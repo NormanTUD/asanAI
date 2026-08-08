@@ -607,6 +607,154 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	border-radius: 6px;
 	padding: 6px 10px;
 	margin: 2px -6px;
+
+/* ── New HTML-mode formulas (no Temml) ────────────────────────────
+   The computation rows are now plain HTML so each number is a
+   click-to-edit <span.ed>. Two-column layout: the formula on the
+   left, the variable name + where-it-came-from on the right. */
+.attn-anatomy-computation .comp-eq .comp-name {
+	display: inline-block;
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	font-size: 0.88rem;
+	color: var(--mn-text, #1e293b);
+	padding: 1px 4px;
+}
+.attn-anatomy-computation .comp-eq .comp-name strong {
+	color: #059669;
+	font-weight: 700;
+}
+.attn-anatomy-computation .comp-eq .comp-where {
+	display: inline-block;
+	margin-left: 10px;
+	font-size: 0.78rem;
+	color: var(--mn-text-muted, #94a3b8);
+	font-style: italic;
+	vertical-align: middle;
+}
+.attn-anatomy-computation .comp-eq .ed-static {
+	color: var(--mn-text-muted, #64748b);
+	padding: 0 1px;
+}
+
+/* Click-to-edit number. Looks like normal text; on hover reveals the
+   edit affordance; on click it becomes a number input. */
+.attn-anatomy-computation span.ed,
+.attn-anatomy-computation .comp-live span.ed {
+	display: inline-block;
+	min-width: 2.4em;
+	padding: 0 3px;
+	margin: 0 1px;
+	border-radius: 4px;
+	border: 1px solid transparent;
+	background: rgba(37, 99, 235, 0.06);
+	color: #2563eb;
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	font-weight: 600;
+	cursor: text;
+	transition: background 0.12s ease, border-color 0.12s ease;
+}
+.attn-anatomy-computation span.ed:hover {
+	background: rgba(37, 99, 235, 0.18);
+	border-color: rgba(37, 99, 235, 0.45);
+}
+.attn-anatomy-computation span.ed:focus,
+.attn-anatomy-computation span.ed input {
+	outline: none;
+	background: #fff;
+	border-color: #2563eb;
+}
+.attn-anatomy-computation span.ed input {
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	font-size: 0.88rem;
+	color: #1e293b;
+	border: 1px solid #2563eb;
+	border-radius: 4px;
+	padding: 0 3px;
+	width: 4.5em;
+}
+
+/* Multi-line formula groups (one per token in the dot / weights /
+   output steps). Each group is 3 compact lines: the expression, the
+   sum, the final result. Groups are separated by a thin divider so
+   they read as distinct blocks when there are >1 tokens. */
+.attn-anatomy-computation .comp-eq-group {
+	padding: 4px 0;
+	border-top: 1px solid var(--mn-border, #e2e8f0);
+	margin-top: 6px;
+}
+.attn-anatomy-computation .comp-eq-group.first {
+	border-top: none;
+	margin-top: 0;
+	padding-top: 0;
+}
+.attn-anatomy-computation .comp-eq-line {
+	padding: 2px 4px;
+	font-size: 0.95rem;
+	color: var(--mn-text, #1e293b);
+}
+.attn-anatomy-computation .comp-eq-line math {
+	margin: 0 !important;
+	font-size: 1rem !important;
+}
+
+/* Matrix (2×2) shown inline next to the W^X label. */
+.attn-anatomy-computation .comp-matrix {
+	display: inline-block;
+	white-space: nowrap;
+	padding: 2px 4px;
+	margin: 0 4px;
+	border: 1px solid var(--mn-border, #cbd5e1);
+	border-radius: 6px;
+	background: rgba(37, 99, 235, 0.04);
+}
+
+/* ── Live values overview panel ────────────────────────────────── */
+.attn-anatomy-computation .attn-live-panel {
+	margin-bottom: 14px;
+	padding: 10px 12px;
+	background: linear-gradient(180deg, rgba(37,99,235,0.04), rgba(37,99,235,0.01));
+	border: 1px solid rgba(37, 99, 235, 0.25);
+	border-radius: 8px;
+}
+.attn-anatomy-computation .attn-live-header {
+	font-weight: 700;
+	color: #2563eb;
+	font-size: 0.82rem;
+	margin-bottom: 6px;
+	letter-spacing: 0.1px;
+}
+.attn-anatomy-computation .attn-live-row {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 2px 0;
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	font-size: 0.82rem;
+	flex-wrap: wrap;
+}
+.attn-anatomy-computation .attn-live-label {
+	color: #2563eb;
+	font-weight: 700;
+	min-width: 38px;
+}
+.attn-anatomy-computation .attn-live-vals {
+	color: var(--mn-text, #1e293b);
+}
+.attn-anatomy-computation .attn-live-grid {
+	display: inline-block;
+	margin: 0 4px;
+	padding: 0 4px;
+	border: 1px solid rgba(37, 99, 235, 0.3);
+	border-radius: 4px;
+	vertical-align: middle;
+}
+.attn-anatomy-computation .attn-live-grid-row {
+	display: block;
+}
+.attn-anatomy-computation .attn-live-grid-row span.ed {
+	margin: 0 2px;
+	min-width: 2em;
+}
 }
 
 /* Geometric intuition panel — rendered with Temml math, explains what
@@ -690,7 +838,7 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 		<button id="attn-anatomy-prev">← Prev</button>
 		<div class="step-info">
 			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
-			<span class="step-total">of 8</span>
+			<span class="step-total">of ?</span>
 			<span id="attn-anatomy-step-title">— From embeddings to Q, K, V</span>
 		</div>
 		<button id="attn-anatomy-next">Next →</button>

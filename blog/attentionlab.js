@@ -254,6 +254,33 @@ const ATTN_TOKENS = [
 const matMul = (W, v) => [W[0][0]*v[0] + W[0][1]*v[1],
                            W[1][0]*v[0] + W[1][1]*v[1]];
 
+// Map a dot-path field identifier to a human-readable variable name
+// shown in tooltips. e.g. "keys.0.1" → "k₁[2]".
+function fieldToName(field) {
+	const parts = field.split('.');
+	const root = parts[0], sub = parts[1];
+	if (root === 'q') return 'q[' + (parseInt(sub) + 1) + ']';
+	if (root === 'keys') return 'k' + (parseInt(sub) + 1) + '[' + (parseInt(parts[2]) + 1) + ']';
+	if (root === 'vals') return 'v' + (parseInt(sub) + 1) + '[' + (parseInt(parts[2]) + 1) + ']';
+	if (root === 'demo' && sub === 'x') return 'x[' + (parseInt(parts[2]) + 1) + ']';
+	if (root === 'demo' && /^W_/.test(sub)) return sub + '[' + (parseInt(parts[2]) + 1) + '][' + (parseInt(parts[3]) + 1) + ']';
+	return field;
+}
+
+// Emit a Temml `\text{◆FIELD|VALUE}` marker. The whole thing
+// renders as one <mtext> element after Temml, which we then find
+// and replace with an editable HTML span. Using \text{} (a basic
+// amsmath command, trusted by default) avoids Temml's trust
+// restrictions on \class / \htmlData / \style.
+//
+// Underscores in the field name (e.g. W_Q) MUST be escaped to \_
+// otherwise LaTeX treats them as subscript operators and the
+// formula throws ParseError.
+function ed(field, value) {
+	const safeField = field.replace(/_/g, '\\_');
+	return '\\text{◆' + safeField + '|' + value + '}';
+}
+
 // ── Predefined token sets ─────────────────────────────────────────
 // Each set is a self-contained scene: query q (always "it"), the other
 // tokens, their keys, values, and queries (for the full-matrix view).
@@ -535,142 +562,150 @@ const ATTN_COMPUTATIONS = {
 	// same tooltip as the corresponding plot element.
 	projections: () => {
 		const d = ATTN_2D.demo;
-		const fmt  = (v) => v.toFixed(2);
-		const fmtV = (v) => `(${fmt(v[0])},\\; ${fmt(v[1])})`;
-		const fmtM = (W) => `\\begin{pmatrix} ${W[0][0].toFixed(2)} & ${W[0][1].toFixed(2)} \\\\ ${W[1][0].toFixed(2)} & ${W[1][1].toFixed(2)} \\end{pmatrix}`;
-		return `
-		<div class="comp-header">▶ One input <b>x</b>, three different learned projections</div>
+		const fmtM = (W, name) => `\\begin{pmatrix} ${ed(`demo.${name}.0.0`, W[0][0].toFixed(2))} & ${ed(`demo.${name}.0.1`, W[0][1].toFixed(2))} \\\\ ${ed(`demo.${name}.1.0`, W[1][0].toFixed(2))} & ${ed(`demo.${name}.1.1`, W[1][1].toFixed(2))} \\end{pmatrix}`;
+		const html = `
+		<div class="comp-header">▶ One input $\\mathbf{x}$, three different learned projections</div>
 		<div class="comp-body">
-			<div class="comp-eq" data-tip="proj-input">
-				$$ \\underbrace{\\mathbf{x} = ${fmtV(d.x)}}_{\\text{input embedding (the same for all three)}} $$
-			</div>
-			<div class="comp-eq" data-tip="proj-q">
-				$$ \\underbrace{${fmtM(d.W_Q)}}_{\\mathbf{W}^Q} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{q} = ${fmtV(d.q)}}_{\\text{query — same direction as } x} $$
-			</div>
-			<div class="comp-eq" data-tip="proj-k">
-				$$ \\underbrace{${fmtM(d.W_K)}}_{\\mathbf{W}^K} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{k} = ${fmtV(d.k)}}_{\\text{key — } x \\text{ rotated } 90°} $$
-			</div>
-			<div class="comp-eq" data-tip="proj-v">
-				$$ \\underbrace{${fmtM(d.W_V)}}_{\\mathbf{W}^V} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{v} = ${fmtV(d.v)}}_{\\text{value — } x \\text{ sheared}} $$
-			</div>
-			<div class="comp-eq" data-tip="proj-qk">
-				$$ \\mathbf{q} \\cdot \\mathbf{k} = (${fmt(d.q[0])})(${fmt(d.k[0])}) + (${fmt(d.q[1])})(${fmt(d.k[1])}) = ${d.qk.toFixed(3)} $$
-			</div>
-			<div class="comp-note">The three W's are <b>different</b>, so the three outputs are <b>different</b> — even though they all start from the same x. This is the whole point of having three projections: each one learns a different "view" of the same token.</div>
-		</div>
-	`;
+			<div class="comp-eq" data-tip="proj-input">$$ \\underbrace{\\mathbf{x} = (${ed('demo.x.0', d.x[0].toFixed(2))},\\, ${ed('demo.x.1', d.x[1].toFixed(2))})}_{\\text{input embedding}} $$</div>
+			<div class="comp-eq" data-tip="proj-q">$$ \\underbrace{${fmtM(d.W_Q, 'W_Q')}}_{\\mathbf{W}^Q} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{q} = (${d.q[0].toFixed(2)},\\, ${d.q[1].toFixed(2)})}_{\\text{query}} $$</div>
+			<div class="comp-eq" data-tip="proj-k">$$ \\underbrace{${fmtM(d.W_K, 'W_K')}}_{\\mathbf{W}^K} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{k} = (${d.k[0].toFixed(2)},\\, ${d.k[1].toFixed(2)})}_{\\text{key}} $$</div>
+			<div class="comp-eq" data-tip="proj-v">$$ \\underbrace{${fmtM(d.W_V, 'W_V')}}_{\\mathbf{W}^V} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{v} = (${d.v[0].toFixed(2)},\\, ${d.v[1].toFixed(2)})}_{\\text{value}} $$</div>
+			<div class="comp-eq" data-tip="proj-qk">$$ \\mathbf{q} \\cdot \\mathbf{k} = (${d.q[0].toFixed(2)})(${d.k[0].toFixed(2)}) + (${d.q[1].toFixed(2)})(${d.k[1].toFixed(2)}) = ${d.qk.toFixed(3)} $$</div>
+			<div class="comp-note">The three W's are <b>different</b>, so the three outputs are <b>different</b> — click any number (including the W matrices) to edit and watch everything update.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTMLProjection();
+		return { html, liveVals };
 	},
 	setup: () => {
 		const q = ATTN_2D.q;
 		const rows = ATTN_2D.keys.map((k, j) =>
-			`<div class="comp-eq" data-tip="k" data-idx="${j}">$$ \\underbrace{\\mathbf{k}_{${j+1}} = (${k[0].toFixed(2)},\\; ${k[1].toFixed(2)})}_{\\text{key “${ATTN_TOKENS[j+1].name}”}} $$</div>`).join('');
-		return `
+			`<div class="comp-eq" data-tip="k" data-idx="${j}">$$ \\underbrace{\\mathbf{k}_{${j+1}} = (${ed('keys.'+j+'.0', k[0].toFixed(2))},\\, ${ed('keys.'+j+'.1', k[1].toFixed(2))})}_{\\text{key "${ATTN_TOKENS[j+1].name}"}} $$</div>`
+		).join('');
+		const html = `
 		<div class="comp-header">▶ The players — the inputs to the equation</div>
 		<div class="comp-body">
-			<div class="comp-eq" data-tip="q" data-idx="0">$$ \\underbrace{\\mathbf{q} = (${q[0].toFixed(2)},\\; ${q[1].toFixed(2)})}_{\\text{query “it”}} $$</div>
+			<div class="comp-eq" data-tip="q" data-idx="0">$$ \\underbrace{\\mathbf{q} = (${ed('q.0', q[0].toFixed(2))},\\, ${ed('q.1', q[1].toFixed(2))})}_{\\text{query "it"}} $$</div>
 			${rows}
-			<div class="comp-note">No computation yet — these are the vectors the equation will operate on. Hover any of them.</div>
-		</div>
-	`;
+			<div class="comp-note">No computation yet — click any number to edit, or change the example above.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	components: () => {
 		const q = ATTN_2D.q, k = ATTN_2D.keys[0];
-		return `
+		const html = `
 		<div class="comp-header">▶ Currently computing: $q[d] \\cdot k_1[d]$ — element-wise product</div>
 		<div class="comp-body">
-			<div class="comp-eq" data-tip="comprect" data-idx="0">
-				$$ \\underbrace{(${q[0].toFixed(2)})\\cdot(${k[0].toFixed(2)})}_{q[1]\\cdot k_1[1]\\,=\\,${(q[0]*k[0]).toFixed(3)}} \\qquad
-				\\underbrace{(${q[1].toFixed(2)})\\cdot(${k[1].toFixed(2)})}_{q[2]\\cdot k_1[2]\\,=\\,${(q[1]*k[1]).toFixed(3)}} $$
-			</div>
+			<div class="comp-eq" data-tip="comprect" data-idx="0">$$
+				\\underbrace{(${ed('q.0', q[0].toFixed(2))})\\cdot(${ed('keys.0.0', k[0].toFixed(2))})}_{q_1[1]\\,=\\,${(q[0]*k[0]).toFixed(3)}} \\qquad
+				\\underbrace{(${ed('q.1', q[1].toFixed(2))})\\cdot(${ed('keys.0.1', k[1].toFixed(2))})}_{q_1[2]\\,=\\,${(q[1]*k[1]).toFixed(3)}}
+			$$</div>
 			<div class="comp-note">Two rectangles, one per dimension — the area of each is one product. Next step adds them together.</div>
-		</div>
-	`;
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	dot: () => {
 		const q = ATTN_2D.q;
 		const rows = ATTN_2D.keys.map((k, j) => {
-			const p1 = (q[0]*k[0]).toFixed(3), p2 = (q[1]*k[1]).toFixed(3);
-			return `<div class="comp-eq" data-tip="bar-score" data-idx="${j}">$$
-				q\\cdot k_{${j+1}} = \\underbrace{(${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)})}_{${p1} + ${p2}} = \\underbrace{${ATTN_2D.scores[j].toFixed(3)}}_{\\text{score}}
-				$$</div>`;
+			const tj = j + 1;
+			const p1 = q[0]*k[0], p2 = q[1]*k[1];
+			const score = ATTN_2D.scores[j].toFixed(3);
+			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}">` +
+				`<div class="comp-eq-line">$$ (${ed('q.0', q[0].toFixed(2))})\\cdot(${ed('keys.'+j+'.0', k[0].toFixed(2))}) \\;+\\; (${ed('q.1', q[1].toFixed(2))})\\cdot(${ed('keys.'+j+'.1', k[1].toFixed(2))}) $$</div>` +
+				`<div class="comp-eq-line">$$ = ${p1.toFixed(3)} + ${p2.toFixed(3)} $$</div>` +
+				`<div class="comp-eq-line">$$ q \\cdot k_{${tj}} = \\underbrace{${score}}_{\\text{score}} $$</div>` +
+			`</div>`;
 		}).join('');
-		return `
+		const html = `
 		<div class="comp-header">▶ Currently computing: $q \\cdot k_j$ — add the component products</div>
 		<div class="comp-body">
 			${rows}
 			<div class="comp-note">Positive score = same direction as $\\mathbf{q}$; negative = opposite. This is the raw attention input.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	scaled: () => {
 		const rows = ATTN_2D.scores.map((s, j) => `
-			<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}">$$
-				s_{${j+1}} = \\frac{q\\cdot k_{${j+1}}}{\\sqrt{d_k}} = \\frac{${s.toFixed(3)}}{\\underbrace{1.414}_{\\sqrt{2}}} = \\underbrace{${ATTN_2D.scaled[j].toFixed(3)}}_{\\text{scaled score}}
-				$$</div>`).join('');
-		return `
+			<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}">$$ s_{${j+1}} = \\frac{q \\cdot k_{${j+1}}}{\\sqrt{2}} = \\frac{${s.toFixed(3)}}{1.414} = ${ATTN_2D.scaled[j].toFixed(3)} $$</div>`
+		).join('');
+		const html = `
 		<div class="comp-header">▶ Currently computing: $\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}$ — variance control</div>
 		<div class="comp-body">
 			${rows}
 			<div class="comp-note">Dividing by $\\sqrt{2} \\approx 1.414$ keeps every score near magnitude $1$ — the same trick a real $d_k = 64$ model uses.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	exps: () => {
 		const rows = ATTN_2D.scaled.map((sc, j) => `
-			<div class="comp-eq" data-tip="bar-exp" data-idx="${j}">$$
-				e^{s_{${j+1}}} = e^{${sc.toFixed(3)}} = \\underbrace{${ATTN_2D.exps[j].toFixed(3)}}_{\\text{positive number}}
-				$$</div>`).join('');
-		return `
+			<div class="comp-eq" data-tip="bar-exp" data-idx="${j}">$$ e^{s_{${j+1}}} = e^{${sc.toFixed(3)}} = ${ATTN_2D.exps[j].toFixed(3)} $$</div>`
+		).join('');
+		const html = `
 		<div class="comp-header">▶ Currently computing: $e^{s_j}$ — amplify differences</div>
 		<div class="comp-body">
 			${rows}
 			<div class="comp-note">Positive scores grow, negative scores shrink toward $0$. The biggest input now towers over the rest.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	weights: () => {
 		const ex  = ATTN_2D.exps;
 		const sum = ex.reduce((a, b) => a + b, 0);
-		const sumRow = `<div class="comp-eq" data-tip="eq-sum">$$ \\underbrace{${ex.map((e) => e.toFixed(3)).join(' + ')}}_{\\text{e}^{s_j}} = \\underbrace{${sum.toFixed(3)}}_{\\text{sum}} $$</div>`;
-		const rows = ex.map((e, j) => `
-			<div class="comp-eq" data-tip="wbar" data-idx="${j}">$$
-				\\alpha_{${j+1}} = \\frac{${e.toFixed(3)}}{${sum.toFixed(3)}} = \\underbrace{${ATTN_2D.weights[j].toFixed(3)}}_{\\text{weight}} = ${(ATTN_2D.weights[j]*100).toFixed(1)}\\,\\%
-				$$</div>`).join('');
-		return `
+		const sumRow = `<div class="comp-eq-group first">` +
+			`<div class="comp-eq-line">$$ \\sum_j e^{s_j} = ${ex.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)} $$</div>` +
+		`</div>`;
+		const rows = ex.map((e, j) => {
+			const tj = j + 1;
+			const w = ATTN_2D.weights[j];
+			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}">` +
+				`<div class="comp-eq-line">$$ \\alpha_{${tj}} = \\frac{e^{s_{${tj}}}}{\\Sigma} $$</div>` +
+				`<div class="comp-eq-line">$$ = \\frac{${e.toFixed(3)}}{${sum.toFixed(3)}} $$</div>` +
+				`<div class="comp-eq-line">$$ = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\% $$</div>` +
+			`</div>`;
+		}).join('');
+		const html = `
 		<div class="comp-header">▶ Currently computing: softmax — divide each $e^{s_j}$ by the sum</div>
 		<div class="comp-body">
 			${sumRow}
 			${rows}
 			<div class="comp-note">The weights now sum to $100\\%$ — a finite budget of attention, split by relevance.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	values: () => {
 		const rows = ATTN_2D.vals.map((v, j) => `
-			<div class="comp-eq" data-tip="v" data-idx="${j}">$$
-				\\underbrace{\\mathbf{v}_{${j+1}} = (${v[0].toFixed(2)},\\; ${v[1].toFixed(2)})}_{\\text{value “${ATTN_TOKENS[j+1].name}”}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(ATTN_2D.weights[j]*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}}
-				$$</div>`).join('');
-		return `
+			<div class="comp-eq" data-tip="v" data-idx="${j}">$$ \\underbrace{\\mathbf{v}_{${j+1}} = (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})}_{\\text{value "${ATTN_TOKENS[j+1].name}"}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(ATTN_2D.weights[j]*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}} $$</div>`
+		).join('');
+		const html = `
 		<div class="comp-header">▶ Switching from keys to value vectors</div>
 		<div class="comp-body">
 			${rows}
 			<div class="comp-note">Keys said <em>what</em> to attend to; values carry the actual content. The attention weights ride along unchanged.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	output: () => {
 		const rows = ATTN_2D.vals.map((v, j) => {
 			const wv = ATTN_2D.weightedVals[j];
-			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}">$$
-				\\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(ATTN_2D.weights[j]*100).toFixed(1)}\\%)\\times (${v[0].toFixed(2)},\\; ${v[1].toFixed(2)}) = \\underbrace{(${wv[0].toFixed(3)},\\; ${wv[1].toFixed(3)})}_{\\text{weighted value}}
-				$$</div>`;
+			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}">$$ \\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(ATTN_2D.weights[j]*100).toFixed(1)}\\%)\\times (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))}) = \\underbrace{(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})}_{\\text{weighted value}} $$</div>`;
 		}).join('');
 		const z = ATTN_2D.output;
-		const sumParts = ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\; ${wv[1].toFixed(3)})`).join(' + ');
-		return `
+		const sumParts = ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})`).join(' + ');
+		const html = `
 		<div class="comp-header">▶ Currently computing: $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ — the weighted sum</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-eq" data-tip="eq-z">$$
-				\\mathbf{z} = \\underbrace{${sumParts}}_{\\text{component-wise sum}} = \\underbrace{(${z[0].toFixed(3)},\\; ${z[1].toFixed(3)})}_{\\mathbf{z}}
-				$$</div>
+			<div class="comp-eq" data-tip="eq-z">$$ \\mathbf{z} = \\underbrace{${sumParts}}_{\\text{component-wise sum}} = \\underbrace{(${z[0].toFixed(3)},\\, ${z[1].toFixed(3)})}_{\\mathbf{z}} $$</div>
 			<div class="comp-note">$\\mathbf{z}$ is a convex combination — it lies <b>inside the span</b> of the $\\mathbf{v}_j$ (a point in 2 tokens, a segment in 3, a triangle in 4).</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	matrix: () => {
 		const M = ATTN_2D.matrix;
@@ -682,33 +717,41 @@ const ATTN_COMPUTATIONS = {
 			const label = ATTN_TOKENS[i].name;
 			return `<div class="comp-eq"><b>q<sub>${i+1}</sub> = ${label}</b> → ${cells}</div>`;
 		}).join('');
-		return `
-		<div class="comp-header">▶ Full α-matrix — every query attends to every key</div>
+		const html = `
+		<div class="comp-header">▶ Full $\\alpha$-matrix — every query attends to every key</div>
 		<div class="comp-body">
-			<div class="comp-note" style="margin-bottom:6px;">Each row is one token's attention distribution. Hover any cell in the 2D plot for the exact score and weight.</div>
+			<div class="comp-note" style="margin-bottom:6px;">Each row is one token's attention distribution. Hover any cell in the 2D plot for the exact score and weight. Edit values below to watch the matrix change.</div>
 			${rows}
 			<div class="comp-note">Each row sums to 100% — it's a probability distribution. The <b>diagonal</b> (a token attending to itself) is often strong: $\\alpha_{ii}$ tends to be large because $\\mathbf{q}_i \\cdot \\mathbf{k}_i = \\lVert \\mathbf{k}_i \\rVert^2 > 0$.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	},
 	selfattn: () => {
 		const M = ATTN_2D.matrix;
 		const Z = ATTN_2D.selfOutputs;
 		const rows = M.map((row, i) => {
-			const wv = ATTN_2D._allVals.slice(0, M.length).map((v, j) =>
-				`${(row[j]*100).toFixed(1)}\\% \\cdot (${v[0].toFixed(2)}, ${v[1].toFixed(2)})`
-			).join(' + ');
+			// Only iterate up to row.length — for 2 tokens M[i] has
+			// 1 element (1 key) so row[1] would be undefined → NaN.
+			const wvParts = [];
+			for (let j = 0; j < row.length && j < ATTN_2D._allVals.length; j++) {
+				const v = ATTN_2D._allVals[j];
+				const w = row[j] || 0;
+				wvParts.push(`${(w*100).toFixed(1)}\\% \\cdot (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})`);
+			}
+			const wv = wvParts.join(' + ');
 			const z = Z[i];
 			const label = ATTN_TOKENS[i].name;
-			return `<div class="comp-eq" data-tip="self-z" data-idx="${i}">$$
-				\\mathbf{z}_{\\text{${label}}} = \\underbrace{${wv}}_{\\text{weighted blend of all values}} = \\underbrace{(${z[0].toFixed(3)},\\; ${z[1].toFixed(3)})}_{\\text{output for “${label}”}}
-				$$</div>`;
+			return `<div class="comp-eq" data-tip="self-z" data-idx="${i}">$$ \\mathbf{z}_{\\text{${label}}} = \\underbrace{${wv}}_{\\text{weighted blend}} = \\underbrace{(${z[0].toFixed(3)},\\, ${z[1].toFixed(3)})}_{\\text{output for "${label}"}} $$</div>`;
 		}).join('');
-		return `
-		<div class="comp-header">▶ Self-attention: every token gets its own output z</div>
+		const html = `
+		<div class="comp-header">▶ Self-attention: every token gets its own output $\\mathbf{z}$</div>
 		<div class="comp-body">
 			${rows}
 			<div class="comp-note">This is what a Transformer layer <i>actually</i> computes: each token's output is a different weighted blend of <b>all</b> the values, with the blending pattern determined by that token's own attention row.</div>
 		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
 	}
 };
 
@@ -1523,7 +1566,9 @@ const AttentionAnatomy = {
 		// Header bits
 		const titleEl = document.getElementById('attn-anatomy-step-title');
 		const numEl   = document.getElementById('attn-anatomy-step-num');
+		const totalEl = document.querySelector('.step-total');
 		if (numEl)   numEl.textContent   = `Step ${this.step + 1}`;
+		if (totalEl) totalEl.textContent = `of ${ATTN_STEPS.length}`;
 		if (titleEl) titleEl.innerHTML    = `— ${data.title}`;
 
 		// Update each panel
@@ -1533,10 +1578,14 @@ const AttentionAnatomy = {
 		this.render2D(data);
 
 		// Temml is loaded by load_base_js(); it scans the document for
-		// $...$ / $$...$$ blocks and replaces them with MathML.
+		// $...$ / $$...$$ blocks and replaces them with MathML. After
+		// that, swap every <mn data-field="..."> in the computation
+		// panel for an editable HTML span so the rendered formulas
+		// stay click-to-edit.
 		if (typeof render_temml === 'function') {
 			try { render_temml(); } catch (e) { /* ignore */ }
 		}
+		this._makeMathEditable();
 
 		// Fade back in on the next frame so the transition is visible.
 		requestAnimationFrame(() => {
@@ -1615,8 +1664,66 @@ const AttentionAnatomy = {
 		const el = document.getElementById('attn-section-computation');
 		if (!el) return;
 		const fn = ATTN_COMPUTATIONS[data.computation];
-		if (fn) el.innerHTML = fn();
-		else el.innerHTML = '';
+		// Each computation function returns a SECOND value (optional): a
+		// list of "live value" rows to prepend — a compact overview of
+		// every editable value relevant to this step.
+		const result = fn ? fn() : '';
+		let body = '';
+		if (typeof result === 'object' && result.html !== undefined) {
+			body = (result.liveVals || '') + result.html;
+		} else {
+			body = result;
+		}
+		el.innerHTML = body;
+		// Wire up click-to-edit on every <span.ed> we just emitted.
+		this._attachEditors(el);
+	},
+
+	// Build the "live values" overview panel rendered as Temml math.
+	// Each editable value uses \text{◆FIELD|VALUE} so _makeMathEditable
+	// can find and replace it with a click-to-edit HTML span after Temml
+	// has rendered the surrounding math.
+	_liveValsHTML: function(extra) {
+		const q = ATTN_2D.q;
+		let html = '<div class="attn-live-panel">';
+		html += '<div class="attn-live-header">▶ Live values — click any number to edit</div>';
+		html += '<div class="attn-live-row">$$ \\mathbf{q} = (\\text{◆q.0|' + q[0].toFixed(2) + '},\\, \\text{◆q.1|' + q[1].toFixed(2) + '}) $$</div>';
+		ATTN_TOKENS.slice(1).forEach((tk, j) => {
+			if (j >= ATTN_2D.keys.length) return;
+			const k = ATTN_2D.keys[j];
+			const v = ATTN_2D.vals[j];
+			html += '<div class="attn-live-row">$$ \\mathbf{' + tk.name + '} = (\\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '},\\, \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '}) \\;\\; (\\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '},\\, \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '}) $$</div>';
+		});
+		if (extra) html += extra;
+		html += '</div>';
+		return html;
+	},
+
+	// Same as _liveValsHTML but for the projections step — adds the W
+	// matrices as 2×2 editable grids, all rendered as Temml math.
+	_liveValsHTMLProjection: function() {
+		const d = ATTN_2D.demo;
+		const cell = (path, val) => '\\text{◆' + path.replace(/_/g, '\\_') + '|' + val + '}';
+		const grid = (W, name) => {
+			let g = '\\begin{pmatrix} ';
+			for (let i = 0; i < 2; i++) {
+				if (i > 0) g += ' \\; ';
+				for (let j = 0; j < 2; j++) {
+					if (j > 0) g += ' & ';
+					g += cell(`demo.${name}.${i}.${j}`, W[i][j].toFixed(2));
+				}
+			}
+			g += ' \\end{pmatrix}';
+			return g;
+		};
+		let html = '<div class="attn-live-panel">';
+		html += '<div class="attn-live-header">▶ Live values — click any number to edit (W matrices included)</div>';
+		html += '<div class="attn-live-row">$$ \\mathbf{x} = (\\text{◆demo.x.0|' + d.x[0].toFixed(2) + '},\\, \\text{◆demo.x.1|' + d.x[1].toFixed(2) + '}) $$</div>';
+		html += '<div class="attn-live-row">$$ \\mathbf{W}^Q = ' + grid(d.W_Q, 'W_Q') + ' $$</div>';
+		html += '<div class="attn-live-row">$$ \\mathbf{W}^K = ' + grid(d.W_K, 'W_K') + ' $$</div>';
+		html += '<div class="attn-live-row">$$ \\mathbf{W}^V = ' + grid(d.W_V, 'W_V') + ' $$</div>';
+		html += '</div>';
+		return html;
 	},
 
 	// Populate the "Geometric intuition" panel: Temml-rendered math +
@@ -1628,6 +1735,112 @@ const AttentionAnatomy = {
 		const fn = ATTN_INTUITIONS[data.intuition];
 		if (fn) el.innerHTML = fn();
 		else el.innerHTML = '';
+	},
+
+	// ─── Live-editable values ──────────────────────────────────────
+	// Every numeric value in the computation formulas is rendered as a
+	// clickable <span class="ed" data-field="..." data-name="...">. Click
+	// it → it turns into a number input → Enter/blur → value is written
+	// back into the matching ATTN_2D field and the whole scene re-renders.
+
+	// Resolve a dot-separated path to a value on ATTN_2D. Examples:
+	//   "q.0"        → ATTN_2D.q[0]
+	//   "keys.1.1"   → ATTN_2D.keys[1][1]
+	//   "demo.W_Q.0.0" → ATTN_2D.demo.W_Q[0][0]
+	//   "demo.x.0"   → ATTN_2D.demo.x[0]
+	_resolveField: function(path) {
+		return path.split('.').reduce(function(o, k) {
+			return o[isNaN(k) ? k : parseInt(k)];
+		}, ATTN_2D);
+	},
+
+	// Write a value back through a dot-path. Returns true if it was a
+	// finite number and the write went through; false otherwise.
+	_setField: function(path, value) {
+		if (!isFinite(value)) return false;
+		const parts = path.split('.');
+		const last = parts.pop();
+		const obj = parts.reduce(function(o, k) {
+			return o[isNaN(k) ? k : parseInt(k)];
+		}, ATTN_2D);
+		obj[isNaN(last) ? last : parseInt(last)] = value;
+		return true;
+	},
+
+	// Attach click-to-edit behaviour to every <span.ed> inside `root`.
+	// Each editable span becomes an <input type="number"> on click; on
+	// Enter or blur the value is committed and everything re-renders.
+	_attachEditors: function(root) {
+		if (!root) return;
+		const self = this;
+		root.querySelectorAll('span.ed').forEach(function(span) {
+			if (span._editableBound) return;
+			span._editableBound = true;
+			span.title = 'click to edit — ' + (span.dataset.name || span.dataset.field);
+			span.addEventListener('click', function(ev) {
+				ev.stopPropagation();
+				if (span.querySelector('input')) return;
+				const cur = self._resolveField(span.dataset.field);
+				const input = document.createElement('input');
+				input.type = 'number';
+				input.step = '0.01';
+				input.value = Number(cur).toFixed(3);
+				input.style.width = '4.5em';
+				span.textContent = '';
+				span.appendChild(input);
+				input.focus();
+				input.select();
+				const commit = function() {
+					const v = parseFloat(input.value);
+					if (self._setField(span.dataset.field, v)) {
+						// Re-derive everything that depends on base values.
+						if (span.dataset.field.indexOf('demo') === 0) {
+							ATTN_2D._updateDemo();
+						}
+						ATTN_2D.recomputeWeights();
+						ATTN_2D.recomputeMatrix();
+						self.render();
+						self._tipContentKey = null;
+					} else {
+						span.textContent = Number(cur).toFixed(3);
+					}
+				};
+				input.addEventListener('blur', commit);
+				input.addEventListener('keydown', function(e) {
+					if (e.key === 'Enter') { input.blur(); }
+					if (e.key === 'Escape') { span.textContent = Number(cur).toFixed(3); }
+				});
+			});
+		});
+	},
+
+	// After Temml converts the LaTeX → MathML, every \text{◆FIELD|VALUE}
+	// marker becomes a <mtext> element. This method walks the computation
+	// panel, finds each of those <mtext> elements, parses out the field
+	// path and value, and replaces it with an editable HTML <span.ed> so
+	// the user can click any number in a rendered formula and change it.
+	_makeMathEditable: function() {
+		const compEl = document.getElementById('attn-section-computation');
+		if (!compEl) return;
+		const self = this;
+		const mtexts = compEl.querySelectorAll('mtext');
+		mtexts.forEach(function(mtext) {
+			const text = mtext.textContent || '';
+			// Match "◆FIELD|VALUE" — the marker is rendered as text content.
+			const m = text.match(/◆([^|]+)\|([\s\S]+)/);
+			if (!m) return;
+			// Unescape LaTeX-mandated \_ back to literal _ so the
+			// dataset field matches the ATTN_2D path (e.g. W_Q not W\_Q).
+			const field = m[1].replace(/\\_/g, '_');
+			const value = m[2];
+			const span = document.createElement('span');
+			span.className = 'ed';
+			span.dataset.field = field;
+			span.dataset.name = fieldToName(field);
+			span.textContent = value;
+			if (mtext.parentNode) mtext.parentNode.replaceChild(span, mtext);
+		});
+		this._attachEditors(compEl);
 	},
 
 	// ─── 2D vector scene ────────────────────────────────────────────
@@ -2445,7 +2658,13 @@ const AttentionAnatomy = {
 		const n = ATTN_2D.numTokens;
 		const queries = ATTN_2D._allQueries.slice(0, n);
 		const keys    = ATTN_2D._allKeys.slice(0, n);
-		const Z       = ATTN_2D.selfOutputs;
+		// Guarantee selfOutputs is computed even if recomputeMatrix was
+		// skipped for some reason — otherwise the z mini-arrows render
+		// at NaN coordinates and show as broken boxes.
+		if (!ATTN_2D.selfOutputs || ATTN_2D.selfOutputs.length < n) {
+			ATTN_2D.recomputeMatrix();
+		}
+		const Z       = ATTN_2D.selfOutputs || [];
 
 		// Lay out the four vectors for each token in a small grid at
 		// the bottom of the plot so they don't all pile up at the origin.
@@ -2492,6 +2711,28 @@ const AttentionAnatomy = {
 			// Query (red), key (blue), z (orange) — all scaled to fit
 			const scale = 0.12;
 			const drawMini = (v, color, label, dy) => {
+				// Guard against NaN/undefined: draw a faded dot instead of a
+				// broken arrow at NaN coordinates.
+				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
+					const dot = document.createElementNS(NS, 'circle');
+					dot.setAttribute('cx', cx);
+					dot.setAttribute('cy', stripY + 0.2 + dy);
+					dot.setAttribute('r', '0.03');
+					dot.setAttribute('fill', themeColor('#94a3b8'));
+					dot.style.pointerEvents = 'none';
+					constructionG.appendChild(dot);
+					const t = document.createElementNS(NS, 'text');
+					t.setAttribute('x', cx);
+					t.setAttribute('y', stripY + 0.2 + dy + 0.04);
+					t.setAttribute('text-anchor', 'middle');
+					t.setAttribute('fill', themeColor('#94a3b8'));
+					t.setAttribute('font-size', '0.06');
+					t.setAttribute('font-family', 'Inter, sans-serif');
+					t.textContent = label + ' (n/a)';
+					t.style.pointerEvents = 'none';
+					labelsG.appendChild(t);
+					return;
+				}
 				const ex = cx + v[0] * scale;
 				const ey = stripY + 0.2 - v[1] * scale + dy;
 				const line = document.createElementNS(NS, 'line');
