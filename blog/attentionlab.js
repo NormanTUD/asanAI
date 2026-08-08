@@ -345,6 +345,16 @@ const ATTN_2D = {
 	hoveredToken: -1,          // -1 = none; 0 = it; 1 = cat; …
 	hoveredFormula: null,      // { step, idx } or null — which formula is hovered
 
+	// Live views over the full arrays — always reflect the CURRENT
+	// numTokens. These were MISSING from the original object, which
+	// meant `this.keys` / `this.vals` were undefined and the old
+	// `setNumTokens` had to assign them directly (shadowing whatever
+	// value was there). With these getters, `setNumTokens` just sets
+	// `numTokens` and everything else derives fresh.
+	get keys()    { return this._allKeys.slice(0, this.numTokens); },
+	get vals()    { return this._allVals.slice(0, this.numTokens); },
+	get queries() { return this._allQueries.slice(0, this.numTokens + 1); },
+
 	// ── Demo data for the "learnable projections" step ────────────
 	// Static W matrices (identity / 90° rotation / shear) that make the
 	// concept visually obvious. The input x is RECOMPUTED from the first
@@ -428,15 +438,24 @@ const ATTN_2D = {
 	},
 
 	setNumTokens: function(n) {
+		n = Math.max(1, Math.min(this._allKeys.length, n));
+		console.log('[attn] setNumTokens: n=' + n + ' _allKeys.length=' + this._allKeys.length);
 		this.numTokens = n;
-		this.keys = this._allKeys.slice(0, n - 1);
-		this.vals = this._allVals.slice(0, n - 1);
+		// NOTE: do NOT assign this.keys / this.vals here — they're
+		// getters (see ATTN_2D declaration). Assigning would shadow the
+		// getter with a stale snapshot, which is why hover over the 3rd
+		// key (mat) had no arrow in the DOM even though numTokens=3
+		// said it should.
+		// this.keys = this._allKeys.slice(0, n - 1);  ← BUG: shadowed getter, off-by-one
+		// this.vals = this._allVals.slice(0, n - 1);
 		this.sqrtDk = Math.sqrt(this.d_k);
 		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
-		this.scores = this.keys.map(k => dot(this.q, k));
+		const keysArr = this.keys;   // getter call
+		this.scores = keysArr.map(k => dot(this.q, k));
 		this.scaled = this.scores.map(s => s / this.sqrtDk);
 		this.recomputeWeights();
 		this.recomputeMatrix();
+		console.log('[attn] setNumTokens done: numTokens=' + this.numTokens + ' keysLen=' + this.keys.length);
 	},
 
 	// Switch to a predefined token set (0..3). Updates q, keys, vals,
