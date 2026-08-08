@@ -1471,6 +1471,19 @@ const AttentionAnatomy = {
 			case 'matrix-cell': {
 				const i = Math.floor(idx / 10);
 				const j = idx % 10;
+				// Guard: matrix has _allKeys.length columns, not n. The
+				// trailing column(s) would index an undefined key — return
+				// a minimal tooltip instead of crashing.
+				if (i >= ATTN_2D._allQueries.length || j >= ATTN_2D._allKeys.length) {
+					return {
+						name: `α[${i+1}][${j+1}]`,
+						intuition: 'no key for this position in the single-query demo',
+						concreteLatex: '\\text{n/a}',
+						formulaLatex: '\\alpha_{ij}',
+						unicode: 'α[i][j] = n/a',
+						desc: 'This cell is outside the available key range.'
+					};
+				}
 				const qi = ATTN_2D._allQueries[i], kj = ATTN_2D._allKeys[j];
 				const score = qi[0]*kj[0] + qi[1]*kj[1];
 				const scaled = score / Math.sqrt(ATTN_2D.d_k);
@@ -2074,7 +2087,7 @@ const AttentionAnatomy = {
 			labelHalo.setAttribute('text-anchor', anchor);
 			labelHalo.setAttribute('dominant-baseline', 'middle');
 			labelHalo.setAttribute('fill', '#fff'); labelHalo.setAttribute('stroke', '#fff');
-			labelHalo.setAttribute('stroke-width', '0.012'); labelHalo.setAttribute('paint-order', 'stroke');
+			labelHalo.setAttribute('stroke-width', '0.005'); labelHalo.setAttribute('paint-order', 'stroke');
 			labelHalo.setAttribute('font-size', '0.1');
 			labelHalo.setAttribute('font-family', 'Inter, sans-serif');
 			labelHalo.textContent = label;
@@ -2222,7 +2235,7 @@ const AttentionAnatomy = {
 			halo.setAttribute('text-anchor', a);
 			halo.setAttribute('dominant-baseline', 'middle');
 			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
-			halo.setAttribute('stroke-width', '0.012'); halo.setAttribute('paint-order', 'stroke');
+			halo.setAttribute('stroke-width', '0.005'); halo.setAttribute('paint-order', 'stroke');
 			halo.setAttribute('font-size', '0.065');
 			halo.setAttribute('font-family', 'Inter, sans-serif');
 			halo.textContent = str;
@@ -2400,12 +2413,14 @@ const AttentionAnatomy = {
 			dim2.addEventListener('mousemove',  (e) => this._showTooltip('comprect', j * 2 + 1, e.clientX, e.clientY));
 			dim2.addEventListener('mouseleave', () => this._hideTooltip());
 
-			// Label above the dim-1 rect (positioned at its top-right)
+			// Label above the dim-1 rect (positioned at its top-right).
+			// Bold + larger font + dark color so it's actually readable.
 			const lbl = document.createElementNS(NS, 'text');
-			lbl.setAttribute('x', Math.min(0, q[0]) + 0.03);
-			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.035);
-			lbl.setAttribute('fill', color);
-			lbl.setAttribute('font-size', '0.07');
+			lbl.setAttribute('x', Math.min(0, q[0]) + 0.04);
+			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.04);
+			lbl.setAttribute('fill', '#1e293b');
+			lbl.setAttribute('font-size', '0.085');
+			lbl.setAttribute('font-weight', '700');
 			lbl.setAttribute('font-family', 'Inter, sans-serif');
 			lbl.textContent = `k${j+1}: ${px} + ${py}`;
 			lbl.style.pointerEvents = 'none';
@@ -2541,10 +2556,13 @@ const AttentionAnatomy = {
 		const n = M.length;
 		if (!n) return;
 		const queries = ATTN_2D._allQueries.slice(0, n);
-		const keys    = ATTN_2D._allKeys.slice(0, n);
+		// Matrix is n queries × keys.length columns (one fewer than n
+		// for the single-query demo, where "it" doesn't carry its own key).
+		const m = Math.min(M[0]?.length || 0, ATTN_2D._allKeys.length);
+		const keys    = ATTN_2D._allKeys.slice(0, m);
 
 		const cell = 0.32, gap = 0.02;
-		const gridW = n * cell + (n - 1) * gap;
+		const gridW = m * cell + (m - 1) * gap;
 		// Centre the grid horizontally; top edge at y = 0.85 so column
 		// labels have room and the whole thing fits in the [-1.4,1.4]
 		// viewport with room for row labels on the left.
@@ -2553,13 +2571,13 @@ const AttentionAnatomy = {
 		const labelGap = 0.12;
 
 		// Column headers: key tokens
-		for (let j = 0; j < n; j++) {
+		for (let j = 0; j < m; j++) {
 			const cx = x0 + j * (cell + gap) + cell / 2;
 			const t = document.createElementNS(NS, 'text');
 			t.setAttribute('x', cx); t.setAttribute('y', y0 + 0.16);
 			t.setAttribute('text-anchor', 'middle');
 			t.setAttribute('fill', themeColor('#475569'));
-			t.setAttribute('font-size', '0.08');
+			t.setAttribute('font-size', '0.09');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `k${j+1}`;
 			t.style.pointerEvents = 'none';
@@ -2573,7 +2591,7 @@ const AttentionAnatomy = {
 			t.setAttribute('x', x0 - labelGap); t.setAttribute('y', cy);
 			t.setAttribute('text-anchor', 'end');
 			t.setAttribute('fill', themeColor('#475569'));
-			t.setAttribute('font-size', '0.08');
+			t.setAttribute('font-size', '0.09');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `q${i+1}`;
 			t.style.pointerEvents = 'none';
@@ -2586,7 +2604,7 @@ const AttentionAnatomy = {
 		xt.setAttribute('y', y0 + 0.32);
 		xt.setAttribute('text-anchor', 'middle');
 		xt.setAttribute('fill', themeColor('#64748b'));
-		xt.setAttribute('font-size', '0.07');
+		xt.setAttribute('font-size', '0.08');
 		xt.setAttribute('font-family', 'Inter, sans-serif');
 		xt.textContent = 'key  →';
 		xt.style.pointerEvents = 'none';
@@ -2597,16 +2615,16 @@ const AttentionAnatomy = {
 		yt.setAttribute('y', y0 - n * (cell + gap) - 0.05);
 		yt.setAttribute('text-anchor', 'end');
 		yt.setAttribute('fill', themeColor('#64748b'));
-		yt.setAttribute('font-size', '0.07');
+		yt.setAttribute('font-size', '0.08');
 		yt.setAttribute('font-family', 'Inter, sans-serif');
 		yt.textContent = '↑ query';
 		yt.style.pointerEvents = 'none';
 		labelsG.appendChild(yt);
 
-		// Cells
+		// Cells — only n × m (not n × n), avoiding the undefined last column.
 		for (let i = 0; i < n; i++) {
-			for (let j = 0; j < n; j++) {
-				const w = M[i][j];
+			for (let j = 0; j < m; j++) {
+				const w = (M[i] || [])[j] || 0;
 				const cx = x0 + j * (cell + gap);
 				const cy = y0 - i * (cell + gap) - cell;
 				const r = document.createElementNS(NS, 'rect');
@@ -2670,29 +2688,31 @@ const AttentionAnatomy = {
 		// the bottom of the plot so they don't all pile up at the origin.
 		// Each "token panel" gets a 1.2-wide × 0.5-tall strip.
 		const colW = 2.6 / n;
-		const stripY = -0.9;
+		const stripY = -0.85;
 
-		// Strip title
+		// Strip title — explains what these mini-plots are.
 		const title = document.createElementNS(NS, 'text');
-		title.setAttribute('x', 0); title.setAttribute('y', stripY - 0.25);
+		title.setAttribute('x', 0); title.setAttribute('y', stripY - 0.32);
 		title.setAttribute('text-anchor', 'middle');
-		title.setAttribute('fill', themeColor('#64748b'));
-		title.setAttribute('font-size', '0.075');
+		title.setAttribute('fill', themeColor('#475569'));
+		title.setAttribute('font-size', '0.085');
+		title.setAttribute('font-weight', '600');
 		title.setAttribute('font-family', 'Inter, sans-serif');
-		title.textContent = 'one mini-plot per token — each gets its own z';
+		title.textContent = 'self-attention output per token — each gets its own z = Σ αⱼ·vⱼ';
 		title.style.pointerEvents = 'none';
 		labelsG.appendChild(title);
 
+		const self = this;
 		for (let i = 0; i < n; i++) {
 			const cx = -1.3 + i * colW + colW / 2;
 			const tokenName = ATTN_TOKENS[i].name;
 
-			// Token header
+			// Token header — large and bold
 			const head = document.createElementNS(NS, 'text');
-			head.setAttribute('x', cx); head.setAttribute('y', stripY - 0.06);
+			head.setAttribute('x', cx); head.setAttribute('y', stripY - 0.10);
 			head.setAttribute('text-anchor', 'middle');
 			head.setAttribute('fill', ATTN_TOKENS[i].color);
-			head.setAttribute('font-size', '0.08');
+			head.setAttribute('font-size', '0.10');
 			head.setAttribute('font-weight', 'bold');
 			head.setAttribute('font-family', 'Inter, sans-serif');
 			head.textContent = tokenName;
@@ -2701,62 +2721,104 @@ const AttentionAnatomy = {
 
 			// Mini 2D axes for this token
 			const ax = document.createElementNS(NS, 'line');
-			ax.setAttribute('x1', cx - 0.35); ax.setAttribute('y1', stripY + 0.2);
-			ax.setAttribute('x2', cx + 0.35); ax.setAttribute('y2', stripY + 0.2);
+			ax.setAttribute('x1', cx - 0.30); ax.setAttribute('y1', stripY + 0.18);
+			ax.setAttribute('x2', cx + 0.30); ax.setAttribute('y2', stripY + 0.18);
 			ax.setAttribute('stroke', themeColor('#cbd5e1'));
-			ax.setAttribute('stroke-width', '0.005');
+			ax.setAttribute('stroke-width', '0.006');
 			ax.style.pointerEvents = 'none';
 			constructionG.appendChild(ax);
 
-			// Query (red), key (blue), z (orange) — all scaled to fit
-			const scale = 0.12;
-			const drawMini = (v, color, label, dy) => {
-				// Guard against NaN/undefined: draw a faded dot instead of a
-				// broken arrow at NaN coordinates.
+			// Faint panel background for hover area
+			const panelBg = document.createElementNS(NS, 'rect');
+			panelBg.setAttribute('x', cx - 0.32); panelBg.setAttribute('y', stripY - 0.18);
+			panelBg.setAttribute('width', 0.64); panelBg.setAttribute('height', 0.44);
+			panelBg.setAttribute('fill', 'transparent');
+			panelBg.setAttribute('stroke', themeColor('#e2e8f0'));
+			panelBg.setAttribute('stroke-width', '0.004');
+			panelBg.setAttribute('stroke-dasharray', '0.01 0.01');
+			panelBg.setAttribute('rx', '0.02');
+			panelBg.style.cursor = 'help';
+			constructionG.appendChild(panelBg);
+
+			// Mini-arrow draw function with hover tooltip
+			const scale = 0.11;
+			const drawMini = (v, color, label, dy, tipKey) => {
 				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
 					const dot = document.createElementNS(NS, 'circle');
 					dot.setAttribute('cx', cx);
-					dot.setAttribute('cy', stripY + 0.2 + dy);
-					dot.setAttribute('r', '0.03');
+					dot.setAttribute('cy', stripY + 0.18 + dy);
+					dot.setAttribute('r', '0.025');
 					dot.setAttribute('fill', themeColor('#94a3b8'));
 					dot.style.pointerEvents = 'none';
 					constructionG.appendChild(dot);
-					const t = document.createElementNS(NS, 'text');
-					t.setAttribute('x', cx);
-					t.setAttribute('y', stripY + 0.2 + dy + 0.04);
-					t.setAttribute('text-anchor', 'middle');
-					t.setAttribute('fill', themeColor('#94a3b8'));
-					t.setAttribute('font-size', '0.06');
-					t.setAttribute('font-family', 'Inter, sans-serif');
-					t.textContent = label + ' (n/a)';
-					t.style.pointerEvents = 'none';
-					labelsG.appendChild(t);
 					return;
 				}
 				const ex = cx + v[0] * scale;
-				const ey = stripY + 0.2 - v[1] * scale + dy;
+				const ey = stripY + 0.18 - v[1] * scale + dy;
 				const line = document.createElementNS(NS, 'line');
-				line.setAttribute('x1', cx); line.setAttribute('y1', stripY + 0.2 + dy);
+				line.setAttribute('x1', cx); line.setAttribute('y1', stripY + 0.18 + dy);
 				line.setAttribute('x2', ex);  line.setAttribute('y2', ey);
 				line.setAttribute('stroke', color);
-				line.setAttribute('stroke-width', '0.012');
+				line.setAttribute('stroke-width', '0.016');
 				line.setAttribute('stroke-linecap', 'round');
 				line.style.pointerEvents = 'none';
 				constructionG.appendChild(line);
-				// Tiny label at the tip
+				// Arrowhead
+				const dx = ex - cx, dy2 = ey - (stripY + 0.18 + dy);
+				const len = Math.sqrt(dx*dx + dy2*dy2);
+				if (len > 0.02) {
+					const ux = dx/len, uy = dy2/len;
+					const s = 0.035;
+					const c = Math.cos(Math.PI/6), si = Math.sin(Math.PI/6);
+					const head = document.createElementNS(NS, 'polygon');
+					head.setAttribute('points', `${ex},${ey} ${ex-s*(ux*c-uy*si)},${ey-s*(ux*si+uy*c)} ${ex-s*(ux*c+uy*si)},${ey-s*(-ux*si+uy*c)}`);
+					head.setAttribute('fill', color);
+					head.style.pointerEvents = 'none';
+					constructionG.appendChild(head);
+				}
+				// Label at the tip
 				const t = document.createElementNS(NS, 'text');
-				t.setAttribute('x', ex + 0.04); t.setAttribute('y', ey - 0.02);
+				t.setAttribute('x', ex + 0.03); t.setAttribute('y', ey - 0.02);
 				t.setAttribute('text-anchor', 'start');
 				t.setAttribute('fill', color);
-				t.setAttribute('font-size', '0.06');
+				t.setAttribute('font-size', '0.075');
+				t.setAttribute('font-weight', '600');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = label;
 				t.style.pointerEvents = 'none';
 				labelsG.appendChild(t);
+
+				// Hover tooltip for this mini-arrow
+				if (tipKey !== undefined) {
+					const hit = document.createElementNS(NS, 'rect');
+					hit.setAttribute('x', Math.min(cx, ex) - 0.02);
+					hit.setAttribute('y', Math.min(stripY + 0.18 + dy, ey) - 0.02);
+					hit.setAttribute('width', Math.abs(ex - cx) + 0.06);
+					hit.setAttribute('height', Math.abs(ey - (stripY + 0.18 + dy)) + 0.06);
+					hit.setAttribute('fill', 'transparent');
+					hit.style.cursor = 'help';
+					constructionG.appendChild(hit);
+					hit.addEventListener('mouseenter', (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
+					hit.addEventListener('mousemove',  (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
+					hit.addEventListener('mouseleave', () => self._hideTooltip());
+				}
 			};
-			drawMini(queries[i], '#ef4444', `q${i+1}`, 0);
-			drawMini(keys[i],    '#2563eb', `k${i+1}`, -0.08);
-			drawMini(Z[i],       '#f59e0b', `z${i+1}`, -0.16);
+			drawMini(queries[i], '#ef4444', 'q',   0,    'q');
+			drawMini(keys[i],    '#2563eb', 'k',   -0.09, 'k');
+			drawMini(Z[i],       '#f59e0b', 'z',   -0.18, 'z');
+
+			// z value label below the panel
+			if (Z[i] && isFinite(Z[i][0])) {
+				const zv = document.createElementNS(NS, 'text');
+				zv.setAttribute('x', cx); zv.setAttribute('y', stripY + 0.30);
+				zv.setAttribute('text-anchor', 'middle');
+				zv.setAttribute('fill', themeColor('#64748b'));
+				zv.setAttribute('font-size', '0.065');
+				zv.setAttribute('font-family', 'monospace');
+				zv.textContent = `z = (${Z[i][0].toFixed(2)}, ${Z[i][1].toFixed(2)})`;
+				zv.style.pointerEvents = 'none';
+				labelsG.appendChild(zv);
+			}
 		}
 	},
 
