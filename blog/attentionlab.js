@@ -1854,6 +1854,13 @@ const AttentionAnatomy = {
 		if (totalEl) totalEl.textContent = `of ${ATTN_STEPS.length}`;
 		if (titleEl) titleEl.innerHTML    = `— ${data.title}`;
 
+		// Reset the editable-field queue BEFORE the renders so ed()
+		// calls inside renderEquation/renderComputation/renderIntuition
+		// populate a FRESH queue. If we reset AFTER, we'd wipe the
+		// fields that were just pushed and _makeMathEditable would
+		// find an empty queue → no <span.ed> spans → nothing editable.
+		_resetEditableQueue();
+
 		// Update each panel
 		this.renderEquation(data);
 		this.renderComputation(data);
@@ -1861,6 +1868,13 @@ const AttentionAnatomy = {
 		this._renderSentence();
 		this.render2D(data);
 		this._renderBarPlots(data);
+
+		// ASSERTION: queue must have fields after all renders
+		if (_editableFieldQueue.length === 0) {
+			console.warn('[attn] edit#16b: _editableFieldQueue is EMPTY after all renders — no ed() calls were made, nothing will be editable');
+		} else {
+			console.log('[attn] edit: queue populated with ' + _editableFieldQueue.length + ' fields: ' + _editableFieldQueue.join(', '));
+		}
 
 		// Temml is loaded by load_base_js(); it scans the document for
 		// $...$ / $$...$$ blocks and replaces them with MathML. After
@@ -1871,9 +1885,6 @@ const AttentionAnatomy = {
 		// render_temml() pass, the Temml pass would overwrite our
 		// <span class="ed"> back to <mtext>, and the ◆ markers would
 		// leak through to the user.
-		// Reset the editable-field queue BEFORE render_temml so the
-		// queue contains only fields from this render's ed() calls.
-		_resetEditableQueue();
 		if (typeof render_temml === 'function') {
 			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
 		}
