@@ -430,35 +430,8 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 }
 
 /* ── Hover highlight on 2D arrows ──────────────────────────────────── */
-/* The hovered arrow + head + label get classes that scale them up and
-   pulse a glow. Even tokens whose arrows are already naturally prominent
-   (cat/mat close to q) get an unmistakable visual change because the
-   SHAFT LENGTH changes via scale, not just colour. */
-.attn-arrow-hovered-shaft {
-	transform-box: fill-box;
-	transform-origin: 0 50%;
-	animation: attn-arrow-grow 0.22s ease-out forwards;
-}
-.attn-arrow-hovered-head {
-	transform-box: fill-box;
-	transform-origin: center;
-	animation: attn-arrow-pop 0.22s ease-out forwards;
-}
-.attn-arrow-hovered-glow {
-	animation: attn-glow-pulse 1.4s ease-in-out infinite;
-}
-@keyframes attn-arrow-grow {
-	from { transform: scale(1, 1); }
-	to   { transform: scale(1.35, 1); }
-}
-@keyframes attn-arrow-pop {
-	from { transform: scale(1); }
-	to   { transform: scale(1.5); }
-}
-@keyframes attn-glow-pulse {
-	0%, 100% { stroke-opacity: 0.28; stroke-width: 0.16; }
-	50%      { stroke-opacity: 0.65; stroke-width: 0.24; }
-}
+/* (CSS animations removed — they were causing ugly pulsing and the
+   transform-box scale was moving SVG lines to wrong coordinates.) */
 
 .attn-token-info h4 {
 	margin: 0 0 8px 0;

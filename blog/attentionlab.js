@@ -2104,13 +2104,17 @@ const AttentionAnatomy = {
 			const idx = parseInt(raw, 10);
 			self._assert(!isNaN(idx), `mouseover: dataset.token="${raw}" is NaN, span="${span.textContent}", dataset=${JSON.stringify(span.dataset)}`);
 			self._assert(idx >= 0 && idx < ATTN_TOKENS.length, `mouseover: idx=${idx} out of range (tokens=${ATTN_TOKENS.length})`);
-			if (ATTN_2D.hoveredToken === idx) {
-				self._dbg('INFO', `mouseover: ${span.textContent} (idx=${idx}) — no change`);
-				return;
-			}
 			const prev = ATTN_2D.hoveredToken;
+			// NO early-return: always re-render. The visual may be out of
+			// sync with state (e.g. after a mouseout that didn't fire), and
+			// re-rendering is cheap. This was the root cause of "step 4
+			// mat — no change" when hovering the same token twice.
 			ATTN_2D.hoveredToken = idx;
-			self._dbg('INFO', `mouseover: "${span.textContent}" idx ${prev}→${idx}`);
+			if (prev === idx) {
+				self._dbg('INFO', `mouseover: "${span.textContent}" (idx=${idx}) — same as before, forcing re-render`);
+			} else {
+				self._dbg('INFO', `mouseover: "${span.textContent}" idx ${prev}→${idx}`);
+			}
 			refresh();
 		});
 		el.addEventListener('mousemove', function(e) {
@@ -2601,19 +2605,17 @@ const AttentionAnatomy = {
 		hit.classList.add(arrowCls);
 		parent.appendChild(hit);
 
-		// Glow halo: drawn UNDER the shaft only when hovered. A fat
-		// low-opacity copy of the shaft in the same colour gives the
-		// hovered arrow a visible "selected" aura.
+		// Glow halo: drawn UNDER the shaft only when hovered. Static
+		// (no CSS animation — those caused ugly pulsing per the user).
 		if (isHovered) {
 			const glow = document.createElementNS(NS, 'line');
 			glow.setAttribute('x1', sx); glow.setAttribute('y1', sy);
 			glow.setAttribute('x2', ex); glow.setAttribute('y2', ey);
 			glow.setAttribute('stroke', finalColor);
-			glow.setAttribute('stroke-width', '0.16');
-			glow.setAttribute('stroke-opacity', '0.28');
+			glow.setAttribute('stroke-width', '0.22');
+			glow.setAttribute('stroke-opacity', '0.35');
 			glow.setAttribute('stroke-linecap', 'round');
 			glow.style.pointerEvents = 'none';
-			glow.classList.add('attn-arrow-hovered-glow');
 			parent.appendChild(glow);
 		}
 
@@ -2627,7 +2629,6 @@ const AttentionAnatomy = {
 		line.style.pointerEvents = 'none';
 		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
 		line.classList.add(arrowCls);
-		if (isHovered) line.classList.add('attn-arrow-hovered-shaft');
 		parent.appendChild(line);
 
 		// Arrowhead (triangle pointing along the vector)
@@ -2649,7 +2650,6 @@ const AttentionAnatomy = {
 			head.setAttribute("opacity", finalOpacity);
 			head.style.pointerEvents = 'none';
 			head.classList.add(arrowCls);
-			if (isHovered) head.classList.add('attn-arrow-hovered-head');
 			parent.appendChild(head);
 		}
 
@@ -3910,6 +3910,17 @@ const AttentionAnatomy = {
 		constructionG.innerHTML = '';
 		if (anglesG) anglesG.innerHTML = '';
 
+		// Sanity checks before drawing — catch data corruption early
+		this._assert(data && typeof data.mode === 'string', `render2D: bad data, mode=${data && data.mode}`);
+		this._assert(ATTN_2D.keys && ATTN_2D.keys.length > 0, 'render2D: ATTN_2D.keys is empty');
+		this._assert(ATTN_2D.q && ATTN_2D.q.length === 2 && !isNaN(ATTN_2D.q[0]) && !isNaN(ATTN_2D.q[1]),
+			`render2D: ATTN_2D.q is bad: ${JSON.stringify(ATTN_2D.q)}`);
+		ATTN_2D.keys.forEach((k, i) => {
+			if (!k || isNaN(k[0]) || isNaN(k[1])) {
+				this._dbg('ERROR', `render2D: ATTN_2D.keys[${i}] is bad: ${JSON.stringify(k)}`);
+			}
+		});
+
 		const mode = data.mode;
 		const comp = data.computation;
 
@@ -3970,7 +3981,7 @@ const AttentionAnatomy = {
 					: (nearQ ? [0.14, -0.14] : undefined);
 
 				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, drawColor, `k${j+1}`, 'k', j, false, dim, lpos, undefined, tkOpacity);
-				if (anglesG) this._addAngleArc(anglesG, labelsG, ATTN_2D.q, drawColor, j, dim || tkOpacity < 1);
+				if (anglesG) this._addAngleArc(anglesG, labelsG, ATTN_2D.q, k, drawColor, j, dim || tkOpacity < 1);
 			});
 
 			// The lengths that feed cos θ = q·k/(‖q‖‖k‖), as muted
