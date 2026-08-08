@@ -941,6 +941,5 @@ body.dark-mode .mobile-panel-control select {
 
 body.darkmode #layers_container_left.left_side,
 body.dark-mode #layers_container_left.left_side {
-	background: rgba(44, 44, 46, 0.97);
 	border-right-color: rgba(255, 255, 255, 0.1);
 }
