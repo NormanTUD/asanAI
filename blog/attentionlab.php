@@ -901,6 +901,15 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	padding: 4px 0;
 	border-top: 1px solid var(--mn-border, #e2e8f0);
 	margin-top: 6px;
+	cursor: help;
+	background: rgba(37,99,235,0.02);
+	border-radius: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+	transition: background 0.12s;
+}
+.attn-anatomy-computation .comp-eq-group:hover {
+	background: rgba(37,99,235,0.08);
 }
 .attn-anatomy-computation .comp-eq-group.first {
 	border-top: none;

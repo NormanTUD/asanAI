@@ -2061,11 +2061,14 @@ const AttentionAnatomy = {
 	// panel, finds each of those <mtext> elements, parses out the field
 	// path and value, and replaces it with an editable HTML <span.ed> so
 	// the user can click any number in a rendered formula and change it.
-	_makeMathEditable: function() {
-		const compEl = document.getElementById('attn-section-computation');
-		if (!compEl) return;
-		const self = this;
-		const mtexts = compEl.querySelectorAll('mtext');
+	_makeMathEditable: function(root) {
+		// Default to the computation panel, but accept any root element
+		// (e.g. the live-values container) so we can make values editable
+		// there too. Without the parameter, ◆PATH|VALUE markers would
+		// never be replaced in the live-values panel.
+		const target = root || document.getElementById('attn-section-computation');
+		if (!target) return;
+		const mtexts = target.querySelectorAll('mtext');
 		mtexts.forEach(function(mtext) {
 			const text = mtext.textContent || '';
 			// Match "◆FIELD|VALUE" — the marker is rendered as text content.
@@ -2082,7 +2085,7 @@ const AttentionAnatomy = {
 			span.textContent = value;
 			if (mtext.parentNode) mtext.parentNode.replaceChild(span, mtext);
 		});
-		this._attachEditors(compEl);
+		this._attachEditors(target);
 	},
 
 	// ─── 2D vector scene ────────────────────────────────────────────
