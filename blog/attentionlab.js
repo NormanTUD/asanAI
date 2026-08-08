@@ -1280,6 +1280,8 @@ const AttentionAnatomy = {
 		try { this._setupSentenceHover(); } catch (e) { console.error('[attn] _setupSentenceHover failed:', e); }
 		try { this._setupFormulaHover(); } catch (e) { console.error('[attn] _setupFormulaHover failed:', e); }
 		this._dbg('OK', 'init: hover handlers attached');
+		// Anti-overlap tracker: cleared per render, so initialise empty.
+		this._clearLabelTracker();
 		// GUARDRAIL: track that init ran so we can assert later
 		this._initRan = true;
 
@@ -3392,12 +3394,115 @@ const AttentionAnatomy = {
 		}
 	},
 
+	// === LABEL ANTI-OVERLAP HELPERS =====================================
+	// The 2D scene draws many short labels — `q`, `k1`, `k2`, `k3`,
+	// `v1`, `v2`, `α1·v1`, `α2·v2`, `z = output` — at the tips of
+	// arrows that often point in similar directions. Without a
+	// systematic solution the labels pile up and become unreadable.
+	// Previously we had two ad-hoc cases (`nearQ`, `inBarBand`) plus
+	// `opos` for the output-mode fanned layout; those handled maybe
+	// half of the configurations. This is the general fix:
+	//   1. Every label registers its SVG-space bounding box in
+	//      this._placedLabels when it's drawn.
+	//   2. For each new label we try the caller's preferred offset
+	//      first, then a fixed fallback list, and pick the first one
+	//      whose bounding box doesn't collide with any placed label.
+	//   3. The tracker is reset at the top of render2D() — each render
+	//      cycle starts with a clean slate.
+	// Hover labels (the big magenta one) skip this — they're temporary
+	// and must stay anchored to the arrow tip regardless of crowding.
+
+	// Estimate a label's bounding box (in SVG data units, viewBox scale).
+	// Adds a small safety margin so neighbouring letters / descenders
+	// of unicode glyphs (α, ·) don't bleed into the next box.
+	_estimateLabelBox: function(label, fontSize) {
+		const charW = fontSize * 0.66;
+		const w = label.length * charW + fontSize * 0.16;   // +pad
+		const h = fontSize * 1.30;                          // +pad for ascender/descender
+		return { w, h };
+	},
+
+	// Pick the first offset in the candidate list whose label box
+	// doesn't overlap any already-placed label. The candidate list
+	// starts with the caller's preferred `lpos` (if any) and then
+	// walks a fixed set of fallback offsets, ordered by visual
+	// preference. If EVERY candidate collides we fall back to the
+	// preferred offset — better to slightly overlap than to wander
+	// arbitrarily far from the arrow tip.
+	_pickLabelOffset: function(ex, ey, lpos, label, fontSize) {
+		const box = this._estimateLabelBox(label, fontSize);
+		const adjY = box.h / 2;   // dominant-baseline:middle → bbox top = ly - h/2
+		// x is right of the arrowhead tip; rest spread around it.
+		const candidates = [
+			lpos,
+			[ 0.14, -0.04],   // standard: right-up
+			[ 0.14,  0.10],   // right-down
+			[-0.06, -0.04],   // just left of tip, up
+			[-0.06,  0.10],   // just left of tip, down
+			[ 0,    -0.18],   // straight above tip
+			[ 0,     0.22],   // straight below tip
+			[ 0.26,  0.04],   // far right (avoids wide-cluster overlap)
+			[-0.26,  0.04],   // far left
+			[ 0.20, -0.16],   // right and up
+			[-0.20, -0.16],   // left and up
+			[ 0.18,  0.22],   // right and down
+			[-0.18,  0.22],   // left and down
+			[ 0,    -0.30],   // well above
+			[ 0,     0.34],   // well below
+			[ 0.32,  0.18],   // far right-down
+			[-0.32,  0.18],   // far left-down
+		].filter(Boolean);
+
+		for (const off of candidates) {
+			const lx = ex + off[0];
+			const ly = ey + off[1];
+			const rect = { x: lx, y: ly - adjY, w: box.w, h: box.h };
+			if (!this._rectOverlaps(rect)) return off;
+		}
+		return lpos || [0.14, -0.04];
+	},
+
+	// Axis-aligned bounding box overlap test against all placed labels.
+	_rectOverlaps: function(rect) {
+		const list = this._placedLabels || [];
+		for (const r of list) {
+			if (rect.x      < r.x + r.w &&
+				rect.x + rect.w > r.x &&
+				rect.y      < r.y + r.h &&
+				rect.y + rect.h > r.y) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	// Record a placed label so subsequent picks can avoid it.
+	_registerLabel: function(lx, ly, label, fontSize) {
+		if (!this._placedLabels) this._placedLabels = [];
+		const box = this._estimateLabelBox(label, fontSize);
+		const adjY = box.h / 2;
+		this._placedLabels.push({
+			x: lx,
+			y: ly - adjY,
+			w: box.w,
+			h: box.h,
+			label,
+		});
+	},
+
+	// Clear the label tracker. Call at the start of every fresh render
+	// pass so a previous frame's boxes don't leak into the next.
+	_clearLabelTracker: function() {
+		this._placedLabels = [];
+	},
+
 	// Draw an arrow from `start` to `end` in the 2D plot. Adds the
 	// hit-area, shaft, arrowhead, and (optional) label to the SVG.
 	// Mouse events fire directly on the hit-area — no Plotly needed.
 	// `lpos` optionally overrides the label offset ([dx, dy]) so labels
 	// that would otherwise stack (e.g. z + its weighted values) can be
-	// fanned out.
+	// fanned out. When omitted the anti-overlap helper picks a free
+	// offset automatically (see helpers above).
 	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos, lanchor, opacity) {
 		const NS = this._SVG_NS;
 		const finalOpacity = (opacity !== undefined) ? opacity : (dim ? 0.35 : 1.0);
@@ -3492,8 +3597,19 @@ const AttentionAnatomy = {
 		// a wide stroke around every glyph looks like a messy outline)
 		let labelHalo = null, labelTxt = null;
 		if (label) {
-			const lx = ex + (lpos ? lpos[0] : 0.14);
-			const ly = ey + (lpos ? lpos[1] : -0.04);
+			// Pick a label offset that doesn't collide with already-placed
+			// labels. The caller's `lpos` is the first candidate — when
+			// they care (e.g. fan-out around z, dodge the bar band), we
+			// honour it. Hover labels skip the tracker entirely: they're
+			// temporary and must stay anchored to the arrow tip.
+			let chosenLpos;
+			if (isHovered) {
+				chosenLpos = lpos;
+			} else {
+				chosenLpos = this._pickLabelOffset(ex, ey, lpos, label, fs);
+			}
+			const lx = ex + (chosenLpos ? chosenLpos[0] : 0.14);
+			const ly = ey + (chosenLpos ? chosenLpos[1] : -0.04);
 			labelHalo = document.createElementNS(NS, 'text');
 			labelHalo.setAttribute('x', lx); labelHalo.setAttribute('y', ly);
 			labelHalo.setAttribute('text-anchor', anchor);
@@ -3519,6 +3635,10 @@ const AttentionAnatomy = {
 			labelTxt.style.pointerEvents = 'none';
 			labelTxt.classList.add(arrowCls);
 			labelsParent.appendChild(labelTxt);
+			// Register so subsequent labels in this render pass avoid
+			// the same spot. Hover labels are excluded so they don't
+			// pollute the layout for the non-hover state.
+			if (!isHovered) this._registerLabel(lx, ly, label, fs);
 		}
 
 		// Mouse events fire DIRECTLY on this element. No Plotly, no
@@ -4790,6 +4910,9 @@ const AttentionAnatomy = {
 		// Sanity checks before drawing — catch data corruption early
 		this._assert(data && typeof data.mode === 'string', `render2D: bad data, mode=${data && data.mode}`);
 		this._assert(ATTN_2D.keys && ATTN_2D.keys.length > 0, 'render2D: ATTN_2D.keys is empty');
+
+		// Reset the label anti-overlap tracker for this render pass.
+		this._clearLabelTracker();
 		this._assert(ATTN_2D.q && ATTN_2D.q.length === 2 && !isNaN(ATTN_2D.q[0]) && !isNaN(ATTN_2D.q[1]),
 			`render2D: ATTN_2D.q is bad: ${JSON.stringify(ATTN_2D.q)}`);
 		ATTN_2D.keys.forEach((k, i) => {
