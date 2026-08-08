@@ -1223,7 +1223,7 @@ const VECTOR_FORMULAS = {
 let TEMML_RENDERED = {};
 
 const AttentionAnatomy = {
-	step: 0,
+	step: 10,
 
 	init: function() {
 		console.log('[attn] init() called');
@@ -2308,6 +2308,22 @@ const AttentionAnatomy = {
 
 		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
 		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
+
+		// Self-attention: the per-token mini-arrows live in the SVG which
+		// sits far down the page (below the equation + computation + live
+		// values panels). The user reported "mouseovers do nothing" because
+		// they were hovering in the visible part of the page while the
+		// arrows were 5000+px below the fold. Scroll the SVG into view so
+		// the moment the user arrives at step 11, the arrows are right
+		// there to be hovered.
+		if (data.mode === 'selfattn') {
+			requestAnimationFrame(() => {
+				const svg = document.getElementById('attn-anatomy-2d-svg');
+				if (svg && svg.scrollIntoView) {
+					svg.scrollIntoView({behavior: 'smooth', block: 'center'});
+				}
+			});
+		}
 
 		// Refresh the debug panel so it reflects the current step.
 		this._updateDebug();
@@ -4672,7 +4688,8 @@ const AttentionAnatomy = {
 		titleDiv.style.pointerEvents = 'none';
 		const titleHtml = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
 		titleHtml.style.cssText = 'font:700 0.11px sans-serif; color:#475569; text-align:center; line-height:1.2;';
-		titleHtml.innerHTML = 'self-attention output per token — each gets its own $\\mathbf{z}_i = \\sum_j \\alpha_{ij}\\,\\mathbf{v}_j$';
+		titleHtml.innerHTML = 'self-attention output per token — each gets its own $\\mathbf{z}_i = \\sum_j \\alpha_{ij}\\,\\mathbf{v}_j$. ' +
+			'<span style="color:#2563eb">⬅ Hover over any arrow for full details (variables, formula, percentages, sum breakdown)</span>';
 		titleDiv.appendChild(titleHtml);
 		labelsG.appendChild(titleDiv);
 		// Render the math via Temml right after the SVG is appended
@@ -4808,12 +4825,16 @@ const AttentionAnatomy = {
 				t.style.pointerEvents = 'none';
 				labelsG.appendChild(t);
 
-				// Hover tooltip for this mini-arrow — generous hit area
+				// Hover tooltip for this mini-arrow — VERY generous hit area
+				// (0.3 padding in data units ≈ 30px at typical SVG size).
+				// The arrows are short, so without this padding the hit rects
+				// are 13-30 px tall and the user has to aim precisely. A wider
+				// hit rect makes step-11 mouseovers feel natural.
 				const hit = document.createElementNS(NS, 'rect');
-				hit.setAttribute('x', Math.min(sx, ex) - 0.05);
-				hit.setAttribute('y', Math.min(sy, ey) - 0.05);
-				hit.setAttribute('width', Math.abs(ex - sx) + 0.12);
-				hit.setAttribute('height', Math.abs(ey - sy) + 0.12);
+				hit.setAttribute('x', Math.min(sx, ex) - 0.3);
+				hit.setAttribute('y', Math.min(sy, ey) - 0.3);
+				hit.setAttribute('width', Math.abs(ex - sx) + 0.6);
+				hit.setAttribute('height', Math.abs(ey - sy) + 0.6);
 				hit.setAttribute('fill', 'transparent');
 				hit.style.cursor = 'help';
 				constructionG.appendChild(hit);
