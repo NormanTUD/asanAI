@@ -352,7 +352,7 @@ const ATTN_2D = {
 	// value was there). With these getters, `setNumTokens` just sets
 	// `numTokens` and everything else derives fresh.
 	get keys()    { return this._allKeys.slice(0, this.numTokens); },
-	get vals()    { return this._allVals.slice(0, this.numTokens); },
+	get vals()    { return this._allVals.slice(0, Math.min(this.numTokens, (this._allKeys || []).length)); },
 	get queries() { return this._allQueries.slice(0, this.numTokens + 1); },
 
 	// ── Demo data for the "learnable projections" step ────────────
@@ -408,10 +408,12 @@ const ATTN_2D = {
 	// at most n × (n-1).
 	recomputeMatrix: function() {
 		const n = this.numTokens;
-		const m = Math.min(n, this._allKeys.length + 1);  // +1: "it" is implicit query, not key
+		// Each token (including "it") is a query; each non-"it" token
+		// is a key. So matrix is n × _allKeys.length (clamped to n).
+		const m = Math.min(n, this._allKeys.length);
 		const queries = this._allQueries.slice(0, n);
-		const keys    = this._allKeys.slice(0, m - 1);
-		const vals    = this._allVals.slice(0, m - 1);
+		const keys    = this._allKeys.slice(0, m);
+		const vals    = this._allVals.slice(0, m);
 		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
 
 		const M = [], Z = [];
@@ -422,7 +424,7 @@ const ATTN_2D = {
 			const row = exps.map(e => e / sum);
 			M.push(row);
 			const z = [0, 0];
-			for (let j = 0; j < m - 1; j++) {
+			for (let j = 0; j < m; j++) {
 				z[0] += row[j] * vals[j][0];
 				z[1] += row[j] * vals[j][1];
 			}
@@ -716,14 +718,13 @@ const ATTN_COMPUTATIONS = {
 		return { html, liveVals };
 	},
 	values: () => {
-		const rows = ATTN_2D.vals.map((v, j) => {
-			// Defensive: weights[j] can be undefined if recomputeWeights
-			// hasn't run. Fall back to 0 so we show 0.0% instead of NaN%.
+		// Helper: get a finite weight value or 0. Catches undefined AND NaN.
+		const safeW = (j) => {
 			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
-			if (!ATTN_2D.weights || ATTN_2D.weights[j] === undefined) {
-				console.warn('[attn] values: weights fallback at j=' + j +
-					' weights=' + JSON.stringify(ATTN_2D.weights));
-			}
+			return (isFinite(w) ? w : 0);
+		};
+		const rows = ATTN_2D.vals.map((v, j) => {
+			const w = safeW(j);
 			return `<div class="comp-eq" data-tip="v" data-idx="${j}">$$ \\underbrace{\\mathbf{v}_{${j+1}} = (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})}_{\\text{value "${ATTN_TOKENS[j+1].name}"}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(w*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}} $$</div>`;
 		}).join('');
 		// Visual weighted-average preview: show each αⱼ · vⱼ and the running sum.
@@ -732,7 +733,7 @@ const ATTN_COMPUTATIONS = {
 		const previewRows = ATTN_2D.vals.map((v, j) => {
 			const tj = j + 1;
 			const tname = (ATTN_TOKENS[j+1] || {}).name || ('v' + tj);
-			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+			const w = safeW(j);
 			const wx = (w * v[0]).toFixed(3);
 			const wy = (w * v[1]).toFixed(3);
 			const barW = Math.round(w * 100);

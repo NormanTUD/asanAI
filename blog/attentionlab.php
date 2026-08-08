@@ -242,17 +242,17 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 
 /* Grid: equation spans FULL WIDTH on the first row. Below it,
    computation goes on the left and the 2D plot goes on the right —
-   tall, uses the full remaining vertical space. */
+    tall, uses the full remaining vertical space. */
 .attn-anatomy-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	grid-template-rows: auto minmax(0, 1fr);
+	grid-template-rows: auto auto minmax(0, 1fr);
 	gap: 14px;
 }
 @media (max-width: 880px) {
 	.attn-anatomy-grid {
 		grid-template-columns: 1fr;
-		grid-template-rows: auto auto auto;
+		grid-template-rows: auto auto auto auto;
 	}
 }
 .attn-grid-equation {
@@ -260,18 +260,39 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	grid-row: 1;
 	margin-bottom: 0;
 }
+/* Debug panel — always visible, spans full width below the equation,
+   above the computation + plot row. */
+.attn-grid-debug {
+	grid-column: 1 / -1;
+	grid-row: 2;
+	margin: 0;
+}
 .attn-grid-computation {
 	grid-column: 1;
-	grid-row: 2;
+	grid-row: 3;
+}
+.attn-anatomy-2d-wrap {
+	grid-column: 2;
+	grid-row: 3;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+	min-height: 0;
+	overflow: hidden;
 }
 /* When the 2D SVG is collapsed (step 10 matrix / step 11 selfattn) the
    computation panel takes the full width so the table / plots get
-   all the horizontal space. */
+   all the horizontal space. The 2D wrap (containing the SVG) is
+   hidden entirely so it doesn't add empty vertical space. */
 .attn-anatomy-grid.attn-grid-svg-collapsed .attn-grid-computation {
 	grid-column: 1 / -1;
 }
 .attn-anatomy-grid.attn-grid-svg-collapsed .attn-anatomy-equation {
 	grid-column: 1 / -1;
+}
+.attn-anatomy-grid.attn-grid-svg-collapsed .attn-anatomy-2d-wrap {
+	display: none;
 }
 .attn-anatomy-2d-wrap {
 	grid-column: 2;
@@ -1131,16 +1152,17 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	     plot (right, tall, uses the full vertical space below). -->
 	<div class="attn-anatomy-grid">
 		<div id="attn-anatomy-equation" class="attn-anatomy-equation attn-grid-equation"></div>
+
+		<!-- Debug panel — lives OUTSIDE the 2D wrap so it's always
+		     visible, even when the SVG is collapsed (step 10/11).
+		     Spans the full width below the equation. -->
+		<div id="attn-debug" class="attn-debug-panel attn-grid-debug" title="Live debug state — hover anything to update. Select-all and copy into a bug report."></div>
+
 		<div id="attn-section-computation" class="attn-anatomy-computation attn-grid-computation"></div>
 			<div class="attn-anatomy-2d-wrap">
 			<!-- The sentence — hover over any token to focus on its
 			     vectors in the plot and see its full info in the popup. -->
 			<div id="attn-sentence" class="attn-sentence"></div>
-
-			<!-- Debug panel — shows live state so any hover/render
-			     issue is immediately visible. Selectable so it can
-			     be copied verbatim into a bug report. -->
-			<div id="attn-debug" class="attn-debug-panel" title="Live debug state — hover anything to update. Select-all and copy into a bug report."></div>
 
 			<!-- Token info popup — SITS BETWEEN the sentence and the
 			     2D plot, so it's always visible without overlapping the
