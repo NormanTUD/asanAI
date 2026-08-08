@@ -435,6 +435,7 @@ const ATTN_2D = {
 		this.output  = Z[last] || [0, 0];
 		this.weightedVals = vals.map((v, j) =>
 			[(this.weights[j] || 0) * v[0], (this.weights[j] || 0) * v[1]]);
+		this._sanity('recomputeMatrix');
 	},
 
 	setNumTokens: function(n) {
@@ -455,6 +456,7 @@ const ATTN_2D = {
 		this.scaled = this.scores.map(s => s / this.sqrtDk);
 		this.recomputeWeights();
 		this.recomputeMatrix();
+		this._sanity('setNumTokens');
 		console.log('[attn] setNumTokens done: numTokens=' + this.numTokens + ' keysLen=' + this.keys.length);
 	},
 
