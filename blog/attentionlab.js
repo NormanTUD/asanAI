@@ -1905,7 +1905,10 @@ const AttentionAnatomy = {
 		// <span class="ed"> back to <mtext>, and the ◆ markers would
 		// leak through to the user.
 		if (typeof render_temml === 'function') {
+			console.log('[attn] render_temml: calling global pass, queue=' + _editableFieldQueue.length + ' fields');
 			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
+		} else {
+			console.warn('[attn] edit#RENDER: render_temml NOT defined — Temml library not loaded? no <mtext> elements will be created');
 		}
 		// Single global pass over ONLY the panels with editable values.
 		// Equation and intuition panels are read-only — they have
