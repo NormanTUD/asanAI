@@ -5348,15 +5348,6 @@ const AttentionAnatomy = {
 
 		if (mode === 'selfattn') {
 			this._drawSelfAttention2D(constructionG, labelsG, arrowsG);
-			// TEMP DEBUG: log state after selfattn render
-			setTimeout(() => {
-				const svg2 = document.getElementById('attn-anatomy-2d-svg');
-				const op = window.getComputedStyle(svg2).opacity;
-				const cl = svg2.classList.contains('attn-svg-collapsed');
-				const rect = svg2.getBoundingClientRect();
-				const hits = svg2.querySelectorAll('rect[fill="transparent"]');
-				console.log('[DBG-SELFATTN] step=' + this.step + ' op=' + op + ' cl=' + cl + ' rect=' + rect.width.toFixed(0) + 'x' + rect.height.toFixed(0) + ' hits=' + hits.length);
-			}, 100);
 		}
 
 		// Hide the dim1/dim2 grid + axes for matrix & selfattn steps —
