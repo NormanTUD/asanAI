@@ -473,21 +473,66 @@
 		lb.setAttribute('aria-modal', 'true');
 		lb.setAttribute('aria-label', 'Image viewer');
 		lb.hidden = true;
-		lb.innerHTML = '<button class="cl-lb-x" type="button" aria-label="Close">\u00d7</button><img alt=""><figcaption></figcaption>';
+		lb.innerHTML = '<button class="cl-lb-x" type="button" aria-label="Close">\u00d7</button>'
+			+ '<button class="cl-lb-prev" type="button" aria-label="Previous image">\u2039</button>'
+			+ '<button class="cl-lb-next" type="button" aria-label="Next image">\u203a</button>'
+			+ '<img alt=""><figcaption></figcaption>';
 		document.body.appendChild(lb);
 		const img = lb.querySelector('img');
 		const cap = lb.querySelector('figcaption');
 		const x = lb.querySelector('.cl-lb-x');
+		const prevBtn = lb.querySelector('.cl-lb-prev');
+		const nextBtn = lb.querySelector('.cl-lb-next');
 
-		function open(src, alt, caption) {
+		/* current set of zoomable images + index; rebuilt on every open */
+		let gallery = [];
+		let idx = -1;
+
+		function loadFromIdx(i) {
+			if (i < 0 || i >= gallery.length) return;
+			idx = i;
+			const target = gallery[i];
+			const src = target.currentSrc || target.src;
 			img.src = src;
-			img.alt = alt || '';
-			if (caption && /<[a-z][\s\S]*>/i.test(caption)) {
-				cap.innerHTML = caption;
-			} else {
-				cap.textContent = caption || '';
+			img.alt = target.alt || '';
+			const fig = target.closest('figure');
+			let capHtml = '';
+			if (fig) {
+				const capEl = fig.querySelector('figcaption');
+				if (capEl) {
+					const clone = capEl.cloneNode(true);
+					clone.querySelectorAll('.cl-cite-tip, .cl-fn-tip').forEach(function (el) { el.remove(); });
+					capHtml = clone.innerHTML.trim();
+				}
 			}
-			cap.style.display = caption ? '' : 'none';
+			if (capHtml && /<[a-z][\s\S]*>/i.test(capHtml)) {
+				cap.innerHTML = capHtml;
+			} else {
+				cap.textContent = capHtml || '';
+			}
+			cap.style.display = capHtml ? '' : 'none';
+			prevBtn.disabled = i <= 0;
+			nextBtn.disabled = i >= gallery.length - 1;
+			prevBtn.style.display = gallery.length > 1 ? '' : 'none';
+			nextBtn.style.display = gallery.length > 1 ? '' : 'none';
+		}
+
+		function open(targetImg) {
+			/* build the gallery from the current .md content so prev/next
+			   follows the actual reading order, not DOM insertion order. */
+			const md = targetImg.closest('.md') || document;
+			gallery = Array.from(md.querySelectorAll('img')).filter(function (im) {
+				if (im.naturalWidth && im.naturalWidth < 50) return false;
+				if (im.closest('button, a.btn, svg')) return false;
+				if (im.matches('[class*="emoji"], .no-zoom')) return false;
+				return true;
+			});
+			idx = gallery.indexOf(targetImg);
+			if (idx < 0) {
+				gallery = [targetImg];
+				idx = 0;
+			}
+			loadFromIdx(idx);
 			lb.hidden = false;
 			// force a reflow so the transition runs
 			void lb.offsetHeight;
@@ -500,9 +545,18 @@
 				lb.hidden = true;
 				img.src = '';
 				document.body.style.overflow = '';
+				gallery = [];
+				idx = -1;
 			}, 180);
 		}
+		function step(delta) {
+			const ni = idx + delta;
+			if (ni < 0 || ni >= gallery.length) return;
+			loadFromIdx(ni);
+		}
 		x.addEventListener('click', function (ev) { ev.stopPropagation(); close(); });
+		prevBtn.addEventListener('click', function (ev) { ev.stopPropagation(); step(-1); });
+		nextBtn.addEventListener('click', function (ev) { ev.stopPropagation(); step(1); });
 		lb.addEventListener('click', function (ev) {
 			if (ev.target === lb) close();
 		});
@@ -515,7 +569,10 @@
 			}
 		}, true);
 		document.addEventListener('keydown', function (ev) {
-			if (ev.key === 'Escape' && !lb.hidden) close();
+			if (lb.hidden) return;
+			if (ev.key === 'Escape') { close(); return; }
+			if (ev.key === 'ArrowLeft')  { ev.preventDefault(); step(-1); return; }
+			if (ev.key === 'ArrowRight') { ev.preventDefault(); step(1);  return; }
 		});
 
 		/* delegated click — fires for any image, present or future.
@@ -541,17 +598,7 @@
 			if (img.naturalWidth && img.naturalWidth < 50) return;
 			ev.preventDefault();
 			ev.stopPropagation();
-			const fig = img.closest('figure');
-			let capHtml = '';
-			if (fig) {
-				const capEl = fig.querySelector('figcaption');
-				if (capEl) {
-					const clone = capEl.cloneNode(true);
-					clone.querySelectorAll('.cl-cite-tip, .cl-fn-tip').forEach(function (el) { el.remove(); });
-					capHtml = clone.innerHTML.trim();
-				}
-			}
-			open(img.currentSrc || img.src, img.alt, capHtml);
+			open(img);
 		}
 		document.addEventListener('click', lightboxClickHandler, true);
 

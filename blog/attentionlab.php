@@ -992,14 +992,25 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 }
 
 /* ── Live values overview panel ────────────────────────────────── */
-.attn-anatomy-computation .attn-live-panel {
-	margin-bottom: 14px;
-	padding: 10px 12px;
+/* Now lives in the 2d wrap container (beside the plot), not in the
+   computation panel. */
+.attn-live-values-container {
+	margin: 0;
+	padding: 0;
+}
+.attn-live-values-container .attn-live-panel {
+	margin-bottom: 0;
+	padding: 8px 12px;
 	background: linear-gradient(180deg, rgba(37,99,235,0.04), rgba(37,99,235,0.01));
 	border: 1px solid rgba(37, 99, 235, 0.25);
 	border-radius: 8px;
+	max-height: 260px;
+	overflow-y: auto;
 }
-.attn-anatomy-computation .attn-live-header {
+.attn-anatomy-computation .attn-live-panel {
+	/* Legacy selector — keep for backwards compat but no longer used */
+}
+.attn-live-panel .attn-live-header {
 	font-weight: 700;
 	color: #2563eb;
 	font-size: 0.82rem;
@@ -1169,6 +1180,10 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			     plot. Reserves space (min-height) so the plot never
 			     shifts when content changes. -->
 			<div id="attn-token-info" class="attn-token-info is-empty"></div>
+
+			<!-- Live values container — lives in the 2d wrap so it sits
+			     BESIDE the plot, not below the computation panel. -->
+			<div id="attn-live-values-container" class="attn-live-values-container"></div>
 
 			<svg id="attn-anatomy-2d-svg" viewBox="-1.5 -1.5 3 2.7" preserveAspectRatio="xMidYMid meet">
 				<g class="attn-grid"></g>

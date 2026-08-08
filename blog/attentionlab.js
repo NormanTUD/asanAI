@@ -1877,17 +1877,26 @@ const AttentionAnatomy = {
 		const el = document.getElementById('attn-section-computation');
 		if (!el) return;
 		const fn = ATTN_COMPUTATIONS[data.computation];
-		// Each computation function returns a SECOND value (optional): a
-		// list of "live value" rows to prepend — a compact overview of
-		// every editable value relevant to this step.
 		const result = fn ? fn() : '';
 		let body = '';
+		let liveVals = '';
 		if (typeof result === 'object' && result.html !== undefined) {
-			body = (result.liveVals || '') + result.html;
+			body = result.html;
+			liveVals = result.liveVals || '';
 		} else {
 			body = result;
 		}
 		el.innerHTML = body;
+		// Live values go into the 2d wrap container, NOT the computation
+		// panel, so they sit BESIDE the plot instead of below it.
+		const liveContainer = document.getElementById('attn-live-values-container');
+		if (liveContainer) {
+			liveContainer.innerHTML = liveVals;
+			if (liveVals) {
+				this._attachEditors(liveContainer);
+				if (typeof render_temml === 'function') render_temml(liveContainer);
+			}
+		}
 		// Wire up click-to-edit on every <span.ed> we just emitted.
 		this._attachEditors(el);
 	},
@@ -2427,41 +2436,83 @@ const AttentionAnatomy = {
 		const el = document.getElementById('attn-token-info');
 		if (!el) return;
 		const q = ATTN_2D.q;
+		const N = ATTN_2D.keys.length;
+		const fmt = (v) => v.toFixed(2);
+		const fmt3 = (v) => v.toFixed(3);
+		// Helper: build the full softmax sum ∑_n exp(q·k_n/√d_k) breakdown
+		const sumBreakdown = () => {
+			const parts = [];
+			for (let n = 0; n < N; n++) {
+				const sc_n = ATTN_2D.scaled[n];
+				const e_n  = ATTN_2D.exps[n];
+				parts.push(`\\underbrace{e^{s_{${n+1}}}_{${e_n.toFixed(3)}}`);
+			}
+			const sum = ATTN_2D.exps.reduce((a,b)=>a+b, 0);
+			return `\\sum_{n=1}^{N} e^{s_n} = ${parts.join(' + ')} = ${sum.toFixed(3)}`;
+		};
+		// Helper: dot-product breakdown for one key
+		const dotBreakdown = (j) => {
+			const k = ATTN_2D.keys[j];
+			const score = q[0]*k[0] + q[1]*k[1];
+			return `\\mathbf{q}\\cdot\\mathbf{k}_{${j+1}} = (${fmt(q[0])})(${fmt(k[0])}) + (${fmt(q[1])})(${fmt(k[1])}) = ${fmt3(score)}`;
+		};
+		// Helper: all dot products at once (for the score step overview)
+		const allDots = () => {
+			const parts = [];
+			for (let j = 0; j < N; j++) {
+				parts.push(`\\mathbf{q}\\cdot\\mathbf{k}_{${j+1}} = ${fmt3(ATTN_2D.scores[j])}`);
+			}
+			return parts.join(',\\quad ');
+		};
 		const cone = [];
-		cone.push(`<div class="ti-cone"><b>Light cone — how this value came to be:</b>`);
+		cone.push(`<div class="ti-cone"><b>🔦 Light cone — how this value came to be (and what each part means):</b>`);
 		if (stepName === 'dot') {
 			const k = ATTN_2D.keys[tokenIdx];
-			const score = (q[0]*k[0] + q[1]*k[1]).toFixed(3);
-			cone.push(`<div class="ti-cone-line">$$\\mathbf{q}\\cdot\\mathbf{k}_{${tokenIdx+1}} = (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${score}$$</div>`);
-			cone.push(`<div class="ti-cone-line">← starts from $\\mathbf{q} = (${q[0].toFixed(2)},\\,${q[1].toFixed(2)})$ and $\\mathbf{k}_{${tokenIdx+1}} = (${k[0].toFixed(2)},\\,${k[1].toFixed(2)})$</div>`);
+			const score = q[0]*k[0] + q[1]*k[1];
+			const cosT = score / (Math.hypot(q[0],q[1]) * Math.hypot(k[0],k[1]));
+			const deg = Math.round(Math.acos(Math.max(-1, Math.min(1, cosT))) * 180 / Math.PI);
+			cone.push(`<div class="ti-cone-line"><b>Step 1 — dot product:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${dotBreakdown(tokenIdx)}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> $\\cos\\theta = ${cosT.toFixed(3)}$, so $\\theta \\approx ${deg}°$. ${cosT > 0.85 ? 'Nearly parallel → strong positive score → big winner.' : cosT > 0.3 ? 'Same general direction → positive score.' : cosT > -0.3 ? 'Near right angle → near-zero score.' : 'Opposite direction → negative score → near-zero weight.'}</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All dot products:</b> $$${allDots()}$$</div>`);
+			cone.push(`<div class="ti-cone-line">← starts from $\\mathbf{q} = (${fmt(q[0])},\\,${fmt(q[1])})$ and $\\mathbf{k}_{${tokenIdx+1}} = (${fmt(k[0])},\\,${fmt(k[1])})$</div>`);
 		} else if (stepName === 'scaled') {
 			const k = ATTN_2D.keys[tokenIdx];
-			const score = (q[0]*k[0] + q[1]*k[1]).toFixed(3);
-			const scaled = ATTN_2D.scaled[tokenIdx].toFixed(3);
-			cone.push(`<div class="ti-cone-line">$$s_{${tokenIdx+1}} = \\frac{${score}}{\\sqrt{2}} = \\frac{${score}}{1.414} = ${scaled}$$</div>`);
-			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = \\dfrac{q\\cdot k_{${tokenIdx+1}}}{\\sqrt{d_k}}$</div>`);
-			cone.push(`<div class="ti-cone-line">← $q\\cdot k_{${tokenIdx+1}} = ${score}$ (dot product)</div>`);
+			const score = q[0]*k[0] + q[1]*k[1];
+			const scaled = ATTN_2D.scaled[tokenIdx];
+			cone.push(`<div class="ti-cone-line"><b>Step 2 — scale by √dₖ:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$s_{${tokenIdx+1}} = \\frac{q\\cdot k_{${tokenIdx+1}}}{\\sqrt{d_k}} = \\frac{${fmt3(score)}}{\\sqrt{2}} = ${fmt3(scaled)}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Scaling keeps every score near magnitude $1$ so softmax behaves the same at any dimension. In a real model $d_k = 64$, so $\\sqrt{d_k} = 8$.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All scaled scores:</b> $${ATTN_2D.scaled.map((s,i) => `s_{${i+1}} = ${fmt3(s)}`).join(',\\quad ')}$</div>`);
 		} else if (stepName === 'exps') {
-			const sc = ATTN_2D.scaled[tokenIdx].toFixed(3);
-			const e  = ATTN_2D.exps[tokenIdx].toFixed(3);
-			cone.push(`<div class="ti-cone-line">$$e^{s_{${tokenIdx+1}}} = e^{${sc}} = ${e}$$</div>`);
-			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${sc}$ (scaled score)</div>`);
-			cone.push(`<div class="ti-cone-line">← $q\\cdot k_{${tokenIdx+1}} = ${(q[0]*ATTN_2D.keys[tokenIdx][0] + q[1]*ATTN_2D.keys[tokenIdx][1]).toFixed(3)}$</div>`);
+			const sc = ATTN_2D.scaled[tokenIdx];
+			const e  = ATTN_2D.exps[tokenIdx];
+			cone.push(`<div class="ti-cone-line"><b>Step 3 — exponentiate:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$e^{s_{${tokenIdx+1}}} = e^{${fmt3(sc)}} = ${fmt3(e)}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> exp turns every score positive and amplifies differences — the largest input grows fastest. Negative scores shrink toward $0$.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All exp values (the numerator of softmax for each key):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.exps.map((e,i) => `e^{s_{${i+1}}} = ${fmt3(e)}`).join(',\\quad ')}$</div>`);
+			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${fmt3(sc)}$ (from step 2)</div>`);
 		} else if (stepName === 'weights') {
-			const e   = ATTN_2D.exps[tokenIdx].toFixed(3);
-			const sum = ATTN_2D.exps.reduce((a, b) => a + b, 0).toFixed(3);
-			const w   = (ATTN_2D.weights[tokenIdx]*100).toFixed(1);
-			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}} = \\frac{e^{s_{${tokenIdx+1}}}}{\\Sigma} = \\frac{${e}}{${sum}} = ${w}\\%$$</div>`);
-			cone.push(`<div class="ti-cone-line">← $e^{s_{${tokenIdx+1}}} = ${e}$</div>`);
-			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${ATTN_2D.scaled[tokenIdx].toFixed(3)}$</div>`);
-			cone.push(`<div class="ti-cone-line">← $q\\cdot k_{${tokenIdx+1}} = ${(q[0]*ATTN_2D.keys[tokenIdx][0] + q[1]*ATTN_2D.keys[tokenIdx][1]).toFixed(3)}$</div>`);
+			const e   = ATTN_2D.exps[tokenIdx];
+			const sum = ATTN_2D.exps.reduce((a, b) => a + b, 0);
+			const w   = (ATTN_2D.weights[tokenIdx]*100);
+			cone.push(`<div class="ti-cone-line"><b>Step 4 — softmax: divide by the sum:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}} = \\frac{e^{s_{${tokenIdx+1}}}}{\\sum_n e^{s_n}} = \\frac{${fmt3(e)}}{${fmt3(sum)}} = ${w.toFixed(1)}\\%$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>The denominator — the full softmax sum:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$\\Sigma = ${sumBreakdown()}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Dividing by the total converts the raw exp-values into a probability distribution. $\\sum_j \\alpha_j = 100\\%$ — the attention is a finite budget shared across keys.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All final weights (this row of the attention matrix):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.weights.map((w,i) => `\\alpha_{${i+1}} = ${(w*100).toFixed(1)}\\%`).join(',\\quad ')}$</div>`);
 		} else if (stepName === 'output') {
 			const wv = ATTN_2D.weightedVals[tokenIdx];
-			const w  = (ATTN_2D.weights[tokenIdx]*100).toFixed(1);
+			const w  = ATTN_2D.weights[tokenIdx]*100;
 			const v  = ATTN_2D.vals[tokenIdx];
-			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}}\\mathbf{v}_{${tokenIdx+1}} = (${w}\\%)\\times(${v[0].toFixed(2)},\\,${v[1].toFixed(2)}) = (${wv[0].toFixed(3)},\\,${wv[1].toFixed(3)})$$</div>`);
-			cone.push(`<div class="ti-cone-line">← $\\alpha_{${tokenIdx+1}} = ${w}\\%$ (softmax weight)</div>`);
-			cone.push(`<div class="ti-cone-line">← $\\mathbf{v}_{${tokenIdx+1}} = (${v[0].toFixed(2)},\\,${v[1].toFixed(2)})$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Step 5 — blend value vectors:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}}\\mathbf{v}_{${tokenIdx+1}} = (${w.toFixed(1)}\\%)\\times(${fmt(v[0])},\\,${fmt(v[1])}) = (${fmt3(wv[0])},\\,${fmt3(wv[1])})$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Each value vector is scaled by its attention weight. Big $\\alpha$ = this token's content dominates. Small $\\alpha$ = nearly ignored.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All weighted values (then summed into z):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.weightedVals.map((wv,i) => `\\alpha_{${i+1}}\\mathbf{v}_{${i+1}} = (${fmt3(wv[0])},\\,${fmt3(wv[1])})`).join(' + ')} = (${fmt3(ATTN_2D.output[0])},\\,${fmt3(ATTN_2D.output[1])})$</div>`);
 		}
 		cone.push(`</div>`);
 		el.innerHTML = cone.join('');

@@ -6253,6 +6253,46 @@ html.dark .cl-cite-tip {
 	justify-content: center;
 }
 .cl-lb-x:hover { background: rgba(255,255,255,.15); }
+.cl-lb-prev,
+.cl-lb-next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 44px;
+	height: 64px;
+	border: 1px solid rgba(255,255,255,.2);
+	border-radius: 6px;
+	background: rgba(255,255,255,.06);
+	color: rgba(255,255,255,.85);
+	font-size: 32px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: serif;
+	padding: 0 0 4px 0;
+}
+.cl-lb-prev { left: 18px; }
+.cl-lb-next { right: 18px; }
+.cl-lb-prev:hover,
+.cl-lb-next:hover { background: rgba(255,255,255,.15); }
+.cl-lb-prev:disabled,
+.cl-lb-next:disabled { opacity: .25; cursor: default; }
+
+/* ── 11.8. Hide the floating chrome while the lightbox is open ──
+   `#cl-lb` is a fixed full-screen overlay; the theme/search/topic
+   buttons (z-index 9999) would otherwise float on top of it. */
+body:has(#cl-lb.is-visible) #theme-toggle,
+body:has(#cl-lb.is-visible) #search-trigger,
+body:has(#cl-lb.is-visible) #topics-toggle,
+body:has(#cl-lb.is-visible) #drawer-toggle,
+body:has(#cl-lb.is-visible) #cl-top,
+body:has(#cl-lb.is-visible) #reading-progress {
+	opacity: 0 !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
+}
 
 /* ── 12. Print stylesheet — book-like, single column ── */
 @media print {
