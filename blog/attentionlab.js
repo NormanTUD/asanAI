@@ -716,19 +716,73 @@ const ATTN_COMPUTATIONS = {
 	matrix: () => {
 		const M = ATTN_2D.matrix;
 		const n = M.length;
-		const rows = M.map((row, i) => {
-			const cells = row.map((w, j) =>
-				`<span style="display:inline-block; min-width:54px; padding:2px 6px; margin:1px; background:rgba(37,99,235,${(w*0.85).toFixed(2)}); color:${w > 0.5 ? '#fff' : '#1e293b'}; border-radius:4px; font-family:monospace; font-size:0.82rem;">${(w*100).toFixed(1)}%</span>`
-			).join('');
-			const label = ATTN_TOKENS[i].name;
-			return `<div class="comp-eq"><b>q<sub>${i+1}</sub> = ${label}</b> → ${cells}</div>`;
-		}).join('');
+		const m = Math.min(M[0]?.length || 0, ATTN_2D._allKeys.length);
+		const queries = ATTN_2D._allQueries.slice(0, n);
+		const keys    = ATTN_2D._allKeys.slice(0, m);
+
+		// Build an HTML table with mouseover info on every cell.
+		// The matrix is NOT drawn in the 2D SVG (no dim1/dim2 background
+		// here) — it's a proper table the user can read cell-by-cell.
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+
+		// Column header cells (k_j): show the actual key vector on hover
+		let colHeaders = '<th class="attn-matrix-corner"></th>';
+		for (let j = 0; j < m; j++) {
+			const k = keys[j];
+			const name = ATTN_TOKENS[j + 1].name;
+			colHeaders += `<th class="attn-matrix-colhead" data-tip-key="${j}">
+				<div class="attn-matrix-colhead-name" style="color:${ATTN_TOKENS[j+1].color}">k<sub>${j+1}</sub> = ${name}</div>
+				<div class="attn-matrix-colhead-form">$$\\mathbf{k}_{${j+1}} = ${pm(k)}$$</div>
+			</th>`;
+		}
+
+		// Body rows (q_i): row header explains what q_i is, each cell
+		// shows α_{ij} with a hover tooltip showing the full derivation.
+		let bodyRows = '';
+		for (let i = 0; i < n; i++) {
+			const q = queries[i];
+			const name = ATTN_TOKENS[i].name;
+			let row = `<tr>
+				<th class="attn-matrix-rowhead" data-tip-row="${i}">
+					<div class="attn-matrix-rowhead-name" style="color:${ATTN_TOKENS[i].color}">q<sub>${i+1}</sub> = ${name}</div>
+					<div class="attn-matrix-rowhead-form">$$\\mathbf{q}_{${i+1}} = ${pm(q)}$$</div>
+				</th>`;
+			for (let j = 0; j < m; j++) {
+				const w = (M[i] || [])[j] || 0;
+				const alpha = w;
+				// Recompute the score for this cell so the tooltip is exact
+				const score = q[0]*keys[j][0] + q[1]*keys[j][1];
+				const scaled = score / Math.SQRT2;
+				const expVal = Math.exp(scaled);
+				const sumExp = ATTN_2D.exps.reduce((a,b) => a+b, 0);
+				const bg = `rgba(37,99,235,${(0.08 + w * 0.85).toFixed(3)})`;
+				const fg = w > 0.45 ? '#fff' : '#1e293b';
+				row += `<td class="attn-matrix-cell" style="background:${bg}; color:${fg};"
+					data-tip-cell="${i},${j}"
+					data-cell-q="${q[0].toFixed(2)},${q[1].toFixed(2)}"
+					data-cell-k="${keys[j][0].toFixed(2)},${keys[j][1].toFixed(2)}"
+					data-cell-score="${score.toFixed(3)}"
+					data-cell-scaled="${scaled.toFixed(3)}"
+					data-cell-exp="${expVal.toFixed(3)}"
+					data-cell-sum="${sumExp.toFixed(3)}"
+					data-cell-alpha="${alpha.toFixed(3)}"
+				><b>${(w*100).toFixed(1)}%</b><br><span style="font-size:0.7em; opacity:0.85">s=${score.toFixed(2)}</span></td>`;
+			}
+			row += '</tr>';
+			bodyRows += row;
+		}
+
 		const html = `
-		<div class="comp-header">▶ Full $\\alpha$-matrix — every query attends to every key</div>
+		<div class="comp-header">▶ Full attention matrix — $\\alpha_{ij}$ for every (query, key) pair</div>
 		<div class="comp-body">
-			<div class="comp-note" style="margin-bottom:6px;">Each row is one token's attention distribution. Hover any cell in the 2D plot for the exact score and weight. Edit values below to watch the matrix change.</div>
-			${rows}
-			<div class="comp-note">Each row sums to 100% — it's a probability distribution. The <b>diagonal</b> (a token attending to itself) is often strong: $\\alpha_{ii}$ tends to be large because $\\mathbf{q}_i \\cdot \\mathbf{k}_i = \\lVert \\mathbf{k}_i \\rVert^2 > 0$.</div>
+			<div class="comp-note" style="margin-bottom:8px;">Each <b>row</b> is one query token's softmax distribution over all keys. Each <b>column</b> is one key. Hover any <b>cell</b> for the exact computation, or hover any <b>row/column header</b> to see what that q or k vector actually is and how it was computed.</div>
+			<div class="attn-matrix-wrap">
+			<table class="attn-matrix-table">
+				<thead><tr>${colHeaders}</tr></thead>
+				<tbody>${bodyRows}</tbody>
+			</table>
+			</div>
+			<div class="comp-note" style="margin-top:8px;">Each <b>row</b> sums to 100% — it's a probability distribution. The <b>diagonal</b> is often strong: $\\alpha_{ii}$ tends to be large because $\\mathbf{q}_i \\cdot \\mathbf{k}_i = \\lVert \\mathbf{k}_i \\rVert^2 > 0$.</div>
 		</div>`;
 		const liveVals = AttentionAnatomy._liveValsHTML();
 		return { html, liveVals };
@@ -1975,6 +2029,15 @@ const AttentionAnatomy = {
 	// Attach hover handlers to the sentence tokens. Called ONCE from
 	// init() — NOT from render() — so we don't re-bind every frame and
 	// don't loop forever.
+	// Lightweight hover update — only re-draws the 2D SVG (for token
+	// dimming) without fading the equation/computation panels. This
+	// prevents the screen from jumping when the user moves the mouse
+	// over tokens.
+	_renderHoverOnly: function() {
+		const data = ATTN_STEPS[this.step];
+		this.render2D(data);
+	},
+
 	_setupSentenceHover: function() {
 		const el = document.getElementById('attn-sentence');
 		if (!el) return;
@@ -1986,7 +2049,7 @@ const AttentionAnatomy = {
 			if (ATTN_2D.hoveredToken === idx) return;
 			ATTN_2D.hoveredToken = idx;
 			self._showTokenInfo(idx);
-			self.render();
+			self._renderHoverOnly();
 		});
 		el.addEventListener('mouseout', function(e) {
 			const span = e.target.closest('.attn-token');
@@ -1995,7 +2058,7 @@ const AttentionAnatomy = {
 			if (to && span.contains(to)) return;
 			ATTN_2D.hoveredToken = -1;
 			self._refreshPopup();
-			self.render();
+			self._renderHoverOnly();
 		});
 	},
 
@@ -2007,24 +2070,114 @@ const AttentionAnatomy = {
 		const el = document.getElementById('attn-section-computation');
 		if (!el) return;
 		const self = this;
+		// Formula nodes (dot/scaled/exps/weights/output)
 		el.addEventListener('mouseover', function(e) {
+			// 1) Formula light-cone
 			const node = e.target.closest('[data-cone-step]');
-			if (!node) return;
-			const step = node.dataset.coneStep;
-			const idx  = parseInt(node.dataset.coneIdx, 10);
-			ATTN_2D.hoveredFormula = { step, idx };
-			self._showFormulaCone(step, idx);
+			if (node) {
+				const step = node.dataset.coneStep;
+				const idx  = parseInt(node.dataset.coneIdx, 10);
+				ATTN_2D.hoveredFormula = { step, idx };
+				self._showFormulaCone(step, idx);
+				return;
+			}
+			// 2) Matrix cell — show the exact α_{ij} computation
+			const cell = e.target.closest('.attn-matrix-cell');
+			if (cell) {
+				const d = cell.dataset;
+				self._showMatrixCellInfo(d);
+				return;
+			}
+			// 3) Matrix row/col header — show what q_i or k_j is
+			const rh = e.target.closest('.attn-matrix-rowhead');
+			if (rh) {
+				self._showMatrixRowInfo(parseInt(rh.dataset.tipRow, 10));
+				return;
+			}
+			const ch = e.target.closest('.attn-matrix-colhead');
+			if (ch) {
+				self._showMatrixColInfo(parseInt(ch.dataset.tipKey, 10));
+				return;
+			}
 		});
 		el.addEventListener('mouseout', function(e) {
-			const node = e.target.closest('[data-cone-step]');
+			const node = e.target.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead');
 			if (!node) return;
 			const to = e.relatedTarget;
 			if (to && node.contains(to)) return;
-			// Also check if we're moving to another formula node
-			if (to && to.closest && to.closest('[data-cone-step]')) return;
+			if (to && to.closest && to.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead')) return;
 			ATTN_2D.hoveredFormula = null;
 			self._refreshPopup();
 		});
+	},
+
+	// Show the full computation for a single matrix cell α_{ij}.
+	_showMatrixCellInfo: function(d) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const [qi, qj] = d.tipCell.split(',').map(Number);
+		const [q0, q1] = d.cellQ.split(',').map(Number);
+		const [k0, k1] = d.cellK.split(',').map(Number);
+		const score   = d.cellScore;
+		const scaled  = d.cellScaled;
+		const expVal  = d.cellExp;
+		const sumExp  = d.cellSum;
+		const alpha   = d.cellAlpha;
+		const qn = ATTN_TOKENS[qi]?.name || `q${qi+1}`;
+		const kn = ATTN_TOKENS[qj+1]?.name || `k${qj+1}`;
+		const pm = (a, b) => `\\begin{pmatrix} ${a} \\\\ ${b} \\end{pmatrix}`;
+		const html = `<h4>α<sub>${qi+1},${qj+1}</sub> — how much <span style="color:${ATTN_TOKENS[qi]?.color || '#ef4444'}">${qn}</span> attends to <span style="color:${ATTN_TOKENS[qj+1]?.color || '#2563eb'}">${kn}</span></h4>` +
+			`<div class="ti-row">$$\\mathbf{q}_{${qi+1}} = ${pm(q0, q1)}, \\quad \\mathbf{k}_{${qj+1}} = ${pm(k0, k1)}$$</div>` +
+			`<div class="ti-row">$$\\mathbf{q}_{${qi+1}} \\cdot \\mathbf{k}_{${qj+1}} = (${q0})(${k0}) + (${q1})(${k1}) = ${score}$$</div>` +
+			`<div class="ti-row">$$s_{${qj+1}} = \\frac{${score}}{\\sqrt{2}} = \\frac{${score}}{1.414} = ${scaled}$$</div>` +
+			`<div class="ti-row">$$e^{s_{${qj+1}}} = e^{${scaled}} = ${expVal}$$</div>` +
+			`<div class="ti-row">$$\\Sigma = \\sum_n e^{s_n} = ${sumExp}$$</div>` +
+			`<div class="ti-row"><b>Result:</b> $$\\alpha_{${qi+1},${qj+1}} = \\frac{${expVal}}{${sumExp}} = ${alpha} = ${(alpha*100).toFixed(1)}\\%$$</div>`;
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Show what q_i is and where it comes from.
+	_showMatrixRowInfo: function(i) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const q = ATTN_2D._allQueries[i];
+		const name = ATTN_TOKENS[i].name;
+		const role = (i === 0) ? 'the query token "it"' : `the ${i+1}${i===1?'st':i===2?'nd':'th'} token in the sentence`;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		let html = `<h4>q<sub>${i+1}</sub> = <span style="color:${ATTN_TOKENS[i].color}">${name}</span></h4>`;
+		html += `<div class="ti-row"><b>Role:</b> ${role}</div>`;
+		html += `<div class="ti-row">$$\\mathbf{q}_{${i+1}} = ${pm(q)}$$</div>`;
+		if (i === 0) {
+			html += `<div class="ti-row">The query is <b>fixed</b> at $\\mathbf{q} = ${pm(q)}$ across all examples.</div>`;
+		} else {
+			html += `<div class="ti-row">For this token, $\\mathbf{q}$ is part of the token's learned embedding — it's the same as its $\\mathbf{k}$ vector in this demo (self-attention setup).</div>`;
+			const k = ATTN_2D._allKeys[i-1];
+			html += `<div class="ti-row">Compare: $\\mathbf{k}_{${i+1}} = ${pm(k)}$</div>`;
+		}
+		html += `<div class="ti-row">In a real Transformer, $\\mathbf{q}_i = \\mathbf{W}^Q \\mathbf{x}_i$ — a learned linear projection of the token embedding $\\mathbf{x}_i$.</div>`;
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Show what k_j is and where it comes from.
+	_showMatrixColInfo: function(j) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const k = ATTN_2D._allKeys[j];
+		const name = ATTN_TOKENS[j+1].name;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		const html = `<h4>k<sub>${j+1}</sub> = <span style="color:${ATTN_TOKENS[j+1].color}">${name}</span></h4>` +
+			`<div class="ti-row"><b>Role:</b> the key vector of "${name}" — what other queries attend <em>to</em></div>` +
+			`<div class="ti-row">$$\\mathbf{k}_{${j+1}} = ${pm(k)}$$</div>` +
+			`<div class="ti-row">$\\|\\mathbf{k}_{${j+1}}\\| = \\sqrt{(${k[0].toFixed(2)})^2 + (${k[1].toFixed(2)})^2} = ${Math.hypot(k[0],k[1]).toFixed(2)}$</div>` +
+			`<div class="ti-row">The angle $\\theta$ between $\\mathbf{q}_i$ and $\\mathbf{k}_{${j+1}}$ determines the attention: $\\mathbf{q}_i \\cdot \\mathbf{k}_{${j+1}} = \\|\\mathbf{q}_i\\| \\cdot \\|\\mathbf{k}_{${j+1}}\\| \\cdot \\cos\\theta$.</div>` +
+			`<div class="ti-row">In a real Transformer, $\\mathbf{k}_j = \\mathbf{W}^K \\mathbf{x}_j$ — a learned linear projection of token "${name}"'s embedding.</div>`;
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
 	},
 
 	// Decide what to show in the popup based on current hover state.
@@ -2041,27 +2194,33 @@ const AttentionAnatomy = {
 	},
 
 	// Token info popup — inline below the sentence. Shows q, k, v, α for
-	// the hovered token, all rendered with Temml.
+	// the hovered token, all rendered with Temml using pmatrix notation.
 	_showTokenInfo: function(idx) {
 		const el = document.getElementById('attn-token-info');
 		if (!el) return;
 		if (idx < 0 || idx >= ATTN_TOKENS.length) { this._hideTokenInfo(); return; }
 		const tk = ATTN_TOKENS[idx];
 		const q = idx < ATTN_2D._allQueries.length ? ATTN_2D._allQueries[idx] : null;
-		let html = `<h4>${tk.name}</h4>`;
-		if (q) html += `<div class="ti-row">$$\\mathbf{q} = (${q[0].toFixed(2)},\\, ${q[1].toFixed(2)})$$</div>`;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		let html = `<h4>Token: <span style="color:${tk.color}">${tk.name}</span></h4>`;
+		if (q) {
+			html += `<div class="ti-row">$$\\mathbf{q} = ${pm(q)}$$</div>`;
+		}
 		const j = idx - 1;
 		const hasKV = j >= 0 && j < ATTN_2D.keys.length && j < ATTN_2D.vals.length;
 		if (hasKV) {
 			const k = ATTN_2D.keys[j], v = ATTN_2D.vals[j];
 			const w = ATTN_2D.weights[j] || 0;
-			html += `<div class="ti-row">$$\\mathbf{k} = (${k[0].toFixed(2)},\\, ${k[1].toFixed(2)})$$</div>`;
-			html += `<div class="ti-row">$$\\mathbf{v} = (${v[0].toFixed(2)},\\, ${v[1].toFixed(2)})$$</div>`;
+			html += `<div class="ti-row">$$\\mathbf{k} = ${pm(k)}$$</div>`;
+			html += `<div class="ti-row">$$\\mathbf{v} = ${pm(v)}$$</div>`;
 			html += `<div class="ti-row">$$\\alpha = ${(w*100).toFixed(1)}\\%$$</div>`;
-			html += `<div class="ti-row">$$\\|\\mathbf{k}\\| = ${Math.hypot(k[0],k[1]).toFixed(2)}$$</div>`;
-			if (q) html += `<div class="ti-row">$$\\mathbf{q}\\cdot\\mathbf{k} = ${(q[0]*k[0]+q[1]*k[1]).toFixed(3)}$$</div>`;
+			html += `<div class="ti-row">$$\\|\\mathbf{k}\\| = \\sqrt{(${k[0].toFixed(2)})^2 + (${k[1].toFixed(2)})^2} = ${Math.hypot(k[0],k[1]).toFixed(2)}$$</div>`;
+			if (q) {
+				const dot = q[0]*k[0]+q[1]*k[1];
+				html += `<div class="ti-row">$$\\mathbf{q}\\cdot\\mathbf{k} = (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${dot.toFixed(3)}$$</div>`;
+			}
 		} else {
-			html += `<div class="ti-row"><span class="ti-label">role:</span> query (the token we're attending FROM)</div>`;
+			html += `<div class="ti-row"><b>Role:</b> query — the token we're attending <em>from</em>. Its q-vector is fixed: <span class="ti-form">$$\\mathbf{q} = ${pm(q)}$$</span></div>`;
 		}
 		el.innerHTML = html;
 		el.classList.remove('is-empty');
@@ -2136,6 +2295,11 @@ const AttentionAnatomy = {
 		constructionG.innerHTML = '';
 		labelsG.innerHTML = '';
 		const comp = data.computation;
+		const hasBars = (comp === 'dot' || comp === 'scaled' || comp === 'exps' || comp === 'weights');
+		// Hide the SVG entirely when this step doesn't use bar plots,
+		// so it doesn't reserve dead space.
+		svg.style.display = hasBars ? 'block' : 'none';
+		if (!hasBars) return;
 		if (comp === 'dot') {
 			this._drawScoreBlocks2D(constructionG, labelsG);
 		} else if (comp === 'scaled') {
@@ -2343,16 +2507,17 @@ const AttentionAnatomy = {
 			labelsParent.appendChild(labelTxt);
 		}
 
-		// Return the elements so callers can animate them if needed.
-		return { hit, line, head, labelHalo, labelTxt, lpos, anchor, start, end };
-
 		// Mouse events fire DIRECTLY on this element. No Plotly, no
 		// overlay, no event-delegation hacks — just plain DOM events.
+		// Every arrow with a `formula` argument gets its own tooltip.
 		if (formula) {
 			hit.addEventListener('mouseenter', (e) => this._showTooltip(formula, idx, e.clientX, e.clientY));
 			hit.addEventListener('mousemove',  (e) => this._showTooltip(formula, idx, e.clientX, e.clientY));
 			hit.addEventListener('mouseleave', () => this._hideTooltip());
 		}
+
+		// Return the elements so callers can animate them if needed.
+		return { hit, line, head, labelHalo, labelTxt, lpos, anchor, start, end };
 	},
 
 	// Standalone tooltip show/hide. Called from SVG mouse events.
@@ -2785,6 +2950,43 @@ const AttentionAnatomy = {
 	// Rows = queries, columns = keys. Each cell's blue intensity is the
 	// weight; the value is written in the centre. Hovering a cell shows
 	// the exact score and weight in the tooltip.
+	// Step 10 (matrix): the actual matrix is now an HTML table in the
+	// computation panel. Here in the 2D SVG we just show a pointer so the
+	// area isn't empty. No dim1/dim2 background (grid/axes are hidden
+	// in render2D for this mode).
+	_drawMatrixRedirect2D: function(constructionG, labelsG) {
+		const NS = this._SVG_NS;
+		const n = ATTN_2D.numTokens;
+		const titles = [
+			'↑ The full attention matrix lives in the computation panel ↑',
+			'Each row = one query\'s softmax over all keys.',
+			'Hover any cell to see the exact computation.'
+		];
+		// Center the message vertically in the [-1.4, 1.4] viewBox.
+		titles.forEach((line, i) => {
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', 0);
+			t.setAttribute('y', 0.4 - i * 0.22);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('fill', themeColor(i === 0 ? '#1e3a8a' : '#475569'));
+			t.setAttribute('font-size', i === 0 ? '0.12' : '0.08');
+			t.setAttribute('font-weight', i === 0 ? '700' : '400');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = line;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		});
+		// A small downward arrow
+		const arrow = document.createElementNS(NS, 'path');
+		arrow.setAttribute('d', 'M -0.06 -0.05 L 0 -0.20 L 0.06 -0.05 M 0 -0.20 L 0 -0.45');
+		arrow.setAttribute('stroke', '#1e3a8a');
+		arrow.setAttribute('stroke-width', '0.012');
+		arrow.setAttribute('fill', 'none');
+		arrow.setAttribute('stroke-linecap', 'round');
+		arrow.setAttribute('stroke-linejoin', 'round');
+		constructionG.appendChild(arrow);
+	},
+
 	_drawAttentionMatrix2D: function(constructionG, labelsG) {
 		const NS = this._SVG_NS;
 		const M = ATTN_2D.matrix;
@@ -2903,9 +3105,9 @@ const AttentionAnatomy = {
 	},
 
 	// Step "Self-attention for every token": draw each token's query, key,
-	// and output z as arrows in the 2D plot. The queries are the same
-	// palette as the existing q (red for "it"), the keys are blue, and
-	// each z is orange (same as the existing z).
+	// and output z as arrows in its OWN mini-plot. No dim1/dim2 background
+	// (the main grid/axes are hidden for this step in render2D). Every
+	// arrow has its own mouseover tooltip.
 	_drawSelfAttention2D: function(constructionG, labelsG, arrowsG) {
 		const NS = this._SVG_NS;
 		const n = ATTN_2D.numTokens;
@@ -2919,19 +3121,20 @@ const AttentionAnatomy = {
 		}
 		const Z       = ATTN_2D.selfOutputs || [];
 
-		// Lay out the four vectors for each token in a small grid at
-		// the bottom of the plot so they don't all pile up at the origin.
-		// Each "token panel" gets a 1.2-wide × 0.5-tall strip.
-		const colW = 2.6 / n;
-		const stripY = -0.85;
+		// Layout: each token gets its own panel in a row.
+		// Each panel is a self-contained mini-plot with its own q, k, z
+		// arrows, labels, and axis. Bigger than before for readability.
+		const panelW = 2.6 / n;
+		const panelH = 0.85;
+		const stripY = -0.55; // top edge of the panel row
 
 		// Strip title — explains what these mini-plots are.
 		const title = document.createElementNS(NS, 'text');
-		title.setAttribute('x', 0); title.setAttribute('y', stripY - 0.32);
+		title.setAttribute('x', 0); title.setAttribute('y', stripY - 0.22);
 		title.setAttribute('text-anchor', 'middle');
 		title.setAttribute('fill', themeColor('#475569'));
-		title.setAttribute('font-size', '0.085');
-		title.setAttribute('font-weight', '600');
+		title.setAttribute('font-size', '0.10');
+		title.setAttribute('font-weight', '700');
 		title.setAttribute('font-family', 'Inter, sans-serif');
 		title.textContent = 'self-attention output per token — each gets its own z = Σ αⱼ·vⱼ';
 		title.style.pointerEvents = 'none';
@@ -2939,71 +3142,79 @@ const AttentionAnatomy = {
 
 		const self = this;
 		for (let i = 0; i < n; i++) {
-			const cx = -1.3 + i * colW + colW / 2;
+			const cx = -1.3 + i * panelW + panelW / 2;
 			const tokenName = ATTN_TOKENS[i].name;
 
-			// Token header — large and bold
+			// Panel background — bigger and clearer
+			const panelBg = document.createElementNS(NS, 'rect');
+			panelBg.setAttribute('x', cx - panelW / 2 + 0.05);
+			panelBg.setAttribute('y', stripY);
+			panelBg.setAttribute('width', panelW - 0.10);
+			panelBg.setAttribute('height', panelH);
+			panelBg.setAttribute('fill', themeColor('#f8fafc'));
+			panelBg.setAttribute('stroke', themeColor('#cbd5e1'));
+			panelBg.setAttribute('stroke-width', '0.005');
+			panelBg.setAttribute('rx', '0.03');
+			constructionG.appendChild(panelBg);
+
+			// Token header — big and bold, above the panel
 			const head = document.createElementNS(NS, 'text');
-			head.setAttribute('x', cx); head.setAttribute('y', stripY - 0.10);
+			head.setAttribute('x', cx); head.setAttribute('y', stripY - 0.05);
 			head.setAttribute('text-anchor', 'middle');
 			head.setAttribute('fill', ATTN_TOKENS[i].color);
-			head.setAttribute('font-size', '0.10');
+			head.setAttribute('font-size', '0.12');
 			head.setAttribute('font-weight', 'bold');
 			head.setAttribute('font-family', 'Inter, sans-serif');
 			head.textContent = tokenName;
 			head.style.pointerEvents = 'none';
 			labelsG.appendChild(head);
 
-			// Mini 2D axes for this token
+			// Mini 2D axes (origin at center-bottom of the panel)
+			const ox = cx, oy = stripY + 0.55; // origin
 			const ax = document.createElementNS(NS, 'line');
-			ax.setAttribute('x1', cx - 0.30); ax.setAttribute('y1', stripY + 0.18);
-			ax.setAttribute('x2', cx + 0.30); ax.setAttribute('y2', stripY + 0.18);
-			ax.setAttribute('stroke', themeColor('#cbd5e1'));
-			ax.setAttribute('stroke-width', '0.006');
+			ax.setAttribute('x1', cx - 0.40); ax.setAttribute('y1', oy);
+			ax.setAttribute('x2', cx + 0.40); ax.setAttribute('y2', oy);
+			ax.setAttribute('stroke', themeColor('#94a3b8'));
+			ax.setAttribute('stroke-width', '0.008');
 			ax.style.pointerEvents = 'none';
 			constructionG.appendChild(ax);
-
-			// Faint panel background for hover area
-			const panelBg = document.createElementNS(NS, 'rect');
-			panelBg.setAttribute('x', cx - 0.32); panelBg.setAttribute('y', stripY - 0.18);
-			panelBg.setAttribute('width', 0.64); panelBg.setAttribute('height', 0.44);
-			panelBg.setAttribute('fill', 'transparent');
-			panelBg.setAttribute('stroke', themeColor('#e2e8f0'));
-			panelBg.setAttribute('stroke-width', '0.004');
-			panelBg.setAttribute('stroke-dasharray', '0.01 0.01');
-			panelBg.setAttribute('rx', '0.02');
-			panelBg.style.cursor = 'help';
-			constructionG.appendChild(panelBg);
+			const ay = document.createElementNS(NS, 'line');
+			ay.setAttribute('x1', ox); ay.setAttribute('y1', oy - 0.40);
+			ay.setAttribute('x2', ox); ay.setAttribute('y2', oy + 0.10);
+			ay.setAttribute('stroke', themeColor('#94a3b8'));
+			ay.setAttribute('stroke-width', '0.008');
+			ay.style.pointerEvents = 'none';
+			constructionG.appendChild(ay);
 
 			// Mini-arrow draw function with hover tooltip
-			const scale = 0.11;
-			const drawMini = (v, color, label, dy, tipKey) => {
+			const scale = 0.16;
+			const drawMini = (v, color, label, tipKey) => {
 				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
 					const dot = document.createElementNS(NS, 'circle');
-					dot.setAttribute('cx', cx);
-					dot.setAttribute('cy', stripY + 0.18 + dy);
-					dot.setAttribute('r', '0.025');
+					dot.setAttribute('cx', ox);
+					dot.setAttribute('cy', oy);
+					dot.setAttribute('r', '0.03');
 					dot.setAttribute('fill', themeColor('#94a3b8'));
 					dot.style.pointerEvents = 'none';
 					constructionG.appendChild(dot);
 					return;
 				}
-				const ex = cx + v[0] * scale;
-				const ey = stripY + 0.18 - v[1] * scale + dy;
+				const ex = ox + v[0] * scale;
+				const ey = oy - v[1] * scale;
 				const line = document.createElementNS(NS, 'line');
-				line.setAttribute('x1', cx); line.setAttribute('y1', stripY + 0.18 + dy);
+				line.setAttribute('x1', ox); line.setAttribute('y1', oy);
 				line.setAttribute('x2', ex);  line.setAttribute('y2', ey);
 				line.setAttribute('stroke', color);
-				line.setAttribute('stroke-width', '0.016');
+				line.setAttribute('stroke-width', '0.020');
 				line.setAttribute('stroke-linecap', 'round');
 				line.style.pointerEvents = 'none';
 				constructionG.appendChild(line);
 				// Arrowhead
-				const dx = ex - cx, dy2 = ey - (stripY + 0.18 + dy);
+				const dx = ex - ox, dy2 = ey - oy;
 				const len = Math.sqrt(dx*dx + dy2*dy2);
 				if (len > 0.02) {
 					const ux = dx/len, uy = dy2/len;
-					const s = 0.035;
+					const s = 0.045;
 					const c = Math.cos(Math.PI/6), si = Math.sin(Math.PI/6);
 					const head = document.createElementNS(NS, 'polygon');
 					head.setAttribute('points', `${ex},${ey} ${ex-s*(ux*c-uy*si)},${ey-s*(ux*si+uy*c)} ${ex-s*(ux*c+uy*si)},${ey-s*(-ux*si+uy*c)}`);
@@ -3011,44 +3222,45 @@ const AttentionAnatomy = {
 					head.style.pointerEvents = 'none';
 					constructionG.appendChild(head);
 				}
-				// Label at the tip
+				// Label at the tip — bigger font
 				const t = document.createElementNS(NS, 'text');
-				t.setAttribute('x', ex + 0.03); t.setAttribute('y', ey - 0.02);
+				t.setAttribute('x', ex + 0.04); t.setAttribute('y', ey - 0.02);
 				t.setAttribute('text-anchor', 'start');
 				t.setAttribute('fill', color);
-				t.setAttribute('font-size', '0.075');
-				t.setAttribute('font-weight', '600');
+				t.setAttribute('font-size', '0.10');
+				t.setAttribute('font-weight', '700');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = label;
 				t.style.pointerEvents = 'none';
 				labelsG.appendChild(t);
 
-				// Hover tooltip for this mini-arrow
-				if (tipKey !== undefined) {
-					const hit = document.createElementNS(NS, 'rect');
-					hit.setAttribute('x', Math.min(cx, ex) - 0.02);
-					hit.setAttribute('y', Math.min(stripY + 0.18 + dy, ey) - 0.02);
-					hit.setAttribute('width', Math.abs(ex - cx) + 0.06);
-					hit.setAttribute('height', Math.abs(ey - (stripY + 0.18 + dy)) + 0.06);
-					hit.setAttribute('fill', 'transparent');
-					hit.style.cursor = 'help';
-					constructionG.appendChild(hit);
-					hit.addEventListener('mouseenter', (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
-					hit.addEventListener('mousemove',  (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
-					hit.addEventListener('mouseleave', () => self._hideTooltip());
-				}
+				// Hover tooltip for this mini-arrow — generous hit area
+				const hit = document.createElementNS(NS, 'rect');
+				hit.setAttribute('x', Math.min(ox, ex) - 0.05);
+				hit.setAttribute('y', Math.min(oy, ey) - 0.05);
+				hit.setAttribute('width', Math.abs(ex - ox) + 0.12);
+				hit.setAttribute('height', Math.abs(ey - oy) + 0.12);
+				hit.setAttribute('fill', 'transparent');
+				hit.style.cursor = 'help';
+				constructionG.appendChild(hit);
+				hit.addEventListener('mouseenter', (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
+				hit.addEventListener('mousemove',  (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
+				hit.addEventListener('mouseleave', () => self._hideTooltip());
 			};
-			drawMini(queries[i], '#ef4444', 'q',   0,    'q');
-			drawMini(keys[i],    '#2563eb', 'k',   -0.09, 'k');
-			drawMini(Z[i],       '#f59e0b', 'z',   -0.18, 'z');
+			// Draw q, k, v, z each with its own mouseover
+			const v = (i === 0) ? null : ATTN_2D._allVals[i-1];
+			drawMini(queries[i], '#ef4444', 'q', 'q');
+			drawMini(keys[i],    '#2563eb', 'k', 'k');
+			if (v) drawMini(v,   '#10b981', 'v', 'self-v');
+			drawMini(Z[i],       '#f59e0b', 'z', 'z');
 
-			// z value label below the panel
+			// z value label below the panel — bigger font
 			if (Z[i] && isFinite(Z[i][0])) {
 				const zv = document.createElementNS(NS, 'text');
-				zv.setAttribute('x', cx); zv.setAttribute('y', stripY + 0.30);
+				zv.setAttribute('x', cx); zv.setAttribute('y', stripY + panelH + 0.14);
 				zv.setAttribute('text-anchor', 'middle');
-				zv.setAttribute('fill', themeColor('#64748b'));
-				zv.setAttribute('font-size', '0.065');
+				zv.setAttribute('fill', themeColor('#475569'));
+				zv.setAttribute('font-size', '0.085');
 				zv.setAttribute('font-family', 'monospace');
 				zv.textContent = `z = (${Z[i][0].toFixed(2)}, ${Z[i][1].toFixed(2)})`;
 				zv.style.pointerEvents = 'none';
@@ -3509,11 +3721,23 @@ const AttentionAnatomy = {
 		}
 
 		if (mode === 'matrix') {
-			this._drawAttentionMatrix2D(constructionG, labelsG);
+			// The full α-matrix is rendered as an HTML table in the
+			// computation panel (with hover info on every cell). Here we
+			// just show a brief pointer so the 2D plot isn't empty.
+			this._drawMatrixRedirect2D(constructionG, labelsG);
 		}
 
 		if (mode === 'selfattn') {
 			this._drawSelfAttention2D(constructionG, labelsG, arrowsG);
+		}
+
+		// Hide the dim1/dim2 grid + axes for matrix & selfattn steps —
+		// they have no geometric meaning there (the matrix is a table,
+		// self-attention uses its own mini-plots).
+		if (svg) {
+			const hideBg = (mode === 'matrix' || mode === 'selfattn');
+			svg.querySelector('.attn-grid').style.display = hideBg ? 'none' : '';
+			svg.querySelector('.attn-axes').style.display = hideBg ? 'none' : '';
 		}
 
 		if (mode === 'keys') {

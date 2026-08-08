@@ -339,22 +339,23 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 }
 
 /* Token info / formula cone panel — inline below the sentence, sits
-   BETWEEN the sentence and the 2D plot. Always reserves space (min-height
-   + opacity) so the plot never shifts when content appears or changes. */
+   BETWEEN the sentence and the 2D plot. min-height is set large enough
+   to hold the tallest possible content (light cone with 8+ formula
+   lines) so the plot NEVER shifts when the user hovers different things. */
 .attn-token-info {
 	position: relative;
 	display: block;
 	margin: 6px auto 4px auto;
-	max-width: 760px;
-	min-height: 72px;
-	padding: 8px 14px;
+	max-width: 780px;
+	min-height: 200px;
+	padding: 10px 16px;
 	background: var(--mn-surface, #fff);
 	border: 1px solid rgba(37, 99, 235, 0.35);
 	border-radius: 8px;
 	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
 	font-family: 'Inter', -apple-system, sans-serif;
-	font-size: 0.82rem;
-	line-height: 1.45;
+	font-size: 0.92rem;
+	line-height: 1.5;
 	color: var(--mn-text, #1e293b);
 	opacity: 1;
 	transition: opacity 0.18s ease;
@@ -362,6 +363,30 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 .attn-token-info.is-empty {
 	opacity: 0;
 	pointer-events: none;
+}
+.attn-token-info h4 {
+	margin: 0 0 8px 0;
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: #1e3a8a;
+}
+.attn-token-info .ti-row {
+	display: block;
+	margin: 4px 0;
+	padding: 3px 0;
+}
+.attn-token-info .ti-cone {
+	margin-top: 8px;
+	padding-top: 8px;
+	border-top: 1px dashed rgba(37,99,235,0.35);
+	font-size: 0.92rem;
+	color: var(--mn-text, #1e293b);
+}
+.attn-token-info .ti-cone b {
+	color: #1e3a8a;
+}
+.attn-token-info .ti-cone-line {
+	padding: 3px 0;
 }
 .attn-token-info .ti-cone {
 	font-size: 0.78rem;
@@ -625,10 +650,10 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	font-weight: bold;
 	color: #2563eb;
 	margin-bottom: 12px;
-	font-size: 0.95rem;
+	font-size: 1.05rem;
 }
 .attn-anatomy-computation .comp-body {
-	font-size: 0.95rem;
+	font-size: 1.02rem;
 	line-height: 1.9;
 	color: var(--mn-text, #1e293b);
 }
@@ -674,7 +699,7 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	border-top: 1px dashed var(--mn-border, #e2e8f0);
 	color: var(--mn-text-muted, #64748b);
 	font-style: italic;
-	font-size: 0.88rem;
+	font-size: 0.95rem;
 }
 
 /* Each numeric row is now a full underbraced Temml equation. Each row
@@ -810,6 +835,68 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	border: 1px solid var(--mn-border, #cbd5e1);
 	border-radius: 6px;
 	background: rgba(37, 99, 235, 0.04);
+}
+
+/* Full attention-matrix table — used in step 10. Each cell is a
+   hoverable α_{ij} with the exact computation on hover. */
+.attn-matrix-wrap {
+	overflow-x: auto;
+	margin: 8px 0;
+}
+.attn-matrix-table {
+	border-collapse: separate;
+	border-spacing: 3px;
+	margin: 0 auto;
+	font-family: 'Inter', sans-serif;
+}
+.attn-matrix-corner {
+	background: transparent;
+}
+.attn-matrix-colhead,
+.attn-matrix-rowhead {
+	background: var(--mn-surface, #fff);
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 6px;
+	padding: 6px 10px;
+	vertical-align: middle;
+	text-align: center;
+	font-weight: 600;
+	min-width: 90px;
+	cursor: help;
+	transition: background 0.12s ease;
+}
+.attn-matrix-colhead:hover,
+.attn-matrix-rowhead:hover {
+	background: rgba(37, 99, 235, 0.08);
+}
+.attn-matrix-colhead-name,
+.attn-matrix-rowhead-name {
+	font-size: 0.88rem;
+	font-weight: 700;
+}
+.attn-matrix-colhead-form,
+.attn-matrix-rowhead-form {
+	font-size: 0.78rem;
+	color: var(--mn-text-muted, #64748b);
+	margin-top: 3px;
+}
+.attn-matrix-cell {
+	padding: 10px 14px;
+	text-align: center;
+	border-radius: 6px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	min-width: 80px;
+	cursor: help;
+	transition: transform 0.12s ease, box-shadow 0.12s ease;
+	border: 2px solid transparent;
+}
+.attn-matrix-cell:hover {
+	transform: scale(1.08);
+	border-color: #1e3a8a;
+	box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+	z-index: 2;
+	position: relative;
 }
 
 /* ── Live values overview panel ────────────────────────────────── */
@@ -979,6 +1066,12 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			     vectors in the plot and see its full info in the popup. -->
 			<div id="attn-sentence" class="attn-sentence"></div>
 
+			<!-- Token info popup — SITS BETWEEN the sentence and the
+			     2D plot, so it's always visible without overlapping the
+			     plot. Reserves space (min-height) so the plot never
+			     shifts when content changes. -->
+			<div id="attn-token-info" class="attn-token-info is-empty"></div>
+
 			<svg id="attn-anatomy-2d-svg" viewBox="-1.5 -1.5 3 2.7" preserveAspectRatio="xMidYMid meet">
 				<g class="attn-grid"></g>
 				<g class="attn-axes"></g>
@@ -989,14 +1082,12 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			</svg>
 
 			<!-- Bar plots live BELOW the 2D scene in their own SVG so
-			     they never overlap the vectors or the angle arcs. -->
-			<svg id="attn-bar-plots-svg" viewBox="0 -0.3 3 1" preserveAspectRatio="xMidYMid meet" style="width:100%; height:120px;">
+			     they never overlap the vectors or the angle arcs.
+			     Hidden (display:none) when empty so no dead space. -->
+			<svg id="attn-bar-plots-svg" viewBox="0 -0.3 3 1" preserveAspectRatio="xMidYMid meet" style="width:100%; height:120px; display:none;">
 				<g class="attn-bar-construction"></g>
 				<g class="attn-bar-labels"></g>
 			</svg>
-
-			<!-- Token info popup — floats to the right of the scene. -->
-			<div id="attn-token-info" class="attn-token-info is-empty"></div>
 
 			<!-- Geometric intuition panel — INSIDE the plot column, right
 			     below the scene, so the picture and its meaning stay
