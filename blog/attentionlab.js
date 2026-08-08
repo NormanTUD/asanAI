@@ -634,12 +634,17 @@ const ATTN_COMPUTATIONS = {
 	},
 	components: () => {
 		const q = ATTN_2D.q, k = ATTN_2D.keys[0];
+		const pmq = `\\begin{pmatrix} ${q[0].toFixed(2)} \\\\ ${q[1].toFixed(2)} \\end{pmatrix}`;
+		const pmk = `\\begin{pmatrix} ${k[0].toFixed(2)} \\\\ ${k[1].toFixed(2)} \\end{pmatrix}`;
 		const html = `
-		<div class="comp-header">▶ Currently computing: $q[d] \\cdot k_1[d]$ — element-wise product</div>
+		<div class="comp-header">▶ Currently computing: $\\underbrace{\\mathbf{q}}_{\\text{query}}[d] \\cdot \\underbrace{\\mathbf{k}_1}_{\\text{key}}[d]$ — element-wise product</div>
 		<div class="comp-body">
 			<div class="comp-eq" data-tip="comprect" data-idx="0">$$
-				\\underbrace{(${ed('q.0', q[0].toFixed(2))})\\cdot(${ed('keys.0.0', k[0].toFixed(2))})}_{q_1[1]\\,=\\,${(q[0]*k[0]).toFixed(3)}} \\qquad
-				\\underbrace{(${ed('q.1', q[1].toFixed(2))})\\cdot(${ed('keys.0.1', k[1].toFixed(2))})}_{q_1[2]\\,=\\,${(q[1]*k[1]).toFixed(3)}}
+				\\underbrace{\\mathbf{q}}_{\\text{query}} = ${pmq} \\qquad \\underbrace{\\mathbf{k}_1}_{\\text{key}} = ${pmk}
+			$$</div>
+			<div class="comp-eq" data-tip="comprect" data-idx="0">$$
+				\\underbrace{(\\underbrace{${ed('q.0', q[0].toFixed(2))}}_{q_0})(\\underbrace{${ed('keys.0.0', k[0].toFixed(2))}}_{k_{1,0}})}_{\\text{dimension 1 product}\\;=\\;${(q[0]*k[0]).toFixed(3)}} \\quad
+				\\underbrace{(\\underbrace{${ed('q.1', q[1].toFixed(2))}}_{q_1})(\\underbrace{${ed('keys.0.1', k[1].toFixed(2))}}_{k_{1,1}})}_{\\text{dimension 2 product}\\;=\\;${(q[1]*k[1]).toFixed(3)}}
 			$$</div>
 			<div class="comp-note">Two rectangles, one per dimension — the area of each is one product. Next step adds them together.</div>
 		</div>`;
@@ -786,18 +791,18 @@ const ATTN_COMPUTATIONS = {
 			`</div>`;
 		}).join('');
 		const z = ATTN_2D.output;
-		// Defensive sumParts — also falls back if weightedVals is empty
 		const sumParts = (ATTN_2D.weightedVals && ATTN_2D.weightedVals.length)
-			? ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})`).join(' + ')
+			? ATTN_2D.weightedVals.map((wv) => `\\begin{pmatrix} ${wv[0].toFixed(3)} \\\\ ${wv[1].toFixed(3)} \\end{pmatrix}`).join(' + ')
 			: ATTN_2D.vals.map((v, j) => {
 				const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
-				return `(${(w*v[0]).toFixed(3)},\\, ${(w*v[1]).toFixed(3)})`;
+				return `\\begin{pmatrix} ${(w*v[0]).toFixed(3)} \\\\ ${(w*v[1]).toFixed(3)} \\end{pmatrix}`;
 			}).join(' + ');
+		const pmz = `\\begin{pmatrix} ${z[0].toFixed(3)} \\\\ ${z[1].toFixed(3)} \\end{pmatrix}`;
 		const html = `
-		<div class="comp-header">▶ Currently computing: $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ — the weighted sum</div>
+		<div class="comp-header">▶ Currently computing: $\\underbrace{\\mathbf{z}}_{\\text{output}} = \\sum_j \\underbrace{\\alpha_j}_{\\text{weight}} \\underbrace{\\mathbf{v}_j}_{\\text{value}}$ — the weighted sum</div>
 		<div class="comp-body">
 			${rows}
-			<div class="comp-eq" data-tip="eq-z">$$ \\mathbf{z} = \\underbrace{${sumParts}}_{\\text{component-wise sum}} = \\underbrace{(${z[0].toFixed(3)},\\, ${z[1].toFixed(3)})}_{\\mathbf{z}} $$</div>
+			<div class="comp-eq" data-tip="eq-z">$$ \\underbrace{\\mathbf{z}}_{\\text{output}} = \\underbrace{${sumParts}}_{\\text{sum of weighted values}} = \\underbrace{${pmz}}_{\\mathbf{z}} $$</div>
 			<div class="comp-note">$\\mathbf{z}$ is a convex combination — it lies <b>inside the span</b> of the $\\mathbf{v}_j$ (a point in 2 tokens, a segment in 3, a triangle in 4).</div>
 		</div>`;
 		const liveVals = AttentionAnatomy._liveValsHTML();
@@ -1958,14 +1963,15 @@ const AttentionAnatomy = {
 	// has rendered the surrounding math.
 	_liveValsHTML: function(extra) {
 		const q = ATTN_2D.q;
+		const pm = (a, b) => `\\begin{pmatrix} ${a} \\\\ ${b} \\end{pmatrix}`;
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit</div>';
-		html += '<div class="attn-live-row attn-live-row-first">$$ \\mathbf{q} = (\\text{◆q.0|' + q[0].toFixed(2) + '},\\, \\text{◆q.1|' + q[1].toFixed(2) + '}) $$</div>';
+		html += '<div class="attn-live-row attn-live-row-first">$$ \\underbrace{\\mathbf{q}}_{\\text{query}} = \\begin{pmatrix} \\text{◆q.0|' + q[0].toFixed(2) + '} \\\\ \\text{◆q.1|' + q[1].toFixed(2) + '} \\end{pmatrix} $$</div>';
 		ATTN_TOKENS.slice(1).forEach((tk, j) => {
 			if (j >= ATTN_2D.keys.length) return;
 			const k = ATTN_2D.keys[j];
 			const v = ATTN_2D.vals[j];
-			html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{' + tk.name + '} = (\\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '},\\, \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '}) \\;\\; (\\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '},\\, \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '}) $$</div>';
+			html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{' + tk.name + '}}_{\\text{key + value}} = \\underbrace{\\begin{pmatrix} \\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '} \\\\ \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{k}_{' + (j+1) + '}} \\quad \\underbrace{\\begin{pmatrix} \\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '} \\\\ \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{v}_{' + (j+1) + '}} $$</div>';
 		});
 		if (extra) html += extra;
 		html += '</div>';
