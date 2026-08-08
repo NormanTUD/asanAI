@@ -117,9 +117,11 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 
 <!-- ===================== ANATOMY OF ATTENTION: STEP-BY-STEP ===================== -->
 <style>
-/* Hover tooltip — appears when the user mouses over an arrow in the
-   2D plot. Shows the exact Temml formula + a plain-language
-   explanation of where that vector comes from mathematically. */
+/* Hover tooltip — appears when the user mouses over an arrow in the 2D
+   plot. Shows the exact Temml formula + a plain-language explanation
+   of where that vector comes from mathematically. Now wider + taller
+   to fit the self-attention "everything explained" tooltips (variables,
+   formulas, percentages, sum breakdown). */
 .attn-vector-tooltip {
 	position: fixed;
 	display: none;
@@ -130,10 +132,12 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.20);
 	z-index: 10000;
 	pointer-events: none;
-	max-width: 600px;
+	max-width: 720px;
 	width: max-content;
-	min-width: 280px;
+	min-width: 340px;
 	color: var(--mn-text, #1e293b);
+	font-size: 0.88rem;
+	line-height: 1.5;
 }
 .attn-vector-tooltip.active {
 	display: block;
@@ -142,8 +146,63 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	font-weight: bold;
 	color: #2563eb;
 	margin-bottom: 8px;
-	font-size: 0.95rem;
+	font-size: 0.98rem;
 	letter-spacing: 0.2px;
+}
+.attn-vector-tooltip .tt-vars {
+	margin: 0 0 10px 0;
+	padding: 8px 12px;
+	background: var(--mn-surface-raised, #f1f5f9);
+	border-radius: 6px;
+	border-left: 3px solid #10b981;
+	font-size: 0.85rem;
+	color: var(--mn-text, #1e293b);
+}
+.attn-vector-tooltip .tt-vars b { color: #0f172a; }
+.attn-vector-tooltip .tt-edit {
+	margin: 0 0 10px 0;
+	padding: 6px 10px;
+	background: rgba(245, 158, 11, 0.10);
+	border-radius: 6px;
+	border-left: 3px solid #f59e0b;
+	font-size: 0.82rem;
+	color: #92400e;
+}
+.attn-vector-tooltip .tt-breakdown {
+	margin: 0 0 10px 0;
+	padding: 8px 12px;
+	background: rgba(34, 197, 94, 0.07);
+	border-radius: 6px;
+	border-left: 3px solid #22c55e;
+	font-size: 0.82rem;
+	color: var(--mn-text, #1e293b);
+}
+.attn-vector-tooltip .tt-breakdown table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 4px;
+	font-size: 0.78rem;
+}
+.attn-vector-tooltip .tt-breakdown td {
+	padding: 2px 6px;
+	border-bottom: 1px solid rgba(34, 197, 94, 0.20);
+}
+.attn-vector-tooltip .tt-breakdown td.num {
+	font-family: 'SF Mono', 'Menlo', monospace;
+	text-align: right;
+	white-space: nowrap;
+}
+.attn-vector-tooltip .tt-breakdown td.pct {
+	color: #166534;
+	font-weight: 600;
+	text-align: right;
+	white-space: nowrap;
+}
+.attn-vector-tooltip .tt-breakdown tr:last-child td { border-bottom: none; }
+.attn-vector-tooltip .tt-breakdown tr.total td {
+	border-top: 2px solid #22c55e;
+	font-weight: bold;
+	padding-top: 6px;
 }
 /* Plain-language "what this MEANS" headline — shown first, above the
    math, so the intuition is never buried under formulas. */

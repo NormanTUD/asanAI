@@ -1526,9 +1526,16 @@ const AttentionAnatomy = {
 
 		const isIt    = (idx === 0);
 		const tName   = (ATTN_TOKENS[idx] && ATTN_TOKENS[idx].name) || `token ${idx}`;
+		// Token display labels:
+		//   q/k/v "it" is shown with the subscript "it"
+		//   q/k/v of token i (1-indexed: "sat"=1, "cat"=2, ...) use the index
+		const sub = isIt ? '\\text{it}' : String(idx);
+		// Compact number formatters used in every LaTeX expression.
 		const fmtNum  = (v) => (isFinite(v) ? v.toFixed(3) : '\\text{NaN}');
 		const fmtVec  = (v) => (Array.isArray(v) && isFinite(v[0]) && isFinite(v[1]))
 			? `[${fmtNum(v[0])},\\; ${fmtNum(v[1])}]` : '\\text{(unavailable)}';
+		const fmtVecPlain = (v) => (Array.isArray(v) && isFinite(v[0]) && isFinite(v[1]))
+			? `[${v[0].toFixed(2)}, ${v[1].toFixed(2)}]` : 'n/a';
 		// Bailout helper — Temml-safe minimal payload so we never produce
 		// "undefined · undefined" inside a $...$ block.
 		const bail = (msg) => {
@@ -1543,16 +1550,9 @@ const AttentionAnatomy = {
 			};
 		};
 
-		// 2. EXTRACT the four per-token values with bounds-checked reads
-		// queries is n+1 long (q_it + n token-q's); _allKeys and _allVals
-		// are n long and there is NO k_it / v_it in this demo (the query
-		// token "it" carries a query but contributes no key/value).
-		//
-		// Indexing for token idx:
-		//   q_{idx}         = _allQueries[idx]               (idx=0 → q_it)
-		//   k_{idx} (idx>0) = _allKeys[idx-1]                (idx=0 → none)
-		//   v_{idx} (idx>0) = _allVals[idx-1]                (idx=0 → none)
-		//   z_{idx}         = selfOutputs[idx]
+		// 2. EXTRACT the four per-token values with bounds-checked reads.
+		//    queries is n+1 long (q_it + n token-q's); _allKeys and _allVals
+		//    are n long and there is NO k_it / v_it in this demo.
 		const q = (idx < ATTN_2D._allQueries.length) ? ATTN_2D._allQueries[idx] : null;
 		const k = isIt
 			? null
@@ -1562,120 +1562,242 @@ const AttentionAnatomy = {
 			: ((idx - 1) < ATTN_2D._allVals.length ? ATTN_2D._allVals[idx - 1] : null);
 		const z = (idx < ATTN_2D.selfOutputs.length) ? ATTN_2D.selfOutputs[idx] : null;
 
-		// 3. BRANCH on what was hovered
+		// 3. Helper to build the per-edit hint (which field the user can
+		//    click in the Live Values box above to change this value).
+		const editHint = (fieldLabel, fieldName) =>
+			`<b>✎ Editable:</b> click <code>${fieldLabel}</code> in the Live Values panel above ` +
+			`<span style="color:#64748b">(field: <code>${fieldName}</code>)</span> — every dependent value ` +
+			`(α-matrix, z's) recomputes live.`;
+
+		// 4. BRANCH on what was hovered.
 		switch (key) {
 			case 'sa-q':
 				if (!q || !isFinite(q[0]) || !isFinite(q[1])) {
 					return bail(`q_{${isIt ? '\\text{it}' : idx}} unavailable`);
 				}
 				return {
-					name: `q of “${tName}”`,
-					intuition: `The <b>query</b> for token <b>${tName}</b> — what this token is <i>looking for</i> in every other token's key.`,
-					concreteLatex: `\\underbrace{\\mathbf{q}_{${isIt ? '\\text{it}' : idx}} = ${fmtVec(q)}}_{\\text{query for “${tName}”}}`,
-					formulaLatex: isIt
-						? '\\mathbf{q}_{\\text{it}} \\;=\\; \\mathbf{x}_{\\text{it}} \\, \\mathbf{W}^Q'
-						: `\\mathbf{q}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^Q`,
-					unicode: isIt
-						? `q_it = [${q[0].toFixed(2)}, ${q[1].toFixed(2)}]  (held fixed in this demo)`
-						: `q_${idx} = [${q[0].toFixed(2)}, ${q[1].toFixed(2)}] = x_${idx} · W^Q`,
-					desc: isIt
-						? `In this demo the query for <b>“it”</b> is held fixed at <code>[${q[0].toFixed(2)}, ${q[1].toFixed(2)}]</code> so you can compare attention regimes across the example sets without the query itself changing.`
-						: `Token <b>${tName}</b>'s embedding x<sub>${idx}</sub> is multiplied by the learned projection matrix <b>W<sup>Q</sup></b>. The result is the direction this token searches along when attending to others.`,
+					name: `q${isIt ? '\\text{ it}' : '_' + idx} — query of “${tName}”`,
+					vars:
+						`<b>Variables in this panel:</b> ` +
+						`q<sub>${sub}</sub> (this arrow, red) — query vector · ` +
+						`x<sub>${sub}</sub> — input embedding of “${tName}” · ` +
+						`W<sup>Q</sup> — learned query projection (Step 1)`,
+					intuition:
+						`<b>q<sub>${sub}</sub></b> is what <b>${tName}</b> is <i>looking for</i> when it scans every other token's key. ` +
+						`A larger dot product with another token's k means more attention flows toward that token.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{q}_{${sub}} = ${fmtVec(q)}}_{\\text{this arrow}}`,
+					formulaLatex:
+						`\\mathbf{q}_{${sub}} \\;=\\; \\mathbf{x}_{${sub}} \\, \\mathbf{W}^Q`,
+					unicode:
+						isIt
+							? `q_it = ${fmtVecPlain(q)}  (held fixed across examples)`
+							: `q_${idx} = ${fmtVecPlain(q)} = x_${idx} · W^Q`,
+					editHint: isIt
+						? `<b>✎ In this demo q<sub>it</sub> is held fixed</b> — change it via the Edit Values button, or use the "set" selector to switch examples.`
+						: editHint(`x_${idx} (input)`, `tokens[${idx-1}].q`),
+					desc:
+						isIt
+							? `Edit: change the input embedding <code>x</code> in the Step 1 demo to see how q<sub>it</sub> = x · W<sup>Q</sup> updates (W<sup>Q</sup> is the identity in the Step 1 demo, so q = x).`
+							: `Token <b>${tName}</b>'s embedding <code>x<sub>${idx}</sub></code> lives in <code>_allQueries[${idx}]</code> (= <code>set.tokens[${idx-1}].q</code>). Click any value in the Live Values panel to edit — every α<sub>${idx},j</sub> recomputes via softmax, and z<sub>${idx}</sub> updates accordingly.`,
 				};
 
 			case 'sa-k':
-				// "it" has no k in this demo (only the query token has its
-				// own key in the demo's data model). Show a clear "n/a" with
-				// the explanation so the user understands the asymmetry
-				// instead of wondering why k is missing.
 				if (isIt || !k || !isFinite(k[0]) || !isFinite(k[1])) {
 					return {
 						name: `k of “${tName}”`,
-						intuition: `In this demo the query token <b>“it”</b> has <i>no own key</i> — it asks questions but does not advertise itself as something to attend to. The other tokens' keys are what <b>“it”</b>'s query scores against.`,
+						vars: `<b>Variables:</b> k<sub>${sub}</sub> — would-be key for “${tName}”. ` +
+							`<span style="color:#dc2626">Not drawn in this demo</span>: “it” carries no own key.`,
+						intuition:
+							`In this demo the query token <b>“it”</b> has <i>no own key</i> — it asks questions but does not advertise itself. ` +
+							`The arrows in the OTHER panels (cat, dog, ...) are the keys that <b>“it”</b>'s query scores against.`,
 						concreteLatex: '\\text{(no } \\mathbf{k}_{\\text{it}} \\text{ in this demo)}',
 						formulaLatex: '',
 						unicode: 'k_it = n/a',
-						desc: '',
+						editHint: 'Not editable — this k simply does not exist in the demo\'s data model.',
+						desc: 'Hover any blue arrow in the other panels to see that token\'s key formula k<sub>i</sub> = x<sub>i</sub> · W<sup>K</sup>.',
 					};
 				}
 				return {
-					name: `k of “${tName}”`,
-					intuition: `The <b>key</b> for token <b>${tName}</b> — what this token <i>advertises</i> about its content. Other tokens' queries score against this key.`,
-					concreteLatex: `\\underbrace{\\mathbf{k}_{${idx}} = ${fmtVec(k)}}_{\\text{key for “${tName}”}}`,
-					formulaLatex: `\\mathbf{k}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^K`,
-					unicode: `k_${idx} = [${k[0].toFixed(2)}, ${k[1].toFixed(2)}] = x_${idx} · W^K`,
-					desc: `Token <b>${tName}</b>'s embedding x<sub>${idx}</sub> is multiplied by the learned projection matrix <b>W<sup>K</sup></b>. The closer this key points to another token's query, the more attention that token will pay to <b>${tName}</b>.`,
+					name: `k${isIt ? '' : '_' + idx} — key of “${tName}”`,
+					vars:
+						`<b>Variables in this panel:</b> ` +
+						`k<sub>${idx}</sub> (this arrow, blue) — key vector · ` +
+						`x<sub>${idx}</sub> — input embedding of “${tName}” · ` +
+						`W<sup>K</sup> — learned key projection (Step 1)`,
+					intuition:
+						`<b>k<sub>${idx}</sub></b> is what <b>${tName}</b> <i>advertises</i> about its content. ` +
+						`Every other token's query q<sub>i</sub> is scored against this k via ` +
+						`<code>α<sub>i${idx}</sub> = softmax(q<sub>i</sub> · k<sub>${idx}</sub> / √d<sub>k</sub>)</code>.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{k}_{${idx}} = ${fmtVec(k)}}_{\\text{this arrow}}`,
+					formulaLatex:
+						`\\mathbf{k}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^K`,
+					unicode:
+						`k_${idx} = ${fmtVecPlain(k)} = x_${idx} · W^K`,
+					editHint: editHint(`x_${idx} (input)`, `tokens[${idx-1}].k`),
+					desc:
+						`Stored in <code>_allKeys[${idx-1}]</code> (= <code>set.tokens[${idx-1}].k</code>). ` +
+						`Edit it to immediately see all <code>α<sub>•${idx}</sub></code> recompute — the dot product ` +
+						`<code>q<sub>i</sub> · k<sub>${idx}</sub></code> is what every row of the α-matrix uses as its raw score before softmax.`,
 				};
 
 			case 'sa-v':
 				if (isIt) {
-					// "it" has no v in this demo
 					return {
 						name: `v of “${tName}”`,
-						intuition: `The query token <b>“it”</b> has no value in this demo — it asks the question but contributes no content. Only the other tokens carry values that can be blended into an answer.`,
+						vars: `<b>Variables:</b> v<sub>${sub}</sub> — would-be value for “${tName}”. ` +
+							`<span style="color:#dc2626">Not drawn in this demo</span>: “it” carries no own value.`,
+						intuition:
+							`The query token <b>“it”</b> has no value in this demo — it asks the question but contributes no content. ` +
+							`Hover any green arrow in the other panels to see the value formulas.`,
 						concreteLatex: '\\text{(no } \\mathbf{v}_{\\text{it}} \\text{ in this demo)}',
 						formulaLatex: '',
 						unicode: 'v_it = n/a',
-						desc: '',
+						editHint: 'Not editable.',
+						desc: 'v is the actual payload each token contributes to every output z<sub>i</sub>. It scales by α before being summed.',
 					};
 				}
 				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
 					return bail(`v_{${idx}} unavailable`);
 				}
 				return {
-					name: `v of “${tName}”`,
-					intuition: `The <b>value</b> for token <b>${tName}</b> — the actual semantic payload that gets blended into every output z<sub>i</sub> according to that output's attention weights α<sub>i·</sub>.`,
-					concreteLatex: `\\underbrace{\\mathbf{v}_{${idx}} = ${fmtVec(v)}}_{\\text{value of “${tName}”}}`,
-					formulaLatex: `\\mathbf{v}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^V`,
-					unicode: `v_${idx} = [${v[0].toFixed(2)}, ${v[1].toFixed(2)}] = x_${idx} · W^V`,
-					desc: `Token <b>${tName}</b>'s embedding x<sub>${idx}</sub> is multiplied by the learned projection matrix <b>W<sup>V</sup></b>. This v is the <i>same</i> for every output — each z<sub>i</sub> scales it by α<sub>i${idx}</sub> before summing.`,
+					name: `v${idx} — value of “${tName}”`,
+					vars:
+						`<b>Variables in this panel:</b> ` +
+						`v<sub>${idx}</sub> (this arrow, green) — value vector · ` +
+						`x<sub>${idx}</sub> — input embedding of “${tName}” · ` +
+						`W<sup>V</sup> — learned value projection (Step 1)`,
+					intuition:
+						`<b>v<sub>${idx}</sub></b> is what <b>${tName}</b> actually contributes to the answer. ` +
+						`The same v<sub>${idx}</sub> is used in <i>every</i> z<sub>i</sub> — each output scales it by α<sub>i${idx}</sub> before summing: ` +
+						`<code>z<sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub> · v<sub>j</sub></code>.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{v}_{${idx}} = ${fmtVec(v)}}_{\\text{this arrow}}`,
+					formulaLatex:
+						`\\mathbf{v}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^V`,
+					unicode:
+						`v_${idx} = ${fmtVecPlain(v)} = x_${idx} · W^V`,
+					editHint: editHint(`x_${idx} (input)`, `tokens[${idx-1}].v`),
+					desc:
+						`Stored in <code>_allVals[${idx-1}]</code> (= <code>set.tokens[${idx-1}].v</code>). ` +
+						`Edit it and every z<sub>i</sub> (for all i = 0..n-1) recomputes — v<sub>${idx}</sub> is multiplied by every row of the α-matrix.`,
 				};
 
 			case 'sa-z':
 				if (!z || !isFinite(z[0]) || !isFinite(z[1])) {
 					return bail(`z_{${idx}} unavailable`);
 				}
-				// Spell out the full z_i = Σ_j α_ij · v_j computation.
-				// matrix[i][j] is the weight from query_i to key_j; column j
-				// corresponds to token (j+1) (since there's no k_it/v_it,
-				// columns are 0-indexed into _allKeys/_allVals). The matching
-				// value is _allVals[j] (= v_{j+1}).
+				// Pull the full row from the α-matrix and every v_j; build
+				// the explicit sum AND a per-term breakdown table. The table
+				// is what makes "where does this 57% come from" answerable.
 				const M = ATTN_2D.matrix;
 				if (!Array.isArray(M) || idx >= M.length) {
 					return bail('matrix not ready');
 				}
 				const row = M[idx] || [];
-				const terms = [];
+
+				// Per-term breakdown: for each j, list α, v, α·v.
+				// The html breakdown goes in `breakdown` (rendered as raw
+				// HTML into the tt-breakdown box). The LaTeX version goes
+				// in concreteLatex underbraced.
+				let alphaStr = '', vStr = '', avStr = '';
+				const tableRows = [];
+				let sumX = 0, sumY = 0;
 				for (let j = 0; j < row.length; j++) {
 					const a = row[j];
 					if (!isFinite(a)) continue;
 					const vj = ATTN_2D._allVals[j];
 					const kn = ATTN_TOKENS[j + 1] ? ATTN_TOKENS[j + 1].name : `t${j+1}`;
-					if (!vj || !isFinite(vj[0])) {
-						terms.push(`${(a*100).toFixed(1)}\\%\\,(\\text{no }\\mathbf{v}_{${j+1}})`);
-					} else {
-						terms.push(`${(a*100).toFixed(1)}\\%\\,` +
-							`\\cdot\\,\\underbrace{[${vj[0].toFixed(2)},${vj[1].toFixed(2)}]}_{\\mathbf{v}_{${j+1}}\\text{ (“${kn}”)}}`);
+					const aPct = (a * 100).toFixed(1);
+					if (!vj || !isFinite(vj[0]) || !isFinite(vj[1])) {
+						alphaStr += `\\alpha_{${idx},${j+1}}\\,(${aPct}\\%)\\;+\\;`;
+						tableRows.push(
+							`<tr><td>j=${j+1} (${kn})</td>` +
+							`<td class="num">${aPct}%</td>` +
+							`<td class="num">n/a</td>` +
+							`<td class="num">n/a</td></tr>`);
+						continue;
 					}
+					const av = [a * vj[0], a * vj[1]];
+					sumX += av[0]; sumY += av[1];
+					alphaStr += `\\underbrace{${aPct}\\%}_{\\alpha_{${idx},${j+1}}}\\cdot\\underbrace{\\mathbf{v}_{${j+1}}}_{\\text{“${kn}”}}\\;+\\;`;
+					vStr += `${vj[0].toFixed(2)},${vj[1].toFixed(2)}\\;\\;`;
+					avStr += `${av[0].toFixed(2)},${av[1].toFixed(2)}\\;\\;`;
+					tableRows.push(
+						`<tr>` +
+							`<td>j=${j+1} (${kn})</td>` +
+							`<td class="pct">${aPct}%</td>` +
+							`<td class="num">[${vj[0].toFixed(2)}, ${vj[1].toFixed(2)}]</td>` +
+							`<td class="num">[${av[0].toFixed(2)}, ${av[1].toFixed(2)}]</td>` +
+						`</tr>`);
 				}
-				const sumText = terms.length
-					? terms.join('\\;+\\;')
-					: '\\text{(no contributing keys)}';
+				// Strip trailing +\\;
+				alphaStr = alphaStr.replace(/\\;\\+\\;\;$/, '');
+				if (!alphaStr) alphaStr = '\\text{(no contributing keys)}';
+
+				// The sum row at the bottom — compare to z so the user can
+				// see "yes, these pieces DO add up to the displayed z".
+				const sumOk = Math.abs(sumX - z[0]) < 0.005 && Math.abs(sumY - z[1]) < 0.005;
+				const sumXstr = sumX.toFixed(2);
+				const sumYstr = sumY.toFixed(2);
+				const tableHTML =
+					`<table>` +
+						`<thead><tr>` +
+							`<th style="text-align:left">key j</th>` +
+							`<th style="text-align:right">α<sub>${idx},j</sub></th>` +
+							`<th style="text-align:right">v<sub>j</sub></th>` +
+							`<th style="text-align:right">α·v</th>` +
+						`</tr></thead>` +
+						`<tbody>${tableRows.join('')}` +
+						`<tr class="total"><td>sum</td>` +
+							`<td class="num">${(row.reduce((a,b)=>a+(isFinite(b)?b:0),0)*100).toFixed(1)}%</td>` +
+							`<td></td>` +
+							`<td class="num">[${sumXstr}, ${sumYstr}]` +
+								(sumOk ? ' ✓' : ' ✗ mismatch') + `</td>` +
+						`</tr>` +
+						`<tr class="total"><td>displayed z<sub>${sub}</sub></td>` +
+							`<td></td><td></td>` +
+							`<td class="num">[${z[0].toFixed(2)}, ${z[1].toFixed(2)}]</td>` +
+						`</tr>` +
+					`</tbody></table>`;
+
+				// Vars legend for the z panel — list everything involved.
+				const varsZ = `<b>Variables in this panel:</b> ` +
+					`z<sub>${sub}</sub> (this arrow, orange) — output vector · ` +
+					`α<sub>${idx},j</sub> — attention weights (row ${idx} of α-matrix, step 10) · ` +
+					`v<sub>j</sub> — value vectors (green arrows in OTHER panels) · ` +
+					`q<sub>${idx}</sub> — this token's query (red arrow in THIS panel)`;
+
 				return {
-					name: `z of “${tName}”`,
-					intuition: `The <b>output</b> for token <b>${tName}</b> — a weighted blend of every value vector, scaled by the attention weights in row ${idx} of the α-matrix.`,
+					name: `z${isIt ? '\\text{ it}' : '_' + idx} — output for “${tName}”`,
+					vars: varsZ,
+					intuition:
+						`<b>z<sub>${sub}</sub></b> is <b>${tName}</b>'s final output — a weighted blend of every value vector. ` +
+						`The weights come from row ${idx} of the α-matrix (one softmax distribution per token). ` +
+						`Each v<sub>j</sub> is multiplied by α<sub>${idx},j</sub> and summed — see the table below for the per-piece contribution.`,
 					concreteLatex:
-						`\\underbrace{\\mathbf{z}_{${isIt ? '\\text{it}' : idx}} = ${fmtVec(z)}}_{\\text{output for “${tName}”}}` +
-						`\\;=\\;\\underbrace{${sumText}}_{\\text{weighted values}}`,
+						`\\underbrace{\\mathbf{z}_{${sub}} = ${fmtVec(z)}}_{\\text{this arrow}}` +
+						`\\;=\\;` + alphaStr,
 					formulaLatex:
-						isIt
-							? '\\mathbf{z}_{\\text{it}} \\;=\\; \\sum_{j=1}^{L} \\alpha_{\\text{it},j}\\, \\mathbf{v}_j'
-							: `\\mathbf{z}_{${idx}} \\;=\\; \\sum_{j=1}^{L} \\alpha_{${idx},j}\\, \\mathbf{v}_j`,
+						`\\mathbf{z}_{${sub}} \\;=\\; \\sum_{j=1}^{L} \\alpha_{${idx},j}\\, \\mathbf{v}_j ` +
+						`\\;=\\; \\sum_{j=1}^{L} \\text{softmax}\\!\\left(\\frac{\\mathbf{q}_{${sub}} \\cdot \\mathbf{k}_j}{\\sqrt{d_k}}\\right) \\mathbf{v}_j`,
 					unicode:
-						(isIt ? 'z_it' : `z_${idx}`) +
-						` = [${z[0].toFixed(2)}, ${z[1].toFixed(2)}]  =  ` +
+						`z_${sub} = [${z[0].toFixed(2)}, ${z[1].toFixed(2)}] = ` +
 						row.map((a, j) => `${(a*100).toFixed(0)}%·v${j+1}`).join(' + '),
-					desc: `Row ${idx} of the α-matrix (the weights for <b>${tName}</b>'s query) gives each v<sub>j</sub> its coefficient. The result is a point inside the convex hull of the v's.`,
+					breakdown: tableHTML,
+					editHint:
+						`<b>✎ Editable inputs</b> (each one re-runs the full α → z pipeline on every keystroke):` +
+						`<ul style="margin:4px 0 0 18px; padding:0">` +
+							`<li><code>x<sub>${sub}</sub></code> (via q<sub>${sub}</sub> = x · W<sup>Q</sup> if you edit q, or directly) — changes q and every α<sub>${idx},j</sub></li>` +
+							`<li><code>x<sub>j</sub></code> for any other token — changes k<sub>j</sub> or v<sub>j</sub>, which affects every α row and every z</li>` +
+						`</ul>`,
+					desc:
+						`The percentage on each row is <b>α<sub>${idx},j</sub></b> = softmax-score of ` +
+						`<code>q<sub>${sub}</sub> · k<sub>j</sub> / √d<sub>k</sub></code>. ` +
+						`Multiply it by v<sub>j</sub> to get that piece's contribution to z<sub>${sub}</sub>. ` +
+						`Sum across all j — the bottom-right cell shows the sum, and the next row shows the displayed z. ` +
+						`If they match (✓) the breakdown is consistent with what you see on screen.`,
 				};
 		}
 		// Unknown key — don't let the caller crash
@@ -3887,18 +4009,42 @@ const AttentionAnatomy = {
 		if (this._tipContentKey !== contentKey) {
 			this._tipContentKey = contentKey;
 
+			// === Build the tooltip body ===
+			// Sections in display order:
+			//   1. tt-name     — bold header
+			//   2. tt-vars     — variable legend (which letters mean what)
+			//   3. tt-intuition — plain-language "what this means"
+			//   4. tt-concrete  — concrete values (Temml math)
+			//   5. tt-formula   — general formula (Temml math)
+			//   6. tt-breakdown — for z: per-key α · v table with percentages
+			//   7. tt-edit      — hint about which field to edit
+			//   8. tt-desc      — closing plain-language explanation
+			const html = [];
+			html.push('<div class="tt-name"></div>');
+			if (info.vars)     html.push('<div class="tt-vars"></div>');
+			html.push('<div class="tt-intuition"></div>');
+			html.push(`<div class="tt-concrete">$$ ${info.concreteLatex} $$</div>`);
 			const formulaHtml = TEMML_RENDERED[key] || `$$ ${info.formulaLatex} $$`;
+			html.push(`<div class="tt-formula">${formulaHtml}</div>`);
+			if (info.breakdown) html.push('<div class="tt-breakdown"></div>');
+			if (info.editHint)  html.push('<div class="tt-edit"></div>');
+			html.push('<div class="tt-desc"></div>');
+			tip.innerHTML = html.join('');
 
-			tip.innerHTML =
-				'<div class="tt-name"></div>' +
-				'<div class="tt-intuition"></div>' +
-				`<div class="tt-concrete">$$ ${info.concreteLatex} $$</div>` +
-				`<div class="tt-formula">${formulaHtml}</div>` +
-				'<div class="tt-desc"></div>';
-
-			tip.querySelector('.tt-name').textContent    = info.name;
-			tip.querySelector('.tt-intuition').innerHTML = info.intuition || '';
-			tip.querySelector('.tt-desc').innerHTML      = info.desc;
+			tip.querySelector('.tt-name').textContent = info.name;
+			const intsEl = tip.querySelector('.tt-intuition');
+			intsEl.innerHTML = info.intuition || '';
+			const descEl = tip.querySelector('.tt-desc');
+			descEl.innerHTML = info.desc || '';
+			if (info.vars) {
+				tip.querySelector('.tt-vars').innerHTML = info.vars;
+			}
+			if (info.editHint) {
+				tip.querySelector('.tt-edit').innerHTML = info.editHint;
+			}
+			if (info.breakdown) {
+				tip.querySelector('.tt-breakdown').innerHTML = info.breakdown;
+			}
 
 			// Show BEFORE rendering so MathML gets real layout dimensions
 			// (a display:none element would still render, but measuring
