@@ -1946,8 +1946,15 @@ const AttentionAnatomy = {
 		const el = document.getElementById('attn-section-intuition');
 		if (!el) return;
 		const fn = ATTN_INTUITIONS[data.intuition];
-		if (fn) el.innerHTML = fn();
-		else el.innerHTML = '';
+		if (fn) {
+			const html = fn();
+			el.innerHTML = html;
+			// Hide if the intuition is empty/blank
+			el.style.display = (html && html.trim()) ? '' : 'none';
+		} else {
+			el.innerHTML = '';
+			el.style.display = 'none';
+		}
 	},
 
 	// ─── Live-editable values ──────────────────────────────────────

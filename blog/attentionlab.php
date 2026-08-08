@@ -370,12 +370,11 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 #attn-bar-plots-svg {
 	width: 100%;
 	height: 110px;
-	display: block;
-	background: transparent;
+	display: none;  /* Hidden by default — JS shows it only when bars exist */
+	background: var(--mn-surface, #fff);
 	margin-top: 4px;
 	border: 1px solid var(--mn-border, #e2e8f0);
 	border-radius: 8px;
-	background: var(--mn-surface, #fff);
 }
 
 /* Live debug panel — shows hover state, step, tokens, errors.
