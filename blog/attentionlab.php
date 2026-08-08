@@ -130,7 +130,7 @@ This is the **mechanical truth** of attention. Every other interpretation — th
 	box-shadow: 0 6px 20px rgba(15, 23, 42, 0.20);
 	z-index: 10000;
 	pointer-events: none;
-	max-width: calc(100vw - 32px);
+	max-width: 600px;
 	width: max-content;
 	min-width: 280px;
 	color: var(--mn-text, #1e293b);
@@ -436,16 +436,6 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	font-family: inherit;
 }
 
-.attn-causal-control {
-	margin: 2px 0 6px 8px;
-	font-size: 0.85rem;
-	color: var(--mn-text, #1e293b);
-}
-.attn-causal-control label {
-	cursor: pointer;
-	user-select: none;
-}
-
 /* Fade transition when changing steps — gives a brief flash instead
    of an instant content swap, which makes the change feel intentional. */
 .attn-anatomy-equation,
@@ -725,12 +715,6 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 		<span class="label">Example</span>
 		<select id="attn-set-select">
 		</select>
-	</div>
-
-	<!-- Causal masking: when ON, each token can only attend to tokens at
-	     or before its own position. Matters for the full-matrix view. -->
-	<div class="attn-causal-control">
-		<label><input type="checkbox" id="attn-causal"> Causal mask</label>
 	</div>
 
 	<!-- Grid: equation spans full width on top, then computation (left) +

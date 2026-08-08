@@ -309,23 +309,36 @@ const ATTN_2D = {
 	exampleIdx: 0,                            // current predefined set
 	d_k: 2,
 	numTokens: 2,
-	causal: false,
 
 	// ── Demo data for the "learnable projections" step ────────────
-	demo: (function() {
-		const x   = [0.80, 0.60];
-		const W_Q = [[1.0, 0.0], [0.0, 1.0]];
-		const W_K = [[0.0, 1.0], [-1.0, 0.0]];
-		const W_V = [[1.0, 0.5], [0.0, 1.0]];
-		const q = matMul(W_Q, x);
-		const k = matMul(W_K, x);
-		const v = matMul(W_V, x);
-		return {
-			x: x, W_Q: W_Q, W_K: W_K, W_V: W_V,
-			q: q, k: k, v: v,
-			qk: q[0]*k[0] + q[1]*k[1]
-		};
-	})(),
+	// Static W matrices (identity / 90° rotation / shear) that make the
+	// concept visually obvious. The input x is RECOMPUTED from the first
+	// token of the current example in setExample() so switching sets
+	// changes what the first slide shows.
+	demo: {
+		x:  [0.80, 0.60],
+		W_Q: [[1.0, 0.0], [0.0, 1.0]],
+		W_K: [[0.0, 1.0], [-1.0, 0.0]],
+		W_V: [[1.0, 0.5], [0.0, 1.0]],
+		q:  [0.80, 0.60],
+		k:  [-0.60, 0.80],
+		v:  [1.10, 0.60],
+		qk: -0.12
+	},
+
+	// Recompute the demo x from the first token of the current example,
+	// so the projections step changes when the user switches examples.
+	_updateDemo: function() {
+		const set = ATTN_SETS[this.exampleIdx];
+		if (!set || !set.tokens[0]) return;
+		const tk = set.tokens[0];
+		// q = W^Q · x, so x = W^Q⁻¹ · q. W^Q is identity, so x = q.
+		this.demo.x = [ tk.q[0], tk.q[1] ];
+		this.demo.q = matMul(this.demo.W_Q, this.demo.x);
+		this.demo.k = matMul(this.demo.W_K, this.demo.x);
+		this.demo.v = matMul(this.demo.W_V, this.demo.x);
+		this.demo.qk = this.demo.q[0]*this.demo.k[0] + this.demo.q[1]*this.demo.k[1];
+	},
 
 	// Standard softmax: exp(s) / Σ. Causal mask zeroes out keys at
 	// positions > query position (only matters for the full-matrix view).
@@ -359,10 +372,7 @@ const ATTN_2D = {
 		const M = [], Z = [];
 		for (let i = 0; i < n; i++) {
 			const scores = keys.map(k => dot(queries[i], k) / this.sqrtDk);
-			let exps = scores.map(s => Math.exp(s));
-			if (this.causal) {
-				for (let j = i + 1; j < m - 1; j++) exps[j] = 0;
-			}
+			const exps = scores.map(s => Math.exp(s));
 			const sum = exps.reduce((a, b) => a + b, 0) || 1;
 			const row = exps.map(e => e / sum);
 			M.push(row);
@@ -409,6 +419,10 @@ const ATTN_2D = {
 		for (let i = 0; i < set.tokens.length; i++) {
 			ATTN_TOKENS[i + 1].name = set.tokens[i].name;
 		}
+		// Recompute the demo input x from the first token's q (since
+		// W^Q is identity in the demo, x = q). This makes the first
+		// slide change when the user switches examples.
+		this._updateDemo();
 		this.setNumTokens(this.numTokens);
 	}
 };
@@ -422,91 +436,91 @@ ATTN_2D.setExample(0);
 // `eqActive` lists the regions of the equation that should glow on this step.
 const ATTN_STEPS = [
 	{
-		title: 'The learnable projections W^Q, W^K, W^V',
+		title: 'The learnable projections $W^Q$, $W^K$, $W^V$',
 		computation: 'projections',
 		intuition: 'projections',
 		eqActive: [],
-		desc: 'Every token starts as the <b>same embedding vector</b> <b>x</b> (gray). Three <i>different</i> learned matrices — <b style="color:#ef4444">W^Q</b>, <b style="color:#2563eb">W^K</b>, <b style="color:#16a34a">W^V</b> — project x into three <i>different</i> 2D vectors: <b style="color:#ef4444">q</b>, <b style="color:#2563eb">k</b>, <b style="color:#16a34a">v</b>. This is <b>the</b> place where the model <i>learns</i>: these matrices are trained end-to-end so q, k, v end up playing their roles.',
+		desc: 'Every token starts as the <b>same embedding vector</b> <b>x</b> (gray). Three <i>different</i> learned matrices — <b style="color:#ef4444">W^Q</b>, <b style="color:#2563eb">W^K</b>, <b style="color:#16a34a">W^V</b> — project x into three <i>different</i> 2D vectors: <b style="color:#ef4444">q</b>, <b style="color:#2563eb">k</b>, <b style="color:#16a34a">v</b>. Hover any arrow for the W matrix and the resulting vector.',
 		mode: 'projections'
 	},
 	{
-		title: 'From embeddings to Q, K, V',
+		title: 'From embeddings to $q$, $k$, $v$',
 		computation: 'setup',
 		intuition: 'setup',
 		eqActive: [],
-		desc: 'Each token starts as an <b>embedding vector</b> <b>x</b>. Three learned projections turn it into the three vectors we will use in attention: the query <b style="color:#ef4444">q</b> (asks "what am I looking for?"), the key <b style="color:#2563eb">k</b> (advertises "here is what I contain"), and the value <b style="color:#16a34a">v</b> (carries the actual content).',
+		desc: 'The current example\'s tokens and their q/k/v vectors. Hover any arrow for the coordinates.',
 		mode: 'keys'
 	},
 	{
-		title: 'Element-wise product',
+		title: 'Element-wise product $q[d] \\cdot k_j[d]$',
 		computation: 'components',
 		intuition: 'components',
 		eqActive: ['dot'],
-		desc: 'The dot product is built from component products: <b>q[1]·k₁[1] + q[2]·k₁[2]</b>. Each product captures alignment along one axis. k₂ and k₃ are dimmed to focus on what is being computed for k₁.',
+		desc: 'The dot product is built from per-dimension products: $q[d] \\cdot k_j[d]$. For $d=1,2$ each token contributes two rectangles (one per axis). Same sign → positive (they agree on this axis); opposite sign → negative (disagree).',
 		mode: 'keys', highlightKey: 0
 	},
 	{
-		title: 'Sum: the dot product q · kⱼ',
+		title: 'Sum: the dot product $q \\cdot k_j$',
 		computation: 'dot',
 		intuition: 'dot',
 		eqActive: ['dot'],
-		desc: 'Add the components for each key: <b>q·k₁</b> = 0.900 + 0.180 = <b>1.080</b>. Positive score = same direction; negative = opposite. k₁ wins because it points closest to q.',
+		desc: 'Add the two per-dimension products for each key. Positive score = same direction as $q$; negative = opposite. Hover any arc to see the exact score and resulting weight.',
 		mode: 'keys'
 	},
 	{
-		title: 'Scale by 1/√d_k',
+		title: 'Scale by $1/\\sqrt{d_k}$',
 		computation: 'scaled',
 		intuition: 'scaled',
 		eqActive: ['sqrt'],
-		desc: 'Divide each score by √2 ≈ 1.414. This keeps the variance of scores near <b>1</b> regardless of d<sub>k</sub> — without it, softmax in a real d<sub>k</sub>=64 Transformer would saturate to a hard one-hot.',
+		desc: 'Divide each score by $\\sqrt{2} \\approx 1.414$. Keeps the variance of scores near <b>1</b> regardless of $d_k$ — without it, softmax in a real $d_k$=64 Transformer would saturate to a hard one-hot.',
 		mode: 'keys'
 	},
 	{
-		title: 'Exponentiate: eˢᶜᵒʳᵉ',
+		title: 'Exponentiate: $e^{\\text{score}}$',
 		computation: 'exps',
 		intuition: 'exps',
 		eqActive: ['exp'],
-		desc: 'Apply exp() to each scaled score. The <b>dashed ghost bars</b> are the scaled scores (negative ones hang below the line); the <b>solid bars</b> are the exp values (all positive). Positive scores grow, negative scores flip above zero and shrink — the biggest input starts to dominate.',
+		desc: 'Apply $\\exp()$ to each scaled score. <b>Dashed ghost bars</b> = scaled scores (negative ones hang below the line); <b>solid bars</b> = $\\exp$ values (all positive). Positive scores grow, negative scores flip above zero and shrink.',
 		mode: 'keys'
 	},
 	{
-		title: 'Normalize (softmax)',
+		title: 'Normalize: $\\alpha_j = e^{s_j} \\big/ \\sum_n e^{s_n}$',
 		computation: 'weights',
 		intuition: 'weights',
 		eqActive: ['denom'],
-		desc: 'Divide each exp(score) by the <b>sum</b> of all three. The numbers now sum to exactly 1 — a probability distribution. These are the <b>attention weights</b> α<sub>ij</sub>: α₁=60.2%, α₂=24.7%, α₃=15.1%.',
+		desc: 'Divide each $\\exp(\\text{score})$ by the sum. The numbers now sum to exactly 1 — a probability distribution. These are the <b>attention weights</b> $\\alpha_j$.',
 		mode: 'keys'
 	},
 	{
-		title: 'Switch to value vectors',
+		title: 'Switch to value vectors $v_j$',
 		computation: 'values',
 		intuition: 'values',
 		eqActive: ['value'],
-		desc: 'Drop the keys. Bring in the <b>Value</b> vectors <b style="color:#16a34a">v₁</b>, <b style="color:#15803d">v₂</b>, <b style="color:#166534">v₃</b> (green) — they live in a separate subspace and carry the actual semantic content. The attention weights carry over unchanged.',
+		desc: 'Drop the keys. Bring in the <b>Value</b> vectors $v_j$ — they carry the actual semantic content. The attention weights carry over unchanged.',
 		mode: 'values'
 	},
 	{
-		title: 'Weighted sum → output z',
+		title: 'Weighted sum: $z = \\sum_j \\alpha_j \\, v_j$',
 		computation: 'output',
 		intuition: 'output',
 		eqActive: ['sum', 'alpha', 'value'],
-		desc: 'Compute <b>z = α₁v₁ + α₂v₂ + α₃v₃</b>. Each value is scaled by its weight (the dark-green dashed arrows), then tip-to-tail added together (gray dashed chain). The final <b style="color:#f59e0b">z</b> (orange) lives <b>inside the convex hull</b> of v₁, v₂, v₃ — attention can only interpolate.',
+		desc: 'Each value is scaled by its weight, then tip-to-tail added. The final $z$ lives <b>inside the convex hull</b> of the $v_j$ — attention can only interpolate.',
 		mode: 'output'
 	},
 	{
-		title: 'The full attention matrix',
+		title: 'The full attention matrix $\\alpha_{ij}$',
 		computation: 'matrix',
 		intuition: 'matrix',
 		eqActive: ['alpha'],
-		desc: 'Every token is a <b>query</b> AND a <b>key</b>. The full <b>α-matrix</b> shows how every token attends to every other token. Each row is one query\'s softmax distribution over all keys. The diagonal is usually strong — tokens tend to attend to themselves.',
+		desc: 'Every token is a <b>query</b> AND a <b>key</b>. The full $\\alpha$-matrix shows how every token attends to every other. Each row = one query\'s softmax distribution over all keys. Hover any cell for the exact score and weight.',
 		mode: 'matrix'
 	},
 	{
-		title: 'Self-attention: every token gets its own z',
+		title: 'Self-attention: $z_i = \\sum_j \\alpha_{ij} \\, v_j$',
 		computation: 'selfattn',
 		intuition: 'selfattn',
 		eqActive: ['sum', 'alpha', 'value'],
-		desc: 'Apply the full α-matrix to the values: <b>z<sub>i</sub> = Σ<sub>j</sub> α[i][j] · v<sub>j</sub></b>. Each token now has its <b>own output</b> — a weighted blend of all the values, according to its own attention pattern. This is what a Transformer layer actually computes.',
+		desc: 'Every token gets its <b>own output</b> $z_i$ — a weighted blend of all values, according to its own attention row. This is what a Transformer layer actually computes.',
 		mode: 'selfattn'
 	}
 ];
@@ -1017,19 +1031,6 @@ const AttentionAnatomy = {
 			});
 		}
 
-		// Causal-mask toggle. For the single-query demo (always "it",
-		// always the last token) this is a no-op — every key position
-		// is ≤ query position. The flag is read by the full attention
-		// matrix and self-attention views when they're enabled.
-		const causalCb = document.getElementById('attn-causal');
-		if (causalCb) {
-			causalCb.addEventListener('change', () => {
-				ATTN_2D.causal = causalCb.checked;
-				ATTN_2D.recomputeWeights();
-				this.render();
-			});
-		}
-
 		// Pre-render the vector formula LaTeX to MathML via Temml, once.
 		// The hover tooltip then just swaps innerHTML — instant, no
 		// re-render cost per hover.
@@ -1167,25 +1168,28 @@ const AttentionAnatomy = {
 				const nq = norm(q), nk = norm(k);
 				const cosT = Math.max(-1, Math.min(1, (q[0]*k[0] + q[1]*k[1]) / (nq * nk)));
 				const deg = Math.round(Math.acos(cosT) * 180 / Math.PI);
+				const score = q[0]*k[0] + q[1]*k[1];
+				const scaled = score / Math.sqrt(ATTN_2D.d_k);
+				const w = (ATTN_2D.weights[idx] || 0);
 
 				let intuition;
 				if (cosT > 0.85) {
-					intuition = `Almost <b>exactly parallel</b> to the query — “${t}” is basically what “it” is looking for, so the score $q \\cdot k$ is large and positive and it <b>wins nearly all the attention</b>.`;
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” is almost parallel to the query — large positive score, winner.`;
 				} else if (cosT > 0.3) {
-					intuition = `Points <b>roughly the same way</b> as the query — “${t}” partially matches the search and earns a positive score.`;
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” points roughly the same way — positive score, partial match.`;
 				} else if (cosT > -0.3) {
-					intuition = `Roughly at <b>right angles</b> to the query — “${t}” shares almost nothing with the search, so $q \\cdot k \\approx 0$ and it gets <b>little attention</b>.`;
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” is near right angles — near-zero score, near-uniform share.`;
 				} else {
-					intuition = `Points <b>the opposite way</b> from the query — “${t}” contradicts the search, so the score is strongly negative and it gets <b>almost no attention</b>.`;
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” points the opposite way — negative score, almost no weight.`;
 				}
 
 				return {
-					name: `angle between q (“it”) and k${idx+1} (“${t}”)`,
+					name: `angle: q (“it”) ↔ k${idx+1} (“${t}”)`,
 					intuition,
-					concreteLatex: `\\underbrace{\\cos\\theta = ${cosT.toFixed(3)}}_{\\theta \\approx ${deg}^\\circ}`,
+					concreteLatex: `\\underbrace{\\theta \\approx ${deg}^\\circ}_{\\cos\\theta \\approx ${cosT.toFixed(3)}}`,
 					formulaLatex: '\\cos\\theta = \\dfrac{q \\cdot k_j}{\\lVert q \\rVert \\, \\lVert k_j \\rVert}',
-					unicode: `cos θ = q·k / (‖q‖·‖k‖)  →  θ ≈ ${deg}°`,
-					desc: `The angle is just a geometric picture of the attention score: $q \\cdot k_j = \\lVert q \\rVert \\lVert k_j \\rVert \\cos\\theta$. Small angle $\\to$ large positive score, right angle $\\to$ zero, obtuse $\\to$ negative.`
+					unicode: `cos θ ≈ ${cosT.toFixed(2)}  →  θ ≈ ${deg}°`,
+					desc: `Score: $q \\cdot k_{${idx+1}} = (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${score.toFixed(3)}$. Scaled by $\\sqrt{d_k}$: ${scaled.toFixed(3)}. After softmax: $\\alpha_{${idx+1}} = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\%$.`
 				};
 			}
 		}
@@ -1338,16 +1342,19 @@ const AttentionAnatomy = {
 				};
 			}
 			case 'comprect': {
-				const k = ATTN_2D.keys[0];
-				const d = idx + 1;                       // 1-based dimension
-				const a = q[d - 1], b = k[d - 1];
+				const j = Math.floor(idx / 2);   // key index
+				const d = idx % 2;                // dimension (0 or 1)
+				const kj = ATTN_2D.keys[j];
+				const a = q[d], b = kj[d];
+				const tk = ATTN_TOKENS[j + 1].name;
+				const dim = d + 1;
 				return {
-					name: `q[${d}] · k₁[${d}]  (dimension ${d})`,
-					intuition: `The <b>area of this rectangle</b> is one element-wise product: ${fmt(a)} × ${fmt(b)}. Same sign → positive (they agree on this axis).`,
+					name: `q[${dim}] · k${j+1}[${dim}]  (${tk}, dim ${dim})`,
+					intuition: `The <b>area of this rectangle</b> is the per-dimension product ${fmt(a)} × ${fmt(b)}. Same sign → positive; opposite → negative.`,
 					concreteLatex: `(${fmt(a)})(${fmt(b)}) = ${(a * b).toFixed(3)}`,
 					formulaLatex: VF.comprect.formula,
-					unicode: `q[${d}]·k₁[${d}] = ${(a * b).toFixed(3)}`,
-					desc: 'The dot product is a sum of these per-dimension products: $q \\cdot k_1 = q[1]\\,k_1[1] + q[2]\\,k_1[2]$.'
+					unicode: `q[${dim}]·k${j+1}[${dim}] = ${(a * b).toFixed(3)}`,
+					desc: `The dot product for key ${j+1} is the sum of its two rectangles: $q \\cdot k_{${j+1}} = q[1]\\,k_{${j+1}}[1] + q[2]\\,k_{${j+1}}[2] = ${(a*b).toFixed(3)} + ${(q[1-d]*kj[1-d]).toFixed(3)} = ${ATTN_2D.scores[j].toFixed(3)}$.`
 				};
 			}
 			case 'proj': {
@@ -1517,7 +1524,7 @@ const AttentionAnatomy = {
 		const titleEl = document.getElementById('attn-anatomy-step-title');
 		const numEl   = document.getElementById('attn-anatomy-step-num');
 		if (numEl)   numEl.textContent   = `Step ${this.step + 1}`;
-		if (titleEl) titleEl.textContent = `— ${data.title}`;
+		if (titleEl) titleEl.innerHTML    = `— ${data.title}`;
 
 		// Update each panel
 		this.renderEquation(data);
@@ -2044,46 +2051,92 @@ const AttentionAnatomy = {
 		});
 	},
 
+	// Numerical value labels next to each key, so the score / scaled /
+	// exp / weight is readable at a glance. Positioned just inside the
+	// arrowhead so they don't collide with the tip label.
+	_addValueLabels2D: function(labelsG, comp) {
+		const NS = this._SVG_NS;
+		let label = null;
+		if (comp === 'dot' || comp === 'components') {
+			label = (j) => `s = ${ATTN_2D.scores[j].toFixed(3)}`;
+		} else if (comp === 'scaled') {
+			label = (j) => `s/√d = ${ATTN_2D.scaled[j].toFixed(3)}`;
+		} else if (comp === 'exps') {
+			label = (j) => `eˢ = ${ATTN_2D.exps[j].toFixed(3)}`;
+		} else if (comp === 'weights') {
+			label = (j) => `α = ${(ATTN_2D.weights[j]*100).toFixed(1)}%`;
+		}
+		if (!label) return;
+
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			// Position at the shaft midpoint, offset toward the tip
+			// so it sits between the origin and the tip label.
+			const mx = 0.62 * k[0], my = 0.62 * k[1];
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', mx);
+			t.setAttribute('y', -my + 0.10);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('dominant-baseline', 'middle');
+			t.setAttribute('fill', '#fff');
+			t.setAttribute('stroke', '#fff');
+			t.setAttribute('stroke-width', '0.012');
+			t.setAttribute('paint-order', 'stroke');
+			t.setAttribute('font-size', '0.07');
+			t.setAttribute('font-weight', 'bold');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = label(j);
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+
+			const txt = document.createElementNS(NS, 'text');
+			txt.setAttribute('x', mx);
+			txt.setAttribute('y', -my + 0.10);
+			txt.setAttribute('text-anchor', 'middle');
+			txt.setAttribute('dominant-baseline', 'middle');
+			txt.setAttribute('fill', color);
+			txt.setAttribute('font-size', '0.07');
+			txt.setAttribute('font-weight', 'bold');
+			txt.setAttribute('font-family', 'Inter, sans-serif');
+			txt.textContent = label(j);
+			txt.style.pointerEvents = 'none';
+			labelsG.appendChild(txt);
+		});
+	},
+
 	// Step "components": q[d]·k[d] as rectangle AREAS — one rectangle
 	// per dimension (area = product), plus dashed drop-lines from the
 	// highlighted key tip and the query tip down to each axis.
 	_drawComponents2D: function(constructionG, labelsG, hi) {
-		if (hi === undefined || !ATTN_2D.keys[hi]) return;
 		const NS = this._SVG_NS;
 		const q = ATTN_2D.q;
-		const k = ATTN_2D.keys[hi];
-		const color = ATTN_TOKENS[hi + 1].color;
-		const px = (q[0] * k[0]).toFixed(3);
-		const py = (q[1] * k[1]).toFixed(3);
+		const keys = ATTN_2D.keys;
 
-		// data coords, y up → SVG y is negated
-		const addRect = (x0, y0, x1, y1, label, dim) => {
+		const addRect = (x0, y0, x1, y1, color, label, idx, dim) => {
 			const rect = document.createElementNS(NS, 'rect');
-			rect.setAttribute('x',  Math.min(x0, x1));
+			const rx = Math.min(x0, x1), ry = Math.min(y0, y1);
+			rect.setAttribute('x',  rx);
 			rect.setAttribute('y',  -Math.max(y0, y1));
 			rect.setAttribute('width',  Math.abs(x1 - x0));
 			rect.setAttribute('height', Math.abs(y1 - y0));
 			rect.setAttribute('fill', color);
-			rect.setAttribute('fill-opacity', '0.10');
+			rect.setAttribute('fill-opacity', '0.12');
 			rect.setAttribute('stroke', color);
-			rect.setAttribute('stroke-opacity', '0.45');
+			rect.setAttribute('stroke-opacity', '0.55');
 			rect.setAttribute('stroke-width', '0.008');
 			rect.setAttribute('stroke-dasharray', '0.03 0.03');
 			rect.style.pointerEvents = 'all';
 			rect.style.cursor = 'help';
 			constructionG.appendChild(rect);
-			rect.addEventListener('mouseenter', (e) => this._showTooltip('comprect', dim, e.clientX, e.clientY));
-			rect.addEventListener('mousemove',  (e) => this._showTooltip('comprect', dim, e.clientX, e.clientY));
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('comprect', idx * 2 + dim, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('comprect', idx * 2 + dim, e.clientX, e.clientY));
 			rect.addEventListener('mouseleave', () => this._hideTooltip());
 			if (label) {
 				const t = document.createElementNS(NS, 'text');
-				t.setAttribute('x', Math.min(x0, x1) + 0.05);
-				// Caption ABOVE the rect (not inside): the rectangles sit
-				// right where the angle arcs + their θ labels live, so an
-				// in-rect label would collide with them.
-				t.setAttribute('y', -Math.max(y0, y1) - 0.055);
+				t.setAttribute('x', rx + 0.03);
+				t.setAttribute('y', -Math.max(y0, y1) - 0.04);
 				t.setAttribute('fill', color);
-				t.setAttribute('font-size', '0.085');
+				t.setAttribute('font-size', '0.075');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = label;
 				t.style.pointerEvents = 'none';
@@ -2091,31 +2144,60 @@ const AttentionAnatomy = {
 			}
 		};
 
-		// Dim-1 product: width q[1], height k[1]  →  area = q[1]·k[1]
-		addRect(0, 0, q[0], k[0], `q₁·k₁ = ${px}`, 0);
-		// Dim-2 product: width q[2], height k[2]  →  area = q[2]·k[2]
-		addRect(0, 0, q[1], k[1], `q₂·k₂ = ${py}`, 1);
+		// All keys: 2 rectangles each (one per dimension). The product
+		// of width × height is q[d] · k_j[d]. The sum across d=1,2 gives
+		// the dot product for key j.
+		keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const isHi = (j === hi);
+			const op = isHi ? '0.18' : '0.08';
+			const px = (q[0] * k[0]).toFixed(3);
+			const py = (q[1] * k[1]).toFixed(3);
+			const dim1 = document.createElementNS(NS, 'rect');
+			dim1.setAttribute('x',  Math.min(0, q[0]));
+			dim1.setAttribute('y',  -Math.max(0, k[0]));
+			dim1.setAttribute('width',  Math.abs(q[0]));
+			dim1.setAttribute('height', Math.abs(k[0]));
+			dim1.setAttribute('fill', color);
+			dim1.setAttribute('fill-opacity', op);
+			dim1.setAttribute('stroke', color);
+			dim1.setAttribute('stroke-opacity', isHi ? '0.6' : '0.35');
+			dim1.setAttribute('stroke-width', '0.008');
+			dim1.setAttribute('stroke-dasharray', '0.03 0.03');
+			dim1.style.pointerEvents = 'all'; dim1.style.cursor = 'help';
+			constructionG.appendChild(dim1);
+			dim1.addEventListener('mouseenter', (e) => this._showTooltip('comprect', j * 2 + 0, e.clientX, e.clientY));
+			dim1.addEventListener('mousemove',  (e) => this._showTooltip('comprect', j * 2 + 0, e.clientX, e.clientY));
+			dim1.addEventListener('mouseleave', () => this._hideTooltip());
 
-		// Drop-lines from the highlighted key tip and the query tip to
-		// each axis, so you can read off the components being multiplied.
-		const drop = (tip, vertical) => {
-			const line = document.createElementNS(NS, 'line');
-			if (vertical) {
-				line.setAttribute('x1', tip[0]); line.setAttribute('y1', 0);
-				line.setAttribute('x2', tip[0]); line.setAttribute('y2', -tip[1]);
-			} else {
-				line.setAttribute('x1', 0);        line.setAttribute('y1', -tip[1]);
-				line.setAttribute('x2', tip[0]);   line.setAttribute('y2', -tip[1]);
-			}
-			line.setAttribute('stroke', color);
-			line.setAttribute('stroke-opacity', '0.55');
-			line.setAttribute('stroke-width', '0.008');
-			line.setAttribute('stroke-dasharray', '0.025 0.025');
-			line.style.pointerEvents = 'none';
-			constructionG.appendChild(line);
-		};
-		drop(k, true);  drop(k, false);
-		drop(q, true);  drop(q, false);
+			const dim2 = document.createElementNS(NS, 'rect');
+			dim2.setAttribute('x',  Math.min(0, q[1]));
+			dim2.setAttribute('y',  -Math.max(0, k[1]));
+			dim2.setAttribute('width',  Math.abs(q[1]));
+			dim2.setAttribute('height', Math.abs(k[1]));
+			dim2.setAttribute('fill', color);
+			dim2.setAttribute('fill-opacity', op);
+			dim2.setAttribute('stroke', color);
+			dim2.setAttribute('stroke-opacity', isHi ? '0.6' : '0.35');
+			dim2.setAttribute('stroke-width', '0.008');
+			dim2.setAttribute('stroke-dasharray', '0.03 0.03');
+			dim2.style.pointerEvents = 'all'; dim2.style.cursor = 'help';
+			constructionG.appendChild(dim2);
+			dim2.addEventListener('mouseenter', (e) => this._showTooltip('comprect', j * 2 + 1, e.clientX, e.clientY));
+			dim2.addEventListener('mousemove',  (e) => this._showTooltip('comprect', j * 2 + 1, e.clientX, e.clientY));
+			dim2.addEventListener('mouseleave', () => this._hideTooltip());
+
+			// Label above the dim-1 rect (positioned at its top-right)
+			const lbl = document.createElementNS(NS, 'text');
+			lbl.setAttribute('x', Math.min(0, q[0]) + 0.03);
+			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.035);
+			lbl.setAttribute('fill', color);
+			lbl.setAttribute('font-size', '0.07');
+			lbl.setAttribute('font-family', 'Inter, sans-serif');
+			lbl.textContent = `k${j+1}: ${px} + ${py}`;
+			lbl.style.pointerEvents = 'none';
+			labelsG.appendChild(lbl);
+		});
 	},
 
 	// Step "The learnable projections": one input embedding x, projected
@@ -2312,22 +2394,8 @@ const AttentionAnatomy = {
 		for (let i = 0; i < n; i++) {
 			for (let j = 0; j < n; j++) {
 				const w = M[i][j];
-				// Causal mask: show masked cells with a grey hatch.
-				const masked = ATTN_2D.causal && j > i;
 				const cx = x0 + j * (cell + gap);
 				const cy = y0 - i * (cell + gap) - cell;
-				if (masked) {
-					const r = document.createElementNS(NS, 'rect');
-					r.setAttribute('x', cx); r.setAttribute('y', cy);
-					r.setAttribute('width', cell); r.setAttribute('height', cell);
-					r.setAttribute('fill', themeColor('#e2e8f0'));
-					r.setAttribute('fill-opacity', '0.5');
-					r.setAttribute('stroke', themeColor('#94a3b8'));
-					r.setAttribute('stroke-width', '0.005');
-					r.style.pointerEvents = 'none';
-					constructionG.appendChild(r);
-					continue;
-				}
 				const r = document.createElementNS(NS, 'rect');
 				r.setAttribute('x', cx); r.setAttribute('y', cy);
 				r.setAttribute('width', cell); r.setAttribute('height', cell);
@@ -2940,6 +3008,10 @@ const AttentionAnatomy = {
 			// visible in the scene, not only in a tooltip.
 			this._addMagnitudeLabels2D(labelsG, data);
 
+			// Numerical value labels next to each key, so the user can
+			// read off the score / scaled / exp / weight at a glance.
+			this._addValueLabels2D(labelsG, comp);
+
 			// Per-step overlays: show the vectors being worked on —
 			// product rectangles, projections, score bars, weight bar.
 			// Each later step shows the previous step's bars as a faint
@@ -2961,7 +3033,10 @@ const AttentionAnatomy = {
 				this._drawWeightBar2D(constructionG, labelsG);
 			}
 		} else if (mode === 'values' || mode === 'output') {
-			const valColors = ['#16a34a', '#15803d', '#166534'];
+			// Values use the SAME hue family as the keys but shifted toward
+			// green so the visual story "this key matches this value" holds:
+			// each value is the green-shifted twin of its key.
+			const valColors = ATTN_TOKENS.slice(1).map((t) => this._shade(t.color, 0.55));
 			ATTN_2D.vals.forEach((v, j) => {
 				const dim = (mode === 'output');
 				// When a value coincides with z (2-token case) push its
