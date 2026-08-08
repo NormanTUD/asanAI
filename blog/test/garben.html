@@ -99,6 +99,123 @@
         border-bottom: 2px solid #3b82f6;
         padding-bottom: 3px;
     }
+    .axiom-row {
+        display: flex;
+        gap: 14px;
+        margin-top: 8px;
+    }
+    .axiom-card {
+        flex: 1;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 10px;
+        background: #f8fafc;
+    }
+
+    /* ===== Smartphone-Ansicht =====
+       Print & Desktop bleiben unveraendert (Tabelle + Flex-Row).
+       Hier wird die Tabelle zu stapelbaren Karten umgebaut. */
+    @media screen and (max-width: 768px) {
+        body {
+            font-size: 11pt;
+            padding: 8px;
+            line-height: 1.5;
+        }
+        header {
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+        h1 { font-size: 17pt; line-height: 1.25; }
+        p.subtitle { font-size: 10pt; }
+
+        .running-example {
+            font-size: 10pt;
+            padding: 10px 12px;
+        }
+
+        /* Tabelle -> gestapelte Karten */
+        table, thead, tbody, tr, td, th {
+            display: block;
+            width: 100%;
+        }
+        thead { display: none; }
+        table {
+            border: none;
+            background: transparent;
+            overflow: visible;
+        }
+        tbody { display: block; }
+        tr {
+            margin-bottom: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            page-break-inside: avoid;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        tr:nth-child(even) td { background-color: white; }
+        td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            font-size: 10pt;
+        }
+        td:last-child { border-bottom: none; }
+
+        /* Spalten-Labels als kleine Ueberschriften */
+        td::before {
+            display: block;
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+        td:nth-child(2)::before { content: "Intuition"; }
+        td:nth-child(3)::before { content: "Konkretes Beispiel"; }
+        td:nth-child(4)::before { content: "Visualisierung"; }
+        td:nth-child(5)::before { content: "Formalismus"; }
+
+        /* Erste Spalte = farbiger Karten-Header */
+        td:first-child {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        td:first-child .term { color: white; font-size: 13pt; }
+        td:first-child .term-sub { color: rgba(255,255,255,0.85); }
+
+        /* SVGs responsiv: volle Karten-Breite nutzen */
+        svg.viz {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 4px 0;
+        }
+        .caption {
+            text-align: left;
+            margin-top: 4px;
+            font-size: 9pt;
+        }
+
+        /* Axiom-Reihe vertikal stapeln */
+        .axiom-row { flex-direction: column; gap: 12px; }
+        .axiom-card { flex: 1 1 auto; }
+
+        /* SVG in Axiomen: explizit volle Breite */
+        .axiom-card svg.viz { width: 100%; }
+
+        .axioms { padding: 12px; }
+        .axioms h2 { font-size: 13pt; }
+
+        footer {
+            font-size: 9pt;
+            padding: 10px 4px;
+        }
+    }
 </style>
 </head>
 <body>
@@ -330,10 +447,10 @@
 
 <div class="axioms">
     <h2>Die 2 Grundaxiome mit Bildern</h2>
-    <div style="display: flex; gap: 14px; margin-top: 8px;">
+    <div class="axiom-row">
 
         <!-- Axiom 1 -->
-        <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #f8fafc;">
+        <div class="axiom-card">
             <div style="font-weight: bold; color: #0f172a; margin-bottom: 4px;">
                 ① Lokal–Global-Identität (Separatedness / Unizität)
             </div>
@@ -367,7 +484,7 @@
         </div>
 
         <!-- Axiom 2 -->
-        <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; background: #f8fafc;">
+        <div class="axiom-card">
             <div style="font-weight: bold; color: #0f172a; margin-bottom: 4px;">
                 ② Verklebbarkeit (Gluing / Existenz)
             </div>
