@@ -275,10 +275,32 @@ function fieldToName(field) {
 //
 // Underscores in the field name (e.g. W_Q) MUST be escaped to \_
 // otherwise LaTeX treats them as subscript operators and the
-// formula throws ParseError.
+// Editable value marker.
+//
+// Previous attempts used markers like \text{◆path|value} or
+// \mathrm{◆path|value} inside the math. Temml tokenizes the content
+// of these commands at math operators (| = norm bar, . = decimal,
+// etc.), so the marker gets split across multiple MathML elements
+// and the ◆ regex never matches.
+//
+// New approach: index-based queue. ed() just returns the value as
+// \text{value} (no marker) and pushes the field onto a global queue.
+// After render_temml() converts everything to MathML, _makeMathEditable()
+// walks the <mtext> elements in document order and matches them 1:1
+// to fields in the queue. This is order-dependent but reliable — as
+// long as the LaTeX generator calls ed() in the same order that Temml
+// produces <mtext> elements, the mapping is correct.
+const _editableFieldQueue = [];
+
 function ed(field, value) {
-	const safeField = field.replace(/_/g, '\\_');
-	return '\\text{◆' + safeField + '|' + value + '}';
+	_editableFieldQueue.push(field);
+	return `\\text{${value}}`;
+}
+
+// Reset the queue before each render so fields from the previous
+// render don't leak into the new one.
+function _resetEditableQueue() {
+	_editableFieldQueue.length = 0;
 }
 
 // ── Predefined token sets ─────────────────────────────────────────
@@ -1845,6 +1867,9 @@ const AttentionAnatomy = {
 		// render_temml() pass, the Temml pass would overwrite our
 		// <span class="ed"> back to <mtext>, and the ◆ markers would
 		// leak through to the user.
+		// Reset the editable-field queue BEFORE render_temml so the
+		// queue contains only fields from this render's ed() calls.
+		_resetEditableQueue();
 		if (typeof render_temml === 'function') {
 			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
 		}
@@ -2005,51 +2030,74 @@ const AttentionAnatomy = {
 	// Each editable value uses \text{◆FIELD|VALUE} so _makeMathEditable
 	// can find and replace it with a click-to-edit HTML span after Temml
 	// has rendered the surrounding math.
+	// ─── Live values panel — PLAIN HTML, NO LATEX ──────────────────
+	// Previous version used $$...$$ blocks with \text{◆path|value}
+	// markers. Temml was splitting \text{◆path|value} into multiple
+	// MathML elements (the diamond in one <mtext>, the rest in <mi>/
+	// <mo>/<mn>), so the regex ◆([^|]+)\|([\s\S]+) never matched and
+	// the ◆ markers leaked through to the user. Now we use plain HTML
+	// with <span class="ed"> elements directly — no Temml round-trip
+	// means no splitting, no race conditions, no leaks.
 	_liveValsHTML: function(extra) {
 		const q = ATTN_2D.q;
-		const pm = (a, b) => `\\begin{pmatrix} ${a} \\\\ ${b} \\end{pmatrix}`;
+		const edSpan = (path, val) => `<span class="ed" data-field="${path}" data-name="${fieldToName(path)}">${val}</span>`;
+		const pm2 = (a, b) =>
+			`<span class="attn-live-pm">${a}<br>${b}</span>`;
+		const labelPm = (label, body) =>
+			`<span class="attn-live-eq">${label} = ${body}</span>`;
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit</div>';
-		html += '<div class="attn-live-row attn-live-row-first">$$ \\underbrace{\\mathbf{q}}_{\\text{query}} = \\begin{pmatrix} \\text{◆q.0|' + q[0].toFixed(2) + '} \\\\ \\text{◆q.1|' + q[1].toFixed(2) + '} \\end{pmatrix} $$</div>';
+		html += '<div class="attn-live-row attn-live-row-first">';
+		html += labelPm('<b>q</b><sub>query</sub>', pm2(edSpan('q.0', q[0].toFixed(2)), edSpan('q.1', q[1].toFixed(2))));
+		html += '</div>';
 		ATTN_TOKENS.slice(1).forEach((tk, j) => {
 			if (j >= ATTN_2D.keys.length) return;
 			const k = ATTN_2D.keys[j];
 			const v = ATTN_2D.vals[j];
-			// k and v are NOT multiplied — they're two separate vectors.
-			// Use \quad (wide space) between them, with underbraces that
-			// clearly say "key" vs "value".
-			html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{' + tk.name + '}}_{\\text{token}} = \\underbrace{\\begin{pmatrix} \\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '} \\\\ \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{k}_{' + (j+1) + '\\;\\text{(key)}}} \\quad \\underbrace{\\begin{pmatrix} \\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '} \\\\ \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '} \\end{pmatrix}}_{\\mathbf{v}_{' + (j+1) + '\\;\\text{(value)}}} $$</div>';
+			const kpm = pm2(edSpan('keys.'+j+'.0', k[0].toFixed(2)), edSpan('keys.'+j+'.1', k[1].toFixed(2)));
+			const vpm = pm2(edSpan('vals.'+j+'.0', v[0].toFixed(2)), edSpan('vals.'+j+'.1', v[1].toFixed(2)));
+			html += '<div class="attn-live-row attn-live-row-sep">';
+			html += `<span class="attn-live-eq"><b>${tk.name}</b><sub>key + value</sub> = `;
+			html += `<span class="attn-live-pm-label">k<sub>${j+1}</sub></span>${kpm}`;
+			html += ` <span class="attn-live-pm-label">v<sub>${j+1}</sub></span>${vpm}`;
+			html += `</span>`;
+			html += '</div>';
 		});
 		if (extra) html += extra;
 		html += '</div>';
 		return html;
 	},
 
-	// Same as _liveValsHTML but for the projections step — adds the W
-	// matrices as 2×2 editable grids, all rendered as Temml math.
+	// Projection step live values — PLAIN HTML, NO LATEX (same reason
+	// as _liveValsHTML above).
 	_liveValsHTMLProjection: function() {
 		const d = ATTN_2D.demo;
-		const cell = (path, val) => `\\text{◆${path.replace(/_/g, '\\_')}|${val}}`;
-		const pm = (path0, val0, path1, val1) =>
-			`\\begin{pmatrix} ${cell(path0, val0)} \\\\ ${cell(path1, val1)} \\end{pmatrix}`;
-		const grid = (W, name) => {
-			let g = '\\begin{pmatrix} ';
+		const edSpan = (path, val) => `<span class="ed" data-field="${path}" data-name="${fieldToName(path)}">${val}</span>`;
+		const pm2 = (a, b) => `<span class="attn-live-pm">${a}<br>${b}</span>`;
+		const grid2 = (W, name) => {
+			let g = '<span class="attn-live-pm attn-live-pm-grid">';
 			for (let i = 0; i < 2; i++) {
-				if (i > 0) g += ' \\; ';
 				for (let j = 0; j < 2; j++) {
-					if (j > 0) g += ' & ';
-					g += cell(`demo.${name}.${i}.${j}`, W[i][j].toFixed(2));
+					g += edSpan(`demo.${name}.${i}.${j}`, W[i][j].toFixed(2));
 				}
 			}
-			g += ' \\end{pmatrix}';
+			g += '</span>';
 			return g;
 		};
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit (W matrices included)</div>';
-		html += '<div class="attn-live-row attn-live-row-first">$$ \\underbrace{\\mathbf{x}}_{\\text{input embedding}} = ' + pm('demo.x.0', d.x[0].toFixed(2), 'demo.x.1', d.x[1].toFixed(2)) + ' $$</div>';
-		html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{W}^Q}_{\\text{query weights}} = ' + grid(d.W_Q, 'W_Q') + ' $$</div>';
-		html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{W}^K}_{\\text{key weights}} = ' + grid(d.W_K, 'W_K') + ' $$</div>';
-		html += '<div class="attn-live-row attn-live-row-sep">$$ \\underbrace{\\mathbf{W}^V}_{\\text{value weights}} = ' + grid(d.W_V, 'W_V') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-first">';
+		html += `<span class="attn-live-eq"><b>x</b><sub>input</sub> = ${pm2(edSpan('demo.x.0', d.x[0].toFixed(2)), edSpan('demo.x.1', d.x[1].toFixed(2)))}</span>`;
+		html += '</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">';
+		html += `<span class="attn-live-eq"><b>W<sup>Q</sup></b><sub>query</sub> = ${grid2(d.W_Q, 'W_Q')}</span>`;
+		html += '</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">';
+		html += `<span class="attn-live-eq"><b>W<sup>K</sup></b><sub>key</sub> = ${grid2(d.W_K, 'W_K')}</span>`;
+		html += '</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">';
+		html += `<span class="attn-live-eq"><b>W<sup>V</sup></b><sub>value</sub> = ${grid2(d.W_V, 'W_V')}</span>`;
+		html += '</div>';
 		html += '</div>';
 		return html;
 	},
@@ -2169,45 +2217,39 @@ const AttentionAnatomy = {
 	_makeMathEditable: function(root) {
 		// Default to the computation panel, but accept any root element
 		// (e.g. the live-values container) so we can make values editable
-		// there too. Without the parameter, ◆PATH|VALUE markers would
-		// never be replaced in the live-values panel.
+		// there too.
 		const target = root || document.getElementById('attn-section-computation');
 		if (!target) {
 			console.warn('[attn] _makeMathEditable: no target element (root=' + (root && root.id) + ')');
 			return;
 		}
 		const mtexts = target.querySelectorAll('mtext');
-		// ASSERTION 1: if we expected ◆ markers but found no <mtext>,
-		// render_temml didn't run on this panel.
-		if (mtexts.length === 0 && target.textContent.indexOf('◆') >= 0) {
-			console.warn('[attn] _makeMathEditable[' + target.id + ']: found ◆ in textContent but NO <mtext> elements — render_temml probably did not run on this panel');
+		// DETAILED DEBUG: log what's actually in the panel
+		if (mtexts.length > 0) {
+			const samples = [];
+			for (let i = 0; i < Math.min(3, mtexts.length); i++) {
+				samples.push('"' + (mtexts[i].textContent || '').substring(0, 40) + '"');
+			}
+			console.log('[attn] _makeMathEditable[' + target.id + ']: ' + mtexts.length + ' <mtext>, queue size: ' + _editableFieldQueue.length + '. samples: ' + samples.join(' | '));
 		}
+		// Index-based matching: walk <mtext> elements in document order
+		// and match each to the next field in _editableFieldQueue.
+		let queueIndex = 0;
 		mtexts.forEach(function(mtext) {
-			const text = mtext.textContent || '';
-			// Match "◆FIELD|VALUE" — the marker is rendered as text content.
-			const m = text.match(/◆([^|]+)\|([\s\S]+)/);
-			if (!m) return;
-			// Unescape LaTeX-mandated \_ back to literal _ so the
-			// dataset field matches the ATTN_2D path (e.g. W_Q not W\_Q).
-			const field = m[1].replace(/\\_/g, '_');
-			const value = m[2];
+			if (queueIndex >= _editableFieldQueue.length) return;
+			const text = (mtext.textContent || '').trim();
+			if (!text) return; // skip empty <mtext>
+			const field = _editableFieldQueue[queueIndex++];
 			const span = document.createElement('span');
 			span.className = 'ed';
 			span.dataset.field = field;
 			span.dataset.name = fieldToName(field);
-			span.textContent = value;
+			span.textContent = text;
 			if (mtext.parentNode) mtext.parentNode.replaceChild(span, mtext);
 		});
-		// ASSERTION 2: after replacement, no <mtext> should contain ◆.
-		const remaining = target.querySelectorAll('mtext');
-		remaining.forEach(function(mt) {
-			if ((mt.textContent || '').indexOf('◆') >= 0) {
-				console.warn('[attn] _makeMathEditable[' + target.id + ']: ◆ marker still in <mtext> after replacement — regex did not match: ' + mt.textContent);
-			}
-		});
-		// ASSERTION 3: no ◆ in the panel's visible text after replacement.
-		if (target.textContent.indexOf('◆') >= 0) {
-			console.warn('[attn] _makeMathEditable[' + target.id + ']: ◆ STILL VISIBLE in panel after replacement — replacement failed');
+		// ASSERTION: queue should be fully consumed (else order is wrong)
+		if (queueIndex !== _editableFieldQueue.length && target.id !== 'attn-anatomy-equation') {
+			console.warn('[attn] _makeMathEditable[' + target.id + ']: queue mismatch — consumed ' + queueIndex + ' of ' + _editableFieldQueue.length + ' fields. Order may be wrong.');
 		}
 		this._attachEditors(target);
 	},

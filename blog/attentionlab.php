@@ -1081,6 +1081,47 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 .attn-live-panel .attn-live-row-first {
 	border-top: none;
 }
+/* Plain-HTML pmatrix for live values — no LaTeX, no Temml splitting. */
+.attn-live-panel .attn-live-eq {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+	font-size: 0.88rem;
+}
+.attn-live-panel .attn-live-eq b {
+	color: #2563eb;
+	font-weight: 700;
+}
+.attn-live-panel .attn-live-eq sub,
+.attn-live-panel .attn-live-eq sup {
+	font-size: 0.7em;
+	color: #64748b;
+	margin-left: 2px;
+}
+.attn-live-panel .attn-live-pm {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	border-left: 1.5px solid #2563eb;
+	border-right: 1.5px solid #2563eb;
+	padding: 2px 6px;
+	margin: 0 2px;
+	font-family: 'SF Mono','Menlo','Consolas','Courier New',monospace;
+}
+.attn-live-panel .attn-live-pm-grid {
+	display: inline-grid;
+	grid-template-columns: auto auto;
+	gap: 4px 8px;
+	padding: 4px 8px;
+}
+.attn-live-panel .attn-live-pm-label {
+	font-size: 0.72rem;
+	color: #64748b;
+	font-weight: 600;
+	letter-spacing: 0.3px;
+	margin-right: 2px;
+}
 .attn-anatomy-computation .attn-live-row {
 	display: flex;
 	align-items: baseline;
