@@ -685,7 +685,7 @@ const ATTN_COMPUTATIONS = {
 		const ex  = ATTN_2D.exps;
 		const sum = ex.reduce((a, b) => a + b, 0);
 		const sumRow = `<div class="comp-eq-group first">` +
-			`<div class="comp-eq-line">$$ \\sum_j e^{s_j} = ${ex.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)} $$</div>` +
+			`<div class="comp-eq-line">$$ \\sum_{j=1}^{N} \\exp(s_j) = ${ex.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)} $$</div>` +
 		`</div>`;
 		const 		rows = ex.map((e, j) => {
 			const tj = j + 1;
@@ -702,8 +702,8 @@ const ATTN_COMPUTATIONS = {
 					' weights.length=' + (ATTN_2D.weights ? ATTN_2D.weights.length : 'undefined'));
 			}
 			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="weights" data-cone-idx="${j}">` +
-				`<div class="comp-eq-line">$$ \\alpha_{${tj}} = \\frac{e^{s_{${tj}}}}{\\Sigma} $$</div>` +
-				`<div class="comp-eq-line">$$ = \\frac{${e.toFixed(3)}}{${sum.toFixed(3)}} $$</div>` +
+				`<div class="comp-eq-line">$$ \\alpha_{${tj}} = \\dfrac{\\exp(s_{${tj}})}{\\sum_{n}\\exp(s_n)} $$</div>` +
+				`<div class="comp-eq-line">$$ = \\dfrac{${e.toFixed(3)}}{${sum.toFixed(3)}} $$</div>` +
 				`<div class="comp-eq-line">$$ = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\% $$</div>` +
 			`</div>`;
 		}).join('');
@@ -1887,14 +1887,27 @@ const AttentionAnatomy = {
 			body = result;
 		}
 		el.innerHTML = body;
+		// Render Temml math in the computation panel — without this the
+		// raw LaTeX would show (e.g. ∑_j e^{s_j} instead of the glyph).
+		if (typeof render_temml === 'function') {
+			try { render_temml(el); } catch (e) { /* ignore */ }
+		}
+		// Make ◆PATH|VALUE markers click-to-edit in the computation panel
+		// too (used by the weighted-vals step etc.).
+		this._makeMathEditable(el);
 		// Live values go into the 2d wrap container, NOT the computation
 		// panel, so they sit BESIDE the plot instead of below it.
 		const liveContainer = document.getElementById('attn-live-values-container');
 		if (liveContainer) {
 			liveContainer.innerHTML = liveVals;
 			if (liveVals) {
+				if (typeof render_temml === 'function') {
+					try { render_temml(liveContainer); } catch (e) { /* ignore */ }
+				}
+				// _makeMathEditable replaces ◆PATH|VALUE with <span class="ed">
+				// so values become click-to-edit. MUST run AFTER render_temml.
+				this._makeMathEditable(liveContainer);
 				this._attachEditors(liveContainer);
-				if (typeof render_temml === 'function') render_temml(liveContainer);
 			}
 		}
 		// Wire up click-to-edit on every <span.ed> we just emitted.
@@ -1909,12 +1922,12 @@ const AttentionAnatomy = {
 		const q = ATTN_2D.q;
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit</div>';
-		html += '<div class="attn-live-row">$$ \\mathbf{q} = (\\text{◆q.0|' + q[0].toFixed(2) + '},\\, \\text{◆q.1|' + q[1].toFixed(2) + '}) $$</div>';
+		html += '<div class="attn-live-row attn-live-row-first">$$ \\mathbf{q} = (\\text{◆q.0|' + q[0].toFixed(2) + '},\\, \\text{◆q.1|' + q[1].toFixed(2) + '}) $$</div>';
 		ATTN_TOKENS.slice(1).forEach((tk, j) => {
 			if (j >= ATTN_2D.keys.length) return;
 			const k = ATTN_2D.keys[j];
 			const v = ATTN_2D.vals[j];
-			html += '<div class="attn-live-row">$$ \\mathbf{' + tk.name + '} = (\\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '},\\, \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '}) \\;\\; (\\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '},\\, \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '}) $$</div>';
+			html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{' + tk.name + '} = (\\text{◆keys.' + j + '.0|' + k[0].toFixed(2) + '},\\, \\text{◆keys.' + j + '.1|' + k[1].toFixed(2) + '}) \\;\\; (\\text{◆vals.' + j + '.0|' + v[0].toFixed(2) + '},\\, \\text{◆vals.' + j + '.1|' + v[1].toFixed(2) + '}) $$</div>';
 		});
 		if (extra) html += extra;
 		html += '</div>';
@@ -1940,10 +1953,10 @@ const AttentionAnatomy = {
 		};
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit (W matrices included)</div>';
-		html += '<div class="attn-live-row">$$ \\mathbf{x} = (\\text{◆demo.x.0|' + d.x[0].toFixed(2) + '},\\, \\text{◆demo.x.1|' + d.x[1].toFixed(2) + '}) $$</div>';
-		html += '<div class="attn-live-row">$$ \\mathbf{W}^Q = ' + grid(d.W_Q, 'W_Q') + ' $$</div>';
-		html += '<div class="attn-live-row">$$ \\mathbf{W}^K = ' + grid(d.W_K, 'W_K') + ' $$</div>';
-		html += '<div class="attn-live-row">$$ \\mathbf{W}^V = ' + grid(d.W_V, 'W_V') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-first">$$ \\mathbf{x} = (\\text{◆demo.x.0|' + d.x[0].toFixed(2) + '},\\, \\text{◆demo.x.1|' + d.x[1].toFixed(2) + '}) $$</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{W}^Q = ' + grid(d.W_Q, 'W_Q') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{W}^K = ' + grid(d.W_K, 'W_K') + ' $$</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">$$ \\mathbf{W}^V = ' + grid(d.W_V, 'W_V') + ' $$</div>';
 		html += '</div>';
 		return html;
 	},
@@ -2494,12 +2507,24 @@ const AttentionAnatomy = {
 			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.exps.map((e,i) => `e^{s_{${i+1}}} = ${fmt3(e)}`).join(',\\quad ')}$</div>`);
 			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${fmt3(sc)}$ (from step 2)</div>`);
 		} else if (stepName === 'weights') {
-			const e   = ATTN_2D.exps[tokenIdx];
-			const sum = ATTN_2D.exps.reduce((a, b) => a + b, 0);
-			const w   = (ATTN_2D.weights[tokenIdx]*100);
-			cone.push(`<div class="ti-cone-line"><b>Step 4 — softmax: divide by the sum:</b></div>`);
+			const k    = ATTN_2D.keys[tokenIdx];
+			const score= q[0]*k[0] + q[1]*k[1];
+			const sc   = ATTN_2D.scaled[tokenIdx];
+			const e    = ATTN_2D.exps[tokenIdx];
+			const sum  = ATTN_2D.exps.reduce((a, b) => a + b, 0);
+			const w    = (ATTN_2D.weights[tokenIdx]*100);
+			// Full chain: show EVERY step that led to this percentage,
+			// so hovering over 15.5% shows exactly how we got there.
+			cone.push(`<div class="ti-cone-line"><b>How α${tokenIdx+1} = ${w.toFixed(1)}% was computed — full chain:</b></div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 1</b> — dot product $q \\cdot k_{${tokenIdx+1}}$:</div>`);
+			cone.push(`<div class="ti-cone-line">$$${dotBreakdown(tokenIdx)}$$</div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 2</b> — scale by $\\sqrt{d_k}$:</div>`);
+			cone.push(`<div class="ti-cone-line">$$s_{${tokenIdx+1}} = \\frac{q\\cdot k_{${tokenIdx+1}}}{\\sqrt{d_k}} = \\frac{${fmt3(score)}}{\\sqrt{2}} = ${fmt3(sc)}$$</div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 3</b> — exponentiate:</div>`);
+			cone.push(`<div class="ti-cone-line">$$e^{s_{${tokenIdx+1}}} = e^{${fmt3(sc)}} = ${fmt3(e)}$$</div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 4</b> — softmax (divide by total):</div>`);
 			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}} = \\frac{e^{s_{${tokenIdx+1}}}}{\\sum_n e^{s_n}} = \\frac{${fmt3(e)}}{${fmt3(sum)}} = ${w.toFixed(1)}\\%$$</div>`);
-			cone.push(`<div class="ti-cone-line"><b>The denominator — the full softmax sum:</b></div>`);
+			cone.push(`<div class="ti-cone-line"><b>The denominator (full softmax sum):</b></div>`);
 			cone.push(`<div class="ti-cone-line">$$\\Sigma = ${sumBreakdown()}$$</div>`);
 			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Dividing by the total converts the raw exp-values into a probability distribution. $\\sum_j \\alpha_j = 100\\%$ — the attention is a finite budget shared across keys.</div>`);
 			cone.push(`<div class="ti-cone-line"><b>All final weights (this row of the attention matrix):</b></div>`);

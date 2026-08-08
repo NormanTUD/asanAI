@@ -473,6 +473,17 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 .attn-token-info .ti-cone-line {
 	padding: 2px 0;
 }
+.attn-token-info .ti-cone-step {
+	color: #1d4ed8;
+	font-weight: 600;
+	margin-top: 4px;
+	padding: 2px 0;
+	border-top: 1px dotted rgba(37,99,235,0.15);
+}
+.attn-token-info .ti-cone-step:first-child {
+	border-top: none;
+	margin-top: 0;
+}
 
 /* ── Hover highlight on 2D arrows ──────────────────────────────────── */
 /* (CSS animations removed — they were causing ugly pulsing and the
@@ -1016,6 +1027,19 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	font-size: 0.82rem;
 	margin-bottom: 6px;
 	letter-spacing: 0.1px;
+}
+.attn-live-panel .attn-live-row {
+	padding: 4px 0;
+	font-size: 0.85rem;
+	line-height: 1.55;
+}
+.attn-live-panel .attn-live-row-sep {
+	border-top: 1px dashed rgba(37, 99, 235, 0.25);
+	margin-top: 2px;
+	padding-top: 6px;
+}
+.attn-live-panel .attn-live-row-first {
+	border-top: none;
 }
 .attn-anatomy-computation .attn-live-row {
 	display: flex;
