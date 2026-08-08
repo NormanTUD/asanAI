@@ -2314,15 +2314,27 @@ const AttentionAnatomy = {
 	// Apply the per-token hover dimming to an opacity value. When a
 	// specific token is hovered, only that token's visuals stay at
 	// full opacity; everything else fades.
+	// Returns true if THIS token is the currently hovered one — used by
+	// every per-token draw call so the hovered arrow can be made
+	// clearly visible (thicker stroke, glow, label stays bright).
+	_tokenIsHovered: function(jPlus1) {
+		const h = ATTN_2D.hoveredToken;
+		if (h < 0) return false;
+		return h === jPlus1;
+	},
+
+	// Apply hover dimming to an opacity value. When a token is hovered,
+	// it stays at full opacity (1.0) so it stays bright; everything
+	// else fades to 0.12 so the hovered one is clearly the focus.
 	_tokenOpacity: function(jPlus1) {
 		const h = ATTN_2D.hoveredToken;
 		if (h < 0) return 1;
 		if (h === jPlus1) return 1;
-		return 0.15;
+		return 0.12;
 	},
 
-	// Apply hover dimming to a color: fade non-hovered tokens toward
-	// a neutral grey.
+	// Apply hover dimming to a color: non-hovered tokens go to a muted
+	// light grey so the hovered one pops in its original colour.
 	_tokenColor: function(color, jPlus1) {
 		const h = ATTN_2D.hoveredToken;
 		if (h < 0) return color;
@@ -2423,6 +2435,14 @@ const AttentionAnatomy = {
 		const NS = this._SVG_NS;
 		const finalOpacity = (opacity !== undefined) ? opacity : (dim ? 0.35 : 1.0);
 
+		// HOVER HIGHLIGHT: when a token is hovered AND this arrow is at
+		// full opacity (i.e. it belongs to the hovered token), make it
+		// visibly pop — thicker stroke, glow halo, bigger label.
+		const isHovered = (ATTN_2D.hoveredToken >= 0 && finalOpacity >= 0.99 && opacity !== undefined);
+		const sw  = isHovered ? 0.052 : 0.028;            // ~85% thicker when hovered
+		const fs  = isHovered ? 0.13   : 0.10;             // bigger label when hovered
+		const swH = isHovered ? 0.16  : 0.11;              // arrowhead bigger when hovered
+
 		// Flip y for SVG (SVG y goes down, our data y goes up)
 		const sx = start[0], sy = -start[1];
 		const ex = end[0],   ey = -end[1];
@@ -2441,12 +2461,27 @@ const AttentionAnatomy = {
 		hit.classList.add(arrowCls);
 		parent.appendChild(hit);
 
+		// Glow halo: drawn UNDER the shaft only when hovered. A fat
+		// low-opacity copy of the shaft in the same colour gives the
+		// hovered arrow a visible "selected" aura.
+		if (isHovered) {
+			const glow = document.createElementNS(NS, 'line');
+			glow.setAttribute('x1', sx); glow.setAttribute('y1', sy);
+			glow.setAttribute('x2', ex); glow.setAttribute('y2', ey);
+			glow.setAttribute('stroke', color);
+			glow.setAttribute('stroke-width', '0.16');
+			glow.setAttribute('stroke-opacity', '0.28');
+			glow.setAttribute('stroke-linecap', 'round');
+			glow.style.pointerEvents = 'none';
+			parent.appendChild(glow);
+		}
+
 		// Visible shaft
 		const line = document.createElementNS(NS, 'line');
 		line.setAttribute('x1', sx); line.setAttribute('y1', sy);
 		line.setAttribute('x2', ex); line.setAttribute('y2', ey);
 		line.setAttribute('stroke', color);
-		line.setAttribute('stroke-width', '0.028');
+		line.setAttribute('stroke-width', sw);
 		line.setAttribute("opacity", finalOpacity);
 		line.style.pointerEvents = 'none';
 		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
@@ -2459,7 +2494,7 @@ const AttentionAnatomy = {
 		let head = null;
 		if (len > 0.01) {
 			const ux = dx / len, uy = dy / len;
-			const s = 0.11;                     // arrowhead size in data units
+			const s = swH;                       // arrowhead size in data units
 			const c = Math.cos(Math.PI / 6), si = Math.sin(Math.PI / 6);
 			// Rotate (ux,uy) by ±30°
 			const ax1 = ex - s * (ux * c - uy * si);
@@ -2487,7 +2522,7 @@ const AttentionAnatomy = {
 			labelHalo.setAttribute('dominant-baseline', 'middle');
 			labelHalo.setAttribute('fill', '#fff'); labelHalo.setAttribute('stroke', '#fff');
 			labelHalo.setAttribute('stroke-width', '0.005'); labelHalo.setAttribute('paint-order', 'stroke');
-			labelHalo.setAttribute('font-size', '0.1');
+			labelHalo.setAttribute('font-size', fs);
 			labelHalo.setAttribute('font-family', 'Inter, sans-serif');
 			labelHalo.textContent = label;
 			labelHalo.style.pointerEvents = 'none';
@@ -2498,9 +2533,10 @@ const AttentionAnatomy = {
 			labelTxt.setAttribute('text-anchor', anchor);
 			labelTxt.setAttribute('dominant-baseline', 'middle');
 			labelTxt.setAttribute('fill', color);
-			labelTxt.setAttribute('font-size', '0.1');
+			labelTxt.setAttribute('font-size', fs);
 			labelTxt.setAttribute("opacity", finalOpacity);
 			labelTxt.setAttribute('font-family', 'Inter, sans-serif');
+			labelTxt.setAttribute('font-weight', isHovered ? '700' : '600');
 			labelTxt.textContent = label;
 			labelTxt.style.pointerEvents = 'none';
 			labelTxt.classList.add(arrowCls);
