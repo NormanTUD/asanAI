@@ -2516,6 +2516,8 @@ const AttentionAnatomy = {
 		// ANGLE 6: capture phase so we run before any stopPropagation in
 		// children
 		el.addEventListener('mouseover', function(e) {
+			// DEBUG: log every mouseover so we can see if the handler fires
+			console.log('[attn] mouseover fired on', e.target.tagName, e.target.className || '');
 			// ANGLE 7: no target
 			if (!e.target) { console.warn('[attn] hover#7: e.target null'); return; }
 			// ANGLE 8: target is text node
