@@ -1225,7 +1225,11 @@ const AttentionAnatomy = {
 	step: 0,
 
 	init: function() {
-		if (!document.getElementById('attn-anatomy-2d-svg')) return;
+		console.log('[attn] init() called');
+		if (!document.getElementById('attn-anatomy-2d-svg')) {
+			console.warn('[attn] init: #attn-anatomy-2d-svg not found, aborting');
+			return;
+		}
 
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
@@ -1270,15 +1274,14 @@ const AttentionAnatomy = {
 		// Pre-render the vector formula LaTeX to MathML via Temml, once.
 		// The hover tooltip then just swaps innerHTML — instant, no
 		// re-render cost per hover.
-		try {
-			this._renderFormulas();
-			this._setupSentenceHover();
-			this._setupFormulaHover();
-			this._dbg('OK', 'init: hover handlers attached');
-		} catch (e) {
-			this._dbg('ERROR', 'init failed at hover setup: ' + e.message);
-			console.error('[attn] init failed:', e);
-		}
+		// Each setup wrapped in its own try-catch so one failure
+		// doesn't prevent the others.
+		try { this._renderFormulas(); } catch (e) { console.error('[attn] _renderFormulas failed:', e); }
+		try { this._setupSentenceHover(); } catch (e) { console.error('[attn] _setupSentenceHover failed:', e); }
+		try { this._setupFormulaHover(); } catch (e) { console.error('[attn] _setupFormulaHover failed:', e); }
+		this._dbg('OK', 'init: hover handlers attached');
+		// GUARDRAIL: track that init ran so we can assert later
+		this._initRan = true;
 
 		// Global error catcher — any uncaught JS error gets logged AND
 		// shown in the debug panel so the user can paste it verbatim.
@@ -1831,6 +1834,15 @@ const AttentionAnatomy = {
 	},
 
 	render: function() {
+		// GUARDRAIL: if init() never ran (e.g. an earlier error
+		// prevented _setupFormulaHover), call it now so the hover
+		// handler is attached. Without this, editing works (because
+		// _attachEditors runs every render) but mouseovers never do.
+		if (!this._initRan) {
+			console.warn('[attn] render: _initRan is false — calling _setupFormulaHover now');
+			try { this._setupFormulaHover(); } catch (e) { console.error('[attn] _setupFormulaHover failed:', e); }
+			this._initRan = true;
+		}
 		const data = ATTN_STEPS[this.step];
 
 		// The tooltip caches content per (key, idx); after a re-render
@@ -1888,16 +1900,16 @@ const AttentionAnatomy = {
 		if (typeof render_temml === 'function') {
 			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
 		}
-		// Single global pass over every panel that might contain
-		// editable values — ORDER MATTERS: must match the order in
-		// which renderEquation/renderComputation/renderIntuition
-		// produced ed() calls (equation → live-values → computation
-		// → intuition), because the queue is consumed globally.
+		// Single global pass over ONLY the panels with editable values.
+		// Equation and intuition panels are read-only — they have
+		// <mtext> elements (from \text{...} in LaTeX) but NO ed()
+		// calls, so processing them would consume queue fields that
+		// belong to the live-values or computation panels.
+		// Order matters: live-values first (its ed() calls happen
+		// first in renderComputation), then computation.
 		[
-			'attn-anatomy-equation',
 			'attn-live-values-container',
-			'attn-section-computation',
-			'attn-anatomy-intuition'
+			'attn-section-computation'
 		].forEach(id => {
 			const panel = document.getElementById(id);
 			if (panel) this._makeMathEditable(panel);
@@ -3786,9 +3798,13 @@ const AttentionAnatomy = {
 
 			// Label above the dim-1 rect (positioned at its top-right).
 			// Bold + larger font + dark color so it's actually readable.
+			// Each key gets its OWN vertical offset so labels for different
+			// keys don't all land at the same (0.04, -0.04) when their
+			// k[0] is negative (previous bug — k1 and k3 overlapped as
+			// a single black blob).
 			const lbl = document.createElementNS(NS, 'text');
 			lbl.setAttribute('x', Math.min(0, q[0]) + 0.04);
-			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.04);
+			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.04 - j * 0.14);
 			lbl.setAttribute('fill', '#1e293b');
 			lbl.setAttribute('font-size', '0.11');
 			lbl.setAttribute('font-weight', '700');
