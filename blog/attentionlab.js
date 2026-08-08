@@ -1905,8 +1905,17 @@ const AttentionAnatomy = {
 		// <span class="ed"> back to <mtext>, and the ◆ markers would
 		// leak through to the user.
 		if (typeof render_temml === 'function') {
-			console.log('[attn] render_temml: calling global pass, queue=' + _editableFieldQueue.length + ' fields');
-			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
+			console.log('[attn] render_temml: calling per-panel pass, queue=' + _editableFieldQueue.length + ' fields');
+			// Call render_temml on EACH panel individually — some Temml
+			// versions don't scan the whole document when called with no
+			// argument, so we feed each panel explicitly.
+			['attn-section-computation', 'attn-live-values-container',
+			 'attn-anatomy-equation', 'attn-anatomy-intuition'].forEach(id => {
+				const panel = document.getElementById(id);
+				if (panel) {
+					try { render_temml(panel); } catch (e) { console.warn('[attn] render_temml failed for ' + id + ':', e); }
+				}
+			});
 		} else {
 			console.warn('[attn] edit#RENDER: render_temml NOT defined — Temml library not loaded? no <mtext> elements will be created');
 		}
@@ -2742,12 +2751,13 @@ const AttentionAnatomy = {
 		const fmt = (v) => v.toFixed(2);
 		const fmt3 = (v) => v.toFixed(3);
 		// Helper: build the full softmax sum ∑_n exp(q·k_n/√d_k) breakdown
+		// NO nested underbraces — Temml chokes on them and everything
+		// AFTER the denominator fails to render. Use simple e^{s_n} = value.
 		const sumBreakdown = () => {
 			const parts = [];
 			for (let n = 0; n < N; n++) {
-				const sc_n = ATTN_2D.scaled[n];
 				const e_n  = ATTN_2D.exps[n];
-				parts.push(`\\underbrace{e^{s_{${n+1}}}_{${e_n.toFixed(3)}}`);
+				parts.push(`e^{s_{${n+1}}} = ${e_n.toFixed(3)}`);
 			}
 			const sum = ATTN_2D.exps.reduce((a,b)=>a+b, 0);
 			return `\\sum_{n=1}^{N} e^{s_n} = ${parts.join(' + ')} = ${sum.toFixed(3)}`;
