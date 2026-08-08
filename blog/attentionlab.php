@@ -264,6 +264,15 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	grid-column: 1;
 	grid-row: 2;
 }
+/* When the 2D SVG is collapsed (step 10 matrix / step 11 selfattn) the
+   computation panel takes the full width so the table / plots get
+   all the horizontal space. */
+.attn-anatomy-grid.attn-grid-svg-collapsed .attn-grid-computation {
+	grid-column: 1 / -1;
+}
+.attn-anatomy-grid.attn-grid-svg-collapsed .attn-anatomy-equation {
+	grid-column: 1 / -1;
+}
 .attn-anatomy-2d-wrap {
 	grid-column: 2;
 	grid-row: 2;

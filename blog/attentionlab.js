@@ -2058,16 +2058,18 @@ const AttentionAnatomy = {
 		ya.setAttribute('stroke', '#94a3b8'); ya.setAttribute('stroke-width', '0.012');
 		axesG.appendChild(ya);
 
-		// Axis labels
+		// Axis labels (positioned inside the viewBox so they don't get clipped)
 		const xl = document.createElementNS(NS, 'text');
-		xl.setAttribute('x', 1.42); xl.setAttribute('y', 0.06);
-		xl.setAttribute('fill', '#475569'); xl.setAttribute('font-size', '0.09');
+		xl.setAttribute('x', 1.30); xl.setAttribute('y', 0.14);
+		xl.setAttribute('fill', '#475569'); xl.setAttribute('font-size', '0.11');
+		xl.setAttribute('font-weight', '700');
 		xl.setAttribute('font-family', 'Inter, sans-serif');
 		xl.textContent = 'Dim 1';
 		axesG.appendChild(xl);
 		const yl = document.createElementNS(NS, 'text');
-		yl.setAttribute('x', 0.06); yl.setAttribute('y', -1.48);
-		yl.setAttribute('fill', '#475569'); yl.setAttribute('font-size', '0.09');
+		yl.setAttribute('x', 0.10); yl.setAttribute('y', -1.38);
+		yl.setAttribute('fill', '#475569'); yl.setAttribute('font-size', '0.11');
+		yl.setAttribute('font-weight', '700');
 		yl.setAttribute('font-family', 'Inter, sans-serif');
 		yl.textContent = 'Dim 2';
 		axesG.appendChild(yl);
@@ -2612,12 +2614,12 @@ const AttentionAnatomy = {
 				if (halo) {
 					t.setAttribute('fill', '#fff');
 					t.setAttribute('stroke', '#fff');
-					t.setAttribute('stroke-width', '0.005');
+					t.setAttribute('stroke-width', '0.0025');
 					t.setAttribute('paint-order', 'stroke');
 				} else {
 					t.setAttribute('fill', color);
 				}
-				t.setAttribute('font-size', '0.072');
+				t.setAttribute('font-size', '0.095');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = `θ≈${deg}°`;
 				t.style.pointerEvents = 'none';
@@ -2735,7 +2737,7 @@ const AttentionAnatomy = {
 			labelHalo.setAttribute('text-anchor', anchor);
 			labelHalo.setAttribute('dominant-baseline', 'middle');
 			labelHalo.setAttribute('fill', '#fff'); labelHalo.setAttribute('stroke', '#fff');
-			labelHalo.setAttribute('stroke-width', '0.005'); labelHalo.setAttribute('paint-order', 'stroke');
+			labelHalo.setAttribute('stroke-width', '0.0025'); labelHalo.setAttribute('paint-order', 'stroke');
 			labelHalo.setAttribute('font-size', fs);
 			labelHalo.setAttribute('font-family', 'Inter, sans-serif');
 			labelHalo.textContent = label;
@@ -2885,8 +2887,8 @@ const AttentionAnatomy = {
 			halo.setAttribute('text-anchor', a);
 			halo.setAttribute('dominant-baseline', 'middle');
 			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
-			halo.setAttribute('stroke-width', '0.005'); halo.setAttribute('paint-order', 'stroke');
-			halo.setAttribute('font-size', '0.065');
+			halo.setAttribute('stroke-width', '0.0025'); halo.setAttribute('paint-order', 'stroke');
+			halo.setAttribute('font-size', '0.095');
 			halo.setAttribute('font-family', 'Inter, sans-serif');
 			halo.textContent = str;
 			halo.style.pointerEvents = 'none';
@@ -2896,7 +2898,7 @@ const AttentionAnatomy = {
 			txt.setAttribute('text-anchor', a);
 			txt.setAttribute('dominant-baseline', 'middle');
 			txt.setAttribute('fill', themeColor('#64748b'));
-			txt.setAttribute('font-size', '0.065');
+			txt.setAttribute('font-size', '0.095');
 			txt.setAttribute('font-family', 'Inter, sans-serif');
 			txt.textContent = str;
 			txt.style.pointerEvents = 'none';
@@ -2956,9 +2958,9 @@ const AttentionAnatomy = {
 			t.setAttribute('dominant-baseline', 'middle');
 			t.setAttribute('fill', '#fff');
 			t.setAttribute('stroke', '#fff');
-			t.setAttribute('stroke-width', '0.005');
+			t.setAttribute('stroke-width', '0.0025');
 			t.setAttribute('paint-order', 'stroke');
-			t.setAttribute('font-size', '0.07');
+			t.setAttribute('font-size', '0.095');
 			t.setAttribute('font-weight', 'bold');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = label(j);
@@ -2971,7 +2973,7 @@ const AttentionAnatomy = {
 			txt.setAttribute('text-anchor', 'middle');
 			txt.setAttribute('dominant-baseline', 'middle');
 			txt.setAttribute('fill', color);
-			txt.setAttribute('font-size', '0.07');
+			txt.setAttribute('font-size', '0.095');
 			txt.setAttribute('font-weight', 'bold');
 			txt.setAttribute('font-family', 'Inter, sans-serif');
 			txt.textContent = label(j);
@@ -3012,7 +3014,7 @@ const AttentionAnatomy = {
 				t.setAttribute('x', rx + 0.03);
 				t.setAttribute('y', -Math.max(y0, y1) - 0.04);
 				t.setAttribute('fill', color);
-				t.setAttribute('font-size', '0.075');
+				t.setAttribute('font-size', '0.1');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = label;
 				t.style.pointerEvents = 'none';
@@ -3069,7 +3071,7 @@ const AttentionAnatomy = {
 			lbl.setAttribute('x', Math.min(0, q[0]) + 0.04);
 			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.04);
 			lbl.setAttribute('fill', '#1e293b');
-			lbl.setAttribute('font-size', '0.085');
+			lbl.setAttribute('font-size', '0.11');
 			lbl.setAttribute('font-weight', '700');
 			lbl.setAttribute('font-family', 'Inter, sans-serif');
 			lbl.textContent = `k${j+1}: ${px} + ${py}`;
@@ -3195,7 +3197,7 @@ const AttentionAnatomy = {
 			badge.setAttribute('text-anchor', 'start');
 			badge.setAttribute('dominant-baseline', 'middle');
 			badge.setAttribute('fill', themeColor('#475569'));
-			badge.setAttribute('font-size', '0.07');
+			badge.setAttribute('font-size', '0.095');
 			badge.setAttribute('font-family', 'Inter, sans-serif');
 			badge.textContent = a.badge;
 			badge.style.pointerEvents = 'none';
@@ -3297,7 +3299,7 @@ const AttentionAnatomy = {
 		xt.setAttribute('y', y0 + 0.32);
 		xt.setAttribute('text-anchor', 'middle');
 		xt.setAttribute('fill', themeColor('#64748b'));
-		xt.setAttribute('font-size', '0.08');
+		xt.setAttribute('font-size', '0.105');
 		xt.setAttribute('font-family', 'Inter, sans-serif');
 		xt.textContent = 'key  →';
 		xt.style.pointerEvents = 'none';
@@ -3308,7 +3310,7 @@ const AttentionAnatomy = {
 		yt.setAttribute('y', y0 - n * (cell + gap) - 0.05);
 		yt.setAttribute('text-anchor', 'end');
 		yt.setAttribute('fill', themeColor('#64748b'));
-		yt.setAttribute('font-size', '0.08');
+		yt.setAttribute('font-size', '0.105');
 		yt.setAttribute('font-family', 'Inter, sans-serif');
 		yt.textContent = '↑ query';
 		yt.style.pointerEvents = 'none';
@@ -3339,7 +3341,7 @@ const AttentionAnatomy = {
 				t.setAttribute('y', cy + cell / 2 + 0.03);
 				t.setAttribute('text-anchor', 'middle');
 				t.setAttribute('fill', w > 0.45 ? '#fff' : themeColor('#1e293b'));
-				t.setAttribute('font-size', '0.07');
+				t.setAttribute('font-size', '0.095');
 				t.setAttribute('font-family', 'Inter, sans-serif');
 				t.textContent = `${(w*100).toFixed(0)}%`;
 				t.style.pointerEvents = 'none';
@@ -3560,7 +3562,7 @@ const AttentionAnatomy = {
 				zv.setAttribute('y', stripY + 0.30);
 				zv.setAttribute('text-anchor', 'end');
 				zv.setAttribute('fill', themeColor('#475569'));
-				zv.setAttribute('font-size', '0.085');
+				zv.setAttribute('font-size', '0.11');
 				zv.setAttribute('font-family', 'monospace');
 				zv.textContent = `z = (${Z[i][0].toFixed(2)}, ${Z[i][1].toFixed(2)})`;
 				zv.style.pointerEvents = 'none';
@@ -3691,7 +3693,7 @@ const AttentionAnatomy = {
 			cap.setAttribute('y', baseY - maxH - 0.06);
 			cap.setAttribute('text-anchor', 'middle');
 			cap.setAttribute('fill', themeColor('#334155'));
-			cap.setAttribute('font-size', '0.075');
+			cap.setAttribute('font-size', '0.1');
 			cap.setAttribute('font-family', 'Inter, sans-serif');
 			cap.textContent = `${signed(p1)} ${p2 < 0 ? '−' : '+'} ${signed(p2)} = ${signed(ATTN_2D.scores[j])}`;
 			cap.style.pointerEvents = 'none';
@@ -3745,7 +3747,7 @@ const AttentionAnatomy = {
 			t.setAttribute('x', x0); t.setAttribute('y', baseY - 0.10);
 			t.setAttribute('text-anchor', 'start');
 			t.setAttribute('fill', themeColor('#64748b'));
-			t.setAttribute('font-size', '0.07');
+			t.setAttribute('font-size', '0.095');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = opTag;
 			t.style.pointerEvents = 'none';
@@ -3799,7 +3801,7 @@ const AttentionAnatomy = {
 			cap.setAttribute('y', baseY - maxH - 0.10);
 			cap.setAttribute('text-anchor', 'middle');
 			cap.setAttribute('fill', themeColor('#334155'));
-			cap.setAttribute('font-size', '0.065');
+			cap.setAttribute('font-size', '0.095');
 			cap.setAttribute('font-family', 'Inter, sans-serif');
 			cap.textContent = `${vin.toFixed(2)} → ${vout.toFixed(2)}`;
 			cap.style.pointerEvents = 'none';
@@ -3886,7 +3888,7 @@ const AttentionAnatomy = {
 		title.setAttribute('y', baseY - 0.065);
 		title.setAttribute('text-anchor', 'middle');
 		title.setAttribute('fill', themeColor('#64748b'));
-		title.setAttribute('font-size', '0.075');
+		title.setAttribute('font-size', '0.1');
 		title.setAttribute('font-family', 'Inter, sans-serif');
 		title.textContent = 'attention weights α — sum = 100%';
 		title.style.pointerEvents = 'none';
@@ -3914,7 +3916,7 @@ const AttentionAnatomy = {
 			t.setAttribute('y', baseY + h / 2);
 			t.setAttribute('text-anchor', 'middle');
 			t.setAttribute('fill', '#fff');
-			t.setAttribute('font-size', '0.07');
+			t.setAttribute('font-size', '0.095');
 			t.setAttribute('font-weight', 'bold');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `α${j+1} ${(wi * 100).toFixed(1)}%`;
@@ -3937,7 +3939,7 @@ const AttentionAnatomy = {
 			// enough that the two stacked labels never touch.
 			t.setAttribute('y', -v[1] - 0.16);
 			t.setAttribute('fill', '#15803d');
-			t.setAttribute('font-size', '0.08');
+			t.setAttribute('font-size', '0.105');
 			t.setAttribute('font-family', 'Inter, sans-serif');
 			t.textContent = `α${j+1} = ${(wi * 100).toFixed(1)}%`;
 			t.style.cursor = 'help';
@@ -4014,6 +4016,10 @@ const AttentionAnatomy = {
 		// table / plots get the full width.
 		const collapseSvg = (data.mode === 'matrix' || data.mode === 'selfattn');
 		svg.classList.toggle('attn-svg-collapsed', collapseSvg);
+		// Also expand the computation panel to full width so the
+		// table / plots have all the horizontal space.
+		const grid = svg.closest('.attn-anatomy-grid');
+		if (grid) grid.classList.toggle('attn-grid-svg-collapsed', collapseSvg);
 
 		// Sanity checks before drawing — catch data corruption early
 		this._assert(data && typeof data.mode === 'string', `render2D: bad data, mode=${data && data.mode}`);
