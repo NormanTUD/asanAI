@@ -408,49 +408,34 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	}
 }
 
-/* Temperature slider + causal-mask toggle. These sit between the
-   token-count selector and the main grid so they read as "global
-   knobs" that affect every step. */
-.attn-temperature-control {
+/* Predefined token-set dropdown. Sits next to the token-count selector. */
+.attn-set-select {
 	display: flex;
 	align-items: center;
-	gap: 10px;
-	margin: 6px 0 2px 0;
-	padding: 4px 8px;
+	gap: 8px;
+	margin: 4px 0 2px 0;
+	padding: 0 8px;
 	font-size: 0.85rem;
 	color: var(--mn-text, #1e293b);
 }
-.attn-temperature-control .label {
+.attn-set-select .label {
 	font-weight: 600;
 	color: var(--mn-text-muted, #64748b);
 	font-size: 0.8rem;
 	min-width: 90px;
 }
-.attn-temperature-control input[type=range] {
+.attn-set-select select {
 	flex: 1;
 	max-width: 320px;
-	accent-color: #2563eb;
-}
-.attn-temperature-control .value {
-	font-family: 'SF Mono','Menlo','Consolas',monospace;
-	font-size: 0.8rem;
-	min-width: 44px;
-	text-align: right;
-	color: #2563eb;
-	font-weight: 600;
-}
-.attn-temperature-control .attn-temp-reset {
-	background: transparent;
+	padding: 3px 6px;
 	border: 1px solid var(--mn-border, #cbd5e1);
-	border-radius: 6px;
-	padding: 2px 8px;
-	font-size: 0.9rem;
-	cursor: pointer;
-	color: var(--mn-text-muted, #64748b);
+	border-radius: 4px;
+	background: var(--mn-surface, #fff);
+	color: var(--mn-text, #1e293b);
+	font-size: 0.85rem;
+	font-family: inherit;
 }
-.attn-temperature-control .attn-temp-reset:hover {
-	background: var(--mn-surface-raised, #f1f5f9);
-}
+
 .attn-causal-control {
 	margin: 2px 0 6px 8px;
 	font-size: 0.85rem;
@@ -727,26 +712,23 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	<div class="attn-token-select">
 		<span class="label">Tokens</span>
 		<button data-attn-tokens="2" class="active" title="The simplest case: query + one key">2</button>
-		<button data-attn-tokens="3" title="Adds dog">3</button>
-		<button data-attn-tokens="4" title="Adds dog and sat">4</button>
+		<button data-attn-tokens="3" title="Adds a 2nd key">3</button>
+		<button data-attn-tokens="4" title="Adds a 3rd key">4</button>
 		<span class="hint">Hover an arrow for the math, hover the arc between two arrows for what it means.</span>
 	</div>
 
-	<!-- Temperature control: τ < 1 sharpens softmax (winner-takes-all),
-	     τ > 1 softens it (more uniform). Affects every step from the
-	     scaled-score row onwards. -->
-	<div class="attn-temperature-control">
-		<span class="label">Temperature τ</span>
-		<input type="range" id="attn-temperature" min="0.25" max="3" step="0.05" value="1" title="Sharpen (τ&lt;1) or soften (τ&gt;1) the softmax distribution">
-		<span id="attn-temperature-val" class="value">1.00</span>
-		<button id="attn-temperature-reset" title="Reset to τ=1 (standard softmax)" class="attn-temp-reset">⟲</button>
+	<!-- Predefined token sets. Each set has its own keys/values so the
+	     user can see how different attention regimes play out: a clear
+	     winner, a two-way race, nothing relating to the query, and a
+	     strong winner. -->
+	<div class="attn-set-select">
+		<span class="label">Example</span>
+		<select id="attn-set-select">
+		</select>
 	</div>
 
 	<!-- Causal masking: when ON, each token can only attend to tokens at
-	     or before its own position. Currently a no-op for the single-query
-	     demo (where "it" is always last), but the toggle is wired up so
-	     future views (full attention matrix, self-attention for all tokens)
-	     can use it. -->
+	     or before its own position. Matters for the full-matrix view. -->
 	<div class="attn-causal-control">
 		<label><input type="checkbox" id="attn-causal"> Causal mask</label>
 	</div>

@@ -254,43 +254,69 @@ const ATTN_TOKENS = [
 const matMul = (W, v) => [W[0][0]*v[0] + W[0][1]*v[1],
                            W[1][0]*v[0] + W[1][1]*v[1]];
 
+// ── Predefined token sets ─────────────────────────────────────────
+// Each set is a self-contained scene: query q (always "it"), the other
+// tokens, their keys, values, and queries (for the full-matrix view).
+// The sets are designed to showcase different attention regimes:
+//
+//   0. Clear winner   — one key is close to q, dominates
+//   1. Two-way race   — two keys are roughly tied
+//   2. Nothing relates — keys are scattered, softmax is near-uniform
+//   3. Strong winner  — one key is almost parallel to q, ~95% weight
+//
+// Each token entry: { name, k, v, q } where k/v live in the key/value
+// subspace and q is the token's query (for self-attention).
+const ATTN_SETS = [
+	{
+		label: 'Clear winner (cat)',
+		tokens: [
+			{ name: 'cat', k: [ 0.90,  0.45], v: [ 0.80,  0.55], q: [ 0.90,  0.45] },
+			{ name: 'dog', k: [-0.50,  0.80], v: [-0.30,  0.70], q: [-0.50,  0.80] },
+			{ name: 'sat', k: [-0.60, -0.70], v: [-0.70, -0.55], q: [-0.60, -0.70] }
+		]
+	},
+	{
+		label: 'Two-way race (loved)',
+		tokens: [
+			{ name: 'loved', k: [ 0.85,  0.50], v: [ 0.70,  0.60], q: [ 0.85,  0.50] },
+			{ name: 'hated', k: [ 0.80,  0.45], v: [-0.60,  0.70], q: [ 0.80,  0.45] },
+			{ name: 'bored', k: [-0.90, -0.30], v: [ 0.10, -0.90], q: [-0.90, -0.30] }
+		]
+	},
+	{
+		label: 'Nothing relates (xyz)',
+		tokens: [
+			{ name: 'xyz', k: [-0.30,  0.20], v: [ 0.60,  0.30], q: [-0.30,  0.20] },
+			{ name: 'abc', k: [ 0.10, -0.40], v: [-0.20,  0.70], q: [ 0.10, -0.40] },
+			{ name: 'def', k: [ 0.20,  0.10], v: [ 0.80, -0.50], q: [ 0.20,  0.10] }
+		]
+	},
+	{
+		label: 'Strong winner (beautiful)',
+		tokens: [
+			{ name: 'beautiful', k: [ 0.98,  0.42], v: [ 0.90,  0.30], q: [ 0.98,  0.42] },
+			{ name: 'ugly',     k: [-0.80,  0.90], v: [-0.60,  0.80], q: [-0.80,  0.90] },
+			{ name: 'plain',    k: [-0.90, -0.80], v: [ 0.20, -0.70], q: [-0.90, -0.80] }
+		]
+	}
+];
+
 const ATTN_2D = {
-	q: [ 1.00, 0.40 ],
-	_allKeys: [
-		[ 0.90, 0.45 ],   // k₁: "cat" — close to q, should win attention
-		[-0.50, 0.80 ],   // k₂: "dog" — somewhat orthogonal
-		[-0.60, -0.70 ]   // k₃: "sat" — pointing opposite-ish
-	],
-	_allVals: [
-		[ 0.80, 0.55 ],   // v₁
-		[-0.30, 0.70 ],   // v₂
-		[-0.70, -0.55 ]   // v₃
-	],
-	// Queries for every token (needed by the full attention matrix and
-	// self-attention views). We use the existing q for "it" and reuse
-	// the keys as queries for the other tokens — a natural choice that
-	// makes self-attention α_ii strong (q_i · k_i = |k_i|² > 0), which
-	// is exactly what real Transformers learn.
-	_allQueries: [
-		[ 1.00,  0.40],   // q_it
-		[ 0.90,  0.45],   // q_cat
-		[-0.50,  0.80],   // q_dog
-		[-0.60, -0.70]    // q_sat
-	],
+	q: [ 1.00, 0.40 ],                       // current query (set on init)
+	_allKeys:  [],
+	_allVals:  [],
+	_allQueries: [],
+	exampleIdx: 0,                            // current predefined set
 	d_k: 2,
 	numTokens: 2,
-	temperature: 1.0,
 	causal: false,
 
 	// ── Demo data for the "learnable projections" step ────────────
-	// One input embedding x, projected by three DIFFERENT learned
-	// matrices W^Q, W^K, W^V into three different 2D vectors. This makes
-	// "q ≠ k ≠ v because W^Q ≠ W^K ≠ W^V" geometrically obvious.
 	demo: (function() {
 		const x   = [0.80, 0.60];
-		const W_Q = [[1.0, 0.0], [0.0, 1.0]];   // identity  → q = x
-		const W_K = [[0.0, 1.0], [-1.0, 0.0]];  // 90° rotation CCW
-		const W_V = [[1.0, 0.5], [0.0, 1.0]];   // horizontal shear
+		const W_Q = [[1.0, 0.0], [0.0, 1.0]];
+		const W_K = [[0.0, 1.0], [-1.0, 0.0]];
+		const W_V = [[1.0, 0.5], [0.0, 1.0]];
 		const q = matMul(W_Q, x);
 		const k = matMul(W_K, x);
 		const v = matMul(W_V, x);
@@ -301,13 +327,10 @@ const ATTN_2D = {
 		};
 	})(),
 
-	// Softmax with temperature τ: exp(s/τ) / Σ. τ<1 sharpens (more
-	// one-hot), τ>1 softens (more uniform). Causal mask zeroes out
-	// keys at positions > query position.
+	// Standard softmax: exp(s) / Σ. Causal mask zeroes out keys at
+	// positions > query position (only matters for the full-matrix view).
 	recomputeWeights: function() {
-		const exps = this.scaled.map(s => Math.exp(s / this.temperature));
-		// Single-query demo: "it" is always the last token, so every
-		// key position is ≤ query position → mask is a no-op here.
+		const exps = this.scaled.map(s => Math.exp(s));
 		const sum = exps.reduce((a, b) => a + b, 0) || 1;
 		this.exps = exps;
 		this.weights = exps.map(e => e / sum);
@@ -321,27 +344,30 @@ const ATTN_2D = {
 	},
 
 	// Full n×n attention matrix: α[i][j] = how much query i attends to
-	// key j. Each row is a softmax over all keys. Also computes the
-	// per-query output z_i for the self-attention view.
+	// key j. The matrix is capped at the available key/value count
+	// (we have one fewer k/v than total tokens — "it" doesn't carry its
+	// own key in the single-query demo), so for n tokens the matrix is
+	// at most n × (n-1).
 	recomputeMatrix: function() {
 		const n = this.numTokens;
+		const m = Math.min(n, this._allKeys.length + 1);  // +1: "it" is implicit query, not key
 		const queries = this._allQueries.slice(0, n);
-		const keys    = this._allKeys.slice(0, n);
-		const vals    = this._allVals.slice(0, n);
+		const keys    = this._allKeys.slice(0, m - 1);
+		const vals    = this._allVals.slice(0, m - 1);
 		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
 
 		const M = [], Z = [];
 		for (let i = 0; i < n; i++) {
 			const scores = keys.map(k => dot(queries[i], k) / this.sqrtDk);
-			let exps = scores.map(s => Math.exp(s / this.temperature));
+			let exps = scores.map(s => Math.exp(s));
 			if (this.causal) {
-				for (let j = i + 1; j < n; j++) exps[j] = 0;
+				for (let j = i + 1; j < m - 1; j++) exps[j] = 0;
 			}
 			const sum = exps.reduce((a, b) => a + b, 0) || 1;
 			const row = exps.map(e => e / sum);
 			M.push(row);
 			const z = [0, 0];
-			for (let j = 0; j < n; j++) {
+			for (let j = 0; j < m - 1; j++) {
 				z[0] += row[j] * vals[j][0];
 				z[1] += row[j] * vals[j][1];
 			}
@@ -349,8 +375,6 @@ const ATTN_2D = {
 		}
 		this.matrix = M;
 		this.selfOutputs = Z;
-		// Keep the single-query fields in sync with the LAST row (the
-		// "it" query, always at position n-1).
 		const last = n - 1;
 		this.weights = M[last] || [];
 		this.output  = Z[last] || [0, 0];
@@ -368,9 +392,27 @@ const ATTN_2D = {
 		this.scaled = this.scores.map(s => s / this.sqrtDk);
 		this.recomputeWeights();
 		this.recomputeMatrix();
+	},
+
+	// Switch to a predefined token set (0..3). Updates q, keys, vals,
+	// queries and the token name list, then re-derives everything.
+	setExample: function(idx) {
+		if (idx < 0 || idx >= ATTN_SETS.length) return;
+		this.exampleIdx = idx;
+		const set = ATTN_SETS[idx];
+		this.q = [ 1.00, 0.40 ];  // the query "it" stays fixed across sets
+		this._allKeys    = set.tokens.map(t => t.k);
+		this._allVals    = set.tokens.map(t => t.v);
+		this._allQueries = [ this.q, ...set.tokens.map(t => t.q) ];
+		// Update the displayed token names.
+		ATTN_TOKENS[0].name = 'it';
+		for (let i = 0; i < set.tokens.length; i++) {
+			ATTN_TOKENS[i + 1].name = set.tokens[i].name;
+		}
+		this.setNumTokens(this.numTokens);
 	}
 };
-ATTN_2D.setNumTokens(2);
+ATTN_2D.setExample(0);
 
 // Eight steps. `mode` decides what the 2D plot draws:
 //   'keys'   → query + keys (steps 1-6)
@@ -662,132 +704,54 @@ const ATTN_COMPUTATIONS = {
 //   - "Big picture" — how it serves the overall attention computation
 const ATTN_INTUITIONS = {
 	projections: () => `
-		<div class="intuition-header">💡 Geometric intuition — Three views of the same token</div>
+		<div class="intuition-header">💡 Three views of the same token</div>
 		<div class="intuition-math">$$\\mathbf{q} = \\mathbf{W}^Q \\mathbf{x}, \\quad \\mathbf{k} = \\mathbf{W}^K \\mathbf{x}, \\quad \\mathbf{v} = \\mathbf{W}^V \\mathbf{x}$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> multiply the same input vector $\\mathbf{x}$ by three different $2 \\times 2$ matrices. Each matrix is a <b>linear map</b> — it rotates, scales, and shears the plane.
-		</div>
-		<div class="intuition-section">
-			<strong>Why three different ones?</strong> because q, k, v play <i>different roles</i>:
-			<ul style="margin: 8px 0 0 0; padding-left: 22px; line-height: 1.55;">
-				<li><b style="color:#ef4444">W^Q</b> learns to put the token in a "search" space — similar queries end up pointing similar ways.</li>
-				<li><b style="color:#2563eb">W^K</b> learns an "advertise" space — similar keys end up pointing similar ways (so they match similar queries).</li>
-				<li><b style="color:#16a34a">W^V</b> learns a "content" space — the actual payload that gets blended into the output.</li>
-			</ul>
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> this is the <b>only</b> learnable part of attention in the original Transformer paper. Everything downstream (dot products, softmax, weighted sums) is fixed math. The W's absorb <i>all</i> the learning — training pushes them into shapes that make q·k large when two tokens should attend to each other.
-		</div>
+		<div class="intuition-section">Three learned linear maps — each one a different rotation/scale/shear of the input space.</div>
 	`,
 	setup: () => `
 		<div class="intuition-header">💡 Where do Q, K, V come from?</div>
 		<div class="intuition-math">$$q_i = x_i W^Q, \\quad k_j = x_j W^K, \\quad v_j = x_j W^V$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> each token's <b>embedding</b> <i>x</i> is multiplied by three <b>learned matrices</b> to produce the query, key, and value.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> Q, K, V are three different "views" of the same token — same input, different roles. This is the first place the model <i>learns</i> anything.
-		</div>
+		<div class="intuition-section">Three learned projections of the same token embedding.</div>
 	`,
 	components: () => `
-		<div class="intuition-header">💡 Geometric intuition — Element-wise product</div>
+		<div class="intuition-header">💡 Element-wise product</div>
 		<div class="intuition-math">$$q[d] \\cdot k_1[d] \\quad d \\in \\{1, 2\\}$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> per-axis product. Same sign = positive (agree); opposite sign = negative (disagree).
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> the atoms of the dot product — sum them next.
-		</div>
+		<div class="intuition-section">Per-axis product. Same sign → positive (agree); opposite sign → negative (disagree).</div>
 	`,
 	dot: () => `
-		<div class="intuition-header">💡 Geometric intuition — The dot product</div>
+		<div class="intuition-header">💡 The dot product</div>
 		<div class="intuition-math">$$q \\cdot k_j = \\lVert q \\rVert \\cdot \\lVert k_j \\rVert \\cdot \\cos\\theta$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> add the components → one scalar per key. Positive = same direction; negative = opposite.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> the projection of <i>q</i> onto <i>k</i> — how much of <i>q</i> fits inside <i>k</i>.
-		</div>
+		<div class="intuition-section">Add the components → one scalar per key. Positive = same direction; negative = opposite.</div>
 	`,
 	scaled: () => `
-		<div class="intuition-header">💡 Geometric intuition — Scale by √d_k</div>
+		<div class="intuition-header">💡 Scale by √d_k</div>
 		<div class="intuition-math">$$\\frac{q \\cdot k_j}{\\sqrt{d_k}}$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> divide each score by √d_k.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> keeps variance at ~1 so softmax behaves at any dimension.
-		</div>
+		<div class="intuition-section">Keeps variance at ~1 so softmax behaves at any dimension.</div>
 	`,
 	exps: () => `
-		<div class="intuition-header">💡 Geometric intuition — Exponentiate</div>
+		<div class="intuition-header">💡 Exponentiate</div>
 		<div class="intuition-math">$$e^{\\text{score}_j}$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> apply exp() to every scaled score. Two things happen <i>at once</i>:
-			<ol style="margin: 8px 0 0 0; padding-left: 22px; line-height: 1.55;">
-				<li><b>Flips negatives above zero.</b> Negative inputs (the dashed bars hanging <i>below</i> the baseline) become small positive numbers — they no longer drag the sum down.</li>
-				<li><b>Amplifies the leader.</b> The biggest input grows much faster than the rest: $e^{0.76} \\approx 2.1$ but $e^{0.13} \\approx 1.1$ — a 6× score gap becomes a 2× value gap, and a 16× gap would become a 16,000,000× gap.</li>
-			</ol>
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Why this step exists:</strong> softmax (the next step) needs <i>positive</i> values to divide into a budget. exp() delivers both the positivity and the amplification that makes the winner dominate. Without exp, dividing positive and negative numbers would let “opposite” tokens cancel the “same-way” tokens — and softmax would lose its meaning.
-		</div>
-	`,
-	weights: () => `
-		<div class="intuition-header">💡 Geometric intuition — Normalize (softmax)</div>
-		<div class="intuition-math">$$\\alpha_{ij} = \\frac{e^{\\text{score}_j}}{\\sum_n e^{\\text{score}_n}}$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> divide each exp(score) by the sum.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> the weights sum to 100% — a finite resource of attention.
-		</div>
+		<div class="intuition-section">Flips negatives above zero <i>and</i> amplifies the leader. Softmax needs positive values.</div>
 	`,
 	values: () => `
-		<div class="intuition-header">💡 Geometric intuition — Switch to values</div>
-		<div class="intuition-math">$$v_j \\in \\mathbb{R}^{d_v}, \\quad \\alpha_{ij}$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> drop the keys, bring in vⱼ — the actual content to blend.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> keys = WHAT to attend to, values = WHAT to retrieve.
-		</div>
+		<div class="intuition-header">💡 Keys vs values</div>
+		<div class="intuition-math">$$\\text{keys} = \\text{WHAT to attend to}, \\quad \\text{values} = \\text{WHAT to retrieve}$$</div>
+		<div class="intuition-section">Weights carry over unchanged — they were computed from the keys.</div>
 	`,
 	output: () => `
-		<div class="intuition-header">💡 Geometric intuition — The weighted sum</div>
+		<div class="intuition-header">💡 The weighted sum</div>
 		<div class="intuition-math">$$\\mathbf{z} = \\sum_j \\alpha_j \\, \\mathbf{v}_j$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> scale each value by its weight, then add them up.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> $\\mathbf{z}$ is the <i>contextualised</i> output for "it" — a weighted blend of every value, with the blending determined by the attention weights.
-		</div>
+		<div class="intuition-section">A convex combination — z always lies inside the convex hull of the values.</div>
 	`,
 	matrix: () => `
-		<div class="intuition-header">💡 Geometric intuition — The attention matrix</div>
+		<div class="intuition-header">💡 The attention matrix</div>
 		<div class="intuition-math">$$\\alpha_{ij} = \\dfrac{e^{\\mathbf{q}_i \\cdot \\mathbf{k}_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{\\mathbf{q}_i \\cdot \\mathbf{k}_n \\,/\\, \\sqrt{d_k}}}$$</div>
-		<div class="intuition-section">
-			<strong>What this is:</strong> an $n \\times n$ matrix where every row is a probability distribution over keys. Row $i$ = "what token $i$ attends to".
-		</div>
-		<div class="intuition-section">
-			<strong>Reading it:</strong> dark blue = strong attention, light = weak. The diagonal often lights up because $\\mathbf{q}_i \\cdot \\mathbf{k}_i = \\lVert \\mathbf{k}_i \\rVert^2$ is always positive (a token naturally attends to itself).
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> this matrix is the <b>entire</b> output of the attention mechanism — everything downstream is just a matrix multiply with the values. In a real Transformer you can <i>visualise</i> this matrix to see what the model has learned (e.g. induction heads, coreference patterns).
-		</div>
+		<div class="intuition-section">Each row = one token's softmax over all keys. Diagonal often lights up (q·k = ‖k‖² > 0).</div>
 	`,
 	selfattn: () => `
-		<div class="intuition-header">💡 Geometric intuition — Self-attention</div>
+		<div class="intuition-header">💡 Self-attention</div>
 		<div class="intuition-math">$$\\mathbf{z}_i = \\sum_j \\alpha_{ij} \\, \\mathbf{v}_j \\quad \\text{for every } i$$</div>
-		<div class="intuition-section">
-			<strong>What this does:</strong> every token gets its own output $\\mathbf{z}_i$, computed as a weighted blend of <i>all</i> the values using <i>that token's</i> row of the α-matrix.
-		</div>
-		<div class="intuition-section">
-			<strong>Why "self":</strong> the queries, keys, and values all come from the <i>same</i> sequence. Each token is simultaneously asking ("what am I looking for?") and answering ("here's what I contain"). This is what makes attention so powerful — every token can directly read from every other.
-		</div>
-		<div class="intuition-section intuition-why">
-			<strong>Big picture:</strong> this is the full Transformer layer (minus residual connections and layer norm). In a real model this runs in parallel for every token, and the outputs $\\mathbf{z}_i$ are fed to the next layer.
-		</div>
+		<div class="intuition-section">Every token gets its own output — a weighted blend of all values, using its own attention row.</div>
 	`
 };
 
@@ -1030,27 +994,25 @@ const AttentionAnatomy = {
 			});
 		});
 
-		// Temperature slider. Recomputes the softmax (exps → weights →
-		// output) with the new τ, then re-renders. The slider is global
-		// to all steps so the user can watch how a single knob changes
-		// the weight bar, the output z, and the weighted values.
-		const tempSlider = document.getElementById('attn-temperature');
-		const tempVal    = document.getElementById('attn-temperature-val');
-		const tempReset  = document.getElementById('attn-temperature-reset');
-		if (tempSlider) {
-			tempSlider.addEventListener('input', () => {
-				ATTN_2D.temperature = parseFloat(tempSlider.value);
-				if (tempVal) tempVal.textContent = ATTN_2D.temperature.toFixed(2);
-				ATTN_2D.recomputeWeights();
-				this.render();
+		// Predefined token-set dropdown. Switching the set swaps all
+		// keys/values/queries (and token names) at once so the user
+		// can compare attention regimes side by side: clear winner,
+		// two-way race, nothing relates, strong winner.
+		const setSelect = document.getElementById('attn-set-select');
+		if (setSelect) {
+			// Populate the options from ATTN_SETS.
+			setSelect.innerHTML = '';
+			ATTN_SETS.forEach((s, i) => {
+				const opt = document.createElement('option');
+				opt.value = String(i);
+				opt.textContent = s.label;
+				if (i === ATTN_2D.exampleIdx) opt.selected = true;
+				setSelect.appendChild(opt);
 			});
-		}
-		if (tempReset) {
-			tempReset.addEventListener('click', () => {
-				ATTN_2D.temperature = 1.0;
-				if (tempSlider) tempSlider.value = '1';
-				if (tempVal)    tempVal.textContent = '1.00';
-				ATTN_2D.recomputeWeights();
+			setSelect.addEventListener('change', () => {
+				const idx = parseInt(setSelect.value, 10);
+				if (idx === ATTN_2D.exampleIdx) return;
+				ATTN_2D.setExample(idx);
 				this.render();
 			});
 		}
@@ -1736,6 +1698,7 @@ const AttentionAnatomy = {
 		svg.querySelectorAll('.attn-axes text').forEach((t) => t.setAttribute('fill', themeColor('#475569')));
 	},
 
+
 	// Draw a hoverable angle arc between the query direction and one
 	// key direction (both drawn from the origin). A fat transparent
 	// copy of the arc acts as the hit-area; hovering it shows the
@@ -1833,6 +1796,9 @@ const AttentionAnatomy = {
 		const ex = end[0],   ey = -end[1];
 		const anchor = lanchor || 'start';
 
+		// Tag every animatable arrow so we can find it later if needed.
+		const arrowCls = 'attn-arrow-' + (idx !== undefined ? idx : 'misc');
+
 		// Invisible fat hit-area for forgiving hover
 		const hit = document.createElementNS(NS, 'line');
 		hit.setAttribute('x1', sx); hit.setAttribute('y1', sy);
@@ -1840,6 +1806,7 @@ const AttentionAnatomy = {
 		hit.setAttribute('stroke', 'transparent');
 		hit.setAttribute('stroke-width', '0.18');
 		hit.classList.add('attn-arrow-hit');
+		hit.classList.add(arrowCls);
 		parent.appendChild(hit);
 
 		// Visible shaft
@@ -1851,11 +1818,13 @@ const AttentionAnatomy = {
 		line.setAttribute('opacity', opacity);
 		line.style.pointerEvents = 'none';
 		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
+		line.classList.add(arrowCls);
 		parent.appendChild(line);
 
 		// Arrowhead (triangle pointing along the vector)
 		const dx = ex - sx, dy = ey - sy;
 		const len = Math.sqrt(dx * dx + dy * dy);
+		let head = null;
 		if (len > 0.01) {
 			const ux = dx / len, uy = dy / len;
 			const s = 0.11;                     // arrowhead size in data units
@@ -1865,42 +1834,49 @@ const AttentionAnatomy = {
 			const ay1 = ey - s * (ux * si + uy * c);
 			const ax2 = ex - s * (ux * c + uy * si);
 			const ay2 = ey - s * (-ux * si + uy * c);
-			const head = document.createElementNS(NS, 'polygon');
+			head = document.createElementNS(NS, 'polygon');
 			head.setAttribute('points', `${ex},${ey} ${ax1},${ay1} ${ax2},${ay2}`);
 			head.setAttribute('fill', color);
 			head.setAttribute('opacity', opacity);
 			head.style.pointerEvents = 'none';
+			head.classList.add(arrowCls);
 			parent.appendChild(head);
 		}
 
 		// Label (with a THIN white halo for readability over the grid —
 		// a wide stroke around every glyph looks like a messy outline)
+		let labelHalo = null, labelTxt = null;
 		if (label) {
 			const lx = ex + (lpos ? lpos[0] : 0.14);
 			const ly = ey + (lpos ? lpos[1] : -0.04);
-			const halo = document.createElementNS(NS, 'text');
-			halo.setAttribute('x', lx); halo.setAttribute('y', ly);
-			halo.setAttribute('text-anchor', anchor);
-			halo.setAttribute('dominant-baseline', 'middle');
-			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
-			halo.setAttribute('stroke-width', '0.012'); halo.setAttribute('paint-order', 'stroke');
-			halo.setAttribute('font-size', '0.1');
-			halo.setAttribute('font-family', 'Inter, sans-serif');
-			halo.textContent = label;
-			halo.style.pointerEvents = 'none';
-			labelsParent.appendChild(halo);
-			const txt = document.createElementNS(NS, 'text');
-			txt.setAttribute('x', lx); txt.setAttribute('y', ly);
-			txt.setAttribute('text-anchor', anchor);
-			txt.setAttribute('dominant-baseline', 'middle');
-			txt.setAttribute('fill', color);
-			txt.setAttribute('font-size', '0.1');
-			txt.setAttribute('opacity', opacity);
-			txt.setAttribute('font-family', 'Inter, sans-serif');
-			txt.textContent = label;
-			txt.style.pointerEvents = 'none';
-			labelsParent.appendChild(txt);
+			labelHalo = document.createElementNS(NS, 'text');
+			labelHalo.setAttribute('x', lx); labelHalo.setAttribute('y', ly);
+			labelHalo.setAttribute('text-anchor', anchor);
+			labelHalo.setAttribute('dominant-baseline', 'middle');
+			labelHalo.setAttribute('fill', '#fff'); labelHalo.setAttribute('stroke', '#fff');
+			labelHalo.setAttribute('stroke-width', '0.012'); labelHalo.setAttribute('paint-order', 'stroke');
+			labelHalo.setAttribute('font-size', '0.1');
+			labelHalo.setAttribute('font-family', 'Inter, sans-serif');
+			labelHalo.textContent = label;
+			labelHalo.style.pointerEvents = 'none';
+			labelHalo.classList.add(arrowCls);
+			labelsParent.appendChild(labelHalo);
+			labelTxt = document.createElementNS(NS, 'text');
+			labelTxt.setAttribute('x', lx); labelTxt.setAttribute('y', ly);
+			labelTxt.setAttribute('text-anchor', anchor);
+			labelTxt.setAttribute('dominant-baseline', 'middle');
+			labelTxt.setAttribute('fill', color);
+			labelTxt.setAttribute('font-size', '0.1');
+			labelTxt.setAttribute('opacity', opacity);
+			labelTxt.setAttribute('font-family', 'Inter, sans-serif');
+			labelTxt.textContent = label;
+			labelTxt.style.pointerEvents = 'none';
+			labelTxt.classList.add(arrowCls);
+			labelsParent.appendChild(labelTxt);
 		}
+
+		// Return the elements so callers can animate them if needed.
+		return { hit, line, head, labelHalo, labelTxt, lpos, anchor, start, end };
 
 		// Mouse events fire DIRECTLY on this element. No Plotly, no
 		// overlay, no event-delegation hacks — just plain DOM events.
