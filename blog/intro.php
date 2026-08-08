@@ -7,7 +7,7 @@ icon: &#127758;
 part: 0
 order: 0
 color: accent
-topics: history, philosophy, math, society
+topics: history, philosophy, math-i, society
 -->
 
 <div class="image-row md">
@@ -47,25 +47,13 @@ This site is not a book to be read passively. It is designed as a playground for
 
 ## Pick Your Interests — A Course That Adapts to You
 
-Not every topic sparks the same curiosity for everyone. Some readers live for the equations. Others want the philosophical questions. Others want the hardware details. Others just want to know how to talk to ChatGPT well. This course is too long to consume in one shape, so it adapts to **you**.
-
-Look at the top-right corner of the page — next to the **dark-mode toggle** you'll find a small 🎯 button. Click it to open the **interest picker**:
-
-* **Toggle a topic** and the rest of the site quietly rearranges itself: sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, so you can still see they exist (and click once to peek if curiosity strikes).
-* **Your choices are saved in a cookie** — they survive reloads and travel with you between pages. No account, no signup.
-* **It's playful on purpose.** There are presets like *Show Everything*, *Just Essentials* and a 🎲 *Surprise Me* button that picks a random subset to start with — a way to discover corners of the course you didn't know you'd enjoy.
+This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD) — each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason.
 
 Below is your current pick. Tap any pill to flip it on or off:
 
 <div data-topics-inline class="inline-topics"></div>
 
-A few things worth knowing:
-
-* **Nothing is gone for good.** Skipped sections show a banner like *“Math section skipped”* with a single-click *Peek anyway* button. So you can stay focused without losing the road map of what the course covers.
-* **The course tiles on the home page react, too.** Tiles for topics you've muted gently fade back, marked *“saved for later”*. They're still one click away if you change your mind.
-* **You can change your mind any time.** There is no score, no penalty. The picker is a dial, not a quiz.
-
-Use it as much or as little as you like. Some readers will ignore it and read straight through. Others will turn off everything except *History* and *Philosophy*. Both are completely valid paths through the material.
+Toggle individual topics to fine-tune — sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
 
 ## What You Will Achieve
 
@@ -86,28 +74,6 @@ To truly grasp the nature of Artificial Intelligence, we will move through vario
 - **The High-Level Abstract**: At the top of the ladder, we reach broad terms like "Topology", "Fiber Bundles", "Intelligence," "Logic," and "Ethics." While these allow us to discuss the impact of AI on society, they remain grounded in the mathematical rungs beneath them.
 
 This text is designed to help you navigate these shifts. We will constantly move from a philosophical "why" down to a mathematical "how," ensuring that the most abstract concepts remain tied to concrete reality.
-
-## A Note on the Authors' Bias
-
-[[t:philosophy]]
-We authors have a soft spot for the *Two Cultures* conversation. We believe that to understand AI well, you need a foot in the mathematics, a foot in the humanities, and a willingness to wade through history. This is unusual — most courses of this size are pure engineering or pure philosophy. We picked the harder middle path because we think the most interesting questions live there. If you mute the Philosophy topic, you won't lose the technical material; you'll just lose the occasional nudge to *think about what it all means*.
-[[/t]]
-
-[[t:math]]
-If you mute Math, you'll see that a lot of the interactive sliders and live demos still work — they're designed to give you intuition even when the equations are hidden. Look at the picture, move the slider, *feel* the shape of the curve. That's the part most readers keep, even when the symbols themselves get tucked away.
-[[/t]]
-
-[[t:history]]
-If History isn't your thing, you'll still get the technical ladder. But you'll miss the long, strange arc from Ishango bones to attention heads — which, in our opinion, is the most poetic part of the whole story. Skim it later when you have an evening to spare.
-[[/t]]
-
-[[t:ethics]]
-If you mute Ethics, you'll skip the chapters on hallucinations, alignment, and societal impact. Those are increasingly the chapters the working world reads first. Consider leaving them on even if you don't think of yourself as a "philosophy person" — they're closer to *engineering risk* than to armchair speculation.
-[[/t]]
-
-[[t:hardware]]
-Muting Hardware is the right move if you mainly want to *use* AI rather than run it. You'll skip GPU lore, inference optimization, and running models locally. The rest of the course doesn't lean on those sections.
-[[/t]]
 
 ## Disclaimer
 

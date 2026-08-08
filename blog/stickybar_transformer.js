@@ -67,7 +67,7 @@
 
 	<div id="tlab-bar-idle" style="display:flex; align-items:center; gap:14px; width:100%;">
 	    <span style="flex-grow:1; color:#94a3b8; font-size:0.82rem;">
-		Transformer Lab — ready to train
+		Ready to train
 	    </span>
 	    <button id="tlab-bar-train-btn" style="${buildTrainButtonStyles()}">▶ Start Training</button>
 	</div>

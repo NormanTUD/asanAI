@@ -34,6 +34,14 @@ function initPureActivationLab() {
 			pro: "Smooth and differentiable everywhere; no 'dying' neurons; the activation of choice in nanoGPT's Feed-Forward Network.",
 			con: "Slightly more expensive to compute than ReLU due to the error function."
 		},
+		silu: {
+			name: "SiLU / Swish (Sigmoid Linear Unit)",
+			fn: (x) => x / (1 + Math.exp(-x)),
+			tex: "f(x) = x \\cdot \\sigma(x) = \\frac{x}{1 + e^{-x}}",
+			use: "The **standard activation of the diffusion U-Net** (Stable Diffusion, DDPM), and of most modern vision CNNs. A self-gated, smoothed ReLU.",
+			pro: "Cheap to compute (one sigmoid, no erf); smooth and differentiable everywhere; non-zero gradient on the negative side; used in every ResBlock of Stable Diffusion alongside GroupNorm.",
+			con: "Output is unbounded below (~ -0.28 minimum), so activations can drift to small negatives and slow training slightly if not paired with normalization."
+		},
 		sigmoid: {
 			name: "Sigmoid / Logistic",
 			fn: (x) => 1 / (1 + Math.exp(-x)),
@@ -88,7 +96,12 @@ function initPureActivationLab() {
 			xaxis: { title: 'Input (z)', range: [-5, 5] },
 			yaxis: { title: 'Output f(z)', range: [-1.2, 1.2] },
 			paper_bgcolor: themeColor('#fff'),
-			plot_bgcolor: themeColor('#fff')
+			plot_bgcolor: themeColor('#fff'),
+			hoverlabel: {
+				bgcolor: themeColor('#1e293b'),
+				bordercolor: 'transparent',
+				font: { color: themeColor('#f8fafc'), size: 12 }
+			}
 		});
 
 		// Update LaTeX
@@ -179,7 +192,7 @@ function initSoftmaxLab() {
             hole: 0.4,
             marker: { colors: colors },
             textinfo: 'label+percent'
-        }], { height: 350, margin: { t: 40, b: 10, l: 10, r: 10 }, showlegend: false, paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff') });
+        }], { height: 350, margin: { t: 40, b: 10, l: 10, r: 10 }, showlegend: false, paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff'), hoverlabel: { bgcolor: themeColor('#1e293b'), bordercolor: 'transparent', font: { color: themeColor('#f8fafc'), size: 12 } } });
 
         Plotly.newPlot('softmax-bar-plot', [{
             x: logits,
@@ -187,7 +200,7 @@ function initSoftmaxLab() {
             type: 'bar',
             orientation: 'h',
             marker: { color: colors.slice(0, logits.length) }
-        }], { height: 350, margin: { t: 40, b: 40, l: 60, r: 20 }, xaxis: { title: 'Input Score' }, paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff') });
+        }], { height: 350, margin: { t: 40, b: 40, l: 60, r: 20 }, xaxis: { title: 'Input Score' }, paper_bgcolor: themeColor('#fff'), plot_bgcolor: themeColor('#fff'), hoverlabel: { bgcolor: themeColor('#1e293b'), bordercolor: 'transparent', font: { color: themeColor('#f8fafc'), size: 12 } } });
 
         // Detaillierte Formel-Anzeige
         let mathHtml = `<div style="text-align:left;"><b>Calculation Path:</b><br>`;
@@ -284,6 +297,14 @@ async function loadActivationModule() {
                 pro: "Smooth and differentiable everywhere; no 'dying' neurons; the activation of choice in nanoGPT's Feed-Forward Network.",
                 con: "Slightly more expensive to compute than ReLU due to the error function."
             },
+            silu: {
+                name: "SiLU / Swish (Sigmoid Linear Unit)",
+                fn: (x) => x / (1 + Math.exp(-x)),
+                tex: "f(x) = x \\cdot \\sigma(x) = \\frac{x}{1 + e^{-x}}",
+                use: "The **standard activation of the diffusion U-Net** (Stable Diffusion, DDPM), and of most modern vision CNNs. A self-gated, smoothed ReLU.",
+                pro: "Cheap to compute (one sigmoid, no erf); smooth and differentiable everywhere; non-zero gradient on the negative side; used in every ResBlock of Stable Diffusion alongside GroupNorm.",
+                con: "Output is unbounded below (~ -0.28 minimum), so activations can drift to small negatives and slow training slightly if not paired with normalization."
+            },
             sigmoid: {
                 name: "Sigmoid / Logistic",
                 fn: (x) => 1 / (1 + Math.exp(-x)),
@@ -338,7 +359,12 @@ async function loadActivationModule() {
                 xaxis: { title: 'Input (z)', range: [-5, 5] },
                 yaxis: { title: 'Output f(z)', range: [-1.2, 1.2] },
                 paper_bgcolor: themeColor('#fff'),
-                plot_bgcolor: themeColor('#fff')
+                plot_bgcolor: themeColor('#fff'),
+                hoverlabel: {
+                    bgcolor: themeColor('#1e293b'),
+                    bordercolor: 'transparent',
+                    font: { color: themeColor('#f8fafc'), size: 12 }
+                }
             });
 
             mathBox.innerHTML = `$ ${selected.tex} $`;

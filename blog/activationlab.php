@@ -7,7 +7,7 @@ icon: &#9889;
 part: 2
 order: 13
 color: coral
-topics: math, programming, interactive
+topics: math-i, programming
 -->
 
 <div class="md">
@@ -50,6 +50,7 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
             <select id="pure-act-type" class="btn" style="border: 1px solid #ccc; width: 100%; padding: 10px;">
                 <option value="relu">ReLU (The Classic Workhorse)</option>
                 <option value="gelu">GELU (The Transformer Standard)</option>
+                <option value="silu">SiLU (The Diffusion Smooth Gate)</option>
                 <option value="sigmoid">Sigmoid (The Classic S-Curve)</option>
                 <option value="tanh">Tanh (Zero-Centered)</option>
                 <option value="leaky_relu">Leaky ReLU (Death Prevention)</option>
@@ -191,4 +192,14 @@ $$\text{GELU}(x) = x \cdot \Phi(x) = 0.5\, x \left(1 + \text{erf}\!\left(\frac{x
 Where $\Phi(x)$ is the standard normal cumulative distribution function and $\text{erf}$ is the error function.
 
 GELU is often described as a "smooth ReLU": it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever "dies" completely — every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
+</div>
+
+<div class="md">
+### SiLU: The Diffusion Smooth Gate
+
+The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** \cite{ramachandran2017swish}, is the activation inside the **U-Net denoiser of Stable Diffusion** and most modern CNN-based vision models:
+
+$$\text{SiLU}(x) \;=\; x \cdot \sigma(x) \;=\; \frac{x}{1 + e^{-x}}$$
+
+A *self-gated* function: each input is multiplied by its own sigmoid. Looks like a smoothed ReLU — strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\approx -0.28$), zero at $x = 0$. Like GELU it is everywhere differentiable and never fully "dies"; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
 </div>

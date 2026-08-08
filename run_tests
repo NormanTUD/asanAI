@@ -7,21 +7,29 @@ show_help() {
 Usage: $0 [OPTIONS]
 
 Options:
-  --no-smoke-tests   Skip running smoke tests
-  --no-docker        Skip starting docker container
-  --no-run-tests     Skip running Python tests
-  --help             Show this help message
+  --no-smoke-tests        Skip running smoke tests
+  --no-docker             Skip starting docker container
+  --no-screenshot-test    Skip the pixel-perfect screenshot regression test
+  --no-run-tests          Skip running Python tests
+  --help                  Show this help message
+
+Environment variables for the screenshot test:
+  SCREENSHOT_URL        URL to screenshot (default: http://localhost:1122/)
+  SCREENSHOT_REFERENCE  Reference PNG (default: tests/screenshot/reference.png)
+  See tests/screenshot/run.sh --help for more.
 EOF
 }
 
 run_smoke_tests=true
 run_docker=true
+run_screenshot_test=false
 run_python_tests=true
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--no-smoke-tests) run_smoke_tests=false ;;
 		--no-docker) run_docker=false ;;
+		--screenshot-test) run_screenshot_test=true ;;
 		--no-run-tests) run_python_tests=false ;;
 	esac
 	shift
@@ -46,12 +54,15 @@ if $run_docker; then
 	fi
 fi
 
+# The screenshot test and the Python test suite both use Playwright, so we
+# always prepare the venv first. Set --no-screenshot-test / --no-run-tests
+# to skip the corresponding stages individually.
 echo "====== Checking virtualenv ======"
 if [[ ! -d ~/.asanai_test_env ]]; then
 	python3 -m venv ~/.asanai_test_env
 	source ~/.asanai_test_env/bin/activate
-	if ! pip install playwright; then
-		echo "pip install playwright failed. Are you online?"
+	if ! pip install playwright Pillow; then
+		echo "pip install playwright Pillow failed. Are you online?"
 		rm -rf ~/.asanai_test_env
 		exit 1
 	fi
@@ -61,9 +72,9 @@ fi
 
 source ~/.asanai_test_env/bin/activate
 
-echo "====== pip install playwright ======"
-if ! pip install playwright; then
-	echo "pip install playwright failed. Are you online?"
+echo "====== pip install playwright Pillow ======"
+if ! pip install playwright Pillow; then
+	echo "pip install playwright Pillow failed. Are you online?"
 	rm -rf ~/.asanai_test_env
 	exit 1
 fi
@@ -72,12 +83,21 @@ echo "====== playwright install chromium ======"
 playwright install chromium
 
 echo "====== Checked virtualenv ======"
+
+if $run_screenshot_test; then
+	echo "====== Running pixel-perfect screenshot test ======"
+	if ! bash tests/screenshot/run.sh; then
+		echo "Screenshot test failed"
+		echo "To regenerate the reference screenshot, run:"
+		echo "    bash tests/screenshot/run.sh --update"
+		echo "To skip this test, re-run with --no-screenshot-test."
+		exit 1
+	fi
+	echo "====== Screenshot test passed ======"
+fi
+
 if $run_python_tests; then
 	echo "====== python -m playwright install --with-deps chromium ======"
-
-	if ! which chromium 2> /dev/null >/dev/null; then
-		sudo apt install chromium
-	fi
 
 	python -m playwright install --with-deps chromium
 

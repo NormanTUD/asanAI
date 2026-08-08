@@ -7,7 +7,7 @@ icon: &#128274;
 part: 5
 order: 34
 color: rose
-topics: ethics, programming, hardware
+topics: safety, ethics, programming, hardware
 -->
 
 <div class="md">

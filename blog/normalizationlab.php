@@ -7,7 +7,7 @@ icon: &#9878;
 part: 3
 order: 18
 color: emerald
-topics: math, architecture, interactive
+topics: math-i, math-ii, architecture
 -->
 
 <div class="md">
@@ -50,11 +50,11 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <!-- Data Matrix -->
     <div style="
         position: relative;
-        background: linear-gradient(160deg, rgba(248,250,252,0.9) 0%, rgba(241,245,249,0.9) 100%);
+        background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(16,185,129,0.05) 100%);
         backdrop-filter: blur(12px);
         padding: 24px;
         border-radius: 20px;
-        border: 1px solid rgba(99,102,241,0.1);
+        border: 1px solid rgba(99,102,241,0.18);
         box-shadow: 0 4px 24px -4px rgba(0,0,0,0.06);
         overflow: hidden;
     ">
@@ -74,7 +74,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
             text-transform: uppercase;
             color: #6366f1;
         ">Data Matrix</p>
-        <p style="font-size: 0.78rem; color: #94a3b8; margin: 0 0 16px 0;">Click cells to edit values interactively</p>
+        <p style="font-size: 0.78rem; color: var(--mn-text-secondary); margin: 0 0 16px 0;">Click cells to edit values interactively</p>
 
         <table id="input-table" style="
             width: 100%;
@@ -82,7 +82,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
             border-spacing: 0;
             text-align: center;
             background: var(--mn-surface, white);
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--mn-border, #e2e8f0);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -129,7 +129,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                     display: block;
                     font-size: 0.78rem;
                     font-weight: 700;
-                    color: #475569;
+                    color: var(--mn-text-secondary);
                     margin-bottom: 6px;
                     letter-spacing: 0.03em;
                 ">Gamma <span style="color:#6366f1;">(γ)</span> — Gain</label>
@@ -153,7 +153,7 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
                     display: block;
                     font-size: 0.78rem;
                     font-weight: 700;
-                    color: #475569;
+                    color: var(--mn-text-secondary);
                     margin-bottom: 6px;
                     letter-spacing: 0.03em;
                 ">Beta <span style="color:#10b981;">(β)</span> — Bias</label>
@@ -188,10 +188,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <!-- Input Chart -->
     <div style="
         position: relative;
-        background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%);
+        background: linear-gradient(160deg, rgba(99,102,241,0.08) 0%, rgba(99,102,241,0.03) 100%);
         padding: 22px;
         border-radius: 20px;
-        border: 1px solid rgba(99,102,241,0.12);
+        border: 1px solid rgba(99,102,241,0.2);
         box-shadow:
             0 8px 32px -8px rgba(99,102,241,0.10),
             0 2px 8px -2px rgba(0,0,0,0.04);
@@ -216,10 +216,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
     <!-- Output Chart -->
     <div style="
         position: relative;
-        background: linear-gradient(160deg, #ffffff 0%, #f0fdf4 100%);
+        background: linear-gradient(160deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.03) 100%);
         padding: 22px;
         border-radius: 20px;
-        border: 1px solid rgba(16,185,129,0.12);
+        border: 1px solid rgba(16,185,129,0.2);
         box-shadow:
             0 8px 32px -8px rgba(16,185,129,0.10),
             0 2px 8px -2px rgba(0,0,0,0.04);
@@ -246,10 +246,10 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the "glue" that k
 <!-- MATH DISPLAY (full width)                                      -->
 <!-- ═══════════════════════════════════════════════════════════════ -->
 <div id="math-display" style="
-    background: linear-gradient(160deg, #ffffff 0%, #fafbff 100%);
+    background: linear-gradient(160deg, rgba(99,102,241,0.06) 0%, rgba(99,102,241,0.02) 100%);
     padding: 32px;
     border-radius: 20px;
-    border: 1px solid rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.18);
     max-height: 550px;
     overflow-y: auto;
     box-shadow: 0 4px 24px -4px rgba(0,0,0,0.05);
@@ -273,4 +273,79 @@ LayerNorm has a beautiful geometric interpretation: after centering (subtracting
 The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable — it can vary due to accumulated activations, layer depth, or input length. By projecting onto the unit sphere, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.
 
 This is why Transformers work well with Pre-Norm: the clean spherical geometry ensures that attention patterns depend only on the *angle* between query and key vectors, not their potentially erratic magnitudes.
+</div>
+
+<div class="md">
+## Group Normalization: Slice the Channels, Normalize Once per Slice
+
+To normalize a feature map, you first have to decide **which numbers get pooled into the same average**. LayerNorm says "all channels of one token"; BatchNorm says "this channel across all samples in the batch". **Group Normalization (GN)** \cite{wu2018groupnorm} splits the $C$ channels into $G$ slices (groups), then for each group computes **one** mean and **one** std across that group's channels × all spatial positions.
+
+The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away. This is why every ResBlock of Stable Diffusion ends with `Conv → GroupNorm → SiLU`.
+
+Drag the slider below and watch the same eight channels get regrouped.
+</div>
+
+<div id="gn-lab" style="max-width: 920px; margin: 1.5em auto; padding: 22px; background: linear-gradient(160deg, rgba(99,102,241,0.05), rgba(16,185,129,0.04)); border: 1px solid rgba(99,102,241,0.18); border-radius: 14px; box-shadow: 0 4px 24px -8px rgba(99,102,241,0.12);">
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:16px; margin-bottom:18px;">
+        <label style="font-weight:700; color:var(--mn-text); white-space:nowrap;">
+            Groups <em>G</em> =
+            <span id="gn-G-val" style="display:inline-block; min-width:28px; padding:3px 10px; margin-left:4px; background:var(--mn-surface); border:1.5px solid #6366f1; border-radius:6px; color:#6366f1; font-family:Menlo,Consolas,monospace; font-weight:700; text-align:center;">4</span>
+        </label>
+        <input id="gn-G" type="range" min="1" max="8" value="4" style="flex:1; min-width:220px; accent-color:#6366f1; cursor:pointer;">
+        <div id="gn-hint" style="font-size:12px; color:var(--mn-text-secondary); font-style:italic;"></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-bottom:16px;">
+        <div>
+            <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">① Input feature map (8 channels × 16 positions)</div>
+            <div id="gn-input" style="background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; padding:10px; overflow-x:auto;"></div>
+        </div>
+        <div>
+            <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#10b981; margin-bottom:8px;">② After GroupNorm (γ = 1, β = 0)</div>
+            <div id="gn-output" style="background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; padding:10px; overflow-x:auto;"></div>
+        </div>
+    </div>
+
+    <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">③ One (μ, σ) per group — every cell in the group gets rescaled by it</div>
+    <div id="gn-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px;"></div>
+
+    <div style="font-size:12px; color:var(--mn-text-secondary); margin-top:14px; line-height:1.55;">
+        Hover any cell in ① to see the exact arithmetic $(x - \mu_g) / \sigma_g$. Cells in the <em>same</em> colored group share a single μ and σ; cells in <em>different</em> groups are normalized independently.
+    </div>
+</div>
+
+<details class="md" style="max-width:920px; margin: 1em auto;">
+    <summary style="cursor:pointer; font-weight:700; color:var(--mn-text); padding:10px 14px; background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-radius:8px;">Show me the math</summary>
+    <div style="padding:14px 18px; background:var(--mn-surface); border:1px solid var(--mn-border, #e2e8f0); border-top:none; border-radius:0 0 8px 8px;">
+
+For an input activation tensor $x \in \mathbb{R}^{N \times C \times H \times W}$, split the $C$ channels into $G$ groups of size $C/G$. For each group $g$, compute mean and variance over **that group's channels × all spatial positions**:
+
+$$
+\mu_g \;=\; \frac{1}{(C/G)\,H\,W} \sum_{c \in g}\sum_{h,w} x_{nchw}, \qquad
+\sigma_g^2 \;=\; \frac{1}{(C/G)\,H\,W} \sum_{c \in g}\sum_{h,w} (x_{nchw} - \mu_g)^2
+$$
+
+Then normalize and apply a per-channel affine (the only learnable parameters):
+
+$$
+\hat{x}_{nchw} \;=\; \gamma_c \, \frac{x_{nchw} - \mu_g}{\sqrt{\sigma_g^2 + \epsilon}} \;+\; \beta_c, \qquad c \in g
+$$
+
+**The two dials.**
+
+* **Number of groups $G$.** With $C$ channels, valid choices are $G \in \{1, 2, \ldots, C\}$ that divide $C$ (or use padding). Smaller $G$ = each statistic pools more numbers = lower variance, but throws away channel structure. Larger $G$ = each statistic is more local, but with too few samples per group the estimate gets noisy. Stable Diffusion's U-Net uses $G = 32$ with $C = 320$ or $640$ channels, i.e. groups of 10 or 20 channels.
+
+* **Affine $\gamma_c, \beta_c$.** Two learnable vectors of length $C$. They let the network *undo* the normalization if it wants — the layer starts as pure centering + unit-variance and learns to deviate only if useful.
+
+**Why this is the diffusion default.** BatchNorm fails at batch size 1. LayerNorm discards all channel relationships, treating every channel identically. GroupNorm keeps a knob ($G$) that lets you trade those two extremes against each other, and the answer it picks ($G = 32$) empirically wins on every high-resolution image benchmark. Notice that no term in the equations depends on $N$ — the batch can be any size, including 1.
+
+</div>
+</details>
+
+<div class="md">
+**The two endpoints.**
+
+* $G = 1$: one group, every channel pooled — exactly **LayerNorm**.
+* $G = C$: each channel alone — exactly **InstanceNorm** (the style-transfer default).
+* $G \in (1, C)$: the sweet spot; Stable Diffusion's U-Net uses $G = 32$.
 </div>

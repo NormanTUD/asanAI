@@ -7,7 +7,7 @@ icon: &#129518;
 part: 5
 order: 37
 color: rose
-topics: agents, architecture, philosophy
+topics: reasoning, agents, architecture, philosophy
 -->
 
 <div class="md">

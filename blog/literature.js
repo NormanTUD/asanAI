@@ -3121,6 +3121,18 @@ window.bibData = {
 		title: "Gaussian Error Linear Units (GELUs)",
 		url: "https://arxiv.org/abs/1606.08415",
 	},
+	"ramachandran2017swish": {
+		author: "Prajit Ramachandran, Barret Zoph, Quoc V. Le",
+		year: "2017",
+		title: "Searching for Activation Functions",
+		url: "https://arxiv.org/abs/1710.05941",
+	},
+	"wu2018groupnorm": {
+		author: "Yuxin Wu, Kaiming He",
+		year: "2018",
+		title: "Group Normalization",
+		url: "https://arxiv.org/abs/1803.08494",
+	},
 	"nair2010rectified": {
 		author: "Vinod Nair, Geoffrey Everest Hinton",
 		year: "2010",
@@ -3636,6 +3648,27 @@ window.bibData = {
 		author: "Lvmin Zhang, Anyi Rao, Maneesh Agrawala",
 		year: 2023,
 		alternativetitle: "ControlNet"
+	},
+	"diffusion_astronaut_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Astronaut_Riding_a_Horse_(SD3.5).webp",
+		title: "Astronaut Riding a Horse (SD3.5)",
+		author: "VulcanSphere (Wikimedia Commons)",
+		year: 2024,
+		alternativetitle: "Stable Diffusion 3.5 — 'astronaut riding a horse'"
+	},
+	"diffusion_ddim_img": {
+		url: "https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png",
+		title: "X-Y plot of AI art of European-style castle in Japan demonstrating DDIM diffusion steps",
+		author: "Benlisquare (Wikimedia Commons)",
+		year: 2022,
+		alternativetitle: "DDIM denoising steps"
+	},
+	"diffusion_architecture_img": {
+		url: "https://commons.wikimedia.org/wiki/File:Stable_Diffusion_architecture.png",
+		title: "Diagram of the Stable Diffusion architecture",
+		author: "Machine Vision and Learning Group, LMU Munich",
+		year: 2021,
+		alternativetitle: "Stable Diffusion architecture diagram"
 	},
 	"ma2024bitnet": {
 		url: "https://arxiv.org/abs/2402.17764",

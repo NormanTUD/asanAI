@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Garben: Intuition, Bilder und Abstrakter Formalismus</title>
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0; padding: 0;
+        color: #1e293b;
+        background-color: #ffffff;
+        font-size: 9.5pt;
+        line-height: 1.45;
+    }
+    header {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        padding: 14px 20px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+    }
+    h1 { margin: 0 0 4px 0; font-size: 16pt; font-weight: 700; }
+    p.subtitle { margin: 0; font-size: 9pt; opacity: 0.92; }
+    .running-example {
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        font-size: 9pt;
+        border-radius: 4px;
+    }
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        page-break-inside: auto;
+    }
+    tr { page-break-inside: avoid; page-break-after: auto; }
+    th {
+        background-color: #0f172a;
+        color: #f8fafc;
+        font-weight: 600;
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 9pt;
+    }
+    td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: top;
+        font-size: 8.5pt;
+    }
+    tr:nth-child(even) td { background-color: #f8fafc; }
+    tr:last-child td { border-bottom: none; }
+    .term { font-weight: 700; color: #1e3a8a; }
+    .term-sub {
+        font-size: 7.5pt; color: #64748b;
+        font-weight: normal; display: block; margin-top: 2px;
+    }
+    .math {
+        font-family: 'Times New Roman', Times, serif;
+        font-style: italic;
+        color: #0f172a;
+    }
+    .viz {
+        display: block; margin: 4px auto;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+    }
+    .caption {
+        font-size: 7.5pt;
+        color: #475569;
+        text-align: center;
+        margin-top: 2px;
+        font-style: italic;
+    }
+    .axioms {
+        margin-top: 14px;
+        background: white;
+        padding: 12px 16px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        page-break-inside: avoid;
+    }
+    .axioms h2 {
+        margin-top: 0;
+        color: #1e3a8a;
+        font-size: 11pt;
+        border-bottom: 2px solid #3b82f6;
+        padding-bottom: 3px;
+    }
+    .axiom-row {
+        display: flex;
+        gap: 14px;
+        margin-top: 8px;
+    }
+    .axiom-card {
+        flex: 1;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 10px;
+        background: #f8fafc;
+    }
+
+    /* ===== Smartphone-Ansicht =====
+       Print und Desktop bleiben unveraendert (Tabelle + Flex-Row).
+       Hier wird die Tabelle zu stapelbaren Karten umgebaut. */
+    @media screen and (max-width: 768px) {
+        body {
+            font-size: 11pt;
+            padding: 8px;
+            line-height: 1.5;
+        }
+        header {
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+        h1 { font-size: 17pt; line-height: 1.25; }
+        p.subtitle { font-size: 10pt; }
+
+        .running-example {
+            font-size: 10pt;
+            padding: 10px 12px;
+        }
+
+        /* Tabelle -> gestapelte Karten */
+        table, thead, tbody, tr, td, th {
+            display: block;
+            width: 100%;
+        }
+        thead { display: none; }
+        table {
+            border: none;
+            background: transparent;
+            overflow: visible;
+        }
+        tbody { display: block; }
+        tr {
+            margin-bottom: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            page-break-inside: avoid;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        tr:nth-child(even) td { background-color: white; }
+        td {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            font-size: 10pt;
+        }
+        td:last-child { border-bottom: none; }
+
+        /* Spalten-Labels als kleine Ueberschriften */
+        td::before {
+            display: block;
+            font-weight: 700;
+            color: #1e3a8a;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+        td:nth-child(2)::before { content: "Intuition"; }
+        td:nth-child(3)::before { content: "Konkretes Beispiel"; }
+        td:nth-child(4)::before { content: "Visualisierung"; }
+        td:nth-child(5)::before { content: "Formalismus"; }
+
+        /* Erste Spalte = farbiger Karten-Header */
+        td:first-child {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        td:first-child .term { color: white; font-size: 13pt; }
+        td:first-child .term-sub { color: rgba(255,255,255,0.85); }
+
+        /* SVGs responsiv: volle Karten-Breite nutzen */
+        svg.viz {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 4px 0;
+        }
+        .caption {
+            text-align: left;
+            margin-top: 4px;
+            font-size: 9pt;
+        }
+
+        /* Axiom-Reihe vertikal stapeln */
+        .axiom-row { flex-direction: column; gap: 12px; }
+        .axiom-card { flex: 1 1 auto; }
+
+        /* SVG in Axiomen: explizit volle Breite */
+        .axiom-card svg.viz { width: 100%; }
+
+        .axioms { padding: 12px; }
+        .axioms h2 { font-size: 13pt; }
+
+        footer {
+            font-size: 9pt;
+            padding: 10px 4px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Garbentheorie: Intuition, Visualisierung &amp; Formalismus</h1>
+    <p class="subtitle">Mit durchgängigem visuellem Beispiel · Druckoptimiert A4 quer</p>
+</header>
+
+<div class="running-example">
+    <strong>🔑 Durchgängiges Beispiel:</strong>
+    Basisraum <span class="math">X = ℝ</span> (die Zahlengerade). Zu jeder offenen Menge <span class="math">U ⊂ ℝ</span>
+    ordnen wir die Menge der stetigen Funktionen zu: <span class="math">F(U) = C(U, ℝ)</span>.
+    So wird jeder abstrakte Begriff sofort konkret vorstellbar.
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 14%;">Begriff</th>
+            <th style="width: 18%;">Intuition</th>
+            <th style="width: 22%;">Konkretes Beispiel</th>
+            <th style="width: 24%;">Visualisierung</th>
+            <th style="width: 22%;">Formalismus</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <!-- Topologischer Raum -->
+    <tr>
+        <td class="term">Topologischer Raum
+            <span class="term-sub">(X, τ)</span>
+        </td>
+        <td>Dein Wissensgebiet – das „Terrain“, auf dem alles lebt.</td>
+        <td>Die reelle Zahlengerade <span class="math">ℝ</span> mit den offenen Intervallen als Topologie.</td>
+        <td>
+            <svg class="viz" width="220" height="70" viewBox="0 0 220 70">
+                <line x1="10" y1="35" x2="210" y2="35" stroke="#0f172a" stroke-width="1.5"/>
+                <polygon points="210,35 203,31 203,39" fill="#0f172a"/>
+                <polygon points="10,35 17,31 17,39" fill="#0f172a"/>
+                <g font-family="Times" font-style="italic" font-size="10" fill="#0f172a">
+                    <line x1="40" y1="32" x2="40" y2="38" stroke="#0f172a"/>
+                    <text x="37" y="52">-2</text>
+                    <line x1="80" y1="32" x2="80" y2="38" stroke="#0f172a"/>
+                    <text x="77" y="52">-1</text>
+                    <line x1="120" y1="32" x2="120" y2="38" stroke="#0f172a"/>
+                    <text x="118" y="52">0</text>
+                    <line x1="160" y1="32" x2="160" y2="38" stroke="#0f172a"/>
+                    <text x="158" y="52">1</text>
+                    <line x1="200" y1="32" x2="200" y2="38" stroke="#0f172a"/>
+                    <text x="198" y="52">2</text>
+                </g>
+                <text x="110" y="18" text-anchor="middle" font-size="9" fill="#1e3a8a" font-weight="bold">X = ℝ</text>
+            </svg>
+            <div class="caption">Die Zahlengerade als Basis</div>
+        </td>
+        <td>Paar <span class="math">(X, τ)</span>: Menge <span class="math">X</span> mit Topologie <span class="math">τ</span> (System offener Teilmengen).</td>
+    </tr>
+
+    <!-- Schnitt -->
+    <tr>
+        <td class="term">Schnitt
+            <span class="term-sub">s ∈ F(U)</span>
+        </td>
+        <td>Ein Datum, das über einem Gebiet <span class="math">U</span> definiert ist.</td>
+        <td>Auf <span class="math">U = (0, 2)</span> ist <span class="math">s(x) = x²</span> ein Schnitt – eine stetige Funktion nur über diesem Intervall.</td>
+        <td>
+            <svg class="viz" width="220" height="90" viewBox="0 0 220 90">
+                <line x1="10" y1="75" x2="210" y2="75" stroke="#0f172a" stroke-width="1"/>
+                <line x1="15" y1="10" x2="15" y2="80" stroke="#0f172a" stroke-width="1"/>
+                <!-- Interval U markieren -->
+                <rect x="60" y="72" width="120" height="6" fill="#fbbf24" opacity="0.6"/>
+                <text x="120" y="88" text-anchor="middle" font-size="8" fill="#92400e" font-weight="bold">U = (0, 2)</text>
+                <!-- x^2 kurve auf U -->
+                <path d="M 60 75 Q 90 65, 120 45 T 180 15" stroke="#dc2626" stroke-width="2" fill="none"/>
+                <circle cx="60" cy="75" r="2.5" fill="white" stroke="#dc2626" stroke-width="1.5"/>
+                <circle cx="180" cy="15" r="2.5" fill="white" stroke="#dc2626" stroke-width="1.5"/>
+                <text x="195" y="20" font-size="9" fill="#dc2626" font-style="italic">s(x)=x²</text>
+            </svg>
+            <div class="caption">Stetige Funktion nur über <span class="math">U</span></div>
+        </td>
+        <td>Für <span class="math">U ∈ τ</span> ist <span class="math">F(U)</span> Menge/Gruppe/Modul. <span class="math">s ∈ F(U) = Γ(U, F)</span>.</td>
+    </tr>
+
+    <!-- Einschränkung -->
+    <tr>
+        <td class="term">Einschränkung
+            <span class="term-sub">ρ<sub>U,V</sub></span>
+        </td>
+        <td>Das Beschränken eines Datums auf einen kleineren Bereich.</td>
+        <td>Schränke <span class="math">s(x)=x²</span> von <span class="math">U=(0,2)</span> auf <span class="math">V=(0,1)</span> ein: gleiche Formel, kleinerer Definitionsbereich.</td>
+        <td>
+            <svg class="viz" width="220" height="90" viewBox="0 0 220 90">
+                <line x1="10" y1="75" x2="210" y2="75" stroke="#0f172a" stroke-width="1"/>
+                <!-- U -->
+                <rect x="40" y="72" width="140" height="6" fill="#fbbf24" opacity="0.4"/>
+                <text x="45" y="88" font-size="7" fill="#92400e">U</text>
+                <!-- V -->
+                <rect x="40" y="72" width="60" height="6" fill="#dc2626" opacity="0.7"/>
+                <text x="65" y="88" font-size="7" fill="#7f1d1d" font-weight="bold">V ⊂ U</text>
+                <!-- Kurve auf U (grau) -->
+                <path d="M 40 75 Q 70 65, 100 50 T 180 15" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+                <!-- Kurve auf V (rot, dick) -->
+                <path d="M 40 75 Q 55 71, 70 65 T 100 50" stroke="#dc2626" stroke-width="2.5" fill="none"/>
+                <text x="130" y="30" font-size="9" fill="#dc2626" font-style="italic">s|<tspan font-size="7">V</tspan></text>
+                <!-- Pfeil -->
+                <text x="160" y="55" font-size="9" fill="#1e3a8a">ρ: F(U)→F(V)</text>
+            </svg>
+            <div class="caption">Ausschneiden auf Teilbereich</div>
+        </td>
+        <td>Morphismus <span class="math">ρ<sub>U,V</sub>: F(U)→F(V)</span> für <span class="math">V⊂U</span>, mit <span class="math">ρ<sub>U,U</sub>=id</span> und <span class="math">ρ<sub>V,W</sub>∘ρ<sub>U,V</sub>=ρ<sub>U,W</sub></span>.</td>
+    </tr>
+
+    <!-- Halm -->
+    <tr>
+        <td class="term">Halm
+            <span class="term-sub">Stalk: F<sub>x</sub></span>
+        </td>
+        <td>Alles, was am Punkt <span class="math">x</span> „lokal“ passieren kann.</td>
+        <td>Am Punkt <span class="math">x=0</span>: alle stetigen Funktionen auf irgendeiner kleinen Umgebung von <span class="math">0</span> – zusammengefasst.</td>
+        <td>
+            <svg class="viz" width="220" height="100" viewBox="0 0 220 100">
+                <line x1="10" y1="88" x2="210" y2="88" stroke="#0f172a" stroke-width="1"/>
+                <!-- Punkt x -->
+                <circle cx="110" cy="88" r="3" fill="#dc2626"/>
+                <text x="106" y="99" font-size="9" fill="#dc2626" font-weight="bold" font-style="italic">x</text>
+                <!-- Umgebungen (geschachtelt) -->
+                <rect x="40" y="70" width="140" height="6" fill="#93c5fd" opacity="0.5"/>
+                <rect x="70" y="55" width="80" height="6" fill="#60a5fa" opacity="0.7"/>
+                <rect x="90" y="40" width="40" height="6" fill="#2563eb" opacity="0.85"/>
+                <text x="185" y="74" font-size="7" fill="#1e3a8a">U₁</text>
+                <text x="155" y="59" font-size="7" fill="#1e3a8a">U₂ ⊂ U₁</text>
+                <text x="135" y="44" font-size="7" fill="#1e3a8a">U₃ ⊂ U₂</text>
+                <!-- Lichtstrahl -->
+                <line x1="110" y1="15" x2="110" y2="88" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,2"/>
+                <text x="115" y="20" font-size="8" fill="#92400e" font-weight="bold">F<tspan font-size="6">x</tspan> = lim<tspan font-size="6">→</tspan> F(U)</text>
+            </svg>
+            <div class="caption">Immer kleinere Umgebungen um <span class="math">x</span></div>
+        </td>
+        <td>Direkter Limes: <span class="math">F<sub>x</sub> := lim<sub>→</sub> F(U)</span> über alle offenen <span class="math">U ∋ x</span>.</td>
+    </tr>
+
+    <!-- Keim -->
+    <tr>
+        <td class="term">Keim
+            <span class="term-sub">Germ: [s]<sub>x</sub></span>
+        </td>
+        <td>Wie ein Datum am Punkt <span class="math">x</span> „aussieht“ – Verhalten in beliebig kleiner Umgebung.</td>
+        <td>Der Keim von <span class="math">s(x)=x²</span> in <span class="math">x=0</span> = alle Funktionen, die nahe 0 mit <span class="math">x²</span> übereinstimmen.</td>
+        <td>
+            <svg class="viz" width="220" height="100" viewBox="0 0 220 100">
+                <line x1="10" y1="70" x2="210" y2="70" stroke="#0f172a" stroke-width="1"/>
+                <line x1="110" y1="10" x2="110" y2="80" stroke="#0f172a" stroke-width="0.8"/>
+                <!-- Funktion s -->
+                <path d="M 30 68 Q 70 65, 110 60 T 190 20" stroke="#dc2626" stroke-width="2" fill="none"/>
+                <!-- Funktion t (identisch nahe x, unterschiedlich weit weg) -->
+                <path d="M 30 30 Q 70 50, 110 60 T 190 68" stroke="#2563eb" stroke-width="2" fill="none" stroke-dasharray="4,2"/>
+                <!-- Kleine Umgebung -->
+                <rect x="95" y="67" width="30" height="6" fill="#fbbf24" opacity="0.8" stroke="#f59e0b"/>
+                <text x="128" y="85" font-size="7" fill="#92400e">gleiche Werte in W</text>
+                <circle cx="110" cy="60" r="3" fill="#0f172a"/>
+                <text x="115" y="55" font-size="8" fill="#0f172a" font-weight="bold">[s]<tspan font-size="6">x</tspan> = [t]<tspan font-size="6">x</tspan></text>
+                <text x="30" y="20" font-size="8" fill="#dc2626">s</text>
+                <text x="30" y="42" font-size="8" fill="#2563eb">t</text>
+            </svg>
+            <div class="caption">Zwei Funktionen mit gleichem Keim in <span class="math">x</span></div>
+        </td>
+        <td>Äquivalenzklasse: <span class="math">(s,U)~(t,V) ⇔ ∃W⊂U∩V, x∈W: s|<sub>W</sub>=t|<sub>W</sub></span>.</td>
+    </tr>
+
+    <!-- Prägarbe -->
+    <tr>
+        <td class="term">Prägarbe
+            <span class="term-sub">Presheaf</span>
+        </td>
+        <td>Daten pro Gebiet – aber ohne Garantie, dass sie zusammenpassen.</td>
+        <td>Ordne jedem <span class="math">U</span> irgendwelche Zahlen zu, ohne dass Einschränkung tatsächlich Verkleben erlaubt.</td>
+        <td>
+            <svg class="viz" width="220" height="90" viewBox="0 0 220 90">
+                <!-- Zwei überlappende Intervalle mit inkonsistenten Funktionen -->
+                <line x1="10" y1="70" x2="210" y2="70" stroke="#0f172a" stroke-width="1"/>
+                <rect x="30" y="67" width="90" height="6" fill="#93c5fd" opacity="0.6"/>
+                <text x="35" y="83" font-size="7" fill="#1e3a8a">U₁</text>
+                <rect x="100" y="67" width="90" height="6" fill="#fca5a5" opacity="0.6"/>
+                <text x="180" y="83" font-size="7" fill="#7f1d1d">U₂</text>
+                <!-- Funktion auf U1 -->
+                <path d="M 30 60 L 120 30" stroke="#2563eb" stroke-width="2" fill="none"/>
+                <!-- Funktion auf U2 - passt NICHT im Überlapp -->
+                <path d="M 100 55 L 190 20" stroke="#dc2626" stroke-width="2" fill="none"/>
+                <!-- Konflikt markieren -->
+                <rect x="100" y="20" width="20" height="45" fill="#fbbf24" opacity="0.25" stroke="#f59e0b" stroke-dasharray="2,2"/>
+                <text x="125" y="15" font-size="8" fill="#b91c1c" font-weight="bold">✗ Konflikt!</text>
+            </svg>
+            <div class="caption">Lokale Daten passen nicht zusammen</div>
+        </td>
+        <td>Kontravarianter Funktor <span class="math">F: O(X)<sup>op</sup> → Set</span>.</td>
+    </tr>
+
+    <!-- Garbe -->
+    <tr>
+        <td class="term">Garbe
+            <span class="term-sub">Sheaf</span>
+        </td>
+        <td>Prägarbe mit Verklebbarkeit: aus konsistenten lokalen Daten wird eindeutig ein globales.</td>
+        <td>Zwei stetige Funktionen auf <span class="math">U₁</span>, <span class="math">U₂</span>, die im Überlapp gleich sind, ergeben genau eine stetige Funktion auf <span class="math">U₁∪U₂</span>.</td>
+        <td>
+            <svg class="viz" width="220" height="90" viewBox="0 0 220 90">
+                <line x1="10" y1="70" x2="210" y2="70" stroke="#0f172a" stroke-width="1"/>
+                <rect x="30" y="67" width="90" height="6" fill="#93c5fd" opacity="0.6"/>
+                <text x="35" y="83" font-size="7" fill="#1e3a8a">U₁</text>
+                <rect x="100" y="67" width="90" height="6" fill="#86efac" opacity="0.6"/>
+                <text x="180" y="83" font-size="7" fill="#166534">U₂</text>
+                <!-- Zwei Funktionen die perfekt zusammenpassen -->
+                <path d="M 30 55 Q 75 40, 120 35" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+                <path d="M 100 40 Q 145 30, 190 15" stroke="#16a34a" stroke-width="2.5" fill="none"/>
+                <!-- Match Zone -->
+                <rect x="100" y="30" width="20" height="35" fill="#4ade80" opacity="0.3" stroke="#16a34a"/>
+                <text x="125" y="20" font-size="8" fill="#166534" font-weight="bold">✓ passt!</text>
+                <text x="30" y="15" font-size="8" fill="#1e3a8a">→ eindeutiges Verkleben</text>
+            </svg>
+            <div class="caption">Konsistente lokale Daten = ein globales</div>
+        </td>
+        <td>Prägarbe <span class="math">F</span> mit Equalizer für jede Überdeckung <span class="math">U=⋃U<sub>i</sub></span>:
+            <span class="math">F(U)→∏F(U<sub>i</sub>)⇉∏F(U<sub>i</sub>∩U<sub>j</sub>)</span></td>
+    </tr>
+
+    </tbody>
+</table>
+
+<div class="axioms">
+    <h2>Die 2 Grundaxiome mit Bildern</h2>
+    <div class="axiom-row">
+
+        <!-- Axiom 1 -->
+        <div class="axiom-card">
+            <div style="font-weight: bold; color: #0f172a; margin-bottom: 4px;">
+                ① Lokal–Global-Identität (Separatedness / Unizität)
+            </div>
+            <div style="font-size: 8.5pt; margin-bottom: 6px;">
+                Stimmen zwei globale Schnitte <span class="math">s, t ∈ F(U)</span> auf jedem Teil <span class="math">U<sub>i</sub></span> überein, so sind sie überall gleich:
+                <br>
+                <span class="math">(∀ i: s|<sub>U<sub>i</sub></sub> = t|<sub>U<sub>i</sub></sub>) ⇒ s = t</span>
+            </div>
+            <svg class="viz" width="320" height="110" viewBox="0 0 320 110">
+                <!-- Basis -->
+                <line x1="10" y1="90" x2="310" y2="90" stroke="#0f172a" stroke-width="1"/>
+                <!-- Überdeckung U = U1 ∪ U2 ∪ U3 -->
+                <rect x="20"  y="87" width="110" height="6" fill="#93c5fd" opacity="0.6"/>
+                <rect x="110" y="87" width="110" height="6" fill="#86efac" opacity="0.6"/>
+                <rect x="200" y="87" width="100" height="6" fill="#fca5a5" opacity="0.6"/>
+                <text x="60"  y="103" font-size="7" fill="#1e3a8a">U₁</text>
+                <text x="155" y="103" font-size="7" fill="#166534">U₂</text>
+                <text x="245" y="103" font-size="7" fill="#7f1d1d">U₃</text>
+                <!-- Funktion s (rot) und t (blau gestrichelt) - identisch! -->
+                <path d="M 20 70 Q 80 55, 160 45 T 300 25"
+                      stroke="#dc2626" stroke-width="2.5" fill="none"/>
+                <path d="M 20 70 Q 80 55, 160 45 T 300 25"
+                      stroke="#2563eb" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
+                <text x="15" y="20" font-size="9" fill="#dc2626" font-weight="bold">s</text>
+                <text x="28" y="20" font-size="9" fill="#2563eb" font-weight="bold">= t</text>
+                <text x="150" y="18" font-size="8" fill="#0f172a" font-style="italic">
+                    lokal überall gleich ⇒ global gleich
+                </text>
+            </svg>
+            <div class="caption">Zwei Schnitte, die lokal überall gleich sind, sind ein einziger Schnitt.</div>
+        </div>
+
+        <!-- Axiom 2 -->
+        <div class="axiom-card">
+            <div style="font-weight: bold; color: #0f172a; margin-bottom: 4px;">
+                ② Verklebbarkeit (Gluing / Existenz)
+            </div>
+            <div style="font-size: 8.5pt; margin-bottom: 6px;">
+                Lokale Schnitte <span class="math">s<sub>i</sub> ∈ F(U<sub>i</sub>)</span>, die auf allen Überlappungen zusammenpassen, lassen sich zu genau einem globalen Schnitt <span class="math">s ∈ F(U)</span> verkleben:
+                <br>
+                <span class="math">s<sub>i</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> = s<sub>j</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> ⇒ ∃! s ∈ F(U)</span>
+            </div>
+            <svg class="viz" width="320" height="110" viewBox="0 0 320 110">
+                <line x1="10" y1="90" x2="310" y2="90" stroke="#0f172a" stroke-width="1"/>
+                <!-- Überdeckung mit sichtbaren Überlappungen -->
+                <rect x="20"  y="87" width="120" height="6" fill="#93c5fd" opacity="0.6"/>
+                <rect x="110" y="87" width="120" height="6" fill="#86efac" opacity="0.6"/>
+                <rect x="200" y="87" width="100" height="6" fill="#fca5a5" opacity="0.6"/>
+                <!-- Überlappungsmarkierungen -->
+                <rect x="110" y="85" width="30" height="10" fill="#fbbf24" opacity="0.35" stroke="#f59e0b" stroke-dasharray="2,1"/>
+                <rect x="200" y="85" width="30" height="10" fill="#fbbf24" opacity="0.35" stroke="#f59e0b" stroke-dasharray="2,1"/>
+                <text x="60"  y="103" font-size="7" fill="#1e3a8a">U₁</text>
+                <text x="155" y="103" font-size="7" fill="#166534">U₂</text>
+                <text x="245" y="103" font-size="7" fill="#7f1d1d">U₃</text>
+                <!-- Drei lokale Funktionen, die perfekt zusammenpassen -->
+                <path d="M 20 75 Q 65 60, 140 50" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+                <path d="M 110 55 Q 165 45, 230 30" stroke="#16a34a" stroke-width="2.5" fill="none"/>
+                <path d="M 200 33 Q 240 25, 300 15" stroke="#dc2626" stroke-width="2.5" fill="none"/>
+                <!-- Grüne Häkchen an den Übergängen -->
+                <text x="118" y="45" font-size="10" fill="#16a34a" font-weight="bold">✓</text>
+                <text x="208" y="28" font-size="10" fill="#16a34a" font-weight="bold">✓</text>
+                <text x="15" y="20" font-size="8" fill="#0f172a" font-style="italic">
+                    lokal konsistent ⇒ ∃! globaler Schnitt s
+                </text>
+            </svg>
+            <div class="caption">Drei lokal passende Stücke verkleben eindeutig zu einer Funktion.</div>
+        </div>
+    </div>
+
+    <!-- Equalizer-Diagramm als abschließende, kategorielle Zusammenfassung -->
+    <div style="margin-top: 14px; padding: 10px 12px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px;">
+        <div style="font-weight: bold; color: #1e3a8a; font-size: 9.5pt; margin-bottom: 4px;">
+            Kompakt: Die beiden Axiome ⇔ Ein einziges Equalizer-Diagramm
+        </div>
+        <div style="text-align: center; font-size: 10pt; padding: 6px 0;">
+            <span class="math">F(U)</span>
+            &nbsp;⟶&nbsp;
+            <span class="math">∏<sub>i</sub> F(U<sub>i</sub>)</span>
+            &nbsp;⇉&nbsp;
+            <span class="math">∏<sub>i,j</sub> F(U<sub>i</sub> ∩ U<sub>j</sub>)</span>
+        </div>
+        <div style="font-size: 8pt; color: #475569; text-align: center;">
+            Der linke Pfeil ist injektiv (= Axiom ①) und sein Bild ist genau der Equalizer der beiden rechten Pfeile (= Axiom ②).
+        </div>
+    </div>
+</div>
+
+<footer style="margin-top: 12px; text-align: center; font-size: 7.5pt; color: #94a3b8;">
+    Durchgängiges Beispiel: X = ℝ, F(U) = C(U, ℝ) · Druckoptimiert A4 quer · © Garbentheorie-Übersicht
+</footer>
+
+</body>
+</html>

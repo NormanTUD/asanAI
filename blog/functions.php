@@ -623,7 +623,6 @@ function render_topics_toggle(): void {
 	echo '<circle cx="12" cy="12" r="5"/>';
 	echo '<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>';
 	echo '</svg></span>';
-	echo '<span class="topics-badge" id="topics-badge" aria-hidden="true"></span>';
 	echo '</button>';
 }
 

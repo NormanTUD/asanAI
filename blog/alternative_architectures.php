@@ -7,7 +7,7 @@ icon: &#9883;
 part: 4
 order: 30
 color: sky
-topics: architecture, math, programming
+topics: architecture, math-i, math-ii, programming
 -->
 
 <div class="md">

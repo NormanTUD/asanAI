@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Garben: Intuition, Bilder und Abstrakter Formalismus</title>
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 12mm;
+        background-color: #f8fafc;
+    }
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #1e293b;
+        background-color: #f8fafc;
+        font-size: 10pt;
+        line-height: 1.5;
+    }
+    header {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        padding: 18px 24px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        margin: 0 0 6px 0;
+        font-size: 18pt;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    p.subtitle {
+        margin: 0;
+        font-size: 10pt;
+        opacity: 0.9;
+        font-weight: 300;
+    }
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    th {
+        background-color: #0f172a;
+        color: #f8fafc;
+        font-weight: 600;
+        text-align: left;
+        padding: 10px 12px;
+        font-size: 9.5pt;
+        border-bottom: 2px solid #cbd5e1;
+    }
+    td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: top;
+        font-size: 9pt;
+    }
+    tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+    tr:last-child td {
+        border-bottom: none;
+    }
+    .term {
+        font-weight: 700;
+        color: #1e3a8a;
+        white-space: nowrap;
+    }
+    .term-sub {
+        font-size: 8pt;
+        color: #64748b;
+        font-weight: normal;
+        display: block;
+    }
+    .math {
+        font-family: 'Times New Roman', Times, serif;
+        font-style: italic;
+        font-weight: bold;
+        color: #0f172a;
+    }
+    .code-block {
+        background-color: #f1f5f9;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 8.5pt;
+        border: 1px solid #e2e8f0;
+        display: inline-block;
+        margin-top: 4px;
+    }
+    .axioms {
+        margin-top: 20px;
+        background: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+    .axioms h2 {
+        margin-top: 0;
+        color: #1e3a8a;
+        font-size: 12pt;
+        border-bottom: 2px solid #3b82f6;
+        padding-bottom: 4px;
+    }
+    .axiom-box {
+        margin-bottom: 12px;
+    }
+    .axiom-title {
+        font-weight: bold;
+        color: #0f172a;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Garbentheorie: Intuition, Visualisierung &amp; Formalismus</h1>
+    <p class="subtitle">Eine strukturierte Gegenüberstellung von intuitiver Sichtweise, bildlichen Analogien und abstrakter Mathematik.</p>
+</header>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 18%;">Begriff</th>
+            <th style="width: 25%;">Deine Intuition</th>
+            <th style="width: 27%;">Bildliche Vorstellung</th>
+            <th style="width: 30%;">Technisch exakter &amp; abstrakter Formalismus</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="term">
+                Topologischer Raum / Situs
+                <span class="term-sub">(X, &tau;)</span>
+            </td>
+            <td>Dein Wissensgebiet (z. B. das Fachgebiet KI).</td>
+            <td>Das <strong>Terrain / die Landkarte</strong>, auf der deine Daten verteilt liegen.</td>
+            <td>Ein Paar <span class="math">(X, &tau;)</span> mit Topologie <span class="math">&tau;</span> auf Menge <span class="math">X</span> (oder allgemein eine Grothendieck-Topologie <span class="math">C</span> auf einer Kategorie).</td>
+        </tr>
+        <tr>
+            <td class="term">
+                Schnitt
+                <span class="term-sub">Section: s &isin; F(U)</span>
+            </td>
+            <td>Der Inhalt / Textentwurf für ein bestimmtes Thema <span class="math">U</span>.</td>
+            <td>Ein <strong>Puzzleteil</strong> oder ein Transparentpapierblatt, das exakt über der Region <span class="math">U</span> liegt.</td>
+            <td>Für ein <span class="math">U &isin; &tau;</span> ist <span class="math">F(U)</span> eine Menge/Gruppe/Modul. <span class="math">s &isin; F(U)</span> ist ein Element daraus, auch <span class="math">&Gamma;(U, F)</span>.</td>
+        </tr>
+        <tr>
+            <td class="term">
+                Einschränkung
+                <span class="term-sub">Restriction: &rho;<sub>U,V</sub></span>
+            </td>
+            <td>Das Kürzen oder Fokussieren von Text auf ein Unterthema.</td>
+            <td>Das <strong>Ausschneiden</strong> eines kleineren Fensters aus deinem Transparentpapierblatt.</td>
+            <td>Ein Morphismus <span class="math">&rho;<sub>U,V</sub>: F(U) &rarr; F(V)</span> für <span class="math">V &sube; U</span> mit <span class="math">&rho;<sub>U,U</sub> = id<sub>F(U)</sub></span> und <span class="math">&rho;<sub>V,W</sub> &circ; &rho;<sub>U,V</sub> = &rho;<sub>U,W</sub></span>.</td>
+        </tr>
+        <tr>
+            <td class="term">
+                Halm
+                <span class="term-sub">Stalk: F<sub>x</sub></span>
+            </td>
+            <td>Die Gesamtheit aller Perspektiven auf genau ein Detail <span class="math">x</span>.</td>
+            <td>Der <strong>Sichtkegel / Lichtstrahl</strong>, der vertikal durch den Punkt <span class="math">x</span> alle Puzzleteile durchbohrt.</td>
+            <td>Der kolimitäre Limes (Direkter Limes) über alle offenen Umgebungen von <span class="math">x</span>:<br>
+            <span class="math">F<sub>x</sub> := lim<sub>&rarr;</sub> F(U)</span> für <span class="math">U &ni; x</span>.</td>
+        </tr>
+        <tr>
+            <td class="term">
+                Keim
+                <span class="term-sub">Germ: [s]<sub>x</sub></span>
+            </td>
+            <td>Eine konkrete Messung / Aussage an genau diesem Punkt <span class="math">x</span>.</td>
+            <td>Der <strong>Schnittpunkt</strong> des vertikalen Lichtstrahls mit einem konkreten Blatt <span class="math">s</span>.</td>
+            <td>Äquivalenzklasse <span class="math">[s, U] &isin; F<sub>x</sub></span> unter <span class="math">(s, U) ~ (t, V) &hArr; &exist; W &sube; U &cap; V</span> mit <span class="math">x &isin; W</span> und <span class="math">s|<sub>W</sub> = t|<sub>W</sub></span>.</td>
+        </tr>
+        <tr>
+            <td class="term">
+                Prägarbe
+                <span class="term-sub">Presheaf</span>
+            </td>
+            <td>Zuordnung von Daten zu Abschnitten ohne Garantie, dass sie zusammenpassen.</td>
+            <td>Eine Ansammlung von Puzzleteilen, die beliebig beschriftet sind – ohne Prüfung der Ränder.</td>
+            <td>Ein kontravarianter Funktor <span class="math">F: O(X)<sup>op</sup> &rarr; Set</span> (oder in eine andere Zielkategorie <span class="math">C</span>).</td>
+        </tr>
+        <tr>
+            <td class="term">
+                Garbe
+                <span class="term-sub">Sheaf</span>
+            </td>
+            <td>Lokale Konsistenz erlaubt lückenloses Verkleben zu einem globalen Bild.</td>
+            <td>Ein <strong>perfektes Puzzle</strong>: Passt jedes Paar an der Nahtstelle zusammen, gibt es genau ein Gesamtbild.</td>
+            <td>Eine Prägarbe <span class="math">F</span>, die für jede Überdeckung <span class="math">U = &bigcup;<sub>i</sub> U<sub>i</sub></span> das Equalizer-Diagramm exakt macht:<br>
+            <span class="math">F(U) &rarr; &prod;<sub>i</sub> F(U<sub>i</sub>) &rArr; &prod;<sub>i,j</sub> F(U<sub>i</sub> &cap; U<sub>j</sub>)</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="axioms">
+    <h2>Die 2 Grundaxiome der Garbe in Formeln</h2>
+    <div class="axiom-title">Sei U = &bigcup;<sub>i &isin; I</sub> U<sub>i</sub> eine offene Überdeckung. Eine Prägarbe F ist eine Garbe, wenn gilt:</div>
+    <ol>
+        <li>
+            <strong>Lokal-Global-Identität (Separatedness / Unizität):</strong><br>
+            Wenn zwei Schnitte <span class="math">s, t &isin; F(U)</span> auf allen Teilen der Überdeckung identisch sind, sind sie global identisch:<br>
+            <span class="math">(&forall; i &isin; I: s|<sub>U<sub>i</sub></sub> = t|<sub>U<sub>i</sub></sub>) &rArr; s = t</span>
+        </li>
+        <li style="margin-top: 8px;">
+            <strong>Verklebbarkeit (Gluing / Existenz):</strong><br>
+            Gibt es lokale Schnitte <span class="math">s<sub>i</sub> &isin; F(U<sub>i</sub>)</span>, die auf allen Überlappungen übereinstimmen (<span class="math">&forall; i, j: s<sub>i</sub>|<sub>U<sub>i</sub> &cap; U<sub>j</sub></sub> = s<sub>j</sub>|<sub>U<sub>i</sub> &cap; U<sub>j</sub></sub></span>), dann existiert ein eindeutiger globaler Schnitt <span class="math">s &isin; F(U)</span> mit <span class="math">s|<sub>U<sub>i</sub></sub> = s<sub>i</sub></span>.
+        </li>
+    </ol>
+</div>
+
+</body>
+</html>

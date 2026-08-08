@@ -7,7 +7,7 @@ icon: &#128187;
 part: 5
 order: 42
 color: rose
-topics: hardware, programming, interactive
+topics: hardware, programming, inference
 -->
 
 <div class="md">

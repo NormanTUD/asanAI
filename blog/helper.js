@@ -2043,6 +2043,42 @@ const GLOSSARY = {
 	'WordPiece': 'A subword tokenization algorithm, used by BERT, that greedily merges the most probable token pairs.',
 	'SentencePiece': 'A subword tokenizer that works directly on raw text, supporting BPE and unigram models without pre-tokenization.',
 	'unigram': 'A language model based on single tokens with no context; also a subword vocabulary model used by SentencePiece.',
+
+	// Diffusion Models
+	'diffusion model': 'A generative model that learns to reverse a step-by-step noising process — start from random noise and iteratively denoise until a clean image emerges.',
+	'forward process': 'The fixed, hand-designed Markov chain that gradually adds Gaussian noise to a clean image over T steps, ending at pure noise.',
+	'reverse process': 'The learned denoising chain — a neural network iteratively removes noise from a sample, walking from pure noise back to a clean image.',
+	'noise schedule': 'The sequence of per-step noise levels (β₁, β₂, …, β_T) that determines how much noise is added at each forward step, typically increasing from ~10⁻⁴ to ~0.02.',
+	'score function': 'The gradient of the log probability density of the data distribution, ∇ₓ log p(x). A trained denoiser implicitly estimates this.',
+	'score matching': 'A training objective that learns the score function by training a denoiser to predict the noise in corrupted samples.',
+	'classifier-free guidance': 'A conditioning trick where the model is trained both with and without the prompt, and at inference the difference between the two is amplified by a guidance scale w.',
+	'CFG': 'See "classifier-free guidance".',
+	'guidance scale': 'The scalar w in classifier-free guidance — higher values follow the prompt more literally at the cost of diversity.',
+	'cross-attention': 'An attention mechanism where queries come from one source (e.g. image patches) and keys/values from another (e.g. text tokens). Used by diffusion U-Nets to read the prompt.',
+	'U-Net': 'An encoder-decoder neural network with skip connections at every resolution. The workhorse backbone of diffusion image models.',
+	'latent diffusion': 'Running the diffusion process on a compressed latent representation of the image rather than on pixels — the trick behind Stable Diffusion that makes training tractable.',
+	'VAE': 'Variational Autoencoder — a model that compresses images into a smaller latent space and decodes them back. In Stable Diffusion the VAE is pretrained and frozen.',
+	'CLIP': 'Contrastive Language-Image Pre-training — a model that embeds images and text into a shared vector space, trained on image-caption pairs. Stable Diffusion 1.5 uses CLIP\'s text tower to encode prompts.',
+	'text encoder': 'The neural network (CLIP or T5) that turns a text prompt into a sequence of vectors the diffusion U-Net can condition on.',
+	'time embedding': 'A vector representation of the diffusion timestep t, typically via sinusoidal positional encoding followed by a small MLP, injected into every U-Net block.',
+	'sinusoidal embedding': 'A positional encoding using sin/cos at geometrically-spaced frequencies; used for both transformer positions and diffusion timesteps.',
+	'skip connection': 'A direct addition of an earlier layer\'s output to a later layer\'s input (as in ResNet and U-Net) — preserves gradients and fine detail across many layers.',
+	'residual block': 'A conv block that adds its input back to its output — the basic building unit of the U-Net.',
+	'GroupNorm': 'Group Normalization — normalizes activations per group of channels, works well at small batch sizes where BatchNorm fails.',
+	'SiLU': 'Sigmoid Linear Unit, also called Swish — the activation x·σ(x) used in the diffusion U-Net, a smooth cousin of ReLU.',
+	'DDPM': 'Denoising Diffusion Probabilistic Model — the 2020 paper (Ho et al.) that brought diffusion to mainstream generative modeling by training a U-Net to predict noise with simple MSE loss.',
+	'DDIM': 'Denoising Diffusion Implicit Model — a faster sampler that can produce good images in 20-50 steps instead of 1000, without retraining.',
+	'LoRA': 'Low-Rank Adaptation — a fine-tuning technique that trains only tiny rank-decomposed adapter matrices on top of frozen weights, enabling style/concept customization in minutes on consumer GPUs.',
+	'ControlNet': 'A side network that adds spatial conditioning (edge maps, depth maps, pose skeletons) to a frozen diffusion U-Net via zero-convolutions.',
+	'adversarial diffusion distillation': 'A training technique that compresses many denoising steps into one by combining a distillation loss with a GAN-style adversarial loss. Used to train SDXL-Turbo.',
+	'Stable Diffusion': 'The open-source latent-diffusion model from Stability AI (2022) that popularized text-to-image generation on consumer GPUs.',
+	'model collapse': 'The degenerative failure mode that occurs when generative models are trained on data produced by earlier generative models — distribution tails erode and outputs become repetitive.',
+	'inpainting': 'Filling in a masked region of an image with diffusion — the model conditions on the unmasked pixels and generates only the missing area.',
+	'img2img': 'Adding noise to an existing image and partially denoising it to get a modified version that preserves overall composition.',
+	'im2img': 'See "img2img".',
+	'image-to-image': 'See "img2img".',
+	'noising': 'The forward diffusion process — adding Gaussian noise to data step by step until only noise remains.',
+	'denoising': 'The reverse diffusion process — removing noise step by step to recover or generate data.',
 };
 
 function tensor(...args) {
@@ -2096,18 +2132,35 @@ window.__MN_DARK = {
 			.getPropertyValue(name).trim();
 	},
 	// Listen to theme changes (cookie-driven toggle in functions.php
-	// mutates the .dark class on <html>).
+	// mutates the .dark class on <html>). Every module shares ONE
+	// observer and all callbacks run in a single debounced batch:
+	// a theme flip triggers exactly one pass over the re-renderers
+	// instead of one MutationObserver + one synchronous callback per
+	// module (which made the toggle feel frozen).
 	onChange: function (callback) {
-		const html = document.documentElement;
-		const obs = new MutationObserver((muts) => {
-			for (const m of muts) {
-				if (m.attributeName === 'class') {
-					callback(this.isDark());
-				}
-			}
+		const api = window.__MN_DARK;
+		api._subscribers = api._subscribers || [];
+		api._subscribers.push(callback);
+		if (api._observer) return api._observer;
+		const dispatch = () => {
+			api._pending = false;
+			const dark = api.isDark();
+			api._subscribers.forEach((cb) => {
+				try { cb(dark); } catch (e) { /* ignore */ }
+			});
+		};
+		api._observer = new MutationObserver(() => {
+			// Coalesce bursts of class mutations into a single pass.
+			if (api._pending) return;
+			api._pending = true;
+			if (window.queueMicrotask) queueMicrotask(dispatch);
+			else Promise.resolve().then(dispatch);
 		});
-		obs.observe(html, { attributes: true, attributeFilter: ['class'] });
-		return obs;
+		api._observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['class']
+		});
+		return api._observer;
 	},
 	// Canonical colour pairs that swap when dark mode is active.
 	// Use these when canvas/WebGL rendering cannot read CSS vars.
@@ -2208,6 +2261,18 @@ window.__MN_DARK = {
 		'#6366f1':     '#818cf8',  // indigo -> lighter indigo
 		'#10b981':     '#6ee7b7',  // emerald -> lighter emerald
 		'#d97706':     '#fbbf24',  // dark amber -> bright amber
+		// Attention-lab vector colours: the k/keys blue and weighted-v
+		// green are used as text fills in the SVG; on the dark canvas
+		// the original Blue-600 (#2563eb) is hard to read. Bump up one
+		// shade so the in-SVG labels stay legible against #0f172a/#1e293b.
+		'#2563eb':     '#60a5fa',  // Blue-600 (k keys) -> Blue-400
+		'#3b82f6':     '#93c5fd',  // Blue-500 -> Blue-300
+		'#1e3a8a':     '#93c5fd',  // Blue-900 (matrix cells) -> Blue-300
+		'#15803d':     '#86efac',  // Green-700 (weighted-v) -> Green-300
+		'#16a34a':     '#4ade80',  // Green-600 -> Green-400
+		'#22c55e':     '#4ade80',  // Green-500 -> Green-400
+		'#d946ef':     '#f0abfc',  // Fuchsia-500 (hover magenta) -> Fuchsia-300
+		'#f97316':     '#fdba74',  // Orange-500 -> Orange-300
 	},
 	// Resolve a single colour through the swap map.
 	// Accepts hex strings, returns the dark-mode equivalent (or the

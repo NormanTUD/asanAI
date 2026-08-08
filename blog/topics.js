@@ -23,55 +23,177 @@
 (function () {
 	'use strict';
 
-	/* ── 1. Topic registry (single source of truth) ───────────── */
+	/* ── 1. Topic registry (single source of truth) ─────────────
+	   Math and Statistics are split into cumulative levels (i = HS,
+	   ii = undergrad, iii = grad / research) so a reader can opt in
+	   only to the depth they actually want. A page that combines
+	   levels can list several, e.g. "math-i, math-ii". */
 	const TOPICS = [
-		{ id: 'math',         label: 'Math',          icon: '∑',    desc: 'Algebra, calculus, linear algebra, geometry' },
-		{ id: 'statistics',   label: 'Statistics',    icon: 'σ',    desc: 'Probability, distributions, inference' },
-		{ id: 'programming',  label: 'Programming',   icon: '{ }',  desc: 'Code, algorithms, data structures' },
-		{ id: 'architecture', label: 'Architecture',  icon: '🏗️',   desc: 'Transformers, attention, model design' },
-		{ id: 'data',         label: 'Data',          icon: '📊',   desc: 'Training data, corpora, curation' },
-		{ id: 'hardware',     label: 'Hardware',      icon: '💻',   desc: 'Chips, GPUs, machines, infrastructure' },
-		{ id: 'vision',       label: 'Vision',        icon: '👁️',   desc: 'Image, video, multimodal perception' },
-		{ id: 'audio',        label: 'Audio',         icon: '🎵',   desc: 'Speech, music, sound processing' },
-		{ id: 'agents',       label: 'Agents',        icon: '🤖',   desc: 'Tool use, reasoning, autonomous systems' },
-		{ id: 'language',     label: 'Language',      icon: '🗣️',   desc: 'Linguistics, semantics, NLP' },
-		{ id: 'history',      label: 'History',       icon: '🏛️',   desc: 'Intellectual history and archaeology' },
-		{ id: 'philosophy',   label: 'Philosophy',    icon: '💭',   desc: 'Mind, meaning, epistemology' },
-		{ id: 'ethics',       label: 'Ethics',        icon: '⚖️',   desc: 'Safety, alignment, responsibility' },
-		{ id: 'society',      label: 'Society',       icon: '🌐',   desc: 'Culture, law, economy, policy' },
-		{ id: 'interactive',  label: 'Hands-on',      icon: '🎮',   desc: 'Interactive demos and playgrounds' }
+		{ id: 'math-i',           label: 'Math I',           icon: '∑',    desc: 'Algebra, derivatives' },
+		{ id: 'math-ii',          label: 'Math II',          icon: '∫',    desc: 'Integrals, linear algebra' },
+		{ id: 'math-iii',         label: 'Math III',         icon: '∮',    desc: 'Probability, real analysis' },
+		{ id: 'statistics-i',     label: 'Stats I',          icon: 'σ',    desc: 'Basic probability, distributions' },
+		{ id: 'statistics-ii',    label: 'Stats II',         icon: 'μ',    desc: 'Inference, hypothesis testing, advanced' },
+		{ id: 'programming',      label: 'Programming',      icon: '{ }',  desc: 'Code, algorithms' },
+		{ id: 'architecture',     label: 'Architecture',     icon: '🏗️',   desc: 'Transformers, attention' },
+		{ id: 'training',         label: 'Training',         icon: '🎯',   desc: 'Fine-tuning, RL, eval' },
+		{ id: 'data',             label: 'Data',             icon: '📊',   desc: 'Datasets, curation' },
+		{ id: 'hardware',         label: 'Hardware',         icon: '💻',   desc: 'Chips, GPUs, infra' },
+		{ id: 'inference',        label: 'Inference',        icon: '⚡',   desc: 'Serving, quantization' },
+		{ id: 'vision',           label: 'Vision',           icon: '👁️',   desc: 'Image, video' },
+		{ id: 'audio',            label: 'Audio',            icon: '🎵',   desc: 'Speech, music' },
+		{ id: 'multimodal',       label: 'Multimodal',       icon: '🧩',   desc: 'Text + image + audio' },
+		{ id: 'agents',           label: 'Agents',           icon: '🤖',   desc: 'Tool use, planning' },
+		{ id: 'reasoning',        label: 'Reasoning',        icon: '∴',    desc: 'Chain-of-thought' },
+		{ id: 'interpretability', label: 'Interpretability', icon: '🔍',   desc: 'Probing, circuits' },
+		{ id: 'language',         label: 'Language',         icon: '🗣️',   desc: 'Linguistics, NLP' },
+		{ id: 'history',          label: 'History',          icon: '🏛️',   desc: 'Intellectual history' },
+		{ id: 'philosophy',       label: 'Philosophy',       icon: '💭',   desc: 'Mind, epistemology' },
+		{ id: 'ethics',           label: 'Ethics',           icon: '⚖️',   desc: 'Responsibility' },
+		{ id: 'safety',           label: 'Safety',           icon: '🛡️',   desc: 'Security, robustness' },
+		{ id: 'society',          label: 'Society',          icon: '🌐',   desc: 'Culture, policy' },
+		{ id: 'law',              label: 'Law',              icon: '📜',   desc: 'Regulation' },
+		{ id: 'frontier',         label: 'Frontier',         icon: '🚀',   desc: 'Open problems' },
+		{ id: 'reference',        label: 'Reference',        icon: '📖',   desc: 'Glossary, cheatsheets' }
 	];
+
+	/* ── 1a. Audience axes (profile × level) ────────────────────
+	   The reader picks one of four roles and one of four depths.
+	   Each (profile, level) cell maps to a curated topic set so that
+	   just clicking a profile+level gives most readers a sensible
+	   default — they can still fine-tune individual topics below. */
+	const PROFILES = [
+		{ id: 'curious',    label: 'Curious',    hint: 'interested general reader, no CS background' },
+		{ id: 'student',    label: 'Student',    hint: 'studying CS or AI formally' },
+		{ id: 'engineer',   label: 'Engineer',   hint: 'ML practitioner building production systems' },
+		{ id: 'researcher', label: 'Researcher', hint: 'academic / R&D in AI' }
+	];
+	const LEVELS = [
+		{ id: 'hs',       label: 'High School',hint: 'High school level' },
+		{ id: 'undergrad',label: 'Undergrad', hint: 'Undergraduate / Bachelor' },
+		{ id: 'grad',     label: 'Grad',      hint: 'Graduate / Master\'s' },
+		{ id: 'phd',      label: 'PhD',       hint: 'PhD / research level' }
+	];
+
+	/* 4 × 4 = 16 audience presets. Each cell lists the topics that
+	   should be ON; everything else is hidden. The matrix is biased
+	   toward the practical reading needs of each role at each depth:
+	   a Curious HS reader gets the storytelling core; a Researcher
+	   PhD gets nearly everything.
+
+	   Math and Statistics are split into i / ii / iii and each level
+	   cumulatively includes the lower levels: HS → math-i + stats-i,
+	   Undergrad → + math-ii + stats-ii, Grad / PhD → + math-iii. */
+	const AUDIENCE_PRESETS = {
+		curious: {
+			hs:        [ 'history', 'philosophy', 'ethics', 'society', 'language' ],
+			undergrad: [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'statistics-i' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'society', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming' ]
+		},
+		student: {
+			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'statistics-i' ],
+			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming' ],
+			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents', 'math-iii', 'reasoning', 'inference', 'data' ]
+		},
+		engineer: {
+			hs:        [ 'math-i', 'statistics-i', 'programming', 'data', 'hardware' ],
+			undergrad: [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'hardware', 'architecture', 'training', 'inference' ],
+			grad:      [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'hardware', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents' ],
+			phd:       [ 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'data', 'hardware', 'architecture', 'training', 'inference', 'language', 'reasoning', 'safety', 'agents', 'interpretability', 'multimodal', 'vision', 'audio' ]
+		},
+		researcher: {
+			hs:        [ 'history', 'philosophy', 'math-i', 'statistics-i', 'language' ],
+			undergrad: [ 'history', 'philosophy', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture' ],
+			grad:      [ 'history', 'philosophy', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
+			phd:       [ 'history', 'philosophy', 'math-i', 'math-ii', 'math-iii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
+		}
+	};
+
+	/* Quick presets (kept as one-click shortcuts that don't require
+	   picking an audience). */
+	const PRESETS = {
+		essentials: [ 'history', 'philosophy', 'language' ],
+		technical:  [ 'history', 'philosophy', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture' ]
+	};
 
 	const COOKIE_NAME  = 'topics_pref';
 	const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 	const STORAGE_KEY  = 'blog_topics_pref';   // localStorage mirror
 
-	/* ── 2. Cookie / storage helpers ──────────────────────────── */
-	function readCookieMap() {
+	/* ── 2. Cookie / storage helpers ────────────────────────────
+	   Stored shape:
+	       { topics: { id: true|false, … }, profile: 'engineer', level: 'phd' }
+	   For backwards compatibility, an old flat topics-only map is
+	   recognised and treated as `{ topics: <that map> }`. */
+	function readRawPref() {
 		const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + COOKIE_NAME + '=([^;]*)'));
-		if (!m) return null;
+		if (m) {
+			try {
+				const parsed = JSON.parse(decodeURIComponent(m[1]));
+				if (parsed && typeof parsed === 'object') return parsed;
+			} catch (e) { /* fall through */ }
+		}
 		try {
-			const parsed = JSON.parse(decodeURIComponent(m[1]));
-			if (parsed && typeof parsed === 'object') return parsed;
+			const raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				if (parsed && typeof parsed === 'object') return parsed;
+			}
 		} catch (e) { /* fall through */ }
 		return null;
 	}
 
-	function writeCookieMap(map) {
-		const v = encodeURIComponent(JSON.stringify(map));
+	function normalizePref(parsed) {
+		const out = {
+			topics: {},
+			profile: null,
+			level: null
+		};
+		if (!parsed || typeof parsed !== 'object') return out;
+		const looksV2 = ('topics' in parsed) || ('profile' in parsed) || ('level' in parsed);
+		const topicsObj = looksV2 ? (parsed.topics || {}) : parsed;
+		TOPICS.forEach(function (t) {
+			out.topics[t.id] = topicsObj[t.id] !== false;
+		});
+		if (looksV2) {
+			if (PROFILES.some(function (p) { return p.id === parsed.profile; })) {
+				out.profile = parsed.profile;
+			}
+			if (LEVELS.some(function (l) { return l.id === parsed.level; })) {
+				out.level = parsed.level;
+			}
+		}
+		return out;
+	}
+
+	function defaultPref() {
+		const topics = {};
+		TOPICS.forEach(function (t) { topics[t.id] = true; });
+		return { topics: topics, profile: null, level: null };
+	}
+
+	function writePref(pref) {
+		const v = encodeURIComponent(JSON.stringify(pref));
 		document.cookie = COOKIE_NAME + '=' + v
 			+ '; path=/; max-age=' + COOKIE_MAX_AGE + '; SameSite=Lax';
 		try { localStorage.setItem(STORAGE_KEY, v); } catch (e) { /* private mode */ }
 	}
 
+	/** legacy wrappers (still used by helpers that only care about topics) */
+	function readCookieMap() {
+		const raw = readRawPref();
+		return raw ? normalizePref(raw).topics : null;
+	}
 	function readStorageMap() {
-		try {
-			const raw = localStorage.getItem(STORAGE_KEY);
-			if (!raw) return null;
-			const parsed = JSON.parse(raw);
-			if (parsed && typeof parsed === 'object') return parsed;
-		} catch (e) { /* fall through */ }
-		return null;
+		const raw = readRawPref();
+		return raw ? normalizePref(raw).topics : null;
+	}
+	function writeCookieMap(map) {
+		const cur = normalizePref(readRawPref());
+		cur.topics = map;
+		writePref(cur);
 	}
 
 	function defaultMap() {
@@ -80,9 +202,13 @@
 		return m;
 	}
 
-	/** active preference map (cookie wins, then localStorage, then defaults) */
+	/** active preference (cookie/localStorage → defaults) */
+	function activePref() {
+		return normalizePref(readRawPref() || defaultPref());
+	}
+	/** legacy: just the topics map */
 	function activeMap() {
-		return readCookieMap() || readStorageMap() || defaultMap();
+		return activePref().topics;
 	}
 
 	/** is `topicId` enabled right now? (missing = enabled) */
@@ -107,27 +233,151 @@
 	}
 
 	function setEnabled(topicId, enabled) {
+		pushHistory();
 		const m = activeMap();
 		m[topicId] = !!enabled;
 		persist(m);
 	}
 
 	function setAll(value) {
+		pushHistory();
 		const m = {};
 		TOPICS.forEach(function (t) { m[t.id] = !!value; });
 		persist(m);
 	}
 
-	/** enable `count` random topics, disable the rest */
-	function pickRandom(count) {
-		const ids = TOPICS.map(function (t) { return t.id; });
-		for (let i = ids.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			const tmp = ids[i]; ids[i] = ids[j]; ids[j] = tmp;
-		}
+	/** enable exactly the topics whose id appears in `enabledIds`,
+	    disable everything else. Unknown ids are silently skipped. */
+	function applyPreset(enabledIds) {
+		pushHistory();
+		const allow = {};
+		(enabledIds || []).forEach(function (id) { allow[cssSafe(id)] = true; });
 		const m = {};
-		ids.forEach(function (id, i) { m[id] = i < count; });
+		TOPICS.forEach(function (t) { m[t.id] = !!allow[t.id]; });
 		persist(m);
+	}
+
+	/** persist the full pref (topics + audience selection) */
+	function persistPref(pref) {
+		writePref(pref);
+		fireChange();
+	}
+
+	/* ── 2b. Undo / redo history (per-session, in memory only) ──
+	   Every user-initiated change pushes the previous state onto an
+	   undo stack; Ctrl/Cmd+Z walks back, Ctrl/Cmd+Shift+Z (or Y)
+	   walks forward. The keyboard listener only fires while the
+	   overlay is open so we never hijack the browser's own undo
+	   on form fields. */
+	const HISTORY_MAX = 50;
+	const undoStack = [];
+	const redoStack = [];
+
+	function snapshotPref() {
+		const p = activePref();
+		return { topics: Object.assign({}, p.topics), profile: p.profile, level: p.level };
+	}
+
+	function pushHistory() {
+		undoStack.push(snapshotPref());
+		if (undoStack.length > HISTORY_MAX) undoStack.shift();
+		redoStack.length = 0;
+		updateUndoButtons();
+	}
+
+	function restoreSnapshot(snap) {
+		persistPref({
+			topics: Object.assign({}, snap.topics),
+			profile: snap.profile,
+			level: snap.level
+		});
+	}
+
+	function undo() {
+		if (undoStack.length === 0) return false;
+		redoStack.push(snapshotPref());
+		if (redoStack.length > HISTORY_MAX) redoStack.shift();
+		restoreSnapshot(undoStack.pop());
+		return true;
+	}
+
+	function redo() {
+		if (redoStack.length === 0) return false;
+		undoStack.push(snapshotPref());
+		if (undoStack.length > HISTORY_MAX) undoStack.shift();
+		restoreSnapshot(redoStack.pop());
+		return true;
+	}
+
+	function updateUndoButtons() {
+		const u = document.getElementById('topics-undo');
+		const r = document.getElementById('topics-redo');
+		if (u) {
+			u.disabled = undoStack.length === 0;
+			u.classList.toggle('topics-undo-empty', undoStack.length === 0);
+			u.title = undoStack.length === 0
+				? 'Nothing to undo'
+				: 'Undo last change (Ctrl/⌘+Z)';
+		}
+		if (r) {
+			r.disabled = redoStack.length === 0;
+			r.classList.toggle('topics-undo-empty', redoStack.length === 0);
+			r.title = redoStack.length === 0
+				? 'Nothing to redo'
+				: 'Redo (Ctrl/⌘+Shift+Z)';
+		}
+	}
+
+	/** apply the curated (profile, level) audience preset and remember
+	    the selection. Unknown ids are silently skipped. */
+	function applyAudience(profile, level) {
+		const cell = AUDIENCE_PRESETS[profile] && AUDIENCE_PRESETS[profile][level];
+		const allow = {};
+		(cell || []).forEach(function (id) { allow[cssSafe(id)] = true; });
+		const topics = {};
+		TOPICS.forEach(function (t) { topics[t.id] = !!allow[t.id]; });
+		pushHistory();
+		persistPref({
+			topics: topics,
+			profile: cell ? profile : null,
+			level:   cell ? level : null
+		});
+	}
+
+	/** change just one axis of the audience selection without re-applying
+	    the preset (used when the user opens the picker for the first time
+	    and we want to remember their pick). */
+	function setAudienceSelection(profile, level) {
+		const cur = activePref();
+		if (profile !== undefined) cur.profile = profile || null;
+		if (level   !== undefined) cur.level   = level   || null;
+		pushHistory();
+		persistPref(cur);
+	}
+
+	/** Apply the audience picker result:
+	      – profile + level both set  → curated preset is loaded.
+	      – only one axis set         → selection is remembered but the
+	                                   existing topic map is left alone
+	                                   (so the user can keep their manual
+	                                   fine-tuning while still seeing their
+	                                   audience pick reflected).
+	      – both axes null            → audience filter is cleared; the
+	                                   topic map is left alone. */
+	function applyAudiencePartial(profile, level) {
+		const cleanProfile = (PROFILES.some(function (p) { return p.id === profile; })) ? profile : null;
+		const cleanLevel   = (LEVELS.some(function (l)   { return l.id === level;    })) ? level   : null;
+		if (cleanProfile && cleanLevel) {
+			applyAudience(cleanProfile, cleanLevel);
+			return;
+		}
+		const cur = activePref();
+		pushHistory();
+		persistPref({
+			topics: cur.topics,
+			profile: cleanProfile,
+			level: cleanLevel
+		});
 	}
 
 	/** ensure map contains an entry for every known topic */
@@ -141,7 +391,7 @@
 	   The button itself is rendered by `render_topics_toggle()` in
 	   functions.php so it's in the DOM immediately (no FOUC, no
 	   waiting on the loader). We just wire up the click handler and
-	   keep the badge in sync. */
+	   keep the button's color intensity in sync via a CSS variable. */
 	function ensureToggleButton() {
 		let btn = document.getElementById('topics-toggle');
 		if (!btn) {
@@ -157,45 +407,29 @@
 				'<circle cx="12" cy="12" r="9"/>',
 				'<circle cx="12" cy="12" r="5"/>',
 				'<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
-				'</svg></span>',
-				'<span class="topics-badge" id="topics-badge" aria-hidden="true"></span>'
+				'</svg></span>'
 			].join('');
 			document.body.appendChild(btn);
 		}
 		// Replace the inline onclick with a proper handler so the
 		// event stays attached even if the button is re-rendered.
 		btn.onclick = openOverlay;
-		// Ensure the badge child exists (it might be missing on the
-		// PHP-rendered version if render_topics_toggle was updated).
-		if (!btn.querySelector('.topics-badge')) {
-			const badge = document.createElement('span');
-			badge.className = 'topics-badge';
-			badge.id = 'topics-badge';
-			badge.setAttribute('aria-hidden', 'true');
-			btn.appendChild(badge);
-		}
-		updateBadge();
+		updateToggleIntensity();
 	}
 
-	function updateBadge() {
-		const badge = document.getElementById('topics-badge');
-		if (!badge) return;
+	/** The toggle no longer reflects the share of topics — it just
+	    exposes an aria-label so screen readers know how many topics are
+	    currently active. */
+	function updateToggleIntensity() {
+		const btn = document.getElementById('topics-toggle');
+		if (!btn) return;
 		const map = normalize(activeMap());
 		const active = Object.values(map).filter(Boolean).length;
-		const total = TOPICS.length;
-		if (active === total) {
-			badge.textContent = '';
-			badge.classList.add('topics-badge-empty');
-			badge.setAttribute('aria-label', 'All topics active');
-		} else if (active === 0) {
-			badge.textContent = '0';
-			badge.classList.remove('topics-badge-empty');
-			badge.setAttribute('aria-label', 'No topics active — everything is skipped');
-		} else {
-			badge.textContent = String(active);
-			badge.classList.remove('topics-badge-empty');
-			badge.setAttribute('aria-label', active + ' of ' + total + ' topics active');
-		}
+		const total  = TOPICS.length;
+		btn.setAttribute(
+			'aria-label',
+			'Choose your interests — ' + active + ' of ' + total + ' active'
+		);
 	}
 
 	/* ── 4. UI: overlay + checklist ───────────────────────────── */
@@ -211,15 +445,47 @@
 				'<button class="topics-close" type="button" aria-label="Close" data-close>×</button>',
 				'<header class="topics-header">',
 					'<h2 id="topics-title"><span class="topics-title-emoji">🎯</span> Your Interests</h2>',
-					'<p class="topics-tagline">Tell us what sparks your curiosity. We\'ll quietly tuck away the bits you don\'t want — but you can always peek with a single click.</p>',
+					'<p class="topics-tagline">Pick who you are and how deep you want to go — we\'ll pick a sensible set of topics for you. Fine-tune individual topics below.</p>',
 				'</header>',
+				'<div class="topics-audience">',
+					'<div class="topics-audience-row">',
+						'<span class="topics-audience-label">I\'m a</span>',
+						'<div class="topics-seg" role="radiogroup" aria-label="Your profile" data-audience="profile">',
+							PROFILES.map(function (p) {
+								return '<button type="button" class="topics-seg-btn" role="radio" data-profile="' + escAttr(p.id) + '" title="' + escAttr(p.hint) + '">' + escAttr(p.label) + '</button>';
+							}).join(''),
+						'</div>',
+						'<button type="button" class="topics-audience-clear" data-audience-clear title="Clear the audience filter — pick topics by hand below">Clear</button>',
+					'</div>',
+					'<div class="topics-audience-row">',
+						'<span class="topics-audience-label">reading at</span>',
+						'<div class="topics-seg" role="radiogroup" aria-label="Your level" data-audience="level">',
+							LEVELS.map(function (l) {
+								return '<button type="button" class="topics-seg-btn" role="radio" data-level="' + escAttr(l.id) + '" title="' + escAttr(l.hint) + '">' + escAttr(l.label) + '</button>';
+							}).join(''),
+						'</div>',
+						'<span class="topics-audience-suffix">level</span>',
+					'</div>',
+					'<p class="topics-audience-hint" id="topics-audience-hint"></p>',
+				'</div>',
 				'<div class="topics-presets" role="group" aria-label="Quick presets">',
 					'<button type="button" data-preset="all" class="topics-preset-btn">Show Everything</button>',
-					'<button type="button" data-preset="none" class="topics-preset-btn">Just Essentials</button>',
-					'<button type="button" data-preset="random" class="topics-preset-btn topics-preset-fun">🎲 Surprise Me</button>',
+					'<button type="button" data-preset="essentials" class="topics-preset-btn">Just Essentials</button>',
+					'<button type="button" data-preset="technical" class="topics-preset-btn">Technical Essentials</button>',
+					'<button type="button" data-preset="none" class="topics-preset-btn topics-preset-off">Disable All</button>',
 				'</div>',
 				'<div class="topics-grid" id="topics-grid"></div>',
 				'<footer class="topics-footer">',
+					'<div class="topics-undo-group" role="group" aria-label="History">',
+						'<button type="button" id="topics-undo" class="topics-undo-btn" aria-label="Undo">',
+							'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>',
+							'<span>Undo</span>',
+						'</button>',
+						'<button type="button" id="topics-redo" class="topics-undo-btn" aria-label="Redo">',
+							'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>',
+							'<span>Redo</span>',
+						'</button>',
+					'</div>',
 					'<span class="topics-count" id="topics-count"></span>',
 					'<span class="topics-hint">Saved automatically · 🍪</span>',
 				'</footer>',
@@ -234,17 +500,86 @@
 			b.addEventListener('click', function () {
 				const p = b.getAttribute('data-preset');
 				if (p === 'all') setAll(true);
-				else if (p === 'none') setAll(false);
-				else if (p === 'random') pickRandom(5);
+				else if (p === 'essentials') applyPreset(PRESETS.essentials);
+				else if (p === 'technical') applyPreset(PRESETS.technical);
+				else if (p === 'none') {
+					pushHistory();
+					setAll(false);
+					flashHint('All topics muted · Ctrl/⌘+Z to undo');
+				}
+				renderAudienceSelection();
 			});
 		});
+		overlay.querySelectorAll('[data-profile]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				const profile = b.getAttribute('data-profile');
+				const cur = activePref();
+				/* Clicking the active profile again toggles it OFF.
+				   Clicking a different profile saves it standalone,
+				   without forcing a level. The preset only fires when
+				   BOTH axes are picked. */
+				const nextProfile = cur.profile === profile ? null : profile;
+				applyAudiencePartial(nextProfile, cur.level);
+				renderAudienceSelection();
+			});
+		});
+		overlay.querySelectorAll('[data-level]').forEach(function (b) {
+			b.addEventListener('click', function () {
+				const level = b.getAttribute('data-level');
+				const cur = activePref();
+				const nextLevel = cur.level === level ? null : level;
+				applyAudiencePartial(cur.profile, nextLevel);
+				renderAudienceSelection();
+			});
+		});
+		const clearBtn = overlay.querySelector('[data-audience-clear]');
+		if (clearBtn) {
+			clearBtn.addEventListener('click', function () {
+				applyAudiencePartial(null, null);
+				renderAudienceSelection();
+			});
+		}
 
-		// Escape closes
+		const undoBtn = document.getElementById('topics-undo');
+		const redoBtn = document.getElementById('topics-redo');
+		if (undoBtn) undoBtn.addEventListener('click', function () { undo(); });
+		if (redoBtn) redoBtn.addEventListener('click', function () { redo(); });
+
+		// Escape closes; Ctrl/Cmd+Z and Ctrl/Cmd+Shift+Z undo/redo while
+		// the overlay is visible (we don't hijack the browser undo
+		// outside the picker).
 		document.addEventListener('keydown', function (e) {
-			if (e.key === 'Escape' && overlay.classList.contains('open')) {
+			if (!overlay.classList.contains('open')) return;
+			if (e.key === 'Escape') {
+				e.preventDefault();
 				closeOverlay();
+				return;
+			}
+			const mod = e.metaKey || e.ctrlKey;
+			if (!mod) return;
+			const k = e.key.toLowerCase();
+			if (k === 'z' && !e.shiftKey) {
+				e.preventDefault();
+				if (undo()) flashHint('Undid last change · Ctrl/⌘+Shift+Z to redo');
+			} else if ((k === 'z' && e.shiftKey) || k === 'y') {
+				e.preventDefault();
+				if (redo()) flashHint('Redid · Ctrl/⌘+Z to undo');
 			}
 		});
+	}
+
+	let _hintTimer = null;
+	function flashHint(msg) {
+		const hint = document.getElementById('topics-audience-hint');
+		if (!hint) return;
+		const orig = hint.textContent;
+		hint.textContent = msg;
+		hint.classList.add('topics-hint-flash');
+		if (_hintTimer) clearTimeout(_hintTimer);
+		_hintTimer = setTimeout(function () {
+			hint.classList.remove('topics-hint-flash');
+			renderAudienceSelection();
+		}, 1600);
 	}
 
 	function renderGrid() {
@@ -287,11 +622,42 @@
 		el.classList.toggle('topics-count-all',  active === total);
 	}
 
+	/** highlight the currently selected profile + level buttons and update
+	    the hint text. Safe to call before the overlay exists. */
+	function renderAudienceSelection() {
+		const pref = activePref();
+		document.querySelectorAll('#topics-overlay [data-profile]').forEach(function (b) {
+			const on = b.getAttribute('data-profile') === pref.profile;
+			b.classList.toggle('topics-seg-on', on);
+			b.setAttribute('aria-checked', on ? 'true' : 'false');
+		});
+		document.querySelectorAll('#topics-overlay [data-level]').forEach(function (b) {
+			const on = b.getAttribute('data-level') === pref.level;
+			b.classList.toggle('topics-seg-on', on);
+			b.setAttribute('aria-checked', on ? 'true' : 'false');
+		});
+		const hint = document.getElementById('topics-audience-hint');
+		if (!hint) return;
+		const profileLabel = (PROFILES.find(function (p) { return p.id === pref.profile; }) || {}).label;
+		const levelLabel   = (LEVELS.find(function (l) { return l.id === pref.level; })   || {}).label;
+		if (pref.profile && pref.level) {
+			hint.textContent = 'Preset applied: ' + profileLabel + ' · ' + levelLabel + '. Toggle individual topics below to fine-tune.';
+		} else if (pref.profile) {
+			hint.textContent = 'Saved: ' + profileLabel + '. Pick a level to apply a curated preset, or tune the grid below by hand.';
+		} else if (pref.level) {
+			hint.textContent = 'Saved: reading at ' + levelLabel + ' level. Pick a profile to apply a curated preset, or tune the grid below by hand.';
+		} else {
+			hint.textContent = '';
+		}
+	}
+
 	let _lastFocused = null;
 
 	function openOverlay() {
 		ensureOverlay();
 		renderGrid();
+		renderAudienceSelection();
+		updateUndoButtons();
 		const o = document.getElementById('topics-overlay');
 		o.classList.add('open');
 		o.setAttribute('aria-hidden', 'false');
@@ -541,17 +907,9 @@
 			if (hits === 0) {
 				tile.classList.add('topic-tile-dim');
 				tile.classList.remove('topic-tile-active');
-				if (!tile.querySelector('.topic-tile-skipped-pill')) {
-					const pill = document.createElement('span');
-					pill.className = 'topic-tile-skipped-pill';
-					pill.textContent = 'saved for later';
-					tile.appendChild(pill);
-				}
 			} else {
 				tile.classList.remove('topic-tile-dim');
 				tile.classList.add('topic-tile-active');
-				const pill = tile.querySelector('.topic-tile-skipped-pill');
-				if (pill) pill.remove();
 			}
 		});
 	}
@@ -588,8 +946,9 @@
 
 	/* ── 9. Change broadcast ──────────────────────────────────── */
 	function fireChange() {
-		updateBadge();
+		updateToggleIntensity();
 		renderGrid();
+		renderAudienceSelection();
 		applyVisibility();
 		// Re-render any inline widget (intro page)
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
@@ -633,7 +992,7 @@
 				'</button>',
 			'</div>',
 			'<div class="inline-topics-grid">' + tilesHtml + '</div>',
-			'<p class="inline-topics-foot">Or use the small <strong>🎯 button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
+			'<p class="inline-topics-foot">Or use the small <strong><span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right</strong> (next to dark-mode &amp; search) any time — your choices are saved in a cookie.</p>'
 		].join('');
 
 		host.querySelector('.inline-topics-open').addEventListener('click', openOverlay);
@@ -650,7 +1009,6 @@
 		ensureToggleButton();
 		ensureOverlay();
 		renderGrid();
-		updateBadge();
 		applyVisibility();
 		document.querySelectorAll('[data-topics-inline]').forEach(renderInlineWidget);
 	}
@@ -664,14 +1022,26 @@
 	/* ── 12. Public API ───────────────────────────────────────── */
 	window.BlogTopics = {
 		TOPICS: TOPICS,
+		PRESETS: PRESETS,
+		PROFILES: PROFILES,
+		LEVELS: LEVELS,
+		AUDIENCE_PRESETS: AUDIENCE_PRESETS,
 		preprocess: preprocess,
 		applyVisibility: applyVisibility,
 		activeMap: function () { return normalize(activeMap()); },
+		activePref: function () { return activePref(); },
 		isEnabled: isEnabled,
 		anyEnabled: anyEnabled,
 		setEnabled: setEnabled,
 		setAll: setAll,
-		pickRandom: pickRandom,
+		applyPreset: applyPreset,
+		applyAudience: applyAudience,
+		applyAudiencePartial: applyAudiencePartial,
+		setAudienceSelection: setAudienceSelection,
+		undo: undo,
+		redo: redo,
+		canUndo: function () { return undoStack.length > 0; },
+		canRedo: function () { return redoStack.length > 0; },
 		openOverlay: openOverlay,
 		closeOverlay: closeOverlay,
 		renderInlineWidget: renderInlineWidget,

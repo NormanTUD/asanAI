@@ -7,7 +7,7 @@ icon: &#9888;
 part: 5
 order: 28
 color: rose
-topics: ethics, language, programming
+topics: safety, ethics, language, programming
 -->
 
 <div class="md">

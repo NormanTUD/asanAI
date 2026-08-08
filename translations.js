@@ -130,7 +130,7 @@ async function update_translations(force=0) {
 
 	var wd = 0;
 
-	if(finished_loading && newly_translated) {
+	if(typeof finished_loading !== "undefined" && finished_loading && newly_translated) {
 		wd = 1;
 	}
 

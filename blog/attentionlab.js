@@ -4,6 +4,17 @@
 /**
  * THE NEURAL UNIVERSE
  */
+
+// Numerically stable softmax: subtract the max before exponentiating
+// so the result is unaffected by a constant shift of the inputs.
+// Used by both the LDD demo and the Anatomy-of-Attention module.
+function softmax(scores) {
+	const max = Math.max(...scores);
+	const exps = scores.map(s => Math.exp(s - max));
+	const sum  = exps.reduce((a, b) => a + b, 0);
+	return exps.map(e => e / sum);
+}
+
 const universeVocab = {
 	'happy': [2, 8, 2], 'sad': [-2, 2, 1], 'love': [4, 9, 3], 'hate': [-4, 1, 0],
 	'king': [8, 5, 10], 'queen': [8, 9, 10], 'man': [1, 5, 5], 'woman': [1, 9, 5],
@@ -221,1009 +232,5314 @@ const SelfAttentionLab = {
 	}
 };
 
-/**
- * Visualizes the "Semantic Tug-of-War" for Apple and Key examples.
- * Shows how a context word (e.g. "juicy") drags "apple" from its
- * neutral base embedding toward the Fruit cluster via the same
- * query-key dot-product mechanism the larger demos use.
- *
- * @param {string} containerId - The ID of the div to render the plot in.
- */
-function initAppleShift(containerId) {
-	// Tech cluster (lower-right)
-	const techLandmarks = [
-		{ x: 8.4, y: 1.4, text: 'iPhone',  icon: '📱' },
-		{ x: 9.1, y: 2.3, text: 'Mac',     icon: '💻' },
-		{ x: 8.7, y: 1.0, text: 'Linux',   icon: '🐧' },
-		{ x: 9.5, y: 2.9, text: 'Pixel',   icon: '🤖' }
-	];
-	// Fruit cluster (upper-left)
-	const fruitLandmarks = [
-		{ x: 1.4, y: 8.8, text: 'Banana',  icon: '🍌' },
-		{ x: 2.4, y: 8.1, text: 'Orchard', icon: '🌳' },
-		{ x: 1.0, y: 7.4, text: 'Vitamin', icon: '💊' },
-		{ x: 2.9, y: 9.0, text: 'Peach',   icon: '🍑' }
-	];
+/* ═══════════════════════════════════════════════════════════
+   ANATOMY OF ATTENTION — STEP-BY-STEP BUILD-UP
+   Click "Next" to advance through each part of the equation,
+   watching the 2D vector scene and score bars evolve together.
+   ═══════════════════════════════════════════════════════════ */
 
-	// Color seeds — landmark color comes from theme swap, accent stays brand.
-	const mutedGray = themeColor('#64748b');
-	const accentAmber = isDarkMode() ? '#fbbf24' : '#eab308';
-	const accentEmerald = isDarkMode() ? '#6ee7b7' : '#10b981';
-	const textPrimary = themeColor('#1e293b');
-	const textMuted   = themeColor('#94a3b8');
+// Four tokens. Token 0 is the query; tokens 1..3 are the keys/values.
+const ATTN_TOKENS = [
+	{ name: 'it',  color: '#ef4444' },
+	{ name: 'cat', color: '#2563eb' },
+	{ name: 'dog', color: '#3b82f6' },
+	{ name: 'sat', color: '#60a5fa' }
+];
 
-	const allLandmarks = [
-		...techLandmarks.map(l => ({ ...l, color: mutedGray })),
-		...fruitLandmarks.map(l => ({ ...l, color: accentAmber }))
-	];
+// 2D query / keys / values. d_k = 2 keeps the geometry clean: the dot
+// product is just (q[1]·k[1]) + (q[2]·k[2]) — two numbers, one vector.
+// Everything is recomputed from the first `numTokens` tokens, so the
+// demo can start with the simplest possible case (query + one other
+// token: one key, one angle, one weight) and add more tokens later.
+const matMul = (W, v) => [W[0][0]*v[0] + W[0][1]*v[1],
+                           W[1][0]*v[0] + W[1][1]*v[1]];
 
-	// Base / context / result
-	const base      = { x: 5.0, y: 5.0, text: 'apple',          sub: 'base embedding' };
-	const context   = { x: 2.0, y: 8.0, text: 'juicy',          sub: 'context giver' };
-	// Result lands roughly halfway toward the fruit cluster, weighted by
-	// how strongly the query "what kind of apple?" matches "juicy".
-	const result    = { x: 3.6, y: 6.8, text: 'apple ⟵ juicy',  sub: 'contextualized' };
+// Map a dot-path field identifier to a human-readable variable name
+// shown in tooltips. e.g. "keys.0.1" → "k₁[2]".
+function fieldToName(field) {
+	const parts = field.split('.');
+	const root = parts[0], sub = parts[1];
+	if (root === 'q') return 'q[' + (parseInt(sub) + 1) + ']';
+	if (root === 'keys') return 'k' + (parseInt(sub) + 1) + '[' + (parseInt(parts[2]) + 1) + ']';
+	if (root === 'vals') return 'v' + (parseInt(sub) + 1) + '[' + (parseInt(parts[2]) + 1) + ']';
+	if (root === 'demo' && sub === 'x') return 'x[' + (parseInt(parts[2]) + 1) + ']';
+	if (root === 'demo' && /^W_/.test(sub)) return sub + '[' + (parseInt(parts[2]) + 1) + '][' + (parseInt(parts[3]) + 1) + ']';
+	return field;
+}
 
-	// Soft cluster halos via translucent filled circles
-	const techHalo = {
-		type: 'scatter', mode: 'lines',
-		x: [8.4, 9.7, 9.7, 8.4, 8.4].map((v,i) => i===0||i===4 ? 8.4 : i===1||i===3 ? v : v),
-		y: [1.0, 1.0, 3.0, 3.0, 1.0],
-		fill: 'toself', fillcolor: isDarkMode() ? 'rgba(100,116,139,0.10)' : 'rgba(100,116,139,0.08)',
-		line: { width: 0 }, showlegend: false, hoverinfo: 'skip'
-	};
-	const techHaloX = [8.0, 9.9, 9.9, 8.0];
-	const techHaloY = [0.6, 0.6, 3.4, 3.4];
-	const fruitHaloX = [0.6, 3.4, 3.4, 0.6];
-	const fruitHaloY = [6.9, 6.9, 9.4, 9.4];
+// Emit a Temml `\text{◆FIELD|VALUE}` marker. The whole thing
+// renders as one <mtext> element after Temml, which we then find
+// and replace with an editable HTML span. Using \text{} (a basic
+// amsmath command, trusted by default) avoids Temml's trust
+// restrictions on \class / \htmlData / \style.
+//
+// Underscores in the field name (e.g. W_Q) MUST be escaped to \_
+// otherwise LaTeX treats them as subscript operators and the
+// Editable value marker.
+//
+// Previous attempts used markers like \text{◆path|value} or
+// \mathrm{◆path|value} inside the math. Temml tokenizes the content
+// of these commands at math operators (| = norm bar, . = decimal,
+// etc.), so the marker gets split across multiple MathML elements
+// and the ◆ regex never matches.
+//
+// New approach: index-based queue. ed() just returns the value as
+// \text{value} (no marker) and pushes the field onto a global queue.
+// After render_temml() converts everything to MathML, _makeMathEditable()
+// walks the <mtext> elements in document order and matches them 1:1
+// to fields in the queue. This is order-dependent but reliable — as
+// long as the LaTeX generator calls ed() in the same order that Temml
+// produces <mtext> elements, the mapping is correct.
+const _editableFieldQueue = [];
+// Global index — consumed ACROSS panels, not per-panel. Each panel's
+// _makeMathEditable picks up where the previous panel left off.
+let _editableQueueIndex = 0;
 
-	const traces = [
-		{
-			x: techHaloX, y: techHaloY, mode: 'lines',
-			fill: 'toself',
-			fillcolor: isDarkMode() ? 'rgba(100,116,139,0.10)' : 'rgba(100,116,139,0.08)',
-			line: { width: 0 }, showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		{
-			x: fruitHaloX, y: fruitHaloY, mode: 'lines',
-			fill: 'toself',
-			fillcolor: isDarkMode() ? 'rgba(251,191,36,0.10)' : 'rgba(234,179,8,0.10)',
-			line: { width: 0 }, showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		// Landmarks
-		{
-			x: allLandmarks.map(l => l.x), y: allLandmarks.map(l => l.y),
-			mode: 'markers+text',
-			text: allLandmarks.map(l => `${l.icon} ${l.text}`),
-			textposition: 'top center',
-			textfont: { size: 11, color: textMuted, family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 9, opacity: 0.85, color: allLandmarks.map(l => l.color),
-			          line: { width: 0 } },
-			name: 'Landmarks', hoverinfo: 'text', type: 'scatter'
-		},
-		// Attention pull vector (context → base)
-		{
-			x: [context.x, base.x], y: [context.y, base.y],
-			mode: 'lines',
-			line: { color: accentEmerald, width: 3, dash: 'dot' },
-			opacity: 0.55,
-			showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		// Movement vector (base → result)
-		{
-			x: [base.x, result.x], y: [base.y, result.y],
-			mode: 'lines',
-			line: { color: '#f97316', width: 4 },
-			showlegend: false, hoverinfo: 'skip', type: 'scatter'
-		},
-		// Base embedding
-		{
-			x: [base.x], y: [base.y], mode: 'markers+text',
-			text: [`<b>${base.text}</b>`],
-			textposition: 'bottom center',
-			textfont: { size: 13, color: textMuted, family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 13, color: mutedGray, symbol: 'circle',
-			          line: { width: 2, color: themeColor('#fff') } },
-			name: 'base', hoverinfo: 'text', type: 'scatter'
-		},
-		// Context giver
-		{
-			x: [context.x], y: [context.y], mode: 'markers+text',
-			text: [`<b>${context.text}</b>`],
-			textposition: 'top center',
-			textfont: { size: 14, color: accentEmerald, family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 14, color: accentEmerald, symbol: 'hexagon',
-			          line: { width: 2, color: themeColor('#fff') } },
-			name: 'context', hoverinfo: 'text', type: 'scatter'
-		},
-		// Contextualized result
-		{
-			x: [result.x], y: [result.y], mode: 'markers+text',
-			text: [`<b>${result.text}</b>`],
-			textposition: 'bottom center',
-			textfont: { size: 13, color: '#f97316', family: 'Inter, system-ui, sans-serif' },
-			marker: { size: 20, color: '#f97316', symbol: 'diamond',
-			          line: { width: 2, color: themeColor('#fff') } },
-			name: 'result', hoverinfo: 'text', type: 'scatter'
+function ed(field, value) {
+	_editableFieldQueue.push(field);
+	return `\\text{${value}}`;
+}
+
+// Reset the queue before each render so fields from the previous
+// render don't leak into the new one.
+function _resetEditableQueue() {
+	_editableFieldQueue.length = 0;
+	_editableQueueIndex = 0;
+}
+
+// ── Predefined token sets ─────────────────────────────────────────
+// Each set is a self-contained scene: query q (always "it"), the other
+// tokens, their keys, values, and queries (for the full-matrix view).
+// The sets are designed to showcase different attention regimes:
+//
+//   0. Clear winner   — one key is close to q, dominates
+//   1. Two-way race   — two keys are roughly tied
+//   2. Nothing relates — keys are scattered, softmax is near-uniform
+//   3. Strong winner  — one key is almost parallel to q, ~95% weight
+//
+// Each token entry: { name, k, v, q } where k/v live in the key/value
+// subspace and q is the token's query (for self-attention).
+const ATTN_SETS = [
+	{
+		label: 'Clear winner — "The cat sat."',
+		full: 'The cat sat on the mat.',
+		tokens: [
+			{ name: 'sat', k: [-0.60, -0.70], v: [-0.70, -0.55], q: [-0.60, -0.70] },
+			{ name: 'cat', k: [ 0.90,  0.45], v: [ 0.80,  0.55], q: [ 0.90,  0.45] },
+			{ name: 'mat', k: [-0.50,  0.80], v: [-0.30,  0.70], q: [-0.50,  0.80] }
+		]
+	},
+	{
+		label: 'Two-way race — "She loved him."',
+		full: 'She loved him deeply.',
+		tokens: [
+			{ name: 'loved', k: [-0.90, -0.30], v: [ 0.10, -0.90], q: [-0.90, -0.30] },
+			{ name: 'she',   k: [ 0.85,  0.50], v: [ 0.70,  0.60], q: [ 0.85,  0.50] },
+			{ name: 'him',   k: [ 0.80,  0.45], v: [-0.60,  0.70], q: [ 0.80,  0.45] }
+		]
+	},
+	{
+		label: 'Nothing relates — "xyz foo bar."',
+		full: 'xyz foo bar qux quux.',
+		tokens: [
+			{ name: 'xyz',  k: [-0.30,  0.20], v: [ 0.60,  0.30], q: [-0.30,  0.20] },
+			{ name: 'foo',  k: [ 0.10, -0.40], v: [-0.20,  0.70], q: [ 0.10, -0.40] },
+			{ name: 'bar',  k: [ 0.20,  0.10], v: [ 0.80, -0.50], q: [ 0.20,  0.10] }
+		]
+	},
+	{
+		label: 'Strong winner — "The beautiful sunset glowed."',
+		full: 'The beautiful sunset glowed.',
+		tokens: [
+			{ name: 'glowed',    k: [-0.90, -0.80], v: [ 0.20, -0.70], q: [-0.90, -0.80] },
+			{ name: 'sunset',    k: [ 0.98,  0.42], v: [ 0.90,  0.30], q: [ 0.98,  0.42] },
+			{ name: 'beautiful', k: [-0.80,  0.90], v: [-0.60,  0.80], q: [-0.80,  0.90] }
+		]
+	}
+];
+
+const ATTN_2D = {
+	q: [ 1.00, 0.40 ],                       // current query (set on init)
+	_allKeys:  [],
+	_allVals:  [],
+	_allQueries: [],
+	exampleIdx: 0,                            // current predefined set
+	d_k: 2,
+	numTokens: 3,  // FIX: was 2, which meant only the first 2 keys were ever
+	             // drawn. Hovering over the 3rd key ("mat") had no arrow
+	             // to highlight — completely silent failure.
+	hoveredToken: -1,          // -1 = none; 0 = it; 1 = cat; …
+	hoveredFormula: null,      // { step, idx } or null — which formula is hovered
+
+	// Live views over the full arrays — always reflect the CURRENT
+	// numTokens. These were MISSING from the original object, which
+	// meant `this.keys` / `this.vals` were undefined and the old
+	// `setNumTokens` had to assign them directly (shadowing whatever
+	// value was there). With these getters, `setNumTokens` just sets
+	// `numTokens` and everything else derives fresh.
+	get keys()    { return this._allKeys.slice(0, this.numTokens); },
+	get vals()    { return this._allVals.slice(0, Math.min(this.numTokens, (this._allKeys || []).length)); },
+	get queries() { return this._allQueries.slice(0, this.numTokens + 1); },
+
+	// ── Demo data for the "learnable projections" step ────────────
+	// Static W matrices (identity / 90° rotation / shear) that make the
+	// concept visually obvious. The input x is RECOMPUTED from the first
+	// token of the current example in setExample() so switching sets
+	// changes what the first slide shows.
+	demo: {
+		x:  [0.80, 0.60],
+		W_Q: [[1.0, 0.0], [0.0, 1.0]],
+		W_K: [[0.0, 1.0], [-1.0, 0.0]],
+		W_V: [[1.0, 0.5], [0.0, 1.0]],
+		q:  [0.80, 0.60],
+		k:  [-0.60, 0.80],
+		v:  [1.10, 0.60],
+		qk: -0.12
+	},
+
+	// Recompute the demo x from the first token of the current example,
+	// so the projections step changes when the user switches examples.
+	_updateDemo: function() {
+		const set = ATTN_SETS[this.exampleIdx];
+		if (!set || !set.tokens[0]) return;
+		const tk = set.tokens[0];
+		// q = W^Q · x, so x = W^Q⁻¹ · q. W^Q is identity, so x = q.
+		this.demo.x = [ tk.q[0], tk.q[1] ];
+		this.demo.q = matMul(this.demo.W_Q, this.demo.x);
+		this.demo.k = matMul(this.demo.W_K, this.demo.x);
+		this.demo.v = matMul(this.demo.W_V, this.demo.x);
+		this.demo.qk = this.demo.q[0]*this.demo.k[0] + this.demo.q[1]*this.demo.k[1];
+	},
+
+	// Recompute the dot-product scores and their scaled versions from
+	// the CURRENT q and keys. This MUST be called whenever q or any key
+	// changes — scores and scaled are direct properties, not getters, so
+	// they go stale the moment you edit a base value.
+	_recomputeScores: function() {
+		this.sqrtDk = this.sqrtDk || Math.sqrt(this.d_k);
+		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
+		const keysArr = this.keys; // getter — reflects current numTokens
+		this.scores = keysArr.map(k => dot(this.q, k));
+		this.scaled = this.scores.map(s => s / this.sqrtDk);
+		// ASSERTION: scores must be finite
+		this.scores.forEach((sc, j) => {
+			if (!isFinite(sc)) console.warn('[attn] _recomputeScores: score[' + j + '] is not finite: ' + sc);
+		});
+	},
+
+	// Standard softmax: exp(s) / Σ. Causal mask zeroes out keys at
+	// positions > query position (only matters for the full-matrix view).
+	recomputeWeights: function() {
+		if (!this.scaled || !this.scaled.length) {
+			console.warn('[attn] recomputeWeights: scaled is empty — _recomputeScores() not called first');
+			return;
 		}
-	];
+		const exps = this.scaled.map(s => Math.exp(s));
+		const sum = exps.reduce((a, b) => a + b, 0) || 1;
+		this.exps = exps;
+		this.weights = exps.map(e => e / sum);
+		this.output = [0, 0];
+		this.vals.forEach((v, j) => {
+			this.output[0] += this.weights[j] * v[0];
+			this.output[1] += this.weights[j] * v[1];
+		});
+		this.weightedVals = this.vals.map((v, j) =>
+			[this.weights[j] * v[0], this.weights[j] * v[1]]);
+		// ASSERTION: weights must sum to 1 (they're a probability distribution)
+		const wsum = this.weights.reduce((a, b) => a + b, 0);
+		if (Math.abs(wsum - 1) > 0.001) {
+			console.warn('[attn] recomputeWeights: weights do NOT sum to 1 — sum=' + wsum.toFixed(6) + ' weights=[' + this.weights.map(x => x.toFixed(3)).join(',') + ']');
+		}
+	},
 
-	const layout = {
-		title: {
-			text: '<b>The "Apple" Shift</b><br><sub style="color:' + textMuted + '">I ate a <b style="color:#f97316">juicy</b> apple.</sub>',
-			font: { size: 16, color: textPrimary, family: 'Inter, system-ui, sans-serif' },
-			x: 0.5, xanchor: 'center'
-		},
-		xaxis: {
-			title: { text: '<i>Tech</i>  ↔  <i>Nature</i>', font: { size: 12, color: textMuted } },
-			range: [-0.3, 10.3],
-			gridcolor: themeColor('#f1f5f9'),
-			zeroline: false,
-			showline: true, linecolor: themeColor('#e2e8f0'),
-			tickfont: { color: textMuted, size: 10 }
-		},
-		yaxis: {
-			title: { text: '<i>Organic</i>  ↔  <i>Synthetic</i>', font: { size: 12, color: textMuted } },
-			range: [-0.3, 10.3],
-			gridcolor: themeColor('#f1f5f9'),
-			zeroline: false,
-			showline: true, linecolor: themeColor('#e2e8f0'),
-			tickfont: { color: textMuted, size: 10 }
-		},
-		annotations: [
-			{
-				x: 8.95, y: 3.55, text: '<b>TECH CLUSTER</b>', showarrow: false,
-				font: { size: 10, color: mutedGray, family: 'Inter, sans-serif' }
-			},
-			{
-				x: 2.0, y: 9.55, text: '<b>FRUIT CLUSTER</b>', showarrow: false,
-				font: { size: 10, color: accentAmber, family: 'Inter, sans-serif' }
-			},
-			{
-				x: result.x + 0.6, y: result.y - 0.05,
-				ax: base.x, ay: base.y, xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
-				text: 'α(q,k) · shift', showarrow: true, arrowhead: 2, arrowsize: 1.2,
-				arrowwidth: 2, arrowcolor: '#f97316',
-				font: { size: 11, color: '#f97316', family: 'Inter, sans-serif' }
+	// Full n×n attention matrix: α[i][j] = how much query i attends to
+	// key j. The matrix is capped at the available key/value count
+	// (we have one fewer k/v than total tokens — "it" doesn't carry its
+	// own key in the single-query demo), so for n tokens the matrix is
+	// at most n × (n-1).
+	recomputeMatrix: function() {
+		const n = this.numTokens;
+		// Each token (including "it") is a query; each non-"it" token
+		// is a key. So matrix is n × _allKeys.length (clamped to n).
+		const m = Math.min(n, this._allKeys.length);
+		const queries = this._allQueries.slice(0, n);
+		const keys    = this._allKeys.slice(0, m);
+		const vals    = this._allVals.slice(0, m);
+		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
+
+		const M = [], Z = [];
+		for (let i = 0; i < n; i++) {
+			const scores = keys.map(k => dot(queries[i], k) / this.sqrtDk);
+			const exps = scores.map(s => Math.exp(s));
+			const sum = exps.reduce((a, b) => a + b, 0) || 1;
+			const row = exps.map(e => e / sum);
+			M.push(row);
+			const z = [0, 0];
+			for (let j = 0; j < m; j++) {
+				z[0] += row[j] * vals[j][0];
+				z[1] += row[j] * vals[j][1];
 			}
-		],
-		paper_bgcolor: themeColor('#fff'),
-		plot_bgcolor: themeColor('#fff'),
-		showlegend: false,
-		margin: { l: 60, r: 30, t: 80, b: 60 },
-		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: '#fff' } }
-	};
-
-	Plotly.react(containerId, traces, layout, { responsive: true, displaylogo: false });
-}
-
-function initShiftExamples() {
-	initAppleShift('apple-shift-plot');
-}
-
-/* ============================================================
-   ATTENTION GEOMETRY LAB — 1D, 2D, 3D interactive demos
-   Requires: Plotly.js (already loaded)
-   ============================================================ */
-
-// ─────────────────── UTILITIES ───────────────────
-
-/* ============================================================
-   ATTENTION GEOMETRY — NAMED CONCEPTS + LIVE SENTENCES
-   Cartesian canvas. No Plotly. Colorful. No overlap.
-   ============================================================ */
-
-/* ============================================================
-   ATTENTION GEOMETRY — NAMED CONCEPTS + RICH SENTENCES
-   ============================================================ */
-
-function softmax(scores) {
-	const max = Math.max(...scores);
-	const exps = scores.map(s => Math.exp(s - max));
-	const sum  = exps.reduce((a, b) => a + b, 0);
-	return exps.map(e => e / sum);
-}
-
-/* ─── Canvas helpers (same as before) ─── */
-
-function drawDot(ctx, x, y, r, color, alpha) {
-	ctx.save();
-	ctx.globalAlpha = alpha != null ? alpha : 1;
-	ctx.beginPath();
-	ctx.arc(x, y, r, 0, Math.PI * 2);
-	ctx.fillStyle = color;
-	ctx.fill();
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 1.5;
-	ctx.stroke();
-	ctx.restore();
-}
-
-function drawDiamond(ctx, x, y, r, color) {
-	ctx.save();
-	ctx.translate(x, y);
-	ctx.rotate(Math.PI / 4);
-	ctx.fillStyle = color;
-	ctx.fillRect(-r, -r, r * 2, r * 2);
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 2;
-	ctx.strokeRect(-r, -r, r * 2, r * 2);
-	ctx.restore();
-}
-
-function drawStar(ctx, cx, cy, r, color) {
-	ctx.beginPath();
-	for (let i = 0; i < 10; i++) {
-		const a = (i * Math.PI) / 5 - Math.PI / 2;
-		const rad = i % 2 === 0 ? r : r * 0.4;
-		ctx[i === 0 ? 'moveTo' : 'lineTo'](cx + rad * Math.cos(a), cy + rad * Math.sin(a));
-	}
-	ctx.closePath();
-	ctx.fillStyle = color;
-	ctx.fill();
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 1.5;
-	ctx.stroke();
-}
-
-function drawLabel(ctx, text, x, y, color, size, align, bold) {
-	ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
-	ctx.fillStyle = color || themeColor('#1e293b');
-	ctx.textAlign = align || 'center';
-	ctx.textBaseline = 'middle';
-	ctx.fillText(text, x, y);
-}
-
-function drawSquare(ctx, x, y, s, color, alpha) {
-	ctx.save();
-	ctx.globalAlpha = alpha != null ? alpha : 1;
-	ctx.fillStyle = color;
-	ctx.fillRect(x - s, y - s, s * 2, s * 2);
-	ctx.strokeStyle = themeColor('#1e293b');
-	ctx.lineWidth = 1;
-	ctx.strokeRect(x - s, y - s, s * 2, s * 2);
-	ctx.restore();
-}
-
-
-/* ═══════════════════════════════════════════════════════════
-   1D — "How Financial Is It?"
-   ═══════════════════════════════════════════════════════════ */
-
-const KV1 = [
-	{ k: -3.0, v: -3.5, color: '#10b981', kIcon: '🌊', kName: 'river',  vIcon: '💧', vName: 'water' },
-	{ k:  3.5, v:  4.0, color: '#f59e0b', kIcon: '🏦', kName: 'vault',  vIcon: '💰', vName: 'money' }
-];
-
-const SENTENCES_1D = [
-	[
-		{ min: 0.999, text: 'A <b style="color:#0ea5e9">catastrophic flood</b> obliterated the <b style="color:#10b981">💧 bank</b> entirely, scouring it down to <b style="color:#10b981">bare bedrock</b> in a single <b style="color:#0ea5e9">night</b>.' },
-		{ min: 0.998, text: 'The <b style="color:#10b981">💧 bank</b> <b style="color:#0ea5e9">disintegrated</b> under the force of the <b style="color:#0ea5e9">flash flood</b>, sweeping <b style="color:#10b981">ancient oaks</b> downstream.' },
-		{ min: 0.996, text: '<b style="color:#0ea5e9">Torrential rains</b> turned the <b style="color:#10b981">💧 bank</b> into a <b style="color:#10b981">mudslide</b>, burying the <b style="color:#f97316">hiking trail</b> under <b style="color:#10b981">three feet of silt</b>.' },
-		{ min: 0.994, text: 'The <b style="color:#10b981">💧 bank</b> gave way with a <b style="color:#0ea5e9">thunderous crack</b>, dumping <b style="color:#10b981">tons of earth</b> into the <b style="color:#10b981">swollen rapids</b>.' },
-		{ min: 0.992, text: 'Geologists measured the <b style="color:#10b981">💧 bank</b> retreating <b style="color:#0ea5e9">six inches per hour</b> as the <b style="color:#10b981">floodwaters</b> tore at the <b style="color:#10b981">clay substrate</b>.' },
-		{ min: 0.990, text: 'After the <b style="color:#0ea5e9">dam</b> broke, the <b style="color:#10b981">💧 bank</b> was <b style="color:#0ea5e9">swallowed whole</b> by <b style="color:#10b981">floodwaters</b> within minutes.' },
-		{ min: 0.988, text: 'A <b style="color:#10b981">massive cottonwood</b> toppled from the <b style="color:#10b981">💧 bank</b> into the <b style="color:#0ea5e9">churning current</b>, creating a <b style="color:#10b981">natural dam</b>.' },
-		{ min: 0.985, text: 'The <b style="color:#10b981">💧 bank</b> was nothing but <b style="color:#10b981">exposed roots</b> and <b style="color:#10b981">crumbling soil</b> after the <b style="color:#0ea5e9">spring melt</b> scoured it clean.' },
-		{ min: 0.982, text: 'Emergency crews reinforced the <b style="color:#10b981">💧 bank</b> with <b style="color:#94a3b8">sandbags</b> as the <b style="color:#0ea5e9">water level</b> kept rising through the <b style="color:#0ea5e9">night</b>.' },
-		{ min: 0.979, text: '<b style="color:#0ea5e9">Floodwaters</b> carved deep grooves into the <b style="color:#10b981">💧 bank</b> overnight, reshaping the entire <b style="color:#10b981">landscape</b>.' },
-		{ min: 0.976, text: 'The <b style="color:#10b981">💧 bank</b> was riddled with <b style="color:#10b981">muskrat burrows</b> that weakened the <b style="color:#10b981">soil</b> from within.' },
-		{ min: 0.973, text: '<b style="color:#10b981">Salmon</b> leapt upstream along the <b style="color:#10b981">💧 bank</b> during the <b style="color:#0ea5e9">spring run</b>, silver flashes in the <b style="color:#0ea5e9">rapids</b>.' },
-		{ min: 0.970, text: 'A <b style="color:#10b981">beaver lodge</b> sat wedged against the <b style="color:#10b981">💧 bank</b>, blocking the <b style="color:#0ea5e9">side channel</b> entirely.' },
-		{ min: 0.966, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">lush with cattails</b> and <b style="color:#10b981">bulrushes</b> where the <b style="color:#0ea5e9">current</b> slowed to a crawl.' },
-		{ min: 0.962, text: 'A <b style="color:#10b981">kingfisher</b> perched on a branch overhanging the <b style="color:#10b981">💧 bank</b>, eyeing the <b style="color:#0ea5e9">water</b> below.' },
-		{ min: 0.958, text: '<b style="color:#10b981">Moss</b> and <b style="color:#10b981">ferns</b> clung to the steep <b style="color:#10b981">💧 bank</b> above the <b style="color:#0ea5e9">waterfall</b>.' },
-		{ min: 0.954, text: 'A <b style="color:#10b981">family of ducks</b> nested in the <b style="color:#10b981">tall grass</b> along the <b style="color:#10b981">💧 bank</b>.' },
-		{ min: 0.950, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">thick with willows</b> whose branches trailed in the <b style="color:#0ea5e9">current</b>.' },
-		{ min: 0.945, text: 'The <b style="color:#0ea5e9">kayaker</b> paddled close to the <b style="color:#10b981">💧 bank</b>, dodging <b style="color:#10b981">overhanging roots</b> and <b style="color:#10b981">low branches</b>.' },
-		{ min: 0.940, text: '<b style="color:#10b981">Wildflowers</b> lined the <b style="color:#10b981">💧 bank</b> as far as the eye could see, swaying in the <b style="color:#0ea5e9">breeze</b>.' },
-		{ min: 0.935, text: 'They spread a <b style="color:#f97316">blanket</b> on the grassy <b style="color:#10b981">💧 bank</b> for a <b style="color:#f97316">picnic</b> by the <b style="color:#0ea5e9">stream</b>.' },
-		{ min: 0.930, text: 'A <b style="color:#10b981">heron</b> stood motionless on the <b style="color:#10b981">💧 bank</b>, watching for <b style="color:#0ea5e9">fish</b> in the <b style="color:#0ea5e9">shallows</b>.' },
-		{ min: 0.92, text: 'The <b style="color:#0ea5e9">canoe</b> scraped against the <b style="color:#f97316">sandy</b> <b style="color:#10b981">💧 bank</b> as they pulled ashore for <b style="color:#f97316">lunch</b>.' },
-		{ min: 0.91, text: '<b style="color:#f97316">Children</b> skipped <b style="color:#94a3b8">stones</b> from the <b style="color:#10b981">💧 bank</b> into the calm <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.90, text: 'An <b style="color:#10b981">otter</b> slid down the <b style="color:#10b981">💧 bank</b> and splashed into the <b style="color:#0ea5e9">creek</b> with a happy chirp.' },
-		{ min: 0.89, text: '<b style="color:#10b981">Turtles</b> sunned themselves on a <b style="color:#94a3b8">log</b> near the <b style="color:#10b981">💧 bank</b> all <b style="color:#f97316">afternoon</b>.' },
-		{ min: 0.88, text: 'The <b style="color:#f97316">path</b> followed the <b style="color:#10b981">💧 bank</b> of the <b style="color:#0ea5e9">creek</b> through the <b style="color:#10b981">woods</b>.' },
-		{ min: 0.87, text: '<b style="color:#10b981">Dragonflies</b> hovered above the <b style="color:#10b981">💧 bank</b> in the <b style="color:#f97316">afternoon</b> <b style="color:#0ea5e9">mist</b>.' },
-		{ min: 0.86, text: 'The <b style="color:#0ea5e9">river</b> had eroded the <b style="color:#10b981">💧 bank</b> into a gentle <b style="color:#f97316">slope</b> over the centuries.' },
-		{ min: 0.85, text: 'A <b style="color:#f97316">rope swing</b> hung from a <b style="color:#10b981">tree</b> on the <b style="color:#10b981">💧 bank</b> above the <b style="color:#0ea5e9">swimming hole</b>.' },
-		{ min: 0.84, text: '<b style="color:#10b981">Reeds</b> rustled along the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">tide</b> slowly came in.' },
-		{ min: 0.83, text: 'The <b style="color:#10b981">💧 bank</b> smelled of <b style="color:#10b981">wet earth</b> and <b style="color:#10b981">pine needles</b> after the <b style="color:#0ea5e9">rain</b>.' },
-		{ min: 0.82, text: 'She sat on the <b style="color:#10b981">💧 bank</b> and dipped her <b style="color:#f97316">toes</b> in the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.81, text: 'A <b style="color:#10b981">frog</b> croaked from somewhere along the <b style="color:#10b981">💧 bank</b> at <b style="color:#8b5cf6">dusk</b>.' },
-		{ min: 0.80, text: '<b style="color:#10b981">Fireflies</b> blinked above the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">stream</b> murmured in the <b style="color:#8b5cf6">darkness</b>.' },
-		{ min: 0.79, text: 'He cast his <b style="color:#f97316">fishing line</b> from the <b style="color:#10b981">💧 bank</b> into the <b style="color:#0ea5e9">deep pool</b>.' },
-		{ min: 0.78, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">soft underfoot</b>, still <b style="color:#0ea5e9">damp</b> from last night\'s <b style="color:#0ea5e9">rain</b>.' },
-		{ min: 0.77, text: 'A <b style="color:#f97316">painter</b> set up her <b style="color:#f97316">easel</b> on the <b style="color:#10b981">💧 bank</b> to capture the <b style="color:#0ea5e9">reflections</b>.' },
-		{ min: 0.76, text: '<b style="color:#10b981">Crawfish</b> scuttled along the <b style="color:#10b981">💧 bank</b> where the <b style="color:#0ea5e9">water</b> was <b style="color:#0ea5e9">shallow</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#10b981">💧 bank</b> was dotted with <b style="color:#10b981">smooth pebbles</b> polished by the <b style="color:#0ea5e9">current</b>.' },
-		{ min: 0.74, text: 'A <b style="color:#f97316">dog</b> bounded along the <b style="color:#10b981">💧 bank</b>, barking at the <b style="color:#0ea5e9">ripples</b>.' },
-		{ min: 0.73, text: 'They followed <b style="color:#10b981">deer tracks</b> down to the <b style="color:#10b981">💧 bank</b> of the <b style="color:#0ea5e9">brook</b>.' },
-		{ min: 0.72, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">overgrown</b> with <b style="color:#10b981">blackberry brambles</b> and <b style="color:#10b981">nettles</b>.' },
-		{ min: 0.71, text: 'A <b style="color:#f97316">wooden bridge</b> crossed the <b style="color:#0ea5e9">stream</b> just where the <b style="color:#10b981">💧 bank</b> curved.' },
-		{ min: 0.70, text: '<b style="color:#10b981">Morning fog</b> clung to the <b style="color:#10b981">💧 bank</b> as the <b style="color:#0ea5e9">river</b> flowed silently past.' },
-		{ min: 0.69, text: 'She found a <b style="color:#f97316">smooth stone</b> on the <b style="color:#10b981">💧 bank</b> and slipped it into her <b style="color:#f97316">pocket</b>.' },
-		{ min: 0.68, text: 'The <b style="color:#10b981">💧 bank</b> dropped steeply into a <b style="color:#0ea5e9">dark pool</b> where <b style="color:#10b981">trout</b> hid.' },
-		{ min: 0.67, text: '<b style="color:#10b981">Birdsong</b> echoed from the <b style="color:#10b981">trees</b> lining the <b style="color:#10b981">💧 bank</b> at <b style="color:#eab308">sunrise</b>.' },
-		{ min: 0.66, text: 'A <b style="color:#f97316">child</b> crouched on the <b style="color:#10b981">💧 bank</b>, peering at <b style="color:#10b981">tadpoles</b> in the <b style="color:#0ea5e9">shallows</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#10b981">💧 bank</b> was their <b style="color:#f97316">favorite spot</b> to watch the <b style="color:#eab308">sunset</b> over the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.64, text: '<b style="color:#10b981">Ivy</b> crept down the <b style="color:#10b981">💧 bank</b> toward the <b style="color:#0ea5e9">water\'s edge</b>.' },
-		{ min: 0.63, text: 'He skipped a <b style="color:#94a3b8">flat stone</b> from the <b style="color:#10b981">💧 bank</b> — it bounced <b style="color:#0ea5e9">five times</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#10b981">💧 bank</b> was quiet except for the <b style="color:#0ea5e9">gurgling</b> of the <b style="color:#0ea5e9">stream</b>.' },
-		{ min: 0.61, text: 'A <b style="color:#10b981">snapping turtle</b> basked on the <b style="color:#10b981">💧 bank</b> in the <b style="color:#eab308">midday sun</b>.' },
-		{ min: 0.60, text: 'They built a <b style="color:#f97316">small fire</b> on the <b style="color:#10b981">💧 bank</b> and listened to the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.59, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">fragrant</b> with <b style="color:#10b981">wild mint</b> growing near the <b style="color:#0ea5e9">water</b>.' },
-		{ min: 0.58, text: 'A <b style="color:#f97316">couple</b> strolled along the <b style="color:#10b981">💧 bank</b> as <b style="color:#10b981">geese</b> honked overhead.' },
-		{ min: 0.57, text: 'The <b style="color:#10b981">💧 bank</b> was <b style="color:#10b981">muddy</b> from the <b style="color:#0ea5e9">recent rain</b>, but the <b style="color:#0ea5e9">water</b> was clearing.' },
-		{ min: 0.56, text: 'She read her <b style="color:#f97316">book</b> on the <b style="color:#10b981">💧 bank</b> while the <b style="color:#0ea5e9">creek</b> babbled beside her.' },
-		{ min: 0.55, text: 'A <b style="color:#10b981">water snake</b> slithered along the <b style="color:#10b981">💧 bank</b> and disappeared into the <b style="color:#10b981">reeds</b>.' },
-		{ min: 0.54, text: 'The <b style="color:#10b981">💧 bank</b> was lined with <b style="color:#10b981">smooth river stones</b> worn by <b style="color:#0ea5e9">centuries of current</b>.' },
-		{ min: 0.53, text: 'He napped in the <b style="color:#10b981">shade</b> on the <b style="color:#10b981">💧 bank</b>, lulled by the <b style="color:#0ea5e9">sound of water</b>.' },
-		{ min: 0.52, text: 'A <b style="color:#10b981">mink</b> darted along the <b style="color:#10b981">💧 bank</b> and vanished into a <b style="color:#10b981">burrow</b>.' },
-		{ min: 0.51, text: 'The <b style="color:#10b981">💧 bank</b> here leans toward <b style="color:#10b981">nature</b> — probably a <b style="color:#10b981">riverbank</b>, but just barely.' },
-		{ min: 0.50, text: 'The word "bank" is undecided — a thin edge between <b style="color:#10b981">💧 water</b> and <b style="color:#f59e0b">💰 money</b>.' },
-		{ min: 0.49, text: 'There\'s a pull toward <b style="color:#10b981">💧 nature</b>, but the meaning isn\'t fully settled yet.' },
-		{ min: 0.48, text: 'A faint hint of <b style="color:#10b981">💧 river</b>, but the context is still wide open.' },
-		{ min: 0.47, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#10b981">💧 water</b>, but barely.' },
-		{ min: 0.46, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#10b981">💧 nature</b>, but it could mean anything at all.' },
-		{ min: 0.45, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#10b981">💧 water</b>, maybe not.' },
-		{ min: 0.00, text: 'The word "bank" is <b style="color:#94a3b8">neutral</b> — <b style="color:#10b981">💧 water</b> and <b style="color:#f59e0b">💰 money</b> are neck and neck.' }
-	],
-	// Index 1 = vault/money dominant
-	[
-		{ min: 0.999, text: 'The <b style="color:#f59e0b">💰 bank</b> was placed under <b style="color:#dc2626">federal receivership</b> after <b style="color:#f59e0b">$2 billion</b> in <b style="color:#f59e0b">toxic assets</b> surfaced on its <b style="color:#f59e0b">balance sheet</b>.' },
-		{ min: 0.998, text: '<b style="color:#dc2626">FBI agents</b> seized <b style="color:#f59e0b">servers</b> from the <b style="color:#f59e0b">💰 bank\'s</b> headquarters in a <b style="color:#dc2626">predawn raid</b> linked to <b style="color:#f59e0b">money laundering</b>.' },
-		{ min: 0.996, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">CEO</b> was <b style="color:#dc2626">indicted</b> on <b style="color:#dc2626">fourteen counts</b> of <b style="color:#f59e0b">securities fraud</b> and <b style="color:#f59e0b">embezzlement</b>.' },
-		{ min: 0.994, text: '<b style="color:#dc2626">Regulators</b> shut down the <b style="color:#f59e0b">💰 bank</b> overnight after a <b style="color:#dc2626">run</b> drained its <b style="color:#f59e0b">cash reserves</b> to zero.' },
-		{ min: 0.992, text: 'The <b style="color:#f59e0b">💰 bank vault</b> held <b style="color:#f59e0b">$40 million</b> in <b style="color:#eab308">gold reserves</b> behind <b style="color:#94a3b8">three-foot steel doors</b>.' },
-		{ min: 0.990, text: '<b style="color:#dc2626">Armored trucks</b> lined up outside the <b style="color:#f59e0b">💰 bank</b> to transport <b style="color:#f59e0b">$100 million</b> in <b style="color:#f59e0b">bearer bonds</b>.' },
-		{ min: 0.988, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">trading floor</b> erupted in <b style="color:#dc2626">panic</b> as the <b style="color:#f59e0b">stock</b> plummeted <b style="color:#dc2626">30%</b> in minutes.' },
-		{ min: 0.985, text: '<b style="color:#dc2626">Federal investigators</b> subpoenaed every record from the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">offshore accounts</b>.' },
-		{ min: 0.982, text: '<b style="color:#dc2626">Armed guards</b> stood outside the <b style="color:#f59e0b">💰 bank</b> during the <b style="color:#94a3b8">armored</b> <b style="color:#f59e0b">cash transfer</b>.' },
-		{ min: 0.979, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">quarterly earnings</b> shattered every <b style="color:#f59e0b">Wall Street</b> forecast this year.' },
-		{ min: 0.976, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">stock price</b> surged <b style="color:#dc2626">18%</b> after the <b style="color:#f59e0b">merger</b> announcement.' },
-		{ min: 0.973, text: '<b style="color:#dc2626">Auditors</b> found <b style="color:#f59e0b">discrepancies</b> in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">ledgers</b> going back <b style="color:#94a3b8">five years</b>.' },
-		{ min: 0.970, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#dc2626">foreclosed</b> on three <b style="color:#f59e0b">properties</b> this <b style="color:#f59e0b">quarter</b> alone.' },
-		{ min: 0.966, text: '<b style="color:#dc2626">Protesters</b> gathered outside the <b style="color:#f59e0b">💰 bank</b> demanding lower <b style="color:#f59e0b">interest rates</b> on <b style="color:#f59e0b">student loans</b>.' },
-		{ min: 0.962, text: 'The <b style="color:#f59e0b">💰 bank</b> announced a <b style="color:#f59e0b">hostile takeover bid</b> for its <b style="color:#f59e0b">rival institution</b>.' },
-		{ min: 0.958, text: 'The <b style="color:#f59e0b">💰 bank</b> issued a <b style="color:#f59e0b">dividend</b> that exceeded <b style="color:#f59e0b">analyst</b> expectations by a wide margin.' },
-		{ min: 0.954, text: '<b style="color:#f59e0b">Shareholders</b> voted to replace the <b style="color:#f59e0b">💰 bank\'s</b> entire <b style="color:#f59e0b">board of directors</b>.' },
-		{ min: 0.950, text: 'The <b style="color:#f59e0b">💰 bank</b> raised its <b style="color:#f59e0b">prime lending rate</b> for the <b style="color:#94a3b8">third time</b> this year.' },
-		{ min: 0.945, text: 'She nervously entered the <b style="color:#f59e0b">💰 bank</b> to negotiate the terms of her <b style="color:#f59e0b">business loan</b>.' },
-		{ min: 0.940, text: 'The <b style="color:#f59e0b">💰 bank</b> approved her <b style="color:#f59e0b">mortgage</b> application after weeks of <b style="color:#94a3b8">paperwork</b>.' },
-		{ min: 0.935, text: 'A <b style="color:#f59e0b">financial advisor</b> at the <b style="color:#f59e0b">💰 bank</b> recommended a <b style="color:#f59e0b">diversified portfolio</b>.' },
-		{ min: 0.930, text: 'The <b style="color:#f59e0b">💰 bank</b> wired <b style="color:#f59e0b">$50,000</b> to the <b style="color:#f59e0b">escrow account</b> by <b style="color:#94a3b8">noon</b>.' },
-		{ min: 0.92, text: 'He refinanced his <b style="color:#f59e0b">home loan</b> through the <b style="color:#f59e0b">💰 bank</b> at a lower <b style="color:#f59e0b">rate</b>.' },
-		{ min: 0.91, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#f59e0b">compliance department</b> flagged the <b style="color:#f59e0b">transaction</b> for review.' },
-		{ min: 0.90, text: 'She deposited her <b style="color:#f59e0b">paycheck</b> at the <b style="color:#f59e0b">💰 bank</b> on <b style="color:#94a3b8">Friday afternoon</b>.' },
-		{ min: 0.89, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">signing bonus</b> for new <b style="color:#f59e0b">premium accounts</b>.' },
-		{ min: 0.88, text: 'He checked his <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">balance</b> nervously before making the <b style="color:#f59e0b">purchase</b>.' },
-		{ min: 0.87, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a letter about new <b style="color:#f59e0b">savings account</b> terms and <b style="color:#f59e0b">fees</b>.' },
-		{ min: 0.86, text: 'She walked into the <b style="color:#f59e0b">💰 bank</b> to ask about opening a <b style="color:#f59e0b">checking account</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">ATM</b> was out of <b style="color:#f59e0b">cash</b> again this <b style="color:#94a3b8">weekend</b>.' },
-		{ min: 0.84, text: 'He walked toward the <b style="color:#f59e0b">💰 bank</b> to check his <b style="color:#f59e0b">account balance</b> before <b style="color:#94a3b8">lunch</b>.' },
-		{ min: 0.83, text: 'The <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">branch</b> on <b style="color:#94a3b8">Main Street</b> was always <b style="color:#94a3b8">crowded</b> at <b style="color:#94a3b8">noon</b>.' },
-		{ min: 0.82, text: 'She received a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> in the <b style="color:#94a3b8">mail</b> and tossed it on the <b style="color:#94a3b8">counter</b>.' },
-		{ min: 0.81, text: 'The <b style="color:#f59e0b">💰 bank</b> offered a <b style="color:#f59e0b">low-interest</b> <b style="color:#f59e0b">credit card</b> with no <b style="color:#f59e0b">annual fee</b>.' },
-		{ min: 0.80, text: 'He needed to visit the <b style="color:#f59e0b">💰 bank</b> before it <b style="color:#94a3b8">closed</b> at <b style="color:#94a3b8">five</b>.' },
-		{ min: 0.79, text: 'The <b style="color:#f59e0b">💰 bank</b> had a <b style="color:#94a3b8">long queue</b> snaking out the <b style="color:#94a3b8">front door</b>.' },
-		{ min: 0.78, text: 'She set up <b style="color:#f59e0b">direct deposit</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">mobile app</b>.' },
-		{ min: 0.77, text: 'The <b style="color:#f59e0b">💰 bank</b> notified him of a <b style="color:#f59e0b">suspicious charge</b> on his <b style="color:#f59e0b">debit card</b>.' },
-		{ min: 0.76, text: 'He opened a <b style="color:#f59e0b">joint account</b> at the <b style="color:#f59e0b">💰 bank</b> after the <b style="color:#94a3b8">wedding</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">lobby</b> smelled of <b style="color:#94a3b8">carpet cleaner</b> and <b style="color:#94a3b8">stale coffee</b>.' },
-		{ min: 0.74, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> <b style="color:#94a3b8">teller</b> for a <b style="color:#f59e0b">cashier\'s check</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#f59e0b">💰 bank</b> waived the <b style="color:#f59e0b">overdraft fee</b> as a <b style="color:#94a3b8">one-time courtesy</b>.' },
-		{ min: 0.72, text: 'He transferred <b style="color:#f59e0b">funds</b> between <b style="color:#f59e0b">accounts</b> at the <b style="color:#f59e0b">💰 bank</b> online.' },
-		{ min: 0.71, text: 'The <b style="color:#f59e0b">💰 bank</b> mailed a new <b style="color:#f59e0b">debit card</b> after the old one <b style="color:#94a3b8">expired</b>.' },
-		{ min: 0.70, text: 'She scheduled a meeting at the <b style="color:#f59e0b">💰 bank</b> to discuss <b style="color:#f59e0b">retirement planning</b>.' },
-		{ min: 0.69, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">parking lot</b> was full every <b style="color:#94a3b8">Monday morning</b>.' },
-		{ min: 0.68, text: 'He picked up a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">brochure</b> about <b style="color:#f59e0b">CD rates</b> on his way out.' },
-		{ min: 0.67, text: 'The <b style="color:#f59e0b">💰 bank</b> required <b style="color:#94a3b8">two forms of ID</b> to open the <b style="color:#f59e0b">account</b>.' },
-		{ min: 0.66, text: 'She used the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">night deposit box</b> after <b style="color:#94a3b8">closing hours</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#f59e0b">💰 bank</b> was running a <b style="color:#f59e0b">promotion</b> on <b style="color:#f59e0b">home equity loans</b>.' },
-		{ min: 0.64, text: 'He sat in the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">waiting area</b>, flipping through a <b style="color:#94a3b8">magazine</b>.' },
-		{ min: 0.63, text: 'The <b style="color:#f59e0b">💰 bank</b> charged a <b style="color:#f59e0b">monthly maintenance fee</b> on the <b style="color:#f59e0b">basic account</b>.' },
-		{ min: 0.62, text: 'She linked her <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">account</b> to a <b style="color:#94a3b8">budgeting app</b>.' },
-		{ min: 0.61, text: 'The <b style="color:#f59e0b">💰 bank</b> was <b style="color:#94a3b8">closed</b> for the <b style="color:#94a3b8">holiday</b>, so he used the <b style="color:#94a3b8">ATM</b>.' },
-		{ min: 0.60, text: 'He forgot his <b style="color:#94a3b8">PIN</b> and had to call the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">helpline</b>.' },
-		{ min: 0.59, text: 'The <b style="color:#f59e0b">💰 bank</b> offered <b style="color:#f59e0b">free checking</b> for <b style="color:#94a3b8">students</b>.' },
-		{ min: 0.58, text: 'She printed a <b style="color:#f59e0b">💰 bank</b> <b style="color:#f59e0b">statement</b> for her <b style="color:#94a3b8">landlord</b> as proof of <b style="color:#f59e0b">income</b>.' },
-		{ min: 0.57, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">drive-through</b> lane had a <b style="color:#94a3b8">ten-car wait</b>.' },
-		{ min: 0.56, text: 'He cashed a <b style="color:#f59e0b">check</b> at the <b style="color:#f59e0b">💰 bank</b> and pocketed the <b style="color:#f59e0b">bills</b>.' },
-		{ min: 0.55, text: 'The <b style="color:#f59e0b">💰 bank</b> updated its <b style="color:#94a3b8">mobile app</b> with a new <b style="color:#94a3b8">interface</b>.' },
-		{ min: 0.54, text: 'She asked the <b style="color:#f59e0b">💰 bank</b> about <b style="color:#f59e0b">wire transfer</b> <b style="color:#f59e0b">fees</b> for an <b style="color:#94a3b8">international</b> payment.' },
-		{ min: 0.53, text: 'The <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">security guard</b> nodded as she walked through the <b style="color:#94a3b8">glass doors</b>.' },
-		{ min: 0.52, text: 'He set up <b style="color:#f59e0b">automatic bill pay</b> through the <b style="color:#f59e0b">💰 bank\'s</b> <b style="color:#94a3b8">website</b>.' },
-		{ min: 0.51, text: 'The <b style="color:#f59e0b">💰 bank</b> sent a <b style="color:#94a3b8">reminder</b> that his <b style="color:#f59e0b">loan payment</b> was due <b style="color:#94a3b8">next week</b>.' },
-		{ min: 0.50, text: '"Bank" is starting to sound like <b style="color:#f59e0b">💰 finance</b> — maybe a <b style="color:#f59e0b">loan office</b>?' },
-		{ min: 0.49, text: 'There\'s a pull toward <b style="color:#f59e0b">💰 money</b>, but it could still go either way.' },
-		{ min: 0.48, text: 'A slight lean toward <b style="color:#f59e0b">💰 finance</b>, but the context is thin.' },
-		{ min: 0.47, text: 'A faint whiff of <b style="color:#f59e0b">💰 money</b>, but nothing conclusive yet.' },
-		{ min: 0.46, text: '"Bank" is ambiguous — a slight lean toward <b style="color:#f59e0b">💰 finance</b>, but barely.' },
-		{ min: 0.45, text: 'A <b style="color:#94a3b8">whisper</b> of <b style="color:#f59e0b">💰 commerce</b>, but it could mean anything at all.' },
-		{ min: 0.44, text: 'The meaning is almost <b style="color:#94a3b8">perfectly split</b> — maybe <b style="color:#f59e0b">💰 money</b>, maybe not.' },
-		{ min: 0.00, text: 'The word "bank" is <b style="color:#94a3b8">neutral</b> — <b style="color:#f59e0b">💰 money</b> and <b style="color:#10b981">💧 water</b> are neck and neck.' }
-	]
-];
-
-const SENTENCES_2D = [
-	// ═══════════════════════════════════════════════════════════════
-	// Bucket 0 = 🔋 battery / ⚡ energy  (key: [-2.0, -1.5])
-	// Dominant when query → Nature (−X) and Calm (−Y)
-	// ═══════════════════════════════════════════════════════════════
-	[
-		{ min: 0.99, text: 'The <b style="color:#10b981">🔋 charge</b> crept into the <b style="color:#10b981">old battery</b> at a <b style="color:#3b82f6">😌 glacial pace</b>, electrons drifting through <b style="color:#10b981">copper windings</b> in a <b style="color:#10b981">🌿 hand-built solar rig</b> deep in the <b style="color:#10b981">forest cabin</b> — pure <b style="color:#10b981">🌿 nature-powered</b>, utterly <b style="color:#3b82f6">😌 unhurried</b>.' },
-		{ min: 0.98, text: 'She left the <b style="color:#10b981">🔋 charge</b> running on the <b style="color:#10b981">🌿 solar panel</b> overnight, the <b style="color:#10b981">off-grid system</b> humming <b style="color:#3b82f6">😌 softly</b> in the <b style="color:#10b981">mountain stillness</b> — no rush, just <b style="color:#10b981">⚡ photons</b> becoming <b style="color:#10b981">⚡ stored energy</b>.' },
-		{ min: 0.97, text: 'The <b style="color:#10b981">🔋 charge</b> trickled into the <b style="color:#10b981">🌿 hand-crank generator</b> as he turned it <b style="color:#3b82f6">😌 slowly</b> by the <b style="color:#10b981">campfire</b>, storing just enough <b style="color:#10b981">⚡ energy</b> to power the <b style="color:#10b981">lantern</b> through the night.' },
-		{ min: 0.96, text: 'The <b style="color:#10b981">🌿 wind turbine</b> fed a <b style="color:#3b82f6">😌 steady</b> <b style="color:#10b981">🔋 charge</b> into the <b style="color:#10b981">deep-cycle batteries</b> buried beneath the <b style="color:#10b981">meadow</b> — <b style="color:#10b981">🌿 nature\'s own</b> power grid, <b style="color:#3b82f6">😌 patient</b> and silent.' },
-		{ min: 0.95, text: 'He monitored the <b style="color:#10b981">🔋 charge</b> level on the <b style="color:#10b981">🌿 hydroelectric cell</b> fed by the <b style="color:#10b981">creek</b> — a <b style="color:#3b82f6">😌 gentle</b> current producing a <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">⚡ charge</b>, nothing forced.' },
-		{ min: 0.94, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 geothermal tap</b> was <b style="color:#3b82f6">😌 slow but inexhaustible</b>, warming the <b style="color:#10b981">cabin</b> and filling the <b style="color:#10b981">batteries</b> with <b style="color:#10b981">⚡ earth-heat energy</b>.' },
-		{ min: 0.93, text: 'A <b style="color:#10b981">🌿 moss-covered</b> solar array fed a <b style="color:#3b82f6">😌 trickle</b> <b style="color:#10b981">🔋 charge</b> to the <b style="color:#10b981">weather station</b> perched on the <b style="color:#10b981">ridge</b> — <b style="color:#10b981">🌿 wilderness tech</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
-		{ min: 0.92, text: 'The <b style="color:#10b981">🔋 charge</b> indicator blinked <b style="color:#3b82f6">😌 lazily</b> on the <b style="color:#10b981">🌿 portable solar charger</b> spread across the <b style="color:#10b981">riverbank rocks</b> — <b style="color:#10b981">⚡ energy</b> from <b style="color:#10b981">🌿 sunlight</b>, no deadline.' },
-		{ min: 0.91, text: 'She checked the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">headlamp batteries</b> before the <b style="color:#3b82f6">😌 evening hike</b> through the <b style="color:#10b981">🌿 old-growth forest</b> — plenty of <b style="color:#10b981">⚡ power</b>, no rush.' },
-		{ min: 0.90, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 steady</b> in the <b style="color:#10b981">🌿 field research battery pack</b> as the <b style="color:#10b981">biologist</b> recorded <b style="color:#10b981">birdsong</b> at <b style="color:#3b82f6">😌 dawn</b>.' },
-		{ min: 0.89, text: 'He plugged the <b style="color:#10b981">🔋 charge</b> cable into the <b style="color:#10b981">🌿 rain-barrel generator</b> and <b style="color:#3b82f6">😌 waited</b> — the <b style="color:#10b981">⚡ energy</b> would come when the <b style="color:#10b981">🌿 rain</b> came.' },
-		{ min: 0.88, text: 'The <b style="color:#10b981">🔋 charge</b> from the <b style="color:#10b981">🌿 bicycle dynamo</b> was enough to keep the <b style="color:#10b981">radio</b> alive during the <b style="color:#3b82f6">😌 leisurely ride</b> through the <b style="color:#10b981">countryside</b>.' },
-		{ min: 0.87, text: 'A <b style="color:#3b82f6">😌 slow</b> <b style="color:#10b981">🔋 charge</b> built up in the <b style="color:#10b981">capacitor bank</b> as the <b style="color:#10b981">🌿 windmill</b> turned in the <b style="color:#3b82f6">😌 afternoon breeze</b>.' },
-		{ min: 0.86, text: 'The <b style="color:#10b981">🔋 charge</b> was at <b style="color:#10b981">80%</b> — the <b style="color:#10b981">🌿 solar panels</b> on the <b style="color:#10b981">barn roof</b> had done their <b style="color:#3b82f6">😌 quiet work</b> all day.' },
-		{ min: 0.85, text: 'She nursed the <b style="color:#10b981">🔋 charge</b> on her <b style="color:#10b981">phone</b> through the <b style="color:#10b981">🌿 camping trip</b>, using it only to <b style="color:#3b82f6">😌 photograph wildflowers</b>.' },
-		{ min: 0.84, text: 'The <b style="color:#10b981">🔋 charge</b> light glowed <b style="color:#10b981">green</b> on the <b style="color:#10b981">🌿 portable power station</b> beside the <b style="color:#10b981">tent</b> — <b style="color:#3b82f6">😌 full and ready</b>.' },
-		{ min: 0.83, text: 'He let the <b style="color:#10b981">🔋 charge</b> build <b style="color:#3b82f6">😌 overnight</b> from the <b style="color:#10b981">🌿 micro-hydro turbine</b> in the <b style="color:#10b981">stream</b> behind the <b style="color:#10b981">cabin</b>.' },
-		{ min: 0.82, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">GPS unit</b> lasted the whole <b style="color:#10b981">🌿 backcountry trek</b> — <b style="color:#3b82f6">😌 no stress</b>, just <b style="color:#10b981">⚡ reliable energy</b>.' },
-		{ min: 0.81, text: 'A <b style="color:#10b981">🔋 full charge</b> meant <b style="color:#3b82f6">😌 peace of mind</b> for the <b style="color:#10b981">🌿 nature photographer</b> heading into the <b style="color:#10b981">wetlands</b> at <b style="color:#3b82f6">😌 sunrise</b>.' },
-		{ min: 0.80, text: 'The <b style="color:#10b981">🔋 charge</b> came from <b style="color:#10b981">🌿 sunlight</b> alone — a <b style="color:#3b82f6">😌 patient</b>, <b style="color:#10b981">natural</b> process powering the <b style="color:#10b981">trail marker lights</b>.' },
-		{ min: 0.79, text: 'She watched the <b style="color:#10b981">🔋 charge</b> meter <b style="color:#3b82f6">😌 inch upward</b> as the <b style="color:#10b981">🌿 solar blanket</b> soaked in the <b style="color:#10b981">afternoon rays</b>.' },
-		{ min: 0.78, text: 'The <b style="color:#10b981">🔋 charge</b> was enough to run the <b style="color:#10b981">water pump</b> for the <b style="color:#10b981">🌿 garden irrigation</b> — <b style="color:#3b82f6">😌 simple, sustainable</b>.' },
-		{ min: 0.77, text: 'He topped off the <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">lantern</b> before the <b style="color:#3b82f6">😌 evening</b> <b style="color:#10b981">🌿 birdwatching session</b>.' },
-		{ min: 0.76, text: 'The <b style="color:#10b981">🔋 charge</b> held <b style="color:#3b82f6">😌 well</b> in the <b style="color:#10b981">cold</b> — the <b style="color:#10b981">🌿 lithium cells</b> were rated for <b style="color:#10b981">winter camping</b>.' },
-		{ min: 0.75, text: 'A <b style="color:#3b82f6">😌 gentle</b> <b style="color:#10b981">🔋 charge</b> flowed from the <b style="color:#10b981">🌿 rooftop panels</b> into the <b style="color:#10b981">home battery</b> — <b style="color:#10b981">⚡ clean energy</b>, no hurry.' },
-		{ min: 0.74, text: 'The <b style="color:#10b981">🔋 charge</b> cycle completed <b style="color:#3b82f6">😌 silently</b> on the <b style="color:#10b981">🌿 off-grid power bank</b> in the <b style="color:#10b981">workshop</b>.' },
-		{ min: 0.73, text: 'She left the <b style="color:#10b981">🔋 charge</b> going while she <b style="color:#3b82f6">😌 napped</b> in the <b style="color:#10b981">🌿 hammock</b> between two <b style="color:#10b981">pines</b>.' },
-		{ min: 0.72, text: 'The <b style="color:#10b981">🔋 charge</b> on the <b style="color:#10b981">tablet</b> was low but <b style="color:#3b82f6">😌 sufficient</b> for <b style="color:#10b981">🌿 reading by the lake</b>.' },
-		{ min: 0.71, text: 'He checked the <b style="color:#10b981">🔋 charge</b> — <b style="color:#10b981">60%</b> — and decided it was <b style="color:#3b82f6">😌 plenty</b> for the <b style="color:#10b981">🌿 afternoon walk</b>.' },
-		{ min: 0.70, text: 'The <b style="color:#10b981">🔋 charge</b> indicator showed <b style="color:#10b981">⚡ full</b> after a <b style="color:#3b82f6">😌 day in the sun</b> on the <b style="color:#10b981">🌿 porch</b>.' },
-		{ min: 0.69, text: 'A <b style="color:#10b981">🔋 trickle charge</b> kept the <b style="color:#10b981">🌿 greenhouse sensors</b> alive through the <b style="color:#3b82f6">😌 winter months</b>.' },
-		{ min: 0.68, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 steady</b> — the <b style="color:#10b981">🌿 wind</b> had been <b style="color:#3b82f6">😌 consistent</b> all week.' },
-		{ min: 0.67, text: 'She plugged in the <b style="color:#10b981">🔋 charge</b> cable and <b style="color:#3b82f6">😌 forgot about it</b> — the <b style="color:#10b981">🌿 solar system</b> handled the rest.' },
-		{ min: 0.66, text: 'The <b style="color:#10b981">🔋 charge</b> was a <b style="color:#3b82f6">😌 background hum</b> in the <b style="color:#10b981">🌿 quiet cabin</b> — <b style="color:#10b981">⚡ electrons</b> doing their work.' },
-		{ min: 0.65, text: 'He didn\'t worry about the <b style="color:#10b981">🔋 charge</b> — the <b style="color:#10b981">🌿 panels</b> always <b style="color:#3b82f6">😌 delivered</b> by morning.' },
-		{ min: 0.64, text: 'The <b style="color:#10b981">🔋 charge</b> was part of the <b style="color:#3b82f6">😌 daily rhythm</b> at the <b style="color:#10b981">🌿 eco-lodge</b> — sun up, batteries full.' },
-		{ min: 0.63, text: 'A <b style="color:#10b981">🔋 charge</b> from <b style="color:#10b981">🌿 renewable sources</b> — <b style="color:#3b82f6">😌 nothing urgent</b>, just <b style="color:#10b981">⚡ clean power</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 almost done</b> — the <b style="color:#10b981">🌿 battery bank</b> would be ready by <b style="color:#3b82f6">😌 evening</b>.' },
-		{ min: 0.61, text: 'She monitored the <b style="color:#10b981">🔋 charge</b> <b style="color:#3b82f6">😌 casually</b> from the <b style="color:#10b981">🌿 garden bench</b>.' },
-		{ min: 0.60, text: 'The <b style="color:#10b981">🔋 charge</b> was <b style="color:#3b82f6">😌 reliable</b> — <b style="color:#10b981">🌿 nature-powered</b> and <b style="color:#3b82f6">😌 stress-free</b>.' },
-		{ min: 0.55, text: '"Charge" here likely means <b style="color:#10b981">🔋 battery energy</b> — something <b style="color:#10b981">🌿 natural</b> and <b style="color:#3b82f6">😌 calm</b>.' },
-		{ min: 0.50, text: '"Charge" leans toward <b style="color:#10b981">🔋 stored energy</b> — a <b style="color:#10b981">🌿 nature</b>-side, <b style="color:#3b82f6">😌 calm</b> reading.' },
-		{ min: 0.45, text: 'A pull toward <b style="color:#10b981">🔋 battery</b> — probably <b style="color:#10b981">🌿 physical energy</b>, <b style="color:#3b82f6">😌 unhurried</b>.' },
-		{ min: 0.40, text: '"Charge" might mean <b style="color:#10b981">🔋 energy</b>, but the signal is weak. Could shift.' },
-		{ min: 0.35, text: 'A faint hint of <b style="color:#10b981">🔋 battery</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
-	],
-
-	// ═══════════════════════════════════════════════════════════════
-	// Bucket 1 = 💳 fee / 💰 payment  (key: [2.5, 1.5])
-	// Dominant when query → Finance (+X) and Urgent (+Y)
-	// ═══════════════════════════════════════════════════════════════
-	[
-		{ min: 0.99, text: 'The <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$47,000</b> hit the <b style="color:#f59e0b">corporate account</b> <b style="color:#ef4444">⚡ without warning</b> — a <b style="color:#f59e0b">💰 fraudulent transaction</b> that triggered an <b style="color:#ef4444">⚡ immediate freeze</b> on all <b style="color:#f59e0b">🏦 assets</b>. Pure <b style="color:#f59e0b">🏦 finance</b>, <b style="color:#ef4444">⚡ maximum urgency</b>.' },
-		{ min: 0.98, text: '<b style="color:#ef4444">⚡ Fraud alerts</b> fired across the <b style="color:#f59e0b">🏦 network</b> as the <b style="color:#f59e0b">💳 charge</b> was flagged — <b style="color:#f59e0b">$12,000</b> in <b style="color:#f59e0b">unauthorized purchases</b> in <b style="color:#ef4444">⚡ under an hour</b>. <b style="color:#f59e0b">🏦 Financial</b> <b style="color:#ef4444">⚡ emergency</b>.' },
-		{ min: 0.97, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ disputed immediately</b> — the <b style="color:#f59e0b">🏦 bank</b> reversed the <b style="color:#f59e0b">💰 $8,500 payment</b> and launched an <b style="color:#ef4444">⚡ emergency investigation</b>.' },
-		{ min: 0.96, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$25,000</b> appeared on the <b style="color:#f59e0b">🏦 statement</b> — the <b style="color:#f59e0b">💰 penalty fee</b> for <b style="color:#ef4444">⚡ breaching</b> the <b style="color:#f59e0b">loan covenant</b>. <b style="color:#ef4444">⚡ Due immediately</b>.' },
-		{ min: 0.95, text: 'The <b style="color:#f59e0b">💳 charge</b> to the <b style="color:#f59e0b">🏦 escrow account</b> was <b style="color:#ef4444">⚡ time-sensitive</b> — miss the <b style="color:#ef4444">⚡ deadline</b> and the <b style="color:#f59e0b">💰 deal</b> collapses.' },
-		{ min: 0.94, text: '<b style="color:#ef4444">⚡ Collections</b> added a <b style="color:#f59e0b">💳 late charge</b> of <b style="color:#f59e0b">$350</b> to the <b style="color:#f59e0b">🏦 overdue account</b> — <b style="color:#ef4444">⚡ pay now</b> or face <b style="color:#f59e0b">further penalties</b>.' },
-		{ min: 0.93, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 wire transfer</b> was <b style="color:#f59e0b">$45</b>, and it had to clear <b style="color:#ef4444">⚡ before market close</b> — no room for delay.' },
-		{ min: 0.92, text: 'His <b style="color:#f59e0b">💳 credit card charge</b> was <b style="color:#ef4444">⚡ declined</b> at the <b style="color:#f59e0b">🏦 point of sale</b> — the <b style="color:#f59e0b">💰 account</b> had been <b style="color:#ef4444">⚡ frozen</b> for suspicious activity.' },
-		{ min: 0.91, text: 'The <b style="color:#f59e0b">💳 charge</b> showed up as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 mobile banking app</b> — she needed to <b style="color:#ef4444">⚡ verify it fast</b> before the hold expired.' },
-		{ min: 0.90, text: 'A <b style="color:#f59e0b">💳 service charge</b> of <b style="color:#f59e0b">3.5%</b> was applied to every <b style="color:#f59e0b">🏦 international transaction</b> — <b style="color:#ef4444">⚡ non-negotiable</b>, effective <b style="color:#ef4444">⚡ immediately</b>.' },
-		{ min: 0.89, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 overdraft protection</b> kicked in <b style="color:#ef4444">⚡ automatically</b> when the <b style="color:#f59e0b">💰 balance</b> dipped below zero.' },
-		{ min: 0.88, text: 'She <b style="color:#ef4444">⚡ contested</b> the <b style="color:#f59e0b">💳 charge</b> on her <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$200</b> for a <b style="color:#f59e0b">💰 subscription</b> she\'d already <b style="color:#ef4444">⚡ cancelled</b>.' },
-		{ min: 0.87, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#ef4444">⚡ reversed</b> within the hour after she called the <b style="color:#f59e0b">🏦 fraud department</b> — <b style="color:#f59e0b">💰 money</b> back, <b style="color:#ef4444">⚡ crisis averted</b>.' },
-		{ min: 0.86, text: 'A <b style="color:#f59e0b">💳 recurring charge</b> of <b style="color:#f59e0b">$99/month</b> appeared on the <b style="color:#f59e0b">🏦 business account</b> — the <b style="color:#f59e0b">💰 software license</b> had <b style="color:#ef4444">⚡ auto-renewed</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#f59e0b">💳 charge</b> to his <b style="color:#f59e0b">🏦 debit card</b> was <b style="color:#f59e0b">$1,200</b> for the <b style="color:#f59e0b">💰 insurance premium</b> — <b style="color:#ef4444">⚡ due today</b>.' },
-		{ min: 0.84, text: 'She noticed an <b style="color:#f59e0b">💳 unexpected charge</b> on the <b style="color:#f59e0b">🏦 joint account</b> and <b style="color:#ef4444">⚡ texted her partner immediately</b>.' },
-		{ min: 0.83, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 annual fee</b> posted on the <b style="color:#f59e0b">first of the month</b> — <b style="color:#f59e0b">💰 $150</b>, <b style="color:#ef4444">⚡ non-refundable</b>.' },
-		{ min: 0.82, text: 'He set up <b style="color:#f59e0b">💳 automatic charges</b> for all <b style="color:#f59e0b">🏦 utility bills</b> — <b style="color:#f59e0b">💰 payments</b> pulled on the <b style="color:#ef4444">⚡ due date</b>, no exceptions.' },
-		{ min: 0.81, text: 'The <b style="color:#f59e0b">💳 charge</b> cleared the <b style="color:#f59e0b">🏦 merchant account</b> in <b style="color:#ef4444">⚡ two business days</b> — standard <b style="color:#f59e0b">💰 processing</b>.' },
-		{ min: 0.80, text: 'A <b style="color:#f59e0b">💳 charge</b> of <b style="color:#f59e0b">$35</b> for the <b style="color:#f59e0b">🏦 returned check</b> — <b style="color:#f59e0b">💰 bank policy</b>, <b style="color:#ef4444">⚡ applied automatically</b>.' },
-		{ min: 0.79, text: 'The <b style="color:#f59e0b">💳 charge</b> was split across two <b style="color:#f59e0b">🏦 credit cards</b> — <b style="color:#f59e0b">💰 $500</b> each, both <b style="color:#ef4444">⚡ processed instantly</b>.' },
-		{ min: 0.78, text: 'She reviewed every <b style="color:#f59e0b">💳 charge</b> on the <b style="color:#f59e0b">🏦 monthly statement</b> — <b style="color:#f59e0b">💰 groceries, gas, subscriptions</b>.' },
-		{ min: 0.77, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 express shipping</b> was <b style="color:#f59e0b">💰 $15</b> — worth it for <b style="color:#ef4444">⚡ next-day delivery</b>.' },
-		// ── Bucket 1 continued (💳 fee / 💰 payment) ──
-		{ min: 0.76, text: 'He disputed the <b style="color:#f59e0b">💳 charge</b> on his <b style="color:#f59e0b">🏦 statement</b> — <b style="color:#f59e0b">$75</b> for a <b style="color:#f59e0b">💰 service</b> he never <b style="color:#ef4444">⚡ authorized</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 same-day processing</b> was <b style="color:#f59e0b">💰 $25</b> — <b style="color:#ef4444">⚡ steep but necessary</b>.' },
-		{ min: 0.74, text: 'A <b style="color:#f59e0b">💳 convenience charge</b> of <b style="color:#f59e0b">$3</b> was added to every <b style="color:#f59e0b">🏦 online payment</b> — small but <b style="color:#ef4444">⚡ annoying</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#f59e0b">💳 charge</b> posted to her <b style="color:#f59e0b">🏦 account</b> at <b style="color:#ef4444">⚡ midnight</b> — the <b style="color:#f59e0b">💰 auto-renewal</b> she forgot to cancel.' },
-		{ min: 0.72, text: 'He noticed a <b style="color:#f59e0b">💳 double charge</b> on his <b style="color:#f59e0b">🏦 receipt</b> and <b style="color:#ef4444">⚡ flagged it</b> with the <b style="color:#f59e0b">cashier</b>.' },
-		{ min: 0.71, text: 'The <b style="color:#f59e0b">💳 charge</b> for the <b style="color:#f59e0b">🏦 currency conversion</b> was <b style="color:#f59e0b">💰 2.5%</b> — standard for <b style="color:#f59e0b">international purchases</b>.' },
-		{ min: 0.70, text: 'A <b style="color:#f59e0b">💳 minimum charge</b> of <b style="color:#f59e0b">$10</b> applied to all <b style="color:#f59e0b">🏦 card transactions</b> at the <b style="color:#f59e0b">store</b>.' },
-		{ min: 0.69, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 refunded</b> to her <b style="color:#f59e0b">🏦 account</b> within <b style="color:#ef4444">⚡ 48 hours</b>.' },
-		{ min: 0.68, text: 'She checked whether the <b style="color:#f59e0b">💳 charge</b> had <b style="color:#f59e0b">💰 cleared</b> on her <b style="color:#f59e0b">🏦 banking app</b>.' },
-		{ min: 0.67, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 late payment</b> was <b style="color:#f59e0b">💰 $29</b> — added <b style="color:#ef4444">⚡ automatically</b>.' },
-		{ min: 0.66, text: 'He set a <b style="color:#f59e0b">💳 spending alert</b> for any <b style="color:#f59e0b">🏦 charge</b> over <b style="color:#f59e0b">💰 $100</b>.' },
-		{ min: 0.65, text: 'The <b style="color:#f59e0b">💳 charge</b> appeared as <b style="color:#f59e0b">💰 pending</b> on the <b style="color:#f59e0b">🏦 statement</b> — not yet finalized.' },
-		{ min: 0.64, text: 'She split the <b style="color:#f59e0b">💳 charge</b> across <b style="color:#f59e0b">three monthly 💰 installments</b> through the <b style="color:#f59e0b">🏦 payment plan</b>.' },
-		{ min: 0.63, text: 'The <b style="color:#f59e0b">💳 charge</b> for <b style="color:#f59e0b">🏦 premium membership</b> was <b style="color:#f59e0b">💰 $49/year</b> — reasonable.' },
-		{ min: 0.62, text: 'He reviewed the <b style="color:#f59e0b">💳 itemized charges</b> on the <b style="color:#f59e0b">🏦 invoice</b> before <b style="color:#f59e0b">💰 paying</b>.' },
-		{ min: 0.61, text: 'The <b style="color:#f59e0b">💳 charge</b> was <b style="color:#f59e0b">💰 small</b> — just <b style="color:#f59e0b">$5</b> for the <b style="color:#f59e0b">🏦 transaction fee</b>.' },
-		{ min: 0.60, text: 'A <b style="color:#f59e0b">💳 charge</b> showed up on the <b style="color:#f59e0b">🏦 family account</b> — probably the <b style="color:#f59e0b">💰 grocery run</b>.' },
-		{ min: 0.55, text: '"Charge" here likely means <b style="color:#f59e0b">💳 a financial fee</b> — something <b style="color:#f59e0b">🏦 monetary</b> and somewhat <b style="color:#ef4444">⚡ pressing</b>.' },
-		{ min: 0.50, text: '"Charge" leans toward <b style="color:#f59e0b">💳 payment</b> — a <b style="color:#f59e0b">🏦 finance</b>-side reading.' },
-		{ min: 0.45, text: 'A pull toward <b style="color:#f59e0b">💳 fee</b> — probably <b style="color:#f59e0b">🏦 financial</b>, with some <b style="color:#ef4444">⚡ urgency</b>.' },
-		{ min: 0.40, text: '"Charge" might mean <b style="color:#f59e0b">💳 payment</b>, but the signal is weak. Could shift.' },
-		{ min: 0.35, text: 'A faint hint of <b style="color:#f59e0b">💳 fee</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and ⚔️ attack all compete equally.' }
-	],
-
-	// ═══════════════════════════════════════════════════════════════
-	// Bucket 2 = 🏃 rush / 🌊 surge  (key: [-1.0, 2.5])
-	// Dominant when query → Nature (−X) and Urgent (+Y)
-	// "Charge" = to rush forward, surge, stampede — physical momentum
-	// ═══════════════════════════════════════════════════════════════
-	[
-		{ min: 0.99, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#ef4444">⚡ stampeding herd</b> shook the <b style="color:#10b981">🌿 entire savanna</b> — <b style="color:#ef4444">⚡ thousands of hooves</b> thundering across the <b style="color:#10b981">sun-baked earth</b>, a <b style="color:#ef4444">🌊 wall of dust and muscle</b> that nothing could stop. Pure <b style="color:#10b981">🌿 wild force</b>, <b style="color:#ef4444">⚡ unstoppable momentum</b>.' },
-		{ min: 0.98, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#ef4444">🌊 flash flood</b> swept through the <b style="color:#10b981">🌿 canyon</b> with <b style="color:#ef4444">⚡ terrifying speed</b> — <b style="color:#10b981">boulders</b> tumbling like pebbles, <b style="color:#10b981">ancient trees</b> snapping like twigs in the <b style="color:#ef4444">🌊 surging torrent</b>.' },
-		{ min: 0.97, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ adrenaline</b> hit her bloodstream as the <b style="color:#10b981">🌿 trail</b> dropped into a <b style="color:#ef4444">⚡ near-vertical descent</b> — <b style="color:#10b981">rocks</b> sliding, <b style="color:#10b981">gravel</b> spraying, the <b style="color:#ef4444">🌊 rush</b> of <b style="color:#ef4444">⚡ pure freefall</b>.' },
-		{ min: 0.96, text: 'The <b style="color:#ef4444">🌊 charging</b> <b style="color:#10b981">🌿 river</b> burst its banks after the <b style="color:#ef4444">⚡ cloudburst</b>, sending a <b style="color:#ef4444">🌊 wall of water</b> crashing through the <b style="color:#10b981">🌿 valley</b> — <b style="color:#ef4444">⚡ raw, uncontainable force</b>.' },
-		{ min: 0.95, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 bull elephant</b> sent <b style="color:#ef4444">⚡ shockwaves</b> through the <b style="color:#10b981">undergrowth</b> — <b style="color:#10b981">trees</b> bending, <b style="color:#10b981">birds</b> exploding skyward, the <b style="color:#10b981">🌿 jungle</b> itself <b style="color:#ef4444">⚡ parting</b> before the <b style="color:#ef4444">🌊 surge</b>.' },
-		{ min: 0.94, text: 'With a <b style="color:#ef4444">⚡ deafening roar</b>, the <b style="color:#ef4444">🌊 charging</b> <b style="color:#10b981">🌿 waterfall</b> hammered the <b style="color:#10b981">rocks</b> below — <b style="color:#ef4444">⚡ millions of gallons per second</b>, a <b style="color:#ef4444">🏃 relentless downward rush</b> carved into <b style="color:#10b981">🌿 ancient stone</b>.' },
-		{ min: 0.93, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wild horses</b> across the <b style="color:#10b981">open steppe</b> was <b style="color:#ef4444">⚡ breathtaking</b> — <b style="color:#10b981">manes</b> streaming, <b style="color:#10b981">hooves</b> drumming, a <b style="color:#ef4444">🌊 living wave</b> of <b style="color:#ef4444">⚡ speed and power</b>.' },
-		{ min: 0.92, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ white water</b> exploded through the <b style="color:#10b981">🌿 narrow gorge</b>, the <b style="color:#10b981">kayak</b> spinning in the <b style="color:#ef4444">🌊 surge</b> as <b style="color:#10b981">🌿 canyon walls</b> blurred past at <b style="color:#ef4444">⚡ terrifying speed</b>.' },
-		{ min: 0.91, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 grizzly</b> was <b style="color:#ef4444">⚡ explosive</b> — <b style="color:#10b981">800 pounds</b> of muscle <b style="color:#ef4444">🌊 surging</b> from the <b style="color:#10b981">🌿 treeline</b> in a <b style="color:#ef4444">⚡ blur of fur and fury</b>.' },
-		{ min: 0.90, text: 'The <b style="color:#ef4444">🌊 charging</b> <b style="color:#10b981">🌿 avalanche</b> devoured the <b style="color:#10b981">mountainside</b> — <b style="color:#ef4444">⚡ tons of snow</b> in a <b style="color:#ef4444">🏃 headlong rush</b> that swallowed <b style="color:#10b981">🌿 everything</b> in its path.' },
-		{ min: 0.89, text: 'He felt the <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ adrenaline</b> as the <b style="color:#10b981">🌿 wave</b> reared up behind him — a <b style="color:#ef4444">🌊 surging wall</b> of <b style="color:#10b981">🌿 ocean</b> about to break with <b style="color:#ef4444">⚡ tremendous force</b>.' },
-		{ min: 0.88, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wildebeest migration</b> filled the <b style="color:#10b981">plain</b> from <b style="color:#10b981">horizon to horizon</b> — a <b style="color:#ef4444">🌊 surging</b>, <b style="color:#ef4444">⚡ unstoppable</b> tide of <b style="color:#10b981">🌿 life</b>.' },
-		{ min: 0.87, text: 'A <b style="color:#ef4444">⚡ sudden</b> <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 wind</b> <b style="color:#ef4444">🌊 surged</b> through the <b style="color:#10b981">🌿 mountain pass</b>, nearly knocking the <b style="color:#10b981">hikers</b> off their feet with its <b style="color:#ef4444">⚡ raw power</b>.' },
-		{ min: 0.86, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 rapids</b> swept the <b style="color:#10b981">raft</b> sideways — <b style="color:#ef4444">⚡ paddles flailing</b>, <b style="color:#ef4444">🌊 water surging</b> over the <b style="color:#10b981">bow</b> in <b style="color:#ef4444">⚡ chaotic bursts</b>.' },
-		{ min: 0.85, text: 'The <b style="color:#10b981">🌿 rhino\'s</b> <b style="color:#ef4444">🏃 charge</b> was <b style="color:#ef4444">⚡ blindingly fast</b> for something so massive — <b style="color:#10b981">dust</b> erupting, the <b style="color:#10b981">🌿 ground</b> trembling beneath the <b style="color:#ef4444">🌊 surge</b> of raw momentum.' },
-		{ min: 0.84, text: 'She braced as the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 storm surge</b> hit the <b style="color:#10b981">🌿 coastline</b> — <b style="color:#ef4444">🌊 water rising</b> <b style="color:#ef4444">⚡ fast</b>, <b style="color:#10b981">dunes</b> dissolving, <b style="color:#10b981">🌿 driftwood</b> tumbling inland.' },
-		{ min: 0.83, text: 'The <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ energy</b> through the <b style="color:#10b981">🌿 thunderhead</b> lit up the <b style="color:#10b981">sky</b> — <b style="color:#ef4444">⚡ lightning</b> forking across the <b style="color:#10b981">🌿 prairie</b> in a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#10b981">🌿 atmospheric power</b>.' },
-		{ min: 0.82, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 bison</b> thundered across the <b style="color:#10b981">🌿 frozen lake</b>, <b style="color:#10b981">ice cracking</b> beneath their hooves as the <b style="color:#ef4444">🌊 herd surged</b> toward the <b style="color:#10b981">far shore</b> at <b style="color:#ef4444">⚡ full speed</b>.' },
-		{ min: 0.81, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 tidal bore</b> raced up the <b style="color:#10b981">🌿 estuary</b> — a <b style="color:#ef4444">🌊 wall of water</b> moving <b style="color:#ef4444">⚡ faster than a person can run</b>, <b style="color:#10b981">🌿 nature</b> in <b style="color:#ef4444">⚡ full sprint</b>.' },
-		{ min: 0.80, text: 'The <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ adrenaline</b> carried her up the <b style="color:#10b981">🌿 scree slope</b> — <b style="color:#10b981">rocks</b> sliding, <b style="color:#10b981">lungs</b> burning, the <b style="color:#ef4444">🌊 surge</b> of effort pushing past every limit.' },
-		{ min: 0.79, text: 'He watched the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 mudslide</b> from the <b style="color:#10b981">ridge</b> — a <b style="color:#ef4444">🌊 brown surge</b> swallowing <b style="color:#10b981">🌿 trees</b> and <b style="color:#10b981">trails</b> with <b style="color:#ef4444">⚡ terrifying speed</b>.' },
-		{ min: 0.78, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 ocean waves</b> against the <b style="color:#10b981">🌿 sea cliffs</b> sent <b style="color:#ef4444">⚡ spray</b> fifty feet into the air — <b style="color:#ef4444">🌊 relentless, surging power</b>.' },
-		{ min: 0.77, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 elk</b> burst from the <b style="color:#10b981">🌿 aspen grove</b>, antlers <b style="color:#ef4444">⚡ crashing</b> through <b style="color:#10b981">branches</b> as the herd <b style="color:#ef4444">🌊 surged</b> downhill.' },
-		{ min: 0.76, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 geyser</b> erupted with <b style="color:#ef4444">⚡ explosive force</b> — <b style="color:#ef4444">🌊 boiling water surging</b> skyward from the <b style="color:#10b981">🌿 volcanic earth</b>.' },
-		{ min: 0.75, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 spring melt</b> turned the <b style="color:#10b981">creek</b> into a <b style="color:#ef4444">🌊 roaring torrent</b> — <b style="color:#ef4444">⚡ fast</b>, <b style="color:#10b981">🌿 wild</b>, and <b style="color:#ef4444">⚡ uncontrollable</b>.' },
-		{ min: 0.74, text: 'He felt the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wind</b> at his back as he sprinted down the <b style="color:#10b981">🌿 dune</b> — a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#ef4444">⚡ speed</b> and <b style="color:#10b981">🌿 sand</b>.' },
-		{ min: 0.73, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 dolphins</b> through the <b style="color:#10b981">🌿 breaking surf</b> was <b style="color:#ef4444">⚡ electric</b> — <b style="color:#ef4444">🌊 surging</b> in perfect formation through the <b style="color:#10b981">🌿 turquoise water</b>.' },
-		{ min: 0.72, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ energy</b> pulsed through the <b style="color:#10b981">🌿 forest</b> as the <b style="color:#10b981">🌿 thunderstorm</b> broke — <b style="color:#10b981">trees</b> bending, <b style="color:#10b981">🌿 leaves</b> <b style="color:#ef4444">🌊 swirling</b> in the <b style="color:#ef4444">⚡ gusts</b>.' },
-		{ min: 0.71, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 mountain stream</b> after the <b style="color:#10b981">🌿 rain</b> was <b style="color:#ef4444">⚡ impressive</b> — <b style="color:#ef4444">🌊 water surging</b> over <b style="color:#10b981">rocks</b> and <b style="color:#10b981">fallen logs</b>.' },
-		{ min: 0.70, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 incoming tide</b> filled the <b style="color:#10b981">🌿 tidal pools</b> in minutes — <b style="color:#ef4444">🌊 surging</b>, <b style="color:#ef4444">⚡ foaming</b>, <b style="color:#10b981">🌿 alive</b>.' },
-		{ min: 0.69, text: 'She felt the <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ excitement</b> as the <b style="color:#10b981">🌿 trail</b> opened onto the <b style="color:#10b981">🌿 summit ridge</b> — <b style="color:#ef4444">🌊 wind surging</b> around her.' },
-		{ min: 0.68, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 waterfall</b> echoed through the <b style="color:#10b981">🌿 gorge</b> — <b style="color:#ef4444">🌊 endless, surging</b>, <b style="color:#ef4444">⚡ powerful</b>.' },
-		{ min: 0.67, text: 'A <b style="color:#ef4444">⚡ sudden</b> <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 hail</b> rattled through the <b style="color:#10b981">🌿 canopy</b> — <b style="color:#ef4444">⚡ intense</b> but brief, a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#10b981">🌿 weather</b>.' },
-		{ min: 0.66, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 river current</b> pulled the <b style="color:#10b981">swimmer</b> downstream — <b style="color:#ef4444">🌊 strong</b>, <b style="color:#ef4444">⚡ insistent</b>, <b style="color:#10b981">🌿 natural</b>.' },
-		{ min: 0.65, text: 'He rode the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wave</b> all the way to <b style="color:#10b981">🌿 shore</b> — a <b style="color:#ef4444">🌊 surge</b> of <b style="color:#ef4444">⚡ momentum</b> and <b style="color:#10b981">🌿 salt spray</b>.' },
-		{ min: 0.64, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 storm front</b> rolled across the <b style="color:#10b981">🌿 prairie</b> — <b style="color:#ef4444">⚡ fast-moving</b>, <b style="color:#ef4444">🌊 surging</b> clouds.' },
-		{ min: 0.63, text: 'A <b style="color:#ef4444">🏃 charge</b> of <b style="color:#10b981">🌿 salmon</b> <b style="color:#ef4444">🌊 surged</b> upstream through the <b style="color:#10b981">🌿 rapids</b> — <b style="color:#ef4444">⚡ leaping</b>, <b style="color:#ef4444">⚡ fighting</b> the <b style="color:#10b981">🌿 current</b>.' },
-		{ min: 0.62, text: 'The <b style="color:#ef4444">🏃 charge</b> of <b style="color:#ef4444">⚡ energy</b> in the <b style="color:#10b981">🌿 atmosphere</b> before the <b style="color:#10b981">🌿 storm</b> was <b style="color:#ef4444">⚡ palpable</b> — <b style="color:#10b981">🌿 hair standing on end</b>.' },
-		{ min: 0.61, text: 'She felt the <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 ocean</b> in every <b style="color:#ef4444">🌊 surge</b> that washed over the <b style="color:#10b981">🌿 reef</b> — <b style="color:#ef4444">⚡ powerful</b> and <b style="color:#10b981">🌿 alive</b>.' },
-		{ min: 0.60, text: 'The <b style="color:#ef4444">🏃 charge</b> of the <b style="color:#10b981">🌿 wind</b> through the <b style="color:#10b981">🌿 canyon</b> was <b style="color:#ef4444">⚡ exhilarating</b> — a <b style="color:#ef4444">🌊 natural surge</b> of <b style="color:#ef4444">⚡ raw force</b>.' },
-		{ min: 0.55, text: '"Charge" here likely means <b style="color:#ef4444">🏃 a physical rush</b> — something <b style="color:#10b981">🌿 natural</b> and <b style="color:#ef4444">⚡ urgent</b>.' },
-		{ min: 0.50, text: '"Charge" leans toward <b style="color:#ef4444">🏃 rushing forward</b> — a <b style="color:#10b981">🌿 nature</b>-side, <b style="color:#ef4444">⚡ urgent</b> reading.' },
-		{ min: 0.45, text: 'A pull toward <b style="color:#ef4444">🏃 surge</b> — probably <b style="color:#10b981">🌿 physical momentum</b>, <b style="color:#ef4444">⚡ intense</b>.' },
-		{ min: 0.40, text: '"Charge" might mean <b style="color:#ef4444">🏃 rush</b>, but the signal is weak. Could shift.' },
-		{ min: 0.35, text: 'A faint hint of <b style="color:#ef4444">🏃 surge</b>, but all three meanings still compete.' },
-		{ min: 0.00, text: '"Charge" is <b style="color:#94a3b8">ambiguous</b> — 🔋 energy, 💳 fee, and 🏃 rush all compete equally.' }
-	]
-
-];
-
-function pickSentence1D(weights) {
-	const maxI = weights.indexOf(Math.max(...weights));
-	const w = weights[maxI];
-	const bucket = SENTENCES_1D[maxI];
-	for (let s = 0; s < bucket.length; s++) {
-		if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
-	}
-	return { idx: maxI, text: bucket[bucket.length - 1].text };
-}
-
-function updateAttn1D() {
-	const slider = document.getElementById('attn1d-q');
-	if (!slider) return;
-	const q = parseFloat(slider.value);
-	const valEl = document.getElementById('attn1d-q-val');
-	if (valEl) valEl.innerText = (q >= 0 ? '+' : '') + q.toFixed(1);
-
-	const scores  = KV1.map(kv => q * kv.k);
-	const weights = softmax(scores);
-	const output  = KV1.reduce((s, kv, i) => s + weights[i] * kv.v, 0);
-
-	// ── Sentence ──
-	const pick = pickSentence1D(weights);
-	const sentenceEl = document.getElementById('attn1d-sentence');
-	if (sentenceEl) {
-		sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-		sentenceEl.style.borderLeftColor = KV1[pick.idx].color;
-	}
-
-	// ── Canvas ──
-	const canvas = document.getElementById('attn1d-canvas');
-	if (!canvas) return;
-	const ctx = canvas.getContext('2d');
-
-	// ── Wait for layout: if the canvas has zero size (e.g. hidden
-	//    by a collapsed <details> or never laid out), defer one frame
-	//    and try again. Prevents the "blank until I move the slider" bug.
-	let rect = canvas.getBoundingClientRect();
-	if (rect.width === 0 || rect.height === 0) {
-		requestAnimationFrame(updateAttn1D);
-		return;
-	}
-
-	const dpr = window.devicePixelRatio || 1;
-	canvas.width = rect.width * dpr;
-	canvas.height = rect.height * dpr;
-	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-	const W = rect.width, H = rect.height;
-	ctx.clearRect(0, 0, W, H);
-
-	const pad = 65;
-	const range = 4.2;
-	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
-
-	const rowQ = H * 0.22;
-	const rowK = H * 0.48;
-	const rowV = H * 0.78;
-
-	// ── Key axis ──
-	ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
-	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(W - pad, rowK); ctx.stroke();
-	ctx.beginPath(); ctx.moveTo(W - pad, rowK); ctx.lineTo(W - pad - 8, rowK - 5); ctx.lineTo(W - pad - 8, rowK + 5); ctx.closePath(); ctx.fillStyle = themeColor('#94a3b8'); ctx.fill();
-	ctx.beginPath(); ctx.moveTo(pad, rowK); ctx.lineTo(pad + 8, rowK - 5); ctx.lineTo(pad + 8, rowK + 5); ctx.closePath(); ctx.fill();
-
-	drawLabel(ctx, '🌿 Nature', pad + 35, rowK + 22, '#10b981', 12, 'center', true);
-	drawLabel(ctx, 'Finance 🏦', W - pad - 35, rowK + 22, '#f59e0b', 12, 'center', true);
-
-	// Ticks
-	ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
-	for (let t = -4; t <= 4; t++) {
-		const x = toX(t);
-		ctx.beginPath(); ctx.moveTo(x, rowK - 3); ctx.lineTo(x, rowK + 3); ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 1; ctx.stroke();
-		if (t !== 0) { ctx.fillStyle = themeColor('#94a3b8'); ctx.fillText((t > 0 ? '+' : '') + t, x, rowK + 14); }
-	}
-	ctx.setLineDash([3, 3]); ctx.strokeStyle = themeColor('#cbd5e1');
-	ctx.beginPath(); ctx.moveTo(toX(0), rowK - 12); ctx.lineTo(toX(0), rowK + 12); ctx.stroke();
-	ctx.setLineDash([]);
-
-	// Value axis
-	ctx.strokeStyle = themeColor('#cbd5e1'); ctx.lineWidth = 1;
-	ctx.beginPath(); ctx.moveTo(pad, rowV); ctx.lineTo(W - pad, rowV); ctx.stroke();
-
-	// Row labels
-	drawLabel(ctx, 'KEYS', 30, rowK, themeColor('#64748b'), 10, 'center', true);
-	drawLabel(ctx, 'VALUES', 30, rowV, themeColor('#64748b'), 10, 'center', true);
-
-	// ── Q→K lines ──
-	KV1.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.moveTo(toX(q), rowQ + 14);
-		ctx.lineTo(toX(kv.k), rowK - 14);
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 2 + weights[i] * 14;
-		ctx.globalAlpha = 0.2 + weights[i] * 0.8;
-		ctx.lineCap = 'round';
-		ctx.stroke();
-		ctx.globalAlpha = 1;
-	});
-
-	// ── Query diamond ──
-	drawDiamond(ctx, toX(q), rowQ, 10, '#2563eb');
-	drawLabel(ctx, `"bank" = ${(q >= 0 ? '+' : '') + q.toFixed(1)}`, toX(q), rowQ - 20, '#2563eb', 14, 'center', true);
-
-	// ── Key dots ──
-	// Offsets to prevent overlap: river is left-aligned, vault right-aligned, bench center
-	const kLabelAligns = ['right', 'left', 'center'];
-	const kLabelOffsets = [-16, 16, 0];
-	KV1.forEach((kv, i) => {
-		const kx = toX(kv.k);
-		drawDot(ctx, kx, rowK, 10, kv.color);
-		drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kLabelOffsets[i], rowK - 28, kv.color, 12, kLabelAligns[i], true);
-		drawLabel(ctx, `${(weights[i]*100).toFixed(0)}%`, kx + kLabelOffsets[i], rowK - 42, kv.color, 11, kLabelAligns[i], true);
-	});
-
-	// ── K→V dashed lines ──
-	KV1.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.setLineDash([4, 4]);
-		ctx.moveTo(toX(kv.k), rowK + 14);
-		ctx.lineTo(toX(kv.v), rowV - 12);
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 1;
-		ctx.globalAlpha = 0.3 + weights[i] * 0.5;
-		ctx.stroke();
-		ctx.setLineDash([]);
-		ctx.globalAlpha = 1;
-	});
-
-	// ── Value squares ──
-	KV1.forEach((kv, i) => {
-		const s = 7 + weights[i] * 4;
-		drawSquare(ctx, toX(kv.v), rowV, s, kv.color, 0.35 + weights[i] * 0.65);
-		drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, toX(kv.v), rowV + s + 14, kv.color, 11, 'center');
-	});
-
-	// ── Output star ──
-	drawStar(ctx, toX(output), rowV, 14, '#f59e0b');
-	drawLabel(ctx, `★ ${output.toFixed(2)}`, toX(output), rowV - 22, '#b45309', 13, 'center', true);
-
-	// ── Math table ──
-	const maxI = pick.idx;
-	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
-	    <th style="text-align:left; padding:3px 8px;">Concept</th>
-	    <th style="text-align:left; padding:3px 8px;">Score (q·k)</th>
-	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
-	    <th style="text-align:right; padding:3px 8px;">α · v</th>
-	</tr>`;
-	KV1.forEach((kv, i) => {
-		const isBold = i === maxI;
-		const rowBg = isBold ? (isDarkMode() ? 'rgba(245, 158, 11, 0.12)' : '#fefce8') : '';
-		html += `<tr style="background:${rowBg};">
-	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px;">${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}</td>
-	    <td style="padding:3px 8px; font-family:monospace;">${(q >= 0 ? '+' : '') + q.toFixed(1)} × ${(kv.k >= 0 ? '+' : '') + kv.k.toFixed(1)} = ${(scores[i] >= 0 ? '+' : '') + scores[i].toFixed(1)}</td>
-	    <td style="padding:3px 8px; width: 255px;">
-		<div style="display:inline-block; width:${Math.max(3, weights[i]*120)}px; height:14px;
-		     background:${kv.color}; border-radius:3px; vertical-align:middle;
-		     opacity:${0.4+weights[i]*0.6}; transition:width 0.12s;"></div>
-		<b style="margin-left:4px;">${(weights[i]*100).toFixed(1)}%</b>
-	    </td>
-	    <td style="text-align:right; padding:3px 8px; font-family:monospace;">${(weights[i]*kv.v >= 0 ? '+' : '') + (weights[i]*kv.v).toFixed(2)}</td>
-	</tr>`;
-	});
-	html += `<tr style="border-top:2px solid ${themeColor('#1e293b')};">
-	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-	<td style="text-align:right; padding:6px 8px;"><b style="color:#f59e0b; font-size:1.15rem;">${(output >= 0 ? '+' : '') + output.toFixed(2)}</b></td>
-    </tr></table>`;
-	document.getElementById('attn1d-math').innerHTML = html;
-}
-
-
-/* ═══════════════════════════════════════════════════════════
-   2D — "Where Does 'Bank' Belong?"
-   ═══════════════════════════════════════════════════════════ */
-
-/* ═══════════════════════════════════════════════════════════
-   2D — "Where Does 'Charge' Belong?"
-   X-axis: Nature (-3) ← → Finance (+3)
-   Y-axis: Calm (-3) ← → Urgent (+3)
-   ═══════════════════════════════════════════════════════════ */
-
-const KV2 = [
-	// 🔋 battery / ⚡ energy — Nature-ish, Calm
-	{ k: [-2.0, -1.5], v: [-2.5, -2.0], color: '#10b981',
-		kIcon: '🔋', kName: 'battery', vIcon: '⚡', vName: 'energy',
-		kOff: [-18, -22], vOff: [0, 18] },
-	// 💳 fee / 💰 payment — Finance, Urgent
-	{ k: [2.5, 1.5], v: [3.0, 1.5], color: '#f59e0b',
-		kIcon: '💳', kName: 'fee', vIcon: '💰', vName: 'payment',
-		kOff: [18, -20], vOff: [0, 18] },
-	{ k: [-1.0, 2.5], v: [-1.5, 3.0], color: '#ef4444',
-		kIcon: '🏃', kName: 'rush', vIcon: '🌊', vName: 'surge',
-		kOff: [22, 4], vOff: [0, 18] }
-];
-
-function pickSentence2D(weights) {
-	const maxI = weights.indexOf(Math.max(...weights));
-	const w = weights[maxI];
-
-	// If the strongest signal is very weak, show a truly ambiguous message
-	// that reflects the actual weight distribution
-	if (w < 0.40) {
-		const pcts = weights.map(w => (w * 100).toFixed(0));
-		return {
-			idx: maxI,
-			text: `"Charge" is <b style="color:#94a3b8">deeply ambiguous</b> here — ` +
-			`<b style="color:${KV2[0].color}">🔋 energy ${pcts[0]}%</b>, ` +
-			`<b style="color:${KV2[1].color}">💳 fee ${pcts[1]}%</b>, ` +
-			`<b style="color:${KV2[2].color}">⚔️ rush ${pcts[2]}%</b>. ` +
-			`The model can't decide.`
-		};
-	}
-
-	const bucket = SENTENCES_2D[maxI];
-	for (let s = 0; s < bucket.length; s++) {
-		if (w >= bucket[s].min) return { idx: maxI, text: bucket[s].text };
-	}
-	return { idx: maxI, text: bucket[bucket.length - 1].text };
-}
-
-function updateAttn2D() {
-	const sliderX = document.getElementById('attn2d-qx');
-	const sliderY = document.getElementById('attn2d-qy');
-	if (!sliderX || !sliderY) return;
-	const qx = parseFloat(sliderX.value);
-	const qy = parseFloat(sliderY.value);
-	const vx = document.getElementById('attn2d-qx-val');
-	const vy = document.getElementById('attn2d-qy-val');
-	if (vx) vx.innerText = (qx >= 0 ? '+' : '') + qx.toFixed(1);
-	if (vy) vy.innerText = (qy >= 0 ? '+' : '') + qy.toFixed(1);
-
-	const q = [qx, qy];
-	const dk = Math.sqrt(2); // √d_k where d_k = 2 dimensions
-
-	// ── Scaled dot-product attention across BOTH dimensions ──
-	// score_i = (q[0]*k_i[0] + q[1]*k_i[1]) / √2
-	const scores  = KV2.map(kv => (q[0] * kv.k[0] + q[1] * kv.k[1]) / dk);
-	const weights = softmax(scores);
-
-	// ── Weighted sum of 2D value vectors ──
-	const out = [0, 0];
-	KV2.forEach((kv, i) => {
-		out[0] += weights[i] * kv.v[0];
-		out[1] += weights[i] * kv.v[1];
-	});
-
-	// ── Pick sentence based on which meaning wins ──
-	const pick = pickSentence2D(weights);
-	const sentenceEl = document.getElementById('attn2d-sentence');
-	if (sentenceEl) {
-		sentenceEl.innerHTML = `<span style="font-size:1.05rem;">${pick.text}</span>`;
-		sentenceEl.style.borderLeftColor = KV2[pick.idx].color;
-	}
-
-	// ── Canvas setup (read width from parent, cap height) ──
-	const canvas = document.getElementById('attn2d-canvas');
-	if (!canvas) return;
-	const ctx = canvas.getContext('2d');
-
-	let rect = canvas.getBoundingClientRect();
-	if (rect.width === 0 || rect.height === 0) {
-		requestAnimationFrame(updateAttn2D);
-		return;
-	}
-
-	const container = canvas.parentElement;
-	const dpr = window.devicePixelRatio || 1;
-	const MAX_HEIGHT = 500;
-
-	const W = Math.floor(rect.width);
-	const H = Math.min(W, MAX_HEIGHT);
-
-	canvas.style.width = W + 'px';
-	canvas.style.height = H + 'px';
-
-	if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
-		canvas.width = W * dpr;
-		canvas.height = H * dpr;
-	}
-
-	ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-	ctx.clearRect(0, 0, W, H);
-
-	// ── Coordinate mapping: -3 to 3 in 0.5 steps ──
-	const pad = 55;
-	const range = 3.5; // slightly beyond 3 for visual padding
-	const toX = (v) => pad + ((v + range) / (2 * range)) * (W - 2 * pad);
-	const toY = (v) => pad + ((range - v) / (2 * range)) * (H - 2 * pad);
-
-	// ── Grid lines at 0.5 steps ──
-	ctx.lineWidth = 1;
-	for (let t = -3; t <= 3; t += 0.5) {
-		// Thicker lines at whole numbers, thinner at 0.5 steps
-		if (t === Math.round(t)) {
-			ctx.strokeStyle = themeColor('#e2e8f0');
-		} else {
-			ctx.strokeStyle = themeColor('#f1f5f9');
+			Z.push(z);
 		}
-		ctx.beginPath(); ctx.moveTo(toX(t), pad); ctx.lineTo(toX(t), H - pad); ctx.stroke();
-		ctx.beginPath(); ctx.moveTo(pad, toY(t)); ctx.lineTo(W - pad, toY(t)); ctx.stroke();
+		this.matrix = M;
+		this.selfOutputs = Z;
+		const last = n - 1;
+		this.weights = M[last] || [];
+		this.output  = Z[last] || [0, 0];
+		this.weightedVals = vals.map((v, j) =>
+			[(this.weights[j] || 0) * v[0], (this.weights[j] || 0) * v[1]]);
+	},
+
+	setNumTokens: function(n) {
+		n = Math.max(1, Math.min(this._allKeys.length, n));
+		console.log('[attn] setNumTokens: n=' + n + ' _allKeys.length=' + this._allKeys.length);
+		this.numTokens = n;
+		// NOTE: do NOT assign this.keys / this.vals here — they're
+		// getters (see ATTN_2D declaration). Assigning would shadow the
+		// getter with a stale snapshot, which is why hover over the 3rd
+		// key (mat) had no arrow in the DOM even though numTokens=3
+		// said it should.
+		// this.keys = this._allKeys.slice(0, n - 1);  ← BUG: shadowed getter, off-by-one
+		// this.vals = this._allVals.slice(0, n - 1);
+		this.sqrtDk = Math.sqrt(this.d_k);
+		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
+		const keysArr = this.keys;   // getter call
+		this.scores = keysArr.map(k => dot(this.q, k));
+		this.scaled = this.scores.map(s => s / this.sqrtDk);
+		this.recomputeWeights();
+		this.recomputeMatrix();
+		console.log('[attn] setNumTokens done: numTokens=' + this.numTokens + ' keysLen=' + this.keys.length);
+	},
+
+	// Switch to a predefined token set (0..3). Updates q, keys, vals,
+	// queries and the token name list, then re-derives everything.
+	setExample: function(idx) {
+		if (idx < 0 || idx >= ATTN_SETS.length) return;
+		this.exampleIdx = idx;
+		const set = ATTN_SETS[idx];
+		this.q = [ 1.00, 0.40 ];  // the query "it" stays fixed across sets
+		this._allKeys    = set.tokens.map(t => t.k);
+		this._allVals    = set.tokens.map(t => t.v);
+		this._allQueries = [ this.q, ...set.tokens.map(t => t.q) ];
+		// Update the displayed token names.
+		ATTN_TOKENS[0].name = 'it';
+		for (let i = 0; i < set.tokens.length; i++) {
+			ATTN_TOKENS[i + 1].name = set.tokens[i].name;
+		}
+		// Recompute the demo input x from the first token's q (since
+		// W^Q is identity in the demo, x = q). This makes the first
+		// slide change when the user switches examples.
+		this._updateDemo();
+		this.setNumTokens(this.numTokens);
 	}
+};
+ATTN_2D.setExample(0);
 
-	// ── Main axes ──
-	ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
-	ctx.beginPath(); ctx.moveTo(pad, toY(0)); ctx.lineTo(W - pad, toY(0)); ctx.stroke();
-	ctx.beginPath(); ctx.moveTo(toX(0), pad); ctx.lineTo(toX(0), H - pad); ctx.stroke();
-
-	// ── Axis labels ──
-	drawLabel(ctx, '🌿 Nature', pad + 6, toY(0) + 18, '#10b981', 11, 'left', true);
-	drawLabel(ctx, 'Finance 💳', W - pad - 6, toY(0) + 18, '#f59e0b', 11, 'right', true);
-	drawLabel(ctx, '⚡ Urgent', toX(0) + 8, pad + 6, '#ef4444', 11, 'left', true);
-	drawLabel(ctx, '😌 Calm', toX(0) + 8, H - pad - 6, '#3b82f6', 11, 'left', true);
-
-	// ── Tick labels at whole numbers ──
-	ctx.fillStyle = themeColor('#94a3b8'); ctx.font = '10px Inter, system-ui, sans-serif'; ctx.textAlign = 'center';
-	for (let t = -3; t <= 3; t++) {
-		if (t === 0) continue;
-		ctx.fillText(t, toX(t), toY(0) + 14);
-		ctx.textAlign = 'right';
-		ctx.fillText(t, toX(0) - 8, toY(t) + 4);
-		ctx.textAlign = 'center';
+// Eight steps. `mode` decides what the 2D plot draws:
+//   'keys'   → query + keys (steps 1-6)
+//   'values' → query + values (step 7)
+//   'output' → values + weighted values + output z with tip-to-tail (step 8)
+// `computation` picks a template that shows the actual numerical math.
+// `eqActive` lists the regions of the equation that should glow on this step.
+const ATTN_STEPS = [
+	{
+		title: 'The learnable projections $W^Q$, $W^K$, $W^V$',
+		computation: 'projections',
+		intuition: 'projections',
+		eqActive: [],
+		desc: 'Every token starts as the <b>same embedding vector</b> <b>x</b> (gray). Three <i>different</i> learned matrices — <b style="color:#ef4444">W^Q</b>, <b style="color:#2563eb">W^K</b>, <b style="color:#16a34a">W^V</b> — project x into three <i>different</i> 2D vectors: <b style="color:#ef4444">q</b>, <b style="color:#2563eb">k</b>, <b style="color:#16a34a">v</b>. Hover any arrow for the W matrix and the resulting vector.',
+		mode: 'projections'
+	},
+	{
+		title: 'From embeddings to $q$, $k$, $v$',
+		computation: 'setup',
+		intuition: 'setup',
+		eqActive: [],
+		desc: 'The current example\'s tokens and their q/k/v vectors. Hover any arrow for the coordinates.',
+		mode: 'keys'
+	},
+	{
+		title: 'Element-wise product $q[d] \\cdot k_j[d]$',
+		computation: 'components',
+		intuition: 'components',
+		eqActive: ['dot'],
+		desc: 'The dot product is built from per-dimension products: $q[d] \\cdot k_j[d]$. For $d=1,2$ each token contributes two rectangles (one per axis). Same sign → positive (they agree on this axis); opposite sign → negative (disagree).',
+		mode: 'keys', highlightKey: 0
+	},
+	{
+		title: 'Sum: the dot product $q \\cdot k_j$',
+		computation: 'dot',
+		intuition: 'dot',
+		eqActive: ['dot'],
+		desc: 'Add the two per-dimension products for each key. Positive score = same direction as $q$; negative = opposite. Hover any arc to see the exact score and resulting weight.',
+		mode: 'keys'
+	},
+	{
+		title: 'Scale by $1/\\sqrt{d_k}$',
+		computation: 'scaled',
+		intuition: 'scaled',
+		eqActive: ['sqrt'],
+		desc: 'Divide each score by $\\sqrt{2} \\approx 1.414$. Keeps the variance of scores near <b>1</b> regardless of $d_k$ — without it, softmax in a real $d_k$=64 Transformer would saturate to a hard one-hot.',
+		mode: 'keys'
+	},
+	{
+		title: 'Exponentiate: $e^{\\text{score}}$',
+		computation: 'exps',
+		intuition: 'exps',
+		eqActive: ['exp'],
+		desc: 'Apply $\\exp()$ to each scaled score. <b>Dashed ghost bars</b> = scaled scores (negative ones hang below the line); <b>solid bars</b> = $\\exp$ values (all positive). Positive scores grow, negative scores flip above zero and shrink.',
+		mode: 'keys'
+	},
+	{
+		title: 'Normalize: $\\alpha_j = e^{s_j} \\big/ \\sum_n e^{s_n}$',
+		computation: 'weights',
+		intuition: 'weights',
+		eqActive: ['denom'],
+		desc: 'Divide each $\\exp(\\text{score})$ by the sum. The numbers now sum to exactly 1 — a probability distribution. These are the <b>attention weights</b> $\\alpha_j$.',
+		mode: 'keys'
+	},
+	{
+		title: 'Switch to value vectors $v_j$',
+		computation: 'values',
+		intuition: 'values',
+		eqActive: ['value'],
+		desc: 'Drop the keys. Bring in the <b>Value</b> vectors $v_j$ — they carry the actual semantic content. The attention weights carry over unchanged.',
+		mode: 'values'
+	},
+	{
+		title: 'Weighted sum: $z = \\sum_j \\alpha_j \\, v_j$',
+		computation: 'output',
+		intuition: 'output',
+		eqActive: ['sum', 'alpha', 'value'],
+		desc: 'Each value is scaled by its weight, then tip-to-tail added. The final $z$ lives <b>inside the convex hull</b> of the $v_j$ — attention can only interpolate.',
+		mode: 'output'
+	},
+	{
+		title: 'The full attention matrix $\\alpha_{ij}$',
+		computation: 'matrix',
+		intuition: 'matrix',
+		eqActive: ['alpha'],
+		desc: 'Every token is a <b>query</b> AND a <b>key</b>. The full $\\alpha$-matrix shows how every token attends to every other. Each row = one query\'s softmax distribution over all keys. Hover any cell for the exact score and weight.',
+		mode: 'matrix'
+	},
+	{
+		title: 'Self-attention: $z_i = \\sum_j \\alpha_{ij} \\, v_j$',
+		computation: 'selfattn',
+		intuition: 'selfattn',
+		eqActive: ['sum', 'alpha', 'value'],
+		desc: 'Every token gets its <b>own output</b> $z_i$ — a weighted blend of all values, according to its own attention row. This is what a Transformer layer actually computes.',
+		mode: 'selfattn'
 	}
+];
 
-	// ── Q→K attention lines (thickness = weight) ──
-	KV2.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.moveTo(toX(q[0]), toY(q[1]));
-		ctx.lineTo(toX(kv.k[0]), toY(kv.k[1]));
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 2 + weights[i] * 12;
-		ctx.globalAlpha = 0.2 + weights[i] * 0.8;
-		ctx.lineCap = 'round';
-		ctx.stroke();
-		ctx.globalAlpha = 1;
-	});
+// Per-step "Currently computing" panels. Each shows the actual numerical
+// computation on the real data, so the user sees exactly what the active
+// sub-expression of the equation is doing with concrete numbers.
+const ATTN_COMPUTATIONS = {
+	// Every numeric row is now a full Temml equation with \underbrace
+	// annotations, so the computation reads as one continuous chain.
+	// Each row carries data-tip/data-idx so hovering it pops up the
+	// same tooltip as the corresponding plot element.
+	projections: () => {
+		const d = ATTN_2D.demo;
+		const fmtM = (W, name) => `\\begin{pmatrix} ${ed(`demo.${name}.0.0`, W[0][0].toFixed(2))} & ${ed(`demo.${name}.0.1`, W[0][1].toFixed(2))} \\\\ ${ed(`demo.${name}.1.0`, W[1][0].toFixed(2))} & ${ed(`demo.${name}.1.1`, W[1][1].toFixed(2))} \\end{pmatrix}`;
+		const html = `
+		<div class="comp-header">▶ One input $\\mathbf{x}$, three different learned projections</div>
+		<div class="comp-body">
+			<div class="comp-eq" data-tip="proj-input">$$ \\underbrace{\\mathbf{x} = (${ed('demo.x.0', d.x[0].toFixed(2))},\\, ${ed('demo.x.1', d.x[1].toFixed(2))})}_{\\text{input embedding}} $$</div>
+			<div class="comp-eq" data-tip="proj-q">$$ \\underbrace{${fmtM(d.W_Q, 'W_Q')}}_{\\mathbf{W}^Q} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{q} = (${d.q[0].toFixed(2)},\\, ${d.q[1].toFixed(2)})}_{\\text{query}} $$</div>
+			<div class="comp-eq" data-tip="proj-k">$$ \\underbrace{${fmtM(d.W_K, 'W_K')}}_{\\mathbf{W}^K} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{k} = (${d.k[0].toFixed(2)},\\, ${d.k[1].toFixed(2)})}_{\\text{key}} $$</div>
+			<div class="comp-eq" data-tip="proj-v">$$ \\underbrace{${fmtM(d.W_V, 'W_V')}}_{\\mathbf{W}^V} \\cdot \\underbrace{\\mathbf{x}}_{\\text{input}} = \\underbrace{\\mathbf{v} = (${d.v[0].toFixed(2)},\\, ${d.v[1].toFixed(2)})}_{\\text{value}} $$</div>
+			<div class="comp-eq" data-tip="proj-qk">$$ \\mathbf{q} \\cdot \\mathbf{k} = (${d.q[0].toFixed(2)})(${d.k[0].toFixed(2)}) + (${d.q[1].toFixed(2)})(${d.k[1].toFixed(2)}) = ${d.qk.toFixed(3)} $$</div>
+			<div class="comp-note">The three W's are <b>different</b>, so the three outputs are <b>different</b> — click any number (including the W matrices) to edit and watch everything update.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTMLProjection();
+		return { html, liveVals };
+	},
+	setup: () => {
+		const q = ATTN_2D.q;
+		const rows = ATTN_2D.keys.map((k, j) =>
+			`<div class="comp-eq" data-tip="k" data-idx="${j}">$$ \\underbrace{\\mathbf{k}_{${j+1}} = (${ed('keys.'+j+'.0', k[0].toFixed(2))},\\, ${ed('keys.'+j+'.1', k[1].toFixed(2))})}_{\\text{key "${ATTN_TOKENS[j+1].name}"}} $$</div>`
+		).join('');
+		const html = `
+		<div class="comp-header">▶ The players — the inputs to the equation</div>
+		<div class="comp-body">
+			<div class="comp-eq" data-tip="q" data-idx="0">$$ \\underbrace{\\mathbf{q} = (${ed('q.0', q[0].toFixed(2))},\\, ${ed('q.1', q[1].toFixed(2))})}_{\\text{query "it"}} $$</div>
+			${rows}
+			<div class="comp-note">No computation yet — click any number to edit, or change the example above.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	components: () => {
+		const q = ATTN_2D.q, k = ATTN_2D.keys[0];
+		const pmq = `\\begin{pmatrix} ${q[0].toFixed(2)} \\\\ ${q[1].toFixed(2)} \\end{pmatrix}`;
+		const pmk = `\\begin{pmatrix} ${k[0].toFixed(2)} \\\\ ${k[1].toFixed(2)} \\end{pmatrix}`;
+		const html = `
+		<div class="comp-header">▶ Currently computing: $\\underbrace{\\mathbf{q}}_{\\text{query}}[d] \\cdot \\underbrace{\\mathbf{k}_1}_{\\text{key}}[d]$ — element-wise product</div>
+		<div class="comp-body">
+			<div class="comp-eq" data-tip="comprect" data-idx="0">$$
+				\\underbrace{\\mathbf{q}}_{\\text{query}} = ${pmq} \\qquad \\underbrace{\\mathbf{k}_1}_{\\text{key}} = ${pmk}
+			$$</div>
+			<div class="comp-eq" data-tip="comprect" data-idx="0">$$
+				\\underbrace{(\\underbrace{${ed('q.0', q[0].toFixed(2))}}_{q_0})(\\underbrace{${ed('keys.0.0', k[0].toFixed(2))}}_{k_{1,0}})}_{\\text{dimension 1 product}\\;=\\;${(q[0]*k[0]).toFixed(3)}} \\quad
+				\\underbrace{(\\underbrace{${ed('q.1', q[1].toFixed(2))}}_{q_1})(\\underbrace{${ed('keys.0.1', k[1].toFixed(2))}}_{k_{1,1}})}_{\\text{dimension 2 product}\\;=\\;${(q[1]*k[1]).toFixed(3)}}
+			$$</div>
+			<div class="comp-note">Two rectangles, one per dimension — the area of each is one product. Next step adds them together.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	dot: () => {
+		const q = ATTN_2D.q;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		const rows = ATTN_2D.keys.map((k, j) => {
+			const tj = j + 1;
+			const p1 = q[0]*k[0], p2 = q[1]*k[1];
+			const score = ATTN_2D.scores[j].toFixed(3);
+			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="dot" data-cone-idx="${j}">` +
+				`<div class="comp-eq-line">$$ \\underbrace{\\mathbf{q}}_{\\text{query}} \\cdot \\underbrace{\\mathbf{k}_{${tj}}}_{\\text{key}} = \\underbrace{(${ed('q.0', q[0].toFixed(2))})\\,(${ed('keys.'+j+'.0', k[0].toFixed(2))})}_{q_0\\,k_{${tj},0}} \\;+\\; \\underbrace{(${ed('q.1', q[1].toFixed(2))})\\,(${ed('keys.'+j+'.1', k[1].toFixed(2))})}_{q_1\\,k_{${tj},1}} $$</div>` +
+				`<div class="comp-eq-line">$$ = \\underbrace{${p1.toFixed(3)}}_{q_0\\,k_{${tj},0}} \\;+\\; \\underbrace{${p2.toFixed(3)}}_{q_1\\,k_{${tj},1}} = \\underbrace{${score}}_{\\text{score}\\;\\mathbf{q}\\cdot\\mathbf{k}_{${tj}}} $$</div>` +
+			`</div>`;
+		}).join('');
+		const html = `
+		<div class="comp-header">▶ Currently computing: $\\underbrace{\\mathbf{q}}_{\\text{query}} \\cdot \\underbrace{\\mathbf{k}_j}_{\\text{key}}$ — add the component products</div>
+		<div class="comp-body">
+			<div class="comp-note">Each component of $\\mathbf{q}$ multiplies the matching component of $\\mathbf{k}_j$. Sum = how aligned they are.</div>
+			${rows}
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	scaled: () => {
+		const rows = ATTN_2D.scores.map((s, j) => {
+			const tj = j + 1;
+			const sc = ATTN_2D.scaled[j].toFixed(3);
+			return `<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}" data-cone-step="scaled" data-cone-idx="${j}">` +
+				`$$ \\underbrace{s_{${tj}}}_{\\text{scaled score}} = \\dfrac{\\underbrace{\\mathbf{q}\\cdot\\mathbf{k}_{${tj}}}_{${s.toFixed(3)}}}{\\underbrace{\\sqrt{d_k}}_{\\sqrt{2}\\approx 1.414}} = \\underbrace{${sc}}_{\\text{divides by }\\sqrt{d_k}} $$` +
+			`</div>`;
+		}).join('');
+		const html = `
+		<div class="comp-header">▶ Currently computing: $\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}$ — variance control</div>
+		<div class="comp-body">
+			${rows}
+			<div class="comp-note">Dividing by $\\sqrt{2} \\approx 1.414$ keeps every score near magnitude $1$ — the same trick a real $d_k = 64$ model uses.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	exps: () => {
+		const rows = ATTN_2D.scaled.map((sc, j) => {
+			const tj = j + 1;
+			const e = ATTN_2D.exps[j].toFixed(3);
+			return `<div class="comp-eq" data-tip="bar-exp" data-idx="${j}" data-cone-step="exps" data-cone-idx="${j}">` +
+				`$$ \\underbrace{e^{s_{${tj}}}}_{\\text{exp of scaled score}} = e^{\\underbrace{${sc.toFixed(3)}}_{s_{${tj}}}} = \\underbrace{${e}}_{\\text{numerator for }\\alpha_{${tj}}} $$` +
+			`</div>`;
+		}).join('');
+		const html = `
+		<div class="comp-header">▶ Currently computing: $e^{s_j}$ — amplify differences</div>
+		<div class="comp-body">
+			${rows}
+			<div class="comp-note">Positive scores grow, negative scores shrink toward $0$. The biggest input now towers over the rest.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	weights: () => {
+		const ex  = ATTN_2D.exps;
+		const sum = ex.reduce((a, b) => a + b, 0);
+		const sumRow = `<div class="comp-eq-group first" data-cone-step="weights" data-cone-idx="-1">` +
+			`<div class="comp-eq-line">$$ \\underbrace{\\sum_{j=1}^{N} \\exp(s_j)}_{\\text{denominator (softmax sum})} = ${ex.map((e, j) => `\\underbrace{${e.toFixed(3)}}_{e^{s_{${j+1}}}}`).join(' \\;+\\; ')} = \\underbrace{${sum.toFixed(3)}}_{\\text{total exp}} $$</div>` +
+		`</div>`;
+		const rows = ex.map((e, j) => {
+			const tj = j + 1;
+			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined)
+				? ATTN_2D.weights[j]
+				: (sum > 0 ? e / sum : 0);
+			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="weights" data-cone-idx="${j}">` +
+				`<div class="comp-eq-line">$$ \\underbrace{\\alpha_{${tj}}}_{\\text{weight for key }${tj}} = \\dfrac{\\underbrace{\\exp(s_{${tj}})}_{${e.toFixed(3)}}}{\\underbrace{\\sum_{n}\\exp(s_n)}_{${sum.toFixed(3)}}} $$</div>` +
+				`<div class="comp-eq-line">$$ = \\underbrace{${w.toFixed(3)}}_{\\alpha_{${tj}}} = \\underbrace{${(w*100).toFixed(1)}\\%}_{\\text{share of attention}} $$</div>` +
+			`</div>`;
+		}).join('');
+		const html = `
+		<div class="comp-header">▶ Currently computing: softmax — divide each $e^{s_j}$ by the sum</div>
+		<div class="comp-body">
+			${sumRow}
+			${rows}
+			<div class="comp-note">The weights now sum to $100\\%$ — a finite budget of attention, split by relevance.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	values: () => {
+		// Helper: get a finite weight value or 0. Catches undefined AND NaN.
+		const safeW = (j) => {
+			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+			return (isFinite(w) ? w : 0);
+		};
+		const rows = ATTN_2D.vals.map((v, j) => {
+			const w = safeW(j);
+			return `<div class="comp-eq" data-tip="v" data-idx="${j}">$$ \\underbrace{\\mathbf{v}_{${j+1}} = (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})}_{\\text{value "${ATTN_TOKENS[j+1].name}"}} \\qquad \\underbrace{\\alpha_{${j+1}} = ${(w*100).toFixed(1)}\\,\\%}_{\\text{weight carries over}} $$</div>`;
+		}).join('');
+		// Visual weighted-average preview: show each αⱼ · vⱼ and the running sum.
+		// This makes it crystal-clear that z = Σ αⱼ·vⱼ is literally a weighted
+		// average of the value vectors. Renders as Temml math (no raw text).
+		const previewRows = ATTN_2D.vals.map((v, j) => {
+			const tj = j + 1;
+			const tname = (ATTN_TOKENS[j+1] || {}).name || ('v' + tj);
+			const w = safeW(j);
+			const pmv = `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+			const pmwv = `\\begin{pmatrix} ${(w*v[0]).toFixed(3)} \\\\ ${(w*v[1]).toFixed(3)} \\end{pmatrix}`;
+			return `<div class="attn-wavg-row">
+				<div class="attn-wavg-eq">$$ \\underbrace{\\alpha_{${tj}}\\,\\mathbf{v}_{${tj}}}_{\\text{${tname}}} = \\underbrace{${(w*100).toFixed(1)}\\%}_{\\alpha_{${tj}}} \\cdot \\underbrace{${pmv}}_{\\mathbf{v}_{${tj}}} = \\underbrace{${pmwv}}_{\\alpha_{${tj}}\\mathbf{v}_{${tj}}} $$</div>
+			</div>`;
+		}).join('');
+		const z = ATTN_2D.output;
+		const pmz = `\\begin{pmatrix} ${z[0].toFixed(3)} \\\\ ${z[1].toFixed(3)} \\end{pmatrix}`;
+		const sumParts = (ATTN_2D.weightedVals && ATTN_2D.weightedVals.length)
+			? ATTN_2D.weightedVals.map((wv) => `\\begin{pmatrix} ${wv[0].toFixed(3)} \\\\ ${wv[1].toFixed(3)} \\end{pmatrix}`).join(' + ')
+			: '\\begin{pmatrix} 0 \\\\ 0 \\end{pmatrix}';
+		const preview = `<div class="attn-wavg-box">
+			<div class="attn-wavg-title">⚖ Weighted-average preview — how each v contributes to z</div>
+			<div class="attn-wavg-rows">${previewRows}</div>
+			<div class="attn-wavg-sum">$$ \\underbrace{\\mathbf{z}}_{\\text{output}} = ${sumParts} = \\underbrace{${pmz}}_{\\mathbf{z}} $$</div>
+		</div>`;
+		const html = `
+		<div class="comp-header">▶ Switching from keys to value vectors</div>
+		<div class="comp-body">
+			${rows}
+			${preview}
+			<div class="comp-note">$\\mathbf{z}$ is a <b>weighted average</b> of the value vectors. Each $\\mathbf{v}_j$ is scaled by its attention weight $\\alpha_j$ and then summed. Weights summing to $100\\%$ guarantee $\\mathbf{z}$ lies inside the convex hull of the $\\mathbf{v}_j$.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	output: () => {
+		const rows = ATTN_2D.vals.map((v, j) => {
+			const w  = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+			const wv = (ATTN_2D.weightedVals && ATTN_2D.weightedVals[j] !== undefined)
+				? ATTN_2D.weightedVals[j]
+				: [w * v[0], w * v[1]];
+			const pmv = `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+			const pmwv = `\\begin{pmatrix} ${wv[0].toFixed(3)} \\\\ ${wv[1].toFixed(3)} \\end{pmatrix}`;
+			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}" data-cone-step="output" data-cone-idx="${j}">` +
+				`$$ \\underbrace{\\alpha_{${j+1}}}_{\\text{weight}}\\,\\underbrace{\\mathbf{v}_{${j+1}}}_{\\text{value}} = \\underbrace{${(w*100).toFixed(1)}\\%}_{\\alpha_{${j+1}}} \\times \\underbrace{${pmv}}_{\\mathbf{v}_{${j+1}}} = \\underbrace{${pmwv}}_{\\alpha_{${j+1}}\\mathbf{v}_{${j+1}}} $$` +
+			`</div>`;
+		}).join('');
+		const z = ATTN_2D.output;
+		const sumParts = (ATTN_2D.weightedVals && ATTN_2D.weightedVals.length)
+			? ATTN_2D.weightedVals.map((wv) => `\\begin{pmatrix} ${wv[0].toFixed(3)} \\\\ ${wv[1].toFixed(3)} \\end{pmatrix}`).join(' + ')
+			: ATTN_2D.vals.map((v, j) => {
+				const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
+				return `\\begin{pmatrix} ${(w*v[0]).toFixed(3)} \\\\ ${(w*v[1]).toFixed(3)} \\end{pmatrix}`;
+			}).join(' + ');
+		const pmz = `\\begin{pmatrix} ${z[0].toFixed(3)} \\\\ ${z[1].toFixed(3)} \\end{pmatrix}`;
+		const html = `
+		<div class="comp-header">▶ Currently computing: $\\underbrace{\\mathbf{z}}_{\\text{output}} = \\sum_j \\underbrace{\\alpha_j}_{\\text{weight}} \\underbrace{\\mathbf{v}_j}_{\\text{value}}$ — the weighted sum</div>
+		<div class="comp-body">
+			${rows}
+			<div class="comp-eq" data-tip="eq-z">$$ \\underbrace{\\mathbf{z}}_{\\text{output}} = \\underbrace{${sumParts}}_{\\text{sum of weighted values}} = \\underbrace{${pmz}}_{\\mathbf{z}} $$</div>
+			<div class="comp-note">$\\mathbf{z}$ is a convex combination — it lies <b>inside the span</b> of the $\\mathbf{v}_j$ (a point in 2 tokens, a segment in 3, a triangle in 4).</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	matrix: () => {
+		const M = ATTN_2D.matrix;
+		const n = M.length;
+		const m = Math.min(M[0]?.length || 0, ATTN_2D._allKeys.length);
+		const queries = ATTN_2D._allQueries.slice(0, n);
+		const keys    = ATTN_2D._allKeys.slice(0, m);
 
-	// ── V→Output dashed lines ──
-	KV2.forEach((kv, i) => {
-		ctx.beginPath();
-		ctx.setLineDash([5, 5]);
-		ctx.moveTo(toX(kv.v[0]), toY(kv.v[1]));
-		ctx.lineTo(toX(out[0]), toY(out[1]));
-		ctx.strokeStyle = kv.color;
-		ctx.lineWidth = 1 + weights[i] * 5;
-		ctx.globalAlpha = 0.2 + weights[i] * 0.6;
-		ctx.stroke();
-		ctx.setLineDash([]);
-		ctx.globalAlpha = 1;
-	});
+		// Build an HTML table with mouseover info on every cell.
+		// The matrix is NOT drawn in the 2D SVG (no dim1/dim2 background
+		// here) — it's a proper table the user can read cell-by-cell.
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
 
-	// ── Key dots (with weight % labels) ──
-	KV2.forEach((kv, i) => {
-		const kx = toX(kv.k[0]), ky = toY(kv.k[1]);
-		drawDot(ctx, kx, ky, 10 + weights[i] * 4, kv.color);
-		drawLabel(ctx, `${kv.kIcon} ${kv.kName}`, kx + kv.kOff[0], ky + kv.kOff[1], kv.color, 13, 'center', true);
-		drawLabel(ctx, `${(weights[i] * 100).toFixed(0)}%`, kx + kv.kOff[0], ky + kv.kOff[1] + 16, kv.color, 12, 'center', true);
-	});
+		// Column header cells (k_j): show the actual key vector on hover
+		let colHeaders = '<th class="attn-matrix-corner"></th>';
+		for (let j = 0; j < m; j++) {
+			const k = keys[j];
+			const name = ATTN_TOKENS[j + 1].name;
+			colHeaders += `<th class="attn-matrix-colhead" data-tip-key="${j}">
+				<div class="attn-matrix-colhead-name" style="color:${ATTN_TOKENS[j+1].color}">k<sub>${j+1}</sub> = ${name}</div>
+				<div class="attn-matrix-colhead-form">$$\\mathbf{k}_{${j+1}} = ${pm(k)}$$</div>
+			</th>`;
+		}
 
-	// ── Value squares ──
-	KV2.forEach((kv, i) => {
-		const vx = toX(kv.v[0]), vy = toY(kv.v[1]);
-		const s = 7 + weights[i] * 5;
-		drawSquare(ctx, vx, vy, s, kv.color, 0.35 + weights[i] * 0.65);
-		drawLabel(ctx, `${kv.vIcon} ${kv.vName}`, vx + kv.vOff[0], vy + kv.vOff[1], kv.color, 11, 'center');
-	});
+		// Body rows (q_i): row header explains what q_i is, each cell
+		// shows α_{ij} with a hover tooltip showing the full derivation.
+		let bodyRows = '';
+		for (let i = 0; i < n; i++) {
+			const q = queries[i];
+			const name = ATTN_TOKENS[i].name;
+			let row = `<tr>
+				<th class="attn-matrix-rowhead" data-tip-row="${i}">
+					<div class="attn-matrix-rowhead-name" style="color:${ATTN_TOKENS[i].color}">q<sub>${i+1}</sub> = ${name}</div>
+					<div class="attn-matrix-rowhead-form">$$\\mathbf{q}_{${i+1}} = ${pm(q)}$$</div>
+				</th>`;
+			for (let j = 0; j < m; j++) {
+				const w = (M[i] || [])[j] || 0;
+				const alpha = w;
+				// Recompute the score for this cell so the tooltip is exact
+				const score = q[0]*keys[j][0] + q[1]*keys[j][1];
+				const scaled = score / Math.SQRT2;
+				const expVal = Math.exp(scaled);
+				const sumExp = ATTN_2D.exps.reduce((a,b) => a+b, 0);
+				const bg = `rgba(37,99,235,${(0.08 + w * 0.85).toFixed(3)})`;
+				const fg = w > 0.45 ? '#fff' : '#1e293b';
+				row += `<td class="attn-matrix-cell" style="background:${bg}; color:${fg};"
+					data-tip-cell="${i},${j}"
+					data-cell-q="${q[0].toFixed(2)},${q[1].toFixed(2)}"
+					data-cell-k="${keys[j][0].toFixed(2)},${keys[j][1].toFixed(2)}"
+					data-cell-score="${score.toFixed(3)}"
+					data-cell-scaled="${scaled.toFixed(3)}"
+					data-cell-exp="${expVal.toFixed(3)}"
+					data-cell-sum="${sumExp.toFixed(3)}"
+					data-cell-alpha="${alpha.toFixed(3)}"
+				><b>${(w*100).toFixed(1)}%</b><br><span style="font-size:0.7em; opacity:0.85">s=${score.toFixed(2)}</span></td>`;
+			}
+			row += '</tr>';
+			bodyRows += row;
+		}
 
-	// ── Query diamond ("charge") ──
-	drawDiamond(ctx, toX(q[0]), toY(q[1]), 10, '#2563eb');
-	drawLabel(ctx, '"charge"', toX(q[0]), toY(q[1]) - 22, '#2563eb', 14, 'center', true);
+		const html = `
+		<div class="comp-header">▶ Full attention matrix — $\\alpha_{ij}$ for every (query, key) pair</div>
+		<div class="comp-body">
+			<div class="comp-note" style="margin-bottom:8px;">Each <b>row</b> is one query token's softmax distribution over all keys. Each <b>column</b> is one key. Hover any <b>cell</b> for the exact computation, or hover any <b>row/column header</b> to see what that q or k vector actually is and how it was computed.</div>
+			<div class="attn-matrix-wrap">
+			<table class="attn-matrix-table">
+				<thead><tr>${colHeaders}</tr></thead>
+				<tbody>${bodyRows}</tbody>
+			</table>
+			</div>
+			<div class="comp-note" style="margin-top:8px;">Each <b>row</b> sums to 100% — it's a probability distribution. The <b>diagonal</b> is often strong: $\\alpha_{ii}$ tends to be large because $\\mathbf{q}_i \\cdot \\mathbf{k}_i = \\lVert \\mathbf{k}_i \\rVert^2 > 0$.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	},
+	selfattn: () => {
+		const M = ATTN_2D.matrix;
+		const Z = ATTN_2D.selfOutputs;
+		const rows = M.map((row, i) => {
+			// Only iterate up to row.length — for 2 tokens M[i] has
+			// 1 element (1 key) so row[1] would be undefined → NaN.
+			const wvParts = [];
+			for (let j = 0; j < row.length && j < ATTN_2D._allVals.length; j++) {
+				const v = ATTN_2D._allVals[j];
+				const w = row[j] || 0;
+				wvParts.push(`${(w*100).toFixed(1)}\\% \\cdot (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))})`);
+			}
+			const wv = wvParts.join(' + ');
+			const z = Z[i];
+			const label = ATTN_TOKENS[i].name;
+			return `<div class="comp-eq" data-tip="self-z" data-idx="${i}">$$ \\mathbf{z}_{\\text{${label}}} = \\underbrace{${wv}}_{\\text{weighted blend}} = \\underbrace{(${z[0].toFixed(3)},\\, ${z[1].toFixed(3)})}_{\\text{output for "${label}"}} $$</div>`;
+		}).join('');
+		const html = `
+		<div class="comp-header">▶ Self-attention: every token gets its own output $\\mathbf{z}$</div>
+		<div class="comp-body">
+			${rows}
+			<div class="comp-note">This is what a Transformer layer <i>actually</i> computes: each token's output is a different weighted blend of <b>all</b> the values, with the blending pattern determined by that token's own attention row.</div>
+		</div>`;
+		const liveVals = AttentionAnatomy._liveValsHTML();
+		return { html, liveVals };
+	}
+};
 
-	// ── Output star ──
-	drawStar(ctx, toX(out[0]), toY(out[1]), 14, '#f59e0b');
-	drawLabel(ctx, '★ charge in context', toX(out[0]), toY(out[1]) + 24, '#b45309', 12, 'center', true);
+// Per-step "Geometric intuition" panels. Each contains:
+//   - A Temml-rendered formula (just set as innerHTML, then call render_temml())
+//   - "What this does" — a plain-language explanation of the operation alone
+//   - "Big picture" — how it serves the overall attention computation
+const ATTN_INTUITIONS = {
+	// `projections` deliberately returns an empty string: the "Three
+	// views of the same token" recap lives in the always-on summary
+	// footer at the END of the anatomy section (see attentionlab.php /
+	// .attn-anatomy-summary), not in step 1's intuition panel where
+	// it would compete with the intro.
+	projections: () => ``,
+	setup: () => `
+		<div class="intuition-header">💡 Where do Q, K, V come from?</div>
+		<div class="intuition-math">$$q_i = x_i W^Q, \\quad k_j = x_j W^K, \\quad v_j = x_j W^V$$</div>
+		<div class="intuition-section">Three learned projections of the same token embedding.</div>
+	`,
+	components: () => `
+		<div class="intuition-header">💡 Element-wise product</div>
+		<div class="intuition-math">$$q[d] \\cdot k_1[d] \\quad d \\in \\{1, 2\\}$$</div>
+		<div class="intuition-section">Per-axis product. Same sign → positive (agree); opposite sign → negative (disagree).</div>
+	`,
+	dot: () => `
+		<div class="intuition-header">💡 The dot product</div>
+		<div class="intuition-math">$$q \\cdot k_j = \\lVert q \\rVert \\cdot \\lVert k_j \\rVert \\cdot \\cos\\theta$$</div>
+		<div class="intuition-section">Add the components → one scalar per key. Positive = same direction; negative = opposite.</div>
+	`,
+	scaled: () => `
+		<div class="intuition-header">💡 Scale by √d_k</div>
+		<div class="intuition-math">$$\\frac{q \\cdot k_j}{\\sqrt{d_k}}$$</div>
+		<div class="intuition-section">Keeps variance at ~1 so softmax behaves at any dimension.</div>
+	`,
+	exps: () => `
+		<div class="intuition-header">💡 Exponentiate</div>
+		<div class="intuition-math">$$e^{\\text{score}_j}$$</div>
+		<div class="intuition-section">Flips negatives above zero <i>and</i> amplifies the leader. Softmax needs positive values.</div>
+	`,
+	values: () => `
+		<div class="intuition-header">💡 Keys vs values</div>
+		<div class="intuition-math">$$\\text{keys} \\;=\\; \\text{WHAT to attend to}$$</div>
+		<div class="intuition-math">$$\\text{values} \\;=\\; \\text{WHAT to retrieve}$$</div>
+		<div class="intuition-section">Weights carry over unchanged — they were computed from the keys.</div>
+	`,
+	output: () => `
+		<div class="intuition-header">💡 The weighted sum</div>
+		<div class="intuition-math">$$\\mathbf{z} = \\sum_j \\alpha_j \\, \\mathbf{v}_j$$</div>
+		<div class="intuition-section">A convex combination — z always lies inside the convex hull of the values.</div>
+	`,
+	matrix: () => `
+		<div class="intuition-header">💡 The attention matrix</div>
+		<div class="intuition-math">$$\\alpha_{ij} = \\dfrac{e^{\\mathbf{q}_i \\cdot \\mathbf{k}_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{\\mathbf{q}_i \\cdot \\mathbf{k}_n \\,/\\, \\sqrt{d_k}}}$$</div>
+		<div class="intuition-section">Each row = one token's softmax over all keys. Diagonal often lights up (q·k = ‖k‖² > 0).</div>
+	`,
+	selfattn: () => `
+		<div class="intuition-header">💡 Self-attention</div>
+		<div class="intuition-math">$$\\mathbf{z}_i = \\sum_j \\alpha_{ij} \\, \\mathbf{v}_j \\quad \\text{for every } i$$</div>
+		<div class="intuition-section">Every token gets its own output — a weighted blend of all values, using its own attention row.</div>
+	`
+};
 
-	// ── Math table (shows both dimensions in dot product) ──
-	const maxI = pick.idx;
-	let html = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-	<tr style="border-bottom:2px solid ${themeColor('#cbd5e1')}; color:${themeColor('#64748b')};">
-	    <th style="text-align:left; padding:3px 8px;">Concept</th>
-	    <th style="text-align:left; padding:3px 8px;">q·k / √2</th>
-	    <th style="text-align:left; padding:3px 8px;">Weight α</th>
-	    <th style="text-align:right; padding:3px 8px;">α · v</th>
-	</tr>`;
-	KV2.forEach((kv, i) => {
-		const dotRaw = q[0] * kv.k[0] + q[1] * kv.k[1];
-		const contrib = [weights[i] * kv.v[0], weights[i] * kv.v[1]];
-		const isBold = i === maxI;
-		const rowBg = isBold ? (isDarkMode() ? 'rgba(245, 158, 11, 0.12)' : '#fefce8') : '';
-		html += `<tr style="background:${rowBg};">
-	    <td style="color:${kv.color}; font-weight:bold; padding:3px 8px; white-space:nowrap;">
-		${kv.kIcon} ${kv.kName} → ${kv.vIcon} ${kv.vName}
-	    </td>
-	    <td style="padding:3px 8px; font-family:monospace;" title="(${q[0].toFixed(1)}×${kv.k[0].toFixed(1)}) + (${q[1].toFixed(1)}×${kv.k[1].toFixed(1)}) = ${dotRaw.toFixed(2)}, then ÷√2 = ${scores[i].toFixed(2)}">
-		${(scores[i] >= 0 ? '+' : '') + scores[i].toFixed(2)}
-	    </td>
-	    <td style="padding:3px 8px; width: 200px">
-		<div style="display:inline-block; width:${Math.max(3, weights[i] * 120)}px; height:14px;
-		     background:${kv.color}; border-radius:3px; vertical-align:middle;
-		     opacity:${0.4 + weights[i] * 0.6}; transition:width 0.12s;"></div>
-		<b style="margin-left:4px;">${(weights[i] * 100).toFixed(1)}%</b>
-	    </td>
-	    <td style="text-align:right; padding:3px 8px; font-family:monospace; white-space:nowrap;">
-		(${contrib[0].toFixed(2)}, ${contrib[1].toFixed(2)})
-	    </td>
-	</tr>`;
-	});
-	html += `<tr style="border-top:2px solid ${themeColor('#1e293b')};">
-	<td colspan="3" style="text-align:right; padding:6px 8px; font-weight:bold;">Output = Σ α·v =</td>
-	<td style="text-align:right; padding:6px 8px;">
-	    <b style="color:#f59e0b; font-size:1.1rem;">(${out[0].toFixed(2)}, ${out[1].toFixed(2)})</b>
-	</td>
-    </tr></table>`;
-	document.getElementById('attn2d-math').innerHTML = html;
+// The exact Temml formula + plain-language explanation for each arrow
+// type that can appear in the 2D plot. Used by the hover tooltip.
+// `intuition` is the plain-language "what this MEANS" headline shown
+// first; the formula + desc below it are the math, for when you want it.
+const VECTOR_FORMULAS = {
+	q: {
+		name: 'q  (the query)',
+		formula: 'q_i \\;=\\; x_i \\, W^Q',
+		unicode: 'qᵢ = xᵢ · W^Q',
+		intuition: 'The arrow of <b>“it”</b> — the direction it is <i>looking for</i> a match. Every other arrow is compared against this one.',
+		desc: 'The query of token $i$. Computed by multiplying the token embedding $x_i$ by the learned query projection matrix $W^Q$.'
+	},
+	k: {
+		name: 'k  (the key)',
+		formula: 'k_j \\;=\\; x_j \\, W^K',
+		unicode: 'kⱼ = xⱼ · W^K',
+		intuition: 'A word <i>advertising</i> what it contains. How closely it points along the query tells you how much it should matter.',
+		desc: 'The key of token $j$. Computed by multiplying the token embedding $x_j$ by the learned key projection matrix $W^K$. Used to score relevance against queries.'
+	},
+	v: {
+		name: 'v  (the value)',
+		formula: 'v_j \\;=\\; x_j \\, W^V',
+		unicode: 'vⱼ = xⱼ · W^V',
+		intuition: 'The word’s actual <i>payload</i> — the content that gets pulled into the output when it wins attention.',
+		desc: 'The value of token $j$. The actual semantic content this token carries — what gets blended into the output.'
+	},
+	weightedV: {
+		name: 'αⱼ · vⱼ  (attention-weighted value)',
+		formula: '\\alpha_j \\, v_j, \\quad \\alpha_j \\;=\\; \\dfrac{e^{q \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'αⱼ vⱼ,  where  αⱼ = softmax(q · kⱼ / √dₖ)',
+		intuition: 'The same payload, shrunk by its attention share — “how much of this word makes it into the answer”.',
+		desc: 'Value $v_j$ scaled by its attention weight $\\alpha_j$. $\\alpha_j$ is the softmax of the scaled dot product — a soft "how much does this token matter?" between $0$ and $1$.'
+	},
+	z: {
+		name: 'z  (the contextualised output)',
+		formula: 'z \\;=\\; \\sum_j \\alpha_j \\, v_j',
+		unicode: 'z = Σⱼ αⱼ vⱼ',
+		intuition: 'The <i>blended answer</i>: the weighted middle of all the values. “it” ends up pointing somewhere between them — closest to the ones that won attention.',
+		desc: 'The contextualised output. A convex combination of all values, each weighted by its attention weight. Always lives inside the convex hull of the values.'
+	},
+	angle: {
+		name: 'angle',
+		formula: '\\cos\\theta = \\dfrac{q \\cdot k_j}{\\lVert q \\rVert \\, \\lVert k_j \\rVert}',
+		unicode: 'cos θ = q·k / (‖q‖·‖k‖)',
+		intuition: '',
+		desc: ''
+	},
+
+	// ── Hoverable parts of the big equation at the top ──────────────
+	// Each entry's `formula` is the general form (pre-rendered once);
+	// the tooltip body is built dynamically by _buildExtraInfo() with
+	// the concrete numbers for the current token count.
+	'eq-qi': {
+		name: 'qᵢ — the query',
+		formula: 'q_i = x_i \\, W^Q',
+		unicode: 'qᵢ = xᵢ · W^Q',
+		intuition: '',
+		desc: ''
+	},
+	'eq-kj': {
+		name: 'kⱼ — the keys',
+		formula: 'k_j = x_j \\, W^K',
+		unicode: 'kⱼ = xⱼ · W^K',
+		intuition: '',
+		desc: ''
+	},
+	'eq-vj': {
+		name: 'vⱼ — the values',
+		formula: 'v_j = x_j \\, W^V',
+		unicode: 'vⱼ = xⱼ · W^V',
+		intuition: '',
+		desc: ''
+	},
+	'eq-alpha': {
+		name: 'αᵢⱼ — the attention weight',
+		formula: '\\alpha_{ij} = \\dfrac{e^{q_i \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q_i \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'αᵢⱼ = e^(qᵢ·kⱼ/√dₖ) / Σₙ e^(qᵢ·kₙ/√dₖ)',
+		intuition: '',
+		desc: ''
+	},
+	'eq-exp': {
+		name: 'exp — exponentiate',
+		formula: 'e^{\\text{score}_j}',
+		unicode: 'e^score',
+		intuition: '',
+		desc: ''
+	},
+	'eq-sum': {
+		name: 'Σ — the normalization sum',
+		formula: '\\sum_n e^{q_i \\cdot k_n \\,/\\, \\sqrt{d_k}}',
+		unicode: 'Σₙ e^(qᵢ·kₙ/√dₖ)',
+		intuition: '',
+		desc: ''
+	},
+	'eq-dot': {
+		name: 'qᵢ · kⱼ — the dot product',
+		formula: 'q_i \\cdot k_j = \\lVert q_i \\rVert \\, \\lVert k_j \\rVert \\, \\cos\\theta',
+		unicode: 'qᵢ·kⱼ = ‖qᵢ‖‖kⱼ‖cosθ',
+		intuition: '',
+		desc: ''
+	},
+	'eq-sqrt': {
+		name: '√dₖ — variance control',
+		formula: '\\sqrt{d_k}',
+		unicode: '√dₖ  (here √2 ≈ 1.414)',
+		intuition: '',
+		desc: ''
+	},
+	'eq-z': {
+		name: 'zᵢ — the contextualised output',
+		formula: 'z_i = \\sum_j \\alpha_{ij} \\, v_j',
+		unicode: 'zᵢ = Σⱼ αᵢⱼ vⱼ',
+		intuition: '',
+		desc: ''
+	},
+
+	// ── Hoverable plot overlays (bars, rectangles, projections) ─────
+	'bar-score': {
+		name: 'score',
+		formula: 'q \\cdot k_j',
+		unicode: 'q·kⱼ',
+		intuition: '',
+		desc: ''
+	},
+	'bar-scaled': {
+		name: 'scaled score',
+		formula: '\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}',
+		unicode: '(q·kⱼ)/√dₖ',
+		intuition: '',
+		desc: ''
+	},
+	'bar-exp': {
+		name: 'exp(score)',
+		formula: 'e^{s_j}',
+		unicode: 'e^s',
+		intuition: '',
+		desc: ''
+	},
+	wbar: {
+		name: 'attention weight',
+		formula: '\\alpha_{ij} = \\dfrac{e^{q_i \\cdot k_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{q_i \\cdot k_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'αᵢⱼ',
+		intuition: '',
+		desc: ''
+	},
+	comprect: {
+		name: 'element-wise product',
+		formula: 'q[d] \\cdot k_j[d]',
+		unicode: 'q[d]·kⱼ[d]',
+		intuition: '',
+		desc: ''
+	},
+	proj: {
+		name: 'projection of q onto kⱼ',
+		formula: '\\mathrm{proj}_{\\mathbf{k}_j} \\, \\mathbf{q} = \\dfrac{q \\cdot k_j}{\\lVert k_j \\rVert}',
+		unicode: 'proj = q·kⱼ / ‖kⱼ‖',
+		intuition: '',
+		desc: ''
+	},
+	span: {
+		name: 'the span of the values',
+		formula: '\\mathrm{conv}\\big(\\mathbf{v}_1, \\ldots, \\mathbf{v}_m\\big)',
+		unicode: 'conv(v₁,…,vₘ)',
+		intuition: '',
+		desc: ''
+	},
+
+	// ── Learnable projections step ─────────────────────────────────
+	'proj-input': {
+		name: 'x — input embedding',
+		formula: '\\mathbf{x}',
+		unicode: 'x',
+		intuition: '',
+		desc: ''
+	},
+	'proj-q': {
+		name: 'q — query',
+		formula: '\\mathbf{q} = \\mathbf{W}^Q \\mathbf{x}',
+		unicode: 'q = W^Q x',
+		intuition: '',
+		desc: ''
+	},
+	'proj-k': {
+		name: 'k — key',
+		formula: '\\mathbf{k} = \\mathbf{W}^K \\mathbf{x}',
+		unicode: 'k = W^K x',
+		intuition: '',
+		desc: ''
+	},
+	'proj-v': {
+		name: 'v — value',
+		formula: '\\mathbf{v} = \\mathbf{W}^V \\mathbf{x}',
+		unicode: 'v = W^V x',
+		intuition: '',
+		desc: ''
+	},
+	'proj-qk': {
+		name: 'q · k',
+		formula: '\\mathbf{q} \\cdot \\mathbf{k}',
+		unicode: 'q·k',
+		intuition: '',
+		desc: ''
+	},
+	'matrix-cell': {
+		name: 'α[i][j]',
+		formula: '\\alpha_{ij} = \\dfrac{e^{\\mathbf{q}_i \\cdot \\mathbf{k}_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{\\mathbf{q}_i \\cdot \\mathbf{k}_n \\,/\\, \\sqrt{d_k}}}',
+		unicode: 'α[i][j]',
+		intuition: '',
+		desc: ''
+	}
+};
+
+// Pre-rendered MathML for each vector formula. Filled once by
+// AttentionAnatomy._renderFormulas() so the hover tooltip can swap
+// content instantly without re-running Temml on every hover.
+let TEMML_RENDERED = {};
+
+const AttentionAnatomy = {
+	step: 10,
+
+	init: function() {
+		console.log('[attn] init() called');
+		if (!document.getElementById('attn-anatomy-2d-svg')) {
+			console.warn('[attn] init: #attn-anatomy-2d-svg not found, aborting');
+			return;
+		}
+
+		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
+		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
+		document.getElementById('attn-anatomy-reset').addEventListener('click', () => this._resetToDefaults());
+
+		// Token-count selector. Recomputes every derived quantity and
+		// re-renders; starts at the simplest case (2 tokens).
+		const tokenBtns = Array.from(document.querySelectorAll('.attn-token-select button[data-attn-tokens]'));
+		tokenBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const n = parseInt(btn.dataset.attnTokens, 10);
+				if (n === ATTN_2D.numTokens) return;
+				ATTN_2D.setNumTokens(n);
+				tokenBtns.forEach((b) => b.classList.toggle('active', b === btn));
+				this.render();
+			});
+		});
+
+		// Predefined token-set dropdown. Switching the set swaps all
+		// keys/values/queries (and token names) at once so the user
+		// can compare attention regimes side by side: clear winner,
+		// two-way race, nothing relates, strong winner.
+		const setSelect = document.getElementById('attn-set-select');
+		if (setSelect) {
+			// Populate the options from ATTN_SETS.
+			setSelect.innerHTML = '';
+			ATTN_SETS.forEach((s, i) => {
+				const opt = document.createElement('option');
+				opt.value = String(i);
+				opt.textContent = s.label;
+				if (i === ATTN_2D.exampleIdx) opt.selected = true;
+				setSelect.appendChild(opt);
+			});
+			setSelect.addEventListener('change', () => {
+				const idx = parseInt(setSelect.value, 10);
+				if (idx === ATTN_2D.exampleIdx) return;
+				ATTN_2D.setExample(idx);
+				this.render();
+			});
+		}
+
+		// Pre-render the vector formula LaTeX to MathML via Temml, once.
+		// The hover tooltip then just swaps innerHTML — instant, no
+		// re-render cost per hover.
+		// Each setup wrapped in its own try-catch so one failure
+		// doesn't prevent the others.
+		try { this._renderFormulas(); } catch (e) { console.error('[attn] _renderFormulas failed:', e); }
+		try { this._setupSentenceHover(); } catch (e) { console.error('[attn] _setupSentenceHover failed:', e); }
+		try { this._setupFormulaHover(); } catch (e) { console.error('[attn] _setupFormulaHover failed:', e); }
+		this._dbg('OK', 'init: hover handlers attached');
+		// Anti-overlap tracker: cleared per render, so initialise empty.
+		this._clearLabelTracker();
+		// GUARDRAIL: track that init ran so we can assert later
+		this._initRan = true;
+
+		// Global error catcher — any uncaught JS error gets logged AND
+		// shown in the debug panel so the user can paste it verbatim.
+		window.addEventListener('error', (ev) => {
+			const msg = `${ev.message}  @${ev.filename}:${ev.lineno}:${ev.colno}`;
+			this._dbg('ERROR', `window.error: ${msg}`);
+		});
+		window.addEventListener('unhandledrejection', (ev) => {
+			this._dbg('ERROR', `unhandledrejection: ${ev.reason}`);
+		});
+
+		// Draw the static background (grid + axes) ONCE.
+		this._initSVG();
+
+		// First debug paint so the panel is populated even before any
+		// hover event.
+		this._updateDebug();
+
+		// ── SELFTEST ────────────────────────────────────────────────
+		// Verify every token span in the rendered sentence has a
+		// valid data-token attribute. This catches regex / escape /
+		// rendering bugs BEFORE the user hovers anything.
+		const sentTokens = document.querySelectorAll('#attn-sentence .attn-token');
+		this._dbg('INFO', `SELFTEST: found ${sentTokens.length} token spans in sentence`);
+		sentTokens.forEach((span, i) => {
+			const dt = span.dataset.token;
+			const idx = parseInt(dt, 10);
+			const expected = ATTN_TOKENS.findIndex(t => t.name === span.textContent);
+			const ok = idx === expected;
+			this._dbg(ok ? 'OK' : 'ERROR',
+				`SELFTEST[${i}] "${span.textContent}" data-token="${dt}" parsed=${idx} expected=${expected}`);
+		});
+
+		this._dbg('INFO', `init() done, step=${this.step}, example=${ATTN_2D.exampleIdx}`);
+
+		// Hover tooltips on the parts of the big equation. The equation
+		// is rebuilt on every step, so we use event delegation on the
+		// container instead of attaching handlers to each fragment.
+		const eqEl = document.getElementById('attn-anatomy-equation');
+		if (eqEl) {
+			eqEl.addEventListener('mouseover', (e) => {
+				const t = e.target.closest ? e.target.closest('.eq-tip') : null;
+				if (t) this._showTooltip(t.dataset.tip, null, e.clientX, e.clientY);
+				else this._hideTooltip();
+			});
+			eqEl.addEventListener('mousemove', (e) => {
+				const t = e.target.closest ? e.target.closest('.eq-tip') : null;
+				if (t) this._showTooltip(t.dataset.tip, null, e.clientX, e.clientY);
+			});
+			eqEl.addEventListener('mouseleave', () => this._hideTooltip());
+		}
+
+		// Hover tooltips on the rows of the "Currently computing" panel.
+		// Same delegation pattern — the rows are rebuilt on every step.
+		const compEl = document.getElementById('attn-section-computation');
+		if (compEl) {
+			const compRow = (e) => e.target.closest ? e.target.closest('.comp-eq') : null;
+			const showComp = (e) => {
+				const t = compRow(e);
+				if (!t) return false;
+				const idx = t.dataset.idx != null ? parseInt(t.dataset.idx, 10) : null;
+				this._showTooltip(t.dataset.tip, idx, e.clientX, e.clientY);
+				return true;
+			};
+			compEl.addEventListener('mouseover', (e) => {
+				if (!showComp(e)) this._hideTooltip();
+			});
+			compEl.addEventListener('mousemove', showComp);
+			compEl.addEventListener('mouseleave', () => this._hideTooltip());
+		}
+
+		// Keyboard navigation: ← / → step through. Skipped while typing
+		// in form fields so this never steals input events.
+		this._keyHandler = (e) => {
+			const t = e.target;
+			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+			if (e.key === 'ArrowLeft')  { e.preventDefault(); this.prev(); }
+			if (e.key === 'ArrowRight') { e.preventDefault(); this.next(); }
+		};
+		document.addEventListener('keydown', this._keyHandler);
+
+		// First render — fills in the arrows for step 1.
+		this.render();
+
+		if (window.__MN_DARK) {
+			window.__MN_DARK.onChange(() => { this._themeSVG(); this.render(); });
+		}
+	},
+
+	// Build the tooltip body for an arrow (or an angle arc). Returns:
+	//   { name, intuition, concreteLatex, formulaLatex, unicode, desc }
+	// - intuition is the plain-language "what this MEANS" headline
+	// - concreteLatex is the concrete equation with the values filled
+	//   in, e.g. "k₁ = [0.90, 0.45]" — underbraced with a label
+	// - formulaLatex is the Temml LaTeX for the general formula
+	// - unicode is the fallback text shown if Temml can't render
+	// - desc is the mathematical explanation underneath
+	_buildArrowInfo: function(key, idx) {
+		const fmt    = (v) => v.toFixed(2);
+		const fmtVec = (v) => v ? `[${fmt(v[0])},\\; ${fmt(v[1])}]` : '\\text{n/a}';
+		const VF = VECTOR_FORMULAS;
+		switch (key) {
+			case 'q':
+				return {
+					name: 'q  (the query)',
+					intuition: VF.q.intuition,
+					concreteLatex: `\\underbrace{\\mathbf{q} = ${fmtVec(ATTN_2D.q)}}_{\\text{query}}`,
+					formulaLatex: VF.q.formula,
+					unicode: VF.q.unicode,
+					desc: VF.q.desc
+				};
+			case 'k': {
+				const k = ATTN_2D.keys[idx];
+				const t = ATTN_TOKENS[idx + 1].name;
+				return {
+					name: `k${idx+1}  (key of “${t}”)`,
+					intuition: `The arrow of <b>“${t}”</b> — what this word <i>advertises</i> it contains. ${VF.k.intuition}`,
+					concreteLatex: `\\underbrace{\\mathbf{k}_{${idx+1}} = ${fmtVec(k)}}_{\\text{key of “${t}”}}`,
+					formulaLatex: VF.k.formula,
+					unicode: VF.k.unicode,
+					desc: VF.k.desc
+				};
+			}
+			case 'v': {
+				const v = ATTN_2D.vals[idx];
+				const t = ATTN_TOKENS[idx + 1].name;
+				return {
+					name: `v${idx+1}  (value of “${t}”)`,
+					intuition: `What <b>“${t}”</b> actually contributes to the answer. ${VF.v.intuition}`,
+					concreteLatex: `\\underbrace{\\mathbf{v}_{${idx+1}} = ${fmtVec(v)}}_{\\text{value of “${t}”}}`,
+					formulaLatex: VF.v.formula,
+					unicode: VF.v.unicode,
+					desc: VF.v.desc
+				};
+			}
+			case 'weightedV': {
+				const wv = ATTN_2D.weightedVals[idx];
+				const t = ATTN_TOKENS[idx + 1].name;
+				return {
+					name: `α${idx+1}·v${idx+1}  (“${t}”, scaled)`,
+					intuition: `How much of <b>“${t}”</b> makes it into the answer. ${VF.weightedV.intuition}`,
+					concreteLatex: `\\underbrace{\\alpha_{${idx+1}} \\, \\mathbf{v}_{${idx+1}} = ${fmtVec(wv)}}_{\\text{weight} \\times \\text{value}}`,
+					formulaLatex: VF.weightedV.formula,
+					unicode: VF.weightedV.unicode,
+					desc: VF.weightedV.desc
+				};
+			}
+			case 'z':
+				return {
+					name: 'z  (the output)',
+					intuition: VF.z.intuition,
+					concreteLatex: `\\underbrace{\\mathbf{z} = ${fmtVec(ATTN_2D.output)}}_{\\text{contextualised output}}`,
+					formulaLatex: VF.z.formula,
+					unicode: VF.z.unicode,
+					desc: VF.z.desc
+				};
+			case 'self-v': {
+				// Self-attention value vector for token idx+1
+				const v = ATTN_2D._allVals[idx];
+				const t = ATTN_TOKENS[idx + 1].name;
+				return {
+					name: `v${idx+1}  (value of “${t}”)`,
+					intuition: `What <b>“${t}”</b> contributes to every output. In self-attention, each v is blended into every z according to α.`,
+					concreteLatex: `\\underbrace{\\mathbf{v}_{${idx+1}} = ${fmtVec(v)}}_{\\text{value of “${t}”}}`,
+					formulaLatex: '\\mathbf{v}_j = \\mathbf{W}^V \\, \\mathbf{x}_j',
+					unicode: `v${idx+1} = [${v[0].toFixed(2)}, ${v[1].toFixed(2)}]`,
+					desc: `Same v used for every query's output. Scaled by α_{ij} before summing into z_i.`
+				};
+			}
+			case 'angle': {
+				const q = ATTN_2D.q;
+				const k = ATTN_2D.keys[idx];
+				const t = ATTN_TOKENS[idx + 1].name;
+				const norm = (v) => Math.hypot(v[0], v[1]);
+				const nq = norm(q), nk = norm(k);
+				const cosT = Math.max(-1, Math.min(1, (q[0]*k[0] + q[1]*k[1]) / (nq * nk)));
+				const deg = Math.round(Math.acos(cosT) * 180 / Math.PI);
+				const score = q[0]*k[0] + q[1]*k[1];
+				const scaled = score / Math.sqrt(ATTN_2D.d_k);
+				const w = (ATTN_2D.weights[idx] || 0);
+
+				let intuition;
+				if (cosT > 0.85) {
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” is almost parallel to the query — large positive score, winner.`;
+				} else if (cosT > 0.3) {
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” points roughly the same way — positive score, partial match.`;
+				} else if (cosT > -0.3) {
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” is near right angles — near-zero score, near-uniform share.`;
+				} else {
+					intuition = `<b>${(w*100).toFixed(1)}%</b> of the attention. “${t}” points the opposite way — negative score, almost no weight.`;
+				}
+
+				return {
+					name: `angle: q (“it”) ↔ k${idx+1} (“${t}”)`,
+					intuition,
+					concreteLatex: `\\underbrace{\\theta \\approx ${deg}^\\circ}_{\\cos\\theta \\approx ${cosT.toFixed(3)}}`,
+					formulaLatex: '\\cos\\theta = \\dfrac{q \\cdot k_j}{\\lVert q \\rVert \\, \\lVert k_j \\rVert}',
+					unicode: `cos θ ≈ ${cosT.toFixed(2)}  →  θ ≈ ${deg}°`,
+					desc: `Score: $q \\cdot k_{${idx+1}} = (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${score.toFixed(3)}$. Scaled by $\\sqrt{d_k}$: ${scaled.toFixed(3)}. After softmax: $\\alpha_{${idx+1}} = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\%$.`
+				};
+			}
+		}
+		return this._buildExtraInfo(key, idx);
+	},
+
+	// Tooltip content for the per-token mini-arrows in step 11 (self-
+	// attention). Each token gets its own q / k / v / z and the hover
+	// has to spell out exactly where each of those values came from:
+	//   q_i — from the token's own embedding x_i, multiplied by W^Q
+	//   k_i — from the token's own embedding x_i, multiplied by W^K
+	//   v_i — from the token's own embedding x_i, multiplied by W^V
+	//   z_i — Σ_j α_ij · v_j, with all the per-key weights spelled out
+	//
+	// GUARDRAILS — this code is easy to break silently (NaN coords,
+	// missing data, off-by-one indices, numTokens flips between hovers)
+	// so every branch starts with strict input validation. If the data
+	// is missing or corrupt, return a minimal "unavailable" payload
+	// rather than rendering "undefined · undefined" or NaN in Temml.
+	_buildSelfAttentionInfo: function(key, idx) {
+		// 1. INPUT VALIDATION — bail out cleanly on garbage
+		if (typeof idx !== 'number' || !isFinite(idx) || idx < 0) {
+			this._dbg('ERROR', `_buildSelfAttentionInfo: bad idx=${idx}`);
+			return this._saUnavailable('invalid token index');
+		}
+		const n = ATTN_2D.numTokens;
+		if (!isFinite(n) || n < 1) {
+			this._dbg('ERROR', `_buildSelfAttentionInfo: bad numTokens=${n}`);
+			return this._saUnavailable('numTokens not set');
+		}
+		if (idx >= n) {
+			this._dbg('ERROR', `_buildSelfAttentionInfo: idx=${idx} >= numTokens=${n}`);
+			return this._saUnavailable('token out of range');
+		}
+		if (!Array.isArray(ATTN_2D._allQueries) || !Array.isArray(ATTN_2D._allKeys)
+		    || !Array.isArray(ATTN_2D._allVals) || !Array.isArray(ATTN_2D.selfOutputs)) {
+			this._dbg('ERROR', '_buildSelfAttentionInfo: arrays not initialised');
+			return this._saUnavailable('data not ready');
+		}
+
+		const isIt    = (idx === 0);
+		const tName   = (ATTN_TOKENS[idx] && ATTN_TOKENS[idx].name) || `token ${idx}`;
+		// Token display labels:
+		//   q/k/v "it" is shown with the subscript "it"
+		//   q/k/v of token i (1-indexed: "sat"=1, "cat"=2, ...) use the index
+		const sub = isIt ? '\\text{it}' : String(idx);
+		// Compact number formatters used in every LaTeX expression.
+		const fmtNum  = (v) => (isFinite(v) ? v.toFixed(3) : '\\text{NaN}');
+		const fmtVec  = (v) => (Array.isArray(v) && isFinite(v[0]) && isFinite(v[1]))
+			? `[${fmtNum(v[0])},\\; ${fmtNum(v[1])}]` : '\\text{(unavailable)}';
+		const fmtVecPlain = (v) => (Array.isArray(v) && isFinite(v[0]) && isFinite(v[1]))
+			? `[${v[0].toFixed(2)}, ${v[1].toFixed(2)}]` : 'n/a';
+		// Bailout helper — Temml-safe minimal payload so we never produce
+		// "undefined · undefined" inside a $...$ block.
+		const bail = (msg) => {
+			this._dbg('WARN', `_buildSelfAttentionInfo(${key}, ${idx}): ${msg}`);
+			return {
+				name: `(${tName})`,
+				intuition: `<i>${msg}</i>`,
+				concreteLatex: `\\text{${msg}}`,
+				formulaLatex: '',
+				unicode: msg,
+				desc: '',
+			};
+		};
+
+		// 2. EXTRACT the four per-token values with bounds-checked reads.
+		//    queries is n+1 long (q_it + n token-q's); _allKeys and _allVals
+		//    are n long and there is NO k_it / v_it in this demo.
+		const q = (idx < ATTN_2D._allQueries.length) ? ATTN_2D._allQueries[idx] : null;
+		const k = isIt
+			? null
+			: ((idx - 1) < ATTN_2D._allKeys.length ? ATTN_2D._allKeys[idx - 1] : null);
+		const v = isIt
+			? null
+			: ((idx - 1) < ATTN_2D._allVals.length ? ATTN_2D._allVals[idx - 1] : null);
+		const z = (idx < ATTN_2D.selfOutputs.length) ? ATTN_2D.selfOutputs[idx] : null;
+
+		// 3. Helper to build the per-edit hint (which field the user can
+		//    click in the Live Values box above to change this value).
+		const editHint = (fieldLabel, fieldName) =>
+			`<b>✎ Editable:</b> click <code>${fieldLabel}</code> in the Live Values panel above ` +
+			`<span style="color:#64748b">(field: <code>${fieldName}</code>)</span> — every dependent value ` +
+			`(α-matrix, z's) recomputes live.`;
+
+		// 4. BRANCH on what was hovered.
+		switch (key) {
+			case 'sa-q':
+				if (!q || !isFinite(q[0]) || !isFinite(q[1])) {
+					return bail(`q_{${isIt ? '\\text{it}' : idx}} unavailable`);
+				}
+				return {
+					name: `q${isIt ? '\\text{ it}' : '_' + idx} — query of “${tName}”`,
+					vars:
+						`<b>Variables in this panel:</b> ` +
+						`q<sub>${sub}</sub> (this arrow, red) — query vector · ` +
+						`x<sub>${sub}</sub> — input embedding of “${tName}” · ` +
+						`W<sup>Q</sup> — learned query projection (Step 1)`,
+					intuition:
+						`<b>q<sub>${sub}</sub></b> is what <b>${tName}</b> is <i>looking for</i> when it scans every other token's key. ` +
+						`A larger dot product with another token's k means more attention flows toward that token.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{q}_{${sub}} = ${fmtVec(q)}}_{\\text{this arrow}}`,
+					formulaLatex:
+						`\\mathbf{q}_{${sub}} \\;=\\; \\mathbf{x}_{${sub}} \\, \\mathbf{W}^Q`,
+					unicode:
+						isIt
+							? `q_it = ${fmtVecPlain(q)}  (held fixed across examples)`
+							: `q_${idx} = ${fmtVecPlain(q)} = x_${idx} · W^Q`,
+					editHint: isIt
+						? `<b>✎ In this demo q<sub>it</sub> is held fixed</b> — change it via the Edit Values button, or use the "set" selector to switch examples.`
+						: editHint(`x_${idx} (input)`, `tokens[${idx-1}].q`),
+					desc:
+						isIt
+							? `Edit: change the input embedding <code>x</code> in the Step 1 demo to see how q<sub>it</sub> = x · W<sup>Q</sup> updates (W<sup>Q</sup> is the identity in the Step 1 demo, so q = x).`
+							: `Token <b>${tName}</b>'s embedding <code>x<sub>${idx}</sub></code> lives in <code>_allQueries[${idx}]</code> (= <code>set.tokens[${idx-1}].q</code>). Click any value in the Live Values panel to edit — every α<sub>${idx},j</sub> recomputes via softmax, and z<sub>${idx}</sub> updates accordingly.`,
+				};
+
+			case 'sa-k':
+				if (isIt || !k || !isFinite(k[0]) || !isFinite(k[1])) {
+					return {
+						name: `k of “${tName}”`,
+						vars: `<b>Variables:</b> k<sub>${sub}</sub> — would-be key for “${tName}”. ` +
+							`<span style="color:#dc2626">Not drawn in this demo</span>: “it” carries no own key.`,
+						intuition:
+							`In this demo the query token <b>“it”</b> has <i>no own key</i> — it asks questions but does not advertise itself. ` +
+							`The arrows in the OTHER panels (cat, dog, ...) are the keys that <b>“it”</b>'s query scores against.`,
+						concreteLatex: '\\text{(no } \\mathbf{k}_{\\text{it}} \\text{ in this demo)}',
+						formulaLatex: '',
+						unicode: 'k_it = n/a',
+						editHint: 'Not editable — this k simply does not exist in the demo\'s data model.',
+						desc: 'Hover any blue arrow in the other panels to see that token\'s key formula k<sub>i</sub> = x<sub>i</sub> · W<sup>K</sup>.',
+					};
+				}
+				return {
+					name: `k${isIt ? '' : '_' + idx} — key of “${tName}”`,
+					vars:
+						`<b>Variables in this panel:</b> ` +
+						`k<sub>${idx}</sub> (this arrow, blue) — key vector · ` +
+						`x<sub>${idx}</sub> — input embedding of “${tName}” · ` +
+						`W<sup>K</sup> — learned key projection (Step 1)`,
+					intuition:
+						`<b>k<sub>${idx}</sub></b> is what <b>${tName}</b> <i>advertises</i> about its content. ` +
+						`Every other token's query q<sub>i</sub> is scored against this k via ` +
+						`<code>α<sub>i${idx}</sub> = softmax(q<sub>i</sub> · k<sub>${idx}</sub> / √d<sub>k</sub>)</code>.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{k}_{${idx}} = ${fmtVec(k)}}_{\\text{this arrow}}`,
+					formulaLatex:
+						`\\mathbf{k}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^K`,
+					unicode:
+						`k_${idx} = ${fmtVecPlain(k)} = x_${idx} · W^K`,
+					editHint: editHint(`x_${idx} (input)`, `tokens[${idx-1}].k`),
+					desc:
+						`Stored in <code>_allKeys[${idx-1}]</code> (= <code>set.tokens[${idx-1}].k</code>). ` +
+						`Edit it to immediately see all <code>α<sub>•${idx}</sub></code> recompute — the dot product ` +
+						`<code>q<sub>i</sub> · k<sub>${idx}</sub></code> is what every row of the α-matrix uses as its raw score before softmax.`,
+				};
+
+			case 'sa-v':
+				if (isIt) {
+					return {
+						name: `v of “${tName}”`,
+						vars: `<b>Variables:</b> v<sub>${sub}</sub> — would-be value for “${tName}”. ` +
+							`<span style="color:#dc2626">Not drawn in this demo</span>: “it” carries no own value.`,
+						intuition:
+							`The query token <b>“it”</b> has no value in this demo — it asks the question but contributes no content. ` +
+							`Hover any green arrow in the other panels to see the value formulas.`,
+						concreteLatex: '\\text{(no } \\mathbf{v}_{\\text{it}} \\text{ in this demo)}',
+						formulaLatex: '',
+						unicode: 'v_it = n/a',
+						editHint: 'Not editable.',
+						desc: 'v is the actual payload each token contributes to every output z<sub>i</sub>. It scales by α before being summed.',
+					};
+				}
+				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
+					return bail(`v_{${idx}} unavailable`);
+				}
+				return {
+					name: `v${idx} — value of “${tName}”`,
+					vars:
+						`<b>Variables in this panel:</b> ` +
+						`v<sub>${idx}</sub> (this arrow, green) — value vector · ` +
+						`x<sub>${idx}</sub> — input embedding of “${tName}” · ` +
+						`W<sup>V</sup> — learned value projection (Step 1)`,
+					intuition:
+						`<b>v<sub>${idx}</sub></b> is what <b>${tName}</b> actually contributes to the answer. ` +
+						`The same v<sub>${idx}</sub> is used in <i>every</i> z<sub>i</sub> — each output scales it by α<sub>i${idx}</sub> before summing: ` +
+						`<code>z<sub>i</sub> = Σ<sub>j</sub> α<sub>ij</sub> · v<sub>j</sub></code>.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{v}_{${idx}} = ${fmtVec(v)}}_{\\text{this arrow}}`,
+					formulaLatex:
+						`\\mathbf{v}_{${idx}} \\;=\\; \\mathbf{x}_{${idx}} \\, \\mathbf{W}^V`,
+					unicode:
+						`v_${idx} = ${fmtVecPlain(v)} = x_${idx} · W^V`,
+					editHint: editHint(`x_${idx} (input)`, `tokens[${idx-1}].v`),
+					desc:
+						`Stored in <code>_allVals[${idx-1}]</code> (= <code>set.tokens[${idx-1}].v</code>). ` +
+						`Edit it and every z<sub>i</sub> (for all i = 0..n-1) recomputes — v<sub>${idx}</sub> is multiplied by every row of the α-matrix.`,
+				};
+
+			case 'sa-z':
+				if (!z || !isFinite(z[0]) || !isFinite(z[1])) {
+					return bail(`z_{${idx}} unavailable`);
+				}
+				// Pull the full row from the α-matrix and every v_j; build
+				// the explicit sum AND a per-term breakdown table. The table
+				// is what makes "where does this 57% come from" answerable.
+				const M = ATTN_2D.matrix;
+				if (!Array.isArray(M) || idx >= M.length) {
+					return bail('matrix not ready');
+				}
+				const row = M[idx] || [];
+
+				// Per-term breakdown: for each j, list α, v, α·v.
+				// The html breakdown goes in `breakdown` (rendered as raw
+				// HTML into the tt-breakdown box). The LaTeX version goes
+				// in concreteLatex underbraced.
+				let alphaStr = '', vStr = '', avStr = '';
+				const tableRows = [];
+				let sumX = 0, sumY = 0;
+				for (let j = 0; j < row.length; j++) {
+					const a = row[j];
+					if (!isFinite(a)) continue;
+					const vj = ATTN_2D._allVals[j];
+					const kn = ATTN_TOKENS[j + 1] ? ATTN_TOKENS[j + 1].name : `t${j+1}`;
+					const aPct = (a * 100).toFixed(1);
+					if (!vj || !isFinite(vj[0]) || !isFinite(vj[1])) {
+						alphaStr += `\\alpha_{${idx},${j+1}}\\,(${aPct}\\%)\\;+\\;`;
+						tableRows.push(
+							`<tr><td>j=${j+1} (${kn})</td>` +
+							`<td class="num">${aPct}%</td>` +
+							`<td class="num">n/a</td>` +
+							`<td class="num">n/a</td></tr>`);
+						continue;
+					}
+					const av = [a * vj[0], a * vj[1]];
+					sumX += av[0]; sumY += av[1];
+					alphaStr += `\\underbrace{${aPct}\\%}_{\\alpha_{${idx},${j+1}}}\\cdot\\underbrace{\\mathbf{v}_{${j+1}}}_{\\text{“${kn}”}}\\;+\\;`;
+					vStr += `${vj[0].toFixed(2)},${vj[1].toFixed(2)}\\;\\;`;
+					avStr += `${av[0].toFixed(2)},${av[1].toFixed(2)}\\;\\;`;
+					tableRows.push(
+						`<tr>` +
+							`<td>j=${j+1} (${kn})</td>` +
+							`<td class="pct">${aPct}%</td>` +
+							`<td class="num">[${vj[0].toFixed(2)}, ${vj[1].toFixed(2)}]</td>` +
+							`<td class="num">[${av[0].toFixed(2)}, ${av[1].toFixed(2)}]</td>` +
+						`</tr>`);
+				}
+				// Strip trailing +\\;
+				alphaStr = alphaStr.replace(/\\;\\+\\;\;$/, '');
+				if (!alphaStr) alphaStr = '\\text{(no contributing keys)}';
+
+				// The sum row at the bottom — compare to z so the user can
+				// see "yes, these pieces DO add up to the displayed z".
+				const sumOk = Math.abs(sumX - z[0]) < 0.005 && Math.abs(sumY - z[1]) < 0.005;
+				const sumXstr = sumX.toFixed(2);
+				const sumYstr = sumY.toFixed(2);
+				const tableHTML =
+					`<table>` +
+						`<thead><tr>` +
+							`<th style="text-align:left">key j</th>` +
+							`<th style="text-align:right">α<sub>${idx},j</sub></th>` +
+							`<th style="text-align:right">v<sub>j</sub></th>` +
+							`<th style="text-align:right">α·v</th>` +
+						`</tr></thead>` +
+						`<tbody>${tableRows.join('')}` +
+						`<tr class="total"><td>sum</td>` +
+							`<td class="num">${(row.reduce((a,b)=>a+(isFinite(b)?b:0),0)*100).toFixed(1)}%</td>` +
+							`<td></td>` +
+							`<td class="num">[${sumXstr}, ${sumYstr}]` +
+								(sumOk ? ' ✓' : ' ✗ mismatch') + `</td>` +
+						`</tr>` +
+						`<tr class="total"><td>displayed z<sub>${sub}</sub></td>` +
+							`<td></td><td></td>` +
+							`<td class="num">[${z[0].toFixed(2)}, ${z[1].toFixed(2)}]</td>` +
+						`</tr>` +
+					`</tbody></table>`;
+
+				// Vars legend for the z panel — list everything involved.
+				const varsZ = `<b>Variables in this panel:</b> ` +
+					`z<sub>${sub}</sub> (this arrow, orange) — output vector · ` +
+					`α<sub>${idx},j</sub> — attention weights (row ${idx} of α-matrix, step 10) · ` +
+					`v<sub>j</sub> — value vectors (green arrows in OTHER panels) · ` +
+					`q<sub>${idx}</sub> — this token's query (red arrow in THIS panel)`;
+
+				return {
+					name: `z${isIt ? '\\text{ it}' : '_' + idx} — output for “${tName}”`,
+					vars: varsZ,
+					intuition:
+						`<b>z<sub>${sub}</sub></b> is <b>${tName}</b>'s final output — a weighted blend of every value vector. ` +
+						`The weights come from row ${idx} of the α-matrix (one softmax distribution per token). ` +
+						`Each v<sub>j</sub> is multiplied by α<sub>${idx},j</sub> and summed — see the table below for the per-piece contribution.`,
+					concreteLatex:
+						`\\underbrace{\\mathbf{z}_{${sub}} = ${fmtVec(z)}}_{\\text{this arrow}}` +
+						`\\;=\\;` + alphaStr,
+					formulaLatex:
+						`\\mathbf{z}_{${sub}} \\;=\\; \\sum_{j=1}^{L} \\alpha_{${idx},j}\\, \\mathbf{v}_j ` +
+						`\\;=\\; \\sum_{j=1}^{L} \\text{softmax}\\!\\left(\\frac{\\mathbf{q}_{${sub}} \\cdot \\mathbf{k}_j}{\\sqrt{d_k}}\\right) \\mathbf{v}_j`,
+					unicode:
+						`z_${sub} = [${z[0].toFixed(2)}, ${z[1].toFixed(2)}] = ` +
+						row.map((a, j) => `${(a*100).toFixed(0)}%·v${j+1}`).join(' + '),
+					breakdown: tableHTML,
+					editHint:
+						`<b>✎ Editable inputs</b> (each one re-runs the full α → z pipeline on every keystroke):` +
+						`<ul style="margin:4px 0 0 18px; padding:0">` +
+							`<li><code>x<sub>${sub}</sub></code> (via q<sub>${sub}</sub> = x · W<sup>Q</sup> if you edit q, or directly) — changes q and every α<sub>${idx},j</sub></li>` +
+							`<li><code>x<sub>j</sub></code> for any other token — changes k<sub>j</sub> or v<sub>j</sub>, which affects every α row and every z</li>` +
+						`</ul>`,
+					desc:
+						`The percentage on each row is <b>α<sub>${idx},j</sub></b> = softmax-score of ` +
+						`<code>q<sub>${sub}</sub> · k<sub>j</sub> / √d<sub>k</sub></code>. ` +
+						`Multiply it by v<sub>j</sub> to get that piece's contribution to z<sub>${sub}</sub>. ` +
+						`Sum across all j — the bottom-right cell shows the sum, and the next row shows the displayed z. ` +
+						`If they match (✓) the breakdown is consistent with what you see on screen.`,
+				};
+		}
+		// Unknown key — don't let the caller crash
+		return this._saUnavailable(`unknown self-attn key: ${key}`);
+	},
+
+	// Minimal "something went wrong" payload for the self-attn tooltip.
+	// Returns a Temml-safe object so _showTooltip never has to special-case
+	// missing data. Includes the same extra fields as the real payloads so
+	// _showTooltip can render the optional sections without checking.
+	_saUnavailable: function(reason) {
+		return {
+			name: 'self-attention value',
+			intuition: `<i>Tooltip unavailable (${reason}).</i>`,
+			concreteLatex: '\\text{(unavailable)}',
+			formulaLatex: '',
+			unicode: '(unavailable)',
+			desc: '',
+			vars: '',
+			editHint: '',
+			breakdown: '',
+		};
+	},
+
+	// Tooltip content for everything else that is hoverable but is not a
+	// plain arrow: the parts of the big equation (q_i, k_j, α_ij, Σ, exp,
+	// √d_k, v_j, z), the bars, the component-product rectangles, the
+	// projection dots, the weight-bar segments and the span fill. Each
+	// one shows the general formula AND the live numbers so hovering is
+	// always enough to "see" where a value comes from.
+	_buildExtraInfo: function(key, idx) {
+		const AT  = ATTN_TOKENS;
+		const q   = ATTN_2D.q;
+		const VF  = VECTOR_FORMULAS;
+		const fmt = (n) => n.toFixed(2);
+		const sum = ATTN_2D.exps.reduce((a, b) => a + b, 0);
+		const d   = ATTN_2D.demo;
+		const klist  = ATTN_2D.keys.map((k, j) => `\\mathbf{k}_{${j+1}} = (${fmt(k[0])},\\; ${fmt(k[1])})`).join(',\\qquad ');
+		const vtoks  = ATTN_2D.vals.map((v, j) => `\\mathbf{v}_{${j+1}} = (${fmt(v[0])},\\; ${fmt(v[1])})`).join(',\\qquad ');
+		const alphas = ATTN_2D.weights.map((w, j) => `\\alpha_{${j+1}} = ${(w * 100).toFixed(1)}\\%`).join(',\\qquad ');
+
+		switch (key) {
+			case 'eq-qi':
+				return {
+					name: 'qᵢ — the query',
+					intuition: 'The arrow of <b>“it”</b>: the direction it is <i>looking for</i> a match. Every other vector is scored against this one.',
+					concreteLatex: `\\mathbf{q} = (${fmt(q[0])},\\; ${fmt(q[1])})`,
+					formulaLatex: VF['eq-qi'].formula,
+					unicode: 'qᵢ = xᵢ · W^Q',
+					desc: 'Token $i$ (“it”) is multiplied by the learned query matrix $W^Q$. The result is the direction attention searches along.'
+				};
+			case 'eq-kj':
+				return {
+					name: 'kⱼ — the keys',
+					intuition: 'The words that <b>advertise</b> what they contain. The closer a key points to the query, the more “it” attends to it.',
+					concreteLatex: klist,
+					formulaLatex: VF['eq-kj'].formula,
+					unicode: 'kⱼ = xⱼ · W^K',
+					desc: `Each key is the projection of its token: $k_j = x_j W^K$. Active keys here: ${ATTN_2D.keys.map((k, j) => `${AT[j+1].name}`).join(', ')}.`
+				};
+			case 'eq-vj':
+				return {
+					name: 'vⱼ — the values',
+					intuition: 'The actual <b>payload</b> each token contributes to the blended answer. Keys say <i>what</i> to attend to; values carry the content.',
+					concreteLatex: vtoks,
+					formulaLatex: VF['eq-vj'].formula,
+					unicode: 'vⱼ = xⱼ · W^V',
+					desc: 'The value vectors get blended into the output, each weighted by its attention weight.'
+				};
+			case 'eq-alpha':
+				return {
+					name: 'αᵢⱼ — the attention weight',
+					intuition: 'How much of each token’s value “it” mixes in. The weights <b>sum to exactly 100%</b> — a finite budget of attention.',
+					concreteLatex: alphas,
+					formulaLatex: VF['eq-alpha'].formula,
+					unicode: 'αᵢⱼ = e^(qᵢ·kⱼ/√dₖ) / Σₙ e^(qᵢ·kₙ/√dₖ)',
+					desc: 'The softmax weight of key $j$ for query $i$. Always between $0$ and $1$, and $\\sum_j \\alpha_{ij} = 1$.'
+				};
+			case 'eq-exp':
+				return {
+					name: 'exp — exponentiate',
+					intuition: 'exp turns every score <b>positive</b> and amplifies differences: the biggest input grows the most, so it starts to dominate.',
+					concreteLatex: ATTN_2D.exps.map((e, j) => `e^{${ATTN_2D.scaled[j].toFixed(3)}} = ${e.toFixed(3)}`).join(',\\qquad '),
+					formulaLatex: VF['eq-exp'].formula,
+					unicode: 'e^score',
+					desc: 'Exponentiating the scaled score makes all values positive. Only the relative sizes then matter — which is exactly what softmax normalizes away.'
+				};
+			case 'eq-sum':
+				return {
+					name: 'Σ — the normalization sum',
+					intuition: 'The <b>total</b> of all exp(score)s. Dividing each exp(score) by this total turns them into weights that sum to 100%.',
+					concreteLatex: `${ATTN_2D.exps.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)}`,
+					formulaLatex: VF['eq-sum'].formula,
+					unicode: 'Σₙ e^(qᵢ·kₙ/√dₖ)',
+					desc: 'The denominator of softmax — the sum over all keys of their exponentiated scaled scores.'
+				};
+			case 'eq-dot':
+				return {
+					name: 'qᵢ · kⱼ — the dot product',
+					intuition: 'Directional <b>agreement</b>: positive means the same way, negative means opposite. These are the raw attention scores.',
+					concreteLatex: `q\\cdot k_{1} = (${fmt(q[0])})(${fmt(ATTN_2D.keys[0][0])}) + (${fmt(q[1])})(${fmt(ATTN_2D.keys[0][1])}) = ${ATTN_2D.scores[0].toFixed(3)}` + ATTN_2D.keys.slice(1).map((k, j) => `,\\; q\\cdot k_{${j+2}} = ${ATTN_2D.scores[j+1].toFixed(3)}`).join(''),
+					formulaLatex: VF['eq-dot'].formula,
+					unicode: 'qᵢ·kⱼ = ‖qᵢ‖‖kⱼ‖cosθ',
+					desc: 'The dot product is the projection of $\\mathbf{q}$ onto $\\mathbf{k}$, scaled by $\\lVert\\mathbf{k}\\rVert$.'
+				};
+			case 'eq-sqrt':
+				return {
+					name: '√dₖ — variance control',
+					intuition: 'Dividing by $\\sqrt{2} \\approx 1.414$ keeps the scores near magnitude $1$. In a real model $d_k = 64$, so $\\sqrt{64} = 8$ — without this the softmax would saturate to a hard one-hot.',
+					concreteLatex: '\\sqrt{d_k} = \\sqrt{2} = 1.414',
+					formulaLatex: VF['eq-sqrt'].formula,
+					unicode: '√dₖ  (here √2 ≈ 1.414)',
+					desc: 'Scaling factor that keeps the variance of the scores near $1$, independent of the key dimension $d_k$.'
+				};
+			case 'eq-z':
+				return {
+					name: 'zᵢ — the contextualised output',
+					intuition: 'The <b>blended answer</b> for “it”: the weighted middle of all values, pulled toward the ones that won attention.',
+					concreteLatex: `\\mathbf{z} = (${fmt(ATTN_2D.output[0])},\\; ${fmt(ATTN_2D.output[1])})`,
+					formulaLatex: VF['eq-z'].formula,
+					unicode: 'zᵢ = Σⱼ αᵢⱼ vⱼ',
+					desc: 'A convex combination — z always lies inside the span of the value vectors.'
+				};
+
+			case 'bar-score': {
+				const k = ATTN_2D.keys[idx];
+				const s = ATTN_2D.scores[idx];
+				return {
+					name: `score q·k${idx+1}  (“${AT[idx+1].name}”)`,
+					intuition: `How strongly <b>“${AT[idx+1].name}”</b> aligns with “it”. Positive = same direction, negative = opposite. This is the raw input to softmax.`,
+					concreteLatex: `q\\cdot k_{${idx+1}} = (${fmt(q[0])})(${fmt(k[0])}) + (${fmt(q[1])})(${fmt(k[1])}) = ${s.toFixed(3)}`,
+					formulaLatex: VF['bar-score'].formula,
+					unicode: `q·k${idx+1} = ${s.toFixed(3)}`,
+					desc: `The bar’s height is the attention score of key ${idx+1}, before any scaling.`
+				};
+			}
+			case 'bar-scaled': {
+				const s = ATTN_2D.scores[idx], sc = ATTN_2D.scaled[idx];
+				return {
+					name: `scaled score s${idx+1}  (“${AT[idx+1].name}”)`,
+					intuition: `The score divided by $\\sqrt{2} \\approx 1.414$. The bar <b>shrank</b> — this keeps the numbers near magnitude $1$ so softmax stays smooth.`,
+					concreteLatex: `\\frac{${s.toFixed(3)}}{\\sqrt{2}} = ${sc.toFixed(3)}`,
+					formulaLatex: VF['bar-scaled'].formula,
+					unicode: `s${idx+1} = ${sc.toFixed(3)}`,
+					desc: `The scaled attention score of key ${idx+1}: $\\frac{q \\cdot k_{${idx+1}}}{\\sqrt{d_k}}$.`
+				};
+			}
+			case 'bar-exp': {
+				const sc = ATTN_2D.scaled[idx], ex = ATTN_2D.exps[idx];
+				return {
+					name: `exp(score)  (“${AT[idx+1].name}”)`,
+					intuition: `The bar <b>grew</b>: exp turns every number positive and amplifies the biggest one the most. “${AT[idx+1].name}” now towers over the rest.`,
+					concreteLatex: `e^{${sc.toFixed(3)}} = ${ex.toFixed(3)}`,
+					formulaLatex: VF['bar-exp'].formula,
+					unicode: `e^s = ${ex.toFixed(3)}`,
+					desc: `The exponentiated scaled score of key ${idx+1}. Always positive; a bigger input yields a much bigger output.`
+				};
+			}
+			case 'wbar': {
+				const w = ATTN_2D.weights[idx];
+				return {
+					name: `α${idx+1} — attention weight (“${AT[idx+1].name}”)`,
+					intuition: `“${AT[idx+1].name}” receives <b>${(w * 100).toFixed(1)}%</b> of “it”’s attention. The segments together exactly fill the bar — a 100% budget.`,
+					concreteLatex: `\\alpha_{${idx+1}} = \\frac{${ATTN_2D.exps[idx].toFixed(3)}}{${sum.toFixed(3)}} = ${w.toFixed(3)}`,
+					formulaLatex: VF.wbar.formula,
+					unicode: `α${idx+1} = ${w.toFixed(3)}`,
+					desc: `The share of the attention budget that key ${idx+1} wins. Summed over all keys it equals $1$.`
+				};
+			}
+			case 'comprect': {
+				const j = Math.floor(idx / 2);   // key index
+				const d = idx % 2;                // dimension (0 or 1)
+				const kj = ATTN_2D.keys[j];
+				const a = q[d], b = kj[d];
+				const tk = ATTN_TOKENS[j + 1].name;
+				const dim = d + 1;
+				return {
+					name: `q[${dim}] · k${j+1}[${dim}]  (${tk}, dim ${dim})`,
+					intuition: `The <b>area of this rectangle</b> is the per-dimension product ${fmt(a)} × ${fmt(b)}. Same sign → positive; opposite → negative.`,
+					concreteLatex: `(${fmt(a)})(${fmt(b)}) = ${(a * b).toFixed(3)}`,
+					formulaLatex: VF.comprect.formula,
+					unicode: `q[${dim}]·k${j+1}[${dim}] = ${(a * b).toFixed(3)}`,
+					desc: `The dot product for key ${j+1} is the sum of its two rectangles: $q \\cdot k_{${j+1}} = q[1]\\,k_{${j+1}}[1] + q[2]\\,k_{${j+1}}[2] = ${(a*b).toFixed(3)} + ${(q[1-d]*kj[1-d]).toFixed(3)} = ${ATTN_2D.scores[j].toFixed(3)}$.`
+				};
+			}
+			case 'proj': {
+				const k = ATTN_2D.keys[idx];
+				const nk = Math.hypot(k[0], k[1]);
+				const dot = ATTN_2D.scores[idx];
+				const len = dot / nk;
+				return {
+					name: `projection of q onto k${idx+1} (“${AT[idx+1].name}”)`,
+					intuition: `The dashed line drops “it”’s arrow <b>perpendicularly</b> onto k${idx+1}’s line. The dot shows how much of “it” points along “${AT[idx+1].name}”: length ${len.toFixed(2)}. Positive → same way, negative → it lands behind the origin.`,
+					concreteLatex: `\\frac{q \\cdot k_{${idx+1}}}{\\lVert k_{${idx+1}} \\rVert} = \\frac{${dot.toFixed(3)}}{${nk.toFixed(3)}} = ${len.toFixed(3)}`,
+					formulaLatex: VF.proj.formula,
+					unicode: `proj = ${len.toFixed(3)}`,
+					desc: `The scalar projection of $\\mathbf{q}$ onto $\\mathbf{k}_{${idx+1}}$. Multiply it by $\\lVert\\mathbf{k}_{${idx+1}}\\rVert$ and you recover the score $q\\cdot k_{${idx+1}} = ${dot.toFixed(3)}$.`
+				};
+			}
+			case 'span':
+				return {
+					name: 'the span of the values',
+					intuition: 'z is a <b>weighted average</b> of the value tips, so it can never leave this region. Attention can only interpolate what is already there — it cannot create new directions.',
+					concreteLatex: `\\mathrm{conv}\\big(\\mathbf{v}_1, \\ldots, \\mathbf{v}_{${ATTN_2D.vals.length}}\\big)`,
+					formulaLatex: VF.span.formula,
+					unicode: 'conv(v₁,…,vₘ)',
+					desc: `The convex hull of the value tips. Since $\\mathbf{z} = \\sum_j \\alpha_j \\mathbf{v}_j$ with $\\alpha_j \\ge 0$ and $\\sum_j \\alpha_j = 1$, $\\mathbf{z}$ always lands inside this region.`
+				};
+			case 'proj-input':
+				return {
+					name: 'x — the input embedding',
+					intuition: 'The <b>raw</b> token representation, before any learned projection. Same x feeds all three branches below.',
+					concreteLatex: `\\mathbf{x} = (${d.x[0].toFixed(2)},\\; ${d.x[1].toFixed(2)})`,
+					formulaLatex: '\\mathbf{x}',
+					unicode: 'x',
+					desc: 'In a real model, $\\mathbf{x}$ is the token embedding (e.g. the 768-dim output of the previous layer for GPT-2). Here it is 2D so the geometry stays visible.'
+				};
+			case 'proj-q':
+				return {
+					name: 'q — the query (W^Q · x)',
+					intuition: 'The <b>search direction</b>. W^Q is the identity here, so q points exactly along x — the query is just the raw token direction.',
+					concreteLatex: `\\mathbf{q} = \\mathbf{W}^Q \\mathbf{x} = (${d.q[0].toFixed(2)},\\; ${d.q[1].toFixed(2)})`,
+					formulaLatex: '\\mathbf{q} = \\mathbf{W}^Q \\mathbf{x}',
+					unicode: 'q = W^Q x',
+					desc: '$\\mathbf{W}^Q$ is a $d_k \\times d_{\\text{model}}$ matrix in a real Transformer — here a $2 \\times 2$ matrix so we can see it. Trained end-to-end so related queries point similar ways.'
+				};
+			case 'proj-k':
+				return {
+					name: 'k — the key (W^K · x)',
+					intuition: 'The <b>advertised content</b>. W^K here is a 90° rotation, so k points perpendicular to x — a deliberately different "view" of the same token.',
+					concreteLatex: `\\mathbf{k} = \\mathbf{W}^K \\mathbf{x} = (${d.k[0].toFixed(2)},\\; ${d.k[1].toFixed(2)})`,
+					formulaLatex: '\\mathbf{k} = \\mathbf{W}^K \\mathbf{x}',
+					unicode: 'k = W^K x',
+					desc: '$\\mathbf{W}^K$ is trained so related keys point similar ways — so they can be matched by similar queries via $\\mathbf{q} \\cdot \\mathbf{k}$.'
+				};
+			case 'proj-v':
+				return {
+					name: 'v — the value (W^V · x)',
+					intuition: 'The <b>payload</b>. W^V here is a horizontal shear, so v is x stretched along Dim 1 — a third independent "view".',
+					concreteLatex: `\\mathbf{v} = \\mathbf{W}^V \\mathbf{x} = (${d.v[0].toFixed(2)},\\; ${d.v[1].toFixed(2)})`,
+					formulaLatex: '\\mathbf{v} = \\mathbf{W}^V \\mathbf{x}',
+					unicode: 'v = W^V x',
+					desc: '$\\mathbf{W}^V$ is trained to put the token\'s content in a space where the weighted average $\\sum_j \\alpha_j \\mathbf{v}_j$ produces a useful output. The keys and values live in <i>different</i> spaces — keys serve matching, values serve blending.'
+				};
+			case 'proj-qk':
+				return {
+					name: 'q · k — the dot product',
+					intuition: 'How well the search direction matches the advertised content. Large = strong attention.',
+					concreteLatex: `\\mathbf{q} \\cdot \\mathbf{k} = ${d.qk.toFixed(3)}`,
+					formulaLatex: '\\mathbf{q} \\cdot \\mathbf{k}',
+					unicode: `q·k = ${d.qk.toFixed(3)}`,
+					desc: 'This scalar is the input to the rest of the pipeline: scaled by $1/\\sqrt{d_k}$, exponentiated, then softmax-normalised into the attention weight $\\alpha$.'
+				};
+			case 'matrix-cell': {
+				const i = Math.floor(idx / 10);
+				const j = idx % 10;
+				// Guard: matrix has _allKeys.length columns, not n. The
+				// trailing column(s) would index an undefined key — return
+				// a minimal tooltip instead of crashing.
+				if (i >= ATTN_2D._allQueries.length || j >= ATTN_2D._allKeys.length) {
+					return {
+						name: `α[${i+1}][${j+1}]`,
+						intuition: 'no key for this position in the single-query demo',
+						concreteLatex: '\\text{n/a}',
+						formulaLatex: '\\alpha_{ij}',
+						unicode: 'α[i][j] = n/a',
+						desc: 'This cell is outside the available key range.'
+					};
+				}
+				const qi = ATTN_2D._allQueries[i], kj = ATTN_2D._allKeys[j];
+				const score = qi[0]*kj[0] + qi[1]*kj[1];
+				const scaled = score / Math.sqrt(ATTN_2D.d_k);
+				const w = (ATTN_2D.matrix[i] || [])[j] || 0;
+				const qName = ATTN_TOKENS[i].name, kName = ATTN_TOKENS[j].name;
+				return {
+					name: `α[${i+1}][${j+1}]  —  ${qName} → ${kName}`,
+					intuition: `How much <b>${qName}</b> attends to <b>${kName}</b>.`,
+					concreteLatex: `\\alpha_{${i+1},${j+1}} = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\%`,
+					formulaLatex: '\\alpha_{ij} = \\dfrac{e^{\\mathbf{q}_i \\cdot \\mathbf{k}_j \\,/\\, \\sqrt{d_k}}}{\\sum_n e^{\\mathbf{q}_i \\cdot \\mathbf{k}_n \\,/\\, \\sqrt{d_k}}}',
+					unicode: `α[${i+1}][${j+1}] = ${(w*100).toFixed(1)}%`,
+					desc: `Score: $\\mathbf{q}_{${i+1}} \\cdot \\mathbf{k}_{${j+1}} = (${qi[0].toFixed(2)})(${kj[0].toFixed(2)}) + (${qi[1].toFixed(2)})(${kj[1].toFixed(2)}) = ${score.toFixed(3)}$. Scaled: ${scaled.toFixed(3)}. After softmax over all keys for this query: weight = ${w.toFixed(3)}.`
+				};
+			}
+		}
+		return null;
+	},
+
+	// Pre-render each VECTOR_FORMULAS entry's LaTeX to MathML via Temml.
+	// Bulletproof: tries up to 20 times with 25ms delays so even if Temml
+	// loads asynchronously we still get rendered MathML in the end.
+	_renderFormulas: function() {
+		const tmp = document.createElement('div');
+		tmp.style.position = 'absolute';
+		tmp.style.left = '0';
+		tmp.style.top = '0';
+		tmp.style.width = '600px';
+		tmp.style.visibility = 'hidden';
+		tmp.style.pointerEvents = 'none';
+		document.body.appendChild(tmp);
+
+		const sleep = (ms) => {
+			const s = Date.now();
+			while (Date.now() - s < ms) { /* synchronous wait */ }
+		};
+
+		for (const key in VECTOR_FORMULAS) {
+			const info = VECTOR_FORMULAS[key];
+			const latex = info.formula;
+			let rendered = '';
+
+		for (let attempt = 0; attempt < 20; attempt++) {
+			tmp.innerHTML = `$$ ${latex} $$`;
+			if (typeof render_temml === 'function') {
+				try { render_temml(tmp); } catch (e) { /* swallow */ }
+			}
+				if (tmp.innerHTML.indexOf('$$') === -1) {
+					rendered = tmp.innerHTML;
+					break;
+				}
+				sleep(25);
+			}
+			TEMML_RENDERED[key] = rendered;
+		}
+		document.body.removeChild(tmp);
+	},
+
+	next: function() {
+		if (this.step < ATTN_STEPS.length - 1) {
+			this.step++;
+			// GUARDRAIL: reset stale hover state from previous step
+			// (otherwise hoveredFormula.step=exps fires when we're now on
+			// step 7 or 11 and the sanity check complains).
+			ATTN_2D.hoveredFormula = null;
+			this._hideInlineTip();
+			this.render();
+		}
+	},
+
+	prev: function() {
+		if (this.step > 0) {
+			this.step--;
+			ATTN_2D.hoveredFormula = null;
+			this._hideInlineTip();
+			this.render();
+		}
+	},
+
+	// ─── Global state management ──────────────────────────────────
+	// ATTN_2D is the SINGLE SOURCE OF TRUTH. Every editable value lives
+	// there (q, _allKeys, _allVals, _allQueries, demo.*). Every render
+	// reads from it. When the user edits any number, the commit() path
+	// (in _attachEditors) does:
+	//   1. _setField(path, value)    → writes to ATTN_2D
+	//   2. _recomputeScores()         → q·k and scaled/√d_k fresh
+	//   3. recomputeWeights()         → softmax from fresh scaled
+	//   4. recomputeMatrix()          → full α[i][j] matrix fresh
+	//   5. render()                   → every panel + plot + bar redraws
+	// So changing one number in one step propagates to ALL steps
+	// (including the one you're on, and every other step if you flip
+	// back to it via Prev/Next).
+	_resetToDefaults: function() {
+		console.log('[attn] reset to defaults for example', ATTN_2D.exampleIdx);
+		// Re-run setExample() which copies the canonical q/keys/vals from
+		// ATTN_SETS back into ATTN_2D, then re-derives everything.
+		ATTN_2D.setExample(ATTN_2D.exampleIdx);
+		ATTN_2D._recomputeScores();
+		ATTN_2D.recomputeWeights();
+		ATTN_2D.recomputeMatrix();
+		this.render();
+		this._dbg('RESET', 'q, keys, vals reset to defaults for "' + ATTN_SETS[ATTN_2D.exampleIdx].label + '"');
+	},
+
+	goto: function(n) {
+		this.step = Math.max(0, Math.min(ATTN_STEPS.length - 1, n));
+		this.render();
+	},
+
+	render: function() {
+		// GUARDRAIL: if init() never ran (e.g. an earlier error
+		// prevented _setupFormulaHover), call it now so the hover
+		// handler is attached. Without this, editing works (because
+		// _attachEditors runs every render) but mouseovers never do.
+		if (!this._initRan) {
+			console.warn('[attn] render: _initRan is false — calling _setupFormulaHover now');
+			try { this._setupFormulaHover(); } catch (e) { console.error('[attn] _setupFormulaHover failed:', e); }
+			this._initRan = true;
+		}
+		const data = ATTN_STEPS[this.step];
+
+		// The tooltip caches content per (key, idx); after a re-render
+		// the numbers may have changed (e.g. token count), so drop it.
+		this._tipContentKey = null;
+
+		// Brief opacity dip on the left column while we swap content.
+		// The right column (plot/bars) just transitions its traces, no fade.
+		const fadeTargets = [
+			document.getElementById('attn-anatomy-equation'),
+			document.getElementById('attn-anatomy-computation'),
+			document.getElementById('attn-anatomy-intuition')
+		].filter(Boolean);
+		fadeTargets.forEach(el => { el.style.opacity = '0.35'; });
+
+		// Header bits
+		const titleEl = document.getElementById('attn-anatomy-step-title');
+		const numEl   = document.getElementById('attn-anatomy-step-num');
+		const totalEl = document.querySelector('.step-total');
+		if (numEl)   numEl.textContent   = `Step ${this.step + 1}`;
+		if (totalEl) totalEl.textContent = `of ${ATTN_STEPS.length}`;
+		if (titleEl) titleEl.innerHTML    = `— ${data.title}`;
+
+		// Reset the editable-field queue BEFORE the renders so ed()
+		// calls inside renderEquation/renderComputation/renderIntuition
+		// populate a FRESH queue. If we reset AFTER, we'd wipe the
+		// fields that were just pushed and _makeMathEditable would
+		// find an empty queue → no <span.ed> spans → nothing editable.
+		_resetEditableQueue();
+
+		// Update each panel
+		this.renderEquation(data);
+		this.renderComputation(data);
+		this.renderIntuition(data);
+		this._renderSentence();
+		this.render2D(data);
+		this._renderBarPlots(data);
+
+		// ASSERTION: queue must have fields after all renders
+		if (_editableFieldQueue.length === 0) {
+			console.warn('[attn] edit#16b: _editableFieldQueue is EMPTY after all renders — no ed() calls were made, nothing will be editable');
+		} else {
+			console.log('[attn] edit: queue populated with ' + _editableFieldQueue.length + ' fields: ' + _editableFieldQueue.join(', '));
+		}
+
+		// Temml is loaded by load_base_js(); it scans the document for
+		// $...$ / $$...$$ blocks and replaces them with MathML. After
+		// that, walk EVERY panel that contains ◆PATH|VALUE markers and
+		// swap them for editable <span class="ed"> so rendered formulas
+		// stay click-to-edit. This MUST be a single global pass — if we
+		// ran _makeMathEditable locally first and then the global
+		// render_temml() pass, the Temml pass would overwrite our
+		// <span class="ed"> back to <mtext>, and the ◆ markers would
+		// leak through to the user.
+		if (typeof render_temml === 'function') {
+			console.log('[attn] render_temml: calling per-panel pass, queue=' + _editableFieldQueue.length + ' fields');
+			// Call render_temml on EACH panel individually — some Temml
+			// versions don't scan the whole document when called with no
+			// argument, so we feed each panel explicitly.
+			['attn-section-computation', 'attn-live-values-container',
+			 'attn-anatomy-equation', 'attn-anatomy-intuition'].forEach(id => {
+				const panel = document.getElementById(id);
+				if (panel) {
+					try { render_temml(panel); } catch (e) { console.warn('[attn] render_temml failed for ' + id + ':', e); }
+				}
+			});
+		} else {
+			console.warn('[attn] edit#RENDER: render_temml NOT defined — Temml library not loaded? no <mtext> elements will be created');
+		}
+		// Single global pass over ONLY the panels with editable values.
+		// Equation and intuition panels are read-only — they have
+		// <mtext> elements (from \text{...} in LaTeX) but NO ed()
+		// calls, so processing them would consume queue fields that
+		// belong to the live-values or computation panels.
+		// Order matters: live-values first (its ed() calls happen
+		// first in renderComputation), then computation.
+		[
+			'attn-live-values-container',
+			'attn-section-computation'
+		].forEach(id => {
+			const panel = document.getElementById(id);
+			if (panel) this._makeMathEditable(panel);
+		});
+		// Attach click-to-edit handlers to all editable spans across
+		// all panels (not just the computation panel).
+		document.querySelectorAll('.attn-anatomy-grid span.ed').forEach(span => {
+			// _attachEditors already guards against double-binding via
+			// span._editableBound, so calling it repeatedly is safe.
+			// We just need to make sure every span gets the handler.
+		});
+		// Wire up editors on ONLY the panels with editable spans.
+		// Equation and intuition panels are read-only.
+		[
+			'attn-live-values-container',
+			'attn-section-computation'
+		].forEach(id => {
+			const panel = document.getElementById(id);
+			if (panel) this._attachEditors(panel);
+		});
+
+		// ASSERTION: after the full global pass, NO panel should still
+		// show ◆ markers in its visible text. If one does, the
+		// render_temml() / _makeMathEditable() / _attachEditors() chain
+		// failed for that panel.
+		[
+			'attn-section-computation',
+			'attn-live-values-container',
+			'attn-anatomy-equation',
+			'attn-anatomy-intuition'
+		].forEach(id => {
+			const panel = document.getElementById(id);
+			if (panel && panel.textContent.indexOf('◆') >= 0) {
+				console.warn('[attn] render(): ◆ STILL VISIBLE in panel #' + id + ' after global pass — _makeMathEditable failed');
+			}
+		});
+
+		// Fade back in on the next frame so the transition is visible.
+		requestAnimationFrame(() => {
+			fadeTargets.forEach(el => { el.style.opacity = ''; });
+		});
+
+		document.getElementById('attn-anatomy-prev').disabled = (this.step === 0);
+		document.getElementById('attn-anatomy-next').disabled = (this.step === ATTN_STEPS.length - 1);
+
+		// Self-attention: the per-token mini-arrows live in the SVG which
+		// sits far down the page (below the equation + computation + live
+		// values panels). The user reported "mouseovers do nothing" because
+		// they were hovering in the visible part of the page while the
+		// arrows were 5000+px below the fold. Scroll the SVG into view so
+		// the moment the user arrives at step 11, the arrows are right
+		// there to be hovered.
+		if (data.mode === 'selfattn') {
+			requestAnimationFrame(() => {
+				const svg = document.getElementById('attn-anatomy-2d-svg');
+				if (svg && svg.scrollIntoView) {
+					svg.scrollIntoView({behavior: 'smooth', block: 'center'});
+				}
+			});
+		}
+
+		// Refresh the debug panel so it reflects the current step.
+		this._updateDebug();
+		// Run runtime plausibility checks on the data model. Done
+		// here (on AttentionAnatomy, NOT on ATTN_2D — that would be a
+		// TDZ trap since ATTN_2D is initialised before AttentionAnatomy).
+		this._sanity('render(step=' + this.step + ')');
+	},
+
+	// Render the FULL equation as Temml / LaTeX. Active sub-expressions
+	// (those listed in `data.eqActive`) are wrapped in \color{#2563eb}
+	// + \mathbf{} so they appear blue and bold after Temml renders them.
+	renderEquation: function(data) {
+		const el = document.getElementById('attn-anatomy-equation');
+		if (!el) return;
+
+		const active = new Set(data.eqActive || []);
+		// Active sub-expression gets boxed + bold blue so the user can
+		// see exactly which part of the equation the current step is
+		// computing. \boxed comes from amsmath; \color from xcolor.
+		const hl = (latex, region) => {
+			if (active.has(region)) return `\\boxed{\\color{#2563eb}\\mathbf{${latex}}}`;
+			return latex;
+		};
+
+		// Every sub-expression is wrapped in its own span (data-tip =
+		// tooltip key) and rendered as INLINE math ($...$ not $$...$$,
+		// so all fragments sit on one shared baseline and the line reads
+		// as a single equation) but each piece is individually hoverable.
+		const frag = (tip, latex) => `<span class="eq-tip" data-tip="${tip}">$${latex}$</span>`;
+		const sym  = (txt) => `<span class="eq-sym">${txt}</span>`;
+
+		// Output line: z_i = Σ_j α_ij · v_j
+		const outputLine =
+			frag('eq-z', hl('z_i', '')) +
+			sym('=') +
+			frag('eq-sum', hl('\\sum_j', 'sum')) +
+			frag('eq-alpha', hl('\\alpha_{ij}', 'alpha')) +
+			sym('·') +
+			frag('eq-vj', hl('v_j', 'value'));
+
+		// Weight line: α_ij = exp( q_i · k_j / √d_k ) ÷ Σ_n exp( q_i · k_n / √d_k )
+		// When the 'dot' region is active, box both q_i and k_j so the
+		// product reads as one highlighted unit.
+		const dotHL = (latex) => hl(latex, 'dot');
+		const weightLine =
+			frag('eq-alpha', hl('\\alpha_{ij}', 'alpha')) +
+			sym('=') +
+			frag('eq-exp', hl('\\mathrm{exp}', 'exp')) +
+			sym('(') +
+			frag('eq-qi', dotHL('q_i')) +
+			sym('·') +
+			frag('eq-kj', dotHL('k_j')) +
+			sym('/') +
+			frag('eq-sqrt', hl('\\sqrt{d_k}', 'sqrt')) +
+			sym(')') +
+			sym('÷') +
+			frag('eq-sum', hl('\\sum_n \\mathrm{exp}(q_i \\cdot k_n \\big/ \\sqrt{d_k})', 'denom'));
+
+		el.innerHTML =
+			'<div class="eq-line" id="attn-section-output">' +
+				'<div class="eq-label">Output</div>' +
+				'<div class="eq-formula">' + outputLine + '</div>' +
+			'</div>' +
+			'<div class="eq-line" id="attn-section-weight">' +
+				'<div class="eq-label">Weight</div>' +
+				'<div class="eq-formula">' + weightLine + '</div>' +
+			'</div>';
+	},
+
+	// Populate the "Currently computing" panel with the actual numerical
+	// computation for this step. Shows real numbers so the user can see
+	// exactly what the active sub-expression of the equation does.
+	renderComputation: function(data) {
+		const el = document.getElementById('attn-section-computation');
+		if (!el) return;
+		const fn = ATTN_COMPUTATIONS[data.computation];
+		const result = fn ? fn() : '';
+		let body = '';
+		let liveVals = '';
+		if (typeof result === 'object' && result.html !== undefined) {
+			body = result.html;
+			liveVals = result.liveVals || '';
+		} else {
+			body = result;
+		}
+		el.innerHTML = body;
+		// NOTE: do NOT call render_temml() or _makeMathEditable() here.
+		// render() does a GLOBAL render_temml() pass on all panels,
+		// then a GLOBAL _makeMathEditable() pass. Doing it locally first
+		// would create <span class="ed"> that the global Temml pass
+		// would then overwrite back to <mtext>, causing ◆ markers to
+		// leak through. The single global pass is the only correct order.
+		// Live values go into the 2d wrap container, NOT the computation
+		// panel, so they sit BESIDE the plot instead of below it.
+		const liveContainer = document.getElementById('attn-live-values-container');
+		if (liveContainer) {
+			liveContainer.innerHTML = liveVals;
+		}
+	},
+
+	// Build the "live values" overview panel rendered as Temml math.
+	// Each editable value uses \text{◆FIELD|VALUE} so _makeMathEditable
+	// can find and replace it with a click-to-edit HTML span after Temml
+	// has rendered the surrounding math.
+	// ─── Live values panel — LATEX/TEMML with queue-based editing ───
+	// Uses ed() for each editable value, which pushes the field onto
+	// _editableFieldQueue and returns \text{value}. After Temml renders,
+	// _makeMathEditable matches <mtext> elements in document order to
+	// fields in queue order. This makes the panel fully Temml-rendered
+	// (no plain HTML) while still allowing click-to-edit on every value.
+	_liveValsHTML: function(extra) {
+		const q = ATTN_2D.q;
+		let html = '<div class="attn-live-panel">';
+		html += '<div class="attn-live-header">▶ Live values — click any number to edit</div>';
+		html += '<div class="attn-live-row attn-live-row-first">';
+		html += '$$ \\underbrace{\\mathbf{q}}_{\\text{query}} = \\begin{pmatrix} ' + ed('q.0', q[0].toFixed(2)) + ' \\\\ ' + ed('q.1', q[1].toFixed(2)) + ' \\end{pmatrix} $$';
+		html += '</div>';
+		ATTN_TOKENS.slice(1).forEach((tk, j) => {
+			if (j >= ATTN_2D.keys.length) return;
+			const k = ATTN_2D.keys[j];
+			const v = ATTN_2D.vals[j];
+			html += '<div class="attn-live-row attn-live-row-sep">';
+			html += '$$ \\underbrace{\\mathbf{' + tk.name + '}}_{\\text{token}} = ';
+			html += '\\underbrace{\\begin{pmatrix} ' + ed('keys.'+j+'.0', k[0].toFixed(2)) + ' \\\\ ' + ed('keys.'+j+'.1', k[1].toFixed(2)) + ' \\end{pmatrix}}_{\\mathbf{k}_{' + (j+1) + '\\;\\text{key}}} \\quad ';
+			html += '\\underbrace{\\begin{pmatrix} ' + ed('vals.'+j+'.0', v[0].toFixed(2)) + ' \\\\ ' + ed('vals.'+j+'.1', v[1].toFixed(2)) + ' \\end{pmatrix}}_{\\mathbf{v}_{' + (j+1) + '\\;\\text{value}}}';
+			html += ' $$';
+			html += '</div>';
+		});
+		if (extra) html += extra;
+		html += '</div>';
+		return html;
+	},
+
+	// Projection step live values — also LaTeX/Temml with queue.
+	_liveValsHTMLProjection: function() {
+		const d = ATTN_2D.demo;
+		const cell = (name, i, j) => ed(`demo.${name}.${i}.${j}`, d[name][i][j].toFixed(2));
+		const pm2 = (a, b) => `\\begin{pmatrix} ${a} \\\\ ${b} \\end{pmatrix}`;
+		const grid = (W, name) => {
+			let g = '\\begin{pmatrix} ';
+			for (let i = 0; i < 2; i++) {
+				if (i > 0) g += ' \\; ';
+				for (let j = 0; j < 2; j++) {
+					if (j > 0) g += ' & ';
+					g += cell(name, i, j);
+				}
+			}
+			g += ' \\end{pmatrix}';
+			return g;
+		};
+		let html = '<div class="attn-live-panel">';
+		html += '<div class="attn-live-header">▶ Live values — click any number to edit (W matrices included)</div>';
+		html += '<div class="attn-live-row attn-live-row-first">';
+		html += '$$ \\underbrace{\\mathbf{x}}_{\\text{input}} = ' + pm2(ed('demo.x.0', d.x[0].toFixed(2)), ed('demo.x.1', d.x[1].toFixed(2))) + ' $$';
+		html += '</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">';
+		html += '$$ \\underbrace{\\mathbf{W}^Q}_{\\text{query weights}} = ' + grid(d.W_Q, 'W_Q') + ' $$';
+		html += '</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">';
+		html += '$$ \\underbrace{\\mathbf{W}^K}_{\\text{key weights}} = ' + grid(d.W_K, 'W_K') + ' $$';
+		html += '</div>';
+		html += '<div class="attn-live-row attn-live-row-sep">';
+		html += '$$ \\underbrace{\\mathbf{W}^V}_{\\text{value weights}} = ' + grid(d.W_V, 'W_V') + ' $$';
+		html += '</div>';
+		html += '</div>';
+		return html;
+	},
+
+	// Populate the "Geometric intuition" panel: Temml-rendered math +
+	// human-readable explanation of what this step does, where it came
+	// from, and how it serves the overall attention computation.
+	renderIntuition: function(data) {
+		const el = document.getElementById('attn-section-intuition');
+		if (!el) return;
+		const fn = ATTN_INTUITIONS[data.intuition];
+		if (fn) {
+			const html = fn();
+			el.innerHTML = html;
+			// Hide if the intuition is empty/blank
+			el.style.display = (html && html.trim()) ? '' : 'none';
+		} else {
+			el.innerHTML = '';
+			el.style.display = 'none';
+		}
+	},
+
+	// ─── Live-editable values ──────────────────────────────────────
+	// Every numeric value in the computation formulas is rendered as a
+	// clickable <span class="ed" data-field="..." data-name="...">. Click
+	// it → it turns into a number input → Enter/blur → value is written
+	// back into the matching ATTN_2D field and the whole scene re-renders.
+
+	// Resolve a dot-separated path to a value on ATTN_2D. Examples:
+	//   "q.0"        → ATTN_2D.q[0]
+	//   "keys.1.1"   → ATTN_2D.keys[1][1]
+	//   "demo.W_Q.0.0" → ATTN_2D.demo.W_Q[0][0]
+	//   "demo.x.0"   → ATTN_2D.demo.x[0]
+	_resolveField: function(path) {
+		return path.split('.').reduce(function(o, k) {
+			return o[isNaN(k) ? k : parseInt(k)];
+		}, ATTN_2D);
+	},
+
+	// Write a value back through a dot-path. Returns true if it was a
+	// finite number and the write went through; false otherwise.
+	_setField: function(path, value) {
+		if (!isFinite(value)) {
+			console.warn('[attn] _setField: rejected non-finite value for path=' + path + ' value=' + value);
+			return false;
+		}
+		const parts = path.split('.');
+		const last = parts.pop();
+		const obj = parts.reduce(function(o, k) {
+			return o[isNaN(k) ? k : parseInt(k)];
+		}, ATTN_2D);
+		obj[isNaN(last) ? last : parseInt(last)] = value;
+		return true;
+	},
+
+	// Attach click-to-edit behaviour to every <span.ed> inside `root`.
+	// Each editable span becomes an <input type="number"> on click; on
+	// Enter or blur the value is committed and everything re-renders.
+	_attachEditors: function(root) {
+		// EDIT#1: no root
+		if (!root) { console.warn('[attn] edit#1: _attachEditors called with no root'); return; }
+		const self = this;
+		const spans = root.querySelectorAll('span.ed');
+		// EDIT#2: no spans found
+		if (spans.length === 0) {
+			console.warn('[attn] edit#2: no span.ed found in #' + root.id + ' — _makeMathEditable may not have run or queue may be empty');
+		} else {
+			console.log('[attn] edit: _attachEditors found ' + spans.length + ' span.ed in #' + root.id);
+		}
+		// EDIT#5: pointer-events on root
+		const rs = getComputedStyle(root);
+		if (rs.pointerEvents === 'none') console.warn('[attn] edit#5: root #' + root.id + ' has pointer-events:none — clicks blocked');
+		spans.forEach(function(span) {
+			if (span._editableBound) return;
+			span._editableBound = true;
+			// EDIT#3: dataset.field empty
+			if (!span.dataset.field) { console.warn('[attn] edit#3: span.ed in #' + root.id + ' has no data-field'); return; }
+			// EDIT#4: dataset.field doesn't resolve to ATTN_2D
+			const probe = self._resolveField(span.dataset.field);
+			if (probe === undefined || probe === null) {
+				console.warn('[attn] edit#4: data-field="' + span.dataset.field + '" resolves to undefined in ATTN_2D');
+			}
+			span.title = 'click to edit — ' + (span.dataset.name || span.dataset.field);
+			span.addEventListener('click', function(ev) {
+				ev.stopPropagation();
+				if (span.querySelector('input')) return;
+				const cur = self._resolveField(span.dataset.field);
+				const input = document.createElement('input');
+				input.type = 'number';
+				input.step = '0.01';
+				input.value = Number(cur).toFixed(3);
+				input.style.width = '4.5em';
+				span.textContent = '';
+				span.appendChild(input);
+				input.focus();
+				input.select();
+				// EDIT#6: input not focused
+				if (document.activeElement !== input) console.warn('[attn] edit#6: input not focused after creation');
+				const commit = function() {
+					const v = parseFloat(input.value);
+					// EDIT#7: non-finite value
+					if (!isFinite(v)) { console.warn('[attn] edit#7: non-finite value ' + input.value); span.textContent = Number(cur).toFixed(3); return; }
+					if (self._setField(span.dataset.field, v)) {
+						// EDIT#8: verify field was actually written
+						const after = self._resolveField(span.dataset.field);
+						if (Math.abs(after - v) > 1e-9) console.warn('[attn] edit#8: field "' + span.dataset.field + '" write failed: expected ' + v + ' got ' + after);
+						if (span.dataset.field.indexOf('demo') === 0) {
+							ATTN_2D._updateDemo();
+						}
+						ATTN_2D._recomputeScores();
+						ATTN_2D.recomputeWeights();
+						ATTN_2D.recomputeMatrix();
+						self.render();
+						self._tipContentKey = null;
+					} else {
+						console.warn('[attn] edit#7: _setField returned false for value ' + v);
+						span.textContent = Number(cur).toFixed(3);
+					}
+				};
+				input.addEventListener('blur', commit);
+				input.addEventListener('keydown', function(e) {
+					if (e.key === 'Enter') { input.blur(); }
+					if (e.key === 'Escape') { span.textContent = Number(cur).toFixed(3); }
+				});
+			});
+		});
+	},
+
+	// After Temml converts the LaTeX → MathML, every \text{◆FIELD|VALUE}
+	// marker becomes a <mtext> element. This method walks the computation
+	// panel, finds each of those <mtext> elements, parses out the field
+	// path and value, and replaces it with an editable HTML <span.ed> so
+	// the user can click any number in a rendered formula and change it.
+	_makeMathEditable: function(root) {
+		// Default to the computation panel, but accept any root element
+		// (e.g. the live-values container) so we can make values editable
+		// there too.
+		const target = root || document.getElementById('attn-section-computation');
+		if (!target) {
+			console.warn('[attn] _makeMathEditable: no target element (root=' + (root && root.id) + ')');
+			return;
+		}
+		const mtexts = target.querySelectorAll('mtext');
+		// DETAILED DEBUG: log what's actually in the panel
+		if (mtexts.length > 0) {
+			const samples = [];
+			for (let i = 0; i < Math.min(3, mtexts.length); i++) {
+				samples.push('"' + (mtexts[i].textContent || '').substring(0, 40) + '"');
+			}
+			console.log('[attn] _makeMathEditable[' + target.id + ']: ' + mtexts.length + ' <mtext>, queue size: ' + _editableFieldQueue.length + '. samples: ' + samples.join(' | '));
+		}
+		// Index-based matching: walk <mtext> elements in document order
+		// and match each to the next field in _editableFieldQueue.
+		// Uses GLOBAL queue index so fields are consumed across panels
+		// in the order they were produced (equation → live-values →
+		// computation → intuition).
+		mtexts.forEach(function(mtext) {
+			if (_editableQueueIndex >= _editableFieldQueue.length) return;
+			const text = (mtext.textContent || '').trim();
+			if (!text) return; // skip empty <mtext>
+			// EDIT#18: skip non-numeric <mtext> (like "score", "key")
+			// — those come from \text{label} not from ed()
+			if (!/^-?\d+\.?\d*$/.test(text)) return;
+			const field = _editableFieldQueue[_editableQueueIndex++];
+			const span = document.createElement('span');
+			span.className = 'ed';
+			span.dataset.field = field;
+			span.dataset.name = fieldToName(field);
+			span.textContent = text;
+			if (mtext.parentNode) mtext.parentNode.replaceChild(span, mtext);
+		});
+		// EDIT#16/17: queue order check
+		console.log('[attn] edit: #' + target.id + ' — queue index now ' + _editableQueueIndex + '/' + _editableFieldQueue.length);
+		this._attachEditors(target);
+	},
+
+	// ─── 2D vector scene ────────────────────────────────────────────
+	// SVG namespace constant (Plotly is gone — we render raw SVG now)
+	_SVG_NS: 'http://www.w3.org/2000/svg',
+
+	// Draw the static background: grid lines + axes + axis labels.
+	// Called once from init().
+	_initSVG: function() {
+		const svg = document.getElementById('attn-anatomy-2d-svg');
+		if (!svg) return;
+
+		const NS = this._SVG_NS;
+		const gridG   = svg.querySelector('.attn-grid');
+		const axesG   = svg.querySelector('.attn-axes');
+
+		// Grid lines at every 0.5
+		for (let i = -1; i <= 1; i += 0.5) {
+			if (i === 0) continue;
+			const h = document.createElementNS(NS, 'line');
+			h.setAttribute('x1', -1.4); h.setAttribute('y1', -i);
+			h.setAttribute('x2',  1.4); h.setAttribute('y2', -i);
+			h.setAttribute('stroke', '#e2e8f0'); h.setAttribute('stroke-width', '0.005');
+			gridG.appendChild(h);
+			const v = document.createElementNS(NS, 'line');
+			v.setAttribute('x1', i); v.setAttribute('y1', -1.4);
+			v.setAttribute('x2', i); v.setAttribute('y2',  1.4);
+			v.setAttribute('stroke', '#e2e8f0'); v.setAttribute('stroke-width', '0.005');
+			gridG.appendChild(v);
+		}
+
+		// Axes (thicker, darker)
+		const xa = document.createElementNS(NS, 'line');
+		xa.setAttribute('x1', -1.4); xa.setAttribute('y1', 0);
+		xa.setAttribute('x2',  1.4); xa.setAttribute('y2', 0);
+		xa.setAttribute('stroke', '#94a3b8'); xa.setAttribute('stroke-width', '0.012');
+		axesG.appendChild(xa);
+		const ya = document.createElementNS(NS, 'line');
+		ya.setAttribute('x1', 0); ya.setAttribute('y1', -1.4);
+		ya.setAttribute('x2', 0); ya.setAttribute('y2',  1.4);
+		ya.setAttribute('stroke', '#94a3b8'); ya.setAttribute('stroke-width', '0.012');
+		axesG.appendChild(ya);
+
+		// Axis labels (positioned inside the viewBox so they don't get clipped)
+		const xl = document.createElementNS(NS, 'text');
+		xl.setAttribute('x', 1.30); xl.setAttribute('y', 0.14);
+		xl.setAttribute('fill', '#475569'); xl.setAttribute('font-size', '0.11');
+		xl.setAttribute('font-weight', '700');
+		xl.setAttribute('font-family', 'Inter, sans-serif');
+		xl.textContent = 'Dim 1';
+		axesG.appendChild(xl);
+		const yl = document.createElementNS(NS, 'text');
+		yl.setAttribute('x', 0.10); yl.setAttribute('y', -1.38);
+		yl.setAttribute('fill', '#475569'); yl.setAttribute('font-size', '0.11');
+		yl.setAttribute('font-weight', '700');
+		yl.setAttribute('font-family', 'Inter, sans-serif');
+		yl.textContent = 'Dim 2';
+		axesG.appendChild(yl);
+
+		// Kill ALL click/drag/select side-effects on the SVG itself
+		// (mousedown is what starts a browser drag — blocking click
+		// alone is too late).
+		const swallow = (e) => { e.preventDefault(); e.stopPropagation(); };
+		svg.addEventListener('mousedown',   swallow, true);
+		svg.addEventListener('dragstart',   swallow, true);
+		svg.addEventListener('selectstart', swallow, true);
+	},
+
+	// Recolour the static background (grid, axes, labels) for the
+	// current theme. Called from the theme-change listener because
+	// _initSVG only runs once.
+	_themeSVG: function() {
+		const svg = document.getElementById('attn-anatomy-2d-svg');
+		if (!svg) return;
+		svg.querySelectorAll('.attn-grid line').forEach((l) => l.setAttribute('stroke', themeColor('#e2e8f0')));
+		svg.querySelectorAll('.attn-axes line').forEach((l) => l.setAttribute('stroke', themeColor('#94a3b8')));
+		svg.querySelectorAll('.attn-axes text').forEach((t) => t.setAttribute('fill', themeColor('#475569')));
+	},
+
+	// Render the sentence row above the 2D plot. Each token is a
+	// hoverable span — hovering focuses the 2D plot on that token's
+	// vectors and shows its full info in a popup.
+	_renderSentence: function() {
+		// Show the FULL sentence (context) with the focused tokens
+		// highlighted as clickable spans. The rest of the sentence is
+		// dimmed but visible — so a human reader can tell what the model
+		// is attending TO.
+		const el = document.getElementById('attn-sentence');
+		if (!el) return;
+		const set = ATTN_SETS[ATTN_2D.exampleIdx];
+		if (!set || !set.full) {
+			el.innerHTML = ATTN_TOKENS.map((tk, j) =>
+				`<span class="attn-token ${j === 0 ? 'it' : 't' + j}" data-token="${j}">${tk.name}</span>`
+			).join(' ');
+			this._updateDebug();
+			return;
+		}
+		// Escape any HTML in the full sentence, then highlight token
+		// names. Use word boundaries so "cat" doesn't match inside
+		// "scatter".
+		const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		const names = ATTN_TOKENS.map((tk) => tk.name);
+		this._assert(names.length === ATTN_TOKENS.length, 'names mismatch');
+		this._assert(names[0] === 'it', 'first token must be it');
+		const pattern = new RegExp('\\b(' + names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'g');
+		const matched = [];
+		const highlighted = esc(set.full).replace(pattern, (m) => {
+			const idx = names.indexOf(m);
+			this._assert(idx >= 0, `regex matched "${m}" but not found in names=[${names}]`);
+			matched.push(`${m}→${idx}`);
+			const cls = 'attn-token ' + (idx === 0 ? 'it' : 't' + idx);
+			return `<span class="${cls}" data-token="${idx}">${m}</span>`;
+		});
+		el.innerHTML = highlighted;
+		this._dbg('INFO', `renderSentence: matched=[${matched.join(', ')}]`);
+		this._updateDebug();
+	},
+
+	// Attach hover handlers to the sentence tokens. Called ONCE from
+	// init() — NOT from render() — so we don't re-bind every frame and
+	// don't loop forever.
+	// Lightweight hover update — only re-draws the 2D SVG (for token
+	// dimming) without fading the equation/computation panels. This
+	// prevents the screen from jumping when the user moves the mouse
+	// over tokens.
+	_renderHoverOnly: function() {
+		const data = ATTN_STEPS[this.step];
+		this._assert(data, `_renderHoverOnly: ATTN_STEPS[${this.step}] is undefined`);
+		if (!data) return;
+		this._dbg('INFO', `render2D(step=${this.step}, mode=${data.mode}, hovered=${ATTN_2D.hoveredToken})`);
+		this.render2D(data);
+	},
+
+	_setupSentenceHover: function() {
+		const el = document.getElementById('attn-sentence');
+		if (!el) { this._dbg('ERROR', 'attn-sentence element not found'); return; }
+		const self = this;
+		// Use BOTH mouseover (event delegation) AND a direct listener on
+		// every token span as a fallback — if mouseover doesn't fire
+		// (e.g. due to some browser quirk or a bubbling issue), the
+		// direct listener will catch it.
+		const refresh = () => {
+			self._showTokenInfo(ATTN_2D.hoveredToken);
+			self._renderHoverOnly();
+			self._updateDebug();
+		};
+		el.addEventListener('mouseover', function(e) {
+			const span = e.target.closest('.attn-token');
+			if (!span) return;
+			const raw = span.dataset.token;
+			const idx = parseInt(raw, 10);
+			self._assert(!isNaN(idx), `mouseover: dataset.token="${raw}" is NaN, span="${span.textContent}", dataset=${JSON.stringify(span.dataset)}`);
+			self._assert(idx >= 0 && idx < ATTN_TOKENS.length, `mouseover: idx=${idx} out of range (tokens=${ATTN_TOKENS.length})`);
+			const prev = ATTN_2D.hoveredToken;
+			// NO early-return: always re-render. The visual may be out of
+			// sync with state (e.g. after a mouseout that didn't fire), and
+			// re-rendering is cheap. This was the root cause of "step 4
+			// mat — no change" when hovering the same token twice.
+			ATTN_2D.hoveredToken = idx;
+			if (prev === idx) {
+				self._dbg('INFO', `mouseover: "${span.textContent}" (idx=${idx}) — same as before, forcing re-render`);
+			} else {
+				self._dbg('INFO', `mouseover: "${span.textContent}" idx ${prev}→${idx}`);
+			}
+			refresh();
+		});
+		el.addEventListener('mousemove', function(e) {
+			// mousemove is a reliable backup — if mouseover didn't fire
+			// (rare but observed), mousemove will pick it up.
+			const span = e.target.closest('.attn-token');
+			if (!span) return;
+			const idx = parseInt(span.dataset.token, 10);
+			if (isNaN(idx) || ATTN_2D.hoveredToken === idx) return;
+			ATTN_2D.hoveredToken = idx;
+			self._dbg('INFO', `mousemove(backup): idx→${idx} "${span.textContent}"`);
+			refresh();
+		});
+		el.addEventListener('mouseout', function(e) {
+			const span = e.target.closest('.attn-token');
+			if (!span) return;
+			const to = e.relatedTarget;
+			if (to && span.contains(to)) return;
+			// Only clear if leaving the whole sentence area
+			if (to && el.contains(to)) return;
+			if (ATTN_2D.hoveredToken === -1) return;
+			self._dbg('INFO', `mouseout: clearing hoveredToken`);
+			ATTN_2D.hoveredToken = -1;
+			self._refreshPopup();
+			self._renderHoverOnly();
+			self._updateDebug();
+		});
+	},
+
+	// Light-cone hover: when the mouse enters a formula in the
+	// computation panel, show the derivation chain in the popup.
+	// Delegation on the computation container — same pattern as
+	// _setupSentenceHover() — so it survives formula re-renders.
+	_setupFormulaHover: function() {
+		const el = document.getElementById('attn-section-computation');
+		// ANGLE 1: element doesn't exist
+		if (!el) { console.warn('[attn] hover#1: #attn-section-computation not in DOM'); return; }
+		const self = this;
+		// ANGLE 2/3: element hidden or can't receive events
+		const s0 = getComputedStyle(el);
+		if (s0.display === 'none')    console.warn('[attn] hover#2: computation panel display:none');
+		if (s0.visibility === 'hidden') console.warn('[attn] hover#3: computation panel visibility:hidden');
+		if (s0.pointerEvents === 'none') console.warn('[attn] hover#4: computation panel pointer-events:none');
+		console.log('[attn] _setupFormulaHover attached to', el.id);
+
+		// ANGLE 5: track mouse GLOBALLY (not just on computation panel —
+		// otherwise light cone position is stale after moving cursor)
+		document.addEventListener('mousemove', function(e) { self._trackMouse(e); });
+
+		// ANGLE 6: capture phase so we run before any stopPropagation in
+		// children
+		el.addEventListener('mouseover', function(e) {
+			// DEBUG: log every mouseover so we can see if the handler fires
+			console.log('[attn] mouseover fired on', e.target.tagName, e.target.className || '');
+			// ANGLE 7: no target
+			if (!e.target) { console.warn('[attn] hover#7: e.target null'); return; }
+			// ANGLE 8: target is text node
+			if (e.target.nodeType !== 1) return;
+
+			// 1) Formula light-cone
+			const node = e.target.closest('[data-cone-step]');
+			// ANGLE 9: .comp-eq-group exists but no data-cone-step
+			if (!node) {
+				const grp = e.target.closest('.comp-eq-group');
+				if (grp && !grp.dataset.coneStep) {
+					console.warn('[attn] hover#9: .comp-eq-group "' + (grp.textContent || '').substring(0, 30) + '…" has no data-cone-step — light cone will never show');
+				}
+				return;
+			}
+			const step = node.dataset.coneStep;
+			const idx  = parseInt(node.dataset.coneIdx, 10);
+			// ANGLE 10: empty step
+			if (!step) { console.warn('[attn] hover#10: data-cone-step empty on', node); return; }
+			// ANGLE 11: NaN idx
+			if (isNaN(idx)) { console.warn('[attn] hover#11: data-cone-idx NaN on', node, 'raw=' + node.dataset.coneIdx); return; }
+			console.log('[attn] hover formula', step, idx);
+			ATTN_2D.hoveredFormula = { step, idx };
+			// Store the hovered group so _showInlineTip can place the
+			// tooltip right after it.
+			self._lastHoveredGroup = node;
+			try {
+				self._showFormulaCone(step, idx);
+			} catch (err) {
+				// ANGLE 12: _showFormulaCone throws
+				console.error('[attn] hover#12: _showFormulaCone error:', err);
+			}
+				return;
+		// 2) Matrix cell — show the exact α_{ij} computation
+		const mcell = e.target.closest('.attn-matrix-cell');
+		if (mcell) {
+			self._showMatrixCellInfo(mcell.dataset);
+			return;
+		}
+		// 3) Matrix row/col header — show what q_i or k_j is
+		const rh = e.target.closest('.attn-matrix-rowhead');
+		if (rh) {
+			self._showMatrixRowInfo(parseInt(rh.dataset.tipRow, 10));
+			return;
+		}
+		const ch = e.target.closest('.attn-matrix-colhead');
+		if (ch) {
+			self._showMatrixColInfo(parseInt(ch.dataset.tipKey, 10));
+			return;
+		}
+	}, true); // capture phase
+
+	el.addEventListener('mouseout', function(e) {
+			const node = e.target.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead');
+			if (!node) return;
+			const to = e.relatedTarget;
+			if (to && node.contains(to)) return;
+			if (to && to.closest && to.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead')) return;
+			// Hide the inline tooltip
+			self._hideInlineTip();
+			ATTN_2D.hoveredFormula = null;
+		});
+	},
+
+	// Show the full computation for a single matrix cell α_{ij}.
+	_showMatrixCellInfo: function(d) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const [qi, qj] = d.tipCell.split(',').map(Number);
+		const [q0, q1] = d.cellQ.split(',').map(Number);
+		const [k0, k1] = d.cellK.split(',').map(Number);
+		const score   = d.cellScore;
+		const scaled  = d.cellScaled;
+		const expVal  = d.cellExp;
+		const sumExp  = d.cellSum;
+		const alpha   = d.cellAlpha;
+		const qn = ATTN_TOKENS[qi]?.name || `q${qi+1}`;
+		const kn = ATTN_TOKENS[qj+1]?.name || `k${qj+1}`;
+		const pm = (a, b) => `\\begin{pmatrix} ${a} \\\\ ${b} \\end{pmatrix}`;
+		const html = `<h4>α<sub>${qi+1},${qj+1}</sub> — how much <span style="color:${ATTN_TOKENS[qi]?.color || '#ef4444'}">${qn}</span> attends to <span style="color:${ATTN_TOKENS[qj+1]?.color || '#2563eb'}">${kn}</span></h4>` +
+			`<div class="ti-row">$$\\mathbf{q}_{${qi+1}} = ${pm(q0, q1)}, \\quad \\mathbf{k}_{${qj+1}} = ${pm(k0, k1)}$$</div>` +
+			`<div class="ti-row">$$\\mathbf{q}_{${qi+1}} \\cdot \\mathbf{k}_{${qj+1}} = (${q0})(${k0}) + (${q1})(${k1}) = ${score}$$</div>` +
+			`<div class="ti-row">$$s_{${qj+1}} = \\frac{${score}}{\\sqrt{2}} = \\frac{${score}}{1.414} = ${scaled}$$</div>` +
+			`<div class="ti-row">$$e^{s_{${qj+1}}} = e^{${scaled}} = ${expVal}$$</div>` +
+			`<div class="ti-row">$$\\Sigma = \\sum_n e^{s_n} = ${sumExp}$$</div>` +
+			`<div class="ti-row"><b>Result:</b> $$\\alpha_{${qi+1},${qj+1}} = \\frac{${expVal}}{${sumExp}} = ${alpha} = ${(alpha*100).toFixed(1)}\\%$$</div>`;
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Show what q_i is and where it comes from.
+	_showMatrixRowInfo: function(i) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const q = ATTN_2D._allQueries[i];
+		const name = ATTN_TOKENS[i].name;
+		const role = (i === 0) ? 'the query token "it"' : `the ${i+1}${i===1?'st':i===2?'nd':'th'} token in the sentence`;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		let html = `<h4>q<sub>${i+1}</sub> = <span style="color:${ATTN_TOKENS[i].color}">${name}</span></h4>`;
+		html += `<div class="ti-row"><b>Role:</b> ${role}</div>`;
+		html += `<div class="ti-row">$$\\mathbf{q}_{${i+1}} = ${pm(q)}$$</div>`;
+		if (i === 0) {
+			html += `<div class="ti-row">The query is <b>fixed</b> at $\\mathbf{q} = ${pm(q)}$ across all examples.</div>`;
+		} else {
+			html += `<div class="ti-row">For this token, $\\mathbf{q}$ is part of the token's learned embedding — it's the same as its $\\mathbf{k}$ vector in this demo (self-attention setup).</div>`;
+			const k = ATTN_2D._allKeys[i-1];
+			html += `<div class="ti-row">Compare: $\\mathbf{k}_{${i+1}} = ${pm(k)}$</div>`;
+		}
+		html += `<div class="ti-row">In a real Transformer, $\\mathbf{q}_i = \\mathbf{W}^Q \\mathbf{x}_i$ — a learned linear projection of the token embedding $\\mathbf{x}_i$.</div>`;
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Show what k_j is and where it comes from.
+	_showMatrixColInfo: function(j) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const k = ATTN_2D._allKeys[j];
+		const name = ATTN_TOKENS[j+1].name;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		const html = `<h4>k<sub>${j+1}</sub> = <span style="color:${ATTN_TOKENS[j+1].color}">${name}</span></h4>` +
+			`<div class="ti-row"><b>Role:</b> the key vector of "${name}" — what other queries attend <em>to</em></div>` +
+			`<div class="ti-row">$$\\mathbf{k}_{${j+1}} = ${pm(k)}$$</div>` +
+			`<div class="ti-row">$\\|\\mathbf{k}_{${j+1}}\\| = \\sqrt{(${k[0].toFixed(2)})^2 + (${k[1].toFixed(2)})^2} = ${Math.hypot(k[0],k[1]).toFixed(2)}$</div>` +
+			`<div class="ti-row">The angle $\\theta$ between $\\mathbf{q}_i$ and $\\mathbf{k}_{${j+1}}$ determines the attention: $\\mathbf{q}_i \\cdot \\mathbf{k}_{${j+1}} = \\|\\mathbf{q}_i\\| \\cdot \\|\\mathbf{k}_{${j+1}}\\| \\cdot \\cos\\theta$.</div>` +
+			`<div class="ti-row">In a real Transformer, $\\mathbf{k}_j = \\mathbf{W}^K \\mathbf{x}_j$ — a learned linear projection of token "${name}"'s embedding.</div>`;
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Decide what to show in the popup based on current hover state.
+	// Priority: hoveredFormula > hoveredToken > hide.
+	_refreshPopup: function() {
+		if (ATTN_2D.hoveredFormula) {
+			const { step, idx } = ATTN_2D.hoveredFormula;
+			this._showFormulaCone(step, idx);
+		} else if (ATTN_2D.hoveredToken >= 0) {
+			this._showTokenInfo(ATTN_2D.hoveredToken);
+		} else {
+			this._hideTokenInfo();
+		}
+	},
+
+	// Token info popup — inline below the sentence. Shows q, k, v, α for
+	// the hovered token, all rendered with Temml using pmatrix notation.
+	_showTokenInfo: function(idx) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		if (idx < 0 || idx >= ATTN_TOKENS.length) { this._hideTokenInfo(); return; }
+		const tk = ATTN_TOKENS[idx];
+		const q = idx < ATTN_2D._allQueries.length ? ATTN_2D._allQueries[idx] : null;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+		let html = `<h4>Token: <span style="color:${tk.color}">${tk.name}</span></h4>`;
+		if (q) {
+			html += `<div class="ti-row">$$\\mathbf{q} = ${pm(q)}$$</div>`;
+		}
+		const j = idx - 1;
+		const hasKV = j >= 0 && j < ATTN_2D.keys.length && j < ATTN_2D.vals.length;
+		if (hasKV) {
+			const k = ATTN_2D.keys[j], v = ATTN_2D.vals[j];
+			const w = ATTN_2D.weights[j] || 0;
+			html += `<div class="ti-row">$$\\mathbf{k} = ${pm(k)}$$</div>`;
+			html += `<div class="ti-row">$$\\mathbf{v} = ${pm(v)}$$</div>`;
+			html += `<div class="ti-row">$$\\alpha = ${(w*100).toFixed(1)}\\%$$</div>`;
+			html += `<div class="ti-row">$$\\|\\mathbf{k}\\| = \\sqrt{(${k[0].toFixed(2)})^2 + (${k[1].toFixed(2)})^2} = ${Math.hypot(k[0],k[1]).toFixed(2)}$$</div>`;
+			if (q) {
+				const dot = q[0]*k[0]+q[1]*k[1];
+				html += `<div class="ti-row">$$\\mathbf{q}\\cdot\\mathbf{k} = (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${dot.toFixed(3)}$$</div>`;
+			}
+		} else {
+			html += `<div class="ti-row"><b>Role:</b> query — the token we're attending <em>from</em>. Its q-vector is fixed: <span class="ti-form">$$\\mathbf{q} = ${pm(q)}$$</span></div>`;
+		}
+		el.innerHTML = html;
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Light cone — show the full derivation chain for a formula value.
+	// Called when hovering over a formula in the computation panel.
+	// stepName: 'dot' | 'scaled' | 'exps' | 'weights' | 'output'
+	// tokenIdx: 0..n-1 (which token's value is being explained)
+	// Last known mouse position — used to position the floating light
+	// cone next to the cursor instead of at a fixed location.
+	_lastMouseX: 0,
+	_lastMouseY: 0,
+	_trackMouse: function(e) {
+		this._lastMouseX = e.clientX;
+		this._lastMouseY = e.clientY;
+	},
+
+	_showFormulaCone: function(stepName, tokenIdx) {
+		const el = document.getElementById('attn-token-info');
+		// ANGLE 13: light cone element missing
+		if (!el) { console.warn('[attn] cone#13: #attn-token-info not in DOM'); return; }
+		// ANGLE 14: ATTN_2D undefined
+		if (typeof ATTN_2D === 'undefined') { console.warn('[attn] cone#14: ATTN_2D undefined'); return; }
+		// ANGLE 15: mouse position never tracked
+		if (this._lastMouseX === 0 && this._lastMouseY === 0) {
+			console.warn('[attn] cone#15: mouse position is (0,0) — mousemove listener may not be attached');
+		}
+		// Position the tooltip near the cursor, clamped to viewport.
+		// Offset (+14, +14) so the cursor doesn't sit on top of the box.
+		const x = this._lastMouseX + 14;
+		const y = this._lastMouseY + 14;
+		const boxW = 420, boxH = 300; // approx — CSS also caps these
+		const maxX = window.innerWidth  - boxW - 8;
+		const maxY = window.innerHeight - boxH - 8;
+		el.style.left = Math.max(8, Math.min(x, maxX)) + 'px';
+		el.style.top  = Math.max(8, Math.min(y, maxY)) + 'px';
+		// ANGLE 16: light cone off-screen
+		if (parseInt(el.style.left) >= window.innerWidth || parseInt(el.style.top) >= window.innerHeight) {
+			console.warn('[attn] cone#16: light cone positioned off-screen');
+		}
+		const q = ATTN_2D.q;
+		const N = ATTN_2D.keys.length;
+		const fmt = (v) => v.toFixed(2);
+		const fmt3 = (v) => v.toFixed(3);
+		// Helper: build the full softmax sum ∑_n exp(q·k_n/√d_k) breakdown
+		// NO nested underbraces — Temml chokes on them and everything
+		// AFTER the denominator fails to render. Use simple e^{s_n} = value.
+		const sumBreakdown = () => {
+			const parts = [];
+			for (let n = 0; n < N; n++) {
+				const e_n  = ATTN_2D.exps[n];
+				parts.push(`e^{s_{${n+1}}} = ${e_n.toFixed(3)}`);
+			}
+			const sum = ATTN_2D.exps.reduce((a,b)=>a+b, 0);
+			return `\\sum_{n=1}^{N} e^{s_n} = ${parts.join(' + ')} = ${sum.toFixed(3)}`;
+		};
+		// Helper: dot-product breakdown for one key
+		const dotBreakdown = (j) => {
+			const k = ATTN_2D.keys[j];
+			const score = q[0]*k[0] + q[1]*k[1];
+			return `\\mathbf{q}\\cdot\\mathbf{k}_{${j+1}} = (${fmt(q[0])})(${fmt(k[0])}) + (${fmt(q[1])})(${fmt(k[1])}) = ${fmt3(score)}`;
+		};
+		// Helper: all dot products at once (for the score step overview)
+		const allDots = () => {
+			const parts = [];
+			for (let j = 0; j < N; j++) {
+				parts.push(`\\mathbf{q}\\cdot\\mathbf{k}_{${j+1}} = ${fmt3(ATTN_2D.scores[j])}`);
+			}
+			return parts.join(',\\quad ');
+		};
+		const cone = [];
+		cone.push(`<div class="ti-cone"><b>🔦 Light cone — how this value came to be (and what each part means):</b>`);
+		if (stepName === 'dot') {
+			const k = ATTN_2D.keys[tokenIdx];
+			const score = q[0]*k[0] + q[1]*k[1];
+			const cosT = score / (Math.hypot(q[0],q[1]) * Math.hypot(k[0],k[1]));
+			const deg = Math.round(Math.acos(Math.max(-1, Math.min(1, cosT))) * 180 / Math.PI);
+			cone.push(`<div class="ti-cone-line"><b>Step 1 — dot product:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${dotBreakdown(tokenIdx)}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> $\\cos\\theta = ${cosT.toFixed(3)}$, so $\\theta \\approx ${deg}°$. ${cosT > 0.85 ? 'Nearly parallel → strong positive score → big winner.' : cosT > 0.3 ? 'Same general direction → positive score.' : cosT > -0.3 ? 'Near right angle → near-zero score.' : 'Opposite direction → negative score → near-zero weight.'}</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All dot products:</b> $$${allDots()}$$</div>`);
+			cone.push(`<div class="ti-cone-line">← starts from $\\mathbf{q} = (${fmt(q[0])},\\,${fmt(q[1])})$ and $\\mathbf{k}_{${tokenIdx+1}} = (${fmt(k[0])},\\,${fmt(k[1])})$</div>`);
+		} else if (stepName === 'scaled') {
+			const k = ATTN_2D.keys[tokenIdx];
+			const score = q[0]*k[0] + q[1]*k[1];
+			const scaled = ATTN_2D.scaled[tokenIdx];
+			cone.push(`<div class="ti-cone-line"><b>Step 2 — scale by √dₖ:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$s_{${tokenIdx+1}} = \\frac{q\\cdot k_{${tokenIdx+1}}}{\\sqrt{d_k}} = \\frac{${fmt3(score)}}{\\sqrt{2}} = ${fmt3(scaled)}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Scaling keeps every score near magnitude $1$ so softmax behaves the same at any dimension. In a real model $d_k = 64$, so $\\sqrt{d_k} = 8$.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All scaled scores:</b> $${ATTN_2D.scaled.map((s,i) => `s_{${i+1}} = ${fmt3(s)}`).join(',\\quad ')}$</div>`);
+		} else if (stepName === 'exps') {
+			const sc = ATTN_2D.scaled[tokenIdx];
+			const e  = ATTN_2D.exps[tokenIdx];
+			cone.push(`<div class="ti-cone-line"><b>Step 3 — exponentiate:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$e^{s_{${tokenIdx+1}}} = e^{${fmt3(sc)}} = ${fmt3(e)}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> exp turns every score positive and amplifies differences — the largest input grows fastest. Negative scores shrink toward $0$.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All exp values (the numerator of softmax for each key):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.exps.map((e,i) => `e^{s_{${i+1}}} = ${fmt3(e)}`).join(',\\quad ')}$</div>`);
+			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${fmt3(sc)}$ (from step 2)</div>`);
+		} else if (stepName === 'weights') {
+			const k    = ATTN_2D.keys[tokenIdx];
+			const score= q[0]*k[0] + q[1]*k[1];
+			const sc   = ATTN_2D.scaled[tokenIdx];
+			const e    = ATTN_2D.exps[tokenIdx];
+			const sum  = ATTN_2D.exps.reduce((a, b) => a + b, 0);
+			const w    = (ATTN_2D.weights[tokenIdx]*100);
+			// Full chain: show EVERY step that led to this percentage,
+			// so hovering over 15.5% shows exactly how we got there.
+			cone.push(`<div class="ti-cone-line"><b>How α${tokenIdx+1} = ${w.toFixed(1)}% was computed — full chain:</b></div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 1</b> — dot product $q \\cdot k_{${tokenIdx+1}}$:</div>`);
+			cone.push(`<div class="ti-cone-line">$$${dotBreakdown(tokenIdx)}$$</div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 2</b> — scale by $\\sqrt{d_k}$:</div>`);
+			cone.push(`<div class="ti-cone-line">$$s_{${tokenIdx+1}} = \\frac{q\\cdot k_{${tokenIdx+1}}}{\\sqrt{d_k}} = \\frac{${fmt3(score)}}{\\sqrt{2}} = ${fmt3(sc)}$$</div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 3</b> — exponentiate:</div>`);
+			cone.push(`<div class="ti-cone-line">$$e^{s_{${tokenIdx+1}}} = e^{${fmt3(sc)}} = ${fmt3(e)}$$</div>`);
+			cone.push(`<div class="ti-cone-line ti-cone-step">▸ <b>Step 4</b> — softmax (divide by total):</div>`);
+			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}} = \\frac{e^{s_{${tokenIdx+1}}}}{\\sum_n e^{s_n}} = \\frac{${fmt3(e)}}{${fmt3(sum)}} = ${w.toFixed(1)}\\%$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>The denominator (full softmax sum):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$\\Sigma = ${sumBreakdown()}$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Dividing by the total converts the raw exp-values into a probability distribution. $\\sum_j \\alpha_j = 100\\%$ — the attention is a finite budget shared across keys.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All final weights (this row of the attention matrix):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.weights.map((w,i) => `\\alpha_{${i+1}} = ${(w*100).toFixed(1)}\\%`).join(',\\quad ')}$</div>`);
+		} else if (stepName === 'output') {
+			const wv = ATTN_2D.weightedVals[tokenIdx];
+			const w  = ATTN_2D.weights[tokenIdx]*100;
+			const v  = ATTN_2D.vals[tokenIdx];
+			cone.push(`<div class="ti-cone-line"><b>Step 5 — blend value vectors:</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}}\\mathbf{v}_{${tokenIdx+1}} = (${w.toFixed(1)}\\%)\\times(${fmt(v[0])},\\,${fmt(v[1])}) = (${fmt3(wv[0])},\\,${fmt3(wv[1])})$$</div>`);
+			cone.push(`<div class="ti-cone-line"><b>Geometric meaning:</b> Each value vector is scaled by its attention weight. Big $\\alpha$ = this token's content dominates. Small $\\alpha$ = nearly ignored.</div>`);
+			cone.push(`<div class="ti-cone-line"><b>All weighted values (then summed into z):</b></div>`);
+			cone.push(`<div class="ti-cone-line">$$${ATTN_2D.weightedVals.map((wv,i) => `\\alpha_{${i+1}}\\mathbf{v}_{${i+1}} = (${fmt3(wv[0])},\\,${fmt3(wv[1])})`).join(' + ')} = (${fmt3(ATTN_2D.output[0])},\\,${fmt3(ATTN_2D.output[1])})$</div>`);
+		}
+		cone.push(`</div>`);
+		// REMOVED: floating light cone. User said "lightcone soll komplett
+		// weg, sein inhalt in den mouseover". So we put the content
+		// directly below the hovered formula as an inline tooltip.
+		this._showInlineTip(cone.join(''));
+	},
+
+	// Inline tooltip — appears DIRECTLY below the hovered formula
+	// (not floating, not following the mouse). This is what replaced
+	// the floating light cone. The tooltip is a child of the hovered
+	// .comp-eq-group so it appears in document flow right below the
+	// formula, with no z-index fighting.
+	_showInlineTip: function(html) {
+		// Remove any existing inline tip first
+		const existing = document.querySelector('.attn-formula-tip');
+		if (existing) existing.remove();
+		if (!this._lastHoveredGroup) return;
+		const tip = document.createElement('div');
+		tip.className = 'attn-formula-tip';
+		tip.innerHTML = html;
+		// Replace ti-cone / ti-cone-line / ti-cone-step classes with
+		// the inline-tip equivalents (so CSS works).
+		tip.querySelectorAll('.ti-cone-line').forEach(el => {
+			if (el.classList.contains('ti-cone-step')) {
+				el.className = 'ti-step';
+			} else {
+				el.className = '';
+			}
+		});
+		const tiCone = tip.querySelector('.ti-cone');
+		if (tiCone) tiCone.className = '';
+		// Insert right after the hovered group
+		this._lastHoveredGroup.insertAdjacentElement('afterend', tip);
+		if (typeof render_temml === 'function') {
+			try { render_temml(tip); } catch (e) { console.warn('[attn] render_temml failed in tip:', e); }
+		}
+	},
+
+	_hideInlineTip: function() {
+		const existing = document.querySelector('.attn-formula-tip');
+		if (existing) existing.remove();
+	},
+
+	_hideTokenInfo: function() {
+		const el = document.getElementById('attn-token-info');
+		if (el) el.classList.add('is-empty');
+	},
+
+	// Render the bar plots BELOW the 2D scene in their own SVG.
+	// This avoids any overlap with the vectors / angle arcs in the
+	// main plot.
+	_renderBarPlots: function(data) {
+		const svg = document.getElementById('attn-bar-plots-svg');
+		if (!svg) return;
+		const constructionG = svg.querySelector('.attn-bar-construction');
+		const labelsG = svg.querySelector('.attn-bar-labels');
+		if (!constructionG || !labelsG) return;
+		// Clear previous
+		constructionG.innerHTML = '';
+		labelsG.innerHTML = '';
+		const comp = data.computation;
+		const hasBars = (comp === 'dot' || comp === 'scaled' || comp === 'exps' || comp === 'weights');
+		// Hide the SVG entirely when this step doesn't use bar plots,
+		// so it doesn't reserve dead space.
+		svg.style.display = hasBars ? 'block' : 'none';
+		if (!hasBars) return;
+		if (comp === 'dot') {
+			this._drawScoreBlocks2D(constructionG, labelsG);
+		} else if (comp === 'scaled') {
+			this._drawScaledBars2D(constructionG, labelsG);
+		} else if (comp === 'exps') {
+			this._drawExpBars2D(constructionG, labelsG);
+		} else if (comp === 'weights') {
+			this._drawWeightBar2D(constructionG, labelsG);
+		}
+	},
+
+	// Apply the per-token hover dimming to an opacity value. When a
+	// specific token is hovered, only that token's visuals stay at
+	// full opacity; everything else fades.
+	// Returns true if THIS token is the currently hovered one — used by
+	// every per-token draw call so the hovered arrow can be made
+	// clearly visible (thicker stroke, glow, label stays bright).
+	_tokenIsHovered: function(jPlus1) {
+		const h = ATTN_2D.hoveredToken;
+		if (h < 0) return false;
+		return h === jPlus1;
+	},
+
+	// Apply hover dimming to an opacity value. When a token is hovered,
+	// it stays at full opacity (1.0) so it stays bright; everything
+	// else fades to 0.12 so the hovered one is clearly the focus.
+	_tokenOpacity: function(jPlus1) {
+		const h = ATTN_2D.hoveredToken;
+		this._assert(typeof jPlus1 === 'number' && !isNaN(jPlus1), `_tokenOpacity: jPlus1=${jPlus1} not a number`);
+		this._assert(typeof h === 'number' && !isNaN(h), `_tokenOpacity: hoveredToken=${h} not a number`);
+		if (h < 0) return 1;
+		if (h === jPlus1) return 1;
+		return 0.12;
+	},
+
+	// Apply hover dimming to a color: non-hovered tokens go to a muted
+	// light grey so the hovered one pops in its original colour.
+	_tokenColor: function(color, jPlus1) {
+		const h = ATTN_2D.hoveredToken;
+		this._assert(typeof jPlus1 === 'number' && !isNaN(jPlus1), `_tokenColor: jPlus1=${jPlus1} not a number`);
+		if (h < 0) return color;
+		if (h === jPlus1) return color;
+		return '#cbd5e1';
+	},
+
+	// ── Comprehensive runtime plausibility checks ───────────────────
+	// Called after every state-mutating operation (setExample,
+	// setNumTokens, recomputeWeights, recomputeMatrix, hover). Asserts
+	// that every derived value is consistent with its inputs, so any
+	// silent corruption surfaces immediately as a console.warn +
+	// red ⚠ line in the debug panel.
+	_sanity: function(where) {
+		const errors = [];
+		const warn = (m) => { console.warn('[attn] sanity(' + where + '): ' + m); errors.push(m); };
+
+		// 1. Token names: must be non-empty strings, unique
+		ATTN_TOKENS.forEach((t, i) => {
+			if (!t || typeof t.name !== 'string' || t.name.length === 0)
+				warn('token[' + i + '].name is empty/invalid: ' + JSON.stringify(t));
+		});
+		const names = ATTN_TOKENS.map(t => t.name);
+		const uniq = new Set(names);
+		if (uniq.size !== names.length) warn('duplicate token names: ' + names);
+
+		// 2. q vector: 2 finite numbers, non-zero (else nothing to plot)
+		if (!Array.isArray(ATTN_2D.q) || ATTN_2D.q.length !== 2)
+			warn('q is not [n,n]: ' + JSON.stringify(ATTN_2D.q));
+		else {
+			if (!isFinite(ATTN_2D.q[0]) || !isFinite(ATTN_2D.q[1]))
+				warn('q has NaN/Infinity: ' + JSON.stringify(ATTN_2D.q));
+			if (Math.hypot(ATTN_2D.q[0], ATTN_2D.q[1]) < 0.01)
+				warn('q is near-zero: ' + JSON.stringify(ATTN_2D.q));
+		}
+
+		// 3. Keys/values: each is [n,n], finite, count matches numTokens
+		const checkArr = (arr, name) => {
+			if (!Array.isArray(arr)) { warn(name + ' not array'); return; }
+			if (arr.length !== ATTN_2D.numTokens)
+				warn(name + '.length=' + arr.length + ' ≠ numTokens=' + ATTN_2D.numTokens);
+			arr.forEach((v, i) => {
+				if (!v || v.length !== 2 || !isFinite(v[0]) || !isFinite(v[1]))
+					warn(name + '[' + i + '] bad: ' + JSON.stringify(v));
+			});
+		};
+		checkArr(ATTN_2D.keys, 'keys');
+		checkArr(ATTN_2D.vals, 'vals');
+
+		// 4. Scores = q·k for each key
+		if (Array.isArray(ATTN_2D.q) && Array.isArray(ATTN_2D.keys)) {
+			ATTN_2D.keys.forEach((k, i) => {
+				if (!k || !isFinite(k[0]) || !isFinite(k[1])) return;
+				const expected = ATTN_2D.q[0]*k[0] + ATTN_2D.q[1]*k[1];
+				if (Array.isArray(ATTN_2D.scores) && Math.abs(ATTN_2D.scores[i] - expected) > 0.01)
+					warn('scores[' + i + ']=' + ATTN_2D.scores[i].toFixed(3) + ' ≠ q·k=' + expected.toFixed(3));
+			});
+		}
+
+		// 5. Weights sum to 1.0 (softmax invariant)
+		if (Array.isArray(ATTN_2D.weights) && ATTN_2D.weights.length > 0) {
+			const sum = ATTN_2D.weights.reduce((a,b) => a+b, 0);
+			if (Math.abs(sum - 1) > 0.01)
+				warn('weights sum=' + sum.toFixed(3) + ' ≠ 1.0');
+			ATTN_2D.weights.forEach((w, i) => {
+				if (!isFinite(w)) warn('weights[' + i + '] is NaN/Inf');
+				else if (w < -0.001 || w > 1.001) warn('weights[' + i + ']=' + w.toFixed(3) + ' outside [0,1]');
+			});
+		}
+
+		// 6. weightedVals[j] = weights[j] * vals[j] (component-wise)
+		if (Array.isArray(ATTN_2D.weights) && Array.isArray(ATTN_2D.weightedVals)) {
+			if (ATTN_2D.weightedVals.length !== ATTN_2D.weights.length)
+				warn('weightedVals.length ≠ weights.length');
+			ATTN_2D.weights.forEach((w, i) => {
+				const wv = ATTN_2D.weightedVals[i];
+				const v  = ATTN_2D.vals[i];
+				if (!wv || !v) return;
+				const exW = [w*v[0], w*v[1]];
+				if (Math.abs(wv[0]-exW[0]) > 0.01 || Math.abs(wv[1]-exW[1]) > 0.01)
+					warn('weightedVals[' + i + '] ≠ weights[' + i + ']*vals[' + i + ']');
+			});
+		}
+
+		// 7. output = sum of weightedVals
+		if (Array.isArray(ATTN_2D.output) && Array.isArray(ATTN_2D.weightedVals)) {
+			const ex = [0, 0];
+			ATTN_2D.weightedVals.forEach(wv => { if (wv && isFinite(wv[0])) { ex[0] += wv[0]; ex[1] += wv[1]; } });
+			if (Math.abs(ATTN_2D.output[0]-ex[0]) > 0.01 || Math.abs(ATTN_2D.output[1]-ex[1]) > 0.01)
+				warn('output ≠ Σ weightedVals (got ' + JSON.stringify(ATTN_2D.output.map(v=>v.toFixed(3))) + ', expected ' + JSON.stringify(ex.map(v=>v.toFixed(3))) + ')');
+		}
+
+		// 8. Matrix rows sum to 1 (each row is a softmax distribution)
+		if (Array.isArray(ATTN_2D.matrix)) {
+			ATTN_2D.matrix.forEach((row, i) => {
+				if (!Array.isArray(row)) { warn('matrix[' + i + '] not array'); return; }
+				const s = row.reduce((a,b) => a+b, 0);
+				if (row.length > 0 && Math.abs(s - 1) > 0.01)
+					warn('matrix row ' + i + ' sum=' + s.toFixed(3));
+				row.forEach((v, j) => {
+					if (!isFinite(v)) warn('matrix[' + i + '][' + j + '] is NaN/Inf');
+					else if (v < -0.001 || v > 1.001) warn('matrix[' + i + '][' + j + ']=' + v.toFixed(3) + ' outside [0,1]');
+				});
+			});
+		}
+
+		// 9. matrix[i][j] should match weight of key j for query i.
+		// IMPORTANT: the matrix uses keys.slice(0, m-1) where
+		// m = min(numTokens, _allKeys.length + 1) — NOT all _allKeys.
+		if (Array.isArray(ATTN_2D.matrix) && Array.isArray(ATTN_2D._allKeys) && Array.isArray(ATTN_2D._allQueries)) {
+			const n = ATTN_2D.numTokens;
+			const m = Math.min(n, ATTN_2D._allKeys.length + 1);
+			const usedKeys = ATTN_2D._allKeys.slice(0, m);
+			for (let i = 0; i < ATTN_2D.matrix.length && i < ATTN_2D._allQueries.length; i++) {
+				const q = ATTN_2D._allQueries[i];
+				if (!q || !isFinite(q[0])) continue;
+				// Compute softmax scores for this query against usedKeys only
+				const scores = usedKeys.map(k => q[0]*k[0] + q[1]*k[1]);
+				const exps = scores.map(s => Math.exp(s / Math.sqrt(ATTN_2D.d_k || 2)));
+				const sum = exps.reduce((a,b)=>a+b,0);
+				const w = exps.map(e => e/sum);
+				for (let j = 0; j < w.length && j < ATTN_2D.matrix[i].length; j++) {
+					if (Math.abs(w[j] - ATTN_2D.matrix[i][j]) > 0.01)
+						warn('matrix[' + i + '][' + j + ']=' + ATTN_2D.matrix[i][j].toFixed(3) + ' ≠ softmax=' + w[j].toFixed(3));
+				}
+			}
+		}
+
+		// 10. hoveredToken must be a valid index
+		const h = ATTN_2D.hoveredToken;
+		if (h !== -1 && (h < 0 || h >= ATTN_TOKENS.length))
+			warn('hoveredToken=' + h + ' out of range [0,' + (ATTN_TOKENS.length-1) + ']');
+
+		// 11. selfOutputs[i] should equal sum_j matrix[i][j] * _allVals[j]
+		if (Array.isArray(ATTN_2D.selfOutputs) && Array.isArray(ATTN_2D.matrix) && Array.isArray(ATTN_2D._allVals)) {
+			ATTN_2D.selfOutputs.forEach((z, i) => {
+				if (!z || !Array.isArray(ATTN_2D.matrix[i])) return;
+				const ex = [0, 0];
+				for (let j = 0; j < ATTN_2D.matrix[i].length && j < ATTN_2D._allVals.length; j++) {
+					const v = ATTN_2D._allVals[j];
+					if (!v) continue;
+					ex[0] += ATTN_2D.matrix[i][j] * v[0];
+					ex[1] += ATTN_2D.matrix[i][j] * v[1];
+				}
+				if (Math.abs(z[0]-ex[0]) > 0.01 || Math.abs(z[1]-ex[1]) > 0.01)
+					warn('selfOutputs[' + i + '] ≠ Σ matrix·vals');
+			});
+		}
+
+		// 12. ATTN_TOKENS: exactly numTokens+1 entries (it + numTokens keys)
+		if (ATTN_TOKENS.length !== ATTN_2D.numTokens + 1)
+			warn('ATTN_TOKENS.length=' + ATTN_TOKENS.length + ' ≠ numTokens+1=' + (ATTN_2D.numTokens + 1));
+
+		// 13. ATTN_TOKENS[0] must be the query token (named "it")
+		if (ATTN_TOKENS[0] && ATTN_TOKENS[0].name !== 'it')
+			warn('ATTN_TOKENS[0].name="' + ATTN_TOKENS[0].name + '" ≠ "it"');
+
+		// 14. _allQueries must have at least numTokens+1 entries (it + N keys)
+		if (Array.isArray(ATTN_2D._allQueries)) {
+			if (ATTN_2D._allQueries.length < ATTN_2D.numTokens + 1)
+				warn('_allQueries.length=' + ATTN_2D._allQueries.length + ' < numTokens+1=' + (ATTN_2D.numTokens + 1));
+			// Check _allQueries[0] equals ATTN_2D.q
+			if (Array.isArray(ATTN_2D.q) && ATTN_2D._allQueries[0] &&
+				(ATTN_2D._allQueries[0][0] !== ATTN_2D.q[0] || ATTN_2D._allQueries[0][1] !== ATTN_2D.q[1]))
+				warn('_allQueries[0] ≠ q');
+		}
+
+		// 15. _allKeys length must equal numTokens
+		if (Array.isArray(ATTN_2D._allKeys) && ATTN_2D._allKeys.length !== ATTN_2D.numTokens)
+			warn('_allKeys.length=' + ATTN_2D._allKeys.length + ' ≠ numTokens=' + ATTN_2D.numTokens);
+
+		// 16. _allVals length must equal numTokens
+		if (Array.isArray(ATTN_2D._allVals) && ATTN_2D._allVals.length !== ATTN_2D.numTokens)
+			warn('_allVals.length=' + ATTN_2D._allVals.length + ' ≠ numTokens=' + ATTN_2D.numTokens);
+
+		// 17. demo data validity (used by projections step)
+		if (ATTN_2D.demo) {
+			const d = ATTN_2D.demo;
+			const checkVec = (v, name) => {
+				if (!v || v.length !== 2 || !isFinite(v[0]) || !isFinite(v[1]))
+					warn('demo.' + name + ' is bad: ' + JSON.stringify(v));
+			};
+			checkVec(d.x, 'x');
+			checkVec(d.q, 'q');
+			checkVec(d.k, 'k');
+			checkVec(d.v, 'v');
+			if (d.W_Q && (!Array.isArray(d.W_Q) || d.W_Q.length !== 2 || d.W_Q[0].length !== 2))
+				warn('demo.W_Q is not 2×2');
+			// demo.q should equal W_Q · demo.x
+			if (Array.isArray(d.W_Q) && d.q && d.x) {
+				const eq = [d.W_Q[0][0]*d.x[0] + d.W_Q[0][1]*d.x[1], d.W_Q[1][0]*d.x[0] + d.W_Q[1][1]*d.x[1]];
+				if (Math.abs(d.q[0]-eq[0]) > 0.01 || Math.abs(d.q[1]-eq[1]) > 0.01)
+					warn('demo.q ≠ W_Q·demo.x (got ' + JSON.stringify(d.q) + ', expected ' + JSON.stringify(eq) + ')');
+			}
+		}
+
+		// 18. numTokens within reasonable bounds
+		if (ATTN_2D.numTokens < 1 || ATTN_2D.numTokens > 10)
+			warn('numTokens=' + ATTN_2D.numTokens + ' out of reasonable bounds [1,10]');
+
+		// 19. exampleIdx within bounds of ATTN_SETS
+		if (typeof ATTN_SETS !== 'undefined' && (ATTN_2D.exampleIdx < 0 || ATTN_2D.exampleIdx >= ATTN_SETS.length))
+			warn('exampleIdx=' + ATTN_2D.exampleIdx + ' out of bounds [0,' + (ATTN_SETS.length-1) + ']');
+
+		// 20. Current step within bounds of ATTN_STEPS
+		if (typeof ATTN_STEPS !== 'undefined' && (this.step < 0 || this.step >= ATTN_STEPS.length))
+			warn('this.step=' + this.step + ' out of bounds [0,' + (ATTN_STEPS.length-1) + ']');
+
+		// 21. All ATTN_TOKENS have valid color strings
+		ATTN_TOKENS.forEach((t, i) => {
+			if (!t || !t.color || !/^#[0-9a-fA-F]{6}$/.test(t.color))
+				warn('ATTN_TOKENS[' + i + '].color="' + (t && t.color) + '" is not valid #RRGGBB');
+		});
+
+		// 22. All key vectors should be roughly unit-length (|k| ≈ 1)
+		if (Array.isArray(ATTN_2D.keys)) {
+			ATTN_2D.keys.forEach((k, i) => {
+				if (!k || !isFinite(k[0])) return;
+				const mag = Math.hypot(k[0], k[1]);
+				if (mag < 0.3 || mag > 3.0)
+					warn('keys[' + i + '] magnitude=' + mag.toFixed(2) + ' unusual (expected ≈1)');
+			});
+		}
+
+		// 23. All value vectors should be roughly unit-length
+		if (Array.isArray(ATTN_2D.vals)) {
+			ATTN_2D.vals.forEach((v, i) => {
+				if (!v || !isFinite(v[0])) return;
+				const mag = Math.hypot(v[0], v[1]);
+				if (mag < 0.3 || mag > 3.0)
+					warn('vals[' + i + '] magnitude=' + mag.toFixed(2) + ' unusual (expected ≈1)');
+			});
+		}
+
+		// 24. output should be roughly unit-length (it's a convex combo of unit vals)
+		if (Array.isArray(ATTN_2D.output) && isFinite(ATTN_2D.output[0])) {
+			const outMag = Math.hypot(ATTN_2D.output[0], ATTN_2D.output[1]);
+			if (outMag < 0.3 || outMag > 3.0)
+				warn('output magnitude=' + outMag.toFixed(2) + ' unusual (convex combo of unit vals should be ≈1)');
+		}
+
+		// 25. scaled = scores / √d_k
+		if (Array.isArray(ATTN_2D.scaled) && Array.isArray(ATTN_2D.scores)) {
+			const sqrtDk = Math.sqrt(ATTN_2D.d_k || 2);
+			ATTN_2D.scores.forEach((s, i) => {
+				const sc = ATTN_2D.scaled[i];
+				if (sc === undefined) return;
+				const ex = s / sqrtDk;
+				if (Math.abs(sc - ex) > 0.01)
+					warn('scaled[' + i + ']=' + sc.toFixed(3) + ' ≠ scores[' + i + ']/√d_k=' + ex.toFixed(3));
+			});
+		}
+
+		// 26. exps = exp(scaled)
+		if (Array.isArray(ATTN_2D.exps) && Array.isArray(ATTN_2D.scaled)) {
+			ATTN_2D.scaled.forEach((sc, i) => {
+				const e = ATTN_2D.exps[i];
+				if (e === undefined) return;
+				const ex = Math.exp(sc);
+				if (Math.abs(e - ex) > 0.01)
+					warn('exps[' + i + ']=' + e.toFixed(3) + ' ≠ exp(scaled[' + i + '])=' + ex.toFixed(3));
+			});
+		}
+
+		// 27. hoveredFormula validity (if set)
+		if (ATTN_2D.hoveredFormula) {
+			const hf = ATTN_2D.hoveredFormula;
+			if (typeof hf !== 'object' || hf === null)
+				warn('hoveredFormula is not an object: ' + JSON.stringify(hf));
+			else {
+				if (typeof hf.step !== 'number' || hf.step < 0 || (typeof ATTN_STEPS !== 'undefined' && hf.step >= ATTN_STEPS.length))
+					warn('hoveredFormula.step=' + hf.step + ' invalid');
+				if (typeof hf.idx !== 'number' || hf.idx < 0)
+					warn('hoveredFormula.idx=' + hf.idx + ' invalid');
+			}
+		}
+
+		// 28. hoveredToken-1 (i.e. the displayed key) must be within _allKeys range
+		if (h > 0 && Array.isArray(ATTN_2D._allKeys) && (h - 1) >= ATTN_2D._allKeys.length)
+			warn('hoveredToken=' + h + ' references key index ' + (h-1) + ' but _allKeys has only ' + ATTN_2D._allKeys.length);
+
+		// 29. ATTN_SETS entries must have valid structure
+		if (typeof ATTN_SETS !== 'undefined') {
+			ATTN_SETS.forEach((s, i) => {
+				if (!s.label) warn('ATTN_SETS[' + i + '] missing label');
+				if (!s.tokens || !Array.isArray(s.tokens) || s.tokens.length === 0)
+					warn('ATTN_SETS[' + i + '] missing tokens array');
+				else s.tokens.forEach((t, j) => {
+					if (!t.k || t.k.length !== 2 || !isFinite(t.k[0]))
+						warn('ATTN_SETS[' + i + '].tokens[' + j + '].k bad');
+				});
+			});
+		}
+
+		// 30. All step transitions produce valid data
+		if (typeof ATTN_STEPS !== 'undefined') {
+			ATTN_STEPS.forEach((s, i) => {
+				if (!s.title) warn('ATTN_STEPS[' + i + '] missing title');
+				if (!s.computation) warn('ATTN_STEPS[' + i + '] missing computation');
+				if (!s.mode) warn('ATTN_STEPS[' + i + '] missing mode');
+			});
+		}
+
+		if (errors.length) {
+			this._dbgLastError = 'sanity(' + where + '): ' + errors.length + ' issue(s): ' + errors.slice(0,3).join('; ');
+			this._updateDebug();
+		} else {
+			this._dbg('OK', 'sanity(' + where + ') passed');
+		}
+	},
+
+	// ── DEBUG HELPERS ────────────────────────────────────────────────
+	// All debug output goes to BOTH console AND the on-page debug
+	// panel so it can be selected-all and pasted into a bug report.
+	_dbgLastEvent: 'page loaded',
+	_dbgLastError: '',
+	_dbg: function(level, msg) {
+		const line = `[${level}] ${msg}`;
+		if (level === 'ERROR') {
+			console.error('[attn]', msg);
+			this._dbgLastError = msg;
+		} else {
+			console.log('[attn]', line);
+		}
+		this._dbgLastEvent = line;
+		this._updateDebug();
+	},
+	_assert: function(cond, msg) {
+		if (!cond) {
+			this._dbg('ERROR', `ASSERTION FAILED: ${msg}`);
+			console.trace();
+		}
+		return !!cond;
+	},
+	_updateDebug: function() {
+		try {
+			const el = document.getElementById('attn-debug');
+			if (!el) return;
+			const step = ATTN_STEPS[this.step];
+			const tokens = ATTN_TOKENS.map((t, i) => `${i}=${t.name}`).join(' ');
+			// Show BOTH _allKeys (full set) AND keys (what's actually drawn).
+			const allKeys = (ATTN_2D._allKeys || []).map(k => `(${k[0].toFixed(2)},${k[1].toFixed(2)})`).join(' ');
+			const drawnKeys = (ATTN_2D.keys || []).map(k => `(${k[0].toFixed(2)},${k[1].toFixed(2)})`).join(' ');
+			const set = ATTN_SETS[ATTN_2D.exampleIdx];
+			const hov  = ATTN_2D.hoveredToken;
+			const hovName = hov >= 0 ? (ATTN_TOKENS[hov]?.name || '?') : 'none';
+			const hovRole = hov >= 0 ? (hov === 0 ? 'query' : 'key') : '—';
+			// Check whether the hovered token's arrow is actually drawn
+			const drawnCount = ATTN_2D.keys ? ATTN_2D.keys.length : 0;
+			const hovInDrawn = (hov >= 0 && hov > 0 && hov <= drawnCount);
+			const hovWarn = (hov >= 0 && !hovInDrawn)
+				? `\n<span class="dbg-err">⚠ hoveredToken=${hov} ("${hovName}") is OUTSIDE drawn keys (only ${drawnCount} drawn)! Arrow does not exist in DOM.</span>`
+				: '';
+			const err = this._dbgLastError ? `\n<span class="dbg-err">⚠ ${this._dbgLastError}</span>` : '';
+			el.innerHTML =
+				`<span class="dbg-label">step</span>  ${this.step + 1}/${ATTN_STEPS.length}  mode=${step?.mode ?? '?'}  comp=${step?.computation ?? '?'}\n` +
+				`<span class="dbg-label">set </span>  ${ATTN_2D.exampleIdx} = "${set?.label ?? '?'}"\n` +
+				`<span class="dbg-label">tok </span>  ${tokens}\n` +
+				`<span class="dbg-label">allK</span>  ${allKeys}  (numTokens=${ATTN_2D.numTokens})\n` +
+				`<span class="dbg-label">drwn</span>  ${drawnKeys}  ← what render2D actually draws\n` +
+				`<span class="dbg-label">hov </span>  ${hov} (${hovName}, ${hovRole})  drawn=${hovInDrawn ? 'YES' : 'NO'}${hovWarn}\n` +
+				`<span class="dbg-label">last</span>  ${this._dbgLastEvent}${err}`;
+		} catch (e) {
+			console.error('[attn] _updateDebug crashed:', e);
+		}
+	},
+
+
+	// Draw a hoverable angle arc between the query direction and one
+	// key direction (both drawn from the origin). A fat transparent
+	// copy of the arc acts as the hit-area; hovering it shows the
+	// intuitive meaning of that angle.
+	_addAngleArc: function(parent, labelsParent, q, k, color, idx, dim) {
+		const NS = this._SVG_NS;
+		const r = 0.45;
+
+		const aq = Math.atan2(q[1], q[0]);
+		const ak = Math.atan2(k[1], k[0]);
+		const d  = Math.atan2(Math.sin(ak - aq), Math.cos(ak - aq)); // short signed angle in (-π, π]
+
+		const steps = 32;
+		let dstr = `M ${(r * Math.cos(aq)).toFixed(4)} ${(-r * Math.sin(aq)).toFixed(4)}`;
+		for (let i = 1; i <= steps; i++) {
+			const a = aq + d * (i / steps);
+			dstr += ` L ${(r * Math.cos(a)).toFixed(4)} ${(-r * Math.sin(a)).toFixed(4)}`;
+		}
+
+		// Fat invisible hit-area for forgiving hover
+		const hit = document.createElementNS(NS, 'path');
+		hit.setAttribute('d', dstr);
+		hit.setAttribute('fill', 'none');
+		hit.setAttribute('stroke', 'transparent');
+		hit.setAttribute('stroke-width', '0.18');
+		hit.setAttribute('stroke-linecap', 'round');
+		parent.appendChild(hit);
+
+		// Visible arc
+		const arc = document.createElementNS(NS, 'path');
+		arc.setAttribute('d', dstr);
+		arc.setAttribute('fill', 'none');
+		arc.setAttribute('stroke', color);
+		arc.setAttribute('stroke-width', '0.018');
+		arc.setAttribute('opacity', dim ? 0.35 : 0.9);
+		arc.style.pointerEvents = 'none';
+		parent.appendChild(arc);
+
+		hit.addEventListener('mouseenter', (e) => this._showTooltip('angle', idx, e.clientX, e.clientY));
+		hit.addEventListener('mousemove',  (e) => this._showTooltip('angle', idx, e.clientX, e.clientY));
+		hit.addEventListener('mouseleave', () => this._hideTooltip());
+
+		// When the angle is meaningful (this key is not dimmed) show its
+		// degree value right on the arc. This is the whole story of WHY
+		// attention works: k₁ sits ~5° from q → huge score; k₃ ~152° →
+		// strongly negative. Small angle = same direction = attention.
+		if (!dim) {
+			const cosT = Math.max(-1, Math.min(1, (q[0]*k[0] + q[1]*k[1]) /
+				(Math.hypot(q[0], q[1]) * Math.hypot(k[0], k[1]))));
+			const deg = Math.round(Math.acos(cosT) * 180 / Math.PI);
+			// When the wedge between q and k is very narrow the bisector
+			// label straddles both shafts, so park it just OUTSIDE the
+			// wedge on the q side. For wide angles the wedge interior is
+			// spacious and the bisector reads better.
+			const labelA = (Math.abs(d) < 0.21) ? aq - 0.19 : aq + d / 2;
+			const rad = (Math.abs(d) < 0.21) ? r + 0.19 : r + 0.17;
+			const lx = rad * Math.cos(labelA);
+			const ly = -rad * Math.sin(labelA);
+			const mkLabel = (halo) => {
+				const t = document.createElementNS(NS, 'text');
+				t.setAttribute('x', lx); t.setAttribute('y', ly);
+				t.setAttribute('text-anchor', 'middle');
+				t.setAttribute('dominant-baseline', 'middle');
+				if (halo) {
+					t.setAttribute('fill', '#fff');
+					t.setAttribute('stroke', '#fff');
+					t.setAttribute('stroke-width', '0.0025');
+					t.setAttribute('paint-order', 'stroke');
+				} else {
+					t.setAttribute('fill', color);
+				}
+				t.setAttribute('font-size', '0.095');
+				t.setAttribute('font-family', 'Inter, sans-serif');
+				t.textContent = `θ≈${deg}°`;
+				t.style.pointerEvents = 'none';
+				labelsParent.appendChild(t);
+			};
+			mkLabel(true);
+			mkLabel(false);
+		}
+	},
+
+	// === LABEL ANTI-OVERLAP HELPERS =====================================
+	// The 2D scene draws many short labels — `q`, `k1`, `k2`, `k3`,
+	// `v1`, `v2`, `α1·v1`, `α2·v2`, `z = output` — at the tips of
+	// arrows that often point in similar directions. Without a
+	// systematic solution the labels pile up and become unreadable.
+	// Previously we had two ad-hoc cases (`nearQ`, `inBarBand`) plus
+	// `opos` for the output-mode fanned layout; those handled maybe
+	// half of the configurations. This is the general fix:
+	//   1. Every label registers its SVG-space bounding box in
+	//      this._placedLabels when it's drawn.
+	//   2. For each new label we try the caller's preferred offset
+	//      first, then a fixed fallback list, and pick the first one
+	//      whose bounding box doesn't collide with any placed label.
+	//   3. The tracker is reset at the top of render2D() — each render
+	//      cycle starts with a clean slate.
+	// Hover labels (the big magenta one) skip this — they're temporary
+	// and must stay anchored to the arrow tip regardless of crowding.
+
+	// Estimate a label's bounding box (in SVG data units, viewBox scale).
+	// Adds a small safety margin so neighbouring letters / descenders
+	// of unicode glyphs (α, ·) don't bleed into the next box.
+	_estimateLabelBox: function(label, fontSize) {
+		const charW = fontSize * 0.66;
+		const w = label.length * charW + fontSize * 0.16;   // +pad
+		const h = fontSize * 1.30;                          // +pad for ascender/descender
+		return { w, h };
+	},
+
+	// Pick the first offset in the candidate list whose label box
+	// doesn't overlap any already-placed label. The candidate list
+	// starts with the caller's preferred `lpos` (if any) and then
+	// walks a fixed set of fallback offsets, ordered by visual
+	// preference. If EVERY candidate collides we fall back to the
+	// preferred offset — better to slightly overlap than to wander
+	// arbitrarily far from the arrow tip.
+	_pickLabelOffset: function(ex, ey, lpos, label, fontSize) {
+		const box = this._estimateLabelBox(label, fontSize);
+		const adjY = box.h / 2;   // dominant-baseline:middle → bbox top = ly - h/2
+		// x is right of the arrowhead tip; rest spread around it.
+		const candidates = [
+			lpos,
+			[ 0.14, -0.04],   // standard: right-up
+			[ 0.14,  0.10],   // right-down
+			[-0.06, -0.04],   // just left of tip, up
+			[-0.06,  0.10],   // just left of tip, down
+			[ 0,    -0.18],   // straight above tip
+			[ 0,     0.22],   // straight below tip
+			[ 0.26,  0.04],   // far right (avoids wide-cluster overlap)
+			[-0.26,  0.04],   // far left
+			[ 0.20, -0.16],   // right and up
+			[-0.20, -0.16],   // left and up
+			[ 0.18,  0.22],   // right and down
+			[-0.18,  0.22],   // left and down
+			[ 0,    -0.30],   // well above
+			[ 0,     0.34],   // well below
+			[ 0.32,  0.18],   // far right-down
+			[-0.32,  0.18],   // far left-down
+		].filter(Boolean);
+
+		for (const off of candidates) {
+			const lx = ex + off[0];
+			const ly = ey + off[1];
+			const rect = { x: lx, y: ly - adjY, w: box.w, h: box.h };
+			if (!this._rectOverlaps(rect)) return off;
+		}
+		return lpos || [0.14, -0.04];
+	},
+
+	// Axis-aligned bounding box overlap test against all placed labels.
+	_rectOverlaps: function(rect) {
+		const list = this._placedLabels || [];
+		for (const r of list) {
+			if (rect.x      < r.x + r.w &&
+				rect.x + rect.w > r.x &&
+				rect.y      < r.y + r.h &&
+				rect.y + rect.h > r.y) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	// Record a placed label so subsequent picks can avoid it.
+	_registerLabel: function(lx, ly, label, fontSize) {
+		if (!this._placedLabels) this._placedLabels = [];
+		const box = this._estimateLabelBox(label, fontSize);
+		const adjY = box.h / 2;
+		this._placedLabels.push({
+			x: lx,
+			y: ly - adjY,
+			w: box.w,
+			h: box.h,
+			label,
+		});
+	},
+
+	// Clear the label tracker. Call at the start of every fresh render
+	// pass so a previous frame's boxes don't leak into the next.
+	_clearLabelTracker: function() {
+		this._placedLabels = [];
+	},
+
+	// Draw an arrow from `start` to `end` in the 2D plot. Adds the
+	// hit-area, shaft, arrowhead, and (optional) label to the SVG.
+	// Mouse events fire directly on the hit-area — no Plotly needed.
+	// `lpos` optionally overrides the label offset ([dx, dy]) so labels
+	// that would otherwise stack (e.g. z + its weighted values) can be
+	// fanned out. When omitted the anti-overlap helper picks a free
+	// offset automatically (see helpers above).
+	_addSVGArrow: function(parent, labelsParent, start, end, color, label, formula, idx, dashed, dim, lpos, lanchor, opacity) {
+		const NS = this._SVG_NS;
+		const finalOpacity = (opacity !== undefined) ? opacity : (dim ? 0.35 : 1.0);
+
+		// HOVER HIGHLIGHT: when a token is hovered AND this arrow is at
+		// full opacity (i.e. it belongs to the hovered token), make it
+		// IMPOSSIBLE to miss — bright magenta, 3× thicker, big arrowhead,
+		// pulsing glow halo, AND a CSS scale animation on the shaft.
+		// Previous attempts used indigo / thicker-only which was too subtle
+		// when the arrow was already naturally prominent (cat/mat case).
+		const isHovered = (ATTN_2D.hoveredToken >= 0 && finalOpacity >= 0.99 && opacity !== undefined);
+		// Assertion: every drawn arrow that THINKS it's hovered must
+		// match the hoveredToken exactly. If not, that's a bug we want
+		// to surface in the debug panel.
+		if (isHovered && label) {
+			this._dbg('INFO', `draw ARROW "${label}" idx=${idx} AS HOVERED (magenta, thick)`);
+		}
+		const sw  = isHovered ? 0.080 : 0.028;            // ~185% thicker when hovered
+		const fs  = isHovered ? 0.17  : 0.10;             // much bigger label when hovered
+		const swH = isHovered ? 0.24  : 0.11;              // much bigger arrowhead when hovered
+		// Bright magenta — maximally distinct from every other arrow colour
+		// (red q, blue k, green v, amber z, grey dimmed).
+		const finalColor = isHovered ? '#d946ef' : color;
+
+		// Flip y for SVG (SVG y goes down, our data y goes up)
+		const sx = start[0], sy = -start[1];
+		const ex = end[0],   ey = -end[1];
+		const anchor = lanchor || 'start';
+
+		// Tag every animatable arrow so we can find it later if needed.
+		const arrowCls = 'attn-arrow-' + (idx !== undefined ? idx : 'misc');
+
+		// Invisible fat hit-area for forgiving hover
+		const hit = document.createElementNS(NS, 'line');
+		hit.setAttribute('x1', sx); hit.setAttribute('y1', sy);
+		hit.setAttribute('x2', ex); hit.setAttribute('y2', ey);
+		hit.setAttribute('stroke', 'transparent');
+		hit.setAttribute('stroke-width', '0.18');
+		hit.classList.add('attn-arrow-hit');
+		hit.classList.add(arrowCls);
+		parent.appendChild(hit);
+
+		// Glow halo: drawn UNDER the shaft only when hovered. Static
+		// (no CSS animation — those caused ugly pulsing per the user).
+		if (isHovered) {
+			const glow = document.createElementNS(NS, 'line');
+			glow.setAttribute('x1', sx); glow.setAttribute('y1', sy);
+			glow.setAttribute('x2', ex); glow.setAttribute('y2', ey);
+			glow.setAttribute('stroke', finalColor);
+			glow.setAttribute('stroke-width', '0.22');
+			glow.setAttribute('stroke-opacity', '0.35');
+			glow.setAttribute('stroke-linecap', 'round');
+			glow.style.pointerEvents = 'none';
+			parent.appendChild(glow);
+		}
+
+		// Visible shaft
+		const line = document.createElementNS(NS, 'line');
+		line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+		line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+		line.setAttribute('stroke', finalColor);
+		line.setAttribute('stroke-width', sw);
+		line.setAttribute("opacity", finalOpacity);
+		line.style.pointerEvents = 'none';
+		if (dashed) line.setAttribute('stroke-dasharray', '0.06 0.05');
+		line.classList.add(arrowCls);
+		parent.appendChild(line);
+
+		// Arrowhead (triangle pointing along the vector)
+		const dx = ex - sx, dy = ey - sy;
+		const len = Math.sqrt(dx * dx + dy * dy);
+		let head = null;
+		if (len > 0.01) {
+			const ux = dx / len, uy = dy / len;
+			const s = swH;                       // arrowhead size in data units
+			const c = Math.cos(Math.PI / 6), si = Math.sin(Math.PI / 6);
+			// Rotate (ux,uy) by ±30°
+			const ax1 = ex - s * (ux * c - uy * si);
+			const ay1 = ey - s * (ux * si + uy * c);
+			const ax2 = ex - s * (ux * c + uy * si);
+			const ay2 = ey - s * (-ux * si + uy * c);
+			head = document.createElementNS(NS, 'polygon');
+			head.setAttribute('points', `${ex},${ey} ${ex-s*(ux*c-uy*si)},${ey-s*(ux*si+uy*c)} ${ex-s*(ux*c+uy*si)},${ey-s*(-ux*si+uy*c)}`);
+			head.setAttribute('fill', finalColor);
+			head.setAttribute("opacity", finalOpacity);
+			head.style.pointerEvents = 'none';
+			head.classList.add(arrowCls);
+			parent.appendChild(head);
+		}
+
+		// Label (with a THIN white halo for readability over the grid —
+		// a wide stroke around every glyph looks like a messy outline)
+		let labelHalo = null, labelTxt = null;
+		if (label) {
+			// Pick a label offset that doesn't collide with already-placed
+			// labels. The caller's `lpos` is the first candidate — when
+			// they care (e.g. fan-out around z, dodge the bar band), we
+			// honour it. Hover labels skip the tracker entirely: they're
+			// temporary and must stay anchored to the arrow tip.
+			let chosenLpos;
+			if (isHovered) {
+				chosenLpos = lpos;
+			} else {
+				chosenLpos = this._pickLabelOffset(ex, ey, lpos, label, fs);
+			}
+			const lx = ex + (chosenLpos ? chosenLpos[0] : 0.14);
+			const ly = ey + (chosenLpos ? chosenLpos[1] : -0.04);
+			labelHalo = document.createElementNS(NS, 'text');
+			labelHalo.setAttribute('x', lx); labelHalo.setAttribute('y', ly);
+			labelHalo.setAttribute('text-anchor', anchor);
+			labelHalo.setAttribute('dominant-baseline', 'middle');
+			labelHalo.setAttribute('fill', '#fff'); labelHalo.setAttribute('stroke', '#fff');
+			// Wider halo than before (0.0025 → 0.006) so the white ring
+			// around each label actually lifts the glyph off the canvas
+			// in dark mode, where the canvas is near-black and the key
+			// blue (#60a5fa after the swap) would otherwise sit close
+			// to the background in tone.
+			labelHalo.setAttribute('stroke-width', '0.006'); labelHalo.setAttribute('paint-order', 'stroke');
+			labelHalo.setAttribute('font-size', fs);
+			labelHalo.setAttribute('font-family', 'Inter, sans-serif');
+			labelHalo.textContent = label;
+			labelHalo.style.pointerEvents = 'none';
+			labelHalo.classList.add(arrowCls);
+			labelsParent.appendChild(labelHalo);
+			labelTxt = document.createElementNS(NS, 'text');
+			labelTxt.setAttribute('x', lx); labelTxt.setAttribute('y', ly);
+			labelTxt.setAttribute('text-anchor', anchor);
+			labelTxt.setAttribute('dominant-baseline', 'middle');
+			labelTxt.setAttribute('fill', finalColor);
+			labelTxt.setAttribute('font-size', fs);
+			labelTxt.setAttribute("opacity", finalOpacity);
+			labelTxt.setAttribute('font-family', 'Inter, sans-serif');
+			labelTxt.setAttribute('font-weight', isHovered ? '700' : '600');
+			labelTxt.textContent = label;
+			labelTxt.style.pointerEvents = 'none';
+			labelTxt.classList.add(arrowCls);
+			labelsParent.appendChild(labelTxt);
+			// Register so subsequent labels in this render pass avoid
+			// the same spot. Hover labels are excluded so they don't
+			// pollute the layout for the non-hover state.
+			if (!isHovered) this._registerLabel(lx, ly, label, fs);
+		}
+
+		// Mouse events fire DIRECTLY on this element. No Plotly, no
+		// overlay, no event-delegation hacks — just plain DOM events.
+		// Every arrow with a `formula` argument gets its own tooltip.
+		if (formula) {
+			hit.addEventListener('mouseenter', (e) => this._showTooltip(formula, idx, e.clientX, e.clientY));
+			hit.addEventListener('mousemove',  (e) => this._showTooltip(formula, idx, e.clientX, e.clientY));
+			hit.addEventListener('mouseleave', () => this._hideTooltip());
+		}
+
+		// Return the elements so callers can animate them if needed.
+		return { hit, line, head, labelHalo, labelTxt, lpos, anchor, start, end };
+	},
+
+	// Standalone tooltip show/hide. Called from SVG mouse events.
+	_showTooltip: function(key, idx, clientX, clientY) {
+		const tip = document.getElementById('attn-vector-tooltip');
+		if (!tip) return;
+		// Self-attention mini-arrows (step 11) use their own info builder
+		// because each token's q/k/v comes from a *different* data path
+		// than the single-query demo (queries[i] / keys[i] / _allVals[i-1]
+		// / selfOutputs[i], with idx 0 reserved for "it"). Without this
+		// branch the tooltip would show the wrong values.
+		const isSelfAttn = (typeof key === 'string' && key.indexOf('sa-') === 0);
+		const info = isSelfAttn
+			? this._buildSelfAttentionInfo(key, idx)
+			: this._buildArrowInfo(key, idx);
+		if (!info) return;
+
+		// mousemove fires constantly while the cursor sits on an arrow —
+		// only rebuild + re-render when the arrow actually changes.
+		const contentKey = key + '|' + idx;
+		if (this._tipContentKey !== contentKey) {
+			this._tipContentKey = contentKey;
+
+			// === Build the tooltip body ===
+			// Sections in display order:
+			//   1. tt-name     — bold header
+			//   2. tt-vars     — variable legend (which letters mean what)
+			//   3. tt-intuition — plain-language "what this means"
+			//   4. tt-concrete  — concrete values (Temml math)
+			//   5. tt-formula   — general formula (Temml math)
+			//   6. tt-breakdown — for z: per-key α · v table with percentages
+			//   7. tt-edit      — hint about which field to edit
+			//   8. tt-desc      — closing plain-language explanation
+			const html = [];
+			html.push('<div class="tt-name"></div>');
+			if (info.vars)     html.push('<div class="tt-vars"></div>');
+			html.push('<div class="tt-intuition"></div>');
+			html.push(`<div class="tt-concrete">$$ ${info.concreteLatex} $$</div>`);
+			const formulaHtml = TEMML_RENDERED[key] || `$$ ${info.formulaLatex} $$`;
+			html.push(`<div class="tt-formula">${formulaHtml}</div>`);
+			if (info.breakdown) html.push('<div class="tt-breakdown"></div>');
+			if (info.editHint)  html.push('<div class="tt-edit"></div>');
+			html.push('<div class="tt-desc"></div>');
+			tip.innerHTML = html.join('');
+
+			tip.querySelector('.tt-name').textContent = info.name;
+			const intsEl = tip.querySelector('.tt-intuition');
+			intsEl.innerHTML = info.intuition || '';
+			const descEl = tip.querySelector('.tt-desc');
+			descEl.innerHTML = info.desc || '';
+			if (info.vars) {
+				tip.querySelector('.tt-vars').innerHTML = info.vars;
+			}
+			if (info.editHint) {
+				tip.querySelector('.tt-edit').innerHTML = info.editHint;
+			}
+			if (info.breakdown) {
+				tip.querySelector('.tt-breakdown').innerHTML = info.breakdown;
+			}
+
+			// Show BEFORE rendering so MathML gets real layout dimensions
+			// (a display:none element would still render, but measuring
+			// is only reliable once visible).
+			tip.classList.add('active');
+
+			// Render concrete equation + description math via Temml.
+			// Scoped to the tooltip — the general formula is already
+			// pre-rendered.
+			this._renderTooltipMath(tip);
+
+			// If the general formula still failed to render, fall back
+			// to readable Unicode math so the user always sees
+			// *something*.
+			const formulaEl = tip.querySelector('.tt-formula');
+			if (formulaEl.innerHTML.indexOf('$$') !== -1) {
+				formulaEl.innerHTML = `<code style="font-family:'SF Mono','Menlo','Consolas',monospace;font-size:13px;padding:2px 4px">${info.unicode}</code>`;
+			}
+		} else {
+			tip.classList.add('active');
+		}
+
+		// Position near cursor with edge-flipping, then clamp to the
+		// viewport so a wide formula (now sized to its natural width)
+		// never spills off either edge.
+		const pad = 16;
+		const vw = window.innerWidth, vh = window.innerHeight;
+		let x = clientX + pad, y = clientY + pad;
+		const r = tip.getBoundingClientRect();
+		if (x + r.width  > vw) x = clientX - r.width  - pad;
+		if (y + r.height > vh) y = clientY - r.height - pad;
+		// If still wider than viewport, center it horizontally.
+		if (r.width > vw - 2 * pad) x = Math.max(pad, (vw - r.width) / 2);
+		// Hard clamp so neither edge can go negative.
+		if (x < pad) x = pad;
+		if (x + r.width  > vw - pad) x = Math.max(pad, vw - pad - r.width);
+		if (y < pad) y = pad;
+		if (y + r.height > vh - pad) y = Math.max(pad, vh - pad - r.height);
+		tip.style.left = x + 'px';
+		tip.style.top  = y + 'px';
+	},
+
+	// Render every remaining $...$ / $$...$$ block inside `root` with
+	// Temml. Retries briefly in case Temml loads asynchronously, then
+	// gives up so the caller can apply its own fallback.
+	_renderTooltipMath: function(root) {
+		if (typeof render_temml !== 'function') return;
+		const sleep = (ms) => { const s = Date.now(); while (Date.now() - s < ms) {} };
+		for (let i = 0; i < 10; i++) {
+			try { render_temml(root); } catch (e) { /* swallow */ }
+			if (root.innerHTML.indexOf('$') === -1) break;
+			sleep(20);
+		}
+	},
+
+	_hideTooltip: function() {
+		const tip = document.getElementById('attn-vector-tooltip');
+		if (tip) tip.classList.remove('active');
+	},
+
+	// ─── Per-step geometric overlays ───────────────────────────────
+	// These draw the actual "working" on top of the plain arrows so each
+	// step visibly takes the vectors and transforms them, instead of
+	// only the left panels changing. Everything renders into the
+	// construction/labels layers, which render2D clears on every step.
+
+	// Darken a hex color by a factor (0..1). Used to distinguish the two
+	// per-dimension product blocks that build up each score bar.
+	_shade: function(hex, f) {
+		const n = parseInt(hex.slice(1), 16);
+		const r = Math.round(((n >> 16) & 255) * f);
+		const g = Math.round(((n >> 8) & 255) * f);
+		const b = Math.round((n & 255) * f);
+		return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+	},
+
+	// Muted sub-labels showing the LENGTH of the query and each key —
+	// the two ingredients of cos θ = q·k/(‖q‖‖k‖). Reads as a pair with
+	// the arrow labels ("k₁" + "‖k₁‖=1.01") so the geometry behind the
+	// attention score is visible without hovering.
+	_addMagnitudeLabels2D: function(labelsG, data) {
+		const NS = this._SVG_NS;
+		const norm = (v) => Math.hypot(v[0], v[1]);
+		const mk = (x, y, str, anchor) => {
+			const a = anchor || 'start';
+			const halo = document.createElementNS(NS, 'text');
+			halo.setAttribute('x', x); halo.setAttribute('y', y);
+			halo.setAttribute('text-anchor', a);
+			halo.setAttribute('dominant-baseline', 'middle');
+			halo.setAttribute('fill', '#fff'); halo.setAttribute('stroke', '#fff');
+			halo.setAttribute('stroke-width', '0.0025'); halo.setAttribute('paint-order', 'stroke');
+			halo.setAttribute('font-size', '0.095');
+			halo.setAttribute('font-family', 'Inter, sans-serif');
+			halo.textContent = str;
+			halo.style.pointerEvents = 'none';
+			labelsG.appendChild(halo);
+			const txt = document.createElementNS(NS, 'text');
+			txt.setAttribute('x', x); txt.setAttribute('y', y);
+			txt.setAttribute('text-anchor', a);
+			txt.setAttribute('dominant-baseline', 'middle');
+			txt.setAttribute('fill', themeColor('#64748b'));
+			txt.setAttribute('font-size', '0.095');
+			txt.setAttribute('font-family', 'Inter, sans-serif');
+			txt.textContent = str;
+			txt.style.pointerEvents = 'none';
+			labelsG.appendChild(txt);
+		};
+
+		const q = ATTN_2D.q;
+
+		// Query magnitude: tucked just below q's tip label (which sits
+		// above the tip at (q + 0.14, -q - 0.04)), so the two never touch.
+		mk(q[0] + 0.10, -q[1] + 0.12, `‖q‖=${norm(q).toFixed(2)}`);
+
+		ATTN_2D.keys.forEach((k, j) => {
+			if (data.highlightKey !== undefined && data.highlightKey !== j) return;
+			// Ride the shaft itself: anchored mid-vector and offset
+			// perpendicular to the direction. This clears the tip label,
+			// the arrowhead (which opens backward toward the origin), and
+			// — for keys nearly collinear with q — q's own labels too.
+			const n = norm(k);
+			const u = [k[0] / n, k[1] / n];
+			// k1's shaft is nearly horizontal, so a small offset clears it;
+			// the steeper k2/k3 shafts reach toward a label corner, so they
+			// need a larger perpendicular offset to keep their glyphs clear.
+			const off = (j === 0) ? 0.14 : 0.22;
+			const sx = 0.5 * k[0] - u[1] * off;
+			const sy = 0.5 * k[1] + u[0] * off;
+			mk(sx, -sy, `‖k${j+1}‖=${n.toFixed(2)}`, 'middle');
+		});
+	},
+
+	// Numerical value labels next to each key, so the score / scaled /
+	// exp / weight is readable at a glance. Positioned just inside the
+	// arrowhead so they don't collide with the tip label.
+	_addValueLabels2D: function(labelsG, comp) {
+		const NS = this._SVG_NS;
+		let label = null;
+		if (comp === 'dot' || comp === 'components') {
+			label = (j) => `s = ${ATTN_2D.scores[j].toFixed(3)}`;
+		} else if (comp === 'scaled') {
+			label = (j) => `s/√d = ${ATTN_2D.scaled[j].toFixed(3)}`;
+		} else if (comp === 'exps') {
+			label = (j) => `eˢ = ${ATTN_2D.exps[j].toFixed(3)}`;
+		} else if (comp === 'weights') {
+			label = (j) => `α = ${(ATTN_2D.weights[j]*100).toFixed(1)}%`;
+		}
+		if (!label) return;
+
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			// Position at the shaft midpoint, offset toward the tip
+			// so it sits between the origin and the tip label.
+			const mx = 0.62 * k[0], my = 0.62 * k[1];
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', mx);
+			t.setAttribute('y', -my + 0.10);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('dominant-baseline', 'middle');
+			t.setAttribute('fill', '#fff');
+			t.setAttribute('stroke', '#fff');
+			t.setAttribute('stroke-width', '0.0025');
+			t.setAttribute('paint-order', 'stroke');
+			t.setAttribute('font-size', '0.095');
+			t.setAttribute('font-weight', 'bold');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = label(j);
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+
+			const txt = document.createElementNS(NS, 'text');
+			txt.setAttribute('x', mx);
+			txt.setAttribute('y', -my + 0.10);
+			txt.setAttribute('text-anchor', 'middle');
+			txt.setAttribute('dominant-baseline', 'middle');
+			txt.setAttribute('fill', color);
+			txt.setAttribute('font-size', '0.095');
+			txt.setAttribute('font-weight', 'bold');
+			txt.setAttribute('font-family', 'Inter, sans-serif');
+			txt.textContent = label(j);
+			txt.style.pointerEvents = 'none';
+			labelsG.appendChild(txt);
+		});
+	},
+
+	// Step "components": q[d]·k[d] as rectangle AREAS — one rectangle
+	// per dimension (area = product), plus dashed drop-lines from the
+	// highlighted key tip and the query tip down to each axis.
+	_drawComponents2D: function(constructionG, labelsG, hi) {
+		const NS = this._SVG_NS;
+		const q = ATTN_2D.q;
+		const keys = ATTN_2D.keys;
+
+		const addRect = (x0, y0, x1, y1, color, label, idx, dim) => {
+			const rect = document.createElementNS(NS, 'rect');
+			const rx = Math.min(x0, x1), ry = Math.min(y0, y1);
+			rect.setAttribute('x',  rx);
+			rect.setAttribute('y',  -Math.max(y0, y1));
+			rect.setAttribute('width',  Math.abs(x1 - x0));
+			rect.setAttribute('height', Math.abs(y1 - y0));
+			rect.setAttribute('fill', color);
+			rect.setAttribute('fill-opacity', '0.12');
+			rect.setAttribute('stroke', color);
+			rect.setAttribute('stroke-opacity', '0.55');
+			rect.setAttribute('stroke-width', '0.008');
+			rect.setAttribute('stroke-dasharray', '0.03 0.03');
+			rect.style.pointerEvents = 'all';
+			rect.style.cursor = 'help';
+			constructionG.appendChild(rect);
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('comprect', idx * 2 + dim, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('comprect', idx * 2 + dim, e.clientX, e.clientY));
+			rect.addEventListener('mouseleave', () => this._hideTooltip());
+			if (label) {
+				const t = document.createElementNS(NS, 'text');
+				t.setAttribute('x', rx + 0.03);
+				t.setAttribute('y', -Math.max(y0, y1) - 0.04);
+				t.setAttribute('fill', color);
+				t.setAttribute('font-size', '0.1');
+				t.setAttribute('font-family', 'Inter, sans-serif');
+				t.textContent = label;
+				t.style.pointerEvents = 'none';
+				labelsG.appendChild(t);
+			}
+		};
+
+		// All keys: 2 rectangles each (one per dimension). The product
+		// of width × height is q[d] · k_j[d]. The sum across d=1,2 gives
+		// the dot product for key j.
+		keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const isHi = (j === hi);
+			const op = isHi ? '0.18' : '0.08';
+			const px = (q[0] * k[0]).toFixed(3);
+			const py = (q[1] * k[1]).toFixed(3);
+			const dim1 = document.createElementNS(NS, 'rect');
+			dim1.setAttribute('x',  Math.min(0, q[0]));
+			dim1.setAttribute('y',  -Math.max(0, k[0]));
+			dim1.setAttribute('width',  Math.abs(q[0]));
+			dim1.setAttribute('height', Math.abs(k[0]));
+			dim1.setAttribute('fill', color);
+			dim1.setAttribute('fill-opacity', op);
+			dim1.setAttribute('stroke', color);
+			dim1.setAttribute('stroke-opacity', isHi ? '0.6' : '0.35');
+			dim1.setAttribute('stroke-width', '0.008');
+			dim1.setAttribute('stroke-dasharray', '0.03 0.03');
+			dim1.style.pointerEvents = 'all'; dim1.style.cursor = 'help';
+			constructionG.appendChild(dim1);
+			dim1.addEventListener('mouseenter', (e) => this._showTooltip('comprect', j * 2 + 0, e.clientX, e.clientY));
+			dim1.addEventListener('mousemove',  (e) => this._showTooltip('comprect', j * 2 + 0, e.clientX, e.clientY));
+			dim1.addEventListener('mouseleave', () => this._hideTooltip());
+
+			const dim2 = document.createElementNS(NS, 'rect');
+			dim2.setAttribute('x',  Math.min(0, q[1]));
+			dim2.setAttribute('y',  -Math.max(0, k[1]));
+			dim2.setAttribute('width',  Math.abs(q[1]));
+			dim2.setAttribute('height', Math.abs(k[1]));
+			dim2.setAttribute('fill', color);
+			dim2.setAttribute('fill-opacity', op);
+			dim2.setAttribute('stroke', color);
+			dim2.setAttribute('stroke-opacity', isHi ? '0.6' : '0.35');
+			dim2.setAttribute('stroke-width', '0.008');
+			dim2.setAttribute('stroke-dasharray', '0.03 0.03');
+			dim2.style.pointerEvents = 'all'; dim2.style.cursor = 'help';
+			constructionG.appendChild(dim2);
+			dim2.addEventListener('mouseenter', (e) => this._showTooltip('comprect', j * 2 + 1, e.clientX, e.clientY));
+			dim2.addEventListener('mousemove',  (e) => this._showTooltip('comprect', j * 2 + 1, e.clientX, e.clientY));
+			dim2.addEventListener('mouseleave', () => this._hideTooltip());
+
+			// Label above the dim-1 rect (positioned at its top-right).
+			// Bold + larger font + dark color so it's actually readable.
+			// Each key gets its OWN vertical offset so labels for different
+			// keys don't all land at the same (0.04, -0.04) when their
+			// k[0] is negative (previous bug — k1 and k3 overlapped as
+			// a single black blob).
+			const lbl = document.createElementNS(NS, 'text');
+			lbl.setAttribute('x', Math.min(0, q[0]) + 0.04);
+			lbl.setAttribute('y', -Math.max(0, k[0]) - 0.04 - j * 0.14);
+			lbl.setAttribute('fill', '#1e293b');
+			lbl.setAttribute('font-size', '0.11');
+			lbl.setAttribute('font-weight', '700');
+			lbl.setAttribute('font-family', 'Inter, sans-serif');
+			lbl.textContent = `k${j+1}: ${px} + ${py}`;
+			lbl.style.pointerEvents = 'none';
+			labelsG.appendChild(lbl);
+		});
+	},
+
+	// Step "The learnable projections": one input embedding x, projected
+	// by three DIFFERENT learned matrices W^Q, W^K, W^V into three
+	// different vectors q, k, v. The visual story: same input, three
+	// different outputs — because the W's are different.
+	_drawLearnableProjections2D: function(constructionG, labelsG, arrowsG) {
+		const NS = this._SVG_NS;
+		const d = ATTN_2D.demo;
+
+		// The four arrows from the origin: x (gray, the input) and its
+		// three projections. Each one carries a tip label and a small
+		// "W^X" badge near the tip so the matrix is visible in the scene.
+		const arrows = [
+			{ v: d.x, color: '#64748b', label: 'x',  tip: 'proj-input', badge: 'input',          dashed: false },
+			{ v: d.q, color: '#ef4444', label: 'q',  tip: 'proj-q',     badge: 'W^Q · x',        dashed: false },
+			{ v: d.k, color: '#2563eb', label: 'k',  tip: 'proj-k',     badge: 'W^K · x',        dashed: false },
+			{ v: d.v, color: '#16a34a', label: 'v',  tip: 'proj-v',     badge: 'W^V · x',        dashed: false }
+		];
+
+		arrows.forEach((a, i) => {
+			// Offset each arrow slightly along its perpendicular so they
+			// don't all sit on top of each other at the origin (they
+			// share a common tail at (0,0)).
+			const n = Math.hypot(a.v[0], a.v[1]) || 1;
+			const ux = a.v[0] / n, uy = a.v[1] / n;
+			// Perpendicular unit vector (rotate 90° CCW in data space)
+			const px = -uy, py = ux;
+			// Fan out: x at 0, q/k/v at small offsets along their own
+			// perpendicular so the badge labels never overlap.
+			const off = [0, 0.00, 0.00, 0.00][i];
+			const sx = off * px, sy = off * py;
+
+			// Hover feedback for step 1: when a token is hovered, the
+			// input "x" arrow dims slightly (it's the embedding of the
+			// token being attended FROM) while q/k/v stay bright.
+			const anyHovered = (ATTN_2D.hoveredToken >= 0);
+			const baseOp = i === 0 ? 0.55 : 1;
+			const shaftOp = (anyHovered && i === 0) ? 0.30 : baseOp;
+
+			// Shaft (with a fat transparent hit-area for the tooltip)
+			const hit = document.createElementNS(NS, 'line');
+			hit.setAttribute('x1', sx); hit.setAttribute('y1', -sy);
+			hit.setAttribute('x2', a.v[0] + sx); hit.setAttribute('y2', -(a.v[1] + sy));
+			hit.setAttribute('stroke', 'transparent');
+			hit.setAttribute('stroke-width', '0.12');
+			hit.style.cursor = 'help';
+			arrowsG.appendChild(hit);
+			hit.addEventListener('mouseenter', (e) => this._showTooltip(a.tip, 0, e.clientX, e.clientY));
+			hit.addEventListener('mousemove',  (e) => this._showTooltip(a.tip, 0, e.clientX, e.clientY));
+			hit.addEventListener('mouseleave', () => this._hideTooltip());
+
+			const shaft = document.createElementNS(NS, 'line');
+			shaft.setAttribute('x1', sx); shaft.setAttribute('y1', -sy);
+			shaft.setAttribute('x2', a.v[0] + sx); shaft.setAttribute('y2', -(a.v[1] + sy));
+			shaft.setAttribute('stroke', a.color);
+			shaft.setAttribute('stroke-width', i === 0 ? '0.022' : '0.028');
+			shaft.setAttribute('opacity', shaftOp);
+			shaft.setAttribute('stroke-linecap', 'round');
+			if (a.dashed) shaft.setAttribute('stroke-dasharray', '0.03 0.03');
+			shaft.style.pointerEvents = 'none';
+			arrowsG.appendChild(shaft);
+
+			// Arrowhead
+			if (i > 0) {
+				const headLen = 0.10;
+				const headAng = Math.PI / 6;
+				const ang = Math.atan2(a.v[1], a.v[0]);
+				const tipX = a.v[0] + sx, tipY = -(a.v[1] + sy);
+				const p1x = tipX - headLen * Math.cos(ang - headAng);
+				const p1y = tipY - headLen * Math.sin(ang - headAng);
+				const p2x = tipX - headLen * Math.cos(ang + headAng);
+				const p2y = tipY - headLen * Math.sin(ang + headAng);
+				const head = document.createElementNS(NS, 'polygon');
+				head.setAttribute('points', `${tipX},${tipY} ${p1x},${p1y} ${p2x},${p2y}`);
+				head.setAttribute('fill', a.color);
+				head.style.pointerEvents = 'none';
+				arrowsG.appendChild(head);
+			}
+
+			// Tip label (q / k / v / x)
+			const tipLabel = document.createElementNS(NS, 'text');
+			const lx = a.v[0] + sx + 0.08;
+			const ly = -(a.v[1] + sy) - 0.02;
+			tipLabel.setAttribute('x', lx);
+			tipLabel.setAttribute('y', ly);
+			tipLabel.setAttribute('text-anchor', 'start');
+			tipLabel.setAttribute('dominant-baseline', 'middle');
+			tipLabel.setAttribute('fill', '#fff');
+			tipLabel.setAttribute('stroke', '#fff');
+			tipLabel.setAttribute('stroke-width', '0.012');
+			tipLabel.setAttribute('paint-order', 'stroke');
+			tipLabel.setAttribute('font-size', '0.1');
+			tipLabel.setAttribute('font-family', 'Inter, sans-serif');
+			tipLabel.textContent = a.label;
+			tipLabel.style.pointerEvents = 'none';
+			labelsG.appendChild(tipLabel);
+
+			// Coloured fill on top of the halo
+			const tipLabelFill = document.createElementNS(NS, 'text');
+			tipLabelFill.setAttribute('x', lx);
+			tipLabelFill.setAttribute('y', ly);
+			tipLabelFill.setAttribute('text-anchor', 'start');
+			tipLabelFill.setAttribute('dominant-baseline', 'middle');
+			tipLabelFill.setAttribute('fill', a.color);
+			tipLabelFill.setAttribute('font-size', '0.1');
+			tipLabelFill.setAttribute('font-family', 'Inter, sans-serif');
+			tipLabelFill.textContent = a.label;
+			tipLabelFill.style.pointerEvents = 'none';
+			labelsG.appendChild(tipLabelFill);
+
+			// Badge: the W matrix that produced this vector. Below the
+			// tip label so the visual reads "arrow → tip label → matrix".
+			const badge = document.createElementNS(NS, 'text');
+			badge.setAttribute('x', lx);
+			badge.setAttribute('y', ly - 0.11);
+			badge.setAttribute('text-anchor', 'start');
+			badge.setAttribute('dominant-baseline', 'middle');
+			badge.setAttribute('fill', themeColor('#475569'));
+			badge.setAttribute('font-size', '0.095');
+			badge.setAttribute('font-family', 'Inter, sans-serif');
+			badge.textContent = a.badge;
+			badge.style.pointerEvents = 'none';
+			labelsG.appendChild(badge);
+		});
+	},
+
+	// Step "The full attention matrix": render α[i][j] as an n×n heatmap.
+	// Rows = queries, columns = keys. Each cell's blue intensity is the
+	// weight; the value is written in the centre. Hovering a cell shows
+	// the exact score and weight in the tooltip.
+	// Step 10 (matrix): the actual matrix is now an HTML table in the
+	// computation panel. Here in the 2D SVG we just show a pointer so the
+	// area isn't empty. No dim1/dim2 background (grid/axes are hidden
+	// in render2D for this mode).
+	_drawMatrixRedirect2D: function(constructionG, labelsG) {
+		const NS = this._SVG_NS;
+		const n = ATTN_2D.numTokens;
+		const titles = [
+			'↑ The full attention matrix lives in the computation panel ↑',
+			'Each row = one query\'s softmax over all keys.'
+		];
+		// Center the message vertically in the [-1.4, 1.4] viewBox.
+		titles.forEach((line, i) => {
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', 0);
+			t.setAttribute('y', 0.4 - i * 0.22);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('fill', themeColor(i === 0 ? '#1e3a8a' : '#475569'));
+			t.setAttribute('font-size', i === 0 ? '0.12' : '0.08');
+			t.setAttribute('font-weight', i === 0 ? '700' : '400');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = line;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		});
+		// A small downward arrow
+		const arrow = document.createElementNS(NS, 'path');
+		arrow.setAttribute('d', 'M -0.06 -0.05 L 0 -0.20 L 0.06 -0.05 M 0 -0.20 L 0 -0.45');
+		arrow.setAttribute('stroke', '#1e3a8a');
+		arrow.setAttribute('stroke-width', '0.012');
+		arrow.setAttribute('fill', 'none');
+		arrow.setAttribute('stroke-linecap', 'round');
+		arrow.setAttribute('stroke-linejoin', 'round');
+		constructionG.appendChild(arrow);
+	},
+
+	_drawAttentionMatrix2D: function(constructionG, labelsG) {
+		const NS = this._SVG_NS;
+		const M = ATTN_2D.matrix;
+		const n = M.length;
+		if (!n) return;
+		const queries = ATTN_2D._allQueries.slice(0, n);
+		// Matrix is n queries × keys.length columns (one fewer than n
+		// for the single-query demo, where "it" doesn't carry its own key).
+		const m = Math.min(M[0]?.length || 0, ATTN_2D._allKeys.length);
+		const keys    = ATTN_2D._allKeys.slice(0, m);
+
+		const cell = 0.32, gap = 0.02;
+		const gridW = m * cell + (m - 1) * gap;
+		// Centre the grid horizontally; top edge at y = 0.85 so column
+		// labels have room and the whole thing fits in the [-1.4,1.4]
+		// viewport with room for row labels on the left.
+		const x0 = -gridW / 2;
+		const y0 = 0.85;
+		const labelGap = 0.12;
+
+		// Column headers: key tokens
+		for (let j = 0; j < m; j++) {
+			const cx = x0 + j * (cell + gap) + cell / 2;
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', cx); t.setAttribute('y', y0 + 0.16);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('fill', themeColor('#475569'));
+			t.setAttribute('font-size', '0.09');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = `k${j+1}`;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		}
+
+		// Row headers: query tokens
+		for (let i = 0; i < n; i++) {
+			const cy = y0 - i * (cell + gap) - cell / 2 + 0.03;
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', x0 - labelGap); t.setAttribute('y', cy);
+			t.setAttribute('text-anchor', 'end');
+			t.setAttribute('fill', themeColor('#475569'));
+			t.setAttribute('font-size', '0.09');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = `q${i+1}`;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		}
+
+		// Axis titles
+		const xt = document.createElementNS(NS, 'text');
+		xt.setAttribute('x', x0 + gridW / 2);
+		xt.setAttribute('y', y0 + 0.32);
+		xt.setAttribute('text-anchor', 'middle');
+		xt.setAttribute('fill', themeColor('#64748b'));
+		xt.setAttribute('font-size', '0.105');
+		xt.setAttribute('font-family', 'Inter, sans-serif');
+		xt.textContent = 'key  →';
+		xt.style.pointerEvents = 'none';
+		labelsG.appendChild(xt);
+
+		const yt = document.createElementNS(NS, 'text');
+		yt.setAttribute('x', x0 - labelGap - 0.02);
+		yt.setAttribute('y', y0 - n * (cell + gap) - 0.05);
+		yt.setAttribute('text-anchor', 'end');
+		yt.setAttribute('fill', themeColor('#64748b'));
+		yt.setAttribute('font-size', '0.105');
+		yt.setAttribute('font-family', 'Inter, sans-serif');
+		yt.textContent = '↑ query';
+		yt.style.pointerEvents = 'none';
+		labelsG.appendChild(yt);
+
+		// Cells — only n × m (not n × n), avoiding the undefined last column.
+		for (let i = 0; i < n; i++) {
+			for (let j = 0; j < m; j++) {
+				const w = (M[i] || [])[j] || 0;
+				const cx = x0 + j * (cell + gap);
+				const cy = y0 - i * (cell + gap) - cell;
+				const r = document.createElementNS(NS, 'rect');
+				r.setAttribute('x', cx); r.setAttribute('y', cy);
+				r.setAttribute('width', cell); r.setAttribute('height', cell);
+				// Blue intensity scales with weight. Floor at 0.08 so even
+				// very small weights are faintly visible.
+				const alpha = 0.08 + w * 0.85;
+				r.setAttribute('fill', '#2563eb');
+				r.setAttribute('fill-opacity', alpha.toFixed(3));
+				r.setAttribute('stroke', '#1e3a8a');
+				r.setAttribute('stroke-width', '0.005');
+				r.style.cursor = 'help';
+				constructionG.appendChild(r);
+
+				// Cell label
+				const t = document.createElementNS(NS, 'text');
+				t.setAttribute('x', cx + cell / 2);
+				t.setAttribute('y', cy + cell / 2 + 0.03);
+				t.setAttribute('text-anchor', 'middle');
+				t.setAttribute('fill', w > 0.45 ? '#fff' : themeColor('#1e293b'));
+				t.setAttribute('font-size', '0.095');
+				t.setAttribute('font-family', 'Inter, sans-serif');
+				t.textContent = `${(w*100).toFixed(0)}%`;
+				t.style.pointerEvents = 'none';
+				labelsG.appendChild(t);
+
+				// Invisible hover target so the tooltip works on the whole cell
+				const hit = document.createElementNS(NS, 'rect');
+				hit.setAttribute('x', cx); hit.setAttribute('y', cy);
+				hit.setAttribute('width', cell); hit.setAttribute('height', cell);
+				hit.setAttribute('fill', 'transparent');
+				hit.style.cursor = 'help';
+				constructionG.appendChild(hit);
+				const qi = i, qj = j;
+				hit.addEventListener('mouseenter', (e) => this._showTooltip('matrix-cell', qi * 10 + qj, e.clientX, e.clientY));
+				hit.addEventListener('mousemove',  (e) => this._showTooltip('matrix-cell', qi * 10 + qj, e.clientX, e.clientY));
+				hit.addEventListener('mouseleave', () => this._hideTooltip());
+			}
+		}
+	},
+
+	// Step "Self-attention for every token": draw each token's query, key,
+	// and output z as arrows in its OWN mini-plot. No dim1/dim2 background
+	// (the main grid/axes are hidden for this step in render2D). Every
+	// arrow has its own mouseover tooltip.
+	_drawSelfAttention2D: function(constructionG, labelsG, arrowsG) {
+		const NS = this._SVG_NS;
+		const n = ATTN_2D.numTokens;
+
+		// GUARDRAIL: re-derive the α-matrix and selfOutputs every time we
+		// enter this step. setNumTokens / setExample also call it, but a
+		// bare step-switch via Prev/Next does not — and we'd otherwise
+		// render stale z's that disagree with the current keys/vals.
+		// The cost is one inner-product pass over ≤ ~16 vectors; negligible.
+		if (!Array.isArray(ATTN_2D.matrix) || ATTN_2D.matrix.length !== n) {
+			ATTN_2D.recomputeMatrix();
+		} else {
+			// Cheap consistency check: row 0 must sum to ~1 (it's a
+			// probability distribution). If not, the matrix is stale.
+			const r0 = ATTN_2D.matrix[0] || [];
+			const sum = r0.reduce((a, b) => a + (isFinite(b) ? b : 0), 0);
+			if (Math.abs(sum - 1) > 0.01) ATTN_2D.recomputeMatrix();
+		}
+		const queries = ATTN_2D._allQueries.slice(0, n);
+		const keys    = ATTN_2D._allKeys.slice(0, n);
+		const Z       = ATTN_2D.selfOutputs || [];
+
+		// Final sanity: every output vector must have finite coordinates
+		// (otherwise the arrowhead positions blow up). Log loudly and
+		// substitute zero so the user at least sees an empty panel.
+		for (let i = 0; i < Z.length; i++) {
+			if (!Z[i] || !isFinite(Z[i][0]) || !isFinite(Z[i][1])) {
+				this._dbg('ERROR', `_drawSelfAttention2D: Z[${i}] not finite — substituting [0,0]`);
+				Z[i] = [0, 0];
+			}
+		}
+
+		// Layout: panels STACKED VERTICALLY (one per row) so each gets
+		// the full width and is much easier to read. With n=3 tokens
+		// the viewBox is 2.7 tall, so we have ~0.85 per panel.
+		const panelW = 2.4;
+		const panelH = 0.75;
+		const cx      = 0; // center horizontally in viewBox
+		const startY  = 1.35 - panelH; // top of first panel
+
+		// Strip title — Temml-rendered so it wraps nicely and never
+		// gets clipped at the right edge.
+		const titleDiv = document.createElementNS(NS, 'foreignObject');
+		titleDiv.setAttribute('x', -1.2);
+		titleDiv.setAttribute('y', startY + panelH * n + 0.05);
+		titleDiv.setAttribute('width', 2.4);
+		titleDiv.setAttribute('height', 0.35);
+		titleDiv.style.pointerEvents = 'none';
+		const titleHtml = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+		titleHtml.style.cssText = 'font:700 0.11px sans-serif; color:#475569; text-align:center; line-height:1.2;';
+		titleHtml.innerHTML = 'self-attention output per token — each gets its own $\\mathbf{z}_i = \\sum_j \\alpha_{ij}\\,\\mathbf{v}_j$. ' +
+			'<span style="color:#2563eb">⬅ Hover over any arrow for full details (variables, formula, percentages, sum breakdown)</span>';
+		titleDiv.appendChild(titleHtml);
+		labelsG.appendChild(titleDiv);
+		// Render the math via Temml right after the SVG is appended
+		this._renderTooltipMath(titleDiv);
+
+		const self = this;
+		for (let i = 0; i < n; i++) {
+			const ox = cx;
+			const oy = startY + panelH * (i + 1) - 0.15; // origin near bottom of panel
+			const tokenName = ATTN_TOKENS[i].name;
+			const stripY    = oy - 0.50; // top edge of this panel
+
+			// Panel background — single full-width panel per token
+			const panelBg = document.createElementNS(NS, 'rect');
+			panelBg.setAttribute('x', cx - panelW / 2);
+			panelBg.setAttribute('y', stripY);
+			panelBg.setAttribute('width', panelW);
+			panelBg.setAttribute('height', panelH);
+			panelBg.setAttribute('fill', themeColor('#f8fafc'));
+			panelBg.setAttribute('stroke', themeColor('#cbd5e1'));
+			panelBg.setAttribute('stroke-width', '0.005');
+			panelBg.setAttribute('rx', '0.03');
+			constructionG.appendChild(panelBg);
+
+			// Token header — big and bold, to the LEFT of the origin
+			const head = document.createElementNS(NS, 'text');
+			head.setAttribute('x', cx - panelW / 2 + 0.12);
+			head.setAttribute('y', stripY + 0.18);
+			head.setAttribute('text-anchor', 'start');
+			head.setAttribute('fill', ATTN_TOKENS[i].color);
+			head.setAttribute('font-size', '0.13');
+			head.setAttribute('font-weight', 'bold');
+			head.setAttribute('font-family', 'Inter, sans-serif');
+			head.textContent = tokenName;
+			head.style.pointerEvents = 'none';
+			labelsG.appendChild(head);
+
+			// q / k / v legend labels at top-left of panel
+			const legend = [
+				{ txt: 'q', color: '#ef4444' },
+				{ txt: 'k', color: '#2563eb' },
+				{ txt: 'v', color: '#10b981' },
+				{ txt: 'z', color: '#f59e0b' }
+			];
+			legend.forEach((lg, li) => {
+				const lt = document.createElementNS(NS, 'text');
+				lt.setAttribute('x', cx - panelW / 2 + 0.42 + li * 0.14);
+				lt.setAttribute('y', stripY + 0.18);
+				lt.setAttribute('text-anchor', 'start');
+				lt.setAttribute('fill', lg.color);
+				lt.setAttribute('font-size', '0.10');
+				lt.setAttribute('font-weight', '700');
+				lt.setAttribute('font-family', 'Inter, sans-serif');
+				lt.textContent = lg.txt;
+				lt.style.pointerEvents = 'none';
+				labelsG.appendChild(lt);
+			});
+
+			// Mini 2D axes (origin at left-center of the panel)
+			const ax = document.createElementNS(NS, 'line');
+			ax.setAttribute('x1', cx - 0.50); ax.setAttribute('y1', oy);
+			ax.setAttribute('x2', cx + panelW / 2 - 0.10); ax.setAttribute('y2', oy);
+			ax.setAttribute('stroke', themeColor('#94a3b8'));
+			ax.setAttribute('stroke-width', '0.006');
+			ax.style.pointerEvents = 'none';
+			constructionG.appendChild(ax);
+			const ay = document.createElementNS(NS, 'line');
+			ay.setAttribute('x1', ox); ay.setAttribute('y1', oy - 0.30);
+			ay.setAttribute('x2', ox); ay.setAttribute('y2', oy + 0.10);
+			ay.setAttribute('stroke', themeColor('#94a3b8'));
+			ay.setAttribute('stroke-width', '0.006');
+			ay.style.pointerEvents = 'none';
+			constructionG.appendChild(ay);
+
+			// Mini-arrow draw function with hover tooltip.
+			// `offset` is a perpendicular shift so q, k, v, z (which
+			// share the same tail) don't overlap when they're parallel
+			// or identical (q == k in self-attention).
+			const scale = 0.18;
+			const drawMini = (v, color, label, tipKey, offset) => {
+				if (!v || !isFinite(v[0]) || !isFinite(v[1])) {
+					const dot = document.createElementNS(NS, 'circle');
+					dot.setAttribute('cx', ox);
+					dot.setAttribute('cy', oy);
+					dot.setAttribute('r', '0.03');
+					dot.setAttribute('fill', themeColor('#94a3b8'));
+					dot.style.pointerEvents = 'none';
+					constructionG.appendChild(dot);
+					return;
+				}
+				// Perpendicular offset (in data units) so overlapping
+				// arrows get fanned out visually.
+				const off = offset || 0;
+				const nx = -v[1], ny = v[0];
+				const nlen = Math.hypot(nx, ny) || 1;
+				const px = (nx / nlen) * off;
+				const py = (ny / nlen) * off;
+				const ex = ox + v[0] * scale + px;
+				const ey = oy - v[1] * scale - py;
+				const sx = ox + px;
+				const sy = oy - py;
+				const line = document.createElementNS(NS, 'line');
+				line.setAttribute('x1', sx); line.setAttribute('y1', sy);
+				line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+				line.setAttribute('stroke', color);
+				line.setAttribute('stroke-width', '0.022');
+				line.setAttribute('stroke-linecap', 'round');
+				line.style.pointerEvents = 'none';
+				constructionG.appendChild(line);
+				// Arrowhead
+				const dx = ex - sx, dy2 = ey - sy;
+				const len = Math.sqrt(dx*dx + dy2*dy2);
+				if (len > 0.02) {
+					const ux = dx/len, uy = dy2/len;
+					const s = 0.05;
+					const c = Math.cos(Math.PI/6), si = Math.sin(Math.PI/6);
+					const head = document.createElementNS(NS, 'polygon');
+					head.setAttribute('points', `${ex},${ey} ${ex-s*(ux*c-uy*si)},${ey-s*(ux*si+uy*c)} ${ex-s*(ux*c+uy*si)},${ey-s*(-ux*si+uy*c)}`);
+					head.setAttribute('fill', color);
+					head.style.pointerEvents = 'none';
+					constructionG.appendChild(head);
+				}
+				// Label at the tip — pushed further out when offset
+				const t = document.createElementNS(NS, 'text');
+				t.setAttribute('x', ex + 0.05 + px * 0.5);
+				t.setAttribute('y', ey - 0.03 - py * 0.5);
+				t.setAttribute('text-anchor', 'start');
+				t.setAttribute('fill', color);
+				t.setAttribute('font-size', '0.10');
+				t.setAttribute('font-weight', '700');
+				t.setAttribute('font-family', 'Inter, sans-serif');
+				t.textContent = label;
+				t.style.pointerEvents = 'none';
+				labelsG.appendChild(t);
+
+				// Hover tooltip for this mini-arrow — VERY generous hit area
+				// (0.3 padding in data units ≈ 30px at typical SVG size).
+				// The arrows are short, so without this padding the hit rects
+				// are 13-30 px tall and the user has to aim precisely. A wider
+				// hit rect makes step-11 mouseovers feel natural.
+				const hit = document.createElementNS(NS, 'rect');
+				hit.setAttribute('x', Math.min(sx, ex) - 0.3);
+				hit.setAttribute('y', Math.min(sy, ey) - 0.3);
+				hit.setAttribute('width', Math.abs(ex - sx) + 0.6);
+				hit.setAttribute('height', Math.abs(ey - sy) + 0.6);
+				hit.setAttribute('fill', 'transparent');
+				hit.style.cursor = 'help';
+				constructionG.appendChild(hit);
+				hit.addEventListener('mouseenter', (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
+				hit.addEventListener('mousemove',  (e) => self._showTooltip(tipKey, i, e.clientX, e.clientY));
+				hit.addEventListener('mouseleave', () => self._hideTooltip());
+			};
+			// Draw q, k, v, z each with its own mouseover. Use small
+			// perpendicular offsets so parallel arrows don't stack on
+			// top of each other (q and k are identical in self-attention).
+			//
+			// SELF-ATTENTION SEMANTICS (correct vs. previous behaviour):
+			//   queries[i] is q_{token i}:    q_it (i=0), q_1, q_2, …
+			//   _allKeys[i-1] is k_{token i}  (i>0; "it" has no own k in this demo)
+			//   _allVals[i-1] is v_{token i}  (i>0; "it" has no own v)
+			// The OLD code did keys[i] which gave each panel the NEXT
+			// token's key (a stale off-by-one). Fix: align k with the
+			// panel's own token, same as q and v.
+			const v = (i === 0) ? null : ATTN_2D._allVals[i-1];
+			const k = (i === 0) ? null : ATTN_2D._allKeys[i-1];
+			// Use the sa- prefixed tipKeys so _showTooltip routes them
+			// to _buildSelfAttentionInfo (which knows about per-token
+			// queries/keys/_allVals/selfOutputs) instead of the generic
+			// _buildArrowInfo (which would show ATTN_2D.q for every q,
+			// regardless of which token's mini-plot was hovered).
+			drawMini(queries[i], '#ef4444', 'q', 'sa-q',  0.035);
+			if (k) drawMini(k,   '#2563eb', 'k', 'sa-k', -0.035);
+			if (v) drawMini(v,   '#10b981', 'v', 'sa-v', 0);
+			drawMini(Z[i],       '#f59e0b', 'z', 'sa-z', 0);
+
+			// z value label below the panel — bigger font
+			if (Z[i] && isFinite(Z[i][0])) {
+				const zv = document.createElementNS(NS, 'text');
+				zv.setAttribute('x', cx + panelW / 2 - 0.10);
+				zv.setAttribute('y', stripY + 0.30);
+				zv.setAttribute('text-anchor', 'end');
+				zv.setAttribute('fill', themeColor('#475569'));
+				zv.setAttribute('font-size', '0.11');
+				zv.setAttribute('font-family', 'monospace');
+				zv.textContent = `z = (${Z[i][0].toFixed(2)}, ${Z[i][1].toFixed(2)})`;
+				zv.style.pointerEvents = 'none';
+				labelsG.appendChild(zv);
+			}
+		}
+	},
+
+	// Steps "dot"/"scaled"/"exps": the projection of the query onto each
+	// key's line. A dashed perpendicular from the query tip down to the
+	// key line, the origin→projection length thickened, and a dot at the
+	// landing point — the classic geometric picture of q·k = |q||k|cosθ.
+	_drawProjections2D: function(constructionG) {
+		const NS = this._SVG_NS;
+		const q = ATTN_2D.q;
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const nk = Math.hypot(k[0], k[1]);
+			const t = (q[0] * k[0] + q[1] * k[1]) / (nk * nk);   // signed projection factor
+			const P = [ t * k[0], t * k[1] ];
+
+			// Perpendicular from the query tip down onto the key's line
+			const drop = document.createElementNS(NS, 'line');
+			drop.setAttribute('x1', q[0]); drop.setAttribute('y1', -q[1]);
+			drop.setAttribute('x2', P[0]); drop.setAttribute('y2', -P[1]);
+			drop.setAttribute('stroke', color);
+			drop.setAttribute('stroke-opacity', '0.45');
+			drop.setAttribute('stroke-width', '0.008');
+			drop.setAttribute('stroke-dasharray', '0.025 0.025');
+			drop.style.pointerEvents = 'none';
+			constructionG.appendChild(drop);
+
+			// The projected length along the key (origin → P), thickened
+			const seg = document.createElementNS(NS, 'line');
+			seg.setAttribute('x1', 0);     seg.setAttribute('y1', 0);
+			seg.setAttribute('x2', P[0]);  seg.setAttribute('y2', -P[1]);
+			seg.setAttribute('stroke', color);
+			seg.setAttribute('stroke-opacity', '0.3');
+			seg.setAttribute('stroke-width', '0.05');
+			seg.setAttribute('stroke-linecap', 'round');
+			seg.style.pointerEvents = 'none';
+			constructionG.appendChild(seg);
+
+			// Dot at the projection point (+ an invisible, more forgiving
+			// hover target around it showing the projection tooltip)
+			const dot = document.createElementNS(NS, 'circle');
+			dot.setAttribute('cx', P[0]);
+			dot.setAttribute('cy', -P[1]);
+			dot.setAttribute('r', '0.025');
+			dot.setAttribute('fill', color);
+			dot.style.pointerEvents = 'none';
+			constructionG.appendChild(dot);
+
+			const hit = document.createElementNS(NS, 'circle');
+			hit.setAttribute('cx', P[0]);
+			hit.setAttribute('cy', -P[1]);
+			hit.setAttribute('r', '0.09');
+			hit.setAttribute('fill', 'transparent');
+			hit.style.cursor = 'help';
+			constructionG.appendChild(hit);
+			hit.addEventListener('mouseenter', (e) => this._showTooltip('proj', j, e.clientX, e.clientY));
+			hit.addEventListener('mousemove',  (e) => this._showTooltip('proj', j, e.clientX, e.clientY));
+			hit.addEventListener('mouseleave', () => this._hideTooltip());
+		});
+	},
+
+	// The score bars are drawn as STACKED BUILDING BLOCKS so the user can
+	// see where each bar comes from: the dot product is just the sum of
+	// the per-dimension products q[1]·kⱼ[1] and q[2]·kⱼ[2]. Positive
+	// products stack downward from the baseline, negative ones upward, so
+	// an agreeing key makes a tall bar while a mixed key visibly cancels.
+	// The per-key caption "0.90 + 0.18 = 1.08" spells out the blocks.
+	_drawScoreBlocks2D: function(constructionG, labelsG) {
+		const NS = this._SVG_NS;
+		const q = ATTN_2D.q;
+		const m = ATTN_2D.keys.length;
+		if (!m) return;
+		const maxA = Math.max.apply(null, ATTN_2D.scores.map((v) => Math.abs(v)).concat([1e-9]));
+		const x0 = -1.2, x1 = 1.2;
+		const w = (x1 - x0) / m;
+		const baseY = -1.14;
+		const maxH  = 0.20;
+
+		// Baseline (zero)
+		const axis = document.createElementNS(NS, 'line');
+		axis.setAttribute('x1', x0); axis.setAttribute('y1', baseY);
+		axis.setAttribute('x2', x1); axis.setAttribute('y2', baseY);
+		axis.setAttribute('stroke', themeColor('#94a3b8'));
+		axis.setAttribute('stroke-width', '0.006');
+		axis.style.pointerEvents = 'none';
+		constructionG.appendChild(axis);
+
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const p1 = q[0] * k[0], p2 = q[1] * k[1];
+			const products = [p1, p2];
+			const cx = x0 + w * (j + 0.5);
+			const bw = Math.max(w - 0.14, 0.06);
+			const hOf = (p) => (Math.abs(p) / maxA) * maxH;
+
+			// Running edge (SVG y, grows downward); start on the baseline.
+			let edge = baseY;
+			products.forEach((p, di) => {
+				const h = hOf(p);
+				const y0 = (p >= 0) ? edge : edge - h;
+				const rect = document.createElementNS(NS, 'rect');
+				rect.setAttribute('x', cx - bw / 2);
+				rect.setAttribute('y', y0);
+				rect.setAttribute('width', bw);
+				rect.setAttribute('height', Math.max(h, 0.006));
+				rect.setAttribute('fill', di === 0 ? color : this._shade(color, 0.5));
+				rect.setAttribute('fill-opacity', '0.9');
+				rect.setAttribute('stroke', color);
+				rect.setAttribute('stroke-opacity', '0.5');
+				rect.setAttribute('stroke-width', '0.008');
+				rect.style.cursor = 'help';
+				constructionG.appendChild(rect);
+				rect.addEventListener('mouseenter', (e) => this._showTooltip('bar-score', j, e.clientX, e.clientY));
+				rect.addEventListener('mousemove',  (e) => this._showTooltip('bar-score', j, e.clientX, e.clientY));
+				rect.addEventListener('mouseleave', () => this._hideTooltip());
+				edge += (p >= 0 ? 1 : -1) * h;
+			});
+
+			// Caption above this key's stack: the blocks as one equation.
+			const signed = (x) => (x < 0 ? '-' + Math.abs(x).toFixed(2) : x.toFixed(2));
+			const cap = document.createElementNS(NS, 'text');
+			cap.setAttribute('x', cx);
+			cap.setAttribute('y', baseY - maxH - 0.06);
+			cap.setAttribute('text-anchor', 'middle');
+			cap.setAttribute('fill', themeColor('#334155'));
+			cap.setAttribute('font-size', '0.1');
+			cap.setAttribute('font-family', 'Inter, sans-serif');
+			cap.textContent = `${signed(p1)} ${p2 < 0 ? '−' : '+'} ${signed(p2)} = ${signed(ATTN_2D.scores[j])}`;
+			cap.style.pointerEvents = 'none';
+			labelsG.appendChild(cap);
+		});
+	},
+
+	// Step "scaled": the previous step's score bars shown as faint dashed
+	// ghosts behind the solid scaled bars, so the "÷ √2" shrink is visible
+	// bar by bar. Same baseline, same max scale, so the ghosts sit exactly
+	// where the score bars were one step ago.
+	_drawScaledBars2D: function(constructionG, labelsG) {
+		this._drawBeforeAfterBars2D(constructionG, labelsG, ATTN_2D.scores, ATTN_2D.scaled, 'bar-score', 'bar-scaled', '÷ √2');
+	},
+
+	// Step "exps": the scaled scores as ghosts behind the exp() bars.
+	// Positive inputs grow, negative inputs flip above the line and
+	// shrink toward 0 — the whole softmax amplification in one picture.
+	_drawExpBars2D: function(constructionG, labelsG) {
+		this._drawBeforeAfterBars2D(constructionG, labelsG, ATTN_2D.scaled, ATTN_2D.exps, 'bar-scaled', 'bar-exp', 'eˣ');
+	},
+
+	// Shared engine for the before/after bar steps: for each key draw the
+	// ghost bar (the input value, dashed + translucent) and the solid bar
+	// (the output value) on top, both hanging from the same baseline and
+	// scaled against the SAME max, so the eye directly reads the growth
+	// or the shrink. `opTag` is the operation label ("÷ √2", "eˣ") shown
+	// at the left edge of the row.
+	_drawBeforeAfterBars2D: function(constructionG, labelsG, inputVals, outputVals, tipIn, tipOut, opTag) {
+		const NS = this._SVG_NS;
+		const m = inputVals.length;
+		if (!m) return;
+		const maxA = Math.max.apply(null, ATTN_2D.scores.map((v) => Math.abs(v)).concat([1e-9]));
+		const x0 = -1.2, x1 = 1.2;
+		const w = (x1 - x0) / m;
+		const baseY = -1.14;
+		const maxH  = 0.20;
+
+		// Baseline (zero)
+		const axis = document.createElementNS(NS, 'line');
+		axis.setAttribute('x1', x0); axis.setAttribute('y1', baseY);
+		axis.setAttribute('x2', x1); axis.setAttribute('y2', baseY);
+		axis.setAttribute('stroke', themeColor('#94a3b8'));
+		axis.setAttribute('stroke-width', '0.006');
+		axis.style.pointerEvents = 'none';
+		constructionG.appendChild(axis);
+
+		// Operation label at the left edge of the row, e.g. "÷ √2".
+		if (opTag) {
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', x0); t.setAttribute('y', baseY - 0.10);
+			t.setAttribute('text-anchor', 'start');
+			t.setAttribute('fill', themeColor('#64748b'));
+			t.setAttribute('font-size', '0.095');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = opTag;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+		}
+
+		const barRect = (v, cx, bw) => {
+			const h = (Math.abs(v) / maxA) * maxH;
+			const rect = document.createElementNS(NS, 'rect');
+			if (v >= 0) { rect.setAttribute('x', cx - bw / 2); rect.setAttribute('y', baseY); rect.setAttribute('height', h); }
+			else        { rect.setAttribute('x', cx - bw / 2); rect.setAttribute('y', baseY - h); rect.setAttribute('height', h); }
+			return rect;
+		};
+
+		ATTN_2D.keys.forEach((k, j) => {
+			const color = ATTN_TOKENS[j + 1].color;
+			const cx = x0 + w * (j + 0.5);
+			const bw = Math.max(w - 0.14, 0.06);
+			const vin = inputVals[j], vout = outputVals[j];
+
+			// Ghost: the input bar, just outlines so the solid bar shows through.
+			const ghost = barRect(vin, cx, bw);
+			ghost.setAttribute('fill', color);
+			ghost.setAttribute('fill-opacity', '0.14');
+			ghost.setAttribute('stroke', color);
+			ghost.setAttribute('stroke-opacity', '0.45');
+			ghost.setAttribute('stroke-width', '0.008');
+			ghost.setAttribute('stroke-dasharray', '0.025 0.025');
+			ghost.style.cursor = 'help';
+			constructionG.appendChild(ghost);
+			ghost.addEventListener('mouseenter', (e) => this._showTooltip(tipIn, j, e.clientX, e.clientY));
+			ghost.addEventListener('mousemove',  (e) => this._showTooltip(tipIn, j, e.clientX, e.clientY));
+			ghost.addEventListener('mouseleave', () => this._hideTooltip());
+
+			// Solid: the output bar.
+			const solid = barRect(vout, cx, bw);
+			solid.setAttribute('fill', color);
+			solid.setAttribute('fill-opacity', '0.9');
+			solid.setAttribute('stroke', color);
+			solid.setAttribute('stroke-opacity', '0.5');
+			solid.setAttribute('stroke-width', '0.008');
+			solid.style.cursor = 'help';
+			constructionG.appendChild(solid);
+			solid.addEventListener('mouseenter', (e) => this._showTooltip(tipOut, j, e.clientX, e.clientY));
+			solid.addEventListener('mousemove',  (e) => this._showTooltip(tipOut, j, e.clientX, e.clientY));
+			solid.addEventListener('mouseleave', () => this._hideTooltip());
+
+			// Caption above the pair, e.g. "k₁: 1.08 → 0.76".
+			const cap = document.createElementNS(NS, 'text');
+			cap.setAttribute('x', cx);
+			cap.setAttribute('y', baseY - maxH - 0.10);
+			cap.setAttribute('text-anchor', 'middle');
+			cap.setAttribute('fill', themeColor('#334155'));
+			cap.setAttribute('font-size', '0.095');
+			cap.setAttribute('font-family', 'Inter, sans-serif');
+			cap.textContent = `${vin.toFixed(2)} → ${vout.toFixed(2)}`;
+			cap.style.pointerEvents = 'none';
+			labelsG.appendChild(cap);
+		});
+	},
+
+	// Step "weights": softmax as a RENORMALIZATION. The raw exp(score)
+	// values are drawn as a full-width strip above (same proportional
+	// segments as the weight bar — because weight_j = exp_j / Σ). The
+	// "÷ Σ" divider between them is the entire operation: divide the
+	// exp strip by the sum and you get the attention bar, unchanged in
+	// shape, re-scaled so it sums to exactly 100%.
+	_drawWeightBar2D: function(constructionG, labelsG) {
+		const NS = this._SVG_NS;
+		const w = ATTN_2D.weights;
+		const ex = ATTN_2D.exps;
+		const sumEx = ex.reduce((a, b) => a + b, 0);
+		const x0 = -1.2, x1 = 1.2;
+		const span = x1 - x0;
+		const baseY = -1.14, h = 0.16;
+
+		// The raw exp(score) strip — the INPUT to softmax.
+		const stripY = -1.38, stripH = 0.07;
+		let acc = 0;
+		ex.forEach((e, j) => {
+			const xl = x0 + acc * span;
+			const xr = x0 + (acc + e / sumEx) * span;
+			const rect = document.createElementNS(NS, 'rect');
+			rect.setAttribute('x', xl);
+			rect.setAttribute('y', stripY);
+			rect.setAttribute('width', Math.max(xr - xl, 0.01));
+			rect.setAttribute('height', stripH);
+			rect.setAttribute('fill', this._shade(ATTN_TOKENS[j + 1].color, 0.7));
+			rect.setAttribute('fill-opacity', '0.9');
+			rect.style.cursor = 'help';
+			constructionG.appendChild(rect);
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('bar-exp', j, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('bar-exp', j, e.clientX, e.clientY));
+			rect.addEventListener('mouseleave', () => this._hideTooltip());
+
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', (xl + xr) / 2);
+			t.setAttribute('y', stripY + stripH / 2);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('dominant-baseline', 'middle');
+			t.setAttribute('fill', '#fff');
+			t.setAttribute('font-size', '0.062');
+			t.setAttribute('font-weight', 'bold');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = e.toFixed(2);
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+			acc += e / sumEx;
+		});
+
+		// "exp" tag on the strip + the ÷ Σ divider. Both ride the same
+		// caption line below the strip — the divider centered under the
+		// strip would collide with the wide first segment's e-value label.
+		const tag = document.createElementNS(NS, 'text');
+		tag.setAttribute('x', x0);
+		tag.setAttribute('y', stripY - 0.05);
+		tag.setAttribute('text-anchor', 'start');
+		tag.setAttribute('fill', themeColor('#64748b'));
+		tag.setAttribute('font-size', '0.062');
+		tag.setAttribute('font-family', 'Inter, sans-serif');
+		tag.textContent = 'eˢ';
+		tag.style.pointerEvents = 'none';
+		labelsG.appendChild(tag);
+
+		const div = document.createElementNS(NS, 'text');
+		div.setAttribute('x', x0 + 0.10);
+		div.setAttribute('y', stripY - 0.05);
+		div.setAttribute('text-anchor', 'start');
+		div.setAttribute('fill', themeColor('#64748b'));
+		div.setAttribute('font-size', '0.062');
+		div.setAttribute('font-family', 'Inter, sans-serif');
+		div.textContent = `÷ Σ = ${sumEx.toFixed(3)}`;
+		div.style.pointerEvents = 'none';
+		labelsG.appendChild(div);
+
+		const title = document.createElementNS(NS, 'text');
+		title.setAttribute('x', 0);
+		title.setAttribute('y', baseY - 0.065);
+		title.setAttribute('text-anchor', 'middle');
+		title.setAttribute('fill', themeColor('#64748b'));
+		title.setAttribute('font-size', '0.1');
+		title.setAttribute('font-family', 'Inter, sans-serif');
+		title.textContent = 'attention weights α — sum = 100%';
+		title.style.pointerEvents = 'none';
+		labelsG.appendChild(title);
+
+		acc = 0;
+		w.forEach((wi, j) => {
+			const xl = x0 + acc * span;
+			const xr = x0 + (acc + wi) * span;
+			const rect = document.createElementNS(NS, 'rect');
+			rect.setAttribute('x', xl);
+			rect.setAttribute('y', baseY);
+			rect.setAttribute('width', Math.max(xr - xl, 0.01));
+			rect.setAttribute('height', h);
+			rect.setAttribute('fill', ATTN_TOKENS[j + 1].color);
+			rect.setAttribute('fill-opacity', '0.85');
+			rect.style.cursor = 'help';
+			constructionG.appendChild(rect);
+			rect.addEventListener('mouseenter', (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			rect.addEventListener('mousemove',  (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			rect.addEventListener('mouseleave', () => this._hideTooltip());
+
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', (xl + xr) / 2);
+			t.setAttribute('y', baseY + h / 2);
+			t.setAttribute('text-anchor', 'middle');
+			t.setAttribute('fill', '#fff');
+			t.setAttribute('font-size', '0.095');
+			t.setAttribute('font-weight', 'bold');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = `α${j+1} ${(wi * 100).toFixed(1)}%`;
+			t.style.pointerEvents = 'none';
+			labelsG.appendChild(t);
+			acc += wi;
+		});
+	},
+
+	// Step "values": annotate each value arrow with its attention weight,
+	// so you can see the weights carry over from the keys to the values.
+	// Each label is hoverable (same tooltip as the weight-bar segments).
+	_drawValueWeights2D: function(labelsG) {
+		const NS = this._SVG_NS;
+		ATTN_2D.weights.forEach((wi, j) => {
+			const v = ATTN_2D.vals[j];
+			const t = document.createElementNS(NS, 'text');
+			t.setAttribute('x', v[0] + 0.14);
+			// Below the value's tip label (which sits at -v[1]-0.04), far
+			// enough that the two stacked labels never touch.
+			t.setAttribute('y', -v[1] - 0.16);
+			t.setAttribute('fill', '#15803d');
+			t.setAttribute('font-size', '0.105');
+			t.setAttribute('font-family', 'Inter, sans-serif');
+			t.textContent = `α${j+1} = ${(wi * 100).toFixed(1)}%`;
+			t.style.cursor = 'help';
+			labelsG.appendChild(t);
+			t.addEventListener('mouseenter', (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			t.addEventListener('mousemove',  (e) => this._showTooltip('wbar', j, e.clientX, e.clientY));
+			t.addEventListener('mouseleave', () => this._hideTooltip());
+		});
+	},
+
+	// Step "output": fill the span (convex hull) of the value tips with
+	// a translucent triangle/segment, so z visibly lands inside it.
+	// The whole region is hoverable.
+	_drawSpanFill2D: function(constructionG) {
+		const NS = this._SVG_NS;
+		const vals = ATTN_2D.vals;
+		if (vals.length < 2) return;
+		const pts = vals.map((v) => `${v[0].toFixed(4)},${(-v[1]).toFixed(4)}`).join(' ');
+		const bind = (el) => {
+			el.style.cursor = 'help';
+			constructionG.appendChild(el);
+			el.addEventListener('mouseenter', (e) => this._showTooltip('span', 0, e.clientX, e.clientY));
+			el.addEventListener('mousemove',  (e) => this._showTooltip('span', 0, e.clientX, e.clientY));
+			el.addEventListener('mouseleave', () => this._hideTooltip());
+		};
+		if (vals.length === 2) {
+			const line = document.createElementNS(NS, 'line');
+			line.setAttribute('x1', vals[0][0]); line.setAttribute('y1', -vals[0][1]);
+			line.setAttribute('x2', vals[1][0]); line.setAttribute('y2', -vals[1][1]);
+			line.setAttribute('stroke', '#f59e0b');
+			line.setAttribute('stroke-opacity', '0.6');
+			line.setAttribute('stroke-width', '0.05');   // fat enough to hover
+			line.setAttribute('stroke-dasharray', '0.04 0.04');
+			bind(line);
+			// thin visible version
+			const vis = document.createElementNS(NS, 'line');
+			vis.setAttribute('x1', vals[0][0]); vis.setAttribute('y1', -vals[0][1]);
+			vis.setAttribute('x2', vals[1][0]); vis.setAttribute('y2', -vals[1][1]);
+			vis.setAttribute('stroke', '#f59e0b');
+			vis.setAttribute('stroke-opacity', '0.6');
+			vis.setAttribute('stroke-width', '0.014');
+			vis.setAttribute('stroke-dasharray', '0.04 0.04');
+			vis.style.pointerEvents = 'none';
+			constructionG.appendChild(vis);
+		} else {
+			const poly = document.createElementNS(NS, 'polygon');
+			poly.setAttribute('points', pts);
+			poly.setAttribute('fill', '#f59e0b');
+			poly.setAttribute('fill-opacity', '0.08');
+			poly.setAttribute('stroke', '#f59e0b');
+			poly.setAttribute('stroke-opacity', '0.45');
+			poly.setAttribute('stroke-width', '0.008');
+			poly.setAttribute('stroke-dasharray', '0.03 0.03');
+			bind(poly);
+		}
+	},
+
+	// Replaces the old Plotly-based render2D. Draws arrows as SVG.
+	render2D: function(data) {
+		const svg = document.getElementById('attn-anatomy-2d-svg');
+		if (!svg) return;
+
+		const arrowsG       = svg.querySelector('.attn-arrows');
+		const labelsG       = svg.querySelector('.attn-labels');
+		const constructionG = svg.querySelector('.attn-construction');
+		const anglesG       = svg.querySelector('.attn-angles');
+		arrowsG.innerHTML       = '';
+		labelsG.innerHTML       = '';
+		constructionG.innerHTML = '';
+		if (anglesG) anglesG.innerHTML = '';
+
+		// Collapse the 2D SVG only for the matrix step (step 10), where
+		// the visualisation lives entirely in the computation panel as
+		// a HTML table. Self-attention (step 11) USES the SVG — it draws
+		// the per-token mini-plots inside it — so it must stay visible,
+		// otherwise the per-token arrows (and their hit areas!) become
+		// opacity:0 and the mouseovers stop responding. This was the
+		// root cause of "mouseovers gehen nicht in step 11".
+		const collapseSvg = (data.mode === 'matrix');
+		svg.classList.toggle('attn-svg-collapsed', collapseSvg);
+		// Also expand the computation panel to full width for matrix
+		// only — self-attn keeps the side-by-side layout.
+		const grid = svg.closest('.attn-anatomy-grid');
+		if (grid) grid.classList.toggle('attn-grid-svg-collapsed', collapseSvg);
+
+		// Self-attention stacks N panels vertically; the default viewBox
+		// (-1.5 -1.5 3 2.7) is only tall enough for ONE panel, so the
+		// other panels ended up drawn outside the visible area and their
+		// hit rects were at y=5000+ px in screen coords — completely
+		// off-screen so the user could never hover them. Resize the
+		// viewBox to fit all panels, plus a strip for the title at the
+		// bottom (startY + panelH*n + 0.05 ≈ 2.95 for n=3).
+		if (data.mode === 'selfattn') {
+			const n = ATTN_2D.numTokens;
+			const need = 1.5 + 0.85 * n + 0.4; // extra strip for title + margin
+			svg.setAttribute('viewBox', '-1.5 -1.5 3 ' + need);
+		} else {
+			svg.setAttribute('viewBox', '-1.5 -1.5 3 2.7');
+		}
+
+		// Sanity checks before drawing — catch data corruption early
+		this._assert(data && typeof data.mode === 'string', `render2D: bad data, mode=${data && data.mode}`);
+		this._assert(ATTN_2D.keys && ATTN_2D.keys.length > 0, 'render2D: ATTN_2D.keys is empty');
+
+		// Reset the label anti-overlap tracker for this render pass.
+		this._clearLabelTracker();
+		this._assert(ATTN_2D.q && ATTN_2D.q.length === 2 && !isNaN(ATTN_2D.q[0]) && !isNaN(ATTN_2D.q[1]),
+			`render2D: ATTN_2D.q is bad: ${JSON.stringify(ATTN_2D.q)}`);
+		ATTN_2D.keys.forEach((k, i) => {
+			if (!k || isNaN(k[0]) || isNaN(k[1])) {
+				this._dbg('ERROR', `render2D: ATTN_2D.keys[${i}] is bad: ${JSON.stringify(k)}`);
+			}
+		});
+
+		const mode = data.mode;
+		const comp = data.computation;
+
+		if (mode === 'keys' || mode === 'values') {
+			this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.q, this._tokenColor('#ef4444', 0), 'q', 'q', 0, false, false, undefined, undefined, this._tokenOpacity(0));
+		}
+
+		if (mode === 'projections') {
+			this._drawLearnableProjections2D(constructionG, labelsG, arrowsG);
+		}
+
+		if (mode === 'matrix') {
+			// The full α-matrix is rendered as an HTML table in the
+			// computation panel (with hover info on every cell). Here we
+			// just show a brief pointer so the 2D plot isn't empty.
+			this._drawMatrixRedirect2D(constructionG, labelsG);
+		}
+
+		if (mode === 'selfattn') {
+			this._drawSelfAttention2D(constructionG, labelsG, arrowsG);
+		}
+
+		// Hide the dim1/dim2 grid + axes for matrix & selfattn steps —
+		// they have no geometric meaning there (the matrix is a table,
+		// self-attention uses its own mini-plots).
+		if (svg) {
+			const hideBg = (mode === 'matrix' || mode === 'selfattn');
+			svg.querySelector('.attn-grid').style.display = hideBg ? 'none' : '';
+			svg.querySelector('.attn-axes').style.display = hideBg ? 'none' : '';
+		}
+
+		if (mode === 'keys') {
+			// Hover dimming: when a token is hovered, fade the others.
+			// The query (idx 0) dims when "it" is NOT hovered.
+			const qOpacity = this._tokenOpacity(0);
+			const qColor   = this._tokenColor('#ef4444', 0);
+
+			ATTN_2D.keys.forEach((k, j) => {
+				const isHi = (data.highlightKey === j);
+				const dim  = (data.highlightKey !== undefined && !isHi);
+				const tkOpacity = this._tokenOpacity(j + 1);
+				const color = isHi ? '#1e3a8a' : ATTN_TOKENS[j + 1].color;
+				const drawColor = (tkOpacity < 1) ? this._tokenColor(color, j + 1) : color;
+
+				// A key that sits within ~25° of the query is so close that
+				// its tip label would sit right on top of q's — push it a
+				// little further out along the shaft instead. And in the
+				// weights step the weight-bar's α labels live in a band
+				// below the plot center, so any key whose tip label would
+				// land in that band flips to the far side of the arrowhead.
+				const ang = Math.atan2(k[1], k[0]);
+				const aq  = Math.atan2(ATTN_2D.q[1], ATTN_2D.q[0]);
+				const gap = Math.abs(Math.atan2(Math.sin(ang - aq), Math.cos(ang - aq)));
+				const nearQ = gap < 25 * Math.PI / 180;
+				const labelY = -k[1] - 0.04;
+				const inBarBand = (comp === 'weights' && labelY >= -1.05 && labelY <= -0.75);
+				const lpos = inBarBand ? [-0.20, 0.04]
+					: (nearQ ? [0.14, -0.14] : undefined);
+
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], k, drawColor, `k${j+1}`, 'k', j, false, dim, lpos, undefined, tkOpacity);
+				if (anglesG) this._addAngleArc(anglesG, labelsG, ATTN_2D.q, k, drawColor, j, dim || tkOpacity < 1);
+			});
+
+			// The lengths that feed cos θ = q·k/(‖q‖‖k‖), as muted
+			// sub-labels — so the score's geometric ingredients are
+			// visible in the scene, not only in a tooltip.
+			this._addMagnitudeLabels2D(labelsG, data);
+
+			// Numerical value labels next to each key, so the user can
+			// read off the score / scaled / exp / weight at a glance.
+			this._addValueLabels2D(labelsG, comp);
+
+			// Per-step overlays: show the vectors being worked on —
+			// Per-step overlays: product rectangles, projections stay in
+			// the 2D scene. The bar plots (score / scaled / exp / weight)
+			// are drawn in their own SVG below — see _renderBarPlots().
+			const tokenColors = ATTN_TOKENS.slice(1).map((t) => t.color);
+			if (comp === 'components') {
+				this._drawComponents2D(constructionG, labelsG, data.highlightKey);
+			} else {
+				// Projections (dashed perpendicular from q tip to key line)
+				// stay in the main 2D plot — they're geometric, not a bar.
+				this._drawProjections2D(constructionG);
+			}
+		} else if (mode === 'values' || mode === 'output') {
+			// Values use the SAME hue family as the keys but shifted toward
+			// green so the visual story "this key matches this value" holds:
+			// each value is the green-shifted twin of its key.
+			const valColors = ATTN_TOKENS.slice(1).map((t) => this._shade(t.color, 0.55));
+			ATTN_2D.vals.forEach((v, j) => {
+				const dim = (mode === 'output');
+				// When a value coincides with z (2-token case) push its
+				// label up so it doesn't collide with "z = output". In the
+				// output step the values are dimmed context anyway, so keep
+				// their labels clear of the bright z label / weighted-v
+				// cluster by hugging the value tip instead of floating.
+				const sameAsZ = (mode === 'output' &&
+					Math.hypot(v[0] - ATTN_2D.output[0], v[1] - ATTN_2D.output[1]) < 0.05);
+				// In output mode "z = output" is anchored left of the z tip,
+				// so value labels hugging their tip would collide with it.
+				// v2 sits closest to z, so drop it below its own tip instead.
+				const opos = (mode === 'output')
+					? (j === 1 ? [0.16, -0.16] : [0.14, 0.02])
+					: undefined;
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], v, valColors[j], `v${j+1}`, 'v', j, false, dim,
+					sameAsZ ? [0.14, -0.20] : opos);
+			});
+			if (mode === 'values') this._drawValueWeights2D(labelsG);
+
+			if (mode === 'output') {
+				// The weighted values: dashed arrows from the origin,
+				// fanned-out labels so they never stack on each other
+				// or on z. In the degenerate 2-token case (α₁ = 1) the
+				// weighted value coincides with z — skip the duplicate
+				// arrow and let z speak for itself.
+				ATTN_2D.weightedVals.forEach((wv, j) => {
+					const sameAsZ = Math.hypot(wv[0] - ATTN_2D.output[0], wv[1] - ATTN_2D.output[1]) < 0.05;
+					if (sameAsZ) return;
+					this._addSVGArrow(arrowsG, labelsG, [0, 0], wv, '#15803d', `α${j+1}·v${j+1}`, 'weightedV', j, true, false,
+						[0.16, 0.08 + j * 0.18]);
+				});
+
+				// Tip-to-tail construction lines (no formula, no events)
+				const NS = this._SVG_NS;
+				let tip = [0, 0];
+				ATTN_2D.weightedVals.forEach((wv, j) => {
+					const next = [tip[0] + wv[0], tip[1] + wv[1]];
+					const line = document.createElementNS(NS, 'line');
+					line.setAttribute('x1', tip[0]); line.setAttribute('y1', -tip[1]);
+					line.setAttribute('x2', next[0]); line.setAttribute('y2', -next[1]);
+					line.setAttribute('stroke', '#94a3b8');
+					line.setAttribute('stroke-width', '0.014');
+					line.setAttribute('stroke-dasharray', '0.03 0.03');
+					line.setAttribute('opacity', '0.65');
+					line.style.pointerEvents = 'none';
+					constructionG.appendChild(line);
+					tip = next;
+				});
+
+				// Blend lines: each original value tip → z. This shows z
+				// as the weighted CENTER of the values, not a new vector.
+				ATTN_2D.vals.forEach((v, j) => {
+					if (Math.hypot(v[0] - ATTN_2D.output[0], v[1] - ATTN_2D.output[1]) < 0.05) return;
+					const line = document.createElementNS(NS, 'line');
+					line.setAttribute('x1', v[0]);      line.setAttribute('y1', -v[1]);
+					line.setAttribute('x2', ATTN_2D.output[0]); line.setAttribute('y2', -ATTN_2D.output[1]);
+					line.setAttribute('stroke', '#94a3b8');
+					line.setAttribute('stroke-width', '0.007');
+					line.setAttribute('stroke-dasharray', '0.02 0.025');
+					line.setAttribute('opacity', '0.45');
+					line.style.pointerEvents = 'none';
+					constructionG.appendChild(line);
+				});
+
+				// Fill the span of the value tips so z visibly lands inside it
+				this._drawSpanFill2D(constructionG);
+
+				this._addSVGArrow(arrowsG, labelsG, [0, 0], ATTN_2D.output, '#f59e0b', 'z = output', 'z', 0, false, false,
+					[-0.16, -0.04], 'end');
+			}
+		}
+	},
+
+	// (Old Plotly-based addArrow2D removed — replaced by _addSVGArrow above.)
+
+
+	// (Old renderBars removed — the bar chart was redundant with the
+	// "Currently computing" panel, which already shows the same numbers.)
+	// (Old highlightEquation removed — highlighting is now done via
+	// \color in the LaTeX rendered by renderEquation.)
+};
+
+function initAttentionAnatomy() {
+	AttentionAnatomy.init();
 }
+
 
 /**
  * Lazy-loaded Q/K/V subspace projection visualization.
@@ -1237,9 +5553,14 @@ function initQKVSubspaceViz() {
 
 	const render = () => _renderQKVSubspaceViz(containerId);
 
-	// Re-render whenever the theme flips so colors stay in sync.
+	// Re-render whenever the theme flips so colors stay in sync —
+	// but only while the (heavy Plotly) section is actually on screen.
 	if (window.__MN_DARK) {
-		window.__MN_DARK.onChange(render);
+		window.__MN_DARK.onChange(() => {
+			const r = container.getBoundingClientRect();
+			const vh = window.innerHeight || document.documentElement.clientHeight;
+			if (r.top < vh && r.bottom > 0) render();
+		});
 	}
 
 	// Lazy-load: only build the (heavy) Plotly scene when the user
@@ -1519,6 +5840,15 @@ function _renderQKVSubspaceViz(containerId) {
    LONG DISTANCE DEPENDENCIES
    ═══════════════════════════════════════════════════════════════ */
 
+// Minimal canvas text helper used by the LDD bar chart below.
+function drawLabel(ctx, text, x, y, color, size, align, bold) {
+	ctx.font = `${bold ? 'bold ' : ''}${size || 13}px Inter, system-ui, sans-serif`;
+	ctx.fillStyle = color || themeColor('#1e293b');
+	ctx.textAlign = align || 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(text, x, y);
+}
+
 const LDD = {
     subject: { word: 'cat', color: '#2563eb' },
     pronoun: { word: 'its', color: '#f59e0b' },
@@ -1615,12 +5945,27 @@ function updateLDD() {
     ctx.strokeStyle = themeColor('#94a3b8'); ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH); ctx.lineTo(W - padR, padT + chartH); ctx.stroke();
 
-    // Y ticks
+    // Y ticks + axis title
     ctx.font = '10px Inter, system-ui, sans-serif'; ctx.fillStyle = themeColor('#94a3b8'); ctx.textAlign = 'right';
     for (let g = 0; g <= 4; g++) {
         const val = (maxVal / 4) * (4 - g);
         ctx.fillText((val * 100).toFixed(0) + '%', padL - 6, padT + (chartH / 4) * g + 4);
     }
+    // Y-axis title (rotated, on the left)
+    ctx.save();
+    ctx.translate(14, padT + chartH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.fillStyle = themeColor('#475569');
+    ctx.font = 'bold 11px Inter, system-ui, sans-serif';
+    ctx.fillText('Attention / Signal Strength (%)', 0, 0);
+    ctx.restore();
+
+    // X-axis title
+    ctx.textAlign = 'center';
+    ctx.fillStyle = themeColor('#475569');
+    ctx.font = 'bold 11px Inter, system-ui, sans-serif';
+    ctx.fillText('Token Position', padL + chartW / 2, H - 6);
 
     // Bars
     tokens.forEach((tok, i) => {
@@ -1647,28 +5992,72 @@ function updateLDD() {
         if (attn[i] > 0.03) drawLabel(ctx, (attn[i]*100).toFixed(0)+'%', x, barY - 8, color, 10, 'center', true);
     });
 
-    // RNN decay line — what an RNN *would* carry forward step-by-step.
-    ctx.beginPath(); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+    // RNN decay curve — thick, with markers at each token. This is the
+    // signal an RNN would carry forward step-by-step.
     const rnnStart = attn[subjectIdx];
+    const rnnPoints = [];
     for (let i = subjectIdx; i <= pronounIdx; i++) {
         const x = toBarX(i);
         const rnnVal = rnnStart * Math.pow(LDD.rnn_decay, i - subjectIdx);
-        const y = toY(rnnVal);
-        if (i === subjectIdx) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        rnnPoints.push({ x, y: toY(rnnVal) });
     }
-    ctx.stroke(); ctx.setLineDash([]);
+    // Draw as a smooth curve (quadratic through points) so it pops visually
+    ctx.beginPath();
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+    rnnPoints.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else {
+            const prev = rnnPoints[i - 1];
+            const cx = (prev.x + p.x) / 2;
+            ctx.bezierCurveTo(cx, prev.y, cx, p.y, p.x, p.y);
+        }
+    });
+    ctx.stroke();
+    // Markers along the RNN curve
+    rnnPoints.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+    });
 
-    // Transformer flat line — self-attention reaches every position
-    // in one step, so signal strength does NOT decay with distance.
-    ctx.beginPath(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+    // Transformer flat line — self-attention reaches every position in
+    // one step, so signal strength does NOT decay with distance.
     const tY = toY(attn[subjectIdx]);
-    ctx.moveTo(toBarX(subjectIdx), tY); ctx.lineTo(toBarX(pronounIdx), tY);
-    ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(toBarX(subjectIdx), tY);
+    ctx.lineTo(toBarX(pronounIdx), tY);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-    // Legend
-    drawLabel(ctx, '— Transformer (flat)', toBarX(subjectIdx) + 10, tY - 12, '#2563eb', 10, 'left', true);
-    const rnnEndVal = rnnStart * Math.pow(LDD.rnn_decay, distance);
-    drawLabel(ctx, '--- RNN (×' + LDD.rnn_decay + '/step)', toBarX(pronounIdx) + 5, toY(rnnEndVal), '#ef4444', 10, 'left', true);
+    // Legend (top-right corner of the chart)
+    const legX = W - padR - 175;
+    const legY = padT + 8;
+    ctx.fillStyle = isDarkMode() ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.92)';
+    ctx.fillRect(legX, legY, 170, 46);
+    ctx.strokeStyle = themeColor('#cbd5e1');
+    ctx.lineWidth = 1;
+    ctx.strokeRect(legX, legY, 170, 46);
+    // Transformer swatch
+    ctx.beginPath();
+    ctx.strokeStyle = '#2563eb';
+    ctx.lineWidth = 3; ctx.setLineDash([4, 4]);
+    ctx.moveTo(legX + 8, legY + 14);
+    ctx.lineTo(legX + 28, legY + 14);
+    ctx.stroke(); ctx.setLineDash([]);
+    drawLabel(ctx, 'Transformer (flat)', legX + 34, legY + 14, themeColor('#1e293b'), 10, 'left', true);
+    // RNN swatch
+    ctx.beginPath();
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+    ctx.moveTo(legX + 8, legY + 34);
+    ctx.lineTo(legX + 28, legY + 34);
+    ctx.stroke();
+    drawLabel(ctx, 'RNN (×' + LDD.rnn_decay + '/step)', legX + 34, legY + 34, themeColor('#1e293b'), 10, 'left', true);
 
     // Math summary
     const rnnFinal = Math.pow(LDD.rnn_decay, distance);
@@ -1702,23 +6091,31 @@ function updateLDD() {
 async function loadAttentionModule() {
 	updateLoadingStatus("Loading section about activation functions...");
 	SelfAttentionLab.init();
-	initShiftExamples();
+	initAttentionAnatomy();
 	runUniverse();
-	updateAttn1D();
-	updateAttn2D();
 	initQKVSubspaceViz();
 	requestAnimationFrame(updateLDD);
 
 	// Re-render the canvases / Plotly figures when the user flips
 	// dark mode so themeColor() picks up the new palette.
+	// AttentionAnatomy and the Q/K/V subspace viz each register their
+	// OWN theme listener (in init()), so only the standalone pieces are
+	// handled here — guarded on visibility so off-screen sections don't
+	// do heavy re-renders on every toggle.
+	const sectionVisible = (id) => {
+		const el = document.getElementById(id);
+		if (!el) return false;
+		const r = el.getBoundingClientRect();
+		return r.top < (window.innerHeight || 768) && r.bottom > 0;
+	};
 	if (window.__MN_DARK) {
 		window.__MN_DARK.onChange(() => {
-			try { initShiftExamples(); } catch (e) { /* ignore */ }
-			try { initQKVSubspaceViz(); } catch (e) { /* ignore */ }
-			try { updateAttn1D(); }      catch (e) { /* ignore */ }
-			try { updateAttn2D(); }      catch (e) { /* ignore */ }
-			try { updateLDD(); }         catch (e) { /* ignore */ }
-			try { runUniverse(); }       catch (e) { /* ignore */ }
+			if (sectionVisible('ldd-canvas')) {
+				try { updateLDD(); } catch (e) { /* ignore */ }
+			}
+			if (sectionVisible('universe-input')) {
+				try { runUniverse(); } catch (e) { /* ignore */ }
+			}
 		});
 	}
 

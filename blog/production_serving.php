@@ -7,7 +7,7 @@ icon: &#9889;
 part: 5
 order: 41
 color: rose
-topics: hardware, programming, society
+topics: inference, hardware, programming, society
 -->
 
 <div class="md">

@@ -447,6 +447,15 @@ body {
 	#cl-lb figcaption {
 		font-size: 0.78em;
 	}
+	.cl-lb-x { top: 10px; right: 12px; width: 36px; height: 36px; font-size: 20px; }
+	.cl-lb-prev,
+	.cl-lb-next {
+		width: 36px;
+		height: 52px;
+		font-size: 26px;
+	}
+	.cl-lb-prev { left: 8px; }
+	.cl-lb-next { right: 8px; }
 
 	/* ── 3r. Shortcut-help card fills the screen on phones ── */
 	.cl-sh-card {

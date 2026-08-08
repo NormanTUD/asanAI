@@ -7,7 +7,7 @@ icon: &#9999;
 part: 5
 order: 36
 color: rose
-topics: language, programming, interactive
+topics: language, programming
 -->
 
 <div class="md">
