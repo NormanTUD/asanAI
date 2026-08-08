@@ -291,6 +291,9 @@ function fieldToName(field) {
 // long as the LaTeX generator calls ed() in the same order that Temml
 // produces <mtext> elements, the mapping is correct.
 const _editableFieldQueue = [];
+// Global index — consumed ACROSS panels, not per-panel. Each panel's
+// _makeMathEditable picks up where the previous panel left off.
+let _editableQueueIndex = 0;
 
 function ed(field, value) {
 	_editableFieldQueue.push(field);
@@ -301,6 +304,7 @@ function ed(field, value) {
 // render don't leak into the new one.
 function _resetEditableQueue() {
 	_editableFieldQueue.length = 0;
+	_editableQueueIndex = 0;
 }
 
 // ── Predefined token sets ─────────────────────────────────────────
@@ -1874,11 +1878,14 @@ const AttentionAnatomy = {
 			try { render_temml(); } catch (e) { console.warn('[attn] render_temml failed:', e); }
 		}
 		// Single global pass over every panel that might contain
-		// ◆ markers — computation, live values, equation, intuition.
+		// editable values — ORDER MATTERS: must match the order in
+		// which renderEquation/renderComputation/renderIntuition
+		// produced ed() calls (equation → live-values → computation
+		// → intuition), because the queue is consumed globally.
 		[
-			'attn-section-computation',
-			'attn-live-values-container',
 			'attn-anatomy-equation',
+			'attn-live-values-container',
+			'attn-section-computation',
 			'attn-anatomy-intuition'
 		].forEach(id => {
 			const panel = document.getElementById(id);
@@ -2030,37 +2037,28 @@ const AttentionAnatomy = {
 	// Each editable value uses \text{◆FIELD|VALUE} so _makeMathEditable
 	// can find and replace it with a click-to-edit HTML span after Temml
 	// has rendered the surrounding math.
-	// ─── Live values panel — PLAIN HTML, NO LATEX ──────────────────
-	// Previous version used $$...$$ blocks with \text{◆path|value}
-	// markers. Temml was splitting \text{◆path|value} into multiple
-	// MathML elements (the diamond in one <mtext>, the rest in <mi>/
-	// <mo>/<mn>), so the regex ◆([^|]+)\|([\s\S]+) never matched and
-	// the ◆ markers leaked through to the user. Now we use plain HTML
-	// with <span class="ed"> elements directly — no Temml round-trip
-	// means no splitting, no race conditions, no leaks.
+	// ─── Live values panel — LATEX/TEMML with queue-based editing ───
+	// Uses ed() for each editable value, which pushes the field onto
+	// _editableFieldQueue and returns \text{value}. After Temml renders,
+	// _makeMathEditable matches <mtext> elements in document order to
+	// fields in queue order. This makes the panel fully Temml-rendered
+	// (no plain HTML) while still allowing click-to-edit on every value.
 	_liveValsHTML: function(extra) {
 		const q = ATTN_2D.q;
-		const edSpan = (path, val) => `<span class="ed" data-field="${path}" data-name="${fieldToName(path)}">${val}</span>`;
-		const pm2 = (a, b) =>
-			`<span class="attn-live-pm">${a}<br>${b}</span>`;
-		const labelPm = (label, body) =>
-			`<span class="attn-live-eq">${label} = ${body}</span>`;
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit</div>';
 		html += '<div class="attn-live-row attn-live-row-first">';
-		html += labelPm('<b>q</b><sub>query</sub>', pm2(edSpan('q.0', q[0].toFixed(2)), edSpan('q.1', q[1].toFixed(2))));
+		html += '$$ \\underbrace{\\mathbf{q}}_{\\text{query}} = \\begin{pmatrix} ' + ed('q.0', q[0].toFixed(2)) + ' \\\\ ' + ed('q.1', q[1].toFixed(2)) + ' \\end{pmatrix} $$';
 		html += '</div>';
 		ATTN_TOKENS.slice(1).forEach((tk, j) => {
 			if (j >= ATTN_2D.keys.length) return;
 			const k = ATTN_2D.keys[j];
 			const v = ATTN_2D.vals[j];
-			const kpm = pm2(edSpan('keys.'+j+'.0', k[0].toFixed(2)), edSpan('keys.'+j+'.1', k[1].toFixed(2)));
-			const vpm = pm2(edSpan('vals.'+j+'.0', v[0].toFixed(2)), edSpan('vals.'+j+'.1', v[1].toFixed(2)));
 			html += '<div class="attn-live-row attn-live-row-sep">';
-			html += `<span class="attn-live-eq"><b>${tk.name}</b><sub>key + value</sub> = `;
-			html += `<span class="attn-live-pm-label">k<sub>${j+1}</sub></span>${kpm}`;
-			html += ` <span class="attn-live-pm-label">v<sub>${j+1}</sub></span>${vpm}`;
-			html += `</span>`;
+			html += '$$ \\underbrace{\\mathbf{' + tk.name + '}}_{\\text{token}} = ';
+			html += '\\underbrace{\\begin{pmatrix} ' + ed('keys.'+j+'.0', k[0].toFixed(2)) + ' \\\\ ' + ed('keys.'+j+'.1', k[1].toFixed(2)) + ' \\end{pmatrix}}_{\\mathbf{k}_{' + (j+1) + '\\;\\text{key}}} \\quad ';
+			html += '\\underbrace{\\begin{pmatrix} ' + ed('vals.'+j+'.0', v[0].toFixed(2)) + ' \\\\ ' + ed('vals.'+j+'.1', v[1].toFixed(2)) + ' \\end{pmatrix}}_{\\mathbf{v}_{' + (j+1) + '\\;\\text{value}}}';
+			html += ' $$';
 			html += '</div>';
 		});
 		if (extra) html += extra;
@@ -2068,35 +2066,36 @@ const AttentionAnatomy = {
 		return html;
 	},
 
-	// Projection step live values — PLAIN HTML, NO LATEX (same reason
-	// as _liveValsHTML above).
+	// Projection step live values — also LaTeX/Temml with queue.
 	_liveValsHTMLProjection: function() {
 		const d = ATTN_2D.demo;
-		const edSpan = (path, val) => `<span class="ed" data-field="${path}" data-name="${fieldToName(path)}">${val}</span>`;
-		const pm2 = (a, b) => `<span class="attn-live-pm">${a}<br>${b}</span>`;
-		const grid2 = (W, name) => {
-			let g = '<span class="attn-live-pm attn-live-pm-grid">';
+		const cell = (name, i, j) => ed(`demo.${name}.${i}.${j}`, d[name][i][j].toFixed(2));
+		const pm2 = (a, b) => `\\begin{pmatrix} ${a} \\\\ ${b} \\end{pmatrix}`;
+		const grid = (W, name) => {
+			let g = '\\begin{pmatrix} ';
 			for (let i = 0; i < 2; i++) {
+				if (i > 0) g += ' \\; ';
 				for (let j = 0; j < 2; j++) {
-					g += edSpan(`demo.${name}.${i}.${j}`, W[i][j].toFixed(2));
+					if (j > 0) g += ' & ';
+					g += cell(name, i, j);
 				}
 			}
-			g += '</span>';
+			g += ' \\end{pmatrix}';
 			return g;
 		};
 		let html = '<div class="attn-live-panel">';
 		html += '<div class="attn-live-header">▶ Live values — click any number to edit (W matrices included)</div>';
 		html += '<div class="attn-live-row attn-live-row-first">';
-		html += `<span class="attn-live-eq"><b>x</b><sub>input</sub> = ${pm2(edSpan('demo.x.0', d.x[0].toFixed(2)), edSpan('demo.x.1', d.x[1].toFixed(2)))}</span>`;
+		html += '$$ \\underbrace{\\mathbf{x}}_{\\text{input}} = ' + pm2(ed('demo.x.0', d.x[0].toFixed(2)), ed('demo.x.1', d.x[1].toFixed(2))) + ' $$';
 		html += '</div>';
 		html += '<div class="attn-live-row attn-live-row-sep">';
-		html += `<span class="attn-live-eq"><b>W<sup>Q</sup></b><sub>query</sub> = ${grid2(d.W_Q, 'W_Q')}</span>`;
+		html += '$$ \\underbrace{\\mathbf{W}^Q}_{\\text{query weights}} = ' + grid(d.W_Q, 'W_Q') + ' $$';
 		html += '</div>';
 		html += '<div class="attn-live-row attn-live-row-sep">';
-		html += `<span class="attn-live-eq"><b>W<sup>K</sup></b><sub>key</sub> = ${grid2(d.W_K, 'W_K')}</span>`;
+		html += '$$ \\underbrace{\\mathbf{W}^K}_{\\text{key weights}} = ' + grid(d.W_K, 'W_K') + ' $$';
 		html += '</div>';
 		html += '<div class="attn-live-row attn-live-row-sep">';
-		html += `<span class="attn-live-eq"><b>W<sup>V</sup></b><sub>value</sub> = ${grid2(d.W_V, 'W_V')}</span>`;
+		html += '$$ \\underbrace{\\mathbf{W}^V}_{\\text{value weights}} = ' + grid(d.W_V, 'W_V') + ' $$';
 		html += '</div>';
 		html += '</div>';
 		return html;
@@ -2157,11 +2156,29 @@ const AttentionAnatomy = {
 	// Each editable span becomes an <input type="number"> on click; on
 	// Enter or blur the value is committed and everything re-renders.
 	_attachEditors: function(root) {
-		if (!root) return;
+		// EDIT#1: no root
+		if (!root) { console.warn('[attn] edit#1: _attachEditors called with no root'); return; }
 		const self = this;
-		root.querySelectorAll('span.ed').forEach(function(span) {
+		const spans = root.querySelectorAll('span.ed');
+		// EDIT#2: no spans found
+		if (spans.length === 0) {
+			console.warn('[attn] edit#2: no span.ed found in #' + root.id + ' — _makeMathEditable may not have run or queue may be empty');
+		} else {
+			console.log('[attn] edit: _attachEditors found ' + spans.length + ' span.ed in #' + root.id);
+		}
+		// EDIT#5: pointer-events on root
+		const rs = getComputedStyle(root);
+		if (rs.pointerEvents === 'none') console.warn('[attn] edit#5: root #' + root.id + ' has pointer-events:none — clicks blocked');
+		spans.forEach(function(span) {
 			if (span._editableBound) return;
 			span._editableBound = true;
+			// EDIT#3: dataset.field empty
+			if (!span.dataset.field) { console.warn('[attn] edit#3: span.ed in #' + root.id + ' has no data-field'); return; }
+			// EDIT#4: dataset.field doesn't resolve to ATTN_2D
+			const probe = self._resolveField(span.dataset.field);
+			if (probe === undefined || probe === null) {
+				console.warn('[attn] edit#4: data-field="' + span.dataset.field + '" resolves to undefined in ATTN_2D');
+			}
 			span.title = 'click to edit — ' + (span.dataset.name || span.dataset.field);
 			span.addEventListener('click', function(ev) {
 				ev.stopPropagation();
@@ -2176,30 +2193,29 @@ const AttentionAnatomy = {
 				span.appendChild(input);
 				input.focus();
 				input.select();
-			const commit = function() {
-				const v = parseFloat(input.value);
-				console.log('[attn] commit', span.dataset.field, '=', v, 'current=', cur);
-				if (self._setField(span.dataset.field, v)) {
-					console.log('[attn] _setField ok, recomputing...');
-					// Re-derive everything that depends on base values.
-					if (span.dataset.field.indexOf('demo') === 0) {
-						ATTN_2D._updateDemo();
+				// EDIT#6: input not focused
+				if (document.activeElement !== input) console.warn('[attn] edit#6: input not focused after creation');
+				const commit = function() {
+					const v = parseFloat(input.value);
+					// EDIT#7: non-finite value
+					if (!isFinite(v)) { console.warn('[attn] edit#7: non-finite value ' + input.value); span.textContent = Number(cur).toFixed(3); return; }
+					if (self._setField(span.dataset.field, v)) {
+						// EDIT#8: verify field was actually written
+						const after = self._resolveField(span.dataset.field);
+						if (Math.abs(after - v) > 1e-9) console.warn('[attn] edit#8: field "' + span.dataset.field + '" write failed: expected ' + v + ' got ' + after);
+						if (span.dataset.field.indexOf('demo') === 0) {
+							ATTN_2D._updateDemo();
+						}
+						ATTN_2D._recomputeScores();
+						ATTN_2D.recomputeWeights();
+						ATTN_2D.recomputeMatrix();
+						self.render();
+						self._tipContentKey = null;
+					} else {
+						console.warn('[attn] edit#7: _setField returned false for value ' + v);
+						span.textContent = Number(cur).toFixed(3);
 					}
-					// CRITICAL: when q or keys change, scores and scaled are
-					// STALE (they're direct properties, not getters). Must
-					// recompute them BEFORE recomputeWeights reads them.
-					// Without this, editing q.x wouldn't change the weights.
-					ATTN_2D._recomputeScores();
-					ATTN_2D.recomputeWeights();
-					ATTN_2D.recomputeMatrix();
-					console.log('[attn] new weights:', ATTN_2D.weights);
-					self.render();
-					self._tipContentKey = null;
-				} else {
-					console.log('[attn] _setField FAILED, not finite');
-					span.textContent = Number(cur).toFixed(3);
-				}
-			};
+				};
 				input.addEventListener('blur', commit);
 				input.addEventListener('keydown', function(e) {
 					if (e.key === 'Enter') { input.blur(); }
@@ -2234,12 +2250,17 @@ const AttentionAnatomy = {
 		}
 		// Index-based matching: walk <mtext> elements in document order
 		// and match each to the next field in _editableFieldQueue.
-		let queueIndex = 0;
+		// Uses GLOBAL queue index so fields are consumed across panels
+		// in the order they were produced (equation → live-values →
+		// computation → intuition).
 		mtexts.forEach(function(mtext) {
-			if (queueIndex >= _editableFieldQueue.length) return;
+			if (_editableQueueIndex >= _editableFieldQueue.length) return;
 			const text = (mtext.textContent || '').trim();
 			if (!text) return; // skip empty <mtext>
-			const field = _editableFieldQueue[queueIndex++];
+			// EDIT#18: skip non-numeric <mtext> (like "score", "key")
+			// — those come from \text{label} not from ed()
+			if (!/^-?\d+\.?\d*$/.test(text)) return;
+			const field = _editableFieldQueue[_editableQueueIndex++];
 			const span = document.createElement('span');
 			span.className = 'ed';
 			span.dataset.field = field;
@@ -2247,10 +2268,8 @@ const AttentionAnatomy = {
 			span.textContent = text;
 			if (mtext.parentNode) mtext.parentNode.replaceChild(span, mtext);
 		});
-		// ASSERTION: queue should be fully consumed (else order is wrong)
-		if (queueIndex !== _editableFieldQueue.length && target.id !== 'attn-anatomy-equation') {
-			console.warn('[attn] _makeMathEditable[' + target.id + ']: queue mismatch — consumed ' + queueIndex + ' of ' + _editableFieldQueue.length + ' fields. Order may be wrong.');
-		}
+		// EDIT#16/17: queue order check
+		console.log('[attn] edit: #' + target.id + ' — queue index now ' + _editableQueueIndex + '/' + _editableFieldQueue.length);
 		this._attachEditors(target);
 	},
 
@@ -2451,58 +2470,88 @@ const AttentionAnatomy = {
 	// _setupSentenceHover() — so it survives formula re-renders.
 	_setupFormulaHover: function() {
 		const el = document.getElementById('attn-section-computation');
-		if (!el) return;
+		// ANGLE 1: element doesn't exist
+		if (!el) { console.warn('[attn] hover#1: #attn-section-computation not in DOM'); return; }
 		const self = this;
+		// ANGLE 2/3: element hidden or can't receive events
+		const s0 = getComputedStyle(el);
+		if (s0.display === 'none')    console.warn('[attn] hover#2: computation panel display:none');
+		if (s0.visibility === 'hidden') console.warn('[attn] hover#3: computation panel visibility:hidden');
+		if (s0.pointerEvents === 'none') console.warn('[attn] hover#4: computation panel pointer-events:none');
 		console.log('[attn] _setupFormulaHover attached to', el.id);
-		// Track mouse position so the floating tooltip can follow the cursor.
-		el.addEventListener('mousemove', function(e) { self._trackMouse(e); });
-		// Formula nodes (dot/scaled/exps/weights/output)
+
+		// ANGLE 5: track mouse GLOBALLY (not just on computation panel —
+		// otherwise light cone position is stale after moving cursor)
+		document.addEventListener('mousemove', function(e) { self._trackMouse(e); });
+
+		// ANGLE 6: capture phase so we run before any stopPropagation in
+		// children
 		el.addEventListener('mouseover', function(e) {
+			// ANGLE 7: no target
+			if (!e.target) { console.warn('[attn] hover#7: e.target null'); return; }
+			// ANGLE 8: target is text node
+			if (e.target.nodeType !== 1) return;
+
 			// 1) Formula light-cone
 			const node = e.target.closest('[data-cone-step]');
-			if (node) {
-				const step = node.dataset.coneStep;
-				const idx  = parseInt(node.dataset.coneIdx, 10);
-				console.log('[attn] hover formula', step, idx);
-				ATTN_2D.hoveredFormula = { step, idx };
-				try {
-					self._showFormulaCone(step, idx);
-				} catch (err) {
-					console.error('[attn] _showFormulaCone error:', err);
+			// ANGLE 9: .comp-eq-group exists but no data-cone-step
+			if (!node) {
+				const grp = e.target.closest('.comp-eq-group');
+				if (grp && !grp.dataset.coneStep) {
+					console.warn('[attn] hover#9: .comp-eq-group "' + (grp.textContent || '').substring(0, 30) + '…" has no data-cone-step — light cone will never show');
 				}
 				return;
 			}
-			// ASSERTION: if the user is hovering over a .comp-eq-group but
-			// it has no data-cone-step, the light cone will never show.
-			const grp = e.target.closest('.comp-eq-group');
-			if (grp && !grp.dataset.coneStep) {
-				console.warn('[attn] hover: .comp-eq-group has no data-cone-step attribute — light cone will never show for this group');
+			const step = node.dataset.coneStep;
+			const idx  = parseInt(node.dataset.coneIdx, 10);
+			// ANGLE 10: empty step
+			if (!step) { console.warn('[attn] hover#10: data-cone-step empty on', node); return; }
+			// ANGLE 11: NaN idx
+			if (isNaN(idx)) { console.warn('[attn] hover#11: data-cone-idx NaN on', node, 'raw=' + node.dataset.coneIdx); return; }
+			console.log('[attn] hover formula', step, idx);
+			ATTN_2D.hoveredFormula = { step, idx };
+			try {
+				self._showFormulaCone(step, idx);
+			} catch (err) {
+				// ANGLE 12: _showFormulaCone throws
+				console.error('[attn] hover#12: _showFormulaCone error:', err);
 			}
-			// 2) Matrix cell — show the exact α_{ij} computation
-			const cell = e.target.closest('.attn-matrix-cell');
-			if (cell) {
-				const d = cell.dataset;
-				self._showMatrixCellInfo(d);
-				return;
-			}
-			// 3) Matrix row/col header — show what q_i or k_j is
-			const rh = e.target.closest('.attn-matrix-rowhead');
-			if (rh) {
-				self._showMatrixRowInfo(parseInt(rh.dataset.tipRow, 10));
-				return;
-			}
-			const ch = e.target.closest('.attn-matrix-colhead');
-			if (ch) {
-				self._showMatrixColInfo(parseInt(ch.dataset.tipKey, 10));
-				return;
-			}
-		});
-		el.addEventListener('mouseout', function(e) {
+			return;
+		// 2) Matrix cell — show the exact α_{ij} computation
+		const mcell = e.target.closest('.attn-matrix-cell');
+		if (mcell) {
+			self._showMatrixCellInfo(mcell.dataset);
+			return;
+		}
+		// 3) Matrix row/col header — show what q_i or k_j is
+		const rh = e.target.closest('.attn-matrix-rowhead');
+		if (rh) {
+			self._showMatrixRowInfo(parseInt(rh.dataset.tipRow, 10));
+			return;
+		}
+		const ch = e.target.closest('.attn-matrix-colhead');
+		if (ch) {
+			self._showMatrixColInfo(parseInt(ch.dataset.tipKey, 10));
+			return;
+		}
+	}, true); // capture phase
+
+	el.addEventListener('mouseout', function(e) {
 			const node = e.target.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead');
 			if (!node) return;
 			const to = e.relatedTarget;
 			if (to && node.contains(to)) return;
 			if (to && to.closest && to.closest('[data-cone-step], .attn-matrix-cell, .attn-matrix-rowhead, .attn-matrix-colhead')) return;
+			// ANGLE 22: mouseout fires <50ms after mouseover — race / flicker
+			if (self._lastConeShow && Date.now() - self._lastConeShow < 50) {
+				console.warn('[attn] cone#22: mouseout fired ' + (Date.now() - self._lastConeShow) + 'ms after mouseover — flicker/race');
+			}
+			// ANGLE 23: relatedTarget is null (mouse left window)
+			if (!to) console.log('[attn] cone#23: mouseout with null relatedTarget — mouse left window');
+			// ANGLE 24: node was just replaced by innerHTML (not in DOM anymore)
+			if (!node.isConnected) console.warn('[attn] cone#24: mouseout target was removed from DOM between mouseover and mouseout — render replaced it');
+			// ANGLE 25: hoveredFormula was already null (double mouseout)
+			if (!ATTN_2D.hoveredFormula) console.warn('[attn] cone#25: mouseout but hoveredFormula already null — double-fire');
 			ATTN_2D.hoveredFormula = null;
 			self._refreshPopup();
 		});
@@ -2639,7 +2688,14 @@ const AttentionAnatomy = {
 
 	_showFormulaCone: function(stepName, tokenIdx) {
 		const el = document.getElementById('attn-token-info');
-		if (!el) return;
+		// ANGLE 13: light cone element missing
+		if (!el) { console.warn('[attn] cone#13: #attn-token-info not in DOM'); return; }
+		// ANGLE 14: ATTN_2D undefined
+		if (typeof ATTN_2D === 'undefined') { console.warn('[attn] cone#14: ATTN_2D undefined'); return; }
+		// ANGLE 15: mouse position never tracked
+		if (this._lastMouseX === 0 && this._lastMouseY === 0) {
+			console.warn('[attn] cone#15: mouse position is (0,0) — mousemove listener may not be attached');
+		}
 		// Position the tooltip near the cursor, clamped to viewport.
 		// Offset (+14, +14) so the cursor doesn't sit on top of the box.
 		const x = this._lastMouseX + 14;
@@ -2649,6 +2705,10 @@ const AttentionAnatomy = {
 		const maxY = window.innerHeight - boxH - 8;
 		el.style.left = Math.max(8, Math.min(x, maxX)) + 'px';
 		el.style.top  = Math.max(8, Math.min(y, maxY)) + 'px';
+		// ANGLE 16: light cone off-screen
+		if (parseInt(el.style.left) >= window.innerWidth || parseInt(el.style.top) >= window.innerHeight) {
+			console.warn('[attn] cone#16: light cone positioned off-screen');
+		}
 		const q = ATTN_2D.q;
 		const N = ATTN_2D.keys.length;
 		const fmt = (v) => v.toFixed(2);
@@ -2744,6 +2804,27 @@ const AttentionAnatomy = {
 		el.innerHTML = cone.join('');
 		el.classList.remove('is-empty');
 		if (typeof render_temml === 'function') render_temml(el);
+		// ANGLE 17: still has is-empty class after removal
+		if (el.classList.contains('is-empty')) console.warn('[attn] cone#17: is-empty class not removed');
+		// ANGLE 18: opacity is 0 after show
+		const s1 = getComputedStyle(el);
+		if (s1.opacity === '0') console.warn('[attn] cone#18: opacity 0 after show — CSS rule still hiding it');
+		// ANGLE 19: z-index too low (covered by debug panel z-index:5)
+		const z = parseInt(s1.zIndex) || 0;
+		if (z < 10) console.warn('[attn] cone#19: z-index=' + z + ' may be covered by debug panel (z:5)');
+		// ANGLE 20: light cone inside a container with transform/filter
+		// (which makes position:fixed relative to that container)
+		let parent = el.parentElement;
+		while (parent && parent !== document.body) {
+			const ps = getComputedStyle(parent);
+			if (ps.transform !== 'none' || ps.filter !== 'none' || ps.perspective !== 'none' || ps.contain === 'paint' || ps.willChange === 'transform') {
+				console.warn('[attn] cone#20: light cone parent #' + parent.id + ' has transform/filter — position:fixed will be relative to it, not viewport');
+				break;
+			}
+			parent = parent.parentElement;
+		}
+		// ANGLE 21: innerHTML empty after update
+		if (!el.innerHTML.trim()) console.warn('[attn] cone#21: innerHTML empty after update');
 	},
 
 	_hideTokenInfo: function() {
