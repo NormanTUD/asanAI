@@ -2491,6 +2491,151 @@ const AttentionAnatomy = {
 		return '#cbd5e1';
 	},
 
+	// ── Comprehensive runtime plausibility checks ───────────────────
+	// Called after every state-mutating operation (setExample,
+	// setNumTokens, recomputeWeights, recomputeMatrix, hover). Asserts
+	// that every derived value is consistent with its inputs, so any
+	// silent corruption surfaces immediately as a console.warn +
+	// red ⚠ line in the debug panel.
+	_sanity: function(where) {
+		const errors = [];
+		const warn = (m) => { console.warn('[attn] sanity(' + where + '): ' + m); errors.push(m); };
+
+		// 1. Token names: must be non-empty strings, unique
+		ATTN_TOKENS.forEach((t, i) => {
+			if (!t || typeof t.name !== 'string' || t.name.length === 0)
+				warn('token[' + i + '].name is empty/invalid: ' + JSON.stringify(t));
+		});
+		const names = ATTN_TOKENS.map(t => t.name);
+		const uniq = new Set(names);
+		if (uniq.size !== names.length) warn('duplicate token names: ' + names);
+
+		// 2. q vector: 2 finite numbers, non-zero (else nothing to plot)
+		if (!Array.isArray(ATTN_2D.q) || ATTN_2D.q.length !== 2)
+			warn('q is not [n,n]: ' + JSON.stringify(ATTN_2D.q));
+		else {
+			if (!isFinite(ATTN_2D.q[0]) || !isFinite(ATTN_2D.q[1]))
+				warn('q has NaN/Infinity: ' + JSON.stringify(ATTN_2D.q));
+			if (Math.hypot(ATTN_2D.q[0], ATTN_2D.q[1]) < 0.01)
+				warn('q is near-zero: ' + JSON.stringify(ATTN_2D.q));
+		}
+
+		// 3. Keys/values: each is [n,n], finite, count matches numTokens
+		const checkArr = (arr, name) => {
+			if (!Array.isArray(arr)) { warn(name + ' not array'); return; }
+			if (arr.length !== ATTN_2D.numTokens)
+				warn(name + '.length=' + arr.length + ' ≠ numTokens=' + ATTN_2D.numTokens);
+			arr.forEach((v, i) => {
+				if (!v || v.length !== 2 || !isFinite(v[0]) || !isFinite(v[1]))
+					warn(name + '[' + i + '] bad: ' + JSON.stringify(v));
+			});
+		};
+		checkArr(ATTN_2D.keys, 'keys');
+		checkArr(ATTN_2D.vals, 'vals');
+
+		// 4. Scores = q·k for each key
+		if (Array.isArray(ATTN_2D.q) && Array.isArray(ATTN_2D.keys)) {
+			ATTN_2D.keys.forEach((k, i) => {
+				if (!k || !isFinite(k[0]) || !isFinite(k[1])) return;
+				const expected = ATTN_2D.q[0]*k[0] + ATTN_2D.q[1]*k[1];
+				if (Array.isArray(ATTN_2D.scores) && Math.abs(ATTN_2D.scores[i] - expected) > 0.01)
+					warn('scores[' + i + ']=' + ATTN_2D.scores[i].toFixed(3) + ' ≠ q·k=' + expected.toFixed(3));
+			});
+		}
+
+		// 5. Weights sum to 1.0 (softmax invariant)
+		if (Array.isArray(ATTN_2D.weights) && ATTN_2D.weights.length > 0) {
+			const sum = ATTN_2D.weights.reduce((a,b) => a+b, 0);
+			if (Math.abs(sum - 1) > 0.01)
+				warn('weights sum=' + sum.toFixed(3) + ' ≠ 1.0');
+			ATTN_2D.weights.forEach((w, i) => {
+				if (!isFinite(w)) warn('weights[' + i + '] is NaN/Inf');
+				else if (w < -0.001 || w > 1.001) warn('weights[' + i + ']=' + w.toFixed(3) + ' outside [0,1]');
+			});
+		}
+
+		// 6. weightedVals[j] = weights[j] * vals[j] (component-wise)
+		if (Array.isArray(ATTN_2D.weights) && Array.isArray(ATTN_2D.weightedVals)) {
+			if (ATTN_2D.weightedVals.length !== ATTN_2D.weights.length)
+				warn('weightedVals.length ≠ weights.length');
+			ATTN_2D.weights.forEach((w, i) => {
+				const wv = ATTN_2D.weightedVals[i];
+				const v  = ATTN_2D.vals[i];
+				if (!wv || !v) return;
+				const exW = [w*v[0], w*v[1]];
+				if (Math.abs(wv[0]-exW[0]) > 0.01 || Math.abs(wv[1]-exW[1]) > 0.01)
+					warn('weightedVals[' + i + '] ≠ weights[' + i + ']*vals[' + i + ']');
+			});
+		}
+
+		// 7. output = sum of weightedVals
+		if (Array.isArray(ATTN_2D.output) && Array.isArray(ATTN_2D.weightedVals)) {
+			const ex = [0, 0];
+			ATTN_2D.weightedVals.forEach(wv => { if (wv && isFinite(wv[0])) { ex[0] += wv[0]; ex[1] += wv[1]; } });
+			if (Math.abs(ATTN_2D.output[0]-ex[0]) > 0.01 || Math.abs(ATTN_2D.output[1]-ex[1]) > 0.01)
+				warn('output ≠ Σ weightedVals (got ' + JSON.stringify(ATTN_2D.output.map(v=>v.toFixed(3))) + ', expected ' + JSON.stringify(ex.map(v=>v.toFixed(3))) + ')');
+		}
+
+		// 8. Matrix rows sum to 1 (each row is a softmax distribution)
+		if (Array.isArray(ATTN_2D.matrix)) {
+			ATTN_2D.matrix.forEach((row, i) => {
+				if (!Array.isArray(row)) { warn('matrix[' + i + '] not array'); return; }
+				const s = row.reduce((a,b) => a+b, 0);
+				if (row.length > 0 && Math.abs(s - 1) > 0.01)
+					warn('matrix row ' + i + ' sum=' + s.toFixed(3));
+				row.forEach((v, j) => {
+					if (!isFinite(v)) warn('matrix[' + i + '][' + j + '] is NaN/Inf');
+					else if (v < -0.001 || v > 1.001) warn('matrix[' + i + '][' + j + ']=' + v.toFixed(3) + ' outside [0,1]');
+				});
+			});
+		}
+
+		// 9. matrix[i][j] should match weight of key j for query i
+		if (Array.isArray(ATTN_2D.matrix) && Array.isArray(ATTN_2D._allKeys) && Array.isArray(ATTN_2D._allQueries)) {
+			for (let i = 0; i < ATTN_2D.matrix.length && i < ATTN_2D._allQueries.length; i++) {
+				const q = ATTN_2D._allQueries[i];
+				if (!q || !isFinite(q[0])) continue;
+				// Compute softmax scores for this query against all keys
+				const scores = ATTN_2D._allKeys.map(k => q[0]*k[0] + q[1]*k[1]);
+				const exps = scores.map(s => Math.exp(s / Math.sqrt(ATTN_2D.d_k || 2)));
+				const sum = exps.reduce((a,b)=>a+b,0);
+				const w = exps.map(e => e/sum);
+				for (let j = 0; j < w.length && j < ATTN_2D.matrix[i].length; j++) {
+					if (Math.abs(w[j] - ATTN_2D.matrix[i][j]) > 0.01)
+						warn('matrix[' + i + '][' + j + ']=' + ATTN_2D.matrix[i][j].toFixed(3) + ' ≠ softmax=' + w[j].toFixed(3));
+				}
+			}
+		}
+
+		// 10. hoveredToken must be a valid index
+		const h = ATTN_2D.hoveredToken;
+		if (h !== -1 && (h < 0 || h >= ATTN_TOKENS.length))
+			warn('hoveredToken=' + h + ' out of range [0,' + (ATTN_TOKENS.length-1) + ']');
+
+		// 11. selfOutputs[i] should equal sum_j matrix[i][j] * _allVals[j]
+		if (Array.isArray(ATTN_2D.selfOutputs) && Array.isArray(ATTN_2D.matrix) && Array.isArray(ATTN_2D._allVals)) {
+			ATTN_2D.selfOutputs.forEach((z, i) => {
+				if (!z || !Array.isArray(ATTN_2D.matrix[i])) return;
+				const ex = [0, 0];
+				for (let j = 0; j < ATTN_2D.matrix[i].length && j < ATTN_2D._allVals.length; j++) {
+					const v = ATTN_2D._allVals[j];
+					if (!v) continue;
+					ex[0] += ATTN_2D.matrix[i][j] * v[0];
+					ex[1] += ATTN_2D.matrix[i][j] * v[1];
+				}
+				if (Math.abs(z[0]-ex[0]) > 0.01 || Math.abs(z[1]-ex[1]) > 0.01)
+					warn('selfOutputs[' + i + '] ≠ Σ matrix·vals');
+			});
+		}
+
+		if (errors.length) {
+			this._dbgLastError = 'sanity(' + where + '): ' + errors.length + ' issue(s): ' + errors.slice(0,3).join('; ');
+			this._updateDebug();
+		} else {
+			this._dbg('OK', 'sanity(' + where + ') passed');
+		}
+	},
+
 	// ── DEBUG HELPERS ────────────────────────────────────────────────
 	// All debug output goes to BOTH console AND the on-page debug
 	// panel so it can be selected-all and pasted into a bug report.
