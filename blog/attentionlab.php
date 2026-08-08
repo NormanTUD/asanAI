@@ -584,6 +584,16 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	transform: translateY(0);
 	background: #dbeafe;
 }
+.attn-anatomy-header #attn-anatomy-reset {
+	background: #fef3c7;
+	border-color: #f59e0b;
+	color: #92400e;
+}
+.attn-anatomy-header #attn-anatomy-reset:hover:not(:disabled) {
+	background: #fde68a;
+	border-color: #d97706;
+	color: #78350f;
+}
 
 /* Token-count selector: start at the simplest case (2 tokens), add
    more to watch the attention budget spread out. */
@@ -1168,6 +1178,7 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			<span class="step-total">of ?</span>
 			<span id="attn-anatomy-step-title">— From embeddings to Q, K, V</span>
 		</div>
+		<button id="attn-anatomy-reset" title="Reset all q, k, v values to defaults for the current token-set">↺ Reset</button>
 		<button id="attn-anatomy-next">Next →</button>
 	</div>
 

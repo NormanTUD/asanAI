@@ -385,6 +385,18 @@ const ATTN_2D = {
 		this.demo.qk = this.demo.q[0]*this.demo.k[0] + this.demo.q[1]*this.demo.k[1];
 	},
 
+	// Recompute the dot-product scores and their scaled versions from
+	// the CURRENT q and keys. This MUST be called whenever q or any key
+	// changes — scores and scaled are direct properties, not getters, so
+	// they go stale the moment you edit a base value.
+	_recomputeScores: function() {
+		this.sqrtDk = this.sqrtDk || Math.sqrt(this.d_k);
+		const dot = (a, b) => a[0]*b[0] + a[1]*b[1];
+		const keysArr = this.keys; // getter — reflects current numTokens
+		this.scores = keysArr.map(k => dot(this.q, k));
+		this.scaled = this.scores.map(s => s / this.sqrtDk);
+	},
+
 	// Standard softmax: exp(s) / Σ. Causal mask zeroes out keys at
 	// positions > query position (only matters for the full-matrix view).
 	recomputeWeights: function() {
@@ -636,29 +648,33 @@ const ATTN_COMPUTATIONS = {
 	},
 	dot: () => {
 		const q = ATTN_2D.q;
+		const pm = (v) => `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
 		const rows = ATTN_2D.keys.map((k, j) => {
 			const tj = j + 1;
 			const p1 = q[0]*k[0], p2 = q[1]*k[1];
 			const score = ATTN_2D.scores[j].toFixed(3);
 			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="dot" data-cone-idx="${j}">` +
-				`<div class="comp-eq-line">$$ (${ed('q.0', q[0].toFixed(2))})\\cdot(${ed('keys.'+j+'.0', k[0].toFixed(2))}) \\;+\\; (${ed('q.1', q[1].toFixed(2))})\\cdot(${ed('keys.'+j+'.1', k[1].toFixed(2))}) $$</div>` +
-				`<div class="comp-eq-line">$$ = ${p1.toFixed(3)} + ${p2.toFixed(3)} $$</div>` +
-				`<div class="comp-eq-line">$$ q \\cdot k_{${tj}} = \\underbrace{${score}}_{\\text{score}} $$</div>` +
+				`<div class="comp-eq-line">$$ \\underbrace{\\mathbf{q}}_{\\text{query}} \\cdot \\underbrace{\\mathbf{k}_{${tj}}}_{\\text{key}} = \\underbrace{(${ed('q.0', q[0].toFixed(2))})\\,(${ed('keys.'+j+'.0', k[0].toFixed(2))})}_{q_0\\,k_{${tj},0}} \\;+\\; \\underbrace{(${ed('q.1', q[1].toFixed(2))})\\,(${ed('keys.'+j+'.1', k[1].toFixed(2))})}_{q_1\\,k_{${tj},1}} $$</div>` +
+				`<div class="comp-eq-line">$$ = \\underbrace{${p1.toFixed(3)}}_{q_0\\,k_{${tj},0}} \\;+\\; \\underbrace{${p2.toFixed(3)}}_{q_1\\,k_{${tj},1}} = \\underbrace{${score}}_{\\text{score}\\;\\mathbf{q}\\cdot\\mathbf{k}_{${tj}}} $$</div>` +
 			`</div>`;
 		}).join('');
 		const html = `
-		<div class="comp-header">▶ Currently computing: $q \\cdot k_j$ — add the component products</div>
+		<div class="comp-header">▶ Currently computing: $\\underbrace{\\mathbf{q}}_{\\text{query}} \\cdot \\underbrace{\\mathbf{k}_j}_{\\text{key}}$ — add the component products</div>
 		<div class="comp-body">
+			<div class="comp-note">Each component of $\\mathbf{q}$ multiplies the matching component of $\\mathbf{k}_j$. Sum = how aligned they are.</div>
 			${rows}
-			<div class="comp-note">Positive score = same direction as $\\mathbf{q}$; negative = opposite. This is the raw attention input.</div>
 		</div>`;
 		const liveVals = AttentionAnatomy._liveValsHTML();
 		return { html, liveVals };
 	},
 	scaled: () => {
-		const rows = ATTN_2D.scores.map((s, j) => `
-			<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}" data-cone-step="scaled" data-cone-idx="${j}">$$ s_{${j+1}} = \\frac{q \\cdot k_{${j+1}}}{\\sqrt{2}} = \\frac{${s.toFixed(3)}}{1.414} = ${ATTN_2D.scaled[j].toFixed(3)} $$</div>`
-		).join('');
+		const rows = ATTN_2D.scores.map((s, j) => {
+			const tj = j + 1;
+			const sc = ATTN_2D.scaled[j].toFixed(3);
+			return `<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}" data-cone-step="scaled" data-cone-idx="${j}">` +
+				`$$ \\underbrace{s_{${tj}}}_{\\text{scaled score}} = \\dfrac{\\underbrace{\\mathbf{q}\\cdot\\mathbf{k}_{${tj}}}_{${s.toFixed(3)}}}{\\underbrace{\\sqrt{d_k}}_{\\sqrt{2}\\approx 1.414}} = \\underbrace{${sc}}_{\\text{divides by }\\sqrt{d_k}} $$` +
+			`</div>`;
+		}).join('');
 		const html = `
 		<div class="comp-header">▶ Currently computing: $\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}$ — variance control</div>
 		<div class="comp-body">
@@ -669,9 +685,13 @@ const ATTN_COMPUTATIONS = {
 		return { html, liveVals };
 	},
 	exps: () => {
-		const rows = ATTN_2D.scaled.map((sc, j) => `
-			<div class="comp-eq" data-tip="bar-exp" data-idx="${j}" data-cone-step="exps" data-cone-idx="${j}">$$ e^{s_{${j+1}}} = e^{${sc.toFixed(3)}} = ${ATTN_2D.exps[j].toFixed(3)} $$</div>`
-		).join('');
+		const rows = ATTN_2D.scaled.map((sc, j) => {
+			const tj = j + 1;
+			const e = ATTN_2D.exps[j].toFixed(3);
+			return `<div class="comp-eq" data-tip="bar-exp" data-idx="${j}" data-cone-step="exps" data-cone-idx="${j}">` +
+				`$$ \\underbrace{e^{s_{${tj}}}}_{\\text{exp of scaled score}} = e^{\\underbrace{${sc.toFixed(3)}}_{s_{${tj}}}} = \\underbrace{${e}}_{\\text{numerator for }\\alpha_{${tj}}} $$` +
+			`</div>`;
+		}).join('');
 		const html = `
 		<div class="comp-header">▶ Currently computing: $e^{s_j}$ — amplify differences</div>
 		<div class="comp-body">
@@ -685,26 +705,16 @@ const ATTN_COMPUTATIONS = {
 		const ex  = ATTN_2D.exps;
 		const sum = ex.reduce((a, b) => a + b, 0);
 		const sumRow = `<div class="comp-eq-group first">` +
-			`<div class="comp-eq-line">$$ \\sum_{j=1}^{N} \\exp(s_j) = ${ex.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)} $$</div>` +
+			`<div class="comp-eq-line">$$ \\underbrace{\\sum_{j=1}^{N} \\exp(s_j)}_{\\text{denominator (softmax sum})} = ${ex.map((e, j) => `\\underbrace{${e.toFixed(3)}}_{e^{s_{${j+1}}}}`).join(' \\;+\\; ')} = \\underbrace{${sum.toFixed(3)}}_{\\text{total exp}} $$</div>` +
 		`</div>`;
-		const 		rows = ex.map((e, j) => {
+		const rows = ex.map((e, j) => {
 			const tj = j + 1;
-			// Defensive: weights[j] can be undefined if recomputeWeights
-			// wasn't called yet or if ex/weights got out of sync. Use
-			// e/sum as the safe fallback (= the same number recomputeWeights
-			// would compute), and log so we see the mismatch.
 			const w = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined)
 				? ATTN_2D.weights[j]
 				: (sum > 0 ? e / sum : 0);
-			if (!ATTN_2D.weights || ATTN_2D.weights[j] === undefined) {
-				console.warn('[attn] weights: fallback at j=' + j +
-					' ex.length=' + ex.length +
-					' weights.length=' + (ATTN_2D.weights ? ATTN_2D.weights.length : 'undefined'));
-			}
 			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="weights" data-cone-idx="${j}">` +
-				`<div class="comp-eq-line">$$ \\alpha_{${tj}} = \\dfrac{\\exp(s_{${tj}})}{\\sum_{n}\\exp(s_n)} $$</div>` +
-				`<div class="comp-eq-line">$$ = \\dfrac{${e.toFixed(3)}}{${sum.toFixed(3)}} $$</div>` +
-				`<div class="comp-eq-line">$$ = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\% $$</div>` +
+				`<div class="comp-eq-line">$$ \\underbrace{\\alpha_{${tj}}}_{\\text{weight for key }${tj}} = \\dfrac{\\underbrace{\\exp(s_{${tj}})}_{${e.toFixed(3)}}}{\\underbrace{\\sum_{n}\\exp(s_n)}_{${sum.toFixed(3)}}} $$</div>` +
+				`<div class="comp-eq-line">$$ = \\underbrace{${w.toFixed(3)}}_{\\alpha_{${tj}}} = \\underbrace{${(w*100).toFixed(1)}\\%}_{\\text{share of attention}} $$</div>` +
 			`</div>`;
 		}).join('');
 		const html = `
@@ -765,19 +775,15 @@ const ATTN_COMPUTATIONS = {
 	},
 	output: () => {
 		const rows = ATTN_2D.vals.map((v, j) => {
-			// Defensive: weightedVals[j] can be undefined if recomputeWeights
-			// wasn't called or got out of sync with vals. Compute it from
-			// weights[j] * v on the fly as the safe fallback.
 			const w  = (ATTN_2D.weights && ATTN_2D.weights[j] !== undefined) ? ATTN_2D.weights[j] : 0;
 			const wv = (ATTN_2D.weightedVals && ATTN_2D.weightedVals[j] !== undefined)
 				? ATTN_2D.weightedVals[j]
 				: [w * v[0], w * v[1]];
-			if (!ATTN_2D.weightedVals || ATTN_2D.weightedVals[j] === undefined) {
-				console.warn('[attn] output: weightedVals fallback at j=' + j +
-					' vals.length=' + ATTN_2D.vals.length +
-					' weightedVals.length=' + (ATTN_2D.weightedVals ? ATTN_2D.weightedVals.length : 'undefined'));
-			}
-			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}" data-cone-step="output" data-cone-idx="${j}">$$ \\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(w*100).toFixed(1)}\\%)\\times (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))}) = \\underbrace{(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})}_{\\text{weighted value}} $$</div>`;
+			const pmv = `\\begin{pmatrix} ${v[0].toFixed(2)} \\\\ ${v[1].toFixed(2)} \\end{pmatrix}`;
+			const pmwv = `\\begin{pmatrix} ${wv[0].toFixed(3)} \\\\ ${wv[1].toFixed(3)} \\end{pmatrix}`;
+			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}" data-cone-step="output" data-cone-idx="${j}">` +
+				`$$ \\underbrace{\\alpha_{${j+1}}}_{\\text{weight}}\\,\\underbrace{\\mathbf{v}_{${j+1}}}_{\\text{value}} = \\underbrace{${(w*100).toFixed(1)}\\%}_{\\alpha_{${j+1}}} \\times \\underbrace{${pmv}}_{\\mathbf{v}_{${j+1}}} = \\underbrace{${pmwv}}_{\\alpha_{${j+1}}\\mathbf{v}_{${j+1}}} $$` +
+			`</div>`;
 		}).join('');
 		const z = ATTN_2D.output;
 		// Defensive sumParts — also falls back if weightedVals is empty
@@ -1182,6 +1188,7 @@ const AttentionAnatomy = {
 
 		document.getElementById('attn-anatomy-prev').addEventListener('click', () => this.prev());
 		document.getElementById('attn-anatomy-next').addEventListener('click', () => this.next());
+		document.getElementById('attn-anatomy-reset').addEventListener('click', () => this._resetToDefaults());
 
 		// Token-count selector. Recomputes every derived quantity and
 		// re-renders; starts at the simplest case (2 tokens).
@@ -1222,9 +1229,15 @@ const AttentionAnatomy = {
 		// Pre-render the vector formula LaTeX to MathML via Temml, once.
 		// The hover tooltip then just swaps innerHTML — instant, no
 		// re-render cost per hover.
-		this._renderFormulas();
-		this._setupSentenceHover();
-		this._setupFormulaHover();
+		try {
+			this._renderFormulas();
+			this._setupSentenceHover();
+			this._setupFormulaHover();
+			this._dbg('OK', 'init: hover handlers attached');
+		} catch (e) {
+			this._dbg('ERROR', 'init failed at hover setup: ' + e.message);
+			console.error('[attn] init failed:', e);
+		}
 
 		// Global error catcher — any uncaught JS error gets logged AND
 		// shown in the debug panel so the user can paste it verbatim.
@@ -1746,6 +1759,31 @@ const AttentionAnatomy = {
 		}
 	},
 
+	// ─── Global state management ──────────────────────────────────
+	// ATTN_2D is the SINGLE SOURCE OF TRUTH. Every editable value lives
+	// there (q, _allKeys, _allVals, _allQueries, demo.*). Every render
+	// reads from it. When the user edits any number, the commit() path
+	// (in _attachEditors) does:
+	//   1. _setField(path, value)    → writes to ATTN_2D
+	//   2. _recomputeScores()         → q·k and scaled/√d_k fresh
+	//   3. recomputeWeights()         → softmax from fresh scaled
+	//   4. recomputeMatrix()          → full α[i][j] matrix fresh
+	//   5. render()                   → every panel + plot + bar redraws
+	// So changing one number in one step propagates to ALL steps
+	// (including the one you're on, and every other step if you flip
+	// back to it via Prev/Next).
+	_resetToDefaults: function() {
+		console.log('[attn] reset to defaults for example', ATTN_2D.exampleIdx);
+		// Re-run setExample() which copies the canonical q/keys/vals from
+		// ATTN_SETS back into ATTN_2D, then re-derives everything.
+		ATTN_2D.setExample(ATTN_2D.exampleIdx);
+		ATTN_2D._recomputeScores();
+		ATTN_2D.recomputeWeights();
+		ATTN_2D.recomputeMatrix();
+		this.render();
+		this._dbg('RESET', 'q, keys, vals reset to defaults for "' + ATTN_SETS[ATTN_2D.exampleIdx].label + '"');
+	},
+
 	goto: function(n) {
 		this.step = Math.max(0, Math.min(ATTN_STEPS.length - 1, n));
 		this.render();
@@ -2032,21 +2070,30 @@ const AttentionAnatomy = {
 				span.appendChild(input);
 				input.focus();
 				input.select();
-				const commit = function() {
-					const v = parseFloat(input.value);
-					if (self._setField(span.dataset.field, v)) {
-						// Re-derive everything that depends on base values.
-						if (span.dataset.field.indexOf('demo') === 0) {
-							ATTN_2D._updateDemo();
-						}
-						ATTN_2D.recomputeWeights();
-						ATTN_2D.recomputeMatrix();
-						self.render();
-						self._tipContentKey = null;
-					} else {
-						span.textContent = Number(cur).toFixed(3);
+			const commit = function() {
+				const v = parseFloat(input.value);
+				console.log('[attn] commit', span.dataset.field, '=', v, 'current=', cur);
+				if (self._setField(span.dataset.field, v)) {
+					console.log('[attn] _setField ok, recomputing...');
+					// Re-derive everything that depends on base values.
+					if (span.dataset.field.indexOf('demo') === 0) {
+						ATTN_2D._updateDemo();
 					}
-				};
+					// CRITICAL: when q or keys change, scores and scaled are
+					// STALE (they're direct properties, not getters). Must
+					// recompute them BEFORE recomputeWeights reads them.
+					// Without this, editing q.x wouldn't change the weights.
+					ATTN_2D._recomputeScores();
+					ATTN_2D.recomputeWeights();
+					ATTN_2D.recomputeMatrix();
+					console.log('[attn] new weights:', ATTN_2D.weights);
+					self.render();
+					self._tipContentKey = null;
+				} else {
+					console.log('[attn] _setField FAILED, not finite');
+					span.textContent = Number(cur).toFixed(3);
+				}
+			};
 				input.addEventListener('blur', commit);
 				input.addEventListener('keydown', function(e) {
 					if (e.key === 'Enter') { input.blur(); }
@@ -2287,6 +2334,7 @@ const AttentionAnatomy = {
 		const el = document.getElementById('attn-section-computation');
 		if (!el) return;
 		const self = this;
+		console.log('[attn] _setupFormulaHover attached to', el.id);
 		// Formula nodes (dot/scaled/exps/weights/output)
 		el.addEventListener('mouseover', function(e) {
 			// 1) Formula light-cone
@@ -2294,8 +2342,13 @@ const AttentionAnatomy = {
 			if (node) {
 				const step = node.dataset.coneStep;
 				const idx  = parseInt(node.dataset.coneIdx, 10);
+				console.log('[attn] hover formula', step, idx);
 				ATTN_2D.hoveredFormula = { step, idx };
-				self._showFormulaCone(step, idx);
+				try {
+					self._showFormulaCone(step, idx);
+				} catch (err) {
+					console.error('[attn] _showFormulaCone error:', err);
+				}
 				return;
 			}
 			// 2) Matrix cell — show the exact α_{ij} computation
