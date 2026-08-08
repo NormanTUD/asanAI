@@ -245,14 +245,15 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
     tall, uses the full remaining vertical space. */
 .attn-anatomy-grid {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	grid-template-rows: auto auto minmax(0, 1fr);
-	gap: 14px;
+	grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+	grid-template-rows: auto auto auto 1fr;
+	gap: 12px;
+	width: 100%;
 }
 @media (max-width: 880px) {
 	.attn-anatomy-grid {
 		grid-template-columns: 1fr;
-		grid-template-rows: auto auto auto auto;
+		grid-template-rows: auto auto auto auto 1fr;
 	}
 }
 .attn-grid-equation {
@@ -260,8 +261,6 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	grid-row: 1;
 	margin-bottom: 0;
 }
-/* Debug panel — always visible, spans full width below the equation,
-   above the computation + plot row. */
 .attn-grid-debug {
 	grid-column: 1 / -1;
 	grid-row: 2;
@@ -269,7 +268,9 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 }
 .attn-grid-computation {
 	grid-column: 1;
-	grid-row: 3;
+	grid-row: 3 / span 2;
+	min-width: 0;
+	overflow: hidden;
 }
 .attn-anatomy-2d-wrap {
 	grid-column: 2;
@@ -283,10 +284,10 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 }
 /* When the 2D SVG is collapsed (step 10 matrix / step 11 selfattn) the
    computation panel takes the full width so the table / plots get
-   all the horizontal space. The 2D wrap (containing the SVG) is
-   hidden entirely so it doesn't add empty vertical space. */
+   all the horizontal space. The 2D wrap is hidden entirely. */
 .attn-anatomy-grid.attn-grid-svg-collapsed .attn-grid-computation {
 	grid-column: 1 / -1;
+	grid-row: 3 / span 2;
 }
 .attn-anatomy-grid.attn-grid-svg-collapsed .attn-anatomy-equation {
 	grid-column: 1 / -1;
@@ -294,29 +295,23 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 .attn-anatomy-grid.attn-grid-svg-collapsed .attn-anatomy-2d-wrap {
 	display: none;
 }
-.attn-anatomy-2d-wrap {
-	grid-column: 2;
-	grid-row: 2;
-	display: flex;
-	flex-direction: column;
-	position: relative;
-	min-width: 0;
-}
 /* Custom SVG-based 2D plot. Replaces Plotly entirely so we have
    full control over mouse events (no more swallowed events). The
    plot keeps its square aspect ratio (height:auto from the viewBox);
    the geometric intuition panel for the current step sits right
    beneath it, inside the plot column. */
 #attn-anatomy-2d-svg {
-	flex: 0 0 auto;
+	flex: 1 1 auto;
 	width: 100%;
-	height: auto;
-	min-height: 420px;
+	height: 100%;
+	min-height: 380px;
 	min-width: 0;
 	display: block;
 	background: var(--mn-surface, #fff);
 	transition: opacity 0.18s ease, max-height 0.18s ease, min-height 0.18s ease, margin 0.18s ease;
 	overflow: hidden;
+	border: 1px solid var(--mn-border, #e2e8f0);
+	border-radius: 8px;
 }
 /* In step 10 (matrix) and step 11 (selfattn) the actual visualisation
    lives in the computation panel. Collapse the 2D SVG so it doesn't
