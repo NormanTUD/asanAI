@@ -1806,7 +1806,8 @@ const AttentionAnatomy = {
 
 	// Minimal "something went wrong" payload for the self-attn tooltip.
 	// Returns a Temml-safe object so _showTooltip never has to special-case
-	// missing data.
+	// missing data. Includes the same extra fields as the real payloads so
+	// _showTooltip can render the optional sections without checking.
 	_saUnavailable: function(reason) {
 		return {
 			name: 'self-attention value',
@@ -1815,6 +1816,9 @@ const AttentionAnatomy = {
 			formulaLatex: '',
 			unicode: '(unavailable)',
 			desc: '',
+			vars: '',
+			editHint: '',
+			breakdown: '',
 		};
 	},
 
