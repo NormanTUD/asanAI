@@ -295,35 +295,39 @@ function ed(field, value) {
 // subspace and q is the token's query (for self-attention).
 const ATTN_SETS = [
 	{
-		label: 'Clear winner (cat)',
+		label: 'Clear winner — "The cat sat."',
+		full: 'The cat sat on the mat.',
 		tokens: [
+			{ name: 'sat', k: [-0.60, -0.70], v: [-0.70, -0.55], q: [-0.60, -0.70] },
 			{ name: 'cat', k: [ 0.90,  0.45], v: [ 0.80,  0.55], q: [ 0.90,  0.45] },
-			{ name: 'dog', k: [-0.50,  0.80], v: [-0.30,  0.70], q: [-0.50,  0.80] },
-			{ name: 'sat', k: [-0.60, -0.70], v: [-0.70, -0.55], q: [-0.60, -0.70] }
+			{ name: 'mat', k: [-0.50,  0.80], v: [-0.30,  0.70], q: [-0.50,  0.80] }
 		]
 	},
 	{
-		label: 'Two-way race (loved)',
+		label: 'Two-way race — "She loved him."',
+		full: 'She loved him deeply.',
 		tokens: [
-			{ name: 'loved', k: [ 0.85,  0.50], v: [ 0.70,  0.60], q: [ 0.85,  0.50] },
-			{ name: 'hated', k: [ 0.80,  0.45], v: [-0.60,  0.70], q: [ 0.80,  0.45] },
-			{ name: 'bored', k: [-0.90, -0.30], v: [ 0.10, -0.90], q: [-0.90, -0.30] }
+			{ name: 'loved', k: [-0.90, -0.30], v: [ 0.10, -0.90], q: [-0.90, -0.30] },
+			{ name: 'she',   k: [ 0.85,  0.50], v: [ 0.70,  0.60], q: [ 0.85,  0.50] },
+			{ name: 'him',   k: [ 0.80,  0.45], v: [-0.60,  0.70], q: [ 0.80,  0.45] }
 		]
 	},
 	{
-		label: 'Nothing relates (xyz)',
+		label: 'Nothing relates — "xyz foo bar."',
+		full: 'xyz foo bar qux quux.',
 		tokens: [
-			{ name: 'xyz', k: [-0.30,  0.20], v: [ 0.60,  0.30], q: [-0.30,  0.20] },
-			{ name: 'abc', k: [ 0.10, -0.40], v: [-0.20,  0.70], q: [ 0.10, -0.40] },
-			{ name: 'def', k: [ 0.20,  0.10], v: [ 0.80, -0.50], q: [ 0.20,  0.10] }
+			{ name: 'xyz',  k: [-0.30,  0.20], v: [ 0.60,  0.30], q: [-0.30,  0.20] },
+			{ name: 'foo',  k: [ 0.10, -0.40], v: [-0.20,  0.70], q: [ 0.10, -0.40] },
+			{ name: 'bar',  k: [ 0.20,  0.10], v: [ 0.80, -0.50], q: [ 0.20,  0.10] }
 		]
 	},
 	{
-		label: 'Strong winner (beautiful)',
+		label: 'Strong winner — "The beautiful sunset glowed."',
+		full: 'The beautiful sunset glowed.',
 		tokens: [
-			{ name: 'beautiful', k: [ 0.98,  0.42], v: [ 0.90,  0.30], q: [ 0.98,  0.42] },
-			{ name: 'ugly',     k: [-0.80,  0.90], v: [-0.60,  0.80], q: [-0.80,  0.90] },
-			{ name: 'plain',    k: [-0.90, -0.80], v: [ 0.20, -0.70], q: [-0.90, -0.80] }
+			{ name: 'glowed',    k: [-0.90, -0.80], v: [ 0.20, -0.70], q: [-0.90, -0.80] },
+			{ name: 'sunset',    k: [ 0.98,  0.42], v: [ 0.90,  0.30], q: [ 0.98,  0.42] },
+			{ name: 'beautiful', k: [-0.80,  0.90], v: [-0.60,  0.80], q: [-0.80,  0.90] }
 		]
 	}
 ];
@@ -337,6 +341,7 @@ const ATTN_2D = {
 	d_k: 2,
 	numTokens: 2,
 	hoveredToken: -1,          // -1 = none; 0 = it; 1 = cat; …
+	hoveredFormula: null,      // { step, idx } or null — which formula is hovered
 
 	// ── Demo data for the "learnable projections" step ────────────
 	// Static W matrices (identity / 90° rotation / shear) that make the
@@ -612,7 +617,7 @@ const ATTN_COMPUTATIONS = {
 			const tj = j + 1;
 			const p1 = q[0]*k[0], p2 = q[1]*k[1];
 			const score = ATTN_2D.scores[j].toFixed(3);
-			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}">` +
+			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="dot" data-cone-idx="${j}">` +
 				`<div class="comp-eq-line">$$ (${ed('q.0', q[0].toFixed(2))})\\cdot(${ed('keys.'+j+'.0', k[0].toFixed(2))}) \\;+\\; (${ed('q.1', q[1].toFixed(2))})\\cdot(${ed('keys.'+j+'.1', k[1].toFixed(2))}) $$</div>` +
 				`<div class="comp-eq-line">$$ = ${p1.toFixed(3)} + ${p2.toFixed(3)} $$</div>` +
 				`<div class="comp-eq-line">$$ q \\cdot k_{${tj}} = \\underbrace{${score}}_{\\text{score}} $$</div>` +
@@ -629,7 +634,7 @@ const ATTN_COMPUTATIONS = {
 	},
 	scaled: () => {
 		const rows = ATTN_2D.scores.map((s, j) => `
-			<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}">$$ s_{${j+1}} = \\frac{q \\cdot k_{${j+1}}}{\\sqrt{2}} = \\frac{${s.toFixed(3)}}{1.414} = ${ATTN_2D.scaled[j].toFixed(3)} $$</div>`
+			<div class="comp-eq" data-tip="bar-scaled" data-idx="${j}" data-cone-step="scaled" data-cone-idx="${j}">$$ s_{${j+1}} = \\frac{q \\cdot k_{${j+1}}}{\\sqrt{2}} = \\frac{${s.toFixed(3)}}{1.414} = ${ATTN_2D.scaled[j].toFixed(3)} $$</div>`
 		).join('');
 		const html = `
 		<div class="comp-header">▶ Currently computing: $\\dfrac{q \\cdot k_j}{\\sqrt{d_k}}$ — variance control</div>
@@ -642,7 +647,7 @@ const ATTN_COMPUTATIONS = {
 	},
 	exps: () => {
 		const rows = ATTN_2D.scaled.map((sc, j) => `
-			<div class="comp-eq" data-tip="bar-exp" data-idx="${j}">$$ e^{s_{${j+1}}} = e^{${sc.toFixed(3)}} = ${ATTN_2D.exps[j].toFixed(3)} $$</div>`
+			<div class="comp-eq" data-tip="bar-exp" data-idx="${j}" data-cone-step="exps" data-cone-idx="${j}">$$ e^{s_{${j+1}}} = e^{${sc.toFixed(3)}} = ${ATTN_2D.exps[j].toFixed(3)} $$</div>`
 		).join('');
 		const html = `
 		<div class="comp-header">▶ Currently computing: $e^{s_j}$ — amplify differences</div>
@@ -659,10 +664,10 @@ const ATTN_COMPUTATIONS = {
 		const sumRow = `<div class="comp-eq-group first">` +
 			`<div class="comp-eq-line">$$ \\sum_j e^{s_j} = ${ex.map((e) => e.toFixed(3)).join(' + ')} = ${sum.toFixed(3)} $$</div>` +
 		`</div>`;
-		const rows = ex.map((e, j) => {
+		const 		rows = ex.map((e, j) => {
 			const tj = j + 1;
 			const w = ATTN_2D.weights[j];
-			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}">` +
+			return `<div class="comp-eq-group${j === 0 ? ' first' : ''}" data-cone-step="weights" data-cone-idx="${j}">` +
 				`<div class="comp-eq-line">$$ \\alpha_{${tj}} = \\frac{e^{s_{${tj}}}}{\\Sigma} $$</div>` +
 				`<div class="comp-eq-line">$$ = \\frac{${e.toFixed(3)}}{${sum.toFixed(3)}} $$</div>` +
 				`<div class="comp-eq-line">$$ = ${w.toFixed(3)} = ${(w*100).toFixed(1)}\\% $$</div>` +
@@ -694,7 +699,7 @@ const ATTN_COMPUTATIONS = {
 	output: () => {
 		const rows = ATTN_2D.vals.map((v, j) => {
 			const wv = ATTN_2D.weightedVals[j];
-			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}">$$ \\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(ATTN_2D.weights[j]*100).toFixed(1)}\\%)\\times (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))}) = \\underbrace{(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})}_{\\text{weighted value}} $$</div>`;
+			return `<div class="comp-eq" data-tip="weightedV" data-idx="${j}" data-cone-step="output" data-cone-idx="${j}">$$ \\alpha_{${j+1}}\\mathbf{v}_{${j+1}} = (${(ATTN_2D.weights[j]*100).toFixed(1)}\\%)\\times (${ed('vals.'+j+'.0', v[0].toFixed(2))},\\, ${ed('vals.'+j+'.1', v[1].toFixed(2))}) = \\underbrace{(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})}_{\\text{weighted value}} $$</div>`;
 		}).join('');
 		const z = ATTN_2D.output;
 		const sumParts = ATTN_2D.weightedVals.map((wv) => `(${wv[0].toFixed(3)},\\, ${wv[1].toFixed(3)})`).join(' + ');
@@ -1080,6 +1085,7 @@ const AttentionAnatomy = {
 		// re-render cost per hover.
 		this._renderFormulas();
 		this._setupSentenceHover();
+		this._setupFormulaHover();
 
 		// Draw the static background (grid + axes) ONCE.
 		this._initSVG();
@@ -1939,19 +1945,31 @@ const AttentionAnatomy = {
 	// hoverable span — hovering focuses the 2D plot on that token's
 	// vectors and shows its full info in a popup.
 	_renderSentence: function() {
-		// Just render the HTML. Event listeners are attached ONCE in
-		// _setupSentenceHover() — calling render() from inside the
-		// listeners would create an infinite loop (render → renderSentence
-		// → re-add listeners → …).
+		// Show the FULL sentence (context) with the focused tokens
+		// highlighted as clickable spans. The rest of the sentence is
+		// dimmed but visible — so a human reader can tell what the model
+		// is attending TO.
 		const el = document.getElementById('attn-sentence');
 		if (!el) return;
-		let html = '';
-		ATTN_TOKENS.forEach((tk, j) => {
-			if (j > 0) html += ' ';
-			const cls = 'attn-token ' + (j === 0 ? 'it' : 't' + j);
-			html += `<span class="${cls}" data-token="${j}">${tk.name}</span>`;
+		const set = ATTN_SETS[ATTN_2D.exampleIdx];
+		if (!set || !set.full) {
+			el.innerHTML = ATTN_TOKENS.map((tk, j) =>
+				`<span class="attn-token ${j === 0 ? 'it' : 't' + j}" data-token="${j}">${tk.name}</span>`
+			).join(' ');
+			return;
+		}
+		// Escape any HTML in the full sentence, then highlight token
+		// names. Use word boundaries so "cat" doesn't match inside
+		// "scatter".
+		const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		const names = ATTN_TOKENS.map((tk) => tk.name);
+		const pattern = new RegExp('\\b(' + names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'g');
+		const highlighted = esc(set.full).replace(pattern, (m) => {
+			const idx = names.indexOf(m);
+			const cls = 'attn-token ' + (idx === 0 ? 'it' : 't' + idx);
+			return `<span class="${cls}" data-token="${idx}">${m}</span>`;
 		});
-		el.innerHTML = html;
+		el.innerHTML = highlighted;
 	},
 
 	// Attach hover handlers to the sentence tokens. Called ONCE from
@@ -1971,49 +1989,138 @@ const AttentionAnatomy = {
 			self.render();
 		});
 		el.addEventListener('mouseout', function(e) {
-			// Only clear if the mouse actually left the sentence area.
 			const span = e.target.closest('.attn-token');
 			if (!span) return;
 			const to = e.relatedTarget;
 			if (to && span.contains(to)) return;
 			ATTN_2D.hoveredToken = -1;
-			self._hideTokenInfo();
+			self._refreshPopup();
 			self.render();
 		});
 	},
 
-	// Token info popup — floats next to the scene showing q, k, v, and
-	// (for non-"it" tokens) the attention weight for this example.
+	// Light-cone hover: when the mouse enters a formula in the
+	// computation panel, show the derivation chain in the popup.
+	// Delegation on the computation container — same pattern as
+	// _setupSentenceHover() — so it survives formula re-renders.
+	_setupFormulaHover: function() {
+		const el = document.getElementById('attn-section-computation');
+		if (!el) return;
+		const self = this;
+		el.addEventListener('mouseover', function(e) {
+			const node = e.target.closest('[data-cone-step]');
+			if (!node) return;
+			const step = node.dataset.coneStep;
+			const idx  = parseInt(node.dataset.coneIdx, 10);
+			ATTN_2D.hoveredFormula = { step, idx };
+			self._showFormulaCone(step, idx);
+		});
+		el.addEventListener('mouseout', function(e) {
+			const node = e.target.closest('[data-cone-step]');
+			if (!node) return;
+			const to = e.relatedTarget;
+			if (to && node.contains(to)) return;
+			// Also check if we're moving to another formula node
+			if (to && to.closest && to.closest('[data-cone-step]')) return;
+			ATTN_2D.hoveredFormula = null;
+			self._refreshPopup();
+		});
+	},
+
+	// Decide what to show in the popup based on current hover state.
+	// Priority: hoveredFormula > hoveredToken > hide.
+	_refreshPopup: function() {
+		if (ATTN_2D.hoveredFormula) {
+			const { step, idx } = ATTN_2D.hoveredFormula;
+			this._showFormulaCone(step, idx);
+		} else if (ATTN_2D.hoveredToken >= 0) {
+			this._showTokenInfo(ATTN_2D.hoveredToken);
+		} else {
+			this._hideTokenInfo();
+		}
+	},
+
+	// Token info popup — inline below the sentence. Shows q, k, v, α for
+	// the hovered token, all rendered with Temml.
 	_showTokenInfo: function(idx) {
 		const el = document.getElementById('attn-token-info');
 		if (!el) return;
-		if (idx < 0 || idx >= ATTN_TOKENS.length) { el.style.display = 'none'; return; }
+		if (idx < 0 || idx >= ATTN_TOKENS.length) { this._hideTokenInfo(); return; }
 		const tk = ATTN_TOKENS[idx];
 		const q = idx < ATTN_2D._allQueries.length ? ATTN_2D._allQueries[idx] : null;
 		let html = `<h4>${tk.name}</h4>`;
-		if (q) html += `<div class="ti-row"><span class="ti-label">q</span><span class="ti-val">(${q[0].toFixed(2)}, ${q[1].toFixed(2)})</span></div>`;
-		// Guard: k/v only exist for non-query tokens AND only if that
-		// token index is within the current key/value array.
+		if (q) html += `<div class="ti-row">$$\\mathbf{q} = (${q[0].toFixed(2)},\\, ${q[1].toFixed(2)})$$</div>`;
 		const j = idx - 1;
 		const hasKV = j >= 0 && j < ATTN_2D.keys.length && j < ATTN_2D.vals.length;
 		if (hasKV) {
 			const k = ATTN_2D.keys[j], v = ATTN_2D.vals[j];
 			const w = ATTN_2D.weights[j] || 0;
-			html += `<div class="ti-row"><span class="ti-label">k</span><span class="ti-val">(${k[0].toFixed(2)}, ${k[1].toFixed(2)})</span></div>`;
-			html += `<div class="ti-row"><span class="ti-label">v</span><span class="ti-val">(${v[0].toFixed(2)}, ${v[1].toFixed(2)})</span></div>`;
-			html += `<div class="ti-row"><span class="ti-label">α</span><span class="ti-val">${(w*100).toFixed(1)}%</span></div>`;
-			html += `<div class="ti-row"><span class="ti-label">‖k‖</span><span class="ti-val">${Math.hypot(k[0],k[1]).toFixed(2)}</span></div>`;
-			if (q) html += `<div class="ti-row"><span class="ti-label">q·k</span><span class="ti-val">${(q[0]*k[0]+q[1]*k[1]).toFixed(3)}</span></div>`;
+			html += `<div class="ti-row">$$\\mathbf{k} = (${k[0].toFixed(2)},\\, ${k[1].toFixed(2)})$$</div>`;
+			html += `<div class="ti-row">$$\\mathbf{v} = (${v[0].toFixed(2)},\\, ${v[1].toFixed(2)})$$</div>`;
+			html += `<div class="ti-row">$$\\alpha = ${(w*100).toFixed(1)}\\%$$</div>`;
+			html += `<div class="ti-row">$$\\|\\mathbf{k}\\| = ${Math.hypot(k[0],k[1]).toFixed(2)}$$</div>`;
+			if (q) html += `<div class="ti-row">$$\\mathbf{q}\\cdot\\mathbf{k} = ${(q[0]*k[0]+q[1]*k[1]).toFixed(3)}$$</div>`;
 		} else {
-			html += `<div class="ti-row"><span class="ti-label">role</span><span class="ti-val">query</span></div>`;
+			html += `<div class="ti-row"><span class="ti-label">role:</span> query (the token we're attending FROM)</div>`;
 		}
 		el.innerHTML = html;
-		el.style.display = 'block';
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
+	},
+
+	// Light cone — show the full derivation chain for a formula value.
+	// Called when hovering over a formula in the computation panel.
+	// stepName: 'dot' | 'scaled' | 'exps' | 'weights' | 'output'
+	// tokenIdx: 0..n-1 (which token's value is being explained)
+	_showFormulaCone: function(stepName, tokenIdx) {
+		const el = document.getElementById('attn-token-info');
+		if (!el) return;
+		const q = ATTN_2D.q;
+		const cone = [];
+		cone.push(`<div class="ti-cone"><b>Light cone — how this value came to be:</b>`);
+		if (stepName === 'dot') {
+			const k = ATTN_2D.keys[tokenIdx];
+			const score = (q[0]*k[0] + q[1]*k[1]).toFixed(3);
+			cone.push(`<div class="ti-cone-line">$$\\mathbf{q}\\cdot\\mathbf{k}_{${tokenIdx+1}} = (${q[0].toFixed(2)})(${k[0].toFixed(2)}) + (${q[1].toFixed(2)})(${k[1].toFixed(2)}) = ${score}$$</div>`);
+			cone.push(`<div class="ti-cone-line">← starts from $\\mathbf{q} = (${q[0].toFixed(2)},\\,${q[1].toFixed(2)})$ and $\\mathbf{k}_{${tokenIdx+1}} = (${k[0].toFixed(2)},\\,${k[1].toFixed(2)})$</div>`);
+		} else if (stepName === 'scaled') {
+			const k = ATTN_2D.keys[tokenIdx];
+			const score = (q[0]*k[0] + q[1]*k[1]).toFixed(3);
+			const scaled = ATTN_2D.scaled[tokenIdx].toFixed(3);
+			cone.push(`<div class="ti-cone-line">$$s_{${tokenIdx+1}} = \\frac{${score}}{\\sqrt{2}} = \\frac{${score}}{1.414} = ${scaled}$$</div>`);
+			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = \\dfrac{q\\cdot k_{${tokenIdx+1}}}{\\sqrt{d_k}}$</div>`);
+			cone.push(`<div class="ti-cone-line">← $q\\cdot k_{${tokenIdx+1}} = ${score}$ (dot product)</div>`);
+		} else if (stepName === 'exps') {
+			const sc = ATTN_2D.scaled[tokenIdx].toFixed(3);
+			const e  = ATTN_2D.exps[tokenIdx].toFixed(3);
+			cone.push(`<div class="ti-cone-line">$$e^{s_{${tokenIdx+1}}} = e^{${sc}} = ${e}$$</div>`);
+			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${sc}$ (scaled score)</div>`);
+			cone.push(`<div class="ti-cone-line">← $q\\cdot k_{${tokenIdx+1}} = ${(q[0]*ATTN_2D.keys[tokenIdx][0] + q[1]*ATTN_2D.keys[tokenIdx][1]).toFixed(3)}$</div>`);
+		} else if (stepName === 'weights') {
+			const e   = ATTN_2D.exps[tokenIdx].toFixed(3);
+			const sum = ATTN_2D.exps.reduce((a, b) => a + b, 0).toFixed(3);
+			const w   = (ATTN_2D.weights[tokenIdx]*100).toFixed(1);
+			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}} = \\frac{e^{s_{${tokenIdx+1}}}}{\\Sigma} = \\frac{${e}}{${sum}} = ${w}\\%$$</div>`);
+			cone.push(`<div class="ti-cone-line">← $e^{s_{${tokenIdx+1}}} = ${e}$</div>`);
+			cone.push(`<div class="ti-cone-line">← $s_{${tokenIdx+1}} = ${ATTN_2D.scaled[tokenIdx].toFixed(3)}$</div>`);
+			cone.push(`<div class="ti-cone-line">← $q\\cdot k_{${tokenIdx+1}} = ${(q[0]*ATTN_2D.keys[tokenIdx][0] + q[1]*ATTN_2D.keys[tokenIdx][1]).toFixed(3)}$</div>`);
+		} else if (stepName === 'output') {
+			const wv = ATTN_2D.weightedVals[tokenIdx];
+			const w  = (ATTN_2D.weights[tokenIdx]*100).toFixed(1);
+			const v  = ATTN_2D.vals[tokenIdx];
+			cone.push(`<div class="ti-cone-line">$$\\alpha_{${tokenIdx+1}}\\mathbf{v}_{${tokenIdx+1}} = (${w}\\%)\\times(${v[0].toFixed(2)},\\,${v[1].toFixed(2)}) = (${wv[0].toFixed(3)},\\,${wv[1].toFixed(3)})$$</div>`);
+			cone.push(`<div class="ti-cone-line">← $\\alpha_{${tokenIdx+1}} = ${w}\\%$ (softmax weight)</div>`);
+			cone.push(`<div class="ti-cone-line">← $\\mathbf{v}_{${tokenIdx+1}} = (${v[0].toFixed(2)},\\,${v[1].toFixed(2)})$</div>`);
+		}
+		cone.push(`</div>`);
+		el.innerHTML = cone.join('');
+		el.classList.remove('is-empty');
+		if (typeof render_temml === 'function') render_temml(el);
 	},
 
 	_hideTokenInfo: function() {
 		const el = document.getElementById('attn-token-info');
-		if (el) el.style.display = 'none';
+		if (el) el.classList.add('is-empty');
 	},
 
 	// Render the bar plots BELOW the 2D scene in their own SVG.

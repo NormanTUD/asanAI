@@ -338,13 +338,15 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	background: var(--mn-surface, #fff);
 }
 
-/* Token info panel — inline below the sentence, so it sits BETWEEN
-   the sentence and the 2D plot instead of overlaying the plot. */
+/* Token info / formula cone panel — inline below the sentence, sits
+   BETWEEN the sentence and the 2D plot. Always reserves space (min-height
+   + opacity) so the plot never shifts when content appears or changes. */
 .attn-token-info {
 	position: relative;
-	display: none;
+	display: block;
 	margin: 6px auto 4px auto;
-	max-width: 700px;
+	max-width: 760px;
+	min-height: 72px;
 	padding: 8px 14px;
 	background: var(--mn-surface, #fff);
 	border: 1px solid rgba(37, 99, 235, 0.35);
@@ -354,6 +356,22 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 	font-size: 0.82rem;
 	line-height: 1.45;
 	color: var(--mn-text, #1e293b);
+	opacity: 1;
+	transition: opacity 0.18s ease;
+}
+.attn-token-info.is-empty {
+	opacity: 0;
+	pointer-events: none;
+}
+.attn-token-info .ti-cone {
+	font-size: 0.78rem;
+	color: var(--mn-text-muted, #64748b);
+	border-top: 1px dashed rgba(37,99,235,0.25);
+	margin-top: 6px;
+	padding-top: 6px;
+}
+.attn-token-info .ti-cone-line {
+	padding: 2px 0;
 }
 .attn-token-info h4 {
 	margin: 0 0 8px 0;
@@ -978,7 +996,7 @@ body.theme-dark .attn-vector-tooltip .tt-intuition,
 			</svg>
 
 			<!-- Token info popup — floats to the right of the scene. -->
-			<div id="attn-token-info" class="attn-token-info" style="display:none;"></div>
+			<div id="attn-token-info" class="attn-token-info is-empty"></div>
 
 			<!-- Geometric intuition panel — INSIDE the plot column, right
 			     below the scene, so the picture and its meaning stay
