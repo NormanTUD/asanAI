@@ -5086,5 +5086,82 @@ window.bibData = {
 		author: "Alexf",
 		year: 2011,
 		alternativetitle: "Thomas de Colmar's Arithmometer at the Musée des Arts et Métiers, Paris"
+	},
+	"newton_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:GodfreyKneller-IsaacNewton-1689.jpg",
+		title: "Portrait of Isaac Newton (1689)",
+		author: "Godfrey Kneller",
+		year: 1689,
+		alternativetitle: "Portrait of Isaac Newton at age 46 by Godfrey Kneller, 1689"
+	},
+	"leibniz_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Gottfried_Wilhelm_Leibniz%2C_Bernhard_Christoph_Francke.jpg",
+		title: "Portrait of Gottfried Wilhelm Leibniz",
+		author: "Bernhard Christoph Francke",
+		year: 1700,
+		alternativetitle: "Portrait of Gottfried Wilhelm Leibniz by Bernhard Christoph Francke, c. 1700"
+	},
+	"euler_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Leonhard_Euler_2.jpg",
+		title: "Portrait of Leonhard Euler",
+		author: "Jakob Emanuel Handmann",
+		year: 1753,
+		alternativetitle: "Portrait of Leonhard Euler by Jakob Emanuel Handmann, 1753"
+	},
+	"riemann_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Georg_Friedrich_Bernhard_Riemann.jpeg",
+		title: "Portrait of Bernhard Riemann",
+		author: "Unknown",
+		year: 1873,
+		alternativetitle: "Portrait photograph of Bernhard Riemann, c. 1860s"
+	},
+	"napier_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:John_Napier.jpg",
+		title: "Portrait of John Napier",
+		author: "Unknown",
+		year: 1616,
+		alternativetitle: "Portrait of John Napier of Merchiston (1550-1617), inventor of logarithms"
+	},
+	"lagrange_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Lagrange_portrait.jpg",
+		title: "Portrait of Joseph-Louis Lagrange",
+		author: "Unknown",
+		year: 1790,
+		alternativetitle: "Portrait of Joseph-Louis Lagrange (1736-1813)"
+	},
+	"rgb_color_cube": {
+		url: "https://commons.wikimedia.org/wiki/File:RGB_color_cube.svg",
+		title: "RGB Color Cube",
+		author: "SharkD",
+		year: 2010,
+		alternativetitle: "RGB color cube showing all possible colors in the 8-bit sRGB color space"
+	},
+	"neural_network_diagram": {
+		url: "https://commons.wikimedia.org/wiki/File:Artificial_neural_network.svg",
+		title: "Artificial Neural Network",
+		author: "Glosser.ca",
+		year: 2013,
+		alternativetitle: "Diagram of an artificial neural network with input, hidden, and output layers"
+	},
+	"wave_interference_diagram": {
+		url: "https://commons.wikimedia.org/wiki/File:Interference_of_two_waves.svg",
+		title: "Interference of Two Waves",
+		author: "Wjh31",
+		year: 2010,
+		alternativetitle: "Two waves in phase producing constructive interference (left) with double amplitude; 180° out of phase producing destructive interference (right)"
+	},
+	"alphago_leesedol_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg",
+		title: "Lee Sedol vs AlphaGo, Game 4",
+		author: "Korea Baduk Association",
+		year: 2016,
+		alternativetitle: "AlphaGo vs. Lee Sedol match, Game 4, March 2016, Seoul"
+	},
+	"shrdlu_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif",
+		title: "SHRDLU",
+		author: "ai.lect",
+		year: 2015,
+		alternativetitle: "Screenshot of the SHRDLU blocks-world natural language interface (Winograd, 1972)"
 	}
 };
