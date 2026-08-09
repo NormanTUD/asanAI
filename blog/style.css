@@ -7615,7 +7615,7 @@ html.dark .topics-preset-fun {
 	);
 	pointer-events: none;
 	z-index: 1;
-	transition: box-shadow 0.3s ease;
+	transition: box-shadow 0.12s ease;
 }
 
 /* When the diagonal-light-ray effect is on, the strip should not
@@ -7635,8 +7635,8 @@ html.dark .topics-preset-fun {
 	font-size: 0.7rem;
 	font-weight: 700;
 	opacity: 0;
-	transform: translateY(4px);
-	transition: opacity 0.18s ease, transform 0.18s ease;
+	transform: translateY(3px);
+	transition: opacity 0.08s linear, transform 0.08s linear;
 	pointer-events: none;
 	z-index: 3;
 	font-variant-numeric: tabular-nums;
