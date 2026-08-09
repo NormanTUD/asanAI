@@ -6542,9 +6542,9 @@ html.dark .course-tile::after {
 }
 .effects-on .course-tile {
 	opacity: 0;
-	transform: translateY(14px) scale(0.985);
-	transition: opacity 0.5s ease,
-	            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+	transform: translateY(8px) scale(0.995);
+	transition: opacity 0.18s ease,
+	            transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .effects-on .course-part.reveal-target.is-revealed .course-tile {
 	opacity: 1;
@@ -6553,16 +6553,18 @@ html.dark .course-tile::after {
 .effects-on .course-part.reveal-target .course-tile {
 	animation: none !important;
 }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(1)  { transition-delay: 0.20s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(2)  { transition-delay: 0.25s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(3)  { transition-delay: 0.30s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(4)  { transition-delay: 0.35s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(5)  { transition-delay: 0.40s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(6)  { transition-delay: 0.45s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(7)  { transition-delay: 0.50s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(8)  { transition-delay: 0.55s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(9)  { transition-delay: 0.60s; }
-.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(10) { transition-delay: 0.65s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(1)  { transition-delay: 0.04s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(2)  { transition-delay: 0.06s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(3)  { transition-delay: 0.08s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(4)  { transition-delay: 0.10s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(5)  { transition-delay: 0.12s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(6)  { transition-delay: 0.14s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(7)  { transition-delay: 0.16s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(8)  { transition-delay: 0.18s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(9)  { transition-delay: 0.20s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(10) { transition-delay: 0.22s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(11) { transition-delay: 0.24s; }
+.effects-on .course-part.reveal-target.is-revealed .course-tile:nth-child(12) { transition-delay: 0.26s; }
 @media (prefers-reduced-motion: reduce) {
 	.effects-on .course-part.reveal-target,
 	.effects-on .course-part-header,
