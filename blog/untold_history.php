@@ -145,18 +145,16 @@ The transformation of this curiosity into a usable force required a cascade of u
 
 * **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture "A New System of Alternate Current Motors and Transformers" (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
 
-<figure>
-    <div class="image-row">
-        <figure>
-            <img src="faraday_disk.jpg" alt="Drawing of Faraday's disk, the first electromagnetic generator" />
-            <figcaption class="md">\citealternativetitle{faraday_disk}: Faraday's rotating copper disk between the poles of a horseshoe magnet, the first demonstration that mechanical motion can produce a steady electric current.</figcaption>
-        </figure>
-        <figure>
-            <img src="tesla_portrait.jpeg" alt="Photograph of Nikola Tesla around 1890, age 34, by Napoleon Sarony" />
-            <figcaption class="md">\citeauthor{tesla_portrait}, whose polyphase alternating-current patents made long-distance electrical power distribution economically viable.</figcaption>
-        </figure>
-    </div>
-</figure>
+<div class="image-row">
+    <figure>
+        <img src="faraday_disk.jpg" alt="Drawing of Faraday's disk, the first electromagnetic generator" />
+        <figcaption class="md">\citealternativetitle{faraday_disk}: Faraday's rotating copper disk between the poles of a horseshoe magnet, the first demonstration that mechanical motion can produce a steady electric current.</figcaption>
+    </figure>
+    <figure>
+        <img src="tesla_portrait.jpeg" alt="Photograph of Nikola Tesla around 1890, age 34, by Napoleon Sarony" />
+        <figcaption class="md">\citeauthor{tesla_portrait}, whose polyphase alternating-current patents made long-distance electrical power distribution economically viable.</figcaption>
+    </figure>
+</div>
 
 A modern LLM training run can consume **gigawatt-hours** of electricity, enough to power a small city for days. This energy flows through infrastructure whose lineage traces directly back to Faraday's hand-cranked copper disk spinning between the poles of a horseshoe magnet, an experiment conducted to satisfy scientific curiosity about the relationship between magnetism and motion, with no notion of "computation" whatsoever.
 
