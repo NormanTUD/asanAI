@@ -1349,7 +1349,7 @@ function mobile_close_drawer() {
 
 	// Descriptions only make sense next to the open drawer
 	if(typeof write_descriptions === "function") {
-		write_descriptions(1);
+		write_descriptions(1); // await not possible here
 	}
 }
 
