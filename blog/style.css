@@ -7577,12 +7577,15 @@ html.dark .topics-preset-fun {
    COURSE PROGRESS — segmented per-tile "where I've been" bar
    (orange #f97316). Two children are inserted into every
    .course-tile on the homepage. The bar is split into 10 equal
-   segments stacked vertically; each segment represents one slice
-   of the linked page's scroll range and is filled with solid
-   orange after ≥3 s of dwell while the viewport sits inside that
-   slice. Filled segments stay filled; unfilled segments render as
-   a faint orange trace. No transitions, no animation — state is
-   painted synchronously when the page loads.
+   segments stacked vertically, each filling 1/10 of the bar's
+   height (no gaps, no padding — the segments meet edge-to-edge
+   from the top of the tile to the bottom). A segment is filled
+   iff the user has scrolled past the top of its corresponding
+   slice of the linked page; the bar is purely a function of the
+   maximum scroll percentage ever reached. Filled segments are
+   solid orange, unfilled are a faint orange trace. No
+   transitions, no animation — state is painted synchronously
+   when the page loads.
    ════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -7601,10 +7604,7 @@ html.dark .topics-preset-fun {
 	width: 5px;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	gap: 1px;
-	padding: 6px 0;
-	box-sizing: border-box;
+	gap: 0;
 	pointer-events: none;
 	z-index: 1;
 	border-radius: 0 var(--mn-radius-md, 10px) var(--mn-radius-md, 10px) 0;
@@ -7612,11 +7612,9 @@ html.dark .topics-preset-fun {
 }
 
 .course-tile > .tile-progress-bar .seg {
-	display: block;
-	width: 100%;
-	height: 4px;
+	flex: 1 1 0;
+	min-height: 0;
 	background: var(--cp-orange-dim);
-	border-radius: 0;
 }
 
 .course-tile > .tile-progress-bar .seg.filled {
@@ -7662,7 +7660,7 @@ html.dark .topics-preset-fun {
 	border-color: color-mix(in srgb, var(--cp-orange) 35%, var(--mn-border));
 }
 
-/* ── small phones: tighten the tooltip and segments ──────────── */
+/* ── small phones: tighten the tooltip ──────────────────────── */
 
 @media (max-width: 480px) {
 	.course-tile > .tile-progress-tip {
@@ -7670,15 +7668,6 @@ html.dark .topics-preset-fun {
 		padding: 1px 6px;
 		bottom: 8px;
 		right: 14px;
-	}
-
-	.course-tile > .tile-progress-bar {
-		gap: 1px;
-		padding: 5px 0;
-	}
-
-	.course-tile > .tile-progress-bar .seg {
-		height: 3px;
 	}
 }
 

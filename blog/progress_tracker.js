@@ -8,20 +8,20 @@
    Each .course-tile on the homepage gets two children inserted by
    this script:
 
-     • .tile-progress-bar  — 5 px column on the RIGHT edge with N
-                             stacked "segments". Each segment = one
-                             equal slice of the linked page's scroll
-                             range (10 by default). A segment is
-                             filled iff the user has scrolled past
-                             the top of that slice at some point.
-                             Filled segments are solid orange, the
-                             rest are a faint orange trace.
+     • .tile-progress-bar  — 5 px column on the RIGHT edge with 10
+                             stacked segments. Each segment fills
+                             1/10 of the bar's height (no gap, no
+                             padding). A segment is filled iff the
+                             user has ever scrolled past the top of
+                             its corresponding slice of the linked
+                             page. Filled segments are solid orange,
+                             the rest are a faint orange trace.
                              No transitions, no animation — the
                              state is rendered synchronously on load.
 
      • .tile-progress-tip  — tiny "60 %" pill, bottom-right,
-                             appears on hover. Shows the share of
-                             segments that have been filled.
+                             appears on hover. Shows the deepest
+                             scroll percentage reached.
 
    State lives in a single localStorage key `course_progress_v3`:
      { tiles: { [slug]: { maxScrollPct, lastSeen } } }
@@ -220,17 +220,16 @@
 		}
 
 		function updateScroll() {
-			const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-			if (docHeight <= 0) {
-				/* Page fits in viewport — the entire page is "seen". */
-				if (ts.maxScrollPct < 100) {
-					ts.maxScrollPct = 100;
-					dirty = true;
-					if (localSaveTmr) clearTimeout(localSaveTmr);
-					localSaveTmr = setTimeout(flush, SAVE_DEBOUNCE_MS);
-				}
+			const scrollHeight = document.documentElement.scrollHeight;
+			const innerHeight  = window.innerHeight || 0;
+			if (innerHeight <= 0 || scrollHeight <= innerHeight) {
+				/* Page fits in viewport, hasn't loaded yet, or is empty.
+				   Never auto-mark as fully seen — a page that just
+				   opened has not been "read" yet. We only respond to
+				   real scroll events. */
 				return;
 			}
+			const docHeight = scrollHeight - innerHeight;
 			const scrollPct = Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100));
 			if (scrollPct > ts.maxScrollPct + 0.5) {
 				ts.maxScrollPct = scrollPct;
@@ -251,7 +250,8 @@
 
 		window.addEventListener('scroll', onScroll, { passive: true });
 		window.addEventListener('resize', onScroll, { passive: true });
-		updateScroll(); /* initial check covers reload-mid-page case */
+		/* No initial updateScroll() — the bar starts empty and only
+		   fills as the user actually scrolls. */
 	}
 
 	function logResetHint() {
