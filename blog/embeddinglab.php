@@ -37,6 +37,11 @@ That is the *entire* bridge between Tokenization and this chapter. Everything be
 
 <div class="optional md" data-headline="The History of Manifolds">
 
+<figure>
+	<img src="riemann.jpeg" alt="Portrait of Bernhard Riemann" style="max-width: 240px;" />
+	<figcaption class="md">\citealternativetitle{riemann_portrait}, who formalized the concept of a manifold.</figcaption>
+</figure>
+
 The concept of a **manifold** is rooted in the German word **Mannigfaltigkeit**, which **Bernhard Riemann** formalized in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} ("On the Hypotheses Which Lie at the Foundations of Geometry"). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauß himself in the audience.
 
 **The Problem Riemann Was Trying to Solve**:
