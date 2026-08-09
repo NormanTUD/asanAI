@@ -5039,11 +5039,11 @@ window.bibData = {
 		alternativetitle: "Close-up of a CRT picture tube"
 	},
 	"eniac_image": {
-		url: "https://commons.wikimedia.org/wiki/File:ENIAC.jpg",
-		title: "ENIAC on Exhibit at the Bradbury Science Museum",
-		author: "Laanderman",
-		year: 2015,
-		alternativetitle: "ENIAC (Electronic Numerical Integrator and Computer)"
+		url: "https://commons.wikimedia.org/wiki/File:Classic_shot_of_the_ENIAC.jpg",
+		title: "Classic Shot of the ENIAC (U.S. Army Photo)",
+		author: "U.S. Army",
+		year: 1946,
+		alternativetitle: "ENIAC (Electronic Numerical Integrator and Computer) at the Moore School"
 	},
 	"williams_tube": {
 		url: "https://commons.wikimedia.org/wiki/File:Williams-Kilburn_tube_-_geograph.org.uk_-_5279623.jpg",

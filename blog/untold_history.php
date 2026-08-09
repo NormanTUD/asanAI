@@ -138,9 +138,9 @@ The transformation of this curiosity into a usable force required a cascade of u
 
 * **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current. He described the effect in \citetitle{faraday}. This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines. Without it, there is no power grid, no data center, and no GPU cluster.
 
-<figure>
+<figure style="float: right; width: 25%; min-width: 140px; max-width: 220px; margin: 0 0 1em 1em;">
     <img style="width: 100%; height: auto; display: block;" src="voltaic_pile.png" alt="Cross-section illustration of Alessandro Volta's voltaic pile, the first electric battery" />
-    <figcaption class="md">The \citealternativetitle{voltaic_pile} (1800): stacked alternating disks of copper and zinc separated by brine-soaked cloth, the first device able to deliver a steady electric current on demand.</figcaption>
+    <figcaption class="md">\citealternativetitle{voltaic_pile} (1800): stacked disks of copper and zinc separated by brine-soaked cloth, the first electric battery.</figcaption>
 </figure>
 
 * **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture "A New System of Alternate Current Motors and Transformers" (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
