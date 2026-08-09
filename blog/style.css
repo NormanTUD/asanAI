@@ -7570,33 +7570,22 @@ html.dark .topics-preset-fun {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — per-tile dwell + page overview strip
-   All orange (#f97316). Three things on every tile, one column on
-   the right edge of the viewport.
+   COURSE PROGRESS — per-tile dwell tracker (orange #f97316)
+   Three children are inserted into every .course-tile on the
+   homepage. There is intentionally NO page-level strip — every
+   tile is tracked, stored and shown independently.
 
-   PER-TILE (children of every .course-tile):
      • .tile-progress-bar   — 5 px orange strip on the RIGHT edge
-                              that fills as ≥30 % viewport coverage
-                              accumulates. Continuous feedback
-                              during the 3-second dwell window.
-                              Faint trace at 0 %, solid at 100 %.
+                              of the tile that fills as ≥30 %
+                              viewport coverage accumulates.
+                              Continuous feedback during the
+                              3-second dwell window. Faint trace
+                              at 0 %, solid at 100 %.
      • .tile-progress-tip   — tiny "67 %" / "✓" pill, bottom-right,
                               fades in on hover.
      • .tile-visited-badge  — 24×24 orange ✓ in the top-right
                               corner, pops in once the 3-second
                               threshold is crossed.
-
-   PAGE-LEVEL:
-     • .progress-page-strip        — fixed thin column on the
-                                     right edge of the viewport.
-     • .progress-page-strip-inner  — tall inner container, sized
-                                     to the document, translated
-                                     by -scrollY so segments stay
-                                     anchored to their tiles.
-     • .progress-page-seg          — one button per tile, solid
-                                     orange when visited, faint
-                                     trace otherwise. Hover → pop.
-                                     Click → smooth-scroll to tile.
 
    Silent on every page that doesn't carry .course-tile.
    ════════════════════════════════════════════════════════════════ */
@@ -7706,58 +7695,6 @@ html.dark .topics-preset-fun {
 	border-color: color-mix(in srgb, var(--cp-orange) 35%, var(--mn-border));
 }
 
-/* ── 2. page-level overview strip (right edge of viewport) ───── */
-
-.progress-page-strip {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 4px;
-	width: 14px;
-	z-index: 25;
-	pointer-events: none; /* never block underlying clicks */
-}
-
-.progress-page-strip-inner {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	pointer-events: auto;
-	will-change: transform;
-}
-
-.progress-page-seg {
-	position: absolute;
-	left: 2px;
-	right: 2px;
-	background: var(--cp-orange);
-	opacity: 0.22;
-	border: none;
-	border-radius: 3px;
-	padding: 0;
-	cursor: pointer;
-	pointer-events: auto;
-	transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.progress-page-seg:hover,
-.progress-page-seg:focus-visible {
-	opacity: 0.75;
-	transform: scaleX(1.45);
-	outline: none;
-}
-
-.progress-page-seg.visited {
-	opacity: 0.95;
-	box-shadow: 0 0 6px var(--cp-orange);
-}
-
-.progress-page-seg.visited:hover,
-.progress-page-seg.visited:focus-visible {
-	opacity: 1;
-}
-
 /* ── reduced motion ──────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -7765,8 +7702,6 @@ html.dark .topics-preset-fun {
 	.course-tile.tile-visited > .tile-visited-badge { transform: none; }
 	.course-tile > .tile-progress-tip   { transition: opacity 0.1s ease; transform: none; }
 	.course-tile:hover > .tile-progress-tip { transform: none; }
-	.progress-page-seg                  { transition: opacity 0.1s ease; transform: none; }
-	.progress-page-seg:hover            { transform: none; }
 }
 
 /* ── small phones: shrink badge / tip / page strip ──────────── */
@@ -7785,8 +7720,6 @@ html.dark .topics-preset-fun {
 		bottom: 8px;
 		right: 14px;
 	}
-	.progress-page-strip { width: 10px; right: 2px; }
-	.progress-page-seg   { left: 1px; right: 1px; }
 }
 
 
