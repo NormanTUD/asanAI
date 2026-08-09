@@ -182,8 +182,19 @@ The path from a grain of beach sand to a chip containing billions of transistors
 The "digital ocean" of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:
 
 * **Total Internal Reflection** (1842): **Jean-Daniel Colladon** demonstrated that light could be guided along curved paths through a jet of water in \citetitle{colladon}. **John Tyndall** independently popularized the same principle through his Royal Institution lectures in London during the 1850s and 1870s, later described in \citetitle{notesonlight} (1870). At the time, these seemed little more than elegant scientific demonstrations.
+
+<figure>
+    <img style="width: 60%; height: auto; display: block; margin: 1em auto;" src="colladon_lightpipe.jpg" alt="Historical engraving of Jean-Daniel Colladon's 'lightfountain' experiment, demonstrating total internal reflection in a jet of water" />
+    <figcaption class="md">The \citealternativetitle{colladon_lightpipe}: light entering one end of a curved jet of water re-emerges from the other, trapped by total internal reflection. A purely optical phenomenon that, 130 years later, became the physical basis of long-distance data transmission.</figcaption>
+</figure>
+
 * **Fiber Optic Communication** (1966): **Charles K. Kao** and **George A. Hockham** theorized that glass fibers could transmit data over long distances if impurities were reduced below a critical threshold, publishing \citetitle{fibreoptics}. This earned Kao the Nobel Prize in Physics in 2009. The subsequent development of ultra-pure glass fibers by researchers at Corning Glass Works (\citetitle{radiationlosses}) enabled the modern internet's backbone.
 * **Submarine Cables**: Over 95% of intercontinental data traffic travels through undersea fiber optic cables, a lineage traceable to the first **transatlantic telegraph cable** completed in August 1858, a project led by **Cyrus West Field** and chronicled in William Thomson's (Lord Kelvin's) reports to the Royal Society. The physical network that connects data centers, users, and the servers hosting LLMs is a material infrastructure as essential as the algorithms themselves.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="submarine_cable.png" alt="Cross-section illustration of a modern submarine fiber-optic communications cable, showing the optical fibers, copper power conductor, polyethylene insulation and steel armor" />
+    <figcaption class="md">\citealternativetitle{submarine_cable}: an annotated cross-section of a modern submarine communications cable. Hair-thin glass fibers at the center, surrounded by copper, steel and polyethylene, carry intercontinental data traffic at terabits per second.</figcaption>
+</figure>
 
 Without these cables, the internet is a collection of isolated local networks. Without the internet, there is no web-scale training corpus. Without the training corpus, there is no LLM.
 
@@ -200,6 +211,11 @@ Each of these discoveries, and many more like them, from the rubbing of amber to
 ### The Jacquard Loom: Weaving the Concept of Programmable Input
 
 In 1804, **Joseph Marie Jacquard** perfected a loom attachment that used **punched cards** to automate the weaving of complex textile patterns. Each card encoded a single row: hole or no hole, thread up or thread down. By chaining cards together, an intricate brocade could be reproduced without a skilled assistant manually selecting each thread, a purely industrial innovation with no computational intent.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="jacquard_loom.jpg" alt="A Jacquard loom at the National Museum of Scotland, showing the chain of punched cards hanging vertically at the right" />
+    <figcaption class="md">The \citealternativetitle{jacquard_loom}: a Jacquard loom with its chain of punched cards visible on the right. Each card encodes a single row of the pattern, the first example of a complex, sequential process stored as discrete binary instructions on a physical medium.</figcaption>
+</figure>
 
 Yet the conceptual leap was immense: a complex, sequential process had been **encoded as discrete binary instructions on a physical medium**. **Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837), and **Ada Lovelace** captured the lineage precisely: the Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}). **Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**. Punched cards remained the dominant computer input medium into the 1970s (see \citetitle{taocp3}, p. 383-384).
 
