@@ -49,6 +49,13 @@ By adding a second number, we unlock an infinite flat surface.
 <div class="md">
 ### 3D: The Color Cube
 
+<div class="image-row md">
+	<figure>
+		<img src="rgb_color_cube.png" alt="RGB color cube diagram" />
+		<figcaption class="md">\citealternativetitle{rgb_color_cube}: every visible color corresponds to a single point inside this cube, parameterized by its Red, Green, and Blue coordinates.</figcaption>
+	</figure>
+</div>
+
 In 3D, we can represent volume. A great way to visualize this is **Color Space**. Every color you see on this screen is just a vector in a 3D space where the axes are **Red**, **Green**, and **Blue**.
 </div>
 
