@@ -2482,6 +2482,11 @@ document.addEventListener('DOMContentLoaded', function() {
         renderAlgorithmicPrompting(container);
     }
 
+    const waveContainer = document.getElementById('wave-interference-container');
+    if (waveContainer) {
+        renderWaveInterference(waveContainer);
+    }
+
     // Re-render plots when the user toggles dark/light mode so themeColor()
     // picks up the new palette on the next call.
     if (window.__MN_DARK) {
@@ -2489,6 +2494,8 @@ document.addEventListener('DOMContentLoaded', function() {
             try { renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 }); } catch (e) { /* ignore */ }
             const c = document.getElementById('algorithmic-prompting-container');
             if (c) { try { renderAlgorithmicPrompting(c); } catch (e) { /* ignore */ } }
+            const w = document.getElementById('wave-interference-container');
+            if (w) { try { renderWaveInterference(w); } catch (e) { /* ignore */ } }
         });
     }
 
@@ -2498,3 +2505,125 @@ document.addEventListener('DOMContentLoaded', function() {
         renderICLExecution(iclContainer);
     }
 });
+
+/**
+ * Wave Interference — Interactive Plotly demo
+ *
+ * Shows two sine waves and their point-by-point sum. The phase offset
+ * between them is controlled by a slider. At 0° the waves interfere
+ * constructively (sum has double amplitude); at 180° they interfere
+ * destructively (sum is zero everywhere). This is the same principle
+ * the trained Transformer exploits via Fourier features.
+ */
+function renderWaveInterference(container) {
+    const root = typeof container === 'string' ? document.getElementById(container) : container;
+    if (!root) { console.error('renderWaveInterference: container not found'); return; }
+
+    root.innerHTML = `
+        <div style="font-family:'Segoe UI', system-ui, -apple-system, sans-serif; max-width:900px; margin:0 auto; padding:10px 0;">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px; padding:12px 16px; background:var(--mn-surface, #f8fafc); border:1px solid var(--mn-border, #e2e8f0); border-radius:10px; margin-bottom:10px;">
+                <label style="font-size:0.9em; font-weight:600; display:flex; align-items:center; gap:8px;">
+                    Phase shift (degrees):
+                    <input type="range" id="wi-phase" min="0" max="360" step="1" value="0" style="width:260px;">
+                </label>
+                <span id="wi-phase-readout" style="font-family:monospace; font-weight:bold; color:#3b82f6; min-width:70px; text-align:right;">0°</span>
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="wi-preset" data-phase="0" style="padding:5px 12px; border:1px solid #10b981; border-radius:5px; background:#ecfdf5; color:#047857; font-size:0.85em; cursor:pointer; font-weight:600;">Constructive (0°)</button>
+                    <button type="button" class="wi-preset" data-phase="180" style="padding:5px 12px; border:1px solid #ef4444; border-radius:5px; background:#fef2f2; color:#b91c1c; font-size:0.85em; cursor:pointer; font-weight:600;">Destructive (180°)</button>
+                </div>
+            </div>
+            <div id="wi-status" style="font-size:0.95em; color:#334155; padding:0 4px 10px 4px; line-height:1.5;"></div>
+            <div id="wi-plot" style="width:100%; height:360px; border-radius:6px;"></div>
+            <div id="wi-explain" style="font-size:0.9em; color:#64748b; padding:10px 4px 0 4px; line-height:1.5;"></div>
+        </div>
+    `;
+
+    const phaseSlider = root.querySelector('#wi-phase');
+    const phaseReadout = root.querySelector('#wi-phase-readout');
+    const statusBox = root.querySelector('#wi-status');
+    const plotDiv = root.querySelector('#wi-plot');
+    const explainBox = root.querySelector('#wi-explain');
+
+    function render() {
+        const phaseDeg = parseFloat(phaseSlider.value);
+        const phaseRad = phaseDeg * Math.PI / 180;
+        const N = 800;
+        const x = Array.from({ length: N }, (_, i) => i * 4 * Math.PI / (N - 1));
+        const waveA = x.map(v => Math.sin(v));
+        const waveB = x.map(v => Math.sin(v + phaseRad));
+        const sum = x.map((v, i) => waveA[i] + waveB[i]);
+        const ampSum = Math.max(...sum).toFixed(3);
+        const ampA = Math.max(...waveA).toFixed(3);
+
+        phaseReadout.textContent = `${phaseDeg.toFixed(0)}°`;
+
+        let label = '';
+        let boxColor = '';
+        if (phaseDeg === 0) {
+            label = `<strong style="color:#10b981;">Constructive interference.</strong> The two waves are perfectly in phase — every peak aligns with a peak. The sum has amplitude <strong>${(2*ampA).toFixed(3)}</strong> (exactly double).`;
+            boxColor = '#10b981';
+        } else if (phaseDeg === 180) {
+            label = `<strong style="color:#ef4444;">Destructive interference.</strong> Every peak of wave A aligns with a trough of wave B. The two waves cancel exactly — the sum is zero everywhere.`;
+            boxColor = '#ef4444';
+        } else if (Math.abs(phaseDeg - 90) < 1 || Math.abs(phaseDeg - 270) < 1) {
+            label = `<strong style="color:#f59e0b;">Quadrature (90°).</strong> The two waves are perpendicular. The sum still oscillates, with amplitude <strong>${ampSum}</strong> ≈ √2 ≈ 1.414.`;
+            boxColor = '#f59e0b';
+        } else {
+            label = `<strong>Partial interference.</strong> Phase offset ${phaseDeg.toFixed(0)}°. Sum amplitude = <strong>${ampSum}</strong> (formula: $2\\cos(\\varphi/2)$, where $\\varphi$ is the phase shift).`;
+            boxColor = '#3b82f6';
+        }
+        statusBox.innerHTML = label;
+        statusBox.style.borderLeft = `4px solid ${boxColor}`;
+        statusBox.style.paddingLeft = '12px';
+
+        const ampTrace = 2.5;
+        const traces = [
+            { x, y: waveA, mode: 'lines', name: 'Wave A: sin(x)', line: { color: '#3b82f6', width: 2 } },
+            { x, y: waveB, mode: 'lines', name: 'Wave B: sin(x + phase)', line: { color: '#f59e0b', width: 2 } },
+            { x, y: sum, mode: 'lines', name: 'Sum (A + B)', line: { color: boxColor, width: 3, dash: 'dash' } },
+            { x: [0, 4 * Math.PI], y: [0, 0], mode: 'lines', line: { color: themeColor('#cbd5e1'), width: 0.8 }, showlegend: false, hoverinfo: 'skip' },
+        ];
+
+        const piTicks = [0, Math.PI, 2 * Math.PI, 3 * Math.PI, 4 * Math.PI];
+        const piLabels = ['0', 'π', '2π', '3π', '4π'];
+
+        Plotly.newPlot(plotDiv, traces, {
+            xaxis: {
+                title: 'x (radians)',
+                tickvals: piTicks,
+                ticktext: piLabels,
+                range: [-0.1, 4 * Math.PI + 0.1],
+                zeroline: false,
+                gridcolor: themeColor('#e2e8f0'),
+            },
+            yaxis: {
+                title: 'amplitude',
+                range: [-ampTrace, ampTrace],
+                zeroline: true,
+                zerolinecolor: themeColor('#94a3b8'),
+                gridcolor: themeColor('#e2e8f0'),
+            },
+            margin: { t: 30, b: 50, l: 60, r: 20 },
+            showlegend: true,
+            legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(255,255,255,0.6)' },
+            paper_bgcolor: themeColor('#fff'),
+            plot_bgcolor: themeColor('#fff'),
+            hovermode: 'x unified',
+        }, { responsive: true });
+
+        if (typeof renderMath === 'function') { try { renderMath(); } catch (e) { /* ignore */ } }
+
+        explainBox.innerHTML = `The trained Transformer uses exactly this trick: for each candidate answer $c$, it computes $\\cos(\\omega_k \\cdot (a+b-c))$ across its 5 learned frequencies. At the correct answer $c = (a+b) \\bmod P$ all five cosines equal $+1$ simultaneously — that is the <em>constructive</em> case (phase shift 0°). Anywhere else the cosines are smaller and partially cancel — partial or destructive interference. So only the right answer lights up.`;
+        if (typeof renderMath === 'function') { try { renderMath(); } catch (e) { /* ignore */ } }
+    }
+
+    phaseSlider.addEventListener('input', render);
+    root.querySelectorAll('.wi-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+            phaseSlider.value = btn.dataset.phase;
+            render();
+        });
+    });
+
+    render();
+}

@@ -5162,5 +5162,11 @@ window.bibData = {
 		author: "ai.lect",
 		year: 2015,
 		alternativetitle: "Screenshot of the SHRDLU blocks-world natural language interface (Winograd, 1972)"
+	},
+	"wave_interference_diagram": {
+		title: "Interactive Wave Interference Demo",
+		author: "Self-generated (Plotly)",
+		year: 2026,
+		alternativetitle: "Interactive Plotly widget in algorithms.js showing two sine waves summing for any phase shift 0°-360° (constructive at 0°, destructive at 180°)"
 	}
 };
