@@ -187,6 +187,35 @@ The most reliable AI systems in 2025 are not pure LLMs — they are LLMs orchest
 The student who masters both — and knows when to use which — will be far more capable than one trained in either alone. This is the synthesis the field is moving toward.
 </div>
 
+<div class="md">
+## The Other Side of the Bridge: Types, Spaces, and Equality
+
+Every loss function, every embedding, every layer of every network is a function between *types*. A loss is a map $\mathcal{L} : \theta \to \mathbb{R}_+$ from the space of parameters to the positive reals. An embedding is a map $E : V \to \mathbb{R}^d$ from a vocabulary to a vector space. A transformer block is a map $T : \mathbb{R}^{L \times d} \to \mathbb{R}^{L \times d}$ from token sequences to token sequences. Once you see this, every chapter in this book is secretly a chapter about *typed functions*.
+
+In most of this textbook we write types informally ("$x$ is a vector, $w$ is a matrix"). For most purposes that's enough. But sometimes a sharper language helps — and the sharpest language for "spaces + functions between them" turns out to be **type theory**.
+</div>
+
+<div class="optional md" data-headline="Type Theory and Homotopy Type Theory (for the curious)">
+**Type theory** is a foundation for mathematics where the basic objects are *types* (think: sets with structure) and the basic maps are *functions* between them. Most modern proof assistants (Lean, Coq, Agda) are built on type theory for the same reason Tensor notation is built on tensors: once you commit, the compiler / kernel checks every step.
+
+**Homotopy Type Theory (HoTT)**, developed by the \citetitle{hottbook} (\citeyear{hottbook}), pushes this further. The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*. Two things are equal not just when a binary "=" returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.
+
+This matters because the **univalence axiom** says:
+
+$$(A \simeq B) \simeq (A = B)$$
+
+— "equality of types *is* equivalence of types." Two mathematical structures are identical precisely when you can translate between them without losing information. This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.
+
+**A free bridge to the rest of this book.** Once you read types as spaces and proofs as paths, a surprising amount of this textbook *clicks*:
+
+- An **embedding space** is a type $\mathbb{R}^d$ whose points are vectors. Cosine similarity becomes a path-flavored statement about angle.
+- An **isomorphism between neural-network layers** (same function, different parameterization) is exactly the kind of "$A = B$" HoTT treats as "$A \simeq B$".
+- A **theorem prover checking an LLM's proof** (see *Symbolic AI* and *Reasoning*) is a function between two types — and HoTT makes the *equality* of the prover's output with the formal statement into something you can *transport structure along*, not just check with a boolean.
+- **Constitutional AI** and reward modeling become functions whose codomain is *preferences*, a type with structure (transitivity, asymmetry) that HoTT handles cleanly.
+
+You do not need HoTT to read this book. But once you have the picture in your head — *types are spaces, proofs are paths, equality is equivalence* — you will start spotting it everywhere in deep learning. And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.
+</div>
+
 <script>
 // Curse of dimensionality: distance concentration
 (function() {
