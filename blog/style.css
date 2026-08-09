@@ -7570,393 +7570,129 @@ html.dark .topics-preset-fun {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS TRACKER
-   A passive scroll-based "where you've been" map. Tiles on the
-   homepage grow a thin left-edge strip in the tile's accent
-   colour as the reader scrolls them into view; once 60%+ was
-   visible at any point the tile gets a soft "seen" glow, and the
-   currently most-visible tile gets a stronger "you are here"
-   outline. A floating badge (bottom-right) always shows the
-   overall tile-seen percentage and expands into a per-tile list
-   grouped by Part. On module pages a thin top-of-viewport bar
-   tracks current scroll depth and stores the max in localStorage
-   so the homepage can later show how deeply each module was read.
+   COURSE PROGRESS — per-tile dwell tracker
+   Each .course-tile gets two visual elements inserted by
+   progress_tracker.js:
+
+     • .tile-progress-bar   — a 5 px strip on the left edge that
+                              fills with the tile's accent colour
+                              as the reader accumulates ≥30 %
+                              viewport visibility. Continuous
+                              feedback during the 3-second dwell
+                              window. At 0 % it shows as a faint
+                              accent trace so the reader can see
+                              that the indicator exists.
+
+     • .tile-visited-badge  — a 24×24 green ✓ in the top-right
+                              corner. Stays invisible until the
+                              3-second threshold is crossed, then
+                              fades + scales into view with a tiny
+                              overshoot and persists forever.
+
+   Once a tile crosses the threshold it gains the .tile-visited
+   class: the left bar goes solid emerald with a soft glow, the
+   border picks up an emerald tint and the badge fades+scales in.
+   Nothing is rendered anywhere else on the page — no global strip,
+   no floating button, no scrollbar overlay. On every page that
+   doesn't contain .course-tile the script is silent.
    ════════════════════════════════════════════════════════════════ */
 
-:root {
-	--cpb-bar-h: 14px;
-}
+/* ── left-edge progress bar (continuous dwell feedback) ──────── */
 
-/* ── per-tile progress strip (homepage) ───────────────────────── */
-
-.course-tile > .tile-progress {
+.course-tile > .tile-progress-bar {
 	position: absolute;
 	left: 0;
 	top: 0;
 	bottom: 0;
-	width: 4px;
+	width: 5px;
 	border-radius: var(--mn-radius-md, 10px) 0 0 var(--mn-radius-md, 10px);
 	background: linear-gradient(
 		to bottom,
 		var(--tile-accent, var(--mn-accent)) 0%,
 		var(--tile-accent, var(--mn-accent)) var(--progress, 0%),
-		color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 8%, transparent) var(--progress, 0%),
-		color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 8%, transparent) 100%
+		color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 28%, transparent) var(--progress, 0%),
+		color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 28%, transparent) 100%
 	);
-	opacity: 0.85;
-	transition: opacity 0.25s ease;
 	pointer-events: none;
 	z-index: 1;
+	transition: box-shadow 0.3s ease;
 }
 
-.course-tile:hover > .tile-progress {
+/* When the diagonal-light-ray effect is on, the strip should not
+   fight with the ray's ::after overlay. */
+.effects-on .course-tile > .tile-progress-bar { z-index: 0; }
+
+/* ── visited ✓ badge (top-right corner) ──────────────────────── */
+
+.course-tile > .tile-visited-badge {
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: #10b981;
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transform: scale(0.3) rotate(-25deg);
+	transition: opacity 0.3s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+	pointer-events: none;
+	z-index: 3;
+	box-shadow: 0 3px 10px rgba(16, 185, 129, 0.45);
+}
+
+.course-tile > .tile-visited-badge svg {
+	width: 14px;
+	height: 14px;
+	display: block;
+}
+
+.course-tile.tile-visited > .tile-visited-badge {
 	opacity: 1;
+	transform: scale(1) rotate(0deg);
 }
 
-.course-tile.tile-seen > .tile-progress {
-	box-shadow: 0 0 6px color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 55%, transparent);
-}
+/* ── visited tile state ───────────────────────────────────────── */
 
-.course-tile.tile-seen {
-	border-color: color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 25%, var(--mn-border));
-}
-
-.course-tile.tile-current {
+.course-tile.tile-visited > .tile-progress-bar {
+	background: #10b981;
 	box-shadow:
-		0 0 0 2px color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 45%, transparent),
-		var(--mn-shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.12));
-	transform: translateY(-2px);
+		inset 0 0 0 1px color-mix(in srgb, #ffffff 30%, transparent),
+		0 0 10px rgba(16, 185, 129, 0.55);
 }
 
-.course-tile.tile-current > .tile-progress {
-	width: 5px;
-	opacity: 1;
+.course-tile.tile-visited {
+	border-color: color-mix(in srgb, #10b981 35%, var(--mn-border));
 }
 
-/* When the diagonal-light-ray effect is on, hide the strip inside
-   that effect layer so the two don't fight each other. */
-.effects-on .course-tile > .tile-progress { z-index: 0; }
-
-/* ── module-page top progress bar ────────────────────────────── */
-
-.module-progress-bar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 3px;
-	background: transparent;
-	z-index: 100;
-	pointer-events: none;
+.course-tile.tile-visited:hover > .tile-visited-badge {
+	transform: scale(1.08);
 }
 
-.module-progress-bar-fill {
-	height: 100%;
-	width: 0%;
-	background: linear-gradient(
-		90deg,
-		var(--mn-accent, #6366f1),
-		color-mix(in srgb, var(--mn-accent, #6366f1) 55%, white)
-	);
-	transition: width 0.12s linear;
-	box-shadow: 0 0 8px color-mix(in srgb, var(--mn-accent, #6366f1) 60%, transparent);
-}
+/* ── reduced motion ───────────────────────────────────────────── */
 
-/* ── overall progress badge (homepage only) ──────────────────── */
-
-.course-progress-badge {
-	position: fixed;
-	right: max(1rem, env(safe-area-inset-right));
-	bottom: max(1rem, env(safe-area-inset-bottom));
-	z-index: 40;
-	font-family: inherit;
-	color: var(--mn-text, inherit);
-}
-
-.cpb-toggle {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.45rem;
-	padding: 0.5rem 0.85rem;
-	border-radius: 999px;
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, inherit);
-	border: 1px solid var(--mn-border, rgba(0, 0, 0, 0.1));
-	box-shadow: var(--mn-shadow-md, 0 6px 18px rgba(0, 0, 0, 0.12));
-	cursor: pointer;
-	font: inherit;
-	font-size: 0.82rem;
-	font-weight: 600;
-	line-height: 1;
-	transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.cpb-toggle:hover {
-	transform: translateY(-1px);
-	box-shadow: var(--mn-shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.18));
-	border-color: color-mix(in srgb, var(--mn-accent, #6366f1) 35%, var(--mn-border));
-}
-
-.cpb-toggle:focus-visible {
-	outline: 2px solid var(--mn-accent, #6366f1);
-	outline-offset: 2px;
-}
-
-.cpb-toggle svg { color: var(--mn-accent, #6366f1); }
-
-.cpb-pct {
-	font-variant-numeric: tabular-nums;
-	min-width: 2.6em;
-	text-align: right;
-}
-
-/* ── panel ───────────────────────────────────────────────────── */
-
-.cpb-panel {
-	position: absolute;
-	right: 0;
-	bottom: calc(100% + 0.55rem);
-	width: min(380px, calc(100vw - 2rem));
-	max-height: min(72vh, 640px);
-	overflow: auto;
-	background: var(--mn-surface, #fff);
-	color: var(--mn-text, inherit);
-	border: 1px solid var(--mn-border, rgba(0, 0, 0, 0.1));
-	border-radius: var(--mn-radius-md, 12px);
-	box-shadow: var(--mn-shadow-lg, 0 18px 40px rgba(0, 0, 0, 0.22));
-	padding: 0.95rem 1rem 0.75rem;
-	font-size: 0.86rem;
-	-webkit-overflow-scrolling: touch;
-}
-
-.cpb-panel[hidden] { display: none; }
-
-.cpb-head {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 0.7rem;
-}
-
-.cpb-head h3 {
-	margin: 0;
-	font-size: 1rem;
-	font-weight: 700;
-	color: var(--mn-heading, inherit);
-}
-
-.cpb-close {
-	background: none;
-	border: none;
-	font-size: 1.5rem;
-	line-height: 1;
-	cursor: pointer;
-	color: var(--mn-text-secondary, inherit);
-	padding: 0 0.25rem;
-	border-radius: 4px;
-}
-
-.cpb-close:hover { color: var(--mn-text, inherit); background: color-mix(in srgb, var(--mn-text, #000) 6%, transparent); }
-.cpb-close:focus-visible { outline: 2px solid var(--mn-accent, #6366f1); outline-offset: 1px; }
-
-.cpb-summary {
-	display: flex;
-	gap: 0.75rem;
-	margin-bottom: 0.8rem;
-	padding: 0.55rem 0.7rem;
-	background: color-mix(in srgb, var(--mn-accent, #6366f1) 8%, transparent);
-	border-radius: var(--mn-radius-sm, 8px);
-}
-
-.cpb-stat {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	gap: 0.05rem;
-	min-width: 0;
-}
-
-.cpb-stat-val {
-	font-size: 1.25rem;
-	font-weight: 700;
-	color: var(--mn-accent, #6366f1);
-	line-height: 1.1;
-	font-variant-numeric: tabular-nums;
-}
-
-.cpb-stat-label {
-	font-size: 0.66rem;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: var(--mn-text-secondary, inherit);
-	line-height: 1.2;
-}
-
-.cpb-legend {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.55rem 0.8rem;
-	align-items: center;
-	font-size: 0.7rem;
-	color: var(--mn-text-secondary, inherit);
-	margin-bottom: 0.6rem;
-}
-
-.cpb-leg {
-	display: inline-block;
-	width: 10px;
-	height: 10px;
-	border-radius: 2px;
-	margin-right: 0.25rem;
-	vertical-align: -1px;
-}
-.cpb-leg-tile { background: var(--mn-accent, #6366f1); }
-.cpb-leg-mod  { background: linear-gradient(90deg, #10b981, #34d399); }
-
-.cpb-hint {
-	margin-left: auto;
-	color: color-mix(in srgb, var(--mn-text-secondary, #000) 70%, transparent);
-	font-style: italic;
-}
-
-.cpb-list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.cpb-part {
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	padding: 0.55rem 0.3rem 0.25rem;
-	margin-top: 0.4rem;
-	font-size: 0.72rem;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: var(--mn-text-secondary, inherit);
-	border-bottom: 1px solid color-mix(in srgb, var(--mn-border, #000) 60%, transparent);
-}
-.cpb-part:first-child { margin-top: 0; }
-
-.cpb-part-name { font-weight: 700; }
-.cpb-part-count { font-variant-numeric: tabular-nums; }
-
-.cpb-item { display: block; }
-
-.cpb-link {
-	display: flex;
-	flex-direction: column;
-	gap: 0.3rem;
-	padding: 0.45rem 0.5rem;
-	text-decoration: none !important;
-	color: inherit;
-	border-radius: var(--mn-radius-sm, 6px);
-	transition: background 0.15s ease;
-}
-
-.cpb-link:hover {
-	background: color-mix(in srgb, var(--mn-accent, #6366f1) 10%, transparent);
-}
-
-.cpb-link:focus-visible {
-	outline: 2px solid var(--mn-accent, #6366f1);
-	outline-offset: -2px;
-}
-
-.cpb-title {
-	font-size: 0.85rem;
-	font-weight: 500;
-	color: var(--mn-heading, inherit);
-}
-
-.cpb-item-seen .cpb-title {
-	color: var(--mn-text, inherit);
-}
-
-.cpb-item-read .cpb-title::before {
-	content: "✓ ";
-	color: #10b981;
-	font-weight: 700;
-}
-
-.cpb-meta {
-	display: flex;
-	gap: 0.45rem;
-}
-
-.cpb-bar {
-	position: relative;
-	flex: 1;
-	height: var(--cpb-bar-h);
-	background: color-mix(in srgb, var(--mn-text, #000) 8%, transparent);
-	border-radius: 999px;
-	overflow: hidden;
-	display: flex;
-	align-items: center;
-	padding: 0 0.4rem;
-}
-
-.cpb-bar-fill {
-	position: absolute;
-	inset: 0 auto 0 0;
-	background: var(--mn-accent, #6366f1);
-	opacity: 0.55;
-	transition: width 0.25s ease, opacity 0.25s ease;
-}
-
-.cpb-bar-mod .cpb-bar-fill {
-	background: linear-gradient(90deg, #10b981, #34d399);
-}
-
-.cpb-item:hover .cpb-bar-fill { opacity: 0.85; }
-
-.cpb-bar-num {
-	position: relative;
-	z-index: 1;
-	font-size: 0.62rem;
-	font-weight: 700;
-	font-variant-numeric: tabular-nums;
-	color: var(--mn-text, inherit);
-	mix-blend-mode: difference;
-	color: white;
-}
-
-.cpb-foot {
-	margin-top: 0.85rem;
-	padding-top: 0.7rem;
-	border-top: 1px solid color-mix(in srgb, var(--mn-border, #000) 60%, transparent);
-}
-
-.cpb-reset {
-	width: 100%;
-	padding: 0.45rem;
-	background: transparent;
-	color: var(--mn-text-secondary, inherit);
-	border: 1px solid var(--mn-border, rgba(0, 0, 0, 0.15));
-	border-radius: var(--mn-radius-sm, 6px);
-	cursor: pointer;
-	font: inherit;
-	font-size: 0.78rem;
-	transition: color 0.15s, border-color 0.15s;
-}
-
-.cpb-reset:hover {
-	color: #ef4444;
-	border-color: #ef4444;
-}
-
-.cpb-reset:focus-visible {
-	outline: 2px solid #ef4444;
-	outline-offset: 2px;
-}
-
-/* honour reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-	.course-tile.tile-current { transform: none; }
-	.cpb-toggle { transition: none; }
-	.cpb-bar-fill, .cpb-link { transition: none; }
+	.course-tile > .tile-visited-badge { transition: opacity 0.15s ease; }
+	.course-tile.tile-visited > .tile-visited-badge { transform: none; }
+	.course-tile.tile-visited:hover > .tile-visited-badge { transform: none; }
 }
+
+/* ── very small phones: shrink the badge so it doesn't crowd ── */
+
+@media (max-width: 380px) {
+	.course-tile > .tile-visited-badge {
+		width: 20px;
+		height: 20px;
+		top: 8px;
+		right: 10px;
+	}
+	.course-tile > .tile-visited-badge svg {
+		width: 12px;
+		height: 12px;
+	}
+}
+
+
