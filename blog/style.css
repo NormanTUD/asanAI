@@ -7571,21 +7571,18 @@ html.dark .topics-preset-fun {
 
 /* ════════════════════════════════════════════════════════════════
    COURSE PROGRESS — per-tile dwell tracker (orange #f97316)
-   Three children are inserted into every .course-tile on the
-   homepage. There is intentionally NO page-level strip — every
-   tile is tracked, stored and shown independently.
+   Two children are inserted into every .course-tile on the
+   homepage. There is intentionally NO page-level strip and NO
+   "completed" badge — the filled bar IS the visited state.
 
      • .tile-progress-bar   — 5 px orange strip on the RIGHT edge
                               of the tile that fills as ≥30 %
                               viewport coverage accumulates.
                               Continuous feedback during the
                               3-second dwell window. Faint trace
-                              at 0 %, solid at 100 %.
-     • .tile-progress-tip   — tiny "67 %" / "✓" pill, bottom-right,
+                              at 0 %, solid + glowing at 100 %.
+     • .tile-progress-tip   — tiny "67 %" pill, bottom-right,
                               fades in on hover.
-     • .tile-visited-badge  — 24×24 orange ✓ in the top-right
-                              corner, pops in once the 3-second
-                              threshold is crossed.
 
    Silent on every page that doesn't carry .course-tile.
    ════════════════════════════════════════════════════════════════ */
