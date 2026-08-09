@@ -14,10 +14,10 @@ topics: architecture, statistics-i, statistics-ii
 Given a probability distribution over the next token, which one do you pick? This is the **decoding strategy**, and it controls the model's "personality" — focused and deterministic, or wild and creative. The frontier in 2025: many subtle techniques beyond temperature and top-$k$.
 
 This chapter covers every common decoding method with its mathematical formulation and recommended use.
+</div>
 
 <div class="optional md" data-headline="Where the math comes from">
-Three of the four quantities in this chapter — **Boltzmann distributions**, **entropy**, and **KL-divergence** — were born long before language models. They appear in `statistics_ii.php` § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it is *exactly* the Boltzmann distribution over energy levels. Sampling, then, is not a new trick: it is thermodynamics in disguise.
-</div>
+Three of the four quantities in this chapter — **Boltzmann distributions**, **entropy**, and **KL-divergence** — were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it is *exactly* the Boltzmann distribution over energy levels. Sampling, then, is not a new trick: it is thermodynamics in disguise.
 </div>
 
 <div class="md">
