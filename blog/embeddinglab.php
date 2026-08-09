@@ -25,6 +25,14 @@ More importantly, he defined language as a system of differences. A word derives
 
 <div class="md">
 In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
+
+<div class="optional md" data-headline="Where the vectors come from (the missing one-liner)">
+A tokenizer (see `tokenizerlab.php`) outputs **integers**: token IDs in $\{0, 1, \dots, |V|-1\}$. The first thing the Transformer does with them is look each ID up in a trainable **embedding matrix**:
+
+$$E \in \mathbb{R}^{|V| \times d}, \qquad \vec e_i = E[i, :]$$
+
+That is the *entire* bridge between Tokenization and this chapter. Everything below assumes this lookup happened: we are now in $\mathbb{R}^d$, no longer in token-ID-land. The geometry you see in the plots is what happens *after* one row of $E$ was selected per token.
+</div>
 </div>
 
 <div class="optional md" data-headline="The History of Manifolds">

@@ -383,4 +383,8 @@ These tools form a growing toolkit for moving beyond "black box" AI toward syste
 
 </div>
 
+<div class="optional md" data-headline="Everything above also works on vision transformers">
+Replace "token" with "patch" and "next word" with "next patch". The math doesn't care. CLIP and ViT contain the same circuits as language Transformers: induction-style heads that complete visual patterns, superposition-packing of features, and sparse-autoencoder-decodable monosemantic units. Anthropic's "multimodal neurons" research on CLIP showed individual units firing for "spider web", "skyscraper", and "celebrity face" — exactly the kind of feature a SAE would isolate today. See `visionlab.php` for the hierarchical-feature view that mechanistic interpretability reverse-engineers.
+</div>
+
 <div id="summary-container"></div>

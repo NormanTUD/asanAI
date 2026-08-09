@@ -14,6 +14,10 @@ topics: programming, philosophy, architecture
 For most of its history, AI was **symbolic**: explicit rules, logical inference, hand-curated knowledge. The neural revolution displaced it, but did not destroy it. The 2020s have seen a renaissance: knowledge graphs, formal verification, neuro-symbolic hybrids, and LLM agents that use tools and APIs as symbolic primitives.
 
 This chapter traces the other branch of AI and shows how it complements neural networks.
+
+<div class="optional md" data-headline="Neuro-symbolic isn't new — it's old friends meeting again">
+The synthesis below happens naturally once you read three other chapters: `reasoning.php` (CoT is *implicit* logic the network learned), `mechanistic_interpretability.php` (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and `agents.php` (ReAct-style tool use is symbolic reasoning wrapped around a neural policy). The "neuro-symbolic" framing just makes the marriage explicit.
+</div>
 </div>
 
 <div class="md">

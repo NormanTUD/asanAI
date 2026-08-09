@@ -200,11 +200,7 @@ In most of this textbook we write types informally ("$x$ is a vector, $w$ is a m
 
 **Homotopy Type Theory (HoTT)**, developed by the \citetitle{hottbook} (\citeyear{hottbook}), pushes this further. The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*. Two things are equal not just when a binary "=" returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.
 
-This matters because the **univalence axiom** says:
-
-$$(A \simeq B) \simeq (A = B)$$
-
-— "equality of types *is* equivalence of types." Two mathematical structures are identical precisely when you can translate between them without losing information. This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.
+This matters because the **univalence axiom** says: $(A \simeq B) \simeq (A = B)$, "equality of types *is* equivalence of types." Two mathematical structures are identical precisely when you can translate between them without losing **structural** information. This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.
 
 **A free bridge to the rest of this book.** Once you read types as spaces and proofs as paths, a surprising amount of this textbook *clicks*:
 
@@ -213,7 +209,7 @@ $$(A \simeq B) \simeq (A = B)$$
 - A **theorem prover checking an LLM's proof** (see *Symbolic AI* and *Reasoning*) is a function between two types — and HoTT makes the *equality* of the prover's output with the formal statement into something you can *transport structure along*, not just check with a boolean.
 - **Constitutional AI** and reward modeling become functions whose codomain is *preferences*, a type with structure (transitivity, asymmetry) that HoTT handles cleanly.
 
-You do not need HoTT to read this book. But once you have the picture in your head — *types are spaces, proofs are paths, equality is equivalence* — you will start spotting it everywhere in deep learning. And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.
+You do not need HoTT to read this book. But once you have the picture in your head — *types are spaces, proofs are paths, equality is equivalence* — you will start spotting it everywhere. And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.
 </div>
 
 <script>

@@ -104,6 +104,10 @@ if the model just memorizes data.
 fall victim to Goodhart's Law if the test data "leaks" into the training set.
 * **Human Evaluation:** Ultimately, the best version of an Language Models is determined by whether 
 it is actually helpful, safe, and accurate in real-world use.
+
+<div class="optional md" data-headline="The benchmarks themselves are Goodhart targets">
+See `evaluation.php` for the full tour of MMLU, HumanEval, GSM8K, and the contamination crisis. The disease named here has many symptoms; that chapter is where you see them.
+</div>
 </div>
 
 <div class="optional md" data-headline="The Mathematical Modeling of Loss">

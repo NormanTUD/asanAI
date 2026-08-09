@@ -210,6 +210,10 @@ L_{\text{GRPO}}(\theta) = -\frac{1}{G}\sum_{i=1}^{G} \min\!\left(\frac{\pi_\thet
 $$
 
 By using the group mean as the baseline, GRPO eliminates the need for a separate value network. This made it possible to RL-train on **verifiable rewards** (math correctness, code test passage) at scale, producing emergent long-CoT reasoning.
+
+<div class="optional md" data-headline="Where this shows up">
+GRPO is the algorithm behind **DeepSeek-R1** (January 2025), the first open-weight model to exhibit emergent long chain-of-thought reasoning. See `reasoning.php` § o1/R1 paradigm for the *result*; the math here is the *cause*.
+</div>
 </div>
 
 <div class="md">
