@@ -5144,11 +5144,11 @@ window.bibData = {
 		alternativetitle: "Diagram of an artificial neural network with input, hidden, and output layers"
 	},
 	"wave_interference_diagram": {
-		url: "https://commons.wikimedia.org/wiki/File:Superposition-principle_of_wave_jp.svg",
-		title: "Superposition Principle of Waves",
-		author: "Sujiniku Shichū",
-		year: 2015,
-		alternativetitle: "Diagram of the superposition principle: two overlapping waves add point-by-point to produce a combined wave"
+		url: "https://commons.wikimedia.org/wiki/File:Interference_of_two_waves.svg",
+		title: "Interference of Two Waves",
+		author: "Wjh31",
+		year: 2010,
+		alternativetitle: "Two in-phase waves adding up to constructive interference with double amplitude (left); two 180°-out-of-phase waves cancelling via destructive interference (right)"
 	},
 	"alphago_leesedol_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg",

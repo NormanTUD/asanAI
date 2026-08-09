@@ -27,8 +27,8 @@ But a single circle (a single frequency) has too many ambiguities. So the networ
 
 <div class="image-row md">
 	<figure>
-		<img src="wave_interference.png" alt="Superposition principle: two overlapping waves adding up to a combined wave" style="max-width: 520px;" />
-		<figcaption class="md">\citealternativetitle{wave_interference_diagram}. Wherever two waves overlap, the heights add point-by-point. When the two waves line up (peaks meet peaks), the sum is tall — <em>constructive</em> interference. When a peak meets a trough, they cancel — <em>destructive</em>. The trained Transformer uses exactly this trick: it picks frequencies where the cosine is $+1$ at the right answer and lower everywhere else, so only the correct answer survives.</figcaption>
+		<img src="wave_interference.png" alt="Two in-phase waves adding up to constructive interference (left) and two out-of-phase waves cancelling (right)" />
+		<figcaption class="md">\citealternativetitle{wave_interference_diagram}. <strong>Left:</strong> two in-phase waves add point-by-point, producing a wave with double the amplitude (constructive interference). <strong>Right:</strong> two waves shifted by half a wavelength (180°) cancel completely (destructive interference). The trained Transformer uses exactly this trick: it picks frequencies where the cosine is $+1$ at the right answer and lower everywhere else, so only the correct answer survives.</figcaption>
 	</figure>
 </div>
 
