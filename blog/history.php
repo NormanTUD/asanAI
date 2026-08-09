@@ -325,6 +325,33 @@ I propose to consider the question, 'Can machines think?'
 
 Turing argued that defining "thinking" was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), a practical standard where a computer is considered intelligent if it can converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
 
+### IBM 702: The First Commercial Business Computer (1953)
+
+<figure>
+    <img style="width: 100%" src="1280px-BRL61-IBM_702.jpg" alt="IBM 702 system" />
+    <figcaption class="md">\citealternativetitle{ibm702image}</figcaption>
+</figure>
+
+The \citealternativetitle{ibm702} (\citeyear{ibm702}) was IBM's first commercial electronic computer aimed at business data processing, and a direct response to Remington Rand's UNIVAC. It introduced **magnetic-core memory** for random-access applications and weighted roughly 24,645 pounds. The memory was character-oriented, Williams-tube based (later retrofitted to core), with capacities ranging from 2,000 to 10,000 characters \cite{ibm702}.
+
+### The Personal Computer: Ed Roberts and the Altair 8800 (1974-1975)
+
+While MIT, Bell Labs, and IBM were building million-dollar mainframes, an Air Force veteran named **Henry Edward "Ed" Roberts** (\citeauthor{edroberts}, 1941–2010), running a small kit company called **MITS** out of Albuquerque, was rebuilding his calculator business after a brutal price war with Texas Instruments had driven it into 300,000 US Dollar of debt. The result, the **\citealternativetitle{altair8800}** (\citeyear{altair8800}), was the first commercially successful personal computer: a 397 US Dollar mail-order kit based on the new Intel 8080 microprocessor, featured on the cover of the January 1975 issue of *Popular Electronics* \cite{edroberts}. Roberts is most often remembered as "[the father of the personal computer](https://en.wikipedia.org/wiki/List_of_people_considered_father_or_mother_of_a_field#Computing)" \cite{edroberts_bbc}.
+
+What the Altair lacked (no keyboard, no display, no operating system, programs entered by toggle switches) was less important than what it started: an industry. \citeauthor{historyofpc} documents how the Altair spawned the **S-100 bus clone industry** (including the IMSAI 8080), the **Homebrew Computer Club**, and ultimately the founding of **Microsoft** when **Bill Gates** and **Paul Allen** wrote **Altair BASIC** \cite{historyofpc} as the company's first product.
+
+For competing claims to the title "father of the personal computer," \citeauthor{historyofpc} lists:
+* **Chuck Peddle** — designed the **MOS 6502** microprocessor, the **KIM-1**, and the **Commodore PET** (\citeyear{commodorepet}), the cheapest of the famous "1977 Trinity" \cite{chuckpeddle} \cite{mos6502}.
+* **André Truong Trong Thi** — co-created the **Micral N** (\citeyear{micral}), one of the earliest microcomputers (1972) \cite{historyofpc}.
+
+### VisiCalc and the Killer App (1979)
+
+In 1979, **Dan Bricklin** watched a Harvard Business School professor erase and redraw an entire spreadsheet on the blackboard after changing a single number. Bricklin's \citealternativetitle{visicalc} (\citeyear{visicalc}) automated exactly that: a "killer app" that, by being Apple-II-exclusive for its first year, is credited with single-handedly selling the Apple II to the business market \cite{visicalc} \cite{historyofpc}. It is widely considered the first "killer application" in computer history.
+
+### The IBM PC (1981)
+
+Released August 12, 1981, the **IBM PC** used the Intel 8088 CPU and Microsoft-supplied **PC-DOS** (later **MS-DOS**), since IBM's negotiations with Digital Research for CP/M had failed \cite{ibmpc} \cite{historyofpc}. IBM's failure to patent the BIOS led, via clean-room reverse engineering, to a clone industry that ultimately overwhelmed IBM itself, establishing the Wintel architecture as the dominant PC standard for decades.
+
 ## The term "Artificial Intelligence"
 
 The term "Artificial Intelligence" was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the \citealternativetitle{darthmouthartificialintelligence}. The workshop was founded on the conjecture that "every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it," marking the official birth of the field.

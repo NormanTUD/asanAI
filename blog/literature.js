@@ -4821,5 +4821,99 @@ window.bibData = {
 		author: "Erella Hovers, Avraham Ronen",
 		year: 2017,
 		alternativetitle: "Oldowan"
+	},
+
+	// ─── Personal computer history ───
+	"edroberts": {
+		url: "https://en.wikipedia.org/wiki/Ed_Roberts_(computer_engineer)",
+		title: "Ed Roberts (computer engineer) — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Ed Roberts"
+	},
+	"edroberts_bbc": {
+		url: "https://news.bbc.co.uk/2/hi/technology/8600493.stm",
+		title: "Microsoft founders lead tributes to 'father of the PC'",
+		author: "BBC News",
+		year: 2010,
+		alternativetitle: "BBC: Father of the PC"
+	},
+	"altair8800": {
+		url: "https://en.wikipedia.org/wiki/Altair_8800",
+		title: "Altair 8800 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Altair 8800"
+	},
+	"ibm702": {
+		url: "https://en.wikipedia.org/wiki/IBM_702",
+		title: "IBM 702 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2025,
+		alternativetitle: "IBM 702"
+	},
+	"ibm702image": {
+		url: "https://en.wikipedia.org/wiki/File:BRL61-IBM_702.jpg",
+		title: "IBM 702 system with CRT memory, CPU, printers, tape drives, drum storage, card reader/punch",
+		author: "U.S. Army Ballistic Research Laboratory",
+		year: 1961,
+		alternativetitle: "IBM 702 system photograph (BRL61)",
+		license: "Public Domain"
+	},
+	"historyofpc": {
+		url: "https://en.wikipedia.org/wiki/History_of_personal_computers",
+		title: "History of personal computers — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "History of Personal Computers"
+	},
+	"chuckpeddle": {
+		url: "https://en.wikipedia.org/wiki/Chuck_Peddle",
+		title: "Chuck Peddle — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Chuck Peddle"
+	},
+	"commodorepet": {
+		url: "https://en.wikipedia.org/wiki/Commodore_PET",
+		title: "Commodore PET — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Commodore PET"
+	},
+	"visicalc": {
+		url: "https://en.wikipedia.org/wiki/VisiCalc",
+		title: "VisiCalc — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "VisiCalc"
+	},
+	"ibmpc": {
+		url: "https://en.wikipedia.org/wiki/IBM_Personal_Computer",
+		title: "IBM Personal Computer — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "IBM PC"
+	},
+	"mos6502": {
+		url: "https://en.wikipedia.org/wiki/MOS_Technology_6502",
+		title: "MOS Technology 6502 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "MOS 6502"
+	},
+	"ibmscamp": {
+		url: "https://en.wikipedia.org/wiki/IBM_5100",
+		title: "IBM 5100 — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "IBM 5100"
+	},
+	"micral": {
+		url: "https://en.wikipedia.org/wiki/Micral_N",
+		title: "Micral N — Wikipedia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		alternativetitle: "Micral N"
 	}
 };
