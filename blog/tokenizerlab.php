@@ -14,6 +14,10 @@ topics: language, programming
 Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.
 </div>
 
+<div class="optional md" data-headline="Where these token IDs go">
+A tokenizer's output is a list of **integers** — token IDs in $\{0, 1, \dots, |V|-1\}$. The very next step in every Transformer is to look each ID up in a trainable matrix $E \in \mathbb{R}^{|V| \times d}$ to get a vector. That lookup is what brings you into the <a href="embeddinglab">Embeddings chapter</a>. Everything below this chapter is "before the lookup"; everything in Embeddings is "after".
+</div>
+
 <div id="tokenizer-section">
 
     <!-- ═══════════════════ STICKY INPUT BAR ═══════════════════ -->

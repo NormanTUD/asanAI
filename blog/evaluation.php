@@ -14,10 +14,10 @@ topics: programming, philosophy, society
 You cannot improve what you cannot measure. The evaluation problem is one of the hardest open issues in modern AI: benchmarks shape what models optimize for, and poorly designed benchmarks produce models that are great at benchmarks but useless in practice.
 
 This chapter covers the major benchmarks, their mathematical formulation, and the crisis of **benchmark contamination** — the central concern that LLMs have already seen every test set during pretraining.
+</div>
 
 <div class="optional md" data-headline="Every benchmark here is a Goodhart target">
-\citetitle{goodhartslaw} (p. 116) states that *every measure which becomes a target becomes a bad measure*. The benchmarks below — MMLU, HumanEval, GSM8K — are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See `losslab.php` § Beware of Goodhart's Law for the training-side version of this disease.
-</div>
+\citetitle{goodhartslaw} (p. 116) states that *every measure which becomes a target becomes a bad measure*. The benchmarks below — MMLU, HumanEval, GSM8K — are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
 </div>
 
 <div class="md">
