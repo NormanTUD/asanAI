@@ -100,14 +100,14 @@ but logically hollow, or worse, one that learns to "game" the benchmarks.
 To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks:
 * **Perplexity:** Measures how well the model predicts a sample, but it can be misleadingly low 
 if the model just memorizes data.
-* **Benchmarks (MMLU, HumanEval):** Tests for reasoning and coding, though even these can 
+* **Benchmarks (MMLU, HumanEval):** Tests for reasoning and coding, though even these can
 fall victim to Goodhart's Law if the test data "leaks" into the training set.
-* **Human Evaluation:** Ultimately, the best version of an Language Models is determined by whether 
+* **Human Evaluation:** Ultimately, the best version of an Language Models is determined by whether
 it is actually helpful, safe, and accurate in real-world use.
+</div>
 
 <div class="optional md" data-headline="The benchmarks themselves are Goodhart targets">
-See `evaluation.php` for the full tour of MMLU, HumanEval, GSM8K, and the contamination crisis. The disease named here has many symptoms; that chapter is where you see them.
-</div>
+See the <a href="evaluation">Evaluation & Benchmarks chapter</a> for the full tour of MMLU, HumanEval, GSM8K, and the contamination crisis. The disease named here has many symptoms; that chapter is where you see them.
 </div>
 
 <div class="optional md" data-headline="The Mathematical Modeling of Loss">
