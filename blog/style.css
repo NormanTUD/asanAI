@@ -5263,9 +5263,10 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	position: fixed;
 	background: var(--mn-heading);
 	color: var(--mn-bg);
+	font-family: var(--mn-font-body);
 	font-size: 0.78rem;
 	font-weight: 400;
-	line-height: 1.4;
+	line-height: 1.5;
 	padding: 10px 14px;
 	border-radius: 8px;
 	width: max(180px, 28vw);
