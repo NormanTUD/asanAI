@@ -5229,12 +5229,14 @@ html.dark #theme-toggle .ti-moon { display: none; }
 
 /* GUARDRAIL (angle 7): every node that COULD be an ancestor of a
    glossary term is forced not to create a containing block. This is
-   belt-and-suspenders on top of the JS scanner. */
-#contents *,
-.md *,
-.optional *,
+   belt-and-suspenders on top of the JS scanner.
+   NOTE: ul, ol, li are excluded — `contain: layout` breaks ::marker
+   positioning and pushes bullet points below the text. */
+#contents *:not(ul):not(ol):not(li):not(a),
+.md *:not(ul):not(ol):not(li):not(a),
+.optional *:not(ul):not(ol):not(li):not(a),
 .optional-content,
-.optional-content * {
+.optional-content *:not(ul):not(ol):not(li):not(a) {
 	contain: layout style !important;
 }
 
@@ -5314,14 +5316,15 @@ html.dark #theme-toggle .ti-moon { display: none; }
 /* ANGLE 10: @supports — for browsers that support `contain`, force every
    potential glossary ancestor to use `contain: layout style` instead of
    any value that would create a containing block. This is the modern,
-   spec-correct fix. */
+   spec-correct fix.
+   NOTE: ul, ol, li excluded — `contain: layout` breaks ::marker. */
 @supports (contain: layout) {
 	#contents,
-	#contents *,
+	#contents *:not(ul):not(ol):not(li),
 	.md,
-	.md *,
+	.md *:not(ul):not(ol):not(li),
 	.optional,
-	.optional * {
+	.optional *:not(ul):not(ol):not(li) {
 		contain: layout style !important;
 	}
 }
