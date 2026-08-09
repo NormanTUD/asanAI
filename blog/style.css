@@ -7570,48 +7570,58 @@ html.dark .topics-preset-fun {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — per-tile dwell tracker
-   Each .course-tile gets two visual elements inserted by
-   progress_tracker.js:
+   COURSE PROGRESS — per-tile dwell + page overview strip
+   All orange (#f97316). Three things on every tile, one column on
+   the right edge of the viewport.
 
-     • .tile-progress-bar   — a 5 px strip on the left edge that
-                              fills with the tile's accent colour
-                              as the reader accumulates ≥30 %
-                              viewport visibility. Continuous
-                              feedback during the 3-second dwell
-                              window. At 0 % it shows as a faint
-                              accent trace so the reader can see
-                              that the indicator exists.
+   PER-TILE (children of every .course-tile):
+     • .tile-progress-bar   — 5 px orange strip on the RIGHT edge
+                              that fills as ≥30 % viewport coverage
+                              accumulates. Continuous feedback
+                              during the 3-second dwell window.
+                              Faint trace at 0 %, solid at 100 %.
+     • .tile-progress-tip   — tiny "67 %" / "✓" pill, bottom-right,
+                              fades in on hover.
+     • .tile-visited-badge  — 24×24 orange ✓ in the top-right
+                              corner, pops in once the 3-second
+                              threshold is crossed.
 
-     • .tile-visited-badge  — a 24×24 green ✓ in the top-right
-                              corner. Stays invisible until the
-                              3-second threshold is crossed, then
-                              fades + scales into view with a tiny
-                              overshoot and persists forever.
+   PAGE-LEVEL:
+     • .progress-page-strip        — fixed thin column on the
+                                     right edge of the viewport.
+     • .progress-page-strip-inner  — tall inner container, sized
+                                     to the document, translated
+                                     by -scrollY so segments stay
+                                     anchored to their tiles.
+     • .progress-page-seg          — one button per tile, solid
+                                     orange when visited, faint
+                                     trace otherwise. Hover → pop.
+                                     Click → smooth-scroll to tile.
 
-   Once a tile crosses the threshold it gains the .tile-visited
-   class: the left bar goes solid emerald with a soft glow, the
-   border picks up an emerald tint and the badge fades+scales in.
-   Nothing is rendered anywhere else on the page — no global strip,
-   no floating button, no scrollbar overlay. On every page that
-   doesn't contain .course-tile the script is silent.
+   Silent on every page that doesn't carry .course-tile.
    ════════════════════════════════════════════════════════════════ */
 
-/* ── left-edge progress bar (continuous dwell feedback) ──────── */
+:root {
+	--cp-orange:        #f97316;
+	--cp-orange-soft:   color-mix(in srgb, #f97316 22%, transparent);
+	--cp-orange-glow:   rgba(249, 115, 22, 0.55);
+}
+
+/* ── 1a. per-tile right-edge progress bar ────────────────────── */
 
 .course-tile > .tile-progress-bar {
 	position: absolute;
-	left: 0;
+	right: 0;
 	top: 0;
 	bottom: 0;
 	width: 5px;
-	border-radius: var(--mn-radius-md, 10px) 0 0 var(--mn-radius-md, 10px);
+	border-radius: 0 var(--mn-radius-md, 10px) var(--mn-radius-md, 10px) 0;
 	background: linear-gradient(
 		to bottom,
-		var(--tile-accent, var(--mn-accent)) 0%,
-		var(--tile-accent, var(--mn-accent)) var(--progress, 0%),
-		color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 28%, transparent) var(--progress, 0%),
-		color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 28%, transparent) 100%
+		var(--cp-orange)      0%,
+		var(--cp-orange)      var(--progress, 0%),
+		var(--cp-orange-soft) var(--progress, 0%),
+		var(--cp-orange-soft) 100%
 	);
 	pointer-events: none;
 	z-index: 1;
@@ -7622,7 +7632,35 @@ html.dark .topics-preset-fun {
    fight with the ray's ::after overlay. */
 .effects-on .course-tile > .tile-progress-bar { z-index: 0; }
 
-/* ── visited ✓ badge (top-right corner) ──────────────────────── */
+/* ── 1b. per-tile hover tooltip ──────────────────────────────── */
+
+.course-tile > .tile-progress-tip {
+	position: absolute;
+	bottom: 10px;
+	right: 16px;
+	background: rgba(15, 23, 42, 0.88);
+	color: #ffffff;
+	padding: 2px 8px;
+	border-radius: 6px;
+	font-size: 0.7rem;
+	font-weight: 700;
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	pointer-events: none;
+	z-index: 3;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.5;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.course-tile:hover > .tile-progress-tip,
+.course-tile:focus-within > .tile-progress-tip {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* ── 1c. per-tile visited ✓ badge (top-right) ───────────────── */
 
 .course-tile > .tile-visited-badge {
 	position: absolute;
@@ -7631,7 +7669,7 @@ html.dark .topics-preset-fun {
 	width: 24px;
 	height: 24px;
 	border-radius: 50%;
-	background: #10b981;
+	background: var(--cp-orange);
 	color: #ffffff;
 	display: flex;
 	align-items: center;
@@ -7641,7 +7679,7 @@ html.dark .topics-preset-fun {
 	transition: opacity 0.3s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 	pointer-events: none;
 	z-index: 3;
-	box-shadow: 0 3px 10px rgba(16, 185, 129, 0.45);
+	box-shadow: 0 3px 10px var(--cp-orange-glow);
 }
 
 .course-tile > .tile-visited-badge svg {
@@ -7655,44 +7693,100 @@ html.dark .topics-preset-fun {
 	transform: scale(1) rotate(0deg);
 }
 
-/* ── visited tile state ───────────────────────────────────────── */
+/* ── 1d. visited tile state ──────────────────────────────────── */
 
 .course-tile.tile-visited > .tile-progress-bar {
-	background: #10b981;
+	background: var(--cp-orange);
 	box-shadow:
 		inset 0 0 0 1px color-mix(in srgb, #ffffff 30%, transparent),
-		0 0 10px rgba(16, 185, 129, 0.55);
+		0 0 10px var(--cp-orange-glow);
 }
 
 .course-tile.tile-visited {
-	border-color: color-mix(in srgb, #10b981 35%, var(--mn-border));
+	border-color: color-mix(in srgb, var(--cp-orange) 35%, var(--mn-border));
 }
 
-.course-tile.tile-visited:hover > .tile-visited-badge {
-	transform: scale(1.08);
+/* ── 2. page-level overview strip (right edge of viewport) ───── */
+
+.progress-page-strip {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 4px;
+	width: 14px;
+	z-index: 25;
+	pointer-events: none; /* never block underlying clicks */
 }
 
-/* ── reduced motion ───────────────────────────────────────────── */
+.progress-page-strip-inner {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	pointer-events: auto;
+	will-change: transform;
+}
+
+.progress-page-seg {
+	position: absolute;
+	left: 2px;
+	right: 2px;
+	background: var(--cp-orange);
+	opacity: 0.22;
+	border: none;
+	border-radius: 3px;
+	padding: 0;
+	cursor: pointer;
+	pointer-events: auto;
+	transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.progress-page-seg:hover,
+.progress-page-seg:focus-visible {
+	opacity: 0.75;
+	transform: scaleX(1.45);
+	outline: none;
+}
+
+.progress-page-seg.visited {
+	opacity: 0.95;
+	box-shadow: 0 0 6px var(--cp-orange);
+}
+
+.progress-page-seg.visited:hover,
+.progress-page-seg.visited:focus-visible {
+	opacity: 1;
+}
+
+/* ── reduced motion ──────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-	.course-tile > .tile-visited-badge { transition: opacity 0.15s ease; }
+	.course-tile > .tile-visited-badge  { transition: opacity 0.15s ease; transform: none; }
 	.course-tile.tile-visited > .tile-visited-badge { transform: none; }
-	.course-tile.tile-visited:hover > .tile-visited-badge { transform: none; }
+	.course-tile > .tile-progress-tip   { transition: opacity 0.1s ease; transform: none; }
+	.course-tile:hover > .tile-progress-tip { transform: none; }
+	.progress-page-seg                  { transition: opacity 0.1s ease; transform: none; }
+	.progress-page-seg:hover            { transform: none; }
 }
 
-/* ── very small phones: shrink the badge so it doesn't crowd ── */
+/* ── small phones: shrink badge / tip / page strip ──────────── */
 
-@media (max-width: 380px) {
+@media (max-width: 480px) {
 	.course-tile > .tile-visited-badge {
 		width: 20px;
 		height: 20px;
 		top: 8px;
-		right: 10px;
+		right: 9px;
 	}
-	.course-tile > .tile-visited-badge svg {
-		width: 12px;
-		height: 12px;
+	.course-tile > .tile-visited-badge svg { width: 12px; height: 12px; }
+	.course-tile > .tile-progress-tip {
+		font-size: 0.62rem;
+		padding: 1px 6px;
+		bottom: 8px;
+		right: 14px;
 	}
+	.progress-page-strip { width: 10px; right: 2px; }
+	.progress-page-seg   { left: 1px; right: 1px; }
 }
 
 

@@ -1,33 +1,50 @@
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — per-tile dwell tracker
+   COURSE PROGRESS — per-tile dwell + page overview strip
 
-   Activates only on pages that contain .course-tile elements
-   (i.e. the homepage). Every other page is completely silent:
-   no DOM mutations, no event listeners, no UI rendered.
+   Active only on pages that contain .course-tile. On every other
+   page the script is completely silent (early return, no DOM
+   mutation, no listeners).
 
-   On the homepage each tile gets two visual elements inserted
-   into itself:
+   Two visualizations on the RIGHT edge of the viewport, both in
+   orange (#f97316):
 
-     • .tile-progress-bar   — a 5 px strip on the left edge that
-                              fills with the tile's accent colour
-                              as the reader accumulates ≥30 %
-                              viewport visibility. Continuous
-                              feedback during the 3-second dwell
-                              window.
+   ── PER-TILE ───────────────────────────────────────────────────
+   Each .course-tile gets three children inserted by this script:
 
-     • .tile-visited-badge  — a 24×24 green ✓ in the top-right
-                              corner. Stays invisible until the
-                              3-second threshold is crossed, then
-                              fades + scales into view with a tiny
-                              overshoot and persists forever.
+     • .tile-progress-bar  — a 5 px strip glued to the RIGHT edge
+                             of the tile. Fills with orange as the
+                             reader accumulates ≥30 % viewport
+                             visibility. Continuous feedback during
+                             the 3-second dwell window. At 0 % it's
+                             a faint orange trace so the reader can
+                             see the indicator exists.
 
-   Persistence is a single localStorage key, `course_progress_v1`,
-   with shape `{ tiles: { [slug]: { dwellMs, dwelled, lastSeen } } }`.
-   Nothing leaves the browser.
+     • .tile-progress-tip  — a tiny "67 %" / "✓" pill in the
+                             bottom-right that fades in on hover.
+                             Shows the current dwell percentage or
+                             "✓" once visited.
 
-   Public API (for debug / power users):
-     window.CourseProgress.reset()  — wipes all progress
-     window.CourseProgress.get()    — returns a JSON copy of state
+     • .tile-visited-badge — a 22×22 orange ✓ circle in the top-
+                             right corner. Stays invisible until
+                             the 3-second threshold is crossed,
+                             then fades+scales in with a small
+                             overshoot and persists forever.
+
+   ── PAGE-LEVEL ─────────────────────────────────────────────────
+   A thin fixed column on the right edge of the viewport
+   (.progress-page-strip). It contains one button per tile,
+   positioned at the tile's document Y inside a tall inner
+   container that's translated by -scrollY so segments stay
+   anchored to their tiles as the page scrolls.
+
+     • Visited tile (≥3 s dwell)   → solid orange segment with glow
+     • Unvisited tile              → faint orange trace (20 %)
+     • Hover segment               → brightens, scaleX 1.4
+     • Click segment               → smooth-scrolls to the tile
+     • Native tooltip on segment   → shows the tile title
+
+   Persistence: a single localStorage key `course_progress_v1`.
+   Public API: window.CourseProgress.{get,reset}.
    ════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -52,6 +69,11 @@
 	let saveTimer = null;
 	let lastTickTime = null;
 
+	let pageStripEl    = null;
+	let pageStripInner = null;
+	let pageStripSegs  = [];
+	let layoutRafPending = false;
+
 	function loadState() {
 		try {
 			if (typeof localStorage === 'undefined') return;
@@ -63,7 +85,7 @@
 					tiles: Object.assign(Object.create(null), parsed.tiles || {})
 				});
 			}
-		} catch (e) { /* localStorage disabled / corrupt */ }
+		} catch (e) { /* disabled / corrupt */ }
 	}
 
 	function saveState() {
@@ -88,6 +110,14 @@
 		return filename.replace(/\.php$/, '');
 	}
 
+	function escapeHtml(s) {
+		const d = document.createElement('div');
+		d.textContent = s == null ? '' : String(s);
+		return d.innerHTML;
+	}
+
+	/* ── per-tile setup ───────────────────────────────────────── */
+
 	function setupTile(tile) {
 		if (!tile.dataset.slug) {
 			tile.dataset.slug = getSlugFromHref(tile.getAttribute('href'));
@@ -97,7 +127,15 @@
 			const bar = document.createElement('div');
 			bar.className = 'tile-progress-bar';
 			bar.setAttribute('aria-hidden', 'true');
-			tile.insertBefore(bar, tile.firstChild);
+			tile.appendChild(bar);
+		}
+
+		if (!tile.querySelector(':scope > .tile-progress-tip')) {
+			const tip = document.createElement('span');
+			tip.className = 'tile-progress-tip';
+			tip.setAttribute('aria-hidden', 'true');
+			tip.textContent = '0%';
+			tile.appendChild(tip);
 		}
 
 		if (!tile.querySelector(':scope > .tile-visited-badge')) {
@@ -119,19 +157,101 @@
 			tile.classList.add('tile-visited');
 			const bar = tile.querySelector(':scope > .tile-progress-bar');
 			if (bar) bar.style.setProperty('--progress', '100%');
+			const tip = tile.querySelector(':scope > .tile-progress-tip');
+			if (tip) tip.textContent = '✓';
 		}
 	}
 
-	function updateBar(tile, pct) {
+	function updateTileUI(tile, pct) {
 		const bar = tile.querySelector(':scope > .tile-progress-bar');
 		if (bar) bar.style.setProperty('--progress', pct + '%');
+		const tip = tile.querySelector(':scope > .tile-progress-tip');
+		if (tip) tip.textContent = pct >= 100 ? '✓' : (Math.round(pct) + '%');
 	}
 
-	function markVisited(tile) {
+	function markVisited(tile, idx) {
 		tile.classList.add('tile-visited');
 		const bar = tile.querySelector(':scope > .tile-progress-bar');
 		if (bar) bar.style.setProperty('--progress', '100%');
+		const tip = tile.querySelector(':scope > .tile-progress-tip');
+		if (tip) tip.textContent = '✓';
+		const seg = pageStripSegs[idx];
+		if (seg) seg.classList.add('visited');
 	}
+
+	/* ── page-level overview strip ────────────────────────────── */
+
+	function buildPageStrip(tiles) {
+		pageStripEl = document.createElement('nav');
+		pageStripEl.className = 'progress-page-strip';
+		pageStripEl.setAttribute('aria-label', 'Course progress overview');
+
+		pageStripInner = document.createElement('div');
+		pageStripInner.className = 'progress-page-strip-inner';
+		pageStripEl.appendChild(pageStripInner);
+
+		for (let i = 0; i < tiles.length; i++) {
+			const tile   = tiles[i];
+			const slug   = tile.dataset.slug;
+			const titleEl = tile.querySelector('h3');
+			const title  = titleEl ? titleEl.textContent.trim() : slug;
+
+			const seg = document.createElement('button');
+			seg.type = 'button';
+			seg.className = 'progress-page-seg';
+			seg.setAttribute('aria-label', 'Scroll to: ' + title);
+			seg.title = title;
+
+			const ts = state.tiles[slug];
+			if (ts && ts.dwelled) seg.classList.add('visited');
+
+			seg.addEventListener('click', function () {
+				const rect = tile.getBoundingClientRect();
+				const targetY = rect.top + window.scrollY - 80;
+				window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+			});
+
+			pageStripInner.appendChild(seg);
+		}
+
+		document.body.appendChild(pageStripEl);
+		pageStripSegs = Array.prototype.slice.call(
+			pageStripInner.querySelectorAll('.progress-page-seg')
+		);
+
+		layoutPageStrip();
+	}
+
+	function layoutPageStrip() {
+		if (!pageStripInner) return;
+		const docH    = document.documentElement.scrollHeight;
+		const scrollY = window.scrollY;
+
+		pageStripInner.style.height = docH + 'px';
+		pageStripInner.style.transform = 'translateY(' + (-scrollY) + 'px)';
+
+		const tiles = getTiles();
+		for (let i = 0; i < tiles.length; i++) {
+			const tile = tiles[i];
+			const rect = tile.getBoundingClientRect();
+			const tileY = rect.top + scrollY;
+			const seg = pageStripSegs[i];
+			if (!seg) continue;
+			seg.style.top = tileY + 'px';
+			seg.style.height = Math.max(10, Math.round(rect.height)) + 'px';
+		}
+	}
+
+	function onScrollOrResize() {
+		if (layoutRafPending) return;
+		layoutRafPending = true;
+		requestAnimationFrame(function () {
+			layoutRafPending = false;
+			layoutPageStrip();
+		});
+	}
+
+	/* ── dwell tracking loop ──────────────────────────────────── */
 
 	function tick(now) {
 		if (lastTickTime === null) lastTickTime = now;
@@ -166,12 +286,12 @@
 
 				ts.dwellMs += dt;
 				const progressPct = Math.min(100, (ts.dwellMs / DWELL_TIME_MS) * 100);
-				updateBar(tile, progressPct);
+				updateTileUI(tile, progressPct);
 
 				if (ts.dwellMs >= DWELL_TIME_MS) {
 					ts.dwelled = true;
 					ts.lastSeen = Date.now();
-					markVisited(tile);
+					markVisited(tile, i);
 					changed = true;
 				}
 			}
@@ -181,6 +301,8 @@
 		requestAnimationFrame(tick);
 	}
 
+	/* ── init ──────────────────────────────────────────────────── */
+
 	function init() {
 		loadState();
 
@@ -188,6 +310,11 @@
 		if (tiles.length === 0) return;
 
 		for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
+		buildPageStrip(tiles);
+
+		window.addEventListener('scroll',   onScrollOrResize, { passive: true });
+		window.addEventListener('resize',   onScrollOrResize, { passive: true });
+
 		requestAnimationFrame(tick);
 	}
 
@@ -201,6 +328,11 @@
 				tile.classList.remove('tile-visited');
 				const bar = tile.querySelector(':scope > .tile-progress-bar');
 				if (bar) bar.style.setProperty('--progress', '0%');
+				const tip = tile.querySelector(':scope > .tile-progress-tip');
+				if (tip) tip.textContent = '0%';
+			}
+			for (let i = 0; i < pageStripSegs.length; i++) {
+				pageStripSegs[i].classList.remove('visited');
 			}
 		},
 		get: function () {
