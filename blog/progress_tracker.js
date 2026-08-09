@@ -1,35 +1,31 @@
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — per-tile dwell tracker
+   COURSE PROGRESS — per-tile dwell tracker (orange #f97316)
+   Active only on pages that contain .course-tile. Silent
+   everywhere else.
 
-   Active only on pages that contain .course-tile. On every other
-   page the script is silent (early return, no DOM mutation, no
-   listeners).
-
-   Each .course-tile gets three children inserted by this script:
+   Each .course-tile gets two children inserted by this script:
 
      • .tile-progress-bar  — 5 px orange strip on the RIGHT edge
                              that fills as ≥30 % viewport coverage
                              accumulates. Continuous feedback
                              during the 3-second dwell window.
-                             Faint orange trace at 0 %, solid
-                             orange with glow at 100 %.
+                             Faint trace at 0 %, solid orange with
+                             glow at 100 %.
 
-     • .tile-progress-tip  — small "67 %" / "✓" pill, bottom-right,
-                             fades in on hover. Shows the current
-                             dwell percentage, or "✓" once the
-                             threshold is crossed.
+     • .tile-progress-tip  — tiny "67 %" pill, bottom-right, fades
+                             in on hover. Always shows the current
+                             dwell percentage (never a checkmark —
+                             the bar filling up *is* the visited
+                             indicator).
 
-     • .tile-visited-badge — 24×24 orange ✓ in the top-right
-                             corner. Pops in once the threshold is
-                             crossed and persists forever.
+   Each tile is tracked, stored and shown independently. State
+   lives in a single localStorage key `course_progress_v1`:
 
-   Every tile is tracked, stored and displayed independently.
-   Progress lives in a single localStorage key (`course_progress_v1`)
-   with shape { tiles: { [slug]: { dwellMs, dwelled, lastSeen } } }.
+     { tiles: { [slug]: { dwellMs, dwelled, lastSeen } } }
 
-   Public API (debug):
-     window.CourseProgress.reset()  — wipes all progress
-     window.CourseProgress.get()    — JSON snapshot of state
+   A reset command is logged to the console once at startup so
+   power-users can wipe history from devtools without grepping
+   through source.
    ════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -50,9 +46,6 @@
 		};
 	}
 
-	/* Normalise a single tile record loaded from localStorage so a
-	   partially-written or older entry can never feed `undefined`
-	   into arithmetic and produce NaN. */
 	function normalizeTile(raw) {
 		if (!raw || typeof raw !== 'object') {
 			return { dwellMs: 0, dwelled: false, lastSeen: 0 };
@@ -136,19 +129,6 @@
 			tile.appendChild(tip);
 		}
 
-		if (!tile.querySelector(':scope > .tile-visited-badge')) {
-			const badge = document.createElement('div');
-			badge.className = 'tile-visited-badge';
-			badge.setAttribute('aria-hidden', 'true');
-			badge.innerHTML =
-				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" '
-				+ 'stroke-width="3" stroke-linecap="round" stroke-linejoin="round" '
-				+ 'aria-hidden="true">'
-				+ '<polyline points="20 6 9 17 4 12"/>'
-				+ '</svg>';
-			tile.appendChild(badge);
-		}
-
 		const slug = tile.dataset.slug;
 		const ts = slug ? state.tiles[slug] : null;
 		if (ts && ts.dwelled) {
@@ -156,7 +136,7 @@
 			const bar = tile.querySelector(':scope > .tile-progress-bar');
 			if (bar) bar.style.setProperty('--progress', '100%');
 			const tip = tile.querySelector(':scope > .tile-progress-tip');
-			if (tip) tip.textContent = '✓';
+			if (tip) tip.textContent = '100%';
 		}
 	}
 
@@ -165,15 +145,13 @@
 		const bar = tile.querySelector(':scope > .tile-progress-bar');
 		if (bar) bar.style.setProperty('--progress', safe + '%');
 		const tip = tile.querySelector(':scope > .tile-progress-tip');
-		if (tip) tip.textContent = safe >= 100 ? '✓' : (Math.round(safe) + '%');
+		if (tip) tip.textContent = Math.round(safe) + '%';
 	}
 
 	function markVisited(tile) {
 		tile.classList.add('tile-visited');
 		const bar = tile.querySelector(':scope > .tile-progress-bar');
 		if (bar) bar.style.setProperty('--progress', '100%');
-		const tip = tile.querySelector(':scope > .tile-progress-tip');
-		if (tip) tip.textContent = '✓';
 	}
 
 	function tick(now) {
@@ -204,9 +182,6 @@
 				const pct  = visH / rect.height;
 				if (pct < VISIBILITY_THRESHOLD) continue;
 
-				/* Defensive re-init: if state was somehow loaded with
-				   a malformed entry (missing dwellMs), reset it here
-				   instead of letting NaN propagate. */
 				if (!ts || typeof ts.dwellMs !== 'number' || !isFinite(ts.dwellMs)) {
 					ts = { dwellMs: 0, dwelled: false, lastSeen: 0 };
 					state.tiles[slug] = ts;
@@ -234,6 +209,14 @@
 
 		const tiles = getTiles();
 		if (tiles.length === 0) return;
+
+		/* One-time hint for power-users / the author. Styled with the
+		   same orange accent as the on-tile indicator. */
+		console.log(
+			'%c Course Progress %c reset →  localStorage.removeItem("course_progress_v1") ',
+			'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;',
+			'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;'
+		);
 
 		for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
 		requestAnimationFrame(tick);
