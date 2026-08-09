@@ -975,7 +975,7 @@ function source_bibliography() {
 		entryText += `: *${data.title}*.`;
 		if (data.url) entryText += ` [Link](${data.url})`;
 
-		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:10px;">${entryText}</div>\n`;
+		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:4px;">${entryText}</div>\n`;
 	});
 
 	sourcesDiv.innerHTML = html;
