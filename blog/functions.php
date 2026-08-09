@@ -168,6 +168,7 @@ function load_base_js () {
 	js("three.min");
 	js("search");
 	js("topics");
+	js("progress_tracker");
 
 	$files = glob("modules/*.js");
 

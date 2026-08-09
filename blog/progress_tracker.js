@@ -1,42 +1,43 @@
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — per-tile dwell tracker (orange #f97316)
-   Active only on pages that contain .course-tile. Silent
-   everywhere else.
+   COURSE PROGRESS — segmented per-tile "where I've been" bar
+   (orange #f97316). Active on every page; on the homepage it just
+   paints the bars from saved state, on a subpage it watches the
+   scroll position and accumulates dwell time per segment.
 
-   Each .course-tile gets two children inserted by this script:
+   Each .course-tile on the homepage gets two children inserted by
+   this script:
 
-     • .tile-progress-bar  — 5 px orange strip on the RIGHT edge
-                             that fills as ≥30 % viewport coverage
-                             accumulates. Continuous feedback
-                             during the 3-second dwell window.
-                             Faint trace at 0 %, solid orange with
-                             glow at 100 %.
+     • .tile-progress-bar  — 5 px column on the RIGHT edge with N
+                             stacked "segments". Each segment = one
+                             equal slice of the linked page's scroll
+                             range (10 by default). Filled segments
+                             are orange, the rest are a faint
+                             orange trace. A segment is marked
+                             filled only after ≥3 s of dwell while
+                             the viewport sits inside that slice.
+                             No transitions, no animation — the
+                             state is rendered synchronously on load.
 
-     • .tile-progress-tip  — tiny "67 %" pill, bottom-right, fades
-                             in on hover. Always shows the current
-                             dwell percentage (never a checkmark —
-                             the bar filling up *is* the visited
-                             indicator).
+     • .tile-progress-tip  — tiny "60 %" pill, bottom-right,
+                             appears on hover. Shows the share of
+                             segments that have been filled so far.
 
-   Each tile is tracked, stored and shown independently. State
-   lives in a single localStorage key `course_progress_v1`:
+   State lives in a single localStorage key `course_progress_v2`:
+     { tiles: { [slug]: { segments: [bool;10], lastSeen } } }
 
-     { tiles: { [slug]: { dwellMs, dwelled, lastSeen } } }
-
-   A reset command is logged to the console once at startup so
-   power-users can wipe history from devtools without grepping
-   through source.
+   A reset command is logged to the console on every page load so
+   power-users can wipe history from devtools without grepping.
    ════════════════════════════════════════════════════════════════ */
 
 (function () {
 	'use strict';
 
-	const STORAGE_KEY        = 'course_progress_v1';
-	const STORAGE_VERSION    = 1;
-	const DWELL_TIME_MS      = 3000;
-	const VISIBILITY_THRESHOLD = 0.3;
-	const SAVE_DEBOUNCE_MS   = 300;
-	const TICK_DT_CAP_MS     = 100;
+	const STORAGE_KEY          = 'course_progress_v2';
+	const STORAGE_VERSION      = 2;
+	const DWELL_TIME_MS        = 3000;
+	const SAVE_DEBOUNCE_MS     = 300;
+	const TICK_DT_CAP_MS       = 100;
+	const TOTAL_SEGMENTS       = 10;
 
 	function defaultState() {
 		return {
@@ -46,22 +47,28 @@
 		};
 	}
 
-	function normalizeTile(raw) {
-		if (!raw || typeof raw !== 'object') {
-			return { dwellMs: 0, dwelled: false, lastSeen: 0 };
-		}
-		const dwellMs = Number(raw.dwellMs);
-		const lastSeen = Number(raw.lastSeen);
-		return {
-			dwellMs:  isFinite(dwellMs) && dwellMs > 0 ? dwellMs : 0,
-			dwelled:  raw.dwelled === true,
-			lastSeen: isFinite(lastSeen) && lastSeen > 0 ? lastSeen : 0
-		};
+	function makeSegments(value) {
+		const v = !!value;
+		const arr = new Array(TOTAL_SEGMENTS);
+		for (let i = 0; i < TOTAL_SEGMENTS; i++) arr[i] = v;
+		return arr;
 	}
 
-	let state = defaultState();
+	function normalizeTile(raw) {
+		const segments = makeSegments(false);
+		if (raw && typeof raw === 'object' && Array.isArray(raw.segments)) {
+			for (let i = 0; i < Math.min(raw.segments.length, TOTAL_SEGMENTS); i++) {
+				segments[i] = raw.segments[i] === true;
+			}
+		}
+		const lastSeen = raw && isFinite(Number(raw.lastSeen)) && Number(raw.lastSeen) > 0
+			? Number(raw.lastSeen)
+			: 0;
+		return { segments: segments, lastSeen: lastSeen };
+	}
+
+	let state   = defaultState();
 	let saveTimer = null;
-	let lastTickTime = null;
 
 	function loadState() {
 		try {
@@ -81,10 +88,10 @@
 			}
 			state = {
 				version: STORAGE_VERSION,
-				tiles: normalizedTiles,
+				tiles:   normalizedTiles,
 				updatedAt: Number(parsed.updatedAt) || 0
 			};
-		} catch (e) { /* disabled / corrupt */ }
+		} catch (e) { /* disabled / corrupt — keep default */ }
 	}
 
 	function saveState() {
@@ -109,129 +116,188 @@
 		return filename.replace(/\.php$/, '');
 	}
 
+	function getCurrentSlug() {
+		return getSlugFromHref(window.location.pathname);
+	}
+
+	function buildBar() {
+		const bar = document.createElement('div');
+		bar.className = 'tile-progress-bar';
+		bar.setAttribute('aria-hidden', 'true');
+		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
+			const seg = document.createElement('span');
+			seg.className = 'seg';
+			bar.appendChild(seg);
+		}
+		return bar;
+	}
+
+	function buildTip() {
+		const tip = document.createElement('span');
+		tip.className = 'tile-progress-tip';
+		tip.setAttribute('aria-hidden', 'true');
+		tip.textContent = '0%';
+		return tip;
+	}
+
+	function renderTile(tile, ts) {
+		let bar = tile.querySelector(':scope > .tile-progress-bar');
+		if (!bar) {
+			bar = buildBar();
+			tile.appendChild(bar);
+		} else if (bar.children.length !== TOTAL_SEGMENTS) {
+			/* legacy / malformed bar — rebuild segment children */
+			bar.innerHTML = '';
+			for (let i = 0; i < TOTAL_SEGMENTS; i++) {
+				const seg = document.createElement('span');
+				seg.className = 'seg';
+				bar.appendChild(seg);
+			}
+		}
+
+		let tip = tile.querySelector(':scope > .tile-progress-tip');
+		if (!tip) {
+			tip = buildTip();
+			tile.appendChild(tip);
+		}
+
+		const segs = (ts && Array.isArray(ts.segments)) ? ts.segments : makeSegments(false);
+		const segElements = bar.children;
+		let seenCount = 0;
+		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
+			const isFilled = !!segs[i];
+			const el = segElements[i];
+			if (el) {
+				if (isFilled) el.classList.add('filled');
+				else          el.classList.remove('filled');
+			}
+			if (isFilled) seenCount++;
+		}
+
+		const pct = Math.round((seenCount / TOTAL_SEGMENTS) * 100);
+		tip.textContent = pct + '%';
+
+		if (seenCount === TOTAL_SEGMENTS) {
+			tile.classList.add('tile-visited');
+		} else {
+			tile.classList.remove('tile-visited');
+		}
+	}
+
 	function setupTile(tile) {
 		if (!tile.dataset.slug) {
 			tile.dataset.slug = getSlugFromHref(tile.getAttribute('href'));
 		}
-
-		if (!tile.querySelector(':scope > .tile-progress-bar')) {
-			const bar = document.createElement('div');
-			bar.className = 'tile-progress-bar';
-			bar.setAttribute('aria-hidden', 'true');
-			tile.appendChild(bar);
-		}
-
-		if (!tile.querySelector(':scope > .tile-progress-tip')) {
-			const tip = document.createElement('span');
-			tip.className = 'tile-progress-tip';
-			tip.setAttribute('aria-hidden', 'true');
-			tip.textContent = '0%';
-			tile.appendChild(tip);
-		}
-
 		const slug = tile.dataset.slug;
-		const ts = slug ? state.tiles[slug] : null;
-		if (ts && ts.dwelled) {
-			tile.classList.add('tile-visited');
-			const bar = tile.querySelector(':scope > .tile-progress-bar');
-			if (bar) bar.style.setProperty('--progress', '100%');
-			const tip = tile.querySelector(':scope > .tile-progress-tip');
-			if (tip) tip.textContent = '100%';
+		const ts   = slug ? state.tiles[slug] : null;
+		renderTile(tile, ts);
+	}
+
+	function trackSubpage(slug) {
+		if (!slug) return;
+
+		let ts = state.tiles[slug];
+		if (!ts) {
+			ts = { segments: makeSegments(false), lastSeen: 0 };
+			state.tiles[slug] = ts;
 		}
-	}
+		if (!Array.isArray(ts.segments) || ts.segments.length !== TOTAL_SEGMENTS) {
+			ts.segments = makeSegments(false);
+		}
 
-	function updateTileUI(tile, pct) {
-		const safe = isFinite(pct) ? Math.min(100, Math.max(0, pct)) : 0;
-		const bar = tile.querySelector(':scope > .tile-progress-bar');
-		if (bar) bar.style.setProperty('--progress', safe + '%');
-		const tip = tile.querySelector(':scope > .tile-progress-tip');
-		if (tip) tip.textContent = Math.round(safe) + '%';
-	}
+		/* Per-segment dwell accumulator, in-memory only.
+		   Once a segment is filled we stop counting for it. */
+		const segmentDwellMs = new Array(TOTAL_SEGMENTS).fill(0);
+		const segmentDone    = new Array(TOTAL_SEGMENTS).fill(false);
+		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
+			segmentDone[i] = ts.segments[i] === true;
+		}
 
-	function markVisited(tile) {
-		tile.classList.add('tile-visited');
-		const bar = tile.querySelector(':scope > .tile-progress-bar');
-		if (bar) bar.style.setProperty('--progress', '100%');
-	}
+		let lastTick     = performance.now();
+		let dirty        = false;
+		let localSaveTmr = null;
 
-	function tick(now) {
-		if (lastTickTime === null) lastTickTime = now;
-		const dt = (isFinite(now) && isFinite(lastTickTime))
-			? Math.min(Math.max(0, now - lastTickTime), TICK_DT_CAP_MS)
-			: 0;
-		lastTickTime = now;
+		function flush() {
+			localSaveTmr = null;
+			if (!dirty) return;
+			dirty = false;
+			ts.lastSeen = Date.now();
+			saveState();
+		}
 
-		const vh = window.innerHeight || document.documentElement.clientHeight || 0;
-		const tiles = getTiles();
-		let changed = false;
+		function tick() {
+			const now = performance.now();
+			const dt  = (isFinite(now) && isFinite(lastTick))
+				? Math.min(Math.max(0, now - lastTick), TICK_DT_CAP_MS)
+				: 0;
+			lastTick = now;
 
-		if (vh > 0 && dt > 0) {
-			for (let i = 0; i < tiles.length; i++) {
-				const tile = tiles[i];
-				const slug = tile.dataset.slug;
-				if (!slug) continue;
+			if (dt > 0 && document.visibilityState === 'visible' && !document.hidden) {
+				const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+				if (docHeight > 0) {
+					const scrollPct = Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100));
+					const segIdx = Math.min(TOTAL_SEGMENTS - 1, Math.floor((scrollPct / 100) * TOTAL_SEGMENTS));
 
-				let ts = state.tiles[slug];
-				if (ts && ts.dwelled) continue;
-
-				const rect = tile.getBoundingClientRect();
-				if (rect.width <= 0 || rect.height <= 0) continue;
-				if (rect.bottom <= 0 || rect.top >= vh) continue;
-
-				const visH = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
-				const pct  = visH / rect.height;
-				if (pct < VISIBILITY_THRESHOLD) continue;
-
-				if (!ts || typeof ts.dwellMs !== 'number' || !isFinite(ts.dwellMs)) {
-					ts = { dwellMs: 0, dwelled: false, lastSeen: 0 };
-					state.tiles[slug] = ts;
-				}
-
-				ts.dwellMs += dt;
-				const progressPct = Math.min(100, Math.max(0, (ts.dwellMs / DWELL_TIME_MS) * 100));
-				updateTileUI(tile, progressPct);
-
-				if (ts.dwellMs >= DWELL_TIME_MS) {
-					ts.dwelled = true;
-					ts.lastSeen = Date.now();
-					markVisited(tile);
-					changed = true;
+					if (!segmentDone[segIdx]) {
+						segmentDwellMs[segIdx] += dt;
+						if (segmentDwellMs[segIdx] >= DWELL_TIME_MS) {
+							segmentDone[segIdx] = true;
+							ts.segments[segIdx] = true;
+							dirty = true;
+							if (localSaveTmr) clearTimeout(localSaveTmr);
+							localSaveTmr = setTimeout(flush, SAVE_DEBOUNCE_MS);
+						}
+					}
 				}
 			}
+
+			requestAnimationFrame(tick);
 		}
 
-		if (changed) saveState();
 		requestAnimationFrame(tick);
+	}
+
+	function logResetHint() {
+		console.log(
+			'%c Course Progress %c reset →  localStorage.removeItem("' + STORAGE_KEY + '") ',
+			'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;',
+			'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;'
+		);
 	}
 
 	function init() {
 		loadState();
 
+		/* Console hint is logged on every page load, not just on the
+		   homepage, so a user on any subpage can find the reset cmd. */
+		logResetHint();
+
 		const tiles = getTiles();
-		if (tiles.length === 0) return;
+		if (tiles.length > 0) {
+			for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
+			return;
+		}
 
-		/* One-time hint for power-users / the author. Styled with the
-		   same orange accent as the on-tile indicator. */
-		console.log(
-			'%c Course Progress %c reset →  localStorage.removeItem("course_progress_v1") ',
-			'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;',
-			'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;'
-		);
-
-		for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
-		requestAnimationFrame(tick);
+		const slug = getCurrentSlug();
+		if (slug && slug !== 'index' && slug !== 'index_full') {
+			trackSubpage(slug);
+		}
 	}
 
 	window.CourseProgress = {
 		reset: function () {
 			state = defaultState();
-			saveState();
+			try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
 			const tiles = getTiles();
 			for (let i = 0; i < tiles.length; i++) {
 				const tile = tiles[i];
 				tile.classList.remove('tile-visited');
 				const bar = tile.querySelector(':scope > .tile-progress-bar');
-				if (bar) bar.style.setProperty('--progress', '0%');
+				if (bar) {
+					for (let j = 0; j < bar.children.length; j++) {
+						bar.children[j].classList.remove('filled');
+					}
+				}
 				const tip = tile.querySelector(':scope > .tile-progress-tip');
 				if (tip) tip.textContent = '0%';
 			}

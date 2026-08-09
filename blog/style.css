@@ -7574,30 +7574,24 @@ html.dark .topics-preset-fun {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — per-tile dwell tracker (orange #f97316)
-   Two children are inserted into every .course-tile on the
-   homepage. There is intentionally NO page-level strip and NO
-   "completed" badge — the filled bar IS the visited state.
-
-     • .tile-progress-bar   — 5 px orange strip on the RIGHT edge
-                              of the tile that fills as ≥30 %
-                              viewport coverage accumulates.
-                              Continuous feedback during the
-                              3-second dwell window. Faint trace
-                              at 0 %, solid + glowing at 100 %.
-     • .tile-progress-tip   — tiny "67 %" pill, bottom-right,
-                              fades in on hover.
-
-   Silent on every page that doesn't carry .course-tile.
+   COURSE PROGRESS — segmented per-tile "where I've been" bar
+   (orange #f97316). Two children are inserted into every
+   .course-tile on the homepage. The bar is split into 10 equal
+   segments stacked vertically; each segment represents one slice
+   of the linked page's scroll range and is filled with solid
+   orange after ≥3 s of dwell while the viewport sits inside that
+   slice. Filled segments stay filled; unfilled segments render as
+   a faint orange trace. No transitions, no animation — state is
+   painted synchronously when the page loads.
    ════════════════════════════════════════════════════════════════ */
 
 :root {
 	--cp-orange:        #f97316;
-	--cp-orange-soft:   color-mix(in srgb, #f97316 22%, transparent);
+	--cp-orange-dim:    color-mix(in srgb, #f97316 12%, transparent);
 	--cp-orange-glow:   rgba(249, 115, 22, 0.55);
 }
 
-/* ── 1a. per-tile right-edge progress bar ────────────────────── */
+/* ── 1a. per-tile right-edge segmented bar ──────────────────── */
 
 .course-tile > .tile-progress-bar {
 	position: absolute;
@@ -7605,17 +7599,28 @@ html.dark .topics-preset-fun {
 	top: 0;
 	bottom: 0;
 	width: 5px;
-	border-radius: 0 var(--mn-radius-md, 10px) var(--mn-radius-md, 10px) 0;
-	background: linear-gradient(
-		to bottom,
-		var(--cp-orange)      0%,
-		var(--cp-orange)      var(--progress, 0%),
-		var(--cp-orange-soft) var(--progress, 0%),
-		var(--cp-orange-soft) 100%
-	);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 3px;
+	padding: 8px 0;
+	box-sizing: border-box;
 	pointer-events: none;
 	z-index: 1;
-	transition: box-shadow 0.12s ease;
+	border-radius: 0 var(--mn-radius-md, 10px) var(--mn-radius-md, 10px) 0;
+	overflow: hidden;
+}
+
+.course-tile > .tile-progress-bar .seg {
+	display: block;
+	width: 100%;
+	height: 4px;
+	background: var(--cp-orange-dim);
+	border-radius: 1px;
+}
+
+.course-tile > .tile-progress-bar .seg.filled {
+	background: var(--cp-orange);
 }
 
 /* When the diagonal-light-ray effect is on, the strip should not
@@ -7635,8 +7640,6 @@ html.dark .topics-preset-fun {
 	font-size: 0.7rem;
 	font-weight: 700;
 	opacity: 0;
-	transform: translateY(3px);
-	transition: opacity 0.08s linear, transform 0.08s linear;
 	pointer-events: none;
 	z-index: 3;
 	font-variant-numeric: tabular-nums;
@@ -7647,30 +7650,19 @@ html.dark .topics-preset-fun {
 .course-tile:hover > .tile-progress-tip,
 .course-tile:focus-within > .tile-progress-tip {
 	opacity: 1;
-	transform: translateY(0);
 }
 
-/* ── visited tile state (no badge — the filled bar IS the state) */
+/* ── fully-seen tile (every segment filled) — glow + border tint */
 
-.course-tile.tile-visited > .tile-progress-bar {
-	background: var(--cp-orange);
-	box-shadow:
-		inset 0 0 0 1px color-mix(in srgb, #ffffff 30%, transparent),
-		0 0 10px var(--cp-orange-glow);
+.course-tile.tile-visited > .tile-progress-bar .seg.filled {
+	box-shadow: 0 0 6px var(--cp-orange-glow);
 }
 
 .course-tile.tile-visited {
 	border-color: color-mix(in srgb, var(--cp-orange) 35%, var(--mn-border));
 }
 
-/* ── reduced motion ──────────────────────────────────────────── */
-
-@media (prefers-reduced-motion: reduce) {
-	.course-tile > .tile-progress-tip   { transition: opacity 0.1s ease; transform: none; }
-	.course-tile:hover > .tile-progress-tip { transform: none; }
-}
-
-/* ── small phones: tighten the tooltip ──────────────────────── */
+/* ── small phones: tighten the tooltip and segments ──────────── */
 
 @media (max-width: 480px) {
 	.course-tile > .tile-progress-tip {
@@ -7678,6 +7670,15 @@ html.dark .topics-preset-fun {
 		padding: 1px 6px;
 		bottom: 8px;
 		right: 14px;
+	}
+
+	.course-tile > .tile-progress-bar {
+		gap: 2px;
+		padding: 6px 0;
+	}
+
+	.course-tile > .tile-progress-bar .seg {
+		height: 3px;
 	}
 }
 
