@@ -517,16 +517,20 @@
 			nextBtn.style.display = gallery.length > 1 ? '' : 'none';
 		}
 
-		function open(targetImg) {
-			/* build the gallery from the current .md content so prev/next
-			   follows the actual reading order, not DOM insertion order. */
-			const md = targetImg.closest('.md') || document;
-			gallery = Array.from(md.querySelectorAll('img')).filter(function (im) {
+		function collectGallery(root) {
+			return Array.from(root.querySelectorAll('img')).filter(function (im) {
 				if (im.naturalWidth && im.naturalWidth < 50) return false;
 				if (im.closest('button, a.btn, svg')) return false;
 				if (im.matches('[class*="emoji"], .no-zoom')) return false;
 				return true;
 			});
+		}
+		function open(targetImg) {
+			/* build the gallery from the entire article body (#contents)
+			   so prev/next follows the actual reading order across all
+			   sections, not just the nearest .md wrapper. */
+			const root = document.getElementById('contents') || document.body || document;
+			gallery = collectGallery(root);
 			idx = gallery.indexOf(targetImg);
 			if (idx < 0) {
 				gallery = [targetImg];
@@ -584,11 +588,19 @@
 		function lightboxClickHandler(ev) {
 			const t = ev.target;
 			if (!(t instanceof Element)) return;
-			// the target may be the img, or a wrapper around it
-			const img = t.tagName === 'IMG' ? t : t.closest('img');
+			// the target may be the img, a wrapper, or even a link inside the
+			// surrounding figcaption (e.g. a citation link to the figure's source).
+			// `closest('img')` only walks ancestors, so for citation links inside
+			// a figcaption the IMG (a sibling of figcaption inside figure) would
+			// be missed — fall back to the figure's own img.
+			let img = t.tagName === 'IMG' ? t : t.closest('img');
+			if (!img) {
+				const fig = t.closest('figure');
+				if (fig) img = fig.querySelector('img');
+			}
 			if (!img) return;
 			// only inside the article body, not in drawer / header / footer
-			if (!img.closest('.md')) return;
+			if (!img.closest('#contents')) return;
 			// user is selecting text — don't hijack
 			const sel = window.getSelection && window.getSelection();
 			if (sel && sel.toString().length > 0) return;
