@@ -165,7 +165,6 @@ function load_base_js () {
 	js("helper");
 	js("master_vis");
 	js("loader");
-	js("progress_tracker");
 	js("three.min");
 	js("search");
 	js("topics");

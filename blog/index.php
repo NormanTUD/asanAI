@@ -25,6 +25,7 @@
 	</script>
 	<?php load_base_js(); ?>
 	<?php js("search"); ?>
+	<?php js("progress_tracker"); ?>
 	<?php include_once("mobile-loader.php"); ?>
 </head>
 <body>
