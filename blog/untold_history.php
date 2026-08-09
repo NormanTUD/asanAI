@@ -368,6 +368,11 @@ The leap to the **microprocessor** arrived in 1971 with the \cite[Intel 4004]{in
 
 The earliest electronic computers used **delay-line memory**, first implemented in the \cite[EDSAC]{edsac1949} (1949). An alternative approach, the **Williams tube** (1947), developed by \cite[Freddie Williams and Tom Kilburn]{williamstube} at the University of Manchester, stored bits as charged dots on the face of a cathode ray tube, making it the first form of truly random-access electronic memory. It was used in the Manchester Baby (1948), the world's first stored-program computer to run a program, and later in machines like the IBM 701. However, it was unreliable and required constant refreshing of the display. The breakthrough in reliability came with **magnetic-core memory**, developed by \cite[An Wang]{wangcore} (1949) and Jay Forrester at MIT, which dominated from the 1950s through the early 1970s.
 
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="williams_tube.jpg" alt="A Williams-Kilburn tube on display: a small cathode ray tube with its deflection circuitry visible behind it" />
+    <figcaption class="md">The \citealternativetitle{williams_tube}: a Williams-Kilburn cathode-ray tube with its associated read/write electronics. Each bit was stored as a tiny patch of charge on the phosphor screen, the first truly random-access electronic memory.</figcaption>
+</figure>
+
 The modern era began when \cite[Robert Dennard]{dennard1968} at IBM invented **DRAM** (1966), storing each bit as a charge in a capacitor. The \cite[Intel 1103]{intel1103} (1970), holding 1 kilobit, rapidly displaced core memory. DRAM capacity has followed its own exponential trajectory: 1 Kb (1970), 1 Mb (1986), 1 Gb (early 2000s), to modern DDR5 modules offering 64 GB per DIMM at bandwidths exceeding 50 GB/s. For AI workloads, memory bandwidth is often the binding constraint: **High Bandwidth Memory (HBM)**, developed by \cite[AMD and SK Hynix]{hbm2013}, provides the necessary throughput for GPU-based training.
 
 ### The Motherboard
@@ -631,6 +636,11 @@ In the spring of 1978, **Dan Bricklin**, a Harvard Business School student and f
 
 He partnered with **Bob Frankston**, a skilled MIT programmer, and together they created **VisiCalc** (Visible Calculator), released in October 1979 for the **Apple II**.
 
+<figure>
+    <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="visicalc.jpg" alt="VisiCalc running on an Apple II computer, showing the grid of cells" />
+    <figcaption class="md">\citealternativetitle{visicalc}: the original killer application. Released in 1979 for the Apple II, it was the first electronic spreadsheet and convinced a generation of business managers to buy a personal computer.</figcaption>
+</figure>
+
 ### Why VisiCalc Was Revolutionary
 
 | Feature | Significance |
@@ -831,6 +841,11 @@ All these developments, even though they were focussed for the normal user, are 
 While Leibniz's Stepped Reckoner proved that mechanical calculation was possible, it remained a fragile prototype, prone to jamming and never reliable enough for daily use. The gap between theoretical proof-of-concept and practical tool was bridged over a century later by **Charles Xavier Thomas de Colmar**, a French inventor and entrepreneur.
 
 In \citeyear{thomasdcolmar1820}, Thomas de Colmar patented the **Arithmometer**, a calculating machine based on Leibniz's stepped drum mechanism. What distinguished it from all prior devices was not mathematical novelty but *engineering reliability and commercial viability*. After decades of refinement, the Arithmometer entered mass production in the 1850s, becoming the **first commercially successful mechanical calculator** and the first to be produced in industrial quantities.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="arithmometer_thomas.jpg" alt="A brass Arithmometer by Thomas de Colmar, c. 1850, displayed at the Musée des Arts et Métiers in Paris, with its sliding carriage and result register visible" />
+    <figcaption class="md">\citealternativetitle{arithmometer_thomas}: the Arithmometer of Thomas de Colmar, c. 1850, at the Musée des Arts et Métiers in Paris. Based on Leibniz's stepped drum, this brass device was the first calculator reliable enough to be mass-produced and sold to banks, insurers and governments.</figcaption>
+</figure>
 
 The machine could perform addition, subtraction, multiplication, and division, and was sold to banks, insurance companies, and government offices across Europe. It remained in production for over 90 years, with various manufacturers producing improved models well into the 20th century.
 
