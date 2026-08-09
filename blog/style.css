@@ -7602,8 +7602,8 @@ html.dark .topics-preset-fun {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	gap: 3px;
-	padding: 8px 0;
+	gap: 1px;
+	padding: 6px 0;
 	box-sizing: border-box;
 	pointer-events: none;
 	z-index: 1;
@@ -7616,7 +7616,7 @@ html.dark .topics-preset-fun {
 	width: 100%;
 	height: 4px;
 	background: var(--cp-orange-dim);
-	border-radius: 1px;
+	border-radius: 0;
 }
 
 .course-tile > .tile-progress-bar .seg.filled {
@@ -7673,8 +7673,8 @@ html.dark .topics-preset-fun {
 	}
 
 	.course-tile > .tile-progress-bar {
-		gap: 2px;
-		padding: 6px 0;
+		gap: 1px;
+		padding: 5px 0;
 	}
 
 	.course-tile > .tile-progress-bar .seg {

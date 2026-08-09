@@ -2,7 +2,8 @@
    COURSE PROGRESS — segmented per-tile "where I've been" bar
    (orange #f97316). Active on every page; on the homepage it just
    paints the bars from saved state, on a subpage it watches the
-   scroll position and accumulates dwell time per segment.
+   scroll position and remembers the maximum scroll percentage the
+   user has reached.
 
    Each .course-tile on the homepage gets two children inserted by
    this script:
@@ -10,20 +11,20 @@
      • .tile-progress-bar  — 5 px column on the RIGHT edge with N
                              stacked "segments". Each segment = one
                              equal slice of the linked page's scroll
-                             range (10 by default). Filled segments
-                             are orange, the rest are a faint
-                             orange trace. A segment is marked
-                             filled only after ≥3 s of dwell while
-                             the viewport sits inside that slice.
+                             range (10 by default). A segment is
+                             filled iff the user has scrolled past
+                             the top of that slice at some point.
+                             Filled segments are solid orange, the
+                             rest are a faint orange trace.
                              No transitions, no animation — the
                              state is rendered synchronously on load.
 
      • .tile-progress-tip  — tiny "60 %" pill, bottom-right,
                              appears on hover. Shows the share of
-                             segments that have been filled so far.
+                             segments that have been filled.
 
-   State lives in a single localStorage key `course_progress_v2`:
-     { tiles: { [slug]: { segments: [bool;10], lastSeen } } }
+   State lives in a single localStorage key `course_progress_v3`:
+     { tiles: { [slug]: { maxScrollPct, lastSeen } } }
 
    A reset command is logged to the console on every page load so
    power-users can wipe history from devtools without grepping.
@@ -32,12 +33,12 @@
 (function () {
 	'use strict';
 
-	const STORAGE_KEY          = 'course_progress_v2';
-	const STORAGE_VERSION      = 2;
-	const DWELL_TIME_MS        = 3000;
+	const STORAGE_KEY          = 'course_progress_v3';
+	const STORAGE_VERSION      = 3;
 	const SAVE_DEBOUNCE_MS     = 300;
-	const TICK_DT_CAP_MS       = 100;
+	const SCROLL_THROTTLE_MS   = 100;
 	const TOTAL_SEGMENTS       = 10;
+	const SEGMENT_HEIGHT_PCT   = 100 / TOTAL_SEGMENTS;
 
 	function defaultState() {
 		return {
@@ -47,27 +48,27 @@
 		};
 	}
 
-	function makeSegments(value) {
-		const v = !!value;
-		const arr = new Array(TOTAL_SEGMENTS);
-		for (let i = 0; i < TOTAL_SEGMENTS; i++) arr[i] = v;
-		return arr;
-	}
-
 	function normalizeTile(raw) {
-		const segments = makeSegments(false);
-		if (raw && typeof raw === 'object' && Array.isArray(raw.segments)) {
-			for (let i = 0; i < Math.min(raw.segments.length, TOTAL_SEGMENTS); i++) {
-				segments[i] = raw.segments[i] === true;
+		let maxScrollPct = 0;
+		if (raw && typeof raw === 'object') {
+			if (typeof raw.maxScrollPct === 'number' && isFinite(raw.maxScrollPct)) {
+				maxScrollPct = Math.min(100, Math.max(0, raw.maxScrollPct));
+			} else if (Array.isArray(raw.segments)) {
+				/* Migrate from v2: segments[0..9] of booleans → maxScrollPct */
+				let trueCount = 0;
+				for (let i = 0; i < Math.min(raw.segments.length, TOTAL_SEGMENTS); i++) {
+					if (raw.segments[i] === true) trueCount++;
+				}
+				maxScrollPct = trueCount * SEGMENT_HEIGHT_PCT;
 			}
 		}
 		const lastSeen = raw && isFinite(Number(raw.lastSeen)) && Number(raw.lastSeen) > 0
 			? Number(raw.lastSeen)
 			: 0;
-		return { segments: segments, lastSeen: lastSeen };
+		return { maxScrollPct: maxScrollPct, lastSeen: lastSeen };
 	}
 
-	let state   = defaultState();
+	let state     = defaultState();
 	let saveTimer = null;
 
 	function loadState() {
@@ -146,7 +147,6 @@
 			bar = buildBar();
 			tile.appendChild(bar);
 		} else if (bar.children.length !== TOTAL_SEGMENTS) {
-			/* legacy / malformed bar — rebuild segment children */
 			bar.innerHTML = '';
 			for (let i = 0; i < TOTAL_SEGMENTS; i++) {
 				const seg = document.createElement('span');
@@ -161,23 +161,26 @@
 			tile.appendChild(tip);
 		}
 
-		const segs = (ts && Array.isArray(ts.segments)) ? ts.segments : makeSegments(false);
+		const maxScroll  = (ts && typeof ts.maxScrollPct === 'number') ? ts.maxScrollPct : 0;
+		const segsFilled = Math.min(
+			TOTAL_SEGMENTS,
+			Math.max(0, Math.floor(maxScroll / SEGMENT_HEIGHT_PCT))
+		);
+
 		const segElements = bar.children;
-		let seenCount = 0;
 		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
-			const isFilled = !!segs[i];
+			const isFilled = i < segsFilled;
 			const el = segElements[i];
 			if (el) {
 				if (isFilled) el.classList.add('filled');
 				else          el.classList.remove('filled');
 			}
-			if (isFilled) seenCount++;
 		}
 
-		const pct = Math.round((seenCount / TOTAL_SEGMENTS) * 100);
+		const pct = Math.round(maxScroll);
 		tip.textContent = pct + '%';
 
-		if (seenCount === TOTAL_SEGMENTS) {
+		if (segsFilled === TOTAL_SEGMENTS) {
 			tile.classList.add('tile-visited');
 		} else {
 			tile.classList.remove('tile-visited');
@@ -198,22 +201,13 @@
 
 		let ts = state.tiles[slug];
 		if (!ts) {
-			ts = { segments: makeSegments(false), lastSeen: 0 };
+			ts = { maxScrollPct: 0, lastSeen: 0 };
 			state.tiles[slug] = ts;
 		}
-		if (!Array.isArray(ts.segments) || ts.segments.length !== TOTAL_SEGMENTS) {
-			ts.segments = makeSegments(false);
+		if (typeof ts.maxScrollPct !== 'number' || !isFinite(ts.maxScrollPct)) {
+			ts.maxScrollPct = 0;
 		}
 
-		/* Per-segment dwell accumulator, in-memory only.
-		   Once a segment is filled we stop counting for it. */
-		const segmentDwellMs = new Array(TOTAL_SEGMENTS).fill(0);
-		const segmentDone    = new Array(TOTAL_SEGMENTS).fill(false);
-		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
-			segmentDone[i] = ts.segments[i] === true;
-		}
-
-		let lastTick     = performance.now();
 		let dirty        = false;
 		let localSaveTmr = null;
 
@@ -225,36 +219,39 @@
 			saveState();
 		}
 
-		function tick() {
-			const now = performance.now();
-			const dt  = (isFinite(now) && isFinite(lastTick))
-				? Math.min(Math.max(0, now - lastTick), TICK_DT_CAP_MS)
-				: 0;
-			lastTick = now;
-
-			if (dt > 0 && document.visibilityState === 'visible' && !document.hidden) {
-				const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-				if (docHeight > 0) {
-					const scrollPct = Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100));
-					const segIdx = Math.min(TOTAL_SEGMENTS - 1, Math.floor((scrollPct / 100) * TOTAL_SEGMENTS));
-
-					if (!segmentDone[segIdx]) {
-						segmentDwellMs[segIdx] += dt;
-						if (segmentDwellMs[segIdx] >= DWELL_TIME_MS) {
-							segmentDone[segIdx] = true;
-							ts.segments[segIdx] = true;
-							dirty = true;
-							if (localSaveTmr) clearTimeout(localSaveTmr);
-							localSaveTmr = setTimeout(flush, SAVE_DEBOUNCE_MS);
-						}
-					}
+		function updateScroll() {
+			const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+			if (docHeight <= 0) {
+				/* Page fits in viewport — the entire page is "seen". */
+				if (ts.maxScrollPct < 100) {
+					ts.maxScrollPct = 100;
+					dirty = true;
+					if (localSaveTmr) clearTimeout(localSaveTmr);
+					localSaveTmr = setTimeout(flush, SAVE_DEBOUNCE_MS);
 				}
+				return;
 			}
-
-			requestAnimationFrame(tick);
+			const scrollPct = Math.min(100, Math.max(0, (window.scrollY / docHeight) * 100));
+			if (scrollPct > ts.maxScrollPct + 0.5) {
+				ts.maxScrollPct = scrollPct;
+				dirty = true;
+				if (localSaveTmr) clearTimeout(localSaveTmr);
+				localSaveTmr = setTimeout(flush, SAVE_DEBOUNCE_MS);
+			}
 		}
 
-		requestAnimationFrame(tick);
+		let scrollTickTimer = null;
+		function onScroll() {
+			if (scrollTickTimer) return;
+			scrollTickTimer = setTimeout(function () {
+				scrollTickTimer = null;
+				updateScroll();
+			}, SCROLL_THROTTLE_MS);
+		}
+
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', onScroll, { passive: true });
+		updateScroll(); /* initial check covers reload-mid-page case */
 	}
 
 	function logResetHint() {
