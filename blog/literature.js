@@ -4915,5 +4915,13 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2026,
 		alternativetitle: "Micral N"
+	},
+	"hottbook": {
+		url: "http://homotopytypetheory.org/book/",
+		title: "Homotopy Type Theory: Univalent Foundations of Mathematics",
+		author: "The Univalent Foundations Program",
+		publisher: "Institute for Advanced Study",
+		year: 2013,
+		alternativetitle: "HoTT Book"
 	}
 };
