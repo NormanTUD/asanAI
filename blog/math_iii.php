@@ -198,6 +198,81 @@ In most of this textbook we write types informally ("$x$ is a vector, $w$ is a m
 <div class="optional md" data-headline="Type Theory and Homotopy Type Theory (for the curious)">
 **Type theory** is a foundation for mathematics where the basic objects are *types* (think: sets with structure) and the basic maps are *functions* between them. Most modern proof assistants (Lean, Coq, Agda) are built on type theory for the same reason Tensor notation is built on tensors: once you commit, the compiler / kernel checks every step.
 
+### What a type actually is
+
+A **type** is, at minimum, *a collection of things* — often just a set. Sometimes there is an additional *rule for how to construct its inhabitants* (and how to tell them apart), but that rule is optional: `bool` is perfectly fine as the bare set $\{\texttt{True}, \texttt{False}\}$, while $\mathbb{R}^d$ additionally comes with the linear-algebraic operations of addition and scaling. The simplest types are familiar from every programming language:
+
+* $\texttt{int}$ — the whole numbers: $\{\dots, -2, -1, 0, 1, 2, \dots\}$
+* $\texttt{bool}$ — exactly two values: $\{\texttt{True}, \texttt{False}\}$
+* $\texttt{string}$ — finite sequences of characters
+* $\texttt{float}$ — the IEEE-754 reals (not the real $\mathbb{R}$ of pure maths; this distinction matters)
+* $\mathbb{R}^d$ — the $d$-dimensional vectors, i.e. functions $\{1,\dots,d\} \to \mathbb{R}$
+
+But types need not be "primitive" — they can be *anything* with a rule for membership. Trees, graphs, proofs, game states, regular expressions, probability distributions, even *other types*. Types can also be *built* from other types (the type constructors below). This is the same freedom you have in any typed programming language, just made explicit.
+
+A **term** is something that *has* a type. We write $x : A$ for "$x$ is a term of type $A$". So $42 : \texttt{int}$, $\texttt{True} : \texttt{bool}$, and a token embedding $\vec{e}_{4181} : \mathbb{R}^{768}$.
+
+### Functions as types
+
+The key idea: **functions are also typed**. If $A$ and $B$ are types, the type $A \to B$ ("$A$ arrow $B$") is *the type of functions from $A$ to $B$*. A term $f : A \to B$ is a rule that turns any $a : A$ into an $f(a) : B$.
+
+The canonical example — and the simplest piece of every neural network — is the **is-even** test:
+
+$$\texttt{isEven} : \texttt{int} \rightarrow \texttt{bool}$$
+
+with the rule $\texttt{isEven}(n) = \texttt{True}$ iff $n \equiv 0 \pmod{2}$. In code:
+
+```python
+is_even : int → bool
+is_even(n) = (n % 2 == 0)
+```
+
+The type signature `int → bool` is doing real work: it is a *promise to the compiler* that no matter what `int` you pass in, you get back a `bool` and nothing else. The compiler can now refuse to let you write `is_even("hello")` — `"hello"` is not an `int`, so the function is simply not applicable.
+
+Now translate this to the textbook:
+
+* The **ReLU** activation: $\text{ReLU} : \mathbb{R} \to \mathbb{R}_{\geq 0}$
+* The **sigmoid** activation: $\sigma : \mathbb{R} \to (0,1)$
+* The **softmax** (see `math_ii.php`): $\text{softmax} : \mathbb{R}^K \to \Delta^{K-1}$, where $\Delta^{K-1}$ is the probability simplex — *the type of probability distributions over $K$ outcomes*
+* A **linear layer** with weight $W$ and bias $b$: $L_{W,b} : \mathbb{R}^{d_\text{in}} \to \mathbb{R}^{d_\text{out}}$
+* The **loss function** in this very chapter: $\mathcal{L} : \Theta \to \mathbb{R}_+$ (parameters to non-negative reals)
+* A **token embedding lookup**: $E : \texttt{int} \to \mathbb{R}^d$ — exactly the same shape as `isEven`, just a different codomain
+
+Once you see every function in ML as "$A \to B$", a lot of design choices stop looking arbitrary. A *classifier head* is the composition of a feature extractor $\mathbb{R}^{d_\text{in}} \to \mathbb{R}^{d_\text{hidden}}$ with a final layer $\mathbb{R}^{d_\text{hidden}} \to \Delta^{K-1}$. A *diffusion model* (see the Diffusion chapter) is a function from $(\text{image}, \text{noise-level})$ to the denoised image — type $\mathbb{R}^{H \times W \times 3} \times [0,1] \to \mathbb{R}^{H \times W \times 3}$.
+
+### Type constructors
+
+You can build new types from old with **type constructors**:
+
+* **Product** $A \times B$: pairs $(a, b)$ with $a : A$ and $b : B$. An RGB image is $\mathbb{R}^{H \times W} \times \mathbb{R}^{H \times W} \times \mathbb{R}^{H \times W}$.
+
+    The name *product* is literal: the type $A \times B$ has exactly $|A| \cdot |B|$ inhabitants — one pair for every combination of an $A$-thing and a $B$-thing. If $A = \{\texttt{A}, \texttt{B}, \texttt{C}\}$ and $B = \texttt{bool} = \{\texttt{true}, \texttt{false}\}$, then $A \times B$ is the $3 \times 2$ table
+
+    | | $\texttt{true}$ | $\texttt{false}$ |
+    |---|---|---|
+    | $\texttt{A}$ | $(\texttt{A}, \texttt{true})$ | $(\texttt{A}, \texttt{false})$ |
+    | $\texttt{B}$ | $(\texttt{B}, \texttt{true})$ | $(\texttt{B}, \texttt{false})$ |
+    | $\texttt{C}$ | $(\texttt{C}, \texttt{true})$ | $(\texttt{C}, \texttt{false})$ |
+
+    — six inhabitants, which is $|A| \cdot |B| = 3 \cdot 2$. The same rule extends to three or more factors: an RGB image $\mathbb{R}^H \times \mathbb{R}^W \times \mathbb{R}^3$ has $|\mathbb{R}|^{H \cdot W \cdot 3}$ inhabitants.
+
+* **Sum** $A + B$: tagged unions — *either* an $A$ *or* a $B$, with a tag telling you which. The result of a parser is a Sum: `ParseSuccess(string) + ParseFailure(error)`. Cardinality: $|A| + |B|$.
+* **Function space** $A \to B$: already covered. Cardinality: $|B|^{|A|}$ — for every one of the $|A|$ inputs you pick one of the $|B|$ outputs, and there are $|B|^{|A|}$ such functions. A function `int → bool` has $2^{|\mathbb{Z}|}$ inhabitants (one for each even/odd rule), which is a *lot*.
+* **List** $\texttt{List}(A)$: finite sequences of $A$'s. A batch of token sequences is $\texttt{List}(\mathbb{R}^{L \times d})$.
+* **Dependent types** $x : A \vdash B(x)$: the type $B$ *depends on the value* $x$. "A vector of length $n$" is a dependent type — the length is part of the type, so you cannot pass a length-3 vector to a function expecting length-4. This is the level at which proof assistants really earn their keep.
+
+These four constructors are essentially all you need. Most type theories add a few more (e.g. $\Sigma$-types for dependent pairs, identity types for equality — see below) but they are all variants on the same four ideas.
+
+### Currying: one-argument at a time
+
+Every multi-argument function can be rewritten as a chain of one-argument functions. This trick is named after Haskell Curry and is the default in most typed languages:
+
+$$f(a, b, c) \quad\equiv\quad f(a)(b)(c) \quad\equiv\quad f : A \to B \to C$$
+
+with the convention that $\to$ **associates to the right**, so $A \to B \to C$ means $A \to (B \to C)$. Concretely, a function $f : \texttt{int} \to \texttt{bool} \to \texttt{string}$ is "give me an `int`, and I'll hand you back a function from `bool` to `string`." You call it as `f(42)`, get back a function, and call *that* with `true` or `false`.
+
+This is not just a notational trick. It is what makes **partial application** and **point-free style** possible, and it is why every ML function with several hyperparameters can be written as a pipeline of small composable pieces. A transformer block $T$ is $T : \mathbb{R}^{L \times d} \to \mathbb{R}^{L \times d}$; multi-layer perceptrons are just nested $\to$'s of vector spaces.
+
 **Homotopy Type Theory (HoTT)**, developed by the \citetitle{hottbook} (\citeyear{hottbook}), pushes this further. The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*. Two things are equal not just when a binary "=" returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.
 
 This matters because the **univalence axiom** says: $(A \simeq B) \simeq (A = B)$, "equality of types *is* equivalence of types." Two mathematical structures are identical precisely when you can translate between them without losing **structural** information. This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.
@@ -209,7 +284,7 @@ This matters because the **univalence axiom** says: $(A \simeq B) \simeq (A = B)
 - A **theorem prover checking an LLM's proof** (see the <a href="symbolic_ai">Symbolic AI chapter</a> and the <a href="reasoning">Reasoning chapter</a>) is a function between two types — and HoTT makes the *equality* of the prover's output with the formal statement into something you can *transport structure along*, not just check with a boolean.
 - **Constitutional AI** and reward modeling become functions whose codomain is *preferences*, a type with structure (transitivity, asymmetry) that HoTT handles cleanly.
 
-You do not need HoTT to read this book. But once you have the picture in your head — *types are spaces, proofs are paths, equality is equivalence* — you will start spotting it everywhere. And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.
+You do not need HoTT to read this book. But once you have the picture in your head — *types are spaces, proofs are paths, equality is equivalence* — you will start spotting it everywhere in deep learning. And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.
 </div>
 
 <script>
