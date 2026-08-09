@@ -27,8 +27,8 @@ But a single circle (a single frequency) has too many ambiguities. So the networ
 
 <div class="image-row md">
 	<figure>
-		<img src="wave_interference.png" alt="Two in-phase waves adding up to constructive interference (left) and two out-of-phase waves cancelling (right)" />
-		<figcaption class="md">\citealternativetitle{wave_interference_diagram}. <strong>Left:</strong> two in-phase waves add point-by-point, producing a wave with double the amplitude (constructive interference). <strong>Right:</strong> two waves shifted by half a wavelength (180°) cancel completely (destructive interference). The trained Transformer uses exactly this trick: it picks frequencies where the cosine is $+1$ at the right answer and lower everywhere else, so only the correct answer survives.</figcaption>
+		<img src="wave_interference.png" alt="Left: two in-phase sine waves adding to a wave with double amplitude (constructive interference). Right: two 180°-out-of-phase waves cancelling to zero (destructive interference)." />
+		<figcaption class="md">\citealternativetitle{wave_interference_diagram}. <strong>Left (constructive):</strong> two in-phase waves (blue + orange) add point-by-point, producing a sum (green) with double the amplitude. <strong>Right (destructive):</strong> two waves shifted by 180° cancel completely, so the sum is zero everywhere. The trained Transformer uses the left case: it picks frequencies where $\cos(\omega_k \cdot (a+b-c)) = 1$ at the correct answer $c = (a+b) \bmod P$ and lower everywhere else, so only the right answer lights up.</figcaption>
 	</figure>
 </div>
 

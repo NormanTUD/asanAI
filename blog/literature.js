@@ -5144,11 +5144,10 @@ window.bibData = {
 		alternativetitle: "Diagram of an artificial neural network with input, hidden, and output layers"
 	},
 	"wave_interference_diagram": {
-		url: "https://commons.wikimedia.org/wiki/File:Interference_of_two_waves.svg",
-		title: "Interference of Two Waves",
-		author: "Wjh31",
-		year: 2010,
-		alternativetitle: "Two in-phase waves adding up to constructive interference with double amplitude (left); two 180°-out-of-phase waves cancelling via destructive interference (right)"
+		title: "Constructive and Destructive Wave Interference",
+		author: "Self-generated (matplotlib)",
+		year: 2026,
+		alternativetitle: "Left: two in-phase waves adding to a wave with double amplitude (constructive). Right: two 180°-out-of-phase waves cancelling to zero (destructive)."
 	},
 	"alphago_leesedol_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg",
