@@ -156,6 +156,11 @@
 	flex: 1 1 auto;
 	min-height: 0;
 
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	align-content: stretch;
+
 	padding: 4px 12px 8px;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -163,6 +168,13 @@
 	background: transparent;
 
 	scrollbar-width: thin;
+}
+
+/* every direct child (group, separator, wrapper) keeps its natural
+   width but stretches to the full panel height, so the group titles
+   anchored at each group's bottom share a single bottom edge */
+#ribbon .ui-tabs-panel > div {
+	flex: 0 0 auto;
 }
 
 #ribbon .ui-tabs-panel::-webkit-scrollbar {
@@ -413,13 +425,20 @@
 /* these wrappers are block-level in the PHP; float them so their
    groups sit inline with the other ribbon groups instead of taking
    a full row (a floated wrapper is a BFC, so it also contains the
-   floated groups inside it instead of collapsing to zero height) */
+   floated groups inside it instead of collapsing to zero height).
+   They are also flex containers so their inner groups stretch to
+   the full panel height like every other group. Ribbon-groups that
+   carry the same classes (e.g. .ribbon-group.expert_mode_only) are
+   excluded so they keep their plain block layout. */
 #image_resize_dimensions,
 #data_plotter,
-#ribbon .ui-tabs-panel > div.expert_mode_only,
-#ribbon .ui-tabs-panel > div.only_when_multiple_webcams,
-#visualization_ribbon > div:first-child {
+#ribbon .ui-tabs-panel > div.expert_mode_only:not(.ribbon-group),
+#ribbon .ui-tabs-panel > div.only_when_multiple_webcams:not(.ribbon-group),
+#visualization_ribbon > div:first-child,
+#logo_ribbon {
 	float: left;
+	display: flex;
+	align-items: stretch;
 }
 
 #asanai_main_logo {

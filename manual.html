@@ -446,26 +446,26 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			Tensors have an arbitrary number of dimensions.
 <br>
-			An image, for example, consists of 3 channels, one for red, green and blue, each one being a matrix (or submatrix of the image tensor). If the image is 3x3 pixels, the image as a tensor would look like this:
+			An image, for example, consists of 3 channels, one for red, green and blue, each one being a 2D slice of the image tensor. If the image is 3x3 pixels, the image as a tensor (using the channels-last convention used by TensorFlow.js, where the shape is <span class="temml_me">[\text{height}, \text{width}, \text{channels}]</span>) would look like this:
 <br>
 			<div class="temml_me" data-display="1">
-				\text{Image} = \begin{pmatrix}
-					\text{Red:} \begin{pmatrix}
+				\text{Image}_{[3,3,3]} = \left[
+					\begin{pmatrix}
 						255 & 0 & 0 \\
 						0 & 128 & 0 \\
 						0 & 0 & 64
-					\end{pmatrix},
-					\text{Green:} \begin{pmatrix}
+					\end{pmatrix}_{\text{Red}},
+					\begin{pmatrix}
 						255 & 0 & 0 \\
 						0 & 128 & 0 \\
 						0 & 0 & 64
-					\end{pmatrix},
-					\text{Blue:} \begin{pmatrix}
+					\end{pmatrix}_{\text{Green}},
+					\begin{pmatrix}
 						255 & 0 & 0 \\
 						0 & 128 & 0 \\
 						0 & 0 & 64
-					\end{pmatrix}
-				\end{pmatrix}
+					\end{pmatrix}_{\text{Blue}}
+				\right]
 			</div>
 <br>
 			The three channels together give us this total image:
@@ -541,10 +541,11 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			The description of the size of a tensor is called a shape. 			A two-by-two-Matrix would have the shape <span class="temml_me"> [2, 2] </span>. The image above would have the shape <span class="temml_me"> [3, 3, 3] </span>, because its 3x3 pixels and has three channels. An image with 64x64 pixel and 3 channels would be <span class="temml_me"> [64, 64, 3] </span>.
 <br>
 			<h3>One-Hot-Encoding</h3>
-			One-Hot-Encoding is used to symbolize percentages of values of categories. For example, if you want to differentiate between cat and dog, the output vector
-			could be <span class="temml_me"> [\text{Percentage Cat}, \text{Percentage Dog}] </span>, which, in total, sums up to 1 (100%).
+			One-Hot-Encoding is used to represent a categorical value as a binary indicator vector: exactly one entry is 1 (the chosen category) and all others are 0. If the vector is afterwards passed through a <a href="#SoftMax">SoftMax</a>-activation-function, the resulting values can be interpreted as percentages that sum up to 1 (100%), so the network can express a soft probability distribution over categories.
 <br>
-			For more categories, you'd add another entry to that column vector, like <span class="temml_me"> [\text{Percentage Cat}, \text{Percentage Dog}, \text{Percentage Human} ] </span>, all of which, again, sum up to 1. This can be achieved with the <a href="#SoftMax">SoftMax</a>-activation-function.
+			For example, if you want to differentiate between cat and dog, the one-hot-encoded output vector could be <span class="temml_me"> [\text{Cat}, \text{Dog}] \in \{0, 1\}^2 </span>, e.g. <span class="temml_me"> [1, 0] </span> for cat.
+<br>
+			For more categories, you'd add another entry to that vector, like <span class="temml_me"> [\text{Cat}, \text{Dog}, \text{Human}] </span>.
 <br>
 			<div class="interactive-demo" id="onehot_demo">
 				<label>Interactive One-Hot-Encoding: </label>
@@ -624,7 +625,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 <br>
 			For each point, while training, a loss is determined. How exactly this is done is dependent on the optimizer chosen (see <a href="#Optimizers">Optimizers</a> for more details).
 <br>
-			After each <a href="#Batch-Size">Batch</a>, the (trainable) weights and biases are adjusted to to better fit the training data and to minimize the loss. The network structure is not altered while training.
+			After each <a href="#Batch-Size">Batch</a>, the (trainable) weights and biases are adjusted to better fit the training data and to minimize the loss. The network structure is not altered while training.
 <br>
 			<h4>Batch-Size</h4>
 			While training, you (most probably) cannot hold all the data at once in memory. So the data is splitted into so-called batches. A batch is a subset of the <span class="temml_me"> X </span>-input-tensor and the <span class="temml_me"> Y </span>-output-tensor, such that the inputs are still correctly assigned. Imagine you have 1000 input values that correspond to 1000 output values, and having batch-size 3, then the first batch may be:
@@ -1024,7 +1025,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h2>Convolutional Layers</h2>
 			<h3>convNd (conv1d, conv2d)</h3>
 			<div id="conv2d_example"></div>
-			Convolutions slide a matrix, called kernel or filter, with width <span class="temml_me">x</span> and height <span class="temml_me">y</span> over the data (by <a href="#Strides">strides steps</a>), and, for each submatrix of the size <span class="temml_me">x</span> by <span class="temml_me">y</span>, multiplying each submatrix with a so-called kernel or filter of a certain size. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
+			Convolutions slide a matrix, called kernel or filter, with width <span class="temml_me">x</span> and height <span class="temml_me">y</span> over the data (by <a href="#Strides">strides steps</a>). At each position, the element-wise product of the kernel and the underlying submatrix is taken and summed into a single scalar value. This <a href="#Dimensionality_Reduction">reduces dimensionality</a> and preserves the general activation strength at certain submatrices.
 <br>
 			Example:
 <br>
@@ -1041,46 +1042,34 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			\end{pmatrix}
 			</span>.
 <br>
-			The first submatrix (without <a href="#Padding">Padding</a>, because it is not needed here for the Kernel fits perfectly when <a href="#Strides">strides</a> = 1) is <span class="temml_me"> S_1 = \begin{pmatrix}
+			With no <a href="#Padding">Padding</a> and <a href="#Strides">strides</a> = 1, the kernel slides over every <span class="temml_me">2\times 2</span> submatrix, producing a single scalar per position. The result is a <span class="temml_me">3\times 3</span> output (since <span class="temml_me">(4-2+1)\times(4-2+1)=3\times 3</span>).
+<br>
+			The first submatrix (top-left) is <span class="temml_me"> S_1 = \begin{pmatrix}
 				10 & 8 \\
 				4 & 2
-				\end{pmatrix} </span>. <span class="temml_me"> S_1 \cdot K = \begin{pmatrix}
-					10 & 8 \\
-					4 & 2
-				\end{pmatrix} \cdot \begin{pmatrix}
-				1 & -1 \\
-				0 & 2
-				\end{pmatrix} = \begin{pmatrix}
-					10 & 6 \\
-					4 & 0
-				\end{pmatrix}
-			</span>.
+				\end{pmatrix} </span>. The convolution at this position is the element-wise product with <span class="temml_me">K</span>, summed: <span class="temml_me"> S_1 \odot K = 10\cdot 1 + 8\cdot(-1) + 4\cdot 0 + 2\cdot 2 = 6 </span>.
 <br>
-			The second submatrix is then <span class="temml_me"> S_2 = \begin{pmatrix}
-				1 & 4 \\
-				14 & 5
-				\end{pmatrix} </span>, which, multiplied by <span class="temml_me">K</span>, is <span class="temml_me"> \begin{pmatrix}
-				1 & 7 \\
-				14 & -4
-			\end{pmatrix}
-			</span>.
+			The next submatrix to the right is <span class="temml_me"> S_2 = \begin{pmatrix}
+				8 & 1 \\
+				2 & 14
+				\end{pmatrix} </span>: <span class="temml_me"> S_2 \odot K = 8\cdot 1 + 1\cdot(-1) + 2\cdot 0 + 14\cdot 2 = 35 </span>.
 <br>
-			When slided over the whole image, the result is <span class="temml_me">
+			Continuing this over every <span class="temml_me">2\times 2</span> window of the data, the full convolution result is the <span class="temml_me">3\times 3</span> tensor:
+			<span class="temml_me">
 				\begin{pmatrix}
-					10 & 6 & 1 & 7 \\
-					4 & 0 & 14 & -4 \\
-					12 & 28 & -5 & 43 \\
-					32 & 224 & 3 & 57
+					6  & 35 & 7  \\
+					42 & -2 & 47 \\
+					248& 21 & 46
 				\end{pmatrix}
-			</span>. The kernel is being trained to recognize whatever it needs to recognize. 
+			</span>. The kernel is being trained to recognize whatever it needs to recognize.
 <br>
 			What the kernel has learnt can be seen by <a href="#Visualize_Layer">Visualize Layer</a> for images and image-like tensors.
 <br>
-			The same principle of a sliding window with matrix multiplications is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape <span class="temml_me"> [\text{int}, \text{int}, \text{int}] </span> (disregarding the batch size, which would be at first position).
+			The same principle of a sliding window with element-wise products that are then summed is used in all Convolutional Layers, no matter if 1d or 2d. For 2d, the input tensor must have the shape <span class="temml_me"> [\text{int}, \text{int}, \text{int}] </span> (disregarding the batch size, which would be at first position).
 <br>
 			A bias is (if enabled) then added to each output value of this graph.
 <br>
-			For 1d convolutions, the kernel can be written as 2d-matrix. For 2d convolutions, the kernel is actually a 3d-cube (the extra dimension being the channels).
+			For 1d convolutions, the kernel slides along a single spatial axis and is itself a 1d vector. For 2d convolutions, the kernel slides along two spatial axes and is a 2d matrix per input channel; stacking the kernels across input channels produces a 3d tensor (the extra dimension being the channels).
 <br>
 			<div class="interactive-demo" id="conv_slide_demo">
 				<label>Interactive Convolution Sliding Window:</label>
@@ -1244,7 +1233,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			Example:
 <br>
 			<div class="temml_me" data-display="1">
-				\underbrace{\text{averagePooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
+				\underbrace{\text{averagePooling}}_{\text{Strides: 2x2, Pool-Size: 2x2}} \left(\begin{pmatrix}
 					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
 					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
 					\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
@@ -1281,9 +1270,9 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			</div>
 			<script>
 			var _poolStates = {
-				avg: { input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
+				avg: { input: [[10,8,1,4],[4,2,14,5],[12,20,-5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
 					colors: ['#ffcdd2','#bbdefb','#ffe0b2','#c8e6c9'] },
-				max: { input: [[10,8,1,4],[4,2,14,5],[12,20,5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
+				max: { input: [[10,8,1,4],[4,2,14,5],[12,20,-5,19],[32,128,3,30]], step: 0, total: 4, playing: false, timer: null,
 					colors: ['#ffcdd2','#bbdefb','#ffe0b2','#c8e6c9'] }
 			};
 			function initPoolDemo(type) {
@@ -1359,7 +1348,7 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			Example:
 <br>
 			<div class="temml_me" data-display="1">
-				\underbrace{\text{maxPooling}}_{\text{Strides: 1x1, Pool-Size: 2x2}} \left(\begin{pmatrix}
+				\underbrace{\text{maxPooling}}_{\text{Strides: 2x2, Pool-Size: 2x2}} \left(\begin{pmatrix}
 					\color{red}{10} & \color{red}{8} & \color{blue}{1} & \color{blue}{4} \\
 					\color{red}{4} & \color{red}{2} & \color{blue}{14} & \color{blue}{5} \\
 					\color{orange}{12} & \color{orange}{20} & \color{green}{-5} & \color{green}{19} \\
@@ -1398,19 +1387,17 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			<h3>alphaDropout</h3>
 			<div id="alphaDropout_example"></div>
 <br>
-			AlphaDropout is a variation of dropout, a regularization technique for reducing overfitting in neural networks.
+			AlphaDropout is a variation of dropout designed to keep the mean and variance of its inputs unchanged across the dropout operation, so that the self-normalizing property of a network (e.g. one built around <a href="#SeLu">SELU</a>) is preserved even with regularization.
 <br>
-			In standard dropout, a random subset of neurons are "dropped out" during each training step by setting their activations to zero. AlphaDropout, on the other hand, sets the activations to a random noise sampled from a zero-mean normal distribution with standard deviation of <span class="temml_me">\alpha</span> (<span class="temml_me">\alpha</span> is a hyperparameter).
+			In standard dropout, a random subset of activations are "dropped out" during each training step by setting them to zero. AlphaDropout does not set dropped activations to zero. Instead, with the dropout-rate probability it replaces an activation <span class="temml_me">x</span> by the SELU saturation value <span class="temml_me">-\lambda \alpha</span>, and otherwise rescales the kept activations by an affine transform chosen so that, after the layer, the mean and variance of the activations match the mean and variance before the layer exactly.
 <br>
-			This way, AlphaDropout allows the model to still learn the mean of the activations while also preventing overfitting and forcing the model to be less sensitive to the specific weights of the neurons. In other words, AlphaDropout regularizes the network by adding noise to the activations, which promotes the network to learn more robust feature representations.
-<br>
-			AlphaDropout can be useful for certain types of datasets, such as time-series data, where the activations have temporal dependencies.
+			Because mean and variance are preserved, AlphaDropout can be used together with <a href="#SeLu">SELU</a> (or other self-normalizing activations) without breaking the property that activations stay approximately standardized throughout a deep network. It is a good choice when regularization is needed in a self-normalizing architecture.
 <br>
 			This layer is only active during training.
 <br>
 			<h3>gaussianDropout</h3>
 			<div id="gaussianDropout_example"></div>
-			Drops out with a gaussian distribution of a specified dropout rate (in the example, 0.2).
+			Multiplies each activation by <span class="temml_me">1 + \epsilon</span>, where <span class="temml_me">\epsilon</span> is Gaussian noise with standard deviation chosen from the dropout rate, so that the expected value of the activation is preserved. With dropout rate <span class="temml_me">r</span>, the noise standard deviation is <span class="temml_me">\sqrt{r/(1-r)}</span>.
 <br>
 			This is used for simulating real-world-data, which is usually noisy (for example, when coming in over a webcam).
 <br>
@@ -1430,6 +1417,14 @@ x_1, x_2, x_3, y_1, y_2, y_3
 			This layer does not do anything to the data. It just prints them out to <tt>console.log</tt>.
 <br>
 			<h2>Layer Options</h2>
+<br>
+			<h3 id="Padding">Padding</h3>
+			Padding is a layer option for <a href="#Convolutional_Layers">convolutional</a> and <a href="#Pooling_layers">pooling</a> layers. It controls how the kernel interacts with the border of the input tensor. Two common settings are:
+			<ul>
+				<li><b>valid</b> (no padding): the kernel is only applied where it fully fits inside the input. The output is therefore smaller than the input.</li>
+				<li><b>same</b>: zero-padding is added around the input so that the output has the same spatial size as the input (for a stride of 1).</li>
+			</ul>
+			For example, a <span class="temml_me">2\times 2</span> kernel applied to a <span class="temml_me">4\times 4</span> input with strides = 1 produces a <span class="temml_me">3\times 3</span> output with <i>valid</i> padding and a <span class="temml_me">4\times 4</span> output with <i>same</i> padding.
 <br>
 			<h3>Trainable</h3>
 			If enabled, the network's weights and biases (if enabled, see <a href="#Use_Bias">Use Bias</a>) are changed while training. If not, they stay the same.
@@ -1520,7 +1515,7 @@ In general, L1 regularization is more suitable for sparse data, where only a few
 			The combination of L1 and L2 regularization is also known as Elastic-Net regularization. The regularization term is defined as <span class="temml_me">\lambda(\alpha\sum_{i=1}^{n}|w_i| + (1-\alpha)\sum_{i=1}^{n}w_i^2)</span>, where <span class="temml_me">\lambda</span> is the regularization strength, <span class="temml_me">w_i</span> are the weights of the model, and <span class="temml_me">\alpha</span> is a parameter that controls the balance between L1 and L2 regularization. This regularization method combines the feature selection property of L1 regularization with the shrinkage property of L2 regularization.
 <br>
 			<h3>Initializers</h3>
-			Initializer set in which way values, mostly the <a href="#Bias">Bias</a> and <a href="#Kernel">Kernel</a>, should be initialized as.
+			Initializer set in which way values, mostly the <a href="#Use_Bias">Bias</a> and the <a href="#Kernel_Initializer">Kernel</a>, should be initialized as.
 <br>
 			An initializer is a function used to initialize the weights of a neural network. It is called when the model is first created and its purpose is to set the initial values of the weights. The choice of initializer can have a significant impact on the performance and convergence of the model.
 <br>
@@ -1747,9 +1742,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			}{3} = 1.39
 			</div>
 			<h3>binaryCrossentropy</h3>
-			<div class="temml_me" data-display="1"> \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n y_i \cdot \log\left(\hat{y}_i\right) + 1\left(-y_i\right) \cdot \log\left(1 - \hat{y}_i\right) </div>
+			<div class="temml_me" data-display="1"> \text{Binary Crossentropy:} -\frac{1}{n} \sum_{i=1}^n \left(y_i \cdot \log\left(\hat{y}_i\right) + \left(1 - y_i\right) \cdot \log\left(1 - \hat{y}_i\right)\right) </div>
 			<h3>categoricalCrossentropy</h3>
-			<div class="temml_me" data-display="1"> \text{Categorical Crossentropy:} -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) </div>
+			<div class="temml_me" data-display="1"> \text{Categorical Crossentropy:} -\frac{1}{n} \sum_{i=1}^n \sum_{c} y_{i,c} \log\left(\hat{y}_{i,c}\right) </div>
 <br>
 			Imagine you want to classify images as one of 5 categories. The input tensors are the images themselves, the output tensor is a vector by the shape of <span class="temml_me"> [5] </span>.
 <br>
@@ -1779,9 +1774,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			0 \\	
 			\end{pmatrix}
 			</span>. The categorical crossentropy would be:
-			<div class="temml_me" data-display="1"> -\sum_{i=1}^n y_i \log\left(\hat{y}_i\right) = </div>
+			<div class="temml_me" data-display="1"> -\frac{1}{n}\sum_{c} y_c \log\left(\hat{y}_c\right) = </div>
 			<div class="temml_me" data-display="1"> 
-			-\left(
+			-\frac{1}{5}\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
 			\underbrace{(1 * \log(0.9))}_\text{Second entry} + 
 			\underbrace{(0 * \log(0.05))}_\text{Third entry} + 
@@ -1790,9 +1785,9 @@ The target shape can be specified by providing a tuple of integers which defines
 			\right) =
 			</div>
 			<div class="temml_me" data-display="1">
-			-\left(
+			-\frac{1}{5}\left(
 			0 + -0.10536051565782630123 + 0 + 0 + 0
-			\right) = 0.10536051565782630123
+			\right) = \frac{1}{5} \cdot 0.10536051565782630123 \approx 0.02107210313156526
 			</div>
 			This is not a perfect loss, but it indicates the results is quite OK.
 <br>
@@ -1807,7 +1802,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			</span>. The categorical crossentropy would be:
 <br>
 			<div class="temml_me" data-display="1"> 
-			-\left(
+			-\frac{1}{5}\left(
 			\underbrace{(0 * \log(0.03))}_\text{First entry} + 
 			\underbrace{(0 * \log(0.9))}_\text{Second entry} + 
 			\underbrace{(1 * \log(0.05))}_\text{Third entry} + 
@@ -1816,13 +1811,13 @@ The target shape can be specified by providing a tuple of integers which defines
 			\right) =
 			</div>
 			<div class="temml_me" data-display="1">
-			-\left(
+			-\frac{1}{5}\left(
 			0 + 0 + -2.99573227355399099344 + 0 + 0
-			\right) = 2.99573227355399099344
+			\right) = \frac{1}{5} \cdot 2.99573227355399099344 \approx 0.59914645471079819
 			</div>
 			Which is quite a high loss.
 <br>
-			Usually, it is recommended to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer, because values of <span class="temml_me">\log(x)</span> are <span class="temml_me">\gt 0</span> and therefore the categoricalCrossentropy may become negative for bad <span class="temml_me">\gt 1</span> values, indicating to the optimizer that they are good, when in reality, they probably aren't.
+			Usually, it is recommended to use categoricalCrossentropy together with a <a href="#SoftMax">SoftMax</a> in the last layer. SoftMax constrains the outputs to the interval <span class="temml_me">(0, 1)</span>, so <span class="temml_me">\log(\hat{y}) \le 0</span> and the categoricalCrossentropy stays <span class="temml_me">\ge 0</span>. Without SoftMax, predicted values <span class="temml_me">\gt 1</span> would yield <span class="temml_me">\log(\hat{y}) \gt 0</span> and could produce negative losses, which would wrongly suggest good predictions to the optimizer.
 <br>
 			categoricalCrossentropy rewards losses that are <i>close enough</i> to be useful with a low loss result, and punishes values that are far off by the desired results.
 <br>
@@ -1849,15 +1844,13 @@ The target shape can be specified by providing a tuple of integers which defines
 				Plotly.newPlot('log_from_0_to_100', data, layout);
 			</script>
 			<h3>categoricalHinge</h3>
-			Categorical hinge loss is a loss function used in multi-class classification tasks, specifically for training models using the hinge loss. It is a variation of the hinge loss that is used for multi-class classification problems where the goal is to separate the classes with a linear boundary.
+			Categorical hinge loss is a loss function used in multi-class classification tasks, specifically for training models using the hinge loss. It is a multi-class generalization of the binary hinge loss where the goal is to separate the correct class from every other class with a margin of at least 1.
 <br>
-			The hinge loss is defined as the maximum of 0 and the difference between the predicted class score and the true class score, plus a margin. In the case of the categorical hinge loss, the predicted class score is the score of the predicted class, and the true class score is the score of the correct class.
+			Given predicted class scores <span class="temml_me">\hat{y}</span> (one per class) and the true class <span class="temml_me">y</span>, the categorical hinge loss is calculated as:
+			<div class="temml_me" data-display="1">\text{loss} = \text{max}\!\left(0,\; 1 \;+\; \max\limits_{c \,\ne\, y} \hat{y}_c \;-\; \hat{y}_y\right)</div>
+			where <span class="temml_me">\hat{y}_y</span> is the predicted score of the correct class and <span class="temml_me">\max_{c \ne y} \hat{y}_c</span> is the largest predicted score among all <i>incorrect</i> classes.
 <br>
-			The categorical hinge loss is calculated as:
-			<div class="temml_me" data-display="1">\text{loss} = \text{max}(0, 1 - \text{y\_true} * \text{y\_pred})</div>
-			where <span class="temml_me">\text{y\_true}</span> is the true class label and <span class="temml_me">\text{y\_pred}</span> is the predicted class score.
-<br>
-			The function will return 0 if <span class="temml_me">\text{y\_true}* \text{y\_pred} >=1</span>, else it will return <span class="temml_me">1- \text{y\_true} * \text{y\_pred}</span>. It forces the model to have a margin of at least 1 between the correct class and the other classes.
+			The function will return 0 if the correct class score already exceeds the best incorrect class score by at least 1, else it will return <span class="temml_me">1 + \max_{c \ne y} \hat{y}_c - \hat{y}_y</span>. It forces the model to keep a margin of at least 1 between the correct class and every other class.
 <br>
 			It is used in cases when multi-class classification is required and training with Hinge Loss is preferred.
 <br>
@@ -1894,9 +1887,9 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			This function should be used if you care about the output tensor's value to be as close to the ground truth as possible and if the difference between 2 values has a meaningful interpretation.
 			<h3>meanAbsolutePercentageError</h3>
-			<div class="temml_me" data-display="1"> \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y} - y}{\hat{y}}\right| </div>
+			<div class="temml_me" data-display="1"> \text{MAPE} = \frac{1}{n} \sum_{t=1}^{n} \left|\frac{\hat{y}_t - y_t}{\hat{y}_t}\right| </div>
 <br>
-			The mean absolute percentage error is used to measure forecasting errors.
+			The mean absolute percentage error is used to measure forecasting errors. Note that this formulation divides by the predicted value <span class="temml_me">\hat{y}_t</span>, so it is undefined when <span class="temml_me">\hat{y}_t = 0</span>; the alternative formulation <span class="temml_me">\frac{1}{n}\sum \left|\frac{y_t - \hat{y}_t}{y_t}\right|</span> divides by the ground truth and is undefined when <span class="temml_me">y_t = 0</span>.
 <br>
 			Example:
 <br>
@@ -1910,29 +1903,29 @@ The target shape can be specified by providing a tuple of integers which defines
 				\text{MAPE}\left(y, \hat{y}\right) = 
 				\frac{1}{4} \cdot
 				\left(
-				\left(\frac{0.5-1}{0.5}\right) +
-				\left(\frac{1-0}{1}\right) +
-				\left(\frac{0.4-0.5}{0.5}\right) +
-				\left(\frac{2-2}{2}\right)
+				\left|\frac{0.5-1}{0.5}\right| +
+				\left|\frac{1-0}{1}\right| +
+				\left|\frac{0.4-0.5}{0.5}\right| +
+				\left|\frac{2-2}{2}\right|
 				\right) =
 			</div>
 <br>
 			<div class="temml_me" data-display="1">
 				\frac{1}{4} \cdot
 				\left(
-				\left(\frac{-0.5}{0.5}\right) + 
-				\left(\frac{1}{1}\right) + 
-				\left(\frac{-0.1}{0.5}\right) + 
-				\left(\frac{0}{2}\right)
+				\left|\frac{-0.5}{0.5}\right| + 
+				\left|\frac{1}{1}\right| + 
+				\left|\frac{-0.1}{0.5}\right| + 
+				\left|\frac{0}{2}\right|
 				\right) =
 			</div>
 <br>
 			<div class="temml_me" data-display="1">
 				\frac{1}{4} \cdot
 				\left(
-				-1 +
 				1 +
-				-0.2 +
+				1 +
+				0.2 +
 				0
 				\right) =
 			</div>
@@ -1940,8 +1933,8 @@ The target shape can be specified by providing a tuple of integers which defines
 			<div class="temml_me" data-display="1">
 				\frac{1}{4} \cdot
 				\left(
-				-0.2
-				\right) = -0.05 
+				2.2
+				\right) = 0.55
 			</div>
 			<h3>meanSquaredLogarithmicError</h3>
 			Mean squared logarithmic error (MSLE) is a loss function used in regression problems. It is a variation of the mean squared error (MSE) loss function, which is commonly used for regression problems.
@@ -1962,7 +1955,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			Poisson loss is a loss function used in regression problems when the target variable follows a Poisson distribution. It is a measure of the difference between the predicted values and the true values, where the difference is calculated based on the probability of the true values given the predicted values.
 <br>
 			The Poisson loss is calculated as:
-			<div class="temml_me" data-display="1">L = \frac{1}{n} \sum_{i=1}^{n} (y_i \log(\hat{y_i})-\hat{y_i})</div>
+			<div class="temml_me" data-display="1">L = \frac{1}{n} \sum_{i=1}^{n} \left(\hat{y_i} - y_i \log(\hat{y_i})\right)</div>
 			Where:
 			<ul>
 				<li>n is the number of samples</li>
@@ -2336,14 +2329,14 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h2>SeLu</h2>
 			The Scaled Exponential Linear Unit (SELU) is an activation function that was introduced to improve the performance of deep neural networks when the input features are standardized and the network architecture is feedforward. SELU is defined as:
 			<div class="temml_me" data-display="1">f(x) = \lambda \begin{cases}
-				x & \text{if } x > 0 \\
+				x & \text{if } x \geq 0 \\
 				\alpha * (e^x - 1) & \text{else}
 			\end{cases}
 			</div>
 			Where:
 			<ul>
 				<li><span class="temml_me">\lambda</span> is a scaling factor and is equal to 1.0507</li>
-				<li><span class="temml_me">\alpha</span> is a negative scaling factor and is equal to 1.67326</li>
+				<li><span class="temml_me">\alpha</span> is a positive scaling factor and is equal to 1.67326. It shapes the negative branch: for <span class="temml_me">x &lt; 0</span>, SELU outputs the negative value <span class="temml_me">\lambda \cdot \alpha \cdot (e^x - 1)</span>.</li>
 			</ul>
 			The SELU activation function is designed to maintain the mean and variance of the inputs during the forward-propagation, which makes it well suited for deep neural networks. When used in combination with a normal initialization, the SELU activation function ensures that the activations of the hidden units remain close to zero, which makes the network less prone to the vanishing or exploding gradient problem.
 <br>
@@ -2551,7 +2544,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h2>LeakyReLu</h2>
 			The Leaky Rectified Linear Unit (LeakyReLU) is an activation function that is used in neural networks as an alternative to the standard Rectified Linear Unit (ReLU) activation function. It is defined as:
 			<div class="temml_me" data-display="1">f(x) = \begin{cases}
-			x & \text{if } x > 0 \\
+			x & \text{if } x \geq 0 \\
 			\alpha * x & \text{else}
 			\end{cases}
 			</div>
@@ -2799,8 +2792,8 @@ The target shape can be specified by providing a tuple of integers which defines
 			Where <span class="temml_me">J(\theta)</span> is the loss function, <span class="temml_me">\beta_1</span> and <span class="temml_me">\beta_2</span> are hyperparameters, <span class="temml_me">\textbf{m}</span> and <span class="temml_me">\textbf{v}</span> are the moving averages of the gradient and the squared gradient, respectively.
 <br>
 			The update rule for Adamax is:
-			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_t - \frac{\alpha}{\sqrt{\textbf{v}_t} + \epsilon} \textbf{m}_t</div>
-			Where <span class="temml_me">\alpha</span> is the learning rate and <span class="temml_me">\epsilon</span> is a small constant to avoid division by zero.
+			<div class="temml_me" data-display="1">\theta_{t+1} = \theta_t - \frac{\alpha}{\textbf{v}_t + \epsilon} \textbf{m}_t</div>
+			Where <span class="temml_me">\alpha</span> is the learning rate and <span class="temml_me">\epsilon</span> is a small constant to avoid division by zero. Note that Adamax uses <span class="temml_me">\textbf{v}_t</span> directly (the <span class="temml_me">L_\infty</span> norm), not its square root.
 <br>
 			Adamax algorithm is similar to Adam algorithm, but it uses the infinity norm instead of the square of the gradient. The infinity norm is the maximum absolute value of the gradient. This allows Adamax to be robust against the presence of large gradients.
 <br>
@@ -2900,7 +2893,7 @@ The target shape can be specified by providing a tuple of integers which defines
 
 			<img src="manual/math_mode.png">
 
-			<h4>Math Mode while training</h4>
+			<h4 id="Math_Mode_while_training">Math Mode while training</h4>
 			When in math mode while the network is training, you can follow how the weights are changing after each batch.
 			<div class="temml_me" data-display="1">
 			h_{\text{Shape: }[4]}' = h_{\text{Shape: }[8]} \times \underbrace{\begin{pmatrix}
@@ -2965,7 +2958,7 @@ The target shape can be specified by providing a tuple of integers which defines
 			<h1>Help for your own neural network</h1>
 			<h2 id="Interpreting_the_training_graph">Interpreting the training graph</h2>
 			<h3>Good loss</h3>
-			Good losses look like the next two ones. In each of these, both losses go down and a very similar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predict">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
+			Good losses look like the next two ones. In each of these, both losses go down and a very similar to each other. It's hard to say if the network is trained enough with these, because the exact meaning of the loss depends heavily on the problem and the data, but you can test in the <a href="#Predicting">Predict-Tab</a> and if it is good enough, you can stop training. If not, continue training or add new layers or neurons/filters to your network.
 			<br>
 			<img class="white_bg_image" src="manual/loss_ok.png" />
 <br>
@@ -2974,7 +2967,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			<img class="white_bg_image" src="manual/stopped_learning.png" />
 <br>
-			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last epoch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters. You may also try to change the step size of the <a href="#Optimizer">optimizer</a>.
+			Here, you can see that <a href="#Math_Mode_while_training">Math mode</a> matrices are mostly black. Black indicates that nothing has changed since the last batch. The ones that aren't black fluctuate wildly between red and green, i.e. the minimum has been found and each batch, tiny values are added or substracted. If your network already works well enough, you can stop training. Otherwise, please try to add more layers or more neurons/filters. You may also try to change the step size of the <a href="#Optimizers">optimizer</a>.
 <br>
 			<img class="white_bg_image" src="manual/stopped_training.gif" />
 <br>
@@ -3024,7 +3017,7 @@ The target shape can be specified by providing a tuple of integers which defines
 <br>
 			This allows you to use the model you trained in your browser in Python code. Simply copy the code (with the button "Copy to clipboard"), paste it into a file and then click "Download model data" and put the files in the same directory.
 <br>
-			Depending on the type of your neural network (ie. for loading images) it will automatically adapt the modules you need to install. 
+			Depending on the type of your neural network (e.g. for loading images) it will automatically adapt the modules you need to install. 
 <br>
 			At the top of the code, in a comment, there is the code you need to execute before running your script.
 <br>
