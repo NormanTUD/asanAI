@@ -248,8 +248,8 @@ You can build new types from old with **type constructors**:
 
     The name *product* is literal: the type $A \times B$ has exactly $|A| \cdot |B|$ inhabitants — one pair for every combination of an $A$-thing and a $B$-thing. If $A = \{\texttt{A}, \texttt{B}, \texttt{C}\}$ and $B = \texttt{bool} = \{\texttt{true}, \texttt{false}\}$, then $A \times B$ is the table
 
-    |       | $\texttt{true}$       | $\texttt{false}$       |
-    |-------|-----------------------|------------------------|
+    |             | $\texttt{true}$       | $\texttt{false}$       |
+    |-------------|-----------------------|------------------------|
     | $\texttt{A}$ | $(\texttt{A}, \texttt{true})$  | $(\texttt{A}, \texttt{false})$ |
     | $\texttt{B}$ | $(\texttt{B}, \texttt{true})$  | $(\texttt{B}, \texttt{false})$ |
     | $\texttt{C}$ | $(\texttt{C}, \texttt{true})$  | $(\texttt{C}, \texttt{false})$ |
@@ -283,6 +283,27 @@ This is not just a notational trick. It is what makes **partial application** an
 **Homotopy Type Theory (HoTT)**, developed by the \citetitle{hottbook} (\citeyear{hottbook}), pushes this further. The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*. Two things are equal not just when a binary "=" returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.
 
 This matters because the **univalence axiom** says: $(A \simeq B) \simeq (A = B)$, "equality of types *is* equivalence of types." Two mathematical structures are identical precisely when you can translate between them without losing **structural** information. This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.
+
+### Equality all the way up: paths, homotopies, ∞-groupoids
+
+Once equality is a *path* rather than a boolean, a new question opens up: **when are two paths the same?** The answer is: another path — a *homotopy* between the two paths, i.e. a continuous deformation of one path into the other. This is a *2-path*, a path between paths.
+
+And then: **when are two 2-paths the same?** Answer: a *3-path*. And so on, ad infinitum. At every level there are paths-between-paths, and the question of whether *those* are equal pushes you up one more level. HoTT takes the full infinite tower seriously: an equality is not a single bit, it is an entire **∞-groupoid**.
+
+What is an *∞-groupoid*? A **groupoid** is the same thing as a **group**, except that the "elements" can be many. In a group there is exactly one element; in a groupoid there can be infinitely many. Concretely: a groupoid is a collection of objects together with *invertible* maps between them (called **morphisms**), where the morphisms compose and every morphism has an inverse. The "group" part means morphisms are reversible symmetries; the "-oid" part ("resembling") means there can be more than one object — it is a *group-like* structure, not a single group. A permutation group is a groupoid with one object. A category of *isomorphisms* is a groupoid. The set of symmetries of any mathematical object forms a groupoid.
+
+An **∞-groupoid** is a groupoid where, in addition to objects and invertible morphisms between them, you have:
+
+* invertible 2-morphisms between parallel 1-morphisms ("two symmetries are homotopic"),
+* invertible 3-morphisms between parallel 2-morphisms,
+* …
+* at every finite level, and the tower never stops.
+
+This is exactly what a *space* is, in the sense topologists mean: points, paths between points, homotopies between paths, homotopies-between-homotopies, all the way up. The slogan of HoTT is therefore:
+
+$$\text{types} = \text{spaces}, \qquad \text{terms} = \text{points}, \qquad \text{equalities} = \text{paths}, \qquad \text{equalities-of-equalities} = \text{homotopies}.$$
+
+The payoff for AI: when a Transformer learns "cat = small dog" and someone asks whether *that* equality is the same as the equality "feline = canine", the question is no longer a yes/no — it is a path between paths, which itself has structure. Two learned representations are "equal" only up to some continuous deformation, and HoTT gives you the language to *talk about* that deformation as a first-class object, not as an afterthought.
 
 **A free bridge to the rest of this book.** Once you read types as spaces and proofs as paths, a surprising amount of this textbook *clicks*:
 
