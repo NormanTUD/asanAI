@@ -301,7 +301,14 @@ An **∞-groupoid** is a groupoid where, in addition to objects and invertible m
 
 This is exactly what a *space* is, in the sense topologists mean: points, paths between points, homotopies between paths, homotopies-between-homotopies, all the way up. The slogan of HoTT is therefore:
 
-$$\text{types} = \text{spaces}, \qquad \text{terms} = \text{points}, \qquad \text{equalities} = \text{paths}, \qquad \text{equalities-of-equalities} = \text{homotopies}.$$
+$$
+\begin{aligned}
+\text{types} &= \text{spaces} \\
+\text{terms} &= \text{points} \\
+\text{equalities} &= \text{paths} \\
+\text{equalities-of-equalities} &= \text{homotopies}
+\end{aligned}
+$$
 
 The payoff for AI: when a Transformer learns "cat = small dog" and someone asks whether *that* equality is the same as the equality "feline = canine", the question is no longer a yes/no — it is a path between paths, which itself has structure. Two learned representations are "equal" only up to some continuous deformation, and HoTT gives you the language to *talk about* that deformation as a first-class object, not as an afterthought.
 
