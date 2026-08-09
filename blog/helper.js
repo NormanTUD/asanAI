@@ -2018,7 +2018,7 @@ const GLOSSARY = {
 	'standard deviation': 'The square root of the variance — the typical amount by which values deviate from the mean.',
 	'covariance': 'A measure of how two variables change together; positive covariance means they tend to move in the same direction.',
 	'correlation': 'A normalized measure of association between two variables, ranging from -1 to +1.',
-	'mean': 'The arithmetic average of a set of numbers.',
+	'arithmetic mean': 'The arithmetic average of a set of numbers: sum divided by count.',
 	'Gaussian': 'The bell-shaped "normal" distribution, ubiquitous in statistics and ML noise models.',
 	'normal distribution': 'The bell-shaped probability distribution fully described by its mean and standard deviation.',
 	'uniform distribution': 'A distribution in which every value within a range is equally likely.',

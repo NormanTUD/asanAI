@@ -91,7 +91,7 @@ A good engineer uses exact tools where they suffice, and approximate tools where
 <div class="md">
 ## Vector Spaces: A Brief Recap
 
-(See Math II for the full treatment.) Recall the central idea: a vector lives in a space, and operations on vectors (addition, scaling, dot product) correspond to geometric operations on the space. Modern AI happens in vector spaces of dimension 768 to 16,000.
+Recall from Math II, the central idea: a vector lives in a space, and operations on vectors (addition, scaling, dot product) correspond to geometric operations on the space. Modern AI happens in vector spaces of dimension 768 to 16,000.
 
 For the rest of this chapter, the only fact about vector spaces we need is the following: **most vector-space intuition from 2D and 3D fails catastrophically in high dimensions**. Understanding the difference is essential to understanding modern AI.
 </div>
