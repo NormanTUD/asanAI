@@ -4959,5 +4959,132 @@ window.bibData = {
 		author: "Immanuel Kant",
 		year: 1781,
 		alternativetitle: "Kant, Critique of Pure Reason"
+	},
+
+	"wmap_cmb": {
+		url: "https://commons.wikimedia.org/wiki/File:WMAP_2010.png",
+		title: "WMAP Image of the Cosmic Microwave Background",
+		author: "NASA / WMAP Science Team",
+		year: 2010,
+		alternativetitle: "Wilkinson Microwave Anisotropy Probe, 7-year data"
+	},
+	"volta_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Volta_A.jpg",
+		title: "Portrait of Alessandro Volta",
+		author: "Garavaglia Giovita (after); Gaetano Bonatti (engraver)",
+		year: 1825,
+		alternativetitle: "Alessandro Volta (1745–1827)"
+	},
+	"voltaic_pile": {
+		url: "https://commons.wikimedia.org/wiki/File:Voltaic_pile_battery.png",
+		title: "Voltaic Pile",
+		author: "Adolphe Ganot",
+		year: 1893,
+		alternativetitle: "Volta's voltaic pile, the first electric battery (1800)"
+	},
+	"faraday_disk": {
+		url: "https://commons.wikimedia.org/wiki/File:Faraday_disk_generator.jpg",
+		title: "Faraday Disk",
+		author: "Émile Alglave & J. Boulard",
+		year: 1884,
+		alternativetitle: "Faraday's electromagnetic induction experiment (1831)"
+	},
+	"tesla_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Tesla_circa_1890.jpeg",
+		title: "Nikola Tesla, Age 34",
+		author: "Napoleon Sarony",
+		year: 1890,
+		alternativetitle: "Nikola Tesla (1856–1943)"
+	},
+	"first_transistor": {
+		url: "https://commons.wikimedia.org/wiki/File:A_replica_of_the_first_working_transistor.jpg",
+		title: "A Replica of the First Working Transistor",
+		author: "Mister rf",
+		year: 2014,
+		alternativetitle: "Bardeen and Brattain's point-contact transistor (December 1947)"
+	},
+	"colladon_lightpipe": {
+		url: "https://commons.wikimedia.org/wiki/File:DanielColladon%27s_Lightfountain_or_Lightpipe,LaNature(magazine),1884.JPG",
+		title: "Daniel Colladon's Lightfountain or Lightpipe",
+		author: "La Nature (magazine)",
+		year: 1884,
+		alternativetitle: "Demonstration of total internal reflection in a jet of water (1842)"
+	},
+	"submarine_cable": {
+		url: "https://commons.wikimedia.org/wiki/File:Submarine_cable_cross-section.svg",
+		title: "Cross-Section of a Submarine Communications Cable",
+		author: "Mysid",
+		year: 2008,
+		alternativetitle: "Submarine fiber-optic cable anatomy"
+	},
+	"jacquard_loom": {
+		url: "https://commons.wikimedia.org/wiki/File:A_Jacquard_loom_showing_information_punchcards,_National_Museum_of_Scotland.jpg",
+		title: "A Jacquard Loom Showing Information Punchcards, National Museum of Scotland",
+		author: "Stephencdickson",
+		year: 2014,
+		alternativetitle: "Jacquard loom with chain of punched cards (1804)"
+	},
+	"sholes_typewriter": {
+		url: "https://commons.wikimedia.org/wiki/File:Sholes_typewriter.jpg",
+		title: "Sholes Type-Writer",
+		author: "George Iles (after a contemporary photograph)",
+		year: 1912,
+		alternativetitle: "Prototype typewriter by Sholes, Glidden and Soule (1868–1873)"
+	},
+	"crt": {
+		url: "https://commons.wikimedia.org/wiki/File:CRT.jpg",
+		title: "Cathode Ray Tube (RCA 35\")",
+		author: "VaughnSaball",
+		year: 2010,
+		alternativetitle: "Close-up of a CRT picture tube"
+	},
+	"eniac_image": {
+		url: "https://commons.wikimedia.org/wiki/File:ENIAC.jpg",
+		title: "ENIAC on Exhibit at the Bradbury Science Museum",
+		author: "Laanderman",
+		year: 2015,
+		alternativetitle: "ENIAC (Electronic Numerical Integrator and Computer)"
+	},
+	"williams_tube": {
+		url: "https://commons.wikimedia.org/wiki/File:Williams-Kilburn_tube_-_geograph.org.uk_-_5279623.jpg",
+		title: "Williams-Kilburn Tube",
+		author: "Bob Harvey",
+		year: 2017,
+		alternativetitle: "Cathode-ray-tube based random-access memory (1947)"
+	},
+	"arpanet_map": {
+		url: "https://commons.wikimedia.org/wiki/File:Arpanet_logical_map,_march_1977.png",
+		title: "ARPANET Logical Map, March 1977",
+		author: "ARPANET / The Computer History Museum",
+		year: 1977,
+		alternativetitle: "Logical topology of the ARPANET in March 1977"
+	},
+	"first_web_browser": {
+		url: "https://commons.wikimedia.org/wiki/File:WorldWideWeb.png",
+		title: "Screenshot of the WorldWideWeb Browser",
+		author: "FedericoMP (based on a screenshot by Ck_mpk)",
+		year: 2007,
+		alternativetitle: "Tim Berners-Lee's first web browser, NeXT, December 1990"
+	},
+	"visicalc": {
+		url: "https://commons.wikimedia.org/wiki/File:VisiCalc.jpg",
+		title: "VisiCalc",
+		author: "Computer History Museum",
+		year: 2011,
+		alternativetitle: "VisiCalc running on an Apple II (1979)"
+	},
+	"mendeleev_periodic_table": {
+		url: "https://commons.wikimedia.org/wiki/File:Mendeleev%27s_periodic_table_(1869_year).jpg",
+		title: "Mendeleev's Periodic Table (First Edition, 1869)",
+		author: "Dmitri Ivanovich Mendeleev",
+		year: 1869,
+		alternativetitle: "The first published version of the periodic table"
+	},
+	"arithmometer_thomas": {
+		url: "https://commons.wikimedia.org/wiki/File:Arithmometer-ThomasDeColmar1850.jpg",
+		title: "Arithmometer by Thomas de Colmar, c. 1850",
+		author: "Alexf",
+		year: 2011,
+		alternativetitle: "Thomas de Colmar's Arithmometer at the Musée des Arts et Métiers, Paris"
 	}
 };

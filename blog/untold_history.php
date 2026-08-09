@@ -19,7 +19,14 @@ The main history of AI traces the intellectual lineage — the ideas, algorithms
 
 According to the prevailing cosmological model, the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang, expanding from an extremely hot, dense state into the vast cosmos we observe today \cite[as described by Weinberg]{weinberg1977first}. Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium. Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.
 
-Successive generations of stars forged heavier elements in their cores and dispersed them through supernova explosions, seeding the interstellar medium with the raw materials for planets and, eventually, life. The discovery of the cosmic microwave background radiation provided strong empirical support for this model \cite[as reported by Penzias and Wilson]{penzias1965measurement}. Our solar system formed approximately 4.55 billion years ago from a collapsing molecular cloud, and the Earth accreted from the resulting protoplanetary disk roughly 4.5 billion years ago \cite[as reviewed by Allègre et al.]{allegre1995age}.
+Successive generations of stars forged heavier elements in their cores and dispersed them through supernova explosions, seeding the interstellar medium with the raw materials for planets and, eventually, life. The discovery of the cosmic microwave background radiation provided strong empirical support for this model \cite[as reported by Penzias and Wilson]{penzias1965measurement}.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="wmap_cmb.png" alt="Full-sky map of the cosmic microwave background temperature fluctuations measured by NASA's Wilkinson Microwave Anisotropy Probe (WMAP)" />
+    <figcaption class="md">The \citealternativetitle{wmap_cmb}: the temperature fluctuations of the cosmic microwave background as measured by NASA's Wilkinson Microwave Anisotropy Probe, the earliest direct image of the infant universe roughly 380,000 years after the Big Bang.</figcaption>
+</figure>
+
+Our solar system formed approximately 4.55 billion years ago from a collapsing molecular cloud, and the Earth accreted from the resulting protoplanetary disk roughly 4.5 billion years ago \cite[as reviewed by Allègre et al.]{allegre1995age}.
 
 In its earliest phase, the planet was largely molten, bombarded by debris from the still-forming solar system. A giant impact with a Mars-sized body (Theia) is thought to have formed the Moon \cite[as proposed by Hartmann and Davis]{hartmann1975satellite}. Over hundreds of millions of years, the surface cooled to form a solid crust, oceans condensed from outgassed water vapor and delivered by cometary impacts, and plate tectonics began reshaping the surface in a process that continues to this day. The Late Heavy Bombardment, ending roughly 3.8 billion years ago, marked the transition to a more stable planetary environment in which life could take hold.
 
