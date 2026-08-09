@@ -130,8 +130,33 @@ No electrical computer can exist without electricity, yet the phenomenon was fir
 The transformation of this curiosity into a usable force required a cascade of unrelated breakthroughs:
 
 * **Alessandro Volta** (1800) created the first true battery (the *voltaic pile*), proving that electricity could be generated chemically and sustained as a steady current, not just produced as a momentary spark. He announced the device in a letter to Sir Joseph Banks, president of the Royal Society, subsequently published as \citetitle{volta}.
+
+<figure style="float: right; width: 35%; max-width: 280px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="volta_portrait.jpg" alt="Engraved portrait of Alessandro Volta" />
+    <figcaption class="md">\citeauthor{volta_portrait}, inventor of the first true electric battery.</figcaption>
+</figure>
+
 * **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current. He described the effect in \citetitle{faraday}. This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines. Without it, there is no power grid, no data center, and no GPU cluster.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="voltaic_pile.png" alt="Cross-section illustration of Alessandro Volta's voltaic pile, the first electric battery" />
+    <figcaption class="md">The \citealternativetitle{voltaic_pile} (1800): stacked alternating disks of copper and zinc separated by brine-soaked cloth, the first device able to deliver a steady electric current on demand.</figcaption>
+</figure>
+
 * **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture "A New System of Alternate Current Motors and Transformers" (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
+
+<figure>
+    <div class="image-row">
+        <figure>
+            <img src="faraday_disk.jpg" alt="Drawing of Faraday's disk, the first electromagnetic generator" />
+            <figcaption class="md">\citealternativetitle{faraday_disk}: Faraday's rotating copper disk between the poles of a horseshoe magnet, the first demonstration that mechanical motion can produce a steady electric current.</figcaption>
+        </figure>
+        <figure>
+            <img src="tesla_portrait.jpeg" alt="Photograph of Nikola Tesla around 1890, age 34, by Napoleon Sarony" />
+            <figcaption class="md">\citeauthor{tesla_portrait}, whose polyphase alternating-current patents made long-distance electrical power distribution economically viable.</figcaption>
+        </figure>
+    </div>
+</figure>
 
 A modern LLM training run can consume **gigawatt-hours** of electricity, enough to power a small city for days. This energy flows through infrastructure whose lineage traces directly back to Faraday's hand-cranked copper disk spinning between the poles of a horseshoe magnet, an experiment conducted to satisfy scientific curiosity about the relationship between magnetism and motion, with no notion of "computation" whatsoever.
 
@@ -144,6 +169,11 @@ Silicon dioxide (common sand) is one of the most abundant compounds on Earth. Bu
 1. **Quantum Mechanics** (1920s–1930s): **Max Planck** introduced the quantum of energy in \citetitle{planck}. **Niels Bohr** proposed the quantized atom in \citetitle{bohr}. **Werner Heisenberg** formulated matrix mechanics in \citetitle{quanten}, and **Erwin Schrödinger** developed wave mechanics in \citetitle{schroedinger}. Together, they revealed that matter at the atomic scale behaves according to probabilistic wave functions, not classical Newtonian mechanics. This theory explained why certain materials (semiconductors) conduct electricity only under specific conditions, a phenomenon that classical physics could not account for.
 2. **Band Theory of Solids** (1929–1931): **Felix Bloch** applied quantum mechanics to electrons in crystal lattices in \citetitle{bloch}. **Alan Herries Wilson** then used Bloch's framework to explain semiconductors specifically in \citetitle{wilsonsemiconductors}, describing how energy bands and "gaps" determine whether a material conducts, insulates, or semi-conducts. This theoretical framework made it possible to *predict* and *engineer* the electrical properties of materials like silicon and germanium.
 3. **The Transistor** (1947): **John Bardeen** and **Walter Brattain** at Bell Labs built the first point-contact transistor in December 1947, a solid-state device that could amplify and switch electrical signals. They published \citetitle{semiconductor}. **William Shockley** followed with the superior junction transistor, described in \citetitle{shockley}. The transistor replaced the vacuum tube, which was bulky, hot, fragile, and power-hungry. Without the transistor, Moore's Law is inconceivable, and without Moore's Law, LLMs are computationally impossible.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="first_transistor.jpg" alt="A replica of the first working point-contact transistor, built by John Bardeen and Walter Brattain at Bell Labs in December 1947" />
+    <figcaption class="md">The \citealternativetitle{first_transistor}: a plastic wedge pressing two fine gold wires against a slab of germanium. This unassuming device replaced the vacuum tube and inaugurated the age of solid-state electronics.</figcaption>
+</figure>
 
 The path from a grain of beach sand to a chip containing billions of transistors passes through some of the most abstract physics ever conceived. A researcher debugging attention heads in a Transformer model is, at the deepest physical layer, relying on quantum tunneling effects in doped silicon crystals, a connection so remote that it borders on the absurd, yet it is absolute.
 
