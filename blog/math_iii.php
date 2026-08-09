@@ -246,15 +246,22 @@ You can build new types from old with **type constructors**:
 
 * **Product** $A \times B$: pairs $(a, b)$ with $a : A$ and $b : B$. An RGB image is $\mathbb{R}^{H \times W} \times \mathbb{R}^{H \times W} \times \mathbb{R}^{H \times W}$.
 
-    The name *product* is literal: the type $A \times B$ has exactly $|A| \cdot |B|$ inhabitants — one pair for every combination of an $A$-thing and a $B$-thing. If $A = \{\texttt{A}, \texttt{B}, \texttt{C}\}$ and $B = \texttt{bool} = \{\texttt{true}, \texttt{false}\}$, then $A \times B$ is the $3 \times 2$ table
+    The name *product* is literal: the type $A \times B$ has exactly $|A| \cdot |B|$ inhabitants — one pair for every combination of an $A$-thing and a $B$-thing. If $A = \{\texttt{A}, \texttt{B}, \texttt{C}\}$ and $B = \texttt{bool} = \{\texttt{true}, \texttt{false}\}$, then $A \times B$ is the table
 
-    | | $\texttt{true}$ | $\texttt{false}$ |
-    |---|---|---|
-    | $\texttt{A}$ | $(\texttt{A}, \texttt{true})$ | $(\texttt{A}, \texttt{false})$ |
-    | $\texttt{B}$ | $(\texttt{B}, \texttt{true})$ | $(\texttt{B}, \texttt{false})$ |
-    | $\texttt{C}$ | $(\texttt{C}, \texttt{true})$ | $(\texttt{C}, \texttt{false})$ |
+    |       | $\texttt{true}$       | $\texttt{false}$       |
+    |-------|-----------------------|------------------------|
+    | $\texttt{A}$ | $(\texttt{A}, \texttt{true})$  | $(\texttt{A}, \texttt{false})$ |
+    | $\texttt{B}$ | $(\texttt{B}, \texttt{true})$  | $(\texttt{B}, \texttt{false})$ |
+    | $\texttt{C}$ | $(\texttt{C}, \texttt{true})$  | $(\texttt{C}, \texttt{false})$ |
 
     — six inhabitants, which is $|A| \cdot |B| = 3 \cdot 2$. The same rule extends to three or more factors: an RGB image $\mathbb{R}^H \times \mathbb{R}^W \times \mathbb{R}^3$ has $|\mathbb{R}|^{H \cdot W \cdot 3}$ inhabitants.
+
+    The two **projection maps** go the other way:
+
+    $$\pi_1 : A \times B \to A, \qquad \pi_1(a, b) = a$$
+    $$\pi_2 : A \times B \to B, \qquad \pi_2(a, b) = b$$
+
+    So $\pi_1(\texttt{A}, \texttt{true}) = \texttt{A}$ and $\pi_2(\texttt{B}, \texttt{false}) = \texttt{false}$. Picking a column of the table is applying $\pi_2$; picking a row is applying $\pi_1$. Together they let you recover each factor from the pair — and the universal property of the product says this is the *only* way to do it cleanly.
 
 * **Sum** $A + B$: tagged unions — *either* an $A$ *or* a $B$, with a tag telling you which. The result of a parser is a Sum: `ParseSuccess(string) + ParseFailure(error)`. Cardinality: $|A| + |B|$.
 * **Function space** $A \to B$: already covered. Cardinality: $|B|^{|A|}$ — for every one of the $|A|$ inputs you pick one of the $|B|$ outputs, and there are $|B|^{|A|}$ such functions. A function `int → bool` has $2^{|\mathbb{Z}|}$ inhabitants (one for each even/odd rule), which is a *lot*.
