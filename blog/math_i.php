@@ -235,6 +235,13 @@ In computing, we treat $\infty$ as a value, but in mathematics, we use limits to
 
 ## Euler's Number ($e$)
 
+<div class="image-row md">
+	<figure>
+		<img src="euler.jpg" alt="Portrait of Leonhard Euler" style="max-width: 260px;" />
+		<figcaption class="md">\citealternativetitle{euler_portrait}, the Swiss mathematician after whom $e$ is named.</figcaption>
+	</figure>
+</div>
+
 $e$ is not an arbitrary constant; it is the natural language of growth and change. It is often used in math and machine learning. Euler's number ($e \approx 2.71828$) is an irrational number defined by the limit of compound interest as the frequency of compounding approaches infinity. Mathematically, it is defined as:
 
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
@@ -308,6 +315,11 @@ Abstractly, a logarithm transforms a scale of growth (multiplicative) into a sca
 
 <div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
 Logarithms were introduced in \citeyear{napier1614} by the Scottish mathematician John Napier in his landmark work \citealternativetitle{napier1614}.
+
+<figure>
+	<img src="napier.jpg" alt="Portrait of John Napier" style="max-width: 220px;" />
+	<figcaption class="md">\citealternativetitle{napier_portrait}.</figcaption>
+</figure>
 
 **The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the calculations.
 
