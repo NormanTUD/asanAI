@@ -21,9 +21,18 @@ This question puzzled mathematicians for centuries, and its resolution gave birt
 <div class="optional md" data-headline="A Brief History: Who Invented Derivatives?">
 The development of calculus is one of the most famous (and contentious) stories in the history of science. Two towering figures independently developed the core ideas in the late 17th century.
 
-**Isaac Newton** (1643–1727) developed his "method of fluxions" around 1665–1666, motivated by problems in physics, he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.
+<div class="image-row md">
+	<figure>
+		<img src="newton.jpg" alt="Portrait of Isaac Newton" />
+		<figcaption class="md">\citealternativetitle{newton_portrait}. Newton developed his "method of fluxions" around 1665–1666, motivated by problems in physics: he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.</figcaption>
+	</figure>
+	<figure>
+		<img src="leibniz.jpg" alt="Portrait of Gottfried Wilhelm Leibniz" />
+		<figcaption class="md">\citealternativetitle{leibniz_portrait}. Leibniz, working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation. His notation, the $\frac{dy}{dx}$ that we still use today, was published in \citeyear{leibniz1684nova} in his paper \citetitle{leibniz1684nova}. Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical.</figcaption>
+	</figure>
+</div>
 
-**Gottfried Wilhelm Leibniz** (1646–1716), working independently in the 1670s and 1680s, developed his own version of calculus with a focus on notation and formal manipulation. His notation, the $\frac{dy}{dx}$ that we still use today, was published in \citeyear{leibniz1684nova} in his paper \citetitle{leibniz1684nova}. Leibniz's genius lay in creating a symbolic language so powerful and intuitive that it made calculus accessible and practical. As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.
+As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz's differential notation proved far more influential than Newton's dot notation for the long-term development of analysis.
 
 The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions. Today, historians recognize that both arrived at the fundamental ideas independently. We use Leibniz's notation ($\frac{dy}{dx}$, $\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.
 
@@ -50,6 +59,11 @@ The **derivative** is what happens when we let $h$ approach zero. The secant lin
 $$f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$$
 
 This is the **limit definition of the derivative**, sometimes called the definition "from first principles." The notation $f'(x)$ (read "f prime of x") was introduced by \citeauthor{lagrange1797theorie} in \citetitle{lagrange1797theorie} (\citeyear{lagrange1797theorie}). Leibniz wrote the same concept as $\frac{df}{dx}$.
+
+<figure>
+	<img src="lagrange.jpg" alt="Portrait of Joseph-Louis Lagrange" style="max-width: 220px;" />
+	<figcaption class="md">\citealternativetitle{lagrange_portrait}, who introduced the now-universal prime notation $f'(x)$ for derivatives.</figcaption>
+</figure>
 
 You can explore this visually below. Drag the slider to move the second point closer to the first and watch the secant line become the tangent line:
 </div>
