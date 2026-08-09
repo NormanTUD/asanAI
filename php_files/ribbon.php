@@ -1,6 +1,6 @@
 <div id="ribbon" style="overflow: hidden;">
 	<ul id="tablist">
-		<li><span class="symbol_button" data-tr-title="hide_ribbon" onclick="hide_ribbon()" style='cursor: pointer; color: gray'>&#9776;</span></li>
+		<li><span class="symbol_button" data-tr-title="hide_ribbon" onclick="toggle_ribbon_and_status_bar()" style='cursor: pointer; color: gray'>&#9776;</span></li>
 		<li><span class="symbol_button" data-tr-title="download_model" style="cursor: pointer" onclick="download_model_and_weights_and_labels()"><img class="ribbon_icon" data-tr-alt="download_model" src="_gui/icons/floppy.svg" /></span></li>
 		<li><span class="symbol_button" data-tr-title="upload_model" id="upload_file_dialog" onclick="open_upload_dialog()" style="cursor: pointer"><img class="ribbon_icon" data-tr-alt="open_saved_models" src="_gui/icons/folder.svg" /></span></li>
 		<li><span id="custom_webcam_training_data_small" data-tr-title="start_webcam_custom_images" style="display: none" class="enabled_symbol only_when_webcam input_shape_is_image symbol_button" onclick="set_custom_webcam_training_data()"><img class="ribbon_icon" data-tr-alt="get_data_from_webcam" src="_gui/camera.svg" /></span></li>
@@ -11,7 +11,7 @@
 
 
 	<div id="home_ribbon" class="ribbon_tab_content" title="start">
-		<div id="logo_ribbon" class="ribbon_tab_content" title="Logo">
+		<div id="logo_ribbon" class="ribbon_tab_content" title="Logo" data-importance="1">
 			<div class="ribbon-group">
 				<div class="ribbon-toolbar">
 					<img width=135 height=135 alt="asanAI Logo" onclick="easter_egg_fireworks()" id="asanai_main_logo" src="_gui/logo_small.png">
@@ -19,7 +19,7 @@
 			</div>
 		</div>
 
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="1">
 			<div class="ribbon-toolbar">
 				<table>
 					<tr>
@@ -27,7 +27,7 @@
 						<td>
 							<select id="dataset" onchange="chose_dataset();$('#prediction').html('');" style="width: 190px">
 							</select>
-							<button id="reset_model" style="width: 46px;" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
+							<button id="reset_model" onclick="init_page_contents($('#dataset').val())"><span class="TRANSLATEME_reset"></span></button>
 						</td>
 					</tr>
 					<tr>
@@ -59,7 +59,7 @@
 
 		<div class="ribbon-group-sep expert_mode_only"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group expert_mode_only">
+		<div class="ribbon-group expert_mode_only" data-importance="2">
 			<div class="ribbon-toolbar">
 				<table>
 					<tr>
@@ -97,14 +97,14 @@
 
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group" style="display:none">
+		<div class="ribbon-group" style="display:none" data-importance="5">
 			<div class="ribbon-toolbar" style="width:100px">
 				<input type="number" id="number_of_layers" value="2" min="1" step="1" style="width: 85%">
 			</div>
 			<div class="ribbon-group-title"><span class="TRANSLATEME_layers"></span></div>
 		</div>
 
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="1">
 			<div class="ribbon-toolbar" style="width: 135px">
 				<table>
 					<tr><td><span class="TRANSLATEME_epochs"></span></td><td><input type="number" name="Epochs" id="epochs" value="30" min="1" step="10" style="width: 40px;"></td></tr>
@@ -119,7 +119,7 @@
 		<div class="ribbon-group-sep-hr"><hr></div>
 
 
-		<div id="image_resize_dimensions" class="hide_when_no_image">
+		<div id="image_resize_dimensions" class="hide_when_no_image" data-importance="3">
 			<div class="ribbon-group">
 				<div class="ribbon-toolbar" style="width:150px">
 					<table>
@@ -147,7 +147,7 @@
 			<div class="ribbon-group-sep-hr"><hr></div>
 		</div>
 
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="1">
 			<div class="ribbon-toolbar">
 				<table>
 					<tr>
@@ -179,7 +179,7 @@
 	</div>
 
 	<div id="tf_ribbon_settings" class="ribbon_tab_content" title="general">
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="2">
 			<div class="ribbon-toolbar">
 				<fieldset style="border-width: 0px" id="mode_chooser"> 
 					<input type="radio" onchange="set_mode()" name="mode_chooser" value="beginner" id="beginner" <?php
@@ -225,7 +225,7 @@
 		<div class="only_when_multiple_webcams" style="display: none">
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
-			<div class="ribbon-group">
+			<div class="ribbon-group" data-importance="3">
 				<div class="ribbon-toolbar">
 					<select id="which_webcam" onchange="restart_webcams()">
 					</select>
@@ -239,7 +239,7 @@
 		<div class="expert_mode_only">
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
-			<div class="ribbon-group">
+			<div class="ribbon-group" data-importance="3">
 				<div class="ribbon-toolbar">
 					<table>
 						<tr>
@@ -263,10 +263,11 @@
 				</div>
 				<div class="ribbon-group-title"><span class="TRANSLATEME_weights_shuffle_resize"></span></div>
 			</div>
+		</div>
 
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
-			<div class="ribbon-group">
+			<div class="ribbon-group expert_mode_only" data-importance="4">
 				<div class="ribbon-toolbar">
 					<table>
 						<tr>
@@ -396,11 +397,10 @@
 				</div>
 				<div class="ribbon-group-title"><span class="TRANSLATEME_set_all_initializers"></span></div>
 			</div>
-		</div>
 
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="2">
 <?php
 			include("php_files/optimizer.php");
 ?>
@@ -411,7 +411,7 @@
 	<div id="tf_ribbon_augmentation" class="ribbon_tab_content" title="augmentation" style="display: none">
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="4">
 			<div class="ribbon-toolbar">
 				<table>
 					<tr>
@@ -440,7 +440,7 @@
 		<div>
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
-			<div class="ribbon-group">
+			<div class="ribbon-group" data-importance="3">
 				<div class="ribbon-group">
 					<div class="ribbon-toolbar">
 						<table>
@@ -465,7 +465,7 @@
 
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="3">
 			<div class="ribbon-group">
 				<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 					<table>
@@ -485,7 +485,7 @@
 
 		<div class="ribbon-group-sep"></div>
 		<div class="ribbon-group-sep-hr"><hr></div>
-		<div class="ribbon-group">
+		<div class="ribbon-group" data-importance="3">
 			<div class="ribbon-group">
 				<div class="ribbon-toolbar" style="width: auto; max-width: 500px;">
 					<table>
@@ -510,7 +510,7 @@
 		<div id="data_plotter" style="display: none">
 			<div class="ribbon-group-sep"></div>
 			<div class="ribbon-group-sep-hr"><hr></div>
-			<div class="ribbon-group">
+			<div class="ribbon-group" data-importance="5">
 				<div class="ribbon-group">
 					<div class="ribbon-toolbar" style="width: auto; max-width: 300px;">
 						<table>
@@ -535,9 +535,9 @@
 	</div>
 
 	<div id="log_ribbon" class="ribbon_tab_content" title="log">
-		<div class="ribbon-group" style="width: auto;">
+		<div class="ribbon-group" style="width: auto;" data-importance="3">
 			<div class="ribbon-toolbar">
-				<textarea style="width: 1400px; height: 90px; font-size: 14px" readonly id="log"></textarea>
+				<textarea style="width: 1400px; height: 60px; font-size: 14px" readonly id="log"></textarea>
 			</div>
 			<button onclick="copy_to_clipboard($('#log').val());"><span class="TRANSLATEME_copy_to_clipboard"></span></button>
 			<button class="expert_mode_only" onclick="confirmAndRunTests();"><span class="TRANSLATEME_run_tests"></span></button>
@@ -547,7 +547,7 @@
 	</div>
 
 	<div id="imprint_ribbon" class="ribbon_tab_content" title="code_and_contact">                                              
-		<div class="ribbon-group" style="width: auto;">                                                                    
+		<div class="ribbon-group" style="width: auto;" data-importance="5">                                                                    
 			<div class="ribbon-toolbar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">                                                                               
 				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button>
 				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank");'><span class="TRANSLATEME_paper"></span></button>

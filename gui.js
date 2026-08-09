@@ -388,6 +388,9 @@ function show_or_hide_beginner_or_expert_mode_stuff() {
 	} else {
 		$(".expert_mode_only").show();
 	}
+	if(typeof update_ribbon_compactness === "function") {
+		update_ribbon_compactness();
+	}
 }
 
 function show_or_hide_download_with_data() {
@@ -1196,6 +1199,7 @@ function show_ribbon() {
 	$("#ribbon").show();
 	$("#ribbon_shower").hide();
 	$("#status_bar").show();
+	update_ribbon_compactness();
 }
 
 function hide_ribbon() {
@@ -1208,6 +1212,15 @@ function hide_ribbon() {
 	$("#status_bar").hide();
 
 	close_all_popups();
+	close_ribbon_more_menu();
+}
+
+function toggle_ribbon_and_status_bar() {
+	if($("#ribbon").is(":visible")) {
+		hide_ribbon();
+	} else {
+		show_ribbon();
+	}
 }
 
 /* ============================================================
@@ -1304,10 +1317,13 @@ function mobile_toggle_drawer() {
 
 	_mobile_drawer_open = true;
 
-	// Update descriptions
-	if (typeof write_descriptions === 'function') {
-		write_descriptions(1); // await not possible here
-	}
+	// Update descriptions AFTER the drawer slide-in transition (0.35s) so
+	// layer offsets are read while the drawer is fully open.
+	setTimeout(function () {
+		if (typeof write_descriptions === 'function') {
+			write_descriptions(1); // await not possible here
+		}
+	}, 380);
 	mobile_set_active_nav('mobile_nav_layers');
 }
 
@@ -1330,6 +1346,11 @@ function mobile_close_drawer() {
 
 	_mobile_drawer_open = false;
 	mobile_clear_active_nav();
+
+	// Descriptions only make sense next to the open drawer
+	if(typeof write_descriptions === "function") {
+		write_descriptions(1);
+	}
 }
 
 function mobile_train_action() {
@@ -2313,6 +2334,223 @@ function ribbon_shower_hack () {
 	if($("#ribbon_shower").is(":visible") && $("#ribbon").is(":visible")) {
 		show_ribbon();
 	}
+}
+
+/* ============================================================
+   COMPACT RIBBON — importance-based collapsing
+   Ribbon groups carry a data-importance attribute (1 = most
+   important). When there is not enough horizontal space, the
+   least important groups that don't fit are moved behind the
+   "more" (⋯) button instead of wrapping to extra rows.
+   Always enabled so the ribbon fits as well as possible.
+   ============================================================ */
+
+var _ribbon_compactness_enabled = true;
+
+function ribbon_compactness_is_enabled() {
+	return _ribbon_compactness_enabled;
+}
+
+function ribbon_compactness_set_enabled(value) {
+	_ribbon_compactness_enabled = !!value;
+}
+
+function _ribbon_more_menu() {
+	var $menu = $("#ribbon_more_menu");
+	if(!$menu.length) {
+		$menu = $('<div id="ribbon_more_menu"></div>').appendTo(document.body);
+	}
+	return $menu;
+}
+
+function _ribbon_more_button_li() {
+	var $li = $("#ribbon_more_li");
+	if($li.length) {
+		return $li;
+	}
+
+	$li = $('<li id="ribbon_more_li"><span id="ribbon_more_button" class="symbol_button" data-tr-title="more_items" title="More">&#8285;</span></li>');
+	$li.appendTo("#tablist");
+
+	$("#ribbon_more_button").on("click", function() {
+		var $menu = _ribbon_more_menu();
+		var is_open = $menu.hasClass("ribbon_more_open");
+		close_ribbon_more_menu();
+		if(!is_open) {
+			var button = this.getBoundingClientRect();
+			$menu.css({
+				top: (button.bottom + 6) + "px",
+				right: Math.max(10, window.innerWidth - button.right) + "px"
+			});
+			$menu.addClass("ribbon_more_open");
+		}
+	});
+
+	$(document).on("click", function(event) {
+		var $menu = _ribbon_more_menu();
+		if($menu.hasClass("ribbon_more_open") &&
+			!$(event.target).closest("#ribbon_more_menu, #ribbon_more_button").length) {
+			close_ribbon_more_menu();
+		}
+	});
+
+	return $li;
+}
+
+function close_ribbon_more_menu() {
+	_ribbon_more_menu().removeClass("ribbon_more_open");
+}
+
+/* the collapsible units of a panel, in their original order */
+function _ribbon_panel_units(panel) {
+	if(!panel._ribbon_units) {
+		panel._ribbon_units = Array.prototype.slice.call(panel.children).filter(function(el) {
+			return el.nodeType === 1 && el.hasAttribute("data-importance");
+		});
+	}
+	return panel._ribbon_units;
+}
+
+/* put every collapsed group back into its panel, in original order */
+function _ribbon_restore_all() {
+	$("#ribbon .ui-tabs-panel").each(function() {
+		var units = this._ribbon_units || [];
+		for (var i = 0; i < units.length; i++) {
+			if(units[i].parentNode !== this) {
+				this.appendChild(units[i]);
+			}
+		}
+	});
+	_ribbon_more_menu().empty();
+}
+
+function _ribbon_active_panel() {
+	var $panels = $("#ribbon .ui-tabs-panel");
+	var $visible = $panels.filter(":visible");
+	return $visible.length ? $visible.first() : $panels.first();
+}
+
+function update_ribbon_compactness($target_panel) {
+	if(!ribbon_compactness_is_enabled() || is_mobile_view() || !$("#ribbon").is(":visible")) {
+		_ribbon_restore_all();
+		_ribbon_more_button_li().hide();
+		close_ribbon_more_menu();
+		return;
+	}
+
+	var $panel = $target_panel || _ribbon_active_panel();
+	if(!$panel.length) {
+		return;
+	}
+	var panel = $panel[0];
+	var units = _ribbon_panel_units(panel);
+
+	_ribbon_restore_all();
+
+	var budget = panel.clientWidth - 4;
+	var height_budget = panel.clientHeight - 6;
+
+	function is_visible(el) {
+		return !(el.style && el.style.display === "none") && el.offsetParent !== null;
+	}
+
+	function importance(el) {
+		return parseInt(el.getAttribute("data-importance") || "5", 10);
+	}
+
+	function unit_width(el) {
+		return el.offsetWidth + parseFloat(getComputedStyle(el).marginRight || 0);
+	}
+
+	var overflow = [];
+	var visible_units = [];
+	for (var i = 0; i < units.length; i++) {
+		if(is_visible(units[i])) {
+			visible_units.push(units[i]);
+		}
+	}
+
+	/* total width of everything that will remain in the panel (units,
+	   wrappers and separators all participate in the float run) */
+	var total_width = 0;
+	for (var k = 0; k < panel.children.length; k++) {
+		var child = panel.children[k];
+		if(child.nodeType === 1 && is_visible(child)) {
+			total_width += unit_width(child);
+		}
+	}
+
+	/* when there is not enough horizontal room, collapse the least
+	   important units first (importance 1 is always kept) */
+	var candidates = visible_units.filter(function(el) {
+		return importance(el) > 1;
+	});
+	candidates.sort(function(a, b) {
+		var ia = importance(a), ib = importance(b);
+		if(ia !== ib) {
+			return ib - ia;
+		}
+		return Array.prototype.indexOf.call(panel.children, a) -
+		       Array.prototype.indexOf.call(panel.children, b);
+	});
+
+	while(candidates.length && total_width > budget) {
+		var el = candidates.shift();
+		if(visible_units.length - overflow.length <= 1) {
+			break;
+		}
+		overflow.push(el);
+		total_width -= unit_width(el);
+	}
+
+	/* a single unit that is taller than the panel is only ever useful
+	   inside the overflow menu, unless it is the last thing left */
+	for (var j = 0; j < visible_units.length; j++) {
+		var el2 = visible_units[j];
+		if(overflow.indexOf(el2) !== -1) {
+			continue;
+		}
+		if(el2.offsetHeight > height_budget && importance(el2) > 1 &&
+		   visible_units.length - overflow.length > 1) {
+			overflow.push(el2);
+		}
+	}
+
+	var $li = _ribbon_more_button_li();
+	if(overflow.length) {
+		$li.show();
+		var $menu = _ribbon_more_menu();
+		for (var m = 0; m < overflow.length; m++) {
+			$menu.append(overflow[m]);
+		}
+	} else {
+		$li.hide();
+		close_ribbon_more_menu();
+	}
+}
+
+function setup_ribbon_compactness() {
+	_ribbon_more_button_li();
+
+	ribbon_compactness_set_enabled(ribbon_compactness_is_enabled());
+
+	$("#ribbon").on("tabsactivate", function(event, ui) {
+		setTimeout(function() {
+			update_ribbon_compactness(ui.newPanel);
+		}, 50);
+	});
+
+	var resize_timer = null;
+	$(window).on("resize", function() {
+		clearTimeout(resize_timer);
+		resize_timer = setTimeout(update_ribbon_compactness, 150);
+	});
+
+	window.addEventListener("load", function() {
+		setTimeout(update_ribbon_compactness, 100);
+	});
+
+	update_ribbon_compactness();
 }
 
 function jump_to_interesting_tab () {

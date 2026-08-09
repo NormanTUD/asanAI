@@ -65,6 +65,10 @@ function check_all_tabs () {
 }
 
 async function on_resize () {
+	if(_website_shown) {
+		_update_mobile_bottom_nav();
+	}
+
 	// Close mobile panels/drawer FIRST so layer positions are correct
 	if(!is_mobile_view()) {
 		mobile_close_all();
@@ -181,6 +185,8 @@ function init_tabs () {
 	$("#visualization_tab").tabs(tabs_settings);
 	$("#training_tab").tabs(tabs_settings);
 	$("#code_tab").tabs(tabs_settings);
+
+	setup_ribbon_compactness();
 
 }
 
@@ -677,14 +683,22 @@ function set_webgl_backend() {
 	$("#webgl_backend").prop("checked", true).trigger("change");
 }
 
+var _website_shown = false;
+
+function _update_mobile_bottom_nav() {
+	var bottomNav = document.getElementById('mobile_bottom_nav');
+	if(bottomNav) {
+		bottomNav.classList.toggle('mobile-visible', is_mobile_view());
+	}
+}
+
 function show_website_and_hide_loader() {
 	$("#mainsite").show();
 	$("#status_bar").show();
 	$("#loading_icon_wrapper").fadeOut(200);
-	if(is_mobile_view()) {
-		var bottomNav = document.getElementById('mobile_bottom_nav');
-		if(bottomNav) bottomNav.style.display = 'flex';
-	}
+	update_ribbon_compactness();
+	_website_shown = true;
+	_update_mobile_bottom_nav();
 }
 
 function set_model_and_label_debugger () {

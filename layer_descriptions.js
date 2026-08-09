@@ -50,7 +50,8 @@ async function write_descriptions(force = 0) {
 		return;
 	}
 
-	if (is_hidden_or_has_hidden_parent($("#layers_container"))) {
+	if ((is_mobile_view() && !$("#layers_container_left").hasClass("drawer-open")) ||
+	    is_hidden_or_has_hidden_parent($("#layers_container"))) {
 		$(".descriptions_of_layers").hide();
 		return;
 	}
@@ -106,8 +107,32 @@ function morph_boxes(new_layout) {
     fade_out_removed(used_keys);
 }
 
+function _get_descriptions_container() {
+	if(!is_mobile_view()) {
+		return $("#maindiv");
+	}
+
+	var $drawer = $("#layers_container_left");
+	var $wrap = $drawer.children(".layer_descriptions_wrapper");
+
+	if(!$wrap.length) {
+		$wrap = $('<div class="layer_descriptions_wrapper"></div>').css({
+			position: "relative",
+			minHeight: "100%"
+		});
+		$drawer.append($wrap);
+		$("#layers_container").appendTo($wrap);
+	}
+
+	return $wrap;
+}
+
+function _get_descriptions_left() {
+	return parse_int(_get_descriptions_container().width() - 64);
+}
+
 function compute_description_layout(groups, layer) {
-    const right_offset = get_layer_right_offset(layer);
+    const right_offset = is_mobile_view() ? _get_descriptions_left() : get_layer_right_offset(layer);
     const markers_start = $(".layer_start_marker");
     const markers_end = $(".layer_end_marker");
 
@@ -158,6 +183,11 @@ function compute_description_layout(groups, layer) {
 }
 
 function morph_update(elem, box) {
+	const container = _get_descriptions_container();
+	if (elem.parent()[0] !== container[0]) {
+		elem.appendTo(container);
+	}
+
 	elem.css({
 		top: box.top + "px",
 		left: box.left + "px",
@@ -197,7 +227,7 @@ function morph_create(box) {
         </div>
     `);
 
-    div.appendTo("#maindiv");
+    div.appendTo(_get_descriptions_container());
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -346,6 +376,11 @@ function get_layer_type_array () {
 }
 
 function show_layer_description_when_layer_is_visible () {
+	if(is_mobile_view() && !$("#layers_container_left").hasClass("drawer-open")) {
+		$(".descriptions_of_layers").hide();
+		return;
+	}
+
 	if($(".layer_setting").is(":visible")) {
 		$(".descriptions_of_layers").show();
 	}

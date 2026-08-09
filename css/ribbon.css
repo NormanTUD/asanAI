@@ -1,49 +1,550 @@
-.ribbon-tab{
-	background:-webkit-gradient(linear, 0 0, 0 bottom, from(#ffffff), to(#eaedf1));
+/* ============================================================
+   asanAI RIBBON — modernized
+   Layout & structure live here.
+   Per-theme colors live in ribbonlightmode.css /
+   ribbondarkmode.css / ribbonnaturalmode.css.
+   Nothing here removes a control — every id, class and
+   feature stays exactly where it was.
+   ============================================================ */
+
+/* ── The ribbon frame ─────────────────────────────────────── */
+
+#ribbon {
+	width: 100%;
+	height: 180px;
+	overflow: hidden;
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 99999;
+
+	display: flex;
+	flex-direction: column;
+
+	font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+	font-size: 13px;
+	line-height: 1.3;
+	text-transform: none;
+
+	background: var(--ribbon-bg, #f7f9fd);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	backdrop-filter: blur(20px) saturate(180%);
+	border-bottom: 1px solid var(--ribbon-border, rgba(0, 0, 0, 0.08));
+	box-shadow: var(--ribbon-shadow, 0 2px 24px rgba(30, 60, 110, 0.12));
 }
 
-.ribbon-group{
-	position:relative;
-	float:left;
-	border-style:solid;
-	border-width:1px;
-	border-color:transparent;
-	-moz-box-sizing:content-box;
-	-webkit-box-sizing:content-box;
-	box-sizing:content-box;
+/* ── Tab strip ────────────────────────────────────────────── */
+
+#tablist {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex: 0 0 auto;
+
+	margin: 0;
+	padding: 3px 10px 4px;
+	list-style: none;
+	white-space: nowrap;
+
+	background: transparent;
+	border: 0;
+	border-bottom: 1px solid var(--ribbon-border, rgba(0, 0, 0, 0.06));
+
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
 }
 
-.ribbon-group-title{
+#tablist::-webkit-scrollbar {
+	display: none;
+}
+
+#tablist li {
+	display: flex;
+	align-items: center;
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	white-space: nowrap;
+}
+
+/* beat the generic jQuery-UI tab styles */
+#tablist li.ui-tabs-tab {
+	padding: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+}
+
+#tablist li.ui-tabs-active {
+	background: transparent !important;
+	margin-bottom: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+#tablist li a {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 12px;
+	border-radius: 999px;
+
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.2;
+	text-transform: capitalize;
+
+	color: var(--ribbon-tab-fg, #444b57);
+	text-decoration: none;
+
+	transition: background var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            color var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            box-shadow var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+#tablist li a:hover {
+	background: var(--ribbon-tab-hover-bg, rgba(0, 0, 0, 0.06));
+	color: var(--ribbon-accent, #007AFF);
+}
+
+#tablist li.ui-tabs-active a,
+#tablist li.ui-tabs-active a:hover {
+	background: var(--ribbon-accent, #007AFF);
+	color: #ffffff;
+	box-shadow: 0 2px 10px var(--ribbon-tab-active-shadow, rgba(0, 122, 255, 0.35));
+}
+
+/* ── Icon buttons in the strip ────────────────────────────── */
+
+#tablist .symbol_button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+
+	font-size: 16px;
+	line-height: 1;
+	color: var(--ribbon-symbol-fg, #3c4250);
+	cursor: pointer;
+
+	transition: background var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            color var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+#tablist .symbol_button:hover {
+	background: var(--ribbon-icon-btn-hover-bg, rgba(0, 0, 0, 0.1));
+}
+
+/* keep the "enabled" affordance, restyled in the accent color */
+#tablist .symbol_button.enabled_symbol {
+	color: var(--ribbon-accent, #007AFF);
+}
+
+#tablist .symbol_button img.ribbon_icon {
+	height: 18px;
+	width: auto;
+}
+
+/* ── Tab content panels ───────────────────────────────────── */
+
+#ribbon .ui-tabs-panel {
+	flex: 1 1 auto;
+	min-height: 0;
+
+	padding: 4px 12px 8px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border: 0;
+	background: transparent;
+
+	scrollbar-width: thin;
+}
+
+#ribbon .ui-tabs-panel::-webkit-scrollbar {
+	width: 8px;
+}
+
+#ribbon .ui-tabs-panel::-webkit-scrollbar-thumb {
+	background: var(--ribbon-fill-secondary, rgba(0, 0, 0, 0.12));
+	border-radius: 4px;
+}
+
+/* ── Groups as flat regions (no boxed cards — they blend into the ribbon) ── */
+
+.ribbon-group {
+	position: relative;
+	float: left;
+
+	margin: 3px 12px 3px 0;
+	padding: 2px 12px 16px;
+
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.ribbon-group .l-btn {
+	float: left;
+}
+
+.ribbon-group-title {
 	position: absolute;
-	left:0;
-	bottom:0;
-	text-align:center;
-	width:100%;
-	height:14px;
-	line-height:14px;
-	top: 120px;
+	top: auto;
+	left: 6px;
+	right: 6px;
+	bottom: 3px;
+	width: auto;
+	height: 14px;
+	line-height: 14px;
+
+	text-align: center;
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+
+	color: var(--ribbon-title-fg, #8a92a3);
 }
 
-.ribbon-group .l-btn{
-	float:left;
-}
+/* ── Group separators are now just air between cards ──────── */
 
-.ribbon-group-sep{
-	float:left;
-	width:0;
-	height:180px;
-	font-size:0;
-	margin:0 2px;
+.ribbon-group-sep {
+	float: left;
+	width: 0;
+	height: 0;
+	margin: 0;
+	border: 0;
+	font-size: 0;
 }
 
 .ribbon-group-sep-hr {
 	display: none;
 }
 
-html {
-	min-width: 1150px;
+/* ── Toolbar content ──────────────────────────────────────── */
+
+.ribbon-toolbar {
+	margin: 0;
+	text-align: left;
 }
 
+.ribbon-toolbar table {
+	border-collapse: collapse;
+}
+
+.ribbon-toolbar td {
+	padding: 1px 5px;
+	font-size: 12px;
+	line-height: 1.35;
+	color: var(--ribbon-label, #6b7280);
+	white-space: nowrap;
+}
+
+/* ── Controls inside the ribbon ───────────────────────────── */
+
+#ribbon select,
+#ribbon input[type="number"],
+#ribbon input[type="text"] {
+	height: 19px;
+	padding: 0 6px;
+
+	border: 1px solid var(--ribbon-control-border, rgba(0, 0, 0, 0.16));
+	border-radius: 7px;
+
+	background: var(--ribbon-control-bg, #ffffff);
+	color: var(--ribbon-control-fg, #1f2430);
+	font-size: 12px;
+	outline: none;
+
+	transition: border-color var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            box-shadow var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            background var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+#ribbon select:hover,
+#ribbon input[type="number"]:hover,
+#ribbon input[type="text"]:hover {
+	background: var(--ribbon-control-hover-bg, #f0f4fb);
+}
+
+#ribbon select:focus,
+#ribbon input[type="number"]:focus,
+#ribbon input[type="text"]:focus {
+	border-color: var(--ribbon-accent, #007AFF);
+	box-shadow: 0 0 0 3px var(--ribbon-focus-ring, rgba(0, 122, 255, 0.22));
+}
+
+#ribbon input[type="checkbox"] {
+	width: 14px;
+	height: 14px;
+	accent-color: var(--ribbon-accent, #007AFF);
+	cursor: pointer;
+}
+
+/* radios are visually replaced by their segmented labels */
+#ribbon input[type="radio"] {
+	position: absolute;
+	width: 0;
+	height: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* ── Segmented choosers (mode / backend) ──────────────────── */
+
+#mode_chooser,
+#backend_chooser {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	margin: 0;
+	padding: 3px;
+	border: 0;
+	background: var(--ribbon-fill-secondary, rgba(0, 0, 0, 0.06));
+	border-radius: 10px;
+}
+
+#mode_chooser label,
+#backend_chooser label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 12px;
+	border-radius: 8px;
+
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1.2;
+
+	color: var(--ribbon-label, #6b7280);
+	cursor: pointer;
+
+	transition: background var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            color var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            box-shadow var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+#mode_chooser label:hover,
+#backend_chooser label:hover {
+	background: var(--ribbon-tab-hover-bg, rgba(0, 0, 0, 0.06));
+}
+
+#mode_chooser input:checked + label,
+#backend_chooser input:checked + label {
+	background: var(--ribbon-control-bg, #ffffff);
+	color: var(--ribbon-accent, #007AFF);
+	box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+#mode_chooser input:focus-visible + label,
+#backend_chooser input:focus-visible + label {
+	outline: 2px solid var(--ribbon-accent, #007AFF);
+	outline-offset: 2px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+
+/* generic ribbon buttons keep their theme background */
+#ribbon button:not(.start_training):not(.restart_training):not(.stop_training) {
+	padding: 3px 12px;
+	border: 1px solid var(--ribbon-control-border, rgba(0, 0, 0, 0.16));
+	border-radius: 8px;
+
+	background: var(--ribbon-button-bg, #eef1f6);
+	color: var(--ribbon-control-fg, #1f2430);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+
+	transition: background var(--duration-fast, 0.2s) var(--ease-default, ease),
+	            transform 0.05s var(--ease-spring, ease);
+}
+
+#ribbon button:not(.start_training):not(.restart_training):not(.stop_training):hover {
+	background: var(--ribbon-button-hover-bg, #e3e8f0);
+}
+
+#ribbon button:not(.start_training):not(.restart_training):not(.stop_training):active {
+	transform: translateY(1px);
+}
+
+/* the big training actions keep their colors, gain modern shaping.
+   they stack vertically and stay compact so they don't dominate the ribbon */
+#ribbon button.start_training,
+#ribbon button.restart_training,
+#ribbon button.stop_training {
+	display: block;
+	width: 100%;
+	margin: 2px 0;
+	padding: 4px 10px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.2;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ── Ribbon details ───────────────────────────────────────── */
+
+#ribbon hr {
+	border: 0;
+	border-top: 1px solid var(--ribbon-border, rgba(0, 0, 0, 0.1));
+	margin: 6px 0;
+}
+
+#logo_ribbon {
+	float: left;
+	height: auto;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+/* these wrappers are block-level in the PHP; float them so their
+   groups sit inline with the other ribbon groups instead of taking
+   a full row (a floated wrapper is a BFC, so it also contains the
+   floated groups inside it instead of collapsing to zero height) */
+#image_resize_dimensions,
+#data_plotter,
+#ribbon .ui-tabs-panel > div.expert_mode_only,
+#ribbon .ui-tabs-panel > div.only_when_multiple_webcams,
+#visualization_ribbon > div:first-child {
+	float: left;
+}
+
+#asanai_main_logo {
+	width: 56px;
+	height: 56px;
+	border-radius: 14px;
+	box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.08));
+	cursor: pointer;
+}
+
+#language_shower {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 4px 6px;
+	border-radius: 999px;
+	background: var(--ribbon-icon-btn-bg, rgba(0, 0, 0, 0.05));
+	box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+}
+
+#language_shower span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background var(--duration-fast, 0.2s) var(--ease-default, ease);
+}
+
+#language_shower span:hover {
+	background: var(--ribbon-icon-btn-hover-bg, rgba(0, 0, 0, 0.1));
+}
+
+#language_shower img {
+	height: 17px;
+	width: auto;
+}
+
+/* ── The slim toggle bar shown when the ribbon is tucked away ── */
+
 #ribbon_shower {
-	font-size: 35px;
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 99999;
+
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 14px;
+	font-size: 18px;
+
+	background: var(--ribbon-bg, #f7f9fd);
+	border-bottom: 1px solid var(--ribbon-border, rgba(0, 0, 0, 0.08));
+	box-shadow: var(--ribbon-shadow, 0 2px 24px rgba(30, 60, 110, 0.12));
+}
+
+#ribbon_shower .symbol_button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	color: var(--ribbon-symbol-fg, #3c4250);
+}
+
+#ribbon_shower .ribbon_icon_large {
+	height: 24px;
+	width: auto;
+}
+
+/* ── Compact ribbon: the "more" overflow menu ─────────────── */
+
+#ribbon_more_li {
+	display: none;
+	margin-left: auto;
+}
+
+#ribbon_more_button {
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: -2px;
+	color: var(--ribbon-symbol-fg, #3c4250);
+}
+
+#ribbon_more_button:hover {
+	background: var(--ribbon-icon-btn-hover-bg, rgba(0, 0, 0, 0.1));
+}
+
+#ribbon_more_menu {
+	display: none;
+	position: fixed;
+	z-index: 100000;
+
+	min-width: 300px;
+	max-width: 620px;
+	max-height: 62vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	padding: 12px;
+	border: 1px solid var(--ribbon-more-border, var(--ribbon-border, rgba(0, 0, 0, 0.12)));
+	border-radius: 14px;
+
+	background: var(--ribbon-more-bg, var(--glass-bg, rgba(255, 255, 255, 0.85)));
+	-webkit-backdrop-filter: blur(24px) saturate(180%);
+	backdrop-filter: blur(24px) saturate(180%);
+	color: var(--ribbon-control-fg, #1f2430);
+	box-shadow: var(--ribbon-shadow, 0 12px 40px rgba(30, 60, 110, 0.22));
+}
+
+#ribbon_more_menu.ribbon_more_open {
+	display: block;
+}
+
+#ribbon_more_menu .ribbon-group {
+	float: none;
+	margin: 0 0 10px;
+	padding: 4px 10px 16px;
+	border-bottom: 1px solid var(--ribbon-border, rgba(0, 0, 0, 0.08));
+}
+
+html {
+	min-width: 1150px;
 }

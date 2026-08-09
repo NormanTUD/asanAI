@@ -49,6 +49,10 @@ function set_mode () {
 	}
 
 	disable_everything_in_last_layer_enable_everyone_else_in_beginner_mode();
+
+	if(typeof update_ribbon_compactness === "function") {
+		update_ribbon_compactness();
+	}
 }
 
 function get_units_at_layer(layer_idx, use_max_layer_size = false) {

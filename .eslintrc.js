@@ -360,6 +360,7 @@ module.exports = {
 		"_highlight_debounce": "readonly",
 		"traindata_struct": "readonly",
 		"repredict": "readonly",
+		"is_mobile_view": "readonly",
 		"is_touch_device_cache": "writable",
 		"isolateEval": "readonly",
 		"got_images_from_webcam": "writable",

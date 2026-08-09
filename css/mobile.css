@@ -242,7 +242,7 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
-	transform: translateY(100%);
+	transform: translateY(calc(100% + 64px));
 	transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 	box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
 	padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -481,10 +481,13 @@
 		padding: 8px;
 	}
 
-	/* Layer settings fit inside the drawer */
+	/* Layer settings fit inside the drawer, leaving room for the
+	   group descriptions on the right so they can stick and scroll. */
 	.layer_setting {
-		width: 100%;
+		width: calc(100% - 64px);
 		box-sizing: border-box;
+		margin-left: 0;
+		margin-right: auto;
 	}
 
 	/* Add/remove layer buttons: touch-friendly */
@@ -499,6 +502,7 @@
 		font-size: 20px;
 		margin: 2px 4px;
 		border-radius: 8px;
+		vertical-align: middle;
 	}
 
 	.add_layer {
@@ -509,6 +513,19 @@
 		color: #FF3B30;
 		position: static;
 		margin-left: 4px;
+	}
+
+	/* Identifier flows after the add/remove buttons instead of being
+	   absolutely positioned on top of them. */
+	.layer_identifier {
+		position: static;
+		display: inline-block;
+		vertical-align: middle;
+		margin: 0 0 0 6px;
+		max-width: calc(100% - 110px);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 }
 
@@ -876,70 +893,75 @@
 }
 
 /* ============================================================
-   DARK MODE OVERRIDES
+   DARK MODE OVERRIDES — phone only. On desktop the left layers
+   panel keeps its normal theme colors.
    ============================================================ */
-body.darkmode #mobile_bottom_nav,
-body.dark-mode #mobile_bottom_nav {
-	background: rgba(28, 28, 30, 0.88);
-	border-top-color: rgba(255, 255, 255, 0.1);
-}
+@media only screen and (max-width: 1100px) {
+	body.darkmode #mobile_bottom_nav,
+	body.dark-mode #mobile_bottom_nav {
+		background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
+		border-top-color: #626567;
+	}
 
-body.darkmode .mobile-panel,
-body.dark-mode .mobile-panel {
-	background: rgba(44, 44, 46, 0.95);
-}
+	body.darkmode .mobile-panel,
+	body.dark-mode .mobile-panel {
+		background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
+		border-top-color: #626567;
+	}
 
-body.darkmode .mobile-nav-item,
-body.dark-mode .mobile-nav-item {
-	color: rgba(255, 255, 255, 0.5);
-}
+	body.darkmode .mobile-nav-item,
+	body.dark-mode .mobile-nav-item {
+		color: rgba(255, 255, 255, 0.5);
+	}
 
-body.darkmode .mobile-nav-item.active,
-body.dark-mode .mobile-nav-item.active {
-	color: var(--color-accent, #0A84FF);
-}
+	body.darkmode .mobile-nav-item.active,
+	body.dark-mode .mobile-nav-item.active {
+		color: var(--color-accent, #0A84FF);
+	}
 
-body.darkmode .mobile-panel-row,
-body.dark-mode .mobile-panel-row {
-	background: rgba(255, 255, 255, 0.08);
-}
+	body.darkmode .mobile-panel-row,
+	body.dark-mode .mobile-panel-row {
+		background: rgba(255, 255, 255, 0.08);
+	}
 
-body.darkmode .mobile-panel-title,
-body.dark-mode .mobile-panel-title {
-	color: #f5f5f7;
-}
+	body.darkmode .mobile-panel-title,
+	body.dark-mode .mobile-panel-title {
+		color: #f5f5f7;
+	}
 
-body.darkmode .mobile-panel-section-title,
-body.dark-mode .mobile-panel-section-title {
-	color: rgba(255, 255, 255, 0.45);
-}
+	body.darkmode .mobile-panel-section-title,
+	body.dark-mode .mobile-panel-section-title {
+		color: rgba(255, 255, 255, 0.45);
+	}
 
-body.darkmode .mobile-panel-label,
-body.dark-mode .mobile-panel-label {
-	color: #f5f5f7;
-}
+	body.darkmode .mobile-panel-label,
+	body.dark-mode .mobile-panel-label {
+		color: #f5f5f7;
+	}
 
-body.darkmode .mobile-panel-close,
-body.dark-mode .mobile-panel-close {
-	background: rgba(255, 255, 255, 0.1);
-	color: rgba(255, 255, 255, 0.6);
-}
+	body.darkmode .mobile-panel-close,
+	body.dark-mode .mobile-panel-close {
+		background: rgba(255, 255, 255, 0.1);
+		color: rgba(255, 255, 255, 0.6);
+	}
 
-body.darkmode .mobile-dataset-select,
-body.darkmode .mobile-data-origin-select,
-body.dark-mode .mobile-dataset-select,
-body.dark-mode .mobile-data-origin-select {
-	background-color: rgba(255, 255, 255, 0.08);
-	color: #f5f5f7;
-}
+	body.darkmode .mobile-dataset-select,
+	body.darkmode .mobile-data-origin-select,
+	body.dark-mode .mobile-dataset-select,
+	body.dark-mode .mobile-data-origin-select {
+		background-color: rgba(255, 255, 255, 0.08);
+		color: #f5f5f7;
+	}
 
-body.darkmode .mobile-panel-control select,
-body.dark-mode .mobile-panel-control select {
-	background-color: rgba(255, 255, 255, 0.08);
-	color: #f5f5f7;
-}
+	body.darkmode .mobile-panel-control select,
+	body.dark-mode .mobile-panel-control select {
+		background-color: rgba(255, 255, 255, 0.08);
+		color: #f5f5f7;
+	}
 
-body.darkmode #layers_container_left.left_side,
-body.dark-mode #layers_container_left.left_side {
-	border-right-color: rgba(255, 255, 255, 0.1);
+	body.darkmode #layers_container_left.left_side,
+	body.dark-mode #layers_container_left.left_side {
+		background: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
+		border-right-color: #626567;
+	}
 }

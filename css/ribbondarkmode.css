@@ -1,12 +1,58 @@
-.ribbon-group-title{
-	color:#acacac;
+/* ============================================================
+   RIBBON — dark theme
+   Modern color system; layout lives in css/ribbon.css
+   ============================================================ */
+
+:root {
+	--ribbon-bg: rgba(24, 26, 34, 0.85);
+	--ribbon-border: rgba(255, 255, 255, 0.1);
+	--ribbon-shadow: 0 2px 24px rgba(0, 0, 0, 0.5);
+
+	--ribbon-more-bg: radial-gradient(circle at top left, #524e4d 0%, #383534 100%);
+	--ribbon-more-border: #626567;
+
+	--ribbon-accent: #3b9bff;
+	--ribbon-tab-fg: #c9cdd6;
+	--ribbon-tab-hover-bg: rgba(255, 255, 255, 0.09);
+	--ribbon-tab-active-shadow: rgba(59, 155, 255, 0.45);
+
+	--ribbon-symbol-fg: #d7dbe4;
+	--ribbon-icon-btn-bg: rgba(255, 255, 255, 0.07);
+	--ribbon-icon-btn-hover-bg: rgba(255, 255, 255, 0.14);
+
+	--ribbon-group-bg: #262936;
+	--ribbon-group-border: rgba(255, 255, 255, 0.1);
+	--ribbon-title-fg: #9aa2b3;
+	--ribbon-label: #b6bcc9;
+
+	--ribbon-control-bg: #343748;
+	--ribbon-control-fg: #e8ebf2;
+	--ribbon-control-border: rgba(255, 255, 255, 0.14);
+	--ribbon-control-hover-bg: #404457;
+	--ribbon-focus-ring: rgba(59, 155, 255, 0.35);
+
+	--ribbon-button-bg: #343748;
+	--ribbon-button-hover-bg: #404457;
+	--ribbon-fill-secondary: rgba(255, 255, 255, 0.09);
 }
 
-.ribbon-group-sep{
-	border-left: 1px solid #585858;
-	border-right: 1px solid #585858;
+#ribbon {
+	background: var(--ribbon-bg);
+	color: #fafafa;
+}
+
+#tablist {
+	background: transparent;
+}
+
+.ribbon-group-title {
+	color: var(--ribbon-title-fg);
+}
+
+.ribbon-group-sep {
+	border: 0;
 }
 
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
-	color: white;
+	color: var(--ribbon-tab-fg);
 }

@@ -89,13 +89,14 @@
 
 /* ── Desktop: ensure ribbon is visible, layers panel visible ── */
 @media only screen and (min-width: 1101px) {
+	/* no `!important` here: it would defeat hide_ribbon()'s inline
+	   display:none and the ribbon could never be collapsed */
 	#ribbon {
-		display: block !important;
+		display: flex;
 	}
 
-	#ribbon_shower {
-		display: none !important;
-	}
+	/* ribbon_shower is JS-driven on desktop: only shown when the
+	   ribbon is tucked away (hide_ribbon()). No CSS forcing here. */
 
 	#toggle_layers_button {
 		display: none;
