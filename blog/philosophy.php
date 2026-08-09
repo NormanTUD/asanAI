@@ -11,6 +11,46 @@ topics: philosophy, ethics, language
 -->
 
 <div class="md">
+<a id="what-is-reason"></a>
+## What is Reason?
+
+Before asking whether machines can *think*, it helps to ask what *reasoning* is in the first place. The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) gives a working definition that has barely changed since Aristotle: **Reason** is the capacity to consciously apply logic by drawing valid conclusions from new or existing information, with the aim of seeking truth.
+
+**Reasoning** is the *process* — using more-or-less rational thought and cognition to extrapolate from existing knowledge and generate new knowledge. The field of **logic** studies the formal version: how to produce logically valid arguments and true conclusions.
+
+Three things make this definition load-bearing for the rest of this chapter:
+
+* **Reason vs. rationality.** "Reason" names the *capacity*; "rationality" names its *correct application*. A being can possess reason and still reason badly (see the section on fallacies below).
+* **Reason vs. intuition.** \citeauthor{aristotle_nicomachean_ethics} drew the classical distinction between **discursive reasoning** (step-by-step, communicable, propositional) and **intuitive reasoning** (fast, personal, opaque). Mathematics needs both: intuition often finds the proof, logic then verifies it.
+* **Reason is reflexive.** It can turn on itself — examine its own conclusions, detect its own errors, revise its own premises. This self-correcting property is what separates reason from mere association.
+
+### Forms of Logical Reasoning
+
+The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) identifies four classical forms, all of which show up in modern AI:
+
+| Form | Pattern | Example in AI |
+|------|---------|---------------|
+| **Deductive** | General premises → necessary conclusion | A theorem prover: given axioms, derive the theorem. |
+| **Inductive** | Specific cases → probable generalisation | A model trained on millions of cat photos concludes "cats have fur." |
+| **Abductive** | Observation → best explanation | A doctor sees symptoms and infers the most likely disease. |
+| **Analogical** | $A$ is like $B$ in known ways; therefore $A$ is like $B$ in unknown ways | "An atom is like a solar system" — useful, but can mislead. |
+
+Chain-of-thought prompting (see the <a href="reasoning">Reasoning chapter</a>) blends all four: it decomposes a problem (deductive), appeals to patterns seen in training (inductive), proposes candidate answers (abductive), and maps structure across domains (analogical).
+
+### Reason vs. Emotion, Faith, and Truth
+
+Three classical tensions run through the philosophy of reason and matter for AI:
+
+* **Reason vs. emotion.** \citeauthor{hume_treatise} argued reason is "the slave of the passions" — it cannot by itself generate action, only calculate means. Modern RLHF implicitly agrees: the reward model encodes human *preferences* (emotional, aesthetic, moral), and the LLM's "reason" serves those preferences.
+* **Reason vs. faith / tradition.** \citeauthor{ockham} and the nominalists argued reason must operate on observable particulars, not inherited dogma. The same impulse drives modern empirical ML: trust the data, not the prior.
+* **Reason vs. truth.** A formally valid argument can have false premises and a false conclusion. \citeauthor{kant_critique_pure_reason} tried to fix this by distinguishing *formal* (logical) validity from *transcendental* (truth-tracking) validity. This is exactly the gap between an LLM that produces *grammatical* arguments and one that produces *true* ones.
+
+### Automated Reasoning
+
+The field of **automated reasoning** studies how reasoning may or may not be modeled computationally. Classical AI took this literally — hand-coded logic, theorem provers, expert systems. Modern AI takes it *statistically* — the same four forms above, learned rather than programmed. The shift from formal to statistical reasoning is arguably the single most important philosophical change of the deep-learning era, and it is what the rest of this textbook is about.
+</div>
+
+<div class="md">
 ## The Turing Test: Performance vs. Presence
 
 <div class="smart-quote" data-cite="turing1950computing" data-page=442>

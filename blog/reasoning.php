@@ -14,13 +14,13 @@ topics: reasoning, agents, architecture, philosophy
 For most of the LLM era, scaling meant **training**: bigger models on more tokens. In late 2024, OpenAI's **o1** — followed in January 2025 by DeepSeek's **R1** — introduced a different scaling axis: **reasoning at inference time**. The model thinks longer, explores more paths, verifies its answers — and gets dramatically better at math, code, and logic.
 
 This chapter covers the techniques behind reasoning models, from the cheap and effective (prompting tricks) to the heavyweight (RL-trained chain-of-thought).
-
-<div class="optional md" data-headline="Where to read next">
-* For the **algorithm** behind R1 (GRPO): see `reinforcement_learning.php` § GRPO.
-* For the **training pipeline** (SFT → RLHF → DPO): see `finetuninglab.php`.
-* For **CoT + tool use** as a control loop: see `agents.php` § ReAct (an agent is CoT with a screwdriver).
-* For what **"reasoning"** even means: see `philosophy.php` § Mary's Room.
 </div>
+
+<div class="optional md" data-headline="Neighbouring chapters">
+* The **algorithm** behind R1 (GRPO) lives in the <a href="reinforcement_learning">Reinforcement Learning chapter</a>.
+* The **training pipeline** (SFT → RLHF → DPO) lives in the <a href="finetuninglab">Fine-Tuning chapter</a>.
+* **CoT + tool use** as a control loop lives in the <a href="agents">AI Agents chapter</a> § ReAct.
+* What **reason** and **reasoning** even *are*, philosophically, is unpacked in the <a href="philosophy#what-is-reason">Philosophy chapter</a> § What is Reason?
 </div>
 
 <div class="md">
@@ -90,11 +90,13 @@ OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning f
 * **Test-time compute scaling**: performance improves monotonically with the number of reasoning tokens the model is allowed to use.
 
 DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique called **GRPO** (\cite[Shao et al., 2024]{shao2024grpo} Policy Optimization), which scores groups of sampled responses and updates the policy to favour the best in each group. This produced emergent long-CoT behaviour without explicit supervision on reasoning traces; the released R1 model then added a cold-start SFT phase to stabilize the learned traces.
-
-<div class="optional md" data-headline="R1 = GRPO (the bridge)">
-R1's emergent long chain-of-thought is **not magic**. It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right. The full algorithm — group sampling, group-relative advantage, PPO-style clipped objective without a critic — lives in `reinforcement_learning.php` § GRPO. If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.
 </div>
 
+<div class="optional md" data-headline="R1 = GRPO (the bridge)">
+R1's emergent long chain-of-thought is **not magic**. It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right. The full algorithm — group sampling, group-relative advantage, PPO-style clipped objective without a critic — lives in the <a href="reinforcement_learning">Reinforcement Learning chapter</a> § GRPO. If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.
+</div>
+
+<div class="md">
 ### Why It Works
 
 The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next. A 100-token CoT might involve ~10 reasoning "chunks", each of which the model has seen many times in pretraining. The model is essentially **decomposing a single hard prediction into many easy ones**.
@@ -119,9 +121,9 @@ The Math-Shepherd method (2024) auto-labels step correctness by checking whether
 </div>
 
 <div class="md">
-## Inference-Time Scaling Laws \cite[Snell et al., 2024]{snell2024testtime}
+## Inference-Time Scaling Laws
 
-**Snell et al.** and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
+\citetitle{snell2024testtime} (\citeyear{snell2024testtime}) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
 
 $$
 \text{accuracy}(n) = a \cdot n^b

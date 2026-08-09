@@ -4923,5 +4923,41 @@ window.bibData = {
 		publisher: "Institute for Advanced Study",
 		year: 2013,
 		alternativetitle: "HoTT Book"
+	},
+	"wikipedia_reason": {
+		url: "https://en.wikipedia.org/wiki/Reason",
+		title: "Reason",
+		author: "Wikipedia contributors",
+		publisher: "Wikipedia, The Free Encyclopedia",
+		year: 2025,
+		alternativetitle: "Reason (Wikipedia)"
+	},
+	"aristotle_nicomachean_ethics": {
+		url: "https://plato.stanford.edu/entries/aristotle-ethics/",
+		title: "Nicomachean Ethics",
+		author: "Aristotle",
+		year: -340,
+		alternativetitle: "Aristotle, Nicomachean Ethics"
+	},
+	"hume_treatise": {
+		url: "https://www.gutenberg.org/ebooks/9665",
+		title: "A Treatise of Human Nature",
+		author: "David Hume",
+		year: 1739,
+		alternativetitle: "Hume, Treatise of Human Nature"
+	},
+	"ockham": {
+		url: "https://plato.stanford.edu/entries/ockham/",
+		title: "William of Ockham",
+		author: "Stanford Encyclopedia of Philosophy",
+		year: 2021,
+		alternativetitle: "William of Ockham (SEP)"
+	},
+	"kant_critique_pure_reason": {
+		url: "https://plato.stanford.edu/entries/kant/",
+		title: "Critique of Pure Reason",
+		author: "Immanuel Kant",
+		year: 1781,
+		alternativetitle: "Kant, Critique of Pure Reason"
 	}
 };
