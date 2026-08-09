@@ -725,7 +725,7 @@ async function get_fit_data () {
 		this_training_start_time = Date.now();
 		$(".training_performance_tabs").show();
 
-		set_tiny_graph_training_info({
+		const tiny_graph_data = {
 			start_time: this_training_start_time,
 			total_epochs: get_epochs(),
 			batch_size: get_batch_size(),
@@ -734,7 +734,9 @@ async function get_fit_data () {
 			model_info: model ? (model.layers ? model.layers.length + " layers" : "") : "",
 			current_run: 1,
 			num_runs: parse_int($("#number_of_runs").val()) || 1
-		});
+		}; // important for linter
+
+		set_tiny_graph_training_info(tiny_graph_data);
 
 		await show_tab_label("training_tab_label", jump_to_interesting_tab());
 
@@ -904,11 +906,13 @@ async function get_fit_data () {
 			var plotCanvas = create_tiny_plot(training_logs_epoch["loss"].x, training_logs_epoch["loss"].y, vl, th * 2, parse_int(0.9 * th));
 			reset_tiny_graph();
 			$("#tiny_graph").append(plotCanvas).show();
-			set_tiny_graph_training_info({
+			const tiny_graph_data = {
 				current_epoch: epochNr,
 				loss_values: training_logs_epoch["loss"].y.slice(),
 				val_loss_values: vl ? vl.slice() : []
-			});
+			}; // important for linter
+
+			set_tiny_graph_training_info(tiny_graph_data);
 			update_tiny_graph_tooltip();
 		} else {
 			reset_tiny_graph(1);
