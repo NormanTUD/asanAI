@@ -2182,6 +2182,34 @@ pre code {
 .optional-content {
 	padding: 15px;
 	animation: fadeIn 0.3s ease;
+	/* GUARDRAIL: prevent tooltip clipping from ever happening here.
+	   Even though JS also strips these after animation, this is the
+	   CSS-level floor: optional content must NEVER create a containing
+	   block for fixed-positioned descendants. */
+	overflow: visible !important;
+	transform: none !important;
+	filter: none !important;
+	clip-path: none !important;
+}
+
+/* Same guardrail for every descendant of optional content — animations
+   sometimes apply transform/filter to individual children, which would
+   re-introduce the containing-block bug. */
+.optional-content *,
+.optional-content *::before,
+.optional-content *::after {
+	transform: none !important;
+}
+
+/* Hard guarantee on the term itself: its own stacking context must not
+   be shadowed by neighbour content. */
+.glossary-term {
+	cursor: help;
+	border-bottom: 1px dotted rgba(148, 163, 184, 0.7);
+	position: relative;
+	display: inline;
+	z-index: 1;
+	isolation: isolate;
 }
 
 .optional-icon {
@@ -5197,12 +5225,36 @@ html.dark #theme-toggle .ti-moon { display: none; }
 
 /* ════════════════════════════════════════════════════════════
    GLOSSARY TOOLTIP
-   ════════════════════════════════════════════════════════ */
+   ════════════════════════════════════════════════════════════ */
+
+/* GUARDRAIL (angle 7): every node that COULD be an ancestor of a
+   glossary term is forced not to create a containing block. This is
+   belt-and-suspenders on top of the JS scanner. */
+#contents *,
+.md *,
+.optional *,
+.optional-content,
+.optional-content * {
+	contain: layout style !important;
+}
+
+/* GUARDRAIL: the #contents scroll container must not clip tooltips. */
+#contents,
+.md {
+	overflow: visible !important;
+	contain: none !important;
+}
+
 .glossary-term {
 	cursor: help;
 	border-bottom: 1px dotted rgba(148, 163, 184, 0.7);
 	position: relative;
 	display: inline;
+	z-index: 1;
+	isolation: isolate;
+}
+.glossary-term:hover {
+	border-bottom-color: rgba(148, 163, 184, 0.9);
 }
 .glossary-term:hover {
 	border-bottom-color: rgba(148, 163, 184, 0.9);
@@ -5221,10 +5273,19 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	pointer-events: none;
 	opacity: 0;
 	transition: opacity 0.2s ease;
-	z-index: 100000;
+	z-index: 2147483647 !important;
+	isolation: isolate;
 	text-align: left;
 	box-shadow: var(--mn-shadow-lg);
 	visibility: hidden;
+	/* GUARDRAIL: any of these on an ancestor would break position:fixed.
+	   The JS scanner also strips them, but belt-and-suspenders. */
+	transform: none !important;
+	filter: none !important;
+	clip-path: none !important;
+	mask: none !important;
+	perspective: none !important;
+	backdrop-filter: none !important;
 }
 .glossary-term:hover .glossary-tooltip,
 .glossary-term:focus .glossary-tooltip {
@@ -5246,6 +5307,21 @@ html.dark #theme-toggle .ti-moon { display: none; }
 		width: max(160px, 40vw);
 		font-size: 0.75rem;
 		padding: 8px 10px;
+	}
+}
+
+/* ANGLE 10: @supports — for browsers that support `contain`, force every
+   potential glossary ancestor to use `contain: layout style` instead of
+   any value that would create a containing block. This is the modern,
+   spec-correct fix. */
+@supports (contain: layout) {
+	#contents,
+	#contents *,
+	.md,
+	.md *,
+	.optional,
+	.optional * {
+		contain: layout style !important;
 	}
 }
 

@@ -1413,6 +1413,22 @@ function initOptionalBlocks() {
 					child.style.filter = 'blur(0px)';
 					child.style.transform = 'translateY(0px)';
 				}, i * perChild);
+
+				// 🔧 FIX (angle 7): after the animation completes, strip EVERY
+				// property that could create a containing block for
+				// position:fixed descendants. Not just transform — also
+				// filter, backdrop-filter, clip-path, mask, perspective,
+				// will-change, contain.
+				setTimeout(() => {
+					child.style.transform = '';
+					child.style.filter = '';
+					child.style.backdropFilter = '';
+					child.style.clipPath = '';
+					child.style.mask = '';
+					child.style.perspective = '';
+					child.style.willChange = 'auto';
+					child.style.contain = '';
+				}, i * perChild + 380);
 			});
 
 			if (onComplete) {

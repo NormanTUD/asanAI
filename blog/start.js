@@ -1107,10 +1107,18 @@ function initGlossary() {
 				span.className = 'glossary-term';
 				span.textContent = term;
 				if (def) {
+					// ANGLE 4: portal the tooltip to document.body.
+					// This guarantees it can never be inside a clipped
+					// or transformed ancestor — it lives at the top of
+					// the DOM, sibling of #contents.
 					var tooltip = document.createElement('span');
 					tooltip.className = 'glossary-tooltip';
 					tooltip.textContent = def;
-					span.appendChild(tooltip);
+					tooltip.dataset.ownerTerm = '__pending__';
+					// keep a back-reference from the term to its tooltip
+					span.dataset.tooltipId = 'tt_' + Math.random().toString(36).slice(2, 10);
+					tooltip.dataset.tooltipId = span.dataset.tooltipId;
+					document.body.appendChild(tooltip);
 				}
 				frag.appendChild(span);
 				lastIdx = match.index + match[0].length;
@@ -1122,10 +1130,59 @@ function initGlossary() {
 		});
 	}
 
-	// Position each tooltip as a fixed element so it always stays inside the
-	// viewport, even when the underlying term sits at the very left or right.
+	// ANGLE 5: ancestor scanner. Before showing a tooltip, walk up from the
+	// term and temporarily neutralize any property that would create a
+	// containing block for position:fixed descendants. The original
+	// values are saved so they can be restored on mouseout.
+	var _savedAncestorStyles = new WeakMap();
+
+	function neutralizeContainingBlock(el) {
+		var node = el;
+		var stack = [];
+		while (node && node !== document.documentElement) {
+			var cs = window.getComputedStyle(node);
+			var props = ['transform', 'filter', 'backdropFilter', 'perspective',
+				'clipPath', 'mask', 'maskImage', 'willChange', 'contain'];
+			var saved = _savedAncestorStyles.get(node) || {};
+			var touched = false;
+			for (var i = 0; i < props.length; i++) {
+				var p = props[i];
+				var v = cs[p];
+				if (v && v !== 'none' && v !== 'normal' && v !== 'auto' && !(p === 'willChange' && v === 'auto')) {
+					if (!(p in saved)) {
+						saved[p] = node.style[p] || '';
+						node.style[p] = 'none';
+						touched = true;
+					}
+				}
+			}
+			if (touched) _savedAncestorStyles.set(node, saved);
+			stack.push(node);
+			node = node.parentElement;
+		}
+		return stack;
+	}
+
+	function restoreAncestors(stack) {
+		for (var i = 0; i < stack.length; i++) {
+			var node = stack[i];
+			var saved = _savedAncestorStyles.get(node);
+			if (!saved) continue;
+			for (var p in saved) {
+				if (saved[p]) node.style[p] = saved[p];
+				else node.style.removeProperty(p);
+			}
+			_savedAncestorStyles.delete(node);
+		}
+	}
+
+	// Position each tooltip. The tooltip is portaled to document.body,
+	// so position:fixed is always relative to the viewport — no matter
+	// what the term's ancestors do.
 	function positionTooltip(term) {
-		var tip = term.querySelector('.glossary-tooltip');
+		var tipId = term.dataset.tooltipId;
+		if (!tipId) return;
+		var tip = document.querySelector('.glossary-tooltip[data-tooltip-id="' + tipId + '"]');
 		if (!tip) return;
 		var termRect = term.getBoundingClientRect();
 		var tipRect = tip.getBoundingClientRect();
@@ -1148,10 +1205,39 @@ function initGlossary() {
 
 		tip.style.left = left + 'px';
 		tip.style.top = top + 'px';
+		// Force on top no matter what z-index any neighbour claims.
+		tip.style.zIndex = '2147483647';
 
 		var arrowLeft = termRect.left + termRect.width / 2 - left;
 		var arrowClamp = Math.max(10, Math.min(tipW - 10, arrowLeft));
 		tip.style.setProperty('--arrow-x', arrowClamp + 'px');
+	}
+
+	function showTooltip(term) {
+		var tipId = term.dataset.tooltipId;
+		if (!tipId) return;
+		var tip = document.querySelector('.glossary-tooltip[data-tooltip-id="' + tipId + '"]');
+		if (!tip) return;
+		term._neutralizedAncestors = neutralizeContainingBlock(term);
+		tip.style.opacity = '1';
+		tip.style.visibility = 'visible';
+		positionTooltip(term);
+	}
+
+	function hideTooltip(term) {
+		var tipId = term.dataset.tooltipId;
+		if (!tipId) return;
+		var tip = document.querySelector('.glossary-tooltip[data-tooltip-id="' + tipId + '"]');
+		if (!tip) return;
+		tip.style.opacity = '0';
+		tip.style.visibility = 'hidden';
+		tip.style.left = '';
+		tip.style.top = '';
+		tip.style.removeProperty('--arrow-x');
+		if (term._neutralizedAncestors) {
+			restoreAncestors(term._neutralizedAncestors);
+			term._neutralizedAncestors = null;
+		}
 	}
 
 	// Use document-level delegation so tooltips are positioned on every page,
@@ -1159,16 +1245,69 @@ function initGlossary() {
 	document.addEventListener('mouseover', function(ev) {
 		var term = ev.target.closest && ev.target.closest('.glossary-term');
 		if (!term) return;
-		positionTooltip(term);
+		showTooltip(term);
 	});
 	document.addEventListener('mouseout', function(ev) {
 		var term = ev.target.closest && ev.target.closest('.glossary-term');
 		if (!term) return;
-		var tip = term.querySelector('.glossary-tooltip');
-		if (!tip) return;
-		tip.style.left = '';
-		tip.style.top = '';
-		tip.style.removeProperty('--arrow-x');
+		hideTooltip(term);
+	});
+	document.addEventListener('scroll', function() {
+		// Re-position any visible tooltip on scroll (which changes bounding rects)
+		document.querySelectorAll('.glossary-tooltip[style*="visibility: visible"]').forEach(function(tip) {
+			var id = tip.dataset.tooltipId;
+			var term = document.querySelector('.glossary-term[data-tooltip-id="' + id + '"]');
+			if (term) positionTooltip(term);
+		});
+	}, true);
+
+	// ANGLE 6: MutationObserver. If any glossary-term is moved into (or
+	// inside of) an ancestor that gains a transform/filter/etc., re-parent
+	// its tooltip to body and re-neutralize.
+	var glossaryObserver = new MutationObserver(function(mutations) {
+		for (var i = 0; i < mutations.length; i++) {
+			var m = mutations[i];
+			// Look for style changes on terms or their ancestors
+			if (m.type === 'attributes' && m.attributeName === 'style') {
+				var t = m.target;
+				if (t.classList && t.classList.contains('glossary-term')) {
+					var id = t.dataset.tooltipId;
+					var tip = id ? document.querySelector('.glossary-tooltip[data-tooltip-id="' + id + '"]') : null;
+					if (tip && tip.parentElement !== document.body) {
+						document.body.appendChild(tip);
+					}
+				}
+			}
+		}
+	});
+	glossaryObserver.observe(document.body, {
+		attributes: true,
+		attributeFilter: ['style', 'class'],
+		subtree: true
+	});
+
+	// ANGLE 8: periodic self-check. Every 2 seconds, make sure every
+	// tooltip is still a direct child of <body>. If not, re-parent it.
+	setInterval(function() {
+		document.querySelectorAll('.glossary-tooltip').forEach(function(tip) {
+			if (tip.parentElement !== document.body) {
+				document.body.appendChild(tip);
+			}
+			// Belt: also force z-index in case any inline style set it lower
+			if (tip.style.zIndex !== '2147483647') {
+				tip.style.zIndex = '2147483647';
+			}
+		});
+	}, 2000);
+
+	// ANGLE 9: re-parent on DOMContentLoaded too, in case terms were
+	// moved by other scripts after initGlossary ran.
+	document.addEventListener('DOMContentLoaded', function() {
+		document.querySelectorAll('.glossary-tooltip').forEach(function(tip) {
+			if (tip.parentElement !== document.body) {
+				document.body.appendChild(tip);
+			}
+		});
 	});
 }
 
