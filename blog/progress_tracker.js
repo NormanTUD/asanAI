@@ -11,20 +11,25 @@
      • .tile-progress-bar  — 5 px column on the RIGHT edge with 10
                              stacked segments. Each segment fills
                              1/10 of the bar's height (no gap, no
-                             padding). A segment is filled iff the
-                             user has ever scrolled past the top of
-                             its corresponding slice of the linked
-                             page. Filled segments are solid orange,
-                             the rest are a faint orange trace.
-                             No transitions, no animation — the
-                             state is rendered synchronously on load.
+                             padding). Each segment's *own* fill is
+                             continuous — the orange fades smoothly
+                             from 0 → 100% inside the segment as the
+                             user scrolls through it, instead of
+                             jumping in 10 % steps. Segments share
+                             edges so the orange flows without a
+                             visible seam. No transitions, no
+                             animation — state is rendered
+                             synchronously on load.
 
      • .tile-progress-tip  — tiny "60 %" pill, bottom-right,
                              appears on hover. Shows the deepest
                              scroll percentage reached.
 
-   State lives in a single localStorage key `course_progress_v3`:
+   State lives in a single localStorage key `course_progress`:
      { tiles: { [slug]: { maxScrollPct, lastSeen } } }
+
+   Older shapes (`segments: [bool;10]`, `dwellMs/dwelled`) are
+   auto-migrated on load.
 
    A reset command is logged to the console on every page load so
    power-users can wipe history from devtools without grepping.
@@ -33,17 +38,15 @@
 (function () {
 	'use strict';
 
-	const STORAGE_KEY          = 'course_progress_v3';
-	const STORAGE_VERSION      = 3;
-	const SAVE_DEBOUNCE_MS     = 300;
-	const SCROLL_THROTTLE_MS   = 100;
-	const TOTAL_SEGMENTS       = 10;
-	const SEGMENT_HEIGHT_PCT   = 100 / TOTAL_SEGMENTS;
+	const STORAGE_KEY        = 'course_progress';
+	const SAVE_DEBOUNCE_MS   = 300;
+	const SCROLL_THROTTLE_MS = 100;
+	const TOTAL_SEGMENTS     = 10;
+	const SEGMENT_HEIGHT_PCT = 100 / TOTAL_SEGMENTS;
 
 	function defaultState() {
 		return {
-			version: STORAGE_VERSION,
-			tiles:   Object.create(null),
+			tiles:     Object.create(null),
 			updatedAt: 0
 		};
 	}
@@ -54,7 +57,7 @@
 			if (typeof raw.maxScrollPct === 'number' && isFinite(raw.maxScrollPct)) {
 				maxScrollPct = Math.min(100, Math.max(0, raw.maxScrollPct));
 			} else if (Array.isArray(raw.segments)) {
-				/* Migrate from v2: segments[0..9] of booleans → maxScrollPct */
+				/* Older shape: segments[0..9] of booleans → maxScrollPct */
 				let trueCount = 0;
 				for (let i = 0; i < Math.min(raw.segments.length, TOTAL_SEGMENTS); i++) {
 					if (raw.segments[i] === true) trueCount++;
@@ -77,7 +80,7 @@
 			const raw = localStorage.getItem(STORAGE_KEY);
 			if (!raw) return;
 			const parsed = JSON.parse(raw);
-			if (!parsed || parsed.version !== STORAGE_VERSION || typeof parsed !== 'object') return;
+			if (!parsed || typeof parsed !== 'object') return;
 
 			const normalizedTiles = Object.create(null);
 			if (parsed.tiles && typeof parsed.tiles === 'object') {
@@ -88,8 +91,7 @@
 				}
 			}
 			state = {
-				version: STORAGE_VERSION,
-				tiles:   normalizedTiles,
+				tiles:     normalizedTiles,
 				updatedAt: Number(parsed.updatedAt) || 0
 			};
 		} catch (e) { /* disabled / corrupt — keep default */ }
@@ -128,6 +130,7 @@
 		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
 			const seg = document.createElement('span');
 			seg.className = 'seg';
+			seg.style.setProperty('--fill', '0%');
 			bar.appendChild(seg);
 		}
 		return bar;
@@ -151,6 +154,7 @@
 			for (let i = 0; i < TOTAL_SEGMENTS; i++) {
 				const seg = document.createElement('span');
 				seg.className = 'seg';
+				seg.style.setProperty('--fill', '0%');
 				bar.appendChild(seg);
 			}
 		}
@@ -162,29 +166,35 @@
 		}
 
 		const maxScroll  = (ts && typeof ts.maxScrollPct === 'number') ? ts.maxScrollPct : 0;
-		const segsFilled = Math.min(
-			TOTAL_SEGMENTS,
-			Math.max(0, Math.floor(maxScroll / SEGMENT_HEIGHT_PCT))
-		);
-
 		const segElements = bar.children;
+		let fullyFilledCount = 0;
+
 		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
-			const isFilled = i < segsFilled;
+			const segStart = i * SEGMENT_HEIGHT_PCT;
+			const segEnd   = (i + 1) * SEGMENT_HEIGHT_PCT;
+
+			let fillPct;
+			if (maxScroll >= segEnd) {
+				fillPct = 100;
+				fullyFilledCount++;
+			} else if (maxScroll > segStart) {
+				fillPct = ((maxScroll - segStart) / SEGMENT_HEIGHT_PCT) * 100;
+			} else {
+				fillPct = 0;
+			}
+
 			const el = segElements[i];
 			if (el) {
-				if (isFilled) el.classList.add('filled');
-				else          el.classList.remove('filled');
+				el.style.setProperty('--fill', fillPct.toFixed(2) + '%');
+				if (fillPct >= 100) el.classList.add('filled');
+				else                el.classList.remove('filled');
 			}
 		}
 
-		const pct = Math.round(maxScroll);
-		tip.textContent = pct + '%';
+		tip.textContent = Math.round(maxScroll) + '%';
 
-		if (segsFilled === TOTAL_SEGMENTS) {
-			tile.classList.add('tile-visited');
-		} else {
-			tile.classList.remove('tile-visited');
-		}
+		if (fullyFilledCount === TOTAL_SEGMENTS) tile.classList.add('tile-visited');
+		else                                     tile.classList.remove('tile-visited');
 	}
 
 	function setupTile(tile) {
@@ -250,34 +260,37 @@
 
 		window.addEventListener('scroll', onScroll, { passive: true });
 		window.addEventListener('resize', onScroll, { passive: true });
-		/* No initial updateScroll() — the bar starts empty and only
-		   fills as the user actually scrolls. */
 	}
 
 	function logResetHint() {
-		console.log(
-			'%c Course Progress %c reset →  localStorage.removeItem("' + STORAGE_KEY + '") ',
-			'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;',
-			'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;'
-		);
+		const label    = '%c Course Progress %c';
+		const cmd      = 'reset →  localStorage.removeItem("' + STORAGE_KEY + '")';
+		const cssLabel = 'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;';
+		const cssCmd   = 'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;';
+		try {
+			console.log(label + ' ' + cmd, cssLabel, cssCmd);
+		} catch (e) {
+			try { console.warn('Course Progress: localStorage.removeItem("' + STORAGE_KEY + '")'); } catch (e2) {}
+		}
 	}
 
 	function init() {
-		loadState();
+		try {
+			loadState();
+			logResetHint();
 
-		/* Console hint is logged on every page load, not just on the
-		   homepage, so a user on any subpage can find the reset cmd. */
-		logResetHint();
+			const tiles = getTiles();
+			if (tiles.length > 0) {
+				for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
+				return;
+			}
 
-		const tiles = getTiles();
-		if (tiles.length > 0) {
-			for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
-			return;
-		}
-
-		const slug = getCurrentSlug();
-		if (slug && slug !== 'index' && slug !== 'index_full') {
-			trackSubpage(slug);
+			const slug = getCurrentSlug();
+			if (slug && slug !== 'index' && slug !== 'index_full') {
+				trackSubpage(slug);
+			}
+		} catch (e) {
+			try { console.error('CourseProgress init error:', e); } catch (e2) {}
 		}
 	}
 
@@ -293,6 +306,7 @@
 				if (bar) {
 					for (let j = 0; j < bar.children.length; j++) {
 						bar.children[j].classList.remove('filled');
+						bar.children[j].style.setProperty('--fill', '0%');
 					}
 				}
 				const tip = tile.querySelector(':scope > .tile-progress-tip');

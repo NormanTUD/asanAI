@@ -7579,13 +7579,12 @@ html.dark .topics-preset-fun {
    .course-tile on the homepage. The bar is split into 10 equal
    segments stacked vertically, each filling 1/10 of the bar's
    height (no gaps, no padding — the segments meet edge-to-edge
-   from the top of the tile to the bottom). A segment is filled
-   iff the user has scrolled past the top of its corresponding
-   slice of the linked page; the bar is purely a function of the
-   maximum scroll percentage ever reached. Filled segments are
-   solid orange, unfilled are a faint orange trace. No
-   transitions, no animation — state is painted synchronously
-   when the page loads.
+   from the top of the tile to the bottom). Each segment's *own*
+   fill is continuous: an orange → dim linear gradient driven by
+   a `--fill` CSS variable (0% … 100%) so the bar grows smoothly
+   inside each segment instead of jumping in 10% steps. Because
+   adjacent segments share an edge, the orange flows seamlessly
+   from one segment into the next as the user scrolls.
    ════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -7614,7 +7613,11 @@ html.dark .topics-preset-fun {
 .course-tile > .tile-progress-bar .seg {
 	flex: 1 1 0;
 	min-height: 0;
-	background: var(--cp-orange-dim);
+	background: linear-gradient(
+		to bottom,
+		var(--cp-orange)    0% var(--fill, 0%),
+		var(--cp-orange-dim) var(--fill, 0%) 100%
+	);
 }
 
 .course-tile > .tile-progress-bar .seg.filled {
