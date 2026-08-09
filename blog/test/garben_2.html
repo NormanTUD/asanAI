@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Garbentheorie am Beispiel: Ein KI-Dokument mit Widerspruch</title>
+<style>
+    @page { size: A4 landscape; margin: 10mm; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0; padding: 0;
+        color: #1e293b;
+        background-color: #ffffff;
+        font-size: 9.5pt;
+        line-height: 1.5;
+    }
+    header {
+        background: linear-gradient(135deg, #7c2d12, #dc2626);
+        color: white;
+        padding: 14px 20px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+    }
+    h1 { margin: 0 0 4px 0; font-size: 16pt; font-weight: 700; }
+    p.subtitle { margin: 0; font-size: 9pt; opacity: 0.92; }
+
+    .running-example {
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        font-size: 9.5pt;
+        border-radius: 4px;
+    }
+    .running-example strong { color: #92400e; }
+    .chapter-box {
+        display: inline-block;
+        background: white;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin: 3px 4px 3px 0;
+        font-size: 8.5pt;
+    }
+    .chapter-box.conflict { border-color: #dc2626; background: #fee2e2; }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    tr { page-break-inside: avoid; }
+    th {
+        background-color: #0f172a;
+        color: #f8fafc;
+        font-weight: 600;
+        text-align: left;
+        padding: 8px 10px;
+        font-size: 9pt;
+    }
+    td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: top;
+        font-size: 9pt;
+    }
+    tr:nth-child(even) td { background-color: #f8fafc; }
+    tr:last-child td { border-bottom: none; }
+
+    .term { font-weight: 700; color: #7c2d12; font-size: 10pt; }
+    .term-sub {
+        font-size: 7.5pt; color: #64748b;
+        font-weight: normal; display: block; margin-top: 2px;
+    }
+    .math {
+        font-family: 'Times New Roman', Times, serif;
+        font-style: italic;
+        color: #0f172a;
+    }
+    .example-cell {
+        background: #fffbeb !important;
+    }
+    .viz {
+        display: block;
+        margin: 4px auto;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 4px;
+    }
+    .caption {
+        font-size: 7.5pt;
+        color: #475569;
+        text-align: center;
+        margin-top: 2px;
+        font-style: italic;
+    }
+
+    .conflict-section {
+        margin-top: 16px;
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        padding: 14px 18px;
+        border-radius: 6px;
+        border: 2px solid #dc2626;
+    }
+    .conflict-section h2 {
+        margin-top: 0;
+        color: #7c2d12;
+        font-size: 12pt;
+        border-bottom: 2px solid #dc2626;
+        padding-bottom: 3px;
+    }
+    .verdict {
+        background: white;
+        padding: 10px 14px;
+        border-radius: 4px;
+        margin-top: 8px;
+        border-left: 4px solid #dc2626;
+        font-size: 9.5pt;
+    }
+    .verdict-good {
+        border-left-color: #16a34a;
+    }
+    .fix-box {
+        margin-top: 12px;
+        background: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        padding: 10px 14px;
+        border-radius: 4px;
+        font-size: 9pt;
+    }
+    .fix-box strong { color: #166534; }
+
+    @media screen and (max-width: 768px) {
+        body { font-size: 11pt; padding: 8px; }
+        table, thead, tbody, tr, td { display: block; width: 100%; }
+        thead { display: none; }
+        table { border: none; }
+        tr {
+            margin-bottom: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        tr:nth-child(even) td { background-color: white; }
+        td { font-size: 10pt; padding: 10px 12px; }
+        td::before {
+            display: block;
+            font-weight: 700;
+            color: #7c2d12;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+        td:nth-child(2)::before { content: "Was es im KI-Dokument ist"; }
+        td:nth-child(3)::before { content: "Visualisierung"; }
+        td:nth-child(4)::before { content: "Formalismus"; }
+        td:first-child {
+            background: linear-gradient(135deg, #7c2d12, #dc2626);
+            color: white;
+        }
+        td:first-child .term { color: white; font-size: 13pt; }
+        td:first-child .term-sub { color: rgba(255,255,255,0.85); }
+        svg.viz { max-width: 100%; width: 100%; height: auto; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Garbentheorie am realen Beispiel</h1>
+    <p class="subtitle">Ein KI-Dokument mit einem Widerspruch als lebendige Illustration von Prägarbe, Garbe, Halm, Schnitt &amp; Verklebbarkeit</p>
+</header>
+
+<div class="running-example">
+    <strong>🔑 Das durchgängige Beispiel – Dein KI-Dokument:</strong><br>
+    Du schreibst ein mehrkapitliges Werk über Künstliche Intelligenz. Jedes Kapitel behandelt ein Thema:
+    <div style="margin-top:6px;">
+        <span class="chapter-box conflict">Kap. 1: Frühgeschichte → „Das erste NN war SNARC (1951)."</span>
+        <span class="chapter-box">Kap. 2: Symbolische KI</span>
+        <span class="chapter-box">Kap. 3: Expertensysteme</span>
+        <span class="chapter-box">Kap. 4: KI-Winter</span>
+        <span class="chapter-box conflict">Kap. 5: Neuronale Netze → „Das erste NN war das Perzeptron (1958)."</span>
+        <span class="chapter-box">Kap. 6: Deep Learning</span>
+    </div>
+    <div style="margin-top:8px;">
+        Kapitel 1 und Kapitel 5 überlappen thematisch (beide berühren „erstes neuronales Netz"), sind aber <em>inkonsistent</em>. Genau hier liegt die Garben-Frage: <strong>Lässt sich dein Text zu einem konsistenten Ganzen verkleben?</strong>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 16%;">Begriff</th>
+            <th style="width: 32%;">Was es in deinem KI-Dokument ist</th>
+            <th style="width: 28%;">Visualisierung</th>
+            <th style="width: 24%;">Formalismus</th>
+        </tr>
+    </thead>
+    <tbody>
+
+    <!-- Topologischer Raum -->
+    <tr>
+        <td class="term">Topologischer Raum
+            <span class="term-sub">(X, τ)</span>
+        </td>
+        <td class="example-cell">
+            <strong>X</strong> = das Themenfeld „KI-Geschichte und -Techniken".<br>
+            Die <em>offenen Mengen</em> <span class="math">U ⊂ X</span> sind Themen­bereiche, über die man reden kann – z. B. „Frühgeschichte", „Neuronale Netze", „Symbolische KI".<br>
+            Deine Kapitel sind konkrete Auswahlen solcher Themen­bereiche.
+        </td>
+        <td>
+            <svg class="viz" width="260" height="120" viewBox="0 0 260 120">
+                <rect x="10" y="10" width="240" height="100" fill="#f1f5f9" stroke="#0f172a" rx="6"/>
+                <text x="130" y="26" text-anchor="middle" font-size="9" fill="#0f172a" font-weight="bold">X = Themenfeld KI</text>
+                <ellipse cx="70" cy="65" rx="45" ry="25" fill="#93c5fd" opacity="0.55" stroke="#1e3a8a"/>
+                <text x="70" y="68" text-anchor="middle" font-size="8" fill="#1e3a8a">Frühgeschichte</text>
+                <ellipse cx="170" cy="60" rx="55" ry="28" fill="#fca5a5" opacity="0.55" stroke="#7f1d1d"/>
+                <text x="170" y="63" text-anchor="middle" font-size="8" fill="#7f1d1d">Neuronale Netze</text>
+                <ellipse cx="130" cy="90" rx="35" ry="15" fill="#fbbf24" opacity="0.4" stroke="#92400e"/>
+                <text x="130" y="94" text-anchor="middle" font-size="7" fill="#92400e">Überlapp</text>
+            </svg>
+            <div class="caption">Themen als offene Mengen, mit Überlappungen</div>
+        </td>
+        <td>Paar <span class="math">(X, τ)</span>: Menge <span class="math">X</span> mit Topologie <span class="math">τ</span> (Menge zulässiger „Themen­bereiche", abgeschlossen unter beliebigen Vereinigungen und endlichen Schnitten).</td>
+    </tr>
+
+    <!-- Schnitt -->
+    <tr>
+        <td class="term">Schnitt
+            <span class="term-sub">Section: s ∈ F(U)</span>
+        </td>
+        <td class="example-cell">
+            Ein <strong>Schnitt über U</strong> ist der konkrete Text, den du zum Thema <span class="math">U</span> schreibst.<br><br>
+            • <span class="math">s₁ ∈ F(U₁)</span> = Text von Kapitel 1 über die Frühgeschichte, inkl. Behauptung „SNARC war das erste NN".<br>
+            • <span class="math">s₅ ∈ F(U₅)</span> = Text von Kapitel 5 über NN, inkl. Behauptung „Perzeptron war das erste NN".<br><br>
+            <em>F(U)</em> ist damit die Menge aller möglichen Texte, die über <span class="math">U</span> geschrieben werden könnten.
+        </td>
+        <td>
+            <svg class="viz" width="260" height="110" viewBox="0 0 260 110">
+                <ellipse cx="70" cy="55" rx="50" ry="28" fill="#93c5fd" opacity="0.5" stroke="#1e3a8a"/>
+                <text x="70" y="30" text-anchor="middle" font-size="8" fill="#1e3a8a" font-weight="bold">U₁ (Frühgesch.)</text>
+                <rect x="35" y="50" width="70" height="30" fill="white" stroke="#1e3a8a"/>
+                <text x="70" y="62" text-anchor="middle" font-size="7" fill="#0f172a">Text s₁:</text>
+                <text x="70" y="73" text-anchor="middle" font-size="6.5" fill="#dc2626">"SNARC = 1. NN"</text>
+                
+                <ellipse cx="190" cy="55" rx="50" ry="28" fill="#fca5a5" opacity="0.5" stroke="#7f1d1d"/>
+                <text x="190" y="30" text-anchor="middle" font-size="8" fill="#7f1d1d" font-weight="bold">U₅ (NN)</text>
+                <rect x="155" y="50" width="70" height="30" fill="white" stroke="#7f1d1d"/>
+                <text x="190" y="62" text-anchor="middle" font-size="7" fill="#0f172a">Text s₅:</text>
+                <text x="190" y="73" text-anchor="middle" font-size="6.5" fill="#dc2626">"Perz. = 1. NN"</text>
+            </svg>
+            <div class="caption">Zwei Schnitte = zwei Kapiteltexte über zwei Themen</div>
+        </td>
+        <td>Für jedes <span class="math">U ∈ τ</span> ist <span class="math">F(U)</span> eine Menge (hier: Menge zulässiger Textfassungen); ein Schnitt ist <span class="math">s ∈ F(U) = Γ(U, F)</span>.</td>
+    </tr>
+
+    <!-- Einschränkung -->
+    <tr>
+        <td class="term">Einschränkung
+            <span class="term-sub">Restriction: ρ<sub>U,V</sub></span>
+        </td>
+        <td class="example-cell">
+            Wenn <span class="math">V ⊂ U</span>, dann liefert <span class="math">ρ<sub>U,V</sub>: F(U) → F(V)</span> aus dem breiten Text zu <span class="math">U</span> den relevanten Teil für <span class="math">V</span>.<br><br>
+            <strong>Konkret:</strong> <span class="math">V = U₁ ∩ U₅</span> ist der Themen-Überlapp „erstes neuronales Netz".<br>
+            • <span class="math">ρ<sub>U₁,V</sub>(s₁)</span> = „SNARC war das erste NN" (aus Kap. 1 herausgeschnitten).<br>
+            • <span class="math">ρ<sub>U₅,V</sub>(s₅)</span> = „Perzeptron war das erste NN" (aus Kap. 5 herausgeschnitten).
+        </td>
+        <td>
+            <svg class="viz" width="260" height="120" viewBox="0 0 260 120">
+                <ellipse cx="130" cy="55" rx="90" ry="32" fill="#93c5fd" opacity="0.4" stroke="#1e3a8a"/>
+                <text x="60" y="30" font-size="8" fill="#1e3a8a" font-weight="bold">U₁</text>
+                <ellipse cx="130" cy="55" rx="45" ry="22" fill="#fbbf24" opacity="0.55" stroke="#92400e"/>
+                <text x="130" y="58" text-anchor="middle" font-size="7" fill="#92400e" font-weight="bold">V = U₁∩U₅</text>
+                <text x="130" y="70" text-anchor="middle" font-size="6" fill="#92400e">"erstes NN"</text>
+                
+                <path d="M 40 90 L 100 65" stroke="#1e3a8a" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+                <text x="30" y="105" font-size="7" fill="#1e3a8a">ρ<tspan font-size="5">U₁,V</tspan>(s₁)</text>
+                
+                <defs>
+                    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                        <polygon points="0,0 8,3 0,6" fill="#1e3a8a"/>
+                    </marker>
+                </defs>
+                <text x="130" y="105" text-anchor="middle" font-size="7" fill="#dc2626" font-weight="bold">→ "SNARC" vs. "Perzeptron"</text>
+            </svg>
+            <div class="caption">Aussage zum Überlappthema aus beiden Kapiteln extrahiert</div>
+        </td>
+        <td>Morphismus <span class="math">ρ<sub>U,V</sub>: F(U) → F(V)</span> für <span class="math">V ⊂ U</span> mit <span class="math">ρ<sub>U,U</sub> = id</span> und <span class="math">ρ<sub>V,W</sub> ∘ ρ<sub>U,V</sub> = ρ<sub>U,W</sub></span> (Funktorialität).</td>
+    </tr>
+
+    <!-- Halm -->
+    <tr>
+        <td class="term">Halm
+            <span class="term-sub">Stalk: F<sub>x</sub></span>
+        </td>
+        <td class="example-cell">
+            Wähle einen sehr spezifischen Punkt <span class="math">x ∈ X</span>, z. B. <span class="math">x</span> = „das erste jemals gebaute neuronale Netz".<br><br>
+            Der <strong>Halm <span class="math">F<sub>x</sub></span></strong> sammelt <em>alle</em> Textfragmente aus <em>allen</em> Kapiteln, die sich beliebig nah an genau diesen einen Punkt heranfokussieren lassen.<br><br>
+            In deinem Dokument enthält <span class="math">F<sub>x</sub></span> also sowohl die SNARC- als auch die Perzeptron-Aussage – zwei <em>unterschiedliche Elemente</em> desselben Halms.
+        </td>
+        <td>
+            <svg class="viz" width="260" height="130" viewBox="0 0 260 130">
+                <line x1="10" y1="110" x2="250" y2="110" stroke="#0f172a"/>
+                <circle cx="130" cy="110" r="3" fill="#dc2626"/>
+                <text x="120" y="125" font-size="8" fill="#dc2626" font-weight="bold" font-style="italic">x = "1. NN"</text>
+                
+                <rect x="30" y="92" width="200" height="6" fill="#93c5fd" opacity="0.5"/>
+                <text x="235" y="97" font-size="7" fill="#1e3a8a">U₁</text>
+                <rect x="60" y="80" width="140" height="6" fill="#fca5a5" opacity="0.6"/>
+                <text x="205" y="85" font-size="7" fill="#7f1d1d">U₅</text>
+                <rect x="95" y="68" width="70" height="6" fill="#fbbf24" opacity="0.75"/>
+                <text x="170" y="73" font-size="7" fill="#92400e">U₁∩U₅</text>
+                
+                <line x1="130" y1="20" x2="130" y2="110" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+                <text x="135" y="30" font-size="8" fill="#92400e" font-weight="bold">F<tspan font-size="6">x</tspan> = alle Keime hier</text>
+                <text x="135" y="42" font-size="7" fill="#0f172a">enthält [s₁]<tspan font-size="5">x</tspan> ≠ [s₅]<tspan font-size="5">x</tspan></text>
+            </svg>
+            <div class="caption">Der Halm bündelt alles, was um den Punkt „erstes NN" gesagt wird</div>
+        </td>
+        <td>Direkter Limes <span class="math">F<sub>x</sub> := colim<sub>U ∋ x</sub> F(U)</span> über alle offenen Umgebungen <span class="math">U</span> von <span class="math">x</span>.</td>
+    </tr>
+
+    <!-- Keim -->
+    <tr>
+        <td class="term">Keim
+            <span class="term-sub">Germ: [s]<sub>x</sub></span>
+        </td>
+        <td class="example-cell">
+            Ein <strong>Keim</strong> ist ein einzelnes Element des Halms – die konkrete Aussage zu <span class="math">x</span>, gesehen aus einem Kapitel.<br><br>
+            • <span class="math">[s₁]<sub>x</sub></span> = der Keim aus Kap. 1: „SNARC".<br>
+            • <span class="math">[s₅]<sub>x</sub></span> = der Keim aus Kap. 5: „Perzeptron".<br><br>
+            Zwei Kapitel liefern denselben Keim genau dann, wenn sie in <em>irgendeiner</em> gemeinsamen kleineren Umgebung von <span class="math">x</span> übereinstimmen. Bei dir tun sie das <strong>nicht</strong>: <span class="math">[s₁]<sub>x</sub> ≠ [s₅]<sub>x</sub></span>.
+        </td>
+        <td>
+            <svg class="viz" width="260" height="120" viewBox="0 0 260 120">
+                <line x1="10" y1="95" x2="250" y2="95" stroke="#0f172a"/>
+                <circle cx="130" cy="95" r="3" fill="#0f172a"/>
+                <text x="122" y="112" font-size="8" fill="#0f172a" font-style="italic">x</text>
+                <rect x="105" y="90" width="50" height="10" fill="#fbbf24" opacity="0.4" stroke="#f59e0b" stroke-dasharray="2,2"/>
+                <text x="163" y="98" font-size="6.5" fill="#92400e">jede Umgb. W</text>
+                
+                <rect x="20" y="30" width="100" height="26" fill="white" stroke="#dc2626"/>
+                <text x="70" y="47" text-anchor="middle" font-size="8" fill="#dc2626">[s₁]<tspan font-size="6">x</tspan>= "SNARC"</text>
+                
+                <rect x="140" y="30" width="100" height="26" fill="white" stroke="#2563eb"/>
+                <text x="190" y="47" text-anchor="middle" font-size="8" fill="#2563eb">[s₅]<tspan font-size="6">x</tspan>= "Perzeptron"</text>
+                
+                <text x="130" y="75" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">[s₁]<tspan font-size="6">x</tspan> ≠ [s₅]<tspan font-size="6">x</tspan> ✗</text>
+            </svg>
+            <div class="caption">Zwei konkurrierende Keime an derselben Stelle</div>
+        </td>
+        <td>Äquivalenzklasse: <span class="math">(s,U) ~ (t,V) ⇔ ∃ W ⊂ U∩V mit x ∈ W und ρ<sub>U,W</sub>(s) = ρ<sub>V,W</sub>(t)</span>. Keim = <span class="math">[s]<sub>x</sub> ∈ F<sub>x</sub></span>.</td>
+    </tr>
+
+    <!-- Prägarbe -->
+    <tr>
+        <td class="term">Prägarbe
+            <span class="term-sub">Presheaf</span>
+        </td>
+        <td class="example-cell">
+            Dein KI-Dokument <em>als Ganzes</em> ist zunächst nur eine <strong>Prägarbe</strong>: Jedem Thema <span class="math">U</span> ordnest du einen Text <span class="math">F(U)</span> zu, und Einschränkungen <span class="math">ρ<sub>U,V</sub></span> respektieren Verschachtelung – aber <em>niemand prüft, ob die Kapitel im Überlapp zusammenpassen</em>.<br><br>
+            Genau das ist bei dir passiert: Kap. 1 und Kap. 5 wurden unabhängig geschrieben, jedes für sich in sich schlüssig – aber im gemeinsamen Themenbereich widersprechen sie sich.
+        </td>
+        <td>
+            <svg class="viz" width="260" height="120" viewBox="0 0 260 120">
+                <rect x="20" y="20" width="100" height="60" fill="#93c5fd" opacity="0.5" stroke="#1e3a8a" rx="4"/>
+                <text x="70" y="38" text-anchor="middle" font-size="8" fill="#1e3a8a" font-weight="bold">Kapitel 1</text>
+                <text x="70" y="55" text-anchor="middle" font-size="7" fill="#0f172a">"SNARC war</text>
+                <text x="70" y="66" text-anchor="middle" font-size="7" fill="#0f172a">das erste NN"</text>
+
+                <rect x="140" y="20" width="100" height="60" fill="#fca5a5" opacity="0.5" stroke="#7f1d1d" rx="4"/>
+                <text x="190" y="38" text-anchor="middle" font-size="8" fill="#7f1d1d" font-weight="bold">Kapitel 5</text>
+                <text x="190" y="55" text-anchor="middle" font-size="7" fill="#0f172a">"Perzeptron war</text>
+                <text x="190" y="66" text-anchor="middle" font-size="7" fill="#0f172a">das erste NN"</text>
+
+                <text x="130" y="100" text-anchor="middle" font-size="10" fill="#b91c1c" font-weight="bold">✗ Kein Konsistenz-Check!</text>
+                <text x="130" y="112" text-anchor="middle" font-size="7" fill="#475569" font-style="italic">Prägarbe erlaubt beides gleichzeitig</text>
+            </svg>
+            <div class="caption">Jedes Kapitel für sich – aber ungeprüft</div>
+        </td>
+        <td>Kontravarianter Funktor <span class="math">F: O(X)<sup>op</sup> → Set</span>. Keine Verklebungsbedingung gefordert.</td>
+    </tr>
+
+    <!-- Garbe -->
+    <tr>
+        <td class="term">Garbe
+            <span class="term-sub">Sheaf</span>
+        </td>
+        <td class="example-cell">
+            Eine <strong>Garbe</strong> wäre dein Dokument, wenn es zusätzlich die <em>Verklebbarkeit</em> erfüllen würde: Überall dort, wo zwei Kapitel dasselbe Thema berühren, müssten sie <em>exakt dieselbe Aussage</em> treffen – dann (und nur dann) ließe sich das ganze Werk widerspruchsfrei zu <em>einem globalen Text</em> über die gesamte KI-Geschichte verkleben.<br><br>
+            Bei dir <strong>scheitert das</strong>: <span class="math">ρ<sub>U₁,V</sub>(s₁) ≠ ρ<sub>U₅,V</sub>(s₅)</span>. Also ist deine Zuordnung eine Prägarbe, aber <em>keine</em> Garbe.
+        </td>
+        <td>
+            <svg class="viz" width="260" height="120" viewBox="0 0 260 120">
+                <rect x="20" y="20" width="100" height="60" fill="#93c5fd" opacity="0.5" stroke="#1e3a8a" rx="4"/>
+                <text x="70" y="38" text-anchor="middle" font-size="8" fill="#1e3a8a" font-weight="bold">Kapitel 1</text>
+                <text x="70" y="58" text-anchor="middle" font-size="7" fill="#0f172a">"Perzeptron"</text>
+
+                <rect x="140" y="20" width="100" height="60" fill="#86efac" opacity="0.5" stroke="#166534" rx="4"/>
+                <text x="190" y="38" text-anchor="middle" font-size="8" fill="#166534" font-weight="bold">Kapitel 5</text>
+                <text x="190" y="58" text-anchor="middle" font-size="7" fill="#0f172a">"Perzeptron"</text>
+
+                <rect x="105" y="35" width="50" height="30" fill="#fbbf24" opacity="0.4" stroke="#f59e0b" stroke-dasharray="2,2"/>
+                <text x="130" y="100" text-anchor="middle" font-size="10" fill="#166534" font-weight="bold">✓ Verklebbar!</text>
+                <text x="130" y="112" text-anchor="middle" font-size="7" fill="#475569" font-style="italic">→ ein konsistentes Gesamtwerk</text>
+            </svg>
+            <div class="caption">So sähe die Garben-Eigenschaft aus</div>
+        </td>
+        <td>Prägarbe <span class="math">F</span> mit exaktem Equalizer für jede Überdeckung <span class="math">U = ⋃ U<sub>i</sub></span>:<br>
+            <span class="math">F(U) → ∏<sub>i</sub> F(U<sub>i</sub>) ⇉ ∏<sub>i,j</sub> F(U<sub>i</sub>∩U<sub>j</sub>)</span></td>
+    </tr>
+
+    </tbody>
+</table>
+
+<!-- Der eigentliche Konflikt-Abschnitt: die Diagnose -->
+<div class="conflict-section">
+    <h2>🔍 Diagnose: Warum dein Dokument keine Garbe ist</h2>
+
+    <p style="margin: 6px 0;">Wir prüfen die beiden Garben-Axiome an deinem konkreten KI-Text:</p>
+
+    <div class="verdict">
+        <strong>Axiom ① Lokal–Global-Identität (Unizität):</strong><br>
+        Formal: <span class="math">(∀ i: s|<sub>U<sub>i</sub></sub> = t|<sub>U<sub>i</sub></sub>) ⇒ s = t</span>.<br>
+        In deinem Dokument: Wenn zwei Gesamtfassungen deines Buchs in jedem Kapitel identisch wären, wären sie ein und dieselbe Fassung. Das ist trivial erfüllt – <strong>Axiom ① ✓</strong>.
+    </div>
+
+    <div class="verdict">
+        <strong>Axiom ② Verklebbarkeit (Existenz):</strong><br>
+        Formal: <span class="math">s<sub>i</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> = s<sub>j</sub>|<sub>U<sub>i</sub>∩U<sub>j</sub></sub> ⇒ ∃! s ∈ F(U)</span>.<br>
+        In deinem Dokument: Für <span class="math">V = U₁ ∩ U₅</span> gilt
+        <span class="math">ρ<sub>U₁,V</sub>(s₁)</span> = „SNARC ist das erste NN" &nbsp;≠&nbsp;
+        <span class="math">ρ<sub>U₅,V</sub>(s₅)</span> = „Perzeptron ist das erste NN".<br>
+        Die Voraussetzung der Verklebbarkeit ist also gar nicht erfüllt – und selbst wenn man <em>versuchen</em> würde zu verkleben, gäbe es <strong>keinen globalen Schnitt</strong>, der beide Kapitel gleichzeitig als Restriktion hat. <strong>Axiom ② ✗</strong>.
+    </div>
+
+    <div class="verdict verdict-good">
+        <strong>Ergebnis:</strong> Die Zuordnung „Thema ↦ Kapiteltext" auf deinem KI-Dokument ist eine <em>Prägarbe</em>, aber <em>keine Garbe</em>. Der Halm <span class="math">F<sub>x</sub></span> am Punkt <span class="math">x</span> = „erstes neuronales Netz" enthält zwei verschiedene Keime <span class="math">[s₁]<sub>x</sub> ≠ [s₅]<sub>x</sub></span> – ein Fingerabdruck der Inkonsistenz genau an einem einzelnen Punkt.
+    </div>
+
+    <div class="fix-box">
+        <strong>💡 Wie du deine Prägarbe zur Garbe machst (Sheafification in der Praxis):</strong>
+        <ol style="margin: 6px 0 0 18px; padding: 0;">
+            <li><strong>Konflikt lokalisieren:</strong> Nutze den Halm-Trick – gehe jeden Punkt <span class="math">x</span> durch und prüfe, ob alle Kapitel dort denselben Keim liefern. Bei dir: <span class="math">x</span> = „erstes NN" hat zwei Keime.</li>
+            <li><strong>Faktisch entscheiden:</strong> Historisch ist SNARC (Minsky &amp; Edmonds, 1951) älter als das Perzeptron (Rosenblatt, 1958). Wähle also z. B. <em>SNARC</em> als die eine Aussage.</li>
+            <li><strong>Beide Kapitel angleichen:</strong> Ersetze in Kap. 5 „das erste NN war das Perzeptron" durch „das erste <em>weit rezipierte</em> NN war das Perzeptron; die früheste physische Realisierung war SNARC (vgl. Kap. 1)".</li>
+            <li><strong>Verklebbarkeit prüfen:</strong> Jetzt gilt <span class="math">ρ<sub>U₁,V</sub>(s₁') = ρ<sub>U₅,V</sub>(s₅')</span> → es existiert ein eindeutiger globaler Schnitt <span class="math">s ∈ F(X)</span>. Dein Buch ist jetzt eine Garbe.</li>
+        </ol>
+    </div>
+</div>
+
+<footer style="margin-top: 14px; text-align: center; font-size: 7.5pt; color: #94a3b8;">
+    Beispiel-Setup: X = Themenfeld KI · F(U) = mögliche Texte über Thema U · Konflikt bei x = „erstes neuronales Netz" · Druckoptimiert A4 quer
+</footer>
+
+</body>
+</html>
