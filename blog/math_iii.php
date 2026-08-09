@@ -206,7 +206,7 @@ This matters because the **univalence axiom** says: $(A \simeq B) \simeq (A = B)
 
 - An **embedding space** is a type $\mathbb{R}^d$ whose points are vectors. Cosine similarity becomes a path-flavored statement about angle.
 - An **isomorphism between neural-network layers** (same function, different parameterization) is exactly the kind of "$A = B$" HoTT treats as "$A \simeq B$".
-- A **theorem prover checking an LLM's proof** (see *Symbolic AI* and *Reasoning*) is a function between two types — and HoTT makes the *equality* of the prover's output with the formal statement into something you can *transport structure along*, not just check with a boolean.
+- A **theorem prover checking an LLM's proof** (see the <a href="symbolic_ai">Symbolic AI chapter</a> and the <a href="reasoning">Reasoning chapter</a>) is a function between two types — and HoTT makes the *equality* of the prover's output with the formal statement into something you can *transport structure along*, not just check with a boolean.
 - **Constitutional AI** and reward modeling become functions whose codomain is *preferences*, a type with structure (transitivity, asymmetry) that HoTT handles cleanly.
 
 You do not need HoTT to read this book. But once you have the picture in your head — *types are spaces, proofs are paths, equality is equivalence* — you will start spotting it everywhere. And you will have a name for the structure the field is moving toward: **a sheaf of types, glued by proofs, where equality is a path you can walk**.
