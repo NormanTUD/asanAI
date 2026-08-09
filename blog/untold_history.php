@@ -227,6 +227,11 @@ Every prompt typed into an LLM passes through a **keyboard** whose layout was di
 
 In 1868, **Christopher Latham Sholes**, Carlos Glidden, and Samuel W. Soule patented an early typewriter (\cite[U.S. Patent 79,265]{typewriterpatent}). By 1874, **E. Remington and Sons** began mass-producing the **Sholes & Glidden Type-Writer**, featuring the **QWERTY** layout, an arrangement designed to separate commonly paired letters and prevent adjacent typebars from colliding. This layout, born from a purely mechanical constraint, became the universal standard for text input and has survived virtually unchanged for over 150 years.
 
+<figure>
+    <img style="width: 70%; height: auto; display: block; margin: 1em auto;" src="sholes_typewriter.jpg" alt="The original Sholes typewriter prototype with circular key arrangement" />
+    <figcaption class="md">\citealternativetitle{sholes_typewriter}: the original Sholes, Glidden and Soule prototype typewriter (1868–1873), manufactured by E. Remington and Sons as the Sholes &amp; Glidden Type-Writer. The QWERTY layout, designed to prevent adjacent typebars from jamming, became the universal input standard that survives into the era of LLM chatbots.</figcaption>
+</figure>
+
 **Teletypes** in the early 20th century adapted the typewriter keyboard for electrical communication, encoding keystrokes as signals over telegraph lines. When **video terminals** replaced teletypes in the 1970s, the QWERTY keyboard carried over unchanged. The computer keyboard is, in every functional sense, a typewriter with its mechanical linkage replaced by an electrical switch matrix.
 
 Today, a user's fingers follow a key arrangement dictated by 1870s typebar physics, yet without the typewriter's standardization of rapid text input, the entire paradigm of **conversational AI** would lack its most fundamental interface.
@@ -236,6 +241,11 @@ Today, a user's fingers follow a key arrangement dictated by 1870s typebar physi
 A machine that cannot *show* its output is, for all practical purposes, mute. The visual display has its origins not in computing, but in 19th-century experimental physics.
 
 In 1897, **Karl Ferdinand Braun** invented the **cathode ray tube (CRT)** at the University of Strasbourg, described in \citetitle{braunannalen}. It was a laboratory instrument for visualizing alternating-current waveforms, a tool for physicists, not communicators. By directing an electron beam onto a phosphorescent surface, Braun rendered invisible electrical phenomena as visible, glowing traces.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="crt.jpg" alt="Close-up of a cathode ray tube (CRT) picture tube, showing the phosphor-coated screen" />
+    <figcaption class="md">A \citealternativetitle{crt}: the phosphor-coated face of a cathode ray tube. Invented in 1897 as a laboratory instrument for visualising oscillating currents, the CRT evolved through television, radar and computer terminals into the display on which the first chatbots were typed.</figcaption>
+</figure>
 
 From this scientific instrument, an extraordinary displacement unfolded: **Philo Farnsworth** demonstrated fully electronic television in 1927, adapting the CRT for broadcast entertainment. During WWII, CRTs were repurposed for **radar displays**, the first use as an interactive, real-time information screen. The transition into computing followed at MIT, where the **Whirlwind** computer (early 1950s) used a CRT for real-time output, and Ivan Sutherland's \cite[Sketchpad]{sketchpad} (1963) proved a screen could be a medium for direct graphical interaction with a computer.
 
@@ -250,6 +260,11 @@ Without the internet, there is no Large Language Model. Not because LLMs require
 
 In 1969, the **Advanced Research Projects Agency Network (ARPANET)** transmitted its first message between UCLA and the Stanford Research Institute, the machine crashed after sending the letters "LO" (of an intended "LOGIN"). The network's purpose was military resilience and academic resource-sharing, documented in \citetitle{rfc1} by **Steve Crocker**. By 1971, ARPANET connected 15 nodes. By 1973, it had crossed the Atlantic. The foundational idea, that heterogeneous computers could exchange data through a shared, decentralized protocol, was radical, but it was *not* about making information public. ARPANET was a closed network for researchers and defense contractors.
 
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="arpanet_map.png" alt="ARPANET logical map, March 1977, showing the network's topology with dozens of nodes and links across the United States" />
+    <figcaption class="md">The \citealternativetitle{arpanet_map}: the logical topology of the ARPANET in March 1977. What began as a four-node experimental network in 1969 would, a generation later, become the technical substrate of the modern Internet, and thus of every web-scale corpus on which an LLM is trained.</figcaption>
+</figure>
+
 ### TCP/IP: A Universal Language for Machines
 
 ARPANET's original protocols were rigid and network-specific. In \citeyear{cerfkahn}, **Vint Cerf** and **Bob Kahn** proposed the **Transmission Control Protocol / Internet Protocol (TCP/IP)** in \citetitle{cerfkahn}, a universal standard that allowed *any* network to interconnect with *any* other. When ARPANET adopted TCP/IP on January 1, 1983, the so-called "flag day", the *internet* as a network of networks was born. This was the critical infrastructural layer: a single, open protocol suite that allowed global-scale data exchange, independent of any particular hardware vendor or government.
@@ -257,6 +272,11 @@ ARPANET's original protocols were rigid and network-specific. In \citeyear{cerfk
 ### Tim Berners-Lee and the World Wide Web
 
 The internet connected machines. The **World Wide Web** connected *documents*. In March 1989, **Tim Berners-Lee**, a software engineer at CERN, circulated \citetitle{bernerslee1989}, a memo proposing a system of interlinked hypertext documents accessible over the internet. By December 1990, he had built the first web server, the first web browser, and the first web page. The three pillars he created, **HTML** (a markup language for documents), **HTTP** (a protocol for transferring them), and **URLs** (a system for addressing them), transformed the internet from a communication tool for specialists into a **public, self-publishing platform for all of humanity**.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="first_web_browser.png" alt="Screenshot of the WorldWideWeb browser running on a NeXT computer, showing an early web page with hyperlinked text" />
+    <figcaption class="md">The \citealternativetitle{first_web_browser}: a screenshot of the WorldWideWeb browser running on a NeXT workstation in December 1990. Built by Tim Berners-Lee at CERN, it was simultaneously editor and viewer for the world's first hypertext web pages.</figcaption>
+</figure>
 
 The consequences were staggering. Within a decade, millions of people were voluntarily uploading text: personal websites, forums, blogs, news articles, encyclopedias, academic papers, product reviews, fan fiction, legal opinions, recipes, poetry, code repositories, and every other form of human expression. By the 2010s, organizations like **\citetitle[Common Crawl]{commoncrawl}** were archiving billions of web pages, creating open datasets of hundreds of terabytes of raw text.
 
@@ -336,6 +356,11 @@ Every weight update in a modern neural network is an electrical signal propagati
 ### The Central Processing Unit (CPU)
 
 The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1946), which used thousands of tubes to achieve speeds thousands of times faster than relays \cite[see ENIAC description]{eniac1946}. The transistor (1947) made miniaturization possible \cite[Bardeen et al., 1948]{semiconductor}, and the **integrated circuit**, independently conceived by **Jack Kilby** (1958) \cite[Kilby, 1958]{kilbyic} and **Robert Noyce** (1959) \cite[Noyce, 1959]{noyceic}, placed multiple transistors on a single die.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="eniac.jpg" alt="Part of the ENIAC (Electronic Numerical Integrator and Computer) on exhibit at the Bradbury Science Museum" />
+    <figcaption class="md">\citealternativetitle{eniac_image}: a portion of the ENIAC on display at the Bradbury Science Museum. Built in 1946 from nearly 18,000 vacuum tubes, it consumed 150 kW and weighed 30 tonnes, yet it was the first fully electronic general-purpose Turing-complete computer.</figcaption>
+</figure>
 
 The leap to the **microprocessor** arrived in 1971 with the \cite[Intel 4004]{intel4004}, containing 2,300 transistors at 740 kHz. The relentless growth described by \citealternativetitle{mooreslaw} drove counts from thousands to billions. Key architectural innovations included **pipelining** (IBM System/360, 1964), **out-of-order execution** \cite[first in the IBM System/360 Model 91]{tomasulo1967}, **superscalar architectures** (1990s), and **multi-core processors** (IBM POWER4, 2001), acknowledging that frequency scaling had hit thermal limits. For AI, the CPU served as the sole training platform until the mid-2000s, but its sequential MIMD architecture proved poorly suited to the massively parallel matrix operations of deep learning.
 
