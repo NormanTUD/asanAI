@@ -676,3 +676,53 @@ body {
 		min-height: 22px;
 	}
 }
+
+/* ──────────────────────────────────────────────────────────────────
+   Progress tracker — phone-specific tweaks
+   ────────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+	/* Slightly smaller floating badge, more bottom padding so it
+	   doesn't crowd the thumb zone or the iOS home indicator. */
+	.course-progress-badge {
+		right: max(0.7rem, env(safe-area-inset-right));
+		bottom: max(0.7rem, env(safe-area-inset-bottom));
+	}
+	.cpb-toggle {
+		padding: 0.42rem 0.7rem;
+		font-size: 0.76rem;
+		gap: 0.35rem;
+	}
+	.cpb-toggle svg { width: 16px; height: 16px; }
+
+	/* Panel stretches edge-to-edge so long tile titles are legible
+	   without horizontal scroll. */
+	.cpb-panel {
+		right: 0.4rem;
+		left: auto;
+		width: calc(100vw - 0.8rem);
+		max-height: min(78vh, 620px);
+		padding: 0.85rem 0.85rem 0.7rem;
+		font-size: 0.84rem;
+	}
+	.cpb-stat-val { font-size: 1.1rem; }
+
+	/* Tighter bars so two progress strips fit side by side. */
+	.cpb-bar {
+		height: 12px;
+		padding: 0 0.35rem;
+	}
+	.cpb-bar-num { font-size: 0.58rem; }
+}
+
+@media (max-width: 380px) {
+	/* Tiny phones: drop the percentage text from the toggle, keep
+	   just the icon so it doesn't wrap. */
+	.cpb-toggle .cpb-pct { display: none; }
+}
+
+@media (hover: none) {
+	/* Touch devices: kill the translateY hover on the badge so
+	   tapping doesn't leave it stuck in a hovered state. */
+	.course-progress-badge .cpb-toggle:hover { transform: none; }
+}
+
