@@ -13,10 +13,6 @@ topics: reasoning, agents, programming, language
 <div class="md">
 ## What is an AI Agent?
 
-<div class="optional md" data-headline="Read this first">
-Before you read this chapter, read `reasoning.php` § Chain-of-Thought Prompting. **An agent is CoT with a screwdriver.** The "Re" in ReAct is the reasoning loop from the Reasoning chapter; the "Act" is just a tool call appended to each reasoning step. Everything in this chapter assumes you already know what CoT, self-consistency, and verification-guided search are.
-</div>
-
 **Terminological clarification (important, see also the Philosophy chapter):** In this course, "AI agent" is used as a *technical* term for a software architecture that wraps an LLM in a control loop and grants it access to external interfaces such as the file system, the network, a search engine, or other tools. It is **not** a claim about consciousness, qualia, intentionality, volition, or any form of genuine "agency" in the philosophical sense. When the chapter title or related literature uses the word "autonomous", it refers to *engineering* autonomy (the loop runs without per-step human approval), not to philosophical agency. The LLM at the heart of an agent is the same reactive, stateless next-token predictor described in the Philosophy chapter; what changes is the *scaffolding around it*, not its inner nature.
 
 Concretely, an **AI Agent** is a system where a Large Language Model acts not merely as a text generator, but as a **controller inside an observe→reason→act loop**. It can be given access to its environment (a file system, a browser, an API), reason about which tool to invoke, observe the result, and iterate until a task is complete. The LLM remains the "decision-making component" of a loop rather than a one-shot oracle.
@@ -38,6 +34,10 @@ $$
 **Key insight:** A vanilla LLM generates text in a single forward pass. An **agent** wraps that LLM in a loop that gives it memory, tools, and the ability to act on the world, then feeds observations back in for the next reasoning step.
 
 The difference between "using an LLM" and "deploying an agent" is the difference between asking someone a question (in their head) and hiring them to complete a project (with hands on a keyboard, a browser, a terminal). The hired person's *cognitive architecture* has not changed; what changed is the set of effectors available to them. The same is true of the LLM inside an agent.
+</div>
+
+<div class="optional md" data-headline="CoT with a screwdriver">
+The "Re" in **ReAct** is the reasoning loop from the <a href="reasoning">Reasoning chapter</a>; the "Act" is just a tool call appended to each reasoning step. Everything in this chapter assumes familiarity with CoT, self-consistency, and verification-guided search.
 </div>
 
 <div class="md">
