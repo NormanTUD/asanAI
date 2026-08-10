@@ -1329,8 +1329,8 @@ function renderBundle() {
     }
 
     // ─────────── Token-Trajektorie mit erhaltendem Schwung ───────────
+    // ─────────── Token-Trajektorie mit RK4-Integration (glatt) ───────────
     function simulateTokenPath(tokenIdx, seedOffset) {
-        // Deterministischer Startpunkt pro Token
         const startSeed = tokenIdx * 137 + seedOffset;
         const sr = (n) => {
             const x = Math.sin(startSeed + n * 47) * 10000;
@@ -1338,19 +1338,17 @@ function renderBundle() {
         };
 
         const path = [];
-        const stepsPerLayer = 90;
-        const dt = 0.04;
-        const friction = 0.92;
+        const stepsPerLayer = 140;   // mehr Steps für feinere Auflösung
+        const dt = 0.022;            // kleiner dt für stabile RK4
+        const friction = 0.985;      // deutlich weniger Reibung → sanftere Bewegung
 
         let lx = sr(1) * 0.5;
         let ly = sr(2) * 0.5;
         let lz = sr(3) * 0.5;
-        // Kleiner initialer Schwung, damit's nicht sofort ins Zentrum fällt
-        let vx = sr(4) * 0.8;
-        let vy = sr(5) * 0.8;
-        let vz = sr(6) * 0.8;
+        let vx = sr(4) * 0.6;
+        let vy = sr(5) * 0.6;
+        let vz = sr(6) * 0.6;
 
-        // Track welcher Attraktor gerade dominiert (für Hover-Info)
         function dominantAttractor(lx, ly, lz, cellAttrs) {
             let best = null;
             let bestForce = 0;
@@ -1365,36 +1363,138 @@ function renderBundle() {
             return best;
         }
 
+        // Runge-Kutta 4 auf dem System (dx/dt=v, dv/dt=F(x) - damping*v)
+        function rk4Step(lx, ly, lz, vx, vy, vz, cellAttrs, dt) {
+            const damping = (1 - friction) / dt;
+            const deriv = (x, y, z, vx, vy, vz) => {
+                const [fx, fy, fz] = fieldAt(x, y, z, cellAttrs);
+                return {
+                    dx: vx, dy: vy, dz: vz,
+                    dvx: fx - damping * vx,
+                    dvy: fy - damping * vy,
+                    dvz: fz - damping * vz
+                };
+            };
+            const k1 = deriv(lx, ly, lz, vx, vy, vz);
+            const k2 = deriv(
+                lx + 0.5 * dt * k1.dx, ly + 0.5 * dt * k1.dy, lz + 0.5 * dt * k1.dz,
+                vx + 0.5 * dt * k1.dvx, vy + 0.5 * dt * k1.dvy, vz + 0.5 * dt * k1.dvz
+            );
+            const k3 = deriv(
+                lx + 0.5 * dt * k2.dx, ly + 0.5 * dt * k2.dy, lz + 0.5 * dt * k2.dz,
+                vx + 0.5 * dt * k2.dvx, vy + 0.5 * dt * k2.dvy, vz + 0.5 * dt * k2.dvz
+            );
+            const k4 = deriv(
+                lx + dt * k3.dx, ly + dt * k3.dy, lz + dt * k3.dz,
+                vx + dt * k3.dvx, vy + dt * k3.dvy, vz + dt * k3.dvz
+            );
+            return {
+                lx: lx + (dt / 6) * (k1.dx + 2 * k2.dx + 2 * k3.dx + k4.dx),
+                ly: ly + (dt / 6) * (k1.dy + 2 * k2.dy + 2 * k3.dy + k4.dy),
+                lz: lz + (dt / 6) * (k1.dz + 2 * k2.dz + 2 * k3.dz + k4.dz),
+                vx: vx + (dt / 6) * (k1.dvx + 2 * k2.dvx + 2 * k3.dvx + k4.dvx),
+                vy: vy + (dt / 6) * (k1.dvy + 2 * k2.dvy + 2 * k3.dvy + k4.dvy),
+                vz: vz + (dt / 6) * (k1.dvz + 2 * k2.dvz + 2 * k3.dvz + k4.dvz)
+            };
+        }
+
+        // Soft-Repulsion an der Würfel-Wand (statt hartes Clampen)
+        function wallForce(pos) {
+            const wall = 0.9;
+            const k = 4.0;
+            let f = 0;
+            if (pos > wall)  f = -k * (pos - wall) ** 2;
+            if (pos < -wall) f =  k * (-wall - pos) ** 2;
+            return f;
+        }
+
         for (let l = 0; l < numLayers; l++) {
             const cellAttrs = cellAttractors[tokenIdx][l];
             for (let s = 0; s < stepsPerLayer; s++) {
-                const [fx, fy, fz] = fieldAt(lx, ly, lz, cellAttrs);
-                vx = vx * friction + fx * dt;
-                vy = vy * friction + fy * dt;
-                vz = vz * friction + fz * dt;
+                // RK4-Schritt
+                const next = rk4Step(lx, ly, lz, vx, vy, vz, cellAttrs, dt);
+                lx = next.lx; ly = next.ly; lz = next.lz;
+                vx = next.vx; vy = next.vy; vz = next.vz;
+
+                // Weiche Wand-Repulsion (statt hartes Clamp — vermeidet Knicke)
+                vx += wallForce(lx) * dt;
+                vy += wallForce(ly) * dt;
+                vz += wallForce(lz) * dt;
+
+                // Geschwindigkeit sanft begrenzen
                 const vmag = Math.sqrt(vx * vx + vy * vy + vz * vz);
-                const vmax = 4.0;
-                if (vmag > vmax) { vx *= vmax / vmag; vy *= vmax / vmag; vz *= vmax / vmag; }
-                lx += vx * dt;
-                ly += vy * dt;
-                lz += vz * dt;
-                lx = Math.max(-0.95, Math.min(0.95, lx));
-                ly = Math.max(-0.95, Math.min(0.95, ly));
-                lz = Math.max(-0.95, Math.min(0.95, lz));
+                const vmax = 3.5;
+                if (vmag > vmax) {
+                    const soft = vmax / vmag;
+                    vx *= soft; vy *= soft; vz *= soft;
+                }
+
+                // Notfall-Clamp falls doch mal rausgeschossen
+                if (Math.abs(lx) > 0.98) { lx = Math.sign(lx) * 0.98; vx *= -0.5; }
+                if (Math.abs(ly) > 0.98) { ly = Math.sign(ly) * 0.98; vy *= -0.5; }
+                if (Math.abs(lz) > 0.98) { lz = Math.sign(lz) * 0.98; vz *= -0.5; }
 
                 const w = worldPos(lx, ly, lz, tokenIdx, l);
                 const dom = dominantAttractor(lx, ly, lz, cellAttrs);
-                const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
-                path.push({
-                    layer: l, world: w,
-                    dominantAttr: dom,
-                    speed
-                });
+                const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
+                path.push({ layer: l, world: w, dominantAttr: dom, speed });
             }
-            // SCHWUNG-ERHALTUNG beim Faser-Übergang (85% statt 30%)
-            vx *= 0.85; vy *= 0.85; vz *= 0.85;
+            // Sanfter Übergang: Schwung fast komplett erhalten (95%)
+            vx *= 0.95; vy *= 0.95; vz *= 0.95;
         }
         return path;
+    }
+
+
+    // ─────────── Catmull-Rom-Spline: glatte Interpolation zwischen Path-Punkten ───────────
+    // Nimmt die Physik-Samples und erzeugt zwischen jedem Paar aufeinanderfolgender
+    // Punkte 'subdivisions' interpolierte Zwischenpunkte via Catmull-Rom-Spline.
+    // Ergebnis: C¹-stetige Kurve ohne sichtbare Ecken.
+    function smoothPath(pathPoints, subdivisions = 6) {
+        if (pathPoints.length < 2) return pathPoints;
+
+        function catmullRom(p0, p1, p2, p3, t) {
+            const t2 = t * t;
+            const t3 = t2 * t;
+            return {
+                x: 0.5 * ((2 * p1.x) +
+                          (-p0.x + p2.x) * t +
+                          (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+                          (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+                y: 0.5 * ((2 * p1.y) +
+                          (-p0.y + p2.y) * t +
+                          (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+                          (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
+                z: 0.5 * ((2 * p1.z) +
+                          (-p0.z + p2.z) * t +
+                          (2 * p0.z - 5 * p1.z + 4 * p2.z - p3.z) * t2 +
+                          (-p0.z + 3 * p1.z - 3 * p2.z + p3.z) * t3)
+            };
+        }
+
+        const smoothed = [];
+        const n = pathPoints.length;
+        for (let i = 0; i < n - 1; i++) {
+            const p0 = pathPoints[Math.max(0, i - 1)].world;
+            const p1 = pathPoints[i].world;
+            const p2 = pathPoints[i + 1].world;
+            const p3 = pathPoints[Math.min(n - 1, i + 2)].world;
+            for (let j = 0; j < subdivisions; j++) {
+                const t = j / subdivisions;
+                const interp = catmullRom(p0, p1, p2, p3, t);
+                // Metadaten vom nächstliegenden echten Sample übernehmen
+                const src = t < 0.5 ? pathPoints[i] : pathPoints[i + 1];
+                smoothed.push({
+                    world: interp,
+                    layer: src.layer,
+                    dominantAttr: src.dominantAttr,
+                    speed: src.speed
+                });
+            }
+        }
+        // Letzten Punkt exakt anhängen
+        smoothed.push(pathPoints[n - 1]);
+        return smoothed;
     }
 
     // ─────────── Basin-Feldlinien ───────────
@@ -1554,20 +1654,17 @@ function renderBundle() {
         allPaths.push(simulateTokenPath(t, t * 13));
     }
 
-    // Alle nicht-Fokus-Tokens erst zeichnen (dünner, opaker)
+    // Alle nicht-Fokus-Tokens erst zeichnen
     for (let t = 0; t < numTokens; t++) {
         if (t === focusTokenIdx) continue;
-        const path = allPaths[t];
+        const rawPath = allPaths[t];
+        const path = smoothPath(rawPath, 5);   // ← NEU: geglättete Version
         const color = tokenColors[t];
 
-        // Segment-weise mit Hover die dominierenden Attraktoren zeigen
-        // Reduziere: alle 10 Steps ein Hover-Segment
-        const stride = 6;
         const xs = path.map(p => p.world.x);
         const ys = path.map(p => p.world.y);
         const zs = path.map(p => p.world.z);
-        // Hover-Texte pro Punkt
-        const hovers = path.map((p, i) => {
+        const hovers = path.map((p) => {
             const domName = p.dominantAttr
                 ? `${p.dominantAttr.isRepeller ? 'Repeller' : 'Attraktor'} (${p.dominantAttr.type})`
                 : 'kein dominanter Einfluss';
@@ -1578,7 +1675,7 @@ function renderBundle() {
             type: 'scatter3d',
             mode: 'lines',
             x: xs, y: ys, z: zs,
-            line: { color, width: 3 },
+            line: { color, width: 3, shape: 'spline' },   // ← Plotly-eigenes Spline zusätzlich
             opacity: 0.55,
             hoverinfo: 'text',
             hovertext: hovers,
@@ -1586,7 +1683,7 @@ function renderBundle() {
             name: `Trajektorie: ${tokens[t]}`
         });
 
-        // Start und Ende dezent markieren
+        // Start und Ende
         traces.push({
             type: 'scatter3d',
             mode: 'markers',
@@ -1609,8 +1706,8 @@ function renderBundle() {
         });
     }
 
-    // Fokus-Token: kräftig, mit Farbverlauf
-    const focusPath = allPaths[focusTokenIdx];
+    // Fokus-Token: kräftig, mit Farbverlauf (geglättet)
+    const focusPath = smoothPath(allPaths[focusTokenIdx], 6);
     const fxs = focusPath.map(p => p.world.x);
     const fys = focusPath.map(p => p.world.y);
     const fzs = focusPath.map(p => p.world.z);
@@ -1628,7 +1725,8 @@ function renderBundle() {
         line: {
             color: focusPath.map((_, i) => i),
             colorscale: [[0, '#fbbf24'], [0.35, '#f472b6'], [0.7, '#a78bfa'], [1, '#22d3ee']],
-            width: 7
+            width: 7,
+            shape: 'spline'
         },
         opacity: 1.0,
         hoverinfo: 'text',
