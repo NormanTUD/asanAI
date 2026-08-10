@@ -1157,17 +1157,17 @@ Below, you can explore this interactively. Two conceptual categories are represe
 <div class="md">
 ## Vector Rotations as Grammar Operators
 
-One of the most surprising geometric discoveries in embedding spaces is that grammatical transformations, like changing a verb from present tense to past tense, are not **translations** (shifting a vector in a direction) but **rotations** (spinning a vector around an axis). Grammar is not a push; it is a turn.
+One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn — an idealization that captures many inflections surprisingly well.
 
 ### The Carousel of Tense
 
-Take a cloud of present-tense verb vectors: "run," "eat," "write," "speak," "build." They form a cluster in the embedding space. Now take their past-tense counterparts: "ran," "ate," "wrote," "spoke," "built." These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous "king − man + woman = queen" analogy). Instead, the entire cloud has been **rotated** by a consistent angle around a fixed axis in the high-dimensional space.
+Take a cloud of present-tense verb vectors: "run," "eat," "write," "speak," "build." They form a cluster in the embedding space. Now take their past-tense counterparts: "ran," "ate," "wrote," "spoke," "built." These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous "king − man + woman = queen" analogy). Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space — again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.
 </div>
 
 $$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
 
 <div class="md">
-where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb. The model has discovered that tense is a **rotational symmetry** of language.
+where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb. This equation is best read as an *analytical model* rather than a literal geometric law: the approximation holds reasonably well for many common verb pairs, but real embeddings are noisy and no single rotation maps every inflection exactly. Calling tense a "rotational symmetry" of language is a useful simplification that captures a statistical tendency, not an exact symmetry.
 
 ### Why Rotation, Not Translation?
 
