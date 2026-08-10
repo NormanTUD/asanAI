@@ -6,6 +6,9 @@ var _grid_visualization_height = 0;
 var _last_grid_canvas_data_url = null;
 var _last_grid_draw_params = null;
 var _grid_resize_timeout = null;
+var _grid_image_hit_regions = [];
+var _grid_tooltip = null;
+var _grid_tooltip_last_region_index = -1;
 
 function save_multi_run_weights(run) {
 	if (!model) return;
@@ -2541,6 +2544,22 @@ function _draw_grid_images_on_ctx(ctx, images, categories, probabilities, counte
 
 		try {
 			ctx.drawImage(image, imageX, imageY, w, h);
+
+			var src = null;
+			try { src = image.src; } catch (e) { src = null; }
+			var correct_category = extractCategoryFromURL(src, image);
+
+			_grid_image_hit_regions.push({
+				x: imageX,
+				y: imageY,
+				w: w,
+				h: h,
+				image: image,
+				category: category,
+				probability: probability,
+				src: src,
+				correct_category: correct_category
+			});
 		} catch (e) {
 			// Skip images that can't be drawn (e.g., broken/not-loaded)
 			dbg("[_draw_grid_images_on_ctx] drawImage failed for image_idx=" + image_idx + ": " + e);
@@ -2596,6 +2615,11 @@ function _restore_last_grid_render() {
 
 function draw_images_in_grid(images, categories, probabilities, category_overview) {
 	_last_grid_draw_params = { images, categories, probabilities, category_overview };
+
+	_grid_image_hit_regions = [];
+	var tooltip = _get_grid_tooltip_element();
+	tooltip.style.display = "none";
+	_grid_tooltip_last_region_index = -1;
 
 	var $container = $("#canvas_grid_visualization");
 
