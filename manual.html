@@ -6,6 +6,11 @@
 		<script src='libs/jquery.js'></script>
 		<script src='libs/jquery-ui.js'></script>
 		<script src='libs/plotly-latest.min.js'></script>
+<<<<<<< Updated upstream
+=======
+		<link rel="stylesheet" href="./libs/temml/Temml-Local.css">
+		<script src="./libs/temml/temml.min.js"></script>
+>>>>>>> Stashed changes
 
 		<script src="tf/tf.js"></script>
 		<script src='base_wrappers.js'></script>
@@ -16,6 +21,7 @@
 		<script src='gui.js'></script>
 		<script src='debug.js'></script>
 		<script src="libs/md5.umd.min.js"></script>
+<<<<<<< Updated upstream
 
 		<link rel="stylesheet" href="libs/temml/Temml-Local.css">
 		<script src="libs/temml/temml.min.js"></script>
@@ -56,6 +62,9 @@
 				manual_temml_full_render();
 			}
 		</script>
+=======
+		<script src='my_temml.js'></script>
+>>>>>>> Stashed changes
 		<style>
 			html { scroll-behavior: smooth; scroll-padding-top: 20px; }
 			body {
@@ -572,8 +581,12 @@ x_1, x_2, x_3, y_1, y_2, y_3
 					if (i < vec.length - 1) tex += ' \\\\ ';
 				}
 				tex += ' \\end{pmatrix}';
+<<<<<<< Updated upstream
 				document.getElementById('onehot_result').innerHTML = '<div class="temml_me" data-display="1"> ' + tex + ' </div>';
 				render_manual_temml(document.getElementById('onehot_result'));
+=======
+				document.getElementById('onehot_result').innerHTML = temml.renderToString(tex, { displayMode: true });
+>>>>>>> Stashed changes
 			}
 			updateOneHot();
 			</script>
@@ -3060,5 +3073,79 @@ The target shape can be specified by providing a tuple of integers which defines
 			Some parts of this documentation were created by different LLM systems.
 		</div>
 		<script src="manual.js"></script>
+		<script>
+		(function() {
+			function convert_math(root) {
+				var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+					acceptNode: function(node) {
+						var p = node.parentNode;
+						if (!p) return NodeFilter.FILTER_REJECT;
+						var tag = p.nodeName;
+						if (tag === "SCRIPT" || tag === "STYLE" || tag === "TEXTAREA" || tag === "PRE" || tag === "CODE") {
+							return NodeFilter.FILTER_REJECT;
+						}
+						if (p.classList && p.classList.contains("temml_me")) {
+							return NodeFilter.FILTER_REJECT;
+						}
+						return NodeFilter.FILTER_ACCEPT;
+					}
+				});
+
+				var text_nodes = [];
+				var n;
+				while ((n = walker.nextNode())) text_nodes.push(n);
+
+				var combined_re = /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\\\(.{1,500}?\\\)|\$.{1,500}?\$)/g;
+
+				text_nodes.forEach(function(tn) {
+					var text = tn.nodeValue;
+					if (!text || (text.indexOf("$") === -1 && text.indexOf("\\") === -1)) return;
+					if (!combined_re.test(text)) return;
+
+					var frag = document.createDocumentFragment();
+					var last = 0;
+					var m;
+					combined_re.lastIndex = 0;
+					while ((m = combined_re.exec(text)) !== null) {
+						var match = m[0];
+						var is_display = match.startsWith("$$") || match.startsWith("\\[");
+						var delim_len = is_display ? 2 : (match.startsWith("\\(") ? 2 : 1);
+						var latex = match.slice(delim_len, match.length - delim_len);
+
+						if (m.index > last) {
+							frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+						}
+
+						var placeholder = document.createElement(is_display ? "div" : "span");
+						placeholder.className = "temml_me";
+						placeholder.dataset.latex = latex;
+						placeholder.dataset.rendered = "1";
+						try {
+							placeholder.innerHTML = temml.renderToString(latex, { displayMode: is_display });
+						} catch (e) {
+							placeholder.textContent = match;
+						}
+						frag.appendChild(placeholder);
+
+						last = m.index + match.length;
+					}
+
+					if (last < text.length) {
+						frag.appendChild(document.createTextNode(text.slice(last)));
+					}
+
+					if (frag.childNodes.length) {
+						tn.parentNode.replaceChild(frag, tn);
+					}
+				});
+			}
+
+			if (document.readyState === "loading") {
+				document.addEventListener("DOMContentLoaded", function() { convert_math(document.body); });
+			} else {
+				convert_math(document.body);
+			}
+		})();
+		</script>
 	</body>
 </html>

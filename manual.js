@@ -814,10 +814,18 @@ async function simulate_layer_on_image (img_element_id, internal_canvas_div_id, 
 			const width = res[3][2];
 
 			$("#" + uuid + "_error").html("");
+<<<<<<< Updated upstream
 			$("#" + uuid + "_shapes").html(`<span class="temml_me">\\text{Shape: } [${input_shape}] \\rightarrow [${output_shape}]</span>`);
 
 			if (typeof render_manual_temml === "function") {
 				render_manual_temml(document.getElementById(uuid + "_shapes"));
+=======
+			var shapes_latex = "\\text{Shape: } [" + input_shape + "] \\rightarrow [" + output_shape + "]";
+			if (typeof temml !== "undefined") {
+				$("#" + uuid + "_shapes").html('<span class="temml_me">' + temml.renderToString(shapes_latex, { displayMode: false }) + '</span>');
+			} else {
+				$("#" + uuid + "_shapes").html(shapes_latex);
+>>>>>>> Stashed changes
 			}
 
 			if(result) {
