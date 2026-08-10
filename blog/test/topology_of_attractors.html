@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologie von Attraktoren – TDA auf LLM-Aktivierungen</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
+}
+.container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+header {
+    text-align: center;
+    padding: 20px 0 30px;
+    border-bottom: 1px solid rgba(148,163,184,0.15);
+    margin-bottom: 30px;
+}
+h1 {
+    font-size: 1.9em;
+    margin: 0 0 8px;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+header p { color: #94a3b8; margin: 0; font-size: 0.95em; }
+
+.step {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(148,163,184,0.15);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(10px);
+}
+.step h2 {
+    margin: 0 0 6px;
+    font-size: 1.25em;
+    color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, #6366f1, #a78bfa);
+    border-radius: 50%;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9em;
+    flex-shrink: 0;
+}
+.step p { color: #cbd5e1; line-height: 1.6; margin: 6px 0; }
+.step .desc { color: #94a3b8; font-size: 0.9em; margin-bottom: 14px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+.controls {
+    background: rgba(15, 23, 42, 0.6);
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin: 12px 0;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.controls label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.88em; color: #cbd5e1;
+}
+.controls input[type=range] { width: 180px; accent-color: #6366f1; }
+.controls select, .controls button {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.88em;
+    cursor: pointer;
+}
+.controls button:hover { background: #334155; }
+.val {
+    font-family: monospace;
+    color: #a78bfa;
+    font-weight: bold;
+    min-width: 40px;
+    display: inline-block;
+}
+
+.plot { background: #0b1220; border-radius: 8px; border: 1px solid rgba(148,163,184,0.1); }
+.plot-3d { height: 380px; }
+.plot-2d { height: 320px; }
+.plot-barcode { height: 280px; }
+
+.info-box {
+    background: rgba(99, 102, 241, 0.08);
+    border-left: 3px solid #a78bfa;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 0.88em;
+    line-height: 1.6;
+}
+.info-box b { color: #c4b5fd; }
+
+.betti-display {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    padding: 12px; background: rgba(15,23,42,0.5); border-radius: 8px;
+    margin-top: 10px;
+}
+.betti {
+    padding: 8px 14px;
+    background: #1e293b;
+    border-radius: 6px;
+    border-left: 3px solid;
+    font-family: monospace;
+    font-size: 0.95em;
+}
+.betti.b0 { border-color: #3b82f6; }
+.betti.b1 { border-color: #10b981; }
+.betti.b2 { border-color: #f59e0b; }
+.betti .lbl { color: #94a3b8; }
+.betti .num { color: #f1f5f9; font-weight: bold; font-size: 1.1em; margin-left: 6px; }
+
+.classify-result {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(167,139,250,0.15));
+    border: 1px solid rgba(167,139,250,0.3);
+    border-radius: 10px;
+    margin-top: 12px;
+    font-size: 0.95em;
+}
+.classify-result .match { font-weight: bold; color: #f472b6; font-size: 1.1em; }
+
+.legend { font-size: 0.78em; color: #94a3b8; margin-top: 6px; }
+kbd {
+    background: #334155;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.85em;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+}
+.formula {
+    font-family: 'Cambria Math', 'Times New Roman', serif;
+    background: rgba(15,23,42,0.6);
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    color: #f0abfc;
+    font-style: italic;
+    margin: 4px 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+    <h1>Topologie von Attraktoren</h1>
+    <p>Vom rohen Aktivierungspunktehaufen zur klassifizierten topologischen Struktur — die Pipeline für TDA auf LLM-internals</p>
+</header>
+
+<!-- ═══════════════════ STEP 1: Point Cloud ═══════════════════ -->
+<div class="step">
+    <h2><span class="step-num">1</span>Rohe Punktwolke (Aktivierungen)</h2>
+    <p class="desc">Stell dir vor: du hast an einem Layer die Aktivierungen für viele Kontexte gesammelt, die alle "Berlin" implizieren. Auf zwei Dimensionen projiziert (PCA/UMAP oder direkt zwei ausgewählte Dimensionen) ergibt sich eine Wolke. <b>Aber:</b> die eigentliche Struktur ist hochdimensional — hier synthetisieren wir bekannte Formen um zu sehen wie sich TDA verhält.</p>
+
+    <div class="controls">
+        <label>Attraktor-Typ:
+            <select id="shape-select">
+                <option value="circle">Kreis (S¹) — Punkt-Attraktor mit Zyklus</option>
+                <option value="torus">Torus (T² = S¹×S¹) — 2 verschachtelte Zyklen</option>
+                <option value="two-circles">Zwei Kreise — zwei getrennte Zyklen</option>
+                <option value="sphere">Sphäre (S²) — geschlossene 2D-Fläche</option>
+                <option value="figure8">Figur 8 — verbundene Zyklen</option>
+                <option value="cluster">3 Cluster (Punkt-Attraktoren)</option>
+                <option value="random">Zufällige Wolke (Nullhypothese)</option>
+            </select>
+        </label>
+        <label>Anzahl Punkte:
+            <input type="range" id="n-points" min="30" max="200" step="10" value="80">
+            <span class="val" id="n-points-val">80</span>
+        </label>
+        <label>Rauschen:
+            <input type="range" id="noise" min="0" max="0.3" step="0.01" value="0.05">
+            <span class="val" id="noise-val">0.05</span>
+        </label>
+        <button id="regenerate">🎲 Neu generieren</button>
+    </div>
+
+    <div id="plot-cloud" class="plot plot-3d"></div>
+    <div class="legend">Ziehen zum Rotieren, Scrollen zum Zoomen. Jeder Punkt = ein Aktivierungsvektor an einer Schicht für einen Kontext.</div>
+</div>
+
+<!-- ═══════════════════ STEP 2: VR Filtration ═══════════════════ -->
+<div class="step">
+    <h2><span class="step-num">2</span>Vietoris-Rips Filtration</h2>
+    <p class="desc">Wir verbinden Punkte durch Simplizes (Kanten, Dreiecke, Tetraeder), sobald ihr Abstand kleiner als ε ist. Bei kleinem ε: nur isolierte Punkte. Bei großem ε: alles verschmilzt zu einem Blob. <b>Dazwischen</b> sieht man die echte Struktur.</p>
+
+    <div class="controls">
+        <label>ε (Filtrationsparameter):
+            <input type="range" id="epsilon" min="0" max="3" step="0.02" value="0.5">
+            <span class="val" id="epsilon-val">0.50</span>
+        </label>
+        <button id="animate-eps">▶ Filtration animieren</button>
+        <label>Simplex-Dim anzeigen:
+            <select id="max-dim">
+                <option value="1">bis Kanten (1-Simplex)</option>
+                <option value="2" selected>bis Dreiecke (2-Simplex)</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="grid-2">
+        <div>
+            <div id="plot-vr" class="plot plot-3d"></div>
+            <div class="legend">Der VR-Komplex bei aktuellem ε. Kanten = Paare mit Abstand ≤ ε. Dreiecke = alle 3 Paare erfüllen die Bedingung.</div>
+        </div>
+        <div>
+            <div id="plot-barcode" class="plot plot-barcode"></div>
+            <div class="legend">Persistenz-Barcode: horizontale Linien zeigen, für welche ε-Bereiche topologische Features existieren. Die vertikale Linie markiert das aktuelle ε.</div>
+        </div>
+    </div>
+
+    <div class="betti-display" id="betti-display">
+        <div class="betti b0"><span class="lbl">β₀ (Komponenten):</span><span class="num" id="b0-val">–</span></div>
+        <div class="betti b1"><span class="lbl">β₁ (Löcher/Zyklen):</span><span class="num" id="b1-val">–</span></div>
+        <div class="betti b2"><span class="lbl">β₂ (Hohlräume):</span><span class="num" id="b2-val">–</span></div>
+    </div>
+    <div class="info-box">
+        <b>Betti-Zahlen</b> zählen die topologischen Features bei aktuellem ε: β₀ = Anzahl Zusammenhangskomponenten, β₁ = Anzahl unabhängiger Schleifen (1-dim Löcher), β₂ = Anzahl geschlossener Hohlräume (2-dim Löcher, wie das Innere einer Kugel).
+    </div>
+</div>
+
+<!-- ═══════════════════ STEP 3: Persistence Diagram ═══════════════════ -->
+<div class="step">
+    <h2><span class="step-num">3</span>Persistenz-Diagramm & Klassifikation</h2>
+    <p class="desc">Statt Barcode kann man Features als Punkte (birth, death) plotten. Features weit über der Diagonalen = lange Persistenz = echte Struktur. Nah an der Diagonale = kurzlebig = Rauschen. Die <b>Signatur</b> (Anzahl langlebiger β₁, β₂, ...) klassifiziert die Topologie.</p>
+
+    <div class="grid-2">
+        <div>
+            <div id="plot-persistence" class="plot plot-2d"></div>
+            <div class="legend">Punkte weit über der Diagonalen sind signifikant. Farbe = Dimension des Features.</div>
+        </div>
+        <div>
+            <div id="plot-signature" class="plot plot-2d"></div>
+            <div class="legend">Persistenz-Signatur: Länge der obersten Barcodes pro Dimension.</div>
+        </div>
+    </div>
+
+    <div class="classify-result" id="classify-result">
+        <span>Klassifikation läuft...</span>
+    </div>
+
+    <div class="info-box">
+        <b>Vergleich mit bekannten Topologien</b> (Wasserstein-artige Distanz auf Betti-Signaturen):
+        <ul style="margin: 6px 0; padding-left: 20px; color: #cbd5e1;">
+            <li>Punkt: β = (1, 0, 0)</li>
+            <li>Kreis S¹: β = (1, 1, 0)</li>
+            <li>Torus T²: β = (1, 2, 1)</li>
+            <li>Sphäre S²: β = (1, 0, 1)</li>
+            <li>Figur 8 (Wedge S¹∨S¹): β = (1, 2, 0)</li>
+            <li>Zwei disjunkte Kreise: β = (2, 2, 0)</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ═══════════════════ STEP 4: Takens Embedding ═══════════════════ -->
+<div class="step">
+    <h2><span class="step-num">4</span>Bonus: Takens' Embedding — Attraktor aus Zeitreihe</h2>
+    <p class="desc">Takens' Theorem: Wenn du <b>nur eine skalare Observable</b> eines dynamischen Systems hast (z.B. eine einzige Dimension der Aktivierung über verschiedene Token), kannst du den vollen Attraktor rekonstruieren durch <span class="formula">v(t) = (x(t), x(t+τ), x(t+2τ), ..., x(t+(m-1)τ))</span> — sofern die Embedding-Dimension m ≥ 2d+1 (d = Dimension des echten Attraktors).</p>
+
+    <div class="controls">
+        <label>Zeitreihe:
+            <select id="ts-select">
+                <option value="sin">Sinus (Kreis-Attraktor)</option>
+                <option value="lorenz">Lorenz (Chaos)</option>
+                <option value="doublesin">2 Sinusse (Torus)</option>
+                <option value="noise">Rauschen (kein Attraktor)</option>
+            </select>
+        </label>
+        <label>Delay τ:
+            <input type="range" id="tau" min="1" max="40" step="1" value="8">
+            <span class="val" id="tau-val">8</span>
+        </label>
+    </div>
+
+    <div class="grid-2">
+        <div>
+            <div id="plot-timeseries" class="plot plot-2d"></div>
+            <div class="legend">Die skalare Observable x(t). Du siehst nur diese eine Zeile.</div>
+        </div>
+        <div>
+            <div id="plot-takens" class="plot plot-3d"></div>
+            <div class="legend">Rekonstruierter Attraktor via Delay-Embedding in 3D. Diffeomorph zum echten Attraktor!</div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <b>Warum das für LLMs interessant ist:</b> Wenn du an einer Schicht die Aktivierung einer <i>einzigen</i> Neurone über einen Kontext-Verlauf beobachtest, könntest du theoretisch den vollen dynamischen Attraktor rekonstruieren, der den kompletten Zustand approximiert — ohne alle Dimensionen zu brauchen. In der Praxis: Kombination mit persistenter Homologie auf dem Takens-embedding.
+    </div>
+</div>
+
+<!-- ═══════════════════ STEP 5: Total Space Bild ═══════════════════ -->
+<div class="step">
+    <h2><span class="step-num">5</span>Konzeptuell: Faserbündel-Bild</h2>
+    <p class="desc">Deine Intuition: Der Kontext ist Basis-Mannigfaltigkeit, jede Schicht eine Faser darüber. Attention/FFN transportieren Krümmung zwischen Fasern. Die Attraktoren, die du suchst, sind stabile Strukturen im Totalraum, die per Filtration/Barcode über die Schichten hinweg persistieren.</p>
+
+    <div id="plot-bundle" class="plot plot-3d"></div>
+    <div class="legend">Illustration: Basis (Token-Sequenz) unten, darüber gestapelte Aktivierungsräume pro Layer. Farbige Trajektorien = Bewegung eines Tokens durch die Layer, in stabile Attraktorbereiche eingefärbt.</div>
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════
+
+function euclid(a, b) {
+    let s = 0;
+    for (let i = 0; i < a.length; i++) s += (a[i] - b[i]) ** 2;
+    return Math.sqrt(s);
+}
+
+function randn() {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POINT CLOUD GENERATORS
+// ═══════════════════════════════════════════════════════════════
+
+function generateShape(kind, n, noise) {
+    const pts = [];
+    const nz = () => randn() * noise;
+    switch (kind) {
+        case 'circle':
+            for (let i = 0; i < n; i++) {
+                const t = 2 * Math.PI * i / n + Math.random() * 0.1;
+                pts.push([Math.cos(t) + nz(), Math.sin(t) + nz(), nz()]);
+            }
+            break;
+        case 'torus':
+            for (let i = 0; i < n; i++) {
+                const u = 2 * Math.PI * Math.random();
+                const v = 2 * Math.PI * Math.random();
+                const R = 1.0, r = 0.4;
+                pts.push([
+                    (R + r * Math.cos(v)) * Math.cos(u) + nz(),
+                    (R + r * Math.cos(v)) * Math.sin(u) + nz(),
+                    r * Math.sin(v) + nz()
+                ]);
+            }
+            break;
+        case 'two-circles':
+            for (let i = 0; i < n; i++) {
+                const t = 2 * Math.PI * Math.random();
+                if (i < n / 2) pts.push([Math.cos(t) - 1.8 + nz(), Math.sin(t) + nz(), nz()]);
+                else pts.push([Math.cos(t) + 1.8 + nz(), Math.sin(t) + nz(), nz()]);
+            }
+            break;
+        case 'sphere':
+            for (let i = 0; i < n; i++) {
+                let x, y, z, s;
+                do {
+                    x = 2 * Math.random() - 1;
+                    y = 2 * Math.random() - 1;
+                    z = 2 * Math.random() - 1;
+                    s = x*x + y*y + z*z;
+                } while (s > 1 || s < 0.01);
+                const norm = Math.sqrt(s);
+                pts.push([x/norm + nz(), y/norm + nz(), z/norm + nz()]);
+            }
+            break;
+        case 'figure8':
+            for (let i = 0; i < n; i++) {
+                const t = 2 * Math.PI * Math.random();
+                pts.push([Math.sin(2*t) + nz(), Math.sin(t) + nz(), nz()]);
+            }
+            break;
+        case 'cluster':
+            const centers = [[-1.5, -1, 0], [1.5, -1, 0], [0, 1.5, 0]];
+            for (let i = 0; i < n; i++) {
+                const c = centers[i % 3];
+                pts.push([c[0] + randn() * 0.15, c[1] + randn() * 0.15, c[2] + randn() * 0.15]);
+            }
+            break;
+        case 'random':
+            for (let i = 0; i < n; i++) {
+                pts.push([
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 3
+                ]);
+            }
+            break;
+    }
+    return pts;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VIETORIS-RIPS COMPLEX
+// ═══════════════════════════════════════════════════════════════
+
+function computeDistMatrix(pts) {
+    const n = pts.length;
+    const D = Array.from({length: n}, () => new Float32Array(n));
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            const d = euclid(pts[i], pts[j]);
+            D[i][j] = d;
+            D[j][i] = d;
+        }
+    }
+    return D;
+}
+
+function buildVRComplex(D, eps, maxDim) {
+    const n = D.length;
+    const edges = [];
+    const triangles = [];
+
+    // 1-simplices (edges)
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (D[i][j] <= eps) edges.push([i, j]);
+        }
+    }
+
+    // 2-simplices (triangles) — all pairwise distances ≤ eps
+    if (maxDim >= 2) {
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                if (D[i][j] > eps) continue;
+                for (let k = j + 1; k < n; k++) {
+                    if (D[i][k] <= eps && D[j][k] <= eps) {
+                        triangles.push([i, j, k]);
+                    }
+                }
+            }
+        }
+    }
+
+    return { edges, triangles };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PERSISTENT HOMOLOGY (simplified: β0 via union-find, β1 via Euler)
+// For proper H1 we'd need boundary matrix reduction — this uses
+// the Euler characteristic + β0 to get β1 for the current filtration
+// which is exact for VR complexes when maxDim=2.
+// ═══════════════════════════════════════════════════════════════
+
+class UnionFind {
+    constructor(n) {
+        this.parent = Array.from({length: n}, (_, i) => i);
+        this.rank = new Array(n).fill(0);
+        this.count = n;
+    }
+    find(x) {
+        while (this.parent[x] !== x) {
+            this.parent[x] = this.parent[this.parent[x]];
+            x = this.parent[x];
+        }
+        return x;
+    }
+    union(x, y) {
+        const rx = this.find(x), ry = this.find(y);
+        if (rx === ry) return false;
+        if (this.rank[rx] < this.rank[ry]) this.parent[rx] = ry;
+        else if (this.rank[rx] > this.rank[ry]) this.parent[ry] = rx;
+        else { this.parent[ry] = rx; this.rank[rx]++; }
+        this.count--;
+        return true;
+    }
+}
+
+function computeBetti(n, edges, triangles) {
+    // β0 via union-find on 1-skeleton
+    const uf = new UnionFind(n);
+    for (const [i, j] of edges) uf.union(i, j);
+    const b0 = uf.count;
+
+    // For a 2-complex: χ = V - E + F = β0 - β1 + β2
+    // β2 is 0 for VR complexes below their embedding dim in typical cases,
+    // but we compute it approximately as: β2 = number of "closed" tetrahedra
+    // For a demo, we set β2 heuristically by looking for closed 2-cycles.
+    const V = n, E = edges.length, F = triangles.length;
+    const chi = V - E + F;
+
+    // Rough β2 estimate: for sphere/torus-like structures, use small
+    // heuristic. In real TDA you'd reduce the boundary matrix ∂₂.
+    // Here: if we have lots of triangles and few edges relative to
+    // vertices, we might have a closed surface.
+    let b2 = 0;
+    // Very rough: if the complex "closes up" (triangle-to-edge ratio high)
+    if (F > 0 && n > 10) {
+        const closedness = F / Math.max(E, 1);
+        if (closedness > 0.7) b2 = 1;
+    }
+
+    // β1 from Euler: β1 = β0 - β2 - χ
+    const b1 = Math.max(0, b0 - b2 - chi);
+
+    return { b0, b1, b2, chi, V, E, F };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PERSISTENCE COMPUTATION (β0 exact, β1/β2 via Euler over filtration)
+// ═══════════════════════════════════════════════════════════════
+
+function computePersistence(pts, epsMax, nSteps = 50) {
+    const D = computeDistMatrix(pts);
+    const n = pts.length;
+    const steps = [];
+    const bars = { b0: [], b1: [], b2: [] };
+
+    // For β0 persistence: track when each component dies (merges)
+    // We build the filtration by sorted edge lengths.
+    const allEdges = [];
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            allEdges.push({ i, j, d: D[i][j] });
+        }
+    }
+    allEdges.sort((a, b) => a.d - b.d);
+
+    // β0 barcode: each vertex born at 0, dies when merged
+    const uf = new UnionFind(n);
+    const deathTimes = new Array(n).fill(null);
+    for (const { i, j, d } of allEdges) {
+        const ri = uf.find(i), rj = uf.find(j);
+        if (ri !== rj) {
+            // The "younger" component dies (higher index by convention)
+            const dying = Math.max(ri, rj);
+            deathTimes[dying] = d;
+            uf.union(i, j);
+        }
+    }
+    // Assign birth=0, death=deathTime for each vertex except the "immortal" root
+    for (let v = 0; v < n; v++) {
+        bars.b0.push({ dim: 0, birth: 0, death: deathTimes[v] === null ? epsMax * 1.2 : deathTimes[v] });
+    }
+
+    // Sample β1, β2 across the filtration
+    for (let s = 0; s < nSteps; s++) {
+        const eps = (s / (nSteps - 1)) * epsMax;
+        const { edges, triangles } = buildVRComplex(D, eps, 2);
+        const betti = computeBetti(n, edges, triangles);
+        steps.push({ eps, ...betti });
+    }
+
+    // Extract β1 bars by tracking when β1 goes up (birth) and down (death)
+    let prevB1 = 0;
+    const openB1 = [];
+    for (let s = 0; s < steps.length; s++) {
+        const b1 = steps[s].b1;
+        const eps = steps[s].eps;
+        while (openB1.length < b1) openB1.push({ dim: 1, birth: eps, death: null });
+        while (openB1.length > b1) {
+            const closed = openB1.pop();
+            closed.death = eps;
+            bars.b1.push(closed);
+        }
+    }
+    // Close remaining open bars at epsMax
+    for (const bar of openB1) {
+        bar.death = epsMax * 1.2;
+        bars.b1.push(bar);
+    }
+
+    // Same for β2
+    let prevB2 = 0;
+    const openB2 = [];
+    for (let s = 0; s < steps.length; s++) {
+        const b2 = steps[s].b2;
+        const eps = steps[s].eps;
+        while (openB2.length < b2) openB2.push({ dim: 2, birth: eps, death: null });
+        while (openB2.length > b2) {
+            const closed = openB2.pop();
+            closed.death = eps;
+            bars.b2.push(closed);
+        }
+    }
+    for (const bar of openB2) {
+        bar.death = epsMax * 1.2;
+        bars.b2.push(bar);
+    }
+
+    return { steps, bars, D };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CLASSIFICATION: match Betti signature to known topologies
+// ═══════════════════════════════════════════════════════════════
+
+const KNOWN_TOPOLOGIES = [
+    { name: 'Punkt / Cluster', betti: [1, 0, 0] },
+    { name: 'Kreis S¹', betti: [1, 1, 0] },
+    { name: 'Torus T²', betti: [1, 2, 1] },
+    { name: 'Sphäre S²', betti: [1, 0, 1] },
+    { name: 'Figur 8 / Wedge S¹∨S¹', betti: [1, 2, 0] },
+    { name: 'Zwei disjunkte Kreise', betti: [2, 2, 0] },
+    { name: 'Drei Cluster', betti: [3, 0, 0] },
+    { name: 'Zwei Cluster', betti: [2, 0, 0] },
+];
+
+function classify(signature) {
+    let best = null;
+    let bestDist = Infinity;
+    for (const topo of KNOWN_TOPOLOGIES) {
+        const d = Math.abs(signature[0] - topo.betti[0]) +
+                  Math.abs(signature[1] - topo.betti[1]) +
+                  Math.abs(signature[2] - topo.betti[2]);
+        if (d < bestDist) {
+            bestDist = d;
+            best = topo;
+        }
+    }
+    return { match: best, distance: bestDist };
+}
+
+// Persistent signature: count bars whose length > threshold
+function getPersistentSignature(bars, threshold) {
+    return [
+        bars.b0.filter(b => b.death - b.birth > threshold).length,
+        bars.b1.filter(b => b.death - b.birth > threshold).length,
+        bars.b2.filter(b => b.death - b.birth > threshold).length,
+    ];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE & CACHING
+// ═══════════════════════════════════════════════════════════════
+
+const state = {
+    points: [],
+    D: null,
+    persistence: null,
+    shape: 'circle',
+    n: 80,
+    noise: 0.05,
+    epsilon: 0.5,
+    maxDim: 2,
+    animating: false,
+};
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: POINT CLOUD
+// ═══════════════════════════════════════════════════════════════
+
+function renderCloud() {
+    const pts = state.points;
+    const trace = {
+        type: 'scatter3d',
+        mode: 'markers',
+        x: pts.map(p => p[0]),
+        y: pts.map(p => p[1]),
+        z: pts.map(p => p[2]),
+        marker: {
+            size: 4,
+            color: pts.map((_, i) => i),
+            colorscale: 'Viridis',
+            opacity: 0.9,
+            line: { width: 0 }
+        }
+    };
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: '#0b1220',
+        scene: {
+            xaxis: { showgrid: false, showticklabels: false, title: '', backgroundcolor: '#0b1220', color: '#94a3b8' },
+            yaxis: { showgrid: false, showticklabels: false, title: '', backgroundcolor: '#0b1220', color: '#94a3b8' },
+            zaxis: { showgrid: false, showticklabels: false, title: '', backgroundcolor: '#0b1220', color: '#94a3b8' },
+            bgcolor: '#0b1220',
+            camera: { eye: { x: 1.6, y: 1.6, z: 1.2 } }
+        },
+        showlegend: false
+    };
+    Plotly.react('plot-cloud', [trace], layout, { displayModeBar: false, responsive: true });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: VR COMPLEX
+// ═══════════════════════════════════════════════════════════════
+
+function renderVR() {
+    const pts = state.points;
+    const eps = state.epsilon;
+    const maxDim = state.maxDim;
+    const { edges, triangles } = buildVRComplex(state.D, eps, maxDim);
+
+    const traces = [];
+
+    // Points
+    traces.push({
+        type: 'scatter3d',
+        mode: 'markers',
+        x: pts.map(p => p[0]),
+        y: pts.map(p => p[1]),
+        z: pts.map(p => p[2]),
+        marker: { size: 3.5, color: '#a78bfa', opacity: 0.95, line: { width: 0 } },
+        hoverinfo: 'skip'
+    });
+
+    // Edges — batch into one trace with None separators
+    if (edges.length > 0) {
+        const ex = [], ey = [], ez = [];
+        for (const [i, j] of edges) {
+            ex.push(pts[i][0], pts[j][0], null);
+            ey.push(pts[i][1], pts[j][1], null);
+            ez.push(pts[i][2], pts[j][2], null);
+        }
+        traces.push({
+            type: 'scatter3d',
+            mode: 'lines',
+            x: ex, y: ey, z: ez,
+            line: { color: '#60a5fa', width: 2 },
+            opacity: 0.5,
+            hoverinfo: 'skip'
+        });
+    }
+
+    // Triangles — as a mesh3d
+    if (triangles.length > 0 && maxDim >= 2) {
+        traces.push({
+            type: 'mesh3d',
+            x: pts.map(p => p[0]),
+            y: pts.map(p => p[1]),
+            z: pts.map(p => p[2]),
+            i: triangles.map(t => t[0]),
+            j: triangles.map(t => t[1]),
+            k: triangles.map(t => t[2]),
+            opacity: 0.25,
+            color: '#f472b6',
+            flatshading: true,
+            hoverinfo: 'skip'
+        });
+    }
+
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: '#0b1220',
+        scene: {
+            xaxis: { showgrid: false, showticklabels: false, title: '', backgroundcolor: '#0b1220' },
+            yaxis: { showgrid: false, showticklabels: false, title: '', backgroundcolor: '#0b1220' },
+            zaxis: { showgrid: false, showticklabels: false, title: '', backgroundcolor: '#0b1220' },
+            bgcolor: '#0b1220',
+            camera: { eye: { x: 1.6, y: 1.6, z: 1.2 } }
+        },
+        showlegend: false
+    };
+    Plotly.react('plot-vr', traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: BARCODE
+// ═══════════════════════════════════════════════════════════════
+
+function renderBarcode() {
+    if (!state.persistence) return;
+    const { bars } = state.persistence;
+    const traces = [];
+
+    // β0 bars
+    const b0Sorted = [...bars.b0].sort((a, b) => (b.death - b.birth) - (a.death - a.birth)).slice(0, 25);
+    b0Sorted.forEach((bar, i) => {
+        traces.push({
+            type: 'scatter',
+            x: [bar.birth, bar.death],
+            y: [i, i],
+            mode: 'lines',
+            line: { color: '#3b82f6', width: 4 },
+            showlegend: i === 0,
+            name: 'β₀',
+            hoverinfo: 'skip'
+        });
+    });
+
+    // β1 bars
+    const yOffset = b0Sorted.length + 2;
+    const b1Sorted = [...bars.b1].sort((a, b) => (b.death - b.birth) - (a.death - a.birth)).slice(0, 15);
+    b1Sorted.forEach((bar, i) => {
+        traces.push({
+            type: 'scatter',
+            x: [bar.birth, bar.death],
+            y: [yOffset + i, yOffset + i],
+            mode: 'lines',
+            line: { color: '#10b981', width: 4 },
+            showlegend: i === 0,
+            name: 'β₁',
+            hoverinfo: 'skip'
+        });
+    });
+
+    // β2 bars
+    const yOffset2 = yOffset + b1Sorted.length + 2;
+    const b2Sorted = [...bars.b2].sort((a, b) => (b.death - b.birth) - (a.death - a.birth)).slice(0, 8);
+    b2Sorted.forEach((bar, i) => {
+        traces.push({
+            type: 'scatter',
+            x: [bar.birth, bar.death],
+            y: [yOffset2 + i, yOffset2 + i],
+            mode: 'lines',
+            line: { color: '#f59e0b', width: 4 },
+            showlegend: i === 0,
+            name: 'β₂',
+            hoverinfo: 'skip'
+        });
+    });
+
+    // Current ε marker
+    const totalY = yOffset2 + b2Sorted.length + 2;
+    traces.push({
+        type: 'scatter',
+        x: [state.epsilon, state.epsilon],
+        y: [-1, totalY],
+        mode: 'lines',
+        line: { color: '#f472b6', width: 2, dash: 'dash' },
+        showlegend: false,
+        hoverinfo: 'skip'
+    });
+
+    const layout = {
+        margin: { l: 40, r: 10, b: 40, t: 10 },
+        paper_bgcolor: '#0b1220',
+        plot_bgcolor: '#0b1220',
+        xaxis: {
+            title: { text: 'ε', font: { color: '#94a3b8' } },
+            color: '#94a3b8',
+            gridcolor: 'rgba(148,163,184,0.1)',
+            zerolinecolor: 'rgba(148,163,184,0.2)'
+        },
+        yaxis: {
+            showticklabels: false,
+            color: '#94a3b8',
+            gridcolor: 'rgba(148,163,184,0.1)',
+            zerolinecolor: 'rgba(148,163,184,0.2)'
+        },
+        legend: {
+            font: { color: '#e2e8f0' },
+            bgcolor: 'rgba(15,23,42,0.7)',
+            x: 0.02, y: 0.98
+        }
+    };
+    Plotly.react('plot-barcode', traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: PERSISTENCE DIAGRAM
+// ═══════════════════════════════════════════════════════════════
+
+function renderPersistenceDiagram() {
+    if (!state.persistence) return;
+    const { bars } = state.persistence;
+    const traces = [];
+
+    const maxVal = 3;
+
+    // Diagonal
+    traces.push({
+        type: 'scatter',
+        x: [0, maxVal], y: [0, maxVal],
+        mode: 'lines',
+        line: { color: 'rgba(148,163,184,0.4)', width: 1, dash: 'dot' },
+        showlegend: false,
+        hoverinfo: 'skip'
+    });
+
+    const dims = [
+        { key: 'b0', color: '#3b82f6', name: 'H₀' },
+        { key: 'b1', color: '#10b981', name: 'H₁' },
+        { key: 'b2', color: '#f59e0b', name: 'H₂' },
+    ];
+
+    dims.forEach(({ key, color, name }) => {
+        const bs = bars[key];
+        traces.push({
+            type: 'scatter',
+            x: bs.map(b => b.birth),
+            y: bs.map(b => Math.min(b.death, maxVal)),
+            mode: 'markers',
+            marker: { size: 8, color, opacity: 0.75, line: { color: '#0b1220', width: 1 } },
+            name,
+            hovertemplate: `${name}: birth=%{x:.2f}, death=%{y:.2f}<extra></extra>`
+        });
+    });
+
+    const layout = {
+        margin: { l: 45, r: 10, b: 45, t: 10 },
+        paper_bgcolor: '#0b1220',
+        plot_bgcolor: '#0b1220',
+        xaxis: {
+            title: { text: 'Birth (ε)', font: { color: '#94a3b8' } },
+            color: '#94a3b8',
+            gridcolor: 'rgba(148,163,184,0.1)',
+            range: [0, maxVal]
+        },
+        yaxis: {
+            title: { text: 'Death (ε)', font: { color: '#94a3b8' } },
+            color: '#94a3b8',
+            gridcolor: 'rgba(148,163,184,0.1)',
+            range: [0, maxVal]
+        },
+        legend: {
+            font: { color: '#e2e8f0' },
+            bgcolor: 'rgba(15,23,42,0.7)',
+            x: 0.75, y: 0.15
+        }
+    };
+    Plotly.react('plot-persistence', traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: SIGNATURE BAR CHART
+// ═══════════════════════════════════════════════════════════════
+
+function renderSignature() {
+    if (!state.persistence) return;
+    const threshold = 0.25;
+    const sig = getPersistentSignature(state.persistence.bars, threshold);
+
+    const trace = {
+        type: 'bar',
+        x: ['β₀', 'β₁', 'β₂'],
+        y: sig,
+        marker: {
+            color: ['#3b82f6', '#10b981', '#f59e0b'],
+            line: { color: '#0b1220', width: 1 }
+        },
+        text: sig.map(v => v.toString()),
+        textposition: 'outside',
+        textfont: { color: '#e2e8f0', size: 14 },
+        hovertemplate: '%{x}: %{y}<extra></extra>'
+    };
+
+    const layout = {
+        margin: { l: 40, r: 10, b: 40, t: 30 },
+        paper_bgcolor: '#0b1220',
+        plot_bgcolor: '#0b1220',
+        title: {
+            text: `Persistente Betti-Zahlen (Threshold=${threshold})`,
+            font: { color: '#e2e8f0', size: 13 }
+        },
+        xaxis: {
+            color: '#94a3b8',
+            gridcolor: 'rgba(148,163,184,0.05)'
+        },
+        yaxis: {
+            color: '#94a3b8',
+            gridcolor: 'rgba(148,163,184,0.1)',
+            dtick: 1
+        },
+        showlegend: false
+    };
+    Plotly.react('plot-signature', [trace], layout, { displayModeBar: false, responsive: true });
+
+    // Classification
+    const { match, distance } = classify(sig);
+    const resultEl = document.getElementById('classify-result');
+    const confidence = distance === 0 ? 'exakter Match' :
+                       distance === 1 ? 'sehr nah' :
+                       distance <= 2 ? 'ähnlich' : 'weit weg';
+    resultEl.innerHTML = `
+        <div>Persistente Signatur: <b>β = (${sig[0]}, ${sig[1]}, ${sig[2]})</b></div>
+        <div style="margin-top:8px;">Bester Match: <span class="match">${match.name}</span>
+             <span style="color:#94a3b8; font-size:0.9em;"> (β = (${match.betti.join(', ')}), ${confidence})</span></div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: TAKENS EMBEDDING
+// ═══════════════════════════════════════════════════════════════
+
+function generateTimeSeries(kind, n = 800) {
+    const ts = [];
+    switch (kind) {
+        case 'sin':
+            for (let i = 0; i < n; i++) ts.push(Math.sin(i * 0.08) + randn() * 0.02);
+            break;
+        case 'doublesin':
+            for (let i = 0; i < n; i++) {
+                ts.push(Math.sin(i * 0.08) + 0.6 * Math.sin(i * 0.31) + randn() * 0.02);
+            }
+            break;
+        case 'lorenz': {
+            let x = 1, y = 1, z = 1;
+            const dt = 0.01;
+            for (let i = 0; i < n * 5; i++) {
+                const dx = 10 * (y - x);
+                const dy = x * (28 - z) - y;
+                const dz = x * y - (8 / 3) * z;
+                x += dx * dt; y += dy * dt; z += dz * dt;
+                if (i % 5 === 0) ts.push(x * 0.05);
+            }
+            break;
+        }
+        case 'noise':
+            for (let i = 0; i < n; i++) ts.push(randn() * 0.5);
+            break;
+    }
+    return ts;
+}
+
+function renderTimeSeries(ts) {
+    const trace = {
+        type: 'scatter',
+        mode: 'lines',
+        x: ts.map((_, i) => i),
+        y: ts,
+        line: { color: '#60a5fa', width: 1.2 },
+        hoverinfo: 'skip'
+    };
+    const layout = {
+        margin: { l: 40, r: 10, b: 40, t: 10 },
+        paper_bgcolor: '#0b1220',
+        plot_bgcolor: '#0b1220',
+        xaxis: {
+            title: { text: 't', font: { color: '#94a3b8' } },
+            color: '#94a3b8', gridcolor: 'rgba(148,163,184,0.1)'
+        },
+        yaxis: {
+            title: { text: 'x(t)', font: { color: '#94a3b8' } },
+            color: '#94a3b8', gridcolor: 'rgba(148,163,184,0.1)'
+        }
+    };
+    Plotly.react('plot-timeseries', [trace], layout, { displayModeBar: false, responsive: true });
+}
+
+function renderTakens(ts, tau) {
+    const m = 3;
+    const pts = [];
+    for (let i = 0; i < ts.length - (m - 1) * tau; i++) {
+        pts.push([ts[i], ts[i + tau], ts[i + 2 * tau]]);
+    }
+    const trace = {
+        type: 'scatter3d',
+        mode: 'lines+markers',
+        x: pts.map(p => p[0]),
+        y: pts.map(p => p[1]),
+        z: pts.map(p => p[2]),
+        line: { color: pts.map((_, i) => i), colorscale: 'Viridis', width: 2 },
+        marker: { size: 1.5, color: pts.map((_, i) => i), colorscale: 'Viridis', opacity: 0.7 },
+        hoverinfo: 'skip'
+    };
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: '#0b1220',
+        scene: {
+            xaxis: { title: 'x(t)', showgrid: false, backgroundcolor: '#0b1220', color: '#94a3b8' },
+            yaxis: { title: `x(t+${tau})`, showgrid: false, backgroundcolor: '#0b1220', color: '#94a3b8' },
+            zaxis: { title: `x(t+${2 * tau})`, showgrid: false, backgroundcolor: '#0b1220', color: '#94a3b8' },
+            bgcolor: '#0b1220',
+            camera: { eye: { x: 1.6, y: 1.6, z: 1.2 } }
+        }
+    };
+    Plotly.react('plot-takens', [trace], layout, { displayModeBar: false, responsive: true });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER: FIBER BUNDLE ILLUSTRATION
+// ═══════════════════════════════════════════════════════════════
+
+function renderBundle() {
+    const traces = [];
+    const nLayers = 6;
+    const nTokens = 8;
+
+    // Basis: token sequence (unten)
+    const baseX = [], baseY = [], baseZ = [];
+    for (let i = 0; i < nTokens; i++) {
+        baseX.push(i);
+        baseY.push(0);
+        baseZ.push(0);
+    }
+    traces.push({
+        type: 'scatter3d', mode: 'markers+text',
+        x: baseX, y: baseY, z: baseZ,
+        marker: { size: 6, color: '#f472b6' },
+        text: ['the', 'capital', 'of', 'germany', 'is', 'Ber', 'lin', '.'],
+        textposition: 'bottom center',
+        textfont: { color: '#f472b6', size: 10 },
+        name: 'Basis (Tokens)',
+        hoverinfo: 'skip'
+    });
+
+    // Fasern (vertikale Aktivierungsräume pro Token)
+    for (let i = 0; i < nTokens; i++) {
+        const fx = [], fy = [], fz = [];
+        for (let l = 0; l < nLayers; l++) {
+            fx.push(i);
+            fy.push(l * 0.5 + randn() * 0.15);
+            fz.push(l);
+        }
+        traces.push({
+            type: 'scatter3d', mode: 'lines+markers',
+            x: fx, y: fy, z: fz,
+            line: { color: 'rgba(96,165,250,0.4)', width: 2 },
+            marker: { size: 3, color: '#60a5fa' },
+            showlegend: i === 0,
+            name: 'Faser (Layer-Stack)',
+            hoverinfo: 'skip'
+        });
+    }
+
+    // Trajektorie eines Tokens durch die Layer (Attraktor-Bahn)
+    const focusToken = 5; // "Ber"
+    const trajX = [], trajY = [], trajZ = [];
+    for (let l = 0; l < nLayers; l++) {
+        // Simuliere Attraktor-Trajektorie: Spirale die auf einen Bereich zuläuft
+        const angle = l * 0.9;
+        const r = Math.max(0.05, 0.6 - l * 0.09);
+        trajX.push(focusToken + Math.cos(angle) * r);
+        trajY.push(l * 0.5 + Math.sin(angle) * r);
+        trajZ.push(l);
+    }
+    traces.push({
+        type: 'scatter3d', mode: 'lines+markers',
+        x: trajX, y: trajY, z: trajZ,
+        line: { color: '#fbbf24', width: 5 },
+        marker: { size: 5, color: '#fbbf24' },
+        name: 'Trajektorie → Attraktor',
+        hoverinfo: 'skip'
+    });
+
+    // Attraktor-Region (Torus-ähnlich am obersten Layer)
+    const torR = 0.3, torr = 0.1;
+    const torX = [], torY = [], torZ = [];
+    for (let i = 0; i < 40; i++) {
+        const u = 2 * Math.PI * i / 40;
+        for (let j = 0; j < 12; j++) {
+            const v = 2 * Math.PI * j / 12;
+            torX.push(focusToken + (torR + torr * Math.cos(v)) * Math.cos(u));
+            torY.push((nLayers - 1) * 0.5 + (torR + torr * Math.cos(v)) * Math.sin(u));
+            torZ.push(nLayers - 1 + torr * Math.sin(v) * 0.3);
+        }
+    }
+    traces.push({
+        type: 'scatter3d', mode: 'markers',
+        x: torX, y: torY, z: torZ,
+        marker: { size: 1.5, color: '#a78bfa', opacity: 0.5 },
+        name: 'Attraktor-Struktur',
+        hoverinfo: 'skip'
+    });
+
+    const layout = {
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        paper_bgcolor: '#0b1220',
+        scene: {
+            xaxis: { title: 'Token-Position', backgroundcolor: '#0b1220', color: '#94a3b8', gridcolor: 'rgba(148,163,184,0.1)' },
+            yaxis: { title: 'Aktivierung (proj.)', backgroundcolor: '#0b1220', color: '#94a3b8', gridcolor: 'rgba(148,163,184,0.1)' },
+            zaxis: { title: 'Layer', backgroundcolor: '#0b1220', color: '#94a3b8', gridcolor: 'rgba(148,163,184,0.1)' },
+            bgcolor: '#0b1220',
+            camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } }
+        },
+        showlegend: true,
+        legend: { font: { color: '#e2e8f0' }, bgcolor: 'rgba(15,23,42,0.7)', x: 0.02, y: 0.98 }
+    };
+    Plotly.react('plot-bundle', traces, layout, { displayModeBar: false, responsive: true });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN PIPELINE: regenerate + recompute
+// ═══════════════════════════════════════════════════════════════
+
+function regeneratePointCloud() {
+    state.points = generateShape(state.shape, state.n, state.noise);
+    state.D = computeDistMatrix(state.points);
+    state.persistence = computePersistence(state.points, 3.0, 60);
+    renderCloud();
+    renderVR();
+    renderBarcode();
+    renderPersistenceDiagram();
+    renderSignature();
+}
+
+function refreshTakens() {
+    const kind = document.getElementById('ts-select').value;
+    const tau = parseInt(document.getElementById('tau').value);
+    const ts = generateTimeSeries(kind, 700);
+    renderTimeSeries(ts);
+    renderTakens(ts, tau);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EVENT WIRING
+// ═══════════════════════════════════════════════════════════════
+
+document.getElementById('shape-select').addEventListener('change', (e) => {
+    state.shape = e.target.value;
+    regeneratePointCloud();
+});
+document.getElementById('n-points').addEventListener('input', (e) => {
+    state.n = parseInt(e.target.value);
+    document.getElementById('n-points-val').textContent = state.n;
+});
+document.getElementById('n-points').addEventListener('change', () => regeneratePointCloud());
+document.getElementById('noise').addEventListener('input', (e) => {
+    state.noise = parseFloat(e.target.value);
+    document.getElementById('noise-val').textContent = state.noise.toFixed(2);
+});
+document.getElementById('noise').addEventListener('change', () => regeneratePointCloud());
+document.getElementById('regenerate').addEventListener('click', () => regeneratePointCloud());
+
+document.getElementById('epsilon').addEventListener('input', (e) => {
+    state.epsilon = parseFloat(e.target.value);
+    document.getElementById('epsilon-val').textContent = state.epsilon.toFixed(2);
+    renderVR();
+    renderBarcode();
+});
+document.getElementById('max-dim').addEventListener('change', (e) => {
+    state.maxDim = parseInt(e.target.value);
+    renderVR();
+});
+
+document.getElementById('animate-eps').addEventListener('click', () => {
+    if (state.animating) return;
+    state.animating = true;
+    const slider = document.getElementById('epsilon');
+    const max = parseFloat(slider.max);
+    const step = 0.03;
+    let cur = 0;
+    const iv = setInterval(() => {
+        cur += step;
+        if (cur > max) {
+            clearInterval(iv);
+            state.animating = false;
+            return;
+        }
+        slider.value = cur;
+        state.epsilon = cur;
+        document.getElementById('epsilon-val').textContent = cur.toFixed(2);
+        renderVR();
+        renderBarcode();
+    }, 60);
+});
+
+document.getElementById('ts-select').addEventListener('change', refreshTakens);
+document.getElementById('tau').addEventListener('input', (e) => {
+    document.getElementById('tau-val').textContent = e.target.value;
+});
+document.getElementById('tau').addEventListener('change', refreshTakens);
+
+// ═══════════════════════════════════════════════════════════════
+// INITIAL RENDER
+// ═══════════════════════════════════════════════════════════════
+
+regeneratePointCloud();
+refreshTakens();
+renderBundle();
+
+</script>
+</body>
+</html>
