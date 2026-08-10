@@ -2590,6 +2590,10 @@ function _draw_grid_init_counters(images, categories) {
 function _restore_last_grid_render() {
 	if (!_last_grid_canvas_data_url) return false;
 
+	var tooltip = _get_grid_tooltip_element();
+	tooltip.style.display = "none";
+	_grid_tooltip_last_region_index = -1;
+
 	var $container = $("#canvas_grid_visualization");
 	var img = new Image();
 	img.onload = function() {
@@ -2668,6 +2672,8 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 
 	$(canvas).appendTo($container);
 
+	_setup_grid_tooltip(canvas);
+
 	try {
 		_last_grid_canvas_data_url = canvas.toDataURL("image/png");
 	} catch (e) {
@@ -2694,6 +2700,182 @@ function _setup_grid_resize_listener() {
 			}
 		}, 200);
 	});
+}
+
+function _grid_escape_html(str) {
+	if (!str) return "";
+	return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function _get_grid_tooltip_element() {
+	if (_grid_tooltip && document.body.contains(_grid_tooltip)) {
+		return _grid_tooltip;
+	}
+
+	_grid_tooltip = document.createElement("div");
+	_grid_tooltip.className = "grid_image_tooltip";
+	_grid_tooltip.style.position = "fixed";
+	_grid_tooltip.style.display = "none";
+	document.body.appendChild(_grid_tooltip);
+
+	return _grid_tooltip;
+}
+
+function _setup_grid_tooltip(canvas) {
+	var tooltip = _get_grid_tooltip_element();
+
+	canvas.style.pointerEvents = "auto";
+	canvas.style.cursor = "crosshair";
+
+	canvas.addEventListener("mousemove", function(e) {
+		var rect = canvas.getBoundingClientRect();
+		var scaleX = canvas.width / (rect.width || 1);
+		var scaleY = canvas.height / (rect.height || 1);
+		var mx = (e.clientX - rect.left) * scaleX;
+		var my = (e.clientY - rect.top) * scaleY;
+
+		var region = null;
+		var region_index = -1;
+		for (var i = _grid_image_hit_regions.length - 1; i >= 0; i--) {
+			var r = _grid_image_hit_regions[i];
+			if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
+				region = r;
+				region_index = i;
+				break;
+			}
+		}
+
+		if (!region) {
+			tooltip.style.display = "none";
+			_grid_tooltip_last_region_index = -1;
+			return;
+		}
+
+		if (region_index !== _grid_tooltip_last_region_index) {
+			_render_grid_tooltip(tooltip, region);
+			_grid_tooltip_last_region_index = region_index;
+		}
+
+		tooltip.style.display = "block";
+		_position_grid_tooltip(tooltip, e.clientX, e.clientY);
+	});
+
+	canvas.addEventListener("mouseleave", function() {
+		tooltip.style.display = "none";
+		_grid_tooltip_last_region_index = -1;
+	});
+
+	canvas.addEventListener("mousedown", function() {
+		tooltip.style.display = "none";
+		_grid_tooltip_last_region_index = -1;
+	});
+}
+
+function _position_grid_tooltip(tooltip, clientX, clientY) {
+	var offset = 16;
+	var rect = tooltip.getBoundingClientRect();
+	var left = clientX + offset;
+	var top = clientY + offset;
+
+	if (left + rect.width > window.innerWidth - 8) {
+		left = clientX - rect.width - offset;
+	}
+
+	if (top + rect.height > window.innerHeight - 8) {
+		top = clientY - rect.height - offset;
+	}
+
+	tooltip.style.left = left + "px";
+	tooltip.style.top = top + "px";
+}
+
+function _render_grid_tooltip(tooltip, region) {
+	tooltip.innerHTML = "";
+
+	var src = region.src || "";
+	var filename = "";
+	if (src && src.indexOf("data:") !== 0) {
+		try {
+			var parts = src.split("/");
+			filename = decodeURIComponent(parts[parts.length - 1]);
+		} catch (e) {
+			filename = "";
+		}
+	}
+
+	var predicted_label = language[lang]["unknown"];
+	if (region.category !== undefined && region.category !== null && labels[region.category] !== undefined) {
+		predicted_label = labels[region.category];
+	}
+
+	var correct_label = region.correct_category || language[lang]["unknown"];
+
+	var is_correct = null;
+	if (region.correct_category) {
+		var correct_index = findIndexByKey(get_all_labels(), region.correct_category);
+		if (correct_index !== undefined && !isNaN(correct_index)) {
+			is_correct = (region.category === (correct_index % labels.length));
+		}
+	}
+
+	var result_label = language[lang]["unknown"];
+	var result_class = "";
+	if (is_correct === true) {
+		result_label = language[lang]["correct"];
+		result_class = "gti_good";
+	} else if (is_correct === false) {
+		result_label = language[lang]["wrong"];
+		result_class = "gti_bad";
+	}
+
+	var probability_percent = region.probability * 100;
+	var probability_display = probability_percent.toFixed(1) + " %";
+
+	var how_text = language[lang]["grid_img_tooltip_how"]
+		.replace("{category}", predicted_label)
+		.replace("{probability}", probability_percent.toFixed(1));
+
+	var html = "";
+	if (filename) {
+		html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["image_file"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(filename) + "</span></div>";
+	}
+	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["correct_category"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(correct_label) + "</span></div>";
+	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["predicted_category"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(predicted_label) + "</span></div>";
+	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["certainty"]) + ":</span> <span class='gti_value'>" + _grid_escape_html(probability_display) + "</span></div>";
+	html += "<div class='gti_row'><span class='gti_label'>" + _grid_escape_html(language[lang]["result"]) + ":</span> <span class='gti_value " + result_class + "'>" + _grid_escape_html(result_label) + "</span></div>";
+	html += "<div class='gti_sep'></div>";
+	html += "<div class='gti_how'>" + _grid_escape_html(how_text) + "</div>";
+
+	tooltip.innerHTML = html;
+
+	var preview_node = null;
+	try {
+		if (region.image) {
+			if (region.image.tagName === "IMG" && region.image.src) {
+				preview_node = region.image.cloneNode(false);
+				preview_node.removeAttribute("width");
+				preview_node.removeAttribute("height");
+				preview_node.className = "grid_image_tooltip_img";
+			} else if (region.image.tagName === "CANVAS") {
+				var src_canvas = region.image;
+				var preview_size = 64;
+				var src_w = src_canvas.width || preview_size;
+				var src_h = src_canvas.height || preview_size;
+				var ratio = Math.min(1, preview_size / Math.max(src_w, src_h, 1));
+				preview_node = document.createElement("canvas");
+				preview_node.className = "grid_image_tooltip_img";
+				preview_node.width = Math.max(1, Math.round(src_w * ratio));
+				preview_node.height = Math.max(1, Math.round(src_h * ratio));
+				preview_node.getContext("2d").drawImage(src_canvas, 0, 0, preview_node.width, preview_node.height);
+			}
+		}
+	} catch (e) {
+		preview_node = null;
+	}
+
+	if (preview_node) {
+		tooltip.insertBefore(preview_node, tooltip.firstChild);
+	}
 }
 
 function extractCategoryFromURL(_url, image_element) {
