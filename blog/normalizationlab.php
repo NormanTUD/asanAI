@@ -11,7 +11,7 @@ topics: math-i, math-ii, architecture
 -->
 
 <div class="md">
-Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016layernorm} (in their paper '\citetitle{ba2016layernorm}'), ensures that the inputs to each layer have a consistent mean and variance. This prevents *"internal covariate shift"* and allows for much higher learning rates and faster convergence.
+Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016layernorm} (in their paper '\citetitle{ba2016layernorm}'), rescales each layer's inputs to have a consistent mean and variance. The original paper motivated this by the need to stabilize the distribution of hidden states across the layers and time steps of a network, which makes the optimization landscape better behaved and allows for much higher learning rates and faster convergence. LN is sometimes loosely said to "prevent internal covariate shift" — a term coined for BatchNorm — but the original LN paper did not rely on that explanation; the practical benefit is improved training stability.
 
 ## The Mathematical Process
 For a specific layer input vector $x$ with $d$ dimensions, the normalization follows these four steps:
