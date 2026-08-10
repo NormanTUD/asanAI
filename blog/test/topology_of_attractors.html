@@ -1090,7 +1090,7 @@ function renderBundle() {
     const numLayers = 6;
     const numTokens = tokens.length;
 
-    // Seeded RNG damit's reproduzierbar ist, aber "random" wirkt
+    // Seeded RNG
     let _seed = 42;
     function rand() {
         _seed = (_seed * 9301 + 49297) % 233280;
@@ -1100,19 +1100,17 @@ function renderBundle() {
     function randChoice(arr) { return arr[Math.floor(rand() * arr.length)]; }
 
     const tokenColors = ['#f472b6', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f87171'];
-    const attractorPalette = ['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#f87171'];
+    const attractorPalette = ['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#c084fc'];
     const repellerColor = '#ef4444';
 
-    // Layout im Weltraum
-    const tokenSpacing = 3.4;
-    const layerSpacing = 3.0;
-    const cubeSize = 1.3;
+    // MEHR PLATZ
+    const tokenSpacing = 4.5;
+    const layerSpacing = 4.2;
+    const cubeSize = 1.5;
 
-    // ────────────────────────────────────────────────────────────
-    // Verzerrungsfunktion für die Faser-Räume
-    // ────────────────────────────────────────────────────────────
+    // ─────────── Verzerrungsfeld pro Faser ───────────
     function distortLocal(lx, ly, lz, tokenIdx, layerIdx) {
-        const strength = 0.04 + layerIdx * 0.11;
+        const strength = 0.04 + layerIdx * 0.12;
         const phase = tokenIdx * 1.7 + layerIdx * 0.9;
         const w1 = Math.sin(lx * 2.1 + phase) * Math.cos(ly * 1.9 + phase * 0.7);
         const w2 = Math.sin(ly * 2.3 + phase * 1.3) * Math.cos(lz * 1.7 + phase);
@@ -1135,38 +1133,46 @@ function renderBundle() {
         };
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Random Attraktor-Konfiguration pro (token, layer)-Zelle
-    // Jede Zelle hat 1-3 Attraktoren/Repellanten an random Positionen
-    // ────────────────────────────────────────────────────────────
+    // ─────────── Random Attraktor-Konfiguration ───────────
     const attractorTypes = ['torus', 'lorenz', 'spiral', 'fig8', 'point', 'limit_cycle'];
 
+    // Menschenlesbare Beschreibungen für Hover
+    const attractorDescriptions = {
+        torus: 'Torus-Attraktor — Trajektorien wickeln sich auf einem Donut auf, quasi-periodisch (2 verschachtelte Zyklen)',
+        lorenz: 'Lorenz-artiger seltsamer Attraktor — chaotisch, zwei Schleifen, Bahnen springen unvorhersagbar dazwischen',
+        spiral: 'Spiral-Attraktor — Partikel spiralen in ein Zentrum hinein (oder heraus bei Repeller)',
+        fig8: 'Figur-8 / Wedge S¹∨S¹ — zwei verbundene Zyklen, homotop nicht trivial',
+        point: 'Punkt-Attraktor — fixer Punkt, alle Bahnen enden dort',
+        limit_cycle: 'Limit-Zyklus — stabiler geschlossener Orbit auf einem Kreis'
+    };
+
     function generateCellAttractors(tokenIdx, layerIdx) {
-        const numAttr = 1 + Math.floor(rand() * 2.5); // 1..3
+        const numAttr = 1 + Math.floor(rand() * 2.5);
         const list = [];
         for (let k = 0; k < numAttr; k++) {
             const type = randChoice(attractorTypes);
-            // Random lokale Position im Würfel [-0.6, 0.6]
             const localCenter = [
                 randRange(-0.55, 0.55),
                 randRange(-0.55, 0.55),
                 randRange(-0.55, 0.55)
             ];
-            // ~25% Chance dass es ein Repellant ist
             const isRepeller = rand() < 0.25;
-            // Größe/Skala
-            const scale = randRange(0.25, 0.45);
-            const strength = randRange(0.6, 1.4); // für Feldberechnung
+            const scale = randRange(0.28, 0.5);
+            const strength = randRange(0.6, 1.4);
             const rotation = randRange(0, Math.PI * 2);
+            // Zufällige Achse für die "Verwirbelung"
+            const axis = [randRange(-1, 1), randRange(-1, 1), randRange(-1, 1)];
+            const alen = Math.sqrt(axis[0]**2 + axis[1]**2 + axis[2]**2) + 1e-6;
+            axis[0] /= alen; axis[1] /= alen; axis[2] /= alen;
+
             list.push({
-                type, localCenter, scale, isRepeller, strength, rotation,
+                type, localCenter, scale, isRepeller, strength, rotation, axis,
                 color: isRepeller ? repellerColor : randChoice(attractorPalette)
             });
         }
         return list;
     }
 
-    // Precompute alle Zellen-Attraktoren
     const cellAttractors = [];
     for (let t = 0; t < numTokens; t++) {
         cellAttractors[t] = [];
@@ -1175,19 +1181,17 @@ function renderBundle() {
         }
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Attraktor-Trajektorien im lokalen Raum generieren
-    // ────────────────────────────────────────────────────────────
+    // ─────────── Attraktor-Visualisierungs-Trajektorien ───────────
     function generateAttractorTrajectory(attr) {
         const pts = [];
-        const N = 80;
+        const N = 90;
         const s = attr.scale;
         const rot = attr.rotation;
         const cosR = Math.cos(rot), sinR = Math.sin(rot);
 
         switch (attr.type) {
             case 'torus': {
-                const R = 0.55 * s, r = 0.22 * s;
+                const R = 0.6 * s, r = 0.25 * s;
                 for (let i = 0; i < N; i++) {
                     const u = (i / N) * Math.PI * 2 * 3;
                     const v = u * 0.31;
@@ -1208,7 +1212,7 @@ function renderBundle() {
                         const dz = x * y - (8 / 3) * z;
                         x += dx * dt; y += dy * dt; z += dz * dt;
                     }
-                    pts.push([x * 0.03 * s, y * 0.03 * s, (z - 25) * 0.03 * s]);
+                    pts.push([x * 0.035 * s, y * 0.035 * s, (z - 25) * 0.035 * s]);
                 }
                 break;
             }
@@ -1224,35 +1228,28 @@ function renderBundle() {
             case 'fig8': {
                 for (let i = 0; i < N; i++) {
                     const t = (i / N) * Math.PI * 2;
-                    pts.push([Math.sin(2 * t) * 0.55 * s, Math.sin(t) * 0.55 * s, Math.cos(t) * 0.25 * s]);
+                    pts.push([Math.sin(2 * t) * 0.6 * s, Math.sin(t) * 0.6 * s, Math.cos(t) * 0.25 * s]);
                 }
                 break;
             }
             case 'point': {
-                // Einlaufende Spirale in einen Punkt (oder auslaufend bei Repeller)
                 for (let i = 0; i < N; i++) {
                     const t = i / N;
                     const r = 0.5 * s * (attr.isRepeller ? t : Math.pow(1 - t, 1.5));
                     const a = t * Math.PI * 10;
-                    pts.push([
-                        Math.cos(a) * r,
-                        Math.sin(a) * r,
-                        Math.cos(a * 0.5) * r * 0.3
-                    ]);
+                    pts.push([Math.cos(a) * r, Math.sin(a) * r, Math.cos(a * 0.5) * r * 0.3]);
                 }
                 break;
             }
             case 'limit_cycle': {
-                // Ein einfacher Kreis mit leichter 3D-Neigung
                 for (let i = 0; i < N; i++) {
                     const t = (i / N) * Math.PI * 2;
-                    const r = 0.5 * s;
+                    const r = 0.55 * s;
                     pts.push([Math.cos(t) * r, Math.sin(t) * r, Math.sin(t * 2) * 0.15 * s]);
                 }
                 break;
             }
         }
-        // Translate to attr.localCenter
         return pts.map(p => [
             p[0] + attr.localCenter[0],
             p[1] + attr.localCenter[1],
@@ -1260,91 +1257,159 @@ function renderBundle() {
         ]);
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Vektorfeld: für Token-Trajektorie und Feldlinien-Andeutung
-    // Berechnet Kraft auf einen Punkt (lx, ly, lz) im lokalen Raum
-    // durch alle Attraktoren/Repellanten der Zelle.
-    // ────────────────────────────────────────────────────────────
+    // ─────────── FELD: mit tangentialer Verwirbelung ───────────
+    // Für torus/fig8/limit_cycle: zusätzlich zum radialen Anziehen ein
+    // TANGENTIALFELD (Kreuzprodukt v × axis), sodass Trajektorien um den
+    // Attraktor herumfliegen statt direkt reinfallen.
+    // Für lorenz: skaliertes echtes Lorenz-Vektorfeld lokal.
     function fieldAt(lx, ly, lz, cellAttrs) {
         let fx = 0, fy = 0, fz = 0;
         for (const attr of cellAttrs) {
             const dx = attr.localCenter[0] - lx;
             const dy = attr.localCenter[1] - ly;
             const dz = attr.localCenter[2] - lz;
-            const r2 = dx * dx + dy * dy + dz * dz + 0.05; // Softening
+            const r2 = dx * dx + dy * dy + dz * dz + 0.04;
             const r = Math.sqrt(r2);
-            // 1/r² Feld, Attraktor zieht (+), Repeller stößt (-)
             const sign = attr.isRepeller ? -1 : 1;
-            const mag = (sign * attr.strength) / r2;
-            fx += (dx / r) * mag;
-            fy += (dy / r) * mag;
-            fz += (dz / r) * mag;
+
+            // Radiale Komponente (immer 1/r²)
+            const radialMag = (sign * attr.strength) / r2;
+            let rfx = (dx / r) * radialMag;
+            let rfy = (dy / r) * radialMag;
+            let rfz = (dz / r) * radialMag;
+
+            // Tangentiale Komponente je nach Typ
+            let tfx = 0, tfy = 0, tfz = 0;
+            if (!attr.isRepeller) {
+                if (attr.type === 'torus' || attr.type === 'limit_cycle') {
+                    // r_vec × axis = tangentiales Rotationsfeld
+                    // Stärke fällt ab mit Distanz, Peak nahe am Attraktor
+                    const swirlMag = attr.strength * 1.8 / (r2 + 0.1);
+                    // Vektor vom Attraktor zum Punkt
+                    const px = -dx, py = -dy, pz = -dz;
+                    // Kreuzprodukt p × axis
+                    tfx = (py * attr.axis[2] - pz * attr.axis[1]) * swirlMag;
+                    tfy = (pz * attr.axis[0] - px * attr.axis[2]) * swirlMag;
+                    tfz = (px * attr.axis[1] - py * attr.axis[0]) * swirlMag;
+                    // Bei Torus: Radialteil schwächer (nicht ins Zentrum reinfallen)
+                    if (attr.type === 'torus') {
+                        rfx *= 0.3; rfy *= 0.3; rfz *= 0.3;
+                        // Sanfte Anziehung auf einen Ring statt Punkt
+                        const ringR = 0.6 * attr.scale;
+                        const pull = (r - ringR) * 2.5;
+                        rfx += (dx / r) * pull * attr.strength * 0.4;
+                        rfy += (dy / r) * pull * attr.strength * 0.4;
+                        rfz += (dz / r) * pull * attr.strength * 0.4;
+                    }
+                } else if (attr.type === 'lorenz') {
+                    // Lokales Lorenz-Feld, um das Attraktor-Zentrum
+                    const scale = 0.04;
+                    const nx = -dx / scale, ny = -dy / scale, nz = -dz / scale + 25;
+                    const lFx = 10 * (ny - nx);
+                    const lFy = nx * (28 - nz) - ny;
+                    const lFz = nx * ny - (8 / 3) * nz;
+                    tfx = lFx * scale * attr.strength * 0.4;
+                    tfy = lFy * scale * attr.strength * 0.4;
+                    tfz = lFz * scale * attr.strength * 0.4;
+                    rfx *= 0.4; rfy *= 0.4; rfz *= 0.4;
+                } else if (attr.type === 'fig8') {
+                    // Sanfter Swirl, damit die Bahn die 8 andeutet
+                    const swirlMag = attr.strength * 1.0 / (r2 + 0.1);
+                    const px = -dx, py = -dy, pz = -dz;
+                    tfx = (py * attr.axis[2] - pz * attr.axis[1]) * swirlMag;
+                    tfy = (pz * attr.axis[0] - px * attr.axis[2]) * swirlMag;
+                    tfz = (px * attr.axis[1] - py * attr.axis[0]) * swirlMag;
+                }
+            }
+            fx += rfx + tfx;
+            fy += rfy + tfy;
+            fz += rfz + tfz;
         }
         return [fx, fy, fz];
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Token-Trajektorie: startet unten, fliegt Layer für Layer nach oben
-    // Innerhalb jeder Zelle: numerische Integration mit Reibung
-    // Der Übergang zwischen Layern: Position wird "übernommen" (Faser-Transport)
-    // ────────────────────────────────────────────────────────────
-    function simulateTokenPath(tokenIdx) {
-        const path = []; // Array von {layer, localPos, worldPos}
-        const stepsPerLayer = 60;
-        const dt = 0.05;
-        const friction = 0.85;
+    // ─────────── Token-Trajektorie mit erhaltendem Schwung ───────────
+    function simulateTokenPath(tokenIdx, seedOffset) {
+        // Deterministischer Startpunkt pro Token
+        const startSeed = tokenIdx * 137 + seedOffset;
+        const sr = (n) => {
+            const x = Math.sin(startSeed + n * 47) * 10000;
+            return (x - Math.floor(x)) * 2 - 1;
+        };
 
-        // Start: random Position im untersten Layer
-        let lx = randRange(-0.4, 0.4);
-        let ly = randRange(-0.4, 0.4);
-        let lz = randRange(-0.4, 0.4);
-        let vx = 0, vy = 0, vz = 0;
+        const path = [];
+        const stepsPerLayer = 90;
+        const dt = 0.04;
+        const friction = 0.92;
+
+        let lx = sr(1) * 0.5;
+        let ly = sr(2) * 0.5;
+        let lz = sr(3) * 0.5;
+        // Kleiner initialer Schwung, damit's nicht sofort ins Zentrum fällt
+        let vx = sr(4) * 0.8;
+        let vy = sr(5) * 0.8;
+        let vz = sr(6) * 0.8;
+
+        // Track welcher Attraktor gerade dominiert (für Hover-Info)
+        function dominantAttractor(lx, ly, lz, cellAttrs) {
+            let best = null;
+            let bestForce = 0;
+            for (const attr of cellAttrs) {
+                const dx = attr.localCenter[0] - lx;
+                const dy = attr.localCenter[1] - ly;
+                const dz = attr.localCenter[2] - lz;
+                const r2 = dx * dx + dy * dy + dz * dz + 0.05;
+                const f = attr.strength / r2;
+                if (f > bestForce) { bestForce = f; best = attr; }
+            }
+            return best;
+        }
 
         for (let l = 0; l < numLayers; l++) {
             const cellAttrs = cellAttractors[tokenIdx][l];
             for (let s = 0; s < stepsPerLayer; s++) {
                 const [fx, fy, fz] = fieldAt(lx, ly, lz, cellAttrs);
-                // Semi-implicit Euler
                 vx = vx * friction + fx * dt;
                 vy = vy * friction + fy * dt;
                 vz = vz * friction + fz * dt;
-                // Geschwindigkeit begrenzen
                 const vmag = Math.sqrt(vx * vx + vy * vy + vz * vz);
-                const vmax = 3.0;
+                const vmax = 4.0;
                 if (vmag > vmax) { vx *= vmax / vmag; vy *= vmax / vmag; vz *= vmax / vmag; }
                 lx += vx * dt;
                 ly += vy * dt;
                 lz += vz * dt;
-                // Im Würfel halten (soft clamp)
                 lx = Math.max(-0.95, Math.min(0.95, lx));
                 ly = Math.max(-0.95, Math.min(0.95, ly));
                 lz = Math.max(-0.95, Math.min(0.95, lz));
 
                 const w = worldPos(lx, ly, lz, tokenIdx, l);
-                path.push({ layer: l, world: w });
+                const dom = dominantAttractor(lx, ly, lz, cellAttrs);
+                const speed = Math.sqrt(vx*vx + vy*vy + vz*vz);
+                path.push({
+                    layer: l, world: w,
+                    dominantAttr: dom,
+                    speed
+                });
             }
-            // Faser-Transport: leichter Reset der Geschwindigkeit beim Layer-Wechsel
-            vx *= 0.3; vy *= 0.3; vz *= 0.3;
+            // SCHWUNG-ERHALTUNG beim Faser-Übergang (85% statt 30%)
+            vx *= 0.85; vy *= 0.85; vz *= 0.85;
         }
         return path;
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Basin-Andeutung: einige Feldlinien-Sampling um die Attraktoren
-    // Startet an random Punkten, folgt dem Feld für kurze Zeit
-    // ────────────────────────────────────────────────────────────
+    // ─────────── Basin-Feldlinien ───────────
     function generateBasinLines(tokenIdx, layerIdx) {
         const cellAttrs = cellAttractors[tokenIdx][layerIdx];
         if (cellAttrs.length === 0) return [];
         const lines = [];
-        const numLines = 8;
-        const stepsPerLine = 25;
-        const dt = 0.03;
+        const numLines = 10;
+        const stepsPerLine = 35;
+        const dt = 0.025;
 
         for (let k = 0; k < numLines; k++) {
-            let lx = randRange(-0.85, 0.85);
-            let ly = randRange(-0.85, 0.85);
-            let lz = randRange(-0.85, 0.85);
+            let lx = randRange(-0.88, 0.88);
+            let ly = randRange(-0.88, 0.88);
+            let lz = randRange(-0.88, 0.88);
             const pts = [];
             for (let s = 0; s < stepsPerLine; s++) {
                 const [fx, fy, fz] = fieldAt(lx, ly, lz, cellAttrs);
@@ -1360,9 +1425,7 @@ function renderBundle() {
         return lines;
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Wireframe des verzerrten Würfels
-    // ────────────────────────────────────────────────────────────
+    // ─────────── Wireframe des verzerrten Würfels ───────────
     function buildDistortedCubeLines(tokenIdx, layerIdx) {
         const gridN = 4;
         const xs = [], ys = [], zs = [];
@@ -1407,27 +1470,24 @@ function renderBundle() {
         return { xs, ys, zs };
     }
 
-    // ────────────────────────────────────────────────────────────
-    // ZUSAMMENBAU: alle Traces
-    // ────────────────────────────────────────────────────────────
+    // ─────────── ZUSAMMENBAU ───────────
     const traces = [];
 
-    // Für jede Zelle: Wireframe + Basin-Feldlinien + Attraktor-Trajektorien + Attraktor-Zentren
     for (let t = 0; t < numTokens; t++) {
         for (let l = 0; l < numLayers; l++) {
-            // Wireframe des verzerrten Raums
+            // Wireframe MIT Hover
             const wire = buildDistortedCubeLines(t, l);
             traces.push({
                 type: 'scatter3d',
                 mode: 'lines',
                 x: wire.xs, y: wire.ys, z: wire.zs,
-                line: { color: 'rgba(148,163,184,0.28)', width: 1 },
-                opacity: 0.45 + l * 0.06,
-                hoverinfo: 'skip',
+                line: { color: 'rgba(148,163,184,0.32)', width: 1 },
+                opacity: 0.5 + l * 0.05,
+                hoverinfo: 'text',
+                hovertext: `Faser-Raum: Token "${tokens[t]}", Layer ${l}<br>Verzerrungsstärke: ${(0.04 + l * 0.12).toFixed(2)}<br>${cellAttractors[t][l].length} Attraktor(en)/Repeller in dieser Zelle`,
                 showlegend: false
             });
-
-            // Basin-Feldlinien (schwach, zeigen Bassin-Struktur)
+            // Basin-Feldlinien MIT Hover
             const basins = generateBasinLines(t, l);
             const bxs = [], bys = [], bzs = [];
             for (const line of basins) {
@@ -1439,8 +1499,9 @@ function renderBundle() {
                     type: 'scatter3d',
                     mode: 'lines',
                     x: bxs, y: bys, z: bzs,
-                    line: { color: 'rgba(100, 200, 255, 0.18)', width: 1 },
-                    hoverinfo: 'skip',
+                    line: { color: 'rgba(100, 200, 255, 0.22)', width: 1 },
+                    hoverinfo: 'text',
+                    hovertext: `Bassin-Feldlinien: Testpartikel folgen dem Vektorfeld<br>Token "${tokens[t]}", Layer ${l}<br>Zeigen die Einzugsgebiete der Attraktoren`,
                     showlegend: false
                 });
             }
@@ -1454,13 +1515,16 @@ function renderBundle() {
                     const w = worldPos(p[0], p[1], p[2], t, l);
                     wxs.push(w.x); wys.push(w.y); wzs.push(w.z);
                 }
+                const attrLabel = attr.isRepeller ? 'REPELLER' : 'ATTRAKTOR';
+                const attrDesc = attractorDescriptions[attr.type];
                 traces.push({
                     type: 'scatter3d',
                     mode: 'lines',
                     x: wxs, y: wys, z: wzs,
-                    line: { color: attr.color, width: 2.5 },
-                    opacity: 0.9,
-                    hoverinfo: 'skip',
+                    line: { color: attr.color, width: 2.8 },
+                    opacity: 0.92,
+                    hoverinfo: 'text',
+                    hovertext: `${attrLabel}: ${attr.type}<br>${attrDesc}<br>Token "${tokens[t]}" · Layer ${l}<br>Skala: ${attr.scale.toFixed(2)} · Stärke: ${attr.strength.toFixed(2)}`,
                     showlegend: false
                 });
                 // Zentrum als Marker
@@ -1470,12 +1534,12 @@ function renderBundle() {
                     mode: 'markers',
                     x: [centerW.x], y: [centerW.y], z: [centerW.z],
                     marker: {
-                        size: attr.isRepeller ? 7 : 5,
+                        size: attr.isRepeller ? 8 : 6,
                         color: attr.color,
                         symbol: attr.isRepeller ? 'diamond' : 'circle',
                         line: { color: '#0b1220', width: 1 }
                     },
-                    hovertext: `${attr.isRepeller ? 'Repeller' : 'Attraktor'}: ${attr.type} @ L${l}, ${tokens[t]}`,
+                    hovertext: `Zentrum: ${attrLabel} (${attr.type})<br>${attrDesc}<br>Position: (${attr.localCenter[0].toFixed(2)}, ${attr.localCenter[1].toFixed(2)}, ${attr.localCenter[2].toFixed(2)})<br>Token "${tokens[t]}" · Layer ${l}`,
                     hoverinfo: 'text',
                     showlegend: false
                 });
@@ -1483,56 +1547,122 @@ function renderBundle() {
         }
     }
 
-    // ────────────────────────────────────────────────────────────
-    // Token-Trajektorie: EIN spezifisches Token fliegt durch alle Layer
-    // Farbverlauf zeigt Zeit/Layer-Fortschritt
-    // ────────────────────────────────────────────────────────────
-    const focusTokenIdx = 5; // "paris"
-    const path = simulateTokenPath(focusTokenIdx);
+    // ─────────── TOKEN-TRAJEKTORIEN: alle Tokens durch alle Layer ───────────
+    const focusTokenIdx = 5; // "paris" — hervorgehoben
+    const allPaths = [];
+    for (let t = 0; t < numTokens; t++) {
+        allPaths.push(simulateTokenPath(t, t * 13));
+    }
+
+    // Alle nicht-Fokus-Tokens erst zeichnen (dünner, opaker)
+    for (let t = 0; t < numTokens; t++) {
+        if (t === focusTokenIdx) continue;
+        const path = allPaths[t];
+        const color = tokenColors[t];
+
+        // Segment-weise mit Hover die dominierenden Attraktoren zeigen
+        // Reduziere: alle 10 Steps ein Hover-Segment
+        const stride = 6;
+        const xs = path.map(p => p.world.x);
+        const ys = path.map(p => p.world.y);
+        const zs = path.map(p => p.world.z);
+        // Hover-Texte pro Punkt
+        const hovers = path.map((p, i) => {
+            const domName = p.dominantAttr
+                ? `${p.dominantAttr.isRepeller ? 'Repeller' : 'Attraktor'} (${p.dominantAttr.type})`
+                : 'kein dominanter Einfluss';
+            return `Token "${tokens[t]}" · Layer ${p.layer}<br>Aktuell: ${domName}<br>Geschwindigkeit: ${p.speed.toFixed(2)}`;
+        });
+
+        traces.push({
+            type: 'scatter3d',
+            mode: 'lines',
+            x: xs, y: ys, z: zs,
+            line: { color, width: 3 },
+            opacity: 0.55,
+            hoverinfo: 'text',
+            hovertext: hovers,
+            showlegend: false,
+            name: `Trajektorie: ${tokens[t]}`
+        });
+
+        // Start und Ende dezent markieren
+        traces.push({
+            type: 'scatter3d',
+            mode: 'markers',
+            x: [xs[0], xs[xs.length - 1]],
+            y: [ys[0], ys[ys.length - 1]],
+            z: [zs[0], zs[zs.length - 1]],
+            marker: {
+                size: [6, 7],
+                color: [color, color],
+                symbol: ['circle', 'diamond-open'],
+                opacity: 0.7,
+                line: { color: '#ffffff', width: 1 }
+            },
+            hoverinfo: 'text',
+            hovertext: [
+                `Start: Token "${tokens[t]}" · Layer 0`,
+                `Ende: Token "${tokens[t]}" · Layer ${numLayers - 1}`
+            ],
+            showlegend: false
+        });
+    }
+
+    // Fokus-Token: kräftig, mit Farbverlauf
+    const focusPath = allPaths[focusTokenIdx];
+    const fxs = focusPath.map(p => p.world.x);
+    const fys = focusPath.map(p => p.world.y);
+    const fzs = focusPath.map(p => p.world.z);
+    const fHovers = focusPath.map((p) => {
+        const domName = p.dominantAttr
+            ? `${p.dominantAttr.isRepeller ? '⚠ REPELLER' : '✦ Attraktor'} (${p.dominantAttr.type})`
+            : 'freier Fluss';
+        return `<b>Token "${tokens[focusTokenIdx]}"</b> · Layer ${p.layer}<br>Aktuell: ${domName}<br>Geschwindigkeit: ${p.speed.toFixed(2)}`;
+    });
+
     traces.push({
         type: 'scatter3d',
         mode: 'lines',
-        x: path.map(p => p.world.x),
-        y: path.map(p => p.world.y),
-        z: path.map(p => p.world.z),
+        x: fxs, y: fys, z: fzs,
         line: {
-            color: path.map((_, i) => i),
-            colorscale: [[0, '#fbbf24'], [0.5, '#f472b6'], [1, '#a78bfa']],
-            width: 6
+            color: focusPath.map((_, i) => i),
+            colorscale: [[0, '#fbbf24'], [0.35, '#f472b6'], [0.7, '#a78bfa'], [1, '#22d3ee']],
+            width: 7
         },
-        opacity: 0.95,
-        hoverinfo: 'skip',
+        opacity: 1.0,
+        hoverinfo: 'text',
+        hovertext: fHovers,
         showlegend: false,
-        name: 'Token-Trajektorie'
+        name: `Fokus: ${tokens[focusTokenIdx]}`
     });
 
-    // Startpunkt und Endpunkt markieren
-    const startP = path[0].world;
-    const endP = path[path.length - 1].world;
+    // Start/End-Marker Fokus
     traces.push({
         type: 'scatter3d',
         mode: 'markers+text',
-        x: [startP.x, endP.x],
-        y: [startP.y, endP.y],
-        z: [startP.z, endP.z],
+        x: [fxs[0], fxs[fxs.length - 1]],
+        y: [fys[0], fys[fys.length - 1]],
+        z: [fzs[0], fzs[fzs.length - 1]],
         marker: {
-            size: [10, 12],
-            color: ['#fbbf24', '#a78bfa'],
+            size: [12, 14],
+            color: ['#fbbf24', '#22d3ee'],
             symbol: ['circle', 'diamond'],
             line: { color: '#ffffff', width: 2 }
         },
-        text: ['START (L0)', 'ENDE (L5)'],
+        text: [`START "${tokens[focusTokenIdx]}"`, `ENDE L${numLayers - 1}`],
         textposition: 'top center',
         textfont: { color: '#e2e8f0', size: 11 },
         hoverinfo: 'text',
-        hovertext: ['Token startet hier', 'Token endet hier nach Faser-Traversierung'],
+        hovertext: [
+            `Fokus-Token "${tokens[focusTokenIdx]}" startet auf Layer 0`,
+            `Fokus-Token "${tokens[focusTokenIdx]}" endet auf Layer ${numLayers - 1} nach kompletter Faser-Traversierung`
+        ],
         showlegend: false
     });
 
-    // ────────────────────────────────────────────────────────────
-    // Basis-Mannigfaltigkeit: Token-Marker unten
-    // ────────────────────────────────────────────────────────────
-    const baseY = -2.2;
+    // ─────────── Basis-Mannigfaltigkeit: Token-Marker unten ───────────
+    const baseY = -2.5;
     for (let t = 0; t < numTokens; t++) {
         const cx = (t - (numTokens - 1) / 2) * tokenSpacing;
         traces.push({
@@ -1540,7 +1670,7 @@ function renderBundle() {
             mode: 'markers+text',
             x: [cx], y: [baseY], z: [0],
             marker: {
-                size: t === focusTokenIdx ? 12 : 8,
+                size: t === focusTokenIdx ? 13 : 9,
                 color: tokenColors[t % tokenColors.length],
                 line: { color: t === focusTokenIdx ? '#ffffff' : '#0b1220', width: t === focusTokenIdx ? 2 : 1 }
             },
@@ -1548,48 +1678,49 @@ function renderBundle() {
             textposition: 'bottom center',
             textfont: {
                 color: tokenColors[t % tokenColors.length],
-                size: t === focusTokenIdx ? 13 : 11
+                size: t === focusTokenIdx ? 14 : 12
             },
-            hoverinfo: 'skip',
+            hoverinfo: 'text',
+            hovertext: `Token "${tokens[t]}" auf der Basis-Mannigfaltigkeit<br>Über diesem Punkt sind ${numLayers} Faserräume gestapelt<br>${t === focusTokenIdx ? '★ FOKUS-TOKEN — Trajektorie hervorgehoben' : ''}`,
             showlegend: false
         });
     }
 
-    // Basis-Mannigfaltigkeit als welliges Grid unten
-    const baseGridN = 18;
-    const spanX = ((numTokens - 1) * tokenSpacing) / 2 + 2.5;
-    const spanZ = 3.0;
-    const bxs = [], bys = [], bzs = [];
+    // Basis-Mannigfaltigkeit als welliges Grid
+    const baseGridN = 22;
+    const spanX = ((numTokens - 1) * tokenSpacing) / 2 + 3.0;
+    const spanZ = 3.5;
+    const bmxs = [], bmys = [], bmzs = [];
     for (let i = 0; i <= baseGridN; i++) {
         const zc = -spanZ + (2 * spanZ * i) / baseGridN;
         for (let j = 0; j <= baseGridN * 2; j++) {
             const xc = -spanX + (2 * spanX * j) / (baseGridN * 2);
-            const wave = 0.25 * Math.sin(xc * 0.55) * Math.cos(zc * 0.85);
-            bxs.push(xc); bys.push(baseY + wave - 0.3); bzs.push(zc);
+            const wave = 0.28 * Math.sin(xc * 0.5) * Math.cos(zc * 0.8);
+            bmxs.push(xc); bmys.push(baseY + wave - 0.35); bmzs.push(zc);
         }
-        bxs.push(null); bys.push(null); bzs.push(null);
+        bmxs.push(null); bmys.push(null); bmzs.push(null);
     }
-    // Zweite Richtung fürs Grid
     for (let j = 0; j <= baseGridN * 2; j++) {
         const xc = -spanX + (2 * spanX * j) / (baseGridN * 2);
         for (let i = 0; i <= baseGridN; i++) {
             const zc = -spanZ + (2 * spanZ * i) / baseGridN;
-            const wave = 0.25 * Math.sin(xc * 0.55) * Math.cos(zc * 0.85);
-            bxs.push(xc); bys.push(baseY + wave - 0.3); bzs.push(zc);
+            const wave = 0.28 * Math.sin(xc * 0.5) * Math.cos(zc * 0.8);
+            bmxs.push(xc); bmys.push(baseY + wave - 0.35); bmzs.push(zc);
         }
-        bxs.push(null); bys.push(null); bzs.push(null);
+        bmxs.push(null); bmys.push(null); bmzs.push(null);
     }
     traces.push({
         type: 'scatter3d',
         mode: 'lines',
-        x: bxs, y: bys, z: bzs,
-        line: { color: 'rgba(99,102,241,0.22)', width: 1 },
-        hoverinfo: 'skip',
+        x: bmxs, y: bmys, z: bmzs,
+        line: { color: 'rgba(99,102,241,0.25)', width: 1 },
+        hoverinfo: 'text',
+        hovertext: 'Basis-Mannigfaltigkeit: Token-Sequenz-Raum. Über jedem Token ist eine Faser (Stapel von 3D-Räumen pro Layer) aufgehängt.',
         showlegend: false,
         name: 'Basis-Mannigfaltigkeit'
     });
 
-    // Vertikale Faser-Verbindungen (nur für Fokus-Token deutlich, andere schwach)
+    // Vertikale Faser-Verbindungen
     for (let t = 0; t < numTokens; t++) {
         const cx = (t - (numTokens - 1) / 2) * tokenSpacing;
         const isFocus = t === focusTokenIdx;
@@ -1597,44 +1728,50 @@ function renderBundle() {
             type: 'scatter3d',
             mode: 'lines',
             x: [cx, cx],
-            y: [baseY, (numLayers - 1) * layerSpacing + cubeSize],
+            y: [baseY, (numLayers - 1) * layerSpacing + cubeSize + 0.5],
             z: [0, 0],
             line: {
-                color: isFocus ? 'rgba(251,191,36,0.5)' : 'rgba(99,102,241,0.2)',
+                color: isFocus ? 'rgba(251,191,36,0.55)' : 'rgba(99,102,241,0.22)',
                 width: isFocus ? 2 : 1,
                 dash: 'dot'
             },
-            hoverinfo: 'skip',
+            hoverinfo: 'text',
+            hovertext: `Faser über Token "${tokens[t]}"<br>Enthält ${numLayers} übereinander gestapelte 3D-Aktivierungsräume`,
             showlegend: false
         });
     }
 
     // Layer-Labels an der Seite
     for (let l = 0; l < numLayers; l++) {
-        const labelX = -((numTokens - 1) / 2) * tokenSpacing - 2.2;
+        const labelX = -((numTokens - 1) / 2) * tokenSpacing - 2.8;
         const labelY = l * layerSpacing;
         traces.push({
             type: 'scatter3d',
             mode: 'text',
             x: [labelX], y: [labelY], z: [0],
             text: [`Layer ${l}`],
-            textfont: { color: '#94a3b8', size: 11 },
-            hoverinfo: 'skip',
+            textfont: { color: '#94a3b8', size: 12 },
+            hoverinfo: 'text',
+            hovertext: `Layer ${l} — Verzerrungsstärke ${(0.04 + l * 0.12).toFixed(2)}<br>Alle ${numTokens} Faserräume auf dieser Höhe`,
             showlegend: false
         });
     }
 
+    // ─────────── LAYOUT mit natürlicher Kamera ───────────
+    // Natürlicher Blick: schräg von vorne oben nach unten schauend,
+    // sodass die Basis-Mannigfaltigkeit unten deutlich sichtbar ist,
+    // und die Layer nach oben gestapelt erscheinen.
     const layout = {
         margin: { l: 0, r: 0, b: 0, t: 0 },
         paper_bgcolor: '#0b1220',
         scene: {
             xaxis: {
-                title: { text: 'Token-Position (Basis-Mannigfaltigkeit)', font: { color: '#94a3b8' } },
+                title: { text: 'Token-Position (Basis)', font: { color: '#94a3b8' } },
                 backgroundcolor: '#0b1220', color: '#94a3b8',
                 gridcolor: 'rgba(148,163,184,0.06)', showspikes: false
             },
             yaxis: {
-                title: { text: 'Layer-Tiefe (Faser-Richtung)', font: { color: '#94a3b8' } },
+                title: { text: 'Layer-Tiefe ↑', font: { color: '#94a3b8' } },
                 backgroundcolor: '#0b1220', color: '#94a3b8',
                 gridcolor: 'rgba(148,163,184,0.06)', showspikes: false
             },
@@ -1645,15 +1782,26 @@ function renderBundle() {
                 showspikes: false, showticklabels: false
             },
             bgcolor: '#0b1220',
-            camera: { eye: { x: 2.4, y: 1.4, z: 1.6 } },
+            // Natürliche Default-Kamera: leicht schräg von vorne oben,
+            // Basis unten sichtbar. up-Vektor zeigt nach oben (y-Achse).
+		camera: {
+			eye: { x: 1.6, y: 0.6, z: 2.3 },   // schräg vorne, leicht oben
+			center: { x: 0, y: 0.4, z: 0 },     // Fokus etwa in der Mitte-unten
+			up: { x: 0, y: 1, z: 0 }            // y-Achse = "oben"
+		}
+		,
             aspectmode: 'data'
         },
         showlegend: false
     };
 
-    Plotly.react('plot-bundle', traces, layout, { displayModeBar: true, responsive: true });
+    Plotly.react('plot-bundle', traces, layout, {
+        displayModeBar: true,
+        responsive: true,
+        modeBarButtonsToRemove: ['resetCameraLastSave3d']
+    });
 
-    // Alten Autorotate-Timer stoppen falls vorhanden (aus vorheriger Version)
+    // Alten Autorotate-Timer stoppen falls vorhanden
     if (window._bundleCamTimer) {
         clearInterval(window._bundleCamTimer);
         window._bundleCamTimer = null;
