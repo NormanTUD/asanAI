@@ -2692,6 +2692,63 @@ body:not(.darkmode) .bar-tooltip-raw {
 	overflow-anchor: none;
 }
 
+.grid_image_tooltip {
+	position: fixed;
+	background: rgba(30, 30, 30, 0.96);
+	color: #eee;
+	padding: 10px 12px;
+	border-radius: 8px;
+	font-size: 12px;
+	line-height: 1.5;
+	z-index: 999999;
+	pointer-events: none;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+	max-width: 340px;
+}
+
+.grid_image_tooltip_img {
+	max-width: 64px;
+	max-height: 64px;
+	border-radius: 4px;
+	margin-bottom: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	object-fit: contain;
+	display: block;
+	background: #111;
+}
+
+.grid_image_tooltip .gti_row {
+	margin: 1px 0;
+	white-space: nowrap;
+}
+
+.grid_image_tooltip .gti_label {
+	color: #999;
+}
+
+.grid_image_tooltip .gti_value {
+	color: #fff;
+	font-weight: 600;
+}
+
+.grid_image_tooltip .gti_good {
+	color: #2ecc71;
+}
+
+.grid_image_tooltip .gti_bad {
+	color: #e74c3c;
+}
+
+.grid_image_tooltip .gti_sep {
+	border-top: 1px solid rgba(255, 255, 255, 0.15);
+	margin: 6px 0;
+}
+
+.grid_image_tooltip .gti_how {
+	color: #bbb;
+	font-size: 11px;
+}
+
 /* ===== Confusion Matrix ===== */
 
 .confusion_matrix_table {
