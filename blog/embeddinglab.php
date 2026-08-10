@@ -685,11 +685,11 @@ Standard embedding spaces use Euclidean geometry, but human language is rife wit
 
 $$ d_{\mathbb{H}}(\mathbf{u}, \mathbf{v}) = \operatorname{arccosh}\!\left(1 + 2\,\frac{\|\mathbf{u} - \mathbf{v}\|^2}{(1 - \|\mathbf{u}\|^2)(1 - \|\mathbf{v}\|^2)}\right) $$
 
-Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism that provides "exponential room" near the edge, exactly where the exponentially many leaf nodes of a deep taxonomy need to reside. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
+Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of "exponential room" near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement — leaves do not literally need to crowd the boundary, and how much "room" is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
 
 Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
 
-\citeauthorlastnameand{poincareembeddings} have shown that, by choosing a Poincaré Embedding Space, the number of dimensions required could be drastically removed in some instances.
+\citeauthorlastnameand{poincareembeddings} showed empirically, on WordNet taxonomies, that hyperbolic embeddings can reach the same embedding quality as Euclidean embeddings with substantially fewer dimensions *in those experiments*. The benefit is data-dependent, it does not mean hyperbolic geometry generally "drastically" lowers the required dimensionality, only that it can do so for suitably hierarchical data.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
