@@ -49,20 +49,20 @@ Or, as a commuting diagram:
 </div>
 
 <div class="optional md" data-headline="The Universal Approximation Theorem">
-The **Universal Approximation Theorem** (proven by \citeauthor{hornik1989universal} in \citeyear{hornik1989universal}, with a related analysis by \citeauthor{hornik} in \citeyear{hornik}) establishes that the power of neural networks is derived from their multilayer feedforward architecture rather than any specific activation function. \citeauthor{hornik1989universal} demonstrated that a single hidden layer is sufficient to approximate any function to an arbitrary degree of accuracy, provided there are enough hidden units. A network with $n$ hidden units implements functions of the form:
+The **Universal Approximation Theorem** is not a single statement but a family of results (notably \citeauthor{cybenko1989} in \citeyear{cybenko1989} and \citeauthor{hornik1989universal} in \citeyear{hornik1989universal}, with a related analysis by \citeauthor{hornik} in \citeyear{hornik}). Their common core: a feed-forward network with a single hidden layer can approximate **any continuous function on a compact domain** arbitrarily well, provided there are enough hidden units and the activation function satisfies the version's hypotheses. It is an *existence* result about representational capacity: it guarantees that a suitable network exists, not that training will find it. A network with $n$ hidden units implements functions of the form:
 
 $$h(x) = \sum_{j=1}^{n} \beta_j \psi(a_j^T x - \theta_j)$$
 
 The variables are defined as:
-* $x \in \mathbb{R}^k$: The input vector.
-* $\psi$: The activation function, which must be **bounded and non-constant**.
+* $x \in \mathbb{R}^k$: The input vector, drawn from a compact domain.
+* $\psi$: The activation function. The required conditions vary by version and genuinely matter: Cybenko's original proof requires a continuous **sigmoidal** activation, Hornik's allows **bounded and non-constant** activations, while unbounded activations such as ReLU need yet another result (e.g., a "non-polynomial" condition). There is no single magic condition under which every activation function works.
 * $a_j$: Weight vectors for the input-to-hidden connections ($a_j^T$ is the transpose for the dot product).
 * $\beta_j$: Coefficients (weights) for the linear output layer.
 * $\theta_j$: Thresholds or biases for each hidden unit.
 
-This proves that networks are "universal learning machines" regardless of whether the activation function is sigmoidal or not, as long as it is not constant.
+Because of this, calling networks "universal learning machines" overstates what the theorem proves. It establishes that sufficiently wide networks can *represent* the target functions for appropriate activation classes; it says nothing about *learning* — neither that gradient descent will find the weights, nor that the required number of hidden units is practical, which can be astronomically large.
 
-This theorem is foundational because it shifts the focus of neural network efficacy away from the specific choice of activation function to the capacity of the architecture itself, proving that even simple models can represent incredibly complex patterns.
+The theorem is still foundational: it shifts the focus of neural network efficacy away from any single activation function to the capacity of the architecture itself, showing that even simple models can in principle represent incredibly complex patterns.
 </div>
 
 <div class="md">
