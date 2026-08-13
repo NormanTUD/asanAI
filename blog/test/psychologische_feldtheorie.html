@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Lewins Feldtheorie – Interaktive Erkundung</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f1420; color: #e8ecf1; line-height: 1.5;
+  }
+  header {
+    padding: 20px; background: linear-gradient(135deg,#1a2340,#0f1420);
+    border-bottom: 1px solid #2a3550;
+  }
+  h1 { font-size: 1.4em; color: #7dd3fc; }
+  h1 small { color: #94a3b8; font-weight: normal; font-size: 0.7em; }
+  nav {
+    display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 20px;
+    background: #131a2b; border-bottom: 1px solid #2a3550;
+  }
+  nav button {
+    background: #1e293b; color: #cbd5e1; border: 1px solid #334155;
+    padding: 8px 14px; cursor: pointer; border-radius: 6px; font-size: 0.9em;
+  }
+  nav button:hover { background: #334155; }
+  nav button.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+  .panel { display: none; padding: 20px; }
+  .panel.active { display: block; }
+  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  canvas {
+    background: #1a2033; border: 1px solid #2a3550;
+    border-radius: 8px; display: block; width: 100%; touch-action: none;
+  }
+  .sidebar {
+    background: #1a2033; border: 1px solid #2a3550;
+    border-radius: 8px; padding: 16px;
+  }
+  .sidebar h3 { color: #7dd3fc; margin-bottom: 10px; font-size: 1.05em; }
+  .sidebar p { font-size: 0.9em; color: #cbd5e1; margin-bottom: 10px; }
+  .control { margin: 12px 0; }
+  .control label { display:block; font-size: 0.85em; color:#94a3b8; margin-bottom:4px; }
+  .control input[type=range] { width: 100%; }
+  .control select, .control button {
+    width: 100%; padding: 8px; background:#0f1420; color:#e8ecf1;
+    border:1px solid #334155; border-radius:4px; font-size: 0.9em;
+  }
+  .control button { cursor: pointer; background: #0ea5e9; border-color:#0ea5e9; }
+  .control button:hover { background:#0284c7; }
+  .quote {
+    font-style: italic; font-size: 0.85em; color:#94a3b8;
+    border-left: 3px solid #0ea5e9; padding-left: 10px; margin: 10px 0;
+  }
+  .timeline { position: relative; padding: 20px 0; }
+  .tl-event {
+    display: flex; gap: 15px; margin-bottom: 15px;
+    padding: 12px; background:#1a2033; border-radius: 8px;
+    border-left: 4px solid #0ea5e9; cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .tl-event:hover { transform: translateX(6px); background:#243149; }
+  .tl-year { font-weight: bold; color:#7dd3fc; min-width: 60px; }
+  .tl-body h4 { color:#e8ecf1; margin-bottom:4px; }
+  .tl-body p { font-size:0.85em; color:#cbd5e1; }
+  .legend {
+    display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:0.8em;
+  }
+  .legend span { display:flex; align-items:center; gap:6px; }
+  .swatch { width:14px; height:14px; border-radius:50%; display:inline-block; }
+  .hint { font-size:0.8em; color:#64748b; margin-top: 8px; }
+  .concept-card {
+    background:#243149; padding:12px; border-radius:6px; margin-bottom:10px;
+  }
+  .concept-card h4 { color:#7dd3fc; margin-bottom:6px; font-size:0.95em; }
+  .concept-card p { font-size:0.85em; }
+  .stat { display:flex; justify-content:space-between; margin: 4px 0; font-size:0.9em;}
+  .stat b { color:#7dd3fc; }
+  .bar { background:#0f1420; height:8px; border-radius:4px; overflow:hidden; margin:4px 0; }
+  .bar > div { height:100%; background: linear-gradient(90deg,#0ea5e9,#7dd3fc); transition:width 0.3s; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Kurt Lewins Feldtheorie <small>· Topologische & Vektorpsychologie · Interaktive Erkundung</small></h1>
+</header>
+
+<nav>
+  <button data-panel="intro" class="active">📖 Einführung</button>
+  <button data-panel="lifespace">🗺️ Lebensraum</button>
+  <button data-panel="vectors">➡️ Vektoren & Valenzen</button>
+  <button data-panel="conflict">⚔️ Konflikte</button>
+  <button data-panel="tension">🔋 Spannungssysteme</button>
+  <button data-panel="saturation">🔄 Sättigung</button>
+  <button data-panel="timeline">📅 Zeitleiste</button>
+</nav>
+
+<!-- INTRO -->
+<section id="intro" class="panel active">
+  <div class="layout">
+    <div>
+      <h2 style="color:#7dd3fc;margin-bottom:12px;">Die Grundidee</h2>
+      <p style="margin-bottom:14px;">
+        Kurt Lewin (1890–1947) entwickelte eine <b>psychologische Feldtheorie</b>, auch
+        <b>topologische Psychologie</b> oder <b>Vektorpsychologie</b> genannt [[1]] [[3]].
+        Sie geht auf die Gestalttheorie zurück – Wolfgang Köhler nahm an, dass psychische
+        Prozesse Feldprozesse sind, analog zu Feldern in der Physik [[1]].
+      </p>
+      <div class="concept-card">
+        <h4>Die zentrale Formel</h4>
+        <p style="font-size:1.3em;text-align:center;padding:10px 0;font-family:serif;">
+          V = f (P, U)
+        </p>
+        <p>Verhalten (V) ist eine <b>Funktion</b> von Person (P) und Umwelt (U) –
+        beide sind wechselseitig voneinander abhängig [[5]]. Zusammen bilden sie den
+        <b>Lebensraum</b>, mathematisch als topologischer Raum aufgefasst.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Was ist ein "Feld"?</h4>
+        <p>Ein Feld ist die <b>Gesamtheit aller gleichzeitig wirkenden Kräfte</b>, die auf
+        eine Person einwirken. Verhalten entsteht nicht aus Vergangenheit oder Zukunft,
+        sondern aus der <b>aktuellen dynamischen Konstellation</b> im Hier und Jetzt [[9]].</p>
+      </div>
+      <div class="concept-card">
+        <h4>Topologie</h4>
+        <p>Die Topologie behandelt <b>räumliche Lagebeziehungen ohne Rücksicht auf Form
+        und Größe</b> [[3]]. Lewin nutzte sie, um psychologische Regionen, Grenzen und
+        Wege im Lebensraum darzustellen – nicht metrisch, sondern strukturell.</p>
+      </div>
+      <div class="concept-card">
+        <h4>Vektoren</h4>
+        <p>Vektoren sind <b>gerichtete Kräfte</b> mit Stärke und Richtung, die auf die
+        Person wirken. Sie entstehen aus <b>Aufforderungscharakteren</b> (Valenzen) der
+        Objekte in der Umwelt – positiv (anziehend) oder negativ (abstoßend) [[11]].</p>
+      </div>
+      <div class="quote">
+        "Aus einer Anordnung psychologisch relevanter Kräfte (Vektorkräfte) geht das
+        individuelle Verhalten hervor. Dieses Verhalten kann mit einem mathematisch
+        rekonstruierbaren Lebensraum beschrieben werden, dem Umfeld." [[9]]
+      </div>
+    </div>
+    <div class="sidebar">
+      <h3>Navigation</h3>
+      <p>Nutze die Reiter oben. Jede Sektion enthält eine <b>interaktive Visualisierung</b>,
+      mit der du spielen kannst, um das Konzept zu verstehen.</p>
+      <p><b>👉 Empfohlener Weg:</b></p>
+      <p>1. Lebensraum → Zieh die Person umher<br>
+      2. Vektoren → Setze Valenzen<br>
+      3. Konflikte → Erlebe Ambivalenz<br>
+      4. Spannungssysteme → Zeigarnik-Effekt<br>
+      5. Sättigung → Wiederholung führt zu Zerfall<br>
+      6. Zeitleiste → Historische Entwicklung</p>
+    </div>
+  </div>
+</section>
+
+<!-- LEBENSRAUM -->
+<section id="lifespace" class="panel">
+  <div class="layout">
+    <div>
+      <h2 style="color:#7dd3fc;margin-bottom:8px;">🗺️ Der Lebensraum (topologisch)</h2>
+      <p style="margin-bottom:10px;font-size:0.9em;">
+        Der Lebensraum ist unterteilt in <b>Regionen</b>, getrennt durch <b>Barrieren</b>.
+        Die Person (P) bewegt sich als "Massenpunkt" von Region zu Region [[10]].
+        <b>Ziehe die Person</b> mit der Maus/Finger. Beobachte, wie sie durch Barrieren
+        gehindert wird.
+      </p>
+      <canvas id="cnvLife" width="800" height="500"></canvas>
+      <div class="legend">
+        <span><span class="swatch" style="background:#f59e0b"></span>Person (P)</span>
+        <span><span class="swatch" style="background:#10b981"></span>Ziel-Region (+)</span>
+        <span><span class="swatch" style="background:#ef4444"></span>Aversive Region (−)</span>
+        <span><span class="swatch" style="background:#64748b"></span>Barriere</span>
+        <span><span class="swatch" style="background:#334155;border:1px dashed #64748b"></span>Neutrale Region</span>
+      </div>
+    </div>
+    <div class="sidebar">
+      <h3>Was passiert hier?</h3>
+      <p>Der Lebensraum besteht aus <b>psychologischen Regionen</b> — etwa "Arbeit",
+      "Familie", "Freizeit". Sie sind durch <b>Grenzen</b> getrennt, die durchlässig
+      oder rigide sein können.</p>
+      <div class="control">
+        <label>Barrieren-Härte</label>
+        <input type="range" id="barrierHardness" min="0" max="100" value="70">
+      </div>
+      <div class="control">
+        <label>Anzugskraft der Ziele</label>
+        <input type="range" id="attractStrength" min="0" max="100" value="50">
+      </div>
+      <div class="control">
+        <button id="lifeReset">Zurücksetzen</button>
+      </div>
+      <div class="concept-card">
+        <h4>Beobachte:</h4>
+        <p>• Die Person wird von grünen Regionen angezogen<br>
+        • Rote stoßen ab<br>
+        • Barrieren können sie nicht durchqueren<br>
+        • Die <b>Bewegungsrichtung</b> = resultierender Vektor</p>
+      </div>
+      <div class="hint">Tipp: Erhöhe die Barrieren-Härte, um "Konflikte" zwischen
+      Regionen zu erzeugen.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VECTORS -->
+<section id="vectors" class="panel">
+  <div class="layout">
+    <div>
+      <h2 style="color:#7dd3fc;margin-bottom:8px;">➡️ Vektoren & Aufforderungscharaktere</h2>
+      <p style="margin-bottom:10px;font-size:0.9em;">
+        Objekte haben <b>Valenzen</b> (Aufforderungscharaktere): + = anziehend, − = abstoßend.
+        Jede Valenz erzeugt einen <b>Vektor</b> auf die Person. Das Verhalten folgt der
+        <b>Resultierenden aller Vektoren</b>. Klicke ins Feld, um Objekte zu platzieren.
+      </p>
+      <canvas id="cnvVec" width="800" height="500"></canvas>
+    </div>
+    <div class="sidebar">
+      <h3>Werkzeuge</h3>
+      <div class="control">
+        <label>Nächster Klick platziert:</label>
+        <select id="placeMode">
+          <option value="pos">Positive Valenz (+)</option>
+          <option value="neg">Negative Valenz (−)</option>
+        </select>
+      </div>
+      <div class="control">
+        <label>Valenz-Stärke: <span id="valStrengthLabel">50</span></label>
+        <input type="range" id="valStrength" min="10" max="100" value="50">
+      </div>
+      <div class="control">
+        <button id="vecClear">Alle Objekte entfernen</button>
+      </div>
+      <div class="concept-card">
+        <h4>Vektor-Formel</h4>
+        <p>Kraft ∝ Valenz / Distanz²<br>
+        Die Person bewegt sich in Richtung der <b>Summe aller Kraftvektoren</b>.</p>
+      </div>
+      <div class="stat">
+        <span>|Vektor|</span><b id="statMagnitude">0</b>
+      </div>
+      <div class="stat">
+        <span>Richtung (°)</span><b id="statAngle">–</b>
+      </div>
+      <div class="quote" style="font-size:0.75em;">
+        "Aufforderungscharaktere" wurden von Lewin eingeführt: die Valenz eines Objekts
+        hängt vom aktuellen Bedürfniszustand ab [[11]].
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONFLIKT -->
+<section id="conflict" class="panel">
+  <div class="layout">
+    <div>
+      <h2 style="color:#7dd3fc;margin-bottom:8px;">⚔️ Konflikttypen nach Lewin</h2>
+      <p style="margin-bottom:10px;font-size:0.9em;">
+        Lewin unterschied drei Konflikttypen. Wähle einen aus und beobachte das
+        Verhalten der Person. Im Beispiel aus Lewins Text: Ein Kind will einen Hund
+        streicheln (+) und hat zugleich Angst (−) — es entsteht ein "Konflikt der
+        Feldvektoren" [[11]].
+      </p>
+      <canvas id="cnvConf" width="800" height="500"></canvas>
+    </div>
+    <div class="sidebar">
+      <h3>Konflikttyp wählen</h3>
+      <div class="control">
+        <select id="conflictType">
+          <option value="app-app">Annäherung–Annäherung (+ / +)</option>
+          <option value="av-av">Vermeidung–Vermeidung (− / −)</option>
+          <option value="app-av" selected>Ambivalenz (+ / −) am selben Objekt</option>
+          <option value="double">Doppelte Ambivalenz</option>
+        </select>
+      </div>
+      <div class="concept-card">
+        <h4>Was du siehst:</h4>
+        <p id="conflictDesc">
+          Ein Objekt zieht an und stößt zugleich ab. Die Person schwankt, nähert sich
+          und weicht zurück – wie das Kind vor dem Hund.
+        </p>
+      </div>
+      <div class="control">
+        <button id="conflictReset">Person neu starten</button>
+      </div>
+      <div class="quote" style="font-size:0.75em;">
+        "In Abb. 1 kommt dieses für einen Konflikt charakteristische Gegeneinander
+        der Feldvektoren in der Haltung des Kindes deutlich zum Ausdruck." [[11]]
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPANNUNGSSYSTEME -->
+<section id="tension" class="panel">
+  <div class="layout">
+    <div>
+      <h2 style="color:#7dd3fc;margin-bottom:8px;">🔋 Spannungssysteme & Zeigarnik-Effekt</h2>
+      <p style="margin-bottom:10px;font-size:0.9em;">
+        Ein <b>Quasibedürfnis</b> (z.B. eine Vornahme, eine Aufgabe) erzeugt ein inneres
+        <b>Spannungssystem</b>. Solange die Aufgabe unerledigt ist, drängt die Spannung
+        zur Erledigung [[11]]. <b>Unbeendete Aufgaben werden besser erinnert als
+        beendete</b> — das ist der Zeigarnik-Effekt.
+      </p>
+      <p style="font-size:0.9em;margin-bottom:10px;">
+        Klicke auf Aufgaben, um sie zu <b>starten</b> oder <b>abzuschließen</b>.
+        Beobachte, wie sich die Spannung aufbaut und abbaut.
+      </p>
+      <canvas id="cnvTension" width="800" height="500"></canvas>
+    </div>
+    <div class="sidebar">
+      <h3>Aufgaben-System</h3>
+      <p style="font-size:0.85em;">Jeder Kreis = eine Aufgabe.
+      Klicken: starten → abschließen. Nicht abgeschlossene Aufgaben pulsieren weiter.</p>
+      <div id="taskStats"></div>
+      <div class="control">
+        <button id="tensionInterrupt">Aufgabe unterbrechen (wie im Experiment)</button>
+      </div>
+      <div class="control">
+        <button id="tensionReset">Neu starten</button>
+      </div>
+      <div class="quote" style="font-size:0.75em;">
+        "Unterbricht man eine Versuchsperson, so zeigt sich nach den Zwischenhandlungen
+        eine außerordentlich starke Wiederaufnahmetendenz. […] Auch Wochen später."
+        (Ovsiankina, Zeigarnik) [[11]]
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SÄTTIGUNG -->
+<section id="saturation" class="panel">
+  <div class="layout">
+    <div>
+      <h2 style="color:#7dd3fc;margin-bottom:8px;">🔄 Psychische Sättigung (Karsten)</h2>
+      <p style="margin-bottom:10px;font-size:0.9em;">
+        Anitra Karstens Experiment: Eine Handlung (z.B. Stricheln) wiederholt sich, bis
+        die Versuchsperson "genug hat". Die Handlung <b>zerfällt</b>, wird variiert,
+        Fehler treten auf, schließlich Übersättigung und Affektausbrüche [[11]].
+      </p>
+      <p style="font-size:0.9em;margin-bottom:10px;">
+        Klicke wiederholt "Handlung ausführen" und beobachte, wie sich Struktur und
+        Qualität verändern.
+      </p>
+      <canvas id="cnvSat" width="800" height="500"></canvas>
+    </div>
+    <div class="sidebar">
+      <h3>Handlung wiederholen</h3>
+      <div class="control">
+        <button id="satAction">Handlung ausführen (Stricheln)</button>
+      </div>
+      <div class="control">
+        <button id="satAuto">Auto-Wiederholung an/aus</button>
+      </div>
+      <div class="control">
+        <button id="satReset">Zurücksetzen</button>
+      </div>
+      <div class="stat">
+        <span>Wiederholungen</span><b id="satCount">0</b>
+      </div>
+      <div class="stat">
+        <span>Sättigungsgrad</span><b id="satLevel">0%</b>
+      </div>
+      <div class="bar"><div id="satBar" style="width:0%"></div></div>
+      <div class="stat">
+        <span>Phase</span><b id="satPhase">Frisch</b>
+      </div>
+      <div class="concept-card">
+        <h4>Phasen:</h4>
+        <p>1. <b>Einarbeiten</b> — Leistung steigt<br>
+        2. <b>Sättigung</b> — Variationen, Zerfall<br>
+        3. <b>Übersättigung</b> — Fehler, Chaos<br>
+        4. <b>Affektausbruch</b> — Zickzack, Zerstörung [[11]]</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZEITLEISTE -->
+<section id="timeline" class="panel">
+  <h2 style="color:#7dd3fc;margin-bottom:16px;">📅 Historische Entwicklung</h2>
+  <div class="timeline" id="timelineList"></div>
+</section>
+
+<script>
+// =========================================
+// NAVIGATION
+// =========================================
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.panel).classList.add('active');
+  });
+});
+
+// =========================================
+// UTILS
+// =========================================
+function fitCanvas(cnv) {
+  const rect = cnv.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  cnv.width = rect.width * dpr;
+  cnv.height = rect.height * dpr;
+  const ctx = cnv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { w: rect.width, h: rect.height, ctx };
+}
+
+function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+  ctx.strokeStyle = color; ctx.fillStyle = color;
+  ctx.lineWidth = width || 2;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const head = 8 + (width || 2);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - head * Math.cos(ang - 0.4), y2 - head * Math.sin(ang - 0.4));
+  ctx.lineTo(x2 - head * Math.cos(ang + 0.4), y2 - head * Math.sin(ang + 0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function getPointerPos(cnv, e) {
+  const rect = cnv.getBoundingClientRect();
+  const pt = e.touches ? e.touches[0] : e;
+  return { x: pt.clientX - rect.left, y: pt.clientY - rect.top };
+}
+
+// =========================================
+// 1. LEBENSRAUM (topologische Regionen)
+// =========================================
+(function() {
+  const cnv = document.getElementById('cnvLife');
+  let dims = fitCanvas(cnv);
+  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+
+  const state = {
+    person: { x: 100, y: 250, vx: 0, vy: 0 },
+    dragging: false,
+    regions: [
+      { x: 550, y: 100, r: 70, valence: +1, label: 'Ziel A' },
+      { x: 620, y: 380, r: 60, valence: +1, label: 'Ziel B' },
+      { x: 350, y: 400, r: 55, valence: -1, label: 'Aversiv' },
+    ],
+    barriers: [
+      { x1: 300, y1: 50, x2: 300, y2: 300 },
+      { x1: 450, y1: 250, x2: 700, y2: 250 },
+    ]
+  };
+
+  const hardness = document.getElementById('barrierHardness');
+  const attract  = document.getElementById('attractStrength');
+  document.getElementById('lifeReset').onclick = () => {
+    state.person = { x: 100, y: 250, vx: 0, vy: 0 };
+  };
+
+  function pointToSegDist(px, py, s) {
+    const dx = s.x2 - s.x1, dy = s.y2 - s.y1;
+    const len2 = dx*dx + dy*dy;
+    let t = ((px - s.x1) * dx + (py - s.y1) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    const cx = s.x1 + t*dx, cy = s.y1 + t*dy;
+    return { d: Math.hypot(px - cx, py - cy), cx, cy };
+  }
+
+  cnv.addEventListener('mousedown', onDown);
+  cnv.addEventListener('touchstart', onDown);
+  cnv.addEventListener('mousemove', onMove);
+  cnv.addEventListener('touchmove', onMove);
+  window.addEventListener('mouseup', () => state.dragging = false);
+  window.addEventListener('touchend', () => state.dragging = false);
+
+  function onDown(e) {
+    const p = getPointerPos(cnv, e);
+    if (dist(p, state.person) < 25) state.dragging = true;
+    e.preventDefault();
+  }
+  function onMove(e) {
+    if (!state.dragging) return;
+    const p = getPointerPos(cnv, e);
+    state.person.x = p.x; state.person.y = p.y;
+    state.person.vx = state.person.vy = 0;
+    e.preventDefault();
+  }
+
+  function step() {
+    const ctx = dims.ctx, W = dims.w, H = dims.h;
+    ctx.clearRect(0, 0, W, H);
+
+    // Hintergrund-Gitter
+    ctx.strokeStyle = '#243149'; ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // Regionen
+    state.regions.forEach(r => {
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+      ctx.fillStyle = r.valence > 0 ? 'rgba(16,185,129,0.25)' : 'rgba(239,68,68,0.25)';
+      ctx.fill();
+      ctx.strokeStyle = r.valence > 0 ? '#10b981' : '#ef4444';
+      ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#e8ecf1'; ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(r.label + ' (' + (r.valence>0?'+':'−') + ')', r.x, r.y);
+    });
+
+    // Barrieren
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 6; ctx.lineCap = 'round';
+    state.barriers.forEach(b => {
+      ctx.beginPath(); ctx.moveTo(b.x1, b.y1); ctx.lineTo(b.x2, b.y2); ctx.stroke();
+    });
+    ctx.lineCap = 'butt';
+
+    // Kräfte auf Person
+    if (!state.dragging) {
+      let fx = 0, fy = 0;
+      const A = parseFloat(attract.value) / 50;
+      state.regions.forEach(r => {
+        const d = Math.max(20, dist(state.person, r));
+        const dir = r.valence;
+        const nx = (r.x - state.person.x) / d;
+        const ny = (r.y - state.person.y) / d;
+        const f = dir * A * 3000 / (d*d);
+        fx += nx * f; fy += ny * f;
+      });
+
+      // Vektor zeichnen
+      const mag = Math.hypot(fx, fy);
+      if (mag > 0.01) {
+        drawArrow(dims.ctx,
+          state.person.x, state.person.y,
+          state.person.x + fx * 8, state.person.y + fy * 8,
+          '#7dd3fc', 2);
+      }
+
+      state.person.vx = (state.person.vx + fx) * 0.85;
+      state.person.vy = (state.person.vy + fy) * 0.85;
+
+      // Barrieren-Kollision
+      const H_ = parseFloat(hardness.value) / 100;
+      state.barriers.forEach(b => {
+        const info = pointToSegDist(state.person.x, state.person.y, b);
+        if (info.d < 18) {
+          const push = (18 - info.d) * H_;
+          const nx = (state.person.x - info.cx) / (info.d || 1);
+          const ny = (state.person.y - info.cy) / (info.d || 1);
+          state.person.x += nx * push;
+          state.person.y += ny * push;
+          state.person.vx *= (1 - H_);
+          state.person.vy *= (1 - H_);
+        }
+      });
+
+      state.person.x += state.person.vx;
+      state.person.y += state.person.vy;
+      state.person.x = Math.max(15, Math.min(W-15, state.person.x));
+      state.person.y = Math.max(15, Math.min(H-15, state.person.y));
+    }
+
+    // Person zeichnen
+    ctx.beginPath();
+    ctx.arc(state.person.x, state.person.y, 15, 0, Math.PI * 2);
+    ctx.fillStyle = '#f59e0b'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('P', state.person.x, state.person.y);
+    ctx.textBaseline = 'alphabetic';
+
+    requestAnimationFrame(step);
+  }
+  step();
+})();
+
+// =========================================
+// 2. VEKTOREN & VALENZEN
+// =========================================
+(function() {
+  const cnv = document.getElementById('cnvVec');
+  let dims = fitCanvas(cnv);
+  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+
+  const state = {
+    person: { x: 400, y: 250, vx: 0, vy: 0 },
+    objects: [
+      { x: 200, y: 150, val: +50 },
+      { x: 600, y: 350, val: -50 },
+    ]
+  };
+
+  const modeSel = document.getElementById('placeMode');
+  const strSlider = document.getElementById('valStrength');
+  const strLabel = document.getElementById('valStrengthLabel');
+  strSlider.oninput = () => strLabel.textContent = strSlider.value;
+
+  document.getElementById('vecClear').onclick = () => state.objects = [];
+
+  cnv.addEventListener('click', e => {
+    const p = getPointerPos(cnv, e);
+    // Nicht setzen, wenn auf Person
+    if (dist(p, state.person) < 20) return;
+    const val = (modeSel.value === 'pos' ? 1 : -1) * parseFloat(strSlider.value);
+    state.objects.push({ x: p.x, y: p.y, val });
+  });
+
+  let dragging = false;
+  cnv.addEventListener('mousedown', e => {
+    const p = getPointerPos(cnv, e);
+    if (dist(p, state.person) < 20) { dragging = true; e.preventDefault(); }
+  });
+  cnv.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const p = getPointerPos(cnv, e);
+    state.person.x = p.x; state.person.y = p.y;
+    state.person.vx = state.person.vy = 0;
+  });
+  window.addEventListener('mouseup', () => dragging = false);
+
+  function step() {
+    const ctx = dims.ctx, W = dims.w, H = dims.h;
+    ctx.clearRect(0, 0, W, H);
+
+    // Kraftfeld als schwache Vektoren visualisieren
+    ctx.strokeStyle = 'rgba(125,211,252,0.15)';
+    ctx.lineWidth = 1;
+    const step_ = 40;
+    for (let x = step_/2; x < W; x += step_) {
+      for (let y = step_/2; y < H; y += step_) {
+        let fx = 0, fy = 0;
+        state.objects.forEach(o => {
+          const dx = x - o.x, dy = y - o.y;
+          const d = Math.max(15, Math.hypot(dx, dy));
+          const f = -o.val / (d*d) * 500;
+          fx += (dx/d) * f; fy += (dy/d) * f;
+        });
+        const m = Math.hypot(fx, fy);
+        if (m > 0.05) {
+          const len = Math.min(15, m * 30);
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + fx/m * len, y + fy/m * len);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Objekte
+    state.objects.forEach(o => {
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, 20, 0, Math.PI*2);
+      ctx.fillStyle = o.val > 0 ? '#10b981' : '#ef4444';
+      ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 16px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(o.val > 0 ? '+' : '−', o.x, o.y);
+    });
+
+    // Kraft auf Person
+    let fx = 0, fy = 0;
+    state.objects.forEach(o => {
+      const dx = state.person.x - o.x, dy = state.person.y - o.y;
+      const d = Math.max(15, Math.hypot(dx, dy));
+      const f = -o.val / (d*d) * 500;
+      fx += (dx/d) * f; fy += (dy/d) * f;
+    });
+
+    if (!dragging) {
+      state.person.vx = (state.person.vx + fx) * 0.9;
+      state.person.vy = (state.person.vy + fy) * 0.9;
+      state.person.x += state.person.vx;
+      state.person.y += state.person.vy;
+      state.person.x = Math.max(15, Math.min(W-15, state.person.x));
+      state.person.y = Math.max(15, Math.min(H-15, state.person.y));
+    }
+
+    // Einzelvektoren zeichnen
+    state.objects.forEach(o => {
+      const dx = state.person.x - o.x, dy = state.person.y - o.y;
+      const d = Math.max(15, Math.hypot(dx, dy));
+      const f = -o.val / (d*d) * 500;
+      const vx = (dx/d) * f, vy = (dy/d) * f;
+      const scale = 40;
+      drawArrow(ctx, state.person.x, state.person.y,
+        state.person.x + vx*scale, state.person.y + vy*scale,
+        o.val > 0 ? 'rgba(16,185,129,0.7)' : 'rgba(239,68,68,0.7)', 1.5);
+    });
+
+    // Resultierender Vektor
+    drawArrow(ctx, state.person.x, state.person.y,
+      state.person.x + fx*40, state.person.y + fy*40,
+      '#fbbf24', 3);
+
+    // Person
+    ctx.beginPath();
+    ctx.arc(state.person.x, state.person.y, 15, 0, Math.PI * 2);
+    ctx.fillStyle = '#f59e0b'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('P', state.person.x, state.person.y);
+    ctx.textBaseline = 'alphabetic';
+
+    // Statistik
+    const mag = Math.hypot(fx, fy);
+    document.getElementById('statMagnitude').textContent = mag.toFixed(2);
+    const ang = mag > 0.01 ? (Math.atan2(fy, fx) * 180 / Math.PI).toFixed(0) : '–';
+    document.getElementById('statAngle').textContent = ang;
+
+    requestAnimationFrame(step);
+  }
+  step();
+})();
+
+// =========================================
+// 3. KONFLIKTE
+// =========================================
+(function() {
+  const cnv = document.getElementById('cnvConf');
+  let dims = fitCanvas(cnv);
+  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+
+  const state = { person: { x: 100, y: 250, vx: 0, vy: 0 }, objects: [], type: 'app-av' };
+  const typeSel = document.getElementById('conflictType');
+  const descEl = document.getElementById('conflictDesc');
+
+  const descriptions = {
+    'app-app': 'Zwei positive Ziele – Buridans Esel. Die Person schwankt zwischen ihnen. Kleine Zufälle entscheiden.',
+    'av-av':   'Zwei negative Optionen – die Person wird "eingeklemmt" und versucht, aus dem Feld zu gehen.',
+    'app-av':  'Ein Objekt zieht an und stößt zugleich ab. Wie das Kind vor dem Hund (Lewin 1928): Nähern, Zurückweichen, Ersatzhandlung.',
+    'double':  'Zwei ambivalente Objekte – klassische Neurose-Konstellation, oszillierende Bewegung.'
+  };
+
+  function setup(type) {
+    state.type = type;
+    descEl.textContent = descriptions[type];
+    const cx = dims.w / 2, cy = dims.h / 2;
+    if (type === 'app-app') {
+      state.objects = [
+        { x: 200, y: cy, pos: +60, neg: 0 },
+        { x: 600, y: cy, pos: +60, neg: 0 },
+      ];
+    } else if (type === 'av-av') {
+      state.objects = [
+        { x: 200, y: cy, pos: 0, neg: -60 },
+        { x: 600, y: cy, pos: 0, neg: -60 },
+      ];
+    } else if (type === 'app-av') {
+      state.objects = [
+        { x: cx + 100, y: cy, pos: +80, neg: -60 },
+      ];
+    } else {
+      state.objects = [
+        { x: 250, y: cy, pos: +60, neg: -50 },
+        { x: 550, y: cy, pos: +60, neg: -50 },
+      ];
+    }
+    state.person = { x: 100, y: cy, vx: 0, vy: 0 };
+  }
+
+  typeSel.onchange = () => setup(typeSel.value);
+  document.getElementById('conflictReset').onclick = () => setup(state.type);
+  setup('app-av');
+
+  function step() {
+    const ctx = dims.ctx, W = dims.w, H = dims.h;
+    ctx.clearRect(0, 0, W, H);
+
+    // Objekte zeichnen
+    state.objects.forEach(o => {
+      // Positive Zone (grün, groß)
+      if (o.pos > 0) {
+        const g = ctx.createRadialGradient(o.x, o.y, 5, o.x, o.y, 120);
+        g.addColorStop(0, 'rgba(16,185,129,0.4)');
+        g.addColorStop(1, 'rgba(16,185,129,0)');
+        ctx.fillStyle = g; ctx.fillRect(o.x - 120, o.y - 120, 240, 240);
+      }
+      // Negative Zone (rot, näher)
+      if (o.neg < 0) {
+        const g = ctx.createRadialGradient(o.x, o.y, 5, o.x, o.y, 60);
+        g.addColorStop(0, 'rgba(239,68,68,0.6)');
+        g.addColorStop(1, 'rgba(239,68,68,0)');
+        ctx.fillStyle = g; ctx.fillRect(o.x - 60, o.y - 60, 120, 120);
+      }
+      // Objekt-Kern
+      ctx.beginPath();
+      ctx.arc(o.x, o.y, 25, 0, Math.PI*2);
+      let c = '#64748b';
+      if (o.pos > 0 && o.neg < 0) c = '#a855f7';
+      else if (o.pos > 0) c = '#10b981';
+      else if (o.neg < 0) c = '#ef4444';
+      ctx.fillStyle = c; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    });
+
+    // Kräfte
+    let fx = 0, fy = 0;
+    state.objects.forEach(o => {
+      const dx = state.person.x - o.x, dy = state.person.y - o.y;
+      const d = Math.max(20, Math.hypot(dx, dy));
+      // Anziehung (positive Valenz zieht): Kraft ~ pos/d
+      const fpos = -o.pos / d * 8;
+      // Abstoßung (negative Valenz stößt ab): Kraft ~ neg/d^2 (nur nah)
+      const fneg = -o.neg / (d*d) * 800;
+      fx += (dx/d) * (fpos + fneg);
+      fy += (dy/d) * (fpos + fneg);
+    });
+
+    // Zittern hinzufügen bei Konflikt
+    const mag = Math.hypot(fx, fy);
+    if (mag < 0.5) {
+      fx += (Math.random() - 0.5) * 0.4;
+      fy += (Math.random() - 0.5) * 0.4;
+    }
+
+    state.person.vx = (state.person.vx + fx) * 0.88;
+    state.person.vy = (state.person.vy + fy) * 0.88;
+    state.person.x += state.person.vx;
+    state.person.y += state.person.vy;
+    state.person.x = Math.max(15, Math.min(W-15, state.person.x));
+    state.person.y = Math.max(15, Math.min(H-15, state.person.y));
+
+    // Vektor
+    drawArrow(ctx, state.person.x, state.person.y,
+      state.person.x + fx*15, state.person.y + fy*15, '#fbbf24', 3);
+
+    // Person
+    ctx.beginPath();
+    ctx.arc(state.person.x, state.person.y, 15, 0, Math.PI*2);
+    ctx.fillStyle = '#f59e0b'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('P', state.person.x, state.person.y);
+    ctx.textBaseline = 'alphabetic';
+
+    requestAnimationFrame(step);
+  }
+  step();
+})();
+
+// =========================================
+// 4. SPANNUNGSSYSTEME (Zeigarnik)
+// =========================================
+(function() {
+  const cnv = document.getElementById('cnvTension');
+  let dims = fitCanvas(cnv);
+  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+
+  let tasks = [];
+  function reset() {
+    tasks = [];
+    const cols = 4, rows = 2;
+    for (let i = 0; i < cols*rows; i++) {
+      tasks.push({
+        x: 100 + (i % cols) * 180,
+        y: 120 + Math.floor(i / cols) * 200,
+        state: 'idle',    // idle, active, done, interrupted
+        tension: 0,
+        memory: 0,
+        pulse: Math.random() * Math.PI * 2
+      });
+    }
+  }
+  reset();
+
+  cnv.addEventListener('click', e => {
+    const p = getPointerPos(cnv, e);
+    tasks.forEach(t => {
+      if (dist(p, t) < 50) {
+        if (t.state === 'idle') { t.state = 'active'; t.tension = 1; }
+        else if (t.state === 'active') { t.state = 'done'; t.tension = 0; }
+        else if (t.state === 'interrupted') { t.state = 'active'; t.tension = 1; }
+      }
+    });
+  });
+
+  document.getElementById('tensionInterrupt').onclick = () => {
+    // Aktive Aufgaben werden unterbrochen — Wiederaufnahmetendenz bleibt
+    tasks.forEach(t => {
+      if (t.state === 'active') {
+        t.state = 'interrupted';
+        t.memory = 1; // Zeigarnik: bleibt im Gedächtnis
+      }
+    });
+  };
+  document.getElementById('tensionReset').onclick = reset;
+
+  function step() {
+    const ctx = dims.ctx, W = dims.w, H = dims.h;
+    ctx.clearRect(0, 0, W, H);
+
+    // Titel
+    ctx.fillStyle = '#7dd3fc';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Aufgaben — klicken zum Starten/Abschließen', 20, 30);
+
+    let totalTension = 0, totalMemory = 0, activeCount = 0, doneCount = 0, interruptedCount = 0;
+
+    tasks.forEach(t => {
+      t.pulse += 0.05;
+
+      // Farbe je nach Zustand
+      let color = '#334155', label = 'idle';
+      if (t.state === 'active') { color = '#0ea5e9'; label = 'aktiv'; activeCount++; }
+      else if (t.state === 'done') { color = '#10b981'; label = 'erledigt'; doneCount++; }
+      else if (t.state === 'interrupted') { color = '#a855f7'; label = 'unterbrochen'; interruptedCount++; }
+
+      // Spannungsring bei aktiven/unterbrochenen Aufgaben
+      if (t.state === 'active' || t.state === 'interrupted') {
+        const pulseSize = 55 + Math.sin(t.pulse) * 8;
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, pulseSize, 0, Math.PI*2);
+        ctx.strokeStyle = t.state === 'interrupted' ? 'rgba(168,85,247,0.5)' : 'rgba(14,165,233,0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Wiederaufnahme-Tendenz visualisieren (Pfeil nach innen)
+        if (t.state === 'interrupted') {
+          const ang = t.pulse;
+          const r1 = 75, r2 = 55;
+          drawArrow(ctx,
+            t.x + Math.cos(ang) * r1, t.y + Math.sin(ang) * r1,
+            t.x + Math.cos(ang) * r2, t.y + Math.sin(ang) * r2,
+            '#a855f7', 1.5);
+        }
+      }
+
+      // Kern
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 45, 0, Math.PI*2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, t.x, t.y);
+      ctx.textBaseline = 'alphabetic';
+
+      // Gedächtnis-Marker (Zeigarnik: unerledigte werden besser erinnert)
+      if (t.memory > 0.01) {
+        ctx.beginPath();
+        ctx.arc(t.x + 32, t.y - 32, 8, 0, Math.PI*2);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fill();
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('M', t.x + 32, t.y - 32);
+        ctx.textBaseline = 'alphabetic';
+      }
+
+      // Spannung baut sich langsam ab, Gedächtnis auch
+      if (t.state === 'active') t.tension = Math.min(1, t.tension + 0.005);
+      if (t.state === 'interrupted') {
+        t.tension = Math.max(0.4, t.tension - 0.0005); // bleibt lange bestehen
+        t.memory = Math.max(0.5, t.memory - 0.0002);
+      }
+      if (t.state === 'done') t.memory = Math.max(0, t.memory - 0.003);
+
+      totalTension += t.tension;
+      totalMemory  += t.memory;
+    });
+
+    requestAnimationFrame(step);
+
+    // Statistik
+    document.getElementById('taskStats').innerHTML = `
+      <div class="stat"><span>Aktiv</span><b>${activeCount}</b></div>
+      <div class="stat"><span>Unterbrochen (Zeigarnik)</span><b>${interruptedCount}</b></div>
+      <div class="stat"><span>Erledigt</span><b>${doneCount}</b></div>
+      <div class="stat"><span>Gesamtspannung</span><b>${totalTension.toFixed(2)}</b></div>
+      <div class="bar"><div style="width:${Math.min(100,totalTension*15)}%"></div></div>
+      <div class="stat"><span>Erinnerbarkeit unerledigt</span><b>${totalMemory.toFixed(2)}</b></div>
+      <div class="bar"><div style="width:${Math.min(100,totalMemory*15)}%"></div></div>
+    `;
+  }
+  step();
+})();
+
+// =========================================
+// 5. SÄTTIGUNG (Karsten)
+// =========================================
+(function() {
+  const cnv = document.getElementById('cnvSat');
+  let dims = fitCanvas(cnv);
+  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+
+  let strokes = [];
+  let count = 0;
+  let auto = false;
+  let autoTimer = 0;
+
+  function phase() {
+    if (count < 15) return { name: 'Frisch (Einarbeiten)', level: count / 15 * 0.15 };
+    if (count < 40) return { name: 'Steigende Leistung', level: 0.15 + (count-15)/25 * 0.15 };
+    if (count < 70) return { name: 'Sättigung — Variationen', level: 0.30 + (count-40)/30 * 0.30 };
+    if (count < 110) return { name: 'Übersättigung — Zerfall', level: 0.60 + (count-70)/40 * 0.30 };
+    return { name: 'Affektausbruch — Chaos', level: Math.min(1, 0.90 + (count-110)/50 * 0.10) };
+  }
+
+  function doAction() {
+    count++;
+    const p = phase();
+    const level = p.level;
+
+    // Position der nächsten "Handlung" (Stricheln)
+    const row = Math.floor((count-1) / 20);
+    const col = (count-1) % 20;
+    const baseX = 60 + col * 32;
+    const baseY = 80 + row * 60;
+
+    // Rhythmus 3/5: 3 kurze + 5 kurze Strichgruppen (Anlehnung an Karstens Experiment)
+    const nStrokes = 3;
+    for (let i = 0; i < nStrokes; i++) {
+      // Perfekte Frische Handlung → immer stärker verzerrt
+      let x1 = baseX + i * 5;
+      let y1 = baseY;
+      let x2 = x1;
+      let y2 = baseY + 30;
+
+      // Rauschen wächst mit Sättigung
+      const noise = level * 40;
+      x1 += (Math.random() - 0.5) * noise;
+      y1 += (Math.random() - 0.5) * noise * 0.5;
+      x2 += (Math.random() - 0.5) * noise;
+      y2 += (Math.random() - 0.5) * noise;
+
+      // Bei Übersättigung: Rhythmus zerfällt, Variationen
+      let width = 2;
+      let color = '#7dd3fc';
+      if (level > 0.3 && Math.random() < level * 0.5) {
+        // Variation: Strichdicke ändert sich
+        width = 1 + Math.random() * 4;
+      }
+      if (level > 0.6) {
+        // Zerfall: falsche Farben, chaotische Winkel
+        const dx = (Math.random() - 0.5) * 20;
+        x2 += dx;
+        color = `hsl(${200 - level*180}, 70%, 60%)`;
+      }
+      if (level > 0.9) {
+        // Affektausbruch: Zickzack
+        x2 = baseX + (Math.random() - 0.5) * 200;
+        y2 = baseY + (Math.random() - 0.5) * 80;
+        width = 1 + Math.random() * 5;
+        color = '#ef4444';
+      }
+
+      strokes.push({ x1, y1, x2, y2, width, color });
+    }
+
+    // Bei extremer Übersättigung: zusätzlicher "Zickzack" quer über alles
+    if (level > 0.95 && count % 5 === 0) {
+      const startX = 40, endX = 760;
+      let x = startX, y = 60 + Math.random() * 400;
+      const zig = [];
+      while (x < endX) {
+        zig.push({ x, y });
+        x += 20 + Math.random() * 30;
+        y += (Math.random() - 0.5) * 80;
+      }
+      for (let i = 0; i < zig.length - 1; i++) {
+        strokes.push({
+          x1: zig[i].x, y1: zig[i].y,
+          x2: zig[i+1].x, y2: zig[i+1].y,
+          width: 2, color: '#ef4444'
+        });
+      }
+    }
+  }
+
+  document.getElementById('satAction').onclick = doAction;
+  document.getElementById('satAuto').onclick = () => auto = !auto;
+  document.getElementById('satReset').onclick = () => {
+    strokes = []; count = 0; auto = false;
+  };
+
+  function draw() {
+    const ctx = dims.ctx, W = dims.w, H = dims.h;
+    ctx.clearRect(0, 0, W, H);
+
+    // Papier-Hintergrund
+    ctx.fillStyle = '#f5f5dc';
+    ctx.fillRect(20, 40, W - 40, H - 60);
+
+    // Striche zeichnen
+    strokes.forEach(s => {
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = s.width;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(s.x1, s.y1);
+      ctx.lineTo(s.x2, s.y2);
+      ctx.stroke();
+    });
+
+    // Titel
+    ctx.fillStyle = '#0f1420';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Aufgabe: Stricheln im Rhythmus 3/5 — beobachte den Zerfall', 30, 30);
+
+    // Auto-Timer
+    if (auto) {
+      autoTimer++;
+      if (autoTimer > 5) { autoTimer = 0; doAction(); }
+    }
+
+    // Statistik aktualisieren
+    const p = phase();
+    document.getElementById('satCount').textContent = count;
+    document.getElementById('satLevel').textContent = Math.round(p.level * 100) + '%';
+    document.getElementById('satBar').style.width = (p.level * 100) + '%';
+    document.getElementById('satPhase').textContent = p.name;
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// =========================================
+// 6. ZEITLEISTE
+// =========================================
+(function() {
+  const events = [
+    { year: '1890', title: 'Kurt Lewin geboren', body: 'Geboren in Mogilno (damals Preußen). Später einer der Begründer der modernen Sozialpsychologie.' },
+    { year: '1910–20', title: 'Berliner Schule der Gestaltpsychologie', body: 'Wertheimer, Köhler, Koffka entwickeln Gestalttheorie. Köhler nahm an, dass psychische Prozesse Feldprozesse sind — analog zu physikalischen Feldern. Diese Idee wurde zur Grundlage von Lewins Feldtheorie.' },
+    { year: '1917', title: 'Lewin: Gesetz der Assoziation', body: 'Erste Kritik am assoziationspsychologischen Grundgesetz: Assoziationen sind keine "Motoren" seelischen Geschehens, sondern nur Koppelungen. Wegweisend für dynamische Betrachtung.' },
+    { year: '1922', title: 'Willensmessung und Grundgesetz der Assoziation', body: 'Lewin widerlegt Achs Idee, Willensstärke am "assoziativen Äquivalent" zu messen. Bereitet Übergang zu dynamischen Ganzheitsbegriffen vor.' },
+    { year: '1926', title: 'Vorsatz, Wille und Bedürfnis', body: 'Einführung der Quasibedürfnisse und Spannungssysteme. Eine Vornahme erzeugt ein reales Spannungssystem — nicht die Intensität des Willenserlebnisses zählt, sondern die dynamische Struktur.' },
+    { year: '1927', title: 'Zeigarnik-Effekt', body: 'Bluma Zeigarniks Dissertation bei Lewin: Unbeendete Handlungen werden besser erinnert als beendete. Empirischer Beleg für Spannungssysteme.' },
+    { year: '1928', title: 'Ovsiankina: Wiederaufnahmetendenz', body: 'Maria Ovsiankina zeigt: Unterbrochene Aufgaben werden auch nach 30 Min. spontan wieder aufgenommen — auch bei unangenehmen Aufgaben. Spannungssysteme wirken drangartig.' },
+    { year: '1928', title: 'Karsten: Psychische Sättigung', body: 'Anitra Karsten dokumentiert experimentell den Zerfall von Handlungen bei Wiederholung: Variationen, Gestaltzerfall, Übersättigung, Affektausbruch.' },
+    { year: '1928', title: 'Baden-Baden-Vortrag', body: 'Lewin hält seinen berühmten Vortrag "Die Entwicklung der experimentellen Willenspsychologie und die Psychotherapie" — Grundlage für die weitere Entwicklung der Feldtheorie und ihrer klinischen Anwendung.' },
+    { year: '1933', title: 'Emigration in die USA', body: 'Als Jude flieht Lewin vor den Nazis. Zunächst Cornell, dann Iowa, später MIT. Übersetzt seine topologische Psychologie ins Englische.' },
+    { year: '1936', title: '"Principles of Topological Psychology"', body: 'Systematische Darstellung der topologischen Psychologie. V = f(P,U): Verhalten als Funktion von Person und Umwelt (Lebensraum).' },
+    { year: '1938', title: '"The Conceptual Representation and Measurement of Psychological Forces"', body: 'Ausarbeitung der Vektorpsychologie. Kräfte als gerichtete Größen im psychologischen Feld.' },
+    { year: '1939', title: 'Führungsstile-Experimente', body: 'Mit Lippitt und White: Autoritär, demokratisch, laissez-faire. Beginn der experimentellen Gruppendynamik.' },
+    { year: '1944–47', title: 'Action Research & Gruppendynamik', body: 'Am MIT-Center for Group Dynamics: "Nichts ist so praktisch wie eine gute Theorie." Feldtheorie wird auf soziale Systeme erweitert.' },
+    { year: '1947', title: 'Lewin stirbt', body: 'Herzinfarkt in Newtonville, Massachusetts. Sein Werk beeinflusst tiefgehend Sozialpsychologie, Organisationsentwicklung, Gestalttherapie.' },
+    { year: '1951', title: '"Field Theory in Social Science" (posthum)', body: 'Sammelband, herausgegeben von Dorwin Cartwright — die englischsprachige Standardreferenz zur Feldtheorie.' },
+    { year: '1960er+', title: 'Weiterwirkung', body: 'Fritz Perls (Gestalttherapie), Kurt Goldstein, später Hans-Jürgen Walter (Gestalttheoretische Psychotherapie), Paul Tholey (Traumforschung) knüpfen an. Auch Organisationsentwicklung, Change Management, Aktionsforschung.' },
+    { year: '1995', title: 'Tholey: Feldbegriffe integrieren', body: 'Paul Tholey unterscheidet phänomenales Feld, psychisches Feld und psychophysisches Feld — versucht Brücken zwischen Physik, Biophysik und Psychologie zu schlagen.' }
+  ];
+
+  const container = document.getElementById('timelineList');
+  events.forEach(ev => {
+    const div = document.createElement('div');
+    div.className = 'tl-event';
+    div.innerHTML = `
+      <div class="tl-year">${ev.year}</div>
+      <div class="tl-body">
+        <h4>${ev.title}</h4>
+        <p>${ev.body}</p>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+})();
+
+</script>
+</body>
+</html>
