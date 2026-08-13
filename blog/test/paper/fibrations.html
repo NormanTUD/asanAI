@@ -2,375 +2,1115 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Fibrationen – interaktiv verstehen</title>
-<script>
-  MathJax = {
-    tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
-    svg: { fontCache: 'global' }
-  };
-</script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<title>Fibrationen — Formalismus & Intuition (v3, Temml)</title>
+
+<!-- TEMML: rendert LaTeX zu MathML, keine MIME-Probleme, ~50 KB -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script defer src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+          delimiters: [
+            {left:'$$', right:'$$', display:true},
+            {left:'\\[', right:'\\]', display:true},
+            {left:'$', right:'$', display:false},
+            {left:'\\(', right:'\\)', display:false}
+          ],
+          throwOnError:false
+        });"></script>
+
+<!-- Plotly für 3D -->
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+
 <style>
-  body { font-family: 'Georgia', serif; max-width: 1200px; margin: 20px auto; padding: 20px;
-         background: #fafaf5; color: #222; line-height: 1.55; }
-  h1 { color: #4a2c6b; border-bottom: 2px solid #4a2c6b; padding-bottom: 6px;}
-  h2 { color: #6b3e2c; margin-top: 30px;}
-  .box { background: #fff; border: 1px solid #ddd; border-radius: 8px;
-         padding: 15px 20px; margin: 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
-  .formula { background: #f0ebf7; padding: 12px; border-left: 4px solid #4a2c6b;
-             border-radius: 4px; overflow-x: auto;}
-  .controls { display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
-              background:#eef; padding:10px; border-radius:6px;}
-  .controls label { font-weight: bold;}
-  canvas { border: 1px solid #999; background: #fff; display:block; margin: 10px auto;}
-  select, input[type=range] { padding: 4px;}
-  .flex { display: flex; flex-wrap: wrap; gap: 15px;}
-  .flex > div { flex: 1 1 400px;}
-  .legend { font-size: 0.9em; color: #555;}
-  code { background: #eee; padding: 2px 5px; border-radius: 3px;}
+  :root {
+    --primary:#4a2c6b; --secondary:#6b3e2c; --accent:#c33;
+    --bg:#fafaf5; --box:#fff; --hint:#fff8e1;
+  }
+  *{box-sizing:border-box}
+  body{font-family:'Georgia',serif;max-width:1300px;margin:20px auto;padding:20px;
+       background:var(--bg);color:#222;line-height:1.6}
+  h1{color:var(--primary);border-bottom:3px double var(--primary);padding-bottom:8px;font-size:2em}
+  h2{color:var(--secondary);margin-top:40px;border-left:5px solid var(--secondary);padding-left:12px}
+  h3{color:#333;margin-top:20px}
+  .box{background:var(--box);border:1px solid #ddd;border-radius:10px;
+       padding:18px 22px;margin:18px 0;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+  .formula{background:linear-gradient(135deg,#f0ebf7,#e8dff2);padding:14px 18px;
+           border-left:5px solid var(--primary);border-radius:6px;overflow-x:auto;margin:12px 0}
+  .intuition{background:var(--hint);border-left:5px solid #f9a825;
+             padding:12px 16px;border-radius:6px;margin:12px 0}
+  .intuition::before{content:"💡 Intuition: ";font-weight:bold;color:#b8860b}
+  .viz{background:#eef8ff;border-left:5px solid #2266cc;padding:12px 16px;
+       border-radius:6px;margin:12px 0}
+  .viz::before{content:"👁 Visualisierung: ";font-weight:bold;color:#1a4a99}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+            background:#e8eefc;padding:12px;border-radius:8px;
+            border:1px solid #b8c5e0;margin:10px 0}
+  .controls label{font-weight:bold;display:flex;flex-direction:column;gap:4px;font-size:.9em}
+  .controls input[type=range]{width:160px}
+  canvas{border:1px solid #999;background:#fff;display:block;margin:10px auto;max-width:100%}
+  select,button{padding:6px 10px;border:1px solid #999;border-radius:4px;
+                background:#fff;font-family:inherit;cursor:pointer}
+  button:hover{background:#eef}
+  .flex{display:flex;flex-wrap:wrap;gap:20px}
+  .flex>div{flex:1 1 450px;min-width:340px}
+  .legend{font-size:.85em;color:#555;padding:6px;background:#f5f5f5;border-radius:4px}
+  code{background:#eee;padding:2px 6px;border-radius:3px;font-family:'Consolas',monospace}
+  .seq-term{display:inline-block;padding:6px 10px;margin:4px;
+            background:#eef;border:1px solid #99b;border-radius:5px;
+            cursor:pointer;transition:all .2s}
+  .seq-term:hover{background:#ccf;transform:translateY(-2px)}
+  .seq-term.active{background:var(--primary);color:#fff}
+  #seqExplain{min-height:60px;padding:10px;background:#f8f4ff;border-radius:6px;margin-top:10px}
+  table{border-collapse:collapse;margin:10px 0}
+  th,td{border:1px solid #ccc;padding:6px 12px;text-align:left}
+  th{background:#eee}
+  .mini{width:100%;height:250px}
 </style>
 </head>
 <body>
 
-<h1>🧵 Fibrationen: Formalismus & Intuition</h1>
+<h1>🧵 Fibrationen — Formalismus & visuelle Intuition</h1>
 
 <div class="box">
-<p>Eine <b>Fibration</b> ist ein "gefaserter Raum": Über jedem Punkt der Basis $B$ hängt eine Faser $F$,
-und alle Fasern zusammen bilden den Totalraum $E$. Die Projektion $p:E\to B$ "vergisst" die Faserrichtung.</p>
+Diese Seite zeigt Fibrationen (Faserbündel & Serre/Hurewicz-Fibrationen)
+sowohl <b>formal</b> (jede Formel mit <code>\underbrace</code>-Beschriftungen)
+als auch <b>visuell</b>: <b>jeder</b> Abschnitt hat sein eigenes interaktives Bild.
+Umgesetzt mit <b>Temml</b> (LaTeX → MathML, keine MIME-Probleme) und <b>Plotly</b>.
 </div>
 
-<h2>1. Die Grunddefinition</h2>
-<div class="box formula">
-$$
-\underbrace{F}_{\text{Faser}} \;\hookrightarrow\; \underbrace{E}_{\text{Totalraum}} \;\xrightarrow{\;\underbrace{p}_{\text{Projektion}}\;}\; \underbrace{B}_{\text{Basis}}
-$$
-<p>Für jeden Punkt $\underbrace{b}_{\text{Basispunkt}} \in \underbrace{B}_{\text{Basisraum}}$ ist die <b>Faser über $b$</b>:</p>
-$$
-\underbrace{p^{-1}(b)}_{\text{Urbild von } b} \;\cong\; \underbrace{F}_{\text{Standardfaser}}
-$$
-</div>
-
-<h2>2. Die Homotopie-Hochhebungs-Eigenschaft (HLP)</h2>
+<!-- =========================== -->
+<h2>1. Grunddefinition eines Faserbündels</h2>
 <div class="box">
-<p>Das <b>Herzstück</b> einer Fibration: Jede Homotopie unten lässt sich nach oben "hochheben".</p>
 <div class="formula">
 $$
-\begin{array}{ccc}
-\underbrace{X}_{\text{Testraum}} & \xrightarrow{\;\underbrace{\tilde{f}_0}_{\text{Start-Lift}}\;} & \underbrace{E}_{\text{Totalraum}} \\
-\underbrace{\iota_0}_{\text{Einbettung } x\mapsto (x,0)} \Big\downarrow & \nearrow \underbrace{\tilde{H}}_{\text{gesuchter Lift}} & \Big\downarrow \underbrace{p}_{\text{Projektion}} \\
-\underbrace{X\times I}_{\text{Zylinder}} & \xrightarrow{\;\underbrace{H}_{\text{Homotopie unten}}\;} & \underbrace{B}_{\text{Basis}}
-\end{array}
+\underbrace{F}_{\text{Standardfaser}}
+\;\hookrightarrow\;
+\underbrace{E}_{\text{Totalraum}}
+\;\xrightarrow{\;\underbrace{p}_{\text{Bündelprojektion}}\;}\;
+\underbrace{B}_{\text{Basisraum}}
 $$
-mit der Bedingung:
 $$
-\underbrace{p\circ \tilde{H}}_{\text{projizierter Lift}} \;=\; \underbrace{H}_{\text{Original}}
-\quad\text{und}\quad
-\underbrace{\tilde{H}(x,0)}_{\text{Startwert}} \;=\; \underbrace{\tilde{f}_0(x)}_{\text{gegeben}}
+\underbrace{E_b}_{\text{Faser über }b}
+=
+\underbrace{p^{-1}(b)}_{\text{Urbild von }b}
+=
+\underbrace{\{e\in E \mid p(e)=b\}}_{\text{alle Punkte über }b}
+\cong
+\underbrace{F}_{\text{alle Fasern homöomorph}}
 $$
 </div>
+
+<div class="intuition">
+Bürste: Griff = Basis $B$, Borsten = Fasern $F$, ganze Bürste = Totalraum $E$.
+Die Projektion $p$ sagt dir, an welchem Griffpunkt eine Borste hängt.
+</div>
+
+<div class="viz">
+Bewege den Slider und sieh, wie sich die grüne Faser über dem roten Basispunkt $b$
+verschiebt. Der Totalraum $E$ wird transparent gezeichnet, damit alle Fasern sichtbar sind.
 </div>
 
 <div class="controls">
-  <label>Fibration:
-    <select id="fibSelect">
-      <option value="trivial">Triviales Bündel $S^1\times I \to S^1$</option>
-      <option value="moebius">Möbiusband $\to S^1$</option>
-      <option value="hopf">Hopf-Fibration $S^3 \to S^2$</option>
+  <label>Basispunkt $b$
+    <input type="range" id="b1" min="0" max="100" value="30">
+    <span id="b1v">0.30</span>
+  </label>
+  <label>Anzahl gezeigte Fasern
+    <input type="range" id="nf1" min="4" max="30" value="12">
+    <span id="nf1v">12</span>
+  </label>
+</div>
+<div id="plot1" class="mini" style="height:400px"></div>
+</div>
+
+<!-- =========================== -->
+<h2>2. Homotopie-Hochhebungs-Eigenschaft (HLP)</h2>
+<div class="box">
+<div class="formula">
+$$
+\begin{array}{ccc}
+\underbrace{X}_{\text{Testraum}}
+& \xrightarrow{\;\underbrace{\tilde f_0}_{\text{Start-Lift}}\;}
+& \underbrace{E}_{\text{Totalraum}} \\[8pt]
+\Big\downarrow\,\underbrace{\iota_0}_{x\mapsto(x,0)}
+& \nearrow\,\underbrace{\tilde H}_{\text{gesuchter Lift}}
+& \Big\downarrow\,\underbrace{p}_{\text{Projektion}} \\[8pt]
+\underbrace{X\times I}_{\text{Zylinder}}
+& \xrightarrow{\;\underbrace{H}_{\text{Homotopie in }B}\;}
+& \underbrace{B}_{\text{Basis}}
+\end{array}
+$$
+$$
+\underbrace{p\circ\tilde H}_{\text{Lift projiziert}}
+=
+\underbrace{H}_{\text{Original}}
+\qquad
+\underbrace{\tilde H(x,0)}_{\text{Startwert}}
+=
+\underbrace{\tilde f_0(x)}_{\text{gegeben}}
+$$
+</div>
+
+<div class="intuition">
+Unten läuft eine Kurve durch $B$. Oben in $E$ ist ein Startpunkt gegeben.
+HLP garantiert: die ganze Bewegung lässt sich <b>oben</b> nachzeichnen.
+</div>
+
+<div class="viz">
+Die rote Kurve $H$ bewegt sich unten in $B$, der blaue Lift $\tilde H$ folgt oben.
+Bei Möbius/Klein siehst du den <b>Twist</b>: der Lift kehrt gespiegelt zurück!
+</div>
+
+<div class="controls">
+  <label>Zeit $t$
+    <input type="range" id="t2" min="0" max="100" value="0">
+    <span id="t2v">0.00</span>
+  </label>
+  <label>Fibrationstyp
+    <select id="fib2">
+      <option value="trivial">Trivial</option>
+      <option value="moebius">Möbius (Twist!)</option>
+      <option value="double">Doppelte Überlagerung</option>
     </select>
   </label>
-  <label>Homotopie-Parameter $t$:
-    <input type="range" id="tSlider" min="0" max="100" value="0">
-    <span id="tVal">0.00</span>
+  <button id="hlpAnim">▶ Animation</button>
+</div>
+<canvas id="hlpCanvas" width="900" height="380"></canvas>
+</div>
+
+<!-- =========================== -->
+<h2>3. Lokale Trivialisierung</h2>
+<div class="box">
+<div class="formula">
+$$
+\underbrace{\varphi_\alpha}_{\text{Karte}}\colon
+\underbrace{p^{-1}(U_\alpha)}_{\text{Stück über }U_\alpha}
+\xrightarrow{\;\cong\;}
+\underbrace{U_\alpha}_{\text{Basisstück}}\times
+\underbrace{F}_{\text{Faser}}
+$$
+$$
+\underbrace{\mathrm{pr}_1}_{\text{Basisprojektion}}
+\circ
+\underbrace{\varphi_\alpha}_{\text{Karte}}
+=
+\underbrace{p}_{\text{Bündelprojektion}}
+$$
+</div>
+
+<div class="viz">
+Zwei Karten $U_\alpha$ und $U_\beta$ auf dem Möbiusband. In jeder einzelnen Karte
+sieht das Bündel aus wie ein triviales Rechteck $U\times F$ — global aber verklebt es sich mit einem Twist.
+</div>
+
+<div class="controls">
+  <label>Karte anzeigen
+    <select id="chartSel">
+      <option value="alpha">$U_\alpha$</option>
+      <option value="beta">$U_\beta$</option>
+      <option value="both">beide + Überlappung</option>
+    </select>
   </label>
-  <label>Basispunkt $b$:
-    <input type="range" id="bSlider" min="0" max="100" value="25">
-    <span id="bVal">0.25</span>
+</div>
+<canvas id="chartCanvas" width="900" height="320"></canvas>
+</div>
+
+<!-- =========================== -->
+<h2>4. Übergangsfunktionen & Kozykel</h2>
+<div class="box">
+<div class="formula">
+$$
+(\underbrace{\varphi_\alpha\circ\varphi_\beta^{-1}}_{\text{Kartenwechsel}})(b,f)
+=
+(b,\;\underbrace{g_{\alpha\beta}(b)}_{\text{Kozykel}}\cdot
+\underbrace{f}_{\text{Faserpunkt}})
+$$
+$$
+\underbrace{g_{\alpha\beta}}_{\text{Kozykel}}\colon
+\underbrace{U_\alpha\cap U_\beta}_{\text{Überlappung}}\to
+\underbrace{G}_{\text{Strukturgruppe}}
+$$
+$$
+\underbrace{g_{\alpha\beta}\cdot g_{\beta\gamma}}_{\text{Umweg über }\beta}
+=
+\underbrace{g_{\alpha\gamma}}_{\text{direkt}}
+\qquad(\text{Kozykel-Bedingung})
+$$
+</div>
+
+<div class="intuition">
+Wenn drei Karten sich überlappen, muss der Umweg über die dritte Karte
+dasselbe Ergebnis liefern wie der direkte Kartenwechsel — sonst wäre die Verklebung inkonsistent.
+</div>
+
+<div class="viz">
+Drei Kreise = drei Karten. Die Pfeile sind die Kozykel. Klick auf die Buttons und
+sieh, wie sich die Kartenwechsel zusammensetzen.
+</div>
+
+<div class="controls">
+  <label>Verklebung visualisieren
+    <select id="cocSel">
+      <option value="static">Statisch</option>
+      <option value="path1">Pfad α ← β ← γ</option>
+      <option value="path2">Pfad α ← γ (direkt)</option>
+    </select>
   </label>
 </div>
-
-<div class="flex">
-  <div>
-    <h3>Totalraum $E$ mit Projektion $p$</h3>
-    <div id="plot3d" style="width:100%;height:500px;"></div>
-  </div>
-  <div>
-    <h3>Homotopie-Hochhebung (Canvas)</h3>
-    <canvas id="liftCanvas" width="500" height="400"></canvas>
-    <p class="legend">
-      <b style="color:#c33">rot</b>: Homotopie $H$ in $B$ &nbsp;
-      <b style="color:#26a">blau</b>: Lift $\tilde{H}$ in $E$ &nbsp;
-      <b style="color:#2a2">grün</b>: Faser $p^{-1}(b)$
-    </p>
-  </div>
+<canvas id="cocycleCanvas" width="900" height="360"></canvas>
 </div>
 
-<h2>3. Lokale Trivialisierung (Faserbündel)</h2>
-<div class="box formula">
-Für jedes $\underbrace{b}_{\text{Punkt}}\in B$ existiert eine offene Umgebung $\underbrace{U}_{\text{Karte}}\subset B$ und ein Homöomorphismus
+<!-- =========================== -->
+<h2>5. Paralleltransport & Monodromie</h2>
+<div class="box">
+<div class="formula">
 $$
-\underbrace{\varphi}_{\text{Trivialisierung}}\colon\;
-\underbrace{p^{-1}(U)}_{\text{Stück über }U}
-\;\xrightarrow{\;\cong\;}\;
-\underbrace{U}_{\text{Basisstück}}\times \underbrace{F}_{\text{Faser}}
+\underbrace{T_\gamma}_{\text{Paralleltransport}}\colon
+\underbrace{F_{\gamma(0)}}_{\text{Startfaser}}\to
+\underbrace{F_{\gamma(1)}}_{\text{Endfaser}}
 $$
-sodass gilt:
+Für geschlossene Wege $\gamma\in\pi_1(B,b_0)$:
 $$
-\underbrace{\mathrm{pr}_1}_{\text{Projektion auf }U}\circ \underbrace{\varphi}_{\text{Chart}} \;=\; \underbrace{p}_{\text{Bündelprojektion}}
-$$
-<p><b>Verklebung:</b> Auf Überlappungen $U_\alpha\cap U_\beta$ gibt es <b>Übergangsfunktionen</b>:</p>
-$$
-\underbrace{g_{\alpha\beta}}_{\text{Kozykel}}\colon\; U_\alpha\cap U_\beta \;\to\; \underbrace{G}_{\text{Strukturgruppe}}
-$$
-mit der Kozykelbedingung
-$$
-\underbrace{g_{\alpha\beta}\cdot g_{\beta\gamma}}_{\text{Weg über }\beta} \;=\; \underbrace{g_{\alpha\gamma}}_{\text{direkter Weg}}
-\quad \text{auf}\quad U_\alpha\cap U_\beta \cap U_\gamma.
+\underbrace{\rho}_{\text{Monodromiedarstellung}}\colon
+\underbrace{\pi_1(B,b_0)}_{\text{Fundamentalgruppe}}\to
+\underbrace{\mathrm{Aut}(F)}_{\text{Faserautomorphismen}}
 $$
 </div>
 
-<h2>4. Die lange exakte Homotopiesequenz</h2>
-<div class="box formula">
-Aus jeder Fibration folgt:
-$$
-\cdots \to \underbrace{\pi_n(F)}_{\text{Faser-Homotopie}} \xrightarrow{\;\underbrace{i_*}_{\text{Inklusion}}\;} \underbrace{\pi_n(E)}_{\text{Total-Homotopie}} \xrightarrow{\;\underbrace{p_*}_{\text{Projektion}}\;} \underbrace{\pi_n(B)}_{\text{Basis-Homotopie}} \xrightarrow{\;\underbrace{\partial}_{\text{Randabbildung}}\;} \underbrace{\pi_{n-1}(F)}_{\text{eins tiefer}} \to \cdots
-$$
-<p>Beispiel <b>Hopf</b>: $\pi_3(S^2) \cong \mathbb{Z}$, erzeugt von der Hopf-Abbildung.</p>
+<div class="intuition">
+Möbius: Eine Umrundung dreht die Faser um → $\rho(1)=-\mathrm{id}$.
+Trivial: alles bleibt gleich → $\rho\equiv\mathrm{id}$.
 </div>
 
-<h2>5. Schnitte (Sections)</h2>
-<div class="box formula">
-Ein <b>Schnitt</b> wählt in jeder Faser einen Punkt:
-$$
-\underbrace{s}_{\text{Schnitt}}\colon \underbrace{B}_{\text{Basis}} \to \underbrace{E}_{\text{Totalraum}}, \qquad \underbrace{p\circ s}_{\text{Rückprojektion}} \;=\; \underbrace{\mathrm{id}_B}_{\text{Identität}}
-$$
-<p>Möbiusband hat <b>keinen</b> nirgends-verschwindenden Schnitt (Twist!) – triviales Bündel schon.</p>
+<div class="viz">
+Bewege den Winkel-Slider durch $0\to 2\pi$. Der Vektor in der Faser wird transportiert.
+Bei Möbius siehst du direkt: nach einer Runde zeigt er in die entgegengesetzte Richtung!
 </div>
 
+<div class="controls">
+  <label>Winkel um $S^1$: $\gamma(t)$
+    <input type="range" id="mono" min="0" max="100" value="0">
+    <span id="monov">0°</span>
+  </label>
+  <label>Bündeltyp
+    <select id="monoType">
+      <option value="trivial">Trivial (Zylinder)</option>
+      <option value="moebius">Möbius</option>
+    </select>
+  </label>
+  <button id="monoAnim">▶ eine Runde</button>
+</div>
+<canvas id="monoCanvas" width="900" height="340"></canvas>
+</div>
+
+<!-- =========================== -->
+<h2>6. Lange exakte Homotopiesequenz</h2>
+<div class="box">
+<div class="formula">
+$$
+\cdots\to
+\underbrace{\pi_n(F)}_{\text{Faser}}
+\xrightarrow{\;\underbrace{i_*}_{\text{Inklusion}}\;}
+\underbrace{\pi_n(E)}_{\text{Total}}
+\xrightarrow{\;\underbrace{p_*}_{\text{Projektion}}\;}
+\underbrace{\pi_n(B)}_{\text{Basis}}
+\xrightarrow{\;\underbrace{\partial_n}_{\text{Rand}}\;}
+\underbrace{\pi_{n-1}(F)}_{\text{tiefer}}\to\cdots
+$$
+$$
+\underbrace{\mathrm{Bild}(i_*)}_{\text{was von }F\text{ kommt}}
+=
+\underbrace{\mathrm{Kern}(p_*)}_{\text{was auf 0 geht}}
+$$
+</div>
+
+<div class="viz">
+Klicke auf die Terme unten — sie leuchten auf und zeigen dir, wie Bild und Kern
+zueinander passen. Die Sequenz ist das mächtigste Rechenwerkzeug der Homotopietheorie.
+</div>
+
+<div id="seqDiagram" style="text-align:center;margin:15px 0">
+  <span class="seq-term" data-info="pnF">$\pi_n(F)$</span>→
+  <span class="seq-term" data-info="pnE">$\pi_n(E)$</span>→
+  <span class="seq-term" data-info="pnB">$\pi_n(B)$</span>→
+  <span class="seq-term" data-info="pn1F">$\pi_{n-1}(F)$</span>→
+  <span class="seq-term" data-info="pn1E">$\pi_{n-1}(E)$</span>→
+  <span class="seq-term" data-info="pn1B">$\pi_{n-1}(B)$</span>→ ⋯
+</div>
+<div id="seqExplain">Klicke einen Term an.</div>
+
+<canvas id="seqCanvas" width="900" height="260"></canvas>
+<p class="legend">Balkendiagramm der Homotopiegruppen einiger Standardfibrationen — wähle unten.</p>
+
+<div class="controls">
+  <label>Beispiel
+    <select id="seqEx">
+      <option value="hopf">Hopf $S^1\to S^3\to S^2$</option>
+      <option value="triv">$S^1\times S^1\to S^1$</option>
+      <option value="path">Wegeraum $\Omega B\to PB\to B$</option>
+    </select>
+  </label>
+</div>
+</div>
+
+<!-- =========================== -->
+<h2>7. Die Hopf-Fibration $S^3\to S^2$</h2>
+<div class="box">
+<div class="formula">
+$$
+\underbrace{S^1}_{\text{Kreisfaser}}\hookrightarrow
+\underbrace{S^3}_{\subset\,\mathbb{C}^2}\xrightarrow{\;p\;}
+\underbrace{S^2}_{\cong\,\mathbb{CP}^1}
+$$
+$$
+\underbrace{p(z_1,z_2)}_{\text{Bildpunkt}}=
+\bigl(\underbrace{2\,\mathrm{Re}(z_1\bar z_2)}_{x},
+\underbrace{2\,\mathrm{Im}(z_1\bar z_2)}_{y},
+\underbrace{|z_1|^2-|z_2|^2}_{z}\bigr)
+$$
+</div>
+
+<div class="viz">
+Jeder Punkt der Basis-Sphäre $S^2$ hat als Faser einen ganzen Kreis in $S^3$.
+Zwei verschiedene Fasern sind <b>verlinkt</b> wie zwei Kettenglieder. Rotiere die 3D-Ansicht!
+</div>
+
+<div class="controls">
+  <label>Anzahl Fasern
+    <input type="range" id="hn" min="4" max="40" value="16"><span id="hnv">16</span>
+  </label>
+  <label>Zwei Fasern hervorheben
+    <input type="checkbox" id="hLink" checked>
+  </label>
+  <label>Phase $\varphi$
+    <input type="range" id="hph" min="0" max="100" value="0"><span id="hphv">0.00</span>
+  </label>
+</div>
+<div id="plotHopf" style="width:100%;height:520px"></div>
+</div>
+
+<!-- =========================== -->
+<h2>8. Schnitte (Sections)</h2>
+<div class="box">
+<div class="formula">
+$$
+\underbrace{s}_{\text{Schnitt}}\colon
+\underbrace{B}_{\text{Basis}}\to
+\underbrace{E}_{\text{Totalraum}},\qquad
+\underbrace{p\circ s}_{\text{Rückprojektion}}=
+\underbrace{\mathrm{id}_B}_{\text{Identität}}
+$$
+</div>
+
+<div class="intuition">
+<b>Igel-Satz:</b> $TS^2$ hat keinen nirgends-verschwindenden Schnitt — irgendwo
+muss jedes stetige Vektorfeld auf der Kugel verschwinden.
+</div>
+
+<div class="viz">
+Bewege den Schnitt-Slider. Du siehst: bei $TS^2$ muss der Schnitt an mindestens
+einem Pol Null werden (rote Warnung erscheint dort).
+</div>
+
+<div class="controls">
+  <label>Basis
+    <select id="secBase">
+      <option value="s1">$S^1$ (Möbius vs. Zylinder)</option>
+      <option value="s2">$S^2$ (Tangentialbündel)</option>
+    </select>
+  </label>
+  <label>Schnitt-Amplitude
+    <input type="range" id="secA" min="0" max="100" value="50"><span id="secAv">0.50</span>
+  </label>
+  <label>Schnitt-Phase
+    <input type="range" id="secP" min="0" max="100" value="0"><span id="secPv">0.00</span>
+  </label>
+</div>
+<div id="plotSec" style="width:100%;height:480px"></div>
+</div>
+
+<!-- =========================== -->
+<h2>9. Zusammenfassung</h2>
+<div class="box">
+<div class="formula">
+$$
+\begin{array}{rcl}
+\text{lokal}&:& \underbrace{p^{-1}(U)}_{\text{Karte}}\cong\underbrace{U\times F}_{\text{Produkt}}\\[4pt]
+\text{Verklebung}&:& \underbrace{g_{\alpha\beta}}_{\text{Kozykel}}\colon U_\alpha\cap U_\beta\to G\\[4pt]
+\text{Homotopie}&:& \text{HLP}\Rightarrow\underbrace{\pi_*\text{-Sequenz}}_{\text{lange exakt}}\\[4pt]
+\text{Monodromie}&:& \underbrace{\rho}_{\text{Darstellung}}\colon \pi_1(B)\to\mathrm{Aut}(F)\\[4pt]
+\text{Schnitte}&:& \underbrace{s}_{\text{Section}}\colon B\to E,\; p\circ s=\mathrm{id}_B
+\end{array}
+$$
+</div>
+
+<div class="intuition">
+Fibrationen = <b>parametrisierte Familien von Räumen</b>. Lokal trivial, global verklebt.
+HLP ist die homotopie-theoretische Essenz, Kozykel die geometrische Konstruktion,
+lange exakte Sequenz das algebraische Werkzeug.
+</div>
+</div>
+
+<!-- ================================================================ -->
+<!--                           SCRIPTS                                -->
+<!-- ================================================================ -->
 <script>
-// ---------- Plotly 3D ----------
-function makeFibration(type, tParam, bParam) {
-  const N = 60;
-  let xs=[], ys=[], zs=[];
-  let fiberX=[], fiberY=[], fiberZ=[];
-  let baseX=[], baseY=[], baseZ=[];
+// ================================================================
+// Abschnitt 1: Faserbündel-Grunddarstellung (Zylinder)
+// ================================================================
+function draw1() {
+  const b = +document.getElementById('b1').value/100;
+  const nf = +document.getElementById('nf1').value;
+  document.getElementById('b1v').textContent = b.toFixed(2);
+  document.getElementById('nf1v').textContent = nf;
 
-  if (type === 'trivial') {
-    // S^1 x I  -> S^1
-    for (let i=0; i<N; i++) {
-      let row=[], rowy=[], rowz=[];
-      for (let j=0; j<N; j++) {
-        const u = 2*Math.PI*i/(N-1);
-        const v = j/(N-1);
-        row.push(Math.cos(u));
-        rowy.push(Math.sin(u));
-        rowz.push(v-0.5);
-      }
-      xs.push(row); ys.push(rowy); zs.push(rowz);
+  const N = 40;
+  const xs=[], ys=[], zs=[];
+  for (let i=0;i<N;i++){
+    const rx=[],ry=[],rz=[];
+    for (let j=0;j<N;j++){
+      const u=2*Math.PI*i/(N-1), v=j/(N-1)-0.5;
+      rx.push(Math.cos(u)); ry.push(Math.sin(u)); rz.push(v);
     }
-    // Faser über b
-    const ub = 2*Math.PI*bParam;
-    for (let j=0; j<N; j++) {
-      const v = j/(N-1);
-      fiberX.push(Math.cos(ub));
-      fiberY.push(Math.sin(ub));
-      fiberZ.push(v-0.5);
-    }
-    // Basiskreis
-    for (let i=0; i<N; i++) {
-      const u = 2*Math.PI*i/(N-1);
-      baseX.push(Math.cos(u)); baseY.push(Math.sin(u)); baseZ.push(-0.8);
-    }
+    xs.push(rx); ys.push(ry); zs.push(rz);
   }
-  else if (type === 'moebius') {
-    for (let i=0; i<N; i++) {
-      let row=[], rowy=[], rowz=[];
-      for (let j=0; j<N; j++) {
-        const u = 2*Math.PI*i/(N-1);
-        const v = (j/(N-1))-0.5;
-        const x = (1 + v*Math.cos(u/2))*Math.cos(u);
-        const y = (1 + v*Math.cos(u/2))*Math.sin(u);
-        const z = v*Math.sin(u/2);
-        row.push(x); rowy.push(y); rowz.push(z);
-      }
-      xs.push(row); ys.push(rowy); zs.push(rowz);
-    }
-    const ub = 2*Math.PI*bParam;
-    for (let j=0; j<N; j++) {
-      const v = (j/(N-1))-0.5;
-      fiberX.push((1+v*Math.cos(ub/2))*Math.cos(ub));
-      fiberY.push((1+v*Math.cos(ub/2))*Math.sin(ub));
-      fiberZ.push(v*Math.sin(ub/2));
-    }
-    for (let i=0; i<N; i++) {
-      const u = 2*Math.PI*i/(N-1);
-      baseX.push(Math.cos(u)); baseY.push(Math.sin(u)); baseZ.push(-1.2);
-    }
-  }
-  else if (type === 'hopf') {
-    // Stereographische Projektion einiger Hopf-Kreise
-    xs=null;
-    const fibersData = [];
-    const numFibers = 12;
-    for (let k=0; k<numFibers; k++) {
-      const theta = Math.PI * k/numFibers;
-      const phi   = 2*Math.PI * k/numFibers;
-      const xF=[], yF=[], zF=[];
-      for (let j=0; j<100; j++) {
-        const t = 2*Math.PI*j/99;
-        // Punkt auf S^3
-        const a = Math.cos(theta/2)*Math.cos(t);
-        const b = Math.cos(theta/2)*Math.sin(t);
-        const c = Math.sin(theta/2)*Math.cos(t+phi);
-        const d = Math.sin(theta/2)*Math.sin(t+phi);
-        // Stereographische Projektion nach R^3
-        const s = 1/(1-d + 0.001);
-        xF.push(a*s); yF.push(b*s); zF.push(c*s);
-      }
-      fibersData.push({x:xF,y:yF,z:zF,theta});
-    }
-    return {type:'hopf', fibers: fibersData, bParam};
-  }
-  return {type, xs, ys, zs, fiberX, fiberY, fiberZ, baseX, baseY, baseZ};
-}
+  const traces = [{
+    type:'surface', x:xs, y:ys, z:zs,
+    colorscale:'Blues', opacity:0.35, showscale:false, name:'E'
+  }];
 
-function draw3D() {
-  const type = document.getElementById('fibSelect').value;
-  const t = +document.getElementById('tSlider').value/100;
-  const b = +document.getElementById('bSlider').value/100;
-  const data = makeFibration(type, t, b);
-  let traces = [];
-
-  if (data.type === 'hopf') {
-    data.fibers.forEach((f,i) => {
-      traces.push({
-        type:'scatter3d', mode:'lines',
-        x:f.x, y:f.y, z:f.z,
-        line:{width:4, color:`hsl(${i*30},70%,50%)`},
-        name:`Faser ${i}`, showlegend:false
-      });
-    });
-  } else {
-    traces.push({
-      type:'surface', x:data.xs, y:data.ys, z:data.zs,
-      colorscale:'Viridis', opacity:0.7, showscale:false, name:'E'
-    });
-    traces.push({
-      type:'scatter3d', mode:'lines',
-      x:data.fiberX, y:data.fiberY, z:data.fiberZ,
-      line:{color:'green', width:8}, name:'Faser p⁻¹(b)'
-    });
-    traces.push({
-      type:'scatter3d', mode:'lines',
-      x:data.baseX, y:data.baseY, z:data.baseZ,
-      line:{color:'red', width:6}, name:'Basis B'
-    });
+  // Fasern
+  for (let k=0;k<nf;k++){
+    const u=2*Math.PI*k/nf;
+    const fx=[], fy=[], fz=[];
+    for (let j=0;j<20;j++){
+      fx.push(Math.cos(u)); fy.push(Math.sin(u)); fz.push(j/19-0.5);
+    }
+    traces.push({type:'scatter3d',mode:'lines',x:fx,y:fy,z:fz,
+      line:{color:'#888',width:2},showlegend:false});
   }
 
-  Plotly.newPlot('plot3d', traces, {
+  // Ausgewählte Faser (grün)
+  const ub = 2*Math.PI*b;
+  const gx=[], gy=[], gz=[];
+  for (let j=0;j<30;j++){
+    gx.push(Math.cos(ub)); gy.push(Math.sin(ub)); gz.push(j/29-0.5);
+  }
+  traces.push({type:'scatter3d',mode:'lines',x:gx,y:gy,z:gz,
+    line:{color:'#2a2',width:10},name:'p⁻¹(b)'});
+
+  // Basispunkt (rot)
+  traces.push({type:'scatter3d',mode:'markers',
+    x:[Math.cos(ub)*1.15], y:[Math.sin(ub)*1.15], z:[-0.7],
+    marker:{color:'#c33',size:8},name:'b'});
+  // Basiskreis
+  const bx=[], by=[], bz=[];
+  for (let i=0;i<50;i++){
+    const u=2*Math.PI*i/49;
+    bx.push(Math.cos(u)*1.15); by.push(Math.sin(u)*1.15); bz.push(-0.7);
+  }
+  traces.push({type:'scatter3d',mode:'lines',x:bx,y:by,z:bz,
+    line:{color:'#c33',width:4},name:'B'});
+
+  Plotly.newPlot('plot1', traces, {
     margin:{l:0,r:0,t:0,b:0},
-    scene:{ aspectmode:'data' }
-  }, {responsive:true});
+    scene:{aspectmode:'data'}
+  }, {responsive:true, displaylogo:false});
 }
+['b1','nf1'].forEach(id=>document.getElementById(id).addEventListener('input',draw1));
 
-// ---------- Canvas: Homotopie-Lift ----------
-function drawLift() {
-  const c = document.getElementById('liftCanvas');
+// ================================================================
+// Abschnitt 2: HLP-Canvas
+// ================================================================
+function drawHLP() {
+  const c = document.getElementById('hlpCanvas');
   const ctx = c.getContext('2d');
-  const W = c.width, H = c.height;
+  const W=c.width, H=c.height;
   ctx.clearRect(0,0,W,H);
+  const t = +document.getElementById('t2').value/100;
+  const type = document.getElementById('fib2').value;
+  document.getElementById('t2v').textContent = t.toFixed(2);
 
-  const t = +document.getElementById('tSlider').value/100;
-  const b = +document.getElementById('bSlider').value/100;
-  const type = document.getElementById('fibSelect').value;
+  // Zonen
+  ctx.fillStyle='#f8f4ff'; ctx.fillRect(30,40,W-60,80);
+  ctx.fillStyle='#fff4e6'; ctx.fillRect(30,H-120,W-60,80);
+  ctx.fillStyle='#333'; ctx.font='bold 18px Georgia';
+  ctx.fillText('E (Totalraum)', 40, 30);
+  ctx.fillText('B (Basis)', 40, H-10);
 
-  // Basis unten
-  ctx.strokeStyle='#888'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(50,H-60); ctx.lineTo(W-30,H-60); ctx.stroke();
-  ctx.fillStyle='#333';
-  ctx.font='14px Georgia';
-  ctx.fillText('B (Basis)', W-90, H-40);
-
-  // Totalraum oben
-  ctx.beginPath(); ctx.moveTo(50,60); ctx.lineTo(W-30,60); ctx.stroke();
-  ctx.fillText('E (Totalraum)', W-130, 40);
-
-  // Projektion p (Pfeile)
-  ctx.strokeStyle='#bbb';
-  for (let x=80; x<W-30; x+=40) {
-    ctx.beginPath();
-    ctx.moveTo(x, 70); ctx.lineTo(x, H-70);
-    ctx.stroke();
-    // Pfeilkopf
-    ctx.beginPath();
-    ctx.moveTo(x, H-70); ctx.lineTo(x-4, H-78); ctx.lineTo(x+4, H-78);
+  // Projektionspfeile
+  ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
+  for (let x=70;x<W-40;x+=50){
+    ctx.beginPath(); ctx.moveTo(x,125); ctx.lineTo(x,H-125); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,H-125); ctx.lineTo(x-4,H-133); ctx.lineTo(x+4,H-133);
     ctx.closePath(); ctx.fillStyle='#bbb'; ctx.fill();
   }
-  ctx.fillStyle='#666'; ctx.fillText('p', 30, H/2);
+  ctx.fillStyle='#666'; ctx.font='italic 20px Georgia'; ctx.fillText('p', 15, H/2);
 
-  // Homotopie H unten (rot) - eine sich bewegende Kurve
+  // Homotopie H unten (rot)
   ctx.strokeStyle='#c33'; ctx.lineWidth=3;
   ctx.beginPath();
-  for (let i=0; i<=100; i++) {
-    const s = i/100;
-    const x = 60 + s*(W-100);
-    const y = H-60 + 30*Math.sin(2*Math.PI*s + t*2*Math.PI)*t;
-    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  for (let i=0;i<=150;i++){
+    const s=i/150;
+    const x = 50 + s*(W-100);
+    const y = H-80 + 25*Math.sin(3*Math.PI*s + t*2*Math.PI)*t;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
   }
   ctx.stroke();
+  ctx.fillStyle='#c33'; ctx.font='italic 16px Georgia';
+  ctx.fillText('H(x,t)', W-90, H-60);
 
-  // Lift oben (blau) - je nach Fibration mit oder ohne Twist
+  // Lift oben (blau) mit ggf. Twist
   ctx.strokeStyle='#26a'; ctx.lineWidth=3;
   ctx.beginPath();
-  for (let i=0; i<=100; i++) {
-    const s = i/100;
-    const x = 60 + s*(W-100);
-    let twist = 0;
-    if (type === 'moebius') twist = 40*Math.sin(Math.PI*s)*t;
-    if (type === 'hopf')    twist = 60*s*t;
-    const y = 60 + 20*Math.sin(2*Math.PI*s + t*2*Math.PI)*t + twist;
-    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  for (let i=0;i<=150;i++){
+    const s=i/150;
+    const x = 50 + s*(W-100);
+    let twist=0;
+    if (type==='moebius') twist = 40*Math.sin(Math.PI*s)*t;
+    if (type==='double')  twist = -20*Math.sin(2*Math.PI*s)*t;
+    const y = 80 + 20*Math.sin(3*Math.PI*s + t*2*Math.PI)*t + twist;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
   }
   ctx.stroke();
+  ctx.fillStyle='#26a'; ctx.fillText('H̃(x,t)', W-90, 100);
 
-  // Faser über b (grün, vertikal)
-  const xb = 60 + b*(W-100);
-  ctx.strokeStyle='#2a2'; ctx.lineWidth=4;
-  ctx.beginPath(); ctx.moveTo(xb,70); ctx.lineTo(xb,H-70); ctx.stroke();
-  ctx.fillStyle='#2a2';
-  ctx.fillText('p⁻¹(b)', xb+6, 90);
+  // Startpunkt f̃₀
+  ctx.fillStyle='#26a';
+  ctx.beginPath(); ctx.arc(50, 80, 6, 0, 2*Math.PI); ctx.fill();
+  ctx.fillStyle='#333'; ctx.font='14px Georgia'; ctx.fillText('f̃₀', 20, 78);
 
-  // Punkt b
+  // Textbadge oben rechts
+  ctx.fillStyle = type==='moebius'?'#a02020':(type==='double'?'#206020':'#204080');
+  ctx.font='bold 14px Georgia';
+  ctx.fillText(
+    type==='moebius' ? 'Möbius: Twist am Ende!' :
+    type==='double'  ? 'Doppelte Überlagerung' :
+    'Trivial: klarer Lift',
+    W-260, 30);
+}
+['t2','fib2'].forEach(id=>document.getElementById(id).addEventListener('input',drawHLP));
+
+let hlpRun=false, hlpId=null;
+document.getElementById('hlpAnim').addEventListener('click',()=>{
+  hlpRun=!hlpRun;
+  document.getElementById('hlpAnim').textContent = hlpRun?'⏸ Pause':'▶ Animation';
+  if (hlpRun) hlpTick(); else cancelAnimationFrame(hlpId);
+});
+function hlpTick(){
+  const s=document.getElementById('t2');
+  s.value = (+s.value+1)%101;
+  drawHLP();
+  hlpId=requestAnimationFrame(hlpTick);
+}
+
+// ================================================================
+// Abschnitt 3: Lokale Trivialisierung
+// ================================================================
+function drawChart() {
+  const c = document.getElementById('chartCanvas');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const sel = document.getElementById('chartSel').value;
+
+  // Möbius-Ring als flach ausgerollt
+  ctx.strokeStyle='#333'; ctx.lineWidth=1.5;
+  ctx.strokeRect(50, 100, W-100, 120);
+  ctx.fillStyle='#333'; ctx.font='bold 14px Georgia';
+  ctx.fillText('B = S¹ (aufgerollt)', 50, 90);
+
+  // Kartenbereiche
+  const showA = sel==='alpha' || sel==='both';
+  const showB = sel==='beta'  || sel==='both';
+
+  if (showA){
+    ctx.fillStyle='rgba(200,80,80,0.25)';
+    ctx.fillRect(50, 100, 500, 120);
+    ctx.fillStyle='#a02020'; ctx.font='bold 16px Georgia';
+    ctx.fillText('U_α', 280, 240);
+    // Karte φ_α oben
+    ctx.strokeStyle='#a02020'; ctx.lineWidth=2;
+    ctx.strokeRect(80, 260, 300, 80);
+    ctx.fillStyle='#a02020';
+    ctx.fillText('φ_α: p⁻¹(U_α) → U_α × F', 90, 255);
+    // Fasern (parallel)
+    ctx.strokeStyle='#a02020'; ctx.lineWidth=1;
+    for (let x=80;x<380;x+=30){
+      ctx.beginPath(); ctx.moveTo(x,260); ctx.lineTo(x,340); ctx.stroke();
+    }
+  }
+  if (showB){
+    ctx.fillStyle='rgba(80,150,200,0.25)';
+    ctx.fillRect(350, 100, 500, 120);
+    ctx.fillStyle='#206090'; ctx.font='bold 16px Georgia';
+    ctx.fillText('U_β', 600, 240);
+    ctx.strokeStyle='#206090'; ctx.lineWidth=2;
+    ctx.strokeRect(500, 260, 300, 80);
+    ctx.fillStyle='#206090';
+    ctx.fillText('φ_β: p⁻¹(U_β) → U_β × F', 510, 255);
+    // Fasern (mit Twist am Rand)
+    ctx.strokeStyle='#206090'; ctx.lineWidth=1;
+    for (let x=500;x<800;x+=30){
+      const s=(x-500)/300;
+      const flip = s>0.85 ? (s-0.85)*6 : 0;
+      ctx.beginPath();
+      ctx.moveTo(x,260+flip*30);
+      ctx.lineTo(x,340-flip*30);
+      ctx.stroke();
+    }
+  }
+  if (sel==='both'){
+    // Überlappungsbereich
+    ctx.fillStyle='rgba(150,100,180,0.4)';
+    ctx.fillRect(350, 100, 200, 120);
+    ctx.fillStyle='#5a2c8b'; ctx.font='bold 14px Georgia';
+    ctx.fillText('U_α ∩ U_β', 400, 155);
+    ctx.fillText('→ Übergangsfunktion g_αβ', 380, 175);
+  }
+
+  // Beschriftungen
+  ctx.fillStyle='#333'; ctx.font='italic 14px Georgia';
+  ctx.fillText('lokal trivialisierte Karten (U × F)', 300, 380);
+}
+document.getElementById('chartSel').addEventListener('input',drawChart);
+
+// ================================================================
+// Abschnitt 4: Kozykel-Diagramm
+// ================================================================
+function drawCocycle() {
+  const c = document.getElementById('cocycleCanvas');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const mode = document.getElementById('cocSel').value;
+
+  const cx=W/2, cy=H/2-20, r=110;
+  const A = {x:cx-r*0.9, y:cy-r*0.5, color:'rgba(200,80,80,0.35)', label:'U_α'};
+  const B = {x:cx+r*0.9, y:cy-r*0.5, color:'rgba(80,150,200,0.35)', label:'U_β'};
+  const G = {x:cx,       y:cy+r*0.75, color:'rgba(80,180,80,0.35)',  label:'U_γ'};
+
+  [A,B,G].forEach(u=>{
+    ctx.fillStyle=u.color;
+    ctx.beginPath(); ctx.arc(u.x,u.y,r,0,2*Math.PI); ctx.fill();
+    ctx.strokeStyle='#333'; ctx.lineWidth=1.5; ctx.stroke();
+  });
+  ctx.fillStyle='#333'; ctx.font='bold 20px Georgia';
+  ctx.fillText('U_α', A.x-90, A.y-50);
+  ctx.fillText('U_β', B.x+50, B.y-50);
+  ctx.fillText('U_γ', G.x-20, G.y+90);
+
+  function arrow(x1,y1,x2,y2,label,color,thick){
+    ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=thick||2.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const ang=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-12*Math.cos(ang-0.3), y2-12*Math.sin(ang-0.3));
+    ctx.lineTo(x2-12*Math.cos(ang+0.3), y2-12*Math.sin(ang+0.3));
+    ctx.closePath(); ctx.fill();
+    ctx.font='italic 16px Georgia';
+    ctx.fillText(label, (x1+x2)/2+8, (y1+y2)/2-8);
+  }
+
+  const highlightP1 = mode==='path1';
+  const highlightP2 = mode==='path2';
+
+  // g_αβ (β → α)
+  arrow(B.x-30, B.y+10, A.x+30, A.y+10, 'g_αβ',
+        highlightP1?'#e00':'#a02020', highlightP1?4:2.5);
+  // g_βγ (γ → β)
+  arrow(G.x+30, G.y-30, B.x-15, B.y+25, 'g_βγ',
+        highlightP1?'#e00':'#2060a0', highlightP1?4:2.5);
+  // g_αγ (γ → α) direkt
+  arrow(G.x-30, G.y-30, A.x+15, A.y+25, 'g_αγ',
+        highlightP2?'#e00':'#20a020', highlightP2?4:2.5);
+
+  ctx.fillStyle='#333'; ctx.font='bold 17px Georgia';
+  ctx.fillText('Kozykel-Bedingung:  g_αβ · g_βγ = g_αγ', 240, H-20);
+
+  if (highlightP1){
+    ctx.fillStyle='#e00'; ctx.font='bold 15px Georgia';
+    ctx.fillText('Weg: γ → β → α  (zwei Schritte)', 30, 30);
+  }
+  if (highlightP2){
+    ctx.fillStyle='#e00'; ctx.font='bold 15px Georgia';
+    ctx.fillText('Weg: γ → α  (direkt)', 30, 30);
+  }
+}
+document.getElementById('cocSel').addEventListener('input',drawCocycle);
+
+// ================================================================
+// Abschnitt 5: Monodromie
+// ================================================================
+function drawMono() {
+  const c = document.getElementById('monoCanvas');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const ang = 2*Math.PI*(+document.getElementById('mono').value/100);
+  const type = document.getElementById('monoType').value;
+  document.getElementById('monov').textContent = (ang*180/Math.PI).toFixed(0)+'°';
+
+  // Kreis B
+  const cx=200, cy=H/2, R=120;
+  ctx.strokeStyle='#c33'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+  ctx.fillStyle='#333'; ctx.font='bold 16px Georgia';
+  ctx.fillText('B = S¹', cx-25, cy+R+30);
+
+  // Basispunkt γ(t)
+  const bx = cx + R*Math.cos(ang);
+  const by = cy + R*Math.sin(ang);
   ctx.fillStyle='#c33';
-  ctx.beginPath(); ctx.arc(xb, H-60, 5, 0, 2*Math.PI); ctx.fill();
-  ctx.fillText('b', xb-4, H-25);
+  ctx.beginPath(); ctx.arc(bx,by,7,0,2*Math.PI); ctx.fill();
+
+  // Startpunkt
+  ctx.fillStyle='#933';
+  ctx.beginPath(); ctx.arc(cx+R,cy,5,0,2*Math.PI); ctx.fill();
+  ctx.fillStyle='#333'; ctx.font='12px Georgia';
+  ctx.fillText('b₀', cx+R+10, cy+5);
+
+  // Faser F = [-1,1] rechts als vertikale Linie
+  const fx = 550;
+  const fy0 = cy-100, fy1 = cy+100;
+  ctx.strokeStyle='#333'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(fx,fy0); ctx.lineTo(fx,fy1); ctx.stroke();
+  ctx.fillStyle='#333'; ctx.fillText('Faser F = [-1,1]', fx+10, fy0-10);
+  ctx.fillText('+1', fx-25, fy0+5);
+  ctx.fillText('-1', fx-25, fy1+5);
+  ctx.fillText(' 0', fx-25, cy+5);
+
+  // Vektor in der Faser
+  const t = ang/(2*Math.PI);
+  let vecY;
+  if (type==='trivial'){
+    vecY = cy - 70; // konstant oben
+  } else {
+    // Möbius: langsame Drehung so, dass nach 2π der Vektor gespiegelt ist
+    vecY = cy - 70*Math.cos(ang/2);
+  }
+  ctx.strokeStyle='#26a'; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(fx,cy); ctx.lineTo(fx,vecY); ctx.stroke();
+  // Pfeilkopf
+  const dir = vecY < cy ? -1 : 1;
+  ctx.beginPath();
+  ctx.moveTo(fx,vecY);
+  ctx.lineTo(fx-6, vecY+dir*10);
+  ctx.lineTo(fx+6, vecY+dir*10);
+  ctx.closePath(); ctx.fillStyle='#26a'; ctx.fill();
+
+  // Verbindung: γ(t) → Faser
+  ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(fx,cy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Status
+  ctx.fillStyle = (type==='moebius' && Math.abs(t-1)<0.02)?'#c33':'#333';
+  ctx.font='bold 16px Georgia';
+  ctx.fillText(
+    type==='moebius'
+      ? (t>=0.99 ? 'Nach 1 Runde: Vektor gespiegelt! ρ(1) = -id' : `t = ${t.toFixed(2)}: Vektor dreht sich langsam`)
+      : `t = ${t.toFixed(2)}: Vektor unverändert (ρ ≡ id)`,
+    300, 40);
+}
+['mono','monoType'].forEach(id=>document.getElementById(id).addEventListener('input',drawMono));
+
+let monoRun=false, monoId=null;
+document.getElementById('monoAnim').addEventListener('click',()=>{
+  monoRun=!monoRun;
+  document.getElementById('monoAnim').textContent = monoRun?'⏸ Pause':'▶ eine Runde';
+  if (monoRun){
+    document.getElementById('mono').value=0;
+    monoTick();
+  } else cancelAnimationFrame(monoId);
+});
+function monoTick(){
+  const s=document.getElementById('mono');
+  const nv = +s.value + 0.6;
+  if (nv >= 100){ s.value=100; drawMono(); monoRun=false;
+    document.getElementById('monoAnim').textContent='▶ eine Runde'; return; }
+  s.value = nv; drawMono();
+  monoId=requestAnimationFrame(monoTick);
 }
 
-// ---------- Events ----------
-function update() {
-  document.getElementById('tVal').textContent =
-    (+document.getElementById('tSlider').value/100).toFixed(2);
-  document.getElementById('bVal').textContent =
-    (+document.getElementById('bSlider').value/100).toFixed(2);
-  draw3D();
-  drawLift();
+// ================================================================
+// Abschnitt 6: Lange exakte Sequenz — Klick + Balkendiagramm
+// ================================================================
+const seqInfo = {
+  pnF:'π_n(F): Sphären in der Faser. Wie „verknotet" liegt F homotopisch?',
+  pnE:'π_n(E): Homotopie des Totalraums. Meist das Ziel der Rechnung.',
+  pnB:'π_n(B): Homotopie der Basis. Oft bekannt oder einfacher.',
+  pn1F:'π_{n-1}(F): Eine Dimension tiefer. Empfangsziel des Randoperators ∂_n.',
+  pn1E:'π_{n-1}(E): Wieder Total, jetzt eins tiefer. Bild von i_*.',
+  pn1B:'π_{n-1}(B): Basis, tiefer. So kaskadiert die Sequenz bis π_0.'
+};
+document.querySelectorAll('.seq-term').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.seq-term').forEach(x=>x.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('seqExplain').textContent = seqInfo[el.dataset.info];
+  });
+});
+
+// Balkendiagramm für Homotopiegruppen
+function drawSeqBars() {
+  const c = document.getElementById('seqCanvas');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  const ex = document.getElementById('seqEx').value;
+
+  // Daten: [π_1, π_2, π_3, π_4] für F, E, B
+  let data, title;
+  if (ex==='hopf'){
+    // Hopf: F=S¹, E=S³, B=S²
+    data = {
+      F:  ['ℤ', '0', '0', '0'],
+      E:  ['0', '0', 'ℤ', 'ℤ/2'],
+      B:  ['0', 'ℤ', 'ℤ', 'ℤ/2']
+    };
+    title = 'Hopf: S¹ → S³ → S²';
+  } else if (ex==='triv'){
+    // Torus als S¹×S¹ → S¹
+    data = {
+      F:  ['ℤ', '0', '0', '0'],
+      E:  ['ℤ²', '0', '0', '0'],
+      B:  ['ℤ', '0', '0', '0']
+    };
+    title = 'Trivial: S¹ × S¹ → S¹';
+  } else {
+    // Wegeraum
+    data = {
+      F:  ['π₀(ΩB)', 'π₁(ΩB)', 'π₂(ΩB)', 'π₃(ΩB)'],
+      E:  ['0', '0', '0', '0'],
+      B:  ['π₁(B)', 'π₂(B)', 'π₃(B)', 'π₄(B)']
+    };
+    title = 'Wegeraum: ΩB → PB → B  (PB zusammenziehbar!)';
+  }
+
+  ctx.fillStyle='#333'; ctx.font='bold 16px Georgia';
+  ctx.fillText(title, 20, 25);
+
+  const labels = ['π₁','π₂','π₃','π₄'];
+  const rows = ['F','E','B'];
+  const rowColors = {F:'#2a2', E:'#4a2c6b', B:'#c33'};
+  const cellW = 160, cellH = 45;
+  const x0 = 100, y0 = 60;
+
+  // Header
+  ctx.fillStyle='#555'; ctx.font='bold 14px Georgia';
+  for (let j=0;j<4;j++){
+    ctx.fillText(labels[j], x0 + j*cellW + cellW/2 - 12, y0-8);
+  }
+  // Zeilen
+  rows.forEach((r,i)=>{
+    ctx.fillStyle = rowColors[r]; ctx.font='bold 16px Georgia';
+    ctx.fillText(r, x0-40, y0 + i*cellH + cellH/2 + 5);
+    for (let j=0;j<4;j++){
+      const val = data[r][j];
+      const strong = val !== '0';
+      ctx.fillStyle = strong ? rowColors[r]+'33' : '#eee';
+      ctx.fillRect(x0 + j*cellW, y0 + i*cellH, cellW-8, cellH-6);
+      ctx.strokeStyle = strong ? rowColors[r] : '#bbb';
+      ctx.lineWidth = strong ? 2 : 1;
+      ctx.strokeRect(x0 + j*cellW, y0 + i*cellH, cellW-8, cellH-6);
+      ctx.fillStyle = '#111'; ctx.font = strong?'bold 16px Georgia':'14px Georgia';
+      ctx.fillText(val, x0 + j*cellW + cellW/2 - 15, y0 + i*cellH + cellH/2 + 5);
+    }
+  });
+
+  // Pfeile: exakte Sequenz i_* → p_* → ∂
+  ctx.fillStyle='#333'; ctx.font='italic 12px Georgia';
+  ctx.fillText('i_* : F → E     p_* : E → B     ∂ : π_n(B) → π_{n-1}(F)',
+               x0, H-15);
 }
-['fibSelect','tSlider','bSlider'].forEach(id =>
-  document.getElementById(id).addEventListener('input', update)
-);
-update();
+document.getElementById('seqEx').addEventListener('input', drawSeqBars);
+
+// ================================================================
+// Abschnitt 7: Hopf-Fibration in 3D
+// ================================================================
+function drawHopf() {
+  const n = +document.getElementById('hn').value;
+  const link = document.getElementById('hLink').checked;
+  const ph = 2*Math.PI * (+document.getElementById('hph').value/100);
+  document.getElementById('hnv').textContent = n;
+  document.getElementById('hphv').textContent = (ph/(2*Math.PI)).toFixed(2);
+
+  const traces = [];
+  for (let k=0;k<n;k++){
+    const theta = Math.PI*(k+0.5)/n;
+    const phi   = 2*Math.PI*k/n + ph;
+    const xF=[], yF=[], zF=[];
+    for (let j=0;j<140;j++){
+      const t = 2*Math.PI*j/139;
+      const a = Math.cos(theta/2)*Math.cos(t);
+      const b = Math.cos(theta/2)*Math.sin(t);
+      const c = Math.sin(theta/2)*Math.cos(t+phi);
+      const d = Math.sin(theta/2)*Math.sin(t+phi);
+      const s = 1/(1.001-d);
+      xF.push(a*s); yF.push(b*s); zF.push(c*s);
+    }
+    const isHighlight = link && (k===0 || k===Math.floor(n/2));
+    traces.push({
+      type:'scatter3d', mode:'lines',
+      x:xF, y:yF, z:zF,
+      line:{
+        width: isHighlight?7:3,
+        color: isHighlight
+          ? (k===0 ? '#e00' : '#0a0')
+          : `hsl(${k*360/n},70%,55%)`
+      },
+      showlegend:false
+    });
+  }
+
+  // Basis-S² kleine Referenz
+  const su=[], sv=[], sw=[];
+  const N=20;
+  for (let i=0;i<N;i++){
+    const ru=[],rv=[],rw=[];
+    for (let j=0;j<N;j++){
+      const u=Math.PI*i/(N-1), v=2*Math.PI*j/(N-1);
+      ru.push(0.4*Math.sin(u)*Math.cos(v) + 4);
+      rv.push(0.4*Math.sin(u)*Math.sin(v) - 4);
+      rw.push(0.4*Math.cos(u) + 4);
+    }
+    su.push(ru); sv.push(rv); sw.push(rw);
+  }
+  traces.push({type:'surface', x:su, y:sv, z:sw,
+    colorscale:'Blues', opacity:0.6, showscale:false});
+
+  Plotly.newPlot('plotHopf', traces, {
+    margin:{l:0,r:0,t:0,b:0},
+    scene:{
+      aspectmode:'data',
+      annotations:[{
+        x:4, y:-4, z:4.6, text:'Basis S²',
+        showarrow:false, font:{size:14,color:'#204080'}
+      }]
+    }
+  }, {responsive:true, displaylogo:false});
+}
+['hn','hLink','hph'].forEach(id=>document.getElementById(id).addEventListener('input',drawHopf));
+
+// ================================================================
+// Abschnitt 8: Schnitte
+// ================================================================
+function drawSec() {
+  const base = document.getElementById('secBase').value;
+  const A = +document.getElementById('secA').value/100;
+  const P = 2*Math.PI * (+document.getElementById('secP').value/100);
+  document.getElementById('secAv').textContent = A.toFixed(2);
+  document.getElementById('secPv').textContent = (P/(2*Math.PI)).toFixed(2);
+
+  const traces = [];
+
+  if (base==='s1'){
+    // Möbius als Fläche
+    const N=50;
+    const xs=[], ys=[], zs=[];
+    for (let i=0;i<N;i++){
+      const rx=[],ry=[],rz=[];
+      for (let j=0;j<N;j++){
+        const u=2*Math.PI*i/(N-1), v=(j/(N-1))-0.5;
+        rx.push((1+v*Math.cos(u/2))*Math.cos(u));
+        ry.push((1+v*Math.cos(u/2))*Math.sin(u));
+        rz.push(v*Math.sin(u/2));
+      }
+      xs.push(rx); ys.push(ry); zs.push(rz);
+    }
+    traces.push({type:'surface', x:xs, y:ys, z:zs,
+      colorscale:'Cividis', opacity:0.5, showscale:false});
+
+    // Versuchter Schnitt: v(u) = A*sin(u + P)
+    // Der stetig gemacht wird — bei Möbius geht das nur, wenn er irgendwo Null wird!
+    const sx=[], sy=[], sz=[];
+    for (let i=0;i<=200;i++){
+      const u = 2*Math.PI*i/200;
+      let v = A*Math.sin(u+P);
+      // Bei Möbius: das globale Vorzeichen dreht sich — wir simulieren einen ehrlichen Schnitt
+      sx.push((1+v*Math.cos(u/2))*Math.cos(u));
+      sy.push((1+v*Math.cos(u/2))*Math.sin(u));
+      sz.push(v*Math.sin(u/2));
+    }
+    traces.push({type:'scatter3d', mode:'lines',
+      x:sx, y:sy, z:sz,
+      line:{color:'#2a2', width:7}, name:'Schnitt s(b)'});
+
+    // Nullstellen markieren
+    for (let i=0;i<=200;i++){
+      const u = 2*Math.PI*i/200;
+      const v = A*Math.sin(u+P);
+      if (Math.abs(v)<0.02){
+        traces.push({type:'scatter3d', mode:'markers',
+          x:[Math.cos(u)],y:[Math.sin(u)],z:[0],
+          marker:{color:'#c33',size:8,symbol:'x'},showlegend:false});
+      }
+    }
+  } else {
+    // S² mit Tangentialvektorfeld
+    const N=25;
+    const xs=[], ys=[], zs=[];
+    for (let i=0;i<N;i++){
+      const rx=[],ry=[],rz=[];
+      for (let j=0;j<N;j++){
+        const u=Math.PI*i/(N-1), v=2*Math.PI*j/(N-1);
+        rx.push(Math.sin(u)*Math.cos(v));
+        ry.push(Math.sin(u)*Math.sin(v));
+        rz.push(Math.cos(u));
+      }
+      xs.push(rx); ys.push(ry); zs.push(rz);
+    }
+    traces.push({type:'surface', x:xs, y:ys, z:zs,
+      colorscale:'Blues', opacity:0.4, showscale:false});
+
+    // Vektorfeld: rotiert um Nord-Süd-Achse → verschwindet an den Polen!
+    for (let i=1;i<10;i++){
+      for (let j=0;j<16;j++){
+        const u = Math.PI*i/10, v = 2*Math.PI*j/16 + P;
+        const px = Math.sin(u)*Math.cos(v);
+        const py = Math.sin(u)*Math.sin(v);
+        const pz = Math.cos(u);
+        // Vektor ∂/∂v (Länge sin(u) → null an Polen)
+        const L = A * Math.sin(u) * 0.5;
+        const tx = -Math.sin(v)*L;
+        const ty =  Math.cos(v)*L;
+        const tz = 0;
+        traces.push({type:'scatter3d', mode:'lines',
+          x:[px,px+tx], y:[py,py+ty], z:[pz,pz+tz],
+          line:{color:'#c33',width:3}, showlegend:false});
+      }
+    }
+    // Pole markieren
+    traces.push({type:'scatter3d', mode:'markers',
+      x:[0,0], y:[0,0], z:[1,-1],
+      marker:{color:'#c33',size:12,symbol:'x'},
+      name:'Nullstellen (Igel-Satz!)'});
+  }
+
+  Plotly.newPlot('plotSec', traces, {
+    margin:{l:0,r:0,t:0,b:0},
+    scene:{aspectmode:'data'}
+  }, {responsive:true, displaylogo:false});
+}
+['secBase','secA','secP'].forEach(id=>document.getElementById(id).addEventListener('input',drawSec));
+
+// ================================================================
+// Initialer Aufruf aller Visualisierungen
+// ================================================================
+window.addEventListener('DOMContentLoaded', ()=>{
+  draw1();
+  drawHLP();
+  drawChart();
+  drawCocycle();
+  drawMono();
+  drawSeqBars();
+  drawHopf();
+  drawSec();
+});
 </script>
-
-<h2>6. Zusammenfassung – alles ist verklebbar</h2>
-<div class="box">
-<ul>
-  <li>Ein <b>Faserbündel</b> = lokal triviales Produkt $U\times F$, global "verklebt" durch Kozykel $g_{\alpha\beta}$.</li>
-  <li>Eine <b>Serre-Fibration</b> = Homotopie-Hochhebung für alle CW-Komplexe.</li>
-  <li>Eine <b>Hurewicz-Fibration</b> = Homotopie-Hochhebung für <i>alle</i> Räume.</li>
-  <li>Jedes Faserbündel über einem parakompakten Raum ist eine Hurewicz-Fibration.</li>
-</ul>
-</div>
 
 </body>
 </html>
