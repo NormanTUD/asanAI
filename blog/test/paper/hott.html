@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Visual Guide to Homotopy Type Theory</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0e27;
+    color: #e8e8e8;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #1a1f4e, #2d1b6b);
+    padding: 30px;
+    text-align: center;
+    border-bottom: 2px solid #4a5cff;
+  }
+  h1 { font-size: 2.2em; color: #7dd3fc; }
+  h2 { color: #fbbf24; margin: 15px 0 10px; }
+  h3 { color: #a78bfa; margin: 10px 0 5px; }
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 15px;
+    background: #111530;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #333;
+  }
+  .nav button {
+    background: #1e2a5e;
+    color: #e8e8e8;
+    border: 1px solid #3a4a8e;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .nav button:hover, .nav button.active {
+    background: #4a5cff;
+    border-color: #7dd3fc;
+  }
+  .section {
+    display: none;
+    padding: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section.active { display: block; }
+  .panel {
+    background: #151a3a;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    border: 1px solid #2a3268;
+  }
+  canvas {
+    background: #0d1128;
+    border-radius: 8px;
+    display: block;
+    margin: 15px auto;
+    cursor: pointer;
+    border: 1px solid #2a3268;
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 0;
+  }
+  .controls button, .controls input {
+    background: #1e2a5e;
+    color: #e8e8e8;
+    border: 1px solid #4a5cff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .controls button:hover { background: #2d3f8e; }
+  .controls label { display: flex; align-items: center; gap: 8px; }
+  .info {
+    background: #0d1128;
+    padding: 12px;
+    border-left: 4px solid #7dd3fc;
+    margin: 10px 0;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .math {
+    font-family: 'Courier New', monospace;
+    background: #0a0e27;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #fbbf24;
+  }
+  .why {
+    background: #2d1b6b;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-size: 14px;
+    border-left: 4px solid #a78bfa;
+  }
+  .why strong { color: #fbbf24; }
+  p { margin: 8px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌌 Visual Guide to Homotopy Type Theory</h1>
+  <p style="color:#a0a0c0">See the concepts. Feel the paths. Understand the space of types.</p>
+</header>
+
+<div class="nav">
+  <button onclick="showSection('intro', this)" class="active">1. Types as Spaces</button>
+  <button onclick="showSection('paths', this)">2. Paths = Equality</button>
+  <button onclick="showSection('ops', this)">3. Path Operations</button>
+  <button onclick="showSection('higher', this)">4. Higher Paths</button>
+  <button onclick="showSection('transport', this)">5. Transport</button>
+  <button onclick="showSection('levels', this)">6. Homotopy Levels</button>
+  <button onclick="showSection('circle', this)">7. The Circle S¹</button>
+  <button onclick="showSection('univalence', this)">8. Univalence</button>
+</div>
+
+<!-- SECTION 1: TYPES AS SPACES -->
+<div id="intro" class="section active">
+  <div class="panel">
+    <h2>The Central Idea: Types are Spaces</h2>
+    <p>In classical math, a <em>type</em> is like a set — just a bag of elements. In HoTT, a type is a <strong>space</strong>: a collection of points that can be connected by paths.</p>
+    
+    <div class="why">
+      <strong>Why this choice?</strong> Traditional equality (a=b) is either true or false. But in mathematics we often ask "are these things <em>the same</em>?" and there can be <em>multiple ways</em> they're the same. Treating types as spaces makes this structure visible.[[14]]
+    </div>
+
+    <canvas id="cSpace" width="800" height="400"></canvas>
+    <div class="controls">
+      <button onclick="addPoint()">Add Point</button>
+      <button onclick="clearSpace()">Clear</button>
+      <label><input type="checkbox" id="showPaths" checked onchange="drawSpace()"> Show paths on hover</label>
+    </div>
+    <div class="info">💡 <strong>Click the canvas</strong> to add points. Hover over two points to see a path between them. Each point is an <em>element</em>; each path is an <em>identification</em> (a proof they're equal).</div>
+  </div>
+</div>
+
+<!-- SECTION 2: PATHS -->
+<div id="paths" class="section">
+  <div class="panel">
+    <h2>Paths ARE Equalities</h2>
+    <p>Given two points <span class="math">x, y : A</span>, the identity type <span class="math">x = y</span> is the <strong>type of paths</strong> from x to y.</p>
+    
+    <div class="why">
+      <strong>Why?</strong> A "proof that x equals y" is data — a specific way to identify them. Different paths = different proofs. This is <em>proof-relevant</em> mathematics.[[14]]
+    </div>
+
+    <canvas id="cPath" width="800" height="350"></canvas>
+    <div class="controls">
+      <button onclick="animatePath()">▶ Animate Path Construction</button>
+      <label>Deform: <input type="range" id="deform" min="0" max="100" value="0" oninput="drawPath()"></label>
+    </div>
+    <div class="info">
+      The <strong>reflexivity path</strong> <span class="math">refl_x : x = x</span> stays at x — it's the constant path. Move the slider to see how paths can bend and deform continuously.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: PATH OPERATIONS -->
+<div id="ops" class="section">
+  <div class="panel">
+    <h2>Groupoid Structure: What You Can Do With Paths</h2>
+    <p>Paths form a <strong>groupoid</strong>: they have identity, inverse, and composition.</p>
+    
+    <div class="why">
+      <strong>Why these three?</strong> Equality should be: <br>
+      • <strong>Reflexive</strong> (x=x always) → identity path<br>
+      • <strong>Symmetric</strong> (x=y → y=x) → path inverse<br>
+      • <strong>Transitive</strong> (x=y, y=z → x=z) → path composition[[14]]
+    </div>
+
+    <canvas id="cOps" width="800" height="450"></canvas>
+    <div class="controls">
+      <button onclick="opMode='refl'; drawOps()">refl (identity)</button>
+      <button onclick="opMode='inv'; drawOps()">p⁻¹ (inverse)</button>
+      <button onclick="opMode='comp'; drawOps()">p · q (composition)</button>
+      <button onclick="opMode='assoc'; drawOps()">Associativity</button>
+    </div>
+    <div id="opDesc" class="info"></div>
+  </div>
+</div>
+
+<!-- SECTION 4: HIGHER PATHS -->
+<div id="higher" class="section">
+  <div class="panel">
+    <h2>Paths Between Paths (Homotopies)</h2>
+    <p>Two paths <span class="math">p, q : x = y</span> can themselves be equal! A path <span class="math">p = q</span> is a <strong>2-path</strong> or homotopy — imagine sliding one path to the other.</p>
+    
+    <div class="why">
+      <strong>Why does this matter?</strong> The path <span class="math">p · p⁻¹</span> isn't literally the constant path — but there's a 2-path deforming it to the constant one. This "weakness up to higher paths" is what makes types ∞-groupoids.[[14]]
+    </div>
+
+    <canvas id="cHigher" width="800" height="400"></canvas>
+    <div class="controls">
+      <label>Homotopy: <input type="range" id="htpy" min="0" max="100" value="0" oninput="drawHigher()"></label>
+      <button onclick="animateHigher()">▶ Animate</button>
+    </div>
+    <div class="info">
+      The green region is a <strong>2-path</strong> — a continuous deformation from path p (red) to path q (blue). Slide to see it fill in!
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: TRANSPORT -->
+<div id="transport" class="section">
+  <div class="panel">
+    <h2>Transport: Moving Along Paths</h2>
+    <p>If <span class="math">P : A → Type</span> is a family of types indexed by A, and <span class="math">p : x = y</span>, then transport gives us <span class="math">p_* : P(x) → P(y)</span>.</p>
+    
+    <div class="why">
+      <strong>Why?</strong> If x and y are equal, then anything true about x should be true about y. Transport is <em>how</em> we move a proof/element from the fiber over x to the fiber over y.[[14]] This makes type families into <strong>fibrations</strong>.
+    </div>
+
+    <canvas id="cTrans" width="800" height="450"></canvas>
+    <div class="controls">
+      <button onclick="animateTransport()">▶ Transport an Element</button>
+      <label>Position: <input type="range" id="tpos" min="0" max="100" value="0" oninput="drawTransport()"></label>
+    </div>
+    <div class="info">
+      Bottom: the base space A with a path from x to y. Top: fibers P(x) and P(y) sitting <em>over</em> each point. An element in P(x) gets carried along the path to become an element of P(y).
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: HOMOTOPY LEVELS -->
+<div id="levels" class="section">
+  <div class="panel">
+    <h2>The Ladder of Homotopy Levels</h2>
+    <p>Types are stratified by how much structure they have:</p>
+    
+    <div class="why">
+      <strong>Why classify types this way?</strong> Some types behave like "truth values" (any two proofs equal), some like "sets" (equalities are trivial), some have real path structure. This gives us the right language for each case.[[12]]
+    </div>
+
+    <canvas id="cLevels" width="800" height="500"></canvas>
+    <div class="controls">
+      <button onclick="levelSel=-2; drawLevels()">(-2) Contractible</button>
+      <button onclick="levelSel=-1; drawLevels()">(-1) Proposition</button>
+      <button onclick="levelSel=0; drawLevels()">(0) Set</button>
+      <button onclick="levelSel=1; drawLevels()">(1) Groupoid</button>
+      <button onclick="levelSel=2; drawLevels()">(2) 2-Groupoid</button>
+    </div>
+    <div id="levelDesc" class="info"></div>
+  </div>
+</div>
+
+<!-- SECTION 7: CIRCLE -->
+<div id="circle" class="section">
+  <div class="panel">
+    <h2>The Circle S¹ and Its Loops</h2>
+    <p>The circle has one point <span class="math">base</span> and one non-trivial loop <span class="math">loop : base = base</span>. The fundamental group is <span class="math">π₁(S¹) = ℤ</span> — winding number![[13]]</p>
+    
+    <div class="why">
+      <strong>Why an integer?</strong> Each way of wrapping a loop around the circle counts. Going around once = 1, twice = 2, backward = -1. Loops that "unwind" cancel out. This is topology emerging from pure logic!
+    </div>
+
+    <canvas id="cCircle" width="800" height="450"></canvas>
+    <div class="controls">
+      <button onclick="wind++; drawCircle()">Wind + (loop)</button>
+      <button onclick="wind--; drawCircle()">Wind − (loop⁻¹)</button>
+      <button onclick="wind=0; drawCircle()">Reset</button>
+    </div>
+    <div id="circDesc" class="info"></div>
+  </div>
+</div>
+
+<!-- SECTION 8: UNIVALENCE -->
+<div id="univalence" class="section">
+  <div class="panel">
+    <h2>Univalence: Equivalent Types are Equal</h2>
+    <p>Voevodsky's insight: <span class="math">(A = B) ≃ (A ≃ B)</span>. Two equivalent types can be <em>identified</em>.[[14]]</p>
+    
+    <div class="why">
+      <strong>Why is this revolutionary?</strong> In set theory, {0,1} and {true,false} are different sets that happen to be isomorphic. Univalence says: if they're equivalent, treat them as literally equal. Isomorphic structures share all properties — for free.
+    </div>
+
+    <canvas id="cUniv" width="800" height="400"></canvas>
+    <div class="controls">
+      <button onclick="univStep=(univStep+1)%4; drawUniv()">▶ Next Step</button>
+      <button onclick="univStep=0; drawUniv()">Reset</button>
+    </div>
+    <div id="univDesc" class="info"></div>
+  </div>
+</div>
+
+<script>
+// ============ NAVIGATION ============
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  // trigger initial draw
+  if (id==='intro') drawSpace();
+  if (id==='paths') drawPath();
+  if (id==='ops') drawOps();
+  if (id==='higher') drawHigher();
+  if (id==='transport') drawTransport();
+  if (id==='levels') drawLevels();
+  if (id==='circle') drawCircle();
+  if (id==='univalence') drawUniv();
+}
+
+// ============ 1. TYPES AS SPACES ============
+const cSpace = document.getElementById('cSpace');
+const ctxS = cSpace.getContext('2d');
+let points = [{x:200,y:200},{x:400,y:150},{x:600,y:250}];
+let hoverIdx = -1;
+
+cSpace.addEventListener('click', e => {
+  const r = cSpace.getBoundingClientRect();
+  points.push({x: e.clientX-r.left, y: e.clientY-r.top});
+  drawSpace();
+});
+cSpace.addEventListener('mousemove', e => {
+  const r = cSpace.getBoundingClientRect();
+  const mx = e.clientX-r.left, my = e.clientY-r.top;
+  hoverIdx = points.findIndex(p => Math.hypot(p.x-mx, p.y-my) < 20);
+  drawSpace();
+});
+
+function addPoint() {
+  points.push({x: 100+Math.random()*600, y: 50+Math.random()*300});
+  drawSpace();
+}
+function clearSpace() { points=[]; drawSpace(); }
+
+function drawSpace() {
+  ctxS.fillStyle = '#0d1128';
+  ctxS.fillRect(0,0,800,400);
+  // draw a "space" blob
+  ctxS.strokeStyle = '#3a4a8e';
+  ctxS.lineWidth = 2;
+  ctxS.setLineDash([5,5]);
+  ctxS.beginPath();
+  ctxS.ellipse(400,200,350,170,0,0,Math.PI*2);
+  ctxS.stroke();
+  ctxS.setLineDash([]);
+  ctxS.fillStyle = '#a0a0c0';
+  ctxS.font = 'italic 16px serif';
+  ctxS.fillText('Type A (as a space)', 30, 30);
+
+  // draw paths on hover
+  if (hoverIdx >= 0 && document.getElementById('showPaths').checked) {
+    const hp = points[hoverIdx];
+    points.forEach((p,i) => {
+      if (i !== hoverIdx) {
+        ctxS.strokeStyle = '#7dd3fc';
+        ctxS.lineWidth = 2;
+        ctxS.beginPath();
+        ctxS.moveTo(hp.x, hp.y);
+        // curved path
+        const mx = (hp.x+p.x)/2, my=(hp.y+p.y)/2 - 30;
+        ctxS.quadraticCurveTo(mx, my, p.x, p.y);
+        ctxS.stroke();
+      }
+    });
+  }
+  // draw points
+  points.forEach((p,i) => {
+    ctxS.fillStyle = i===hoverIdx ? '#fbbf24' : '#7dd3fc';
+    ctxS.beginPath();
+    ctxS.arc(p.x, p.y, 8, 0, Math.PI*2);
+    ctxS.fill();
+    ctxS.fillStyle = '#e8e8e8';
+    ctxS.font = '14px monospace';
+    ctxS.fillText('x'+i, p.x+12, p.y-8);
+  });
+}
+drawSpace();
+
+// ============ 2. PATHS ============
+const cPath = document.getElementById('cPath');
+const ctxP = cPath.getContext('2d');
+let pathAnim = 0;
+
+function drawPath() {
+  const d = document.getElementById('deform').value/100;
+  ctxP.fillStyle = '#0d1128';
+  ctxP.fillRect(0,0,800,350);
+  
+  const x1=150, y1=175, x2=650, y2=175;
+  
+  // straight reference (refl-ish)
+  ctxP.strokeStyle = '#3a4a8e';
+  ctxP.setLineDash([4,4]);
+  ctxP.beginPath();
+  ctxP.moveTo(x1,y1); ctxP.lineTo(x2,y2);
+  ctxP.stroke();
+  ctxP.setLineDash([]);
+
+  // actual path
+  ctxP.strokeStyle = '#fbbf24';
+  ctxP.lineWidth = 3;
+  ctxP.beginPath();
+  ctxP.moveTo(x1,y1);
+  const cy = 175 - d*120 * Math.sin(pathAnim);
+  ctxP.quadraticCurveTo(400, cy, x2, y2);
+  ctxP.stroke();
+
+  // endpoints
+  [[x1,y1,'x'],[x2,y2,'y']].forEach(([x,y,l])=>{
+    ctxP.fillStyle='#7dd3fc';
+    ctxP.beginPath(); ctxP.arc(x,y,10,0,Math.PI*2); ctxP.fill();
+    ctxP.fillStyle='#e8e8e8'; ctxP.font='18px monospace';
+    ctxP.fillText(l, x-5, y+35);
+  });
+
+  ctxP.fillStyle='#a0a0c0';
+  ctxP.font='italic 16px serif';
+  ctxP.fillText('A path p : x = y', 300, 50);
+  ctxP.fillStyle='#3a4a8e';
+  ctxP.font='14px monospace';
+  ctxP.fillText('(straight = refl-like)', 320, 195);
+}
+
+function animatePath() {
+  let t=0;
+  const iv = setInterval(()=>{
+    pathAnim = t;
+    document.getElementById('deform').value = 50 + 50*Math.sin(t*0.5);
+    drawPath();
+    t += 0.1;
+    if (t>Math.PI*4) { clearInterval(iv); pathAnim=0; document.getElementById('deform').value=0; drawPath(); }
+  }, 30);
+}
+drawPath();
+
+// ============ 3. PATH OPERATIONS ============
+const cOps = document.getElementById('cOps');
+const ctxO = cOps.getContext('2d');
+let opMode = 'refl';
+
+function drawOps() {
+  ctxO.fillStyle = '#0d1128';
+  ctxO.fillRect(0,0,800,450);
+  const desc = document.getElementById('opDesc');
+
+  const drawPt = (x,y,l,c='#7dd3fc') => {
+    ctxO.fillStyle=c;
+    ctxO.beginPath(); ctxO.arc(x,y,9,0,Math.PI*2); ctxO.fill();
+    ctxO.fillStyle='#e8e8e8'; ctxO.font='16px monospace';
+    ctxO.fillText(l, x+12, y+5);
+  };
+  const drawArrow = (x1,y1,x2,y2,color,label,curve=0) => {
+    ctxO.strokeStyle=color; ctxO.lineWidth=3;
+    ctxO.beginPath();
+    ctxO.moveTo(x1,y1);
+    const mx=(x1+x2)/2, my=(y1+y2)/2+curve;
+    ctxO.quadraticCurveTo(mx, my, x2, y2);
+    ctxO.stroke();
+    // arrowhead
+    const ang = Math.atan2(y2-my, x2-mx);
+    ctxO.beginPath();
+    ctxO.moveTo(x2,y2);
+    ctxO.lineTo(x2-12*Math.cos(ang-0.4), y2-12*Math.sin(ang-0.4));
+    ctxO.lineTo(x2-12*Math.cos(ang+0.4), y2-12*Math.sin(ang+0.4));
+    ctxO.closePath();
+    ctxO.fillStyle=color; ctxO.fill();
+    if (label) {
+    ctxO.fillStyle=color; ctxO.font='14px monospace';
+      ctxO.fillText(label, mx-8, my+curve+(curve>0?15:-5));
+    }
+  };
+
+  if (opMode === 'refl') {
+    desc.innerHTML = '<strong>refl (reflexivity):</strong> Every point x has an identity path refl<sub>x</sub> : x = x. Topologically, this is the constant path that stays at x. It witnesses that x equals itself.';
+    drawPt(400, 225, 'x');
+    ctxO.strokeStyle = '#fbbf24'; ctxO.lineWidth = 3;
+    ctxO.beginPath();
+    ctxO.arc(400, 200, 25, 0, Math.PI*2);
+    ctxO.stroke();
+    ctxO.fillStyle='#fbbf24'; ctxO.font='italic 16px serif';
+    ctxO.fillText('refl_x : x = x', 440, 195);
+  }
+  else if (opMode === 'inv') {
+    desc.innerHTML = '<strong>Inverse p⁻¹ :</strong> Given path p : x = y, we get p⁻¹ : y = x by traversing p backwards. This gives equality its symmetry.';
+    drawPt(200, 225, 'x');
+    drawPt(600, 225, 'y');
+    drawArrow(200, 225, 600, 225, '#fbbf24', 'p : x = y', -60);
+    drawArrow(600, 300, 200, 300, '#a78bfa', 'p⁻¹ : y = x', 60);
+    drawPt(200, 300, 'y', '#7dd3fc');
+    drawPt(600, 300, 'x', '#7dd3fc');
+  }
+  else if (opMode === 'comp') {
+    desc.innerHTML = '<strong>Composition p · q :</strong> Given p : x = y and q : y = z, concatenate to get p · q : x = z. This gives equality its transitivity.';
+    drawPt(150, 300, 'x');
+    drawPt(400, 200, 'y');
+    drawPt(650, 300, 'z');
+    drawArrow(150, 300, 400, 200, '#fbbf24', 'p', -20);
+    drawArrow(400, 200, 650, 300, '#a78bfa', 'q', -20);
+    drawArrow(150, 350, 650, 350, '#7dd3fc', 'p · q : x = z', 20);
+    drawPt(150, 350, '', '#7dd3fc');
+    drawPt(650, 350, '', '#7dd3fc');
+  }
+  else if (opMode === 'assoc') {
+    desc.innerHTML = '<strong>Associativity (up to 2-path!):</strong> (p · q) · r is not literally equal to p · (q · r) — but there is a higher path (2-path) between them. This "weakness" is what makes types ∞-groupoids!';
+    drawPt(100, 250, 'x');
+    drawPt(300, 180, 'y');
+    drawPt(500, 180, 'z');
+    drawPt(700, 250, 'w');
+    drawArrow(100, 250, 300, 180, '#fbbf24', 'p', -15);
+    drawArrow(300, 180, 500, 180, '#a78bfa', 'q', -15);
+    drawArrow(500, 180, 700, 250, '#7dd3fc', 'r', -15);
+    ctxO.fillStyle='#e8e8e8'; ctxO.font='italic 15px serif';
+    ctxO.fillText('(p · q) · r  =  p · (q · r)   — via a 2-path α', 180, 400);
+    ctxO.strokeStyle='#fbbf24'; ctxO.lineWidth=2;
+    ctxO.setLineDash([3,3]);
+    ctxO.beginPath();
+    ctxO.moveTo(280,395); ctxO.quadraticCurveTo(400,370,520,395);
+    ctxO.stroke();
+    ctxO.setLineDash([]);
+    ctxO.fillStyle='#fbbf24';
+    ctxO.fillText('α', 395, 365);
+  }
+}
+drawOps();
+
+// ============ 4. HIGHER PATHS ============
+const cHigher = document.getElementById('cHigher');
+const ctxH = cHigher.getContext('2d');
+
+function drawHigher() {
+  const t = document.getElementById('htpy').value/100;
+  ctxH.fillStyle = '#0d1128';
+  ctxH.fillRect(0,0,800,400);
+
+  const x1=150, y1=200, x2=650, y2=200;
+
+  // Fill the homotopy region
+  if (t > 0) {
+    ctxH.fillStyle = `rgba(74, 222, 128, ${0.15 + t*0.25})`;
+    ctxH.beginPath();
+    ctxH.moveTo(x1, y1);
+    // Interpolate control points from p to q
+    const cy1 = 100; // p's curve up
+    const cy2 = 300; // q's curve down
+    // Draw many intermediate paths
+    for (let i = 0; i <= 20; i++) {
+      const s = i/20;
+      const cy = cy1 + s*(cy2-cy1)*t;
+      ctxH.moveTo(x1, y1);
+      ctxH.quadraticCurveTo(400, cy, x2, y2);
+    }
+    ctxH.strokeStyle = `rgba(74, 222, 128, ${0.15 + t*0.15})`;
+    ctxH.lineWidth = 1;
+    for (let i = 0; i <= 20; i++) {
+      const s = i/20;
+      const cy = 100 + s*(300-100)*t;
+      ctxH.beginPath();
+      ctxH.moveTo(x1, y1);
+      ctxH.quadraticCurveTo(400, cy, x2, y2);
+      ctxH.stroke();
+    }
+  }
+
+  // Path p (red, curves up)
+  ctxH.strokeStyle = '#ef4444';
+  ctxH.lineWidth = 3;
+  ctxH.beginPath();
+  ctxH.moveTo(x1,y1);
+  ctxH.quadraticCurveTo(400, 100, x2, y2);
+  ctxH.stroke();
+
+  // Path q (blue, curves down — deformed toward this)
+  ctxH.strokeStyle = '#3b82f6';
+  ctxH.lineWidth = 3;
+  ctxH.beginPath();
+  ctxH.moveTo(x1,y1);
+  ctxH.quadraticCurveTo(400, 100 + t*200, x2, y2);
+  ctxH.stroke();
+
+  // Endpoints
+  [[x1,y1,'x'],[x2,y2,'y']].forEach(([x,y,l])=>{
+    ctxH.fillStyle='#7dd3fc';
+    ctxH.beginPath(); ctxH.arc(x,y,10,0,Math.PI*2); ctxH.fill();
+    ctxH.fillStyle='#e8e8e8'; ctxH.font='18px monospace';
+    ctxH.fillText(l, x-5, y+35);
+  });
+
+  ctxH.fillStyle='#ef4444'; ctxH.font='italic 15px serif';
+  ctxH.fillText('p', 200, 130);
+  ctxH.fillStyle='#3b82f6';
+  ctxH.fillText('q (deforming)', 200, 330);
+  ctxH.fillStyle='#4ade80';
+  ctxH.font='italic 18px serif';
+  if (t > 0.3) ctxH.fillText('2-path α : p = q', 340, 60);
+}
+
+function animateHigher() {
+  let v=0;
+  const iv = setInterval(()=>{
+    v += 2;
+    document.getElementById('htpy').value = v;
+    drawHigher();
+    if (v>=100) clearInterval(iv);
+  }, 20);
+}
+drawHigher();
+
+// ============ 5. TRANSPORT ============
+const cTrans = document.getElementById('cTrans');
+const ctxT = cTrans.getContext('2d');
+
+function drawTransport() {
+  const t = document.getElementById('tpos').value/100;
+  ctxT.fillStyle = '#0d1128';
+  ctxT.fillRect(0,0,800,450);
+
+  // Base space (bottom)
+  ctxT.strokeStyle = '#3a4a8e';
+  ctxT.setLineDash([4,4]);
+  ctxT.beginPath();
+  ctxT.moveTo(50,380); ctxT.lineTo(750,380);
+  ctxT.stroke();
+  ctxT.setLineDash([]);
+  ctxT.fillStyle='#a0a0c0'; ctxT.font='italic 14px serif';
+  ctxT.fillText('Base A', 20, 385);
+
+  const x1=200, x2=600;
+  const xc = x1 + t*(x2-x1);
+
+  // Path in base
+  ctxT.strokeStyle = '#fbbf24';
+  ctxT.lineWidth = 3;
+  ctxT.beginPath();
+  ctxT.moveTo(x1, 380); ctxT.lineTo(x2, 380);
+  ctxT.stroke();
+
+  // Endpoints in base
+  ctxT.fillStyle='#7dd3fc';
+  ctxT.beginPath(); ctxT.arc(x1,380,8,0,Math.PI*2); ctxT.fill();
+  ctxT.beginPath(); ctxT.arc(x2,380,8,0,Math.PI*2); ctxT.fill();
+  ctxT.fillStyle='#e8e8e8'; ctxT.font='16px monospace';
+  ctxT.fillText('x', x1-4, 410);
+  ctxT.fillText('y', x2-4, 410);
+  ctxT.fillStyle='#fbbf24'; ctxT.font='italic 14px serif';
+  ctxT.fillText('p : x = y', (x1+x2)/2-30, 370);
+
+  // Fibers (vertical ellipses above each point)
+  function drawFiber(cx, label, active) {
+    ctxT.strokeStyle = active ? '#a78bfa' : '#3a4a8e';
+    ctxT.lineWidth = 2;
+    ctxT.beginPath();
+    ctxT.ellipse(cx, 200, 40, 100, 0, 0, Math.PI*2);
+    ctxT.stroke();
+    ctxT.fillStyle='#a0a0c0'; ctxT.font='italic 13px serif';
+    ctxT.fillText(label, cx-25, 90);
+    // dashed line down to base
+    ctxT.strokeStyle='#2a3268';
+    ctxT.setLineDash([2,4]);
+    ctxT.beginPath();
+    ctxT.moveTo(cx, 300); ctxT.lineTo(cx, 380);
+    ctxT.stroke();
+    ctxT.setLineDash([]);
+  }
+  drawFiber(x1, 'P(x)', true);
+  drawFiber(x2, 'P(y)', true);
+  // Show current transported fiber
+  if (t > 0 && t < 1) {
+    drawFiber(xc, '', true);
+  }
+
+  // Element traveling
+  ctxT.fillStyle='#fbbf24';
+  ctxT.beginPath();
+  ctxT.arc(xc, 180, 10, 0, Math.PI*2);
+  ctxT.fill();
+  ctxT.fillStyle='#e8e8e8'; ctxT.font='14px monospace';
+  ctxT.fillText(t < 0.5 ? 'u : P(x)' : 'p_*(u) : P(y)', xc+15, 175);
+
+  // Trajectory
+  ctxT.strokeStyle='#fbbf24';
+  ctxT.setLineDash([3,3]);
+  ctxT.beginPath();
+  ctxT.moveTo(x1, 180); ctxT.lineTo(xc, 180);
+  ctxT.stroke();
+  ctxT.setLineDash([]);
+
+  // Base point moving too
+  ctxT.fillStyle='#fbbf24';
+  ctxT.beginPath();
+  ctxT.arc(xc, 380, 6, 0, Math.PI*2);
+  ctxT.fill();
+
+  ctxT.fillStyle='#a78bfa'; ctxT.font='italic 15px serif';
+  ctxT.fillText('transport: carries elements along paths', 200, 40);
+}
+
+function animateTransport() {
+  let v=0;
+  const iv = setInterval(()=>{
+    v += 2;
+    document.getElementById('tpos').value = v;
+    drawTransport();
+    if (v>=100) clearInterval(iv);
+  }, 30);
+}
+drawTransport();
+
+// ============ 6. HOMOTOPY LEVELS ============
+const cLevels = document.getElementById('cLevels');
+const ctxL = cLevels.getContext('2d');
+let levelSel = -1;
+
+function drawLevels() {
+  ctxL.fillStyle = '#0d1128';
+  ctxL.fillRect(0,0,800,500);
+  const desc = document.getElementById('levelDesc');
+
+  // Ladder visualization
+  const levels = [
+    {n:-2, name:'Contractible', color:'#4ade80'},
+    {n:-1, name:'Proposition',  color:'#7dd3fc'},
+    {n: 0, name:'Set',          color:'#fbbf24'},
+    {n: 1, name:'Groupoid',     color:'#a78bfa'},
+    {n: 2, name:'2-Groupoid',   color:'#f472b6'},
+  ];
+
+  levels.forEach((lv, i) => {
+    const y = 80 + i*70;
+    const active = lv.n === levelSel;
+    ctxL.fillStyle = active ? lv.color : '#2a3268';
+    ctxL.fillRect(50, y, 200, 40);
+    ctxL.fillStyle = active ? '#0d1128' : '#e8e8e8';
+    ctxL.font = 'bold 14px monospace';
+    ctxL.fillText(`(${lv.n}) ${lv.name}`, 60, y+25);
+  });
+
+  // Illustration on the right
+  const cx = 550, cy = 250;
+  if (levelSel === -2) {
+    desc.innerHTML = '<strong>(-2) Contractible:</strong> A single point (up to homotopy). Any two elements are equal, and any two paths are equal, all the way up. Example: <span class="math">Unit</span>. It "has exactly one element".';
+    ctxL.fillStyle = '#4ade80';
+    ctxL.beginPath(); ctxL.arc(cx, cy, 15, 0, Math.PI*2); ctxL.fill();
+    ctxL.fillStyle = '#e8e8e8'; ctxL.font = '16px monospace';
+    ctxL.fillText('•  (one point)', cx+30, cy+5);
+  }
+  else if (levelSel === -1) {
+    desc.innerHTML = '<strong>(-1) Mere Proposition:</strong> Any two elements are equal (but it might be empty). Either uninhabited or contractible. This is what "logic" is made of: truth values with no extra data.';
+    ctxL.fillStyle = '#7dd3fc';
+    ctxL.beginPath(); ctxL.arc(cx-20, cy, 12, 0, Math.PI*2); ctxL.fill();
+    ctxL.beginPath(); ctxL.arc(cx+20, cy, 12, 0, Math.PI*2); ctxL.fill();
+    ctxL.strokeStyle='#7dd3fc'; ctxL.lineWidth=2;
+    ctxL.beginPath(); ctxL.moveTo(cx-20,cy); ctxL.lineTo(cx+20,cy); ctxL.stroke();
+    ctxL.fillStyle='#e8e8e8'; ctxL.font='13px monospace';
+    ctxL.fillText('any two points equal', cx-70, cy+35);
+  }
+  else if (levelSel === 0) {
+    desc.innerHTML = '<strong>(0) Set:</strong> All paths between two points are equal. This is what mathematicians usually call a "set" — points with trivial equality structure. Example: <span class="math">Nat</span>, <span class="math">Bool</span>.';
+    const pts = [[cx-40,cy-30],[cx+40,cy-30],[cx-40,cy+30],[cx+40,cy+30]];
+    ctxL.fillStyle='#fbbf24';
+    pts.forEach(([x,y])=>{
+      ctxL.beginPath(); ctxL.arc(x,y,10,0,Math.PI*2); ctxL.fill();
+    });
+    ctxL.fillStyle='#e8e8e8'; ctxL.font='13px monospace';
+    ctxL.fillText('distinct points, no path structure', cx-90, cy+70);
+  }
+  else if (levelSel === 1) {
+    desc.innerHTML = '<strong>(1) Groupoid:</strong> Points can have non-trivial paths between them, but paths between paths are trivial (equal). Example: the type of small categories, or <span class="math">S¹</span>.';
+    ctxL.fillStyle='#a78bfa';
+    ctxL.beginPath(); ctxL.arc(cx-50,cy,10,0,Math.PI*2); ctxL.fill();
+    ctxL.beginPath(); ctxL.arc(cx+50,cy,10,0,Math.PI*2); ctxL.fill();
+    ctxL.strokeStyle='#a78bfa'; ctxL.lineWidth=2;
+    ctxL.beginPath(); ctxL.moveTo(cx-50,cy);
+    ctxL.quadraticCurveTo(cx,cy-40,cx+50,cy); ctxL.stroke();
+    ctxL.beginPath(); ctxL.moveTo(cx-50,cy);
+    ctxL.quadraticCurveTo(cx,cy+40,cx+50,cy); ctxL.stroke();
+    ctxL.fillStyle='#e8e8e8'; ctxL.font='13px monospace';
+    ctxL.fillText('multiple paths, but flat', cx-70, cy+75);
+  }
+  else if (levelSel === 2) {
+    desc.innerHTML = '<strong>(2) 2-Groupoid:</strong> Paths and paths-between-paths (2-paths) can be non-trivial, but 3-paths are trivial. Example: <span class="math">S²</span> truncated at level 2.';
+    ctxL.fillStyle='#f472b6';
+    ctxL.beginPath(); ctxL.arc(cx-50,cy,10,0,Math.PI*2); ctxL.fill();
+    ctxL.beginPath(); ctxL.arc(cx+50,cy,10,0,Math.PI*2); ctxL.fill();
+    ctxL.strokeStyle='#f472b6'; ctxL.lineWidth=2;
+    ctxL.beginPath(); ctxL.moveTo(cx-50,cy);
+    ctxL.quadraticCurveTo(cx,cy-40,cx+50,cy); ctxL.stroke();
+    ctxL.beginPath(); ctxL.moveTo(cx-50,cy);
+    ctxL.quadraticCurveTo(cx,cy+40,cx+50,cy); ctxL.stroke();
+    // 2-path (filled region)
+    ctxL.fillStyle='rgba(244,114,182,0.2)';
+    ctxL.beginPath();
+    ctxL.moveTo(cx-50,cy);
+    ctxL.quadraticCurveTo(cx,cy-40,cx+50,cy);
+    ctxL.quadraticCurveTo(cx,cy+40,cx-50,cy);
+    ctxL.fill();
+    ctxL.fillStyle='#e8e8e8'; ctxL.font='13px monospace';
+    ctxL.fillText('paths between paths matter', cx-90, cy+75);
+  }
+
+  // Upward-closure note
+  ctxL.fillStyle='#a0a0c0'; ctxL.font='italic 12px serif';
+  ctxL.fillText('Every n-type is also (n+1)-type — the ladder goes up ∞', 50, 470);
+}
+drawLevels();
+
+// ============ 7. CIRCLE S¹ ============
+const cCircle = document.getElementById('cCircle');
+const ctxC = cCircle.getContext('2d');
+let wind = 0;
+
+function drawCircle() {
+  ctxC.fillStyle = '#0d1128';
+  ctxC.fillRect(0,0,800,450);
+  const desc = document.getElementById('circDesc');
+
+  const cx = 400, cy = 220, r = 130;
+
+  // The circle
+  ctxC.strokeStyle = '#3a4a8e';
+  ctxC.lineWidth = 4;
+  ctxC.beginPath();
+  ctxC.arc(cx, cy, r, 0, Math.PI*2);
+  ctxC.stroke();
+
+  // The winding loop (draw with varying color/thickness based on winding)
+  const absW = Math.abs(wind);
+  if (absW > 0) {
+    const totalAngle = wind * Math.PI * 2;
+    const steps = Math.max(60, absW*40);
+    for (let i = 0; i < steps; i++) {
+      const t1 = i/steps;
+      const t2 = (i+1)/steps;
+      const a1 = -Math.PI/2 + totalAngle * t1;
+      const a2 = -Math.PI/2 + totalAngle * t2;
+      // Spiral outward slightly to visualize winding
+      const rr1 = r + t1 * 3 * absW * Math.sign(wind);
+      const rr2 = r + t2 * 3 * absW * Math.sign(wind);
+      const hue = wind > 0 ? 45 : 200;
+      ctxC.strokeStyle = `hsl(${hue}, 90%, ${55 + t1*20}%)`;
+      ctxC.lineWidth = 3;
+      ctxC.beginPath();
+      ctxC.moveTo(cx + rr1*Math.cos(a1), cy + rr1*Math.sin(a1));
+      ctxC.lineTo(cx + rr2*Math.cos(a2), cy + rr2*Math.sin(a2));
+      ctxC.stroke();
+    }
+    // Arrow at end
+    const finalA = -Math.PI/2 + totalAngle;
+    const finalR = r + 3*absW*Math.sign(wind);
+    const ex = cx + finalR*Math.cos(finalA);
+    const ey = cy + finalR*Math.sin(finalA);
+    ctxC.fillStyle = wind > 0 ? '#fbbf24' : '#7dd3fc';
+    ctxC.beginPath();
+    const tangA = finalA + Math.PI/2 * Math.sign(wind);
+    ctxC.moveTo(ex, ey);
+    ctxC.lineTo(ex + 10*Math.cos(tangA-0.4), ey + 10*Math.sin(tangA-0.4));
+    ctxC.lineTo(ex + 10*Math.cos(tangA+0.4), ey + 10*Math.sin(tangA+0.4));
+    ctxC.closePath();
+    ctxC.fill();
+  }
+
+  // Base point
+  const bx = cx, by = cy - r;
+  ctxC.fillStyle = '#ef4444';
+  ctxC.beginPath();
+  ctxC.arc(bx, by, 9, 0, Math.PI*2);
+  ctxC.fill();
+  ctxC.fillStyle='#e8e8e8'; ctxC.font='15px monospace';
+  ctxC.fillText('base', bx+14, by-8);
+
+  // Winding number display
+  ctxC.fillStyle = wind > 0 ? '#fbbf24' : (wind < 0 ? '#7dd3fc' : '#e8e8e8');
+  ctxC.font = 'bold 48px monospace';
+  ctxC.fillText(wind.toString(), 60, 80);
+  ctxC.fillStyle = '#a0a0c0';
+  ctxC.font = 'italic 14px serif';
+  ctxC.fillText('winding number', 30, 100);
+
+  // Description
+  desc.innerHTML = `<strong>Winding = ${wind}</strong> — This loop wraps around ${Math.abs(wind)} time(s) ${wind >= 0 ? 'counterclockwise' : 'clockwise'}. In HoTT, <span class="math">π₁(S¹) ≃ ℤ</span> — each integer is a distinct homotopy class of loops. The encode function transports along the loop and applies successor/predecessor to 0. [[13]]`;
+
+  // Legend
+  ctxC.fillStyle = '#a0a0c0';
+  ctxC.font = '12px monospace';
+  ctxC.fillText('base : S¹', 30, 430);
+  ctxC.fillText('loop : base = base', 200, 430);
+  ctxC.fillText('π₁(S¹) ≃ ℤ', 500, 430);
+}
+drawCircle();
+
+// ============ 8. UNIVALENCE ============
+const cUniv = document.getElementById('cUniv');
+const ctxU = cUniv.getContext('2d');
+let univStep = 0;
+
+function drawUniv() {
+  ctxU.fillStyle = '#0d1128';
+  ctxU.fillRect(0,0,800,400);
+  const desc = document.getElementById('univDesc');
+
+  // Two types A and B as blobs
+  const drawBlob = (cx, cy, label, color, items) => {
+    ctxU.strokeStyle = color;
+    ctxU.lineWidth = 2;
+    ctxU.setLineDash([5,5]);
+    ctxU.beginPath();
+    ctxU.ellipse(cx, cy, 100, 70, 0, 0, Math.PI*2);
+    ctxU.stroke();
+    ctxU.setLineDash([]);
+    ctxU.fillStyle = color;
+    ctxU.font = 'bold 18px serif';
+    ctxU.fillText(label, cx-15, cy-85);
+    items.forEach((item, i) => {
+      const angle = (i / items.length) * Math.PI * 2;
+      const px = cx + 50 * Math.cos(angle);
+      const py = cy + 30 * Math.sin(angle);
+      ctxU.fillStyle = color;
+      ctxU.beginPath();
+      ctxU.arc(px, py, 6, 0, Math.PI*2);
+      ctxU.fill();
+      ctxU.fillStyle = '#e8e8e8';
+      ctxU.font = '13px monospace';
+      ctxU.fillText(item, px+10, py+4);
+    });
+  };
+
+  drawBlob(180, 200, 'A', '#7dd3fc', ['0', '1']);
+  drawBlob(620, 200, 'B', '#fbbf24', ['false', 'true']);
+
+  if (univStep >= 1) {
+    // Draw equivalence arrows
+    ctxU.strokeStyle = '#a78bfa';
+    ctxU.lineWidth = 2;
+    // Arrow A -> B
+    ctxU.beginPath();
+    ctxU.moveTo(285, 185);
+    ctxU.lineTo(515, 185);
+    ctxU.stroke();
+    // arrowhead
+    ctxU.beginPath();
+    ctxU.moveTo(515, 185);
+    ctxU.lineTo(505, 180);
+    ctxU.lineTo(505, 190);
+    ctxU.closePath();
+    ctxU.fillStyle = '#a78bfa';
+    ctxU.fill();
+    // Arrow B -> A
+    ctxU.beginPath();
+    ctxU.moveTo(515, 215);
+    ctxU.lineTo(285, 215);
+    ctxU.stroke();
+    ctxU.beginPath();
+    ctxU.moveTo(285, 215);
+    ctxU.lineTo(295, 210);
+    ctxU.lineTo(295, 220);
+    ctxU.closePath();
+    ctxU.fill();
+    ctxU.fillStyle = '#a78bfa';
+    ctxU.font = 'italic 16px serif';
+    ctxU.fillText('f', 390, 178);
+    ctxU.fillText('g', 390, 235);
+    ctxU.font = '13px monospace';
+    ctxU.fillText('A ≃ B', 370, 120);
+  }
+
+  if (univStep >= 2) {
+    // Highlight: equivalence
+    ctxU.fillStyle = '#4ade80';
+    ctxU.font = 'italic 18px serif';
+    ctxU.fillText('...are equivalent (bijection + coherence)', 200, 300);
+  }
+
+  if (univStep >= 3) {
+    // The univalence conclusion
+    ctxU.fillStyle = '#f472b6';
+    ctxU.font = 'bold 22px serif';
+    ctxU.fillText('(A ≃ B)  ≃  (A = B)', 250, 350);
+    ctxU.fillStyle = '#fbbf24';
+    ctxU.font = 'italic 14px serif';
+    ctxU.fillText('Univalence: equivalent types ARE equal!', 220, 380);
+  }
+
+  const descriptions = [
+    '<strong>Step 0:</strong> Two types A = {0,1} and B = {false, true}. In set theory these are DIFFERENT sets that just happen to be in bijection. Click "Next Step".',
+    '<strong>Step 1:</strong> We construct functions f: A → B and g: B → A that are inverse to each other — this makes A and B <em>equivalent</em> (A ≃ B). [[14]]',
+    '<strong>Step 2:</strong> The equivalence data (f, g, and proofs of inverseness) form the type A ≃ B — a "witness of sameness".',
+    '<strong>Step 3:</strong> <span class="math">Univalence</span> says: the type of equivalences (A ≃ B) is itself equivalent to the type of equalities (A = B). So equivalent types can be <em>identified</em>. Any theorem about A automatically applies to B! [[14]]'
+  ];
+  desc.innerHTML = descriptions[univStep];
+}
+drawUniv();
+
+</script>
+</body>
+</html>
