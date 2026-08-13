@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Spinnenseide ↔ Musik — Visuelle Paper-Tour</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #eee; min-height: 100vh; overflow-x: hidden;
+  }
+  header {
+    text-align: center; padding: 30px 20px;
+    background: rgba(0,0,0,0.3); border-bottom: 2px solid #ffcc00;
+  }
+  header h1 { font-size: 2.2em; color: #ffcc00; }
+  header p { color: #aaa; margin-top: 8px; font-size: 0.95em; }
+  nav {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+    padding: 15px; background: rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 100;
+  }
+  nav button {
+    background: #302b63; color: #fff; border: 1px solid #ffcc00;
+    padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.9em;
+    transition: all 0.3s;
+  }
+  nav button:hover, nav button.active { background: #ffcc00; color: #000; transform: scale(1.05); }
+  section {
+    display: none; padding: 30px 20px; max-width: 1200px; margin: 0 auto;
+    animation: fadeIn 0.5s;
+  }
+  section.active { display: block; }
+  @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1;} }
+  h2 { color: #ffcc00; margin-bottom: 15px; font-size: 1.7em; }
+  .card {
+    background: rgba(255,255,255,0.08); border-radius: 15px; padding: 20px;
+    margin: 15px 0; border-left: 4px solid #ffcc00;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+  .analogy-box {
+    background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .analogy-box:hover { background: #ffcc00; color: #000; transform: scale(1.03); }
+  .silk { border-top: 4px solid #4fc3f7; }
+  .music { border-top: 4px solid #ff6ec7; }
+  .arrow { font-size: 2em; text-align: center; color: #ffcc00; padding: 10px 0; }
+  .hierarchy-level {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.06); padding: 15px; border-radius: 10px;
+    margin: 8px 0; cursor: pointer; transition: all 0.3s;
+  }
+  .hierarchy-level:hover { background: rgba(255,204,0,0.2); transform: translateX(10px); }
+  .level-num {
+    background: #ffcc00; color: #000; border-radius: 50%; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2em;
+  }
+  .level-content { flex: 1; margin: 0 15px; }
+  .level-content strong { color: #4fc3f7; }
+  .level-content em { color: #ff6ec7; font-style: normal; }
+  canvas { background: #000; border-radius: 10px; display: block; margin: 15px auto; max-width: 100%; }
+  .formula {
+    background: #000; padding: 20px; border-radius: 10px; text-align: center;
+    font-family: "Cambria Math", serif; font-size: 1.3em; color: #4fc3f7; margin: 15px 0;
+    border: 1px dashed #ffcc00;
+  }
+  .btn {
+    background: #ffcc00; color: #000; border: none; padding: 10px 20px;
+    border-radius: 25px; cursor: pointer; font-weight: bold; margin: 5px;
+  }
+  .btn:hover { background: #fff; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 15px; font-size: 0.8em; margin: 2px; }
+  .tag-new { background: #4caf50; color: #fff; }
+  .tag-critique { background: #f44336; color: #fff; }
+  .tag-method { background: #2196f3; color: #fff; }
+  .tag-result { background: #ff9800; color: #fff; }
+  .olog-node {
+    display: inline-block; background: #302b63; border: 2px solid #ffcc00;
+    padding: 10px 15px; border-radius: 10px; margin: 5px; cursor: pointer;
+    transition: all 0.3s;
+  }
+  .olog-node:hover { background: #ffcc00; color: #000; }
+  .flow { display: flex; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .flow-arrow { font-size: 1.5em; color: #ffcc00; margin: 0 8px; }
+  #consonanceDemo { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .freq-btn {
+    background: #4fc3f7; color: #000; border: none; padding: 15px 20px;
+    border-radius: 50%; cursor: pointer; font-weight: bold; width: 70px; height: 70px;
+  }
+  .freq-btn:hover { transform: scale(1.15); background: #ffcc00; }
+  #matrixDisplay { background: #000; padding: 15px; border-radius: 10px; font-family: monospace;
+    margin-top: 15px; white-space: pre; overflow-x: auto; }
+  footer { text-align: center; padding: 30px; color: #888; font-size: 0.85em; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🕷️ Spinnenseide ↔ 🎵 Musik</h1>
+  <p>Eine visuelle Reise durch das Paper von Giesa, Spivak & Buehler (MIT, 2011)</p>
+  <p style="color:#ffcc00">Klicke dich durch die Tabs — alles ist interaktiv!</p>
+</header>
+
+<nav>
+  <button onclick="show('idea', this)" class="active">💡 Idee</button>
+  <button onclick="show('method', this)">🔬 Methode</button>
+  <button onclick="show('hierarchy', this)">🏗️ Hierarchie</button>
+  <button onclick="show('formula', this)">📐 Formel</button>
+  <button onclick="show('demo', this)">🎹 Demo</button>
+  <button onclick="show('results', this)">📊 Ergebnisse</button>
+  <button onclick="show('critique', this)">⚠️ Kritik</button>
+  <button onclick="show('summary', this)">🎯 Fazit</button>
+</nav>
+
+<!-- IDEA -->
+<section id="idea" class="active">
+  <h2>💡 Die große Idee</h2>
+  <div class="card">
+    <p style="font-size:1.1em; line-height:1.7">
+      Zwei völlig verschiedene Welten — <strong style="color:#4fc3f7">Spinnenseide</strong> (ein Biomaterial) und
+      <strong style="color:#ff6ec7">klassische Musik</strong> — haben <em style="color:#ffcc00">dieselbe hierarchische Struktur</em>.
+      Wenn wir das mathematisch sauber beweisen, können wir Wissen aus einer Domäne in die andere übertragen.
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="analogy-box silk" onclick="alert('Spinnenseide: aus Aminosäuren → Polypeptiden → Proteinen → Nanoverbunden gebaut. Extrem zäh & fest.')">
+      <h3>🕷️ Spinnenseide</h3>
+      <p style="margin-top:10px">Aminosäuren → Bindungen → Polypeptide → Proteine → Nanocomposite</p>
+    </div>
+    <div class="analogy-box music" onclick="alert('Musik: aus Klangwellen → Tönen → Akkorden → Riffs gebaut. Emotional und strukturiert.')">
+      <h3>🎵 Musik</h3>
+      <p style="margin-top:10px">Klangwellen → Stapel → Töne → Akkorde → Riffs</p>
+    </div>
+  </div>
+
+  <div class="arrow">⇕ ISOMORPH ⇕</div>
+
+  <div class="card">
+    <h3 style="color:#4fc3f7">Warum das wichtig ist:</h3>
+    <ul style="margin-left:20px; line-height:1.8">
+      <li>🧠 <strong>Lernen durch Analogie</strong> — wie Bohr-Atom = Sonnensystem</li>
+      <li>🔗 Wissensteilung über Fachgrenzen hinweg</li>
+      <li>🎓 Neue Wege im Materialdesign (Materiomics)</li>
+      <li>🎼 Man könnte "Musik komponieren" wie man "Materialien designt"</li>
+    </ul>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section id="method">
+  <h2>🔬 Die Methode: Ologs (Ontology Logs)</h2>
+  <div class="card">
+    <span class="tag tag-method">METHODE</span>
+    <p style="margin-top:10px; line-height:1.7">
+      Ein <strong style="color:#ffcc00">Olog</strong> ist eine mathematische Landkarte, die auf
+      <strong>Kategorientheorie</strong> basiert. Sie besteht aus:
+    </p>
+    <div class="flow" style="margin-top:20px">
+      <div class="olog-node" onclick="alert('Objekte = Sets/Mengen von Dingen, z.B. \"eine Aminosäure\"')">📦 Objekte<br><small>(Sets)</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="olog-node" onclick="alert('Pfeile = eindeutige Funktionen zwischen Objekten, z.B. \"hat als Position\"')">➡️ Pfeile<br><small>(Funktionen)</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="olog-node" onclick="alert('Funktoren = strukturerhaltende Abbildungen zwischen zwei Ologs. Genau das macht die Analogie mathematisch!')">🔄 Funktoren<br><small>(Analogien)</small></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#4fc3f7">Der Prozess in 4 Schritten:</h3>
+    <div class="hierarchy-level" onclick="this.style.background='rgba(255,204,0,0.3)'">
+      <div class="level-num">1</div>
+      <div class="level-content"><strong>Bausteine identifizieren</strong> — Aminosäuren ↔ Klangwellen</div>
+    </div>
+    <div class="hierarchy-level" onclick="this.style.background='rgba(255,204,0,0.3)'">
+      <div class="level-num">2</div>
+      <div class="level-content"><strong>Übergeordnete Einheiten definieren</strong> — Polypeptide ↔ Töne</div>
+    </div>
+    <div class="hierarchy-level" onclick="this.style.background='rgba(255,204,0,0.3)'">
+      <div class="level-num">3</div>
+      <div class="level-content"><strong>Struktur–Funktion-Beziehungen</strong> — Sekundärstruktur ↔ Tonhöhe</div>
+    </div>
+    <div class="hierarchy-level" onclick="this.style.background='rgba(255,204,0,0.3)'">
+      <div class="level-num">4</div>
+      <div class="level-content"><strong>Funktor bauen</strong> — mathematischer Beweis der Analogie</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🆕 Neu in diesem Paper: <em>Hierarchische Ologs</em></h3>
+    <p>Klassische Ologs zeigen Objekte flach. Die Autoren führen <strong>verschachtelte Boxen</strong> ein
+    (Snapshots), die die Hierarchie auf den ersten Blick sichtbar machen.
+    Mathematisch: eine Kategorie C mit Unterkategorie H (Baum-Struktur), Ob(C)=Ob(H).</p>
+  </div>
+</section>
+
+<!-- HIERARCHY -->
+<section id="hierarchy">
+  <h2>🏗️ Die Hierarchie — Klicke jede Ebene an!</h2>
+  <p style="text-align:center; color:#aaa; margin-bottom:20px">Links: Spinnenseide 🕷️ &nbsp;·&nbsp; Rechts: Musik 🎵</p>
+
+  <div class="grid2">
+    <div>
+      <h3 style="color:#4fc3f7; text-align:center">🕷️ SPINNENSEIDE</h3>
+      <div class="hierarchy-level silk" onclick="toggleInfo(this, 'Aminosäuren sind die 20 Grundbausteine aller Proteine.')">
+        <div class="level-num">1</div>
+        <div class="level-content"><strong>Aminosäure</strong></div>
+      </div>
+      <div class="hierarchy-level silk" onclick="toggleInfo(this, 'Peptidbindungen verbinden Aminosäuren zu Ketten.')">
+        <div class="level-num">2</div>
+        <div class="level-content"><strong>Bindung (Peptid)</strong></div>
+      </div>
+      <div class="hierarchy-level silk" onclick="toggleInfo(this, 'Polypeptid = lineare Kette von ≥2 Aminosäuren.')">
+        <div class="level-num">3</div>
+        <div class="level-content"><strong>Polypeptid</strong></div>
+      </div>
+      <div class="hierarchy-level silk" onclick="toggleInfo(this, 'Protein faltet sich in Sekundärstrukturen: α-Helix, β-Sheet, amorph.')">
+        <div class="level-num">4</div>
+        <div class="level-content"><strong>Protein</strong> (α-Helix, β-Sheet)</div>
+      </div>
+      <div class="hierarchy-level silk" onclick="toggleInfo(this, 'Nanocomposite: hochfeste Netzwerke, die Zähigkeit erzeugen.')">
+        <div class="level-num">5</div>
+        <div class="level-content"><strong>Nanocomposite</strong></div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="color:#ff6ec7; text-align:center">🎵 MUSIK</h3>
+      <div class="hierarchy-level music" onclick="toggleInfo(this, 'Grundwellen: Sinus, Dreieck, Sägezahn — Bausteine des Klangs.')">
+        <div class="level-num">1</div>
+        <div class="level-content"><em>Klangwelle</em></div>
+      </div>
+      <div class="hierarchy-level music" onclick="toggleInfo(this, 'Stack = Übereinanderlegen zweier Klangwellen.')">
+        <div class="level-num">2</div>
+        <div class="level-content"><em>Stack</em></div>
+      </div>
+      <div class="hierarchy-level music" onclick="toggleInfo(this, 'Ton = Note mit einer Tonhöhe (pitch).')">
+        <div class="level-num">3</div>
+        <div class="level-content"><em>Ton / Note</em></div>
+      </div>
+      <div class="hierarchy-level music" onclick="toggleInfo(this, 'Akkord = harmonische Kombination mehrerer Töne (z.B. Terzen).')">
+        <div class="level-num">4</div>
+        <div class="level-content"><em>Akkord</em> (Dur / Moll)</div>
+      </div>
+      <div class="hierarchy-level music" onclick="toggleInfo(this, 'Riff = rhythmische Anordnung von Akkorden. In Graph-Struktur!')">
+        <div class="level-num">5</div>
+        <div class="level-content"><em>Riff</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>🔗 Der versteckte Trick</h3>
+    <p>Beide Systeme haben eine <strong>ausgezeichnete Untergruppe</strong>:</p>
+    <ul style="margin-left:20px; line-height:1.9">
+      <li>🧬 Bei Proteinen: <strong>Enzyme</strong> mit aktivem Zentrum</li>
+      <li>🎼 Bei Musik: <strong>Dur-Akkorde</strong> mit Grundton (root)</li>
+    </ul>
+    <p style="margin-top:10px">→ Beides sind "distinguished members" mit besonderer Funktion, gebunden an eine niedrigere Ebene.</p>
+  </div>
+</section>
+
+<!-- FORMULA -->
+<section id="formula">
+  <h2>📐 Die zentrale Formel</h2>
+  <div class="card">
+    <span class="tag tag-new">KERNGLEICHUNG</span>
+    <h3 style="margin-top:10px">Konsonanz-Bedingung für Musik</h3>
+    <div class="formula">
+      c · log₂(f₂ / f₁) ∈ ℤ &nbsp;&nbsp; mit c = 12
+    </div>
+    <p style="line-height:1.7">
+      Zwei Frequenzen <strong>f₁, f₂</strong> klingen harmonisch (konsonant), wenn das Verhältnis
+      auf einer <strong>gleichstufig temperierten Skala</strong> zu einem ganzzahligen Vielfachen führt.
+      Der Faktor <strong>c = 12</strong> steht für die 12 Halbtöne pro Oktave.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>🧮 Wie man's prüft: die Frequenzmatrix</h3>
+    <p>Man baut eine Matrix [x<sub>ij</sub>] aller Frequenzpaare und prüft: sind <em>alle</em> Einträge ganzzahlig?</p>
+    <div id="matrixDisplay">
+Beispiel — C-Dur Akkord (C=261.63, E=329.63, G=392.00 Hz):
+
+           C        E        G
+    C  [   0    ,  4.00  ,  7.02  ]
+    E  [ -4.00  ,   0    ,  3.02  ]
+    G  [ -7.02  , -3.02  ,   0    ]
+
+    → ≈ ganzzahlig → KONSONANT ✅
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#4fc3f7">🕷️ Die Materialseite (Analogie)</h3>
+    <p>Bei Spinnenseide clustern <strong>3–4 Wasserstoffbrücken</strong> in β-Sheets.
+    Die Scherfestigkeit steigt <em>überproportional</em> gegenüber einer Einzelbindung —
+    das ist die materialwissenschaftliche Entsprechung zur Konsonanz!</p>
+    <div class="formula" style="color:#ff6ec7">
+      τ<sub>cluster</sub>(N) ≫ N · τ<sub>single</sub> &nbsp; für N ≈ 3-4
+    </div>
+    <p><strong>Merke:</strong> Cluster → emergente Funktion. In beiden Welten!</p>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <h2>🎹 Interaktive Demo</h2>
+
+  <div class="card">
+    <h3>🎵 Klick die Frequenzen — höre Konsonanz vs. Dissonanz</h3>
+    <div id="consonanceDemo" style="margin-top:15px">
+      <button class="freq-btn" onclick="playFreq(261.63)">C<br>261Hz</button>
+      <button class="freq-btn" onclick="playFreq(329.63)">E<br>329Hz</button>
+      <button class="freq-btn" onclick="playFreq(392.00)">G<br>392Hz</button>
+      <button class="freq-btn" onclick="playChord([261.63,329.63,392.00])" style="background:#4caf50">C-Dur<br>😊</button>
+      <button class="freq-btn" onclick="playChord([261.63,277.18,293.66])" style="background:#f44336">Cluster<br>😖</button>
+    </div>
+    <p style="text-align:center; margin-top:15px; color:#aaa">
+      Grün = konsonant (ganzzahlige Verhältnisse) · Rot = dissonant
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>🕸️ Simulation: H-Bond Cluster in β-Sheet</h3>
+    <canvas id="clusterCanvas" width="800" height="200"></canvas>
+    <div style="text-align:center">
+      <button class="btn" onclick="drawCluster(1)">1 Bindung (schwach)</button>
+      <button class="btn" onclick="drawCluster(3)">3 Bindungen (optimal)</button>
+      <button class="btn" onclick="drawCluster(4)">4 Bindungen (optimal)</button>
+      <button class="btn" onclick="drawCluster(8)">8 Bindungen (bricht!)</button>
+    </div>
+    <p id="clusterInfo" style="text-align:center; margin-top:10px; color:#ffcc00"></p>
+  </div>
+
+  <div class="card">
+    <h3>🎼 Hierarchie-Aufbau live</h3>
+    <canvas id="hierCanvas" width="800" height="300"></canvas>
+    <div style="text-align:center">
+      <button class="btn" onclick="buildHierarchy()">▶️ Baue Hierarchie auf</button>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <h2>📊 Ergebnisse & Erkenntnisse</h2>
+
+  <div class="card">
+    <span class="tag tag-result">ERGEBNIS 1</span>
+    <h3 style="margin-top:10px">Isomorphie zwischen Seide und Musik</h3>
+    <p>Beide Systeme lassen sich durch <strong>funktoriale Isomorphismen</strong> aufeinander abbilden —
+    Objekte und Pfeile stehen an derselben Stelle. Das ist keine Metapher, sondern mathematisch beweisbar.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-result">ERGEBNIS 2</span>
+    <h3 style="margin-top:10px">H-Bond Clustering (3-4 Bindungen optimal)</h3>
+    <p>Bei Spinnenseide führt <strong>geometrische Einschränkung im Nanobereich</strong> zum Bruch von Clustern aus 3–4 Wasserstoffbrücken in β-Sheet-Strukturen — genau das erzeugt die optimale Scherfestigkeit [[11]].</p>
+    <p style="margin-top:10px; color:#4fc3f7">→ Mehr ist nicht besser! Ab einer kritischen Länge bricht das Cluster schwächer.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-result">ERGEBNIS 3</span>
+    <h3 style="margin-top:10px">Konsonanz-Cluster in Musik</h3>
+    <p>Akkorde aus <strong>konsonanten Frequenzen</strong> sind Menschen (und einigen Tieren) angeboren angenehm.
+    Die Frequenzen liegen auf einer <em>gleichstufig temperierten Skala</em> mit ganzzahligen Verhältnissen [[11]].</p>
+    <p style="margin-top:10px">→ Genau analog zum H-Bond-Cluster: <strong>Emergente Funktion durch Bündelung</strong>.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-result">ERGEBNIS 4</span>
+    <h3 style="margin-top:10px">Schadenstoleranz — beide Systeme robust!</h3>
+    <div class="grid2" style="margin-top:15px">
+      <div class="analogy-box silk">
+        <p>🕸️ Lokale Defekte in Spinnennetzen beeinträchtigen die mechanische Gesamtfunktion <strong>nicht</strong> [[11]]</p>
+      </div>
+      <div class="analogy-box music">
+        <p>🎵 Das Weglassen einzelner Akkorde in einer Sequenz zerstört die tonale Kohärenz <strong>nicht</strong> [[11]]</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-result">ERGEBNIS 5</span>
+    <h3 style="margin-top:10px">Pattern-Building erzeugt Makro-Funktion</h3>
+    <div class="flow" style="margin-top:15px">
+      <div class="olog-node">β-Sheet + amorphe Phase</div>
+      <div class="flow-arrow">→</div>
+      <div class="olog-node">Fibrille ~50 nm</div>
+      <div class="flow-arrow">→</div>
+      <div class="olog-node" style="background:#4caf50">Zähigkeit ⚡</div>
+    </div>
+    <div class="flow" style="margin-top:10px">
+      <div class="olog-node">Akkord-Sequenzen</div>
+      <div class="flow-arrow">→</div>
+      <div class="olog-node">Riffs & Phrasen</div>
+      <div class="flow-arrow">→</div>
+      <div class="olog-node" style="background:#4caf50">musikalische Spannung 🎭</div>
+    </div>
+  </div>
+</section>
+
+<!-- CRITIQUE -->
+<section id="critique">
+  <h2>⚠️ Kritik & offene Fragen</h2>
+
+  <div class="card">
+    <span class="tag tag-critique">KRITIK 1</span>
+    <h3 style="margin-top:10px">Nicht-Determinismus der Faltung</h3>
+    <p>Die Sekundärstruktur von Proteinen ist <strong>nicht immer deterministisch</strong> — dasselbe Protein
+    kann sich in <em>mehrere</em> Strukturen falten. Das gefährdet die Eindeutigkeit der funktionalen Beziehungen im Olog [[11]].</p>
+    <p style="margin-top:10px; color:#ff6ec7">Analog in Musik: Tonhöhe und Timbre sind manchmal <strong>mehrdeutig</strong>.</p>
+    <p style="margin-top:10px">🔧 <strong>Lösungsansatz:</strong> Umgebungsbedingungen spezifizieren → "Protein-Grammatik" definieren.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-critique">KRITIK 2</span>
+    <h3 style="margin-top:10px">Objektiv vs. subjektiv</h3>
+    <div class="grid2" style="margin-top:15px">
+      <div class="analogy-box silk">
+        <p><strong>🕷️ Materialeigenschaften</strong><br>eindeutig, wohldefiniert, <em>objektiv</em> messbar (z.B. Scherfestigkeit in MPa)</p>
+      </div>
+      <div class="analogy-box music">
+        <p><strong>🎵 Kunstwahrnehmung</strong><br><em>subjektiv</em>, emotional, kulturell geprägt (Was klingt "schön"?)</p>
+      </div>
+    </div>
+    <p style="margin-top:15px">→ Der Funktor überträgt Struktur, aber die <strong>Bewertung</strong> ist grundverschieden [[11]].</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-critique">KRITIK 3</span>
+    <h3 style="margin-top:10px">Nur ein Ausschnitt</h3>
+    <p>Beide Ologs (Figuren 2 und 3 im Paper) sind nur <strong>Teile eines größeren Ologs</strong>, das Spinnenseide
+    oder klassische Musik <em>vollständig</em> beschreiben würde. Die Vollständigkeit ist noch nicht erreicht [[11]].</p>
+    <p style="margin-top:10px">🔗 Ankerpunkt für Erweiterung: das gemeinsame Objekt <strong>„a bond" / „a stack"</strong>.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-critique">KRITIK 4 (implizit)</span>
+    <h3 style="margin-top:10px">Struktur ≠ Funktion trennbar?</h3>
+    <p>In hierarchischen Systemen entsteht Funktionalität <strong>durch die strukturelle Anordnung selbst</strong>
+    (Clustering, Stacking). Es ist daher oft <em>unmöglich</em>, Struktur und Funktion sauber zu trennen — in Table 1
+    des Papers überlappen diese Dimensionen bewusst [[11]].</p>
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section id="summary">
+  <h2>🎯 Fazit — das Wichtigste in einem Bild</h2>
+
+  <div class="card">
+    <h3 style="text-align:center; color:#ffcc00; font-size:1.5em">Die Kernbotschaft</h3>
+    <p style="text-align:center; font-size:1.2em; margin-top:15px; line-height:1.7">
+      🕷️ Spinnenseide und 🎵 klassische Musik teilen dieselbe <strong style="color:#4fc3f7">hierarchische Bauart</strong>.<br>
+      Mit <strong style="color:#ff6ec7">Kategorientheorie</strong> (Ologs) kann man das mathematisch <em>beweisen</em> — nicht bloß behaupten.
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 style="color:#4caf50">✅ Was ist neu?</h3>
+      <ul style="margin-left:20px; line-height:1.9">
+        <li><strong>Hierarchische Ologs</strong> — neue Notation mit Snapshot-Boxen</li>
+        <li>Funktorialer Isomorphismus Seide ↔ Musik formal etabliert</li>
+        <li>Neue Notation für Musikpartituren als gewichtete Graphen (Akkord = Knoten, Länge = Kantengewicht) [[11]]</li>
+        <li>Fundament für <strong>Materiomics</strong> als disziplin-übergreifende Wissenschaft</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="color:#2196f3">🛠️ Wozu ist das gut?</h3>
+      <ul style="margin-left:20px; line-height:1.9">
+        <li>Wissen strukturiert teilen — wie ein "mathematisches Wikipedia" [[11]]</li>
+        <li>Lernen durch Analogie in Bildung nutzbar machen</li>
+        <li>Verborgene Zusammenhänge zwischen Disziplinen aufdecken</li>
+        <li>Neue Materialien inspirieren durch bekannte Muster (z.B. aus Musik)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#ffcc00">🔑 Die Superkraft der Ologs</h3>
+    <p style="line-height:1.8">Ologs erzwingen <strong>Rigorosität</strong> beim Analogisieren: Jeder Begriff in System A muss <em>präzise</em>
+    einem Begriff in System B zugeordnet werden, sonst ist es kein Funktor. Das macht Ologs <strong>überlegen gegenüber
+    üblichen ontologischen oder heuristischen Ansätzen</strong> [[11]].</p>
+  </div>
+
+  <div class="card" style="text-align:center; background:linear-gradient(135deg,#302b63,#ffcc00); color:#000">
+    <h3 style="font-size:1.6em">🎓 Take-Home</h3>
+    <p style="font-size:1.15em; margin-top:10px; line-height:1.7">
+      Wenn du die Struktur von <strong>Musik</strong> verstehst,<br>
+      verstehst du auch die Struktur von <strong>Spinnenseide</strong>.<br>
+      Und umgekehrt.
+    </p>
+    <p style="margin-top:15px; font-style:italic">— das ist die Macht der Analogie.</p>
+  </div>
+</section>
+
+<footer>
+  Basierend auf: Giesa, Spivak & Buehler (2011), <em>"Reoccurring patterns in hierarchical protein materials and music: The power of analogies"</em>, submitted to BioNanoScience [[11]].<br>
+  Interaktive Visualisierung — klicke, höre, entdecke!
+</footer>
+
+<script>
+// ========== NAVIGATION ==========
+function show(id, btn) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function toggleInfo(el, txt) {
+  let existing = el.querySelector('.info-pop');
+  if (existing) { existing.remove(); return; }
+  let d = document.createElement('div');
+  d.className = 'info-pop';
+  d.style.cssText = 'background:#ffcc00;color:#000;padding:8px 12px;border-radius:8px;margin-left:15px;flex:2;font-size:0.9em';
+  d.textContent = txt;
+  el.appendChild(d);
+}
+
+// ========== SOUND ==========
+let audioCtx;
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playFreq(f) {
+  let ctx = getCtx();
+  let osc = ctx.createOscillator();
+  let gain = ctx.createGain();
+  osc.frequency.value = f;
+  osc.type = 'sine';
+  gain.gain.setValueAtTime(0.3, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime + 1.2);
+}
+
+function playChord(freqs) {
+  freqs.forEach(f => playFreq(f));
+}
+
+// ========== CLUSTER CANVAS ==========
+function drawCluster(n) {
+  let c = document.getElementById('clusterCanvas');
+  let ctx = c.getContext('2d');
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, c.width, c.height);
+
+  // two protein strands
+  ctx.strokeStyle = '#4fc3f7';
+  ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(50, 60); ctx.lineTo(750, 60); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(50, 140); ctx.lineTo(750, 140); ctx.stroke();
+
+  // H-bonds
+  let spacing = 600 / (n + 1);
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5,5]);
+  for (let i = 1; i <= n; i++) {
+    let x = 100 + i * spacing;
+    ctx.beginPath(); ctx.moveTo(x, 60); ctx.lineTo(x, 140); ctx.stroke();
+    ctx.fillStyle = '#ffcc00';
+    ctx.beginPath(); ctx.arc(x, 100, 4, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.setLineDash([]);
+
+  // label
+  ctx.fillStyle = '#fff';
+  ctx.font = '16px sans-serif';
+  ctx.fillText('Strand 1', 10, 65);
+  ctx.fillText('Strand 2', 10, 145);
+
+  let info = document.getElementById('clusterInfo');
+  let msg = '';
+  let strength = 0;
+  if (n === 1) { msg = '❌ Schwach — reißt sofort. Einzelbindung hält nichts.'; strength = 20; }
+  else if (n === 3 || n === 4) { msg = '✅ OPTIMAL — kooperativer Bruch, maximale Scherfestigkeit!'; strength = 100; }
+  else if (n > 5) { msg = '⚠️ Zu groß — Kraft nicht mehr gleichmäßig verteilt, versagt frühzeitig.'; strength = 50; }
+  else { msg = '⏳ Suboptimal — nicht ideal, aber besser als eine Einzelbindung.'; strength = 60; }
+  info.textContent = `${n} H-Bindung(en) → Relative Festigkeit: ${strength}%  |  ${msg}`;
+
+  // strength bar
+  ctx.fillStyle = '#333';
+  ctx.fillRect(50, 175, 700, 15);
+  ctx.fillStyle = strength >= 90 ? '#4caf50' : strength >= 50 ? '#ff9800' : '#f44336';
+  ctx.fillRect(50, 175, 7 * strength, 15);
+}
+drawCluster(3);
+
+// ========== HIERARCHY ANIMATION ==========
+function buildHierarchy() {
+  let c = document.getElementById('hierCanvas');
+  let ctx = c.getContext('2d');
+  ctx.fillStyle = '#000'; ctx.fillRect(0,0,c.width,c.height);
+
+  let levels = [
+    {silk: 'Aminosäure', music: 'Klangwelle', color: '#4fc3f7'},
+    {silk: 'Polypeptid',  music: 'Ton',       color: '#66bb6a'},
+    {silk: 'Protein',     music: 'Akkord',    color: '#ffca28'},
+    {silk: 'Nanocomposite', music: 'Riff',    color: '#ff6ec7'}
+  ];
+  let i = 0;
+  function step() {
+    if (i >= levels.length) return;
+    let y = 40 + i * 60;
+    let L = levels[i];
+
+    // silk box
+    ctx.fillStyle = L.color;
+    ctx.fillRect(80, y, 250, 40);
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('🕷️ ' + L.silk, 100, y + 25);
+
+    // music box
+    ctx.fillStyle = L.color;
+    ctx.fillRect(470, y, 250, 40);
+    ctx.fillStyle = '#000';
+    ctx.fillText('🎵 ' + L.music, 490, y + 25);
+
+    // arrow (isomorphism)
+    ctx.strokeStyle = '#ffcc00';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(340, y + 20); ctx.lineTo(460, y + 20);
+    ctx.stroke();
+    ctx.fillStyle = '#ffcc00';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('≅', 395, y + 15);
+
+    // vertical connectors
+    if (i > 0) {
+      ctx.strokeStyle = '#666';
+      ctx.beginPath();
+      ctx.moveTo(200, y - 20); ctx.lineTo(200, y);
+      ctx.moveTo(595, y - 20); ctx.lineTo(595, y);
+      ctx.stroke();
+    }
+    i++;
+    setTimeout(step, 500);
+  }
+  step();
+}
+</script>
+
+</body>
+</html>
