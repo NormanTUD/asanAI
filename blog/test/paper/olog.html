@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Ologs — Ontology Logs interaktiv erklärt</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #f0f0f5;
+    min-height: 100vh;
+    padding: 40px 20px;
+    line-height: 1.6;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 {
+    font-size: 3.5em;
+    background: linear-gradient(90deg, #f093fb, #f5576c, #4facfe, #00f2fe);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 6s ease-in-out infinite;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .subtitle {
+    text-align: center;
+    color: #a0a0c0;
+    margin-bottom: 40px;
+    font-size: 1.2em;
+  }
+  h2 {
+    font-size: 2em;
+    margin: 40px 0 15px;
+    color: #f093fb;
+    border-bottom: 2px solid rgba(240, 147, 251, 0.3);
+    padding-bottom: 8px;
+  }
+  h3 { color: #4facfe; margin: 20px 0 10px; }
+  p { margin-bottom: 12px; }
+  .card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 48px rgba(240, 147, 251, 0.2);
+  }
+  svg { display: block; margin: 20px auto; cursor: pointer; }
+  .node {
+    fill: url(#nodeGrad);
+    stroke: #f093fb;
+    stroke-width: 2;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .node:hover { stroke: #00f2fe; stroke-width: 3; filter: drop-shadow(0 0 10px #00f2fe); }
+  .node-text {
+    fill: white;
+    font-size: 13px;
+    font-weight: 600;
+    text-anchor: middle;
+    pointer-events: none;
+    dominant-baseline: middle;
+  }
+  .arrow {
+    stroke: #4facfe;
+    stroke-width: 2;
+    fill: none;
+    marker-end: url(#arrowhead);
+    transition: stroke 0.3s;
+  }
+  .arrow:hover { stroke: #f5576c; stroke-width: 3; }
+  .arrow-label {
+    fill: #ffd700;
+    font-size: 12px;
+    font-style: italic;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  .info-box {
+    background: rgba(79, 172, 254, 0.15);
+    border-left: 4px solid #4facfe;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    min-height: 60px;
+  }
+  .rule {
+    background: linear-gradient(135deg, rgba(245, 87, 108, 0.2), rgba(240, 147, 251, 0.2));
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    border-left: 4px solid #f5576c;
+  }
+  .rule h4 { color: #f5576c; margin-bottom: 8px; font-size: 1.1em; }
+  code {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    color: #00f2fe;
+  }
+  .tab-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .tab-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s;
+  }
+  .tab-btn:hover { background: rgba(240, 147, 251, 0.3); }
+  .tab-btn.active {
+    background: linear-gradient(90deg, #f093fb, #f5576c);
+    border-color: transparent;
+    box-shadow: 0 4px 20px rgba(245, 87, 108, 0.4);
+  }
+  .tab-panel { display: none; animation: fadeIn 0.5s; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .commutative-check {
+    text-align: center;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: all 0.5s;
+  }
+  .commutes { background: rgba(0, 242, 254, 0.2); color: #00f2fe; }
+  .not-commutes { background: rgba(245, 87, 108, 0.2); color: #f5576c; }
+  .highlight-path { stroke: #ffd700 !important; stroke-width: 4 !important; filter: drop-shadow(0 0 6px #ffd700); }
+  .footer {
+    text-align: center;
+    margin-top: 60px;
+    color: #808098;
+    font-size: 0.9em;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(0, 242, 254, 0.2);
+    color: #00f2fe;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    margin: 0 4px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>🧬 Ontology Logs</h1>
+  <p class="subtitle">Eine visuelle Reise durch die Sprache der Bedeutung — nach David Spivak</p>
+
+  <div class="card">
+    <h2>💡 Was ist ein Olog?</h2>
+    <p>Ein <strong>Ontology Log (Olog)</strong> ist eine formale, aber intuitive Methode, um <strong>Wissen zu strukturieren</strong>. Es basiert auf der <em>Kategorientheorie</em> und wurde von David Spivak am MIT entwickelt.</p>
+    <p>Ein Olog besteht aus zwei einfachen Zutaten:</p>
+    <ul style="margin-left: 30px;">
+      <li>🟪 <strong>Typen</strong> (Objekte) — dargestellt als <em>Boxen</em> mit Substantiven</li>
+      <li>➡️ <strong>Aspekte</strong> (Morphismen/Pfeile) — dargestellt als <em>Pfeile</em> mit Verben/Funktionen</li>
+    </ul>
+    <p style="margin-top: 15px;">👇 <em>Klicke auf die Knoten und Pfeile unten, um zu interagieren!</em></p>
+  </div>
+
+  <!-- Beispiel 1: Einfaches Olog -->
+  <div class="card">
+    <h2>📘 Beispiel 1: Ein Mensch und seine Mutter</h2>
+    <p>Das einfachste Olog: Jeder Mensch hat genau eine Mutter (die auch ein Mensch ist).</p>
+    <svg width="100%" height="220" viewBox="0 0 800 220">
+      <defs>
+        <linearGradient id="nodeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f093fb"/>
+          <stop offset="100%" stop-color="#5b3a8a"/>
+        </linearGradient>
+        <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <polygon points="0 0, 10 3, 0 6" fill="#4facfe"/>
+        </marker>
+      </defs>
+      <rect class="node" x="80" y="80" width="200" height="60" rx="10" data-info="Ein Typ: die Menge aller Menschen. Elemente sind konkrete Personen."/>
+      <text class="node-text" x="180" y="110">ein Mensch</text>
+      <rect class="node" x="520" y="80" width="200" height="60" rx="10" data-info="Auch ein Typ 'Mensch' — aber in der Rolle als Mutter."/>
+      <text class="node-text" x="620" y="110">ein Mensch (als Mutter)</text>
+      <path class="arrow" d="M 280 110 Q 400 60 520 110" data-info="Ein Aspekt: eine Funktion, die jedem Menschen genau eine Mutter zuordnet."/>
+      <text class="arrow-label" x="400" y="55">hat als Mutter</text>
+    </svg>
+    <div class="info-box" id="info1">👆 Klicke auf einen Knoten oder Pfeil, um Details zu sehen!</div>
+  </div>
+
+  <!-- Regeln -->
+  <div class="card">
+    <h2>📜 Die goldenen Regeln von Ologs</h2>
+
+    <div class="rule">
+      <h4>Regel 1: Boxen enthalten Substantive</h4>
+      <p>Jede Box beschreibt einen <strong>Typ</strong> — eine Menge von Dingen. Der Text sollte mit "ein/eine" beginnen: <code>ein Buch</code>, <code>eine Zahl</code>, <code>ein Ereignis</code>.</p>
+    </div>
+
+    <div class="rule">
+      <h4>Regel 2: Pfeile sind Funktionen</h4>
+      <p>Jeder Pfeil <code>f: A → B</code> ordnet <strong>jedem</strong> Element von A <strong>genau ein</strong> Element von B zu. Der Text lautet z. B. <code>hat als ...</code>.</p>
+    </div>
+
+    <div class="rule">
+      <h4>Regel 3: Der Text muss einen sinnvollen Satz bilden</h4>
+      <p>"ein Mensch <em>hat als Mutter</em> einen Menschen" ✅<br>"ein Mensch <em>schwimmt</em> ein Auto" ❌</p>
+    </div>
+
+    <div class="rule">
+      <h4>Regel 4: Kompositionen müssen kommutieren</h4>
+      <p>Wenn es zwei Wege von A nach B gibt, müssen beide dasselbe Ergebnis liefern. Diagramme <strong>kommutieren</strong>!</p>
+    </div>
+  </div>
+
+  <!-- Beispiel 2: Kommutatives Diagramm -->
+  <div class="card">
+    <h2>🔺 Beispiel 2: Kommutatives Diagramm</h2>
+    <p>Jedes Kind hat eine Mutter, jede Mutter ist eine Frau. Also: Jedes Kind hat eine Mutter, die eine Frau ist. <strong>Beide Wege führen zum selben Ergebnis!</strong></p>
+    <svg width="100%" height="320" viewBox="0 0 800 320">
+      <rect class="node commute-node" id="c-kind" x="60" y="230" width="160" height="60" rx="10" data-info="Startpunkt: die Menge aller Kinder."/>
+      <text class="node-text" x="140" y="260">ein Kind</text>
+      <rect class="node commute-node" id="c-mutter" x="320" y="30" width="160" height="60" rx="10" data-info="Zwischenschritt: die Mutter des Kindes."/>
+      <text class="node-text" x="400" y="60">eine Mutter</text>
+      <rect class="node commute-node" id="c-frau" x="580" y="230" width="160" height="60" rx="10" data-info="Ziel: eine Frau (der Typ, zu dem die Mutter gehört)."/>
+      <text class="node-text" x="660" y="260">eine Frau</text>
+      <path class="arrow commute-arrow" id="arr-km" d="M 200 235 L 340 90" data-path="top"/>
+      <text class="arrow-label" x="240" y="150">hat als Mutter</text>
+      <path class="arrow commute-arrow" id="arr-mf" d="M 460 90 L 600 235" data-path="top"/>
+      <text class="arrow-label" x="560" y="150">ist</text>
+      <path class="arrow commute-arrow" id="arr-kf" d="M 220 260 L 580 260" data-path="bottom"/>
+      <text class="arrow-label" x="400" y="285">hat als weibl. Elternteil</text>
+    </svg>
+    <div style="text-align:center;">
+      <button class="tab-btn" onclick="animatePath('top')">▶ Weg oben: Kind → Mutter → Frau</button>
+      <button class="tab-btn" onclick="animatePath('bottom')">▶ Weg unten: Kind → Frau</button>
+    </div>
+    <div class="commutative-check commutes" id="commuteStatus">✅ Diagramm kommutiert: beide Wege liefern dieselbe Frau!</div>
+  </div>
+
+  <!-- Beispiel 3: Tabs mit mehreren Beispielen -->
+  <div class="card">
+    <h2>🎨 Beispiel-Galerie: Ologs in freier Wildbahn</h2>
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="showTab(0)">📚 Bibliothek</button>
+      <button class="tab-btn" onclick="showTab(1)">🍕 Restaurant</button>
+      <button class="tab-btn" onclick="showTab(2)">🚗 Fahrzeug</button>
+      <button class="tab-btn" onclick="showTab(3)">🧪 Molekül</button>
+      <button class="tab-btn" onclick="showTab(4)">🎵 Musik</button>
+    </div>
+
+    <div class="tab-panel active">
+      <h3>📚 Ein Buch in einer Bibliothek</h3>
+      <svg width="100%" height="280" viewBox="0 0 800 280">
+        <rect class="node" x="50" y="110" width="140" height="60" rx="10" data-info="Der Startpunkt: alle Bücher im Regal."/>
+        <text class="node-text" x="120" y="140">ein Buch</text>
+        <rect class="node" x="280" y="20" width="160" height="60" rx="10" data-info="Der Autor — auch ein Mensch."/>
+        <text class="node-text" x="360" y="50">ein Autor</text>
+        <rect class="node" x="280" y="200" width="160" height="60" rx="10" data-info="Der Titel als Zeichenkette."/>
+        <text class="node-text" x="360" y="230">ein Titel</text>
+        <rect class="node" x="540" y="20" width="200" height="60" rx="10" data-info="Ein Name — auch ein Text."/>
+        <text class="node-text" x="640" y="50">eine Zeichenkette</text>
+        <rect class="node" x="540" y="200" width="200" height="60" rx="10" data-info="Der Titel ist eine Zeichenkette."/>
+        <text class="node-text" x="640" y="230">eine Zeichenkette</text>
+        <path class="arrow" d="M 190 130 L 280 60" data-info="Jedes Buch hat genau einen (Haupt-)Autor."/>
+        <text class="arrow-label" x="220" y="80">hat als Autor</text>
+        <path class="arrow" d="M 190 150 L 280 220" data-info="Jedes Buch hat einen Titel."/>
+        <text class="arrow-label" x="220" y="200">hat als Titel</text>
+        <path class="arrow" d="M 440 50 L 540 50" data-info="Der Autor hat einen Namen."/>
+        <text class="arrow-label" x="490" y="40">heißt</text>
+        <path class="arrow" d="M 440 230 L 540 230" data-info="Der Titel ist Text."/>
+        <text class="arrow-label" x="490" y="220">als Text</text>
+      </svg>
+      <div class="info-box">👆 Klicke die Elemente an, um zu erfahren, wie ein Bibliothekssystem strukturiert wird.</div>
+    </div>
+
+    <div class="tab-panel">
+      <h3>🍕 Bestellung im Restaurant</h3>
+      <svg width="100%" height="280" viewBox="0 0 800 280">
+        <rect class="node" x="30" y="110" width="160" height="60" rx="10" data-info="Ein Gast im Restaurant."/>
+        <text class="node-text" x="110" y="140">ein Gast</text>
+        <rect class="node" x="270" y="30" width="180" height="60" rx="10" data-info="Eine Bestellung ist ein Ereignis."/>
+        <text class="node-text" x="360" y="60">eine Bestellung</text>
+        <rect class="node" x="270" y="190" width="180" height="60" rx="10" data-info="Der Tisch, an dem der Gast sitzt."/>
+        <text class="node-text" x="360" y="220">ein Tisch</text>
+        <rect class="node" x="540" y="30" width="200" height="60" rx="10" data-info="Ein Gericht auf der Speisekarte."/>
+        <text class="node-text" x="640" y="60">ein Gericht</text>
+        <rect class="node" x="540" y="190" width="200" height="60" rx="10" data-info="Ein Kellner — auch ein Mensch."/>
+        <text class="node-text" x="640" y="220">ein Kellner</text>
+        <path class="arrow" d="M 190 130 L 270 70" data-info="Der Gast tätigt eine Bestellung."/>
+        <text class="arrow-label" x="225" y="90">tätigt</text>
+        <path class="arrow" d="M 190 150 L 270 210" data-info="Der Gast sitzt an einem Tisch."/>
+        <text class="arrow-label" x="225" y="195">sitzt an</text>
+        <path class="arrow" d="M 450 60 L 540 60" data-info="Die Bestellung besteht aus einem Gericht."/>
+        <text class="arrow-label" x="495" y="50">von</text>
+        <path class="arrow" d="M 450 220 L 540 220" data-info="Jeder Tisch hat einen Kellner."/>
+        <text class="arrow-label" x="495" y="210">bedient von</text>
+      </svg>
+      <div class="info-box">🍽️ Ologs sind ideal, um Datenbank-Schemata zu entwerfen!</div>
+    </div>
+
+    <div class="tab-panel">
+      <h3>🚗 Ein Auto und seine Teile</h3>
+      <svg width="100%" height="280" viewBox="0 0 800 280">
+        <rect class="node" x="330" y="20" width="140" height="60" rx="10" data-info="Ein einzelnes Fahrzeug."/>
+        <text class="node-text" x="400" y="50">ein Auto</text>
+        <rect class="node" x="60" y="200" width="160" height="60" rx="10" data-info="Der Motor."/>
+        <text class="node-text" x="140" y="230">ein Motor</text>
+        <rect class="node" x="320" y="200" width="160" height="60" rx="10" data-info="Vier davon pro Auto."/>
+        <text class="node-text" x="400" y="230">ein Rad</text>
+        <rect class="node" x="580" y="200" width="160" height="60" rx="10" data-info="Der Besitzer."/>
+        <text class="node-text" x="660" y="230">ein Mensch</text>
+        <path class="arrow" d="M 350 80 L 180 200" data-info="Jedes Auto hat einen Motor."/>
+        <text class="arrow-label" x="230" y="130">hat</text>
+        <path class="arrow" d="M 400 80 L 400 200" data-info="Achtung: hier bräuchte man eigentlich Multi-Werte!"/>
+        <text class="arrow-label" x="430" y="145">hat (eines)</text>
+        <path class="arrow" d="M 450 80 L 620 200" data-info="Der Besitzer des Autos."/>
+        <text class="arrow-label" x="570" y="130">gehört</text>
+      </svg>
+      <div class="info-box">⚠️ Beachte: Pfeile sind <em>Funktionen</em> — pro Auto ein Wert. Für "4 Räder" braucht man eine Menge oder eine Umkehrung des Pfeils!</div>
+    </div>
+
+    <div class="tab-panel">
+      <h3>🧪 Ein chemisches Molekül</h3>
+      <svg width="100%" height="280" viewBox="0 0 800 280">
+        <rect class="node" x="60" y="110" width="160" height="60" rx="10" data-info="Ein Atom (H, O, C, ...)"/>
+        <text class="node-text" x="140" y="140">ein Atom</text>
+        <rect class="node" x="320" y="30" width="160" height="60" rx="10" data-info="Eine Bindung zwischen zwei Atomen."/>
+        <text class="node-text" x="400" y="60">eine Bindung</text>
+        <rect class="node" x="320" y="190" width="160" height="60" rx="10" data-info="Das Element (Kohlenstoff etc.)"/>
+        <text class="node-text" x="400" y="220">ein Element</text>
+        <rect class="node" x="580" y="30" width="160" height="60" rx="10" data-info="Einfach, doppelt, dreifach."/>
+        <text class="node-text" x="660" y="60">ein Bindungstyp</text>
+        <rect class="node" x="580" y="190" width="160" height="60" rx="10" data-info="Die Ordnungszahl (Zahl)."/>
+        <text class="node-text" x="660" y="220">eine Zahl</text>
+        <path class="arrow" d="M 220 130 L 320 70" data-info="Atom ist Teil einer Bindung."/>
+        <text class="arrow-label" x="260" y="90">ist Teil von</text>
+        <path class="arrow" d="M 220 150 L 320 210" data-info="Jedes Atom hat ein Element."/>
+        <text class="arrow-label" x="260" y="195">ist vom</text>
+        <path class="arrow" d="M 480 60 L 580 60" data-info="Bindung hat einen Typ."/>
+        <text class="arrow-label" x="530" y="50">hat</text>
+        <path class="arrow" d="M 480 220 L 580 220" data-info="Element hat eine Ordnungszahl."/>
+        <text class="arrow-label" x="530" y="210">hat Nr.</text>
+      </svg>
+      <div class="info-box">⚛️ Ologs modellieren perfekt Struktur-Beziehungen in der Chemie!</div>
+    </div>
+
+    <div class="tab-panel">
+      <h3>🎵 Musik-Olog</h3>
+      <svg width="100%" height="280" viewBox="0 0 800 280">
+        <rect class="node" x="60" y="110" width="160" height="60" rx="10" data-info="Ein einzelner Song."/>
+        <text class="node-text" x="140" y="140">ein Song</text>
+        <rect class="node" x="320" y="30" width="160" height="60" rx="10" data-info="Der Interpret / die Band."/>
+        <text class="node-text" x="400" y="60">ein Künstler</text>
+        <rect class="node" x="320" y="190" width="160" height="60" rx="10" data-info="Das Album, auf dem der Song erschien."/>
+        <text class="node-text" x="400" y="220">ein Album</text>
+        <rect class="node" x="580" y="30" width="160" height="60" rx="10" data-info="Ein Musikgenre."/>
+        <text class="node-text" x="660" y="60">ein Genre</text>
+        <rect class="node" x="580" y="190" width="160" height="60" rx="10" data-info="Erscheinungsjahr."/>
+        <text class="node-text" x="660" y="220">ein Jahr</text>
+        <path class="arrow" d="M 220 130 L 320 70" data-info="Song hat einen Künstler."/>
+        <text class="arrow-label" x="260" y="90">von</text>
+        <path class="arrow" d="M 220 150 L 320 210" data-info="Song ist auf einem Album."/>
+        <text class="arrow-label" x="260" y="195">auf</text>
+        <path class="arrow" d="M 480 60 L 580 60" data-info="Künstler ist einem Genre zugeordnet."/>
+        <text class="arrow-label" x="530" y="50">spielt</text>
+        <path class="arrow" d="M 480 220 L 580 220" data-info="Album hat ein Erscheinungsjahr."/>
+        <text class="arrow-label" x="530" y="210">erschien</text>
+      </svg>
+      <div class="info-box">🎶 Spotify & Co. verwenden intern ähnliche relationale Schemata!</div>
+    </div>
+  </div>
+
+  <!-- Beispiel 4: Interaktiver Olog-Builder -->
+  <div class="card">
+    <h2>🛠️ Interaktiver Olog-Builder</h2>
+    <p>Klicke auf die Buttons, um <strong>Schritt für Schritt</strong> ein Olog aufzubauen. Beobachte, wie sich das Wissen entfaltet!</p>
+    <div style="text-align:center; margin: 20px 0;">
+      <button class="tab-btn" onclick="buildStep(1)">➕ Schritt 1: Person</button>
+      <button class="tab-btn" onclick="buildStep(2)">➕ Schritt 2: + Adresse</button>
+      <button class="tab-btn" onclick="buildStep(3)">➕ Schritt 3: + Stadt</button>
+      <button class="tab-btn" onclick="buildStep(4)">➕ Schritt 4: + Land</button>
+      <button class="tab-btn" onclick="buildStep(0)">🔄 Reset</button>
+    </div>
+    <svg width="100%" height="320" viewBox="0 0 800 320" id="builderSvg">
+      <!-- wird per JS gefüllt -->
+    </svg>
+    <div class="info-box" id="builderInfo">👆 Klicke "Schritt 1", um zu beginnen!</div>
+  </div>
+
+  <!-- Kommutativität ausführlich -->
+  <div class="card">
+    <h2>🔁 Warum Kommutativität so wichtig ist</h2>
+    <p>Stell dir vor, du berechnest den <strong>Wohnort-Kontinent</strong> einer Person auf zwei Wegen:</p>
+    <ul style="margin-left:30px;">
+      <li><span class="badge">Weg A</span> Person → Adresse → Stadt → Land → Kontinent</li>
+      <li><span class="badge">Weg B</span> Person → Kontinent (direkte Zuordnung)</li>
+    </ul>
+    <p>Damit das Olog <em>korrekt</em> ist, müssen <strong>beide Wege dasselbe Ergebnis liefern</strong> — für jede Person. Das nennt man ein <em>kommutatives Diagramm</em>.</p>
+    <div class="rule">
+      <h4>🧠 Merksatz</h4>
+      <p>„Wenn zwei Pfade zwischen denselben Boxen laufen, müssen sie gleich sein." — David Spivak</p>
+    </div>
+  </div>
+
+  <!-- Anwendungen -->
+  <div class="card">
+    <h2>🌍 Wo werden Ologs eingesetzt?</h2>
+    <ul style="margin-left:30px; line-height: 2;">
+      <li>🗄️ <strong>Datenbank-Design</strong> — Ologs sind mächtiger als ER-Diagramme</li>
+      <li>🧬 <strong>Bioinformatik</strong> — Modellierung von Genexpression, Proteinnetzwerken</li>
+      <li>🤖 <strong>Wissensgraphen & KI</strong> — semantische Repräsentation</li>
+      <li>🏭 <strong>Systems Engineering</strong> — komplexe technische Systeme</li>
+      <li>📚 <strong>Wissenschaftskommunikation</strong> — präzise Konzeptaustausch</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    ✨ Basierend auf David Spivaks Arbeit „Ologs: A Categorical Framework for Knowledge Representation" ✨<br>
+    Interaktive Visualisierung — hover, klicke, entdecke!
+  </div>
+
+</div>
+
+<script>
+  // Klick-Handler für alle Knoten und Pfeile
+  document.querySelectorAll('[data-info]').forEach(el => {
+    el.addEventListener('click', function() {
+      const info = this.getAttribute('data-info');
+      // Nächste .info-box im Elternteil finden
+      let parent = this.closest('.card');
+      let infoBox = parent.querySelector('.info-box');
+      if (infoBox) {
+        infoBox.textContent = '💡 ' + info;
+        infoBox.style.animation = 'none';
+        void infoBox.offsetWidth;
+        infoBox.style.animation = 'fadeIn 0.4s';
+      }
+    });
+  });
+
+  // Tab-System
+  function showTab(index) {
+    const card = event.target.closest('.card');
+    const buttons = card.querySelectorAll('.tab-btn');
+    const panels = card.querySelectorAll('.tab-panel');
+    buttons.forEach((b, i) => b.classList.toggle('active', i === index));
+    panels.forEach((p, i) => p.classList.toggle('active', i === index));
+  }
+
+  // Pfad-Animation für Kommutativitäts-Diagramm
+  function animatePath(which) {
+    const top = ['arr-km', 'arr-mf'];
+    const bottom = ['arr-kf'];
+    // Reset
+    document.querySelectorAll('.commute-arrow').forEach(a => a.classList.remove('highlight-path'));
+    const ids = which === 'top' ? top : bottom;
+    ids.forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('highlight-path');
+      }, i * 600);
+    });
+    setTimeout(() => {
+      const status = document.getElementById('commuteStatus');
+      status.textContent = '✅ Beide Wege enden bei "eine Frau" — das Diagramm kommutiert!';
+    }, ids.length * 600 + 200);
+  }
+
+  // Interaktiver Builder
+  const builderSteps = {
+    0: { nodes: [], arrows: [], info: '👆 Klicke "Schritt 1", um zu beginnen!' },
+    1: {
+      nodes: [{x:320, y:130, w:160, h:60, text:'eine Person'}],
+      arrows: [],
+      info: '📦 Wir haben unseren ersten Typ: eine Person. Noch keine Beziehungen.'
+    },
+    2: {
+      nodes: [
+        {x:60, y:130, w:160, h:60, text:'eine Person'},
+        {x:580, y:130, w:160, h:60, text:'eine Adresse'}
+      ],
+      arrows: [{x1:220, y1:160, x2:580, y2:160, label:'wohnt bei'}],
+      info: '➡️ Wir fügen einen Aspekt hinzu: jede Person hat eine Adresse.'
+    },
+    3: {
+      nodes: [
+        {x:40, y:130, w:140, h:60, text:'eine Person'},
+        {x:320, y:130, w:140, h:60, text:'eine Adresse'},
+        {x:600, y:130, w:140, h:60, text:'eine Stadt'}
+      ],
+      arrows: [
+        {x1:180, y1:160, x2:320, y2:160, label:'wohnt bei'},
+        {x1:460, y1:160, x2:600, y2:160, label:'liegt in'}
+      ],
+      info: '🏙️ Jede Adresse liegt in einer Stadt. Beziehungen verketten sich!'
+    },
+    4: {
+      nodes: [
+        {x:20, y:230, w:130, h:50, text:'eine Person'},
+        {x:200, y:230, w:130, h:50, text:'eine Adresse'},
+        {x:380, y:230, w:130, h:50, text:'eine Stadt'},
+        {x:560, y:230, w:130, h:50, text:'ein Land'},
+        {x:290, y:40, w:220, h:50, text:'ein Kontinent'}
+      ],
+      arrows: [
+        {x1:150, y1:255, x2:200, y2:255, label:'wohnt bei'},
+        {x1:330, y1:255, x2:380, y2:255, label:'liegt in'},
+        {x1:510, y1:255, x2:560, y2:255, label:'im Land'},
+        {x1:625, y1:230, x2:510, y2:90, label:'auf'},
+        {x1:150, y1:230, x2:290, y2:90, label:'lebt auf (direkt)'}
+      ],
+      info: '🌍 Jetzt haben wir zwei Wege zum Kontinent — sie müssen KOMMUTIEREN!'
+    }
+  };
+
+  function buildStep(n) {
+    const svg = document.getElementById('builderSvg');
+    const step = builderSteps[n];
+    let html = '';
+    // Arrows zuerst (damit sie unter den Nodes liegen)
+    step.arrows.forEach(a => {
+      html += `<path class="arrow" d="M ${a.x1} ${a.y1} L ${a.x2} ${a.y2}"/>`;
+      const mx = (a.x1 + a.x2) / 2;
+      const my = (a.y1 + a.y2) / 2 - 8;
+      html += `<text class="arrow-label" x="${mx}" y="${my}">${a.label}</text>`;
+    });
+    step.nodes.forEach(node => {
+      html += `<rect class="node" x="${node.x}" y="${node.y}" width="${node.w}" height="${node.h}" rx="10"/>`;
+      html += `<text class="node-text" x="${node.x + node.w/2}" y="${node.y + node.h/2}">${node.text}</text>`;
+    });
+    svg.innerHTML = html;
+    document.getElementById('builderInfo').textContent = '💡 ' + step.info;
+  }
+
+  // Startzustand
+  buildStep(0);
+</script>
+
+</body>
+</html>
