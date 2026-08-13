@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>🌾 Garbentheorie – Interaktiv Verstehen</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script defer src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#0f0e17; --panel:#1a1826; --ink:#fffffe; --muted:#a7a9be;
+    --acc1:#ff8906; --acc2:#f25f4c; --acc3:#e53170; --acc4:#7f5af0;
+    --acc5:#2cb67d; --gold:#f9c74f; --wheat:#e9c46a;
+    --u1:#7f5af0; --u2:#2cb67d; --u3:#ff8906; --u4:#e53170;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:
+    radial-gradient(ellipse at top,#241b3a 0%,#0f0e17 60%);
+    color:var(--ink);line-height:1.55;min-height:100vh}
+  header{padding:2.5rem 1.5rem 1rem;text-align:center;
+    background:linear-gradient(180deg,rgba(127,90,240,.15),transparent)}
+  header h1{font-size:clamp(1.8rem,4vw,3rem);margin:0;
+    background:linear-gradient(90deg,#f9c74f,#e53170,#7f5af0);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  header p{color:var(--muted);max-width:720px;margin:.5rem auto}
+  nav{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;
+    gap:.3rem;justify-content:center;padding:.6rem;
+    background:rgba(15,14,23,.85);backdrop-filter:blur(12px);
+    border-bottom:1px solid #2a2740}
+  nav button{background:#1a1826;color:var(--ink);border:1px solid #2a2740;
+    padding:.4rem .7rem;border-radius:.5rem;font-size:.85rem;cursor:pointer;
+    transition:.2s}
+  nav button:hover{background:var(--acc4);border-color:var(--acc4)}
+  section{max-width:1100px;margin:2rem auto;padding:1.5rem;
+    background:var(--panel);border-radius:1rem;border:1px solid #2a2740;
+    box-shadow:0 20px 60px rgba(0,0,0,.4)}
+  section h2{margin-top:0;font-size:1.6rem;display:flex;align-items:center;gap:.6rem}
+  .badge{font-size:.7rem;padding:.15rem .5rem;border-radius:.4rem;
+    background:var(--acc4);color:white}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+  @media (max-width:800px){.grid2{grid-template-columns:1fr}}
+  .card{background:#221f33;padding:1rem;border-radius:.7rem;
+    border-left:3px solid var(--acc4)}
+  .card.intuit{border-color:var(--acc1)}
+  .card.formal{border-color:var(--acc5)}
+  .card h3{margin:.2rem 0 .5rem;font-size:1rem;color:var(--gold)}
+  .speak{font-style:italic;color:var(--muted);font-size:.85rem;
+    padding:.4rem .6rem;background:#0f0e17;border-radius:.4rem;
+    border-left:2px solid var(--acc3);margin-top:.5rem}
+  .speak::before{content:"🔊 ";}
+  svg{width:100%;height:auto;background:#0f0e17;border-radius:.6rem;
+    display:block;margin:.6rem 0}
+  .controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;
+    padding:.6rem;background:#0f0e17;border-radius:.5rem;margin:.6rem 0}
+  .controls label{font-size:.85rem;color:var(--muted);display:flex;
+    align-items:center;gap:.4rem}
+  input[type=range]{accent-color:var(--acc3)}
+  button.play{background:var(--acc3);color:white;border:none;
+    padding:.4rem .8rem;border-radius:.4rem;cursor:pointer;font-weight:600}
+  button.play:hover{background:var(--acc2)}
+  .real{background:linear-gradient(135deg,#3a2e1a,#1a1826);
+    padding:1rem;border-radius:.7rem;margin-top:1rem;
+    border:1px dashed var(--wheat)}
+  .real h4{margin:.2rem 0 .4rem;color:var(--wheat)}
+  .tag{display:inline-block;font-size:.7rem;padding:.1rem .4rem;
+    background:#2a2740;border-radius:.3rem;margin-right:.3rem}
+  .formula-annot{margin:.8rem 0;text-align:center;font-size:1.1rem}
+  .status{font-family:monospace;color:var(--acc5);font-size:.85rem}
+  .status.bad{color:var(--acc2)}
+  footer{text-align:center;padding:2rem;color:var(--muted);font-size:.85rem}
+  .wheat-icon{font-size:1.2em}
+  details{margin-top:.6rem}
+  summary{cursor:pointer;color:var(--gold);font-weight:600}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌾 Garbentheorie – Sehen. Spielen. Verstehen.</h1>
+  <p>Von der Zeitachse zum ∞-Topos. Jedes Konzept als Bild, Formel & Alltagsanalogie.
+     Ziehe, klicke, spiele – die Mathematik antwortet.</p>
+</header>
+
+<nav id="nav"></nav>
+
+<!-- SECTIONS INJECTED BY JS -->
+<div id="content"></div>
+
+<footer>
+  Gebaut mit Temml, SVG & purer Neugier · Analogie: 🌾 = echte Getreidegarbe – Halme (stalks) stehen aufrecht am Boden ($M$).
+</footer>
+
+<script>
+/* ============================================================
+   DATA: 8 Konzepte
+   ============================================================ */
+const concepts = [
+  {id:'base', num:1, emoji:'🌍', title:'Basismannigfaltigkeit & Site',
+   de:'Grundraum / Zeit-Raum-Rahmen', en:'Base Manifold / Site',
+   intuit:'Der Boden auf dem alles steht. Bei Getreide: das Feld. In der Wahrnehmung: die Zeitachse t. Wir wählen offene Bereiche U ⊆ M – "Zeitfenster" oder "Beobachtungsintervalle".',
+   formula:String.raw`\underbrace{M}_{\text{Grundraum}} \supseteq \underbrace{U,V}_{\text{offene Fenster}}`,
+   speak:'"M ist ein topologischer Raum mit offenen Teilmengen U und V"',
+   real:'📅 Kalender: M = alle Zeitpunkte. U = "diese Woche". 🗺️ Karte: M = Erde, U = Deutschland. 🧠 KI: M = Input-Domain, U = ein Batch.'},
+
+  {id:'fiber', num:2, emoji:'🌾', title:'Faser & Faserbündel',
+   de:'Faser / Möglichkeitsraum am Punkt x', en:'Fiber / Total Space',
+   intuit:'Über JEDEM Punkt x auf dem Boden M steht ein senkrechter Halm F_x. In diesem Halm leben ALLE möglichen Werte an diesem Punkt (Sehen 👁️, Hören 👂, Fühlen ✋). Das Gesamtbündel E ist die Vereinigung aller Halme.',
+   formula:String.raw`\underbrace{E}_{\text{Totalraum}} \xrightarrow{\;\pi\;} \underbrace{M}_{\text{Basis}} , \quad \underbrace{F_x}_{\text{Faser bei }x} = \underbrace{\pi^{-1}(x)}_{\text{Urbild}}`,
+   speak:'"E projiziert per pi auf M; die Faser F-x ist das Urbild von x unter pi"',
+   real:'🌾 Getreide: Halm = alle Körner senkrecht über einem Bodenpunkt. 🎬 Film: über jedem Zeitpunkt liegt der komplette Frame (Pixel + Ton). 🧠 KI: über jedem Input x liegen alle möglichen Feature-Vektoren.'},
+
+  {id:'section', num:3, emoji:'✂️', title:'Schnitt',
+   de:'Schnitt / konkrete Messung', en:'Section',
+   intuit:'Ein Schnitt s ist eine tatsächliche Auswahl: pro Punkt x aus U greifen wir GENAU EINEN Wert aus dem Halm F_x. Wie eine Sichel, die auf jeder Höhe ein Korn erwischt. Die Bedingung π∘s = id sagt: "Was ich bei x auswähle, liegt auch WIRKLICH über x."',
+   formula:String.raw`s : U \to E, \quad \underbrace{\pi \circ s = \mathrm{id}_U}_{\text{Wähle in jedem Halm den richtigen Punkt}}`,
+   speak:'"s ist eine Abbildung von U nach E, sodass pi verknüpft mit s gleich der Identität auf U ist"',
+   real:'🌡️ Temperaturverlauf: pro Zeitpunkt ein Wert. 🎵 Melodie: pro Zeit ein Ton. 🧠 Neuronales Netz: der gewählte Aktivierungspfad. 🌾 Sichel: schneidet aus jedem Halm ein Korn.'},
+
+  {id:'presheaf', num:4, emoji:'📦', title:'Prägarbe & Restriktion',
+   de:'Prägarbe & Einschränkung', en:'Presheaf & Restriction',
+   intuit:'Die Prägarbe 𝓕 ist ein Katalog: zu jedem offenen Bereich U gibt sie die Menge 𝓕(U) aller zugelassenen Schnitte. Wichtig: Wenn V ⊆ U (kleineres Fenster), kann ich jeden Schnitt s|_U EINSCHRÄNKEN auf V. Kontravariant: Pfeile drehen sich um!',
+   formula:String.raw`\mathcal{F}:\underbrace{\mathrm{Open}(M)^{\mathrm{op}}}_{\text{Bereiche, Pfeile umgedreht}} \to \mathbf{Set}, \qquad \underbrace{\rho_{UV}}_{\text{Restriktion}}: \mathcal{F}(U)\to\mathcal{F}(V), \; s\mapsto s|_V`,
+   speak:'"F ist ein kontravarianter Funktor von den offenen Mengen in die Kategorie der Mengen; rho-U-V schränkt s auf V ein"',
+   real:'📸 Foto-Crop: großes Bild → Ausschnitt. 📉 Aktienkurs: 1 Jahr → 1 Monat. 🎬 Videoschnitt. 🧠 KI: ganze Sequenz → Sub-Sequenz für Attention.'},
+
+  {id:'germ', num:5, emoji:'🔬', title:'Keim',
+   de:'Keim / lokaler Datenkern', en:'Germ',
+   intuit:'Der Keim [s]_x ist "s unendlich stark reingezoomt bei x". Zwei Schnitte haben denselben Keim, wenn sie in IRGENDEINER (beliebig kleinen) Umgebung von x übereinstimmen. Es interessiert nur das lokale Verhalten – Fernes ist egal.',
+   formula:String.raw`[s]_x = \underbrace{(U,s)}_{\text{Repräsentant}} / \underbrace{\sim}_{\exists W\ni x:\,s|_W = t|_W}`,
+   speak:'"Klammer s Index x ist die Äquivalenzklasse des Paares U-s, quotientiert nach lokaler Gleichheit"',
+   real:'🔬 Mikroskop: nur das Verhalten am Punkt zählt. 📈 Ableitung f\'(x): Keim von f bei x. 🧠 Gradient in KI: lokale Änderung. 🌾 EIN Korn ganz oben auf einem Halm.'},
+
+  {id:'stalk', num:6, emoji:'🌾', title:'Halm',
+   de:'Halm / Speicher aller Keime bei x', en:'Stalk',
+   intuit:'Der Halm 𝓕_x sammelt ALLE Keime, die bei x überhaupt möglich sind. Formal: direkter Limes über immer kleinere Umgebungen. Das ist die "vertikale Säule" der lokalen Möglichkeiten – daher der Name Garbe = Bündel von Halmen! 🌾',
+   formula:String.raw`\mathcal{F}_x = \underbrace{\varinjlim_{x\in U}}_{\text{immer kleinere Umgebungen}} \mathcal{F}(U)`,
+   speak:'"F-x ist der direkte Limes von F von U, wobei U über alle offenen Umgebungen von x läuft"',
+   real:'🌾 Getreidehalm: alle Körner an EINEM Standort. 🧠 KI: alle möglichen lokalen Feature-Aktivierungen an einem Input. 🔬 Alle Keime von glatten Funktionen bei 0.'},
+
+  {id:'sheaf', num:7, emoji:'🧩', title:'Garbe & Verklebung',
+   de:'Garbe & Gluing', en:'Sheaf & Gluing Axiom',
+   intuit:'Eine Prägarbe wird zur GARBE, wenn zwei Wunder passieren: (a) Eindeutigkeit: Zwei globale Schnitte, die lokal überall gleich sind, sind identisch. (b) Verklebung: Wenn lokale Schnitte auf allen Überlappungen matchen, existiert EIN globaler Schnitt, der sie alle vereint. Aus lokal → global!',
+   formula:String.raw`\underbrace{s_i|_{U_i\cap U_j} = s_j|_{U_i\cap U_j}}_{\text{lokal verträglich}} \;\Longrightarrow\; \underbrace{\exists! \, s \in \mathcal{F}(U)}_{\text{globaler Schnitt}} : s|_{U_i}=s_i`,
+   speak:'"Wenn die Restriktionen von s-i und s-j auf dem Schnitt übereinstimmen, existiert genau ein globales s, das sich auf jedes s-i einschränkt"',
+   real:'🧩 Puzzle: Ränder passen → EIN Bild. 🗺️ Google Maps: Kartenkacheln → Weltkarte. 🎧 Stereo: L+R Kanal überlappen konsistent → 3D-Klang. 🧠 Federated Learning: lokale Modelle → globales Modell.'},
+
+  {id:'infty', num:8, emoji:'♾️', title:'∞-Garbe & Homotopie',
+   de:'∞-Garbe & homotopes Verkleben', en:'∞-Sheaf / Higher Sheaf',
+   intuit:'In der realen Welt sind Dinge NIE exakt gleich – nur "stetig ineinander verformbar". Licht kommt schneller an als Schall, aber dein Gehirn verklebt sie homotop zu EINEM Ereignis (Blitz + Donner = Gewitter). Statt Gleichheit auf Überlappungen fordern wir Homotopie-Äquivalenz. Das ergibt einen ∞-Topos.',
+   formula:String.raw`\mathcal{F}(U) \simeq \underbrace{\mathrm{holim}_i \, \mathcal{F}(U_i)}_{\text{Homotopie-Limes}}, \qquad s_i|_{U_{ij}} \underbrace{\simeq}_{\text{homotop, nicht }=} s_j|_{U_{ij}}`,
+   speak:'"F von U ist homotopie-äquivalent zum Homotopie-Limes der F von U-i; die Restriktionen sind homotop, nicht gleich"',
+   real:'⚡ Blitz+Donner werden neuronal zusammengeklebt. 🎬 Motion-Interpolation. 🧠 Deep Learning: Loss-Landscape hat viele "äquivalente" Minima → homotop verbunden. 🌐 Persistent Homology, Topological Data Analysis.'}
+];
+
+/* ============================================================
+   RENDER SECTIONS
+   ============================================================ */
+const nav = document.getElementById('nav');
+const content = document.getElementById('content');
+
+concepts.forEach(c=>{
+  const btn = document.createElement('button');
+  btn.textContent = `${c.num}. ${c.emoji} ${c.title.split('&')[0].trim()}`;
+  btn.onclick = ()=>document.getElementById(c.id).scrollIntoView({behavior:'smooth'});
+  nav.appendChild(btn);
+
+  const sec = document.createElement('section');
+  sec.id = c.id;
+  sec.innerHTML = `
+    <h2><span>${c.emoji}</span> ${c.num}. ${c.title}
+        <span class="badge">${c.en}</span></h2>
+    <div class="grid2">
+      <div class="card intuit">
+        <h3>💡 Intuition (${c.de})</h3>
+        <p>${c.intuit}</p>
+      </div>
+      <div class="card formal">
+        <h3>📐 Formal</h3>
+        <div class="formula-annot" data-tex="${encodeURIComponent(c.formula)}"></div>
+        <div class="speak">${c.speak}</div>
+      </div>
+    </div>
+    <div id="viz-${c.id}"></div>
+    <div class="real">
+      <h4>🌐 Reale Analogien</h4>
+      <p>${c.real}</p>
+    </div>
+  `;
+  content.appendChild(sec);
+});
+
+/* ============================================================
+   TEMML RENDER (waits for library)
+   ============================================================ */
+window.addEventListener('load',()=>{
+  document.querySelectorAll('[data-tex]').forEach(el=>{
+    const tex = decodeURIComponent(el.dataset.tex);
+    try{ el.innerHTML = temml.renderToString(tex,{displayMode:true}); }
+    catch(e){ el.textContent = tex; }
+  });
+  buildAllViz();
+});
+
+/* ============================================================
+   VISUALISIERUNGEN – SVG
+   ============================================================ */
+function buildAllViz(){
+  buildBase();
+  buildFiber();
+  buildSection();
+  buildPresheaf();
+  buildGerm();
+  buildStalk();
+  buildSheaf();
+  buildInfty();
+}
+
+/* -------- 1. BASE -------- */
+function buildBase(){
+  const host = document.getElementById('viz-base');
+  host.innerHTML = `
+    <div class="controls">
+      <label>Fenster U Position: <input type="range" id="bU" min="0" max="80" value="20"></label>
+      <label>Breite: <input type="range" id="bW" min="10" max="60" value="30"></label>
+    </div>
+    <svg viewBox="0 0 800 200" id="svgBase"></svg>`;
+  const svg = document.getElementById('svgBase');
+  const draw = ()=>{
+    const u = +document.getElementById('bU').value;
+    const w = +document.getElementById('bW').value;
+    const x1 = 40 + u*7.2, x2 = x1 + w*7.2;
+    svg.innerHTML = `
+      <line x1="20" y1="130" x2="780" y2="130" stroke="#7f5af0" stroke-width="3"/>
+      <text x="770" y="155" fill="#a7a9be" text-anchor="end">M (Zeit t)</text>
+      <rect x="${x1}" y="115" width="${x2-x1}" height="30" fill="#ff8906" opacity="0.35" rx="4"/>
+      <text x="${(x1+x2)/2}" y="105" fill="#ff8906" text-anchor="middle" font-weight="bold">U (offen)</text>
+      ${Array.from({length:9}).map((_,i)=>`
+        <line x1="${40+i*92.5}" y1="125" x2="${40+i*92.5}" y2="135" stroke="#a7a9be"/>
+        <text x="${40+i*92.5}" y="170" fill="#a7a9be" text-anchor="middle" font-size="12">t${i}</text>`).join('')}
+      <circle cx="${(x1+x2)/2}" cy="130" r="6" fill="#e53170"/>
+      <text x="${(x1+x2)/2}" y="55" fill="#e53170" text-anchor="middle" font-weight="bold">Punkt x ∈ U</text>
+      <line x1="${(x1+x2)/2}" y1="60" x2="${(x1+x2)/2}" y2="124" stroke="#e53170" stroke-dasharray="3,3"/>`;
+  };
+  document.getElementById('bU').oninput = draw;
+  document.getElementById('bW').oninput = draw;
+  draw();
+}
+
+/* -------- 2. FIBER -------- */
+function buildFiber(){
+  const host = document.getElementById('viz-fiber');
+  host.innerHTML = `
+    <div class="controls">
+      <label>Punkt x: <input type="range" id="fX" min="1" max="7" value="4"></label>
+      <label><input type="checkbox" id="fShowAll" checked> Alle Halme zeigen</label>
+    </div>
+    <svg viewBox="0 0 800 260" id="svgFiber"></svg>`;
+  const svg = document.getElementById('svgFiber');
+  const senses = [
+    {label:'👁️', color:'#f9c74f', y:-70},
+    {label:'👂', color:'#7f5af0', y:-45},
+    {label:'✋', color:'#2cb67d', y:-20}
+  ];
+  const draw = ()=>{
+    const xSel = +document.getElementById('fX').value;
+    const showAll = document.getElementById('fShowAll').checked;
+    let stalks = '';
+    for(let i=1;i<=7;i++){
+      const cx = 60 + i*100;
+      const highlight = (i===xSel);
+      if(!showAll && !highlight) continue;
+      stalks += `
+        <line x1="${cx}" y1="220" x2="${cx}" y2="60" 
+              stroke="${highlight?'#e9c46a':'#3a3550'}" 
+              stroke-width="${highlight?4:2}"/>
+        ${senses.map(s=>`
+          <circle cx="${cx}" cy="${220+s.y}" r="${highlight?7:4}" 
+                  fill="${s.color}" opacity="${highlight?1:0.5}"/>
+          ${highlight?`<text x="${cx+12}" y="${224+s.y}" fill="${s.color}" font-size="14">${s.label}</text>`:''}
+        `).join('')}
+        <text x="${cx}" y="245" fill="#a7a9be" text-anchor="middle" font-size="11">x${i}</text>
+        ${highlight?`<text x="${cx}" y="50" fill="#e9c46a" text-anchor="middle" font-weight="bold">F_x${i}</text>`:''}
+      `;
+    }
+    svg.innerHTML = `
+      <line x1="20" y1="220" x2="780" y2="220" stroke="#7f5af0" stroke-width="3"/>
+      <text x="770" y="255" fill="#a7a9be" text-anchor="end">M</text>
+      <text x="30" y="75" fill="#a7a9be" font-size="12">Totalraum E</text>
+      <text x="30" y="230" fill="#a7a9be" font-size="12">π ↓</text>
+      ${stalks}`;
+  };
+  document.getElementById('fX').oninput = draw;
+  document.getElementById('fShowAll').onchange = draw;
+  draw();
+}
+
+/* -------- 3. SECTION -------- */
+function buildSection(){
+  const host = document.getElementById('viz-section');
+  host.innerHTML = `
+    <div class="controls">
+      <label>Wähle Sinn: 
+        <select id="secSense">
+          <option value="0">👁️ Sehen</option>
+          <option value="1">👂 Hören</option>
+          <option value="2">✋ Tasten</option>
+          <option value="mix">🎭 Gemischt</option>
+        </select>
+      </label>
+      <label>Wellenform: <input type="range" id="secWave" min="0" max="30" value="10"></label>
+      <span class="status" id="secStatus">π∘s = id ✓</span>
+    </div>
+    <svg viewBox="0 0 800 260" id="svgSection"></svg>`;
+  const svg = document.getElementById('svgSection');
+  const senses = [
+    {label:'👁️', color:'#f9c74f', y:-70},
+    {label:'👂', color:'#7f5af0', y:-45},
+    {label:'✋', color:'#2cb67d', y:-20}
+  ];
+  const draw = ()=>{
+    const sel = document.getElementById('secSense').value;
+    const w = +document.getElementById('secWave').value;
+    let stalks='', points='', pathPts=[];
+    for(let i=1;i<=7;i++){
+      const cx = 60 + i*100;
+      stalks += `<line x1="${cx}" y1="220" x2="${cx}" y2="140" stroke="#3a3550" stroke-width="2"/>`;
+      senses.forEach(s=>{
+        stalks += `<circle cx="${cx}" cy="${220+s.y}" r="4" fill="${s.color}" opacity="0.4"/>`;
+      });
+      let pick;
+      if(sel==='mix'){
+        pick = senses[i%3];
+      } else {
+        pick = senses[+sel];
+      }
+      const wave = Math.sin(i*0.7)*w;
+      const py = 220 + pick.y + wave*0.3;
+      pathPts.push([cx,py]);
+      points += `<circle cx="${cx}" cy="${py}" r="8" fill="${pick.color}" stroke="white" stroke-width="2"/>
+                 <text x="${cx}" y="${py+4}" text-anchor="middle" font-size="10">${pick.label}</text>`;
+    }
+    const path = 'M' + pathPts.map(p=>p.join(',')).join(' L');
+    svg.innerHTML = `
+      <line x1="20" y1="220" x2="780" y2="220" stroke="#7f5af0" stroke-width="3"/>
+      <rect x="60" y="215" width="700" height="10" fill="#ff8906" opacity="0.3"/>
+      <text x="60" y="255" fill="#ff8906" font-size="12">U ⊆ M</text>
+      ${stalks}
+      <path d="${path}" stroke="#e53170" stroke-width="3" fill="none" stroke-dasharray="4,3"/>
+      ${points}
+      <text x="740" y="130" fill="#e53170" font-weight="bold">Schnitt s</text>`;
+  };
+  document.getElementById('secSense').onchange = draw;
+  document.getElementById('secWave').oninput = draw;
+  draw();
+}
+
+/* -------- 4. PRESHEAF & RESTRICTION -------- */
+function buildPresheaf(){
+  const host = document.getElementById('viz-presheaf');
+  host.innerHTML = `
+    <div class="controls">
+      <label>V-Start: <input type="range" id="pV1" min="10" max="50" value="20"></label>
+      <label>V-Ende: <input type="range" id="pV2" min="55" max="90" value="70"></label>
+      <button class="play" id="pRestrict">✂️ Restringieren s ↦ s|_V</button>
+    </div>
+    <svg viewBox="0 0 800 300" id="svgPresh"></svg>
+    <details><summary>Warum kontravariant?</summary>
+      <p style="color:var(--muted);font-size:.9rem">
+        Die Inklusion V ↪ U ist ein Pfeil von V nach U. 𝓕 dreht ihn um: 
+        𝓕(U) → 𝓕(V). Große Fenster liefern reichhaltigere Info, die man 
+        auf kleine reduziert – nie umgekehrt.
+      </p>
+    </details>`;
+  const svg = document.getElementById('svgPresh');
+  let restricted = false;
+  const draw = ()=>{
+    const v1 = +document.getElementById('pV1').value;
+    const v2 = +document.getElementById('pV2').value;
+    const uX1 = 40, uX2 = 760;
+    const vX1 = 40 + v1*7.6, vX2 = 40 + v2*7.6;
+    // sample section as sine
+    const N = 40;
+    let sPath='', sPathV='';
+    for(let i=0;i<=N;i++){
+      const x = uX1 + (uX2-uX1)*i/N;
+      const y = 100 + Math.sin(i*0.4)*25 + Math.cos(i*0.2)*12;
+      sPath += (i?' L':'M') + x + ',' + y;
+      if(x>=vX1 && x<=vX2) sPathV += (sPathV?' L':'M') + x + ',' + (y+140);
+    }
+    svg.innerHTML = `
+      <!-- U layer -->
+      <text x="20" y="30" fill="#ff8906" font-weight="bold">𝓕(U): Schnitt über großem Fenster U</text>
+      <line x1="${uX1}" y1="150" x2="${uX2}" y2="150" stroke="#7f5af0" stroke-width="2"/>
+      <rect x="${uX1}" y="145" width="${uX2-uX1}" height="10" fill="#ff8906" opacity="0.3"/>
+      <text x="${uX1}" y="175" fill="#ff8906" font-size="12">U</text>
+      <path d="${sPath}" stroke="#e53170" stroke-width="3" fill="none"/>
+      <rect x="${vX1}" y="45" width="${vX2-vX1}" height="110" fill="#2cb67d" opacity="0.15" 
+            stroke="#2cb67d" stroke-dasharray="4,3"/>
+      <text x="${(vX1+vX2)/2}" y="60" fill="#2cb67d" text-anchor="middle" font-size="12">V ⊆ U</text>
+      <!-- arrow -->
+      <path d="M 400 195 L 400 235" stroke="#f9c74f" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="410" y="220" fill="#f9c74f" font-size="14">ρ_UV</text>
+      <!-- V layer -->
+      <text x="20" y="260" fill="#2cb67d" font-weight="bold">𝓕(V): eingeschränkter Schnitt s|_V</text>
+      <line x1="${vX1}" y1="285" x2="${vX2}" y2="285" stroke="#2cb67d" stroke-width="2"/>
+      ${restricted?`<path d="${sPathV}" stroke="#e53170" stroke-width="3" fill="none"/>`:''}
+      <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <polygon points="0,0 8,3 0,6" fill="#f9c74f"/></marker></defs>`;
+  };
+  document.getElementById('pV1').oninput = draw;
+  document.getElementById('pV2').oninput = draw;
+  document.getElementById('pRestrict').onclick = ()=>{ restricted = !restricted; draw(); };
+  draw();
+}
+
+/* -------- 5. GERM -------- */
+function buildGerm(){
+  const host = document.getElementById('viz-germ');
+  host.innerHTML = `
+    <div class="controls">
+      <label>🔬 Zoom: <input type="range" id="gZoom" min="1" max="100" value="10"></label>
+      <label><input type="checkbox" id="gShowT" checked> Zweiten Schnitt t zeigen</label>
+      <span class="status" id="gStatus">[s]_x ≠ [t]_x noch unterscheidbar</span>
+    </div>
+    <svg viewBox="0 0 800 260" id="svgGerm"></svg>`;
+  const svg = document.getElementById('svgGerm');
+  const draw = ()=>{
+    const z = +document.getElementById('gZoom').value;
+    const showT = document.getElementById('gShowT').checked;
+    const cx = 400, cy = 130;
+    const range = 400/z;
+    let sPath='', tPath='';
+    for(let i=0;i<=100;i++){
+      const dx = -range/2 + range*i/100;
+      const worldX = dx;
+      const sy = Math.sin(worldX*0.05)*40 + Math.cos(worldX*0.1)*15;
+      const ty = sy + (Math.abs(worldX)>range*0.3 ? Math.sin(worldX*0.02)*20 : 0);
+      const px = cx + dx*z;
+      const py1 = cy + sy;
+      const py2 = cy + ty;
+      sPath += (i?' L':'M') + px + ',' + py1;
+      tPath += (i?' L':'M') + px + ',' + py2;
+    }
+    // status: near x are they close?
+    const nearRange = range*0.2;
+    const sameGerm = z>=20; // once zoomed enough they look identical near x
+    document.getElementById('gStatus').textContent = 
+      sameGerm ? '[s]_x = [t]_x  ✓ (lokal identisch)' : '[s]_x ≠ [t]_x noch unterscheidbar';
+    document.getElementById('gStatus').className = 'status' + (sameGerm?'':' bad');
+    svg.innerHTML = `
+      <line x1="20" y1="200" x2="780" y2="200" stroke="#7f5af0" stroke-width="2"/>
+      <circle cx="${cx}" cy="200" r="6" fill="#e53170"/>
+      <text x="${cx}" y="225" fill="#e53170" text-anchor="middle" font-weight="bold">x</text>
+      <circle cx="${cx}" cy="${cy}" r="${200/Math.sqrt(z)}" fill="none" 
+              stroke="#f9c74f" stroke-dasharray="3,3" opacity="0.6"/>
+      <text x="${cx + 200/Math.sqrt(z)+5}" y="${cy}" fill="#f9c74f" font-size="11">Umgebung W ∋ x</text>
+      <path d="${sPath}" stroke="#e53170" stroke-width="3" fill="none"/>
+      <text x="60" y="50" fill="#e53170">— s</text>
+      ${showT?`<path d="${tPath}" stroke="#2cb67d" stroke-width="3" fill="none" stroke-dasharray="5,3"/>
+              <text x="60" y="70" fill="#2cb67d">- - t</text>`:''}
+      <text x="700" y="50" fill="#a7a9be" font-size="12">Zoom ×${z}</text>`;
+  };
+  document.getElementById('gZoom').oninput = draw;
+  document.getElementById('gShowT').onchange = draw;
+  draw();
+}
+
+/* -------- 6. STALK -------- */
+function buildStalk(){
+  const host = document.getElementById('viz-stalk');
+  host.innerHTML = `
+    <div class="controls">
+      <label>Umgebungen einblenden: <input type="range" id="stN" min="1" max="6" value="3"></label>
+      <button class="play" id="stColim">🌾 Colimit: Halm formen</button>
+    </div>
+    <svg viewBox="0 0 800 320" id="svgStalk"></svg>
+    <p style="color:var(--muted);font-size:.9rem">
+      Immer kleinere Umgebungen U₁ ⊃ U₂ ⊃ U₃ ⊃ … um x. Jede liefert Schnitte 𝓕(Uᵢ).
+      Der <b>Halm</b> ist der Colimit – zusammenkollabiert zu einer "Säule aus Keimen" bei x.
+    </p>`;
+  const svg = document.getElementById('svgStalk');
+  let collapsed = false;
+  const draw = ()=>{
+    const n = +document.getElementById('stN').value;
+    const cx = 400;
+    let layers = '';
+    for(let i=0;i<n;i++){
+      const w = collapsed ? 40 : 300 - i*45;
+      const y = 60 + i*35;
+      const opacity = collapsed ? 0.9 : 0.5 + i*0.08;
+      layers += `
+        <ellipse cx="${cx}" cy="${y}" rx="${w}" ry="12" fill="#7f5af0" opacity="${opacity}"/>
+        <text x="${cx-w-10}" y="${y+4}" fill="#a7a9be" text-anchor="end" font-size="11">𝓕(U${i+1})</text>
+      `;
+    }
+    // stalk column when collapsed
+    const stalkCol = collapsed ? `
+      <rect x="${cx-8}" y="60" width="16" height="${n*35}" fill="url(#stalkG)" rx="8"/>
+      <text x="${cx+30}" y="${60+n*17}" fill="#e9c46a" font-weight="bold">𝓕_x  (Halm)</text>
+    ` : '';
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="stalkG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f9c74f"/>
+          <stop offset="1" stop-color="#e53170"/>
+        </linearGradient>
+      </defs>
+      <line x1="20" y1="260" x2="780" y2="260" stroke="#7f5af0" stroke-width="2"/>
+      <circle cx="${cx}" cy="260" r="7" fill="#e53170"/>
+      <text x="${cx}" y="285" fill="#e53170" text-anchor="middle" font-weight="bold">x</text>
+      ${layers}
+      ${stalkCol}
+      <text x="20" y="30" fill="#a7a9be">Colimit: lim→  𝓕(Uᵢ) = 𝓕_x</text>`;
+  };
+  document.getElementById('stN').oninput = draw;
+  document.getElementById('stColim').onclick = ()=>{ collapsed = !collapsed; draw(); };
+  draw();
+}
+
+/* -------- 7. SHEAF: GLUING PUZZLE -------- */
+function buildSheaf(){
+  const host = document.getElementById('viz-sheaf');
+  host.innerHTML = `
+    <div class="controls">
+      <label>Schnitt s₁ (auf U₁): <input type="range" id="shA" min="-30" max="30" value="10"></label>
+      <label>Schnitt s₂ (auf U₂): <input type="range" id="shB" min="-30" max="30" value="10"></label>
+      <button class="play" id="shGlue">🧩 Verkleben</button>
+      <span class="status" id="shStatus">–</span>
+    </div>
+    <svg viewBox="0 0 800 260" id="svgSheaf"></svg>
+    <p style="color:var(--muted);font-size:.9rem">
+      Stelle beide Schnitte so ein, dass sie auf der <b>Überlappung U₁∩U₂</b> übereinstimmen.
+      Dann – und nur dann – erlaubt die Garbenaxiom-Verklebung EINEN globalen Schnitt auf U₁∪U₂.
+    </p>`;
+  const svg = document.getElementById('svgSheaf');
+  const U1x1=60, U1x2=440, U2x1=340, U2x2=740;
+  const draw = ()=>{
+    const a = +document.getElementById('shA').value;
+    const b = +document.getElementById('shB').value;
+    // At overlap midpoint check
+    const compat = Math.abs(a-b) <= 2;
+    // curves: s1(x) = 130 + a*sin(0.02x), s2(x)=130 + b*sin(0.02x)
+    const curve = (x1,x2,amp)=>{
+      let p='';
+      for(let x=x1;x<=x2;x+=4){
+        const y = 130 + Math.sin((x-x1)*0.015)*amp - amp*0.3;
+        p += (p?' L':'M') + x + ',' + y;
+      }
+      return p;
+    };
+    document.getElementById('shStatus').textContent = compat 
+      ? '✓ verträglich – Verklebung möglich!' 
+      : `✗ Δ = ${(a-b).toFixed(1)} — passt (noch) nicht`;
+    document.getElementById('shStatus').className = 'status' + (compat?'':' bad');
+    svg.innerHTML = `
+      <line x1="20" y1="220" x2="780" y2="220" stroke="#7f5af0" stroke-width="2"/>
+      <rect x="${U1x1}" y="215" width="${U1x2-U1x1}" height="10" fill="#ff8906" opacity="0.35"/>
+      <rect x="${U2x1}" y="215" width="${U2x2-U2x1}" height="10" fill="#2cb67d" opacity="0.35"/>
+      <rect x="${U2x1}" y="215" width="${U1x2-U2x1}" height="10" fill="#f9c74f" opacity="0.6"/>
+      <text x="${(U1x1+U2x1)/2}" y="245" fill="#ff8906" text-anchor="middle">U₁</text>
+      <text x="${(U1x2+U2x2)/2}" y="245" fill="#2cb67d" text-anchor="middle">U₂</text>
+      <text x="${(U2x1+U1x2)/2}" y="205" fill="#f9c74f" text-anchor="middle" font-size="11">U₁∩U₂</text>
+      <path d="${curve(U1x1,U1x2,a)}" stroke="#ff8906" stroke-width="3" fill="none"/>
+      <path d="${curve(U2x1,U2x2,b)}" stroke="#2cb67d" stroke-width="3" fill="none" 
+            stroke-dasharray="${compat?'0':'5,3'}"/>
+      ${compat?`<path d="${curve(U1x1,U2x2,(a+b)/2)}" stroke="#e53170" stroke-width="4" 
+                fill="none" opacity="0.6"/>
+                <text x="400" y="60" fill="#e53170" text-anchor="middle" font-weight="bold">
+                ∃! globaler Schnitt s auf U₁∪U₂</text>`:''}`;
+  };
+  ['shA','shB'].forEach(id=>document.getElementById(id).oninput = draw);
+  document.getElementById('shGlue').onclick = ()=>{
+    // snap both to average
+    const a = +document.getElementById('shA').value;
+    const b = +document.getElementById('shB').value;
+    const avg = Math.round((a+b)/2);
+    document.getElementById('shA').value = avg;
+    document.getElementById('shB').value = avg;
+    draw();
+  };
+  draw();
+}
+
+/* -------- 8. ∞-SHEAF & HOMOTOPY -------- */
+function buildInfty(){
+  const host = document.getElementById('viz-infty');
+  host.innerHTML = `
+    <div class="controls">
+      <label>Homotopie-Pfad t: <input type="range" id="hT" min="0" max="100" value="0"></label>
+      <button class="play" id="hAuto">▶️ Auto-Deformieren</button>
+      <span class="status" id="hStatus">Licht ⚡ und Schall 🔊 zeitlich versetzt</span>
+    </div>
+    <svg viewBox="0 0 800 300" id="svgInf"></svg>
+    <p style="color:var(--muted);font-size:.9rem">
+      In der klassischen Garbe müsste ⚡Blitz und 🔊Donner EXAKT gleichzeitig ankommen, damit sie 
+      "dasselbe Ereignis" sind. In einer <b>∞-Garbe</b> reicht ein <b>Homotopie-Pfad</b> 
+      (stetige Deformation) – dein Gehirn tut genau das!
+    </p>`;
+  const svg = document.getElementById('svgInf');
+  let timer=null;
+  const draw = ()=>{
+    const t = +document.getElementById('hT').value / 100;
+    const lightX = 200, soundX = 600;
+    const eventX = lightX + (soundX-lightX)*0.5;
+    // interpolated positions
+    const lx = lightX + (eventX-lightX)*t;
+    const sx = soundX + (eventX-soundX)*t;
+    const merged = Math.abs(lx-sx)<10;
+    document.getElementById('hStatus').textContent = merged 
+      ? '✓ homotop verklebt → EIN Ereignis 🌩️'       : `Pfad t = ${(t).toFixed(2)}, Δ = ${Math.abs(lx-sx).toFixed(0)}px`;
+    document.getElementById('hStatus').className = 'status' + (merged?'':' bad');
+    // homotopy path (curved arc between light and sound worldlines)
+    const arcY = 150;
+    const arc = `M ${lightX} 80 Q ${(lightX+soundX)/2} ${arcY - t*60} ${soundX} 80`;
+    svg.innerHTML = `
+      <line x1="20" y1="240" x2="780" y2="240" stroke="#7f5af0" stroke-width="2"/>
+      <text x="770" y="265" fill="#a7a9be" text-anchor="end">Zeit t</text>
+      <!-- worldlines -->
+      <line x1="${lightX}" y1="60" x2="${lightX}" y2="240" stroke="#f9c74f" stroke-width="1" opacity="0.3" stroke-dasharray="2,3"/>
+      <line x1="${soundX}" y1="60" x2="${soundX}" y2="240" stroke="#7f5af0" stroke-width="1" opacity="0.3" stroke-dasharray="2,3"/>
+      <!-- homotopy arc -->
+      <path d="${arc}" stroke="#e9c46a" stroke-width="2" fill="none" opacity="0.5" stroke-dasharray="4,4"/>
+      <text x="${(lightX+soundX)/2}" y="${arcY - t*60 - 10}" fill="#e9c46a" text-anchor="middle" font-size="11">homotoper Pfad</text>
+      <!-- light -->
+      <circle cx="${lx}" cy="80" r="18" fill="#f9c74f" opacity="0.9"/>
+      <text x="${lx}" y="86" text-anchor="middle" font-size="20">⚡</text>
+      <text x="${lx}" y="115" fill="#f9c74f" text-anchor="middle" font-size="12">Licht s₁</text>
+      <!-- sound -->
+      <circle cx="${sx}" cy="80" r="18" fill="#7f5af0" opacity="0.9"/>
+      <text x="${sx}" y="86" text-anchor="middle" font-size="20">🔊</text>
+      <text x="${sx}" y="115" fill="#7f5af0" text-anchor="middle" font-size="12">Schall s₂</text>
+      ${merged?`
+        <circle cx="${(lx+sx)/2}" cy="80" r="30" fill="#e53170" opacity="0.3">
+          <animate attributeName="r" values="25;40;25" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <text x="${(lx+sx)/2}" y="45" fill="#e53170" text-anchor="middle" font-weight="bold" font-size="14">🌩️ Gewitter (verklebtes Ereignis)</text>
+      `:''}
+      <!-- overlap zone -->
+      <rect x="${lightX-40}" y="235" width="${soundX-lightX+80}" height="10" fill="#f9c74f" opacity="0.15"/>
+      <text x="${(lightX+soundX)/2}" y="270" fill="#a7a9be" text-anchor="middle" font-size="11">U₁ ∩ U₂  →  s₁|_∩  ≃  s₂|_∩  (homotop, nicht =)</text>`;
+  };
+  document.getElementById('hT').oninput = draw;
+  document.getElementById('hAuto').onclick = ()=>{
+    if(timer){ clearInterval(timer); timer=null; return; }
+    let v = +document.getElementById('hT').value;
+    let dir = 1;
+    timer = setInterval(()=>{
+      v += dir*2;
+      if(v>=100){v=100;dir=-1;}
+      if(v<=0){v=0;dir=1;}
+      document.getElementById('hT').value = v;
+      draw();
+    },50);
+  };
+  draw();
+}
+
+/* ============================================================
+   BONUS: SYNOPSE — Wie alles zusammenhängt
+   ============================================================ */
+const synopse = document.createElement('section');
+synopse.id = 'synopse';
+synopse.innerHTML = `
+  <h2>🗺️ Synopse: Wie alles zusammenhängt <span class="badge">Big Picture</span></h2>
+  <p>Die Konzepte bauen aufeinander auf wie ein <b>Turm</b> — von lokaler Geometrie zu globaler Kohärenz zu homotoper Flexibilität:</p>
+  <svg viewBox="0 0 900 480" id="synopseSVG"></svg>
+  <div class="grid2">
+    <div class="card intuit">
+      <h3>🌾 Warum heißt es "Garbe"?</h3>
+      <p>Wie eine echte Getreidegarbe: viele einzelne <b>Halme</b> (stalks) stehen aufrecht am Boden (Basis M). 
+         Über jedem Bodenpunkt eine vertikale Säule von Möglichkeiten. Ein <b>Schnitt</b> ist die Sichel, 
+         die aus jedem Halm ein Korn wählt. Und die <b>Verklebung</b> bindet die Halme zu einer kohärenten Ernte.</p>
+    </div>
+    <div class="card formal">
+      <h3>🧠 Wo taucht das in KI/Informatik auf?</h3>
+      <ul style="font-size:.9rem;line-height:1.7">
+        <li><b>Federated Learning</b>: lokale Modelle (Schnitte) → globales Modell (Verklebung)</li>
+        <li><b>Topological Data Analysis</b>: persistent sheaves auf Punktwolken</li>
+        <li><b>Sheaf Neural Networks</b> (Bodnar, Hansen, Bronstein 2022): Restriktionsabbildungen als lernbare Matrizen</li>
+        <li><b>Distributed Systems</b>: CRDTs sind essentiell Garben-Strukturen (lokale Konsistenz → globale)</li>
+        <li><b>Type Theory / HoTT</b>: ∞-Garben ⇔ Homotopy Type Theory (Univalenz-Axiom)</li>
+        <li><b>Sensor Fusion</b>: multimodale Wahrnehmung als ∞-Garben-Verklebung</li>
+      </ul>
+    </div>
+  </div>
+  <details style="margin-top:1rem">
+    <summary>📚 Die 8 Schichten als "Rezept"</summary>
+    <ol style="color:var(--muted);line-height:1.9">
+      <li><b>Basis M</b> festlegen (Wo? Wann?)</li>
+      <li><b>Faser F_x</b> bauen (Welche Werte sind pro Punkt möglich?)</li>
+      <li><b>Schnitte 𝓕(U)</b> zulassen (Welche Auswahlen sind erlaubt?)</li>
+      <li><b>Restriktion ρ_UV</b> definieren (Wie schrumpft man Fenster?) → <i>Prägarbe</i></li>
+      <li><b>Keime [s]_x</b> bilden (Was bleibt beim Reinzoomen?)</li>
+      <li><b>Halme 𝓕_x</b> sammeln (Colimit aller Keime bei x)</li>
+      <li><b>Verklebung fordern</b> (Aus verträglich-lokal wird eindeutig-global) → <i>Garbe</i></li>
+      <li><b>Gleichheit lockern</b> zu Homotopie → <i>∞-Garbe</i> (realistische Welt)</li>
+    </ol>
+  </details>
+`;
+content.appendChild(synopse);
+// nav button for synopse
+const navBtnSyn = document.createElement('button');
+navBtnSyn.textContent = '🗺️ Synopse';
+navBtnSyn.onclick = ()=>document.getElementById('synopse').scrollIntoView({behavior:'smooth'});
+nav.appendChild(navBtnSyn);
+
+// draw synopse diagram after load
+window.addEventListener('load',()=>{
+  const s = document.getElementById('synopseSVG');
+  if(!s) return;
+  const nodes = [
+    {x:100, y:420, r:35, c:'#7f5af0', l:'M', sub:'Basis'},
+    {x:250, y:420, r:35, c:'#f9c74f', l:'F_x', sub:'Faser'},
+    {x:400, y:420, r:35, c:'#e53170', l:'s', sub:'Schnitt'},
+    {x:550, y:420, r:35, c:'#ff8906', l:'𝓕', sub:'Prägarbe'},
+    {x:250, y:250, r:35, c:'#f25f4c', l:'[s]_x', sub:'Keim'},
+    {x:400, y:250, r:35, c:'#e9c46a', l:'𝓕_x', sub:'Halm'},
+    {x:600, y:250, r:40, c:'#2cb67d', l:'𝓕✓', sub:'Garbe'},
+    {x:780, y:120, r:45, c:'#e53170', l:'∞', sub:'∞-Garbe'}
+  ];
+  const edges = [
+    [0,1,'π⁻¹'],[1,2,'wählt'],[2,3,'sammelt'],[3,4,'zoomt'],
+    [4,5,'colim'],[3,6,'+ Gluing'],[5,6,'⊂'],[6,7,'homotop']
+  ];
+  let svgInner = '';
+  edges.forEach(([a,b,lbl])=>{
+    const A = nodes[a], B = nodes[b];
+    svgInner += `<line x1="${A.x}" y1="${A.y}" x2="${B.x}" y2="${B.y}" 
+                 stroke="#a7a9be" stroke-width="1.5" opacity="0.5" marker-end="url(#ar2)"/>
+                 <text x="${(A.x+B.x)/2}" y="${(A.y+B.y)/2 - 6}" 
+                 fill="#a7a9be" font-size="11" text-anchor="middle" 
+                 style="background:#1a1826">${lbl}</text>`;
+  });
+  nodes.forEach(n=>{
+    svgInner += `<circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="${n.c}" opacity="0.85"/>
+                 <text x="${n.x}" y="${n.y+2}" fill="white" text-anchor="middle" 
+                       font-weight="bold" font-size="14">${n.l}</text>
+                 <text x="${n.x}" y="${n.y + n.r + 15}" fill="#a7a9be" 
+                       text-anchor="middle" font-size="11">${n.sub}</text>`;
+  });
+  s.innerHTML = `
+    <defs><marker id="ar2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0,0 9,3 0,6" fill="#a7a9be"/></marker></defs>
+    <text x="450" y="30" fill="#f9c74f" text-anchor="middle" font-size="16" font-weight="bold">
+      Von lokal (unten) zu global-homotop (oben rechts)</text>
+    ${svgInner}`;
+});
+</script>
+</body>
+</html>

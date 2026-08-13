@@ -436,7 +436,7 @@ function getPointerPos(cnv, e) {
 (function() {
   const cnv = document.getElementById('cnvLife');
   let dims = fitCanvas(cnv);
-  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+  new ResizeObserver(() => { dims = fitCanvas(cnv); }).observe(cnv);
 
   const state = {
     person: { x: 100, y: 250, vx: 0, vy: 0 },
@@ -588,7 +588,7 @@ function getPointerPos(cnv, e) {
 (function() {
   const cnv = document.getElementById('cnvVec');
   let dims = fitCanvas(cnv);
-  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+  new ResizeObserver(() => { dims = fitCanvas(cnv); }).observe(cnv);
 
   const state = {
     person: { x: 400, y: 250, vx: 0, vy: 0 },
@@ -727,7 +727,7 @@ function getPointerPos(cnv, e) {
 (function() {
   const cnv = document.getElementById('cnvConf');
   let dims = fitCanvas(cnv);
-  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+  new ResizeObserver(() => { dims = fitCanvas(cnv); }).observe(cnv);
 
   const state = { person: { x: 100, y: 250, vx: 0, vy: 0 }, objects: [], type: 'app-av' };
   const typeSel = document.getElementById('conflictType');
@@ -854,7 +854,7 @@ function getPointerPos(cnv, e) {
 (function() {
   const cnv = document.getElementById('cnvTension');
   let dims = fitCanvas(cnv);
-  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+  new ResizeObserver(() => { dims = fitCanvas(cnv); }).observe(cnv);
 
   let tasks = [];
   function reset() {
@@ -1001,7 +1001,7 @@ function getPointerPos(cnv, e) {
 (function() {
   const cnv = document.getElementById('cnvSat');
   let dims = fitCanvas(cnv);
-  window.addEventListener('resize', () => dims = fitCanvas(cnv));
+  new ResizeObserver(() => { dims = fitCanvas(cnv); }).observe(cnv);
 
   let strokes = [];
   let count = 0;
