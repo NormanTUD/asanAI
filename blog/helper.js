@@ -604,6 +604,7 @@ function smartquote() {
 				const renderState = (isShort, animate = false) => {
 					const text = isShort ? shortHtml : fullHtml;
 					p.setAttribute('data-state', isShort ? 'short' : 'full');
+					p.classList.toggle('quote-char-mode', !!animate);
 
 					const hintText = isShort ? 'expand' : 'collapse';
 					const hintEl = `<span class="quote-expand-hint"><span class="quote-hint-dot">·</span> <i>${hintText}</i></span>`;

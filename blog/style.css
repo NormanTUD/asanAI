@@ -3177,6 +3177,13 @@ input[type="reset"]:active {
 	transition: text-shadow 0.4s ease, color 0.4s ease;
 }
 
+/* In animated char mode the text is composed of inline-block .quote-char
+   spans, so the guillemets must match their vertical alignment exactly. */
+.toggleable-quote.quote-char-mode .quote-guillemet {
+	display: inline-block;
+	vertical-align: baseline;
+}
+
 .quote-guillemet.glow-pulse {
 	animation: guillemetGlow 0.8s ease-in-out 2;
 }
