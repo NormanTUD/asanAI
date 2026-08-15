@@ -387,6 +387,113 @@
 		});
 	}
 
+	/* ── 6c/6d shared: hover preview tooltips ──
+	   Both the footnote and citation hover previews used to live inside
+	   the anchor's parent node. That put them inside whatever stacking
+	   context the surrounding animated quote/figure created (quoteReveal,
+	   imgReveal keep a transform via fill-mode:both), so the tip's
+	   z-index was trapped beneath following text.
+	   Fix: portal each tooltip to <body>, position it with position:fixed
+	   from the anchor's viewport rect, and temporarily neutralize any
+	   ancestor that would create a containing block for fixed positioning.
+	   This is the same guardrailed pattern the glossary tooltip uses. */
+
+	var _previewSavedStyles = new WeakMap();
+
+	function neutralizeContainingBlock(el) {
+		var node = el;
+		var stack = [];
+		var props = ['transform', 'filter', 'backdropFilter', 'perspective',
+			'clipPath', 'mask', 'maskImage', 'willChange', 'contain'];
+		while (node && node !== document.documentElement) {
+			var cs = window.getComputedStyle(node);
+			var saved = _previewSavedStyles.get(node) || {};
+			var touched = false;
+			for (var i = 0; i < props.length; i++) {
+				var p = props[i];
+				var v = cs[p];
+				if (v && v !== 'none' && v !== 'normal' && v !== 'auto' && !(p === 'willChange' && v === 'auto')) {
+					if (!(p in saved)) {
+						saved[p] = node.style[p] || '';
+						node.style[p] = 'none';
+						touched = true;
+					}
+				}
+			}
+			if (touched) _previewSavedStyles.set(node, saved);
+			stack.push(node);
+			node = node.parentElement;
+		}
+		return stack;
+	}
+
+	function restoreAncestors(stack) {
+		for (var i = 0; i < stack.length; i++) {
+			var node = stack[i];
+			var saved = _previewSavedStyles.get(node);
+			if (!saved) continue;
+			for (var p in saved) {
+				if (saved[p]) node.style[p] = saved[p];
+				else node.style.removeProperty(p);
+			}
+			_previewSavedStyles.delete(node);
+		}
+	}
+
+	function positionPreviewTip(anchor, tip) {
+		var aRect = anchor.getBoundingClientRect();
+		var tipRect = tip.getBoundingClientRect();
+		var vw = window.innerWidth || document.documentElement.clientWidth;
+		var margin = 8;
+		var tipW = tipRect.width;
+		var tipH = tipRect.height;
+
+		var left = aRect.left + aRect.width / 2 - tipW / 2;
+		var top = aRect.top - tipH - 8;
+
+		if (top < margin) {
+			top = aRect.bottom + 8;
+		}
+		if (left < margin) {
+			left = margin;
+		} else if (left + tipW > vw - margin) {
+			left = vw - tipW - margin;
+		}
+
+		tip.style.left = left + 'px';
+		tip.style.top = top + 'px';
+		// Force on top no matter what z-index any neighbour claims.
+		tip.style.zIndex = '2147483647';
+	}
+
+	function wirePreviewTip(anchor, tip) {
+		tip._anchor = anchor;
+		var timer = null;
+		var neutralized = null;
+		var show = function () {
+			clearTimeout(timer);
+			neutralized = neutralizeContainingBlock(anchor);
+			positionPreviewTip(anchor, tip);
+			tip.classList.add('is-visible');
+		};
+		var hide = function () {
+			clearTimeout(timer);
+			timer = setTimeout(function () {
+				tip.classList.remove('is-visible');
+				if (neutralized) {
+					restoreAncestors(neutralized);
+					neutralized = null;
+				}
+			}, 80);
+		};
+		anchor.addEventListener('mouseenter', show);
+		anchor.addEventListener('mouseleave', hide);
+		anchor.addEventListener('focus', show);
+		anchor.addEventListener('blur', hide);
+		tip.addEventListener('mouseenter', show);
+		tip.addEventListener('mouseleave', hide);
+	}
+
 	/* ── 6c. Footnote hover preview ──
 	   Hover a footnote-ref superscript → tooltip with the
 	   footnote text appears next to it. Pure utility, zero
@@ -410,19 +517,8 @@
 				});
 				tip.appendChild(clone);
 			}
-			a.parentNode.appendChild(tip);
-			let timer = null;
-			const show = function () { clearTimeout(timer); tip.classList.add('is-visible'); };
-			const hide = function () {
-				clearTimeout(timer);
-				timer = setTimeout(function () { tip.classList.remove('is-visible'); }, 80);
-			};
-			a.addEventListener('mouseenter', show);
-			a.addEventListener('mouseleave', hide);
-			a.addEventListener('focus', show);
-			a.addEventListener('blur', hide);
-			tip.addEventListener('mouseenter', show);
-			tip.addEventListener('mouseleave', hide);
+			document.body.appendChild(tip);
+			wirePreviewTip(a, tip);
 		});
 	}
 
@@ -447,19 +543,8 @@
 				if (!la.getAttribute('href')) la.remove();
 			});
 			tip.appendChild(clone);
-			a.parentNode.appendChild(tip);
-			let timer = null;
-			const show = function () { clearTimeout(timer); tip.classList.add('is-visible'); };
-			const hide = function () {
-				clearTimeout(timer);
-				timer = setTimeout(function () { tip.classList.remove('is-visible'); }, 80);
-			};
-			a.addEventListener('mouseenter', show);
-			a.addEventListener('mouseleave', hide);
-			a.addEventListener('focus', show);
-			a.addEventListener('blur', hide);
-			tip.addEventListener('mouseenter', show);
-			tip.addEventListener('mouseleave', hide);
+			document.body.appendChild(tip);
+			wirePreviewTip(a, tip);
 		});
 	}
 
@@ -671,6 +756,12 @@
 		installReadingMeta();
 		installBackToTop();
 		installImageLightbox();
+		// Keep any visible hover preview glued to its anchor while scrolling.
+		document.addEventListener('scroll', function () {
+			document.querySelectorAll('.cl-fn-tip.is-visible, .cl-cite-tip.is-visible').forEach(function (tip) {
+				if (tip._anchor) positionPreviewTip(tip._anchor, tip);
+			});
+		}, true);
 		// pick up late content (MathJax, lazy modules, etc.)
 		const mo = new MutationObserver(function (muts) {
 			let touched = false;

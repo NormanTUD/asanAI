@@ -6254,8 +6254,8 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 /* ── 11.6. Footnote hover tooltip ── */
 .cl-fn-tip,
 .cl-cite-tip {
-	position: absolute;
-	z-index: 9200;
+	position: fixed;
+	z-index: 2147483647 !important;
 	max-width: 360px;
 	min-width: 180px;
 	padding: 10px 14px;
@@ -6264,17 +6264,29 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 	border: 1px solid var(--mn-border);
 	border-radius: 8px;
 	box-shadow: 0 12px 36px rgba(0,0,0,.18);
+	font-family: sans-serif;
 	font-size: .82rem;
 	line-height: 1.5;
 	opacity: 0;
+	visibility: hidden;
 	pointer-events: none;
-	/* no transform here: a transform would become the containing block for
-	   position:fixed descendants (e.g. glossary tooltips) and throw them offscreen */
+	/* GUARDRAIL: the tip is portaled to <body> and positioned with
+	   position:fixed. Any of these properties on an ancestor would
+	   create a containing block / stacking context and re-trap the tip
+	   beneath following content. The JS ancestor scanner strips them on
+	   hover, but belt-and-suspenders. */
+	transform: none !important;
+	filter: none !important;
+	clip-path: none !important;
+	mask: none !important;
+	perspective: none !important;
+	backdrop-filter: none !important;
 	transition: opacity .15s ease;
 }
 .cl-fn-tip.is-visible,
 .cl-cite-tip.is-visible {
 	opacity: 1;
+	visibility: visible;
 	pointer-events: auto;
 }
 .cl-fn-tip > ol,
