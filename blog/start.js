@@ -1070,8 +1070,8 @@ function initGlossary() {
 					if (parent.closest('select, option, input, textarea, button, label[for]')) {
 						return NodeFilter.FILTER_REJECT;
 					}
-					// Skip if inside math element or already has glossary-term
-					if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
+					// Skip if inside math element, already has glossary-term, or inside a citation link
+					if (parent.closest('math') || parent.closest('.glossary-term') || parent.closest('a.cite-stealth, a[data-target]')) return NodeFilter.FILTER_REJECT;
 					// Only process if text contains potential matches
 					if (!pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
 					pattern.lastIndex = 0;
