@@ -5298,6 +5298,11 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	mask: none !important;
 	perspective: none !important;
 	backdrop-filter: none !important;
+	/* Hard guarantee: force the browser to composite this element in its
+	   own layer above everything. will-change creates a new stacking
+	   context; contain prevents ancestor styles from leaking in. */
+	will-change: transform, opacity !important;
+	contain: layout style !important;
 }
 .glossary-term:hover .glossary-tooltip,
 .glossary-term:focus .glossary-tooltip {
