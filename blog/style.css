@@ -5313,6 +5313,12 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	border: 6px solid transparent;
 	border-top-color: var(--mn-heading);
 }
+.glossary-tooltip--below::after {
+	top: auto;
+	bottom: 100%;
+	border-top-color: transparent;
+	border-bottom-color: var(--mn-heading);
+}
 
 @media (max-width: 600px) {
 	.glossary-tooltip {

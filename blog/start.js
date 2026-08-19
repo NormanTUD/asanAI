@@ -1070,8 +1070,8 @@ function initGlossary() {
 					if (parent.closest('select, option, input, textarea, button, label[for]')) {
 						return NodeFilter.FILTER_REJECT;
 					}
-					// Skip if inside math element, already has glossary-term, or inside a citation link
-					if (parent.closest('math') || parent.closest('.glossary-term') || parent.closest('a.cite-stealth, a[data-target]')) return NodeFilter.FILTER_REJECT;
+					// Skip if inside math element or already has glossary-term
+					if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
 					// Only process if text contains potential matches
 					if (!pattern.test(node.textContent)) return NodeFilter.FILTER_REJECT;
 					pattern.lastIndex = 0;
@@ -1192,9 +1192,17 @@ function initGlossary() {
 		var tipH = tipRect.height;
 
 		var left = termRect.left + termRect.width / 2 - tipW / 2;
-		var top = termRect.top - tipH - 8;
+		var insideCitation = !!term.closest('a.cite-stealth, a[data-target]');
+		var top;
+		if (insideCitation) {
+			// Place glossary tooltip below the term so it doesn't collide
+			// with the citation preview that sits above the anchor.
+			top = termRect.bottom + 8;
+		} else {
+			top = termRect.top - tipH - 8;
+		}
 
-		if (top < margin) {
+		if (!insideCitation && top < margin) {
 			top = termRect.bottom + 8;
 		}
 		if (left < margin) {
@@ -1208,6 +1216,9 @@ function initGlossary() {
 		// Force on top no matter what z-index any neighbour claims.
 		tip.style.zIndex = '2147483647';
 
+		// Arrow points up (toward the term) when tooltip is below,
+		// points down when tooltip is above.
+		tip.classList.toggle('glossary-tooltip--below', insideCitation);
 		var arrowLeft = termRect.left + termRect.width / 2 - left;
 		var arrowClamp = Math.max(10, Math.min(tipW - 10, arrowLeft));
 		tip.style.setProperty('--arrow-x', arrowClamp + 'px');
@@ -1233,6 +1244,7 @@ function initGlossary() {
 		tip.style.visibility = 'hidden';
 		tip.style.left = '';
 		tip.style.top = '';
+		tip.classList.remove('glossary-tooltip--below');
 		tip.style.removeProperty('--arrow-x');
 		if (term._neutralizedAncestors) {
 			restoreAncestors(term._neutralizedAncestors);
