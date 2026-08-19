@@ -1135,6 +1135,7 @@ function initGlossary() {
 				var span = document.createElement('span');
 				span.className = 'glossary-term';
 				span.textContent = term;
+				span.removeAttribute('title');
 				if (def) {
 					// ANGLE 4: portal the tooltip to document.body.
 					// This guarantees it can never be inside a clipped
@@ -1308,14 +1309,23 @@ function initGlossary() {
 	var glossaryObserver = new MutationObserver(function(mutations) {
 		for (var i = 0; i < mutations.length; i++) {
 			var m = mutations[i];
-			// Look for style changes on terms or their ancestors
-			if (m.type === 'attributes' && m.attributeName === 'style') {
+			if (m.type === 'attributes') {
 				var t = m.target;
-				if (t.classList && t.classList.contains('glossary-term')) {
-					var id = t.dataset.tooltipId;
-					var tip = id ? document.querySelector('.glossary-tooltip[data-tooltip-id="' + id + '"]') : null;
-					if (tip && tip.parentElement !== document.body) {
-						document.body.appendChild(tip);
+				// Strip any title attribute added to glossary terms —
+				// the browser's native title tooltip would overlay our
+				// custom glossary tooltip.
+				if (t.classList && t.classList.contains('glossary-term') && m.attributeName === 'title') {
+					t.removeAttribute('title');
+					continue;
+				}
+				// Look for style changes on terms or their ancestors
+				if (m.attributeName === 'style') {
+					if (t.classList && t.classList.contains('glossary-term')) {
+						var id = t.dataset.tooltipId;
+						var tip = id ? document.querySelector('.glossary-tooltip[data-tooltip-id="' + id + '"]') : null;
+						if (tip && tip.parentElement !== document.body) {
+							document.body.appendChild(tip);
+						}
 					}
 				}
 			}
@@ -1323,7 +1333,7 @@ function initGlossary() {
 	});
 	glossaryObserver.observe(document.body, {
 		attributes: true,
-		attributeFilter: ['style', 'class'],
+		attributeFilter: ['style', 'class', 'title'],
 		subtree: true
 	});
 
@@ -1338,6 +1348,10 @@ function initGlossary() {
 			if (tip.style.zIndex !== '2147483647') {
 				tip.style.zIndex = '2147483647';
 			}
+		});
+		// Belt: strip any title attributes that snuck onto glossary terms
+		document.querySelectorAll('.glossary-term[title]').forEach(function(el) {
+			el.removeAttribute('title');
 		});
 	}, 2000);
 
