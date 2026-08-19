@@ -1049,6 +1049,26 @@ function initGlossary() {
 	});
 	var pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
 
+	// Helper: extract the definition string from a GLOSSARY entry (string or {def, exclude})
+	function getGlossaryDef(entry) {
+		return typeof entry === 'string' ? entry : entry.def;
+	}
+
+	// Helper: check if a match at the given position should be excluded because
+	// surrounding context suggests everyday (non-technical) usage. Each GLOSSARY
+	// entry may have an `exclude` array of RegExp patterns. If ANY pattern matches
+	// within ±150 chars of the match, the term is treated as plain English.
+	function isExcluded(text, matchIndex, matchLength, entry) {
+		if (typeof entry === 'string' || !entry.exclude) return false;
+		var start = Math.max(0, matchIndex - 150);
+		var end = Math.min(text.length, matchIndex + matchLength + 150);
+		var ctx = text.slice(start, end);
+		for (var i = 0; i < entry.exclude.length; i++) {
+			if (entry.exclude[i].test(ctx)) return true;
+		}
+		return false;
+	}
+
 	// Walk text nodes inside #contents (but skip code/pre/math/form elements).
 	// Only does auto-detection of terms in markdown prose; hardcoded
 	// .glossary-term nodes (e.g. on transformer.php) are handled below
@@ -1101,7 +1121,16 @@ function initGlossary() {
 				}
 				var term = match[0];
 				var key = terms.find(function(k) { return k.toLowerCase() === term.toLowerCase(); });
-				var def = key ? GLOSSARY[key] : '';
+				var entry = key ? GLOSSARY[key] : null;
+				var def = entry ? getGlossaryDef(entry) : '';
+
+				// Check contextual exclusion — if surrounding text suggests
+				// everyday usage, skip the highlight entirely
+				if (entry && isExcluded(text, match.index, match[0].length, entry)) {
+					frag.appendChild(document.createTextNode(term));
+					lastIdx = match.index + match[0].length;
+					continue;
+				}
 
 				var span = document.createElement('span');
 				span.className = 'glossary-term';

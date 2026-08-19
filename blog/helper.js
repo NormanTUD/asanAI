@@ -1899,7 +1899,10 @@ const GLOSSARY = {
 	'scalar': 'A single number. A rank-0 tensor. The opposite of a vector.',
 	'vector': 'An ordered list of numbers. A rank-1 tensor. Geometrically, an arrow from the origin to a point in $\\mathbb{R}^d$.',
 	'matrix': 'A 2D grid of numbers. A rank-2 tensor. Represents linear maps between vector spaces and batches of vectors.',
-	'rank': 'The number of indices a tensor has. Scalar = rank 0, vector = rank 1, matrix = rank 2, stack of matrices = rank 3, etc.',
+	'rank': {
+		def: 'The number of indices a tensor has. Scalar = rank 0, vector = rank 1, matrix = rank 2, stack of matrices = rank 3, etc.',
+		exclude: [/\bmilitary\b/i, /\bsocial\b/i, /\broyal\b/i, /\bofficer\b/i, /\bgeneral\b/i, /\bcolonel\b/i, /\bmajor\b/i, /\bcaptain\b/i, /\bsergeant\b/i, /\bprivate\b/i, /\bmember\b/i, /\bhighest\b/i, /\blowest\b/i, /\btop\b/i, /\bbottom\b/i, /\bequal\b/i, /\bsenior\b/i, /\bjunior\b/i, /\bposition\b/i, /\bstatus\b/i]
+	},
 	'shape': 'The dimensions of a tensor: e.g. a batch of 32 RGB images of $224 \\times 224$ has shape $(32, 3, 224, 224)$.',
 	'Hadamard product': 'Element-wise multiplication of two tensors of the same shape, written $\\odot$. Different from matrix multiplication, which uses dot products of rows and columns.',
 	'function composition': 'Applying one function to the output of another: $(g \\circ f)(x) = g(f(x))$. The algebra of pipelines.',
@@ -1960,7 +1963,10 @@ const GLOSSARY = {
 	'cross-entropy': 'A loss function that measures the difference between two probability distributions, commonly used for classification.',
 	'cosine similarity': 'A measure of similarity between two vectors calculated as the cosine of the angle between them.',
 	'dot product': 'A mathematical operation that multiplies corresponding elements of two vectors and sums the results.',
-	'gradient': 'A vector of partial derivatives pointing in the direction of steepest increase of a function.',
+	'gradient': {
+		def: 'A vector of partial derivatives pointing in the direction of steepest increase of a function.',
+		exclude: [/color/i, /colour/i, /\bbackground\b/i, /\bsky\b/i, /\bwall\b/i, /\bhair\b/i, /\bsunset/i, /\bdawn/i, /\btint\b/i, /\bhue\b/i, /\bombre/i, /\bfade/i]
+	},
 	'training': 'The process of adjusting a model\'s parameters by repeatedly feeding it data and minimizing its loss — the "learning" phase.',
 	'inference': 'Running a trained model on new input to produce an output — the usage phase, as opposed to training.',
 	'pretrained': 'Already trained on a large general dataset before being adapted to a specific task or fine-tuned.',
@@ -1969,7 +1975,10 @@ const GLOSSARY = {
 	'gradients': 'The vectors of partial derivatives computed by backpropagation; they point toward where the loss increases and drive weight updates.',
 	'logits': 'The raw, unnormalized scores a model outputs before softmax converts them into probabilities.',
 	'tokens': 'The text units (words, subwords, or characters) a model reads and generates one at a time.',
-	'loss': 'A scalar measuring how far the model\'s predictions are from the truth; training minimizes it.',
+	'loss': {
+		def: 'A scalar measuring how far the model\'s predictions are from the truth; training minimizes it.',
+		exclude: [/\bweight loss\b/i, /\bfinancial/i, /\bmonetary/i, /\bprofit/i, /\bdefeat\b/i, /\bgame\b/i, /\bmatch\b/i, /\bbattle\b/i, /\bwar\b/i, /\b casualties\b/i, /\bmissing\b/i, /\bgrieving\b/i, /\bgrief\b/i, /\bmourning/i, /\bsense of\b/i, /\bat a loss\b/i]
+	},
 	'loss landscape': 'The high-dimensional surface mapping every possible set of weights to its loss, which optimizers navigate.',
 	'convex': 'A function with a single valley where gradient descent reliably finds the minimum — real neural networks are almost never convex.',
 	'local minimum': 'A point in the loss landscape that is lower than its neighbors but not the global lowest point, where training can get stuck.',
@@ -2000,7 +2009,10 @@ const GLOSSARY = {
 	'jacobian': 'The matrix of all partial derivatives of a vector-valued function, generalizing the gradient to multiple outputs.',
 	'MSE': 'Mean Squared Error — a loss that averages the squared differences between predictions and targets, punishing large errors heavily.',
 	'accuracy': 'The fraction of predictions a model gets right — simple, but misleading when classes are imbalanced.',
-	'precision': 'Of everything predicted as positive, the fraction that actually is; low precision means many false alarms.',
+	'precision': {
+		def: 'Of everything predicted as positive, the fraction that actually is; low precision means many false alarms.',
+		exclude: [/astronomy/i, /astronomical/i, /stars?\b/i, /celestial/i, /mapping/i, /telescope/i, /imperfect/i, /\bmeasure(ments?)?\b/i, /remarkable/i, /extraordinary/i, /impressive/i, /stunning/i, /unprecedented/i, /modest/i, /limited/i, /rough/i, /meticulous/i, /exquisite/i]
+	},
 	'recall': 'Of all actually-positive cases, the fraction the model finds; low recall means many misses.',
 	'F1 score': 'The harmonic mean of precision and recall, giving one balanced score for a classifier.',
 	'benchmark': 'A standardized set of tasks and metrics used to compare models against each other.',
@@ -2062,7 +2074,10 @@ const GLOSSARY = {
 	'neuron': 'The basic unit of a neural network: a weighted sum of inputs plus a bias, passed through a non-linearity.',
 	'architecture': 'The structural blueprint of a network — its layers, connections, and scale.',
 	'feature': 'An individual measurable or learned property of the input that the model uses to make decisions.',
-	'dimension': 'One coordinate of a vector space; embeddings live in high-dimensional spaces where nearby points are semantically similar.',
+	'dimension': {
+		def: 'One coordinate of a vector space; embeddings live in high-dimensional spaces where nearby points are semantically similar.',
+		exclude: [/other dimensions/i, /\bthree dimensions\b/i, /\bfour dimensions/i, /\bfifth dimension/i, /\bspatial/i, /\bphysical/i, /\broom\b/i, /\bbox\b/i, /\bpage\b/i, /\bwidth\b/i, /\bheight\b/i, /\bdepth\b/i, /\blength\b/i, /\bsize\b/i, /\bmeasured?\b/i, /\bcubic/i, /\bsquare/i]
+	},
 	'context length': 'The maximum number of tokens a model can consider at once — its attention working memory.',
 	'sequence length': 'The number of tokens in a given input sequence, a key driver of compute and memory use.',
 	'KV cache': 'Cached attention keys and values for all tokens so far, reused on each new generation step instead of recomputing the whole past.',
@@ -2168,6 +2183,119 @@ const GLOSSARY = {
 	'image-to-image': 'See "img2img".',
 	'noising': 'The forward diffusion process — adding Gaussian noise to data step by step until only noise remains.',
 	'denoising': 'The reverse diffusion process — removing noise step by step to recover or generate data.',
+
+	// Core ML Concepts
+	'neural network': 'A computational model inspired by biological neurons, composed of layers of interconnected nodes that transform inputs through weighted connections and nonlinear activations.',
+	'deep learning': 'Machine learning using neural networks with many layers, enabling hierarchical feature extraction from raw data.',
+	'pre-training': 'The initial training phase where a model learns general representations from large unlabeled datasets before being adapted to specific tasks.',
+	'fine-tuning': 'The process of taking a pre-trained model and training it further on a specific, usually smaller, dataset.',
+	'distillation': 'Training a smaller student model to imitate a large teacher model, capturing most of its capability cheaply.',
+	'backbone': 'The core feature-extracting subnetwork of a larger architecture — everything before the task-specific head.',
+	'head': 'The task-specific output layer attached to a shared backbone — classification head, detection head, etc.',
+	'latent': 'Existing in a hidden or compressed representation space not directly observable in the raw input.',
+	'manifold': 'A continuous lower-dimensional surface embedded in a higher-dimensional space; learned representations are often assumed to lie on one.',
+	'loss landscape': 'The high-dimensional surface mapping every possible set of weights to its loss, which optimizers navigate.',
+	'embedding': 'A dense vector representation of a discrete entity (word, token, concept) in a continuous high-dimensional space.',
+	'attention mechanism': 'A mechanism that lets each token in a sequence weigh the importance of every other token when computing its own representation.',
+	'positional encoding': 'A signal added to token embeddings that tells the transformer where each token sits, since attention has no built-in notion of order.',
+
+	// Architectures & Models
+	'GAN': 'Generative Adversarial Network — a framework where a generator and discriminator are trained adversarially to produce realistic synthetic data.',
+	'autoencoder': 'A neural network trained to compress its input into a latent code and then reconstruct it, learning efficient representations.',
+	'encoder-decoder': 'An architecture pairing an input encoder with an autoregressive output decoder, e.g. T5 or BART.',
+	'BERT': 'Bidirectional Encoder Representations from Transformers — a pre-trained encoder model that reads text bidirectionally, optimised for understanding tasks.',
+	'GPT': 'Generative Pre-trained Transformer — a family of autoregressive decoder-only language models that generate text one token at a time.',
+	'ResNet': 'Residual Network — a deep convolutional architecture that introduced skip connections to enable training of networks with hundreds of layers.',
+	'U-Net': 'An encoder-decoder neural network with skip connections at every resolution. The workhorse backbone of diffusion image models.',
+	'MoE': 'Mixture of Experts — an architecture with many specialist subnetworks and a router that activates only a few per token.',
+
+	// Training Concepts
+	'batch size': 'The number of training examples processed in one forward/backward pass before the model\'s weights are updated.',
+	'learning rate schedule': 'A strategy for adjusting the learning rate during training — step decay, cosine annealing, warmup, etc.',
+	'warm restart': 'Resetting the learning rate to a higher value during training, helping the optimizer escape local minima.',
+	'early stopping': 'Halting training when validation performance stops improving, preventing overfitting and saving compute.',
+	'label smoothing': 'Replacing hard one-hot labels with soft distributions (e.g. 0.9 for the correct class) to prevent the model from becoming overconfident.',
+	'mixed precision': 'Training with reduced numerical precision (fp16 or bf16) where possible, cutting memory use and speeding up computation on modern GPUs.',
+	'distributed training': 'Splitting training across multiple GPUs or machines, synchronizing gradients to scale up effective batch size and reduce wall-clock time.',
+	'data augmentation': 'Artificially expanding a training dataset by applying realistic transformations (rotation, cropping, noise) to existing examples.',
+	'transfer learning': 'Reusing knowledge from a model trained on one task to perform a new, related task more easily.',
+
+	// Evaluation & Metrics
+	'confusion matrix': 'A table comparing predicted vs. actual classes, showing true positives, true negatives, false positives, and false negatives.',
+	'AUC': 'Area Under the ROC Curve — a single number summarising a classifier\'s performance across all threshold settings.',
+	'F1 score': 'The harmonic mean of precision and recall, giving one balanced score for a classifier.',
+
+	// Mathematical Foundations
+	'Bayesian': 'Relating to Thomas Bayes\' theorem — updating beliefs about a hypothesis given observed evidence, using prior probabilities and likelihoods.',
+	'Markov': 'Describing systems where the next state depends only on the present state, not on the full history.',
+	'convex': 'A function with a single valley where gradient descent reliably finds the minimum — real neural networks are almost never convex.',
+	'non-convex': 'A function with multiple local minima and saddle points — the typical loss landscape of deep neural networks.',
+
+	// Interpretability
+	'mechanistic interpretability': 'Reverse-engineering the internal computations of a neural network to understand exactly how it produces its outputs.',
+	'activation pattern': 'The specific set of neuron values produced by a given input, revealing what features the network has detected.',
+	'feature visualization': 'Techniques for creating inputs that maximally activate a particular neuron or channel, revealing what it has learned to detect.',
+	'probing': 'Training a simple classifier on intermediate representations to test what information is linearly encoded at each layer.',
+	'spare': { def: 'In mechanistic interpretability, a feature is sparse if only a small fraction of neurons activate for any given input — enabling cleaner decomposition.', exclude: [/free time/i, /\bnot busy\b/i, /\blittle\b.*\btime\b/i] },
+	'superposition': 'The hypothesis that neural networks represent more features than they have dimensions by encoding them as overlapping, nearly-orthogonal directions.',
+
+	// Generative Models
+	'VAE': 'Variational Autoencoder — a generative model that learns a latent space by combining an encoder-decoder architecture with a probabilistic objective.',
+	'GAN': 'Generative Adversarial Network — two networks trained in opposition: a generator creating fake data and a discriminator trying to distinguish real from fake.',
+	'flow-based model': 'A generative model that learns an invertible mapping between data and a simple prior distribution, enabling exact likelihood computation.',
+	'autoregressive model': 'A generative model that decomposes a joint probability into a product of conditionals, generating one variable at a time.',
+
+	// Practical / Deployment
+	'quantization': 'Compressing weights to lower numerical precision (e.g. fp16 to int8) to cut memory use and speed up inference.',
+	'pruning': 'Removing unimportant weights, neurons, or connections to make a model smaller and faster.',
+	'inference': 'Running a trained model on new input to produce an output — the usage phase, as opposed to training.',
+	'latency': 'How quickly a model responds — measured as time to the first token and per-token generation time.',
+	'throughput': 'How much work a system completes per second, e.g. tokens or requests — optimized at the cost of latency.',
+	'batching': 'Processing many requests or examples together in one pass, raising throughput at some cost to individual latency.',
+	'continuous batching': 'Adding new requests to an in-flight batch as others finish, keeping the GPU busy instead of waiting for whole batches.',
+	'paged attention': 'Storing the KV cache in flexible non-contiguous pages, like an OS manages memory, eliminating waste from fragmentation.',
+	'speculative decoding': 'Having a small draft model propose several tokens that a big model verifies in parallel — faster with identical output.',
+
+	// NLP / Language
+	'tokenizer': 'An algorithm that splits text into tokens, mapping between raw text and the model\'s vocabulary indices.',
+	'vocabulary': 'The fixed set of tokens a model can output, mapped to indices by the tokenizer.',
+	'BPE': 'Byte Pair Encoding — a subword tokenization algorithm that iteratively merges the most frequent pairs of symbols.',
+	'corpus': 'A large collection of text used for training or evaluating language models.',
+	'perplexity': 'A measure of how surprised a language model is by text — lower perplexity means more confident, better predictions.',
+	'BLEU score': 'Bilingual Evaluation Understudy — a metric for machine translation quality based on n-gram overlap with reference translations.',
+	'ROUGE score': 'Recall-Oriented Understudy for Gisting Evaluation — a metric for summarisation quality based on n-gram overlap with reference summaries.',
+	'chain-of-thought': 'Prompting the model to reason step by step before answering, which dramatically improves performance on complex problems.',
+	'few-shot': 'Providing a handful of examples in the prompt to show the model the desired input-output pattern before asking a question.',
+	'zero-shot': 'Asking a model to perform a task without any examples, relying purely on what it learned during training.',
+	'in-context learning': 'The ability of LLMs to adapt to a task from examples supplied directly in the prompt, without changing any weights.',
+	'prompt engineering': 'The craft of designing and refining prompts to reliably get the desired output from a language model.',
+	'hallucination': 'When a model confidently generates plausible-sounding but factually wrong or invented content.',
+
+	// RLHF / Alignment
+	'RLHF': 'Reinforcement Learning from Human Feedback — fine-tuning a model with a reward model trained on human preferences to make outputs more helpful and aligned.',
+	'reward model': 'A model trained on human preference comparisons to score outputs, providing the reward signal used in RLHF.',
+	'alignment': 'Training a model to behave in accordance with human intentions and values rather than just to maximize its training objective.',
+	'DPO': 'Direct Preference Optimization — a simpler alternative to RLHF that directly optimises a language model on pairwise preference data without training a separate reward model.',
+	'Constitutional AI': 'An alignment method where the model critiques and revises its own outputs against a set of principles, reducing reliance on human labellers.',
+
+	// Serving / Infra
+	'vLLM': 'A high-throughput LLM serving engine that uses paged attention for efficient memory management during generation.',
+	'llama.cpp': 'A C/C++ inference engine for running quantised LLMs on consumer CPUs and GPUs.',
+	'Ollama': 'A tool for downloading and running LLMs locally with a simple command-line interface.',
+	'TensorRT': 'NVIDIA\'s deep learning inference optimiser and runtime, fusing and optimising layers for maximum GPU throughput.',
+	'ONNX': 'Open Neural Network Exchange — a format for exporting trained models so they can run across different frameworks and hardware.',
+	'token generation': 'The autoregressive process of producing output tokens one at a time, each conditioned on all previously generated tokens.',
+	'TTFT': 'Time to First Token — the latency between receiving a request and generating the first output token, a key serving metric.',
+	'context window': 'The maximum number of tokens a model can process in a single forward pass, acting as its "working memory."',
+
+	// Diffusion / Vision
+	'score function': 'The gradient of the log probability density of the data distribution, ∇ₓ log p(x). A trained denoiser implicitly estimates this.',
+	'noise schedule': 'The sequence of per-step noise levels (β₁, β₂, …, β_T) that determines how much noise is added at each forward step.',
+	'classifier-free guidance': 'A conditioning trick where the model is trained both with and without the prompt, and at inference the difference between the two is amplified by a guidance scale w.',
+	'latent diffusion': 'Running the diffusion process on a compressed latent representation of the image rather than on pixels — the trick behind Stable Diffusion.',
+	'LoRA': 'Low-Rank Adaptation — a fine-tuning technique that trains only tiny rank-decomposed adapter matrices on top of frozen weights, enabling style/concept customization in minutes on consumer GPUs.',
+	'ControlNet': 'A side network that adds spatial conditioning (edge maps, depth maps, pose skeletons) to a frozen diffusion U-Net via zero-convolutions.',
+	'IP-Adapter': 'An adapter that injects image features into the cross-attention layers of a diffusion U-Net, enabling image-conditioned generation.',
 };
 
 function tensor(...args) {
