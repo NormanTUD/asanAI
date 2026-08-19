@@ -749,7 +749,9 @@ function smartquote() {
 			citeLink.className = "cite-stealth iframe-safe-link";
 			citeLink.setAttribute('data-target', `bib-${citeKey}`);
 			citeLink.style.cursor = "pointer";
-			citeLink.title = info;
+			// Guardrail: no title attribute — the citation preview tooltip
+			// (via .cite-stealth) already shows this info on hover. A native
+			// browser title tooltip would overlay our custom tooltip.
 			citeLink.innerHTML = `${author_display}${page}${after}`;
 
 			footer.appendChild(document.createTextNode('— '));
@@ -802,7 +804,6 @@ function bibtexify() {
 			}
 
 			citedInThisBlock.add(key);
-			const info = `${data.author}: ${data.title}${data.year ? ' ('+data.year+')' : ''}`;
 			let linkText = "";
 
 			// LOGIC: Use manual text if provided, otherwise switch based on type
@@ -894,7 +895,7 @@ function bibtexify() {
 
 			const idAttribute = isDuplicate ? "" : `id="${instanceId}"`;
 
-			const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" title="${info}" style="cursor:pointer;">${linkText}</a>`;
+			const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" style="cursor:pointer;">${linkText}</a>`;
 
 			// Return the final citation element (citation link + source-icon link)
 			return `<span class="autociteelement">${fullLink}${svgIcon}</span>`;
@@ -911,7 +912,7 @@ function bibtexify() {
 
 			let year = data.year ? `, ${data.year}` : "";
 			footnotesHTML += `<li id="fn-${fnId}">${data.author}, <a class="iframe-safe-link" data-target="bib-${key}" style="cursor:pointer;">${data.title}</a>${year} <a class="iframe-safe-link" data-target="${instanceId}" style="cursor:pointer;">↩</a></li>\n`;
-			return `<sup class="footnote-ref"><a class="iframe-safe-link" data-target="fn-${fnId}" id="${instanceId}" title="${data.author}: ${data.title}" style="cursor:pointer;">[${fnId}]</a></sup>`;
+			return `<sup class="footnote-ref"><a class="iframe-safe-link" data-target="fn-${fnId}" id="${instanceId}" style="cursor:pointer;">[${fnId}]</a></sup>`;
 		});
 
 		container.innerHTML = content;
