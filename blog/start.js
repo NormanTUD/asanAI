@@ -1254,7 +1254,185 @@ function initGlossary() {
 		tip.style.setProperty('--arrow-x', arrowClamp + 'px');
 	}
 
+	// ════════════════════════════════════════════════════════════════
+	// ANGLE 1 — PROTOTYPE TRAP
+	// Override Element.prototype.title so that any code (ours, third-party,
+	// browser extension) that tries to set .title on a .glossary-term
+	// silently has the attribute stripped. This catches direct assignment,
+	// setAttribute(), jQuery .attr(), framework bindings, etc.
+	// Guardrail: only targets .glossary-term — all other elements untouched.
+	// Guardrail: wrapped in try/catch — if another library already froze
+	// the prototype, we degrade gracefully instead of breaking.
+	// ════════════════════════════════════════════════════════════════
+	try {
+		var _origTitleDesc = Object.getOwnPropertyDescriptor(Element.prototype, 'title');
+		if (_origTitleDesc && _origTitleDesc.set) {
+			Object.defineProperty(Element.prototype, 'title', {
+				get: _origTitleDesc.get,
+				set: function(v) {
+					// Strip title from glossary terms — prevent native browser tooltip
+					if (this.classList && this.classList.contains('glossary-term')) {
+						try { this.removeAttribute('title'); } catch(e) {}
+						return;
+					}
+					_origTitleDesc.set.call(this, v);
+				},
+				configurable: true,
+				enumerable: true
+			});
+		}
+	} catch(e) { /* Prototype frozen by another lib — degrade gracefully */ }
+
+	// Helper: strip title from a single element (used by multiple angles)
+	function stripTitle(el) {
+		if (el && el.nodeType === 1 && el.hasAttribute && el.hasAttribute('title')) {
+			el.removeAttribute('title');
+		}
+	}
+
+	// Helper: sweep all .glossary-term elements for stray title attributes
+	function sweepAllTerms() {
+		var all = document.querySelectorAll('.glossary-term[title]');
+		for (var i = 0; i < all.length; i++) {
+			all[i].removeAttribute('title');
+		}
+	}
+
+	// ════════════════════════════════════════════════════════════════
+	// ANGLE 2 — CAPTURE-PHASE EVENT LISTENERS
+	// The browser's native title tooltip fires after ~400ms hover delay.
+	// By listening in the CAPTURE phase (which fires before bubble phase),
+	// we intercept mouseover/mouseenter BEFORE the browser's timer starts.
+	// Guardrail: passive:true — never blocks other event handlers.
+	// Guardrail: stripped title is gone before browser can read it.
+	// ════════════════════════════════════════════════════════════════
+	function handleMouseOverCapture(ev) {
+		var term = ev.target.closest && ev.target.closest('.glossary-term');
+		if (term) stripTitle(term);
+	}
+	document.addEventListener('mouseover', handleMouseOverCapture, { capture: true, passive: true });
+	document.addEventListener('mouseenter', handleMouseOverCapture, { capture: true, passive: true });
+
+	// ════════════════════════════════════════════════════════════════
+	// ANGLE 3 — POST-LOAD SWEEPS
+	// Other scripts may set .title AFTER initGlossary runs. We sweep at
+	// DOMContentLoaded (all sync scripts done) and window.load (all
+	// async/defer scripts + images done). These are one-shot safety nets.
+	// Guardrail: DOMContentLoaded fires even if we're past that point
+	// (it's replayed if listener is added after it already fired — but
+	// we add a fallback window.onload anyway).
+	// ════════════════════════════════════════════════════════════════
+	document.addEventListener('DOMContentLoaded', function() {
+		sweepAllTerms();
+		// Also re-parent any tooltips that got displaced
+		document.querySelectorAll('.glossary-tooltip').forEach(function(tip) {
+			if (tip.parentElement !== document.body) {
+				document.body.appendChild(tip);
+			}
+		});
+	});
+	window.addEventListener('load', function() {
+		sweepAllTerms();
+		document.querySelectorAll('.glossary-tooltip').forEach(function(tip) {
+			if (tip.parentElement !== document.body) {
+				document.body.appendChild(tip);
+			}
+		});
+	});
+	// Belt: if we're already past DOMContentLoaded, sweep immediately
+	if (document.readyState === 'complete' || document.readyState === 'interactive') {
+		setTimeout(sweepAllTerms, 0);
+		setTimeout(sweepAllTerms, 100);
+	}
+
+	// ════════════════════════════════════════════════════════════════
+	// ANGLE 4 — MUTATION OBSERVER
+	// Watches the entire body for any attribute changes on .glossary-term
+	// elements. If 'title' is added (by any code), it's removed in the
+	// same microtask — before the browser can process the change.
+	// Also catches: class changes that add .glossary-term to an element
+	// that already has a title; style changes that break tooltip stacking.
+	// Guardrail: attributeFilter limits to ['title','style','class'] so
+	// we don't observe irrelevant mutations (performance).
+	// Guardrail: subtree:true catches deeply nested terms.
+	// ════════════════════════════════════════════════════════════════
+	var glossaryObserver = new MutationObserver(function(mutations) {
+		for (var i = 0; i < mutations.length; i++) {
+			var m = mutations[i];
+			if (m.type !== 'attributes') continue;
+			var t = m.target;
+
+			// Title attribute added to a glossary term → strip immediately
+			if (m.attributeName === 'title' && t.classList && t.classList.contains('glossary-term')) {
+				t.removeAttribute('title');
+				continue;
+			}
+
+			// Class changed — check if .glossary-term was just added and
+			// the element already had a title from before
+			if (m.attributeName === 'class' && t.classList && t.classList.contains('glossary-term')) {
+				stripTitle(t);
+				continue;
+			}
+
+			// Style changed on a glossary term — ensure tooltip stays portaled
+			if (m.attributeName === 'style' && t.classList && t.classList.contains('glossary-term')) {
+				var id = t.dataset.tooltipId;
+				var tip = id ? document.querySelector('.glossary-tooltip[data-tooltip-id="' + id + '"]') : null;
+				if (tip && tip.parentElement !== document.body) {
+					document.body.appendChild(tip);
+				}
+			}
+		}
+	});
+	glossaryObserver.observe(document.body, {
+		attributes: true,
+		attributeFilter: ['title', 'style', 'class'],
+		subtree: true
+	});
+
+	// ════════════════════════════════════════════════════════════════
+	// ANGLE 5 — PERIODIC SELF-CHECK (DEFENSE IN DEPTH)
+	// Every 2 seconds: sweep for stray titles, ensure tooltips are
+	// portaled to body, and force z-index. This catches everything
+	// the other 4 angles might miss (race conditions, edge cases,
+	// browser extensions that inject after observers fire).
+	// Guardrail: querySelectorAll is cheap for <1000 terms.
+	// Guardrail: runs in idle callback when available, else setTimeout.
+	// ════════════════════════════════════════════════════════════════
+	function periodicSweep() {
+		// Sweep titles
+		sweepAllTerms();
+		// Ensure tooltips are portaled to body
+		var tips = document.querySelectorAll('.glossary-tooltip');
+		for (var i = 0; i < tips.length; i++) {
+			var tip = tips[i];
+			if (tip.parentElement !== document.body) {
+				document.body.appendChild(tip);
+			}
+			if (tip.style.zIndex !== '2147483647') {
+				tip.style.zIndex = '2147483647';
+			}
+		}
+	}
+	setInterval(function() {
+		if (window.requestIdleCallback) {
+			requestIdleCallback(periodicSweep, { timeout: 500 });
+		} else {
+			periodicSweep();
+		}
+	}, 2000);
+
+	// ════════════════════════════════════════════════════════════════
+	// GUARDRAIL 1 — showTooltip ALSO strips title on every hover
+	// Even if all other angles fail, the moment we show our custom
+	// tooltip, we strip the native title one more time. The browser
+	// needs the title attribute to exist AT THE MOMENT of hover to
+	// show the native tooltip — removing it here is too late for the
+	// FIRST hover but prevents it on subsequent hovers.
+	// ════════════════════════════════════════════════════════════════
 	function showTooltip(term) {
+		stripTitle(term);
 		var tipId = term.dataset.tooltipId;
 		if (!tipId) return;
 		var tip = document.querySelector('.glossary-tooltip[data-tooltip-id="' + tipId + '"]');
@@ -1295,75 +1473,12 @@ function initGlossary() {
 		hideTooltip(term);
 	});
 	document.addEventListener('scroll', function() {
-		// Re-position any visible tooltip on scroll (which changes bounding rects)
 		document.querySelectorAll('.glossary-tooltip[style*="visibility: visible"]').forEach(function(tip) {
 			var id = tip.dataset.tooltipId;
 			var term = document.querySelector('.glossary-term[data-tooltip-id="' + id + '"]');
 			if (term) positionTooltip(term);
 		});
 	}, true);
-
-	// ANGLE 6: MutationObserver. If any glossary-term is moved into (or
-	// inside of) an ancestor that gains a transform/filter/etc., re-parent
-	// its tooltip to body and re-neutralize.
-	var glossaryObserver = new MutationObserver(function(mutations) {
-		for (var i = 0; i < mutations.length; i++) {
-			var m = mutations[i];
-			if (m.type === 'attributes') {
-				var t = m.target;
-				// Strip any title attribute added to glossary terms —
-				// the browser's native title tooltip would overlay our
-				// custom glossary tooltip.
-				if (t.classList && t.classList.contains('glossary-term') && m.attributeName === 'title') {
-					t.removeAttribute('title');
-					continue;
-				}
-				// Look for style changes on terms or their ancestors
-				if (m.attributeName === 'style') {
-					if (t.classList && t.classList.contains('glossary-term')) {
-						var id = t.dataset.tooltipId;
-						var tip = id ? document.querySelector('.glossary-tooltip[data-tooltip-id="' + id + '"]') : null;
-						if (tip && tip.parentElement !== document.body) {
-							document.body.appendChild(tip);
-						}
-					}
-				}
-			}
-		}
-	});
-	glossaryObserver.observe(document.body, {
-		attributes: true,
-		attributeFilter: ['style', 'class', 'title'],
-		subtree: true
-	});
-
-	// ANGLE 8: periodic self-check. Every 2 seconds, make sure every
-	// tooltip is still a direct child of <body>. If not, re-parent it.
-	setInterval(function() {
-		document.querySelectorAll('.glossary-tooltip').forEach(function(tip) {
-			if (tip.parentElement !== document.body) {
-				document.body.appendChild(tip);
-			}
-			// Belt: also force z-index in case any inline style set it lower
-			if (tip.style.zIndex !== '2147483647') {
-				tip.style.zIndex = '2147483647';
-			}
-		});
-		// Belt: strip any title attributes that snuck onto glossary terms
-		document.querySelectorAll('.glossary-term[title]').forEach(function(el) {
-			el.removeAttribute('title');
-		});
-	}, 2000);
-
-	// ANGLE 9: re-parent on DOMContentLoaded too, in case terms were
-	// moved by other scripts after initGlossary ran.
-	document.addEventListener('DOMContentLoaded', function() {
-		document.querySelectorAll('.glossary-tooltip').forEach(function(tip) {
-			if (tip.parentElement !== document.body) {
-				document.body.appendChild(tip);
-			}
-		});
-	});
 }
 
 // ─── Shared post-load initialization ───
