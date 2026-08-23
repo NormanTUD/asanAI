@@ -1263,7 +1263,7 @@ $$\text{Cat} \mapsto \vec{v}_{\text{Cat}} \in \mathbb{R}^n$$
 and suddenly relationships can be expressed geometrically:
 
 $$
-\underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Dog}}\right)}_{\text{distance: cat} \leftrightarrow \text{dog}} \;<\; \underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Quasar}}\right)}_{\text{distance: cat} \leftrightarrow \text{quasar}}
+\underbrace{\underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Dog}}\right)}_{\text{cat} \leftrightarrow \text{dog}} \;<\; \underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Quasar}}\right)}_{\text{cat} \leftrightarrow \text{quasar}}}_{\text{in plain English: cat lives closer to dog than to quasar}}
 $$
 
 Read out loud, left to right: *"the distance from cat to dog is less than the distance from cat to quasar."* Each `d(·,·)` is a plain Euclidean distance, the same formula as the straight-line gap between two points on a map, except measured between two high-dimensional vectors instead. The whole sentence, in plain English, is just: **cats are semantically closer to dogs than to quasars.** Geometry is doing nothing more than letting us *write that down* in a form a computer can optimize.
