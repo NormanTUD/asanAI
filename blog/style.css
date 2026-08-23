@@ -5240,13 +5240,35 @@ html.dark #theme-toggle .ti-moon { display: none; }
    glossary term is forced not to create a containing block. This is
    belt-and-suspenders on top of the JS scanner.
    NOTE: ul, ol, li are excluded — `contain: layout` breaks ::marker
-   positioning and pushes bullet points below the text. */
-#contents *:not(ul):not(ol):not(li):not(a),
-.md *:not(ul):not(ol):not(li):not(a),
-.optional *:not(ul):not(ol):not(li):not(a),
+   positioning and pushes bullet points below the text.
+   NOTE: h1-h6 excluded — `contain: style` is a counter-scope boundary
+   (CSS Containment §3.2), so a contained heading would break the
+   h1/h2/h3 numbering from section 15. */
+#contents *:not(ul):not(ol):not(li):not(a):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
+.md *:not(ul):not(ol):not(li):not(a):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
+.optional *:not(ul):not(ol):not(li):not(a):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
+.optional-content *:not(ul):not(ol):not(li):not(a):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+	/* NOTE: `style` deliberately omitted — style containment is a counter
+	   scope boundary (CSS Containment §3.2) and would reset the section-15
+	   h1/h2/h3 numbering wherever it lands on the counting path. */
+	contain: layout !important;
+}
+
+/* COUNTER SAFETY: the h1→h2→h3 numbering (section 15) needs ONE
+   unbroken counter scope from <body> down to every counted heading.
+   `contain: style` anywhere on that path (article containers or the
+   headings themselves) resets every heading to "1". Keep this rule
+   after any rule that might re-introduce containment. */
+#contents,
+.md,
+.optional,
 .optional-content,
-.optional-content *:not(ul):not(ol):not(li):not(a) {
-	contain: layout style !important;
+#contents h1, #contents h2, #contents h3,
+#contents h4, #contents h5, #contents h6,
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6,
+.optional h1, .optional h2, .optional h3,
+.optional-content h1, .optional-content h2, .optional-content h3 {
+	contain: none !important;
 }
 
 /* GUARDRAIL: the #contents scroll container must not clip tooltips. */
@@ -5337,15 +5359,17 @@ html.dark #theme-toggle .ti-moon { display: none; }
    potential glossary ancestor to use `contain: layout style` instead of
    any value that would create a containing block. This is the modern,
    spec-correct fix.
-   NOTE: ul, ol, li excluded — `contain: layout` breaks ::marker. */
+   NOTE: ul, ol, li excluded — `contain: layout` breaks ::marker.
+   NOTE: h1-h6 excluded — style containment scopes counters (breaks
+   section-15 heading numbering).
+   NOTE: bare #contents / .md / .optional NOT listed here — they sit on
+   the counter path and keep their earlier `contain: none !important`. */
 @supports (contain: layout) {
-	#contents,
-	#contents *:not(ul):not(ol):not(li),
-	.md,
-	.md *:not(ul):not(ol):not(li),
-	.optional,
-	.optional *:not(ul):not(ol):not(li) {
-		contain: layout style !important;
+	#contents *:not(ul):not(ol):not(li):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
+	.md *:not(ul):not(ol):not(li):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6),
+	.optional *:not(ul):not(ol):not(li):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+		/* `style` omitted — see COUNTER SAFETY note above. */
+		contain: layout !important;
 	}
 }
 
