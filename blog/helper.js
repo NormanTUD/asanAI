@@ -2082,7 +2082,6 @@ const GLOSSARY = {
 	'context length': 'The maximum number of tokens a model can consider at once — its attention working memory.',
 	'sequence length': 'The number of tokens in a given input sequence, a key driver of compute and memory use.',
 	'KV cache': 'Cached attention keys and values for all tokens so far, reused on each new generation step instead of recomputing the whole past.',
-	'memory': 'The information a model can use while generating — bounded by its context window and stored attention state.',
 	'working memory': 'The tokens currently in context that a model can directly attend to while generating a response.',
 	'memory bandwidth': 'The rate memory can feed data to the compute units — the main bottleneck for autoregressive token generation.',
 	'FLOPs': 'Floating-Point Operations — a unit of compute used to measure training cost and model size.',
