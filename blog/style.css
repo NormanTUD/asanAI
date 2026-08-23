@@ -5738,7 +5738,10 @@ blockquote > p:first-of-type::before {
 }
 
 /* ── 4. Drop cap — Floral Capitals, first paragraph of the page only ──
-   polish.js tags the page's opening paragraph with `.cl-dropcap`. */
+   polish.js tags the page's opening paragraph with `.cl-dropcap`.
+   `initial-letter` snaps the cap exactly onto the first 5 line boxes,
+   so it stays 5 lines tall whatever the font size / line height is.
+   Browsers without `initial-letter` fall back to a float approximation. */
 @font-face {
 	font-family: 'Floral Capitals';
 	src: url('FloralCapitals.ttf') format('truetype');
@@ -5749,11 +5752,6 @@ blockquote > p:first-of-type::before {
 .md > p.cl-dropcap::first-letter {
 	font-family: 'Floral Capitals', Georgia, 'Times New Roman', serif;
 	font-weight: 400;
-	font-size: 6.8em;
-	float: left;
-	line-height: .85;
-	padding: .04em .14em 0 0;
-	margin-top: .05em;
 	background: linear-gradient(135deg,
 		hsl(199, 96%, 72%) 0%,
 		hsl(226, 90%, 66%) 26%,
@@ -5763,6 +5761,20 @@ blockquote > p:first-of-type::before {
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
+}
+@supports (initial-letter: 5) {
+	.md > p.cl-dropcap::first-letter {
+		initial-letter: 5;
+	}
+}
+@supports not (initial-letter: 5) {
+	.md > p.cl-dropcap::first-letter {
+		float: left;
+		font-size: 8.8em;
+		line-height: .78;
+		padding: .03em .14em 0 0;
+		margin-top: .06em;
+	}
 }
 
 /* ── 5. Heading anchor links — shareable section URLs ── */
