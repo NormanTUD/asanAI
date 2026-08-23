@@ -174,21 +174,12 @@ body {
 		font-size: 0.7em;
 	}
 
-	/* ── 3b. Drop caps are TOO MUCH on a 4-inch screen ──
-	   5 lines of cap on a narrow viewport swallows half the screen,
-	   so phones get a 3-line initial instead. */
-	@supports (initial-letter: 5) {
-		.md > p.cl-dropcap::first-letter {
-			initial-letter: 3;
-		}
-	}
-	@supports not (initial-letter: 5) {
-		.md > p.cl-dropcap::first-letter {
-			font-size: 4.4em;
-			padding: 0.02em 0.08em 0 0;
-			margin-top: 0.02em;
-			line-height: 0.95;
-		}
+	/* ── 3b. Drop caps on a 4-inch screen ──
+	   Size is measured & set by polish.js (see style.css §4); it
+	   already picks fewer cap lines on narrow viewports, so only
+	   the horizontal breathing room needs trimming here. */
+	.md > p.cl-dropcap::first-letter {
+		padding: 0.02em 0.08em 0 0;
 	}
 
 	/* ── 3c. Tiles → 1 column, denser ──────────────────────── */

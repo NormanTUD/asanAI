@@ -738,23 +738,71 @@
 
 	/* ── 8. Drop-cap target ──
 	   Tags the very first paragraph of the page with `.cl-dropcap`
-	   so the CSS can give it a Goudy Initialen initial. Runs on
-	   every pass, so it re-marks correctly after late renders. */
+	   and measures the real geometry so the CSS float cap spans
+	   exactly N text lines (see style.css §4):
+	     • paragraph line height comes from getComputedStyle — so
+	       it follows any breakpoint / theme change automatically;
+	     • the ink ratio (visible cap height ÷ em) of the actual
+	       first character is measured in Floral Capitals via
+	       canvas, because ornamental fonts carry a lot of empty
+	       leading inside their em box.
+	   font-size = lines × lineHeightPx ÷ inkRatio. */
+	const DC_FONT = 'Floral Capitals';
+	function dcLines() {
+		return window.matchMedia('(max-width: 700px)').matches ? 3 : 5;
+	}
+	function dcInkRatio(ch) {
+		try {
+			const cv = markDropcapParagraph._cv || (markDropcapParagraph._cv = document.createElement('canvas'));
+			const ctx = cv.getContext('2d');
+			ctx.font = '100px "' + DC_FONT + '", Georgia, serif';
+			const m = ctx.measureText(ch);
+			if (m.actualBoundingBoxAscent > 0) return m.actualBoundingBoxAscent / 100;
+		} catch (e) { /* keep fallback */ }
+		return 0.72;
+	}
+	function sizeDropcap(p) {
+		const apply = function (ratio) {
+			const cs = getComputedStyle(p);
+			const fs = parseFloat(cs.fontSize) || 18;
+			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
+			p.style.setProperty('--cl-dc-size',
+				((dcLines() * lh) / ratio).toFixed(1) + 'px');
+		};
+		const ch = (p.textContent.trim()[0] || 'A');
+		if (document.fonts && document.fonts.check('16px "' + DC_FONT + '"', ch)) {
+			requestAnimationFrame(function () { apply(dcInkRatio(ch)); });
+		} else if (document.fonts) {
+			document.fonts.load('16px "' + DC_FONT + '"', ch)
+				.then(function () { apply(dcInkRatio(ch)); })
+				.catch(function () { apply(0.72); });
+		} else {
+			apply(0.72);
+		}
+	}
 	function markDropcapParagraph() {
 		document.querySelectorAll('.md > p.cl-dropcap').forEach(function (p) {
 			p.classList.remove('cl-dropcap');
+			p.style.removeProperty('--cl-dc-size');
 		});
 		const firstMd = document.querySelector('#contents > .md')
 			|| document.querySelector('.md');
 		if (!firstMd) return;
-		const paras = firstMd.querySelectorAll(':scope > p');
-		for (const p of paras) {
+		for (const p of firstMd.querySelectorAll(':scope > p')) {
 			// skip layout-only paragraphs (lone anchors, spacing)
 			if ((p.textContent || '').trim()) {
 				p.classList.add('cl-dropcap');
+				sizeDropcap(p);
 				break;
 			}
 		}
+	}
+	// re-measure when the viewport crosses the narrow/desktop boundary
+	if (!markDropcapParagraph._mqBound && window.matchMedia) {
+		markDropcapParagraph._mqBound = true;
+		window.matchMedia('(max-width: 700px)').addEventListener('change', function () {
+			markDropcapParagraph();
+		});
 	}
 
 	/* ── First-touch helpers (silent, once) ── */
