@@ -1248,3 +1248,36 @@ Below, you can explore this interactively. A cloud of verbs is shown in their pr
         This is why grammar is a <b>carousel</b>, not a conveyor belt.
     </div>
 </section>
+
+<div class="md">
+## Why Geometry Works
+
+When a language model stops treating a word like
+
+$$\text{Cat}$$
+
+as a mere symbol and instead represents it internally as a vector, you get something like
+
+$$\text{Cat} \mapsto \vec{v}_{\text{Cat}} \in \mathbb{R}^n$$
+
+and suddenly relationships can be expressed geometrically:
+
+$$
+\underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Dog}}\right)}_{\text{distance: cat} \leftrightarrow \text{dog}} \;<\; \underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Quasar}}\right)}_{\text{distance: cat} \leftrightarrow \text{quasar}}
+$$
+
+Read out loud, left to right: *"the distance from cat to dog is less than the distance from cat to quasar."* Each `d(·,·)` is a plain Euclidean distance, the same formula as the straight-line gap between two points on a map, except measured between two high-dimensional vectors instead. The whole sentence, in plain English, is just: **cats are semantically closer to dogs than to quasars.** Geometry is doing nothing more than letting us *write that down* in a form a computer can optimize.
+
+or certain **directions in space correspond to semantic shifts**. Move a vector along the "royalty" direction and "Man" becomes "King." Move it along the "tense" direction and "run" becomes "ran."
+
+This isn't magic because "the universe is secretly one giant vector space." It isn't a metaphysical claim that reality has some hidden geometric structure.
+
+The trick is simpler than that: **geometry gives us a language in which relationships can be represented continuously and compositionally.**
+
+* **Continuous**, because similarity becomes a *degree* rather than a binary flag. Two concepts can be almost-similar, very-similar, or barely-related — and that gradient is preserved.
+* **Compositional**, because concepts combine through vector arithmetic — and addition is precisely the operation geometry already supports natively. A "royalty" direction, applied anywhere, transforms Man into King. A "tense" rotation, applied anywhere, transforms run into ran.
+
+This is enormously practical for learning. Gradients flow. Errors propagate. Optimization is well-defined. A model whose representations live in a continuous space can be *tuned* — nudged by gradient descent the way a sculptor tunes a shape. Discrete symbols offer no such handle: you cannot take a half-step from "cat" toward "dog," and there is no meaningful direction in which to descend.
+
+The power of the embedding space isn't that language *is* geometry. It's that geometry happens to be exactly the right mathematical structure for representing *relations* — and language, as Saussure understood a century before any of this existed, is nothing if not a system of differences.
+</div>
