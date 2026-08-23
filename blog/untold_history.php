@@ -131,19 +131,20 @@ The transformation of this curiosity into a usable force required a cascade of u
 
 * **Alessandro Volta** (1800) created the first true battery (the *voltaic pile*), proving that electricity could be generated chemically and sustained as a steady current, not just produced as a momentary spark. He announced the device in a letter to Sir Joseph Banks, president of the Royal Society, subsequently published as \citetitle{volta}.
 
-<figure style="float: right; width: 35%; max-width: 280px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="volta_portrait.jpg" alt="Engraved portrait of Alessandro Volta" />
-    <figcaption class="md">\citeauthor{volta_portrait}, inventor of the first true electric battery.</figcaption>
-</figure>
-
 * **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current. He described the effect in \citetitle{faraday}. This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines. Without it, there is no power grid, no data center, and no GPU cluster.
 
-<figure style="float: right; width: 25%; min-width: 140px; max-width: 220px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="voltaic_pile.png" alt="Cross-section illustration of Alessandro Volta's voltaic pile, the first electric battery" />
-    <figcaption class="md">\citealternativetitle{voltaic_pile} (1800): stacked disks of copper and zinc separated by brine-soaked cloth, the first electric battery.</figcaption>
-</figure>
-
 * **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture "A New System of Alternate Current Motors and Transformers" (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
+
+<div class="image-row">
+    <figure>
+        <img src="volta_portrait.jpg" alt="Engraved portrait of Alessandro Volta" />
+        <figcaption class="md">\citeauthor{volta_portrait}, inventor of the first true electric battery.</figcaption>
+    </figure>
+    <figure>
+        <img src="voltaic_pile.png" alt="Cross-section illustration of Alessandro Volta's voltaic pile, the first electric battery" />
+        <figcaption class="md">\citealternativetitle{voltaic_pile} (1800): stacked disks of copper and zinc separated by brine-soaked cloth, the first electric battery.</figcaption>
+    </figure>
+</div>
 
 <div class="image-row">
     <figure>
@@ -200,7 +201,22 @@ Without these cables, the internet is a collection of isolated local networks. W
 
 A modern data center generates enormous quantities of heat. Training a large language model pushes thousands of GPUs to their thermal limits for weeks or months. Without industrial **cooling systems**, the silicon would overheat and fail within minutes.
 
-The history of artificial cooling traces back to **William Cullen**, who demonstrated artificial refrigeration by evaporating ethyl ether in a partial vacuum at the University of Glasgow, described in \citetitle{cullencold}. The technology was later industrialized through the work of **Carl von Linde**, whose ammonia-compression refrigerator (\cite[German Patent DE 1250]{patent1250}, 1877) made large-scale cooling commercially viable, and **Willis Carrier** (1902), who designed the first modern air-conditioning system for the Sackett-Wilhelms Lithographing & Publishing Company in Brooklyn, later formalized in his paper \citetitle{psychrometric} (presented to the American Society of Mechanical Engineers, 1911).
+Long before mechanical refrigeration existed, the cold itself had to be **harvested in winter and stored for summer use**. The oldest strategy was the **[Eisweiher](ice pond)**: a small, shallow, wind-sheltered body of water — often an artificial pond or a specially dammed millpond — chosen so that a few days of sustained frost would freeze it solid. The surface was then cut into rectangular blocks with hand saws, pried loose with pike poles, and hauled by sled, cart, or slide into an insulated **ice cellar** (*Eiskeller*) packed with straw, where it could last through the warm months \cite[as illustrated in]{eisschlagen_traunsee}. The technique was in continuous use across Central Europe from the Middle Ages well into the twentieth century, and the name *Eisweiher* survives on ponds that today serve very different purposes — as fish ponds, fire-water reservoirs, or simply recreational lakes.
+
+Where no suitable pond existed, breweries, hospitals, hotels, and food businesses erected **[Eisgalgen](ice gallows)**: wooden or steel frames fitted with sturdy horizontal crossbeams. At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig, freezing into long icicles that could grow several metres down over the course of a cold week. The icicles were then knocked off with mallets, collected, and stored \cite[as documented in]{eisgalgen_mittenwald}. A single large installation, such as the one still occasionally operated at a brewery in Ulm, can "harvest" up to 100 m³ of ice during a sufficiently cold week. Unlike pond ice, gallows ice gave the operator direct control over water quality, and made ice production independent of any nearby natural waterbody — a complete ice-making installation with no moving parts and no machinery at all.
+
+<div class="image-row">
+    <figure>
+        <img src="eisschlagen_traunsee.jpg" alt="Black-and-white photograph of men cutting and transporting ice on a frozen Austrian lake, December 1899" />
+        <figcaption class="md">\citealternativetitle{eisschlagen_traunsee}: ice-cutting (*Eisschlagen*) on an Austrian lake, December 1899. The frozen surface is being sawn into rectangular blocks, pried loose with pike poles, and carted off to a nearby ice cellar for summer use — the basic workflow of every *Eisweiher* from the Middle Ages to the early 20th century.</figcaption>
+    </figure>
+    <figure>
+        <img src="eisgalgen_mittenwald.jpg" alt="A wooden ice gallows in Mittenwald, Bavaria, photographed in January 2015" />
+        <figcaption class="md">\citealternativetitle{eisgalgen_mittenwald}: a wooden ice gallows (*Eisgalgen*) at the Dekan-Karl-Platz in Mittenwald, Bavaria, January 2015. Water sprayed over the frame freezes into icicles several metres long, a fully mechanical ice factory that requires nothing but gravity and sub-zero air.</figcaption>
+    </figure>
+</div>
+
+The history of **artificial** cooling traces back to **William Cullen**, who demonstrated artificial refrigeration by evaporating ethyl ether in a partial vacuum at the University of Glasgow, described in \citetitle{cullencold}. The technology was later industrialized through the work of **Carl von Linde**, whose ammonia-compression refrigerator (\cite[German Patent DE 1250]{patent1250}, 1877) made large-scale cooling commercially viable, and **Willis Carrier** (1902), who designed the first modern air-conditioning system for the Sackett-Wilhelms Lithographing & Publishing Company in Brooklyn, later formalized in his paper \citetitle{psychrometric} (presented to the American Society of Mechanical Engineers, 1911).
 
 Today, hyperscale data centers use elaborate cooling systems, from chilled water loops to, increasingly, liquid immersion cooling, consuming megawatts of power just to prevent the hardware from destroying itself. The quiet hum of air conditioning in a server room is as essential to the existence of ChatGPT as the Transformer architecture itself.
 

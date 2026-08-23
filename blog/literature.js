@@ -5174,5 +5174,19 @@ window.bibData = {
 		author: "Self-generated (Plotly)",
 		year: 2026,
 		alternativetitle: "Interactive Plotly widget in algorithms.js showing two sine waves summing for any phase shift 0°-360° (constructive at 0°, destructive at 180°)"
+	},
+	"eisgalgen_mittenwald": {
+		url: "https://commons.wikimedia.org/wiki/File:Eisgalgen-Mittenwald-Dekan-Karl-Platz-2015-01-01.jpg",
+		title: "Eisgalgen in Mittenwald auf dem Dekan-Karl-Platz",
+		author: "HubertSt (Wikimedia Commons)",
+		year: 2015,
+		alternativetitle: "Ice gallows (Eisgalgen) at the Dekan-Karl-Platz in Mittenwald, Bavaria, January 2015"
+	},
+	"eisschlagen_traunsee": {
+		url: "https://commons.wikimedia.org/wiki/File:Eisschlagen.JPG",
+		title: "Brechen von Eis am Traunsee",
+		author: "Duke Philipp of Württemberg (1838–1917)",
+		year: 1899,
+		alternativetitle: "Ice-cutting on an Austrian lake (Traunsee), December 1899"
 	}
 };
