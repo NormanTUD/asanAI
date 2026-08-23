@@ -1268,7 +1268,7 @@ $$
 
 Read out loud, left to right: *"the distance from cat to dog is less than the distance from cat to quasar."* Each `d(·,·)` is a plain Euclidean distance, the same formula as the straight-line gap between two points on a map, except measured between two high-dimensional vectors instead. The whole sentence, in plain English, is just: **cats are semantically closer to dogs than to quasars.** Geometry is doing nothing more than letting us *write that down* in a form a computer can optimize.
 
-or certain **directions in space correspond to semantic shifts**. Move a vector along the "royalty" direction and "Man" becomes "King." Move it along the "tense" direction and "run" becomes "ran."
+or certain **directions in space correspond to semantic shifts**. If the offset from "Man" to "King" is roughly the same as the offset from "Woman" to "Queen," then that shared direction — call it the "royalty" displacement — is something the model has actually *learned* from the data, not something anyone programmed. The same logic applies to grammar: rotating the entire cloud of present-tense verbs ("run," "eat," "write") by a fixed angle lands you in the cloud of their past-tense counterparts ("ran," "ate," "wrote"). Apply that rotation to "run" and you arrive near "ran"; apply it to "eat" and you arrive near "ate." Distances measure *where* a word is; directions show you how to *move* one word into another.
 
 This isn't magic because "the universe is secretly one giant vector space." It isn't a metaphysical claim that reality has some hidden geometric structure.
 
