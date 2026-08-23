@@ -5737,22 +5737,29 @@ blockquote > p:first-of-type::before {
 	font-style: normal;
 }
 
-/* ── 4. Drop cap — only the first paragraph after a heading ── */
-.md > h1 + p::first-letter,
-.md > h2 + p::first-letter,
-.md > h3 + p::first-letter {
-	font-family: var(--mn-font-heading);
-	font-weight: 700;
-	font-size: 3.2em;
+/* ── 4. Drop cap — Floral Capitals, first paragraph of the page only ──
+   polish.js tags the page's opening paragraph with `.cl-dropcap`. */
+@font-face {
+	font-family: 'Floral Capitals';
+	src: url('FloralCapitals.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+.md > p.cl-dropcap::first-letter {
+	font-family: 'Floral Capitals', Georgia, 'Times New Roman', serif;
+	font-weight: 400;
+	font-size: 6.8em;
 	float: left;
-	line-height: .9;
-	padding: .05em .12em 0 0;
-	margin-top: .04em;
-	color: var(--mn-heading);
+	line-height: .85;
+	padding: .04em .14em 0 0;
+	margin-top: .05em;
 	background: linear-gradient(135deg,
-		hsla(218, 80%, 70%, .85) 0%,
-		hsla(282, 80%, 70%, .85) 50%,
-		hsla(330, 80%, 70%, .85) 100%);
+		hsl(199, 96%, 72%) 0%,
+		hsl(226, 90%, 66%) 26%,
+		hsl(262, 86%, 68%) 52%,
+		hsl(300, 82%, 66%) 76%,
+		hsl(334, 92%, 70%) 100%);
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;

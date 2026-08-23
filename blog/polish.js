@@ -736,9 +736,31 @@
 		update();
 	}
 
-	/* ── 8. First-touch helpers (silent, once) ── */
+	/* ── 8. Drop-cap target ──
+	   Tags the very first paragraph of the page with `.cl-dropcap`
+	   so the CSS can give it a Goudy Initialen initial. Runs on
+	   every pass, so it re-marks correctly after late renders. */
+	function markDropcapParagraph() {
+		document.querySelectorAll('.md > p.cl-dropcap').forEach(function (p) {
+			p.classList.remove('cl-dropcap');
+		});
+		const firstMd = document.querySelector('#contents > .md')
+			|| document.querySelector('.md');
+		if (!firstMd) return;
+		const paras = firstMd.querySelectorAll(':scope > p');
+		for (const p of paras) {
+			// skip layout-only paragraphs (lone anchors, spacing)
+			if ((p.textContent || '').trim()) {
+				p.classList.add('cl-dropcap');
+				break;
+			}
+		}
+	}
+
+	/* ── First-touch helpers (silent, once) ── */
 	function run(root) {
 		try {
+			markDropcapParagraph();
 			installHeadingAnchors(root);
 			upgradeHeadingAnchors(root);
 			labelCodeBlocks(root);

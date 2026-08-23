@@ -175,10 +175,8 @@ body {
 	}
 
 	/* ── 3b. Drop caps are TOO MUCH on a 4-inch screen ── */
-	.md > h1 + p::first-letter,
-	.md > h2 + p::first-letter,
-	.md > h3 + p::first-letter {
-		font-size: 1.6em;
+	.md > p.cl-dropcap::first-letter {
+		font-size: 3.4em;
 		padding: 0.02em 0.08em 0 0;
 		margin-top: 0.02em;
 		line-height: 0.95;
