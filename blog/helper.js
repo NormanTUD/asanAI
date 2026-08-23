@@ -2557,3 +2557,67 @@ window.__MN_DARK = {
 const isDarkMode = () => window.__MN_DARK.isDark();
 const themeColor = (c) => window.__MN_DARK.color(c);
 const cssVar = (name) => window.__MN_DARK.themeVar(name);
+
+// ════════════════════════════════════════════════════════════════
+//   GLOBAL PLOTLY THEME OBSERVER
+//   Most lab pages render their Plotly charts once at load time
+//   with `themeColor('#fff')` baked into the layout. When the
+//   user then toggles dark mode, the chart keeps its old colours
+//   until the per-module listener re-runs its `Plotly.react()`.
+//
+//   To avoid having to wire that listener up in every file,
+//   this observer walks every `.js-plotly-plot` instance after a
+//   theme flip and patches `paper_bgcolor`, `plot_bgcolor`, font
+//   colours, and any registered colour in the pairs table.
+//   It is a no-op until Plotly is loaded.
+// ════════════════════════════════════════════════════════════════
+(function setupGlobalPlotlyThemeObserver() {
+	const PATCH_KEYS = [
+		'paper_bgcolor', 'plot_bgcolor',
+		'bgcolor', 'gridcolor', 'line.color', 'marker.color',
+		'fillcolor', 'font.color', 'color'
+	];
+	const swap = (val) => {
+		if (Array.isArray(val)) return val.map(swap);
+		if (val && typeof val === 'object') {
+			const out = {};
+			for (const k of Object.keys(val)) out[k] = swap(val[k]);
+			return out;
+		}
+		if (typeof val !== 'string') return val;
+		return window.__MN_DARK.color(val);
+	};
+	const patchLayout = (gd) => {
+		try {
+			const layout = gd._fullLayout || gd.layout || {};
+			const update = {};
+			for (const key of PATCH_KEYS) {
+				if (layout[key] !== undefined) update[key] = swap(layout[key]);
+			}
+			if (Object.keys(update).length === 0) return;
+			if (typeof Plotly !== 'undefined' && Plotly.relayout) {
+				Plotly.relayout(gd, update);
+			}
+		} catch (e) { /* ignore — chart not yet attached */ }
+	};
+	const patchAll = () => {
+		if (typeof Plotly === 'undefined') return;
+		const nodes = document.querySelectorAll('.js-plotly-plot');
+		nodes.forEach(patchLayout);
+	};
+	// Patch once on initial load too, in case the page loaded with
+	// the dark class already set (e.g. via the prefers-color-scheme
+	// path in index.php).
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', patchAll, { once: true });
+	} else {
+		patchAll();
+	}
+	// Patch on every theme flip.
+	window.__MN_DARK.onChange(() => {
+		// Defer one tick so any module-level re-renderers that also
+		// listen have a chance to run first.
+		setTimeout(patchAll, 0);
+	});
+})();
+

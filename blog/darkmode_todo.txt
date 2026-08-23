@@ -1,5 +1,9 @@
-history: OR and XOR Gate graphs have white bg
-statistics: "Why This Matters for AI" blöcke sind zu hell, The Dirichlet Distribution: The Probability of Probabilities ist im dreieck weiß
-visionlab: manchmal ist der bg noch weiß ( 👆 Move your mouse over the source image to see the convolutionA mathematical operation that slides a filter over input data, detecting local patterns like edges or textures. math computed in real-time for each pixel... und  Each matrix (kernel) acts as a specialized "eye" that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected. )
-normalizationlab, embeddinglab, positionalembeddingslab, mechanistic_interpretability, algorithms, rag, vectorsearch, contextwindows, appendix, intuition, deeplearninglab, autodiff, minimalneuron, activationlab, derivativelab, differentiation, losslab: plots sind weiß
+history: OR and XOR Gate graphs have white bg [FIXED 2026-08-23 — wrapper + SVG rect.bg override + global Plotly theme observer in helper.js]
+statistics: "Why This Matters for AI" blöcke sind zu hell [FIXED 2026-08-23 — ai-callout bg + border-left override, text color override], The Dirichlet Distribution: The Probability of Probabilities ist im dreieck weiß [FIXED 2026-08-23 — explicit wrapper bg for #plot-dirichlet-simplex + global Plotly observer]
+visionlab: manchmal ist der bg noch weiß ( 👆 Move your mouse over the source image ... und  Each matrix (kernel) ... ) [FIXED 2026-08-23 — text colour normalisation on #conv-math-step + .panel[style*=var(--mn-surface)] child override]
+normalizationlab, embeddinglab, positionalembeddingslab, mechanistic_interpretability, algorithms, rag, vectorsearch, contextwindows, appendix, intuition, deeplearninglab, autodiff, minimalneuron, activationlab, derivativelab, differentiation, losslab: plots sind weiß [FIXED 2026-08-23 — nuclear Plotly/ECharts wrapper bg + recursive rect.bg fill + global Plotly theme observer patches paper_bgcolor/plot_bgcolor/gridcolor/font.color/bgcolor on every chart when theme toggles]
 
+Notes for the next person looking at this file:
+- The CSS additions live in style.css in a dedicated "Darkmode-TODO fixes" block.
+- The Plotly observer lives at the bottom of helper.js (setupGlobalPlotlyThemeObserver).
+- If you add a new lab that uses Plotly and don't listen to __MN_DARK.onChange yourself, the global observer will still patch paper_bgcolor / plot_bgcolor / font.color / gridcolor / line.color / marker.color / fillcolor / bgcolor on theme toggle. Just don't hardcode those values inline in your chart options — use themeColor() at render time so the first paint is correct.

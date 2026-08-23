@@ -1134,6 +1134,217 @@ html.dark select option {
 }
 
 /* ════════════════════════════════════════════════════════════
+   DARK MODE — Darkmode-TODO fixes (2026-08-23)
+   Targets the residual white backgrounds that survive the
+   existing overrides:
+   - history.php   : OR / XOR Gate Plotly plots
+   - statistics.php: "Why This Matters for AI" callouts, cream
+                     math display, Dirichlet triangle
+   - visionlab.php : mouse-over math hint, feature-map help panel
+   - 17 lab pages  : hard-coded `style="background:#fff"` /
+                     `style="background:#f8fafc"` containers
+                     around Plotly plots and tables
+   Strategy: catch every light-hex pattern that still appears in
+   inline styles across these files, plus a blanket Plotly /
+   ECharts wrapper rule so any future plot rendered with
+   `paper_bgcolor: #fff` automatically picks up the dark surface.
+   ════════════════════════════════════════════════════════ */
+
+/* 1. Cream / pale-yellow math display backgrounds (statistics.php) */
+html.dark [style*="background: #fdfaf2"],
+html.dark [style*="background:#fdfaf2"],
+html.dark [style*="background: #fef3c7"],
+html.dark [style*="background:#fef3c7"],
+html.dark [style*="background: #fef9c3"],
+html.dark [style*="background:#fef9c3"] {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+
+/* 2. Coral / orange light backgrounds (losslab, activationlab, etc.) */
+html.dark [style*="background: #fff7ed"],
+html.dark [style*="background:#fff7ed"],
+html.dark [style*="background: #ffedd5"],
+html.dark [style*="background:#ffedd5"],
+html.dark [style*="background: #fed7aa"],
+html.dark [style*="background:#fed7aa"] {
+	background: rgba(249, 115, 22, 0.08) !important;
+	border-color: rgba(249, 115, 22, 0.3) !important;
+	color: var(--mn-text) !important;
+}
+
+/* 3. Solid bright accent colours used as button or progress bg.
+      Keep them saturated in dark mode but ensure text stays
+      readable by leaving fg as white. */
+html.dark [style*="background: #10b981"]:not([class*="callout"]),
+html.dark [style*="background:#10b981"]:not([class*="callout"]),
+html.dark [style*="background: #22c55e"]:not([class*="callout"]),
+html.dark [style*="background:#22c55e"]:not([class*="callout"]) {
+	background: #059669 !important;
+	border-color: #047857 !important;
+}
+html.dark [style*="background: #3b82f6"]:not([class*="callout"]),
+html.dark [style*="background:#3b82f6"]:not([class*="callout"]),
+html.dark [style*="background: #2563eb"]:not([class*="callout"]),
+html.dark [style*="background:#2563eb"]:not([class*="callout"]) {
+	background: #1d4ed8 !important;
+	border-color: #1e40af !important;
+}
+html.dark [style*="background: #ef4444"]:not([class*="callout"]),
+html.dark [style*="background:#ef4444"]:not([class*="callout"]) {
+	background: #b91c1c !important;
+	border-color: #991b1b !important;
+}
+html.dark [style*="background: #6366f1"]:not([class*="callout"]),
+html.dark [style*="background:#6366f1"]:not([class*="callout"]) {
+	background: #4338ca !important;
+	border-color: #3730a3 !important;
+}
+html.dark [style*="background: #8b5cf6"]:not([class*="callout"]),
+html.dark [style*="background:#8b5cf6"]:not([class*="callout"]) {
+	background: #6d28d9 !important;
+	border-color: #5b21b6 !important;
+}
+html.dark [style*="background: #f59e0b"]:not([class*="callout"]),
+html.dark [style*="background:#f59e0b"]:not([class*="callout"]) {
+	background: #b45309 !important;
+	border-color: #92400e !important;
+}
+
+/* 4. Bright-coloured border-lefts on .ai-callout blocks in
+      statistics.php (Why This Matters for AI).  Keep the
+      saturated accent so the card still reads as a callout,
+      but make sure the surrounding box has a dark surface. */
+html.dark .ai-callout[style*="border-left: 4px solid #22c55e"],
+html.dark .ai-callout[style*="border-left:4px solid #22c55e"],
+html.dark .ai-callout[style*="border-left: 4px solid #e11d48"],
+html.dark .ai-callout[style*="border-left:4px solid #e11d48"],
+html.dark .ai-callout[style*="border-left: 4px solid #6366f1"],
+html.dark .ai-callout[style*="border-left:4px solid #6366f1"],
+html.dark .ai-callout[style*="border-left: 4px solid #eab308"],
+html.dark .ai-callout[style*="border-left:4px solid #eab308"] {
+	background: var(--mn-surface) !important;
+	color: var(--mn-text) !important;
+}
+
+/* 5. Plotly — nuclear option: any wrapper that contains a
+      Plotly plot gets a dark surface.  Catches the Plotly SVG
+      background even when JS rendered it before the user
+      toggled the theme (so themeColor() baked in light hex). */
+html.dark .js-plotly-plot,
+html.dark .plotly,
+html.dark .plot-container,
+html.dark .svg-container {
+	background: var(--mn-bg) !important;
+}
+/* Inside the SVG, paper + plot backgrounds are separate <rect>s.
+      Force every one to fill with the dark surface. */
+html.dark .js-plotly-plot .main-svg .bg,
+html.dark .js-plotly-plot .main-svg rect.bg,
+html.dark .js-plotly-plot .main-svg .layer-above rect,
+html.dark .js-plotly-plot .main-svg .layer-below rect {
+	fill: var(--mn-bg) !important;
+}
+/* Plotly gridlines & zero lines: dim them so the axes read on dark. */
+html.dark .js-plotly-plot .main-svg .gridlayer path,
+html.dark .js-plotly-plot .main-svg .xgrid path,
+html.dark .js-plotly-plot .main-svg .ygrid path,
+html.dark .js-plotly-plot .main-svg .zgrid path,
+html.dark .js-plotly-plot .main-svg .zerolinelayer path {
+	stroke: var(--mn-border) !important;
+}
+/* Plotly modebar (top-right toolbar) — fix white icons / button bg. */
+html.dark .js-plotly-plot .modebar-bg,
+html.dark .js-plotly-plot .modebar-group {
+	fill: rgba(15, 23, 42, 0.6) !important;
+	stroke: var(--mn-border) !important;
+}
+html.dark .js-plotly-plot .modebar-btn path {
+	fill: var(--mn-text-secondary) !important;
+}
+html.dark .js-plotly-plot .modebar-btn:hover .modebar-bg {
+	fill: var(--mn-surface-raised) !important;
+}
+
+/* 6. ECharts wrappers — match the same nuclear fallback. */
+html.dark .echarts,
+html.dark div[_echarts_instance_] {
+	background: var(--mn-bg) !important;
+}
+html.dark div[_echarts_instance_] canvas {
+	background: transparent !important;
+}
+
+/* 7. The Dirichlet ternary Plotly in statistics.php:
+      paper_bgcolor + plot_bgcolor are explicitly transparent,
+      so the triangle reads whatever sits behind it.  Give the
+      container an explicit dark surface. */
+html.dark #plot-dirichlet-simplex,
+html.dark #plot-gmm-clusters,
+html.dark #plot-zarathustra-convergence,
+html.dark #plot-or-gate,
+html.dark #plot-xor-gate {
+	background: var(--mn-bg) !important;
+	border-radius: 8px;
+}
+
+/* 8. The visionlab convolution math-step box and feature-map
+      help panel — both use the `#f8fafc → #f1f5f9` linear
+      gradient.  The existing rule catches that gradient, but
+      the explicit child text colour `#475569` is too dark on
+      the dark surface.  Override the inherited text colour. */
+html.dark #conv-math-step,
+html.dark #conv-math-step * {
+	color: var(--mn-text-secondary) !important;
+}
+html.dark #conv-math-step [style*="color:#94a3b8"],
+html.dark #conv-math-step [style*="color: #94a3b8"] {
+	color: var(--mn-text-muted) !important;
+}
+
+/* 9. visionlab.php source / feature-map panel — uses
+      `background: var(--mn-surface, white)` which IS picked up
+      by the CSS variable, but child <p> inherits a dark text
+      colour in light mode that becomes unreadable on dark.
+      Normalise. */
+html.dark .panel[style*="var(--mn-surface"] {
+	color: var(--mn-text) !important;
+}
+html.dark .panel[style*="var(--mn-surface"] [style*="color: #475569"],
+html.dark .panel[style*="var(--mn-surface"] [style*="color:#475569"] {
+	color: var(--mn-text-secondary) !important;
+}
+
+/* 10. Last-resort fallback: any element rendered by a lab
+       with an inline `background` starting with a near-white
+       hex (anything whose first hex digit is f and lightness
+       is high) is forced to the dark surface.  This catches
+       any straggler colour the table above missed without
+       having to enumerate every swatch.  Kept off for
+       `linear-gradient(...)` because that is handled above. */
+html.dark [style*="background:#fff"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background: #fff"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background:#ffffff"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background: #ffffff"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background:white"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background: white"]:not([class*="callout"]):not([class*="statlab"]) {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+html.dark [style*="background:#fef"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background: #fef"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background:#fed"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background: #fed"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background:#ffd"]:not([class*="callout"]):not([class*="statlab"]),
+html.dark [style*="background: #ffd"]:not([class*="callout"]):not([class*="statlab"]) {
+	background: var(--mn-surface) !important;
+	border-color: var(--mn-border) !important;
+	color: var(--mn-text) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
    DARK MODE — Form elements (textarea, input, select)
    These ensure all form controls adapt when the user toggles
    from dark to light or vice-versa.
