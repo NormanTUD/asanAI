@@ -5947,8 +5947,14 @@ html { scroll-behavior: smooth; }
 	color: inherit;
 }
 
-/* ── 15. Number anchors on headings (count in their h-level) ── */
-.md { counter-reset: h2count h3count h4count; }
+/* ── 15. Number anchors on headings (count in their h-level) ──
+   Counters are reset ONCE per page on <body>, and re-reset at every <h1>.
+   An h1's counter scope covers its following siblings and their descendants,
+   so all .md fragments of an article share one sequence (1, 2, 3 …) no matter
+   how many .md divs the article is split into — and on pages that embed many
+   articles (index_full), each article's <h1> starts its own numbering. */
+body { counter-reset: h2count h3count h4count; }
+h1 { counter-reset: h2count h3count h4count; }
 .md h2 { counter-reset: h3count; counter-increment: h2count; }
 .md h3 { counter-increment: h3count; }
 .md h2::before {
