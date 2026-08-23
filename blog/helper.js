@@ -1864,7 +1864,7 @@ const GLOSSARY = {
 	'germ': 'An equivalence class of functions (or sections) that agree in some neighbourhood of a point. The atomic unit of local data in sheaf theory.',
 	'section': 'In sheaf theory, a choice of data over an open set, compatible with the sheaf\'s restriction maps. The "global" data the sheaf provides.',
 	'restriction map': 'A map that takes data defined on a larger open set and restricts it to a smaller one. The compatibility check that makes a presheaf into a sheaf.',
-	'topology': 'A collection of "open" sets on a space satisfying union and finite-intersection axioms. Generalises metric spaces and gives the notion of "nearness" sheaves live on.',
+	'topology': 'Similiar to geometry, but distance is abstracted away and of two points you can only say that d(x, y) = 0 if they are the same point, and d(x, y) != 0 if they are not.',
 	'open cover': 'A collection of open sets whose union is the whole space. Sheaves are tested on covers: local data on each open set must glue to global data on the whole.',
 	'category': 'A collection of objects and morphisms between them, with associative composition and identity morphisms. The language of modern structural mathematics.',
 	'functor': 'A structure-preserving map between categories: it sends objects to objects and morphisms to morphisms, respecting composition and identities.',
