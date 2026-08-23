@@ -5740,8 +5740,10 @@ blockquote > p:first-of-type::before {
 /* ── 4. Drop cap — Floral Capitals, first paragraph of the page only ──
    polish.js tags the page's opening paragraph with `.cl-dropcap` and
    measures the real line boxes + the glyph's real ink height, then
-   sets `--cl-dc-size` so the cap spans exactly N text lines.
-   The var falls back to a sane static size until JS has measured. */
+   sets `--cl-dc-size` so the cap spans N text lines — N is chosen
+   adaptively between 3 and 5 depending on how much room the opening
+   paragraph has. The var falls back to a sane static size until JS
+   has measured. */
 @font-face {
 	font-family: 'Floral Capitals';
 	src: url('FloralCapitals.ttf') format('truetype');

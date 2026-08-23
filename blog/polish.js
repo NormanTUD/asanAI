@@ -739,7 +739,10 @@
 	/* ── 8. Drop-cap target ──
 	   Tags the very first paragraph of the page with `.cl-dropcap`
 	   and measures the real geometry so the CSS float cap spans
-	   exactly N text lines (see style.css §4):
+	   N text lines (see style.css §4):
+	     • N adapts to the paragraph: start at 5, step down towards
+	       3 while the paragraph has fewer real text lines than the
+	       cap would be tall;
 	     • paragraph line height comes from getComputedStyle — so
 	       it follows any breakpoint / theme change automatically;
 	     • the ink ratio (visible cap height ÷ em) of the actual
@@ -748,9 +751,8 @@
 	       leading inside their em box.
 	   font-size = lines × lineHeightPx ÷ inkRatio. */
 	const DC_FONT = 'Floral Capitals';
-	function dcLines() {
-		return window.matchMedia('(max-width: 700px)').matches ? 3 : 5;
-	}
+	const DC_LINES_MIN = 3;
+	const DC_LINES_MAX = 5;
 	function dcInkRatio(ch) {
 		try {
 			const cv = markDropcapParagraph._cv || (markDropcapParagraph._cv = document.createElement('canvas'));
@@ -762,22 +764,48 @@
 		return 0.72;
 	}
 	function sizeDropcap(p) {
-		const apply = function (ratio) {
-			const cs = getComputedStyle(p);
+		const apply = function (lines, ratio, cs) {
 			const fs = parseFloat(cs.fontSize) || 18;
 			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
 			p.style.setProperty('--cl-dc-size',
-				((dcLines() * lh) / ratio).toFixed(1) + 'px');
+				((lines * lh) / ratio).toFixed(1) + 'px');
+		};
+		// Count the paragraph's real text line boxes. NOTE: comparing
+		// against p.offsetHeight does NOT work — Blink grows the block
+		// around its own floated ::first-letter, so the box always
+		// "fits". Only actual line boxes reveal how much text there is.
+		const textLineCount = function (lh) {
+			try {
+				const rng = document.createRange();
+				rng.selectNodeContents(p);
+				const tops = new Set();
+				for (const r of rng.getClientRects()) {
+					if (r.width > 2 && r.height > 2) {
+						tops.add(Math.round(r.top / (lh * 0.5)));
+					}
+				}
+				return tops.size;
+			} catch (e) { return DC_LINES_MAX; }
+		};
+		const fit = function (ratio) {
+			const cs = getComputedStyle(p);
+			const fs = parseFloat(cs.fontSize) || 18;
+			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
+			for (let lines = DC_LINES_MAX; lines >= DC_LINES_MIN; lines--) {
+				apply(lines, ratio, cs);
+				// reading rects forces a re-layout with the new size
+				if (lines <= textLineCount(lh) || lines === DC_LINES_MIN) break;
+			}
 		};
 		const ch = (p.textContent.trim()[0] || 'A');
 		if (document.fonts && document.fonts.check('16px "' + DC_FONT + '"', ch)) {
-			requestAnimationFrame(function () { apply(dcInkRatio(ch)); });
+			requestAnimationFrame(function () { fit(dcInkRatio(ch)); });
 		} else if (document.fonts) {
 			document.fonts.load('16px "' + DC_FONT + '"', ch)
-				.then(function () { apply(dcInkRatio(ch)); })
-				.catch(function () { apply(0.72); });
+				.then(function () { fit(dcInkRatio(ch)); })
+				.catch(function () { fit(0.72); });
 		} else {
-			apply(0.72);
+			fit(0.72);
 		}
 	}
 	function markDropcapParagraph() {
