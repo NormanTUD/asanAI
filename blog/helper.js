@@ -80,6 +80,46 @@ function getTopLevelMdContainers() {
 	});
 }
 
+/* ── Typographic punctuation pass ──────────────────────────────
+   Runs on the RENDERED DOM (never the Markdown source), so fenced
+   code, inline code, kbd and math are untouched by construction —
+   they're excluded explicitly anyway. Stateless per text node:
+   every decision uses only its immediate left/right context, which
+   makes the pass idempotent and safe across inline-tag boundaries.
+
+     --- → em dash   -- → en dash   ... → ellipsis
+     "a" → “a”       it's / dogs'  → ’      'x' → ‘x’            */
+function smartPunct(root) {
+	if (!root || !root.querySelectorAll) return;
+	const SKIP = 'code, pre, kbd, samp, script, style, textarea, option, math, .no-smart';
+	const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+		acceptNode: function (n) {
+			if (!n.nodeValue || !/["'\-.]/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+			const p = n.parentElement;
+			if (p && p.closest(SKIP)) return NodeFilter.FILTER_REJECT;
+			return NodeFilter.FILTER_ACCEPT;
+		}
+	});
+	const nodes = [];
+	while (walker.nextNode()) nodes.push(walker.currentNode);
+	for (const node of nodes) {
+		let s = node.nodeValue;
+		s = s.replace(/-{2,}/g, function (d) { return d.length >= 3 ? '\u2014' : '\u2013'; })
+		     .replace(/\.\.\./g, '\u2026');
+		// apostrophes: contractions (it's) and word-final possessives (dogs')
+		s = s.replace(/(\p{L})'(\p{L})/gu, '$1\u2019$2')
+		     .replace(/(\p{L})'(?![\p{L}\p{N}])/gu, '$1\u2019');
+		// double quotes: an opener is a quote preceded by start/space/opening
+		// punctuation and followed by non-space; everything else closes.
+		s = s.replace(/(^|[\s(\[{\u2014\u2013])"(?=\S)/g, '$1\u201C')
+		     .replace(/"/g, '\u201D');
+		// single quotes: same shape, AFTER contractions were consumed
+		s = s.replace(/(^|[\s(\[{\u2014\u2013])'(?=[^\s'])/g, '$1\u2018')
+		     .replace(/'/g, '\u2019');
+		if (s !== node.nodeValue) node.nodeValue = s;
+	}
+}
+
 function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
 	getTopLevelMdContainers().forEach(container => {
@@ -119,6 +159,7 @@ function renderMarkdown() {
 
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
+		smartPunct(container);
 	});
 	updateLoadingStatus("Almost finished.");
 
@@ -136,6 +177,7 @@ function renderMarkdown() {
 			fnContainer.innerHTML = BlogTopics.preprocess(fnContainer.innerHTML);
 		}
 		fnContainer.innerHTML = marked.parse(fnContainer.innerHTML);
+		smartPunct(fnContainer);
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();
 		}
@@ -147,6 +189,7 @@ function renderMarkdown() {
 			srcContainer.innerHTML = BlogTopics.preprocess(srcContainer.innerHTML);
 		}
 		srcContainer.innerHTML = marked.parse(srcContainer.innerHTML);
+		smartPunct(srcContainer);
 		if (window.BlogTopics && BlogTopics.applyVisibility) {
 			BlogTopics.applyVisibility();
 		}
@@ -985,6 +1028,7 @@ function source_bibliography() {
 	if (typeof renderMarkdown === "function") {
 		sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
 			if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
+			smartPunct(el);
 		});
 	}
 

@@ -1,3 +1,24 @@
+/* ════════════════════════════════════════════════════════════
+   PROSE SERIF — Source Serif 4 (SIL OFL 1.1), variable wght,
+   self-hosted latin subset (~50 KB each). Used ONLY for running
+   text; UI chrome, labs, buttons and code stay on the sans/mono
+   stacks below. License: fonts/OFL-SourceSerif4.txt
+   ════════════════════════════════════════════════════════════ */
+@font-face {
+	font-family: 'Source Serif 4';
+	src: url('fonts/SourceSerif4-Variable-latin.woff2') format('woff2');
+	font-weight: 200 900;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Source Serif 4';
+	src: url('fonts/SourceSerif4-Variable-Italic-latin.woff2') format('woff2');
+	font-weight: 200 900;
+	font-style: italic;
+	font-display: swap;
+}
+
 html {
 	background: #ffffff;
 	color: #1e293b;
@@ -24,6 +45,20 @@ html {
 	--mn-font-heading: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	--mn-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	--mn-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+	--mn-font-prose: "Source Serif 4", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+
+	/* Vertical-rhythm ladder — single source of truth for block
+	   spacing in the reading column (≈ golden-ish steps). Micro-
+	   spacing inside type (paragraph gap, heading leading) stays
+	   in em on purpose so it scales with the reader's font size;
+	   these rem tokens are for structural gaps between blocks. */
+	--mn-space-2xs: .375rem;  /*  6 */
+	--mn-space-xs:  .625rem;  /* 10 */
+	--mn-space-s:   1rem;     /* 16 */
+	--mn-space-m:   1.5rem;   /* 24 */
+	--mn-space-l:   2.25rem;  /* 36 */
+	--mn-space-xl:  3.25rem;  /* 52 */
+	--mn-space-2xl: 4.5rem;   /* 72 */
 
 	/* Accent palette — warm coral to deep indigo */
 	--mn-accent: #6366f1;
@@ -61,8 +96,11 @@ html {
    DARK MODE
    ════════════════════════════════════════════════════════ */
 html.dark {
+	/* Body copy sits a notch below pure #e2e8f0: long reading passages
+	   feel calmer while contrast on #0f172a stays ≈ 11:1. Headings and
+	   chrome stay brighter via --mn-heading / explicit rules. */
 	background: #0f172a;
-	color: #e2e8f0;
+	color: #cbd5e1;
 	color-scheme: dark;
 	--mn-bg: #0f172a;
 	--mn-bg-subtle: #1e293b;
@@ -72,7 +110,7 @@ html.dark {
 	--mn-surface-raised: #334155;
 	--mn-border: #334155;
 	--mn-border-light: #1e293b;
-	--mn-text: #e2e8f0;
+	--mn-text: #cbd5e1;
 	--mn-text-secondary: #94a3b8;
 	--mn-text-muted: #64748b;
 	--mn-heading: #f1f5f9;
@@ -1185,8 +1223,10 @@ html.dark .loader-section-row.done .loader-label {
 
 html.dark #contents,
 html.dark #loader {
-	color: #e2e8f0 !important;
+	color: #cbd5e1 !important;
 }
+/* Loader is transient chrome — keep it at the brighter step. */
+html.dark #loader { color: #e2e8f0 !important; }
 html.dark #contents h1,
 html.dark #contents h2,
 html.dark #contents h3,
@@ -1203,7 +1243,7 @@ html.dark .md h4 {
 html.dark #contents p,
 html.dark #contents li,
 html.dark #contents div:not([class*="plot"]):not([class*="chart"]):not([class*="echarts"]):not(.glossary-tooltip) {
-	color: #e2e8f0;
+	color: #cbd5e1;
 }
 
 /* Transition class for smooth theme switching */
@@ -1215,7 +1255,7 @@ html.theme-transition *::after {
 }
 
 #contents, #loader {
-	font-family: sans-serif;
+	font-family: var(--mn-font-prose);
 	margin: 0px;
 	cursor: default;
 	height: fit-content;
@@ -1229,6 +1269,9 @@ html.theme-transition *::after {
 	-webkit-overflow-scrolling: touch;
 }
 
+/* The loader is chrome, not prose — keep it on the UI sans. */
+#loader { font-family: var(--mn-font-body); }
+
 #contents {
 	/* 1. Dynamische Breite mit Obergrenze */
 	width: 95%;            /* Nimmt auf kleinen Screens fast alles ein */
@@ -1241,8 +1284,6 @@ html.theme-transition *::after {
 	/* 3. Textausrichtung im Container */
 	text-align: left;      /* Stellt sicher, dass der Text linksbündig bleibt */
 
-	/* Dein restlicher bestehender Code */
-	font-family: sans-serif;
 	cursor: default;
 	height: fit-content;
 	min-height: 100%;
@@ -1250,6 +1291,44 @@ html.theme-transition *::after {
 	animation: bodyFadeIn 1s ease forwards;
 	line-height: 1.6;
 	color: #1e293b;
+}
+
+/* ── Prose vs. chrome ───────────────────────────────────────
+   #contents inherits the reading serif; everything interactive
+   or machine-looking snaps back to the UI sans / mono stacks.
+   Later component rules may override these freely — they are a
+   floor, not a ceiling. */
+#contents button,
+#contents input,
+#contents select,
+#contents textarea {
+	font-family: var(--mn-font-body);
+}
+#contents code,
+#contents pre,
+#contents kbd,
+#contents samp {
+	font-family: var(--mn-font-mono);
+}
+
+/* Blocksatz für den Fließtext — bewusst nur auf die oberste
+   Prosa-Ebene beschränkt (Markdown-Absätze, Top-Level-Listen,
+   Zitate). Lab-/Interaktions-Container bleiben im Flattersatz,
+   damit schmale Spalten keine Löcher bekommen. Silbentrennung
+   inkl. hyphenate-limit-* läuft über die .md-Regeln weiter unten. */
+.md > p,
+.md > ul > li,
+.md > ol > li,
+.md blockquote p,
+.cl-block > p,
+#footnotes li,
+#sources li {
+	text-align: justify;
+}
+#footnotes li,
+#sources li {
+	hyphens: auto;
+	-webkit-hyphens: auto;
 }
 
 #contents p {
@@ -2072,9 +2151,23 @@ figcaption {
 }
 
 #contents h1, #contents h2, #contents h3 {
-	margin-top: 2em;
-	margin-bottom: 0.5em;
+	margin-top: var(--mn-space-l);
+	margin-bottom: var(--mn-space-xs);
 	line-height: 1.2;
+}
+
+/* Structural block rhythm for top-level prose blocks. Deliberately
+   placed EARLY: any later component rule (labs, callouts …) wins the
+   cascade, so this only sets the default beat. */
+.md > pre,
+.md > figure,
+.md > table,
+.md > blockquote,
+.md > hr,
+.md > ul,
+.md > ol {
+	margin-top: var(--mn-space-m);
+	margin-bottom: var(--mn-space-m);
 }
 
 #contents a {
@@ -5793,6 +5886,32 @@ blockquote > p:first-of-type::before {
 	background-clip: text;
 	color: transparent;
 }
+/* ── 4b. Native `initial-letter` upgrade — where the browser supports
+   it (Chromium/Safari; Firefox keeps the measured float path above),
+   polish.js skips all ink measuring and only sets `--cl-dc-lines`;
+   the UA sinks and scales the cap itself, with true baseline
+   alignment across every font-size change. Same ornament, same
+   gradient, zero JS layout feedback loops. */
+@supports ((initial-letter: 3) or (-webkit-initial-letter: 3)) {
+	.md > p.cl-dropcap::first-letter {
+		float: none;
+		font-size: inherit;   /* initial-letter derives the size from N lines */
+		line-height: inherit;
+		padding: 0;
+		margin-top: 0;
+		background: linear-gradient(160deg,
+			hsl(203, 96%, 74%) 0%,
+			hsl(232, 90%, 68%) 30%,
+			hsl(266, 86%, 70%) 55%,
+			hsl(310, 84%, 68%) 80%,
+			hsl(334, 92%, 70%) 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		initial-letter: var(--cl-dc-lines, 4) 3;
+		-webkit-initial-letter: var(--cl-dc-lines, 4) 3;
+	}
+}
 
 /* ── 5. Heading anchor links — shareable section URLs ── */
 .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
@@ -5977,9 +6096,9 @@ html { scroll-behavior: smooth; }
    so all .md fragments of an article share one sequence (1, 2, 3 …) no matter
    how many .md divs the article is split into — and on pages that embed many
    articles (index_full), each article's <h1> starts its own numbering. */
-body { counter-reset: h2count h3count h4count; }
-h1 { counter-reset: h2count h3count h4count; }
-.md h2 { counter-reset: h3count; counter-increment: h2count; }
+body { counter-reset: h2count h3count h4count figcount tabcount eqcount; }
+h1 { counter-reset: h2count h3count h4count figcount tabcount eqcount; }
+.md h2 { counter-reset: h3count figcount tabcount eqcount; counter-increment: h2count; }
 .md h3 { counter-increment: h3count; }
 .md h2::before {
 	content: counter(h2count, decimal) ".\00a0\00a0";
@@ -6009,6 +6128,71 @@ h1 { counter-reset: h2count h3count h4count; }
 /* Opt-out: any heading that contains a span.no-num does not get numbered */
 .md h2:has(> .no-num)::before,
 .md h3:has(> .no-num)::before { content: none; }
+
+/* ── Figure / table / equation numbers ─────────────────────────
+   All chapter-scoped (reset at every .md h2 via the counters above):
+     Fig. 3.2 · Tab. 3.1 · display math gets "(3.n)" in the right
+   margin, like print textbooks. polish.js tags captions that already
+   carry their own label ("Fig. 12: …") or sit before the first h2
+   of a page with .no-auto-num / .no-eq-num — those stay untouched. */
+.md figure figcaption::before,
+.md > figcaption::before {
+	content: "Fig.\00a0" counter(h2count) "." counter(figcount) "\2002";
+	counter-increment: figcount;
+	font-style: normal;
+	font-weight: 600;
+	color: var(--mn-text-secondary);
+	letter-spacing: .01em;
+	font-variant-numeric: tabular-nums;
+}
+.md figure figcaption.no-auto-num::before,
+.md > figcaption.no-auto-num::before { content: none; }
+
+.md table > caption {
+	caption-side: top;
+	text-align: left;
+	font-size: .82em;
+	line-height: 1.45;
+	color: var(--mn-text-muted);
+	padding: .4em 0;
+}
+.md table > caption::before {
+	content: "Tab.\00a0" counter(h2count) "." counter(tabcount) "\2002";
+	counter-increment: tabcount;
+	font-style: normal;
+	font-weight: 600;
+	color: var(--mn-text-secondary);
+	font-variant-numeric: tabular-nums;
+}
+.md table > caption.no-auto-num::before { content: none; }
+
+/* Display equations are wrapped in span.cl-eq by polish.js. */
+span.cl-eq {
+	display: block;
+	position: relative;
+	margin: 1.2em 0;
+	padding-right: 3em; /* keeps centered math clear of the margin number */
+	text-align: center;
+	counter-increment: eqcount;
+}
+.cl-eq .tml-display,
+.cl-eq mjx-container[display="true"],
+.cl-eq .katex-display {
+	margin: 0 !important;
+}
+.cl-eq::after {
+	content: "(" counter(h2count) "." counter(eqcount) ")";
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: .85em;
+	color: var(--mn-text-muted);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.cl-eq.no-eq-num { counter-increment: none; }
+.cl-eq.no-eq-num::after { content: none; }
 
 /* ════════════════════════════════════════════════════════════
    QUIET FUNCTIONAL POLISH — invisible until you need it.

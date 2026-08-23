@@ -753,6 +753,19 @@
 	const DC_FONT = 'Floral Capitals';
 	const DC_LINES_MIN = 3;
 	const DC_LINES_MAX = 5;
+	/* Native `initial-letter` (Chromium 110+, Safari; Firefox still takes
+	   the JS float path below): the browser sinks and scales the cap
+	   itself, so no canvas ink measuring is needed — we only pick how
+	   many lines the cap should span. */
+	const DC_NATIVE = typeof CSS !== 'undefined' && CSS.supports && (
+		CSS.supports('initial-letter', '3') ||
+		CSS.supports('-webkit-initial-letter', '3'));
+	function dcLineTarget(p) {
+		// Longer opening paragraphs can carry a taller cap without the
+		// text running out underneath it (mirrors the float-path fit loop).
+		const words = ((p.textContent || '').trim().match(/\S+/g) || []).length;
+		return words < 40 ? 3 : words < 70 ? 4 : DC_LINES_MAX;
+	}
 	function dcInkRatio(ch) {
 		try {
 			const cv = markDropcapParagraph._cv || (markDropcapParagraph._cv = document.createElement('canvas'));
@@ -764,6 +777,12 @@
 		return 0.72;
 	}
 	function sizeDropcap(p) {
+		if (DC_NATIVE) {
+			// The @supports block in style.css does the layout; just say
+			// how tall the cap should be.
+			p.style.setProperty('--cl-dc-lines', dcLineTarget(p));
+			return;
+		}
 		const apply = function (lines, ratio, cs) {
 			const fs = parseFloat(cs.fontSize) || 18;
 			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
@@ -842,6 +861,79 @@
 		});
 	}
 
+	/* ── Figure / table / equation numbering (CSS counters do the
+	   math — see style.css §15b). These passes only prepare the DOM:
+	     • wrap display math so a right-margin number can attach,
+	     • opt captions out when they carry their own label or sit
+	       before the page's first h2 (counter would read "0.x"). */
+	function precededByH2(el, h2s) {
+		for (let i = 0; i < h2s.length; i++) {
+			if (h2s[i].compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) return true;
+		}
+		return false;
+	}
+	function numberEquations(root) {
+		const scope = root.nodeType === 9 ? (root.getElementById('contents') || root.body || root) : root;
+		const h2s = Array.prototype.slice.call(scope.querySelectorAll('.md h2'));
+		scope.querySelectorAll('.md math.tml-display, .md math[display="block"]').forEach(function (m) {
+			if (!m.parentNode || m.closest('.cl-eq')) return;
+			if (m.closest('.no-eq-num, [data-no-eq-num]')) return;
+			const wrap = document.createElement('span');
+			wrap.className = 'cl-eq';
+			m.parentNode.insertBefore(wrap, m);
+			wrap.appendChild(m);
+			if (!precededByH2(m, h2s)) wrap.classList.add('no-eq-num');
+		});
+	}
+	const MANUAL_CAPTION_RE = /^\s*(?:figures?|figs?\.|abb\.?|tables?|tab\.|tbl\.?)\s*[\dIVX]/i;
+	function tagAutoNumberedCaptions(root) {
+		const scope = root.nodeType === 9 ? (root.getElementById('contents') || root.body || root) : root;
+		const h2s = Array.prototype.slice.call(scope.querySelectorAll('.md h2'));
+		scope.querySelectorAll('.md figure figcaption, .md > figcaption, .md table > caption').forEach(function (cap) {
+			if (MANUAL_CAPTION_RE.test((cap.textContent || '').trim())) {
+				cap.classList.add('no-auto-num');
+				return;
+			}
+			if (!precededByH2(cap, h2s)) cap.classList.add('no-auto-num');
+		});
+	}
+
+	/* ── Acronym small caps — "HTTP", "LLM" & co. get the .caps class
+	   (all-small-caps + slight tracking). Case-sensitive on purpose:
+	   prose words that merely contain capitals are never touched.
+	   Code, math and already-marked spans are skipped. */
+	const ACRO_RE = /\b(AI|AGI|LLMs?|GPT-\d(?:\.\d)?|CNNs?|RNNs?|LSTMs?|GRUs?|MLPs?|APIs?|GPUs?|TPUs?|CPUs?|RAM|VRAM|NLP|BPE|RLHF|RL|DQN|PPO|MCTS|SOTA|RAG|LoRA|VAEs?|GANs?|ReLU|SGD|JSON|HTML|CSS|SQL|HTTPS?|URLs?|URIs?|PDFs?|CSV|TSV|TOC|FAQ|CLI|GUI)\b/g;
+	const ACRO_SKIP = '.caps, code, pre, kbd, samp, script, style, textarea, option, math, .no-caps';
+	function markAcronyms(root) {
+		const scope = root.nodeType === 9 ? (root.getElementById('contents') || root.body || root) : root;
+		const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+			acceptNode: function (n) {
+				if (!n.nodeValue || !/[A-Za-z]{2}/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+				if (!/\b[A-Z][A-Z]/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+				const p = n.parentElement;
+				if (p && p.closest(ACRO_SKIP)) return NodeFilter.FILTER_REJECT;
+				return NodeFilter.FILTER_ACCEPT;
+			}
+		});
+		const nodes = [];
+		while (walker.nextNode()) nodes.push(walker.currentNode);
+		for (const node of nodes) {
+			const s = node.nodeValue;
+			let out = '', last = 0, hit = false, m;
+			ACRO_RE.lastIndex = 0;
+			while ((m = ACRO_RE.exec(s))) {
+				hit = true;
+				out += s.slice(last, m.index);
+				out += '<span class="caps">' + m[0] + '</span>';
+				last = m.index + m[0].length;
+			}
+			if (!hit) continue;
+			out += s.slice(last);
+			node.parentNode.replaceChild(
+				document.createRange().createContextualFragment(out), node);
+		}
+	}
+
 	/* ── First-touch helpers (silent, once) ── */
 	function run(root) {
 		try {
@@ -852,6 +944,9 @@
 			installCopyButtons(root);
 			installFootnotePreview(root);
 			installCitationPreview(root);
+			tagAutoNumberedCaptions(root);
+			numberEquations(root);
+			markAcronyms(root);
 		} catch (e) { /* silent */ }
 	}
 
