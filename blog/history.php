@@ -637,9 +637,25 @@ include **Christopher Strachey's** \citetitle{strachey1952} (\citeyear{strachey1
 Manchester Mark I computer and used templates to produce randomized romantic letters,
 arguably the earliest known computer-generated literary text.
 
-Lutz's \citetitle{lutz1959} (1959) used a Zuse Z22 computer to recombine
+The earliest of these examples is **Theo Lutz** (1932–2010), a German computer
+scientist, student of the philosopher-cyberneticist **Max Bense**, and one of the
+pioneers of what is now called *digital poetry* \cite{lutzobituary}. His \citetitle{lutz1959}
+(\citeyear{lutz1959}) ran on a Zuse Z22 at the TH Stuttgart computer center and recombined
 words from Kafka's *The Castle* according to probabilistic rules, producing what he
-explicitly called "stochastic texts". These experiments predate
+explicitly called "stochastic texts":
+
+<div class="smart-quote" data-cite="lutz1959">
+<div class="full-quote">Nicht jeder Blick ist nah. Kein Dorf ist spät.<br>
+Ein Schloss ist frei und jeder Bauer ist fern.</div>
+<div class="short-quote">Not every look is near. No village is late.<br>
+A castle is free and every farmer is far.</div>
+</div>
+
+Remarkably, Lutz even sketched how such a program could learn: by raising the transition
+probabilities between subject and predicate whenever a generated sentence was judged
+"meaningful", \cite["the machine has 'learned' in a certain way"]{lutz1959} — preferring
+certain word combinations over time, essentially a trainable n-gram-style language model
+proposed in 1959. These experiments predate
 Racter by decades and sit at the intersection of combinatorics and language that traces
 back through \cite[Shannon's]{shannon1948communication} information-theoretic treatment
 of English as a stochastic process.

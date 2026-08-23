@@ -738,6 +738,12 @@ window.bibData = {
 		year: 1959,
 		url: "http://www.stuttgarter-schule.de/lutz_schule_en.htm"
 	},
+	"lutzobituary": {
+		title: "Als die Welt das Lutzen lernte: Zum Tod von Theo Lutz",
+		author: "Detlef Borchers",
+		year: 2010,
+		url: "https://www.heise.de/newsticker/meldung/Als-die-Welt-das-Lutzen-lernte-Zum-Tod-von-Theo-Lutz-923875.html"
+	},
 
 	"masuoka1987": {
 		title: "New Ultra High Density EPROM and Flash EEPROM with NAND Structure",
