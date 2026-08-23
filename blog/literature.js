@@ -3164,6 +3164,13 @@ window.bibData = {
 		title: "A Synopsis of Linguistic Theory, 1930-1955",
 		url: "https://cs.brown.edu/courses/csci2952d/readings/lecture1-firth.pdf",
 	},
+	"salton1975vectorspace": {
+		author: "Gerard Salton, Anita Wong, Chung-Shu Yang",
+		year: "1975",
+		title: "A Vector Space Model for Automatic Indexing",
+		url: "https://doi.org/10.1145/361219.361220",
+		alternativetitle: "Vector Space Model (Salton et al.)"
+	},
 	"legendre1786": {
 		author: "Adrien-Marie Legendre",
 		year: "1786",
