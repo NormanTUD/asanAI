@@ -785,15 +785,24 @@
 			p.classList.remove('cl-dropcap');
 			p.style.removeProperty('--cl-dc-size');
 		});
-		const firstMd = document.querySelector('#contents > .md')
-			|| document.querySelector('.md');
-		if (!firstMd) return;
-		for (const p of firstMd.querySelectorAll(':scope > p')) {
-			// skip layout-only paragraphs (lone anchors, spacing)
-			if ((p.textContent || '').trim()) {
-				p.classList.add('cl-dropcap');
-				sizeDropcap(p);
-				break;
+		// Walk every .md block in document order — the page may OPEN with
+		// a figure row, heading or anchor wrapper that holds no <p> at all
+		// (e.g. intro.php's image strip), so the real opening paragraph
+		// can live in a later .md block.
+		const scopes = [];
+		const contents = document.getElementById('contents');
+		if (contents) scopes.push(contents);
+		scopes.push(document);
+		for (const scope of scopes) {
+			for (const md of scope.querySelectorAll('.md')) {
+				for (const p of md.querySelectorAll(':scope > p')) {
+					// skip layout-only paragraphs (lone anchors, spacing)
+					if ((p.textContent || '').trim()) {
+						p.classList.add('cl-dropcap');
+						sizeDropcap(p);
+						return;
+					}
+				}
 			}
 		}
 	}
