@@ -6,7 +6,7 @@
  * Runs inside page.evaluate so it has access to the live DOM.
  */
 
-const { makeSelector, isSkippableTag } = require('./selectors');
+const { makeSelector } = require('./selectors');
 
 /**
  * Capture visible elements in the current viewport.
@@ -24,6 +24,13 @@ const { makeSelector, isSkippableTag } = require('./selectors');
 async function snapshotVisibleElements(page, opts = {}) {
     const maxElements = opts.maxElements || 800;
     return await page.evaluate((limit) => {
+        // SKIP_TAGS inlined here — page.evaluate runs in the browser
+        // context, so the Node.js isSkippableTag helper is not visible.
+        const SKIP_TAGS = new Set([
+            'svg','g','path','rect','circle','tspan','defs',
+            'canvas','foreignobject','br','meta','link','script','style'
+        ]);
+        const SKIP_RE = /MathJax|mjx-|katex|plotly|echarts|js-plotly/i;
         const out = [];
         const all = document.body.querySelectorAll('*');
         const vpH = window.innerHeight, vpW = window.innerWidth;
@@ -40,7 +47,9 @@ async function snapshotVisibleElements(page, opts = {}) {
                 (el.className && typeof el.className === 'string'
                     ? '.' + el.className.trim().split(/\s+/).filter(x => x).slice(0, 3).join('.')
                     : '');
-            if (isSkippableTag(sel)) continue;
+            const tag = el.tagName.toLowerCase();
+            if (SKIP_TAGS.has(tag)) continue;
+            if (SKIP_RE.test(sel)) continue;
             const hasBackdrop = cs.backdropFilter && cs.backdropFilter !== 'none';
             let ancSel = '';
             let p = el.parentElement;
