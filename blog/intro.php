@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: From Stone Age Tools to ChatGPT: Beyond the Black Box
+title: From Big Bang to ChatGPT: Beyond the Black Box
 description: The big picture: what this course is about and how it connects human history to modern AI.
 icon: &#127758;
 part: 0
