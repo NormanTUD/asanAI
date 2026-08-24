@@ -115,9 +115,10 @@ function findDarkMarker(content) {
 
 /** Strip any previously-inserted AUTO-GENERATED block(s) so we don't stack. */
 function stripExistingAutoBlocks(content) {
-    // Match each AUTO-GENERATED block including trailing blank lines.
+    // Match each AUTO-GENERATED block (either kind: FONT or STUCK-WHITE)
+    // including trailing blank lines.
     return content.replace(
-        /\n*\/\*[\s\S]*?AUTO-GENERATED DARK-MODE FONT READABILITY FIXES[\s\S]*?\*\/\n*/g,
+        /\n*\/\*[\s\S]*?AUTO-GENERATED (?:DARK-MODE FONT READABILITY|STUCK-WHITE DARK-MODE) FIXES[\s\S]*?\*\/\n*/g,
         '\n'
     );
 }
