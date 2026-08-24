@@ -53,6 +53,7 @@ class ScrollCapture {
         this.browser = await puppeteer.launch({
             executablePath: this.executablePath,
             headless: this.headless ? 'new' : false,
+            protocolTimeout: 300000, // 5 min — some lab pages are heavy
             args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
         });
     }
