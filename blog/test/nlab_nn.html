@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Neural Networks — Aha-Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#131829; --fg:#e8ecf5; --dim:#8a94b0;
+  --accent:#7c5cff; --accent2:#22d3ee; --accent3:#f472b6; --accent4:#fbbf24;
+  --card:rgba(255,255,255,0.04); --border:rgba(255,255,255,0.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,#1a1f3a 0%,#0a0e1a 60%);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;line-height:1.5;min-height:100vh}
+header{padding:60px 40px 40px;text-align:center;background:linear-gradient(180deg,rgba(124,92,255,0.12),transparent)}
+h1{font-size:clamp(2rem,5vw,3.5rem);margin:0;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-0.02em}
+.sub{color:var(--dim);margin-top:12px;font-size:1.1rem}
+nav.tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:20px;position:sticky;top:0;background:rgba(10,14,26,0.85);backdrop-filter:blur(12px);z-index:100;border-bottom:1px solid var(--border)}
+nav.tabs button{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:10px 18px;border-radius:20px;cursor:pointer;font-size:0.9rem;transition:all 0.2s;font-weight:500}
+nav.tabs button:hover{background:rgba(124,92,255,0.15);border-color:var(--accent)}
+nav.tabs button.active{background:linear-gradient(90deg,var(--accent),var(--accent2));border-color:transparent;color:white}
+main{max-width:1300px;margin:0 auto;padding:30px 20px 100px}
+section{display:none;animation:fadeIn 0.4s ease}
+section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+h2{font-size:1.8rem;margin-top:0;color:var(--accent2);font-weight:700}
+h3{color:var(--accent3);margin-top:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin:20px 0}
+.aha{background:linear-gradient(135deg,rgba(124,92,255,0.15),rgba(34,211,238,0.08));border-left:4px solid var(--accent);padding:16px 20px;border-radius:8px;margin:16px 0}
+.aha::before{content:"💡 ";font-size:1.2em}
+.grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+canvas,svg{display:block;max-width:100%;border-radius:12px;background:var(--bg2)}
+label{display:block;margin:8px 0 4px;color:var(--dim);font-size:0.9rem}
+input[type="range"]{width:100%;accent-color:var(--accent)}
+input[type="number"],select{background:var(--bg2);color:var(--fg);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-family:inherit}
+button.btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;margin:4px}
+button.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(124,92,255,0.4)}
+.val{color:var(--accent2);font-family:'JetBrains Mono',monospace;font-weight:600}
+.chip{display:inline-block;padding:2px 10px;background:rgba(34,211,238,0.15);border-radius:12px;font-size:0.8rem;color:var(--accent2);margin:2px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.footer{text-align:center;padding:40px;color:var(--dim);font-size:0.85rem}
+code{background:var(--bg2);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',Menlo,monospace;color:var(--accent4)}
+.hero-canvas{width:100%;height:400px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Neurale Netze verstehen</h1>
+  <p class="sub">Ein interaktiver Deep-Dive durch die zentralen Ideen — vom Neuron bis zu Kategorien und Renormierung</p>
+</header>
+
+<nav class="tabs">
+  <button class="active" data-tab="intuition">1. Intuition</button>
+  <button data-tab="neuron">2. Ein Neuron</button>
+  <button data-tab="network">3. Netzwerk & Universal Approx</button>
+  <button data-tab="training">4. Training & Loss</button>
+  <button data-tab="backprop">5. Backprop & Gradienten</button>
+  <button data-tab="autodiff">6. Automatic Differentiation</button>
+  <button data-tab="stringdiag">7. String Diagrams</button>
+  <button data-tab="tensor">8. Tensor Networks</button>
+  <button data-tab="infowidth">9. Grosse Netze = Felder</button>
+  <button data-tab="rg">10. Renormierung & RG-Flow</button>
+  <button data-tab="topology">11. Topologische Sicht</button>
+</nav>
+
+<main>
+
+<!-- ============ 1. INTUITION ============ -->
+<section id="intuition" class="active">
+  <h2>Aha #1 — Ein neuronales Netz ist einfach eine Verkettung affiner Abbildungen mit nichtlinearer Aktivierung</h2>
+  <div class="aha">Ein Netz ist NICHT magisch. Es ist: <code>f(x) = Tₗ ∘ g ∘ Tₗ₋₁ ∘ g ∘ … ∘ T₁(x)</code>, wo jedes <code>Tᵢ(x) = Wᵢx + bᵢ</code> eine affine Karte und <code>g</code> eine punktweise Nichtlinearität ist.</div>
+
+  <div class="card">
+    <svg id="heroDiag" viewBox="0 0 900 400" class="hero-canvas"></svg>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Was passiert wirklich?</h3>
+      <p>Jede Schicht <span class="chip">verzerrt den Raum</span>. Die Nichtlinearität <span class="chip">faltet</span> ihn. Nach vielen Schichten kann jede stetige Funktion approximiert werden.</p>
+    </div>
+    <div class="card">
+      <h3>Warum überhaupt Nichtlinearität?</h3>
+      <p>Ohne <code>g</code> ist eine Verkettung von affinen Karten wieder affin — ein einziges großes <code>Wx+b</code>. Erst die Nichtlinearität schafft Ausdruckskraft. Probier's:</p>
+      <button class="btn" onclick="toggleNonlin()">Nichtlinearität an/aus</button>
+      <div id="nonlinStatus">Status: <span class="val">Nichtlinear (ReLU)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. NEURON ============ -->
+<section id="neuron">
+  <h2>Aha #2 — Ein einzelnes Neuron ist ein linearer Klassifizierer + Squasher</h2>
+  <div class="aha">Ein Neuron rechnet: <code>y = g(w·x + b)</code>. Die Hyperebene <code>w·x + b = 0</code> teilt den Raum. <code>g</code> quetscht das Ergebnis in ein Ausgabeintervall.</div>
+
+  <div class="two-col">
+    <div class="card">
+      <label>Gewicht w₁: <span class="val" id="w1val">1.0</span></label>
+      <input type="range" id="w1" min="-3" max="3" step="0.1" value="1">
+      <label>Gewicht w₂: <span class="val" id="w2val">1.0</span></label>
+      <input type="range" id="w2" min="-3" max="3" step="0.1" value="1">
+      <label>Bias b: <span class="val" id="bval">0.0</span></label>
+      <input type="range" id="b" min="-3" max="3" step="0.1" value="0">
+      <label>Aktivierung:</label>
+      <select id="actFn">
+        <option value="relu">ReLU</option>
+        <option value="sigmoid" selected>Sigmoid</option>
+        <option value="tanh">tanh</option>
+        <option value="linear">Linear (kein g)</option>
+      </select>
+    </div>
+    <div class="card">
+      <div id="neuronPlot" style="height:400px"></div>
+    </div>
+  </div>
+  <p style="color:var(--dim)">Beobachte: Nur die <b>Richtung</b> von w bestimmt die Trennlinie, die <b>Länge</b> von w bestimmt die Schärfe des Übergangs, <b>b</b> verschiebt.</p>
+</section>
+
+<!-- ============ 3. NETWORK ============ -->
+<section id="network">
+  <h2>Aha #3 — Ein Netz mit einer versteckten Schicht approximiert JEDE stetige Funktion</h2>
+  <div class="aha"><b>Universal Approximation Theorem</b>: Mit genügend Neuronen in einer versteckten Schicht kannst du jede stetige Funktion beliebig genau approximieren. Live-Demo:</div>
+
+  <div class="card">
+    <label>Anzahl versteckter Neuronen: <span class="val" id="nNeuronsVal">5</span></label>
+    <input type="range" id="nNeurons" min="1" max="30" step="1" value="5">
+    <label>Zielfunktion:</label>
+    <select id="targetFn">
+      <option value="sin">sin(2πx)</option>
+      <option value="step">Stufe</option>
+      <option value="abs">|x|</option>
+      <option value="bump">Gaussian Bump</option>
+      <option value="wiggle">Wackelfunktion</option>
+    </select>
+    <button class="btn" onclick="trainUAT()">🎯 Trainieren (Least Squares Fit)</button>
+    <div id="uatPlot" style="height:400px;margin-top:10px"></div>
+  </div>
+</section>
+
+<!-- ============ 4. TRAINING ============ -->
+<section id="training">
+  <h2>Aha #4 — Training = Wandern auf einer Loss-Landschaft</h2>
+  <div class="aha">Wir suchen Parameter θ, die den Fehler <code>L(θ)</code> minimieren. Gradient Descent: <code>θ ← θ − η ∇L(θ)</code>. Schau zu:</div>
+
+  <div class="two-col">
+    <div class="card">
+      <label>Lernrate η: <span class="val" id="lrVal">0.1</span></label>
+      <input type="range" id="lr" min="0.001" max="0.5" step="0.001" value="0.1">
+      <label>Startpunkt:</label>
+      <button class="btn" onclick="resetLoss()">🎲 Zufälliger Start</button>
+      <button class="btn" onclick="stepGD()">Ein Schritt</button>
+      <button class="btn" onclick="runGD()">▶ Laufen</button>
+      <button class="btn" onclick="stopGD()">⏸ Stop</button>
+      <p style="color:var(--dim);font-size:0.9rem">Landschaft: <code>L(θ₁,θ₂) = ...</code> mit lokalen Minima. Beobachte, wie die Lernrate das Verhalten ändert!</p>
+    </div>
+    <div class="card">
+      <div id="lossPlot" style="height:450px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. BACKPROP ============ -->
+<section id="backprop">
+  <h2>Aha #5 — Backpropagation ist einfach die Kettenregel, mechanisch angewendet</h2>
+  <div class="aha">Für <code>y = f(g(h(x)))</code> ist <code>dy/dx = f'(g(h(x))) · g'(h(x)) · h'(x)</code>. Backprop propagiert diese Produkte <b>rückwärts</b> durchs Netz.</div>
+
+  <div class="card">
+    <svg id="backpropDiag" viewBox="0 0 900 380" style="width:100%;height:380px"></svg>
+    <button class="btn" onclick="animateBackprop()">▶ Forward + Backward animieren</button>
+  </div>
+
+  <div class="card">
+    <h3>Warum "rückwärts"?</h3>
+    <p>Vorwärts: berechne Aktivierungen. Rückwärts: multipliziere lokale Ableitungen <b>ansammelnd</b>. Das nennt man <b>Reverse-Mode Automatic Differentiation</b> — effizient wenn wenige Ausgaben (typisch: skalarer Loss) und viele Parameter existieren.</p>
+    <p><b>Kosten:</b> Backprop kostet nur ~2-3× so viel wie Forward — unabhängig von der Anzahl der Parameter! Das ist der Grund, warum Deep Learning skaliert.</p>
+  </div>
+</section>
+
+<!-- ============ 6. AUTODIFF ============ -->
+<section id="autodiff">
+  <h2>Aha #6 — Automatic Differentiation: Kategorientheoretisch = Funktor!</h2>
+  <div class="aha">AD ist der <b>eindeutige struktur-erhaltende Funktor</b> von der Syntax-Kategorie (Programme) in die Kategorie der Programme mit Ableitungen (CHAD-Perspektive).</div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Forward-Mode</h3>
+      <p>Berechnet Tangenten <b>vorwärts</b>. Effizient für <code>ℝ → ℝⁿ</code> (wenige Inputs).</p>
+      <p>Implementiert den <b>Tangentialbündel-Funktor</b> <code>T</code>.</p>
+    </div>
+    <div class="card">
+      <h3>Reverse-Mode (Backprop)</h3>
+      <p>Berechnet Kotangenten <b>rückwärts</b>. Effizient für <code>ℝⁿ → ℝ</code> (viele Inputs, ein Loss).</p>
+      <p>Implementiert den <b>Kotangentialbündel-Funktor</b> <code>T*</code>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Live: Kettenregel visualisiert</h3>
+    <label>x = <span class="val" id="xADval">1.0</span></label>
+    <input type="range" id="xAD" min="-2" max="2" step="0.05" value="1">
+    <div id="adPlot" style="height:350px"></div>
+    <p>Wir berechnen <code>f(x) = sin(x²)</code> und dessen Ableitung <code>f'(x) = 2x·cos(x²)</code> per AD. Rot: Funktion. Grün: Tangente an aktuellem x (durch AD berechnet).</p>
+  </div>
+</section>
+
+<!-- ============ 7. STRING DIAGRAMS ============ -->
+<section id="stringdiag">
+  <h2>Aha #7 — Neurale Netze SIND String Diagrams in monoidalen Kategorien</h2>
+  <div class="aha">Statt Symbolen: <b>Drähte</b> = Vektorräume (Aktivierungen), <b>Knoten</b> = lineare/nichtlineare Karten. Verkettung = vertikale Komposition. Parallelität = Tensorprodukt (⊗).</div>
+
+  <div class="card">
+    <svg id="stringDiag" viewBox="0 0 700 500" style="width:100%;height:500px"></svg>
+    <p>Das obige Diagramm zeigt ein 2-Layer-Netz als String-Diagramm. Jeder <b>Draht</b> ist ein Vektorraum (mit Dimension gelabelt). Jede <b>Box</b> ist eine Karte. Die Semantik erhält Poincaré-Dualität zu üblichen Netzdiagrammen.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Warum ist das mächtig?</h3>
+      <ul>
+        <li><b>Kompositionalität</b> ist visuell klar</li>
+        <li><b>Backprop</b> = "Diagramm umdrehen" (Dualität!)</li>
+        <li>Verbindungen zu <b>Quantenmechanik</b>, <b>Linguistik</b> (DisCoCat), <b>Tensor Networks</b></li>
+        <li>Framework: <b>CHAD</b> (Combinatory Homomorphic AD)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Poincaré-Duale</h3>
+      <p>Kommutative Diagramme haben <b>Punkte</b> als Objekte, <b>Pfeile</b> als Morphismen. String-Diagramme drehen das um: <b>Regionen</b> = Objekte, <b>Drähte</b> = Morphismen, <b>Knoten</b> = 2-Morphismen. Dieselbe Info, andere Perspektive!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. TENSOR NETWORKS ============ -->
+<section id="tensor">
+  <h2>Aha #8 — Tensor Networks = String Diagrams "mit Haltung"</h2>
+  <div class="aha">Ein <b>Tensor Network</b> ist ein String-Diagramm, dessen äußere Drähte einen Zustand im Tensorprodukt kodieren. Verwendet in Quantenphysik, ML, und AdS/CFT.</div>
+
+  <div class="card">
+    <label>Netzwerk-Typ:</label>
+    <select id="tnType" onchange="drawTensorNet()">
+      <option value="mps">Matrix Product State (MPS) — 1D-Ketten</option>
+      <option value="tree">Tree Tensor Network — hierarchisch</option>
+      <option value="mera">MERA — Renormierung</option>
+      <option value="peps">PEPS — 2D</option>
+    </select>
+    <svg id="tnDiag" viewBox="0 0 800 400" style="width:100%;height:400px"></svg>
+    <p id="tnDescription" style="color:var(--dim)"></p>
+  </div>
+
+  <div class="card">
+    <h3>Verbindung zu Neuralen Netzen</h3>
+    <p>Viele NN-Architekturen (Transformers, CNNs) können als Tensor Networks ausgedrückt werden. Umgekehrt: TNs geben strukturierte, physikalisch motivierte Priors. <b>Aha:</b> Sowohl NNs als auch TNs sind "efficient parametric families of high-dimensional functions/tensors".</p>
+  </div>
+</section>
+
+<!-- ============ 9. INFINITE WIDTH ============ -->
+<section id="infowidth">
+  <h2>Aha #9 — Unendlich breite Netze SIND Gauss-Prozesse (= Quantenfelder!)</h2>
+  <div class="aha">Wenn du die Layer-Breite → ∞ schickst, wird das Netz (bei zufälliger Initialisierung) zu einem <b>Gauss-Prozess</b>. Und Gauss-Prozesse sind freie Quantenfelder!</div>
+
+  <div class="card">
+    <label>Anzahl gesampelter Netze: <span class="val" id="nSampVal">20</span></label>
+    <input type="range" id="nSamp" min="1" max="100" value="20">
+    <label>Layer-Breite: <span class="val" id="widthVal">10</span></label>
+    <input type="range" id="width" min="1" max="500" value="10">
+    <button class="btn" onclick="sampleNNGP()">🎲 Neu samplen</button>
+    <div id="nngpPlot" style="height:400px"></div>
+    <p>Jede Kurve ist ein zufällig initialisiertes Netz. Bei <b>kleiner Breite</b> sind die Kurven "eigenständig". Bei <b>großer Breite</b> ähneln sie einem <b>glatten stochastischen Prozess</b> (dem NNGP).</p>
+  </div>
+
+  <div class="card">
+    <h3>Warum ist das ein Aha?</h3>
+    <p>Die "Wahrscheinlichkeitsverteilung über Funktionen", die ein NN darstellt, hat eine <b>Wirkung</b> <code>S[f] = ∫ ρ_f</code>, ähnlich wie in der QFT. Nicht-Gaussianität ↔ Wechselwirkungen. Feynman-Diagramme können auf NNs angewendet werden!</p>
+    <p>Das nennt sich <b>Neural Network Field Theory</b>.</p>
+  </div>
+</section>
+
+<!-- ============ 10. RG FLOW ============ -->
+<section id="rg">
+  <h2>Aha #10 — Deep Learning ≈ Renormierungsgruppen-Fluss</h2>
+  <div class="aha">Frühere Schichten lernen Details (hohe Frequenzen), spätere lernen abstrakte Konzepte (niedrige Frequenzen). Genau wie RG-Flow in der Physik: <b>Coarse-Graining</b> Schicht für Schicht.</div>
+
+  <div class="card">
+    <canvas id="rgCanvas" width="800" height="300"></canvas>
+    <button class="btn" onclick="stepRG()">Ein Coarse-Graining Schritt</button>
+      <button class="btn" onclick="resetRG()">🔄 Reset</button>
+    </div>
+    <p style="color:var(--dim)">Ein Signal (oben) wird schrittweise vergröbert. Jeder RG-Schritt = eine tiefere NN-Schicht. Details verschwinden, aber die <b>Struktur</b> bleibt (bei richtiger Skalierung).</p>
+  </div>
+
+  <div class="card">
+    <h3>Warum ist das ein Aha?</h3>
+    <p>Mehta & Schwab (2014) haben gezeigt: eine <b>Restricted Boltzmann Machine</b> ist <span class="chip">mathematisch äquivalent</span> zu einem RG-Schritt in der Variational RG. Jede Schicht integriert höhere Frequenzen (kurze Skalen) aus und behält relevante niedrige Frequenzen (lange Skalen).</p>
+    <p>Das erklärt, warum Deep Learning bei natürlichen Daten (Bilder, Sprache, Physik) so gut funktioniert: <b>die Welt ist hierarchisch</b>, und NNs implementieren diese Hierarchie automatisch. [[25]]</p>
+  </div>
+</section>
+
+<!-- ============ 11. TOPOLOGY ============ -->
+<section id="topology">
+  <h2>Aha #11 — Die Form der Daten zählt: Topologische Sicht</h2>
+  <div class="aha"><b>Topological Data Analysis (TDA)</b>: Daten haben eine <b>Form</b> (Löcher, Zusammenhangskomponenten, Hohlräume). Diese ist robust gegen Rauschen und oft aussagekräftiger als lokale Metriken.</div>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Persistent Homology</h3>
+      <p>Für ein Datenset baut man eine <b>Filtration</b> von Simplizialkomplexen bei wachsendem Radius ε auf. Für jedes ε: welche <span class="chip">Löcher (H₁)</span>, welche <span class="chip">Komponenten (H₀)</span> existieren?</p>
+      <p>Persistente Features (die lange „leben") sind echte Struktur; kurzlebige sind Rauschen. [[15]]</p>
+      <button class="btn" onclick="animateFiltration()">▶ Filtration zeigen</button>
+    </div>
+    <div class="card">
+      <svg id="tdaViz" viewBox="0 0 400 400" style="width:100%;height:400px;background:var(--bg2);border-radius:12px"></svg>
+      <label>Radius ε: <span class="val" id="epsVal">0.15</span></label>
+      <input type="range" id="eps" min="0.02" max="0.5" step="0.005" value="0.15">
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Anwendung in Machine Learning</h3>
+    <p><b>Topological Machine Learning</b>: Persistenz-Diagramme als Feature-Kernels für klassische ML-Modelle. Verbindet Topologie mit Deep Learning. Beispiel: Ein NN kann lernen, mit persistenten Features als Input zu arbeiten, was Robustheit gegen Deformation bringt. [[27]]</p>
+  </div>
+
+  <div class="aha">🎉 <b>Du hast es geschafft!</b> Du hast jetzt einen mentalen Rahmen für: Was NNs sind, wie sie trainiert werden, warum sie funktionieren, wie sie mit Kategorien, Physik, Topologie und Sprachtheorie verbunden sind. Weiter erforschen: die nLab-Seiten und die referenzierten Papers.</p>
+</section>
+
+</main>
+
+<div class="footer">
+  Interaktiver Explorer basierend auf nLab-Inhalten zu <code>neural network</code>, <code>tensor network</code>, <code>automatic differentiation</code>, <code>kernel method</code>, <code>topological data analysis</code>, <code>topological machine learning</code>, <code>linguistics</code>, <code>algebraic topology</code>, <code>Banach space</code>, <code>function machine</code>, <code>singular learning theory</code>, <code>string diagram</code>, <code>information geometry</code>, <code>equilibrium propagation</code>, <code>machine learning</code>, <code>statistical learning theory</code>, <code>topological signal processing</code>. [[25]] [[18]] [[16]] [[14]] [[15]] [[27]]
+</div>
+
+<script>
+/* =========== TAB NAVIGATION =========== */
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    const target = document.getElementById(btn.dataset.tab);
+    target.classList.add('active');
+    // Re-render diagrams for the active tab
+    setTimeout(() => onTabActivate(btn.dataset.tab), 50);
+    window.scrollTo({top: 0, behavior:'smooth'});
+  });
+});
+
+function onTabActivate(tab){
+  if(tab==='intuition') drawHero();
+  if(tab==='neuron') updateNeuron();
+  if(tab==='network') drawUAT();
+  if(tab==='training') drawLoss();
+  if(tab==='backprop') drawBackpropDiag();
+  if(tab==='autodiff') drawAD();
+  if(tab==='stringdiag') drawStringDiag();
+  if(tab==='tensor') drawTensorNet();
+  if(tab==='infowidth') sampleNNGP();
+  if(tab==='rg') drawRG();
+  if(tab==='topology') drawTDA();
+}
+
+/* =========== 1. HERO DIAGRAM =========== */
+let nonlinOn = true;
+function toggleNonlin(){
+  nonlinOn = !nonlinOn;
+  document.getElementById('nonlinStatus').innerHTML = 'Status: <span class="val">'+(nonlinOn?'Nichtlinear (ReLU)':'Linear (kollabiert!)')+'</span>';
+  drawHero();
+}
+function drawHero(){
+  const svg = d3.select('#heroDiag');
+  svg.selectAll('*').remove();
+  const layers = [3, 5, 5, 2];
+  const W = 900, H = 400;
+  const colX = layers.map((_,i) => 100 + i*(W-200)/(layers.length-1));
+  const positions = layers.map((n,i) => d3.range(n).map(j => ({x:colX[i], y: H/2 + (j-(n-1)/2)*60, layer:i, idx:j})));
+  // edges
+  const edges = svg.append('g');
+  for(let i=0;i<layers.length-1;i++){
+    positions[i].forEach(a => positions[i+1].forEach(b => {
+      edges.append('line').attr('x1',a.x).attr('y1',a.y).attr('x2',b.x).attr('y2',b.y)
+        .attr('stroke', nonlinOn ? 'rgba(124,92,255,0.35)' : 'rgba(255,100,100,0.35)')
+        .attr('stroke-width', 1.5);
+    }));
+  }
+  // nodes
+  positions.flat().forEach((p,i) => {
+    svg.append('circle').attr('cx',p.x).attr('cy',p.y).attr('r',16)
+      .attr('fill', p.layer===0?'#22d3ee':p.layer===layers.length-1?'#f472b6':'#7c5cff')
+      .attr('stroke','white').attr('stroke-width',2)
+      .style('filter','drop-shadow(0 0 8px currentColor)');
+  });
+  // labels
+  ['Input x','Hidden','Hidden','Output y'].forEach((t,i)=>{
+    svg.append('text').attr('x',colX[i]).attr('y',30).attr('text-anchor','middle')
+      .attr('fill','#e8ecf5').attr('font-size',14).attr('font-weight','600').text(t);
+    if(i<layers.length-1){
+      svg.append('text').attr('x',(colX[i]+colX[i+1])/2).attr('y',H-20).attr('text-anchor','middle')
+        .attr('fill','#8a94b0').attr('font-size',12).text('W'+(i+1)+', b'+(i+1)+(nonlinOn?', g':''));
+    }
+  });
+}
+
+/* =========== 2. NEURON =========== */
+function actFn(z, name){
+  if(name==='relu') return Math.max(0,z);
+  if(name==='sigmoid') return 1/(1+Math.exp(-z));
+  if(name==='tanh') return Math.tanh(z);
+  return z;
+}
+function updateNeuron(){
+  const w1 = parseFloat(document.getElementById('w1').value);
+  const w2 = parseFloat(document.getElementById('w2').value);
+  const b = parseFloat(document.getElementById('b').value);
+  const fn = document.getElementById('actFn').value;
+  document.getElementById('w1val').textContent = w1.toFixed(2);
+  document.getElementById('w2val').textContent = w2.toFixed(2);
+  document.getElementById('bval').textContent = b.toFixed(2);
+  const N=40, xs=[], ys=[], zs=[];
+  for(let i=0;i<N;i++){
+    const row=[];
+    for(let j=0;j<N;j++){
+      const x=-3+6*i/(N-1), y=-3+6*j/(N-1);
+      row.push(actFn(w1*x + w2*y + b, fn));
+      if(i===0) ys.push(y);
+    }
+    xs.push(-3+6*i/(N-1));
+    zs.push(row);
+  }
+  Plotly.newPlot('neuronPlot',[{
+    z: zs, x: xs, y: ys, type:'surface',
+    colorscale:[[0,'#0a0e1a'],[0.5,'#7c5cff'],[1,'#22d3ee']],
+    showscale:false
+  }],{
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+    scene:{xaxis:{title:'x₁',color:'#e8ecf5'},yaxis:{title:'x₂',color:'#e8ecf5'},zaxis:{title:'g(w·x+b)',color:'#e8ecf5'},bgcolor:'rgba(0,0,0,0)'},
+    margin:{l:0,r:0,t:0,b:0}, font:{color:'#e8ecf5'}
+  },{displayModeBar:false});
+}
+['w1','w2','b','actFn'].forEach(id=>document.getElementById(id).addEventListener('input',updateNeuron));
+
+/* =========== 3. UNIVERSAL APPROX =========== */
+function target(x, kind){
+  if(kind==='sin') return Math.sin(2*Math.PI*x);
+  if(kind==='step') return x<0.5?-1:1;
+  if(kind==='abs') return Math.abs(x-0.5)*2-0.5;
+  if(kind==='bump') return Math.exp(-30*(x-0.5)**2)*2-1;
+  return Math.sin(6*x)+0.5*Math.sin(15*x);
+}
+let uatParams = null;
+function trainUAT(){
+  const n = parseInt(document.getElementById('nNeurons').value);
+  const kind = document.getElementById('targetFn').value;
+  // Random hidden layer
+  const w = [], b = [];
+  for(let i=0;i<n;i++){ w.push((Math.random()-0.5)*20); b.push((Math.random()-0.5)*10); }
+  // Least squares on output weights
+  const N=100, X=[], Y=[];
+  for(let i=0;i<N;i++){ const x=i/(N-1); X.push(x); Y.push(target(x,kind)); }
+  // Design matrix Phi (N x n+1)
+  const Phi = X.map(x => { const row = w.map((wi,i)=> Math.max(0, wi*x + b[i])); row.push(1); return row; });
+  // Solve (Phi^T Phi) a = Phi^T Y   (small n, do naively)
+  const nCols = n+1;
+  const A = Array.from({length:nCols},()=>Array(nCols).fill(0));
+  const bb = Array(nCols).fill(0);
+  for(let k=0;k<N;k++) for(let i=0;i<nCols;i++){ for(let j=0;j<nCols;j++) A[i][j]+=Phi[k][i]*Phi[k][j]; bb[i]+=Phi[k][i]*Y[k]; }
+  // Gauss elim
+  for(let i=0;i<nCols;i++){
+    let mx=i; for(let k=i+1;k<nCols;k++) if(Math.abs(A[k][i])>Math.abs(A[mx][i])) mx=k;
+    [A[i],A[mx]]=[A[mx],A[i]]; [bb[i],bb[mx]]=[bb[mx],bb[i]];
+    if(Math.abs(A[i][i])<1e-10) A[i][i]=1e-10;
+    for(let k=i+1;k<nCols;k++){ const f=A[k][i]/A[i][i]; for(let j=i;j<nCols;j++) A[k][j]-=f*A[i][j]; bb[k]-=f*bb[i]; }
+  }
+  const a = Array(nCols).fill(0);
+  for(let i=nCols-1;i>=0;i--){ let s=bb[i]; for(let j=i+1;j<nCols;j++) s-=A[i][j]*a[j]; a[i]=s/A[i][i]; }
+  uatParams = {w,b,a,kind};
+  drawUAT();
+}
+function drawUAT(){
+  const N=200, X=[], Yt=[], Yp=[];
+  const kind = uatParams ? uatParams.kind : document.getElementById('targetFn').value;
+  for(let i=0;i<N;i++){
+    const x=i/(N-1); X.push(x); Yt.push(target(x,kind));
+    if(uatParams){
+      let y=uatParams.a[uatParams.a.length-1];
+      for(let k=0;k<uatParams.w.length;k++) y += uatParams.a[k]*Math.max(0,uatParams.w[k]*x+uatParams.b[k]);
+      Yp.push(y);
+    }
+  }
+  const traces = [{x:X,y:Yt,mode:'lines',name:'Ziel',line:{color:'#22d3ee',width:3}}];
+  if(uatParams) traces.push({x:X,y:Yp,mode:'lines',name:'NN Approx.',line:{color:'#f472b6',width:2,dash:'dot'}});
+  Plotly.newPlot('uatPlot',traces,{
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(19,24,41,1)',
+    font:{color:'#e8ecf5'}, xaxis:{gridcolor:'#2a3050'}, yaxis:{gridcolor:'#2a3050'},
+    margin:{l:40,r:20,t:20,b:40}
+  },{displayModeBar:false});
+}
+document.getElementById('nNeurons').addEventListener('input',e=>{document.getElementById('nNeuronsVal').textContent=e.target.value;});
+document.getElementById('targetFn').addEventListener('change',()=>{uatParams=null;drawUAT();});
+
+/* =========== 4. LOSS LANDSCAPE =========== */
+function lossFn(x,y){
+  return 0.5*(x*x+y*y) - 1.2*Math.exp(-((x-1.5)**2+(y-0.5)**2)) - Math.exp(-((x+1)**2+(y+1.2)**2)) + 0.3*Math.sin(3*x)*Math.cos(3*y);
+}
+function gradLoss(x,y){
+  const h=0.001;
+  return [(lossFn(x+h,y)-lossFn(x-h,y))/(2*h),(lossFn(x,y+h)-lossFn(x,y-h))/(2*h)];
+}
+let gdState = {x:1.8,y:1.8, path:[[1.8,1.8]], running:null};
+function drawLoss(){
+  const N=40, xs=[], ys=[], zs=[];
+  for(let i=0;i<N;i++){ xs.push(-3+6*i/(N-1)); ys.push(-3+6*i/(N-1)); }
+  for(let j=0;j<N;j++){ const row=[]; for(let i=0;i<N;i++) row.push(lossFn(xs[i],ys[j])); zs.push(row); }
+  const traces=[{z:zs,x:xs,y:ys,type:'contour',colorscale:[[0,'#0a0e1a'],[0.5,'#7c5cff'],[1,'#f472b6']],showscale:false,contours:{showlines:false}}];
+  if(gdState.path.length){
+    traces.push({x:gdState.path.map(p=>p[0]),y:gdState.path.map(p=>p[1]),mode:'lines+markers',line:{color:'#22d3ee',width:2},marker:{color:'#fbbf24',size:6},name:'GD-Pfad'});
+  }
+  Plotly.newPlot('lossPlot',traces,{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(19,24,41,1)',font:{color:'#e8ecf5'},
+    xaxis:{title:'θ₁',gridcolor:'#2a3050'},yaxis:{title:'θ₂',gridcolor:'#2a3050'},
+    margin:{l:40,r:20,t:20,b:40}
+  },{displayModeBar:false});
+}
+function resetLoss(){
+  gdState.x = (Math.random()-0.5)*5; gdState.y=(Math.random()-0.5)*5;
+  gdState.path=[[gdState.x,gdState.y]]; drawLoss();
+}
+function stepGD(){
+  const lr = parseFloat(document.getElementById('lr').value);
+  const [gx,gy] = gradLoss(gdState.x, gdState.y);
+  gdState.x -= lr*gx; gdState.y -= lr*gy;
+  gdState.path.push([gdState.x,gdState.y]);
+  if(gdState.path.length>200) gdState.path.shift();
+  drawLoss();
+}
+function runGD(){ if(gdState.running) return; gdState.running=setInterval(stepGD,80); }
+function stopGD(){ if(gdState.running){ clearInterval(gdState.running); gdState.running=null; } }
+document.getElementById('lr').addEventListener('input',e=>{document.getElementById('lrVal').textContent=parseFloat(e.target.value).toFixed(3);});
+
+/* =========== 5. BACKPROP DIAG =========== */
+function drawBackpropDiag(){
+  const svg = d3.select('#backpropDiag');
+  svg.selectAll('*').remove();
+  const nodes = [
+    {id:'x',x:80,y:190,label:'x'},
+    {id:'h1',x:230,y:120,label:'h₁=σ(W₁x)'},
+    {id:'h2',x:230,y:260,label:'h₂=σ(W₂x)'},
+    {id:'y',x:450,y:190,label:'y=W₃·h'},
+    {id:'L',x:650,y:190,label:'L=½(y-t)²'},
+  ];
+  const edges=[['x','h1'],['x','h2'],['h1','y'],['h2','y'],['y','L']];
+  edges.forEach(([a,b],i)=>{
+    const na=nodes.find(n=>n.id===a), nb=nodes.find(n=>n.id===b);
+    svg.append('line').attr('x1',na.x).attr('y1',na.y).attr('x2',nb.x).attr('y2',nb.y)
+      .attr('stroke','#7c5cff').attr('stroke-width',2).attr('marker-end','url(#arrow)')
+      .attr('id','edge-'+i);
+  });
+  svg.append('defs').append('marker').attr('id','arrow').attr('viewBox','0 -5 10 10').attr('refX',20).attr('refY',0)
+    .attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto')
+    .append('path').attr('d','M0,-5L10,0L0,5').attr('fill','#7c5cff');
+  nodes.forEach(n=>{
+    svg.append('circle').attr('cx',n.x).attr('cy',n.y).attr('r',35).attr('fill','#131829').attr('stroke','#22d3ee').attr('stroke-width',2);
+    svg.append('text').attr('x',n.x).attr('y',n.y+5).attr('text-anchor','middle').attr('fill','#e8ecf5').attr('font-size',13).text(n.label);
+  });
+}
+function animateBackprop(){
+  drawBackpropDiag();
+  const svg = d3.select('#backpropDiag');
+  // forward
+  d3.range(5).forEach(i=>{
+    setTimeout(()=>{ svg.select('#edge-'+i).attr('stroke','#22d3ee').attr('stroke-width',5); },i*400);
+  });
+  // backward
+  setTimeout(()=>{
+    d3.range(5).reverse().forEach((i,k)=>{
+      setTimeout(()=>{ svg.select('#edge-'+i).attr('stroke','#f472b6').attr('stroke-width',5).attr('stroke-dasharray','8,4'); },k*400);
+    });
+  }, 2500);
+}
+
+/* =========== 6. AUTODIFF =========== */
+function drawAD(){
+  const x0 = parseFloat(document.getElementById('xAD').value);
+  document.getElementById('xADval').textContent = x0.toFixed(2);
+  const N=200, X=[], Y=[], T=[];
+  for(let i=0;i<N;i++){ const x=-2+4*i/(N-1); X.push(x); Y.push(Math.sin(x*x)); }
+  const y0 = Math.sin(x0*x0), dy0 = 2*x0*Math.cos(x0*x0);
+  for(let i=0;i<N;i++){ T.push(y0 + dy0*(X[i]-x0)); }
+  Plotly.newPlot('adPlot',[
+    {x:X,y:Y,mode:'lines',name:'f(x)=sin(x²)',line:{color:'#f472b6',width:3}},
+    {x:X,y:T,mode:'lines',name:'Tangente (via AD)',line:{color:'#22d3ee',width:2,dash:'dot'}},
+    {x:[x0],y:[y0],mode:'markers',name:'x',marker:{color:'#fbbf24',size:12}}
+  ],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(19,24,41,1)',font:{color:'#e8ecf5'},    xaxis:{gridcolor:'#2a3050'},yaxis:{gridcolor:'#2a3050',range:[-2,2]},
+    margin:{l:40,r:20,t:20,b:40}, showlegend:true
+  },{displayModeBar:false});
+}
+document.getElementById('xAD').addEventListener('input',drawAD);
+
+/* =========== 7. STRING DIAGRAM =========== */
+function drawStringDiag(){
+  const svg = d3.select('#stringDiag');
+  svg.selectAll('*').remove();
+  const W=700, H=500;
+  // Boxes (morphisms) with wires
+  const boxes = [
+    {x:150, y:120, w:120, h:50, label:'W₁ (5×3)', color:'#7c5cff'},
+    {x:400, y:120, w:120, h:50, label:'σ (ReLU)', color:'#f472b6'},
+    {x:275, y:280, w:120, h:50, label:'W₂ (2×5)', color:'#22d3ee'},
+    {x:275, y:400, w:120, h:50, label:'softmax', color:'#fbbf24'}
+  ];
+  // Wires (from top to bottom)
+  const wires = [
+    {x1:210,y1:40,x2:210,y2:120, label:'ℝ³'},
+    {x1:210,y1:170,x2:460,y2:120, label:'ℝ⁵'},
+    {x1:460,y1:170,x2:335,y2:280, label:'ℝ⁵'},
+    {x1:335,y1:330,x2:335,y2:400, label:'ℝ²'},
+    {x1:335,y1:450,x2:335,y2:490, label:'ℝ²'}
+  ];
+  wires.forEach(w=>{
+    svg.append('path')
+      .attr('d',`M ${w.x1} ${w.y1} C ${w.x1} ${(w.y1+w.y2)/2}, ${w.x2} ${(w.y1+w.y2)/2}, ${w.x2} ${w.y2}`)
+      .attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',3);
+    svg.append('text').attr('x',(w.x1+w.x2)/2+10).attr('y',(w.y1+w.y2)/2)
+      .attr('fill','#8a94b0').attr('font-size',12).text(w.label);
+  });
+  boxes.forEach(b=>{
+    svg.append('rect').attr('x',b.x).attr('y',b.y).attr('width',b.w).attr('height',b.h)
+      .attr('rx',10).attr('fill',b.color).attr('stroke','white').attr('stroke-width',2)
+      .style('filter','drop-shadow(0 0 8px '+b.color+')');
+    svg.append('text').attr('x',b.x+b.w/2).attr('y',b.y+b.h/2+5).attr('text-anchor','middle')
+      .attr('fill','white').attr('font-weight','700').attr('font-size',14).text(b.label);
+  });
+  // Labels
+  svg.append('text').attr('x',210).attr('y',30).attr('text-anchor','middle')
+    .attr('fill','#e8ecf5').attr('font-size',14).attr('font-weight','700').text('Input x');
+  svg.append('text').attr('x',335).attr('y',495).attr('text-anchor','middle')
+    .attr('fill','#e8ecf5').attr('font-size',14).attr('font-weight','700').text('Output p');
+}
+
+/* =========== 8. TENSOR NETWORKS =========== */
+function drawTensorNet(){
+  const type = document.getElementById('tnType').value;
+  const svg = d3.select('#tnDiag');
+  svg.selectAll('*').remove();
+  const W=800, H=400;
+  let desc = '';
+  if(type==='mps'){
+    desc = 'MPS: eine 1D-Kette von Tensoren, verbunden durch "virtuelle" (Bond-)Indizes. Ideal für 1D-Quantensysteme.';
+    const N=6, y=200;
+    for(let i=0;i<N;i++){
+      const x = 100+i*120;
+      svg.append('circle').attr('cx',x).attr('cy',y).attr('r',25).attr('fill','#7c5cff').attr('stroke','white').attr('stroke-width',2);
+      svg.append('text').attr('x',x).attr('y',y+5).attr('text-anchor','middle').attr('fill','white').attr('font-weight','700').text('T'+(i+1));
+      // Physical leg (down)
+      svg.append('line').attr('x1',x).attr('y1',y+25).attr('x2',x).attr('y2',y+80).attr('stroke','#22d3ee').attr('stroke-width',3);
+      svg.append('circle').attr('cx',x).attr('cy',y+80).attr('r',5).attr('fill','#22d3ee');
+      // Bond
+      if(i<N-1) svg.append('line').attr('x1',x+25).attr('y1',y).attr('x2',x+120-25).attr('y2',y).attr('stroke','#f472b6').attr('stroke-width',3);
+    }
+  }
+  else if(type==='tree'){
+    desc = 'Tree Tensor Network: hierarchische Struktur, natürlich für Systeme mit Skalen-Hierarchie.';
+    const positions = [
+      {x:400,y:80,l:'R'},
+      {x:250,y:180,l:'A'},{x:550,y:180,l:'B'},
+      {x:150,y:280,l:'a'},{x:350,y:280,l:'b'},{x:450,y:280,l:'c'},{x:650,y:280,l:'d'}
+    ];
+    const edges = [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]];
+    edges.forEach(([a,b])=>{
+      svg.append('line').attr('x1',positions[a].x).attr('y1',positions[a].y).attr('x2',positions[b].x).attr('y2',positions[b].y).attr('stroke','#f472b6').attr('stroke-width',3);
+    });
+    positions.forEach((p,i)=>{
+      svg.append('circle').attr('cx',p.x).attr('cy',p.y).attr('r',22).attr('fill', i<3?'#7c5cff':'#22d3ee').attr('stroke','white').attr('stroke-width',2);
+      svg.append('text').attr('x',p.x).attr('y',p.y+5).attr('text-anchor','middle').attr('fill','white').attr('font-weight','700').text(p.l);
+      if(i>=3){
+        svg.append('line').attr('x1',p.x).attr('y1',p.y+22).attr('x2',p.x).attr('y2',p.y+70).attr('stroke','#22d3ee').attr('stroke-width',3);
+        svg.append('circle').attr('cx',p.x).attr('cy',p.y+70).attr('r',5).attr('fill','#22d3ee');
+      }
+    });
+  }
+  else if(type==='mera'){
+    desc = 'MERA (Multi-scale Entanglement Renormalization Ansatz): kombiniert Isometrien und Disentangler auf mehreren Skalen — direkter Bezug zu Renormierung und AdS/CFT!';
+    // 3 layers
+    const layers = [
+      {y:80, n:2, color:'#7c5cff'},
+      {y:200, n:4, color:'#f472b6'},
+      {y:320, n:8, color:'#22d3ee'}
+    ];
+    layers.forEach((L,li)=>{
+      const spacing = W/(L.n+1);
+      for(let i=0;i<L.n;i++){
+        const x = spacing*(i+1);
+        svg.append('rect').attr('x',x-20).attr('y',L.y-15).attr('width',40).attr('height',30).attr('rx',5).attr('fill',L.color).attr('stroke','white').attr('stroke-width',1.5);
+        if(li<layers.length-1){
+          const nextL = layers[li+1];
+          const nextSpacing = W/(nextL.n+1);
+          const j1 = 2*i+1, j2 = 2*i+2;
+          if(j1<=nextL.n) svg.append('line').attr('x1',x).attr('y1',L.y+15).attr('x2',nextSpacing*j1).attr('y2',nextL.y-15).attr('stroke','#8a94b0').attr('stroke-width',1.5);
+          if(j2<=nextL.n) svg.append('line').attr('x1',x).attr('y1',L.y+15).attr('x2',nextSpacing*j2).attr('y2',nextL.y-15).attr('stroke','#8a94b0').attr('stroke-width',1.5);
+        }
+      }
+    });
+    // Physical legs bottom
+    const bottomSpacing = W/9;
+    for(let i=0;i<8;i++){
+      const x = bottomSpacing*(i+1);
+      svg.append('line').attr('x1',x).attr('y1',335).attr('x2',x).attr('y2',380).attr('stroke','#22d3ee').attr('stroke-width',2);
+      svg.append('circle').attr('cx',x).attr('cy',380).attr('r',4).attr('fill','#22d3ee');
+    }
+  }
+  else if(type==='peps'){
+    desc = 'PEPS (Projected Entangled Pair States): 2D-Gitter von Tensoren — für 2D-Quantensysteme wie Spin-Modelle.';
+    const N=4;
+    const dx = 130, dy=80, x0=150, y0=80;
+    for(let i=0;i<N;i++){
+      for(let j=0;j<N;j++){
+        const x=x0+j*dx, y=y0+i*dy;
+        svg.append('circle').attr('cx',x).attr('cy',y).attr('r',15).attr('fill','#7c5cff').attr('stroke','white').attr('stroke-width',1.5);
+        if(j<N-1) svg.append('line').attr('x1',x+15).attr('y1',y).attr('x2',x+dx-15).attr('y2',y).attr('stroke','#f472b6').attr('stroke-width',2);
+        if(i<N-1) svg.append('line').attr('x1',x).attr('y1',y+15).attr('x2',x).attr('y2',y+dy-15).attr('stroke','#f472b6').attr('stroke-width',2);
+      }
+    }
+  }
+  document.getElementById('tnDescription').textContent = desc;
+}
+document.getElementById('tnType').addEventListener('change',drawTensorNet);
+
+/* =========== 9. NNGP =========== */
+function sampleNNGP(){
+  const nSamp = parseInt(document.getElementById('nSamp').value);
+  const width = parseInt(document.getElementById('width').value);
+  document.getElementById('nSampVal').textContent = nSamp;
+  document.getElementById('widthVal').textContent = width;
+  const N=100, X=[];
+  for(let i=0;i<N;i++) X.push(-2+4*i/(N-1));
+  const traces = [];
+  for(let s=0;s<nSamp;s++){
+    // Random 1-hidden-layer NN with width neurons
+    const W1 = [], b1 = [], w2 = [];
+    for(let i=0;i<width;i++){
+      W1.push(gauss()*Math.sqrt(2));
+      b1.push(gauss()*0.5);
+      w2.push(gauss()/Math.sqrt(width));  // scaling for NTK/NNGP
+    }
+    const Y = X.map(x=>{
+      let y=0;
+      for(let i=0;i<width;i++) y += w2[i]*Math.tanh(W1[i]*x+b1[i]);
+      return y;
+    });
+    traces.push({x:X,y:Y,mode:'lines',line:{color:`hsla(${(s*360/nSamp)|0},70%,60%,0.5)`,width:1.5},showlegend:false});
+  }
+  Plotly.newPlot('nngpPlot',traces,{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(19,24,41,1)',font:{color:'#e8ecf5'},
+    xaxis:{gridcolor:'#2a3050',title:'x'},yaxis:{gridcolor:'#2a3050',title:'f(x)'},
+    margin:{l:40,r:20,t:20,b:40}
+  },{displayModeBar:false});
+}
+function gauss(){ // Box-Muller
+  let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+document.getElementById('nSamp').addEventListener('input',()=>document.getElementById('nSampVal').textContent=document.getElementById('nSamp').value);
+document.getElementById('width').addEventListener('input',()=>document.getElementById('widthVal').textContent=document.getElementById('width').value);
+
+/* =========== 10. RG FLOW =========== */
+let rgSignal = null;
+function initRGSignal(){
+  const N=800;
+  rgSignal = [];
+  for(let i=0;i<N;i++){
+    const x = i/N*4*Math.PI;
+    rgSignal.push(Math.sin(x) + 0.5*Math.sin(5*x) + 0.3*Math.sin(15*x) + 0.2*(Math.random()-0.5));
+  }
+  drawRG();
+}
+function drawRG(){
+  if(!rgSignal) initRGSignal();
+  const cv = document.getElementById('rgCanvas');
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle='#131829'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2; ctx.beginPath();
+  const N = rgSignal.length;
+  for(let i=0;i<N;i++){
+    const x = i/N*cv.width;
+    const y = cv.height/2 - rgSignal[i]*80;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.05)'; ctx.lineWidth=1;
+  for(let i=0;i<10;i++){ ctx.beginPath(); ctx.moveTo(i*cv.width/10,0); ctx.lineTo(i*cv.width/10,cv.height); ctx.stroke(); }
+  // Label
+  ctx.fillStyle='#8a94b0'; ctx.font='14px sans-serif';
+  ctx.fillText('Länge des Signals: '+N+' Samples', 10, 20);
+}
+function stepRG(){
+  if(!rgSignal) initRGSignal();
+  const N = rgSignal.length;
+  if(N<8){ alert('Signal zu kurz für weiteres Coarse-Graining!'); return; }
+  const newSig = [];
+  for(let i=0;i<N;i+=2) newSig.push((rgSignal[i]+rgSignal[i+1])/2);
+  rgSignal = newSig;
+  drawRG();
+}
+function resetRG(){ rgSignal=null; drawRG(); }
+
+/* =========== 11. TDA =========== */
+let tdaPoints = null;
+function genTDAPoints(){
+  tdaPoints = [];
+  // Two circles + noise
+  for(let i=0;i<40;i++){
+    const t = 2*Math.PI*i/40;
+    tdaPoints.push([0.35+0.25*Math.cos(t)+0.02*gauss(), 0.5+0.25*Math.sin(t)+0.02*gauss()]);
+  }
+  for(let i=0;i<30;i++){
+    const t = 2*Math.PI*i/30;
+    tdaPoints.push([0.75+0.15*Math.cos(t)+0.02*gauss(), 0.4+0.15*Math.sin(t)+0.02*gauss()]);
+  }
+  // Some noise
+  for(let i=0;i<15;i++) tdaPoints.push([Math.random(), Math.random()]);
+}
+function drawTDA(){
+  if(!tdaPoints) genTDAPoints();
+  const svg = d3.select('#tdaViz');
+  svg.selectAll('*').remove();
+  const eps = parseFloat(document.getElementById('eps').value);
+  document.getElementById('epsVal').textContent = eps.toFixed(3);
+  const S = 400;
+  // Draw balls
+  tdaPoints.forEach(p=>{
+    svg.append('circle').attr('cx',p[0]*S).attr('cy',p[1]*S).attr('r',eps*S)
+      .attr('fill','rgba(124,92,255,0.15)').attr('stroke','rgba(124,92,255,0.35)').attr('stroke-width',0.5);
+  });
+  // Draw edges (Vietoris-Rips)
+  for(let i=0;i<tdaPoints.length;i++){
+    for(let j=i+1;j<tdaPoints.length;j++){
+      const dx = tdaPoints[i][0]-tdaPoints[j][0];
+      const dy = tdaPoints[i][1]-tdaPoints[j][1];
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if(d < 2*eps){
+        svg.append('line').attr('x1',tdaPoints[i][0]*S).attr('y1',tdaPoints[i][1]*S)
+          .attr('x2',tdaPoints[j][0]*S).attr('y2',tdaPoints[j][1]*S)
+          .attr('stroke','rgba(34,211,238,0.4)').attr('stroke-width',0.8);
+      }
+    }
+  }
+  // Draw points
+  tdaPoints.forEach(p=>{
+    svg.append('circle').attr('cx',p[0]*S).attr('cy',p[1]*S).attr('r',3)
+      .attr('fill','#fbbf24');
+  });
+}
+document.getElementById('eps').addEventListener('input',drawTDA);
+function animateFiltration(){
+  const slider = document.getElementById('eps');
+  let e = 0.02;
+  const timer = setInterval(()=>{
+    slider.value = e;
+    drawTDA();
+    e += 0.008;
+    if(e > 0.35) clearInterval(timer);
+  }, 60);
+}
+
+/* =========== INITIAL RENDER =========== */
+drawHero();
+
+</script>
+</body>
+</html>
