@@ -5,6 +5,9 @@ html.dark div.course-hero { color: #e2e8f0 !important; }
 html.dark div.course-hero { color: #e2e8f0 !important; } 
 html.dark div.course-hero { color: #e2e8f0 !important; } 
 html.dark div.course-hero { color: #e2e8f0 !important; } 
+html.dark div.course-hero { color: #e2e8f0 !important; } 
+html.dark div.course-hero { color: #e2e8f0 !important; } 
+html.dark div.course-hero { color: #e2e8f0 !important; } 
 html.dark div.course-hero { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
 html.dark blockquote.rendered-quote { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
 html.dark span.quote-guillemet.quote-guillemet-open { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
@@ -47,19 +50,41 @@ html.dark span.glossary-tooltip { color: #e2e8f0 !important; } /* was rgb(0, 0, 
 html.dark span.cl-cite-tip { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
 html.dark a.cl-skip { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
 html.dark div.course-part.reveal-target { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark div.drawer-section { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark div.drawer-part-label { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark a.drawer-module { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
-html.dark a.drawer-module.active { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
+html.dark div.drawer-section { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark div.drawer-part-label { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark a.drawer-module { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
+html.dark a.drawer-module.active { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
 html.dark a.course-tile.course-tile-featured.topic-tile-active { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
-html.dark li.toc-item.has-children { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark span.caps { color: #e2e8f0 !important; } /* was rgb(0, 68, 170); 2 elements across 1 pages */
-html.dark li.toc-item { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark div.md { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark p.cl-dropcap { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark span.autociteelement { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark a.bibtexify_auto_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
-html.dark span.external_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
+html.dark li.toc-item.has-children { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark span.caps { color: #e2e8f0 !important; } /* was rgb(0, 68, 170); 2 elements across 2 pages */
+html.dark li.toc-item { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark div.md { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark p.cl-dropcap { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark span.autociteelement { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark a.bibtexify_auto_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
+html.dark span.external_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
+html.dark figcaption.md.no-auto-num { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
+html.dark span.glossary-term { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark div.user-select-none.svg-container { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
+
+/* ════════════════════════════════════════════════════════════
+   AUTO-GENERATED STUCK-WHITE DARK-MODE FIXES
+   ═══════════════════════════════════════════════════════════ */
+html.dark span.ti-moon { background-color: var(--mn-surface, #1e293b) !important; } /* 6 pages, 971px cluster */
+html.dark a.drawer-module { background-color: var(--mn-surface, #1e293b) !important; } /* 6 pages, 951592px cluster */
+html.dark div.course-hero { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 1018491px cluster */
+html.dark figcaption.md.no-auto-num { background-color: var(--mn-surface, #1e293b) !important; } /* 4 pages, 728759px cluster */
+html.dark span.ipill-label { background-color: var(--mn-surface, #1e293b) !important; } /* 2 pages, 1108px cluster */
+html.dark span.external_link_icon { background-color: var(--mn-surface, #1e293b) !important; } /* 2 pages, 627346px cluster */
+html.dark p.inline-topics-foot { background-color: var(--mn-surface, #1e293b) !important; } /* 2 pages, 163525px cluster */
+html.dark figcaption.no-auto-num { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 722504px cluster */
+html.dark div.search-header { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 200108px cluster */
+html.dark button.topics-seg-btn { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 899px cluster */
+html.dark div.course-tiles { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 984981px cluster */
+html.dark a.course-tile.topic-tile-active { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 988331px cluster */
+html.dark p.cl-dropcap { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 704556px cluster */
+html.dark div.user-select-none.svg-container { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 5030px cluster */
+html.dark div.md { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 933099px cluster */
 
 
 /* ════════════════════════════════════════════════════════════
@@ -117,12 +142,33 @@ html.dark div.drawer-part-label { color: #e2e8f0 !important; } /* was rgb(0, 0, 
 html.dark a.drawer-module { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
 html.dark a.drawer-module.active { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
 html.dark a.course-tile.course-tile-featured.topic-tile-active { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
-html.dark li.toc-item.has-children { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark span.caps { color: #e2e8f0 !important; } /* was rgb(0, 68, 170); 2 elements across 1 pages */
-html.dark li.toc-item { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark div.md { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark p.cl-dropcap { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark span.autociteelement { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
-html.dark a.bibtexify_auto_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
-html.dark span.external_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 1 pages */
+html.dark li.toc-item.has-children { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark span.caps { color: #e2e8f0 !important; } /* was rgb(0, 68, 170); 2 elements across 2 pages */
+html.dark li.toc-item { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark div.md { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark p.cl-dropcap { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark span.autociteelement { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark a.bibtexify_auto_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
+html.dark span.external_link_icon { color: #e2e8f0 !important; } /* was rgb(0, 0, 238); 1 elements across 2 pages */
 html.dark figcaption.md.no-auto-num { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
+html.dark span.glossary-term { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 2 pages */
+html.dark div.user-select-none.svg-container { color: #e2e8f0 !important; } /* was rgb(0, 0, 0); 1 elements across 1 pages */
+
+/* ════════════════════════════════════════════════════════════
+   AUTO-GENERATED STUCK-WHITE DARK-MODE FIXES
+   ═══════════════════════════════════════════════════════════ */
+html.dark span.ti-moon { background-color: var(--mn-surface, #1e293b) !important; } /* 6 pages, 971px cluster */
+html.dark a.drawer-module { background-color: var(--mn-surface, #1e293b) !important; } /* 6 pages, 951592px cluster */
+html.dark div.course-hero { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 1018491px cluster */
+html.dark figcaption.md.no-auto-num { background-color: var(--mn-surface, #1e293b) !important; } /* 4 pages, 728759px cluster */
+html.dark span.ipill-label { background-color: var(--mn-surface, #1e293b) !important; } /* 2 pages, 1108px cluster */
+html.dark span.external_link_icon { background-color: var(--mn-surface, #1e293b) !important; } /* 2 pages, 627346px cluster */
+html.dark p.inline-topics-foot { background-color: var(--mn-surface, #1e293b) !important; } /* 2 pages, 163525px cluster */
+html.dark figcaption.no-auto-num { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 722504px cluster */
+html.dark div.search-header { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 200108px cluster */
+html.dark button.topics-seg-btn { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 899px cluster */
+html.dark div.course-tiles { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 984981px cluster */
+html.dark a.course-tile.topic-tile-active { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 988331px cluster */
+html.dark p.cl-dropcap { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 704556px cluster */
+html.dark div.user-select-none.svg-container { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 5030px cluster */
+html.dark div.md { background-color: var(--mn-surface, #1e293b) !important; } /* 1 pages, 933099px cluster */
