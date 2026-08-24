@@ -1083,7 +1083,7 @@ By 1953, Metropolis and co-workers at Los Alamos had turned the same idea into a
 
 ### Game Theory and the Architecture of Computation
 
-While consulting at Los Alamos, John von Neumann co-authored *Theory of Games and Economic Behavior* (1944) with Oskar Morgenstern. The book's mathematical framework — minimax, Nash equilibrium, repeated games — became the foundation of **multi-agent reinforcement learning**, algorithmic game theory, and modern mechanism design \cite{vonneumann1928game}.
+While consulting at Los Alamos, John von Neumann co-authored *Theory of Games and Economic Behavior* (1944) with Oskar Morgenstern \cite{vonneumann_morgenstern1944}. The book's mathematical framework — minimax, Nash equilibrium, repeated games — became the foundation of **multi-agent reinforcement learning**, algorithmic game theory, and modern mechanism design.
 
 <figure>
     <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="von_neumann_lanl.gif" alt="Photograph of John von Neumann at Los Alamos, in the late 1940s" />
@@ -1109,10 +1109,10 @@ The same Monte Carlo idea, applied to game-tree search, gave rise to **Monte Car
 
 The numerical demands of weapons hydrodynamics drove the development of **FORTRAN** \cite{backusfortran} at IBM (1957) and the early culture of high-performance scientific computing at Los Alamos. The same culture produced the **MANIAC** computer, one of the first machines to play a credible game of chess, and the early Monte Carlo simulation community whose work is the literal ancestor of every probabilistic ML method today.
 
-### A Brief Note on the Ethical Inheritance
+### From Weapons Code to Civilian Tool
 
-The contributions above were developed for one of the most morally consequential projects of the 20th century. They were also, in the 80 years since, repeatedly redirected toward civilian and humanitarian purposes: weather and climate modelling (Monte Carlo radiative transfer), Bayesian medical statistics, game-theoretic mechanism design for spectrum auctions, and the training of modern conversational agents. The methods themselves are morally neutral; the institutions and decisions that direct them are not.
+The methods above moved quickly into civilian use. Monte Carlo radiative-transfer codes became the backbone of climate and weather modelling. Bayesian statistics, with I. J. Good as one of its main postwar advocates, became standard in medicine, social science, and industry. Game-theoretic mechanism design runs modern spectrum auctions. MCMC underpins essentially every modern probabilistic programming language.
 
-The history of AI is not only the history of algorithms. It is the visible tip of an iceberg whose submerged mass includes a quarter-century of weapons research — codebreaking, fire control, ballistic missiles, and nuclear weapons — every dollar of which produced contributions that later returned, transformed, to the civilian world.
+The history of AI is not only the history of algorithms. It is also the history of numerical methods, statistical techniques, and computing infrastructure that were developed for wartime and weapons-research needs and were later redirected toward the civilian world.
 
 </div>

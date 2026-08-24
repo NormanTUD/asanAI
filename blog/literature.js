@@ -5463,6 +5463,13 @@ window.bibData = {
 		url: "https://web.archive.org/web/20100705020840/http://www.dartmouth.edu/~matc/mathematics/geometry/pdf/VonNeumann1928.pdf",
 		alternativetitle: "von Neumann's 1928 paper on the minimax theorem"
 	},
+	"vonneumann_morgenstern1944": {
+		title: "Theory of Games and Economic Behavior",
+		author: "John von Neumann, Oskar Morgenstern",
+		year: 1944,
+		url: "https://www.jstor.org/stable/1884098",
+		alternativetitle: "von Neumann & Morgenstern's 1944 book, foundational text of game theory"
+	},
 	"silver2016alphago": {
 		title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
 		author: "David Silver, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, Demis Hassabis",
