@@ -47,7 +47,7 @@
 	<h1>From Big Bang to ChatGPT</h1>
 </div>
 
-<?php incl("From Big Bang to ChatGPT: Beyond the Black Box", "intro"); ?>
+<?php incl("Beyond the Black Box", "intro"); ?>
 
 <div class="course-overview">
 
