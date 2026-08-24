@@ -5195,5 +5195,33 @@ window.bibData = {
 		author: "Duke Philipp of Württemberg (1838–1917)",
 		year: 1899,
 		alternativetitle: "Ice-cutting on an Austrian lake (Traunsee), December 1899"
+	},
+	"niepce_le_gras": {
+		url: "https://commons.wikimedia.org/wiki/File:View_from_the_Window_at_Le_Gras,_Joseph_Nic%C3%A9phore_Ni%C3%A9pce.jpg",
+		title: "Point de vue du Gras",
+		author: "Joseph Nicéphore Niépce",
+		year: 1827,
+		alternativetitle: "Niépce's heliograph \"View from the Window at Le Gras\" — the oldest surviving camera photograph"
+	},
+	"muybridge1887catalogue": {
+		url: "https://archive.org/details/cu31924024580353",
+		title: "Animal Locomotion: An Electro-Photographic Investigation of Consecutive Phases of Animal Movements — Prospectus and Catalogue of Plates",
+		author: "Eadweard Muybridge",
+		year: 1887,
+		alternativetitle: "Muybridge's 1887 Animal Locomotion catalogue at the University of Pennsylvania"
+	},
+	"solnit2003motion": {
+		url: "https://www.bloomsbury.com/us/motion-studies-9781582342458/",
+		title: "Motion Studies: Time, Space and Eadweard Muybridge",
+		author: "Rebecca Solnit",
+		year: 2003,
+		alternativetitle: "Solnit's Motion Studies — the standard account of Muybridge's influence"
+	},
+	"gordon2015indecent": {
+		url: "https://yalebooks.yale.edu/book/9780300209488/indecent-exposures/",
+		title: "Indecent Exposures: Eadweard Muybridge's \"Animal Locomotion\" Nudes",
+		author: "Sara Anne Gordon",
+		year: 2015,
+		alternativetitle: "Gordon's scholarly study of the Animal Locomotion plates"
 	}
 };

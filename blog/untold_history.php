@@ -267,8 +267,41 @@ Without the visual display, AI remains a silent, invisible process. The screen i
 </div>
 
 <div class="md">
+### From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data
 
-Without the internet, there is no Large Language Model. Not because LLMs require a network connection to function, but because without a global, open, interconnected information network, the **petabytes of digitized human text** required to train them would simply not exist. The internet is not merely the delivery mechanism for AI, it is the precondition for the training corpus itself.
+A modern vision model is, at the level of bytes, a pile of images together with labels. That shape — a labelled image-sequence dataset — has a remarkably concrete origin in 19th-century France and Philadelphia.
+
+The very first surviving camera photograph was made by **Joseph Nicéphore Niépce** around 1826–1827 at his estate in Saint-Loup-de-Varennes. His *Point de vue du Gras*, a view from a window onto the courtyard below, was fixed onto a pewter plate coated with bitumen of Judea. Because the light-sensitive asphalt needed roughly **eight hours of exposure**, the sun appears to illuminate the buildings from both sides at once, an artefact no human eye could ever have witnessed. The plate itself survived, and is held today at the \cite[Harry Ransom Center]{niepce_le_gras} at the University of Texas at Austin.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="niepce_le_gras.jpg" alt="Niépce's 1826/27 heliograph \"View from the Window at Le Gras\" — the oldest surviving camera photograph" />
+    <figcaption class="md">The \citealternativetitle{niepce_le_gras}: the oldest surviving camera photograph, captured on a bitumen-coated pewter plate over the course of an entire day. The 8-hour exposure causes sunlight to fall on the buildings from both sides simultaneously, a property of no real scene, only of the extremely long time-integral Niépce's chemistry required.</figcaption>
+</figure>
+
+Photography matured rapidly over the following decades. Louis Daguerre's *daguerreotype* (publicly announced in 1839) brought exposure times down from hours to minutes, and William Henry Fox Talbot's *calotype* introduced the paper negative, the basis of modern film. By the 1870s, instantaneous photography was possible, and the question of whether a galloping horse was ever fully airborne, an argument that had defeated painters for centuries, was finally within reach of an answer.
+
+In 1878, the industrialist **Leland Stanford** commissioned **Eadweard Muybridge** to settle the question. Muybridge rigged a row of twelve tripwire-triggered cameras along Stanford's Palo Alto racecourse. On June 19 of that year, the horse *Occident* galloped past and the shutters fired in sequence. The result, ***The Horse in Motion***, is the founding image of **chronophotography**: a time-series of photographs in which each frame is a discrete, time-stamped sample of a continuous motion.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="muybridge_horse_gallop.jpg" alt="Muybridge's sequence of a galloping horse from 1878 — the founding image of chronophotography" />
+    <figcaption class="md">Muybridge's 1878 sequence of the horse *Occident* galloping past a battery of tripwire cameras: the founding image of \citealternativetitle{muybridge1887catalogue}, and arguably the first instance in history of a *labelled image-sequence dataset*: a continuous motion, sampled in equal time-intervals, with the subject, action and breed known in advance.</figcaption>
+</figure>
+
+Encouraged, the University of Pennsylvania commissioned Muybridge between 1884 and 1887 to extend this approach systematically. The resulting work, ***Animal Locomotion***, comprised **781 collotype plates containing more than 20,000 individual photographs** \cite[as catalogued by Muybridge]{muybridge1887catalogue}. Each plate captured a single motion (a woman opening a parasol, an ostrich running, a child ascending stairs) in 36 successive frames, photographed by 12 to 24 synchronised cameras whose shutters were tripped by electromagnets and time-stamped by a chronographic clock. Crucially, every plate was **annotated**: subject, action, age, build, even clothing and props, in exactly the form of a modern supervised-learning dataset. Plate 626, for instance, is not just a horse running, it is *"Gallop; thoroughbred bay mare, Annie G."*
+
+Two structural inventions of this project have proved decisive for every vision model trained since:
+
+1. **The labelled image sequence.** Muybridge's plates are rows of equal-time-interval frames of a known subject performing a known action. This is the schema of ImageNet, Kinetics, Something-Something and YouTube-8M, expressed in 1887. The model has not changed; only the volume and the digital substrate have.
+2. **Synchronised multi-view capture.** To resolve the foreshortening that confuses single-perspective images, Muybridge placed additional camera banks at the front and rear of his track, and built a six-camera array that fired simultaneously from different angles, the conceptual ancestor of modern **multi-view stereo, photogrammetry, NeRF and 3D Gaussian Splatting**, all of which are trained on Muybridge-style synchronised image-sets of a scene captured from many viewpoints.
+
+Muybridge went further still. He built the **zoöpraxiscope**, a projection device that replayed his sequences as cyclical animations, the technical seed of motion pictures, and through them of Disney, CGI, Pixar and the rendered-image training corpora that today's image-generation models consume by the petabyte. As \citeauthor{solnit2003motion} argues in her study of the project, Muybridge's *"invention was not the photograph, but the sequence"* \cite[as discussed by Solnit]{solnit2003motion}, and the sequence is the data structure of every modern visual network.
+
+<citeauthor{gordon2015indecent} has catalogued how systematic the project was: a hierarchy from nude human males down to chickens, ordered by a 19th-century logic of the *scala naturae*, but presented in the visual grammar of a modern corpus, complete with controlled backgrounds, grid markings for measurement, and rejection of out-of-sequence frames. The aesthetic of an AI training set, in other words, predates the algorithm by half a century.
+
+Without chronophotography there are no video frames. Without labelled image-sequences there are no video-classification, action-recognition or world-model datasets. Without synchronised multi-view capture there are no neural radiance fields. Without Muybridge's pewter and silver plates, the contemporary vision stack has nothing to look at. The trained image lives because a horse galloped past a row of tripwires in Palo Alto, and a stubborn photographer was willing to spend three years at the University of Pennsylvania counting its hoofbeats.
+</div>
+
+<div class="md">
 
 ### ARPANET: Connecting the First Nodes
 
