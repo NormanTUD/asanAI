@@ -28,9 +28,12 @@ async function snapshotVisibleElements(page, opts = {}) {
         // context, so the Node.js isSkippableTag helper is not visible.
         const SKIP_TAGS = new Set([
             'svg','g','path','rect','circle','tspan','defs',
-            'canvas','foreignobject','br','meta','link','script','style'
+            'canvas','foreignobject','br','meta','link','script','style',
+            'math','mrow','mi','mo','mn','msup','msub','mfrac','mtable',
+            'mtr','mtd','munderover','mover','munder','mtext','annotation',
+            'semantics','merror','mglyph'
         ]);
-        const SKIP_RE = /MathJax|mjx-|katex|plotly|echarts|js-plotly/i;
+        const SKIP_RE = /MathJax|mjx-|katex|plotly|echarts|js-plotly|tml-/i;
         const out = [];
         const all = document.body.querySelectorAll('*');
         const vpH = window.innerHeight, vpW = window.innerWidth;
