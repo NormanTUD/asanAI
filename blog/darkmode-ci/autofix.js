@@ -59,6 +59,52 @@ function findSafeColor() {
     return pickReadableForeground(DARK_PAGE_BG, SAFE_LIGHT_COLORS, 4.5);
 }
 
+/**
+ * Make a selector more general by stripping dynamic IDs and tag-only selectors.
+ * E.g. `a#ref-planck-abc12.cite-stealth.iframe-safe-link` →
+ *      `a.cite-stealth.iframe-safe-link`
+ * `span` → `span`  (kept; called out as a bare-tag rule but only if safe)
+ */
+function generalizeSelector(sel) {
+    if (!sel) return sel;
+    const isBareTag = /^[a-z][a-z0-9]*$/i.test(sel);
+    if (isBareTag) return null; // skip bare tags — too broad
+    // Strip ID
+    let s = sel.replace(/#[a-zA-Z0-9_-]+/g, '');
+    // Collapse multiple dots
+    s = s.replace(/\.+/g, '.');
+    // If we stripped everything but a tag, treat as bare
+    if (/^[a-z][a-z0-9]*\.?$/i.test(s) || !s) return null;
+    return s;
+}
+
+/** Group fixes by their generalized selector so we don't generate 200 ID-specific rules. */
+function groupByGeneralized(fixes) {
+    const groups = new Map(); // generalizedSel -> { originalSels, color, severity, contrast, pages }
+    const skipped = [];
+    for (const f of fixes) {
+        const gen = generalizeSelector(f.sel);
+        if (!gen) {
+            skipped.push({ ...f, reason: 'bare-tag selector — too broad, manual fix needed' });
+            continue;
+        }
+        if (!groups.has(gen)) {
+            groups.set(gen, {
+                sel: gen,
+                color: f.color,
+                severity: f.severity,
+                contrast: f.contrast,
+                pages: new Set(f.pages),
+                originalCount: 0,
+            });
+        }
+        const g = groups.get(gen);
+        g.pages.add(...f.pages);
+        g.originalCount++;
+    }
+    return { groups, skipped };
+}
+
 function findDarkMarker(content) {
     const m = content.match(/(\/\*\s*[^*]*[Dd]arkmode[^*]*\*\/)/);
     if (m) return { pos: m.index, length: m[0].length };
