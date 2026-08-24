@@ -5,7 +5,6 @@
 <title>Neural Networks — Aha-Explorer</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
 :root{
@@ -288,8 +287,7 @@ code{background:var(--bg2);padding:2px 6px;border-radius:4px;font-family:'JetBra
   <div class="card">
     <canvas id="rgCanvas" width="800" height="300"></canvas>
     <button class="btn" onclick="stepRG()">Ein Coarse-Graining Schritt</button>
-      <button class="btn" onclick="resetRG()">🔄 Reset</button>
-    </div>
+    <button class="btn" onclick="resetRG()">🔄 Reset</button>
     <p style="color:var(--dim)">Ein Signal (oben) wird schrittweise vergröbert. Jeder RG-Schritt = eine tiefere NN-Schicht. Details verschwinden, aber die <b>Struktur</b> bleibt (bei richtiger Skalierung).</p>
   </div>
 
@@ -551,15 +549,15 @@ function drawBackpropDiag(){
     {id:'L',x:650,y:190,label:'L=½(y-t)²'},
   ];
   const edges=[['x','h1'],['x','h2'],['h1','y'],['h2','y'],['y','L']];
+  svg.append('defs').append('marker').attr('id','arrow').attr('viewBox','0 -5 10 10').attr('refX',20).attr('refY',0)
+    .attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto')
+    .append('path').attr('d','M0,-5L10,0L0,5').attr('fill','#7c5cff');
   edges.forEach(([a,b],i)=>{
     const na=nodes.find(n=>n.id===a), nb=nodes.find(n=>n.id===b);
     svg.append('line').attr('x1',na.x).attr('y1',na.y).attr('x2',nb.x).attr('y2',nb.y)
       .attr('stroke','#7c5cff').attr('stroke-width',2).attr('marker-end','url(#arrow)')
       .attr('id','edge-'+i);
   });
-  svg.append('defs').append('marker').attr('id','arrow').attr('viewBox','0 -5 10 10').attr('refX',20).attr('refY',0)
-    .attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto')
-    .append('path').attr('d','M0,-5L10,0L0,5').attr('fill','#7c5cff');
   nodes.forEach(n=>{
     svg.append('circle').attr('cx',n.x).attr('cy',n.y).attr('r',35).attr('fill','#131829').attr('stroke','#22d3ee').attr('stroke-width',2);
     svg.append('text').attr('x',n.x).attr('y',n.y+5).attr('text-anchor','middle').attr('fill','#e8ecf5').attr('font-size',13).text(n.label);
