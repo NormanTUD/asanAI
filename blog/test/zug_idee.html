@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Raum, Zug und kohärente Verschiedenheit</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, serif;
+    background: #f4f1ea;
+    color: #222;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .scene {
+    min-height: 100vh;
+    padding: 60px 8vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 1px solid #d8d2c4;
+    position: relative;
+  }
+  .scene h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #3a2f1e;
+  }
+  .scene p {
+    max-width: 640px;
+    font-size: 1.1em;
+    margin-bottom: 16px;
+  }
+  .hint {
+    color: #7a6a4a;
+    font-style: italic;
+    font-size: 0.95em;
+  }
+  button {
+    background: #3a2f1e;
+    color: #f4f1ea;
+    border: none;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 6px 4px;
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+  button:hover { background: #5a4a30; }
+  button.active { background: #a06030; }
+
+  /* Szene 1: Zug */
+  #train-scene {
+    background: linear-gradient(180deg, #b8c8d8 0%, #d8c8a8 100%);
+  }
+  .train-window {
+    width: 100%;
+    max-width: 500px;
+    height: 200px;
+    background: linear-gradient(90deg, #8db888, #a8c898, #8db888);
+    border: 8px solid #3a2f1e;
+    border-radius: 8px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .landscape {
+    position: absolute;
+    top: 40%;
+    width: 200%;
+    height: 60%;
+    background: repeating-linear-gradient(
+      90deg,
+      #6a8858 0px, #6a8858 80px,
+      #7a9868 80px, #7a9868 160px
+    );
+    animation: scroll 4s linear infinite;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .sense-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .sense-box {
+    padding: 15px 20px;
+    background: #fff;
+    border: 2px solid #3a2f1e;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-width: 140px;
+  }
+  .sense-box:hover { background: #ffeecc; }
+  .sense-box.active {
+    background: #a06030;
+    color: #fff;
+    transform: scale(1.05);
+  }
+  .sense-output {
+    min-height: 80px;
+    padding: 20px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 6px;
+    margin-top: 10px;
+    font-style: italic;
+    max-width: 640px;
+  }
+
+  /* Graph-Szenen */
+  .graph-container {
+    width: 100%;
+    max-width: 700px;
+    height: 500px;
+    margin: 20px 0;
+    position: relative;
+  }
+  svg { width: 100%; height: 100%; }
+  .node circle {
+    fill: #fff;
+    stroke: #3a2f1e;
+    stroke-width: 3;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .node:hover circle { fill: #ffeecc; }
+  .node.center circle { fill: #a06030; }
+  .node text {
+    text-anchor: middle;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .node.center text { fill: #fff; font-weight: bold; }
+  .edge {
+    stroke: #7a6a4a;
+    stroke-width: 2;
+    fill: none;
+    transition: all 0.4s;
+  }
+  .edge.highlight { stroke: #a06030; stroke-width: 4; }
+  .edge-label {
+    font-size: 12px;
+    fill: #7a6a4a;
+    text-anchor: middle;
+  }
+
+  /* Embedding-Szene */
+  .embedding-space {
+    width: 100%;
+    max-width: 700px;
+    height: 400px;
+    background: #fff;
+    border: 2px solid #3a2f1e;
+    border-radius: 8px;
+    position: relative;
+    margin: 20px 0;
+  }
+  .word {
+    position: absolute;
+    padding: 6px 12px;
+    background: #3a2f1e;
+    color: #f4f1ea;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.4s;
+    transform: translate(-50%, -50%);
+  }
+  .word:hover { background: #a06030; }
+  .word.highlight { background: #a06030; transform: translate(-50%, -50%) scale(1.2); }
+
+  /* HoTT-Szene */
+  .hott-canvas {
+    width: 100%;
+    max-width: 700px;
+    height: 400px;
+    background: #fff;
+    border: 2px solid #3a2f1e;
+    border-radius: 8px;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  /* Landkarte */
+  .map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+    max-width: 900px;
+  }
+  .map-card {
+    padding: 20px;
+    background: #fff;
+    border: 2px solid #3a2f1e;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .map-card:hover {
+    background: #ffeecc;
+    transform: translateY(-3px);
+  }
+  .map-card.active {
+    background: #a06030;
+    color: #fff;
+  }
+  .map-card h4 { margin-bottom: 8px; }
+  .map-card p { font-size: 0.9em; margin: 0; }
+  .map-explanation {
+    padding: 20px;
+    background: #fff;
+    border-left: 4px solid #a06030;
+    max-width: 900px;
+    min-height: 100px;
+    font-style: italic;
+  }
+
+  .nav-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(58, 47, 30, 0.85);
+    color: #f4f1ea;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- SZENE 1: Der Zug -->
+<section class="scene" id="train-scene">
+  <h2>1. Du sitzt im Zug.</h2>
+  <p>Stell dir vor: Du sitzt in einem Zug. Klick nacheinander auf die Sinne — und spür, was passiert.</p>
+
+  <div class="train-window">
+    <div class="landscape"></div>
+  </div>
+
+  <div class="sense-panel">
+    <div class="sense-box" data-sense="visuell">👁 Sehen</div>
+    <div class="sense-box" data-sense="auditiv">👂 Hören</div>
+    <div class="sense-box" data-sense="leiblich">🫸 Spüren</div>
+    <div class="sense-box" data-sense="raum">📍 Verorten</div>
+  </div>
+
+  <div class="sense-output" id="sense-output">
+    Klick auf einen Sinn.
+  </div>
+
+  <p class="hint" style="margin-top:30px;">
+    Frage: Ist irgendeiner dieser Eindrücke „der Zug"? Oder ist der Zug etwas, das <em>zwischen</em> ihnen liegt?
+  </p>
+</section>
+
+<!-- SZENE 2: Die Frage -->
+<section class="scene">
+  <h2>2. Wo ist der Zug?</h2>
+  <p>
+    Merkwürdig, oder? Du kannst nicht auf eine einzelne Empfindung zeigen und sagen:
+    „Das da — <em>das</em> ist der Zug."
+  </p>
+  <p>
+    Das Bild aus dem Fenster ist nicht der Zug. Das Rattern ist nicht der Zug. Das Wackeln ist nicht der Zug.
+    Und trotzdem: Alle diese Eindrücke <strong>passen zueinander</strong>. Sie widersprechen sich nicht.
+    Sie erzählen dieselbe Geschichte.
+  </p>
+  <p>
+    Genau <strong>dieses Zusammenpassen</strong> ist das Rätsel, das wir jetzt ausklamüsern.
+  </p>
+</section>
+
+<!-- SZENE 3: Graph mit Zentrum -->
+<section class="scene">
+  <h2>3. Der klassische Gedanke: Da ist ein Ding.</h2>
+  <p>
+    Die naheliegende Antwort lautet: Es gibt „den Zug" als ein Ding <em>hinter</em> allen Empfindungen.
+    Die Empfindungen sind Perspektiven <em>auf</em> ihn.
+  </p>
+  <p>Klick auf eine Perspektive — sie leuchtet zum Zentrum.</p>
+
+  <div class="graph-container">
+    <svg id="graph1" viewBox="0 0 700 500"></svg>
+  </div>
+
+  <p class="hint">
+    Bequem. Aber: Hast du das Zentrum jemals <em>direkt</em> erlebt? Oder immer nur eine der Perspektiven?
+  </p>
+</section>
+
+<!-- SZENE 4: Zentrum verschwindet -->
+<section class="scene" style="background:#eae4d0;">
+  <h2>4. Der Sprung: Das Zentrum verschwindet.</h2>
+  <p>
+    Jetzt kommt der entscheidende Gedanke. Was, wenn es <strong>kein zentrales Ding</strong> gibt?
+    Was, wenn „der Zug" einfach das ist, <em>dass die Perspektiven zusammenpassen</em>?
+  </p>
+  <p>Klick auf den Knopf und schau, was passiert:</p>
+
+  <button id="remove-center">Zentrum entfernen</button>
+  <button id="restore-center">Zentrum wiederherstellen</button>
+
+  <div class="graph-container">
+    <svg id="graph2" viewBox="0 0 700 500"></svg>
+  </div>
+
+  <p>
+    <strong>Das ist die Kernidee:</strong> „Dasselbe" ist nicht ein verstecktes Ding hinter den Perspektiven.
+    „Dasselbe" ist das <em>Netz der Kohärenzen</em> zwischen ihnen.
+  </p>
+  <p class="hint">
+    Verschiedenheit muss nicht aufgehoben werden, um Einheit zu erzeugen.
+  </p>
+</section>
+
+<!-- SZENE 5: Embeddings -->
+<section class="scene">
+  <h2>5. Genau dasselbe passiert in KI.</h2>
+  <p>
+    Ein Sprachmodell weiß nicht, was „Katze" <em>ist</em>. Es weiß nur, <strong>wo</strong> „Katze" in einem
+    Netz von Beziehungen liegt — nah bei „Hund", weiter weg von „Quasar".
+  </p>
+  <p>Klick auf ein Wort — die verwandten leuchten auf.</p>
+
+  <div class="embedding-space" id="embedding-space"></div>
+
+  <p class="hint">
+    Bedeutung ist keine Eigenschaft <em>des Wortes</em>. Bedeutung ist eine <em>Position im Relationsnetz</em>.
+    Genau dieselbe Bewegung wie beim Zug.
+  </p>
+</section>
+
+<!-- SZENE 6: HoTT -->
+<section class="scene" style="background:#eae4d0;">
+  <h2>6. Und in der Mathematik: Gleichheit als Weg.</h2>
+  <p>
+    Klassisch fragt Mathematik: Sind <em>a</em> und <em>b</em> gleich? Ja oder nein.
+  </p>
+  <p>
+    Homotopy Type Theory sagt: <strong>Gleichheit hat Struktur.</strong>
+    Zwischen <em>a</em> und <em>b</em> kann es <em>viele Wege</em> geben — und zwischen diesen Wegen wiederum
+    Verformungen.
+  </p>
+  <p>Klick, um einen Weg zwischen a und b zu ziehen. Klick nochmal, um einen anderen zu ziehen.</p>
+
+  <div class="hott-canvas" id="hott-canvas">
+    <svg viewBox="0 0 700 400" id="hott-svg"></svg>
+  </div>
+
+  <button id="hott-reset">Zurücksetzen</button>
+
+  <p class="hint">
+    Auch hier: „a = b" ist kein primitives Ja/Nein mehr. Es ist ein <em>Raum von Verbindungen</em> —
+    genau wie „der Zug" ein Netz von Perspektiven war.
+  </p>
+</section>
+
+<!-- SZENE 7: Landkarte -->
+<section class="scene">
+  <h2>7. Alles ist derselbe Gedanke.</h2>
+  <p>
+    Die Behauptung dieser ganzen Seite ist einfach:
+    Der Zug, das Wortnetz, die Gleichheit in der Mathematik — <strong>das ist dieselbe Struktur</strong>.
+    Klick auf die Karten und sieh, wie sie sich entsprechen.
+  </p>
+
+  <div class="map-grid" id="map-grid">
+    <div class="map-card" data-key="zug">
+      <h4>🚂 Der Zug</h4>
+      <p>Sinnesmodalitäten, die zusammenpassen.</p>
+    </div>
+    <div class="map-card" data-key="ki">
+      <h4>🤖 KI-Embeddings</h4>
+      <p>Wörter als Positionen im Relationsnetz.</p>
+    </div>
+    <div class="map-card" data-key="hott">
+      <h4>∞ HoTT</h4>
+      <p>Gleichheit als Raum von Wegen.</p>
+    </div>
+    <div class="map-card" data-key="schmitz">
+      <h4>🫁 Schmitz</h4>
+      <p>Leibraum: Enge, Weite, Richtung — vor Punkten.</p>
+    </div>
+    <div class="map-card" data-key="garbe">
+      <h4>📐 Garben</h4>
+      <f></f>
+      <p>Lokale Daten, die kohärent zusammenkleben.</p>
+    </div>
+    <div class="map-card" data-key="kern">
+      <h4>💡 Der Kern</h4>
+      <p>Kohärente Verschiedenheit.</p>
+    </div>
+  </div>
+
+  <div class="map-explanation" id="map-explanation">
+    Klick auf eine Karte.
+  </div>
+
+  <p style="margin-top:40px; font-size:1.15em;">
+    <strong>Fazit:</strong> Vielleicht ist nicht <em>Raum</em> das Fundamentale.
+    Vielleicht ist es <em>kohärente Verschiedenheit</em>:
+    verschiedene Perspektiven, die durch Übergänge verbunden sind, deren Zusammenspiel eine Einheit erzeugt —
+    ohne dass diese Einheit ein zusätzliches Ding sein müsste.
+  </p>
+  <p class="hint" style="margin-top:20px;">
+    Und Raum ist einfach die Form, in der wir dieses Prinzip am unmittelbarsten sehen können —
+    als Nähe, Ferne, Richtung, Weg.
+  </p>
+</section>
+
+<div class="nav-hint">Scroll nach unten ↓</div>
+
+<script>
+// ============ SZENE 1: Sinne ============
+const senseTexts = {
+  visuell: "Landschaft zieht vorbei. Fenster als Rahmen. Bewegung im Bild.",
+  auditiv: "Gleichmäßiges Rattern. Manchmal ein Pfeifen. Stimmen leise im Hintergrund.",
+  leiblich: "Leichtes Vibrieren am Rücken. Ein sanftes Schwanken. Sitz drückt.",
+  raum: "Du bist irgendwo zwischen zwei Städten. In Bewegung. Nicht hier, nicht dort."
+};
+document.querySelectorAll('.sense-box').forEach(box => {
+  box.addEventListener('click', () => {
+    document.querySelectorAll('.sense-box').forEach(b => b.classList.remove('active'));
+    box.classList.add('active');
+    document.getElementById('sense-output').textContent = senseTexts[box.dataset.sense];
+  });
+});
+
+// ============ SZENE 3: Graph mit Zentrum ============
+function drawGraph1() {
+  const svg = document.getElementById('graph1');
+  const cx = 350, cy = 250, r = 160;
+  const perspectives = [
+    { name: 'visuell', angle: -Math.PI/2 },
+    { name: 'auditiv', angle: -Math.PI/2 + 2*Math.PI/5 },
+    { name: 'leiblich', angle: -Math.PI/2 + 4*Math.PI/5 },
+    { name: 'räumlich', angle: -Math.PI/2 + 6*Math.PI/5 },
+    { name: 'affektiv', angle: -Math.PI/2 + 8*Math.PI/5 }
+  ];
+
+  let html = '';
+  perspectives.forEach((p, i) => {
+    const x = cx + r * Math.cos(p.angle);
+    const y = cy + r * Math.sin(p.angle);
+    html += `<line class="edge" id="e1-${i}" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" />`;
+  });
+  html += `<g class="node center"><circle cx="${cx}" cy="${cy}" r="45"/><text x="${cx}" y="${cy+5}">Zug</text></g>`;
+  perspectives.forEach((p, i) => {
+    const x = cx + r * Math.cos(p.angle);
+    const y = cy + r * Math.sin(p.angle);
+    html += `<g class="node" data-idx="${i}"><circle cx="${x}" cy="${y}" r="35"/><text x="${x}" y="${y+5}">${p.name}</text></g>`;
+  });
+  svg.innerHTML = html;
+
+  svg.querySelectorAll('.node[data-idx]').forEach(n => {
+    n.addEventListener('click', () => {
+      svg.querySelectorAll('.edge').forEach(e => e.classList.remove('highlight'));
+      const edge = document.getElementById('e1-' + n.dataset.idx);
+      if (edge) edge.classList.add('highlight');
+    });
+  });
+}
+drawGraph1();
+
+// ============ SZENE 4: Graph ohne Zentrum ============
+let centerVisible = true;
+function drawGraph2() {
+  const svg = document.getElementById('graph2');
+  const cx = 350, cy = 250, r = 170;
+  const perspectives = [
+    { name: 'visuell' },
+    { name: 'auditiv' },
+    { name: 'leiblich' },
+    { name: 'räumlich' },
+    { name: 'affektiv' }
+  ];
+  const positions = perspectives.map((_, i) => {
+    const angle = -Math.PI/2 + i * 2 * Math.PI / perspectives.length;
+    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  });
+
+  let html = '';
+  // Kanten zwischen allen Perspektiven (Kohärenzen)
+  for (let i = 0; i < positions.length; i++) {
+    for (let j = i+1; j < positions.length; j++) {
+      html += `<line class="edge" x1="${positions[i].x}" y1="${positions[i].y}" x2="${positions[j].x}" y2="${positions[j].y}" stroke-dasharray="4 4"/>`;
+    }
+  }
+  // Kanten zum Zentrum (nur wenn sichtbar)
+  if (centerVisible) {
+    positions.forEach(p => {
+      html += `<line class="edge" x1="${cx}" y1="${cy}" x2="${p.x}" y2="${p.y}"/>`;
+    });
+    html += `<g class="node center"><circle cx="${cx}" cy="${cy}" r="45"/><text x="${cx}" y="${cy+5}">Zug</text></g>`;
+  }
+  // Perspektiven
+  perspectives.forEach((p, i) => {
+    html += `<g class="node"><circle cx="${positions[i].x}" cy="${positions[i].y}" r="35"/><text x="${positions[i].x}" y="${positions[i].y+5}">${p.name}</text></g>`;
+  });
+
+  // Beschriftung "≃" wenn Zentrum weg
+  if (!centerVisible) {
+    html += `<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="28" fill="#a06030" font-style="italic">≃</text>`;
+    html += `<text x="${cx}" y="${cy+35}" text-anchor="middle" font-size="13" fill="#7a6a4a">nur Kohärenz</text>`;
+  }
+
+  svg.innerHTML = html;
+}
+drawGraph2();
+
+document.getElementById('remove-center').addEventListener('click', () => {
+  centerVisible = false;
+  drawGraph2();
+});
+document.getElementById('restore-center').addEventListener('click', () => {
+  centerVisible = true;
+  drawGraph2();
+});
+
+// ============ SZENE 5: Embeddings ============
+const words = [
+  { text: 'Katze',    x: 30, y: 40, group: 'tier' },
+  { text: 'Hund',     x: 42, y: 35, group: 'tier' },
+  { text: 'Wolf',     x: 48, y: 48, group: 'tier' },
+  { text: 'Tiger',    x: 36, y: 55, group: 'tier' },
+  { text: 'Haustier', x: 25, y: 28, group: 'tier' },
+  { text: 'Bellen',   x: 52, y: 22, group: 'tier' },
+
+  { text: 'Auto',     x: 72, y: 30, group: 'fahrzeug' },
+  { text: 'Zug',      x: 82, y: 42, group: 'fahrzeug' },
+  { text: 'Fahrrad',  x: 68, y: 45, group: 'fahrzeug' },
+  { text: 'Schiene',  x: 88, y: 55, group: 'fahrzeug' },
+
+  { text: 'Quasar',   x: 80, y: 82, group: 'astro' },
+  { text: 'Galaxie',  x: 70, y: 78, group: 'astro' },
+  { text: 'Stern',    x: 62, y: 88, group: 'astro' },
+
+  { text: 'Freude',   x: 20, y: 78, group: 'gefuehl' },
+  { text: 'Trauer',   x: 15, y: 88, group: 'gefuehl' },
+  { text: 'Angst',    x: 28, y: 85, group: 'gefuehl' }
+];
+
+const space = document.getElementById('embedding-space');
+words.forEach((w, i) => {
+  const el = document.createElement('div');
+  el.className = 'word';
+  el.textContent = w.text;
+  el.style.left = w.x + '%';
+  el.style.top = w.y + '%';
+  el.dataset.idx = i;
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.word').forEach(x => x.classList.remove('highlight'));
+    const group = words[i].group;
+    document.querySelectorAll('.word').forEach(x => {
+      if (words[x.dataset.idx].group === group) x.classList.add('highlight');
+    });
+  });
+  space.appendChild(el);
+});
+
+// ============ SZENE 6: HoTT — Pfade zwischen a und b ============
+const hottSvg = document.getElementById('hott-svg');
+let pathCount = 0;
+const pathColors = ['#a06030', '#3a7a5a', '#5a4aa0', '#a0a030', '#a03a5a'];
+
+function initHott() {
+  hottSvg.innerHTML = `
+    <circle cx="120" cy="200" r="18" fill="#3a2f1e"/>
+    <text x="120" y="240" text-anchor="middle" font-size="20" font-style="italic">a</text>
+    <circle cx="580" cy="200" r="18" fill="#3a2f1e"/>
+    <text x="580" y="240" text-anchor="middle" font-size="20" font-style="italic">b</text>
+    <text x="350" y="30" text-anchor="middle" font-size="14" fill="#7a6a4a">
+      Klick, um einen Pfad von a nach b zu erzeugen
+    </text>
+  `;
+  pathCount = 0;
+}
+initHott();
+
+hottSvg.addEventListener('click', () => {
+  if (pathCount >= 5) return;
+  const curveHeight = 120 - pathCount * 55 + (pathCount % 2) * 30;
+  const controlY = 200 - curveHeight;
+  const color = pathColors[pathCount];
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', `M 120 200 Q 350 ${controlY} 580 200`);
+  path.setAttribute('stroke', color);
+  path.setAttribute('stroke-width', '3');
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke-dasharray', '1000');
+  path.setAttribute('stroke-dashoffset', '1000');
+  hottSvg.appendChild(path);
+  // Animation
+  setTimeout(() => {
+    path.style.transition = 'stroke-dashoffset 0.8s ease-out';
+    path.setAttribute('stroke-dashoffset', '0');
+  }, 20);
+
+  // Label
+  const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  label.setAttribute('x', 350);
+  label.setAttribute('y', controlY + 30);
+  label.setAttribute('text-anchor', 'middle');
+  label.setAttribute('fill', color);
+  label.setAttribute('font-size', '14');
+  label.setAttribute('font-style', 'italic');
+  label.textContent = `p${pathCount + 1}`;
+  hottSvg.appendChild(label);
+
+  pathCount++;
+
+  if (pathCount === 2) {
+    const hint = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    hint.setAttribute('x', 350);
+    hint.setAttribute('y', 370);
+    hint.setAttribute('text-anchor', 'middle');
+    hint.setAttribute('fill', '#7a6a4a');
+    hint.setAttribute('font-size', '13');
+    hint.textContent = 'Zwischen p1 und p2 kann es Verformungen geben — Homotopien. Und zwischen denen wieder Homotopien. Ins Unendliche.';
+    hottSvg.appendChild(hint);
+  }
+});
+
+document.getElementById('hott-reset').addEventListener('click', initHott);
+
+// ============ SZENE 7: Landkarte ============
+const mapExplanations = {
+  zug: "Der Zug ist keine einzelne Empfindung. Er ist das Zusammenpassen von Sehen, Hören, Spüren, Verorten. Lokale Perspektiven, die kohärent ineinandergreifen.",
+  ki: "Ein Wort hat keine Bedeutung an sich. Es hat eine Position im Netz seiner Beziehungen zu anderen Wörtern. Bedeutung = Kohärenz mit dem Rest.",
+  hott: "Gleichheit ist nicht Ja/Nein, sondern ein Raum von Wegen. Zwei Dinge sind gleich durch ein Netz von Verbindungen — nicht durch Verschmelzung.",
+  schmitz: "Der Leibraum bei Schmitz ist kein Punkt-Raum. Er ist Enge, Weite, Richtung, Atmosphäre — Beziehungsqualitäten, aus denen sich Räumlichkeit erst bildet.",
+  garbe: "Eine Garbe: über jeder lokalen Region gibt es Daten, die auf Überlappungen zusammenpassen. Aus lokaler Kohärenz entsteht ein globales Objekt. Genau wie beim Zug.",
+  kern: "Der gemeinsame Nenner all dieser Beispiele: Verschiedenheit muss nicht aufgelöst werden, um Einheit zu erzeugen. Einheit IST das kohärente Zusammenspiel."
+};
+
+document.querySelectorAll('.map-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.map-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    document.getElementById('map-explanation').textContent = mapExplanations[card.dataset.key];
+  });
+});
+
+// ============ Nav-Hinweis ausblenden nach Scroll ============
+window.addEventListener('scroll', () => {
+  const hint = document.querySelector('.nav-hint');
+  if (window.scrollY > 200) hint.style.opacity = '0';
+  else hint.style.opacity = '1';
+});
+</script>
+
+</body>
+</html>
