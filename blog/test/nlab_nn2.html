@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<title>Neuronale Netze – interaktive Aha-Tour</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+window.MathJax = { tex: {inlineMath: [['$','$']]}, svg: {fontCache: 'global'} };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0b1020; --bg2:#141a35; --fg:#e8ecff; --mut:#8ea0d6;
+    --acc:#7cf5c0; --acc2:#ff8ad4; --acc3:#ffd36e; --acc4:#7aa2ff;
+    --card:#181f42;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,#1a2255 0%,#07091a 60%);color:var(--fg);font-family:'Inter','SF Pro',system-ui,sans-serif;line-height:1.55}
+  header{padding:60px 20px 40px;text-align:center;background:linear-gradient(180deg,rgba(124,245,192,.08),transparent)}
+  header h1{font-size:clamp(2rem,5vw,3.6rem);margin:0;background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-1px}
+  header p{color:var(--mut);max-width:720px;margin:14px auto 0;font-size:1.1rem}
+  main{max-width:1200px;margin:0 auto;padding:20px}
+  section{background:var(--card);border-radius:20px;padding:28px;margin:24px 0;box-shadow:0 20px 60px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.05)}
+  section h2{font-size:1.7rem;margin:0 0 10px;color:var(--acc)}
+  section h3{color:var(--acc3);margin-top:24px}
+  .subtitle{color:var(--mut);margin-bottom:20px}
+  .grid{display:grid;gap:20px}
+  .grid-2{grid-template-columns:1fr 1fr}
+  @media(max-width:800px){.grid-2{grid-template-columns:1fr}}
+  canvas{background:#07091a;border-radius:12px;display:block;width:100%}
+  .controls{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0;align-items:center}
+  .controls label{font-size:.9rem;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+  input[type=range]{accent-color:var(--acc)}
+  select,button{background:var(--bg2);color:var(--fg);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 14px;font-family:inherit;cursor:pointer;transition:.2s}
+  button:hover{background:var(--acc);color:#000;font-weight:600}
+  .badge{display:inline-block;padding:2px 10px;border-radius:20px;background:rgba(124,245,192,.15);color:var(--acc);font-size:.75rem;font-weight:600;margin-right:6px}
+  .aha{background:linear-gradient(135deg,rgba(255,138,212,.12),rgba(124,245,192,.08));border-left:4px solid var(--acc2);padding:14px 18px;margin:14px 0;border-radius:8px;font-size:.98rem}
+  .aha strong{color:var(--acc2)}
+  .formula{background:#0a0f28;padding:12px 18px;border-radius:8px;overflow-x:auto;margin:10px 0;border:1px dashed rgba(255,255,255,.1)}
+  .layman{color:var(--mut);font-style:italic;font-size:.95rem;margin-top:6px}
+  nav.toc{position:sticky;top:0;background:rgba(11,16,32,.9);backdrop-filter:blur(10px);padding:14px;text-align:center;z-index:100;border-bottom:1px solid rgba(255,255,255,.08)}
+  nav.toc a{color:var(--acc);margin:0 10px;text-decoration:none;font-size:.9rem}
+  nav.toc a:hover{color:var(--acc2)}
+  .stat{display:inline-block;padding:8px 14px;background:var(--bg2);border-radius:8px;margin-right:8px;font-family:'JetBrains Mono',monospace;font-size:.9rem}
+  .stat b{color:var(--acc)}
+  footer{padding:40px 20px;text-align:center;color:var(--mut);font-size:.85rem}
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <a href="#idee">Idee</a>
+  <a href="#anatomie">Anatomie</a>
+  <a href="#activation">Aktivierungen</a>
+  <a href="#forward">Vorwärts</a>
+  <a href="#lernen">Lernen</a>
+  <a href="#loss">Verlustlandschaft</a>
+  <a href="#playground">Playground</a>
+  <a href="#large">Large Networks</a>
+  <a href="#infogeo">Info-Geometrie</a>
+</nav>
+
+<header>
+  <h1>Neuronale Netze<br>zum Anfassen</h1>
+  <p>Eine interaktive Tour durch die nLab-Definition — vom Neuron bis zur Neural Network Field Theory. Klick, zieh, spiel — nicht lesen.</p>
+</header>
+
+<main>
+
+<!-- =================== 1. IDEE =================== -->
+<section id="idee">
+  <span class="badge">Kapitel 1</span>
+  <h2>Was ist überhaupt ein neuronales Netz?</h2>
+  <p class="subtitle">Ein neuronales Netz ist einfach eine <b>Funktion</b> $f: \mathbb{R}^d \to \mathbb{R}^m$ — die man aus Beispielen lernt, statt sie hinzuschreiben [[11]].</p>
+  
+  <div class="grid grid-2">
+    <div>
+      <div class="formula">$f(x) = (T_L \circ g \circ T_{L-1} \circ g \circ \dots \circ T_1)(x)$</div>
+      <p><b>Was steckt dahinter?</b> Eine Kette von einfachen Schritten:</p>
+      <ul>
+        <li><b>$T_L(x) = \langle W_L, x\rangle + b_L$</b> — eine <b>affine Abbildung</b>: das Signal wird gewichtet und verschoben.</li>
+        <li><b>$g$</b> — eine <b>nichtlineare Aktivierung</b>: verbiegt das Signal (sonst wäre alles nur eine Gerade).</li>
+      </ul>
+      <div class="aha"><strong>Aha #1:</strong> Ein tiefes Netz ist nur eine Sandwich: <em>linear → biegen → linear → biegen → linear</em>. Ohne das "biegen" könntest du 1000 Schichten stapeln und hättest immer noch nur eine Gerade.</div>
+    </div>
+    <div>
+      <canvas id="sandwichCanvas" height="360"></canvas>
+      <div class="controls">
+        <label>Schichten <input id="layerCount" type="range" min="1" max="6" value="3"><span id="layerCountV">3</span></label>
+        <button onclick="animateSandwich()">▶ Zeige Transformation</button>
+      </div>
+      <p class="layman">Jede Schicht verformt den Raum. Klick den Button und sieh, wie eine Spirale sich entwirrt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== 2. ANATOMIE =================== -->
+<section id="anatomie">
+  <span class="badge">Kapitel 2</span>
+  <h2>Anatomie: Ein Netz zum Zerlegen</h2>
+  <p class="subtitle">Bewege die Regler — sieh live, wie sich Struktur ändert.</p>
+  <div class="controls">
+    <label>Eingabe-Neuronen <input id="nIn" type="range" min="1" max="8" value="3"><span id="nInV">3</span></label>
+    <label>Versteckte Schichten <input id="nHidden" type="range" min="1" max="4" value="2"><span id="nHiddenV">2</span></label>
+    <label>Neuronen pro Schicht <input id="nWidth" type="range" min="2" max="10" value="5"><span id="nWidthV">5</span></label>
+    <label>Ausgabe-Neuronen <input id="nOut" type="range" min="1" max="6" value="2"><span id="nOutV">2</span></label>
+  </div>
+  <canvas id="anatomyCanvas" height="380"></canvas>
+  <div class="aha"><strong>Aha #2:</strong> Jede Linie ist ein <b>Gewicht</b> $W_{ij}$ — eine Zahl. Ein Netz mit z.B. GPT-Größe hat <em>Milliarden</em> davon. Trotzdem: die Struktur bleibt diese hier.</div>
+</section>
+
+<!-- =================== 3. AKTIVIERUNG =================== -->
+<section id="activation">
+  <span class="badge">Kapitel 3</span>
+  <h2>Die Aktivierungsfunktion $g$ — das "Biegen"</h2>
+  <p class="subtitle">Ohne Nichtlinearität kein Deep Learning. Hier vier Klassiker im Vergleich.</p>
+  <svg id="actSvg" width="100%" height="320"></svg>
+  <div class="controls">
+    <button onclick="setAct('sigmoid')">Sigmoid</button>
+    <button onclick="setAct('tanh')">Tanh</button>
+    <button onclick="setAct('relu')">ReLU</button>
+    <button onclick="setAct('gelu')">GELU</button>
+    <button onclick="setAct('all')">Alle zeigen</button>
+  </div>
+  <div class="aha"><strong>Aha #3:</strong> <b>ReLU</b> (Rectified Linear Unit) ist einfach $\max(0,x)$ — eine Rampe. Genau diese banale Funktion hat 2012 Deep Learning zum Boom gebracht: sie ist schnell, ihre Ableitung ist 0 oder 1, und dadurch fließt der Gradient tief durch das Netz.</div>
+</section>
+
+<!-- =================== 4. FORWARD =================== -->
+<section id="forward">
+  <span class="badge">Kapitel 4</span>
+  <h2>Vorwärts durchs Netz — ein Neuron leuchtet</h2>
+  <p class="subtitle">Klick irgendwo in die Eingabe. Sieh, wie das Signal durchfließt.</p>
+  <canvas id="forwardCanvas" height="380"></canvas>
+  <div class="controls">
+    <label>x₁ <input id="x1" type="range" min="-2" max="2" step="0.1" value="0.5"><span id="x1V">0.5</span></label>
+    <label>x₂ <input id="x2" type="range" min="-2" max="2" step="0.1" value="-0.3"><span id="x2V">-0.3</span></label>
+    <button onclick="pulseForward()">💥 Puls senden</button>
+  </div>
+  <div class="aha"><strong>Aha #4:</strong> Jedes Neuron macht denselben Mini-Job: Summe seiner Eingaben mal Gewichten, dann durch $g$. Aus tausend solcher Winzlinge entsteht Intelligenz.</div>
+</section>
+
+<!-- =================== 5. LERNEN =================== -->
+<section id="lernen">
+  <span class="badge">Kapitel 5</span>
+  <h2>Wie ein Netz lernt: Gradientenabstieg</h2>
+  <p class="subtitle">Der nLab-Text nennt es die Kernbewegung [[11]]:</p>
+  <div class="formula">$\theta'(t) = -\nabla_\theta \Phi$ mit $\Phi = \sum_z C(f_{\theta(t)}(z), y_z)$</div>
+  <p>Übersetzt: <em>Verändere die Parameter $\theta$ in Richtung, in der der Fehler $\Phi$ am schnellsten sinkt.</em></p>
+  <div class="grid grid-2">
+    <div>
+      <div id="lossPlot" style="height:340px"></div>
+    </div>
+    <div>
+      <div class="stat">Epoche: <b id="epoch">0</b></div>
+      <div class="stat">Loss: <b id="lossVal">—</b></div>
+      <div class="stat">Lernrate η: <b id="lrShow">0.1</b></div>
+      <div class="controls">
+        <label>Lernrate <input id="lr" type="range" min="0.001" max="1" step="0.001" value="0.1"></label>
+        <button onclick="startTrain()">▶ Trainiere</button>
+        <button onclick="resetTrain()">↺ Reset</button>
+      </div>
+      <div class="aha"><strong>Aha #5:</strong> Lernen = <em>Bergabgehen</em>. Man steht auf einer riesigen Berglandschaft (Fehlerlandschaft), berechnet, wo der Boden abfällt, und geht kleine Schritte in diese Richtung. Fertig. Das ist alles.</div>
+      <div class="aha"><strong>Aha #6:</strong> Zu große Schritte → hüpft übers Tal. Zu kleine → dauert ewig. Deshalb ist die <b>Lernrate</b> $\eta$ der wichtigste Knopf.</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== 6. LOSS 3D =================== -->
+<section id="loss">
+  <span class="badge">Kapitel 6</span>
+  <h2>Die Verlustlandschaft in 3D</h2>
+  <p class="subtitle">Dreh die Kugel. Der rote Pfad ist der Gradientenabstieg — die Bewegung eines Netzes während des Lernens.</p>
+  <div id="loss3d" style="height:500px"></div>
+  <div class="aha"><strong>Aha #7:</strong> Die "$\theta$-Trajektorie" $f_{\theta_i} \mapsto f_{\theta_{i+1}}$ aus dem nLab-Artikel [[11]] ist genau <em>diese rote Kurve</em>. Ein Netz zu trainieren = einen Ball einen Berg herunterrollen lassen.</div>
+  <div class="aha"><strong>Aha #8 (fortgeschritten):</strong> Im Grenzfall unendlich vieler Parameter wird diese Landschaft so glatt und riesig-dimensional, dass fast überall ein Talweg ist. Das ist die Idee der <b>Neural Tangent Kernel Theory</b> [[11]] — Lernen wird formal ähnlich zur Bewegung eines Teilchens.</div>
+</section>
+
+<!-- =================== 7. PLAYGROUND =================== -->
+<section id="playground">
+  <span class="badge">Kapitel 7 · Live-Netz</span>
+  <h2>Der Playground: Trainiere ein echtes Netz</h2>
+  <p class="subtitle">Wähle ein Problem, klick auf Trainieren und sieh zu, wie das Netz die Grenze zwischen den Klassen findet.</p>
+  <div class="controls">
+    <label>Datensatz
+      <select id="dataset">
+        <option value="xor">XOR (klassisch)</option>
+        <option value="circles" selected>Kreise</option>
+        <option value="spiral">Spirale (hart!)</option>
+      </select>
+    </label>
+    <label>Aktivierung
+      <select id="pgAct">
+        <option>tanh</option>
+        <option selected>relu</option>
+        <option>sigmoid</option>
+      </select>
+    </label>
+    <label>Versteckte Neuronen <input id="pgWidth" type="range" min="2" max="16" value="8"><span id="pgWidthV">8</span></label>
+    <label>Schichten <input id="pgLayers" type="range" min="1" max="4" value="2"><span id="pgLayersV">2</span></label>
+    <button onclick="pgStart()">▶ Trainieren</button>
+    <button onclick="pgReset()">↺ Reset</button>
+  </div>
+  <div class="grid grid-2">
+    <div>
+      <canvas id="pgCanvas" width="400" height="400"></canvas>
+      <p class="layman">Entscheidungsgrenze (Farbverlauf) + Datenpunkte (Kreise). Live.</p>
+    </div>
+    <div>
+      <div id="pgLoss" style="height:380px"></div>
+      <div class="stat">Epoche: <b id="pgEpoch">0</b></div>
+      <div class="stat">Loss: <b id="pgLossVal">—</b></div>
+    </div>
+  </div>
+  <div class="aha"><strong>Aha #9:</strong> Bei der <em>Spirale</em> braucht das Netz mehr Kapazität (breiter/tiefer). Zu wenige Neuronen → kann die Kurve nicht "biegen". Zu viele → overfittet. Das ist das ganze Geheimnis von Architektur-Wahl.</div>
+</section>
+
+<!-- =================== 8. LARGE NETWORK =================== -->
+<section id="large">
+  <span class="badge">Kapitel 8 · Große Netze</span>
+  <h2>Wenn Netze unendlich breit werden</h2>
+  <p>Legt man Gaußsche Zufallsverteilungen über die Gewichte $\theta$ und nimmt die Breite $n \to \infty$, dann folgt aus dem zentralen Grenzwertsatz [[11]]:</p>
+  <div class="formula">Das Netz wird ein <b>Gaußprozess</b> — der <b>NNGP</b> (Neural Network Gaussian Process).</div>
+  <div id="nngp" style="height:400px"></div>
+  <p class="layman">Jede graue Kurve ist ein Netz mit zufällig gewürfelten Gewichten. Bei genügend Neuronen wird die Wolke <em>berechenbar</em> — man weiß im Voraus, wie sie aussieht, ohne zu trainieren.</p>
+  <div class="aha"><strong>Aha #10:</strong> Ein <em>unendlich breites</em> Netz vor dem Training ist rechnerisch dasselbe wie eine klassische statistische Methode (Kernel-Methode). Deep Learning und "alte" Statistik sind Verwandte — nur an der Grenze.</div>
+  <div class="aha"><strong>Aha #11 (nerdig):</strong> Die nLab-Seite erwähnt <b>Neural Network Field Theory</b>: hier wird das Netz zu einem <em>Quantenfeld</em>, wenn seine Korrelationsfunktionen die Osterwalder-Schrader-Axiome erfüllen [[11]]. Physik trifft Machine Learning.</div>
+</section>
+
+<!-- =================== 9. INFO-GEOMETRIE =================== -->
+<section id="infogeo">
+  <span class="badge">Kapitel 9 · Informationsgeometrie</span>
+  <h2>Der Raum aller Wahrscheinlichkeitsverteilungen ist eine Fläche</h2>
+  <p>Informationsgeometrie sagt: Familien von Wahrscheinlichkeitsverteilungen bilden eine <b>Mannigfaltigkeit</b> [[13]]. Beispiel: alle Gauß-Verteilungen $\mathcal{N}(\mu,\sigma)$ leben auf einer 2D-Fläche.</p>
+  <div class="grid grid-2">
+    <div>
+      <svg id="infoSvg" width="100%" height="380"></svg>
+      <p class="layman">Bewege die Maus — die Kurve zeigt die Verteilung an dieser $(\mu,\sigma)$-Stelle.</p>
+    </div>
+    <div>
+      <div class="formula">Fisher-Metrik: $g(v,w)_s = E_s(v(\log s)\, w(\log s))$</div>
+      <p>Die <b>Fisher-Information</b> ersetzt "Krümmung", die <b>Kullback-Leibler-Divergenz</b> ersetzt "Abstand" [[13]].</p>
+      <div class="aha"><strong>Aha #12:</strong> Zwei Verteilungen sind "nah", wenn man sie schlecht voneinander unterscheiden kann. Das ist keine geometrische Nähe — sondern <em>informationstheoretische</em>.</div>
+      <div class="aha"><strong>Aha #13:</strong> Die Cramér-Rao-Ungleichung — untere Schranke jeder statistischen Schätzung — ist einfach die Aussage: "eine Mannigfaltigkeit ändert sich wenig, wo sie flach ist" [[13]]. Elegant, oder?</div>
+      <div class="aha"><strong>Aha #14 (Verbindung):</strong> Machine Learning [[12]] + Informationsgeometrie [[13]] + Neuronale Netze [[11]] sind auf nLab derselbe Kontext — Wahrscheinlichkeitstheorie mit Ableitungen. Alles ein einziges großes Gedankengebäude.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Quellen: nLab-Seiten <em>neural network</em> [[11]], <em>machine learning</em> [[12]], <em>information geometry</em> [[13]]. Gebaut mit Canvas, Plotly, D3, MathJax.
+</footer>
+
+</main>
+
+<script>
+/* ============ Hilfsfunktionen ============ */
+const rand = (a=-1,b=1)=>Math.random()*(b-a)+a;
+const sigmoid=x=>1/(1+Math.exp(-x));
+const dsigmoid=x=>{const s=sigmoid(x);return s*(1-s)};
+const tanhF=x=>Math.tanh(x);
+const dtanh=x=>1-Math.tanh(x)**2;
+const relu=x=>Math.max(0,x);
+const drelu=x=>x>0?1:0;
+const gelu=x=>0.5*x*(1+Math.tanh(Math.sqrt(2/Math.PI)*(x+0.044715*x**3)));
+
+/* Update alle range->span Anzeigen */
+document.querySelectorAll('input[type=range]').forEach(r=>{
+  const span = r.parentElement.querySelector('span');
+  if(span) r.addEventListener('input',()=>{ span.textContent=r.value; onControlChange(r.id); });
+});
+function onControlChange(id){
+  if(['nIn','nHidden','nWidth','nOut'].includes(id)) drawAnatomy();
+  if(['x1','x2'].includes(id)) drawForward();
+  if(id==='lr') document.getElementById('lrShow').textContent=document.getElementById('lr').value;
+  if(['pgWidth','pgLayers'].includes(id)) pgReset();
+  if(id==='layerCount') drawSandwich();
+}
+
+/* ============ 1. SANDWICH: Spirale wird entwirrt ============ */
+const sandCv=document.getElementById('sandwichCanvas');
+function resizeCanvas(cv){cv.width=cv.clientWidth*devicePixelRatio;cv.height=cv.clientHeight*devicePixelRatio;cv.getContext('2d').setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+let sandPts=[];
+function genSpiral(){
+  sandPts=[];
+  for(let i=0;i<200;i++){
+    const t=i/200*4*Math.PI, r=t/10;
+    sandPts.push({x:r*Math.cos(t),y:r*Math.sin(t),c:0});
+    sandPts.push({x:r*Math.cos(t+Math.PI),y:r*Math.sin(t+Math.PI),c:1});
+  }
+}
+genSpiral();
+function drawSandwich(step=0){
+  resizeCanvas(sandCv);
+  const ctx=sandCv.getContext('2d');
+  const w=sandCv.clientWidth,h=sandCv.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,sc=Math.min(w,h)/4;
+  const layers=+document.getElementById('layerCount').value;
+  const t=step;
+  sandPts.forEach(p=>{
+    let x=p.x,y=p.y;
+    for(let l=0;l<layers;l++){
+      const progress=Math.min(1,Math.max(0,t-l));
+      // linear stretch + nichtlineare Biegung
+      const a=0.4*progress, s=1+0.3*progress;
+      const nx=s*(x*Math.cos(a)-y*Math.sin(a));
+      const ny=s*(x*Math.sin(a)+y*Math.cos(a));
+      x=Math.tanh(nx*1.3);
+      y=Math.tanh(ny*1.3);
+    }
+    ctx.fillStyle=p.c?'#ff8ad4':'#7cf5c0';
+    ctx.beginPath();
+    ctx.arc(cx+x*sc,cy+y*sc,2.2,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+let sandAnim=0,sandTimer=null;
+function animateSandwich(){
+  clearInterval(sandTimer);
+  sandAnim=0;
+  const layers=+document.getElementById('layerCount').value;
+  sandTimer=setInterval(()=>{
+    sandAnim+=0.05;
+    drawSandwich(sandAnim);
+    if(sandAnim>layers+0.5){clearInterval(sandTimer)}
+  },30);
+}
+drawSandwich(0);
+
+/* ============ 2. ANATOMIE ============ */
+const anatCv=document.getElementById('anatomyCanvas');
+function drawAnatomy(){
+  resizeCanvas(anatCv);
+  const ctx=anatCv.getContext('2d');
+  const w=anatCv.clientWidth,h=anatCv.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  const nIn=+document.getElementById('nIn').value;
+  const nH=+document.getElementById('nHidden').value;
+  const nW=+document.getElementById('nWidth').value;
+  const nOut=+document.getElementById('nOut').value;
+  const layers=[nIn, ...Array(nH).fill(nW), nOut];
+  const gap=w/(layers.length+1);
+  const positions=layers.map((n,i)=>{
+    const x=gap*(i+1);
+    const step=h/(n+1);
+    return Array.from({length:n},(_,j)=>({x,y:step*(j+1)}));
+  });
+  // Kanten
+  ctx.lineWidth=0.6;
+  for(let l=0;l<positions.length-1;l++){
+    positions[l].forEach(a=>{
+      positions[l+1].forEach(b=>{
+        const wgt=Math.sin(a.x*b.y*0.001);
+        ctx.strokeStyle=wgt>0?`rgba(124,245,192,${.2+Math.abs(wgt)*.3})`:`rgba(255,138,212,${.2+Math.abs(wgt)*.3})`;
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      });
+    });
+  }
+  // Neuronen
+  positions.forEach((layer,i)=>{
+    const color=i===0?'#7aa2ff':(i===positions.length-1?'#ffd36e':'#7cf5c0');
+    layer.forEach(p=>{
+      ctx.fillStyle=color;
+      ctx.beginPath();ctx.arc(p.x,p.y,9,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#07091a';ctx.lineWidth=2;ctx.stroke();
+    });
+  });
+  // Labels
+  ctx.fillStyle='#8ea0d6';ctx.font='12px Inter';ctx.textAlign='center';
+  ctx.fillText('Eingabe',positions[0][0].x,h-8);
+  ctx.fillText('Ausgabe',positions[positions.length-1][0].x,h-8);
+  const totalW=positions.reduce((s,l,i)=>i===0?0:s+l.length*positions[i-1].length,0);
+  ctx.textAlign='left';ctx.fillStyle='#7cf5c0';
+  ctx.fillText(`≈ ${totalW} Gewichte`,10,20);
+}
+drawAnatomy();
+
+/* ============ 3. AKTIVIERUNGSFUNKTIONEN (D3) ============ */
+let currentAct='all';
+function setAct(a){currentAct=a;drawAct()}
+function drawAct(){
+  const svg=d3.select('#actSvg');
+  svg.selectAll('*').remove();
+  const W=svg.node().clientWidth, H=320;
+  const m={t:20,r:20,b:30,l:40};
+  const x=d3.scaleLinear().domain([-4,4]).range([m.l,W-m.r]);
+  const y=d3.scaleLinear().domain([-1.2,2]).range([H-m.b,m.t]);
+  svg.append('g').attr('transform',`translate(0,${y(0)})`).call(d3.axisBottom(x)).attr('color','#8ea0d6');
+  svg.append('g').attr('transform',`translate(${x(0)},0)`).call(d3.axisLeft(y)).attr('color','#8ea0d6');
+  const fns={sigmoid:{f:sigmoid,c:'#7cf5c0'},tanh:{f:tanhF,c:'#ff8ad4'},relu:{f:relu,c:'#ffd36e'},gelu:{f:gelu,c:'#7aa2ff'}};
+  const keys=currentAct==='all'?Object.keys(fns):[currentAct];
+  const pts=d3.range(-4,4,0.05);
+  const line=d3.line().x(d=>x(d)).y((d,i,arr)=>y(fns[keys[arr.__k]].f(d)));
+  keys.forEach((k,ki)=>{
+    const path=d3.line().x(d=>x(d)).y(d=>y(fns[k].f(d)))(pts);
+    svg.append('path').attr('d',path).attr('fill','none').attr('stroke',fns[k].c).attr('stroke-width',2.5);
+    svg.append('text').attr('x',W-m.r-60).attr('y',m.t+20+ki*20).attr('fill',fns[k].c).attr('font-size',13).attr('font-weight',600).text(k);
+  });
+}
+drawAct();
+window.addEventListener('resize',drawAct);
+
+/* ============ 4. FORWARD PASS ============ */
+const fwdCv=document.getElementById('forwardCanvas');
+const fwdNet={
+  W1:[[0.8,-0.5],[0.3,0.9],[-0.7,0.4],[0.6,0.2]],
+  b1:[0.1,-0.2,0.0,0.3],
+  W2:[[0.5,-0.6,0.4,0.8],[-0.3,0.7,-0.5,0.2]],
+  b2:[0.1,-0.1]
+};
+function drawForward(pulseT=null){
+  resizeCanvas(fwdCv);
+  const ctx=fwdCv.getContext('2d');
+  const w=fwdCv.clientWidth,h=fwdCv.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  const x1=+document.getElementById('x1').value, x2=+document.getElementById('x2').value;
+  // Forward
+  const inp=[x1,x2];
+  const hid=fwdNet.W1.map((row,i)=>relu(row[0]*x1+row[1]*x2+fwdNet.b1[i]));
+  const out=fwdNet.W2.map((row,i)=>tanhF(row.reduce((s,wj,j)=>s+wj*hid[j],0)+fwdNet.b2[i]));
+  const layers=[inp,hid,out];
+  const labels=['Eingabe (2)','Versteckt ReLU (4)','Ausgabe tanh (2)'];
+  const gap=w/(layers.length+1);
+  const pos=layers.map((layer,i)=>{
+    const x=gap*(i+1), step=h/(layer.length+1);
+    return layer.map((v,j)=>({x,y:step*(j+1),v}));
+  });
+  // Kanten mit Aktivierungswert
+  const weights=[fwdNet.W1,fwdNet.W2];
+  for(let l=0;l<pos.length-1;l++){
+    pos[l].forEach((a,i)=>{
+      pos[l+1].forEach((b,j)=>{
+        const wgt=weights[l][j][i];
+        const active = pulseT!==null && pulseT>l && pulseT<l+1.5;
+        ctx.strokeStyle= wgt>0 ? `rgba(124,245,192,${active?.9:.3})` : `rgba(255,138,212,${active?.9:.3})`;
+        ctx.lineWidth=active?2.5:0.8+Math.abs(wgt);
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      });
+    });
+  }
+  // Neuronen mit Werten
+  pos.forEach((layer,li)=>{
+    layer.forEach(p=>{
+      const intensity=Math.min(1,Math.abs(p.v));
+      const glow = pulseT!==null && Math.abs(pulseT-li)<0.4 ? 20 : 0;
+      if(glow){ctx.shadowBlur=glow;ctx.shadowColor='#7cf5c0'}
+      ctx.fillStyle=p.v>=0 ? `rgba(124,245,192,${.3+intensity*.7})` : `rgba(255,138,212,${.3+intensity*.7})`;
+      ctx.beginPath();ctx.arc(p.x,p.y,18,0,Math.PI*2);ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.strokeStyle='#07091a';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#e8ecff';ctx.font='bold 11px JetBrains Mono, monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(p.v.toFixed(2),p.x,p.y);
+    });
+  });
+  ctx.fillStyle='#8ea0d6';ctx.font='12px Inter';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+  labels.forEach((l,i)=>ctx.fillText(l,pos[i][0].x,20));
+}
+let fwdT=null,fwdTimer=null;
+function pulseForward(){
+  clearInterval(fwdTimer);fwdT=0;
+  fwdTimer=setInterval(()=>{
+    fwdT+=0.05;
+    drawForward(fwdT);
+    if(fwdT>2.5){clearInterval(fwdTimer);fwdT=null;drawForward()}
+  },30);
+}
+drawForward();
+
+/* ============ 5. LOSS-KURVE (Plotly) ============ */
+let lossHist=[], epoch=0, trainTimer=null, theta={w:rand(),b:rand()};
+const targetFn=x=>Math.sin(x*2)*0.7;
+const trainX=d3.range(-2,2,0.2);
+function forwardMini(x){return theta.w*Math.tanh(x)+theta.b}
+function computeLoss(){return trainX.reduce((s,x)=>s+(forwardMini(x)-targetFn(x))**2,0)/trainX.length}
+function initLossPlot(){
+  Plotly.newPlot('lossPlot',[{x:[],y:[],type:'scatter',mode:'lines',line:{color:'#7cf5c0',width:3},name:'Verlust'}],{
+    paper_bgcolor:'#181f42',plot_bgcolor:'#0a0f28',
+    font:{color:'#e8ecff'},margin:{t:30,r:20,b:40,l:50},
+    xaxis:{title:'Epoche',gridcolor:'#2a3060'},yaxis:{title:'Loss',gridcolor:'#2a3060'},
+    title:'Fehler sinkt beim Lernen'
+  },{responsive:true,displayModeBar:false});
+}
+initLossPlot();
+function trainStep(){
+  const lr=+document.getElementById('lr').value;
+  let gw=0,gb=0;
+  trainX.forEach(x=>{
+    const y=forwardMini(x), t=targetFn(x), e=y-t;
+    gw+=2*e*Math.tanh(x); gb+=2*e;
+  });
+  gw/=trainX.length; gb/=trainX.length;
+  theta.w-=lr*gw; theta.b-=lr*gb;
+  const L=computeLoss(); lossHist.push(L); epoch++;
+  document.getElementById('epoch').textContent=epoch;
+  document.getElementById('lossVal').textContent=L.toFixed(4);
+  Plotly.extendTraces('lossPlot',{x:[[epoch]],y:[[L]]},[0]);
+}
+function startTrain(){clearInterval(trainTimer);trainTimer=setInterval(trainStep,50)}
+function resetTrain(){clearInterval(trainTimer);epoch=0;lossHist=[];theta={w:rand(),b:rand()};Plotly.react('lossPlot',[{x:[],y:[],type:'scatter',mode:'lines',line:{color:'#7cf5c0',width:3}}],{paper_bgcolor:'#181f42',plot_bgcolor:'#0a0f28',font:{color:'#e8ecff'},margin:{t:30,r:20,b:40,l:50},xaxis:{title:'Epoche',gridcolor:'#2a3060'},yaxis:{title:'Loss',gridcolor:'#2a3060'}});document.getElementById('epoch').textContent=0;document.getElementById('lossVal').textContent='—'}
+
+/* ============ 6. 3D VERLUSTLANDSCHAFT ============ */
+function initLoss3D(){
+  const N=50, X=[],Y=[],Z=[];
+  for(let i=0;i<N;i++){
+    const row=[];
+    for(let j=0;j<N;j++){
+      const wx=-3+6*i/N, wy=-3+6*j/N;
+      const z=Math.sin(wx*0.8)*Math.cos(wy*0.8)+0.3*(wx*wx+wy*wy)*0.15+Math.exp(-((wx-1)**2+(wy-1)**2))*(-1.5);
+      row.push(z);
+    }
+    Z.push(row);
+  }
+  // Gradientenpfad
+  let px=-2.5,py=2.5,pxs=[px],pys=[py],pzs=[];
+  const loss=(x,y)=>Math.sin(x*0.8)*Math.cos(y*0.8)+0.3*(x*x+y*y)*0.15+Math.exp(-((x-1)**2+(y-1)**2))*(-1.5);
+  const dx=(x,y)=>(loss(x+0.01,y)-loss(x-0.01,y))/0.02;
+  const dy=(x,y)=>(loss(x,y+0.01)-loss(x,y-0.01))/0.02;
+  pzs.push(loss(px,py));
+  for(let k=0;k<80;k++){
+    px-=0.15*dx(px,py); py-=0.15*dy(px,py);
+    pxs.push(px);pys.push(py);pzs.push(loss(px,py)+0.05);
+  }
+  Plotly.newPlot('loss3d',[
+    {type:'surface',z:Z,colorscale:[[0,'#193c78'],[0.5,'#7cf5c0'],[1,'#ffd36e']],opacity:0.85,showscale:false,
+      x:d3.range(-3,3,6/N),y:d3.range(-3,3,6/N)},
+    {type:'scatter3d',x:pxs,y:pys,z:pzs,mode:'lines+markers',line:{color:'#ff8ad4',width:6},marker:{size:3,color:'#ff8ad4'},name:'Gradientenpfad'}
+  ],{
+    paper_bgcolor:'#181f42',plot_bgcolor:'#181f42',font:{color:'#e8ecff'},
+    scene:{xaxis:{title:'θ₁',color:'#8ea0d6'},yaxis:{title:'θ₂',color:'#8ea0d6'},zaxis:{title:'Loss Φ',color:'#8ea0d6'},bgcolor:'#0a0f28'},
+    margin:{t:20,r:0,b:0,l:0}
+  },{responsive:true,displayModeBar:false});
+}
+initLoss3D();
+
+/* ============ 7. PLAYGROUND ============ */
+class MLP{
+  constructor(sizes,act='relu'){
+    this.sizes=sizes;this.act=act;
+    this.W=[];this.b=[];
+    for(let i=0;i<sizes.length-1;i++){
+      const scale=Math.sqrt(2/sizes[i]);
+      this.W.push(Array.from({length:sizes[i+1]},()=>Array.from({length:sizes[i]},()=>rand()*scale)));
+      this.b.push(Array(sizes[i+1]).fill(0));
+    }
+  }
+  actFn(x){return this.act==='relu'?relu(x):this.act==='tanh'?tanhF(x):sigmoid(x)}
+  dActFn(x){return this.act==='relu'?drelu(x):this.act==='tanh'?dtanh(x):dsigmoid(x)}
+  forward(x){
+    this.zs=[];this.as=[x];let a=x;
+    for(let l=0;l<this.W.length;l++){
+      const z=this.W[l].map((row,i)=>row.reduce((s,w,j)=>s+w*a[j],0)+this.b[l][i]);
+      this.zs.push(z);
+      a = l===this.W.length-1 ? z.map(sigmoid) : z.map(v=>this.actFn(v));
+      this.as.push(a);
+    }
+    return a;
+  }
+  train(X,Y,lr=0.05){
+    let totalLoss=0;
+    for(let n=0;n<X.length;n++){
+      const x=X[n], y=Y[n];
+      const out=this.forward(x);
+      const loss=-(y*Math.log(out[0]+1e-9)+(1-y)*Math.log(1-out[0]+1e-9));
+      totalLoss+=loss;
+      // Backprop
+      let delta=[out[0]-y];
+      const dW=this.W.map(w=>w.map(r=>r.map(_=>0)));
+      const db=this.b.map(bl=>bl.map(_=>0));
+      for(let l=this.W.length-1;l>=0;l--){
+        for(let i=0;i<this.W[l].length;i++){
+          db[l][i]=delta[i];
+          for(let j=0;j<this.W[l][i].length;j++) dW[l][i][j]=delta[i]*this.as[l][j];
+        }
+        if(l>0){
+          const newDelta=Array(this.W[l-1].length).fill(0);
+          for(let j=0;j<newDelta.length;j++){
+            let s=0;
+            for(let i=0;i<this.W[l].length;i++) s+=this.W[l][i][j]*delta[i];
+            newDelta[j]=s*this.dActFn(this.zs[l-1][j]);
+          }
+          delta=newDelta;
+        }
+      }
+      for(let l=0;l<this.W.length;l++)
+        for(let i=0;i<this.W[l].length;i++){
+          this.b[l][i]-=lr*db[l][i];
+          for(let j=0;j<this.W[l][i].length;j++) this.W[l][i][j]-=lr*dW[l][i][j];
+        }
+    }
+    return totalLoss/X.length;
+  }
+}
+function makeDataset(kind){
+  const X=[],Y=[];
+  if(kind==='xor'){
+    for(let i=0;i<200;i++){
+      const x=rand(-1,1),y=rand(-1,1);
+      X.push([x,y]);Y.push((x*y>0)?1:0);
+    }
+  } else if(kind==='circles'){
+    for(let i=0;i<300;i++){
+      const t=rand(0,2*Math.PI), r=Math.random()<0.5?rand(0.1,0.4):rand(0.6,0.9);
+      X.push([r*Math.cos(t),r*Math.sin(t)]);
+      Y.push(r<0.5?1:0);
+    }
+  } else {
+    for(let i=0;i<200;i++){
+      const t=i/200*4*Math.PI, r=t/12+0.1;
+      X.push([r*Math.cos(t),r*Math.sin(t)]);Y.push(1);
+      X.push([r*Math.cos(t+Math.PI),r*Math.sin(t+Math.PI)]);Y.push(0);
+    }
+  }
+  return {X,Y};
+}
+let pgNet=null, pgData=null, pgTimer=null, pgEpoch=0, pgLossHist=[];
+const pgCv=document.getElementById('pgCanvas');
+const pgCtx=pgCv.getContext('2d');
+function pgReset(){
+  clearInterval(pgTimer);
+  pgEpoch=0; pgLossHist=[];
+  const w=+document.getElementById('pgWidth').value;
+  const L=+document.getElementById('pgLayers').value;
+  const act=document.getElementById('pgAct').value;
+  const sizes=[2, ...Array(L).fill(w), 1];
+  pgNet=new MLP(sizes,act);
+  pgData=makeDataset(document.getElementById('dataset').value);
+  document.getElementById('pgEpoch').textContent=0;
+  document.getElementById('pgLossVal').textContent='—';
+  Plotly.newPlot('pgLoss',[{x:[],y:[],type:'scatter',mode:'lines',line:{color:'#ff8ad4',width:3}}],{
+    paper_bgcolor:'#181f42',plot_bgcolor:'#0a0f28',font:{color:'#e8ecff'},
+    margin:{t:30,r:20,b:40,l:50},title:'Live-Loss',
+    xaxis:{title:'Epoche',gridcolor:'#2a3060'},yaxis:{title:'Loss',gridcolor:'#2a3060'}
+  },{responsive:true,displayModeBar:false});
+  drawPG();
+}
+function drawPG(){
+  const W=pgCv.width,H=pgCv.height;
+  // Entscheidungsgrenze als Bild
+  const img=pgCtx.createImageData(W,H);
+  const step=4;
+  for(let py=0;py<H;py+=step){
+    for(let px=0;px<W;px+=step){
+      const x=(px/W)*2-1, y=1-(py/H)*2;
+      const out=pgNet.forward([x,y])[0];
+      // Farbe: 0 => pink, 1 => grün
+      const r=Math.floor(255*(1-out)*0.55 + 20);
+      const g=Math.floor(255*out*0.7 + 30);
+      const b=Math.floor(80 + 50*(1-Math.abs(out-0.5)*2));
+      for(let dy=0;dy<step;dy++)for(let dx=0;dx<step;dx++){
+        const idx=((py+dy)*W+(px+dx))*4;
+        img.data[idx]=r;img.data[idx+1]=g;img.data[idx+2]=b;img.data[idx+3]=180;
+      }
+    }
+  }
+  pgCtx.putImageData(img,0,0);
+  // Datenpunkte
+  pgData.X.forEach((p,i)=>{
+    const px=(p[0]+1)/2*W, py=(1-(p[1]+1)/2)*H;
+    pgCtx.beginPath();
+    pgCtx.arc(px,py,4,0,Math.PI*2);
+    pgCtx.fillStyle=pgData.Y[i]?'#7cf5c0':'#ff8ad4';
+    pgCtx.fill();
+    pgCtx.strokeStyle='#07091a';pgCtx.lineWidth=1.5;pgCtx.stroke();
+  });
+}
+function pgStart(){
+  if(!pgNet) pgReset();
+  clearInterval(pgTimer);
+  pgTimer=setInterval(()=>{
+    const L=pgNet.train(pgData.X,pgData.Y,0.05);
+    pgEpoch++;
+    pgLossHist.push(L);
+    document.getElementById('pgEpoch').textContent=pgEpoch;
+    document.getElementById('pgLossVal').textContent=L.toFixed(4);
+    if(pgEpoch%2===0){
+      Plotly.extendTraces('pgLoss',{x:[[pgEpoch]],y:[[L]]},[0]);
+      drawPG();
+    }
+    if(pgEpoch>800) clearInterval(pgTimer);
+  },30);
+}
+document.getElementById('dataset').addEventListener('change',pgReset);
+document.getElementById('pgAct').addEventListener('change',pgReset);
+pgReset();
+
+/* ============ 8. NNGP: viele zufällige Netze (unendliche Breite) ============ */
+function drawNNGP(){
+  const xs=d3.range(-3,3,0.05);
+  const traces=[];
+  const nCurves=30;
+  const widths=[64,64,64];
+  // "Mittleres" Netz mit vielen Neuronen: Ausgabe wird gaußartig
+  for(let k=0;k<nCurves;k++){
+    const net=new MLP([1,...widths,1],'tanh');
+    const ys=xs.map(x=>net.forward([x])[0]);
+    traces.push({x:xs,y:ys,type:'scatter',mode:'lines',
+      line:{color:`rgba(124,245,192,${0.15+Math.random()*0.15})`,width:1.2},
+      showlegend:false,hoverinfo:'skip'});
+  }
+  // Mittelwert & Konfidenz
+  const mean=xs.map((_,i)=>traces.reduce((s,t)=>s+t.y[i],0)/nCurves);
+  const std=xs.map((_,i)=>{
+    const m=mean[i];
+    return Math.sqrt(traces.reduce((s,t)=>s+(t.y[i]-m)**2,0)/nCurves);
+  });
+  traces.push({x:xs,y:mean.map((m,i)=>m+2*std[i]),type:'scatter',mode:'lines',line:{color:'#ffd36e',width:0},showlegend:false,hoverinfo:'skip'});
+  traces.push({x:xs,y:mean.map((m,i)=>m-2*std[i]),type:'scatter',mode:'lines',line:{color:'#ffd36e',width:0},fill:'tonexty',fillcolor:'rgba(255,211,110,0.15)',name:'±2σ (Gaußprozess)'});
+  traces.push({x:xs,y:mean,type:'scatter',mode:'lines',line:{color:'#ff8ad4',width:3},name:'Mittelwert'});
+  Plotly.newPlot('nngp',traces,{
+    paper_bgcolor:'#181f42',plot_bgcolor:'#0a0f28',font:{color:'#e8ecff'},
+    margin:{t:30,r:20,b:40,l:50},
+    title:'30 zufällige Netze → sichtbarer Gaußprozess',
+    xaxis:{title:'x',gridcolor:'#2a3060'},yaxis:{title:'f(x)',gridcolor:'#2a3060'}
+  },{responsive:true,displayModeBar:false});
+}
+drawNNGP();
+
+/* ============ 9. INFO-GEOMETRIE (D3) ============ */
+function drawInfoGeo(){
+  const svg=d3.select('#infoSvg');
+  svg.selectAll('*').remove();
+  const W=svg.node().clientWidth, H=380;
+  const m={t:20,r:20,b:40,l:50};
+  // Links: Mannigfaltigkeit (μ,σ)
+  const halfW=W/2;
+  const x=d3.scaleLinear().domain([-2,2]).range([m.l,halfW-m.r]);
+  const y=d3.scaleLinear().domain([0.2,2]).range([H-m.b,m.t]);
+  // Fisher-Metrik-Grid: Abstände entsprechen KL-Distanz ~ 1/(2σ²) dμ² + 1/σ² dσ²
+  // Zeichne "geodätisches" Gitter
+  for(let mu=-2;mu<=2;mu+=0.4){
+    const path=d3.range(0.2,2,0.05).map(s=>[x(mu),y(s)]);
+    svg.append('path').attr('d',d3.line()(path)).attr('stroke','rgba(124,245,192,0.2)').attr('fill','none');
+  }
+  for(let s=0.2;s<=2;s+=0.2){
+    // Bogen: proportional gestreckt
+    const path=d3.range(-2,2,0.1).map(mu=>[x(mu),y(s)]);
+    svg.append('path').attr('d',d3.line()(path)).attr('stroke',`rgba(255,138,212,${0.15+0.4/s})`).attr('fill','none').attr('stroke-width',0.5+1/s);
+  }
+  svg.append('g').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x)).attr('color','#8ea0d6');
+  svg.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y)).attr('color','#8ea0d6');
+  svg.append('text').attr('x',halfW/2).attr('y',H-5).attr('fill','#8ea0d6').attr('text-anchor','middle').text('μ (Mittelwert)');
+  svg.append('text').attr('transform',`rotate(-90) translate(${-H/2},15)`).attr('fill','#8ea0d6').attr('text-anchor','middle').text('σ (Std.abw.)');
+  svg.append('text').attr('x',halfW/2).attr('y',m.t-5).attr('fill','#7cf5c0').attr('text-anchor','middle').attr('font-weight',600).text('Mannigfaltigkeit aller Gauß-Verteilungen');
+  // Cursor-Punkt
+  const cursor=svg.append('circle').attr('r',6).attr('fill','#ffd36e').attr('cx',x(0)).attr('cy',y(1));
+  // Rechts: Verteilung anzeigen
+  const rx=d3.scaleLinear().domain([-4,4]).range([halfW+m.l,W-m.r]);
+  const ry=d3.scaleLinear().domain([0,1.5]).range([H-m.b,m.t]);
+  svg.append('g').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(rx)).attr('color','#8ea0d6');
+  svg.append('text').attr('x',(halfW+W)/2).attr('y',m.t-5).attr('fill','#ff8ad4').attr('text-anchor','middle').attr('font-weight',600).text('Verteilung an dieser Stelle');
+  const distPath=svg.append('path').attr('fill','rgba(255,138,212,0.25)').attr('stroke','#ff8ad4').attr('stroke-width',2);
+  function updateDist(mu,sigma){
+    const pts=d3.range(-4,4,0.05).map(t=>{
+      const p=Math.exp(-((t-mu)**2)/(2*sigma*sigma))/(sigma*Math.sqrt(2*Math.PI));
+      return [rx(t),ry(p)];
+    });
+    const path=d3.line()(pts) + ` L ${rx(4)},${ry(0)} L ${rx(-4)},${ry(0)} Z`;
+    distPath.attr('d',path);
+  }
+  updateDist(0,1);
+  svg.on('mousemove',function(ev){
+    const [mx,my]=d3.pointer(ev);
+    if(mx<halfW){
+      const mu=x.invert(mx), sigma=y.invert(my);
+      if(sigma>0.15 && sigma<2.2 && mu>-2.2 && mu<2.2){
+        cursor.attr('cx',mx).attr('cy',my);
+        updateDist(mu,sigma);
+      }
+    }
+  });
+}
+drawInfoGeo();
+window.addEventListener('resize',()=>{drawInfoGeo();drawAct();drawAnatomy();drawForward();drawSandwich(0);});
+
+/* ============ Init ============ */
+window.addEventListener('load',()=>{
+  drawSandwich(0);
+  drawAnatomy();
+  drawForward();
+  drawAct();
+});
+</script>
+</body>
+</html>
