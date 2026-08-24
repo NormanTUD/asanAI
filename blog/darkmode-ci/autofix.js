@@ -12,11 +12,13 @@
  *   node autofix.js --stream <path>      # custom stream file
  *   node autofix.js --css <path>          # target stylesheet
  *   node autofix.js --dry-run            # print, don't write
- *   node autofix.js --only critical      # only critical severity
+ *   node autofix.js --only-critical      # only critical severity
  *   node autofix.js --include-stuck-white # also fix stuck-white containers
  */
 const fs = require('fs');
 const path = require('path');
+const { parseRgba, contrastRatio, pickReadableForeground } = require('./lib/color-utils');
+const { isHudElement, isSkippableTag } = require('./lib/selectors');
 
 function parseArgs() {
     const args = process.argv.slice(2);
@@ -44,7 +46,6 @@ function parseArgs() {
     return opts;
 }
 
-// ---------- Constants ----------
 const DARK_PAGE_BG = { r: 15, g: 23, b: 42 };
 const SAFE_LIGHT_COLORS = [
     { c: { r: 226, g: 232, b: 240 }, name: '#e2e8f0' },
@@ -54,39 +55,8 @@ const SAFE_LIGHT_COLORS = [
     { c: { r: 129, g: 140, b: 248 }, name: '#818cf8' },
 ];
 
-function relLum(c) {
-    const f = (v) => {
-        v /= 255;
-        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-    };
-    return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b);
-}
-function contrast(c1, c2) {
-    const L1 = relLum(c1), L2 = relLum(c2);
-    return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
-}
 function findSafeColor() {
-    for (const { c, name } of SAFE_LIGHT_COLORS) {
-        if (contrast(c, DARK_PAGE_BG) >= 4.5) return name;
-    }
-    return '#e2e8f0';
-}
-
-const FIXED_HUD_ANCESTORS = [
-    'drawer-panel', 'drawer-header', 'drawer-backdrop',
-    'topics-overlay', 'topics-backdrop', 'topics-header',
-    'search-overlay', 'search-backdrop',
-    'curiosity-score', 'cl-progress'
-];
-const FIXED_HUD_IDS = [
-    'search-trigger', 'theme-toggle', 'topics-toggle', 'drawer-toggle',
-    'topics-count', 'topics-overlay', 'topics-backdrop', 'topics-close',
-    'search-overlay', 'curiosity-score'
-];
-function isHudElement(sel, anc) {
-    const combined = (sel || '') + ' ' + (anc || '');
-    return FIXED_HUD_ANCESTORS.some(s => combined.includes(s)) ||
-           FIXED_HUD_IDS.some(id => sel && sel.includes('#' + id));
+    return pickReadableForeground(DARK_PAGE_BG, SAFE_LIGHT_COLORS, 4.5);
 }
 
 function findDarkMarker(content) {
@@ -97,7 +67,6 @@ function findDarkMarker(content) {
     return { pos: content.length, length: 0 };
 }
 
-// ---------- Main ----------
 function main() {
     const opts = parseArgs();
     if (!fs.existsSync(opts.stream)) {
@@ -131,7 +100,6 @@ function main() {
         }
     }
 
-    // Build fixes
     const fixes = [];
     const skipped = [];
     for (const [key, info] of issueMap) {
@@ -139,12 +107,8 @@ function main() {
             skipped.push({ ...info, reason: 'HUD/overlay element' });
             continue;
         }
-        if (/^(svg|g|path|rect|circle|tspan|defs|canvas)$/i.test(info.sel.split(/[.#]/)[0])) {
-            skipped.push({ ...info, reason: 'SVG element' });
-            continue;
-        }
-        if (/MathJax|mjx-|katex|plotly|echarts/i.test(info.sel)) {
-            skipped.push({ ...info, reason: 'MathJax/Plotly' });
+        if (isSkippableTag(info.sel)) {
+            skipped.push({ ...info, reason: 'SVG/MathJax element' });
             continue;
         }
         fixes.push({
@@ -162,9 +126,8 @@ function main() {
         console.log(`  ${f.severity}  ${f.sel.padEnd(50)}  ${f.color} -> ${f.newColor}  (${f.pages.length} pages)`);
     }
     if (fixes.length > 20) console.log(`  ... and ${fixes.length - 20} more`);
-    console.log(`\\nSkipped ${skipped.length} as unsafe/HUD`);
+    console.log(`\nSkipped ${skipped.length} as unsafe/HUD`);
 
-    // Group by selector
     const bySelector = new Map();
     for (const f of fixes) {
         if (!bySelector.has(f.sel)) bySelector.set(f.sel, []);
@@ -186,7 +149,6 @@ function main() {
     }
     cssLines.push('');
 
-    // Stuck-white containers
     const whiteBugMap = new Map();
     if (opts.includeStuckWhite) {
         for (const line of lines) {
@@ -196,9 +158,8 @@ function main() {
                 if (!e.sel || e.sel === 'img' || e.sel === 'none') continue;
                 if (e.backdrop) continue;
                 if (isHudElement(e.sel, '')) continue;
-                const key = e.sel;
-                if (!whiteBugMap.has(key)) {
-                    whiteBugMap.set(key, {
+                if (!whiteBugMap.has(e.sel)) {
+                    whiteBugMap.set(e.sel, {
                         sel: e.sel,
                         bg: e.bg,
                         inlineBg: e.inlineBg,
@@ -207,41 +168,31 @@ function main() {
                         x: c.x, y: c.y, w: c.w, h: c.h
                     });
                 }
-                whiteBugMap.get(key).pages.add(d.page);
+                whiteBugMap.get(e.sel).pages.add(d.page);
             }
         }
         if (whiteBugMap.size > 0) {
             cssLines.push('/* ════════════════════════════════════════════════════════════');
             cssLines.push('   AUTO-GENERATED STUCK-WHITE DARK-MODE FIXES');
-            cssLines.push('   Containers that stay white in dark mode — overridden to');
-            cssLines.push('   use the dark theme surface color.');
             cssLines.push('   ═══════════════════════════════════════════════════════════ */');
             for (const [sel] of whiteBugMap) {
                 cssLines.push(`html.dark ${sel} { background-color: var(--mn-surface, #1e293b) !important; }`);
             }
             cssLines.push('');
-            console.log(`\\n${whiteBugMap.size} stuck-white cluster elements to fix`);
+            console.log(`\n${whiteBugMap.size} stuck-white cluster elements to fix`);
         }
     }
 
     const newCss = cssLines.join('\n');
-    console.log('\\n=== CSS TO INSERT ===');
+    console.log('\n=== CSS TO INSERT ===');
     console.log(newCss);
 
     if (opts.dryRun) {
-        console.log('\\n[DRY-RUN] Not writing to disk.');
-        const report = {
-            generatedAt: new Date().toISOString(),
-            fontFixes: fixes,
-            stuckWhiteFixes: [...whiteBugMap.entries()].map(([sel, info]) => ({ sel, ...info, pages: [...info.pages] })),
-            skipped: skipped.map(s => ({ ...s, pages: [...s.pages] }))
-        };
-        fs.mkdirSync(opts.out, { recursive: true });
-        fs.writeFileSync(path.join(opts.out, 'autofix_report.json'), JSON.stringify(report, null, 2));
+        console.log('\n[DRY-RUN] Not writing to disk.');
+        writeReport(opts, fixes, whiteBugMap, skipped);
         process.exit(0);
     }
 
-    // Backup + write
     const styleContent = fs.readFileSync(opts.css, 'utf8');
     const backupPath = opts.css + '.bak-autofix';
     fs.writeFileSync(backupPath, styleContent);
@@ -256,18 +207,21 @@ function main() {
     }
     fs.writeFileSync(opts.css, finalContent);
 
-    console.log(`\\nApplied ${cssLines.filter(l => l.trim()).length} CSS rules to ${opts.css}`);
+    console.log(`\nApplied ${cssLines.filter(l => l.trim()).length} CSS rules to ${opts.css}`);
     console.log(`Backup saved to ${backupPath}`);
+    writeReport(opts, fixes, whiteBugMap, skipped);
+    console.log(`\nReport saved to ${opts.out}/autofix_report.json`);
+}
 
+function writeReport(opts, fixes, whiteBugMap, skipped) {
+    fs.mkdirSync(opts.out, { recursive: true });
     const report = {
         generatedAt: new Date().toISOString(),
         fontFixes: fixes,
         stuckWhiteFixes: [...whiteBugMap.entries()].map(([sel, info]) => ({ sel, ...info, pages: [...info.pages] })),
         skipped: skipped.map(s => ({ ...s, pages: [...s.pages] }))
     };
-    fs.mkdirSync(opts.out, { recursive: true });
     fs.writeFileSync(path.join(opts.out, 'autofix_report.json'), JSON.stringify(report, null, 2));
-    console.log(`\\nReport saved to ${opts.out}/autofix_report.json`);
 }
 
 main();
