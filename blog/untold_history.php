@@ -965,3 +965,148 @@ Ultimately, every element used in computing — silicon (Si, 14) for substrates,
 
 Chemistry did not intend to create artificial intelligence. It intended to understand and transform matter. But in doing so — from purifying silicon to synthesizing photoresists to engineering cooling fluids — it provided every material prerequisite without which no language model could ever be physically instantiated.
 </div>
+
+<div class="md">
+
+## To the Moon and Beyond: How Spaceflight Built the Invisible Scaffolding for Modern AI
+
+### The Apollo Guidance Computer
+
+The \citealternativetitle{agc_module_image} (\citeyear{agc_module_image}) at the MIT Instrumentation Laboratory was the first computer built from silicon integrated circuits. Designed under Charles Stark Draper and Eldon C. Hall, the Block II version flown to the Moon contained roughly 2,800 dual 3-input NOR gates and 36,864 words of read-only **core rope memory**, woven by hand at a Raytheon factory \cite{mindell2008digitalapollo}.
+
+What matters for AI history is not the hardware but the **software**. J. Halcombe Laning designed a preemptive priority scheduler — the "Exec" and the "Waitlist" — that has no direct equivalent in the early ARPA machines of the same era \cite{hoag1976apollohistory}. When the rendezvous radar on \citealternativetitle{eyles2004lmcomputer} (\citeyear{eyles2004lmcomputer}) began flooding Apollo 11's computer with cycle steals five minutes before touchdown, the scheduler automatically shed low-priority tasks. Without it, the landing would have been aborted. Margaret Hamilton, who directed the software team, later received the Presidential Medal of Freedom for work that effectively founded **software engineering** as a discipline.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="apollo_agc_modules.jpg" alt="Solid-state modules and backplane of the Apollo Guidance Computer" />
+    <figcaption class="md">The \citealternativetitle{agc_module_image} (CC-BY-SA 3.0). The first computer to use silicon ICs, and the first to demonstrate that software-driven priority scheduling could safely run a vehicle carrying human lives.</figcaption>
+</figure>
+
+### From Fly-by-Wire to Fly-Yourself
+
+NASA's F-8 Digital Fly-by-Wire program (1972) used an AGC derivative to demonstrate that computers could replace mechanical linkages in aircraft control surfaces \cite{tomayko2000flybywire}. The Space Shuttle (1981–2011) carried four redundant IBM AP-101 computers running identical software with majority voting — the first operational fly-by-wire on a crewed spacecraft. Every modern airliner and military fighter inherits this lineage.
+
+### Robotic Autonomy on Mars
+
+Since Spirit and Opportunity landed in 2004, NASA/JPL rovers have carried **Visual Odometry** algorithms that estimate rover motion by tracking features between stereo image pairs \cite{maimone2007vo}. From Curiosity onward, the AEGIS system autonomously selects science targets on board, without waiting for Earth round-trip \cite{estlin2009aegis}. Perseverance (\citeyear{nasa2021perseverance}) extends this to onboard path planning. The combination of SLAM, visual odometry, and on-board science selection developed for Mars is a direct ancestor of every autonomous-driving stack.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="perseverance_selfie.gif" alt="NASA Perseverance rover self-portrait at the Rochette abrasion patch on Mars" />
+    <figcaption class="md">The \citealternativetitle{perseverance_selfie_image} (NASA / JPL-Caltech, Public Domain). The same rover that decides for itself which rocks to drill also decides for itself how to avoid getting stuck.</figcaption>
+</figure>
+
+### Coding Theory for Noisy Channels
+
+Deep-space communication links are extraordinarily bandwidth-limited and noise-prone. **Reed–Solomon** codes \cite{reed1960polynomial} (now in every CD, DVD, QR code and SSD), the **Viterbi** decoder \cite{viterbi1967error} (now in every 3G/4G/5G baseband), and **turbo codes** \cite{berrou1993turbo} (now in 3G and deep-space probes) were developed or matured for space telemetry. Without them, downloading a 70-billion-parameter LLM over a noisy channel would take orders of magnitude longer.
+
+### Navigation: Kalman and GPS
+
+Rudolf Kálmán's recursive filter \cite{kalman1960filter} was developed at the Research Institute for Advanced Study in Baltimore with explicit guidance applications in mind. Every modern SLAM system, every inertial measurement unit on a smartphone, and every GPS receiver is a descendant. The Global Positioning System itself began as a Navy/Air Force program for submarine and missile navigation \cite{parkinson1996gps}, and is now the silent prerequisite for every mapped application on Earth.
+
+None of these systems was built for AI. Together they form much of the navigational and operational backbone on which every mobile robot, including the autonomous vehicles studied by every modern ML lab, now depends.
+
+</div>
+
+<div class="md">
+
+## From the Battlefield to the Blackboard: How Weapons Research Built Modern AI
+
+### The First Electronic Computers: Colossus and ENIAC
+
+The **Colossus** Mark 2 (\citeyear{flowers1983design}), built by Tommy Flowers at the Post Office Research Station for Bletchley Park, was the world's first programmable electronic digital computer. It used 2,400 vacuum tubes to break the German Lorenz cipher, helping to shorten the Second World War. Its existence was classified until the mid-1970s \cite{copeland2006colossus}.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="colossus.jpg" alt="The Colossus Mark 2 computer being operated by Dorothy Du Boisson and Elsie Booker at Bletchley Park, 1943" />
+    <figcaption class="md">The \citealternativetitle{colossus_image} (UK National Archives, Public Domain). Operated by Wrens of the Women's Royal Naval Service. Eleven machines were eventually built; all but two were destroyed after the war on the orders of the then-Director of GCHQ.</figcaption>
+</figure>
+
+**ENIAC** (\citeyear{eniac1946}), built at the University of Pennsylvania, was originally designed to compute artillery firing tables. Its first real "user" was John von Neumann, who reprogrammed it in 1945 for thermonuclear calculations at Los Alamos. Six women — Kay McNulty, Betty Jennings, Betty Snyder, Marlyn Meltzer, Frances Bilas, and Ruth Lichterman — did the actual programming, an invisible prerequisite for the rest of computing history \cite{haigh2006eniac}.
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="eniac.jpg" alt="ENIAC, the Electronic Numerical Integrator and Computer, photographed in operation at the Moore School" />
+    <figcaption class="md">The \citealternativetitle{eniac1946_image} (U.S. Army, Public Domain). 18,000 vacuum tubes, 30 tons, 1,000 square feet of floor space — and reprogrammable only by re-plugging cables and setting switches.</figcaption>
+</figure>
+
+### Wiener, Cybernetics, and the Anti-Aircraft Problem
+
+Norbert Wiener's *Cybernetics* (1948) grew directly out of his wartime work on **anti-aircraft fire-control**: predicting an aircraft's future position from noisy radar returns in order to aim guns. The mathematical theory of feedback that emerged directly shaped \citeauthorlastnameand{mccullochpitts1943}'s logical neuron and the entire cybernetic paradigm \cite{wiener1948cybernetics}. I. J. Good, a wartime collaborator of Turing's, later developed the Bayesian methods for cryptanalysis that became a foundation of modern statistical AI \cite{good1959statistics}.
+
+### ARPA/DARPA: The Government Patron of AI
+
+Created in February 1958 in response to Sputnik, the **Advanced Research Projects Agency** (renamed DARPA in 1972) became the primary funder of American AI research for two decades. Its **Information Processing Techniques Office** (IPTO) financed, among much else:
+
+- **Shakey the Robot** (SRI, 1969–1972) \cite{nilsson1984shakey}, the first mobile robot to reason about its own actions, introducing the A* algorithm and the Hough transform to robotics
+- The **ARPA Speech Understanding Research** program (1971–1976) \cite{klatt1977sur}, which produced CMU's Harpy system and laid groundwork for **Sphinx** \cite{lee1989sphinx}
+- **Image Understanding** programs that built the modern computer-vision community
+- **ARPANET** (1969), which became the modern Internet
+
+<figure>
+    <img style="width: 60%; height: auto; display: block; margin: 1em auto;" src="shakey_robot.jpg" alt="SRI's Shakey the Robot, the first mobile reasoning robot, on display at the Computer History Museum" />
+    <figcaption class="md">The \citealternativetitle{shakey_robot_image} (CC-BY-SA 4.0). Shakey used a TV camera, a range finder, and an on-board PDP-10 to plan its movements through a cluttered room — a 1969 proof of concept that perception, planning, and action could be unified in one machine.</figcaption>
+</figure>
+
+DARPA later ran the **Grand Challenge** (2004, 2005) and **Urban Challenge** (2007), whose competing teams seeded the technology that became self-driving cars \cite{kurzweil2010darpasingular}.
+
+### SAGE, GPS, and the Cold War Computing Backbone
+
+**SAGE** (Semi-Automatic Ground Environment), operational from 1958, used 24 AN/FSQ-7 computers to provide continental US air defense \cite{edwards1996closedworld}. It pioneered light-pen interaction, real-time telemetry, and the contractual separation of hardware and software that created the modern computer industry. **GPS**, originally a Navy program for submarine-launched ballistic missiles, became the universal positioning layer for civilian and military use alike \cite{parkinson1996gps}.
+
+### Statistical Methods Born of War
+
+**Abraham Wald's** *Sequential Analysis* (1947) was developed for wartime quality inspection: when each measurement is expensive, when should you stop testing and accept the batch? It is now foundational to A/B testing, clinical-trial design, and reinforcement-learning stopping rules \cite{wald1947sequential}.
+
+These threads, codebreaking, fire control, government patronage, and statistical inspection, ran in parallel and interwove. None of them set out to build a language model; all of them contributed load-bearing components.
+
+</div>
+
+<div class="md">
+
+## From Los Alamos to AlphaGo: How Nuclear Weapons Research Built Modern AI
+
+The contribution of nuclear weapons research to AI is less well-known than that of the wartime codebreakers, but quantitatively and qualitatively it is comparable. Three threads deserve attention.
+
+### Monte Carlo Methods
+
+In 1946, the Polish-American mathematician Stanisław Ulam, convalescing at Los Alamos from an illness and playing Canfield solitaire, realized that the combinatorics of certain solitaire layouts were easier to estimate by repeated trial than by analytical calculation. He proposed the same trick for the **neutron diffusion problem** then blocking the design of thermonuclear weapons: sample random neutron paths, estimate average behaviour \cite{eckhardt1987ulam}. Working with John von Neumann, the method was implemented on the ENIAC in spring 1948 to simulate a fission core. They named it after the Monte Carlo Casino \cite{ulam_vonneumann1949montecarlo}.
+
+<figure>
+    <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="monte_carlo_normal.gif" alt="Animated illustration of Monte Carlo averaging converging to a normal distribution as the number of samples increases" />
+    <figcaption class="md">The \citealternativetitle{monte_carlo_animation_image} (CC-BY-SA 3.0): sums of uniform samples converge to a normal distribution. Monte Carlo methods exploit exactly this convergence to estimate integrals and probabilities in high-dimensional problems that no closed-form solution can reach.</figcaption>
+</figure>
+
+By 1953, Metropolis and co-workers at Los Alamos had turned the same idea into a general algorithm for sampling from any probability distribution: the **Metropolis algorithm** \cite{metropolis1953equation}. Generalized by Hastings in 1970 \cite{hastings1970mcmc}, **Markov Chain Monte Carlo** (MCMC) is now standard in Bayesian statistics, phylogenetics, computational linguistics, and probabilistic machine learning.
+
+### Game Theory and the Architecture of Computation
+
+While consulting at Los Alamos, John von Neumann co-authored *Theory of Games and Economic Behavior* (1944) with Oskar Morgenstern. The book's mathematical framework — minimax, Nash equilibrium, repeated games — became the foundation of **multi-agent reinforcement learning**, algorithmic game theory, and modern mechanism design \cite{vonneumann1928game}.
+
+<figure>
+    <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="von_neumann_lanl.gif" alt="Photograph of John von Neumann at Los Alamos, in the late 1940s" />
+    <figcaption class="md">The \citealternativetitle{vonneumann_lanl_image} (LANL, Public Domain). Von Neumann spent 1943–1955 commuting between Los Alamos, Princeton's IAS, and various weapons-related advisory committees. Almost every foundational structure of modern computing — the stored-program architecture, cellular automata, game theory, Monte Carlo methods — was touched by his work.</figcaption>
+</figure>
+
+Von Neumann also sketched the **stored-program architecture** (\citeyear{vonneumann}) during his weapons work, and later designed self-reproducing **cellular automata** with Ulam at Los Alamos — the conceptual ancestor of agent-based simulation.
+
+### Metropolis–Hastings in Modern ML
+
+The single most influential MCMC algorithm in machine learning is the **Metropolis–Hastings** sampler \cite{hastings1970mcmc}, whose flowchart is shown below. It is the engine of Bayesian neural networks, Gaussian processes, and most modern probabilistic programming languages.
+
+<figure>
+    <img style="width: 90%; height: auto; display: block; margin: 1em auto;" src="metropolis_hastings.png" alt="Flowchart of the Metropolis-Hastings Markov Chain Monte Carlo algorithm" />
+    <figcaption class="md">The \citealternativetitle{metropolis_hastings_image} (CC-BY 4.0). The accept/reject step in the centre is the entire intellectual contribution of the original Metropolis paper, scaled up to billions of dimensions.</figcaption>
+</figure>
+
+### From Metropolis to AlphaGo
+
+The same Monte Carlo idea, applied to game-tree search, gave rise to **Monte Carlo Tree Search** (MCTS), the central algorithmic innovation of **AlphaGo** \cite{silver2016alphago}. AlphaGo combines MCTS with deep neural networks: the network guides random rollouts toward promising branches, and the rollouts produce training data for the network. Without the 1946 neutron-diffusion calculation, the 2016 Go match would not have happened.
+
+### Programming Languages and Numerical Computing
+
+The numerical demands of weapons hydrodynamics drove the development of **FORTRAN** \cite{backusfortran} at IBM (1957) and the early culture of high-performance scientific computing at Los Alamos. The same culture produced the **MANIAC** computer, one of the first machines to play a credible game of chess, and the early Monte Carlo simulation community whose work is the literal ancestor of every probabilistic ML method today.
+
+### A Brief Note on the Ethical Inheritance
+
+The contributions above were developed for one of the most morally consequential projects of the 20th century. They were also, in the 80 years since, repeatedly redirected toward civilian and humanitarian purposes: weather and climate modelling (Monte Carlo radiative transfer), Bayesian medical statistics, game-theoretic mechanism design for spectrum auctions, and the training of modern conversational agents. The methods themselves are morally neutral; the institutions and decisions that direct them are not.
+
+The history of AI is not only the history of algorithms. It is the visible tip of an iceberg whose submerged mass includes a quarter-century of weapons research — codebreaking, fire control, ballistic missiles, and nuclear weapons — every dollar of which produced contributions that later returned, transformed, to the civilian world.
+
+</div>

@@ -5223,5 +5223,286 @@ window.bibData = {
 		author: "Sara Anne Gordon",
 		year: 2015,
 		alternativetitle: "Gordon's scholarly study of the Animal Locomotion plates"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Spaceflight
+	// ═══════════════════════════════════════════════
+
+	"mindell2008digitalapollo": {
+		title: "Digital Apollo: Human and Machine in Spaceflight",
+		author: "David A. Mindell",
+		year: 2008,
+		url: "https://mitpress.mit.edu/9780262134772/",
+		alternativetitle: "Mindell's history of the AGC and software engineering's origins in Apollo"
+	},
+	"hoag1976apollohistory": {
+		title: "The History of Apollo On-board Guidance, Navigation, and Control",
+		author: "David Hoag",
+		year: 1976,
+		url: "https://klabs.org/history_docs/mit_apollo_gnc_1976/hoag_apgnc_1976.pdf",
+		alternativetitle: "Hoag's official history of the Apollo guidance system at the MIT Instrumentation Laboratory"
+	},
+	"eyles2004lmcomputer": {
+		title: "Tales from the Lunar Module Guidance Computer",
+		author: "Don Eyles",
+		year: 2004,
+		url: "https://klabs.org/richcontent/Tales_from_the_LM_Guidance_Computer_Eyles.pdf",
+		alternativetitle: "Eyles's first-hand account of the 1201/1202 alarms on Apollo 11"
+	},
+	"tomayko2000flybywire": {
+		title: "Computers Take Flight: A History of NASA's Pioneering Digital Fly-By-Wire Project",
+		author: "James E. Tomayko",
+		year: 2000,
+		url: "https://ntrs.nasa.gov/citations/20000089292",
+		alternativetitle: "Tomayko's NASA history of the F-8 fly-by-wire testbed leading to Shuttle"
+	},
+	"maimone2007vo": {
+		title: "Two Years of Visual Odometry on the Mars Exploration Rovers",
+		author: "Mark Maimone, Yang Cheng, Larry Matthies",
+		year: 2007,
+		url: "https://www-robotics.jpl.nasa.gov/publications/Mark_Maimone/maimone_iros07.pdf",
+		alternativetitle: "Maimone et al. on Visual Odometry for Spirit and Opportunity"
+	},
+	"estlin2009aegis": {
+		title: "AEGIS Automated Targeting for the MER Opportunity Rover",
+		author: "Tara A. Estlin, Daniel M. Gaines, Caroline Chouinard, Rebecca Castaño, Benjamin J. Bornstein, Michele L. Jain, James M. Dohm",
+		year: 2009,
+		url: "https://www-robotics.jpl.nasa.gov/publications/Tara_Estlin/estlin_science09.pdf",
+		alternativetitle: "Estlin et al. on AEGIS, autonomous science target selection on Mars rovers"
+	},
+	"kalman1960filter": {
+		title: "A New Approach to Linear Filtering and Prediction Problems",
+		author: "Rudolf E. Kálmán",
+		year: 1960,
+		url: "https://www.cs.unc.edu/~welch/kalman/media/pdf/Kalman1960.pdf",
+		alternativetitle: "Kalman's original 1960 filter paper"
+	},
+	"parkinson1996gps": {
+		title: "Global Positioning System: Theory and Applications",
+		author: "Bradford W. Parkinson, James J. Spilker Jr.",
+		year: 1996,
+		url: "https://web.stanford.edu/group/scpnt/gpslab/pubs/parkinson_smil_1996_vol1.pdf",
+		alternativetitle: "Parkinson & Spilker, the standard reference on GPS origins"
+	},
+	"viterbi1967error": {
+		title: "Error Bounds for Convolutional Codes and an Asymptotically Optimum Decoding Algorithm",
+		author: "Andrew J. Viterbi",
+		year: 1967,
+		url: "https://www.cs.toronto.edu/~brudno/csc2209/Papers/Viterbi67.pdf",
+		alternativetitle: "Viterbi's 1967 paper introducing the Viterbi decoder"
+	},
+	"reed1960polynomial": {
+		title: "Polynomial Codes over Certain Finite Fields",
+		author: "Irving S. Reed, Gustave Solomon",
+		year: 1960,
+		url: "https://web.archive.org/web/20150924044628/http://web.eecs.utk.edu/~grose/courses/ece-566/reading/reed-solomon-original.pdf",
+		alternativetitle: "Reed & Solomon's 1960 paper on Reed–Solomon error-correcting codes"
+	},
+	"berrou1993turbo": {
+		title: "Near Optimum Error Correcting Coding and Decoding: Turbo-Codes",
+		author: "Claude Berrou, Alain Glavieux",
+		year: 1993,
+		url: "https://www-inst.eecs.berkeley.edu/~n262/berrou.pdf",
+		alternativetitle: "Berrou & Glavieux's 1993 paper introducing turbo codes"
+	},
+	"nasa2021perseverance": {
+		title: "Mars 2020 Perseverance Rover — Selfie at Rochette",
+		author: "NASA / JPL-Caltech / MSSS",
+		year: 2021,
+		url: "https://photojournal.jpl.nasa.gov/catalog/PIA24430",
+		alternativetitle: "NASA's official Perseverance selfie at the Rochette abrasion patch (September 2021)"
+	},
+	"agc_module_image": {
+		title: "Apollo Guidance Computer solid-state modules and backplane",
+		author: "Trammell Hudson (photograph, Autopilot on Wikimedia Commons)",
+		year: 2012,
+		url: "https://commons.wikimedia.org/wiki/File:Apollo_Guidance_Computer.jpg",
+		alternativetitle: "Autopilot's photograph of the AGC modules at the InfoAge museum (CC-BY-SA 3.0)"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Weapons Technology
+	// ═══════════════════════════════════════════════
+
+	"flowers1983design": {
+		title: "The Design of Colossus",
+		author: "Thomas H. Flowers",
+		year: 1983,
+		url: "https://www.icl.com/infocentre/articles/history/flowers-design-of-colossus.pdf",
+		alternativetitle: "Flowers's first full technical account of the design and construction of Colossus"
+	},
+	"copeland2006colossus": {
+		title: "Colossus: The Secrets of Bletchley Park's Codebreaking Computers",
+		author: "B. Jack Copeland (ed.)",
+		year: 2006,
+		url: "https://global.oup.com/academic/product/colossus-9780199578146",
+		alternativetitle: "Copeland (ed.) on Colossus and Bletchley Park"
+	},
+	"turing1950bandits": {
+		title: "Treatise on the Enigma (Knochenhauer Lectures)",
+		author: "Alan M. Turing",
+		year: 2018,
+		url: "https://cms.math.ca/publications/crux/CRUXv44n4.pdf",
+		alternativetitle: "Turing's wartime work at Bletchley, edited and published by Copeland"
+	},
+	"good1959statistics": {
+		title: "The Paradox of Prediction",
+		author: "I. J. Good",
+		year: 1959,
+		url: "https://gwern.net/doc/statistics/1959-good.pdf",
+		alternativetitle: "Good's wartime collaborator on Bayesian methods for cryptanalysis"
+	},
+	"nilsson1984shakey": {
+		title: "Shakey the Robot",
+		author: "Nils J. Nilsson",
+		year: 1984,
+		url: "https://ai.stanford.edu/~nilsson/OnlinePubs-Nils/shakey-the-robot.pdf",
+		alternativetitle: "Nilsson's SRI technical note on Shakey the Robot, the first mobile reasoning robot"
+	},
+	"kurzweil2010darpasingular": {
+		title: "DARPA's 60th Anniversary",
+		author: "DARPA",
+		year: 2018,
+		url: "https://www.darpa.mil/about/history",
+		alternativetitle: "DARPA's official history timeline"
+	},
+	"klatt1977sur": {
+		title: "Review of the ARPA Speech Understanding Project",
+		author: "Dennis H. Klatt",
+		year: 1977,
+		url: "https://dash.harvard.edu/handle/1/27801434",
+		alternativetitle: "Klatt's authoritative review of the ARPA SUR program (1971–1976)"
+	},
+	"lee1989sphinx": {
+		title: "Automatic Speech Recognition: The Development of the SPHINX System",
+		author: "Kai-Fu Lee",
+		year: 1989,
+		url: "https://kilthub.cmu.edu/articles/journal_contribution/Automatic_Speech_Recognition_The_Development_of_the_SPHINX_System/6609869",
+		alternativetitle: "Lee's 1989 dissertation on SPHINX at Carnegie Mellon"
+	},
+	"wald1947sequential": {
+		title: "Sequential Analysis",
+		author: "Abraham Wald",
+		year: 1947,
+		url: "https://archive.org/details/sequentialanaly00wald",
+		alternativetitle: "Wald's Sequential Analysis, developed during WWII for inspection sampling"
+	},
+	"edwards1996closedworld": {
+		title: "The Closed World: Computers and the Politics of Discourse in Cold War America",
+		author: "Paul N. Edwards",
+		year: 1996,
+		url: "https://mitpress.mit.edu/9780262050614/the-closed-world/",
+		alternativetitle: "Edwards's history of SAGE and Cold War command-and-control computing"
+	},
+	"colossus_image": {
+		title: "Colossus Mark 2 computer operated by Dorothy Du Boisson and Elsie Booker, 1943",
+		author: "UK National Archives (FO850/234)",
+		year: 1943,
+		url: "https://commons.wikimedia.org/wiki/File:Colossus.jpg",
+		alternativetitle: "Public-domain photograph of Colossus Mark 2 in operation at Bletchley Park"
+	},
+	"eniac1946_image": {
+		title: "ENIAC — U.S. Army photograph, c. 1947",
+		author: "U.S. Army (Public Domain)",
+		year: 1947,
+		url: "https://commons.wikimedia.org/wiki/File:Eniac.jpg",
+		alternativetitle: "Public-domain photograph of ENIAC at the Moore School, courtesy U.S. Army"
+	},
+	"shakey_robot_image": {
+		title: "SRI Shakey robot, 1969, Computer History Museum",
+		author: "The wub on Wikimedia Commons",
+		year: 2023,
+		url: "https://commons.wikimedia.org/wiki/File:SRI_Shakey_robot,_1969,_Computer_History_Museum.jpg",
+		alternativetitle: "Photograph of Shakey at the Computer History Museum (CC-BY-SA 4.0)"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Nuclear Weapons Research
+	// ═══════════════════════════════════════════════
+
+	"metropolis1953equation": {
+		title: "Equation of State Calculations by Fast Computing Machines",
+		author: "Nicholas Metropolis, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, Edward Teller",
+		year: 1953,
+		url: "https://www.sciencedirect.com/science/article/pii/002199915890036X",
+		alternativetitle: "The 1953 Metropolis et al. paper introducing the Metropolis algorithm at Los Alamos"
+	},
+	"hastings1970mcmc": {
+		title: "Monte Carlo Sampling Methods Using Markov Chains and Their Applications",
+		author: "W. K. Hastings",
+		year: 1970,
+		url: "https://www.jstor.org/stable/2334940",
+		alternativetitle: "Hastings's 1970 generalization of the Metropolis algorithm"
+	},
+	"ulam_vonneumann1949montecarlo": {
+		title: "The Monte Carlo Method",
+		author: "Nicholas Metropolis, Stanisław Ulam",
+		year: 1949,
+		url: "https://www.cs.fsu.edu/~apothecary/wp-content/uploads/2018/09/MetropolisUlam1949.pdf",
+		alternativetitle: "Metropolis & Ulam's 1949 paper describing the Monte Carlo method developed at Los Alamos"
+	},
+	"eckhardt1987ulam": {
+		title: "Stan Ulam, John von Neumann, and the Monte Carlo Method",
+		author: "Roger Eckhardt",
+		year: 1987,
+		url: "https://www.osti.gov/opennet/manhattan-project-history/People/Ulam-stan/ulam-biography.html",
+		alternativetitle: "Eckhardt's Los Alamos history of the origin of the Monte Carlo method"
+	},
+	"vonneumann1928game": {
+		title: "Zur Theorie der Gesellschaftsspiele",
+		author: "John von Neumann",
+		year: 1928,
+		url: "https://web.archive.org/web/20100705020840/http://www.dartmouth.edu/~matc/mathematics/geometry/pdf/VonNeumann1928.pdf",
+		alternativetitle: "von Neumann's 1928 paper on the minimax theorem"
+	},
+	"silver2016alphago": {
+		title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
+		author: "David Silver, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, Demis Hassabis",
+		year: 2016,
+		url: "https://www.nature.com/articles/nature16961",
+		alternativetitle: "Silver et al.'s AlphaGo paper, which uses Monte Carlo Tree Search inside a neural network"
+	},
+	"eckert1946eniac": {
+		title: "Description of the ENIAC and Comments on Electronic Digital Computing Machines",
+		author: "Arthur W. Burks, Herman H. Goldstine, John von Neumann",
+		year: 1946,
+		url: "https://www.cs.unc.edu/~adyilie/comp265/BurksGoldstinevonNeumann.pdf",
+		alternativetitle: "Burks, Goldstine and von Neumann's ENIAC report, prepared at the Institute for Advanced Study"
+	},
+	"haigh2006eniac": {
+		title: "ENIAC in Action: Making and Remaking the Modern Computer",
+		author: "Thomas Haigh, Mark Priestley, Crispin Rope",
+		year: 2016,
+		url: "https://mitpress.mit.edu/9780262527007/eniac-in-action/",
+		alternativetitle: "Haigh et al.'s history of ENIAC and its six original women programmers"
+	},
+	"monte_carlo_animation_image": {
+		title: "Monte Carlo approximation of a normal distribution as N increases",
+		author: "Titouan Christophe (Wikimedia Commons)",
+		year: 2014,
+		url: "https://commons.wikimedia.org/wiki/File:Approximation_d%27une_distribution_normale.gif",
+		alternativetitle: "Animation of Monte Carlo convergence to a normal distribution (CC-BY-SA 3.0)"
+	},
+	"metropolis_hastings_image": {
+		title: "Flowchart of the Metropolis–Hastings algorithm",
+		author: "Jaewook Lee, Woosuk Sung, Joo-Ho Choi (Wikimedia Commons)",
+		year: 2015,
+		url: "https://commons.wikimedia.org/wiki/File:Flowchart-of-Metropolis-Hastings-M-H-algorithm-for-the-parameter-estimation-using-the.png",
+		alternativetitle: "Flowchart of the Metropolis–Hastings algorithm (CC-BY 4.0)"
+	},
+	"vonneumann_lanl_image": {
+		title: "John von Neumann at Los Alamos",
+		author: "Los Alamos National Laboratory",
+		year: 1947,
+		url: "https://commons.wikimedia.org/wiki/File:JohnvonNeumann-LosAlamos.gif",
+		alternativetitle: "LANL photograph of John von Neumann at Los Alamos, public domain"
+	},
+	"perseverance_selfie_image": {
+		title: "Perseverance's Selfie at \"Rochette\"",
+		author: "NASA / JPL-Caltech",
+		year: 2021,
+		url: "https://commons.wikimedia.org/wiki/File:Perseverance-Selfie-at-Rochette-Horizontal-V2.gif",
+		alternativetitle: "NASA's Perseverance Mars rover self-portrait at the Rochette abrasion patch (Public Domain)"
 	}
 };
