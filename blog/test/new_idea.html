@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Kohärente Verschiedenheit — interaktive Reise</title>
+<style>
+:root{--bg:#0b1020;--panel:#121a2d;--panel2:#0f1728;--text:#e8edf7;--muted:#9aa7bf;--line:#263452;--accent:#7dd3fc;--accent2:#c4b5fd;--good:#86efac;--warn:#fbbf24}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% -10%,#1b2850 0,#0b1020 48%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{max-width:1200px;margin:auto;padding:34px 22px 14px} h1{font-size:clamp(28px,4vw,48px);line-height:1.05;margin:0 0 10px} h2{margin:0 0 8px;font-size:22px} h3{margin:18px 0 6px}.lede{color:var(--muted);max-width:850px;font-size:17px}
+main{max-width:1200px;margin:auto;padding:10px 22px 50px}.tabs{display:flex;gap:7px;overflow:auto;padding:8px 0 16px;position:sticky;top:0;background:rgba(11,16,32,.9);backdrop-filter:blur(10px);z-index:10}.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:9px 13px;cursor:pointer;white-space:nowrap}.tabs button.active{color:#06111b;background:var(--accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:1.35fr .75fr;gap:16px}.card{background:linear-gradient(180deg,rgba(18,26,45,.96),rgba(12,18,32,.96));border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 14px 40px rgba(0,0,0,.18)}canvas{display:block;width:100%;height:500px;background:#08101e;border-radius:13px;border:1px solid #1d2a45}.controls{display:grid;gap:12px}.control{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02)}label{display:flex;justify-content:space-between;gap:10px;color:var(--muted);margin-bottom:7px}input[type=range]{width:100%}button.action{border:1px solid var(--line);background:#18233b;color:var(--text);border-radius:10px;padding:9px 11px;cursor:pointer}.actions{display:flex;gap:8px;flex-wrap:wrap}.math{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#080d18;border:1px solid #202d47;padding:10px;border-radius:10px;overflow:auto}.hint{color:var(--muted);font-size:13px}.big{font-size:24px;color:var(--accent);font-weight:650}.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 8px;color:var(--muted);font-size:12px}.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:13px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.footer{color:var(--muted);margin-top:25px;font-size:13px}.hide{display:none}@media(max-width:850px){.grid,.two{grid-template-columns:1fr}canvas{height:420px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Kohärente Verschiedenheit</h1>
+  <p class="lede">Eine visuelle Reise von <b>Unterscheidung</b> über <b>Relation, Lokalität und Garben</b> bis zu <b>∞-Kohärenz</b>. Nicht zum Auswendiglernen: Ziehe, verbinde, verforme und beobachte, was sich dabei verändert.</p>
+</header>
+<main>
+<nav class="tabs" id="tabs"></nav>
+
+<section id="app"></section>
+
+<div class="footer">
+  Mathematischer Hinweis: Die Visualisierungen sind didaktische Modelle. Besonders bei ∞-Garben wird „≈“ als Äquivalenz/Homotopie dargestellt; das ist nicht dasselbe wie eine bloß metrische Nähe.
+</div>
+</main>
+
+<script>
+const app=document.getElementById('app'), tabs=document.getElementById('tabs');
+const steps=[
+['1','Unterscheidung'],['2','Relation'],['3','Lokalität'],['4','Garbe'],['5','∞-Kohärenz'],['6','Perspektiven'],['7','Topos'],['8','Gesamtbild']
+];
+let current=0;
+steps.forEach((s,i)=>{let b=document.createElement('button');b.textContent=s[0]+'. '+s[1];b.onclick=()=>{current=i;render()};tabs.appendChild(b)});
+
+function shell(title,sub,controls,canvasId){
+return `<div class="grid"><div class="card"><h2>${title}</h2><p class="hint">${sub}</p><canvas id="${canvasId}"></canvas></div><div class="card controls">${controls}</div></div>`;
+}
+function ctxSetup(c){const d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;let x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return [x,w,h]}
+function line(x,a,b,dash=[]){x.save();x.setLineDash(dash);x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke();x.restore()}
+function node(x,p,label,r=9){x.beginPath();x.arc(p[0],p[1],r,0,Math.PI*2);x.fill();x.fillText(label,p[0]+r+5,p[1]+4)}
+function arrow(x,a,b,label=''){let ang=Math.atan2(b[1]-a[1],b[0]-a[0]), L=13; x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke();x.beginPath();x.moveTo(b[0],b[1]);x.lineTo(b[0]-L*Math.cos(ang-.5),b[1]-L*Math.sin(ang-.5));x.lineTo(b[0]-L*Math.cos(ang+.5),b[1]-L*Math.sin(ang+.5));x.closePath();x.fill();if(label)x.fillText(label,(a[0]+b[0])/2+6,(a[1]+b[1])/2-6)}
+
+function render(){
+[...tabs.children].forEach((b,i)=>b.classList.toggle('active',i===current));
+if(current===0)step0(); if(current===1)step1(); if(current===2)step2(); if(current===3)step3(); if(current===4)step4(); if(current===5)step5(); if(current===6)step6(); if(current===7)step7();
+}
+
+function step0(){
+app.innerHTML=shell('1. Unterscheidung','Spencer-Browns Ausgangspunkt als Minimalmodell: Eine Unterscheidung erzeugt zwei Seiten. Ziehe die Trennlinie.',`
+<div class="big">A | B</div>
+<p>Die Linie macht A und B unterscheidbar. Sie sagt noch nicht, <i>wie</i> A und B miteinander verbunden sind.</p>
+<div class="control"><label>Position der Grenze <span id="v">50%</span></label><input id="sep" type="range" min="20" max="80" value="50"></div>
+<div class="math">Distinktion: A \\mid B</div>
+<p class="hint">Merke: Die Grenze trennt — und macht dadurch erst eine relationale Situation sichtbar.</p>`,'c0');
+let c=document.getElementById('c0'), [x,w,h]=ctxSetup(c);let sep=document.getElementById('sep');
+function draw(){x.clearRect(0,0,w,h);let q=w*sep.value/100;x.fillStyle='#17233a';x.fillRect(0,0,q,h);x.fillStyle='#152f35';x.fillRect(q,0,w-q,h);x.fillStyle='#7dd3fc';x.fillRect(q-2,0,4,h);x.fillStyle='#e8edf7';x.font='bold 22px system-ui';x.fillText('A',q/2-7,h/2);x.fillText('B',q+(w-q)/2-7,h/2);document.getElementById('v').textContent=sep.value+'%'}
+sep.oninput=draw;draw();
+}
+
+function step1(){
+app.innerHTML=shell('2. Relation','Jetzt sind A und B nicht nur verschieden. Du kannst ihre Verbindung verändern.',`
+<div class="control"><label>Verbindungsstärke <span id="rv">0.5</span></label><input id="rel" type="range" min="0" max="100" value="50"></div>
+<div class="actions"><button class="action" id="add">Dritten Punkt hinzufügen</button><button class="action" id="reset">Reset</button></div>
+<div class="math">R(A,B)</div>
+<p>Eine Relation ist noch kein Raum. Aber sobald Beziehungen organisiert werden, entsteht eine Struktur von Zusammenhang.</p>
+<p class="hint">Ziehe die Punkte. Beobachte: Nicht die Punkte allein tragen die Struktur, sondern ihre Beziehungen.</p>`,'c1');
+let c=document.getElementById('c1'),[x,w,h]=ctxSetup(c), pts=[{x:w*.32,y:h*.48,n:'A'},{x:w*.68,y:h*.48,n:'B'}],extra=false;
+function draw(){x.clearRect(0,0,w,h);x.strokeStyle='#7dd3fc';x.fillStyle='#7dd3fc';x.lineWidth=2;let strength=+document.getElementById('rel').value/100;let a=pts[0],b=pts[1];x.globalAlpha=strength;line(x,[a.x,a.y],[b.x,b.y]);x.globalAlpha=1;pts.forEach(p=>node(x,{0:p.x,1:p.y},p.n,10));}
+function hit(e){let r=c.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;return pts.findIndex(p=>(p.x-mx)**2+(p.y-my)**2<300)}
+let drag=-1;c.onpointerdown=e=>{drag=hit(e);if(drag>=0)c.setPointerCapture(e.pointerId)};c.onpointermove=e=>{if(drag<0)return;let r=c.getBoundingClientRect();pts[drag].x=e.clientX-r.left;pts[drag].y=e.clientY-r.top;draw()};c.onpointerup=()=>drag=-1;
+document.getElementById('rel').oninput=e=>{document.getElementById('rv').textContent=(e.target.value/100).toFixed(2);draw()};
+document.getElementById('add').onclick=()=>{if(!extra){pts.push({x:w*.5,y:h*.22,n:'C'});extra=true;draw()}};document.getElementById('reset').onclick=()=>{pts.splice(2);extra=false;draw()};draw();
+}
+
+function step2(){
+app.innerHTML=shell('3. Lokalität','Eine Relation wird räumlich interessant, wenn du von Umgebungen sprechen kannst. Verschiebe x und verändere den Radius seiner Umgebung.',`
+<div class="control"><label>Radius der Umgebung <span id="rr">80</span></label><input id="rad" type="range" min="20" max="190" value="80"></div>
+<div class="math">U(x) = { y \\mid d(x,y) &lt; r }</div>
+<p>Das ist noch metrischer als allgemeine Topologie. Der didaktische Punkt ist: <b>lokal</b> bedeutet, dass ein Zustand eine Umgebung hat, ohne den ganzen Raum betrachten zu müssen.</p>
+<p class="hint">Ziehe x. Welche Punkte werden lokal „sichtbar“?</p>`,'c2');
+let c=document.getElementById('c2'),[x,w,h]=ctxSetup(c), pts=Array.from({length:22},(_,i)=>({x:60+Math.random()*(w-120),y:60+Math.random()*(h-120)})),px=w*.5,py=h*.5,drag=false;
+function draw(){x.clearRect(0,0,w,h);let r=+document.getElementById('rad').value; x.fillStyle='rgba(125,211,252,.10)';x.strokeStyle='#7dd3fc';x.lineWidth=2;x.beginPath();x.arc(px,py,r,0,7);x.fill();x.stroke();pts.forEach(p=>{let d=Math.hypot(p.x-px,p.y-py);x.fillStyle=d<r?'#86efac':'#71809a';node(x,p,'',4)});x.fillStyle='#7dd3fc';node(x,{0:px,1:py},'x',9);document.getElementById('rr').textContent=r}
+c.onpointerdown=e=>{let r=c.getBoundingClientRect();if(Math.hypot(e.clientX-r.left-px,e.clientY-r.top-py)<18){drag=true;c.setPointerCapture(e.pointerId)}};c.onpointermove=e=>{if(!drag)return;let r=c.getBoundingClientRect();px=e.clientX-r.left;py=e.clientY-r.top;draw()};c.onpointerup=()=>drag=false;document.getElementById('rad').oninput=draw;draw();
+}
+
+function step3(){
+app.innerHTML=shell('4. Garbe: lokal → global','Hier passiert der zentrale „Klebe“-Schritt. Vier lokale Karten beschreiben ein gemeinsames Ganzes.',`
+<div class="control"><label>Lokale Abweichung <span id="dv">0</span></label><input id="dev" type="range" min="0" max="100" value="0"></div>
+<div class="actions"><button class="action" id="glue">Globalen Schnitt berechnen</button><button class="action" id="split">Lokale Schnitte zurücksetzen</button></div>
+<div class="math">s_i \\in F(U_i)<br>s_i|_{U_i\\cap U_j}=s_j|_{U_i\\cap U_j}</div>
+<p>Bei einer gewöhnlichen Garbe müssen die lokalen Daten auf Überlappungen <b>gleich</b> sein. Sind sie kompatibel, können sie zu einem globalen Schnitt verklebt werden.</p>
+<p id="status" class="hint">Noch nicht verklebt.</p>`,'c3');
+let c=document.getElementById('c3'),[x,w,h]=ctxSetup(c),dev=document.getElementById('dev'),glued=false;
+function draw(){x.clearRect(0,0,w,h);let cols=2,rows=2,cw=w*.34,ch=h*.34,gx=w*.33,gy=h*.23;let d=+dev.value/100;for(let j=0;j<2;j++)for(let i=0;i<2;i++){let ox=gx+i*cw*.92,oy=gy+j*ch*.92;x.strokeStyle='#324462';x.strokeRect(ox,oy,cw,ch);x.strokeStyle=glued?'#86efac':'#7dd3fc';x.lineWidth=2;let phase=(i+j)*.25+d*(i-j)*.5;x.beginPath();for(let k=0;k<=60;k++){let t=k/60,xx=ox+20+t*(cw-40),yy=oy+ch*.55+Math.sin(t*5+phase)*22+(d*30*(i-j));if(k)x.lineTo(xx,yy);else x.moveTo(xx,yy)}x.stroke();x.fillStyle='#9aa7bf';x.font='12px system-ui';x.fillText(`U${j*2+i+1}`,ox+8,oy+18)}document.getElementById('status').textContent=glued?'Globaler Schnitt: lokal kompatible Daten wurden als ein Ganzes interpretiert.':'Noch nicht verklebt.'}
+dev.oninput=()=>{glued=false;document.getElementById('dv').textContent=dev.value;draw()};document.getElementById('glue').onclick=()=>{glued=(+dev.value<12);draw()};document.getElementById('split').onclick=()=>{glued=false;dev.value=0;document.getElementById('dv').textContent=0;draw()};draw();
+}
+
+function step4(){
+app.innerHTML=shell('5. ∞-Kohärenz: Gleichheit wird zu Äquivalenz','Jetzt ersetzen wir strikte Gleichheit durch Äquivalenzen. Und auch die Äquivalenzen müssen kohärent sein.',`
+<div class="control"><label>Homotopie-Stärke <span id="hv">50%</span></label><input id="hom" type="range" min="0" max="100" value="50"></div>
+<div class="actions"><button class="action" id="coh">Dreifach-Kohärenz zeigen</button><button class="action" id="clearcoh">Ausblenden</button></div>
+<div class="math">s_i|_{U_{ij}} \\simeq s_j|_{U_{ij}}<br>\\alpha_{ij}:s_i\\simeq s_j<br>\\text{und höhere Kohärenzen auf }U_{ijk},\\ldots</div>
+<p>Bei ∞-Garben ist „passen“ homotopisch reich: Daten müssen nicht buchstäblich gleich sein. Es gibt Äquivalenzen zwischen ihnen; diese Äquivalenzen haben wiederum Kohärenzen.</p>`,'c4');
+let c=document.getElementById('c4'),[x,w,h]=ctxSetup(c),coh=false;
+function draw(){x.clearRect(0,0,w,h);let P=[{x:w*.5,y:h*.22,n:'A'},{x:w*.28,y:h*.68,n:'B'},{x:w*.72,y:h*.68,n:'C'}],s=+document.getElementById('hom').value/100;x.strokeStyle='#c4b5fd';x.fillStyle='#c4b5fd';x.lineWidth=3;arrow(x,[P[0].x,P[0].y],[P[1].x,P[1].y],'≃');arrow(x,[P[1].x,P[1].y],[P[2].x,P[2].y],'≃');arrow(x,[P[2].x,P[2].y],[P[0].x,P[0].y],'≃');if(coh){x.globalAlpha=.25+.7*s;x.fillStyle='#7dd3fc';x.beginPath();x.moveTo(P[0].x,P[0].y);x.lineTo(P[1].x,P[1].y);x.lineTo(P[2].x,P[2].y);x.closePath();x.fill();x.globalAlpha=1;x.fillStyle='#7dd3fc';x.fillText('2-dimensionale Kohärenz',w*.5-70,h*.52)}P.forEach(p=>node(x,{0:p.x,1:p.y},p.n,10));document.getElementById('hv').textContent=Math.round(s*100)+'%'}
+document.getElementById('hom').oninput=draw;document.getElementById('coh').onclick=()=>{coh=true;draw()};document.getElementById('clearcoh').onclick=()=>{coh=false;draw()};draw();
+}
+
+function step5(){
+app.innerHTML=shell('6. Perspektiven: Das „Ding“ kann aus Kohärenz entstehen','Keine privilegierte Mitte: visuell, auditiv, leiblich und räumlich sind lokale Erscheinungsweisen. Ziehe Knoten und beobachte die Übergänge.',`
+<div class="control"><label>Äquivalenz-Toleranz <span id="pv">0.6</span></label><input id="tol" type="range" min="0" max="100" value="60"></div>
+<div class="math">A \\simeq B \\simeq C</div>
+<p>Die stärkere Abstraktion lautet:</p>
+<div class="big">Objekt ≈ kohärentes Netz seiner Erscheinungsweisen</div>
+<p class="hint">Das ist eine philosophisch-mathematische Modellidee, keine Behauptung, dass Empfindungen bereits mathematisch als ∞-Garben formalisiert wären.</p>`,'c5');
+let c=document.getElementById('c5'),[x,w,h]=ctxSetup(c),pts=[{x:w*.25,y:h*.28,n:'visuell'},{x:w*.72,y:h*.28,n:'auditiv'},{x:w*.25,y:h*.7,n:'leiblich'},{x:w*.72,y:h*.7,n:'räumlich'}],drag=-1;
+function draw(){x.clearRect(0,0,w,h);let t=+document.getElementById('tol').value/100;x.strokeStyle='#7dd3fc';x.fillStyle='#7dd3fc';x.lineWidth=2;[[0,1],[0,2],[1,3],[2,3],[0,3]].forEach(([i,j],k)=>{x.globalAlpha=.25+.75*t;arrow(x,[pts[i].x,pts[i].y],[pts[j].x,pts[j].y],k===4?'≈':'≃');x.globalAlpha=1});pts.forEach(p=>node(x,{0:p.x,1:p.y},p.n,10));document.getElementById('pv').textContent=t.toFixed(2)}
+function hit(e){let r=c.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;return pts.findIndex(p=>Math.hypot(p.x-mx,p.y-my)<20)}
+c.onpointerdown=e=>{drag=hit(e);if(drag>=0)c.setPointerCapture(e.pointerId)};c.onpointermove=e=>{if(drag<0)return;let r=c.getBoundingClientRect();pts[drag].x=e.clientX-r.left;pts[drag].y=e.clientY-r.top;draw()};c.onpointerup=()=>drag=-1;document.getElementById('tol').oninput=draw;draw();
+}
+
+function step6(){
+app.innerHTML=shell('7. Topos: eine ganze lokale mathematische Welt','Ein Topos ist mehr als ein Raum: Er trägt eine Kategorie von Objekten und eine interne Logik. Hier siehst du eine vereinfachte „Weltkarte“.',`
+<div class="actions"><button class="action" id="logic">Logik umschalten</button><button class="action" id="world">Neue Insel</button></div>
+<div class="math">\\mathbf{Sh}(X) = \\text{Garbe(n) auf }X</div>
+<p>In einem Topos können Objekte, Abbildungen, Subobjekte und interne Aussagen untersucht werden. Allgemeine Topoi haben typischerweise intuitionistische, nicht notwendig klassische interne Logik.</p>
+<p id="logicText" class="hint">Interne Perspektive: „wahr“ bedeutet strukturell wahr in dieser mathematischen Welt.</p>`,'c6');
+let c=document.getElementById('c6'),[x,w,h]=ctxSetup(c),n=3,classic=false;
+function draw(){x.clearRect(0,0,w,h);let centers=[];for(let i=0;i<n;i++){let a=i*2*Math.PI/n-Math.PI/2,r=Math.min(w,h)*.28;centers.push([w/2+r*Math.cos(a),h/2+r*Math.sin(a)])}x.strokeStyle='#334563';x.lineWidth=2;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)arrow(x,centers[i],centers[j],'');centers.forEach((p,i)=>{x.fillStyle=i===0?'#7dd3fc':'#c4b5fd';x.beginPath();x.arc(p[0],p[1],58,0,7);x.fill();x.fillStyle='#08101e';x.font='bold 15px system-ui';x.fillText('Welt '+String.fromCharCode(65+i),p[0]-28,p[1]+5);x.fillStyle='#9aa7bf';x.font='12px system-ui';x.fillText('lokale Regeln',p[0]-32,p[1]+24)});x.fillStyle='#e8edf7';x.font='bold 18px system-ui';x.fillText('Topos ≠ bloß ein Raum',w/2-90,h*.5);x.fillStyle='#9aa7bf';x.font='13px system-ui';x.fillText(classic?'klassische Logik (als Kontrast)':'interne intuitionistische Perspektive',w/2-95,h*.56)}
+document.getElementById('logic').onclick=()=>{classic=!classic;document.getElementById('logicText').textContent=classic?'Kontrastmodell: klassische Logik erlaubt P ∨ ¬P allgemein. Ein allgemeiner Topos muss das intern nicht erfüllen.':'Interne Perspektive: „wahr“ bedeutet strukturell wahr in dieser mathematischen Welt.';draw()};document.getElementById('world').onclick=()=>{n=Math.min(6,n+1);draw()};draw();
+}
+
+function step7(){
+app.innerHTML=shell('8. Gesamtbild','Jetzt laufen alle Ebenen zusammen. Klicke die Begriffe an; sie leuchten auf und zeigen, was sie jeweils hinzufügen.',`
+<div class="actions" id="terms"></div>
+<div id="desc" class="card" style="background:#0a1220;margin-top:4px">Wähle einen Begriff.</div>
+<div class="math">Unterscheidung → Relation → Lokalität → Kompatibilität → Kohärenz → Gluing → Globalität → Invarianz</div>
+<p class="hint">Die These ist keine etablierte Ontologie. Sie ist eine gemeinsame strukturelle Linse, unter der die besprochenen Theorien vergleichbar werden.</p>`,'c7');
+let c=document.getElementById('c7'),[x,w,h]=ctxSetup(c),terms=['Unterscheidung','Relation','Lokalität','Kompatibilität','Kohärenz','Gluing','Globalität','Invarianz'],active=-1;
+const text=[
+'Etwas wird von anderem unterscheidbar. Spencer-Brown macht die Distinktion zum Ausgangspunkt.',
+'Objekte sind nicht isoliert; es gibt Beziehungen und Morphismen zwischen ihnen.',
+'Ein Zustand hat eine Umgebung. Topologie formalisiert Nähe ohne zwingend metrische Abstände.',
+'Lokale Daten müssen auf Überschneidungen zusammenpassen.',
+'Bei ∞-Strukturen können auch die Übergänge selbst und ihre höheren Beziehungen kohärent sein.',
+'Kompatible lokale Daten werden zu globalen Daten zusammengesetzt; das ist der Garben-/Descent-Gedanke.',
+'Das Ganze ist nicht notwendig ein Behälter hinter den Teilen; es kann aus ihrer Kohärenz hervorgehen.',
+'Gesucht wird, was unter zulässigen Transformationen erhalten bleibt: ein Kernbegriff mathematischer Struktur.'
+];
+let div=document.getElementById('terms');terms.forEach((t,i)=>{let b=document.createElement('button');b.className='action';b.textContent=t;b.onclick=()=>{active=i;document.getElementById('desc').innerHTML='<h3>'+t+'</h3><p>'+text[i]+'</p>';draw()};div.appendChild(b)});
+function draw(){x.clearRect(0,0,w,h);let y=h/2, left=70,right=w-70,dx=(right-left)/(terms.length-1);x.strokeStyle='#334563';x.lineWidth=3;line(x,[left,y],[right,y]);terms.forEach((t,i)=>{let px=left+i*dx;x.fillStyle=i===active?'#86efac':'#7dd3fc';x.beginPath();x.arc(px,y,11,0,7);x.fill();x.fillStyle='#9aa7bf';x.font='11px system-ui';x.save();x.translate(px,y+27);x.rotate(i%2?-.18:.18);x.fillText(t,-25,0);x.restore()})}draw();
+}
+render();
+</script>
+</body>
+</html>
