@@ -192,8 +192,6 @@ function main() {
         if (!bySelector.has(gen)) bySelector.set(gen, []);
         bySelector.get(gen).push(f);
     }
-    // Use the generalized group for the actual rule count
-    const finalBySelector = groups;
 
     const cssLines = [];
     cssLines.push('');
@@ -250,7 +248,7 @@ function main() {
 
     if (opts.dryRun) {
         console.log('\n[DRY-RUN] Not writing to disk.');
-        writeReport(opts, fixes, whiteBugMap, skipped);
+        writeReport(opts, fixes, whiteBugMap, skipped, groups, bareSkips);
         process.exit(0);
     }
 
@@ -270,7 +268,7 @@ function main() {
 
     console.log(`\nApplied ${cssLines.filter(l => l.trim()).length} CSS rules to ${opts.css}`);
     console.log(`Backup saved to ${backupPath}`);
-    writeReport(opts, fixes, whiteBugMap, skipped);
+    writeReport(opts, fixes, whiteBugMap, skipped, groups, bareSkips);
     console.log(`\nReport saved to ${opts.out}/autofix_report.json`);
 }
 
