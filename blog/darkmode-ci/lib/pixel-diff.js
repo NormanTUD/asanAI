@@ -5,6 +5,12 @@
  */
 
 const fs = require('fs');
+const PNG = require('pngjs');
+
+// pngjs 7.x moved `sync` under `PNG.PNG.sync` (it's `png.sync` in 6.x).
+// Detect once and reuse.
+const PNG_SYNC = (PNG.PNG && PNG.PNG.sync) || PNG.sync;
+function pngSyncRead(buf) { return PNG_SYNC.read(buf); }
 
 /**
  * Find clusters of WHITE pixels in BOTH light and dark screenshots, at
@@ -21,14 +27,13 @@ const fs = require('fs');
  * @returns {Promise<Array<{x, y, w, h, pixels}>>}
  */
 async function findStuckWhiteClusters(lightPath, darkPath, opts = {}) {
-    const png = opts.png || require('pngjs');
     const minCluster = opts.minCluster || 800;
     const whiteThreshold = opts.whiteThreshold || 235;
     const maxSimilarity = opts.maxSimilarity || 30;
     const maxAspectRatio = opts.maxAspectRatio || 5;
 
-    const light = png.sync.read(fs.readFileSync(lightPath));
-    const dark  = png.sync.read(fs.readFileSync(darkPath));
+    const light = pngSyncRead(fs.readFileSync(lightPath));
+    const dark  = pngSyncRead(fs.readFileSync(darkPath));
     const W = dark.width, H = dark.height;
 
     const mask = new Uint8Array(W * H);
@@ -53,11 +58,10 @@ async function findStuckWhiteClusters(lightPath, darkPath, opts = {}) {
  * (potential theme-switch bugs).
  */
 async function findChangedClusters(lightPath, darkPath, opts = {}) {
-    const png = opts.png || require('pngjs');
     const minCluster = opts.minCluster || 500;
     const minDifference = opts.minDifference || 100;
-    const light = png.sync.read(fs.readFileSync(lightPath));
-    const dark  = png.sync.read(fs.readFileSync(darkPath));
+    const light = pngSyncRead(fs.readFileSync(lightPath));
+    const dark  = pngSyncRead(fs.readFileSync(darkPath));
     const W = dark.width, H = dark.height;
     const mask = new Uint8Array(W * H);
     for (let y = 0; y < H; y++) {

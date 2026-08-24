@@ -215,7 +215,7 @@ async function main() {
         process.stdout.write(JSON.stringify(summary, null, 2) + '\n');
     } else {
         console.log(`\nDone. ${reportPath}`);
-        console.log(`Summary: ${summary.pages} pages, ${summary.totalBugs} theme bugs, ${summary.totalFontIssues} font issues, ${summary.totalWhites} stuck-white clusters (${summary.durationSec}s)`);
+        console.log(`Summary: ${summary.pages} pages, ${summary.totalBugs} theme bugs, ${summary.totalFontIssues} font issues, ${summary.totalWhiteClusters} stuck-white clusters (${summary.durationSec}s)`);
     }
     // Exit code: 1 if any critical/bad bugs or stuck-white clusters
     const critFontIssues = all.reduce((s, p) => s + p.blocks.reduce((x, b) =>
