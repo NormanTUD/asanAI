@@ -976,10 +976,16 @@ The \citealternativetitle{agc_module_image} (\citeyear{agc_module_image}) at the
 
 What matters for AI history is not the hardware but the **software**. J. Halcombe Laning designed a preemptive priority scheduler — the "Exec" and the "Waitlist" — that has no direct equivalent in the early ARPA machines of the same era \cite{hoag1976apollohistory}. When the rendezvous radar on \citealternativetitle{eyles2004lmcomputer} (\citeyear{eyles2004lmcomputer}) began flooding Apollo 11's computer with cycle steals five minutes before touchdown, the scheduler automatically shed low-priority tasks. Without it, the landing would have been aborted. Margaret Hamilton, who directed the software team, later received the Presidential Medal of Freedom for work that effectively founded **software engineering** as a discipline.
 
-<figure>
-    <img style="width: 100%; height: auto; display: block;" src="apollo_agc_modules.jpg" alt="Solid-state modules and backplane of the Apollo Guidance Computer" />
-    <figcaption class="md">The \citealternativetitle{agc_module_image} (CC-BY-SA 3.0). The first computer to use silicon ICs, and the first to demonstrate that software-driven priority scheduling could safely run a vehicle carrying human lives.</figcaption>
-</figure>
+<div class="image-row">
+    <figure>
+        <img src="apollo_agc_modules.jpg" alt="Solid-state modules and backplane of the Apollo Guidance Computer" />
+        <figcaption class="md">The \citealternativetitle{agc_module_image} (CC-BY-SA 3.0). The first computer to use silicon ICs, and the first to demonstrate that software-driven priority scheduling could safely run a vehicle carrying human lives.</figcaption>
+    </figure>
+    <figure>
+        <img src="margaret_hamilton.jpg" alt="Margaret Hamilton in 1969 standing next to stacks of the Apollo Guidance Computer source-code listings" />
+        <figcaption class="md">The \citealternativetitle{hamilton1969_image} (Public Domain, PD US no notice). Margaret Hamilton beside the printouts of the AGC software her MIT team produced for the Apollo Command and Lunar Modules — the "stacks" she is standing next to are taller than she is.</figcaption>
+    </figure>
+</div>
 
 ### From Fly-by-Wire to Fly-Yourself
 
@@ -1028,7 +1034,7 @@ The **Colossus** Mark 2 (\citeyear{flowers1983design}), built by Tommy Flowers a
 
 ### Wiener, Cybernetics, and the Anti-Aircraft Problem
 
-Norbert Wiener's *Cybernetics* (1948) grew directly out of his wartime work on **anti-aircraft fire-control**: predicting an aircraft's future position from noisy radar returns in order to aim guns. The mathematical theory of feedback that emerged directly shaped \citeauthorlastnameand{mccullochpitts1943}'s logical neuron and the entire cybernetic paradigm \cite{wiener1948cybernetics}. I. J. Good, a wartime collaborator of Turing's, later developed the Bayesian methods for cryptanalysis that became a foundation of modern statistical AI \cite{good1959statistics}.
+Norbert Wiener's *Cybernetics* (1948) grew directly out of his wartime work on **anti-aircraft fire-control**: predicting an aircraft's future position from noisy radar returns in order to aim guns. The book synthesized Wiener's feedback theory with \citeauthor{mccullochpitts1943}'s 1943 logical-neuron paper, written five years earlier, to define the cybernetic paradigm that dominated AI in the 1950s \cite{wiener1948cybernetics}. I. J. Good, a wartime collaborator of Turing's, later developed the Bayesian methods for cryptanalysis that became a foundation of modern statistical AI \cite{good1959statistics}.
 
 ### ARPA/DARPA: The Government Patron of AI
 

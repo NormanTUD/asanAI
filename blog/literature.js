@@ -5320,6 +5320,13 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Apollo_Guidance_Computer.jpg",
 		alternativetitle: "Autopilot's photograph of the AGC modules at the InfoAge museum (CC-BY-SA 3.0)"
 	},
+	"hamilton1969_image": {
+		title: "Margaret Hamilton standing beside the Apollo Guidance Computer source-code listings, 1969",
+		author: "NASA / Draper Laboratory (restoration by Adam Cuerden, 2017)",
+		year: 1969,
+		url: "https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg",
+		alternativetitle: "NASA photograph of Margaret Hamilton with the AGC listings (Public Domain, PD US no notice)"
+	},
 
 	// ═══════════════════════════════════════════════
 	// Weapons Technology
