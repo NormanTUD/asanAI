@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 	<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#ffffff'; ?>">
-	<title>From Stone Age Tools to ChatGPT</title>
+	<title>From Big Bang to ChatGPT</title>
 	<script>
 	function toggleTheme() {
 		var html = document.documentElement;
@@ -44,10 +44,10 @@
 
 <div class="course-hero">
 	<?php render_constellation(); ?>
-	<h1>From Stone Age Tools to ChatGPT</h1>
+	<h1>From Big Bang to ChatGPT</h1>
 </div>
 
-<?php incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro"); ?>
+<?php incl("From Big Bang to ChatGPT: Beyond the Black Box", "intro"); ?>
 
 <div class="course-overview">
 

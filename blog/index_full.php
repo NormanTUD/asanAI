@@ -6,7 +6,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#ffffff'; ?>">
-	<title>From Stone Age Tools to ChatGPT</title>
+	<title>From Big Bang to ChatGPT</title>
 	<script>
 	function toggleTheme() {
 		var html = document.documentElement;
@@ -43,7 +43,7 @@
 
 <div id="contents" style="display: none">
 <?php
-	incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro");
+	incl("From Big Bang to ChatGPT: Beyond the Black Box", "intro");
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
 	incl("Brief History of AI", "history");
 	incl("Basic Math Concepts I — The Numerical Foundations", "math_i");
