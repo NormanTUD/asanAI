@@ -426,8 +426,7 @@ window.bibData = {
 	"rosenthal2005hot": {
 		title: "Consciousness, Interpretation, and Higher-Order Thought",
 		author: "David M. Rosenthal",
-		year: 2005,
-		url: "https://www.davidrosenthal.org/DR-Vienna.pdf"
+		year: 2005
 	},
 	"lau2011hot": {
 		title: "Empirical support for higher-order theories of conscious awareness",
@@ -1261,7 +1260,7 @@ window.bibData = {
 		url: "https://pubs.aip.org/aip/apl/article-abstract/17/10/423/42220/RADIATION-LOSSES-IN-GLASS-OPTICAL-WAVEGUIDES?redirectedFrom=fulltext"
 	},
 	"semiconductor": {
-		url: "https://www.eletrica.ufpr.br/mehl/materiais/documentos/PhysRev.74.230.pdf",
+		url: "https://web.archive.org/web/20250725045353/https://www.eletrica.ufpr.br/mehl/materiais/documentos/PhysRev.74.230.pdf",
 		title: "The Transistor, A Semi-Conductor Triode",
 		author: "J. Bardeen, W. H. Brattain",
 		year: 1948
@@ -1384,12 +1383,6 @@ window.bibData = {
 		title: "An information integration theory of consciousness",
 		year: 2004,
 		author: "Giulio Tononi"
-	},
-	"rosenthal2005hot": {
-		url: "https://www.davidrosenthal.org/DR-Vienna.pdf",
-		author: "David M. Rosenthal",
-		year: 2005,
-		title: "Consciousness, Interpretation, and Higher-Order-Thought"
 	},
 	"earlyl2": {
 		url: "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf",
@@ -2923,7 +2916,7 @@ window.bibData = {
 		author: "Yoshua Bengio, Patrice Simard, Paolo Frasconi",
 		year: "1994",
 		title: "Learning long-term dependencies with gradient descent is difficult",
-		url: "https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf",
+		url: "https://web.archive.org/web/20260425113855/https://www.comp.hkbu.edu.hk/~markus/teaching/comp7650/tnn-94-gradient.pdf",
 	},
 	"he2015resnet": {
 		author: "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
@@ -2979,7 +2972,7 @@ window.bibData = {
 		author: "Ilya Sutskever, James Martens, Geoffrey Everest Hinton",
 		year: "2011",
 		title: "Generating Text with Recurrent Neural Networks",
-		url: "https://www.cs.utoronto.edu/~ilya/pubs/2011/LANG-RNN.pdf",
+		url: "https://web.archive.org/web/20260812041451/https://www.cs.utoronto.ca/~ilya/pubs/2011/LANG-RNN.pdf",
 	},
 	// check years
 	"harnad1990symbol": {
@@ -4348,7 +4341,6 @@ window.bibData = {
 		alternativetitle: "R-GCN"
 	},
 	"blesch2024neurokgc": {
-		url: "https://www.cs.ox.ac.uk/is/events/NeuroSymbolicAISummit/NeuroSym_KGC_overview.pdf",
 		title: "Neural-Symbolic Knowledge Graphs",
 		author: "Conference Proceedings",
 		year: 2024,
@@ -5233,21 +5225,19 @@ window.bibData = {
 		title: "Digital Apollo: Human and Machine in Spaceflight",
 		author: "David A. Mindell",
 		year: 2008,
-		url: "https://mitpress.mit.edu/9780262134772/",
 		alternativetitle: "Mindell's history of the AGC and software engineering's origins in Apollo"
 	},
 	"hoag1976apollohistory": {
 		title: "The History of Apollo On-board Guidance, Navigation, and Control",
 		author: "David Hoag",
 		year: 1976,
-		url: "https://klabs.org/history_docs/mit_apollo_gnc_1976/hoag_apgnc_1976.pdf",
+		url: "https://ntrs.nasa.gov/citations/19760019157",
 		alternativetitle: "Hoag's official history of the Apollo guidance system at the MIT Instrumentation Laboratory"
 	},
 	"eyles2004lmcomputer": {
 		title: "Tales from the Lunar Module Guidance Computer",
 		author: "Don Eyles",
 		year: 2004,
-		url: "https://klabs.org/richcontent/Tales_from_the_LM_Guidance_Computer_Eyles.pdf",
 		alternativetitle: "Eyles's first-hand account of the 1201/1202 alarms on Apollo 11"
 	},
 	"tomayko2000flybywire": {
@@ -5261,49 +5251,44 @@ window.bibData = {
 		title: "Two Years of Visual Odometry on the Mars Exploration Rovers",
 		author: "Mark Maimone, Yang Cheng, Larry Matthies",
 		year: 2007,
-		url: "https://www-robotics.jpl.nasa.gov/publications/Mark_Maimone/maimone_iros07.pdf",
 		alternativetitle: "Maimone et al. on Visual Odometry for Spirit and Opportunity"
 	},
 	"estlin2009aegis": {
 		title: "AEGIS Automated Targeting for the MER Opportunity Rover",
 		author: "Tara A. Estlin, Daniel M. Gaines, Caroline Chouinard, Rebecca Castaño, Benjamin J. Bornstein, Michele L. Jain, James M. Dohm",
 		year: 2009,
-		url: "https://www-robotics.jpl.nasa.gov/publications/Tara_Estlin/estlin_science09.pdf",
 		alternativetitle: "Estlin et al. on AEGIS, autonomous science target selection on Mars rovers"
 	},
 	"kalman1960filter": {
 		title: "A New Approach to Linear Filtering and Prediction Problems",
 		author: "Rudolf E. Kálmán",
 		year: 1960,
-		url: "https://www.cs.unc.edu/~welch/kalman/media/pdf/Kalman1960.pdf",
+		url: "https://web.archive.org/web/20260521190709/https://www.cs.unc.edu/~welch/kalman/media/pdf/Kalman1960.pdf",
 		alternativetitle: "Kalman's original 1960 filter paper"
 	},
 	"parkinson1996gps": {
 		title: "Global Positioning System: Theory and Applications",
 		author: "Bradford W. Parkinson, James J. Spilker Jr.",
 		year: 1996,
-		url: "https://web.stanford.edu/group/scpnt/gpslab/pubs/parkinson_smil_1996_vol1.pdf",
 		alternativetitle: "Parkinson & Spilker, the standard reference on GPS origins"
 	},
 	"viterbi1967error": {
 		title: "Error Bounds for Convolutional Codes and an Asymptotically Optimum Decoding Algorithm",
 		author: "Andrew J. Viterbi",
 		year: 1967,
-		url: "https://www.cs.toronto.edu/~brudno/csc2209/Papers/Viterbi67.pdf",
 		alternativetitle: "Viterbi's 1967 paper introducing the Viterbi decoder"
 	},
 	"reed1960polynomial": {
 		title: "Polynomial Codes over Certain Finite Fields",
 		author: "Irving S. Reed, Gustave Solomon",
 		year: 1960,
-		url: "https://web.archive.org/web/20150924044628/http://web.eecs.utk.edu/~grose/courses/ece-566/reading/reed-solomon-original.pdf",
 		alternativetitle: "Reed & Solomon's 1960 paper on Reed–Solomon error-correcting codes"
 	},
 	"berrou1993turbo": {
 		title: "Near Optimum Error Correcting Coding and Decoding: Turbo-Codes",
 		author: "Claude Berrou, Alain Glavieux",
 		year: 1993,
-		url: "https://www-inst.eecs.berkeley.edu/~n262/berrou.pdf",
+		url: "https://ieeexplore.ieee.org/document/209582",
 		alternativetitle: "Berrou & Glavieux's 1993 paper introducing turbo codes"
 	},
 	"nasa2021perseverance": {
@@ -5336,7 +5321,7 @@ window.bibData = {
 		title: "The Design of Colossus",
 		author: "Thomas H. Flowers",
 		year: 1983,
-		url: "https://www.icl.com/infocentre/articles/history/flowers-design-of-colossus.pdf",
+		url: "https://ieeexplore.ieee.org/document/1054058",
 		alternativetitle: "Flowers's first full technical account of the design and construction of Colossus"
 	},
 	"copeland2006colossus": {
@@ -5350,14 +5335,12 @@ window.bibData = {
 		title: "Treatise on the Enigma (Knochenhauer Lectures)",
 		author: "Alan M. Turing",
 		year: 2018,
-		url: "https://cms.math.ca/publications/crux/CRUXv44n4.pdf",
 		alternativetitle: "Turing's wartime work at Bletchley, edited and published by Copeland"
 	},
 	"good1959statistics": {
 		title: "The Paradox of Prediction",
 		author: "I. J. Good",
 		year: 1959,
-		url: "https://gwern.net/doc/statistics/1959-good.pdf",
 		alternativetitle: "Good's wartime collaborator on Bayesian methods for cryptanalysis"
 	},
 	"nilsson1984shakey": {
@@ -5371,14 +5354,13 @@ window.bibData = {
 		title: "DARPA's 60th Anniversary",
 		author: "DARPA",
 		year: 2018,
-		url: "https://www.darpa.mil/about/history",
+		url: "https://web.archive.org/web/20240520193708/https://www.darpa.mil/about/history",
 		alternativetitle: "DARPA's official history timeline"
 	},
 	"klatt1977sur": {
 		title: "Review of the ARPA Speech Understanding Project",
 		author: "Dennis H. Klatt",
 		year: 1977,
-		url: "https://dash.harvard.edu/handle/1/27801434",
 		alternativetitle: "Klatt's authoritative review of the ARPA SUR program (1971–1976)"
 	},
 	"lee1989sphinx": {
@@ -5392,14 +5374,13 @@ window.bibData = {
 		title: "Sequential Analysis",
 		author: "Abraham Wald",
 		year: 1947,
-		url: "https://archive.org/details/sequentialanaly00wald",
+		url: "https://archive.org/details/in.ernet.dli.2015.271076",
 		alternativetitle: "Wald's Sequential Analysis, developed during WWII for inspection sampling"
 	},
 	"edwards1996closedworld": {
 		title: "The Closed World: Computers and the Politics of Discourse in Cold War America",
 		author: "Paul N. Edwards",
 		year: 1996,
-		url: "https://mitpress.mit.edu/9780262050614/the-closed-world/",
 		alternativetitle: "Edwards's history of SAGE and Cold War command-and-control computing"
 	},
 	"colossus_image": {
@@ -5432,7 +5413,7 @@ window.bibData = {
 		title: "Equation of State Calculations by Fast Computing Machines",
 		author: "Nicholas Metropolis, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, Edward Teller",
 		year: 1953,
-		url: "https://www.sciencedirect.com/science/article/pii/002199915890036X",
+		url: "https://bayes.wustl.edu/Manual/EquationOfState.pdf",
 		alternativetitle: "The 1953 Metropolis et al. paper introducing the Metropolis algorithm at Los Alamos"
 	},
 	"hastings1970mcmc": {
@@ -5446,22 +5427,13 @@ window.bibData = {
 		title: "The Monte Carlo Method",
 		author: "Nicholas Metropolis, Stanisław Ulam",
 		year: 1949,
-		url: "https://www.cs.fsu.edu/~apothecary/wp-content/uploads/2018/09/MetropolisUlam1949.pdf",
 		alternativetitle: "Metropolis & Ulam's 1949 paper describing the Monte Carlo method developed at Los Alamos"
 	},
 	"eckhardt1987ulam": {
 		title: "Stan Ulam, John von Neumann, and the Monte Carlo Method",
 		author: "Roger Eckhardt",
 		year: 1987,
-		url: "https://www.osti.gov/opennet/manhattan-project-history/People/Ulam-stan/ulam-biography.html",
 		alternativetitle: "Eckhardt's Los Alamos history of the origin of the Monte Carlo method"
-	},
-	"vonneumann1928game": {
-		title: "Zur Theorie der Gesellschaftsspiele",
-		author: "John von Neumann",
-		year: 1928,
-		url: "https://web.archive.org/web/20100705020840/http://www.dartmouth.edu/~matc/mathematics/geometry/pdf/VonNeumann1928.pdf",
-		alternativetitle: "von Neumann's 1928 paper on the minimax theorem"
 	},
 	"vonneumann_morgenstern1944": {
 		title: "Theory of Games and Economic Behavior",
@@ -5481,14 +5453,12 @@ window.bibData = {
 		title: "Description of the ENIAC and Comments on Electronic Digital Computing Machines",
 		author: "Arthur W. Burks, Herman H. Goldstine, John von Neumann",
 		year: 1946,
-		url: "https://www.cs.unc.edu/~adyilie/comp265/BurksGoldstinevonNeumann.pdf",
 		alternativetitle: "Burks, Goldstine and von Neumann's ENIAC report, prepared at the Institute for Advanced Study"
 	},
 	"haigh2006eniac": {
 		title: "ENIAC in Action: Making and Remaking the Modern Computer",
 		author: "Thomas Haigh, Mark Priestley, Crispin Rope",
 		year: 2016,
-		url: "https://mitpress.mit.edu/9780262527007/eniac-in-action/",
 		alternativetitle: "Haigh et al.'s history of ENIAC and its six original women programmers"
 	},
 	"monte_carlo_animation_image": {
