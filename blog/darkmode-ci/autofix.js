@@ -274,13 +274,23 @@ function main() {
     console.log(`\nReport saved to ${opts.out}/autofix_report.json`);
 }
 
-function writeReport(opts, fixes, whiteBugMap, skipped) {
+function writeReport(opts, fixes, whiteBugMap, skipped, groups, bareSkips) {
     fs.mkdirSync(opts.out, { recursive: true });
     const report = {
         generatedAt: new Date().toISOString(),
         fontFixes: fixes,
+        appliedRules: [...groups.entries()].map(([gen, info]) => ({
+            selector: gen,
+            newColor: findSafeColor(),
+            originalColor: info.color,
+            severity: info.severity,
+            contrast: info.contrast,
+            elementsFixed: info.originalCount,
+            pages: [...info.pages],
+        })),
         stuckWhiteFixes: [...whiteBugMap.entries()].map(([sel, info]) => ({ sel, ...info, pages: [...info.pages] })),
-        skipped: skipped.map(s => ({ ...s, pages: [...s.pages] }))
+        skipped: skipped.map(s => ({ ...s, pages: [...s.pages] })),
+        bareTagSkipped: (bareSkips || []).map(s => ({ ...s, pages: [...s.pages] })),
     };
     fs.writeFileSync(path.join(opts.out, 'autofix_report.json'), JSON.stringify(report, null, 2));
 }
