@@ -113,16 +113,6 @@ function findDarkMarker(content) {
     return { pos: content.length, length: 0 };
 }
 
-/** Strip any previously-inserted AUTO-GENERATED block(s) so we don't stack. */
-function stripExistingAutoBlocks(content) {
-    // Match each AUTO-GENERATED block (either kind: FONT or STUCK-WHITE)
-    // including trailing blank lines.
-    return content.replace(
-        /\n*\/\*[\s\S]*?AUTO-GENERATED (?:DARK-MODE FONT READABILITY|STUCK-WHITE DARK-MODE) FIXES[\s\S]*?\*\/\n*/g,
-        '\n'
-    );
-}
-
 function main() {
     const opts = parseArgs();
     if (!fs.existsSync(opts.stream)) {
@@ -276,16 +266,14 @@ function main() {
     const styleContent = fs.readFileSync(opts.css, 'utf8');
     const backupPath = opts.css + '.bak-autofix';
     fs.writeFileSync(backupPath, styleContent);
-    // Strip any previous AUTO-GENERATED block(s) so we don't stack
-    const cleaned = stripExistingAutoBlocks(styleContent);
-    const marker = findDarkMarker(cleaned);
+    const marker = findDarkMarker(styleContent);
     let finalContent;
     if (marker.length > 0) {
-        finalContent = cleaned.slice(0, marker.pos + marker.length)
+        finalContent = styleContent.slice(0, marker.pos + marker.length)
             + '\n' + newCss
-            + cleaned.slice(marker.pos + marker.length);
+            + styleContent.slice(marker.pos + marker.length);
     } else {
-        finalContent = cleaned + '\n' + newCss;
+        finalContent = styleContent + '\n' + newCss;
     }
     fs.writeFileSync(opts.css, finalContent);
 

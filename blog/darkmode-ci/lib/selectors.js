@@ -34,13 +34,10 @@ function isSkippableTag(sel) {
     const tag = sel.split(/[.#]/)[0].toLowerCase();
     const SKIP_TAGS = [
         'svg','g','path','rect','circle','tspan','defs',
-        'canvas','foreignobject','br','meta','link','script','style',
-        'math','mrow','mi','mo','mn','msup','msub','mfrac','mtable',
-        'mtr','mtd','munderover','mover','munder','mtext','annotation',
-        'semantics','merror','mglyph'
+        'canvas','foreignobject','br','meta','link','script','style'
     ];
     if (SKIP_TAGS.includes(tag)) return true;
-    if (/MathJax|mjx-|katex|plotly|echarts|js-plotly|tml-/i.test(sel)) return true;
+    if (/MathJax|mjx-|katex|plotly|echarts|js-plotly/i.test(sel)) return true;
     return false;
 }
 
