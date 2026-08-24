@@ -210,6 +210,7 @@ function main() {
 
     const whiteBugMap = new Map();
     if (opts.includeStuckWhite) {
+        const whiteSkipped = [];
         for (const line of lines) {
             let d; try { d = JSON.parse(line); } catch { continue; }
             for (const c of d.whiteClusters || []) {
@@ -217,9 +218,16 @@ function main() {
                 if (!e.sel || e.sel === 'img' || e.sel === 'none') continue;
                 if (e.backdrop) continue;
                 if (isHudElement(e.sel, '')) continue;
-                if (!whiteBugMap.has(e.sel)) {
-                    whiteBugMap.set(e.sel, {
-                        sel: e.sel,
+                if (isSkippableTag(e.sel)) continue;
+                // Generalize the selector (strip dynamic IDs, skip bare tags)
+                const gen = generalizeSelector(e.sel);
+                if (!gen) {
+                    whiteSkipped.push({ sel: e.sel });
+                    continue;
+                }
+                if (!whiteBugMap.has(gen)) {
+                    whiteBugMap.set(gen, {
+                        sel: gen,
                         bg: e.bg,
                         inlineBg: e.inlineBg,
                         pages: new Set(),
@@ -227,15 +235,18 @@ function main() {
                         x: c.x, y: c.y, w: c.w, h: c.h
                     });
                 }
-                whiteBugMap.get(e.sel).pages.add(d.page);
+                whiteBugMap.get(gen).pages.add(d.page);
             }
+        }
+        if (whiteSkipped.length > 0) {
+            console.log(`Stuck-white: skipped ${whiteSkipped.length} bare-tag/unspecified selectors`);
         }
         if (whiteBugMap.size > 0) {
             cssLines.push('/* ════════════════════════════════════════════════════════════');
             cssLines.push('   AUTO-GENERATED STUCK-WHITE DARK-MODE FIXES');
             cssLines.push('   ═══════════════════════════════════════════════════════════ */');
-            for (const [sel] of whiteBugMap) {
-                cssLines.push(`html.dark ${sel} { background-color: var(--mn-surface, #1e293b) !important; }`);
+            for (const [gen, info] of whiteBugMap) {
+                cssLines.push(`html.dark ${gen} { background-color: var(--mn-surface, #1e293b) !important; } /* ${info.pages.size} pages, ${info.clusterSize}px cluster */`);
             }
             cssLines.push('');
             console.log(`\n${whiteBugMap.size} stuck-white cluster elements to fix`);
@@ -269,7 +280,6 @@ function main() {
     console.log(`\nApplied ${cssLines.filter(l => l.trim()).length} CSS rules to ${opts.css}`);
     console.log(`Backup saved to ${backupPath}`);
     writeReport(opts, fixes, whiteBugMap, skipped, groups, bareSkips);
-    console.log(`\nReport saved to ${opts.out}/autofix_report.json`);
 }
 
 function writeReport(opts, fixes, whiteBugMap, skipped, groups, bareSkips) {
@@ -291,6 +301,7 @@ function writeReport(opts, fixes, whiteBugMap, skipped, groups, bareSkips) {
         bareTagSkipped: (bareSkips || []).map(s => ({ ...s, pages: [...s.pages] })),
     };
     fs.writeFileSync(path.join(opts.out, 'autofix_report.json'), JSON.stringify(report, null, 2));
+    console.log(`\nFull report: ${opts.out}/autofix_report.json`);
 }
 
 main();
