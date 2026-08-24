@@ -340,8 +340,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn => {
     btn.classList.add('active');
     const target = document.getElementById(btn.dataset.tab);
     target.classList.add('active');
-    // Re-render diagrams for the active tab
-    setTimeout(() => onTabActivate(btn.dataset.tab), 50);
+    requestAnimationFrame(() => requestAnimationFrame(() => onTabActivate(btn.dataset.tab)));
     window.scrollTo({top: 0, behavior:'smooth'});
   });
 });
@@ -358,6 +357,11 @@ function onTabActivate(tab){
   if(tab==='infowidth') sampleNNGP();
   if(tab==='rg') drawRG();
   if(tab==='topology') drawTDA();
+}
+
+function safePlot(id, data, layout, config){
+  Plotly.newPlot(id, data, layout, config);
+  requestAnimationFrame(() => requestAnimationFrame(() => Plotly.Plots.resize(id)));
 }
 
 /* =========== 1. HERO DIAGRAM =========== */
@@ -427,7 +431,7 @@ function updateNeuron(){
     xs.push(-3+6*i/(N-1));
     zs.push(row);
   }
-  Plotly.newPlot('neuronPlot',[{
+  safePlot('neuronPlot',[{
     z: zs, x: xs, y: ys, type:'surface',
     colorscale:[[0,'#0a0e1a'],[0.5,'#7c5cff'],[1,'#22d3ee']],
     showscale:false
@@ -489,7 +493,7 @@ function drawUAT(){
   }
   const traces = [{x:X,y:Yt,mode:'lines',name:'Ziel',line:{color:'#22d3ee',width:3}}];
   if(uatParams) traces.push({x:X,y:Yp,mode:'lines',name:'NN Approx.',line:{color:'#f472b6',width:2,dash:'dot'}});
-  Plotly.newPlot('uatPlot',traces,{
+  safePlot('uatPlot',traces,{
     paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(19,24,41,1)',
     font:{color:'#e8ecf5'}, xaxis:{gridcolor:'#2a3050'}, yaxis:{gridcolor:'#2a3050'},
     margin:{l:40,r:20,t:20,b:40}
@@ -515,7 +519,7 @@ function drawLoss(){
   if(gdState.path.length){
     traces.push({x:gdState.path.map(p=>p[0]),y:gdState.path.map(p=>p[1]),mode:'lines+markers',line:{color:'#22d3ee',width:2},marker:{color:'#fbbf24',size:6},name:'GD-Pfad'});
   }
-  Plotly.newPlot('lossPlot',traces,{
+  safePlot('lossPlot',traces,{
     paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(19,24,41,1)',font:{color:'#e8ecf5'},
     xaxis:{title:'θ₁',gridcolor:'#2a3050'},yaxis:{title:'θ₂',gridcolor:'#2a3050'},
     margin:{l:40,r:20,t:20,b:40}
@@ -586,7 +590,7 @@ function drawAD(){
   for(let i=0;i<N;i++){ const x=-2+4*i/(N-1); X.push(x); Y.push(Math.sin(x*x)); }
   const y0 = Math.sin(x0*x0), dy0 = 2*x0*Math.cos(x0*x0);
   for(let i=0;i<N;i++){ T.push(y0 + dy0*(X[i]-x0)); }
-  Plotly.newPlot('adPlot',[
+  safePlot('adPlot',[
     {x:X,y:Y,mode:'lines',name:'f(x)=sin(x²)',line:{color:'#f472b6',width:3}},
     {x:X,y:T,mode:'lines',name:'Tangente (via AD)',line:{color:'#22d3ee',width:2,dash:'dot'}},
     {x:[x0],y:[y0],mode:'markers',name:'x',marker:{color:'#fbbf24',size:12}}
@@ -750,7 +754,7 @@ function sampleNNGP(){
     });
     traces.push({x:X,y:Y,mode:'lines',line:{color:`hsla(${(s*360/nSamp)|0},70%,60%,0.5)`,width:1.5},showlegend:false});
   }
-  Plotly.newPlot('nngpPlot',traces,{
+  safePlot('nngpPlot',traces,{
     paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(19,24,41,1)',font:{color:'#e8ecf5'},
     xaxis:{gridcolor:'#2a3050',title:'x'},yaxis:{gridcolor:'#2a3050',title:'f(x)'},
     margin:{l:40,r:20,t:20,b:40}
