@@ -229,7 +229,7 @@ Type **"bank river"** or **"bank money"** below. Notice how the diamond, the con
 
 <div class="layers-vertical">
 	<input type="text" id="trans-input" class="bw-cell" style="width: 90%;" value="bank river" oninput="runAttention()">
-	<p>The diamond shows where “Bank” moves in context.</p>
+	<p>The diamond shows where "Bank" moves in context.</p>
 </div>
 <div id="transformer-plot" class="plot-container" style="height: 450px; background: #fff;"></div>
 
@@ -242,7 +242,7 @@ LLM models have **many attention heads** running in parallel, each a tiny specia
 
 It is important to note that not all attention heads do something that is humanly interpretable. They may look like they're reacting to nouns or verbs, but in reality, it's just a pattern learnt from statistics. They are not programmed to react to those words, and they don't 'know' what they are.
 
-#### 4b: Feed-Forward Network - “What do I conclude?”
+#### 4b: Feed-Forward Network - "What do I conclude?"
 
 After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
 
@@ -252,11 +252,11 @@ If Attention is about *looking around* at other words, the Feed-Forward Network 
 
 The Feed-Forward-Network is often thought of as the **\cite[Knowledge bank]{keyvalmem}** of a Transformer. Here it is decided, in what direction in the Embedding Space the **Contextualized Embedding** should be moved to get closer to a meaningful next word.
 
-1. **The Detectors (Layer 1):** The model expands the word's vector to check for thousands of specific patterns. (“Is this a French landmark?” “Is this about technology?”)
+1. **The Detectors (Layer 1):** The model expands the word's vector to check for thousands of specific patterns. ("Is this a French landmark?" "Is this about technology?")
 2. **The Filter (Activation Function):** A mathematical filter (like ReLU) zeroes out any detector that didn't find a match. Only the strong signals survive.
-3. **The Knowledge (Layer 2):** For every detector that “fired,” the model adds associated facts back into the token's vector.
+3. **The Knowledge (Layer 2):** For every detector that "fired," the model adds associated facts back into the token's vector.
 
-Let's look at the word **“Apple”**. Because of the *Attention* step, its vector already contains clues about its context. Watch how the FFN reacts differently based on that context.
+Let's look at the word **"Apple"**. Because of the *Attention* step, its vector already contains clues about its context. Watch how the FFN reacts differently based on that context.
 </div>
 
 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;

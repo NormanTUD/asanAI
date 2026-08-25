@@ -262,15 +262,15 @@ In models like **GPT-3** and **GPT-4**, Layer Normalization is the “glue” th
 
 LayerNorm has a beautiful geometric interpretation: after centering (subtracting the mean) and normalizing by the standard deviation, the output vector $\hat{x}$ lies on the surface of a **unit sphere** in $d$-dimensional space. The learnable parameters $\gamma$ and $\beta$ then stretch and shift this sphere.
 
-**Step 1 - Centering:** Subtracting the mean $\mu$ shifts the cloud of vectors so that their center of mass is at the origin. This removes the “DC offset”, the shared common signal across all features.
+**Step 1 - Centering:** Subtracting the mean $\mu$ shifts the cloud of vectors so that their center of mass is at the origin. This removes the "DC offset" — the shared common signal across all features.
 
-**Step 2 - Normalization:** Dividing by the standard deviation $\sigma$ scales each vector to have unit length. Every vector now lies on the surface of a $d$-dimensional hypersphere of radius 1. The direction of the vector, the relative pattern of activations, is preserved, but its magnitude is standardized.
+**Step 2 - Normalization:** Dividing by the standard deviation $\sigma$ scales each vector to have unit length. Every vector now lies on the surface of a $d$-dimensional hypersphere of radius 1. The direction of the vector — the relative pattern of activations — is preserved, but its magnitude is standardized.
 
 **Step 3 - Scale and Shift:** The learnable parameters $\gamma$ (gain) and $\beta$ (bias) allow the model to deform this sphere:
 - $\gamma$ stretches or compresses the sphere along each axis (an anisotropic scaling)
 - $\beta$ shifts the entire sphere away from the origin
 
-The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable, it can vary due to accumulated activations, layer depth, or input length. By projecting onto the unit sphere, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.
+The key insight: **LayerNorm separates direction from magnitude**. Only the *direction* of the activation vector carries information about the token's identity and context. The *magnitude* is discarded because it's unreliable — it can vary due to accumulated activations, layer depth, or input length. By projecting onto the unit sphere, LayerNorm forces the model to encode all information in angular relationships alone, making learning more stable and less sensitive to the absolute scale of activations.
 
 This is why Transformers work well with Pre-Norm: the clean spherical geometry ensures that attention patterns depend only on the *angle* between query and key vectors, not their potentially erratic magnitudes.
 </div>
@@ -278,7 +278,7 @@ This is why Transformers work well with Pre-Norm: the clean spherical geometry e
 <div class="md">
 ## Group Normalization: Slice the Channels, Normalize Once per Slice
 
-To normalize a feature map, you first have to decide **which numbers get pooled into the same average**. LayerNorm says “all channels of one token”; BatchNorm says “this channel across all samples in the batch”. **Group Normalization (GN)** \cite{wu2018groupnorm} splits the $C$ channels into $G$ slices (groups), then for each group computes **one** mean and **one** std across that group's channels × all spatial positions.
+To normalize a feature map, you first have to decide **which numbers get pooled into the same average**. LayerNorm says "all channels of one token"; BatchNorm says "this channel across all samples in the batch". **Group Normalization (GN)** \cite{wu2018groupnorm} splits the $C$ channels into $G$ slices (groups), then for each group computes **one** mean and **one** std across that group's channels × all spatial positions.
 
 The payoff: GN is **independent of the batch**, so it works at batch size 1 (essential for high-resolution image generation, where memory forces tiny batches), while still **preserving channel structure** that LayerNorm throws away. This is why every ResBlock of Stable Diffusion ends with `Conv → GroupNorm → SiLU`.
 
@@ -306,7 +306,7 @@ Drag the slider below and watch the same eight channels get regrouped.
         </div>
     </div>
 
-    <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">③ One (μ, σ) per group, every cell in the group gets rescaled by it</div>
+    <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#6366f1; margin-bottom:8px;">③ One (μ, σ) per group — every cell in the group gets rescaled by it</div>
     <div id="gn-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px;"></div>
 
     <div style="font-size:12px; color:var(--mn-text-secondary); margin-top:14px; line-height:1.55;">
@@ -335,9 +335,9 @@ $$
 
 * **Number of groups $G$.** With $C$ channels, valid choices are $G \in \{1, 2, \ldots, C\}$ that divide $C$ (or use padding). Smaller $G$ = each statistic pools more numbers = lower variance, but throws away channel structure. Larger $G$ = each statistic is more local, but with too few samples per group the estimate gets noisy. Stable Diffusion's U-Net uses $G = 32$ with $C = 320$ or $640$ channels, i.e. groups of 10 or 20 channels.
 
-* **Affine $\gamma_c, \beta_c$.** Two learnable vectors of length $C$. They let the network *undo* the normalization if it wants, the layer starts as pure centering + unit-variance and learns to deviate only if useful.
+* **Affine $\gamma_c, \beta_c$.** Two learnable vectors of length $C$. They let the network *undo* the normalization if it wants — the layer starts as pure centering + unit-variance and learns to deviate only if useful.
 
-**Why this is the diffusion default.** BatchNorm fails at batch size 1. LayerNorm discards all channel relationships, treating every channel identically. GroupNorm keeps a knob ($G$) that lets you trade those two extremes against each other, and the answer it picks ($G = 32$) empirically wins on every high-resolution image benchmark. Notice that no term in the equations depends on $N$, the batch can be any size, including 1.
+**Why this is the diffusion default.** BatchNorm fails at batch size 1. LayerNorm discards all channel relationships, treating every channel identically. GroupNorm keeps a knob ($G$) that lets you trade those two extremes against each other, and the answer it picks ($G = 32$) empirically wins on every high-resolution image benchmark. Notice that no term in the equations depends on $N$ — the batch can be any size, including 1.
 
 </div>
 </details>
@@ -345,7 +345,7 @@ $$
 <div class="md">
 **The two endpoints.**
 
-* $G = 1$: one group, every channel pooled, exactly **LayerNorm**.
-* $G = C$: each channel alone, exactly **InstanceNorm** (the style-transfer default).
+* $G = 1$: one group, every channel pooled — exactly **LayerNorm**.
+* $G = C$: each channel alone — exactly **InstanceNorm** (the style-transfer default).
 * $G \in (1, C)$: the sweet spot; Stable Diffusion's U-Net uses $G = 32$.
 </div>
