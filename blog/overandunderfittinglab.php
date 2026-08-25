@@ -185,7 +185,7 @@ In practice, we never know the true function (here we do, it's $\sin(x)$). Inste
 |---------|---------|
 | **Dotted grey line**, *Universal Truth* | A perfect sine wave, $y = \sin(x)$. This is the true underlying pattern we want the AI to learn. |
 | **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data, only a small, noisy sample. |
-| **Black dots**, *Noisy Observations* | The specific data points the AI can "see." Notice they scatter around the true curve; real-world measurements are never perfect. |
+| **Black dots**, *Noisy Observations* | The specific data points the AI can “see.” Notice they scatter around the true curve; real-world measurements are never perfect. |
 | **Red line**, *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |
 | **Green dots**, *Test Data* | Data points the model has **never** seen during training. The test MSE measures how well the model generalises. |
 
@@ -195,7 +195,7 @@ In practice, we never know the true function (here we do, it's $\sin(x)$). Inste
 
 Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 
-* **The AI's logic:** *"I found a polynomial that perfectly matches the dots I was given."*
+* **The AI's logic:** *“I found a polynomial that perfectly matches the dots I was given.”*
 * **The reality:** The AI has no concept of *periodicity*, it doesn't know the wave repeats. It assumes the local polynomial trend continues, which inevitably sends $f(x) \to \pm\infty$.
 * **Lesson:** Machine-learning models are typically strong **interpolators** (they guess well *between* known points) but poor **extrapolators** (they guess badly *outside* the range of training data).
 
@@ -213,7 +213,7 @@ Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 
 We use polynomial regression, but the lessons apply directly to neural networks. Here's why:
 
-A single-layer neural network with $n$ neurons computes a weighted sum of *learned features*, conceptually identical to our weighted sum of polynomial terms. Adding more neurons (or more layers) is analogous to raising the polynomial degree: it increases the model's **capacity** to represent complex functions. The \citetitle{hornik1989universal} (\citeauthor{hornik1989universal}, \citeyear{hornik1989universal}; with a related follow-up by \citeauthor{hornik} in \citeyear{hornik}) proves that a sufficiently wide neural network can approximate *any* continuous function, just as a sufficiently high-degree polynomial can. But "can approximate anything" is precisely the problem: with enough capacity, the model will fit the noise, not just the signal.
+A single-layer neural network with $n$ neurons computes a weighted sum of *learned features*, conceptually identical to our weighted sum of polynomial terms. Adding more neurons (or more layers) is analogous to raising the polynomial degree: it increases the model's **capacity** to represent complex functions. The \citetitle{hornik1989universal} (\citeauthor{hornik1989universal}, \citeyear{hornik1989universal}; with a related follow-up by \citeauthor{hornik} in \citeyear{hornik}) proves that a sufficiently wide neural network can approximate *any* continuous function, just as a sufficiently high-degree polynomial can. But “can approximate anything” is precisely the problem: with enough capacity, the model will fit the noise, not just the signal.
 
 Large Language Models (LLMs) are neural networks with billions of parameters, polynomial degree cranked to an astronomical level. They perform brilliantly on tasks similar to their training data (*interpolation*) but can produce plausible-sounding nonsense on topics outside that distribution (*extrapolation*). The red line rocketing to $\pm\infty$ outside the blue box is a visual metaphor for hallucination.
 
@@ -232,7 +232,7 @@ $$
 on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the center but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
 </div>
 
-## Taming the "Wiggle": Regularization & Dropout
+## Taming the “Wiggle”: Regularization & Dropout
 
 To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.
 
