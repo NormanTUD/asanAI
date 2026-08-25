@@ -2084,6 +2084,39 @@ window.bibData = {
 		year: 2020,
 		url: "https://arxiv.org/abs/2012.14913"
 	},
+	"dai2022knowledgeneurons": {
+		title: "Knowledge Neurons in Pretrained Transformers",
+		author: "Damai Dai, Li Dong, Yaru Hao, Zhifang Sui, Baobao Chang, Furu Wei",
+		year: 2022,
+		url: "https://arxiv.org/abs/2104.08696"
+	},
+	"todd2024functionvectors": {
+		title: "Function Vectors in Large Language Models",
+		author: "Eric Todd, Millicent L. Li, Arnab Sen Sharma, Aaron Mueller, Byron C. Wallace, David Bau",
+		year: 2024,
+		url: "https://arxiv.org/abs/2310.15213",
+		alternativetitle: "Function Vectors"
+	},
+	"nostalgebraist2020logitlens": {
+		title: "Interpreting GPT: The Logit Lens",
+		author: "nostalgebraist",
+		year: 2020,
+		url: "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens",
+		alternativetitle: "The Logit Lens"
+	},
+	"ramsauer2020hopfield": {
+		title: "Hopfield Networks is All You Need",
+		author: "Hubert Ramsauer, Bernhard Schäfl, Johannes Lehner, Philipp Seidl, Michael Widrich, Lukas Gruber, Markus Holzleitner, Milena Pavlović, Geir Kjetil Sandve, Victor Greiff, David Kreil, Michael Kopp, Günter Klambauer, Johannes Brandstetter, Sepp Hochreiter",
+		year: 2020,
+		url: "https://arxiv.org/abs/2008.02217",
+		alternativetitle: "Modern Hopfield Networks"
+	},
+	"hopfield1982": {
+		title: "Neural networks and physical systems with emergent collective computational abilities",
+		author: "John J. Hopfield",
+		year: 1982,
+		url: "https://www.pnas.org/doi/10.1073/pnas.79.8.2554"
+	},
 	"grandmotherneuron": {
 		title: "The Value of Failure in Science: The Story of Grandmother Cells in Neuroscience",
 		author: "Ann-Sophie Barwich",

@@ -75,6 +75,7 @@
 	incl("Temperature & Sampling", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
 	incl("Mechanistic Interpretability", "mechanistic_interpretability");
+	incl("Where 'Paris' Lives — How an LLM Retrieves a Fact", "fact_lookup");
 	incl("How Transformers Execute Algorithms", "algorithms");
 	incl("Multimodal & Vision-Language Models", "multimodal");
 	incl("Diffusion Models", "diffusion");
