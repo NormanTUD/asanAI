@@ -543,6 +543,55 @@ window.bibData = {
 		year: 2023,
 		url: "https://arxiv.org/abs/2303.08112"
 	},
+	"elhage2022solu": {
+		title: "Softmax Linear Units",
+		author: "Nelson Elhage, Tristan Hume, Catherine Olsson, Nicholas Schiefer, Tom Henighan, Shauna Kravec, Zac Hatfield-Dodds, Robert Lasenby, Dawn Drain, Carol Chen, Roger Grosse, Sam McCandlish, Jared Kaplan, Dario Amodei, Martin Wattenberg, Chris Olah",
+		year: 2022,
+		url: "https://transformer-circuits.pub/2022/solu/index.html",
+		alternativetitle: "SoLU activation"
+	},
+	"elhage2023privileged": {
+		title: "Privileged Bases in the Transformer Residual Stream",
+		author: "Nelson Elhage, Robert Lasenby, Chris Olah",
+		year: 2023,
+		url: "https://transformer-circuits.pub/2023/privileged-basis/index.html",
+		alternativetitle: "Privileged Bases"
+	},
+	"bricken2023monosemanticity": {
+		title: "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+		author: "Trenton Bricken, Adly Templeton, Joshua Batson, Brian Chen, Adam Jermyn, Tom Conerly, Nick Turner, Cem Anil, Carson Denison, Amanda Askell, Robert Lasenby, Yuntao Bai, Shauna Kravec, Nicholas Schiefer, Tim Maxwell, Nicholas Joseph, Alex Tamkin, Karina Nguyen, Jared Kaplan, Tom Henighan, Tom B. Brown, Dario Amodei, Catherine Olsson, Scott Linderman, Chris Olah, Jack Lindsey",
+		year: 2023,
+		url: "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+		alternativetitle: "Towards Monosemanticity"
+	},
+	"anthropic2023mapping": {
+		title: "Mapping the mind of a large language model",
+		author: "Anthropic Interpretability Team",
+		year: 2023,
+		url: "https://www.anthropic.com/research/mapping-mind-language-model",
+		alternativetitle: "Mapping the Mind of an LLM"
+	},
+	"templeton2024scaling": {
+		title: "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+		author: "Adly Templeton, Tom Conerly, Jonathan Marcus, Jack Lindsey, Trenton Bricken, Brian Chen, Adam Pearce, Craig Citro, Emmanuel Ameisen, Andy Jones, Hoagy Cunningham, Nicholas L. Turner, Callum McDougall, Monte MacDiarmid, Alex Tamkin, Esin Durmus, Tristan Hume, Francesco Mosconi, C. Daniel Freeman, Theodore R. Sumers, Edward Rees, Joshua Batson, Adam Jermyn, Shan Carter, Chris Olah, Tom Henighan",
+		year: 2024,
+		url: "https://arxiv.org/abs/2605.29358",
+		alternativetitle: "Scaling Monosemanticity"
+	},
+	"lindsey2025biology": {
+		title: "On the Biology of a Large Language Model",
+		author: "Jack Lindsey, Wes Gurnee, Emmanuel Ameisen, Brian Chen, Adam Pearce, Nicholas L. Turner, Craig Citro, David Abrahams, Shan Carter, Bastian Hossel, Jonathan Marcus, Michael Sklar, Adly Templeton, Trenton Bricken, Callum McDougall, Hoagy Cunningham, Tom Henighan, Andy Jones, Andrew Kelley, Chris D. Freeman, Jonah Rue-Spahr, Dorsa Sadigh, Roger Grosse, Jared Kaplan, Samuel R. Bowman, Ethan Perez, Tom B. Brown, Chris Olah",
+		year: 2025,
+		url: "https://transformer-circuits.pub/2025/attribution-graphs/biology.html",
+		alternativetitle: "Biology of an LLM"
+	},
+	"ameisen2025circuit": {
+		title: "Circuit Tracing: Revealing Computational Graphs in Language Models",
+		author: "Emmanuel Ameisen, Jack Lindsey, Adam Pearce, Wes Gurnee, Nicholas L. Turner, Brian Chen, Craig Citro, David Abrahams, Shan Carter, Bastian Hossel, Jonathan Marcus, Michael Sklar, Adly Templeton, Trenton Bricken, Callum McDougall, Hoagy Cunningham, Tom Henighan, Andy Jones, Andrew Kelley, Chris D. Freeman, Jonah Rue-Spahr, Dorsa Sadigh, Roger Grosse, Samuel R. Bowman, Ethan Perez, Tom B. Brown, Chris Olah",
+		year: 2025,
+		url: "https://transformer-circuits.pub/2025/attribution-graphs/methods.html",
+		alternativetitle: "Circuit Tracing"
+	},
 	"shannon1937switching": {
 		title: "A Symbolic Analysis of Relay and Switching Circuits",
 		author: "Claude Elwood Shannon",
