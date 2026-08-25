@@ -15,7 +15,7 @@ LLMs were trained on a single, well-defined objective: **next-token prediction**
 
 ### Few-Shot In-Context Learning (GPT-3, 2020)
 
-The first major surprise. \cite[Brown et al., 2020][]{brown2020gpt3} showed that a 175-billion parameter autoregressive language model could be conditioned on a handful of input-output examples written into the prompt and then continue the pattern on a new query — **without any weight updates, without gradient descent, without a fine-tuning loop**. This was not how language modelling was supposed to work. Prior to GPT-3, neural NLP required task-specific architectures, features, and training. After GPT-3, "prompting" became a programming interface. The deeper surprise was that the ability appeared *smoothly* with scale: at small scales models ignore the examples, at large scales they exploit them reliably.
+The first major surprise. \cite[Brown et al., 2020]{brown2020gpt3} showed that a 175-billion parameter autoregressive language model could be conditioned on a handful of input-output examples written into the prompt and then continue the pattern on a new query — **without any weight updates, without gradient descent, without a fine-tuning loop**. This was not how language modelling was supposed to work. Prior to GPT-3, neural NLP required task-specific architectures, features, and training. After GPT-3, "prompting" became a programming interface. The deeper surprise was that the ability appeared *smoothly* with scale: at small scales models ignore the examples, at large scales they exploit them reliably.
 
 ### In-Context Statistical Learning
 
