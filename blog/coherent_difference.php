@@ -130,10 +130,10 @@ Spencer-Brown begins his book with an instruction that is also an axiom:
 Draw a distinction.
 </div>
 
-A single boundary drawn across an unmarked plane produces two states, marked on one side, unmarked on the other. Two axioms then govern what can happen:
+A single boundary drawn across an unmarked plane produces two states, marked on one side, unmarked on the other. One axiom then govern what can happen:
 
 $$
-\neg\neg\,a \;=\; a \qquad\qquad a \;\wedge\; \neg a \;=\; \text{void}
+\neg\neg\, \;=\; \neg
 $$
 
 (Apply the mark twice and you are back where you started; the marked and unmarked states are mutually exclusive.) From these two axioms the entire Boolean calculus of propositions falls out \cite{spencerbrown1969form}. The point, for us, is not the algebra. The point is that Spencer-Brown placed *distinction itself* at the foundation of mathematics: the act that splits one world into two is the act from which everything else is built.
