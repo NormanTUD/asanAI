@@ -5677,7 +5677,7 @@ window.bibData = {
 		author: "Robert Goldblatt",
 		year: 1979,
 		publisher: "North-Holland",
-		url: "https://www.elsevier.com/books/topoi/goldblatt/978-0-444-85107-3",
+		url: "https://www.sciencedirect.com/bookseries/studies-in-logic-and-the-foundations-of-mathematics/vol/98/suppl/C",
 		alternativetitle: "Studies in Logic and the Foundations of Mathematics, Vol. 98"
 	},
 	"distributional_hypothesis": {
