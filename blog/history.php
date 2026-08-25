@@ -264,7 +264,7 @@ The mathematical birth of the neuron model predates McCulloch and Pitts by 36 ye
 
 $$ I(t) = C \,\frac{dV(t)}{dt}, \qquad V(t) \;\mapsto\; V_\text{rest} \;\;\text{whenever}\;\; V(t) \geq V_\text{th}, $$
 
-exactly the same equation that today powers large-scale spiking neural network simulations. A century review of the original paper was published in \citeyear{abbott1999lapicque} by \citeauthor{abbott1999lapicque} (\citealternativetitle{abbott1999lapicque}, PMID <a href="https://pubmed.ncbi.nlm.nih.gov/10643408/">10643408</a>), who called it the earliest formal neuron model and noted that it is still "one of the most popular models in computational neuroscience" — used not only for single-cell studies but as the canonical building block of network simulations \cite{abbott1999lapicque}. So strictly speaking, the often-cited McCulloch-Pitts cell of 1943 is *not* the first artificial neuron; it is the first **logical** one. Lapicque's leaky integrator came first, and is still the workhorse of modern spiking networks.
+exactly the same equation that today powers large-scale spiking neural network simulations. A century review of the original paper was published in \citeyear{abbott1999lapicque} by \citeauthor{abbott1999lapicque} \cite{abbott1999lapicque}, who called it the earliest formal neuron model and noted that it is still "one of the most popular models in computational neuroscience" — used not only for single-cell studies but as the canonical building block of network simulations. So strictly speaking, the often-cited McCulloch-Pitts cell of 1943 is *not* the first artificial neuron; it is the first **logical** one. Lapicque's leaky integrator came first, and is still the workhorse of modern spiking networks.
 </div>
 
 <div class="image-row">
