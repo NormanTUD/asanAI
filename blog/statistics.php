@@ -162,7 +162,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
     <div class="md">
         ## Bias in Data: The Mirror of Society
 
-        A model is only as good as the data it is trained on. If the training data contains historical biases, the model will learn and amplify them. This is not a bug in the math  it is a feature of the statistical learning process: the model faithfully reproduces the patterns it observes.
+        A model is only as good as the data it is trained on. If the training data contains historical biases, the model will learn and amplify them. This is not a bug in the math, it is a feature of the statistical learning process: the model faithfully reproduces the patterns it observes.
 
         **Common sources of bias in ML datasets:**
 
@@ -786,9 +786,9 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet “know” whether you are a coder, a poet, or a chef. Every word you type shifts that distribution, concentrating probability on some possibilities and away from others. This is an *analogy*  not a quantum “superposition” that “collapses”: the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.
+When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet “know” whether you are a coder, a poet, or a chef. Every word you type shifts that distribution, concentrating probability on some possibilities and away from others. This is an *analogy*, not a quantum “superposition” that “collapses”: the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.
 
-This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an “internal map” of probabilities ($P$) and updates it based on new data ($D$). It is a useful way to think about how context narrows predictions  not a claim that the network literally performs Bayesian updates.
+This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an “internal map” of probabilities ($P$) and updates it based on new data ($D$). It is a useful way to think about how context narrows predictions, not a claim that the network literally performs Bayesian updates.
 </div>
 
 <div class="statlab-interactive-zone">

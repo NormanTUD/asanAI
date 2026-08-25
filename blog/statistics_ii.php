@@ -13,7 +13,7 @@ topics: math-ii, math-iii, statistics-ii
 <div class="md">
 This second statistics chapter covers **inference**: how we update our beliefs given new data, and how we measure uncertainty. These are the tools that turn raw distributions into actionable predictions.
 
-By the end, you will understand Bayesian reasoning, Shannon entropy, latent variable models (including EM), and Markov chains  all central to modern machine learning.
+By the end, you will understand Bayesian reasoning, Shannon entropy, latent variable models (including EM), and Markov chains, all central to modern machine learning.
 </div>
 
 <div class="statlab-container">
@@ -68,9 +68,9 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet “know” whether you are a coder, a poet, or a chef. Every word you type shifts that distribution, concentrating probability on some possibilities and away from others. This is an *analogy*  not a quantum “superposition” that “collapses”: the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.
+When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet “know” whether you are a coder, a poet, or a chef. Every word you type shifts that distribution, concentrating probability on some possibilities and away from others. This is an *analogy*, not a quantum “superposition” that “collapses”: the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.
 
-This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an “internal map” of probabilities ($P$) and updates it based on new data ($D$). It is a useful way to think about how context narrows predictions  not a claim that the network literally performs Bayesian updates.
+This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an “internal map” of probabilities ($P$) and updates it based on new data ($D$). It is a useful way to think about how context narrows predictions, not a claim that the network literally performs Bayesian updates.
 </div>
 
 <div class="statlab-interactive-zone">

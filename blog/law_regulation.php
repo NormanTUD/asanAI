@@ -52,7 +52,7 @@ A new category added in late negotiations. Covers foundation models. Obligations
 
 * **Transparency**: technical documentation, training data summaries.
 * **Copyright compliance**: policy to comply with EU copyright law, opt-out mechanism for rights-holders (text-and-data-mining rights).
-* **Systemic risk**: GPAI models trained with >10^25 FLOPs (essentially GPT-4-class and above) face additional obligations  risk evaluation, incident reporting, model evaluation, adversarial testing.
+* **Systemic risk**: GPAI models trained with >10^25 FLOPs (essentially GPT-4-class and above) face additional obligations, risk evaluation, incident reporting, model evaluation, adversarial testing.
 
 The EU AI Act's phased timeline: Feb 2025 (banned practices), Aug 2025 (GPAI rules, governance), Aug 2026 (most high-risk), Aug 2027 (embedded high-risk systems).
 </div>
@@ -65,7 +65,7 @@ The EU's General Data Protection Regulation (2018) applies to any processing of 
 Key intersections with LLMs:
 
 * **Lawful basis**: most LLM training relies on **legitimate interest** or **consent**. The EU's TDM opt-out (Article 4(3)) lets rights-holders forbid text-and-data-mining of their works; the AI Act makes compliance explicit.
-* **Right to be forgotten**: training a model on personal data is processing. Can the data subject compel deletion? Unclear in practice  models don't store verbatim data, but memorization is real.
+* **Right to be forgotten**: training a model on personal data is processing. Can the data subject compel deletion? Unclear in practice, models don't store verbatim data, but memorization is real.
 * **Automated decision-making (Article 22)**: individuals have the right not to be subject to decisions based solely on automated processing that significantly affect them. LLM-based hiring, credit, etc. must include human-in-the-loop.
 * **Data Protection Impact Assessments (DPIA)**: required for high-risk processing.
 * **Cross-border transfers**: US/EU data flows are now governed by the **EU-US Data Privacy Framework** (2023); adequacy decision in place but subject to legal challenge.

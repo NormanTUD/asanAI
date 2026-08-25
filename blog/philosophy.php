@@ -16,13 +16,13 @@ topics: philosophy, ethics, language
 
 Before asking whether machines can *think*, it helps to ask what *reasoning* is in the first place. The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) gives a working definition that has barely changed since Aristotle: **Reason** is the capacity to consciously apply logic by drawing valid conclusions from new or existing information, with the aim of seeking truth.
 
-**Reasoning** is the *process*  using more-or-less rational thought and cognition to extrapolate from existing knowledge and generate new knowledge. The field of **logic** studies the formal version: how to produce logically valid arguments and true conclusions.
+**Reasoning** is the *process*, using more-or-less rational thought and cognition to extrapolate from existing knowledge and generate new knowledge. The field of **logic** studies the formal version: how to produce logically valid arguments and true conclusions.
 
 Three things make this definition load-bearing for the rest of this chapter:
 
 * **Reason vs. rationality.** “Reason” names the *capacity*; “rationality” names its *correct application*. A being can possess reason and still reason badly (see the section on fallacies below).
 * **Reason vs. intuition.** \citeauthor{aristotle_nicomachean_ethics} drew the classical distinction between **discursive reasoning** (step-by-step, communicable, propositional) and **intuitive reasoning** (fast, personal, opaque). Mathematics needs both: intuition often finds the proof, logic then verifies it.
-* **Reason is reflexive.** It can turn on itself  examine its own conclusions, detect its own errors, revise its own premises. This self-correcting property is what separates reason from mere association.
+* **Reason is reflexive.** It can turn on itself, examine its own conclusions, detect its own errors, revise its own premises. This self-correcting property is what separates reason from mere association.
 
 ### Forms of Logical Reasoning
 
@@ -33,7 +33,7 @@ The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) identifies four c
 | **Deductive** | General premises → necessary conclusion | A theorem prover: given axioms, derive the theorem. |
 | **Inductive** | Specific cases → probable generalisation | A model trained on millions of cat photos concludes “cats have fur.” |
 | **Abductive** | Observation → best explanation | A doctor sees symptoms and infers the most likely disease. |
-| **Analogical** | $A$ is like $B$ in known ways; therefore $A$ is like $B$ in unknown ways | “An atom is like a solar system”  useful, but can mislead. |
+| **Analogical** | $A$ is like $B$ in known ways; therefore $A$ is like $B$ in unknown ways | “An atom is like a solar system”, useful, but can mislead. |
 
 Chain-of-thought prompting (see the <a href="reasoning">Reasoning chapter</a>) blends all four: it decomposes a problem (deductive), appeals to patterns seen in training (inductive), proposes candidate answers (abductive), and maps structure across domains (analogical).
 
@@ -41,13 +41,13 @@ Chain-of-thought prompting (see the <a href="reasoning">Reasoning chapter</a>) b
 
 Three classical tensions run through the philosophy of reason and matter for AI:
 
-* **Reason vs. emotion.** \citeauthor{hume_treatise} argued reason is “the slave of the passions”  it cannot by itself generate action, only calculate means. Modern RLHF implicitly agrees: the reward model encodes human *preferences* (emotional, aesthetic, moral), and the LLM's “reason” serves those preferences.
+* **Reason vs. emotion.** \citeauthor{hume_treatise} argued reason is “the slave of the passions”, it cannot by itself generate action, only calculate means. Modern RLHF implicitly agrees: the reward model encodes human *preferences* (emotional, aesthetic, moral), and the LLM's “reason” serves those preferences.
 * **Reason vs. faith / tradition.** \citeauthor{ockham} and the nominalists argued reason must operate on observable particulars, not inherited dogma. The same impulse drives modern empirical ML: trust the data, not the prior.
 * **Reason vs. truth.** A formally valid argument can have false premises and a false conclusion. \citeauthor{kant_critique_pure_reason} tried to fix this by distinguishing *formal* (logical) validity from *transcendental* (truth-tracking) validity. This is exactly the gap between an LLM that produces *grammatical* arguments and one that produces *true* ones.
 
 ### Automated Reasoning
 
-The field of **automated reasoning** studies how reasoning may or may not be modeled computationally. Classical AI took this literally  hand-coded logic, theorem provers, expert systems. Modern AI takes it *statistically*  the same four forms above, learned rather than programmed. The shift from formal to statistical reasoning is arguably the single most important philosophical change of the deep-learning era, and it is what the rest of this textbook is about.
+The field of **automated reasoning** studies how reasoning may or may not be modeled computationally. Classical AI took this literally, hand-coded logic, theorem provers, expert systems. Modern AI takes it *statistically*, the same four forms above, learned rather than programmed. The shift from formal to statistical reasoning is arguably the single most important philosophical change of the deep-learning era, and it is what the rest of this textbook is about.
 </div>
 
 <div class="md">
@@ -102,7 +102,7 @@ Sentience is the ability to have subjective experiences or *qualia*.
 
 #### Agency: The Capacity to Want
 Agency is the ability to act on one's own behalf with intent.
-* **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a “Prompt.” It has no “will” to speak, no hunger to satisfy, and no boredom to alleviate. (The word “agent” in the AI-engineering sense  see the *AI Agents* module  refers to a *technical* control loop that grants the LLM access to a file system, a browser, or other tools. It is not a claim that the system possesses agency, volition, or any phenomenological “wanting.” The two uses of the word are unfortunately homonymous; the engineering sense does not entail the philosophical one.)
+* **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a “Prompt.” It has no “will” to speak, no hunger to satisfy, and no boredom to alleviate. (The word “agent” in the AI-engineering sense, see the *AI Agents* module, refers to a *technical* control loop that grants the LLM access to a file system, a browser, or other tools. It is not a claim that the system possesses agency, volition, or any phenomenological “wanting.” The two uses of the word are unfortunately homonymous; the engineering sense does not entail the philosophical one.)
 * **Lack of Teleology:** Humans have goals (survival, love, art). AI has a “Loss Function.” Its only “goal” is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
 
 ### 4E Cognition: The Biological Bedrock
@@ -432,7 +432,7 @@ The key insight is the **causal inner product**: an inner product on the represe
 - The same direction, transformed by the inverse covariance matrix, acts as a **steering vector** that changes the model's output gender without affecting language or other concepts
 - Probing and steering are **the same object** viewed from different sides of the model (the Riesz isomorphism)
 
-This result deepens the philosophical puzzle. If concepts are organized with such precise geometric structure  if “meaning” has a measurable, causal geometry  then the model is doing something more structured than “haphazardly stitching together sequences.” Yet the geometry is still defined over tokens, not over grounded experience. The model has a **map of meaning** with correct topology, but the map is still not the territory.
+This result deepens the philosophical puzzle. If concepts are organized with such precise geometric structure, if “meaning” has a measurable, causal geometry, then the model is doing something more structured than “haphazardly stitching together sequences.” Yet the geometry is still defined over tokens, not over grounded experience. The model has a **map of meaning** with correct topology, but the map is still not the territory.
 </div>
 
 <div id="philosophy-linear-rep-container"></div>
@@ -609,7 +609,7 @@ Drawing from Steve Bannon's strategy of “flooding the zone with shit,” AI al
 
 Transformer-based LLMs **lack internal metacognition**, i.e., the architecture itself has no built-in second-order loop that monitors and evaluates its own knowledge states. That strikes at the heart of why these systems remain permanently trapped inside “Mary's Room.” A human knows the difference between confident recall and uncertain guessing because metacognition provides a second-order feedback loop: a felt sense of knowing or not-knowing. The Transformer has no such loop. Its single forward pass produces a softmax distribution where prediction and confidence are entangled in the same set of weights, with no independent “inner critic” to adjudicate reliability. This is structurally analogous to Searle's \cite[Chinese Room]{searle1980minds} operator, who can produce flawless output but has no mechanism to assess whether that output is correct, because correctness requires semantic access the architecture simply does not provide. The model, like the person in the room, manipulates symbols based on learned statistical patterns without any capacity to step back and ask, “Do I actually know this, or am I just guessing?”
 
-**Important distinction, to avoid contradiction with later chapters:** the absence of *internal* metacognition does *not* mean that metacognition cannot be *imposed externally*. The Reasoning chapter describes **Process Reward Models (PRMs)**  separate networks trained to score every step of a chain-of-thought  and shows that beam search guided by a PRM can dramatically improve accuracy on competition mathematics. There are also self-consistency schemes (sample many completions, take the majority answer), verifier models (a separate model judges the first model's output), and best-of-$n$ selection. All of these function as *external* metacognitive loops: the LLM itself remains a non-self-monitoring next-token predictor, but the *system around it* can monitor, verify, and select among its outputs. The metacognition is real at the system level, and absent at the model level. Both claims must be held simultaneously for the architecture to be described honestly.
+**Important distinction, to avoid contradiction with later chapters:** the absence of *internal* metacognition does *not* mean that metacognition cannot be *imposed externally*. The Reasoning chapter describes **Process Reward Models (PRMs)**, separate networks trained to score every step of a chain-of-thought, and shows that beam search guided by a PRM can dramatically improve accuracy on competition mathematics. There are also self-consistency schemes (sample many completions, take the majority answer), verifier models (a separate model judges the first model's output), and best-of-$n$ selection. All of these function as *external* metacognitive loops: the LLM itself remains a non-self-monitoring next-token predictor, but the *system around it* can monitor, verify, and select among its outputs. The metacognition is real at the system level, and absent at the model level. Both claims must be held simultaneously for the architecture to be described honestly.
 
 This architectural blind spot is also what makes the \cite[Stochastic Parrot]{bender2021stochasticparrots} critique so durable. When an LLM outputs hedging language like “I'm not entirely sure, but...” it is not performing genuine self-assessment; it is reproducing a linguistic pattern statistically associated with uncertainty in its training data. The 4E Cognition framework explains why no amount of scaling will fix this: true metacognition in humans is Embodied (we feel hesitation as a somatic state), Enacted (we learn to doubt ourselves through real-world consequences of being wrong), and Embedded (we calibrate our confidence to context and stakes). The LLM, being ontologically isolated within its high-dimensional vector space, has none of these biological substrates. It is, as the Global Workspace Theory analogy suggests, a message board without a reader, a “stage” that can never look back at itself. This is the deepest reason hallucinations are not a bug to be patched but an inevitable byproduct of an architecture where knowledge and confabulation are produced by the very same computation.
 

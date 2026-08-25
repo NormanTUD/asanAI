@@ -122,11 +122,11 @@ https://arxiv.org/html/2505.11611v1
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
                     <input type="radio" name="train-optimizer-choice" value="sgd">
-                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent  gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
                     <input type="radio" name="train-optimizer-choice" value="rmsprop">
-                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation  adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
                 </label>
             </div>
         </div>
@@ -306,7 +306,7 @@ The output width is simply the sum of the input widths.
 
 #### Multi-Head Attention: Lateral Parallelism
 
-After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$  the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
+After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$, the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
 </div>
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
@@ -316,7 +316,7 @@ $$z_{0} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
-* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section  context disambiguates.)
+* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section, context disambiguates.)
 * $d_k = \text{Key/Query Head Dimension}$ (dimensionality of the projected keys and queries in each head; usually $d_\text{model} / h$)
 * $d_v = \text{Value Head Dimension}$ (dimensionality of the projected values in each head; in the original Transformer $d_v = d_k$, but the two can differ in general)
 
@@ -334,7 +334,7 @@ In this stage, it is already abstracted away from the concrete Embedding Space (
 </div>
 
 <div class="optional md" data-headline="Gradient Clipping: The Immune System of Training">
-Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode. A single pathological training example can produce a gradient so large that it destroys all learned weights in one step  the **exploding gradient** problem.
+Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode. A single pathological training example can produce a gradient so large that it destroys all learned weights in one step, the **exploding gradient** problem.
 
 Gradient clipping is the complementary defense: it caps the magnitude of gradients so that no single update can change the model by more than a fixed amount. Mathematically, if the gradient vector $\mathbf{g}$ has elements larger than a threshold $\tau$, each element is rescaled:
 
@@ -342,7 +342,7 @@ $$g_i' = \begin{cases} g_i & \text{if } |g_i| \leq \tau \\ \tau \cdot \text{sign
 
 In this implementation, gradients are clipped to the range $[-1, 1]$. This is the numerical equivalent of an immune system: the body allows gradual adaptation (learning) but violently rejects sudden massive changes. Without clipping, one bad sentence in the training data could corrupt the entire model. With it, the damage is bounded.
 
-However, like an immune system, it is imperfect  it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
+However, like an immune system, it is imperfect, it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
 </div>
 
 <div class="optional md" data-headline="Why Gradients Vanish or Explode: The Chain Rule">
@@ -350,7 +350,7 @@ The root cause of both vanishing and exploding gradients is the **chain rule** o
 
 $$\frac{\partial \mathcal{L}}{\partial W_l} = \frac{\partial \mathcal{L}}{\partial h_L} \cdot \prod_{k=l}^{L-1} \frac{\partial h_{k+1}}{\partial h_k}$$
 
-Each term $\frac{\partial h_{k+1}}{\partial h_k}$ contains the weight matrix $W_k$. If the eigenvalues (spectral radius) of these weight matrices are consistently less than 1, the product shrinks exponentially with depth, causing the gradient to **vanish**  early layers receive near-zero updates and stop learning. If the eigenvalues are greater than 1, the product grows exponentially, causing the gradient to **explode**  early layers receive destructive updates.
+Each term $\frac{\partial h_{k+1}}{\partial h_k}$ contains the weight matrix $W_k$. If the eigenvalues (spectral radius) of these weight matrices are consistently less than 1, the product shrinks exponentially with depth, causing the gradient to **vanish**, early layers receive near-zero updates and stop learning. If the eigenvalues are greater than 1, the product grows exponentially, causing the gradient to **explode**, early layers receive destructive updates.
 
 This is why simple deep networks without residual connections and normalization are so hard to train: the product of 100 matrices, each with spectral radius 0.9, decays as $0.9^{100} \approx 0.00003$, effectively killing learning in the first layers. The residual connection solves this by providing an additive identity path $x_{l+1} = x_l + F(x_l)$, which ensures that the gradient can flow backward through the skip connection without passing through any weight matrices:
 
@@ -561,7 +561,7 @@ This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When 
 <div class="optional md" data-headline="The Unembedding Matrix as a Dual Space">
 The unembedding matrix $W_U$ (often equal to $W_E^T$ due to weight tying) does more than just produce logits. It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation. Each row of $W_U$ is a “detector” for a specific token: moving the residual stream vector in the direction of $W_U[\text{“Paris”}]$ literally increases the probability of outputting “Paris.”
 
-This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model “would predict” at that point. Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output. The attention heads and FFN layers are not performing abstract, uninterpretable operations  they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.
+This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model “would predict” at that point. Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output. The attention heads and FFN layers are not performing abstract, uninterpretable operations, they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.
 </div>
 
 <div class="optional md" data-headline="From Logits to Probabilities: A numerically stable Softmax">
@@ -637,19 +637,19 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 
 Here is the complete path a prompt takes through the system, from raw text to generated response:
 
-1. **Tokenization**  The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. “The cat sat” might become `[1996, 4937, 4021]`.
+1. **Tokenization**, The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. “The cat sat” might become `[1996, 4937, 4021]`.
 
-2. **Embedding**  Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\text{model}}$. These vectors live in a semantic space where similar words are close together.
+2. **Embedding**, Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\text{model}}$. These vectors live in a semantic space where similar words are close together.
 
-3. **Positional Encoding**  A position signal is added to each embedding so the model knows the order of tokens. Without this, “dog bites man” and “man bites dog” would be identical to the model.
+3. **Positional Encoding**, A position signal is added to each embedding so the model knows the order of tokens. Without this, “dog bites man” and “man bites dog” would be identical to the model.
 
-4. **Transformer Layers ($N \times$)**  Each layer applies two sub-modules, with **residual connections** so the original information is never lost:
+4. **Transformer Layers ($N \times$)**, Each layer applies two sub-modules, with **residual connections** so the original information is never lost:
    - **Multi-Head Self-Attention:** Each token queries all others, computes relevance scores, and gathers contextual information. Multiple heads run in parallel, each specializing in different linguistic relationships (syntax, semantics, coreference).
    - **Feed-Forward Network (FFN):** Each token is processed independently through an expanding activation layer (detectors) and a contracting projection layer (knowledge retrieval). This is where memorized facts and patterns are applied.
 
-5. **Unembedding**  The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often the transpose of $W_E$), producing a logit score for every word in the vocabulary.
+5. **Unembedding**, The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often the transpose of $W_E$), producing a logit score for every word in the vocabulary.
 
-6. **Sampling**  Logits are scaled by temperature and passed through softmax to produce probabilities. A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally). The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.
+6. **Sampling**, Logits are scaled by temperature and passed through softmax to produce probabilities. A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally). The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.
 
 Every step is differentiable, every transformation is a matrix operation, and no component has access to anything beyond the current context window. The entire architecture is a single, differentiable function $f_\theta(\text{prompt}) \to \text{next token distribution}$.
 
@@ -680,19 +680,19 @@ While the architecture is identical in both modes, the behavior of the model dif
 | **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |
 | **Randomness** | Controlled by temperature / top-p | Controlled by dropout / data shuffling |
 
-**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target  it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
+**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target, it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
 
 </div>
 
 <div id="tda-live-section" class="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
 	<details open>
 	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
-		🧭 TDA Live  Attractors in the Residual Stream
+		🧭 TDA Live, Attractors in the Residual Stream
 	</summary>
 	<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 900px;">
 		A <b>topological data analysis</b> of the residual stream and the weight deltas (weights minus their previous
 		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (stable
-		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red  not
+		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red, not
 		necessarily sources of the flow, just points of locally positive divergence). The phase diagram shows the flow
 		vectors, the basin of attraction, and the <b>persistence</b> (shape) of the resulting structures via H₀
 		components and H₁ loops.
@@ -785,7 +785,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence diagram  shape of attractors (H₀ red, H₁ blue)</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence diagram, shape of attractors (H₀ red, H₁ blue)</div>
 			<div id="tda-live-persistence" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
@@ -797,11 +797,11 @@ While the architecture is identical in both modes, the behavior of the model dif
 			<div id="tda-live-betti" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Topology by layer  β₀ / β₁</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Topology by layer, β₀ / β₁</div>
 			<div id="tda-live-topo" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Learning field  ‖ΔW‖ per matrix (weight deltas)</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Learning field, ‖ΔW‖ per matrix (weight deltas)</div>
 			<div id="tda-live-weights" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 	</div>
@@ -809,16 +809,16 @@ While the architecture is identical in both modes, the behavior of the model dif
 	<details style="margin-top: 14px; font-size: 0.85rem; color: var(--mn-text-muted, #475569);">
 		<summary style="cursor: pointer; font-weight: 700; color: var(--mn-text, #334155);">❓ How to read the phase diagram</summary>
 		<div style="padding: 10px 14px; background: var(--mn-bg-subtle, #f8fafc); border-radius: 8px; line-height: 1.6;">
-			<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets. Repeat this on a grid of points and you get a <b>vector field</b>  a map of how the network moves states around.</p>
+			<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets. Repeat this on a grid of points and you get a <b>vector field</b>, a map of how the network moves states around.</p>
 			<ul style="margin: 0; padding-left: 20px;">
 				<li><b style="color:#2563eb;">Blue cones / arrows</b> = the state is <i>pulled in</i> (negative divergence → an <b>attractor</b>). Hidden states that get pulled in and stay = the “meanings” the model converges to.</li>
 				<li><b style="color:#dc2626;">Red cones / arrows</b> = the state is <i>pushed away</i> (positive divergence → a <b>repeller</b>). Unstable points the model keeps everything away from.</li>
-				<li><b>Thin colored lines</b> = <b>streamlines</b>: follow one state starting anywhere  it drifts along these lines. Green = it settled into an attractor.</li>
+				<li><b>Thin colored lines</b> = <b>streamlines</b>: follow one state starting anywhere, it drifts along these lines. Green = it settled into an attractor.</li>
 				<li><b>Colored dots</b> = the actual residual states of the words in your sentence (one per token per layer, color = token). See how they sit relative to attractors.</li>
 				<li><b>Blue diamond</b> = detected attractor center, <b>red ✕</b> = repeller center.</li>
 				<li><b>Persistence / Barcode / Betti:</b> the “shape” of the cloud of states. β₀ = number of separate clusters, β₁ = number of loops/holes in the structure. Hover over any element in the plot for details.</li>
 			</ul>
-			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary)  the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor “owns”, and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive  drag to rotate while training runs.</p>
+			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary), the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor “owns”, and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive, drag to rotate while training runs.</p>
 		</div>
 	</details>
 	</details>

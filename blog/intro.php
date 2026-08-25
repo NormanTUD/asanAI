@@ -43,17 +43,17 @@ This site is not a book to be read passively. It is designed as a playground for
 * **Learn by Doing:** The core of this experience is interactivity. You are encouraged to move the sliders, input your own data, and click through visualizations. Curiosity is the primary engine of learning here. Try to see where the logic holds and where it breaks.
 * **Navigating Complexity:** At times, the mathematics will get heavy. You do not need to master every equation on the first pass. If a technical section feels overwhelming, skip it, play with the interactive models, and return to the theory once you have built an intuitive feel for how the numbers move.
 * **Not every topic may be of interest to you**: Use the *table of contents* to navigate, you can skip all sections that are of no interest to you.
-* **The Starting Point:** We assume no prior knowledge beyond good English reading capability and the practical knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read  and that is fine. Use the interactive demos to build intuition, skip sections that feel too heavy, and come back later. Expect to re-read, tinker, and take your time.
+* **The Starting Point:** We assume no prior knowledge beyond good English reading capability and the practical knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read, and that is fine. Use the interactive demos to build intuition, skip sections that feel too heavy, and come back later. Expect to re-read, tinker, and take your time.
 
-## Pick Your Interests  A Course That Adapts to You
+## Pick Your Interests, A Course That Adapts to You
 
-This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD)  each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason.
+This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD), each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason.
 
 Below is your current pick. Tap any pill to flip it on or off:
 
 <div data-topics-inline class="inline-topics"></div>
 
-Toggle individual topics to fine-tune  sections you don't care about get tucked behind a soft “skipped” banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
+Toggle individual topics to fine-tune, sections you don't care about get tucked behind a soft “skipped” banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
 
 ## What You Will Achieve
 

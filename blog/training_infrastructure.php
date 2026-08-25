@@ -83,7 +83,7 @@ The query, key, value heads are split across GPUs; each GPU computes a partial a
 
 **Split the model depth-wise**: GPU 0 holds layers 0–7, GPU 1 holds layers 8–15, etc. Each mini-batch propagates through the pipeline like data through a pipeline of CPUs.
 
-The challenge: **pipeline bubbles**  idle time waiting for the previous stage to finish. GPipe \cite[Huang et al., 2018]{huang2018gpipe} splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
+The challenge: **pipeline bubbles**, idle time waiting for the previous stage to finish. GPipe \cite[Huang et al., 2018]{huang2018gpipe} splits each mini-batch into $m$ micro-batches, processing them in staggered fashion. PipelineFLUSH and 1F1B (One-Forward-One-Backward, used in Megatron and DeepSpeed) reduce bubble overhead.
 </div>
 
 <div class="md">

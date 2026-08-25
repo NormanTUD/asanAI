@@ -125,7 +125,7 @@ By minimizing this function under the constraint of a fixed compute budget $C \a
 <div class="md">
 ## The Deepest Insight: Cross-Entropy Is Shannon Entropy
 
-The connection between cross-entropy loss and information theory is not a superficial analogy  it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
+The connection between cross-entropy loss and information theory is not a superficial analogy, it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
 
 Shannon's cross-entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
 
@@ -141,7 +141,7 @@ where $y$ is the one-hot true label (the “true distribution” for a single ex
 
 The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm. Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs. Reducing the loss means finding a shorter description of the data. This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.
 
-Intelligence, from this perspective, is not a separate objective  it is a side effect of optimal compression. The connection to Hutter's prize (\cite{hutter2006universal}) and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
+Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression. The connection to Hutter's prize (\cite{hutter2006universal}) and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
 
 ### Why Cross-Entropy Pairs Perfectly with Softmax
 
@@ -149,7 +149,7 @@ The gradient of cross-entropy with softmax is beautifully simple:
 
 $$\frac{\partial \mathcal{L}}{\partial z_i} = \hat{y}_i - y_i$$
 
-The error signal is just “how wrong were you?”  the difference between prediction and truth. This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).
+The error signal is just “how wrong were you?”, the difference between prediction and truth. This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).
 </div>
 
 

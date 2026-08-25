@@ -15,7 +15,7 @@ topics: math-ii
 <div class="md">
 Modern AI is, at its core, applied linear algebra. Every image, every word, every token lives in a high-dimensional **vector space**. This chapter introduces the mathematical objects that make neural networks possible: vectors, matrices, tensors, and the operations that combine them.
 
-If you complete this chapter, the rest of the textbook  embeddings, attention, gradients, activations  will read as natural applications of these primitives.
+If you complete this chapter, the rest of the textbook, embeddings, attention, gradients, activations, will read as natural applications of these primitives.
 </div>
 
 <div class="md">
@@ -171,7 +171,7 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
 | Object | Rank | Shape | Example |
 |--------|------|-------|---------|
-| Scalar | 0 |  | $s = 5$ |
+| Scalar | 0 | — | $s = 5$ |
 | Vector | 1 | $(d,)$ | color $= (r, g, b)$ |
 | Matrix | 2 | $(h, w)$ | a black-and-white image |
 | Tensor | 3+ | $(h, w, c, \dots)$ | a color image is $(h, w, 3)$ |
@@ -359,7 +359,7 @@ $$
 \frac{\partial L_{\text{CE}}}{\partial z_i} = \hat{y}_i - y_i
 $$
 
-i.e. the gradient is just “predicted minus actual”  the reason softmax + cross-entropy is the canonical pairing.
+i.e. the gradient is just “predicted minus actual”, the reason softmax + cross-entropy is the canonical pairing.
 </div>
 
 <script>

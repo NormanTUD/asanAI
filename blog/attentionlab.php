@@ -103,16 +103,16 @@ You will see each part of the equation appear one layer at a time, with the corr
 
 The walkthrough proceeds through these eight steps:
 
-1. **The Cast**  introduce the Query $\mathbf{q}$ and the three Keys $\mathbf{k}_1, \mathbf{k}_2, \mathbf{k}_3$ in $d_k=3$ dimensional space.
-2. **Element-wise product**  the dot product is built from three scalar products, one per dimension.
-3. **The dot product**  sum the products into a single scalar score per key.
-4. **Scale by $1/\sqrt{d_k}$**  variance control to keep softmax in its usable range.
-5. **Exponentiate**  amplify differences between scores.
-6. **Normalize via softmax**  turn raw scores into a probability distribution.
-7. **Switch to value vectors**  bring in the $\mathbf{v}_j$ that carry the actual semantic content.
-8. **Weighted sum**  combine the values into the final output $\mathbf{z}$.
+1. **The Cast**, introduce the Query $\mathbf{q}$ and the three Keys $\mathbf{k}_1, \mathbf{k}_2, \mathbf{k}_3$ in $d_k=3$ dimensional space.
+2. **Element-wise product**, the dot product is built from three scalar products, one per dimension.
+3. **The dot product**, sum the products into a single scalar score per key.
+4. **Scale by $1/\sqrt{d_k}$**, variance control to keep softmax in its usable range.
+5. **Exponentiate**, amplify differences between scores.
+6. **Normalize via softmax**, turn raw scores into a probability distribution.
+7. **Switch to value vectors**, bring in the $\mathbf{v}_j$ that carry the actual semantic content.
+8. **Weighted sum**, combine the values into the final output $\mathbf{z}$.
 
-This is the **mechanical truth** of attention. Every other interpretation  the tug-of-war, the database lookup, the Hopfield retrieval  is a metaphor layered on top of these concrete operations.
+This is the **mechanical truth** of attention. Every other interpretation, the tug-of-war, the database lookup, the Hopfield retrieval, is a metaphor layered on top of these concrete operations.
 </div>
 
 <!-- ===================== ANATOMY OF ATTENTION: STEP-BY-STEP ===================== -->
@@ -1386,7 +1386,7 @@ html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(3) span { color: #86e
 		<div class="step-info">
 			<span class="step-num" id="attn-anatomy-step-num">Step 1</span>
 			<span class="step-total">of ?</span>
-			<span id="attn-anatomy-step-title"> From embeddings to Q, K, V</span>
+			<span id="attn-anatomy-step-title">, From embeddings to Q, K, V</span>
 		</div>
 		<button id="attn-anatomy-reset" title="Reset all q, k, v values to defaults for the current token-set">↺ Reset</button>
 		<button id="attn-anatomy-next">Next →</button>
@@ -1478,7 +1478,7 @@ html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(3) span { color: #86e
 			<div class="attn-summary-eq"><span>v</span> = W<sup>V</sup> · x</div>
 		</div>
 		<div class="intuition-section">
-			Three learned linear maps  each a different rotation/scale/shear
+			Three learned linear maps, each a different rotation/scale/shear
 			of the input space. <b>q</b> asks the question, <b>k</b> advertises
 			what each token contains, <b>v</b> carries the content to blend.
 		</div>
@@ -1513,7 +1513,7 @@ To decide how much “pull” one word has on another, the model performs a math
 
 The model calculates an alignment score using the scaled dot product:
 $$\text{score}_{i,j} = \frac{\mathbf{q}_i \cdot \mathbf{k}_j^T}{\sqrt{d_k}}$$
-The $\sqrt{d_k}$ term is critical  without it, the dot-product magnitudes scale with the head dimension and the softmax saturates. If the Query and Key point in a similar direction, the connection is strong.
+The $\sqrt{d_k}$ term is critical, without it, the dot-product magnitudes scale with the head dimension and the softmax saturates. If the Query and Key point in a similar direction, the connection is strong.
 
 In modern NLP, words are not merely strings; they are high-dimensional vectors. **Self-Attention** is the operation that allows a model to dynamically re-weight these vectors based on their contextual relevance to one another.
 
@@ -1556,7 +1556,7 @@ A subtle but important detail: **$Q$ and $K$ have dimension $d_k$, while $V$ has
 
 <div class="md">
 
-In a real Transformer, every token lives as a $d_{\text{model}}$-dimensional vector  $d_{\text{model}} = 512$ in the original paper. The matrices $W^Q, W^K, W^V$ are **linear projections** that map each token from $d_{\text{model}}$ down into a smaller subspace ($d_k = d_v = 64$ in the original paper). They are linear, so a 2D plane through the origin is faithful to what happens in 512 dimensions: every projection is a shadow of the original onto some lower-dimensional subspace.
+In a real Transformer, every token lives as a $d_{\text{model}}$-dimensional vector, $d_{\text{model}} = 512$ in the original paper. The matrices $W^Q, W^K, W^V$ are **linear projections** that map each token from $d_{\text{model}}$ down into a smaller subspace ($d_k = d_v = 64$ in the original paper). They are linear, so a 2D plane through the origin is faithful to what happens in 512 dimensions: every projection is a shadow of the original onto some lower-dimensional subspace.
 
 - **Grey points**: Original 3D token embeddings (the toy version of $d_{\text{model}}$).
 - **Coloured diamonds on the plane**: Where each token lands after being multiplied by the weight matrix. The coloured lines show the projection “shadow” from 3D down to the plane.
@@ -1572,7 +1572,7 @@ $$
 \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)\, W^O, \quad \text{head}_i = \text{Attention}(Q W_i^Q,\ K_i^K,\ V_i^V)
 $$
 
-with $W_i^Q, W_i^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$, and $W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$. In the original paper, $h = 8$, $d_{\text{model}} = 512$, so each head works in a $d_k = d_v = 64$-dimensional subspace. The total per-head cost equals that of one big $512$-dim head, but the model gains the ability to **jointly attend to information from different representation subspaces**  one head can chase syntactic dependencies while another tracks coreference.
+with $W_i^Q, W_i^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$, and $W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$. In the original paper, $h = 8$, $d_{\text{model}} = 512$, so each head works in a $d_k = d_v = 64$-dimensional subspace. The total per-head cost equals that of one big $512$-dim head, but the model gains the ability to **jointly attend to information from different representation subspaces**, one head can chase syntactic dependencies while another tracks coreference.
 
 The final projection $W^O$ is what lets the heads' outputs mix back together into a single $d_{\text{model}}$-dimensional representation.
 
@@ -1639,7 +1639,7 @@ When you see a dark blue square with **85%**, you are seeing the model “linkin
 
 In the world of Transformers, meaning is **movement**. Instead of looking up a word in a static dictionary, the model calculates a new position for that word based on the “gravitational pull” of its neighbours in the embedding space. This creates a vector that is near the *meaning* of the word in the context it is used in, not the mere embedding of the word itself.
 
-The classic illustration: the word **“apple”** is ambiguous in isolation, but in *I ate a juicy apple* the word **“juicy”** pulls the apple vector toward the fruit cluster  the same dot-product mechanism this page demonstrates geometrically with the step-by-step walkthrough above.
+The classic illustration: the word **“apple”** is ambiguous in isolation, but in *I ate a juicy apple* the word **“juicy”** pulls the apple vector toward the fruit cluster, the same dot-product mechanism this page demonstrates geometrically with the step-by-step walkthrough above.
 
 ## Attention Heads as Differentiable Turing Machine Read Heads
 
@@ -1674,15 +1674,15 @@ $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
 <div class="md">
 The diamond you see in the plot is the result of this physics, a word finding its true north by listening to its neighbors.
 
-It is important to note that attention does not only disambiguate words with multiple meanings like “bank” or “apple.” It operates over **every token in the sequence**, refining **all** representations simultaneously. A word like “the” gets contextualized just as much as “bank” does  attention captures syntactic relationships (subject-verb agreement), coreference (linking “she” to “Maria”), temporal reasoning (“before” relating two events), adjectival binding (“red” attaching to “car” rather than “house”), and countless other structural dependencies. The disambiguation examples above are simply the most *visually dramatic* illustration of what is, in reality, a universal mechanism: every word's representation is reshaped by every other word it attends to, regardless of whether the word is ambiguous in isolation.
+It is important to note that attention does not only disambiguate words with multiple meanings like “bank” or “apple.” It operates over **every token in the sequence**, refining **all** representations simultaneously. A word like “the” gets contextualized just as much as “bank” does, attention captures syntactic relationships (subject-verb agreement), coreference (linking “she” to “Maria”), temporal reasoning (“before” relating two events), adjectival binding (“red” attaching to “car” rather than “house”), and countless other structural dependencies. The disambiguation examples above are simply the most *visually dramatic* illustration of what is, in reality, a universal mechanism: every word's representation is reshaped by every other word it attends to, regardless of whether the word is ambiguous in isolation.
 
 ### The Attention Matrix: A Zero-Sum Economy
 
-Each row of the attention matrix sums to 1 (due to softmax), making it **right-stochastic**. But the columns generally do **not** sum to 1. This asymmetry reveals something profound: some tokens are “attended to” much more than others  they become **information hubs**.
+Each row of the attention matrix sums to 1 (due to softmax), making it **right-stochastic**. But the columns generally do **not** sum to 1. This asymmetry reveals something profound: some tokens are “attended to” much more than others, they become **information hubs**.
 
 In BERT, the `[CLS]` token often accumulates massive column-sums, acting as a sink that aggregates information from the entire sequence. In GPT-style models, the last (most recent) token plays a similar role. These tokens become gravitational centers that the entire sequence orbits around.
 
-The zero-sum nature of attention (each row sums to exactly 1) means attention is a **finite resource**. When one token receives more attention from a given query, every other token necessarily receives less. This is not a design choice  it is a mathematical consequence of the softmax normalization. It creates a competitive economy within every forward pass: tokens compete for attention the way organisms compete for resources in an ecosystem. A highly salient token (a proper noun, a negation word) can “starve” surrounding tokens of attention, causing the model to effectively ignore them.
+The zero-sum nature of attention (each row sums to exactly 1) means attention is a **finite resource**. When one token receives more attention from a given query, every other token necessarily receives less. This is not a design choice, it is a mathematical consequence of the softmax normalization. It creates a competitive economy within every forward pass: tokens compete for attention the way organisms compete for resources in an ecosystem. A highly salient token (a proper noun, a negation word) can “starve” surrounding tokens of attention, causing the model to effectively ignore them.
 
-The deeper implication: the model cannot attend to everything equally  it must always choose, and every choice is a sacrifice. This mirrors the human condition of finite attention: we cannot listen to all voices simultaneously, and every act of focus is an act of exclusion.
+The deeper implication: the model cannot attend to everything equally, it must always choose, and every choice is a sacrifice. This mirrors the human condition of finite attention: we cannot listen to all voices simultaneously, and every act of focus is an act of exclusion.
 </div>

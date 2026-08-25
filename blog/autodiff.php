@@ -358,7 +358,7 @@ Backpropagation through a deep network is really just multiplying a chain of <i>
 
 $$\frac{\partial \mathcal{L}}{\partial x^{(0)}} = \frac{\partial \mathcal{L}}{\partial x^{(L)}} \cdot J^{(L)} \cdot J^{(L-1)} \cdot \ldots \cdot J^{(1)}$$
 
-The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets fix this because their Jacobian is $I + J_F$  the identity term guarantees that singular values are at least 1, allowing gradients to flow through arbitrarily many layers.
+The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets fix this because their Jacobian is $I + J_F$, the identity term guarantees that singular values are at least 1, allowing gradients to flow through arbitrarily many layers.
 
 This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU that maintain smooth, non-vanishing gradients across the full input range.
 </div>

@@ -15,7 +15,7 @@ Before an AI can “calculate” a word, it must chop the text into pieces. This
 </div>
 
 <div class="optional md" data-headline="Where these token IDs go">
-A tokenizer's output is a list of **integers**  token IDs in $\{0, 1, \dots, |V|-1\}$. The very next step in every Transformer is to look each ID up in a trainable matrix $E \in \mathbb{R}^{|V| \times d}$ to get a vector. That lookup is what brings you into the <a href="embeddinglab">Embeddings chapter</a>. Everything below this chapter is “before the lookup”; everything in Embeddings is “after”.
+A tokenizer's output is a list of **integers**, token IDs in $\{0, 1, \dots, |V|-1\}$. The very next step in every Transformer is to look each ID up in a trainable matrix $E \in \mathbb{R}^{|V| \times d}$ to get a vector. That lookup is what brings you into the <a href="embeddinglab">Embeddings chapter</a>. Everything below this chapter is “before the lookup”; everything in Embeddings is “after”.
 </div>
 
 <div id="tokenizer-section">
@@ -107,7 +107,7 @@ The concept of viewing text as a sequence of raw characters dates back to \citea
             <span class="section-token-count"></span>
         </div>
         <div class="md">
-WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it greedily merges the pair whose combination most improves the **likelihood of the training data**. The original formulation (Schuster & Nakajima 2012), introduced to handle the massive character sets of Japanese and Korean, optimizes that likelihood directly through an iterative procedure  it has no closed-form per-pair score. The ratio shown below is a separate, simpler *approximation* used by BERT-style implementations, not the original objective. WordPiece later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., “tokenization” → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
+WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it greedily merges the pair whose combination most improves the **likelihood of the training data**. The original formulation (Schuster & Nakajima 2012), introduced to handle the massive character sets of Japanese and Korean, optimizes that likelihood directly through an iterative procedure, it has no closed-form per-pair score. The ratio shown below is a separate, simpler *approximation* used by BERT-style implementations, not the original objective. WordPiece later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., “tokenization” → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
         </div>
 
 	<div class="optional md" data-headline="The WordPiece-Algorithm">
@@ -120,7 +120,7 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
 		    <p align="center">
 		      $$\text{score}(a, b) = \frac{\text{freq}(ab)}{\text{freq}(a) \times \text{freq}(b)}$$
 		    </p>
-		    This closed-form ratio is a *simplification*, not the original formulation  it favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently, which is why the formula is a *ratio* rather than a raw frequency: BPE uses raw frequency, BERT-style WordPiece uses the ratio.
+		    This closed-form ratio is a *simplification*, not the original formulation, it favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently, which is why the formula is a *ratio* rather than a raw frequency: BPE uses raw frequency, BERT-style WordPiece uses the ratio.
 		  </li>
 		  <li>
 		    <strong>Merge the highest-scoring pair</strong> and add the new symbol to the vocabulary.
@@ -151,7 +151,7 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
         </div>
 
 <div class="md">
-**Why BPE works: Zipf's Law.** The reason BPE's merge strategy is so effective is that it mirrors the statistical structure of language itself. \citeauthor{zipf1949human} observed that in any natural language corpus, a few words (like “the,” “of,” “and”) appear with very high frequency, while most words are rare. BPE's iterative merging naturally produces a token vocabulary that follows this same distribution: common words stay intact as single tokens, while rare words are broken into fragments that reuse frequent subword units. This aligns the tokenizer's granularity with the data's statistical structure  frequent patterns get short codes, rare ones get longer compositions. In effect, BPE is a lossless compression scheme that happens to produce excellent tokenizations for language models.
+**Why BPE works: Zipf's Law.** The reason BPE's merge strategy is so effective is that it mirrors the statistical structure of language itself. \citeauthor{zipf1949human} observed that in any natural language corpus, a few words (like “the,” “of,” “and”) appear with very high frequency, while most words are rare. BPE's iterative merging naturally produces a token vocabulary that follows this same distribution: common words stay intact as single tokens, while rare words are broken into fragments that reuse frequent subword units. This aligns the tokenizer's granularity with the data's statistical structure, frequent patterns get short codes, rare ones get longer compositions. In effect, BPE is a lossless compression scheme that happens to produce excellent tokenizations for language models.
 </div>
 
 
@@ -188,7 +188,7 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
             <h3 style="margin:0; color:#fca5a5;">Why LLMs Can't Count Letters</h3>
         </div>
         <div class="md">
-Type a word like **“strawberry”** below and watch how BPE splits it. The model never sees individual letters  it sees whatever fragments the tokenizer produced during training.
+Type a word like **“strawberry”** below and watch how BPE splits it. The model never sees individual letters, it sees whatever fragments the tokenizer produced during training.
         </div>
         <div style="margin:12px 0;">
             <input type="text" id="tokenization-failure-input" class="bw-cell"

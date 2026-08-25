@@ -11,7 +11,7 @@ topics: math-i
 -->
 
 <div class="md">
-Before we can understand a Neural Network, we have to understand the language it speaks: **mathematics**. This first of three math chapters covers the numerical foundations  the symbols and operations that appear constantly in AI code.
+Before we can understand a Neural Network, we have to understand the language it speaks: **mathematics**. This first of three math chapters covers the numerical foundations, the symbols and operations that appear constantly in AI code.
 
 By the end, you will be comfortable with the sum symbol $\sum$, Euler's number $e$, logarithms, and the way a computer represents “infinity” without crashing.
 </div>

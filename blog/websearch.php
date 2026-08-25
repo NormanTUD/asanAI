@@ -241,7 +241,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🔍</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Search API</div>
-<div class="wslab-arch-desc">Bing · Google · Brave · SearXNG  returns top 5-10 results as JSON</div>
+<div class="wslab-arch-desc">Bing · Google · Brave · SearXNG, returns top 5-10 results as JSON</div>
 
         </div>
     </div>

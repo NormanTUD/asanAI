@@ -265,9 +265,9 @@ This has a profound implication for **cross-lingual translation**. When a Transf
 
 A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding. Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic “shape.” To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined “meaning manifold” that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.
 
-In other words, a translation Transformer can be described as translating **paths through meaning-space**  identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space. Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*. But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.
+In other words, a translation Transformer can be described as translating **paths through meaning-space**, identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space. Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*. But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.
 
-This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** \cite[Vaswani et al., 2017]{vaswani2017attention}. This relational map is what gets preserved and transferred  **not any individual coordinate** \cite[Elhage et al., 2021]{elhage2021mathematical}.
+This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** \cite[Vaswani et al., 2017]{vaswani2017attention}. This relational map is what gets preserved and transferred, **not any individual coordinate** \cite[Elhage et al., 2021]{elhage2021mathematical}.
 
 </div>
 
@@ -687,7 +687,7 @@ Standard embedding spaces use Euclidean geometry, but human language is rife wit
 
 $$ d_{\mathbb{H}}(\mathbf{u}, \mathbf{v}) = \operatorname{arccosh}\!\left(1 + 2\,\frac{\|\mathbf{u} - \mathbf{v}\|^2}{(1 - \|\mathbf{u}\|^2)(1 - \|\mathbf{v}\|^2)}\right) $$
 
-Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of “exponential room” near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement  leaves do not literally need to crowd the boundary, and how much “room” is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
+Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of “exponential room” near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement, leaves do not literally need to crowd the boundary, and how much “room” is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
 
 Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
 
@@ -817,7 +817,7 @@ Below, you can explore this fractal folding interactively. The visualization sho
 
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>What you're seeing:</b> At <b>Level 1</b>, you see the coarse animal kingdom 
+        <b>What you're seeing:</b> At <b>Level 1</b>, you see the coarse animal kingdom, 
         <span style="color:#ef4444; font-weight:bold;">Mammals</span>,
         <span style="color:#3b82f6; font-weight:bold;">Birds</span>, and
         <span style="color:#10b981; font-weight:bold;">Reptiles</span> as clusters.
@@ -914,8 +914,8 @@ This is not just a mathematical curiosity. The Voronoi tessellation is **mathema
 ### Why This Matters for LLMs
 
 * **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is equivalent to finding which Voronoi cell the output vector falls into, the cell boundaries *are* the decision boundaries.
-* **Cell size is a geometric, not linguistic, property:** A cell's volume depends only on the positions of the neighboring seeds and the chosen metric. Frequency does not automatically inflate a cell. Whether common words like “the” end up with large cells  making them easier to “land in”  is an *empirical* question about the learned embedding geometry, not a consequence of the Voronoi construction itself.
-* **Neighbors may reflect semantics  but only if the embedding is well-trained:** Sharing a boundary merely means geometric closeness under the chosen metric. It translates into semantic relatedness only insofar as the trained embedding geometry actually groups related words together, which is true of well-trained models but is not guaranteed by the Voronoi construction. “Dog” and “Cat” may share a boundary in a good embedding; nothing in the geometry *requires* it.
+* **Cell size is a geometric, not linguistic, property:** A cell's volume depends only on the positions of the neighboring seeds and the chosen metric. Frequency does not automatically inflate a cell. Whether common words like “the” end up with large cells, making them easier to “land in”, is an *empirical* question about the learned embedding geometry, not a consequence of the Voronoi construction itself.
+* **Neighbors may reflect semantics, but only if the embedding is well-trained:** Sharing a boundary merely means geometric closeness under the chosen metric. It translates into semantic relatedness only insofar as the trained embedding geometry actually groups related words together, which is true of well-trained models but is not guaranteed by the Voronoi construction. “Dog” and “Cat” may share a boundary in a good embedding; nothing in the geometry *requires* it.
 * **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
 
 Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token “owns” that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
@@ -1061,7 +1061,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
         When two balls overlap, an <span style="color:#60a5fa; font-weight:bold;">edge</span> connects them.
         When three mutually connected points form a triangle, it is
         <span style="color:rgba(139,92,246,0.2); font-weight:bold;">filled in purple</span>.
-        <span style="color:#f59e0b; font-weight:bold;">Yellow highlighted loops</span> mark detected <b>topological holes</b> 
+        <span style="color:#f59e0b; font-weight:bold;">Yellow highlighted loops</span> mark detected <b>topological holes</b>, 
         regions enclosed by edges but <b>not filled</b> by triangles. These are the voids.
         The <b>right panel</b> is the <b>persistence diagram</b>: each dot is a hole,
         plotted by its birth radius (x) and death radius (y).
@@ -1159,11 +1159,11 @@ Below, you can explore this interactively. Two conceptual categories are represe
 <div class="md">
 ## Vector Rotations as Grammar Operators
 
-One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn  an idealization that captures many inflections surprisingly well.
+One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn, an idealization that captures many inflections surprisingly well.
 
 ### The Carousel of Tense
 
-Take a cloud of present-tense verb vectors: “run,” “eat,” “write,” “speak,” “build.” They form a cluster in the embedding space. Now take their past-tense counterparts: “ran,” “ate,” “wrote,” “spoke,” “built.” These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous “king − man + woman = queen” analogy). Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space  again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.
+Take a cloud of present-tense verb vectors: “run,” “eat,” “write,” “speak,” “build.” They form a cluster in the embedding space. Now take their past-tense counterparts: “ran,” “ate,” “wrote,” “spoke,” “built.” These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous “king − man + woman = queen” analogy). Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space, again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.
 </div>
 
 $$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
@@ -1276,10 +1276,10 @@ This isn't magic because “the universe is secretly one giant vector space.” 
 
 The trick is simpler than that: **geometry gives us a language in which relationships can be represented continuously and compositionally.**
 
-* **Continuous**, because similarity becomes a *degree* rather than a binary flag. Two concepts can be almost-similar, very-similar, or barely-related  and that gradient is preserved.
-* **Compositional**, because concepts combine through vector arithmetic  and addition is precisely the operation geometry already supports natively. A “royalty” direction, applied anywhere, transforms Man into King. A “tense” rotation, applied anywhere, transforms run into ran.
+* **Continuous**, because similarity becomes a *degree* rather than a binary flag. Two concepts can be almost-similar, very-similar, or barely-related, and that gradient is preserved.
+* **Compositional**, because concepts combine through vector arithmetic, and addition is precisely the operation geometry already supports natively. A “royalty” direction, applied anywhere, transforms Man into King. A “tense” rotation, applied anywhere, transforms run into ran.
 
-This is enormously practical for learning. Gradients flow. Errors propagate. Optimization is well-defined. A model whose representations live in a continuous space can be *tuned*  nudged by gradient descent the way a sculptor tunes a shape. Discrete symbols offer no such handle: you cannot take a half-step from “cat” toward “dog,” and there is no meaningful direction in which to descend.
+This is enormously practical for learning. Gradients flow. Errors propagate. Optimization is well-defined. A model whose representations live in a continuous space can be *tuned*, nudged by gradient descent the way a sculptor tunes a shape. Discrete symbols offer no such handle: you cannot take a half-step from “cat” toward “dog,” and there is no meaningful direction in which to descend.
 
-The power of the embedding space isn't that language *is* geometry. It's that geometry happens to be exactly the right mathematical structure for representing *relations*  and language, as Saussure understood a century before any of this existed, is nothing if not a system of differences.
+The power of the embedding space isn't that language *is* geometry. It's that geometry happens to be exactly the right mathematical structure for representing *relations*, and language, as Saussure understood a century before any of this existed, is nothing if not a system of differences.
 </div>

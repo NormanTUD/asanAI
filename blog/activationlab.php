@@ -39,7 +39,7 @@ $$y = (W_2W_1)x + (W_2b_1 + b_2)$$
 
 See? We end up with another linear transformation like $Wx + b$, where $ W = W_2W_1 $ and $b = (W_2b_1 + b_2)$. This way, adding more layers, doesn't add more functionality to the neural network. This is where activation functions come into play.
 
-Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU**  a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*; first used as an activation function in artificial neural networks by \citeauthor{relufirst} in \citeyear{relufirst} in the Neocognitron; and brought into mainstream deep learning by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}), **Sigmoid**, or **Tanh**), stacking layers adds no extra “intelligence” or power to the model.
+Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU**, a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*; first used as an activation function in artificial neural networks by \citeauthor{relufirst} in \citeyear{relufirst} in the Neocognitron; and brought into mainstream deep learning by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}), **Sigmoid**, or **Tanh**), stacking layers adds no extra “intelligence” or power to the model.
 </div>
 
 <div class="activation-lab-container" style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #dcfce7; margin-top: 20px;">
@@ -156,7 +156,7 @@ During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** func
 
 The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** “flatten out” (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.
 
-This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**  a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*. It was \citeauthor{relufirst} in \citeyear{relufirst} who first *used* this kind of piecewise-linear response as an activation function in artificial neural networks, in his Neocognitron. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
+This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**, a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*. It was \citeauthor{relufirst} in \citeyear{relufirst} who first *used* this kind of piecewise-linear response as an activation function in artificial neural networks, in his Neocognitron. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
 </div>
 
 <div class="image-row md">
@@ -179,19 +179,19 @@ For any given input, roughly half of ReLU's neurons output exactly zero. This me
 
 This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lottery}: within a large, randomly initialized network, there exist smaller subnetworks (“winning tickets”) that, when trained in isolation, can match the performance of the full network. ReLU makes these subnetworks easier to find because its sparsity naturally partitions the network into overlapping but distinct computational pathways.
 
-The “aha-moment”: ReLU doesn't just prevent vanishing gradients  it forces the network to use a different “team” of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
+The “aha-moment”: ReLU doesn't just prevent vanishing gradients, it forces the network to use a different “team” of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
 </div>
 
 <div class="md">
 ### GELU: The Smooth Transformer Gate
 
-While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)**  introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu})  became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
+While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)**, introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu}), became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
 
 $$\text{GELU}(x) = x \cdot \Phi(x) = 0.5\, x \left(1 + \text{erf}\!\left(\frac{x}{\sqrt{2}}\right)\right)$$
 
 Where $\Phi(x)$ is the standard normal cumulative distribution function and $\text{erf}$ is the error function.
 
-GELU is often described as a “smooth ReLU”: it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever “dies” completely  every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
+GELU is often described as a “smooth ReLU”: it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever “dies” completely, every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
 </div>
 
 <div class="md">
@@ -201,5 +201,5 @@ The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** \cite{ramachandran20
 
 $$\text{SiLU}(x) \;=\; x \cdot \sigma(x) \;=\; \frac{x}{1 + e^{-x}}$$
 
-A *self-gated* function: each input is multiplied by its own sigmoid. Looks like a smoothed ReLU  strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\approx -0.28$), zero at $x = 0$. Like GELU it is everywhere differentiable and never fully “dies”; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
+A *self-gated* function: each input is multiplied by its own sigmoid. Looks like a smoothed ReLU, strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\approx -0.28$), zero at $x = 0$. Like GELU it is everywhere differentiable and never fully “dies”; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
 </div>

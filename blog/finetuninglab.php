@@ -19,7 +19,7 @@ The trend in 2024–2025: most alignment work has moved away from RLHF toward **
 <div class="md">
 ## Stage 0: Pretraining (recap)
 
-The base model is trained on the next-token-prediction objective (see the Intuition chapter) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data  but does not behave as an assistant.
+The base model is trained on the next-token-prediction objective (see the Intuition chapter) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.
 
 Stage 1: **Supervised Fine-Tuning (SFT)** teaches it to follow instructions.
 Stage 2: **Preference optimization** aligns its outputs with human values.
@@ -57,7 +57,7 @@ A typical 2025 SFT dataset: 100K–1M examples. Llama 3 used ~10M SFT examples.
 
 * **Data quality > quantity**: 10K carefully curated examples beat 1M noisy ones.
 * **Diversity matters**: instruction-following, code, math, multilingual, refusal, formatting.
-* **Format**: ChatML, Alpaca, ShareGPT  pick one and stick to it.
+* **Format**: ChatML, Alpaca, ShareGPT, pick one and stick to it.
 * **Multi-turn**: include conversations, not just single Q&A.
 </div>
 
@@ -76,7 +76,7 @@ where $y_w$ is the human-preferred (winner) response and $y_l$ the loser.
 
 A 2025 RM is typically a 7B–70B language model with a **single scalar output head**. It is trained on **100K–1M preference pairs**.
 
-**Multi-dimensional rewards**: production RMs score multiple axes  helpfulness, harmlessness, factuality, style. The final reward is a weighted sum:
+**Multi-dimensional rewards**: production RMs score multiple axes, helpfulness, harmlessness, factuality, style. The final reward is a weighted sum:
 
 $$
 R(x, y) = \sum_{i} w_i R_i(x, y)
@@ -155,7 +155,7 @@ The choice in 2025: **DPO with length normalization** or **SimPO** for most case
 GRPO (Group Relative Policy Optimization) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
 
 * **Group sampling**: for each prompt, sample $G$ candidate responses from the current policy.
-* **Verifiable reward**: for math, the reward is binary  the answer is correct or not. For code, it's test pass/fail.
+* **Verifiable reward**: for math, the reward is binary, the answer is correct or not. For code, it's test pass/fail.
 * **Group-relative advantage**: $A_i = (r_i - \mu_G) / \sigma_G$ where $\mu_G, \sigma_G$ are the group's mean and std.
 * **No critic**: the group statistics serve as the baseline.
 
@@ -187,7 +187,7 @@ The reward is typically a combination of:
 A 2024 frontier-lab pattern:
 
 1. **Sample** multiple candidate responses for each prompt using the current policy.
-2. **Judge** using a strong model (or LLM-as-judge)  pick winner and loser.
+2. **Judge** using a strong model (or LLM-as-judge), pick winner and loser.
 3. **Train** the policy with DPO on these on-policy preferences.
 4. **Repeat** with the updated policy.
 
@@ -218,7 +218,7 @@ Combines 4-bit quantization of the base model with LoRA adapters in fp16. A 70B 
 * **Adapters** \cite[Houlsby et al., 2019]{houlsby2019adapters}: small bottleneck layers inserted between Transformer blocks.
 * **Prompt tuning** \cite[Lester et al., 2021]{lester2021prompttuning}: learnable soft prompts prepended to inputs.
 * **IA³** \cite[Liu et al., 2022]{liu2022ia3}: learnable scaling vectors on attention and FFN.
-* **DoRA** \cite[Liu et al., 2024]{liu2024dora}: decomposed magnitude and direction updates  often outperforms LoRA at the same rank.
+* **DoRA** \cite[Liu et al., 2024]{liu2024dora}: decomposed magnitude and direction updates, often outperforms LoRA at the same rank.
 </div>
 
 <div id="lora-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -287,10 +287,10 @@ Fine-tuning is the right tool when:
 
 Fine-tuning is the wrong tool when:
 
-* You need **real-time knowledge**  use RAG instead.
-* The behavior you want is **achievable via prompting**  much cheaper.
-* You don't have **at least 1K high-quality examples**  quality data is the bottleneck.
-* The model needs to **generalize** to situations not in your data  prompts generalize better.
+* You need **real-time knowledge**, use RAG instead.
+* The behavior you want is **achievable via prompting**, much cheaper.
+* You don't have **at least 1K high-quality examples**, quality data is the bottleneck.
+* The model needs to **generalize** to situations not in your data, prompts generalize better.
 
 Rule of thumb: **prompt first, RAG second, fine-tune third**. Fine-tuning is a significant engineering investment; do it only after the lower-cost options are exhausted.
 </div>

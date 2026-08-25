@@ -75,7 +75,7 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
 
 * **Human in the Loop:** Never automate a system where the AI takes critical action (like sending money or medical advice) without a human checking it first.
 * **Verify Facts:** Use AI for summarization, drafting, and brainstorming. Do **not** use it as a search engine for facts without verifying the output via Google or a trusted source.
-* **RAG (Retrieval Augmented Generation):** An automated retriever searches a knowledge base (e.g., a manual, documents, or a database) and injects the most relevant passages into the prompt  the AI then answers using only those passages. This reduces hallucinations significantly because the AI doesn't have to rely on its “fuzzy memory.”
+* **RAG (Retrieval Augmented Generation):** An automated retriever searches a knowledge base (e.g., a manual, documents, or a database) and injects the most relevant passages into the prompt, the AI then answers using only those passages. This reduces hallucinations significantly because the AI doesn't have to rely on its “fuzzy memory.”
 
 The Rule of Thumb is: even if the output looks right, be suspicious. Always check the math, run the code, and check the links.
 
@@ -220,11 +220,11 @@ If a model is trained on a sentence of the form “A is B”, it will not automa
 
 The “Reversal Curse” highlights a core failure in how auto-regressive LLMs generalize information. If a model learns a fact in the format “A is B”, for example, “Valentina Tereshkova was the first woman to travel to space”, it fails to automatically infer the reverse: “The first woman to travel to space was Valentina Tereshkova.”
 
-The root cause is the **causal mask**. During autoregressive training, the model is trained to predict $P(B \mid A\text{ is})$  the next token given all previous tokens. The causal mask means that when processing “A is B,” the token “B” can attend to “A” and “is,” but “A” never attends to “B.” When asked the reverse question “Who is B?”, the model would need to compute $P(A \mid B\text{ is})$, but during training, the token “A” was never in a position where it needed to be predicted after “B”  the information flowed in the wrong direction. The model literally never had the gradient signal to learn the reverse mapping.
+The root cause is the **causal mask**. During autoregressive training, the model is trained to predict $P(B \mid A\text{ is})$, the next token given all previous tokens. The causal mask means that when processing “A is B,” the token “B” can attend to “A” and “is,” but “A” never attends to “B.” When asked the reverse question “Who is B?”, the model would need to compute $P(A \mid B\text{ is})$, but during training, the token “A” was never in a position where it needed to be predicted after “B”, the information flowed in the wrong direction. The model literally never had the gradient signal to learn the reverse mapping.
 
 This reveals a fundamental limitation of autoregressive training: it learns conditional distributions $P(B \mid A)$ but not $P(A \mid B)$, unless both directions appear in the training data. These two conditional probabilities are not interchangeable without **Bayes' theorem**, which the model has no mechanism to apply. Bidirectional models like BERT do not suffer from this problem because every token attends to every other token, so information flows symmetrically in both directions.
 
-Research shows that for reversed questions, the likelihood of the model providing the correct name is no higher than a random guess. This gap persists across different model sizes and families; even GPT-4, which can identify a celebrity's parent 79% of the time, often fails (dropping to 33%) when asked to identify the child of that same parent. The Reversal Curse is not a failure of “understanding”  it is a direct consequence of asymmetric information flow imposed by the causal mask.
+Research shows that for reversed questions, the likelihood of the model providing the correct name is no higher than a random guess. This gap persists across different model sizes and families; even GPT-4, which can identify a celebrity's parent 79% of the time, often fails (dropping to 33%) when asked to identify the child of that same parent. The Reversal Curse is not a failure of “understanding”, it is a direct consequence of asymmetric information flow imposed by the causal mask.
 
 ## Why LLMs Struggle with Mathematics
 

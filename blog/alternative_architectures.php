@@ -96,7 +96,7 @@ $$
 \text{LinearAttn}(Q, K, V)_i = \frac{\phi(Q_i)^\top \sum_{j=1}^{n} \phi(K_j) V_j^\top}{\phi(Q_i)^\top \sum_{j=1}^{n} \phi(K_j)}
 $$
 
-By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (the “state”), compute drops to $O(n \cdot d^2)$ and memory is $O(d^2)$  independent of $n$.
+By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (the “state”), compute drops to $O(n \cdot d^2)$ and memory is $O(d^2)$, independent of $n$.
 
 ### Performer \cite[Choromanski et al., 2021]{choromanski2021performer}
 

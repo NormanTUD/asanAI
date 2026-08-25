@@ -13,11 +13,11 @@ topics: programming, philosophy, society
 <div class="md">
 You cannot improve what you cannot measure. The evaluation problem is one of the hardest open issues in modern AI: benchmarks shape what models optimize for, and poorly designed benchmarks produce models that are great at benchmarks but useless in practice.
 
-This chapter covers the major benchmarks, their mathematical formulation, and the crisis of **benchmark contamination**  the central concern that LLMs have already seen every test set during pretraining.
+This chapter covers the major benchmarks, their mathematical formulation, and the crisis of **benchmark contamination**, the central concern that LLMs have already seen every test set during pretraining.
 </div>
 
 <div class="optional md" data-headline="Every benchmark here is a Goodhart target">
-\citetitle{goodhartslaw} (p. 116) states that *every measure which becomes a target becomes a bad measure*. The benchmarks below  MMLU, HumanEval, GSM8K  are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
+\citetitle{goodhartslaw} (p. 116) states that *every measure which becomes a target becomes a bad measure*. The benchmarks below, MMLU, HumanEval, GSM8K, are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
 </div>
 
 <div class="md">
@@ -190,10 +190,10 @@ The Holistic Evaluation of Language Models benchmark suite evaluates models acro
 
 The most reliable current evaluations are:
 
-1. **LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys} Elo**  for general chat quality.
-2. **GPQA / FrontierMath / ARC-AGI**  for hard reasoning, contamination-resistant.
-3. **\cite[Chen et al., 2021]{chen2021humaneval} / LiveCodeBench / SWE-Bench**  for code.
-4. **Human preference studies**  the gold standard, when affordable.
+1. **LMSYS \cite[Zheng et al., 2023]{zheng2023lmsys} Elo**, for general chat quality.
+2. **GPQA / FrontierMath / ARC-AGI**, for hard reasoning, contamination-resistant.
+3. **\cite[Chen et al., 2021]{chen2021humaneval} / LiveCodeBench / SWE-Bench**, for code.
+4. **Human preference studies**, the gold standard, when affordable.
 
 Static benchmarks like \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} are **informative but no longer load-bearing** for frontier-model comparison.
 </div>
@@ -204,13 +204,13 @@ Static benchmarks like \cite[Hendrycks et al., 2021]{hendrycks2021mmlu} are **in
 When evaluating an LLM for your application:
 
 1. **Build your own evaluation set** with 100–500 examples from your real workload. Static benchmarks won't reflect your distribution.
-2. **Use LLM-as-judge carefully**  verify agreement with human raters on a held-out subset.
+2. **Use LLM-as-judge carefully**, verify agreement with human raters on a held-out subset.
 3. **Track variance**: run with temperature > 0 and report mean ± std.
 4. **Test for regressions**: regression suite on every model update.
 5. **Watch for contamination**: time-shift your evaluation set creation.
 6. **Include adversarial examples**: prompts designed to break the system.
 
-The goal is **not** to maximize a leaderboard score. It is to **measure real-world utility**  and that requires effort that no static benchmark can replace.
+The goal is **not** to maximize a leaderboard score. It is to **measure real-world utility**, and that requires effort that no static benchmark can replace.
 </div>
 
 <script>

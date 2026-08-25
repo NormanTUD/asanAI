@@ -176,7 +176,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
     <div class="md">
         ## Bias in Data: The Mirror of Society
 
-        A model is only as good as the data it is trained on. If the training data contains historical biases, the model will learn and amplify them. This is not a bug in the math  it is a feature of the statistical learning process: the model faithfully reproduces the patterns it observes.
+        A model is only as good as the data it is trained on. If the training data contains historical biases, the model will learn and amplify them. This is not a bug in the math, it is a feature of the statistical learning process: the model faithfully reproduces the patterns it observes.
 
         **Common sources of bias in ML datasets:**
 
@@ -788,7 +788,7 @@ The chi-square distribution arises as the sum of $k$ squared standard Normal var
 
 $$\chi^2_k = \sum_{i=1}^k Z_i^2, \quad Z_i \sim \mathcal{N}(0, 1)$$
 
-It has one parameter, $k$ (degrees of freedom), and is **asymmetric**  bounded below at 0, with a long right tail.
+It has one parameter, $k$ (degrees of freedom), and is **asymmetric**, bounded below at 0, with a long right tail.
 
 ### The Equation of “Surprise”
 
@@ -820,7 +820,7 @@ The error function is closely related to the Normal distribution:
 
 $$\text{erf}(x) = \frac{2}{\sqrt{\pi}} \int_0^x e^{-t^2}\, dt$$
 
-It has no closed form  it must be computed numerically or via series. Its derivative is $\frac{2}{\sqrt{\pi}} e^{-x^2}$, a scaled Gaussian.
+It has no closed form, it must be computed numerically or via series. Its derivative is $\frac{2}{\sqrt{\pi}} e^{-x^2}$, a scaled Gaussian.
 
 The complementary error function $\text{erfc}(x) = 1 - \text{erf}(x)$ appears in diffusion models (see the Diffusion chapter), where the noise schedule often involves erfc.
 </div>
@@ -848,7 +848,7 @@ $$f(k) \propto \frac{1}{k^s}$$
 
 with $s \approx 1$. This is **Zipf's Law** (George Kingsley Zipf, 1949). For English, “the” appears ~7% of the time, “of” ~3.5%, “and” ~2.5%, and the 100th most common word ~0.05%.
 
-Zipf's law is observed in many seemingly unrelated domains: city populations, income, web traffic, even the size of earthquakes. The mathematical reason is debated  competing theories include preferential attachment (“the rich get richer”), information-theoretic optimization, and self-organized criticality.
+Zipf's law is observed in many seemingly unrelated domains: city populations, income, web traffic, even the size of earthquakes. The mathematical reason is debated, competing theories include preferential attachment (“the rich get richer”), information-theoretic optimization, and self-organized criticality.
 
 For LLMs, Zipf's law has two practical consequences:
 

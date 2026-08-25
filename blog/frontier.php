@@ -11,7 +11,7 @@ topics: frontier, philosophy, architecture, ethics
 -->
 
 <div class="md">
-This chapter surveys the research frontier of 2025  the techniques and ideas that are emerging from labs but not yet standardized. Some will become textbook material in two years; others will fade. Knowing the landscape keeps you ahead of the curve.
+This chapter surveys the research frontier of 2025, the techniques and ideas that are emerging from labs but not yet standardized. Some will become textbook material in two years; others will fade. Knowing the landscape keeps you ahead of the curve.
 </div>
 
 <div class="md">
@@ -43,7 +43,7 @@ $$
 
 The L1 penalty forces only a few features to be active for any input. Anthropic's work on Claude 3 Sonnet (2024) found:
 
-* A single SAE feature activated on **\cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge** references  across languages, image descriptions, and even ASCII art.
+* A single SAE feature activated on **\cite[Templeton et al., 2024]{anthropic2024goldengate} Bridge** references, across languages, image descriptions, and even ASCII art.
 * Features for **code bugs**, **refusal**, **deception** could be identified.
 * Some features are **universal** across model families (Llama, GPT, Claude).
 
@@ -118,7 +118,7 @@ See the AI Agents chapter for the basics. Frontier developments:
 * **\cite[Multi-Agent]{du2023multiagent}** (\cite[Du et al., 2023]{du2023multiagent}): multiple LLMs argue; a judge picks the best. Improves reasoning accuracy 5–15%.
 * **Toolformer-style self-taught tool use** (\cite[Schick et al., 2023]{schick2023toolformer}; Gorilla, \cite[Patil et al., 2023]{patil2023gorilla}): models learn to call thousands of APIs.
 * **Computer use agents**: Anthropic's Claude can interact with a real desktop. OpenAI's Operator. Google Jarvis (rumored). All powered by screenshot→action Transformers.
-* **Code agents**: SWE-Agent, AutoCodeRover, Devin  autonomous software engineering. Still unreliable but improving.
+* **Code agents**: SWE-Agent, AutoCodeRover, Devin, autonomous software engineering. Still unreliable but improving.
 * **Hierarchical agents**: a planner agent delegates to specialist sub-agents. Used in many production systems.
 
 A 2025 benchmark (GAIA, Mialon et al., Meta) tests realistic agent tasks: “find the CEO of the company that acquired Twitter's recommendation team and their phone number on the website”. Frontier agents solve ~50% of these; humans solve 92%.
@@ -181,19 +181,19 @@ For practical deployments: a good **memory + retrieval layer** is more useful th
 
 From the Mechanistic Interpretability chapter's foundation, frontier work in 2024–2025:
 
-* **Sparse autoencoders** (see above)  millions of features per model.
+* **Sparse autoencoders** (see above), millions of features per model.
 * **Causal scrubbing** (\cite[Redman et al., 2024]{redman2024causalscrubbing}): formally verify which circuits implement a behavior.
-* **Cross-model universality**: do circuits transfer across models? Yes, partially  “induction heads” appear in every Transformer.
+* **Cross-model universality**: do circuits transfer across models? Yes, partially, “induction heads” appear in every Transformer.
 * **Alignment-via-interpretability**: identify features for “deception”, “harm”, “sycophancy” and steer the model away from them. **Representation engineering** \cite[Zou et al., 2023]{zou2023repeng} is the umbrella term.
 
-The dream: an **“MRI for AI”**  read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
+The dream: an **“MRI for AI”**, read the activations, identify misbehavior, fix it surgically. Not realized, but progressing.
 </div>
 
 <div class="md">
 ## Open Questions
 
 * Will the next paradigm shift come from **architectures** (post-Transformer), **scaling** (more data/compute), or **inference** (test-time compute, agents)?
-* Can interpretability mature into a **safety discipline**  predicting and preventing failures before deployment?
+* Can interpretability mature into a **safety discipline**, predicting and preventing failures before deployment?
 * Will **multimodal** models converge to a single architecture (one Transformer for everything) or remain specialists (one for vision, one for speech)?
 * Will **open models** close the gap to frontier, or will the frontier pull away indefinitely?
 * Will **economic value** concentrate among the few companies with frontier-scale compute, or diffuse widely?

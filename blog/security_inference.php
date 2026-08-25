@@ -65,7 +65,7 @@ The deeper problem: any scalar reward function is an **incomplete specification*
 No single defense is bulletproof. Real-world deployments layer <em>defense in depth</em>:
 input filtering catches obvious attacks, instruction hierarchy enforces privilege levels,
 output classifiers catch policy violations that slip through, and adversarial training hardens
-the model against novel jailbreaks. The goal isn't perfection  it's raising the cost of
+the model against novel jailbreaks. The goal isn't perfection, it's raising the cost of
 attack high enough that adversaries move on to easier targets.
 </p>
 </section>

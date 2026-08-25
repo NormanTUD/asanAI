@@ -60,7 +60,7 @@ The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mc
 <div class="image-row md">
 	<figure>
 		<img src="shrdlu.gif" alt="Screenshot of the SHRDLU blocks-world program" />
-		<figcaption class="md">\citealternativetitle{shrdlu_image}. Terry Winograd's SHRDLU (1972) let a user type English sentences (“pick up a big red block”) to manipulate a virtual world of colored blocks  the canonical demonstration that natural-language reasoning over a small world was possible.</figcaption>
+		<figcaption class="md">\citealternativetitle{shrdlu_image}. Terry Winograd's SHRDLU (1972) let a user type English sentences (“pick up a big red block”) to manipulate a virtual world of colored blocks, the canonical demonstration that natural-language reasoning over a small world was possible.</figcaption>
 	</figure>
 </div>
 

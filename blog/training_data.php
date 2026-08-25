@@ -11,7 +11,7 @@ topics: training, data, programming, society
 -->
 
 <div class="md">
-A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated  and why every frontier lab guards its data recipes as their most valuable trade secret.
+A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated, and why every frontier lab guards its data recipes as their most valuable trade secret.
 </div>
 
 <div class="md">
@@ -138,7 +138,7 @@ How much web vs. code vs. math? This is largely **undocumented and proprietary**
 
 * **Code data** disproportionately helps reasoning (LLaMA, Mistral, Qwen all emphasize code).
 * **Math data** is critical for arithmetic; even small amounts help.
-* **Multilingual data** is under-studied  most frontier models are still 70–90% English.
+* **Multilingual data** is under-studied, most frontier models are still 70–90% English.
 * **Instruction data** is best added *after* pretraining, not mixed in.
 * **DPO/preference data** should be 100K–1M examples, not millions.
 

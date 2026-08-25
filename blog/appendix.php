@@ -23,15 +23,15 @@ Structurally, this is often marked by a transition in **attention matrices** fro
 
 ### Symbol Conventions
 
-Because this textbook spans probability theory, classical neural networks, and transformer internals, a few symbols recur with **different meanings in different chapters**. The list below is the disambiguation key  when in doubt, refer back here.
+Because this textbook spans probability theory, classical neural networks, and transformer internals, a few symbols recur with **different meanings in different chapters**. The list below is the disambiguation key, when in doubt, refer back here.
 
 | Symbol | Meaning A (and where it appears) | Meaning B (and where it appears) |
 |---|---|---|
-| $\sigma$ | **Standard deviation** of a Normal distribution (Statistics I/II, e.g. $\mathcal{N}(\mu,\sigma^2)$) | **Sigmoid** $\sigma(z) = 1/(1+e^{-z})$ (Backprop, Autodiff)  and, in two chapters, also **Softmax** $\sigma(z)_i = e^{z_i}/\sum e^{z_j}$ (Activation, Transformer temperature); the formula itself is unambiguous in either case |
-| $L$ | **Lipschitz constant** (Math III, concentration-of-measure bounds) | **Loss function** (Loss, Backprop, Autodiff, Optimizer  $\mathcal{L}$ is also used for loss in some chapters) |
-| $T$ | **Sequence length** in attention shape annotations (Transformer, Attention  number of tokens per sequence) | **Temperature** in softmax sampling (Sampling, Transformer, Inference Optimization) |
-| $d_v$ | **Value head dimension** in attention (Transformer, Attention) | (no second meaning  but $d_k = d_v$ only in the *original* Vaswani transformer; the two can differ in modern variants) |
-| $\eta$ | **Learning rate** in gradient descent (Backprop, Autodiff, Optimizer) | (also written `lr` in interactive demos  see Optimizer for the convention note) |
+| $\sigma$ | **Standard deviation** of a Normal distribution (Statistics I/II, e.g. $\mathcal{N}(\mu,\sigma^2)$) | **Sigmoid** $\sigma(z) = 1/(1+e^{-z})$ (Backprop, Autodiff), and, in two chapters, also **Softmax** $\sigma(z)_i = e^{z_i}/\sum e^{z_j}$ (Activation, Transformer temperature); the formula itself is unambiguous in either case |
+| $L$ | **Lipschitz constant** (Math III, concentration-of-measure bounds) | **Loss function** (Loss, Backprop, Autodiff, Optimizer, $\mathcal{L}$ is also used for loss in some chapters) |
+| $T$ | **Sequence length** in attention shape annotations (Transformer, Attention, number of tokens per sequence) | **Temperature** in softmax sampling (Sampling, Transformer, Inference Optimization) |
+| $d_v$ | **Value head dimension** in attention (Transformer, Attention) | (no second meaning, but $d_k = d_v$ only in the *original* Vaswani transformer; the two can differ in modern variants) |
+| $\eta$ | **Learning rate** in gradient descent (Backprop, Autodiff, Optimizer) | (also written `lr` in interactive demos, see Optimizer for the convention note) |
 
 When the same chapter uses a symbol in two senses (e.g. $T$ for both sequence length and temperature inside `transformer.php`), context always disambiguates; the legend at the point of use is the primary contract.
 
@@ -323,6 +323,6 @@ Below, you can explore this interactively. A simulated sentence unfolds step by 
 </section>
 
 <div class="md">
-A curated companion to this appendix is the standalone chapter <a href="unexpected_capabilities">Unexpected Capabilities of LLMs</a>, which catalogues the most striking discoveries researchers did not anticipate from next-token prediction  emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
+A curated companion to this appendix is the standalone chapter <a href="unexpected_capabilities">Unexpected Capabilities of LLMs</a>, which catalogues the most striking discoveries researchers did not anticipate from next-token prediction, emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
 </div>
 

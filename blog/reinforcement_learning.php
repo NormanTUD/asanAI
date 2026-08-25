@@ -148,7 +148,7 @@ $$
 L^{\text{RLHF}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)
 $$
 
-The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model  a critical stabilizer.
+The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model, a critical stabilizer.
 
 The reward model is trained on Bradley-Terry comparisons:
 
@@ -221,7 +221,7 @@ GRPO is the algorithm behind **DeepSeek-R1** (January 2025), the first open-weig
 
 | Method | Reward signal | Critic | Reference model | Use case |
 |--------|---------------|--------|-----------------|----------|
-| **SFT** | None | No |  | Pretraining alignment |
+| **SFT** | None | No | — | Pretraining alignment |
 | **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |
 | **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |
 | **IPO** | Implicit, regularized | No | Yes | Noisy preferences |

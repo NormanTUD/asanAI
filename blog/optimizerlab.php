@@ -39,7 +39,7 @@ Different optimizers use different strategies for step 2:
 |---|---|---|---|
 | **Learning Rate** | The size of each step. Controls how aggressively the optimizer moves. | Convergence is painfully slow; may stall. | The optimizer “overshoots” and bounces around the minimum, or even diverges. |
 | **Epochs (Steps)** | How many update steps the optimizer is allowed to take. | May stop before reaching the minimum. | Wastes computation if the minimum was already found. |
-| **Start Position** | Where on the x-axis the optimizer begins its journey. |  |  |
+| **Start Position** | Where on the x-axis the optimizer begins its journey. | — |, |
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 20px; background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1;">
@@ -98,11 +98,11 @@ Different optimizers use different strategies for step 2:
         </div>
         <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Current Loss</div>
-            <div id="stat-loss" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);"></div>
+            <div id="stat-loss" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);">, </div>
         </div>
         <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Gradient</div>
-            <div id="stat-grad" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);"></div>
+            <div id="stat-grad" style="font-size: 1.3em; font-weight: bold; font-family: monospace; color: var(--mn-heading, #0f172a);">, </div>
         </div>
         <div style="background: var(--mn-surface, white); padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <div style="font-size: 0.78em; color: var(--mn-text-secondary, #64748b); text-transform: uppercase; letter-spacing: 0.05em;">Steps Taken</div>

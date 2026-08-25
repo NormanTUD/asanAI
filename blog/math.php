@@ -703,5 +703,5 @@ $$P(|\cos(\mathbf{v}_1, \mathbf{v}_2)| > 0.1) \approx 0$$
 
 This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many “almost-orthogonal” directions for free. This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.
 
-The “aha-moment”: the very property that makes high dimensions terrifying for classical statistics  the concentration of measure  is what makes neural networks so powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
+The “aha-moment”: the very property that makes high dimensions terrifying for classical statistics, the concentration of measure, is what makes neural networks so powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
 </div>

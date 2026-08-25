@@ -76,7 +76,7 @@ India is **the world's largest AI talent producer** but a relatively small front
 
 ### Strategic Position
 
-India is positioning as the **“AI for the global south”** hub  building affordable, multilingual AI for emerging markets.
+India is positioning as the **“AI for the global south”** hub, building affordable, multilingual AI for emerging markets.
 </div>
 
 <div class="md">
@@ -98,7 +98,7 @@ African AI is **early but rapidly growing**, focused on problems specific to the
 * **Lesan AI** (Ethiopia): Tigrinya, Amharic machine translation.
 * **Sunbird AI** (Uganda): multilingual speech recognition for 40+ African languages.
 * **Awarri** (Nigeria): Yoruba, Igbo, Hausa NLP.
-* **Lelapa AI** (South Africa): “Vula Vulapha”  African language LLM.
+* **Lelapa AI** (South Africa): “Vula Vulapha”, African language LLM.
 * **InstaDeep** (Tunisia): \cite[acquired by BioNTech for \$680M][]{insta2023}. AI for genomic surveillance, including early detection of COVID variants in Africa.
 
 ### Challenges
@@ -181,7 +181,7 @@ The EU's AI strategy emphasizes **regulation + research**:
 * **Horizon Europe**: €1B/year for AI research.
 * **EuroLLM, Project OpenGPT-X**: European open-source multilingual models.
 
-The European research tradition  led by Bengio (Mila), Schmidhuber (IDSIA), Hinton's students  has shaped deep learning from its inception.
+The European research tradition, led by Bengio (Mila), Schmidhuber (IDSIA), Hinton's students, has shaped deep learning from its inception.
 </div>
 
 <div class="md">
@@ -209,7 +209,7 @@ But the **“good enough” tier** is now globally accessible. Most enterprise A
 
 Three trends to watch:
 
-1. **Bifurcation**: US-China compute decoupling may produce two parallel AI ecosystems  Western and Chinese  with limited cross-pollination.
+1. **Bifurcation**: US-China compute decoupling may produce two parallel AI ecosystems, Western and Chinese, with limited cross-pollination.
 2. **Multipolarity**: India, UAE, France, Korea, and others are building independent AI capabilities, especially for their languages and cultures.
 3. **Open-source as soft power**: Chinese open-source releases (Qwen, DeepSeek) and Western ones (Llama, Mistral) compete for global developer mindshare. Adoption is a form of influence.
 

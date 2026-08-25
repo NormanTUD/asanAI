@@ -132,7 +132,7 @@ To bridge symbolic KGs with neural methods, several **KG embedding** methods lea
 * **RotatE**: rotation in complex space, captures composition.
 * **GraphSAGE / R-GCN**: graph neural networks over the KG structure.
 
-These enable **link prediction**: given $(h, r, ?)$, predict $t$  completing missing triples. Used in recommendation, drug repurposing, fraud detection.
+These enable **link prediction**: given $(h, r, ?)$, predict $t$, completing missing triples. Used in recommendation, drug repurposing, fraud detection.
 </div>
 
 <div class="md">

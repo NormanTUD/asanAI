@@ -62,7 +62,7 @@ $$
 E_{\text{total}} = \sum_i \frac{1}{2}(t_i - o_i)^2
 $$
 
-Here, $t_i$ is the target value, and $o_i$ is the network's output. The factor $\frac{1}{2}$ is included for convenience, as it cancels out when taking derivatives. The standard **MSE** (used in the Loss and Overfitting chapters) is $\tfrac{1}{N}\sum (y_i - \hat{y}_i)^2$  same shape, no $\tfrac{1}{2}$, normalised by batch size; both formulations share the same minima.
+Here, $t_i$ is the target value, and $o_i$ is the network's output. The factor $\frac{1}{2}$ is included for convenience, as it cancels out when taking derivatives. The standard **MSE** (used in the Loss and Overfitting chapters) is $\tfrac{1}{N}\sum (y_i - \hat{y}_i)^2$, same shape, no $\tfrac{1}{2}$, normalised by batch size; both formulations share the same minima.
 
 ## Backward Pass: Updating Weights
 

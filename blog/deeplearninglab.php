@@ -60,7 +60,7 @@ The variables are defined as:
 * $\beta_j$: Coefficients (weights) for the linear output layer.
 * $\theta_j$: Thresholds or biases for each hidden unit.
 
-Because of this, calling networks “universal learning machines” overstates what the theorem proves. It establishes that sufficiently wide networks can *represent* the target functions for appropriate activation classes; it says nothing about *learning*  neither that gradient descent will find the weights, nor that the required number of hidden units is practical, which can be astronomically large.
+Because of this, calling networks “universal learning machines” overstates what the theorem proves. It establishes that sufficiently wide networks can *represent* the target functions for appropriate activation classes; it says nothing about *learning*, neither that gradient descent will find the weights, nor that the required number of hidden units is practical, which can be astronomically large.
 
 The theorem is still foundational: it shifts the focus of neural network efficacy away from any single activation function to the capacity of the architecture itself, showing that even simple models can in principle represent incredibly complex patterns.
 </div>

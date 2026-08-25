@@ -304,7 +304,7 @@ $KM = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0f1f">
-<title>The Web of Knowledge  Course Map</title>
+<title>The Web of Knowledge, Course Map</title>
 <script>
 (function() {
 	function apply(theme) {
@@ -598,10 +598,10 @@ a { color: var(--accent); text-decoration: none; }
 	<h1 class="km-title">The Web of <span class="of">Knowledge</span></h1>
 	<p class="km-sub">The <b>Universe</b> view puts every concept of the course on a Poincaré disk: the most-used ideas shine biggest, and you can shift the focal point to zoom into any neighbourhood. Switch to the <b>Course</b> view to walk the seven parts module by module.</p>
 	<div class="km-stats">
-		<div class="km-stat"><b id="st-modules"></b> modules</div>
-		<div class="km-stat"><b id="st-edges"></b> connections</div>
-		<div class="km-stat"><b id="st-citations"></b> citations</div>
-		<div class="km-stat"><b id="st-concepts"></b> concepts tracked</div>
+		<div class="km-stat"><b id="st-modules">, </b> modules</div>
+		<div class="km-stat"><b id="st-edges">, </b> connections</div>
+		<div class="km-stat"><b id="st-citations">, </b> citations</div>
+		<div class="km-stat"><b id="st-concepts">, </b> concepts tracked</div>
 	</div>
 </div>
 

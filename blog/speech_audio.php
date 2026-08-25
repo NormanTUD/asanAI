@@ -11,7 +11,7 @@ topics: multimodal, audio, architecture, programming
 -->
 
 <div class="md">
-Sound is the **last major modality** that LLMs learned to read and write. As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively  taking voice input, generating speech, transcribing languages, recognizing emotion, even singing.
+Sound is the **last major modality** that LLMs learned to read and write. As of 2025, frontier models (GPT-4o, Gemini, Voxtral, Qwen2-Audio) handle audio natively, taking voice input, generating speech, transcribing languages, recognizing emotion, even singing.
 
 This chapter covers how audio is represented, how it is encoded and decoded, and how Transformer-based models learn to listen and speak.
 </div>
@@ -19,7 +19,7 @@ This chapter covers how audio is represented, how it is encoded and decoded, and
 <div class="md">
 ## From Waveform to Tokens: Three Representations
 
-A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz  a sequence of 16,000 to 44,100 floats **per second**. That is too dense for any model to ingest directly. Modern systems compress audio through one of three representations:
+A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats **per second**. That is too dense for any model to ingest directly. Modern systems compress audio through one of three representations:
 
 ### 1. Spectrograms (and Mel-spectrograms)
 
@@ -46,7 +46,7 @@ For an LLM to “read” audio as discrete tokens (like text tokens), a **neural
 * **DAC** (Descript, 2023): improved quality at low bitrates.
 * **Whisper's log-mel**: not discrete, but the de facto input for ASR models.
 
-The codec has an **encoder** $E: \text{waveform} \to \mathbb{Z}^{T \times n_q}$ (frames × codebook entries) and a **decoder** $D: \mathbb{Z}^{T \times n_q} \to \text{waveform}$. With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second  comparable in density to text.
+The codec has an **encoder** $E: \text{waveform} \to \mathbb{Z}^{T \times n_q}$ (frames × codebook entries) and a **decoder** $D: \mathbb{Z}^{T \times n_q} \to \text{waveform}$. With $n_q = 8$ codebooks and 75 frames per second, audio becomes 600 tokens per second, comparable in density to text.
 </div>
 
 <div id="codec-viz" style="max-width:880px; margin:1em auto;"></div>
@@ -54,7 +54,7 @@ The codec has an **encoder** $E: \text{waveform} \to \mathbb{Z}^{T \times n_q}$ 
 <div class="md">
 ### 3. Self-Supervised Representations
 
-Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors  perfect input for downstream ASR, speaker ID, or emotion recognition.
+Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representations by masking spans of audio and predicting the discrete latent units of a teacher model. The output is a sequence of 50 Hz contextualized vectors, perfect input for downstream ASR, speaker ID, or emotion recognition.
 </div>
 
 <div class="md">
@@ -71,7 +71,7 @@ The model is trained with a multi-task objective: transcribe, translate to Engli
 
 **Conformer** (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR. It combines convolutions (for local patterns) with self-attention (for global context) in each block. USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.
 
-Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers  most modern speech and language systems are decoder-only (see the Transformer chapter); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.
+Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the Transformer chapter); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.
 </div>
 
 <div class="md">
@@ -119,7 +119,7 @@ The training data for these is massive: trillions of audio-text interleaved exam
 | Conformer | Conv + Attention | Local + global context per layer |
 | Unified multimodal | Text + audio tokens | One Transformer for both |
 
-The shift from “speech recognition” (separate ASR model) and “speech synthesis” (separate TTS model) to **one model that speaks and listens** is now complete in 2025. The remaining frontier is **real-time, low-latency, expressive speech**  natural conversation rather than turn-taking.
+The shift from “speech recognition” (separate ASR model) and “speech synthesis” (separate TTS model) to **one model that speaks and listens** is now complete in 2025. The remaining frontier is **real-time, low-latency, expressive speech**, natural conversation rather than turn-taking.
 </div>
 
 <script>

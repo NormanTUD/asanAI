@@ -16,7 +16,7 @@ topics: multimodal, vision, architecture, programming
 	<figcaption>A single text prompt, and a diffusion model produced this image in seconds. This one was created with the prompt “Astronaut Riding a Horse” (\cite[Image: Stable Diffusion 3.5]{diffusion_astronaut_img})</figcaption>
 </figure>
 
-Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** \cite[Ho et al., 2020]{ho2020ddpm}  built on a 2019 idea from Yang Song and Stefano Ermon \cite[Song & Ermon, 2019]{song2019score}  quietly opened a new path. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
+Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** \cite[Ho et al., 2020]{ho2020ddpm}, built on a 2019 idea from Yang Song and Stefano Ermon \cite[Song & Ermon, 2019]{song2019score}, quietly opened a new path. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
 
 The idea is almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to undo the destruction, one tiny step at a time**. It is a different paradigm from the autoregressive next-token prediction that drives LLMs, even though both produce staggering results.
 
@@ -40,7 +40,7 @@ $$
 x_t \;=\; \sqrt{1-t}\, x_0 \;+\; \sqrt{t}\, \epsilon, \qquad \epsilon \sim \mathcal{N}(0, \mathbf{I})
 $$
 
-For $t = 1$ the first term vanishes and $x_T$ is pure Gaussian noise. Crucially, **every step of the forward process is fixed in advance**  no learning required. The forward chain is just a way to manufacture training data for the model that does the hard work.
+For $t = 1$ the first term vanishes and $x_T$ is pure Gaussian noise. Crucially, **every step of the forward process is fixed in advance**, no learning required. The forward chain is just a way to manufacture training data for the model that does the hard work.
 
 The slider below shows the forward process happening to a real image. Drag it to watch the picture dissolve into noise.
 </div>
@@ -59,7 +59,7 @@ This is the formulation introduced by DDPM. The training objective is almost lau
 3. Ask the network to predict *what that noise was*.
 4. Train by mean-squared error between the predicted and the true noise.
 
-For the vanilla DDPM / DDIM recipe that is it: no discriminator, no generator, no min-max game. Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly. (One caveat: the 1-step “Turbo” models like SDXL-Turbo were *not* trained with pure MSE  they use **adversarial diffusion distillation**, an explicit GAN-style loss, to compress 50 denoising steps into 1.)
+For the vanilla DDPM / DDIM recipe that is it: no discriminator, no generator, no min-max game. Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly. (One caveat: the 1-step “Turbo” models like SDXL-Turbo were *not* trained with pure MSE, they use **adversarial diffusion distillation**, an explicit GAN-style loss, to compress 50 denoising steps into 1.)
 
 The slider below steps through the **reverse** process on the same image. Drag it from right to left to watch an image emerge from chaos. In a real diffusion model this would take a thousand tiny denoising steps; here we collapse them into a handful of frames.
 </div>
@@ -69,12 +69,12 @@ The slider below steps through the **reverse** process on the same image. Drag i
 <div class="md">
 ## Why does this work?
 
-You might ask: how can *removing noise* ever create a picture? The trick is this  **a denoiser that can spot noise must also have learned what “no noise” looks like**. It has implicitly learned the shape of the data distribution. So if you start from pure noise and repeatedly denoise, you trace a path through that distribution, and end up with a brand new sample.
+You might ask: how can *removing noise* ever create a picture? The trick is this, **a denoiser that can spot noise must also have learned what “no noise” looks like**. It has implicitly learned the shape of the data distribution. So if you start from pure noise and repeatedly denoise, you trace a path through that distribution, and end up with a brand new sample.
 
 That is the deep “why” of diffusion in one sentence. Two ways to make it more concrete:
 
 * **Coarse-to-fine**: at high noise levels, only the largest-scale structure of the data is recoverable. The network first sketches rough shapes, then refines detail. Generation is hierarchical *by construction*.
-* **Score matching** \cite[Song & Ermon, 2019]{song2019score}: a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the data distribution  the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
+* **Score matching** \cite[Song & Ermon, 2019]{song2019score}: a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the data distribution, the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
 
 Either view explains why “denoising” and “generation” are two sides of the same coin.
 </div>
@@ -98,11 +98,11 @@ The factor $w$ is the **guidance scale**. The intuition: $\epsilon_\theta(x_t, t
 
 The CFG trick above answers “how do you amplify the prompt”. But three questions remain: **where do the (image, prompt) training pairs come from?**, **how does the text encoder turn words into something the U-Net can read?**, and **how does the U-Net actually use those numbers?** This section walks through the full pipeline end-to-end.
 
-### 1. Training data  no manual labels needed
+### 1. Training data, no manual labels needed
 
-You do **not** need to sit down and label 100,000 images. The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web. The “label” of every image is whatever its surrounding HTML already said  the alt attribute, the caption, the page title.
+You do **not** need to sit down and label 100,000 images. The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web. The “label” of every image is whatever its surrounding HTML already said, the alt attribute, the caption, the page title.
 
-What the model actually learns from this data is **not a database of specific images**. It learns an *internal representation of the world*: what astronauts look like, what horses look like, what “riding” looks like, what “in space” looks like  each concept distilled from many thousands of images seen during training. When you prompt for “an astronaut riding a horse”, there is almost certainly no training image of exactly that scene. The model composes a new image by combining its learned concepts: astronaut-shape here, horse-shape there, riding-pose between them. The output is **synthesized**, not retrieved.
+What the model actually learns from this data is **not a database of specific images**. It learns an *internal representation of the world*: what astronauts look like, what horses look like, what “riding” looks like, what “in space” looks like, each concept distilled from many thousands of images seen during training. When you prompt for “an astronaut riding a horse”, there is almost certainly no training image of exactly that scene. The model composes a new image by combining its learned concepts: astronaut-shape here, horse-shape there, riding-pose between them. The output is **synthesized**, not retrieved.
 
 This is also why diffusion models sometimes hallucinate or get details wrong: the “labels” are noisy, scraped web text, not clean annotations, and the concepts are statistical, not encyclopedic.
 
@@ -112,15 +112,15 @@ This is also why diffusion models sometimes hallucinate or get details wrong: th
 <div id="tokenizer-viz" style="max-width: 880px; margin: 1em auto;"></div>
 
 <div class="md">
-### 2. Text becomes numbers  the text encoder and embeddings
+### 2. Text becomes numbers, the text encoder and embeddings
 
-The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; for SD 3 and FLUX, it is T5. Both are **Transformer encoders**  the same architecture family as the LLMs in the other chapters.
+The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; for SD 3 and FLUX, it is T5. Both are **Transformer encoders**, the same architecture family as the LLMs in the other chapters.
 
-The text encoder does two things, in order  tokenization and embedding. Both are covered in detail elsewhere on this site (see the **Tokenization** and **Embeddings** chapters); the small viz above is just a quick reminder of what comes out of the other end of that pipeline. The crucial property for our purposes is that each token ends up as a vector (768 numbers for CLIP, 4096 for T5-XXL), and **similar concepts end up close together** in that vector space: “astronaut” and “space suit” have nearby vectors, “horse” and “pony” have nearby vectors, “astronaut riding a horse” is far from “still life with fruit”.
+The text encoder does two things, in order, tokenization and embedding. Both are covered in detail elsewhere on this site (see the **Tokenization** and **Embeddings** chapters); the small viz above is just a quick reminder of what comes out of the other end of that pipeline. The crucial property for our purposes is that each token ends up as a vector (768 numbers for CLIP, 4096 for T5-XXL), and **similar concepts end up close together** in that vector space: “astronaut” and “space suit” have nearby vectors, “horse” and “pony” have nearby vectors, “astronaut riding a horse” is far from “still life with fruit”.
 </div>
 
 <div class="md">
-### 3. Cross-attention  how the U-Net reads the text
+### 3. Cross-attention, how the U-Net reads the text
 
 Now the diffusion U-Net has two inputs at every denoising step:
 
@@ -129,7 +129,7 @@ Now the diffusion U-Net has two inputs at every denoising step:
 
 The U-Net applies **cross-attention** at each layer. The picture to keep in your head: **at every step, the model paints the image by asking each word in your prompt, “which part of the picture is yours?”** The word *“astronaut”* claims the upper-center region. The word *“horse”* claims the lower region. The word *“riding”* claims the bit in between. Function words like *“a”*, *“of”* barely claim anything.
 
-Below: click any *content* word in the prompt and watch a colored region light up over the part of the astronaut image that word would “claim” during generation. The regions are simplified  a real diffusion model has hundreds of tiny patches  but the principle is the same: each word in your prompt controls its own piece of the picture.
+Below: click any *content* word in the prompt and watch a colored region light up over the part of the astronaut image that word would “claim” during generation. The regions are simplified, a real diffusion model has hundreds of tiny patches, but the principle is the same: each word in your prompt controls its own piece of the picture.
 </div>
 
 <div id="cross-attention-viz" style="max-width: 880px; margin: 1em auto;"></div>
@@ -145,17 +145,17 @@ The full Stable Diffusion pipeline looks like this end-to-end:
 </figure>
 
 <div class="md">
-So the answer to “do I need to label 100k images?” is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning*  if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
+So the answer to “do I need to label 100k images?” is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning*, if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** \cite[Hu et al., 2021]{hu2021lora} on as few as a few dozen images, or steer outputs with **ControlNet** \cite[Zhang et al., 2023]{zhang2023controlnet} using edge maps, depth maps, or pose skeletons.
 
 ## What's the network?
 
 It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 
-* **2D convolutions**  slide filters over the latent to detect local patterns
-* **ResBlocks**  `Conv → Norm → SiLU → Conv` plus a skip connection
-* **GroupNorm + SiLU**  normalization and the smooth $x \cdot \sigma(x)$ activation
-* **Self-attention** at the lower resolutions  pixels talk to each other across the whole image
-* **Cross-attention** at the lower resolutions  pixels attend to the text tokens (this is the conditioning)
+* **2D convolutions**, slide filters over the latent to detect local patterns
+* **ResBlocks**, `Conv → Norm → SiLU → Conv` plus a skip connection
+* **GroupNorm + SiLU**, normalization and the smooth $x \cdot \sigma(x)$ activation
+* **Self-attention** at the lower resolutions, pixels talk to each other across the whole image
+* **Cross-attention** at the lower resolutions, pixels attend to the text tokens (this is the conditioning)
 * **Skip connections** from each encoder block to the matching decoder block
 * **Sinusoidal time embedding** for the timestep $t$, injected into every block
 
@@ -165,9 +165,9 @@ The only fully-connected layers are tiny MLPs for the time and text embeddings. 
 
 Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
 
-The breakthrough of **Latent Diffusion Models** \cite[Rombach et al., 2022]{rombach2022ldm}  the technology behind Stable Diffusion  was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
+The breakthrough of **Latent Diffusion Models** \cite[Rombach et al., 2022]{rombach2022ldm}, the technology behind Stable Diffusion, was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
 
-The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model  it was learned earlier as an ordinary autoencoder and frozen in place.
+The text prompt goes through CLIP, the latent goes through the U-Net, and at the end a frozen VAE decoder turns the clean latent back into an image. The VAE is never trained alongside the diffusion model, it was learned earlier as an ordinary autoencoder and frozen in place.
 
 Below, the famous DDIM denoising sequence for a real Stable Diffusion run shows the same idea in action. Read it from top-left to bottom-right: the network starts from pure noise and gradually reveals a coherent image of a European-style castle in Japan, adding detail with each step.
 </div>
@@ -182,20 +182,20 @@ Below, the famous DDIM denoising sequence for a real Stable Diffusion run shows 
 
 The same recipe works anywhere you can define a “noising” process and a network that can reverse it:
 
-* **Video**: Sora, Veo, Stable Video Diffusion  same idea, with an extra time dimension and attention layers that keep frames consistent.
-* **Audio**: AudioLDM, DiffSinger  diffuse a spectrogram, then a vocoder turns it back into sound.
+* **Video**: Sora, Veo, Stable Video Diffusion, same idea, with an extra time dimension and attention layers that keep frames consistent.
+* **Audio**: AudioLDM, DiffSinger, diffuse a spectrogram, then a vocoder turns it back into sound.
 * **Music**: Riffusion, MusicLDM.
-* **Proteins**: RFdiffusion, Chroma  diffuse over 3D atomic coordinates of new proteins.
-* **Robotics**: Diffuser  diffuse over action sequences.
-* **Time-series**: TimeGrad  diffuse over weather, financial, or sensor data.
+* **Proteins**: RFdiffusion, Chroma, diffuse over 3D atomic coordinates of new proteins.
+* **Robotics**: Diffuser, diffuse over action sequences.
+* **Time-series**: TimeGrad, diffuse over weather, financial, or sensor data.
 
 The general principle is almost embarrassingly simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**
 
 ## Where the field is now
 
-By 2025, the diffusion community has largely moved on to **flow matching** \cite[Lipman et al., 2023]{lipman2023flow}  a more general framework where the “noising” path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
+By 2025, the diffusion community has largely moved on to **flow matching** \cite[Lipman et al., 2023]{lipman2023flow}, a more general framework where the “noising” path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
 
-The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** \cite[Peebles & Xie, 2023]{peebles2023dit}  a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.
+The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** \cite[Peebles & Xie, 2023]{peebles2023dit}, a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.
 
 Practical models have also become fast. Modern systems generate images in **1–8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM). Diffusion is no longer slow.
 
@@ -205,16 +205,16 @@ In five years, the technique went from “diffusion as a curiosity” to “diff
 
 These are the tools the diffusion community actually uses:
 
-* **[Stable Diffusion Web UI (AUTOMATIC1111)](https://github.com/AUTOMATIC1111/stable-diffusion-webui)**  the de facto local frontend. One install, full access to SD 1.5, SDXL, and the entire community of fine-tunes.
-* **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)**  node-based, scriptable, the choice of power users. Best for pipelines that mix ControlNet, LoRA, img2img, inpainting and upscaling.
-* **[Fooocus](https://github.com/lllyasviel/Fooocus)**  minimal UI inspired by Midjourney. Best if you want results without fiddling.
-* **[Hugging Face Spaces](https://huggingface.co/spaces)**  free browser-based demos of the latest open models. No installation, no GPU needed.
-* **[InvokeAI](https://github.com/invoke-ai/InvokeAI)**  a polished commercial-grade CLI and web UI.
+* **[Stable Diffusion Web UI (AUTOMATIC1111)](https://github.com/AUTOMATIC1111/stable-diffusion-webui)**, the de facto local frontend. One install, full access to SD 1.5, SDXL, and the entire community of fine-tunes.
+* **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)**, node-based, scriptable, the choice of power users. Best for pipelines that mix ControlNet, LoRA, img2img, inpainting and upscaling.
+* **[Fooocus](https://github.com/lllyasviel/Fooocus)**, minimal UI inspired by Midjourney. Best if you want results without fiddling.
+* **[Hugging Face Spaces](https://huggingface.co/spaces)**, free browser-based demos of the latest open models. No installation, no GPU needed.
+* **[InvokeAI](https://github.com/invoke-ai/InvokeAI)**, a polished commercial-grade CLI and web UI.
 
 For *controlling* what the model draws:
 
-* **[ControlNet](https://github.com/lllyasviel/ControlNet)** \cite[Zhang et al., 2023]{zhang2023controlnet}  spatial control from edge maps, depth maps, or pose skeletons, without retraining the base model.
-* **LoRA** \cite[Hu et al., 2021]{hu2021lora}  small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU. ([paper](https://arxiv.org/abs/2106.09685))
+* **[ControlNet](https://github.com/lllyasviel/ControlNet)** \cite[Zhang et al., 2023]{zhang2023controlnet}, spatial control from edge maps, depth maps, or pose skeletons, without retraining the base model.
+* **LoRA** \cite[Hu et al., 2021]{hu2021lora}, small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU. ([paper](https://arxiv.org/abs/2106.09685))
 
 If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing \cite[Sohl-Dickstein et al., 2015]{sohl2015deep}, Song & Ermon's score-based 2019 paper \cite[Song & Ermon, 2019]{song2019score}, and Ho's DDPM in 2020 \cite[Ho et al., 2020]{ho2020ddpm}.
 </div>

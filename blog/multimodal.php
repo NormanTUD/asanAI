@@ -11,7 +11,7 @@ topics: multimodal, vision, architecture, programming
 -->
 
 <div class="md">
-A pure text model is blind. It has never seen a colour, a face, or a curve. **Multimodal** models remove this handicap: a single network that ingests **images, text, audio, video**  and reasons across them. The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default; text-only models are increasingly a special case.
+A pure text model is blind. It has never seen a colour, a face, or a curve. **Multimodal** models remove this handicap: a single network that ingests **images, text, audio, video**, and reasons across them. The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default; text-only models are increasingly a special case.
 
 This chapter traces the technical lineage from pixels-as-tensors (see the Convolutions and Vision chapter) to **pixels-as-tokens** that an LLM can read.
 </div>
@@ -104,7 +104,7 @@ Take the prompt *“What is unusual about this image?”* with an attached photo
 4. **Concatenate**: $\text{[visual tokens] [text tokens]}$.
 5. **Autoregressive generation** as in any LLM: predict the next text token conditioned on the joint sequence.
 
-The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required  the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.
+The LLM treats the visual tokens as if they were a foreign language it has been taught to read. No new attention mechanism is required, the same Q/K/V machinery already described in the Attention chapter handles the cross-modal mixing, because visual and text tokens occupy the same vector space.
 </div>
 
 <div class="md">
@@ -128,7 +128,7 @@ The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0
 
 Multimodal does **not** mean omnipotent:
 
-* **Spatial reasoning**: counting objects (“how many apples?”), understanding left/right relationships, depth ordering  all surprisingly weak.
+* **Spatial reasoning**: counting objects (“how many apples?”), understanding left/right relationships, depth ordering, all surprisingly weak.
 * **Hallucination amplifies**: an LLM that hallucinates text can hallucinate “the dog is brown” when no dog is present.
 * **OCR is brittle**: handwritten text, unusual fonts, or cluttered scenes cause systematic failures.
 * **Adversarial fragility**: imperceptible pixel perturbations (see the Security chapter) can flip a model's answer.
@@ -138,7 +138,7 @@ Multimodal does **not** mean omnipotent:
 <div class="md">
 ## What's Next
 
-* **Any-to-any models**: GPT-4o, Gemini 2, and others can take image, audio, video *and* produce any of them  generating speech, singing, or video from a text prompt.
+* **Any-to-any models**: GPT-4o, Gemini 2, and others can take image, audio, video *and* produce any of them, generating speech, singing, or video from a text prompt.
 * **Video as a long sequence of patches**: video tokens are simply more frames stacked in time. Gemini 1.5 Pro accepts up to 1 hour of video at native resolution.
 * **Embodied multimodal**: robots that fuse camera, lidar, proprioception, and language in one model (RT-2, PaLM-E, OpenVLA).
 </div>
@@ -152,7 +152,7 @@ Multimodal LLMs are conceptually simple:
 2. **Project** all modalities into a shared token space (or use cross-attention).
 3. **Train** the model as a normal next-token predictor on the joint sequence.
 
-The hard parts are data (curating trillions of matched image-text-audio samples  see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.
+The hard parts are data (curating trillions of matched image-text-audio samples, see the Training Data chapter), compute (vision towers + LLMs + alignment data = massive training runs), and evaluation (the benchmarks above are still being developed). But the architectural recipe is now standard and reproducible, which is why every frontier lab ships multimodal-by-default in 2025.
 </div>
 
 <script>
