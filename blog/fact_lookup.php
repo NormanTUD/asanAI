@@ -73,7 +73,7 @@ After $L$ layers,
 
 The residual stream is a *public* scratchpad: every attention head and every MLP layer reads from it and writes to it. The crucial word is *additive*: nothing in the architecture forces components to overwrite each other, they just add their contributions. This means a circuit for any specific behavior can be isolated as a sum of contributions from specific components at specific layers \cite[Elhage et al., 2021]{elhage2021mathematical}.
 
-A subtler fact about the residual stream, documented empirically by \citeauthor[Elhage et al., 2023]{elhage2023privileged} \cite{elhage2023privileged}, is that the *coordinate axes* of the residual stream — that is, the individual entries of the vector $x^{(\ell)}_i$ — end up carrying more meaning than the mathematics of the architecture suggests they should. In a "pure" linear-algebra view, the basis of $\mathbb{R}^d$ is arbitrary, and only directions should matter; in practice, the per-dimension normalizers in the Adam optimizer nudge the model into using specific coordinates for specific kinds of information. We will not need this fact for the rest of the chapter, but it is the reason that single coordinates sometimes look interpretable even when they should not.
+A subtler fact about the residual stream, documented empirically by \cite[Elhage et al., 2023]{elhage2023privileged}, is that the *coordinate axes* of the residual stream — that is, the individual entries of the vector $x^{(\ell)}_i$ — end up carrying more meaning than the mathematics of the architecture suggests they should. In a "pure" linear-algebra view, the basis of $\mathbb{R}^d$ is arbitrary, and only directions should matter; in practice, the per-dimension normalizers in the Adam optimizer nudge the model into using specific coordinates for specific kinds of information. We will not need this fact for the rest of the chapter, but it is the reason that single coordinates sometimes look interpretable even when they should not.
 
 For our prompt, the residual stream at the final position starts as the embedding of " ", plus a positional encoding for position 5. After $L$ iterations of "attention read this, MLP write something", it ends up as a vector that, when multiplied by $W_U$, gives a logit on "Paris" that is much larger than the logit on "Lyon" or "Berlin".
 
@@ -113,7 +113,7 @@ A Transformer block's MLP is a two-layer feed-forward network applied independen
 
 <p>$$\text{MLP}(x) = \sigma(x W_1 + b_1)\, W_2 + b_2$$</p>
 
-with $\sigma$ typically being GeLU. \citeauthor{keyvalmem} \cite{keyvalmem} made the observation that turned this into a research program: the rows of $W_1$ can be read as **keys** (input patterns the neuron "looks for"), and the corresponding columns of $W_2$ as **values** (vectors to write into the residual stream when that key matches). The activation $\sigma(x W_1)$ is the *soft* match score against every key.
+with $\sigma$ typically being GeLU. \cite[Geva et al., 2020]{keyvalmem} made the observation that turned this into a research program: the rows of $W_1$ can be read as **keys** (input patterns the neuron "looks for"), and the corresponding columns of $W_2$ as **values** (vectors to write into the residual stream when that key matches). The activation $\sigma(x W_1)$ is the *soft* match score against every key.
 
 The analogy to a hash table is exact. A literal hash table would, given $x$, find the one key $k^*$ that exactly matches and return its value $v^*$. The MLP does the same thing *approximately*: multiple keys can match with different scores, and the output is a weighted average of their values, weighted by match strength. This is a **soft associative memory**:
 
@@ -129,7 +129,7 @@ A hard hash table stores a fact or it doesn't. A soft key-value memory does some
 
 So there is a cloud of soft key-value pairs in the model's weights. The question is: is "Paris is the capital of France" stored *somewhere specific*, or is it smeared across millions of pairs in some inseparable way? The experimental evidence from the last few years is, surprisingly clearly: *somewhere specific*.
 
-\citeauthor{dai2022knowledgeneurons} \cite{dai2022knowledgeneurons} introduced the **knowledge neuron** framework. For a relational fact like "the Space Needle is in Seattle", they:
+\cite[Dai et al., 2022]{dai2022knowledgeneurons} introduced the **knowledge neuron** framework. For a relational fact like "the Space Needle is in Seattle", they:
 
 1. Run the cloze query "The Space Needle is located in the city of \_\_\_" through the model and identify the layer where the answer first becomes confidently "Seattle".
 2. Use integrated-gradients attribution to find which neurons in that layer's MLP, and which intermediate dimensions in the residual stream, are most responsible for the prediction.
@@ -144,7 +144,7 @@ This is the closest thing we have to a smoking gun: there exist *local, causally
 <div class="md">
 ## 5. Opening up one fact: ROME
 
-The most dramatic experimental evidence that facts live in identifiable, narrow regions of the weights comes from \citeauthor{meng2022locating} \cite{meng2022locating} and their method **ROME** — *Rank-One Model Editing*.
+The most dramatic experimental evidence that facts live in identifiable, narrow regions of the weights comes from \cite[Meng et al., 2022]{meng2022locating} and their method **ROME** — *Rank-One Model Editing*.
 
 Their procedure:
 
@@ -166,7 +166,7 @@ Honest caveats. ROME is not a complete theory of fact storage. It is one experim
 
 The third piece of the picture is the most surprising, and the most contested.
 
-A long line of work, going back to the famous "king − man + woman ≈ queen" result on word embeddings, has found that *semantic relations are linear operations in the model's representation space*. \citeauthor{park2024linear} \cite{park2024linear} made this rigorous with the **linear representation hypothesis**: a concept like "country → capital" is a *direction* in the residual stream, and the model's internal representations of words are arranged so that moving along that direction in the embedding of "France" lands you near the embedding of "Paris".
+A long line of work, going back to the famous "king − man + woman ≈ queen" result on word embeddings, has found that *semantic relations are linear operations in the model's representation space*. \cite[Park et al., 2024]{park2024linear} made this rigorous with the **linear representation hypothesis**: a concept like "country → capital" is a *direction* in the residual stream, and the model's internal representations of words are arranged so that moving along that direction in the embedding of "France" lands you near the embedding of "Paris".
 
 Concretely, if $\gamma(w) \in \mathbb{R}^{d}$ denotes the unembedding-row vector for word $w$ (so that the logit for $w$ is $\gamma(w) \cdot x$), the hypothesis predicts
 
@@ -176,13 +176,13 @@ That is: the *vector* from "France" to "Paris" is approximately the same vector 
 
 <p>$$\gamma(\text{capital}(c)) \;\approx\; \gamma(c) + \bar{r}$$</p>
 
-A related and equally striking line of evidence is the **function vector** finding of \citeauthor{todd2024functionvectors} \cite{todd2024functionvectors}. They give the model an in-context task — a few examples of "French: chien → dog; Spanish: gato → cat; English: ___ → ?" — and show that a small number of attention heads in the middle layers carry a *single vector* that encodes "the task is translate from {French, Spanish, English} to English". They then extract that vector from one prompt, *inject* it into the residual stream of an entirely different prompt ("the cheese is ___"), and the model performs the translation task on the new prompt, even though the new prompt has no in-context examples.
+A related and equally striking line of evidence is the **function vector** finding of \cite[Todd et al., 2024]{todd2024functionvectors}. They give the model an in-context task — a few examples of "French: chien → dog; Spanish: gato → cat; English: ___ → ?" — and show that a small number of attention heads in the middle layers carry a *single vector* that encodes "the task is translate from {French, Spanish, English} to English". They then extract that vector from one prompt, *inject* it into the residual stream of an entirely different prompt ("the cheese is ___"), and the model performs the translation task on the new prompt, even though the new prompt has no in-context examples.
 
 Putting §4 and §6 together: **a fact is not stored as a key-value pair in one location, but as a *direction* in the residual stream that the key-value lookup is responsible for writing**. The MLP at layer $\ell$ contains the key "if input looks like a country with a capital-relation context, write the vector $\bar{r}$ into the residual stream". The unembedding $W_U$ then converts $\bar{r}$ into the logit pattern that puts mass on the correct answer.
 
 This is the linear-representation + soft-key-value-memory picture in one breath. It is the picture that *most* current interpretability researchers are betting on, and it has the strongest convergence between theory (Park et al.'s causal inner product) and experiment (ROME, function vectors, knowledge neurons).
 
-The strongest evidence that this picture holds in *frontier-scale* production models — not just in the 100M–7B toys where most of the original experiments were done — comes from \citeauthor[Templeton et al., 2024]{templeton2024scaling} \cite{templeton2024scaling}. They trained sparse autoencoders on the residual stream of Claude 3 Sonnet and recovered up to 34 million interpretable features. Among them: features for individual famous people, features for specific cities, features for specific code constructs, features for abstract concepts like "errors in code" and "sarcasm". The fact that a feature for "the Eiffel Tower" exists as a *direction* in the residual stream of a production frontier model is direct confirmation that the linear-representation picture scales. And the now-famous "Golden Gate Bridge" feature — a single direction whose activation makes the model insist on mentioning the bridge regardless of what you ask about — is a textbook example of a fact-as-direction.
+The strongest evidence that this picture holds in *frontier-scale* production models — not just in the 100M–7B toys where most of the original experiments were done — comes from \cite[Templeton et al., 2024]{templeton2024scaling}. They trained sparse autoencoders on the residual stream of Claude 3 Sonnet and recovered up to 34 million interpretable features. Among them: features for individual famous people, features for specific cities, features for specific code constructs, features for abstract concepts like "errors in code" and "sarcasm". The fact that a feature for "the Eiffel Tower" exists as a *direction* in the residual stream of a production frontier model is direct confirmation that the linear-representation picture scales. And the now-famous "Golden Gate Bridge" feature — a single direction whose activation makes the model insist on mentioning the bridge regardless of what you ask about — is a textbook example of a fact-as-direction.
 </div>
 
 <div class="md">
@@ -190,7 +190,7 @@ The strongest evidence that this picture holds in *frontier-scale* production mo
 
 All of the above is the result of careful *post-hoc* analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you *watch the answer form in real time* as the forward pass progresses: the **logit lens**.
 
-The idea, introduced by \citeauthor{nostalgebraist2020logitlens} \cite{nostalgebraist2020logitlens} and refined into the **tuned lens** by \citeauthor{belrose2023tunedlens} \cite{belrose2023tunedlens}, is to apply the unembedding matrix $W_U$ to the residual stream at *every* layer, not just the final one:
+The idea, introduced by \cite[nostalgebraist, 2020]{nostalgebraist2020logitlens} and refined into the **tuned lens** by \cite[Belrose et al., 2023]{belrose2023tunedlens}, is to apply the unembedding matrix $W_U$ to the residual stream at *every* layer, not just the final one:
 
 <p>$$\text{logits}^{(\ell)} = W_U \cdot x^{(\ell)}$$</p>
 
@@ -221,7 +221,7 @@ This picture is *suggestive* and *partially grounded*, but it is not, as of this
 
 ### What is grounded
 
-The connection between Transformer attention and modern Hopfield networks is mathematically precise. \citeauthor{ramsauer2020hopfield} \cite{ramsauer2020hopfield} showed that the attention update rule
+The connection between Transformer attention and modern Hopfield networks is mathematically precise. \cite[Ramsauer et al., 2020]{ramsauer2020hopfield} showed that the attention update rule
 
 <p>$$\xi_i^{\text{new}} = \mathrm{softmax}(\beta \, X X^\top)\, X$$</p>
 
@@ -229,7 +229,7 @@ with $\beta \propto 1/\sqrt{d_k}$, is *exactly* the update rule of a continuous-
 
 <p>$$E = -\mathrm{lse}(\beta, X X^\top) + \tfrac{1}{2}\xi^\top \xi + \tfrac{1}{2}\sum_j x_j^\top x_j$$</p>
 
-where $\mathrm{lse}$ is the log-sum-exp. The classical Hopfield network of \citeauthor{hopfield1982} \cite{hopfield1982} was the original "associative memory with basins of attraction" architecture. So the *attention mechanism* in a Transformer is, formally, an iterative retrieval rule from a generalized Hopfield model. That is a real mathematical fact.
+where $\mathrm{lse}$ is the log-sum-exp. The classical Hopfield network of \cite[Hopfield, 1982]{hopfield1982} was the original "associative memory with basins of attraction" architecture. So the *attention mechanism* in a Transformer is, formally, an iterative retrieval rule from a generalized Hopfield model. That is a real mathematical fact.
 
 ### What is suggested but not proven
 
@@ -263,9 +263,9 @@ The answer is **superposition** \cite{elhage2022superposition}: the model repres
 
 In high dimensions, you can pack exponentially many nearly-orthogonal vectors. If $d = 4096$, the number of unit vectors that are pairwise at angle at least $90° - \epsilon$ is exponential in $d$. The model exploits this: it stores thousands or millions of interpretable features ("this is a French word", "this is the subject of a sentence", "this token activates the 'capital of X' key") as directions in the residual stream, *not* as individual neurons. A single neuron ends up participating in many features; a single feature ends up spread across many neurons.
 
-This is why the knowledge-neuron finding of \citeauthor{dai2022knowledgeneurons} \cite{dai2022knowledgeneurons} is *remarkable*: it works *despite* superposition. Some neurons end up monosemantic for specific facts because, during training, the optimization finds it cheaper to dedicate a few neurons to frequently-retrieved facts than to spread those facts across the superposition soup.
+This is why the knowledge-neuron finding of \cite[Dai et al., 2022]{dai2022knowledgeneurons} is *remarkable*: it works *despite* superposition. Some neurons end up monosemantic for specific facts because, during training, the optimization finds it cheaper to dedicate a few neurons to frequently-retrieved facts than to spread those facts across the superposition soup.
 
-The systematic way to *recover* monosemantic features from a superposed residual stream is the **sparse autoencoder** \cite{cunningham2023sparse} \cite{bricken2023monosemanticity}. A sparse autoencoder is a small network trained to decompose the residual stream into a much larger dictionary of sparse features, such that each feature fires for a single human-interpretable concept. The original SAE work by \citeauthor[Bricken et al., 2023]{bricken2023monosemanticity} \cite{bricken2023monosemanticity} was done on a 1-layer toy transformer; \citeauthor[Templeton et al., 2024]{templeton2024scaling} \cite{templeton2024scaling} then scaled the same idea to Claude 3 Sonnet and recovered up to 34 million features. A parallel line of work by \citeauthor[Elhage et al., 2022]{elhage2022solu} \cite{elhage2022solu} showed that an architectural change — replacing the GeLU activation in MLP neurons with a custom "SoLU" activation — makes individual neurons substantially *more* monosemantic even without SAEs, by reducing the incentive to use superposition in the first place. This is an active research area; the current best SAEs recover tens of millions of interpretable features from a frontier model, and they have been used to find features that correlate with specific factual associations, specific syntactic structures, specific sentiment, and specific safety-relevant concepts.
+The systematic way to *recover* monosemantic features from a superposed residual stream is the **sparse autoencoder** \cite{cunningham2023sparse} \cite{bricken2023monosemanticity}. A sparse autoencoder is a small network trained to decompose the residual stream into a much larger dictionary of sparse features, such that each feature fires for a single human-interpretable concept. The original SAE work by \cite[Bricken et al., 2023]{bricken2023monosemanticity} was done on a 1-layer toy transformer; \cite[Templeton et al., 2024]{templeton2024scaling} then scaled the same idea to Claude 3 Sonnet and recovered up to 34 million features. A parallel line of work by \cite[Elhage et al., 2022]{elhage2022solu} showed that an architectural change — replacing the GeLU activation in MLP neurons with a custom "SoLU" activation — makes individual neurons substantially *more* monosemantic even without SAEs, by reducing the incentive to use superposition in the first place. This is an active research area; the current best SAEs recover tens of millions of interpretable features from a frontier model, and they have been used to find features that correlate with specific factual associations, specific syntactic structures, specific sentiment, and specific safety-relevant concepts.
 </div>
 
 <div class="md">
@@ -275,7 +275,7 @@ The picture in §3–§9 is the best current account, and it is the one most mec
 
 ### Scale gap
 
-Almost all the experiments cited in this chapter — ROME, knowledge neurons, induction heads, logit lens — were done on models in the 100M–7B parameter range: BERT-base, GPT-2 small, GPT-J. Frontier models in 2025–2026 are 100× to 1000× larger. The honest version of this concern is that the picture in §3–§9 is well-supported for "small" production models (≤ 7B) and is rapidly being extended to frontier-scale production models. \citeauthor[Templeton et al., 2024]{templeton2024scaling} \cite{templeton2024scaling} have trained sparse autoencoders on Claude 3 Sonnet and recovered millions of interpretable features. \citeauthor[Lindsey et al., 2025]{lindsey2025biology} \cite{lindsey2025biology} and \citeauthor[Ameisen et al., 2025]{ameisen2025circuit} \cite{ameisen2025circuit} have applied "circuit tracing" — replacing MLP layers with cross-layer transcoders and then following the computation feature-by-feature — to Claude 3.5 Haiku, producing the first end-to-end mechanistic accounts of multi-step behaviors in a production model. The picture is converging: the same general mechanisms (residual stream as scratchpad, attention as routing, MLPs as soft key-value stores, facts as directions) appear to hold, with new layers of structure visible only at the frontier scale.
+Almost all the experiments cited in this chapter — ROME, knowledge neurons, induction heads, logit lens — were done on models in the 100M–7B parameter range: BERT-base, GPT-2 small, GPT-J. Frontier models in 2025–2026 are 100× to 1000× larger. The honest version of this concern is that the picture in §3–§9 is well-supported for "small" production models (≤ 7B) and is rapidly being extended to frontier-scale production models. \cite[Templeton et al., 2024]{templeton2024scaling} have trained sparse autoencoders on Claude 3 Sonnet and recovered millions of interpretable features. \cite[Lindsey et al., 2025]{lindsey2025biology} and \cite[Ameisen et al., 2025]{ameisen2025circuit} have applied "circuit tracing" — replacing MLP layers with cross-layer transcoders and then following the computation feature-by-feature — to Claude 3.5 Haiku, producing the first end-to-end mechanistic accounts of multi-step behaviors in a production model. The picture is converging: the same general mechanisms (residual stream as scratchpad, attention as routing, MLPs as soft key-value stores, facts as directions) appear to hold, with new layers of structure visible only at the frontier scale.
 
 ### Multi-hop and composition
 
@@ -285,7 +285,7 @@ The picture works well for single-hop retrieval: "the capital of X is Y" → loo
 
 When the model says "Paris", is it because it has an internal *model* of the world in which France has a capital called Paris? Or is it because it has memorized a soft key-value pair that happens to fire on this context?
 
-The most striking evidence that LLMs *can* build internal models — not just lookups — comes from \citeauthor{li2022othello_iclr} \cite{li2022othello_iclr}. They trained a GPT-style model on legal Othello moves *with no information about the board*. Probing experiments revealed that the model had spontaneously built an internal representation of the board state, accurate enough that interventions on the representation produced the predicted changes in next-move predictions. This is a *world model*, in a meaningful sense, learned purely from next-token prediction.
+The most striking evidence that LLMs *can* build internal models — not just lookups — comes from \cite[Li et al., 2023]{li2022othello_iclr}. They trained a GPT-style model on legal Othello moves *with no information about the board*. Probing experiments revealed that the model had spontaneously built an internal representation of the board state, accurate enough that interventions on the representation produced the predicted changes in next-move predictions. This is a *world model*, in a meaningful sense, learned purely from next-token prediction.
 
 For factual knowledge about the real world, the situation is murkier. Frontier models behave as if they have a *partial* world model: they can answer questions they were never directly trained on, by combining retrieved facts. But it is unclear whether that world model is a coherent geometric structure in the residual stream (something like a map of Europe with Paris marked on it) or a vast, mostly-flat lookup table with cross-references. Probably both, in unknown proportions.
 
