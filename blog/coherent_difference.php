@@ -209,6 +209,10 @@ The picture is this:
 	<figcaption class="md">\citealternativetitle{sheaf_gluing_image}: where the local sections agree on $U_1 \cap U_2$, the sheaf guarantees a unique global section $s \in \mathcal{F}(U_1 \cup U_2)$ that restricts back to each \cite{sheaf_gluing_image}. Local agreement $\Rightarrow$ global existence, and uniqueness.</figcaption>
 </figure>
 
+Drag the coloured handles at the endpoints of each section to change the local data. When the two sections agree on the overlap (within the tolerance ε), the sheaf axiom fires and a unique global section appears as a dashed dark-green line. When they disagree, a red segment marks the point of worst mismatch and no gluing is possible. Try the two buttons to snap directly into each regime.
+
+<div id="sheaf-gluing-container" style="margin: 20px 0;"></div>
+
 In one line:
 
 $$
@@ -274,7 +278,10 @@ $$
 
 is the categorical expression of "relations can themselves be related" taken to its logical conclusion \cite{higher_category_wiki}. Homotopy Type Theory makes this the very definition of what a type is: a type is a space, an element is a point, an identification $p : a =_A b$ is a path from $a$ to $b$, and an identification of identifications is a homotopy between paths \cite{hottbook}. Sets, in this picture, are the special case where all higher homotopies are trivial, i.e. a set is a space whose only interesting structure is its points.
 
-<div class="optional md" data-headline="Lightning and thunder: when 'equal on the overlap' is too strict">
+Three sensors ${i, j, k}$ each record a lightning strike in their own local time. The pairwise equivalences $\alpha_{ij}$, $\alpha_{jk}$, $\alpha_{ik}$ are time-translations. The sheaf-with-coherence axiom on the triple overlap requires $\alpha_{ik} \simeq \alpha_{ij} \circ \alpha_{jk}$, which in this concrete setup reduces to $\delta_{ik} = \delta_{ij} + \delta_{jk}$. Move the three sliders to test whether the coherence square commutes.
+
+<div id="homotopy-coherence-container" style="margin: 20px 0;"></div>
+
 A physical example of an $\infty$-sheaf in disguise: lightning and thunder.
 
 Lightning and thunder are caused by the same event. They should be "the same thing" on the overlap of times when both are visible and audible. But light reaches us almost instantly, while sound lags behind by a measurable delay that depends on distance. So on the overlap (the time window when both are happening), the two signals are not *equal* in the set-theoretic sense. They are related by a *homotopy*: the data of how far away the strike was, encoded as a time-translation.

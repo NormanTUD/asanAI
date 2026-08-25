@@ -5685,5 +5685,20 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Distributional_semantics"
+	},
+
+	"kosinski2023tom": {
+		url: "https://arxiv.org/abs/2302.02083",
+		title: "Evaluating Large Language Models in Theory of Mind Tasks",
+		author: "Michal Kosinski",
+		year: 2024,
+		alternativetitle: "Theory of Mind Emerges in LLMs"
+	},
+	"bubeck2023sparks": {
+		url: "https://arxiv.org/abs/2303.12712",
+		title: "Sparks of Artificial General Intelligence: Early experiments with GPT-4",
+		author: "Sébastien Bubeck, Varun Chandrasekaran, Ronen Eldan, Johannes Gehrke, Eric Horvitz, Ece Kamar, Peter Lee, Yin Tat Lee, Yuanzhi Li, Scott Lundberg, Harsha Nori, Hamid Palangi, Marco Tulio Ribeiro, Yi Zhang",
+		year: 2023,
+		alternativetitle: "Sparks of AGI"
 	}
 };

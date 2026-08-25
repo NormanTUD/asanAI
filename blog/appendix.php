@@ -322,3 +322,62 @@ Below, you can explore this interactively. A simulated sentence unfolds step by 
     </div>
 </section>
 
+<div class="md">
+## Unexpected Capabilities of LLMs: Discoveries That Surprised Researchers
+
+LLMs were trained on a single, well-defined objective: **next-token prediction**. The architecture is a stack of attention layers, the data is text. Everything else — reasoning, world-modelling, theory of mind, tool use — was not specified, not rewarded, and in many cases not even expected to be possible. Yet, capability after capability kept *emerging* during scaling. The list below catalogues the most striking of these discoveries, each with a citation to the paper that first reported it and a short note on *why* it was unexpected.
+
+### Few-Shot In-Context Learning (GPT-3, 2020)
+
+The first major surprise. \cite[Brown et al., 2020][]{brown2020gpt3} showed that a 175-billion parameter autoregressive language model could be conditioned on a handful of input-output examples written into the prompt and then continue the pattern on a new query — **without any weight updates, without gradient descent, without a fine-tuning loop**. This was not how language modelling was supposed to work. Prior to GPT-3, neural NLP required task-specific architectures, features, and training. After GPT-3, "prompting" became a programming interface. The deeper surprise was that the ability appeared *smoothly* with scale: at small scales models ignore the examples, at large scales they exploit them reliably.
+
+### In-Context Statistical Learning
+
+In 2022, \cite[Garg, Tsipras, Liang & Valiant, 2022]{garg2022incontext} asked a sharper question: if a Transformer is trained on sequences drawn from a *family* of functions (e.g. linear functions $f(x) = w^\top x$ with random $w$), can it in-context learn a *new* function from that family on the fly? The answer was yes: at test time, given a few noisy $(x, y)$ pairs, the model produced predictions matching the **optimal least-squares estimator** for that function class, *without ever performing gradient descent at inference*. The result extended to sparse linear functions, two-layer neural networks, and decision trees, in each case matching or exceeding specialised task-specific learning algorithms. This established that in-context learning is not task recognition (looking up a similar pretraining task) but genuine inference-time algorithm execution.
+
+### Induction Heads: The Circuit Behind ICL
+
+If in-context learning is real inference, it must be implemented in some specific circuitry. \cite[Olsson et al., 2022]{olsson2022induction} identified **induction heads** — pairs of attention heads that implement the simple algorithm "complete $[A][B]\dots[A] \to [B]$". Across six complementary lines of evidence, they showed that induction heads develop at *precisely the same training step* as a sudden jump in in-context learning ability (visible as a discontinuity in the loss curve). The implication: many "emergent" capabilities of LLMs may be the macroscopic signature of a small, identifiable circuit forming inside the network. This is now one of the cleanest examples of *mechanistic interpretability* — explaining a behaviour by finding the responsible weights.
+
+### Chain-of-Thought Reasoning Emerges From a Prompt
+
+In January 2022, \cite[Wei et al., 2022]{wei2022chainofthought} demonstrated that appending *"Let's think step by step"* (or showing worked examples) to a prompt dramatically improves a model's performance on arithmetic, commonsense, and symbolic reasoning benchmarks — sometimes by **more than 50 percentage points**. \cite[Kojima et al., 2022]{kojima2022zeroshot} then showed the same effect *without any worked examples*, using only the magic suffix. Before this work, the standard assumption was that a frozen language model performs a fixed amount of "reasoning" per forward pass. Chain-of-Thought revealed that the model already contained latent multi-step reasoning capability — it merely needed permission (in the form of the right prompt) to surface it. This finding directly enabled the entire modern reasoning paradigm culminating in o1, o3, and DeepSeek-R1.
+
+### Self-Consistency and Tree of Thoughts
+
+Once reasoning can be sampled, two natural refinements appeared. \cite[Wang et al., 2022]{wang2022selfconsistency} showed that sampling *many* chain-of-thought traces and taking the majority answer outperforms greedy decoding, on the intuition that correct reasoning paths converge while incorrect ones diverge. \cite[Yao et al., 2023]{yao2023tot} pushed this further with **Tree of Thoughts**: the model generates multiple candidate next steps, *evaluates* each, and decides whether to continue, branch, or backtrack. On the Game of 24 (a combinatorial puzzle), chain-of-thought GPT-4 solved 4% of problems; Tree of Thoughts solved 74%. The surprise was not that the model could reason, but that the same model could be coaxed into *deliberate* search and self-evaluation by changes to the inference loop alone.
+
+### Algorithmic Prompting
+
+What happens if you give an LLM the *algorithm* for a task instead of examples? \cite[Zhou et al., 2022]{zhou2022algorithmic} tested this on 19-digit addition: a plain few-shot baseline reached 9.5% accuracy; an in-context description of the addition algorithm reached **90.5%**. The model was not memorising the answers (the numbers were random), not retrieving the algorithm from pretraining (it was given verbatim in the prompt), and not gradient-descenting on the task. It was *executing* an algorithm it had never seen before, by reading the algorithm from natural-language instructions. This is a strong empirical anchor for the claim that LLMs can perform general algorithmic computation when the procedure is specified unambiguously.
+
+### Emergent World Representations — Othello-GPT
+
+Perhaps the most surprising mechanistic finding of 2022. \cite[Li et al., 2022][]{li2022othello_iclr} trained a small GPT on **move sequences from the board game Othello** — the model never saw the board, only the sequence of moves. Probing the internal activations, they found a non-linear representation of the full board state had spontaneously formed inside the network: each cell's "colour" (black, white, empty) could be linearly decoded from specific neurons. Causal interventions (artificially flipping a cell's representation) caused the model to predict legal moves as if the board had actually been flipped. The model had invented a world model because predicting the next move required it. The lesson: a sufficiently expressive next-token predictor, trained on a sufficiently structured sequence, builds internal representations of the underlying generative process whether or not we ask it to.
+
+### Theory of Mind
+
+Theory of Mind — the ability to model that other agents hold beliefs that may differ from reality — was long considered a uniquely human cognitive capacity, emerging around age four. \cite[Kosinski, 2024][]{kosinski2023tom} tested 11 LLMs on 40 False-Belief scenarios (640 prompts in total). The result was striking: smaller and older models solved 0% of tasks; GPT-3-davinci-003 (Nov 2022) solved 20%; ChatGPT-3.5 (Mar 2023) solved 20%; **ChatGPT-4 (Jun 2023) solved 75%**, statistically indistinguishable from six-year-old children. ToM was not in the training objective; it was not reinforced; it was not a benchmark anyone was optimising for. It *emerged spontaneously* as a side-effect of language modelling scaling. The result is contested in detail (subsequent papers find that small prompt perturbations break the ability), but the central finding — that frontier models display systematic ToM behaviour on standard tests — is robust.
+
+### Self-Taught Tool Use — Toolformer
+
+Language models famously struggle with exact arithmetic and factual lookup. \cite[Schick et al., 2023][]{schick2023toolformer} showed that a model can teach *itself* to call external APIs (a calculator, a search engine, a translation system, a calendar) by a self-supervised procedure: write candidate API calls into text, execute them, keep the calls that *reduce the loss* on subsequent tokens, discard the rest. The resulting model — **Toolformer** — substantially improved zero-shot performance on a variety of downstream tasks, often matching much larger models. The surprise was twofold: (a) the supervision signal (loss reduction) was extremely weak, yet sufficient to teach tool use from raw text; (b) the model learned *which* tool to call, *when*, *with what arguments*, and *how to incorporate the result*, all without human-labelled tool-use examples.
+
+### Sparks of AGI (GPT-4)
+
+In March 2023, a team at Microsoft Research published a 154-page investigation of an early GPT-4 checkpoint titled \textit{Sparks of Artificial General Intelligence} \cite[Bubeck et al., 2023][]{bubeck2023sparks}. Their central claim was that GPT-4, beyond its mastery of language, could solve novel and difficult tasks spanning mathematics, coding, vision, medicine, law, and psychology — *without needing any special prompting* — and that its performance was "strikingly close to human-level performance" in many of these domains. The paper documented abilities the authors had not anticipated: synthesising novel proofs, writing functioning code from a one-line description, explaining jokes, drawing ASCII art on request, and passing professional exams (bar exam, medical board) in the 90th percentile or above. Whether or not one accepts the "AGI" framing, the paper is a careful catalogue of capabilities that nobody — including OpenAI — predicted when scaling GPT-3.
+
+### The Pattern: Phase Transitions, Not Smooth Scaling
+
+Taken together, these findings share a common structure that distinguishes them from ordinary engineering progress:
+
+1. **None of them were in the training objective.** Few-shot learning, reasoning chains, world models, theory of mind, tool use — none were directly supervised.
+2. **All of them appeared *late* during scaling.** Below some threshold of parameters, data, or compute, the ability is essentially absent. Above the threshold, it is present.
+3. **Most are *non-smooth* — they appear as phase transitions.** The induction-heads loss curve has a sharp discontinuity. Chain-of-thought jumps from near-zero to substantial accuracy at a scale threshold. Theory-of-Mind goes from 0% to 20% to 75% across three GPT versions in eighteen months. The smooth scaling laws that describe loss do *not* describe capability.
+4. **The capabilities are *compositional* once present.** Chain-of-thought combines with self-consistency combines with tree-search combines with tool-use. Each new layer of structure can be stacked on the others.
+
+The practical consequence: we cannot, in 2026, predict the full capability profile of a model 10× larger than today's frontier. Each past prediction underestimates what emerges. The next genuinely surprising capability is, by definition, the one nobody is currently working on.
+
+The conceptual consequence is harder. A language model trained on text is, in some deep sense, *forced* to build models of the world (because accurate next-token prediction requires modelling whatever process generated the text), models of agents (because human text describes mental states), models of algorithms (because text encodes procedures), and models of its own reasoning (because text is full of corrections and second drafts). The next-token objective is much richer than it appears.
+</div>
+

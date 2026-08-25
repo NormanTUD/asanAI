@@ -205,6 +205,13 @@ function load_base_js () {
 				console.error("Initialization failed:", error);
 				updateLoadingStatus(`Error loading page. Please refresh. ${error}`);
 			}
+
+			// Signal that the page is fully initialised. Listeners that
+			// need to mount interactive content AFTER renderMarkdown() has
+			// rewritten the .md innerHTML should hook in here, since the
+			// canvas/element references they captured on DOMContentLoaded
+			// point to detached nodes by now.
+			window.dispatchEvent(new CustomEvent('blogPostLoadComplete'));
 		}
 
 		window.addEventListener('DOMContentLoaded', loader_fn);
