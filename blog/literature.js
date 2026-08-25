@@ -5700,5 +5700,40 @@ window.bibData = {
 		author: "Sébastien Bubeck, Varun Chandrasekaran, Ronen Eldan, Johannes Gehrke, Eric Horvitz, Ece Kamar, Peter Lee, Yin Tat Lee, Yuanzhi Li, Scott Lundberg, Harsha Nori, Hamid Palangi, Marco Tulio Ribeiro, Yi Zhang",
 		year: 2023,
 		alternativetitle: "Sparks of AGI"
+	},
+	"nye2021scratchpad": {
+		url: "https://arxiv.org/abs/2112.00114",
+		title: "Show Your Work: Scratchpads for Intermediate Computation with Language Models",
+		author: "Maxwell Nye, Anders Johan Andreassen, Guy Gur-Ari, Henryk Michalewski, Jacob Austin, David Bieber, David Dohan, Aitor Lewkowycz, Maarten Bosma, David Luan, Charles Sutton, Augustus Odena",
+		year: 2021,
+		alternativetitle: "Scratchpads"
+	},
+	"mckenzie2023inverse": {
+		url: "https://arxiv.org/abs/2211.02011",
+		title: "Inverse scaling can become U-shaped",
+		author: "Jason Wei, Najoung Kim, Yi Tay, Quoc V. Le",
+		year: 2023,
+		alternativetitle: "Inverse Scaling Prize"
+	},
+	"press2022compositionality": {
+		url: "https://arxiv.org/abs/2210.03350",
+		title: "Measuring and Narrowing the Compositionality Gap in Language Models",
+		author: "Ofir Press, Muru Zhang, Sewon Min, Ludwig Schmidt, Noah A. Smith, Mike Lewis",
+		year: 2023,
+		alternativetitle: "Compositionality Gap"
+	},
+	"shi2023cottransfer": {
+		url: "https://arxiv.org/abs/2210.03057",
+		title: "Language Models are Multilingual Chain-of-Thought Reasoners",
+		author: "Freda Shi, Mirac Suzgun, Markus Freitag, Xinyi Wang, Suraj Srivats, Soroush Vosoughi, Hyung Won Chung, Yi Tay, Sebastian Ruder, Denny Zhou, Dipanjan Das, Jason Wei",
+		year: 2023,
+		alternativetitle: "Cross-Lingual Reasoning Transfer"
+	},
+	"lin2021truthful": {
+		url: "https://arxiv.org/abs/2109.07958",
+		title: "Truthful AI: Developing and Governing AI That Does Not Lie",
+		author: "Stephanie Lin, Jacob Hilton, Owain Evans",
+		year: 2022,
+		alternativetitle: "Truthfulness"
 	}
 };
