@@ -63,7 +63,7 @@ This sounds too austere to be true. The next sections will fill in how it can ne
 <div class="md">
 ## 2. The residual stream as a public scratchpad
 
-The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\ell)} \in \mathbb{R}^d$ at every layer $\ell$ and every position $i$, to which every component *adds* its output \cite{elhage2021mathematical}. Concretely:
+The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\ell)} \in \mathbb{R}^d$ at every layer $\ell$ and every position $i$, to which every component *adds* its output \cite[Elhage et al., 2021]{elhage2021mathematical}. Concretely:
 
 <p>$$x_i^{(\ell)} = x_i^{(\ell-1)} + \text{attn}^{(\ell)}(x^{(\ell-1)})_i + \text{MLP}^{(\ell)}(x^{(\ell-1)})_i$$</p>
 
@@ -71,7 +71,7 @@ After $L$ layers,
 
 <p>$$x_i^{(L)} = x_i^{(0)} + \sum_{\ell=1}^{L} \Big( \text{attn}^{(\ell)}(x^{(\ell-1)})_i + \text{MLP}^{(\ell)}(x^{(\ell-1)})_i \Big)$$</p>
 
-The residual stream is a *public* scratchpad: every attention head and every MLP layer reads from it and writes to it. The crucial word is *additive*: nothing in the architecture forces components to overwrite each other, they just add their contributions. This means a circuit for any specific behavior can be isolated as a sum of contributions from specific components at specific layers \cite{elhage2021mathematical}.
+The residual stream is a *public* scratchpad: every attention head and every MLP layer reads from it and writes to it. The crucial word is *additive*: nothing in the architecture forces components to overwrite each other, they just add their contributions. This means a circuit for any specific behavior can be isolated as a sum of contributions from specific components at specific layers \cite[Elhage et al., 2021]{elhage2021mathematical}.
 
 For our prompt, the residual stream at the final position starts as the embedding of " ", plus a positional encoding for position 5. After $L$ iterations of "attention read this, MLP write something", it ends up as a vector that, when multiplied by $W_U$, gives a logit on "Paris" that is much larger than the logit on "Lyon" or "Berlin".
 
@@ -99,7 +99,7 @@ and the head's output at position $i$ is
 
 For our prompt, in the early layers, attention is mostly doing *local* work — each token looks at its neighbours. By the middle layers, particular attention heads have learned to route specific pieces of information. One head, in some layer, becomes a "previous-token head" that attends to whatever came immediately before each token. Another head, in a later layer, learns to attend *from the final position back to the position where "France" sits* \cite{olsson2022induction}. The result is that the residual stream at the final position ends up containing information about "France" that the embedding alone did not put there.
 
-A useful decomposition, due to \citeauthor{elhage2021mathematical} \cite{elhage2021mathematical}, is to split each head into its **QK circuit** ($W_Q^\top W_K$, the matrix that decides *where to look*) and its **OV circuit** ($W_O W_V$, the matrix that decides *what to write when looking*). For an "I want to read 'France'" head, the QK matrix makes the final position attend strongly to the "France" position, and the OV matrix is approximately the identity in the relevant subspace — it copies what it reads.
+A useful decomposition, due to \cite[Elhage et al., 2021]{elhage2021mathematical}, is to split each head into its **QK circuit** ($W_Q^\top W_K$, the matrix that decides *where to look*) and its **OV circuit** ($W_O W_V$, the matrix that decides *what to write when looking*). For an "I want to read 'France'" head, the QK matrix makes the final position attend strongly to the "France" position, and the OV matrix is approximately the identity in the relevant subspace — it copies what it reads.
 </div>
 
 <div class="md">
@@ -201,7 +201,7 @@ Empirically, for a prompt like "The capital of France is", the logit-lens readou
 | 15–25 | "Paris" with growing margin | the model has decided |
 | 30–40 | "Paris" with high margin | refinement, hedging, suppression of alternatives |
 
-The midpoint is where the *decision* happens, in the sense that "Paris" enters the top-1 and stays there. The last 20 or so layers are mostly refinement: nudging the probability mass around, suppressing alternative candidates ("Lyon", "Versailles"), making sure the next-character predictions ("P", "Pa", "Par", "Pari", "Paris") stay consistent. This is also why **early-exit** methods — predicting from layer $L/2$ instead of layer $L$ — sometimes work surprisingly well \cite{elhage2021mathematical}: by the middle, the model has often already committed to the answer.
+The midpoint is where the *decision* happens, in the sense that "Paris" enters the top-1 and stays there. The last 20 or so layers are mostly refinement: nudging the probability mass around, suppressing alternative candidates ("Lyon", "Versailles"), making sure the next-character predictions ("P", "Pa", "Par", "Pari", "Paris") stay consistent. This is also why **early-exit** methods — predicting from layer $L/2$ instead of layer $L$ — sometimes work surprisingly well \cite[Elhage et al., 2021]{elhage2021mathematical}: by the middle, the model has often already committed to the answer.
 
 <div class="optional md" data-headline="What the logit lens is and is not">
 The logit lens is a *diagnostic*, not a measurement of what the model is "thinking". When you apply $W_U$ at layer 15, you are asking: *if I had to output a token right now, which one would I pick?* The model does not actually output a token at layer 15. The lens tells you what the residual stream at layer 15 has come to represent in unembedding space — which is informative, because the unembedding is what determines the final output. The **tuned lens** \cite{belrose2023tunedlens} improves on this by learning a small per-layer affine correction, which fixes the bias that earlier layers use slightly different bases than the unembedding expects. Use the logit lens for intuition, the tuned lens when you want to be rigorous.
@@ -297,13 +297,13 @@ Here is the picture in one breath, with citations:
 
 At each of the $L$ iterations:
 
-- **Attention** \cite{vaswani2017attention, elhage2021mathematical} routes information between positions: in our prompt, the critical job is making the final position attend back to the position holding "France".
+- **Attention** \cite{vaswani2017attention} \cite[Elhage et al., 2021]{elhage2021mathematical} routes information between positions: in our prompt, the critical job is making the final position attend back to the position holding "France".
 - **MLP** \cite{keyvalmem} performs a soft key-value lookup: somewhere in the weight matrices $W_1, W_2$ is a key that activates on "country with capital-relation context" and a value that writes the "capital-of-X" direction \cite{park2024linear} into the residual stream.
-- **Residual addition** \cite{elhage2021mathematical} accumulates these contributions into a single public vector.
+- **Residual addition** \cite[Elhage et al., 2021]{elhage2021mathematical} accumulates these contributions into a single public vector.
 - After the final layer, **$W_U$ unembeds** the residual stream into vocabulary logits. The logit for "Paris" is large because the residual stream has been pulled close to the unembedding direction of "Paris".
 - **Softmax** turns the logits into a probability distribution over the next token.
 
-This picture has been confirmed in pieces by ROME-style edits \cite{meng2022locating, meng2022memit}, knowledge-neuron attributions \cite{dai2022knowledgeneurons}, function-vector steering \cite{todd2024functionvectors}, induction-head analysis \cite{olsson2022induction}, logit-lens inspection \cite{nostalgebraist2020logitlens, belrose2023tunedlens}, and superposition-aware feature extraction \cite{elhage2022superposition, cunningham2023sparse}. It is consistent with the Hopfield-network interpretation of attention \cite{ramsauer2020hopfield, hopfield1982}. It is also, almost certainly, not the whole picture for frontier-scale models or multi-hop reasoning.
+This picture has been confirmed in pieces by ROME-style edits \cite{meng2022locating} \cite{meng2022memit}, knowledge-neuron attributions \cite{dai2022knowledgeneurons}, function-vector steering \cite{todd2024functionvectors}, induction-head analysis \cite{olsson2022induction}, logit-lens inspection \cite{nostalgebraist2020logitlens} \cite{belrose2023tunedlens}, and superposition-aware feature extraction \cite{elhage2022superposition} \cite{cunningham2023sparse}. It is consistent with the Hopfield-network interpretation of attention \cite{ramsauer2020hopfield} \cite{hopfield1982}. It is also, almost certainly, not the whole picture for frontier-scale models or multi-hop reasoning.
 
 That is the state of the art in mid-2026. The next token "Paris" is not retrieved from a database. It is *computed*, by a function $f_\theta$ that maps an input vector to a residual stream that has been nudged, layer by layer, into a region of $\mathbb{R}^d$ where the unembedding matrix gives high logit to the right answer. We know roughly *which* layers do the nudging, *which* matrices hold the knowledge, *which* directions encode which relations. We do not yet know *why* this is the optimal way to store the information, *whether* the same mechanism works at frontier scale, or *whether* the model has anything like an internal world map of Europe with Paris marked on it.
 

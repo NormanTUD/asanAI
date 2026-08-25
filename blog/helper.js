@@ -1397,7 +1397,7 @@ function initOptionalBlocks() {
 		block.classList.add('optional-initialized');
 
 		const headline = block.getAttribute('data-headline') || "More Information";
-		const contentHtml = block.innerHTML;
+		let contentHtml = block.innerHTML;
 		block.innerHTML = '';
 
 		// Create Header
@@ -1409,12 +1409,34 @@ function initOptionalBlocks() {
 			<span class="optional-title">${headline}</span>
 		`;
 
+		// ── Markdown pass for nested .optional.md blocks ─────────────
+		// getTopLevelMdContainers() only processes .md containers whose
+		// ancestors are NOT .md. A <div class="optional md"> is always
+		// nested inside the outer <div class="md"> section, so
+		// renderMarkdown() skips it; marked, in turn, treats the nested
+		// <div> as a raw HTML block and passes its body through
+		// untouched. That is why "*italic*" inside an optional block used
+		// to render as literal "*italic*" instead of <em>italic</em>.
+		//
+		// bibtexify(), BlogClusters.preprocess(), BlogTopics.preprocess()
+		// and the \index{} replacement all run on the OUTER container's
+		// string content, so their substitutions (citations, index
+		// spans, cluster/topic markers) ARE already present inside the
+		// optional body — marked.parse() will simply leave that HTML
+		// alone while processing the still-raw markdown around it.
+		//
+		// Top-level .optional.md blocks (no .md ancestor) were already
+		// processed by renderMarkdown() and must NOT be re-parsed.
+		const nestedUnderMd =
+			!!block.parentElement &&
+			!!block.parentElement.closest('.md');
+
+		if (nestedUnderMd && typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+			contentHtml = marked.parse(contentHtml);
+		}
+
 		// Create Content Wrapper (initially hidden)
 		const contentWrapper = document.createElement('div');
-		// 🔧 FIX 1: Keine 'md'-Klasse, um doppelte marked.parse()-Verarbeitung zu vermeiden.
-		// Der Inhalt wurde bereits als HTML aus block.innerHTML übernommen.
-		// Falls renderMarkdown() später nochmal läuft, würde es das fertige HTML
-		// erneut durch marked.parse() jagen und dabei kaputt machen.
 		contentWrapper.className = 'optional-content';
 		contentWrapper.style.display = 'none';
 		// 🔧 FIX 2: overflow:hidden NICHT mehr dauerhaft setzen.
@@ -1422,6 +1444,18 @@ function initOptionalBlocks() {
 		// Vorher blieb overflow:hidden nach dem Expand permanent bestehen,
 		// was in Kombination mit einer CSS max-height den Inhalt bei ~2000px abschnitt.
 		contentWrapper.innerHTML = contentHtml;
+
+		// Mirror renderMarkdown()'s post-processing on the freshly
+		// rendered subtree so typographic punctuation, [[t:…]] topic
+		// visibility, and per-cluster CSS all behave consistently with
+		// the rest of the page.
+		smartPunct(contentWrapper);
+		if (window.BlogTopics && BlogTopics.applyVisibility) {
+			BlogTopics.applyVisibility();
+		}
+		if (window.BlogClusters && BlogClusters.injectCSS) {
+			BlogClusters.injectCSS();
+		}
 
 		block.appendChild(header);
 		block.appendChild(contentWrapper);
