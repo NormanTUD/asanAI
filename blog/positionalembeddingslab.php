@@ -42,13 +42,13 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 
 <!-- ─── Interactive: Unit Circle ─── -->
 <div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style="color:#2563eb;font-weight:bold;">blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style="color:#ef4444;font-weight:bold;">red</span>).</p>
+    <p style="color:#64748b; font-size:0.9em;">Drag the angle and watch the point move on the unit circle. Its $x$-coordinate is $\cos\theta$ (<span style=“color:#2563eb;font-weight:bold;”>blue</span>) and its $y$-coordinate is $\sin\theta$ (<span style=“color:#ef4444;font-weight:bold;”>red</span>).</p>
 
     <div style="margin-bottom:10px;">
         <strong>Angle $\theta$:</strong>
         <input type="range" id="slider-sc-theta" min="0" max="6.2832" step="0.01" value="0.78" style="width:300px;">
         <span id="disp-sc-theta" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.78</span> rad
-        (<span id="disp-sc-deg" style="font-family:monospace;">44.7°</span>)
+        (<span id=“disp-sc-deg” style=“font-family:monospace;”>44.7°</span>)
     </div>
 
     <div id="sc-equation-display" style="text-align:center; font-size:1.2em; margin:10px 0; background:#f8fafc; padding:10px; border-radius:6px; min-height:50px;"></div>
