@@ -5666,11 +5666,11 @@ window.bibData = {
 		alternativetitle: "Used as a context note for Spencer-Brown's influence on Niklas Luhmann"
 	},
 	"lumpschool": {
-		title: "The Lump School of Philosophy of Mathematics",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Lump_school",
-		alternativetitle: "On the Lump School and the broader idea of structural realism"
+		title: "Structural Realism",
+		author: "Stanford Encyclopedia of Philosophy",
+		year: 2024,
+		url: "https://plato.stanford.edu/entries/structural-realism/",
+		alternativetitle: "The contemporary structural realist program in philosophy of mathematics and science"
 	},
 	"distributional_hypothesis": {
 		title: "Distributional semantics",
