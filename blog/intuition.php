@@ -71,9 +71,9 @@ The LLM learned to predict the next word by reading **massive** amounts of text 
 
 ### Step 1: Tokenization
 
-Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**. We can first think of these tokens as words, but they don't have to be. They can be sub-words, numbers or any part of a text. While we humans think in words, the LLM “thinks” in tokens.
+Computers don't understand words. They understand numbers. So the very first thing an LLM does is **chop the input into small pieces called tokens**. We can first think of these tokens as words, but they don't have to be. They can be sub-words, numbers or any part of a text. While we humans think in words, the LLM "thinks" in tokens.
 
-$$\text{“Once upon a time”} \rightarrow [\text{“Once”}, \ \text{“upon”}, \ \text{“a”}, \ \text{“time”}]$$
+$$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$
 
 Most tokens are common words or word fragments. For example, `"understanding"` might be split into `"under"` + `"standing"`, two tokens. This way the model can handle words it has never seen before by combining pieces it *has* seen.
 
@@ -97,7 +97,7 @@ What it splits and where is dependent on the data it has seen. It chooses that a
     <div id="tokenizer-output" style="min-height:60px;"></div>
     <div id="tokenizer-stats" style="margin-top:10px;"></div>
     <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-	💡 Try typing <b>“understanding”</b> or <b>“unbreakable”</b> to see subword splitting in action.
+	💡 Try typing <b>"understanding"</b> or <b>"unbreakable"</b> to see subword splitting in action.
 	The model breaks unknown words into known pieces it learned during training.
     </div>
 </div>
@@ -107,15 +107,15 @@ What it splits and where is dependent on the data it has seen. It chooses that a
 
 A raw token doesn't tell the model anything about what a word *means*. So the model replaces each token with a **long list of numbers** (called a vector) that represents its meaning.
 
-$$\text{“king”} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$
+$$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$
 
-These vectors live in a high-dimensional space where **words with similar meanings end up close together**. “King” and “queen” are close to each other in a sense. “Banana” and “monarchy” are far apart. Nobody hand-designs these vectors. The model learns them automatically during training, purely from seeing which words appear in similar contexts across billions of sentences.
+These vectors live in a high-dimensional space where **words with similar meanings end up close together**. "King" and "queen" are close to each other in a sense. "Banana" and "monarchy" are far apart. Nobody hand-designs these vectors. The model learns them automatically during training, purely from seeing which words appear in similar contexts across billions of sentences.
 
 What's remarkable is that this space captures *relationships*, not just similarity. The most famous example:
 
 $$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
 
-The direction from “man” to “woman” represents something like the concept of gender. That same direction, applied to “king,” lands you right next to “queen.” The model was never told any of this. These relationships emerge on their own, just from reading text.
+The direction from "man" to "woman" represents something like the concept of gender. That same direction, applied to "king," lands you right next to "queen." The model was never told any of this. These relationships emerge on their own, just from reading text.
 
 Real networks don't just use 2 or 3 dimensional Embedding Spaces, but thousands of dimensions. That are too many to visualizable, but the basic idea stays the same.
 </div>
@@ -153,13 +153,13 @@ Real networks don't just use 2 or 3 dimensional Embedding Spaces, but thousands 
 <div class="md">
 ### Step 3: Positional Encoding
 
-“The dog bites man” means something very different from “The man bites dog.” Same words, different order. So a **positional encoding** is added to each token's embedding, a unique signal that says “I'm the 1st word,” “I'm the 2nd word,” and so on.
+"The dog bites man" means something very different from "The man bites dog." Same words, different order. So a **positional encoding** is added to each token's embedding, a unique signal that says "I'm the 1st word," "I'm the 2nd word," and so on.
 
 $$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{index})$$
 
 Now each token carries two pieces of information: **what it is** and **where it is**.
 
-This is required, because the embedding and attention operations have no built-in notion of sequence order, so without it, “dog bites man” and “man bites dog” would look identical to the model.
+This is required, because the embedding and attention operations have no built-in notion of sequence order, so without it, "dog bites man" and "man bites dog" would look identical to the model.
 </div>
 
 <!-- ============================================================ -->
@@ -213,17 +213,17 @@ $$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
 
 This is called a **Residual Stream**, originally invented for preventing the **Vanishing Gradient Problem**, but now, additionally, acts as a **shared notebook**. Each layer reads from the notebook, does some thinking, and **writes its findings back** to it.
 
-#### 4a: Attention - “Which other words matter for *this* word?”
+#### 4a: Attention - "Which other words matter for *this* word?"
 
-Attention lets the model **look at other tokens** to understand context. In *“The cat sat on the mat because **it** was tired”*, what does “it” refer to? An **attention head** figures this out by comparing “it” to every other word and deciding that “it” is most related to “cat”.
+Attention lets the model **look at other tokens** to understand context. In *"The cat sat on the mat because **it** was tired"*, what does "it" refer to? An **attention head** figures this out by comparing "it" to every other word and deciding that "it" is most related to "cat".
 
 Attention Heads solve what linguists call **Long Distance Dependencies**: a word at the beginning of a long text may influence the meaning of a word at the very end. Attention allows to find out which word attends to which other word over short or even very long texts, and it can do so over the whole **context length** of the LLM model.
 
 It does so by moving the Embedding of a word in dependence of the context it's used in to a place called **contextualized Embedding** that looks not only at the word, but at the context the word is used in.
 
-This is best exemplified when using words that have multiple meanings, like “bank”, which could be a **river bank**, or a **bank** where you put your **money**.
+This is best exemplified when using words that have multiple meanings, like "bank", which could be a **river bank**, or a **bank** where you put your **money**.
 
-Type **“bank river”** or **“bank money”** below. Notice how the diamond, the contextualized “Bank”, leaps toward the neighbor that defines it. This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to it's meaning in the context its used in.
+Type **"bank river"** or **"bank money"** below. Notice how the diamond, the contextualized "Bank", leaps toward the neighbor that defines it. This is what **Attention** does: it looks at the context a word is used in, and moves the **Embedding** of a word in the **Embedding Space** to a point closer to it's meaning in the context its used in.
 
 </div>
 
@@ -264,11 +264,11 @@ Let's look at the word **“Apple”**. Because of the *Attention* step, its vec
     <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
         <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit"
                 style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:bold; transition: 0.2s;">
-            🍎 Context: “eating an apple”
+            🍎 Context: "eating an apple"
         </button>
         <button onclick="FFNViz.setScenario('apple_tech')" id="btn-ffn-tech"
                 style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; cursor:pointer; font-weight:bold; transition: 0.2s;">
-            💻 Context: “buying an apple”
+            💻 Context: "buying an apple"
         </button>
     </div>
 
@@ -277,7 +277,7 @@ Let's look at the word **“Apple”**. Because of the *Attention* step, its vec
         <div style="width: 120px; text-align: center; z-index: 2;">
             <div style="font-weight: bold; color: #475569; margin-bottom: 8px;">Input Vector</div>
             <div id="ffn-input-box" style="background: #e0e7ff; border: 2px solid #818cf8; padding: 10px; border-radius: 8px; font-weight: bold; color: #312e81; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-                “Apple” + Context
+                "Apple" + Context
             </div>
         </div>
 
@@ -356,7 +356,7 @@ Neither the **Attention Heads** nor the **Neural Network** are configured by han
 
 After all layers, the model takes the **last token's vector** and produces a **score for every word in the vocabulary** (often 50,000+ words). These scores are converted into probabilities:
 
-$$P(\text{“time”}) = 0.72, \quad P(\text{“day”}) = 0.08, \quad P(\text{“hill”}) = 0.002, \quad \ldots$$
+$$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$
 
 The model then **picks a word**, usually one of the top candidates, with a bit of randomness so it doesn't always say the exact same thing. That's what makes it creative.
 
@@ -373,7 +373,7 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
             🎯 Step 5: The Final Prediction: Probability over Vocabulary
         </span>
         <div style="font-size:0.85em; color:#64748b; margin-top:4px;">
-            Input: “Once upon a” → What comes next?
+            Input: "Once upon a" → What comes next?
         </div>
     </div>
 
@@ -391,19 +391,19 @@ And then, as we saw in Part I, that word gets appended to the input and the whol
 
     <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
         💡 <b>Temperature</b> controls randomness. At T→0, the model always picks the top word (greedy).
-        At high T, the distribution flattens and rare words get a chance, that's what makes LLMs “creative.”
-        The model doesn't “know” the answer; it assigns probabilities and <b>samples</b>.
+        At high T, the distribution flattens and rare words get a chance, that's what makes LLMs "creative."
+        The model doesn't "know" the answer; it assigns probabilities and <b>samples</b>.
     </div>
 </div>
 
 <div class="md">
 ## The key insight
 
-There is no “understanding” module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
+There is no "understanding" module, no grammar checker, no knowledge database. It's all just vectors flowing through layers of simple math: addition, multiplication, and comparison. But stack enough of these simple operations together, and something that *looks a lot like understanding* emerges.
 
 ### Why next-token prediction is so powerful
 
 The goal of minimizing cross-entropy loss is not a shallow objective. There is a deep connection between **prediction** and **compression**. The Kolmogorov complexity $K(x)$ of a string $x$ is the length of the shortest program that produces it. Solomonoff's theory of inductive inference proves that the optimal predictor for any sequence is the one that finds the shortest description (maximum compression) of the data seen so far. Cross-entropy loss, which LLMs minimize, is an upper bound on the compressibility of the text. A model that achieves low cross-entropy has found a short description of the statistical structure of language.
 
-But here is the insight: to compress natural language well, you must model the **causal structure of the world** that generates language. When the training text says “I dropped the glass and it ___,” predicting “shattered” requires an implicit model of gravity, material properties, and causation. The model does not need to be explicitly taught physics; the compression objective forces it to discover physical regularities because they reduce prediction error. This is why scaling works: more parameters allow more compression, which requires more accurate world models, which produces more intelligent behavior. From this perspective, **intelligence is a side effect of optimal compression**, not a separate objective.
+But here is the insight: to compress natural language well, you must model the **causal structure of the world** that generates language. When the training text says "I dropped the glass and it ___," predicting "shattered" requires an implicit model of gravity, material properties, and causation. The model does not need to be explicitly taught physics; the compression objective forces it to discover physical regularities because they reduce prediction error. This is why scaling works: more parameters allow more compression, which requires more accurate world models, which produces more intelligent behavior. From this perspective, **intelligence is a side effect of optimal compression**, not a separate objective.
 </div>

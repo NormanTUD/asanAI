@@ -57,7 +57,7 @@ A typical 2025 SFT dataset: 100K–1M examples. Llama 3 used ~10M SFT examples.
 
 * **Data quality > quantity**: 10K carefully curated examples beat 1M noisy ones.
 * **Diversity matters**: instruction-following, code, math, multilingual, refusal, formatting.
-* **Format**: ChatML, Alpaca, ShareGPT, pick one and stick to it.
+* **Format**: ChatML, Alpaca, ShareGPT — pick one and stick to it.
 * **Multi-turn**: include conversations, not just single Q&A.
 </div>
 
@@ -76,7 +76,7 @@ where $y_w$ is the human-preferred (winner) response and $y_l$ the loser.
 
 A 2025 RM is typically a 7B–70B language model with a **single scalar output head**. It is trained on **100K–1M preference pairs**.
 
-**Multi-dimensional rewards**: production RMs score multiple axes, helpfulness, harmlessness, factuality, style. The final reward is a weighted sum:
+**Multi-dimensional rewards**: production RMs score multiple axes — helpfulness, harmlessness, factuality, style. The final reward is a weighted sum:
 
 $$
 R(x, y) = \sum_{i} w_i R_i(x, y)
@@ -109,7 +109,7 @@ $$
 * Memory-hungry: a 70B PPO setup needs ~16 H100s.
 * Slow: rollouts are sequential.
 
-By 2025, most frontier labs use PPO **only** for the final “alignment tax” refinement; primary alignment is now done with DPO-family methods.
+By 2025, most frontier labs use PPO **only** for the final "alignment tax" refinement; primary alignment is now done with DPO-family methods.
 </div>
 
 <div class="md">
@@ -155,7 +155,7 @@ The choice in 2025: **DPO with length normalization** or **SimPO** for most case
 GRPO (Group Relative Policy Optimization) is the breakthrough that enabled DeepSeek-R1's reasoning training (see the Reasoning chapter). It combines:
 
 * **Group sampling**: for each prompt, sample $G$ candidate responses from the current policy.
-* **Verifiable reward**: for math, the reward is binary, the answer is correct or not. For code, it's test pass/fail.
+* **Verifiable reward**: for math, the reward is binary — the answer is correct or not. For code, it's test pass/fail.
 * **Group-relative advantage**: $A_i = (r_i - \mu_G) / \sigma_G$ where $\mu_G, \sigma_G$ are the group's mean and std.
 * **No critic**: the group statistics serve as the baseline.
 

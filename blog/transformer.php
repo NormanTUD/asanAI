@@ -122,11 +122,11 @@ https://arxiv.org/html/2505.11611v1
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
                     <input type="radio" name="train-optimizer-choice" value="sgd">
-                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent, gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent — gradient descent performed on small random batches of data rather than the full dataset.</span></span>
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
                     <input type="radio" name="train-optimizer-choice" value="rmsprop">
-                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation, adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation — adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
                 </label>
             </div>
         </div>
@@ -171,8 +171,8 @@ The journey of a sentence begins with **Tokenization**, which decomposes raw tex
 
 Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
 
-* **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for “bank” is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
-* **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it “migrates” based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
+* **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for "bank" is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
+* **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it "migrates" based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
 </div>
 
 <div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
@@ -198,7 +198,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 <div class="md">
 ## Positional Encoding
 
-To address the lack of sequence order in transformers, a “position signal” is added to each token's embedding, forming the initial hidden state $h_{0}$:
+To address the lack of sequence order in transformers, a "position signal" is added to each token's embedding, forming the initial hidden state $h_{0}$:
 </div>
 
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
@@ -212,7 +212,7 @@ $$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}
 
 $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
-These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The Feed-Forward Network (FFN) learns to interpret these fixed “geometric fingerprints” by adjusting its weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
+These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The Feed-Forward Network (FFN) learns to interpret these fixed "geometric fingerprints" by adjusting its weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
 
 The key to how the FFN learns from positional encodings lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity allows the FFN to infer relative positions by learning simple transformations that map positional relationships to meaningful patterns. Over multiple layers, the FFN entangles positional and semantic information, enabling the model to reason about sequence structure and relationships effectively. This process ensures that the model can generalize to unseen sequences and maintain positional understanding even when tokens are shifted or reordered.
 
@@ -230,18 +230,18 @@ In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 
 <div class="optional md" data-headline="Does Positional Encoding 'break' the Word's Meaning?">
-When you add “random” values to a vector, you change its location in the multidimensional embedding space. However, this doesn't “break” the word:
+When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word:
 
-- **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word “King” to a new location, but it remains in a “neighborhood” that the model still recognizes as “King.”
+- **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King."
 - **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network's layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
-- **The Risk of Overlapping**: During training, the model learns to set the “scale” of the embeddings much larger than the “scale” of the positional encodings. This ensures the position “nudges” the meaning without overwriting it.
+- **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
 </div>
 
 <div class="optional md" data-headline="The Decoder-Only Architecture">
 Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
 1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (see \citetitle{xiong2020}) that improves gradient flow and training stability through deep stacks.
-2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from “cheating” by looking at future positions.
+2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from "cheating" by looking at future positions.
 3. **A Feed-Forward Network (FFN)** with GELU activation and its own Pre-LN and residual connection.
 
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.
