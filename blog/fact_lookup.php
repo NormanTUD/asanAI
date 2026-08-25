@@ -29,9 +29,7 @@ First, the word "knows". It is doing a lot of work in the question "how does it 
 
 We mean something much more specific and much more boring. The trained model is a function
 
-<p>$$\underbrace{f_\theta}_{\text{the trained network}} \;:\; \underbrace{\mathcal{X}}_{\text{all possible token sequences}} \;\longrightarrow\; \underbrace{\Delta^{|V|-1}}_{\text{a probability distribution over the vocabulary}}$$</p>
-
-<p>$$\underbrace{\text{the trained network takes a prompt and returns a probability distribution over the next token.}}_{\text{the same statement, in plain English}}$$</p>
+<p>$$\underbrace{\underbrace{f_\theta}_{\text{the trained network}} \;:\; \underbrace{\mathcal{X}}_{\text{all possible token sequences}} \;\longrightarrow\; \underbrace{\Delta^{|V|-1}}_{\text{a probability distribution over the vocabulary}}}_{\text{the trained network takes a prompt and returns a probability distribution over the next token.}}$$</p>
 
 Here $\mathcal{X}$ is the set of all finite token sequences, $V$ is the vocabulary of size $|V|$, and $\Delta^{|V|-1}$ is the probability simplex (the set of all probability distributions over $|V|$ outcomes). The question becomes: *why does $f_\theta$, applied to the prompt "The capital of France is", assign high probability to the token "Paris"?* That is a well-posed mathematical question. The answer will not tell us what Paris *is*. It will tell us what shape of computation inside the network produces that token.
 
