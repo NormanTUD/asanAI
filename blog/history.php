@@ -254,6 +254,19 @@ While the algorithm was suboptimal, it guaranteed checkmate in fewer than 63 mov
 Long before digital computers existed, physicists \citeauthor{lenz1920} and his student \citeauthor{ising1925} introduced what is now recognized as the first <b>recurrent neural network architecture</b>. The Ising model describes a lattice of nodes (spins) with feedback connections, where each node influences its neighbors, and the system settles into an equilibrium state in response to input conditions. While it was designed to model ferromagnetism, not computation, its mathematical structure is identical to that of later associative memory networks. In \citeyear{amari1972}, \citeauthor{amari1972} made this recurrent architecture <b>adaptive</b>, enabling it to learn to associate input patterns with output patterns by changing its connection weights, creating the first published learning recurrent neural network. Ten years later, the basic equations of Amari's network were republished and its storage capacity analyzed under the name "Hopfield Network."
 </div>
 
+<div class="optional md" data-headline="The First Mathematical Neuron: Lapicque's Integrate-and-Fire Model (1907)">
+<figure style="float: right; width: 22%; max-width: 160px; margin: 0 0 1em 1em;">
+    <img style="width: 100%; height: auto; display: block;" src="lapicque.jpg" alt="Louis Lapicque" />
+    <figcaption class="md">Louis Lapicque, 1866–1952</figcaption>
+</figure>
+
+The mathematical birth of the neuron model predates McCulloch and Pitts by 36 years. In \citeyear{lapicque1907}, French neuroscientist \citeauthor{lapicque1907} published \citealternativetitle{lapicque1907} — the paper that introduced what we now call the **integrate-and-fire** neuron. Working at the Sorbonne, Lapicque replaced the messy biophysics of the nerve membrane with the simplest possible electrical analogue: a capacitor being charged by an input current until its voltage crosses a fixed threshold, at which point a "spike" is emitted and the voltage is reset. In modern notation, this is
+
+$$ I(t) = C \,\frac{dV(t)}{dt}, \qquad V(t) \;\mapsto\; V_\text{rest} \;\;\text{whenever}\;\; V(t) \geq V_\text{th}, $$
+
+exactly the same equation that today powers large-scale spiking neural network simulations. A century review of the original paper was published in \citeyear{abbott1999lapicque} by \citeauthor{abbott1999lapicque} (\citealternativetitle{abbott1999lapicque}, PMID <a href="https://pubmed.ncbi.nlm.nih.gov/10643408/">10643408</a>), who called it the earliest formal neuron model and noted that it is still "one of the most popular models in computational neuroscience" — used not only for single-cell studies but as the canonical building block of network simulations \cite{abbott1999lapicque}. So strictly speaking, the often-cited McCulloch-Pitts cell of 1943 is *not* the first artificial neuron; it is the first **logical** one. Lapicque's leaky integrator came first, and is still the workhorse of modern spiking networks.
+</div>
+
 <div class="image-row">
 	<figure>
 		<img src="mcculloch.png" alt="Warren McCulloch" />
@@ -265,7 +278,7 @@ Long before digital computers existed, physicists \citeauthor{lenz1920} and his 
 	</figure>
 </div>
 
-The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Before \citeauthorlastnameand{darthmouthartificialintelligence} even named the field, neurophysiologist and neuroscientist team of \citeauthor{mccullochpitts1943} laid the very bedrock foundation for modern AI in their seminal work \citetitle{mccullochpitts1943}. They based their research on the research of \citeauthor{steadystates}, who they extensively cited in their first paper \citetitle{pittsfirstpaper}, in which Pitts demonstrated how circular chains of neurons mathematically settle into predictable firing patterns or constant inactivity based on their connection strengths, proving neurons are not just some biological mess, but a logical, deterministical machine.
+The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Strictly speaking, the very first formal neuron model was \citeauthor{lapicque1907}'s integrate-and-fire cell of \citeyear{lapicque1907} (see the aside above); the work of \citeauthor{mccullochpitts1943} that follows is the first **logical** neuron, which is what most histories of AI mean when they speak of "the first artificial neuron." Before \citeauthorlastnameand{darthmouthartificialintelligence} even named the field, neurophysiologist and neuroscientist team of \citeauthor{mccullochpitts1943} laid the very bedrock foundation for modern AI in their seminal work \citetitle{mccullochpitts1943}. They based their research on the research of \citeauthor{steadystates}, who they extensively cited in their first paper \citetitle{pittsfirstpaper}, in which Pitts demonstrated how circular chains of neurons mathematically settle into predictable firing patterns or constant inactivity based on their connection strengths, proving neurons are not just some biological mess, but a logical, deterministical machine.
 
 They proved that a simplified model of a biological neuron, often called the **McCulloch-Pitts cell**, could perform complex logical operations. Such a neuron computes a weighted sum of its inputs $x_i$ and "fires" if it exceeds a threshold $\theta$:
 

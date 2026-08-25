@@ -2283,6 +2283,20 @@ window.bibData = {
 		author: "Santiago Ramón y Cajal",
 		url: "https://digibug.ugr.es/bitstream/handle/10481/69715/CAJAIMP5014.pdf?sequence=1&isAllowed=y"
 	},
+	"lapicque1907": {
+		author: "Louis Lapicque",
+		year: "1907",
+		title: "Recherches quantitatives sur l'excitation électrique des nerfs traitée comme une polarisation",
+		alternativetitle: "Quantitative Research on the Electrical Excitation of Nerves Treated as a Polarization",
+		url: "https://doi.org/10.1016/S0361-9230(99)00161-6"
+	},
+	"abbott1999lapicque": {
+		author: "L. F. Abbott",
+		year: "1999",
+		title: "Lapicque's introduction of the integrate-and-fire model neuron (1907)",
+		alternativetitle: "Lapicque's Integrate-and-Fire Model",
+		url: "https://pubmed.ncbi.nlm.nih.gov/10643408/"
+	},
 	"perceptronimagebox": {
 		title: "Kernelled Connections: Perceptron as Diagram",
 		author: "Michael Eby",
