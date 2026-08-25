@@ -5,7 +5,7 @@ title: Unexpected Capabilities of LLMs
 description: Discoveries that surprised researchers — emergent abilities, reasoning, theory of mind, self-improvement, and the strange things LLMs can do that nobody trained them for.
 icon: &#10024;
 part: 6
-order: 46
+order: 45
 color: text-secondary
 topics: emergence, reasoning, interpretability, philosophy
 -->
