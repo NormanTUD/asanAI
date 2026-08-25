@@ -329,6 +329,7 @@ together with associativity and identity axioms \cite{category_theory_wiki}. Cat
 
 What we care about here is the higher generalization. In a 2-category, morphisms themselves can be related by 2-morphisms $\alpha : f \Rightarrow g$. In an $\infty$-category, this continues all the way up \cite{higher_category_wiki}. The conceptual content is the same as for $\infty$-sheaves and HoTT: at every level of structure, the "things at that level" come with their own relation-of-relations, and the coherent compatibility of those relations is what makes the whole thing hang together.
 </div>
+</div>
 
 <div class="md">
 ## 7. Topoi: worlds where you can do mathematics
