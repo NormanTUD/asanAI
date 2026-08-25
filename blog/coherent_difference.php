@@ -136,7 +136,7 @@ $$
 \neg\neg\, \;=\; \neg
 $$
 
-(Apply the mark twice and you are back where you started; the marked and unmarked states are mutually exclusive.) From these two axioms the entire Boolean calculus of propositions falls out \cite{spencerbrown1969form}. The point, for us, is not the algebra. The point is that Spencer-Brown placed *distinction itself* at the foundation of mathematics: the act that splits one world into two is the act from which everything else is built.
+(Apply the mark twice and you are back where you started) From this axiom, the entire Boolean calculus of propositions falls out \cite{spencerbrown1969form}. The point, for us, is not the algebra. The point is that Spencer-Brown placed *distinction itself* at the foundation of mathematics: the act that splits one world into two is the act from which everything else is built.
 
 The philosophical point is older than the algebraic one. The article on \citetitle{distinction_philosophy} traces the concept of a *real distinction* (a difference that exists in the world, not merely in the mind) from Aristotle's distinction between actuality and potentiality, through Aquinas's distinction between essence and existence, to Kant's distinction between appearance and thing-in-itself \cite{distinction_philosophy}. Each of these is the same move: carve a boundary, and you get two sides.
 
