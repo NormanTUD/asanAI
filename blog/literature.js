@@ -5672,6 +5672,14 @@ window.bibData = {
 		url: "https://plato.stanford.edu/entries/structural-realism/",
 		alternativetitle: "The contemporary structural realist program in philosophy of mathematics and science"
 	},
+	"goldblatt1979topoi": {
+		title: "Topoi: The Categorial Analysis of Logic",
+		author: "Robert Goldblatt",
+		year: 1979,
+		publisher: "North-Holland",
+		url: "https://www.elsevier.com/books/topoi/goldblatt/978-0-444-85107-3",
+		alternativetitle: "Studies in Logic and the Foundations of Mathematics, Vol. 98"
+	},
 	"distributional_hypothesis": {
 		title: "Distributional semantics",
 		author: "Wikipedia contributors",
