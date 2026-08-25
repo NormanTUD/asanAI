@@ -103,8 +103,8 @@
 	incl("Frontier Topics", "frontier");
 	incl("AI Law & Regulation", "law_regulation");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
-	incl("Appendix", "appendix");
 	incl("Unexpected Capabilities of LLMs", "unexpected_capabilities");
+	incl("Appendix", "appendix");
 ?>
 </div>
 </body>
