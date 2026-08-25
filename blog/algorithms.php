@@ -5,7 +5,7 @@ title: How Transformers Execute Algorithms
 description: Grokking: when networks stop memorizing and start discovering the Discrete Fourier Transform.
 icon: &#128295;
 part: 4
-order: 26
+order: 27
 color: sky
 topics: programming, architecture, math-i, math-ii
 -->

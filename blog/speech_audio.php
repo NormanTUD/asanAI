@@ -5,7 +5,7 @@ title: Speech & Audio Models
 description: Whisper, TTS, music generation — how sound becomes tokens and back again.
 icon: &#127908;
 part: 4
-order: 29
+order: 30
 color: sky
 topics: multimodal, audio, architecture, programming
 -->

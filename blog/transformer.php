@@ -5,7 +5,7 @@ title: The Transformer Architecture
 description: A deep interactive dive, configure heads, layers, and dimensions, then watch it compute.
 icon: &#129516;
 part: 4
-order: 24
+order: 25
 color: sky
 topics: architecture, math-i, math-ii, programming
 featured: true

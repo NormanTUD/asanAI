@@ -68,6 +68,7 @@
 	incl("Understanding Layer Normalization", "normalizationlab");
 	incl("Reinforcement Learning", "reinforcement_learning");
 	incl("Tokenization: How Words become Numbers", "tokenizerlab");
+	incl("Coherent Difference", "coherent_difference");
 	incl("Embeddings: The Geometry of Meaning", "embeddinglab");
 	incl("The Semantic Tug-of-War: How Transformers 'Think'", "attentionlab");
 	incl("Positional Embeddings", "positionalembeddingslab");

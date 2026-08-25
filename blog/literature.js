@@ -5502,5 +5502,180 @@ window.bibData = {
 		year: 2021,
 		url: "https://commons.wikimedia.org/wiki/File:Perseverance-Selfie-at-Rochette-Horizontal-V2.gif",
 		alternativetitle: "NASA's Perseverance Mars rover self-portrait at the Rochette abrasion patch (Public Domain)"
+	},
+
+	"spencerbrown1969form": {
+		title: "Laws of Form",
+		author: "George Spencer-Brown",
+		year: 1969,
+		publisher: "George Allen and Unwin Ltd",
+		url: "https://en.wikipedia.org/wiki/Laws_of_Form",
+		alternativetitle: "LoF"
+	},
+	"spencerbrown_wiki": {
+		title: "G. Spencer-Brown",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/G._Spencer-Brown"
+	},
+	"distinction_philosophy": {
+		title: "Distinction (philosophy)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Distinction_(philosophy)"
+	},
+	"sheaf_mathematics": {
+		title: "Sheaf (mathematics)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Sheaf_(mathematics)"
+	},
+	"sheaf_gluing_image": {
+		title: "Gluing compatible local sections to a section over the union",
+		author: "Wikipedia contributors",
+		year: 2024,
+		url: "https://commons.wikimedia.org/wiki/File:2_point_sheaf_gluing.svg",
+		alternativetitle: "Sheaf gluing diagram from Wikipedia (CC-BY-SA 4.0)"
+	},
+	"sheaf_sections_image": {
+		title: "Sections over two opens of the two-point space",
+		author: "Wikipedia contributors",
+		year: 2024,
+		url: "https://commons.wikimedia.org/wiki/File:2_point_sheaf_sections.svg",
+		alternativetitle: "Sheaf sections diagram from Wikipedia (CC-BY-SA 4.0)"
+	},
+	"grothendieck_sheaf": {
+		title: "Alexander Grothendieck and the Theory of Schemes",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Alexander_Grothendieck"
+	},
+	"category_theory_wiki": {
+		title: "Category theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Category_theory"
+	},
+	"category_diagram_image": {
+		title: "Commutative diagram for a morphism",
+		author: "Wikipedia contributors",
+		year: 2007,
+		url: "https://commons.wikimedia.org/wiki/File:Commutative_diagram_for_morphism.svg",
+		alternativetitle: "Category-theory commutative diagram from Wikipedia (CC-BY-SA 4.0)"
+	},
+	"maclane1998categories": {
+		title: "Categories for the Working Mathematician",
+		author: "Saunders Mac Lane",
+		year: 1998,
+		publisher: "Springer-Verlag",
+		url: "https://en.wikipedia.org/wiki/Category_theory",
+		alternativetitle: "Graduate Texts in Mathematics 5"
+	},
+	"eilenberglane1945": {
+		title: "General Theory of Natural Equivalences",
+		author: "Samuel Eilenberg, Saunders Mac Lane",
+		year: 1945,
+		journal: "Transactions of the American Mathematical Society",
+		volume: 58,
+		pages: "231–294",
+		url: "https://en.wikipedia.org/wiki/Category_theory"
+	},
+	"awodey2010category": {
+		title: "Category Theory",
+		author: "Steve Awodey",
+		year: 2010,
+		publisher: "Oxford University Press",
+		url: "https://en.wikipedia.org/wiki/Category_theory"
+	},
+	"topos_wiki": {
+		title: "Topos",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Topos"
+	},
+	"higher_category_wiki": {
+		title: "Higher category theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Higher_category_theory"
+	},
+	"schmitz_philosopher_wiki": {
+		title: "Hermann Schmitz (philosopher)",
+		author: "Wikipedia contributors",
+		year: 2024,
+		url: "https://en.wikipedia.org/wiki/Hermann_Schmitz_(philosopher)"
+	},
+	"schmitz_neo_phenomenology": {
+		title: "Neo-phenomenology and the return to the things themselves",
+		author: "Hermann Schmitz",
+		year: 2019,
+		journal: "Phenomenology World-Wide: Foundations — Expanding Dynamics — Life-Engagements",
+		publisher: "Springer Netherlands",
+		url: "https://en.wikipedia.org/wiki/Hermann_Schmitz_(philosopher)",
+		alternativetitle: "Schmitz's neo-phenomenology (Neue Phänomenologie)"
+	},
+	"whitehead_process": {
+		title: "Process and Reality: An Essay in Cosmology",
+		author: "Alfred North Whitehead",
+		year: 1929,
+		publisher: "Macmillan",
+		url: "https://en.wikipedia.org/wiki/Process_and_Reality"
+	},
+	"heraclitus_unity": {
+		title: "On the Unity of Opposites in Heraclitus",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Heraclitus"
+	},
+	"russell1903principia": {
+		title: "Principia Mathematica",
+		author: "Bertrand Russell, Alfred North Whitehead",
+		year: 1910,
+		publisher: "Cambridge University Press",
+		url: "https://en.wikipedia.org/wiki/Principia_Mathematica"
+	},
+	"manifold_wiki": {
+		title: "Manifold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Manifold"
+	},
+	"topology_wiki": {
+		title: "Topology",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Topology"
+	},
+	"fiber_bundle_wiki": {
+		title: "Fiber bundle",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Fiber_bundle"
+	},
+	"typespaces_wiki": {
+		title: "Type theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Type_theory"
+	},
+	"niklasluhmann_systems": {
+		title: "Systems theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Systems_theory",
+		alternativetitle: "Used as a context note for Spencer-Brown's influence on Niklas Luhmann"
+	},
+	"lumpschool": {
+		title: "The Lump School of Philosophy of Mathematics",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Lump_school",
+		alternativetitle: "On the Lump School and the broader idea of structural realism"
+	},
+	"distributional_hypothesis": {
+		title: "Distributional semantics",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Distributional_semantics"
 	}
 };

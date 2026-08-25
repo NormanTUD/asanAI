@@ -5,7 +5,7 @@ title: Beyond Transformers
 description: State-space models (Mamba, S4), linear attention, RWKV, and the post-transformer landscape.
 icon: &#9883;
 part: 4
-order: 30
+order: 31
 color: sky
 topics: architecture, math-i, math-ii, programming
 -->

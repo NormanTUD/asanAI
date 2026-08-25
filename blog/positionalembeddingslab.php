@@ -5,7 +5,7 @@ title: Positional Embeddings
 description: Why order matters, sine, cosine, and how Transformers know which token came first.
 icon: &#128255;
 part: 4
-order: 22
+order: 23
 color: sky
 topics: architecture, math-i, math-ii
 -->
