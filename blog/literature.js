@@ -2295,7 +2295,7 @@ window.bibData = {
 		year: "1999",
 		title: "Lapicque's introduction of the integrate-and-fire model neuron (1907)",
 		alternativetitle: "Lapicque's Integrate-and-Fire Model",
-		url: "https://pubmed.ncbi.nlm.nih.gov/10643408/"
+		url: "https://web.archive.org/web/20070613230629/http://neurotheory.columbia.edu/~larry/AbbottBrResBul99.pdf"
 	},
 	"perceptronimagebox": {
 		title: "Kernelled Connections: Perceptron as Diagram",
