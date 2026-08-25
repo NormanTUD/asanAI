@@ -29,9 +29,9 @@ First, the word "knows". It is doing a lot of work in the question "how does it 
 
 We mean something much more specific and much more boring. The trained model is a function
 
-<p>$$f_\theta : \mathcal{X} \to \Delta^{|V|-1}$$</p>
+<p>$$\underbrace{f_\theta}_{\text{the trained network}} \;:\; \underbrace{\mathcal{X}}_{\text{all possible token sequences}} \;\longrightarrow\; \underbrace{\Delta^{|V|-1}}_{\text{a probability distribution over the vocabulary}}$$</p>
 
-that maps a sequence of tokens to a probability distribution over the vocabulary $V$. The question becomes: *why does $f_\theta(\text{``The capital of France is \_''})$ assign high probability to the token whose decoded string is "Paris"?* That is a well-posed mathematical question. The answer will not tell us what Paris *is*. It will tell us what shape of computation inside the network produces that token.
+that maps a sequence of tokens to a probability distribution over the vocabulary $V$. The question becomes: *why does $f_\theta(\text{"The capital of France is \_"})$ assign high probability to the token whose decoded string is "Paris"?* That is a well-posed mathematical question. The answer will not tell us what Paris *is*. It will tell us what shape of computation inside the network produces that token.
 
 The whole rest of this chapter is an answer to that question, in eleven pieces, with the bits we don't know labelled honestly as we go.
 
