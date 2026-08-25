@@ -31,7 +31,9 @@ We mean something much more specific and much more boring. The trained model is 
 
 <p>$$\underbrace{f_\theta}_{\text{the trained network}} \;:\; \underbrace{\mathcal{X}}_{\text{all possible token sequences}} \;\longrightarrow\; \underbrace{\Delta^{|V|-1}}_{\text{a probability distribution over the vocabulary}}$$</p>
 
-that maps a sequence of tokens to a probability distribution over the vocabulary $V$. The question becomes: *why does $f_\theta(\text{"The capital of France is \_"})$ assign high probability to the token whose decoded string is "Paris"?* That is a well-posed mathematical question. The answer will not tell us what Paris *is*. It will tell us what shape of computation inside the network produces that token.
+<p>$$\underbrace{\text{the trained network takes a prompt and returns a probability distribution over the next token.}}_{\text{the same statement, in plain English}}$$</p>
+
+Here $\mathcal{X}$ is the set of all finite token sequences, $V$ is the vocabulary of size $|V|$, and $\Delta^{|V|-1}$ is the probability simplex (the set of all probability distributions over $|V|$ outcomes). The question becomes: *why does $f_\theta$, applied to the prompt "The capital of France is", assign high probability to the token "Paris"?* That is a well-posed mathematical question. The answer will not tell us what Paris *is*. It will tell us what shape of computation inside the network produces that token.
 
 The whole rest of this chapter is an answer to that question, in eleven pieces, with the bits we don't know labelled honestly as we go.
 
