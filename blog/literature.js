@@ -5735,5 +5735,54 @@ window.bibData = {
 		author: "Stephanie Lin, Jacob Hilton, Owain Evans",
 		year: 2022,
 		alternativetitle: "Truthfulness"
+	},
+	"burns2022ccs": {
+		url: "https://arxiv.org/abs/2212.03827",
+		title: "Discovering Latent Knowledge in Language Models Without Supervision",
+		author: "Collin Burns, Haotian Ye, Dan Klein, Jacob Steinhardt",
+		year: 2023,
+		alternativetitle: "Latent Knowledge via CCS"
+	},
+	"madaan2023selfrefine": {
+		url: "https://arxiv.org/abs/2303.17651",
+		title: "Self-Refine: Iterative Refinement with Self-Feedback",
+		author: "Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao, Sarah Wiegreffe, Uri Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, Shashank Gupta, Bodhisattwa Prasad Majumder, Katherine Hermann, Sean Welleck, Amir Yazdanbakhsh, Peter Clark",
+		year: 2023,
+		alternativetitle: "Self-Refine"
+	},
+	"huang2022selfimprove": {
+		url: "https://arxiv.org/abs/2210.11610",
+		title: "Large Language Models Can Self-Improve",
+		author: "Jiaxin Huang, Shixiang Shane Gu, Le Hou, Yuexin Wu, Xuezhi Wang, Hongkun Yu, Jiawei Han",
+		year: 2022,
+		alternativetitle: "Self-Improvement"
+	},
+	"chung2022flan": {
+		url: "https://arxiv.org/abs/2210.11416",
+		title: "Scaling Instruction-Finetuned Language Models",
+		author: "Hyung Won Chung, Le Hou, Shayne Longpre, Barret Zoph, Yi Tay, William Fedus, Yunxuan Li, Xuezhi Wang, Mostafa Dehghani, Siddhartha Brahma, Albert Webson, Shixiang Shane Gu, Zhuyun Dai, Mirac Suzgun, Xinyun Chen, Aakanksha Chowdhery, Alex Castro-Ros, Marie Pellat, Kevin Robinson, Dasha Valter, Sharan Narang, Gaurav Mishra, Adams Yu, Vincent Zhao, Yanping Huang, Andrew Dai, Hongkun Yu, Slav Petrov, Ed H. Chi, Jeff Dean, Jacob Devlin, Adam Roberts, Denny Zhou, Quoc V. Le, Jason Wei",
+		year: 2022,
+		alternativetitle: "FLAN / Instruction Tuning"
+	},
+	"carlini2021extracting": {
+		url: "https://arxiv.org/abs/2012.07805",
+		title: "Extracting Training Data from Large Language Models",
+		author: "Nicholas Carlini, Florian Tramèr, Eric Wallace, Matthew Jagielski, Ariel Herbert-Voss, Katherine Lee, Adam Roberts, Tom Brown, Dawn Song, Úlfar Erlingsson, Alina Oprea, Colin Raffel",
+		year: 2021,
+		alternativetitle: "Training Data Extraction"
+	},
+	"kadavath2022selfknowledge": {
+		url: "https://arxiv.org/abs/2207.05221",
+		title: "Language Models (Mostly) Know What They Know",
+		author: "Saurav Kadavath, Tom Conerly, Amanda Askell, Tom Henighan, Dawn Drain, Ethan Perez, Nicholas Schiefer, Zac Hatfield-Dodds, Nova DasSarma, Eli Tran-Johnson, Scott Johnston, Sheer El-Showk, Andy Jones, Nelson Elhage, Tristan Hume, Anna Chen, Yuntao Bai, Sam Bowman, Stanislav Fort, Deep Ganguli, Danny Hernandez, Josh Jacobson, Jackson Kernion, Shauna Kravec, Liane Lovitt, Kamal Ndousse, Catherine Olsson, Sam Ringer, Dario Amodei, Tom Brown, Jack Clark, Nicholas Joseph, Ben Mann, Sam McCandlish, Chris Olah, Jared Kaplan",
+		year: 2022,
+		alternativetitle: "Language Models Know What They Know"
+	},
+	"udrescu2020aifeynman": {
+		url: "https://arxiv.org/abs/2006.10782",
+		title: "AI Feynman 2.0: Pareto-optimal symbolic regression exploiting graph modularity",
+		author: "Silviu-Marian Udrescu, Andrew Tan, Jiahai Feng, Orisvaldo Neto, Tailin Wu, Max Tegmark",
+		year: 2020,
+		alternativetitle: "AI Feynman / Symbolic Regression"
 	}
 };
