@@ -37,7 +37,7 @@ A few terms used throughout the chapter:
 
 * **Trajectory** $\tau = (s_0, a_0, r_0, s_1, a_1, r_1, \dots, s_T)$: the full sequence of states, actions, and rewards produced by one rollout of a policy.
 * **Return** $G_t = \sum_{k=0}^{\infty} \gamma^k R(s_{t+k}, a_{t+k})$: the discounted sum of future rewards from time $t$ onward (the quantity inside the expectation above, anchored at $s_0 = s$).
-* **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session). For continuing tasks without a natural endpoint, RL uses "episodic" framing by resetting at fixed horizons.
+* **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session). For continuing tasks without a natural endpoint, RL uses “episodic” framing by resetting at fixed horizons.
 </div>
 
 <div class="md">
@@ -67,7 +67,7 @@ $$
 V^*(s) = \max_a \left[R(s, a) + \gamma \sum_{s'} P(s' \mid s, a)\, V^*(s')\right]
 $$
 
-For an LLM, the "state" is the current context window, the "action" is the next token, and the "reward" comes from a reward model (**RLHF**) or verifier (reasoning training).
+For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).
 </div>
 
 <div class="md">
@@ -148,7 +148,7 @@ $$
 L^{\text{RLHF}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)
 $$
 
-The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model — a critical stabilizer.
+The **KL penalty** prevents the policy from drifting too far from the reference (SFT) model  a critical stabilizer.
 
 The reward model is trained on Bradley-Terry comparisons:
 
@@ -156,7 +156,7 @@ $$
 P(y_w \succ y_l \mid x) = \frac{\exp(R(x, y_w))}{\exp(R(x, y_w)) + \exp(R(x, y_l))}
 $$
 
-where $y_w$ is the "winner" and $y_l$ the "loser".
+where $y_w$ is the “winner” and $y_l$ the “loser”.
 </div>
 
 <div class="md">
@@ -221,7 +221,7 @@ GRPO is the algorithm behind **DeepSeek-R1** (January 2025), the first open-weig
 
 | Method | Reward signal | Critic | Reference model | Use case |
 |--------|---------------|--------|-----------------|----------|
-| **SFT** | None | No | — | Pretraining alignment |
+| **SFT** | None | No |  | Pretraining alignment |
 | **RLHF (PPO)** | Learned RM | Yes | Yes | Industry standard until 2023 |
 | **DPO** | Implicit from policy ratio | No | Yes | Simple, no RL |
 | **IPO** | Implicit, regularized | No | Yes | Noisy preferences |
@@ -248,7 +248,7 @@ Defenses:
 * **Multiple reward models**: ensemble disagreement as an uncertainty signal.
 * **KL penalty to reference**: keeps the policy close to the human-aligned SFT model.
 * **Process reward**: score intermediate reasoning steps, not just final output.
-* **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written "constitution" of principles.
+* **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.
 * **\cite[Du et al., 2023]{du2023multiagent} / red-teaming**: train an adversary to find exploits, then train against them.
 </div>
 

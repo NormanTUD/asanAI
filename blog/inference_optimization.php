@@ -81,8 +81,8 @@ Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contex
 Beyond quantization:
 
 * **Multi-Query Attention (MQA)** (Shazeer, 2019): all query heads share a single K and V head. 64× KV memory reduction.
-* **Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: middle ground — 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
-* **Sliding Window Attention** \cite[Beltagy et al., 2020]{beltagy2020longformer}: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few "global" attention layers to preserve long-range context.
+* **Grouped-Query Attention (GQA)** \cite[Ainslie et al., 2023]{ainslie2023gqa}: middle ground  8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
+* **Sliding Window Attention** \cite[Beltagy et al., 2020]{beltagy2020longformer}: only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few “global” attention layers to preserve long-range context.
 * **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory. Eliminates fragmentation.
 * **Prefix caching**: KV cache for a system prompt is computed once and reused across requests. Standard for chatbot APIs.
 * **Cross-request KV sharing**: identical prompts across users share KV blocks. Used in vLLM and SGLang.
@@ -177,7 +177,7 @@ A request with a 100K-token prompt would otherwise block the GPU for many second
 <div class="md">
 ## Distillation Recap
 
-A small "student" model trained to mimic a larger "teacher":
+A small “student” model trained to mimic a larger “teacher”:
 
 * **Logit distillation**: match full output distribution: $\mathcal{L} = \text{KL}(p_T \| p_S)$
 * **Hidden-state distillation**: match intermediate activations.
@@ -213,7 +213,7 @@ H100's **Transformer Engine** does FP8 matmuls natively. INT4 path for Hopper is
 
 ### Speculative Prefill
 
-When the prompt is long and the system has many concurrent decoders, prefill can preempt decode. Some systems schedule prefill on a separate "prefill pool" of GPUs.
+When the prompt is long and the system has many concurrent decoders, prefill can preempt decode. Some systems schedule prefill on a separate “prefill pool” of GPUs.
 </div>
 
 <div class="md">
@@ -267,7 +267,7 @@ Combined, a single 8-GPU node can serve ~100 concurrent users generating at 30+ 
 
 Active research in 2025:
 
-* **Sub-quadratic architectures** for inference (see the Beyond Transformers chapter) — Mamba-2, Jamba.
+* **Sub-quadratic architectures** for inference (see the Beyond Transformers chapter)  Mamba-2, Jamba.
 * **FP4/FP6 inference**: lower precision for further speedups.
 * **Network compression**: distilling large reasoning models into small fast ones.
 * **Distributed speculative decoding**: one draft model serving many target models.

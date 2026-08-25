@@ -16,7 +16,7 @@ topics: math-i, math-ii, architecture
 
 To train a neural network, we use **Backpropagation**. This algorithm calculates how much each weight contributed to the final error (loss) so we can adjust the weights to reduce that error.
 
-Mathematically, we use the **Chain Rule** of calculus. In a standard "Plain" network (like VGG or AlexNet), the input $x$ passes through a series of layers to produce output $y$.
+Mathematically, we use the **Chain Rule** of calculus. In a standard “Plain” network (like VGG or AlexNet), the input $x$ passes through a series of layers to produce output $y$.
 
 $$ y = f_L(f_{L-1}(... f_1(x)...)) $$
 
@@ -24,7 +24,7 @@ During backpropagation, to find the gradient of the loss $\mathcal{L}$ with resp
 
 $$ \frac{\partial \mathcal{L}}{\partial x_0} = \frac{\partial \mathcal{L}}{\partial x_L} \cdot \underbrace{\frac{\partial x_L}{\partial x_{L-1}} \cdot \frac{\partial x_{L-1}}{\partial x_{L-2}} \cdots \frac{\partial x_1}{\partial x_0}}_{\text{Multiplicative Chain}} $$
 
-**Why "Vanishing"?** If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.
+**Why “Vanishing”?** If the derivatives (gradients) in this chain are small (e.g., $< 1$), multiplying many of them together causes the result to shrink exponentially.
 
 * **Plain Network:** $0.9 \times 0.9 \times 0.9 \dots \approx 0$
 * **Result:** The early layers stop learning because their gradient update is effectively zero. Deep networks become impossible to train.
@@ -38,10 +38,10 @@ ResNet (short for *Residual Network*) was introduced by Kaiming He et al. in \ci
 $$ y = F(x, \{W_i\}) + x $$
 
 Where:
-* $x$ is the input to the block (the "Identity Connection").
+* $x$ is the input to the block (the “Identity Connection”).
 * $F(x)$ is the learned transformation (usually 2 or 3 convolution layers).
 
-**The Gradient "Superhighway":** Let's look at the gradient of this new block during backpropagation:
+**The Gradient “Superhighway”:** Let's look at the gradient of this new block during backpropagation:
 
 $$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{1} $$
 
@@ -66,7 +66,7 @@ $$ y = F(x, \{W_i\}) + W_s x $$
 
 $$ y_{i,j,k} = \sum_{c=0}^{C_\text{in}} w_{k,c} \cdot x_{i,j,c} $$
 
-This allows the network to match the "shape" of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.
+This allows the network to match the “shape” of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.
 
 </div>
 

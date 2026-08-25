@@ -17,11 +17,11 @@ TODO https://datascience.stackexchange.com/questions/85866/who-invented-the-conc
 
 <div class="md">
 
-We give an artificial intelligence — specifically, a single-layer neural network — one deceptively simple task: **"Learn the pattern of a sine wave."**
+We give an artificial intelligence  specifically, a single-layer neural network  one deceptively simple task: **“Learn the pattern of a sine wave.”**
 
 By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.
 
-## The Maths: How the Model "Thinks"
+## The Maths: How the Model “Thinks”
 
 We construct a function $f(x)$ of the form
 
@@ -30,7 +30,7 @@ f(x) \;=\; w_n\, x^{n} + w_{n-1}\, x^{n-1} + \cdots + w_1\, x + b
 \;=\; \sum_{i=1}^{n} w_i\, x^{i} \;+\; b
 $$
 
-This is **Polynomial Regression**. Rather than "knowing" the answer is a sine wave, the model assembles an equation by combining different powers of $x$.
+This is **Polynomial Regression**. Rather than “knowing” the answer is a sine wave, the model assembles an equation by combining different powers of $x$.
 
 <div class="optional md" data-headline="What the Symbols Mean">
 
@@ -38,13 +38,13 @@ This is **Polynomial Regression**. Rather than "knowing" the answer is a sine wa
 |--------|------|
 | $n$, **Polynomial Degree** | Controlled by the *Complexity* slider. Degree 1 → straight line ($w_1 x + b$). Degree 10 → a curve that can bend up to 9 times. |
 | $w_i$, **Weights** | Coefficients the AI adjusts during training to reshape the curve. |
-| $b$, **Bias term** | A constant that shifts the entire curve up or down. Not to be confused with "high bias" (underfitting). |
+| $b$, **Bias term** | A constant that shifts the entire curve up or down. Not to be confused with “high bias” (underfitting). |
 
 </div>
 
 ### The Loss Function
 
-The **MSE** (Mean Squared Error) is the AI's measure of "how wrong am I?":
+The **MSE** (Mean Squared Error) is the AI's measure of “how wrong am I?”:
 
 $$
 \text{MSE} = \frac{1}{N}\sum_{i=1}^{N}\bigl(y_{\text{observed}}^{(i)} - y_{\text{predicted}}^{(i)}\bigr)^{2}
@@ -55,7 +55,7 @@ $$
 
 ### How the Model Learns: Gradient Descent
 
-Knowing "how wrong am I?" is not enough, the model also needs a strategy for getting *less wrong*. This is the job of **gradient descent**.
+Knowing “how wrong am I?” is not enough, the model also needs a strategy for getting *less wrong*. This is the job of **gradient descent**.
 
 At each training step the model:
 
@@ -185,7 +185,7 @@ In practice, we never know the true function (here we do, it's $\sin(x)$). Inste
 |---------|---------|
 | **Dotted grey line**, *Universal Truth* | A perfect sine wave, $y = \sin(x)$. This is the true underlying pattern we want the AI to learn. |
 | **Blue-shaded region**, *Training Window* | The slice of reality the model is allowed to observe. In practice we never have *all* the data, only a small, noisy sample. |
-| **Black dots**, *Noisy Observations* | The specific data points the AI can "see." Notice they scatter around the true curve; real-world measurements are never perfect. |
+| **Black dots**, *Noisy Observations* | The specific data points the AI can “see.” Notice they scatter around the true curve; real-world measurements are never perfect. |
 | **Red line**, *AI's Hypothesis* | The model's current best guess. It tries to draw a curve that passes as close to the black dots as possible. |
 | **Green dots**, *Test Data* | Data points the model has **never** seen during training. The test MSE measures how well the model generalises. |
 
@@ -195,7 +195,7 @@ In practice, we never know the true function (here we do, it's $\sin(x)$). Inste
 
 Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 
-* **The AI's logic:** *"I found a polynomial that perfectly matches the dots I was given."*
+* **The AI's logic:** *“I found a polynomial that perfectly matches the dots I was given.”*
 * **The reality:** The AI has no concept of *periodicity*, it doesn't know the wave repeats. It assumes the local polynomial trend continues, which inevitably sends $f(x) \to \pm\infty$.
 * **Lesson:** Machine-learning models are typically strong **interpolators** (they guess well *between* known points) but poor **extrapolators** (they guess badly *outside* the range of training data).
 
@@ -213,7 +213,7 @@ Look at how the **Red Line** behaves *outside* the **Blue Training Zone**:
 
 We use polynomial regression, but the lessons apply directly to neural networks. Here's why:
 
-A single-layer neural network with $n$ neurons computes a weighted sum of *learned features*, conceptually identical to our weighted sum of polynomial terms. Adding more neurons (or more layers) is analogous to raising the polynomial degree: it increases the model's **capacity** to represent complex functions. The \citetitle{hornik1989universal} (\citeauthor{hornik1989universal}, \citeyear{hornik1989universal}; with a related follow-up by \citeauthor{hornik} in \citeyear{hornik}) proves that a sufficiently wide neural network can approximate *any* continuous function, just as a sufficiently high-degree polynomial can. But "can approximate anything" is precisely the problem: with enough capacity, the model will fit the noise, not just the signal.
+A single-layer neural network with $n$ neurons computes a weighted sum of *learned features*, conceptually identical to our weighted sum of polynomial terms. Adding more neurons (or more layers) is analogous to raising the polynomial degree: it increases the model's **capacity** to represent complex functions. The \citetitle{hornik1989universal} (\citeauthor{hornik1989universal}, \citeyear{hornik1989universal}; with a related follow-up by \citeauthor{hornik} in \citeyear{hornik}) proves that a sufficiently wide neural network can approximate *any* continuous function, just as a sufficiently high-degree polynomial can. But “can approximate anything” is precisely the problem: with enough capacity, the model will fit the noise, not just the signal.
 
 Large Language Models (LLMs) are neural networks with billions of parameters, polynomial degree cranked to an astronomical level. They perform brilliantly on tasks similar to their training data (*interpolation*) but can produce plausible-sounding nonsense on topics outside that distribution (*extrapolation*). The red line rocketing to $\pm\infty$ outside the blue box is a visual metaphor for hallucination.
 
@@ -232,7 +232,7 @@ $$
 on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the center but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
 </div>
 
-## Taming the "Wiggle": Regularization & Dropout
+## Taming the “Wiggle”: Regularization & Dropout
 
 To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.
 
@@ -275,7 +275,7 @@ $$
 \begin{pmatrix} 2.0 & \mathbf{0} & \mathbf{0} & 16.0 \end{pmatrix}
 $$
 
-Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to "freak out" when it leaves the training window. The trade-off: dropout requires **more training data** and **longer training** to converge.
+Because the model must learn the pattern with only *partial* information at every step, the resulting approximation is far more robust, and far less likely to “freak out” when it leaves the training window. The trade-off: dropout requires **more training data** and **longer training** to converge.
 
 </div>
 
@@ -286,12 +286,12 @@ The curve's behaviour outside the blue box mirrors a core challenge of modern AI
 **Symptoms:**
 * Within familiar patterns (*interpolation*), LLMs appear brilliant.
 * On novel logic puzzles or niche topics (*extrapolation*), they *hallucinate*: much like the red line, they invent facts that fit the statistical pattern but have no basis in reality.
-* The root cause is identical, the model has no concept of the underlying "periodicity" or universal truth; it only sees the local trend of its training window.
+* The root cause is identical, the model has no concept of the underlying “periodicity” or universal truth; it only sees the local trend of its training window.
 
 **Technical mitigation:**
-* **regularization** (L1 / L2) penalizes overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
+* **regularization** (L1 / L2) penalizes overly complex internal representations, keeping the model's “curve” smoother in uncharted territory.
 * **Dropout** prevents co-adaptation of features, improving robustness to distribution shift.
-* Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials, and over-parameterized neural networks, so erratic at the edges.
+* Together, they ensure the model does not “chase the noise” (high variance), which is precisely what makes high-degree polynomials, and over-parameterized neural networks, so erratic at the edges.
 
 <div class="optional md" data-headline="Double Descent: When More Parameters Help Again">
 
@@ -299,7 +299,7 @@ The classical bias–variance tradeoff predicts a clean U-shaped test-error curv
 
 When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*. This has been observed in deep neural networks, random forests, and even simple linear models.
 
-The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the "simplest" one (in a minimum-norm sense), which generalises well. This challenges the simple "more parameters = more overfitting" narrative and is an active area of research.
+The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the “simplest” one (in a minimum-norm sense), which generalises well. This challenges the simple “more parameters = more overfitting” narrative and is an active area of research.
 
 Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterized, provided they are trained with enough data and appropriate regularization.
 

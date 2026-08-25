@@ -159,7 +159,7 @@
   <div id="river-fade-right"></div>
 
   <h2>🌊 The River of Ideas</h2>
-  <div class="subtitle">πάντα ῥεῖ — everything flows</div>
+  <div class="subtitle">πάντα ῥεῖ  everything flows</div>
   <div class="subtitle2">Each generation traded hand-crafted specificity for greater generality, and the machine took over another layer of human cognitive labor. Hover to explore connections. Click nodes with links to jump to their section.</div>
   <div id="river-legend"></div>
   <svg id="river-svg"></svg>

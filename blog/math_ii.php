@@ -15,7 +15,7 @@ topics: math-ii
 <div class="md">
 Modern AI is, at its core, applied linear algebra. Every image, every word, every token lives in a high-dimensional **vector space**. This chapter introduces the mathematical objects that make neural networks possible: vectors, matrices, tensors, and the operations that combine them.
 
-If you complete this chapter, the rest of the textbook — embeddings, attention, gradients, activations — will read as natural applications of these primitives.
+If you complete this chapter, the rest of the textbook  embeddings, attention, gradients, activations  will read as natural applications of these primitives.
 </div>
 
 <div class="md">
@@ -23,7 +23,7 @@ If you complete this chapter, the rest of the textbook — embeddings, attention
 
 ### 1D: The Line
 
-In 1D, you only have one "degree of freedom." You can go forward or backward.
+In 1D, you only have one “degree of freedom.” You can go forward or backward.
 * **Concept:** A single number describes your entire universe.
 </div>
 
@@ -70,16 +70,16 @@ In 3D, we can represent volume. A great way to visualize this is **Color Space**
 </div>
 
 <div class="md">
-### 4D and Beyond: The "Feature" Space
+### 4D and Beyond: The “Feature” Space
 
-We cannot "see" 4D, but we can **describe** it. In AI, dimensions are just "features." Imagine we are describing a "Fruit." We can use a 4D vector to describe:
+We cannot “see” 4D, but we can **describe** it. In AI, dimensions are just “features.” Imagine we are describing a “Fruit.” We can use a 4D vector to describe:
 
 1. **Sweetness**
 2. **Sourness**
 3. **Firmness**
 4. **Seed Count**
 
-Every fruit is now a point in a 4D "Fruit Space."
+Every fruit is now a point in a 4D “Fruit Space.”
 </div>
 
 <div style="background: var(--mn-bg); padding: 15px; border: 1px solid var(--mn-border); border-radius: 8px;">
@@ -114,7 +114,7 @@ $$s \in \left\{0, 1, 2, 3, 4, \dots, 254, 255\right\} \quad \text{Example:} \qua
 
 A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
 
-To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
+To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This “package” is a vector.
 
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix}$$
 
@@ -126,7 +126,7 @@ Vectors can also be understood as arrows in space. For example, the vector $\beg
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
 <div class="md">
-Vectors are not "glued" to one spot. A vector is simply a set of instructions (like "3 right, 4 up"). You can start that instruction anywhere in space, and it is still the same vector!
+Vectors are not “glued” to one spot. A vector is simply a set of instructions (like “3 right, 4 up”). You can start that instruction anywhere in space, and it is still the same vector!
 </div>
 
 <div style="text-align: center; margin-bottom: 10px;">
@@ -151,7 +151,7 @@ $$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} =
 
 A **Matrix** is a grid of numbers (like a spreadsheet).
 
-A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", $255$ means white and everything inbetween are different shades of gray.
+A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means “black”, $255$ means white and everything inbetween are different shades of gray.
 
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
@@ -167,11 +167,11 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 <div class="md">
 ### The Tensor (the umbrella term)
 
-**The Secret:** In AI, *Tensor* is the umbrella word for "any rectangular array of numbers." A scalar is a rank-0 tensor, a vector is a rank-1 tensor, a matrix is a rank-2 tensor, and once we stack matrices we get a **rank-3+ tensor**. This lets the neural network treat every piece of data with the same set of math rules.
+**The Secret:** In AI, *Tensor* is the umbrella word for “any rectangular array of numbers.” A scalar is a rank-0 tensor, a vector is a rank-1 tensor, a matrix is a rank-2 tensor, and once we stack matrices we get a **rank-3+ tensor**. This lets the neural network treat every piece of data with the same set of math rules.
 
 | Object | Rank | Shape | Example |
 |--------|------|-------|---------|
-| Scalar | 0 | — | $s = 5$ |
+| Scalar | 0 |  | $s = 5$ |
 | Vector | 1 | $(d,)$ | color $= (r, g, b)$ |
 | Matrix | 2 | $(h, w)$ | a black-and-white image |
 | Tensor | 3+ | $(h, w, c, \dots)$ | a color image is $(h, w, 3)$ |
@@ -184,7 +184,7 @@ $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 
 When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
 
-Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
+Notice how each “cell” of the grid is actually a vector (a vertical list) of three values:
 </div>
 
 $$
@@ -200,7 +200,7 @@ The form a tensor has is called a *shape*. The shape defines how many rows and c
 
 * **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
 * **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
-* **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
+* **The Coordinates:** The numbers like $_{1,2}$ mean: “Row 1, Column 2”.
 
 To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
 
@@ -237,7 +237,7 @@ With other methods of making numbers from data (like Embeddings to create number
 
 In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$.
 
-You can experiment with how two linear functions combine. Adjust the sliders to see how the "inner" function $f$ and the "outer" function $g$ create a new, composed result.
+You can experiment with how two linear functions combine. Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.
 </div>
 
 <div style="background: var(--mn-surface, #f9f9f9); padding: 15px; border-radius: 8px; border: 1px solid #eee;">
@@ -274,9 +274,9 @@ We can visualize these relationships using a square diagram. It shows that there
 
 The **Hadamard Product** ($\odot$) was formally introduced by \citeauthor{hadamardproduct} in \citeyear{hadamardproduct} within his thesis \citetitle{hadamardproduct}. It was designed to solve the practical problem of identifying **singularities** in complex power series. By multiplying coefficients element-wise, defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$, Hadamard could predict the analytic continuation and boundaries of new functions derived from known ones.
 
-While standard matrix multiplication follows the "row-by-column" rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
+While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
 
-In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a "gate."
+In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a “gate.”
 
 ### Mathematical Definition
 
@@ -359,7 +359,7 @@ $$
 \frac{\partial L_{\text{CE}}}{\partial z_i} = \hat{y}_i - y_i
 $$
 
-i.e. the gradient is just "predicted minus actual" — the reason softmax + cross-entropy is the canonical pairing.
+i.e. the gradient is just “predicted minus actual”  the reason softmax + cross-entropy is the canonical pairing.
 </div>
 
 <script>

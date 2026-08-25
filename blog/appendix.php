@@ -15,7 +15,7 @@ topics: reference, math-i, programming
 ### Grokking
 
 Grokking\cite[]{grokking} is a phenomenon in deep learning where a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued.
-Originally identified by \cite[Power et al., 2022][]{power2022grokking}, this "aha moment" occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period,
+Originally identified by \cite[Power et al., 2022][]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period,
 only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern.
 Structurally, this is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
 
@@ -23,15 +23,15 @@ Structurally, this is often marked by a transition in **attention matrices** fro
 
 ### Symbol Conventions
 
-Because this textbook spans probability theory, classical neural networks, and transformer internals, a few symbols recur with **different meanings in different chapters**. The list below is the disambiguation key — when in doubt, refer back here.
+Because this textbook spans probability theory, classical neural networks, and transformer internals, a few symbols recur with **different meanings in different chapters**. The list below is the disambiguation key  when in doubt, refer back here.
 
 | Symbol | Meaning A (and where it appears) | Meaning B (and where it appears) |
 |---|---|---|
-| $\sigma$ | **Standard deviation** of a Normal distribution (Statistics I/II, e.g. $\mathcal{N}(\mu,\sigma^2)$) | **Sigmoid** $\sigma(z) = 1/(1+e^{-z})$ (Backprop, Autodiff) — and, in two chapters, also **Softmax** $\sigma(z)_i = e^{z_i}/\sum e^{z_j}$ (Activation, Transformer temperature); the formula itself is unambiguous in either case |
-| $L$ | **Lipschitz constant** (Math III, concentration-of-measure bounds) | **Loss function** (Loss, Backprop, Autodiff, Optimizer — $\mathcal{L}$ is also used for loss in some chapters) |
-| $T$ | **Sequence length** in attention shape annotations (Transformer, Attention — number of tokens per sequence) | **Temperature** in softmax sampling (Sampling, Transformer, Inference Optimization) |
-| $d_v$ | **Value head dimension** in attention (Transformer, Attention) | (no second meaning — but $d_k = d_v$ only in the *original* Vaswani transformer; the two can differ in modern variants) |
-| $\eta$ | **Learning rate** in gradient descent (Backprop, Autodiff, Optimizer) | (also written `lr` in interactive demos — see Optimizer for the convention note) |
+| $\sigma$ | **Standard deviation** of a Normal distribution (Statistics I/II, e.g. $\mathcal{N}(\mu,\sigma^2)$) | **Sigmoid** $\sigma(z) = 1/(1+e^{-z})$ (Backprop, Autodiff)  and, in two chapters, also **Softmax** $\sigma(z)_i = e^{z_i}/\sum e^{z_j}$ (Activation, Transformer temperature); the formula itself is unambiguous in either case |
+| $L$ | **Lipschitz constant** (Math III, concentration-of-measure bounds) | **Loss function** (Loss, Backprop, Autodiff, Optimizer  $\mathcal{L}$ is also used for loss in some chapters) |
+| $T$ | **Sequence length** in attention shape annotations (Transformer, Attention  number of tokens per sequence) | **Temperature** in softmax sampling (Sampling, Transformer, Inference Optimization) |
+| $d_v$ | **Value head dimension** in attention (Transformer, Attention) | (no second meaning  but $d_k = d_v$ only in the *original* Vaswani transformer; the two can differ in modern variants) |
+| $\eta$ | **Learning rate** in gradient descent (Backprop, Autodiff, Optimizer) | (also written `lr` in interactive demos  see Optimizer for the convention note) |
 
 When the same chapter uses a symbol in two senses (e.g. $T$ for both sequence length and temperature inside `transformer.php`), context always disambiguates; the legend at the point of use is the primary contract.
 
@@ -66,7 +66,7 @@ We've shown that a position shift by a fixed offset $k$ corresponds to multiplyi
 
 ### What Is a Group?
 
-A **group** is one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. It is a set $G$ equipped with a single combining operation "$\cdot$" that satisfies exactly four axioms:
+A **group** is one of the most fundamental structures in all of mathematics: the formal language of *symmetry*. It is a set $G$ equipped with a single combining operation “$\cdot$” that satisfies exactly four axioms:
 
 | Axiom | Statement | PE Rotation Example |
 |---|---|---|
@@ -89,11 +89,11 @@ The set $\{M_k : k \in \mathbb{R}\}$ satisfies all four axioms, it is the **circ
 
 ### Why the Group Structure Matters for Attention
 
-1. **"3 apart" is always the same $M_3$**, whether you start at position 2 or position 2000.
-2. **Compositions compose predictably**: "3 forward, then 5 forward" equals "8 forward" ($M_3 \cdot M_5 = M_8$).
-3. **Reversibility**: the model can ask "what was 3 positions *before* me?" via $M_{-3}$.
+1. **“3 apart” is always the same $M_3$**, whether you start at position 2 or position 2000.
+2. **Compositions compose predictably**: “3 forward, then 5 forward” equals “8 forward” ($M_3 \cdot M_5 = M_8$).
+3. **Reversibility**: the model can ask “what was 3 positions *before* me?” via $M_{-3}$.
 
-The attention mechanism learns these rotations through its $Q$ and $K$ linear projections. The group structure guarantees that once the model learns the "shape" of an offset, it **generalises to every position in the sequence for free**. No special circuitry, no lookup tables, just linear algebra riding on top of algebraic symmetry.
+The attention mechanism learns these rotations through its $Q$ and $K$ linear projections. The group structure guarantees that once the model learns the “shape” of an offset, it **generalises to every position in the sequence for free**. No special circuitry, no lookup tables, just linear algebra riding on top of algebraic symmetry.
 
 **The aha-moment:** Positional encoding doesn't just *label* positions, it gives the model an **algebraic compass** that works identically everywhere in the sequence.
 </div>
@@ -119,7 +119,7 @@ The attention mechanism learns these rotations through its $Q$ and $K$ linear pr
 <div class="md">
 ### Reading the Compass Plot
 
-Each **filled dot** is a starting position on the unit circle (determined by its PE angle $\text{pos}\cdot\omega_0$). Each **open dot** is the result after applying $M_k$. The arrow between them is *the same rotation* in every case, the arrow length and arc angle never change, only the starting point moves. This is exactly the translation-invariance that lets a Transformer generalise "3 tokens apart" to any location it has never seen.
+Each **filled dot** is a starting position on the unit circle (determined by its PE angle $\text{pos}\cdot\omega_0$). Each **open dot** is the result after applying $M_k$. The arrow between them is *the same rotation* in every case, the arrow length and arc angle never change, only the starting point moves. This is exactly the translation-invariance that lets a Transformer generalise “3 tokens apart” to any location it has never seen.
 </div>
 
 <!-- ── Cayley Table ── -->
@@ -143,9 +143,9 @@ Information doesn't flow through a transformer in a smooth, monotonic stream. It
 
 Researchers have observed that transformer layers tend to organize into three broad phases:
 
-1. **Expansion (Early Layers):** The input embedding is "opened up." The model broadens the representation, activating many dimensions, exploring many possible interpretations of the input. The activation vector becomes **wide and diffuse**, high entropy, low certainty. This is the model asking: "What could this input mean?"
+1. **Expansion (Early Layers):** The input embedding is “opened up.” The model broadens the representation, activating many dimensions, exploring many possible interpretations of the input. The activation vector becomes **wide and diffuse**, high entropy, low certainty. This is the model asking: “What could this input mean?”
 
-2. **Compression (Middle Layers):** The representation suddenly **contracts**. The model narrows down, suppressing irrelevant dimensions, sharpening the signal. This is the "logic check", the phase where the model commits to an interpretation, resolves ambiguities, and performs the core reasoning. The activation vector becomes **tight and focused**, low entropy, high certainty.
+2. **Compression (Middle Layers):** The representation suddenly **contracts**. The model narrows down, suppressing irrelevant dimensions, sharpening the signal. This is the “logic check”, the phase where the model commits to an interpretation, resolves ambiguities, and performs the core reasoning. The activation vector becomes **tight and focused**, low entropy, high certainty.
 
 3. **Re-expansion (Late Layers):** The representation opens up again, but differently. Now the model is preparing to **generate output**, it needs to fan out from a single sharp interpretation into a probability distribution over the entire vocabulary. The vector broadens again, but this time in a structured way that maps onto token probabilities.
 
@@ -246,19 +246,19 @@ Below, you can explore this interactively. A simulated transformer processes a t
 <div class="md">
 ## Isosurfaces of Probability: Truth Tunnels
 
-Imagine wrapping a "shell" around every region of the embedding space where the model considers a token or sequence **plausible**. These shells are **isosurfaces**, surfaces of equal probability, like the isobars on a weather map that connect points of equal atmospheric pressure. Inside the shell: plausible continuations. Outside: nonsense.
+Imagine wrapping a “shell” around every region of the embedding space where the model considers a token or sequence **plausible**. These shells are **isosurfaces**, surfaces of equal probability, like the isobars on a weather map that connect points of equal atmospheric pressure. Inside the shell: plausible continuations. Outside: nonsense.
 
 ### From Weather Maps to Thought Corridors
 
 In meteorology, high-pressure zones are broad, stable regions; low-pressure zones are tight, intense. The embedding space works the same way:
 
-* **Open fields:** At the start of a conversation, the probability isosurface is a wide, blob-like region, almost anything could come next. "The" could be followed by thousands of plausible tokens. The isosurface is fat and round.
-* **Narrow tunnels:** As the context grows and the argument tightens, the isosurface **collapses into a narrow corridor**, a "truth tunnel." After "The capital of France is," the plausible region shrinks to a tiny pocket around "Paris." The isosurface is now a tight tube.
-* **Branching points:** At moments of ambiguity ("The bank of the ___"), the tunnel **forks**, one branch leads toward "river" (geography), another toward "account" (finance). The isosurface develops a bifurcation, like a blood vessel splitting in two.
+* **Open fields:** At the start of a conversation, the probability isosurface is a wide, blob-like region, almost anything could come next. “The” could be followed by thousands of plausible tokens. The isosurface is fat and round.
+* **Narrow tunnels:** As the context grows and the argument tightens, the isosurface **collapses into a narrow corridor**, a “truth tunnel.” After “The capital of France is,” the plausible region shrinks to a tiny pocket around “Paris.” The isosurface is now a tight tube.
+* **Branching points:** At moments of ambiguity (“The bank of the ___”), the tunnel **forks**, one branch leads toward “river” (geography), another toward “account” (finance). The isosurface develops a bifurcation, like a blood vessel splitting in two.
 
 ### The Tube System in Hyperspace
 
-If you could visualize the path of a full conversation through the embedding space, you would see something like a **branching tube system**: wide at the start, narrowing as context accumulates, occasionally forking at ambiguous decision points, and sometimes opening back up when the topic shifts. The walls of the tube are the isosurface, the boundary between "the model considers this plausible" and "the model considers this nonsense."
+If you could visualize the path of a full conversation through the embedding space, you would see something like a **branching tube system**: wide at the start, narrowing as context accumulates, occasionally forking at ambiguous decision points, and sometimes opening back up when the topic shifts. The walls of the tube are the isosurface, the boundary between “the model considers this plausible” and “the model considers this nonsense.”
 
 $$ \mathcal{S}_\tau = \{ \mathbf{x} \in \mathbb{R}^d \mid P(\mathbf{x} \mid \text{context}) = \tau \} $$
 
@@ -323,6 +323,6 @@ Below, you can explore this interactively. A simulated sentence unfolds step by 
 </section>
 
 <div class="md">
-A curated companion to this appendix is the standalone chapter <a href="unexpected_capabilities">Unexpected Capabilities of LLMs</a>, which catalogues the most striking discoveries researchers did not anticipate from next-token prediction — emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
+A curated companion to this appendix is the standalone chapter <a href="unexpected_capabilities">Unexpected Capabilities of LLMs</a>, which catalogues the most striking discoveries researchers did not anticipate from next-token prediction  emergent reasoning, theory of mind, world models, latent knowledge, self-improvement, and the patterns that tie them all together.
 </div>
 

@@ -13,7 +13,7 @@ topics: math-i, programming
 <div class="md">
 The concept of a **derivative** is one of the most important ideas in all of mathematics. It answers a deceptively simple question: *How fast is something changing at this exact moment?*
 
-If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time. But how do we define "instantaneous" mathematically, when an instant has zero duration?
+If you drive a car and your speedometer reads 60 km/h, that number is a derivative, it tells you the instantaneous rate of change of your position with respect to time. But how do we define “instantaneous” mathematically, when an instant has zero duration?
 
 This question puzzled mathematicians for centuries, and its resolution gave birth to an entire branch of mathematics: **Calculus**.
 </div>
@@ -24,7 +24,7 @@ The development of calculus is one of the most famous (and contentious) stories 
 <div class="image-row md">
 	<figure>
 		<img src="newton.jpg" alt="Portrait of Isaac Newton" />
-		<figcaption class="md">\citealternativetitle{newton_portrait}. Newton developed his "method of fluxions" around 1665–1666, motivated by problems in physics: he needed a way to describe the motion of planets and falling objects. He thought of quantities as "flowing" and their rates of change as "fluxions." Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.</figcaption>
+		<figcaption class="md">\citealternativetitle{newton_portrait}. Newton developed his “method of fluxions” around 1665–1666, motivated by problems in physics: he needed a way to describe the motion of planets and falling objects. He thought of quantities as “flowing” and their rates of change as “fluxions.” Newton's approach was deeply rooted in the physical world: velocity is the fluxion of position, and acceleration is the fluxion of velocity. However, Newton was notoriously secretive and did not publish his methods until decades later.</figcaption>
 	</figure>
 	<figure>
 		<img src="leibniz.jpg" alt="Portrait of Gottfried Wilhelm Leibniz" />
@@ -58,7 +58,7 @@ The **derivative** is what happens when we let $h$ approach zero. The secant lin
 
 $$f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$$
 
-This is the **limit definition of the derivative**, sometimes called the definition "from first principles." The notation $f'(x)$ (read "f prime of x") was introduced by \citeauthor{lagrange1797theorie} in \citetitle{lagrange1797theorie} (\citeyear{lagrange1797theorie}). Leibniz wrote the same concept as $\frac{df}{dx}$.
+This is the **limit definition of the derivative**, sometimes called the definition “from first principles.” The notation $f'(x)$ (read “f prime of x”) was introduced by \citeauthor{lagrange1797theorie} in \citetitle{lagrange1797theorie} (\citeyear{lagrange1797theorie}). Leibniz wrote the same concept as $\frac{df}{dx}$.
 
 <figure>
 	<img src="lagrange.jpg" alt="Portrait of Joseph-Louis Lagrange" style="max-width: 220px;" />
@@ -126,7 +126,7 @@ This is the workhorse of differentiation. For example:
 
 $$\frac{d}{dx}[c \cdot f(x)] = c \cdot f'(x)$$
 
-You can "pull out" constants. For example: $\frac{d}{dx}[5x^3] = 5 \cdot 3x^2 = 15x^2$.
+You can “pull out” constants. For example: $\frac{d}{dx}[5x^3] = 5 \cdot 3x^2 = 15x^2$.
 
 ### The Sum Rule
 
@@ -248,7 +248,7 @@ Derivatives are not just an abstract mathematical concept, they are the **engine
 
 2. **Backpropagation**: As we saw, the **chain rule** allows us to compute the gradient of the loss with respect to every single weight in a deep network, no matter how many layers it has. This algorithm, popularized by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}, is what makes deep learning possible.
 
-3. **Optimization Landscape**: The derivative tells us about the "shape" of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
+3. **Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
 
 4. **The Sigmoid Derivative**: As we derived above, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
 
@@ -275,7 +275,7 @@ The symbol $\partial$ for partial derivatives was introduced by the Marquis de C
 <!-- ─── Interactive: Gradient on a 3D Surface ─── -->
 <div style="background: var(--mn-surface, #fff); padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
     <p style="margin-top:0;"><strong>Gradient Descent on a Surface</strong></p>
-    <p style="color:#64748b; font-size:0.9em;">The surface is $f(x,y) = x^2 + y^2$ (a simple "bowl"). The red arrow shows the negative gradient direction, the direction gradient descent would move. Drag the point to see how the gradient changes.</p>
+    <p style="color:#64748b; font-size:0.9em;">The surface is $f(x,y) = x^2 + y^2$ (a simple “bowl”). The red arrow shows the negative gradient direction, the direction gradient descent would move. Drag the point to see how the gradient changes.</p>
 
     <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:10px;">
         <div>
@@ -306,5 +306,5 @@ The symbol $\partial$ for partial derivatives was introduced by the Marquis de C
 | Partial derivative | $\frac{\partial f}{\partial x}$ | Rate of change in one variable |
 | Gradient | $\nabla f$ | Vector of all partial derivatives |
 
-The derivative is the bridge between static mathematics and dynamic change. It is the tool that lets us ask "what happens next?" and, in the context of AI, "how should we adjust?" Without it, machines could not learn.
+The derivative is the bridge between static mathematics and dynamic change. It is the tool that lets us ask “what happens next?” and, in the context of AI, “how should we adjust?” Without it, machines could not learn.
 </div>

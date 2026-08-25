@@ -17,7 +17,7 @@ The best way to predict the future is to invent it.
 <div class="md">
 ## What is RAG?
 
-A standard LLM can only use what it memorized during training. Ask it about a document it never saw, and it either **hallucinates** or says *"I don't know."*
+A standard LLM can only use what it memorized during training. Ask it about a document it never saw, and it either **hallucinates** or says *“I don't know.”*
 
 **Retrieval-Augmented Generation (RAG)** gives the LLM an external, searchable memory. Before the model generates an answer, a *retriever* finds the most relevant passages from a document store and injects them into the prompt. The LLM then answers **grounded in those passages**.
 
@@ -90,15 +90,15 @@ A vector database is **not** a traditional SQL database. It doesn't search by ke
 | Field | Example | Purpose |
 |-------|---------|---------|
 | `id` | `doc_0042` | Unique identifier |
-| `vector` | $[0.023, -0.841, 0.117, \ldots]$ | 768-dim embedding, the searchable "meaning" |
-| `text` | "The Transformer was introduced in 2017…" | Original chunk, returned to the LLM |
+| `vector` | $[0.023, -0.841, 0.117, \ldots]$ | 768-dim embedding, the searchable “meaning” |
+| `text` | “The Transformer was introduced in 2017…” | Original chunk, returned to the LLM |
 | `metadata` | `{source: "vaswani2017", page: 3}` | Filtering, citations |
 
 ### How is search so fast?
 
 Brute-force comparison against millions of vectors would be $O(n \cdot d)$ per query, too slow. Vector DBs use **Approximate Nearest Neighbor (ANN)** algorithms:
 
-- **HNSW** (Hierarchical Navigable Small World): builds a multi-layer graph. Searching "hops" through the graph, narrowing in on the target region, like navigating a city by jumping between landmarks. *Most popular in production.*
+- **HNSW** (Hierarchical Navigable Small World): builds a multi-layer graph. Searching “hops” through the graph, narrowing in on the target region, like navigating a city by jumping between landmarks. *Most popular in production.*
 - **IVF** (Inverted File Index): clusters vectors into Voronoi cells at index time. At query time, only a few nearby cells are searched.
 - **Product Quantization**: compresses vectors into compact codes, trading a tiny bit of accuracy for massive memory savings.
 
@@ -110,20 +110,20 @@ Result: querying **1 billion vectors in ~50 ms** on a single machine.
 </div>
 
 <div id="raglab-demo-container">
-    <p class="raglab-demo-subtitle">Type a query and see which "documents" match by cosine similarity. This is a toy demo using tiny vectors, real systems use 768+ dimensions, but the principle is identical.</p>
+    <p class="raglab-demo-subtitle">Type a query and see which “documents” match by cosine similarity. This is a toy demo using tiny vectors, real systems use 768+ dimensions, but the principle is identical.</p>
     <input type="text" id="raglab-query-input" placeholder="Try: &quot;How do neural networks learn?&quot;" value="How do neural networks learn?" />
     <button id="raglab-search-btn">🔎 Search</button>
     <div id="raglab-results"></div>
     <details class="raglab-details">
         <summary>How does this demo work?</summary>
-        <p>Each "document" and your query are mapped to a tiny vector using keyword heuristics (a stand-in for a real embedding model). The system computes cosine similarity between your query vector and every document vector, then ranks them. In production, the embedding model is a neural network and vectors have hundreds of dimensions.</p>
+        <p>Each “document” and your query are mapped to a tiny vector using keyword heuristics (a stand-in for a real embedding model). The system computes cosine similarity between your query vector and every document vector, then ranks them. In production, the embedding model is a neural network and vectors have hundreds of dimensions.</p>
     </details>
 </div>
 
 <div class="md">
 ## RAG vs. In-Context Learning (ICL)
 
-**In-Context Learning** is when you put examples or instructions directly in the prompt and the LLM "learns" the task on the fly, no weight updates, just pattern-matching over the provided tokens.
+**In-Context Learning** is when you put examples or instructions directly in the prompt and the LLM “learns” the task on the fly, no weight updates, just pattern-matching over the provided tokens.
 
 RAG and ICL are **complementary**, not competing. In fact, **RAG feeds into ICL**: the retrieved documents *become* the in-context examples the model reasons over.
 </div>
@@ -164,7 +164,7 @@ Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (
 <div id="raglab-context-table"></div>
 
 <div class="md">
-### The "Lost in the Middle" Problem
+### The “Lost in the Middle” Problem
 
 Research shows that LLMs pay the most attention to the **beginning** and **end** of long contexts, often ignoring information buried in the middle. Even if a 200K-token window *can* hold your data, the model may fail to *use* it.
 
@@ -177,8 +177,8 @@ In practice, **RAG + long context** work together: RAG retrieves the top 10–20
 - **Garbage in, garbage out.** If the document store contains wrong information, RAG will confidently retrieve and present it.
 - **Indirect prompt injection.** Because RAG feeds retrieved text straight into the prompt, malicious instructions hidden in a document can try to hijack the model (see the Security chapter).
 - **Chunking matters.** If a critical fact is split across two chunks and neither is retrieved, the answer will be incomplete.
-- **Embedding blind spots.** Embedding models can misjudge similarity, a query about "Python" (the snake) might retrieve docs about "Python" (the language).
-- **No reasoning over absence.** RAG can't tell you "this information doesn't exist in the database." It will retrieve the *closest* thing, which may be irrelevant.
+- **Embedding blind spots.** Embedding models can misjudge similarity, a query about “Python” (the snake) might retrieve docs about “Python” (the language).
+- **No reasoning over absence.** RAG can't tell you “this information doesn't exist in the database.” It will retrieve the *closest* thing, which may be irrelevant.
 - **Latency.** The retrieval step adds ~50–200 ms per query.
 
 ## Summary

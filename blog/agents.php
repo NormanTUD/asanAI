@@ -13,9 +13,9 @@ topics: reasoning, agents, programming, language
 <div class="md">
 ## What is an AI Agent?
 
-**Terminological clarification (important, see also the Philosophy chapter):** In this course, "AI agent" is used as a *technical* term for a software architecture that wraps an LLM in a control loop and grants it access to external interfaces such as the file system, the network, a search engine, or other tools. It is **not** a claim about consciousness, qualia, intentionality, volition, or any form of genuine "agency" in the philosophical sense. When the chapter title or related literature uses the word "autonomous", it refers to *engineering* autonomy (the loop runs without per-step human approval), not to philosophical agency. The LLM at the heart of an agent is the same reactive, stateless next-token predictor described in the Philosophy chapter; what changes is the *scaffolding around it*, not its inner nature.
+**Terminological clarification (important, see also the Philosophy chapter):** In this course, “AI agent” is used as a *technical* term for a software architecture that wraps an LLM in a control loop and grants it access to external interfaces such as the file system, the network, a search engine, or other tools. It is **not** a claim about consciousness, qualia, intentionality, volition, or any form of genuine “agency” in the philosophical sense. When the chapter title or related literature uses the word “autonomous”, it refers to *engineering* autonomy (the loop runs without per-step human approval), not to philosophical agency. The LLM at the heart of an agent is the same reactive, stateless next-token predictor described in the Philosophy chapter; what changes is the *scaffolding around it*, not its inner nature.
 
-Concretely, an **AI Agent** is a system where a Large Language Model acts not merely as a text generator, but as a **controller inside an observe→reason→act loop**. It can be given access to its environment (a file system, a browser, an API), reason about which tool to invoke, observe the result, and iterate until a task is complete. The LLM remains the "decision-making component" of a loop rather than a one-shot oracle.
+Concretely, an **AI Agent** is a system where a Large Language Model acts not merely as a text generator, but as a **controller inside an observe→reason→act loop**. It can be given access to its environment (a file system, a browser, an API), reason about which tool to invoke, observe the result, and iterate until a task is complete. The LLM remains the “decision-making component” of a loop rather than a one-shot oracle.
 
 $$
 \begin{gathered}
@@ -33,11 +33,11 @@ $$
 
 **Key insight:** A vanilla LLM generates text in a single forward pass. An **agent** wraps that LLM in a loop that gives it memory, tools, and the ability to act on the world, then feeds observations back in for the next reasoning step.
 
-The difference between "using an LLM" and "deploying an agent" is the difference between asking someone a question (in their head) and hiring them to complete a project (with hands on a keyboard, a browser, a terminal). The hired person's *cognitive architecture* has not changed; what changed is the set of effectors available to them. The same is true of the LLM inside an agent.
+The difference between “using an LLM” and “deploying an agent” is the difference between asking someone a question (in their head) and hiring them to complete a project (with hands on a keyboard, a browser, a terminal). The hired person's *cognitive architecture* has not changed; what changed is the set of effectors available to them. The same is true of the LLM inside an agent.
 </div>
 
 <div class="optional md" data-headline="CoT with a screwdriver">
-The "Re" in **ReAct** is the reasoning loop from the <a href="reasoning">Reasoning chapter</a>; the "Act" is just a tool call appended to each reasoning step. Everything in this chapter assumes familiarity with CoT, self-consistency, and verification-guided search.
+The “Re” in **ReAct** is the reasoning loop from the <a href="reasoning">Reasoning chapter</a>; the “Act” is just a tool call appended to each reasoning step. Everything in this chapter assumes familiarity with CoT, self-consistency, and verification-guided search.
 </div>
 
 <div class="md">
@@ -60,7 +60,7 @@ The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mc
 <div class="image-row md">
 	<figure>
 		<img src="shrdlu.gif" alt="Screenshot of the SHRDLU blocks-world program" />
-		<figcaption class="md">\citealternativetitle{shrdlu_image}. Terry Winograd's SHRDLU (1972) let a user type English sentences ("pick up a big red block") to manipulate a virtual world of colored blocks — the canonical demonstration that natural-language reasoning over a small world was possible.</figcaption>
+		<figcaption class="md">\citealternativetitle{shrdlu_image}. Terry Winograd's SHRDLU (1972) let a user type English sentences (“pick up a big red block”) to manipulate a virtual world of colored blocks  the canonical demonstration that natural-language reasoning over a small world was possible.</figcaption>
 	</figure>
 </div>
 
@@ -99,24 +99,24 @@ sector of the Colorado orogeny extends into?
 
 Thought 1: I need to search Colorado orogeny, find the area that the
 eastern sector extends into, then find the elevation range of that area.
-Action 1: Search["Colorado orogeny"]
+Action 1: Search[“Colorado orogeny”]
 Observation 1: The Colorado orogeny was an episode of mountain building
 (an orogeny) in Colorado and surrounding areas...
 
 Thought 2: It does not mention the eastern sector. I need to look up
 eastern sector.
-Action 2: Lookup["eastern sector"]
+Action 2: Lookup[“eastern sector”]
 Observation 2: The eastern sector extends into the High Plains.
 
 Thought 3: The eastern sector extends into the High Plains. I need to
 search High Plains and find its elevation range.
-Action 3: Search["High Plains elevation range"]
+Action 3: Search[“High Plains elevation range”]
 Observation 3: The High Plains rise in elevation from around 460 m near
 the eastern border to over 1,800 m at the foot of the Rocky Mountains.
 
 Thought 4: High Plains rise from around 460 m to over 1,800 m, so the
 elevation range is approximately 1,340 m.
-Action 4: Finish["approximately 1,340 m"]</code></pre>
+Action 4: Finish[“approximately 1,340 m”]</code></pre>
 
 <div class="md">
 The key innovation is that **Thought** and **Action** alternate in the same token stream. The LLM generates both its internal reasoning *and* its tool calls as text. The orchestrator parses the actions, executes them, and injects the observations back into the context.
@@ -174,7 +174,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 <h5 class="step-title">OBSERVE</h5>
 <ul>
 <li>Tool executes in sandbox</li>
-<li>Result injected as "Observation"</li>
+<li>Result injected as “Observation”</li>
 <li>Loop back to PERCEIVE</li>
 </ul>
 </div>
@@ -182,7 +182,7 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 <div class="agent-loop-termination">
 <h5>Termination Conditions</h5>
 <ul>
-<li>LLM emits a "Finish" action</li>
+<li>LLM emits a “Finish” action</li>
 <li>Maximum iterations reached (safety bound)</li>
 <li>Token budget exhausted</li>
 <li>Error threshold exceeded</li>
@@ -193,9 +193,9 @@ Every LLM agent, regardless of framework, implements a variant of this loop:
 <div class="md">
 ### The System Prompt: Defining the Agent's Identity
 
-The system prompt is the agent's "DNA." It defines:
+The system prompt is the agent's “DNA.” It defines:
 1. **Available tools** (name, description, parameters)
-2. **Behavioral constraints** ("never execute destructive actions without confirmation")
+2. **Behavioral constraints** (“never execute destructive actions without confirmation”)
 3. **Output format** (how to structure thoughts, actions, and final answers)
 4. **Persona** (role, expertise level, communication style)
 </div>
@@ -207,9 +207,9 @@ The system prompt is the agent's "DNA." It defines:
 3. calculator(expression: str) → Evaluate a mathematical expression
 4. python_exec(code: str) → Execute Python code in a sandbox
 
-For each step, output your reasoning as "Thought: ..." then your action
-as "Action: tool_name(arguments)". When you have enough information to
-answer the user's question, use "Action: finish(answer)".
+For each step, output your reasoning as “Thought: ...” then your action
+as “Action: tool_name(arguments)”. When you have enough information to
+answer the user's question, use “Action: finish(answer)”.
 
 Rules:
 - Always verify claims with web_search before stating them as fact
@@ -222,18 +222,18 @@ Rules:
 
 Tool use (also called **function calling**) is the bridge between the LLM's text world and the real world. The mechanism works identically to what was described in the web search chapter, but generalized to arbitrary tools.
 
-### How the LLM "calls" a tool
+### How the LLM “calls” a tool
 
 The LLM doesn't execute anything. It generates a **structured text output** that the orchestrator parses and executes:
 </div>
 
 <pre class="wslab-code-block"><code>// LLM generates this structured output:
 {
-  "thought": "I need to find the current population of Tokyo to answer this.",
-  "action": {
-    "tool": "web_search",
-    "arguments": {
-      "query": "Tokyo population 2026"
+  “thought”: “I need to find the current population of Tokyo to answer this.”,
+  “action”: {
+    “tool”: “web_search”,
+    “arguments”: {
+      “query”: “Tokyo population 2026”
     }
   }
 }
@@ -242,10 +242,10 @@ The LLM doesn't execute anything. It generates a **structured text output** that
 // 1. Parses the JSON
 // 2. Validates the tool name exists
 // 3. Validates the arguments match the schema
-// 4. Executes: web_search("Tokyo population 2026")
-// 5. Gets result: "Tokyo's population in 2026 is approximately 13.96 million..."
+// 4. Executes: web_search(“Tokyo population 2026”)
+// 5. Gets result: “Tokyo's population in 2026 is approximately 13.96 million...”
 // 6. Injects into context:
-//    Observation: "Tokyo's population in 2026 is approximately 13.96 million..."
+//    Observation: “Tokyo's population in 2026 is approximately 13.96 million...”
 // 7. Calls LLM again with updated context</code></pre>
 
 <div class="md">
@@ -255,46 +255,46 @@ Tools are defined as JSON schemas that the LLM sees in its system prompt:
 </div>
 
 <pre class="wslab-code-block"><code>{
-  "tools": [
+  “tools”: [
     {
-      "name": "web_search",
-      "description": "Search the internet for current information",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "query": {
-            "type": "string",
-            "description": "The search query"
+      “name”: “web_search”,
+      “description”: “Search the internet for current information”,
+      “parameters”: {
+        “type”: “object”,
+        “properties”: {
+          “query”: {
+            “type”: “string”,
+            “description”: “The search query”
           }
         },
-        "required": ["query"]
+        “required”: [“query”]
       }
     },
     {
-      "name": "python_exec",
-      "description": "Execute Python code in a sandboxed environment",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "Python code to execute"
+      “name”: “python_exec”,
+      “description”: “Execute Python code in a sandboxed environment”,
+      “parameters”: {
+        “type”: “object”,
+        “properties”: {
+          “code”: {
+            “type”: “string”,
+            “description”: “Python code to execute”
           }
         },
-        "required": ["code"]
+        “required”: [“code”]
       }
     },
     {
-      "name": "send_email",
-      "description": "Send an email to a specified recipient",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "to": { "type": "string" },
-          "subject": { "type": "string" },
-          "body": { "type": "string" }
+      “name”: “send_email”,
+      “description”: “Send an email to a specified recipient”,
+      “parameters”: {
+        “type”: “object”,
+        “properties”: {
+          “to”: { “type”: “string” },
+          “subject”: { “type”: “string” },
+          “body”: { “type”: “string” }
         },
-        "required": ["to", "subject", "body"]
+        “required”: [“to”, “subject”, “body”]
       }
     }
   ]
@@ -303,7 +303,7 @@ Tools are defined as JSON schemas that the LLM sees in its system prompt:
 <div class="md">
 ## Memory: How Agents Remember
 
-A single LLM call is stateless, it only "remembers" what's in its context window. Agents need memory to handle multi-step tasks that span many interactions.
+A single LLM call is stateless, it only “remembers” what's in its context window. Agents need memory to handle multi-step tasks that span many interactions.
 
 ### Types of Agent Memory
 
@@ -336,7 +336,7 @@ A single agent has limits: context window size, expertise breadth, and the tende
 
 | Pattern | Description | Example |
 |---------|-------------|---------|
-| **Hierarchical** | A "manager" agent delegates subtasks to "worker" agents | CEO agent assigns research to analyst agent, writing to editor agent |
+| **Hierarchical** | A “manager” agent delegates subtasks to “worker” agents | CEO agent assigns research to analyst agent, writing to editor agent |
 | **Debate** | Multiple agents argue different positions, a judge synthesizes | Red team vs. blue team for security analysis |
 | **Pipeline** | Agents process sequentially, each refining the previous output | Researcher → Writer → Editor → Fact-checker |
 | **Swarm** | Agents work in parallel on independent subtasks, results merged | Multiple search agents covering different aspects of a question |
@@ -397,7 +397,7 @@ An agent that can act on the world (send emails, execute code, make purchases) m
 
 | Risk | Example | Mitigation |
 |------|---------|------------|
-| **Goal misinterpretation** | "Clean up my inbox" → agent deletes all emails | Confirmation steps for destructive actions |
+| **Goal misinterpretation** | “Clean up my inbox” → agent deletes all emails | Confirmation steps for destructive actions |
 | **Reward hacking** | Agent finds shortcuts that satisfy metrics but not intent | Human-in-the-loop checkpoints |
 | **Unbounded iteration** | Agent enters infinite loop trying to achieve impossible goal | Maximum iteration limits |
 | **Tool misuse** | Agent uses code execution to access unauthorized resources | Sandboxing, permission systems |
@@ -441,7 +441,7 @@ Agents are a natural generalization of Websearch and RAG-Systems:
 | Web Search | Agent |
 |------------|-------|
 | One tool: `web_search()` | Many tools: search, code, email, APIs, ... |
-| One reasoning step: "Should I search?" | Many reasoning steps: plan, execute, reflect |
+| One reasoning step: “Should I search?” | Many reasoning steps: plan, execute, reflect |
 | One iteration: search → answer | Many iterations: search → analyze → search again → synthesize |
 | Fixed pipeline | Dynamic, goal-directed behavior |
 | Stateless | Stateful (memory across steps) |

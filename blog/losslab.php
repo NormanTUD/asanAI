@@ -13,7 +13,7 @@ topics: training, math-i, programming
 <div class="md">
 In the previous section, we saw how AI represents data as **Tensors**. But how does a model actually learn to give the right answer? It uses a **Loss Function**.
 
-A Loss Function is a mathematical way of measuring *"how wrong"* the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number *as small as possible*.
+A Loss Function is a mathematical way of measuring *“how wrong”* the AI is. If the AI's guess is far from the truth, the Loss is a high number. If the guess is perfect, the Loss is zero. Training an AI is essentially the process of turning knobs (parameters) to make this Loss number *as small as possible*.
 
 ## Regression: Mean Squared Error (MSE)
 
@@ -25,7 +25,7 @@ $$\text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 
 (Textbooks and the Backpropagation chapter sometimes scale the sum by an extra factor $\frac{1}{2}$ for algebraic convenience; the location of the minimum is unchanged.)
 
-In the plot below, the loss creates a "bowl" shape. To train the AI, we calculate the **slope** (the derivative). If the slope is negative, the AI needs to increase its guess. If the slope is positive, it needs to decrease it.
+In the plot below, the loss creates a “bowl” shape. To train the AI, we calculate the **slope** (the derivative). If the slope is negative, the AI needs to increase its guess. If the slope is positive, it needs to decrease it.
 </div>
 
 <div style="display: flex; gap: 20px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
@@ -44,13 +44,13 @@ In the plot below, the loss creates a "bowl" shape. To train the AI, we calculat
 <div class="md">
 ## Classification: Cross-Entropy
 
-When an AI has to choose between categories (like "Cat" vs "Dog"), it doesn't just pick one; it outputs a **probability** for each. This is represented as a vector where all numbers add up to $1.0$ ($100\%$).
+When an AI has to choose between categories (like “Cat” vs “Dog”), it doesn't just pick one; it outputs a **probability** for each. This is represented as a vector where all numbers add up to $1.0$ ($100\%$).
 
 **Cross-Entropy Loss** looks at the probability the AI gave to the *correct* answer. 
 * If the AI is $99\%$ sure it's a cat (and it is), the loss is almost $0$.
 * If the AI is only $1\%$ sure it's a cat, the loss becomes **extremely high**.
 
-The math uses a *logarithm* ($-\ln(P)$), which creates a steep "wall" as confidence approaches zero. This forces the AI to be very "uncomfortable" when it is wrong.
+The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as confidence approaches zero. This forces the AI to be very “uncomfortable” when it is wrong.
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
@@ -90,18 +90,18 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep "wall" as confide
 
 \citealternativetitle{goodhartslaw} (p. 116) states that every measure which becomes a target becomes a bad measure. That is, 
 when we focus solely on optimizing a single metric, we often lose sight of the actual goal. 
-In the context of Language Models, this manifests as the gap between "Loss" and "True Intelligence."
+In the context of Language Models, this manifests as the gap between “Loss” and “True Intelligence.”
 
 While a model is trained to minimize **Loss** (predicting the next token), a low loss doesn't 
-inherently mean the model is "smart" or "truthful." If we only optimize for mathematical 
-probability, we risk creating a "Stochastic Parrot", a model that is statistically perfect 
-but logically hollow, or worse, one that learns to "game" the benchmarks.
+inherently mean the model is “smart” or “truthful.” If we only optimize for mathematical 
+probability, we risk creating a “Stochastic Parrot”, a model that is statistically perfect 
+but logically hollow, or worse, one that learns to “game” the benchmarks.
 
 To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks:
 * **Perplexity:** Measures how well the model predicts a sample, but it can be misleadingly low 
 if the model just memorizes data.
 * **Benchmarks (MMLU, HumanEval):** Tests for reasoning and coding, though even these can
-fall victim to Goodhart's Law if the test data "leaks" into the training set.
+fall victim to Goodhart's Law if the test data “leaks” into the training set.
 * **Human Evaluation:** Ultimately, the best version of an Language Models is determined by whether
 it is actually helpful, safe, and accurate in real-world use.
 </div>
@@ -116,7 +116,7 @@ In the study \citetitle{hoffmann2022chinchilla}, the researchers estimated optim
 $$L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}$$
 
 In this equation:
-* $E$: Represents the "irreducible loss" (the theoretical minimum error that remains even with infinite data and parameters).
+* $E$: Represents the “irreducible loss” (the theoretical minimum error that remains even with infinite data and parameters).
 * $A, B, \alpha, \beta$: Are constants determined through empirical data fitting on over 400 models.
 
 By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}.
@@ -125,7 +125,7 @@ By minimizing this function under the constraint of a fixed compute budget $C \a
 <div class="md">
 ## The Deepest Insight: Cross-Entropy Is Shannon Entropy
 
-The connection between cross-entropy loss and information theory is not a superficial analogy — it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
+The connection between cross-entropy loss and information theory is not a superficial analogy  it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
 
 Shannon's cross-entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
 
@@ -137,11 +137,11 @@ Cross-entropy loss for a classification task is:
 
 $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} y_{i,c} \log \hat{y}_{i,c}$$
 
-where $y$ is the one-hot true label (the "true distribution" for a single example) and $\hat{y}$ is the predicted probability. This is **exactly** the per-example Shannon cross-entropy.
+where $y$ is the one-hot true label (the “true distribution” for a single example) and $\hat{y}$ is the predicted probability. This is **exactly** the per-example Shannon cross-entropy.
 
-The "aha-moment": training an LLM is equivalent to building the world's best text compression algorithm. Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs. Reducing the loss means finding a shorter description of the data. This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more "intelligent" behavior.
+The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm. Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs. Reducing the loss means finding a shorter description of the data. This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.
 
-Intelligence, from this perspective, is not a separate objective — it is a side effect of optimal compression. The connection to Hutter's prize (\cite{hutter2006universal}) and the "intelligence is compression" thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
+Intelligence, from this perspective, is not a separate objective  it is a side effect of optimal compression. The connection to Hutter's prize (\cite{hutter2006universal}) and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
 
 ### Why Cross-Entropy Pairs Perfectly with Softmax
 
@@ -149,7 +149,7 @@ The gradient of cross-entropy with softmax is beautifully simple:
 
 $$\frac{\partial \mathcal{L}}{\partial z_i} = \hat{y}_i - y_i$$
 
-The error signal is just "how wrong were you?" — the difference between prediction and truth. This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).
+The error signal is just “how wrong were you?”  the difference between prediction and truth. This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).
 </div>
 
 

@@ -24,35 +24,35 @@ $$ \begin{pmatrix} y_1 \\ y_2 \end{pmatrix} = \begin{pmatrix} 0.5 & -0.2 & 0.1 \
 But since normal numbers are tensors as well, this holds true. Given $a$ and $b$ are tensors, this is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
 
 In AI terminology, we give these parameters specific names:
-* **Weight ($a$):** This determines the "tilt" of the line. It defines how much the input $x$ influences the output $y$.
+* **Weight ($a$):** This determines the “tilt” of the line. It defines how much the input $x$ influences the output $y$.
 * **Bias ($b$):** This allows the model to shift the line up or down, regardless of the input.
 
 Instead of us moving the sliders to find $a$ and $b$, the computer will search for these values itself.
 
-To help the computer find the right values, we provide a **Dataset** (a set of "correct" pairs):
+To help the computer find the right values, we provide a **Dataset** (a set of “correct” pairs):
 
 * **Input $(x) \rightarrow$ Output $(y)$**
 * $1 \rightarrow 2$
 * $2 \rightarrow 4$
 * $3 \rightarrow 6$
 
-Our goal is for the computer to find a function where $f(1) \approx 2$, $f(2) \approx 4$, and so on. You might notice the "perfect" rule here is $y = 2x + 0$.
+Our goal is for the computer to find a function where $f(1) \approx 2$, $f(2) \approx 4$, and so on. You might notice the “perfect” rule here is $y = 2x + 0$.
 
 When you click **🚀 Start Training**, the computer performs a loop:
 
 1.  **Prediction:** The model takes an input $x$ and calculates a guess using its current $a$ and $b$.
-2.  **Loss Calculation:** The computer calculates the **Loss** (the error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI "you are off by 1".
+2.  **Loss Calculation:** The computer calculates the **Loss** (the error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI “you are off by 1”.
 3.  **Optimization:** The AI uses a math trick called *Gradient Descent* to slightly nudge $a$ and $b$ in the direction that makes the Loss smaller.
 
 Watch it in real time:
 
-* **Loss History:** Watch the red chart. As the AI learns, the "Loss" (error) should drop toward zero.
-* **Linear Regression:** Watch the orange line. It starts at a random position and gradually "tilts" until it passes through the blue data points.
+* **Loss History:** Watch the red chart. As the AI learns, the “Loss” (error) should drop toward zero.
+* **Linear Regression:** Watch the orange line. It starts at a random position and gradually “tilts” until it passes through the blue data points.
 * **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
 
 A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers, where the output of one neuron becomes the input for the next, the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
 
-The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits "regress" toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
+The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits “regress” toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
 </div>
 
 <div class="controls-bar">
@@ -91,7 +91,7 @@ Before a network begins to learn, its internal world is a mathematical void. In 
 
 $$f(x) = ax + b$$
 
-In this "toy" network equation:
+In this “toy” network equation:
 * **$x$**: Represents the input signal (the initial coordinate).
 * **$a$** (Weights): The scaling or rotation factor that determines the trajectory of data through the system.
 * **$b$** (Bias): The translation factor that shifts the position of the output.
@@ -106,9 +106,9 @@ If we were to initialize every weight and bias at the exact same value, such as 
 
 To solve this, we use **Random Initialization**. By scattering the starting values of $a$ and $b$ across a distribution, we ensure that:
 * **Unique Starting Points**: Each path in the network begins at a different location in the coordinate space.
-* **Gradient Variance**: As the network processes data, it can "pull" and "push" these random points into meaningful clusters.
+* **Gradient Variance**: As the network processes data, it can “pull” and “push” these random points into meaningful clusters.
 
-By starting with "noise," we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
+By starting with “noise,” we give the network the mathematical flexibility it needs to reorganize that chaos into a structured map of logical relationships.
 
 ## Python implementation
 Here are two example scripts, the first one using TensorFlow, the second one using PyTorch, that train a one-layer neural network in Python on the 'and' dataset.
@@ -129,59 +129,59 @@ render_gem_tabs($minimalneuroncodetabs, "minimalneuron");
 <div class="md">
 ## Output Layer: The Mirror of the Target
 
-The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your "Labels" (the ground truth).
+The final layer of a neural network is not arbitrary; it is a mathematical mirror of the data you want to predict. Its shape, the number of neurons it contains, must match the dimensionality of your “Labels” (the ground truth).
 
 ### Categorical Data and One-Hot Encoding
-If you are classifying objects (e.g., Cat, Dog, Bird), the computer cannot easily work with text. However, we also cannot simply assign them numbers like $1, 2,$ and $3$, because the math would assume a Dog ($2$) is "twice as much" as a Cat ($1$).
+If you are classifying objects (e.g., Cat, Dog, Bird), the computer cannot easily work with text. However, we also cannot simply assign them numbers like $1, 2,$ and $3$, because the math would assume a Dog ($2$) is “twice as much” as a Cat ($1$).
 
 To solve this, we use **One-Hot Encoding**. Each category becomes its own dimension in a vector:
 * **Cat**: $[1, 0, 0]$
 * **Dog**: $[0, 1, 0]$
 * **Bird**: $[0, 0, 1]$
 
-In this case, your output layer **must have exactly 3 neurons**. To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function. Think of Softmax as a "percentage generator": it squashes the outputs so they all sum up to $1.0$ ($100\%$), allowing the network to say "I am 90% sure this is a Dog". Details are more complicated, but we will come back to them later.
+In this case, your output layer **must have exactly 3 neurons**. To turn the raw numbers from these neurons into something we can understand, we use the **Softmax** activation function. Think of Softmax as a “percentage generator”: it squashes the outputs so they all sum up to $1.0$ ($100\%$), allowing the network to say “I am 90% sure this is a Dog”. Details are more complicated, but we will come back to them later.
 
 ### Spatial and Complex Outputs
-The rule of "matching the data" extends to every domain:
+The rule of “matching the data” extends to every domain:
 * **Binary Classification**: If the answer is just Yes/No (0 or 1), a single neuron with a Sigmoid activation is enough.
 * **Image Generation**: If the model is supposed to output a grayscale image of $28 \times 28$ pixels and is a single channel only (black and white), the output layer must contain $784$ neurons (one for every pixel) or be reshaped to match that specific width and height.
 * **Coordinates**: If you are predicting the $(x, y)$ location of an object, you need exactly $2$ output neurons.
 
-If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the "loop" of learning will break.
+If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the “loop” of learning will break.
 
 **The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your loss function must be probabilistic (i.e., softmax).
 
 ## The Statistical Nature of Learning
 
-We often think of Neural Networks as "learning" in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
+We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
 
 ### Data is not just Numbers; it is a Distribution
-In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a "Sample" and a "Population." When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.
+In the **Normal Distribution** part of the **Statistics** section, we learned about the difference between a “Sample” and a “Population.” When we train the neuron above on points like $(1, 2)$ or $(2, 4)$, we are not teaching it just those specific numbers. We are asking it to approximate the **Underlying Distribution** that generated those numbers.
 
 This relies on the **Law of Large Numbers**:
 $$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
 
-Or, in plain English: **"As the number of times you repeat an experiment ($n$) grows towards real number of cases (which may be $\infty$), the average of your actual results ($\bar{X}_n$) will eventually settle down and equal the true theoretical average ($\mu$)."**
+Or, in plain English: **“As the number of times you repeat an experiment ($n$) grows towards real number of cases (which may be $\infty$), the average of your actual results ($\bar{X}_n$) will eventually settle down and equal the true theoretical average ($\mu$).”**
 
 In simpler terms:
-* **The Left Side ($\bar{X}_n$):** This is the "Sample Average." It represents what you actually observed in your data (e.g., the average height of 100 people you measured).
-* **The Arrow ($\to$):** This represents "convergence." It means "gets closer and closer to".
-* **The Right Side ($\mu$):** This is the "Population Mean." It is the "true" hidden reality (e.g., the average height of every human on Earth).
+* **The Left Side ($\bar{X}_n$):** This is the “Sample Average.” It represents what you actually observed in your data (e.g., the average height of 100 people you measured).
+* **The Arrow ($\to$):** This represents “convergence.” It means “gets closer and closer to”.
+* **The Right Side ($\mu$):** This is the “Population Mean.” It is the “true” hidden reality (e.g., the average height of every human on Earth).
 
 **Why it matters for your Neural Network:**
-This law is the reason why more data usually leads to a better model. With only a few data points, your "average" (the weights the network learns) might be skewed by luck or noise. But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the "true" underlying pattern ($\mu$) of the data.
+This law is the reason why more data usually leads to a better model. With only a few data points, your “average” (the weights the network learns) might be skewed by luck or noise. But as you feed it thousands of examples, the Law of Large Numbers ensures that the noise cancels itself out, allowing the network to find the “true” underlying pattern ($\mu$) of the data.
 
-If our training data is a "representative sample" (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the "True" relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
+If our training data is a “representative sample” (meaning it follows the same statistical distribution as the real world example you're trying to model), the weights of the network will converge to the “True” relationship. If the data is biased (a bad sample), the model learns a skewed reality. This is why knowing your data's distribution is critical. You cannot fit a straight line to a circle; you must choose a model architecture that matches the geometry of your data's distribution.
 
 ### Initialization: Controlled Chaos
-We previously mentioned initializing weights "randomly." But "random" is a dangerous word in engineering. If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN). If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.
+We previously mentioned initializing weights “randomly.” But “random” is a dangerous word in engineering. If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN). If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.
 
 To solve this, we use the **Normal Distribution** ($\mathcal{N}$) we saw in the **Statistics** part.
-Modern networks use "Xavier" or "He" initialization, which are just fancy ways of saying: *pick random numbers from a Gaussian Bell Curve where the width ($\sigma$) is carefully calculated based on the size of the network.*
+Modern networks use “Xavier” or “He” initialization, which are just fancy ways of saying: *pick random numbers from a Gaussian Bell Curve where the width ($\sigma$) is carefully calculated based on the size of the network.*
 
 $$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_\text{inputs}}}\right) $$
 
-This ensures that the "energy" (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
+This ensures that the “energy” (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
 
 ## Matrices as Parallel Processing
 
@@ -191,9 +191,9 @@ Instead of computing one neuron at a time, we pack all inputs into a vector $\ma
 
 $$\mathbf{y} = W\mathbf{x} + \mathbf{b}$$
 
-This single line represents thousands of individual multiplications and additions, all happening in parallel. Every row of $W$ is a separate "neuron" with its own set of weights. Every column of $W$ receives the same input $\mathbf{x}$. The matrix multiplication $W\mathbf{x}$ computes the dot product of every row with $\mathbf{x}$ simultaneously.
+This single line represents thousands of individual multiplications and additions, all happening in parallel. Every row of $W$ is a separate “neuron” with its own set of weights. Every column of $W$ receives the same input $\mathbf{x}$. The matrix multiplication $W\mathbf{x}$ computes the dot product of every row with $\mathbf{x}$ simultaneously.
 
-This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle. A modern GPU can execute a $4096 \times 4096$ matrix multiply — over 16 million individual multiplications — in a single operation. Without this parallelization, training a model like GPT-4 would be computationally impossible.
+This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle. A modern GPU can execute a $4096 \times 4096$ matrix multiply  over 16 million individual multiplications  in a single operation. Without this parallelization, training a model like GPT-4 would be computationally impossible.
 
 So when you see $\mathbf{h} = \text{Attention}(Q, K, V)$, remember that every letter in that equation is a **matrix**, and every operation is a **batch of thousands of parallel arithmetic operations**, each one as simple as the single neuron $y = ax + b$.
 </div>

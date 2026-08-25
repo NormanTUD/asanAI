@@ -11,11 +11,11 @@ topics: language, architecture, programming
 -->
 
 <div class="md">
-Every time you send a message to an LLM, the model doesn't "remember" your previous conversations from some internal database. It doesn't have a persistent memory like a human brain. Instead, it reads **everything**, the system prompt, the conversation history, any retrieved documents, as a single, flat sequence of tokens. This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.
+Every time you send a message to an LLM, the model doesn't “remember” your previous conversations from some internal database. It doesn't have a persistent memory like a human brain. Instead, it reads **everything**, the system prompt, the conversation history, any retrieved documents, as a single, flat sequence of tokens. This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.
 
 <p>$$ \text{Context Window} = [\underbrace{\text{System Prompt}}_{\sim 500 \text{ tokens}} \;|\; \underbrace{\text{Conversation History}}_{\text{variable}} \;|\; \underbrace{\text{Retrieved Docs (RAG)}}_{\text{variable}} \;|\; \underbrace{\text{Current Query}}_{\text{variable}}] $$</p>
 
-**Key insight:** The context window is not "memory" in the human sense. It is a **fixed-size input buffer**. Once it's full, something must be dropped. Once the conversation ends, everything is gone unless explicitly saved externally.
+**Key insight:** The context window is not “memory” in the human sense. It is a **fixed-size input buffer**. Once it's full, something must be dropped. Once the conversation ends, everything is gone unless explicitly saved externally.
 </div>
 
 <div id="cwlab-window-diagram"></div>
@@ -23,7 +23,7 @@ Every time you send a message to an LLM, the model doesn't "remember" your previ
 <div class="md">
 ## What Is a Context Window?
 
-A context window (also called "context length") is the **maximum number of tokens** the model can process in a single forward pass. It includes *everything*: the system prompt, all previous messages in the conversation, any injected documents, and the new query.
+A context window (also called “context length”) is the **maximum number of tokens** the model can process in a single forward pass. It includes *everything*: the system prompt, all previous messages in the conversation, any injected documents, and the new query.
 
 ### Context Window Sizes (2025-2026)
 
@@ -47,7 +47,7 @@ The growth has been exponential: from 1K tokens in 2019 to 1M+ tokens in 2025, a
 
 A rough conversion:
 - **English:** 1 token ≈ 0.75 words (or ~4 characters)
-- **Code:** 1 token ≈ 0.4 words (more tokens per "word" due to syntax)
+- **Code:** 1 token ≈ 0.4 words (more tokens per “word” due to syntax)
 - **Non-Latin scripts:** Often more tokens per word
 
 $$
@@ -122,7 +122,7 @@ $$
 
 ### 3. Sliding Window Attention
 
-Instead of attending to *all* previous tokens, each token only attends to the most recent $w$ tokens (the "window"):
+Instead of attending to *all* previous tokens, each token only attends to the most recent $w$ tokens (the “window”):
 
 <p>$$ \text{Attention}_i = \text{softmax}\left(\frac{Q_i \cdot K_{[i-w:i]}^T}{\sqrt{d_k}}\right) V_{[i-w:i]} $$</p>
 
@@ -152,7 +152,7 @@ For extremely long sequences (1M+ tokens), the KV cache doesn't fit on a single 
 
 This allows context windows to scale with the number of GPUs, limited only by hardware budget.
 
-## The "Lost in the Middle" Problem
+## The “Lost in the Middle” Problem
 
 Even if a model *can* process 200K tokens, does it actually *use* all of them equally?
 
@@ -164,7 +164,7 @@ Research consistently shows that LLMs exhibit a **U-shaped attention pattern**: 
 <div class="md">
 ### Why does this happen?
 
-1. **Positional encoding bias:** Early tokens have well-learned positional embeddings; middle tokens are in a "flat" region
+1. **Positional encoding bias:** Early tokens have well-learned positional embeddings; middle tokens are in a “flat” region
 2. **Recency bias:** The most recent tokens are closest in the KV cache and receive stronger attention
 3. **Training distribution:** During pre-training, the most important information (instructions, key facts) tends to appear at the beginning or end of documents
 
@@ -185,18 +185,18 @@ This is one of the most important practical decisions in building LLM applicatio
 
 <div id="cwlab-compare-grid">
     <div class="cwlab-compare-card cwlab-card-blue">
-        <span class="cwlab-tag cwlab-tag-blue">Long Context ("Stuff it all in")</span>
+        <span class="cwlab-tag cwlab-tag-blue">Long Context (“Stuff it all in”)</span>
         <ul>
             <li>Put all documents directly into the prompt</li>
             <li>Simple, no retrieval infrastructure needed</li>
             <li>Model sees everything, can find unexpected connections</li>
             <li><strong>Cost:</strong> Pay for all tokens, even irrelevant ones</li>
             <li><strong>Limit:</strong> Still bounded by max context length</li>
-            <li><strong>Risk:</strong> "Lost in the middle", may miss buried facts</li>
+            <li><strong>Risk:</strong> “Lost in the middle”, may miss buried facts</li>
         </ul>
     </div>
     <div class="cwlab-compare-card cwlab-card-green">
-        <span class="cwlab-tag cwlab-tag-green">RAG ("Retrieve only what's relevant")</span>
+        <span class="cwlab-tag cwlab-tag-green">RAG (“Retrieve only what's relevant”)</span>
         <ul>
             <li>Search millions of documents, inject only top-K chunks</li>
             <li>Scales to unlimited corpus size</li>
@@ -229,9 +229,9 @@ In practice, the most effective systems combine both:
 
 RAG handles the *discovery* problem (finding needles in haystacks), while long context handles the *reasoning* problem (synthesizing information across multiple retrieved passages).
 
-## How LLMs "Remember" Across Conversations
+## How LLMs “Remember” Across Conversations
 
-LLMs have **no built-in persistent memory**. Each API call is stateless, the model has no idea what you asked it yesterday. So how do systems like ChatGPT seem to "remember" you?
+LLMs have **no built-in persistent memory**. Each API call is stateless, the model has no idea what you asked it yesterday. So how do systems like ChatGPT seem to “remember” you?
 
 ### Strategy 1: Conversation History in Context
 
@@ -270,7 +270,7 @@ For persistent memory across sessions, systems store information externally:
 
 | System | How it works |
 |--------|-------------|
-| **ChatGPT Memory** | Extracts key facts ("User prefers Python") → stores in a database → injects into system prompt |
+| **ChatGPT Memory** | Extracts key facts (“User prefers Python”) → stores in a database → injects into system prompt |
 | **Vector memory** | Embeds past conversations → stores in vector DB → retrieves relevant memories when similar topics arise |
 | **File-based memory** | Writes structured notes to files (CLAUDE.md, memory.json) → reads them at session start |
 | **Graph memory** | Stores entities and relationships in a knowledge graph → queries for relevant connections |
@@ -280,22 +280,22 @@ For persistent memory across sessions, systems store information externally:
 
 # 1. After each conversation, a small model extracts key facts:
 extracted = extract_facts(conversation)
-# → ["User is a Python developer", "User prefers concise answers"]
+# → [“User is a Python developer”, “User prefers concise answers”]
 
 # 2. Facts are stored in a database linked to the user:
 memory_db.store(user_id, extracted)
 
 # 3. At the start of each new conversation, memories are injected:
-system_prompt = f"""You are a helpful assistant.
+system_prompt = f“”“You are a helpful assistant.
 
 User memories:
 - User is a Python developer
 - User prefers concise answers
 - User is working on a RAG system for legal documents
-"""
+“”“
 
 # The LLM sees these memories as part of its context, it has no
-# "internal" awareness that these are from previous sessions.</code></pre>
+# “internal” awareness that these are from previous sessions.</code></pre>
 
 <div class="md">
 The key insight: **memory is always external**. The LLM itself is stateless, it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation. In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored. Four layers working together create the illusion that ChatGPT knows you personally.
@@ -348,18 +348,18 @@ This is why **longer conversations cost more**, both in money (API pricing is pe
 
 ## Practical Implications: What This Means for You
 
-### 1. Why conversations "forget" things
+### 1. Why conversations “forget” things
 
 If you've had a long conversation and the model seems to forget something you said earlier, it's likely because:
 - The conversation exceeded the context window and old messages were truncated
-- The information is in the "middle" of a long context (lost-in-the-middle effect)
+- The information is in the “middle” of a long context (lost-in-the-middle effect)
 - The system used compaction and the detail was lost in summarization
 
-### 2. Why "starting a new chat" sometimes helps
+### 2. Why “starting a new chat” sometimes helps
 
 A fresh conversation has an empty context window. The model's full attention capacity is available for your new question, with no interference from irrelevant prior messages.
 
-### 3. Why RAG beats "just paste everything"
+### 3. Why RAG beats “just paste everything”
 
 For a 10,000-page knowledge base:
 - **Paste everything:** Impossible (exceeds any context window)

@@ -44,7 +44,7 @@ https://arxiv.org/html/2505.11611v1
 		<span id="heads-val" style="font-weight: bold; color: #3b82f6;">3</span>
 		<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 	    <b>Dependency:</b> $d_{\text{model}}$ must be a multiple of $h$.<br>
-            <b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel "viewpoints." If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
+            <b>Reason:</b> Multi-head attention splits the main vector into $h$ parallel “viewpoints.” If $d_{\text{model}}$ is 4 and $h$ is 2, each head looks at 2 dimensions.
         </p>
 		<input type="range" id="transformer-heads" min="1" max="8" value="3"
 			style="width: 100%;" oninput="syncTransformerSettings('heads')">
@@ -62,7 +62,7 @@ https://arxiv.org/html/2505.11611v1
 	    <label style="font-weight: bold;">Context Size: </label>
 	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">128</span>
 	    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-		<b>Effect:</b> Sets the maximum number of tokens the model can "see" at once during training and inference.<br>
+		<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br>
 		<b>Reason:</b> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$ (this can be mitigated through the <i>KV-Cache</i>).
 	    </p>
 	    <input type="range" id="transformer-context-size" min="2" max="256" step="1" value="128"
@@ -122,11 +122,11 @@ https://arxiv.org/html/2505.11611v1
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
                     <input type="radio" name="train-optimizer-choice" value="sgd">
-                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent — gradient descent performed on small random batches of data rather than the full dataset.</span></span>
+                    <span class="glossary-term">SGD<span class="glossary-tooltip">Stochastic Gradient Descent  gradient descent performed on small random batches of data rather than the full dataset.</span></span>
                 </label>
                 <label style="display: inline-flex; align-items: center; gap: 4px; font-weight: normal; cursor: pointer;">
                     <input type="radio" name="train-optimizer-choice" value="rmsprop">
-                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation — adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
+                    <span class="glossary-term">RMSProp<span class="glossary-tooltip">Root Mean Square Propagation  adapts the learning rate per parameter using a moving average of recent squared gradients, which keeps updates stable even when gradients vary wildly in magnitude.</span></span>
                 </label>
             </div>
         </div>
@@ -171,8 +171,8 @@ The journey of a sentence begins with **Tokenization**, which decomposes raw tex
 
 Once tokenized, these units are converted into vectors. It is crucial to distinguish between the **Embedding Space** and the **Feature Space**:
 
-* **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for "bank" is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
-* **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it "migrates" based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
+* **Embedding Space (Static):** This is the initial lookup table where each token is assigned a fixed vector. At this stage, the vector for “bank” is always the same, regardless of context. This is where the **Hidden State** $h_0$ starts at the beginning of the process.
+* **Feature Space (Dynamic):** As vectors pass through the layers, they enter the Feature Space. Here, the representation of a word is no longer fixed; it “migrates” based on the surrounding tokens. The hidden states $h_0, h_1, \dots, h_n$ represent the coordinates of the word as it is refined by the model's internal logic. The **Feature Space** is highly abstract, and not humanly interpretable anymore.
 </div>
 
 <div style="background: var(--mn-bg-subtle, #f8fafc); padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #e2e8f0;">
@@ -198,7 +198,7 @@ Once tokenized, these units are converted into vectors. It is crucial to disting
 <div class="md">
 ## Positional Encoding
 
-To address the lack of sequence order in transformers, a "position signal" is added to each token's embedding, forming the initial hidden state $h_{0}$:
+To address the lack of sequence order in transformers, a “position signal” is added to each token's embedding, forming the initial hidden state $h_{0}$:
 </div>
 
 $$h_{0} = \underbrace{\text{Embedding}(\text{Token})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}} + \underbrace{\text{PositionalEncoding}(\text{pos})}_{\in \mathbb{R}^{\text{Batch} \times \text{Length} \times d_{\text{model}}}}$$
@@ -212,7 +212,7 @@ $$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}
 
 $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
-These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The Feed-Forward Network (FFN) learns to interpret these fixed "geometric fingerprints" by adjusting its weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
+These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The Feed-Forward Network (FFN) learns to interpret these fixed “geometric fingerprints” by adjusting its weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
 
 The key to how the FFN learns from positional encodings lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity allows the FFN to infer relative positions by learning simple transformations that map positional relationships to meaningful patterns. Over multiple layers, the FFN entangles positional and semantic information, enabling the model to reason about sequence structure and relationships effectively. This process ensures that the model can generalize to unseen sequences and maintain positional understanding even when tokens are shifted or reordered.
 
@@ -230,18 +230,18 @@ In this example, we're using a scaling factor of <span id="posEmbedScaleFactor">
 <div id="transformer-pe-integration-results" style="margin-top: 20px;"></div>
 
 <div class="optional md" data-headline="Does Positional Encoding 'break' the Word's Meaning?">
-When you add "random" values to a vector, you change its location in the multidimensional embedding space. However, this doesn't "break" the word:
+When you add “random” values to a vector, you change its location in the multidimensional embedding space. However, this doesn't “break” the word:
 
-- **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word "King" to a new location, but it remains in a "neighborhood" that the model still recognizes as "King."
+- **High-Dimensional Space:** In real models, the embedding space is massive. Adding a positional vector moves the word “King” to a new location, but it remains in a “neighborhood” that the model still recognizes as “King.”
 - **Is it ever removed again?:** It is not explicitly removed: Positional information is added to token embeddings at the input and is subsequently transformed and mixed through the network's layers. Rather than being preserved as a separable signal, positional and semantic information become increasingly entangled through learned linear projections and non-linear transformations, allowing the model to jointly reason about content and position.
-- **The Risk of Overlapping**: During training, the model learns to set the "scale" of the embeddings much larger than the "scale" of the positional encodings. This ensures the position "nudges" the meaning without overwriting it.
+- **The Risk of Overlapping**: During training, the model learns to set the “scale” of the embeddings much larger than the “scale” of the positional encodings. This ensures the position “nudges” the meaning without overwriting it.
 </div>
 
 <div class="optional md" data-headline="The Decoder-Only Architecture">
 Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
 1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (see \citetitle{xiong2020}) that improves gradient flow and training stability through deep stacks.
-2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from "cheating" by looking at future positions.
+2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from “cheating” by looking at future positions.
 3. **A Feed-Forward Network (FFN)** with GELU activation and its own Pre-LN and residual connection.
 
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.
@@ -254,16 +254,16 @@ This is the architecture you are interacting with in every visualization here. W
 Everything is in flux.
 </div>
 
-In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a shared "notebook" where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} like in **ResNet**, $x_{\text{new}} = x + \text{layer}(x)$, which serve two purposes:
+In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a shared “notebook” where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} like in **ResNet**, $x_{\text{new}} = x + \text{layer}(x)$, which serve two purposes:
 
 1. It allows very deep networks without the **Vanishing Gradient**-problem.
-2. It serves as a shared notebook where, at each layer, the "experts" at that layer write down their results in the original stream, so it becomes a \cite[communication bus]{elhage2021mathematical} for all **Attention Heads** and **Feed-Forward-Networks**, where they perform "collaborative editing" by adding insights rather than overwriting the signal.
+2. It serves as a shared notebook where, at each layer, the “experts” at that layer write down their results in the original stream, so it becomes a \cite[communication bus]{elhage2021mathematical} for all **Attention Heads** and **Feed-Forward-Networks**, where they perform “collaborative editing” by adding insights rather than overwriting the signal.
 
-This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained "river width" acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
+This architecture is governed by the \cite[Information Bottleneck principle]{tishby2000informationbottleneck}; because the dimensionality $d_{\text{model}}$ is fixed, the stream forces a transition from surface-level features to task-relevant abstractions as depth increases. Ultimately, this constrained “river width” acts as an implicit regularizer, necessitating that token-level noise distill into conceptual structure to survive the journey through the layers.
 
 ## Masked Self-Attention
 
-To ensure the model learns to generate text autoregressively, we prevent it from "looking into the future" during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
+To ensure the model learns to generate text autoregressively, we prevent it from “looking into the future” during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
 
 We enforce this constraint by adding a **Causal Mask** ($M$) to the attention scores before the Softmax operation. This lower-triangular matrix is defined as:
 
@@ -275,9 +275,9 @@ $$M = \begin{pmatrix} 0 & -\infty & -\infty & -\infty \\ 0 & 0 & -\infty & -\inf
 The modified attention calculation then is:
 $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} + M \right) V$$
 
-Since $e^{-\infty}$ approaches $0$, the Softmax function nullifies the weights for all "future" positions ($i < j$), effectively neutralizing those connections.
+Since $e^{-\infty}$ approaches $0$, the Softmax function nullifies the weights for all “future” positions ($i < j$), effectively neutralizing those connections.
 
-The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, "impoverished" tokens. This **information funnel** makes the last token uniquely privileged, as it is the only position that has "seen" the entire context, which is why its hidden state is used for next-token prediction.
+The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, “impoverished” tokens. This **information funnel** makes the last token uniquely privileged, as it is the only position that has “seen” the entire context, which is why its hidden state is used for next-token prediction.
 
 This is also important for **prompt engineering**:
 * **Position matters:** Token position acts as a form of informational privilege.
@@ -290,7 +290,7 @@ The job of a Single Attention Head is to find some form of relation between all 
 $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}\right) \cdot V$$
 
 #### Concatenation Definition
-Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different "heads." Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.
+Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different “heads.” Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
 For $h$ heads, where each head has dimension $d_k$ (for keys and queries) and $d_v$ (for values):
 
@@ -306,7 +306,7 @@ The output width is simply the sum of the input widths.
 
 #### Multi-Head Attention: Lateral Parallelism
 
-After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$ — the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
+After the heads process the sequence, they are **concatenated** and multiplied by a final output matrix $W^O$. The intermediate state after the attention sub-layer (but before the FFN) is denoted $z_0$  the recurrence below uses $z_n$ for the same intermediate state at layer $n$, while $h_{n+1}$ denotes the *block-output* state after both attention and FFN:
 </div>
 
 $$\text{MultiHead}(h_0) = \text{Concat}(\text{head}_1, \dots, \text{head}_h) \cdot W^O$$
@@ -316,7 +316,7 @@ $$z_{0} = h_{0} + \text{MultiHead}(\text{LayerNorm}(h_{0}))$$
 This Layer Normalization ensures that the values don't 'explode' and get too large, since they are, after being normalized, always in around 0 with a variance of 1. Without it, the values might get bigger and bigger with many layers.
 
 * $B = \text{Batch Size}$ (The number of independent sequences processed in a single forward pass)
-* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section — context disambiguates.)
+* $T = \text{Sequence Length}$ (The number of tokens/words in each sequence; **note**: $T$ is reused as the *temperature* symbol in the Sampling section  context disambiguates.)
 * $d_k = \text{Key/Query Head Dimension}$ (dimensionality of the projected keys and queries in each head; usually $d_\text{model} / h$)
 * $d_v = \text{Value Head Dimension}$ (dimensionality of the projected values in each head; in the original Transformer $d_v = d_k$, but the two can differ in general)
 
@@ -334,7 +334,7 @@ In this stage, it is already abstracted away from the concrete Embedding Space (
 </div>
 
 <div class="optional md" data-headline="Gradient Clipping: The Immune System of Training">
-Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode. A single pathological training example can produce a gradient so large that it destroys all learned weights in one step — the **exploding gradient** problem.
+Layer Normalization keeps activations stable, but during backpropagation, gradients can still explode. A single pathological training example can produce a gradient so large that it destroys all learned weights in one step  the **exploding gradient** problem.
 
 Gradient clipping is the complementary defense: it caps the magnitude of gradients so that no single update can change the model by more than a fixed amount. Mathematically, if the gradient vector $\mathbf{g}$ has elements larger than a threshold $\tau$, each element is rescaled:
 
@@ -342,7 +342,7 @@ $$g_i' = \begin{cases} g_i & \text{if } |g_i| \leq \tau \\ \tau \cdot \text{sign
 
 In this implementation, gradients are clipped to the range $[-1, 1]$. This is the numerical equivalent of an immune system: the body allows gradual adaptation (learning) but violently rejects sudden massive changes. Without clipping, one bad sentence in the training data could corrupt the entire model. With it, the damage is bounded.
 
-However, like an immune system, it is imperfect — it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
+However, like an immune system, it is imperfect  it can also suppress legitimate large updates that the model actually needs, slowing learning on genuinely novel patterns.
 </div>
 
 <div class="optional md" data-headline="Why Gradients Vanish or Explode: The Chain Rule">
@@ -350,17 +350,17 @@ The root cause of both vanishing and exploding gradients is the **chain rule** o
 
 $$\frac{\partial \mathcal{L}}{\partial W_l} = \frac{\partial \mathcal{L}}{\partial h_L} \cdot \prod_{k=l}^{L-1} \frac{\partial h_{k+1}}{\partial h_k}$$
 
-Each term $\frac{\partial h_{k+1}}{\partial h_k}$ contains the weight matrix $W_k$. If the eigenvalues (spectral radius) of these weight matrices are consistently less than 1, the product shrinks exponentially with depth, causing the gradient to **vanish** — early layers receive near-zero updates and stop learning. If the eigenvalues are greater than 1, the product grows exponentially, causing the gradient to **explode** — early layers receive destructive updates.
+Each term $\frac{\partial h_{k+1}}{\partial h_k}$ contains the weight matrix $W_k$. If the eigenvalues (spectral radius) of these weight matrices are consistently less than 1, the product shrinks exponentially with depth, causing the gradient to **vanish**  early layers receive near-zero updates and stop learning. If the eigenvalues are greater than 1, the product grows exponentially, causing the gradient to **explode**  early layers receive destructive updates.
 
 This is why simple deep networks without residual connections and normalization are so hard to train: the product of 100 matrices, each with spectral radius 0.9, decays as $0.9^{100} \approx 0.00003$, effectively killing learning in the first layers. The residual connection solves this by providing an additive identity path $x_{l+1} = x_l + F(x_l)$, which ensures that the gradient can flow backward through the skip connection without passing through any weight matrices:
 
 $$\frac{\partial x_{l+1}}{\partial x_l} = I + \frac{\partial F}{\partial x_l}$$
 
-The identity term $I$ ensures that the gradient has a "highway" that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth.
+The identity term $I$ ensures that the gradient has a “highway” that bypasses the multiplicative chain, preventing both vanishing and explosion regardless of depth.
 </div>
 
 <div class="optional md" data-headline="What the heads actually react to">
-In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most "important" heads in encoder models often perform three specific, interpretable functions:
+In the paper \citealternativetitle{analyzingmultiheads}, the study identified that the most “important” heads in encoder models often perform three specific, interpretable functions:
 
 * **Positional Heads**: These heads attend to adjacent tokens, usually the previous or the next token in the sequence. They are essential for capturing the local structural order of the sentence.
 * **Syntactic Heads**: These heads align with specific syntactic dependencies. They show a high success rate in identifying grammatical relationships, such as the relation between a verb and its direct object.
@@ -368,33 +368,33 @@ In the paper \citealternativetitle{analyzingmultiheads}, the study identified th
 
 However, research into larger Decoder-only models from \cite[Elhage et al., 2021]{elhage2021mathematical} and \cite[Olsson et al., 2022]{incontextlearninghead} and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:
 
-* **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they "induce" that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
-* **Successor Heads**: Identified as universal circuits across various architectures \cite[Gould et al., 2024]{successorheads}, these heads perform logical incrementation. They map tokens to their ordinal successors, such as "Monday" to "Tuesday", "January" to "February", or "1" to "2".
-* **Name Mover Heads**: Observed in tasks like Indirect Object Identification by \cite[Wang et al., 2022]{interpretabilityinwild}, these heads extract specific entities (like names) from the earlier context and "move" them to the final token position to ensure logical consistency in the output.
+* **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they “induce” that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
+* **Successor Heads**: Identified as universal circuits across various architectures \cite[Gould et al., 2024]{successorheads}, these heads perform logical incrementation. They map tokens to their ordinal successors, such as “Monday” to “Tuesday”, “January” to “February”, or “1” to “2”.
+* **Name Mover Heads**: Observed in tasks like Indirect Object Identification by \cite[Wang et al., 2022]{interpretabilityinwild}, these heads extract specific entities (like names) from the earlier context and “move” them to the final token position to ensure logical consistency in the output.
 * **Negative / Copy Suppression Heads**: These heads, identified by \cite[McDougall et al., 2023]{copysuppression}, actively suppress tokens that are over-predicted by other circuits. They act as a corrective mechanism to prevent the model from repeating itself or making common probabilistic errors.
-* **Safety / Refusal Heads**: Recent research by \cite[Zhou et al.]{safetyheads} suggests that specific heads act as "gatekeepers" for safety alignment. When these heads are ablated, models may lose their ability to refuse harmful prompts, indicating they are key feature extractors for safety boundaries.
-* **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a "resting place" for attention when no relevant semantic information is found.
+* **Safety / Refusal Heads**: Recent research by \cite[Zhou et al.]{safetyheads} suggests that specific heads act as “gatekeepers” for safety alignment. When these heads are ablated, models may lose their ability to refuse harmful prompts, indicating they are key feature extractors for safety boundaries.
+* **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a “resting place” for attention when no relevant semantic information is found.
 </div>
 
 <div class="optional md" data-headline="Attention-Heads and In-Context-Learning">
-Induction heads represent a specialized evolutionary step beyond the "Positional Heads"
+Induction heads represent a specialized evolutionary step beyond the “Positional Heads”
 described in Voita et al. (\citeyear{analyzingmultiheads}). While a standard positional head might only look at
 the token immediately before it, the Induction Head circuit uses that information
 to perform algorithmic copying.
 
-In a sequence like "Harry Potter ... Harry", the process unfolds as follows:
+In a sequence like “Harry Potter ... Harry”, the process unfolds as follows:
 
 - **Step 1: The Previous Token Head (Early Layer):** This functions like the
-  "Positional Head". At the first instance of [Potter], it looks back
-  at [Harry] and encodes that "Harry preceded me."
+  “Positional Head”. At the first instance of [Potter], it looks back
+  at [Harry] and encodes that “Harry preceded me.”
 - **Step 2: The Induction Head (Later Layer):** When the model sees [Harry]
   a second time, this head searches the entire context for previous [Harry]
-  tokens. It ignores the current position and instead "attends" to the
+  tokens. It ignores the current position and instead “attends” to the
   [Potter] token because [Potter] carries the signal that it follows [Harry].
 - **The Result:** The model copies [Potter] into its current prediction.
 
 This discovery is significant because it shows that models don't just learn
-static "Syntactic" rules; they learn to build dynamic "search engines" that
+static “Syntactic” rules; they learn to build dynamic “search engines” that
 allow them to learn new patterns in real-time during a single prompt.
 </div>
 
@@ -459,7 +459,7 @@ h_{n+1} &= z_n + \text{FeedForward}(\text{LayerNorm}(z_n))
 \end{aligned}
 $$
 
-As $h$ progresses from $h_0$ to $h_{N}$, the vector for "apple" might move from being near "fruit" to being near "tech company" based on the contextual "nudges" received in the Feature Space during each Attention and FFN cycle.
+As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move from being near “fruit” to being near “tech company” based on the contextual “nudges” received in the Feature Space during each Attention and FFN cycle.
 </div>
 
 <div id="ffn-equations-container"></div>
@@ -492,7 +492,7 @@ increasing compute cost. The core idea, first proposed in
 \cite[Adaptive Mixtures of Local Experts]{jacobs1991moe}, is to maintain
 multiple parallel FFN sub-networks (experts) alongside a learned gating
 network that routes each input to the most relevant expert, a
-"divide and conquer" approach where specialised networks handle
+“divide and conquer” approach where specialised networks handle
 different regions of the input space.
 
 This concept remained difficult to
@@ -520,7 +520,7 @@ $$\text{Logits} = h_{\text{final}} \cdot W_{\text{Vocab}}^T$$
 
 This architecture subordinates to the Bitter Lesson by \citeauthor{sutton2019bitter}: computation and general-purpose learning eventually outperform hand-crafted linguistic rules.
 
-We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: "How similar is our current thought vector to every known word vector?"
+We have arrived at the final vector $h_{\text{final}}$ for the last token. To convert this abstract geometric location back into a specific word from our vocabulary, we perform a dot product against the **Unembedding Matrix** ($W_\text{vocab}$). This effectively asks: “How similar is our current thought vector to every known word vector?”
 
 ## Step-by-Step Logit Calculation
 
@@ -549,19 +549,19 @@ $$H = \begin{pmatrix}
 	h_{n}
 \end{pmatrix} \in \mathbb{R}^{n \times d_{\text{model}}}$$
 
-The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the final projection is only interested in the **prediction**:
+The “Migration Map” prints the entire flattened matrix because it wants to show the path of every word. However, the final projection is only interested in the **prediction**:
 
 $$h_{\text{last}} = H[n]$$
 
 Remember that the $n$ is the number of tokens in the **Inference**-sequence, not in the training sequence, even though the $h_\text{after}$ may be from the training data.
 
-This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When the model is, for example, $d_{\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
+This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When the model is, for example, $d_{\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\text{model}$). These 3 numbers are a “compressed summary” of the entire sequence's context, which is why the previous tokens can be “ignored” at this specific final stage, their influence is already baked into that last vector.
 </div>
 
 <div class="optional md" data-headline="The Unembedding Matrix as a Dual Space">
-The unembedding matrix $W_U$ (often equal to $W_E^T$ due to weight tying) does more than just produce logits. It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation. Each row of $W_U$ is a "detector" for a specific token: moving the residual stream vector in the direction of $W_U[\text{"Paris"}]$ literally increases the probability of outputting "Paris."
+The unembedding matrix $W_U$ (often equal to $W_E^T$ due to weight tying) does more than just produce logits. It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation. Each row of $W_U$ is a “detector” for a specific token: moving the residual stream vector in the direction of $W_U[\text{“Paris”}]$ literally increases the probability of outputting “Paris.”
 
-This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model "would predict" at that point. Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output. The attention heads and FFN layers are not performing abstract, uninterpretable operations — they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.
+This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model “would predict” at that point. Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output. The attention heads and FFN layers are not performing abstract, uninterpretable operations  they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.
 </div>
 
 <div class="optional md" data-headline="From Logits to Probabilities: A numerically stable Softmax">
@@ -576,29 +576,29 @@ $$P(w) = \text{softmax}(\text{logit}_w) = \frac{e^{\text{logit}_w - m}}{\display
 The **logit** and **probit** models are foundational tools in statistical modeling for
 binary and categorical outcomes. The **logit function**, defined as
 $\log\left(\frac{p}{1 - p}\right)$, was first introduced by \citeauthor{logitorigin} in his \citeyear{logitorigin} paper
-"\citetitle{logitorigin}". Berkson coined the term "logit" as an
-analogy to the already-established "probit." The **probit model**, which uses the
+“\citetitle{logitorigin}”. Berkson coined the term “logit” as an
+analogy to the already-established “probit.” The **probit model**, which uses the
 inverse of the standard normal cumulative distribution function $\phi^{-1}\left(p\right)$ as its link
-function, was developed earlier by \citeauthor{probitorigin} in his \citeyear{probitorigin} paper "\citetitle{probitorigin}".
+function, was developed earlier by \citeauthor{probitorigin} in his \citeyear{probitorigin} paper “\citetitle{probitorigin}”.
 
 Beyond logits and probits, several other link functions serve similar purposes in
 **generalized linear models (GLMs)**, a framework formalized by \citeauthorlastnameand{generalizedlinearmodels}
-in their seminal \citeyear{generalizedlinearmodels} paper "\citetitle{generalizedlinearmodels}". The **complementary log-log
+in their seminal \citeyear{generalizedlinearmodels} paper “\citetitle{generalizedlinearmodels}”. The **complementary log-log
 ($\text{cloglog}$)** link, defined as $\log\left(−\log\left(1 − p\right)\right)$, is useful for modeling asymmetric
 binary outcomes and is closely tied to extreme value distributions, as explored by
 \citeauthor{statisticsofextremes} in his \citeyear{statisticsofextremes} work
-"\citetitle{statisticsofextremes}".
+“\citetitle{statisticsofextremes}”.
 
 The **cauchit** link uses the inverse of the Cauchy CDF and is more robust to outliers in the latent
 variable, as discussed by \citeauthorlastnameand{parametriclinks} in their
-\citeyear{parametriclinks} paper "\citetitle{parametriclinks}".
+\citeyear{parametriclinks} paper “\citetitle{parametriclinks}”.
 Additionally, the **log-log link**, defined as $-\log\left(-\log\left(p\right)\right)$, mirrors the
 $\text{cloglog}$ for the opposite tail of the distribution, as detailed by
-\citeauthorlastnameand{glmsecondedition} in \citeyear{glmsecondedition} in "\citetitle{glmsecondedition}".
+\citeauthorlastnameand{glmsecondedition} in \citeyear{glmsecondedition} in “\citetitle{glmsecondedition}”.
 </div>
 
 <div class="optional md" data-headline="Temperature and the Shannon-Entropy">
-The **\citeauthorlastnameand{shannon1951communication} entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the "randomness" of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
+The **\citeauthorlastnameand{shannon1951communication} entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the “randomness” of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
 </div>
 
 <div class="optional md" data-headline="Temperature Scaling">
@@ -619,7 +619,7 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 <div>
 	<label style="font-weight: bold;">Temperature ($T$): <span id="temp-val" style="font-weight: bold; color: #3b82f6;">1.0</span></label>
 	<p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
-		<b>Effect:</b> Controls the "sharpness" of the probability distribution.<br>
+		<b>Effect:</b> Controls the “sharpness” of the probability distribution.<br>
 		<b>Reason:</b> Low values ($T < 1$) force the model to be deterministic; high values ($T > 1$) increase diversity by making unlikely words more probable.
 	</p>
 	<input type="range" id="transformer-temperature" min="0.1" max="2.0" step="0.1" value="1.0" style="width: 100%; vertical-align: middle;" oninput="document.getElementById('temp-val').innerText = this.value; rerender_temperature_only();">
@@ -637,19 +637,19 @@ Dividing by $T$ rescales the logit differences. When $T < 1$, the differences ar
 
 Here is the complete path a prompt takes through the system, from raw text to generated response:
 
-1. **Tokenization** — The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. "The cat sat" might become `[1996, 4937, 4021]`.
+1. **Tokenization**  The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. “The cat sat” might become `[1996, 4937, 4021]`.
 
-2. **Embedding** — Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\text{model}}$. These vectors live in a semantic space where similar words are close together.
+2. **Embedding**  Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\text{model}}$. These vectors live in a semantic space where similar words are close together.
 
-3. **Positional Encoding** — A position signal is added to each embedding so the model knows the order of tokens. Without this, "dog bites man" and "man bites dog" would be identical to the model.
+3. **Positional Encoding**  A position signal is added to each embedding so the model knows the order of tokens. Without this, “dog bites man” and “man bites dog” would be identical to the model.
 
-4. **Transformer Layers ($N \times$)** — Each layer applies two sub-modules, with **residual connections** so the original information is never lost:
+4. **Transformer Layers ($N \times$)**  Each layer applies two sub-modules, with **residual connections** so the original information is never lost:
    - **Multi-Head Self-Attention:** Each token queries all others, computes relevance scores, and gathers contextual information. Multiple heads run in parallel, each specializing in different linguistic relationships (syntax, semantics, coreference).
    - **Feed-Forward Network (FFN):** Each token is processed independently through an expanding activation layer (detectors) and a contracting projection layer (knowledge retrieval). This is where memorized facts and patterns are applied.
 
-5. **Unembedding** — The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often the transpose of $W_E$), producing a logit score for every word in the vocabulary.
+5. **Unembedding**  The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often the transpose of $W_E$), producing a logit score for every word in the vocabulary.
 
-6. **Sampling** — Logits are scaled by temperature and passed through softmax to produce probabilities. A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally). The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.
+6. **Sampling**  Logits are scaled by temperature and passed through softmax to produce probabilities. A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally). The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.
 
 Every step is differentiable, every transformation is a matrix operation, and no component has access to anything beyond the current context window. The entire architecture is a single, differentiable function $f_\theta(\text{prompt}) \to \text{next token distribution}$.
 
@@ -680,19 +680,19 @@ While the architecture is identical in both modes, the behavior of the model dif
 | **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |
 | **Randomness** | Controlled by temperature / top-p | Controlled by dropout / data shuffling |
 
-**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target — it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
+**The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target  it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
 
 </div>
 
 <div id="tda-live-section" class="tda-live-section" style="margin: 20px 0; padding: 18px; background: var(--mn-bg-subtle, #f8fafc); border: 1px solid #e2e8f0; border-radius: 12px;">
 	<details open>
 	<summary style="cursor: pointer; font-size: 1.05rem; font-weight: 700; color: var(--mn-text, #0f172a); padding: 6px 0;">
-		🧭 TDA Live — Attractors in the Residual Stream
+		🧭 TDA Live  Attractors in the Residual Stream
 	</summary>
 	<p style="font-size: 0.85rem; color: var(--mn-text-muted, #64748b); margin: 6px 0 12px 0; max-width: 900px;">
 		A <b>topological data analysis</b> of the residual stream and the weight deltas (weights minus their previous
 		values). Tokens drift through a phase space; over epochs the drift field reorganizes into <b>attractors</b> (stable
-		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red — not
+		sinks where states settle, blue) and <b>repellers</b> (unstable points the flow pushes away from, red  not
 		necessarily sources of the flow, just points of locally positive divergence). The phase diagram shows the flow
 		vectors, the basin of attraction, and the <b>persistence</b> (shape) of the resulting structures via H₀
 		components and H₁ loops.
@@ -785,7 +785,7 @@ While the architecture is identical in both modes, the behavior of the model dif
 
 	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px;">
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence diagram — shape of attractors (H₀ red, H₁ blue)</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Persistence diagram  shape of attractors (H₀ red, H₁ blue)</div>
 			<div id="tda-live-persistence" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
@@ -797,11 +797,11 @@ While the architecture is identical in both modes, the behavior of the model dif
 			<div id="tda-live-betti" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Topology by layer — β₀ / β₁</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Topology by layer  β₀ / β₁</div>
 			<div id="tda-live-topo" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 		<div>
-			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Learning field — ‖ΔW‖ per matrix (weight deltas)</div>
+			<div style="font-size: 0.8rem; font-weight: 700; color: var(--mn-text-muted, #475569); margin-bottom: 6px;">Learning field  ‖ΔW‖ per matrix (weight deltas)</div>
 			<div id="tda-live-weights" style="width: 100%; height: 260px; background: var(--mn-surface, white); border-radius: 10px; border: 1px solid #e2e8f0;"></div>
 		</div>
 	</div>
@@ -809,16 +809,16 @@ While the architecture is identical in both modes, the behavior of the model dif
 	<details style="margin-top: 14px; font-size: 0.85rem; color: var(--mn-text-muted, #475569);">
 		<summary style="cursor: pointer; font-weight: 700; color: var(--mn-text, #334155);">❓ How to read the phase diagram</summary>
 		<div style="padding: 10px 14px; background: var(--mn-bg-subtle, #f8fafc); border-radius: 8px; line-height: 1.6;">
-			<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the "push" it gets. Repeat this on a grid of points and you get a <b>vector field</b> — a map of how the network moves states around.</p>
+			<p style="margin: 0 0 8px 0;"><b>The idea:</b> run a point (a token's hidden state) through one more transformer layer and look at the “push” it gets. Repeat this on a grid of points and you get a <b>vector field</b>  a map of how the network moves states around.</p>
 			<ul style="margin: 0; padding-left: 20px;">
-				<li><b style="color:#2563eb;">Blue cones / arrows</b> = the state is <i>pulled in</i> (negative divergence → an <b>attractor</b>). Hidden states that get pulled in and stay = the "meanings" the model converges to.</li>
+				<li><b style="color:#2563eb;">Blue cones / arrows</b> = the state is <i>pulled in</i> (negative divergence → an <b>attractor</b>). Hidden states that get pulled in and stay = the “meanings” the model converges to.</li>
 				<li><b style="color:#dc2626;">Red cones / arrows</b> = the state is <i>pushed away</i> (positive divergence → a <b>repeller</b>). Unstable points the model keeps everything away from.</li>
-				<li><b>Thin colored lines</b> = <b>streamlines</b>: follow one state starting anywhere — it drifts along these lines. Green = it settled into an attractor.</li>
+				<li><b>Thin colored lines</b> = <b>streamlines</b>: follow one state starting anywhere  it drifts along these lines. Green = it settled into an attractor.</li>
 				<li><b>Colored dots</b> = the actual residual states of the words in your sentence (one per token per layer, color = token). See how they sit relative to attractors.</li>
 				<li><b>Blue diamond</b> = detected attractor center, <b>red ✕</b> = repeller center.</li>
-				<li><b>Persistence / Barcode / Betti:</b> the "shape" of the cloud of states. β₀ = number of separate clusters, β₁ = number of loops/holes in the structure. Hover over any element in the plot for details.</li>
+				<li><b>Persistence / Barcode / Betti:</b> the “shape” of the cloud of states. β₀ = number of separate clusters, β₁ = number of loops/holes in the structure. Hover over any element in the plot for details.</li>
 			</ul>
-			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary) — the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor "owns", and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive — drag to rotate while training runs.</p>
+			<p style="margin: 8px 0 0 0;">Tip: switch <b>Projection → Slice dims</b> to look at raw 2D/3D slices of the higher-dimensional state space (choose the axes), or <b>Force PCA</b> if the plot looks flat. To inspect one layer, pick it in the <b>Layer</b> menu in the controls above (or click a layer in the emergence summary)  the phase plot then shows only that layer's states as an epoch trail. Toggle <b>2D/3D</b>, enable <b>Basins (2D)</b> to color the region each attractor “owns”, and watch the <b>Attractor &amp; repeller emergence</b> panel to see where each one is born across layers. The plot is interactive  drag to rotate while training runs.</p>
 		</div>
 	</details>
 	</details>

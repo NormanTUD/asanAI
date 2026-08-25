@@ -11,7 +11,7 @@ topics: reasoning, agents, architecture, philosophy
 -->
 
 <div class="md">
-For most of the LLM era, scaling meant **training**: bigger models on more tokens. In late 2024, OpenAI's **o1** — followed in January 2025 by DeepSeek's **R1** — introduced a different scaling axis: **reasoning at inference time**. The model thinks longer, explores more paths, verifies its answers — and gets dramatically better at math, code, and logic.
+For most of the LLM era, scaling meant **training**: bigger models on more tokens. In late 2024, OpenAI's **o1**  followed in January 2025 by DeepSeek's **R1**  introduced a different scaling axis: **reasoning at inference time**. The model thinks longer, explores more paths, verifies its answers  and gets dramatically better at math, code, and logic.
 
 This chapter covers the techniques behind reasoning models, from the cheap and effective (prompting tricks) to the heavyweight (RL-trained chain-of-thought).
 </div>
@@ -26,7 +26,7 @@ This chapter covers the techniques behind reasoning models, from the cheap and e
 <div class="md">
 ## Chain-of-Thought Prompting
 
-The **magic phrase** *"Let's think step by step"* — added to a zero-shot prompt — was introduced by \cite[Kojima et al., 2022]{kojima2022zeroshot} and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, \cite[Wei et al., 2022]{wei2022cot} showed that **few-shot** chain-of-thought prompting — providing hand-written reasoning exemplars in the prompt — achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
+The **magic phrase** *“Let's think step by step”*  added to a zero-shot prompt  was introduced by \cite[Kojima et al., 2022]{kojima2022zeroshot} and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, \cite[Wei et al., 2022]{wei2022cot} showed that **few-shot** chain-of-thought prompting  providing hand-written reasoning exemplars in the prompt  achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
 
 $$
 P_{\text{CoT}}(y \mid x) = \sum_z P(y \mid x, z)\, P(z \mid x)
@@ -42,7 +42,7 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 
 | Method | Year | Idea |
 |--------|------|------|
-| **Zero-shot CoT** | 2022 | *"Let's think step by step"* |
+| **Zero-shot CoT** | 2022 | *“Let's think step by step”* |
 | **Few-shot CoT** | 2022 | Hand-written reasoning examples |
 | **Self-consistency** | 2022 | Sample $k$ CoTs, take majority vote on answers |
 | **Least-to-most prompting** | 2022 | Decompose into subproblems, solve sequentially |
@@ -93,13 +93,13 @@ DeepSeek's **R1-Zero** was trained purely with RL (no SFT) using a technique cal
 </div>
 
 <div class="optional md" data-headline="R1 = GRPO (the bridge)">
-R1's emergent long chain-of-thought is **not magic**. It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right. The full algorithm — group sampling, group-relative advantage, PPO-style clipped objective without a critic — lives in the <a href="reinforcement_learning">Reinforcement Learning chapter</a> § GRPO. If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.
+R1's emergent long chain-of-thought is **not magic**. It is what falls out when you apply **Group Relative Policy Optimization** to a base model and reward it for getting verifiable answers right. The full algorithm  group sampling, group-relative advantage, PPO-style clipped objective without a critic  lives in the <a href="reinforcement_learning">Reinforcement Learning chapter</a> § GRPO. If a single line is all you remember: *R1 is what GRPO looks like when you let it run for a million steps on math problems*.
 </div>
 
 <div class="md">
 ### Why It Works
 
-The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next. A 100-token CoT might involve ~10 reasoning "chunks", each of which the model has seen many times in pretraining. The model is essentially **decomposing a single hard prediction into many easy ones**.
+The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next. A 100-token CoT might involve ~10 reasoning “chunks”, each of which the model has seen many times in pretraining. The model is essentially **decomposing a single hard prediction into many easy ones**.
 
 Forcing the model to verify its own work (critique-then-revise, search over candidates) gives another order-of-magnitude improvement on hard math and code.
 </div>
@@ -117,7 +117,7 @@ Training a PRM:
 
 At inference, beam search guided by the PRM dramatically improves accuracy on math (used in o1, Qwen-QwQ, and many open-source replicas). The cost is labelling data; synthetic PRMs (auto-labelling using a stronger model) are now competitive.
 
-The Math-Shepherd method (2024) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point — eliminating the need for human step labels.
+The Math-Shepherd method (2024) auto-labels step correctness by checking whether later steps can reach the correct final answer from this point  eliminating the need for human step labels.
 </div>
 
 <div class="md">
@@ -151,11 +151,11 @@ Reasoning improves performance on tasks where:
 It does **not** help with:
 
 * **Factual recall** (the model either knows the date of the Battle of Hastings or it doesn't).
-* **Subjective tasks** (creative writing, preference — there's no "correct" reasoning path).
+* **Subjective tasks** (creative writing, preference  there's no “correct” reasoning path).
 * **Hard perception** (recognizing fine-grained visual details).
 * **Distribution shift** (if the test prompt is unlike any training example, no amount of thinking will help).
 
-The bitter lesson still applies: **scale helps**. But now you have two knobs — training and inference.
+The bitter lesson still applies: **scale helps**. But now you have two knobs  training and inference.
 </div>
 
 <div class="md">
@@ -180,7 +180,7 @@ The frontier of research is **meta-reasoning**: training the model to *decide ho
 | o1-style long thinking | $10{-}100\times$ | Hard math, code, science |
 | Process Reward Model search | $k \cdot d\times$ | Maximum accuracy on verifiable tasks |
 
-The era of "scale by training" is now supplemented by **scale by thinking**. The frontier in 2025 is figuring out how to spend inference compute *adaptively* — think hard when it matters, save tokens when it doesn't.
+The era of “scale by training” is now supplemented by **scale by thinking**. The frontier in 2025 is figuring out how to spend inference compute *adaptively*  think hard when it matters, save tokens when it doesn't.
 </div>
 
 <script>

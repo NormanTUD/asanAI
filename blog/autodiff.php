@@ -11,7 +11,7 @@ topics: math-i, programming
 -->
 
 <div class="md">
-At the heart of every modern neural network lies a deceptively simple question: *"How much did each weight contribute to the error?"* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.
+At the heart of every modern neural network lies a deceptively simple question: *“How much did each weight contribute to the error?”* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.
 
 Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\frac{f(x+h) - f(x)}{h}$). Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**.
 </div>
@@ -57,7 +57,7 @@ AD automates this process by recording each elementary operation and its local d
 
 ## Forward Mode vs. Reverse Mode
 
-There are two "directions" in which the chain rule can be evaluated:
+There are two “directions” in which the chain rule can be evaluated:
 
 **Forward Mode** propagates derivatives *alongside* the computation, from inputs to outputs. It computes $\frac{\partial v_i}{\partial x}$ for a chosen input $x$ at each step. This is efficient when there are **few inputs and many outputs** (e.g., computing the Jacobian column by column).
 
@@ -305,7 +305,7 @@ Several architectural innovations have been developed to combat these problems:
 
 1. **ReLU Activation** (\citeauthor{relupaper}, \citeyear{relupaper}): The Rectified Linear Unit $\text{ReLU}(z) = \max(0, z)$ has a derivative of exactly $1$ for positive inputs, preventing the multiplicative shrinkage that plagues sigmoid networks.
 
-2. **Residual Connections** (\citeauthor{he2015resnet}, \citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\mathbf{y} = F(\mathbf{x}) + \mathbf{x}$. This creates a "gradient highway" that allows gradients to bypass problematic layers entirely.
+2. **Residual Connections** (\citeauthor{he2015resnet}, \citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\mathbf{y} = F(\mathbf{x}) + \mathbf{x}$. This creates a “gradient highway” that allows gradients to bypass problematic layers entirely.
 
 3. **Layer Normalization** (\citeauthor{ba2016layernorm}, \citeyear{ba2016layernorm}): Normalizing activations at each layer keeps values in a well-behaved range, preventing both vanishing and exploding gradients.
 
@@ -349,7 +349,7 @@ An important distinction in modern AD frameworks is whether the computational gr
 
 **Static Graphs** (TensorFlow 1.x, early Theano): The entire computation is defined symbolically before any data flows through it. This allows aggressive compiler-level optimizations but makes debugging difficult, you cannot simply insert a `print()` statement to inspect intermediate values.
 
-**Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute. Each forward pass constructs a fresh tape, which is then consumed during the backward pass. This "define-by-run" approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.
+**Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute. Each forward pass constructs a fresh tape, which is then consumed during the backward pass. This “define-by-run” approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.
 
 The Transformer architecture, released in \citeyear{vaswani2017attention}, which powers modern LLMs like GPT, relies heavily on dynamic computation patterns (variable-length sequences, masked attention), making dynamic graphs the natural choice. This is one reason PyTorch became the dominant framework in research.
 
@@ -358,9 +358,9 @@ Backpropagation through a deep network is really just multiplying a chain of <i>
 
 $$\frac{\partial \mathcal{L}}{\partial x^{(0)}} = \frac{\partial \mathcal{L}}{\partial x^{(L)}} \cdot J^{(L)} \cdot J^{(L-1)} \cdot \ldots \cdot J^{(1)}$$
 
-The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets fix this because their Jacobian is $I + J_F$ — the identity term guarantees that singular values are at least 1, allowing gradients to flow through arbitrarily many layers.
+The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets fix this because their Jacobian is $I + J_F$  the identity term guarantees that singular values are at least 1, allowing gradients to flow through arbitrarily many layers.
 
-This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the "dying ReLU" problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU that maintain smooth, non-vanishing gradients across the full input range.
+This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU that maintain smooth, non-vanishing gradients across the full input range.
 </div>
 
 ## Summary

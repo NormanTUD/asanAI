@@ -49,7 +49,7 @@ This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms e
 
 ## Connection to Grokking
 
-This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ~0% test accuracy). Then, after many more epochs, it suddenly "groks" the pattern, test accuracy jumps from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
+This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ~0% test accuracy). Then, after many more epochs, it suddenly “groks” the pattern, test accuracy jumps from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
 ## Interactive Exploration
 
@@ -341,7 +341,7 @@ This is the first line of evidence that the network operates in a Fourier basis:
 <div class="md">
 ## In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt
 
-Everything above describes an algorithm **baked into the weights** during training. But something far stranger happens every day: you paste pseudocode into a prompt, say "now execute `add(128, 367)`", and the model produces the correct answer — despite never having been trained on *your* algorithm.
+Everything above describes an algorithm **baked into the weights** during training. But something far stranger happens every day: you paste pseudocode into a prompt, say “now execute `add(128, 367)`“, and the model produces the correct answer  despite never having been trained on *your* algorithm.
 
 This is **in-context algorithm execution**. The algorithm is not in the weights. It exists only as tokens in the context window. Yet the model follows it step by step.
 
@@ -370,13 +370,13 @@ Execute: add(128, 367)
 </pre>
 
 <div class="md">
-The model has no Python interpreter. It has no CPU. It has no variable registers. Yet it produces "495" — and if you ask it to show its work, it traces through the loop iterations correctly.
+The model has no Python interpreter. It has no CPU. It has no variable registers. Yet it produces “495”  and if you ask it to show its work, it traces through the loop iterations correctly.
 
 **How?**
 
 ### What the Weights Actually Encode: A Meta-Algorithm
 
-The key insight from \cite[Garg et al. (2022)]{garg2022incontext} is that Transformers trained on diverse data don't memorize specific algorithms — they learn a **meta-algorithm**: a general-purpose procedure for extracting and executing patterns from context.
+The key insight from \cite[Garg et al. (2022)]{garg2022incontext} is that Transformers trained on diverse data don't memorize specific algorithms  they learn a **meta-algorithm**: a general-purpose procedure for extracting and executing patterns from context.
 
 Formally, given a prompt structured as:
 
@@ -384,25 +384,25 @@ $$P = (x_1, f(x_1), x_2, f(x_2), \ldots, x_k, f(x_k), x_{\text{query}})$$
 
 a trained Transformer can predict $f(x_{\text{query}})$ for functions $f$ it has **never seen during training**, with performance matching the optimal estimator for that function class. This is not memorization: with $2d$ in-context examples, the model achieves error < 0.001, while the best memorized weight vector from 32M training vectors would yield error ~0.216 \cite[Appendix B.7]{garg2022incontext}.
 
-But your algorithm prompt isn't input-output pairs — it's *code*. So what's happening?
+But your algorithm prompt isn't input-output pairs  it's *code*. So what's happening?
 
 ### The Three Things the Weights Encode
 
 The weights don't contain your algorithm. They contain three capabilities that *together* allow execution:
 
 **1. Pattern Recognition (Attention Layers)**
-The attention mechanism identifies structural patterns in the prompt: loop constructs, variable assignments, conditional branches, function signatures. Induction heads \cite[Olsson et al., 2022]{olsson2022induction} — the same circuits that do pattern completion like "[A][B]...[A] → predict [B]" — generalize to matching algorithmic patterns: "when I see `carry = s // 10` followed by a state where s=15, the next value of carry is 1."
+The attention mechanism identifies structural patterns in the prompt: loop constructs, variable assignments, conditional branches, function signatures. Induction heads \cite[Olsson et al., 2022]{olsson2022induction}  the same circuits that do pattern completion like “[A][B]...[A] → predict [B]”  generalize to matching algorithmic patterns: “when I see `carry = s // 10` followed by a state where s=15, the next value of carry is 1.“
 
 **2. State Simulation (Residual Stream)**
-The residual stream maintains an implicit "execution state." As the model generates each token of output, the residual stream encodes something analogous to:
+The residual stream maintains an implicit “execution state.” As the model generates each token of output, the residual stream encodes something analogous to:
 - Current values of variables (carry, digit_a, digit_b, etc.)
 - Current position in the loop
 - Accumulated partial results
 
-This is not a literal register file — it's a distributed representation across hundreds of dimensions. But it functions as one.
+This is not a literal register file  it's a distributed representation across hundreds of dimensions. But it functions as one.
 
 **3. Step-by-Step Generation (Autoregressive Decoding)**
-Each generated token advances the computation by one micro-step. The model doesn't execute the entire algorithm in a single forward pass — it executes one step per generated token, using its own output as "scratch space" for the next step.
+Each generated token advances the computation by one micro-step. The model doesn't execute the entire algorithm in a single forward pass  it executes one step per generated token, using its own output as “scratch space” for the next step.
 
 ### Why Ambiguity Kills: The Algorithmic Prompting Discovery
 
@@ -416,7 +416,7 @@ Consider teaching addition. A scratchpad-style prompt shows:
 , 4 9 5 C: 0
 ```
 
-The model sees that 8+7 generates carry 1 and 2+6 generates carry 0. But it could conclude: "carry is 1 when both digits are even" or "first pair always has carry 1." The rules are **ambiguous** from examples alone \cite[Section 2]{zhou2022algorithmic}.
+The model sees that 8+7 generates carry 1 and 2+6 generates carry 0. But it could conclude: “carry is 1 when both digits are even” or “first pair always has carry 1.” The rules are **ambiguous** from examples alone \cite[Section 2]{zhou2022algorithmic}.
 
 An algorithmic prompt removes this ambiguity by making every computational step explicit:
 
@@ -425,23 +425,23 @@ FN[3]=8. SN[3]=7. C[3]=0. Since 8+7+0=15, 15>10, 15%10=5.
 Length of A is 1. Thus A=[5]. Since (15-5)/10=1, C[2]=1.
 ```
 
-The result: **90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baselines — a 9× error reduction \cite[Table 2]{zhou2022algorithmic}.
+The result: **90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baselines  a 9× error reduction \cite[Table 2]{zhou2022algorithmic}.
 
 ### Proof That the Model Actually Follows the In-Context Algorithm
 
 Is the model truly executing the algorithm from context, or just pattern-matching the output format? \cite[Zhou et al. (2022)]{zhou2022algorithmic} prove it's genuine execution through three tests:
 
-**Test 1: Intermediate step correctness.** For every addition question where the final answer was correct, ALL intermediate steps were also correct. The model doesn't skip steps — it traces through the algorithm as written \cite[Section 3.1]{zhou2022algorithmic}.
+**Test 1: Intermediate step correctness.** For every addition question where the final answer was correct, ALL intermediate steps were also correct. The model doesn't skip steps  it traces through the algorithm as written \cite[Section 3.1]{zhou2022algorithmic}.
 
 **Test 2: Systematic errors destroy performance.** When ALL carry calculations in the prompt examples are wrong (e.g., always using the wrong digit), accuracy drops to ~0%. If the model were relying on its pretrained knowledge of addition, wrong examples wouldn't matter. But it's actually learning the rule from context \cite[Figure 3b]{zhou2022algorithmic}.
 
 **Test 3: Irregular errors cause only minor degradation.** When only SOME steps have errors, the model can still extrapolate the correct rule from the unchanged steps. This shows it's generalizing from the pattern, not memorizing specific examples.
 
-This is in stark contrast to chain-of-thought prompting, where providing wrong reasoning patterns barely affects performance — suggesting those models rely on pretraining knowledge, not in-context learning \cite[Madaan and Yazdanbakhsh, 2022]{zhou2022algorithmic}.
+This is in stark contrast to chain-of-thought prompting, where providing wrong reasoning patterns barely affects performance  suggesting those models rely on pretraining knowledge, not in-context learning \cite[Madaan and Yazdanbakhsh, 2022]{zhou2022algorithmic}.
 
 ### The Mechanism: Layer by Layer
 
-Combining insights from both papers, here's what happens during a single forward pass when the model encounters "Execute: add(128, 367)" after seeing the algorithm:
+Combining insights from both papers, here's what happens during a single forward pass when the model encounters “Execute: add(128, 367)” after seeing the algorithm:
 
 **Layers 1–4 (Algorithm Parsing):**
 Attention heads identify the structure of the algorithm in the prompt. Key patterns recognized:
@@ -452,23 +452,23 @@ Attention heads identify the structure of the algorithm in the prompt. Key patte
 The QK circuits of these heads have learned to match structural tokens (`while`, `if`, `=`) regardless of the specific variable names or values.
 
 **Layers 5–8 (State Binding):**
-The model binds the query inputs (128, 367) to the algorithm's parameters (a, b). This is analogous to what \cite[Garg et al. (2022)]{garg2022incontext} call "computing sufficient statistics" — the attention layers aggregate information from the in-context algorithm description and the specific inputs into a unified representation.
+The model binds the query inputs (128, 367) to the algorithm's parameters (a, b). This is analogous to what \cite[Garg et al. (2022)]{garg2022incontext} call “computing sufficient statistics”  the attention layers aggregate information from the in-context algorithm description and the specific inputs into a unified representation.
 
 **Layers 9–12 (Step Execution):**
 MLP layers transform the bound state into the next output token. For each generated token, the model:
-1. Reads the current "state" from the residual stream
+1. Reads the current “state” from the residual stream
 2. Applies the transformation rule extracted from the algorithm description
 3. Writes the updated state back
 
-This is why **autoregressive generation is essential**: the model can only execute one step per forward pass. Complex algorithms require many generated tokens (the "scratchpad"), with each token advancing the state by one micro-step.
+This is why **autoregressive generation is essential**: the model can only execute one step per forward pass. Complex algorithms require many generated tokens (the “scratchpad”), with each token advancing the state by one micro-step.
 
 ### The Critical Role of the Scratchpad
 
-The model cannot execute a 19-digit addition in a single forward pass — that would require maintaining ~19 loop iterations worth of state simultaneously. Instead, it generates intermediate tokens that serve as **external memory**:
+The model cannot execute a 19-digit addition in a single forward pass  that would require maintaining ~19 loop iterations worth of state simultaneously. Instead, it generates intermediate tokens that serve as **external memory**:
 
 <p>$$\underbrace{\text{Step 1 output}}_{\text{generated tokens}} \rightarrow \underbrace{\text{becomes input}}_{\text{for next forward pass}} \rightarrow \underbrace{\text{Step 2 output}}_{\text{generated tokens}} \rightarrow \cdots$$</p>
 
-Each forward pass reads the previously generated tokens (which encode the current state) and produces the next step. The context window acts as a tape — exactly like a Turing machine's tape, but with the constraint that it can only be written left-to-right.
+Each forward pass reads the previously generated tokens (which encode the current state) and produces the next step. The context window acts as a tape  exactly like a Turing machine's tape, but with the constraint that it can only be written left-to-right.
 
 This is why \cite[Zhou et al. (2022)]{zhou2022algorithmic} find that **context length is the primary bottleneck**: the model can only execute as many steps as fit in its context window.
 
@@ -491,11 +491,11 @@ Despite these capabilities, there are hard limits:
 - **Context length bounds computation:** The model can only execute as many steps as fit in its context window.
 - **Ambiguity kills performance:** If the algorithm description allows multiple interpretations, the model may follow the wrong one. Uncommon operations (like indexing a variable position) are harder than common ones (like always taking the last element) \cite[Section 3.1]{zhou2022algorithmic}.
 - **Interference between skills:** Mixing very different types of reasoning (e.g., informal math reasoning + formal algorithm execution) in one prompt causes performance degradation \cite[Section 6]{zhou2022algorithmic}.
-- **No true compilation:** The model doesn't "compile" your code into an internal representation. It simulates execution token by token. This means execution speed is O(output_tokens), not O(algorithm_complexity).
+- **No true compilation:** The model doesn't “compile” your code into an internal representation. It simulates execution token by token. This means execution speed is O(output_tokens), not O(algorithm_complexity).
 
 ### Interactive Exploration
 
-Below you can explore how an LLM executes an addition algorithm step by step. Provide two numbers, and watch the model trace through the algorithm — showing how each generated token advances the computational state.
+Below you can explore how an LLM executes an addition algorithm step by step. Provide two numbers, and watch the model trace through the algorithm  showing how each generated token advances the computational state.
 </div>
 
 <div id="icl-execution-container" style="max-width:900px; margin:0 auto;"></div>
@@ -511,20 +511,20 @@ Consider teaching a model to add two numbers. There's a spectrum of how explicit
 
 | Level | Prompt Style | Accuracy (19-digit) |
 |-------|-------------|-------------------|
-| **Zero-shot** | "What is 1234567890123456789 + 9876543210987654321?" | ~0% |
+| **Zero-shot** | “What is 1234567890123456789 + 9876543210987654321?” | ~0% |
 | **Few-shot** | Show 3 examples of addition with answers | 9.5% |
-| **Chain-of-thought** | Show examples with informal reasoning ("carry the 1...") | ~25% |
+| **Chain-of-thought** | Show examples with informal reasoning (“carry the 1...”) | ~25% |
 | **Algorithmic prompting** | Show the *exact* algorithm with every micro-step explicit | **90.5%** |
 
-The 9× improvement from few-shot to algorithmic prompting isn't just "more detail helps." It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** \cite[Section 2]{zhou2022algorithmic}.
+The 9× improvement from few-shot to algorithmic prompting isn't just “more detail helps.” It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** \cite[Section 2]{zhou2022algorithmic}.
 
 ### The Ambiguity Problem (Visualized)
 
 When you show the model `8 + 7 = 15, write 5, carry 1` followed by `2 + 6 = 8, write 8, carry 0`, the model must infer the carry rule. But from just these two examples, multiple rules are consistent:
 
-- ✅ "Carry = 1 when sum ≥ 10" (correct)
-- ❌ "Carry = 1 when both digits are ≥ 7" (consistent with examples!)
-- ❌ "Carry = 1 on the first iteration only" (also consistent!)
+- ✅ “Carry = 1 when sum ≥ 10” (correct)
+- ❌ “Carry = 1 when both digits are ≥ 7” (consistent with examples!)
+- ❌ “Carry = 1 on the first iteration only” (also consistent!)
 
 Algorithmic prompting eliminates this by making the rule explicit: `Since 8+7+0=15 and 15≥10, carry = (15-5)/10 = 1`.
 
@@ -537,7 +537,7 @@ Zhou et al. discovered that algorithmic reasoning can be taught progressively th
 3. **Skill Composition:** Teach how to chain algorithms (multiplication = repeated addition)
 4. **Skills as Tools:** Use algorithms as subroutines within broader reasoning tasks
 
-Each stage introduces new challenges. Stage 3 (composition) is particularly interesting: the model must recognize when to "call" a sub-algorithm and correctly pass state between them.
+Each stage introduces new challenges. Stage 3 (composition) is particularly interesting: the model must recognize when to “call” a sub-algorithm and correctly pass state between them.
 </div>
 
 <div id="algorithmic-prompting-container" style="max-width:960px; margin:0 auto;"></div>

@@ -13,7 +13,7 @@ topics: math-ii, math-iii, statistics-ii
 <div class="md">
 This second statistics chapter covers **inference**: how we update our beliefs given new data, and how we measure uncertainty. These are the tools that turn raw distributions into actionable predictions.
 
-By the end, you will understand Bayesian reasoning, Shannon entropy, latent variable models (including EM), and Markov chains — all central to modern machine learning.
+By the end, you will understand Bayesian reasoning, Shannon entropy, latent variable models (including EM), and Markov chains  all central to modern machine learning.
 </div>
 
 <div class="statlab-container">
@@ -23,9 +23,9 @@ By the end, you will understand Bayesian reasoning, Shannon entropy, latent vari
 <div class="md">
 ## Bayesian Updating: The Logic of Science
 
-While Gauß sought the "True Path" of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
+While Gauß sought the “True Path” of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
 
-His essay, that published posthumously in the year \citeyear{bayes1763essay}, provides the mathematical engine for **induction**. In modern AI, this is how a machine "changes its mind." It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.
+His essay, that published posthumously in the year \citeyear{bayes1763essay}, provides the mathematical engine for **induction**. In modern AI, this is how a machine “changes its mind.” It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.
 
 ### The Anatomy of an Update
 The goal of Bayesian inference is to calculate the **Posterior**, your updated degree of belief in a hypothesis ($H$) after seeing evidence ($E$).
@@ -34,13 +34,13 @@ $$P(H|E) = \frac{\overbrace{P(E|H)}^{\text{Likelihood}} \cdot \overbrace{P(H)}^{
 
 * **The Prior $P(H)$**: Your initial strength of belief before the new data arrives.
 * **The Likelihood $P(E|H)$**: The probability that you would see this specific evidence if your hypothesis were actually true.
-* **The Marginal Likelihood $P(E)$**: The "Total Evidence", the probability of seeing this data under *all* possible scenarios (both when $H$ is true and when it is false).
+* **The Marginal Likelihood $P(E)$**: The “Total Evidence”, the probability of seeing this data under *all* possible scenarios (both when $H$ is true and when it is false).
 
-### The "Spam Filter" Logic
-Imagine your "Prior" belief that any random email is spam is 20%. You then see the word **"WINNER"**.
+### The “Spam Filter” Logic
+Imagine your “Prior” belief that any random email is spam is 20%. You then see the word **“WINNER”**.
 
-1.  If the email *is* spam, the word "WINNER" appears 90% of the time (**Likelihood**).
-2.  If the email *is not* spam, the word "WINNER" still appears 10% of the time (**False Positive**).
+1.  If the email *is* spam, the word “WINNER” appears 90% of the time (**Likelihood**).
+2.  If the email *is not* spam, the word “WINNER” still appears 10% of the time (**False Positive**).
 
 Bayesian updating allows us to weigh these possibilities to find the new probability that the email is spam.
 </div>
@@ -68,14 +68,14 @@ Bayesian updating allows us to weigh these possibilities to find the new probabi
 </div>
 
 <div class="md">
-When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet "know" whether you are a coder, a poet, or a chef. Every word you type shifts that distribution, concentrating probability on some possibilities and away from others. This is an *analogy* — not a quantum "superposition" that "collapses": the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.
+When you start a prompt, the model's probability distribution over its next token is very broad: it doesn't yet “know” whether you are a coder, a poet, or a chef. Every word you type shifts that distribution, concentrating probability on some possibilities and away from others. This is an *analogy*  not a quantum “superposition” that “collapses”: the model simply runs a deterministic forward pass, optionally sampling randomly at generation time.
 
-This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an "internal map" of probabilities ($P$) and updates it based on new data ($D$). It is a useful way to think about how context narrows predictions — not a claim that the network literally performs Bayesian updates.
+This behavior can be pictured as **Bayesian inference**, the method named after **Thomas Bayes**: as if the model maintains an “internal map” of probabilities ($P$) and updates it based on new data ($D$). It is a useful way to think about how context narrows predictions  not a claim that the network literally performs Bayesian updates.
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    Type a sentence in English, French, or German (e.g., *"Hello"* vs *"Bonjour"* vs *"Guten Tag"*). Watch how the model's "Belief" shifts in real-time as it processes each word.
+    Type a sentence in English, French, or German (e.g., *“Hello”* vs *“Bonjour”* vs *“Guten Tag”*). Watch how the model's “Belief” shifts in real-time as it processes each word.
     </div>
     
     <div class="statlab-controls">
@@ -88,16 +88,16 @@ This behavior can be pictured as **Bayesian inference**, the method named after 
 <div class="md">
 ## Entropy (The Messiness Scale)
 
-While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify "Information" itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
+While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify “Information” itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
 
 If we toss a coin, each outcome is a state $x_i$. 
 </div>
 
-$$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underbrace{\log_2 P(x_i)}_{\text{The "Surprise" (Bits)}}$$
+$$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underbrace{\log_2 P(x_i)}_{\text{The “Surprise” (Bits)}}$$
 
 <div class="md">
 * **$x_i$ Explained:** This represents the $i$-th possible outcome. For our coin, $x_1 = \text{Heads}$ and $x_2 = \text{Tails}$.
-* **The Goal:** Shannon wanted a measure that was maximal when uncertainty was highest. If a coin is "fair" ($0.5/0.5$), you are maximally surprised by the result. If a coin is "weighted" ($1.0/0.0$), there is no surprise, so Entropy is zero.
+* **The Goal:** Shannon wanted a measure that was maximal when uncertainty was highest. If a coin is “fair” ($0.5/0.5$), you are maximally surprised by the result. If a coin is “weighted” ($1.0/0.0$), there is no surprise, so Entropy is zero.
 </div>
 
 <div class="statlab-interactive-zone">
@@ -137,35 +137,35 @@ $$H(X) = - \sum_{i=1}^{n} \underbrace{P(x_i)}_{\text{Probability}} \cdot \underb
 </div>
 
 <div class="md">
-This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower this cross-entropy, the more "certain" and accurate the model has become.
+This concept is the backbone of modern AI. When a model like GPT predicts the next word, it calculates the **Cross-Entropy** between its guess and the actual word. The lower this cross-entropy, the more “certain” and accurate the model has become.
 </div>
 
 <div class="md">
 ## The Dirichlet Distribution: The Probability of Probabilities
 
-While Zipf's Law tells us how common words are, it doesn't explain how they "clump" together. To understand how an AI chooses a "topic" before it chooses a word, we need the **Dirichlet Distribution**.
+While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together. To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.
 
-### History & The "Urn" Motivation
+### History & The “Urn” Motivation
 Named after **Peter Gustav Lejeune Dirichlet** in the 19th century, this distribution was a generalization of the Beta distribution.
 
-Imagine an urn filled with marbles of $K$ different colors. If you start with a few marbles and every time you pick one, you put it back along with *more* marbles of the same color, you create a "rich-get-richer" effect. This is the **Pólya Urn Model**, and the Dirichlet distribution describes the resulting proportions of colors in the limit.
+Imagine an urn filled with marbles of $K$ different colors. If you start with a few marbles and every time you pick one, you put it back along with *more* marbles of the same color, you create a “rich-get-richer” effect. This is the **Pólya Urn Model**, and the Dirichlet distribution describes the resulting proportions of colors in the limit.
 
 Mathematically, for a probability vector $p = (p_1, \dots, p_K)$, the density is:
 $$f(p_1, \dots, p_K; \alpha_1, \dots, \alpha_K) = \frac{1}{\text{B}(\alpha)} \prod_{i=1}^{K} p_i^{\alpha_i - 1}$$
 Where $\alpha$ is the **concentration parameter**.
 
-In AI, we use this to solve the "Bag of Words" problem. Before a Transformer generates text, it is essentially sampling from a Dirichlet distribution to decide the "mixture" of the text.
-* Is this 80% "Technical Manual" and 20% "Friendly Tutorial"?
-* The $\alpha$ values represent the model's "prior knowledge" about how words group together in the training dataset.
+In AI, we use this to solve the “Bag of Words” problem. Before a Transformer generates text, it is essentially sampling from a Dirichlet distribution to decide the “mixture” of the text.
+* Is this 80% “Technical Manual” and 20% “Friendly Tutorial”?
+* The $\alpha$ values represent the model's “prior knowledge” about how words group together in the training dataset.
 
-When $\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very "certain" and chooses one specific topic). When $\alpha > 1$, it pushes everything toward the center (a "vague" mixture of everything).
+When $\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very “certain” and chooses one specific topic). When $\alpha > 1$, it pushes everything toward the center (a “vague” mixture of everything).
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    Adjust the $\alpha$-parameters for three potential "Topics" (e.g., Science, Art, Sports). Watch how the "Probability Space" (represented as a 3D simplex) shifts.
+    Adjust the $\alpha$-parameters for three potential “Topics” (e.g., Science, Art, Sports). Watch how the “Probability Space” (represented as a 3D simplex) shifts.
     * **Low Alpha (< 1):** The AI is decisive; it picks one topic.
-    * **High Alpha (> 1):** The AI is "blending" topics together.
+    * **High Alpha (> 1):** The AI is “blending” topics together.
     </div>
 
     <div class="statlab-controls">
@@ -189,16 +189,16 @@ When an AI reads a word, it faces a **Disambiguation Problem**. In statistics, w
 
 ### Expectation-Maximization (EM)
 The algorithm used to solve this was formalized by **Arthur Dempster, Laird, and Rubin** in 1977. It works in two steps that mirror how a Transformer processes context:
-1.  **Expectation (E):** Based on the current words, what is the probability that we are in "Topic A" vs "Topic B"?
-2.  **Maximization (M):** Adjust the internal "weights" to favor the words that fit that topic.
+1.  **Expectation (E):** Based on the current words, what is the probability that we are in “Topic A” vs “Topic B”?
+2.  **Maximization (M):** Adjust the internal “weights” to favor the words that fit that topic.
 
-### The Statistical "Vibe"
-In LLMs, this is why a prompt works. By typing "Import torch," you are statistically forcing the model's **Hidden State** to move its "Expectation" entirely into the "Coding" cluster, making "print" infinitely more likely than "reproduction" (the biology cluster).
+### The Statistical “Vibe”
+In LLMs, this is why a prompt works. By typing “Import torch,” you are statistically forcing the model's **Hidden State** to move its “Expectation” entirely into the “Coding” cluster, making “print” infinitely more likely than “reproduction” (the biology cluster).
 </div>
 
 <div class="statlab-interactive-zone">
     <div class="md">
-    Adjust the "Cluster Separation." When clusters overlap, the AI's "Choice" is statistically noisy (uncertain). As the Transformer sees more context, it effectively "pushes" these distributions apart to make a clear choice.
+    Adjust the “Cluster Separation.” When clusters overlap, the AI's “Choice” is statistically noisy (uncertain). As the Transformer sees more context, it effectively “pushes” these distributions apart to make a clear choice.
     </div>
 
     <div class="statlab-controls">
@@ -221,9 +221,9 @@ In LLMs, this is why a prompt works. By typing "Import torch," you are statistic
 <div class="md">
 ## The Law of Large Numbers
 
-In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical "Prior" is heavily biased by the opening scene. 
+In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene. 
 
-The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\bar{X}_n$ of words like "the" or "God" converges to their true mathematical mean $\mu$ within the entire corpus.
+The **Law of Large Numbers** ensures that as our sample size $n$ grows, the observed frequency $\bar{X}_n$ of words like “the” or “God” converges to their true mathematical mean $\mu$ within the entire corpus.
 </div>
 
 $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
@@ -239,7 +239,7 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 </div>
 
 <div class="md">
-## Markovian Transitions (The Probability of "Next")
+## Markovian Transitions (The Probability of “Next”)
 
 An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**. This is the logic of **Andrey Markov** (1906). He proposed that we can predict the future state of a system based solely on its current state.
 
@@ -249,7 +249,7 @@ In linguistics, we call this an **N-Gram**.
 
 $$ P(A|B) = \frac{P(A \cap B)}{P(B)} $$
 
-If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the Markov-Chain "chooses" based on this statistical skew.
+If Nietzsche wrote “Thus spake” 100 times, but “Thus thought” only 5 times, the Markov-Chain “chooses” based on this statistical skew.
 </div>
 
 <div class="statlab-interactive-zone">
@@ -258,7 +258,7 @@ If Nietzsche wrote "Thus spake" 100 times, but "Thus thought" only 5 times, the 
     </div>
 
     <div class="statlab-controls">
-        <label>Select a "Current" Word:</label>
+        <label>Select a “Current” Word:</label>
         <select id="markov-word-select" style="padding: 10px; border-radius: 5px;">
             <option value="thus">thus</option>
             <option value="spake">spake</option>
@@ -354,9 +354,9 @@ Thus began Zarathustra's down-going.
 	
         Originally formulated by **\citeauthor{boltzmann}** (c. \citeyear{boltzmann}) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
 
-        In LLMs, we apply this to the "vocabulary" instead of "molecules." The **Temperature** ($T$) determines how much energy is in the system.
+        In LLMs, we apply this to the “vocabulary” instead of “molecules.” The **Temperature** ($T$) determines how much energy is in the system.
         - **The Graph:** Shows the probability of picking specific tokens.
-        - **Live Logic:** At high $T$, the distribution flattens (Entropy increases). At low $T$, the "cold" model only picks the most certain word.
+        - **Live Logic:** At high $T$, the distribution flattens (Entropy increases). At low $T$, the “cold” model only picks the most certain word.
     </div>
     <div class="statlab-interactive-zone">
         <p>Enter 5 raw scores (Logits) separated by commas:</p>
@@ -371,11 +371,11 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## Maximum Likelihood Estimation (MLE): The Fisherian Fit
 
-        Popularized by **Sir \citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the "most likely" average height of the whole population?
+        Popularized by **Sir \citeauthor{fisher1922}**, MLE was created to solve the problem of **Parameter Estimation**. If you see 10 tall people, what is the “most likely” average height of the whole population?
 
         LLMs use this to find the best weights ($\theta$) for the model.
-        - **The Graph:** The red dots are your "observed data." The blue curve is your model.
-        - **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the "Likelihood" value.
+        - **The Graph:** The red dots are your “observed data.” The blue curve is your model.
+        - **The Goal:** Move the slider to align the peak of the curve with the cluster of dots to maximize the “Likelihood” value.
     </div>
     <div class="statlab-interactive-zone">
         <p>Enter your observed data points (e.g., -1, 0.5, 2):</p>
@@ -392,7 +392,7 @@ Thus began Zarathustra's down-going.
 
         Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule of Probability solves the problem of **Sequential Dependencies**. (It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
-        In an LLM, the probability of the sentence "The cat sat" is calculated as:
+        In an LLM, the probability of the sentence “The cat sat” is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$
     </div>
     <div class="statlab-interactive-zone">
@@ -420,7 +420,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## KL Divergence: Information Gain
 
-        Introduced in \citeauthorlastnameand{leiblerkullback} *\citetitle{leiblerkullback}* (\citeyear{leiblerkullback}), this was originally used for **Cryptanalysis** and military intelligence. It measures the "surprise" or extra bits of info needed if you use Distribution Q to approximate Distribution P.
+        Introduced in \citeauthorlastnameand{leiblerkullback} *\citetitle{leiblerkullback}* (\citeyear{leiblerkullback}), this was originally used for **Cryptanalysis** and military intelligence. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.
 
         - **The Graph:** Shows the overlap between P (Truth) and Q (Model).
         - **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.
@@ -435,14 +435,14 @@ Thus began Zarathustra's down-going.
 <div class="statlab-section">
     <div class="md">
         ## Bag of Words (BoW): The Linguistic Atom
-        The "Distributional Hypothesis", the idea that words occurring in similar contexts have similar meanings, was popularized by **\citeauthor{zelligharris}** in his \citeyear{zelligharris} article *\citetitle{zelligharris}*. It treats a document not as a sequence, but as a "bag": you lose the grammar, the order, and the syntax, keeping only the raw counts.
+        The “Distributional Hypothesis”, the idea that words occurring in similar contexts have similar meanings, was popularized by **\citeauthor{zelligharris}** in his \citeyear{zelligharris} article *\citetitle{zelligharris}*. It treats a document not as a sequence, but as a “bag”: you lose the grammar, the order, and the syntax, keeping only the raw counts.
 
         This was the primary method for **Spam Filtering** and early **Search Engines** before LLMs.
-        - **The Graph:** Visualizes the "Vector" of your text. Each unique word is a dimension.
-        - **Live Logic:** Watch how "The cat sat" and "Sat the cat" produce the exact same statistical signature, demonstrating the model's "blindness" to word order.
+        - **The Graph:** Visualizes the “Vector” of your text. Each unique word is a dimension.
+        - **Live Logic:** Watch how “The cat sat” and “Sat the cat” produce the exact same statistical signature, demonstrating the model's “blindness” to word order.
     </div>
     <div class="statlab-interactive-zone">
-        <p>Type or paste text to see its "Bag of Words" representation:</p>
+        <p>Type or paste text to see its “Bag of Words” representation:</p>
         <textarea id="bow-input" style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-family: sans-serif;" oninput="renderBoW()">The quick brown fox jumps over the lazy dog. The dog was not so lazy after all.</textarea>
 
         <div id="bow-eqn" style="padding:15px; background:#f8fafc; border-radius:8px; margin:10px 0; font-family: serif; border-left: 4px solid #10b981;"></div>

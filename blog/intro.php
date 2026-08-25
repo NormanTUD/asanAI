@@ -31,10 +31,10 @@ This is a journey through the evolution of human thought where technical milesto
 To understand a Neural Network is to understand a tapestry of ideas that often sidetracked into unexpected fields:
 
 * **Astronomy and Precision:** We will see how astronomers from the fourth century and beyond, trying to map the stars with imperfect data, developed the very optimization tools that allow modern LLMs to learn from the internet.
-* **The Technical and The Philosophical:** We will not just look at code. We will explore how concepts of logic, language, and "Geist" have transitioned from philosophical debates into billions of trainable parameters.
+* **The Technical and The Philosophical:** We will not just look at code. We will explore how concepts of logic, language, and “Geist” have transitioned from philosophical debates into billions of trainable parameters.
 * **AI in Society:** We address the technology as a cultural mirror by looking at how these systems interact with human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 
-We will try to overcome the "\citetitle{twocultures}-Problem", i.e. that the sciences and the humanities have become split into two distinct worlds, unable to communicate or understand the methods and values of the other. We believe that reality is One, and different sciences are different ways of looking at the same world and as such, we need both ways of looking at it.
+We will try to overcome the “\citetitle{twocultures}-Problem”, i.e. that the sciences and the humanities have become split into two distinct worlds, unable to communicate or understand the methods and values of the other. We believe that reality is One, and different sciences are different ways of looking at the same world and as such, we need both ways of looking at it.
 
 ## An Interactive Playground
 
@@ -43,17 +43,17 @@ This site is not a book to be read passively. It is designed as a playground for
 * **Learn by Doing:** The core of this experience is interactivity. You are encouraged to move the sliders, input your own data, and click through visualizations. Curiosity is the primary engine of learning here. Try to see where the logic holds and where it breaks.
 * **Navigating Complexity:** At times, the mathematics will get heavy. You do not need to master every equation on the first pass. If a technical section feels overwhelming, skip it, play with the interactive models, and return to the theory once you have built an intuitive feel for how the numbers move.
 * **Not every topic may be of interest to you**: Use the *table of contents* to navigate, you can skip all sections that are of no interest to you.
-* **The Starting Point:** We assume no prior knowledge beyond good English reading capability and the practical knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read — and that is fine. Use the interactive demos to build intuition, skip sections that feel too heavy, and come back later. Expect to re-read, tinker, and take your time.
+* **The Starting Point:** We assume no prior knowledge beyond good English reading capability and the practical knowledge of a Stone Ager, and the willingness to put in effort into reading and working with this document. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read  and that is fine. Use the interactive demos to build intuition, skip sections that feel too heavy, and come back later. Expect to re-read, tinker, and take your time.
 
-## Pick Your Interests — A Course That Adapts to You
+## Pick Your Interests  A Course That Adapts to You
 
-This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD) — each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason.
+This course is too long to consume in one shape, so it adapts to **you**. Look for the <span class="interest-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg></span> button top-right and pick your *profile* (Curious / Student / Engineer / Researcher) and *level* (High School / Undergrad / Grad / PhD)  each combination loads a curated topic set. **Math is split into Math I / II / III** so a high-school reader doesn't get shoved into graduate-level integrals, and **Statistics** into Stats I / II for the same reason.
 
 Below is your current pick. Tap any pill to flip it on or off:
 
 <div data-topics-inline class="inline-topics"></div>
 
-Toggle individual topics to fine-tune — sections you don't care about get tucked behind a soft "skipped" banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
+Toggle individual topics to fine-tune  sections you don't care about get tucked behind a soft “skipped” banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
 
 ## What You Will Achieve
 
@@ -67,13 +67,13 @@ You will see that AI is not a sudden magic invention, but the technical and phil
 
 ## Navigating the Ladder of Abstraction
 
-To truly grasp the nature of Artificial Intelligence, we will move through various levels of abstraction, much like the framework described by \citeauthor{hayakawa}. Understanding these systems requires the ability to climb up and down this "ladder" fluently:
+To truly grasp the nature of Artificial Intelligence, we will move through various levels of abstraction, much like the framework described by \citeauthor{hayakawa}. Understanding these systems requires the ability to climb up and down this “ladder” fluently:
 
-- **The Concrete Base**: At the lowest rungs, we deal with the "process level", the raw, physical bits of data and the specific numerical weights in a matrix.
+- **The Concrete Base**: At the lowest rungs, we deal with the “process level”, the raw, physical bits of data and the specific numerical weights in a matrix.
 - **The Intermediate Technicalities**: As we ascend, we group these specifics into functional concepts like Backpropagation or Gradient Descent. These are the tools that organize raw data into recognizable patterns.
-- **The High-Level Abstract**: At the top of the ladder, we reach broad terms like "Topology", "Fiber Bundles", "Intelligence," "Logic," and "Ethics." While these allow us to discuss the impact of AI on society, they remain grounded in the mathematical rungs beneath them.
+- **The High-Level Abstract**: At the top of the ladder, we reach broad terms like “Topology”, “Fiber Bundles”, “Intelligence,” “Logic,” and “Ethics.” While these allow us to discuss the impact of AI on society, they remain grounded in the mathematical rungs beneath them.
 
-This text is designed to help you navigate these shifts. We will constantly move from a philosophical "why" down to a mathematical "how," ensuring that the most abstract concepts remain tied to concrete reality.
+This text is designed to help you navigate these shifts. We will constantly move from a philosophical “why” down to a mathematical “how,” ensuring that the most abstract concepts remain tied to concrete reality.
 
 ## Disclaimer
 

@@ -11,9 +11,9 @@ topics: math-i
 -->
 
 <div class="md">
-Before we can understand a Neural Network, we have to understand the language it speaks: **mathematics**. This first of three math chapters covers the numerical foundations — the symbols and operations that appear constantly in AI code.
+Before we can understand a Neural Network, we have to understand the language it speaks: **mathematics**. This first of three math chapters covers the numerical foundations  the symbols and operations that appear constantly in AI code.
 
-By the end, you will be comfortable with the sum symbol $\sum$, Euler's number $e$, logarithms, and the way a computer represents "infinity" without crashing.
+By the end, you will be comfortable with the sum symbol $\sum$, Euler's number $e$, logarithms, and the way a computer represents “infinity” without crashing.
 </div>
 
 <div class="md">
@@ -55,7 +55,7 @@ Let's now introduce **functions**. A function is something that accepts inputs a
 </code></pre>
 
 <div class="md">
-When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called "plot" from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
+When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called “plot” from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
 </div>
 
 <div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
@@ -89,7 +89,7 @@ There are certain sets that are useful to know, like $\mathbb{N}$, which is the 
 
 Functions define a rule so that, for each element of a set, if you apply the rules the function defines, you end up with an element in another (or even the same) set of elements.
 
-Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for "all the natural numbers" ($\left\{0, 1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
+Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for “all the natural numbers” ($\left\{0, 1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
 
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 </div>
@@ -111,9 +111,9 @@ Throughout this course, we will look into these building blocks and how the comp
 <div class="md">
 ## The Sum Symbol $ \sum $
 
-In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation”. This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
 
-Think of $\sum$ as a **"for-loop"** for addition.
+Think of $\sum$ as a **“for-loop”** for addition.
 
 ### How to read the symbol
 
@@ -133,7 +133,7 @@ $$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
 
 ### Why AI needs this: Weighted Sums
 
-The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a "weight" based on its importance.
+The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a “weight” based on its importance.
 
 If $x$ is the input and $w$ is the weight, the AI calculates a score using this formula:
 
@@ -200,7 +200,7 @@ The factorial grows extremely quickly, much faster than exponential functions. T
 <div class="optional md" data-headline="Reasoning and History">
 The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**.
 
-Defining $0! = 1$ is a "combinatorial convention". It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
+Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
 </div>
 
 <div class="md">
@@ -212,11 +212,11 @@ In the floating-point math used by AI models, infinity follows specific rules th
 	$$\infty + n = \infty$$
 	$$\infty - n = \infty$$
 	$$\infty + \infty = \infty$$
-	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of "certainty," minor fluctuations don't distract the model.
+	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of “certainty,” minor fluctuations don't distract the model.
 * **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
 	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
-	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
+	The exponential of negative infinity is exactly zero. This is a “superpower” in machine learning. It allows us to “mask” certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
 * Similarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 
@@ -261,7 +261,7 @@ While the limit above is the definition, $e$ can be calculated using a Taylor Se
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
 $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 
-The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
+The equation asks: *“What if we compound every single microsecond? What if the interest is calculated continuously?”* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a “natural ceiling.” That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 </div>
 
 <div class="optional md" data-headline="History of the Taylor Series">
@@ -275,7 +275,7 @@ It was not until 1715 that \citeauthor{taylor1715} published the first general m
 <div class="md">
 ## Exponentiation
 
-In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
+In its simplest form, exponentiation is repeated multiplication. If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
 
 $$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$
 
@@ -284,7 +284,7 @@ In the expression $b^y = x$:
 * **$y$** is the **exponent**.
 * **$x$** is the **result**.
 
-While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just "counting" multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
+While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just “counting” multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 </div>
 
 <div class="optional md" data-headline="Why is $2^{0.5}$ the square root?">
@@ -297,7 +297,7 @@ Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it 
 </div>
 
 <div class="optional md" data-headline="What about negative numbers?">
-Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to "divide" instead of "multiply."
+Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to “divide” instead of “multiply.”
 $$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
@@ -306,11 +306,11 @@ In the context of the continuous curve, as the exponent moves into negative terr
 <div class="md">
 ## Logarithms: Reversing the Process
 
-A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **"To what power must we raise the base to get this specific result?"** ($b^? = x$).
+A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
 
-For example, if we ask "To what power must we raise 2 to get 8?" ($\log_2(8) = ?$), the answer is 3.
+For example, if we ask “To what power must we raise 2 to get 8?” ($\log_2(8) = ?$), the answer is 3.
 
-Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the "size" or "order of magnitude" of a number rather than just its value.
+Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the “size” or “order of magnitude” of a number rather than just its value.
 </div>
 
 <div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
@@ -327,7 +327,7 @@ Napier's breakthrough allowed researchers to perform **multiplication by simply 
 
 $$\log(A \times B) = \log(A) + \log(B)$$
 
-By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *"Logarithms, by shortening the labors, doubled the life of the astronomer"* (p. 96).
+By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *“Logarithms, by shortening the labors, doubled the life of the astronomer”* (p. 96).
 </div>
 
 <div class="optional md" data-headline="How is the Logarithm calculated today?">
@@ -339,13 +339,13 @@ $$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + 
 <div class="md">
 ### The Change of Base
 
-In practice, most mathematical libraries only "know" how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
+In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
 
 $$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
 
-This works because the logarithm is essentially a scaling factor. If you know the "natural" rate of growth, you can find the rate of growth for any other base by simply dividing by the "cost" of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
+This works because the logarithm is essentially a scaling factor. If you know the “natural” rate of growth, you can find the rate of growth for any other base by simply dividing by the “cost” of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
 
-While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how "wrong" a model is during training. We will dive deeper into "Log Loss" and "Softmax" in the upcoming sections.
+While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how “wrong” a model is during training. We will dive deeper into “Log Loss” and “Softmax” in the upcoming sections.
 </div>
 
 <div style="background: var(--mn-bg); padding: 20px; border: 1px solid var(--mn-border); border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -370,7 +370,7 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 <div class="md">
 ## The Mathematical Concept: The Role of $\infty$
 
-While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
+While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle “impossible” states or “hidden” information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
 </div>
 
 <script>

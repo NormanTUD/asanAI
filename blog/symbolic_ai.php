@@ -17,7 +17,7 @@ This chapter traces the other branch of AI and shows how it complements neural n
 </div>
 
 <div class="optional md" data-headline="Neuro-symbolic isn't new — it's old friends meeting again">
-The synthesis below happens naturally once you read three other chapters: <a href="reasoning">Reasoning</a> (CoT is *implicit* logic the network learned), <a href="mechanistic_interpretability">Mechanistic Interpretability</a> (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and <a href="agents">AI Agents</a> (ReAct-style tool use is symbolic reasoning wrapped around a neural policy). The "neuro-symbolic" framing just makes the marriage explicit.
+The synthesis below happens naturally once you read three other chapters: <a href="reasoning">Reasoning</a> (CoT is *implicit* logic the network learned), <a href="mechanistic_interpretability">Mechanistic Interpretability</a> (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and <a href="agents">AI Agents</a> (ReAct-style tool use is symbolic reasoning wrapped around a neural policy). The “neuro-symbolic” framing just makes the marriage explicit.
 </div>
 
 <div class="md">
@@ -132,7 +132,7 @@ To bridge symbolic KGs with neural methods, several **KG embedding** methods lea
 * **RotatE**: rotation in complex space, captures composition.
 * **GraphSAGE / R-GCN**: graph neural networks over the KG structure.
 
-These enable **link prediction**: given $(h, r, ?)$, predict $t$ — completing missing triples. Used in recommendation, drug repurposing, fraud detection.
+These enable **link prediction**: given $(h, r, ?)$, predict $t$  completing missing triples. Used in recommendation, drug repurposing, fraud detection.
 </div>
 
 <div class="md">
@@ -142,9 +142,9 @@ Modern LLMs use **tools** as symbolic primitives:
 
 * **Web search**: query → fetch results → summarize.
 * **Code execution**: generate Python → run in sandbox → use output.
-* **Calculator**: "what is 17 × 23?" → call a calculator → return 391.
-* **Database query**: "users in Berlin" → generate SQL → execute → return rows.
-* **API calls**: "book a flight" → call Skyscanner API.
+* **Calculator**: “what is 17 × 23?” → call a calculator → return 391.
+* **Database query**: “users in Berlin” → generate SQL → execute → return rows.
+* **API calls**: “book a flight” → call Skyscanner API.
 
 Frameworks: LangChain, LlamaIndex, AutoGen, CrewAI, LangGraph, OpenAI's function-calling, Anthropic's tool use.
 
@@ -163,7 +163,7 @@ Symbolic AI is critical for **provable correctness**:
 
 ### LLM + Theorem Proving (the 2024 frontier)
 
-The Lean-based **"AI for math"** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:
+The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:
 
 1. Generate a candidate proof in natural language + Lean code.
 2. Submit to Lean's kernel for verification.

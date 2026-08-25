@@ -18,7 +18,7 @@ The idea of hierarchical visual feature detection was first introduced by \citea
 
 * **Local Connectivity:** Cells respond only to small portions of the visual field (Receptive Fields).
 * **Feature Hierarchy:** Simple features (edges) are combined to form complex features.
-* **Pooling/Invariance:** The concept of complex cells corresponds to "Max-Pooling" in modern architectures, achieving translation invariance.
+* **Pooling/Invariance:** The concept of complex cells corresponds to “Max-Pooling” in modern architectures, achieving translation invariance.
 
 ## What is a Convolution?
 
@@ -108,13 +108,13 @@ In **Deep Learning**, the paradigm shifts completely:
 <div class="md">
 ## The Power of Hierarchy: Building Complexity from Simplicity
 
-A deep learning model doesn't identify a "stop sign" in a single leap. Instead, it constructs an understanding through a **layered hierarchy of abstraction**, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.
+A deep learning model doesn't identify a “stop sign” in a single leap. Instead, it constructs an understanding through a **layered hierarchy of abstraction**, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.
 
 ### Layer 1: Primitive Edge Detection
 
 The first convolutional layer acts like a microscopic scanner. Each kernel examines a tiny local window of pixels (e.g., $3 \times 3$) to detect basic **primitives**: horizontal lines, vertical lines, diagonal edges, and color gradients.
 
-At this stage, the network has no concept of a "sign", it only knows that there is a strong vertical gradient at coordinate $(23, 41)$ or a diagonal edge at $(67, 12)$. These raw detections form **feature maps**, one per kernel.
+At this stage, the network has no concept of a “sign”, it only knows that there is a strong vertical gradient at coordinate $(23, 41)$ or a diagonal edge at $(67, 12)$. These raw detections form **feature maps**, one per kernel.
 
 The four feature maps below show exactly this: each filter responds to edges at a different orientation.
 
@@ -122,8 +122,8 @@ The four feature maps below show exactly this: each filter responds to edges at 
 
 The second convolutional layer doesn't look at the original image at all. Instead, it looks at the **feature maps** produced by Layer 1.
 
-* **Searching for Patterns in Patterns:** If a "45° Diagonal" activation appears adjacent to a "90° Vertical" activation, Layer 2 can learn to interpret this spatial co-occurrence as a **corner**.
-* **Expanding the Receptive Field:** Because each layer's kernel covers a region of the *previous* layer's output, deeper layers effectively "see" a much larger area of the original image. A $3 \times 3$ kernel in Layer 2, applied to Layer 1's output, actually represents a $5 \times 5$ region of the raw input.
+* **Searching for Patterns in Patterns:** If a “45° Diagonal” activation appears adjacent to a “90° Vertical” activation, Layer 2 can learn to interpret this spatial co-occurrence as a **corner**.
+* **Expanding the Receptive Field:** Because each layer's kernel covers a region of the *previous* layer's output, deeper layers effectively “see” a much larger area of the original image. A $3 \times 3$ kernel in Layer 2, applied to Layer 1's output, actually represents a $5 \times 5$ region of the raw input.
 * **The Heatmap Below:** The combined heatmap squares the activations to amplify regions where multiple filters fire simultaneously, these are the corners and junctions of the octagonal stop sign.
 
 ### Deeper Layers: From Parts to Objects
@@ -147,7 +147,7 @@ The more layers, the more abstract and complex the representations become. Howev
             </div>
             <div style="margin-top: 20px; padding: 12px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 8px; font-size: 0.8rem; color: #475569; border: 1px solid #e2e8f0;">
                 <strong>🔍 How to read the feature maps:</strong><br>
-                Each matrix (kernel) acts as a specialized "eye" that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected.
+                Each matrix (kernel) acts as a specialized “eye” that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected.
             </div>
         </div>
 
@@ -162,13 +162,13 @@ The more layers, the more abstract and complex the representations become. Howev
 
 Above, you manually adjusted a single kernel to see how it affects an image. In a real-world **Convolutional Neural Network (CNN)**, the computer doesn't just use one kernel; it learns many different kernels at once to find various features.
 
-To go from a complex image (a 3D tensor) to a final decision, like "Stop Sign" or "Not a Stop Sign", we need to bridge the gap between the 2D grid and a final numerical probability. This is where **Flattening** comes in.
+To go from a complex image (a 3D tensor) to a final decision, like “Stop Sign” or “Not a Stop Sign”, we need to bridge the gap between the 2D grid and a final numerical probability. This is where **Flattening** comes in.
 
 ### The Flatten Layer: Unrolling the Grid
 
-A Convolutional layer preserves the "grid" shape of an image to find spatial patterns like edges and corners. However, the final decision-making layer (the **Dense** layer) expects a simple, flat list of numbers.
+A Convolutional layer preserves the “grid” shape of an image to find spatial patterns like edges and corners. However, the final decision-making layer (the **Dense** layer) expects a simple, flat list of numbers.
 
-* **What it does:** It "unrolls" the grid. For example, if your feature map is a $3 \times 3$ grid, Flattening turns those 9 pixels into a single vertical list (Vector) of 9 numbers.
+* **What it does:** It “unrolls” the grid. For example, if your feature map is a $3 \times 3$ grid, Flattening turns those 9 pixels into a single vertical list (Vector) of 9 numbers.
 * **Why we do it:** It allows the AI to take every feature it found across the entire image and combine them into a final mathematical score using a weighted sum.
 * **No learnable parameters:** Unlike Conv2D or Dense layers, Flatten has zero trainable weights, it is purely a structural reshaping operation.
 </div>

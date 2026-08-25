@@ -11,13 +11,13 @@ topics: architecture, statistics-i, statistics-ii
 -->
 
 <div class="md">
-Given a probability distribution over the next token, which one do you pick? This is the **decoding strategy**, and it controls the model's "personality" — focused and deterministic, or wild and creative. The frontier in 2025: many subtle techniques beyond temperature and top-$k$.
+Given a probability distribution over the next token, which one do you pick? This is the **decoding strategy**, and it controls the model's “personality”  focused and deterministic, or wild and creative. The frontier in 2025: many subtle techniques beyond temperature and top-$k$.
 
 This chapter covers every common decoding method with its mathematical formulation and recommended use.
 </div>
 
 <div class="optional md" data-headline="Where the math comes from">
-Three of the four quantities in this chapter — **Boltzmann distributions**, **entropy**, and **KL-divergence** — were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it is *exactly* the Boltzmann distribution over energy levels. Sampling, then, is not a new trick: it is thermodynamics in disguise.
+Three of the four quantities in this chapter  **Boltzmann distributions**, **entropy**, and **KL-divergence**  were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it is *exactly* the Boltzmann distribution over energy levels. Sampling, then, is not a new trick: it is thermodynamics in disguise.
 </div>
 
 <div class="md">
@@ -45,7 +45,7 @@ But that's only the beginning. Most modern systems use **additional filters** on
 
 Always pick $\arg\max_i P(i)$. Deterministic, fast. Used in production for fact-retrieval tasks where creativity is unwanted.
 
-Drawback: **repetition loops** and **mode collapse** ("the the the the...").
+Drawback: **repetition loops** and **mode collapse** (“the the the the...”).
 </div>
 
 <div class="md">
@@ -116,7 +116,7 @@ Less common than top-$p$ or min-$p$.
 <div class="md">
 ## Tail-Free Sampling (TFS)
 
-Discards tokens in the "tail" of the distribution where the second derivative of probability is small. Rarely used in production.
+Discards tokens in the “tail” of the distribution where the second derivative of probability is small. Rarely used in production.
 </div>
 
 <div class="md">
@@ -177,7 +177,7 @@ where $\mathbf{h}_i$ is the token's hidden state and $\alpha$ controls the degen
 
 Maintain the top $B$ partial sequences at each step; expand all of them; keep the top $B$. Used in machine translation; rarely in modern LLM chat.
 
-Drawbacks: tends to produce generic, "averaged" outputs in open-ended generation.
+Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.
 </div>
 
 <div class="md">

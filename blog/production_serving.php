@@ -19,11 +19,11 @@ The frontier in 2025: serving **hundreds of thousands of tokens per second per c
 <div class="md">
 ## The Inference Challenge
 
-For a 70B model in bf16 on a single H100, each generated token requires reading the full model weights from HBM. With 140 GB at ~3 TB/s HBM bandwidth, this gives **~46 ms per token** as a *pure memory-bandwidth lower bound* — the absolute floor for fp16, single-user, single-GPU decode. Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms. To beat the 46 ms floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic — the techniques discussed in this chapter.
+For a 70B model in bf16 on a single H100, each generated token requires reading the full model weights from HBM. With 140 GB at ~3 TB/s HBM bandwidth, this gives **~46 ms per token** as a *pure memory-bandwidth lower bound*  the absolute floor for fp16, single-user, single-GPU decode. Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms. To beat the 46 ms floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic  the techniques discussed in this chapter.
 
 Three bottlenecks:
 
-1. **Memory bandwidth (the hard floor)**: see above — sets the minimum per-token latency for a given precision.
+1. **Memory bandwidth (the hard floor)**: see above  sets the minimum per-token latency for a given precision.
 2. **Compute throughput**: matmuls saturate FLOPs only at large batch sizes.
 3. **Latency**: chat workloads are bursty; prefill and decode have different characteristics.
 
@@ -33,7 +33,7 @@ Solutions attack each in turn.
 <div class="md">
 ## KV-Cache: The Hidden Memory Tax
 
-Recall from the Attention chapter: during autoregressive generation, each new token must attend to all previous tokens. Without caching, every step recomputes the K and V matrices for the full history — $O(n^2)$ work per token.
+Recall from the Attention chapter: during autoregressive generation, each new token must attend to all previous tokens. Without caching, every step recomputes the K and V matrices for the full history  $O(n^2)$ work per token.
 
 The **KV-cache** stores the K and V projections of past tokens in GPU memory. Memory per token:
 
@@ -41,7 +41,7 @@ $$
 \text{KV memory per token} = 2 \cdot L \cdot h \cdot d_h \cdot \text{bytes}
 $$
 
-For a 70B model ($L = 80$ layers, $h = 64$ heads, $d_h = 128$) with fp16 KV (2 bytes): $2 \cdot 80 \cdot 64 \cdot 128 \cdot 2 = 2.6$ MB per token. For 4K context: 10.5 GB; for 128K context: **335 GB** — **exceeding the model weights themselves**.
+For a 70B model ($L = 80$ layers, $h = 64$ heads, $d_h = 128$) with fp16 KV (2 bytes): $2 \cdot 80 \cdot 64 \cdot 128 \cdot 2 = 2.6$ MB per token. For 4K context: 10.5 GB; for 128K context: **335 GB**  **exceeding the model weights themselves**.
 
 This is the dominant memory cost in inference. Several techniques address it:
 
@@ -162,7 +162,7 @@ NVIDIA's optimized inference engine. Tightly integrated with TensorRT for kernel
 
 ### SGLang (Stanford LMSYS)
 
-Optimized for **structured generation** — JSON output, grammar-constrained decoding, multi-turn tool use. Powers Vicuna and many agent systems.
+Optimized for **structured generation**  JSON output, grammar-constrained decoding, multi-turn tool use. Powers Vicuna and many agent systems.
 
 ### llama.cpp (Georgi Gerganov)
 

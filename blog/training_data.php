@@ -11,7 +11,7 @@ topics: training, data, programming, society
 -->
 
 <div class="md">
-A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated — and why every frontier lab guards its data recipes as their most valuable trade secret.
+A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated  and why every frontier lab guards its data recipes as their most valuable trade secret.
 </div>
 
 <div class="md">
@@ -30,7 +30,7 @@ Frontier LLMs are trained on **10–15 trillion tokens**. The composition is rou
 | Conversational / instruction | 2–5% | 200–500B | Curated human dialogues |
 | Multimodal captions | 5–10% | 500B–1T | Alt-text, image captions |
 
-The **Chinchilla scaling law** (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) suggests that for a given compute budget, models are best trained when tokens $\approx 20 \times$ parameters. So a 70B model needs ~1.4T tokens to be "Chinchilla-optimal"; frontier models now train on $10 \times$ that, trading sample efficiency for capability.
+The **Chinchilla scaling law** (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) suggests that for a given compute budget, models are best trained when tokens $\approx 20 \times$ parameters. So a 70B model needs ~1.4T tokens to be “Chinchilla-optimal”; frontier models now train on $10 \times$ that, trading sample efficiency for capability.
 </div>
 
 <div class="md">
@@ -53,12 +53,12 @@ The pipeline:
 <div class="md">
 ## Quality Filtering
 
-Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, "Lorem ipsum", repetitive template content. A model trained on this learns to mimic junk.
+Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content. A model trained on this learns to mimic junk.
 
 Standard filters:
 
 * **Length filter**: drop documents < 100 or > 100,000 characters.
-* **Mean word length**: drop documents with abnormally long "words" (often base64 or random tokens).
+* **Mean word length**: drop documents with abnormally long “words” (often base64 or random tokens).
 * **Symbol-to-word ratio**: drop if > 0.1 (mostly punctuation / numbers).
 * **Bullet-point ratio**: drop if > 90% lines are bullets (often lists).
 * **Stop-word fraction**: English text has 20–30% stop-words. Lower indicates non-natural text.
@@ -111,7 +111,7 @@ A document in the training set may **contain benchmark items verbatim**. Models 
 * **Translation contamination**: a French-language model could be tested on French versions of English benchmarks; cross-lingual contamination is harder.
 * **Adversarial contamination**: bad actors can post benchmark items publicly to poison future training sets.
 
-Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds "surprisingly low-perplexity" are flagged for review. FrontierMath and ARC-AGI use private, novel questions precisely to avoid this issue.
+Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perplexity filtering**: documents that the model finds “surprisingly low-perplexity” are flagged for review. FrontierMath and ARC-AGI use private, novel questions precisely to avoid this issue.
 </div>
 
 <div class="md">
@@ -138,7 +138,7 @@ How much web vs. code vs. math? This is largely **undocumented and proprietary**
 
 * **Code data** disproportionately helps reasoning (LLaMA, Mistral, Qwen all emphasize code).
 * **Math data** is critical for arithmetic; even small amounts help.
-* **Multilingual data** is under-studied — most frontier models are still 70–90% English.
+* **Multilingual data** is under-studied  most frontier models are still 70–90% English.
 * **Instruction data** is best added *after* pretraining, not mixed in.
 * **DPO/preference data** should be 100K–1M examples, not millions.
 

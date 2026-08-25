@@ -11,22 +11,22 @@ topics: math-i, programming
 -->
 
 <div class="md">
-    In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**, think of this as a "Scoreboard" that tells us how many mistakes the AI is making. 
+    In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**, think of this as a “Scoreboard” that tells us how many mistakes the AI is making. 
 
     The goal of an AI is to get the lowest score possible (zero mistakes). To do that, the AI has to figure out which direction to move to find the bottom of the valley.
 
     ## Finding the Way Down
     Imagine you are standing on a foggy mountain. You can't see the bottom, but you can feel the ground under your feet. To find the way down, you:
-    1.  **Look Ahead:** Take a tiny "probe" step ($h$) to the side.
+    1.  **Look Ahead:** Take a tiny “probe” step ($h$) to the side.
     2.  **Check the Change:** See if that step made your height go up or down.
     3.  **Calculate the Slope:** This tells you how steep the hill is right where you are standing.
     
-    In math, we write this simple "steepness check" like this:
+    In math, we write this simple “steepness check” like this:
     
     $$\text{Slope} \approx \frac{f(x + h) - f(x)}{h}$$
     
     ### Moving Toward the Goal: Gradient Descent
-    Once the AI knows which way is "downhill," it updates its position. This is called **Gradient Descent**. 
+    Once the AI knows which way is “downhill,” it updates its position. This is called **Gradient Descent**. 
     
     * **The Slope:** Tells us the direction.
     * **The Learning Rate:** Tells us how big of a step to take.
@@ -79,9 +79,9 @@ topics: math-i, programming
 
 <div class="md" style="margin-top: 30px;">
     ### What to Watch For
-    1.  **The "Probe" Step:** Notice the red line. It shows the AI "looking ahead" by distance $h$. If you make $h$ very small, the AI gets a much more accurate sense of the slope exactly where it is standing.
-    2.  **Learning in Action:** Click **"Take 1 Step Down."** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves, it keeps moving "downhill" until its errors are as small as possible.
-    3.  **Getting Stuck:** Try the "Complex Hills" landscape. If you start the AI in the wrong place, it might find a small valley and get stuck there, even if there is a much deeper valley further away!
+    1.  **The “Probe” Step:** Notice the red line. It shows the AI “looking ahead” by distance $h$. If you make $h$ very small, the AI gets a much more accurate sense of the slope exactly where it is standing.
+    2.  **Learning in Action:** Click **“Take 1 Step Down.”** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves, it keeps moving “downhill” until its errors are as small as possible.
+    3.  **Getting Stuck:** Try the “Complex Hills” landscape. If you start the AI in the wrong place, it might find a small valley and get stuck there, even if there is a much deeper valley further away!
 
 ### Understanding the Partial Derivative ($\partial$)
 
@@ -93,17 +93,17 @@ The symbol $\partial$ for partial derivatives was introduced by the Marquis de C
 The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.
 
 * **The Problem:** In a complex system, changing two things at once makes it impossible to know which change caused the result.
-* **The Solution:** We "freeze" all variables except one. We treat those frozen variables as if they were plain, unmoving numbers (constants).
-* **The Symbol:** We write $\frac{\partial f}{\partial x}$ to say: "Find the slope of function $f$, but only look at the $x$ direction."
+* **The Solution:** We “freeze” all variables except one. We treat those frozen variables as if they were plain, unmoving numbers (constants).
+* **The Symbol:** We write $\frac{\partial f}{\partial x}$ to say: “Find the slope of function $f$, but only look at the $x$ direction.”
 
 #### The Practical Example: Minimizing Prediction Error
 
-Imagine an AI trying to predict house prices. To improve, the AI needs to minimize its **Loss** ($f$), which represents the mathematical "distance" between its guess and the actual price. In this scenario, the Loss depends on two internal settings the AI is adjusting: the weight given to **Size** ($x$) and the weight given to **Age** ($y$).
+Imagine an AI trying to predict house prices. To improve, the AI needs to minimize its **Loss** ($f$), which represents the mathematical “distance” between its guess and the actual price. In this scenario, the Loss depends on two internal settings the AI is adjusting: the weight given to **Size** ($x$) and the weight given to **Age** ($y$).
 
 Let's define the **Loss Function** as:
 $$f(x, y) = x^2 + 3y$$
 
-To reduce the error, the AI needs to know which direction to "step" by calculating partial derivatives.
+To reduce the error, the AI needs to know which direction to “step” by calculating partial derivatives.
 
 **Step A: Find the influence of the Size weight ($\frac{\partial f}{\partial x}$)**
 To do this, we treat the **Age weight** ($y$) as a constant.
@@ -123,13 +123,13 @@ Now, we treat the **Size weight** ($x$) as the constant.
 The AI combines these individual slopes into a **Gradient Vector**:
 $$\nabla f = [8, 3]$$
 
-This vector tells the AI exactly how much to adjust each "knob" (Size and Age) to reach the goal. Just like the **"Take 1 Step Down"** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:
+This vector tells the AI exactly how much to adjust each “knob” (Size and Age) to reach the goal. Just like the **“Take 1 Step Down”** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:
 * $x_\text{new} = x_\text{old} - (\text{Learning Rate} \times 8)$
 * $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 3)$
 
-### The "Backpropagation" Bridge: The Chain Rule
+### The “Backpropagation” Bridge: The Chain Rule
 
-You've learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which "knob" at the very beginning (the input) caused it.
+You've learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which “knob” at the very beginning (the input) caused it.
 
 This is called **Backpropagation**, and it relies on the **Chain Rule**.
 
@@ -141,6 +141,6 @@ Imagine three gears connected in a line: Gear A, Gear B, and Gear C.
 If you want to know how fast Gear C moves when you touch Gear A, you just multiply the ratios:
 $$\frac{\partial \text{Output}}{\partial \text{Input}} = \frac{\partial \text{Node B}}{\partial \text{Input}} \times \frac{\partial \text{Output}}{\partial \text{Node B}}$$
 
-#### Why "Back"?
-In AI, we calculate the error at the end first. We then pass that "error message" backward through the chain. Each layer multiplies the incoming message by its own local slope.
+#### Why “Back”?
+In AI, we calculate the error at the end first. We then pass that “error message” backward through the chain. Each layer multiplies the incoming message by its own local slope.
 </div>

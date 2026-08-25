@@ -11,11 +11,11 @@ topics: language, programming
 -->
 
 <div class="md">
-Before an AI can "calculate" a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI "sees" the world differently.
+Before an AI can “calculate” a word, it must chop the text into pieces. This process is called **Tokenization**. Depending on how you chop, the AI “sees” the world differently.
 </div>
 
 <div class="optional md" data-headline="Where these token IDs go">
-A tokenizer's output is a list of **integers** — token IDs in $\{0, 1, \dots, |V|-1\}$. The very next step in every Transformer is to look each ID up in a trainable matrix $E \in \mathbb{R}^{|V| \times d}$ to get a vector. That lookup is what brings you into the <a href="embeddinglab">Embeddings chapter</a>. Everything below this chapter is "before the lookup"; everything in Embeddings is "after".
+A tokenizer's output is a list of **integers**  token IDs in $\{0, 1, \dots, |V|-1\}$. The very next step in every Transformer is to look each ID up in a trainable matrix $E \in \mathbb{R}^{|V| \times d}$ to get a vector. That lookup is what brings you into the <a href="embeddinglab">Embeddings chapter</a>. Everything below this chapter is “before the lookup”; everything in Embeddings is “after”.
 </div>
 
 <div id="tokenizer-section">
@@ -50,9 +50,9 @@ A tokenizer's output is a list of **integers** — token IDs in $\{0, 1, \dots, 
         <div class="md">
 The most intuitive way: Every time there is a space, comma, dot etc., we create a new token.
 
-Before modern subword methods, word-level splitting was the default for systems like the original **IBM Alignment Models** in the early 1990s. While \citeauthor{zipf1949human} (\citeyear{zipf1949human}) formalized the distribution problem, it was these early translation models that hit the "Out-of-Vocabulary" (OOV) wall, leading researchers to realize that treating "brave" and "bravely" as two completely unrelated IDs was inefficient.
+Before modern subword methods, word-level splitting was the default for systems like the original **IBM Alignment Models** in the early 1990s. While \citeauthor{zipf1949human} (\citeyear{zipf1949human}) formalized the distribution problem, it was these early translation models that hit the “Out-of-Vocabulary” (OOV) wall, leading researchers to realize that treating “brave” and “bravely” as two completely unrelated IDs was inefficient.
 
-**Problem:** If the AI sees a new word like "bravely", it has no idea what it means.
+**Problem:** If the AI sees a new word like “bravely”, it has no idea what it means.
         </div>
         <div id="viz-spaces" class="viz-container"></div>
     </div>
@@ -93,7 +93,7 @@ Later, *Claude Shannon* expanded the idea of word-level Analysis and $n$-gram-Mo
         <div class="md">
 This treats every single letter and space as its own token. This is the most granular way to see text.
 
-The concept of viewing text as a sequence of raw characters dates back to \citeauthor{markov1913ngram} (\citeyear{markov1913ngram}), who used it to analyze the statistical structure of Russian literature. In the era of Deep Learning, the "raw view" was revitalized by \citeauthor{sutskever2011generating} in their paper \citetitle{sutskever2011generating}, which proved that Recurrent Neural Networks could learn to predict the next character with enough precision to form coherent words and sentences from scratch.
+The concept of viewing text as a sequence of raw characters dates back to \citeauthor{markov1913ngram} (\citeyear{markov1913ngram}), who used it to analyze the statistical structure of Russian literature. In the era of Deep Learning, the “raw view” was revitalized by \citeauthor{sutskever2011generating} in their paper \citetitle{sutskever2011generating}, which proved that Recurrent Neural Networks could learn to predict the next character with enough precision to form coherent words and sentences from scratch.
         </div>
         <div id="viz-chars" class="viz-container"></div>
     </div>
@@ -107,7 +107,7 @@ The concept of viewing text as a sequence of raw characters dates back to \citea
             <span class="section-token-count"></span>
         </div>
         <div class="md">
-WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it greedily merges the pair whose combination most improves the **likelihood of the training data**. The original formulation (Schuster & Nakajima 2012), introduced to handle the massive character sets of Japanese and Korean, optimizes that likelihood directly through an iterative procedure — it has no closed-form per-pair score. The ratio shown below is a separate, simpler *approximation* used by BERT-style implementations, not the original objective. WordPiece later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., "tokenization" → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
+WordPiece is a subword method closely related to BPE, but instead of merging the most *frequent* pair, it greedily merges the pair whose combination most improves the **likelihood of the training data**. The original formulation (Schuster & Nakajima 2012), introduced to handle the massive character sets of Japanese and Korean, optimizes that likelihood directly through an iterative procedure  it has no closed-form per-pair score. The ratio shown below is a separate, simpler *approximation* used by BERT-style implementations, not the original objective. WordPiece later became famous as the tokenizer behind Google's **BERT**. Continuation fragments are marked with `##` (e.g., “tokenization” → `token`, `##iza`, `##tion`). GPT-style models use BPE instead because byte-level BPE is simpler to train at scale and guarantees coverage of any input without needing an unknown-token fallback.
         </div>
 
 	<div class="optional md" data-headline="The WordPiece-Algorithm">
@@ -120,7 +120,7 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
 		    <p align="center">
 		      $$\text{score}(a, b) = \frac{\text{freq}(ab)}{\text{freq}(a) \times \text{freq}(b)}$$
 		    </p>
-		    This closed-form ratio is a *simplification*, not the original formulation — it favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently, which is why the formula is a *ratio* rather than a raw frequency: BPE uses raw frequency, BERT-style WordPiece uses the ratio.
+		    This closed-form ratio is a *simplification*, not the original formulation  it favors merging pairs whose co-occurrence is high <em>relative to</em> how often each piece appears independently, which is why the formula is a *ratio* rather than a raw frequency: BPE uses raw frequency, BERT-style WordPiece uses the ratio.
 		  </li>
 		  <li>
 		    <strong>Merge the highest-scoring pair</strong> and add the new symbol to the vocabulary.
@@ -147,11 +147,11 @@ WordPiece is a subword method closely related to BPE, but instead of merging the
         <div class="md">
 Modern AIs use **BPE (Byte-Pair Encoding)**. It keeps common words whole but splits rare words into known building blocks like `ing` or `ly`.
 
-The history of BPE is a classic case of an algorithm being repurposed for a new era. Originally, \citeauthor{gage1994bpe} (\citeyear{gage1994bpe}) developed the technique strictly for data compression, using iterative byte-pair replacement to shrink files. It remained a niche compression tool until \citeauthor{sennrich2016subword} (\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy. This shift allowed modern models to handle rare words by breaking them into frequent fragments, effectively solving the "Out-of-Vocabulary" problem that had previously limited word-level neural networks.
+The history of BPE is a classic case of an algorithm being repurposed for a new era. Originally, \citeauthor{gage1994bpe} (\citeyear{gage1994bpe}) developed the technique strictly for data compression, using iterative byte-pair replacement to shrink files. It remained a niche compression tool until \citeauthor{sennrich2016subword} (\citeyear{sennrich2016subword}) adapted the logic into a subword tokenization strategy. This shift allowed modern models to handle rare words by breaking them into frequent fragments, effectively solving the “Out-of-Vocabulary” problem that had previously limited word-level neural networks.
         </div>
 
 <div class="md">
-**Why BPE works: Zipf's Law.** The reason BPE's merge strategy is so effective is that it mirrors the statistical structure of language itself. \citeauthor{zipf1949human} observed that in any natural language corpus, a few words (like "the," "of," "and") appear with very high frequency, while most words are rare. BPE's iterative merging naturally produces a token vocabulary that follows this same distribution: common words stay intact as single tokens, while rare words are broken into fragments that reuse frequent subword units. This aligns the tokenizer's granularity with the data's statistical structure — frequent patterns get short codes, rare ones get longer compositions. In effect, BPE is a lossless compression scheme that happens to produce excellent tokenizations for language models.
+**Why BPE works: Zipf's Law.** The reason BPE's merge strategy is so effective is that it mirrors the statistical structure of language itself. \citeauthor{zipf1949human} observed that in any natural language corpus, a few words (like “the,” “of,” “and”) appear with very high frequency, while most words are rare. BPE's iterative merging naturally produces a token vocabulary that follows this same distribution: common words stay intact as single tokens, while rare words are broken into fragments that reuse frequent subword units. This aligns the tokenizer's granularity with the data's statistical structure  frequent patterns get short codes, rare ones get longer compositions. In effect, BPE is a lossless compression scheme that happens to produce excellent tokenizations for language models.
 </div>
 
 
@@ -162,7 +162,7 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
 		  </li>
 		  <li>
 		    <strong>Count all adjacent symbol pairs</strong> across the corpus.<br>
-		    <em>For example, in a corpus containing "car" (5×) and "cable" (3×), the pair <b>c a</b> appears 8 times total.</em>
+		    <em>For example, in a corpus containing “car” (5×) and “cable” (3×), the pair <b>c a</b> appears 8 times total.</em>
 		  </li>
 		  <li>
 		    <strong>Merge the most frequent pair</strong> into a single new symbol and add it to the vocabulary.<br>
@@ -188,7 +188,7 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
             <h3 style="margin:0; color:#fca5a5;">Why LLMs Can't Count Letters</h3>
         </div>
         <div class="md">
-Type a word like **"strawberry"** below and watch how BPE splits it. The model never sees individual letters — it sees whatever fragments the tokenizer produced during training.
+Type a word like **“strawberry”** below and watch how BPE splits it. The model never sees individual letters  it sees whatever fragments the tokenizer produced during training.
         </div>
         <div style="margin:12px 0;">
             <input type="text" id="tokenization-failure-input" class="bw-cell"

@@ -25,11 +25,11 @@ $$\mathbf{h} = \sigma(W_n \mathbf{x} + \mathbf{b}_n)$$
 Where $\sigma$ is the Activation Function, $W_n$ is a tensor with the weights from layer $n$ and $b_n$ is a vector with the biases of layer $n$.
 
 ### Stacking and Composition
-"Deep" simply means that the output of one layer becomes the input for the next. Mathematically, this is known as **Function Composition**. To get to the final prediction $\hat{y}$ in a two-layer network, we pass the data through a *chain of operations*:
+“Deep” simply means that the output of one layer becomes the input for the next. Mathematically, this is known as **Function Composition**. To get to the final prediction $\hat{y}$ in a two-layer network, we pass the data through a *chain of operations*:
 
 $$\text{Result} = \sigma_2(W_2 (\sigma_1(W_1 \mathbf{x} + \mathbf{b}_1)) + \mathbf{b}_2)$$
 
-Each layer $L_n$ has its own set of weights $W_n$ and biases $\mathbf{b}_n$. This hierarchy allows the network to learn a "ladder" of features: the first layer might detect *simple lines*, the second detects *shapes*, and the third detects *complex objects* like faces or cars.
+Each layer $L_n$ has its own set of weights $W_n$ and biases $\mathbf{b}_n$. This hierarchy allows the network to learn a “ladder” of features: the first layer might detect *simple lines*, the second detects *shapes*, and the third detects *complex objects* like faces or cars.
 
 The operation can be split as well. The following equations are equal to the one equation, but spread out more:
 
@@ -55,21 +55,21 @@ $$h(x) = \sum_{j=1}^{n} \beta_j \psi(a_j^T x - \theta_j)$$
 
 The variables are defined as:
 * $x \in \mathbb{R}^k$: The input vector, drawn from a compact domain.
-* $\psi$: The activation function. The required conditions vary by version and genuinely matter: Cybenko's original proof requires a continuous **sigmoidal** activation, Hornik's allows **bounded and non-constant** activations, while unbounded activations such as ReLU need yet another result (e.g., a "non-polynomial" condition). There is no single magic condition under which every activation function works.
+* $\psi$: The activation function. The required conditions vary by version and genuinely matter: Cybenko's original proof requires a continuous **sigmoidal** activation, Hornik's allows **bounded and non-constant** activations, while unbounded activations such as ReLU need yet another result (e.g., a “non-polynomial” condition). There is no single magic condition under which every activation function works.
 * $a_j$: Weight vectors for the input-to-hidden connections ($a_j^T$ is the transpose for the dot product).
 * $\beta_j$: Coefficients (weights) for the linear output layer.
 * $\theta_j$: Thresholds or biases for each hidden unit.
 
-Because of this, calling networks "universal learning machines" overstates what the theorem proves. It establishes that sufficiently wide networks can *represent* the target functions for appropriate activation classes; it says nothing about *learning* — neither that gradient descent will find the weights, nor that the required number of hidden units is practical, which can be astronomically large.
+Because of this, calling networks “universal learning machines” overstates what the theorem proves. It establishes that sufficiently wide networks can *represent* the target functions for appropriate activation classes; it says nothing about *learning*  neither that gradient descent will find the weights, nor that the required number of hidden units is practical, which can be astronomically large.
 
 The theorem is still foundational: it shifts the focus of neural network efficacy away from any single activation function to the capacity of the architecture itself, showing that even simple models can in principle represent incredibly complex patterns.
 </div>
 
 <div class="md">
 ### The Role of Non-Linearity
-The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the "glue" that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically *collapse into a single linear function*, because a "linear function of a linear function" is still just a linear function.
+The activation function $\sigma$ (such as **ReLU** or **Sigmoid**) is the “glue” that makes stacking work. If we didn't use $\sigma$ between layers, the entire stack would mathematically *collapse into a single linear function*, because a “linear function of a linear function” is still just a linear function.
 
-By keeping the non-linear "gates" between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate.
+By keeping the non-linear “gates” between the stacks, we allow the network to warp and fold the coordinate space, enabling it to solve complex problems like the **XOR** gate.
 
 **Tip:** Try changing the activation function of the hidden layer.
 </div>

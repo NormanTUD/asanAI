@@ -12,7 +12,7 @@ topics: inference, language, agents, programming
 <div class="md">
 ## How LLMs Actually Search the Web
 
-When you ask ChatGPT, Claude, or Gemini a question that requires up-to-date information, the model doesn't "browse the internet" the way you do. Instead, a **tool-use pipeline** orchestrates a series of API calls, content fetches, and text extractions *before* the LLM ever generates a single token of its answer.
+When you ask ChatGPT, Claude, or Gemini a question that requires up-to-date information, the model doesn't “browse the internet” the way you do. Instead, a **tool-use pipeline** orchestrates a series of API calls, content fetches, and text extractions *before* the LLM ever generates a single token of its answer.
 
 $$
 \begin{gathered}
@@ -28,7 +28,7 @@ $$
 \end{gathered}
 $$
 
-**Key insight:** The LLM itself cannot "see" the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.
+**Key insight:** The LLM itself cannot “see” the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.
 </div>
 <div id="wslab-pipeline-diagram"></div>
 <div class="md">
@@ -40,10 +40,10 @@ Not every question requires a web search. The system (or the LLM itself) first d
 
 | Signal | Example | Action |
 |--------|---------|--------|
-| Temporal keywords | "latest", "today", "2026" | → Search |
-| Named entities + recency | "current CEO of Twitter" | → Search |
-| Evergreen knowledge | "What is the Pythagorean theorem?" | → Answer directly |
-| Explicit request | "Search the web for…" | → Search |
+| Temporal keywords | “latest”, “today”, “2026” | → Search |
+| Named entities + recency | “current CEO of Twitter” | → Search |
+| Evergreen knowledge | “What is the Pythagorean theorem?” | → Answer directly |
+| Explicit request | “Search the web for…” | → Search |
 | Ambiguity / uncertainty | Model unsure about facts | → Search |
 
 Modern systems use **few-shot prompting** or **fine-tuned classifiers** to make this decision. The LLM is given a system prompt like the following:
@@ -65,9 +65,9 @@ Once the LLM decides to search, it doesn't just forward the user's raw question 
 
 | User says | LLM searches for |
 |-----------|-------------------|
-| "What's happening with the war?" | `"Ukraine Russia conflict latest developments May 2026"` |
-| "Did that company go bankrupt?" | `"[company name from context] bankruptcy filing 2026"` |
-| "How much does it cost now?" | `"[product name] current price 2026"` |
+| “What's happening with the war?” | `"Ukraine Russia conflict latest developments May 2026"` |
+| “Did that company go bankrupt?” | `"[company name from context] bankruptcy filing 2026"` |
+| “How much does it cost now?” | `"[product name] current price 2026"` |
 
 This is called **query transformation**, the LLM uses conversational context to produce a precise, keyword-rich search string. Some systems generate **multiple queries** to cover different angles of the question.
 
@@ -77,7 +77,7 @@ $$
 
 ## Step 3: The Search Engine, What's Actually Used?
 
-This is the question everyone asks: *"What search engine does ChatGPT use?"*
+This is the question everyone asks: *“What search engine does ChatGPT use?”*
 
 ### Commercial LLM providers use **Search APIs**:
 
@@ -105,18 +105,18 @@ The search API returns **structured JSON**, not rendered web pages:
 </div>
 
 <pre class="wslab-code-block"><code>{
-  "results": [
+  “results”: [
     {
-      "title": "Transformer Architecture Explained - 2026 Update",
-      "url": "https://example.com/transformers-2026",
-      "snippet": "The transformer architecture has evolved significantly since...",
-      "date": "2026-04-15"
+      “title”: “Transformer Architecture Explained - 2026 Update”,
+      “url”: “https://example.com/transformers-2026”,
+      “snippet”: “The transformer architecture has evolved significantly since...”,
+      “date”: “2026-04-15”
     },
     {
-      "title": "New Advances in Attention Mechanisms",
-      "url": "https://arxiv.org/abs/2026.12345",
-      "snippet": "We propose a novel linear attention variant that reduces...",
-      "date": "2026-03-22"
+      “title”: “New Advances in Attention Mechanisms”,
+      “url”: “https://arxiv.org/abs/2026.12345”,
+      “snippet”: “We propose a novel linear attention variant that reduces...”,
+      “date”: “2026-03-22”
     }
   ]
 }</code></pre>
@@ -142,7 +142,7 @@ Raw HTML is full of navigation bars, ads, scripts, and boilerplate. The system u
 
 | Tool | What it does |
 |------|--------------|
-| **Readability.js** (Mozilla) | Extracts the "main content" from a page (like Reader Mode) |
+| **Readability.js** (Mozilla) | Extracts the “main content” from a page (like Reader Mode) |
 | **Trafilatura** (Python) | Extracts and cleans article text from HTML |
 | **BeautifulSoup** | General HTML parser, extract specific elements |
 | **Playwright / Puppeteer** | Full headless browser, handles JavaScript-rendered pages |
@@ -202,15 +202,15 @@ If the search results don't contain enough information, say so.
 Search Results:
 
 [1] Source: example.com/transformers-2026 (April 15, 2026)
-"The transformer architecture has evolved significantly since the original
-'Attention Is All You Need' paper. In 2026, the dominant variant uses..."
+“The transformer architecture has evolved significantly since the original
+'Attention Is All You Need' paper. In 2026, the dominant variant uses...“
 
 [2] Source: arxiv.org/abs/2026.12345 (March 22, 2026)
-"We propose a novel linear attention variant that reduces computational
-complexity from O(n²) to O(n) while maintaining 97% of standard..."
+“We propose a novel linear attention variant that reduces computational
+complexity from O(n²) to O(n) while maintaining 97% of standard...“
 
 [3] Source: blog.research.ai/attention (January 8, 2026)
-"Recent benchmarks show that modern attention mechanisms achieve..."
+“Recent benchmarks show that modern attention mechanisms achieve...”
 
 User: What are the latest advances in transformer architecture?</code></pre>
 <div class="md">
@@ -223,7 +223,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">💬</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">User Interface</div>
-<div class="wslab-arch-desc">"What are the latest advances in transformers?"</div>
+<div class="wslab-arch-desc">“What are the latest advances in transformers?”</div>
 
         </div>
     </div>
@@ -232,7 +232,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🤖</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Orchestrator / Agent</div>
-<div class="wslab-arch-desc">Receives query · Asks LLM "Should I search?" · LLM decides on search terms</div>
+<div class="wslab-arch-desc">Receives query · Asks LLM “Should I search?” · LLM decides on search terms</div>
 
         </div>
     </div>
@@ -241,7 +241,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">🔍</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">Search API</div>
-<div class="wslab-arch-desc">Bing · Google · Brave · SearXNG — returns top 5-10 results as JSON</div>
+<div class="wslab-arch-desc">Bing · Google · Brave · SearXNG  returns top 5-10 results as JSON</div>
 
         </div>
     </div>
@@ -295,7 +295,7 @@ The LLM then generates an answer **grounded in these sources**, citing them inli
         <div class="wslab-arch-icon">📄</div>
         <div class="wslab-arch-content">
           <div class="wslab-arch-title">User Sees Answer</div>
-<div class="wslab-arch-desc">"Recent advances include linear attention [1], sparse mixture-of-experts [2] and…" with clickable sources</div>
+<div class="wslab-arch-desc">“Recent advances include linear attention [1], sparse mixture-of-experts [2] and…” with clickable sources</div>
 
         </div>
     </div>
@@ -313,25 +313,25 @@ $$
 
 ## Tool Use / Function Calling: The Mechanism
 
-The LLM doesn't have "built-in" web access. Instead, it uses a protocol called **function calling** (or **tool use**):
+The LLM doesn't have “built-in” web access. Instead, it uses a protocol called **function calling** (or **tool use**):
 
 **1.** The system prompt defines available tools:
 </div>
 
 <pre class="wslab-code-block"><code>{
-  "tools": [
+  “tools”: [
     {
-      "name": "web_search",
-      "description": "Search the web for current information",
-      "parameters": {
-        "query": { "type": "string", "description": "Search query" }
+      “name”: “web_search”,
+      “description”: “Search the web for current information”,
+      “parameters”: {
+        “query”: { “type”: “string”, “description”: “Search query” }
       }
     },
     {
-      "name": "fetch_page",
-      "description": "Fetch and extract content from a URL",
-      "parameters": {
-        "url": { "type": "string", "description": "URL to fetch" }
+      “name”: “fetch_page”,
+      “description”: “Fetch and extract content from a URL”,
+      “parameters”: {
+        “url”: { “type”: “string”, “description”: “URL to fetch” }
       }
     }
   ]
@@ -342,8 +342,8 @@ The LLM doesn't have "built-in" web access. Instead, it uses a protocol called *
 
 <pre class="wslab-code-block"><code>// LLM output (not shown to user):
 {
-  "tool_call": "web_search",
-  "arguments": { "query": "transformer architecture advances 2026" }
+  “tool_call”: “web_search”,
+  “arguments”: { “query”: “transformer architecture advances 2026” }
 }</code></pre>
 <div class="md">
 **3.** The orchestrator **executes** the tool call and returns results to the LLM.
@@ -402,7 +402,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 - **robots.txt:** Ethical systems respect crawling restrictions
 - **Stale search indices:** Search engines may not have indexed very recent pages
 - **JavaScript-heavy sites:** Require expensive headless browser rendering
-- **Multimedia content:** Images, videos, and interactive content can't be "read"
+- **Multimedia content:** Images, videos, and interactive content can't be “read”
 - **Hallucinated citations:** The LLM might misattribute information to the wrong source
 - **Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (see the Security chapter)
 
@@ -437,7 +437,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 If you understood the RAG chapter, web search is conceptually simple:
 
 $$
-\underbrace{\text{Web Search}}_{\text{RAG where the "database" is the entire internet}}
+\underbrace{\text{Web Search}}_{\text{RAG where the “database” is the entire internet}}
 $$
 
 The only differences are:

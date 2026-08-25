@@ -15,13 +15,13 @@ When we peer inside a Transformer, we don't find a single monolithic algorithm. 
 
 ## What is a Circuit?
 
-A circuit in a neural network is a computational subgraph: a subset of model components (attention heads, MLP layers, embeddings) connected via the \cite[residual stream]{elhage2021mathematical} that together implement a specific input-output behavior. Just as an electronic circuit board contains specialized sub-circuits for power regulation, signal amplification, and logic gates, a Transformer contains sub-circuits for tasks like "copy the previous token," "find the subject of a sentence," or "look up factual associations."
+A circuit in a neural network is a computational subgraph: a subset of model components (attention heads, MLP layers, embeddings) connected via the \cite[residual stream]{elhage2021mathematical} that together implement a specific input-output behavior. Just as an electronic circuit board contains specialized sub-circuits for power regulation, signal amplification, and logic gates, a Transformer contains sub-circuits for tasks like “copy the previous token,” “find the subject of a sentence,” or “look up factual associations.”
 
-The key insight from \cite[Elhage et al. (2021)]{elhage2021mathematical} is that the **residual stream** acts as a shared communication bus. Each attention head and MLP layer reads from this bus, performs a computation, and writes its result back. Circuits emerge when specific heads learn to "talk to each other" through this shared medium.
+The key insight from \cite[Elhage et al. (2021)]{elhage2021mathematical} is that the **residual stream** acts as a shared communication bus. Each attention head and MLP layer reads from this bus, performs a computation, and writes its result back. Circuits emerge when specific heads learn to “talk to each other” through this shared medium.
 
 <p>$$\underbrace{x_0}_{\text{embedding}} \xrightarrow{+h_1} \xrightarrow{+h_2} \xrightarrow{+\text{MLP}_1} \xrightarrow{+h_3} \cdots \xrightarrow{+h_L} \underbrace{x_L}_{\text{unembedding}}$$</p>
 
-Each arrow represents an additive contribution to the residual stream. A "circuit" is a subset of these contributions that accounts for a particular behavior.
+Each arrow represents an additive contribution to the residual stream. A “circuit” is a subset of these contributions that accounts for a particular behavior.
 
 ## The Residual Stream as a Communication Bus
 
@@ -36,16 +36,16 @@ where $x_i^{(0)}$ is the token embedding plus positional encoding. Every compone
 Research has identified several recurring circuit patterns in Transformers \cite[Olsson et al., 2022]{olsson2022induction}:
 
 ### 1. Direct Path (Token Identity)
-The simplest "circuit" is no circuit at all: the embedding of a token flows directly through the residual stream to the unembedding, without being significantly modified by any attention head or MLP. This implements a **bigram model**: predicting the next token based solely on the identity of the current token.
+The simplest “circuit” is no circuit at all: the embedding of a token flows directly through the residual stream to the unembedding, without being significantly modified by any attention head or MLP. This implements a **bigram model**: predicting the next token based solely on the identity of the current token.
 
 ### 2. Induction Heads (Pattern Completion)
 \cite[Induction heads]{olsson2022induction} are perhaps the most important circuit discovered so far. They implement the following algorithm:
 
-"If I've seen the pattern $[A][B] \ldots [A]$, predict $[B]$."
+“If I've seen the pattern $[A][B] \ldots [A]$, predict $[B]$.”
 
 This requires **two attention heads working together** across two layers:
 
-- **Head 1 (Previous Token Head):** In an early layer, this head attends from each token to the token *before* it, effectively computing "what came before me?" It writes this information into the residual stream.
+- **Head 1 (Previous Token Head):** In an early layer, this head attends from each token to the token *before* it, effectively computing “what came before me?” It writes this information into the residual stream.
 - **Head 2 (Induction Head):** In a later layer, this head uses the information written by Head 1 to search for previous occurrences of the current token's predecessor pattern, then copies what followed.
 
 $$\underbrace{[\text{...} A \; B \; \text{...} \; A]}_{\text{context}} \xrightarrow{\text{Head 1: prev-token}} \xrightarrow{\text{Head 2: pattern match}} \text{predict } B$$
@@ -53,13 +53,13 @@ $$\underbrace{[\text{...} A \; B \; \text{...} \; A]}_{\text{context}} \xrightar
 ### 3. Indirect Object Identification (IOI)
 The \cite[IOI circuit]{wang2022interpretability} in GPT-2 small handles sentences like:
 
-"When Mary and John went to the store, John gave a drink to ___"
+“When Mary and John went to the store, John gave a drink to ___”
 
-The circuit must identify that "Mary" is the indirect object (the answer), not "John" (who is the subject). This requires a sophisticated collaboration of multiple attention heads across multiple layers, organized into functional groups:
+The circuit must identify that “Mary” is the indirect object (the answer), not “John” (who is the subject). This requires a sophisticated collaboration of multiple attention heads across multiple layers, organized into functional groups:
 
-- **Duplicate Token Heads:** Detect that "John" appears twice
+- **Duplicate Token Heads:** Detect that “John” appears twice
 - **S-Inhibition Heads:** Suppress the repeated name
-- **Name Mover Heads:** Copy the remaining name ("Mary") to the output
+- **Name Mover Heads:** Copy the remaining name (“Mary”) to the output
 
 ## How Circuits Are Discovered
 
@@ -89,7 +89,7 @@ $$\text{head}(x) = W_O \cdot (A \cdot V)$$
 
 The key insight is that $W_Q^T W_K$ determines **what the head looks for** (the QK circuit), while $W_O W_V$ determines **what information gets moved** (the OV circuit). These can be analyzed independently.
 
-### The QK Circuit: "Where to Look"
+### The QK Circuit: “Where to Look”
 
 The QK circuit computes a bilinear form that determines the attention pattern:
 
@@ -97,13 +97,13 @@ The QK circuit computes a bilinear form that determines the attention pattern:
 
 If we decompose $W_Q^T W_K$ in the token embedding basis, we can read off which token pairs have high mutual attention.
 
-### The OV Circuit: "What to Copy"
+### The OV Circuit: “What to Copy”
 
 The OV circuit determines what information flows when attention is paid:
 
 $$\text{Output contribution} = W_O W_V \cdot x_{\text{source}}$$
 
-The matrix $W_O W_V$ maps source token representations to output contributions. For a "copying" head, this matrix approximates the identity in the relevant subspace.
+The matrix $W_O W_V$ maps source token representations to output contributions. For a “copying” head, this matrix approximates the identity in the relevant subspace.
 </div>
 
 <div class="md">
@@ -150,8 +150,8 @@ Induction heads are the canonical example of **K-composition**: the previous-tok
 
 \cite[Activation patching]{meng2022locating} is the primary experimental technique for identifying which components matter for a given behavior. The procedure is:
 
-1. Run the model on a **clean input** (e.g., "The Eiffel Tower is in") and record all activations.
-2. Run the model on a **corrupted input** (e.g., "The Colosseum is in") and record all activations.
+1. Run the model on a **clean input** (e.g., “The Eiffel Tower is in”) and record all activations.
+2. Run the model on a **corrupted input** (e.g., “The Colosseum is in”) and record all activations.
 3. For each component, **replace** its activation on the corrupted run with its value from the clean run.
 4. Measure how much the output changes (recovers toward the clean answer).
 
@@ -165,11 +165,11 @@ A large $\Delta_C$ means component $C$ is critical for the task.
 <div class="md">
 ## The Logit Lens: Watching Predictions Form Layer by Layer
 
-One powerful tool for peering inside a Transformer is the \cite[**logit lens**]{belrose2023tunedlens}. The idea is beautifully simple: at every layer, take the hidden state of the residual stream and decode it into vocabulary probabilities by applying the unembedding matrix $W_U$. This lets us watch how the model's prediction evolves as it passes through the network — the proverbial "thinking process" laid out layer by layer.
+One powerful tool for peering inside a Transformer is the \cite[**logit lens**]{belrose2023tunedlens}. The idea is beautifully simple: at every layer, take the hidden state of the residual stream and decode it into vocabulary probabilities by applying the unembedding matrix $W_U$. This lets us watch how the model's prediction evolves as it passes through the network  the proverbial “thinking process” laid out layer by layer.
 
 $$\text{logits}^{(\ell)} = W_U \cdot x^{(\ell)}$$
 
-Early layers typically produce diffuse, uncertain predictions. Middle layers begin to converge on the correct semantic neighborhood. Late layers make the final sharp distinction. The \cite[tuned lens]{belrose2023tunedlens} refines this by training a small affine probe for each layer (rather than reusing $W_U$ directly), producing more faithful and less biased decodings. This technique has revealed that models often "change their mind" at specific layers, and that the trajectory of latent predictions can be used to detect malicious inputs.
+Early layers typically produce diffuse, uncertain predictions. Middle layers begin to converge on the correct semantic neighborhood. Late layers make the final sharp distinction. The \cite[tuned lens]{belrose2023tunedlens} refines this by training a small affine probe for each layer (rather than reusing $W_U$ directly), producing more faithful and less biased decodings. This technique has revealed that models often “change their mind” at specific layers, and that the trajectory of latent predictions can be used to detect malicious inputs.
 </div>
 
 <div class="md">
@@ -177,7 +177,7 @@ Early layers typically produce diffuse, uncertain predictions. Middle layers beg
 
 Understanding circuits is not merely an academic exercise. It has direct implications for AI safety and alignment:
 
-1. **Detecting deception:** If we can identify the circuit responsible for a model's claim, we can check whether the model "believes" what it says or is producing text that contradicts its internal representations.
+1. **Detecting deception:** If we can identify the circuit responsible for a model's claim, we can check whether the model “believes” what it says or is producing text that contradicts its internal representations.
 
 2. **Targeted editing:** \cite[Knowledge editing techniques]{meng2022locating} like ROME (Rank-One Model Editing) and \cite[MEMIT]{meng2022memit} (which scales to thousands of edits) use circuit-level understanding to surgically modify specific facts without affecting other capabilities.
 
@@ -185,7 +185,7 @@ Understanding circuits is not merely an academic exercise. It has direct implica
 
 4. **Scalable oversight:** As models grow larger, we need automated tools to verify their behavior. Circuit-level analysis provides a path toward formal verification of neural network properties, while \cite[top-down approaches]{zou2023representation} like Representation Engineering offer complementary methods for controlling model behavior at the representation level without requiring circuit-level granularity.
 
-The field of mechanistic interpretability is still young, but it represents our best current hope for moving beyond "black box" AI toward systems we can genuinely understand and trust.
+The field of mechanistic interpretability is still young, but it represents our best current hope for moving beyond “black box” AI toward systems we can genuinely understand and trust.
 
 ## The FFN as a Soft Hash Table
 
@@ -195,15 +195,15 @@ $$\text{FFN}(x) = \text{ReLU}(x W_1 + b_1) W_2 + b_2$$
 
 The rows of $W_1$ are **keys** (address patterns). The dot product $x W_1$ computes the match score between the input $x$ and every key. ReLU zeroes out non-matching keys. The columns of $W_2$ are **values** (the information retrieved when a key matches). The output is a weighted sum of values, weighted by match strength.
 
-This is exactly a soft hash table: instead of exact-match lookup (hard hashing), the FFN performs **approximate-match retrieval** where multiple keys can partially match and their values are blended. The "hash function" is the learned projection $W_1$, and the "hash table entries" are the rows/columns of $W_1$ and $W_2$.
+This is exactly a soft hash table: instead of exact-match lookup (hard hashing), the FFN performs **approximate-match retrieval** where multiple keys can partially match and their values are blended. The “hash function” is the learned projection $W_1$, and the “hash table entries” are the rows/columns of $W_1$ and $W_2$.
 
-The "aha-moment": the FFN doesn't "compute" in the traditional sense — it **retrieves**. Each FFN layer is a soft associative memory with $d_{\text{ff}}$ slots (typically $4 \times d_{\text{model}}$, so ~3,072 to ~16,384 slots per layer). Across 96 layers (the GPT-3 175B configuration cited throughout this course; smaller models like LLaMA-7B have ~32 layers, LLaMA-70B has ~80, and frontier models in 2025 span a range of roughly 32 to 128 layers depending on architecture choices), a large Transformer has access to roughly 300,000 to 1.5 million memory slots. When the model "knows" that Paris is the capital of France, that fact is stored as a key-value pair in one or more FFN layers: the key activates when the input pattern matches "capital of France," and the value pushes the residual stream toward the "Paris" direction. This is why knowledge editing (changing a single fact in a trained model) is possible: you just need to find and modify the relevant key-value pair in the FFN.
+The “aha-moment”: the FFN doesn't “compute” in the traditional sense  it **retrieves**. Each FFN layer is a soft associative memory with $d_{\text{ff}}$ slots (typically $4 \times d_{\text{model}}$, so ~3,072 to ~16,384 slots per layer). Across 96 layers (the GPT-3 175B configuration cited throughout this course; smaller models like LLaMA-7B have ~32 layers, LLaMA-70B has ~80, and frontier models in 2025 span a range of roughly 32 to 128 layers depending on architecture choices), a large Transformer has access to roughly 300,000 to 1.5 million memory slots. When the model “knows” that Paris is the capital of France, that fact is stored as a key-value pair in one or more FFN layers: the key activates when the input pattern matches “capital of France,” and the value pushes the residual stream toward the “Paris” direction. This is why knowledge editing (changing a single fact in a trained model) is possible: you just need to find and modify the relevant key-value pair in the FFN.
 
 ## The Transformer as a Message-Passing System
 
-There is a deep connection between Transformers and Graph Neural Networks (GNNs). In a GNN, nodes pass messages to neighbors along edges. In self-attention, every token is a node on a **complete graph** — every token can attend to every other token. The attention weights are learned, dynamic **edge weights**. The causal mask simply prunes this complete graph into a directed acyclic graph where edges only flow backward in time.
+There is a deep connection between Transformers and Graph Neural Networks (GNNs). In a GNN, nodes pass messages to neighbors along edges. In self-attention, every token is a node on a **complete graph**  every token can attend to every other token. The attention weights are learned, dynamic **edge weights**. The causal mask simply prunes this complete graph into a directed acyclic graph where edges only flow backward in time.
 
-The "aha-moment": a Transformer layer is a single step of **message-passing** on a fully connected graph where the edge weights are computed on-the-fly from the data itself. This reframes the quadratic cost $\mathcal{O}(n^2)$ not as a bug of the architecture but as the price of assuming every token might be relevant to every other token. Sparse attention methods (Longformer, BigBird) are literally **graph sparsification** — replacing the complete graph with a sparse one (local windows + random edges + global nodes), trading off expressiveness for efficiency.
+The “aha-moment”: a Transformer layer is a single step of **message-passing** on a fully connected graph where the edge weights are computed on-the-fly from the data itself. This reframes the quadratic cost $\mathcal{O}(n^2)$ not as a bug of the architecture but as the price of assuming every token might be relevant to every other token. Sparse attention methods (Longformer, BigBird) are literally **graph sparsification**  replacing the complete graph with a sparse one (local windows + random edges + global nodes), trading off expressiveness for efficiency.
 
 This also explains why Transformers generalize so well: by starting with a complete graph and learning which edges matter, they can discover any dependency structure, whereas RNNs are constrained to a chain graph and CNNs to a grid graph.
 
@@ -213,19 +213,19 @@ Attention patterns change systematically as information flows through the layers
 
 - **Early layers** tend to show more **local and positional patterns**: attention concentrates on adjacent tokens, diagonal stripes in the attention matrix, and simple positional relationships. These layers establish basic syntactic structure and token identity.
 
-- **Middle layers** develop more **semantic and syntactic patterns**: dependency arcs (linking verbs to their subjects), coreference resolution (tying pronouns to antecedents), and compositional relationships. This is where the model begins to understand the "who did what to whom" structure of the sentence — \cite[structural probes]{hewitt2019structural} have shown that syntax trees are explicitly encoded in the geometry of these hidden representations.
+- **Middle layers** develop more **semantic and syntactic patterns**: dependency arcs (linking verbs to their subjects), coreference resolution (tying pronouns to antecedents), and compositional relationships. This is where the model begins to understand the “who did what to whom” structure of the sentence  \cite[structural probes]{hewitt2019structural} have shown that syntax trees are explicitly encoded in the geometry of these hidden representations.
 
-- **Late layers** become more **diffuse or task-specific**: attention concentrates on tokens that are relevant to the final prediction, often forming complex, distributed patterns that are harder to interpret. In autoregressive models, the final token's attention often becomes a "summary" of the entire context, pulling information from across the sequence for the final prediction.
+- **Late layers** become more **diffuse or task-specific**: attention concentrates on tokens that are relevant to the final prediction, often forming complex, distributed patterns that are harder to interpret. In autoregressive models, the final token's attention often becomes a “summary” of the entire context, pulling information from across the sequence for the final prediction.
 
-This progression mirrors how human reading comprehension works: first identify the words, then parse the syntax, then build a semantic representation, then make a prediction. The model does not need to be explicitly structured this way — this hierarchy emerges purely from the training objective.
+This progression mirrors how human reading comprehension works: first identify the words, then parse the syntax, then build a semantic representation, then make a prediction. The model does not need to be explicitly structured this way  this hierarchy emerges purely from the training objective.
 
 ### The Double Helix: Information Separation Through Depth
 
-A \citeyear{lu2023doublehelix} paper (\citetitle{lu2023doublehelix}) peered deeper into this layer progression by disentangling the different types of information carried in the residual stream. The authors distinguished four layers of information — positional, syntactic, semantic, and contextual — and showed that through the deep layers, positional information separates from semantic content along a helix-shaped path in the embedding space. On the encoder side, the conceptual dimensions naturally organize into Part-of-Speech clusters; on the decoder side, bigram patterns predict the grammatical role of the next token. This work challenges the common practice of simply adding positional encoding to the semantic embedding at the input, suggesting instead a Linear-and-Add approach that may lead to better separation of concerns across layers.
+A \citeyear{lu2023doublehelix} paper (\citetitle{lu2023doublehelix}) peered deeper into this layer progression by disentangling the different types of information carried in the residual stream. The authors distinguished four layers of information  positional, syntactic, semantic, and contextual  and showed that through the deep layers, positional information separates from semantic content along a helix-shaped path in the embedding space. On the encoder side, the conceptual dimensions naturally organize into Part-of-Speech clusters; on the decoder side, bigram patterns predict the grammatical role of the next token. This work challenges the common practice of simply adding positional encoding to the semantic embedding at the input, suggesting instead a Linear-and-Add approach that may lead to better separation of concerns across layers.
 
 ## Grokking: When Memorization Turns into Understanding
 
-The phenomenon of \cite[**grokking**]{power2022grokking} occurs when a neural network trains on a small algorithmic dataset, first memorizes the training examples perfectly, then suddenly — well past the point of overfitting — generalizes to the test set. It is as if the network spends most of training simply memorizing answers, then has an "aha moment" where it discovers the underlying rule.
+The phenomenon of \cite[**grokking**]{power2022grokking} occurs when a neural network trains on a small algorithmic dataset, first memorizes the training examples perfectly, then suddenly  well past the point of overfitting  generalizes to the test set. It is as if the network spends most of training simply memorizing answers, then has an “aha moment” where it discovers the underlying rule.
 
 \citeauthor{nanda2023grokking} reverse-engineered this process in a small Transformer trained on modular addition ($a + b \bmod p$). They discovered that the network learns a Fourier-based algorithm: it converts inputs to their discrete Fourier components, multiplies them (which corresponds to addition in the frequency domain), and converts back. This is exactly how you would add numbers on a clock: rotating around a circle by the sum of two angles.
 
@@ -234,7 +234,7 @@ Crucially, they identified three distinct phases of training:
 2. **Circuit formation:** A Fourier-based algorithm gradually crystallizes in the weights, first as weak signals
 3. **Cleanup:** The memorization circuitry is pruned away, leaving only the generalizing algorithm
 
-The "aha moment" of grokking is not a sudden leap — it is the moment when the cleanup phase overtakes memorization, and the generalizing circuit becomes the dominant contributor to the output. Progress measures such as Fourier coefficient entropy and weight norm can track this hidden process continuously, revealing that algorithmic understanding grows smoothly long before it appears in the test accuracy.
+The “aha moment” of grokking is not a sudden leap  it is the moment when the cleanup phase overtakes memorization, and the generalizing circuit becomes the dominant contributor to the output. Progress measures such as Fourier coefficient entropy and weight norm can track this hidden process continuously, revealing that algorithmic understanding grows smoothly long before it appears in the test accuracy.
 </div>
 
 <div id="grokking-container"></div>
@@ -242,11 +242,11 @@ The "aha moment" of grokking is not a sudden leap — it is the moment when the 
 <div class="md">
 ## Emergent World Representations: The Othello Experiment
 
-One of the most striking demonstrations that sequence models build internal world models comes from \cite[Li et al. (2023)]{li2022othello_iclr}. The researchers trained a GPT variant ("Othello-GPT") on sequences of legal Othello moves — with **no knowledge of the game rules, board structure, or even that a board exists**. The model saw only token sequences representing tile indices (a vocabulary of 60 tokens).
+One of the most striking demonstrations that sequence models build internal world models comes from \cite[Li et al. (2023)]{li2022othello_iclr}. The researchers trained a GPT variant (“Othello-GPT”) on sequences of legal Othello moves  with **no knowledge of the game rules, board structure, or even that a board exists**. The model saw only token sequences representing tile indices (a vocabulary of 60 tokens).
 
 Despite this, probing experiments revealed that the model had developed an **internal representation of the board state**:
 
-- **Linear probes** achieved only ~20% error — barely better than probing a randomized network.
+- **Linear probes** achieved only ~20% error  barely better than probing a randomized network.
 - **Nonlinear probes** (2-layer MLPs) achieved error rates as low as **1.7%** on synthetic data, demonstrating that the board state is encoded in a **nonlinear** manifold within the residual stream.
 
 $$\text{Probe: } p_\theta(x^l_t) = \text{softmax}(W_1 \cdot \text{ReLU}(W_2 \cdot x^l_t))$$
@@ -255,17 +255,17 @@ where $x^l_t$ is the residual stream activation at layer $l$, position $t$.
 
 ### Interventional Evidence: The Representation is Causal
 
-Crucially, the representation is not merely correlational — it is **causal**. The researchers modified internal activations to reflect a counterfactual board state (e.g., flipping a tile from white to black), then measured whether the model's predictions changed accordingly. On both "natural" (reachable) and "unnatural" (unreachable) board states, the intervention produced predictions consistent with the new state, with average errors of only **0.12** and **0.06** respectively (compared to a null-intervention baseline of ~2.6 errors).
+Crucially, the representation is not merely correlational  it is **causal**. The researchers modified internal activations to reflect a counterfactual board state (e.g., flipping a tile from white to black), then measured whether the model's predictions changed accordingly. On both “natural” (reachable) and “unnatural” (unreachable) board states, the intervention produced predictions consistent with the new state, with average errors of only **0.12** and **0.06** respectively (compared to a null-intervention baseline of ~2.6 errors).
 
-This means the model doesn't just *correlate* with the board state — it *uses* the board state to make predictions. The world model is causally upstream of the output.
+This means the model doesn't just *correlate* with the board state  it *uses* the board state to make predictions. The world model is causally upstream of the output.
 
 ### Latent Saliency Maps: Attribution via Intervention
 
-By systematically intervening on each tile's representation and measuring the change in prediction probability, the researchers created **latent saliency maps** — visualizations showing which tiles on the board are most important for a given prediction. For the synthetic-trained model, these maps precisely highlight the tiles required to make a move legal (the AND-logic of Othello's flanking rule). For the championship-trained model, the maps reveal more complex global strategic features.
+By systematically intervening on each tile's representation and measuring the change in prediction probability, the researchers created **latent saliency maps**  visualizations showing which tiles on the board are most important for a given prediction. For the synthetic-trained model, these maps precisely highlight the tiles required to make a move legal (the AND-logic of Othello's flanking rule). For the championship-trained model, the maps reveal more complex global strategic features.
 
 ### Implications for Mechanistic Interpretability
 
-The Othello-GPT result establishes a key principle: **next-token prediction on sequences can produce internal representations that encode the causal structure of the world that generated those sequences**. This is directly relevant to understanding LLMs trained on natural language — the question is whether analogous world models exist for more complex domains.
+The Othello-GPT result establishes a key principle: **next-token prediction on sequences can produce internal representations that encode the causal structure of the world that generated those sequences**. This is directly relevant to understanding LLMs trained on natural language  the question is whether analogous world models exist for more complex domains.
 </div>
 
 <div id="othello-container"></div>
@@ -273,11 +273,11 @@ The Othello-GPT result establishes a key principle: **next-token prediction on s
 <div class="md">
 ## The Linear Representation Hypothesis: Geometry of Concepts
 
-\cite[Park, Choe & Veitch (2024)]{park2024linear} formalize what it means for concepts to be "linearly represented" in an LLM. They identify **three** notions of linear representation and prove they are unified by a single geometric structure:
+\cite[Park, Choe & Veitch (2024)]{park2024linear} formalize what it means for concepts to be “linearly represented” in an LLM. They identify **three** notions of linear representation and prove they are unified by a single geometric structure:
 
 ### Three Notions of Linear Representation
 
-1. **Subspace (Direction):** A concept like male→female is represented as a direction $\bar{\gamma}_W$ in the unembedding space, such that $\gamma(\text{"queen"}) - \gamma(\text{"king"})$ is parallel to $\gamma(\text{"woman"}) - \gamma(\text{"man"})$.
+1. **Subspace (Direction):** A concept like male→female is represented as a direction $\bar{\gamma}_W$ in the unembedding space, such that $\gamma(\text{“queen”}) - \gamma(\text{“king”})$ is parallel to $\gamma(\text{“woman”}) - \gamma(\text{“man”})$.
 
 2. **Measurement (Probing):** The probability of a concept value is logit-linear in the representation:
 $$\text{logit}\, P(Y = Y(1) \mid Y \in \{Y(0), Y(1)\}, \lambda) = \alpha \cdot \lambda^\top \bar{\gamma}_W$$
@@ -290,7 +290,7 @@ The key insight is that the standard Euclidean inner product is **not** the righ
 
 $$\langle \bar{\gamma}, \bar{\gamma}' \rangle_C := \bar{\gamma}^\top \text{Cov}(\gamma)^{-1} \bar{\gamma}'$$
 
-where $\text{Cov}(\gamma)$ is the covariance of unembedding vectors sampled uniformly from the vocabulary. This inner product has the property that **causally separable concepts are orthogonal** — e.g., English→French ⊥ male→female.
+where $\text{Cov}(\gamma)$ is the covariance of unembedding vectors sampled uniformly from the vocabulary. This inner product has the property that **causally separable concepts are orthogonal**  e.g., English→French ⊥ male→female.
 
 ### Unification Theorem
 
@@ -302,7 +302,7 @@ This means: **probing directions and steering vectors are the same object**, vie
 
 ### Refinement: Linear vs. Nonlinear Encoding
 
-The Linear Representation Hypothesis assumes concepts are encoded **linearly** (as directions). The Othello-GPT experiment found that **linear probes fail** (20% error) while **nonlinear probes succeed** (1.7% error). This is not a contradiction but a refinement: the board state in Othello-GPT is encoded nonlinearly, while many semantic concepts in large language models (trained on natural language at scale) appear to develop linear representations. The difference may be one of **scale and training distribution** — larger models trained on richer data may linearize representations that smaller models encode nonlinearly. This is consistent with the finding by \cite[Marks & Tegmark (2023)]{marks2023geometry} that linear truth representations emerge with scale.
+The Linear Representation Hypothesis assumes concepts are encoded **linearly** (as directions). The Othello-GPT experiment found that **linear probes fail** (20% error) while **nonlinear probes succeed** (1.7% error). This is not a contradiction but a refinement: the board state in Othello-GPT is encoded nonlinearly, while many semantic concepts in large language models (trained on natural language at scale) appear to develop linear representations. The difference may be one of **scale and training distribution**  larger models trained on richer data may linearize representations that smaller models encode nonlinearly. This is consistent with the finding by \cite[Marks & Tegmark (2023)]{marks2023geometry} that linear truth representations emerge with scale.
 </div>
 
 <div id="linear-rep-container"></div>
@@ -322,7 +322,7 @@ $$X = \begin{bmatrix} \underbrace{S}_{\text{scratchpad}} & \underbrace{M}_{\text
 - **Memory:** Data storage for read/write operations
 - **Commands:** Instructions the transformer executes
 
-The transformer processes this input, produces an output, and the output is fed back as the new input — exactly like a CPU executing one instruction per clock cycle.
+The transformer processes this input, produces an output, and the output is fed back as the new input  exactly like a CPU executing one instruction per clock cycle.
 
 ### FLEQ: A Flexible Single-Instruction Computer
 
@@ -344,7 +344,7 @@ where $f_m$ can be matrix multiplication, nonlinear functions, polynomials, etc.
 | Power iteration | 13 | 1 |
 | SGD on neural networks | 13 | 1 |
 
-The depth does **not** scale with program length — only with the complexity of a single instruction. This is because the loop handles iteration, not depth.
+The depth does **not** scale with program length  only with the complexity of a single instruction. This is because the loop handles iteration, not depth.
 
 ### Building Blocks from Attention
 
@@ -356,7 +356,7 @@ The construction uses attention to implement:
 
 ### Implications for Mechanistic Interpretability
 
-This result suggests that when we observe a trained Transformer performing multi-step reasoning, it may be implementing something analogous to a looped program — using the residual stream as memory, attention for data routing, and MLPs for computation. The "circuits" discovered by mechanistic interpretability may be fragments of such implicit programs.
+This result suggests that when we observe a trained Transformer performing multi-step reasoning, it may be implementing something analogous to a looped program  using the residual stream as memory, attention for data routing, and MLPs for computation. The “circuits” discovered by mechanistic interpretability may be fragments of such implicit programs.
 
 ### A Common Thread
 
@@ -370,21 +370,21 @@ All three papers share a common situs: the residual stream as a computational me
 
 Mechanistic interpretability is the practice of reverse-engineering neural networks into human-understandable algorithms. The key insights are:
 
-* **Circuits** are sparse subgraphs of attention heads and MLP layers that collaborate to implement specific behaviors — induction heads for pattern completion, IOI circuits for name resolution, and direct paths for bigram statistics.
-* **The residual stream** is a communication bus: every component reads from it and writes back to it. Circuits emerge when heads learn to "talk to each other" through this shared medium.
+* **Circuits** are sparse subgraphs of attention heads and MLP layers that collaborate to implement specific behaviors  induction heads for pattern completion, IOI circuits for name resolution, and direct paths for bigram statistics.
+* **The residual stream** is a communication bus: every component reads from it and writes back to it. Circuits emerge when heads learn to “talk to each other” through this shared medium.
 * **Superposition** explains why individual neurons are often uninterpretable: the model packs more features than dimensions by using nearly-orthogonal directions in activation space.
 * **Sparse autoencoders** resolve superposition by learning an overcomplete dictionary of features from the residual stream, giving us monosemantic units to work with.
 * **Activation patching** is the causal scalpel: by swapping activations between runs, we isolate which components are causally necessary for a behavior.
-* **The logit lens** lets us decode the model's "thoughts" at every layer, revealing how predictions evolve from diffuse uncertainty to sharp certainty.
+* **The logit lens** lets us decode the model's “thoughts” at every layer, revealing how predictions evolve from diffuse uncertainty to sharp certainty.
 * **Grokking** shows that generalization can emerge long after memorization, as structured circuits gradually overtake memorized pairs.
 * **The double helix** reveals that positional and semantic information separate through the layers along a helical path.
 
-These tools form a growing toolkit for moving beyond "black box" AI toward systems we can genuinely understand, verify, and trust. The field is young, but it already offers practical techniques for detecting deception, editing knowledge, predicting failures, and providing scalable oversight of increasingly capable models.
+These tools form a growing toolkit for moving beyond “black box” AI toward systems we can genuinely understand, verify, and trust. The field is young, but it already offers practical techniques for detecting deception, editing knowledge, predicting failures, and providing scalable oversight of increasingly capable models.
 
 </div>
 
 <div class="optional md" data-headline="Everything above also works on vision transformers">
-Replace "token" with "patch" and "next word" with "next patch". The math doesn't care. CLIP and ViT contain the same circuits as language Transformers: induction-style heads that complete visual patterns, superposition-packing of features, and sparse-autoencoder-decodable monosemantic units. Anthropic's "multimodal neurons" research on CLIP showed individual units firing for "spider web", "skyscraper", and "celebrity face" — exactly the kind of feature a SAE would isolate today. See the <a href="visionlab">Convolutions chapter</a> for the hierarchical-feature view that mechanistic interpretability reverse-engineers.
+Replace “token” with “patch” and “next word” with “next patch”. The math doesn't care. CLIP and ViT contain the same circuits as language Transformers: induction-style heads that complete visual patterns, superposition-packing of features, and sparse-autoencoder-decodable monosemantic units. Anthropic's “multimodal neurons” research on CLIP showed individual units firing for “spider web”, “skyscraper”, and “celebrity face”  exactly the kind of feature a SAE would isolate today. See the <a href="visionlab">Convolutions chapter</a> for the hierarchical-feature view that mechanistic interpretability reverse-engineers.
 </div>
 
 <div id="summary-container"></div>

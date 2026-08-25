@@ -11,7 +11,7 @@ topics: history, philosophy, society
 -->
 
 <div class="md">
-The main history of AI traces the intellectual lineage — the ideas, algorithms, and architectures that directly led to modern systems. But those ideas did not emerge in a vacuum. They rest on a vast, invisible scaffolding of discoveries made in fields entirely unrelated to computation: the chemistry that purified silicon, the physics that explained semiconductors, the looms that inspired programmable input, the video game industry that accidentally built the perfect hardware for neural networks. This page collects those **displaced prerequisites**: the contributions so fundamental they vanish into the background, yet without which no language model could exist.
+The main history of AI traces the intellectual lineage  the ideas, algorithms, and architectures that directly led to modern systems. But those ideas did not emerge in a vacuum. They rest on a vast, invisible scaffolding of discoveries made in fields entirely unrelated to computation: the chemistry that purified silicon, the physics that explained semiconductors, the looms that inspired programmable input, the video game industry that accidentally built the perfect hardware for neural networks. This page collects those **displaced prerequisites**: the contributions so fundamental they vanish into the background, yet without which no language model could exist.
 </div>
 
 <div class="md">
@@ -40,7 +40,7 @@ The question received its most famous formulation from **Gottfried Wilhelm Leibn
 
 #### Heidegger: The Fundamental Question
 
-\citeauthor{heidegger1935metaphysics} radicalized Leibniz's question, calling *"Why are there beings at all, and not rather nothing?"* the fundamental question of philosophy itself. But where Leibniz sought an answer, Heidegger insisted the question must be *held open*, our absorption in particular things makes us forget the sheer wonder that anything exists at all.
+\citeauthor{heidegger1935metaphysics} radicalized Leibniz's question, calling *“Why are there beings at all, and not rather nothing?”* the fundamental question of philosophy itself. But where Leibniz sought an answer, Heidegger insisted the question must be *held open*, our absorption in particular things makes us forget the sheer wonder that anything exists at all.
 
 #### Jocaxian: Nothing Has No Rules
 
@@ -50,7 +50,7 @@ A more unconventional argument, associated with the thinker \citeauthor{jocaxian
 2. Then there are **no rules preventing** something from arising, because rules are themselves *something*.
 3. A state of absolute nothingness is therefore inherently **unstable**: without any prohibition, something can emerge.
 
-Instead of asking "Why something?", the question becomes: **"What could prevent something from existing?"** And the answer is: *nothing*, because nothingness lacks all causal power. Sustaining a void would itself require a kind of rule, which would already be *something*.
+Instead of asking “Why something?”, the question becomes: **“What could prevent something from existing?”** And the answer is: *nothing*, because nothingness lacks all causal power. Sustaining a void would itself require a kind of rule, which would already be *something*.
 
 These three perspectives share a recognition that existence is not self-evident. Leibniz answers with a necessary ground; Heidegger preserves the wonder; Jocaxian argues that the very emptiness of nothing guarantees its own dissolution.
 
@@ -68,7 +68,7 @@ Humans are not descended from monkeys or any other primate living today; rather,
 
 Early hominins such as *Sahelanthropus tchadensis* (approximately 7 million years ago) and *Ardipithecus ramidus* (approximately 4.4 million years ago) show a mosaic of ape-like and human-like features \cite[as described by White et al.]{white2009ardipithecus}. The genus *Australopithecus* (approximately 4–2 million years ago) exhibited habitual bipedalism while retaining relatively small brains. Stone-tool knapping, however, **predates** the genus *Homo*: the \citealternativetitle{lomekwi} from approximately 3.3 million years ago, attributed to late australopithecines, is the oldest known assemblage. The emergence of the genus *Homo* around 2.8 million years ago was associated with increasing brain size and the more systematic **\citealternativetitle{oldowan}** tool industry, the first technology unambiguously tied to *Homo habilis*. *Homo erectus* (approximately 1.9 million years ago) was the first hominin to spread beyond Africa, mastering fire \cite[as demonstrated by Berna et al.]{wonderwerk} and developing more sophisticated tool technologies such as the Acheulean hand-axe.
 
-Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans roughly 500,000–700,000 years ago. Anatomically modern *Homo sapiens* appeared in Africa approximately 300,000 years ago \cite[as established by Hublin et al.]{hublin2017jebel}, with linguistic capacity likely present by 135,000 years ago \cite[as argued by Miyagawa et al.]{earlylanguage}. The emergence of modern human behavior \cite[as documented by Henshilwood et al.]{emergenceofmodernhumanbehaviour}, including symbolic art and complex tool manufacture, is attested from at least 100,000 years ago. The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations in Mesopotamia, Egypt, the Indus Valley, and China set the stage for the accumulation of knowledge across generations that would eventually produce philosophy, mathematics, and science — and, ultimately, the intellectual infrastructure for artificial intelligence.
+Archaic humans including Neanderthals and Denisovans diverged from the lineage leading to modern humans roughly 500,000–700,000 years ago. Anatomically modern *Homo sapiens* appeared in Africa approximately 300,000 years ago \cite[as established by Hublin et al.]{hublin2017jebel}, with linguistic capacity likely present by 135,000 years ago \cite[as argued by Miyagawa et al.]{earlylanguage}. The emergence of modern human behavior \cite[as documented by Henshilwood et al.]{emergenceofmodernhumanbehaviour}, including symbolic art and complex tool manufacture, is attested from at least 100,000 years ago. The development of agriculture approximately 10,000–12,000 years ago and the subsequent rise of civilizations in Mesopotamia, Egypt, the Indus Valley, and China set the stage for the accumulation of knowledge across generations that would eventually produce philosophy, mathematics, and science  and, ultimately, the intellectual infrastructure for artificial intelligence.
 </div>
 
 <div class="md">
@@ -102,7 +102,7 @@ were stretched in space and time, pushing toward a division of labor
 in which slow-burning materials had to be selected and guarded while
 other subsistence activities continued.
 
-The simplest ignition technique, rubbing a stick in a groove in a wooden "hearth", requires no more
+The simplest ignition technique, rubbing a stick in a groove in a wooden “hearth”, requires no more
 conceptual complexity than hafting, since both involve bringing two
 components together via a vital intermediary: tinder in the one,
 \cite[fixative in the other]{controlleduseoffire}.
@@ -116,7 +116,7 @@ in brain size through the Pleistocene, provided protection from predators, and
 facilitated social gathering. In this
 sense, the controlled use of fire and its associated tools sit at the
 very beginning of the history of machines as a history of
-**abstraction**, where human effort is progressively "drawn away"
+**abstraction**, where human effort is progressively “drawn away”
 from the direct task.
 </div>
 
@@ -133,7 +133,7 @@ The transformation of this curiosity into a usable force required a cascade of u
 
 * **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current. He described the effect in \citetitle{faraday}. This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines. Without it, there is no power grid, no data center, and no GPU cluster.
 
-* **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture "A New System of Alternate Current Motors and Transformers" (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
+* **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture “A New System of Alternate Current Motors and Transformers” (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
 
 <div class="image-row">
     <figure>
@@ -157,7 +157,7 @@ The transformation of this curiosity into a usable force required a cascade of u
     </figure>
 </div>
 
-A modern LLM training run can consume **gigawatt-hours** of electricity, enough to power a small city for days. This energy flows through infrastructure whose lineage traces directly back to Faraday's hand-cranked copper disk spinning between the poles of a horseshoe magnet, an experiment conducted to satisfy scientific curiosity about the relationship between magnetism and motion, with no notion of "computation" whatsoever.
+A modern LLM training run can consume **gigawatt-hours** of electricity, enough to power a small city for days. This energy flows through infrastructure whose lineage traces directly back to Faraday's hand-cranked copper disk spinning between the poles of a horseshoe magnet, an experiment conducted to satisfy scientific curiosity about the relationship between magnetism and motion, with no notion of “computation” whatsoever.
 
 ### Quantum Mechanics and the Transistor: From Beach Sand to Thinking Silicon
 
@@ -166,7 +166,7 @@ The entire digital age rests upon the **transistor**, a device whose invention r
 Silicon dioxide (common sand) is one of the most abundant compounds on Earth. But transforming it into a substrate for computation required:
 
 1. **Quantum Mechanics** (1920s–1930s): **Max Planck** introduced the quantum of energy in \citetitle{planck}. **Niels Bohr** proposed the quantized atom in \citetitle{bohr}. **Werner Heisenberg** formulated matrix mechanics in \citetitle{quanten}, and **Erwin Schrödinger** developed wave mechanics in \citetitle{schroedinger}. Together, they revealed that matter at the atomic scale behaves according to probabilistic wave functions, not classical Newtonian mechanics. This theory explained why certain materials (semiconductors) conduct electricity only under specific conditions, a phenomenon that classical physics could not account for.
-2. **Band Theory of Solids** (1929–1931): **Felix Bloch** applied quantum mechanics to electrons in crystal lattices in \citetitle{bloch}. **Alan Herries Wilson** then used Bloch's framework to explain semiconductors specifically in \citetitle{wilsonsemiconductors}, describing how energy bands and "gaps" determine whether a material conducts, insulates, or semi-conducts. This theoretical framework made it possible to *predict* and *engineer* the electrical properties of materials like silicon and germanium.
+2. **Band Theory of Solids** (1929–1931): **Felix Bloch** applied quantum mechanics to electrons in crystal lattices in \citetitle{bloch}. **Alan Herries Wilson** then used Bloch's framework to explain semiconductors specifically in \citetitle{wilsonsemiconductors}, describing how energy bands and “gaps” determine whether a material conducts, insulates, or semi-conducts. This theoretical framework made it possible to *predict* and *engineer* the electrical properties of materials like silicon and germanium.
 3. **The Transistor** (1947): **John Bardeen** and **Walter Brattain** at Bell Labs built the first point-contact transistor in December 1947, a solid-state device that could amplify and switch electrical signals. They published \citetitle{semiconductor}. **William Shockley** followed with the superior junction transistor, described in \citetitle{shockley}. The transistor replaced the vacuum tube, which was bulky, hot, fragile, and power-hungry. Without the transistor, Moore's Law is inconceivable, and without Moore's Law, LLMs are computationally impossible.
 
 <figure>
@@ -178,7 +178,7 @@ The path from a grain of beach sand to a chip containing billions of transistors
 
 ### Fiber Optics and Submarine Cables: The Physical Internet
 
-The "digital ocean" of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:
+The “digital ocean” of training data does not exist in an abstract cloud; it flows through **physical infrastructure** that has its own displaced history:
 
 * **Total Internal Reflection** (1842): **Jean-Daniel Colladon** demonstrated that light could be guided along curved paths through a jet of water in \citetitle{colladon}. **John Tyndall** independently popularized the same principle through his Royal Institution lectures in London during the 1850s and 1870s, later described in \citetitle{notesonlight} (1870). At the time, these seemed little more than elegant scientific demonstrations.
 
@@ -201,14 +201,14 @@ Without these cables, the internet is a collection of isolated local networks. W
 
 A modern data center generates enormous quantities of heat. Training a large language model pushes thousands of GPUs to their thermal limits for weeks or months. Without industrial **cooling systems**, the silicon would overheat and fail within minutes.
 
-Long before mechanical refrigeration existed, the cold itself had to be **harvested in winter and stored for summer use**. The oldest strategy was the **[Eisweiher](ice pond)**: a small, shallow, wind-sheltered body of water — often an artificial pond or a specially dammed millpond — chosen so that a few days of sustained frost would freeze it solid. The surface was then cut into rectangular blocks with hand saws, pried loose with pike poles, and hauled by sled, cart, or slide into an insulated **ice cellar** (*Eiskeller*) packed with straw, where it could last through the warm months \cite[as illustrated in]{eisschlagen_traunsee}. The technique was in continuous use across Central Europe from the Middle Ages well into the twentieth century, and the name *Eisweiher* survives on ponds that today serve very different purposes — as fish ponds, fire-water reservoirs, or simply recreational lakes.
+Long before mechanical refrigeration existed, the cold itself had to be **harvested in winter and stored for summer use**. The oldest strategy was the **[Eisweiher](ice pond)**: a small, shallow, wind-sheltered body of water  often an artificial pond or a specially dammed millpond  chosen so that a few days of sustained frost would freeze it solid. The surface was then cut into rectangular blocks with hand saws, pried loose with pike poles, and hauled by sled, cart, or slide into an insulated **ice cellar** (*Eiskeller*) packed with straw, where it could last through the warm months \cite[as illustrated in]{eisschlagen_traunsee}. The technique was in continuous use across Central Europe from the Middle Ages well into the twentieth century, and the name *Eisweiher* survives on ponds that today serve very different purposes  as fish ponds, fire-water reservoirs, or simply recreational lakes.
 
-Where no suitable pond existed, breweries, hospitals, hotels, and food businesses erected **[Eisgalgen](ice gallows)**: wooden or steel frames fitted with sturdy horizontal crossbeams. At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig, freezing into long icicles that could grow several metres down over the course of a cold week. The icicles were then knocked off with mallets, collected, and stored \cite[as documented in]{eisgalgen_mittenwald}. A single large installation, such as the one still occasionally operated at a brewery in Ulm, can "harvest" up to 100 m³ of ice during a sufficiently cold week. Unlike pond ice, gallows ice gave the operator direct control over water quality, and made ice production independent of any nearby natural waterbody — a complete ice-making installation with no moving parts and no machinery at all.
+Where no suitable pond existed, breweries, hospitals, hotels, and food businesses erected **[Eisgalgen](ice gallows)**: wooden or steel frames fitted with sturdy horizontal crossbeams. At temperatures below about −3 °C, well or spring water was sprayed from nozzles over the rig, freezing into long icicles that could grow several metres down over the course of a cold week. The icicles were then knocked off with mallets, collected, and stored \cite[as documented in]{eisgalgen_mittenwald}. A single large installation, such as the one still occasionally operated at a brewery in Ulm, can “harvest” up to 100 m³ of ice during a sufficiently cold week. Unlike pond ice, gallows ice gave the operator direct control over water quality, and made ice production independent of any nearby natural waterbody  a complete ice-making installation with no moving parts and no machinery at all.
 
 <div class="image-row">
     <figure>
         <img src="eisschlagen_traunsee.jpg" alt="Black-and-white photograph of men cutting and transporting ice on a frozen Austrian lake, December 1899" />
-        <figcaption class="md">\citealternativetitle{eisschlagen_traunsee}: ice-cutting (*Eisschlagen*) on an Austrian lake, December 1899. The frozen surface is being sawn into rectangular blocks, pried loose with pike poles, and carted off to a nearby ice cellar for summer use — the basic workflow of every *Eisweiher* from the Middle Ages to the early 20th century.</figcaption>
+        <figcaption class="md">\citealternativetitle{eisschlagen_traunsee}: ice-cutting (*Eisschlagen*) on an Austrian lake, December 1899. The frozen surface is being sawn into rectangular blocks, pried loose with pike poles, and carted off to a nearby ice cellar for summer use  the basic workflow of every *Eisweiher* from the Middle Ages to the early 20th century.</figcaption>
     </figure>
     <figure>
         <img src="eisgalgen_mittenwald.jpg" alt="A wooden ice gallows in Mittenwald, Bavaria, photographed in January 2015" />
@@ -231,7 +231,7 @@ In 1804, **Joseph Marie Jacquard** perfected a loom attachment that used **punch
     <figcaption class="md">The \citealternativetitle{jacquard_loom}: a Jacquard loom with its chain of punched cards visible on the right. Each card encodes a single row of the pattern, the first example of a complex, sequential process stored as discrete binary instructions on a physical medium.</figcaption>
 </figure>
 
-Yet the conceptual leap was immense: a complex, sequential process had been **encoded as discrete binary instructions on a physical medium**. **Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837), and **Ada Lovelace** captured the lineage precisely: the Engine "weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves" (\citetitle{lovelacequote}). **Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**. Punched cards remained the dominant computer input medium into the 1970s (see \citetitle{taocp3}, p. 383-384).
+Yet the conceptual leap was immense: a complex, sequential process had been **encoded as discrete binary instructions on a physical medium**. **Charles Babbage** explicitly borrowed the mechanism for his **Analytical Engine** (c. 1837), and **Ada Lovelace** captured the lineage precisely: the Engine “weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves” (\citetitle{lovelacequote}). **Herman Hollerith** later adapted punched cards for the **1890 US Census**, founding the company that became **IBM**. Punched cards remained the dominant computer input medium into the 1970s (see \citetitle{taocp3}, p. 383-384).
 
 Without the loom, there is no concept of externally encoded, interchangeable instructions, no punched card, no magnetic tape, no software. A textile artisan solving a manufacturing problem inadvertently created the first programmable input mechanism.
 
@@ -263,13 +263,13 @@ In 1897, **Karl Ferdinand Braun** invented the **cathode ray tube (CRT)** at the
 
 From this scientific instrument, an extraordinary displacement unfolded: **Philo Farnsworth** demonstrated fully electronic television in 1927, adapting the CRT for broadcast entertainment. During WWII, CRTs were repurposed for **radar displays**, the first use as an interactive, real-time information screen. The transition into computing followed at MIT, where the **Whirlwind** computer (early 1950s) used a CRT for real-time output, and Ivan Sutherland's \cite[Sketchpad]{sketchpad} (1963) proved a screen could be a medium for direct graphical interaction with a computer.
 
-Without the visual display, AI remains a silent, invisible process. The screen is the **output channel** through which a language model becomes conversational and immediate, and its lineage traces directly to a physicist studying oscillating currents with no notion of "computation" whatsoever.
+Without the visual display, AI remains a silent, invisible process. The screen is the **output channel** through which a language model becomes conversational and immediate, and its lineage traces directly to a physicist studying oscillating currents with no notion of “computation” whatsoever.
 </div>
 
 <div class="md">
 ### From Niépce's Pewter Plate to Muybridge's Plates: The Birth of Image-Sequence Data
 
-A modern vision model is, at the level of bytes, a pile of images together with labels. That shape — a labelled image-sequence dataset — has a remarkably concrete origin in 19th-century France and Philadelphia.
+A modern vision model is, at the level of bytes, a pile of images together with labels. That shape  a labelled image-sequence dataset  has a remarkably concrete origin in 19th-century France and Philadelphia.
 
 The very first surviving camera photograph was made by **Joseph Nicéphore Niépce** around 1826–1827 at his estate in Saint-Loup-de-Varennes. His *Point de vue du Gras*, a view from a window onto the courtyard below, was fixed onto a pewter plate coated with bitumen of Judea. Because the light-sensitive asphalt needed roughly **eight hours of exposure**, the sun appears to illuminate the buildings from both sides at once, an artefact no human eye could ever have witnessed. The plate itself survived, and is held today at the \cite[Harry Ransom Center]{niepce_le_gras} at the University of Texas at Austin.
 
@@ -287,14 +287,14 @@ In 1878, the industrialist **Leland Stanford** commissioned **Eadweard Muybridge
     <figcaption class="md">Muybridge's 1878 sequence of the horse *Occident* galloping past a battery of tripwire cameras: the founding image of \citealternativetitle{muybridge1887catalogue}, and arguably the first instance in history of a *labelled image-sequence dataset*: a continuous motion, sampled in equal time-intervals, with the subject, action and breed known in advance.</figcaption>
 </figure>
 
-Encouraged, the University of Pennsylvania commissioned Muybridge between 1884 and 1887 to extend this approach systematically. The resulting work, ***Animal Locomotion***, comprised **781 collotype plates containing more than 20,000 individual photographs** \cite[as catalogued by Muybridge]{muybridge1887catalogue}. Each plate captured a single motion (a woman opening a parasol, an ostrich running, a child ascending stairs) in 36 successive frames, photographed by 12 to 24 synchronised cameras whose shutters were tripped by electromagnets and time-stamped by a chronographic clock. Crucially, every plate was **annotated**: subject, action, age, build, even clothing and props, in exactly the form of a modern supervised-learning dataset. Plate 626, for instance, is not just a horse running, it is *"Gallop; thoroughbred bay mare, Annie G."*
+Encouraged, the University of Pennsylvania commissioned Muybridge between 1884 and 1887 to extend this approach systematically. The resulting work, ***Animal Locomotion***, comprised **781 collotype plates containing more than 20,000 individual photographs** \cite[as catalogued by Muybridge]{muybridge1887catalogue}. Each plate captured a single motion (a woman opening a parasol, an ostrich running, a child ascending stairs) in 36 successive frames, photographed by 12 to 24 synchronised cameras whose shutters were tripped by electromagnets and time-stamped by a chronographic clock. Crucially, every plate was **annotated**: subject, action, age, build, even clothing and props, in exactly the form of a modern supervised-learning dataset. Plate 626, for instance, is not just a horse running, it is *“Gallop; thoroughbred bay mare, Annie G.”*
 
 Two structural inventions of this project have proved decisive for every vision model trained since:
 
 1. **The labelled image sequence.** Muybridge's plates are rows of equal-time-interval frames of a known subject performing a known action. This is the schema of ImageNet, Kinetics, Something-Something and YouTube-8M, expressed in 1887. The model has not changed; only the volume and the digital substrate have.
 2. **Synchronised multi-view capture.** To resolve the foreshortening that confuses single-perspective images, Muybridge placed additional camera banks at the front and rear of his track, and built a six-camera array that fired simultaneously from different angles, the conceptual ancestor of modern **multi-view stereo, photogrammetry, NeRF and 3D Gaussian Splatting**, all of which are trained on Muybridge-style synchronised image-sets of a scene captured from many viewpoints.
 
-Muybridge went further still. He built the **zoöpraxiscope**, a projection device that replayed his sequences as cyclical animations, the technical seed of motion pictures, and through them of Disney, CGI, Pixar and the rendered-image training corpora that today's image-generation models consume by the petabyte. As \citeauthor{solnit2003motion} argues in her study of the project, Muybridge's *"invention was not the photograph, but the sequence"* \cite[as discussed by Solnit]{solnit2003motion}, and the sequence is the data structure of every modern visual network.
+Muybridge went further still. He built the **zoöpraxiscope**, a projection device that replayed his sequences as cyclical animations, the technical seed of motion pictures, and through them of Disney, CGI, Pixar and the rendered-image training corpora that today's image-generation models consume by the petabyte. As \citeauthor{solnit2003motion} argues in her study of the project, Muybridge's *“invention was not the photograph, but the sequence”* \cite[as discussed by Solnit]{solnit2003motion}, and the sequence is the data structure of every modern visual network.
 
 \citeauthor{gordon2015indecent} has catalogued how systematic the project was: a hierarchy from nude human males down to chickens, ordered by a 19th-century logic of the *scala naturae*, but presented in the visual grammar of a modern corpus, complete with controlled backgrounds, grid markings for measurement, and rejection of out-of-sequence frames. The aesthetic of an AI training set, in other words, predates the algorithm by half a century.
 
@@ -305,7 +305,7 @@ Without chronophotography there are no video frames. Without labelled image-sequ
 
 ### ARPANET: Connecting the First Nodes
 
-In 1969, the **Advanced Research Projects Agency Network (ARPANET)** transmitted its first message between UCLA and the Stanford Research Institute, the machine crashed after sending the letters "LO" (of an intended "LOGIN"). The network's purpose was military resilience and academic resource-sharing, documented in \citetitle{rfc1} by **Steve Crocker**. By 1971, ARPANET connected 15 nodes. By 1973, it had crossed the Atlantic. The foundational idea, that heterogeneous computers could exchange data through a shared, decentralized protocol, was radical, but it was *not* about making information public. ARPANET was a closed network for researchers and defense contractors.
+In 1969, the **Advanced Research Projects Agency Network (ARPANET)** transmitted its first message between UCLA and the Stanford Research Institute, the machine crashed after sending the letters “LO” (of an intended “LOGIN”). The network's purpose was military resilience and academic resource-sharing, documented in \citetitle{rfc1} by **Steve Crocker**. By 1971, ARPANET connected 15 nodes. By 1973, it had crossed the Atlantic. The foundational idea, that heterogeneous computers could exchange data through a shared, decentralized protocol, was radical, but it was *not* about making information public. ARPANET was a closed network for researchers and defense contractors.
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="arpanet_map.png" alt="ARPANET logical map, March 1977, showing the network's topology with dozens of nodes and links across the United States" />
@@ -314,7 +314,7 @@ In 1969, the **Advanced Research Projects Agency Network (ARPANET)** transmitted
 
 ### TCP/IP: A Universal Language for Machines
 
-ARPANET's original protocols were rigid and network-specific. In \citeyear{cerfkahn}, **Vint Cerf** and **Bob Kahn** proposed the **Transmission Control Protocol / Internet Protocol (TCP/IP)** in \citetitle{cerfkahn}, a universal standard that allowed *any* network to interconnect with *any* other. When ARPANET adopted TCP/IP on January 1, 1983, the so-called "flag day", the *internet* as a network of networks was born. This was the critical infrastructural layer: a single, open protocol suite that allowed global-scale data exchange, independent of any particular hardware vendor or government.
+ARPANET's original protocols were rigid and network-specific. In \citeyear{cerfkahn}, **Vint Cerf** and **Bob Kahn** proposed the **Transmission Control Protocol / Internet Protocol (TCP/IP)** in \citetitle{cerfkahn}, a universal standard that allowed *any* network to interconnect with *any* other. When ARPANET adopted TCP/IP on January 1, 1983, the so-called “flag day”, the *internet* as a network of networks was born. This was the critical infrastructural layer: a single, open protocol suite that allowed global-scale data exchange, independent of any particular hardware vendor or government.
 
 ### Tim Berners-Lee and the World Wide Web
 
@@ -375,8 +375,8 @@ could have emerged. Permanent settlements enabled:
   intellectual labor, and the institutional structures (academies,
   universities, guilds) that preserved and transmitted knowledge.
 
-This list is far from exhaustive. Countless other "invisible
-prerequisites" underpin the history of computation and AI that remain
+This list is far from exhaustive. Countless other “invisible
+prerequisites“ underpin the history of computation and AI that remain
 unmentioned here: the domestication of animals (enabling transport
 and communication networks), the invention of metallurgy (without
 which no gear, no wire, no chip), the development of glass-making
@@ -434,7 +434,7 @@ The digital networking revolution began with **packet switching**, independently
 * **InfiniBand** (\cite[first specified in 2000]{infiniband2000}): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.
 * **RDMA (Remote Direct Memory Access)**, formalized in the \cite[Virtual Interface Architecture]{via1998} and built natively into InfiniBand: allowing one machine to read another's memory without involving either CPU, critical for gradient synchronization in distributed training frameworks like \cite[Horovod]{horovod2018}.
 
-Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds. The collective communication patterns (all-reduce, ring-allreduce) are as much "hardware" as the chips themselves.
+Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds. The collective communication patterns (all-reduce, ring-allreduce) are as much “hardware” as the chips themselves.
 
 ### Storage
 
@@ -466,7 +466,7 @@ Every digital computer operates to the rhythm of a **crystal oscillator**. The q
 
 ### Convergence
 
-None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the "displaced prerequisite": a convergence of solutions to unrelated problems that proved inseparable once they met.
+None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the “displaced prerequisite”: a convergence of solutions to unrelated problems that proved inseparable once they met.
 </div>
 
 <div class="md">
@@ -538,9 +538,9 @@ At its core, an array is an ordered, indexed collection of elements stored in co
 
 The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with no formal distinction between data types. The formalization of arrays as a programming construct emerged with high-level languages:
 
-- **FORTRAN (1957)** — Designed by John Backus at IBM, FORTRAN was the first widely-used high-level language and introduced explicit multi-dimensional arrays for scientific computing. A declaration like `DIMENSION A(10,10)` allocated a $10 \times 10$ matrix in memory.
-- **ALGOL 60 (1960)** — Introduced explicit type declarations and dynamic array bounds.
-- **C (1972)** — Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
+- **FORTRAN (1957)**  Designed by John Backus at IBM, FORTRAN was the first widely-used high-level language and introduced explicit multi-dimensional arrays for scientific computing. A declaration like `DIMENSION A(10,10)` allocated a $10 \times 10$ matrix in memory.
+- **ALGOL 60 (1960)**  Introduced explicit type declarations and dynamic array bounds.
+- **C (1972)**  Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
 
 ### Why Arrays Matter
 
@@ -564,12 +564,12 @@ Python, created by Guido van Rossum in 1991, is an interpreted, dynamically-type
 
 ### Key Capabilities
 
-- **Labeled axes** — Rows and columns have names, not just integer indices
-- **Missing data handling** — Built-in `NaN` propagation and fill methods
-- **GroupBy operations** — Split-apply-combine pattern for aggregation
-- **Time series support** — Date ranges, frequency conversion, rolling windows
-- **I/O tools** — Read/write CSV, Excel, SQL, Parquet, JSON, HDF5
-- **Alignment** — Automatic data alignment on labels during operations
+- **Labeled axes**  Rows and columns have names, not just integer indices
+- **Missing data handling**  Built-in `NaN` propagation and fill methods
+- **GroupBy operations**  Split-apply-combine pattern for aggregation
+- **Time series support**  Date ranges, frequency conversion, rolling windows
+- **I/O tools**  Read/write CSV, Excel, SQL, Parquet, JSON, HDF5
+- **Alignment**  Automatic data alignment on labels during operations
 
 ### Impact
 
@@ -593,7 +593,7 @@ Created by **David Cournapeau** and later developed by INRIA researchers, Scikit
 
 ### TensorFlow (2015) and PyTorch (2016)
 
-These deep learning frameworks extend the concept of arrays into **tensors** — multi-dimensional arrays that support automatic differentiation and GPU acceleration. A tensor is simply a generalization of arrays to arbitrary dimensions:
+These deep learning frameworks extend the concept of arrays into **tensors**  multi-dimensional arrays that support automatic differentiation and GPU acceleration. A tensor is simply a generalization of arrays to arbitrary dimensions:
 
 $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor}$$
 
@@ -615,14 +615,14 @@ $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor
 
 ## Summary
 
-The invention of arrays was not a single event but an evolutionary process — from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
+The invention of arrays was not a single event but an evolutionary process  from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
 </div>
 
 <div class="md">
 
 ## Prelude: The Paper Ledger Era
 
-Long before computers existed, humanity organized data in **tabular form**. Double-entry bookkeeping, formalized by **Luca Pacioli** in his 1494 work \citetitle{summaarithmetica}, established the grid of rows and columns as the universal language of business data. For nearly 500 years, every accountant, scientist, and clerk worked with ruled paper, pencils, and erasers — manually computing totals, cross-referencing entries, and propagating changes by hand.
+Long before computers existed, humanity organized data in **tabular form**. Double-entry bookkeeping, formalized by **Luca Pacioli** in his 1494 work \citetitle{summaarithmetica}, established the grid of rows and columns as the universal language of business data. For nearly 500 years, every accountant, scientist, and clerk worked with ruled paper, pencils, and erasers  manually computing totals, cross-referencing entries, and propagating changes by hand.
 
 The fundamental problem was simple but devastating:
 
@@ -634,7 +634,7 @@ A single error in a ledger could cascade through hundreds of cells, requiring ho
 
 ### Data Processing Before Interactivity
 
-The earliest computers (ENIAC, UNIVAC, IBM 701) were not interactive. Users submitted jobs on **punched cards** or magnetic tape, waited hours or days, and received printed output. "Working with data" meant:
+The earliest computers (ENIAC, UNIVAC, IBM 701) were not interactive. Users submitted jobs on **punched cards** or magnetic tape, waited hours or days, and received printed output. “Working with data” meant:
 
 1. Encoding data onto cards (one row per card)
 2. Writing a FORTRAN or COBOL program to process it
@@ -653,13 +653,13 @@ This workflow was accessible only to trained programmers and operators. The conc
 
 ### Interactive Computing Arrives
 
-The invention of **time-sharing systems** — where multiple users could interact with a single computer simultaneously via terminals — was the first step toward making computers usable for data work by non-programmers.
+The invention of **time-sharing systems**  where multiple users could interact with a single computer simultaneously via terminals  was the first step toward making computers usable for data work by non-programmers.
 
 Key milestones:
 
-- **CTSS** (Compatible Time-Sharing System, MIT, 1961) — first demonstration of interactive multi-user computing
-- **Multics** (1964–1969) — ambitious time-sharing OS that influenced Unix
-- **UNIX** (1969, Ken Thompson & Dennis Ritchie at Bell Labs) — made interactive computing practical and portable
+- **CTSS** (Compatible Time-Sharing System, MIT, 1961)  first demonstration of interactive multi-user computing
+- **Multics** (1964–1969)  ambitious time-sharing OS that influenced Unix
+- **UNIX** (1969, Ken Thompson & Dennis Ritchie at Bell Labs)  made interactive computing practical and portable
 
 ### LANPAR: The Invisible Ancestor (1969)
 
@@ -667,7 +667,7 @@ In 1969, **Rene Pardo** and **Remy Landau** invented **LANPAR** (LANguage for Pr
 
 - Cells in a grid could contain **formulas referencing other cells**
 - When one cell changed, all dependent cells **automatically recalculated**
-- Users could enter data in **any order** (hence "at random") — the system resolved dependencies automatically
+- Users could enter data in **any order** (hence “at random”)  the system resolved dependencies automatically
 
 LANPAR was granted U.S. Patent 4,398,249 in 1983 (filed 1970). It is arguably the first true electronic spreadsheet, but it ran on mainframes, had no visual grid interface, and remained unknown outside AT&T. Its inventors spent decades in patent litigation, largely forgotten by history.
 
@@ -679,7 +679,7 @@ Around the same time, **General Electric** developed **Autotab**, a mainframe-ba
 
 ### The Origin Story
 
-In the spring of 1978, **Dan Bricklin**, a Harvard Business School student and former programmer at DEC, sat in an accounting class watching his professor erase and recalculate an entire blackboard of numbers after changing a single assumption. Bricklin envisioned an "electronic blackboard" — a visual grid where changing one number would instantly ripple through all dependent calculations.
+In the spring of 1978, **Dan Bricklin**, a Harvard Business School student and former programmer at DEC, sat in an accounting class watching his professor erase and recalculate an entire blackboard of numbers after changing a single assumption. Bricklin envisioned an “electronic blackboard”  a visual grid where changing one number would instantly ripple through all dependent calculations.
 
 He partnered with **Bob Frankston**, a skilled MIT programmer, and together they created **VisiCalc** (Visible Calculator), released in October 1979 for the **Apple II**.
 
@@ -693,18 +693,18 @@ He partnered with **Bob Frankston**, a skilled MIT programmer, and together they
 | Feature | Significance |
 |---------|-------------|
 | Visual grid of rows and columns | Users could *see* their data as a table, not as code |
-| Cell references in formulas | `A1 + B1` — intuitive spatial addressing |
+| Cell references in formulas | `A1 + B1`  intuitive spatial addressing |
 | Automatic recalculation | Change one cell → all dependents update instantly |
-| Immediate feedback | Type a number, see the result — no batch submission |
+| Immediate feedback | Type a number, see the result  no batch submission |
 | No programming required | Accountants and managers could use it directly |
 
-### The "Killer App"
+### The “Killer App”
 
-VisiCalc became the first **"killer application"** — software so compelling that people bought hardware specifically to run it. The Apple II's sales exploded. For the first time, businesses purchased personal computers not as curiosities but as essential tools. As Bricklin later reflected:
+VisiCalc became the first **“killer application”**  software so compelling that people bought hardware specifically to run it. The Apple II's sales exploded. For the first time, businesses purchased personal computers not as curiosities but as essential tools. As Bricklin later reflected:
 
-"VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes."
+“VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes.”
 
-The spreadsheet metaphor — a grid of cells, each containing either a value or a formula — proved so intuitive that it has survived essentially unchanged for over 45 years.
+The spreadsheet metaphor  a grid of cells, each containing either a value or a formula  proved so intuitive that it has survived essentially unchanged for over 45 years.
 
 ### The Mathematical Model
 
@@ -724,21 +724,21 @@ This automatic propagation of changes through a dependency graph is the core inn
 
 When IBM released the **IBM PC** in 1981, VisiCalc was slow to port. **Mitch Kapor**, a former VisiCalc product manager, seized the opportunity and founded **Lotus Development Corporation**. In January 1983, he released **Lotus 1-2-3**.
 
-### Why "1-2-3"?
+### Why “1-2-3”?
 
 The name reflected three integrated capabilities:
 
-1. **Spreadsheet** — the core grid calculation engine
-2. **Charting** — built-in graphing of data (bar charts, line graphs, pie charts)
-3. **Database** — basic sorting, filtering, and querying of tabular data
+1. **Spreadsheet**  the core grid calculation engine
+2. **Charting**  built-in graphing of data (bar charts, line graphs, pie charts)
+3. **Database**  basic sorting, filtering, and querying of tabular data
 
 ### Technical Advantages
 
 Lotus 1-2-3 was written in **x86 assembly language**, making it dramatically faster than VisiCalc on IBM PC hardware. It also introduced:
 
-- **Named ranges** — referring to cell groups by name rather than coordinates
-- **Macros** — sequences of keystrokes that could be recorded and replayed, enabling automation
-- **Larger grid sizes** — 2,048 rows × 256 columns (vs. VisiCalc's 254 × 63)
+- **Named ranges**  referring to cell groups by name rather than coordinates
+- **Macros**  sequences of keystrokes that could be recorded and replayed, enabling automation
+- **Larger grid sizes**  2,048 rows × 256 columns (vs. VisiCalc's 254 × 63)
 
 ### Market Dominance
 
@@ -748,7 +748,7 @@ Lotus 1-2-3 became the best-selling software in the world and the primary reason
 
 ### Origins
 
-**Microsoft Excel** was first released in 1985 — for the **Apple Macintosh**, not for DOS. Microsoft recognized that the Mac's graphical user interface (GUI) offered a fundamentally better experience for spreadsheet work: direct manipulation with a mouse, WYSIWYG formatting, and visual selection of cell ranges.
+**Microsoft Excel** was first released in 1985  for the **Apple Macintosh**, not for DOS. Microsoft recognized that the Mac's graphical user interface (GUI) offered a fundamentally better experience for spreadsheet work: direct manipulation with a mouse, WYSIWYG formatting, and visual selection of cell ranges.
 
 The Windows version followed in 1987 (Excel 2.0), and by the early 1990s, as Windows overtook DOS, Excel began its ascent over Lotus 1-2-3.
 
@@ -767,7 +767,7 @@ The Windows version followed in 1987 (Excel 2.0), and by the early 1990s, as Win
 
 ### Excel as a Programming Language
 
-Excel and it's competitor's (like LibreOffice's Calc) formula system is, in computer science terms, a **purely functional, lazy-evaluated, reactive programming language** operating over a two-dimensional namespace. Modern Excel (with LAMBDA, LET, MAP, REDUCE, and dynamic arrays) is **Turing-complete** — capable, in theory, of computing anything any programming language can compute.
+Excel and it's competitor's (like LibreOffice's Calc) formula system is, in computer science terms, a **purely functional, lazy-evaluated, reactive programming language** operating over a two-dimensional namespace. Modern Excel (with LAMBDA, LET, MAP, REDUCE, and dynamic arrays) is **Turing-complete**  capable, in theory, of computing anything any programming language can compute.
 
 The cell formula:
 
@@ -785,16 +785,16 @@ $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 
 While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.
 
-- **IMS** (IBM, 1966) — hierarchical database for the Apollo program
-- **CODASYL** (1969) — network model databases
-- **Edgar F. Codd's Relational Model** (1970) — the paper *"A Relational Model of Data for Large Shared Data Banks"* proposed organizing data into **tables** (relations) with rows (tuples) and columns (attributes), queried through a declarative language
-- **SQL** (Structured Query Language, 1974) — developed by Donald Chamberlin and Raymond Boyce at IBM, based on Codd's relational algebra:
+- **IMS** (IBM, 1966)  hierarchical database for the Apollo program
+- **CODASYL** (1969)  network model databases
+- **Edgar F. Codd's Relational Model** (1970)  the paper *“A Relational Model of Data for Large Shared Data Banks”* proposed organizing data into **tables** (relations) with rows (tuples) and columns (attributes), queried through a declarative language
+- **SQL** (Structured Query Language, 1974)  developed by Donald Chamberlin and Raymond Boyce at IBM, based on Codd's relational algebra:
 
 $$\sigma_{\text{age} > 30}(\text{Employees}) \equiv \texttt{SELECT * FROM Employees WHERE age > 30}$$
 
-- **Oracle** (1979), **IBM DB2** (1983), **Microsoft SQL Server** (1989) — commercial implementations
-- **MySQL** (1995), **PostgreSQL** (1996) — open-source alternatives that democratized database access
-- **SQLite** (2000) — embedded database requiring no server, now deployed on billions of devices
+- **Oracle** (1979), **IBM DB2** (1983), **Microsoft SQL Server** (1989)  commercial implementations
+- **MySQL** (1995), **PostgreSQL** (1996)  open-source alternatives that democratized database access
+- **SQLite** (2000)  embedded database requiring no server, now deployed on billions of devices
 
 ### Statistical Software: Purpose-Built Data Tools
 
@@ -825,9 +825,9 @@ The Python stack (Pandas + Matplotlib + Scikit-learn + Jupyter Notebooks) repres
 - Inline visualizations
 - Interactive widgets
 
-This format mirrors the spreadsheet's core insight (immediate feedback, visible results) while extending it to arbitrary programming. A Jupyter notebook is, conceptually, a spreadsheet where each "cell" can contain any computation, not just a formula over a grid.
+This format mirrors the spreadsheet's core insight (immediate feedback, visible results) while extending it to arbitrary programming. A Jupyter notebook is, conceptually, a spreadsheet where each “cell” can contain any computation, not just a formula over a grid.
 
-## Business Intelligence and the "No-Code" Movement
+## Business Intelligence and the “No-Code” Movement
 
 ### The BI Stack (2000s–2020s)
 
@@ -849,7 +849,7 @@ $$\text{Punched cards} \to \text{SQL} \to \text{Spreadsheets} \to \text{Drag-and
 
 The latest evolution integrates **large language models** directly into data tools:
 
-- **Excel Copilot**: "Create a pivot table showing quarterly revenue by region"
+- **Excel Copilot**: “Create a pivot table showing quarterly revenue by region”
 - **ChatGPT Code Interpreter**: upload a CSV, ask questions in natural language
 - **Pandas AI**: natural language queries over DataFrames
 - **Databricks Assistant**: AI-generated SQL and Python for data engineering
@@ -877,7 +877,7 @@ $$\text{Abstraction} \uparrow \implies \text{Barrier to entry} \downarrow \impli
 
 ## Summary
 
-The history of "Excel-like things" is fundamentally a history of **making data manipulation accessible to non-programmers**. From Pacioli's ruled ledgers through LANPAR's automatic recalculation, VisiCalc's visual grid, Lotus's integrated charting, Excel's GUI and VBA, Google Sheets' collaboration, to today's AI-powered natural language interfaces, each step removed a layer of technical friction between humans and their data.
+The history of “Excel-like things” is fundamentally a history of **making data manipulation accessible to non-programmers**. From Pacioli's ruled ledgers through LANPAR's automatic recalculation, VisiCalc's visual grid, Lotus's integrated charting, Excel's GUI and VBA, Google Sheets' collaboration, to today's AI-powered natural language interfaces, each step removed a layer of technical friction between humans and their data.
 
 The spreadsheet's enduring genius lies not in computational power (Python and SQL are vastly more capable) but in its **cognitive fit**: the two-dimensional grid mirrors how humans naturally think about structured information. Rows are records. Columns are attributes. Cells are facts. Formulas are relationships. This mental model, unchanged since 1979, has proven more durable than any specific technology, and every successor, from Pandas DataFrames to BI dashboards, ultimately pays homage to it.
 
@@ -896,7 +896,7 @@ In \citeyear{thomasdcolmar1820}, Thomas de Colmar patented the **Arithmometer**,
 
 The machine could perform addition, subtraction, multiplication, and division, and was sold to banks, insurance companies, and government offices across Europe. It remained in production for over 90 years, with various manufacturers producing improved models well into the 20th century.
 
-The Arithmometer's significance lies not in a conceptual breakthrough but in a practical one: it proved that Leibniz's dream of mechanized calculation could be made robust, reproducible, and useful to non-specialists. It represents the moment when the "calculator" ceased to be a philosopher's curiosity and became a **commercial product**, an essential step in the trajectory from abstract logic to the industrial-scale computation that would eventually power AI systems.
+The Arithmometer's significance lies not in a conceptual breakthrough but in a practical one: it proved that Leibniz's dream of mechanized calculation could be made robust, reproducible, and useful to non-specialists. It represents the moment when the “calculator” ceased to be a philosopher's curiosity and became a **commercial product**, an essential step in the trajectory from abstract logic to the industrial-scale computation that would eventually power AI systems.
 </div>
 
 <div class="md">
@@ -904,9 +904,9 @@ The large language model is, at its deepest physical layer, a phenomenon of appl
 
 ### Quantum Mechanics and the Transistor
 
-The entire digital age rests upon the transistor, a device whose invention required understanding quantum mechanics — a branch of physics that did not exist until the 20th century. Max Planck introduced the quantum of energy in 1900 \cite{planck}. Niels Bohr proposed the quantized atom in 1913 \cite{bohr}. Werner Heisenberg formulated matrix mechanics in 1925 \cite{quanten}, and Erwin Schrödinger developed wave mechanics in 1926 \cite{schroedinger}.
+The entire digital age rests upon the transistor, a device whose invention required understanding quantum mechanics  a branch of physics that did not exist until the 20th century. Max Planck introduced the quantum of energy in 1900 \cite{planck}. Niels Bohr proposed the quantized atom in 1913 \cite{bohr}. Werner Heisenberg formulated matrix mechanics in 1925 \cite{quanten}, and Erwin Schrödinger developed wave mechanics in 1926 \cite{schroedinger}.
 
-Felix Bloch applied quantum mechanics to electrons in crystal lattices \cite{bloch}, and Alan Herries Wilson used this framework to explain semiconductors \cite{wilsonsemiconductors}. Without band theory, there is no understanding of why silicon can be made to switch between conducting and insulating states — and without that understanding, there is no transistor \cite{semiconductor}, no integrated circuit \cite{kilbyic} \cite{noyceic}, no microprocessor \cite{intel4004}, no GPU, and no LLM.
+Felix Bloch applied quantum mechanics to electrons in crystal lattices \cite{bloch}, and Alan Herries Wilson used this framework to explain semiconductors \cite{wilsonsemiconductors}. Without band theory, there is no understanding of why silicon can be made to switch between conducting and insulating states  and without that understanding, there is no transistor \cite{semiconductor}, no integrated circuit \cite{kilbyic} \cite{noyceic}, no microprocessor \cite{intel4004}, no GPU, and no LLM.
 
 ### Electromagnetism and Power Generation
 
@@ -918,29 +918,29 @@ Ludwig Boltzmann's statistical mechanics \cite{boltzmann_thermo} provided the th
 
 ### Optics and Data Transmission
 
-The fiber optic cables that carry over 95% of intercontinental internet traffic — and thus the training data for every LLM — exploit total internal reflection, first demonstrated by Daniel Colladon in 1842 \cite{colladon} and theoretically enabled for long-distance communication by Charles Kao and George Hockham in 1966 \cite{fibreoptics}. Without fiber optics, there is no global internet, no web-scale corpus, and no training data.
+The fiber optic cables that carry over 95% of intercontinental internet traffic  and thus the training data for every LLM  exploit total internal reflection, first demonstrated by Daniel Colladon in 1842 \cite{colladon} and theoretically enabled for long-distance communication by Charles Kao and George Hockham in 1966 \cite{fibreoptics}. Without fiber optics, there is no global internet, no web-scale corpus, and no training data.
 
 ### Statistical Mechanics and Machine Learning
 
 Beyond hardware, physics contributed directly to the mathematical foundations of machine learning. The Boltzmann distribution from statistical mechanics inspired Boltzmann Machines \cite{boltzmannlearning}, one of the earliest generative models. The Ising model of ferromagnetism \cite{lenz1920} \cite{ising1925}, describing interacting spins on a lattice, is now recognized as the first recurrent neural network architecture. The concept of energy minimization in physical systems directly influenced energy-based learning frameworks \cite{lecun2006}. The free energy principle from thermodynamics \cite{friston2010freeenergy} has been proposed as a unifying framework for understanding both biological and artificial intelligence.
 
-Physics did not set out to create artificial intelligence. It set out to understand the universe. But in doing so, it created every physical prerequisite — from the quantum tunneling effects in transistors to the electromagnetic waves in fiber optic cables — without which no language model could ever exist.
+Physics did not set out to create artificial intelligence. It set out to understand the universe. But in doing so, it created every physical prerequisite  from the quantum tunneling effects in transistors to the electromagnetic waves in fiber optic cables  without which no language model could ever exist.
 </div>
 
 <div class="md">
-If physics provided the theoretical understanding of matter, chemistry provided the practical ability to *transform* it. Every component of an LLM's physical substrate — from the ultra-pure silicon wafers to the rare-earth magnets in hard drives, from the lithium-ion batteries in mobile devices to the specialized cooling fluids in data centers — is a product of chemical engineering. Chemistry gave AI its body.
+If physics provided the theoretical understanding of matter, chemistry provided the practical ability to *transform* it. Every component of an LLM's physical substrate  from the ultra-pure silicon wafers to the rare-earth magnets in hard drives, from the lithium-ion batteries in mobile devices to the specialized cooling fluids in data centers  is a product of chemical engineering. Chemistry gave AI its body.
 
 ### Silicon Purification: From Sand to Semiconductor
 
-The journey from common beach sand (silicon dioxide, SiO₂) to a functioning microprocessor requires chemical transformations of extraordinary precision. The Siemens process, developed in the 1950s, reduces silicon dioxide with carbon at high temperatures, then purifies it through reaction with hydrogen chloride to form trichlorosilane (SiHCl₃), which is subsequently decomposed to yield polycrystalline silicon of 99.9999999% purity (nine nines). This "electronic grade" silicon is then grown into single crystals via the Czochralski process \cite{semiconductor}. Without these chemical purification methods, transistors cannot function — impurity concentrations of even a few parts per billion alter semiconductor behavior catastrophically. The entire digital age rests upon chemistry's ability to produce materials of unprecedented purity.
+The journey from common beach sand (silicon dioxide, SiO₂) to a functioning microprocessor requires chemical transformations of extraordinary precision. The Siemens process, developed in the 1950s, reduces silicon dioxide with carbon at high temperatures, then purifies it through reaction with hydrogen chloride to form trichlorosilane (SiHCl₃), which is subsequently decomposed to yield polycrystalline silicon of 99.9999999% purity (nine nines). This “electronic grade” silicon is then grown into single crystals via the Czochralski process \cite{semiconductor}. Without these chemical purification methods, transistors cannot function  impurity concentrations of even a few parts per billion alter semiconductor behavior catastrophically. The entire digital age rests upon chemistry's ability to produce materials of unprecedented purity.
 
 ### Doping: The Chemistry of Controlled Impurity
 
-A pure silicon crystal is a poor conductor. What makes it useful is the deliberate introduction of specific impurities — a process called **doping**. Adding phosphorus atoms (Group V) creates n-type silicon with excess electrons; adding boron atoms (Group III) creates p-type silicon with electron "holes." The p-n junction formed at their interface is the basis of every diode and transistor \cite{shockley}. This is fundamentally a chemical process: selecting specific elements from the periodic table and introducing them into a crystal lattice at precisely controlled concentrations (typically one dopant atom per million silicon atoms). Without the chemist's understanding of how atomic species interact within crystal structures, there is no transistor and no computation.
+A pure silicon crystal is a poor conductor. What makes it useful is the deliberate introduction of specific impurities  a process called **doping**. Adding phosphorus atoms (Group V) creates n-type silicon with excess electrons; adding boron atoms (Group III) creates p-type silicon with electron “holes.” The p-n junction formed at their interface is the basis of every diode and transistor \cite{shockley}. This is fundamentally a chemical process: selecting specific elements from the periodic table and introducing them into a crystal lattice at precisely controlled concentrations (typically one dopant atom per million silicon atoms). Without the chemist's understanding of how atomic species interact within crystal structures, there is no transistor and no computation.
 
 ### Photolithography: Chemistry as Nanoscale Sculpture
 
-Modern chips contain billions of transistors, each smaller than a virus. They are manufactured through **photolithography**, a process that is essentially chemistry performed with light. A silicon wafer is coated with a light-sensitive chemical called a **photoresist**. Ultraviolet light is projected through a mask, causing chemical reactions that either harden or dissolve the exposed resist (depending on whether it is "positive" or "negative" resist). The unexposed (or exposed) resist is washed away with chemical solvents, revealing the silicon beneath for etching or ion implantation. This cycle is repeated dozens of times to build up the three-dimensional structure of a modern processor. Each step is a chemical reaction — polymerization, dissolution, oxidation, deposition — performed at nanometer precision.
+Modern chips contain billions of transistors, each smaller than a virus. They are manufactured through **photolithography**, a process that is essentially chemistry performed with light. A silicon wafer is coated with a light-sensitive chemical called a **photoresist**. Ultraviolet light is projected through a mask, causing chemical reactions that either harden or dissolve the exposed resist (depending on whether it is “positive” or “negative” resist). The unexposed (or exposed) resist is washed away with chemical solvents, revealing the silicon beneath for etching or ion implantation. This cycle is repeated dozens of times to build up the three-dimensional structure of a modern processor. Each step is a chemical reaction  polymerization, dissolution, oxidation, deposition  performed at nanometer precision.
 
 ### Electrochemistry and Energy Storage
 
@@ -948,22 +948,22 @@ The lithium-ion battery, which powers every laptop, smartphone, and increasingly
 
 ### Rare Earth Chemistry and Permanent Magnets
 
-The hard disk drives that store training datasets rely on **neodymium-iron-boron (Nd₂Fe₁₄B) permanent magnets** and **cobalt-platinum alloy** recording media — materials whose magnetic properties were characterized through decades of solid-state chemistry research. The voice coil actuators that position read/write heads with nanometer precision depend on rare-earth magnets whose synthesis requires specialized chemical extraction from ore (typically through solvent extraction and ion exchange chromatography).
+The hard disk drives that store training datasets rely on **neodymium-iron-boron (Nd₂Fe₁₄B) permanent magnets** and **cobalt-platinum alloy** recording media  materials whose magnetic properties were characterized through decades of solid-state chemistry research. The voice coil actuators that position read/write heads with nanometer precision depend on rare-earth magnets whose synthesis requires specialized chemical extraction from ore (typically through solvent extraction and ion exchange chromatography).
 
 ### Cooling Fluids and Thermal Management
 
-As GPU clusters push thermal limits, data centers increasingly turn to **liquid immersion cooling** using engineered dielectric fluids — synthetic fluorocarbon compounds (such as 3M's Fluorinert and Novec series) designed through organic chemistry to be thermally conductive, electrically insulating, chemically inert, and non-flammable. The development of these specialized coolants is pure applied chemistry, formulated specifically to remove heat from electronics without damaging them.
+As GPU clusters push thermal limits, data centers increasingly turn to **liquid immersion cooling** using engineered dielectric fluids  synthetic fluorocarbon compounds (such as 3M's Fluorinert and Novec series) designed through organic chemistry to be thermally conductive, electrically insulating, chemically inert, and non-flammable. The development of these specialized coolants is pure applied chemistry, formulated specifically to remove heat from electronics without damaging them.
 
 ### The Periodic Table as Foundation
 
-Ultimately, every element used in computing — silicon (Si, 14) for substrates, copper (Cu, 29) for interconnects, gold (Au, 79) for wire bonds, tantalum (Ta, 73) for capacitors, gallium (Ga, 31) and arsenic (As, 33) for III-V semiconductors in networking lasers, erbium (Er, 68) for fiber optic amplifiers, neodymium (Nd, 60) for magnets — was first isolated, characterized, and understood through chemistry. Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements; without this organizational framework, the systematic engineering of materials for computation would have been impossible.
+Ultimately, every element used in computing  silicon (Si, 14) for substrates, copper (Cu, 29) for interconnects, gold (Au, 79) for wire bonds, tantalum (Ta, 73) for capacitors, gallium (Ga, 31) and arsenic (As, 33) for III-V semiconductors in networking lasers, erbium (Er, 68) for fiber optic amplifiers, neodymium (Nd, 60) for magnets  was first isolated, characterized, and understood through chemistry. Dmitri Mendeleev's 1869 periodic table organized the elements by atomic weight and predicted the existence of undiscovered elements; without this organizational framework, the systematic engineering of materials for computation would have been impossible.
 
 <figure>
     <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="mendeleev_periodic_table.jpg" alt="Mendeleev's periodic table of the elements from 1869, the first published version, showing elements arranged by atomic weight" />
     <figcaption class="md">The \citealternativetitle{mendeleev_periodic_table}: Mendeleev's original 1869 arrangement of the elements by atomic weight, complete with bold predictions for then-undiscovered elements such as gallium, scandium and germanium. Every silicon, copper and neodymium atom in a modern GPU owes its place on this chart.</figcaption>
 </figure>
 
-Chemistry did not intend to create artificial intelligence. It intended to understand and transform matter. But in doing so — from purifying silicon to synthesizing photoresists to engineering cooling fluids — it provided every material prerequisite without which no language model could ever be physically instantiated.
+Chemistry did not intend to create artificial intelligence. It intended to understand and transform matter. But in doing so  from purifying silicon to synthesizing photoresists to engineering cooling fluids  it provided every material prerequisite without which no language model could ever be physically instantiated.
 </div>
 
 <div class="md">
@@ -974,7 +974,7 @@ Chemistry did not intend to create artificial intelligence. It intended to under
 
 The \citealternativetitle{agc_module_image} (\citeyear{agc_module_image}) at the MIT Instrumentation Laboratory was the first computer built from silicon integrated circuits. Designed under Charles Stark Draper and Eldon C. Hall, the Block II version flown to the Moon contained roughly 2,800 dual 3-input NOR gates and 36,864 words of read-only **core rope memory**, woven by hand at a Raytheon factory \cite{mindell2008digitalapollo}.
 
-What matters for AI history is not the hardware but the **software**. J. Halcombe Laning designed a preemptive priority scheduler — the "Exec" and the "Waitlist" — that has no direct equivalent in the early ARPA machines of the same era \cite{hoag1976apollohistory}. When the rendezvous radar on \citealternativetitle{eyles2004lmcomputer} (\citeyear{eyles2004lmcomputer}) began flooding Apollo 11's computer with cycle steals five minutes before touchdown, the scheduler automatically shed low-priority tasks. Without it, the landing would have been aborted. Margaret Hamilton, who directed the software team, later received the Presidential Medal of Freedom for work that effectively founded **software engineering** as a discipline.
+What matters for AI history is not the hardware but the **software**. J. Halcombe Laning designed a preemptive priority scheduler  the “Exec” and the “Waitlist”  that has no direct equivalent in the early ARPA machines of the same era \cite{hoag1976apollohistory}. When the rendezvous radar on \citealternativetitle{eyles2004lmcomputer} (\citeyear{eyles2004lmcomputer}) began flooding Apollo 11's computer with cycle steals five minutes before touchdown, the scheduler automatically shed low-priority tasks. Without it, the landing would have been aborted. Margaret Hamilton, who directed the software team, later received the Presidential Medal of Freedom for work that effectively founded **software engineering** as a discipline.
 
 <div class="image-row">
     <figure>
@@ -983,13 +983,13 @@ What matters for AI history is not the hardware but the **software**. J. Halcomb
     </figure>
     <figure>
         <img src="margaret_hamilton.jpg" alt="Margaret Hamilton in 1969 standing next to stacks of the Apollo Guidance Computer source-code listings" />
-        <figcaption class="md">The \citealternativetitle{hamilton1969_image} (Public Domain, PD US no notice). Margaret Hamilton beside the printouts of the AGC software her MIT team produced for the Apollo Command and Lunar Modules — the "stacks" she is standing next to are taller than she is.</figcaption>
+        <figcaption class="md">The \citealternativetitle{hamilton1969_image} (Public Domain, PD US no notice). Margaret Hamilton beside the printouts of the AGC software her MIT team produced for the Apollo Command and Lunar Modules  the “stacks” she is standing next to are taller than she is.</figcaption>
     </figure>
 </div>
 
 ### From Fly-by-Wire to Fly-Yourself
 
-NASA's F-8 Digital Fly-by-Wire program (1972) used an AGC derivative to demonstrate that computers could replace mechanical linkages in aircraft control surfaces \cite{tomayko2000flybywire}. The Space Shuttle (1981–2011) carried four redundant IBM AP-101 computers running identical software with majority voting — the first operational fly-by-wire on a crewed spacecraft. Every modern airliner and military fighter inherits this lineage.
+NASA's F-8 Digital Fly-by-Wire program (1972) used an AGC derivative to demonstrate that computers could replace mechanical linkages in aircraft control surfaces \cite{tomayko2000flybywire}. The Space Shuttle (1981–2011) carried four redundant IBM AP-101 computers running identical software with majority voting  the first operational fly-by-wire on a crewed spacecraft. Every modern airliner and military fighter inherits this lineage.
 
 ### Robotic Autonomy on Mars
 
@@ -1025,11 +1025,11 @@ The **Colossus** Mark 2 (\citeyear{flowers1983design}), built by Tommy Flowers a
     <figcaption class="md">The \citealternativetitle{colossus_image} (UK National Archives, Public Domain). Operated by Wrens of the Women's Royal Naval Service. Eleven machines were eventually built; all but two were destroyed after the war on the orders of the then-Director of GCHQ.</figcaption>
 </figure>
 
-**ENIAC** (\citeyear{eniac1946}), built at the University of Pennsylvania, was originally designed to compute artillery firing tables. Its first real "user" was John von Neumann, who reprogrammed it in 1945 for thermonuclear calculations at Los Alamos. Six women — Kay McNulty, Betty Jennings, Betty Snyder, Marlyn Meltzer, Frances Bilas, and Ruth Lichterman — did the actual programming, an invisible prerequisite for the rest of computing history \cite{haigh2006eniac}.
+**ENIAC** (\citeyear{eniac1946}), built at the University of Pennsylvania, was originally designed to compute artillery firing tables. Its first real “user” was John von Neumann, who reprogrammed it in 1945 for thermonuclear calculations at Los Alamos. Six women  Kay McNulty, Betty Jennings, Betty Snyder, Marlyn Meltzer, Frances Bilas, and Ruth Lichterman  did the actual programming, an invisible prerequisite for the rest of computing history \cite{haigh2006eniac}.
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="eniac.jpg" alt="ENIAC, the Electronic Numerical Integrator and Computer, photographed in operation at the Moore School" />
-    <figcaption class="md">The \citealternativetitle{eniac1946_image} (U.S. Army, Public Domain). 18,000 vacuum tubes, 30 tons, 1,000 square feet of floor space — and reprogrammable only by re-plugging cables and setting switches.</figcaption>
+    <figcaption class="md">The \citealternativetitle{eniac1946_image} (U.S. Army, Public Domain). 18,000 vacuum tubes, 30 tons, 1,000 square feet of floor space  and reprogrammable only by re-plugging cables and setting switches.</figcaption>
 </figure>
 
 ### Wiener, Cybernetics, and the Anti-Aircraft Problem
@@ -1047,7 +1047,7 @@ Created in February 1958 in response to Sputnik, the **Advanced Research Project
 
 <figure>
     <img style="width: 60%; height: auto; display: block; margin: 1em auto;" src="shakey_robot.jpg" alt="SRI's Shakey the Robot, the first mobile reasoning robot, on display at the Computer History Museum" />
-    <figcaption class="md">The \citealternativetitle{shakey_robot_image} (CC-BY-SA 4.0). Shakey used a TV camera, a range finder, and an on-board PDP-10 to plan its movements through a cluttered room — a 1969 proof of concept that perception, planning, and action could be unified in one machine.</figcaption>
+    <figcaption class="md">The \citealternativetitle{shakey_robot_image} (CC-BY-SA 4.0). Shakey used a TV camera, a range finder, and an on-board PDP-10 to plan its movements through a cluttered room  a 1969 proof of concept that perception, planning, and action could be unified in one machine.</figcaption>
 </figure>
 
 DARPA later ran the **Grand Challenge** (2004, 2005) and **Urban Challenge** (2007), whose competing teams seeded the technology that became self-driving cars \cite{kurzweil2010darpasingular}.
@@ -1083,14 +1083,14 @@ By 1953, Metropolis and co-workers at Los Alamos had turned the same idea into a
 
 ### Game Theory and the Architecture of Computation
 
-While consulting at Los Alamos, John von Neumann co-authored *Theory of Games and Economic Behavior* (1944) with Oskar Morgenstern \cite{vonneumann_morgenstern1944}. The book's mathematical framework — minimax, Nash equilibrium, repeated games — became the foundation of **multi-agent reinforcement learning**, algorithmic game theory, and modern mechanism design.
+While consulting at Los Alamos, John von Neumann co-authored *Theory of Games and Economic Behavior* (1944) with Oskar Morgenstern \cite{vonneumann_morgenstern1944}. The book's mathematical framework  minimax, Nash equilibrium, repeated games  became the foundation of **multi-agent reinforcement learning**, algorithmic game theory, and modern mechanism design.
 
 <figure>
     <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="von_neumann_lanl.gif" alt="Photograph of John von Neumann at Los Alamos, in the late 1940s" />
-    <figcaption class="md">The \citealternativetitle{vonneumann_lanl_image} (LANL, Public Domain). Von Neumann spent 1943–1955 commuting between Los Alamos, Princeton's IAS, and various weapons-related advisory committees. Almost every foundational structure of modern computing — the stored-program architecture, cellular automata, game theory, Monte Carlo methods — was touched by his work.</figcaption>
+    <figcaption class="md">The \citealternativetitle{vonneumann_lanl_image} (LANL, Public Domain). Von Neumann spent 1943–1955 commuting between Los Alamos, Princeton's IAS, and various weapons-related advisory committees. Almost every foundational structure of modern computing  the stored-program architecture, cellular automata, game theory, Monte Carlo methods  was touched by his work.</figcaption>
 </figure>
 
-Von Neumann also sketched the **stored-program architecture** (\citeyear{vonneumann}) during his weapons work, and later designed self-reproducing **cellular automata** with Ulam at Los Alamos — the conceptual ancestor of agent-based simulation.
+Von Neumann also sketched the **stored-program architecture** (\citeyear{vonneumann}) during his weapons work, and later designed self-reproducing **cellular automata** with Ulam at Los Alamos  the conceptual ancestor of agent-based simulation.
 
 ### Metropolis–Hastings in Modern ML
 

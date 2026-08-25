@@ -17,14 +17,14 @@ topics: language, math-i, math-ii, architecture
 
 
 <div class="optional md" data-headline="Friedrich Nietzsche and Ferdinand de Saussure: The earliest precursors to ideas related to Embedding">
-The theoretical foundation for modern word embeddings was laid as early as 1916 in \citetitle{saussure1916}. \citeauthor{saussure1916} recognized that the linguistic sign is arbitrary, there is no natural connection between the word "tree" (the signifier) and the concept of a tree (the signified). This idea was already implied by Nietzsches '\citetitle{ueberwahrheitundluege}' in \citeyear{ueberwahrheitundluege}, but widely ignored at the time.
+The theoretical foundation for modern word embeddings was laid as early as 1916 in \citetitle{saussure1916}. \citeauthor{saussure1916} recognized that the linguistic sign is arbitrary, there is no natural connection between the word “tree” (the signifier) and the concept of a tree (the signified). This idea was already implied by Nietzsches '\citetitle{ueberwahrheitundluege}' in \citeyear{ueberwahrheitundluege}, but widely ignored at the time.
 
 More importantly, he defined language as a system of differences. A word derives its meaning only because it is *not* any other word in the system. When we state today that the meaning of a word is determined by its position in a high-dimensional vector space, we are simply fulfilling Saussure's vision of a purely relational semantics.
 </div>
 
 
 <div class="md">
-In the architecture of a Transformer, a word possesses no intrinsic "soul" or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
+In the architecture of a Transformer, a word possesses no intrinsic “soul” or static dictionary definition. Instead, its identity is defined entirely by its context, its **use**. This philosophical principle is operationalized through a high-dimensional **Embedding Space**, where semantic concepts are mapped as coordinates in a continuous geometric manifold.
 </div>
 
 <div class="optional md" data-headline="Where the vectors come from">
@@ -42,7 +42,7 @@ That is the *entire* bridge between Tokenization and this chapter. Everything be
 	<figcaption class="md">\citealternativetitle{riemann_portrait}, who formalized the concept of a manifold.</figcaption>
 </figure>
 
-The concept of a **manifold** is rooted in the German word **Mannigfaltigkeit**, which **Bernhard Riemann** formalized in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} ("On the Hypotheses Which Lie at the Foundations of Geometry"). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauß himself in the audience.
+The concept of a **manifold** is rooted in the German word **Mannigfaltigkeit**, which **Bernhard Riemann** formalized in his landmark **1854 Göttingen inaugural lecture** (*Habilitationsvortrag*), titled \citetitle{hypothesengeometrie} (“On the Hypotheses Which Lie at the Foundations of Geometry”). The lecture was delivered before the faculty at the University of Göttingen, with Carl Friedrich Gauß himself in the audience.
 
 **The Problem Riemann Was Trying to Solve**:
 
@@ -50,13 +50,13 @@ Riemann was attempting to **generalize the idea of a surface to higher dimension
 
 1. **Extending geometry beyond three dimensions:** Riemann wanted a rigorous mathematical framework for spaces of *any* number of dimensions, not just the two-dimensional surfaces studied by Gauß.
 
-2. **Understanding spaces that are locally flat but globally complex:** Manifolds are shapes that "look flat to an ant living on them, even though they might have a more complicated global structure." A sphere, for example, looks flat if you're standing on it (like the Earth), but its global structure is curved and closed.
+2. **Understanding spaces that are locally flat but globally complex:** Manifolds are shapes that “look flat to an ant living on them, even though they might have a more complicated global structure.” A sphere, for example, looks flat if you're standing on it (like the Earth), but its global structure is curved and closed.
 
-3. **Describing the set of all possible values of a variable under constraints:** Riemann described a *Mannigfaltigkeit* as the set of all possible values a variable can take when subject to certain constraints, he used the term precisely because "the variable can have **many values**."
+3. **Describing the set of all possible values of a variable under constraints:** Riemann described a *Mannigfaltigkeit* as the set of all possible values a variable can take when subject to certain constraints, he used the term precisely because “the variable can have **many values**.”
 
-**Why "Mannigfaltigkeit" Specifically?**
+**Why “Mannigfaltigkeit” Specifically?**
 
-The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a "many-fold" collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher \citeauthor{hypothesengeometrieenglish} later translated *Mannigfaltigkeit* into the English word "manifoldness," which was subsequently shortened to **manifold**.
+The German word *Mannigfaltigkeit* carries connotations of **diversity, multiplicity, and variety**, a “many-fold” collection of possibilities. Riemann chose it because he was describing mathematical objects that could take on many different forms and configurations while still being governed by underlying geometric principles. The English mathematician and philosopher \citeauthor{hypothesengeometrieenglish} later translated *Mannigfaltigkeit* into the English word “manifoldness,” which was subsequently shortened to **manifold**.
 
 **The Broader Intellectual Context**:
 
@@ -71,9 +71,9 @@ As described elsewhere in this text, the **Manifold Hypothesis**, the idea that 
 <div class="md">
 Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to \citealternativetitle{gage1994bpe}.
 
-In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, "You shall know a word by the company it keeps" (p. 11), suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthorlastnameand{mikolov2013word2vec} to mathematically map language into the vector spaces we see in modern LLMs today.
+In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, “You shall know a word by the company it keeps” (p. 11), suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthorlastnameand{mikolov2013word2vec} to mathematically map language into the vector spaces we see in modern LLMs today.
 
-Two decades earlier, and on a different continent, **\citeauthor{salton1975vectorspace}** (\citeyear{salton1975vectorspace}) at Cornell had already turned this idea into an algebra. To retrieve relevant documents from a growing library, his **SMART** system represented each document as a high-dimensional vector of term weights (today called **tf-idf**) and compared it to a query vector using **cosine similarity**, the same geometric measure of "how parallel are these two arrows" we still use for semantic search. Their paper, "\citetitle{salton1975vectorspace}", is the first formal **vector space model** of language and the first time the *angle between two language vectors* was used as a numeric proxy for semantic relatedness \cite{salton1975vectorspace}. Neural word embeddings would only arrive nearly four decades later, but the geometric intuition was already in place: documents and words are points in a space, and meaning is a question of distance.
+Two decades earlier, and on a different continent, **\citeauthor{salton1975vectorspace}** (\citeyear{salton1975vectorspace}) at Cornell had already turned this idea into an algebra. To retrieve relevant documents from a growing library, his **SMART** system represented each document as a high-dimensional vector of term weights (today called **tf-idf**) and compared it to a query vector using **cosine similarity**, the same geometric measure of “how parallel are these two arrows” we still use for semantic search. Their paper, “\citetitle{salton1975vectorspace}”, is the first formal **vector space model** of language and the first time the *angle between two language vectors* was used as a numeric proxy for semantic relatedness \cite{salton1975vectorspace}. Neural word embeddings would only arrive nearly four decades later, but the geometric intuition was already in place: documents and words are points in a space, and meaning is a question of distance.
 
 ## One Dimension
 To visualize this, consider a simple **1D Embedding Space** representing temperature. We assign words a single numerical coordinate on an axis:
@@ -82,7 +82,7 @@ To visualize this, consider a simple **1D Embedding Space** representing tempera
 * **Warm**: $35$
 * **Boiling**: $100$
 
-In this one-dimensional world, "Cold" is mathematically proximal to "Frosty" but distant from "Boiling".
+In this one-dimensional world, “Cold” is mathematically proximal to “Frosty” but distant from “Boiling”.
 
 This allows you to do calculations like $\underset{100}{\underbrace{\text{Boiling}}} - \underset{60}{\underbrace{\text{Hot}}} \approx \underset{40}{\underbrace{\text{Warm}}}$. Warm, by definition here, is 35, so it is only approximate, but it's the closest match and makes some sense.
 </div>
@@ -103,7 +103,7 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
 
 Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
 
-Because these positions are derived from logical relationships in data, the space itself becomes "computable". We can perform algebraic operations on these vectors to navigate human concepts:
+Because these positions are derived from logical relationships in data, the space itself becomes “computable”. We can perform algebraic operations on these vectors to navigate human concepts:
 </div>
 
 <div style="text-align: center; margin: 1.5em 0; font-size: 1.2em;">
@@ -144,7 +144,7 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
 
 <div class="md">
 ## Quantifying Semantic Proximity
-In a vector space, "meaning" is a function of distance. If two words appear in similar linguistic environments, their vectors converge toward the same neighborhood.
+In a vector space, “meaning” is a function of distance. If two words appear in similar linguistic environments, their vectors converge toward the same neighborhood.
 
 ### Euclidean Distance
 To determine the degree of similarity between two vectors $\mathbf{A}$ and $\mathbf{B}$ in $n$-dimensional space, we can calculate the straight-line gap known as **Euclidean Distance**:
@@ -163,10 +163,10 @@ While Euclidean distance measures the physical gap between points, modern LLMs o
 
 $$ \text{similarity} = \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} $$
 
-In a 1,536-dimensional model, "meaning" isn't a static definition; it's a **positional relationship**. Imagine a direction in space that represents "Royalty." Moving a vector in that direction transforms "Man" into "King.".
+In a 1,536-dimensional model, “meaning” isn't a static definition; it's a **positional relationship**. Imagine a direction in space that represents “Royalty.” Moving a vector in that direction transforms “Man” into “King.”.
 
 
-The **red arc** below visualizes the **Cosine Distance**, the "conceptual shift" between two points. The **dashed line** is the **Euclidean Distance**, or the "energy" required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
+The **red arc** below visualizes the **Cosine Distance**, the “conceptual shift” between two points. The **dashed line** is the **Euclidean Distance**, or the “energy” required to move from one token to another. In the geometry of meaning, words that appear in similar contexts are pulled together by gravity, forming clusters that represent human knowledge.
 </div>
 
 <section style="width: 100%; padding: 20px; margin-bottom: 40px; box-sizing: border-box;">
@@ -192,11 +192,11 @@ The Dot Product $\vec{A} \cdot \vec{B}$ is:
 $$\vec{A} \cdot \vec{B} = (a_1 \times b_1) + (a_2 \times b_2)$$
 
 The Dot Product has a beautiful geometric property:
-* **High Positive Number:** The arrows point in roughly the same direction (They are "Similar").
-* **Zero:** The arrows are at a right angle (They are "Unrelated").
-* **Negative Number:** The arrows point in opposite directions (They are "Opposites").
+* **High Positive Number:** The arrows point in roughly the same direction (They are “Similar”).
+* **Zero:** The arrows are at a right angle (They are “Unrelated”).
+* **Negative Number:** The arrows point in opposite directions (They are “Opposites”).
 
-In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related. This will be explained in more detail later on.
+In a Transformer (like ChatGPT), this is the “Handshake.” When a word “looks” at another word, it calculates the Dot Product. If the result is high, the AI knows those words are contextually related. This will be explained in more detail later on.
 </div>
 
 <div class="lab-container">
@@ -212,9 +212,9 @@ In a Transformer (like ChatGPT), this is the "Handshake." When a word "looks" at
 <div class="md">
 ### Scale Invariance: Direction Is Meaning, Magnitude Is Noise
 
-There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them "far apart." Cosine similarity correctly identifies them as identical in meaning.
+There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them “far apart.” Cosine similarity correctly identifies them as identical in meaning.
 
-Why does magnitude vary? During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms. A rare synonym of "King" might encode the same directional relationships but have a much shorter vector. Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.
+Why does magnitude vary? During training, tokens that appear more frequently accumulate more gradient updates, inflating their vector norms. A rare synonym of “King” might encode the same directional relationships but have a much shorter vector. Cosine similarity is blind to this artifact; Euclidean distance is fooled by it.
 
 Below, drag the **magnitude slider** to stretch or shrink a token's vector without changing its direction. Watch how Euclidean distance changes dramatically while cosine similarity stays perfectly constant.
 </div>
@@ -243,31 +243,31 @@ Mathematical physics translates the saying of Heraclitus, 'All things flow,' int
 </div>
 
 <div class="md">
-It is tempting to label specific axes as "Gender," "Power," or "Temperature," but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
+It is tempting to label specific axes as “Gender,” “Power,” or “Temperature,” but this is often a human-imposed simplification. In modern LLMs, dimensions are **latent features**, mathematical patterns discovered through statistical co-occurrence rather than human-defined categories.
 
-While we can find "directions" in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
-* **Meaning is Simulated:** The computer does not "understand" what a King is; it only understands that the token "King" consistently appears in specific geometric relationships with other tokens.
+While we can find “directions” in the vector space that correlate with human concepts, most of the 768+ dimensions do not have a name in any human language.
+* **Meaning is Simulated:** The computer does not “understand” what a King is; it only understands that the token “King” consistently appears in specific geometric relationships with other tokens.
 * **No Inherent Soul:** The coordinates are products of linear algebra, not internal experience. Meaning is a human concept we project onto the model's output; the machine is simply navigating a continuous geometric manifold.
 </div>
 
 <div class="optional md" data-headline="The Outliers of Geometry: Hapax Legomena and Glitch Tokens">
-While the semantic manifold relies on "use" to define meaning, the system falters when a word lacks a statistical history. [**Hapax legomena**](https://en.wikipedia.org/wiki/Hapax_legomenon), terms that appear only once in an entire corpus, present a unique challenge for embedding spaces. Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it. In a high-dimensional space, these words become "homeless"; the model cannot triangulate their coordinates through repeated relationships. Without the "gravity" of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.
+While the semantic manifold relies on “use” to define meaning, the system falters when a word lacks a statistical history. [**Hapax legomena**](https://en.wikipedia.org/wiki/Hapax_legomenon), terms that appear only once in an entire corpus, present a unique challenge for embedding spaces. Because a token's identity is defined entirely by its context, a single occurrence provides insufficient data points to anchor it. In a high-dimensional space, these words become “homeless”; the model cannot triangulate their coordinates through repeated relationships. Without the “gravity” of multiple linguistic environments to pull them into a meaningful neighborhood, their vectors often reside in noisy, semi-random locations, rendering them mathematically isolated from the manifold of human knowledge.
 
-Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable "positional relationship" in the space. When an LLM encounters these tokens, it often suffers a "hallucination of meaning" or total logic failure. In the geometry of meaning, these tokens act like "voids" or "gravity wells", they are products of statistical co-occurrence that do not correlate with any human concept.
+Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable “positional relationship” in the space. When an LLM encounters these tokens, it often suffers a “hallucination of meaning” or total logic failure. In the geometry of meaning, these tokens act like “voids” or “gravity wells”, they are products of statistical co-occurrence that do not correlate with any human concept.
 </div>
 
 <div class="md">
 ## Rotational Invariance and Translation as Path-Finding
 
-A critical property of embedding spaces is their **rotational invariance**. If you take an entire embedding space and rotate it, spinning every single vector by the same angle, nothing changes semantically. "King" is still near "Queen," "Cat" is still far from "Democracy." This is because meaning in these spaces is not encoded in absolute coordinates, but in the **\cite[relational geometry]{smith2017orthogonal}** between points: their distances, angles, and cluster structures.
+A critical property of embedding spaces is their **rotational invariance**. If you take an entire embedding space and rotate it, spinning every single vector by the same angle, nothing changes semantically. “King” is still near “Queen,” “Cat” is still far from “Democracy.” This is because meaning in these spaces is not encoded in absolute coordinates, but in the **\cite[relational geometry]{smith2017orthogonal}** between points: their distances, angles, and cluster structures.
 
-This has a profound implication for **cross-lingual translation**. When a Transformer is trained on two languages, each language develops its own embedding space. Remarkably, these spaces tend to be **isomorphic**, they share the same internal geometric structure, \cite[just rotated and scaled relative to each other]{mikolov2013exploiting}. The word for "king" in French and the word for "king" in English occupy analogous positions within their respective manifolds. Aligning two such spaces often requires nothing more than a linear transformation, a rotation matrix and a scaling factor, because the underlying topology of human concepts is, to a significant degree, \cite[language-invariant]{conneau2018word}.
+This has a profound implication for **cross-lingual translation**. When a Transformer is trained on two languages, each language develops its own embedding space. Remarkably, these spaces tend to be **isomorphic**, they share the same internal geometric structure, \cite[just rotated and scaled relative to each other]{mikolov2013exploiting}. The word for “king” in French and the word for “king” in English occupy analogous positions within their respective manifolds. Aligning two such spaces often requires nothing more than a linear transformation, a rotation matrix and a scaling factor, because the underlying topology of human concepts is, to a significant degree, \cite[language-invariant]{conneau2018word}.
 
-A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding. Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic "shape." To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined "meaning manifold" that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.
+A **translation Transformer** can therefore be *viewed through a geometric lens* as performing a kind of path-finding. Given a sequence of tokens in the source language, the encoder produces a sequence of hidden states that can be pictured as a trajectory weaving through clusters of meaning; the decoder's task can be pictured as finding a **corresponding path** in the target language's embedding space that preserves the same relational structure: the same turns, the same cluster transitions, the same semantic “shape.” To be clear, this is a metaphor, an aid to intuition rather than a literal mechanism: there is no formally defined “meaning manifold” that the encoder actually traverses, and the picture is not a theorem about how Transformers compute translations.
 
-In other words, a translation Transformer can be described as translating **paths through meaning-space** — identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space. Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*. But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.
+In other words, a translation Transformer can be described as translating **paths through meaning-space**  identifying the geometric signature of the input, which clusters were visited, in what order, with what transitions, and reconstructing an analogous trajectory in the output space. Used this way, the image is genuinely useful: it captures why translations can be fluent even when there is no one-to-one word correspondence between languages, and why the model is matching *shapes*, not *points*. But it remains a geometric metaphor for representation learning, not an established description of the translation mechanism.
 
-This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** \cite[Vaswani et al., 2017]{vaswani2017attention}. This relational map is what gets preserved and transferred — **not any individual coordinate** \cite[Elhage et al., 2021]{elhage2021mathematical}.
+This is also why the Attention mechanism is so central. Attention computes pairwise relationships (via dot products) between all tokens in a sequence, effectively building a map of the local geometry, which points are near each other, which are aligned, which are **orthogonal** \cite[Vaswani et al., 2017]{vaswani2017attention}. This relational map is what gets preserved and transferred  **not any individual coordinate** \cite[Elhage et al., 2021]{elhage2021mathematical}.
 
 </div>
 
@@ -290,13 +290,13 @@ This is also why the Attention mechanism is so central. Attention computes pairw
 <div class="md">
 The real magic is in the **transformation itself**. You can watch Japanese's embedding space smoothly rotate and scale to align with English. This is exactly what algorithms like Procrustes alignment do: they find the optimal rotation matrix $\mathbf{W}$ such that $\mathbf{X}_B \mathbf{W} \approx \mathbf{X}_A$, minimizing the distance between corresponding word pairs across languages (\cite{smith2017orthogonal}, \citeauthorlastnameand{conneau2018word}).
 
-Click **"Align"** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
+Click **“Align”** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
 </div>
 
 <div class="md">
 ### The Limits of Isomorphism
 
-While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than \cite[English to Spanish]{sogaard2018limitations}. This suggests that the "universal geometric structure of human concepts" has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.
+While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than \cite[English to Spanish]{sogaard2018limitations}. This suggests that the “universal geometric structure of human concepts” has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.
 
 ## The Manifold Hypothesis
 
@@ -351,11 +351,11 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 </section>
 
 <div class="md">
-This works because the real world structures the language first, and thus, "dog" has similar relations to cat, pet, horse, mouse, ..., as "Hund" (german for dog) has to "Katze" (cat), "Haustier" (pet), "Pferd" (horse), mouse ("Maus") and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world. It's all about the relations to each other.
+This works because the real world structures the language first, and thus, “dog” has similar relations to cat, pet, horse, mouse, ..., as “Hund” (german for dog) has to “Katze” (cat), “Haustier” (pet), “Pferd” (horse), mouse (“Maus”) and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world. It's all about the relations to each other.
 
 ## Attention as Metric Tensor
 
-There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the \cite[framework of Geometric Deep Learning]{bronstein2021geometric}.
+There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the “shape” of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are “close” to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the \cite[framework of Geometric Deep Learning]{bronstein2021geometric}.
 
 ## The Residual Stream as Geodesic
 
@@ -363,11 +363,11 @@ Building on \cite[the mechanistic analysis of Transformer circuits]{elhage2021ma
 
 ## Translation Invariance: The Parallelogram Law
 
-Rotational invariance tells us that spinning the entire space preserves meaning. But there's a second, equally profound invariance: **translation invariance of relational offsets**. The vector from "Man" to "King", the "royalty direction", is approximately the same as the vector from "Woman" to "Queen." This isn't a coincidence; it's a geometric regularity that \cite[emerges from training on co-occurrence statistics]{mikolov2013word2vec}).
+Rotational invariance tells us that spinning the entire space preserves meaning. But there's a second, equally profound invariance: **translation invariance of relational offsets**. The vector from “Man” to “King”, the “royalty direction”, is approximately the same as the vector from “Woman” to “Queen.” This isn't a coincidence; it's a geometric regularity that \cite[emerges from training on co-occurrence statistics]{mikolov2013word2vec}).
 
-This means concepts like "royalty," "gender," or "youth" aren't points in the space, they're **directions**. And those directions are consistent everywhere. You can pick up the "royalty" vector from one pair and transplant it onto another. This is the **parallelogram law** of analogies, and it's what makes vector arithmetic on words possible at all.
+This means concepts like “royalty,” “gender,” or “youth” aren't points in the space, they're **directions**. And those directions are consistent everywhere. You can pick up the “royalty” vector from one pair and transplant it onto another. This is the **parallelogram law** of analogies, and it's what makes vector arithmetic on words possible at all.
 
-Below, you can explore this interactively. Select different "concept directions" and watch the same offset vector produce valid analogies across multiple word pairs, forming perfect parallelograms in the embedding space.
+Below, you can explore this interactively. Select different “concept directions” and watch the same offset vector produce valid analogies across multiple word pairs, forming perfect parallelograms in the embedding space.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -390,13 +390,13 @@ To them, I said, the truth would be literally nothing but the shadows of the ima
 </div>
 
 <div class="md">
-Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a "platonic" embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it.
+Perhaps the most provocative recent finding is \citetitle{huh2024platonic}: different models trained on completely different data modalities, text, images, audio, appear to be converging toward the same underlying representation of reality. Vision models and language models, when aligned, share similar geometric structures. This suggests that there may be a “platonic” embedding space, an optimal geometry for representing the statistical structure of the real world, and that all sufficiently powerful models are independently discovering it.
 
-The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections**, different rotations and scalings of a single, underlying geometric truth. A vision model that learns "dog" from millions of photographs, a language model that learns "dog" from billions of sentences, and an audio model that learns "dog" from spectrograms of barking, all three converge to place "dog" in the *same neighborhood*, near "cat" and "wolf," far from "piano" and "thunder." The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.
+The analogy to Plato's theory of Forms is deliberate. Just as Plato argued that the physical world is a shadow of a more perfect realm of ideal Forms, the Platonic Representation Hypothesis suggests that all model embeddings are **projections**, different rotations and scalings of a single, underlying geometric truth. A vision model that learns “dog” from millions of photographs, a language model that learns “dog” from billions of sentences, and an audio model that learns “dog” from spectrograms of barking, all three converge to place “dog” in the *same neighborhood*, near “cat” and “wolf,” far from “piano” and “thunder.” The internal distances and angles between concepts are preserved across modalities, even though no model ever saw another's training data.
 
 This would explain why cross-lingual alignment works (as we saw above): not just because human languages share syntactic structure, but because **the world they describe has a fixed geometry**. French and English converge not merely because both are human languages, but because both are attempting to model the same underlying reality, and that reality has a unique optimal embedding. As models grow more powerful and see more data, they are all climbing the same mountain from different sides, converging toward the summit: the platonic representation.
 
-Below, three independently trained models, a **Language model** (●), a **Vision model** (◆), and an **Audio model** (■), have each learned to embed the same real-world concepts. Each model lives in its own rotated coordinate frame. But the **internal geometry**, which concepts are near which, what clusters form, what distances separate them, is identical across all three. Click **Align** to watch all three modalities converge onto a single shared structure, revealing the "platonic" geometry underneath.
+Below, three independently trained models, a **Language model** (●), a **Vision model** (◆), and an **Audio model** (■), have each learned to embed the same real-world concepts. Each model lives in its own rotated coordinate frame. But the **internal geometry**, which concepts are near which, what clusters form, what distances separate them, is identical across all three. Click **Align** to watch all three modalities converge onto a single shared structure, revealing the “platonic” geometry underneath.
 
 This hypothesis allows so-called **Brain-Swapping**: since models learn similar representation when trained on data about the same real world, their embedding spaces have similar manifolds in them, and can be changed after being rotated without too big of an impact on the validity of the results.
 </div>
@@ -442,7 +442,7 @@ This hypothesis allows so-called **Brain-Swapping**: since models learn similar 
 
 Embedding spaces are typically **anisotropic**, the vectors are not uniformly distributed through the space but instead cluster in a narrow cone or occupy only a subregion of the available volume. \citeauthor{ethayarajh2019contextual} (\citeyear{ethayarajh2019contextual}) showed that in models like BERT and GPT-2, embeddings at later layers become increasingly anisotropic, meaning the average cosine similarity between random word pairs is surprisingly high (often 0.5–0.9). This is problematic because it compresses the effective range of cosine similarity, making it harder to distinguish genuinely similar words from merely average ones. Techniques like **whitening** or **isotropy calibration** are used to counteract this.
 
-To understand why this matters, consider the geometry. In a perfectly **isotropic** space, word vectors are scattered uniformly across all directions. A random pair of words would have an expected cosine similarity near zero, leaving the full range from $-1$ to $+1$ available to encode genuine semantic relationships. But when the distribution collapses into a narrow cone, as it does in the deeper layers of most Transformers, even unrelated words end up pointing in roughly the same direction. The cosine similarity between "Democracy" and "Sandwich" might be $0.7$, while the similarity between "King" and "Queen" might be $0.85$. The *absolute* numbers look high in both cases; only a narrow band of $0.15$ separates meaningful relatedness from noise. This is the anisotropy problem: the metric that is supposed to measure "how similar are these concepts?" becomes almost useless when the entire vocabulary is squeezed into a small angular region of the space.
+To understand why this matters, consider the geometry. In a perfectly **isotropic** space, word vectors are scattered uniformly across all directions. A random pair of words would have an expected cosine similarity near zero, leaving the full range from $-1$ to $+1$ available to encode genuine semantic relationships. But when the distribution collapses into a narrow cone, as it does in the deeper layers of most Transformers, even unrelated words end up pointing in roughly the same direction. The cosine similarity between “Democracy” and “Sandwich” might be $0.7$, while the similarity between “King” and “Queen” might be $0.85$. The *absolute* numbers look high in both cases; only a narrow band of $0.15$ separates meaningful relatedness from noise. This is the anisotropy problem: the metric that is supposed to measure “how similar are these concepts?” becomes almost useless when the entire vocabulary is squeezed into a small angular region of the space.
 
 Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) to highly anisotropic (vectors crushed into a narrow cone). Watch how the histogram of pairwise cosine similarities collapses from a wide distribution into a tight spike, and how the effective discriminative range shrinks to almost nothing.
 </div>
@@ -461,34 +461,34 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
     </div>
     <div id="anisotropy-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; max-width: 700px; margin: 0 auto;"></div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>What you're seeing:</b> The left panel shows word vectors emanating from the origin. In an <b>isotropic</b> space (slider at 0%), vectors spread uniformly in all directions. As <b>anisotropy</b> increases, vectors collapse into a <span style="color:#ef4444; font-weight:bold;">narrow cone</span> (shaded red wedge). The right panel shows the distribution of <i>all pairwise cosine similarities</i>. Notice how it shifts from a wide spread centered near 0 to a narrow spike near 1.0, the <span style="color:#ef4444; font-weight:bold;">effective bandwidth</span> for distinguishing "truly similar" from "merely average" shrinks dramatically.
+        <b>What you're seeing:</b> The left panel shows word vectors emanating from the origin. In an <b>isotropic</b> space (slider at 0%), vectors spread uniformly in all directions. As <b>anisotropy</b> increases, vectors collapse into a <span style="color:#ef4444; font-weight:bold;">narrow cone</span> (shaded red wedge). The right panel shows the distribution of <i>all pairwise cosine similarities</i>. Notice how it shifts from a wide spread centered near 0 to a narrow spike near 1.0, the <span style="color:#ef4444; font-weight:bold;">effective bandwidth</span> for distinguishing “truly similar” from “merely average” shrinks dramatically.
     </div>
 </section>
 
 <div class="md">
 ## Polysemanticity and the Superposition Hypothesis
 
-Modern research into Transformers reveals that the brain-inspired "one neuron, one concept" model, often critiqued as the **"Grandmother Neuron"** (coined by \cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion. Instead, models utilize two critical phenomena to represent information:
+Modern research into Transformers reveals that the brain-inspired “one neuron, one concept” model, often critiqued as the **“Grandmother Neuron”** (coined by \cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion. Instead, models utilize two critical phenomena to represent information:
 
 ### Distributed Representations
-A concept like "cat" is not stored in a single neuron. Instead, it is a **direction** in a high-dimensional vector space. To represent a specific concept, the model activates a pattern across dozens of neurons. Shifting a single activation in this ensemble slightly alters the meaning (e.g., from "cat" to "kitten").
+A concept like “cat” is not stored in a single neuron. Instead, it is a **direction** in a high-dimensional vector space. To represent a specific concept, the model activates a pattern across dozens of neurons. Shifting a single activation in this ensemble slightly alters the meaning (e.g., from “cat” to “kitten”).
 
 ### Polysemanticity (The Multi-Tasking Neuron)
 The observable consequence of this structure is **polysemanticity**: individual neurons fire in response to multiple, seemingly unrelated concepts. For example, a single neuron might activate for:
 * Text related to the Golden Gate Bridge.
 * Mathematical formulas involving integers.
-* The concept of "reliability" or "French cuisine."
+* The concept of “reliability” or “French cuisine.”
 
 ### Why Superposition Happens
 Polysemanticity is not a training failure; it is a predictable result of the model compressing $M$ features into $N$ dimensions where $M \gg N$ (analogous to the **Pigeonhole Principle**). 
 
-The core mechanism is **\cite[Superposition]{elhage2022superposition}**. The model exploits the **sparsity** of natural language, the fact that "legal terminology" and "French cuisine" rarely co-occur in the same context. By assigning concepts to nearly orthogonal directions in high-dimensional space, the model packs exponentially more features than it has physical neurons, accepting occasional "crosstalk" (interference) as a tolerable trade-off for massive representational capacity.
+The core mechanism is **\cite[Superposition]{elhage2022superposition}**. The model exploits the **sparsity** of natural language, the fact that “legal terminology” and “French cuisine” rarely co-occur in the same context. By assigning concepts to nearly orthogonal directions in high-dimensional space, the model packs exponentially more features than it has physical neurons, accepting occasional “crosstalk” (interference) as a tolerable trade-off for massive representational capacity.
 
 ### Golden-Gate-Claude
 
-A vivid demonstration of these principles is \citetitle{goldengateclaude}, in which researchers from Anthropic used \cite[Sparse Autoencoders]{sparseautoencoders} to isolate a specific feature direction within Claude Sonnet's activation space corresponding to the concept of the Golden Gate Bridge. By artificially amplifying this single direction during inference, the model became fixated on the bridge, mentioning it in nearly every response regardless of topic. This confirms that concepts are encoded as **directions** in high-dimensional space, not in individual neurons, and that these directions are causally active: amplifying one is sufficient to dominate the model's output. It is also a direct consequence of superposition, because "Golden Gate Bridge" shares neuronal substrate with countless other features via near-orthogonal packing, isolating it required the decomposition tools described above rather than simply toggling a single neuron.
+A vivid demonstration of these principles is \citetitle{goldengateclaude}, in which researchers from Anthropic used \cite[Sparse Autoencoders]{sparseautoencoders} to isolate a specific feature direction within Claude Sonnet's activation space corresponding to the concept of the Golden Gate Bridge. By artificially amplifying this single direction during inference, the model became fixated on the bridge, mentioning it in nearly every response regardless of topic. This confirms that concepts are encoded as **directions** in high-dimensional space, not in individual neurons, and that these directions are causally active: amplifying one is sufficient to dominate the model's output. It is also a direct consequence of superposition, because “Golden Gate Bridge” shares neuronal substrate with countless other features via near-orthogonal packing, isolating it required the decomposition tools described above rather than simply toggling a single neuron.
 
-**The Dimensionality Trade-off:** In a 2D space, you can only have two perfectly orthogonal (zero interference) features. In a 768+ dimensional model, thousands of "near-orthogonal" features can coexist, though this proximity is exactly why individual neurons appear polysemantic.
+**The Dimensionality Trade-off:** In a 2D space, you can only have two perfectly orthogonal (zero interference) features. In a 768+ dimensional model, thousands of “near-orthogonal” features can coexist, though this proximity is exactly why individual neurons appear polysemantic.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -519,7 +519,7 @@ A vivid demonstration of these principles is \citetitle{goldengateclaude}, in wh
         The moment N exceeds 2, features must share angular space &mdash; this is <b>superposition</b>.
         The <span style="color:#ef4444; font-weight:bold;">red lines</span> between arrow tips show interference: thicker and more opaque means a higher |dot product|.
         The matrix below shows every pairwise value. In a real LLM with 768+ dimensions,
-        the model can fit <i>thousands</i> of near-orthogonal features, but "near" still means
+        the model can fit <i>thousands</i> of near-orthogonal features, but “near” still means
         each neuron ends up <b>polysemantic</b> &mdash; responding to multiple features at once.
     </div>
 </section>
@@ -539,7 +539,7 @@ To see this concretely, imagine prompting a model with:
 
 *Q: What is the capital of Italy?  A: ???*
 
-Each example pair creates an **offset vector** in the model's internal activation space, a directional arrow pointing from where "France" lives to where "Paris" lives. These individual arrows are noisy: the *France → Paris* offset is not identical to the *Germany → Berlin* offset because each word occupies a slightly different region of the high-dimensional manifold. But when the model averages across all the examples, a single coherent **task direction** emerges, a vector that encodes "move from a country token to its capital-city token." When the query token "Italy" enters the residual stream, this task direction **steers** it toward the correct answer region, landing it near "Rome", without any weight update whatsoever.
+Each example pair creates an **offset vector** in the model's internal activation space, a directional arrow pointing from where “France” lives to where “Paris” lives. These individual arrows are noisy: the *France → Paris* offset is not identical to the *Germany → Berlin* offset because each word occupies a slightly different region of the high-dimensional manifold. But when the model averages across all the examples, a single coherent **task direction** emerges, a vector that encodes “move from a country token to its capital-city token.” When the query token “Italy” enters the residual stream, this task direction **steers** it toward the correct answer region, landing it near “Rome”, without any weight update whatsoever.
 
 This is why in-context learning is so powerful and so mysterious: the model is not being retrained. It is performing a geometric operation, constructing a direction from examples and applying it to a query, entirely within the forward pass. The task vector is not stored in any weight matrix; it exists only as a transient pattern in the activation geometry, assembled and discarded with each new prompt.
 
@@ -578,9 +578,9 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
         The same color appears in the <b>prompt panel</b> on the right, so you can trace every sentence to its geometric effect.
         The offset vectors Δ are shown beside each prompt line and averaged into the
         <span style="color:#3b82f6; font-weight:bold;">blue Task Vector</span>.
-        The <span style="color:#ef4444; font-weight:bold;">red diamond</span> is the query token "Italy."
-        Click <b>Inject</b> to steer "Italy" along the task vector toward the
-        <span style="color:#10b981; font-weight:bold;">green answer region</span> around "Rome."
+        The <span style="color:#ef4444; font-weight:bold;">red diamond</span> is the query token “Italy.”
+        Click <b>Inject</b> to steer “Italy” along the task vector toward the
+        <span style="color:#10b981; font-weight:bold;">green answer region</span> around “Rome.”
         With 1 noisy example the vector misses; add more examples and watch it converge.
     </div>
 </section>
@@ -626,17 +626,17 @@ This was first described by \citeauthorlastnameand{belkin2019}.
 <div class="md">
 ## The Geometry of Negation
 
-One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for "not happy" is closer to "happy" than to "sad", because "not" and "happy" co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.
+One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for “not happy” is closer to “happy” than to “sad”, because “not” and “happy” co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.
 
-In a distributional model, the meaning of "not" is itself a vector, learned from all the contexts where "not" appears. When you compose "not happy" (by adding the vectors), the "not" component provides only a small perturbation, a slight directional nudge, rather than a $180°$ reversal to the antonym. The result is a vector that still sits firmly in the neighborhood of "happy," surrounded by words like "cheerful," "pleased," and "joyful." The actual antonym, "sad," remains far away in a completely different region of the space.
+In a distributional model, the meaning of “not” is itself a vector, learned from all the contexts where “not” appears. When you compose “not happy” (by adding the vectors), the “not” component provides only a small perturbation, a slight directional nudge, rather than a $180°$ reversal to the antonym. The result is a vector that still sits firmly in the neighborhood of “happy,” surrounded by words like “cheerful,” “pleased,” and “joyful.” The actual antonym, “sad,” remains far away in a completely different region of the space.
 </div>
 
 $$\vec{v}_{\text{not happy}} = \vec{v}_{\text{not}} + \vec{v}_{\text{happy}} \approx \vec{v}_{\text{happy}} + \varepsilon \quad \neq \quad \vec{v}_{\text{sad}}$$
 
 <div class="md">
-This negation problem has been \cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word "not" simply does not encode a logical inversion operator in vector space; it encodes "the kinds of sentences where 'not' appears," which overwhelmingly co-occur with the very concepts being negated.
+This negation problem has been \cite[extensively studied]{kassner2020negated} and remains partially unsolved even in large contextual models like BERT and GPT. While Transformers with attention can handle negation better than static embeddings, because the surrounding context modulates the representation across layers, the underlying geometric limitation persists in the embedding layers themselves. The word “not” simply does not encode a logical inversion operator in vector space; it encodes “the kinds of sentences where 'not' appears,” which overwhelmingly co-occur with the very concepts being negated.
 
-Below, select any word (or type "not X") and observe how "not X" drifts only slightly from X in embedding space, rather than jumping to its logical antonym. The faded circle marks where "not X" *should* land if geometry respected logic.
+Below, select any word (or type “not X”) and observe how “not X” drifts only slightly from X in embedding space, rather than jumping to its logical antonym. The faded circle marks where “not X” *should* land if geometry respected logic.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -667,12 +667,12 @@ Below, select any word (or type "not X") and observe how "not X" drifts only sli
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6;">
         <b>What you're seeing:</b> The <span style="color:#3b82f6; font-weight:bold;">blue dot</span> is the original word.
-        The <span style="color:#ef4444; font-weight:bold;">red diamond</span> is "not [word]", its <i>actual</i> position in embedding space,
-        computed by adding the "not" vector. The <span style="color:#10b981; font-weight:bold;">green dot</span> is the logical antonym.
-        The <span style="color:rgba(239,68,68,0.4);">faded red circle</span> shows where "not [word]" <i>should</i> land if negation worked logically.
+        The <span style="color:#ef4444; font-weight:bold;">red diamond</span> is “not [word]”, its <i>actual</i> position in embedding space,
+        computed by adding the “not” vector. The <span style="color:#10b981; font-weight:bold;">green dot</span> is the logical antonym.
+        The <span style="color:rgba(239,68,68,0.4);">faded red circle</span> shows where “not [word]” <i>should</i> land if negation worked logically.
         Notice the red diamond barely moves from the blue dot, because in distributional semantics,
-        "not happy" co-occurs in the same contexts as "happy," so they end up as neighbors.
-        The <span style="color:#f59e0b; font-weight:bold;">gold arrow</span> is the tiny "not" perturbation; the
+        “not happy” co-occurs in the same contexts as “happy,” so they end up as neighbors.
+        The <span style="color:#f59e0b; font-weight:bold;">gold arrow</span> is the tiny “not” perturbation; the
         <span style="color:rgba(16,185,129,0.4);">faded green line</span> is the path logic <i>expects</i>.
         <b>Negation is invisible to the geometry.</b>
     </div>
@@ -683,15 +683,15 @@ Below, select any word (or type "not X") and observe how "not X" drifts only sli
 
 Standard embedding spaces use Euclidean geometry, but human language is rife with hierarchical structure, taxonomies (animal → mammal → dog → poodle), hypernymy chains, parse trees, organizational hierarchies. Euclidean space is fundamentally ill-suited for representing trees: the number of nodes at depth $d$ in a tree with branching factor $b$ grows as $\mathcal{O}(b^d)$, exponentially, but the volume of a Euclidean ball of radius $r$ in $n$ dimensions grows only polynomially as $\mathcal{O}(r^n)$. This mismatch means that as a tree grows deeper, a Euclidean embedding must either introduce severe distance distortion or consume prohibitively many dimensions to accommodate the exponential proliferation of leaf nodes.
 
-**Hyperbolic space** resolves this tension. Spaces of constant negative curvature exhibit **exponential volume growth**, the circumference of a hyperbolic circle of radius $r$ grows as $\sim e^r$, not $\sim r$, making them the natural geometric habitat for embedding hierarchies with minimal distortion. In the **\cite[Poincaré disk model]{nickel2017poincare}**, the entire hyperbolic plane is mapped to the interior of a unit disk. Points near the **center** represent general, high-level concepts ("entity"), while points near the **boundary** represent increasingly specific leaves ("golden retriever"). The metric that governs this world is:
+**Hyperbolic space** resolves this tension. Spaces of constant negative curvature exhibit **exponential volume growth**, the circumference of a hyperbolic circle of radius $r$ grows as $\sim e^r$, not $\sim r$, making them the natural geometric habitat for embedding hierarchies with minimal distortion. In the **\cite[Poincaré disk model]{nickel2017poincare}**, the entire hyperbolic plane is mapped to the interior of a unit disk. Points near the **center** represent general, high-level concepts (“entity”), while points near the **boundary** represent increasingly specific leaves (“golden retriever”). The metric that governs this world is:
 
 $$ d_{\mathbb{H}}(\mathbf{u}, \mathbf{v}) = \operatorname{arccosh}\!\left(1 + 2\,\frac{\|\mathbf{u} - \mathbf{v}\|^2}{(1 - \|\mathbf{u}\|^2)(1 - \|\mathbf{v}\|^2)}\right) $$
 
-Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of "exponential room" near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement — leaves do not literally need to crowd the boundary, and how much "room" is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
+Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of “exponential room” near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement  leaves do not literally need to crowd the boundary, and how much “room” is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
 
 Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
 
-\citeauthorlastnameand{poincareembeddings} showed empirically, on WordNet taxonomies, that hyperbolic embeddings can reach the same embedding quality as Euclidean embeddings with substantially fewer dimensions *in those experiments*. The benefit is data-dependent, it does not mean hyperbolic geometry generally "drastically" lowers the required dimensionality, only that it can do so for suitably hierarchical data.
+\citeauthorlastnameand{poincareembeddings} showed empirically, on WordNet taxonomies, that hyperbolic embeddings can reach the same embedding quality as Euclidean embeddings with substantially fewer dimensions *in those experiments*. The benefit is data-dependent, it does not mean hyperbolic geometry generally “drastically” lowers the required dimensionality, only that it can do so for suitably hierarchical data.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -712,7 +712,7 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> A taxonomy tree embedded in the <span style="color:#8b5cf6; font-weight:bold;">Poincaré disk</span>.
-        General concepts like "Entity" sit near the <b>center</b>; specific concepts like "Poodle" and "Tabby" crowd near the <b>boundary</b>.
+        General concepts like “Entity” sit near the <b>center</b>; specific concepts like “Poodle” and “Tabby” crowd near the <b>boundary</b>.
         The <span style="color:#6366f1; font-weight:bold;">curved arcs</span> are <b>geodesics</b>, shortest paths in hyperbolic space, which bend inward through the disk.
         The <span style="color:#f59e0b; font-weight:bold;">amber chain</span> highlights Entity → Animal → Mammal → Dog → Poodle.
         Drag the <b>curvature slider</b> to 0 (Euclidean) and watch the depth rings become evenly spaced and the edges straighten; slide to 1 (Hyperbolic) and the outer rings compress toward the boundary while geodesics curve inward, exponential room for exponentially many leaves.
@@ -731,11 +731,11 @@ In a 768-dimensional space, you might expect data points to spread out evenly in
 This is a direct consequence of the **concentration of measure** phenomenon in high-dimensional geometry: in $n$ dimensions, almost all the volume of a hypersphere is concentrated in a thin shell near the surface, and almost all pairs of random vectors are nearly orthogonal. The result is that meaningful data doesn't fill the space, it clings to a sparse skeleton of low-dimensional structures threading through the void.
 
 This has practical consequences:
-* **Nearest-neighbor search** is harder than it looks, because "nearest" in 768 dimensions doesn't mean what your 3D intuition suggests. Most of the space between any two points is empty.
+* **Nearest-neighbor search** is harder than it looks, because “nearest” in 768 dimensions doesn't mean what your 3D intuition suggests. Most of the space between any two points is empty.
 * **Clustering** reveals that the space is not a single blob but a network of **filaments and clumps**, dense knots of semantically related tokens connected by thin bridges, surrounded by vast uninhabited regions.
-* **Interpolation** between two tokens (e.g., averaging their vectors) can land you in one of these empty voids, producing a vector that corresponds to *no* meaningful concept, a "semantic vacuum."
+* **Interpolation** between two tokens (e.g., averaging their vectors) can land you in one of these empty voids, producing a vector that corresponds to *no* meaningful concept, a “semantic vacuum.”
 
-The visualization below gives you an intuition for this. In 2D, points can spread out uniformly. But as you increase the effective dimensionality (simulated here by compressing the angular distribution), the points collapse into narrow cones, and the fraction of "occupied" space shrinks dramatically. The **gray region** represents the empty void, the space where no data lives.
+The visualization below gives you an intuition for this. In 2D, points can spread out uniformly. But as you increase the effective dimensionality (simulated here by compressing the angular distribution), the points collapse into narrow cones, and the fraction of “occupied” space shrinks dramatically. The **gray region** represents the empty void, the space where no data lives.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -772,22 +772,22 @@ How does a model that operates in a fixed-size vector space manage to encode hie
 
 ### The Geometry of the Niche
 
-Consider the concept "Dog." In the embedding space, "Dog" occupies a region, a neighborhood of vectors that all relate to dog-ness. But zoom into that region and you find it is not a featureless blob. Inside it, the vectors for "Dachshund," "Shepherd," and "Poodle" are arranged relative to each other using the same geometric principles that organize the level above. The axis that separates "domestic" from "wild" at the Animal level reappears, at a smaller scale, to separate "lap dog" from "working dog" at the Breed level. The axis that separates "large" from "small" among Mammals reappears to separate "Great Dane" from "Chihuahua" among Dogs.
+Consider the concept “Dog.” In the embedding space, “Dog” occupies a region, a neighborhood of vectors that all relate to dog-ness. But zoom into that region and you find it is not a featureless blob. Inside it, the vectors for “Dachshund,” “Shepherd,” and “Poodle” are arranged relative to each other using the same geometric principles that organize the level above. The axis that separates “domestic” from “wild” at the Animal level reappears, at a smaller scale, to separate “lap dog” from “working dog” at the Breed level. The axis that separates “large” from “small” among Mammals reappears to separate “Great Dane” from “Chihuahua” among Dogs.
 
 ### Self-Similarity
 
-This is **self-similarity**, the hallmark of fractal structure. The model applies the same set of learned distinction directions (size, danger, domestication, function) at every hierarchical level, each time at a smaller spatial scale. The result is a space that is "folded" in on itself: what looks like a single point at a coarse zoom level unfolds, upon magnification, into a rich sub-structure that mirrors the parent geometry.
+This is **self-similarity**, the hallmark of fractal structure. The model applies the same set of learned distinction directions (size, danger, domestication, function) at every hierarchical level, each time at a smaller spatial scale. The result is a space that is “folded” in on itself: what looks like a single point at a coarse zoom level unfolds, upon magnification, into a rich sub-structure that mirrors the parent geometry.
 
 $$ \text{Structure}(\text{Breeds within Dog}) \;\approx\; \alpha \cdot \text{Structure}(\text{Species within Animal}) $$
 
 where $\alpha < 1$ is a spatial scaling factor, the sub-structure is a shrunken copy of the super-structure.
 
 This has practical consequences:
-* **Few-shot generalization**: Because the same geometric logic repeats at every level, a model that has learned to distinguish "domestic vs. wild" at the Animal level can immediately apply that distinction at the Breed level, even for breeds it has rarely seen.
-* **Compositionality**: Hierarchical concepts can be navigated by composing coarse and fine direction vectors, move to "Dog" first (coarse), then move along the "small + domestic" direction within that region (fine).
+* **Few-shot generalization**: Because the same geometric logic repeats at every level, a model that has learned to distinguish “domestic vs. wild” at the Animal level can immediately apply that distinction at the Breed level, even for breeds it has rarely seen.
+* **Compositionality**: Hierarchical concepts can be navigated by composing coarse and fine direction vectors, move to “Dog” first (coarse), then move along the “small + domestic” direction within that region (fine).
 * **Compression**: A fractal structure is extraordinarily efficient. Instead of learning a unique geometry for every sub-category, the model reuses a small set of distinction templates, scaled and translated, at every depth.
 
-Below, you can explore this fractal folding interactively. The visualization shows a three-level hierarchy: **Animals → Species → Breeds**. At **Zoom Level 1**, you see the coarse structure, clusters of Animals. Zoom in to Level 2 and the "Dog" cluster unfolds into individual species. Zoom to Level 3 and individual breeds appear inside each species, arranged in a geometry that mirrors the level above. The **distinction axes** (size, domestication) are drawn at each level to show how they repeat at smaller scales.
+Below, you can explore this fractal folding interactively. The visualization shows a three-level hierarchy: **Animals → Species → Breeds**. At **Zoom Level 1**, you see the coarse structure, clusters of Animals. Zoom in to Level 2 and the “Dog” cluster unfolds into individual species. Zoom to Level 3 and individual breeds appear inside each species, arranged in a geometry that mirrors the level above. The **distinction axes** (size, domestication) are drawn at each level to show how they repeat at smaller scales.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -817,7 +817,7 @@ Below, you can explore this fractal folding interactively. The visualization sho
 
     <!-- Description -->
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
-        <b>What you're seeing:</b> At <b>Level 1</b>, you see the coarse animal kingdom —
+        <b>What you're seeing:</b> At <b>Level 1</b>, you see the coarse animal kingdom 
         <span style="color:#ef4444; font-weight:bold;">Mammals</span>,
         <span style="color:#3b82f6; font-weight:bold;">Birds</span>, and
         <span style="color:#10b981; font-weight:bold;">Reptiles</span> as clusters.
@@ -837,7 +837,7 @@ There is a deep analogy between how LLMs store information in their embedding sp
 
 ### Distributed, Not Localized
 
-Neural network embeddings work the same way. The concept "Dog" is not stored in dimension 42, or in any single neuron. It is stored as a **pattern across all dimensions simultaneously**, a direction in the full 768-dimensional space. Every dimension participates in encoding every concept, just as every point on a holographic plate participates in encoding every part of the scene. This is why you can't point to a single weight and say "this is where the model knows about dogs." The knowledge is *everywhere and nowhere*, distributed holographically across the entire vector.
+Neural network embeddings work the same way. The concept “Dog” is not stored in dimension 42, or in any single neuron. It is stored as a **pattern across all dimensions simultaneously**, a direction in the full 768-dimensional space. Every dimension participates in encoding every concept, just as every point on a holographic plate participates in encoding every part of the scene. This is why you can't point to a single weight and say “this is where the model knows about dogs.” The knowledge is *everywhere and nowhere*, distributed holographically across the entire vector.
 
 ### Graceful Degradation
 
@@ -851,7 +851,7 @@ where $k$ is the number of surviving dimensions and $d$ is the total dimensional
 
 ### Interference as the Price of Compression
 
-The flip side of holographic storage is **interference**. Because every concept is spread across every dimension, concepts inevitably overlap. The dot product between "Dog" and "Cat" is not zero, their patterns share components, just as two holograms recorded on the same plate create ghost images of each other. This is the same superposition phenomenon we explored earlier, but seen from the holographic perspective: the embedding space is a shared recording medium, and every concept is written across its entire volume.
+The flip side of holographic storage is **interference**. Because every concept is spread across every dimension, concepts inevitably overlap. The dot product between “Dog” and “Cat” is not zero, their patterns share components, just as two holograms recorded on the same plate create ghost images of each other. This is the same superposition phenomenon we explored earlier, but seen from the holographic perspective: the embedding space is a shared recording medium, and every concept is written across its entire volume.
 
 Below, you can explore this holographic property directly. A set of concept vectors are embedded in a simulated space. Use the **Damage slider** to randomly zero out increasing fractions of the dimensions. Watch how the **pairwise similarity structure**, which concepts are near which, degrades gracefully rather than catastrophically. The **similarity matrix** on the right preserves its overall pattern even under severe damage, just as a scratched hologram preserves the full scene at lower resolution.
 </div>
@@ -887,7 +887,7 @@ Below, you can explore this holographic property directly. A set of concept vect
         <b>What you're seeing:</b> The <b>left panel</b> shows concept vectors projected into 2D.
         <span style="color:rgba(148,163,184,0.5);">Faded circles</span> are the <b>original</b> (undamaged) positions;
         <b>solid markers</b> are the positions after randomly zeroing out dimensions.
-        The <b>right panel</b> is the pairwise cosine similarity matrix, the "fingerprint" of the space's relational structure.
+        The <b>right panel</b> is the pairwise cosine similarity matrix, the “fingerprint” of the space's relational structure.
         As you increase damage, individual vectors drift (like a scratched hologram losing sharpness),
         but the <b>overall pattern of the matrix is preserved</b>, similar concepts stay similar, dissimilar ones stay dissimilar.
         This is <b>holographic graceful degradation</b>: information is distributed across all dimensions,
@@ -909,16 +909,16 @@ $$ V(s_i) = \{ \mathbf{x} \in \mathbb{R}^d \mid \| \mathbf{x} - s_i \| \leq \| \
 
 The boundaries between cells are **equidistant surfaces**, the set of points exactly halfway between two neighboring seeds. In 2D, these boundaries are line segments; in 768 dimensions, they are high-dimensional hyperplanes.
 
-This is not just a mathematical curiosity. The Voronoi tessellation is **mathematically equivalent to the decision boundary of a nearest-neighbor classifier**: any new point that lands in a cell gets assigned to that cell's token. When an LLM's decoder maps a hidden state back to a token, it is essentially asking "which token's Voronoi cell does this vector fall into?"
+This is not just a mathematical curiosity. The Voronoi tessellation is **mathematically equivalent to the decision boundary of a nearest-neighbor classifier**: any new point that lands in a cell gets assigned to that cell's token. When an LLM's decoder maps a hidden state back to a token, it is essentially asking “which token's Voronoi cell does this vector fall into?”
 
 ### Why This Matters for LLMs
 
 * **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is equivalent to finding which Voronoi cell the output vector falls into, the cell boundaries *are* the decision boundaries.
-* **Cell size is a geometric, not linguistic, property:** A cell's volume depends only on the positions of the neighboring seeds and the chosen metric. Frequency does not automatically inflate a cell. Whether common words like "the" end up with large cells — making them easier to "land in" — is an *empirical* question about the learned embedding geometry, not a consequence of the Voronoi construction itself.
-* **Neighbors may reflect semantics — but only if the embedding is well-trained:** Sharing a boundary merely means geometric closeness under the chosen metric. It translates into semantic relatedness only insofar as the trained embedding geometry actually groups related words together, which is true of well-trained models but is not guaranteed by the Voronoi construction. "Dog" and "Cat" may share a boundary in a good embedding; nothing in the geometry *requires* it.
+* **Cell size is a geometric, not linguistic, property:** A cell's volume depends only on the positions of the neighboring seeds and the chosen metric. Frequency does not automatically inflate a cell. Whether common words like “the” end up with large cells  making them easier to “land in”  is an *empirical* question about the learned embedding geometry, not a consequence of the Voronoi construction itself.
+* **Neighbors may reflect semantics  but only if the embedding is well-trained:** Sharing a boundary merely means geometric closeness under the chosen metric. It translates into semantic relatedness only insofar as the trained embedding geometry actually groups related words together, which is true of well-trained models but is not guaranteed by the Voronoi construction. “Dog” and “Cat” may share a boundary in a good embedding; nothing in the geometry *requires* it.
 * **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
 
-Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token "owns" that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
+Below, you can explore a 2D Voronoi diagram that simulates how an embedding space is partitioned into token territories. **Drag tokens** to see how the boundaries shift in real time. **Click anywhere** in empty space to see which token “owns” that point and how far it is from the boundary. Toggle between different example configurations to see how the geometry changes for different semantic neighborhoods.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -929,7 +929,7 @@ Below, you can explore a 2D Voronoi diagram that simulates how an embedding spac
         <div id="voronoi-info-panel" style="background: var(--mn-surface, #fff); border-radius: 8px; border: 1px solid #e2e8f0; padding: 16px; font-family: sans-serif; font-size: 0.85em; color: #475569; line-height: 1.7;">
             <div style="font-weight: bold; font-size: 1em; color: #1e293b; margin-bottom: 8px;">📍 Click anywhere on the map</div>
             <div id="voronoi-click-info">
-                Click a point in the space to see which token "owns" it, how far it is from the nearest boundary, and who the neighboring territories are.
+                Click a point in the space to see which token “owns” it, how far it is from the nearest boundary, and who the neighboring territories are.
             </div>
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 12px 0;">
             <div style="font-weight: bold; font-size: 0.9em; color: #1e293b; margin-bottom: 6px;">🏷️ Token Legend</div>
@@ -971,8 +971,8 @@ Below, you can explore a 2D Voronoi diagram that simulates how an embedding spac
         <b>White lines</b> are the cell boundaries, the exact points equidistant between two tokens.
         <b>Drag any token</b> to see how the entire partition restructures in real time.
         <b>Click empty space</b> to query which token owns that point.
-        Notice how <b>semantically similar tokens</b> (e.g., "Dog" and "Cat") share long boundaries,
-        while dissimilar ones (e.g., "Dog" and "Quantum") may not share a boundary at all.
+        Notice how <b>semantically similar tokens</b> (e.g., “Dog” and “Cat”) share long boundaries,
+        while dissimilar ones (e.g., “Dog” and “Quantum”) may not share a boundary at all.
     </div>
 </section>
 
@@ -988,7 +988,7 @@ Persistent Homology is an algebraic method for detecting topological features, c
 1. **Start with your data points** (token vectors in the embedding space).
 2. **Grow a ball** around each point, starting at radius $r = 0$.
 3. **As $r$ increases**, balls begin to overlap, forming connections. At some radius, a loop appears, a ring of connected points surrounding an empty region. At a larger radius, the loop might fill in and disappear.
-4. **Track the birth and death** of each topological feature. Features that persist across a wide range of radii are "real" structure; features that flicker in and out are noise.
+4. **Track the birth and death** of each topological feature. Features that persist across a wide range of radii are “real” structure; features that flicker in and out are noise.
 
 The result is a **persistence diagram**: a scatter plot where each point represents a topological feature (a hole), with its birth radius on one axis and death radius on the other. Points far from the diagonal represent **robust, persistent holes**, genuine voids in the data.
 
@@ -1000,9 +1000,9 @@ A feature with high persistence is a real structural void, not an artifact of sp
 
 The holes in the embedding space are not just geometric curiosities. They mark regions where **no coherent concept exists**, logical impossibilities, semantic contradictions, or ideas that human language simply never expresses:
 
-* **Semantic voids:** There is no concept that is simultaneously "very large" and "microscopic," or "definitely true" and "definitely false." The space between these contradictory directions is empty, a topological hole.
+* **Semantic voids:** There is no concept that is simultaneously “very large” and “microscopic,” or “definitely true” and “definitely false.” The space between these contradictory directions is empty, a topological hole.
 * **The negative image of knowledge:** If the filled regions of the space represent everything the model *can* express, the holes represent everything it *cannot*. They are the **negative imprint of our world-understanding**, the shape of the unsayable.
-* **Forbidden interpolations:** These holes explain why you can't smoothly interpolate between certain concepts. The path from "alive" to "dead" doesn't pass through a smooth gradient, it passes through a void, because there is no coherent concept "half-alive-half-dead" (at least not in the way the model has learned to organize meaning).
+* **Forbidden interpolations:** These holes explain why you can't smoothly interpolate between certain concepts. The path from “alive” to “dead” doesn't pass through a smooth gradient, it passes through a void, because there is no coherent concept “half-alive-half-dead” (at least not in the way the model has learned to organize meaning).
 * **Structural constraints:** Some holes reflect grammatical or logical constraints. There is no token that functions simultaneously as a noun, verb, adjective, and preposition, that region of the space is necessarily empty.
 
 The visualization below lets you explore this. A 2D point cloud represents token vectors. As you increase the **radius parameter $r$**, connections form between nearby points, loops appear around empty regions, and the persistent homology algorithm detects and highlights the **holes**, the voids that persist across a wide range of radii. The **persistence diagram** on the right separates real structure from noise.
@@ -1061,7 +1061,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
         When two balls overlap, an <span style="color:#60a5fa; font-weight:bold;">edge</span> connects them.
         When three mutually connected points form a triangle, it is
         <span style="color:rgba(139,92,246,0.2); font-weight:bold;">filled in purple</span>.
-        <span style="color:#f59e0b; font-weight:bold;">Yellow highlighted loops</span> mark detected <b>topological holes</b> —
+        <span style="color:#f59e0b; font-weight:bold;">Yellow highlighted loops</span> mark detected <b>topological holes</b> 
         regions enclosed by edges but <b>not filled</b> by triangles. These are the voids.
         The <b>right panel</b> is the <b>persistence diagram</b>: each dot is a hole,
         plotted by its birth radius (x) and death radius (y).
@@ -1076,26 +1076,26 @@ The visualization below lets you explore this. A 2D point cloud represents token
 
 In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points, the smallest convex body that encloses all of them.
 
-Now apply this to the embedding space. Take every concept the model associates with "morally good", kindness, honesty, generosity, courage, compassion, and compute their convex hull. You get a polytope: the **geometric territory of moral goodness** in the embedding space. Do the same for "morally bad", cruelty, deception, greed, cowardice, and you get a second polytope.
+Now apply this to the embedding space. Take every concept the model associates with “morally good”, kindness, honesty, generosity, courage, compassion, and compute their convex hull. You get a polytope: the **geometric territory of moral goodness** in the embedding space. Do the same for “morally bad”, cruelty, deception, greed, cowardice, and you get a second polytope.
 
 ### Where Polytopes Overlap: The Geometry of Dilemmas
 
 The fascinating part is what happens **between** these polytopes:
 
-* **Wide separation:** Where the "good" and "bad" hulls are far apart, the model is **morally decisive**. "Kindness" is unambiguously inside the good hull and far from the bad one. No dilemma here.
-* **Overlap zone:** Where the hulls **interpenetrate**, you find concepts that the model cannot cleanly classify, **moral dilemmas**. "Mercy killing," "white lies," "civil disobedience," "necessary violence", these concepts live in the geometric intersection of good and bad. The overlap *is* the dilemma, rendered as geometry.
+* **Wide separation:** Where the “good” and “bad” hulls are far apart, the model is **morally decisive**. “Kindness” is unambiguously inside the good hull and far from the bad one. No dilemma here.
+* **Overlap zone:** Where the hulls **interpenetrate**, you find concepts that the model cannot cleanly classify, **moral dilemmas**. “Mercy killing,” “white lies,” “civil disobedience,” “necessary violence”, these concepts live in the geometric intersection of good and bad. The overlap *is* the dilemma, rendered as geometry.
 * **Boundary zone:** Concepts near the surface of a hull but not deep inside it are **borderline cases**, the model is uncertain. The distance from a point to the hull surface is a geometric measure of moral confidence.
 
 This generalizes far beyond morality. You can compute polytope hulls for any pair of categories:
-* **"Science" vs. "Pseudoscience"**, the overlap contains contested concepts like certain alternative medicine claims.
-* **"Formal" vs. "Informal" language**, the overlap contains registers that shift depending on context.
-* **"Alive" vs. "Dead"**, the overlap contains viruses, dormant seeds, philosophical zombies.
+* **“Science” vs. “Pseudoscience”**, the overlap contains contested concepts like certain alternative medicine claims.
+* **“Formal” vs. “Informal” language**, the overlap contains registers that shift depending on context.
+* **“Alive” vs. “Dead”**, the overlap contains viruses, dormant seeds, philosophical zombies.
 
 $$ \text{Dilemma}(A, B) = \text{Hull}(A) \cap \text{Hull}(B) $$
 
 The volume of the intersection is a **geometric measure of conceptual ambiguity** between two categories.
 
-Below, you can explore this interactively. Two conceptual categories are represented as polytope hulls (convex envelopes) in 2D. **Drag individual concept points** to reshape the hulls. Watch the **overlap zone**, the geometric dilemma, grow and shrink in real time. Switch between different category pairs to see how the model's "moral geometry" differs from its "linguistic geometry" or its "ontological geometry."
+Below, you can explore this interactively. Two conceptual categories are represented as polytope hulls (convex envelopes) in 2D. **Drag individual concept points** to reshape the hulls. Watch the **overlap zone**, the geometric dilemma, grow and shrink in real time. Switch between different category pairs to see how the model's “moral geometry” differs from its “linguistic geometry” or its “ontological geometry.”
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -1159,24 +1159,24 @@ Below, you can explore this interactively. Two conceptual categories are represe
 <div class="md">
 ## Vector Rotations as Grammar Operators
 
-One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn — an idealization that captures many inflections surprisingly well.
+One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn  an idealization that captures many inflections surprisingly well.
 
 ### The Carousel of Tense
 
-Take a cloud of present-tense verb vectors: "run," "eat," "write," "speak," "build." They form a cluster in the embedding space. Now take their past-tense counterparts: "ran," "ate," "wrote," "spoke," "built." These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous "king − man + woman = queen" analogy). Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space — again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.
+Take a cloud of present-tense verb vectors: “run,” “eat,” “write,” “speak,” “build.” They form a cluster in the embedding space. Now take their past-tense counterparts: “ran,” “ate,” “wrote,” “spoke,” “built.” These form a second cluster. The relationship between the two clusters is not a simple offset vector (like the famous “king − man + woman = queen” analogy). Instead, the shift can be approximated by rotating the entire cloud by a roughly consistent angle around an axis in the high-dimensional space  again an approximation, since real inflections are rarely perfectly uniform across the vocabulary.
 </div>
 
 $$ \mathbf{v}_{\text{past}} \approx \mathbf{R}_{\text{tense}} \cdot \mathbf{v}_{\text{present}} $$
 
 <div class="md">
-where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb. This equation is best read as an *analytical model* rather than a literal geometric law: the approximation holds reasonably well for many common verb pairs, but real embeddings are noisy and no single rotation maps every inflection exactly. Calling tense a "rotational symmetry" of language is a useful simplification that captures a statistical tendency, not an exact symmetry.
+where $\mathbf{R}_{\text{tense}}$ is a **rotation matrix**, the same matrix applied to every verb. This equation is best read as an *analytical model* rather than a literal geometric law: the approximation holds reasonably well for many common verb pairs, but real embeddings are noisy and no single rotation maps every inflection exactly. Calling tense a “rotational symmetry” of language is a useful simplification that captures a statistical tendency, not an exact symmetry.
 
 ### Why Rotation, Not Translation?
 
 This makes deep geometric sense:
 
 * **Tense is cyclical:** Languages often treat time as having a cyclical quality, past patterns repeat, future expectations echo past experiences. A rotation naturally encodes cyclical structure, while a translation implies a one-way shift.
-* **Meaning preservation:** A rotation preserves the **magnitude** (length) of a vector, the "importance" or "activation strength" of the concept doesn't change when you change its tense. Only its **direction** changes. "Run" and "ran" are equally "verb-like"; they just point in slightly different directions.
+* **Meaning preservation:** A rotation preserves the **magnitude** (length) of a vector, the “importance” or “activation strength” of the concept doesn't change when you change its tense. Only its **direction** changes. “Run” and “ran” are equally “verb-like”; they just point in slightly different directions.
 * **Composability:** Rotations compose cleanly. Applying the tense rotation twice doesn't send you to nonsense, it might approximate another grammatical form (e.g., past → pluperfect). Translations, by contrast, would drift further and further from meaningful regions.
 
 This generalizes beyond tense. Other grammatical operations that behave as rotations include:
@@ -1184,7 +1184,7 @@ This generalizes beyond tense. Other grammatical operations that behave as rotat
 * **Singular → Plural** (nouns rotate by a consistent angle)
 * **Active → Passive** voice
 * **Positive → Comparative → Superlative** (adjectives)
-* **Nominalization** (verb → noun: "discover" → "discovery")
+* **Nominalization** (verb → noun: “discover” → “discovery”)
 
 The embedding space is, in a sense, a **grammar carousel**: each grammatical transformation is a specific rotation, and the model has learned these rotations purely from statistical co-occurrence, nobody programmed the rotation matrices.
 
@@ -1268,18 +1268,18 @@ $$
 \underbrace{\underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Dog}}\right)}_{\text{cat} \leftrightarrow \text{dog}} \;<\; \underbrace{d\!\left(\vec{v}_{\text{Cat}},\, \vec{v}_{\text{Quasar}}\right)}_{\text{cat} \leftrightarrow \text{quasar}}}_{\text{in plain English: cat lives closer to dog than to quasar}}
 $$
 
-Read out loud, left to right: *"the distance from cat to dog is less than the distance from cat to quasar."* Each `d(·,·)` is a plain Euclidean distance, the same formula as the straight-line gap between two points on a map, except measured between two high-dimensional vectors instead. The whole sentence, in plain English, is just: **cats are semantically closer to dogs than to quasars.** Geometry is doing nothing more than letting us *write that down* in a form a computer can optimize.
+Read out loud, left to right: *“the distance from cat to dog is less than the distance from cat to quasar.”* Each `d(·,·)` is a plain Euclidean distance, the same formula as the straight-line gap between two points on a map, except measured between two high-dimensional vectors instead. The whole sentence, in plain English, is just: **cats are semantically closer to dogs than to quasars.** Geometry is doing nothing more than letting us *write that down* in a form a computer can optimize.
 
-Not just distances. Geometry also gives us **directions that encode semantic shifts**. Add a vector to a word and you get a different word. Add the *same* vector to a different starting word and you get yet another word. If both results make sense, that vector is doing real work: it encodes a specific kind of transformation. The offset from "Man" to "King" is roughly the same as the offset from "Woman" to "Queen." That shared displacement, the "royalty" direction, is something the model inferred from usage, not something anyone wrote down. The same logic governs grammar. Rotate the cloud of present-tense verbs ("run," "eat," "write") by a fixed angle and you land in the cloud of past-tense verbs ("ran," "ate," "wrote"). Apply that rotation to "run" and you arrive near "ran"; apply it to "eat" and you arrive near "ate." Distances measure *where* a word is; directions show you how to *move* one word into another.
+Not just distances. Geometry also gives us **directions that encode semantic shifts**. Add a vector to a word and you get a different word. Add the *same* vector to a different starting word and you get yet another word. If both results make sense, that vector is doing real work: it encodes a specific kind of transformation. The offset from “Man” to “King” is roughly the same as the offset from “Woman” to “Queen.” That shared displacement, the “royalty” direction, is something the model inferred from usage, not something anyone wrote down. The same logic governs grammar. Rotate the cloud of present-tense verbs (“run,” “eat,” “write”) by a fixed angle and you land in the cloud of past-tense verbs (“ran,” “ate,” “wrote”). Apply that rotation to “run” and you arrive near “ran”; apply it to “eat” and you arrive near “ate.” Distances measure *where* a word is; directions show you how to *move* one word into another.
 
-This isn't magic because "the universe is secretly one giant vector space." It isn't a metaphysical claim that reality has some hidden geometric structure.
+This isn't magic because “the universe is secretly one giant vector space.” It isn't a metaphysical claim that reality has some hidden geometric structure.
 
 The trick is simpler than that: **geometry gives us a language in which relationships can be represented continuously and compositionally.**
 
-* **Continuous**, because similarity becomes a *degree* rather than a binary flag. Two concepts can be almost-similar, very-similar, or barely-related — and that gradient is preserved.
-* **Compositional**, because concepts combine through vector arithmetic — and addition is precisely the operation geometry already supports natively. A "royalty" direction, applied anywhere, transforms Man into King. A "tense" rotation, applied anywhere, transforms run into ran.
+* **Continuous**, because similarity becomes a *degree* rather than a binary flag. Two concepts can be almost-similar, very-similar, or barely-related  and that gradient is preserved.
+* **Compositional**, because concepts combine through vector arithmetic  and addition is precisely the operation geometry already supports natively. A “royalty” direction, applied anywhere, transforms Man into King. A “tense” rotation, applied anywhere, transforms run into ran.
 
-This is enormously practical for learning. Gradients flow. Errors propagate. Optimization is well-defined. A model whose representations live in a continuous space can be *tuned* — nudged by gradient descent the way a sculptor tunes a shape. Discrete symbols offer no such handle: you cannot take a half-step from "cat" toward "dog," and there is no meaningful direction in which to descend.
+This is enormously practical for learning. Gradients flow. Errors propagate. Optimization is well-defined. A model whose representations live in a continuous space can be *tuned*  nudged by gradient descent the way a sculptor tunes a shape. Discrete symbols offer no such handle: you cannot take a half-step from “cat” toward “dog,” and there is no meaningful direction in which to descend.
 
-The power of the embedding space isn't that language *is* geometry. It's that geometry happens to be exactly the right mathematical structure for representing *relations* — and language, as Saussure understood a century before any of this existed, is nothing if not a system of differences.
+The power of the embedding space isn't that language *is* geometry. It's that geometry happens to be exactly the right mathematical structure for representing *relations*  and language, as Saussure understood a century before any of this existed, is nothing if not a system of differences.
 </div>

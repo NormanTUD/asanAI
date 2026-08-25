@@ -13,7 +13,7 @@ topics: math-i, programming
 <div class="md">
 ## The Necessity of Activation Functions
 
-Activation functions serve as the mathematical **"gates"** of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.
+Activation functions serve as the mathematical **“gates”** of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.
 
 By introducing **non-linearity**, these functions allow the model to learn complex patterns, from the specific curve of a cat's ear to the subtle nuances of human speech.
 
@@ -39,7 +39,7 @@ $$y = (W_2W_1)x + (W_2b_1 + b_2)$$
 
 See? We end up with another linear transformation like $Wx + b$, where $ W = W_2W_1 $ and $b = (W_2b_1 + b_2)$. This way, adding more layers, doesn't add more functionality to the neural network. This is where activation functions come into play.
 
-Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU** — a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*; first used as an activation function in artificial neural networks by \citeauthor{relufirst} in \citeyear{relufirst} in the Neocognitron; and brought into mainstream deep learning by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}), **Sigmoid**, or **Tanh**), stacking layers adds no extra "intelligence" or power to the model.
+Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the remaining term is just a new bias vector, the multi-layer network behaves exactly like a **single-layer** model. Without non-linear activation functions (like **ReLU**  a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*; first used as an activation function in artificial neural networks by \citeauthor{relufirst} in \citeyear{relufirst} in the Neocognitron; and brought into mainstream deep learning by \citeauthorlastnameand{relupaper} in \citetitle{relupaper}), **Sigmoid**, or **Tanh**), stacking layers adds no extra “intelligence” or power to the model.
 </div>
 
 <div class="activation-lab-container" style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px solid #dcfce7; margin-top: 20px;">
@@ -70,13 +70,13 @@ Because a product of two matrices $(W_2W_1)$ is simply another matrix, and the r
 </div>
 
 <div class="md">
-## SoftMax: The "Multi-Class" Gate
+## SoftMax: The “Multi-Class” Gate
 
 While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in \citeyear{bridle1989probabilistic} by \citeauthor{bridle1989probabilistic}) is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
 
-### Why the name "Soft" Max?
-* **Hard Max:** A standard "Maximum" function (like `argmax`) is "hard." It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it with Backpropagation.
-* **Soft Max:** This is a "softened" version. It turns the largest value into the highest probability, but it still assigns smaller probabilities to the "losers." This allows the network to express **uncertainty**.
+### Why the name “Soft” Max?
+* **Hard Max:** A standard “Maximum” function (like `argmax`) is “hard.” It returns 1 for the largest value and 0 for everything else. It is not differentiable, which means we can't train a network with it with Backpropagation.
+* **Soft Max:** This is a “softened” version. It turns the largest value into the highest probability, but it still assigns smaller probabilities to the “losers.” This allows the network to express **uncertainty**.
 
 ### The Math
 For an input vector $z$ (called **logits**), the SoftMax value for the $i$-th element is:
@@ -88,39 +88,39 @@ $$ \sigma(z)_i = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
 1.  **Exponentials ($e^z$):** We raise $e$ to the power of each input. This ensures every output is positive.
 2.  **Normalization:** We divide each result by the sum of all results. This ensures the final values **always sum to 1.0 (100%)**.
 
-### Why it's not a simple percentage (The "Non-Linear" Secret)
+### Why it's not a simple percentage (The “Non-Linear” Secret)
 
 If you input 0.1 and 0.9, you might expect 10% and 90%. Instead, you get roughly 31% and 69%. This is because SoftMax is **not a linear scaling**; it is an **exponential normalization**.
 
-#### The Exponential "Contrast"
+#### The Exponential “Contrast”
 SoftMax uses the function $e^x$ to transform inputs.
 * **Linear thinking:** 0.9 is 9x larger than 0.1.
 * **SoftMax thinking:** $e^{0.9}$ (2.46) is only ~2.2x larger than $e^{0.1}$ (1.11).
-This behavior acts as a **contrast amplifier**. It helps the network make a "confident" decision by widening the gap between the top scores and the noise.
+This behavior acts as a **contrast amplifier**. It helps the network make a “confident” decision by widening the gap between the top scores and the noise.
 
 #### Handling Negative Numbers
 A simple percentage calculation fails if you have negative scores (e.g., -2.0 and 1.0). You cannot have a negative probability. SoftMax solves this because $e^x$ is **always positive**. Even $e^{-5.0}$ results in a tiny, positive number (0.0067).
 
 #### Why is this the standard for AI?
-Because $e$ represents the "most natural" way to describe growth, the function $e^x$ is uniquely simple to work with in calculus. In SoftMax, we are essentially saying: *"Let's treat the scores (logits) as continuous growth rates."* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$. This "cleanliness" is what allows us to train massive AI models without the math becoming a tangled mess.
+Because $e$ represents the “most natural” way to describe growth, the function $e^x$ is uniquely simple to work with in calculus. In SoftMax, we are essentially saying: *“Let's treat the scores (logits) as continuous growth rates.”* By using $e$, the math of learning (calculus) becomes as smooth and efficient as possible, because the derivative of $e^x$ is just $e^x$. This “cleanliness” is what allows us to train massive AI models without the math becoming a tangled mess.
 
 #### Why is $e$ the perfect choice for SoftMax?
 Neural networks don't use $e$ just because it's famous; they use it because of **Calculus**.
 
 * **The Derivative Property:** $e^x$ is the only function where the derivative is the function itself: $\frac{d}{dx}e^x = e^x$.
-    * *Why this matters:* In backpropagation, we calculate "gradients" (slopes). When we combine the SoftMax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$. This efficiency makes training deep networks computationally feasible.
+    * *Why this matters:* In backpropagation, we calculate “gradients” (slopes). When we combine the SoftMax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$. This efficiency makes training deep networks computationally feasible.
 
 * **The Positivity Constraint:** Probabilities cannot be negative. However, raw neural network outputs (logits) can be any real number from $-\infty$ to $+\infty$. Since $e^x$ is strictly positive for all real $x$, it maps negative numbers into the positive space required for probability.
 
-* **Non-Linear Contrast (The "Amplifier"):**
+* **Non-Linear Contrast (The “Amplifier”):**
     If we have Logits $x_1=2$ and $x_2=4$, the difference is only 2 units (linear).
     But $e^4 \approx 54.6$ and $e^2 \approx 7.4$.
-    The exponential transformation increases the ratio from $2:1$ to roughly $7:1$. This forces the network to pick a "winner," making the classification decision much more distinct.
+    The exponential transformation increases the ratio from $2:1$ to roughly $7:1$. This forces the network to pick a “winner,” making the classification decision much more distinct.
 
 #### The Motivation in SoftMax
 The SoftMax formula $\sigma(z)_i = \frac{e^{z_i}}{\sum e^{z_j}}$ is essentially a **normalization of growth**.
 
-By exponentiating the logits, we are measuring the "total growth energy" of all classes combined and then asking: *"What percentage of the total energy belongs to Class A?"* This ensures that even if a score is negative, it still represents a physical "share" of the total probability, and that the sum of all shares always equals exactly 1.0 (100%).
+By exponentiating the logits, we are measuring the “total growth energy” of all classes combined and then asking: *“What percentage of the total energy belongs to Class A?”* This ensures that even if a score is negative, it still represents a physical “share” of the total probability, and that the sum of all shares always equals exactly 1.0 (100%).
 </div>
 
 <div class="softmax-lab-container" style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
@@ -142,21 +142,21 @@ By exponentiating the logits, we are measuring the "total growth energy" of all 
 <div class="md">
 ## The Evolution of Differentiability: From Step Functions to Sigmoids
 
-The realization that activation functions needed to be differentiable was born from the necessity of **gradient-based optimization**. In early models like the Perceptron (by \citeauthor{rosenblatt1958perceptron}), the **Heaviside step function** was used. Because its derivative is zero almost everywhere, it was impossible to use calculus to "nudge" weights in the right direction. To solve this, researchers turned to smooth, continuous functions that allowed for the application of the chain rule, the mathematical backbone of **backpropagation**.
+The realization that activation functions needed to be differentiable was born from the necessity of **gradient-based optimization**. In early models like the Perceptron (by \citeauthor{rosenblatt1958perceptron}), the **Heaviside step function** was used. Because its derivative is zero almost everywhere, it was impossible to use calculus to “nudge” weights in the right direction. To solve this, researchers turned to smooth, continuous functions that allowed for the application of the chain rule, the mathematical backbone of **backpropagation**.
 
 ### The Reign of Sigmoid and Tanh
 
-During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** functions became the standard "decision makers" for neural networks. 
+During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** functions became the standard “decision makers” for neural networks. 
 
-* **Sigmoid**: This function squashes input values into a range of $(0, 1)$, which was originally favored because it could be interpreted as the probability of a neuron "firing". Key historical implementations, such as the early backpropagation experiments on handwritten zip code recognition, utilized sigmoid activations in the hidden layers.
+* **Sigmoid**: This function squashes input values into a range of $(0, 1)$, which was originally favored because it could be interpreted as the probability of a neuron “firing”. Key historical implementations, such as the early backpropagation experiments on handwritten zip code recognition, utilized sigmoid activations in the hidden layers.
 * **Tanh**: As researchers like \citeauthor{lecun1998gradientbased} (in '\citetitle{lecun1998gradientbased}', published in \citeyear{lecun1998gradientbased}) pushed for better performance, **Tanh** became preferred over Sigmoid because it is zero-centered, mapping inputs to a range of $(-1, 1)$. This helped keep the updates to the network's weights more balanced during training, a technique notably applied to document recognition systems.
 
 
 ### The Breaking Point: Vanishing Gradients
 
-The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** "flatten out" (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.
+The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** “flatten out” (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.
 
-This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)** — a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*. It was \citeauthor{relufirst} in \citeyear{relufirst} who first *used* this kind of piecewise-linear response as an activation function in artificial neural networks, in his Neocognitron. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
+This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**  a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*. It was \citeauthor{relufirst} in \citeyear{relufirst} who first *used* this kind of piecewise-linear response as an activation function in artificial neural networks, in his Neocognitron. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
 </div>
 
 <div class="image-row md">
@@ -175,23 +175,23 @@ This bottleneck was finally bypassed when the community embraced the **Rectified
 
 The most common explanation for ReLU's success is that its derivative is 1 for positive inputs and 0 for negative ones, which prevents the vanishing gradient problem. But there is a deeper insight: ReLU creates **sparsity**.
 
-For any given input, roughly half of ReLU's neurons output exactly zero. This means the network is effectively using a **different sparse subnetwork** for each input. A neuron that activates for "dog" may be silent for "cat," and vice versa. Over the entire dataset, each neuron specializes in a subset of patterns, and every input activates only a fraction of the available neurons.
+For any given input, roughly half of ReLU's neurons output exactly zero. This means the network is effectively using a **different sparse subnetwork** for each input. A neuron that activates for “dog” may be silent for “cat,” and vice versa. Over the entire dataset, each neuron specializes in a subset of patterns, and every input activates only a fraction of the available neurons.
 
-This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lottery}: within a large, randomly initialized network, there exist smaller subnetworks ("winning tickets") that, when trained in isolation, can match the performance of the full network. ReLU makes these subnetworks easier to find because its sparsity naturally partitions the network into overlapping but distinct computational pathways.
+This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lottery}: within a large, randomly initialized network, there exist smaller subnetworks (“winning tickets”) that, when trained in isolation, can match the performance of the full network. ReLU makes these subnetworks easier to find because its sparsity naturally partitions the network into overlapping but distinct computational pathways.
 
-The "aha-moment": ReLU doesn't just prevent vanishing gradients — it forces the network to use a different "team" of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
+The “aha-moment”: ReLU doesn't just prevent vanishing gradients  it forces the network to use a different “team” of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
 </div>
 
 <div class="md">
 ### GELU: The Smooth Transformer Gate
 
-While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)** — introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu}) — became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
+While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)**  introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu})  became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
 
 $$\text{GELU}(x) = x \cdot \Phi(x) = 0.5\, x \left(1 + \text{erf}\!\left(\frac{x}{\sqrt{2}}\right)\right)$$
 
 Where $\Phi(x)$ is the standard normal cumulative distribution function and $\text{erf}$ is the error function.
 
-GELU is often described as a "smooth ReLU": it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever "dies" completely — every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
+GELU is often described as a “smooth ReLU”: it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever “dies” completely  every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
 </div>
 
 <div class="md">
@@ -201,5 +201,5 @@ The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** \cite{ramachandran20
 
 $$\text{SiLU}(x) \;=\; x \cdot \sigma(x) \;=\; \frac{x}{1 + e^{-x}}$$
 
-A *self-gated* function: each input is multiplied by its own sigmoid. Looks like a smoothed ReLU — strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\approx -0.28$), zero at $x = 0$. Like GELU it is everywhere differentiable and never fully "dies"; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
+A *self-gated* function: each input is multiplied by its own sigmoid. Looks like a smoothed ReLU  strongly positive for large $x$, weakly negative for large negative $x$ (minimum $\approx -0.28$), zero at $x = 0$. Like GELU it is everywhere differentiable and never fully “dies”; unlike GELU it needs only one sigmoid (no error function), so deep vision stacks prefer it. Inside Stable Diffusion, every ResBlock ends with `Conv → GroupNorm → SiLU`.
 </div>

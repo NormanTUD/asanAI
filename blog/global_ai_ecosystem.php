@@ -36,7 +36,7 @@ China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-s
 ### Strategic Advantages
 
 * **Massive engineering talent**: top Chinese universities (Tsinghua, Peking, Shanghai Jiao Tong) produce ~100,000 CS graduates per year.
-* **Aggressive open-source publishing**: Chinese labs release model weights and papers freely. This is partly a competitive strategy (commoditize the closed labs) and partly regulatory pressure to "contribute to the community".
+* **Aggressive open-source publishing**: Chinese labs release model weights and papers freely. This is partly a competitive strategy (commoditize the closed labs) and partly regulatory pressure to “contribute to the community”.
 * **Low inference cost**: aggressive optimization yields APIs at \$0.27/1M tokens (DeepSeek), 10× cheaper than GPT-4o \cite[DeepSeek, 2024]{deepseek2024v3}.
 * **Industry integration**: deep partnerships with Alibaba Cloud, Tencent Cloud, Baidu Cloud for distribution.
 
@@ -76,7 +76,7 @@ India is **the world's largest AI talent producer** but a relatively small front
 
 ### Strategic Position
 
-India is positioning as the **"AI for the global south"** hub — building affordable, multilingual AI for emerging markets.
+India is positioning as the **“AI for the global south”** hub  building affordable, multilingual AI for emerging markets.
 </div>
 
 <div class="md">
@@ -98,7 +98,7 @@ African AI is **early but rapidly growing**, focused on problems specific to the
 * **Lesan AI** (Ethiopia): Tigrinya, Amharic machine translation.
 * **Sunbird AI** (Uganda): multilingual speech recognition for 40+ African languages.
 * **Awarri** (Nigeria): Yoruba, Igbo, Hausa NLP.
-* **Lelapa AI** (South Africa): "Vula Vulapha" — African language LLM.
+* **Lelapa AI** (South Africa): “Vula Vulapha”  African language LLM.
 * **InstaDeep** (Tunisia): \cite[acquired by BioNTech for \$680M][]{insta2023}. AI for genomic surveillance, including early detection of COVID variants in Africa.
 
 ### Challenges
@@ -181,7 +181,7 @@ The EU's AI strategy emphasizes **regulation + research**:
 * **Horizon Europe**: €1B/year for AI research.
 * **EuroLLM, Project OpenGPT-X**: European open-source multilingual models.
 
-The European research tradition — led by Bengio (Mila), Schmidhuber (IDSIA), Hinton's students — has shaped deep learning from its inception.
+The European research tradition  led by Bengio (Mila), Schmidhuber (IDSIA), Hinton's students  has shaped deep learning from its inception.
 </div>
 
 <div class="md">
@@ -201,7 +201,7 @@ The asymmetry that remains:
 * **Data acquisition** is increasingly centralized: licensing deals favor large incumbents.
 * **Distribution** (API customers, enterprise relationships) requires sales infrastructure.
 
-But the **"good enough" tier** is now globally accessible. Most enterprise AI applications don't need frontier; they need a 7B–70B open model fine-tuned on local data. This is the playing field where most innovation now happens.
+But the **“good enough” tier** is now globally accessible. Most enterprise AI applications don't need frontier; they need a 7B–70B open model fine-tuned on local data. This is the playing field where most innovation now happens.
 </div>
 
 <div class="md">
@@ -209,7 +209,7 @@ But the **"good enough" tier** is now globally accessible. Most enterprise AI ap
 
 Three trends to watch:
 
-1. **Bifurcation**: US-China compute decoupling may produce two parallel AI ecosystems — Western and Chinese — with limited cross-pollination.
+1. **Bifurcation**: US-China compute decoupling may produce two parallel AI ecosystems  Western and Chinese  with limited cross-pollination.
 2. **Multipolarity**: India, UAE, France, Korea, and others are building independent AI capabilities, especially for their languages and cultures.
 3. **Open-source as soft power**: Chinese open-source releases (Qwen, DeepSeek) and Western ones (Llama, Mistral) compete for global developer mindshare. Adoption is a form of influence.
 

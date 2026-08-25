@@ -13,21 +13,21 @@ topics: architecture, math-i, math-ii
 <div class="smart-quote" data-cite="vaswani2017attention" data-page=6>
 Since our model contains no recurrence and no convolution, in order for the model to make use of the
 order of the sequence, we must inject some information about the relative or absolute position of the
-tokens in the sequence. To this end, we add "positional encodings" to the input embeddings at the
+tokens in the sequence. To this end, we add “positional encodings” to the input embeddings at the
 bottoms of the encoder and decoder stacks. The positional encodings have the same dimension $d_\text{model}$
 as the embeddings, so that the two can be summed.
 </div>
 
 <div class="md">
-In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *"The dog bit the man"* exactly the same as *"The man bit the dog"* (and also the same as *"dog the The man bit"* and all other combinations of these words).
+In a Transformer, words are processed in parallel. Without **Positional Encoding (PE)**, the model would treat the sentence *“The dog bit the man”* exactly the same as *“The man bit the dog”* (and also the same as *“dog the The man bit”* and all other combinations of these words).
 
-To fix this, we **add** a unique mathematical "signature" to each word's vector based on its position ($\text{pos}$), with on sine and cosine.
+To fix this, we **add** a unique mathematical “signature” to each word's vector based on its position ($\text{pos}$), with on sine and cosine.
 
 ## The Invention of the Transformer & Positional Encoding
-The challenge of processing text in parallel (instead of word-by-word like older RNNs) required a new way to inject "time" or "order" into the model.
+The challenge of processing text in parallel (instead of word-by-word like older RNNs) required a new way to inject “time” or “order” into the model.
 
-* **The "\citetitle{vaswani2017attention}" Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
-* **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from "fast" wiggles to "slow" curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
+* **The “\citetitle{vaswani2017attention}” Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
+* **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from “fast” wiggles to “slow” curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
 
 ## Sine and Cosine
 
@@ -81,11 +81,11 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 </div>
 
 <div class="optional md" data-headline="History and Etymology of Sine and Cosine">
-The concept originates in ancient Indian astronomy. Indian Astronomer \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* ("bowstring") to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* ("pocket" or "fold"). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
+The concept originates in ancient Indian astronomy. Indian Astronomer \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* (“pocket” or “fold”). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
 
-In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the term *algebra* (from 'Al-Jabr'; his personal name also inspired the term *algorithm*), translated *jayb* into the Latin ***sinus*** ("curve," "bay," or "fold").
+In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the term *algebra* (from 'Al-Jabr'; his personal name also inspired the term *algorithm*), translated *jayb* into the Latin ***sinus*** (“curve,” “bay,” or “fold”).
 
-**Cosine** ("complement's sine") was later coined by \citeauthor{gunter1620} in his \citeyear{gunter1620} work \citetitle{gunter1620}. It describes the sine of the complementary angle:
+**Cosine** (“complement's sine”) was later coined by \citeauthor{gunter1620} in his \citeyear{gunter1620} work \citetitle{gunter1620}. It describes the sine of the complementary angle:
 
 $$\sin(\theta) = \cos(90^\circ - \theta)$$
 
@@ -111,17 +111,17 @@ $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d_\text{model}
 <div class="md">
 This gives each position a distinct pattern the model can learn to interpret.
 
-## Concrete Example: Nudging the "King"
-Let's say, the word **"king"** is represented by the vector:
+## Concrete Example: Nudging the “King”
+Let's say, the word **“king”** is represented by the vector:
 $$\text{king} = [1.688, -0.454, 0, 0]$$
 
-When "king" is at **Position 1**, we calculate a PE vector and add it. This "nudges" the king's position in 4D space.
+When “king” is at **Position 1**, we calculate a PE vector and add it. This “nudges” the king's position in 4D space.
 </div>
 
 $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmatrix} + \begin{pmatrix} \text{PE}_{\text{pos}1, \text{dim}0} \\ \text{PE}_{\text{pos}1, \text{dim}1} \\ \text{PE}_{\text{pos}1, \text{dim}2} \\ \text{PE}_{\text{pos}1, \text{dim}3} \end{pmatrix}$$
 
 <div style="margin-bottom: 20px; font-family: sans-serif;">
-    <strong>Move "king" to a different position:</strong> 
+    <strong>Move “king” to a different position:</strong> 
     <input type="range" id="pe-len" min="0" max="10" value="1" oninput="PositionalLab.update(this.value)">
     <span id="pe-val">Position 1</span>
 </div>
@@ -135,9 +135,9 @@ $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmat
 
 You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines. This is intentional:
 
-* **Frequency Scaling:** Each pair of dimensions uses a different frequency. The "speed" of the wave is determined by the divisor $10000^{2i/d_\text{model}}$, which is the dimensions Frequency $\omega$.
-* **The "Slow" Dimensions:** For a small $d_\text{model}$ like 4, the second pair of dimensions (indices 2 and 3) has a much larger divisor, making the wave stretch out over thousands of positions.
-* **The Purpose:** The fast waves help the model distinguish between immediate neighbors, while the slow waves act like a "slow clock," helping the model track position across very long sequences.
+* **Frequency Scaling:** Each pair of dimensions uses a different frequency. The “speed” of the wave is determined by the divisor $10000^{2i/d_\text{model}}$, which is the dimensions Frequency $\omega$.
+* **The “Slow” Dimensions:** For a small $d_\text{model}$ like 4, the second pair of dimensions (indices 2 and 3) has a much larger divisor, making the wave stretch out over thousands of positions.
+* **The Purpose:** The fast waves help the model distinguish between immediate neighbors, while the slow waves act like a “slow clock,” helping the model track position across very long sequences.
 
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
 
@@ -148,11 +148,11 @@ The wave plots above show each dimension's projection individually, flat curves 
 - **Dims 0, 1** (fastest sin/cos pair) trace a **circle**, the cross-section of the helix
 - **Dim 2** (next slower frequency) provides **axial drift**, stretching the circle into a helix
 
-**Adjacent positions are close together.** Neighboring points sit right next to each other on the curve. The model does not memorize "position 5 is special", nearness is encoded geometrically.
+**Adjacent positions are close together.** Neighboring points sit right next to each other on the curve. The model does not memorize “position 5 is special”, nearness is encoded geometrically.
 
-**Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length and direction**. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute "3 hours from now" regardless of what time it currently is.
+**Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length and direction**. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute “3 hours from now” regardless of what time it currently is.
 
-**Generalization to unseen lengths.** Because the geometry of "nearby" vs "far away" is baked into the encoding rather than memorized, Transformers can generalize to sequence lengths they were never trained on.
+**Generalization to unseen lengths.** Because the geometry of “nearby” vs “far away” is baked into the encoding rather than memorized, Transformers can generalize to sequence lengths they were never trained on.
 
 **Try rotating the 3D plot**, from directly above you will see the circular cross-section (Dims 0, 1). From the side you will see the axial drift (Dim 2). The two colored segments always subtend the same arc.
 </div>
@@ -164,7 +164,7 @@ The wave plots above show each dimension's projection individually, flat curves 
 
 What happens when you repeat the same word hundreds of times in a sequence? The **semantic embedding** is identical every time, but the **positional encoding** nudges each copy to a slightly different point in space.
 
-The plot below places the **raw embedding** of "king" (with no positional encoding) at the center. From it, **hundreds of lines** radiate outward to the final embedding of "king" at each position (0 through 199). The result is a starburst that reveals the geometry of positional encoding itself:
+The plot below places the **raw embedding** of “king” (with no positional encoding) at the center. From it, **hundreds of lines** radiate outward to the final embedding of “king” at each position (0 through 199). The result is a starburst that reveals the geometry of positional encoding itself:
 
 - **Short lines** mean the PE at that position barely moved the vector.
 - **The pattern of directions** shows how the sine/cosine waves systematically sweep the word through embedding space.

@@ -44,7 +44,7 @@ Let's now introduce **functions**. A function is something that accepts inputs a
 </code></pre>
 
 <div class="md">
-When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called "plot" from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
+When we have such a function, we can go through a list of values, like $1$, $2$, $\dots$, and plug them into the function, and use the resulting number as a position indicator, and create a so-called “plot” from it. That is, we show it in a diagram where $x$ is left-to-right and $y$, the result, is the vertical direction. The identity function looks like this:
 </div>
 
 <div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
@@ -134,7 +134,7 @@ There are certain sets that are useful to know, like $\mathbb{N}$, which is the 
 
 Functions define a rule so that, for each element of a set, if you apply the rules the function defines, you end up with an element in another (or even the same) set of elements. 
 
-Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for "all the natural numbers" ($\left\{0, 1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
+Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for “all the natural numbers” ($\left\{0, 1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
 
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 
@@ -155,9 +155,9 @@ Throughout this course, we will look into these building blocks and how the comp
 
 ## The Sum Symbol $ \sum $
 
-In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for "summation". This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
+In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation”. This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
 
-Think of $\sum$ as a **"for-loop"** for addition.
+Think of $\sum$ as a **“for-loop”** for addition.
 
 ### How to read the symbol
 A typical summation looks like this:
@@ -174,7 +174,7 @@ If we have a vector $\vec{v} = \begin{pmatrix} 10 \\ 20 \\ 30 \\ 40 \end{pmatrix
 $$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
 
 ### Why AI needs this: Weighted Sums
-The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a "weight" based on its importance.
+The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a “weight” based on its importance.
 
 If $x$ is the input and $w$ is the weight, the AI calculates a score using this formula:
 $$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
@@ -240,7 +240,7 @@ The factorial grows extremely quickly, much faster than exponential functions. T
 <div class="optional md" data-headline="Reasoning and History">
 The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**. 
 
-Defining $0! = 1$ is a "combinatorial convention". It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
+Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
 </div>
 
 <div class="md">
@@ -252,11 +252,11 @@ In the floating-point math used by AI models, infinity follows specific rules th
 	$$\infty + n = \infty$$
 	$$\infty - n = \infty$$
 	$$\infty + \infty = \infty$$
-	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of "certainty," minor fluctuations don't distract the model.
+	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of “certainty,” minor fluctuations don't distract the model.
 * **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
 	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
-	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
+	The exponential of negative infinity is exactly zero. This is a “superpower” in machine learning. It allows us to “mask” certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
 * Similarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 
@@ -295,7 +295,7 @@ While the limit above is the definition, $e$ can be calculated using a [Taylor S
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
 $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 
-The equation asks: *"What if we compound every single microsecond? What if the interest is calculated continuously?"* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a "natural ceiling." That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
+The equation asks: *“What if we compound every single microsecond? What if the interest is calculated continuously?”* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a “natural ceiling.” That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 
 <div class="optional md" data-headline="History of the Taylor Series">
 The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion. In the 14th century, \citeauthor{madhava} gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method. His followers in the Kerala school developed further expansions over the following two centuries.
@@ -306,7 +306,7 @@ It was not until 1715 that \citeauthor{taylor1715} published the first general m
 </div>
 
 ## Exponentiation
-In its simplest form, exponentiation is repeated multiplication. If we ask, "What is 2 to the power of 3?" ($2^3$), we mean:
+In its simplest form, exponentiation is repeated multiplication. If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
 $$\underbrace{2 \times 2 \times 2}_\text{3 times} = 8$$
 
 In the expression $b^y = x$:
@@ -314,7 +314,7 @@ In the expression $b^y = x$:
 * **$y$** is the **exponent**.
 * **$x$** is the **result**.
 
-While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just "counting" multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
+While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$). When the exponent is a fraction, we are no longer just “counting” multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 </div>
 
 <div class="optional md" data-headline="Why is $2^{0.5}$ the square root?">
@@ -327,7 +327,7 @@ Since $2^{0.5}$ is a number that, when multiplied by itself, results in $2$, it 
 </div>
 
 <div class="optional md" data-headline="What about negative numbers?">
-Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to "divide" instead of "multiply."
+Negative exponents do not mean the result becomes negative; instead, they represent the **reciprocal** (division). A negative exponent tells you to “divide” instead of “multiply.”
 $$2^{-3} = \frac{1}{2^3} = \frac{1}{8} = 0.125$$
 
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
@@ -335,11 +335,11 @@ In the context of the continuous curve, as the exponent moves into negative terr
 
 <div class="md">
 ## Logarithms: Reversing the Process
-A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **"To what power must we raise the base to get this specific result?"** ($b^? = x$).
+A logarithm is the inverse operation of exponentiation. It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
 
-For example, if we ask "To what power must we raise 2 to get 8?" ($\log_2(8) = ?$), the answer is 3.
+For example, if we ask “To what power must we raise 2 to get 8?” ($\log_2(8) = ?$), the answer is 3.
 
-Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the "size" or "order of magnitude" of a number rather than just its value.
+Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive). It tells you the “size” or “order of magnitude” of a number rather than just its value.
 </div>
 
 <div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
@@ -351,7 +351,7 @@ Napier's breakthrough allowed researchers to perform **multiplication by simply 
 
 $$\log(A \times B) = \log(A) + \log(B)$$
 
-By using "Log Tables," an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding "anti-logarithm" to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *"Logarithms, by shortening the labors, doubled the life of the astronomer"* (p. 96).
+By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *“Logarithms, by shortening the labors, doubled the life of the astronomer”* (p. 96).
 </div>
 
 <div class="optional md" data-headline="How is the Logarithm calculated today?">
@@ -362,11 +362,11 @@ $$\ln(1+x) = \sum_{n=1}^{\infty} (-1)^{n+1} \frac{x^n}{n} = x - \frac{x^2}{2} + 
 
 <div class="md">
 ### The Change of Base
-In practice, most mathematical libraries only "know" how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
+In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula**:
 $$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
-This works because the logarithm is essentially a scaling factor. If you know the "natural" rate of growth, you can find the rate of growth for any other base by simply dividing by the "cost" of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
+This works because the logarithm is essentially a scaling factor. If you know the “natural” rate of growth, you can find the rate of growth for any other base by simply dividing by the “cost” of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
 
-While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how "wrong" a model is during training. We will dive deeper into "Log Loss" and "Softmax" in the upcoming sections.
+While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how “wrong” a model is during training. We will dive deeper into “Log Loss” and “Softmax” in the upcoming sections.
 </div>
 
 <div style="background: var(--mn-bg); padding: 20px; border: 1px solid var(--mn-border); border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -391,30 +391,30 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 <div class="md">
 ## The Mathematical Concept: The Role of $\infty$
 
-While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle "impossible" states or "hidden" information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
+While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle “impossible” states or “hidden” information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
 
 ## What are approximations?
 
 In traditional programming, we aim for **exactness**. If you write a function to calculate a tax rate, you want the result to be 100% correct every single time. However, the real world is messy and doesn't always follow simple, rigid rules.
 
-An **approximation** (from latin *approximātus*, "to come near, approach", see \citetitle{kleinetymology}, p. 45) is a result that is "close enough" to the truth to be useful, even if it isn't perfect.
+An **approximation** (from latin *approximātus*, “to come near, approach”, see \citetitle{kleinetymology}, p. 45) is a result that is “close enough” to the truth to be useful, even if it isn't perfect.
 
 ### Most Artificial Intelligence is approximations
-Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for "if-then" logic. 
+Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for “if-then” logic. 
 
-* **Complexity:** There is no single mathematical formula for a "cat." A cat can be any color, in any pose, and in any lighting.
+* **Complexity:** There is no single mathematical formula for a “cat.” A cat can be any color, in any pose, and in any lighting.
 * **The Goal:** Instead of looking for a perfect rule, AI looks for a **statistical likelihood**. It approximates the pattern of a cat based on the thousands of examples it has seen.
 
 ### Accuracy vs. Precision
-When we talk about models being "good enough," we are looking at the balance of error.
-* **A "Perfect" Model:** Would have 0% error but is often impossible to build for complex data.
-* **An "Approximate" Model:** Might be 98% accurate. While it may occasionally mistake a fluffy pillow for a cat, its ability to process millions of images in seconds makes it incredibly valuable anyways.
+When we talk about models being “good enough,” we are looking at the balance of error.
+* **A “Perfect” Model:** Would have 0% error but is often impossible to build for complex data.
+* **An “Approximate” Model:** Might be 98% accurate. While it may occasionally mistake a fluffy pillow for a cat, its ability to process millions of images in seconds makes it incredibly valuable anyways.
 
-**Key takeaway:** AI doesn't "know" what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of "cat-ness."
+**Key takeaway:** AI doesn't “know” what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of “cat-ness.”
 
 ## Vector Spaces
 ### 1D: The Line
-In 1D, you only have one "degree of freedom." You can go forward or backward.
+In 1D, you only have one “degree of freedom.” You can go forward or backward.
 * **Concept:** A single number describes your entire universe.
 </div>
 
@@ -452,14 +452,14 @@ In 3D, we can represent volume. A great way to visualize this is **Color Space**
 </div>
 
 <div class="md">
-### 4D and Beyond: The "Feature" Space
-We cannot "see" 4D, but we can **describe** it. In AI, dimensions are just "features." Imagine we are describing a "Fruit." We can use a 4D vector to describe:
+### 4D and Beyond: The “Feature” Space
+We cannot “see” 4D, but we can **describe** it. In AI, dimensions are just “features.” Imagine we are describing a “Fruit.” We can use a 4D vector to describe:
 1. **Sweetness**
 2. **Sourness**
 3. **Firmness**
 4. **Seed Count**
 
-Every fruit is now a point in a 4D "Fruit Space."
+Every fruit is now a point in a 4D “Fruit Space.”
 </div>
 
 <div style="background: var(--mn-bg); padding: 15px; border: 1px solid var(--mn-border); border-radius: 8px;">
@@ -492,7 +492,7 @@ $$s \in \left\{0, 1, 2, 3, 4, \dots, 254, 255\right\} \quad \text{Example:} \qua
 ### The Vector (rank 1)
 A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
 
-To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This "package" is a vector.
+To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This “package” is a vector.
 $$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} $$
 
 $$\text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
@@ -503,7 +503,7 @@ Vectors can also be understood as arrows in space. For example, the vector $\beg
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
 <div class="md">
-Vectors are not "glued" to one spot. A vector is simply a set of instructions (like "3 right, 4 up"). You can start that instruction anywhere in space, and it is still the same vector!
+Vectors are not “glued” to one spot. A vector is simply a set of instructions (like “3 right, 4 up”). You can start that instruction anywhere in space, and it is still the same vector!
 </div>
 
 <div style="text-align: center; margin-bottom: 10px;">
@@ -526,7 +526,7 @@ $$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} =
 
 ### The Matrix (rank 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
-A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means "black", $255$ means white and everything inbetween are different shades of gray.
+A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means “black”, $255$ means white and everything inbetween are different shades of gray.
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 
 </div>
@@ -543,13 +543,13 @@ When we stack many matrices together, we get a high-level **Tensor**.
 A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
 $$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
 
-**The Secret:** In AI, we call *everything* a Tensor. A single number is just a "rank 0 Tensor." This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
+**The Secret:** In AI, we call *everything* a Tensor. A single number is just a “rank 0 Tensor.” This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
 
 ### The Mathematical View: A $3 \times 3 \times 3$ Tensor
 
 When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
 
-Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
+Notice how each “cell” of the grid is actually a vector (a vertical list) of three values:
 </div>
 
 $$
@@ -565,7 +565,7 @@ The form a tensor has is called a *shape*. The shape defines how many rows and c
 
 * **The Grid:** The large outer brackets $\begin{pmatrix} \dots \end{pmatrix}$ represent the **Shape** (Rows and Columns).
 * **The Depth:** Each small inner bracket $\begin{pmatrix} r \\ g \\ b \end{pmatrix}$ is the **Feature Vector** for a single pixel.
-* **The Coordinates:** The numbers like $_{1,2}$ mean: "Row 1, Column 2".
+* **The Coordinates:** The numbers like $_{1,2}$ mean: “Row 1, Column 2”.
 
 To make colors, we use **three numbers** for every single pixel: one for **Red**, one for **Green**, and one for **Blue**.
 
@@ -602,7 +602,7 @@ With other methods of making numbers from data (like Embeddings to create number
 
 In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$.
 
-You can experiment with how two linear functions combine. Adjust the sliders to see how the "inner" function $f$ and the "outer" function $g$ create a new, composed result.
+You can experiment with how two linear functions combine. Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.
 </div>
 
 <div style="background: var(--mn-surface, #f9f9f9); padding: 15px; border-radius: 8px; border: 1px solid #eee;">
@@ -639,9 +639,9 @@ We can visualize these relationships using a square diagram. It shows that there
 
 The **Hadamard Product** ($\odot$) was formally introduced by \citeauthor{hadamardproduct} in \citeyear{hadamardproduct} within his thesis \citetitle{hadamardproduct}. It was designed to solve the practical problem of identifying **singularities** in complex power series. By multiplying coefficients element-wise, defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$, Hadamard could predict the analytic continuation and boundaries of new functions derived from known ones.
 
-While standard matrix multiplication follows the "row-by-column" rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
+While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
 
-In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a "gate."
+In the context of Deep Learning, the $\odot$ symbol is ubiquitous. It is used in **Layer Normalization** to scale normalized values by a learnable parameter $\gamma$, and in **Gating Mechanisms** (like LSTMs or GRUs) to decide which information should pass through a “gate.”
 
 ### Mathematical Definition
 For two vectors $\vec{a}$ and $\vec{b}$ of length $n$, the product is defined as:
@@ -695,13 +695,13 @@ to express symmetry properties.
 <div class="md">
 ## The Blessing of Dimensionality
 
-You may have heard of the "curse of dimensionality": in high dimensions, distance metrics break down, and all points become roughly equidistant. But there is a corresponding **blessing of dimensionality** that makes neural networks possible.
+You may have heard of the “curse of dimensionality”: in high dimensions, distance metrics break down, and all points become roughly equidistant. But there is a corresponding **blessing of dimensionality** that makes neural networks possible.
 
 In high-dimensional spaces, random vectors are almost always **nearly orthogonal**. In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with vanishingly small variance:
 
 $$P(|\cos(\mathbf{v}_1, \mathbf{v}_2)| > 0.1) \approx 0$$
 
-This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many "almost-orthogonal" directions for free. This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.
+This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many “almost-orthogonal” directions for free. This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.
 
-The "aha-moment": the very property that makes high dimensions terrifying for classical statistics — the concentration of measure — is what makes neural networks so powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
+The “aha-moment”: the very property that makes high dimensions terrifying for classical statistics  the concentration of measure  is what makes neural networks so powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
 </div>

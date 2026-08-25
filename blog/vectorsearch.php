@@ -45,9 +45,9 @@ Where:
 - $k_1$ and $b$ are tuning parameters
 - $|d|$ / $\text{avgdl}$ = document length normalized by average
 
-**Strengths:** Fast, interpretable, excellent for exact matches ("error code 0x80070005").
+**Strengths:** Fast, interpretable, excellent for exact matches (“error code 0x80070005”).
 
-**Weaknesses:** Completely blind to meaning. Searching "car" won't find documents about "automobile." Searching "How do I fix a broken heart?" returns cardiology articles.
+**Weaknesses:** Completely blind to meaning. Searching “car” won't find documents about “automobile.” Searching “How do I fix a broken heart?” returns cardiology articles.
 
 ### 2. Semantic Search (Dense Vector Search)
 
@@ -57,9 +57,9 @@ $$
 \text{sim}(\vec{q}, \vec{v}_i) = \frac{\vec{q} \cdot \vec{v}_i}{\|\vec{q}\| \; \|\vec{v}_i\|}
 $$
 
-**Strengths:** Understands synonyms, paraphrases, and conceptual similarity. "Car" matches "automobile," "vehicle," and even "Tesla Model 3."
+**Strengths:** Understands synonyms, paraphrases, and conceptual similarity. “Car” matches “automobile,” “vehicle,” and even “Tesla Model 3.”
 
-**Weaknesses:** Can miss exact keyword matches. Searching for a specific product code like "XJ-4200" may return semantically similar but wrong products. Also, embedding models have blind spots, they can confuse "Python" (snake) with "Python" (language).
+**Weaknesses:** Can miss exact keyword matches. Searching for a specific product code like “XJ-4200” may return semantically similar but wrong products. Also, embedding models have blind spots, they can confuse “Python” (snake) with “Python” (language).
 
 ### 3. Hybrid Search
 
@@ -93,7 +93,7 @@ Each record in a vector database contains:
 |-------|---------|---------|
 | `id` | `chunk_0042` | Unique identifier |
 | `vector` | $[0.023, -0.841, 0.117, \ldots]$ | 768-dim (or 1536-dim) embedding |
-| `text` | "The Transformer was introduced in 2017…" | Original chunk, returned to the LLM |
+| `text` | “The Transformer was introduced in 2017…” | Original chunk, returned to the LLM |
 | `metadata` | `{source: "vaswani2017", page: 3, date: "2017-06-12"}` | For filtering and citations |
 
 ### The Brute-Force Problem
@@ -131,7 +131,7 @@ $$
 \text{Search complexity: } O(\log N) \quad \text{vs. brute force } O(N)
 $$
 
-**Result:** Searching 1 billion vectors takes ~100-200 "hops" instead of 1 billion comparisons.
+**Result:** Searching 1 billion vectors takes ~100-200 “hops” instead of 1 billion comparisons.
 </div>
 
 <div class="md">
@@ -226,7 +226,7 @@ A vector database is only as good as the vectors you put into it. The **embeddin
 1. **Semantic faithfulness:** Similar meanings → similar vectors
 2. **Dimensionality:** Higher dimensions capture more nuance but cost more memory and compute
 3. **Training data:** Models trained on diverse text generalize better
-4. **Instruction-awareness:** Modern models accept a task prefix ("search_query:", "search_document:") to optimize for retrieval
+4. **Instruction-awareness:** Modern models accept a task prefix (“search_query:”, “search_document:”) to optimize for retrieval
 
 ### Popular Embedding Models (2025-2026)
 
@@ -247,7 +247,7 @@ A vector database is only as good as the vectors you put into it. The **embeddin
 from embedding_model import embed
 from vector_db import VectorDB
 
-db = VectorDB(algorithm="hnsw", dimensions=768)
+db = VectorDB(algorithm=“hnsw”, dimensions=768)
 
 # 1. Chunk documents
 chunks = split_into_chunks(documents, size=400, overlap=50)
@@ -259,16 +259,16 @@ for chunk in chunks:
         id=chunk.id,
         vector=vector,
         text=chunk.text,
-        metadata={"source": chunk.source, "page": chunk.page}
+        metadata={“source”: chunk.source, “page”: chunk.page}
     )
 
 # 3. Query
-query_vector = embed("How does attention work in transformers?")
+query_vector = embed(“How does attention work in transformers?”)
 results = db.search(query_vector, top_k=5)
 
 # results = [
-#   {id: "chunk_42", score: 0.91, text: "Self-attention computes..."},
-#   {id: "chunk_17", score: 0.87, text: "The attention mechanism..."},
+#   {id: “chunk_42”, score: 0.91, text: “Self-attention computes...”},
+#   {id: “chunk_17”, score: 0.87, text: “The attention mechanism...”},
 #   ...
 # ]</code></pre>
 
@@ -302,13 +302,13 @@ The 50-token overlap means a sentence split between chunks appears in full in at
 Raw vector search returns the semantically closest chunks regardless of source, date, or category. **Metadata filtering** adds structured constraints:
 </div>
 
-<pre class="vslab-code-block"><code># Search only in documents from 2026, tagged as "research"
+<pre class="vslab-code-block"><code># Search only in documents from 2026, tagged as “research”
 results = db.search(
     vector=query_vector,
     top_k=5,
     filter={
-        "year": {"$gte": 2026},
-        "category": "research"
+        “year”: {“$gte”: 2026},
+        “category”: “research”
     }
 )</code></pre>
 
@@ -361,7 +361,7 @@ The core operation is always the same: embed → store → search → retrieve.
 | What is a vector database? | A database optimized for high-dimensional similarity search using ANN algorithms |
 | How is it different from SQL? | SQL matches exact values. Vector DBs match *meanings* via geometric distance |
 | How is search so fast? | ANN algorithms (HNSW, IVF, PQ) reduce $O(N)$ to $O(\log N)$ |
-| What is HNSW? | A multi-layer graph where search "hops" from coarse to fine, like navigating highways → local streets |
+| What is HNSW? | A multi-layer graph where search “hops” from coarse to fine, like navigating highways → local streets |
 | Keyword vs. semantic vs. hybrid? | Keywords match words, semantic matches meaning, hybrid combines both |
 | What is re-ranking? | A second, more accurate pass over retrieved candidates using a cross-encoder |
 | What is chunking? | Splitting documents into 200-500 token passages for indexing |
