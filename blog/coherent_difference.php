@@ -130,7 +130,7 @@ Spencer-Brown begins his book with an instruction that is also an axiom:
 Draw a distinction.
 </div>
 
-A single boundary drawn across an unmarked plane produces two states, marked on one side, unmarked on the other. One axiom then govern what can happen:
+A single boundary drawn across an unmarked plane produces two states, marked on one side, unmarked on the other. One axiom then governs what can happen:
 
 $$
 \neg\neg\, \;=\; \neg
