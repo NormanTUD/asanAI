@@ -3211,6 +3211,13 @@ window.bibData = {
 		url: "https://doi.org/10.1007/s10441-020-09400-0",
 		alternativetitle: "FBT Theorem"
 	},
+	"hoffman2015interface": {
+		author: "Donald D. Hoffman, Manish Singh, Chetan Prakash",
+		year: 2015,
+		title: "The Interface Theory of Perception",
+		url: "https://doi.org/10.3758/s13423-015-0890-8",
+		alternativetitle: "Interface Theory of Perception"
+	},
 	"glorot2011deep": {
 		author: "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
 		year: "2011",
