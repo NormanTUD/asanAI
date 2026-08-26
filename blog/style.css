@@ -2384,6 +2384,8 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 p {
 	overflow-wrap: break-word; /* keep as emergency fallback */
 	word-break: normal;        /* let hyphens: auto do its job */
+	font-feature-settings: "liga" 1, "dlig" 1; /* Aktiviert Standard- und diskretionäre Ligaturen */
+	hanging-punctuation: first last;
 }
 
 figcaption {
@@ -6160,6 +6162,15 @@ blockquote > p:first-of-type::before {
 		initial-letter: var(--cl-dc-lines, 4) 3;
 		-webkit-initial-letter: var(--cl-dc-lines, 4) 3;
 	}
+}
+
+/* First-line styling for the page-opening paragraph only.
+   polish.js tags the first <p> in .md with .cl-dropcap; piggy-back on
+   that so the small-caps / letter-spacing effect stays scoped to the
+   very first paragraph of the page, not every paragraph. */
+.md > p.cl-dropcap::first-line {
+	font-variant: small-caps;
+	letter-spacing: 1px;
 }
 
 /* ── 5. Heading anchor links — shareable section URLs ── */
