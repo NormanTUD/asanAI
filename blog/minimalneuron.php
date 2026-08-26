@@ -13,15 +13,15 @@ topics: math-i, math-ii, programming
 <div class="minimalneuron-page">
 
 <div class="md">
-The simplest AI is actually a very simple mathematical model called a **Neuron**. At its core, it is just a linear function:
+The simplest AI is actually a very simple mathematical model called a **Neuron**. As a *pedagogical starting point*, we take it to be just an affine map — a linear function plus a constant shift:
 
 $$y = f(x) = ax + b$$
 
-This is *the smallest possible neural network* already. Just that simple function equation, with $a$ and $b$ being *Parameters* for the function. In this case, $a$ and $b$ are just simple floating point numbers, but usually they are not numbers but tensors, ie. large lists of numbers, such that it can be that they can look like 
+**Important note:** A single affine map by itself is **not yet a full neural network**. Formally, a neural network is built by composing many such affine maps with a non-linear **activation function** $g$ between them, of the form $f(x) = (T_L \circ g \circ T_{L-1} \circ g \circ \dots \circ T_1)(x)$. Without that non-linearity, stacking affine maps collapses back into a single affine map (we will see exactly this collapse in the activation chapter, and it is the reason every real network uses an activation function). For this *first lesson*, however, we keep things as simple as possible: just that single function equation, with $a$ and $b$ being *Parameters* for the function. In this case, $a$ and $b$ are just simple floating point numbers, but usually they are not numbers but tensors, ie. large lists of numbers, such that it can be that they can look like 
 
 $$ \begin{pmatrix} y_1 \\ y_2 \end{pmatrix} = \begin{pmatrix} 0.5 & -0.2 & 0.1 \\ 0.8 & 0.4 & -0.9 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix} + \begin{pmatrix} 0.1 \\ -0.5 \end{pmatrix}. $$
 
-But since normal numbers are tensors as well, this holds true. Given $a$ and $b$ are tensors, this is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
+But since normal numbers are tensors as well, this holds true. Historically, the earliest activation function layered on top of $ax + b$ was the **Heaviside step function** $H(x) = \mathbf{1}_{x > 0}$, which fires $1$ when the affine map is positive and $0$ otherwise. With it, the neuron becomes $\hat{y} = H(ax + b)$ — and this is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
 
 In AI terminology, we give these parameters specific names:
 * **Weight ($a$):** This determines the “tilt” of the line. It defines how much the input $x$ influences the output $y$.
