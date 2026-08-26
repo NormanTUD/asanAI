@@ -3200,9 +3200,16 @@ window.bibData = {
 	},
 	"berglund2023reversal": {
 		author: "Lukas Berglund, Meg Tong, Max Kaufmann, Mikita Balesni, Asa Cooper Stickland, Tomasz Korbak, Owain Evans",
-		year: "2023",
+		year: 2023,
 		title: "The Reversal Curse: LLMs trained on 'A is B' fail to learn 'B is A'",
 		url: "https://arxiv.org/abs/2309.12288",
+	},
+	"prakash2021fitness": {
+		author: "Chetan Prakash, Kyle D. Stephens, Donald D. Hoffman, Manish Singh, Chris Fields",
+		year: 2021,
+		title: "Fitness Beats Truth in the Evolution of Perception",
+		url: "https://doi.org/10.1007/s10441-020-09400-0",
+		alternativetitle: "FBT Theorem"
 	},
 	"glorot2011deep": {
 		author: "Xavier Glorot, Antoine Bordes, Yoshua Bengio",

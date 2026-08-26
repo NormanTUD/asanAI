@@ -104,6 +104,35 @@ We often say the AI is “lying,” but that isn't technically true. To lie, you
 
 As Frankfurt argues, the “bullshitter” is different because they are simply indifferent to whether their claims describe reality correctly. This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
 
+## Fitness Beats Truth: The Math Behind the Bullshit Machine
+
+Frankfurt gave us the philosophical diagnosis. A team of mathematicians, cognitive scientists, and philosophers gave us the **proof**. In their \citeyear{prakash2021fitness} paper \citetitle{prakash2021fitness}, \citeauthor{prakash2021fitness} formalize the claim via the **Fitness-Beats-Truth (FBT) Theorem**:
+
+<div class="smart-quote" data-cite="prakash2021fitness">
+  If one starts with the assumption that perception involves inference to states of the objective world, then the FBT Theorem shows that a strategy that simply seeks to maximize expected-fitness payoff, with no attempt to estimate the “true” world state, does consistently better.
+</div>
+
+The setup is deliberately stark. Suppose a system faces a perceptual task: pick an action from an observation. There is some latent “true” world state $W$ and a noisy observation $X$. Two strategies are on the table.
+
+* **Truth-tracking.** Estimate $W$ as faithfully as possible from $X$, then act on the estimate. This is the Bayesian ideal: perception as *inverse problem* solving.
+* **Fitness-only.** Skip the inference entirely. Pick the action that maximizes expected payoff over the observation, with no constraint that any action “corresponds to” the world at all.
+
+The \citealternativetitle{prakash2021fitness} proves that the **fitness-only strategy dominates the truth strategy**, and that this dominance *grows* with the size of the perceptual space. The more “world” there is to estimate, the more expensive truth-tracking becomes and the larger the lead fitness-only opens up. This is the formal backbone of the **Interface Theory of Perception** (Hoffman, Singh & Prakash, 2015): perception did not evolve to deliver a veridical picture of reality. It evolved to deliver a *species-specific user interface* that maximizes reproductive payoff, and the truth-tracking picture was a story we told ourselves to make the interface feel objective.
+
+For an LLM, the dictionary translation is almost embarrassingly direct:
+
+| Biological Perception | LLM |
+| :--- | :--- |
+| Observation $X$ | Prompt + context window |
+| Latent world state $W$ | The actual facts of the matter |
+| Fitness payoff | Next-token log-likelihood $\cdot$ RLHF reward |
+| “Truth-tracking” strategy | A model trained against an explicit factuality ground-truth |
+| “Fitness-only” strategy | A standard pretrained + RLHF'd LLM |
+
+The default LLM *is* the fitness-only strategy. It was never asked to be a Bayesian estimator of $W$; it was asked to maximize the expected reward of its generated tokens. The \citealternativetitle{prakash2021fitness} tells us, *a priori*, that this strategy will beat any truth-tracking alternative on the metrics it is actually measured by, which is exactly why hallucinations are the default epistemic state of next-token prediction rather than a residual bug to be patched. Frankfurt said the bullshitter is *indifferent* to truth; \citeauthor{prakash2021fitness} prove that indifference is the **evolutionarily stable strategy** under fitness selection.
+
+This reframes the entire mitigation toolkit. Every technique that measurably reduces hallucinations, RAG, Chain-of-Thought, verifiers, constrained decoding, factuality rewards in RLHF, works for the same reason: it **modifies the fitness function** so that truth-tracking becomes locally rewarded. You are not removing the indifference; you are making truth pay. The FBT Theorem warns that as the perceptual space grows, the cost of truth-tracking grows with it, which is precisely the empirical finding that hallucination rates scale up on the long tail of factual queries. Reducing hallucinations therefore means *changing the objective*, not asking the same objective to start caring.
+
 ## Advanced Mitigation: Chain of Thought (CoT)
 
 One of the most effective ways to reduce hallucinations is a technique called **Chain of Thought (CoT)** prompting. Instead of asking for a final answer immediately, you ask the AI to “think step-by-step.”
