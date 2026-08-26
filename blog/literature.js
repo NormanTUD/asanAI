@@ -3218,6 +3218,13 @@ window.bibData = {
 		url: "https://doi.org/10.3758/s13423-015-0890-8",
 		alternativetitle: "Interface Theory of Perception"
 	},
+	"unfinishablemap2026fbt": {
+		author: "Andy Southgate, Claude Oquatre-six",
+		year: 2026,
+		title: "Fitness-Beats-Truth Theorem",
+		url: "https://unfinishablemap.org/concepts/fitness-beats-truth/",
+		alternativetitle: "Unfinishable Map"
+	},
 	"glorot2011deep": {
 		author: "Xavier Glorot, Antoine Bordes, Yoshua Bengio",
 		year: "2011",
