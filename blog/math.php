@@ -134,7 +134,13 @@ There are certain sets that are useful to know, like $\mathbb{N}$, which is the 
 
 Functions define a rule so that, for each element of a set, if you apply the rules the function defines, you end up with an element in another (or even the same) set of elements. 
 
-Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for “all the natural numbers” ($\left\{0, 1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
+Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any nonnegative integer $x \in \{0, 1, 2, 3, \ldots\}$ and returns $\text{True}$ if $x$ is even and $\text{False}$ otherwise. Here the input set is $\mathbb{N}$ (the natural numbers, including 0), and the output set is $\mathbb{B} = \{\text{True}, \text{False}\}$. Notice that $0$ is even, so $\text{is\_even}(0) = \text{True}$ — which is exactly what the definition gives us.
+
+<div class="optional md" data-headline="Note">
+
+Some books define the natural numbers as $\{1, 2, 3, \ldots\}$ (excluding $0$). Both conventions are common. Throughout this course we use the inclusive convention $\mathbb{N} = \{0, 1, 2, \ldots\}$, matching the convention most programming languages (and most AI libraries) use.
+
+</div>
 
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 
@@ -477,33 +483,61 @@ Every fruit is now a point in a 4D “Fruit Space.”
 
 
 <div class="md">
+### The formal definition (the important one)
+
+The geometric picture above is intuitive, but it hides a question: when we add a vector to a vector, or stretch a vector by a number, *what rules must those operations obey?* A **vector space** is the precise answer.
+
+Mathematicians formalize this as follows. Pick a *base field* $k$ — a number system where addition, subtraction, multiplication, and division all behave as you would expect. In this course, $k$ will almost always be the **real numbers** $\mathbb{R}$; in cryptography or some physics contexts it might be a finite field or the complex numbers.
+
+<div class="optional md" data-headline="Definition">
+
+A *vector space over $k$* is a set $V$ together with two operations — vector addition $V \times V \to V$ and scalar multiplication $k \times V \to V$ — that satisfy eight axioms (closure, associativity, identity, inverses, distributivity, compatibility of scalar multiplication). The elements of $V$ are called **vectors**; the elements of $k$ are called **scalars**.
+
+</div>
+
+You don't need to memorise the eight axioms. What you need to remember is:
+
+1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The integers $\{0, 1, \ldots, 255\}$ that index pixel brightness are *not* scalars of a vector space over $\mathbb{R}$; they are just integers, and we use them as coordinate indices.
+2. **A vector is not a "list of numbers".** A vector is an *element* of a vector space. The list-of-numbers representation only appears once you pick a basis — that is, once you choose how to measure vectors. The vector itself exists without that choice. (This is why we can rotate, stretch, or translate an embedding space in later chapters without changing the meaning of "vector".)
+3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them. This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
+
+</div>
+
+<div class="md">
 ## How Computers see data: Tensors
 
-If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers. In the AI world, we call every container of numbers a **Tensor**.
+If you want to talk to an AI about images, you can't just show it a picture. You have to turn everything into numbers.
 
-Think of Tensors like a ladder of complexity:
+### Scalars
 
-### The Scalar (rank 0)
-A **Scalar** is just one single number. 
-Imagine a single lightbulb. The number tells you how bright it is: **0** is off (black), **255** is full power (white).
+A **scalar** is a single number from the base field — in this course, almost always a real number. You use scalars every time you stretch a vector or measure a single quantity.
 
-$$s \in \left\{0, 1, 2, 3, 4, \dots, 254, 255\right\} \quad \text{Example:} \quad s = 255$$
+$$ s \in \mathbb{R} \qquad \text{Example: } s = 2.5 $$
 
-### The Vector (rank 1)
-A **Vector** is a list of numbers. They are sometimes written with an arrow above them, like this: $\vec{v}$.
+A note on terminology: in machine learning, you will often see "scalar" used more loosely to mean "a single number of any kind" — for example a pixel brightness in $\{0, 1, \ldots, 255\}$. That is fine as a casual usage, but strictly speaking pixel brightnesses are integers, not elements of the vector space's base field. The two meanings rarely cause problems in practice; just be aware they exist.
 
-To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, and one for Blue. This “package” is a vector.
-$$\vec{v} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} $$
+### Vectors
 
-$$\text{Example:} \quad \vec{v} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)}$$
+A **vector** is an element of a vector space. The geometric picture is an *arrow* with a direction and a length: "three steps to the right, four steps up." The algebraic picture is a single thing you can add to other vectors and stretch with scalars.
 
-Vectors can also be understood as arrows in space. For example, the vector $\begin{pmatrix} 3 \\ 4 \end{pmatrix}$, means: move 3 to the right and 4 to the top.
-</div>
+If you pick a basis, you can write a vector as a list of coordinates. In $\mathbb{R}^3$ with the standard basis, the arrow "3 right, 4 up, 2 forward" becomes the column
+
+$$ \vec{v} = \begin{pmatrix} 3 \\ 4 \\ 2 \end{pmatrix} $$
+
+Two important properties:
+
+* A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or at $(1, 1)$. This is what it means for vectors to be basis-free.
+* You can stretch a vector by a scalar: $2 \cdot (3, 4, 2) = (6, 8, 4)$. You can add vectors component-wise: $(1, 2) + (3, 4) = (4, 6)$.
+
+To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, one for Blue. This 3-tuple is a vector in $\mathbb{R}^3$:
+
+$$ \vec{v}_{\text{color}} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \qquad \text{Example: } \vec{v}_{\text{color}} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)} $$
+
 
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
 <div class="md">
-Vectors are not “glued” to one spot. A vector is simply a set of instructions (like “3 right, 4 up”). You can start that instruction anywhere in space, and it is still the same vector!
+A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or somewhere else. This is what it means for vectors to be basis-free.
 </div>
 
 <div style="text-align: center; margin-bottom: 10px;">
@@ -512,17 +546,6 @@ Vectors are not “glued” to one spot. A vector is simply a set of instruction
 </div>
 
 <div id="movable-vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
-
-<div class="md">
-Vectors can also have many more dimensions, way too many to visually display them. And they can also be multiplied with by a scalar (multiplying each value in the vector by this scalar):
-
-$$ c \cdot \vec{v} = c \cdot \begin{pmatrix} v_1 \\ v_2 \end{pmatrix} = \begin{pmatrix} c \cdot v_1 \\ c \cdot v_2 \end{pmatrix} $$
-
-$$ 2 \cdot \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 2 \cdot 3 \\ 2 \cdot 4 \end{pmatrix} = \begin{pmatrix} 6 \\ 8 \end{pmatrix} $$
-
-Vectors can also be added:
-
-$$ \begin{pmatrix} 1 \\ 2 \end{pmatrix} + \begin{pmatrix} 3 \\ 4 \end{pmatrix} = \begin{pmatrix} 1 + 3 \\ 2 + 4 \end{pmatrix} = \begin{pmatrix} 4 \\ 6 \end{pmatrix} $$
 
 ### The Matrix (rank 2)
 A **Matrix** is a grid of numbers (like a spreadsheet).
@@ -538,18 +561,53 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 </div>
 
 <div class="md">
-### The Tensor (rank 3 and beyond)
-When we stack many matrices together, we get a high-level **Tensor**.
-A **Color Photo** is a 3D Tensor. It's a stack of three matrices: a Red one, a Green one, and a Blue one, all sitting on top of each other.
-$$\mathcal{T} \in \text{Height} \times \text{Width} \times \text{Colors}$$
+### Arrays, vectors, matrices, and the word "tensor"
 
-**The Secret:** In AI, we call *everything* a Tensor. A single number is just a “rank 0 Tensor.” This makes it easy for the brain of the AI (the Neural Network) because it treats every piece of data with the same set of math rules!
+You have seen scalars, vectors, and matrices. You can stack them in a grid of grids to get more structure. Python and PyTorch call these multidimensional arrays *tensors* — that is the meaning of the word in this course:
 
-### The Mathematical View: A $3 \times 3 \times 3$ Tensor
+<div class="optional md" data-headline="Definition (informal, machine-learning sense)">
 
-When you type numbers into the grid, the computer organizes them into a structured math object. Here is how your **Color Image** looks as a formal Tensor $\mathcal{T}$.
+A *tensor* is a rectangular array of numbers with a fixed number of axes (also called *dimensions* or *modes*). A scalar is a 0-axis tensor, a vector is a 1-axis tensor, a matrix is a 2-axis tensor, and so on.
 
-Notice how each “cell” of the grid is actually a vector (a vertical list) of three values:
+</div>
+
+| Object | Axes | Shape | Example |
+|--------|------|-------|---------|
+| Scalar | 0 | `()` | $s = 5$ |
+| Vector | 1 | `(d,)` | color $= (r, g, b)$ |
+| Matrix | 2 | `(h, w)` | a black-and-white image |
+| 3-axis tensor | 3 | `(h, w, c)` | a color image |
+| 4-axis tensor | 4 | `(b, h, w, c)` | a batch of color images |
+
+A color photo is a 3-axis tensor: a stack of three matrices (one each for red, green, blue).
+
+$$\mathcal{T} \in \mathbb{R}^{\text{Height} \times \text{Width} \times \text{Colors}}$$
+
+This is the meaning of "tensor" throughout the rest of this course. It is the meaning PyTorch, TensorFlow, and NumPy use.
+
+#### A different word in mathematics
+
+The same word — *tensor* — has a stricter meaning in mathematics and physics. There, a tensor is *an element of a tensor product of vector spaces*. This is the object used in general relativity, electromagnetism, and continuum mechanics. Its properties are fixed by *transformation rules*, not just by its numerical entries. The two meanings are connected historically — the ML usage borrowed the name because the underlying data structures share algebraic properties with the mathematical objects — but they are not the same definition.
+
+If you go on to read physics or differential geometry, you will encounter:
+
+* a *contravariant* index (subscript notation in physics, superscript in math),
+* a *covariant* index (the other way),
+* a *type* $(p, q)$, meaning $p$ contravariant slots and $q$ covariant slots.
+
+In that language, a vector field is a $(1, 0)$-tensor, a one-form (linear functional) is a $(0, 1)$-tensor, and a metric tensor is a symmetric $(0, 2)$-tensor. None of this matters for the ML sense above — but it is why the word was tempting to borrow.
+
+<div class="optional md" data-headline="Convention">
+
+Throughout this course, "tensor" means "multidimensional array" (the ML sense).
+
+</div>
+
+### The shape of a colour image, written out
+
+When you type numbers into the grid, the computer organises them into a structured object. Here is how your **colour image** looks as a 3-axis tensor $\mathcal{T}$.
+
+Notice how each "cell" of the grid is actually a vector (a vertical list) of three values:
 </div>
 
 $$
