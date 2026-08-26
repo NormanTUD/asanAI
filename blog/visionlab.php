@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Convolutions: How Computers See
+title: Convolutions: How a Computer Learns to See
 description: Sliding kernels, edge detection, and the CNN revolution, with interactive filters.
 icon: &#128065;
 part: 3

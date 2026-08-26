@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Embeddings: Geometry of Meaning
+title: Embeddings: The Geometry of Meaning
 description: Words as vectors in space, from Wittgenstein to Riemannian manifolds.
 icon: &#127758;
 part: 4

@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Live Training Lab
+title: Live Training of a Neural Network
 description: Watch a neural network learn in real time, decision boundaries, weights, and activations.
 icon: &#127918;
 part: 2

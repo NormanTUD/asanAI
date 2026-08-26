@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Backpropagation
+title: Backpropagation: How a Neural Network Learns From Its Mistakes
 description: The 1986 algorithm that made deep learning possible, forward pass, backward pass, weight updates.
 icon: &#8634;
 part: 2

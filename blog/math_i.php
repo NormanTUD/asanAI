@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Math I — The Numerical Foundations
+title: Basic Math Concepts I — The Numerical Foundations
 description: Programming, functions, sums, products, infinity, Euler's number, exponentials, logarithms.
 icon: &#128290;
 part: 1

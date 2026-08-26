@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Over- and Underfitting
+title: Over- and underfitting
 description: The delicate balance, when a model learns the pattern vs. when it memorizes the noise.
 icon: &#127922;
 part: 3

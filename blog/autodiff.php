@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Automatic Differentiation
+title: Automatic Differentiation: How Machines Learn
 description: How machines compute gradients at scale, the chain rule, forward and reverse mode.
 icon: &#9881;
 part: 2

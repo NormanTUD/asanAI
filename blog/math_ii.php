@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Math II — Linear Algebra for AI
+title: Basic Math Concepts II — Linear Algebra for AI
 description: Vector spaces, tensors, function composition, Hadamard product, matrix transposition.
 icon: &#128290;
 part: 1

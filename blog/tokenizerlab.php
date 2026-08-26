@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Tokenization
+title: Tokenization: How Words become Numbers
 description: How words become numbers, word-level, N-gram, and subword methods compared.
 icon: &#9000;
 part: 4

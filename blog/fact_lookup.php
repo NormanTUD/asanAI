@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Where "Paris" Lives — How an LLM Retrieves a Fact
+title: Where 'Paris' Lives — How an LLM Retrieves a Fact
 description: A walk through the forward pass: residual streams, MLP key-value memory, attention, the linear representation hypothesis, and the honest limits of what we know.
 icon: &#127757;
 part: 4

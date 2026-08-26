@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Context Windows & Memory
+title: Context Windows & Memory: What LLMs Can Hold in Mind
 description: What LLMs can hold in mind, from GPT-2's 1K to Gemini's 1M+ tokens.
 icon: &#128196;
 part: 5

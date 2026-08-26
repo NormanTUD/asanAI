@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Math III — Approximation & The Geometry of High Dimensions
+title: Basic Math Concepts III — Approximation & The Geometry of High Dimensions
 description: Why AI works on approximations, accuracy vs precision, and the blessing of dimensionality.
 icon: &#128290;
 part: 1

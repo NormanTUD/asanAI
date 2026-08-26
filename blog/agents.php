@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: AI Agents: Tool-Use Loops and Orchestration
+title: AI Agents: Autonomous Reasoning and Tool Use
 description: History, architecture, and internals of LLM-based agents, from early cognitive architectures to ReAct and beyond.
 icon: &#129302;
 part: 5

@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Layer Normalization
+title: Understanding Layer Normalization
 description: Keeping activations stable, the math behind GPT's pre-norm architecture.
 icon: &#9878;
 part: 3

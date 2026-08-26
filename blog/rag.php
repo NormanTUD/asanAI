@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Retrieval-Augmented Generation
+title: Retrieval-Augmented Generation: Giving LLMs a Search Engine
 description: Giving LLMs a search engine, chunking, embedding, and the RAG pipeline.
 icon: &#128270;
 part: 5

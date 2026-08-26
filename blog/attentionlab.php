@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Attention: The Semantic Tug-of-War
+title: The Semantic Tug-of-War: How Transformers 'Think'
 description: How Transformers overcome RNN signal decay, direct access across any distance.
 icon: &#128269;
 part: 4

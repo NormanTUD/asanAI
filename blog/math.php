@@ -1,4 +1,11 @@
 <?php include_once("functions.php"); ?>
+
+<!--
+COURSE_METADATA:
+title: Basic Math Concepts (Full Reference)
+part: 1
+order: 3
+-->
 <!--
 NOTE: This file is kept as a complete reference for the math chapters.
 The curriculum now splits this into math_i.php, math_ii.php, and math_iii.php

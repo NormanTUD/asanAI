@@ -334,30 +334,24 @@ function call_js_if_matching_file_exists() {
 }
 
 function print_dynamic_title($tag = "title") {
-	// Determine the current filename without extension (e.g., 'optimizerlab')
+	// Title comes from this file's own <!-- COURSE_METADATA: ... --> block.
 	$script_filename = $_SERVER['SCRIPT_FILENAME'] ?? '';
 	if (empty($script_filename)) return;
 
-	$base_name = pathinfo($script_filename, PATHINFO_FILENAME);
+	$content = @file_get_contents($script_filename);
+	if (!$content) return;
 
-	// Read the content of index.php
-	$index_path = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'index_full.php';
-	$index_content = @file_get_contents($index_path);
+	$pattern = '/<!--\s*\n?\s*COURSE_METADATA:\s*\n((?:.*\n)*?)\s*-->/';
+	if (!preg_match($pattern, $content, $matches)) return;
 
-	if ($index_content) {
-		// Regex to find: incl("Headline", "base_name")
-		// Supports both single and double quotes
-		$pattern = '/incl\s*\(\s*["\'](.*?)["\']\s*,\s*["\']' . preg_quote($base_name) . '["\']\s*\)/';
+	if (!preg_match('/^title:\s*(.+?)\s*$/m', $matches[1], $title_match)) return;
 
-		if (preg_match($pattern, $index_content, $matches)) {
-			$headline = $matches[1];
-			if($tag == "title") {
-				$headline = str_replace('$', '', $headline);
-			}
-
-			echo "<$tag>$headline</$tag>\n";
-		}
+	$headline = $title_match[1];
+	if ($tag == "title") {
+		$headline = str_replace('$', '', $headline);
 	}
+
+	echo "<$tag>$headline</$tag>\n";
 }
 
 function get_ai_course_labels($indexFile = 'index_full.php') {

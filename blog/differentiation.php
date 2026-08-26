@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Differentiation
+title: Differentiation: The Mathematics of Change
 description: The derivative: one of the most important ideas in all of mathematics, from secant to tangent.
 icon: &#128208;
 part: 2

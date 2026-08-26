@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Smallest Neural Network
+title: Smallest possible neural network
 description: The simplest AI: y = ax + b. A single neuron, linear regression, and the birth of learning.
 icon: &#10024;
 part: 2

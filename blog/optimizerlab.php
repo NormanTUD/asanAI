@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: The Optimizer
+title: The Optimizer: Navigating the Loss Landscape
 description: Navigating the loss landscape, SGD, Momentum, and Adam compared interactively.
 icon: &#127757;
 part: 2
