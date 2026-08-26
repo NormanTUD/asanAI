@@ -10,7 +10,824 @@ color: accent
 topics: math-ii
 -->
 
-<script src="math.js"></script>
+<script>
+// ── Lazy-render infrastructure ──────────────────────────────────────────────
+// Tracks which plot containers are currently visible.
+const _visiblePlots = new Set();
+// Stores the latest render function for each plot so we can replay it on scroll-in.
+const _pendingRenders = {};
+
+/**
+ * Central IntersectionObserver for ALL 3D (and other heavy) plots.
+ * When a plot enters the viewport we render it (using the latest pending state
+ * if one was queued while it was off-screen).
+ */
+const _plotVisibilityObserver = new IntersectionObserver(
+	(entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.id;
+			if (entry.isIntersecting) {
+				_visiblePlots.add(id);
+				// If a render was queued while off-screen, execute it now.
+				if (_pendingRenders[id]) {
+					_pendingRenders[id]();
+				}
+			} else {
+				_visiblePlots.delete(id);
+			}
+		});
+	},
+	{ rootMargin: rootMargin, threshold: 0 }
+);
+
+/**
+ * Conditionally render a plot.
+ *  – If the container is in (or near) the viewport → render immediately.
+ *  – Otherwise → stash the render callback so it fires when the user scrolls to it.
+ */
+function lazyRender(plotId, renderFn) {
+	// Always save the latest state so it's never lost.
+	_pendingRenders[plotId] = renderFn;
+
+	if (_visiblePlots.has(plotId)) {
+		renderFn();
+	}
+	// else: renderFn will be called by the observer when the element scrolls in.
+}
+
+/**
+ * Start observing a plot container. Call once per plot after the DOM is ready.
+ */
+function observePlot(plotId) {
+	const el = document.getElementById(plotId);
+	if (el) _plotVisibilityObserver.observe(el);
+}
+
+// ── Application bootstrap ───────────────────────────────────────────────────
+
+function initDataBasics() {
+	// ── Cheap / global work – always run immediately ──
+	refreshMath();
+
+	// ── Everything else – deferred until its section scrolls near ──
+
+	lazyInit('bw-matrix-container', () => {
+		renderBWTable();
+		updateBWPreview();
+	});
+
+	lazyInit('rgb-combined-container', () => {
+		renderRGBCombinedTable();
+		updateRGBPreview();
+	});
+
+	lazyInit('vector-plot',           renderVectorPlot);
+	lazyInit('movable-vector-plot',   renderMovableVector);
+	lazyInit('log-plot',              initLogPlot);
+	lazyInit('plot-composition',      initCompositionPlot);
+	lazyInit('hadamard-display',      initHadamard);
+
+	// ELI5Math already has internal lazy-render logic for its 3-D plots,
+	// but we still defer the whole setup until the first ELI5 element is near.
+	lazyInit('plot-step-1',           renderELI5Math);
+
+	// Interactive vector spaces (1D–4D); the 3D sub-plot already uses lazyRender internally.
+	lazyInit('v1-plot',               initInteractiveVectorSpaces);
+}
+
+// ── Hadamard ────────────────────────────────────────────────────────────────
+
+function initHadamard() {
+	['h-a1', 'h-a2', 'h-a3', 'h-b1', 'h-b2', 'h-b3'].forEach((id) => {
+		document.getElementById(id).addEventListener('input', runHadamardExperiment);
+	});
+	runHadamardExperiment();
+}
+
+// ── Composition Plot ────────────────────────────────────────────────────────
+
+function initCompositionPlot() {
+	const sliders = ['a', 'b', 'c', 'd'].map((id) =>
+		document.getElementById(`slider-comp-${id}`)
+	);
+
+	function update() {
+		const a = parseFloat(sliders[0].value);
+		const b = parseFloat(sliders[1].value);
+		const c = parseFloat(sliders[2].value);
+		const d = parseFloat(sliders[3].value);
+
+		const xValues = Array.from({ length: 40 }, (_, i) => (i - 20) / 2);
+		const fVals = xValues.map((x) => a * x + b);
+		const gVals = xValues.map((x) => c * x + d);
+		const compVals = xValues.map((x) => c * (a * x + b) + d);
+
+		const data = [
+			{ x: xValues, y: fVals, name: 'f(x)', line: { dash: 'dot', color: themeColor('#94a3b8') } },
+			{ x: xValues, y: gVals, name: 'g(x)', line: { dash: 'dot', color: themeColor('#cbd5e1') } },
+			{
+				x: xValues,
+				y: compVals,
+				name: '(g ∘ f)(x)',
+				line: { width: 4, color: '#2563eb' },
+			},
+		];
+
+		const layout = {
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
+			margin: { t: 10, b: 30, l: 30, r: 10 },
+			legend: { orientation: 'h', y: -0.2, font: { color: themeColor('#1e293b') } },
+			xaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			yaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		};
+
+		Plotly.react('plot-composition', data, layout);
+		document.getElementById('composition-formula').innerHTML =
+			`$$(g \\circ f)(x) = ${c}(${a}x + ${b}) + ${d}$$`;
+		render_temml();
+	}
+
+	sliders.forEach((s) => s.addEventListener('input', update));
+	update();
+}
+
+// ── Log Plot ────────────────────────────────────────────────────────────────
+
+function initLogPlot() {
+	const sliderBase = document.getElementById('slider-log-base');
+	const sliderX = document.getElementById('slider-log-x');
+	const dispBase = document.getElementById('disp-log-base');
+	const dispX = document.getElementById('disp-log-x');
+	const formulaContainer = document.getElementById('log-equation-display');
+
+	function render() {
+		const b = parseFloat(sliderBase.value);
+		const inputX = parseFloat(sliderX.value);
+
+		dispBase.textContent = b.toFixed(1);
+		dispX.textContent = inputX.toFixed(1);
+
+		const xValues = [];
+		const yValues = [];
+		for (let i = 0.1; i <= 50; i += 0.5) {
+			xValues.push(i);
+			yValues.push(Math.log(i) / Math.log(b));
+		}
+
+		const currentY = Math.log(inputX) / Math.log(b);
+		const minY = Math.min(...yValues, currentY);
+		const maxY = Math.max(...yValues, currentY);
+		const padding = (maxY - minY) * 0.1 || 1;
+
+		const traceCurve = {
+			x: xValues,
+			y: yValues,
+			mode: 'lines',
+			name: `log base ${b.toFixed(1)}`,
+			line: { color: '#2563eb', width: 3 },
+		};
+		const tracePoint = {
+			x: [inputX],
+			y: [currentY],
+			mode: 'markers',
+			name: 'Your Value',
+			marker: { size: 12, color: '#db2777', line: { color: 'white', width: 2 } },
+		};
+		const traceLines = {
+			x: [inputX, inputX, 0],
+			y: [0, currentY, currentY],
+			mode: 'lines',
+			showlegend: false,
+			line: { color: themeColor('#94a3b8'), width: 1, dash: 'dash' },
+		};
+
+		const layout = {
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
+			title: { text: 'The Logarithm', font: { size: 16, color: themeColor('#1e293b') } },
+			xaxis: { title: { text: 'Input (x)', font: { color: themeColor('#64748b') } }, range: [0, 52], zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			yaxis: {
+				title: { text: 'Output (y)', font: { color: themeColor('#64748b') } },
+				range: [minY - padding, maxY + padding],
+				zeroline: true,
+				gridcolor: themeColor('#f1f5f9'),
+				zerolinecolor: themeColor('#cbd5e1'),
+				tickfont: { color: themeColor('#64748b') },
+			},
+			margin: { l: 50, r: 20, b: 50, t: 40 },
+			showlegend: false,
+			hovermode: 'closest',
+		};
+
+		Plotly.react('log-plot', [traceCurve, traceLines, tracePoint], layout);
+
+		const tex = `$$ \\log_{${b.toFixed(1)}}(${inputX.toFixed(1)}) = ${currentY.toFixed(
+			2
+		)} \\iff ${b.toFixed(1)}^{${currentY.toFixed(2)}} = ${inputX.toFixed(1)} $$`;
+		formulaContainer.innerHTML = tex;
+		render_temml();
+	}
+
+	sliderBase.addEventListener('input', render);
+	sliderX.addEventListener('input', render);
+	render();
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function validateInput(el) {
+	let val = parseFloat(el.value);
+	if (isNaN(val)) val = 0;
+	let finalVal = Math.floor(val);
+	if (finalVal < 0) finalVal = 0;
+	if (finalVal > 255) finalVal = 255;
+	el.value = finalVal;
+}
+
+function refreshMath(selector = '#section-rgb') {
+	render_temml();
+}
+
+// ── BW / RGB tables & previews ──────────────────────────────────────────────
+
+function renderBWTable() {
+	const container = document.getElementById('bw-matrix-container');
+	let html = '<table>';
+	for (let r = 0; r < 3; r++) {
+		html += '<tr>';
+		for (let c = 0; c < 3; c++) {
+			let val = r === c ? 0 : 255;
+			html += `<td class="bw-cell"><input type="number" value="${val}" min="0" max="255" class="bw-cell-input" id="bw_image_cell_${r}_${c}" oninput="validateInput(this); updateBWPreview()" style="width:55px; padding: 6px; border: 1px solid ${themeColor('#e2e8f0')}; font-weight: bold; text-align: center;"></td>`;
+		}
+		html += '</tr>';
+	}
+	container.innerHTML = html + '</table>';
+}
+
+function renderRGBCombinedTable() {
+	const container = document.getElementById('rgb-combined-container');
+	let html =
+		'<table style="border-spacing: 8px; border-collapse: separate;">';
+	for (let r = 0; r < 3; r++) {
+		html += '<tr>';
+		for (let c = 0; c < 3; c++) {
+			let rv = r === 0 ? 255 : 0;
+			let gv = r === 1 ? 255 : 0;
+			let bv = r === 2 ? 255 : 0;
+			html += `
+			<td style="background: ${themeColor('#ffffff')}; border: 1px solid ${themeColor('#cbd5e1')}; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+				<div style="display: flex; flex-direction: column; gap: 5px;">
+					<div style="display: flex; align-items: center; gap: 6px;">
+						<div style="width: 6px; height: 18px; background: #ef4444; border-radius: 2px;"></div>
+						<input type="number" value="${rv}" class="rgb-c-r" id="rgb_image_${r}_${c}_red" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid ${themeColor('#fee2e2')}; text-align: center;">
+					</div>
+					<div style="display: flex; align-items: center; gap: 6px;">
+						<div style="width: 6px; height: 18px; background: #22c55e; border-radius: 2px;"></div>
+						<input type="number" value="${gv}" class="rgb-c-g" id="rgb_image_${r}_${c}_green" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid ${themeColor('#dcfce7')}; text-align: center;">
+					</div>
+					<div style="display: flex; align-items: center; gap: 6px;">
+						<div style="width: 6px; height: 18px; background: #3b82f6; border-radius: 2px;"></div>
+						<input type="number" value="${bv}" class="rgb-c-b" id="rgb_image_${r}_${c}_blue" oninput="validateInput(this); updateRGBPreview()" style="width:55px; font-size:12px; border:1px solid ${themeColor('#dbeafe')}; text-align: center;">
+					</div>
+				</div>
+			</td>`;
+		}
+		html += '</tr>';
+	}
+	container.innerHTML = html + '</table>';
+}
+
+function updateBWPreview() {
+	const canvas = document.getElementById('bw-preview-canvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+	const imgData = ctx.createImageData(3, 3);
+	const cells = document.querySelectorAll('.bw-cell-input');
+	cells.forEach((cell, i) => {
+		const val = parseInt(cell.value) || 0;
+		imgData.data[i * 4] = val;
+		imgData.data[i * 4 + 1] = val;
+		imgData.data[i * 4 + 2] = val;
+		imgData.data[i * 4 + 3] = 255;
+	});
+	ctx.putImageData(imgData, 0, 0);
+}
+
+function updateRGBPreview() {
+	const canvas = document.getElementById('rgb-preview-canvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+	const imgData = ctx.createImageData(3, 3);
+	const reds = document.querySelectorAll('.rgb-c-r');
+	const greens = document.querySelectorAll('.rgb-c-g');
+	const blues = document.querySelectorAll('.rgb-c-b');
+	for (let i = 0; i < 9; i++) {
+		imgData.data[i * 4] = parseInt(reds[i].value) || 0;
+		imgData.data[i * 4 + 1] = parseInt(greens[i].value) || 0;
+		imgData.data[i * 4 + 2] = parseInt(blues[i].value) || 0;
+		imgData.data[i * 4 + 3] = 255;
+	}
+	ctx.putImageData(imgData, 0, 0);
+}
+
+// ── Simple vector plot (static) ─────────────────────────────────────────────
+
+function renderVectorPlot() {
+	const data = [
+		{
+			x: [0, 3],
+			y: [0, 4],
+			type: 'scatter',
+			mode: 'lines+markers',
+			marker: { size: 10, color: '#3b82f6' },
+			line: { width: 4, color: '#3b82f6' },
+			name: 'Vector [3, 4]',
+		},
+	];
+	const layout = {
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
+		title: { text: 'Vector Visualization', font: { color: themeColor('#1e293b') } },
+		xaxis: { range: [0, 5], zeroline: true, title: { text: 'x', font: { color: themeColor('#64748b') } }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		yaxis: { range: [0, 5], zeroline: true, title: { text: 'y', font: { color: themeColor('#64748b') } }, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		margin: { l: 40, r: 40, b: 40, t: 40 },
+		annotations: [
+			{
+				x: 3, y: 4, ax: 0, ay: 0,
+				xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+				text: '', showarrow: true,
+				arrowhead: 2, arrowsize: 1, arrowwidth: 3, arrowcolor: '#3b82f6',
+			},
+		],
+	};
+	Plotly.newPlot('vector-plot', data, layout);
+}
+
+// ── ELI5 Math plots (mixed 2-D and 3-D) ────────────────────────────────────
+// 3-D plots: plot-step-4, plot-step-5, plot-step-7  → lazy-rendered
+// 2-D plots: plot-step-1, plot-step-6              → rendered on first view,
+//            then always updated immediately by sliders (cheap)
+
+function renderELI5Math() {
+	const range = [];
+	for (let i = -10; i <= 10; i++) range.push(i);
+
+	const layoutBase = {
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
+		margin: { t: 10, b: 30, l: 30, r: 10 },
+		xaxis: { range: [-10, 10], fixedrange: true, zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		yaxis: { range: [-10, 10], fixedrange: true, zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		showlegend: false,
+	};
+
+	// ── 2-D: Linear (plot-step-6) ──
+	function updatePlotLinear() {
+		const a = parseFloat(document.getElementById('slider-6-a').value);
+		const b = parseFloat(document.getElementById('slider-6-b').value);
+
+		document.getElementById('formula-6').innerHTML =
+			`$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
+		render_temml();
+
+		Plotly.react(
+			'plot-step-6',
+			[
+				{
+					x: range,
+					y: range.map((x) => a * x + b),
+					mode: 'lines',
+					line: { color: '#3b82f6', width: 4 },
+				},
+			],
+			layoutBase
+		);
+	}
+
+	// ── 3-D: Surface (plot-step-7) — LAZY ──
+	function updatePlotSurface() {
+		const a = parseFloat(document.getElementById('slider-7-a').value);
+		const b = parseFloat(document.getElementById('slider-7-b').value);
+
+		// Always update the formula text (cheap)
+		document.getElementById('formula-7').innerHTML =
+			`$$f(x, y) = \\underbrace{${a}}_ax + \\underbrace{${b}}_by$$`;
+		render_temml();
+
+		// Lazy-render the expensive 3-D surface
+		lazyRender('plot-step-7', () => {
+			const zData = range.map((x) => range.map((y) => a * x + b * y));
+			Plotly.react(
+				'plot-step-7',
+				[
+					{
+						z: zData,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Blues',
+						showscale: false,
+					},
+				],
+				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { range: [-20, 20], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.5, y: 1.5, z: 1 } },
+					},
+				}
+			);
+		});
+	}
+
+	// ── 3-D: Waves (plot-step-5) — LAZY ──
+	function updatePlotWaves() {
+		const freq = parseFloat(document.getElementById('slider-5-freq').value);
+		const amp = parseFloat(document.getElementById('slider-5-amp').value);
+
+		document.getElementById('formula-5').innerHTML =
+			`$$f(x, y) = \\underbrace{${amp}}_\\text{Amplitude} \\cdot (\\sin(\\underbrace{${freq}}_\\text{Frequence}x) + \\sin(\\underbrace{${freq}}_\\text{Frequence}y))$$`;
+		render_temml();
+
+		lazyRender('plot-step-5', () => {
+			const zWaves = range.map((x) =>
+				range.map((y) => amp * (Math.sin(x * freq) + Math.sin(y * freq)))
+			);
+			Plotly.react(
+				'plot-step-5',
+				[
+					{
+						z: zWaves,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Viridis',
+						showscale: false,
+					},
+				],
+				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } },
+					},
+				}
+			);
+		});
+	}
+
+	// ── 3-D: Static f(x,y)=x+y (plot-step-4) — LAZY ──
+	function renderStep4() {
+		lazyRender('plot-step-4', () => {
+			const zData = range.map((x) => range.map((y) => x + y));
+			Plotly.newPlot(
+				'plot-step-4',
+				[
+					{
+						z: zData,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Greys',
+						showscale: false,
+					},
+				],
+				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.5, y: 1.5, z: 1 } }
+					},
+				}
+			);
+		});
+	}
+
+	// ── First-view observer for 2-D plots (one-shot) ──
+	const oneshotJobs = {
+		'plot-step-1': () =>
+			Plotly.newPlot(
+				'plot-step-1',
+				[
+					{
+						x: range,
+						y: range,
+						mode: 'lines',
+						line: { color: themeColor('#333'), width: 3 },
+					},
+				],
+				layoutBase
+			),
+		'plot-step-6': updatePlotLinear,
+	};
+
+	const oneshotObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const id = entry.target.id;
+					if (oneshotJobs[id]) oneshotJobs[id]();
+					oneshotObserver.unobserve(entry.target);
+				}
+			});
+		},
+		{ rootMargin: rootMargin, threshold: 0 }
+	);
+
+	// Observe 2-D one-shot plots
+	['plot-step-1', 'plot-step-6'].forEach((id) => {
+		const el = document.getElementById(id);
+		if (el) oneshotObserver.observe(el);
+	});
+
+	// Observe 3-D lazy plots with the global visibility observer
+	['plot-step-4', 'plot-step-5', 'plot-step-7'].forEach(observePlot);
+
+	// Fire initial lazy renders (will only actually draw if in view)
+	renderStep4();
+	updatePlotSurface();
+	updatePlotWaves();
+
+	// Slider listeners — always call the update functions (they internally use lazyRender)
+	document.getElementById('slider-6-a').addEventListener('input', updatePlotLinear);
+	document.getElementById('slider-6-b').addEventListener('input', updatePlotLinear);
+	document.getElementById('slider-7-a').addEventListener('input', updatePlotSurface);
+	document.getElementById('slider-7-b').addEventListener('input', updatePlotSurface);
+	document.getElementById('slider-5-freq').addEventListener('input', updatePlotWaves);
+	document.getElementById('slider-5-amp').addEventListener('input', updatePlotWaves);
+}
+
+// ── Movable Vector ──────────────────────────────────────────────────────────
+
+function renderMovableVector() {
+	const plotId = 'movable-vector-plot';
+
+	function update() {
+		const sX = document.getElementById('slider-vector-x');
+		const sY = document.getElementById('slider-vector-y');
+		const plotDiv = document.getElementById(plotId);
+
+		if (!sX || !sY || !plotDiv) {
+			console.error('[Vector Plot] Update aborted: Elements missing from DOM');
+			return;
+		}
+
+		const startX = parseFloat(sX.value) || 0;
+		const startY = parseFloat(sY.value) || 0;
+		const vecX = 2;
+		const vecY = 3;
+
+		const data = [
+			{
+				x: [0, vecX], y: [0, vecY],
+				type: 'scatter', mode: 'lines',
+				line: { dash: 'dot', color: '#cbd5e0' },
+				name: 'Original',
+			},
+			{
+				x: [startX, startX + vecX], y: [startY, startY + vecY],
+				type: 'scatter', mode: 'lines+markers',
+				marker: { size: 8, color: '#ef4444' },
+				line: { width: 4, color: '#ef4444' },
+				name: 'Moved Vector',
+			},
+		];
+
+		const layout = {
+			paper_bgcolor: themeColor('#ffffff'),
+			plot_bgcolor: themeColor('#f8fafc'),
+			font: { color: themeColor('#1e293b') },
+			showlegend: false,
+			xaxis: { range: [0, 10], zeroline: true, dtick: 1, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			yaxis: { range: [0, 10], zeroline: true, dtick: 1, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			margin: { l: 40, r: 40, b: 40, t: 40 },
+			annotations: [
+				{
+					x: vecX, y: vecY, ax: 0, ay: 0,
+					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+					showarrow: true, arrowhead: 2, arrowcolor: '#cbd5e0',
+				},
+				{
+					x: startX + vecX, y: startY + vecY,
+					ax: startX, ay: startY,
+					xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+					showarrow: true, arrowhead: 2, arrowsize: 1,
+					arrowwidth: 3, arrowcolor: '#ef4444',
+				},
+			],
+		};
+
+		Plotly.react(plotDiv, data, layout);
+	}
+
+	document.addEventListener('input', function (event) {
+		if (
+			event.target.id === 'slider-vector-x' ||
+			event.target.id === 'slider-vector-y'
+		) {
+			update();
+		}
+	});
+
+	update();
+}
+
+// ── Interactive Vector Spaces ───────────────────────────────────────────────
+
+function initInteractiveVectorSpaces() {
+	const updateMath = (id, values) => {
+		const el = document.getElementById(id);
+		const inner = values.join(' \\\\ ');
+		el.innerHTML = `$$\\vec{v} = \\begin{pmatrix} ${inner} \\end{pmatrix}$$`;
+		render_temml();
+	};
+
+	// --- 1D Logic ---
+	const v1s = document.getElementById('v1-slider');
+	function draw1D() {
+		const x = parseFloat(v1s.value);
+		updateMath('v1-math', [x.toFixed(1)]);
+		Plotly.react(
+			'v1-plot',
+			[
+				{
+					x: [0, x], y: [0, 0],
+					mode: 'lines+markers',
+					line: { color: '#2563eb', width: 4 },
+					marker: { size: 10 },
+				},
+			],
+			{
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
+				margin: { t: 0, b: 20, l: 20, r: 20 },
+				height: 80,
+				xaxis: { range: [-6, 6], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+				yaxis: { visible: false },
+			}
+		);
+	}
+
+	// --- 2D Logic ---
+	const v2x = document.getElementById('v2-x'),
+		v2y = document.getElementById('v2-y');
+	function draw2D() {
+		const x = parseFloat(v2x.value),
+			y = parseFloat(v2y.value);
+		updateMath('v2-math', [x.toFixed(1), y.toFixed(1)]);
+		Plotly.react(
+			'v2-plot',
+			[
+				{
+					x: [0, x], y: [0, y],
+					mode: 'lines+markers',
+					line: { color: '#059669', width: 4 },
+					marker: { size: 12 },
+				},
+			],
+			{
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
+				margin: { t: 10, b: 30, l: 30, r: 10 },
+				xaxis: { range: [-6, 6], zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+				yaxis: { range: [-6, 6], zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			}
+		);
+	}
+
+	// --- 3D Logic (RGB vector) — LAZY ---
+	const v3r = document.getElementById('v3-r'),
+		v3g = document.getElementById('v3-g'),
+		v3b = document.getElementById('v3-b');
+
+	function draw3D() {
+		const r = v3r.value,
+			g = v3g.value,
+			b = v3b.value;
+		const color = `rgb(${r},${g},${b})`;
+
+		// Always update the math label (cheap)
+		updateMath('v3-math', [r, g, b]);
+
+		// Lazy-render the expensive 3-D scatter
+		lazyRender('v3-plot', () => {
+			const traceOutline = {
+				x: [0, r], y: [0, g], z: [0, b],
+				type: 'scatter3d', mode: 'lines',
+				line: { color: '#000000', width: 12 },
+				showlegend: false,
+			};
+			const traceColor = {
+				x: [0, r], y: [0, g], z: [0, b],
+				type: 'scatter3d', mode: 'lines+markers',
+				line: { color: color, width: 8 },
+				marker: { size: 4, color: '#000' },
+				showlegend: false,
+			};
+			Plotly.react('v3-plot', [traceOutline, traceColor], {
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
+				margin: { t: 0, b: 0, l: 0, r: 0 },
+				uirevision: 'true',
+				scene: {
+					xaxis: { title: { text: 'Red', font: { color: themeColor('#64748b') } }, range: [0, 255], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+					yaxis: { title: { text: 'Green', font: { color: themeColor('#64748b') } }, range: [0, 255], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+					zaxis: { title: { text: 'Blue', font: { color: themeColor('#64748b') } }, range: [0, 255], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+				},
+			});
+		});
+	}
+
+	// --- 4D Logic (bar chart — cheap, no lazy needed) ---
+	const v4Inputs = [1, 2, 3, 4].map((i) => document.getElementById(`v4-${i}`));
+	function draw4D() {
+		const vals = v4Inputs.map((el) => parseInt(el.value));
+		updateMath('v4-math', vals);
+		Plotly.react(
+			'v4-plot',
+			[
+				{
+					x: ['Sweet', 'Sour', 'Firm', 'Seeds'],
+					y: vals,
+					type: 'bar',
+					marker: { color: '#7c3aed' },
+				},
+			],
+			{
+				paper_bgcolor: themeColor('#ffffff'),
+				plot_bgcolor: themeColor('#f8fafc'),
+				font: { color: themeColor('#1e293b') },
+				margin: { t: 10, b: 40, l: 30, r: 10 },
+				xaxis: { tickfont: { color: themeColor('#64748b') } },
+				yaxis: { range: [0, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+			}
+		);
+	}
+
+	// Event Listeners
+	v1s.oninput = draw1D;
+	v2x.oninput = v2y.oninput = draw2D;
+	v3r.oninput = v3g.oninput = v3b.oninput = draw3D;
+	v4Inputs.forEach((el) => (el.oninput = draw4D));
+
+	// Observe the 3D plot for lazy rendering
+	observePlot('v3-plot');
+
+	// Initial Renders
+	draw1D();
+	draw2D();
+	draw3D(); // Will only actually render if v3-plot is in view; otherwise queued
+	draw4D();
+}
+
+// ── Hadamard experiment ─────────────────────────────────────────────────────
+
+function runHadamardExperiment() {
+	const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+	const a = [getVal('h-a1'), getVal('h-a2'), getVal('h-a3')];
+	const b = [getVal('h-b1'), getVal('h-b2'), getVal('h-b3')];
+	const res = a.map((val, i) => (val * b[i]).toFixed(2));
+
+	const display = document.getElementById('hadamard-display');
+	display.innerHTML = `$$ \\begin{pmatrix} ${a[0]} \\cdot ${b[0]} \\\\ ${a[1]} \\cdot ${b[1]} \\\\ ${a[2]} \\cdot ${b[2]} \\end{pmatrix} = \\begin{pmatrix} ${res[0]} \\\\ ${res[1]} \\\\ ${res[2]} \\end{pmatrix} $$`;
+
+	refreshMath();
+	render_temml();
+}
+
+// ── Module loader ───────────────────────────────────────────────────────────
+
+async function loadMathLabModule() {
+	updateLoadingStatus('Loading section about Math...');
+	initDataBasics();
+	return Promise.resolve();
+}
+
+</script>
 
 <div class="md">
 Modern AI is, at its core, applied linear algebra. Every image, every word, every token lives in a high-dimensional **vector space**. This chapter introduces the mathematical objects that make neural networks possible: vectors, matrices, tensors, and the operations that combine them.
@@ -139,6 +956,10 @@ Two important properties:
 
 * A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or at $(1, 1)$. This is what it means for vectors to be basis-free.
 * You can stretch a vector by a scalar: $2 \cdot (3, 4, 2) = (6, 8, 4)$. You can add vectors component-wise: $(1, 2) + (3, 4) = (4, 6)$.
+
+To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, one for Blue. This 3-tuple is a vector in $\mathbb{R}^3$:
+
+$$ \vec{v}_{\text{color}} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \qquad \text{Example: } \vec{v}_{\text{color}} = \begin{pmatrix} 255 \\ 0 \\ 0 \end{pmatrix} \text{ (Pure Red!)} $$
 
 
 </div>
@@ -413,9 +1234,9 @@ i.e. the gradient is just “predicted minus actual”, the reason softmax + cro
 </div>
 
 <script>
-// The plot initializers live in math.js (loaded above). There is no
-// math_ii.js, so none of these get registered in the module loader queue —
-// initialize the page's plots directly here instead.
+// The plot initializer functions live in the inline <script> at the top of
+// this file (previously math.js). They are not auto-loaded by the module
+// loader queue — initialize the page's plots directly here instead.
 (function () {
 	let initialized = false;
 

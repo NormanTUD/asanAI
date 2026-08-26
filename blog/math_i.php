@@ -69,6 +69,19 @@ We can now also introduce parameters, $a$ and $b$ (which will later be the so-ca
 </code></pre>
 
 <div class="md">
+You can experiment around with how the parameters by changing them with the sliders:
+</div>
+
+<div style="margin-bottom: 10px;">
+    $a$: <input type="range" id="slider-6-a" min="-5" max="5" step="0.1" value="1">
+    $b$: <input type="range" id="slider-6-b" min="-10" max="10" step="1" value="0">
+</div>
+
+<div id="formula-6" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x) = 1x + 0$$</div>
+
+<div id="plot-step-6" class="plot-container" style="height: 300px; margin-bottom: 40px;"></div>
+
+<div class="md">
 For example, the $ \text{add} $-function takes 2 inputs, and adds them to each other with the rule $ \text{Output} = \text{First input} + \text{second input} $. We may use shorter names like $x$ and $y$ instead of $\text{First input}$. In python, it looks like this:
 </div>
 
@@ -78,8 +91,48 @@ def add(x, y):
 
 print(add(10, 5)) # Output: 15</code></pre>
 
+<div id="plot-step-4" class="plot-container" style="height: 350px; margin-bottom: 40px;"></div>
+
 <div class="md">
-Of course, we can also parameterize this function: $f(x, y) = ax + by$.
+We can use this $\text{add}$ function in the code, similar to what we had before.
+</div>
+
+<pre><code class="language-python">result = add(1, 2) # Calls the 'add' function with x = 1 and y = 2,
+                   # which calculates 1+2 and returns 3, which is saved in the variable result
+print(result) # The result is then printed
+</code></pre>
+
+
+<div class="md">
+Of course, we can also parameterize this function: $f(x, y) = ax + by$. You can also play around with how this changes the results of this function in the next plot:
+</div>
+
+<div style="margin-bottom: 10px;">
+    $a$: <input type="range" id="slider-7-a" min="-2" max="2" step="0.1" value="0.5">
+    $b$: <input type="range" id="slider-7-b" min="-2" max="2" step="0.1" value="0.5">
+</div>
+
+<div id="formula-7" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 0.5x + 0.5y$$</div>
+
+<div id="plot-step-7" class="plot-container" style="height: 400px; margin-bottom: 40px;"></div>
+
+<div class="md">
+We can also use other functions, like $\sin$ (the sine) in our functions, and we can also parameterize them to get more complex patterns:
+</div>
+
+<div id="desc-5" class="md"></div>
+<div style="margin-bottom: 10px;">
+    Amplitude: <input type="range" id="slider-5-amp" min="0.5" max="5.0" step="0.1" value="1.0">
+    Frequency: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.5" value="0.5">
+</div>
+
+<div id="formula-5" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 1.0 \cdot (\sin(0.5x) + \sin(0.5y))$$</div>
+
+<div id="code-5-container"></div>
+
+<div id="plot-step-5" class="plot-container" style="height: 450px; margin-bottom: 40px;"></div>
+
+<div class="md">
 
 For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
 
@@ -89,7 +142,13 @@ There are certain sets that are useful to know, like $\mathbb{N}$, which is the 
 
 Functions define a rule so that, for each element of a set, if you apply the rules the function defines, you end up with an element in another (or even the same) set of elements.
 
-Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any positive integer (the natural numbers) and returns $\text{True}$ if it is the number is even, and else $\text{False}$. Here, the input set is $\mathbb{N}$, which is math-speak for “all the natural numbers” ($\left\{0, 1, 2, 3, 4, 5, 6, \dots\right\}$), and the output set the input set is mapped to is just $\left\{\text{True}, \text{False}\right\}$ $(\mathbb{B})$.
+Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any nonnegative integer $x \in \{0, 1, 2, 3, \ldots\}$ and returns $\text{True}$ if $x$ is even and $\text{False}$ otherwise. Here the input set is $\mathbb{N}$ (the natural numbers, including 0), and the output set is $\mathbb{B} = \{\text{True}, \text{False}\}$. Notice that $0$ is even, so $\text{is\_even}(0) = \text{True}$ — which is exactly what the definition gives us.
+
+<div class="optional md" data-headline="Note">
+
+Some books define the natural numbers as $\{1, 2, 3, \ldots\}$ (excluding $0$). Both conventions are common. Throughout this course we use the inclusive convention $\mathbb{N} = \{0, 1, 2, \ldots\}$, matching the convention most programming languages (and most AI libraries) use.
+
+</div>
 
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 </div>
@@ -374,7 +433,6 @@ While we often view infinity as an endless loop or an impossibly large number, i
 </div>
 
 <script>
-// Reuse the original math.js content if available
 if (typeof loadMathIModule === 'undefined') {
 	async function loadMathIModule() {
 		updateLoadingStatus("Loading section about Math I...");
@@ -382,18 +440,234 @@ if (typeof loadMathIModule === 'undefined') {
 	}
 }
 
-// Identity plot
-(function() {
-	const plotEl = document.getElementById('plot-step-1');
-	if (plotEl && typeof Plotly !== 'undefined') {
-		const xs = [], ys = [];
-		for (let x = -5; x <= 5; x += 0.1) { xs.push(x); ys.push(x); }
-		Plotly.newPlot('plot-step-1', [{ x: xs, y: ys, mode: 'lines', line: { color: '#3b82f6', width: 3 } }], {
-			paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-			margin: { t: 20, b: 40, l: 50, r: 20 }, xaxis: { title: 'x' }, yaxis: { title: 'y = x' }
-		}, { responsive: true });
+// ── Lazy-render infrastructure ──────────────────────────────────────────────
+const _visiblePlots = new Set();
+const _pendingRenders = {};
+const _plotVisibilityObserver = new IntersectionObserver(
+	(entries) => {
+		entries.forEach((entry) => {
+			const id = entry.target.id;
+			if (entry.isIntersecting) {
+				_visiblePlots.add(id);
+				if (_pendingRenders[id]) {
+					_pendingRenders[id]();
+				}
+			} else {
+				_visiblePlots.delete(id);
+			}
+		});
+	},
+	{ rootMargin: rootMargin, threshold: 0 }
+);
+function lazyRender(plotId, renderFn) {
+	_pendingRenders[plotId] = renderFn;
+	if (_visiblePlots.has(plotId)) {
+		renderFn();
 	}
-})();
+}
+function observePlot(plotId) {
+	const el = document.getElementById(plotId);
+	if (el) _plotVisibilityObserver.observe(el);
+}
+
+// ── ELI5 Math plots (plot-step-1/4/5/6/7) ─────────────────────────────────
+function renderELI5Math() {
+	const range = [];
+	for (let i = -10; i <= 10; i++) range.push(i);
+
+	const layoutBase = {
+		paper_bgcolor: themeColor('#ffffff'),
+		plot_bgcolor: themeColor('#f8fafc'),
+		font: { color: themeColor('#1e293b') },
+		margin: { t: 10, b: 30, l: 30, r: 10 },
+		xaxis: { range: [-10, 10], fixedrange: true, zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		yaxis: { range: [-10, 10], fixedrange: true, zeroline: true, gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+		showlegend: false,
+	};
+
+	function updatePlotLinear() {
+		const a = parseFloat(document.getElementById('slider-6-a').value);
+		const b = parseFloat(document.getElementById('slider-6-b').value);
+
+		document.getElementById('formula-6').innerHTML =
+			`$$f(x) = \\underbrace{${a}}_ax + \\underbrace{${b}}_b$$`;
+		render_temml();
+
+		Plotly.react(
+			'plot-step-6',
+			[
+				{
+					x: range,
+					y: range.map((x) => a * x + b),
+					mode: 'lines',
+					line: { color: '#3b82f6', width: 4 },
+				},
+			],
+			layoutBase
+		);
+	}
+
+	function updatePlotSurface() {
+		const a = parseFloat(document.getElementById('slider-7-a').value);
+		const b = parseFloat(document.getElementById('slider-7-b').value);
+
+		document.getElementById('formula-7').innerHTML =
+			`$$f(x, y) = \\underbrace{${a}}_ax + \\underbrace{${b}}_by$$`;
+		render_temml();
+
+		lazyRender('plot-step-7', () => {
+			const zData = range.map((x) => range.map((y) => a * x + b * y));
+			Plotly.react(
+				'plot-step-7',
+				[
+					{
+						z: zData,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Blues',
+						showscale: false,
+					},
+				],
+				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { range: [-20, 20], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.5, y: 1.5, z: 1 } },
+					},
+				}
+			);
+		});
+	}
+
+	function updatePlotWaves() {
+		const freq = parseFloat(document.getElementById('slider-5-freq').value);
+		const amp = parseFloat(document.getElementById('slider-5-amp').value);
+
+		document.getElementById('formula-5').innerHTML =
+			`$$f(x, y) = \\underbrace{${amp}}_\\text{Amplitude} \\cdot (\\sin(\\underbrace{${freq}}_\\text{Frequence}x) + \\sin(\\underbrace{${freq}}_\\text{Frequence}y))$$`;
+		render_temml();
+
+		lazyRender('plot-step-5', () => {
+			const zWaves = range.map((x) =>
+				range.map((y) => amp * (Math.sin(x * freq) + Math.sin(y * freq)))
+			);
+			Plotly.react(
+				'plot-step-5',
+				[
+					{
+						z: zWaves,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Viridis',
+						showscale: false,
+					},
+				],
+				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } },
+					},
+				}
+			);
+		});
+	}
+
+	function renderStep4() {
+		lazyRender('plot-step-4', () => {
+			const zData = range.map((x) => range.map((y) => x + y));
+			Plotly.newPlot(
+				'plot-step-4',
+				[
+					{
+						z: zData,
+						x: range,
+						y: range,
+						type: 'surface',
+						colorscale: 'Greys',
+						showscale: false,
+					},
+				],
+				{
+					paper_bgcolor: themeColor('#ffffff'),
+					plot_bgcolor: themeColor('#f8fafc'),
+					font: { color: themeColor('#1e293b') },
+					margin: { t: 0, b: 0, l: 0, r: 0 },
+					scene: {
+						xaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						yaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						zaxis: { gridcolor: themeColor('#f1f5f9'), zerolinecolor: themeColor('#cbd5e1'), tickfont: { color: themeColor('#64748b') } },
+						camera: { eye: { x: 1.5, y: 1.5, z: 1 } }
+					},
+				}
+			);
+		});
+	}
+
+	const oneshotJobs = {
+		'plot-step-1': () =>
+			Plotly.newPlot(
+				'plot-step-1',
+				[
+					{
+						x: range,
+						y: range,
+						mode: 'lines',
+						line: { color: themeColor('#333'), width: 3 },
+					},
+				],
+				layoutBase
+			),
+		'plot-step-6': updatePlotLinear,
+	};
+
+	const oneshotObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const id = entry.target.id;
+					if (oneshotJobs[id]) oneshotJobs[id]();
+					oneshotObserver.unobserve(entry.target);
+				}
+			});
+		},
+		{ rootMargin: rootMargin, threshold: 0 }
+	);
+
+	['plot-step-1', 'plot-step-6'].forEach((id) => {
+		const el = document.getElementById(id);
+		if (el) oneshotObserver.observe(el);
+	});
+
+	['plot-step-4', 'plot-step-5', 'plot-step-7'].forEach(observePlot);
+
+	renderStep4();
+	updatePlotSurface();
+	updatePlotWaves();
+
+	document.getElementById('slider-6-a').addEventListener('input', updatePlotLinear);
+	document.getElementById('slider-6-b').addEventListener('input', updatePlotLinear);
+	document.getElementById('slider-7-a').addEventListener('input', updatePlotSurface);
+	document.getElementById('slider-7-b').addEventListener('input', updatePlotSurface);
+	document.getElementById('slider-5-freq').addEventListener('input', updatePlotWaves);
+	document.getElementById('slider-5-amp').addEventListener('input', updatePlotWaves);
+}
+
+if (typeof Plotly !== 'undefined' && document.getElementById('plot-step-1')) {
+	renderELI5Math();
+}
 
 // Logarithm interactive plot
 (function() {
