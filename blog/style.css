@@ -10,6 +10,7 @@
 	font-weight: 200 900;
 	font-style: normal;
 	font-display: swap;
+	font-optical-sizing: auto;
 }
 @font-face {
 	font-family: 'Source Serif 4';
@@ -17,6 +18,7 @@
 	font-weight: 200 900;
 	font-style: italic;
 	font-display: swap;
+	font-optical-sizing: auto;
 }
 
 html {
@@ -24,6 +26,7 @@ html {
 	color: #1e293b;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	font-synthesis: none;
 	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
 	color-scheme: light;
 	--mn-bg: #ffffff;
@@ -2386,6 +2389,8 @@ p {
 	word-break: normal;        /* let hyphens: auto do its job */
 	font-feature-settings: "liga" 1, "dlig" 1; /* Aktiviert Standard- und diskretionäre Ligaturen */
 	hanging-punctuation: first last;
+	text-wrap: pretty;             /* weniger Hurenkinder/Schusterjungen */
+	font-variant-numeric: oldstyle-nums proportional-nums; /* Zahlen sitzen auf Grundlinie, kein monospace-Brett */
 }
 
 figcaption {
@@ -2405,6 +2410,7 @@ figcaption {
 	margin-top: var(--mn-space-l);
 	margin-bottom: var(--mn-space-xs);
 	line-height: 1.2;
+	text-wrap: balance; /* gleicht Zeilenlängen aus, kein hängendes Einzelwort */
 }
 
 /* Structural block rhythm for top-level prose blocks. Deliberately
@@ -2423,6 +2429,8 @@ figcaption {
 
 #contents a {
 	text-decoration-color: rgba(37, 99, 235, 0.35);
+	text-decoration-thickness: 0.06em;
+	text-underline-offset: 0.18em;
 }
 #contents a:hover {
 	text-decoration-color: currentColor; /* Full opacity on hover */
@@ -2444,6 +2452,7 @@ figcaption {
 pre, code, .status-console, .matrix-input {
 	tab-size: 4;
 	font-variant-numeric: tabular-nums slashed-zero;
+	font-feature-settings: "liga" 0, "dlig" 0, "calt" 0; /* sonst wird aus => ein ⇒, in Code unerwünscht */
 }
 
 pre {
@@ -6118,6 +6127,7 @@ blockquote > p:first-of-type::before {
 	font-weight: 400;
 	font-style: normal;
 	font-display: swap;
+	font-optical-sizing: auto;
 }
 .md > p.cl-dropcap::first-letter {
 	font-family: 'Floral Capitals', Georgia, 'Times New Roman', serif;
