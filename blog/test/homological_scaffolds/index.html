@@ -209,34 +209,25 @@ const state = {
 
 async function loadGEXF(url) {
   const res = await fetch(url);
-  const txt = await res.text();
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(txt, 'text/xml');
+  const data = await res.json();
 
   const nodes = [];
   const nodeMap = new Map();
-  xml.querySelectorAll('node').forEach(n => {
-    const id = n.getAttribute('id');
-    const label = n.getAttribute('label') || id;
-    let mod = 0;
-    n.querySelectorAll('attvalue').forEach(av => {
-      if (av.getAttribute('for') === '0') mod = parseInt(av.getAttribute('value'));
-    });
+  for (const n of data.nodes) {
     const idx = nodes.length;
-    const node = { id, label, mod, idx, x: 0, y: 0, vx: 0, vy: 0 };
+    const node = { id: n.id, label: n.label, mod: n.mod, idx, x: 0, y: 0, vx: 0, vy: 0 };
     nodes.push(node);
-    nodeMap.set(id, node);
-  });
+    nodeMap.set(n.id, node);
+  }
 
   const edges = [];
-  xml.querySelectorAll('edge').forEach(e => {
-    const s = e.getAttribute('source');
-    const t = e.getAttribute('target');
-    const w = parseFloat(e.getAttribute('weight') || '1');
-    if (nodeMap.has(s) && nodeMap.has(t)) {
-      edges.push({ s: nodeMap.get(s).idx, t: nodeMap.get(t).idx, w });
+  for (const e of data.edges) {
+    const s = nodeMap.get(e.s);
+    const t = nodeMap.get(e.t);
+    if (s && t) {
+      edges.push({ s: s.idx, t: t.idx, w: e.w });
     }
-  });
+  }
 
   // Normalize weights to [0,1]
   const wmax = Math.max(...edges.map(e => e.w));
@@ -987,14 +978,14 @@ async function init() {
 
   try {
     status.textContent = 'Loading placebo GEXF...';
-    state.datasets.placebo = await loadGEXF('rsif-2014-0873-File001.gexf');
+    state.datasets.placebo = await loadGEXF('rsif-2014-0873-File001.json');
     status.textContent = 'Computing placebo filtration (this may take a moment)...';
     await new Promise(r => setTimeout(r, 20));
     state.datasets.placebo.filtration = computeFiltration(state.datasets.placebo);
     layoutCircular(state.datasets.placebo.nodes);
 
     status.textContent = 'Loading psilocybin GEXF...';
-    state.datasets.psilocybin = await loadGEXF('rsif-2014-0873-File002.gexf');
+    state.datasets.psilocybin = await loadGEXF('rsif-2014-0873-File002.json');
     status.textContent = 'Computing psilocybin filtration...';
     await new Promise(r => setTimeout(r, 20));
     state.datasets.psilocybin.filtration = computeFiltration(state.datasets.psilocybin);
