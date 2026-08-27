@@ -487,6 +487,18 @@ Five things. Each is restated as a checklist item, the way you might want to rea
 5. **“Different” is not “unrelated”.** It is “related by a coherent transition”. Two vectors far apart in $\mathbb{R}^d$ are not disconnected; they are connected by a path, and that path passes through neighborhoods of intermediate vectors. The geometry of an embedding space is the geometry of all such paths, not just of the points.
 
 If those five points feel obvious, you are ready. If they don't, read this chapter once more, slowly, this time, before opening the next one.
+
+## 13. The most general definition of space
+
+Everything in this chapter has been, quietly, a definition. Not a definition of a particular space (Euclidean, Riemannian, topological, metric, Hilbert) but a definition of what it *takes* for something to deserve the name "space" at all. Read the chain one last time and notice what it does not require: no distance, no dimension, no coordinates, no container, no ambient background, no points that pre-exist their relations. What it *does* require is only three things: that there be distinctions, that those distinctions carry a notion of locality (a "near" without a number), and that the local pieces be coherent enough on their overlaps to be glued into something invariant. Anything satisfying these three conditions is, in the sense we have been building, a space. In one line:
+
+$$
+\boxed{
+\textbf{A space is a structure in which distinguishable local data cohere, on their overlaps, into an invariant global whole.}
+}
+$$
+
+This is more general than the everyday container-space of Newton, more general than the metric spaces of analysis, more general even than the Riemannian manifolds of Einstein, all of which are special cases where the local data happens to be a distance function and the coherence happens to be smooth. It is at least as general as a Grothendieck topos, "a space in which one can do mathematics". And it is exactly the sense in which an embedding space is a space: not a pre-existing $\mathbb{R}^d$ waiting to be populated, but a geometry that *emerges* from the coherent local behavior of tokens across contexts, an approximate sheaf whose global shape is the meaning it has learned to represent. When the next chapter says "space", this is the word it means. Everything narrower is a specialization; everything broader is a metaphor. Space, in its most general form, is simply the name we give to coherent difference that has learned how to hold together.
 </div>
 
 <div class="optional md" data-headline="A philosophical note: this is a structural hypothesis, not an ontology">
@@ -509,16 +521,4 @@ The 5th-century BCE philosopher \cite[Heraclitus]{heraclitus_unity} is reported 
 A little over two millennia later, \citeauthor{whitehead_process} (\citeyear{whitehead_process}) built an entire metaphysics on the idea that the world is made of *processes*, not *substances*, “becoming” rather than “being”. His word *concrescence* names exactly the operation we have been calling gluing: many prehensions (local graspings) come together into one actual occasion (a global entity) \cite{whitehead_process}. Whitehead's *Process and Reality* can be interpreted as a sheaf-theoretic picture of the world, decades before sheaves were formulated in their modern form.
 
 The history of ideas is not a ladder. It is a sheaf.
-
-## 13. The most general definition of space
-
-Everything in this chapter has been, quietly, a definition. Not a definition of a particular space (Euclidean, Riemannian, topological, metric, Hilbert) but a definition of what it *takes* for something to deserve the name "space" at all. Read the chain one last time and notice what it does not require: no distance, no dimension, no coordinates, no container, no ambient background, no points that pre-exist their relations. What it *does* require is only three things: that there be distinctions, that those distinctions carry a notion of locality (a "near" without a number), and that the local pieces be coherent enough on their overlaps to be glued into something invariant. Anything satisfying these three conditions is, in the sense we have been building, a space. In one line:
-
-$$
-\boxed{
-\textbf{A space is a structure in which distinguishable local data cohere, on their overlaps, into an invariant global whole.}
-}
-$$
-
-This is more general than the everyday container-space of Newton, more general than the metric spaces of analysis, more general even than the Riemannian manifolds of Einstein, all of which are special cases where the local data happens to be a distance function and the coherence happens to be smooth. It is at least as general as a Grothendieck topos, "a space in which one can do mathematics". And it is exactly the sense in which an embedding space is a space: not a pre-existing $\mathbb{R}^d$ waiting to be populated, but a geometry that *emerges* from the coherent local behavior of tokens across contexts, an approximate sheaf whose global shape is the meaning it has learned to represent. When the next chapter says "space", this is the word it means. Everything narrower is a specialization; everything broader is a metaphor. Space, in its most general form, is simply the name we give to coherent difference that has learned how to hold together.
 </div>
