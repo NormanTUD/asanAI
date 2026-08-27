@@ -71,8 +71,12 @@
 
     <label>Dataset</label>
     <div class="toggles">
-      <button id="btnPla" class="active">Placebo Scaffold</button>
-      <button id="btnPsi">Psilocybin Scaffold</button>
+      <button id="btnLoadPla">📥 Load Placebo</button>
+      <button id="btnLoadPsi">📥 Load Psilocybin</button>
+    </div>
+    <div class="toggles" style="margin-top:4px;">
+      <button id="btnPla" class="active" disabled>Placebo</button>
+      <button id="btnPsi" disabled>Psilocybin</button>
     </div>
 
     <label>Filtration threshold ω = <span class="val" id="thrVal">0.50</span></label>
@@ -208,8 +212,14 @@ const state = {
 };
 
 async function loadGEXF(url) {
+  const t0 = performance.now();
+  console.log(`[loadGEXF] START  url=${url}  t=${t0.toFixed(1)}ms`);
+  console.log(`[loadGEXF] → fetch(${url})`);
   const res = await fetch(url);
+  console.log(`[loadGEXF] ← fetch returned status=${res.status} type=${res.headers.get('content-type')} size=${res.headers.get('content-length')}B  t=${(performance.now()-t0).toFixed(1)}ms`);
+  console.log(`[loadGEXF] → res.json()`);
   const data = await res.json();
+  console.log(`[loadGEXF] ← json parsed: ${data.nodes.length} nodes, ${data.edges.length} edges  t=${(performance.now()-t0).toFixed(1)}ms`);
 
   const nodes = [];
   const nodeMap = new Map();
@@ -219,6 +229,7 @@ async function loadGEXF(url) {
     nodes.push(node);
     nodeMap.set(n.id, node);
   }
+  console.log(`[loadGEXF] nodeMap built: ${nodes.length} entries  t=${(performance.now()-t0).toFixed(1)}ms`);
 
   const edges = [];
   for (const e of data.edges) {
@@ -237,6 +248,7 @@ async function loadGEXF(url) {
   // Sort descending by weight — this IS the filtration order
   edges.sort((a, b) => b.wn - a.wn);
 
+  console.log(`[loadGEXF] DONE  nodes=${nodes.length} edges=${edges.length} w∈[${wmin.toFixed(3)},${wmax.toFixed(3)}]  total=${(performance.now()-t0).toFixed(1)}ms`);
   return { nodes, edges, wmin, wmax };
 }
 
@@ -245,8 +257,10 @@ async function loadGEXF(url) {
    (Union-Find for β0; cycle detection for approximate H1)
    ============================================================ */
 function computeFiltration(data) {
+  const t0 = performance.now();
   const { nodes, edges } = data;
   const n = nodes.length;
+  console.log(`[filtration] START  n=${n} edges=${edges.length}  t=${t0.toFixed(1)}ms`);
   const parent = Array.from({length: n}, (_, i) => i);
   const rank = new Array(n).fill(0);
   function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
@@ -347,6 +361,7 @@ function computeFiltration(data) {
         edgeCount: step+1,
         triCount: triangles
       });
+      console.log(`[filtration] step=${step}/${edges.length}  (${((step/edges.length)*100).toFixed(1)}%)  β0=${roots.size}  β1=${cyclesAlive.size}  triangles=${triangles}  t=${(performance.now()-t0).toFixed(0)}ms`);
     }
   });
 
@@ -355,7 +370,7 @@ function computeFiltration(data) {
   for(const [id, cyc] of cyclesAlive){
     allCycles.push({ id, birth: cyc.birth, death: 0 });
   }
-
+  console.log(`[filtration] DONE  cycles=${allCycles.length}  bettiSteps=${bettiSteps.length}  total=${(performance.now()-t0).toFixed(0)}ms`);
   return { bettiSteps, cycles: allCycles };
 }
 
@@ -971,32 +986,46 @@ function applyLayout() {
 }
 
 /* ============================================================
-   Initialization
+   Lazy loading — triggered by explicit button click
    ============================================================ */
-async function init() {
+const FILES = {
+  placebo: 'rsif-2014-0873-File001.json',
+  psilocybin: 'rsif-2014-0873-File002.json',
+};
+
+async function loadDataset(key) {
   const status = document.getElementById('status');
-
+  const btn = document.getElementById(key === 'placebo' ? 'btnLoadPla' : 'btnLoadPsi');
+  if (state.datasets[key]) {
+    console.log(`[init] ${key} already loaded, skipping`);
+    return;
+  }
+  btn.disabled = true;
+  const t0 = performance.now();
   try {
-    status.textContent = 'Loading placebo GEXF...';
-    state.datasets.placebo = await loadGEXF('rsif-2014-0873-File001.json');
-    status.textContent = 'Computing placebo filtration (this may take a moment)...';
-    await new Promise(r => setTimeout(r, 20));
-    state.datasets.placebo.filtration = computeFiltration(state.datasets.placebo);
-    layoutCircular(state.datasets.placebo.nodes);
-
-    status.textContent = 'Loading psilocybin GEXF...';
-    state.datasets.psilocybin = await loadGEXF('rsif-2014-0873-File002.json');
-    status.textContent = 'Computing psilocybin filtration...';
-    await new Promise(r => setTimeout(r, 20));
-    state.datasets.psilocybin.filtration = computeFiltration(state.datasets.psilocybin);
-    layoutCircular(state.datasets.psilocybin.nodes);
-
-    status.textContent = `Loaded. Placebo: ${state.datasets.placebo.nodes.length} nodes, ${state.datasets.placebo.edges.length} edges. Psilocybin: ${state.datasets.psilocybin.nodes.length} nodes, ${state.datasets.psilocybin.edges.length} edges.`;
-
-    redrawAll();
+    status.textContent = `[${key}] fetching ${FILES[key]}...`;
+    console.log(`[init] >>> loadDataset(${key}) START`);
+    const data = await loadGEXF(FILES[key]);
+    status.textContent = `[${key}] fetched (${(performance.now()-t0).toFixed(0)}ms). Computing filtration...`;
+    console.log(`[init] [${key}] computing filtration...`);
+    // Yield to UI so the status text actually paints before the heavy work
+    await new Promise(r => setTimeout(r, 50));
+    data.filtration = computeFiltration(data);
+    console.log(`[init] [${key}] applying layout`);
+    layoutCircular(data.nodes);
+    state.datasets[key] = data;
+    btn.textContent = '✓ ' + (key === 'placebo' ? 'Placebo' : 'Psilocybin') + ' loaded';
+    const elapsed = ((performance.now()-t0)/1000).toFixed(2);
+    status.textContent = `[${key}] loaded: ${data.nodes.length} nodes, ${data.edges.length} edges, ${data.filtration.cycles.length} cycles  (${elapsed}s)`;
+    console.log(`[init] <<< loadDataset(${key}) DONE  total=${elapsed}s`);
+    // Enable the corresponding view button
+    document.getElementById(key === 'placebo' ? 'btnPla' : 'btnPsi').disabled = false;
+    // Switch to the just-loaded dataset and redraw
+    if (state.current === key) redrawAll();
   } catch(err) {
-    status.textContent = 'ERROR: ' + err.message + ' — make sure you are serving via HTTP (e.g. `python -m http.server`) and the GEXF files are in the same folder.';
-    console.error(err);
+    status.textContent = `[${key}] ERROR: ${err.message}`;
+    console.error(`[init] loadDataset(${key}) failed:`, err);
+    btn.disabled = false;
   }
 }
 
@@ -1042,17 +1071,22 @@ document.getElementById('speed').addEventListener('input', e => {
 });
 
 document.getElementById('btnPla').addEventListener('click', () => {
+  if (!state.datasets.placebo) { console.warn('[ui] Placebo not loaded yet — click "📥 Load Placebo" first'); return; }
   state.current = 'placebo';
   document.getElementById('btnPla').classList.add('active');
   document.getElementById('btnPsi').classList.remove('active');
   redrawAll();
 });
 document.getElementById('btnPsi').addEventListener('click', () => {
+  if (!state.datasets.psilocybin) { console.warn('[ui] Psilocybin not loaded yet — click "📥 Load Psilocybin" first'); return; }
   state.current = 'psilocybin';
   document.getElementById('btnPsi').classList.add('active');
   document.getElementById('btnPla').classList.remove('active');
   redrawAll();
 });
+
+document.getElementById('btnLoadPla').addEventListener('click', () => loadDataset('placebo'));
+document.getElementById('btnLoadPsi').addEventListener('click', () => loadDataset('psilocybin'));
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   state.threshold = 0.5;
@@ -1090,9 +1124,10 @@ document.getElementById('animBtn').addEventListener('click', () => {
 });
 
 /* ============================================================
-   Kick off
+   Kick off — lazy; nothing loaded until the user clicks
    ============================================================ */
-init();
+console.log('[init] page ready — click "📥 Load Placebo" or "📥 Load Psilocybin" to begin');
+document.getElementById('status').textContent = 'Idle. Click a "Load" button to fetch a dataset.';
 </script>
 
 </body>
