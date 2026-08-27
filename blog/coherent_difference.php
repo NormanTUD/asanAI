@@ -356,7 +356,7 @@ Take any object in your perceptual field. Say, a train moving past you on a plat
 
 * a visual phenomenon, a shape of metal moving against a background,
 * an auditory phenomenon, a sound whose pitch drops as it passes (the Doppler shift),
-* a leibliches phenomenon, a pressure, a vibration, a slight tremor in your chest,
+* a *"leibliches"* phenomenon, a pressure, a vibration, a slight tremor in your chest,
 * a spatial phenomenon, something that has front, side, depth, and is moving from “there” to “less there”.
 
 These appearances are not identical. They are different modalities of one phenomenon, and they have different qualitative textures. The phenomenological tradition, especially in the form developed by \citeauthor{schmitz_neo_phenomenology} (\citeyear{schmitz_neo_phenomenology}) as *Neue Phänomenologie* (neo-phenomenology), insists that lived space is structured first by such qualities: *Nähe* (nearness), *Ferne* (farness), *Weite* (openness), *Enge* (narrowness), *Richtung* (direction), bodily *Ergriffenheit* (being-seized), long before it is structured by Cartesian coordinates \cite{schmitz_neo_phenomenology}. The geometric space of physics is a specialization of this richer, qualitative space, not its foundation.
