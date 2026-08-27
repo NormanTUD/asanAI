@@ -5783,6 +5783,71 @@ window.bibData = {
 		url: "https://www.sciencedirect.com/bookseries/studies-in-logic-and-the-foundations-of-mathematics/vol/98/suppl/C",
 		alternativetitle: "Studies in Logic and the Foundations of Mathematics, Vol. 98"
 	},
+	"johnstone_elephant": {
+		title: "Sketches of an Elephant: A Topos Theory Compendium",
+		author: "Peter T. Johnstone",
+		year: 2002,
+		publisher: "Oxford University Press",
+		url: "https://en.wikipedia.org/wiki/Topos",
+		alternativetitle: "The canonical modern multi-volume reference work on topos theory"
+	},
+	"maclanemoerdijk1992": {
+		title: "Sheaves in Geometry and Logic: A First Introduction to Topos Theory",
+		author: "Saunders Mac Lane, Ieke Moerdijk",
+		year: 1992,
+		publisher: "Springer-Verlag",
+		url: "https://en.wikipedia.org/wiki/Topos",
+		alternativetitle: "The standard first textbook bridging sheaf theory, category theory and logic"
+	},
+	"nlab_topos": {
+		title: "Topos",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/topos",
+		alternativetitle: "The nLab entry on topos (an encyclopedic survey of all the equivalent definitions and perspectives)"
+	},
+	"elementary_topos_wiki": {
+		title: "Elementary topos",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Elementary_topos"
+	},
+	"subobject_classifier_wiki": {
+		title: "Subobject classifier",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Subobject_classifier"
+	},
+	"diaconescu1975": {
+		title: "Axiom of choice and complementation",
+		author: "Radu Diaconescu",
+		year: 1975,
+		journal: "Proceedings of the American Mathematical Society",
+		volume: 51,
+		pages: "175–178",
+		url: "https://en.wikipedia.org/wiki/Axiom_of_choice",
+		alternativetitle: "Diaconescu's theorem: in any topos, the axiom of choice implies the law of excluded middle"
+	},
+	"internal_logic_wiki": {
+		title: "Internal logic",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/internal+logic",
+		alternativetitle: "The internal logic of a topos and the Mitchell-Bénabou language"
+	},
+	"geometric_morphism_wiki": {
+		title: "Geometric morphism",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Geometric_morphism"
+	},
+	"heyting_algebra_wiki": {
+		title: "Heyting algebra",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Heyting_algebra",
+		alternativetitle: "The internal truth-value algebra of a topos: intuitionistic generalization of a Boolean algebra"
+	},
 	"distributional_hypothesis": {
 		title: "Distributional semantics",
 		author: "Wikipedia contributors",
