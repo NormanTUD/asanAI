@@ -50,6 +50,11 @@
   .panel-title .badge { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #262a38; font-weight: normal; }
   .badge.pla { color: #66ccff; }
   .badge.psi { color: #ff6b6b; }
+
+  /* Coloured border on the top of each dataset column so it's
+     immediately clear which set of plots belongs to placebo vs. psi */
+  .col.col-pla { border-top: 2px solid #66ccff; padding-top: 6px; }
+  .col.col-psi { border-top: 2px solid #ff6b6b; padding-top: 6px; }
   canvas { background: #0a0b10; border-radius: 4px; display: block; width: 100%; height: 100%; }
   button {
     background: #262a38; color: #e8e8ee; border: 1px solid #3a3e50;
@@ -166,10 +171,10 @@
 <!-- MAIN 2-COLUMN VISUALISATIONS -->
 <div class="main">
   <!-- LEFT: PLACEBO -->
-  <div class="col">
+  <div class="col col-pla">
     <div class="panel">
       <div class="panel-title">
-        <span>① Network · Placebo scaffold</span>
+        <span>① Network scaffold <span class="badge pla">Placebo</span></span>
         <span class="stat" id="netInfoPla"></span>
       </div>
       <canvas id="netCanvasPla"></canvas>
@@ -177,14 +182,14 @@
     <div class="col-sub">
       <div class="panel">
         <div class="panel-title">
-          <span>② Persistence Diagram</span>
+          <span>② Persistence Diagram <span class="badge pla">Pla</span></span>
           <span class="stat" id="pdInfoPla"></span>
         </div>
         <canvas id="pdCanvasPla"></canvas>
       </div>
       <div class="panel">
         <div class="panel-title">
-          <span>③ Barcode H₁</span>
+          <span>③ Barcode H₁ <span class="badge pla">Pla</span></span>
           <span class="stat" id="bcInfoPla"></span>
         </div>
         <canvas id="bcCanvasPla"></canvas>
@@ -193,10 +198,10 @@
   </div>
 
   <!-- RIGHT: PSILOCYBIN -->
-  <div class="col">
+  <div class="col col-psi">
     <div class="panel">
       <div class="panel-title">
-        <span>① Network · Psilocybin scaffold</span>
+        <span>① Network scaffold <span class="badge psi">Psilocybin</span></span>
         <span class="stat" id="netInfoPsi"></span>
       </div>
       <canvas id="netCanvasPsi"></canvas>
@@ -204,14 +209,14 @@
     <div class="col-sub">
       <div class="panel">
         <div class="panel-title">
-          <span>② Persistence Diagram</span>
+          <span>② Persistence Diagram <span class="badge psi">Psi</span></span>
           <span class="stat" id="pdInfoPsi"></span>
         </div>
         <canvas id="pdCanvasPsi"></canvas>
       </div>
       <div class="panel">
         <div class="panel-title">
-          <span>③ Barcode H₁</span>
+          <span>③ Barcode H₁ <span class="badge psi">Psi</span></span>
           <span class="stat" id="bcInfoPsi"></span>
         </div>
         <canvas id="bcCanvasPsi"></canvas>
@@ -220,18 +225,24 @@
   </div>
 </div>
 
-<!-- BOTTOM: COMPARISON OVERLAYS -->
+<!-- BOTTOM: COMPARISON OVERLAYS (both datasets on each canvas) -->
 <div class="compare">
   <div class="panel">
-    <div class="panel-title"><span>④ Betti curves (both)</span></div>
+    <div class="panel-title">
+      <span>④ Betti curves <span class="badge pla">Pla</span><span class="badge psi">Psi</span></span>
+    </div>
     <canvas id="bettiCanvas"></canvas>
   </div>
   <div class="panel">
-    <div class="panel-title"><span>⑤ P(π) persistence density</span></div>
+    <div class="panel-title">
+      <span>⑤ P(π) persistence density <span class="badge pla">Pla</span><span class="badge psi">Psi</span></span>
+    </div>
     <canvas id="ppiCanvas"></canvas>
   </div>
   <div class="panel">
-    <div class="panel-title"><span>⑥ P(β) birth density</span></div>
+    <div class="panel-title">
+      <span>⑥ P(β) birth density <span class="badge pla">Pla</span><span class="badge psi">Psi</span></span>
+    </div>
     <canvas id="pbCanvas"></canvas>
   </div>
 </div>
