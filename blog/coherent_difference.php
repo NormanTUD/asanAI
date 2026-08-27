@@ -332,17 +332,232 @@ What we care about here is the higher generalization. In a 2-category, morphisms
 <div class="md">
 ## 7. Topoi: worlds where you can do mathematics
 
-Sheaves on a fixed space $X$ form a category $\mathbf{Sh}(X)$, and this category has an extraordinary property: it behaves, in many respects, like the category of ordinary sets. You can form products, coproducts, function spaces, you can do logic inside it, you can define a notion of “element of a sheaf” that is just as comfortable as the ordinary notion of “element of a set”. Categories that behave this way are called **toposes** (singular: **topos**).
+Sheaves on a fixed space $X$ form a category $\mathbf{Sh}(X)$, and this category has an extraordinary property: it behaves, in many respects, like the category of ordinary sets. You can form products, coproducts, function spaces, you can do logic inside it, you can define a notion of "element of a sheaf" that is just as comfortable as the ordinary notion of "element of a set". Categories that behave this way are called **toposes** (singular: **topos**).
 
-The concept was introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} in the early 1960s and was given its modern axiomatic form by William Lawvere and Myles Tierney in the late 1960s and early 1970s, with the central axiom (the “topos axiom”) being the existence of a *subobject classifier*, an object $\Omega$ that plays the role of “the set of truth values” inside the topos \cite{topos_wiki}. The defining textbook reference is \citeauthor{goldblatt1979topoi}'s \citetitle{goldblatt1979topoi}, still one of the clearest introductions; the canonical modern treatment is Peter Johnstone's three-volume *Sketches of an Elephant* \cite{topos_wiki}.
+The concept was introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} in the early 1960s and was given its modern axiomatic form by William Lawvere and Myles Tierney in the late 1960s and early 1970s, with the central axiom (the "topos axiom") being the existence of a *subobject classifier*, an object $\Omega$ that plays the role of "the set of truth values" inside the topos \cite{topos_wiki}. The defining textbook reference is \citeauthor{goldblatt1979topoi}'s \citetitle{goldblatt1979topoi}, still one of the clearest introductions; the canonical modern treatment is \citeauthor{johnstone_elephant}'s two-volume \citetitle{johnstone_elephant}; and the standard first bridge from sheaf theory to logic is \citeauthor{maclanemoerdijk1992}'s \citetitle{maclanemoerdijk1992} \cite{johnstone_elephant} \cite{maclanemoerdijk1992}. The nLab's encyclopedic entry on topoi \cite{nlab_topos} lists thirteen non-equivalent-sounding definitions, all known to be equivalent — "however you approach it, it is still the same animal".
 
-In the hands of \cite[the topos theorists]{topos_wiki}, a topos becomes more than a category. It is *a universe of mathematics*: a self-contained world with objects, morphisms, internal logic, and its own notion of truth. Different topoi correspond to different “logics”: in a sheaf topos the internal logic is classical (true or false), but in a more general topos it can be intuitionistic (you can have statements that are neither provably true nor provably false). This is why topos theory is the natural home of *constructive* mathematics, of synthetic differential geometry, and of the categorical logic that underlies some modern type theories \cite{topos_wiki}.
+In the hands of \cite[the topos theorists]{topos_wiki}, a topos becomes more than a category. It is *a universe of mathematics*: a self-contained world with objects, morphisms, internal logic, and its own notion of truth. Different topoi correspond to different "logics": in a sheaf topos over a classical space the internal logic is classical (true or false), but in a more general topos it can be intuitionistic (you can have statements that are neither provably true nor provably false). This is why topos theory is the natural home of *constructive* mathematics, of synthetic differential geometry, and of the categorical logic that underlies some modern type theories \cite{topos_wiki} \cite{internal_logic_wiki}.
 
 For our purposes, the picture to remember is this:
 
 $$
-\boxed{\text{A topos is a “space” in which you can do mathematics.}}
+\boxed{\text{A topos is a "space" in which you can do mathematics.}}
 $$
+
+The slogan is right, but it is also underselling the subject. A topos is not just one kind of space; it is *the most general kind of structure in which mathematics as we know it can be done*. It generalizes the category of sets; it absorbs sheaf theory, type theory, intuitionistic logic, and synthetic differential geometry into a single framework; and it gives a precise meaning to the idea that "the same mathematics can be done in many different worlds". The rest of this section is the formal unpacking of that slogan, the answer to a list of questions a topos raises, and a summary of what is and is not true in every topos.
+
+### 7.1. Two flavors of topos
+
+In the literature there are two non-equivalent but closely related notions. The first is the older, more geometric one; the second is the more abstract, more algebraic one \cite{elementary_topos_wiki} \cite{nlab_topos}.
+
+* **Grothendieck topos.** Defined, up to equivalence, as the category of sheaves on a *site* — a small category equipped with a notion of "covering families". Equivalently (by a theorem of Jean Giraud) a category $\mathcal{E}$ satisfying four explicit axioms: a small set of *generators*, all small colimits, sums that are *disjoint* (the fiber product of $X$ and $Y$ over their sum $X \sqcup Y$ is the initial object), and equivalence relations that are *effective* \cite{topos_wiki}. This is the topos most relevant to algebraic geometry.
+
+* **Elementary topos.** Defined by Lawvere and Tierney as a category $\mathcal{E}$ with the following four ingredients \cite{elementary_topos_wiki} \cite{goldblatt1979topoi}:
+  1. *Finite limits* exist (terminal object $1$, binary products $A \times B$, equalizers — equivalently, all finite diagrams have a limit).
+  2. *Exponentials* $B^A$ exist for any two objects $A, B$, i.e. a morphism $\mathrm{ev}: B^A \times A \to B$ universal with respect to morphisms $C \times A \to B$. Together with the previous condition, this makes $\mathcal{E}$ *Cartesian closed*: morphisms out of a product $C \times A$ correspond to morphisms $C \to B^A$.
+  3. A *subobject classifier* $\Omega$ exists — an object together with a monomorphism $\mathrm{true}: 1 \hookrightarrow \Omega$ such that every monomorphism $m: Y \hookrightarrow X$ factors uniquely as a pullback of $\mathrm{true}$ along some $\chi_m: X \to \Omega$ \cite{subobject_classifier_wiki}.
+  4. (Originally also finite colimits, but this was later observed to be redundant — it follows from the first three.)
+
+Every Grothendieck topos is an elementary topos, but not conversely: the *effective topos* (a topos of "computable mathematics") is elementary but not Grothendieck; the category $\mathbf{FinSet}$ of finite sets is elementary but not Grothendieck (it has no natural numbers object, see below) \cite{elementary_topos_wiki}. The two notions share most of their theory; they diverge on questions of *size* — which categories are "small enough" to be considered.
+
+A useful mnemonic:
+
+$$
+\boxed{
+\begin{aligned}
+\text{Grothendieck topos} &\;=\; \text{sheaves on a site} \\
+&\;=\; \text{elementary topos that is cocomplete} \\
+&\;\;\text{and has a small generating set.}
+\end{aligned}
+}
+$$
+
+### 7.2. The subobject classifier $\Omega$
+
+The subobject classifier is the single axiom that does the most work. To see why, start from the familiar case.
+
+In $\mathbf{Set}$, a subset $S \subseteq X$ is determined by its indicator function $\chi_S : X \to \{0, 1\}$, and conversely every function $X \to \{0, 1\}$ determines a subset. Subsets of $X$ are the same thing as functions from $X$ to a special two-element object. Generalize the special two-element object to a special object $\Omega$ in any category with a terminal object $1$, and you obtain a notion of "subset" in any category where such an object exists \cite{subobject_classifier_wiki}.
+
+Formally: a subobject classifier is a morphism
+
+$$
+\mathrm{true}: 1 \hookrightarrow \Omega
+$$
+
+such that for every monomorphism $m: Y \hookrightarrow X$ there is a unique $\chi_m: X \to \Omega$ making the following square a pullback:
+
+$$
+\begin{array}{ccc}
+Y & \to & 1 \\
+m \downarrow & & \downarrow \mathrm{true} \\
+X & \xrightarrow{\;\chi_m\;\;} & \Omega
+\end{array}
+$$
+
+The intuition: every "sub-object of $X$" is the pullback of the truth morphism $\mathrm{true}$ along some morphism to $\Omega$. The morphism $\chi_m : X \to \Omega$ is the *characteristic morphism* of the subobject. In $\mathbf{Set}$, $\Omega = \{0, 1\}$ and $\chi_S$ is the indicator function; in $\mathbf{Sh}(X)$ (sheaves on a topological space $X$), $\Omega(U)$ is the set of all open subsets of $U$, and $\mathrm{true}_U: \{*\} \to \Omega(U)$ sends the single point to the open subset $U$ itself \cite{subobject_classifier_wiki}.
+
+This single piece of structure does enormous work. From it you can recover:
+
+* a notion of *equality* (the diagonal $\Delta_X: X \to X \times X$ is a subobject, so it has a characteristic morphism);
+* a notion of *truth value* (a morphism $p: 1 \to \Omega$ is a "truth value");
+* a notion of *subobject* in general (every monomorphism corresponds to a morphism to $\Omega$);
+* the logical connectives, by pulling back along morphisms $\Omega \times \Omega \to \Omega$, $\Omega \to \Omega$, etc.
+
+In this precise sense, $\Omega$ is *the topos's own set of truth values*, and the existence of $\Omega$ is what makes the category "set-like".
+
+<div class="optional md" data-headline="The subobject classifier as the 'shape of all shapes'">
+A second, slightly more conceptual reading. The subobject functor $\mathrm{Sub}: \mathcal{C}^{\mathrm{op}} \to \mathbf{Set}$ that sends each object $X$ to the set of its subobjects (up to isomorphism) is representable, and the representing object is exactly $\Omega$. So $\Omega$ is the object whose generalized elements *are* all subobjects of all objects. It is, in a slogan, "the shape of all possible shapes of sub-things". In $\mathbf{Set}$ that shape is a two-point set; in $\mathbf{Sh}(X)$ it is the lattice of open subsets; in the effective topos it is the lattice of recursively enumerable subsets of $\mathbb{N}$. The subobject classifier is the topos's own classification of the kinds of distinction it can support — which is to say, the kinds of distinction its logic is willing to recognize \cite{subobject_classifier_wiki} \cite{internal_logic_wiki}.
+</div>
+
+### 7.3. What holds in every topos
+
+This is the magic of the axioms. Once you have finite limits, exponentials, and a subobject classifier, almost all of ordinary mathematics becomes available *internally*. Concretely, every topos has the following structure \cite{elementary_topos_wiki} \cite{maclanemoerdijk1992} \cite{johnstone_elephant} \cite{nlab_topos}:
+
+* **Finite limits and colimits.** Products, coproducts, equalizers, coequalizers, pullbacks, pushouts, terminal and initial objects — everything you need for finite diagrams. (Grothendieck topoi also have all *small* limits and colimits.)
+* **Exponentials.** For every pair of objects $A, B$ there is an exponential $B^A$ with evaluation $\mathrm{ev}: B^A \times A \to B$ and currying $\mathrm{curry}: \mathcal{E}(C \times A, B) \cong \mathcal{E}(C, B^A)$. So the topos is *Cartesian closed*, just like $\mathbf{Set}$.
+* **Power objects.** For every object $X$, the exponential $\Omega^X$ exists. This is the topos's own notion of the "power set of $X$", and its existence is what makes higher-order logic work inside.
+* **A natural numbers object** $\mathbb{N}$ — but only in a Grothendieck topos. (Elementary topoi may fail this; e.g. $\mathbf{FinSet}$.)
+* **Heyting algebra structure on $\Omega$.** Internally, the truth values form a Heyting algebra: a lattice with $\wedge, \vee, \Rightarrow, \bot, \top$ satisfying all the usual identities of intuitionistic logic \cite{heyting_algebra_wiki}. Only the *Boolean topoi* (those for which $\Omega$ is internally $\{0, 1\}$) recover classical logic.
+* **Locally Cartesian closed.** For every object $\Gamma$, the slice category $\mathcal{E} / \Gamma$ is itself Cartesian closed. This is what makes "substitution" work as an adjoint pair, and is what justifies the internal quantifiers $\forall, \exists$ as right and left adjoints to pullback along projections.
+* **An internal language** — the *Mitchell–Bénabou language* \cite{internal_logic_wiki}. A typed higher-order intuitionistic logic in which the types are objects of the topos, terms are generalized elements (i.e. morphisms from some context), and propositions are morphisms $1 \to \Omega$.
+* **Many ordinary theorems.** Every morphism factors uniquely (up to equivalence) as an epimorphism followed by a monomorphism; images and coimages exist and coincide; equalizers are pullbacks over the diagonal; the Yoneda lemma holds for any topos regarded as enriched over itself.
+
+The slogan is therefore:
+
+$$
+\boxed{\text{Any theorem provable in higher-order intuitionistic logic holds in every topos.}}
+$$
+
+This is not a metaphor. It is a theorem of categorical logic. If you can write down a proof in higher-order intuitionistic logic, that proof transfers verbatim into every topos, with the same types and the same steps. The Mitchell–Bénabou language is the formal witness to this fact \cite{internal_logic_wiki}.
+
+What you get for free, then, is: most of point-set topology, most of group theory, most of ring theory, most of metric-space theory, most of measure theory, all of constructive analysis — anything expressible without invoking $p \vee \neg p$ or the axiom of choice.
+
+### 7.4. What can fail
+
+The interesting question is the converse: what does *not* hold in every topos? Several pieces of ordinary mathematics can fail, and the failure is informative \cite{topos_wiki} \cite{johnstone_elephant} \cite{diaconescu1975}.
+
+* **The law of excluded middle.** In a sheaf topos $\mathbf{Sh}(X)$, the subobject classifier $\Omega$ assigns to each open $U$ the set of *open subsets of $U*$. A truth value is therefore a region of the space, not a Boolean bit. The statement $p \vee \neg p$ corresponds to "every open subset of $U$ is either covered or its complement (in $U$) is covered", which is false: there are plenty of open subsets that are neither wholly covered nor wholly uncovered. The internal logic is therefore *intuitionistic*, not classical. Only the *Boolean topoi* (those for which $\Omega$ is internally $\{0, 1\}$) recover classical logic.
+* **The axiom of choice.** There are many useful variants — dependent choice, countable choice, global choice — and each can fail or hold independently in a given topos. The most striking fact here is **Diaconescu's theorem** (\citeyear{diaconescu1975}): in any topos, the axiom of choice implies the law of excluded middle \cite{diaconescu1975}. So the two principles, classically equivalent inside $\mathbf{Set}$, become strictly separated as soon as we leave $\mathbf{Set}$ behind: you can have LEM without AC (a Boolean topos can have a non-AC version); but AC without LEM is impossible — AC forces LEM.
+* **Existence of points.** A *point* of a topos $\mathcal{E}$ is a geometric morphism $p: \mathbf{Set} \to \mathcal{E}$ (see §7.5 below). Many topoi have no points at all: there is a famous example due to \cite[Pierre Deligne]{topos_wiki} of a non-trivial topos with no points, arising from sheaves on a particular (large) site. In a point-less topos there is no way to "evaluate" an object at a classical location; everything must be done internally. This is not a pathological corner case: Deligne's example is a topos of sheaves on a perfectly respectable site, and the failure of points is a feature of the topos theory of cohesion.
+* **Unique factorization in Boolean form.** In a non-Boolean topos, the factorization of a morphism into epi followed by mono is unique, but the Boolean-algebraic identities that classify it in $\mathbf{Set}$ (image = coimage, etc.) may fail in subtle ways.
+
+The slogan:
+
+$$
+\boxed{
+\text{Boolean logic and the axiom of choice are features of } \mathbf{Set}\text{, not of topoi.}
+}
+$$
+
+In fact the slogan is even stronger: classical mathematics as we usually practice it is *one* topos ($\mathbf{Set}$) with extra axioms. Every other topos is a different universe, with a different logic, in which different things are true.
+
+### 7.5. Maps between topoi: geometric morphisms
+
+What is a "map" between two topoi? Not an ordinary functor: an ordinary functor $\mathcal{E} \to \mathcal{F}$ need not preserve the structure that makes them topoi. The right notion was introduced by Grothendieck in the 1960s and is the *geometric morphism*.
+
+A geometric morphism $f: \mathcal{F} \to \mathcal{E}$ is a pair of adjoint functors
+
+$$
+f^* : \mathcal{E} \to \mathcal{F}, \qquad f_* : \mathcal{F} \to \mathcal{E},
+$$
+
+with $f^*$ (the *inverse image*) left adjoint to $f_*$ (the *direct image*), and with $f^*$ required to preserve finite limits \cite{geometric_morphism_wiki}. The analogy is exact: for a continuous map $\varphi: X \to Y$ between topological spaces, pulling back a sheaf on $Y$ gives a sheaf on $X$, and that pullback is left adjoint to pushing forward. This is why geometric morphisms are the right notion. A geometric morphism is exactly the categorical shadow of a "geometric map of generalized spaces". The classification is exact: every continuous map $\varphi: X \to Y$ induces a geometric morphism $\mathbf{Sh}(X) \to \mathbf{Sh}(Y)$, and conversely "most" geometric morphisms between sheaf topoi arise this way.
+
+Two special cases matter:
+
+* **Points.** A point of a topos $\mathcal{E}$ is a geometric morphism $p: \mathbf{Set} \to \mathcal{E}$. Geometrically: a way of recovering a "classical location" inside the generalized space. Algebraically: a way of evaluating an internal object as an ordinary set.
+* **Essential geometric morphisms.** A geometric morphism $f$ is *essential* if $f^*$ has a further left adjoint $f_!$. These correspond to a particularly well-behaved kind of map of topoi, and they form the natural setting for notions like connectedness and local triviality in the topos-theoretic sense.
+
+The slogan:
+
+$$
+\boxed{\text{A geometric morphism is a "map of spaces" between two topos-universes.}}
+$$
+
+<div class="optional md" data-headline="Why not just functors?">
+A functor $\mathcal{E} \to \mathcal{F}$ between topoi, if it preserves the right structure, induces a geometric morphism — but only one direction of it. The other direction, the "extra" functor $f_*$, is what distinguishes a geometric morphism from a plain functor, and it is essential: $f_*$ remembers the "size" or "extension" of objects under the map, and without it you do not have a map of spaces in the geometric sense. This is why topos theory has its own 2-category: objects are topoi, morphisms are geometric morphisms, 2-morphisms are natural transformations between the direct-image functors. The 2-categorical point of view is not a luxury; it is the only setting in which "maps of spaces" behave the way they do in classical topology \cite{geometric_morphism_wiki}.
+</div>
+
+### 7.6. What is a "space" in a topos?
+
+We have used the word "space" four times in this section already, and each time we meant something slightly different. This is honest. The topos notion of "space" is genuinely multistable, and the multistability is a feature, not a bug \cite{nlab_topos}. At least five readings are alive in the literature:
+
+1. **The topos *itself* is the space.** This is the most common usage in algebraic geometry: $\mathbf{Sh}(X)$ is a "topos", and one writes $X \mapsto \mathbf{Sh}(X)$ as if $\mathbf{Sh}(X)$ *were* $X$ in some new sense. The slogan "a topos is a generalized space" lives here \cite{nlab_topos}.
+2. **The objects of the topos are the "spaces over the base".** In this reading, the topos $\mathbf{Sh}(X)$ is a *category* of spaces (sheaves), and morphisms between them are "maps of spaces". A sheaf $F$ on $X$ is itself a kind of space — the *étale space* of $F$ — sitting over $X$ via a local homeomorphism.
+3. **The morphisms of the topos are the maps of spaces.** This is the dual reading: the topos is the *theory* of "what counts as a map", and its objects are whatever the maps are between.
+4. **The subobject classifier $\Omega$ is the topos's "space of truths".** This is the reading that matters for logic: a statement $P$ in the internal language is a subobject, and the corresponding morphism $1 \to \Omega$ is a point of the topos's own truth-space.
+5. **The topos is a *world*, not a space at all.** This is the reading preferred by logicians: a topos is a universe in which one does mathematics, and the question "what is its topology" is the question "what mathematics can be done here, and how do statements glue?".
+
+These readings are not mutually exclusive. They are five different things one can mean when one says the word "space" in a topos-theoretic context, and the same word doing five jobs at once is, in fact, the kind of structural multiplicity this chapter has been about from the start.
+
+### 7.7. What is "truth" in a topos?
+
+Truth in a topos is local, contextual, and non-Boolean \cite{internal_logic_wiki} \cite{heyting_algebra_wiki}.
+
+* **Truth values are objects.** A "truth value" in a topos $\mathcal{E}$ is not a bit; it is a *morphism $p: 1 \to \Omega$* into the subobject classifier. When $\Omega = \{0, 1\}$ there are exactly two of them; when $\Omega$ is larger there are more.
+* **In $\mathbf{Sh}(X)$, truth values are open sets.** A statement $P$ "is true on $U$" if $U \subseteq \{x : P(x)\}$. So a single statement can be true on one open region and false on another, and "neither" is a perfectly well-defined intermediate truth value.
+* **In the effective topos, truth values are computable propositions.** A truth value is a "truth tree" — a possibly infinite computation that can produce 0 (false), 1 (true), or diverge (unknown).
+* **In a presheaf topos $[\mathcal{C}^{\mathrm{op}}, \mathbf{Set}]$, truth values are sieves.** A truth value on an object $c \in \mathcal{C}$ is a collection of morphisms into $c$ closed under precomposition — i.e. a "way of covering $c$".
+* **$\Omega$ is a Heyting algebra internally.** The connectives $\wedge, \vee, \Rightarrow, \bot, \top$ are all given by morphisms of $\Omega$, and they satisfy the axioms of a Heyting algebra. They become the connectives of *intuitionistic* logic, not classical logic. The law $p \vee \neg p = \top$ holds in a topos exactly when the topos is Boolean.
+
+The slogan is therefore:
+
+$$
+\boxed{
+\text{Truth in a topos is not a bit. It is a region, a computation, a sieve — the shape of "where" a statement holds.}
+}
+$$
+
+This is the radical move that the sheaf / topos picture makes. Once truth becomes a region, the question "is $P$ true?" stops having a yes/no answer in general, and starts having the answer "yes on $U$, no on $V$, indeterminate on the rest". The classical dichotomy is recovered as the special case where the topos is Boolean and every region is either everything or nothing.
+
+### 7.8. What "remains true in all topoi"?
+
+A direct summary of what we have just learned, in the spirit of the question that motivates this section \cite{nlab_topos} \cite{maclanemoerdijk1992} \cite{johnstone_elephant} \cite{internal_logic_wiki}.
+
+Things that **hold in every (elementary) topos**:
+
+* **Finite limits and colimits.** Products, coproducts, equalizers, pullbacks, pushouts, terminal and initial objects. Yes, in every topos.
+* **Exponentials and Cartesian closure.** $B^A$ exists; currying works; evaluation works. Yes, in every topos.
+* **Power objects and higher-order structure.** $\Omega^X$ exists for every object $X$. Yes, in every topos.
+* **Subobject classifier and internal logic.** $\Omega$ exists; the Heyting algebra structure on $\Omega$ exists; $\wedge, \vee, \Rightarrow, \bot, \top, \forall, \exists, =$ all make sense internally. Yes, in every topos.
+* **The internal language (Mitchell–Bénabou).** Anything provable in higher-order intuitionistic logic holds inside every topos. Yes.
+* **Locally Cartesian closed.** The slice $\mathcal{E} / \Gamma$ is itself a topos, for every object $\Gamma$. Yes, in every topos.
+* **Stability of epis under pullback.** The (epi, mono) factorization is a stable factorization system. Yes, in every topos.
+* **Extensivity.** Coproducts are disjoint, and disjointness is part of the topos's structure. Yes, in every topos.
+* **Adhesiveness.** A topos is an adhesive category, which is what makes pushout–pullback arguments work as well as they do. Yes, in every topos.
+* **Barr's theorem.** Every topos is a quotient (in the 2-categorical sense) of a presheaf topos. Yes, every topos is "Morita-equivalent" to a presheaf topos, so the easy theory of $[\mathcal{C}^{\mathrm{op}}, \mathbf{Set}]$ is dense.
+
+Things that **hold in every Grothendieck topos** (but not necessarily in every elementary topos):
+
+* **Small colimits.** All colimits of small diagrams exist.
+* **A natural numbers object.** Every Grothendieck topos has *some* $\mathbb{N}$. In an arbitrary elementary topos, $\mathbb{N}$ may fail to exist (e.g. $\mathbf{FinSet}$).
+* **W-types and the apparatus of inductive definitions.** A consequence of having a NNO and being a Grothendieck topos.
+* **A presentation as sheaves on a site.** This is by definition.
+
+Things that **do not hold in every topos**, and which therefore require a choice of topos (or extra axioms) to be true:
+
+* **The law of excluded middle** $P \vee \neg P$. Fails in every non-Boolean topos (e.g. $\mathbf{Sh}(\mathbb{R})$).
+* **The axiom of choice.** Fails in many topoi. By **Diaconescu's theorem** \cite{diaconescu1975}, AC implies LEM, so AC + non-Boolean is impossible.
+* **Existence of "points".** Fails in Deligne's point-free topos.
+* **Standard arithmetic.** Every Grothendieck topos has *some* natural numbers object, but it is not always the "standard" one of $\mathbf{Set}$. (For instance, the natural numbers object in the effective topos is the set of "computable natural numbers", and the internal arithmetic is constructive, not classical.)
+* **The axiom of replacement, the axiom of regularity, and other "size" axioms of ZFC.** These are properties of $\mathbf{Set}$ as a model of ZFC, not of topoi in general.
+
+### 7.9. Open questions a topos leaves behind
+
+It is worth saying the things we do *not* know, or that remain genuinely puzzling. None of the following is a claim of this textbook; they are questions that the topos picture makes it natural to ask, and that the topos picture does not, by itself, answer \cite{nlab_topos} \cite{johnstone_elephant} \cite{internal_logic_wiki}.
+
+1. **Is a topos a space?** Section 7.6 listed five different readings. Which one is "the right" reading? Or is the topos picture deliberately polymorphic on this point, the way a category is polymorphically an algebraic structure, a database, a type system, and a logic depending on what you do with it?
+2. **Is a topos a logic?** Or is the logic only a *shadow* the topos casts? A topos is, strictly speaking, a category with certain structure; the logic is the interpretation we get when we read that structure syntactically. How much of mathematics is "really" categorical, and how much is "really" logical?
+3. **Is the classical / Boolean topos the "true" one?** Working mathematicians default to $\mathbf{Set}$. Constructivists insist on topoi in which LEM fails. Who is right? Or is the question malformed?
+4. **What is the analogue of "topology" for a topos?** A topological space has open sets, a basis, a separation axiom, a notion of compactness. A topos has $\Omega$, a natural numbers object, a notion of "Boolean", and several notions of "compactness" — there are at least three: *coherent*, *quasi-compact*, and *compact* — that do not coincide in general. How much of ordinary topology survives the generalization, and what new phenomena appear?
+5. **Does a topos have "size"?** A Grothendieck topos has a small set of generators and all small colimits; an elementary topos has neither constraint. The notion of "size" inside a topos is given by the *universe* objects (Grothendieck universes, or type-theoretic universes $\mathcal{U}_i$); these exist in most topoi but not all. What does "small" or "large" mean when the meta-theory is itself a topos?
+6. **What is the analogue of "continuity"?** A continuous map between spaces preserves open sets. A geometric morphism between topoi preserves finite limits under $f^*$. The two notions agree on the sheaf topoi. Is the topos one the more general, or is there a still more general notion waiting to be found — perhaps some cohesion or differentiability structure on a higher topos?
+7. **Can two different topoi be "the same"?** Yes: many non-equivalent sites give equivalent topoi. This is the *invariance of the topos*: the topos remembers the geometric content but forgets the particular presentation. Is the equivalence class the "real" object, or is each individual topos a real object, and the equivalences just accidental? Olivia Caramello's "topos-as-bridge" program \cite{topos_wiki} argues, persuasively, that the equivalence classes are the real objects and that topoi are best thought of as *bridges* between different mathematical theories.
+8. **Is there a "fundamental theorem of toposes"?** Not in the sense of Galois theory. But Barr's theorem says every topos is a quotient of a presheaf topos, and Diaconescu's theorem gives the AC $\Rightarrow$ LEM direction; together with Giraud's theorem classifying Grothendieck topoi by their colimit structure, these are the closest things to a "fundamental theorem" the subject has. Whether a deeper unifying theorem is waiting to be found is open.
+9. **Is "truth" in a topos always intuitionistic?** No: the topos is *Boolean* exactly when its internal logic is classical. But the move from "I work in $\mathbf{Set}$" to "I work in *any* topos" is the move from "I assume classical logic" to "I do not assume classical logic". Which is more honest? Constructivists have an answer; classical mathematicians have a different one. The topos itself refuses to adjudicate.
+10. **What is the role of the points?** Deligne's point-less topos is the canonical reminder that not every topos can be recovered from its classical points. A point-free topos forces the working mathematician to give up the intuition of "evaluating at a location" and replace it with the purely internal notion of a generalized element. How much of classical geometry survives the loss of points?
+
+None of these questions has a settled answer. The honest report is: topos theory is the most general context in which we know how to do mathematics, and the moment you sit inside it, the question of *what mathematics is* — what is a space, what is a truth, what is a proof, what is a computation — stops being background and becomes the subject.
 
 Concretely, an embedding space is *almost* a topos. It carries data (the vectors), it has morphisms (the linear maps between layers), it has internal logic (the gating decisions of attention). It is not a topos in the strict technical sense, but it has the same flavor: a small structured world in which local rules apply and in which a global object falls out of them.
 </div>
