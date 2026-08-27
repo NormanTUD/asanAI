@@ -11,36 +11,43 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 12px;
     height: 100vh; display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  h1 { font-size: 16px; margin: 0 0 4px 0; color: #ffcc66; }
-  .subtitle { font-size: 11px; color: #888; margin-bottom: 6px; }
+  h1 {
+    font-size: 22px; font-weight: 600; margin: 0 0 2px 0; color: #ffcc66;
+    letter-spacing: 0.3px;
+  }
+  .subtitle { font-size: 12px; color: #888; margin-bottom: 8px; }
+  .subtitle b { color: #c8c8d0; }
 
   /* Compact horizontal control bar */
   .controls {
-    display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+    display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center;
     background: #171923; border: 1px solid #2a2d3a; border-radius: 6px;
-    padding: 6px 10px; margin-bottom: 6px; flex: 0 0 auto;
+    padding: 5px 10px; margin-bottom: 6px; flex: 0 0 auto;
+    font-size: 12px;
   }
-  .controls label { display: inline; font-size: 11px; color: #aab; margin: 0; }
-  .controls .group { display: flex; align-items: center; gap: 4px; }
-  .controls .group-sep { width: 1px; height: 18px; background: #2a2d3a; }
+  .controls label { display: inline; font-size: 12px; color: #c0c0d0; margin: 0; }
+  .controls .group { display: flex; align-items: center; gap: 5px; }
+  .controls .group-sep { width: 1px; height: 20px; background: #2a2d3a; }
   .controls input[type=range] { width: 90px; vertical-align: middle; }
-  .controls select { font-size: 11px; padding: 2px 4px; }
-  .controls button { font-size: 11px; padding: 3px 8px; }
-  .val { color: #ffcc66; font-family: monospace; font-weight: bold; }
-  .stat { font-family: monospace; font-size: 10px; color: #99ccff; }
+  .controls select { font-size: 12px; padding: 2px 6px; }
+  .controls button { font-size: 12px; padding: 3px 10px; }
+  .val { color: #ffcc66; font-family: monospace; font-weight: bold; font-size: 13px; }
+  .stat { font-family: monospace; font-size: 11px; color: #99ccff; }
 
   .panel {
     background: #171923; border: 1px solid #2a2d3a;
-    border-radius: 6px; padding: 6px;
+    border-radius: 6px; padding: 8px;
     display: flex; flex-direction: column; min-height: 0;
   }
   .panel-title {
-    font-size: 11px; color: #99ccff;
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 4px; flex: 0 0 auto;
+    font-size: 13px; font-weight: 600; color: #99ccff;
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 6px; flex: 0 0 auto;
+    letter-spacing: 0.2px;
   }
-  .panel-title .badge { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #262a38; }
+  .panel-title .badge { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #262a38; font-weight: normal; }
   .badge.pla { color: #66ccff; }
   .badge.psi { color: #ff6b6b; }
   canvas { background: #0a0b10; border-radius: 4px; display: block; width: 100%; height: 100%; }
@@ -50,29 +57,37 @@
   }
   button:hover { background: #333849; }
 
-  /* Main layout: 2 columns, each containing a network + (PD | BC) row */
+  /* ============================================================
+     Layout — explicit proportions so the comparison row never
+     hogs the screen:
+       Networks      :  flex 2 2 0   (big, primary visualisation)
+       PD + Barcode  :  flex 2 2 0   (big)
+       Compare (3×)  :  flex 0 0 150px  (small, summary)
+       Status        :  flex 0 0 auto
+     ============================================================ */
   .main {
-    flex: 1 1 auto; min-height: 0;
+    flex: 2 2 0; min-height: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1.4fr 1fr;
+    grid-template-rows: 1.6fr 1fr;
     gap: 6px;
   }
   .col { display: grid; grid-template-rows: subgrid; grid-row: span 2; gap: 6px; min-height: 0; }
   .col-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-height: 0; }
 
-  /* Bottom comparison strip */
+  /* Compact comparison strip */
   .compare {
-    flex: 0 0 200px;
+    flex: 0 0 150px;
     display: grid; grid-template-columns: 1fr 1fr 1fr;
     gap: 6px; margin-top: 6px;
+    min-height: 0;
   }
 
   /* Status strip */
   .status-strip {
     flex: 0 0 auto; margin-top: 6px;
     background: #171923; border: 1px solid #2a2d3a; border-radius: 6px;
-    padding: 5px 10px; font-size: 11px; color: #aab;
+    padding: 6px 12px; font-size: 12px; color: #c0c0d0;
     display: flex; gap: 14px; align-items: center; justify-content: space-between;
   }
   progress { appearance: none; -webkit-appearance: none; border: 1px solid #3a3e50;
