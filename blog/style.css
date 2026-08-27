@@ -2427,6 +2427,13 @@ figcaption {
 	margin-bottom: var(--mn-space-m);
 }
 
+/* Center images inside figures (parity with the mobile rule in mobile.css). */
+.md figure img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 #contents a {
 	text-decoration-color: rgba(37, 99, 235, 0.35);
 	text-decoration-thickness: 0.06em;
