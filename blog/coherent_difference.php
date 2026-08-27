@@ -500,13 +500,7 @@ Truth in a topos is local, contextual, and non-Boolean \cite{internal_logic_wiki
 * **In a presheaf topos $[\mathcal{C}^{\mathrm{op}}, \mathbf{Set}]$, truth values are sieves.** A truth value on an object $c \in \mathcal{C}$ is a collection of morphisms into $c$ closed under precomposition — i.e. a "way of covering $c$".
 * **$\Omega$ is a Heyting algebra internally.** The connectives $\wedge, \vee, \Rightarrow, \bot, \top$ are all given by morphisms of $\Omega$, and they satisfy the axioms of a Heyting algebra. They become the connectives of *intuitionistic* logic, not classical logic. The law $p \vee \neg p = \top$ holds in a topos exactly when the topos is Boolean.
 
-The slogan is therefore:
-
-$$
-\boxed{
-\text{Truth in a topos is not a bit. It is a region, a computation, a sieve — the shape of "where" a statement holds.}
-}
-$$
+The slogan is therefore: **Truth in a topos is not a bit. It is a region, a computation, a sieve — the shape of "where" a statement holds**.
 
 This is the radical move that the sheaf / topos picture makes. Once truth becomes a region, the question "is $P$ true?" stops having a yes/no answer in general, and starts having the answer "yes on $U$, no on $V$, indeterminate on the rest". The classical dichotomy is recovered as the special case where the topos is Boolean and every region is either everything or nothing.
 
