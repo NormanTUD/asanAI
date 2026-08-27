@@ -682,13 +682,16 @@ function drawPD(key) {
   const pad = 24 * (window.devicePixelRatio || 1);
   const plotW = W - pad*2, plotH = H - pad*2;
 
+  // Axes: birth (x) and death (y) both go 0→1 left-to-right / bottom-to-top.
+  // Diagonal runs from bottom-left to top-right.
+  // Persistent points (birth ≫ death) sit in the upper-right area.
   const isLog = state.pdScale === 'log';
   function xmap(b) {
     if (isLog) {
       const v = Math.log10(Math.max(b, 1e-4));
-      return pad + (1 - (v - (-4)) / 4) * plotW;
+      return pad + ((v - (-4)) / 4) * plotW;
     }
-    return pad + (1 - b) * plotW;
+    return pad + b * plotW;
   }
   function ymap(d) {
     if (isLog) {
@@ -702,7 +705,7 @@ function drawPD(key) {
   const bins = 30;
   const density = Array.from({length: bins}, () => new Array(bins).fill(0));
   for (const c of cycles) {
-    const bx = Math.floor((1 - c.birth) * bins);
+    const bx = Math.floor(c.birth * bins);
     const by = Math.floor((1 - c.death) * bins);
     if (bx >= 0 && bx < bins && by >= 0 && by < bins) density[bx][by]++;
   }
@@ -722,12 +725,12 @@ function drawPD(key) {
     }
   }
 
-  // diagonal
+  // diagonal — top-left (birth=0,death=0) to bottom-right (birth=1,death=1)
   ctx.strokeStyle = '#666';
   ctx.setLineDash([3, 3]);
   ctx.beginPath();
-  ctx.moveTo(xmap(1), ymap(1));
-  ctx.lineTo(xmap(0), ymap(0));
+  ctx.moveTo(xmap(0), ymap(0));
+  ctx.lineTo(xmap(1), ymap(1));
   ctx.stroke();
   ctx.setLineDash([]);
 
@@ -780,7 +783,7 @@ function drawBarcode(key) {
   const plotW = W - pad*2, plotH = H - pad*2;
   const barH = plotH / Math.max(N, 1);
 
-  function xmap(v) { return pad + (1 - v) * plotW; }
+  function xmap(v) { return pad + v * plotW; }
 
   for (let i = 0; i < N; i++) {
     const c = cycles[i];
@@ -789,8 +792,8 @@ function drawBarcode(key) {
     ctx.strokeStyle = `rgb(${100 + 155*t | 0},${180 - 100*t | 0},${255 - 100*t | 0})`;
     ctx.lineWidth = Math.max(1, barH * 0.7);
     ctx.beginPath();
-    ctx.moveTo(xmap(c.birth), pad + i*barH + barH/2);
-    ctx.lineTo(xmap(c.death), pad + i*barH + barH/2);
+    ctx.moveTo(xmap(c.death), pad + i*barH + barH/2);
+    ctx.lineTo(xmap(c.birth), pad + i*barH + barH/2);
     ctx.stroke();
   }
 
@@ -824,7 +827,7 @@ function drawBetti() {
       if (s.b1 > maxB) maxB = s.b1;
     }
   }
-  function xmap(w) { return pad + (1 - w) * plotW; }
+  function xmap(w) { return pad + w * plotW; }
   function ymap(v) { return pad + plotH - (v / maxB) * plotH; }
 
   const colors = { placebo: '#66ccff', psilocybin: '#ff6b6b' };
