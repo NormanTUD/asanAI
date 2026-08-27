@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Psilocybin vs Placebo — Persistent Homology Explorer</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 12px;
+    background: #0e0f14; color: #e8e8ee;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+  }
+  h1 { font-size: 18px; margin: 0 0 8px 0; color: #ffcc66; }
+  h2 { font-size: 13px; margin: 0 0 4px 0; color: #99ccff; text-transform: uppercase; letter-spacing: 1px; }
+  .top {
+    display: grid; grid-template-columns: 320px 1fr; gap: 12px;
+  }
+  .panel {
+    background: #171923; border: 1px solid #2a2d3a;
+    border-radius: 6px; padding: 10px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-top: 10px;
+  }
+  .grid3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px; margin-top: 10px;
+  }
+  canvas { background: #0a0b10; border-radius: 4px; display: block; width: 100%; }
+  label { display: block; margin: 6px 0 2px; font-size: 12px; color: #aab; }
+  input[type=range] { width: 100%; }
+  select, button {
+    background: #262a38; color: #e8e8ee; border: 1px solid #3a3e50;
+    border-radius: 4px; padding: 4px 8px; font-size: 12px;
+    cursor: pointer;
+  }
+  button:hover { background: #333849; }
+  .row { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+  .row > * { flex: 1; }
+  .val { color: #ffcc66; font-family: monospace; font-weight: bold; }
+  .stat { font-family: monospace; font-size: 11px; color: #99ccff; }
+  .legend { display: flex; gap: 12px; font-size: 11px; margin-top: 4px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
+  .toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+  .toggles button.active { background: #4a5480; border-color: #6a75a8; }
+  #status { font-size: 11px; color: #888; margin-top: 4px; }
+  .plot-title {
+    font-size: 12px; color: #99ccff;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .mini { font-size: 10px; padding: 2px 6px; }
+</style>
+</head>
+<body>
+
+<h1>🍄 Persistent Homology of Brain Networks — Interactive Explorer</h1>
+<div style="font-size:11px; color:#888; margin-bottom:8px;">
+  Real data from Petri et al. (2014) — Psilocybin vs Placebo homological scaffolds.
+  Play with the filtration threshold to see cliques form, cycles are born and die, and barcodes emerge.
+</div>
+
+<div class="top">
+  <!-- CONTROL PANEL -->
+  <div class="panel">
+    <h2>Controls</h2>
+
+    <label>Dataset</label>
+    <div class="toggles">
+      <button id="btnPla" class="active">Placebo Scaffold</button>
+      <button id="btnPsi">Psilocybin Scaffold</button>
+    </div>
+
+    <label>Filtration threshold ω = <span class="val" id="thrVal">0.50</span></label>
+    <input type="range" id="thr" min="0" max="1000" value="500">
+    <div class="stat" id="filtStat">edges in G_ω: 0 / 0</div>
+
+    <label>Layout</label>
+    <select id="layout">
+      <option value="circle">Circular (by community)</option>
+      <option value="force">Force-directed (spring)</option>
+    </select>
+
+    <label>Node size</label>
+    <input type="range" id="nsz" min="1" max="20" value="5">
+
+    <label>Edge alpha</label>
+    <input type="range" id="ea" min="10" max="100" value="60">
+
+    <div class="row">
+      <button id="animBtn">▶ Animate filtration</button>
+      <button id="resetBtn">↺ Reset view</button>
+    </div>
+
+    <label>Animation speed</label>
+    <input type="range" id="speed" min="1" max="50" value="10">
+
+    <hr style="border-color:#2a2d3a; margin: 10px 0;">
+    <h2>Barcode / Persistence Diagram</h2>
+    <div class="row">
+      <label style="margin:0;">X-axis scale</label>
+      <select id="pdScale">
+        <option value="linear">Linear</option>
+        <option value="log">Log</option>
+      </select>
+    </div>
+    <div class="row">
+      <label style="margin:0;">Sort barcode by</label>
+      <select id="bcSort">
+        <option value="persistence">Persistence</option>
+        <option value="birth">Birth</option>
+      </select>
+    </div>
+
+    <hr style="border-color:#2a2d3a; margin: 10px 0;">
+    <h2>Live counts</h2>
+    <div class="stat" id="counts">
+      Nodes: -<br>
+      Edges (total): -<br>
+      Triangles filled: -<br>
+      Alive H1 cycles: -<br>
+      Dead H1 cycles: -<br>
+    </div>
+    <div id="status">Loading GEXF...</div>
+  </div>
+
+  <!-- MAIN VIS -->
+  <div>
+    <div class="panel">
+      <div class="plot-title">
+        <span>① Simplicial Complex K<sub>ω</sub> — cliques promoted to simplices</span>
+        <span class="stat" id="netInfo"></span>
+      </div>
+      <canvas id="netCanvas" width="900" height="500"></canvas>
+      <div class="legend">
+        <span><span class="swatch" style="background:#ff6b6b"></span>edge</span>
+        <span><span class="swatch" style="background:rgba(200,120,255,0.4)"></span>2-simplex (filled triangle)</span>
+        <span><span class="swatch" style="background:#ffcc66"></span>node</span>
+        <span style="color:#888">Colors = modularity communities from GEXF</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="plot-title">
+          <span>② Persistence Diagram (birth vs death)</span>
+          <span class="stat" id="pdInfo"></span>
+        </div>
+        <canvas id="pdCanvas" width="500" height="380"></canvas>
+        <div class="stat">Points far from diagonal = persistent (important) cycles. Current threshold shown as line.</div>
+      </div>
+
+      <div class="panel">
+        <div class="plot-title">
+          <span>③ Barcode — H<sub>1</sub> generator lifespans</span>
+          <span class="stat" id="bcInfo"></span>
+        </div>
+        <canvas id="bcCanvas" width="500" height="380"></canvas>
+        <div class="stat">Each horizontal bar = one 1-cycle. Length = persistence π = δ - β.</div>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="panel">
+        <div class="plot-title"><span>④ Betti curves</span></div>
+        <canvas id="bettiCanvas" width="400" height="220"></canvas>
+        <div class="stat">β₀ (components) & β₁ (loops) vs filtration.</div>
+      </div>
+      <div class="panel">
+        <div class="plot-title">
+          <span>⑤ P(π) persistence density</span>
+          <select id="pScale" class="mini"><option value="linear">linear</option><option value="log">log</option></select>
+        </div>
+        <canvas id="ppiCanvas" width="400" height="220"></canvas>
+      </div>
+      <div class="panel">
+        <div class="plot-title">
+          <span>⑥ P(β) birth density</span>
+          <select id="bScale" class="mini"><option value="log">log</option><option value="linear">linear</option></select>
+        </div>
+        <canvas id="pbCanvas" width="400" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Data Model & GEXF loader
+   ============================================================ */
+const state = {
+  datasets: { placebo: null, psilocybin: null },
+  current: 'placebo',
+  threshold: 0.5,     // fraction along sorted weights (descending)
+  animating: false,
+  layout: 'circle',
+  nodeSize: 5,
+  edgeAlpha: 0.6,
+  pdScale: 'linear',
+  bcSort: 'persistence',
+  pScale: 'linear',
+  bScale: 'log',
+  speed: 10,
+};
+
+async function loadGEXF(url) {
+  const res = await fetch(url);
+  const txt = await res.text();
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(txt, 'text/xml');
+
+  const nodes = [];
+  const nodeMap = new Map();
+  xml.querySelectorAll('node').forEach(n => {
+    const id = n.getAttribute('id');
+    const label = n.getAttribute('label') || id;
+    let mod = 0;
+    n.querySelectorAll('attvalue').forEach(av => {
+      if (av.getAttribute('for') === '0') mod = parseInt(av.getAttribute('value'));
+    });
+    const idx = nodes.length;
+    const node = { id, label, mod, idx, x: 0, y: 0, vx: 0, vy: 0 };
+    nodes.push(node);
+    nodeMap.set(id, node);
+  });
+
+  const edges = [];
+  xml.querySelectorAll('edge').forEach(e => {
+    const s = e.getAttribute('source');
+    const t = e.getAttribute('target');
+    const w = parseFloat(e.getAttribute('weight') || '1');
+    if (nodeMap.has(s) && nodeMap.has(t)) {
+      edges.push({ s: nodeMap.get(s).idx, t: nodeMap.get(t).idx, w });
+    }
+  });
+
+  // Normalize weights to [0,1]
+  const wmax = Math.max(...edges.map(e => e.w));
+  const wmin = Math.min(...edges.map(e => e.w));
+  edges.forEach(e => { e.wn = (e.w - wmin) / (wmax - wmin + 1e-9); });
+
+  // Sort descending by weight — this IS the filtration order
+  edges.sort((a, b) => b.wn - a.wn);
+
+  return { nodes, edges, wmin, wmax };
+}
+
+/* ============================================================
+   Toy persistent homology on the filtration
+   (Union-Find for β0; cycle detection for approximate H1)
+   ============================================================ */
+function computeFiltration(data) {
+  const { nodes, edges } = data;
+  const n = nodes.length;
+  const parent = Array.from({length: n}, (_, i) => i);
+  const rank = new Array(n).fill(0);
+  function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+  function union(a,b){ a=find(a); b=find(b); if(a===b) return false;
+    if(rank[a]<rank[b]) [a,b]=[b,a];
+    parent[b]=a; if(rank[a]===rank[b]) rank[a]++;
+    return true;
+  }
+
+  // adjacency by step
+  const adj = Array.from({length: n}, () => new Set());
+  const bettiSteps = [];  // {step, b0, b1, edgeCount, triCount}
+  const cyclesAlive = new Map(); // cycleId -> {birth, edges: Set}
+  const deadCycles = [];
+  let cid = 0;
+  let triangles = 0;
+
+  // We'll approximate H1: when an edge is added that connects two nodes in the same component,
+  // it CREATES a cycle. When adding an edge causes a triangle where all 3 edges are already present,
+  // it can KILL an older cycle. This is a simplified version — the real algorithm uses matrix reduction.
+
+  // Track cycles by their fundamental representatives via BFS
+  function findCycle(u, v) {
+    // BFS from u avoiding the direct edge (u,v), find path to v
+    const prev = new Map();
+    prev.set(u, null);
+    const q = [u];
+    while(q.length){
+      const x = q.shift();
+      if(x === v) break;
+      for(const y of adj[x]){
+        if(!prev.has(y)){ prev.set(y, x); q.push(y); }
+      }
+    }
+    if(!prev.has(v)) return null;
+    // reconstruct
+    const path = [];
+    let x = v;
+    while(x !== null){ path.push(x); x = prev.get(x); }
+    return path;
+  }
+
+  edges.forEach((e, step) => {
+    const {s, t, wn} = e;
+    const merged = union(s, t);
+
+    // Detect triangles formed
+    const common = [];
+    for(const x of adj[s]) if(adj[t].has(x)) common.push(x);
+    triangles += common.length;
+
+    if(!merged) {
+      // s and t already connected -> new 1-cycle is born
+      // find shortest cycle
+      const path = findCycle(s, t);
+      if(path && path.length >= 3){
+        const cyc = { id: cid++, birth: wn, edges: new Set() };
+        for(let i=0;i<path.length-1;i++){
+          const a = Math.min(path[i], path[i+1]);
+          const b = Math.max(path[i], path[i+1]);
+          cyc.edges.add(a+','+b);
+        }
+        // also close via (s,t)
+        const a = Math.min(s,t), b = Math.max(s,t);
+        cyc.edges.add(a+','+b);
+        cyclesAlive.set(cyc.id, cyc);
+      }
+    }
+
+    // Kill cycles via triangle formation
+    for(const x of common){
+      // triangle (s,t,x) — this fills the 2-simplex
+      // Any cycle containing all 3 edges (s,t),(s,x),(t,x) becomes bounded
+      const eA = Math.min(s,t)+','+Math.max(s,t);
+      const eB = Math.min(s,x)+','+Math.max(s,x);
+      const eC = Math.min(t,x)+','+Math.max(t,x);
+      for(const [id, cyc] of cyclesAlive){
+        if(cyc.edges.has(eA) && cyc.edges.has(eB) && cyc.edges.has(eC)){
+          // kill oldest (Elder rule approx)
+          deadCycles.push({ id, birth: cyc.birth, death: wn });
+          cyclesAlive.delete(id);
+          break; // only kill one per triangle
+        }
+      }
+    }
+
+    adj[s].add(t); adj[t].add(s);
+
+    // sample betti curve
+    if(step % Math.max(1, Math.floor(edges.length/300)) === 0 || step === edges.length-1){
+      // count components
+      const roots = new Set();
+      for(let i=0;i<n;i++) roots.add(find(i));
+      bettiSteps.push({
+        step, w: wn,
+        b0: roots.size,
+        b1: cyclesAlive.size,
+        edgeCount: step+1,
+        triCount: triangles
+      });
+    }
+  });
+
+  // Cycles still alive at end -> death = 0 (last filtration value)
+  const allCycles = [...deadCycles];
+  for(const [id, cyc] of cyclesAlive){
+    allCycles.push({ id, birth: cyc.birth, death: 0 });
+  }
+
+  return { bettiSteps, cycles: allCycles };
+}
+
+/* ============================================================
+   Layouts
+   ============================================================ */
+function layoutCircular(nodes) {
+  // sort by community, then place on circle
+  const sorted = [...nodes].sort((a,b) => a.mod - b.mod || a.idx - b.idx);
+  const N = sorted.length;
+  sorted.forEach((n, i) => {
+    const angle = (i / N) * 2 * Math.PI - Math.PI/2;
+    n.x = Math.cos(angle);
+    n.y = Math.sin(angle);
+  });
+}
+
+function layoutForce(nodes, edges, iters = 200) {
+  const N = nodes.length;
+  // init random
+  nodes.forEach(n => {
+    if(n.x === 0 && n.y === 0) {
+      n.x = (Math.random()-0.5)*2;
+      n.y = (Math.random()-0.5)*2;
+    }
+  });
+  const topEdges = edges.slice(0, Math.min(edges.length, 800));
+  for(let it=0; it<iters; it++){
+    // repulsion
+    for(let i=0;i<N;i++){
+      let fx=0, fy=0;
+      for(let j=0;j<N;j++){
+        if(i===j) continue;
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d2 = dx*dx+dy*dy+0.001;
+        const f = 0.005 / d2;
+        fx += dx*f; fy += dy*f;
+      }
+      nodes[i].vx = (nodes[i].vx + fx) * 0.85;
+      nodes[i].vy = (nodes[i].vy + fy) * 0.85;
+    }
+    // attraction along edges
+    for(const e of topEdges){
+      const a = nodes[e.s], b = nodes[e.t];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const f = 0.02 * e.wn;
+      a.vx += dx*f; a.vy += dy*f;
+      b.vx -= dx*f; b.vy -= dy*f;
+    }
+    for(const n of nodes){ n.x += n.vx; n.y += n.vy; }
+  }
+  // normalize
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const n of nodes){ minX=Math.min(minX,n.x); maxX=Math.max(maxX,n.x); minY=Math.min(minY,n.y); maxY=Math.max(maxY,n.y); }
+  const cx=(minX+maxX)/2, cy=(minY+maxY)/2, s=Math.max(maxX-minX,maxY-minY)/2;
+  for(const n of nodes){ n.x=(n.x-cx)/s; n.y=(n.y-cy)/s; }
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+function communityColor(m) {
+  const palette = ['#ff6b6b','#ffcc66','#66ff99','#66ccff','#c988ff','#ff88bb','#88ffdd','#ffaa44'];
+  return palette[m % palette.length];
+}
+
+function drawNetwork() {
+  const cv = document.getElementById('netCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0,0,W,H);
+
+  const data = state.datasets[state.current];
+  if(!data) return;
+  const { nodes, edges } = data;
+
+  const cx = W/2, cy = H/2;
+  const R = Math.min(W,H)/2 - 20;
+
+  // find included edges given threshold
+  // filtration: keep top-fraction of sorted edges (already sorted descending)
+  const keepCount = Math.floor(edges.length * state.threshold);
+  const included = new Set();
+  const includedList = [];
+  for(let i=0;i<keepCount;i++){
+    const e = edges[i];
+    const key = Math.min(e.s,e.t)+','+Math.max(e.s,e.t);
+    included.add(key);
+    includedList.push(e);
+  }
+
+  // build adjacency of included
+  const adj = Array.from({length: nodes.length}, () => new Set());
+  for(const e of includedList){
+    adj[e.s].add(e.t); adj[e.t].add(e.s);
+  }
+
+  // detect triangles for shading (limit for perf)
+  const triangles = [];
+  if(includedList.length < 3000){
+    for(const e of includedList){
+      const {s,t} = e;
+      if(adj[s].size > adj[t].size) continue; // avoid duplicates
+      for(const x of adj[s]){
+        if(x > t && adj[t].has(x)){
+          triangles.push([s,t,x]);
+        }
+      }
+    }
+  }
+
+  // draw triangles (2-simplices)
+  ctx.globalAlpha = 0.15;
+  ctx.fillStyle = '#c878ff';
+  for(const [a,b,c] of triangles){
+    ctx.beginPath();
+    ctx.moveTo(cx + nodes[a].x*R, cy + nodes[a].y*R);
+    ctx.lineTo(cx + nodes[b].x*R, cy + nodes[b].y*R);
+    ctx.lineTo(cx + nodes[c].x*R, cy + nodes[c].y*R);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // draw edges
+  ctx.globalAlpha = state.edgeAlpha;
+  for(const e of includedList){
+    const a = nodes[e.s], b = nodes[e.t];
+    const col = communityColor(a.mod);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 0.3 + e.wn * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + a.x*R, cy + a.y*R);
+    ctx.lineTo(cx + b.x*R, cy + b.y*R);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // draw nodes
+  for(const n of nodes){
+    ctx.fillStyle = communityColor(n.mod);
+    ctx.beginPath();
+    ctx.arc(cx + n.x*R, cy + n.y*R, state.nodeSize, 0, 2*Math.PI);
+    ctx.fill();
+    ctx.strokeStyle = '#0a0b10';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // stats
+  document.getElementById('filtStat').textContent =
+    `edges in G_ω: ${includedList.length} / ${edges.length}`;
+  document.getElementById('netInfo').textContent =
+    `triangles (2-simplices): ${triangles.length}`;
+
+  // update counts
+  const filt = data.filtration;
+  if(filt && filt.bettiSteps.length){
+    // find closest betti step to current threshold
+    const targetStep = keepCount;
+    let closest = filt.bettiSteps[0];
+    for(const s of filt.bettiSteps){
+      if(Math.abs(s.step - targetStep) < Math.abs(closest.step - targetStep)) closest = s;
+    }
+    // count alive/dead cycles at current threshold
+    let alive = 0, dead = 0;
+    const wThr = includedList.length ? includedList[includedList.length-1].wn : 0;
+    for(const c of filt.cycles){
+      if(c.birth >= wThr && c.death < wThr) alive++;
+      else if(c.death >= wThr) dead++;
+    }
+    document.getElementById('counts').innerHTML =
+      `Nodes: ${nodes.length}<br>` +
+      `Edges (total): ${edges.length}<br>` +
+      `Edges included: ${includedList.length}<br>` +
+      `Triangles filled: ${triangles.length}<br>` +
+      `Alive H1 cycles: ${alive}<br>` +
+      `Dead H1 cycles: ${dead}<br>` +
+      `Total cycles found: ${filt.cycles.length}`;
+  }
+}
+
+/* ============================================================
+   Persistence Diagram (birth vs death)
+   ============================================================ */
+function drawPD() {
+  const cv = document.getElementById('pdCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  const data = state.datasets[state.current];
+  if(!data || !data.filtration) return;
+  const cycles = data.filtration.cycles;
+
+  const pad = 40;
+  const plotW = W - pad*2, plotH = H - pad*2;
+
+  // Axes: birth on x (descending from 1 to 0 as in figure 6),
+  // death on y (descending 0 to 1 top-to-bottom)
+  // Persistent points are far ABOVE the diagonal (birth high, death low)
+  const isLog = state.pdScale === 'log';
+  function xmap(b) {
+    // birth: 1 -> left, 0 -> right (descending)
+    if(isLog){
+      const v = Math.log10(Math.max(b, 1e-4));
+      const vmin = -4, vmax = 0;
+      return pad + (1 - (v-vmin)/(vmax-vmin)) * plotW;
+    }
+    return pad + (1 - b) * plotW;
+  }
+  function ymap(d) {
+    if(isLog){
+      const v = Math.log10(Math.max(d, 1e-4));
+      const vmin = -4, vmax = 0;
+      return pad + (1 - (v-vmin)/(vmax-vmin)) * plotH;
+    }
+    return pad + (1 - d) * plotH;
+  }
+
+  // Background gradient hint (log density) — like figure 6
+  // draw hexbin-like density
+  const bins = 40;
+  const density = Array.from({length: bins}, () => new Array(bins).fill(0));
+  for(const c of cycles){
+    const bx = Math.floor((1-c.birth) * bins);
+    const by = Math.floor((1-c.death) * bins);
+    if(bx>=0 && bx<bins && by>=0 && by<bins) density[bx][by]++;
+  }
+  let dmax = 0;
+  for(let i=0;i<bins;i++) for(let j=0;j<bins;j++) if(density[i][j]>dmax) dmax=density[i][j];
+  if(dmax > 0){
+    const cellW = plotW/bins, cellH = plotH/bins;
+    for(let i=0;i<bins;i++){
+      for(let j=0;j<bins;j++){
+        if(density[i][j] === 0) continue;
+        const v = Math.log(density[i][j]+1) / Math.log(dmax+1);
+        // colormap: dark purple -> pink -> white
+        const r = Math.floor(80 + 175*v);
+        const g = Math.floor(30 + 120*v);
+        const b = Math.floor(120 + 130*v);
+        ctx.fillStyle = `rgba(${r},${g},${b},${0.7*v+0.1})`;
+        ctx.fillRect(pad + i*cellW, pad + j*cellH, cellW+1, cellH+1);
+      }
+    }
+  }
+
+  // Draw diagonal (birth = death line)
+  ctx.strokeStyle = '#888';
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(xmap(1), ymap(1));
+  ctx.lineTo(xmap(0), ymap(0));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw current threshold line
+  ctx.strokeStyle = '#ffcc66';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(xmap(state.threshold), pad);
+  ctx.lineTo(xmap(state.threshold), pad+plotH);
+  ctx.stroke();
+
+  // Draw points on top (sample if too many)
+  const step = Math.max(1, Math.floor(cycles.length / 3000));
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  for(let i=0;i<cycles.length;i+=step){
+    const c = cycles[i];
+    ctx.beginPath();
+    ctx.arc(xmap(c.birth), ymap(c.death), 1, 0, 2*Math.PI);
+    ctx.fill();
+  }
+
+  // Axes labels
+  ctx.fillStyle = '#aab';
+  ctx.font = '11px monospace';
+  ctx.fillText('birth β (1 → 0)', W/2 - 40, H - 8);
+  ctx.save();
+  ctx.translate(12, H/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('death δ', 0, 0);
+  ctx.restore();
+
+  // Tick marks
+  ctx.fillStyle = '#666';
+  ctx.font = '9px monospace';
+  for(let t=0; t<=1; t+=0.2){
+    const x = xmap(t);
+    ctx.fillText(t.toFixed(1), x-6, pad+plotH+12);
+    const y = ymap(t);
+    ctx.fillText(t.toFixed(1), pad-22, y+3);
+  }
+
+  document.getElementById('pdInfo').textContent =
+    `${cycles.length} cycles | scale: ${state.pdScale}`;
+}
+
+/* ============================================================
+   Barcode
+   ============================================================ */
+function drawBarcode() {
+  const cv = document.getElementById('bcCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0,0,W,H);
+
+  const data = state.datasets[state.current];
+  if(!data || !data.filtration) return;
+  let cycles = [...data.filtration.cycles];
+
+  if(state.bcSort === 'persistence'){
+    cycles.sort((a,b) => (b.birth - b.death) - (a.birth - a.death));
+  } else {
+    cycles.sort((a,b) => b.birth - a.birth);
+  }
+
+  // Take top N bars for readability
+  const N = Math.min(cycles.length, 200);
+  cycles = cycles.slice(0, N);
+
+  const pad = 40;
+  const plotW = W - pad*2, plotH = H - pad*2;
+  const barH = plotH / N;
+
+  function xmap(v){
+    // filtration goes 1 -> 0 descending
+    return pad + (1 - v) * plotW;
+  }
+
+  // draw bars
+  for(let i=0;i<N;i++){
+    const c = cycles[i];
+    const x1 = xmap(c.birth);
+    const x2 = xmap(c.death);
+    const persistence = c.birth - c.death;
+    // color by persistence
+    const t = Math.min(1, persistence * 3);
+    const r = Math.floor(100 + 155*t);
+    const g = Math.floor(180 - 100*t);
+    const b = Math.floor(255 - 100*t);
+    ctx.strokeStyle = `rgb(${r},${g},${b})`;
+    ctx.lineWidth = Math.max(1, barH*0.7);
+    ctx.beginPath();
+    ctx.moveTo(x1, pad + i*barH + barH/2);
+    ctx.lineTo(x2, pad + i*barH + barH/2);
+    ctx.stroke();
+  }
+
+  // Current threshold line
+  ctx.strokeStyle = '#ffcc66';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo(xmap(state.threshold), pad);
+  ctx.lineTo(xmap(state.threshold), pad+plotH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axes
+  ctx.fillStyle = '#aab';
+  ctx.font = '11px monospace';
+  ctx.fillText('filtration ω (1 → 0)', W/2-60, H-8);
+  ctx.save();
+  ctx.translate(14, H/2 + 20);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText(`H₁ generators (top ${N})`, 0, 0);
+  ctx.restore();
+
+  ctx.fillStyle = '#666';
+  ctx.font = '9px monospace';
+  for(let t=0; t<=1; t+=0.2){
+    const x = xmap(t);
+    ctx.fillText(t.toFixed(1), x-6, pad+plotH+12);
+  }
+
+  document.getElementById('bcInfo').textContent =
+    `showing ${N} / ${data.filtration.cycles.length} | sort: ${state.bcSort}`;
+}
+
+/* ============================================================
+   Betti curves
+   ============================================================ */
+function drawBetti() {
+  const cv = document.getElementById('bettiCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0,0,W,H);
+
+  const data = state.datasets[state.current];
+  if(!data || !data.filtration) return;
+  const steps = data.filtration.bettiSteps;
+  if(!steps.length) return;
+
+  const pad = 34;
+  const plotW = W - pad*2, plotH = H - pad*2;
+  let maxB0 = 0, maxB1 = 0;
+  for(const s of steps){ if(s.b0>maxB0) maxB0=s.b0; if(s.b1>maxB1) maxB1=s.b1; }
+  const maxB = Math.max(maxB0, maxB1);
+
+  // filtration axis: ω from 1 to 0 (descending)
+  function xmap(w){ return pad + (1-w) * plotW; }
+  function ymap(v){ return pad + plotH - (v/maxB) * plotH; }
+
+  // grid
+  ctx.strokeStyle = '#222'; ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++){
+    const y = pad + (i/4)*plotH;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad+plotW, y); ctx.stroke();
+  }
+
+  // β0
+  ctx.strokeStyle = '#66ccff'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  steps.forEach((s,i) => {
+    const x = xmap(s.w), y = ymap(s.b0);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // β1
+  ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  steps.forEach((s,i) => {
+    const x = xmap(s.w), y = ymap(s.b1);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // threshold
+  ctx.strokeStyle = '#ffcc66'; ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo(xmap(state.threshold), pad);
+  ctx.lineTo(xmap(state.threshold), pad+plotH);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#66ccff'; ctx.font = '10px monospace';
+  ctx.fillText('β₀ components', pad+4, pad+10);
+  ctx.fillStyle = '#ff6b6b';
+  ctx.fillText('β₁ loops', pad+4, pad+22);
+
+  ctx.fillStyle = '#666';
+  ctx.fillText('ω →', pad+plotW-20, H-6);
+  ctx.fillText('max='+maxB, pad-30, pad+8);
+}
+
+/* ============================================================
+   P(π) persistence distribution — like fig. 4a
+   ============================================================ */
+function drawPPi() {
+  const cv = document.getElementById('ppiCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0,0,W,H);
+
+  const pad = 34;
+  const plotW = W - pad*2, plotH = H - pad*2;
+
+  // Compute for BOTH datasets, overlay
+  const results = {};
+  for(const key of ['placebo','psilocybin']){
+    const data = state.datasets[key];
+    if(!data || !data.filtration) continue;
+    const cycles = data.filtration.cycles;
+    const bins = 30;
+    const hist = new Array(bins).fill(0);
+    for(const c of cycles){
+      const p = c.birth - c.death;
+      const b = Math.min(bins-1, Math.floor(p*bins));
+      if(b>=0) hist[b]++;
+    }
+    const total = cycles.length || 1;
+    results[key] = hist.map(v => v/total);
+  }
+
+  const isLog = state.pScale === 'log';
+  let maxV = 0;
+  for(const k in results) for(const v of results[k]) if(v>maxV) maxV=v;
+  const minV = isLog ? 1e-4 : 0;
+
+  function xmap(i, N){ return pad + (i/(N-1))*plotW; }
+  function ymap(v){
+    if(isLog){
+      const lv = Math.log10(Math.max(v, minV));
+      const lmax = Math.log10(maxV || 1);
+      const lmin = Math.log10(minV);
+      return pad + plotH - ((lv-lmin)/(lmax-lmin)) * plotH;
+    }
+    return pad + plotH - (v/(maxV||1)) * plotH;
+  }
+
+  const colors = { placebo: '#66ccff', psilocybin: '#ff6b6b' };
+  for(const k of ['placebo','psilocybin']){
+    if(!results[k]) continue;
+    ctx.strokeStyle = colors[k];
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    results[k].forEach((v, i) => {
+      const x = xmap(i, results[k].length);
+      const y = ymap(Math.max(v, minV));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#66ccff'; ctx.font = '10px monospace';
+  ctx.fillText('placebo', pad+plotW-70, pad+10);
+  ctx.fillStyle = '#ff6b6b';
+  ctx.fillText('psilocybin', pad+plotW-70, pad+22);
+  ctx.fillStyle = '#aab';
+  ctx.fillText('π (persistence) →', pad+plotW-110, H-6);
+  ctx.fillText('P(π)', 4, pad+8);
+}
+
+/* ============================================================
+   P(β) birth distribution — like fig. 4b
+   ============================================================ */
+function drawPB() {
+  const cv = document.getElementById('pbCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0,0,W,H);
+
+  const pad = 34;
+  const plotW = W - pad*2, plotH = H - pad*2;
+
+  const results = {};
+  for(const key of ['placebo','psilocybin']){
+    const data = state.datasets[key];
+    if(!data || !data.filtration) continue;
+    const cycles = data.filtration.cycles;
+    const bins = 40;
+    const hist = new Array(bins).fill(0);
+    for(const c of cycles){
+      const b = Math.min(bins-1, Math.floor(c.birth*bins));
+      if(b>=0) hist[b]++;
+    }
+    const total = cycles.length || 1;
+    results[key] = hist.map(v => v/total);
+  }
+
+  const isLog = state.bScale === 'log';
+  let maxV = 0;
+  for(const k in results) for(const v of results[k]) if(v>maxV) maxV=v;
+  const minV = isLog ? 1e-5 : 0;
+
+  function xmap(i, N){ return pad + (i/(N-1))*plotW; }
+  function ymap(v){
+    if(isLog){
+      const lv = Math.log10(Math.max(v, minV));
+      const lmax = Math.log10(maxV || 1);
+      const lmin = Math.log10(minV);
+      return pad + plotH - ((lv-lmin)/(lmax-lmin)) * plotH;
+    }
+    return pad + plotH - (v/(maxV||1)) * plotH;
+  }
+
+  const colors = { placebo: '#66ccff', psilocybin: '#ff6b6b' };
+  for(const k of ['placebo','psilocybin']){
+    if(!results[k]) continue;
+    ctx.strokeStyle = colors[k];
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    results[k].forEach((v, i) => {
+      const x = xmap(i, results[k].length);
+      const y = ymap(Math.max(v, minV));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#66ccff'; ctx.font = '10px monospace';
+  ctx.fillText('placebo', pad+plotW-70, pad+10);
+  ctx.fillStyle = '#ff6b6b';
+  ctx.fillText('psilocybin', pad+plotW-70, pad+22);
+  ctx.fillStyle = '#aab';
+  ctx.fillText('β (birth) →', pad+plotW-90, H-6);
+  ctx.fillText('P(β)', 4, pad+8);
+}
+
+/* ============================================================
+   Master redraw
+   ============================================================ */
+function redrawAll() {
+  drawNetwork();
+  drawPD();
+  drawBarcode();
+  drawBetti();
+  drawPPi();
+  drawPB();
+}
+
+/* ============================================================
+   Layout dispatcher
+   ============================================================ */
+function applyLayout() {
+  const data = state.datasets[state.current];
+  if(!data) return;
+  if(state.layout === 'circle') layoutCircular(data.nodes);
+  else layoutForce(data.nodes, data.edges, 150);
+}
+
+/* ============================================================
+   Initialization
+   ============================================================ */
+async function init() {
+  const status = document.getElementById('status');
+
+  try {
+    status.textContent = 'Loading placebo GEXF...';
+    state.datasets.placebo = await loadGEXF('rsif-2014-0873-File001.gexf');
+    status.textContent = 'Computing placebo filtration (this may take a moment)...';
+    await new Promise(r => setTimeout(r, 20));
+    state.datasets.placebo.filtration = computeFiltration(state.datasets.placebo);
+    layoutCircular(state.datasets.placebo.nodes);
+
+    status.textContent = 'Loading psilocybin GEXF...';
+    state.datasets.psilocybin = await loadGEXF('rsif-2014-0873-File002.gexf');
+    status.textContent = 'Computing psilocybin filtration...';
+    await new Promise(r => setTimeout(r, 20));
+    state.datasets.psilocybin.filtration = computeFiltration(state.datasets.psilocybin);
+    layoutCircular(state.datasets.psilocybin.nodes);
+
+    status.textContent = `Loaded. Placebo: ${state.datasets.placebo.nodes.length} nodes, ${state.datasets.placebo.edges.length} edges. Psilocybin: ${state.datasets.psilocybin.nodes.length} nodes, ${state.datasets.psilocybin.edges.length} edges.`;
+
+    redrawAll();
+  } catch(err) {
+    status.textContent = 'ERROR: ' + err.message + ' — make sure you are serving via HTTP (e.g. `python -m http.server`) and the GEXF files are in the same folder.';
+    console.error(err);
+  }
+}
+
+/* ============================================================
+   UI wiring
+   ============================================================ */
+document.getElementById('thr').addEventListener('input', e => {
+  state.threshold = e.target.value / 1000;
+  document.getElementById('thrVal').textContent = state.threshold.toFixed(3);
+  redrawAll();
+});
+document.getElementById('nsz').addEventListener('input', e => {
+  state.nodeSize = +e.target.value;
+  drawNetwork();
+});
+document.getElementById('ea').addEventListener('input', e => {
+  state.edgeAlpha = e.target.value / 100;
+  drawNetwork();
+});
+document.getElementById('layout').addEventListener('change', e => {
+  state.layout = e.target.value;
+  applyLayout();
+  drawNetwork();
+});
+document.getElementById('pdScale').addEventListener('change', e => {
+  state.pdScale = e.target.value;
+  drawPD();
+});
+document.getElementById('bcSort').addEventListener('change', e => {
+  state.bcSort = e.target.value;
+  drawBarcode();
+});
+document.getElementById('pScale').addEventListener('change', e => {
+  state.pScale = e.target.value;
+  drawPPi();
+});
+document.getElementById('bScale').addEventListener('change', e => {
+  state.bScale = e.target.value;
+  drawPB();
+});
+document.getElementById('speed').addEventListener('input', e => {
+  state.speed = +e.target.value;
+});
+
+document.getElementById('btnPla').addEventListener('click', () => {
+  state.current = 'placebo';
+  document.getElementById('btnPla').classList.add('active');
+  document.getElementById('btnPsi').classList.remove('active');
+  redrawAll();
+});
+document.getElementById('btnPsi').addEventListener('click', () => {
+  state.current = 'psilocybin';
+  document.getElementById('btnPsi').classList.add('active');
+  document.getElementById('btnPla').classList.remove('active');
+  redrawAll();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state.threshold = 0.5;
+  document.getElementById('thr').value = 500;
+  document.getElementById('thrVal').textContent = '0.500';
+  applyLayout();
+  redrawAll();
+});
+
+let animId = null;
+document.getElementById('animBtn').addEventListener('click', () => {
+  if(state.animating){
+    state.animating = false;
+    document.getElementById('animBtn').textContent = '▶ Animate filtration';
+    if(animId) cancelAnimationFrame(animId);
+    return;
+  }
+  state.animating = true;
+  document.getElementById('animBtn').textContent = '⏸ Pause';
+  let t = 1.0; // start with all edges included, sweep down
+  let dir = -1;
+  const slider = document.getElementById('thr');
+  function step() {
+    if(!state.animating) return;
+    t += dir * (state.speed / 5000);
+    if(t <= 0){ t = 0; dir = 1; }
+    if(t >= 1){ t = 1; dir = -1; }
+    state.threshold = t;
+    slider.value = Math.round(t * 1000);
+    document.getElementById('thrVal').textContent = t.toFixed(3);
+    redrawAll();
+    animId = requestAnimationFrame(step);
+  }
+  step();
+});
+
+/* ============================================================
+   Kick off
+   ============================================================ */
+init();
+</script>
+
+</body>
+</html>
