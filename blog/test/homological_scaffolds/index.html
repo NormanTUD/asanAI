@@ -48,6 +48,11 @@
   .toggles { display: flex; gap: 6px; flex-wrap: wrap; }
   .toggles button.active { background: #4a5480; border-color: #6a75a8; }
   #status { font-size: 11px; color: #888; margin-top: 4px; }
+  progress { appearance: none; -webkit-appearance: none; border: 1px solid #3a3e50; background: #0a0b10; border-radius: 3px; }
+  progress::-webkit-progress-bar { background: #0a0b10; border-radius: 3px; }
+  progress::-webkit-progress-value { background: linear-gradient(90deg, #66ccff, #ffcc66); border-radius: 3px; }
+  progress::-moz-progress-bar { background: linear-gradient(90deg, #66ccff, #ffcc66); border-radius: 3px; }
+  .stage { color: #ffcc66; }
   .plot-title {
     font-size: 12px; color: #99ccff;
     display: flex; justify-content: space-between; align-items: center;
@@ -129,7 +134,11 @@
       Alive H1 cycles: -<br>
       Dead H1 cycles: -<br>
     </div>
-    <div id="status">Loading GEXF...</div>
+    <div id="status">Idle.</div>
+    <div id="progressWrap" style="display:none; margin-top:6px;">
+      <progress id="progressBar" value="0" max="100" style="width:100%; height:14px;"></progress>
+      <div class="stat" id="progressLabel" style="margin-top:2px;">0%</div>
+    </div>
   </div>
 
   <!-- MAIN VIS -->
@@ -211,16 +220,92 @@ const state = {
   speed: 10,
 };
 
-async function loadGEXF(url) {
-  const t0 = performance.now();
-  console.log(`[loadGEXF] START  url=${url}  t=${t0.toFixed(1)}ms`);
-  console.log(`[loadGEXF] → fetch(${url})`);
-  const res = await fetch(url);
-  console.log(`[loadGEXF] ← fetch returned status=${res.status} type=${res.headers.get('content-type')} size=${res.headers.get('content-length')}B  t=${(performance.now()-t0).toFixed(1)}ms`);
-  console.log(`[loadGEXF] → res.json()`);
-  const data = await res.json();
-  console.log(`[loadGEXF] ← json parsed: ${data.nodes.length} nodes, ${data.edges.length} edges  t=${(performance.now()-t0).toFixed(1)}ms`);
+/* ============================================================
+   Progress helpers
+   ============================================================ */
+function setProgress(pct, label) {
+  const wrap = document.getElementById('progressWrap');
+  const bar = document.getElementById('progressBar');
+  const lbl = document.getElementById('progressLabel');
+  if (pct === null) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+  bar.value = pct;
+  lbl.textContent = label || `${pct.toFixed(0)}%`;
+}
+function setStatus(text) {
+  document.getElementById('status').innerHTML = text;
+}
 
+/* ============================================================
+   fetchJSONWithProgress — same as fetch+res.json(), but reports
+   real byte-level download progress for the progress bar.
+   ============================================================ */
+async function fetchJSONWithProgress(url, label) {
+  const t0 = performance.now();
+  console.log(`[fetch] GET ${url}`);
+  setProgress(0, `${label} — connecting...`);
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  const totalStr = res.headers.get('content-length');
+  const total = totalStr ? parseInt(totalStr, 10) : 0;
+
+  const reader = res.body.getReader();
+  const chunks = [];
+  let received = 0;
+  let lastUI = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.length;
+    const pct = total ? (received / total) * 100 : 0;
+    const now = performance.now();
+    if (now - lastUI > 80) {             // throttle DOM updates
+      const mb = (received / 1048576).toFixed(2);
+      const totalMB = total ? (total / 1048576).toFixed(2) : '?';
+      const speed = (received / 1048576) / ((now - t0) / 1000);
+      setProgress(pct, `${label} — ${mb} / ${totalMB} MB (${speed.toFixed(2)} MB/s)`);
+      lastUI = now;
+    }
+  }
+
+  const blob = new Blob(chunks);
+  console.log(`[fetch] ← ${url}  ${received}B in ${(performance.now()-t0).toFixed(0)}ms`);
+  setProgress(100, `${label} — parsing...`);
+  const text = await blob.text();
+  const data = JSON.parse(text);
+  setProgress(100, `${label} — parsed ${data.nodes?.length || '?'} nodes, ${data.edges?.length || '?'} edges`);
+  return data;
+}
+
+/* ============================================================
+   Loader — tries .precomputed.json first (instant), falls back to
+   .json + on-the-fly filtration computation.
+   ============================================================ */
+async function loadDatasetRaw(baseName, label) {
+  const precompUrl = `${baseName}.precomputed.json`;
+  const rawUrl = `${baseName}.json`;
+
+  // Probe for precomputed variant with a cheap HEAD
+  let usePrecomputed = false;
+  try {
+    const head = await fetch(precompUrl, { method: 'HEAD' });
+    usePrecomputed = head.ok;
+    console.log(`[loader] ${precompUrl} ${head.ok ? 'EXISTS' : 'missing'} → ${usePrecomputed ? 'precomputed path' : 'fallback path'}`);
+  } catch (e) {
+    console.log(`[loader] HEAD failed: ${e.message}`);
+  }
+
+  const url = usePrecomputed ? precompUrl : rawUrl;
+  setStatus(`${label}: <span class="stage">fetching</span> ${url}`);
+  const data = await fetchJSONWithProgress(url, label);
+
+  // Build node/edge index structure regardless of source
   const nodes = [];
   const nodeMap = new Map();
   for (const n of data.nodes) {
@@ -229,27 +314,26 @@ async function loadGEXF(url) {
     nodes.push(node);
     nodeMap.set(n.id, node);
   }
-  console.log(`[loadGEXF] nodeMap built: ${nodes.length} entries  t=${(performance.now()-t0).toFixed(1)}ms`);
-
   const edges = [];
   for (const e of data.edges) {
     const s = nodeMap.get(e.s);
     const t = nodeMap.get(e.t);
-    if (s && t) {
-      edges.push({ s: s.idx, t: t.idx, w: e.w });
-    }
+    if (s && t) edges.push({ s: s.idx, t: t.idx, w: e.w });
   }
 
-  // Normalize weights to [0,1]
-  const wmax = Math.max(...edges.map(e => e.w));
-  const wmin = Math.min(...edges.map(e => e.w));
+  // Normalize weights to [0,1] (always done here, precomputed already has wmin/wmax)
+  let wmax, wmin;
+  if (typeof data.wmin === 'number' && typeof data.wmax === 'number') {
+    wmin = data.wmin;
+    wmax = data.wmax;
+  } else {
+    wmax = Math.max(...edges.map(e => e.w));
+    wmin = Math.min(...edges.map(e => e.w));
+  }
   edges.forEach(e => { e.wn = (e.w - wmin) / (wmax - wmin + 1e-9); });
-
-  // Sort descending by weight — this IS the filtration order
   edges.sort((a, b) => b.wn - a.wn);
 
-  console.log(`[loadGEXF] DONE  nodes=${nodes.length} edges=${edges.length} w∈[${wmin.toFixed(3)},${wmax.toFixed(3)}]  total=${(performance.now()-t0).toFixed(1)}ms`);
-  return { nodes, edges, wmin, wmax };
+  return { nodes, edges, wmin, wmax, precomputed: data.filtration || null };
 }
 
 /* ============================================================
@@ -994,7 +1078,7 @@ const FILES = {
 };
 
 async function loadDataset(key) {
-  const status = document.getElementById('status');
+  const label = key === 'placebo' ? 'Placebo' : 'Psilocybin';
   const btn = document.getElementById(key === 'placebo' ? 'btnLoadPla' : 'btnLoadPsi');
   if (state.datasets[key]) {
     console.log(`[init] ${key} already loaded, skipping`);
@@ -1003,29 +1087,38 @@ async function loadDataset(key) {
   btn.disabled = true;
   const t0 = performance.now();
   try {
-    status.textContent = `[${key}] fetching ${FILES[key]}...`;
     console.log(`[init] >>> loadDataset(${key}) START`);
-    const data = await loadGEXF(FILES[key]);
-    status.textContent = `[${key}] fetched (${(performance.now()-t0).toFixed(0)}ms). Computing filtration...`;
-    console.log(`[init] [${key}] computing filtration...`);
-    // Yield to UI so the status text actually paints before the heavy work
-    await new Promise(r => setTimeout(r, 50));
-    data.filtration = computeFiltration(data);
+    const baseName = FILES[key].replace(/\.json$/, '');
+    const data = await loadDatasetRaw(baseName, label);
+
+    let filtration = data.precomputed;
+    if (filtration) {
+      console.log(`[init] [${key}] using precomputed filtration  cycles=${filtration.cycles.length}  bettiSteps=${filtration.bettiSteps.length}`);
+      setProgress(100, `${label} — precomputed filtration ready`);
+    } else {
+      setStatus(`${label}: <span class="stage">computing</span> filtration on-the-fly...`);
+      console.log(`[init] [${key}] computing filtration (slow path)...`);
+      await new Promise(r => setTimeout(r, 50));  // let UI paint
+      filtration = computeFiltration(data);
+      console.log(`[init] [${key}] filtration done  cycles=${filtration.cycles.length}`);
+    }
+
+    data.filtration = filtration;
     console.log(`[init] [${key}] applying layout`);
     layoutCircular(data.nodes);
     state.datasets[key] = data;
-    btn.textContent = '✓ ' + (key === 'placebo' ? 'Placebo' : 'Psilocybin') + ' loaded';
+    btn.textContent = '✓ ' + label + ' loaded';
     const elapsed = ((performance.now()-t0)/1000).toFixed(2);
-    status.textContent = `[${key}] loaded: ${data.nodes.length} nodes, ${data.edges.length} edges, ${data.filtration.cycles.length} cycles  (${elapsed}s)`;
+    setStatus(`${label}: <span class="stage">ready</span> — ${data.nodes.length} nodes, ${data.edges.length} edges, ${filtration.cycles.length} cycles (${elapsed}s)`);
     console.log(`[init] <<< loadDataset(${key}) DONE  total=${elapsed}s`);
-    // Enable the corresponding view button
+    setProgress(null);
     document.getElementById(key === 'placebo' ? 'btnPla' : 'btnPsi').disabled = false;
-    // Switch to the just-loaded dataset and redraw
     if (state.current === key) redrawAll();
   } catch(err) {
-    status.textContent = `[${key}] ERROR: ${err.message}`;
+    setStatus(`${label}: <span class="stage">ERROR</span> — ${err.message}`);
     console.error(`[init] loadDataset(${key}) failed:`, err);
     btn.disabled = false;
+    setProgress(null);
   }
 }
 
