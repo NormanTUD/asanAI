@@ -6,209 +6,245 @@
 <style>
   * { box-sizing: border-box; }
   body {
-    margin: 0; padding: 12px;
+    margin: 0; padding: 8px;
     background: #0e0f14; color: #e8e8ee;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
+    height: 100vh; display: flex; flex-direction: column;
   }
-  h1 { font-size: 18px; margin: 0 0 8px 0; color: #ffcc66; }
-  h2 { font-size: 13px; margin: 0 0 4px 0; color: #99ccff; text-transform: uppercase; letter-spacing: 1px; }
-  .top {
-    display: grid; grid-template-columns: 320px 1fr; gap: 12px;
+  h1 { font-size: 16px; margin: 0 0 4px 0; color: #ffcc66; }
+  .subtitle { font-size: 11px; color: #888; margin-bottom: 6px; }
+
+  /* Compact horizontal control bar */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+    background: #171923; border: 1px solid #2a2d3a; border-radius: 6px;
+    padding: 6px 10px; margin-bottom: 6px; flex: 0 0 auto;
   }
+  .controls label { display: inline; font-size: 11px; color: #aab; margin: 0; }
+  .controls .group { display: flex; align-items: center; gap: 4px; }
+  .controls .group-sep { width: 1px; height: 18px; background: #2a2d3a; }
+  .controls input[type=range] { width: 90px; vertical-align: middle; }
+  .controls select { font-size: 11px; padding: 2px 4px; }
+  .controls button { font-size: 11px; padding: 3px 8px; }
+  .val { color: #ffcc66; font-family: monospace; font-weight: bold; }
+  .stat { font-family: monospace; font-size: 10px; color: #99ccff; }
+
   .panel {
     background: #171923; border: 1px solid #2a2d3a;
-    border-radius: 6px; padding: 10px;
+    border-radius: 6px; padding: 6px;
+    display: flex; flex-direction: column; min-height: 0;
   }
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-top: 10px;
+  .panel-title {
+    font-size: 11px; color: #99ccff;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px; flex: 0 0 auto;
   }
-  .grid3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px; margin-top: 10px;
-  }
-  canvas { background: #0a0b10; border-radius: 4px; display: block; width: 100%; }
-  label { display: block; margin: 6px 0 2px; font-size: 12px; color: #aab; }
-  input[type=range] { width: 100%; }
-  select, button {
+  .panel-title .badge { font-size: 10px; padding: 1px 6px; border-radius: 3px; background: #262a38; }
+  .badge.pla { color: #66ccff; }
+  .badge.psi { color: #ff6b6b; }
+  canvas { background: #0a0b10; border-radius: 4px; display: block; width: 100%; height: 100%; }
+  button {
     background: #262a38; color: #e8e8ee; border: 1px solid #3a3e50;
-    border-radius: 4px; padding: 4px 8px; font-size: 12px;
-    cursor: pointer;
+    border-radius: 4px; cursor: pointer;
   }
   button:hover { background: #333849; }
-  .row { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
-  .row > * { flex: 1; }
-  .val { color: #ffcc66; font-family: monospace; font-weight: bold; }
-  .stat { font-family: monospace; font-size: 11px; color: #99ccff; }
-  .legend { display: flex; gap: 12px; font-size: 11px; margin-top: 4px; }
-  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
-  .toggles { display: flex; gap: 6px; flex-wrap: wrap; }
-  .toggles button.active { background: #4a5480; border-color: #6a75a8; }
-  #status { font-size: 11px; color: #888; margin-top: 4px; }
-  progress { appearance: none; -webkit-appearance: none; border: 1px solid #3a3e50; background: #0a0b10; border-radius: 3px; }
+
+  /* Main layout: 2 columns, each containing a network + (PD | BC) row */
+  .main {
+    flex: 1 1 auto; min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1.4fr 1fr;
+    gap: 6px;
+  }
+  .col { display: grid; grid-template-rows: subgrid; grid-row: span 2; gap: 6px; min-height: 0; }
+  .col-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; min-height: 0; }
+
+  /* Bottom comparison strip */
+  .compare {
+    flex: 0 0 200px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px; margin-top: 6px;
+  }
+
+  /* Status strip */
+  .status-strip {
+    flex: 0 0 auto; margin-top: 6px;
+    background: #171923; border: 1px solid #2a2d3a; border-radius: 6px;
+    padding: 5px 10px; font-size: 11px; color: #aab;
+    display: flex; gap: 14px; align-items: center; justify-content: space-between;
+  }
+  progress { appearance: none; -webkit-appearance: none; border: 1px solid #3a3e50;
+    background: #0a0b10; border-radius: 3px; height: 10px; flex: 1 1 200px; max-width: 280px; }
   progress::-webkit-progress-bar { background: #0a0b10; border-radius: 3px; }
   progress::-webkit-progress-value { background: linear-gradient(90deg, #66ccff, #ffcc66); border-radius: 3px; }
   progress::-moz-progress-bar { background: linear-gradient(90deg, #66ccff, #ffcc66); border-radius: 3px; }
   .stage { color: #ffcc66; }
-  .plot-title {
-    font-size: 12px; color: #99ccff;
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 4px;
-  }
-  .mini { font-size: 10px; padding: 2px 6px; }
+  .counts { display: flex; gap: 16px; }
+  .counts span b { color: #e8e8ee; }
+  .counts .pla b { color: #66ccff; }
+  .counts .psi b { color: #ff6b6b; }
 </style>
 </head>
 <body>
 
-<h1>🍄 Persistent Homology of Brain Networks — Interactive Explorer</h1>
-<div style="font-size:11px; color:#888; margin-bottom:8px;">
-  Real data from Petri et al. (2014) — Psilocybin vs Placebo homological scaffolds.
-  Play with the filtration threshold to see cliques form, cycles are born and die, and barcodes emerge.
+<h1>🍄 Persistent Homology of Brain Networks — Psilocybin vs Placebo</h1>
+<div class="subtitle">
+  Petri et al. (2014) — interactive scaffold explorer. Both datasets load automatically.
 </div>
 
-<div class="top">
-  <!-- CONTROL PANEL -->
-  <div class="panel">
-    <h2>Controls</h2>
-
-    <label>Dataset</label>
-    <div class="toggles">
-      <button id="btnLoadPla">📥 Load Placebo</button>
-      <button id="btnLoadPsi">📥 Load Psilocybin</button>
-    </div>
-    <div class="toggles" style="margin-top:4px;">
-      <button id="btnPla" class="active" disabled>Placebo</button>
-      <button id="btnPsi" disabled>Psilocybin</button>
-    </div>
-
-    <label>Filtration threshold ω = <span class="val" id="thrVal">0.50</span></label>
+<!-- COMPACT HORIZONTAL CONTROLS -->
+<div class="controls">
+  <div class="group">
+    <label>ω =</label><span class="val" id="thrVal">0.500</span>
     <input type="range" id="thr" min="0" max="1000" value="500">
-    <div class="stat" id="filtStat">edges in G_ω: 0 / 0</div>
-
+  </div>
+  <div class="group-sep"></div>
+  <div class="group">
     <label>Layout</label>
     <select id="layout">
-      <option value="circle">Circular (by community)</option>
-      <option value="force">Force-directed (spring)</option>
+      <option value="circle">Circular</option>
+      <option value="force">Force</option>
     </select>
-
-    <label>Node size</label>
+  </div>
+  <div class="group">
+    <label>Node</label>
     <input type="range" id="nsz" min="1" max="20" value="5">
-
-    <label>Edge alpha</label>
+  </div>
+  <div class="group">
+    <label>Edge α</label>
     <input type="range" id="ea" min="10" max="100" value="60">
-
-    <div class="row">
-      <button id="animBtn">▶ Animate filtration</button>
-      <button id="resetBtn">↺ Reset view</button>
-    </div>
-
-    <label>Animation speed</label>
+  </div>
+  <div class="group-sep"></div>
+  <div class="group">
+    <button id="animBtn">▶ Animate</button>
+    <button id="resetBtn">↺ Reset</button>
+    <label>speed</label>
     <input type="range" id="speed" min="1" max="50" value="10">
+  </div>
+  <div class="group-sep"></div>
+  <div class="group">
+    <label>PD</label>
+    <select id="pdScale">
+      <option value="linear">lin</option>
+      <option value="log">log</option>
+    </select>
+    <label>BC</label>
+    <select id="bcSort">
+      <option value="persistence">π</option>
+      <option value="birth">β</option>
+    </select>
+    <label>P(π)</label>
+    <select id="pScale">
+      <option value="linear">lin</option>
+      <option value="log">log</option>
+    </select>
+    <label>P(β)</label>
+    <select id="bScale">
+      <option value="log">log</option>
+      <option value="linear">lin</option>
+    </select>
+  </div>
+</div>
 
-    <hr style="border-color:#2a2d3a; margin: 10px 0;">
-    <h2>Barcode / Persistence Diagram</h2>
-    <div class="row">
-      <label style="margin:0;">X-axis scale</label>
-      <select id="pdScale">
-        <option value="linear">Linear</option>
-        <option value="log">Log</option>
-      </select>
+<!-- MAIN 2-COLUMN VISUALISATIONS -->
+<div class="main">
+  <!-- LEFT: PLACEBO -->
+  <div class="col">
+    <div class="panel">
+      <div class="panel-title">
+        <span>① Network · Placebo scaffold</span>
+        <span class="stat" id="netInfoPla"></span>
+      </div>
+      <canvas id="netCanvasPla"></canvas>
     </div>
-    <div class="row">
-      <label style="margin:0;">Sort barcode by</label>
-      <select id="bcSort">
-        <option value="persistence">Persistence</option>
-        <option value="birth">Birth</option>
-      </select>
-    </div>
-
-    <hr style="border-color:#2a2d3a; margin: 10px 0;">
-    <h2>Live counts</h2>
-    <div class="stat" id="counts">
-      Nodes: -<br>
-      Edges (total): -<br>
-      Triangles filled: -<br>
-      Alive H1 cycles: -<br>
-      Dead H1 cycles: -<br>
-    </div>
-    <div id="status">Idle.</div>
-    <div id="progressWrap" style="display:none; margin-top:6px;">
-      <progress id="progressBar" value="0" max="100" style="width:100%; height:14px;"></progress>
-      <div class="stat" id="progressLabel" style="margin-top:2px;">0%</div>
+    <div class="col-sub">
+      <div class="panel">
+        <div class="panel-title">
+          <span>② Persistence Diagram</span>
+          <span class="stat" id="pdInfoPla"></span>
+        </div>
+        <canvas id="pdCanvasPla"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-title">
+          <span>③ Barcode H₁</span>
+          <span class="stat" id="bcInfoPla"></span>
+        </div>
+        <canvas id="bcCanvasPla"></canvas>
+      </div>
     </div>
   </div>
 
-  <!-- MAIN VIS -->
-  <div>
+  <!-- RIGHT: PSILOCYBIN -->
+  <div class="col">
     <div class="panel">
-      <div class="plot-title">
-        <span>① Simplicial Complex K<sub>ω</sub> — cliques promoted to simplices</span>
-        <span class="stat" id="netInfo"></span>
+      <div class="panel-title">
+        <span>① Network · Psilocybin scaffold</span>
+        <span class="stat" id="netInfoPsi"></span>
       </div>
-      <canvas id="netCanvas" width="900" height="500"></canvas>
-      <div class="legend">
-        <span><span class="swatch" style="background:#ff6b6b"></span>edge</span>
-        <span><span class="swatch" style="background:rgba(200,120,255,0.4)"></span>2-simplex (filled triangle)</span>
-        <span><span class="swatch" style="background:#ffcc66"></span>node</span>
-        <span style="color:#888">Colors = modularity communities from GEXF</span>
+      <canvas id="netCanvasPsi"></canvas>
+    </div>
+    <div class="col-sub">
+      <div class="panel">
+        <div class="panel-title">
+          <span>② Persistence Diagram</span>
+          <span class="stat" id="pdInfoPsi"></span>
+        </div>
+        <canvas id="pdCanvasPsi"></canvas>
+      </div>
+      <div class="panel">
+        <div class="panel-title">
+          <span>③ Barcode H₁</span>
+          <span class="stat" id="bcInfoPsi"></span>
+        </div>
+        <canvas id="bcCanvasPsi"></canvas>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="grid">
-      <div class="panel">
-        <div class="plot-title">
-          <span>② Persistence Diagram (birth vs death)</span>
-          <span class="stat" id="pdInfo"></span>
-        </div>
-        <canvas id="pdCanvas" width="500" height="380"></canvas>
-        <div class="stat">Points far from diagonal = persistent (important) cycles. Current threshold shown as line.</div>
-      </div>
+<!-- BOTTOM: COMPARISON OVERLAYS -->
+<div class="compare">
+  <div class="panel">
+    <div class="panel-title"><span>④ Betti curves (both)</span></div>
+    <canvas id="bettiCanvas"></canvas>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><span>⑤ P(π) persistence density</span></div>
+    <canvas id="ppiCanvas"></canvas>
+  </div>
+  <div class="panel">
+    <div class="panel-title"><span>⑥ P(β) birth density</span></div>
+    <canvas id="pbCanvas"></canvas>
+  </div>
+</div>
 
-      <div class="panel">
-        <div class="plot-title">
-          <span>③ Barcode — H<sub>1</sub> generator lifespans</span>
-          <span class="stat" id="bcInfo"></span>
-        </div>
-        <canvas id="bcCanvas" width="500" height="380"></canvas>
-        <div class="stat">Each horizontal bar = one 1-cycle. Length = persistence π = δ - β.</div>
-      </div>
-    </div>
-
-    <div class="grid3">
-      <div class="panel">
-        <div class="plot-title"><span>④ Betti curves</span></div>
-        <canvas id="bettiCanvas" width="400" height="220"></canvas>
-        <div class="stat">β₀ (components) & β₁ (loops) vs filtration.</div>
-      </div>
-      <div class="panel">
-        <div class="plot-title">
-          <span>⑤ P(π) persistence density</span>
-          <select id="pScale" class="mini"><option value="linear">linear</option><option value="log">log</option></select>
-        </div>
-        <canvas id="ppiCanvas" width="400" height="220"></canvas>
-      </div>
-      <div class="panel">
-        <div class="plot-title">
-          <span>⑥ P(β) birth density</span>
-          <select id="bScale" class="mini"><option value="log">log</option><option value="linear">linear</option></select>
-        </div>
-        <canvas id="pbCanvas" width="400" height="220"></canvas>
-      </div>
-    </div>
+<!-- STATUS STRIP -->
+<div class="status-strip">
+  <div id="status">Loading…</div>
+  <div id="progressWrap" style="display:none; display: flex; gap: 8px; align-items: center;">
+    <progress id="progressBar" value="0" max="100"></progress>
+    <span class="stat" id="progressLabel" style="min-width:80px; text-align:right;">0%</span>
+  </div>
+  <div class="counts">
+    <span class="pla"><b id="cPlaN">–</b> nodes</span>
+    <span class="psi"><b id="cPsiN">–</b> nodes</span>
+    <span class="pla"><b id="cPlaE">–</b> edges</span>
+    <span class="psi"><b id="cPsiE">–</b> edges</span>
+    <span class="pla"><b id="cPlaC">–</b> cyc</span>
+    <span class="psi"><b id="cPsiC">–</b> cyc</span>
   </div>
 </div>
 
 <script>
 /* ============================================================
-   Data Model & GEXF loader
+   State
    ============================================================ */
 const state = {
   datasets: { placebo: null, psilocybin: null },
-  current: 'placebo',
-  threshold: 0.5,     // fraction along sorted weights (descending)
+  threshold: 0.5,
   animating: false,
   layout: 'circle',
   nodeSize: 5,
@@ -218,6 +254,11 @@ const state = {
   pScale: 'linear',
   bScale: 'log',
   speed: 10,
+};
+
+const FILES = {
+  placebo: 'rsif-2014-0873-File001',
+  psilocybin: 'rsif-2014-0873-File002',
 };
 
 /* ============================================================
@@ -231,17 +272,15 @@ function setProgress(pct, label) {
     wrap.style.display = 'none';
     return;
   }
-  wrap.style.display = 'block';
+  wrap.style.display = 'flex';
   bar.value = pct;
   lbl.textContent = label || `${pct.toFixed(0)}%`;
 }
-function setStatus(text) {
-  document.getElementById('status').innerHTML = text;
-}
+function setStatus(text) { document.getElementById('status').innerHTML = text; }
 
 /* ============================================================
-   fetchJSONWithProgress — same as fetch+res.json(), but reports
-   real byte-level download progress for the progress bar.
+   fetchJSONWithProgress — streams the body and reports byte-level
+   progress so the user sees real download speed.
    ============================================================ */
 async function fetchJSONWithProgress(url, label) {
   const t0 = performance.now();
@@ -265,47 +304,44 @@ async function fetchJSONWithProgress(url, label) {
     received += value.length;
     const pct = total ? (received / total) * 100 : 0;
     const now = performance.now();
-    if (now - lastUI > 80) {             // throttle DOM updates
+    if (now - lastUI > 80) {
       const mb = (received / 1048576).toFixed(2);
       const totalMB = total ? (total / 1048576).toFixed(2) : '?';
       const speed = (received / 1048576) / ((now - t0) / 1000);
-      setProgress(pct, `${label} — ${mb} / ${totalMB} MB (${speed.toFixed(2)} MB/s)`);
+      setProgress(pct, `${label} ${mb}/${totalMB}MB ${speed.toFixed(1)}MB/s`);
       lastUI = now;
     }
   }
 
   const blob = new Blob(chunks);
   console.log(`[fetch] ← ${url}  ${received}B in ${(performance.now()-t0).toFixed(0)}ms`);
-  setProgress(100, `${label} — parsing...`);
+  setProgress(100, `${label} parsing...`);
   const text = await blob.text();
   const data = JSON.parse(text);
-  setProgress(100, `${label} — parsed ${data.nodes?.length || '?'} nodes, ${data.edges?.length || '?'} edges`);
+  setProgress(100, `${label} ✓`);
   return data;
 }
 
 /* ============================================================
-   Loader — tries .precomputed.json first (instant), falls back to
-   .json + on-the-fly filtration computation.
+   Loader — auto-prefers the .precomputed.json variant.
    ============================================================ */
 async function loadDatasetRaw(baseName, label) {
   const precompUrl = `${baseName}.precomputed.json`;
   const rawUrl = `${baseName}.json`;
 
-  // Probe for precomputed variant with a cheap HEAD
   let usePrecomputed = false;
   try {
     const head = await fetch(precompUrl, { method: 'HEAD' });
     usePrecomputed = head.ok;
-    console.log(`[loader] ${precompUrl} ${head.ok ? 'EXISTS' : 'missing'} → ${usePrecomputed ? 'precomputed path' : 'fallback path'}`);
   } catch (e) {
-    console.log(`[loader] HEAD failed: ${e.message}`);
+    console.log(`[loader] HEAD probe failed: ${e.message}`);
   }
 
   const url = usePrecomputed ? precompUrl : rawUrl;
-  setStatus(`${label}: <span class="stage">fetching</span> ${url}`);
+  console.log(`[loader] using ${usePrecomputed ? 'PRECOMPUTED' : 'raw'}  →  ${url}`);
+  setStatus(`${label}: <span class="stage">fetching</span> ${url.split('/').pop()}`);
   const data = await fetchJSONWithProgress(url, label);
 
-  // Build node/edge index structure regardless of source
   const nodes = [];
   const nodeMap = new Map();
   for (const n of data.nodes) {
@@ -321,11 +357,9 @@ async function loadDatasetRaw(baseName, label) {
     if (s && t) edges.push({ s: s.idx, t: t.idx, w: e.w });
   }
 
-  // Normalize weights to [0,1] (always done here, precomputed already has wmin/wmax)
   let wmax, wmin;
   if (typeof data.wmin === 'number' && typeof data.wmax === 'number') {
-    wmin = data.wmin;
-    wmax = data.wmax;
+    wmin = data.wmin; wmax = data.wmax;
   } else {
     wmax = Math.max(...edges.map(e => e.w));
     wmin = Math.min(...edges.map(e => e.w));
@@ -336,39 +370,63 @@ async function loadDatasetRaw(baseName, label) {
   return { nodes, edges, wmin, wmax, precomputed: data.filtration || null };
 }
 
+async function loadDataset(key) {
+  const label = key === 'placebo' ? 'Placebo' : 'Psilocybin';
+  const t0 = performance.now();
+  try {
+    console.log(`[init] >>> loadDataset(${key}) START`);
+    const baseName = FILES[key];
+    const data = await loadDatasetRaw(baseName, label);
+
+    let filtration = data.precomputed;
+    if (!filtration) {
+      setStatus(`${label}: <span class="stage">computing</span> filtration...`);
+      await new Promise(r => setTimeout(r, 50));
+      filtration = computeFiltration(data);
+    }
+
+    data.filtration = filtration;
+    layoutCircular(data.nodes);
+    state.datasets[key] = data;
+
+    const elapsed = ((performance.now()-t0)/1000).toFixed(2);
+    const tag = key === 'placebo' ? 'Pla' : 'Psi';
+    document.getElementById(`c${tag}N`).textContent = data.nodes.length;
+    document.getElementById(`c${tag}E`).textContent = data.edges.length;
+    document.getElementById(`c${tag}C`).textContent = filtration.cycles.length;
+    console.log(`[init] <<< loadDataset(${key}) DONE  total=${elapsed}s`);
+
+    return data;
+  } catch(err) {
+    setStatus(`${label}: <span class="stage">ERROR</span> ${err.message}`);
+    console.error(`[init] loadDataset(${key}) failed:`, err);
+    throw err;
+  }
+}
+
 /* ============================================================
-   Toy persistent homology on the filtration
-   (Union-Find for β0; cycle detection for approximate H1)
+   Persistent homology (fallback when no precomputed file)
    ============================================================ */
 function computeFiltration(data) {
   const t0 = performance.now();
   const { nodes, edges } = data;
   const n = nodes.length;
-  console.log(`[filtration] START  n=${n} edges=${edges.length}  t=${t0.toFixed(1)}ms`);
   const parent = Array.from({length: n}, (_, i) => i);
   const rank = new Array(n).fill(0);
   function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
   function union(a,b){ a=find(a); b=find(b); if(a===b) return false;
-    if(rank[a]<rank[b]) [a,b]=[b,a];
-    parent[b]=a; if(rank[a]===rank[b]) rank[a]++;
+    if(rank[a]<rank[b]) [a,b]=[b,a]; parent[b]=a; if(rank[a]===rank[b]) rank[a]++;
     return true;
   }
 
-  // adjacency by step
   const adj = Array.from({length: n}, () => new Set());
-  const bettiSteps = [];  // {step, b0, b1, edgeCount, triCount}
-  const cyclesAlive = new Map(); // cycleId -> {birth, edges: Set}
+  const bettiSteps = [];
+  const cyclesAlive = new Map();
   const deadCycles = [];
   let cid = 0;
   let triangles = 0;
 
-  // We'll approximate H1: when an edge is added that connects two nodes in the same component,
-  // it CREATES a cycle. When adding an edge causes a triangle where all 3 edges are already present,
-  // it can KILL an older cycle. This is a simplified version — the real algorithm uses matrix reduction.
-
-  // Track cycles by their fundamental representatives via BFS
   function findCycle(u, v) {
-    // BFS from u avoiding the direct edge (u,v), find path to v
     const prev = new Map();
     prev.set(u, null);
     const q = [u];
@@ -380,7 +438,6 @@ function computeFiltration(data) {
       }
     }
     if(!prev.has(v)) return null;
-    // reconstruct
     const path = [];
     let x = v;
     while(x !== null){ path.push(x); x = prev.get(x); }
@@ -390,15 +447,11 @@ function computeFiltration(data) {
   edges.forEach((e, step) => {
     const {s, t, wn} = e;
     const merged = union(s, t);
-
-    // Detect triangles formed
     const common = [];
     for(const x of adj[s]) if(adj[t].has(x)) common.push(x);
     triangles += common.length;
 
     if(!merged) {
-      // s and t already connected -> new 1-cycle is born
-      // find shortest cycle
       const path = findCycle(s, t);
       if(path && path.length >= 3){
         const cyc = { id: cid++, birth: wn, edges: new Set() };
@@ -407,35 +460,28 @@ function computeFiltration(data) {
           const b = Math.max(path[i], path[i+1]);
           cyc.edges.add(a+','+b);
         }
-        // also close via (s,t)
         const a = Math.min(s,t), b = Math.max(s,t);
         cyc.edges.add(a+','+b);
         cyclesAlive.set(cyc.id, cyc);
       }
     }
 
-    // Kill cycles via triangle formation
     for(const x of common){
-      // triangle (s,t,x) — this fills the 2-simplex
-      // Any cycle containing all 3 edges (s,t),(s,x),(t,x) becomes bounded
       const eA = Math.min(s,t)+','+Math.max(s,t);
       const eB = Math.min(s,x)+','+Math.max(s,x);
       const eC = Math.min(t,x)+','+Math.max(t,x);
       for(const [id, cyc] of cyclesAlive){
         if(cyc.edges.has(eA) && cyc.edges.has(eB) && cyc.edges.has(eC)){
-          // kill oldest (Elder rule approx)
           deadCycles.push({ id, birth: cyc.birth, death: wn });
           cyclesAlive.delete(id);
-          break; // only kill one per triangle
+          break;
         }
       }
     }
 
     adj[s].add(t); adj[t].add(s);
 
-    // sample betti curve
     if(step % Math.max(1, Math.floor(edges.length/300)) === 0 || step === edges.length-1){
-      // count components
       const roots = new Set();
       for(let i=0;i<n;i++) roots.add(find(i));
       bettiSteps.push({
@@ -445,16 +491,14 @@ function computeFiltration(data) {
         edgeCount: step+1,
         triCount: triangles
       });
-      console.log(`[filtration] step=${step}/${edges.length}  (${((step/edges.length)*100).toFixed(1)}%)  β0=${roots.size}  β1=${cyclesAlive.size}  triangles=${triangles}  t=${(performance.now()-t0).toFixed(0)}ms`);
     }
   });
 
-  // Cycles still alive at end -> death = 0 (last filtration value)
   const allCycles = [...deadCycles];
   for(const [id, cyc] of cyclesAlive){
     allCycles.push({ id, birth: cyc.birth, death: 0 });
   }
-  console.log(`[filtration] DONE  cycles=${allCycles.length}  bettiSteps=${bettiSteps.length}  total=${(performance.now()-t0).toFixed(0)}ms`);
+  console.log(`[filtration] done in ${(performance.now()-t0).toFixed(0)}ms`);
   return { bettiSteps, cycles: allCycles };
 }
 
@@ -462,7 +506,6 @@ function computeFiltration(data) {
    Layouts
    ============================================================ */
 function layoutCircular(nodes) {
-  // sort by community, then place on circle
   const sorted = [...nodes].sort((a,b) => a.mod - b.mod || a.idx - b.idx);
   const N = sorted.length;
   sorted.forEach((n, i) => {
@@ -474,7 +517,6 @@ function layoutCircular(nodes) {
 
 function layoutForce(nodes, edges, iters = 200) {
   const N = nodes.length;
-  // init random
   nodes.forEach(n => {
     if(n.x === 0 && n.y === 0) {
       n.x = (Math.random()-0.5)*2;
@@ -483,7 +525,6 @@ function layoutForce(nodes, edges, iters = 200) {
   });
   const topEdges = edges.slice(0, Math.min(edges.length, 800));
   for(let it=0; it<iters; it++){
-    // repulsion
     for(let i=0;i<N;i++){
       let fx=0, fy=0;
       for(let j=0;j<N;j++){
@@ -497,7 +538,6 @@ function layoutForce(nodes, edges, iters = 200) {
       nodes[i].vx = (nodes[i].vx + fx) * 0.85;
       nodes[i].vy = (nodes[i].vy + fy) * 0.85;
     }
-    // attraction along edges
     for(const e of topEdges){
       const a = nodes[e.s], b = nodes[e.t];
       const dx = b.x - a.x, dy = b.y - a.y;
@@ -507,7 +547,6 @@ function layoutForce(nodes, edges, iters = 200) {
     }
     for(const n of nodes){ n.x += n.vx; n.y += n.vy; }
   }
-  // normalize
   let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
   for(const n of nodes){ minX=Math.min(minX,n.x); maxX=Math.max(maxX,n.x); minY=Math.min(minY,n.y); maxY=Math.max(maxY,n.y); }
   const cx=(minX+maxX)/2, cy=(minY+maxY)/2, s=Math.max(maxX-minX,maxY-minY)/2;
@@ -522,57 +561,62 @@ function communityColor(m) {
   return palette[m % palette.length];
 }
 
-function drawNetwork() {
-  const cv = document.getElementById('netCanvas');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle = '#0a0b10';
-  ctx.fillRect(0,0,W,H);
+function fitCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const W = Math.max(1, Math.floor(rect.width * dpr));
+  const H = Math.max(1, Math.floor(rect.height * dpr));
+  if (canvas.width !== W || canvas.height !== H) {
+    canvas.width = W;
+    canvas.height = H;
+  }
+  return { ctx: canvas.getContext('2d'), W, H, dpr };
+}
 
-  const data = state.datasets[state.current];
-  if(!data) return;
+/* --- Network (one canvas per dataset) --- */
+function drawNetwork(key) {
+  const tag = key === 'placebo' ? 'Pla' : 'Psi';
+  const cv = document.getElementById(`netCanvas${tag}`);
+  const { ctx, W, H } = fitCanvas(cv);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0, 0, W, H);
+
+  const data = state.datasets[key];
+  if (!data) return;
   const { nodes, edges } = data;
 
   const cx = W/2, cy = H/2;
-  const R = Math.min(W,H)/2 - 20;
+  const R = Math.min(W, H)/2 - 12;
 
-  // find included edges given threshold
-  // filtration: keep top-fraction of sorted edges (already sorted descending)
   const keepCount = Math.floor(edges.length * state.threshold);
   const included = new Set();
   const includedList = [];
-  for(let i=0;i<keepCount;i++){
+  for (let i = 0; i < keepCount; i++) {
     const e = edges[i];
-    const key = Math.min(e.s,e.t)+','+Math.max(e.s,e.t);
-    included.add(key);
+    const key2 = Math.min(e.s, e.t) + ',' + Math.max(e.s, e.t);
+    included.add(key2);
     includedList.push(e);
   }
 
-  // build adjacency of included
   const adj = Array.from({length: nodes.length}, () => new Set());
-  for(const e of includedList){
+  for (const e of includedList) {
     adj[e.s].add(e.t); adj[e.t].add(e.s);
   }
 
-  // detect triangles for shading (limit for perf)
   const triangles = [];
-  if(includedList.length < 3000){
-    for(const e of includedList){
-      const {s,t} = e;
-      if(adj[s].size > adj[t].size) continue; // avoid duplicates
-      for(const x of adj[s]){
-        if(x > t && adj[t].has(x)){
-          triangles.push([s,t,x]);
-        }
+  if (includedList.length < 3000) {
+    for (const e of includedList) {
+      const {s, t} = e;
+      if (adj[s].size > adj[t].size) continue;
+      for (const x of adj[s]) {
+        if (x > t && adj[t].has(x)) triangles.push([s, t, x]);
       }
     }
   }
 
-  // draw triangles (2-simplices)
   ctx.globalAlpha = 0.15;
   ctx.fillStyle = '#c878ff';
-  for(const [a,b,c] of triangles){
+  for (const [a, b, c] of triangles) {
     ctx.beginPath();
     ctx.moveTo(cx + nodes[a].x*R, cy + nodes[a].y*R);
     ctx.lineTo(cx + nodes[b].x*R, cy + nodes[b].y*R);
@@ -582,13 +626,11 @@ function drawNetwork() {
   }
   ctx.globalAlpha = 1;
 
-  // draw edges
   ctx.globalAlpha = state.edgeAlpha;
-  for(const e of includedList){
+  for (const e of includedList) {
     const a = nodes[e.s], b = nodes[e.t];
-    const col = communityColor(a.mod);
-    ctx.strokeStyle = col;
-    ctx.lineWidth = 0.3 + e.wn * 2;
+    ctx.strokeStyle = communityColor(a.mod);
+    ctx.lineWidth = 0.3 + e.wn * 1.5;
     ctx.beginPath();
     ctx.moveTo(cx + a.x*R, cy + a.y*R);
     ctx.lineTo(cx + b.x*R, cy + b.y*R);
@@ -596,8 +638,7 @@ function drawNetwork() {
   }
   ctx.globalAlpha = 1;
 
-  // draw nodes
-  for(const n of nodes){
+  for (const n of nodes) {
     ctx.fillStyle = communityColor(n.mod);
     ctx.beginPath();
     ctx.arc(cx + n.x*R, cy + n.y*R, state.nodeSize, 0, 2*Math.PI);
@@ -607,518 +648,349 @@ function drawNetwork() {
     ctx.stroke();
   }
 
-  // stats
-  document.getElementById('filtStat').textContent =
-    `edges in G_ω: ${includedList.length} / ${edges.length}`;
-  document.getElementById('netInfo').textContent =
-    `triangles (2-simplices): ${triangles.length}`;
-
-  // update counts
-  const filt = data.filtration;
-  if(filt && filt.bettiSteps.length){
-    // find closest betti step to current threshold
-    const targetStep = keepCount;
-    let closest = filt.bettiSteps[0];
-    for(const s of filt.bettiSteps){
-      if(Math.abs(s.step - targetStep) < Math.abs(closest.step - targetStep)) closest = s;
-    }
-    // count alive/dead cycles at current threshold
-    let alive = 0, dead = 0;
-    const wThr = includedList.length ? includedList[includedList.length-1].wn : 0;
-    for(const c of filt.cycles){
-      if(c.birth >= wThr && c.death < wThr) alive++;
-      else if(c.death >= wThr) dead++;
-    }
-    document.getElementById('counts').innerHTML =
-      `Nodes: ${nodes.length}<br>` +
-      `Edges (total): ${edges.length}<br>` +
-      `Edges included: ${includedList.length}<br>` +
-      `Triangles filled: ${triangles.length}<br>` +
-      `Alive H1 cycles: ${alive}<br>` +
-      `Dead H1 cycles: ${dead}<br>` +
-      `Total cycles found: ${filt.cycles.length}`;
-  }
+  document.getElementById(`netInfo${tag}`).textContent =
+    `${includedList.length}/${edges.length} edges · ${triangles.length} tri`;
 }
 
-/* ============================================================
-   Persistence Diagram (birth vs death)
-   ============================================================ */
-function drawPD() {
-  const cv = document.getElementById('pdCanvas');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
+/* --- Persistence Diagram (one canvas per dataset) --- */
+function drawPD(key) {
+  const tag = key === 'placebo' ? 'Pla' : 'Psi';
+  const cv = document.getElementById(`pdCanvas${tag}`);
+  const { ctx, W, H } = fitCanvas(cv);
+  ctx.fillStyle = '#0a0b10';
+  ctx.fillRect(0, 0, W, H);
 
-  const data = state.datasets[state.current];
-  if(!data || !data.filtration) return;
+  const data = state.datasets[key];
+  if (!data || !data.filtration) return;
   const cycles = data.filtration.cycles;
 
-  const pad = 40;
+  const pad = 24 * (window.devicePixelRatio || 1);
   const plotW = W - pad*2, plotH = H - pad*2;
 
-  // Axes: birth on x (descending from 1 to 0 as in figure 6),
-  // death on y (descending 0 to 1 top-to-bottom)
-  // Persistent points are far ABOVE the diagonal (birth high, death low)
   const isLog = state.pdScale === 'log';
   function xmap(b) {
-    // birth: 1 -> left, 0 -> right (descending)
-    if(isLog){
+    if (isLog) {
       const v = Math.log10(Math.max(b, 1e-4));
-      const vmin = -4, vmax = 0;
-      return pad + (1 - (v-vmin)/(vmax-vmin)) * plotW;
+      return pad + (1 - (v - (-4)) / 4) * plotW;
     }
     return pad + (1 - b) * plotW;
   }
   function ymap(d) {
-    if(isLog){
+    if (isLog) {
       const v = Math.log10(Math.max(d, 1e-4));
-      const vmin = -4, vmax = 0;
-      return pad + (1 - (v-vmin)/(vmax-vmin)) * plotH;
+      return pad + (1 - (v - (-4)) / 4) * plotH;
     }
     return pad + (1 - d) * plotH;
   }
 
-  // Background gradient hint (log density) — like figure 6
-  // draw hexbin-like density
-  const bins = 40;
+  // density
+  const bins = 30;
   const density = Array.from({length: bins}, () => new Array(bins).fill(0));
-  for(const c of cycles){
-    const bx = Math.floor((1-c.birth) * bins);
-    const by = Math.floor((1-c.death) * bins);
-    if(bx>=0 && bx<bins && by>=0 && by<bins) density[bx][by]++;
+  for (const c of cycles) {
+    const bx = Math.floor((1 - c.birth) * bins);
+    const by = Math.floor((1 - c.death) * bins);
+    if (bx >= 0 && bx < bins && by >= 0 && by < bins) density[bx][by]++;
   }
   let dmax = 0;
-  for(let i=0;i<bins;i++) for(let j=0;j<bins;j++) if(density[i][j]>dmax) dmax=density[i][j];
-  if(dmax > 0){
-    const cellW = plotW/bins, cellH = plotH/bins;
-    for(let i=0;i<bins;i++){
-      for(let j=0;j<bins;j++){
-        if(density[i][j] === 0) continue;
-        const v = Math.log(density[i][j]+1) / Math.log(dmax+1);
-        // colormap: dark purple -> pink -> white
-        const r = Math.floor(80 + 175*v);
-        const g = Math.floor(30 + 120*v);
-        const b = Math.floor(120 + 130*v);
-        ctx.fillStyle = `rgba(${r},${g},${b},${0.7*v+0.1})`;
-        ctx.fillRect(pad + i*cellW, pad + j*cellH, cellW+1, cellH+1);
+  for (let i = 0; i < bins; i++)
+    for (let j = 0; j < bins; j++)
+      if (density[i][j] > dmax) dmax = density[i][j];
+  if (dmax > 0) {
+    const cellW = plotW / bins, cellH = plotH / bins;
+    for (let i = 0; i < bins; i++) {
+      for (let j = 0; j < bins; j++) {
+        if (density[i][j] === 0) continue;
+        const v = Math.log(density[i][j] + 1) / Math.log(dmax + 1);
+        ctx.fillStyle = `rgba(${80 + 175*v | 0},${30 + 120*v | 0},${120 + 130*v | 0},${0.7*v + 0.1})`;
+        ctx.fillRect(pad + i*cellW, pad + j*cellH, cellW + 1, cellH + 1);
       }
     }
   }
 
-  // Draw diagonal (birth = death line)
-  ctx.strokeStyle = '#888';
-  ctx.setLineDash([4,4]);
+  // diagonal
+  ctx.strokeStyle = '#666';
+  ctx.setLineDash([3, 3]);
   ctx.beginPath();
   ctx.moveTo(xmap(1), ymap(1));
   ctx.lineTo(xmap(0), ymap(0));
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Draw current threshold line
+  // threshold
   ctx.strokeStyle = '#ffcc66';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(xmap(state.threshold), pad);
-  ctx.lineTo(xmap(state.threshold), pad+plotH);
+  ctx.lineTo(xmap(state.threshold), pad + plotH);
   ctx.stroke();
 
-  // Draw points on top (sample if too many)
-  const step = Math.max(1, Math.floor(cycles.length / 3000));
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
-  for(let i=0;i<cycles.length;i+=step){
+  // points
+  const step = Math.max(1, Math.floor(cycles.length / 1500));
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  for (let i = 0; i < cycles.length; i += step) {
     const c = cycles[i];
     ctx.beginPath();
     ctx.arc(xmap(c.birth), ymap(c.death), 1, 0, 2*Math.PI);
     ctx.fill();
   }
 
-  // Axes labels
-  ctx.fillStyle = '#aab';
-  ctx.font = '11px monospace';
-  ctx.fillText('birth β (1 → 0)', W/2 - 40, H - 8);
-  ctx.save();
-  ctx.translate(12, H/2);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText('death δ', 0, 0);
-  ctx.restore();
+  const fs = Math.max(8, 9 * (window.devicePixelRatio || 1));
+  ctx.font = `${fs}px monospace`;
+  ctx.fillStyle = '#888';
+  ctx.fillText(`${cycles.length} cyc`, pad, H - 6);
 
-  // Tick marks
-  ctx.fillStyle = '#666';
-  ctx.font = '9px monospace';
-  for(let t=0; t<=1; t+=0.2){
-    const x = xmap(t);
-    ctx.fillText(t.toFixed(1), x-6, pad+plotH+12);
-    const y = ymap(t);
-    ctx.fillText(t.toFixed(1), pad-22, y+3);
-  }
-
-  document.getElementById('pdInfo').textContent =
-    `${cycles.length} cycles | scale: ${state.pdScale}`;
+  document.getElementById(`pdInfo${tag}`).textContent = `${cycles.length} cyc`;
 }
 
-/* ============================================================
-   Barcode
-   ============================================================ */
-function drawBarcode() {
-  const cv = document.getElementById('bcCanvas');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
+/* --- Barcode (one canvas per dataset) --- */
+function drawBarcode(key) {
+  const tag = key === 'placebo' ? 'Pla' : 'Psi';
+  const cv = document.getElementById(`bcCanvas${tag}`);
+  const { ctx, W, H } = fitCanvas(cv);
   ctx.fillStyle = '#0a0b10';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillRect(0, 0, W, H);
 
-  const data = state.datasets[state.current];
-  if(!data || !data.filtration) return;
+  const data = state.datasets[key];
+  if (!data || !data.filtration) return;
   let cycles = [...data.filtration.cycles];
+  if (state.bcSort === 'persistence')
+    cycles.sort((a, b) => (b.birth - b.death) - (a.birth - a.death));
+  else
+    cycles.sort((a, b) => b.birth - a.birth);
 
-  if(state.bcSort === 'persistence'){
-    cycles.sort((a,b) => (b.birth - b.death) - (a.birth - a.death));
-  } else {
-    cycles.sort((a,b) => b.birth - a.birth);
-  }
-
-  // Take top N bars for readability
-  const N = Math.min(cycles.length, 200);
+  const N = Math.min(cycles.length, 120);
   cycles = cycles.slice(0, N);
 
-  const pad = 40;
+  const pad = 24 * (window.devicePixelRatio || 1);
   const plotW = W - pad*2, plotH = H - pad*2;
-  const barH = plotH / N;
+  const barH = plotH / Math.max(N, 1);
 
-  function xmap(v){
-    // filtration goes 1 -> 0 descending
-    return pad + (1 - v) * plotW;
-  }
+  function xmap(v) { return pad + (1 - v) * plotW; }
 
-  // draw bars
-  for(let i=0;i<N;i++){
+  for (let i = 0; i < N; i++) {
     const c = cycles[i];
-    const x1 = xmap(c.birth);
-    const x2 = xmap(c.death);
-    const persistence = c.birth - c.death;
-    // color by persistence
-    const t = Math.min(1, persistence * 3);
-    const r = Math.floor(100 + 155*t);
-    const g = Math.floor(180 - 100*t);
-    const b = Math.floor(255 - 100*t);
-    ctx.strokeStyle = `rgb(${r},${g},${b})`;
-    ctx.lineWidth = Math.max(1, barH*0.7);
+    const pers = c.birth - c.death;
+    const t = Math.min(1, pers * 3);
+    ctx.strokeStyle = `rgb(${100 + 155*t | 0},${180 - 100*t | 0},${255 - 100*t | 0})`;
+    ctx.lineWidth = Math.max(1, barH * 0.7);
     ctx.beginPath();
-    ctx.moveTo(x1, pad + i*barH + barH/2);
-    ctx.lineTo(x2, pad + i*barH + barH/2);
+    ctx.moveTo(xmap(c.birth), pad + i*barH + barH/2);
+    ctx.lineTo(xmap(c.death), pad + i*barH + barH/2);
     ctx.stroke();
   }
 
-  // Current threshold line
   ctx.strokeStyle = '#ffcc66';
   ctx.lineWidth = 1.5;
-  ctx.setLineDash([3,3]);
+  ctx.setLineDash([3, 3]);
   ctx.beginPath();
   ctx.moveTo(xmap(state.threshold), pad);
-  ctx.lineTo(xmap(state.threshold), pad+plotH);
+  ctx.lineTo(xmap(state.threshold), pad + plotH);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Axes
-  ctx.fillStyle = '#aab';
-  ctx.font = '11px monospace';
-  ctx.fillText('filtration ω (1 → 0)', W/2-60, H-8);
-  ctx.save();
-  ctx.translate(14, H/2 + 20);
-  ctx.rotate(-Math.PI/2);
-  ctx.fillText(`H₁ generators (top ${N})`, 0, 0);
-  ctx.restore();
-
-  ctx.fillStyle = '#666';
-  ctx.font = '9px monospace';
-  for(let t=0; t<=1; t+=0.2){
-    const x = xmap(t);
-    ctx.fillText(t.toFixed(1), x-6, pad+plotH+12);
-  }
-
-  document.getElementById('bcInfo').textContent =
-    `showing ${N} / ${data.filtration.cycles.length} | sort: ${state.bcSort}`;
+  document.getElementById(`bcInfo${tag}`).textContent = `top ${N}`;
 }
 
-/* ============================================================
-   Betti curves
-   ============================================================ */
+/* --- Betti curves (overlay both) --- */
 function drawBetti() {
   const cv = document.getElementById('bettiCanvas');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
+  const { ctx, W, H } = fitCanvas(cv);
   ctx.fillStyle = '#0a0b10';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillRect(0, 0, W, H);
 
-  const data = state.datasets[state.current];
-  if(!data || !data.filtration) return;
-  const steps = data.filtration.bettiSteps;
-  if(!steps.length) return;
-
-  const pad = 34;
+  const pad = 24 * (window.devicePixelRatio || 1);
   const plotW = W - pad*2, plotH = H - pad*2;
-  let maxB0 = 0, maxB1 = 0;
-  for(const s of steps){ if(s.b0>maxB0) maxB0=s.b0; if(s.b1>maxB1) maxB1=s.b1; }
-  const maxB = Math.max(maxB0, maxB1);
+  let maxB = 1;
+  for (const key of ['placebo', 'psilocybin']) {
+    const d = state.datasets[key];
+    if (!d || !d.filtration) continue;
+    for (const s of d.filtration.bettiSteps) {
+      if (s.b0 > maxB) maxB = s.b0;
+      if (s.b1 > maxB) maxB = s.b1;
+    }
+  }
+  function xmap(w) { return pad + (1 - w) * plotW; }
+  function ymap(v) { return pad + plotH - (v / maxB) * plotH; }
 
-  // filtration axis: ω from 1 to 0 (descending)
-  function xmap(w){ return pad + (1-w) * plotW; }
-  function ymap(v){ return pad + plotH - (v/maxB) * plotH; }
-
-  // grid
-  ctx.strokeStyle = '#222'; ctx.lineWidth = 1;
-  for(let i=0;i<=4;i++){
-    const y = pad + (i/4)*plotH;
-    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad+plotW, y); ctx.stroke();
+  const colors = { placebo: '#66ccff', psilocybin: '#ff6b6b' };
+  for (const key of ['placebo', 'psilocybin']) {
+    const d = state.datasets[key];
+    if (!d || !d.filtration) continue;
+    const steps = d.filtration.bettiSteps;
+    ctx.strokeStyle = colors[key];
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    steps.forEach((s, i) => {
+      const x = xmap(s.w), y = ymap(s.b0);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    steps.forEach((s, i) => {
+      const x = xmap(s.w), y = ymap(s.b1);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
   }
 
-  // β0
-  ctx.strokeStyle = '#66ccff'; ctx.lineWidth = 2;
-  ctx.beginPath();
-  steps.forEach((s,i) => {
-    const x = xmap(s.w), y = ymap(s.b0);
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
-  ctx.stroke();
-
-  // β1
-  ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
-  ctx.beginPath();
-  steps.forEach((s,i) => {
-    const x = xmap(s.w), y = ymap(s.b1);
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
-  ctx.stroke();
-
-  // threshold
-  ctx.strokeStyle = '#ffcc66'; ctx.setLineDash([3,3]);
+  ctx.strokeStyle = '#ffcc66';
+  ctx.setLineDash([3, 3]);
   ctx.beginPath();
   ctx.moveTo(xmap(state.threshold), pad);
-  ctx.lineTo(xmap(state.threshold), pad+plotH);
+  ctx.lineTo(xmap(state.threshold), pad + plotH);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  ctx.fillStyle = '#66ccff'; ctx.font = '10px monospace';
-  ctx.fillText('β₀ components', pad+4, pad+10);
-  ctx.fillStyle = '#ff6b6b';
-  ctx.fillText('β₁ loops', pad+4, pad+22);
-
-  ctx.fillStyle = '#666';
-  ctx.fillText('ω →', pad+plotW-20, H-6);
-  ctx.fillText('max='+maxB, pad-30, pad+8);
+  const fs = Math.max(8, 9 * (window.devicePixelRatio || 1));
+  ctx.font = `${fs}px monospace`;
+  ctx.fillStyle = '#66ccff'; ctx.fillText('β₀ pla', pad+4, pad+10);
+  ctx.fillStyle = '#ff6b6b'; ctx.fillText('β₀ psi', pad+50, pad+10);
+  ctx.fillStyle = '#66ccff'; ctx.fillText('β₁ pla', pad+4, pad+22);
+  ctx.fillStyle = '#ff6b6b'; ctx.fillText('β₁ psi', pad+50, pad+22);
 }
 
-/* ============================================================
-   P(π) persistence distribution — like fig. 4a
-   ============================================================ */
+/* --- P(π) overlay --- */
 function drawPPi() {
   const cv = document.getElementById('ppiCanvas');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
+  const { ctx, W, H } = fitCanvas(cv);
   ctx.fillStyle = '#0a0b10';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillRect(0, 0, W, H);
 
-  const pad = 34;
+  const pad = 24 * (window.devicePixelRatio || 1);
   const plotW = W - pad*2, plotH = H - pad*2;
 
-  // Compute for BOTH datasets, overlay
   const results = {};
-  for(const key of ['placebo','psilocybin']){
-    const data = state.datasets[key];
-    if(!data || !data.filtration) continue;
-    const cycles = data.filtration.cycles;
+  for (const key of ['placebo', 'psilocybin']) {
+    const d = state.datasets[key];
+    if (!d || !d.filtration) continue;
     const bins = 30;
     const hist = new Array(bins).fill(0);
-    for(const c of cycles){
+    for (const c of d.filtration.cycles) {
       const p = c.birth - c.death;
-      const b = Math.min(bins-1, Math.floor(p*bins));
-      if(b>=0) hist[b]++;
+      const b = Math.min(bins - 1, Math.floor(p * bins));
+      if (b >= 0) hist[b]++;
     }
-    const total = cycles.length || 1;
-    results[key] = hist.map(v => v/total);
+    const total = d.filtration.cycles.length || 1;
+    results[key] = hist.map(v => v / total);
   }
-
   const isLog = state.pScale === 'log';
   let maxV = 0;
-  for(const k in results) for(const v of results[k]) if(v>maxV) maxV=v;
+  for (const k in results) for (const v of results[k]) if (v > maxV) maxV = v;
   const minV = isLog ? 1e-4 : 0;
 
-  function xmap(i, N){ return pad + (i/(N-1))*plotW; }
-  function ymap(v){
-    if(isLog){
+  function xmap(i, N) { return pad + (i / (N - 1)) * plotW; }
+  function ymap(v) {
+    if (isLog) {
       const lv = Math.log10(Math.max(v, minV));
       const lmax = Math.log10(maxV || 1);
       const lmin = Math.log10(minV);
-      return pad + plotH - ((lv-lmin)/(lmax-lmin)) * plotH;
+      return pad + plotH - ((lv - lmin) / (lmax - lmin)) * plotH;
     }
-    return pad + plotH - (v/(maxV||1)) * plotH;
+    return pad + plotH - (v / (maxV || 1)) * plotH;
   }
 
   const colors = { placebo: '#66ccff', psilocybin: '#ff6b6b' };
-  for(const k of ['placebo','psilocybin']){
-    if(!results[k]) continue;
+  for (const k of ['placebo', 'psilocybin']) {
+    if (!results[k]) continue;
     ctx.strokeStyle = colors[k];
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     results[k].forEach((v, i) => {
       const x = xmap(i, results[k].length);
       const y = ymap(Math.max(v, minV));
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
     ctx.stroke();
   }
 
-  ctx.fillStyle = '#66ccff'; ctx.font = '10px monospace';
-  ctx.fillText('placebo', pad+plotW-70, pad+10);
-  ctx.fillStyle = '#ff6b6b';
-  ctx.fillText('psilocybin', pad+plotW-70, pad+22);
-  ctx.fillStyle = '#aab';
-  ctx.fillText('π (persistence) →', pad+plotW-110, H-6);
-  ctx.fillText('P(π)', 4, pad+8);
+  const fs = Math.max(8, 9 * (window.devicePixelRatio || 1));
+  ctx.font = `${fs}px monospace`;
+  ctx.fillStyle = '#66ccff'; ctx.fillText('placebo', pad+4, pad+10);
+  ctx.fillStyle = '#ff6b6b'; ctx.fillText('psilocybin', pad+4, pad+22);
 }
 
-/* ============================================================
-   P(β) birth distribution — like fig. 4b
-   ============================================================ */
+/* --- P(β) overlay --- */
 function drawPB() {
   const cv = document.getElementById('pbCanvas');
-  const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0,0,W,H);
+  const { ctx, W, H } = fitCanvas(cv);
   ctx.fillStyle = '#0a0b10';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillRect(0, 0, W, H);
 
-  const pad = 34;
+  const pad = 24 * (window.devicePixelRatio || 1);
   const plotW = W - pad*2, plotH = H - pad*2;
 
   const results = {};
-  for(const key of ['placebo','psilocybin']){
-    const data = state.datasets[key];
-    if(!data || !data.filtration) continue;
-    const cycles = data.filtration.cycles;
+  for (const key of ['placebo', 'psilocybin']) {
+    const d = state.datasets[key];
+    if (!d || !d.filtration) continue;
     const bins = 40;
     const hist = new Array(bins).fill(0);
-    for(const c of cycles){
-      const b = Math.min(bins-1, Math.floor(c.birth*bins));
-      if(b>=0) hist[b]++;
+    for (const c of d.filtration.cycles) {
+      const b = Math.min(bins - 1, Math.floor(c.birth * bins));
+      if (b >= 0) hist[b]++;
     }
-    const total = cycles.length || 1;
-    results[key] = hist.map(v => v/total);
+    const total = d.filtration.cycles.length || 1;
+    results[key] = hist.map(v => v / total);
   }
-
   const isLog = state.bScale === 'log';
   let maxV = 0;
-  for(const k in results) for(const v of results[k]) if(v>maxV) maxV=v;
+  for (const k in results) for (const v of results[k]) if (v > maxV) maxV = v;
   const minV = isLog ? 1e-5 : 0;
 
-  function xmap(i, N){ return pad + (i/(N-1))*plotW; }
-  function ymap(v){
-    if(isLog){
+  function xmap(i, N) { return pad + (i / (N - 1)) * plotW; }
+  function ymap(v) {
+    if (isLog) {
       const lv = Math.log10(Math.max(v, minV));
       const lmax = Math.log10(maxV || 1);
       const lmin = Math.log10(minV);
-      return pad + plotH - ((lv-lmin)/(lmax-lmin)) * plotH;
+      return pad + plotH - ((lv - lmin) / (lmax - lmin)) * plotH;
     }
-    return pad + plotH - (v/(maxV||1)) * plotH;
+    return pad + plotH - (v / (maxV || 1)) * plotH;
   }
 
   const colors = { placebo: '#66ccff', psilocybin: '#ff6b6b' };
-  for(const k of ['placebo','psilocybin']){
-    if(!results[k]) continue;
+  for (const k of ['placebo', 'psilocybin']) {
+    if (!results[k]) continue;
     ctx.strokeStyle = colors[k];
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     results[k].forEach((v, i) => {
       const x = xmap(i, results[k].length);
       const y = ymap(Math.max(v, minV));
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     });
     ctx.stroke();
   }
 
-  ctx.fillStyle = '#66ccff'; ctx.font = '10px monospace';
-  ctx.fillText('placebo', pad+plotW-70, pad+10);
-  ctx.fillStyle = '#ff6b6b';
-  ctx.fillText('psilocybin', pad+plotW-70, pad+22);
-  ctx.fillStyle = '#aab';
-  ctx.fillText('β (birth) →', pad+plotW-90, H-6);
-  ctx.fillText('P(β)', 4, pad+8);
+  const fs = Math.max(8, 9 * (window.devicePixelRatio || 1));
+  ctx.font = `${fs}px monospace`;
+  ctx.fillStyle = '#66ccff'; ctx.fillText('placebo', pad+4, pad+10);
+  ctx.fillStyle = '#ff6b6b'; ctx.fillText('psilocybin', pad+4, pad+22);
 }
 
 /* ============================================================
-   Master redraw
+   Master redraw — now redraws BOTH datasets
    ============================================================ */
 function redrawAll() {
-  drawNetwork();
-  drawPD();
-  drawBarcode();
+  drawNetwork('placebo');
+  drawNetwork('psilocybin');
+  drawPD('placebo');
+  drawPD('psilocybin');
+  drawBarcode('placebo');
+  drawBarcode('psilocybin');
   drawBetti();
   drawPPi();
   drawPB();
 }
 
-/* ============================================================
-   Layout dispatcher
-   ============================================================ */
 function applyLayout() {
-  const data = state.datasets[state.current];
-  if(!data) return;
-  if(state.layout === 'circle') layoutCircular(data.nodes);
-  else layoutForce(data.nodes, data.edges, 150);
-}
-
-/* ============================================================
-   Lazy loading — triggered by explicit button click
-   ============================================================ */
-const FILES = {
-  placebo: 'rsif-2014-0873-File001.json',
-  psilocybin: 'rsif-2014-0873-File002.json',
-};
-
-async function loadDataset(key) {
-  const label = key === 'placebo' ? 'Placebo' : 'Psilocybin';
-  const btn = document.getElementById(key === 'placebo' ? 'btnLoadPla' : 'btnLoadPsi');
-  if (state.datasets[key]) {
-    console.log(`[init] ${key} already loaded, skipping`);
-    return;
-  }
-  btn.disabled = true;
-  const t0 = performance.now();
-  try {
-    console.log(`[init] >>> loadDataset(${key}) START`);
-    const baseName = FILES[key].replace(/\.json$/, '');
-    const data = await loadDatasetRaw(baseName, label);
-
-    let filtration = data.precomputed;
-    if (filtration) {
-      console.log(`[init] [${key}] using precomputed filtration  cycles=${filtration.cycles.length}  bettiSteps=${filtration.bettiSteps.length}`);
-      setProgress(100, `${label} — precomputed filtration ready`);
-    } else {
-      setStatus(`${label}: <span class="stage">computing</span> filtration on-the-fly...`);
-      console.log(`[init] [${key}] computing filtration (slow path)...`);
-      await new Promise(r => setTimeout(r, 50));  // let UI paint
-      filtration = computeFiltration(data);
-      console.log(`[init] [${key}] filtration done  cycles=${filtration.cycles.length}`);
-    }
-
-    data.filtration = filtration;
-    console.log(`[init] [${key}] applying layout`);
-    layoutCircular(data.nodes);
-    state.datasets[key] = data;
-    btn.textContent = '✓ ' + label + ' loaded';
-    const elapsed = ((performance.now()-t0)/1000).toFixed(2);
-    setStatus(`${label}: <span class="stage">ready</span> — ${data.nodes.length} nodes, ${data.edges.length} edges, ${filtration.cycles.length} cycles (${elapsed}s)`);
-    console.log(`[init] <<< loadDataset(${key}) DONE  total=${elapsed}s`);
-    setProgress(null);
-    document.getElementById(key === 'placebo' ? 'btnPla' : 'btnPsi').disabled = false;
-    if (state.current === key) redrawAll();
-  } catch(err) {
-    setStatus(`${label}: <span class="stage">ERROR</span> — ${err.message}`);
-    console.error(`[init] loadDataset(${key}) failed:`, err);
-    btn.disabled = false;
-    setProgress(null);
+  for (const key of ['placebo', 'psilocybin']) {
+    const d = state.datasets[key];
+    if (!d) continue;
+    if (state.layout === 'circle') layoutCircular(d.nodes);
+    else layoutForce(d.nodes, d.edges, 150);
   }
 }
 
@@ -1132,24 +1004,24 @@ document.getElementById('thr').addEventListener('input', e => {
 });
 document.getElementById('nsz').addEventListener('input', e => {
   state.nodeSize = +e.target.value;
-  drawNetwork();
+  drawNetwork('placebo'); drawNetwork('psilocybin');
 });
 document.getElementById('ea').addEventListener('input', e => {
   state.edgeAlpha = e.target.value / 100;
-  drawNetwork();
+  drawNetwork('placebo'); drawNetwork('psilocybin');
 });
 document.getElementById('layout').addEventListener('change', e => {
   state.layout = e.target.value;
   applyLayout();
-  drawNetwork();
+  drawNetwork('placebo'); drawNetwork('psilocybin');
 });
 document.getElementById('pdScale').addEventListener('change', e => {
   state.pdScale = e.target.value;
-  drawPD();
+  drawPD('placebo'); drawPD('psilocybin');
 });
 document.getElementById('bcSort').addEventListener('change', e => {
   state.bcSort = e.target.value;
-  drawBarcode();
+  drawBarcode('placebo'); drawBarcode('psilocybin');
 });
 document.getElementById('pScale').addEventListener('change', e => {
   state.pScale = e.target.value;
@@ -1163,24 +1035,6 @@ document.getElementById('speed').addEventListener('input', e => {
   state.speed = +e.target.value;
 });
 
-document.getElementById('btnPla').addEventListener('click', () => {
-  if (!state.datasets.placebo) { console.warn('[ui] Placebo not loaded yet — click "📥 Load Placebo" first'); return; }
-  state.current = 'placebo';
-  document.getElementById('btnPla').classList.add('active');
-  document.getElementById('btnPsi').classList.remove('active');
-  redrawAll();
-});
-document.getElementById('btnPsi').addEventListener('click', () => {
-  if (!state.datasets.psilocybin) { console.warn('[ui] Psilocybin not loaded yet — click "📥 Load Psilocybin" first'); return; }
-  state.current = 'psilocybin';
-  document.getElementById('btnPsi').classList.add('active');
-  document.getElementById('btnPla').classList.remove('active');
-  redrawAll();
-});
-
-document.getElementById('btnLoadPla').addEventListener('click', () => loadDataset('placebo'));
-document.getElementById('btnLoadPsi').addEventListener('click', () => loadDataset('psilocybin'));
-
 document.getElementById('resetBtn').addEventListener('click', () => {
   state.threshold = 0.5;
   document.getElementById('thr').value = 500;
@@ -1191,22 +1045,22 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 let animId = null;
 document.getElementById('animBtn').addEventListener('click', () => {
-  if(state.animating){
+  if (state.animating) {
     state.animating = false;
-    document.getElementById('animBtn').textContent = '▶ Animate filtration';
-    if(animId) cancelAnimationFrame(animId);
+    document.getElementById('animBtn').textContent = '▶ Animate';
+    if (animId) cancelAnimationFrame(animId);
     return;
   }
   state.animating = true;
   document.getElementById('animBtn').textContent = '⏸ Pause';
-  let t = 1.0; // start with all edges included, sweep down
+  let t = 1.0;
   let dir = -1;
   const slider = document.getElementById('thr');
   function step() {
-    if(!state.animating) return;
+    if (!state.animating) return;
     t += dir * (state.speed / 5000);
-    if(t <= 0){ t = 0; dir = 1; }
-    if(t >= 1){ t = 1; dir = -1; }
+    if (t <= 0) { t = 0; dir = 1; }
+    if (t >= 1) { t = 1; dir = -1; }
     state.threshold = t;
     slider.value = Math.round(t * 1000);
     document.getElementById('thrVal').textContent = t.toFixed(3);
@@ -1216,11 +1070,30 @@ document.getElementById('animBtn').addEventListener('click', () => {
   step();
 });
 
+window.addEventListener('resize', () => redrawAll());
+
 /* ============================================================
-   Kick off — lazy; nothing loaded until the user clicks
+   Auto-load both datasets in parallel on page load
    ============================================================ */
-console.log('[init] page ready — click "📥 Load Placebo" or "📥 Load Psilocybin" to begin');
-document.getElementById('status').textContent = 'Idle. Click a "Load" button to fetch a dataset.';
+async function init() {
+  const t0 = performance.now();
+  setStatus('Auto-loading <span class="stage">Placebo</span>...');
+  try {
+    await loadDataset('placebo');
+    setStatus('Auto-loading <span class="stage">Psilocybin</span>...');
+    await loadDataset('psilocybin');
+    setProgress(null);
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+    const pla = state.datasets.placebo;
+    const psi = state.datasets.psilocybin;
+    setStatus(`✓ Loaded in ${elapsed}s — Placebo: ${pla.nodes.length}n/${pla.filtration.cycles.length}c, Psilocybin: ${psi.nodes.length}n/${psi.filtration.cycles.length}c`);
+    redrawAll();
+  } catch (err) {
+    setStatus(`<span class="stage">ERROR</span> ${err.message}`);
+    console.error('[init] auto-load failed:', err);
+  }
+}
+init();
 </script>
 
 </body>
