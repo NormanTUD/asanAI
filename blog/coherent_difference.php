@@ -513,6 +513,4 @@ Two historical notes, since they are too beautiful to omit.
 The 5th-century BCE philosopher \cite[Heraclitus]{heraclitus_unity} is reported (in fragment B50) to have said: *“You cannot step into the same river twice, for fresh waters are ever flowing in upon you.”* The fragment is usually read as a doctrine of *flux*, that everything changes, nothing stays. But it can equally be read as a doctrine of *coherent difference*: the river at time $t_1$ and the river at time $t_2$ are not identical, but they are related by a coherent transition (the flow of water), and the river-as-object is the coherent network of all those appearances across time. Heraclitus, on the second reading, is already gesturing at the sheaf picture.
 
 A little over two millennia later, \citeauthor{whitehead_process} (\citeyear{whitehead_process}) built an entire metaphysics on the idea that the world is made of *processes*, not *substances*, “becoming” rather than “being”. His word *concrescence* names exactly the operation we have been calling gluing: many prehensions (local graspings) come together into one actual occasion (a global entity) \cite{whitehead_process}. Whitehead's *Process and Reality* can be interpreted as a sheaf-theoretic picture of the world, decades before sheaves were formulated in their modern form.
-
-The history of ideas is not a ladder. It is a sheaf.
 </div>
