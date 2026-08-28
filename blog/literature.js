@@ -2379,12 +2379,6 @@ window.bibData = {
 		alternativetitle: "Lapicque's Integrate-and-Fire Model",
 		url: "https://web.archive.org/web/20070613230629/http://neurotheory.columbia.edu/~larry/AbbottBrResBul99.pdf"
 	},
-	"perceptronimagebox": {
-		title: "Kernelled Connections: Perceptron as Diagram",
-		author: "Michael Eby",
-		year: 2020,
-		url: "https://tripleampersand.org/kernelled-connections-perceptron-diagram/"
-	},
 	"lstm": {
 		url: "https://www.bioinf.jku.at/publications/older/2604.pdf",
 		year: 1997,

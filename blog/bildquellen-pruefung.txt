@@ -13,13 +13,6 @@ Davon:
 === ⚠ PROPRIETÄRE / KRITISCHE BILDER (NICHT OHNE WEITERES NUTZBAR) ===
 ========================================================================
 
-1. perceptronimagebox (Zeile 2382)
-   URL: https://tripleampersand.org/kernelled-connections-perceptron-diagram/
-   Problem: Bild stammt aus einem persönlichen Blogartikel (TripleAmpersand Journal) 
-            von Michael Eby (2020). Der Blog hat keine CC-Lizenz, das Bild ist 
-            standardmäßig urheberrechtlich geschützt.
-   Status: PROPRIETÄR - Nicht ohne Erlaubnis des Autors verwendbar.
-
 2. perceptronimagecables (Zeile 2957)
    URL: https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg
    Problem: Das Mark I Perceptron Foto ist auf der englischen Wikipedia nur 
