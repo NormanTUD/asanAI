@@ -16,12 +16,12 @@
 		window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 	// Tunables — small, slow, quiet.
-	const TARGET_COUNT  = 30;     // upper bound on node count
-	const MIN_COUNT     = 14;     // lower bound for tiny hero areas
-	const DENSITY_DIVIS = 4200;   // area / this = node count (capped)
-	const MAX_LINK_PX   = 165;    // max edge length to consider drawing
-	const LINK_ALPHA    = 0.45;   // peak line opacity at distance = 0
-	const NODE_ALPHA    = 0.65;   // peak node opacity at peak pulse
+	const TARGET_COUNT  = 36;     // upper bound on node count
+	const MIN_COUNT     = 16;     // lower bound for tiny hero areas
+	const DENSITY_DIVIS = 3200;   // area / this = node count (capped)
+	const MAX_LINK_PX   = 170;    // max edge length to consider drawing
+	const LINK_ALPHA    = 0.55;   // peak line opacity at distance = 0
+	const NODE_ALPHA    = 0.85;   // peak node opacity at peak pulse
 	const SPEED         = 0.045;  // base drift speed (px / frame @ 60fps)
 	const WOBBLE        = 0.035;  // sinusoidal perturbation amplitude
 
