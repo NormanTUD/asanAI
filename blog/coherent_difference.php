@@ -344,7 +344,9 @@ $$
 \boxed{\text{A topos is a "space" in which you can do mathematics.}}
 $$
 
-The slogan is right, but it is also underselling the subject. A topos is not just one kind of space; it is *the most general kind of structure in which mathematics as we know it can be done*. It generalizes the category of sets; it absorbs sheaf theory, type theory, intuitionistic logic, and synthetic differential geometry into a single framework; and it gives a precise meaning to the idea that "the same mathematics can be done in many different worlds". The rest of this section is the formal unpacking of that slogan, the answer to a list of questions a topos raises, and a summary of what is and is not true in every topos.
+The slogan is right, but it is also underselling the subject. A topos is not just one kind of space; it is *the most general kind of structure in which mathematics as we know it can be done*. It generalizes the category of sets; it absorbs sheaf theory, type theory, intuitionistic logic, and synthetic differential geometry into a single framework; and it gives a precise meaning to the idea that "the same mathematics can be done in many different worlds". The rest of this section is the formal unpacking of that slogan, the answer to a list of questions a topos raises, and a summary of what is and is not true in every topos. The technical details are in three optional boxes below; if you only want the slogan, the closing paragraph at the end of the section is enough to carry into the next chapter.
+
+<div class="optional md" data-headline="Topos foundations: two flavors, the subobject classifier, and what every topos has">
 
 ### 7.1. Two flavors of topos
 
@@ -432,6 +434,10 @@ This is not a metaphor. It is a theorem of categorical logic. If you can write d
 
 What you get for free, then, is: most of point-set topology, most of group theory, most of ring theory, most of metric-space theory, most of measure theory, all of constructive analysis — anything expressible without invoking $p \vee \neg p$ or the axiom of choice.
 
+</div>
+
+<div class="optional md" data-headline="What topoi can and cannot do, and maps between them">
+
 ### 7.4. What can fail
 
 The interesting question is the converse: what does *not* hold in every topos? Several pieces of ordinary mathematics can fail, and the failure is informative \cite{topos_wiki} \cite{johnstone_elephant} \cite{diaconescu1975}.
@@ -477,6 +483,10 @@ $$
 <div class="optional md" data-headline="Why not just functors?">
 A functor $\mathcal{E} \to \mathcal{F}$ between topoi, if it preserves the right structure, induces a geometric morphism — but only one direction of it. The other direction, the "extra" functor $f_*$, is what distinguishes a geometric morphism from a plain functor, and it is essential: $f_*$ remembers the "size" or "extension" of objects under the map, and without it you do not have a map of spaces in the geometric sense. This is why topos theory has its own 2-category: objects are topoi, morphisms are geometric morphisms, 2-morphisms are natural transformations between the direct-image functors. The 2-categorical point of view is not a luxury; it is the only setting in which "maps of spaces" behave the way they do in classical topology \cite{geometric_morphism_wiki}.
 </div>
+
+</div>
+
+<div class="optional md" data-headline="Space, truth, what holds where, and open questions">
 
 ### 7.6. What is a "space" in a topos?
 
@@ -552,6 +562,8 @@ It is worth saying the things we do *not* know, or that remain genuinely puzzlin
 10. **What is the role of the points?** Deligne's point-less topos is the canonical reminder that not every topos can be recovered from its classical points. A point-free topos forces the working mathematician to give up the intuition of "evaluating at a location" and replace it with the purely internal notion of a generalized element. How much of classical geometry survives the loss of points?
 
 None of these questions has a settled answer. The honest report is: topos theory is the most general context in which we know how to do mathematics, and the moment you sit inside it, the question of *what mathematics is* — what is a space, what is a truth, what is a proof, what is a computation — stops being background and becomes the subject.
+
+</div>
 
 Concretely, an embedding space is *almost* a topos. It carries data (the vectors), it has morphisms (the linear maps between layers), it has internal logic (the gating decisions of attention). It is not a topos in the strict technical sense, but it has the same flavor: a small structured world in which local rules apply and in which a global object falls out of them.
 </div>
