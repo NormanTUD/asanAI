@@ -55,22 +55,28 @@ The architecture looks, at first glance, like a variational autoencoder \cite{ki
 **Wake phase.** Real data $x$ is clamped at the bottom. The recognition network samples a latent code $h_w$ from the bottom-up posterior
 
 $$
-\underbrace{h_w}_{\text{latent during wake}} \;\sim\; \underbrace{q(h \mid x)}_{\text{recognition network's belief about } h \text{ given } x}.
+h_w \;\sim\; q(h \mid x).
 $$
+
+where the subscript $w$ in $h_w$ reminds us that this latent is sampled during the *wake* phase, and $q(h \mid x)$ is the recognition network's bottom-up posterior over $h$ given $x$.
 
 The generative network is then trained, by maximum likelihood, to reconstruct $x$ from $h_w$:
 
 $$
-\underbrace{\Delta \theta_{\text{gen}}}_{\text{update to generative weights}} \;=\; \underbrace{\eta}_{\text{learning rate}} \cdot \underbrace{\nabla_{\theta_{\text{gen}}} \log p_{\theta_{\text{gen}}}(x \mid h_w)}_{\text{gradient of reconstruction likelihood}}.
+\Delta \theta_{\text{gen}} \;=\; \eta \cdot \nabla_{\theta_{\text{gen}}} \log p_{\theta_{\text{gen}}}(x \mid h_w).
 $$
+
+Here $\Delta \theta_{\text{gen}}$ is the update to the generative weights, $\eta$ is the learning rate, and the gradient is the standard maximum-likelihood gradient of the reconstruction log-probability.
 
 Intuitively: *"I see this thing. Here is the latent code I would assign to it. Now teach the bottom-up world to produce it from that code."* This is the easy direction. The gradient is a clean maximum-likelihood update on the generative weights.
 
 **Sleep phase.** Latent variables are sampled from the generative model's prior
 
 $$
-\underbrace{h_s}_{\text{latent during sleep}} \;\sim\; \underbrace{p(h)}_{\text{the generative network's prior on latents}}.
+h_s \;\sim\; p(h).
 $$
+
+The subscript $s$ in $h_s$ reminds us this latent is sampled during *sleep*; $p(h)$ is the generative network's prior over latents.
 
 The generative network then synthesises a *fake* data vector
 

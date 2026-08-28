@@ -6379,6 +6379,13 @@ window.bibData = {
 		url: "https://www.cs.toronto.edu/~roweis/csc2515-2006/readings/quinlan.pdf",
 		alternativetitle: "ID3"
 	},
+	"quinlan1993c45": {
+		title: "C4.5: Programs for Machine Learning",
+		author: "J. Ross Quinlan",
+		year: 1993,
+		url: "https://www.rulequest.com/see5-unix.html",
+		alternativetitle: "C4.5"
+	},
 	"quinlan1987pruning": {
 		title: "Simplifying Decision Trees",
 		author: "J. Ross Quinlan",
