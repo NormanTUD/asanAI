@@ -3190,6 +3190,14 @@ window.bibData = {
 		year: "2025",
 		url: "https://people.idsia.ch/~juergen/who-invented-convolutional-neural-networks-28aug2025.html",
 	},
+	"russell2021aima": {
+		author: "Stuart J. Russell, Peter Norvig",
+		title: "Artificial Intelligence: A Modern Approach",
+		edition: "4th",
+		year: "2021",
+		publisher: "Pearson",
+		alternativetitle: "AIMA",
+	},
 	"weizenbaum1976computer": {
 		author: "Joseph Weizenbaum",
 		url: "https://archive.org/details/computerpowerhum0000weiz_v0i3",
