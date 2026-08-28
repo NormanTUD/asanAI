@@ -1,18 +1,3 @@
-Bildquellen-Prüfung aus literature.js
-=====================================
-Stand: 28.08.2026
-
-ZUSAMMENFASSUNG
---------------
-Insgesamt wurden 65 Bildquellen untersucht.
-
-Davon:
-- 59 auf Wikimedia Commons / Wikipedia (alle mit freier Lizenz, tw. mit Einschränkungen)
-- 6 nicht auf Wikimedia (3 proprietär/unklar, 3 mit Restriktionen)
-
-=== ⚠ PROPRIETÄRE / KRITISCHE BILDER (NICHT OHNE WEITERES NUTZBAR) ===
-========================================================================
-
 3. perceptronimagewiring (Zeile 2968)
    URL: https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html
    Problem: Die Vorlesungsnotizen selbst sind CC-BY-SA 4.0 lizenziert, ABER das 
@@ -46,12 +31,3 @@ Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
 Jede URL wurde via Wikimedia Commons / Wikipedia Schnittstelle geprüft.
 Lizenzangaben stammen direkt von den File-Pages auf commons.wikimedia.org
 und en.wikipedia.org (Stand: August 2026).
-
-=== HINWEIS ===
-==============
-Auch wenn ein Bild als "Public Domain" oder "CC-BY-SA" markiert ist:
-- Bei CC-Lizenzen ist NAMENSNENNUNG (Autor, Quelle, Lizenz) erforderlich
-- Bei "PD US no notice" / "PD-Art": In Deutschland kann die Situation 
-  anders sein als in den USA
-- Bei alten Fotografien: Rechte des Fotografen vs. des abgebildeten 
-  Werks prüfen (z.B. bei Gemäldefotografien)
