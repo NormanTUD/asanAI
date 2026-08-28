@@ -157,10 +157,10 @@ The motivation was always the same: *take $n$ points and replace them with $k$ a
 The $k$-means algorithm partitions $n$ points into $k$ clusters by minimising the **within-cluster sum of squared distances** (WCSS) to the centroid:
 
 $$
-\underbrace{
-\min_{\{S_i\}_{i=1}^{k}} \;\; \sum_{i=1}^{k} \sum_{x \in S_i} \bigl\| x - \mu_i \bigr\|^2, \qquad \mu_i = \tfrac{1}{|S_i|} \sum_{x \in S_i} x
-}_{\text{objective: minimise total squared distance from each point to its cluster's centroid}}
+\min_{\{S_i\}_{i=1}^{k}} \;\; \sum_{i=1}^{k} \sum_{x \in S_i} \bigl\| x - \mu_i \bigr\|^2, \qquad \mu_i = \tfrac{1}{|S_i|} \sum_{x \in S_i} x.
 $$
+
+The objective: minimise the total squared distance from each point to its own cluster's centroid. The centroid $\mu_i$ is, by definition, the arithmetic mean of the points in $S_i$.
 
 The objective is exactly the negative log-likelihood (up to a constant) of a Gaussian mixture model in which every cluster has identity covariance and every mixing weight is $1/k$. So $k$-means is **a special case of EM for Gaussian mixtures** \cite{bishop2006prml}, and almost every phenomenon that appears in $k$-means has a more general explanation in the EM literature.
 
@@ -169,13 +169,13 @@ The objective is exactly the negative log-likelihood (up to a constant) of a Gau
 The standard algorithm is **Lloyd's algorithm** \cite{lloyd1982kmeans}. Two steps, repeated until convergence:
 
 $$
-\underbrace{
 \begin{aligned}
 &\textbf{Assignment step:}\quad S_i^{(t)} \;=\; \bigl\{ x_p : \|x_p - \mu_i^{(t)}\|^2 \;\le\; \|x_p - \mu_j^{(t)}\|^2 \; \forall j \bigr\} \\[0.4em]
 &\textbf{Update step:}\quad \mu_i^{(t+1)} \;=\; \tfrac{1}{|S_i^{(t)}|} \sum_{x \in S_i^{(t)}} x
 \end{aligned}
-}_{\text{Lloyd's two alternating steps}}
 $$
+
+In the assignment step, every point $x_p$ is moved to the cluster whose centroid $\mu_i^{(t)}$ is closest to it in squared Euclidean distance. In the update step, every centroid is replaced by the mean of its (newly assigned) points. The two steps are Lloyd's *alternating minimisation*.
 
 The two steps are monotonically improving: the assignment step never increases the WCSS, and the update step finds the optimal centroid given a fixed assignment. The algorithm therefore converges in finite time, but only to a *local* optimum — the global optimum of the WCSS is NP-hard \cite{aloise2009np}.
 
@@ -184,20 +184,20 @@ The two steps are monotonically improving: the assignment step never increases t
 The original Lloyd algorithm depends critically on the initial centroids. Bad seeds converge to bad local optima. \citeauthor{arthur2007kmeanspp} (\citeyear{arthur2007kmeanspp}) showed that choosing the first centroid uniformly at random, and each subsequent centroid with probability proportional to its squared distance from the nearest already-chosen centroid, yields an expected WCSS that is at most $8 \log k$ times the optimum. The seeding rule is the difference between a $k$-means that converges to a partition that is sometimes $10\times$ worse than the optimum and one that is at most a small constant worse. $k$-means++ is the default in scikit-learn and most modern libraries.
 
 $$
-\underbrace{
-P(\text{next centroid} = x) \;\propto\; \underbrace{D(x)^2}_{\text{squared distance from } x \text{ to nearest already-chosen centroid}}
-}_{\text{$k$-means++ seeding rule}}
+P(\text{next centroid} = x) \;\propto\; D(x)^2.
 $$
+
+Here $D(x)$ is the distance from $x$ to its nearest *already-chosen* centroid. So the further a point is from everything chosen so far, the more likely it is to be picked next. This is the *$k$-means++ seeding rule*.
 
 #### Complexity
 
 $k$-means is NP-hard in general \cite{aloise2009np}, but converges in expected polynomial time under mild distributional assumptions \cite{arthur2011smoothed}. In practice on real data, Lloyd's algorithm terminates in a handful of iterations, and the per-iteration cost is
 
 $$
-\underbrace{
-T_{\text{iter}} \;=\; \underbrace{O(n k d)}_{\text{compute distances from } n \text{ points to } k \text{ centroids in } d \text{ dims}}
-}_{\text{Lloyd's algorithm per-iteration cost}}
+T_{\text{iter}} \;=\; O(n k d).
 $$
+
+Each iteration computes $n$ distances of length $d$ for each of the $k$ centroids — that's Lloyd's per-iteration cost of $O(n k d)$.
 
 #### Where it fails
 
@@ -228,7 +228,6 @@ A *cut* at any horizontal height $h$ gives the flat partition in which every lea
 #### The four classical linkage rules
 
 $$
-\underbrace{
 L(A, B) \;=\;
 \begin{cases}
 \displaystyle\min_{a \in A,\, b \in B} d(a, b) & \text{(single linkage)} \\[1.2em]
@@ -236,8 +235,9 @@ L(A, B) \;=\;
 \displaystyle\frac{1}{|A|\,|B|} \sum_{a \in A,\, b \in B} d(a, b) & \text{(average / UPGMA)} \\[1.6em]
 \displaystyle\frac{|A|\,|B|}{|A \cup B|} \;\|\mu_A - \mu_B\|_2^2 & \text{(Ward's)}
 \end{cases}
-}_{\text{four ways of deciding "how far apart are two clusters?"}}
 $$
+
+These are four different answers to the question *"how far apart are two clusters?"*: the closest pair (single), the farthest pair (complete), the average over all pairs (UPGMA), or the merge that increases the within-cluster variance the least (Ward's).
 
 * **Single linkage** uses the closest pair. Tends to produce long, stringy "chaining" clusters: if two clusters touch at a single pair of points, they get merged. Cheap to compute; great for detecting elongated filaments in images; bad for spherical clusters.
 * **Complete linkage** uses the farthest pair. Tends to produce tight, equal-radius clusters; breaks long chains. Robust to noise but biased towards equal-sized clusters.
@@ -249,15 +249,15 @@ $$
 The naive algorithm is $\mathcal{O}(n^3)$; with a heap it drops to $\mathcal{O}(n^2 \log n)$. **SLINK** \cite{sibson1973slink} and **CLINK** \cite{defays1977clink} achieve the optimal $\mathcal{O}(n^2)$ for single- and complete-linkage respectively. For the more interesting linkages (Ward's, average), the $\mathcal{O}(n^2 \log n)$ heap implementation is the production choice.
 
 $$
-\underbrace{
 T(n) \;=\;
 \begin{cases}
 \mathcal{O}(n^2) & \text{(SLINK, CLINK)} \\
 \mathcal{O}(n^2 \log n) & \text{(Ward's, UPGMA, with heap)} \\
 \mathcal{O}(n^3) & \text{(naive, three nested loops)}
 \end{cases}
-}_{\text{hierarchical clustering complexity by linkage}}
 $$
+
+So the *complexity of hierarchical clustering* depends on the linkage: SLINK and CLINK are $\mathcal{O}(n^2)$, the heap-based Ward and UPGMA are $\mathcal{O}(n^2 \log n)$, and the naive three-nested-loops version is $\mathcal{O}(n^3)$.
 
 #### Where it lives now
 
