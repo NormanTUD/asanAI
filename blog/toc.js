@@ -2,7 +2,7 @@ function slugify(text, usedIds) {
 	var base = String(text || '')
 		.toLowerCase()
 		.replace(/[‘’]/g, "'")
-		.replace(/[^\w\s\-·]+/g, '')
+		.replace(/[^\p{L}\p{N}\s\-·]+/gu, '')
 		.replace(/[\s·]+/g, '-')
 		.replace(/^-+|-+$/g, '')
 		.slice(0, 80);
@@ -84,6 +84,38 @@ function toc() {
 	var stack = [{ level: 0, element: rootUl }];
 	var usedIds = new Set();
 
+	// Headings can contain inline LaTeX like `$\Omega$`. By the time
+	// `toc()` runs, the IntersectionObserver-based math renderer has
+	// only processed headings already in the viewport — everything
+	// below the fold still has raw `$...$` text. And even after
+	// rendering, `header.textContent` pulls in the LaTeX source from
+	// the `<annotation>` elements Temml adds for accessibility
+	// (`annotate: true`), so we'd see e.g. "The subobject classifier
+	// \OmegaΩ" instead of just "The subobject classifier Ω".
+	//
+	// Fix: render math on a detached clone with `annotate: false` and
+	// strip any pre-existing annotations before reading textContent.
+	function getHeaderTitle(header) {
+		var clone = header.cloneNode(true);
+		clone.querySelectorAll('annotation, [data-mjx-annotation], mjx-annotation')
+			.forEach(function(a) { a.remove(); });
+
+		if (clone.textContent.indexOf('$') !== -1 &&
+			typeof temml !== 'undefined' && temml.renderMathInElement) {
+			try {
+				temml.renderMathInElement(clone, {
+					delimiters: [
+						{ left: '$$', right: '$$', display: true },
+						{ left: '$',  right: '$',  display: false }
+					],
+					annotate: false,
+					throwOnError: false
+				});
+			} catch (e) { /* noop */ }
+		}
+		return clone.textContent.trim();
+	}
+
 	function saveState() {
 		var state = {};
 		tocDiv.querySelectorAll('li.has-children').forEach(function(li) {
@@ -99,7 +131,7 @@ function toc() {
 
 	headers.forEach(function(header, index) {
 		var level = parseInt(header.tagName.substring(1));
-		var titleText = header.textContent;
+		var titleText = getHeaderTitle(header);
 
 		var lastLevel = stack[stack.length - 1].level;
 		if (lastLevel !== 0 && level > lastLevel + 1) {
