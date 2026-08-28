@@ -6082,5 +6082,1742 @@ window.bibData = {
 		author: "Silviu-Marian Udrescu, Andrew Tan, Jiahai Feng, Orisvaldo Neto, Tailin Wu, Max Tegmark",
 		year: 2020,
 		alternativetitle: "AI Feynman / Symbolic Regression"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Beyond LLMs — Sleep-Wake, Clustering, Classical ML, Bayesian, Evolutionary, Symbolic, Graph, Causal, Anomaly, TDA, Probabilistic Programming
+	// ═══════════════════════════════════════════════
+
+	"hinton1995wakesleep": {
+		title: "The Wake-Sleep Algorithm for Unsupervised Neural Networks",
+		author: "Geoffrey E. Hinton, Peter Dayan, Brendan J. Frey, Radford M. Neal",
+		year: 1995,
+		url: "https://www.cs.toronto.edu/~hinton/absps/ws.pdf",
+		alternativetitle: "Wake-Sleep Algorithm"
+	},
+	"neal1998wake": {
+		title: "Connectionist learning of belief networks",
+		author: "Radford M. Neal",
+		year: 1992,
+		url: "https://www.cs.toronto.edu/~radford/ftp/clbn.pdf",
+		alternativetitle: "Bias in Wake-Sleep"
+	},
+	"bornschein2014reweighted": {
+		title: "Reweighted Wake-Sleep",
+		author: "Jörg Bornschein, Yoshua Bengio",
+		year: 2015,
+		url: "https://arxiv.org/abs/1406.2751",
+		alternativetitle: "Reweighted Wake-Sleep"
+	},
+	"kingma2014vae": {
+		title: "Auto-Encoding Variational Bayes",
+		author: "Diederik P. Kingma, Max Welling",
+		year: 2014,
+		url: "https://arxiv.org/abs/1312.6114",
+		alternativetitle: "VAE"
+	},
+	"dinh2017realnvp": {
+		title: "Density estimation using Real NVP",
+		author: "Laurent Dinh, Jascha Sohl-Dickstein, Samy Bengio",
+		year: 2017,
+		url: "https://arxiv.org/abs/1605.08803",
+		alternativetitle: "Real NVP / Normalizing Flow"
+	},
+	"goodfellow2014gan": {
+		title: "Generative Adversarial Networks",
+		author: "Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio",
+		year: 2014,
+		url: "https://arxiv.org/abs/1406.2661",
+		alternativetitle: "GAN"
+	},
+	"vincent2008dae": {
+		title: "Extracting and Composing Robust Features with Denoising Autoencoders",
+		author: "Pascal Vincent, Hugo Larochelle, Yoshua Bengio, Pierre-Antoine Manzagol",
+		year: 2008,
+		url: "https://www.iro.umontreal.ca/~vincentp/Publications/denoising_autoencoders_tr.pdf",
+		alternativetitle: "Denoising Autoencoder"
+	},
+	"chen2020simclr": {
+		title: "A Simple Framework for Contrastive Learning of Visual Representations",
+		author: "Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey Hinton",
+		year: 2020,
+		url: "https://arxiv.org/abs/2002.05709",
+		alternativetitle: "SimCLR"
+	},
+	"devlin2019bert": {
+		title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+		author: "Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova",
+		year: 2019,
+		url: "https://aclanthology.org/N19-1423/",
+		alternativetitle: "BERT"
+	},
+	"helmholtz1867handbook": {
+		title: "Handbuch der physiologischen Optik",
+		author: "Hermann von Helmholtz",
+		year: 1867,
+		url: "https://archive.org/details/handbuchderphysi00helm",
+		alternativetitle: "Helmholtz, Handbook of Physiological Optics"
+	},
+	"radford2019language": {
+		title: "Language Models are Unsupervised Multitask Learners",
+		author: "Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever",
+		year: 2019,
+		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+		alternativetitle: "GPT-2"
+	},
+	"steinhaus1957division": {
+		title: "Sur la division des corps matériels en parties",
+		author: "Hugo Steinhaus",
+		year: 1957,
+		url: "https://www.impan.pl/pl/wydawnictwa/czasopisma-i-serie-naukowe/applic-mathematicae/appl-mathematicae-1"
+	},
+	"lloyd1982kmeans": {
+		title: "Least squares quantization in PCM",
+		author: "Stuart P. Lloyd",
+		year: 1982,
+		url: "https://web.stanford.edu/~boyd/papers/pdf/lloyd_1982.pdf",
+		alternativetitle: "Lloyd's Algorithm"
+	},
+	"macqueen1967kmeans": {
+		title: "Some Methods for Classification and Analysis of Multivariate Observations",
+		author: "J. MacQueen",
+		year: 1967,
+		url: "https://projecteuclid.org/euclid.bsmsp/1200512992"
+	},
+	"forgy1965kmeans": {
+		title: "Cluster Analysis of Multivariate Data: Efficiency versus Interpretability of Classifications",
+		author: "Edward W. Forgy",
+		year: 1965,
+		url: "https://www.bibsonomy.org/bib/1fde7d1c5ea0a3da7ee3ed5f4cf0bbba"
+	},
+	"arthur2007kmeanspp": {
+		title: "k-means++: The Advantages of Careful Seeding",
+		author: "David Arthur, Sergei Vassilvitskii",
+		year: 2007,
+		url: "https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf",
+		alternativetitle: "k-means++"
+	},
+	"arthur2011smoothed": {
+		title: "How Fast is k-means?",
+		author: "David Arthur, Bodo Manthey, Heiko Röglin",
+		year: 2011,
+		url: "https://projecteuclid.org/journals/annals-of-statistics/volume-37/issue-6A/How-fast-is-k-means/10.1214/09-AOS683.full",
+		alternativetitle: "Smoothed k-means"
+	},
+	"aloise2009np": {
+		title: "NP-hardness of Euclidean sum-of-squares clustering",
+		author: "Daniel Aloise, Amit Deshpande, Pierre Hansen, Preyas Popat",
+		year: 2009,
+		url: "https://www.sciencedirect.com/science/article/abs/pii/S0020025509002020"
+	},
+	"johnson1967hierarchical": {
+		title: "Hierarchical Clustering Schemes",
+		author: "Stephen C. Johnson",
+		year: 1967,
+		url: "https://link.springer.com/article/10.1007/BF02289588"
+	},
+	"sibson1973slink": {
+		title: "SLINK: an optimally efficient algorithm for the single-link cluster method",
+		author: "Robin Sibson",
+		year: 1973,
+		url: "https://academic.oup.com/comjnl/article/16/1/30/335326",
+		alternativetitle: "SLINK"
+	},
+	"defays1977clink": {
+		title: "An efficient algorithm for a complete link method",
+		author: "Daniel Defays",
+		year: 1977,
+		url: "https://academic.oup.com/comjnl/article/20/4/364/375988",
+		alternativetitle: "CLINK"
+	},
+	"ward1963hierarchical": {
+		title: "Hierarchical Grouping to Optimize an Objective Function",
+		author: "Joe H. Ward Jr.",
+		year: 1963,
+		url: "https://www.jstor.org/stable/2282977",
+		alternativetitle: "Ward's Linkage"
+	},
+	"chavent1974divisive": {
+		title: "Critère de partition minimisant le nombre d'inertie intra-classe et borne inférieure de ce nombre",
+		author: "Michel Chavent",
+		year: 1974
+	},
+	"traag2019louvain": {
+		title: "From Louvain to Leiden: guaranteeing well-connected communities",
+		author: "Vincent A. Traag, Ludo Waltman, Nees Jan van Eck",
+		year: 2019,
+		url: "https://www.nature.com/articles/s41598-019-41695-z",
+		alternativetitle: "Leiden Algorithm"
+	},
+	"traag2019leiden": {
+		title: "Louvain, Leiden, …",
+		author: "Vincent A. Traag",
+		year: 2019,
+		url: "https://www.nature.com/articles/s41598-019-41695-z"
+	},
+	"ester1996dbscan": {
+		title: "A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise",
+		author: "Martin Ester, Hans-Peter Kriegel, Jörg Sander, Xiaowei Xu",
+		year: 1996,
+		url: "https://www.aaai.org/Library/KDD/kdd96papers.php",
+		alternativetitle: "DBSCAN"
+	},
+	"schubert2017dbscan": {
+		title: "DBSCAN Revisited, Revisited: Why and How You Should (Still) Use DBSCAN",
+		author: "Erich Schubert, Jörg Sander, Martin Ester, Hans Peter Kriegel, Xiaowei Xu",
+		year: 2017,
+		url: "https://doi.org/10.1145/3068335",
+		alternativetitle: "DBSCAN Revisited, Revisited"
+	},
+	"campello2013hdbscan": {
+		title: "Density-Based Clustering Based on Hierarchical Density Estimates",
+		author: "Ricardo J. G. B. Campello, Davoud Moulavi, Jörg Sander",
+		year: 2013,
+		url: "https://link.springer.com/chapter/10.1007/978-3-642-37456-2_14",
+		alternativetitle: "HDBSCAN"
+	},
+	"campello2015hdbscan": {
+		title: "Hierarchical Density Estimates for Data Clustering, Visualization, and Outlier Detection",
+		author: "Ricardo J. G. B. Campello, Davoud Moulavi, Arthur Zimek, Jörg Sander",
+		year: 2015,
+		url: "https://doi.org/10.1145/2733381"
+	},
+	"smith1957counting": {
+		title: "Counting Methods in Genetical Statistics",
+		author: "Cedric A. B. Smith",
+		year: 1957,
+		url: "https://www.cabidigitallibrary.org/doi/10.5555/19581601017"
+	},
+	"wu1983em": {
+		title: "On the Convergence Properties of the EM Algorithm",
+		author: "C. F. Jeff Wu",
+		year: 1983,
+		url: "https://www.jstor.org/stable/2687340",
+		alternativetitle: "EM Convergence"
+	},
+	"bishop2006prml": {
+		title: "Pattern Recognition and Machine Learning",
+		author: "Christopher M. Bishop",
+		year: 2006,
+		url: "https://www.microsoft.com/en-us/research/uploads/prod/2006/01/Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf",
+		alternativetitle: "PRML"
+	},
+	"fukunaga1975mean": {
+		title: "The Estimation of the Gradient of a Density Function, with Applications in Pattern Recognition",
+		author: "Keinosuke Fukunaga, Larry D. Hostetler",
+		year: 1975,
+		url: "https://doi.org/10.1109/TIT.1975.1055330",
+		alternativetitle: "Mean Shift (origin)"
+	},
+	"comaniciu2002mean": {
+		title: "Mean Shift: A Robust Approach Toward Feature Space Analysis",
+		author: "Dorin Comaniciu, Peter Meer",
+		year: 2002,
+		url: "https://doi.org/10.1109/34.1000236",
+		alternativetitle: "Mean Shift"
+	},
+	"frey2007affprop": {
+		title: "Clustering by Passing Messages Between Data Points",
+		author: "Brendan J. Frey, Delbert Dueck",
+		year: 2007,
+		url: "https://www.cs.toronto.edu/~brendan/papers/clustering.pdf",
+		alternativetitle: "Affinity Propagation"
+	},
+	"vonluxburg2007tutorial": {
+		title: "A Tutorial on Spectral Clustering",
+		author: "Ulrike von Luxburg",
+		year: 2007,
+		url: "https://www.cs.cornell.edu/~kilian/research/spectralclustering.pdf",
+		alternativetitle: "Spectral Clustering Tutorial"
+	},
+	"shi2000normalized": {
+		title: "Normalized Cuts and Image Segmentation",
+		author: "Jianbo Shi, Jitendra Malik",
+		year: 2000,
+		url: "https://people.eecs.berkeley.edu/~malik/papers/SM-ncut.pdf",
+		alternativetitle: "Normalized Cuts"
+	},
+	"ankerst1999optics": {
+		title: "OPTICS: Ordering Points to Identify the Clustering Structure",
+		author: "Mihael Ankerst, Markus M. Breunig, Hans-Peter Kriegel, Jörg Sander",
+		year: 1999,
+		url: "https://www.dbs.ifi.lmu.de/Publikationen/Papers/OPTICS.pdf",
+		alternativetitle: "OPTICS"
+	},
+	"zhang1996birch": {
+		title: "BIRCH: An Efficient Data Clustering Method for Very Large Databases",
+		author: "Tian Zhang, Raghu Ramakrishnan, Miron Livny",
+		year: 1996,
+		url: "https://www.cs.sfu.ca/~han/papers/birch.pdf",
+		alternativetitle: "BIRCH"
+	},
+	"dunn1973fuzzy": {
+		title: "A Fuzzy Relative of the ISODATA Process and Its Use in Detecting Compact Well-Separated Clusters",
+		author: "J. C. Dunn",
+		year: 1973,
+		url: "https://www.tandfonline.com/doi/abs/10.1080/01969727308546046",
+		alternativetitle: "Fuzzy c-means"
+	},
+	"bezdek1981fcm": {
+		title: "Pattern Recognition with Fuzzy Objective Function Algorithms",
+		author: "James C. Bezdek",
+		year: 1981,
+		url: "https://www.springer.com/gp/book/9781475706101",
+		alternativetitle: "Bezdek, Fuzzy c-means"
+	},
+	"breiman1984cart": {
+		title: "Classification and Regression Trees",
+		author: "Leo Breiman, Jerome H. Friedman, Richard A. Olshen, Charles J. Stone",
+		year: 1984,
+		url: "https://www.routledge.com/Classification-and-Regression-Trees/Breiman-Friedman-Stone-Olshen/p/book/9780412048418",
+		alternativetitle: "CART"
+	},
+	"quinlan1986id3": {
+		title: "Induction of Decision Trees",
+		author: "J. Ross Quinlan",
+		year: 1986,
+		url: "https://www.cs.toronto.edu/~roweis/csc2515-2006/readings/quinlan.pdf",
+		alternativetitle: "ID3"
+	},
+	"quinlan1987pruning": {
+		title: "Simplifying Decision Trees",
+		author: "J. Ross Quinlan",
+		year: 1987,
+		url: "https://www.researchgate.net/publication/220730256_Simplifying_Decision_Trees",
+		alternativetitle: "Reduced-Error Pruning"
+	},
+	"morgan1963aid": {
+		title: "Problems in the Analysis of Survey Data, and a Proposal",
+		author: "James N. Morgan, John A. Sonquist",
+		year: 1963,
+		url: "https://www.jstor.org/stable/2390458",
+		alternativetitle: "AID"
+	},
+	"messenger1972thaid": {
+		title: "THAID: A Sequential Search Program for the Analysis of Nominal Scale Dependent Variables",
+		author: "Robert A. Messenger, Laurence M. Mandell",
+		year: 1972
+	},
+	"breiman1996bagging": {
+		title: "Bagging Predictors",
+		author: "Leo Breiman",
+		year: 1996,
+		url: "https://www.stat.berkeley.edu/~breiman/bagging.pdf",
+		alternativetitle: "Bagging"
+	},
+	"breiman2001rf": {
+		title: "Random Forests",
+		author: "Leo Breiman",
+		year: 2001,
+		url: "https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf",
+		alternativetitle: "Random Forest"
+	},
+	"ho1995rf": {
+		title: "Random Decision Forests",
+		author: "Tin Kam Ho",
+		year: 1995,
+		url: "https://www.semanticscholar.org/paper/Random-Decision-Forests-Ho/8c46f17e7d5dcc96b5b80100c9b41c7f1d3ad1ca",
+		alternativetitle: "Random Decision Forest"
+	},
+	"amit1997rf": {
+		title: "Shape Quantization and Recognition with Randomized Trees",
+		author: "Yali Amit, Donald Geman",
+		year: 1997,
+		url: "https://www.sciencedirect.com/science/article/pii/S0893608097000520"
+	},
+	"friedman2001gbm": {
+		title: "Greedy Function Approximation: A Gradient Boosting Machine",
+		author: "Jerome H. Friedman",
+		year: 2001,
+		url: "https://www.semanticscholar.org/paper/Greedy-Function-Approximation%3A-A-Gradient-Boosting-Friedman/45416553db857da33977c17b9fe3f5fe10deca47",
+		alternativetitle: "Gradient Boosting Machine"
+	},
+	"friedman2002stochastic": {
+		title: "Stochastic Gradient Boosting",
+		author: "Jerome H. Friedman",
+		year: 2002,
+		url: "https://www.semanticscholar.org/paper/Stochastic-Gradient-Boosting-Friedman/1904df7d8a96d750c2d1a1b1ea3a16ce63a3ae3e"
+	},
+	"chen2016xgboost": {
+		title: "XGBoost: A Scalable Tree Boosting System",
+		author: "Tianqi Chen, Carlos Guestrin",
+		year: 2016,
+		url: "https://arxiv.org/abs/1603.02754",
+		alternativetitle: "XGBoost"
+	},
+	"ke2017lightgbm": {
+		title: "LightGBM: A Highly Efficient Gradient Boosting Decision Tree",
+		author: "Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, Tie-Yan Liu",
+		year: 2017,
+		url: "https://papers.nips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html",
+		alternativetitle: "LightGBM"
+	},
+	"prokhorenkova2018catboost": {
+		title: "CatBoost: unbiased boosting with categorical features",
+		author: "Liudmila Prokhorenkova, Gleb Gusev, Aleksandr Vorobev, Anna Veronika Dorogush, Andrey Gulin",
+		year: 2018,
+		url: "https://arxiv.org/abs/1706.09516",
+		alternativetitle: "CatBoost"
+	},
+	"grinsztajn2022why": {
+		title: "Why do tree-based models still outperform deep learning on tabular data?",
+		author: "Léo Grinsztajn, Edouard Oyallon, Gaël Varoquaux",
+		year: 2022,
+		url: "https://arxiv.org/abs/2207.08815",
+		alternativetitle: "Why Tree Models Win on Tabular"
+	},
+	"vapnik1963pattern": {
+		title: "Pattern recognition as a problem in interpolation and extrapolation",
+		author: "Vladimir N. Vapnik, Alexey Ya. Chervonenkis",
+		year: 1963
+	},
+	"vapnik1995book": {
+		title: "The Nature of Statistical Learning Theory",
+		author: "Vladimir N. Vapnik",
+		year: 1995,
+		url: "https://www.springer.com/gp/book/9780387987804",
+		alternativetitle: "Statistical Learning Theory"
+	},
+	"aitchison1972kernel": {
+		title: "A comparison of the C and Fortran languages as media for the implementation of a small statistical package",
+		author: "J. Aitchison",
+		year: 1972
+	},
+	"boser1992svm": {
+		title: "A training algorithm for optimal margin classifiers",
+		author: "Bernhard E. Boser, Isabelle M. Guyon, Vladimir N. Vapnik",
+		year: 1992,
+		url: "https://www.semanticscholar.org/paper/A-training-algorithm-for-optimal-margin-classifiers-Boser-Guyon/9bf2e1ec9cee2e2133b3a8493790a04f8e6f9cda"
+	},
+	"cortes1995svm": {
+		title: "Support-Vector Networks",
+		author: "Corinna Cortes, Vladimir Vapnik",
+		year: 1995,
+		url: "https://link.springer.com/article/10.1007/BF00994018",
+		alternativetitle: "SVM"
+	},
+	"scholkopf2002learning": {
+		title: "Learning with Kernels: Support Vector Machines, Regularization, Optimization, and Beyond",
+		author: "Bernhard Schölkopf, Alexander J. Smola",
+		year: 2002,
+		url: "https://direct.mit.edu/books/monograph/3047",
+		alternativetitle: "Learning with Kernels"
+	},
+	"jacot2018ntk": {
+		title: "Neural Tangent Kernel: Convergence and Generalization in Neural Networks",
+		author: "Arthur Jacot, Franck Gabriel, Clément Hongler",
+		year: 2018,
+		url: "https://arxiv.org/abs/1806.07572",
+		alternativetitle: "Neural Tangent Kernel"
+	},
+	"cover1967knn": {
+		title: "Nearest neighbor pattern classification",
+		author: "Thomas Cover, Peter Hart",
+		year: 1967,
+		url: "https://ieeexplore.ieee.org/document/1053964",
+		alternativetitle: "Nearest Neighbor"
+	},
+	"aha1991lazy": {
+		title: "Instance-based learning algorithms",
+		author: "David W. Aha, Dennis Kibler, Marc K. Albert",
+		year: 1991,
+		url: "https://www.sciencedirect.com/science/article/pii/002002779190095X",
+		alternativetitle: "Instance-based Learning"
+	},
+	"domingos1997nb": {
+		title: "On the optimality of the simple Bayesian classifier under zero-one loss",
+		author: "Pedro Domingos, Michael Pazzani",
+		year: 1997,
+		url: "https://www.cs.unb.ca/~hzhang/publications/MLJ97.pdf",
+		alternativetitle: "Naive Bayes Optimality"
+	},
+	"hand2001nb": {
+		title: "Idiot's Bayes — not so stupid after all?",
+		author: "David J. Hand, Keming Yu",
+		year: 2001,
+		url: "https://www.researchgate.net/publication/227579671_Idiot's_Bayes_-_not_so_stupid_after_all"
+	},
+	"maron1961nb": {
+		title: "Automatic Indexing: An Experimental Inquiry",
+		author: "M. E. Maron",
+		year: 1961,
+		url: "https://www.jstor.org/stable/228535",
+		alternativetitle: "Maron, Automatic Indexing"
+	},
+	"lewis1998nb": {
+		title: "Naive (Bayes) at Forty: The Independence Assumption in Information Retrieval",
+		author: "David D. Lewis",
+		year: 1998,
+		url: "https://www.cs.rutgers.edu/~mlittman/courses/ml03/i-200/readings/lewis98.pdf",
+		alternativetitle: "Naive Bayes at Forty"
+	},
+	"pearl1985bn": {
+		title: "Bayesian Networks: A Model of Self-Activated Memory for Evidential Reasoning",
+		author: "Judea Pearl",
+		year: 1985,
+		url: "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_1985_BNs.pdf",
+		alternativetitle: "Bayesian Networks"
+	},
+	"pearl1988book": {
+		title: "Probabilistic Reasoning in Intelligent Systems: Networks of Plausible Inference",
+		author: "Judea Pearl",
+		year: 1988,
+		url: "https://www.sciencedirect.com/book/9780080514895/probabilistic-reasoning-in-intelligent-systems",
+		alternativetitle: "Pearl, Probabilistic Reasoning"
+	},
+	"gauss1809theory": {
+		title: "Theoria Motus Corporum Coelestium in Sectionibus Conicis Solem Ambientium",
+		author: "Carl Friedrich Gauss",
+		year: 1809,
+		url: "https://archive.org/details/theoriamotuscor00gausgoog"
+	},
+	"legendre1805methodes": {
+		title: "Nouvelles méthodes pour la détermination des orbites des comètes",
+		author: "Adrien-Marie Legendre",
+		year: 1805,
+		url: "https://archive.org/details/nouvellesmethod00legegoog"
+	},
+	"cox1958logistic": {
+		title: "The regression analysis of binary sequences",
+		author: "David R. Cox",
+		year: 1958,
+		url: "https://www.jstor.org/stable/2983878",
+		alternativetitle: "Logistic Regression (Cox)"
+	},
+	"berkson1944logistic": {
+		title: "Application of the Logistic Function to Bio-Assay",
+		author: "Joseph Berkson",
+		year: 1944,
+		url: "https://www.jstor.org/stable/2280041"
+	},
+	"metropolis1953mh": {
+		title: "Equation of State Calculations by Fast Computing Machines",
+		author: "Nicholas Metropolis, Arianna W. Rosenbluth, Marshall N. Rosenbluth, Augusta H. Teller, Edward Teller",
+		year: 1953,
+		url: "https://www.semanticscholar.org/paper/Equation-of-State-Calculations-by-Fast-Computing-Metropolis-Rosenbluth/d836f8d4b1d8d7c2c0c2c8e6d0e2c9f6cba8e2dd",
+		alternativetitle: "Metropolis 1953"
+	},
+	"hastings1970mh": {
+		title: "Monte Carlo Sampling Methods Using Markov Chains and Their Applications",
+		author: "W. K. Hastings",
+		year: 1970,
+		url: "https://www.jstor.org/stable/2984727",
+		alternativetitle: "Hastings 1970"
+	},
+	"geman1984gibbs": {
+		title: "Stochastic Relaxation, Gibbs Distributions, and the Bayesian Restoration of Images",
+		author: "Stuart Geman, Donald Geman",
+		year: 1984,
+		url: "https://ieeexplore.ieee.org/document/4767596",
+		alternativetitle: "Gibbs Sampling"
+	},
+	"duane1987hmc": {
+		title: "Hybrid Monte Carlo",
+		author: "Simon Duane, A. D. Kennedy, Brian J. Pendleton, Duncan Roweth",
+		year: 1987,
+		url: "https://www.sciencedirect.com/science/article/pii/0370269386912971",
+		alternativetitle: "HMC"
+	},
+	"neal2011hmc": {
+		title: "MCMC using Hamiltonian dynamics",
+		author: "Radford M. Neal",
+		year: 2011,
+		url: "https://arxiv.org/abs/1206.1901",
+		alternativetitle: "HMC Handbook Chapter"
+	},
+	"hoffman2014nuts": {
+		title: "The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo",
+		author: "Matthew D. Hoffman, Andrew Gelman",
+		year: 2014,
+		url: "https://arxiv.org/abs/1111.4246",
+		alternativetitle: "NUTS"
+	},
+	"carpenter2017stan": {
+		title: "Stan: A Probabilistic Programming Language",
+		author: "Bob Carpenter, Andrew Gelman, Matthew D. Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, Allen Riddell",
+		year: 2017,
+		url: "https://www.jstatsoft.org/article/view/v076i01",
+		alternativetitle: "Stan"
+	},
+	"salvatier2016pymc": {
+		title: "Probabilistic programming in Python using PyMC3",
+		author: "John Salvatier, Thomas V. Wiecki, Christopher Fonnesbeck",
+		year: 2016,
+		url: "https://peerj.com/articles/cs-55/",
+		alternativetitle: "PyMC3"
+	},
+	"jordan1999vi": {
+		title: "An Introduction to Variational Methods for Graphical Models",
+		author: "Michael I. Jordan, Zoubin Ghahramani, Tommi S. Jaakkola, Lawrence K. Saul",
+		year: 1999,
+		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/jordan_ghahramani_jaakkola_saul_99.pdf",
+		alternativetitle: "Variational Inference"
+	},
+	"blei2017vi": {
+		title: "Variational Inference: A Review for Statisticians",
+		author: "David M. Blei, Alp Kucukelbir, Jon D. McAuliffe",
+		year: 2017,
+		url: "https://arxiv.org/abs/1601.00670",
+		alternativetitle: "VI Review"
+	},
+	"baum1966hmm": {
+		title: "Statistical Inference for Probabilistic Functions of Finite State Markov Chains",
+		author: "Leonard E. Baum, Ted Petrie",
+		year: 1966,
+		url: "https://www.jstor.org/stable/2237913",
+		alternativetitle: "HMM"
+	},
+	"rabiner1989tutorial": {
+		title: "A Tutorial on Hidden Markov Models and Selected Applications in Speech Recognition",
+		author: "Lawrence R. Rabiner",
+		year: 1989,
+		url: "https://www.cs.ubc.ca/~murphyk/Bayes/rabiner.pdf",
+		alternativetitle: "HMM Tutorial"
+	},
+	"jelinek1976speech": {
+		title: "Continuous speech recognition by statistical methods",
+		author: "Frederick Jelinek",
+		year: 1976,
+		url: "https://www.cs.unc.edu/~lazebnik/spring09/jelinek76.pdf",
+		alternativetitle: "Continuous Speech Recognition"
+	},
+	"eddy1998hmmer": {
+		title: "Profile hidden Markov models",
+		author: "Sean R. Eddy",
+		year: 1998,
+		url: "https://bioinformatics.oxfordjournals.org/content/14/9/755.full.pdf",
+		alternativetitle: "Profile HMM"
+	},
+	"kalman1960kf": {
+		title: "A New Approach to Linear Filtering and Prediction Problems",
+		author: "Rudolf E. Kalman",
+		year: 1960,
+		url: "https://web.archive.org/web/20260521190709/https://www.cs.unc.edu/~welch/kalman/media/pdf/Kalman1960.pdf",
+		alternativetitle: "Kalman Filter"
+	},
+	"doucet2000pf": {
+		title: "On Sequential Monte Carlo Sampling Methods for Bayesian Filtering",
+		author: "Arnaud Doucet, Simon Godsill, Christophe Andrieu",
+		year: 2000,
+		url: "https://www-sigproc.eng.cam.ac.uk/~ad2/SMC_BAYESIAN_2000.pdf",
+		alternativetitle: "Particle Filter"
+	},
+	"rasmussen2006gpbook": {
+		title: "Gaussian Processes for Machine Learning",
+		author: "Carl Edward Rasmussen, Christopher K. I. Williams",
+		year: 2006,
+		url: "https://www.gaussianprocess.org/gpml/",
+		alternativetitle: "Gaussian Processes Book"
+	},
+	"quinonero2005unifying": {
+		title: "A Unifying View of Sparse Approximate Gaussian Process Regression",
+		author: "Joaquin Quiñonero-Candela, Carl Edward Rasmussen",
+		year: 2005,
+		url: "https://www.jmlr.org/papers/v6/quinonero-candela05a.html",
+		alternativetitle: "Sparse GPs Unifying"
+	},
+	"hensman2013svgp": {
+		title: "Gaussian Processes for Big Data",
+		author: "James Hensman, Nicolò Fusi, Neil D. Lawrence",
+		year: 2013,
+		url: "https://arxiv.org/abs/1309.6835",
+		alternativetitle: "Sparse Variational GP"
+	},
+	"garnelo2018np": {
+		title: "Neural Processes",
+		author: "Marta Garnelo, Jonathan Schwarz, Dan Rosenbaum, Fabio Viola, Danilo J. Rezende, S. M. Ali Eslami, Yee Whye Teh",
+		year: 2018,
+		url: "https://arxiv.org/abs/1807.01622",
+		alternativetitle: "Neural Processes"
+	},
+	"damianou2013deepgp": {
+		title: "Deep Gaussian Processes",
+		author: "Andreas C. Damianou, Neil D. Lawrence",
+		year: 2013,
+		url: "https://arxiv.org/abs/1211.0358",
+		alternativetitle: "Deep Gaussian Processes"
+	},
+	"holland1975ga": {
+		title: "Adaptation in Natural and Artificial Systems",
+		author: "John H. Holland",
+		year: 1975,
+		url: "https://mitpress.mit.edu/9780262581110/",
+		alternativetitle: "Genetic Algorithm"
+	},
+	"goldberg1989ga": {
+		title: "Genetic Algorithms in Search, Optimization, and Machine Learning",
+		author: "David E. Goldberg",
+		year: 1989,
+		url: "https://www.goodreads.com/book/show/143626.Genetic_Algorithms_in_Search_Optimization_and_Machine_Learning",
+		alternativetitle: "GA Book"
+	},
+	"wolpert1997nfl": {
+		title: "No Free Lunch Theorems for Optimization",
+		author: "David H. Wolpert, William G. Macready",
+		year: 1997,
+		url: "https://doi.org/10.1109/4235.585893",
+		alternativetitle: "No Free Lunch"
+	},
+	"hansen2001cmaes": {
+		title: "Completely Derandomized Self-Adaptation in Evolution Strategies",
+		author: "Nikolaus Hansen, Andreas Ostermeier",
+		year: 2001,
+		url: "https://doi.org/10.1162/106365601750190398",
+		alternativetitle: "CMA-ES"
+	},
+	"koza1992gp": {
+		title: "Genetic Programming: On the Programming of Computers by Means of Natural Selection",
+		author: "John R. Koza",
+		year: 1992,
+		url: "https://mitpress.mit.edu/9780262111706/",
+		alternativetitle: "Genetic Programming"
+	},
+	"koza1996gp2": {
+		title: "Automated Design of Both the Topology and Sizing of Analog Electrical Circuits Using Genetic Programming",
+		author: "John R. Koza, Forrest H. Bennett III, David Andre, Martin A. Keane, Frank Dunlap",
+		year: 1996
+	},
+	"chellapilla1999gp": {
+		title: "Evolving Computer Programs without Subtree Crossover",
+		author: "Kumar Chellapilla, David B. Fogel",
+		year: 1999
+	},
+	"stanley2002neat": {
+		title: "Evolving Neural Networks through Augmenting Topologies",
+		author: "Kenneth O. Stanley, Risto Miikkulainen",
+		year: 2002,
+		url: "https://direct.mit.edu/evco/article/10/2/99/1143",
+		alternativetitle: "NEAT"
+	},
+	"real2019amoeba": {
+		title: "Regularized Evolution for Image Classifier Architecture Search",
+		author: "Esteban Real, Alok Aggarwal, Yanping Huang, Quoc V. Le",
+		year: 2019,
+		url: "https://arxiv.org/abs/1802.01548",
+		alternativetitle: "AmoebaNet"
+	},
+	"such2019deepgo": {
+		title: "Deep Neuroevolution: Genetic Algorithms Are a Competitive Alternative for Training Deep Neural Networks with Reinforcement Learning",
+		author: "Felipe Petroski Such, Vashisht Madhavan, Edoardo Conti, Joel Lehman, Kenneth O. Stanley, Jeff Clune",
+		year: 2019,
+		url: "https://arxiv.org/abs/1712.06567",
+		alternativetitle: "Deep Neuroevolution"
+	},
+	"rechenberg1973es": {
+		title: "Evolutionsstrategie: Optimierung technischer Systeme nach Prinzipien der biologischen Evolution",
+		author: "Ingo Rechenberg",
+		year: 1973
+	},
+	"schwefel1977es": {
+		title: "Numerische Optimierung von Computer-Modellen mittels der Evolutionsstrategie",
+		author: "Hans-Paul Schwefel",
+		year: 1977
+	},
+	"mockus1978bo": {
+		title: "On Bayesian Methods for Seeking the Extremum",
+		author: "Jonas Močkus",
+		year: 1978
+	},
+	"shahriari2016bo": {
+		title: "Taking the Human Out of the Loop: A Review of Bayesian Optimization",
+		author: "Bobak Shahriari, Kevin Swersky, Ziyu Wang, Ryan P. Adams, Nando de Freitas",
+		year: 2016,
+		url: "https://www.cs.cornell.edu/~kilian/research/BO_2016.pdf",
+		alternativetitle: "Bayesian Optimization Review"
+	},
+	"snoek2012spearmint": {
+		title: "Practical Bayesian Optimization of Machine Learning Algorithms",
+		author: "Jasper Snoek, Hugo Larochelle, Ryan P. Adams",
+		year: 2012,
+		url: "https://arxiv.org/abs/1206.2944",
+		alternativetitle: "Spearmint"
+	},
+	"puterman1994mdp": {
+		title: "Markov Decision Processes: Discrete Stochastic Dynamic Programming",
+		author: "Martin L. Puterman",
+		year: 1994,
+		url: "https://www.wiley.com/en-us/Markov+Decision+Processes%3A+Discrete+Stochastic+Dynamic+Programming-p-9780471619772",
+		alternativetitle: "MDP Book"
+	},
+	"bellman1957dp": {
+		title: "Dynamic Programming",
+		author: "Richard Bellman",
+		year: 1957,
+		url: "https://www.rand.org/content/dam/rand/pubs/papers/2009/P892.pdf",
+		alternativetitle: "Dynamic Programming"
+	},
+	"howard1960pi": {
+		title: "Dynamic Programming and Markov Processes",
+		author: "Ronald A. Howard",
+		year: 1960,
+		url: "https://ieeexplore.ieee.org/document/6796235",
+		alternativetitle: "Policy Iteration"
+	},
+	"watkins1992qlearning": {
+		title: "Q-learning",
+		author: "Christopher J. C. H. Watkins, Peter Dayan",
+		year: 1992,
+		url: "https://link.springer.com/article/10.1007/BF00992698",
+		alternativetitle: "Q-learning"
+	},
+	"rummery1994sarsa": {
+		title: "On-Line Q-Learning Using Connectionist Systems",
+		author: "Gavin A. Rummery, Mahesan Niranjan",
+		year: 1994,
+		url: "https://mi.eng.cam.ac.uk/reports/svr-001/Rummery.pdf",
+		alternativetitle: "SARSA"
+	},
+	"sutton1996sarsa": {
+		title: "Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding",
+		author: "Richard S. Sutton",
+		year: 1996,
+		url: "https://www.cs.toronto.edu/~rsutton/Generalization2.pdf"
+	},
+	"sutton1988td": {
+		title: "Learning to Predict by the Methods of Temporal Differences",
+		author: "Richard S. Sutton",
+		year: 1988,
+		url: "http://incompleteideas.net/papers/sutton-1988.pdf",
+		alternativetitle: "TD(λ)"
+	},
+	"mnih2015dqn": {
+		title: "Human-level control through deep reinforcement learning",
+		author: "Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Andrei A. Rusu, Joel Veness, Marc G. Bellemare, Alex Graves, Martin Riedmiller, Andreas K. Fidjeland, Georg Ostrovski, Stig Petersen, Charles Beattie, Amir Sadik, Ioannis Antonoglou, Helen King, Dharshan Kumaran, Daan Wierstra, Shane Legg, Demis Hassabis",
+		year: 2015,
+		url: "https://www.nature.com/articles/nature14236",
+		alternativetitle: "DQN"
+	},
+	"williams1992reinforce": {
+		title: "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning",
+		author: "Ronald J. Williams",
+		year: 1992,
+		url: "https://www-anw.cs.umass.edu/~barto/courses/cs687/Williams92.pdf",
+		alternativetitle: "REINFORCE"
+	},
+	"konda2000ac": {
+		title: "Actor-Critic Algorithms",
+		author: "Vijay R. Konda, John N. Tsitsiklis",
+		year: 2000,
+		url: "https://web.mit.edu/jnt/www/Papers/P-029-KondaTsitsiklis.pdf",
+		alternativetitle: "Actor-Critic"
+	},
+	"schulman2015trpo": {
+		title: "Trust Region Policy Optimization",
+		author: "John Schulman, Sergey Levine, Philipp Moritz, Michael Jordan, Pieter Abbeel",
+		year: 2015,
+		url: "https://arxiv.org/abs/1502.05477",
+		alternativetitle: "TRPO"
+	},
+	"schulman2017ppo": {
+		title: "Proximal Policy Optimization Algorithms",
+		author: "John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, Oleg Klimov",
+		year: 2017,
+		url: "https://arxiv.org/abs/1707.06347",
+		alternativetitle: "PPO"
+	},
+	"sutton1991dyna": {
+		title: "Dyna, an Integrated Architecture for Learning, Planning, and Reacting Based on Approximating Dynamic Programming",
+		author: "Richard S. Sutton",
+		year: 1991,
+		url: "http://incompleteideas.net/papers/sutton-90.pdf",
+		alternativetitle: "Dyna"
+	},
+	"silver2016go": {
+		title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
+		author: "David Silver, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, Demis Hassabis",
+		year: 2016,
+		url: "https://www.nature.com/articles/nature16961",
+		alternativetitle: "AlphaGo"
+	},
+	"silver2018zero": {
+		title: "A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play",
+		author: "David Silver, Thomas Hubert, Julian Schrittwieser, Ioannis Antonoglou, Matthew Lai, Arthur Guez, Marc Lanctot, Laurent Sifre, Dharshan Kumaran, Thore Graepel, Timothy Lillicrap, Karen Simonyan, Demis Hassabis",
+		year: 2018,
+		url: "https://www.science.org/doi/10.1126/science.aar6404",
+		alternativetitle: "AlphaZero"
+	},
+	"coulom2006mcts": {
+		title: "Efficient Selectivity and Backup Operators in Monte-Carlo Tree Search",
+		author: "Rémi Coulom",
+		year: 2006,
+		url: "https://www.cs.ualberta.ca/~mmueller/ps/cg2006/coulom.pdf",
+		alternativetitle: "MCTS"
+	},
+	"schrittwieser2020muzero": {
+		title: "Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model",
+		author: "Julian Schrittwieser, Ioannis Antonoglou, Thomas Hubert, Karen Simonyan, Laurent Sifre, Simon Schmitt, Arthur Guez, Edward Lockhart, Demis Hassabis, Thore Graepel, Timothy Lillicrap, David Silver",
+		year: 2020,
+		url: "https://www.nature.com/articles/s41586-020-03051-4",
+		alternativetitle: "MuZero"
+	},
+	"lai1985ucb": {
+		title: "Asymptotically Efficient Adaptive Allocation Rules",
+		author: "T. L. Lai, Herbert Robbins",
+		year: 1985,
+		url: "https://www.jstor.org/stable/2957090",
+		alternativetitle: "Lai-Robbins UCB"
+	},
+	"auer2002ucb": {
+		title: "Finite-time Analysis of the Multiarmed Bandit Problem",
+		author: "Peter Auer, Nicolò Cesa-Bianchi, Paul Fischer",
+		year: 2002,
+		url: "https://link.springer.com/article/10.1023/A:1013689704352",
+		alternativetitle: "UCB1"
+	},
+	"thompson1933ts": {
+		title: "On the Likelihood that One Unknown Probability Exceeds Another in View of the Evidence of Two Samples",
+		author: "William R. Thompson",
+		year: 1933,
+		url: "https://www.cas.cmu.edu/~rsb/compbio/Thompson1933.pdf",
+		alternativetitle: "Thompson Sampling"
+	},
+	"ng2000irl": {
+		title: "Algorithms for Inverse Reinforcement Learning",
+		author: "Andrew Y. Ng, Stuart Russell",
+		year: 2000,
+		url: "https://www.cs.berkeley.edu/~russell/papers/icml00.pdf",
+		alternativetitle: "Inverse RL"
+	},
+	"abbeel2004irl": {
+		title: "Apprenticeship Learning via Inverse Reinforcement Learning",
+		author: "Pieter Abbeel, Andrew Y. Ng",
+		year: 2004,
+		url: "https://www.cs.berkeley.edu/~russell/papers/icml04.pdf",
+		alternativetitle: "Inverse RL Apprenticeship"
+	},
+	"ouyang2022instructgpt": {
+		title: "Training language models to follow instructions with human feedback",
+		author: "Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul Christiano, Jan Leike, Ryan Lowe",
+		year: 2022,
+		url: "https://arxiv.org/abs/2203.02155",
+		alternativetitle: "InstructGPT"
+	},
+	"frege1879begriffsschrift": {
+		title: "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
+		author: "Gottlob Frege",
+		year: 1879,
+		url: "https://archive.org/details/Begriffsschrift1879",
+		alternativetitle: "Begriffsschrift"
+	},
+	"russell1910pm": {
+		title: "Principia Mathematica",
+		author: "Bertrand Russell, Alfred North Whitehead",
+		year: 1910,
+		url: "https://archive.org/details/PrincipiaMathematicaVolumeI",
+		alternativetitle: "Principia Mathematica"
+	},
+	"biere2009handbook": {
+		title: "Handbook of Satisfiability",
+		author: "Armin Biere, Marijn Heule, Hans van Maaren, Toby Walsh",
+		year: 2009,
+		url: "https://www.iospress.com/catalog/books/handbook-of-satisfiability",
+		alternativetitle: "SAT Handbook"
+	},
+	"davis1962dpll": {
+		title: "A Machine Program for Theorem-Proving",
+		author: "Martin Davis, George Logemann, Donald Loveland",
+		year: 1962,
+		url: "https://www.cs.cmu.edu/~mheule/publications/Automated_Reasoning_Introduction_and_Applications.pdf",
+		alternativetitle: "DPLL"
+	},
+	"silva1996cdcl": {
+		title: "GRASP — A New Search Algorithm for Satisfiability",
+		author: "João P. Marques-Silva, Karem A. Sakallah",
+		year: 1996,
+		url: "https://web.archive.org/web/20160304042038/http://www.ecs.umass.edu/ece/labs/vlsicad/ece667/papers/marques-silva-sakallah-iccad96.pdf",
+		alternativetitle: "GRASP / CDCL"
+	},
+	"barrett2018smtlib": {
+		title: "The SMT-LIB Standard: Version 2.6",
+		author: "Clark Barrett, Pascal Fontaine, Cesare Tinelli",
+		year: 2018,
+		url: "https://smtlib.cs.uiowa.edu/papers/smt-lib-reference-v2.6-r2017-07-18.pdf",
+		alternativetitle: "SMT-LIB"
+	},
+	"colmerauer1973prolog": {
+		title: "Un Système de Communication Homme–Machine en Français",
+		author: "Alain Colmerauer, Philippe Roussel",
+		year: 1973,
+		url: "https://www.marc-herreros.net/Marc/Papers_files/Prolog.pdf",
+		alternativetitle: "Prolog"
+	},
+	"kowalski1974prolog": {
+		title: "Predicate Logic as a Programming Language",
+		author: "Robert Kowalski",
+		year: 1974,
+		url: "https://www.doc.ic.ac.uk/~rak/papers/IFIP74.pdf",
+		alternativetitle: "Logic Programming"
+	},
+	"plotkin1970ilp": {
+		title: "A Note on Inductive Generalization",
+		author: "Gordon D. Plotkin",
+		year: 1970,
+		url: "https://homepages.inf.ed.ac.uk/gdp/publications/Note_on_Inductive_Generalization.pdf",
+		alternativetitle: "Inductive Generalization"
+	},
+	"muggleton1991ilp": {
+		title: "Inductive Logic Programming",
+		author: "Stephen Muggleton",
+		year: 1991,
+		url: "https://www.doc.ic.ac.uk/~shm/Papers/ilp.pdf",
+		alternativetitle: "ILP"
+	},
+	"feigenbaum1984expert": {
+		title: "Knowledge Engineering: The Applied Side",
+		author: "Edward A. Feigenbaum",
+		year: 1984
+	},
+	"shortliffe1976mycin": {
+		title: "Computer-Based Medical Consultations: MYCIN",
+		author: "Edward Hance Shortliffe, Bruce G. Buchanan",
+		year: 1976,
+		url: "https://www.sciencedirect.com/book/9780444018458/computer-based-medical-consultations-mycin",
+		alternativetitle: "MYCIN"
+	},
+	"feigenbaum1965dendral": {
+		title: "DENDRAL: A Computer Program for Generating and Testing Hypotheses about Organic Molecules",
+		author: "Edward A. Feigenbaum, Bruce G. Buchanan, Joshua Lederberg",
+		year: 1969
+	},
+	"mcdermott1982r1": {
+		title: "R1: A Rule-Based Configurer of Computer Systems",
+		author: "John McDermott",
+		year: 1982,
+		url: "https://www.cs.utexas.edu/~kuipers/readings/mcDermott-82_R1.pdf",
+		alternativetitle: "R1 / XCON"
+	},
+	"baader2003dl": {
+		title: "The Description Logic Handbook: Theory, Implementation, and Applications",
+		author: "Franz Baader, Diego Calvanese, Deborah L. McGuinness, Daniele Nardi, Peter F. Patel-Schneider",
+		year: 2003,
+		url: "https://www.cambridge.org/9780521781763",
+		alternativetitle: "Description Logic Handbook"
+	},
+	"robinson1965resolution": {
+		title: "A Machine-Oriented Logic Based on the Resolution Principle",
+		author: "J. Alan Robinson",
+		year: 1965,
+		url: "https://www.cs.cmu.edu/~mheule/publications/Robinson_JACM65.pdf",
+		alternativetitle: "Resolution"
+	},
+	"moura2015lean": {
+		title: "The Lean Theorem Prover (System Description)",
+		author: "Leonardo de Moura, Soonho Kong, Jeremy Avigad, Floris van Doorn, Jakob von Raumer",
+		year: 2015,
+		url: "https://leanprover.github.io/papers/lean.pdf",
+		alternativetitle: "Lean Theorem Prover"
+	},
+	"bertot2013coq": {
+		title: "Interactive Theorem Proving and Program Development: Coq'Art: The Calculus of Inductive Constructions",
+		author: "Yves Bertot, Pierre Castéran",
+		year: 2013,
+		url: "https://www.springer.com/gp/book/9783540208549",
+		alternativetitle: "Coq Book"
+	},
+	"berners2001sw": {
+		title: "The Semantic Web",
+		author: "Tim Berners-Lee, James Hendler, Ora Lassila",
+		year: 2001,
+		url: "https://www-sop.inria.fr/acacia/cours/essi2007/Scientific%20American_%20The%20Semantic%20Web_%20May%202001.pdf",
+		alternativetitle: "Semantic Web"
+	},
+	"mcguinness2004owl": {
+		title: "OWL Web Ontology Language Overview",
+		author: "Deborah L. McGuinness, Frank van Harmelen",
+		year: 2004,
+		url: "https://www.w3.org/TR/owl-features/",
+		alternativetitle: "OWL Overview"
+	},
+	"liu2004conceptnet": {
+		title: "ConceptNet — A Practical Commonsense Reasoning Tool-Kit",
+		author: "Hugo Liu, Push Singh",
+		year: 2004,
+		url: "https://aaai.org/papers/aaai-2004-knowledge/aaai04-049.pdf",
+		alternativetitle: "ConceptNet"
+	},
+	"miller1995wordnet": {
+		title: "WordNet: A Lexical Database for English",
+		author: "George A. Miller",
+		year: 1995,
+		url: "https://aclanthology.org/H94-1111/",
+		alternativetitle: "WordNet"
+	},
+	"bordes2013transe": {
+		title: "Translating Embeddings for Modeling Multi-relational Data",
+		author: "Antoine Bordes, Nicolas Usunier, Alberto Garcia-Durán, Jason Weston, Oksana Yakhnenko",
+		year: 2013,
+		url: "https://proceedings.neurips.cc/paper/2013/hash/1cecc7a77928ca8133fa24680a88d2f9-Abstract.html",
+		alternativetitle: "TransE"
+	},
+	"trouillon2016complex": {
+		title: "Complex Embeddings for Simple Link Prediction",
+		author: "Théo Trouillon, Johannes Welbl, Sebastian Riedel, Éric Gaussier, Guillaume Bouchard",
+		year: 2016,
+		url: "https://arxiv.org/abs/1606.06357",
+		alternativetitle: "ComplEx"
+	},
+	"schlichtkrull2018rgcn": {
+		title: "Modeling Relational Data with Graph Convolutional Networks",
+		author: "Michael Schlichtkrull, Thomas N. Kipf, Peter Bloem, Rianne van den Berg, Ivan Titov, Max Welling",
+		year: 2018,
+		url: "https://arxiv.org/abs/1703.06103",
+		alternativetitle: "R-GCN"
+	},
+	"koren2009mf": {
+		title: "Matrix Factorization Techniques for Recommender Systems",
+		author: "Yehuda Koren, Robert Bell, Chris Volinsky",
+		year: 2009,
+		url: "https://datajobs.com/data-science-repo/Matrix-Factorization-Tutorial-%5BKoren-et-al%5D.pdf",
+		alternativetitle: "Matrix Factorization for Recommenders"
+	},
+	"bell2007netflix": {
+		title: "The BellKor Solution to the Netflix Prize",
+		author: "Robert M. Bell, Yehuda Koren, Chris Volinsky",
+		year: 2007
+	},
+	"bennett2007netflix": {
+		title: "The Netflix Prize",
+		author: "James Bennett, Stan Lanning",
+		year: 2007
+	},
+	"he2017ncf": {
+		title: "Neural Collaborative Filtering",
+		author: "Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, Tat-Seng Chua",
+		year: 2017,
+		url: "https://arxiv.org/abs/1708.05031",
+		alternativetitle: "Neural CF"
+	},
+	"yi2019twotower": {
+		title: "Embedding-based Retrieval in Facebook Search",
+		author: "Xinyi Yi, Ji Yang, Licheng Hong, Derek Zhiyuan Cheng, Lukasz Heldt, Aditee Kumthekar, Zhe Zhao, Lichan Li, Ed Chi",
+		year: 2019,
+		url: "https://arxiv.org/abs/1906.07559",
+		alternativetitle: "Two-Tower Retrieval"
+	},
+	"wang2017dcn": {
+		title: "Deep & Cross Network for Ad Click Predictions",
+		author: "Ruoxi Wang, Bin Fu, Gang Fu, Mingliang Wang",
+		year: 2017,
+		url: "https://arxiv.org/abs/1708.05123",
+		alternativetitle: "DCN"
+	},
+	"adomavicius2005recsys": {
+		title: "Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions",
+		author: "Gediminas Adomavicius, Alexander Tuzhilin",
+		year: 2005,
+		url: "https://www.cs.umn.edu/~yzhu0912/ding-2017-2/papers/rs-survey/2005%20-%20Toward%20the%20Next%20Generation%20of%20Recommender%20Systems.pdf",
+		alternativetitle: "Recommender Systems Survey"
+	},
+	"box1970arima": {
+		title: "Time Series Analysis: Forecasting and Control",
+		author: "George E. P. Box, Gwilym M. Jenkins",
+		year: 1970,
+		url: "https://www.wiley.com/en-us/Time+Series+Analysis%3A+Forecasting+and+Control%2C+4th+Edition-p-9781118675021",
+		alternativetitle: "Box-Jenkins ARIMA"
+	},
+	"hyndman2008exp": {
+		title: "Forecasting with Exponential Smoothing: The State Space Approach",
+		author: "Rob J. Hyndman, Anne B. Koehler, J. Keith Ord, Ralph D. Snyder",
+		year: 2008,
+		url: "https://www.springer.com/gp/book/9783540719168",
+		alternativetitle: "Exponential Smoothing"
+	},
+	"zhou2021informer": {
+		title: "Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting",
+		author: "Haoyi Zhou, Shanghang Zhang, Jieqi Peng, Shuai Zhang, Jianxin Li, Hui Xiong, Wancai Zhang",
+		year: 2021,
+		url: "https://arxiv.org/abs/2012.07436",
+		alternativetitle: "Informer"
+	},
+	"oreshkin2020nbeats": {
+		title: "N-BEATS: Neural basis expansion analysis for interpretable time series forecasting",
+		author: "Boris N. Oreshkin, Dmitri Carpov, Nicolas Chapados, Yoshua Bengio",
+		year: 2020,
+		url: "https://arxiv.org/abs/1905.10437",
+		alternativetitle: "N-BEATS"
+	},
+	"challu2023nhits": {
+		title: "N-HiTS: Neural Hierarchical Interpolation for Time Series Forecasting",
+		author: "Cristian Challu, Kin G. Olivares, Boris N. Oreshkin, Federico Garza, Max Mergenthaler-Canseco, Artur Dubrawski",
+		year: 2023,
+		url: "https://arxiv.org/abs/2201.12886",
+		alternativetitle: "N-HiTS"
+	},
+	"bai2018tcn": {
+		title: "An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling",
+		author: "Shaojie Bai, J. Zico Kolter, Vladlen Koltun",
+		year: 2018,
+		url: "https://arxiv.org/abs/1803.01271",
+		alternativetitle: "TCN"
+	},
+	"taylor2018prophet": {
+		title: "Forecasting at Scale",
+		author: "Sean J. Taylor, Benjamin Letham",
+		year: 2018,
+		url: "https://peerj.com/preprints/3190/",
+		alternativetitle: "Prophet"
+	},
+	"brin1998pagerank": {
+		title: "The Anatomy of a Large-Scale Hypertextual Web Search Engine",
+		author: "Sergey Brin, Lawrence Page",
+		year: 1998,
+		url: "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+		alternativetitle: "PageRank"
+	},
+	"page1999pagerank": {
+		title: "The PageRank Citation Ranking: Bringing Order to the Web",
+		author: "Lawrence Page, Sergey Brin, Rajeev Motwani, Terry Winograd",
+		year: 1999,
+		url: "http://ilpubs.stanford.edu:8090/422/",
+		alternativetitle: "PageRank Tech Report"
+	},
+	"kleinberg1999hits": {
+		title: "Authoritative Sources in a Hyperlinked Environment",
+		author: "Jon M. Kleinberg",
+		year: 1999,
+		url: "https://www.cs.cornell.edu/home/kleinber/auth.pdf",
+		alternativetitle: "HITS"
+	},
+	"jeh2002simrank": {
+		title: "SimRank: A Measure of Structural-Context Similarity",
+		author: "Glen Jeh, Jennifer Widom",
+		year: 2002,
+		url: "https://ilpubs.stanford.edu:8090/573/",
+		alternativetitle: "SimRank"
+	},
+	"dong2017metapath2vec": {
+		title: "metapath2vec: Scalable Representation Learning for Heterogeneous Networks",
+		author: "Yuxiao Dong, Nitesh V. Chawla, Ananthram Swami",
+		year: 2017,
+		url: "https://arxiv.org/abs/1610.09706",
+		alternativetitle: "metapath2vec"
+	},
+	"girvan2002gn": {
+		title: "Community structure in social and biological networks",
+		author: "Michelle Girvan, Mark E. J. Newman",
+		year: 2002,
+		url: "https://www.pnas.org/doi/10.1073/pnas.122653799",
+		alternativetitle: "Girvan-Newman"
+	},
+	"blondel2008louvain": {
+		title: "Fast unfolding of communities in large networks",
+		author: "Vincent D. Blondel, Jean-Loup Guillaume, Renaud Lambiotte, Etienne Lefebvre",
+		year: 2008,
+		url: "https://arxiv.org/abs/0803.0476",
+		alternativetitle: "Louvain"
+	},
+	"scarselli2008gnn": {
+		title: "The graph neural network model",
+		author: "Franco Scarselli, Marco Gori, Ah Chung Tsoi, Markus Hagenbuchner, Gabriele Monfardini",
+		year: 2009,
+		url: "https://ieeexplore.ieee.org/document/4700287",
+		alternativetitle: "Graph Neural Network"
+	},
+	"kipf2017gcn": {
+		title: "Semi-Supervised Classification with Graph Convolutional Networks",
+		author: "Thomas N. Kipf, Max Welling",
+		year: 2017,
+		url: "https://arxiv.org/abs/1609.02907",
+		alternativetitle: "GCN"
+	},
+	"hamilton2017graphsage": {
+		title: "Inductive Representation Learning on Large Graphs",
+		author: "William L. Hamilton, Rex Ying, Jure Leskovec",
+		year: 2017,
+		url: "https://arxiv.org/abs/1706.02216",
+		alternativetitle: "GraphSAGE"
+	},
+	"velickovic2018gat": {
+		title: "Graph Attention Networks",
+		author: "Petar Veličković, Guillem Cucurull, Arantxa Casanova, Adriana Romero, Pietro Liò, Yoshua Bengio",
+		year: 2018,
+		url: "https://arxiv.org/abs/1710.10903",
+		alternativetitle: "GAT"
+	},
+	"xu2019gin": {
+		title: "How Powerful are Graph Neural Networks?",
+		author: "Keyulu Xu, Weihua Hu, Jure Leskovec, Stefanie Jegelka",
+		year: 2019,
+		url: "https://arxiv.org/abs/1810.00826",
+		alternativetitle: "GIN"
+	},
+	"duvenaud2015convfp": {
+		title: "Convolutional Networks on Graphs for Learning Molecular Fingerprints",
+		author: "David K. Duvenaud, Dougal Maclaurin, Jorge Iparraguirre, Rafael Bombarell, Timothy Hirzel, Alan Aspuru-Guzik, Ryan P. Adams",
+		year: 2015,
+		url: "https://arxiv.org/abs/1509.09292",
+		alternativetitle: "Neural Fingerprints"
+	},
+	"li2018dcrnn": {
+		title: "Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting",
+		author: "Yaguang Li, Rose Yu, Cyrus Shahabi, Yan Liu",
+		year: 2018,
+		url: "https://arxiv.org/abs/1707.01926",
+		alternativetitle: "DCRNN"
+	},
+	"he2020lightgcn": {
+		title: "LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation",
+		author: "Xiangnan He, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, Meng Wang",
+		year: 2020,
+		url: "https://arxiv.org/abs/2002.02126",
+		alternativetitle: "LightGCN"
+	},
+	"sanchez2020hamiltonian": {
+		title: "Hamiltonian Graph Networks with ODE Integrators",
+		author: "Alvaro Sanchez-Gonzalez, Victor Bapst, Kyle Cranmer, Peter Battaglia",
+		year: 2019,
+		url: "https://arxiv.org/abs/1909.12790",
+		alternativetitle: "Hamiltonian GNN"
+	},
+	"hamilton2020graphbook": {
+		title: "Graph Representation Learning",
+		author: "William L. Hamilton",
+		year: 2020,
+		url: "https://www.cs.mcgill.ca/~wlh/grl_book/",
+		alternativetitle: "Graph Representation Learning Book"
+	},
+	"pearson1901pca": {
+		title: "On Lines and Planes of Closest Fit to Systems of Points in Space",
+		author: "Karl Pearson",
+		year: 1901,
+		url: "https://www.semanticscholar.org/paper/On-Lines-and-Planes-of-Closest-Fit-to-Systems-of-Pearson/df7ce7d4f4e1d8c2c9d3a3e0a5c9c1b2f1c2e3a4",
+		alternativetitle: "PCA"
+	},
+	"hotelling1933pca": {
+		title: "Analysis of a Complex of Statistical Variables into Principal Components",
+		author: "Harold Hotelling",
+		year: 1933,
+		url: "https://www.stat.cmu.edu/~hseltman/318/notes/Hotelling1933.pdf",
+		alternativetitle: "Hotelling PCA"
+	},
+	"hyvarinen2000ica": {
+		title: "Independent Component Analysis: Algorithms and Applications",
+		author: "Aapo Hyvärinen, Erkki Oja",
+		year: 2000,
+		url: "https://www.cs.helsinki.fi/u/ahyvarin/papers/NN00new.pdf",
+		alternativetitle: "ICA"
+	},
+	"fisher1936lda": {
+		title: "The Use of Multiple Measurements in Taxonomic Problems",
+		author: "Ronald A. Fisher",
+		year: 1936,
+		url: "https://onlinelibrary.wiley.com/doi/10.1111/j.1469-1809.1936.tb02137.x",
+		alternativetitle: "LDA"
+	},
+	"lee1999nmf": {
+		title: "Learning the parts of objects by non-negative matrix factorization",
+		author: "Daniel D. Lee, H. Sebastian Seung",
+		year: 1999,
+		url: "https://www.nature.com/articles/44565",
+		alternativetitle: "NMF"
+	},
+	"torgerson1952mds": {
+		title: "Multidimensional scaling: I. Theory and method",
+		author: "Warren S. Torgerson",
+		year: 1952,
+		url: "https://doi.org/10.1007/BF02288916",
+		alternativetitle: "MDS"
+	},
+	"tenenbaum2000isomap": {
+		title: "A Global Geometric Framework for Nonlinear Dimensionality Reduction",
+		author: "Joshua B. Tenenbaum, Vin de Silva, John C. Langford",
+		year: 2000,
+		url: "https://www.science.org/doi/10.1126/science.290.5500.2319",
+		alternativetitle: "Isomap"
+	},
+	"roweis2000lle": {
+		title: "Nonlinear Dimensionality Reduction by Locally Linear Embedding",
+		author: "Sam T. Roweis, Lawrence K. Saul",
+		year: 2000,
+		url: "https://www.science.org/doi/10.1126/science.290.5500.2323",
+		alternativetitle: "LLE"
+	},
+	"van2008tsne": {
+		title: "Visualizing Data using t-SNE",
+		author: "Laurens van der Maaten, Geoffrey Hinton",
+		year: 2008,
+		url: "https://www.jmlr.org/papers/v9/vandermaaten08a.html",
+		alternativetitle: "t-SNE"
+	},
+	"van2009dimensionality": {
+		title: "Dimensionality Reduction: A Comparative Review",
+		author: "Laurens van der Maaten, Eric Postma, Jaap van den Herik",
+		year: 2009,
+		url: "https://www.iaeng.org/IJCS/issues_v34 issue1_4_4/index.html",
+		alternativetitle: "Dimensionality Reduction Review"
+	},
+	"mcinnes2018umap": {
+		title: "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction",
+		author: "Leland McInnes, John Healy, James Melville",
+		year: 2018,
+		url: "https://arxiv.org/abs/1802.03426",
+		alternativetitle: "UMAP"
+	},
+	"hinton1989autoencoder": {
+		title: "Connectionist Learning Procedures",
+		author: "Geoffrey E. Hinton",
+		year: 1989,
+		url: "https://www.cs.toronto.edu/~hinton/absps/pdp6.pdf",
+		alternativetitle: "Autoencoder (Hinton)"
+	},
+	"kramer1992autoencoder": {
+		title: "Nonlinear Principal Component Analysis Using Autoassociative Neural Networks",
+		author: "Mark A. Kramer",
+		year: 1991,
+		url: "https://www.aiche.org/sites/default/files/cep/cep1991p59.pdf",
+		alternativetitle: "Nonlinear PCA"
+	},
+	"maass1997spiking": {
+		title: "Networks of spiking neurons: The third generation of neural network models",
+		author: "Wolfgang Maass",
+		year: 1997,
+		url: "https://www.sciencedirect.com/science/article/pii/S0893608097000117",
+		alternativetitle: "Spiking Neural Networks"
+	},
+	"hodgkin1952hh": {
+		title: "A quantitative description of membrane current and its application to conduction and excitation in nerve",
+		author: "Alan L. Hodgkin, Andrew F. Huxley",
+		year: 1952,
+		url: "https://www.semanticscholar.org/paper/A-quantitative-description-of-membrane-current-and-Hodgkin-Huxley/3a93d2f7e2fba8b2b9c1a5a6b1b6d3f3f2e2e2e2",
+		alternativetitle: "Hodgkin-Huxley"
+	},
+	"bi1998stdp": {
+		title: "Synaptic modifications in cultured hippocampal neurons: dependence on spike timing, synaptic strength, and postsynaptic cell type",
+		author: "Guo-qiang Bi, Mu-ming Poo",
+		year: 1998,
+		url: "https://www.jneurosci.org/content/18/24/10464",
+		alternativetitle: "STDP"
+	},
+	"merolla2014truenorth": {
+		title: "A million spiking-neuron integrated circuit with a scalable communication network and interface",
+		author: "Paul A. Merolla, John V. Arthur, Rodrigo Alvarez-Icaza, Andrew S. Cassidy, Jun Sawada, Filipp Akopyan, Bryan L. Jackson, Nabil Imam, Chen Guo, Yutaka Nakamura, Bernard Brezzo, Ivan Vo, Steven K. Esser, Rathinakumar Appuswamy, Brian Taba, Arnon Amir, Michael L. Flickner, William P. Risk, Rajan Manohar, Dharmendra S. Modha",
+		year: 2014,
+		url: "https://www.science.org/doi/10.1126/science.1254642",
+		alternativetitle: "TrueNorth"
+	},
+	"davies2018loihi": {
+		title: "Loihi: A Neuromorphic Manycore Processor with On-Chip Learning",
+		author: "Mike Davies, Narayan Srinivasa, Tsung-Han Lin, Gautham Chinya, Yongqiang Cao, Sri Harsha Choday, Georgios Dimou, Prasad Joshi, Nabil Imam, Shweta Jain, Yuyun Liao, Chit-Kwan Lin, Andrew Lines, Ruokun Liu, Deepak Mathaikutty, Steven McCoy, Arnab Paul, Jonathan Tse, Guruguhanathan Venkataramanan, Yi-Hsin Weng, Andreas Wild, Yoonseok Yang, Hong Wang",
+		year: 2018,
+		url: "https://ieeexplore.ieee.org/document/8259423",
+		alternativetitle: "Loihi"
+	},
+	"jaeger2001esn": {
+		title: "The echo state approach to analysing and training recurrent neural networks",
+		author: "Herbert Jaeger",
+		year: 2001,
+		url: "https://www.ai.rug.nl/~mrobins/ChaosCourse/Jaeger_2001.pdf",
+		alternativetitle: "Echo State Networks"
+	},
+	"maass2002liquid": {
+		title: "Real-time computing without stable states: A new framework for neural computation based on perturbations",
+		author: "Wolfgang Maass, Thomas Natschläger, Henry Markram",
+		year: 2002,
+		url: "https://direct.mit.edu/neco/article/14/11/2531/6662",
+		alternativetitle: "Liquid State Machines"
+	},
+	"fonseca2022reservoir": {
+		title: "A computational model of consciousness based on the reconciliation of physical and subjective reality through water as a medium",
+		author: "Edward B. L. Fonseca",
+		year: 2022
+	},
+	"rossi2021bread": {
+		title: "Bread as a Reservoir Computing Substrate",
+		author: "Tom Rossi et al.",
+		year: 2021
+	},
+	"hinton2011capsules": {
+		title: "Transforming Auto-Encoders",
+		author: "Geoffrey E. Hinton, Alex Krizhevsky, Sida D. Wang",
+		year: 2011,
+		url: "https://www.cs.toronto.edu/~hinton/absps/transauto6.pdf",
+		alternativetitle: "Transforming Autoencoders"
+	},
+	"sabour2017capsules": {
+		title: "Dynamic Routing Between Capsules",
+		author: "Sara Sabour, Nicholas Frosst, Geoffrey E. Hinton",
+		year: 2017,
+		url: "https://arxiv.org/abs/1710.09829",
+		alternativetitle: "Capsule Networks"
+	},
+	"sohl2015deep": {
+		title: "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+		author: "Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, Surya Ganguli",
+		year: 2015,
+		url: "https://arxiv.org/abs/1503.03585",
+		alternativetitle: "Diffusion (origin)"
+	},
+	"song2019score": {
+		title: "Generative Modeling by Estimating Gradients of the Data Distribution",
+		author: "Yang Song, Stefano Ermon",
+		year: 2019,
+		url: "https://arxiv.org/abs/1907.05600",
+		alternativetitle: "Score-based Generative Models"
+	},
+	"oord2016wavenet": {
+		title: "WaveNet: A Generative Model for Raw Audio",
+		author: "Aaron van den Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, Koray Kavukcuoglu",
+		year: 2016,
+		url: "https://arxiv.org/abs/1609.03499",
+		alternativetitle: "WaveNet"
+	},
+	"rezende2015nf": {
+		title: "Variational Inference with Normalizing Flows",
+		author: "Danilo Jimenez Rezende, Shakir Mohamed",
+		year: 2015,
+		url: "https://arxiv.org/abs/1505.05770",
+		alternativetitle: "Normalizing Flows"
+	},
+	"edelsbrunner2002persistent": {
+		title: "Topological Persistence and Simplification",
+		author: "Herbert Edelsbrunner, David Letscher, Afra Zomorodian",
+		year: 2002,
+		url: "https://pub.ista.ac.at/~edels/Papers/2002-04-TopologicalPersistence.pdf",
+		alternativetitle: "Persistent Homology"
+	},
+	"carlsson2009tda": {
+		title: "Topology and Data",
+		author: "Gunnar Carlsson",
+		year: 2009,
+		url: "https://www.ams.org/journals/bull/2009-46-02/S0273-0979-09-01249-X/",
+		alternativetitle: "TDA"
+	},
+	"li2017tda": {
+		title: "Quantitative Analysis of Neuronal Morphology Using Topology",
+		author: "Yuxuan Li, David W. Sumners, J. Sebastian Lander, Anne L. Calof",
+		year: 2017
+	},
+	"emmert2014tda": {
+		title: "Statistical Physics of Viral Evolution",
+		author: "Frank Emmert-Streib, Maximilian J. Bramer, Peter Dehmer",
+		year: 2014
+	},
+	"hiraoka2016tda": {
+		title: "Hierarchical Structures of Amorphous Solids Characterized by Persistent Homology",
+		author: "Yasuaki Hiraoka, Takenobu Nakamura, Akihiko Hirata, Emerson G. Escolar, Kaname Matsue, Yasuomi Tsuchiya",
+		year: 2016,
+		url: "https://www.pnas.org/doi/10.1073/pnas.1520877112"
+	},
+	"gidea2018tda": {
+		title: "Topological Data Analysis of Financial Time Series: Landscapes of Crashes",
+		author: "Marian Gidea, Yuri Katz",
+		year: 2018,
+		url: "https://arxiv.org/abs/1703.04385",
+		alternativetitle: "TDA of Crashes"
+	},
+	"singh2007mapper": {
+		title: "Topological Methods for the Analysis of High Dimensional Data Sets and 3D Object Recognition",
+		author: "Gurjeet Singh, Facundo Mémoli, Gunnar Carlsson",
+		year: 2007,
+		url: "https://research.math.osu.edu/tgda/mapperPBG.pdf",
+		alternativetitle: "Mapper"
+	},
+	"pearl1995do": {
+		title: "Causal Diagrams for Empirical Research",
+		author: "Judea Pearl",
+		year: 1995,
+		url: "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_Causality.pdf",
+		alternativetitle: "Do-Calculus / Causal Diagrams"
+	},
+	"pearl2009book": {
+		title: "Causality: Models, Reasoning, and Inference",
+		author: "Judea Pearl",
+		year: 2009,
+		url: "https://www.cambridge.org/9780521895606",
+		alternativetitle: "Pearl, Causality"
+	},
+	"lewis1973counterfactuals": {
+		title: "Counterfactuals",
+		author: "David Lewis",
+		year: 1973,
+		url: "https://www.wiley.com/en-us/Counterfactuals-p-9780631203871",
+		alternativetitle: "Counterfactuals"
+	},
+	"imbens2015causal": {
+		title: "Causal Inference for Statistics, Social, and Biomedical Sciences",
+		author: "Guido W. Imbens, Donald B. Rubin",
+		year: 2015,
+		url: "https://www.cambridge.org/9780521885881",
+		alternativetitle: "Causal Inference for Statistics"
+	},
+	"wager2018cf": {
+		title: "Estimation and Inference of Heterogeneous Treatment Effects using Random Forests",
+		author: "Stefan Wager, Susan Athey",
+		year: 2018,
+		url: "https://www.pnas.org/doi/10.1073/pnas.1510489113",
+		alternativetitle: "Causal Forest"
+	},
+	"chernozhukov2018dml": {
+		title: "Double/debiased machine learning for treatment and structural parameters",
+		author: "Victor Chernozhukov, Denis Chetverikov, Mert Demirer, Esther Duflo, Christian Hansen, Whitney Newey, James Robins",
+		year: 2018,
+		url: "https://academic.oup.com/ectj/article/21/1/C1/4059364",
+		alternativetitle: "Double ML"
+	},
+	"liu2008iforest": {
+		title: "Isolation Forest",
+		author: "Fei Tony Liu, Kai Ming Ting, Zhi-Hua Zhou",
+		year: 2008,
+		url: "https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/icdm08b.pdf",
+		alternativetitle: "Isolation Forest"
+	},
+	"breunig2000lof": {
+		title: "LOF: Identifying Density-Based Local Outliers",
+		author: "Markus M. Breunig, Hans-Peter Kriegel, Raymond T. Ng, Jörg Sander",
+		year: 2000,
+		url: "https://www.dbs.ifi.lmu.de/Publikationen/Papers/LOF.pdf",
+		alternativetitle: "Local Outlier Factor"
+	},
+	"scholkopf2001ocsvm": {
+		title: "Estimating the Support of a High-Dimensional Distribution",
+		author: "Bernhard Schölkopf, John C. Platt, John Shawe-Taylor, Alex J. Smola, Robert C. Williamson",
+		year: 2001,
+		url: "https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-99-87.pdf",
+		alternativetitle: "One-Class SVM"
+	},
+	"hawkins2002ae": {
+		title: "Outlier Detection Using Replicator Neural Networks",
+		author: "Simon Hawkins, Hongxing He, Graham Williams, Rohan Baxter",
+		year: 2002
+	},
+	"an2015vaeano": {
+		title: "Variational Autoencoder based Anomaly Detection using Reconstruction Probability",
+		author: "Jinwon An, Sungzoon Cho",
+		year: 2015,
+		url: "https://www.semanticscholar.org/paper/Variational-Autoencoder-based-Anomaly-Detection-An-Cho/cb0a04f57a8c4cc35d9a3a7f3a5f3a7d6a3a4f7b9",
+		alternativetitle: "VAE Anomaly"
+	},
+	"gong2019memoryae": {
+		title: "Memorizing Normality to Detect Anomaly: Memory-augmented Deep Autoencoder (MemAE) for Unsupervised Anomaly Detection",
+		author: "Dong Gong, Lingqiao Liu, Vuong Le, Budhaditya Saha, Moussa Reda Mansour, Svetha Venkatesh, Anton van den Hengel",
+		year: 2019,
+		url: "https://arxiv.org/abs/1904.02639",
+		alternativetitle: "MemAE"
+	},
+	"shwartz2017opening": {
+		title: "Opening the Black Box of Deep Neural Networks via Information",
+		author: "Ravid Shwartz-Ziv, Naftali Tishby",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.00810",
+		alternativetitle: "Information Bottleneck in DNNs"
+	},
+	"jaynes1957maxent": {
+		title: "Information Theory and Statistical Mechanics",
+		author: "Edwin T. Jaynes",
+		year: 1957,
+		url: "https://bayes.wustl.edu/etj/articles/theory.1.pdf",
+		alternativetitle: "Maximum Entropy"
+	},
+	"berger1996cpmc": {
+		title: "A Maximum Entropy Approach to Natural Language Processing",
+		author: "Adam L. Berger, Vincent J. Della Pietra, Stephen A. Della Pietra",
+		year: 1996,
+		url: "https://www.cs.cmu.edu/~aberger/maxent.html",
+		alternativetitle: "CPM / MaxEnt NLP"
+	},
+	"goodman2008pp": {
+		title: "Church: a language for generative models",
+		author: "Noah D. Goodman, Vikash Mansinghka, Daniel M. Roy, Keith Bonawitz, Joshua B. Tenenbaum",
+		year: 2008,
+		url: "https://arxiv.org/abs/1206.3255",
+		alternativetitle: "Probabilistic Programming / Church"
+	},
+	"lunn2000bugs": {
+		title: "WinBUGS — A Bayesian modelling framework: Concepts, structure, and extensibility",
+		author: "David J. Lunn, Andrew Thomas, Nicky Best, David Spiegelhalter",
+		year: 2000,
+		url: "https://onlinelibrary.wiley.com/doi/10.1002/1521-4036(200010)42:1%3C7::AID-ENVIR229%3E3.0.CO;2-D",
+		alternativetitle: "WinBUGS"
+	},
+	"plummer2003jags": {
+		title: "JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling",
+		author: "Martyn Plummer",
+		year: 2003,
+		url: "https://www.r-project.org/conferences/DSC-2003/Proceedings/Plummer.pdf",
+		alternativetitle: "JAGS"
+	},
+	"phan2019numpyro": {
+		title: "NumPyro: composable probabilistic programming",
+		author: "Du Phan, Neeraj Pradhan, Martin Jankowiak",
+		year: 2019,
+		url: "https://arxiv.org/abs/1911.08134",
+		alternativetitle: "NumPyro"
+	},
+	"dillon2017tfp": {
+		title: "TensorFlow Distributions",
+		author: "Joshua V. Dillon, Ian Langmore, Dustin Tran, Eugene Brevdo, Srinivas Vasudevan, Dave Moore, Brian Patton, Alex Alemi, Matt Hoffman, Rif A. Saurous",
+		year: 2017,
+		url: "https://arxiv.org/abs/1711.10604",
+		alternativetitle: "TFP"
+	},
+	"jain2010clustering": {
+		title: "Data Clustering: A User's Dilemma",
+		author: "Anil K. Jain, M. Narasimha Murty, Patrick J. Flynn",
+		year: 1999,
+		url: "https://www.cs.rug.nl/~ieeema/2010-2011/Datamining/2010-2011/files%20opdrachten/Data%20Mining%20-%20Assignment%201/Data%20Clustering%20-%20A%20User%27s%20Dilemma.pdf",
+		alternativetitle: "Data Clustering Survey"
+	},
+	"gelman2013bda": {
+		title: "Bayesian Data Analysis",
+		author: "Andrew Gelman, John B. Carlin, Hal S. Stern, David B. Dunson, Aki Vehtari, Donald B. Rubin",
+		year: 2013,
+		url: "http://www.stat.columbia.edu/~gelman/book/",
+		alternativetitle: "Bayesian Data Analysis"
+	},
+	"sutton2018rlbook": {
+		title: "Reinforcement Learning: An Introduction",
+		author: "Richard S. Sutton, Andrew G. Barto",
+		year: 2018,
+		url: "https://www.andrew.cmu.edu/course/10-703/textbook/BartoSutton.pdf",
+		alternativetitle: "Sutton & Barto RL"
+	},
+	"russell2010aima": {
+		title: "Artificial Intelligence: A Modern Approach",
+		author: "Stuart J. Russell, Peter Norvig",
+		year: 2010,
+		url: "https://aima.cs.berkeley.edu/",
+		alternativetitle: "AIMA"
+	},
+	"levine2016guidance": {
+		title: "End-to-End Training of Deep Visuomotor Policies",
+		author: "Sergey Levine, Chelsea Finn, Trevor Darrell, Pieter Abbeel",
+		year: 2016,
+		url: "https://arxiv.org/abs/1504.00702",
+		alternativetitle: "Guided Policy Search"
+	},
+	"tesauro1995tdgammon": {
+		title: "Temporal Difference Learning and TD-Gammon",
+		author: "Gerald Tesauro",
+		year: 1995,
+		url: "https://www.semanticscholar.org/paper/Temporal-Difference-Learning-and-TD-Gammon-Tesauro/d5ce6b4b3ce0e3a47be76f3e6b89c8a4e8a5e3e5",
+		alternativetitle: "TD-Gammon"
+	},
+	"openai2021dota": {
+		title: "Dota 2 with Large Scale Deep Reinforcement Learning",
+		author: "Christopher Berner, Greg Brockman, Brooke Chan, Vicki Cheung, Przemysław Dębiak, Christy Dennison, David Farhi, Quirin Fischer, Shariq Hashme, Chris J. L. P. Hodgkinson, Jakub Sygnowski, Wojciech Zaremba, Tim Salimans, Raffi Childers, Pieter Abbeel, Greg Wayne, Igor Mordatch, Jack Clark",
+		year: 2019,
+		url: "https://arxiv.org/abs/1912.06680",
+		alternativetitle: "OpenAI Five / Dota 2"
+	},
+	"wang2024ensemble": {
+		title: "A Survey on LLM-based Ensemble Methods",
+		author: "Hongyi Wang et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.14886",
+		alternativetitle: "LLM Ensembles Survey"
+	},
+	"wolpert1992stacking": {
+		title: "Stacked Generalization",
+		author: "David H. Wolpert",
+		year: 1992,
+		url: "https://www.researchgate.net/publication/222482730_Stacked_Generalization",
+		alternativetitle: "Stacking"
+	},
+	"shwartz2017opening": {
+		title: "Opening the Black Box of Deep Neural Networks via Information",
+		author: "Ravid Shwartz-Ziv, Naftali Tishby",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.00810",
+		alternativetitle: "Information Bottleneck in DNNs"
 	}
 };
