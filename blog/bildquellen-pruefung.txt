@@ -123,7 +123,6 @@ CC-BY-SA / CC-BY / CC0 (Creative Commons - mit Namensnennung nutzbar):
 
 Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
 
-1. perceptronimagebox    -> Bild durch Commons-Variante ersetzen ODER Autoren kontaktieren
 2. perceptronimagecables -> SOFORT ERSETZEN! Fair Use nicht für externe Nutzung
 3. perceptronimagewiring -> Lizenz des Bildes klären, ggf. anderes Foto verwenden
 4. mccullochpittsimage   -> Originalbilder direkt suchen und lizenzieren
