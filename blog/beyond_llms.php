@@ -269,15 +269,34 @@ The divisive direction (top-down, starting from one cluster and recursively spli
 <div class="md">
 ### DBSCAN: density-based, parameter-light
 
-The **Density-Based Spatial Clustering of Applications with Noise** algorithm \cite{ester1996dbscan} takes a different angle: a cluster is a region of high point density, separated from other such regions by regions of low density, and points in low-density regions are noise. The user supplies two parameters, a radius $\varepsilon$ and a minimum neighbour count $\mathrm{minPts}$, and the algorithm classifies each point as:
+#### Why it was invented
+
+In the early 1990s, geographic information systems (GIS) researchers at the University of Munich were drowning in spatial data — locations of trees, crime incidents, earthquakes, weather stations — and they needed to find natural groupings. $k$-means failed on this data for two reasons. First, the clusters were *irregularly shaped*: a chain of crime incidents along a road, a crescent of forest fire hotspots. Second, the clusters contained *noise*: random isolated points that didn't belong to anything, and that $k$-means was forced to assign to one of the $k$ groups. \citeauthor{ester1996dbscan} (\citeyear{ester1996dbscan}), a PhD student at LMU Munich, formalised the alternative: *a cluster is a region of high point density, separated from other such regions by regions of low density, and points in low-density regions are noise*. The algorithm was named *Density-Based Spatial Clustering of Applications with Noise* and was published at KDD 1996. It won the **SIGKDD Test of Time Award in 2014** for being the most-cited data-mining algorithm in the world.
+
+#### The algorithm
+
+The user supplies two parameters, a radius $\varepsilon$ and a minimum neighbour count $\mathrm{minPts}$, and the algorithm classifies each point as:
 
 * **Core:** has at least $\mathrm{minPts}$ points (including itself) within radius $\varepsilon$.
 * **Border:** is reachable from a core point but does not itself have enough neighbours.
 * **Noise:** neither.
 
+$$
+\underbrace{
+\text{type}(p) \;=\;
+\begin{cases}
+\text{core} & \text{if } |\{q : d(p, q) \le \varepsilon\}| \ge \mathrm{minPts} \\
+\text{border} & \text{if } p \text{ is reachable from a core but } |\cdot| < \mathrm{minPts} \\
+\text{noise} & \text{otherwise}
+\end{cases}
+}_{\text{the three roles a point can play in a density-based cluster}}
+$$
+
 Two core points within distance $\varepsilon$ of each other belong to the same cluster. The full algorithm expands clusters by following the density-reachable relation, which is transitive for core points but not for borders. Worst-case complexity $\mathcal{O}(n^2)$; with a spatial index, $\mathcal{O}(n \log n)$.
 
-DBSCAN was awarded the **SIGKDD Test of Time Award in 2014** for being the most-cited data-mining algorithm in the world. Its virtues: it finds arbitrarily-shaped clusters (including crescents and rings that $k$-means cannot), it does not need the number of clusters as input, and it explicitly labels noise. Its limitations: it struggles when clusters have very different densities, and the $\varepsilon$ parameter has to be chosen carefully — typically by inspecting the "$k$-distance plot" for an elbow.
+#### Why it matters
+
+DBSCAN's virtues: it finds arbitrarily-shaped clusters (including crescents and rings that $k$-means cannot), it does not need the number of clusters as input, and it explicitly labels noise. Its limitations: it struggles when clusters have very different densities, and the $\varepsilon$ parameter has to be chosen carefully — typically by inspecting the "$k$-distance plot" for an elbow.
 
 A revision, **HDBSCAN** \cite{campello2013hdbscan, campello2015hdbscan}, removes the $\varepsilon$ parameter entirely by computing a hierarchy of density estimates and extracting the most stable clusters. A further refinement, **DBSCAN Revisited, Revisited** \cite{schubert2017dbscan}, fixes a long-standing non-determinism in DBSCAN's handling of border points. These algorithms are the production choice for anomaly detection, geospatial clustering, and anywhere the number of clusters is genuinely unknown.
 </div>
@@ -285,14 +304,30 @@ A revision, **HDBSCAN** \cite{campello2013hdbscan, campello2015hdbscan}, removes
 <div class="md">
 ### Expectation–Maximisation and Gaussian Mixture Models
 
-The **EM algorithm** of \citeauthor{dempster1977em} (\citeyear{dempster1977em}) is one of the foundational tools of modern statistics. Given a probabilistic model with latent variables, EM alternates:
+#### Why it was invented
 
-* **E-step:** compute the posterior distribution of the latent variables given the current parameters and the data.
-* **M-step:** maximise the expected log-likelihood with respect to the parameters.
+In the late 1960s and early 1970s, statisticians were drowning in incomplete-data problems: estimating the parameters of a model when some of the data were missing, or when the model was most naturally written in terms of *latent* variables that were never observed. \citeauthor{smith1957counting} (\citeyear{smith1957counting}) had earlier solved the simplest version (counting alleles given observed genotypes) for genetics. Hartley's 1958 H.O.M. algorithm generalised it to several discrete distributions. Sundberg and others developed closed-form updates for the exponential family. \citeauthor{dempster1977em} (\citeyear{dempster1977em}) at Harvard's statistics department saw that all of these algorithms were the *same algorithm*, applied to different problems, and wrote the paper that named it: *Maximum Likelihood from Incomplete Data via the EM Algorithm*. \citeauthor{wu1983em} (\citeyear{wu1983em}) at the University of Wisconsin supplied the correct convergence proof the original paper had skipped. EM was the consolidation of a decade of independent rediscovery into a single, general, widely applicable procedure.
+
+The motivation is simple: maximum likelihood with latent variables requires the values of the latent variables, but the values of the latent variables require the parameters, and the two problems cannot be solved simultaneously. EM breaks the deadlock by *alternating*: pretend the latent variables are known (guess them), then solve for the parameters; with the new parameters, update the guess for the latents; iterate.
+
+#### The algorithm
+
+Given a probabilistic model with latent variables, EM alternates:
+
+$$
+\underbrace{
+\begin{aligned}
+&\textbf{E-step:}\quad Q(\theta \mid \theta^{(t)}) \;=\; \mathbb{E}_{z \sim p(\cdot \mid x, \theta^{(t)})}\bigl[ \log p(x, z \mid \theta) \bigr] \\[0.4em]
+&\textbf{M-step:}\quad \theta^{(t+1)} \;=\; \arg\max_{\theta}\; Q(\theta \mid \theta^{(t)})
+\end{aligned}
+}_{\text{the two steps of the EM algorithm}}
+$$
+
+The E-step computes the *expected log-likelihood* under the current posterior over the latents. The M-step picks the parameters that maximise that expectation. The notation $Q(\theta \mid \theta^{(t)})$ means "$Q$ as a function of the new $\theta$, evaluated assuming the current $\theta^{(t)}$".
 
 When applied to a mixture of Gaussians, EM becomes **Gaussian Mixture Modelling (GMM)**: each cluster is a full Gaussian with its own mean and covariance, and EM learns all of them jointly. GMM is the probabilistic parent of $k$-means: in the limit where all covariances are tied to a small multiple of the identity and all mixing weights are equal, GMM clustering reduces to $k$-means \cite{bishop2006prml}.
 
-Dempster, Laird, and Rubin's 1977 paper was the consolidation, not the invention. The earliest version is the gene-counting algorithm of \citeauthor{smith1957counting} (\citeyear{smith1957counting}) for estimating allele frequencies; Hartley's 1958 H.O.M. algorithm generalised it; Sundberg and others developed the closed-form Sundberg formula for exponential families. \citeauthor{wu1983em} (\citeyear{wu1983em}) supplied the correct convergence proof that Dempster–Laird–Rubin had skipped. EM is one of the few statistical algorithms that is *the* canonical solution to a problem that almost every other statistical procedure is a special case of.
+EM is one of the few statistical algorithms that is *the* canonical solution to a problem that almost every other statistical procedure is a special case of.
 </div>
 
 <div class="md">
