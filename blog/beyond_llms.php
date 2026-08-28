@@ -680,7 +680,7 @@ These five families are the canonical deep generative models. They were all cove
 * **Normalising Flows** \cite{dinh2017realnvp, rezende2015nf}: a sequence of invertible transformations between the data distribution and a simple base distribution. Exact likelihood; expensive training; used in density estimation.
 * **GANs** \cite{goodfellow2014gan}: a generator network and a discriminator network trained in opposition. Sharp samples; unstable training; mode collapse.
 * **Diffusion models** \cite{ho2020ddpm, sohl2015deep, song2019score}: learn to reverse a gradual noising process. State of the art on image and audio generation.
-* **Autoregressive models** \cite{oord2016wavenet}: factorise $p(\mathbf{x}) = \prod_t p(x_t \mid x_{<t})$ and train each conditional with a likelihood loss. This is what GPT does for text; the same paradigm, applied pixel-by-pixel or waveform-sample-by-sample, gives WaveNet and PixelCNN.
+* **Autoregressive models** \cite{oord2016wavenet}: factorise $p(x) = \prod_t p(x_t \mid x_{1:t-1})$ and train each conditional with a likelihood loss. This is what GPT does for text; the same paradigm, applied pixel-by-pixel or waveform-sample-by-sample, gives WaveNet and PixelCNN.
 
 These five families are the landscape of deep generative modelling as of 2025. Each is a self-contained research community with its own conferences, datasets, and evaluation protocols. None is reducible to the others.
 </div>
