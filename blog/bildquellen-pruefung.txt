@@ -14,10 +14,6 @@
             klar lizenziert.
    Status: UNCLEAR - Lizenz der tatsächlichen Bilder nicht eindeutig.
 
-6. notesonlight (Zeile 1251) - PDF, kein Bild
-   URL: https://upload.wikimedia.org/wikipedia/commons/9/98/Notes_of_a_course_of_nine_lectures_on_light...
-   Status: Auf Commons hochgeladen, aber PDF-Dokument (kein Bild im engeren Sinne)
-
 === ⚠ EMPFEHLUNG: KRITISCHE EINTRÄGE ÜBERPRÜFEN ===
 ==================================================
 
