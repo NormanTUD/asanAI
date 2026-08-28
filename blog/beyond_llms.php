@@ -282,15 +282,15 @@ The user supplies two parameters, a radius $\varepsilon$ and a minimum neighbour
 * **Noise:** neither.
 
 $$
-\underbrace{
 \text{type}(p) \;=\;
 \begin{cases}
 \text{core} & \text{if } |\{q : d(p, q) \le \varepsilon\}| \ge \mathrm{minPts} \\
 \text{border} & \text{if } p \text{ is reachable from a core but } |\cdot| < \mathrm{minPts} \\
 \text{noise} & \text{otherwise}
 \end{cases}
-}_{\text{the three roles a point can play in a density-based cluster}}
 $$
+
+So each point plays one of three roles in a density-based cluster: **core** (enough neighbours to be a cluster anchor), **border** (reachable from a core but not itself an anchor), or **noise** (neither).
 
 Two core points within distance $\varepsilon$ of each other belong to the same cluster. The full algorithm expands clusters by following the density-reachable relation, which is transitive for core points but not for borders. Worst-case complexity $\mathcal{O}(n^2)$; with a spatial index, $\mathcal{O}(n \log n)$.
 
@@ -315,13 +315,13 @@ The motivation is simple: maximum likelihood with latent variables requires the 
 Given a probabilistic model with latent variables, EM alternates:
 
 $$
-\underbrace{
 \begin{aligned}
 &\textbf{E-step:}\quad Q(\theta \mid \theta^{(t)}) \;=\; \mathbb{E}_{z \sim p(\cdot \mid x, \theta^{(t)})}\bigl[ \log p(x, z \mid \theta) \bigr] \\[0.4em]
 &\textbf{M-step:}\quad \theta^{(t+1)} \;=\; \arg\max_{\theta}\; Q(\theta \mid \theta^{(t)})
 \end{aligned}
-}_{\text{the two steps of the EM algorithm}}
 $$
+
+These are the two steps of the EM algorithm. The E-step computes the *expected log-likelihood* under the current posterior over the latents. The M-step picks the parameters that maximise that expectation. The notation $Q(\theta \mid \theta^{(t)})$ means "$Q$ as a function of the new $\theta$, evaluated assuming the current $\theta^{(t)}$".
 
 The E-step computes the *expected log-likelihood* under the current posterior over the latents. The M-step picks the parameters that maximise that expectation. The notation $Q(\theta \mid \theta^{(t)})$ means "$Q$ as a function of the new $\theta$, evaluated assuming the current $\theta^{(t)}$".
 
