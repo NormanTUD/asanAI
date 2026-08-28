@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Spuren des Anderen – Sind DMT-Entitäten real?</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#07060d;
+    --bg2:#12102a;
+    --accent:#b388ff;
+    --accent2:#00e5ff;
+    --accent3:#ff5eae;
+    --text:#e8e6ff;
+    --muted:#9c98c7;
+    --card:rgba(255,255,255,0.04);
+    --border:rgba(179,136,255,0.25);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;line-height:1.65;overflow-x:hidden}
+  a{color:var(--accent2)}
+  header.hero{
+    position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;
+    background: radial-gradient(ellipse at 20% 20%, #2a0d5c 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 60%, #061a3d 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, #3d0a3c 0%, transparent 60%),
+                var(--bg);
+    overflow:hidden;
+  }
+  #heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:0.55}
+  .hero-content{position:relative;z-index:1;max-width:900px}
+  h1{
+    font-size:clamp(2.2rem,6vw,4.5rem);margin:0 0 0.5rem;
+    background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    letter-spacing:-0.02em;font-weight:800;
+  }
+  .subtitle{font-size:clamp(1rem,1.6vw,1.3rem);color:var(--muted);margin-top:1rem;font-style:italic}
+  .authors{margin-top:2rem;font-size:0.9rem;color:var(--muted)}
+  .scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);color:var(--muted);animation:bob 2s infinite ease-in-out;z-index:1}
+  @keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,10px)}}
+  main{max-width:1100px;margin:0 auto;padding:3rem 1.5rem}
+  section{margin:5rem 0;scroll-margin-top:2rem}
+  h2{
+    font-size:clamp(1.6rem,3.2vw,2.4rem);
+    background:linear-gradient(90deg,var(--accent2),var(--accent));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    border-left:4px solid var(--accent);padding-left:1rem;margin-bottom:1.5rem;
+  }
+  h3{color:var(--accent2);margin-top:2rem}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:1.5rem 1.8rem;margin:1.5rem 0;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);
+  }
+  .quote{
+    border-left:3px solid var(--accent3);padding:1rem 1.4rem;margin:1.5rem 0;
+    background:rgba(255,94,174,0.06);border-radius:0 12px 12px 0;
+    font-style:italic;color:#f4d8ea;
+  }
+  .quote .lang{display:inline-block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;
+    color:var(--accent3);font-weight:700;margin-bottom:0.4rem;font-style:normal}
+  .quote cite{display:block;font-size:0.8rem;color:var(--muted);margin-top:0.6rem;font-style:normal}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem}
+  .pill{display:inline-block;padding:0.2rem 0.7rem;border-radius:20px;background:rgba(179,136,255,0.15);
+    border:1px solid var(--border);font-size:0.8rem;margin:0.2rem}
+  .formula{overflow-x:auto;padding:1rem;background:rgba(0,0,0,0.35);border-radius:12px;margin:1rem 0;text-align:center}
+  button.tab{background:transparent;border:1px solid var(--border);color:var(--text);
+    padding:0.5rem 1rem;border-radius:20px;cursor:pointer;margin:0.2rem;transition:all 0.2s}
+  button.tab:hover,button.tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+  .interactive{background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin:2rem 0}
+  canvas.viz{width:100%;max-width:100%;display:block;border-radius:12px;background:#04030a}
+  .controls{display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;margin-top:1rem}
+  .controls label{font-size:0.85rem;color:var(--muted)}
+  input[type=range]{accent-color:var(--accent)}
+  .stat{display:inline-block;text-align:center;padding:1rem;margin:0.5rem;min-width:140px;
+    background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.25);border-radius:12px}
+  .stat .n{font-size:2rem;color:var(--accent2);font-weight:700;display:block}
+  .stat .l{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+  table{width:100%;border-collapse:collapse;margin:1rem 0}
+  th,td{padding:0.7rem;border-bottom:1px solid var(--border);text-align:left}
+  th{color:var(--accent2);font-weight:600}
+  .toc{position:fixed;top:1rem;right:1rem;background:rgba(7,6,13,0.9);border:1px solid var(--border);
+    border-radius:12px;padding:0.8rem;z-index:100;font-size:0.8rem;backdrop-filter:blur(10px);max-width:200px}
+  .toc a{display:block;color:var(--muted);text-decoration:none;padding:0.2rem 0}
+  .toc a:hover{color:var(--accent)}
+  .toc h4{margin:0 0 0.4rem;color:var(--accent);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em}
+  @media(max-width:800px){.toc{display:none}}
+  .warning{border-left:3px solid #ffcc00;background:rgba(255,204,0,0.05);padding:1rem;border-radius:0 12px 12px 0;margin:1rem 0}
+  .footer{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.85rem;border-top:1px solid var(--border);margin-top:4rem}
+  .glow{text-shadow:0 0 20px currentColor}
+  details{margin:1rem 0;padding:1rem;background:rgba(255,255,255,0.03);border-radius:12px;border:1px solid var(--border)}
+  summary{cursor:pointer;color:var(--accent2);font-weight:600}
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <h4>Reise</h4>
+  <a href="#hero">✧ Einstieg</a>
+  <a href="#kern">1 Kernidee</a>
+  <a href="#ontologie">2 Ontologie</a>
+  <a href="#mathe">3 Mathematik</a>
+  <a href="#interface">4 Das Interface</a>
+  <a href="#dmt">5 DMT</a>
+  <a href="#spuren">6 Spuren</a>
+  <a href="#experimente">7 Experimente</a>
+  <a href="#kritik">8 Kritik</a>
+  <a href="#fazit">9 Fazit</a>
+</nav>
+
+<header class="hero" id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <h1>Spuren des Anderen</h1>
+    <p class="subtitle">Sind DMT-Entitäten real?<br>Eine Reise durch <em>Conscious Realism</em>, Markov-Kerne & außergewöhnliche Erfahrungen.</p>
+    <div class="authors">Andrew R. Gallimore · Niffe Hermansson · Donald D. Hoffman<br><small>OIST · Noonautics · The Trace Institute · UC Irvine</small></div>
+  </div>
+  <div class="scroll-hint">▼ scrollen</div>
+</header>
+
+<main>
+
+<section id="kern">
+  <h2>1 · Worum geht's hier eigentlich?</h2>
+  <div class="card">
+    <p>Stell dir vor: Menschen, die eine hohe Dosis <strong>DMT</strong> (N,N-Dimethyltryptamin) inhalieren oder injiziert bekommen, berichten in erstaunlicher Regelmäßigkeit nicht einfach von hübschen Farbmustern — sondern davon, in eine <em>vollständig andere Realität</em> katapultiert zu werden, bewohnt von <strong>intelligenten, nicht-menschlichen Entitäten</strong>, die mit ihnen zu kommunizieren scheinen.</p>
+    <p>Die Standard-Erklärung lautet: „Halluzinationen — nichts weiter als das Gehirn, das verrückt spielt." Die Autoren fragen mutig: <em>Was, wenn das nicht die ganze Geschichte ist?</em></p>
+    <p>Sie liefern <strong>keinen Beweis</strong>, dass diese Wesen real sind. Stattdessen bauen sie einen präzisen mathematisch-philosophischen Rahmen, in dem die Frage <em>sinnvoll gestellt und experimentell getestet</em> werden kann. [11]</p>
+  </div>
+
+  <div class="grid2">
+    <div class="stat"><span class="n">~45%</span><span class="l">DMT-Trips mit Entitäten (n=3.778)</span></div>
+    <div class="stat"><span class="n">72%</span><span class="l">In naturalistischen Studien</span></div>
+    <div class="stat"><span class="n">&lt;5%</span><span class="l">Menschen als Entitäten gesichtet</span></div>
+    <div class="stat"><span class="n">120min</span><span class="l">Erweiterte DMTx-Sessions möglich</span></div>
+  </div>
+</section>
+
+<section id="ontologie">
+  <h2>2 · Die ontologische Umkehrung</h2>
+  <p>Das Papier steht und fällt mit einer radikalen Verschiebung der Grundannahmen — der <em>Ontologie</em>, also der Frage: <strong>Was existiert eigentlich fundamental?</strong></p>
+
+  <div class="interactive">
+    <div class="controls" style="justify-content:center">
+      <button class="tab active" data-onto="materialism">Materialismus</button>
+      <button class="tab" data-onto="iit">IIT (Tononi)</button>
+      <button class="tab" data-onto="realism">Conscious Realism</button>
+    </div>
+    <canvas id="ontoCanvas" class="viz" height="320"></canvas>
+    <p id="ontoText" style="margin-top:1rem;text-align:center;color:var(--muted);min-height:3em"></p>
+  </div>
+
+  <div class="card">
+    <h3>Das „Hard Problem"</h3>
+    <p>Seit 200 Jahren dominiert der Materialismus: Materie ist fundamental, Bewusstsein ist ein Nebenprodukt neuronaler Aktivität. Doch wie genau aus Neuronenfeuern <em>subjektives Erleben</em> entsteht, hat niemand erklären können. Das nennt David Chalmers das <strong>Hard Problem of Consciousness</strong>. [11]</p>
+    <p>Die Autoren folgern: Vielleicht war die Grundannahme selbst der Fehler.</p>
+  </div>
+
+  <div class="quote">
+    <span class="lang">🇬🇧 Original</span>
+    "The world consists of (and only of) conscious agents and it is this network of conscious agents that gives rise to the experience of space, time, and the objects within it."
+    <cite>Gallimore, Hermansson & Hoffman (2025) [11]</cite>
+  </div>
+  <div class="quote">
+    <span class="lang">🇩🇪 Übersetzung</span>
+    „Die Welt besteht aus (und nur aus) bewussten Agenten, und es ist dieses Netzwerk bewusster Agenten, das die Erfahrung von Raum, Zeit und den Objekten darin hervorbringt."
+    <cite>ebd. [11]</cite>
+  </div>
+</section>
+
+<section id="mathe">
+  <h2>3 · Die Mathematik hinter der Idee</h2>
+  <p>„Bewusster Agent" klingt esoterisch — im Papier ist es <em>streng formal</em>. Ein bewusster Agent (CA) ist ein 7-Tupel:</p>
+
+  <div class="formula" id="f1"></div>
+
+  <p>Drei „Markov-Kerne" (probabilistische Übergangs­regeln) steuern das Zusammenspiel:</p>
+
+  <table>
+    <tr><th>Kern</th><th>Beschreibung</th><th>Formal</th></tr>
+    <tr><td><strong>P</strong> Wahrnehmung</td><td>Weltzustand → Qualia</td><td>W × 𝒳 → [0,1]</td></tr>
+    <tr><td><strong>D</strong> Entscheidung</td><td>Qualia → Handlung</td><td>X × 𝒢 → [0,1]</td></tr>
+    <tr><td><strong>A</strong> Aktion</td><td>Handlung → Weltzustand</td><td>G × 𝒲 → [0,1]</td></tr>
+  </table>
+
+  <p>Die Komposition dieser drei ergibt den <strong>Qualia-Kern</strong> — die Übergangsdynamik der Erfahrung selbst:</p>
+  <div class="formula" id="f2"></div>
+
+  <h3>Was heißt „A nimmt B wahr"?</h3>
+  <p>Agent A hat keinen direkten Zugriff auf B's Erfahrungsraum. Der einzige Kanal führt über die Welt:</p>
+  <div class="formula" id="f3"></div>
+  <p>Dieser induzierte Kanal Φ heißt <strong>Spur (trace)</strong> — und das ist der Schlüsselbegriff des ganzen Papiers. [11]</p>
+
+  <div class="interactive">
+    <h3 style="margin-top:0">🎲 Interaktiv: Die Markov-Polytop-Explosion</h3>
+    <p>Für einen Erfahrungsraum mit <em>n</em> Zuständen ist der Raum aller möglichen Übergangsdynamiken ein n(n−1)-dimensionales Polytop mit exponentiell vielen Ecken. Schon bei kleinen n wird der Raum <strong>unfassbar groß</strong>:</p>
+    <div class="controls">
+      <label>Zustände n = <span id="nVal">3</span></label>
+      <input type="range" id="nSlider" min="2" max="12" value="3" style="flex:1;min-width:200px">
+    </div>
+    <div id="polytopeStats" style="margin-top:1rem;font-family:monospace;font-size:0.95rem"></div>
+    <canvas id="polyCanvas" class="viz" height="200"></canvas>
+    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.8rem">Fazit der Autoren: Es könnten <em>quasi unendlich viele</em> Arten bewusster Agenten existieren — die meisten davon für uns völlig unerreichbar.</p>
+  </div>
+</section>
+
+<section id="interface">
+  <h2>4 · Die Welt als User-Interface</h2>
+  <p>Kernanalogie: Deine Wahrnehmung ist wie ein <strong>Desktop-Interface</strong>. Icons und Ordner sind keine „wahre" Abbildung dessen, was elektronisch im Rechner passiert — aber sie sind <em>nützlich</em>. Genauso: Raum, Zeit, Objekte sind evolutionär optimierte Icons, keine Wahrheit. [11]</p>
+
+  <div class="card">
+    <h3>Das „Fitness-beats-Truth"-Theorem</h3>
+    <p>Hoffman und Kollegen zeigten spieltheoretisch: Wahrnehmungssysteme, die auf <em>Wahrheit</em> geeicht sind, werden von solchen, die auf <em>Fitness</em> geeicht sind, evolutionär ausgestochen. Je komplexer die Umwelt, desto näher die Wahrscheinlichkeit an <strong>Null</strong>, dass wir Realität akkurat sehen. [11]</p>
+  </div>
+
+  <div class="interactive">
+    <h3 style="margin-top:0">🖥️ JPEG-Analogie</h3>
+    <p>Öffne dieselbe Datei mit zwei Programmen:</p>
+    <canvas id="jpegCanvas" class="viz" height="260"></canvas>
+    <p style="color:var(--muted);text-align:center;margin-top:0.8rem"><em>Dieselben Daten. Ein Interface macht Sinn, das andere Chaos.</em> DMT könnte, so die These, ein anderer „Viewer" für dieselben Wirklichkeitsdaten sein.</p>
+  </div>
+
+  <div class="quote">
+    <span class="lang">🇬🇧 Original</span>
+    "Space-time itself may be just one data format or 'headset' for conscious agents – one that humans happen to use."
+    <cite>[11]</cite>
+  </div>
+  <div class="quote">
+    <span class="lang">🇩🇪 Übersetzung</span>
+    „Die Raumzeit selbst könnte lediglich ein Datenformat oder ‚Headset' für bewusste Agenten sein — eines, das Menschen zufällig benutzen."
+    <cite>[11]</cite>
+  </div>
+
+  <h3>Consensus Reality Space (CRS)</h3>
+  <p>Der Bereich des Erfahrungs­raums, in dem sich unser Bewusstsein üblicherweise bewegt — ein Anziehungs­becken, gestaltet durch evolutionären Druck. Alles außerhalb: für uns normalerweise <em>unwahrnehmbar</em>.</p>
+</section>
+
+<section id="dmt">
+  <h2>5 · DMT — der Interface-Umschalter?</h2>
+  <p>Klassische Psychedelika wie LSD oder Psilocybin verzerren die Wahrnehmung. Hoch dosiertes DMT tut etwas <em>qualitativ Anderes</em>: Nutzer berichten, komplett aus dieser Welt „herausgerissen" und in eine andere transportiert zu werden — oft realer als die alltägliche Realität empfunden. [11]</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Typische Motive</h3>
+      <ul>
+        <li>🌀 Tunnel oder Portal</li>
+        <li>🏛️ „Warteraum" / hypertechnologische Kammer</li>
+        <li>👽 Pädagogische Wesen („machine elves", Insektoide, Gottheiten)</li>
+        <li>📐 Höhere Dimensionen, unmögliche Geometrien</li>
+        <li>💾 „Downloads" komplexer Information</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Das Rätsel</h3>
+      <p>Träume und Psychosen produzieren <em>normale</em> Menschen und Tiere — also, was unser Gehirn kennt. DMT-Erfahrungen sind zu <strong>über 95% frei von Menschen</strong> und stattdessen bevölkert von Wesen, die keinerlei Bezug zu unserer evolutionären Umwelt haben. <em>Warum?</em> [11]</p>
+    </div>
+  </div>
+
+  <div class="interactive">
+    <h3 style="margin-top:0">🌀 Die Interface-Perturbation (visualisiert)</h3>
+    <p>Der CRS als ruhige Landschaft. DMT „flacht" die Energielandschaft ab, Bewusstsein erkundet neue Regionen:</p>
+    <div class="controls">
+      <label>DMT-Dosis: <span id="doseVal">0</span></label>
+      <input type="range" id="doseSlider" min="0" max="100" value="0" style="flex:1;min-width:200px">
+    </div>
+    <canvas id="landscapeCanvas" class="viz" height="300"></canvas>
+  </div>
+</section>
+
+<section id="spuren">
+  <h2>6 · „Spuren des Anderen"</h2>
+  <p>Der zentrale technische Begriff. Wenn Agent B die Welt beeinflusst und A's Wahrnehmungs­kern darauf empfindlich ist, entsteht in A's Erfahrungsraum eine <strong>Spur</strong> — eine Teilmenge S ⊆ X<sub>A</sub>, in der sich B's Dynamik <em>indirekt</em> abbildet.</p>
+
+  <div class="formula" id="f4"></div>
+
+  <p>A sieht nie B selbst — nur die statistischen Fingerabdrücke von B's Handeln, gefiltert durch A's Interface.</p>
+
+  <h3>Drei Fingerabdrücke exotischer Bewusstseinsdynamik</h3>
+
+  <div class="grid2">
+    <div class="card">
+      <h4 style="color:var(--accent3)">📐 6.1 Höher-dimensionale Phänomenologie</h4>
+      <div class="quote" style="border-left-color:var(--accent2);background:rgba(0,229,255,0.05);margin:0.5rem 0">
+        <span class="lang">🇬🇧 Bericht</span>
+        "There were way, way more directions in space to look at than there should have been…"
+        <cite>Reddit-Nutzer [11]</cite>
+      </div>
+      <div class="quote" style="border-left-color:var(--accent2);background:rgba(0,229,255,0.05);margin:0.5rem 0">
+        <span class="lang">🇩🇪 Übersetzung</span>
+        „Es gab viel, viel mehr Richtungen im Raum, in die man schauen konnte, als es hätte geben dürfen… Mehr als drei Dimensionen."
+        <cite>Reddit-Nutzer, zitiert in [11]</cite>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="color:var(--accent3)">🎭 6.2 Extreme Komplexität & "Andersartigkeit"</h4>
+      <div class="quote" style="border-left-color:var(--accent);background:rgba(179,136,255,0.05);margin:0.5rem 0">
+        <span class="lang">🇬🇧 Bericht</span>
+        "…transferring as much mathematical and geometric knowledge as fast as possible… like us teaching our toddlers squares, circles, and triangles."
+        <cite>Erfahrungsbericht [11]</cite>
+      </div>
+      <div class="quote" style="border-left-color:var(--accent);background:rgba(179,136,255,0.05);margin:0.5rem 0">
+        <span class="lang">🇩🇪 Übersetzung</span>
+        „…übertrug so viel mathematisches und geometrisches Wissen wie möglich, so schnell wie möglich… als würden wir Kleinkindern Quadrate, Kreise und Dreiecke beibringen."
+        <cite>[11]</cite>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="color:var(--accent3)">🤝 6.3 Unabhängige Handlungsfähigkeit</h4>
+      <p>Die Wesen wirken autonom, überraschend, unkontrollierbar. Manche Nutzer berichten von <em>wiederholten Begegnungen mit derselben Entität</em> über Monate. Andere behaupten, dieselbe Entität <em>unabhängig voneinander</em> getroffen zu haben. [11]</p>
+    </div>
+  </div>
+
+  <div class="interactive">
+    <h3 style="margin-top:0">🔺 Flatland-Analogie</h3>
+    <p>Ein 2D-Wesen sieht ein rotierendes 3D-Objekt nur als scheinbar chaotisch flackernde Schnitte. So könnten wir DMT-Entitäten sehen: als seltsam metamorphe Wesen, deren wahre Struktur wir nicht fassen können.</p>
+    <canvas id="flatlandCanvas" class="viz" height="280"></canvas>
+    <p style="color:var(--muted);font-size:0.85rem;text-align:center">Oben: was ein 3D-Beobachter sieht (Tesserakt-Projektion). Unten: was ein 2D-„Flachländer" von einem 3D-Würfel wahrnehmen würde.</p>
+  </div>
+</section>
+
+<section id="experimente">
+  <h2>7 · Wie testen? Die vorgeschlagenen Experimente</h2>
+  <p>Der springende Punkt: Die Autoren <em>machen keine metaphysische Behauptung</em>. Sie schlagen Experimente vor, deren Ergebnisse die Hypothese <strong>falsifizieren oder stützen</strong> könnten. Möglich wurden diese durch <strong>DMTx</strong> — kontrollierte intravenöse Infusionen, die den Trip auf bis zu 120 Minuten verlängern. [11]</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>🧪 Einzelperson-Experimente</h3>
+      <p><strong>Blindes Farb-Tracking:</strong> Ein Computer in einem anderen Raum schaltet zufällig zwischen Blau und Gelb. Kann eine kooperative Entität die verborgene Variable im Erleben abbilden?</p>
+      <p><strong>Dynamische Fähigkeitstests:</strong> Nicht „Löse Primfaktoren" — sondern: Kann die Entität komplexe nicht-euklidische Flächen fehlerfrei einfärben (Vier-Farben-Problem in Echtzeit)? Kohärenz während simultaner Transformationen? Langzeit-Kohärenz nach Unterbrechung? [11]</p>
+    </div>
+    <div class="card">
+      <h3>👥 Mehrpersonen-Experimente</h3>
+      <p><strong>Information Deposit & Retrieval:</strong> Person A gibt einer Entität einen zufällig generierten Code. Person B trifft (angeblich) dieselbe Entität in einer separaten Session — kann sie den Code abrufen?</p>
+      <p><strong>Konvergenzanalyse:</strong> Zeigen unabhängige Berichte über Wesen, Umgebungen und Inhalte nicht-triviale Übereinstimmungen jenseits des Zufalls? [11]</p>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠️ Wichtig:</strong> Verblindung, Präregistrierung, Kontrollbedingungen (Vorstellungskraft, andere Psychedelika), sorgfältige Beachtung von Erwartungseffekten. Null-Resultate wären genauso informativ wie positive Resultate. [11]
+  </div>
+
+  <details>
+    <summary>🔬 Der interdisziplinäre Vorschlag</summary>
+    <p>Statt nur Fragebögen: Mathematiker analysieren die non-euklidische Struktur. Linguisten und Semiotiker untersuchen die Sprachen und Zeichensysteme der Entitäten. Anthropologen suchen archetypische Muster. Informatiker, Physiker, Phänomenologen, Bewusstseinsphilosophen. Ein völlig neuer Forschungszweig. [11]</p>
+  </details>
+</section>
+
+<section id="kritik">
+  <h2>8 · Schwachstellen, Fallstricke, Lernpotential</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="color:#ffcc00">⚠️ Grenzen des Papiers</h3>
+      <ul>
+        <li><strong>Unfalsifizierbarkeit droht:</strong> „Die Entität wollte nicht kooperieren" kann jedes Null-Resultat wegerklären.</li>
+        <li><strong>Selektionsbias:</strong> Rekrutierung von Personen mit angeblichen „Beziehungen" zu Entitäten unterminiert Blindheit.</li>
+        <li><strong>Subjektive Berichte:</strong> Alle Aufgaben-Ergebnisse hängen davon ab, was der Proband berichtet.</li>
+        <li><strong>Anekdotenlast:</strong> Viel wird durch Reddit- und Erowid-Berichte gestützt — nicht durch kontrollierte Studien.</li>
+        <li><strong>Ockhams Rasiermesser:</strong> Halluzination bleibt die parsimonischere Erklärung — die Autoren geben das explizit zu. [11]</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent2)">💡 Stärken & Lernpotential</h3>
+      <ul>
+        <li><strong>Mathematische Präzision:</strong> Statt vager Esoterik ein sauberes formales Vokabular (Markov-Kerne, Spuren, Polytope).</li>
+        <li><strong>Argumentative Ehrlichkeit:</strong> Die Autoren behaupten nichts, sie <em>fragen</em> präzise.</li>
+        <li><strong>Empirische Angriffsfläche:</strong> Falsifizierbarkeit ist explizit designtes Merkmal.</li>
+        <li><strong>Interdisziplinäre Brücken:</strong> Verbindet Physik, Neurowissenschaft, Philosophie, Anthropologie.</li>
+        <li><strong>Reframing:</strong> Die Frage „Sind sie real?" wird zu „Was zeigt der Fingerabdruck ihrer Dynamik?" — testbarer. [11]</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Zum Nachdenken</h3>
+    <p>Selbst wenn die zentrale Hypothese falsch ist, hinterlässt das Papier Werkzeug: die formale Sprache <em>bewusster Agenten</em>, den Begriff der <em>Spur</em>, die Idee eines <em>Consensus Reality Space</em>. Diese Konzepte sind unabhängig davon nützlich, ob DMT-Wesen „real" sind — sie erlauben, überhaupt <em>präzise</em> über das Problem zu sprechen. Das ist mehr, als Bewusstseinsphilosophie üblicherweise liefert.</p>
+  </div>
+</section>
+
+<section id="fazit">
+  <h2>9 · Fazit</h2>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(179,136,255,0.1),rgba(0,229,255,0.08),rgba(255,94,174,0.1));border:1px solid var(--accent)">
+    <p style="font-size:1.1rem">Die Autoren schließen nicht mit einer Antwort, sondern mit einer <strong>präzise gestellten Frage</strong>:</p>
+    <div class="quote">
+      <span class="lang">🇬🇧 Original</span>
+      "The central question is no longer simply whether DMT entities are 'real', but whether the human perceptual interface is capable, even temporarily, of perceiving normally imperceptible conscious agents…"
+      <cite>[11]</cite>
+    </div>
+    <div class="quote">
+      <span class="lang">🇩🇪 Übersetzung</span>
+      „Die zentrale Frage ist nicht länger einfach, ob DMT-Entitäten ‚real' sind, sondern ob die menschliche Wahrnehmungsschnittstelle — auch nur vorübergehend — normal unwahrnehmbare bewusste Agenten perzipieren kann…"
+      <cite>[11]</cite>
+    </div>
+    <p style="text-align:center;margin-top:2rem;font-size:1.15rem" class="glow">Ob DMT tatsächlich ein Fenster zu anderen Bewusstseinsformen öffnet oder nur der Halluzinationskanal auf höchster Stufe ist —<br><strong>die Frage lässt sich nun endlich <em>rigoros</em> stellen.</strong></p>
+  </div>
+
+  <div class="grid2" style="margin-top:2rem">
+    <div class="stat"><span class="n">🔮</span><span class="l">Ontologische Umkehrung</span></div>
+    <div class="stat"><span class="n">📐</span><span class="l">Mathematische Präzision</span></div>
+    <div class="stat"><span class="n">🧪</span><span class="l">Falsifizierbare Vorhersagen</span></div>
+    <div class="stat"><span class="n">🌌</span><span class="l">Offener Ausgang</span></div>
+  </div>
+</section>
+
+<div class="footer">
+  <p>Basierend auf: Gallimore, Hermansson & Hoffman (2025) — <em>Traces of the Other: Are DMT Entities Real? DMT Phenomenology in the Framework of Conscious Realism</em>. [11]</p>
+  <p>OIST · Noonautics · The Trace Institute · UC Irvine</p>
+  <p style="margin-top:1rem;font-style:italic">„What matters, from a scientific perspective, is that the question can be asked precisely, tested rigorously, and approached with both openness and restraint." [11]</p>
+</div>
+
+</main>
+
+<script>
+// ============ TEMML formulas ============
+function renderFormula(id, tex){
+  const el=document.getElementById(id);
+  if(el && window.temml) el.innerHTML=temml.renderToString(tex,{displayMode:true});
+}
+window.addEventListener('load',()=>{
+  renderFormula('f1','CA = \\big\\langle (X,\\mathcal{X}),\\,(G,\\mathcal{G}),\\,(W,\\mathcal{W}),\\,P,\\,D,\\,A,\\,N \\big\\rangle');
+  renderFormula('f2','Q = D \\circ A \\circ P : X \\times \\mathcal{X} \\to [0,1]');
+  renderFormula('f3','\\Phi := P_A \\circ A_B \\circ D_B : X_B \\to X_A');
+  renderFormula('f4','S \\subseteq X_A \\quad \\text{mit}\\quad \\Phi(x_B,\\,S) > 0');
+});
+
+// ============ Hero particles ============
+(function(){
+  const c=document.getElementById('heroCanvas');const ctx=c.getContext('2d');
+  let w,h,particles;
+  function resize(){w=c.width=c.offsetWidth*devicePixelRatio;h=c.height=c.offsetHeight*devicePixelRatio}
+  resize();window.addEventListener('resize',resize);
+  particles=Array.from({length:120},()=>({
+    x:Math.random()*w,y:Math.random()*h,
+    vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,
+    r:Math.random()*2+0.5,hue:Math.random()*80+240
+  }));
+  function loop(){
+    ctx.fillStyle='rgba(7,6,13,0.15)';ctx.fillRect(0,0,w,h);
+    for(const p of particles){
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*devicePixelRatio,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${p.hue},80%,70%,0.7)`;ctx.fill();
+    }
+    for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<100*devicePixelRatio){
+        ctx.strokeStyle=`rgba(179,136,255,${0.15*(1-d/(100*devicePixelRatio))})`;
+        ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.stroke();
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============ Ontology tabs ============
+(function(){
+  const c=document.getElementById('ontoCanvas');const ctx=c.getContext('2d');
+  const txt=document.getElementById('ontoText');
+  function resize(){c.width=c.offsetWidth*devicePixelRatio;c.height=320*devicePixelRatio;ctx.scale(devicePixelRatio,devicePixelRatio)}
+  resize();
+  const modes={
+    materialism:{title:'Materie → Bewusstsein',text:'Materie ist fundamental. Bewusstsein „emergiert" aus Neuronen. Problem: das Hard Problem — niemand kann sagen, WIE.',draw:mat},
+    iit:{title:'Integrierte Information',text:'Bewusstsein = intrinsische kausale Struktur (Φ). Es entsteht überall, wo integrierte Information ungleich Null ist.',draw:iit},
+    realism:{title:'Bewusste Agenten fundamental',text:'Nur bewusste Agenten existieren. Raum, Zeit und Materie sind ein evolutives Interface — wie Icons auf einem Desktop.',draw:cr}
+  };
+  function mat(){
+    const w=c.width/devicePixelRatio,h=c.height/devicePixelRatio;
+    ctx.clearRect(0,0,w,h);
+    for(let i=0;i<40;i++){
+      const x=Math.random()*w,y=Math.random()*h*0.6+20;
+      ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+      ctx.fillStyle='#666';ctx.fill();
+    }
+    ctx.fillStyle='#888';ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Materie / Atome / Neuronen',w/2,h*0.72);
+    ctx.fillStyle='rgba(179,136,255,0.15)';
+    ctx.fillRect(w/2-100,h*0.82,200,50);
+    ctx.strokeStyle='var(--accent)';ctx.strokeRect(w/2-100,h*0.82,200,50);
+    ctx.fillStyle='#b388ff';ctx.font='bold 14px sans-serif';ctx.fillText('? Bewusstsein ?',w/2,h*0.9);
+    ctx.strokeStyle='#666';ctx.beginPath();ctx.moveTo(w/2,h*0.72);ctx.lineTo(w/2,h*0.82);ctx.stroke();
+  }
+  function iit(){
+    const w=c.width/devicePixelRatio,h=c.height/devicePixelRatio;
+    ctx.clearRect(0,0,w,h);
+    const cx=w/2,cy=h/2,r=90;
+    const nodes=[];
+    for(let i=0;i<8;i++){nodes.push({x:cx+r*Math.cos(i/8*Math.PI*2),y:cy+r*Math.sin(i/8*Math.PI*2)})}
+    ctx.strokeStyle='rgba(0,229,255,0.4)';ctx.lineWidth=1.5;
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+      ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();
+    }
+    for(const n of nodes){
+      ctx.beginPath();ctx.arc(n.x,n.y,7,0,Math.PI*2);
+      ctx.fillStyle='#00e5ff';ctx.fill();
+    }
+    ctx.fillStyle='#00e5ff';ctx.font='bold 22px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Φ',cx,cy+7);
+    ctx.font='13px sans-serif';ctx.fillStyle='#9c98c7';
+    ctx.fillText('Integrierte kausale Struktur',cx,h-20);
+  }
+  function cr(){
+    const w=c.width/devicePixelRatio,h=c.height/devicePixelRatio;
+    ctx.clearRect(0,0,w,h);
+    const agents=[];
+    for(let i=0;i<14;i++){
+      agents.push({x:Math.random()*w*0.85+w*0.075,y:Math.random()*h*0.7+30,size:Math.random()*15+8});
+    }
+    ctx.strokeStyle='rgba(255,94,174,0.35)';ctx.lineWidth=1;
+    for(let i=0;i<agents.length;i++)for(let j=i+1;j<agents.length;j++){
+      if(Math.random()>0.6){
+        ctx.beginPath();ctx.moveTo(agents[i].x,agents[i].y);ctx.lineTo(agents[j].x,agents[j].y);ctx.stroke();
+      }
+    }
+    for(const a of agents){
+      const g=ctx.createRadialGradient(a.x,a.y,0,a.x,a.y,a.size);
+      g.addColorStop(0,'rgba(179,136,255,0.9)');g.addColorStop(1,'rgba(179,136,255,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(a.x,a.y,a.size,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(a.x,a.y,3,0,Math.PI*2);ctx.fill();
+    }
+    ctx.fillStyle='#9c98c7';ctx.font='13px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Netzwerk bewusster Agenten → Interface → „Welt"',w/2,h-15);
+  }
+  function set(mode){
+    document.querySelectorAll('[data-onto]').forEach(b=>b.classList.toggle('active',b.dataset.onto===mode));
+    txt.innerHTML='<strong>'+modes[mode].title+'</strong> — '+modes[mode].text;
+    modes[mode].draw();
+  }
+  document.querySelectorAll('[data-onto]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.onto)));
+  set('materialism');
+})();
+
+// ============ Markov polytope stats ============
+(function(){
+  const s=document.getElementById('nSlider');const nV=document.getElementById('nVal');
+  const stats=document.getElementById('polytopeStats');
+  const c=document.getElementById('polyCanvas');const ctx=c.getContext('2d');
+  function resize(){c.width=c.offsetWidth*devicePixelRatio;c.height=200*devicePixelRatio}
+  resize();window.addEventListener('resize',resize);
+  function fmt(n){
+    if(n<1e6)return n.toLocaleString('de-DE');
+    if(n<1e15)return n.toExponential(2).replace('e+','×10^');
+    return n.toExponential(2).replace('e+','×10^');
+  }
+  function update(){
+    const n=parseInt(s.value);nV.textContent=n;
+    const dim=n*(n-1);const verts=Math.pow(n,n);
+    stats.innerHTML=
+      `Erfahrungsraum: <span style="color:var(--accent2)">${n} Zustände</span> · `+
+      `Polytop-Dimension: <span style="color:var(--accent)">${dim}</span> · `+
+      `Ecken (deterministische Kerne): <span style="color:var(--accent3)">${fmt(verts)}</span>`;
+    // draw bar
+    const w=c.width,h=c.height;
+    ctx.clearRect(0,0,w,h);
+    const barMax=Math.log10(Math.pow(12,12));
+    const barVal=Math.log10(verts);
+    const bw=(barVal/barMax)*(w-40*devicePixelRatio);
+    const grad=ctx.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,'#00e5ff');grad.addColorStop(0.5,'#b388ff');grad.addColorStop(1,'#ff5eae');
+    ctx.fillStyle=grad;
+    ctx.fillRect(20*devicePixelRatio,h/2-25*devicePixelRatio,bw,50*devicePixelRatio);
+    ctx.fillStyle='#fff';ctx.font=`bold ${16*devicePixelRatio}px sans-serif`;ctx.textAlign='center';
+    ctx.fillText('log₁₀(Ecken) ≈ '+barVal.toFixed(1),w/2,h/2+7*devicePixelRatio);
+  }
+  s.addEventListener('input',update);
+  update();
+})();
+
+// ============ JPEG analogy ============
+(function(){
+  const c=document.getElementById('jpegCanvas');const ctx=c.getContext('2d');
+  function resize(){c.width=c.offsetWidth*devicePixelRatio;c.height=260*devicePixelRatio}
+  resize();window.addEventListener('resize',resize);
+  function draw(){
+    const w=c.width,h=c.height;
+    ctx.clearRect(0,0,w,h);
+    const halfW=w/2;
+    // Left: coherent image (photo viewer)
+    ctx.save();
+    ctx.translate(20*devicePixelRatio,20*devicePixelRatio);
+    const iw=halfW-40*devicePixelRatio,ih=h-70*devicePixelRatio;
+    const grad=ctx.createLinearGradient(0,0,iw,ih);
+    grad.addColorStop(0,'#ff6b9d');grad.addColorStop(0.5,'#c084fc');grad.addColorStop(1,'#00e5ff');
+    ctx.fillStyle=grad;ctx.fillRect(0,0,iw,ih);
+    // Draw a "sun"
+    ctx.fillStyle='rgba(255,220,120,0.9)';
+    ctx.beginPath();ctx.arc(iw*0.7,ih*0.3,ih*0.15,0,Math.PI*2);ctx.fill();
+    // Mountains
+    ctx.fillStyle='rgba(30,20,50,0.7)';
+    ctx.beginPath();
+    ctx.moveTo(0,ih);
+    ctx.lineTo(iw*0.2,ih*0.55);
+    ctx.lineTo(iw*0.4,ih*0.7);
+    ctx.lineTo(iw*0.6,ih*0.45);
+    ctx.lineTo(iw*0.85,ih*0.65);
+    ctx.lineTo(iw,ih*0.55);
+    ctx.lineTo(iw,ih);
+    ctx.closePath();ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#00e5ff';ctx.font=`bold ${14*devicePixelRatio}px sans-serif`;ctx.textAlign='center';
+    ctx.fillText('📷 Photo-App: sinnvoll',halfW/2,h-15*devicePixelRatio);
+
+    // Right: gibberish (word processor)
+    ctx.save();
+    ctx.translate(halfW+20*devicePixelRatio,20*devicePixelRatio);
+    ctx.fillStyle='#0a0814';ctx.fillRect(0,0,iw,ih);
+    ctx.font=`${9*devicePixelRatio}px monospace`;
+    ctx.fillStyle='#666';ctx.textAlign='left';
+    const chars='ÿØÿà�JFIF��☒◊§¶‡•™˜∆Ω≈çß∂ƒ©˙∆˚¬…æœ∑´®†¥¨';
+    for(let y=10*devicePixelRatio;y<ih;y+=11*devicePixelRatio){
+      let s='';
+      for(let x=0;x<Math.floor(iw/(6*devicePixelRatio));x++){
+        s+=chars[Math.floor(Math.random()*chars.length)];
+      }
+      ctx.fillStyle=`hsl(${Math.random()*60+200},40%,${40+Math.random()*30}%)`;
+      ctx.fillText(s,4*devicePixelRatio,y);
+    }
+    ctx.restore();
+    ctx.fillStyle='#ff5eae';ctx.font=`bold ${14*devicePixelRatio}px sans-serif`;ctx.textAlign='center';
+    ctx.fillText('📝 Word-App: Chaos',halfW+halfW/2,h-15*devicePixelRatio);
+
+    // Center label
+    ctx.fillStyle='#b388ff';ctx.font=`bold ${12*devicePixelRatio}px sans-serif`;
+    ctx.fillText('gleiche Daten',w/2,h/2);
+  }
+  draw();
+  window.addEventListener('resize',()=>{resize();draw()});
+})();
+
+// ============ DMT Landscape ============
+(function(){
+  const c=document.getElementById('landscapeCanvas');const ctx=c.getContext('2d');
+  const s=document.getElementById('doseSlider');const v=document.getElementById('doseVal');
+  function resize(){c.width=c.offsetWidth*devicePixelRatio;c.height=300*devicePixelRatio}
+  resize();window.addEventListener('resize',resize);
+  let t=0,ball={x:0.5,vy:0};
+  function landscape(x,dose){
+    // CRS deep basin at x=0.5, flattens as dose rises
+    const flatten=dose/100;
+    const crs=Math.pow((x-0.5)*3,2)*(1-flatten*0.9);
+    // Exotic bumps appear at high dose
+    const exotic=flatten*(0.3*Math.sin(x*18)+0.2*Math.sin(x*33+1.7));
+    return crs+exotic;
+  }
+  function draw(){
+    const dose=parseInt(s.value);v.textContent=dose+' μg/kg';
+    const w=c.width,h=c.height;
+    ctx.fillStyle='rgba(4,3,10,0.25)';ctx.fillRect(0,0,w,h);
+    // Draw landscape
+    ctx.beginPath();
+    for(let i=0;i<=w;i++){
+      const x=i/w;
+      const y=h*0.75-landscape(x,dose)*h*0.35;
+      if(i===0)ctx.moveTo(i,y);else ctx.lineTo(i,y);
+    }
+    ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+    const g=ctx.createLinearGradient(0,0,0,h);
+    g.addColorStop(0,`rgba(179,136,255,${0.3+dose/200})`);
+    g.addColorStop(1,'rgba(10,5,30,0.9)');
+    ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle=`rgba(0,229,255,${0.5+dose/200})`;ctx.lineWidth=2*devicePixelRatio;ctx.stroke();
+
+    // Consciousness ball — bounces around based on dose
+    if(dose<10){ball.x+=(0.5-ball.x)*0.1}
+    else{
+      const dx=0.001+dose*0.0003;
+      ball.x+=(Math.random()-0.5)*dx*(1+dose/30);
+      ball.x=Math.max(0.02,Math.min(0.98,ball.x));
+    }
+    const bx=ball.x*w;
+    const by=h*0.75-landscape(ball.x,dose)*h*0.35-15*devicePixelRatio;
+    const rg=ctx.createRadialGradient(bx,by,0,bx,by,25*devicePixelRatio);
+    rg.addColorStop(0,'#fff');rg.addColorStop(0.4,'#ff5eae');rg.addColorStop(1,'rgba(255,94,174,0)');
+    ctx.fillStyle=rg;
+    ctx.beginPath();ctx.arc(bx,by,25*devicePixelRatio,0,Math.PI*2);ctx.fill();
+
+    // Draw exotic "entities" as ghostly forms at high dose
+    if(dose>40){
+      const n=Math.floor((dose-40)/12);
+      for(let i=0;i<n;i++){
+        const ex=(0.15+i*0.12+Math.sin(t*0.01+i)*0.05)*w;
+        const ey=h*0.75-landscape(ex/w,dose)*h*0.35-40*devicePixelRatio-Math.abs(Math.sin(t*0.02+i))*20*devicePixelRatio;
+        const size=(15+Math.sin(t*0.03+i*2)*8)*devicePixelRatio;
+        ctx.strokeStyle=`hsla(${(i*60+t)%360},80%,70%,${0.4+dose/300})`;
+        ctx.lineWidth=1.5*devicePixelRatio;
+        ctx.beginPath();
+        for(let k=0;k<8;k++){
+          const a=k/8*Math.PI*2+t*0.02;
+          const r=size*(1+0.3*Math.sin(a*3+t*0.05));
+          const px=ex+Math.cos(a)*r,py=ey+Math.sin(a)*r;
+          if(k===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+        }
+        ctx.closePath();ctx.stroke();
+      }
+    }
+
+    // Labels
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font=`${11*devicePixelRatio}px sans-serif`;ctx.textAlign='center';
+    ctx.fillText('← Erfahrungsraum →',w/2,h-8*devicePixelRatio);
+    ctx.fillText('CRS',w/2,h*0.78);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  s.addEventListener('input',()=>{});
+  draw();
+})();
+
+// ============ Flatland ============
+(function(){
+  const c=document.getElementById('flatlandCanvas');const ctx=c.getContext('2d');
+  function resize(){c.width=c.offsetWidth*devicePixelRatio;c.height=280*devicePixelRatio}
+  resize();window.addEventListener('resize',resize);
+  let t=0;
+  function draw(){
+    const w=c.width,h=c.height;
+    ctx.fillStyle='rgba(4,3,10,0.2)';ctx.fillRect(0,0,w,h);
+    // Top half: rotating tesseract-like projection
+    const cx=w/2,cy=h*0.28;
+    const scale=Math.min(w,h)*0.11;
+    const angle=t*0.008;
+    const angle2=t*0.005;
+    // Simple 4D→3D→2D projection of tesseract vertices
+    const verts=[];
+    for(let i=0;i<16;i++){
+      const x=((i&1)?1:-1);const y=((i&2)?1:-1);
+      const z=((i&4)?1:-1);const w4=((i&8)?1:-1);
+      // 4D rotation
+      const zr=z*Math.cos(angle2)-w4*Math.sin(angle2);
+      const wr=z*Math.sin(angle2)+w4*Math.cos(angle2);
+      // project 4D→3D
+      const kk=1/(2.2-wr*0.7);
+      let x3=x*kk,y3=y*kk,z3=zr*kk;
+      // 3D rotation
+      const xr=x3*Math.cos(angle)-z3*Math.sin(angle);
+      const zr2=x3*Math.sin(angle)+z3*Math.cos(angle);
+      // project 3D→2D
+      const k2=1/(2.5-zr2*0.5);
+      verts.push({x:cx+xr*scale*k2*2.5,y:cy+y3*scale*k2*2.5});
+    }
+    ctx.strokeStyle='rgba(0,229,255,0.6)';ctx.lineWidth=1.2*devicePixelRatio;
+    for(let i=0;i<16;i++){
+      for(let j=i+1;j<16;j++){
+        // Only connect vertices that differ in exactly one bit
+        const diff=i^j;
+        if(diff && !(diff&(diff-1))){
+          ctx.beginPath();ctx.moveTo(verts[i].x,verts[i].y);ctx.lineTo(verts[j].x,verts[j].y);ctx.stroke();
+        }
+      }
+    }
+    ctx.fillStyle='#00e5ff';ctx.font=`${11*devicePixelRatio}px sans-serif`;ctx.textAlign='center';
+    ctx.fillText('4D-Tesserakt → uns erscheint es als „metamorphes" Wesen',cx,h*0.02+12*devicePixelRatio);
+
+    // Divider
+    ctx.strokeStyle='rgba(179,136,255,0.3)';ctx.lineWidth=1*devicePixelRatio;
+    ctx.beginPath();ctx.moveTo(20*devicePixelRatio,h*0.55);ctx.lineTo(w-20*devicePixelRatio,h*0.55);ctx.stroke();
+
+    // Bottom half: Flatlander view — cube passing through 2D plane
+    const cy2=h*0.78;
+    const phase=(t*0.02)%(Math.PI*2);
+    const sliceZ=Math.sin(phase);
+    // A 3D cube from z=-1 to z=1; the 2D slice depends on rotation
+    const rot=t*0.02;
+    // Just draw morphing polygon
+    ctx.strokeStyle='rgba(255,94,174,0.8)';ctx.lineWidth=1.5*devicePixelRatio;
+    ctx.beginPath();
+    const sides=4;
+    const sz=scale*1.5*(0.5+0.5*Math.abs(Math.cos(phase)));
+    for(let i=0;i<=sides;i++){
+      const a=i/sides*Math.PI*2+rot;
+      const r=sz*(1+0.3*Math.sin(phase*2+i));
+      const px=cx+Math.cos(a)*r;
+      const py=cy2+Math.sin(a)*r*0.6;
+      if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // 2D world line
+    ctx.strokeStyle='rgba(179,136,255,0.4)';
+    ctx.beginPath();ctx.moveTo(30*devicePixelRatio,cy2);ctx.lineTo(w-30*devicePixelRatio,cy2);ctx.stroke();
+    ctx.fillStyle='#ff5eae';ctx.textAlign='center';
+    ctx.fillText('Flachländer sieht 3D-Würfel als sich verwandelnde Form',cx,h-10*devicePixelRatio);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// Smooth scroll for TOC
+document.querySelectorAll('.toc a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const el=document.querySelector(a.getAttribute('href'));
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+
+</body>
+</html>
