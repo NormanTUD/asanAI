@@ -95,6 +95,9 @@ function toc() {
 		// Event listener for smooth scrolling
 		link.addEventListener("click", function(e) {
 			e.preventDefault();
+			if (typeof revealAncestorOptionalBlocks === 'function') {
+				revealAncestorOptionalBlocks(header);
+			}
 			header.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		});
 
