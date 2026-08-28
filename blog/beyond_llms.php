@@ -136,24 +136,62 @@ The previous chapters treat unsupervised learning as the poor cousin of language
 <div class="md">
 ### $k$-means: the workhorse
 
-The $k$-means algorithm partitions $n$ points into $k$ clusters by minimising the within-cluster sum of squared distances to the centroid:
+#### Why it was invented
+
+In the early days of digital telephony and signal compression, \citeauthor{lloyd1982kmeans} (\citeyear{lloyd1982kmeans}) — an engineer at Bell Labs in 1957 — faced the problem of turning a continuous analogue waveform into a small set of reproducible discrete codes. His answer was: *quantise* the signal to a small set of representative levels, and choose the levels so that the typical squared error is minimised. The algorithm he wrote down is exactly what we now call $k$-means. It sat in a Bell Labs internal memo for 25 years before being published as a journal article in 1982; in the meantime, the same idea was independently invented several times for vector quantisation in signal processing, for clustering in statistics, and (slightly later) for image segmentation in computer vision. The Polish mathematician \citeauthor{steinhaus1957division} (\citeyear{steinhaus1957division}) had already described an equivalent partition in 1956; the term "$k$-means" was coined by \citeauthor{macqueen1967kmeans} (\citeyear{macqueen1967kmeans}), who also gave the first formal convergence proof. \citeauthor{forgy1965kmeans} (\citeyear{forgy1965kmeans}) published an essentially identical method in 1965, which is why some references call the algorithm Lloyd–Forgy.
+
+The motivation was always the same: *take $n$ points and replace them with $k$ archetypal representatives, throwing away as little information as possible*. The squared-Euclidean loss is the natural objective because it has a closed-form minimum (the mean), because it leads to the well-known Voronoi partition of the space, and because it admits a clean alternating algorithm that converges to a local optimum in a handful of iterations.
+
+#### The objective
+
+The $k$-means algorithm partitions $n$ points into $k$ clusters by minimising the **within-cluster sum of squared distances** (WCSS) to the centroid:
 
 $$
-\boxed{
-\min_{\{S_i\}_{i=1}^{k}} \;\; \sum_{i=1}^{k} \sum_{\mathbf{x} \in S_i} \bigl\| \mathbf{x} - \boldsymbol{\mu}_i \bigr\|^2, \qquad \boldsymbol{\mu}_i = \tfrac{1}{|S_i|} \sum_{\mathbf{x} \in S_i} \mathbf{x}.
-}
+\underbrace{
+\min_{\{S_i\}_{i=1}^{k}} \;\; \sum_{i=1}^{k} \sum_{x \in S_i} \bigl\| x - \mu_i \bigr\|^2, \qquad \mu_i = \tfrac{1}{|S_i|} \sum_{x \in S_i} x
+}_{\text{objective: minimise total squared distance from each point to its cluster's centroid}}
 $$
 
-The standard algorithm is **Lloyd's algorithm** \cite{lloyd1982kmeans}, first written down at Bell Labs for pulse-code modulation in 1957 and published as a journal article only in 1982. The two steps are:
+The objective is exactly the negative log-likelihood (up to a constant) of a Gaussian mixture model in which every cluster has identity covariance and every mixing weight is $1/k$. So $k$-means is **a special case of EM for Gaussian mixtures** \cite{bishop2006prml}, and almost every phenomenon that appears in $k$-means has a more general explanation in the EM literature.
 
-1. **Assignment.** Put each point into the cluster whose centroid is closest.
-2. **Update.** Recompute each centroid as the mean of its assigned points.
+#### Lloyd's algorithm
 
-The two steps alternate until convergence. Lloyd's algorithm is essentially an **Expectation–Maximisation** procedure for a Gaussian mixture model in which all cluster covariances are tied to the identity and all mixing weights are equal — a relationship made explicit in \citeauthor{lloyd1982kmeans}'s analysis and in many textbooks since.
+The standard algorithm is **Lloyd's algorithm** \cite{lloyd1982kmeans}. Two steps, repeated until convergence:
 
-The history of the idea is older than Lloyd. \citeauthor{steinhaus1957division} (\citeyear{steinhaus1957division}) described an equivalent partition in a Polish mathematical journal; the term "$k$-means" itself comes from \citeauthor{macqueen1967kmeans} (\citeyear{macqueen1967kmeans}), who also gave the first formal convergence proof. \citeauthor{forgy1965kmeans} published an essentially identical method in 1965, which is why some references call the algorithm Lloyd–Forgy. A more recent improvement, **$k$-means++** \cite{arthur2007kmeanspp}, gives a probabilistic seeding rule that yields an $O(\log k)$ approximation guarantee on the WCSS, and is the default in scikit-learn and most modern libraries.
+$$
+\underbrace{
+\begin{aligned}
+&\textbf{Assignment step:}\quad S_i^{(t)} \;=\; \bigl\{ x_p : \|x_p - \mu_i^{(t)}\|^2 \;\le\; \|x_p - \mu_j^{(t)}\|^2 \; \forall j \bigr\} \\[0.4em]
+&\textbf{Update step:}\quad \mu_i^{(t+1)} \;=\; \tfrac{1}{|S_i^{(t)}|} \sum_{x \in S_i^{(t)}} x
+\end{aligned}
+}_{\text{Lloyd's two alternating steps}}
+$$
 
-$k$-means is NP-hard in general \cite{aloise2009np}, but converges in expected polynomial time under mild distributional assumptions \cite{arthur2011smoothed}, and in practice terminates in a handful of iterations on real data. Its weakness is that it only finds *convex, equal-volume* clusters. Two interleaving crescents will defeat it; a thin arc inside a fat disc will defeat it; any cluster whose centroid is not representative of its members will defeat it. The algorithms below were invented precisely to fix these failures.
+The two steps are monotonically improving: the assignment step never increases the WCSS, and the update step finds the optimal centroid given a fixed assignment. The algorithm therefore converges in finite time, but only to a *local* optimum — the global optimum of the WCSS is NP-hard \cite{aloise2009np}.
+
+#### $k$-means++: a smarter seeding
+
+The original Lloyd algorithm depends critically on the initial centroids. Bad seeds converge to bad local optima. \citeauthor{arthur2007kmeanspp} (\citeyear{arthur2007kmeanspp}) showed that choosing the first centroid uniformly at random, and each subsequent centroid with probability proportional to its squared distance from the nearest already-chosen centroid, yields an expected WCSS that is at most $8 \log k$ times the optimum. The seeding rule is the difference between a $k$-means that converges to a partition that is sometimes $10\times$ worse than the optimum and one that is at most a small constant worse. $k$-means++ is the default in scikit-learn and most modern libraries.
+
+$$
+\underbrace{
+P(\text{next centroid} = x) \;\propto\; \underbrace{D(x)^2}_{\text{squared distance from } x \text{ to nearest already-chosen centroid}}
+}_{\text{$k$-means++ seeding rule}}
+$$
+
+#### Complexity
+
+$k$-means is NP-hard in general \cite{aloise2009np}, but converges in expected polynomial time under mild distributional assumptions \cite{arthur2011smoothed}. In practice on real data, Lloyd's algorithm terminates in a handful of iterations, and the per-iteration cost is
+
+$$
+\underbrace{
+T_{\text{iter}} \;=\; \underbrace{O(n k d)}_{\text{compute distances from } n \text{ points to } k \text{ centroids in } d \text{ dims}}
+}_{\text{Lloyd's algorithm per-iteration cost}}
+$$
+
+#### Where it fails
+
+The weakness is that $k$-means only finds *convex, equal-volume* clusters. Two interleaving crescents will defeat it; a thin arc inside a fat disc will defeat it; any cluster whose centroid is not representative of its members will defeat it. The algorithms in the next sections were invented precisely to fix these failures.
 </div>
 
 <div class="md">
