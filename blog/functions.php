@@ -68,7 +68,8 @@ function js($file, $loaderLabel = null, $defer = false) {
 
 		if ($should_load) {
 			$deferAttr = $defer ? " defer" : "";
-			print("<script src='$file'$deferAttr></script>\n");
+			$v = (!$is_proxy && file_exists($file)) ? "?v=" . filemtime($file) : "";
+			print("<script src='$file$v'$deferAttr></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
 
 			// 3. Check for module loader function pattern
