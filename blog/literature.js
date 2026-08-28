@@ -2424,6 +2424,16 @@ window.bibData = {
 		title: "Perceptron Simulation Experiments (Project Para)",
 		year: 1959
 	},
+	"jensen2026perceptron": {
+		author: "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
+		title: "Assembling and Training the Perceptron: A Personal Account",
+		year: 2026,
+		journal: "IEEE Annals of the History of Computing",
+		volume: "48",
+		number: "2",
+		pages: "62-65",
+		url: "https://doi.org/10.1109/MAHC.2026.3686038"
+	},
 	"oxfordetymology": {
 		url: "https://archive.org/details/oxforddictionary0000unse_c3e9",
 		year: 1966,
