@@ -363,10 +363,10 @@ In the early 1960s, applied statisticians were drowning in survey data. They had
 A **decision tree** partitions the feature space by axis-aligned splits and assigns a constant prediction to each cell of the resulting partition \cite{breiman1984cart,quinlan1986id3,quinlan1993c45}. The splits are chosen greedily to maximise some impurity reduction — information gain \cite{quinlan1986id3}, Gini impurity \cite{breiman1984cart}, or variance reduction \cite{breiman1984cart}.
 
 $$
-\underbrace{
-\Delta \text{Impurity}(S, j, t) \;=\; \underbrace{H(S)}_{\text{impurity before split}} \;-\; \underbrace{\tfrac{|S_L|}{|S|} H(S_L) \;+\; \tfrac{|S_R|}{|S|} H(S_R)}_{\text{weighted impurity after the split on feature } j \text{ at threshold } t}
-}_{\text{how much a candidate split would reduce impurity}}
+\Delta \text{Impurity}(S, j, t) \;=\; H(S) \;-\; \tfrac{|S_L|}{|S|} H(S_L) \;-\; \tfrac{|S_R}{|S|} H(S_R).
 $$
+
+The quantity on the left is how much a candidate split would reduce the impurity of the node. $H(S)$ is the impurity of the parent set $S$; the two weighted terms are the impurities of the left child $S_L$ and the right child $S_R$ after splitting on feature $j$ at threshold $t$. A good split is one that makes this number large.
 
 Here $S$ is the set of training points in the current node, $S_L$ and $S_R$ are the left and right children, and $H$ is any impurity function (Gini, entropy, variance).
 
