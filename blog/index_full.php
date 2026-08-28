@@ -101,6 +101,7 @@
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("The Global AI Ecosystem", "global_ai_ecosystem");
 	incl("The Untold History of AI", "untold_history");
+	incl("Beyond LLMs — The Wider World of Algorithms & Models", "beyond_llms");
 	incl("Frontier Topics", "frontier");
 	incl("AI Law & Regulation", "law_regulation");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
