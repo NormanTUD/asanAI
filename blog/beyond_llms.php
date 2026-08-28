@@ -354,9 +354,21 @@ The course has spent many chapters describing the Transformer. On real-world *ta
 <div class="md">
 ### Decision trees: $O(\log n)$ decisions per row
 
+#### Why they were invented
+
+In the early 1960s, applied statisticians were drowning in survey data. They had spreadsheets with hundreds of variables and thousands of respondents, and they wanted automatic ways to find *which* variables matter, *how* they interact, and *what* segment of the population they distinguish. Linear regression told you the average effect of each variable, but said nothing about interactions; full polynomial regression blew up combinatorially. The US Census Bureau, the Survey Research Center at Michigan, and the Bell Labs statistics group all converged on the same idea: *recursively split the data on the variable that explains the most variance, and assign a constant prediction to each leaf*. The first serious program was **AID** of \citeauthor{morgan1963aid} (\citeyear{morgan1963aid}), built for analysing survey data. **THAID** of \citeauthor{ messenger1972thaid} (\citeyear{messenger1972thaid}) extended it to nominal dependent variables. The modern tree-learning algorithm was then independently invented twice — by \citeauthor{quinlan1986id3} (\citeyear{quinlan1986id3,quinlan1993c45}) as **ID3/C4.5** in the machine-learning community and by \citeauthor{breiman1984cart} (\citeyear{breiman1984cart}) as **CART** in the statistics community. The two have converged in modern libraries but their intellectual lineages are different: ID3 is the descendant of the AI tradition of rule induction, CART is the descendant of the statistics tradition of recursive partitioning.
+
+#### The algorithm
+
 A **decision tree** partitions the feature space by axis-aligned splits and assigns a constant prediction to each cell of the resulting partition \cite{breiman1984cart,quinlan1986id3,quinlan1993c45}. The splits are chosen greedily to maximise some impurity reduction — information gain \cite{quinlan1986id3}, Gini impurity \cite{breiman1984cart}, or variance reduction \cite{breiman1984cart}.
 
-The earliest learning-tree algorithms are from the statistics literature of the 1960s — the **AID** program of \citeauthor{morgan1963aid} (\citeyear{morgan1963aid}) and the **THAID** program of \citeauthor{ messenger1972thaid} (\citeyear{messenger1972thaid}). The two algorithm families that survived are **ID3/C4.5/C5.0** of \citeauthor{quinlan1986id3,quinlan1993c45} and **CART** of \citeauthor{breiman1984cart} (\citeyear{breiman1984cart}). They differ in the impurity criterion, in whether they support regression (CART does, ID3 originally didn't), and in the pruning strategy.
+$$
+\underbrace{
+\Delta \text{Impurity}(S, j, t) \;=\; \underbrace{H(S)}_{\text{impurity before split}} \;-\; \underbrace{\tfrac{|S_L|}{|S|} H(S_L) \;+\; \tfrac{|S_R|}{|S|} H(S_R)}_{\text{weighted impurity after the split on feature } j \text{ at threshold } t}
+}_{\text{how much a candidate split would reduce impurity}}
+$$
+
+Here $S$ is the set of training points in the current node, $S_L$ and $S_R$ are the left and right children, and $H$ is any impurity function (Gini, entropy, variance).
 
 Decision trees are interpretable (you can print the tree), fast ($O(\log n)$ inference on a balanced tree), and natively handle mixed feature types without preprocessing. They overfit terribly without regularisation; the classical answer is *cost-complexity pruning* \cite{breiman1984cart} or *reduced-error pruning* \cite{quinlan1987pruning}.
 
