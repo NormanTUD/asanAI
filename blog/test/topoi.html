@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Topoi - Interaktive Einführung</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+    color: #e4e4e7;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, #4c1d95 0%, #1e3a8a 100%);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  header h1 { margin: 0 0 0.5rem; font-size: 2.5rem; letter-spacing: -0.5px; }
+  header p { margin: 0; opacity: 0.85; font-size: 1.1rem; }
+  nav {
+    background: #16162a;
+    padding: 1rem 2rem;
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid #2a2a44;
+    overflow-x: auto; white-space: nowrap;
+  }
+  nav a {
+    color: #a5b4fc; text-decoration: none; margin-right: 1.5rem;
+    font-weight: 500; font-size: 0.95rem;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: #fbbf24; }
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  section {
+    background: #1e1e35;
+    border-radius: 14px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border: 1px solid #2a2a44;
+  }
+  h2 {
+    color: #fbbf24;
+    border-bottom: 2px solid #4c1d95;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    font-size: 1.75rem;
+  }
+  h3 { color: #a5b4fc; margin-top: 1.5rem; }
+  .quote {
+    border-left: 4px solid #fbbf24;
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 0;
+    background: rgba(251,191,36,0.08);
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+  }
+  canvas {
+    background: #0a0a18;
+    border-radius: 10px;
+    display: block;
+    margin: 1rem auto;
+    border: 1px solid #2a2a44;
+    max-width: 100%;
+  }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 0.8rem;
+    margin: 1rem 0;
+    align-items: center;
+  }
+  button {
+    background: linear-gradient(135deg, #4c1d95, #1e3a8a);
+    color: white; border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(76,29,149,0.5); }
+  button:active { transform: translateY(0); }
+  select, input[type=range], input[type=text] {
+    background: #0a0a18;
+    color: #e4e4e7;
+    border: 1px solid #4c1d95;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  label { font-size: 0.9rem; color: #c7d2fe; }
+  .info-box {
+    background: rgba(76,29,149,0.15);
+    border-left: 3px solid #a5b4fc;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+  }
+  .info-box strong { color: #fbbf24; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+  .output {
+    background: #0a0a18;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #a5b4fc;
+    margin-top: 0.5rem;
+    min-height: 2em;
+    white-space: pre-wrap;
+  }
+  .tag {
+    display: inline-block;
+    background: #4c1d95;
+    color: white;
+    padding: 0.15rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin: 0 0.3rem 0.3rem 0;
+  }
+  footer {
+    text-align: center; padding: 2rem;
+    color: #6b7280; font-size: 0.9rem;
+    border-top: 1px solid #2a2a44;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Topoi — Eine interaktive Reise</h1>
+  <p>Was sind Topoi? Wie funktionieren sie? Wozu sind sie da? — Basierend auf Robert Goldblatts "Topoi: The Categorial Analysis of Logic"</p>
+</header>
+
+<nav>
+  <a href="#intro">Einführung</a>
+  <a href="#origins">Ursprünge</a>
+  <a href="#cats">Kategorien</a>
+  <a href="#arrows">Pfeile statt ε</a>
+  <a href="#definition">Topos-Definition</a>
+  <a href="#classifier">Subobjektklassifikator Ω</a>
+  <a href="#examples">Beispiele</a>
+  <a href="#logic">Interne Logik</a>
+  <a href="#heyting">Heyting-Algebren</a>
+  <a href="#sheaves">Garben</a>
+  <a href="#panorama">Panorama</a>
+</nav>
+
+<main>
+
+<section id="intro">
+  <h2>1. Was ist ein Topos? — Die große Idee</h2>
+  <p>Ein <strong>Topos</strong> (Plural: Topoi) ist eine mathematische Struktur, die verallgemeinert, was eine "Welt der Mengen" ist. Sie ist gleichzeitig:</p>
+  <ul>
+    <li>ein <strong>Universum für Mathematik</strong> (wie die Kategorie <b>Set</b> aller Mengen)</li>
+    <li>eine <strong>verallgemeinerte Geometrie</strong> (die aus Garbentheorie kommt)</li>
+    <li>ein <strong>Modell für Logik</strong> (klassisch oder intuitionistisch)</li>
+  </ul>
+  <div class="quote">
+    "Es ist die Absicht dieses Buches, die Kategorie eines Topos einzuführen und zu erklären, welche Implikationen sie für Logik und die Grundlagen der Mathematik hat." — R. Goldblatt
+  </div>
+  <div class="info-box">
+    <strong>Kernidee:</strong> Statt Mathematik auf Mengen ($\in$-Beziehung) zu gründen, gründen wir sie auf <em>Pfeilen</em> (Funktionen, Morphismen). Ein Topos ist eine Kategorie, in der man alle üblichen mengentheoretischen Konstruktionen (Produkte, Teilmengen, Potenzmengen, Wahrheitswerte) durchführen kann — aber die interne Logik muss nicht klassisch sein.
+  </div>
+
+  <h3>Interaktives: Vom Element zum Pfeil</h3>
+  <p>In der klassischen Mengenlehre ist $x \in A$ fundamental. In Topostheorie ersetzen wir dies durch Pfeile $x: 1 \to A$ von einem Endobjekt. Klicke unten, um den Wechsel zu sehen:</p>
+  <canvas id="cvIntro" width="800" height="300"></canvas>
+  <div class="controls">
+    <button onclick="drawIntro('set')">Mengensicht ($x \in A$)</button>
+    <button onclick="drawIntro('arrow')">Pfeilsicht ($x: 1 \to A$)</button>
+  </div>
+</section>
+
+<section id="origins">
+  <h2>2. Woher kommen Topoi? — Drei Wurzeln</h2>
+  <p>Goldblatt betont, dass Topoi historisch aus <em>drei</em> unabhängigen Quellen wuchsen, die sich verblüffend vereinigten:</p>
+
+  <div class="grid2">
+    <div>
+      <h3>🌿 Wurzel 1: Algebraische Geometrie</h3>
+      <p>Alexander <strong>Grothendieck</strong> (1960er) verallgemeinerte den Begriff eines "topologischen Raums" zu <strong>Sites</strong> und ihren <strong>Garben</strong> ("faisceaux"). Ein <em>Grothendieck-Topos</em> ist eine Kategorie von Garben über einem Site.</p>
+      <span class="tag">Geometrie</span><span class="tag">Garben</span>
+    </div>
+    <div>
+      <h3>🧠 Wurzel 2: Kategorientheorie</h3>
+      <p>F. W. <strong>Lawvere</strong> (1964) fragte: <em>Was macht die Kategorie <b>Set</b> aus?</em> Er axiomatisierte sie kategoriell — und entdeckte den <strong>Subobjektklassifikator</strong> Ω. Mit M. <strong>Tierney</strong> definierte er den <em>elementaren Topos</em> (1969-70).</p>
+      <span class="tag">Kategorien</span><span class="tag">Axiome</span>
+    </div>
+    <div>
+      <h3>🔮 Wurzel 3: Logik & Mengenlehre</h3>
+      <p>Paul <strong>Cohen</strong> (1963) bewies Unabhängigkeit der Kontinuumshypothese durch <em>Forcing</em>. Scott–Solovay übersetzten das in <strong>Boolean-wertige Modelle</strong>. Als "Boolean" durch "Heyting" ersetzt wurde, entstand eine tiefe Verbindung zu Grothendieck-Topoi.</p>
+      <span class="tag">Cohen</span><span class="tag">Kripke</span>
+    </div>
+    <div>
+      <h3>⚡ Die Vereinigung (~1970)</h3>
+      <p>Diese drei Fäden verweben sich: Grothendiecks Garben, Lawveres Axiome, und die Semantik der intuitionistischen Logik sind <em>ein und dasselbe Ding</em>. Das ist die Schönheit der Topostheorie.</p>
+      <span class="tag">Synthese</span>
+    </div>
+  </div>
+
+  <canvas id="cvOrigins" width="800" height="380"></canvas>
+  <div class="controls">
+    <button onclick="animateOrigins()">▶ Die drei Wurzeln verschmelzen</button>
+    <button onclick="drawOrigins(0)">↺ Zurücksetzen</button>
+  </div>
+</section>
+
+<section id="cats">
+  <h2>3. Grundlagen: Kategorien</h2>
+  <p>Um Topoi zu verstehen, brauchen wir zuerst <strong>Kategorien</strong>. Eine Kategorie $\mathscr{C}$ besteht aus:</p>
+  <ul>
+    <li>einer Klasse von <b>Objekten</b> $a, b, c, \ldots$</li>
+    <li>für jedes Paar $(a,b)$: einer Menge von <b>Pfeilen</b> (Morphismen) $\mathscr{C}(a,b)$</li>
+    <li>einer <b>Komposition</b> $\circ$: gegeben $f: a \to b$ und $g: b \to c$, gibt es $g \circ f: a \to c$</li>
+    <li>für jedes $a$ einen <b>Identitätspfeil</b> $1_a: a \to a$</li>
+  </ul>
+  <p>Diese müssen zwei Axiome erfüllen:</p>
+  <p><strong>Assoziativität:</strong> $h \circ (g \circ f) = (h \circ g) \circ f$</p>
+  <p><strong>Identität:</strong> $1_b \circ f = f = f \circ 1_a$ für $f: a \to b$</p>
+
+  <h3>Interaktive Kategorie: Baue Pfeile</h3>
+  <p>Klicke auf das Canvas, um Objekte hinzuzufügen. Klicke auf zwei Objekte nacheinander, um einen Pfeil zu ziehen. Wähle dann zwei Pfeile aus, um sie zu komponieren:</p>
+  <canvas id="cvCat" width="800" height="400"></canvas>
+  <div class="controls">
+    <button onclick="catMode='add'">➕ Objekte hinzufügen</button>
+    <button onclick="catMode='arrow'">➤ Pfeile ziehen</button>
+    <button onclick="catMode='compose'">∘ Komposition</button>
+    <button onclick="clearCat()">🗑 Zurücksetzen</button>
+    <span id="catStatus" style="color:#a5b4fc;"></span>
+  </div>
+
+  <div class="info-box">
+    <strong>Beispiele für Kategorien:</strong><br>
+    <b>Set</b> (Mengen + Funktionen), <b>Top</b> (topologische Räume + stetige Abbildungen), <b>Grp</b> (Gruppen + Homomorphismen), <b>Vect</b> (Vektorräume + lineare Abbildungen), jede Halbordnung (Preorder), jedes Monoid.
+  </div>
+</section>
+
+<section id="arrows">
+  <h2>4. "Instead of Epsilon" — Konstruktionen mit Pfeilen</h2>
+  <p>Goldblatts Kapitel 3 heißt "Instead of Epsilon Arrows". Die zentrale Idee: <em>alle</em> mengentheoretischen Begriffe (injektiv, surjektiv, Produkt, Teilmenge, ...) lassen sich <strong>ohne</strong> das $\in$-Zeichen definieren.</p>
+
+  <h3>Monomorphismen (injektive Pfeile)</h3>
+  <p>Ein Pfeil $f: a \to b$ heißt <strong>monisch</strong>, wenn: für alle $g, h: c \to a$ mit $f \circ g = f \circ h$ folgt $g = h$.</p>
+  <p>In <b>Set</b> entspricht dies genau der Injektivität.</p>
+  <div class="info-box">
+    Bezeichnung: $f: a \rightarrowtail b$ heißt "mono".
+  </div>
+
+  <h3>Produkte kategorial</h3>
+  <p>Ein <strong>Produkt</strong> von $a$ und $b$ ist ein Objekt $a \times b$ mit zwei Projektionen $\text{pr}_a, \text{pr}_b$, sodass für jedes andere Objekt $c$ mit Pfeilen $f: c \to a$, $g: c \to b$ genau ein Pfeil $\langle f, g \rangle: c \to a \times b$ existiert, sodass:</p>
+  $$\text{pr}_a \circ \langle f, g \rangle = f \quad \text{und} \quad \text{pr}_b \circ \langle f, g \rangle = g$$
+
+  <canvas id="cvProduct" width="800" height="380"></canvas>
+  <div class="controls">
+    <button onclick="animateProduct()">▶ Universelle Eigenschaft animieren</button>
+  </div>
+
+  <h3>Pullback (Faserprodukt)</h3>
+  <p>Der <strong>Pullback</strong> von $f: a \to c$ und $g: b \to c$ ist ein Objekt $a \times_c b$ mit:</p>
+  <canvas id="cvPullback" width="800" height="320"></canvas>
+  <p>In <b>Set</b>: $a \times_c b = \{(x,y) \in a \times b : f(x) = g(y)\}$. Pullbacks sind das Werkzeug für Urbilder, Fasern, Schnittpunkte.</p>
+</section>
+
+<section id="definition">
+  <h2>5. Die Definition eines (elementaren) Topos</h2>
+  <div class="info-box">
+    <strong>Definition (Lawvere-Tierney):</strong> Ein <strong>elementarer Topos</strong> $\mathscr{E}$ ist eine Kategorie, die:
+    <ol>
+      <li>alle <b>endlichen Limiten</b> hat (Terminalobjekt $1$, Pullbacks)</li>
+      <li>alle <b>endlichen Kolimiten</b> hat (Initialobjekt $0$, Pushouts)</li>
+      <li><b>exponential-abgeschlossen</b> ist: für alle $a, b$ existiert $b^a$ mit $\text{ev}: b^a \times a \to b$</li>
+      <li>einen <b>Subobjektklassifikator</b> $\Omega$ hat: einen Pfeil $\text{true}: 1 \to \Omega$ mit universeller Eigenschaft</li>
+    </ol>
+  </div>
+
+  <p>Punkt 4 ist der geheime Kern! Er macht aus "irgendeiner geometrisch-algebraischen Kategorie" eine Welt mit <em>innerer Logik</em>.</p>
+
+  <p><strong>Wichtige Tatsache (Paré):</strong> Bedingung 2 (Kolimiten) folgt bereits aus 1, 3, 4! Also reichen: endliche Limiten + Exponentiale + $\Omega$.</p>
+</section>
+
+<section id="classifier">
+  <h2>6. Der Subobjektklassifikator Ω</h2>
+  <p>Das ist der wichtigste Baustein. Zuerst in <b>Set</b>:</p>
+
+  <h3>In Set: Ω = {0, 1}</h3>
+  <p>Zu jeder Teilmenge $A \subseteq D$ gehört ihre <strong>charakteristische Funktion</strong> $\chi_A: D \to \{0,1\}$:</p>
+  $$\chi_A(x) = \begin{cases} 1 & \text{falls } x \in A \\ 0 & \text{sonst} \end{cases}$$
+
+  <canvas id="cvChi" width="800" height="300"></canvas>
+  <div class="controls">
+    <button onclick="toggleChi()">▶ Teilmenge verändern</button>
+  </div>
+  <div class="output" id="chiOut"></div>
+
+  <h3>Das Pullback-Quadrat</h3>
+  <p>Die Definition ist ein Pullback:</p>
+  $$\begin{array}{ccc} A & \longrightarrow & 1 \\ \downarrow & & \downarrow \text{true} \\ D & \xrightarrow{\chi_A} & \Omega \end{array}$$
+
+  <h3>Ω-Axiom (allgemein)</h3>
+  <div class="info-box">
+    Für jedes Monomorphismus $f: a \rightarrowtail d$ existiert <em>genau ein</em> Pfeil $\chi_f: d \to \Omega$, sodass obiges Quadrat ein Pullback ist. Das heißt: <strong>Subobjekte von $d$ ↔ Pfeile $d \to \Omega$</strong>.
+  </div>
+
+  <p>In verschiedenen Topoi sieht $\Omega$ anders aus:</p>
+  <ul>
+    <li><b>Set</b>: $\Omega = \{0, 1\}$ (2 Wahrheitswerte, klassisch)</li>
+    <li><b>Set²</b> (Paare von Mengen): $\Omega$ hat 4 Elemente</li>
+    <li><b>Set^→</b> (Funktionen): $\Omega$ hat 3 Elemente (nicht klassisch!)</li>
+    <li><b>Sh(X)</b> (Garben): $\Omega$ = Garbe der offenen Mengen</li>
+    <li><b>M2-Set</b>: $\Omega$ = Menge der Linksideale von $M_2$</li>
+  </ul>
+</section>
+
+<section id="examples">
+  <h2>7. Konkrete Beispiele von Topoi</h2>
+
+  <h3>Beispiel A: Set² (Paare von Mengen)</h3>
+  <p>Objekte sind Paare $(A, B)$ von Mengen. Pfeile sind Paare von Funktionen. Terminalobjekt: $(\{*\}, \{*\})$. Klassifikator: $(\{0,1\}, \{0,1\})$.</p>
+
+  <h3>Beispiel B: Set^→ ("Mengen durch die Zeit")</h3>
+  <p>Ein Objekt ist eine Funktion $f: A \to B$. Interpretiere: $A$ ist "vorher", $B$ ist "nachher", $f$ ist die Zeitentwicklung.</p>
+  <canvas id="cvSetArrow" width="800" height="320"></canvas>
+  <p>Der Klassifikator hat <em>drei</em> Wahrheitswerte: {"noch nicht", "gerade jetzt", "schon lange"} — repräsentiert als Funktion $\{0,1\} \to \{0, \tfrac{1}{2}, 1\}$.</p>
+
+  <h3>Beispiel C: Bn(I) — Bündel von Mengen</h3>
+  <p>Ein Objekt ist eine Funktion $p: A \to I$, gedacht als "Bündel" mit Fasern $A_i = p^{-1}(\{i\})$ über jedem $i \in I$.</p>
+  <canvas id="cvBundle" width="800" height="320"></canvas>
+  <div class="controls">
+    <button onclick="drawBundle()">↻ Neues Bündel</button>
+  </div>
+
+  <h3>Beispiel D: M2 — das kanonische Gegenbeispiel</h3>
+  <p>$M_2 = \{0, 1\}$ mit Multiplikation ist ein Monoid (aber keine Gruppe). Die Kategorie $M_2\text{-}\mathbf{Set}$ ist bivalent (2 Wahrheitswerte), aber <em>nicht klassisch</em>! Sie ist Goldblatts Lieblings-Gegenbeispiel.</p>
+</section>
+
+<section id="logic">
+  <h2>8. Interne Logik eines Topos</h2>
+  <p>Jeder Topos $\mathscr{E}$ trägt eine <strong>innere Logik</strong>. Der Subobjekt-Klassifikator $\Omega$ ist die interne "Menge der Wahrheitswerte", und $\mathrm{Sub}(d)$ trägt für jedes Objekt $d$ die Struktur einer <strong>Heyting-Algebra</strong>.</p>
+
+  <h3>Die logischen Operationen als Pfeile</h3>
+  <p>Aus der universellen Eigenschaft von $\Omega$ ergeben sich Pfeile:</p>
+  <ul>
+    <li>$\top: 1 \to \Omega$ (wahr)</li>
+    <li>$\bot: 1 \to \Omega$ (falsch) — als Charakter von $0 \to 1$</li>
+    <li>$\wedge: \Omega \times \Omega \to \Omega$ (Konjunktion) — Charakter von $\langle \top, \top \rangle: 1 \to \Omega \times \Omega$</li>
+    <li>$\vee: \Omega \times \Omega \to \Omega$ (Disjunktion)</li>
+    <li>$\Rightarrow: \Omega \times \Omega \to \Omega$ (Implikation) — Charakter des Equalizers von $\wedge$ und $\pi_1$</li>
+    <li>$\neg: \Omega \to \Omega$ (Negation) — Charakter von $\bot: 1 \to \Omega$</li>
+  </ul>
+
+  <h3>Der Clou: Die Logik ist im Allgemeinen intuitionistisch!</h3>
+  <div class="info-box">
+    <strong>Zentrale Entdeckung:</strong> In $\mathbf{Set}$ ist $\Omega = \{0,1\}$ und die Logik ist klassisch (Boolesch): $p \vee \neg p = \top$ gilt immer.
+    <br><br>
+    In allgemeinen Topoi gilt das <em>nicht</em>! Die Logik ist <strong>intuitionistisch</strong>: das Gesetz vom ausgeschlossenen Dritten $p \vee \neg p$ und die doppelte Negationselimination $\neg\neg p = p$ können versagen.
+  </div>
+
+  <canvas id="cvLogic" width="800" height="380"></canvas>
+  <div class="controls">
+    <label>Wahrheitswert p: </label>
+    <select id="topoSelect" onchange="drawLogic()">
+      <option value="set">Set (2 Werte: 0, 1)</option>
+      <option value="M2">M₂-Set (2 Werte, nicht-klassisch)</option>
+      <option value="setArrow">Set→ (3 Werte)</option>
+      <option value="sh">Sh(ℝ) (offene Mengen)</option>
+    </select>
+    <button onclick="drawLogic()">Anzeigen</button>
+  </div>
+  <div class="output" id="logicOut"></div>
+
+  <h3>Der Zusammenhang: Topoi ↔ Kripke-Modelle</h3>
+  <p>Für einen Poset $P$ ist $\mathbf{Set}^{P^{op}}$ (Prägarben auf $P$) ein Topos, dessen interne Logik <em>genau</em> die Kripke-Semantik der intuitionistischen Logik über dem Rahmen $P$ realisiert! Die "Zeitentwicklung" der Wahrheit in Kripke-Modellen ist das gleiche mathematische Phänomen wie die interne Logik eines Prägarben-Topos.</p>
+</section>
+
+<section id="heyting">
+  <h2>9. Heyting-Algebren interaktiv</h2>
+  <p>Eine <strong>Heyting-Algebra</strong> ist eine bicartesisch abgeschlossene Halbordnung: ein Verband $(H, \wedge, \vee, 0, 1)$ mit einer relativen Pseudokomplement-Operation $\Rightarrow$, sodass:</p>
+  $$a \wedge b \leq c \iff a \leq (b \Rightarrow c)$$
+  <p>Definiere $\neg a := (a \Rightarrow 0)$. In einer <strong>Booleschen Algebra</strong> gilt $\neg\neg a = a$; in einer Heyting-Algebra i.A. nur $a \leq \neg\neg a$.</p>
+
+  <h3>Beispiel: Die Heyting-Algebra der offenen Mengen</h3>
+  <p>Für einen topologischen Raum $X$ bildet $\mathcal{O}(X)$ (offene Mengen) eine Heyting-Algebra:</p>
+  <ul>
+    <li>$U \wedge V = U \cap V$</li>
+    <li>$U \vee V = U \cup V$</li>
+    <li>$U \Rightarrow V = \mathrm{int}((X \setminus U) \cup V)$ (Inneres!)</li>
+    <li>$\neg U = \mathrm{int}(X \setminus U)$</li>
+  </ul>
+
+  <canvas id="cvHeyting" width="800" height="400"></canvas>
+  <div class="controls">
+    <button onclick="heytingDemo('U')">Zeige U</button>
+    <button onclick="heytingDemo('negU')">Zeige ¬U</button>
+    <button onclick="heytingDemo('negnegU')">Zeige ¬¬U</button>
+    <button onclick="heytingDemo('union')">Zeige U ∨ ¬U</button>
+  </div>
+  <div class="output" id="heytingOut"></div>
+
+  <div class="info-box">
+    <strong>Beobachtung:</strong> $U \cup \neg U \neq X$ im Allgemeinen! Es fehlt der Rand von $U$. Deshalb versagt $p \vee \neg p$ in der Logik der offenen Mengen — und damit in der Logik von Garben-Topoi.
+  </div>
+</section>
+
+<section id="sheaves">
+  <h2>10. Garben (Sheaves) — Die geometrische Wurzel</h2>
+  <p>Eine <strong>Prägarbe</strong> auf einem topologischen Raum $X$ ist ein kontravarianter Funktor $F: \mathcal{O}(X)^{op} \to \mathbf{Set}$. Intuitiv: $F(U)$ ist die "Menge der Objekte, die auf $U$ definiert sind" (z.B. stetige Funktionen $U \to \mathbb{R}$), und $F(V \subseteq U): F(U) \to F(V)$ ist die Einschränkung.</p>
+
+  <h3>Die Garbenbedingung (COM)</h3>
+  <p>Eine Prägarbe $F$ ist eine <strong>Garbe</strong>, wenn lokale Daten sich zu globalen zusammensetzen lassen: Für jede offene Überdeckung $\{U_i\}$ von $U$ und kompatible Familie $s_i \in F(U_i)$ (d.h. $s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}$) gibt es genau ein $s \in F(U)$ mit $s|_{U_i} = s_i$.</p>
+
+  <canvas id="cvSheaf" width="800" height="400"></canvas>
+  <div class="controls">
+    <button onclick="drawSheaf('sections')">Lokale Schnitte</button>
+    <button onclick="drawSheaf('glue')">Verkleben</button>
+    <button onclick="drawSheaf('germ')">Halme (Keime)</button>
+  </div>
+
+  <div class="info-box">
+    <strong>Zentrale Sätze:</strong>
+    <ul>
+      <li>$\mathrm{Sh}(X)$ (Garben auf $X$) ist ein Topos</li>
+      <li>Sein Klassifikator $\Omega$ ist die Garbe der offenen Mengen: $\Omega(U) = \{V \subseteq U : V \text{ offen}\}$</li>
+      <li>Seine interne Logik ist die Heyting-Algebra $\mathcal{O}(X)$</li>
+    </ul>
+  </div>
+
+  <h3>Grothendieck-Topologien: Verallgemeinerung</h3>
+  <p>Grothendieck erkannte: Man braucht keinen topologischen Raum! Es genügt eine Kategorie $\mathscr{C}$ mit einer <strong>Sieb-Struktur</strong> (was zählt als "Überdeckung"). Dies ergibt eine <em>Site</em> $(\mathscr{C}, J)$, und Garben darauf bilden einen <strong>Grothendieck-Topos</strong>.</p>
+  <p>Das war die revolutionäre Verallgemeinerung, die algebraische Geometrie (étale Kohomologie!) ermöglichte.</p>
+</section>
+
+<section id="panorama">
+  <h2>11. Panorama: Was haben wir gesehen?</h2>
+  
+  <h3>Die drei Gesichter des Topos</h3>
+  <div class="grid2">
+    <div>
+      <h4>🌐 Als Universum für Mathematik</h4>
+      <p>Ein Topos ist eine "Welt", in der man Mathematik betreiben kann — Mengen, Funktionen, Produkte, Potenzmengen. Aber die interne Logik kann intuitionistisch sein!</p>
+    </div>
+    <div>
+      <h4>📐 Als verallgemeinerte Geometrie</h4>
+      <p>Grothendieck-Topoi sind "verallgemeinerte Räume" — sie erlauben Geometrie auf Kategorien, weit jenseits topologischer Räume.</p>
+    </div>
+    <div>
+      <h4>🧠 Als Modell für Logik</h4>
+      <p>Die Kripke-Semantik intuitionistischer Logik, Cohens Forcing für Mengenlehre, Heyting-Algebren — alles vereinigt sich im Topos-Begriff.</p>
+    </div>
+    <div>
+      <h4>🔗 Die Synthese</h4>
+      <p>Diese drei Perspektiven sind <em>ein und dasselbe</em>. Das ist die Schönheit und Tiefe der Topostheorie.</p>
+    </div>
+  </div>
+
+  <h3>Die axiomatische Definition (Zusammenfassung)</h3>
+  <div class="info-box">
+    Ein <strong>elementarer Topos</strong> $\mathscr{E}$ ist eine Kategorie mit:
+    <ol>
+      <li>Endlichen Limiten (Terminalobjekt, Pullbacks)</li>
+      <li>Exponentialobjekten $b^a$ (kartesisch abgeschlossen)</li>
+      <li>Einem Subobjektklassifikator $\Omega$ mit $\top: 1 \to \Omega$</li>
+    </ol>
+    Aus diesen drei Bausteinen folgt automatisch: endliche Kolimiten, Potenzobjekte $\mathcal{P}(a) = \Omega^a$, interne Logik (Heyting-Algebra auf $\mathrm{Sub}(d)$), interne Sprache, ...
+  </div>
+
+  <h3>Woher kommen Topoi? (Wiederholung)</h3>
+  <ol>
+    <li><strong>Grothendieck (1960er):</strong> Aus der algebraischen Geometrie — étale Topologie, Garben auf Sites</li>
+    <li><strong>Lawvere-Tierney (1969):</strong> Elementare Axiomatisierung, Subobjektklassifikator als Kernbegriff</li>
+    <li><strong>Cohen-Scott-Solovay (1963-67):</strong> Forcing für Unabhängigkeitsresultate, Boolean-valued models → Heyting-valued models</li>
+  </ol>
+
+  <h3>Was noch bleibt zu erforschen</h3>
+  <ul>
+    <li><strong>Higher Topos Theory:</strong> ∞-Kategorien und ∞-Topoi (Lurie, Joyal, ...)</li>
+    <li><strong>Homotopy Type Theory:</strong> Neue Grundlagen der Mathematik, tief verwoben mit Topostheorie</li>
+    <li><strong>Klassifizierende Topoi:</strong> Jede geometrische Theorie hat einen "universellen Topos", der ihre Modelle klassifiziert (Deligne, Makkai-Reyes)</li>
+    <li><strong>Anwendungen:</strong> Algebraische Geometrie, Logik, Informatik (Typtheorie), sogar Physik!</li>
+  </ul>
+
+  <div class="quote">
+    "Toposes are the natural home of mathematics." — William Lawvere
+  </div>
+
+  <div class="info-box" style="margin-top: 2rem;">
+    <strong>Empfehlung zum Weiterlesen:</strong>
+    <ul>
+      <li>Goldblatt, <em>Topoi: The Categorial Analysis of Logic</em> (dein Buch! Einsteigerfreundlich)</li>
+      <li>Mac Lane & Moerdijk, <em>Sheaves in Geometry and Logic</em> (Standardwerk)</li>
+      <li>Johnstone, <em>Sketches of an Elephant</em> (die umfassende Enzyklopädie)</li>
+      <li>Leinster, <em>An informal introduction to topos theory</em> (kurze Einführung, arXiv:1012.5647)</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Erstellt als interaktive Einführung basierend auf Robert Goldblatt, <em>Topoi: The Categorial Analysis of Logic</em> (1984).<br>
+  Formeln gerendert mit MathJax • Interaktive Grafiken mit HTML5 Canvas
+</footer>
+
+<script>
+// ========================================================================
+// CANVAS 1: Element vs Arrow view
+// ========================================================================
+function drawIntro(mode) {
+  const c = document.getElementById('cvIntro');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.fillStyle = '#e4e4e7';
+  ctx.font = '16px sans-serif';
+  
+  if (mode === 'set') {
+    // Draw set A with elements
+    ctx.strokeStyle = '#a5b4fc';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(400, 150, 200, 100, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.fillText('A', 580, 155);
+    
+    const points = [[320, 120], [400, 100], [480, 130], [350, 180], [450, 190]];
+    ctx.fillStyle = '#fbbf24';
+    points.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e4e4e7';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('x' + (i+1), p[0] + 8, p[1] + 4);
+      ctx.fillStyle = '#fbbf24';
+    });
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('Elemente x ∈ A', 320, 270);
+  } else {
+    // Draw 1 → A
+    ctx.fillStyle = '#a5b4fc';
+    ctx.beginPath();
+    ctx.arc(150, 150, 30, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0f0f1e';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('1', 143, 158);
+    
+    ctx.strokeStyle = '#a5b4fc';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(550, 150, 150, 90, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('A', 690, 155);
+    
+    // Arrow
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(185, 150);
+    ctx.lineTo(400, 150);
+    ctx.stroke();
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(400, 150);
+    ctx.lineTo(390, 145);
+    ctx.lineTo(390, 155);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '18px sans-serif';
+    ctx.fillText('x: 1 → A', 260, 140);
+    
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(550, 150, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('x(0)', 560, 148);
+    
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('Element als Pfeil x: 1 → A', 250, 280);
+  }
+}
+drawIntro('set');
+
+// ========================================================================
+// CANVAS 2: Origins animation
+// ========================================================================
+let originsStage = 0;
+function drawOrigins(stage) {
+  originsStage = stage;
+  const c = document.getElementById('cvOrigins');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.font = '14px sans-serif';
+  
+  const positions = stage === 0 ? 
+    [[150, 100], [400, 100], [650, 100]] :
+    stage === 1 ? [[200, 120], [400, 100], [600, 120]] :
+    stage === 2 ? [[280, 140], [400, 100], [520, 140]] :
+    [[400, 180], [400, 180], [400, 180]];
+  
+  const colors = ['#22c55e', '#a5b4fc', '#f472b6'];
+  const labels = ['Algebraische\nGeometrie\n(Grothendieck)', 'Kategorientheorie\n(Lawvere)', 'Logik/Set Theory\n(Cohen)'];
+  
+  positions.forEach((p, i) => {
+    ctx.fillStyle = colors[i];
+    ctx.globalAlpha = stage === 3 ? 0.5 : 1;
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], 60, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#0f0f1e';
+    ctx.font = 'bold 12px sans-serif';
+    const lines = labels[i].split('\n');
+    lines.forEach((l, j) => {
+      ctx.fillText(l, p[0] - ctx.measureText(l).width/2, p[1] - 10 + j * 15);
+    });
+  });
+  
+  if (stage === 3) {
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(400, 180, 80, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0f0f1e';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('TOPOS', 355, 188);
+  }
+  
+  ctx.fillStyle = '#c7d2fe';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('Drei unabhängige Ursprünge verschmelzen ~1970', 200, 350);
+}
+drawOrigins(0);
+
+function animateOrigins() {
+  let s = 0;
+  const iv = setInterval(() => {
+    drawOrigins(s);
+    s++;
+    if (s > 3) clearInterval(iv);
+  }, 800);
+}
+
+// ========================================================================
+// CANVAS 3: Interactive category builder
+// ========================================================================
+let catObjects = [];
+let catArrows = [];
+let catMode = 'add';
+let catSelected = [];
+
+const cvCat = document.getElementById('cvCat');
+const ctxCat = cvCat.getContext('2d');
+
+cvCat.addEventListener('click', function(e) {
+  const rect = cvCat.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  if (catMode === 'add') {
+    const name = String.fromCharCode(65 + catObjects.length);
+    catObjects.push({x, y, name});
+  } else if (catMode === 'arrow') {
+    const obj = catObjects.find(o => Math.hypot(o.x - x, o.y - y) < 25);
+    if (obj) {
+      catSelected.push(obj);
+      if (catSelected.length === 2) {
+        catArrows.push({from: catSelected[0], to: catSelected[1], name: 'f' + catArrows.length});
+        catSelected = [];
+      }
+    }
+  } else if (catMode === 'compose') {
+    const arr = catArrows.find(a => {
+      const mx = (a.from.x + a.to.x)/2, my = (a.from.y + a.to.y)/2;
+      return Math.hypot(mx - x, my - y) < 30;
+    });
+    if (arr) {
+      catSelected.push(arr);
+      if (catSelected.length === 2) {
+        if (catSelected[0].to === catSelected[1].from) {
+          catArrows.push({from: catSelected[0].from, to: catSelected[1].to, 
+                          name: catSelected[1].name + '∘' + catSelected[0].name, composite: true});
+          document.getElementById('catStatus').textContent = 'Komposition erstellt!';
+        } else {
+          document.getElementById('catStatus').textContent = 'Nicht komponierbar!';
+        }
+        catSelected = [];
+      }
+    }
+  }
+  drawCat();
+});
+
+function drawCat() {
+  ctxCat.clearRect(0, 0, cvCat.width, cvCat.height);
+  // Draw arrows
+  catArrows.forEach(a => {
+    ctxCat.strokeStyle = a.composite ? '#fbbf24' : '#a5b4fc';
+    ctxCat.lineWidth = 2;
+    ctxCat.beginPath();
+    if (a.from === a.to) {
+      // self-loop
+      ctxCat.arc(a.from.x + 30, a.from.y - 30, 20, 0, Math.PI * 2);
+    } else {
+      const dx = a.to.x - a.from.x, dy = a.to.y - a.from.y;
+      const len = Math.hypot(dx, dy);
+      const ux = dx/len, uy = dy/len;
+      ctxCat.moveTo(a.from.x + ux * 25, a.from.y + uy * 25);
+      ctxCat.lineTo(a.to.x - ux * 25, a.to.y - uy * 25);
+      // Arrowhead
+      const ax = a.to.x - ux * 25, ay = a.to.y - uy * 25;
+      ctxCat.lineTo(ax - ux * 10 - uy * 5, ay - uy * 10 + ux * 5);
+      ctxCat.moveTo(ax, ay);
+      ctxCat.lineTo(ax - ux * 10 + uy * 5, ay - uy * 10 - ux * 5);
+    }
+    ctxCat.stroke();
+    // Label arrow
+    const mx = (a.from.x + a.to.x)/2, my = (a.from.y + a.to.y)/2;
+    ctxCat.fillStyle = a.composite ? '#fbbf24' : '#c7d2fe';
+    ctxCat.font = '13px sans-serif';
+    ctxCat.fillText(a.name, mx + 5, my - 8);
+  });
+  // Draw objects
+  catObjects.forEach(o => {
+    ctxCat.fillStyle = catSelected.includes(o) ? '#fbbf24' : '#a5b4fc';
+    ctxCat.beginPath();
+    ctxCat.arc(o.x, o.y, 22, 0, Math.PI * 2);
+    ctxCat.fill();
+    ctxCat.fillStyle = '#0f0f1e';
+    ctxCat.font = 'bold 18px sans-serif';
+    ctxCat.fillText(o.name, o.x - 6, o.y + 6);
+  });
+  // Instructions
+  ctxCat.fillStyle = '#6b7280';
+  ctxCat.font = '13px sans-serif';
+  ctxCat.fillText('Modus: ' + catMode + '  |  Objekte: ' + catObjects.length + '  |  Pfeile: ' + catArrows.length, 10, 20);
+}
+
+function clearCat() {
+  catObjects = [];
+  catArrows = [];
+  catSelected = [];
+  document.getElementById('catStatus').textContent = '';
+  drawCat();
+}
+drawCat();
+
+// ========================================================================
+// CANVAS 4: Product universal property
+// ========================================================================
+function drawProduct(t) {
+  const c = document.getElementById('cvProduct');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  // a × b (top center), a (bottom left), b (bottom right), c (top, above product)
+  const pAxB = {x: 400, y: 200, label: 'a × b'};
+  const pA = {x: 200, y: 320, label: 'a'};
+  const pB = {x: 600, y: 320, label: 'b'};
+  const pC = {x: 400, y: 60, label: 'c'};
+  
+  const drawObj = (p, color = '#a5b4fc') => {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0f0f1e';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText(p.label, p.x - ctx.measureText(p.label).width/2, p.y + 5);
+  };
+  
+  const drawArrow = (from, to, label, color = '#a5b4fc', dashed = false) => {
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx/len, uy = dy/len;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash(dashed ? [6, 4] : []);
+    ctx.beginPath();
+    ctx.moveTo(from.x + ux * 30, from.y + uy * 30);
+    ctx.lineTo(to.x - ux * 30, to.y - uy * 30);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    const ax = to.x - ux * 30, ay = to.y - uy * 30;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - ux * 10 - uy * 5, ay - uy * 10 + ux * 5);
+    ctx.lineTo(ax - ux * 10 + uy * 5, ay - uy * 10 - ux * 5);
+    ctx.closePath();
+    ctx.fill();
+    // label
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '14px sans-serif';
+    ctx.fillText(label, (from.x + to.x)/2 + 8, (from.y + to.y)/2);
+  };
+  
+  drawObj(pAxB, '#fbbf24');
+  drawObj(pA);
+  drawObj(pB);
+  
+  drawArrow(pAxB, pA, 'pr_a');
+  drawArrow(pAxB, pB, 'pr_b');
+  
+  if (t >= 1) {
+    drawObj(pC, '#f472b6');
+    drawArrow(pC, pA, 'f');
+    drawArrow(pC, pB, 'g');
+  }
+  if (t >= 2) {
+    drawArrow(pC, pAxB, '⟨f,g⟩', '#fbbf24', true);
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('Es existiert GENAU EIN Pfeil ⟨f,g⟩ (gestrichelt)', 250, 380);
+    ctx.fillText('sodass die Diagramme kommutieren.', 250, 398);
+  }
+}
+drawProduct(0);
+function animateProduct() {
+  drawProduct(0);
+  setTimeout(() => drawProduct(1), 800);
+  setTimeout(() => drawProduct(2), 1600);
+}
+
+// ========================================================================
+// CANVAS 5: Pullback
+// ========================================================================
+function drawPullback() {
+  const c = document.getElementById('cvPullback');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  const P = {x: 250, y: 80, label: 'a×_c b'};
+  const A = {x: 550, y: 80, label: 'a'};
+  const B = {x: 250, y: 240, label: 'b'};
+  const C = {x: 550, y: 240, label: 'c'};
+  
+  [P, A, B, C].forEach(p => {
+    ctx.fillStyle = p === P ? '#fbbf24' : '#a5b4fc';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 28, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0f0f1e';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(p.label, p.x - ctx.measureText(p.label).width/2, p.y + 5);
+  });
+  
+  const arr = (from, to, label) => {
+    const dx = to.x - from.x, dy = to.y - from.y;
+    const len = Math.hypot(dx, dy);
+    const ux = dx/len, uy = dy/len;
+    ctx.strokeStyle = '#a5b4fc';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(from.x + ux * 30, from.y + uy * 30);
+    ctx.lineTo(to.x - ux * 30, to.y - uy * 30);
+    ctx.stroke();
+    const ax = to.x - ux * 30, ay = to.y - uy * 30;
+    ctx.fillStyle = '#a5b4fc';
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(ax - ux * 10 - uy * 5, ay - uy * 10 + ux * 5);
+    ctx.lineTo(ax - ux * 10 + uy * 5, ay - uy * 10 - ux * 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '14px sans-serif';
+    ctx.fillText(label, (from.x + to.x)/2 + 5, (from.y + to.y)/2 - 5);
+  };
+  
+  arr(P, A, 'p_1');
+  arr(P, B, 'p_2');
+  arr(A, C, 'f');
+  arr(B, C, 'g');
+  
+  // Pullback corner mark
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(285, 100);
+  ctx.lineTo(295, 100);
+  ctx.lineTo(295, 110);
+  ctx.stroke();
+  
+  ctx.fillStyle = '#c7d2fe';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('Pullback: f ∘ p_1 = g ∘ p_2, universell', 200, 300);
+}
+drawPullback();
+
+// ========================================================================
+// CANVAS 6: Characteristic function χ_A
+// ========================================================================
+let chiState = 0;
+const chiSubsets = [
+  [1, 3],
+  [0, 1, 2],
+  [2, 4],
+  [0, 1, 2, 3, 4],
+  []
+];
+function drawChi() {
+  const c = document.getElementById('cvChi');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  const subset = chiSubsets[chiState];
+  
+  // D on left
+  ctx.strokeStyle = '#a5b4fc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(180, 150, 100, 110, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#a5b4fc';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.fillText('D', 90, 40);
+  
+  // Elements of D
+  for (let i = 0; i < 5; i++) {
+    const y = 70 + i * 40;
+    const inSubset = subset.includes(i);
+    ctx.fillStyle = inSubset ? '#fbbf24' : '#4b5563';
+    ctx.beginPath();
+    ctx.arc(180, y, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('x' + i, 195, y + 4);
+  }
+  
+  // Ω = {0, 1} on right
+  ctx.strokeStyle = '#a5b4fc';
+  ctx.beginPath();
+  ctx.ellipse(620, 150, 60, 100, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = '#a5b4fc';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.fillText('Ω', 660, 40);
+  
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.arc(620, 100, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e4e4e7';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('1 (true)', 640, 105);
+  
+  ctx.fillStyle = '#4b5563';
+  ctx.beginPath();
+  ctx.arc(620, 200, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e4e4e7';
+  ctx.fillText('0 (false)', 640, 205);
+  
+  // Arrows from D to Ω
+  for (let i = 0; i < 5; i++) {
+    const y = 70 + i * 40;
+    const target = subset.includes(i) ? 100 : 200;
+    ctx.strokeStyle = subset.includes(i) ? '#fbbf24' : '#4b5563';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(190, y);
+    ctx.lineTo(610, target);
+    ctx.stroke();
+  }
+  
+  ctx.fillStyle = '#e4e4e7';
+  ctx.font = '16px sans-serif';
+  ctx.fillText('χ_A : D → Ω', 350, 30);
+  
+  document.getElementById('chiOut').textContent = 
+    'A = {' + subset.map(i => 'x' + i).join(', ') + '}\n' +
+    'χ_A(x) = 1 falls x ∈ A, sonst 0';
+}
+drawChi();
+function toggleChi() {
+  chiState = (chiState + 1) % chiSubsets.length;
+  drawChi();
+}
+
+// ========================================================================
+// CANVAS 7: Set^→
+// ========================================================================
+function drawSetArrow() {
+  const c = document.getElementById('cvSetArrow');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  // Two "time slices"
+  ctx.strokeStyle = '#a5b4fc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(200, 160, 90, 110, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(600, 160, 90, 110, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.fillText('A (jetzt)', 155, 40);
+  ctx.fillText('B (später)', 550, 40);
+  
+  const A = [[180, 100], [210, 150], [190, 210], [220, 250]];
+  const B = [[580, 90], [620, 140], [590, 200], [610, 250]];
+  const mapping = [0, 1, 1, 3]; // A[i] -> B[mapping[i]]
+  
+  A.forEach((p, i) => {
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  B.forEach(p => {
+    ctx.fillStyle = '#a5b4fc';
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+  A.forEach((p, i) => {
+    const t = B[mapping[i]];
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(p[0] + 6, p[1]);
+    ctx.lineTo(t[0] - 6, t[1]);
+    ctx.stroke();
+  });
+  
+  ctx.fillStyle = '#c7d2fe';
+  ctx.font = '16px sans-serif';
+  ctx.fillText('Objekt in Set→ : eine Funktion f: A → B', 220, 300);
+}
+drawSetArrow();
+
+// ========================================================================
+// CANVAS 8: Bundle
+// ========================================================================
+function drawBundle() {
+  const c = document.getElementById('cvBundle');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  // Base I at bottom
+  ctx.strokeStyle = '#a5b4fc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(100, 260);
+  ctx.lineTo(700, 260);
+  ctx.stroke();
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillText('I (Basis)', 720, 265);
+  
+  const basePts = [180, 300, 420, 540, 640];
+  basePts.forEach((x, i) => {
+    ctx.fillStyle = '#a5b4fc';
+    ctx.beginPath();
+    ctx.arc(x, 260, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('i' + i, x - 6, 280);
+  });
+  
+  // Fibers above each base point
+  basePts.forEach((x, i) => {
+    const fiberSize = 1 + Math.floor(Math.random() * 4);
+    for (let j = 0; j < fiberSize; j++) {
+      const y = 240 - (j + 1) * 30 - Math.random() * 10;
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      // projection line
+      ctx.strokeStyle = 'rgba(251,191,36,0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, 260);
+      ctx.stroke();
+    }
+  });
+  
+  ctx.fillStyle = '#c7d2fe';
+  ctx.font = '15px sans-serif';
+  ctx.fillText('Bündel p: A → I, Faser A_i über jedem i', 200, 40);
+  ctx.fillText('(Dies ist ein Objekt in Bn(I) = Set/I)', 220, 60);
+}
+drawBundle();
+
+// ========================================================================
+// CANVAS 9: Logic in different topoi
+// ========================================================================
+function drawLogic() {
+  const c = document.getElementById('cvLogic');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  const topos = document.getElementById('topoSelect').value;
+  
+  let values, name, LEM;
+  if (topos === 'set') {
+    values = [{name: '0 (⊥)', y: 300, color: '#4b5563'}, {name: '1 (⊤)', y: 100, color: '#fbbf24'}];
+    name = 'Set: klassische Logik';
+    LEM = 'p ∨ ¬p = ⊤  ✓ (klassisch!)';
+  } else if (topos === 'M2') {
+    values = [{name: '0 (⊥)', y: 300, color: '#4b5563'}, {name: '1 (⊤)', y: 100, color: '#fbbf24'}];
+    name = 'M₂-Set: bivalent, aber NICHT klassisch';
+    LEM = 'p ∨ ¬p ≠ ⊤ i.A.  ✗ (intuitionistisch!)';
+  } else if (topos === 'setArrow') {
+    values = [
+      {name: '⊥ (nie)', y: 320, color: '#4b5563'},
+      {name: '½ (später)', y: 200, color: '#a5b4fc'},
+      {name: '⊤ (immer)', y: 80, color: '#fbbf24'}
+    ];
+    name = 'Set→: DREI Wahrheitswerte';
+    LEM = 'p ∨ ¬p ≠ ⊤  ✗';
+  } else {
+    values = [
+      {name: '∅', y: 340, color: '#4b5563'},
+      {name: 'U₁', y: 260, color: '#a5b4fc'},
+      {name: 'U₂', y: 180, color: '#c7d2fe'},
+      {name: 'U₁ ∪ U₂', y: 120, color: '#fcd34d'},
+      {name: 'X (⊤)', y: 60, color: '#fbbf24'}
+    ];
+    name = 'Sh(ℝ): unendlich viele Wahrheitswerte (offene Mengen)';
+    LEM = 'p ∨ ¬p ≠ ⊤ (Randpunkte fehlen!)  ✗';
+  }
+  
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillText(name, 30, 30);
+  
+  ctx.strokeStyle = '#4b5563';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(400, 40);
+  ctx.lineTo(400, 360);
+  ctx.stroke();
+  
+  values.forEach(v => {
+    ctx.fillStyle = v.color;
+    ctx.beginPath();
+    ctx.arc(400, v.y, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '14px sans-serif';
+    ctx.fillText(v.name, 420, v.y + 5);
+  });
+  
+  // Connect values (poset structure)
+  for (let i = 0; i < values.length - 1; i++) {
+    ctx.strokeStyle = '#6b7280';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(400, values[i].y - 12);
+    ctx.lineTo(400, values[i+1].y + 12);
+    ctx.stroke();
+  }
+  
+  ctx.fillStyle = '#c7d2fe';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('Ω = Objekt der Wahrheitswerte', 30, 380);
+  
+  document.getElementById('logicOut').textContent = 
+    'Topos: ' + name + '\n' +
+    'Anzahl globaler Wahrheitswerte: ' + values.length + '\n' +
+    'Satz vom ausgeschlossenen Dritten: ' + LEM;
+}
+drawLogic();
+
+// ========================================================================
+// CANVAS 10: Heyting algebra on open sets
+// ========================================================================
+function drawHeytingBase() {
+  const c = document.getElementById('cvHeyting');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  // Draw R² as gray background
+  ctx.fillStyle = '#1e1e35';
+  ctx.fillRect(50, 50, 700, 320);
+  ctx.strokeStyle = '#4b5563';
+  ctx.strokeRect(50, 50, 700, 320);
+  ctx.fillStyle = '#6b7280';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('X = ℝ² (topologischer Raum)', 60, 65);
+  return ctx;
+}
+
+function heytingDemo(mode) {
+  const ctx = drawHeytingBase();
+  const c = document.getElementById('cvHeyting');
+  // U = open disc
+  const Ux = 300, Uy = 210, Ur = 100;
+  
+  ctx.globalAlpha = 0.5;
+  
+  if (mode === 'U') {
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('U (offene Kreisscheibe)', Ux - 60, Uy + 5);
+    document.getElementById('heytingOut').textContent = 
+      'U = offene Kreisscheibe.\nU ist eine offene Menge in ℝ².';
+  } else if (mode === 'negU') {
+    // ¬U = interior of complement = open exterior
+    ctx.fillStyle = '#a5b4fc';
+    ctx.fillRect(50, 50, 700, 320);
+    // "cut out" closed disc (disc plus boundary)
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur + 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    // outline U
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#a5b4fc';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('¬U = int(X \\ U) = offenes Äußere', 70, 340);
+    document.getElementById('heytingOut').textContent = 
+      '¬U = Inneres des Komplements von U.\n' +
+      'Achtung: Der RAND ∂U (Kreislinie) gehört WEDER zu U NOCH zu ¬U!';
+  } else if (mode === 'negnegU') {
+    // ¬¬U = interior of closure of U = open disc again (since U is regular open)
+    ctx.fillStyle = '#22c55e';
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#22c55e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('¬¬U = int(cl(U)) = U (hier "regulär offen")', 70, 340);
+    document.getElementById('heytingOut').textContent = 
+      '¬¬U = Inneres vom Abschluss von U.\n' +
+      'Für die offene Kreisscheibe gilt: ¬¬U = U.\n' +
+      'Aber i.A. ist ¬¬U ≠ U in Heyting-Algebren!';
+  } else if (mode === 'union') {
+    // U ∪ ¬U — everything except the boundary
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#a5b4fc';
+    ctx.fillRect(50, 50, 700, 320);
+    ctx.globalCompositeOperation = 'destination-out';
+    // Cut out an annulus (the boundary ring)
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur + 3, 0, Math.PI * 2);
+    ctx.arc(Ux, Uy, Ur - 3, 0, Math.PI * 2, true);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    // Re-fill U
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur - 3, 0, Math.PI * 2);
+    ctx.fill();
+    // Draw the missing boundary as red
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(Ux, Uy, Ur, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#ef4444';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('← Der Rand ∂U fehlt! Also U ∨ ¬U ≠ X', 420, Uy);
+    document.getElementById('heytingOut').textContent = 
+      'U ∨ ¬U = U ∪ int(X \\ U) = X \\ ∂U ≠ X\n' +
+      'Der Satz vom ausgeschlossenen Dritten SCHEITERT!\n' +
+      'Das ist der geometrische Grund für intuitionistische Logik.';
+  }
+}
+heytingDemo('U');
+
+// ========================================================================
+// CANVAS 11: Sheaves
+// ========================================================================
+function drawSheaf(mode) {
+  const c = document.getElementById('cvSheaf');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  // Base line (topological space X)
+  ctx.strokeStyle = '#a5b4fc';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(50, 320);
+  ctx.lineTo(750, 320);
+  ctx.stroke();
+  ctx.fillStyle = '#a5b4fc';
+  ctx.font = 'bold 15px sans-serif';
+  ctx.fillText('X (topologischer Raum)', 580, 355);
+  
+  // Open cover: three overlapping intervals
+  const covers = [
+    {x1: 100, x2: 340, y: 300, color: '#fbbf24', name: 'U₁'},
+    {x1: 280, x2: 520, y: 285, color: '#22c55e', name: 'U₂'},
+    {x1: 460, x2: 700, y: 300, color: '#f472b6', name: 'U₃'}
+  ];
+  
+  covers.forEach(u => {
+    ctx.strokeStyle = u.color;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(u.x1, u.y);
+    ctx.lineTo(u.x2, u.y);
+    ctx.stroke();
+    ctx.fillStyle = u.color;
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText(u.name, (u.x1 + u.x2)/2 - 10, u.y - 8);
+  });
+  
+  if (mode === 'sections') {
+    // Local sections above each U_i — draw as wobbly curves
+    covers.forEach(u => {
+      ctx.strokeStyle = u.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let x = u.x1; x <= u.x2; x += 2) {
+        const t = (x - u.x1) / (u.x2 - u.x1);
+        const y = 180 + 30 * Math.sin(t * Math.PI * 3 + (u.x1 * 0.05)) - u.x1 * 0.05;
+        if (x === u.x1) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('Lokale Schnitte s_i ∈ F(U_i)', 250, 40);
+    ctx.fillText('(z.B. stetige Funktionen auf U_i)', 260, 60);
+  } else if (mode === 'glue') {
+    // Compatible sections: they agree on overlaps → one global section
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let x = 100; x <= 700; x += 2) {
+      const t = (x - 100) / 600;
+      const y = 180 + 40 * Math.sin(t * Math.PI * 2);
+      if (x === 100) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // Projection lines to base at overlaps
+    ctx.strokeStyle = 'rgba(251,191,36,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    [280, 340, 460, 520].forEach(x => {
+      ctx.beginPath();
+      ctx.moveTo(x, 100);
+      ctx.lineTo(x, 320);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.fillText('Verklebter globaler Schnitt s ∈ F(U₁ ∪ U₂ ∪ U₃)', 180, 40);
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('Weil s_i|_{U_i ∩ U_j} = s_j|_{U_i ∩ U_j}, gibt es genau EIN globales s.', 130, 60);
+  } else if (mode === 'germ') {
+    // Draw stalks at a specific point — nested germs
+    const px = 400;
+    // Draw a stalk (vertical stack of neighborhoods shrinking)
+    for (let i = 0; i < 5; i++) {
+      const r = 60 - i * 10;
+      ctx.strokeStyle = `rgba(251,191,36,${0.3 + i * 0.15})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(px, 150, r, 20, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    // Vertical line = stalk
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(px, 100);
+    ctx.lineTo(px, 320);
+    ctx.stroke();
+    // Point on base
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(px, 320, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('x', px + 10, 335);
+    ctx.fillStyle = '#c7d2fe';
+    ctx.font = '14px sans-serif';
+    ctx.fillText('Halm F_x = colim_{U ∋ x} F(U)', 250, 40);
+    ctx.fillText('= "Keime" von Schnitten am Punkt x', 260, 60);
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('Stalk', px + 15, 150);
+  }
+}
+drawSheaf('sections');
+
+// Typeset math after everything is drawn
+if (window.MathJax) {
+  MathJax.startup?.promise?.then(() => MathJax.typesetPromise?.());
+}
+</script>
+
+</body>
+</html>
