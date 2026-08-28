@@ -70,7 +70,7 @@
 				angle:  Math.random() * Math.PI * 2,
 				phase:  Math.random() * Math.PI * 2,
 				phaseY: Math.random() * Math.PI * 2,
-				r:      1.1 + Math.random() * 1.3,
+				r:      1.4 + Math.random() * 1.6,
 				speed:  SPEED * (0.6 + Math.random() * 0.9),
 			});
 		}
@@ -198,4 +198,17 @@
 	} else {
 		init();
 	}
+
+	// Last-resort backstop: if anything else goes wrong before init
+	// runs (e.g. the script tag gets parsed late because of network
+	// hiccups), make sure we still attach once the window is fully
+	// loaded. No-op if init() already ran.
+	window.addEventListener('load', () => {
+		if (!rafId && !reduceMotion) {
+			hero = canvas.parentElement;
+			sizeToHero();
+			seed();
+			start();
+		}
+	});
 })();
