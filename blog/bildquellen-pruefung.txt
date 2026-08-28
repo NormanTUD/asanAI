@@ -45,15 +45,6 @@ Davon:
             klar lizenziert.
    Status: UNCLEAR - Lizenz der tatsächlichen Bilder nicht eindeutig.
 
-5. maschinenmensch (Zeile 2717)
-   URL: https://en.wikipedia.org/wiki/File:Maschinenmensch_in_a_screen_shot_from_the_Metropolis_film.jpg
-   Problem: Screenshots aus dem Film "Metropolis" (1927) von Fritz Lang.
-            Public Domain in den USA, aber NICHT im Heimatland (Deutschland) bis 2047.
-            Wikipedia weist explizit darauf hin: "This file will not be in the 
-            public domain in both its home country and the United States until 
-            January 1, 2047"
-   Status: PROPRIETÄR (in DE bis 2047) - In Deutschland problematisch!
-
 6. notesonlight (Zeile 1251) - PDF, kein Bild
    URL: https://upload.wikimedia.org/wikipedia/commons/9/98/Notes_of_a_course_of_nine_lectures_on_light...
    Status: Auf Commons hochgeladen, aber PDF-Dokument (kein Bild im engeren Sinne)
@@ -143,7 +134,6 @@ Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
 2. perceptronimagecables -> SOFORT ERSETZEN! Fair Use nicht für externe Nutzung
 3. perceptronimagewiring -> Lizenz des Bildes klären, ggf. anderes Foto verwenden
 4. mccullochpittsimage   -> Originalbilder direkt suchen und lizenzieren
-5. maschinenmensch       -> NICHT in DE verwenden bis 2047; Alternative suchen
 
 === METHODE ===
 =============
