@@ -116,21 +116,12 @@ But Wake-Sleep's spirit is everywhere. Self-supervised pretraining \cite{devlin2
 <div class="md">
 ### A worked picture
 
-$$
-\begin{array}{|l|c|c|}
-\hline
-\textbf{Phase} & \textbf{Clamped input} & \textbf{Optimised network} \\
-\hline
-\text{Wake} & x \sim p_{\text{data}} & \text{Generative } p(x \mid h) \text{ from } h_w \sim q(h \mid x) \\
-\hline
-\text{Sleep} & h_s \sim p(h) & \text{Recognition } q(h \mid x) \text{ from } \tilde{x} \sim p(x \mid h_s) \\
-\hline
-\end{array}
-$$
+| Phase | Clamped input | Optimised network |
+|---|---|---|
+| **Wake** | $x \sim p_{\text{data}}$ | Generative $p(x \mid h)$ from $h_w \sim q(h \mid x)$ |
+| **Sleep** | $h_s \sim p(h)$ | Recognition $q(h \mid x)$ from $\tilde{x} \sim p(x \mid h_s)$ |
 
 That is the entire algorithm. Two maximum-likelihood updates per step, one for each network, no global likelihood computed.
-
-That is the entire algorithm. And it is worth lingering on the fact that this was the state of the art in deep generative modelling roughly a quarter-century before the Transformer paper.
 </div>
 
 <div class="optional md" data-headline="The Hel(m)holtz in the name">
