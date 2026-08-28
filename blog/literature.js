@@ -3198,6 +3198,26 @@ window.bibData = {
 		publisher: "Pearson",
 		alternativetitle: "AIMA",
 	},
+	"fukushima1969relu": {
+		author: "Kunihiko Fukushima",
+		title: "Visual Feature Extraction by a Multilayered Network of Analog Threshold Elements",
+		journal: "IEEE Transactions on Systems Science and Cybernetics",
+		volume: "5",
+		number: "4",
+		pages: "322-333",
+		year: "1969",
+		doi: "10.1109/TSSC.1969.300225",
+	},
+	"waibel1987tdnn": {
+		author: "Alex Waibel",
+		title: "Phoneme Recognition Using Time-Delay Neural Networks",
+		year: "1987",
+	},
+	"zhang1988cnn": {
+		author: "Wei Zhang, Junji Tanida, Kazuyoshi Itoh, Yoshiki Ichioka",
+		title: "Shift-Invariant Pattern Recognition Neural Network and Its Optical Architecture",
+		year: "1988",
+	},
 	"weizenbaum1976computer": {
 		author: "Joseph Weizenbaum",
 		url: "https://archive.org/details/computerpowerhum0000weiz_v0i3",
