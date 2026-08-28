@@ -771,111 +771,90 @@ The deeper fact: ensembles are *the* historical recipe for winning machine-learn
 
 A summary, with the year of the foundational paper and the most common use case:
 
-$$
-\begin{array}{|l|c|c|l|}
-\hline
-\textbf{Algorithm} & \textbf{Year} & \textbf{Family} & \textbf{Canonical use} \\
-\hline
-\textit{Wake-Sleep} & 1995 & \text{Deep generative} & \text{Helmholtz machines} \\
-k\textit{-means (Lloyd)} & 1957 & \text{Clustering} & \text{Vector quantisation} \\
-k\textit{-means++} & 2007 & \text{Clustering} & \text{General clustering baseline} \\
-\text{Hierarchical (Ward)} & 1963 & \text{Clustering} & \text{Taxonomy building} \\
-\text{DBSCAN} & 1996 & \text{Clustering} & \text{Anomaly-aware clustering} \\
-\text{HDBSCAN} & 2013 & \text{Clustering} & \text{Density-based, no } \varepsilon \\
-\text{EM (GMM)} & 1977 & \text{Clustering, Bayes} & \text{Probabilistic clustering} \\
-\text{Mean shift} & 1975 & \text{Clustering} & \text{Non-parametric} \\
-\text{Spectral} & 2000 & \text{Clustering} & \text{Image segmentation} \\
-\text{Affinity propagation} & 2007 & \text{Clustering} & \text{Unknown } k \\
-\text{OPTICS} & 1999 & \text{Clustering} & \text{Hierarchy of densities} \\
-\hline
-\text{Decision tree (CART)} & 1984 & \text{Supervised} & \text{Interpretable baseline} \\
-\text{ID3/C4.5} & 1986 & \text{Supervised} & \text{Multiclass} \\
-\text{Random forest} & 2001 & \text{Supervised} & \text{Tabular SOTA (pre-2014)} \\
-\text{XGBoost} & 2016 & \text{Supervised} & \text{Tabular SOTA} \\
-\text{LightGBM} & 2017 & \text{Supervised} & \text{Large-scale tabular} \\
-\text{SVM} & 1995 & \text{Supervised} & \text{Kernel methods} \\
-k\textit{-NN} & 1967 & \text{Supervised} & \text{Non-parametric} \\
-\text{Naive Bayes} & 1961 & \text{Supervised} & \text{Text baseline} \\
-\text{Linear / logistic} & 1805/1958 & \text{Supervised} & \text{Interpretable} \\
-\hline
-\text{Metropolis–Hastings} & 1953 & \text{Bayesian} & \text{MCMC} \\
-\text{Gibbs sampling} & 1984 & \text{Bayesian} & \text{MCMC} \\
-\text{HMC/NUTS} & 1987/2014 & \text{Bayesian} & \text{Gradient MCMC} \\
-\text{VI} & 1999 & \text{Bayesian} & \text{Approximate Bayes} \\
-\text{Kalman filter} & 1960 & \text{Bayesian, time series} & \text{Linear–Gaussian state-space} \\
-\text{HMM} & 1966 & \text{Bayesian, time series} & \text{Sequence labelling} \\
-\text{Gaussian Process} & 1940s & \text{Bayesian} & \text{Small data, uncertainty} \\
-\text{Bayesian network} & 1985 & \text{Bayesian} & \text{Generative graphical model} \\
-\hline
-\text{GA} & 1975 & \text{Evolutionary} & \text{Combinatorial} \\
-\text{GP} & 1992 & \text{Evolutionary} & \text{Symbolic regression} \\
-\text{CMA-ES} & 2001 & \text{Evolutionary} & \text{Continuous black-box} \\
-\text{NEAT} & 2002 & \text{Evolutionary} & \text{Neuroevolution} \\
-\text{Bayesian optimisation} & 1978 & \text{Evolutionary} & \text{Hyperparameter search} \\
-\hline
-\text{Value/Policy iteration} & 1957/60 & \text{RL} & \text{Tabular MDP} \\
-\text{Q-learning} & 1992 & \text{RL} & \text{Off-policy TD} \\
-\text{SARSA} & 1996 & \text{RL} & \text{On-policy TD} \\
-\text{REINFORCE} & 1992 & \text{RL} & \text{Policy gradient} \\
-\text{PPO} & 2017 & \text{RL} & \text{Stable policy gradient} \\
-\text{DQN} & 2015 & \text{RL} & \text{Deep value-based} \\
-\text{AlphaZero} & 2018 & \text{RL} & \text{Self-play + MCTS} \\
-\text{MuZero} & 2020 & \text{RL} & \text{Learned latent model} \\
-\text{Inverse RL} & 2000 & \text{RL} & \text{Learn from demo} \\
-\text{UCB/Thompson} & 1933/85 & \text{Bandits} & \text{Exploration} \\
-\hline
-\text{SAT solver} & 1962 & \text{Symbolic} & \text{Boolean satisfiability} \\
-\text{SMT solver} & 1970s & \text{Symbolic} & \text{Program verification} \\
-\text{Prolog} & 1973 & \text{Symbolic} & \text{Logic programming} \\
-\text{ILP} & 1991 & \text{Symbolic} & \text{Rule learning} \\
-\text{MYCIN/R1} & 1976/82 & \text{Symbolic} & \text{Expert system} \\
-\text{Lean/Coq} & 2015/13 & \text{Symbolic} & \text{Interactive theorem proving} \\
-\hline
-\text{Matrix factorisation} & 2009 & \text{Recommender} & \text{Collaborative filtering} \\
-\text{Neural CF} & 2017 & \text{Recommender} & \text{Deep recommendation} \\
-\text{Two-tower} & 2019 & \text{Recommender} & \text{Retrieval at scale} \\
-\hline
-\text{ARIMA} & 1970 & \text{Time series} & \text{Forecasting baseline} \\
-\text{Prophet} & 2018 & \text{Time series} & \text{Business forecasting} \\
-\text{N-BEATS} & 2020 & \text{Time series} & \text{Deep univariate} \\
-\text{DeepAR} & 2017 & \text{Time series} & \text{Probabilistic forecasting} \\
-\hline
-\text{PageRank} & 1998 & \text{Graph} & \text{Web search} \\
-\text{Louvain/Leiden} & 2008/19 & \text{Graph} & \text{Community detection} \\
-\text{GCN/GraphSAGE/GAT} & 2017 & \text{Graph} & \text{Node/graph classification} \\
-\text{GIN} & 2019 & \text{Graph} & \text{Provably expressive GNN} \\
-\hline
-\text{PCA} & 1901 & \text{Dim. reduction} & \text{Linear} \\
-\text{ICA} & 1980s & \text{Dim. reduction} & \text{Blind source separation} \\
-\text{t-SNE} & 2008 & \text{Dim. reduction} & \text{Visualisation} \\
-\text{UMAP} & 2018 & \text{Dim. reduction} & \text{Visualisation, manifold} \\
-\text{Autoencoder} & 1989 & \text{Dim. reduction} & \text{Nonlinear} \\
-\hline
-\text{Spiking NN} & 1997 & \text{Neural, special} & \text{Neuromorphic hardware} \\
-\text{Reservoir} & 2001/02 & \text{Neural, special} & \text{Physical computing} \\
-\text{Capsule} & 2011/17 & \text{Neural, special} & \text{Viewpoint-equivariant} \\
-\text{Normalising flow} & 2015 & \text{Generative} & \text{Exact likelihood} \\
-\text{GAN} & 2014 & \text{Generative} & \text{Sharp samples} \\
-\text{Diffusion} & 2015/20 & \text{Generative} & \text{Image/audio generation} \\
-\hline
-\text{Persistent homology} & 2002 & \text{TDA} & \text{Shape of data} \\
-\text{Mapper} & 2007 & \text{TDA} & \text{Graph from data} \\
-\hline
-\text{Do-calculus} & 1995 & \text{Causal} & \text{Intervention} \\
-\text{Causal forest} & 2018 & \text{Causal} & \text{Heterogeneous treatment} \\
-\text{DML} & 2018 & \text{Causal} & \text{Doubly robust} \\
-\hline
-\text{Isolation Forest} & 2008 & \text{Anomaly} & \text{Tree-based anomaly} \\
-\text{LOF} & 2000 & \text{Anomaly} & \text{Density-based anomaly} \\
-\text{One-Class SVM} & 2001 & \text{Anomaly} & \text{Boundary anomaly} \\
-\hline
-\text{Information Bottleneck} & 2000 & \text{Info. theory} & \text{Compression} \\
-\text{Maximum Entropy} & 1957 & \text{Info. theory} & \text{Principled distributions} \\
-\hline
-\text{Stan/PyMC} & 2017/16 & \text{Prob. programming} & \text{Bayesian modelling} \\
-\hline
-\end{array}
-$$
+| Algorithm | Year | Family | Canonical use |
+|---|---|---|---|
+| *Wake-Sleep* | 1995 | Deep generative | Helmholtz machines |
+| *k*-means (Lloyd) | 1957 | Clustering | Vector quantisation |
+| *k*-means++ | 2007 | Clustering | General clustering baseline |
+| Hierarchical (Ward) | 1963 | Clustering | Taxonomy building |
+| DBSCAN | 1996 | Clustering | Anomaly-aware clustering |
+| HDBSCAN | 2013 | Clustering | Density-based, no ε |
+| EM (GMM) | 1977 | Clustering, Bayes | Probabilistic clustering |
+| Mean shift | 1975 | Clustering | Non-parametric |
+| Spectral | 2000 | Clustering | Image segmentation |
+| Affinity propagation | 2007 | Clustering | Unknown *k* |
+| OPTICS | 1999 | Clustering | Hierarchy of densities |
+| Decision tree (CART) | 1984 | Supervised | Interpretable baseline |
+| ID3/C4.5 | 1986 | Supervised | Multiclass |
+| Random forest | 2001 | Supervised | Tabular SOTA (pre-2014) |
+| XGBoost | 2016 | Supervised | Tabular SOTA |
+| LightGBM | 2017 | Supervised | Large-scale tabular |
+| SVM | 1995 | Supervised | Kernel methods |
+| *k*-NN | 1967 | Supervised | Non-parametric |
+| Naive Bayes | 1961 | Supervised | Text baseline |
+| Linear / logistic | 1805/1958 | Supervised | Interpretable |
+| Metropolis–Hastings | 1953 | Bayesian | MCMC |
+| Gibbs sampling | 1984 | Bayesian | MCMC |
+| HMC/NUTS | 1987/2014 | Bayesian | Gradient MCMC |
+| VI | 1999 | Bayesian | Approximate Bayes |
+| Kalman filter | 1960 | Bayesian, time series | Linear–Gaussian state-space |
+| HMM | 1966 | Bayesian, time series | Sequence labelling |
+| Gaussian Process | 1940s | Bayesian | Small data, uncertainty |
+| Bayesian network | 1985 | Bayesian | Generative graphical model |
+| GA | 1975 | Evolutionary | Combinatorial |
+| GP | 1992 | Evolutionary | Symbolic regression |
+| CMA-ES | 2001 | Evolutionary | Continuous black-box |
+| NEAT | 2002 | Evolutionary | Neuroevolution |
+| Bayesian optimisation | 1978 | Evolutionary | Hyperparameter search |
+| Value/Policy iteration | 1957/60 | RL | Tabular MDP |
+| Q-learning | 1992 | RL | Off-policy TD |
+| SARSA | 1996 | RL | On-policy TD |
+| REINFORCE | 1992 | RL | Policy gradient |
+| PPO | 2017 | RL | Stable policy gradient |
+| DQN | 2015 | RL | Deep value-based |
+| AlphaZero | 2018 | RL | Self-play + MCTS |
+| MuZero | 2020 | RL | Learned latent model |
+| Inverse RL | 2000 | RL | Learn from demo |
+| UCB/Thompson | 1933/85 | Bandits | Exploration |
+| SAT solver | 1962 | Symbolic | Boolean satisfiability |
+| SMT solver | 1970s | Symbolic | Program verification |
+| Prolog | 1973 | Symbolic | Logic programming |
+| ILP | 1991 | Symbolic | Rule learning |
+| MYCIN/R1 | 1976/82 | Symbolic | Expert system |
+| Lean/Coq | 2015/13 | Symbolic | Interactive theorem proving |
+| Matrix factorisation | 2009 | Recommender | Collaborative filtering |
+| Neural CF | 2017 | Recommender | Deep recommendation |
+| Two-tower | 2019 | Recommender | Retrieval at scale |
+| ARIMA | 1970 | Time series | Forecasting baseline |
+| Prophet | 2018 | Time series | Business forecasting |
+| N-BEATS | 2020 | Time series | Deep univariate |
+| DeepAR | 2017 | Time series | Probabilistic forecasting |
+| PageRank | 1998 | Graph | Web search |
+| Louvain/Leiden | 2008/19 | Graph | Community detection |
+| GCN/GraphSAGE/GAT | 2017 | Graph | Node/graph classification |
+| GIN | 2019 | Graph | Provably expressive GNN |
+| PCA | 1901 | Dim. reduction | Linear |
+| ICA | 1980s | Dim. reduction | Blind source separation |
+| t-SNE | 2008 | Dim. reduction | Visualisation |
+| UMAP | 2018 | Dim. reduction | Visualisation, manifold |
+| Autoencoder | 1989 | Dim. reduction | Nonlinear |
+| Spiking NN | 1997 | Neural, special | Neuromorphic hardware |
+| Reservoir | 2001/02 | Neural, special | Physical computing |
+| Capsule | 2011/17 | Neural, special | Viewpoint-equivariant |
+| Normalising flow | 2015 | Generative | Exact likelihood |
+| GAN | 2014 | Generative | Sharp samples |
+| Diffusion | 2015/20 | Generative | Image/audio generation |
+| Persistent homology | 2002 | TDA | Shape of data |
+| Mapper | 2007 | TDA | Graph from data |
+| Do-calculus | 1995 | Causal | Intervention |
+| Causal forest | 2018 | Causal | Heterogeneous treatment |
+| DML | 2018 | Causal | Doubly robust |
+| Isolation Forest | 2008 | Anomaly | Tree-based anomaly |
+| LOF | 2000 | Anomaly | Density-based anomaly |
+| One-Class SVM | 2001 | Anomaly | Boundary anomaly |
+| Information Bottleneck | 2000 | Info. theory | Compression |
+| Maximum Entropy | 1957 | Info. theory | Principled distributions |
+| Stan/PyMC | 2017/16 | Prob. programming | Bayesian modelling |
 
 More than eighty algorithms. Twenty-plus research communities. Half a dozen deep-learning paradigms. Eight classical learning paradigms that *predate* deep learning and remain competitive on the problems they were designed for.
 </div>
