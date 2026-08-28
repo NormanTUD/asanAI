@@ -348,7 +348,7 @@ The slogan is right, but it is also underselling the subject. A topos is not jus
 
 <div class="optional md" data-headline="Topos foundations: two flavors, the subobject classifier, and what every topos has">
 
-### 7.1. Two flavors of topos
+### Two flavors of topos
 
 In the literature there are two non-equivalent but closely related notions. The first is the older, more geometric one; the second is the more abstract, more algebraic one \cite{elementary_topos_wiki} \cite{nlab_topos}.
 
@@ -374,7 +374,7 @@ $$
 }
 $$
 
-### 7.2. The subobject classifier $\Omega$
+### The subobject classifier $\Omega$
 
 The subobject classifier is the single axiom that does the most work. To see why, start from the familiar case.
 
@@ -411,7 +411,7 @@ In this precise sense, $\Omega$ is *the topos's own set of truth values*, and th
 A second, slightly more conceptual reading. The subobject functor $\mathrm{Sub}: \mathcal{C}^{\mathrm{op}} \to \mathbf{Set}$ that sends each object $X$ to the set of its subobjects (up to isomorphism) is representable, and the representing object is exactly $\Omega$. So $\Omega$ is the object whose generalized elements *are* all subobjects of all objects. It is, in a slogan, "the shape of all possible shapes of sub-things". In $\mathbf{Set}$ that shape is a two-point set; in $\mathbf{Sh}(X)$ it is the lattice of open subsets; in the effective topos it is the lattice of recursively enumerable subsets of $\mathbb{N}$. The subobject classifier is the topos's own classification of the kinds of distinction it can support — which is to say, the kinds of distinction its logic is willing to recognize \cite{subobject_classifier_wiki} \cite{internal_logic_wiki}.
 </div>
 
-### 7.3. What holds in every topos
+### What holds in every topos
 
 This is the magic of the axioms. Once you have finite limits, exponentials, and a subobject classifier, almost all of ordinary mathematics becomes available *internally*. Concretely, every topos has the following structure \cite{elementary_topos_wiki} \cite{maclanemoerdijk1992} \cite{johnstone_elephant} \cite{nlab_topos}:
 
@@ -438,13 +438,13 @@ What you get for free, then, is: most of point-set topology, most of group theor
 
 <div class="optional md" data-headline="What topoi can and cannot do, and maps between them">
 
-### 7.4. What can fail
+### What can fail
 
 The interesting question is the converse: what does *not* hold in every topos? Several pieces of ordinary mathematics can fail, and the failure is informative \cite{topos_wiki} \cite{johnstone_elephant} \cite{diaconescu1975}.
 
 * **The law of excluded middle.** In a sheaf topos $\mathbf{Sh}(X)$, the subobject classifier $\Omega$ assigns to each open $U$ the set of *open subsets of $U*$. A truth value is therefore a region of the space, not a Boolean bit. The statement $p \vee \neg p$ corresponds to "every open subset of $U$ is either covered or its complement (in $U$) is covered", which is false: there are plenty of open subsets that are neither wholly covered nor wholly uncovered. The internal logic is therefore *intuitionistic*, not classical. Only the *Boolean topoi* (those for which $\Omega$ is internally $\{0, 1\}$) recover classical logic.
 * **The axiom of choice.** There are many useful variants — dependent choice, countable choice, global choice — and each can fail or hold independently in a given topos. The most striking fact here is **Diaconescu's theorem** (\citeyear{diaconescu1975}): in any topos, the axiom of choice implies the law of excluded middle \cite{diaconescu1975}. So the two principles, classically equivalent inside $\mathbf{Set}$, become strictly separated as soon as we leave $\mathbf{Set}$ behind: you can have LEM without AC (a Boolean topos can have a non-AC version); but AC without LEM is impossible — AC forces LEM.
-* **Existence of points.** A *point* of a topos $\mathcal{E}$ is a geometric morphism $p: \mathbf{Set} \to \mathcal{E}$ (see §7.5 below). Many topoi have no points at all: there is a famous example due to \cite[Pierre Deligne]{topos_wiki} of a non-trivial topos with no points, arising from sheaves on a particular (large) site. In a point-less topos there is no way to "evaluate" an object at a classical location; everything must be done internally. This is not a pathological corner case: Deligne's example is a topos of sheaves on a perfectly respectable site, and the failure of points is a feature of the topos theory of cohesion.
+* **Existence of points.** A *point* of a topos $\mathcal{E}$ is a geometric morphism $p: \mathbf{Set} \to \mathcal{E}$ (see the maps-between-topoi section below). Many topoi have no points at all: there is a famous example due to \cite[Pierre Deligne]{topos_wiki} of a non-trivial topos with no points, arising from sheaves on a particular (large) site. In a point-less topos there is no way to "evaluate" an object at a classical location; everything must be done internally. This is not a pathological corner case: Deligne's example is a topos of sheaves on a perfectly respectable site, and the failure of points is a feature of the topos theory of cohesion.
 * **Unique factorization in Boolean form.** In a non-Boolean topos, the factorization of a morphism into epi followed by mono is unique, but the Boolean-algebraic identities that classify it in $\mathbf{Set}$ (image = coimage, etc.) may fail in subtle ways.
 
 The slogan:
@@ -457,7 +457,7 @@ $$
 
 In fact the slogan is even stronger: classical mathematics as we usually practice it is *one* topos ($\mathbf{Set}$) with extra axioms. Every other topos is a different universe, with a different logic, in which different things are true.
 
-### 7.5. Maps between topoi: geometric morphisms
+### Maps between topoi: geometric morphisms
 
 What is a "map" between two topoi? Not an ordinary functor: an ordinary functor $\mathcal{E} \to \mathcal{F}$ need not preserve the structure that makes them topoi. The right notion was introduced by Grothendieck in the 1960s and is the *geometric morphism*.
 
@@ -488,7 +488,7 @@ A functor $\mathcal{E} \to \mathcal{F}$ between topoi, if it preserves the right
 
 <div class="optional md" data-headline="Space, truth, what holds where, and open questions">
 
-### 7.6. What is a "space" in a topos?
+### What is a "space" in a topos?
 
 We have used the word "space" four times in this section already, and each time we meant something slightly different. This is honest. The topos notion of "space" is genuinely multistable, and the multistability is a feature, not a bug \cite{nlab_topos}. At least five readings are alive in the literature:
 
@@ -500,7 +500,7 @@ We have used the word "space" four times in this section already, and each time 
 
 These readings are not mutually exclusive. They are five different things one can mean when one says the word "space" in a topos-theoretic context, and the same word doing five jobs at once is, in fact, the kind of structural multiplicity this chapter has been about from the start.
 
-### 7.7. What is "truth" in a topos?
+### What is "truth" in a topos?
 
 Truth in a topos is local, contextual, and non-Boolean \cite{internal_logic_wiki} \cite{heyting_algebra_wiki}.
 
@@ -514,7 +514,7 @@ The slogan is therefore: **Truth in a topos is not a bit. It is a region, a comp
 
 This is the radical move that the sheaf / topos picture makes. Once truth becomes a region, the question "is $P$ true?" stops having a yes/no answer in general, and starts having the answer "yes on $U$, no on $V$, indeterminate on the rest". The classical dichotomy is recovered as the special case where the topos is Boolean and every region is either everything or nothing.
 
-### 7.8. What "remains true in all topoi"?
+### What "remains true in all topoi"?
 
 A direct summary of what we have just learned, in the spirit of the question that motivates this section \cite{nlab_topos} \cite{maclanemoerdijk1992} \cite{johnstone_elephant} \cite{internal_logic_wiki}.
 
@@ -546,7 +546,7 @@ Things that **do not hold in every topos**, and which therefore require a choice
 * **Standard arithmetic.** Every Grothendieck topos has *some* natural numbers object, but it is not always the "standard" one of $\mathbf{Set}$. (For instance, the natural numbers object in the effective topos is the set of "computable natural numbers", and the internal arithmetic is constructive, not classical.)
 * **The axiom of replacement, the axiom of regularity, and other "size" axioms of ZFC.** These are properties of $\mathbf{Set}$ as a model of ZFC, not of topoi in general.
 
-### 7.9. Open questions a topos leaves behind
+### Open questions a topos leaves behind
 
 It is worth saying the things we do *not* know, or that remain genuinely puzzling. None of the following is a claim of this textbook; they are questions that the topos picture makes it natural to ask, and that the topos picture does not, by itself, answer \cite{nlab_topos} \cite{johnstone_elephant} \cite{internal_logic_wiki}.
 
