@@ -92,7 +92,7 @@ $$
 \Delta \theta_{\text{rec}} \;=\; \eta \cdot \nabla_{\theta_{\text{rec}}} \log q_{\theta_{\text{rec}}}(h_s \mid \tilde{x}).
 $$
 
-Here $\Delta \theta_{\text{rec}}$ is the update to the recognition weights. The gradient pushes the recognition distribution $q(\, \cdot \mid \tilde{x}\,)$ to put probability mass on the latent $h_s$ that generated $\tilde{x}$ in the first place.
+Here $\Delta \theta_{\text{rec}}$ is the update to the recognition weights, and the gradient is the standard maximum-likelihood gradient of the log-recognition-probability that the recognition network assigns to $h_s$ given $\tilde{x}$.
 
 Intuitively: *"Imagine something. Now teach the bottom-up world to recognise it when it sees it again."* This is the unsupervised direction. The gradient is again a clean maximum-likelihood update, this time on the recognition weights.
 
