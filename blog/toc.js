@@ -36,7 +36,7 @@ function toc() {
 	var s = document.createElement("style");
 	s.textContent = `
 	#toc { font-family: system-ui, sans-serif; background: #fafafa; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0; line-height: 1.3; }
-	#toc > ul { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; padding: 0; margin: 0; list-style: none; }
+	#toc > ul { display: grid; grid-template-columns: 1fr; gap: 0 20px; padding: 0; margin: 0; list-style: none; }
 	#toc ul { list-style: none; margin: 2px 0; }
 	#toc ul ul { display: none; padding-left: 12px; }
 	#toc a { text-decoration: none; color: #0044aa; font-size: 0.85em; cursor: pointer; }
@@ -72,7 +72,7 @@ function toc() {
 		var li = document.createElement("li");
 		li.className = "toc-item";
 
-		if (shouldExpandAll) {
+		if (shouldExpandAll || parentObj.level === 0) {
 			li.classList.add("expanded");
 		}
 
