@@ -117,7 +117,7 @@ If you already know topology, sheaves, category theory and HoTT well, you can sk
 </div>
 
 <div class="md">
-## 1. The first move: distinction
+## The first move: distinction
 
 <figure>
 	<img src="laws_of_form_cover.jpg" alt="Cover of Spencer-Brown's Laws of Form (1969)" style="max-width: 200px; background: white; padding: 8px;" />
@@ -144,7 +144,7 @@ What the modern formalizations buy us is a promise: once we have the move, we ca
 </div>
 
 <div class="md">
-## 2. From distinction to structure
+## From distinction to structure
 
 A set is the simplest structure that can hold distinctions. $A = \{a,b,c\}$ knows only that $a, b, c$ are inside $A$. It does not know whether $a$ is “near” $b$, or “more like” $b$ than $c$, or whether there is a path from $a$ to $c$ via $b$. A set is a thin container.
 
@@ -160,7 +160,7 @@ is one of the oldest and most useful formalizations of the idea that “relation
 </div>
 
 <div class="md">
-## 3. Locality: the decisive turn
+## Locality: the decisive turn
 
 So far everything we have said could be done with bare set theory. Topology adds the move that turns a set into a *place*, the introduction of locality without distance.
 
@@ -191,7 +191,7 @@ and refuses to give a numerical answer. Instead it gives *which sets contain* $x
 </div>
 
 <div class="md">
-## 4. The sheaf picture: local islands, glued into a continent
+## The sheaf picture: local islands, glued into a continent
 
 Once you have a topology, you can attach data to every open set. A \citetitle{sheaf_mathematics} $\mathcal{F}$ assigns to each open $U \subseteq X$ a set $\mathcal{F}(U)$, the *sections* over $U$, together with restriction maps $\mathcal{F}(U) \to \mathcal{F}(V)$ for $V \subseteq U$ \cite{sheaf_mathematics}.
 
@@ -250,7 +250,7 @@ Why does this matter for embeddings? Because an embedding space is, in spirit, a
 </div>
 
 <div class="md">
-## 5. Equality becomes coherence
+## Equality becomes coherence
 
 In a classical sheaf, two sections are equal on the overlap: $s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}$. The equality sign is the flat equality of set theory: either the two things are the same element, or they are not.
 
@@ -290,7 +290,7 @@ $$
 </div>
 
 <div class="md">
-## 6. The categorical shape of the same story
+## The categorical shape of the same story
 
 We have been speaking of “objects” and “morphisms” and “sections” without yet pinning down what a category formally is. Let's do that now, in two voices, because the answer sounds different depending on what kind of reader you are.
 
@@ -330,7 +330,7 @@ What we care about here is the higher generalization. In a 2-category, morphisms
 </div>
 
 <div class="md">
-## 7. Topoi: worlds where you can do mathematics
+## Topoi: worlds where you can do mathematics
 
 Sheaves on a fixed space $X$ form a category $\mathbf{Sh}(X)$, and this category has an extraordinary property: it behaves, in many respects, like the category of ordinary sets. You can form products, coproducts, function spaces, you can do logic inside it, you can define a notion of "element of a sheaf" that is just as comfortable as the ordinary notion of "element of a set". Categories that behave this way are called **toposes** (singular: **topos**).
 
@@ -569,7 +569,7 @@ Concretely, an embedding space is *almost* a topos. It carries data (the vectors
 </div>
 
 <div class="md">
-## 8. The phenomenology of one phenomenon
+## The phenomenology of one phenomenon
 
 So far, the story has been mathematical. The same shape, however, shows up outside mathematics, and that is the deeper reason it is worth knowing.
 
@@ -592,7 +592,7 @@ The same point, expressed categorically, is what an $\infty$-sheaf on the space 
 </div>
 
 <div class="md">
-## 9. Why this is the lens for embeddings
+## Why this is the lens for embeddings
 
 Embeddings are the place where all of the above comes together in modern AI. A tokenizer (see the <a href="tokenizerlab">Tokenization chapter</a>) hands the network a list of integers: token IDs. The next step, which the <a href="embeddinglab">Embeddings chapter</a> treats in detail, is to *place* every token at a point in a high-dimensional vector space $\mathbb{R}^d$. From that point on, every operation in the network is an operation in that space: distances, dot products, attention weights, the residual stream.
 
@@ -618,7 +618,7 @@ The idea that “space” is not a container but a structure of relations is old
 </div>
 
 <div class="md">
-## 10. The chain, revisited
+## The chain, revisited
 
 $$
 \boxed{
@@ -659,7 +659,7 @@ That is why we are spending a chapter on it. The chain is the spine of modern AI
 </div>
 
 <div class="md">
-## 11. The central sentence
+## The central sentence
 
 $$
 \boxed{
@@ -693,7 +693,7 @@ These three sentences are not theorems. They are lenses. If they are in your hea
 </div>
 
 <div class="md">
-## 12. What to carry into the Embeddings chapter
+## What to carry into the Embeddings chapter
 
 Five things. Each is restated as a checklist item, the way you might want to read it once before clicking the link to the Embeddings chapter.
 
@@ -709,7 +709,7 @@ Five things. Each is restated as a checklist item, the way you might want to rea
 
 If those five points feel obvious, you are ready. If they don't, read this chapter once more, slowly, this time, before opening the next one.
 
-## 13. The most general definition of space
+## The most general definition of space
 
 Everything in this chapter has been, quietly, a definition. Not a definition of a particular space (Euclidean, Riemannian, topological, metric, Hilbert) but a definition of what it *takes* for something to deserve the name "space" at all. Read the chain one last time and notice what it does not require: no distance, no dimension, no coordinates, no container, no ambient background, no points that pre-exist their relations. What it *does* require is only three things: that there be distinctions, that those distinctions carry a notion of locality (a "near" without a number), and that the local pieces be coherent enough on their overlaps to be glued into something invariant. Anything satisfying these three conditions is, in the sense we have been building, a space. In one line: **A space is a structure in which distinguishable local data cohere, on their overlaps, into an invariant global whole**.
 
