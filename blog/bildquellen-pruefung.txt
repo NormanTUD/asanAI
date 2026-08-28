@@ -13,15 +13,6 @@ Davon:
 === ⚠ PROPRIETÄRE / KRITISCHE BILDER (NICHT OHNE WEITERES NUTZBAR) ===
 ========================================================================
 
-2. perceptronimagecables (Zeile 2957)
-   URL: https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg
-   Problem: Das Mark I Perceptron Foto ist auf der englischen Wikipedia nur 
-            unter FAIR USE lizenziert. Originalfoto vom Cornell Aeronautical 
-            Laboratory, vermutlich urheberrechtlich geschützt.
-            Die Lizenzseite sagt explizit: "Any other uses of this image, on 
-            Wikipedia or elsewhere, may be copyright infringement."
-   Status: PROPRIETÄR (Fair Use only auf Wikipedia) - NICHT frei wiederverwendbar!
-
 3. perceptronimagewiring (Zeile 2968)
    URL: https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html
    Problem: Die Vorlesungsnotizen selbst sind CC-BY-SA 4.0 lizenziert, ABER das 
@@ -123,7 +114,6 @@ CC-BY-SA / CC-BY / CC0 (Creative Commons - mit Namensnennung nutzbar):
 
 Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
 
-2. perceptronimagecables -> SOFORT ERSETZEN! Fair Use nicht für externe Nutzung
 3. perceptronimagewiring -> Lizenz des Bildes klären, ggf. anderes Foto verwenden
 4. mccullochpittsimage   -> Originalbilder direkt suchen und lizenzieren
 
