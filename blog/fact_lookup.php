@@ -327,4 +327,3 @@ Five things, restated as a checklist.
 
 If those five points are in your head, you understand roughly as much about fact retrieval in LLMs as any working researcher in 2026. The remaining open questions are deep, but the parts we *do* know are now formally grounded, experimentally tested, and converging on a coherent picture.
 </div>
-</div>
