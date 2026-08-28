@@ -3267,6 +3267,48 @@ window.bibData = {
 		title: "On Nature",
 		url: "https://en.wikisource.org/wiki/Fragments_of_Heraclitus",
 	},
+	"parmenides480fragments": {
+		author: "Parmenides",
+		year: "c. 480 BCE",
+		title: "On Nature",
+		url: "https://en.wikisource.org/wiki/Early_Greek_Philosophy/Parmenides_of_Elea",
+	},
+	"anaxagoras450fragments": {
+		author: "Anaxagoras",
+		year: "c. 450 BCE",
+		title: "Fragments",
+		url: "https://en.wikisource.org/wiki/Early_Greek_Philosophy/Anaxagoras_of_Klazomenai",
+	},
+	"laozi400taoteching": {
+		author: "Laozi",
+		year: "c. 400 BCE",
+		title: "Tao Te Ching",
+		url: "https://www.gutenberg.org/ebooks/216",
+	},
+	"plotinus250enneads": {
+		author: "Plotinus",
+		year: "c. 270 CE",
+		title: "The Enneads",
+		url: "https://en.wikisource.org/wiki/Enneads_(Mackenna)",
+	},
+	"nagarjuna150mmk": {
+		author: "Nagarjuna",
+		year: "c. 150 CE",
+		title: "Mulamadhyamakakarika (Fundamental Verses of the Middle Way)",
+		url: "https://plato.stanford.edu/entries/nagarjuna/",
+	},
+	"cusanus1440docta": {
+		author: "Nicholas of Cusa",
+		year: 1440,
+		title: "De Docta Ignorantia (On Learned Ignorance)",
+		url: "https://plato.stanford.edu/entries/cusanus/",
+	},
+	"spinoza1677ethics": {
+		author: "Benedictus de Spinoza",
+		year: 1677,
+		title: "Ethica Ordine Geometrico Demonstrata (Ethics)",
+		url: "https://www.gutenberg.org/ebooks/3800",
+	},
 	"nietzsche1883zarathustra": {
 		author: "Friedrich Nietzsche",
 		year: "1883",
@@ -5141,6 +5183,13 @@ window.bibData = {
 		author: "Aristotle",
 		year: -340,
 		alternativetitle: "Aristotle, Nicomachean Ethics"
+	},
+	"aristotle_metaphysics": {
+		url: "https://plato.stanford.edu/entries/aristotle-metaphysics/",
+		title: "Metaphysics",
+		author: "Aristotle",
+		year: -350,
+		alternativetitle: "Aristotle, Metaphysics"
 	},
 	"hume_treatise": {
 		url: "https://www.gutenberg.org/ebooks/9665",

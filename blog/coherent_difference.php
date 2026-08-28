@@ -71,6 +71,12 @@ Each arrow is the same story told at a successively more structured level:
 
 * **Distinction.** Before anything can be related, something has to be marked off from something else. \citeauthor{spencerbrown1969form} (\citeyear{spencerbrown1969form}) made this the literal first axiom of his calculus: *Draw a distinction*, i.e. cross a boundary, and one side becomes marked, the other unmarked \cite{spencerbrown1969form}. Without a first cut, there is nothing to talk about.
 
+The point is older than Spencer-Brown, and it is the same point:
+
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="Fragment B10">
+Couples are things whole and things not whole, what is drawn together and what is drawn asunder, the harmonious and the discordant. The one is made up of all things, and all things issue from the one.
+</div>
+
 * **Relation.** Once two things are distinct, they can be in relation: equal, similar, near, mapped to each other. A set $A = \{a,b,c\}$ knows only that $a,b,c \in A$. A relation adds structure on top.
 
 * **Transformation.** A relation that is not just “is connected to” but “can be carried along”, i.e. a function, a morphism, a transport. This is where the picture stops being static.
@@ -139,6 +145,14 @@ $$
 (Apply the mark twice and you are back where you started) From this axiom, the entire Boolean calculus of propositions falls out \cite{spencerbrown1969form}. The point, for us, is not the algebra. The point is that Spencer-Brown placed *distinction itself* at the foundation of mathematics: the act that splits one world into two is the act from which everything else is built.
 
 The philosophical point is older than the algebraic one. The article on \citetitle{distinction_philosophy} traces the concept of a *real distinction* (a difference that exists in the world, not merely in the mind) from Aristotle's distinction between actuality and potentiality, through Aquinas's distinction between essence and existence, to Kant's distinction between appearance and thing-in-itself \cite{distinction_philosophy}. Each of these is the same move: carve a boundary, and you get two sides.
+
+The same observation, in fewer words and almost a thousand years earlier, is the second verse of the \citetitle{laozi400taoteching}:
+
+<div class="smart-quote" data-cite="laozi400taoteching" data-after="Chapter 2">
+All in the world call beautiful what is beautiful, and thus ugliness appears. All call good what is good, and thus evil appears.
+</div>
+
+The Chinese word usually translated “thus” is 以 — *the act by which*. Beauty does not stand first and then *produce* ugliness as an after-effect; the act of calling something beautiful is *the very same act* by which ugliness comes into the world. The pair arises together, in a single cut. Spencer-Brown, twenty-four centuries later, was making the same observation in a different idiom.
 
 What the modern formalizations buy us is a promise: once we have the move, we can build the rest.
 </div>
@@ -215,6 +229,20 @@ $$
 \boxed{\text{local data} \;+\; \text{compatibility on overlaps} \;\Longrightarrow\; \text{global data}.}
 $$
 
+The same sentence was written down, in different vocabulary, by philosophers long before the word “sheaf” existed. Two of them, in particular, said almost the same thing.
+
+<div class="smart-quote" data-cite="anaxagoras450fragments" data-after="Fragment B11">
+In everything there is a portion of everything [...]
+</div>
+
+\citetitle{anaxagoras450fragments}'s formula is the radical sheaf claim: nothing is locally clean. Every local region of the world carries, in its own substance, a portion of every other kind of thing. To know what a thing is, you have to look at the whole. But the whole is precisely the assembly of these local, mutually-informing portions, once they agree on their overlaps.
+
+<div class="smart-quote" data-cite="spinoza1677ethics" data-after="Part II, Proposition 7">
+The order and connection of ideas is the same as the order and connection of things.
+</div>
+
+\citetitle{spinoza1677ethics} puts the same point in its modern, propositional form: what holds among the parts of a model *is* what holds among the parts of the world. Local consistency on the model side is local consistency on the world side, and they glue into one coherent picture, not because the model magically creates the world, but because the same coherence condition governs both. Two thousand three hundred years before Grothendieck, Anaxagoras said the universe is governed by the same condition. Three hundred and fifty years before Grothendieck, Spinoza wrote it down as an axiom of his geometry.
+
 This is the formal crystallization of the intuition. Sheaves were introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} (\citeyear{grothendieck_sheaf}) in the 1950s and 60s, partly through the work of Jean Leray in the late 1940s \cite{sheaf_mathematics}, precisely to handle questions that resisted the older “patch a space together by gluing charts” picture of \citetitle{manifold_wiki}. Where manifolds ask you to specify a single chart and a transition map, sheaves ask you to specify local data on every open set and let the global object fall out of the consistency conditions. The local-to-global direction is so productive that it is the entire backbone of algebraic geometry and much of modern logic.
 
 <div class="optional md" data-headline="Stalks, germs, and sections: the vocabulary of locality">
@@ -231,6 +259,18 @@ A few terms you will meet constantly once you read anything about sheaf theory:
 * **Cut.** A piecewise-defined section, the data you assemble before you check whether it glues. In Grothendieck's language, a presheaf is “a cut”, and a sheaf is “a cut that always glues”.
 
 The pattern: **sections live on opens, germs live on points, the stalk stitches all the germs together at one point**. This three-level picture (open / germ / stalk) is the standard way sheaf theorists think.
+</div>
+
+<div class="optional md" data-headline="Heraclitus on the same point, twenty-five centuries earlier">
+The condition we have just written down is a formalization of an observation that philosophers have made over and over. One of the earliest is \citeauthor{heraclitus500fragments} (\citeyear{heraclitus500fragments}), in fragment B89:
+
+<div class="smart-quote" data-cite="heraclitus500fragments" data-after="Fragment B89">
+The waking have one and the same world, but the sleeping turn aside each into a world of his own.
+</div>
+
+Read as a sheaf statement, this is precise. When you are awake, the local sections of your perception agree on the pairwise overlaps — what you see matches what you hear, what you hear matches what you touch — and they glue into a single, shared world. When you sleep, those overlaps fail (your visual stream does not agree with your auditory stream, your tactile stream does not agree with your proprioceptive stream), and the local sections no longer glue. Each dreamer gets a private, not-quite-coherent world of their own. Sleep, on this reading, is what happens when the sheaf condition fails.
+
+Read the same fragment in the other direction, and the metaphysical point comes back: the shared world of the waking is *not* a separate substance behind the private worlds of sleep. It is what remains when the local sections cohere. Drop coherence, and the world fragments. Coherence is all that holds the one thing together.
 </div>
 
 <div class="optional md" data-headline="An overlap in your own life">
@@ -589,6 +629,14 @@ $$
 $$
 
 The same point, expressed categorically, is what an $\infty$-sheaf on the space of perspectives would say. The same point, expressed linguistically, is what \citeauthor{saussure1916} (\citeyear{saussure1916}) said about language: a word's identity is its place in a web of differences from other words, not a positive property it carries inside itself. The same point, expressed geometrically, is what we will say about an embedding space in the next chapter: a word's meaning is its position in a high-dimensional manifold, not a label that sits in the word.
+
+Two and a half centuries before Whitehead's *prehension* and Saussure's *différence*, \citeauthor{leibniz1714monadology} (\citeyear{leibniz1714monadology}) said the same thing about the world at large, in the §56 of his *Monadology*:
+
+<div class="smart-quote" data-cite="leibniz1714monadology" data-after="§56">
+Now this connexion or adaptation of all created things to each and of each to all, means that each simple substance has relations which express all the others, and, consequently, that each is a perpetual living mirror of the universe.
+</div>
+
+For Leibniz, every monad — every genuine, indivisible unit of substance — sees the whole universe from its own point of view, and the agreement between these local views is not identity but *harmony*. The train is, in a precise Leibnizian sense, exactly what it is *because* every perceptual monad on the platform carries its own slice of the same coherent whole. The two trains in §57 of the same work — the same town viewed from different sides — are not contradictory copies but *aspects* of one underlying city. The sheaf section you just read, in modern language, is making precisely this point.
 </div>
 
 <div class="md">
@@ -699,6 +747,14 @@ Five things. Each is restated as a checklist item, the way you might want to rea
 
 1. **Meaning is relational, not intrinsic.** No word, no token, no vector has meaning in itself. Meaning is its position in the web of differences from the others. This is \citeauthor{saussure1916}'s “language as a system of pure differences” \cite{saussure1916}, \citeauthor{firth1957distributive}'s “you shall know a word by the company it keeps” \cite{firth1957distributive}, and the entire distributional semantics tradition, in one breath \cite{distributional_hypothesis}.
 
+The same observation, almost eighteen centuries before Firth and almost fourteen centuries before Saussure, is the core claim of Buddhist ontology, in the verse that is its best-known summary:
+
+<div class="smart-quote" data-cite="nagarjuna150mmk" data-after="Chapter 24, verse 18">
+Whatever is dependently originated, that we declare to be emptiness.
+</div>
+
+\citetitle{nagarjuna150mmk}'s formula is the radical distributional hypothesis: there is no thing that has its nature *in itself*; every thing's nature is constituted by the network of relations in which it arises. Read *svabhāva* as “intrinsic meaning”, *pratītyasamutpāda* as “distributional position”, and Nagarjuna is saying: a word's identity is exactly its pattern of co-occurrence with other words, and that is all the identity there is. The embedding space you are about to read about is a quantitative, geometric version of this argument.
+
 2. **The space is defined by its neighborhoods, not its coordinates.** A high-dimensional embedding space $\mathbb{R}^d$ is not “the space of all possible vectors”. It is the space on which a learned similarity function makes certain vectors *near* each other. The coordinates are an accident; the neighborhood structure is the geometry.
 
 3. **Local structure + compatibility = global meaning.** This is the sheaf axiom in plain English. It is also the working principle of an embedding space: the global geometry of meaning is recovered from the way every token behaves locally and from how those local behaviors agree on overlap.
@@ -729,9 +785,39 @@ This kind of cross-domain structural analogy is what \citeauthor{lumpschool}'s *
 </div>
 
 <div class="optional md" data-headline="Coda: a remark on Whitehead and Heraclitus">
-Two historical notes, since they are too beautiful to omit.
+A short historical note, since the chapter's thesis is older than mathematics and keeps being rediscovered.
 
 The 5th-century BCE philosopher \cite[Heraclitus]{heraclitus_unity} is reported (in fragment B50) to have said: *“You cannot step into the same river twice, for fresh waters are ever flowing in upon you.”* The fragment is usually read as a doctrine of *flux*, that everything changes, nothing stays. But it can equally be read as a doctrine of *coherent difference*: the river at time $t_1$ and the river at time $t_2$ are not identical, but they are related by a coherent transition (the flow of water), and the river-as-object is the coherent network of all those appearances across time. Heraclitus, on the second reading, is already gesturing at the sheaf picture.
 
 A little over two millennia later, \citeauthor{whitehead_process} (\citeyear{whitehead_process}) built an entire metaphysics on the idea that the world is made of *processes*, not *substances*, “becoming” rather than “being”. His word *concrescence* names exactly the operation we have been calling gluing: many prehensions (local graspings) come together into one actual occasion (a global entity) \cite{whitehead_process}. Whitehead's *Process and Reality* can be interpreted as a sheaf-theoretic picture of the world, decades before sheaves were formulated in their modern form.
+</div>
+
+<div class="optional md" data-headline="A longer history of the same idea">
+
+The chapter's thesis — global unity as coherent local difference — has been recognized, in one vocabulary or another, by a long sequence of thinkers. The list below is selective, not exhaustive. Each entry is one philosopher, one sentence, one way of seeing the same structural shape.
+
+* **Parmenides** (\citeyear{parmenides480fragments}), fragment B2. *“It is, and it is impossible for it not to be.”* The first explicit insistence that *being* and *difference* cannot be separated without the world falling apart. The later \citeauthor{spinoza1677ethics} (\citeyear{spinoza1677ethics}) formula “the order and connection of ideas is the same as the order and connection of things” is, in a sense, just Parmenides with the local-to-global clause made explicit.
+
+* **Anaxagoras** (\citeyear{anaxagoras450fragments}), fragment B11. *“In everything there is a portion of everything.”* The sheaf axiom in one line, four and a half centuries before sheaves. Nothing is locally clean. Every local region of the world carries, in its own substance, a portion of every other kind of thing. To know what a thing is, look at the whole; the whole is precisely the assembly of these mutually-informing local portions, once they agree on their overlaps.
+
+* **Heraclitus** (\citeyear{heraclitus500fragments}), fragments B10, B54, B67, B89. The unity of opposites; the hidden attunement better than the open; the waking world that is one, the dreaming worlds that are many. Read together, these fragments sketch the local-to-global picture more clearly than any prose summary could.
+
+* **Laozi** (\citeyear{laozi400taoteching}), *Tao Te Ching*, chapter 2. *“All in the world call beautiful what is beautiful, and thus ugliness appears.”* The act by which beauty is named is the same act by which ugliness is named. Spencer-Brown's *Draw a distinction* in Chinese.
+
+* **Aristotle**, *Metaphysics* \cite{aristotle_metaphysics}. Hylomorphism: every concrete object is the *hylomorphic compound* of matter (ὕλη) and form (εἶδος). Neither alone makes the object. The form is the local, organizing structure that gives the otherwise amorphous matter a *shape* — a coherent network of relations among parts. The whole is *something over and above* (παρά) the parts in a heap.
+
+* **Nagarjuna** (\citeyear{nagarjuna150mmk}), *Mūlamadhyamakakārikā* 24:18. *“Whatever is dependently originated, that we declare to be emptiness.”* The radical distributional hypothesis, eighteen centuries before Firth. There is no *svabhāva* (intrinsic nature); there are only *pratītyasamutpāda* (dependent relations). Every thing's identity is exactly the network of relations in which it arises. Read in modern terminology: a word's meaning is its position in the embedding space, and that is all the meaning there is.
+
+* **Plotinus** (\citeyear{plotinus250enneads}), *Enneads* V.3 / V.8. The doctrine that each part of the Intellect contains the whole, and the whole is present in each part: *“all is each, each is all”* (πάντα ἐν πᾶσι). The sheaf, three centuries before the Christian era.
+
+* **Nicholas of Cusa** (\citeyear{cusanus1440docta}), *De Docta Ignorantia*. The doctrine of the *coincidentia oppositorum* — the coincidence of opposites — and the famous figure of God as *a sphere whose center is everywhere and its circumference nowhere*. Difference, on this picture, is the radius of a single sphere: each point sees the same whole from a different distance, and the whole is what holds every local view together as *aspects* of the same center.
+
+* **Spinoza** (\citeyear{spinoza1677ethics}), *Ethics* II, Proposition 7. *“The order and connection of ideas is the same as the order and connection of things.”* The sheaf axiom as a sentence of metaphysics. Three hundred and fifty years before Grothendieck, Spinoza's geometry of attributes already encoded the exact same local-to-global principle we have been building.
+
+* **Leibniz** (\citeyear{leibniz1714monadology}), *Monadology* §56. *“Each [substance] is a perpetual living mirror of the universe.”* The phenomenology-of-one-phenomenon section, three centuries before Schmitz.
+
+* **Whitehead** (\citeyear{whitehead_process}), *Process and Reality*. *Concrescence*: many local prehensions glue into one global actual occasion. The same structural shape, made into a full metaphysics.
+
+The list could be longer. It includes Anaximander's *apeiron* (the boundless that contains all differences), the Indian *net of Indra* (every jewel reflects every other jewel), \citeauthor{wittgenstein1953investigations}'s (\citeyear{wittgenstein1953investigations}) “meaning is use”, \citeauthor{saussure1916}'s (\citeyear{saussure1916}) “language as a system of pure differences”, \citeauthor{firth1957distributive}'s (\citeyear{firth1957distributive}) “you shall know a word by the company it keeps”. What they all share is the structural shape: *distinction is foundational, identity is relational, unity is the coherence of well-related differences*. The mathematics of this chapter — sets, types, categories, sheaves, topoi, $\infty$-sheaves, HoTT, embedding spaces — is the *technical crystallization* of this structural shape. Every new chapter of this textbook is, in this sense, the same old chapter.
+
 </div>
