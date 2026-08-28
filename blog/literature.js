@@ -2434,6 +2434,36 @@ window.bibData = {
 		pages: "62-65",
 		url: "https://doi.org/10.1109/MAHC.2026.3686038"
 	},
+	"lindquist2026weirdai": {
+		author: "Benjamin Lindquist",
+		title: "Weird A.I.",
+		year: 2026,
+		journal: "IEEE Annals of the History of Computing",
+		volume: "48",
+		number: "1",
+		pages: "66-72",
+		url: "https://doi.org/10.1109/MAHC.2026.3658244"
+	},
+	"lane2025eliza": {
+		author: "Rupert Lane, Anthony Hay, Arthur Schwarz, David M. Berry, Jeff Shrager",
+		title: "ELIZA Reanimated: Restoring the Mother of All Chatbots to One of the World's First Time-Sharing Systems",
+		year: 2025,
+		journal: "IEEE Annals of the History of Computing",
+		volume: "47",
+		number: "2",
+		pages: "68-76",
+		url: "https://doi.org/10.1109/MAHC.2025.3564095"
+	},
+	"poirier2025neat": {
+		author: "Lindsay Poirier",
+		title: "Neat Versus Scruffy: How Early AI Researchers Classified Epistemic Cultures of Knowledge Representation",
+		year: 2025,
+		journal: "IEEE Annals of the History of Computing",
+		volume: "47",
+		number: "2",
+		pages: "6-17",
+		url: "https://doi.org/10.1109/MAHC.2024.3498692"
+	},
 	"oxfordetymology": {
 		url: "https://archive.org/details/oxforddictionary0000unse_c3e9",
 		year: 1966,
