@@ -7819,5 +7819,20 @@ window.bibData = {
 		year: 2017,
 		url: "https://arxiv.org/abs/1703.00810",
 		alternativetitle: "Information Bottleneck in DNNs"
+	},
+
+	"pearl1995book": {
+		title: "Biometrika article on Causal Diagrams (Pearl's seminal causal inference paper)",
+		author: "Judea Pearl",
+		year: 1995,
+		url: "https://www.cs.columbia.edu/graphics/courses/cmsc_290i-2023/papers/Pearl_Causality.pdf",
+		alternativetitle: "Pearl 1995 (causal diagrams)"
+	},
+	"freund1997boosting": {
+		title: "A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting",
+		author: "Yoav Freund, Robert E. Schapire",
+		year: 1997,
+		url: "https://www.cse.ucsd.edu/~yfreund/papers/boosting.pdf",
+		alternativetitle: "AdaBoost"
 	}
 };
