@@ -628,50 +628,11 @@ function render_topics_toggle(): void {
 	echo '</button>';
 }
 
-function render_constellation(int $seed = 42): void {
-	// Deterministic pseudo-random nodes & edges for the hero background.
-	mt_srand($seed);
-	$nodes = [];
-	for ($i = 0; $i < 34; $i++) {
-		$nodes[] = [
-			'x' => mt_rand(20, 1180),
-			'y' => mt_rand(20, 380),
-			'r' => mt_rand(14, 30) / 10,
-			'd' => mt_rand(0, 5000) / 1000,
-		];
-	}
-	$lines = [];
-	$count = count($nodes);
-	for ($i = 0; $i < $count; $i++) {
-		for ($j = $i + 1; $j < $count; $j++) {
-			$dx = $nodes[$i]['x'] - $nodes[$j]['x'];
-			$dy = $nodes[$i]['y'] - $nodes[$j]['y'];
-			$dist = sqrt($dx * $dx + $dy * $dy);
-			if ($dist < 215) {
-				$lines[] = [
-					'a' => $i,
-					'b' => $j,
-					'd' => mt_rand(0, 6000) / 1000,
-				];
-			}
-		}
-	}
-	echo '<svg class="constellation" viewBox="0 0 1200 400" '
-		. 'preserveAspectRatio="xMidYMid slice" aria-hidden="true">';
-	foreach ($lines as $line) {
-		$a = $nodes[$line['a']];
-		$b = $nodes[$line['b']];
-		echo '<line class="cn-line cn-line-flow"'
-			. ' x1="' . $a['x'] . '" y1="' . $a['y'] . '"'
-			. ' x2="' . $b['x'] . '" y2="' . $b['y'] . '"'
-			. ' style="animation-delay:' . $line['d'] . 's"/>';
-	}
-	foreach ($nodes as $node) {
-		echo '<circle class="cn-node"'
-			. ' cx="' . $node['x'] . '" cy="' . $node['y'] . '"'
-			. ' r="' . $node['r'] . '"'
-			. ' style="animation-delay:' . $node['d'] . 's"/>';
-	}
-	echo '</svg>';
+function render_constellation(): void {
+	// Canvas-based hero decoration: organic-network.js paints a slowly
+	// drifting graph of nodes & edges directly onto this canvas. It
+	// self-sizes to the .course-hero and self-fades when scrolled past.
+	echo '<canvas class="organic-network" aria-hidden="true"></canvas>';
+	js("organic-network");
 }
 ?>

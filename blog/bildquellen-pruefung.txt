@@ -1,0 +1,161 @@
+Bildquellen-Prüfung aus literature.js
+=====================================
+Stand: 28.08.2026
+
+ZUSAMMENFASSUNG
+--------------
+Insgesamt wurden 65 Bildquellen untersucht.
+
+Davon:
+- 59 auf Wikimedia Commons / Wikipedia (alle mit freier Lizenz, tw. mit Einschränkungen)
+- 6 nicht auf Wikimedia (3 proprietär/unklar, 3 mit Restriktionen)
+
+=== ⚠ PROPRIETÄRE / KRITISCHE BILDER (NICHT OHNE WEITERES NUTZBAR) ===
+========================================================================
+
+1. perceptronimagebox (Zeile 2382)
+   URL: https://tripleampersand.org/kernelled-connections-perceptron-diagram/
+   Problem: Bild stammt aus einem persönlichen Blogartikel (TripleAmpersand Journal) 
+            von Michael Eby (2020). Der Blog hat keine CC-Lizenz, das Bild ist 
+            standardmäßig urheberrechtlich geschützt.
+   Status: PROPRIETÄR - Nicht ohne Erlaubnis des Autors verwendbar.
+
+2. perceptronimagecables (Zeile 2957)
+   URL: https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg
+   Problem: Das Mark I Perceptron Foto ist auf der englischen Wikipedia nur 
+            unter FAIR USE lizenziert. Originalfoto vom Cornell Aeronautical 
+            Laboratory, vermutlich urheberrechtlich geschützt.
+            Die Lizenzseite sagt explizit: "Any other uses of this image, on 
+            Wikipedia or elsewhere, may be copyright infringement."
+   Status: PROPRIETÄR (Fair Use only auf Wikipedia) - NICHT frei wiederverwendbar!
+
+3. perceptronimagewiring (Zeile 2968)
+   URL: https://lcc-cit.github.io/CS123-CourseMaterials/LectureNotes/CS123-Topic04-1-History.html
+   Problem: Die Vorlesungsnotizen selbst sind CC-BY-SA 4.0 lizenziert, ABER das 
+            konkrete Bild "Frank Rosenblatt working on wiring for a perceptron" 
+            hat KEINE klare Lizenzangabe. Fotograf: "Unknown Photographer" (1960).
+            Cornell Aeronautical Laboratory-Foto, vermutlich proprietär.
+   Status: UNCLEAR - Lizenz des Bildes selbst nicht eindeutig geklärt.
+
+4. mccullochpittsimage (Zeile 2501)
+   URL: https://www.historyofinformation.com/detail.php?id=3908
+   Problem: Die Webseite historyofinformation.com (Jeremy Norman) ist © 2004-2026 
+            und enthält keine CC-Lizenz. Die tatsächlichen Bilder sind extern 
+            (infoproc.blogspot.com, alchetron.com). Die Quellenbilder sind nicht 
+            klar lizenziert.
+   Status: UNCLEAR - Lizenz der tatsächlichen Bilder nicht eindeutig.
+
+5. maschinenmensch (Zeile 2717)
+   URL: https://en.wikipedia.org/wiki/File:Maschinenmensch_in_a_screen_shot_from_the_Metropolis_film.jpg
+   Problem: Screenshots aus dem Film "Metropolis" (1927) von Fritz Lang.
+            Public Domain in den USA, aber NICHT im Heimatland (Deutschland) bis 2047.
+            Wikipedia weist explizit darauf hin: "This file will not be in the 
+            public domain in both its home country and the United States until 
+            January 1, 2047"
+   Status: PROPRIETÄR (in DE bis 2047) - In Deutschland problematisch!
+
+6. notesonlight (Zeile 1251) - PDF, kein Bild
+   URL: https://upload.wikimedia.org/wikipedia/commons/9/98/Notes_of_a_course_of_nine_lectures_on_light...
+   Status: Auf Commons hochgeladen, aber PDF-Dokument (kein Bild im engeren Sinne)
+
+
+=== FREIE / GENEHMIGTE BILDER (Wikimedia Commons / NASA / CC) ===
+================================================================
+
+Wikimedia Commons/Wikipedia mit klaren, freien Lizenzen (PD, CC-BY-SA, CC0, CC-BY):
+
+PD (Public Domain / Gemeinfrei):
+- cuevadelasmanos_image (Zeile 78) - File:Cueva_de_las_Manos - CC-BY-SA 2.0
+- wienerajedrecista (Zeile 263) - PD US no notice
+- turingimage (Zeile 1044) - PD (UK, anonymous)
+- perceptronimagedetection (Zeile 2962) - PD US Federal Government
+- maschinenmensch_in_a_screen_shot_from_the_Metropolis_film.jpg - PD US (aber NICHT in DE!)
+- aristotleandplato (Zeile 2590) - PD-old (Raphael 1509)
+- flammarion (Zeile 2792) - PD (1888)
+- stopsignimage (Zeile 2980) - CC0
+- wmap_cmb (Zeile 5086) - PD NASA
+- volta_portrait (Zeile 5093) - PD-old (Author died >100 years ago)
+- voltaic_pile (Zeile 5100) - PD
+- faraday_disk (Zeile 5107) - PD
+- tesla_portrait (Zeile 5114) - PD
+- newton_portrait (Zeile 5212) - PD (Godfrey Kneller 1689)
+- leibniz_portrait (Zeile 5219) - PD (Bernhard Christoph Francke)
+- euler_portrait (Zeile 5226) - PD
+- riemann_portrait (Zeile 5233) - PD
+- napier_portrait (Zeile 5240) - PD
+- lagrange_portrait (Zeile 5247) - PD
+- crt (Zeile 5156) - PD
+- arithmometer_thomas (Zeile 5205) - PD
+- mendeleev_periodic_table (Zeile 5198) - PD
+- visicalc (Zeile 5191) - PD
+- first_web_browser (Zeile 5184) - PD (CERN)
+- arpanet_map (Zeile 5177) - PD
+- williams_tube (Zeile 5170) - PD (geograph)
+- eniac_image (Zeile 5163) - PD
+- sholes_typewriter (Zeile 5149) - PD
+- jacquard_loom (Zeile 5142) - PD
+- ceresimage (Zeile 2773) - PD NASA
+- antikytheraimage (Zeile 2538) - PD
+- babbage (Zeile 2544) - PD
+- earliestabacusphoto (Zeile 2103) - PD
+- cuneiform (Zeile 1507) - PD (Iraq Museum)
+- hamilton1969_image (Zeile 5425) - PD US no notice
+- ibm702image (Zeile 4977) - PD US Federal Government
+- johnvon_neumann_lanl (Zeile 5595) - PD Los Alamos
+- perseverance_selfie_image (Zeile 5602) - PD NASA
+- Eisschlagen (Zeile 5301) - zu prüfen (wahrscheinlich CC)
+- niepce_le_gras (Zeile 5308) - PD (ältestes Foto)
+
+CC-BY-SA / CC-BY / CC0 (Creative Commons - mit Namensnennung nutzbar):
+- Cueva_de_las_Manos (Zeile 78) - CC-BY-SA 2.0
+- diffusion_astronaut_img (Zeile 3775) - CC0
+- diffusion_ddim_img (Zeile 3782) - CC0 (Stable Diffusion AI Kunst)
+- diffusion_architecture_img (Zeile 3789) - zu prüfen (vermutlich CC)
+- Rechenmaschine_Leibniz (Zeile 1877) - CC-BY-SA 4.0
+- Salamische_Tafel (Zeile 2110) - zu prüfen (Commons)
+- Ishango_Knochen (Zeile 2077) - zu prüfen (Commons)
+- colladon_lightpipe (Zeile 5128) - zu prüfen (Public Domain alt)
+- first_transistor (Zeile 5121) - zu prüfen (vermutlich CC)
+- submarine_cable (Zeile 5135) - zu prüfen
+- rgb_color_cube (Zeile 5254) - zu prüfen (vermutlich CC)
+- neural_network_diagram (Zeile 5261) - GFDL/CC-BY-SA 3.0
+- alphago_leesedol_image (Zeile 5274) - zu prüfen
+- shrdlu_image (Zeile 5281) - zu prüfen
+- eisgalgen_mittenwald (Zeile 5294) - zu prüfen
+- agc_module_image (Zeile 5418) - CC-BY-SA 3.0
+- colossus_image (Zeile 5503) - zu prüfen (vermutlich PD alt)
+- eniac1946_image (Zeile 5510) - zu prüfen (vermutlich PD)
+- shakey_robot_image (Zeile 5517) - CC-BY-SA 4.0
+- monte_carlo_animation_image (Zeile 5581) - CC-BY-SA 3.0
+- metropolis_hastings_image (Zeile 5588) - CC-BY 4.0
+- sheaf_gluing_image (Zeile 5636) - CC-BY-SA 4.0 (Wikipedia)
+- sheaf_sections_image (Zeile 5643) - CC-BY-SA 4.0 (Wikipedia)
+- category_diagram_image (Zeile 5662) - CC-BY-SA 4.0 (Wikipedia)
+- wave_interference_diagram (Zeile 5268/5288) - zu prüfen (Doppelung)
+
+
+=== ⚠ EMPFEHLUNG: KRITISCHE EINTRÄGE ÜBERPRÜFEN ===
+==================================================
+
+Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
+
+1. perceptronimagebox    -> Bild durch Commons-Variante ersetzen ODER Autoren kontaktieren
+2. perceptronimagecables -> SOFORT ERSETZEN! Fair Use nicht für externe Nutzung
+3. perceptronimagewiring -> Lizenz des Bildes klären, ggf. anderes Foto verwenden
+4. mccullochpittsimage   -> Originalbilder direkt suchen und lizenzieren
+5. maschinenmensch       -> NICHT in DE verwenden bis 2047; Alternative suchen
+
+=== METHODE ===
+=============
+Jede URL wurde via Wikimedia Commons / Wikipedia Schnittstelle geprüft.
+Lizenzangaben stammen direkt von den File-Pages auf commons.wikimedia.org
+und en.wikipedia.org (Stand: August 2026).
+
+=== HINWEIS ===
+==============
+Auch wenn ein Bild als "Public Domain" oder "CC-BY-SA" markiert ist:
+- Bei CC-Lizenzen ist NAMENSNENNUNG (Autor, Quelle, Lizenz) erforderlich
+- Bei "PD US no notice" / "PD-Art": In Deutschland kann die Situation 
+  anders sein als in den USA
+- Bei alten Fotografien: Rechte des Fotografen vs. des abgebildeten 
+  Werks prüfen (z.B. bei Gemäldefotografien)

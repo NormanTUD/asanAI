@@ -1,7 +1,8 @@
 /* ════════════════════════════════════════════════════════════
    EFFECTS — Gorgeous but quiet enhancements
    • Scroll-reveal cascade for course parts
-   • Hero constellation fade-out on scroll past
+   The hero network's own scroll-fade is handled inside
+   organic-network.js so it can pause its RAF loop too.
    Activated by adding `effects-on` to <html>. No-JS users see
    the default visible state — graceful fallback.
    ════════════════════════════════════════════════════════════ */
@@ -13,17 +14,6 @@
 
 	const reduceMotion = window.matchMedia &&
 		window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-	function rafThrottle(fn) {
-		let pending = null;
-		return function () {
-			if (pending !== null) return;
-			pending = requestAnimationFrame(() => {
-				pending = null;
-				fn();
-			});
-		};
-	}
 
 	/* ─────────────────────────────────────────────────────────
 	   Scroll-reveal for course parts
@@ -57,33 +47,8 @@
 		parts.forEach(p => io.observe(p));
 	}
 
-	/* ─────────────────────────────────────────────────────────
-	   Hero constellation scroll-fade
-	   Once the user scrolls past most of the hero, fade the
-	   constellation to 0. Smooth and cheap.
-	   ───────────────────────────────────────────────────────── */
-	function initHeroScrollFade() {
-		const hero = document.querySelector('.course-hero');
-		if (!hero) return;
-		const constellation = hero.querySelector('.constellation');
-		if (!constellation) return;
-
-		const check = rafThrottle(() => {
-			const rect = hero.getBoundingClientRect();
-			if (rect.bottom < window.innerHeight * 0.35) {
-				hero.classList.add('is-scrolled-past');
-			} else {
-				hero.classList.remove('is-scrolled-past');
-			}
-		});
-
-		window.addEventListener('scroll', check, { passive: true });
-		check();
-	}
-
 	function init() {
 		initScrollReveal();
-		initHeroScrollFade();
 	}
 
 	if (document.readyState === 'loading') {

@@ -6919,7 +6919,7 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
 	.kn-lane-glow, .km-legend, .km-controls, .km-detail,
 	#reading-progress, #reading-progress > div,
-	.constellation {
+	.organic-network {
 		display: none !important;
 	}
 	.md a[target="_blank"]::after { content: '' !important; }
@@ -6947,9 +6947,10 @@ body:has(#cl-lb.is-visible) #reading-progress {
    ════════════════════════════════════════════════════════════ */
 
 /* ─────────────────────────────────────────────────────────────
-   1. Constellation hero background
-   A faint, AI-themed network of nodes & edges that lives
-   entirely inside .course-hero. Fades when scrolled past.
+   1. Organic network hero background
+   A faint, AI-themed network of slowly-drifting nodes & edges
+   painted by organic-network.js onto a canvas that lives entirely
+   inside .course-hero. Barely visible — purely decorative.
    ───────────────────────────────────────────────────────────── */
 .course-hero {
 	position: relative;
@@ -6960,7 +6961,7 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	position: relative;
 	z-index: 2;
 }
-.course-hero .constellation {
+.course-hero .organic-network {
 	position: absolute;
 	inset: 0;
 	z-index: 1;
@@ -6970,42 +6971,7 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	opacity: 0.9;
 	transition: opacity 0.6s ease;
 }
-.course-hero .constellation .cn-node {
-	fill: var(--mn-accent);
-	opacity: 0;
-	transform-origin: center;
-	transform-box: fill-box;
-	animation: cnPulse 6s ease-in-out infinite;
-}
-.course-hero .constellation .cn-line {
-	stroke: var(--mn-accent);
-	stroke-width: 0.6;
-	opacity: 0;
-	animation: cnLineFade 7s ease-in-out infinite;
-}
-.course-hero .constellation .cn-line-flow {
-	stroke-dasharray: 5 7;
-	animation: cnLineFade 7s ease-in-out infinite,
-	           cnDash 3.6s linear infinite;
-}
-@keyframes cnPulse {
-	0%, 100% { opacity: 0.12; transform: scale(0.75); }
-	50%      { opacity: 0.55; transform: scale(1.25); }
-}
-@keyframes cnLineFade {
-	0%, 100% { opacity: 0.05; }
-	50%      { opacity: 0.22; }
-}
-@keyframes cnDash {
-	to { stroke-dashoffset: -24; }
-}
-.course-hero.is-scrolled-past .constellation { opacity: 0; }
-html.dark .course-hero .constellation .cn-node {
-	fill: #a5b4fc;
-}
-html.dark .course-hero .constellation .cn-line {
-	stroke: #a5b4fc;
-}
+.course-hero.is-scrolled-past .organic-network { opacity: 0; }
 
 /* ─────────────────────────────────────────────────────────────
    2. Tile shimmer sweep
