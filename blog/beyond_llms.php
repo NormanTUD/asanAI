@@ -52,11 +52,41 @@ The architecture looks, at first glance, like a variational autoencoder \cite{ki
 <div class="md">
 ### The two phases
 
-**Wake phase.** Real data $\mathbf{x}$ is clamped at the bottom. The recognition network samples a latent $\tilde{\mathbf{h}} \sim q(\mathbf{h} \mid \mathbf{x})$. The generative network is then trained, by maximum likelihood, to reconstruct $\mathbf{x}$ from $\tilde{\mathbf{h}}$. Intuitively: "this is what the latent code in my head looks like; now teach the bottom-up world to reproduce it". This is the easy direction. The gradient is a clean maximum-likelihood update on the generative weights.
+**Wake phase.** Real data $x$ is clamped at the bottom. The recognition network samples a latent code $h_w$ from the bottom-up posterior
 
-**Sleep phase.** Latent variables are sampled from the generative model's prior $\tilde{\mathbf{h}} \sim p(\mathbf{h})$. The generative network then synthesises a fake data vector $\tilde{\mathbf{x}} \sim p(\mathbf{x} \mid \tilde{\mathbf{h}})$. The recognition network is trained, by maximum likelihood, to recover $\tilde{\mathbf{h}}$ from $\tilde{\mathbf{x}}$. Intuitively: "imagine something; now teach the bottom-up world to recognise it when you see it again". This is the unsupervised direction. The gradient is again a clean maximum-likelihood update, this time on the recognition weights.
+$$
+\underbrace{h_w}_{\text{latent during wake}} \;\sim\; \underbrace{q(h \mid x)}_{\text{recognition network's belief about } h \text{ given } x}.
+$$
 
-The algorithm is the literal definition of a *self-supervised* learning loop, half a decade before the term was coined. The data and the labels come from the same model, in alternation.
+The generative network is then trained, by maximum likelihood, to reconstruct $x$ from $h_w$:
+
+$$
+\underbrace{\Delta \theta_{\text{gen}}}_{\text{update to generative weights}} \;=\; \underbrace{\eta}_{\text{learning rate}} \cdot \underbrace{\nabla_{\theta_{\text{gen}}} \log p_{\theta_{\text{gen}}}(x \mid h_w)}_{\text{gradient of reconstruction likelihood}}.
+$$
+
+Intuitively: *"I see this thing. Here is the latent code I would assign to it. Now teach the bottom-up world to produce it from that code."* This is the easy direction. The gradient is a clean maximum-likelihood update on the generative weights.
+
+**Sleep phase.** Latent variables are sampled from the generative model's prior
+
+$$
+\underbrace{h_s}_{\text{latent during sleep}} \;\sim\; \underbrace{p(h)}_{\text{the generative network's prior on latents}}.
+$$
+
+The generative network then synthesises a *fake* data vector
+
+$$
+\underbrace{\tilde{x}}_{\text{a dreamt image / sound / sentence}} \;\sim\; \underbrace{p(x \mid h_s)}_{\text{generative network imagining } x \text{ from } h_s}.
+$$
+
+The recognition network is then trained, again by maximum likelihood, to recover $h_s$ from $\tilde{x}$:
+
+$$
+\underbrace{\Delta \theta_{\text{rec}}}_{\text{update to recognition weights}} \;=\; \eta \cdot \underbrace{\nabla_{\theta_{\text{rec}}} \log q_{\theta_{\text{rec}}}(h_s \mid \tilde{x})}_{\text{gradient that pushes } q(\cdot \mid \tilde{x}) \text{ to put mass on } h_s}.
+$$
+
+Intuitively: *"Imagine something. Now teach the bottom-up world to recognise it when it sees it again."* This is the unsupervised direction. The gradient is again a clean maximum-likelihood update, this time on the recognition weights.
+
+The algorithm is the literal definition of a *self-supervised* learning loop, half a decade before the term was coined. The data and the labels come from the same model, in alternation. Each iteration touches every weight in the system; neither phase ever needs a human label.
 </div>
 
 <div class="md">
@@ -77,18 +107,20 @@ But Wake-Sleep's spirit is everywhere. Self-supervised pretraining \cite{devlin2
 ### A worked picture
 
 $$
+\underbrace{
 \begin{array}{|l|c|c|}
 \hline
 \textbf{Phase} & \textbf{Clamped input} & \textbf{Optimised network} \\
 \hline
-\text{Wake} & \mathbf{x} \sim p_{\text{data}} & \text{Generative } p(\mathbf{x} \mid \mathbf{h}) \text{ from } \tilde{\mathbf{h}} \sim q(\mathbf{h} \mid \mathbf{x}) \\
+\text{Wake} & x \sim p_{\text{data}} & \text{Generative } p(x \mid h) \text{ from } h_w \sim q(h \mid x) \\
 \hline
-\text{Sleep} & \tilde{\mathbf{h}} \sim p(\mathbf{h}) & \text{Recognition } q(\mathbf{h} \mid \mathbf{x}) \text{ from } \tilde{\mathbf{x}} \sim p(\mathbf{x} \mid \tilde{\mathbf{h}}) \\
+\text{Sleep} & h_s \sim p(h) & \text{Recognition } q(h \mid x) \text{ from } \tilde{x} \sim p(x \mid h_s) \\
 \hline
 \end{array}
+}_{\text{two maximum-likelihood updates, one per network, no global likelihood}}
 $$
 
-Two maximum-likelihood updates per step, one for each network, no global likelihood computed. That is the entire algorithm. And it is worth lingering on the fact that this was the state of the art in deep generative modelling roughly a quarter-century before the Transformer paper.
+That is the entire algorithm. And it is worth lingering on the fact that this was the state of the art in deep generative modelling roughly a quarter-century before the Transformer paper.
 </div>
 
 <div class="optional md" data-headline="The Hel(m)holtz in the name">
@@ -127,18 +159,65 @@ $k$-means is NP-hard in general \cite{aloise2009np}, but converges in expected p
 <div class="md">
 ### Hierarchical clustering: the dendrogram
 
-Sometimes you do not want a single partition; you want a *tree* of partitions. Agglomerative hierarchical clustering starts with every point in its own cluster, then repeatedly merges the two closest clusters according to a **linkage** rule, until one cluster remains. The result is a **dendrogram** — a binary tree whose leaves are points and whose merge heights encode dissimilarity \cite{johnson1967hierarchical}.
+#### Why it was invented
 
-Four classical linkage rules \cite{sibson1973slink}:
+In the 1960s, taxonomists, ecologists, and psychologists needed to build *nested* classifications of things. A non-hierarchical $k$-means partition says "these are the $k$ groups", but the taxonomists also wanted to know *which groups are similar to which other groups*. They needed a tree of similarities, not a flat list. \citeauthor{johnson1967hierarchical} (\citeyear{johnson1967hierarchical}), a psychometrician at Bell Labs, gave the first general algorithm; the modern bottom-up form was independently developed by \citeauthor{sibson1973slink} (\citeyear{sibson1973slink}) in the UK as **SLINK**, and the top-down form by \citeauthor{chavent1974divisive} (\citeyear{chavent1974divisive}) and others. The visualisation of the result — the **dendrogram** (Greek for "tree drawing") — is the central object of the field.
 
-* **Single linkage:** $\min_{\mathbf{a} \in A, \mathbf{b} \in B} d(\mathbf{a}, \mathbf{b})$. The closest pair. Tends to produce long, stringy "chaining" clusters.
-* **Complete linkage:** $\max_{\mathbf{a} \in A, \mathbf{b} \in B} d(\mathbf{a}, \mathbf{b})$. The farthest pair. Tends to produce tight, equal-radius clusters.
-* **Average linkage (UPGMA):** $\tfrac{1}{|A| |B|} \sum d(\mathbf{a}, \mathbf{b})$. Robust compromise.
-* **Ward's linkage** \cite{ward1963hierarchical}: merge the two clusters whose union has the smallest increase in within-cluster variance. Tends to give the most interpretable clusters for tabular data.
+The classical uses were biological taxonomy ("which species are closely related?"), numerical ecology ("which plant communities co-occur in similar habitats?"), and document clustering in library science ("which books share subject headings?"). Every one of these problems came with a metric the user cared about, a budget on the number of clusters the user did *not* know in advance, and a need to inspect the *structure* of similarity, not just the flat partition.
 
-The naive algorithm is $\mathcal{O}(n^3)$; with a heap it drops to $\mathcal{O}(n^2 \log n)$. **SLINK** \cite{sibson1973slink} and **CLINK** \cite{defays1977clink} achieve $\mathcal{O}(n^2)$ for single- and complete-linkage respectively. Hierarchical clustering is used heavily in **single-cell transcriptomics** — modern pipelines such as *Scanpy* cluster millions of cells into putative cell types by first reducing the dimensionality and then running Leiden or Louvain community detection \cite{traag2019louvain} on a $k$-nearest-neighbour graph, an idea that descends directly from the hierarchical clustering literature.
+#### The dendrogram
 
-The divisive direction (top-down, starting from one cluster and recursively splitting) is much rarer in practice because the splitting criterion is hard to define; the divisive analogue of Ward's linkage has been studied by \citeauthor{chavent1974divisive} and others.
+The output of agglomerative hierarchical clustering is a binary tree in which the leaves are the original data points and the internal nodes are merges. The height of an internal node is the dissimilarity at which the two children were merged:
+
+$$
+\underbrace{
+\begin{array}{c}
+\text{height}(u \vee v) \;=\; \underbrace{L(A_u, A_v)}_{\text{the chosen linkage applied to the two child clusters}}
+\end{array}
+}_{\text{dendrogram node height = dissimilarity at which the merge happened}}
+$$
+
+A *cut* at any horizontal height $h$ gives the flat partition in which every leaf-to-leaf path stays below $h$ entirely inside one cluster, and every merge above $h$ is between two different clusters. Different linkage criteria define $L(\cdot, \cdot)$ differently and therefore produce different dendrograms from the same data.
+
+#### The four classical linkage rules
+
+$$
+\underbrace{
+L(A, B) \;=\;
+\begin{cases}
+\displaystyle\min_{a \in A,\, b \in B} d(a, b) & \text{(single linkage)} \\[1.2em]
+\displaystyle\max_{a \in A,\, b \in B} d(a, b) & \text{(complete linkage)} \\[1.2em]
+\displaystyle\frac{1}{|A|\,|B|} \sum_{a \in A,\, b \in B} d(a, b) & \text{(average / UPGMA)} \\[1.6em]
+\displaystyle\frac{|A|\,|B|}{|A \cup B|} \;\|\mu_A - \mu_B\|_2^2 & \text{(Ward's)}
+\end{cases}
+}_{\text{four ways of deciding "how far apart are two clusters?"}}
+$$
+
+* **Single linkage** uses the closest pair. Tends to produce long, stringy "chaining" clusters: if two clusters touch at a single pair of points, they get merged. Cheap to compute; great for detecting elongated filaments in images; bad for spherical clusters.
+* **Complete linkage** uses the farthest pair. Tends to produce tight, equal-radius clusters; breaks long chains. Robust to noise but biased towards equal-sized clusters.
+* **Average linkage (UPGMA)** averages over all pairs. A robust compromise that is the default in most libraries.
+* **Ward's linkage** \cite{ward1963hierarchical} picks the merge that increases within-cluster variance the least, which is equivalent to merging the two centroids that are closest in squared-Euclidean distance. The most interpretable for tabular data; minimises the same loss as $k$-means at every merge.
+
+#### Algorithm and complexity
+
+The naive algorithm is $\mathcal{O}(n^3)$; with a heap it drops to $\mathcal{O}(n^2 \log n)$. **SLINK** \cite{sibson1973slink} and **CLINK** \cite{defays1977clink} achieve the optimal $\mathcal{O}(n^2)$ for single- and complete-linkage respectively. For the more interesting linkages (Ward's, average), the $\mathcal{O}(n^2 \log n)$ heap implementation is the production choice.
+
+$$
+\underbrace{
+T(n) \;=\;
+\begin{cases}
+\mathcal{O}(n^2) & \text{(SLINK, CLINK)} \\
+\mathcal{O}(n^2 \log n) & \text{(Ward's, UPGMA, with heap)} \\
+\mathcal{O}(n^3) & \text{(naive, three nested loops)}
+\end{cases}
+}_{\text{hierarchical clustering complexity by linkage}}
+$$
+
+#### Where it lives now
+
+Hierarchical clustering is the workhorse of **single-cell transcriptomics** — modern pipelines such as *Scanpy* cluster millions of cells into putative cell types by first reducing the dimensionality and then running Leiden or Louvain community detection \cite{traag2019louvain} on a $k$-nearest-neighbour graph, an idea that descends directly from the hierarchical clustering literature. It is also the default in **phylogenetics** (UPGMA trees are the literal output of the algorithm), in **cheminformatics** (hierarchical clustering of molecules by fingerprint similarity), and in **operational taxonomy** (clustering failures by root cause).
+
+The divisive direction (top-down, starting from one cluster and recursively splitting) is much rarer in practice because the splitting criterion is hard to define; the divisive analogue of Ward's linkage has been studied by \citeauthor{chavent1974divisive} (\citeyear{chavent1974divisive}) and others.
 </div>
 
 <div class="md">
