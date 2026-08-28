@@ -81,14 +81,18 @@ The subscript $s$ in $h_s$ reminds us this latent is sampled during *sleep*; $p(
 The generative network then synthesises a *fake* data vector
 
 $$
-\underbrace{\tilde{x}}_{\text{a dreamt image / sound / sentence}} \;\sim\; \underbrace{p(x \mid h_s)}_{\text{generative network imagining } x \text{ from } h_s}.
+\tilde{x} \;\sim\; p(x \mid h_s).
 $$
+
+So $\tilde{x}$ is a *dreamt* image, sound, or sentence — a hallucinated sample produced by the generative network from $h_s$.
 
 The recognition network is then trained, again by maximum likelihood, to recover $h_s$ from $\tilde{x}$:
 
 $$
-\underbrace{\Delta \theta_{\text{rec}}}_{\text{update to recognition weights}} \;=\; \eta \cdot \underbrace{\nabla_{\theta_{\text{rec}}} \log q_{\theta_{\text{rec}}}(h_s \mid \tilde{x})}_{\text{gradient that pushes } q(\cdot \mid \tilde{x}) \text{ to put mass on } h_s}.
+\Delta \theta_{\text{rec}} \;=\; \eta \cdot \nabla_{\theta_{\text{rec}}} \log q_{\theta_{\text{rec}}}(h_s \mid \tilde{x}).
 $$
+
+Here $\Delta \theta_{\text{rec}}$ is the update to the recognition weights; the gradient pushes the recognition distribution $q(\cdot \mid \tilde{x})$ to put probability mass on the latent $h_s$ that generated $\tilde{x}$ in the first place.
 
 Intuitively: *"Imagine something. Now teach the bottom-up world to recognise it when it sees it again."* This is the unsupervised direction. The gradient is again a clean maximum-likelihood update, this time on the recognition weights.
 
@@ -113,7 +117,6 @@ But Wake-Sleep's spirit is everywhere. Self-supervised pretraining \cite{devlin2
 ### A worked picture
 
 $$
-\underbrace{
 \begin{array}{|l|c|c|}
 \hline
 \textbf{Phase} & \textbf{Clamped input} & \textbf{Optimised network} \\
@@ -123,8 +126,9 @@ $$
 \text{Sleep} & h_s \sim p(h) & \text{Recognition } q(h \mid x) \text{ from } \tilde{x} \sim p(x \mid h_s) \\
 \hline
 \end{array}
-}_{\text{two maximum-likelihood updates, one per network, no global likelihood}}
 $$
+
+That is the entire algorithm. Two maximum-likelihood updates per step, one for each network, no global likelihood computed.
 
 That is the entire algorithm. And it is worth lingering on the fact that this was the state of the art in deep generative modelling roughly a quarter-century before the Transformer paper.
 </div>
@@ -214,12 +218,10 @@ The classical uses were biological taxonomy ("which species are closely related?
 The output of agglomerative hierarchical clustering is a binary tree in which the leaves are the original data points and the internal nodes are merges. The height of an internal node is the dissimilarity at which the two children were merged:
 
 $$
-\underbrace{
-\begin{array}{c}
-\text{height}(u \vee v) \;=\; \underbrace{L(A_u, A_v)}_{\text{the chosen linkage applied to the two child clusters}}
-\end{array}
-}_{\text{dendrogram node height = dissimilarity at which the merge happened}}
+\text{height}(u \vee v) \;=\; L(A_u, A_v).
 $$
+
+The right-hand side $L(A_u, A_v)$ is the chosen linkage applied to the two child clusters $A_u, A_v$. So the *dendrogram node height* is exactly the dissimilarity at which the merge happened.
 
 A *cut* at any horizontal height $h$ gives the flat partition in which every leaf-to-leaf path stays below $h$ entirely inside one cluster, and every merge above $h$ is between two different clusters. Different linkage criteria define $L(\cdot, \cdot)$ differently and therefore produce different dendrograms from the same data.
 
