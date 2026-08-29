@@ -445,11 +445,12 @@
 	width: 56px;
 	height: 56px;
 	border-radius: 14px;
-	box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.08));
-	cursor: pointer;
+	box-shadow: none;
+	border: 0;
 	outline: none;
 	-webkit-tap-highlight-color: transparent;
 	user-select: none;
+	cursor: pointer;
 }
 
 #language_shower {
