@@ -67,6 +67,7 @@ foreach ($parts as $partNum => $modules):
 ?>
 <div class="course-part">
 	<div class="course-part-header" style="--part-color: var(--mn-<?php echo htmlspecialchars($modules[0]['color']); ?>)">
+		<span class="course-part-number">Part <?php echo $partNum; ?></span>
 		<h2><?php echo htmlspecialchars($partTitles[$partNum]['title']); ?></h2>
 		<p><?php echo $partTitles[$partNum]['desc']; ?></p>
 	</div>

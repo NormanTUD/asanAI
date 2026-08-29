@@ -4679,6 +4679,17 @@ img {
 .course-hero {
 	text-align: center;
 	padding: 3rem 0 2rem;
+	background:
+		radial-gradient(ellipse 70% 80% at 50% 0%,
+			color-mix(in srgb, var(--mn-bg-warm) 70%, transparent) 0%,
+			transparent 70%);
+}
+
+html.dark .course-hero {
+	background:
+		radial-gradient(ellipse 70% 80% at 50% 0%,
+			color-mix(in srgb, var(--mn-bg-warm) 85%, transparent) 0%,
+			transparent 70%);
 }
 
 .course-hero h1 {
@@ -4760,9 +4771,19 @@ img {
 }
 
 .course-tile:hover {
-	box-shadow: var(--mn-shadow-lg);
+	box-shadow:
+		0 10px 25px -5px color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 28%, transparent),
+		0 8px 10px -6px rgba(0, 0, 0, 0.04);
 	border-color: color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 40%, transparent);
 	transform: translateY(-2px);
+}
+
+.course-tile:focus-visible {
+	outline: 2px solid color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 70%, transparent);
+	outline-offset: 3px;
+	box-shadow:
+		0 10px 25px -5px color-mix(in srgb, var(--tile-accent, var(--mn-accent)) 28%, transparent),
+		0 8px 10px -6px rgba(0, 0, 0, 0.04);
 }
 
 .course-tile-icon {
