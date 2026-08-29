@@ -182,15 +182,28 @@ That is all a relation is: a bookkeeping device for *some* structure between thi
 </div>
 
 <div class="md">
-### Three properties worth naming
+### Properties worth naming
 
-Out of the wilderness of possible relations, three keep showing up:
+Out of the wilderness of possible relations, a handful keep showing up. The first three are the bones of *sameness*:
 
 - **Reflexive**: $a \mathrel{R} a$ for every $a \in A$. Every thing relates to itself.
 - **Symmetric**: $a \mathrel{R} b \Rightarrow b \mathrel{R} a$. The relation does not care about direction.
 - **Transitive**: $a \mathrel{R} b$ and $b \mathrel{R} c \Rightarrow a \mathrel{R} c$. Chains collapse.
 
 A relation with all three is an **equivalence relation**, usually written $\sim$. It behaves *like* equality — not quite equality, but the same kind of thing. The classic example: fix $n$ and declare $a \sim b$ iff $n \mid (a - b)$. Congruence mod $n$ is equality's slightly more relaxed cousin.
+
+The next four are the bones of *order*:
+
+- **Antisymmetric**: $a \mathrel{R} b$ and $b \mathrel{R} a \Rightarrow a = b$. Direction matters, but in a single controlled way: the two directions can only meet at identity. The running example is $\le$ — if $x \le y$ and $y \le x$, then $x$ and $y$ are the same number.
+- **Asymmetric**: $a \mathrel{R} b \Rightarrow \neg(b \mathrel{R} a)$. The two directions are strictly disjoint; no element can be related to another in both ways, not even to itself. (Asymmetry is stronger than antisymmetry — it rules out $a \mathrel{R} a$ as a special case.)
+- **Irreflexive** (or *antireflexive*): $\neg(a \mathrel{R} a)$ for every $a \in A$. Nothing relates to itself. The prototype is the strict order $<$, since no number is strictly less than itself.
+- **Total** (or *connex*): for every $a, b \in A$, at least one of $a \mathrel{R} b$, $b \mathrel{R} a$, or $a = b$ holds. Any two elements are comparable — one beats the other, or they tie.
+
+One more, because "total" almost always wants to mean something sharper:
+
+- **Trichotomous**: for every $a, b$, *exactly* one of $a \mathrel{R} b$, $b \mathrel{R} a$, $a = b$ holds. Total says "at least one"; trichotomy says "exactly one". On $\mathbb{Z}$ with $<$, every pair splits cleanly into one of the three cases — the integers are well-ordered.
+
+These combine. Reflexive + antisymmetric + transitive is a **partial order** ($\le$, divisibility, set inclusion). Irreflexive + transitive is a **strict partial order** ($<$, proper set inclusion). Add totality to either and you get a **total order** — the familiar linear arrangement of $\mathbb{Z}$ or $\mathbb{R}$. Equivalence, partial order, total order: three pieces of furniture almost every room of mathematics arranges itself around.
 </div>
 
 <div class="md">
