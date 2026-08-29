@@ -281,6 +281,7 @@ function hide_no_conv_stuff() {
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 		$("[aria-labelledby='activation_atlas_tab_label']").hide();
 		$("#auto_augment").prop("checked", false);
+		show_hide_augment_tab();
 		$(".hide_when_no_image").hide();
 		$(".hide_when_image").show();
 	}
@@ -1431,6 +1432,56 @@ function _sync_mobile_dataset_panel() {
 	var vs = document.getElementById('mobile_validationSplit');
 	var vs_ribbon = document.getElementById('validationSplit');
 	if (vs && vs_ribbon) vs.value = vs_ribbon.value;
+
+	var runs = document.getElementById('mobile_number_of_runs');
+	var runs_ribbon = document.getElementById('number_of_runs');
+	if (runs && runs_ribbon) runs.value = runs_ribbon.value;
+
+	// Image options
+	var height = document.getElementById('mobile_height');
+	var height_ribbon = document.getElementById('height');
+	if (height && height_ribbon) height.value = height_ribbon.value;
+
+	var width = document.getElementById('mobile_width');
+	var width_ribbon = document.getElementById('width');
+	if (width && width_ribbon) width.value = width_ribbon.value;
+
+	var maxf = document.getElementById('mobile_max_number_of_files_per_category');
+	var maxf_ribbon = document.getElementById('max_number_of_files_per_category');
+	if (maxf && maxf_ribbon) maxf.value = maxf_ribbon.value;
+
+	var aug = document.getElementById('mobile_auto_augment');
+	var aug_ribbon = document.getElementById('auto_augment');
+	if (aug && aug_ribbon) aug.checked = aug_ribbon.checked;
+
+	// Augmentation sub-section visibility follows the augment checkbox
+	var augSection = document.getElementById('mobile_augmentation_section');
+	if (augSection) augSection.style.display = (aug && aug.checked) ? '' : 'none';
+
+	var ar = document.getElementById('mobile_augment_rotate_images');
+	var ar_ribbon = document.getElementById('augment_rotate_images');
+	if (ar && ar_ribbon) ar.checked = ar_ribbon.checked;
+
+	var nr = document.getElementById('mobile_number_of_rotations');
+	var nr_ribbon = document.getElementById('number_of_rotations');
+	if (nr && nr_ribbon) nr.value = nr_ribbon.value;
+
+	var ai = document.getElementById('mobile_augment_invert_images');
+	var ai_ribbon = document.getElementById('augment_invert_images');
+	if (ai && ai_ribbon) ai.checked = ai_ribbon.checked;
+
+	var fl = document.getElementById('mobile_augment_flip_left_right');
+	var fl_ribbon = document.getElementById('augment_flip_left_right');
+	if (fl && fl_ribbon) fl.checked = fl_ribbon.checked;
+
+	// Training extras
+	var jt = document.getElementById('mobile_jump_to_interesting_tab');
+	var jt_ribbon = document.getElementById('jump_to_interesting_tab');
+	if (jt && jt_ribbon) jt.checked = jt_ribbon.checked;
+
+	var db = document.getElementById('mobile_divide_by');
+	var db_ribbon = document.getElementById('divide_by');
+	if (db && db_ribbon) db.value = db_ribbon.value;
 }
 
 /* Render the per-optimizer parameter inputs (LR, momentum, rho, ...)
@@ -1543,7 +1594,86 @@ function _sync_mobile_settings_panel() {
 		optEl.value = optRibbon.value;
 	}
 
+	// Weights / shuffle / resize
+	var shuffleEl = document.getElementById('mobile_shuffle_before_each_epoch');
+	var shuffleRibbon = document.getElementById('shuffle_before_each_epoch');
+	if (shuffleEl && shuffleRibbon) shuffleEl.checked = shuffleRibbon.checked;
+
+	var tfdbgEl = document.getElementById('mobile_enable_tf_debug');
+	var tfdbgRibbon = document.getElementById('enable_tf_debug');
+	if (tfdbgEl && tfdbgRibbon) {
+		tfdbgEl.checked = tfdbgRibbon.checked;
+		tfdbgEl.disabled = tfdbgRibbon.disabled;
+	}
+
+	var rmEl = document.getElementById('mobile_default_resize_method');
+	var rmRibbon = document.getElementById('default_resize_method');
+	if (rmEl && rmRibbon) rmEl.value = rmRibbon.value;
+
+	// Set all initializers
+	_sync_mobile_select_from_ribbon('mobile_set_all_kernel_initializers', 'set_all_kernel_initializers');
+	_sync_mobile_select_from_ribbon('mobile_set_all_bias_initializers', 'set_all_bias_initializers');
+	_sync_mobile_select_from_ribbon('mobile_set_all_activation_functions', 'set_all_activation_functions');
+	_sync_mobile_select_from_ribbon('mobile_set_all_activation_functions_except_last_layer', 'set_all_activation_functions_except_last_layer');
+
+	var initTypeEl = document.getElementById('mobile_change_initializers_selector');
+	var initTypeRibbon = document.getElementById('change_initializers_selector');
+	if (initTypeEl && initTypeRibbon) initTypeEl.value = initTypeRibbon.value;
+
+	['mean','value','distribution','mode','scale','maxval','minval','stddev','seed'].forEach(function(k) {
+		var m = document.getElementById('mobile_set_all_initializers_value_' + k);
+		var r = document.getElementById('set_all_initializers_value_' + k);
+		if (m && r) m.value = r.value;
+	});
+
+	// Keep the dynamic sub-rows visible on mobile in sync with the desktop.
+	// Desktop `change_all_initializers` shows rows via the class
+	// `set_all_initializers_<k>`; we mirror the visibility here.
+	['mean','value','distribution','mode','scale','maxval','minval','stddev','seed'].forEach(function(k) {
+		var r = document.getElementById('set_all_initializers_value_' + k);
+		if (!r) return;
+		var visible = window.getComputedStyle(r.closest('tr')).display !== 'none';
+		var mr = document.querySelector('.mobile_set_all_initializers_tr.set_all_initializers_' + k);
+		if (mr) mr.style.display = visible ? '' : 'none';
+	});
+
+	// Visualization
+	_sync_mobile_value('mobile_max_activation_iterations', 'max_activation_iterations');
+	_sync_mobile_value('mobile_max_activation_lr', 'max_activation_lr');
+	_sync_mobile_value('mobile_max_activated_neuron_image_size', 'max_activated_neuron_image_size');
+	_sync_mobile_value('mobile_max_neurons_fcnn', 'max_neurons_fcnn');
+	_sync_mobile_value('mobile_min_time_between_batch_plots', 'min_time_between_batch_plots');
+	_sync_mobile_value('mobile_max_number_of_images_in_grid', 'max_number_of_images_in_grid');
+	_sync_mobile_value('mobile_pixel_size', 'pixel_size');
+	_sync_mobile_value('mobile_kernel_pixel_size', 'kernel_pixel_size');
+
+	_sync_mobile_check('mobile_show_bars_instead_of_numbers', 'show_bars_instead_of_numbers');
+	_sync_mobile_check('mobile_visualize_images_in_grid', 'visualize_images_in_grid');
+	_sync_mobile_check('mobile_show_raw_data', 'show_raw_data');
+
 	_render_mobile_optimizer_params();
+}
+
+function _sync_mobile_value(mobileId, ribbonId) {
+	var m = document.getElementById(mobileId);
+	var r = document.getElementById(ribbonId);
+	if (m && r) m.value = r.value;
+}
+
+function _sync_mobile_check(mobileId, ribbonId) {
+	var m = document.getElementById(mobileId);
+	var r = document.getElementById(ribbonId);
+	if (m && r) m.checked = r.checked;
+}
+
+function _sync_mobile_select_from_ribbon(mobileId, ribbonId) {
+	var m = document.getElementById(mobileId);
+	var r = document.getElementById(ribbonId);
+	if (!m || !r) return;
+	if (m.options.length !== r.options.length) {
+		m.innerHTML = r.innerHTML;
+	}
+	m.value = r.value;
 }
 
 /* Override show_ribbon / hide_ribbon for mobile */
@@ -1895,6 +2025,12 @@ function show_hide_augment_tab () {
 		dbg("[show_hide_augment_tab] " + language[lang]["hiding_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 	}
+
+	var augChecked = $("#auto_augment").is(":checked");
+	var m = document.getElementById("mobile_auto_augment");
+	if (m) m.checked = augChecked;
+	var s = document.getElementById("mobile_augmentation_section");
+	if (s) s.style.display = augChecked ? "" : "none";
 }
 
 function get_layer_activation_function (nr) {
@@ -3057,10 +3193,12 @@ function get_layer_visualization_tab_str() {
 
 function hide_data_plotter() {
 	$("#data_plotter").hide();
+	$("#mobile_data_plotter_row, #mobile_pixel_size_row, #mobile_kernel_pixel_size_row").hide();
 }
 
 function show_data_plotter() {
 	$("#data_plotter").show();
+	$("#mobile_data_plotter_row, #mobile_pixel_size_row, #mobile_kernel_pixel_size_row").show();
 }
 
 function show_conv_visualizations() {

@@ -342,6 +342,10 @@
 							</select>
 						</div>
 					</div>
+					<button class="mobile-panel-row" onclick="init_page_contents($('#dataset').val()); mobile_close_all();" style="width:100%; cursor:pointer; text-align:left; font-size:15px; background:none; border:0;">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_reset"></span></span>
+						<span>&rarr;</span>
+					</button>
 				</div>
 
 				<div class="mobile-panel-section">
@@ -349,19 +353,81 @@
 					<div class="mobile-panel-row">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_epochs"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_epochs" value="30" min="1" step="10" onchange="$('#epochs').val(this.value)">
+							<input type="number" id="mobile_epochs" value="30" min="1" step="10" onchange="$('#epochs').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_batch_size"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_batchSize" value="10" min="1" step="5" onchange="$('#batchSize').val(this.value)">
+							<input type="number" id="mobile_batchSize" value="10" min="1" step="5" onchange="$('#batchSize').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_valsplit"></span> %</span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_validationSplit" value="20" min="0" max="99" step="5" onchange="$('#validationSplit').val(this.value)">
+							<input type="number" id="mobile_validationSplit" value="20" min="0" max="99" step="5" onchange="$('#validationSplit').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row expert_mode_only">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_number_of_runs"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_number_of_runs" value="1" min="1" max="50" step="1" onchange="$('#number_of_runs').val(this.value).trigger('change');">
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section hide_when_no_image">
+					<div class="mobile-panel-section-title" data-tr-text="image_options">Image Options</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_height"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_height" value="" min="1" onchange="$('#height').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_width"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_width" value="" min="1" onchange="$('#width').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row hide_when_custom_data">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_img_per_cat"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_max_number_of_files_per_category" value="100" min="0" step="5" onchange="$('#max_number_of_files_per_category').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row expert_mode_only">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_augment"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_auto_augment" onchange="$('#auto_augment').prop('checked', this.checked); show_hide_augment_tab();">
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section expert_mode_only" id="mobile_augmentation_section" style="display:none">
+					<div class="mobile-panel-section-title" data-tr-text="augmentation">Augmentation</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_auto_rotate_images"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_rotate_images" onchange="$('#augment_rotate_images').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_number_of_rotations"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_number_of_rotations" value="4" min="1" onchange="$('#number_of_rotations').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_invert_images"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_invert_images" onchange="$('#augment_invert_images').prop('checked', this.checked).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_flip_left_right"></span></span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_augment_flip_left_right" onchange="$('#augment_flip_left_right').prop('checked', this.checked).trigger('change');">
 						</div>
 					</div>
 				</div>
@@ -374,6 +440,18 @@
 					<button class="mobile-retrain-btn restart_training" onclick="retrain_neural_network(); mobile_close_all();">
 						<span class="TRANSLATEME_start_training_from_scratch"></span>
 					</button>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_autotab"></span></span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_jump_to_interesting_tab" onchange="$('#jump_to_interesting_tab').prop('checked', this.checked);">
+						</div>
+					</div>
+					<div class="mobile-panel-row expert_mode_only">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_divide_x_by"></span>:</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_divide_by" value="1" onchange="$('#divide_by').val(this.value); repredict();">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -442,6 +520,211 @@
 						</div>
 					</div>
 					<div id="mobile_optimizer_params"></div>
+				</div>
+
+				<div class="mobile-panel-section expert_mode_only">
+					<div class="mobile-panel-section-title" data-tr-text="weights_shuffle_resize">Weights, Shuffle &amp; Resize</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_shuffle_before_each_epoch"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_shuffle_before_each_epoch" onchange="$('#shuffle_before_each_epoch').prop('checked', this.checked);">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_enable_tf_debug"></span></span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_enable_tf_debug" onchange="$('#enable_tf_debug').prop('checked', this.checked); if(this.checked){tf_debug();} else {$('#enable_tf_debug').prop('disabled', false);}">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_resize_method"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_default_resize_method" onchange="$('#default_resize_method').val(this.value).trigger('change');">
+								<option value="nearestNeighbor">nearestNeighbor</option>
+								<option value="bilinear">bilinear</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section expert_mode_only">
+					<div class="mobile-panel-section-title" data-tr-text="set_all_initializers">Set all Initializers</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_kernel_initializer"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_set_all_kernel_initializers" onchange="$('#set_all_kernel_initializers').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_bias_initializer"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_set_all_bias_initializers" onchange="$('#set_all_bias_initializers').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_activation_functions"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_set_all_activation_functions" onchange="$('#set_all_activation_functions').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label">&rdca; <span class="TRANSLATEME_except_last_layer"></span></span>
+						<div class="mobile-panel-control">
+							<select id="mobile_set_all_activation_functions_except_last_layer" onchange="$('#set_all_activation_functions_except_last_layer').val(this.value).trigger('change');" style="min-width:160px"></select>
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label">Initializer type</span>
+						<div class="mobile-panel-control">
+							<select id="mobile_change_initializers_selector" onchange="$('#change_initializers_selector').val(this.value).trigger('change');">
+								<option value="glorotUniform">glorotUniform</option>
+								<option value="constant">constant</option>
+								<option value="glorotNormal">glorotNormal</option>
+								<option value="heNormal">heNormal</option>
+								<option value="heUniform">heUniform</option>
+								<option value="leCunNormal">leCunNormal</option>
+								<option value="leCunUniform">leCunUniform</option>
+								<option value="ones">ones</option>
+								<option value="randomNormal">randomNormal</option>
+								<option value="randomUniform">randomUniform</option>
+								<option value="truncatedNormal">truncatedNormal</option>
+								<option value="varianceScaling">varianceScaling</option>
+								<option value="zeros">zeros</option>
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_mean" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_mean_label"></span></span>
+						<div class="mobile-panel-control">
+							<input class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_mean" onchange="$('#set_all_initializers_value_mean').val(this.value).trigger('change');" value="1">
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_value" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_value_label"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" step="1" class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_value" onchange="$('#set_all_initializers_value_value').val(this.value).trigger('change');" value="1">
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_distribution" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_distribution_label"></span></span>
+						<div class="mobile-panel-control">
+							<select class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_distribution" onchange="$('#set_all_initializers_value_distribution').val(this.value).trigger('change');">
+								<option value="normal">normal</option>
+								<option value="uniform">uniform</option>
+								<option value="truncatedNormal">truncatedNormal</option>
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_mode" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_mode_label"></span></span>
+						<div class="mobile-panel-control">
+							<select class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_mode" onchange="$('#set_all_initializers_value_mode').val(this.value).trigger('change');">
+								<option value="fanIn">fanIn</option>
+								<option value="fanOut">fanOut</option>
+								<option value="fanAvg">fanAvg</option>
+							</select>
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_scale" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_scale_label"></span></span>
+						<div class="mobile-panel-control">
+							<input class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_scale" onchange="$('#set_all_initializers_value_scale').val(this.value).trigger('change');" value="1" type="number" step="1">
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_maxval" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_maxval_label"></span></span>
+						<div class="mobile-panel-control">
+							<input class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_maxval" onchange="$('#set_all_initializers_value_maxval').val(this.value).trigger('change');" value="1" type="number" step="1">
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_minval" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_minval_label"></span></span>
+						<div class="mobile-panel-control">
+							<input class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_minval" onchange="$('#set_all_initializers_value_minval').val(this.value).trigger('change');" value="-1" type="number" step="1">
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_stddev" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_stddev_label"></span></span>
+						<div class="mobile-panel-control">
+							<input class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_stddev" onchange="$('#set_all_initializers_value_stddev').val(this.value).trigger('change');" value="1" type="number" step="1">
+						</div>
+					</div>
+					<div class="mobile-panel-row mobile_set_all_initializers_tr set_all_initializers_seed" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_seed_label"></span></span>
+						<div class="mobile-panel-control">
+							<input class="mobile_set_all_initializers_input" id="mobile_set_all_initializers_value_seed" onchange="$('#set_all_initializers_value_seed').val(this.value).trigger('change');" value="1" type="number" step="1">
+						</div>
+					</div>
+				</div>
+
+				<div class="mobile-panel-section">
+					<div class="mobile-panel-section-title" data-tr-text="max_activated_neurons">Visualization</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_iterations"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_max_activation_iterations" value="200" min="1" onchange="$('#max_activation_iterations').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_learning_rate"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_max_activation_lr" value="0.01" min="0.00001" max="10" step="0.001" onchange="$('#max_activation_lr').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row hide_when_no_conv_visualizations" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_width_amp_height"></span>:</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_max_activated_neuron_image_size" value="0" min="0" max="1000" step="1" onchange="$('#max_activated_neuron_image_size').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_max_neurons_fcnn"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_max_neurons_fcnn" value="32" min="0" onchange="$('#max_neurons_fcnn').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_batch_plot_minimum_time"></span> (s)</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_min_time_between_batch_plots" value="5" min="0" onchange="$('#min_time_between_batch_plots').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_show_bars_instead_of_numbers"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_show_bars_instead_of_numbers" onchange="$('#show_bars_instead_of_numbers').prop('checked', this.checked); updated_page_restart_webcam_if_applicable();">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_visualize_images_in_grid"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_visualize_images_in_grid" onchange="$('#visualize_images_in_grid').prop('checked', this.checked); updated_page();">
+						</div>
+					</div>
+					<div class="mobile-panel-row">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_number_of_grid_images"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_max_number_of_images_in_grid" value="50" min="0" max="1000" onchange="$('#max_number_of_images_in_grid').val(this.value).trigger('change');">
+						</div>
+					</div>
+					<div class="mobile-panel-row" id="mobile_data_plotter_row" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_show_raw_data"></span>?</span>
+						<div class="mobile-panel-control">
+							<input type="checkbox" id="mobile_show_raw_data" onchange="$('#show_raw_data').prop('checked', this.checked);">
+						</div>
+					</div>
+					<div class="mobile-panel-row" id="mobile_pixel_size_row" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_pixel_size"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_pixel_size" value="1" min="1" max="100" onchange="$('#pixel_size').val(this.value); change_pixel_size();">
+						</div>
+					</div>
+					<div class="mobile-panel-row" id="mobile_kernel_pixel_size_row" style="display:none">
+						<span class="mobile-panel-label"><span class="TRANSLATEME_kernel_pixel_size"></span></span>
+						<div class="mobile-panel-control">
+							<input type="number" id="mobile_kernel_pixel_size" value="10" min="1" max="100" onchange="$('#kernel_pixel_size').val(this.value); change_kernel_pixel_size();">
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
