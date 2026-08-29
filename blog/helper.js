@@ -924,7 +924,7 @@ function bibtexify() {
 			return { key, linkText, data, instanceId, isFirstInBlock };
 			}).filter(Boolean);
 
-			const html = renderedKeys.map(({ key, linkText, data, instanceId }) => {
+			const html = renderedKeys.map(({ key, linkText, data, instanceId, isFirstInBlock }) => {
 				// Source icon as its own link (sibling, not nested) opening the source URL in a new tab
 				const svgIcon = data.url
 					? `<a class="bibtexify_auto_link_icon" href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
