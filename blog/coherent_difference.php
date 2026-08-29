@@ -204,6 +204,14 @@ One more, because "total" almost always wants to mean something sharper:
 - **Trichotomous**: for every $a, b$, *exactly* one of $a \mathrel{R} b$, $b \mathrel{R} a$, $a = b$ holds. Total says "at least one"; trichotomy says "exactly one". On $\mathbb{Z}$ with $<$, every pair splits cleanly into one of the three cases — the integers are well-ordered.
 
 These combine. Reflexive + antisymmetric + transitive is a **partial order** ($\le$, divisibility, set inclusion). Irreflexive + transitive is a **strict partial order** ($<$, proper set inclusion). Add totality to either and you get a **total order** — the familiar linear arrangement of $\mathbb{Z}$ or $\mathbb{R}$. Equivalence, partial order, total order: three pieces of furniture almost every room of mathematics arranges itself around.
+
+A few more, each with its own habitat:
+
+- **Coreflexive** (or *quasireflexive*): $a \mathrel{R} b \Rightarrow a = b$. Only identity pairs relate. Reflexivity says every element self-loops; coreflexivity says *only* self-loops exist — the strictest nontrivial relation short of the empty one. Add transitivity and $R$ collapses to literal equality: if $a \mathrel{R} b$ and $b \mathrel{R} c$, then $a \mathrel{R} c$ and therefore $a = c$.
+- **Euclidean**: $a \mathrel{R} b$ and $a \mathrel{R} c \Rightarrow b \mathrel{R} c$. Two arrows leaving the same source must point at each other. Reflexive + euclidean is itself an equivalence relation — it forces transitivity, since $a \mathrel{R} b$ and $b \mathrel{R} c$ give $a \mathrel{R} c$ by euclidean applied at $b$. Its main life is in modal logic: the relation is the accessibility frame, and euclidean is the relation-theoretic shadow of the modal axiom $p \to \Box p$.
+- **Serial** (or *left-total*): $\forall a \in A,\ \exists b \in A : a \mathrel{R} b$. Every element has at least one outgoing arrow — no isolated vertices, no dead ends. Total says any two elements are comparable; serial only requires that nothing is stranded on the left.
+- **Functional** (or *right-unique*): $a \mathrel{R} b$ and $a \mathrel{R} c \Rightarrow b = c$. Each $a$ has at most one image. This *is* a function, once you forget the syntax $f : A \to B$ and keep only the graph $\{(a, f(a))\} \subseteq A \times B$. Serial + functional is a total function; add *injective* — $\forall b, c : b \mathrel{R} a$ and $c \mathrel{R} a \Rightarrow b = c$, i.e. *left-unique* — and you have a bijection onto the image.
+- **Dense**: $a \mathrel{R} b$ and $a \neq b \Rightarrow \exists c : a \mathrel{R} c$ and $c \mathrel{R} b$. Between any two distinct related elements there is a third. The rationals $\mathbb{Q}$ and reals $\mathbb{R}$ under $<$ are dense; the integers $\mathbb{Z}$ are not. It is the relation-theoretic seed of "no gaps" — the same gap that completing $\mathbb{Q}$ to $\mathbb{R}$ is built to fill.
 </div>
 
 <div class="md">
