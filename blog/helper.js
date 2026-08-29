@@ -988,13 +988,14 @@ function bibtexify() {
 </span></a>`
 					: "";
 
-				// GUARDRAIL 1: If the citation link's data-target does not
-				// yet exist in the DOM (because the Sources section is
-				// built AFTER bibtexify runs), fall back to the first
-				// element with id starting with `bib-${key}` once the
-				// page is fully built. The click handler also re-resolves
-				// the target lazily.
-				const idAttribute = citedInThisBlock.has(key) ? "" : `id="${instanceId}"`;
+				// GUARDRAIL 1: Stable id `cite-${key}` is set on the FIRST
+				// occurrence in each .md block. Subsequent occurrences in
+				// the same block use the same id (which is fine — getElementById
+				// returns the first match, and the backlinks point to the
+				// first one too). Every backlink in the Sources section
+				// points to the same stable id, so the click handler can
+				// never fail to find a target.
+				const idAttribute = isFirstInBlock ? `id="${instanceId}"` : "";
 				const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" data-fallback-target="${instanceId}" style="cursor:pointer;">${linkText}</a>`;
 				return `<span class="autociteelement">${fullLink}${svgIcon}</span>`;
 			}).join('');
@@ -1066,10 +1067,13 @@ function source_bibliography() {
 	sortedKeys.forEach(key => {
 		const data = window.bibData[key];
 		const instances = window.citationMap[key] || [];
+		// Deduplicate instance ids (since every occurrence of a key now
+		// pushes the SAME stable id `cite-${key}`). Without dedup the
+		// backlinks would show "^ 1 1 1 1" for every repeated citation.
+		const uniqueInstanceIds = [...new Set(instances)];
 		let backLinks = "";
-		if (instances.length > 0) {
-			// NEW: Backlinks updated to iframe-safe-link
-			const links = instances.map((id, index) => `<a class="iframe-safe-link" data-target="${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px; cursor:pointer;">${index + 1}</a>`).join("");
+		if (uniqueInstanceIds.length > 0) {
+			const links = uniqueInstanceIds.map((id, index) => `<a class="iframe-safe-link" data-target="${id}" style="text-decoration:none; font-size:0.8em; margin:0 2px; cursor:pointer;">${index + 1}</a>`).join("");
 			backLinks = `<span style="color:#888;">^ ${links}</span> `;
 		}
 
