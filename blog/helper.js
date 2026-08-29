@@ -846,7 +846,7 @@ function bibtexify() {
 			const data = trackCitation(key, instanceId, isDuplicate);
 			if (!data) {
 				console.error(`Reference ${key} not found!`);
-				return `[?${key}?]`;
+				return null;
 			}
 
 			citedInThisBlock.add(key);
@@ -876,7 +876,7 @@ function bibtexify() {
 				}
 			}
 			return { key, linkText, data };
-			});
+			}).filter(Boolean);
 
 			const html = renderedKeys.map(({ key, linkText, data }) => {
 				// Source icon as its own link (sibling, not nested) opening the source URL in a new tab
