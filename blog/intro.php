@@ -16,7 +16,7 @@ topics: history, philosophy, math-i, society
 		<figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos_image}, Argentina (c. 7300 BC - 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall.</figcaption>
 	</figure>
 	<figure>
-		<img src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
+		<img src="image.php?f=FrankRosenblattWiringPerceptron.jpg&amp;ar-base=cave_hands.jpg" alt="Perceptron Wiring" />
 		<figcaption class="md">\citetitle[Wiring the Perceptron (1958), the first artificial neural network with a formal learning rule]{perceptronimagewiring}</figcaption>
 	</figure>
 </div>
