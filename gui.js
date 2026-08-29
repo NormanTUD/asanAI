@@ -1433,6 +1433,59 @@ function _sync_mobile_dataset_panel() {
 	if (vs && vs_ribbon) vs.value = vs_ribbon.value;
 }
 
+/* Render the per-optimizer parameter inputs (LR, momentum, rho, ...)
+   into the mobile settings panel, mirroring the hidden desktop inputs
+   inside `#X_metadata` so values stay in sync with get_model_data(). */
+function _render_mobile_optimizer_params() {
+	var container = document.getElementById('mobile_optimizer_params');
+	if (!container) return;
+
+	var type = (typeof get_optimizer === 'function') ? get_optimizer() : '';
+	var source = type ? document.getElementById(type + '_metadata') : null;
+
+	if (!source) {
+		container.innerHTML = '';
+		return;
+	}
+
+	var sourceInputs = source.querySelectorAll('input.optimizer_metadata_input');
+	var html = '';
+
+	sourceInputs.forEach(function(src) {
+		var desktopId = src.id;
+		if (!desktopId) return;
+
+		// Map desktop id (e.g. "learningRate_sgd") to a TRANSLATEME key
+		// (e.g. "learning_rate"). Strip the trailing "_<optimizer>" first.
+		var underscoreIdx = desktopId.lastIndexOf('_');
+		var camelBase = underscoreIdx >= 0 ? desktopId.substring(0, underscoreIdx) : desktopId;
+		var labelKey = camelBase.replace(/([A-Z])/g, '_$1').toLowerCase();
+
+		var min = src.getAttribute('min');
+		var max = src.getAttribute('max');
+		var step = src.getAttribute('step') || '0.000001';
+		var value = (src.value !== undefined && src.value !== null) ? src.value : '';
+
+		var attrs = ' type="number" step="' + step + '" value="' + String(value).replace(/"/g, '&quot;') + '"';
+		if (min !== null) attrs += ' min="' + min + '"';
+		if (max !== null) attrs += ' max="' + max + '"';
+
+		// Writing the value back to the hidden desktop input and triggering
+		// its `change` event makes the existing set_optimizer_metadata_input_change
+		// handler refresh the model via updated_page().
+		var onchange = "$('#" + desktopId + "').val(this.value).trigger('change');";
+
+		html += '<div class="mobile-panel-row">';
+		html += '<span class="mobile-panel-label"><span class="TRANSLATEME_' + labelKey + '"></span></span>';
+		html += '<div class="mobile-panel-control">';
+		html += '<input id="mobile_' + desktopId + '"' + attrs + ' onchange="' + onchange + '">';
+		html += '</div>';
+		html += '</div>';
+	});
+
+	container.innerHTML = html;
+}
+
 function _sync_mobile_settings_panel() {
 	// Mode
 	var modeEl = document.getElementById('mobile_mode');
@@ -1489,6 +1542,8 @@ function _sync_mobile_settings_panel() {
 		}
 		optEl.value = optRibbon.value;
 	}
+
+	_render_mobile_optimizer_params();
 }
 
 /* Override show_ribbon / hide_ribbon for mobile */

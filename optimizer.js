@@ -6,6 +6,10 @@ async function change_optimizer() {
 
 	$("#" + type + "_metadata").show();
 
+	if (typeof _render_mobile_optimizer_params === "function") {
+		_render_mobile_optimizer_params();
+	}
+
 	await updated_page();
 
 	await get_model_data();

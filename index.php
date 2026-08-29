@@ -441,6 +441,7 @@
 							<select id="mobile_optimizer" onchange="$('#optimizer').val(this.value).trigger('change');" style="min-width:160px"></select>
 						</div>
 					</div>
+					<div id="mobile_optimizer_params"></div>
 				</div>
 			</div>
 		</div>
