@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Coherent Difference — Interaktiv</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #2d1b4e 100%);
+    color: #e8e8f0;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+  h1 {
+    font-size: 2.8em;
+    background: linear-gradient(90deg, #ffd89b, #ff9a9e, #a18cd1, #84fab0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .subtitle { color: #9fa8da; font-style: italic; margin-bottom: 40px; font-size: 1.1em; }
+  .section {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+    backdrop-filter: blur(10px);
+  }
+  .section h2 {
+    color: #ffd89b;
+    margin-top: 0;
+    font-size: 1.6em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    background: rgba(255,216,155,0.15);
+    border: 1px solid rgba(255,216,155,0.3);
+    border-radius: 20px;
+    font-size: 0.7em;
+    color: #ffd89b;
+    font-family: monospace;
+  }
+  canvas {
+    display: block;
+    background: #0d1128;
+    border-radius: 8px;
+    cursor: crosshair;
+    max-width: 100%;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+    align-items: center;
+  }
+  button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95em;
+    transition: transform 0.1s, box-shadow 0.2s;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+  button:active { transform: translateY(0); }
+  input[type="range"] { flex: 1; min-width: 150px; accent-color: #a18cd1; }
+  label { color: #b0b8d4; font-size: 0.9em; display: flex; align-items: center; gap: 8px; }
+  .hint {
+    background: rgba(255,216,155,0.08);
+    border-left: 3px solid #ffd89b;
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+    font-size: 0.95em;
+    color: #d4dae8;
+  }
+  .status {
+    font-family: monospace;
+    color: #84fab0;
+    padding: 8px 12px;
+    background: rgba(132,250,176,0.08);
+    border-radius: 6px;
+    font-size: 0.9em;
+  }
+  .status.bad { color: #ff9a9e; background: rgba(255,154,158,0.08); }
+  .chain-viz { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 20px 0; }
+  .chain-node {
+    padding: 10px 16px;
+    background: rgba(161,140,209,0.15);
+    border: 1px solid rgba(161,140,209,0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+  }
+  .chain-node:hover { background: rgba(161,140,209,0.3); transform: scale(1.05); }
+  .chain-node.active { background: linear-gradient(135deg, #a18cd1, #fbc2eb); color: #1a1a3e; font-weight: bold; }
+  .quote {
+    font-style: italic;
+    padding: 16px 20px;
+    border-left: 3px solid #84fab0;
+    color: #b0d8c4;
+    margin: 16px 0;
+    background: rgba(132,250,176,0.04);
+    border-radius: 4px;
+  }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 780px) { .row { grid-template-columns: 1fr; } }
+  .footer { text-align: center; color: #6a7599; margin-top: 40px; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Coherent Difference</h1>
+  <div class="subtitle">Wie aus lokalen Unterschieden ein zusammenhängender Raum wird — zum Anfassen, ohne Formeln</div>
+
+  <!-- CHAIN -->
+  <div class="section">
+    <h2>Die Kette <span class="badge">Klicke!</span></h2>
+    <p>Das ganze Dokument dreht sich um <strong>eine</strong> Idee, ausgedrückt in acht Schritten. Klicke jeden Knoten:</p>
+    <div class="chain-viz" id="chainViz"></div>
+    <div id="chainDesc" class="hint">Wähle einen Knoten oben.</div>
+  </div>
+
+  <!-- DISTINCTION -->
+  <div class="section">
+    <h2>1. Distinktion <span class="badge">Draw a distinction</span></h2>
+    <p>Spencer-Brown: Bevor irgendetwas <em>ist</em>, muss eine Grenze gezogen werden. Zeichne eine Linie — schon gibt es zwei Seiten.</p>
+    <canvas id="distCanvas" width="900" height="300"></canvas>
+    <div class="controls">
+      <button onclick="clearDist()">Löschen</button>
+      <span class="status" id="distStatus">Ziehe mit der Maus, um Grenzen zu zeichnen.</span>
+    </div>
+    <div class="hint">Solange die Fläche einfarbig ist, gibt es nichts zu sagen. Jede Grenze erschafft <em>zwei</em> — Innen/Außen, markiert/unmarkiert. Alle Mathematik beginnt hier.</div>
+  </div>
+
+  <!-- RELATION / TOPOLOGY -->
+  <div class="section">
+    <h2>2. Lokalität ohne Metrik <span class="badge">Topologie</span></h2>
+    <p>Ein Raum ist <em>nicht</em> notwendig ein Behälter mit Entfernungen. Er ist eine Menge von Punkten plus die Angabe, welche Punktmengen als "offen" (=nachbarschaftlich) gelten. <strong>Kein Meterstab nötig.</strong></p>
+    <p>Klicke, um Punkte zu setzen. Ziehe Kreise mit der rechten Maustaste (oder Shift+Klick), um "offene Mengen" (Nachbarschaften) zu definieren. Beobachte: <em>Nähe</em> entsteht aus Zugehörigkeit zu gemeinsamen Nachbarschaften, nicht aus Zahlen.</p>
+    <canvas id="topoCanvas" width="900" height="400"></canvas>
+    <div class="controls">
+      <button onclick="addRandomOpens()">Zufällige Nachbarschaften</button>
+      <button onclick="clearTopo()">Reset</button>
+      <label>Ausgewählter Punkt: <span class="status" id="topoStatus">—</span></label>
+    </div>
+    <div class="hint">Zwei Punkte sind "nah", wenn jede Nachbarschaft des einen auch den anderen enthält. Das ist alles. Keine Metrik, keine Koordinaten — trotzdem ein <em>Raum</em>.</div>
+  </div>
+
+  <!-- SHEAF / GLUING -->
+  <div class="section">
+    <h2>3. Gluing: Lokale Daten → Globales Ganzes <span class="badge">Garbe / Sheaf</span></h2>
+    <p>Zwei Beobachter sehen jeweils einen Teil der Welt. Ihre Sichten <em>müssen</em> auf dem Überlappungsgebiet übereinstimmen — sonst kein gemeinsames Bild.</p>
+    <canvas id="sheafCanvas" width="900" height="400"></canvas>
+    <div class="controls">
+      <label>Sektion U₁ (linke Kurve): <input type="range" id="s1" min="-100" max="100" value="0"></label>
+      <label>Sektion U₂ (rechte Kurve): <input type="range" id="s2" min="-100" max="100" value="0"></label>
+      <span class="status" id="sheafStatus">Kohärent ✓</span>
+    </div>
+    <div class="hint"><strong>Sheaf-Axiom in einem Satz:</strong> Wenn lokale Daten auf den Überlappungen übereinstimmen, dann existiert genau eine globale Fortsetzung. Verschiebe die Regler und beobachte, wann sich die Kurven auf dem Überlapp treffen.</div>
+  </div>
+
+  <!-- COHERENCE / HOMOTOPY -->
+  <div class="section">
+    <h2>4. Kohärenz statt Gleichheit <span class="badge">∞-Sheaf / HoTT</span></h2>
+    <p>Blitz und Donner sind <em>nicht gleich</em> — sie sind kohärent verbunden (durch eine Zeitverschiebung). Zwei Dinge müssen nicht identisch sein, um <em>zusammenzugehören</em>. Es reicht ein <em>Weg</em> zwischen ihnen.</p>
+    <canvas id="homCanvas" width="900" height="350"></canvas>
+    <div class="controls">
+      <label>Weg-Deformation: <input type="range" id="homSlider" min="0" max="100" value="50"></label>
+      <button onclick="animatePath()">Animiere Homotopie</button>
+    </div>
+    <div class="hint">Die beiden Wege sind unterschiedlich, aber sie sind <em>kohärent äquivalent</em>: der eine lässt sich stetig in den anderen deformieren. Das ist der Kern von Homotopie und ∞-Kategorien.</div>
+  </div>
+
+  <!-- EMBEDDING SPACE -->
+  <div class="section">
+    <h2>5. Der Embedding-Raum <span class="badge">Bedeutung als Position</span></h2>
+    <p>Wörter haben keine Bedeutung <em>in sich</em>. Ihre Bedeutung ist ihre <strong>Position im Netz der Unterschiede</strong> zu allen anderen Wörtern. Ziehe Wörter herum — beobachte, wie die Beziehungen zueinander die Landschaft der Bedeutung formen.</p>
+    <canvas id="embedCanvas" width="900" height="500"></canvas>
+    <div class="controls">
+      <button onclick="resetEmbed()">Reset</button>
+      <button onclick="clusterEmbed()">Cluster nach Ähnlichkeit</button>
+      <label>Nachbarschafts-Radius: <input type="range" id="embRadius" min="30" max="200" value="80"></label>
+    </div>
+    <div class="hint">Der Raum ist kein Behälter, der Wörter aufnimmt. Der Raum <em>ist</em> das Muster ihrer Beziehungen. Ziehe "cat" nahe "dog" — bemerkst du, wie die Nachbarschaft die Bedeutung mitformt?</div>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <div class="section">
+    <h2>6. Der Zug am Bahnsteig <span class="badge">Phänomenologie</span></h2>
+    <p>Klicke auf die Modalitäten. Ein Zug ist nicht "hinter" seinen Erscheinungen — er <em>ist</em> das kohärente Netz seiner Erscheinungen.</p>
+    <canvas id="trainCanvas" width="900" height="350"></canvas>
+    <div class="controls">
+      <button onclick="toggleModality('visual')">👁 Sehen</button>
+      <button onclick="toggleModality('audio')">👂 Hören</button>
+      <button onclick="toggleModality('touch')">✋ Fühlen</button>
+      <button onclick="toggleModality('spatial')">📐 Raum</button>
+    </div>
+    <div class="quote">"Each simple substance has relations which express all the others, and, consequently, that each is a perpetual living mirror of the universe." — Leibniz, Monadology §56</div>
+  </div>
+
+  <div class="footer">
+    Basierend auf <em>Coherent Difference</em> — die strukturelle Idee hinter Topologie, Garben, ∞-Kategorien, Topoi und Embedding-Räumen.<br>
+    Spiel weiter. Der Raum ist nicht gegeben — er entsteht in dem, was du hier tust.
+  </div>
+</div>
+
+<script>
+// =================== CHAIN ===================
+const chainSteps = [
+  {name:"Distinktion", desc:"Eine Grenze wird gezogen. Zwei Seiten entstehen — markiert und unmarkiert. Der Anfang aller Struktur."},
+  {name:"Relation", desc:"Zwei distinkte Dinge können in Beziehung stehen: ähnlich, nah, verbunden."},
+  {name:"Transformation", desc:"Beziehungen werden dynamisch: aus A wird B durch eine Abbildung."},
+  {name:"Lokalität", desc:"Nähe ohne Metrik — Nachbarschaften statt Zahlen. Topologie."},
+  {name:"Kompatibilität", desc:"Wo lokale Sichten sich überlappen, müssen sie übereinstimmen."},
+  {name:"Kohärenz", desc:"Übereinstimmung nicht als Gleichheit, sondern als kohärente Äquivalenz."},
+  {name:"Gluing", desc:"Lokale Puzzleteile werden zu einem globalen Ganzen — eindeutig."},
+  {name:"Globalität", desc:"Das Ganze ist nicht die Summe, sondern die Kohärenz seiner Teile."},
+  {name:"Invarianz", desc:"Das Ergebnis überlebt jeden Perspektivwechsel."}
+];
+const chainViz = document.getElementById('chainViz');
+chainSteps.forEach((s,i) => {
+  const el = document.createElement('div');
+  el.className = 'chain-node';
+  el.textContent = (i+1)+'. '+s.name;
+  el.onclick = () => {
+    document.querySelectorAll('.chain-node').forEach(n=>n.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('chainDesc').innerHTML = '<strong>'+s.name+':</strong> '+s.desc;
+  };
+  chainViz.appendChild(el);
+});
+
+// =================== DISTINCTION ===================
+const distCanvas = document.getElementById('distCanvas');
+const distCtx = distCanvas.getContext('2d');
+let distPaths = [];
+let drawing = false;
+function drawDist() {
+  distCtx.fillStyle = '#0d1128';
+  distCtx.fillRect(0,0,distCanvas.width,distCanvas.height);
+  // fill regions using paths as walls (simplified: just draw the lines glowing)
+  distPaths.forEach(path => {
+    distCtx.strokeStyle = '#ffd89b';
+    distCtx.lineWidth = 2;
+    distCtx.shadowColor = '#ffd89b';
+    distCtx.shadowBlur = 12;
+    distCtx.beginPath();
+    path.forEach((p,i) => i===0? distCtx.moveTo(p.x,p.y): distCtx.lineTo(p.x,p.y));
+    distCtx.stroke();
+  });
+  distCtx.shadowBlur = 0;
+  if (distPaths.length === 0) {
+    distCtx.fillStyle = '#3a4166';
+    distCtx.font = 'italic 22px Georgia';
+    distCtx.textAlign = 'center';
+    distCtx.fillText('Unmarkiert. Keine Grenze. Nichts zu sagen.', distCanvas.width/2, distCanvas.height/2);
+  } else {
+    distCtx.fillStyle = 'rgba(255,216,155,0.6)';
+    distCtx.font = '14px Georgia';
+    distCtx.textAlign = 'left';
+    distCtx.fillText(distPaths.length+' Distinktion(en) gezogen — jetzt gibt es Struktur.', 20, 30);
+  }
+}
+distCanvas.onmousedown = e => { drawing = true; distPaths.push([{x:e.offsetX,y:e.offsetY}]); };
+distCanvas.onmousemove = e => {
+  if (!drawing) return;
+  distPaths[distPaths.length-1].push({x:e.offsetX,y:e.offsetY});
+  drawDist();
+};
+distCanvas.onmouseup = () => drawing = false;
+distCanvas.onmouseleave = () => drawing = false;
+function clearDist() { distPaths = []; drawDist(); }
+drawDist();
+
+// =================== TOPOLOGY ===================
+const topoCanvas = document.getElementById('topoCanvas');
+const topoCtx = topoCanvas.getContext('2d');
+let topoPoints = [];
+let topoOpens = []; // {cx,cy,r}
+let selectedPoint = -1;
+let shiftDrag = null;
+
+function drawTopo() {
+  topoCtx.fillStyle = '#0d1128';
+  topoCtx.fillRect(0,0,topoCanvas.width,topoCanvas.height);
+  // opens
+  topoOpens.forEach((o,i) => {
+    topoCtx.fillStyle = `hsla(${(i*47)%360}, 70%, 60%, 0.12)`;
+    topoCtx.strokeStyle = `hsla(${(i*47)%360}, 70%, 70%, 0.6)`;
+    topoCtx.lineWidth = 1.5;
+    topoCtx.beginPath();
+    topoCtx.arc(o.cx,o.cy,o.r,0,Math.PI*2);
+    topoCtx.fill();
+    topoCtx.stroke();
+  });
+  // points
+  topoPoints.forEach((p,i) => {
+    const isSel = i===selectedPoint;
+    topoCtx.fillStyle = isSel ? '#ffd89b' : '#84fab0';
+    topoCtx.shadowColor = topoCtx.fillStyle;
+    topoCtx.shadowBlur = isSel ? 20 : 8;
+    topoCtx.beginPath();
+    topoCtx.arc(p.x,p.y,isSel?9:6,0,Math.PI*2);
+    topoCtx.fill();
+    topoCtx.shadowBlur = 0;
+    topoCtx.fillStyle = '#e8e8f0';
+    topoCtx.font = '13px Georgia';
+    topoCtx.fillText(p.label, p.x+10, p.y-8);
+  });
+  // status: which opens contain selected
+  if (selectedPoint >= 0) {
+    const p = topoPoints[selectedPoint];
+    const containing = topoOpens.filter(o => Math.hypot(p.x-o.cx,p.y-o.cy) < o.r);
+    document.getElementById('topoStatus').textContent =
+      p.label + ' ist in ' + containing.length + ' Nachbarschaft(en). Nah zu: ' +
+      (topoPoints.filter((q,j) => j!==selectedPoint && containing.every(o => Math.hypot(q.x-o.cx,q.y-o.cy)<o.r)).map(q=>q.label).join(', ') || '—');
+  }
+  if (topoPoints.length===0) {
+    topoCtx.fillStyle = '#3a4166';
+    topoCtx.font = 'italic 16px Georgia';
+    topoCtx.textAlign = 'center';
+    topoCtx.fillText('Klick: Punkt setzen • Shift+Ziehen: Nachbarschaft • Klick auf Punkt: auswählen', topoCanvas.width/2, topoCanvas.height/2);
+    topoCtx.textAlign = 'left';
+  }
+}
+topoCanvas.onmousedown = e => {
+  if (e.shiftKey) {
+    shiftDrag = {cx:e.offsetX, cy:e.offsetY, r:0};
+    return;
+  }
+  // check if clicked on existing point
+  const hit = topoPoints.findIndex(p => Math.hypot(p.x-e.offsetX,p.y-e.offsetY) < 10);
+  if (hit >= 0) { selectedPoint = hit; }
+  else {
+    const labels = ['cat','dog','tree','sun','moon','fish','bird','stone','fire','water','wind','earth'];
+    topoPoints.push({x:e.offsetX,y:e.offsetY,label:labels[topoPoints.length % labels.length]});
+    selectedPoint = topoPoints.length-1;
+  }
+  drawTopo();
+};
+topoCanvas.onmousemove = e => {
+  if (shiftDrag) {
+    shiftDrag.r = Math.hypot(e.offsetX-shiftDrag.cx, e.offsetY-shiftDrag.cy);
+    drawTopo();
+    topoCtx.strokeStyle = '#ffd89b';
+    topoCtx.setLineDash([5,5]);
+    topoCtx.beginPath();
+    topoCtx.arc(shiftDrag.cx,shiftDrag.cy,shiftDrag.r,0,Math.PI*2);
+    topoCtx.stroke();
+    topoCtx.setLineDash([]);
+  }
+};
+topoCanvas.onmouseup = e => {
+  if (shiftDrag && shiftDrag.r > 15) topoOpens.push(shiftDrag);
+  shiftDrag = null;
+  drawTopo();
+};
+function addRandomOpens() {
+  if (topoPoints.length < 3) {
+    ['cat','dog','kitten','puppy','tree','stone'].forEach((l,i) => {
+      topoPoints.push({x:150+Math.random()*600, y:80+Math.random()*240, label:l});
+    });
+  }
+  for (let i = 0; i < 3; i++) {
+    const cx = 150 + Math.random()*600;
+    const cy = 80 + Math.random()*240;
+    topoOpens.push({cx, cy, r: 60 + Math.random()*80});
+  }
+  drawTopo();
+}
+function clearTopo() { topoPoints = []; topoOpens = []; selectedPoint = -1; drawTopo(); }
+drawTopo();
+
+// =================== SHEAF ===================
+const sheafCanvas = document.getElementById('sheafCanvas');
+const sheafCtx = sheafCanvas.getContext('2d');
+const s1Slider = document.getElementById('s1');
+const s2Slider = document.getElementById('s2');
+const sheafStatus = document.getElementById('sheafStatus');
+
+function drawSheaf() {
+  const W = sheafCanvas.width, H = sheafCanvas.height;
+  sheafCtx.fillStyle = '#0d1128';
+  sheafCtx.fillRect(0,0,W,H);
+
+  // Two open sets U1 (left) and U2 (right) with overlap in the middle
+  const U1_start = 50, U1_end = 550;
+  const U2_start = 350, U2_end = 850;
+  const overlap_start = U2_start, overlap_end = U1_end;
+
+  // draw U1 region
+  sheafCtx.fillStyle = 'rgba(132,250,176,0.08)';
+  sheafCtx.fillRect(U1_start, 60, U1_end - U1_start, H-120);
+  sheafCtx.fillStyle = 'rgba(161,140,209,0.08)';
+  sheafCtx.fillRect(U2_start, 60, U2_end - U2_start, H-120);
+  // overlap
+  sheafCtx.fillStyle = 'rgba(255,216,155,0.12)';
+  sheafCtx.fillRect(overlap_start, 60, overlap_end - overlap_start, H-120);
+
+  // labels
+  sheafCtx.fillStyle = '#84fab0';
+  sheafCtx.font = '14px Georgia';
+  sheafCtx.fillText('U₁', U1_start+10, 80);
+  sheafCtx.fillStyle = '#a18cd1';
+  sheafCtx.fillText('U₂', U2_end-30, 80);
+  sheafCtx.fillStyle = '#ffd89b';
+  sheafCtx.fillText('U₁ ∩ U₂  (Überlapp)', overlap_start+20, H-70);
+
+  // axis
+  const yBase = H/2;
+  sheafCtx.strokeStyle = 'rgba(255,255,255,0.15)';
+  sheafCtx.beginPath();
+  sheafCtx.moveTo(0, yBase); sheafCtx.lineTo(W, yBase);
+  sheafCtx.stroke();
+
+  const v1 = parseFloat(s1Slider.value);
+  const v2 = parseFloat(s2Slider.value);
+
+  // s1: a curve over U1, amplitude controlled by v1
+  sheafCtx.strokeStyle = '#84fab0';
+  sheafCtx.lineWidth = 3;
+  sheafCtx.shadowColor = '#84fab0';
+  sheafCtx.shadowBlur = 10;
+  sheafCtx.beginPath();
+  for (let x = U1_start; x <= U1_end; x++) {
+    const t = (x - U1_start) / (U1_end - U1_start);
+    const y = yBase - Math.sin(t * Math.PI * 2) * 40 - v1 * 0.5;
+    if (x === U1_start) sheafCtx.moveTo(x, y);
+    else sheafCtx.lineTo(x, y);
+  }
+  sheafCtx.stroke();
+
+  // s2: a curve over U2, amplitude controlled by v2
+  sheafCtx.strokeStyle = '#a18cd1';
+  sheafCtx.shadowColor = '#a18cd1';
+  sheafCtx.beginPath();
+  for (let x = U2_start; x <= U2_end; x++) {
+    const t = (x - U2_start) / (U2_end - U2_start);
+    const y = yBase - Math.sin(t * Math.PI * 2) * 40 - v2 * 0.5;
+    if (x === U2_start) sheafCtx.moveTo(x, y);
+    else sheafCtx.lineTo(x, y);
+  }
+  sheafCtx.stroke();
+  sheafCtx.shadowBlur = 0;
+
+  // Check compatibility on overlap: sample points
+  let maxDiff = 0;
+  for (let x = overlap_start; x <= overlap_end; x += 5) {
+    const t1 = (x - U1_start) / (U1_end - U1_start);
+    const y1 = yBase - Math.sin(t1 * Math.PI * 2) * 40 - v1 * 0.5;
+    const t2 = (x - U2_start) / (U2_end - U2_start);
+    const y2 = yBase - Math.sin(t2 * Math.PI * 2) * 40 - v2 * 0.5;
+    maxDiff = Math.max(maxDiff, Math.abs(y1 - y2));
+  }
+
+  if (maxDiff < 8) {
+    sheafStatus.textContent = '✓ Kohärent — eindeutige globale Sektion existiert';
+    sheafStatus.className = 'status';
+    // draw glued global section
+    sheafCtx.strokeStyle = 'rgba(255,216,155,0.4)';
+    sheafCtx.lineWidth = 6;
+    sheafCtx.setLineDash([2,4]);
+    sheafCtx.beginPath();
+    for (let x = U1_start; x <= U2_end; x++) {
+      let y;
+      if (x < overlap_start) {
+        const t = (x - U1_start) / (U1_end - U1_start);
+        y = yBase - Math.sin(t * Math.PI * 2) * 40 - v1 * 0.5;
+      } else if (x > overlap_end) {
+        const t = (x - U2_start) / (U2_end - U2_start);
+        y = yBase - Math.sin(t * Math.PI * 2) * 40 - v2 * 0.5;
+      } else {
+        const t1 = (x - U1_start) / (U1_end - U1_start);
+        const y1 = yBase - Math.sin(t1 * Math.PI * 2) * 40 - v1 * 0.5;
+        const t2 = (x - U2_start) / (U2_end - U2_start);
+        const y2 = yBase - Math.sin(t2 * Math.PI * 2) * 40 - v2 * 0.5;
+        y = (y1 + y2) / 2;
+      }
+      if (x === U1_start) sheafCtx.moveTo(x, y);
+      else sheafCtx.lineTo(x, y);
+    }
+    sheafCtx.stroke();
+    sheafCtx.setLineDash([]);
+  } else {
+    sheafStatus.textContent = '✗ Inkohärent — Sektionen stimmen auf dem Überlapp nicht überein (Δ=' + maxDiff.toFixed(1) + ')';
+    sheafStatus.className = 'status bad';
+  }
+}
+s1Slider.oninput = drawSheaf;
+s2Slider.oninput = drawSheaf;
+drawSheaf();
+
+// =================== HOMOTOPY ===================
+const homCanvas = document.getElementById('homCanvas');
+const homCtx = homCanvas.getContext('2d');
+const homSlider = document.getElementById('homSlider');
+
+function drawHom() {
+  const W = homCanvas.width, H = homCanvas.height;
+  homCtx.fillStyle = '#0d1128';
+  homCtx.fillRect(0,0,W,H);
+
+  const t = homSlider.value / 100;
+  const A = {x: 100, y: H/2};
+  const B = {x: W-100, y: H/2};
+
+  // endpoints
+  homCtx.fillStyle = '#ffd89b';
+  homCtx.shadowColor = '#ffd89b';
+  homCtx.shadowBlur = 15;
+  homCtx.beginPath(); homCtx.arc(A.x, A.y, 10, 0, Math.PI*2); homCtx.fill();
+  homCtx.beginPath(); homCtx.arc(B.x, B.y, 10, 0, Math.PI*2); homCtx.fill();
+  homCtx.shadowBlur = 0;
+  homCtx.fillStyle = '#e8e8f0';
+  homCtx.font = 'italic 18px Georgia';
+  homCtx.fillText('a', A.x-6, A.y+35);
+  homCtx.fillText('b', B.x-6, B.y+35);
+
+  // Path 1: straight
+  homCtx.strokeStyle = 'rgba(132,250,176,0.4)';
+  homCtx.lineWidth = 2;
+  homCtx.setLineDash([4,4]);
+  homCtx.beginPath();
+  homCtx.moveTo(A.x, A.y);
+  homCtx.lineTo(B.x, B.y);
+  homCtx.stroke();
+  homCtx.setLineDash([]);
+
+  // Path 2: curved above
+  homCtx.strokeStyle = 'rgba(161,140,209,0.4)';
+  homCtx.beginPath();
+  homCtx.moveTo(A.x, A.y);
+  homCtx.quadraticCurveTo(W/2, 80, B.x, B.y);
+  homCtx.stroke();
+
+  // Interpolated path (homotopy)
+  homCtx.strokeStyle = '#ffd89b';
+  homCtx.lineWidth = 3.5;
+  homCtx.shadowColor = '#ffd89b';
+  homCtx.shadowBlur = 12;
+  homCtx.beginPath();
+  const cx = W/2;
+  const cy_straight = H/2;
+  const cy_curved = 80;
+  const cy = cy_straight * (1-t) + cy_curved * t;
+  homCtx.moveTo(A.x, A.y);
+  homCtx.quadraticCurveTo(cx, cy, B.x, B.y);
+  homCtx.stroke();
+  homCtx.shadowBlur = 0;
+
+  // Labels
+  homCtx.fillStyle = '#84fab0';
+  homCtx.font = '13px Georgia';
+  homCtx.fillText('Weg γ₁ (gerade)', 130, H/2 + 25);
+  homCtx.fillStyle = '#a18cd1';
+  homCtx.fillText('Weg γ₂ (gebogen)', W/2 - 60, 60);
+  homCtx.fillStyle = '#ffd89b';
+  homCtx.fillText('Homotopie H(s,·) bei s=' + t.toFixed(2), 30, 30);
+
+  // Explanation
+  homCtx.fillStyle = 'rgba(255,255,255,0.5)';
+  homCtx.font = 'italic 13px Georgia';
+  homCtx.fillText('γ₁ ≠ γ₂  als Objekte — aber γ₁ ≃ γ₂ durch stetige Deformation.', 30, H-30);
+}
+homSlider.oninput = drawHom;
+let homAnimating = false;
+function animatePath() {
+  if (homAnimating) return;
+  homAnimating = true;
+  let dir = 1;
+  const iv = setInterval(() => {
+    let v = parseFloat(homSlider.value) + dir * 2;
+    if (v >= 100) { v = 100; dir = -1; }
+    if (v <= 0) { v = 0; dir = 1; }
+    homSlider.value = v;
+    drawHom();
+  }, 30);
+  setTimeout(() => { clearInterval(iv); homAnimating = false; }, 6000);
+}
+drawHom();
+
+// =================== EMBEDDING SPACE ===================
+const embedCanvas = document.getElementById('embedCanvas');
+const embedCtx = embedCanvas.getContext('2d');
+const embRadius = document.getElementById('embRadius');
+
+const wordCategories = {
+  animals: ['cat','dog','kitten','puppy','fish','bird','wolf','fox'],
+  nature:  ['tree','stone','river','mountain','sun','moon','cloud','fire'],
+  emotions:['joy','sadness','anger','fear','love','hope','peace','wonder'],
+  abstract:['truth','beauty','number','idea','space','time','being','word']
+};
+let embedWords = [];
+function initEmbed() {
+  embedWords = [];
+  Object.entries(wordCategories).forEach(([cat, words], ci) => {
+    const hue = ci * 90;
+    words.forEach(w => {
+      embedWords.push({
+        label: w,
+        cat: cat,
+        hue: hue,
+        x: 100 + Math.random() * (embedCanvas.width - 200),
+        y: 60 + Math.random() * (embedCanvas.height - 120),
+        vx: 0, vy: 0
+      });
+    });
+  });
+}
+initEmbed();
+
+let draggedWord = null;
+embedCanvas.onmousedown = e => {
+  const hit = embedWords.find(w => Math.hypot(w.x - e.offsetX, w.y - e.offsetY) < 20);
+  if (hit) draggedWord = hit;
+};
+embedCanvas.onmousemove = e => {
+  if (draggedWord) {
+    draggedWord.x = e.offsetX;
+    draggedWord.y = e.offsetY;
+  }
+};
+embedCanvas.onmouseup = () => draggedWord = null;
+embedCanvas.onmouseleave = () => draggedWord = null;
+
+function drawEmbed() {
+  const W = embedCanvas.width, H = embedCanvas.height;
+  embedCtx.fillStyle = '#0d1128';
+  embedCtx.fillRect(0,0,W,H);
+  const R = parseFloat(embRadius.value);
+
+  // draw connections within neighborhood radius
+  embedCtx.lineWidth = 1;
+  for (let i=0; i<embedWords.length; i++) {
+    for (let j=i+1; j<embedWords.length; j++) {
+      const a = embedWords[i], b = embedWords[j];
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d < R) {
+        const alpha = 1 - d/R;
+        const sameCat = a.cat === b.cat;
+        embedCtx.strokeStyle = sameCat
+          ? `hsla(${a.hue}, 70%, 60%, ${alpha*0.6})`
+          : `hsla(0, 0%, 70%, ${alpha*0.15})`;
+        embedCtx.beginPath();
+        embedCtx.moveTo(a.x, a.y);
+        embedCtx.lineTo(b.x, b.y);
+        embedCtx.stroke();
+      }
+    }
+  }
+
+  // draw words
+  embedWords.forEach(w => {
+    embedCtx.fillStyle = `hsl(${w.hue}, 70%, 65%)`;
+    embedCtx.shadowColor = embedCtx.fillStyle;
+    embedCtx.shadowBlur = 10;
+    embedCtx.beginPath();
+    embedCtx.arc(w.x, w.y, 6, 0, Math.PI*2);
+    embedCtx.fill();
+    embedCtx.shadowBlur = 0;
+    embedCtx.fillStyle = '#e8e8f0';
+    embedCtx.font = '13px Georgia';
+    embedCtx.fillText(w.label, w.x+10, w.y-8);
+  });
+
+  // legend
+  embedCtx.font = '12px Georgia';
+  Object.keys(wordCategories).forEach((cat, i) => {
+    embedCtx.fillStyle = `hsl(${i*90}, 70%, 65%)`;
+    embedCtx.beginPath();
+    embedCtx.arc(20, 20 + i*20, 5, 0, Math.PI*2);
+    embedCtx.fill();
+    embedCtx.fillStyle = '#b0b8d4';
+    embedCtx.fillText(cat, 32, 24 + i*20);
+  });
+}
+function resetEmbed() { initEmbed(); drawEmbed(); }
+function clusterEmbed() {
+  // gently pull same-category words together
+  let step = 0;
+  const iv = setInterval(() => {
+    embedWords.forEach(w => {
+      const peers = embedWords.filter(o => o.cat === w.cat && o !== w);
+      let cx = 0, cy = 0;
+      peers.forEach(p => { cx += p.x; cy += p.y; });
+      cx /= peers.length; cy /= peers.length;
+      w.x += (cx - w.x) * 0.05;
+      w.y += (cy - w.y) * 0.05;
+    });
+    // repulsion to avoid overlap
+    for (let i=0; i<embedWords.length; i++) {
+      for (let j=i+1; j<embedWords.length; j++) {
+        const a = embedWords[i], b = embedWords[j];
+        const dx = b.x-a.x, dy = b.y-a.y;
+        const d = Math.hypot(dx,dy);
+        if (d < 30 && d > 0.1) {
+          const push = (30-d)/d * 0.5;
+          a.x -= dx * push; a.y -= dy * push;
+          b.x += dx * push; b.y += dy * push;
+        }
+      }
+    }
+    drawEmbed();
+    step++;
+    if (step > 80) clearInterval(iv);
+  }, 30);
+}
+embRadius.oninput = drawEmbed;
+setInterval(() => { if (draggedWord) drawEmbed(); }, 30);
+drawEmbed();
+
+// =================== TRAIN (Phenomenology) ===================
+const trainCanvas = document.getElementById('trainCanvas');
+const trainCtx = trainCanvas.getContext('2d');
+const modalities = { visual: true, audio: false, touch: false, spatial: false };
+let trainPos = -200;
+
+function toggleModality(m) {
+  modalities[m] = !modalities[m];
+}
+
+function drawTrain() {
+  const W = trainCanvas.width, H = trainCanvas.height;
+  trainCtx.fillStyle = '#0d1128';
+  trainCtx.fillRect(0,0,W,H);
+
+  // platform
+  trainCtx.fillStyle = 'rgba(255,255,255,0.06)';
+  trainCtx.fillRect(0, H-60, W, 60);
+  trainCtx.strokeStyle = 'rgba(255,255,255,0.15)';
+  trainCtx.beginPath();
+  trainCtx.moveTo(0, H-60); trainCtx.lineTo(W, H-60);
+  trainCtx.stroke();
+
+  trainPos += 1.5;
+  if (trainPos > W + 200) trainPos = -200;
+
+  // count active modalities
+  const activeCount = Object.values(modalities).filter(v=>v).length;
+
+  if (activeCount === 0) {
+    trainCtx.fillStyle = '#6a7599';
+    trainCtx.font = 'italic 18px Georgia';
+    trainCtx.textAlign = 'center';
+    trainCtx.fillText('Keine Modalität aktiv — kein Phänomen. Wähle mindestens eine.', W/2, H/2);
+    trainCtx.textAlign = 'left';
+    requestAnimationFrame(drawTrain);
+    return;
+  }
+
+  const trainY = H - 150;
+
+  // VISUAL: draw the train shape
+  if (modalities.visual) {
+    trainCtx.fillStyle = 'rgba(132,250,176,0.85)';
+    trainCtx.shadowColor = '#84fab0';
+    trainCtx.shadowBlur = 20;
+    trainCtx.fillRect(trainPos, trainY, 180, 70);
+    trainCtx.fillStyle = 'rgba(255,216,155,0.9)';
+    trainCtx.fillRect(trainPos+20, trainY+15, 30, 30);
+    trainCtx.fillRect(trainPos+70, trainY+15, 30, 30);
+    trainCtx.fillRect(trainPos+120, trainY+15, 30, 30);
+    trainCtx.shadowBlur = 0;
+  }
+
+  // AUDIO: draw sound waves emanating
+  if (modalities.audio) {
+    const cx = trainPos + 90, cy = trainY + 35;
+    for (let r=20; r<200; r+=25) {
+      const phase = (Date.now()/200 + r) % 100;
+      const alpha = Math.max(0, 1 - phase/100) * 0.4;
+      trainCtx.strokeStyle = `rgba(161,140,209,${alpha})`;
+      trainCtx.lineWidth = 2;
+      trainCtx.beginPath();
+      trainCtx.arc(cx, cy, r + phase, 0, Math.PI*2);
+      trainCtx.stroke();
+    }
+  }
+
+  // TOUCH: tremor lines at bottom
+  if (modalities.touch) {
+    trainCtx.strokeStyle = 'rgba(255,154,158,0.5)';
+    trainCtx.lineWidth = 1.5;
+    for (let i=0; i<5; i++) {
+      trainCtx.beginPath();
+      for (let x=0; x<W; x+=4) {
+        const dist = Math.abs(x - (trainPos + 90));
+        const amp = Math.max(0, 30 - dist/8);
+        const y = H - 30 + Math.sin(x*0.1 + Date.now()*0.01 + i) * amp * 0.3;
+        if (x===0) trainCtx.moveTo(x,y);
+        else trainCtx.lineTo(x,y);
+      }
+      trainCtx.stroke();
+    }
+  }
+
+  // SPATIAL: perspective lines
+  if (modalities.spatial) {
+    trainCtx.strokeStyle = 'rgba(255,216,155,0.3)';
+    trainCtx.lineWidth = 1;
+    trainCtx.setLineDash([5,5]);
+    const vanishX = trainPos + 90;
+    for (let i=0; i<8; i++) {
+      trainCtx.beginPath();
+      trainCtx.moveTo(vanishX, trainY+35);
+      trainCtx.lineTo(i*W/7, H);
+      trainCtx.stroke();
+    }
+    trainCtx.setLineDash([]);
+  }
+
+  // Coherence indicator
+  trainCtx.fillStyle = '#e8e8f0';
+  trainCtx.font = '14px Georgia';
+  trainCtx.fillText(`Aktive Modalitäten: ${activeCount} / 4`, 20, 30);
+  if (activeCount >= 2) {
+    trainCtx.fillStyle = '#84fab0';
+    trainCtx.font = 'italic 14px Georgia';
+    trainCtx.fillText('→ Auf dem Überlapp der Modalitäten stimmen die Sichten überein: EIN Zug.', 20, 52);
+  } else {
+    trainCtx.fillStyle = '#ffd89b';
+    trainCtx.font = 'italic 14px Georgia';
+    trainCtx.fillText('→ Nur eine Modalität — noch keine Kohärenz zwischen Sichten.', 20, 52);
+  }
+
+  requestAnimationFrame(drawTrain);
+}
+drawTrain();
+</script>
+</body>
+</html>
