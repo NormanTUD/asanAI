@@ -124,7 +124,6 @@ function toc() {
 	var rootUl = document.createElement("ul");
 	var stack = [{ level: 0, element: rootUl }];
 	var usedIds = new Set();
-	var chapterNumber = 0; // counter for h2-level main chapters
 
 	// --- Helpers ---------------------------------------------------------
 
@@ -236,6 +235,8 @@ function toc() {
 
 	// --- Build the tree --------------------------------------------------
 
+	var totalWords = 0; // for the footer summary
+
 	headers.forEach(function(header) {
 		var level = parseInt(header.tagName.substring(1));
 		var titleText = getHeaderTitle(header);
@@ -262,10 +263,6 @@ function toc() {
 			li.classList.add("expanded");
 		}
 
-		var toggle = document.createElement("span");
-		toggle.className = "toggle-icon";
-		toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ ";
-
 		// Assign a stable, unique id so the link is focusable, shareable,
 		// and so the scroll-spy + n/p shortcuts in polish.js (which resolve
 		// targets via href) actually work. Dedup so two headings with the
@@ -279,22 +276,9 @@ function toc() {
 			usedIds.add(header.id);
 		}
 
-		// Layout: [toggle] [row: number?] [link] [meta]
+		// Row layout: link on the left, optional reading-time on the right.
 		var row = document.createElement("div");
 		row.className = "toc-row";
-		li.appendChild(toggle);
-
-		// Number main chapters (h2 only) so the TOC reads like a book.
-		// We reset the counter only on encountering a new h2 (not when we
-		// descend into h3/h4 sub-sections) — so the chapter count is
-		// monotonic through the whole document.
-		if (level === 2) {
-			chapterNumber += 1;
-			var numSpan = document.createElement("span");
-			numSpan.className = "toc-num";
-			numSpan.textContent = chapterNumber + '.';
-			row.appendChild(numSpan);
-		}
 
 		var link = document.createElement("a");
 		link.textContent = titleText;
@@ -302,18 +286,6 @@ function toc() {
 			link.href = '#' + header.id;
 		}
 
-		// Optional-content badge: a small "opt" tag so the reader can tell
-		// at a glance which sub-sections live inside a foldable aside.
-		if (li.classList.contains("toc-optional")) {
-			var badge = document.createElement("span");
-			badge.className = "toc-opt-badge";
-			badge.textContent = 'opt';
-			badge.title = 'Inhalt einer optionalen Box';
-			link.appendChild(document.createTextNode(' '));
-			link.appendChild(badge);
-		}
-
-		// Event listener for smooth scrolling
 		link.addEventListener("click", function(e) {
 			e.preventDefault();
 			if (typeof revealAncestorOptionalBlocks === 'function') {
@@ -324,8 +296,7 @@ function toc() {
 
 		row.appendChild(link);
 
-		// Reading-time / word-count meta on h2 chapters (and h3 if there's
-		// room). Skip h4+ to keep the TOC visually clean.
+		// Reading-time meta on h2/h3 chapters; skip h4+ to keep it sparse.
 		if (level <= 3) {
 			var sectionText = getSectionText(header);
 			var words = countWords(sectionText);
@@ -335,6 +306,10 @@ function toc() {
 				meta.textContent = formatReadingTime(words);
 				meta.title = words + ' Wörter';
 				row.appendChild(meta);
+				// Add h2 chapters' words to the total; h3 sub-sections are
+				// already counted within their h2's section, so summing
+				// them would double-count.
+				if (level === 2) totalWords += words;
 			}
 		}
 
