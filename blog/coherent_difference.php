@@ -174,6 +174,76 @@ is one of the oldest and most useful formalizations of the idea that “relation
 </div>
 
 <div class="md">
+## Relations and equivalence relations
+
+Suppose you own things — books, socks, grievances, whatever. Call the set of your things $A$. A **relation** on $A$ is just a subset $R \subseteq A \times A$: for each ordered pair $(a, b)$, a decision whether $a$ stands to $b$ in the way $R$ names. Write $a \mathrel{R} b$ when it does.
+
+That is all a relation is: a bookkeeping device for *some* structure between things. "Is older than", "lives in the same drawer as", "owes money to", "is the square of" — all relations. On the chain of the previous section, **distinction** gives you the elements of $A$; **relation** is the very next link.
+</div>
+
+<div class="md">
+### Three properties worth naming
+
+Out of the wilderness of possible relations, three keep showing up:
+
+- **Reflexive**: $a \mathrel{R} a$ for every $a \in A$. Every thing relates to itself.
+- **Symmetric**: $a \mathrel{R} b \Rightarrow b \mathrel{R} a$. The relation does not care about direction.
+- **Transitive**: $a \mathrel{R} b$ and $b \mathrel{R} c \Rightarrow a \mathrel{R} c$. Chains collapse.
+
+A relation with all three is an **equivalence relation**, usually written $\sim$. It behaves *like* equality — not quite equality, but the same kind of thing. The classic example: fix $n$ and declare $a \sim b$ iff $n \mid (a - b)$. Congruence mod $n$ is equality's slightly more relaxed cousin.
+</div>
+
+<div class="md">
+### The payoff: partitions
+
+Here is the theorem that makes equivalence relations worth caring about:
+
+$$
+\boxed{
+\begin{aligned}
+&\text{An equivalence relation on } A \text{ is the same thing} \\
+&\text{as a partition of } A \text{ into disjoint boxes.}
+\end{aligned}
+}
+$$
+
+The **equivalence class** of $a$ is $[a] = \{\, x \in A : a \sim x \,\}$ — everything equivalent to $a$. Two classes are either identical or disjoint; together they cover $A$. So an equivalence relation is *literally* a way of sorting your stuff into non-overlapping boxes. Deciding what counts as *the same* — for your purposes — is deciding what boxes exist. Sock drawers and bookshelves are different equivalence relations on the same pile of stuff. The relation *is* the sorting.
+</div>
+
+<div class="md">
+### The quotient, and how relations adapt
+
+Once you have $\sim$ on $A$, form the **quotient set**
+
+$$
+A/{\sim} \;=\; \{\, [a] : a \in A \,\}
+$$
+
+— the set whose elements are the boxes themselves. This is where difference gets *coarsened*: things distinct in $A$ become identical in $A/{\sim}$ when they share a box.
+
+Two reflexes to keep:
+
+1. **From a function.** Any $f : A \to B$ induces an equivalence relation: $a \sim a' \iff f(a) = f(a')$. Reflexive, symmetric, transitive for free. The quotient $A/{\sim}$ is a copy of the image of $f$. This is "collapse to what matters" in practice.
+
+2. **Closing up a relation.** Start with any $R$. Add self-loops (reflexivity), reversed pairs (symmetry), composed pairs (transitivity), and iterate. The result is the **equivalence closure** of $R$: the coarsest sorting compatible with the connections you insisted on.
+
+The second move is where the previous section's chain shows up again. Local data (some pairs you called "related") plus compatibility (symmetry on pairs) plus coherence (transitivity on triples) glues into a global partition. An equivalence relation is a baby sheaf — the flattest possible one, where "agreement on overlaps" is literal equality rather than a homotopy.
+</div>
+
+<div class="md">
+### Everywhere, once you look
+
+The rest of mathematics is largely a catalogue of equivalence relations someone found useful:
+
+- Fractions: $(p, q) \sim (p', q') \iff pq' = p'q$.
+- Vector space quotients $V/W$: $v \sim v' \iff v - v' \in W$.
+- Homotopy classes: paths modulo continuous deformation.
+- Angles: $\mathbb{R}$ modulo $2\pi$.
+
+Each is the same move: *declare what counts as the same, then work with the boxes*. The relation is the question ("what do I care about?"); the partition is the answer ("here are the boxes"). Which equivalence relation to use is, secretly, almost every mathematical question you will ever be asked.
+</div>
+
+<div class="md">
 ## Locality: the decisive turn
 
 So far everything we have said could be done with bare set theory. Topology adds the move that turns a set into a *place*, the introduction of locality without distance.
