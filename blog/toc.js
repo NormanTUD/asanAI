@@ -182,7 +182,7 @@ function toc() {
 		}
 
 		var text = range.toString();
-		range.detach();
+		if (typeof range.detach === 'function') range.detach();
 		return text;
 	}
 
