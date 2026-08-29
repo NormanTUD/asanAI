@@ -447,6 +447,9 @@
 	border-radius: 14px;
 	box-shadow: var(--shadow-md, 0 4px 16px rgba(0, 0, 0, 0.08));
 	cursor: pointer;
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
 }
 
 #language_shower {
