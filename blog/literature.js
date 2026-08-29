@@ -2988,7 +2988,7 @@ window.bibData = {
 	"perceptronimagewiring": {
 		url: "https://perceptrondemo.com/",
 		title: "A technician under the leadership of Frank Rosenblatt working on the wiring for the perceptron",
-		author: "Unknown Photographer",
+		author: "Frederic Lewis",
 		year: 1960
 	},
 	"historyofmathematicalnotation": {
