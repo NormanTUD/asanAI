@@ -287,8 +287,44 @@ function bindIframeSafeLinks() {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const targetId = link.getAttribute('data-target');
-		const targetEl = document.getElementById(targetId);
+		// GUARDRAIL: Resolve the target element with multiple fallbacks:
+		//  1. Exact id match
+		//  2. data-fallback-target attribute (set by bibtexify)
+		//  3. Prefix match: any element whose id starts with the
+		//     requested id (handles stale random-suffix drift)
+		//  4. The Sources section, if data-target starts with "bib-"
+		function resolveTarget(link) {
+			const targetId = link.getAttribute('data-target');
+			if (!targetId) return null;
+
+			let el = document.getElementById(targetId);
+			if (el) return el;
+
+			const fallback = link.getAttribute('data-fallback-target');
+			if (fallback) {
+				el = document.getElementById(fallback);
+				if (el) return el;
+			}
+
+			// Prefix match (handles legacy random-suffix ids)
+			if (!el && targetId.indexOf('-') !== -1) {
+				const base = targetId.split('-').slice(0, -1).join('-');
+				const candidates = document.querySelectorAll(`[id^="${base}-"]`);
+				if (candidates.length > 0) return candidates[0];
+			}
+
+			// If the requested target is in the bib-/sources area but
+			// hasn't been built yet (rare ordering issue), scroll to the
+			// Sources section as a last resort.
+			if (targetId.startsWith('bib-') || targetId.startsWith('fn-')) {
+				const sources = document.getElementById('sources-section');
+				if (sources) return sources;
+			}
+
+			return null;
+		}
+
+		const targetEl = resolveTarget(link);
 
 		if (targetEl) {
 			// --- 1. Reveal any ancestor optional blocks ---
@@ -366,7 +402,11 @@ function bindIframeSafeLinks() {
 				}, 1800);
 			});
 		} else {
-			console.warn(`Target element #${targetId} not found.`);
+			console.warn(`Target element #${link.getAttribute('data-target')} not found — link has no valid destination and is being hidden.`);
+			// GUARDRAIL: a citation/backlink that points nowhere is
+			// useless — visually hide it so the user doesn't click dead
+			// elements again.
+			link.style.display = 'none';
 		}
 	};
 }
