@@ -92,12 +92,11 @@ function toc() {
 		'#toc .toc-meta { flex: 0 0 auto; font-size: 0.78em; color: #8c959f; font-variant-numeric: tabular-nums; font-weight: 400; }',
 		'#toc li.toc-level-2 > .toc-row > .toc-meta { color: #656d76; }',
 
-		// Toggle icon: small, neutral, only visible on hover for cleanliness.
-		'#toc .toggle-icon { display: inline-block; width: 0.9em; cursor: pointer; color: #8c959f; font-size: 0.75em; user-select: none; visibility: hidden; margin-right: 2px; }',
-		'#toc .has-children > .toc-row > .toggle-icon { visibility: hidden; }',
-		'#toc li.has-children > .toc-row > a::before { content: "▸ "; font-size: 0.75em; color: #8c959f; display: inline-block; width: 1em; transition: transform 0.15s ease; }',
-		'#toc li.has-children.expanded > .toc-row > a::before { content: "▾ "; }',
-		'#toc li.has-children > .toc-row > a:hover::before { color: #1f2328; }',
+		// Toggle icon — a tiny chevron before the link. Click on the
+		// chevron toggles; click anywhere else on the row navigates.
+		'#toc .toggle-icon { display: inline-block; width: 1em; cursor: pointer; color: #8c959f; font-size: 0.75em; user-select: none; margin-right: 4px; flex: 0 0 auto; }',
+		'#toc .toggle-icon:hover { color: #1f2328; }',
+		'#toc li:not(.has-children) > .toc-row > .toggle-icon { visibility: hidden; }',
 
 		// Filter
 		'#toc.filtering li.toc-hidden { display: none; }',
@@ -107,7 +106,7 @@ function toc() {
 		// Total reading time footer
 		'#toc .toc-footer { font-size: 0.78em; color: #8c959f; margin-top: 14px; padding-top: 10px; border-top: 1px solid #eaeef2; }',
 
-		'@media (prefers-reduced-motion: reduce) { #toc ul.collapsible, #toc.toc-ready ul.collapsible, #toc li.has-children > .toc-row > a::before { transition: none; } }'
+		'@media (prefers-reduced-motion: reduce) { #toc ul.collapsible, #toc.toc-ready ul.collapsible { transition: none; } }'
 	].join('\n');
 	document.head.appendChild(s);
 
@@ -276,9 +275,17 @@ function toc() {
 			usedIds.add(header.id);
 		}
 
-		// Row layout: link on the left, optional reading-time on the right.
+		// Row layout: [toggle?] [link] [meta?]
 		var row = document.createElement("div");
 		row.className = "toc-row";
+
+		// A small chevron is rendered for items that have sub-sections.
+		// We add it to every row, but hide it via CSS for leaves. Click
+		// on the chevron toggles; click anywhere else navigates.
+		var toggle = document.createElement("span");
+		toggle.className = "toggle-icon";
+		toggle.textContent = li.classList.contains("expanded") ? '▾' : '▸';
+		row.appendChild(toggle);
 
 		var link = document.createElement("a");
 		link.textContent = titleText;
@@ -328,13 +335,14 @@ function toc() {
 		li.appendChild(nextUl);
 		stack.push({ level: level, element: nextUl });
 
-		li.addEventListener("click", function(e) {
-			if (e.target.tagName !== "A" && li.classList.contains("has-children")) {
-				e.stopPropagation();
-				li.classList.toggle("expanded");
-				toggle.innerHTML = li.classList.contains("expanded") ? "▾ " : "▸ ";
-				saveState();
-			}
+		// Click on the chevron toggles expansion; click on the link
+		// itself navigates (handled in the link's own listener above).
+		toggle.addEventListener("click", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			li.classList.toggle("expanded");
+			toggle.textContent = li.classList.contains("expanded") ? '▾' : '▸';
+			saveState();
 		});
 	});
 
@@ -348,7 +356,7 @@ function toc() {
 			var wantsExpanded = !!storedState[href];
 			li.classList.toggle('expanded', wantsExpanded);
 			var t = li.querySelector(':scope > .toggle-icon');
-			if (t) t.innerHTML = wantsExpanded ? '▾ ' : '▸ ';
+			if (t) t.textContent = wantsExpanded ? '▾' : '▸';
 		});
 	}
 
@@ -378,11 +386,22 @@ function toc() {
 	tocDiv.appendChild(toolbar);
 	tocDiv.appendChild(rootUl);
 
+	// Footer with total reading time, so the reader has a one-glance
+	// summary of how long the whole page takes. Skipped if we couldn't
+	// measure anything.
+	if (totalWords > 0) {
+		var footer = document.createElement("div");
+		footer.className = "toc-footer";
+		var totalMin = formatReadingTime(totalWords);
+		footer.textContent = 'Gesamt: ' + totalMin + ' Lesezeit · ' + totalWords.toLocaleString('de-DE') + ' Wörter';
+		tocDiv.appendChild(footer);
+	}
+
 	function setAllExpanded(wantExpanded) {
 		tocDiv.querySelectorAll('li.has-children').forEach(function(li) {
 			li.classList.toggle('expanded', wantExpanded);
 			var t = li.querySelector(':scope > .toggle-icon');
-			if (t) t.innerHTML = wantExpanded ? '▾ ' : '▸ ';
+			if (t) t.textContent = wantExpanded ? '▾' : '▸';
 		});
 		saveState();
 	}
