@@ -94,7 +94,7 @@ function toc() {
 		'#toc li.toc-level-2 { margin-top: 4px; }',
 		'#toc .toc-row { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }',
 		'#toc .toc-row > a { flex: 1; min-width: 0; }',
-		'#toc .toc-row > .toc-meta-col { flex: 0 0 auto; }',
+		'#toc .toc-row > .toc-meta { flex: 0 0 auto; }',
 
 		// Filter
 		'#toc.filtering li.toc-hidden { display: none; }',
