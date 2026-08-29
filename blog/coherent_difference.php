@@ -220,6 +220,34 @@ And a handful more — less universal, but unavoidable in their own territories:
 - **Acyclic**: there is no sequence $a_1, a_2, \dots, a_n$ with $a_1 \mathrel{R} a_2 \mathrel{R} \cdots \mathrel{R} a_n \mathrel{R} a_1$ and all $a_i$ distinct. No closed loops — only paths, trees, and DAGs. An irreflexive relation is acyclic iff it admits a topological ordering; strict partial orders are acyclic for free. Acyclic + irreflexive is the working definition of "hierarchy without cycles", and the combinatorial heart of half of computer science.
 - **Semiorder** (or *interval order*): a strict partial order equipped with a perceptual threshold $\varepsilon > 0$ such that $a \prec b$ iff the gap between them exceeds $\varepsilon$ and anything smaller is registered as indifference. The motivating case is psychophysical comparison — you can feel that A is heavier than B and B heavier than C, but A versus C falls under the just-noticeable-difference and you shrug. Semiorders live between total orders (every difference sharp) and bare comparability (no structure at all); they are the order theory of perception.
 - **Quasi-transitive**: a relation whose *strict part* $\{(a, b) : a \mathrel{R} b \text{ and } \neg(b \mathrel{R} a)\}$ is transitive. Quasi-transitivity is the weakest condition that still rules out cycles among *strict* preferences, which is exactly why it shows up in social choice — Arrow's impossibility theorem operates on quasi-transitive preferences, where strict preferences are coherent but indifference is allowed to wander.
+
+<div class="optional md" data-headline="The menagerie: every named relation property worth filing away">
+
+Some are bundles of axioms already named:
+
+- **Preorder** (or *quasi-order*): reflexive + transitive. Antisymmetry is dropped, so $a \mathrel{R} b$ and $b \mathrel{R} a$ can coexist for $a \neq b$. The prototype is "is at least as good as" on preferences: $A \ge B$ and $B \ge A$ does not force $A = B$, only that they are tied. Preorders are to partial orders what equivalences-with-overlap are to partitions — almost the same, slightly more permissive.
+- **Partial equivalence relation** (PER): symmetric + transitive, *not* necessarily reflexive. The missing reflexivity is the point: equivalence classes form only inside some subset of $A$, the rest is untouched. PERs are the right object for partial functions: a relation on $A$ is a partial function iff it is a functional PER.
+- **Tolerance relation** (or *compatibility relation*): reflexive + symmetric, *without* transitivity. $A$ similar to $B$, $B$ similar to $C$, but $A$ and $C$ need not be. Tolerance is the formal model of measurement noise and rough similarity — chain two tolerances and the error compounds, which is why the property deliberately breaks the triangle inequality.
+- **Congruence relation**: an equivalence relation that respects one or more operations. If $a \sim a'$ and $b \sim b'$, then $a \star b \sim a' \star b'$ for every operation $\star$ in the signature. Congruences are what let you pass from one algebraic structure to another (say from $\mathbb{Z}$ to $\mathbb{Z}/n\mathbb{Z}$) without breaking the operations.
+
+Some are extremal — the smallest, the largest, the diagonal:
+
+- **Universal relation**: $A \times A$. Every element relates to every element (including itself). The maximal relation under $\subseteq$, the identity of the algebra of relations under join.
+- **Empty relation**: $\varnothing$. Nothing relates to anything. The minimal relation under $\subseteq$, the identity under meet.
+- **Identity relation** (or *diagonal*): $\{(a, a) : a \in A\}$. Each element relates only to itself. Reflexive, symmetric, transitive, *and* coreflexive — the smallest equivalence relation, the prototype of equality. Universal, empty, and identity are the $0$, $1$, and diagonal of the relation lattice.
+
+Some are structural — for termination, reachability, and rewriting:
+
+- **Well-founded**: no infinite descending chain $a_1 \mathrel{R} a_2 \mathrel{R} a_3 \mathrel{R} \cdots$. Equivalently, every nonempty subset of $A$ has an $R$-minimal element. Well-foundedness is what makes induction valid: prove it for the minimal elements, push up. In computer science it is the formal justification of *termination* — every recursive definition on a well-founded order is guaranteed to halt.
+- **Right-total** (or *surjective*): $\forall b \in A,\ \exists a \in A : a \mathrel{R} b$. The mirror of *serial*. Every element is hit by at least one arrow. Serial + functional + right-total is a bijection $A \to A$.
+- **Confluent** (the **Church–Rosser property**): if $a \mathrel{R}^* b$ and $a \mathrel{R}^* c$, then some $d$ satisfies $b \mathrel{R}^* d$ and $c \mathrel{R}^* d$. Two different ways of rewriting $a$ can be brought back together by further rewriting. The Church–Rosser theorem for the pure lambda calculus is the original instance: if $t \to^* u$ and $t \to^* v$, then some $w$ is reachable from both. Confluence is what makes the result of computation independent of the order in which rules were applied.
+- **Strongly confluent** (the **diamond property**): the same diagram but in one step. $a \mathrel{R} b$ and $a \mathrel{R} c$ implies $b \mathrel{R} d$ and $c \mathrel{R} d$ for some $d$, without the reflexive-transitive closure. Strictly stronger than confluence; when it holds, the uniqueness-of-normal-form proof is shorter. (Newman's lemma, the substitute: terminating + locally confluent $\Rightarrow$ confluent.)
+- **Circular**: $a \mathrel{R} b$ and $b \mathrel{R} c \Rightarrow c \mathrel{R} a$. The relation closes back to its starting point on every two-step walk. "Reachable from" on a strongly connected directed graph is circular; so are most "is in the same orbit as" relations in group actions.
+
+And one synonym, for the record:
+
+- **Antitransitive**: $a \mathrel{R} b$ and $b \mathrel{R} c \Rightarrow \neg(a \mathrel{R} c)$. The strict negation of transitivity. Same as *intransitive* above — the names coexist, the property is one.
+</div>
 </div>
 
 <div class="md">
