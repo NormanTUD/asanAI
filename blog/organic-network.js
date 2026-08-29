@@ -96,11 +96,12 @@
 			const dy = Math.sin(n.angle) * n.speed + Math.cos(t / 5100 + n.phaseY) * WOBBLE;
 			n.x += dx;
 			n.y += dy;
-			// Soft wrap so the network feels infinite, not contained.
-			if (n.x < -20) n.x = w + 20;
-			else if (n.x > w + 20) n.x = -20;
-			if (n.y < -20) n.y = h + 20;
-			else if (n.y > h + 20) n.y = -20;
+			// Soft bounce off the hero edges so the network stays inside
+			// the parent's box — no clipping at top/bottom by overflow:hidden.
+			if (n.x < n.r) { n.x = n.r; n.angle = Math.PI - n.angle; }
+			else if (n.x > w - n.r) { n.x = w - n.r; n.angle = Math.PI - n.angle; }
+			if (n.y < n.r) { n.y = n.r; n.angle = -n.angle; }
+			else if (n.y > h - n.r) { n.y = h - n.r; n.angle = -n.angle; }
 		}
 
 		// Edges first, nodes drawn on top.
