@@ -841,8 +841,17 @@ function bibtexify() {
 		content = content.replace(/\\(cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)(?:\[(.*?)\])?\{([^}]+)\}/g, (match, type, manualText, keysStr) => {
 			const keys = keysStr.split(/\s*,\s*/);
 			const renderedKeys = keys.map((key) => {
+			// Memoize instanceId per key across ALL bibtexify calls so that
+			// backlinks in the Sources section can reliably find the
+			// original citation link (the bug that caused
+			// "Target element #ref-key-XXXXX not found").
+			if (!window._citeIdMap) window._citeIdMap = {};
+			let instanceId = window._citeIdMap[key];
+			if (!instanceId) {
+				instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
+				window._citeIdMap[key] = instanceId;
+			}
 			const isDuplicate = citedInThisBlock.has(key);
-			const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
 			const data = trackCitation(key, instanceId, isDuplicate);
 			if (!data) {
 				console.error(`Reference ${key} not found!`);
@@ -875,10 +884,10 @@ function bibtexify() {
 					default:           linkText = `[${data.author}, ${data.year}]`;
 				}
 			}
-			return { key, linkText, data };
+			return { key, linkText, data, instanceId };
 			}).filter(Boolean);
 
-			const html = renderedKeys.map(({ key, linkText, data }) => {
+			const html = renderedKeys.map(({ key, linkText, data, instanceId }) => {
 				// Source icon as its own link (sibling, not nested) opening the source URL in a new tab
 				const svgIcon = data.url
 					? `<a class="bibtexify_auto_link_icon" href="${data.url}" target="_blank" rel="noopener noreferrer" title="View source"><span class="external_link_icon">
@@ -942,9 +951,14 @@ function bibtexify() {
 </span></a>`
 					: "";
 
-				const instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
+				// GUARDRAIL 1: If the citation link's data-target does not
+				// yet exist in the DOM (because the Sources section is
+				// built AFTER bibtexify runs), fall back to the first
+				// element with id starting with `bib-${key}` once the
+				// page is fully built. The click handler also re-resolves
+				// the target lazily.
 				const idAttribute = citedInThisBlock.has(key) ? "" : `id="${instanceId}"`;
-				const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" style="cursor:pointer;">${linkText}</a>`;
+				const fullLink = `<a class="cite-stealth iframe-safe-link" ${idAttribute} data-target="bib-${key}" data-fallback-target="${instanceId}" style="cursor:pointer;">${linkText}</a>`;
 				return `<span class="autociteelement">${fullLink}${svgIcon}</span>`;
 			}).join('');
 
