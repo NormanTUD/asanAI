@@ -878,21 +878,18 @@ function bibtexify() {
 
 		// UPDATED REGEX: Added (?:\[(.*?)\])? to capture optional [text]
 		// Now also handles comma-separated keys like \cite{key1, key2, key3}
+		//
+		// Uses STABLE, DETERMINISTIC ids (`cite-${key}`) for the first occurrence
+		// of every key. Backlinks in the Sources section point to these same
+		// stable ids, so there is no possible drift between the citation
+		// and its backlink.
 		content = content.replace(/\\(cite|citeauthor|citeauthorlastnameand|citetitle|citeyear|citealternativetitle|citeurl)(?:\[(.*?)\])?\{([^}]+)\}/g, (match, type, manualText, keysStr) => {
 			const keys = keysStr.split(/\s*,\s*/);
 			const renderedKeys = keys.map((key) => {
-			// Memoize instanceId per key across ALL bibtexify calls so that
-			// backlinks in the Sources section can reliably find the
-			// original citation link (the bug that caused
-			// "Target element #ref-key-XXXXX not found").
-			if (!window._citeIdMap) window._citeIdMap = {};
-			let instanceId = window._citeIdMap[key];
-			if (!instanceId) {
-				instanceId = `ref-${key}-${Math.random().toString(36).substr(2, 5)}`;
-				window._citeIdMap[key] = instanceId;
-			}
-			const isDuplicate = citedInThisBlock.has(key);
-			const data = trackCitation(key, instanceId, isDuplicate);
+			// Stable, deterministic id: no random suffix, no drift.
+			const instanceId = `cite-${key}`;
+			const isFirstInBlock = !citedInThisBlock.has(key);
+			const data = trackCitation(key, instanceId, !isFirstInBlock);
 			if (!data) {
 				console.error(`Reference ${key} not found!`);
 				return null;
@@ -924,7 +921,7 @@ function bibtexify() {
 					default:           linkText = `[${data.author}, ${data.year}]`;
 				}
 			}
-			return { key, linkText, data, instanceId };
+			return { key, linkText, data, instanceId, isFirstInBlock };
 			}).filter(Boolean);
 
 			const html = renderedKeys.map(({ key, linkText, data, instanceId }) => {
