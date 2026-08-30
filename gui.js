@@ -2621,7 +2621,7 @@ function _ribbon_active_panel() {
 	return $visible.length ? $visible.first() : $panels.first();
 }
 
-function update_ribbon_compactness($target_panel) {
+function update_ribbon_compactness($target_panel = null) {
 	if(!ribbon_compactness_is_enabled() || is_mobile_view() || !$("#ribbon").is(":visible")) {
 		_ribbon_restore_all();
 		_ribbon_more_button_li().hide();
