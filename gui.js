@@ -1486,7 +1486,7 @@ function _sync_mobile_dataset_panel() {
 
 /* Render the per-optimizer parameter inputs (LR, momentum, rho, ...)
    into the mobile settings panel, mirroring the hidden desktop inputs
-   inside `#X_metadata` so values stay in sync with get_model_data(). */
+   inside `#X_metadata` so values stay in await sync with get_model_data(). */
 function _render_mobile_optimizer_params() {
 	var container = document.getElementById('mobile_optimizer_params');
 	if (!container) return;
