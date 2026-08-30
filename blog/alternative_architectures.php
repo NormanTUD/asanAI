@@ -21,7 +21,7 @@ This chapter surveys the main candidates, with the mathematical core of each.
 
 **KV-cache mitigation:** Even standard Transformers handle long contexts via **KV-caching** (see the Production Serving chapter), which stores past K/V matrices so per-token compute stays linear in sequence length during autoregressive generation. The O(n²) cost appears in **training** and in **prefill** of long prompts; generation with a KV cache is O(n) per token. The practical gap between Transformers and sub-quadratic alternatives is therefore smaller than the asymptotic notation suggests.
 
-Standard self-attention (see the Attention chapter) computes:
+Standard self-attention (see the <a href="attentionlab">Attention chapter</a>) computes:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V

@@ -13,7 +13,7 @@ topics: multimodal, vision, architecture, programming
 <div class="md">
 A pure text model is blind. It has never seen a colour, a face, or a curve. **Multimodal** models remove this handicap: a single network that ingests **images, text, audio, video**, and reasons across them. The 2024–2025 generation (GPT-4o, Claude 3.5 Sonnet, Gemini 1.5, InternVL-2, LLaVA-OneVision) is multimodal by default; text-only models are increasingly a special case.
 
-This chapter traces the technical lineage from pixels-as-tensors (see the Convolutions and Vision chapter) to **pixels-as-tokens** that an LLM can read.
+This chapter traces the technical lineage from pixels-as-tensors (see the <a href="visionlab">Convolutions and Vision chapter</a>) to **pixels-as-tokens** that an LLM can read.
 </div>
 
 <div class="md">

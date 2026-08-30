@@ -178,7 +178,7 @@ The community is moving towards:
 
 * **Live evaluations**: continuous, time-stamped, on novel data.
 * **Capability-specific benchmarks**: LiveCodeBench (contests from the past month), MathArena (rolling math contests).
-* **Process-based evaluation**: scoring not just final answers but the **reasoning steps** (PRM, see the Reasoning chapter).
+* **Process-based evaluation**: scoring not just final answers but the **reasoning steps** (PRM, see the <a href="reasoning">Reasoning chapter</a>).
 * **Behavioral red-teaming**: probing for specific failure modes (jailbreaks, hallucinations, bias).
 * **Task-specific evaluation**: medical QA with clinician review, legal tasks with lawyer review, code with actual execution and CI.
 

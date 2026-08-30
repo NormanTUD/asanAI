@@ -71,7 +71,7 @@ The model is trained with a multi-task objective: transcribe, translate to Engli
 
 **Conformer** (Gulati et al., Google, 2020) is the dominant architecture for streaming ASR. It combines convolutions (for local patterns) with self-attention (for global context) in each block. USM (Google, 2023) and SeamlessM4T (Meta, 2023) extend this to 100+ languages.
 
-Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the Transformer chapter); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.
+Note that Whisper is one of the few remaining widely-used **encoder-decoder** Transformers, most modern speech and language systems are decoder-only (see the <a href="transformer">Transformer chapter</a>); the unified models below (GPT-4o, Gemini, Voxtral, Qwen2-Audio) follow the decoder-only / native-Transformer pattern.
 </div>
 
 <div class="md">

@@ -267,7 +267,7 @@ Combined, a single 8-GPU node can serve ~100 concurrent users generating at 30+ 
 
 Active research in 2025:
 
-* **Sub-quadratic architectures** for inference (see the Beyond Transformers chapter), Mamba-2, Jamba.
+* **Sub-quadratic architectures** for inference (see the <a href="alternative_architectures">Beyond Transformers chapter</a>), Mamba-2, Jamba.
 * **FP4/FP6 inference**: lower precision for further speedups.
 * **Network compression**: distilling large reasoning models into small fast ones.
 * **Distributed speculative decoding**: one draft model serving many target models.

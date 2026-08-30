@@ -95,7 +95,7 @@ Ring Attention \cite[Liu et al., 2023]{liu2023ring} and Striped Attention implem
 
 ### Expert Parallelism (for MoE)
 
-For \cite[Bubeck et al., 2023]{bubeck2023moeoverview}-of-Experts models (see the Transformer chapter): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
+For \cite[Bubeck et al., 2023]{bubeck2023moeoverview}-of-Experts models (see the <a href="transformer">Transformer chapter</a>): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
 </div>
 
 <div class="md">

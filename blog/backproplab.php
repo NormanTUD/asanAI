@@ -66,7 +66,7 @@ Here, $t_i$ is the target value, and $o_i$ is the network's output. The factor $
 
 ## Backward Pass: Updating Weights
 
-The backward pass uses the **chain rule** to compute how much each weight contributed to the total error. For any weight $w$, the change is proportional to:
+The backward pass uses the **chain rule** (explained in the <a href="differentiation">Differentiation chapter</a>) to compute how much each weight contributed to the total error. For any weight $w$, the change is proportional to:
 
 $$
 \frac{\partial E}{\partial w} = \delta \cdot \text{input}

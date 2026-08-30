@@ -107,7 +107,7 @@ Forcing the model to verify its own work (critique-then-revise, search over cand
 <div class="md">
 ## Process Reward Models (PRMs)
 
-A **reward model** (used in \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the Fine-Tuning chapter) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
+A **reward model** (used in \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the <a href="finetuninglab">Fine-Tuning chapter</a>) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
 
 Training a PRM:
 

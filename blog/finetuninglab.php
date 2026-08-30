@@ -19,7 +19,7 @@ The trend in 2024–2025: most alignment work has moved away from RLHF toward **
 <div class="md">
 ## Stage 0: Pretraining (recap)
 
-The base model is trained on the next-token-prediction objective (see the Intuition chapter) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.
+The base model is trained on the next-token-prediction objective (see the <a href="intuition">Intuition chapter</a>) over ~10T tokens of web text. The result is a model that completes sentences in the style of its training data, but does not behave as an assistant.
 
 Stage 1: **Supervised Fine-Tuning (SFT)** teaches it to follow instructions.
 Stage 2: **Preference optimization** aligns its outputs with human values.
@@ -82,7 +82,7 @@ $$
 R(x, y) = \sum_{i} w_i R_i(x, y)
 $$
 
-**Reward hacking** (see the Reinforcement Learning chapter) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality. Defenses: KL penalty, ensemble of RMs, process supervision.
+**Reward hacking** (see the <a href="reinforcement_learning">Reinforcement Learning chapter</a>) is the constant danger: a sufficiently good optimizer will find ways to maximize reward without improving quality. Defenses: KL penalty, ensemble of RMs, process supervision.
 </div>
 
 <div class="md">
