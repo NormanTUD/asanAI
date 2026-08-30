@@ -173,6 +173,430 @@ function renderPEPromptInjection() {
     }, { responsive: true });
 }
 
+function renderPEContradictionIntersection() {
+    const root = document.getElementById('pe-contradiction-intersection');
+    if (!root || typeof Plotly === 'undefined') return;
+
+    // Three semantic regions. Centre positions are placed in three different
+    // quadrants of the cube so they read as distinct clusters in 3-D.
+    const regions = {
+        familiar:    { label: 'FAMILIAR',    color: '#f59e0b', center: [-1.10,  0.55,  0.40] },
+        interesting: { label: 'INTERESTING', color: '#06b6d4', center: [ 1.05,  0.45, -0.55] },
+        minimal:     { label: 'MINIMAL',     color: '#a78bfa', center: [-0.10, -1.05,  0.55] },
+    };
+
+    // -----------------------------------------------------------------------
+    // Each point: word, hint, regions[], pos[x,y,z]
+    // pos values are hand-tuned so each point lives inside the region(s) it
+    // belongs to (i.e. closer to those centres than to any other).
+    // -----------------------------------------------------------------------
+    const points = [
+        // ===== squarely inside FAMILIAR =====
+        { word: 'home',           pos: [-1.20,  0.65,  0.55], regions: ['familiar'], hint: 'a place you do not have to explain' },
+        { word: 'coffee',         pos: [-1.30,  0.30,  0.25], regions: ['familiar'], hint: 'the same cup every morning' },
+        { word: 'mother tongue',  pos: [-0.95,  0.80,  0.20], regions: ['familiar'], hint: 'the language you dream in' },
+        { word: 'old friend',     pos: [-1.40,  0.45,  0.65], regions: ['familiar'], hint: 'no small talk needed' },
+        { word: 'kitchen',        pos: [-0.90,  0.35,  0.10], regions: ['familiar'], hint: 'smell of something cooking' },
+        { word: 'hand-written',   pos: [-1.15,  0.70,  0.05], regions: ['familiar'], hint: 'a letter, in your own hand' },
+        { word: 'lullaby',        pos: [-1.00,  0.20,  0.60], regions: ['familiar'], hint: 'sounds you fall asleep to' },
+
+        // ===== squarely inside INTERESTING =====
+        { word: 'paradox',        pos: [ 1.20,  0.60, -0.70], regions: ['interesting'], hint: 'true and false at once' },
+        { word: 'twist',          pos: [ 0.85,  0.25, -0.80], regions: ['interesting'], hint: 'the ending you did not see' },
+        { word: 'infinity',       pos: [ 1.30,  0.55, -0.30], regions: ['interesting'], hint: 'a line with no last point' },
+        { word: 'glitch',         pos: [ 0.95,  0.75, -0.45], regions: ['interesting'], hint: 'a tear in the pattern' },
+        { word: 'fractal',        pos: [ 1.10,  0.20, -0.55], regions: ['interesting'], hint: 'the same shape at every scale' },
+        { word: 'reveal',         pos: [ 1.35,  0.70, -0.65], regions: ['interesting'], hint: 'the thing you missed before' },
+        { word: 'palindrome',     pos: [ 0.90,  0.50, -0.30], regions: ['interesting'], hint: 'reads the same both ways' },
+
+        // ===== squarely inside MINIMAL =====
+        { word: 'void',           pos: [-0.10, -1.25,  0.65], regions: ['minimal'], hint: 'the absence of anything' },
+        { word: 'silence',        pos: [ 0.05, -1.20,  0.35], regions: ['minimal'], hint: 'no signal at all' },
+        { word: 'single dot',     pos: [-0.30, -0.95,  0.75], regions: ['minimal'], hint: 'one mark, no more' },
+        { word: 'breath',         pos: [ 0.10, -1.10,  0.45], regions: ['minimal'], hint: 'one cycle in, one cycle out' },
+        { word: 'white space',    pos: [-0.20, -0.85,  0.30], regions: ['minimal'], hint: 'what is not there, on purpose' },
+        { word: 'ember',          pos: [-0.05, -1.30,  0.20], regions: ['minimal'], hint: 'a single point of warmth' },
+        { word: 'pebble',         pos: [ 0.15, -1.00,  0.80], regions: ['minimal'], hint: 'a stone, smoothed by water' },
+
+        // ===== pairwise overlaps =====
+        // FAMILIAR ∩ INTERESTING
+        { word: 'wabi-sabi',      pos: [-0.20,  0.75, -0.10], regions: ['familiar', 'interesting'], hint: 'imperfect, therefore beautiful' },
+        { word: 'nostalgia',      pos: [-0.45,  0.85,  0.15], regions: ['familiar', 'interesting'], hint: 'a memory warmer than the thing' },
+        { word: 'deja-vu',        pos: [-0.10,  0.70, -0.35], regions: ['familiar', 'interesting'], hint: 'I have been in this room before' },
+        { word: 'old joke',       pos: [-0.55,  0.55, -0.20], regions: ['familiar', 'interesting'], hint: 'funnier the 50th time' },
+        { word: 'folk song',      pos: [-0.30,  0.95,  0.30], regions: ['familiar', 'interesting'], hint: 'old melody, new feeling' },
+
+        // FAMILIAR ∩ MINIMAL
+        { word: 'morning ritual', pos: [-0.85, -0.25,  0.65], regions: ['familiar', 'minimal'], hint: 'the same three small things' },
+        { word: 'prayer',         pos: [-0.65, -0.45,  0.50], regions: ['familiar', 'minimal'], hint: 'a handful of words you already know' },
+        { word: 'tea ceremony',   pos: [-0.95, -0.55,  0.45], regions: ['familiar', 'minimal'], hint: 'familiar steps, almost nothing' },
+
+        // INTERESTING ∩ MINIMAL
+        { word: 'Bauhaus',        pos: [ 0.55, -0.30,  0.10], regions: ['interesting', 'minimal'], hint: 'less, but better' },
+        { word: 'Mondrian',       pos: [ 0.70, -0.55, -0.10], regions: ['interesting', 'minimal'], hint: 'three lines, three colours' },
+        { word: 'duchamp',        pos: [ 0.40, -0.10,  0.25], regions: ['interesting', 'minimal'], hint: 'a urinal, signed' },
+        { word: 'Lichtenstein',   pos: [ 0.80, -0.40, -0.30], regions: ['interesting', 'minimal'], hint: 'one idea, one shape, no more' },
+        { word: 'Oulipo',         pos: [ 0.30, -0.25, -0.20], regions: ['interesting', 'minimal'], hint: 'constraint as engine' },
+
+        // ===== triple overlap (all three) =====
+        { word: 'haiku',          pos: [-0.10, -0.05,  0.45], regions: ['familiar', 'interesting', 'minimal'], hint: '5-7-5, and somehow everything' },
+        { word: 'ikebana',        pos: [-0.30, -0.20,  0.65], regions: ['familiar', 'interesting', 'minimal'], hint: 'three stems, a whole season' },
+        { word: 'zen koan',       pos: [ 0.10,  0.05,  0.20], regions: ['familiar', 'interesting', 'minimal'], hint: 'a question that breaks the question' },
+        { word: 'one-stroke',     pos: [-0.40,  0.10,  0.55], regions: ['familiar', 'interesting', 'minimal'], hint: 'one motion, no correction' },
+
+        // ===== void points (far from all three centres) =====
+        { word: 'liminal',        pos: [ 1.40, -0.85,  0.30], regions: [], hint: 'between, not yet, no longer' },
+        { word: 'ineffable',      pos: [-1.30, -0.95, -0.40], regions: [], hint: 'would lose its shape if spoken' },
+        { word: 'sublime',        pos: [ 1.10, -1.20,  0.60], regions: [], hint: 'too big to hold in one frame' },
+        { word: 'aporia',         pos: [-0.85,  1.20, -0.65], regions: [], hint: 'a puzzle with no exit' },
+        { word: 'fugue',          pos: [ 0.20,  1.30,  0.30], regions: [], hint: 'a voice answering itself' },
+    ];
+
+    // Colour for a point: single region → that region's colour; multi-region →
+    // midpoint of the constituent colours; void → gray.
+    function rgbFromHex(hex) {
+        const h = hex.replace('#', '');
+        return [
+            parseInt(h.substring(0, 2), 16),
+            parseInt(h.substring(2, 4), 16),
+            parseInt(h.substring(4, 6), 16),
+        ];
+    }
+    function pointColor(p) {
+        if (p.regions.length === 0) return '#64748b';
+        const cols = p.regions.map(id => rgbFromHex(regions[id].color));
+        const r = Math.round(cols.reduce((a, c) => a + c[0], 0) / cols.length);
+        const g = Math.round(cols.reduce((a, c) => a + c[1], 0) / cols.length);
+        const b = Math.round(cols.reduce((a, c) => a + c[2], 0) / cols.length);
+        return `rgb(${r},${g},${b})`;
+    }
+    function regionsLabel(p) {
+        if (p.regions.length === 0) return '<i>void</i>';
+        return p.regions.map(id => regions[id].label.toLowerCase()).join(' & ');
+    }
+    function buildHoverText(p) {
+        const r = rgbFromHex(p.regions.length === 0 ? '#94a3b8' : regions[p.regions[0]].color);
+        const band = `rgb(${r[0]},${r[1]},${r[2]})`;
+        return `<span style="background:${band};color:#000;padding:1px 6px;border-radius:3px;font-weight:700;">${p.word}</span>` +
+               `<br><span style="color:#1f2937;font-style:italic;">${p.hint}</span>` +
+               `<br><span style="color:#374151;">lives in: ${regionsLabel(p)}</span>`;
+    }
+
+    // -----------------------------------------------------------------------
+    // Cloud volumes. Two layers:
+    //   1) Translucent ellipsoid MESH (mesh3d) — a real 3-D volume with
+    //      visible boundary. Radii are large enough that neighbouring
+    //      ellipsoids overlap, so the intersection regions appear naturally.
+    //   2) Dense point cloud (scatter3d) inside each ellipsoid — gives the
+    //      "dusty" texture on top of the smooth volume.
+    // Both are unlabeled; the hoverable words sit on top.
+    // -----------------------------------------------------------------------
+    function gauss() {
+        const u1 = Math.max(1e-9, Math.random());
+        const u2 = Math.random();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+    function cloudFor(regionId, center, n, sigma) {
+        const pts = [];
+        for (let i = 0; i < n; i++) {
+            pts.push({
+                x: center[0] + gauss() * sigma,
+                y: center[1] + gauss() * sigma,
+                z: center[2] + gauss() * sigma,
+                color: regions[regionId].color,
+            });
+        }
+        return pts;
+    }
+    // Ellipsoid radii are *larger than the region-to-region distance* so the
+    // volumes visibly overlap at the boundaries.
+    const ELLIPSOID_RADII = [0.85, 0.75, 0.80];
+    function ellipsoidVerts(center, rx, ry, rz, segs) {
+        const verts = [];
+        const idx = [];
+        for (let i = 0; i <= segs; i++) {
+            const phi = (i / segs) * Math.PI;
+            for (let j = 0; j <= segs; j++) {
+                const theta = (j / segs) * 2 * Math.PI;
+                verts.push([
+                    center[0] + rx * Math.sin(phi) * Math.cos(theta),
+                    center[1] + ry * Math.sin(phi) * Math.sin(theta),
+                    center[2] + rz * Math.cos(phi),
+                ]);
+            }
+        }
+        for (let i = 0; i < segs; i++) {
+            for (let j = 0; j < segs; j++) {
+                const a = i * (segs + 1) + j;
+                const b = a + 1;
+                const c = (i + 1) * (segs + 1) + j;
+                const d = c + 1;
+                idx.push(a, b, d);
+                idx.push(a, d, c);
+            }
+        }
+        return { verts, idx };
+    }
+
+    // Inner core clouds — dense, high opacity
+    const cloudInner = [
+        ...cloudFor('familiar',    regions.familiar.center,    280, 0.40),
+        ...cloudFor('interesting', regions.interesting.center, 280, 0.40),
+        ...cloudFor('minimal',     regions.minimal.center,     280, 0.40),
+    ];
+    // Outer halo — extends past the ellipsoid boundary so the edge is soft
+    const cloudOuter = [
+        ...cloudFor('familiar',    regions.familiar.center,    180, 0.95),
+        ...cloudFor('interesting', regions.interesting.center, 180, 0.95),
+        ...cloudFor('minimal',     regions.minimal.center,     180, 0.95),
+    ];
+    // Sparse void dust — random spread, gray
+    const voidDust = [];
+    for (let i = 0; i < 140; i++) {
+        voidDust.push({
+            x: (Math.random() * 2 - 1) * 1.7,
+            y: (Math.random() * 2 - 1) * 1.7,
+            z: (Math.random() * 2 - 1) * 1.5,
+        });
+    }
+
+    const traces = [
+        // -------- Translucent ellipsoid volumes (mesh3d) --------
+        // These are real 3-D surfaces. Radii are large enough that neighbouring
+        // volumes overlap visibly, which is where the overlap words live.
+        ...['familiar', 'interesting', 'minimal'].map(id => {
+            const r = regions[id];
+            const { verts, idx } = ellipsoidVerts(r.center, ELLIPSOID_RADII[0], ELLIPSOID_RADII[1], ELLIPSOID_RADII[2], 24);
+            return {
+                type: 'mesh3d',
+                x: verts.map(v => v[0]),
+                y: verts.map(v => v[1]),
+                z: verts.map(v => v[2]),
+                i: idx.filter((_, k) => k % 2 === 0),
+                j: idx.filter((_, k) => k % 2 === 1) || undefined,
+                // Build i/j/k arrays manually for proper triangulation
+                ...(() => {
+                    const I = [], J = [], K = [];
+                    for (let n = 0; n < idx.length; n += 3) {
+                        I.push(idx[n]); J.push(idx[n + 1]); K.push(idx[n + 2]);
+                    }
+                    return { i: I, j: J, k: K };
+                })(),
+                color: r.color,
+                opacity: 0.18,
+                flatshading: false,
+                lighting: { ambient: 0.8, diffuse: 0.2, specular: 0, roughness: 1 },
+                hoverinfo: 'skip',
+                showlegend: false,
+            };
+        }),
+
+        // -------- Cloud particles (two layers for soft edges) --------
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: cloudOuter.map(p => p.x), y: cloudOuter.map(p => p.y), z: cloudOuter.map(p => p.z),
+            marker: { size: 5, color: cloudOuter.map(p => p.color), opacity: 0.12, line: { width: 0 } },
+            hoverinfo: 'skip', showlegend: false,
+        },
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: cloudInner.map(p => p.x), y: cloudInner.map(p => p.y), z: cloudInner.map(p => p.z),
+            marker: { size: 4, color: cloudInner.map(p => p.color), opacity: 0.45, line: { width: 0 } },
+            hoverinfo: 'skip', showlegend: false,
+        },
+        // -------- Void dust (sparse, gray) --------
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: voidDust.map(p => p.x), y: voidDust.map(p => p.y), z: voidDust.map(p => p.z),
+            marker: { size: 2, color: '#475569', opacity: 0.35, line: { width: 0 } },
+            hoverinfo: 'skip', showlegend: false,
+        },
+
+        // -------- Labeled single-region points (circles, bright) --------
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: points.filter(p => p.regions.length === 1 && p.regions[0] === 'familiar').map(p => p.pos[0]),
+            y: points.filter(p => p.regions.length === 1 && p.regions[0] === 'familiar').map(p => p.pos[1]),
+            z: points.filter(p => p.regions.length === 1 && p.regions[0] === 'familiar').map(p => p.pos[2]),
+            text: points.filter(p => p.regions.length === 1 && p.regions[0] === 'familiar').map(buildHoverText),
+            hoverinfo: 'text',
+            marker: {
+                size: 10, symbol: 'circle',
+                color: points.filter(p => p.regions.length === 1 && p.regions[0] === 'familiar').map(pointColor),
+                line: { color: '#ffffff', width: 1.5 },
+                opacity: 1.0,
+            },
+            name: 'familiar',
+            showlegend: true,
+        },
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: points.filter(p => p.regions.length === 1 && p.regions[0] === 'interesting').map(p => p.pos[0]),
+            y: points.filter(p => p.regions.length === 1 && p.regions[0] === 'interesting').map(p => p.pos[1]),
+            z: points.filter(p => p.regions.length === 1 && p.regions[0] === 'interesting').map(p => p.pos[2]),
+            text: points.filter(p => p.regions.length === 1 && p.regions[0] === 'interesting').map(buildHoverText),
+            hoverinfo: 'text',
+            marker: {
+                size: 10, symbol: 'circle',
+                color: points.filter(p => p.regions.length === 1 && p.regions[0] === 'interesting').map(pointColor),
+                line: { color: '#ffffff', width: 1.5 },
+                opacity: 1.0,
+            },
+            name: 'interesting',
+            showlegend: true,
+        },
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: points.filter(p => p.regions.length === 1 && p.regions[0] === 'minimal').map(p => p.pos[0]),
+            y: points.filter(p => p.regions.length === 1 && p.regions[0] === 'minimal').map(p => p.pos[1]),
+            z: points.filter(p => p.regions.length === 1 && p.regions[0] === 'minimal').map(p => p.pos[2]),
+            text: points.filter(p => p.regions.length === 1 && p.regions[0] === 'minimal').map(buildHoverText),
+            hoverinfo: 'text',
+            marker: {
+                size: 10, symbol: 'circle',
+                color: points.filter(p => p.regions.length === 1 && p.regions[0] === 'minimal').map(pointColor),
+                line: { color: '#ffffff', width: 1.5 },
+                opacity: 1.0,
+            },
+            name: 'minimal',
+            showlegend: true,
+        },
+
+        // -------- Overlap points (diamonds, larger, white rim) --------
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: points.filter(p => p.regions.length >= 2).map(p => p.pos[0]),
+            y: points.filter(p => p.regions.length >= 2).map(p => p.pos[1]),
+            z: points.filter(p => p.regions.length >= 2).map(p => p.pos[2]),
+            text: points.filter(p => p.regions.length >= 2).map(buildHoverText),
+            hoverinfo: 'text',
+            marker: {
+                size: points.filter(p => p.regions.length >= 2).map(p => p.regions.length === 3 ? 18 : 14),
+                symbol: 'diamond',
+                color: points.filter(p => p.regions.length >= 2).map(pointColor),
+                line: { color: '#ffffff', width: 2 },
+                opacity: 1.0,
+            },
+            name: 'overlap',
+            showlegend: true,
+        },
+
+        // -------- Void points (gray crosses) --------
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: points.filter(p => p.regions.length === 0).map(p => p.pos[0]),
+            y: points.filter(p => p.regions.length === 0).map(p => p.pos[1]),
+            z: points.filter(p => p.regions.length === 0).map(p => p.pos[2]),
+            text: points.filter(p => p.regions.length === 0).map(buildHoverText),
+            hoverinfo: 'text',
+            marker: {
+                size: 8, symbol: 'cross',
+                color: '#94a3b8',
+                line: { color: '#cbd5e1', width: 1 },
+                opacity: 0.8,
+            },
+            name: 'void',
+            showlegend: true,
+        },
+
+        // -------- Region-centre labels (text on top) --------
+        {
+            type: 'scatter3d',
+            mode: 'markers+text',
+            x: Object.values(regions).map(r => r.center[0]),
+            y: Object.values(regions).map(r => r.center[1]),
+            z: Object.values(regions).map(r => r.center[2]),
+            text: Object.values(regions).map(r => r.label),
+            textposition: 'top center',
+            textfont: { size: 13, color: '#f8fafc' },
+            hoverinfo: 'skip',
+            marker: {
+                size: 5, symbol: 'diamond-open',
+                color: Object.values(regions).map(r => r.color),
+                line: { color: '#ffffff', width: 2 },
+            },
+            showlegend: false,
+        },
+    ];
+
+    const layout = {
+        paper_bgcolor: '#000000',
+        plot_bgcolor:  '#000000',
+        font: { family: 'system-ui, sans-serif', color: '#e2e8f0', size: 11 },
+        margin: { l: 0, r: 0, t: 0, b: 0 },
+        showlegend: true,
+        legend: {
+            bgcolor: 'rgba(15,16,32,0.6)',
+            bordercolor: 'rgba(148,163,184,0.3)',
+            borderwidth: 1,
+            font: { color: '#e2e8f0', size: 10 },
+            x: 0.02, y: 0.98, xanchor: 'left', yanchor: 'top',
+        },
+        // Global hoverlabel styling — light bg, dark text, high contrast
+        hoverlabel: {
+            bgcolor: '#fefce8',
+            bordercolor: '#1f2937',
+            borderwidth: 1,
+            font: { family: 'system-ui, sans-serif', size: 12, color: '#1f2937' },
+            align: 'left',
+        },
+        scene: {
+            bgcolor: '#000000',
+            xaxis: {
+                title: { text: 'x', font: { color: '#f87171', size: 13 } },
+                range: [-1.7, 1.7],
+                gridcolor: 'rgba(255,255,255,0.18)',
+                zerolinecolor: 'rgba(255,255,255,0.3)',
+                showbackground: true,
+                backgroundcolor: 'rgba(20,20,35,0.3)',
+                tickfont: { color: '#94a3b8', size: 9 },
+                linecolor: 'rgba(148,163,184,0.4)',
+            },
+            yaxis: {
+                title: { text: 'y', font: { color: '#4ade80', size: 13 } },
+                range: [-1.7, 1.7],
+                gridcolor: 'rgba(255,255,255,0.18)',
+                zerolinecolor: 'rgba(255,255,255,0.3)',
+                showbackground: true,
+                backgroundcolor: 'rgba(20,20,35,0.3)',
+                tickfont: { color: '#94a3b8', size: 9 },
+                linecolor: 'rgba(148,163,184,0.4)',
+            },
+            zaxis: {
+                title: { text: 'z', font: { color: '#60a5fa', size: 13 } },
+                range: [-1.7, 1.7],
+                gridcolor: 'rgba(255,255,255,0.18)',
+                zerolinecolor: 'rgba(255,255,255,0.3)',
+                showbackground: true,
+                backgroundcolor: 'rgba(20,20,35,0.3)',
+                tickfont: { color: '#94a3b8', size: 9 },
+                linecolor: 'rgba(148,163,184,0.4)',
+            },
+            camera: {
+                eye: { x: 1.4, y: 1.1, z: 1.3 },
+                center: { x: 0, y: 0, z: 0 },
+            },
+            aspectmode: 'cube',
+        },
+    };
+
+    const config = {
+        responsive: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
+    };
+
+    Plotly.newPlot(root, traces, layout, config);
+}
+
 function renderPEInteractiveLab() {
     const container = document.getElementById('pe-interactive-lab');
     if (!container) return;
@@ -286,6 +710,7 @@ async function loadPromptengineeringModule() {
         renderPETechRadar(),
         renderPECoTAccuracy(),
         renderPEPromptInjection(),
+        renderPEContradictionIntersection(),
         renderPEInteractiveLab(),
     ]);
     const resizeAll = () => {

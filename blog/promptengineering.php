@@ -287,7 +287,14 @@ are already much smaller regions. But the real narrowing happens when you requir
 
 Each contradiction is the **intersection of two thin regions** that meet in a narrow band. Stack them and the intersection shrinks geometrically. The model has no choice but to land in a small, well-defined neighborhood -- but it still has to find the actual point inside it.
 
-The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time \cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}. The only difference is that you describe the directions in adjectives and the "push" in the word "but" -- the model performs the vector arithmetic itself.
+The mechanism is the same one *latent steering* exploits: identify directions, then push toward (or away from) them at inference time \cite[§1, definition of latent steering; §2, amortization of direction injection]{emergentmind_latent_steering}.
+
+</div>
+
+<div id="pe-contradiction-intersection" style="width:100%; margin: 0 auto 30px auto;"></div>
+
+<div class="md">
+### Interactive: Watch the Region Shrink
 
 ### The Spatial Picture: Distinction, Locality, Coherence, Gluing
 
