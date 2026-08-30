@@ -311,32 +311,6 @@ function renderPEContradictionIntersection() {
     // Ellipsoid radii are *larger than the region-to-region distance* so the
     // volumes visibly overlap at the boundaries.
     const ELLIPSOID_RADII = [0.85, 0.75, 0.80];
-    function ellipsoidVerts(center, rx, ry, rz, segs) {
-        const verts = [];
-        const idx = [];
-        for (let i = 0; i <= segs; i++) {
-            const phi = (i / segs) * Math.PI;
-            for (let j = 0; j <= segs; j++) {
-                const theta = (j / segs) * 2 * Math.PI;
-                verts.push([
-                    center[0] + rx * Math.sin(phi) * Math.cos(theta),
-                    center[1] + ry * Math.sin(phi) * Math.sin(theta),
-                    center[2] + rz * Math.cos(phi),
-                ]);
-            }
-        }
-        for (let i = 0; i < segs; i++) {
-            for (let j = 0; j < segs; j++) {
-                const a = i * (segs + 1) + j;
-                const b = a + 1;
-                const c = (i + 1) * (segs + 1) + j;
-                const d = c + 1;
-                idx.push(a, b, d);
-                idx.push(a, d, c);
-            }
-        }
-        return { verts, idx };
-    }
 
     // Inner core clouds — dense, high opacity
     const cloudInner = [
@@ -350,6 +324,22 @@ function renderPEContradictionIntersection() {
         ...cloudFor('interesting', regions.interesting.center, 180, 0.95),
         ...cloudFor('minimal',     regions.minimal.center,     180, 0.95),
     ];
+    // Volume markers — large, very transparent scatter3d points that simulate
+    // a soft 3D cloud volume without using mesh3d (which would block hover
+    // events on the labeled points behind it).
+    const cloudVolume = [];
+    for (const id of ['familiar', 'interesting', 'minimal']) {
+        const center = regions[id].center;
+        const color = regions[id].color;
+        for (let i = 0; i < 100; i++) {
+            cloudVolume.push({
+                x: center[0] + gauss() * ELLIPSOID_RADII[0] * 0.95,
+                y: center[1] + gauss() * ELLIPSOID_RADII[1] * 0.95,
+                z: center[2] + gauss() * ELLIPSOID_RADII[2] * 0.95,
+                color,
+            });
+        }
+    }
     // Sparse void dust — random spread, gray
     const voidDust = [];
     for (let i = 0; i < 140; i++) {
@@ -361,35 +351,16 @@ function renderPEContradictionIntersection() {
     }
 
     const traces = [
-        // -------- Translucent ellipsoid volumes (mesh3d) --------
-        // These are real 3-D surfaces. Radii are large enough that neighbouring
-        // volumes overlap visibly, which is where the overlap words live.
-        ...['familiar', 'interesting', 'minimal'].map(id => {
-            const r = regions[id];
-            const { verts, idx } = ellipsoidVerts(r.center, ELLIPSOID_RADII[0], ELLIPSOID_RADII[1], ELLIPSOID_RADII[2], 24);
-            return {
-                type: 'mesh3d',
-                x: verts.map(v => v[0]),
-                y: verts.map(v => v[1]),
-                z: verts.map(v => v[2]),
-                i: idx.filter((_, k) => k % 2 === 0),
-                j: idx.filter((_, k) => k % 2 === 1) || undefined,
-                // Build i/j/k arrays manually for proper triangulation
-                ...(() => {
-                    const I = [], J = [], K = [];
-                    for (let n = 0; n < idx.length; n += 3) {
-                        I.push(idx[n]); J.push(idx[n + 1]); K.push(idx[n + 2]);
-                    }
-                    return { i: I, j: J, k: K };
-                })(),
-                color: r.color,
-                opacity: 0.18,
-                flatshading: false,
-                lighting: { ambient: 0.8, diffuse: 0.2, specular: 0, roughness: 1 },
-                hoverinfo: 'skip',
-                showlegend: false,
-            };
-        }),
+        // -------- Cloud volume (large soft scatter3d markers, no hover) --------
+        // Simulates the 3-D ellipsoid volume without using mesh3d, so it does
+        // not intercept hover events on the labeled points behind it.
+        {
+            type: 'scatter3d',
+            mode: 'markers',
+            x: cloudVolume.map(p => p.x), y: cloudVolume.map(p => p.y), z: cloudVolume.map(p => p.z),
+            marker: { size: 24, color: cloudVolume.map(p => p.color), opacity: 0.09, line: { width: 0 } },
+            hoverinfo: 'skip', showlegend: false,
+        },
 
         // -------- Cloud particles (two layers for soft edges) --------
         {
