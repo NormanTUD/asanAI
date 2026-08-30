@@ -393,7 +393,7 @@ function toc() {
 		var footer = document.createElement("div");
 		footer.className = "toc-footer";
 		var totalMin = formatReadingTime(totalWords);
-		footer.textContent = 'Gesamt: ' + totalMin + ' Lesezeit · ' + totalWords.toLocaleString('de-DE') + ' Wörter';
+		footer.textContent = 'Total: ' + totalMin + ' reading time · ' + totalWords.toLocaleString('en-US') + ' words';
 		tocDiv.appendChild(footer);
 	}
 
