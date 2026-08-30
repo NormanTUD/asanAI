@@ -7841,5 +7841,42 @@ window.bibData = {
 		year: 1997,
 		url: "https://www.cse.ucsd.edu/~yfreund/papers/boosting.pdf",
 		alternativetitle: "AdaBoost"
+	},
+
+	"emergentmind_latent_space_steering": {
+		title: "Latent Space Steering Techniques",
+		author: "EmergentMind",
+		year: 2026,
+		url: "https://www.emergentmind.com/topics/latent-space-steering",
+		alternativetitle: "Latent Space Steering"
+	},
+	"emergentmind_steering_vectors": {
+		title: "Steering Vectors: Beamforming to LLM Control",
+		author: "EmergentMind",
+		year: 2025,
+		url: "https://www.emergentmind.com/topics/steering-vectors",
+		alternativetitle: "Steering Vectors"
+	},
+	"emergentmind_latent_steering": {
+		title: "Latent Steering in Neural Networks",
+		author: "EmergentMind",
+		year: 2026,
+		url: "https://www.emergentmind.com/topics/latent-steering",
+		alternativetitle: "Latent Steering"
+	},
+	"emergentmind_representation_steering": {
+		title: "Representation Steering in Neural Models",
+		author: "EmergentMind",
+		year: 2025,
+		url: "https://www.emergentmind.com/topics/representation-steering",
+		alternativetitle: "Representation Steering"
+	},
+
+	"coherent_difference_chapter": {
+		title: "Coherent Difference — Why meaning is built from local differences glued together coherently",
+		author: "Asanai Blog",
+		year: 2026,
+		url: "https://asanai.blog/coherent_difference.php",
+		alternativetitle: "Coherent Difference"
 	}
 };
