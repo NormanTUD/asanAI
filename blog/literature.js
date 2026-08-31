@@ -5188,7 +5188,7 @@ window.bibData = {
 		url: "https://plato.stanford.edu/entries/aristotle-metaphysics/",
 		title: "Metaphysics",
 		author: "Aristotle",
-		year: -350,
+		year: "350 B. C.",
 		alternativetitle: "Aristotle, Metaphysics"
 	},
 	"hume_treatise": {
