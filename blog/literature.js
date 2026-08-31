@@ -7958,5 +7958,129 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Polyethylene",
 		alternativetitle: "Polyethylene"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Displaced prerequisites: Paper, Glass, Press, etc.
+	// ═══════════════════════════════════════════════
+
+	"cai_lun_paper": {
+		title: "Cai Lun's Memorial on Papermaking, recorded in Hou Hanshu (後漢書)",
+		author: "Fan Ye (historian)",
+		year: 105,
+		url: "https://en.wikipedia.org/wiki/Paper",
+		alternativetitle: "Cai Lun's Memorial"
+	},
+	"galileosidereus": {
+		title: "Sidereus Nuncius (The Sidereal Messenger)",
+		author: "Galileo Galilei",
+		year: 1610,
+		url: "https://en.wikisource.org/wiki/The_Sidereal_Messenger_of_Galileo_Galilei",
+		alternativetitle: "Sidereus Nuncius"
+	},
+	"leeuwenhoekletters": {
+		title: "Letters to the Royal Society on microscopic observations (1673–1723)",
+		author: "Antoni van Leeuwenhoek",
+		year: 1674,
+		url: "https://en.wikipedia.org/wiki/Antonie_van_Leeuwenhoek",
+		alternativetitle: "Leeuwenhoek's Letters"
+	},
+	"gutenbergpress": {
+		title: "Movable metal type printing press (Mainz, c. 1440)",
+		author: "Johannes Gutenberg",
+		year: 1440,
+		url: "https://en.wikipedia.org/wiki/Gutenberg_Bible",
+		alternativetitle: "Movable Metal Type"
+	},
+	"paciolisumma": {
+		title: "Summa de Arithmetica, Geometria, Proportioni et Proportionalita (1494, Particulare IX, ch. 11)",
+		author: "Luca Pacioli",
+		year: 1494,
+		url: "https://en.wikipedia.org/wiki/Summa_de_arithmetica",
+		alternativetitle: "Summa de Arithmetica"
+	},
+	"mercator1569": {
+		title: "Nova et Aucta Orbis Terrae Descriptio ad Usum Navigantium Emendatissima",
+		author: "Gerardus Mercator",
+		year: 1569,
+		url: "https://en.wikipedia.org/wiki/Mercator_projection",
+		alternativetitle: "Mercator 1569 World Map"
+	},
+	"harrisonh4": {
+		title: "H4 Marine Timekeeper (tested 1761, Board of Longitude)",
+		author: "John Harrison",
+		year: 1761,
+		url: "https://en.wikipedia.org/wiki/Marine_chronometer",
+		alternativetitle: "Harrison H4"
+	},
+	"huygenspendulum": {
+		title: "Horologium Oscillatorium (pendulum clock, 1656)",
+		author: "Christiaan Huygens",
+		year: 1656,
+		url: "https://en.wikipedia.org/wiki/Huygens%27s_pendulum_clock",
+		alternativetitle: "Horologium Oscillatorium"
+	},
+	"newcomenengine": {
+		title: "Atmospheric steam engine (1712, Dartmouth, England)",
+		author: "Thomas Newcomen",
+		year: 1712,
+		url: "https://en.wikipedia.org/wiki/Newcomen_atmospheric_engine",
+		alternativetitle: "Newcomen Engine"
+	},
+	"wattpatent": {
+		title: "British Patent No. 913: A New Method of Lessening the Consumption of Steam in Steam Engines",
+		author: "James Watt",
+		year: 1769,
+		url: "https://en.wikipedia.org/wiki/Watt_steam_engine",
+		alternativetitle: "Watt Patent 913"
+	},
+	"torricellibarometer": {
+		title: "Letter to Michelangelo Ricci (1644, on the vacuum and atmospheric pressure)",
+		author: "Evangelista Torricelli",
+		year: 1644,
+		url: "https://en.wikipedia.org/wiki/Evangelista_Torricelli",
+		alternativetitle: "Torricelli's Letters"
+	},
+	"vonguericke": {
+		title: "Experimenta Nova Magdeburgica (1672, describing the 1654 hemispheres experiment)",
+		author: "Otto von Guericke",
+		year: 1654,
+		url: "https://en.wikipedia.org/wiki/Experimenta_Nova",
+		alternativetitle: "Experimenta Nova"
+	},
+	"geisslertube": {
+		title: "Geissler tubes and the study of electrical discharges in rarefied gases",
+		author: "Heinrich Geissler",
+		year: 1857,
+		url: "https://en.wikipedia.org/wiki/Geissler_tube",
+		alternativetitle: "Geissler Tube"
+	},
+	"flemingdiode": {
+		title: "Instrument for Converting Alternating Electric Currents into Continuous Currents (U.S. Patent 803,684)",
+		author: "John Ambrose Fleming",
+		year: 1905,
+		url: "https://patents.google.com/patent/US803684A/en",
+		alternativetitle: "Fleming Diode Patent"
+	},
+	"deforestaudion": {
+		title: "Space Telegraphy (U.S. Patent 879,532, triode vacuum tube / Audion)",
+		author: "Lee De Forest",
+		year: 1907,
+		url: "https://patents.google.com/patent/US879532A/en",
+		alternativetitle: "De Forest Audion Patent"
+	},
+	"morsetelegraph": {
+		title: "Improvement in the Mode of Communicating Information by Signals by the Application of Electromagnetism (U.S. Patent 1,647)",
+		author: "Samuel F. B. Morse",
+		year: 1840,
+		url: "https://patents.google.com/patent/US1647A/en",
+		alternativetitle: "Morse Telegraph Patent"
+	},
+	"cookewheatstone": {
+		title: "Electric Telegraph (needle telegraph, 1837)",
+		author: "William Fothergill Cooke and Charles Wheatstone",
+		year: 1837,
+		url: "https://en.wikipedia.org/wiki/Cooke_and_Wheatstone_telegraph",
+		alternativetitle: "Cooke-Wheatstone Telegraph"
 	}
 };
