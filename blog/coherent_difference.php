@@ -952,7 +952,7 @@ The list could be longer. It includes Anaximander's *apeiron* (the boundless tha
 <div class="md">
 ## Coda: the ladder of embodiment
 
-This chapter walked *up* a ladder — from a first distinction to the invariant global whole of a sheaf, from a set to a topos, from a topological space to an $\infty$-category of coherent transitions. Each rung asks less and survives more. At the top, "space" no longer means container or location. It means only:
+This chapter walked *up* a ladder — from a first distinction to the invariant global whole of a sheaf. At the top, "space" no longer means container. It means:
 
 $$
 \boxed{
@@ -963,7 +963,7 @@ $$
 }
 $$
 
-There is a second ladder, running the other way, which every embodied system has to climb. Same rungs, opposite direction:
+Every embodied system climbs a second ladder, running the other way. Same rungs, opposite direction:
 
 $$
 \underbrace{\text{coherent difference}}_{\text{grammar}}
@@ -979,11 +979,11 @@ $$
 \underbrace{\text{silicon}}_{\text{substrate}}
 $$
 
-Every downward step is a *loss* of generality and a *gain* of operational reality. The two ladders are the same ladder, read as grammar or as pronunciation.
+Each downward step: loss of generality, gain of operational reality. Grammar read one way; pronunciation read the other.
 
-### The condensation, made concrete
+### The arithmetic shadow
 
-The condensation that matters carries the chain into a vector space of floats. Every link has an arithmetic shadow:
+The condensation that matters carries the chain into a vector space of floats. Every link has an arithmetic image:
 
 $$
 \begin{array}{r|l}
@@ -997,22 +997,22 @@ $$
 \end{array}
 $$
 
-The minimal structure in which the entire chain can be *arithmetically enacted*. Nothing is lost that a gradient needs.
+The minimal structure in which the chain can be *arithmetically enacted*.
 
-### Two layers of approximation
+### Two stacked approximations
 
-A vector in an actual LLM is not an element of $\mathbb{R}^d$. It is a tuple of **floats** — a finite, logarithmically-quantized lattice, dense near zero and coarse at the extremes. Two approximations stack: the chain approximated by $\mathbb{R}^d$, and $\mathbb{R}^d$ approximated by the float lattice.
+A vector in an LLM is not an element of $\mathbb{R}^d$. It is a tuple of **floats** — a finite, logarithmically-quantized lattice, dense near zero, coarse at the extremes. Two approximations stack: the chain approximated by $\mathbb{R}^d$; $\mathbb{R}^d$ approximated by the float lattice.
 
-The consequences are structural. Float addition is **not associative**: $(a + b) + c \neq a + (b + c)$ in general. The vector space in which a language model operates is *not a vector space in the axiomatic sense of this chapter*. It behaves like one only so long as one does not look too closely.
+The consequences are structural. Float addition is **not associative**: $(a + b) + c \neq a + (b + c)$ in general. The vector space of an LLM is *not a vector space in the axiomatic sense*. It behaves like one only at the resolution of the floats.
 
-And yet the shadow suffices, for two reasons:
+### Why the shadow suffices
 
-- **Language is itself approximate.** Words are not sharply bounded, meanings not discrete, contexts blend. Two softnesses meet, and they fit.
-- **Backpropagation requires a metric.** A gradient needs a direction; a direction needs a metric; a metric needs numbers. The vector space is the shape structure must take when it wants to *learn*. A topos cannot compute. A sheaf cannot descend a gradient. A float can.
+- **Language is itself approximate.** Words are not sharply bounded, meanings not discrete, contexts blend. Two softnesses fit.
+- **Backpropagation requires a metric.** A gradient needs a direction; a direction needs a metric; a metric needs numbers. A topos cannot compute. A sheaf cannot descend a gradient. A float can.
 
 ### The wider principle
 
-The vector space is one instance of an older move. Aristotle called it hylomorphism \cite{aristotle_metaphysics}: every concrete object is form and matter held together in one compound. The abstract chain is the form; the floats are the matter; the running network is the compound.
+Aristotle's hylomorphism \cite{aristotle_metaphysics}: form + matter = compound. The chain is the form; the floats are the matter; the running network is the compound.
 
 $$
 \boxed{
@@ -1023,9 +1023,9 @@ $$
 }
 $$
 
-Structure alone does not compute, does not learn, does not answer a prompt. Structure that acts has always taken on a body: neurons, silicon, floats, ink, air pressure in a spoken word. Every embodiment loses something. Every one, by losing, becomes able to act.
+Structure alone does not compute, does not learn, does not answer a prompt. Every embodiment loses something. Every one, by losing, becomes able to act.
 
-### One sentence to carry forward
+### One sentence
 
 $$
 \boxed{
@@ -1037,5 +1037,5 @@ $$
 }
 $$
 
-When the next chapter says *"an embedding is a point in a high-dimensional space"*, it means: the entire chain of this chapter, condensed through a finite arithmetic just faithful enough to carry meaning, and just concrete enough to be multiplied by a matrix a billion times per second. Abstraction and embodiment are the same object, seen from opposite ends of the ladder. Coherent difference, made computable — and, at last, made *real*.
+When the next chapter says *"an embedding is a point in a high-dimensional space"*, it means: the entire chain, condensed through a finite arithmetic just faithful enough to carry meaning, and just concrete enough to be multiplied by a matrix a billion times per second. Abstraction and embodiment are the same object, read from opposite ends of the ladder. Coherent difference, made computable — and, at last, made *real*.
 </div>
