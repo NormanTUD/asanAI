@@ -7878,5 +7878,45 @@ window.bibData = {
 		year: 2026,
 		url: "https://asanai.blog/coherent_difference.php",
 		alternativetitle: "Coherent Difference"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Displaced prerequisites: Metallurgy
+	// ═══════════════════════════════════════════════
+
+	"theophrastusstones": {
+		title: "Περὶ λίθων (On Stones)",
+		author: "Theophrastus of Eresos",
+		year: "c. 315 BCE",
+		url: "https://en.wikipedia.org/wiki/Theophrastus",
+		alternativetitle: "On Stones"
+	},
+	"plinynaturalhistory": {
+		title: "Naturalis Historia (Books XXXIII–XXXIV on metals and mining)",
+		author: "Pliny the Elder",
+		year: "c. 77 CE",
+		url: "https://en.wikisource.org/wiki/Natural_History_(Rackham,_Jones,_%26_Eichholz)/Book_34",
+		alternativetitle: "Natural History"
+	},
+	"deremetallica": {
+		title: "De Re Metallica",
+		author: "Georgius Agricola",
+		year: 1556,
+		url: "https://www.gutenberg.org/ebooks/38015",
+		alternativetitle: "De Re Metallica"
+	},
+	"bessemerpatent": {
+		title: "Improvement in the Manufacture of Iron and Steel (U.S. Patent 16,082)",
+		author: "Henry Bessemer",
+		year: 1856,
+		url: "https://patents.google.com/patent/US16082A/en",
+		alternativetitle: "Bessemer Patent"
+	},
+	"ironpillardelhi": {
+		title: "On the Corrosion Resistance of the Delhi Iron Pillar",
+		author: "R. Balasubramaniam",
+		year: 2002,
+		url: "https://en.wikipedia.org/wiki/Iron_pillar_of_Delhi",
+		alternativetitle: "Delhi Iron Pillar"
 	}
 };
