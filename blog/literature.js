@@ -7918,5 +7918,45 @@ window.bibData = {
 		year: 2002,
 		url: "https://en.wikipedia.org/wiki/Iron_pillar_of_Delhi",
 		alternativetitle: "Delhi Iron Pillar"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Displaced prerequisites: Insulation of electricity
+	// ═══════════════════════════════════════════════
+
+	"guttapercha": {
+		title: "Gutta-percha (with electrical insulation history)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Gutta-percha",
+		alternativetitle: "Gutta-percha"
+	},
+	"goodyearvulcanization": {
+		title: "Improvement in India-Rubber Fabrics (U.S. Patent 3,633)",
+		author: "Charles Goodyear",
+		year: 1844,
+		url: "https://patents.google.com/patent/US3633A/en",
+		alternativetitle: "Goodyear Vulcanization Patent"
+	},
+	"atlantictelegraph": {
+		title: "The Atlantic Telegraph",
+		author: "Bacon and Company (Cyrus West Field)",
+		year: 1866,
+		url: "https://books.google.com/books?id=CwszAQAAMAAJ&pg=PA108",
+		alternativetitle: "The Atlantic Telegraph"
+	},
+	"baekelandpatent": {
+		title: "Method of Making Insoluble Products of Phenol and Formaldehyde (U.S. Patent 942,699)",
+		author: "Leo H. Baekeland",
+		year: 1909,
+		url: "https://patents.google.com/patent/US942699A/en",
+		alternativetitle: "Baekeland Patent"
+	},
+	"polyethylenehistory": {
+		title: "Polyethylene (with electrical insulation history)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Polyethylene",
+		alternativetitle: "Polyethylene"
 	}
 };
