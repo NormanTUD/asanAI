@@ -399,13 +399,28 @@ Glass was made in Mesopotamia and Egypt as early as 3500 BCE, but the transparen
 
 ### The Printing Press: Mass-Producing Knowledge
 
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="gutenberg_press.jpg" alt="Engraving of William Caxton showing specimens of his printing to King Edward IV and his Queen, published in The Graphic, 30 January 1877" />
+    <figcaption class="md">The Caxton Celebration (1877): William Caxton showing specimens of his printing to King Edward IV and his Queen. The Gutenberg press, developed around 1440, combined movable metal type, oil-based ink, and a modified wine press.</figcaption>
+</figure>
+
 **\citeauthor{gutenbergpress}**'s printing press, developed around 1440 in Mainz, combined movable metal type, oil-based ink, and a modified wine press into the first technology for mass-producing identical copies of text. Before Gutenberg, a single book took a scribe months to copy; after him, a press could produce thousands of pages per day. The press made the scientific revolution possible: ideas could be published, circulated, criticised, and improved across distances that a single scholar could never reach. It standardised mathematical notation (making algebra, calculus, and eventually algorithms transmissible across linguistic boundaries), enabled the *Encyclopédie*, and created the mass literacy that the World Wide Web would eventually exploit as its training corpus. Without the printing press, there is no standardisation of knowledge, no scientific community, and no web-scale text corpus on which a language model can be trained.
 
 ### Double-Entry Bookkeeping: The First Error-Detecting Code
 
+<figure>
+    <img style="width: 60%; height: auto; display: block; margin: 1em auto;" src="pacioli_portrait.jpg" alt="Portrait of Luca Pacioli, c. 1495, attributed to Jacopo de' Barbari" />
+    <figcaption class="md">Portrait of Luca Pacioli (c. 1495), attributed to Jacomo de' Barbari. Pacioli's Summa de Arithmetica (1494) was the first printed systematic exposition of double-entry bookkeeping — the first widely used error-detecting code.</figcaption>
+</figure>
+
 **\citeauthor{paciolisumma}**'s \citeyear{paciolisumma} \citetitle{paciolisumma} did not invent double-entry bookkeeping, which had been practised in Italian merchant cities for at least two centuries, but it was the first printed, systematic exposition of the method. The principle is simple: every transaction is recorded twice, once as a debit and once as a credit, and the two sides must always balance. If they do not, an error has occurred somewhere in the ledger. This made double-entry the first widely used error-detecting code, a mechanical guarantee of numerical consistency that prefigured checksums, parity bits, and the cyclic redundancy checks that validate every packet on the modern internet. The method also enabled the joint-stock company: by providing an auditable record of assets and liabilities, it allowed strangers to pool capital, trust each other's accounting, and finance ventures from the Dutch East India Company to the semiconductor foundries of Taiwan that no individual could fund alone.
 
 ### Navigation and the Longitude Problem
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="mercator_1569.png" alt="Gerardus Mercator's 1569 world map, the first to use the Mercator projection" />
+    <figcaption class="md">Gerardus Mercator's 1569 world map: the first cartographic projection that allowed rhumb-line courses to be plotted as straight lines on a flat sheet. The longitude problem — determining east-west position at sea — drove decades of research in precision engineering and horology.</figcaption>
+</figure>
 
 The "longitude problem", determining one's east-west position at sea, was the great scientific challenge of the 18th century. Latitude could be found from the sun's altitude, but longitude required comparing local time (from a sextant observation) with the time at a reference meridian, which meant carrying a clock accurate to within a few seconds over months of ocean travel. **\citeauthor{mercator1569}**'s \citeyear{mercator1569} map projection had already solved the cartographic problem, allowing rhumb-line courses to be plotted as straight lines on a flat sheet. The British Board of Longitude, established in 1714 with a prize of £20,000, funded decades of research in astronomy, horology, and precision engineering. **\citeauthor{harrisonh4}**'s \citeyear{harrisonh4} chronometer finally solved the timekeeping problem, losing only five seconds over 81 days at sea. The longitude prize seeded the precision engineering tradition that would later produce chronometers, sextants, and eventually the machine tools that make interchangeable parts, the foundation of all modern hardware manufacturing.
 
@@ -419,9 +434,19 @@ The "longitude problem", determining one's east-west position at sea, was the gr
 
 ### Vacuum Technique: Emptying Space to Fill It with Electrons
 
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="magdeburg_hemispheres.jpg" alt="Reconstruction of Otto von Guericke's Magdeburg hemispheres experiment, demonstrating the vacuum" />
+    <figcaption class="md">The Magdeburg hemispheres (Otto von Guericke, 1654): two copper bowls evacuated of air, held together so firmly by atmospheric pressure that teams of horses could not pull them apart. The vacuum technique pioneered here would, three centuries later, make the vacuum tube possible.</figcaption>
+</figure>
+
 **\citeauthor{torricellibarometer}**'s \citeyear{torricellibarometer} barometer demonstrated that the atmosphere has weight and, by implication, that the space above the mercury in a sealed tube is empty, a vacuum. **\citeauthor{vonguericke}**'s \citeyear{vonguericke} \citealternativetitle{vonguericke} (1654) made the point dramatically: two teams of horses could not pull apart a sphere evacuated of air. But the decisive step for computation was the development of glassblowing techniques that could seal metal electrodes inside a glass envelope from which the air had been removed. **\citeauthor{geisslertube}**'s \citeyear{geisslertube} \citealternativetitle{geisslertube} (1857) showed that electric current through low-pressure gas produces coloured light. Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the "Edison effect." **\citeauthor{flemingdiode}**'s \citeyear{flemingdiode} \citealternativetitle{flemingdiode} used this effect to build the first electronic rectifier; **\citeauthor{deforestaudion}**'s \citeyear{deforestaudion} \citealternativetitle{deforestaudion} (1906) added a third electrode to create the first electronic amplifier. The ENIAC (1946) used 17,468 vacuum tubes; every electronic computer until the transistor era was a room full of glowing glass bulbs, each one dependent on the vacuum techniques pioneered by Torricelli and von Guericke three centuries earlier.
 
 ### Land Telegraphy: The First Digital Network
+
+<figure>
+    <img style="width: 100%; height: auto; display: block;" src="morse_telegraph.jpg" alt="A Morse telegraph key, the first device for digital electronic communication" />
+    <figcaption class="md">A Morse telegraph key: the first practical interface for digital electronic communication. Morse code, a variable-length binary encoding using dots and dashes, was the first digital communication protocol.</figcaption>
+</figure>
 
 **\citeauthor{morsetelegraph}**'s \citeyear{morsetelegraph} electromagnetic telegraph and the competing **\citeauthor{cookewheatstone}** \citeyear{cookewheatstone} were the first practical technologies for transmitting information faster than a horse could ride. Morse code, a variable-length binary encoding using short signals (dots) and long signals (dashes), was the first digital communication protocol. By 1866, a transatlantic cable linked Europe and North America; by 1900, over two million miles of telegraph wire encircled the globe. The telegraph introduced concepts that would later become foundational to computer networking: message routing through relay stations (the direct ancestor of packet-switched routers), standardised protocols for interoperation between different manufacturers' equipment, and the idea that a "network" could span continents. The store-and-forward relay stations of the telegraph era were the architectural template for ARPANET's packet-switched routers a century later. Without the telegraph, there is no instant communication, no coordinated railroad scheduling, and no concept of a network of machines forwarding messages, and therefore no internet.
 

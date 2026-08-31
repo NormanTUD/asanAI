@@ -7925,10 +7925,10 @@ window.bibData = {
 	// ═══════════════════════════════════════════════
 
 	"guttapercha": {
-		title: "Gutta-percha (with electrical insulation history)",
+		title: "Gutta-percha",
 		author: "Wikipedia contributors",
 		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Gutta-percha",
+		url: "https://commons.wikimedia.org/wiki/File:Gutta-percha_(Palaquium_gutta)_tree.jpg",
 		alternativetitle: "Gutta-percha"
 	},
 	"goodyearvulcanization": {
@@ -7953,10 +7953,10 @@ window.bibData = {
 		alternativetitle: "Baekeland Patent"
 	},
 	"polyethylenehistory": {
-		title: "Polyethylene (with electrical insulation history)",
+		title: "Polyethylene",
 		author: "Wikipedia contributors",
 		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Polyethylene",
+		url: "https://commons.wikimedia.org/wiki/File:Polyethene_repeat_unit.svg",
 		alternativetitle: "Polyethylene"
 	},
 
@@ -7968,7 +7968,7 @@ window.bibData = {
 		title: "Cai Lun's Memorial on Papermaking, recorded in Hou Hanshu (後漢書)",
 		author: "Fan Ye (historian)",
 		year: 105,
-		url: "https://en.wikipedia.org/wiki/Paper",
+		url: "https://commons.wikimedia.org/wiki/File:CaiLun.jpg",
 		alternativetitle: "Cai Lun's Memorial"
 	},
 	"galileosidereus": {
@@ -7982,77 +7982,77 @@ window.bibData = {
 		title: "Letters to the Royal Society on microscopic observations (1673–1723)",
 		author: "Antoni van Leeuwenhoek",
 		year: 1674,
-		url: "https://en.wikipedia.org/wiki/Antonie_van_Leeuwenhoek",
+		url: "https://commons.wikimedia.org/wiki/File:Antonie_van_Leeuwenhoek_(by_Jan_Verkolje).jpg",
 		alternativetitle: "Leeuwenhoek's Letters"
 	},
 	"gutenbergpress": {
-		title: "Movable metal type printing press (Mainz, c. 1440)",
-		author: "Johannes Gutenberg",
-		year: 1440,
-		url: "https://en.wikipedia.org/wiki/Gutenberg_Bible",
-		alternativetitle: "Movable Metal Type"
+		title: "The Caxton Celebration (1877): William Caxton showing specimens of his printing to King Edward IV and his Queen",
+		author: "William Small (1843–1929), published in The Graphic, 30 January 1877",
+		year: 1877,
+		url: "https://commons.wikimedia.org/wiki/File:The_Caxton_Celebration_-_William_Caxton_showing_specimens_of_his_printing_to_King_Edward_IV_and_his_Queen.jpg",
+		alternativetitle: "Caxton Celebration (1877)"
 	},
 	"paciolisumma": {
 		title: "Summa de Arithmetica, Geometria, Proportioni et Proportionalita (1494, Particulare IX, ch. 11)",
 		author: "Luca Pacioli",
 		year: 1494,
-		url: "https://en.wikipedia.org/wiki/Summa_de_arithmetica",
+		url: "https://commons.wikimedia.org/wiki/File:Pacioli.jpg",
 		alternativetitle: "Summa de Arithmetica"
 	},
 	"mercator1569": {
-		title: "Nova et Aucta Orbis Terrae Descriptio ad Usum Navigantium Emendatissima",
+		title: "Nova et Aucta Orbis Terrae Descriptio ad Usum Navigantium Emendatissima (1569 world map)",
 		author: "Gerardus Mercator",
 		year: 1569,
-		url: "https://en.wikipedia.org/wiki/Mercator_projection",
+		url: "https://commons.wikimedia.org/wiki/File:Mercator_1569.png",
 		alternativetitle: "Mercator 1569 World Map"
 	},
 	"harrisonh4": {
 		title: "H4 Marine Timekeeper (tested 1761, Board of Longitude)",
 		author: "John Harrison",
 		year: 1761,
-		url: "https://en.wikipedia.org/wiki/Marine_chronometer",
+		url: "https://commons.wikimedia.org/wiki/File:Harrison%27s_H4_Marine_Timekeeper.jpg",
 		alternativetitle: "Harrison H4"
 	},
 	"huygenspendulum": {
 		title: "Horologium Oscillatorium (pendulum clock, 1656)",
 		author: "Christiaan Huygens",
 		year: 1656,
-		url: "https://en.wikipedia.org/wiki/Huygens%27s_pendulum_clock",
+		url: "https://commons.wikimedia.org/wiki/File:Christiaan_Huygens-pendulum_clock.png",
 		alternativetitle: "Horologium Oscillatorium"
 	},
 	"newcomenengine": {
 		title: "Atmospheric steam engine (1712, Dartmouth, England)",
 		author: "Thomas Newcomen",
 		year: 1712,
-		url: "https://en.wikipedia.org/wiki/Newcomen_atmospheric_engine",
+		url: "https://commons.wikimedia.org/wiki/File:Newcomen_atmospheric_engine_animation.gif",
 		alternativetitle: "Newcomen Engine"
 	},
 	"wattpatent": {
 		title: "British Patent No. 913: A New Method of Lessening the Consumption of Steam in Steam Engines",
 		author: "James Watt",
 		year: 1769,
-		url: "https://en.wikipedia.org/wiki/Watt_steam_engine",
+		url: "https://commons.wikimedia.org/wiki/File:Watt_steam_engine.jpg",
 		alternativetitle: "Watt Patent 913"
 	},
 	"torricellibarometer": {
 		title: "Letter to Michelangelo Ricci (1644, on the vacuum and atmospheric pressure)",
 		author: "Evangelista Torricelli",
 		year: 1644,
-		url: "https://en.wikipedia.org/wiki/Evangelista_Torricelli",
+		url: "https://commons.wikimedia.org/wiki/File:Torricelli%27s_experiment.svg",
 		alternativetitle: "Torricelli's Letters"
 	},
 	"vonguericke": {
 		title: "Experimenta Nova Magdeburgica (1672, describing the 1654 hemispheres experiment)",
 		author: "Otto von Guericke",
 		year: 1654,
-		url: "https://en.wikipedia.org/wiki/Experimenta_Nova",
-		alternativetitle: "Experimenta Nova"
+		url: "https://commons.wikimedia.org/wiki/File:Magdeburger-halbkugeln.jpg",
+		alternativetitle: "Magdeburg Hemispheres"
 	},
 	"geisslertube": {
 		title: "Geissler tubes and the study of electrical discharges in rarefied gases",
 		author: "Heinrich Geissler",
 		year: 1857,
-		url: "https://en.wikipedia.org/wiki/Geissler_tube",
+		url: "https://commons.wikimedia.org/wiki/File:Geissler_tubes.jpg",
 		alternativetitle: "Geissler Tube"
 	},
 	"flemingdiode": {
@@ -8080,7 +8080,7 @@ window.bibData = {
 		title: "Electric Telegraph (needle telegraph, 1837)",
 		author: "William Fothergill Cooke and Charles Wheatstone",
 		year: 1837,
-		url: "https://en.wikipedia.org/wiki/Cooke_and_Wheatstone_telegraph",
+		url: "https://commons.wikimedia.org/wiki/File:Cooke_and_Wheatstone_telegraph.jpg",
 		alternativetitle: "Cooke-Wheatstone Telegraph"
 	}
 };
