@@ -407,11 +407,12 @@ The second wave of insulation was synthetic. \textbf{\citeauthor{goodyearvulcani
 
 Strip any single one of these insulating materials from the causal chain and the chain breaks. Bakelite bobbins let Tesla and Westinghouse's AC motors run unattended for decades; polyethylene's controlled dielectric constant makes the twisted-pair cable in every Ethernet port possible, and its low-loss profile at microwave frequencies is what lets the radar, the cell tower, and the satellite downlink carry data across a continent or an ocean. The enamel coating on a single copper magnet wire is, today, a thin shell of polyimide or polyurethane whose molecular structure was engineered for a thermal class invented for the 1960s space program. Without insulation, the conductor alone cannot even *be* a conductor — a wire shorted to ground is not a wire but a fuse. The displaced prerequisite here is not the metal, not the signal, but the stubbornness of the material wrapped around the metal that lets the signal *stay* a signal.
 
-The history of AI is not merely a history of algorithms and
-architectures. It is the visible tip of an iceberg whose submerged
-mass is the entire cumulative infrastructure of human civilization,
-built layer upon layer over millennia by people who could never have
-imagined what their contributions would eventually make possible.
+Modern AI rests on a cumulative infrastructure that includes
+metallurgy, electrical insulation, semiconductor fabrication,
+refrigeration, and dozens of other domains developed for reasons
+unrelated to computation. Most of these contributions were made by
+people who could not have foreseen their eventual use in artificial
+intelligence systems.
 </div>
 
 <div class="md">
