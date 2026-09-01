@@ -12,8 +12,6 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, model-theory, ai,
 
 <div class="md">
 
-# From World to Model: Coherent Representation
-
 How can many different, partial, transformed descriptions belong to one world without being literally identical?
 
 The single guiding diagram of this chapter is:
