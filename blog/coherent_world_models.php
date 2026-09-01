@@ -208,22 +208,39 @@ $\mathcal V$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain com
 
 ## Sheaves: coherence = descent
 
-$F$ is a **sheaf** on $(\mathcal C, J)$ iff for every cover $\{c_i \to c\}$:
+In plain English first. A presheaf $F$ assigns a set of "local sections" to every context: $F(c)$ is the data one can write down *on* $c$. Sheaf-ness is the rule that turns *compatible* local data into *unique* global data.
+
+$$
+\boxed{\;\text{compatible local data} \;\Longrightarrow\; \text{unique global data}.\;}
+$$
+
+A family $\{s_i \in F(c_i)\}$ is **compatible** when, on every pairwise overlap $c_i \times_c c_j$, the two restrictions of $s_i$ and $s_j$ agree. A sheaf says: that condition alone is enough — there is exactly one global section in $F(c)$ whose restriction to each patch is $s_i$.
+
+Now the same content as an equation. For every admissible cover $\{c_i \to c\}_{i \in I}$:
 
 $$
 \underbrace{F(c)}_{\text{global section on }c}
 \;\xrightarrow{\;\sim\;}\;
-\underbrace{
-\varprojlim
-\underbrace{\Bigl(\;
-\underbrace{\prod_{i} F(c_i)}_{\underbrace{\prod_i}_{\text{"one for each patch }i\text{"}}\ \ \underbrace{F(c_i)}_{\text{section on patch }i}}
-\;\underbrace{\rightrightarrows}_{\text{two arrows: restrict from left / from right}}\;
-\underbrace{\prod_{i,j} F(c_i \times_c c_j)}_{\underbrace{\prod_{i,j}}_{\text{"one for each pair of patches"}}\ \ \underbrace{F(c_i\times_c c_j)}_{\text{section on the overlap of }c_i\text{ and }c_j}}
-\;\Bigr)}_{\text{compare each patch's section on every pairwise overlap}}
-}_{\underbrace{\varprojlim}_{\text{the equalizer of those two arrows: the tuples that agree everywhere}}}.
+\underbrace{\mathrm{Eq}\!\Bigl(\;
+\underbrace{\prod_{i\in I} F(c_i)}_{\text{a section on each patch}}
+\;\xrightrightarrows[\;\text{restrict from }j\;]{\;\text{restrict from }i\;}\;
+\underbrace{\prod_{i,j\in I} F(c_i \times_c c_j)}_{\text{a section on each pairwise overlap}}
+\;\Bigr)}_{\text{the tuples that agree on every overlap}}
 $$
 
-Reading in plain English: **for every family of local sections that agree on every overlap, there is one and only one global section restricting to them.**
+Three pieces, reading left to right:
+
+1. **The big set $\prod_i F(c_i)$.** A tuple whose $i$-th entry is a section on patch $c_i$. The product says: give me one section per patch, nothing more.
+
+2. **The two arrows into $\prod_{i,j} F(c_i\times_c c_j)$.** Each arrow restricts the tuple of sections to a section on the overlaps. The "from $i$" arrow projects the $i$-th entry onto the overlap with $c_j$; the "from $j$" arrow does the symmetric thing. The two arrows agree exactly when the chosen sections agree on every overlap.
+
+3. **The equalizer.** Out of all tuples in $\prod_i F(c_i)$, keep only those on which the two arrows give the same answer. Those are precisely the compatible tuples — and the sheaf condition says there is a *unique* global section in $F(c)$ sitting above each compatible tuple.
+
+The $\varprojlim$ in older presentations does exactly the same job; the equalizer is just its name when the diagram is a single parallel pair. (For covers of more than two patches, $\varprojlim$ runs over the full *Čech nerve* — see "Higher coherence" below.)
+
+The isomorphism $F(c) \simeq \mathrm{Eq}(\cdots)$ is the **sheaf condition**: the smallest, sharpest statement of the local-to-global principle.
+
+Reading in plain English, one more time: **for every family of local sections that agree on every overlap, there is one and only one global section restricting to them.**
 
 $$
 \begin{array}{c|c|c}
@@ -236,10 +253,6 @@ $$
 $$
 
 The empirical row is not a theorem of sheaf theory; it is the same **shape** in a different target.
-
-$$
-\boxed{\text{compatible local data} \;\Longrightarrow\; \text{unique global data.}}
-$$
 
 </div>
 
