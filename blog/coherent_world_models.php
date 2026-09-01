@@ -194,7 +194,7 @@ $$
 
 The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover" and coherence would become vacuous. By restricting to admissible covers, we make the sheaf condition a *meaningful* question about the specific modelling context.
 
-Everyday analogy: a set of overlapping photographs *covers* a room if every point of the room appears in at least one photograph. Formally, equipping $\mathcal C$ with a rule for which families count as covers is a **Grothendieck topology** $J$; the pair $(\mathcal C, J)$ is a **site** (as sketched in *Coherent Difference*).
+Equipping $\mathcal C$ with a rule for which families count as covers (one that closes under pullback and under composition) is a **Grothendieck topology** $J$; the pair $(\mathcal C, J)$ is a **site** (as sketched in *Coherent Difference*).
 
 A **representation scheme** is a presheaf:
 
@@ -392,6 +392,8 @@ $$
 <div class="md">
 
 ## Where AI actually enters
+
+So far everything has been a *specification*: a list of conditions that a coherent world model must satisfy. This section asks the converse question — does any part of modern machine learning *already* realise these conditions, even informally?
 
 Neural networks compose **parametric maps** — functions of the form $f_\theta : X \to Y$ that depend on a parameter vector $\theta$ learnable from data. Composing such maps is not just function composition, because the parameters compose too; several frameworks make this precise:
 
@@ -607,6 +609,8 @@ A useful analogy is not a theorem.
 <div class="md">
 
 ## A practical procedure
+
+The whole framework, compressed into nine steps you can run through on any dataset, in any domain. Each step has a question; the framework is the discipline of asking them in order.
 
 Given complicated evidence, in any domain:
 

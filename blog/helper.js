@@ -2639,6 +2639,12 @@ const GLOSSARY = {
 	'mod': 'A model of a theory: a set (or object of a target category) on which all axioms of the theory hold.',
 	'backpropagation': 'The algorithm that computes gradients of the loss with respect to every weight in the network by applying the chain rule backwards.',
 	'residual stream': 'The sum of all layer outputs flowing through the model; each layer reads from and writes to this shared "notebook".',
+	'representation scheme': 'In this chapter: a presheaf F: C^op → V, i.e. an assignment of a target-category object to every context, together with restriction maps along refinements. The "data" half of a coherent-modelling setup: V carries the representations, C^op says how they restrict.',
+	'composable morphism': 'A morphism in a category — an object with composition defined. In ML: a parametric map whose parameters also compose, so that two layers chained together yield a third parameterised map. The categorical upgrade of "just a function".',
+	'parametric map': 'A function f_θ: X → Y whose behaviour depends on a parameter vector θ learnable from data. The basic building block of a neural network; composing them gives a deeper parameterised map.',
+	'multimodal alignment': 'The process (or the resulting state) in which several modalities — image, text, audio — are mapped into one shared representation space so that semantically corresponding inputs end up close together. In this chapter: (partial) descent over a cover by modalities into one shared latent.',
+	'grothendieck cover': 'In a Grothendieck topology: a family of morphisms {cᵢ → c} designated as "covering" c by the topology rule. Generalises both open covers of topological spaces and admissible covers of epistemic contexts.',
+	'subobject of': 'In a category: a monomorphism m: Y → X. The "subobjects of X" form a pre-ordered class under inclusion; in a topos this class is representable by the subobject classifier Ω.',
 };
 
 function tensor(...args) {
