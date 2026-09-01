@@ -16,39 +16,22 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, model-theory, ai,
 
 How can many different, partial, transformed descriptions belong to one world without being literally identical?
 
-This chapter develops one idea from several directions:
+The single guiding diagram of this chapter is:
 
 $$
 \boxed{
-\text{world}
-\longrightarrow
-\text{interaction}
-\longrightarrow
-\text{data}
-\longrightarrow
-\text{representation}
-\longrightarrow
-\text{transformation}
-\longrightarrow
-\text{coherent integration}
-\longrightarrow
-\text{model}
-}
+\begin{array}{c}
+\text{world}\\ \downarrow\\ \text{interaction}\\ \downarrow\\ \text{data}\\ \downarrow\\ \text{representation}\\ \downarrow\\ \text{transformation}\\ \downarrow\\ \text{coherent integration}\\ \downarrow\\ \text{model}
+\end{array}}
 $$
 
-The motivating examples may come from perception, science, anomalous reports, or artificial intelligence. But the real subject is more general:
+The examples come from perception, science, and AI, but the real subject is more general: **how do finite observers construct a coherent model from partial and differently transformed access to one subject matter?**
 
-**How do finite observers construct a coherent model from partial and differently transformed access to one subject matter?**
-
-The mathematical tools that become relevant include category theory, topology, sheaves, descent, homotopy theory, $\infty$-categories, model theory, probability, and machine learning.
-
-There is an important discipline throughout:
+The mathematical tools that become relevant include category theory, topology, sheaves, descent, homotopy theory, $\infty$-categories, model theory, probability, and machine learning. Throughout, one discipline matters:
 
 $$
 \boxed{\text{a useful analogy is not automatically a theorem.}}
 $$
-
-We will therefore distinguish carefully between exact mathematics and structural analogy.
 
 </div>
 
@@ -56,113 +39,132 @@ We will therefore distinguish carefully between exact mathematics and structural
 
 ## 1. The basic problem
 
-Imagine a world $W$ that contains some event or process we want to understand.
-
-We do not simply receive $W$ itself. Instead, some interaction produces data:
+A world $W$ contains some event. We do not receive $W$ itself; some interaction produces data $W\xrightarrow{O_i}D_i$. Different observers or instruments give different observation maps:
 
 $$
-W\xrightarrow{O_i}D_i.
+W\xrightarrow{O_1}D_1,\quad W\xrightarrow{O_2}D_2,\quad W\xrightarrow{O_3}D_3,
 $$
 
-Different observers or instruments may have different observation maps:
+and the resulting datasets need not agree ($D_1\neq D_2$). A camera produces pixels, a microphone a waveform, a radar a signal, a human a perceptual representation and a linguistic report.
+
+The scientific question is not "are these data literally the same?" but:
 
 $$
-W\xrightarrow{O_1}D_1,
-\qquad
-W\xrightarrow{O_2}D_2,
-\qquad
-W\xrightarrow{O_3}D_3.
+\underbrace{\exists\, T\in\mathcal{T}:\; D_i \xrightarrow{T} D_j}_{\text{are the differences explained by a justified transformation?}}
 $$
-
-The resulting datasets need not be identical:
-
-$$
-D_1\neq D_2.
-$$
-
-That is not yet a contradiction.
-
-A camera produces pixels. A microphone produces a waveform. A radar produces a signal. A human observer produces a perceptual representation and perhaps a linguistic report.
-
-The scientific question is not:
-
-**"Are these data literally the same?"**
-
-It is:
-
-**Can we explain their differences by a sufficiently well-constrained system of transformations, and can the resulting descriptions be integrated into one coherent model?**
-
-This distinction is the central idea of the chapter.
 
 </div>
 
 <div class="md">
 
-## 2. One world, many channels
+## 2. One world, many channels — a concrete example
 
-Consider a train passing a person on a platform.
-
-A simplified physical chain might look like
+Consider a train passing a person on a platform. A single physical event produces several signal channels:
 
 $$
-W
-\to
-\text{electromagnetic field}
-\to
-\text{photons}
-\to
-\text{retina}
-\to
-\text{neural processing}
-\to
-\text{visual representation}.
+\begin{array}{ccccc}
+&&W\ (\text{train event})&&\\
+&\swarrow&\downarrow&\searrow&\\
+\text{light field}&&\text{sound field}&&\text{radar interaction}\\
+\downarrow_{\text{eye}}&&\downarrow_{\text{ear}}&&\downarrow_{\text{antenna}}\\
+\text{visual signal}&&\text{auditory signal}&&\text{measurement signal}\\
+&\searrow&\downarrow&\swarrow&\\
+&&\text{integrated model}&&
+\end{array}
 $$
 
-At the same time:
+At this level already, the representations are not identical. A visual signal, an acoustic waveform, and a radar measurement are different kinds of data. What makes them potentially informative about the same event is not equality, but the existence of well-understood relations between them.
+
+But the transformation does not stop at the sensor. The same physical information can pass through several additional layers before it becomes a conscious perception, a linguistic report, or a scientific model:
 
 $$
-W
-\to
-\text{pressure variations}
-\to
-\text{ear}
-\to
-\text{neural processing}
-\to
-\text{auditory representation}.
+\begin{array}{c}
+W\\ \downarrow{\scriptstyle\ \text{physical interaction}}\\ \{\text{light},\text{sound},\text{EM}\}\\ \downarrow{\scriptstyle\ \text{sensor/instrument}}\\ \text{neural / instrumental representation}\\ \downarrow{\scriptstyle\ \text{individual processing}}\\ \text{personal interpretation}\\ \downarrow{\scriptstyle\ \text{linguistic encoding}}\\ \text{linguistic representation}\\ \downarrow{\scriptstyle\ \text{cultural/historical context}}\\ \text{shared scientific or conceptual model}
+\end{array}
 $$
 
-And perhaps:
+A mathematically useful way of representing this is to treat the different factors as labeled transformations. For a part of the world $W$, one observation channel is:
 
 $$
-W
-\to
-\text{radar interaction}
-\to
-\text{instrument signal}.
+W \xrightarrow{P} S \xrightarrow{I} D \xrightarrow{N} R \xrightarrow{L} T \xrightarrow{C} M,
 $$
 
-These streams can overlap without being identical.
+where $P$ is the physical process, $S$ the stimulus, $I$ the instrument interaction, $D$ the datum, $N$ observer processing, $R$ an internal representation, $L$ linguistic encoding, $T$ conceptual interpretation, $C$ contextual embedding, and $M$ the resulting model. These need not be linear; several are coupled or recursive, so a richer picture is a network:
 
-The visual system might encode a moving object. The auditory system might encode a changing frequency caused by the Doppler effect. The radar might encode range and velocity.
+$$
+\begin{array}{ccccccc}
+&&&W&&&\\
+&&\swarrow&\downarrow&\searrow&&\\
+&S_1&&S_2&&S_3&\\
+&\downarrow{\scriptstyle I_1}&&\downarrow{\scriptstyle I_2}&&\downarrow{\scriptstyle I_3}&\\
+D_{\text{vision}}&&D_{\text{audio}}&&D_{\text{radar}}&&\cdots\\
+&\searrow{\scriptstyle N_a}&\downarrow{\scriptstyle N_b}&\swarrow{\scriptstyle N_c}&&&\\
+&&R_{\text{obs}},\ R_{\text{instr}}&&&&\\
+&&\downarrow{\scriptstyle L,C}&&&&\\
+&&\text{global model } M&&&&
+\end{array}
+$$
 
-The representations are different because the **observation processes are different**.
+The observer is not a passive endpoint. For observers $a,b$ we have $N_a:S\to R_a$ and $N_b:S\to R_b$ with $N_a\neq N_b$. This does not imply they have access to different worlds — only that access is mediated by different transformations. The same holds for instruments $I_1:S\to D_1$ and $I_2:S\to D_2$.
 
-A useful general picture is therefore:
+**Time as an additional index.** An observation is not just $D$ but $D_t$, with $t\mapsto D_t$. Different observations concern different windows $D_{[t_0,t_1]},\, D_{[t_1,t_2]}$, and overlapping windows relate by restriction $D_{[t_0,t_2]}\to D_{[t_0,t_1]}$. This is structurally close to the locality of sheaf theory. A dynamical transition $\Phi_{t_1,t_0}:X_{t_0}\to X_{t_1}$ relates states over time, so:
+
+$$
+\boxed{\text{different time} \neq \text{different underlying system}.}
+$$
+
+**Individual neurophysiology as a transformation.** With $R_a=N_a(D)$ and $R_b=N_b(D)$, even similar $D$ gives $R_a\neq R_b$. The categorical point is simple:
+
+$$
+\boxed{\text{different representation} \not\Rightarrow \text{different source}.}
+$$
+
+**Language as another representation map.** An internal representation $R$ is converted into a linguistic report $L:R\to\Sigma^\ast$ with $L(R)\neq R$. Different languages give $L_A:R\to\Sigma_A^\ast$ and $L_B:R\to\Sigma_B^\ast$, related by translation $\tau_{AB}:\Sigma_A^\ast\to\Sigma_B^\ast$.
+
+**Culture and history as contextual structure.** Context is an index $c\in C$, so reports are $R_{c,t,a}$. Historical shifts are transformations $R_{c_1}\xrightarrow{T_{c_1c_2}} R_{c_2}$ between systems of categorization. The interesting question becomes: which structure survives $T_{c_1c_2}$?
+
+**A context-indexed family.** Observations form a family $D_{a,t,c,i}$ indexed by observer, time, context, and channel:
 
 $$
 \begin{array}{ccccc}
 &&W&&\\
 &\swarrow&\downarrow&\searrow&\\
-D_1&&D_2&&D_3\\
+D_{a,t,c,1}&&D_{a,t,c,2}&&D_{a,t,c,3}\\
 \downarrow&&\downarrow&&\downarrow\\
-M_1&&M_2&&M_3
+R_{a,t,c,1}&&R_{a,t,c,2}&&R_{a,t,c,3}\\
+&\searrow&\downarrow&\swarrow&\\
+&&M_{a,t,c}&&
 \end{array}
 $$
 
-where $D_i$ are observations and $M_i$ are interpretations or models.
+The global model is built not by pretending all representations are identical, but by determining which transformations between them are justified:
 
-The fact that $M_1\neq M_2$ does not imply that they concern different worlds.
+$$
+\underbrace{W \to \{D_{a,t,c,i}\} \to \{R_{a,t,c,i}\} \to \{M_{a,t,c}\}}_{\text{one domain} \,\to\, \text{many transformations} \,\to\, \text{coherent integration}}.
+$$
+
+**The important distinction.** There are three fundamentally different sources of difference:
+
+$$
+\boxed{
+\begin{array}{l}
+\text{world difference: the underlying state actually differs}\\
+\text{measurement difference: the observation channel differs}\\
+\text{representation difference: the transformation of the data differs}
+\end{array}}
+$$
+
+plus contextual dimensions: time, observer, instrument, culture, language, conceptual framework. A disagreement between reports therefore does not identify which level is responsible, and the whole task is to locate the discrepancy in one of
+
+$$
+W,\quad W\to D,\quad D\to R,\quad R\to L(R),\quad L(R)\to M.
+$$
+
+Only then does it make sense to ask whether the observations can be coherently glued. The inverse problem is:
+
+$$
+\boxed{\underbrace{\text{many transformed observations}}_{\text{partial, heterogeneous}}\ \longrightarrow\ \underbrace{\text{constraints on a common model}}_{\text{coherent global structure}}.}
+$$
 
 </div>
 
@@ -170,55 +172,21 @@ The fact that $M_1\neq M_2$ does not imply that they concern different worlds.
 
 ## 3. Transformation is the missing concept
 
-Suppose two observers produce representations
+Given two representations $M_A, M_B$, the naive question "$M_A=M_B$?" is often wrong. Instead, ask for a justified transformation $T_{AB}:M_A\to M_B$, or map both into a common comparison space:
 
 $$
-M_A
-\qquad\text{and}\qquad
-M_B.
+\begin{array}{ccc}
+M_A & \xrightarrow{\ T_A\ } & C \\
+&& \uparrow{\scriptstyle T_B}\\
+&& M_B
+\end{array}
 $$
 
-A naive approach asks whether
+A coordinate change does not create a new physical object; a camera's color response does not create a new scene; a translation does not create a new event. The transformation *is* part of the explanation:
 
 $$
-M_A=M_B.
+\boxed{\text{difference is informative if we know what produced the difference.}}
 $$
-
-Often that is the wrong question.
-
-Instead, ask whether there is a justified transformation
-
-$$
-T_{AB}:M_A\to M_B
-$$
-
-or, more generally, whether both can be mapped into a common comparison space:
-
-$$
-M_A\xrightarrow{T_A}C
-\qquad
-M_B\xrightarrow{T_B}C.
-$$
-
-Then compatibility can be tested inside $C$.
-
-This is a powerful conceptual move:
-
-$$
-\boxed{
-\text{difference can be informative if we know what produced the difference.}
-}
-$$
-
-A coordinate change does not create a new physical object.
-
-A camera's color response does not create a new scene.
-
-A language translation does not create a new event.
-
-A perceptual transformation can change an experience without changing its external cause.
-
-The transformation is part of the explanation.
 
 </div>
 
@@ -226,49 +194,11 @@ The transformation is part of the explanation.
 
 ## 4. But an arbitrary transformation proves nothing
 
-Here is the first major safeguard.
-
-For any two finite sets $A$ and $B$ of the same cardinality, one can often invent a bijection
+For any two finite sets of equal cardinality, some bijection $T:A\to B$ exists. So the claim $\exists T:A\to B$ is weak. The strong claim is $\exists T\in\mathcal{T}$, where $\mathcal T$ is a **constrained class of admissible transformations**: camera calibrations, coordinate changes, physical propagation laws, measured sensor responses, validated translations, statistically justified noise models.
 
 $$
-T:A\to B.
+\boxed{\text{coherence needs constrained transitions, not arbitrary rescue maps.}}
 $$
-
-That does not mean the datasets are meaningfully equivalent.
-
-Therefore this claim is weak:
-
-$$
-\exists T:A\to B.
-$$
-
-The stronger and scientifically useful claim is:
-
-$$
-\exists T\in\mathcal{T}
-$$
-
-where $\mathcal{T}$ is a **constrained class of admissible transformations** justified independently of the particular case.
-
-Examples:
-
-* a known camera calibration;
-* a coordinate transformation;
-* a physical propagation law;
-* a measured sensor response;
-* a known translation between representations;
-* a statistically validated noise model;
-* a previously established perceptual transformation.
-
-Thus:
-
-$$
-\boxed{
-\text{coherence requires constrained transitions, not arbitrary rescue maps.}
-}
-$$
-
-Without this restriction, every contradiction could be "explained" by inventing a sufficiently complicated transformation.
 
 </div>
 
@@ -276,53 +206,11 @@ Without this restriction, every contradiction could be "explained" by inventing 
 
 ## 5. Equality is only one notion of sameness
 
-Mathematics contains several different ways for things to be "the same."
-
-Literal equality:
-
 $$
-x=y.
+\underbrace{x=y}_{\text{literal}}\ \ \underbrace{x\cong y}_{\text{iso}}\ \ \underbrace{x\simeq y}_{\text{equiv}}\ \ \underbrace{d(x,y)\le\varepsilon}_{\text{approx}}\ \ \underbrace{P(D_1,D_2\mid M)\text{ high}}_{\text{statistical}}
 $$
 
-Isomorphism:
-
-$$
-x\cong y.
-$$
-
-Equivalence:
-
-$$
-x\simeq y.
-$$
-
-Approximate similarity:
-
-$$
-d(x,y)\leq\varepsilon.
-$$
-
-Statistical compatibility:
-
-$$
-P(D_1,D_2\mid M)
-$$
-
-is sufficiently high under a specified model.
-
-These are not interchangeable.
-
-A useful epistemology therefore asks:
-
-**What notion of sameness is justified here?**
-
-If two functions agree pointwise on an overlap, that is strict equality.
-
-If two coordinate descriptions represent the same structure through an isomorphism, that is not literal equality.
-
-If two objects are equivalent in an $\infty$-categorical setting, that is weaker and richer still.
-
-The ability to distinguish these cases is one of the main reasons category theory is useful.
+These are not interchangeable. Category theory is useful precisely because it distinguishes them.
 
 </div>
 
@@ -330,46 +218,14 @@ The ability to distinguish these cases is one of the main reasons category theor
 
 ## 6. Categories: worlds of transformations
 
-A category consists of objects, morphisms between them, composition, and identities.
+A category has objects, morphisms, composition, identities: $A\xrightarrow{f}B\xrightarrow{g}C$ gives $g\circ f:A\to C$. A model pipeline is a composite:
 
 $$
-A\xrightarrow{f}B\xrightarrow{g}C
+\underbrace{\text{world}}_{A}\xrightarrow{f}\underbrace{\text{sensor data}}_{B}\xrightarrow{g}\underbrace{\text{latent rep.}}_{C}\xrightarrow{h}\underbrace{\text{prediction}}_{D},\qquad h\circ g\circ f:A\to D.
 $$
 
-gives
-
 $$
-g\circ f:A\to C.
-$$
-
-The category-theoretic viewpoint deliberately focuses on **relationships and composition** rather than the internal construction of every object.
-
-This makes it natural for representation problems.
-
-Suppose:
-
-$$
-\text{world description}
-\xrightarrow{f}
-\text{sensor data}
-\xrightarrow{g}
-\text{latent representation}
-\xrightarrow{h}
-\text{prediction}.
-$$
-
-Then the entire pipeline is a composite:
-
-$$
-h\circ g\circ f.
-$$
-
-Changing the representation changes the arrows, and category theory gives us a language for asking whether important structure survives those changes.
-
-A useful slogan is:
-
-$$
-\boxed{\text{category theory studies structured transformations and how they compose}.}
+\boxed{\text{category theory studies structured transformations and how they compose.}}
 $$
 
 </div>
@@ -378,31 +234,7 @@ $$
 
 ## 7. Locality
 
-So far we have not said where a description applies.
-
-Topology gives us a language for locality.
-
-A topological space $X$ consists of a set together with a collection of open sets. The details of the axioms can wait. Intuitively, open sets give us regions or contexts in which descriptions are available.
-
-Suppose
-
-$$
-U_1,U_2,\ldots,U_n
-$$
-
-cover a larger domain $U$:
-
-$$
-U=\bigcup_iU_i.
-$$
-
-Now imagine that we have data on each $U_i$.
-
-The local-to-global question is:
-
-**When do these local descriptions come from one coherent description on all of $U$?**
-
-This is exactly the kind of question for which sheaf theory was developed.
+A topological space $X$ has open sets — think "regions of applicability." A cover $U=\bigcup_i U_i$ raises the question: **when do local descriptions on each $U_i$ come from one coherent description on $U$?** This is what sheaf theory formalizes.
 
 </div>
 
@@ -410,72 +242,17 @@ This is exactly the kind of question for which sheaf theory was developed.
 
 ## 8. Sheaves: local data that can be glued
 
-A presheaf $\mathcal F$ assigns data to regions:
+A presheaf $\mathcal F$ assigns data $\mathcal F(U)$ to each $U$ with restrictions $\rho_{UV}:\mathcal F(U)\to\mathcal F(V)$ for $V\subseteq U$. A **sheaf** additionally satisfies gluing: given local sections $s_i\in\mathcal F(U_i)$ agreeing on overlaps,
 
 $$
-U\mapsto\mathcal F(U),
+s_i|_{U_i\cap U_j}=s_j|_{U_i\cap U_j},
 $$
 
-together with restriction maps
+there exists a unique global $s\in\mathcal F(U)$ with $s|_{U_i}=s_i$. In one line:
 
 $$
-\rho_{UV}:\mathcal F(U)\to\mathcal F(V)
-\qquad(V\subseteq U).
+\boxed{\text{compatible local data} \Longrightarrow \text{global data}.}
 $$
-
-If
-
-$$
-s\in\mathcal F(U),
-$$
-
-then
-
-$$
-s|_V
-$$
-
-is what the global section says when restricted to $V$.
-
-A sheaf satisfies a gluing condition.
-
-Suppose
-
-$$
-U=\bigcup_iU_i
-$$
-
-and we have local sections
-
-$$
-s_i\in\mathcal F(U_i).
-$$
-
-If they agree on overlaps,
-
-$$
-s_i|_{U_i\cap U_j}
-=
-s_j|_{U_i\cap U_j},
-$$
-
-then there exists a unique global section
-
-$$
-s\in\mathcal F(U)
-$$
-
-whose restrictions are the $s_i$.
-
-In one line:
-
-$$
-\boxed{
-\text{compatible local data}\Longrightarrow\text{global data}.
-}
-$$
-
-That is the mathematical meaning of **gluing**.
 
 </div>
 
@@ -483,41 +260,7 @@ That is the mathematical meaning of **gluing**.
 
 ## 9. Why ordinary equality can be too strict
 
-In the ordinary sheaf condition, the local sections literally agree on their overlaps:
-
-$$
-s_i|_V=s_j|_V.
-$$
-
-But many mathematical situations have meaningful relationships weaker than literal equality.
-
-Two coordinate descriptions can be related by an isomorphism.
-
-Two geometric objects can be homotopy equivalent.
-
-Two paths can themselves be homotopic.
-
-Two representations can be equivalent while differing internally.
-
-This motivates homotopical and higher-categorical generalizations.
-
-Instead of asking only for
-
-$$
-x=y,
-$$
-
-we may have
-
-$$
-x\simeq y.
-$$
-
-The important correction is:
-
-**An $\infty$-sheaf is not simply a sheaf where every equality sign is replaced by a path.**
-
-Rather, an $\infty$-sheaf is a sheaf-like object valued in an $\infty$-category, where descent is expressed using the homotopy-coherent structure of that target.
+Coordinate descriptions can be related by isomorphism; geometric objects by homotopy equivalence; paths by homotopies of their own. So the ordinary $s_i|_V=s_j|_V$ is often replaced by $s_i|_V\simeq s_j|_V$. An **$\infty$-sheaf** is not merely a sheaf with equalities replaced by paths — it is a sheaf-like object valued in an $\infty$-category where descent uses homotopy-coherent structure.
 
 </div>
 
@@ -525,39 +268,7 @@ Rather, an $\infty$-sheaf is a sheaf-like object valued in an $\infty$-category,
 
 ## 10. Equalizers
 
-An equalizer is one of the simplest categorical constructions for expressing compatibility.
-
-Given parallel maps
-
-$$
-f,g:X\rightrightarrows Y,
-$$
-
-an equalizer is a map
-
-$$
-e:E\to X
-$$
-
-such that
-
-$$
-f\circ e=g\circ e,
-$$
-
-and which is universal with that property.
-
-In $\mathbf{Set}$:
-
-$$
-E=\{x\in X\mid f(x)=g(x)\}.
-$$
-
-So an equalizer is **not itself a path between two values**.
-
-It selects the part of the domain on which two maps agree.
-
-This matters because the intuition "there is some transformation making these descriptions compatible" is related to categorical limits, pullbacks, equalizers, and descent—but should not be identified with the definition of an equalizer.
+Given parallel maps $f,g:X\rightrightarrows Y$, the equalizer $e:E\to X$ satisfies $f\circ e=g\circ e$ universally. In $\mathbf{Set}$, $E=\{x\in X\mid f(x)=g(x)\}$ — the part of the domain on which two maps agree. An equalizer is not a "path between values"; it selects agreement.
 
 </div>
 
@@ -565,45 +276,15 @@ This matters because the intuition "there is some transformation making these de
 
 ## 11. Pullbacks: compatibility through a common target
 
-A pullback is another useful construction.
-
-Suppose:
-
-$$
-X\xrightarrow{f}Z
-\qquad
-Y\xrightarrow{g}Z.
-$$
-
-The pullback
-
-$$
-X\times_ZY
-$$
-
-contains pairs $(x,y)$ whose images agree:
-
-$$
-f(x)=g(y).
-$$
-
-Diagrammatically:
-
 $$
 \begin{array}{ccc}
-X\times_ZY&\to&X\\
-\downarrow&&\downarrow f\\
-Y&\xrightarrow{g}&Z.
-\end{array}
+X\times_Z Y & \xrightarrow{\ \pi_X\ } & X\\
+{\scriptstyle \pi_Y}\downarrow && \downarrow{\scriptstyle f}\\
+Y & \xrightarrow{\ g\ } & Z
+\end{array}\qquad \underbrace{X\times_Z Y = \{(x,y): f(x)=g(y)\}}_{\text{two representations, agreeing after sending them into a shared space}}
 $$
 
-This is a clean formalization of a common pattern:
-
-**Two representations can be compared after sending them into a shared space.**
-
-For empirical modeling, $Z$ might be a calibrated measurement space, a shared latent representation, or a set of quantities that both observations constrain.
-
-Again, the exact mathematical object depends on the application. The value of the pattern is that it forces us to specify **what is actually being compared**.
+For empirical modeling, $Z$ might be a calibrated measurement space or a shared latent representation.
 
 </div>
 
@@ -611,54 +292,21 @@ Again, the exact mathematical object depends on the application. The value of th
 
 ## 12. Higher coherence
 
-Suppose three local representations have comparison maps
+For three representations with comparison maps
 
 $$
-\phi_{AB}:A\to B,
-\qquad
-\phi_{BC}:B\to C,
-\qquad
-\phi_{AC}:A\to C.
+A\xrightarrow{\phi_{AB}} B\xrightarrow{\phi_{BC}} C,\qquad A\xrightarrow{\phi_{AC}} C,
 $$
 
-Strict coherence would require
+strict coherence needs $\phi_{BC}\circ\phi_{AB}=\phi_{AC}$; homotopical coherence needs $\phi_{BC}\circ\phi_{AB}\simeq\phi_{AC}$, and the equivalence between these maps is itself structure. With more objects, those structures satisfy their own compatibility conditions:
 
 $$
-\phi_{BC}\circ\phi_{AB}=\phi_{AC}.
+\text{objects}\to\text{morphisms}\to 2\text{-morphisms}\to 3\text{-morphisms}\to\cdots
 $$
 
-A homotopical setting may instead require
-
 $$
-\phi_{BC}\circ\phi_{AB}\simeq\phi_{AC}.
+\boxed{\text{relations can themselves have relations.}}
 $$
-
-But now the equivalence between these two maps is itself structure.
-
-With four or more objects, those structures have compatibility conditions of their own.
-
-Thus we get the hierarchy
-
-$$
-\text{objects}
-\to
-\text{morphisms}
-\to
-\text{2-morphisms}
-\to
-\text{3-morphisms}
-\to\cdots
-$$
-
-This is what "higher coherence" means at an intuitive level.
-
-The key insight is:
-
-$$
-\boxed{\text{relations can themselves have relations}.}
-$$
-
-That is one of the deep ideas behind $\infty$-categories and homotopy-coherent descent.
 
 </div>
 
@@ -666,49 +314,11 @@ That is one of the deep ideas behind $\infty$-categories and homotopy-coherent d
 
 ## 13. The observation chain
 
-Now return to empirical data.
-
-A very general observation chain is
-
 $$
-W
-\xrightarrow{p}
-S
-\xrightarrow{q}
-N
-\xrightarrow{r}
-P
-\xrightarrow{t}
-R,
+\underbrace{W}_{\text{world}}\xrightarrow{p}\underbrace{S}_{\text{stimulus}}\xrightarrow{q}\underbrace{N}_{\text{processing}}\xrightarrow{r}\underbrace{P}_{\text{internal rep.}}\xrightarrow{t}\underbrace{R}_{\text{report}}
 $$
 
-where, schematically:
-
-* $W$ = subject matter in the world;
-* $S$ = physical stimulus;
-* $N$ = processing in an observer or instrument;
-* $P$ = internal representation;
-* $R$ = report, measurement, or action.
-
-Two observers may have:
-
-$$
-W\to S_A\to N_A\to P_A\to R_A
-$$
-
-and
-
-$$
-W\to S_B\to N_B\to P_B\to R_B.
-$$
-
-Even if they concern the same underlying event, the outputs can differ.
-
-The difference may arise at any stage.
-
-This is why it is often a mistake to treat a report as if it were a transparent copy of the world.
-
-A report is the endpoint of a transformation pipeline.
+Two observers may produce different $R_A, R_B$ from the same $W$ because differences may arise at any stage. A report is the *endpoint* of a transformation pipeline, not a transparent copy.
 
 </div>
 
@@ -716,40 +326,14 @@ A report is the endpoint of a transformation pipeline.
 
 ## 14. Perception is a transformation, not a photograph
 
-Human perception is not simply:
-
 $$
-\text{world}\to\text{perfect copy}.
+\text{stimulus}\xrightarrow{\text{sensory}} \text{signal}\xrightarrow{\text{inference}} \text{percept}
 $$
 
-A better simplified picture is:
+Different physiologies, attention, expectations, and contexts produce different percepts from related stimuli. Systematic distortions are informative because they are part of the causal story:
 
 $$
-\text{stimulus}
-\to
-\text{sensory processing}
-\to
-\text{inference}
-\to
-\text{perceptual representation}.
-$$
-
-Different nervous systems, attention states, expectations, learning histories, and contexts can produce different representations from related stimuli.
-
-This does not imply that perception is arbitrary.
-
-Quite the opposite: the transformation is constrained by the organism's physiology and by its interaction with the environment.
-
-A systematic perceptual distortion can therefore be informative.
-
-If an observer consistently transforms a class of stimuli in a particular way, that transformation is part of the explanatory model.
-
-The epistemic rule is:
-
-$$
-\boxed{
-\text{do not treat the representation as identical to its input when the transformation is part of the causal story.}
-}
+\boxed{\text{do not treat the representation as identical to its input when the transformation is part of the causal story.}}
 $$
 
 </div>
@@ -758,37 +342,11 @@ $$
 
 ## 15. Anomalous reports as a modeling example
 
-Suppose an observer reports something extraordinary.
-
-There are at least several distinct questions:
-
-1. What physical stimulus, if any, occurred?
-2. What data actually entered the observer or instrument?
-3. What transformations occurred before the report?
-4. What cultural or linguistic categories shaped the report?
-5. Which parts of the report are independently corroborated?
-6. Can the report be related to other data by independently justified transformations?
-7. What global model explains the resulting collection of evidence?
-
-This avoids two symmetrical errors.
-
-The first is:
-
-**"The report is extraordinary, therefore the extraordinary interpretation is true."**
-
-The second is:
-
-**"The interpretation seems psychologically unusual, therefore there is no interesting datum here."**
-
-A better approach is:
+For an extraordinary report, separate: (1) the physical stimulus, if any; (2) the data actually entering the observer; (3) transformations before the report; (4) categories shaping the report; (5) independent corroboration; (6) relations to other data via justified transformations; (7) a global model. This avoids both "the report is extraordinary, therefore its extraordinary interpretation is true" and "the interpretation is unusual, therefore nothing interesting happened."
 
 $$
-\boxed{
-\text{separate datum, transformation, interpretation, and explanation}.
-}
+\boxed{\text{separate datum, transformation, interpretation, explanation.}}
 $$
-
-The unexplained remainder should remain visible.
 
 </div>
 
@@ -796,32 +354,11 @@ The unexplained remainder should remain visible.
 
 ## 16. Anomaly does not mean failure
 
-Suppose most observations fit a model $M$:
+If $D_1,\ldots,D_{99}\leadsto M$ but $D_{100}$ does not fit, options include: $D_{100}$ is erroneous; $M$ is incomplete; the observation map is misunderstood; a new phenomenon is present.
 
 $$
-D_1,\ldots,D_{99}\leadsto M
+\boxed{\text{an anomaly is a constraint not yet integrated.}}
 $$
-
-but $D_{100}$ does not.
-
-Several possibilities exist:
-
-* $D_{100}$ is erroneous;
-* $M$ is incomplete;
-* the observation map is misunderstood;
-* the data concern another phenomenon;
-* the assumed common cause is wrong;
-* or a genuinely new phenomenon is present.
-
-Therefore:
-
-$$
-\boxed{\text{an anomaly is a constraint that has not yet been integrated.}}
-$$
-
-This is more productive than either automatically believing or automatically dismissing it.
-
-A strong model should explain why apparently contradictory observations occur—or state precisely where it currently cannot.
 
 </div>
 
@@ -829,37 +366,7 @@ A strong model should explain why apparently contradictory observations occur—
 
 ## 17. The common-domain hypothesis
 
-The whole framework assumes something like:
-
-**Many observations can be related because they arise within one sufficiently connected causal domain.**
-
-Call this the **common-domain hypothesis**.
-
-It does not require every observation to concern the same object.
-
-It says that different observations can, in principle, participate in one larger structure.
-
-If they cannot be related even after all justified transformations are considered, there are several possibilities:
-
-$$
-\text{different causes},
-\qquad
-\text{bad data},
-\qquad
-\text{wrong transformation},
-\qquad
-\text{wrong global model}.
-$$
-
-This makes failure to glue informative.
-
-The framework must permit:
-
-$$
-\boxed{\text{these data should not be glued}.}
-$$
-
-Otherwise it is not a constraint at all.
+The whole framework assumes: many observations relate because they arise within one sufficiently connected causal domain. Failure to glue is informative — the framework must permit $\boxed{\text{these data should not be glued.}}$
 
 </div>
 
@@ -867,34 +374,7 @@ Otherwise it is not a constraint at all.
 
 ## 18. Time and culture are also context
 
-Locality does not have to mean physical location.
-
-A dataset can be indexed by context:
-
-$$
-C=
-(\text{place},\text{time},\text{observer},\text{instrument},\text{culture},\text{conditions},\ldots).
-$$
-
-This is schematic rather than a claim that all these variables literally form one topological space.
-
-The important idea is that the same underlying pattern may appear through different representational systems.
-
-A description from one historical period may use one vocabulary; another period may use another.
-
-Instead of asking whether the words are identical, ask:
-
-$$
-\text{what structure changes?}
-$$
-
-and
-
-$$
-\text{what structure remains invariant?}
-$$
-
-This is a general strategy for studying cultural tracking of reports, scientific concepts, and changing categories.
+Context can be indexed as $C=(\text{place},\text{time},\text{observer},\text{instrument},\text{culture},\ldots)$. Instead of asking whether words match across periods, ask **what structure changes** and **what remains invariant**.
 
 </div>
 
@@ -902,38 +382,11 @@ This is a general strategy for studying cultural tracking of reports, scientific
 
 ## 19. Invariants
 
-Suppose a representation changes:
+Given $A\xrightarrow{T}B$, what survives? Causal ordering, adjacency, symmetry, connectivity, statistical dependence, conservation laws, geometric relations.
 
 $$
-A\xrightarrow{T}B.
+\boxed{\text{What survives a legitimate change of representation?}}
 $$
-
-What survives?
-
-Possibilities include:
-
-* causal ordering;
-* adjacency;
-* symmetry;
-* connectivity;
-* statistical dependence;
-* conservation laws;
-* logical consequences;
-* geometric relations.
-
-Such preserved structure is an **invariant**.
-
-This gives one of the most important questions for AI and science:
-
-$$
-\boxed{
-\text{What survives a legitimate change of representation?}
-}
-$$
-
-An invariant is often more informative than the coordinates used to describe it.
-
-This is why abstract mathematics can connect apparently unrelated representations: it focuses on structure that survives transformations.
 
 </div>
 
@@ -941,51 +394,11 @@ This is why abstract mathematics can connect apparently unrelated representation
 
 ## 20. Model theory: from data to possible worlds
 
-Model theory provides a complementary language.
-
-Let $\mathcal L$ be a formal language and $T$ a collection of sentences in that language.
-
-A structure $M$ is a model of $T$ when
+For a language $\mathcal L$ and theory $T$, a structure $M$ satisfies $T$ when $M\models T$. Observations add constraints: $T_{\text{data}}=T\cup\{O_1,\ldots,O_n\}$. Candidate models must satisfy $M\models T_{\text{data}}$.
 
 $$
-M\models T.
+\boxed{\text{consistency constrains models; it does not identify reality.}}
 $$
-
-Suppose observations add constraints:
-
-$$
-O_1,O_2,\ldots,O_n.
-$$
-
-We obtain:
-
-$$
-T_{\mathrm{data}}
-=
-T\cup\{O_1,\ldots,O_n\}.
-$$
-
-A candidate model must satisfy:
-
-$$
-M\models T_{\mathrm{data}}.
-$$
-
-If no model exists, the assumptions are inconsistent.
-
-If many models exist, the observations do not uniquely determine a world model.
-
-Therefore:
-
-$$
-\boxed{
-\text{consistency constrains models; it does not automatically identify reality}.
-}
-$$
-
-This is the model-theoretic version of an epistemic principle that matters enormously for AI:
-
-**a system can be internally consistent while still being wrong about the world.**
 
 </div>
 
@@ -993,40 +406,10 @@ This is the model-theoretic version of an epistemic principle that matters enorm
 
 ## 21. Underdetermination
 
-Suppose:
+If $M_1\models T$ and $M_2\models T$ with $M_1\neq M_2$, the constraints do not distinguish them. The response is not arbitrary choice, but discriminating observation $O$ with $M_1\models O$ and $M_2\not\models O$.
 
 $$
-M_1\models T
-\qquad\text{and}\qquad
-M_2\models T.
-$$
-
-If $M_1$ and $M_2$ are genuinely different structures, then the available constraints do not distinguish them.
-
-This is **underdetermination**.
-
-The response is not to arbitrarily choose one.
-
-Instead, seek a new observation $O$ for which:
-
-$$
-M_1\models O
-$$
-
-but
-
-$$
-M_2\not\models O.
-$$
-
-Such an observation has discriminating power.
-
-This is where the local-to-global framework meets experimental science:
-
-$$
-\boxed{
-\text{when several coherent models survive, look for observations that separate them}.
-}
+\boxed{\text{when several coherent models survive, look for observations that separate them.}}
 $$
 
 </div>
@@ -1035,35 +418,11 @@ $$
 
 ## 22. Interpretations between models
 
-Model theory also studies systematic ways one structure can be represented inside another.
-
-This is important because a representation need not preserve every property.
-
-A map
+A map $M\to N$ may preserve some structure while discarding other information — exactly what happens throughout science and AI. A physical simulation preserves some physical relations; a diagram preserves some geometric relations; a language description preserves some semantic relations; an embedding preserves some statistical or relational structure. The correct question is not "is this representation the world?" but:
 
 $$
-M\to N
+\boxed{\text{which structure of the world does this representation preserve, and what does it discard?}}
 $$
-
-may preserve some chosen structure while forgetting other information.
-
-That is exactly what happens throughout science and AI.
-
-A physical simulation preserves some physical relations.
-
-A diagram preserves some geometric relations.
-
-A language description preserves some semantic relations.
-
-An embedding preserves some statistical or relational structure.
-
-Thus the correct question is not:
-
-**"Is this representation the world?"**
-
-but:
-
-**"Which structure of the world does this representation preserve, and what does it discard?"**
 
 </div>
 
@@ -1071,53 +430,10 @@ but:
 
 ## 23. Approximate gluing for empirical data
 
-Real observations are noisy.
-
-Exact compatibility
+Real data are noisy. Exact $s_i|_U=s_j|_U$ is unrealistic, so we use $d(s_i|_U,s_j|_U)\le\varepsilon$, a likelihood $P(D_1,\ldots,D_n\mid M)$, or an objective $M^\ast=\arg\min_M L(M;D_1,\ldots,D_n)$. These are not sheaf theory, but empirical analogues.
 
 $$
-s_i|_U=s_j|_U
-$$
-
-is often unrealistic.
-
-We can instead define a distance:
-
-$$
-d(s_i|_U,s_j|_U)
-$$
-
-and require
-
-$$
-d(s_i|_U,s_j|_U)\leq\varepsilon.
-$$
-
-Or use a likelihood:
-
-$$
-P(D_1,\ldots,D_n\mid M).
-$$
-
-Or an optimization objective:
-
-$$
-M^\ast
-=
-\arg\min_M
-L(M;D_1,\ldots,D_n).
-$$
-
-These are not definitions of sheaf theory.
-
-They are empirical analogues of the same **local-to-global constraint problem**.
-
-This distinction is important:
-
-$$
-\boxed{
-\text{sheaf gluing is exact mathematics; statistical integration is a related modeling strategy.}
-}
+\boxed{\text{sheaf gluing is exact math; statistical integration is a related strategy.}}
 $$
 
 </div>
@@ -1126,53 +442,13 @@ $$
 
 ## 24. From sheaf theory to AI
 
-Machine learning is fundamentally full of transformations.
-
-A neural network can be written as
+A neural network is $x\xrightarrow{f_1}h_1\xrightarrow{f_2}h_2\to\cdots\xrightarrow{f_n}y$, each $h_i$ a representation after another transformation. For a Transformer:
 
 $$
-x
-\xrightarrow{f_1}
-h_1
-\xrightarrow{f_2}
-h_2
-\to\cdots\to
-h_n
-\xrightarrow{f_n}
-y.
+\text{tokens}\xrightarrow{\text{embed}}\text{embeddings}\xrightarrow{\text{attn+MLP}}\text{contextual reps}\xrightarrow{\text{unembed}}\text{logits}\xrightarrow{\text{softmax}}\text{probs}.
 $$
 
-Each hidden state is a representation of the input after another transformation.
-
-For a Transformer, schematically:
-
-$$
-\text{tokens}
-\to
-\text{embeddings}
-\to
-\text{contextual representations}
-\to
-\text{logits}
-\to
-\text{probabilities}.
-$$
-
-These internal states are not miniature copies of the external world.
-
-They are learned representations shaped by the training objective.
-
-The categorical intuition is useful because it encourages us to ask:
-
-* What are the objects?
-* What are the transformations?
-* Which transformations compose?
-* Which structures are preserved?
-* Where are representations compared?
-* What information is discarded?
-* What global behavior emerges from many local transformations?
-
-But the architecture is not thereby literally a sheaf.
+Categorical intuition asks: what are the objects, morphisms, invariants, and what is discarded? But the architecture is not literally a sheaf.
 
 </div>
 
@@ -1180,37 +456,15 @@ But the architecture is not thereby literally a sheaf.
 
 ## 25. Embeddings
 
-An embedding is a map such as
+$E:V\to\mathbb R^d$ turns discrete symbols into geometric points. Distances, directions, and neighborhoods encode statistical regularities.
 
 $$
-E:V\to\mathbb R^d.
+\underbrace{\text{discrete symbols}}_{V} \xrightarrow{\ E\ } \underbrace{\text{geometric representation}}_{\mathbb R^d}
 $$
 
-A token $v\in V$ becomes a vector $E(v)$.
-
-The absolute coordinates are usually less interesting than the relations induced by the representation.
-
-For example, distances, directions, neighborhoods, and other geometric relationships may encode statistical regularities learned from data.
-
-So we can think of an embedding as a change of representation:
-
 $$
-\text{discrete symbols}
-\longrightarrow
-\text{geometric representation}.
+\boxed{\text{which relations among the symbols become represented geometrically?}}
 $$
-
-The useful question is:
-
-$$
-\boxed{
-\text{which relations among the original symbols become represented geometrically?}
-}
-$$
-
-An embedding space is not automatically a sheaf, a topos, or an $\infty$-category. Those require specific mathematical structures.
-
-The analogy becomes legitimate only when those structures are actually defined.
 
 </div>
 
@@ -1218,50 +472,22 @@ The analogy becomes legitimate only when those structures are actually defined.
 
 ## 26. Attention as learned relational structure
 
-For hidden states $H$, self-attention uses
+For hidden states $H$, self-attention uses $Q=HW_Q,\ K=HW_K,\ V=HW_V$, and computes
 
-$$
-Q=HW_Q,\qquad
-K=HW_K,\qquad
-V=HW_V,
+$$\mathrm{Attention}(Q,K,V) \;=\; \mathrm{softmax}\!\Big(\tfrac{QK^\top}{\sqrt{d_k}}\Big)V.
 $$
 
-and computes, in a standard simplified form,
+The matrix $QK^\top$ contains learned compatibility scores between positions:
 
 $$
-\operatorname{Attention}(Q,K,V)
-=
-\operatorname{softmax}
-\left(
-\frac{QK^\top}{\sqrt{d_k}}
-\right)V.
+\underbrace{QK^\top}_{\text{who attends to whom}} \xrightarrow{\ \text{softmax}\ } \underbrace{A}_{\text{relational weights}} \xrightarrow{\ \cdot V\ } \underbrace{\text{context-mixed representation}}_{\text{new }H}.
 $$
 
-The matrix
-
 $$
-QK^\top
+\boxed{\text{attention constructs context-dependent relations among representations.}}
 $$
 
-contains learned compatibility scores between positions.
-
-Conceptually:
-
-$$
-\boxed{
-\text{attention constructs context-dependent relations among representations}.
-}
-$$
-
-This is structurally interesting from a category-theoretic perspective.
-
-But attention weights are not automatically semantic truth values, and attention is not automatically a categorical morphism in any technically meaningful sense.
-
-Again:
-
-$$
-\text{analogy}\neq\text{definition}.
-$$
+Structurally interesting, but attention weights are not semantic truth values and attention is not a categorical morphism in any technical sense. Analogy $\neq$ definition.
 
 </div>
 
@@ -1269,32 +495,16 @@ $$
 
 ## 27. Residual streams and composition
 
-A Transformer layer can be schematically written as
+A Transformer layer is schematically $H_{\ell+1} = H_\ell + G_\ell(H_\ell)$, i.e.
 
 $$
-H_{\ell+1}
-=
-H_\ell+G_\ell(H_\ell).
+\underbrace{H_\ell}_{\text{prior representation}} \xrightarrow{\ +\,G_\ell\ } \underbrace{H_{\ell+1}}_{\text{updated representation}}.
 $$
 
-The residual connection provides an explicit path by which information from an earlier representation remains available to later computations.
-
-This makes it tempting to speak of "gluing" layers.
-
-That can be a useful metaphor if it means:
-
-**multiple transformations contribute to one evolving representation.**
-
-But ordinary residual addition is not sheaf gluing.
-
-The mathematically correct statement is simply that the network composes parameterized functions, with additive skip connections.
-
-The deeper common pattern is:
+Residuals preserve access to earlier representations. Calling this "gluing" is a metaphor unless one specifies a topology and a sheaf; the correct statement is that the network composes parameterized functions with additive skip connections.
 
 $$
-\boxed{
-\text{many transformations can contribute to one coherent computational state}.
-}
+\boxed{\text{many transformations can contribute to one coherent computational state.}}
 $$
 
 </div>
@@ -1303,41 +513,19 @@ $$
 
 ## 28. Multimodal AI
 
-The idea becomes even more concrete in multimodal systems.
-
-We can have:
-
 $$
-\text{image}\to M_{\rm vision},
-$$
-
-$$
-\text{text}\to M_{\rm language},
-$$
-
-$$
-\text{audio}\to M_{\rm audio}.
+\begin{array}{ccc}
+\text{image} & \xrightarrow{E_v} & M_{\text{vision}} \\
+\text{text} & \xrightarrow{E_l} & M_{\text{language}} \\
+\text{audio} & \xrightarrow{E_a} & M_{\text{audio}}
+\end{array}
+\qquad
+\begin{array}{c}
+M_{\text{vision}}\\ \searrow\\ M_{\text{shared}}\\ \nearrow\\ M_{\text{language}}
+\end{array}
 $$
 
-The representations are not identical.
-
-A multimodal model tries to place them into a computational system in which information from one modality constrains or informs another.
-
-Schematically:
-
-$$
-M_{\rm vision}
-\leftrightarrow
-M_{\rm shared}
-\leftrightarrow
-M_{\rm language}.
-$$
-
-This is exactly where the general idea of **coherent difference** becomes useful.
-
-The goal is not to erase modality-specific structure.
-
-It is to create enough shared structure that the modalities can constrain one another.
+The goal is not to erase modality-specific structure but to create enough shared structure that the modalities constrain one another — the general idea of **coherent difference**.
 
 </div>
 
@@ -1345,45 +533,17 @@ It is to create enough shared structure that the modalities can constrain one an
 
 ## 29. Hallucination as a coherence problem
 
-An AI system can generate an internally coherent answer without being adequately constrained by external evidence.
-
-Schematically:
+An AI can generate an internally coherent answer without adequate external constraint:
 
 $$
-D
-\to
-M_{\rm internal}
+D \xrightarrow{\ \text{model}\ } M_{\text{internal}} \quad\text{with}\quad \underbrace{M_{\text{internal}} \not\approx W}_{\text{coherent but ungrounded}}.
 $$
 
-may produce a representation that is highly coherent internally while
-
 $$
-M_{\rm internal}\not\approx W.
+\boxed{\text{internal coherence} \neq \text{external validity}.}
 $$
 
-This suggests a useful conceptual distinction:
-
-$$
-\boxed{
-\text{internal coherence}\neq\text{external validity}.
-}
-$$
-
-A model may satisfy many learned relationships while failing to track the particular world state relevant to the current query.
-
-Reliable AI therefore needs both:
-
-$$
-\text{internal consistency}
-$$
-
-and
-
-$$
-\text{external grounding}.
-$$
-
-The sheaf/model-theoretic lens is useful here because it asks not only whether pieces fit together, but **which transitions connect them to independently constrained data**.
+Reliable AI needs both internal consistency and external grounding — which is exactly what the sheaf/model-theoretic lens asks: which transitions connect internal state to independently constrained data?
 
 </div>
 
@@ -1391,46 +551,17 @@ The sheaf/model-theoretic lens is useful here because it asks not only whether p
 
 ## 30. Training as constraint accumulation
 
-A neural network learns parameters by minimizing an objective:
+A network learns parameters by
 
 $$
-\theta^\ast
-=
-\arg\min_\theta
-\mathcal L(\theta;D).
+\theta^\ast \;=\; \arg\min_\theta\, \mathcal L(\theta;D).
 $$
 
-A large dataset imposes many constraints on the function represented by $\theta$.
-
-Very schematically:
-
 $$
-\text{many examples}
-\to
-\text{many constraints}
-\to
-\text{one parameterized function}.
+\underbrace{\text{many examples}}_{D} \xrightarrow{\ \nabla\mathcal L\ } \underbrace{\text{many constraints}}_{\text{on }\theta} \xrightarrow{\ \text{optim}\ } \underbrace{\text{one parameterized function}}_{f_{\theta^\ast}}.
 $$
 
-This resembles the local-to-global pattern:
-
-$$
-\text{partial constraints}
-\to
-\text{integrated structure}.
-$$
-
-But again, optimization is not literally sheaf descent.
-
-The analogy is useful because it directs attention toward:
-
-* overlapping constraints;
-* conflicting constraints;
-* representations;
-* invariants;
-* generalization;
-* residual errors;
-* and the structure of the transformations between representations.
+This resembles local-to-global integration but is optimization, not sheaf descent. The analogy is useful because it directs attention to overlapping constraints, invariants, generalization, and residuals.
 
 </div>
 
@@ -1438,45 +569,17 @@ The analogy is useful because it directs attention toward:
 
 ## 31. Generative models
 
-Generative models provide another version of the same broad problem.
-
-Suppose
+With latent $z$ and observation $x$:
 
 $$
-z\to x
+\underbrace{z}_{\text{latent}} \xrightarrow{\ \text{decoder}\ } \underbrace{x}_{\text{observed}}, \qquad \underbrace{x_1,\ldots,x_n}_{\text{data}} \xrightarrow{\ \text{posterior}\ } \underbrace{P(z\mid x_1,\ldots,x_n)}_{\text{integrating latent hypothesis}}.
 $$
 
-where $z$ is latent structure and $x$ is an observation.
-
-Given observations, we infer possible latent states:
-
 $$
-P(z\mid x).
+\boxed{\text{heterogeneous partial observations} \longrightarrow \text{latent structure that integrates them.}}
 $$
 
-For several observations:
-
-$$
-P(z\mid x_1,\ldots,x_n).
-$$
-
-The model searches for latent structure that makes the observations jointly intelligible.
-
-This is not sheaf theory.
-
-It is probabilistic inference.
-
-But the structural similarity is striking:
-
-$$
-\boxed{
-\text{heterogeneous partial observations}
-\to
-\text{latent structure that integrates them}.
-}
-$$
-
-This is one reason category theory, model theory, probability, and machine learning can be complementary rather than competing descriptions.
+Not sheaf theory — probabilistic inference — but the same structural silhouette.
 
 </div>
 
@@ -1484,63 +587,15 @@ This is one reason category theory, model theory, probability, and machine learn
 
 ## 32. A hierarchy of compatibility
 
-We can now distinguish several levels:
-
-### Strict equality
-
 $$
-s_i|_U=s_j|_U.
+\underbrace{s_i|_U=s_j|_U}_{\text{strict}} \ \Rightarrow\ \underbrace{s_i\cong s_j}_{\text{iso}} \ \Rightarrow\ \underbrace{s_i\simeq s_j}_{\text{homotopy}} \ \Rightarrow\ \underbrace{d(s_i,s_j)\le\varepsilon}_{\text{approx}} \ \Rightarrow\ \underbrace{P(D_i,D_j\mid M)\text{ high}}_{\text{stat}} \ \Rightarrow\ \underbrace{\exists M:M\models T_{\text{all}}}_{\text{model-theoretic}}.
 $$
 
-### Isomorphism
-
 $$
-s_i\cong s_j.
+\boxed{\text{never silently upgrade a weak relation into a stronger one.}}
 $$
 
-### Homotopical equivalence
-
-$$
-s_i\simeq s_j.
-$$
-
-### Approximate compatibility
-
-$$
-d(s_i,s_j)\leq\varepsilon.
-$$
-
-### Probabilistic compatibility
-
-$$
-P(D_i,D_j\mid M)
-$$
-
-is sufficiently high.
-
-### Model-theoretic compatibility
-
-$$
-\exists M\quad M\models T_{\rm all}.
-$$
-
-These are different mathematical notions.
-
-The important meta-principle is:
-
-$$
-\boxed{
-\text{never silently upgrade a weak relation into a stronger one.}
-}
-$$
-
-Correlation is not identity.
-
-A plausible transformation is not proof.
-
-Consistency is not truth.
-
-Equivalence is not literal equality.
+Correlation is not identity. A plausible transformation is not proof. Consistency is not truth. Equivalence is not literal equality.
 
 </div>
 
@@ -1548,33 +603,10 @@ Equivalence is not literal equality.
 
 ## 33. What a global model should accomplish
 
-A good integrated model should ideally:
-
-1. explain many independent observations;
-2. use constrained transition maps;
-3. preserve known structural relationships;
-4. represent uncertainty;
-5. expose assumptions;
-6. tolerate measurement noise without explaining everything away;
-7. make new predictions;
-8. permit falsification;
-9. compare against alternative models;
-10. preserve anomalies rather than silently deleting them.
-
-Thus:
+A good integrated model should (1) explain many independent observations, (2) use constrained transitions, (3) preserve known structural relations, (4) represent uncertainty, (5) expose assumptions, (6) tolerate noise without explaining everything away, (7) predict, (8) be falsifiable, (9) be comparable to alternatives, (10) preserve anomalies.
 
 $$
-\boxed{
-\text{global model}
-=
-\text{integration}
-+
-\text{constraints}
-+
-\text{predictive power}
-+
-\text{epistemic humility}.
-}
+\boxed{\text{global model} \;=\; \text{integration} + \text{constraints} + \text{predictive power} + \text{epistemic humility}.}
 $$
 
 </div>
@@ -1583,43 +615,13 @@ $$
 
 ## 34. The danger of unlimited flexibility
 
-Suppose a theory says:
-
-*Whenever two observations disagree, there exists some hidden transformation that makes them compatible.*
-
-If the transformation is completely unconstrained, the theory can survive anything.
-
-That is not explanatory strength.
-
-It is unfalsifiability.
-
-Formally, if the admissible transformation class is
+If the admissible transformation class is $\mathcal T=\{\text{almost every map}\}$, then $\exists T\in\mathcal T$ has no discriminating power. A serious framework must make the transition structure *costly to invent*:
 
 $$
-\mathcal T=\{\text{almost every imaginable map}\},
+\boxed{\text{more transformation freedom} \Longrightarrow \text{more evidence needed}.}
 $$
 
-then the condition
-
-$$
-\exists T\in\mathcal T
-$$
-
-has very little discriminating power.
-
-Therefore a serious coherent-model framework must make the transition structure costly to invent.
-
-One can think informally:
-
-$$
-\boxed{
-\text{more transformation freedom}
-\Longrightarrow
-\text{more evidence needed}.
-}
-$$
-
-This connects naturally to statistical model selection, Bayesian priors, complexity penalties, and Occam-style reasoning.
+This connects to model selection, Bayesian priors, complexity penalties, and Occam-style reasoning.
 
 </div>
 
@@ -1627,45 +629,15 @@ This connects naturally to statistical model selection, Bayesian priors, complex
 
 ## 35. The world is not the model
 
-A representation $M$ is not automatically identical with the subject matter $W$:
-
 $$
-M\neq W.
+\underbrace{W}_{\text{world}} \xrightarrow{\ \text{represent}\ } \underbrace{M}_{\text{model}}, \qquad M\neq W.
 $$
 
-Instead, there is some relationship:
+Different models represent the same domain: $M_{\text{physics}},\ M_{\text{perception}},\ M_{\text{language}},\ M_{\text{economics}},\ M_{\text{AI}}$. No contradiction — the question is:
 
 $$
-W\to M.
+\boxed{\text{how are the models related, and what do they preserve?}}
 $$
-
-The map may preserve some structures and discard others.
-
-Different models can therefore represent the same domain:
-
-$$
-M_{\rm physics},
-\quad
-M_{\rm perception},
-\quad
-M_{\rm language},
-\quad
-M_{\rm economics},
-\quad
-M_{\rm AI}.
-$$
-
-There is no contradiction in having many models of one world.
-
-The important question is:
-
-$$
-\boxed{
-\text{how are the models related, and what do they preserve?}
-}
-$$
-
-This is one of the deepest reasons to think categorically.
 
 </div>
 
@@ -1673,39 +645,13 @@ This is one of the deepest reasons to think categorically.
 
 ## 36. Finite observers and provisional globality
 
-A finite observer cannot access every variable in the world.
-
-Therefore a global model is always relative to available information:
+A finite observer cannot access every variable; a global model is always relative to available information:
 
 $$
-M_1\to M_2\to M_3\to\cdots
+\underbrace{M_1 \xrightarrow{\ +D_2\ } M_2 \xrightarrow{\ +D_3\ } M_3 \xrightarrow{\ \cdots\ }}_{\text{revision as data arrive}}
 $$
 
-as new data arrive.
-
-This does not make global modeling pointless.
-
-It changes the goal.
-
-We should not demand:
-
-$$
-M=\text{complete reality}.
-$$
-
-Instead:
-
-$$
-M_t
-=
-\text{the best justified coherent model available at time }t.
-$$
-
-A new observation can force a revision.
-
-That is not a defect.
-
-It is what an empirical theory should be able to do.
+We should not demand $M=\text{complete reality}$; we should demand $M_t=$ *the best justified coherent model available at time $t$*.
 
 </div>
 
@@ -1713,67 +659,9 @@ It is what an empirical theory should be able to do.
 
 ## 37. A practical algorithm for world-model building
 
-For any complicated body of evidence:
+Given complicated evidence:
 
-### 1. Record the raw datum
-
-What was actually measured, observed, or reported?
-
-$$
-D.
-$$
-
-### 2. Separate interpretation
-
-What was inferred from $D$?
-
-$$
-I(D).
-$$
-
-### 3. Draw the transformation chain
-
-What processes connect the subject matter to the datum?
-
-$$
-W\to D\to I.
-$$
-
-### 4. Identify overlaps
-
-Which observations constrain the same variables or event?
-
-### 5. Specify transition maps
-
-What transformations connect the representations?
-
-### 6. Constrain the transformations
-
-Why is each transformation admissible?
-
-### 7. Test compatibility
-
-Is it:
-
-$$
-=,\quad\cong,\quad\simeq,\quad\approx,
-$$
-
-or only statistically related?
-
-### 8. Search for global models
-
-Find structures satisfying as many constraints as possible.
-
-### 9. Preserve residuals
-
-Record what does not fit.
-
-### 10. Search for discriminating evidence
-
-What observation would separate competing explanations?
-
-This procedure is useful for scientific datasets, historical evidence, perception research, and AI systems alike.
+1. record the raw datum $D$; 2. separate interpretation $I(D)$; 3. draw the chain $W\to D\to I$; 4. identify overlaps; 5. specify transition maps; 6. constrain them (why admissible?); 7. test which compatibility holds ($=,\cong,\simeq,\approx$, statistical); 8. search for global models; 9. preserve residuals; 10. seek discriminating evidence.
 
 </div>
 
@@ -1781,41 +669,13 @@ This procedure is useful for scientific datasets, historical evidence, perceptio
 
 ## 38. A formal template
 
-Let $\mathcal C$ be a category of contexts and let
+Let $\mathcal C$ be a category of contexts and $F:\mathcal C^{op}\to\mathcal V$. For $u:V\to U$, get restriction $F(u):F(U)\to F(V)$. Local sections $s_i\in F(U_i)$; ask when $\{s_i\}$ is compatible and glues to a global section.
 
 $$
-F:\mathcal C^{op}\to\mathcal V
+\underbrace{F(U_i)}_{\text{local}} \xrightarrow{\ F(u_{ij})\ } \underbrace{F(U_i\cap U_j)}_{\text{overlap}} \xleftarrow{\ F(u_{ji})\ } \underbrace{F(U_j)}_{\text{local}}
 $$
 
-assign data or representations to contexts, where $\mathcal V$ is an appropriate category.
-
-For a morphism
-
-$$
-u:V\to U,
-$$
-
-we obtain a restriction/transport map
-
-$$
-F(u):F(U)\to F(V).
-$$
-
-A local section is an element
-
-$$
-s_i\in F(U_i).
-$$
-
-The local-to-global problem asks whether the collection $\{s_i\}$ is compatible and whether it arises from a global section.
-
-For an ordinary sheaf, compatibility is expressed by equality on overlaps.
-
-For a homotopy-valued setting, compatibility is expressed by coherent equivalences.
-
-For empirical data, we may instead use an error metric, likelihood, or loss function.
-
-This is the formal skeleton behind the entire intuition.
+Ordinary sheaf: equality on overlaps. Homotopy-valued: coherent equivalences. Empirical: error metric, likelihood, or loss.
 
 </div>
 
@@ -1823,43 +683,11 @@ This is the formal skeleton behind the entire intuition.
 
 ## 39. A model-theoretic template
 
-Let $\mathcal L$ be a language and $T$ a theory.
-
-Add observations:
+With language $\mathcal L$ and theory $T$, add observations to get $T_D=T\cup\{O_1,\ldots,O_n\}$ and ask for models $M\models T_D$. Three outcomes:
 
 $$
-T_D=T\cup\{O_1,\ldots,O_n\}.
+\underbrace{\nexists\,M:M\models T_D}_{\text{inconsistent}}, \qquad \underbrace{M_1,M_2\models T_D,\ M_1\neq M_2}_{\text{underdetermined}}, \qquad \underbrace{\text{narrow class of }M}_{\text{empirical discrimination needed}}.
 $$
-
-Then ask for models:
-
-$$
-M\models T_D.
-$$
-
-There are three broad outcomes:
-
-### No model
-
-$$
-\nexists M\;(M\models T_D).
-$$
-
-The assumptions are inconsistent.
-
-### Many models
-
-$$
-M_1\models T_D,\qquad M_2\models T_D.
-$$
-
-The data underdetermine the model.
-
-### Strongly constrained model class
-
-Many possible structures have been ruled out.
-
-The next step is then not philosophical certainty but empirical discrimination.
 
 </div>
 
@@ -1867,30 +695,11 @@ The next step is then not philosophical certainty but empirical discrimination.
 
 ## 40. The same pattern across mathematics and AI
 
-The conceptual chain can now be written:
-
 $$
 \boxed{
-\begin{aligned}
-&\text{distinction}\\
-&\downarrow\\
-&\text{relation}\\
-&\downarrow\\
-&\text{transformation}\\
-&\downarrow\\
-&\text{context / locality}\\
-&\downarrow\\
-&\text{compatibility}\\
-&\downarrow\\
-&\text{coherence}\\
-&\downarrow\\
-&\text{gluing / integration}\\
-&\downarrow\\
-&\text{global model}\\
-&\downarrow\\
-&\text{invariant / prediction}
-\end{aligned}
-}
+\begin{array}{c}
+\text{distinction}\\ \downarrow\\ \text{relation}\\ \downarrow\\ \text{transformation}\\ \downarrow\\ \text{context / locality}\\ \downarrow\\ \text{compatibility}\\ \downarrow\\ \text{coherence}\\ \downarrow\\ \text{gluing / integration}\\ \downarrow\\ \text{global model}\\ \downarrow\\ \text{invariant / prediction}
+\end{array}}
 $$
 
 Different theories occupy different parts of this chain:
@@ -1912,9 +721,7 @@ $$
 \end{array}
 $$
 
-They are not all secretly the same theory.
-
-They are different mathematical languages for related structural problems.
+Not one hidden theory — different languages for related structural problems.
 
 </div>
 
@@ -1922,34 +729,14 @@ They are different mathematical languages for related structural problems.
 
 ## 41. The deepest connection to AI
 
-AI can be viewed at a very high level as a machine for transforming representations.
-
 $$
 \boxed{
-\text{input}
-\to
-\text{representation}
-\to
-\text{transformation}
-\to
-\text{integration}
-\to
-\text{prediction/action}
-}
+\begin{array}{c}
+\text{input}\\ \downarrow\\ \text{representation}\\ \downarrow\\ \text{transformation}\\ \downarrow\\ \text{integration}\\ \downarrow\\ \text{prediction / action}
+\end{array}}
 $$
 
-The important questions become:
-
-* What does the representation preserve?
-* What does it forget?
-* What transformations connect different representations?
-* Which relations remain invariant?
-* How are conflicting constraints handled?
-* How is information from different modalities integrated?
-* Which internal structures are grounded in external observations?
-* What happens when the model encounters a context outside its training distribution?
-
-These questions provide a conceptual bridge from elementary category theory to modern AI without pretending that a neural network is literally a categorical construction.
+Ask: what does the representation preserve; what does it forget; which transformations connect different representations; which relations remain invariant; how are conflicts handled; how are modalities integrated; which internal structures are grounded externally; what happens outside the training distribution? A bridge from elementary category theory to modern AI without pretending a neural network is literally a categorical construction.
 
 </div>
 
@@ -1957,37 +744,11 @@ These questions provide a conceptual bridge from elementary category theory to m
 
 ## 42. The central epistemic distinction
 
-There are three different things we should never collapse:
-
 $$
-\boxed{
-\text{data}
-\neq
-\text{representation}
-\neq
-\text{model}.
-}
+\boxed{\underbrace{D}_{\text{data}} \;\neq\; \underbrace{R(D)}_{\text{representation}} \;\neq\; \underbrace{M(R(D))}_{\text{model}}.}
 $$
 
-More explicitly:
-
-$$
-D
-\neq
-R(D)
-\neq
-M(R(D)).
-$$
-
-Data are produced by an observation process.
-
-Representations are transformations of data.
-
-Models are structures that organize representations and make predictions.
-
-The transitions between these levels are not philosophical decoration.
-
-They are part of the causal and mathematical explanation.
+Data are produced by observation. Representations are transformations of data. Models organize representations and predict. The transitions between these levels are part of the causal and mathematical explanation, not philosophical decoration.
 
 </div>
 
@@ -1995,39 +756,19 @@ They are part of the causal and mathematical explanation.
 
 ## 43. The final picture
 
-We can now put everything together:
-
 $$
-\begin{array}{cccccc}
-&&W&&&\\
-&\swarrow&\downarrow&\searrow&&\\
-D_A&&D_B&&D_C&\\
-\downarrow&&\downarrow&&\downarrow&\\
-M_A&\xrightarrow{T_{AB}}&M_B&\xleftarrow{T_{CB}}&M_C&\\
-&\searrow&&\swarrow&&\\
-&&G&&&
+\begin{array}{ccccc}
+&&W&&\\
+&\swarrow&\downarrow&\searrow&\\
+D_A&&D_B&&D_C\\
+\downarrow{\scriptstyle N_A}&&\downarrow{\scriptstyle N_B}&&\downarrow{\scriptstyle N_C}\\
+M_A&\xrightarrow{T_{AB}}&M_B&\xleftarrow{T_{CB}}&M_C\\
+&\searrow&\downarrow&\swarrow&\\
+&&\underbrace{G}_{\text{global model}}&&
 \end{array}
 $$
 
-The goal is not necessarily to prove
-
-$$
-M_A=M_B=M_C.
-$$
-
-The goal is to determine whether the differences can be related by justified transformations so that the resulting structure can participate in a coherent global model $G$.
-
-In strict settings, this may involve equality on overlaps.
-
-In categorical settings, it may involve universal constructions.
-
-In homotopical settings, it may involve equivalences and higher coherence.
-
-In model theory, it may involve finding structures satisfying all constraints.
-
-In probabilistic modeling, it may involve maximizing a joint likelihood.
-
-In machine learning, it may involve learning representations that make many heterogeneous observations jointly predictive.
+The goal is not $M_A=M_B=M_C$. The goal is to determine whether differences can be related by justified transformations so the resulting structure participates in a coherent $G$. Strict setting: equality on overlaps. Categorical: universal constructions. Homotopical: equivalences and higher coherence. Model-theoretic: structures satisfying all constraints. Probabilistic: joint likelihood. ML: representations making heterogeneous observations jointly predictive.
 
 Different mathematics. Same broad problem.
 
@@ -2038,33 +779,91 @@ Different mathematics. Same broad problem.
 ## 44. One sentence to remember
 
 $$
+\boxed{\textbf{A coherent world model does not erase perspectival difference; it explains how different perspectives are related.}}
+$$
+
+More formally:
+
+$$
+\boxed{\underbrace{\text{difference}}_{\text{many views}} + \underbrace{\text{constrained transformation}}_{\text{justified maps}} + \underbrace{\text{coherence}}_{\text{fits together}} \Longrightarrow \underbrace{\text{integrated structure}}_{\text{global model}}.}
+$$
+
+And the safeguard:
+
+$$
+\boxed{\text{coherence is evidence for a model's structural adequacy, not a proof that the model is true.}}
+$$
+
+That distinction is what keeps the same framework useful for mathematics, science, perception, model theory, and AI without turning it into an unfalsifiable metaphor.
+
+</div>
+
+<div class="md">
+
+## 45. Coda: what remains when representations change
+
+If we strip away every specific formalism — categories, sheaves, $\infty$-groupoids, models, probability distributions, neural networks — what remains is a single working principle:
+
+$$
 \boxed{
-\textbf{A coherent world model does not erase perspectival difference; it explains how different perspectives are related.}
+\underbrace{W}_{\text{one domain}}
+\ \longrightarrow\ 
+\underbrace{\{R_i\}}_{\text{many representations}}
+\ \longrightarrow\ 
+\underbrace{\{T_{ij}\}}_{\text{justified transformations}}
+\ \longrightarrow\ 
+\underbrace{G}_{\text{coherent global structure}}.
 }
 $$
 
-Or, more formally:
+Everything in this chapter has been a way of making one of the four terms more precise:
+
+$$
+\begin{array}{c|c}
+\text{Refining } W & \text{ontology, physics, causal structure}\\
+\text{Refining } R_i & \text{perception, measurement, embeddings, language}\\
+\text{Refining } T_{ij} & \text{category theory, sheaves, homotopy, translation}\\
+\text{Refining } G & \text{model theory, probability, integrated learning}
+\end{array}
+$$
+
+No single discipline owns the whole picture. Each supplies vocabulary for a different part of the same underlying problem.
+
+</div>
+
+<div class="md">
+
+## 46. Closing summary
+
+Three sentences suffice.
+
+**First**, the world reaches us only through transformations, so different representations of one situation are the rule, not the exception:
+
+$$
+W \xrightarrow{\ O_i\ } D_i \xrightarrow{\ N_i\ } R_i.
+$$
+
+**Second**, coherence is possible when the differences among representations are explained by *constrained* transformations, not arbitrary rescue maps:
+
+$$
+\underbrace{\exists\, T_{ij}\in\mathcal T}_{\text{justified, not invented}}\ :\ R_i \to R_j.
+$$
+
+**Third**, an integrated model is a structure through which those constrained transformations become mutually compatible — provisionally, revisably, and without pretending that the model is the world:
 
 $$
 \boxed{
-\text{difference}
-+
-\text{constrained transformation}
-+
-\text{coherence}
-\Longrightarrow
-\text{integrated structure}.
+\underbrace{G}_{\text{model}}
+\ \not=\ 
+\underbrace{W}_{\text{world}},
+\qquad
+\text{but}
+\qquad
+\underbrace{G}_{\text{model}}
+\ \text{is how }W\text{ becomes intelligible to a finite observer.}
 }
 $$
 
-And the final safeguard is equally important:
-
-$$
-\boxed{
-\text{coherence is evidence for a model's structural adequacy, not a proof that the model is true.}
-}
-$$
-
-That distinction is what allows the same framework to be useful for mathematics, science, perception, model theory, and AI without turning it into an unfalsifiable metaphor.
+That is the whole idea of coherent representation.
 
 </div>
