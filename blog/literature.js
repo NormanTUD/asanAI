@@ -8131,22 +8131,29 @@ window.bibData = {
 		title: "Der Wahrheitsbegriff in den formalisierten Sprachen",
 		author: "Alfred Tarski",
 		year: 1935,
-		url: "https://www.jstor.org/stable/2251170",
+		url: "https://plato.stanford.edu/entries/tarski-truth/",
 		alternativetitle: "The Concept of Truth in Formalized Languages (Studia Philosophica, 1935; English trans. in Logic, Semantics, Metamathematics, 1956)"
 	},
 	"tarski1944semantic": {
 		title: "The Semantic Conception of Truth and the Foundations of Semantics",
 		author: "Alfred Tarski",
 		year: 1944,
-		url: "https://www.jstor.org/stable/2103328",
-		alternativetitle: "Philosophy and Phenomenological Research, vol. 4"
+		url: "https://philpapers.org/rec/TARTSC-2",
+		alternativetitle: "Philosophy and Phenomenological Research, vol. 4 (1944), pp. 341–376"
+	},
+	"tarski1956logic": {
+		title: "Logic, Semantics, Metamathematics: Papers from 1923 to 1938",
+		author: "Alfred Tarski (trans. J. H. Woodger)",
+		year: 1956,
+		url: "https://archive.org/details/logic-semantics-metamathematics",
+		alternativetitle: "Logic, Semantics, Metamathematics (Oxford: Clarendon Press, 1956) — contains the standard English translation of the 1935 paper, pp. 152–278"
 	},
 	"bradley1893appearance": {
 		title: "Appearance and Reality: A Metaphysical Essay",
 		author: "F. H. Bradley",
 		year: 1893,
 		url: "https://www.gutenberg.org/ebooks/20893",
-		alternativetitle: "Appearance and Reality (Oxford: Clarendon Press, 1893; 9th ed. 1930)"
+		alternativetitle: "Appearance and Reality (London: Swan Sonnenschein; Oxford: Clarendon Press, 1893; 9th ed. 1930)"
 	},
 	"blanshard1939nature": {
 		title: "The Nature of Thought",
@@ -8175,5 +8182,12 @@ window.bibData = {
 		year: 2019,
 		url: "https://plato.stanford.edu/entries/truth-coherence/",
 		alternativetitle: "The Coherence Theory of Truth (Stanford Encyclopedia of Philosophy)"
+	},
+	"hodges2007tarski": {
+		title: "Tarski's Truth Definitions",
+		author: "Wilfrid Hodges",
+		year: 2007,
+		url: "https://plato.stanford.edu/entries/tarski-truth/",
+		alternativetitle: "Tarski's Truth Definitions (Stanford Encyclopedia of Philosophy)"
 	}
 };
