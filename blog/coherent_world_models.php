@@ -532,17 +532,22 @@ Correlation is not identity. A plausible transformation is not proof. Consistenc
 ## The one diagram
 
 $$
-\begin{array}{ccccccccc}
-&&\underbrace{W}_{\text{subject matter}}&&&&&\\
-{}^{\,O_1}\!\swarrow&{}^{\,O_2}\!\downarrow&{}^{\,O_3}\!\searrow&\cdots&{}^{\,O_i}\!\downarrow&\cdots&\\
-\underbrace{R_1}_{\text{view 1}}&&\underbrace{R_2}_{\text{view 2}}&&\underbrace{R_3}_{\text{view 3}}&\cdots&\underbrace{R_i}_{\text{view }i}&\cdots&\\
-{}^{\,T_1}\!\searrow&{}^{\,T_2}\!\downarrow&{}^{\,T_3}\!\swarrow&\cdots&{}^{\,T_i}\!\downarrow&\cdots&\\
-&&\underbrace{G=\varprojlim_{\,i\in I}F(R_i)}_{\text{coherent global model — limit over all views in } I}&&&&&\\
+\begin{array}{ccccc}
+&&\underbrace{W}_{\text{subject matter}}&&\\
+&{\scriptstyle O_1}\swarrow&{\scriptstyle O_2}\downarrow&{\scriptstyle O_3}\searrow&\\
+\underbrace{R_1}_{\text{view 1}}&&\underbrace{R_2}_{\text{view 2}}&&\underbrace{R_3}_{\text{view 3}}\\
+&{\scriptstyle T_1}\searrow&{\scriptstyle T_2}\downarrow&{\scriptstyle T_3}\swarrow&\\
+&&\underbrace{G = \varprojlim F}_{\text{coherent global model}}&&\qquad T_i \in \mathcal T
 \end{array}
-\qquad T_i\in\mathcal T,\ \ i\in I
 $$
 
-Read the dots as "any number of views". The cover $\{R_i\}_{i\in I}$ is indexed by an arbitrary set $I$ — three, a thousand, or uncountably many. The coherent global model $G$ is the limit of the whole diagram, not just of three patches. This is the picture the rest of the chapter unpacks.
+Three views shown; the cover can have any number. Replace the index by an arbitrary set $I$ (finite, countable, or uncountable) and add as many $R_i$, $O_i$, $T_i$ as you like:
+
+$$
+\cdots \;\xrightarrow{\,O_{i-1}\,}\; R_{i-1}\; \xleftarrow{\,O_i\,}\; W\; \xrightarrow{\,O_{i+1}\,}\; R_{i+1}\; \xrightarrow{\,O_{i+2}\,}\;\cdots
+$$
+
+and analogously for the $T_i$. The global model becomes $G = \varprojlim_{\,i\in I} F(R_i)$, the limit over *all* views in $I$ — three, a thousand, or uncountably many. The three-view picture above is the smallest non-trivial case; the whole framework scales to covers of any size.
 
 Different mathematics, one shape:
 
