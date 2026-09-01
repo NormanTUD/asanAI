@@ -14,7 +14,7 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, model-theory, ai,
 
 # From World to Model: Coherent Representation
 
-> **How can many different, partial, transformed descriptions belong to one world without being literally identical?**
+How can many different, partial, transformed descriptions belong to one world without being literally identical?
 
 This chapter develops one idea from several directions:
 
