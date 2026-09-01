@@ -182,12 +182,17 @@ Time is a context. Culture is a context. A historical period is a context. A con
 
 Morphisms in $\mathcal C$ are **refinements**: narrower time windows, tighter instruments, sub-frameworks, more specific coordinates.
 
-A **cover** of a context $c$ is a family of sub-contexts $\{c_i \to c\}_{i \in I}$ that *together* determine $c$ via admissible transitions:
+A **cover** of a context $c$ is, in the most general sense, a family of sub-contexts $\{c_i \to c\}_{i \in I}$ whose images together contain everything relevant about $c$ — *no relevant feature of $c$ escapes all patches*. The everyday analogy: a set of overlapping photographs covers a room if every point of the room appears in at least one photograph. In a topological space, an **open cover** of an open set $U$ is a family $\{U_i\}$ of open sets whose union contains $U$. A **Grothendieck cover** generalises both: a family of morphisms $\{c_i \to c\}$ is a cover if it has been *designated* as covering by a rule on the category, called a Grothendieck topology.
+
+In this chapter the cover is required to do one more job: every morphism $c_i \to c$ must lie in the designated class $\mathcal T$ of admissible transitions. We call such a cover **admissible**:
 
 $$
-\underbrace{\{c_i \to c\}_{i \in I}}_{\text{covering family}}\ :\ 
+\underbrace{\{c_i \xrightarrow{\,O_i\,} c\}_{i \in I}}_{\text{admissible covering family}}\ :\ 
+\underbrace{\text{each }O_i\in\mathcal T}_{\text{morphisms are admissible}}\ ,\qquad
 \underbrace{\text{admissible-}\mathcal T\text{-images of the }c_i\text{ jointly determine }c}_{\text{"no relevant feature of }c\text{ escapes all patches"}}.
 $$
+
+The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover" and coherence would become vacuous. By restricting to admissible covers, we make the sheaf condition a *meaningful* question about the specific modelling context.
 
 Everyday analogy: a set of overlapping photographs *covers* a room if every point of the room appears in at least one photograph. Formally, equipping $\mathcal C$ with a rule for which families count as covers is a **Grothendieck topology** $J$; the pair $(\mathcal C, J)$ is a **site** (as sketched in *Coherent Difference*).
 
@@ -221,11 +226,12 @@ Now the same content as an equation. For every admissible cover $\{c_i \to c\}_{
 $$
 \underbrace{F(c)}_{\text{global section on }c}
 \;\xrightarrow{\;\sim\;}\;
-\underbrace{\mathrm{Eq}\!\Bigl(\;
+\underbrace{\;\mathrm{Eq}\!\Bigl(\;
 \underbrace{\prod_{i\in I} F(c_i)}_{\text{a section on each patch}}
-\;\xrightrightarrows[\;\text{restrict from }j\;]{\;\text{restrict from }i\;}\;
+\;\rightrightarrows\;
 \underbrace{\prod_{i,j\in I} F(c_i \times_c c_j)}_{\text{a section on each pairwise overlap}}
-\;\Bigr)}_{\text{the tuples that agree on every overlap}}
+\;\Bigr)}_{\substack{\text{the tuples that agree on every overlap}\\
+\text{(two restriction arrows: from $i$-side, from $j$-side)}}}
 $$
 
 Three pieces, reading left to right:
@@ -274,7 +280,7 @@ $$
 \end{array}
 $$
 
-Five representations, five different categories. The site $\mathcal C$ contains their contexts; the cover of "the event" is $\{c_v, c_a, c_r, c_\ell, c_h\} \to c$; $\mathcal T$ contains sensor calibration, physical propagation (sound delay, Doppler), validated linguistic reporting, and archival transmission with error bounds. A global $G \in F(c)$ exists iff descent holds.
+Five representations, five different categories. The site $\mathcal C$ contains their contexts; the **admissible cover** of "the event" is the family $\{c_v, c_a, c_r, c_\ell, c_h\} \to c$ — each arrow admissible, the patches together recovering everything relevant about $c$. $\mathcal T$ contains sensor calibration, physical propagation (sound delay, Doppler), validated linguistic reporting, and archival transmission with error bounds. A global $G \in F(c)$ exists iff descent holds.
 
 The same shape governs **mathematical data**: a group presented by generators-and-relations, by a Cayley table, by a permutation action, by a matrix representation, by a character table. Five presentations, five categories, one group — provided the transitions between presentations are admissible (isomorphisms of the appropriate kind).
 
@@ -318,22 +324,27 @@ The pullback *is* the object of agreements. Visual and radar tracks pull back ov
 
 ## Higher coherence
 
-Three representations with pairwise transitions:
+Suppose three representations $A, B, C$ are related pairwise:
 
 $$
-A \xrightarrow{\phi_{AB}} B \xrightarrow{\phi_{BC}} C,\qquad A \xrightarrow{\phi_{AC}} C.
+A \xrightarrow{\;\phi_{AB}\;} B \xrightarrow{\;\phi_{BC}\;} C,\qquad A \xrightarrow{\;\phi_{AC}\;} C.
 $$
 
-- **Strict:** $\phi_{BC} \circ \phi_{AB} = \phi_{AC}$.
-- **Homotopical:** a filler $\alpha_{ABC} : \phi_{BC}\phi_{AB} \Rightarrow \phi_{AC}$ (a 2-morphism).
-- **Four representations:** a 3-morphism filling between the fillers.
-- **And so on:** the Čech nerve of the cover, evaluated in $F$.
+There are now two ways to go from $A$ to $C$: directly via $\phi_{AC}$, or by composition $\phi_{BC} \circ \phi_{AB}$. The question is whether these two ways agree.
+
+- **Strict regime.** They agree *on the nose*: $\phi_{BC} \circ \phi_{AB} \;=\; \phi_{AC}$. Equality is a single yes/no answer.
+
+- **Homotopical regime.** They agree *up to a witness* — a **2-morphism** $\alpha_{ABC} : \phi_{BC} \phi_{AB} \Rightarrow \phi_{AC}$. Think of $\alpha_{ABC}$ as a "filler" that says the two routes are not the same path but can be *continuously deformed* into one another. The 2-morphism itself is data; you can ask further questions about *it*.
+
+- **Four representations.** Add $D$, with its own transitions. Now the fillers $\alpha_{ABC}$, $\alpha_{BCD}$, $\alpha_{ACD}$, $\alpha_{ABD}$ may themselves disagree — and you need a **3-morphism** filling between the fillers to certify higher-order consistency. And so on.
+
+The generalisation is clean: an **$n$-morphism** is a cell of dimension $n$ in a higher category.
 
 $$
-\underbrace{\text{objects}}_{0\text{-cells}} \to 
-\underbrace{\text{morphisms}}_{1\text{-cells}} \to 
-\underbrace{2\text{-morphisms}}_{\text{relations of relations}} \to 
-\underbrace{3\text{-morphisms}}_{\text{and so on}} \to \cdots
+\underbrace{\text{objects}}_{0\text{-cells}} \;\to\; 
+\underbrace{\text{morphisms}}_{1\text{-cells}} \;\to\; 
+\underbrace{2\text{-morphisms}}_{\text{morphisms between morphisms}} \;\to\; 
+\underbrace{3\text{-morphisms}}_{\text{morphisms between }2\text{-morphisms}} \;\to\; \cdots
 $$
 
 $$
@@ -344,7 +355,9 @@ $$
 \end{aligned}}
 $$
 
-An **$\infty$-sheaf** is a sheaf-like object in an $(\infty,1)$-topos: equality on overlaps is replaced by *coherent equivalence*, and coherence itself is data at every level.
+The sheaf condition itself runs up this tower. The classical sheaf condition (Section "Sheaves") tests *equality* on pairwise overlaps. To handle homotopical targets, one builds the **Čech nerve** of the cover $\{c_i \to c\}$: a simplicial object that in degree $0$ lists the patches, in degree $1$ lists pairwise overlaps, in degree $2$ lists triple overlaps, and so on, with face and degeneracy maps encoding the combinatorial structure. The sheaf condition becomes the requirement that the limit (now a limit in $\infty$-groupoids) over the whole Čech nerve reproduces $F(c)$.
+
+An **$\infty$-sheaf** is a sheaf-like object valued in $\infty$-groupoids instead of sets: instead of *equality* on overlaps one requires *coherent equivalence*, with the coherence tracked at every level. Sheaf = descent-data in $\mathbf{Set}$; $\infty$-sheaf = descent-data in $\infty\text{-Gpd}$.
 
 *Physical example.* Lightning and thunder from one strike are not *equal* on their time-overlap; they are related by a *homotopy* whose parameter is the travel-time delay. Triple overlaps (add a distant echo) require the delays to *compose coherently*. An $\infty$-sheaf handles this exactly.
 
