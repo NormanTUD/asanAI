@@ -8122,5 +8122,58 @@ window.bibData = {
 		year: "Historical photograph",
 		url: "https://commons.wikimedia.org/wiki/File:Morsetaste.jpg",
 		alternativetitle: "Morse telegraph key"
+	},
+
+	// ────────────────────────────────────────────────────────────
+	// Truth theory — Tarski (correspondence) and the coherence tradition
+	// ────────────────────────────────────────────────────────────
+	"tarski1935wahrheitsbegriff": {
+		title: "Der Wahrheitsbegriff in den formalisierten Sprachen",
+		author: "Alfred Tarski",
+		year: 1935,
+		url: "https://www.jstor.org/stable/2251170",
+		alternativetitle: "The Concept of Truth in Formalized Languages (Studia Philosophica, 1935; English trans. in Logic, Semantics, Metamathematics, 1956)"
+	},
+	"tarski1944semantic": {
+		title: "The Semantic Conception of Truth and the Foundations of Semantics",
+		author: "Alfred Tarski",
+		year: 1944,
+		url: "https://www.jstor.org/stable/2103328",
+		alternativetitle: "Philosophy and Phenomenological Research, vol. 4"
+	},
+	"bradley1893appearance": {
+		title: "Appearance and Reality: A Metaphysical Essay",
+		author: "F. H. Bradley",
+		year: 1893,
+		url: "https://www.gutenberg.org/ebooks/20893",
+		alternativetitle: "Appearance and Reality (Oxford: Clarendon Press, 1893; 9th ed. 1930)"
+	},
+	"blanshard1939nature": {
+		title: "The Nature of Thought",
+		author: "Brand Blanshard",
+		year: 1939,
+		url: "https://archive.org/details/in.ernet.dli.2015.140855",
+		alternativetitle: "The Nature of Thought (London: George Allen & Unwin, 1939)"
+	},
+	"joachim1906nature": {
+		title: "The Nature of Truth",
+		author: "H. H. Joachim",
+		year: 1906,
+		url: "https://archive.org/details/natureoftruthbe00joach",
+		alternativetitle: "The Nature of Truth: An Essay (Oxford: Clarendon Press, 1906)"
+	},
+	"bonjour1985structure": {
+		title: "The Structure of Empirical Knowledge",
+		author: "Laurence BonJour",
+		year: 1985,
+		url: "https://www.hackettpublishing.com/the-structure-of-empirical-knowledge",
+		alternativetitle: "The Structure of Empirical Knowledge (Cambridge, MA: Harvard University Press, 1985)"
+	},
+	"walker2019coherence": {
+		title: "The Coherence Theory of Truth",
+		author: "Mark Walker",
+		year: 2019,
+		url: "https://plato.stanford.edu/entries/truth-coherence/",
+		alternativetitle: "The Coherence Theory of Truth (Stanford Encyclopedia of Philosophy)"
 	}
 };
