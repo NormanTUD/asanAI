@@ -767,3 +767,299 @@ $$
 $$
 
 </div>
+
+<div class="md">
+
+## The chapter that survived: truth, correspondence, and the correlation of model and reality
+
+The "One sentence" above names what a coherent world model *is*. It does not yet say when one is *true*. Coherence is necessary — a model whose parts contradict each other is not a description of any single subject matter. But coherence is not *sufficient*: a self-consistent fantasy is still a fantasy, and a hallucinating language model that satisfies its own internal regularities is still hallucinating. The rest of this chapter takes up the question coherence alone cannot answer:
+
+$$
+\boxed{
+\begin{aligned}
+&\text{When does a coherent model actually correspond}\\
+&\text{to the subject matter it is about?}
+\end{aligned}}
+$$
+
+The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Blanshard). The proper synthesis is to require *both*, jointly, at every admissible contact point.
+
+</div>
+
+<div class="md">
+
+### Tarski's Convention T
+
+In 1935, Alfred Tarski published *Der Wahrheitsbegriff in den formalisierten Sprachen*\citeauthor{tarski1935wahrheitsbegriff}\citeyear{tarski1935wahrheitsbegriff}\citetitle{tarski1935wahrheitsbegriff} — one of the most consequential short papers in the history of logic. (An accessible English rendering is the 1944 lecture \citetitle{tarski1944semantic}; the standard English translation appears in the 1956 collection \citetitle{tarski1956logic}.) Tarski's target was the *vagueness* of the classical correspondence intuition — "a sentence is true when it agrees with reality" — which, as he pointed out, uses the very word it tries to define. His replacement is the semantic Convention T, formulated below as Tarski states it in the Woodger translation:
+
+<div class="smart-quote" data-cite="tarski1956logic">
+<div class="full-quote">A sentence $\boldsymbol{x}$ of a language $\mathcal{L}$ is *true in $\mathcal{L}$* if, and only if, $p$ — where $p$ is any sentence of the meta-language which "expresses the same meaning" as $\boldsymbol{x}$.</div>
+<div class="short-quote">A sentence $S$ is true if, and only if, $p$ — where $p$ is the meta-language sentence that translates $S$.</div>
+</div>
+
+Read once for the structure. The convention has four pieces:
+
+1. **The object-language** $\mathcal{L}$ in which the sentence $S$ is *written*: the formal language inside the model.
+2. **The meta-language** in which we *talk about* $S$ and assert $p$: a richer language in which we can refer to the object-sentence and to the world.
+3. **The quotation-name** of $S$ in the meta-language — Tarski uses quotation marks. The name is the *handle* by which the object-sentence is gripped from outside.
+4. **The proposition $p$** in the meta-language — the same content, now stated as a claim *about the world*.
+
+The convention binds them together with the simplest possible connective: *if, and only if*. Truth, for Tarski, is not a mysterious property — it is a *correlation* between a formal artefact inside the model and a fact outside it.
+
+The classical illustration, which Tarski uses as his running example in the 1935 paper:
+
+<div class="smart-quote" data-cite="tarski1935wahrheitsbegriff">
+<div class="full-quote">Thus for instance the sentence "snow is white" is true if, and only if, snow is white.</div>
+<div class="short-quote">„Schnee ist weiß" is true if, and only if, Schnee weiß ist.</div>
+</div>
+
+What looks like a triviality is in fact a *definition*. The right-hand side is not inside quotation marks — it is not the *name* of a sentence, it is the sentence's *content*, asserted as a fact about the world. Convention T is the rule that says: **a model is true exactly at the points where it touches the world, and at those points the touch must hold**.
+
+$$
+\underbrace{S}_{\text{claim, inside the model}}
+\;\;\text{is true iff}\;\;
+\underbrace{p}_{\text{fact, in the meta-language about the world}}.
+$$
+
+This is correspondence — not as a metaphor, but as a precise, formally statable condition.
+
+</div>
+
+<div class="md">
+
+### Why Tarski's correspondence is structural
+
+Tarski's contribution is not a slogan — it is a *definition*. He proved that for any formalised language rich enough to express its own semantics, the T-schema "$\boldsymbol{x}$ is true iff $p$" can be satisfied by a recursive construction (using his notion of *satisfaction*). Three consequences matter here:
+
+1. **Truth is not a primitive.** It is *defined* in terms of satisfaction, reference, and quotation. The definition replaces every informal axiom about truth with a precise procedure — there is no need for a separate "truth axiom".
+
+2. **Truth is semantic, not syntactic.** Two sentences with the same syntactic form may differ in truth-value; the value depends on what the symbols *refer to* in the world. Tarski is explicit about this in \citeyear{tarski1944semantic}, where he calls his account the *semantic* conception precisely to contrast it with formalist or syntactic theories.
+
+3. **The T-schema is conservative.** Adding "$\boldsymbol{x}$ is true iff $\boldsymbol{p}$" to a formalised language does not let you prove anything you could not already prove in the meta-language. Truth is content, not new deductive power.
+
+The key consequence for this chapter: Tarski turns truth from a metaphysical mystery into an *interface condition*. At every point where the model's claim meets the world, an *if-and-only-if* must hold. The T-schema is, in effect, the categorical content of the admissible transitions $\mathcal T$ — the catalogue of which *if-and-only-if* arrows the framework licenses.
+
+$$
+\underbrace{T\in\mathcal T}_{\text{admissible transition (this chapter)}}
+\;\;\longleftrightarrow\;\;\;
+\underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1935)}}
+$$
+
+</div>
+
+<div class="md">
+
+### The coherence tradition
+
+The demand that a model be *internally consistent* is older than Tarski and older than modern logic. Its modern philosophical form begins with the British idealists, in particular F. H. Bradley's *Appearance and Reality*\citeauthor{bradley1893appearance}\citeyear{bradley1893appearance}\citetitle{bradley1893appearance}:
+
+<div class="smart-quote" data-cite="bradley1893appearance">
+<div class="full-quote">Truth, we may say, is the systematic coherence of ideas, such coherence being determined ultimately by the nature of the idea itself, or by the reality which the idea endeavours to represent.</div>
+<div class="short-quote">Truth is the systematic coherence of ideas.</div>
+</div>
+
+Bradley's claim is not that coherence is *sufficient* — he grounds it explicitly in *the reality which the idea endeavours to represent* — but he gives it pride of place. A claim is not true by accident; it is true because it *fits into* a larger system of beliefs that hangs together. The twentieth-century inheritors, most notably Brand Blanshard in *The Nature of Thought*\citeauthor{blanshard1939nature}\citeyear{blanshard1939nature}\citetitle{blanshard1939nature}, develop the position more formally:
+
+<div class="smart-quote" data-cite="blanshard1939nature">
+<div class="full-quote">The truth of a proposition is nothing but its coherence with the whole of experience, and ultimately with the whole of reality.</div>
+<div class="short-quote">Truth is coherence with the whole of experience and of reality.</div>
+</div>
+
+The Stanford Encyclopedia of Philosophy entry on coherence \citeauthor{walker2019coherence}\citeyear{walker2019coherence}\citetitle{walker2019coherence} traces the lineage further: H. H. Joachim's *The Nature of Truth*\citeauthor{joachim1906nature}\citeyear{joachim1906nature}\citetitle{joachim1906nature}; into twentieth-century epistemology (BonJour's *The Structure of Empirical Knowledge*\citeauthor{bonjour1985structure}\citeyear{bonjour1985structure}\citetitle{bonjour1985structure}); and into contemporary analytic philosophy where it appears in modified form under the labels *holism*, *structural realism*, and *coherentist epistemology*.
+
+For our purposes the technical content matters more than the historical lineage. What the coherence tradition gives us, in the language of this chapter, is **the sheaf condition**: a coherent model is one whose local sections agree on overlaps. Coherence is the structural heart of descent.
+
+$$
+\boxed{\;\text{coherence} = \text{descent on admissible covers}.\;}
+$$
+
+</div>
+
+<div class="md">
+
+### The synthesis: coherence *and* correspondence
+
+The two traditions look opposed only if read carelessly. Read carefully, they are *complementary*: each names a necessary condition that the other ignores.
+
+$$
+\begin{array}{c|c|c}
+\text{Tradition} & \text{It checks that…} & \text{It ignores…}\\
+\hline
+\text{Correspondence (Tarski)} & \text{at each contact point, model}\leftrightarrow\text{world} & \text{the model's internal consistency}\\
+\text{Coherence (Bradley / Blanshard)} & \text{the model's parts fit on overlaps} & \text{whether the parts fit the world}
+\end{array}
+$$
+
+A purely correspondence-based theory has no criterion for *which* claims to check: it can say "claim $S$ corresponds to fact $p$" but it has no story for whether $S$ itself hangs together with the rest of the model. A purely coherence-based theory has no anchor in the world: it can certify that a model is internally consistent, and nothing else.
+
+The proper synthesis — and the position implicit in Tarski's own writing on the *adequacy* of a formalised language to a domain — is **both, simultaneously, at every admissible contact point**:
+
+$$
+\boxed{
+\begin{aligned}
+&\underbrace{\text{coherence}}_{\text{descent on every admissible cover}}
+\;\;\wedge\;\;
+\underbrace{\text{correspondence}}_{\text{Tarski at every }T\in\mathcal T}\\
+&\qquad\qquad\Longleftrightarrow\qquad\qquad
+\underbrace{G\text{ is true}}_{\text{its every admissible claim matches the world}}
+\end{aligned}}
+$$
+
+This is the precise statement of what it means to say that a coherent world model is *true*. Not true as a slogan — true as the conjunction of two formally checkable conditions, one structural and one empirical.
+
+</div>
+
+<div class="md">
+
+### The diagram, completed
+
+Return to the running picture from earlier in this chapter. A subject matter $W$, observed by instruments to give representations $R_i$, glued through admissible transitions $T_i\in\mathcal T$ into a coherent global model $G$. Now overlay Tarski:
+
+$$
+\begin{array}{ccccccccc}
+&&\underbrace{W}_{\text{subject matter}}&&&&&\\
+{}^{O_1}\!\swarrow&{}^{O_2}\!\downarrow&{}^{O_3}\!\searrow&\cdots&{}^{O_i}\!\downarrow&\cdots&\\
+\underbrace{R_1}_{\text{view 1}}&&\underbrace{R_2}_{\text{view 2}}&&\underbrace{R_3}_{\text{view 3}}&\cdots&\underbrace{R_i}_{\text{view }i}&\cdots&\\
+{}^{T_1}\!\searrow&{}^{T_2}\!\downarrow&{}^{T_3}\!\swarrow&\cdots&{}^{T_i}\!\downarrow&\cdots&\\
+&&\underbrace{G}_{\text{coherent global model}}&&&&&\\
+\end{array}
+$$
+
+Three sorts of arrows are now in play, and each carries a separate truth-condition.
+
+$$
+\begin{array}{c|c|c}
+\text{Arrow} & \text{Role} & \text{Truth-condition}\\
+\hline
+W \xrightarrow{\,O_i\,} R_i & \text{observation} & O_i \in \mathcal T \text{ (admissibility)}\\
+R_i \xrightarrow{\,T_i\,} G & \text{gluing} & \text{coherence on overlaps (sheaf)}\\
+G \xrightarrow{\;\text{claim about }W\;} W & \text{use} & \text{Tarski at the contact point}
+\end{array}
+$$
+
+- **The $O_i$ arrows** ($W \to R_i$) are observation arrows. They are *inside* the modelling setup, not correspondence arrows — the act of observing already distorts. We do not require them to satisfy Tarski; we require only that they belong to $\mathcal T$.
+
+- **The $T_i$ arrows** ($R_i \to G$) are admissible transitions. They do their *coherence* work: the sheaf condition is checked along them, agreement on overlaps is verified.
+
+- **The implicit $W \leftrightarrow R_i$ contact.** This is what Tarski is about. Each *use* of an observation $R_i$ as a *claim* about $W$ is a Tarskian if-and-only-if: the claim is true iff the fact holds. Admissible transitions encode the calibration; the if-and-only-if encodes the truth.
+
+The model $G$ is true when all three rows hold simultaneously for every $i\in I$ — and the third row is the new one this section adds.
+
+</div>
+
+<div class="md">
+
+### Three pathologies
+
+It is instructive to see how each failure mode breaks exactly one of the two conditions.
+
+**1. The self-consistent fantasy.** The model $G$ satisfies the sheaf condition: every local section agrees on every overlap, descent holds, the global section is unique. The maps $O_i$ and $T_i$ all belong to $\mathcal T$. But the model is *uncalibrated*: the admissible transitions $\mathcal T$ were chosen carelessly, or the system has been allowed to drift. Result: a perfectly coherent fiction.
+
+$$
+\underbrace{G\text{ self-consistent}}_{\text{descent holds}}
+\;\;\not\Rightarrow\;\;
+\underbrace{G\approx W}_{\text{contact with the world}}.
+$$
+
+Failure: *correspondence*.
+
+**2. The contact-point junkie.** Every claim $S$ made by the model is individually checked against the world and found true — Tarski holds at every point. But the model has no internal structure: its claims do not fit together, descent fails, the "global model" is a heap of disconnected facts. Result: a factbook.
+
+$$
+\underbrace{\text{every }S_i\text{ corresponds}}_{\text{Tarski at each }T_i}
+\;\;\not\Rightarrow\;\;
+\underbrace{G\text{ exists}}_{\text{coherent whole}}.
+$$
+
+Failure: *coherence*.
+
+**3. The contact-point liar.** A special, important sub-case of (1): the model's *internal* logic is consistent, the maps $T_i\in\mathcal T$ are all admissible, but the system has been trained on data that does not actually reflect $W$. With enough data and enough fitting, descent holds internally; but the model's predictions at the contact points systematically miss. Result: the **hallucinating language model** of the section "Where AI actually enters".
+
+$$
+\underbrace{M_{\text{internal}}\text{ self-consistent}}_{\text{coherence}}
+\;\;\wedge\;\;
+\underbrace{\text{no grounded }T\in\mathcal T}_{\text{contact-point failure}}
+\;\;\Longleftrightarrow\;\;
+\underbrace{\text{hallucination}}_{\text{the dangerous case.}}
+$$
+
+Failure: *both* — but the diagnosis is that $\mathcal T$ has been chosen wrongly.
+
+</div>
+
+<div class="md">
+
+### Tarski's discipline, applied
+
+For a model $G$ to be true, every admissible transition $T\in\mathcal T$ must function as a Tarskian correlation. In practice this means four disciplines:
+
+1. **Every claim has a contact point.** A claim that is not anchored to any admissible transition is not a claim about the world — it is at best an internal regularity of the model. Refuse to call it "true".
+
+2. **Every contact point has a calibration.** The instrument, the translation, the proof — whatever bridges the model and the world — must be *itself* checkable. A Tarski arrow is only as good as the calibration that supports it.
+
+3. **Every calibration is itself admissible.** Calibration procedures belong in $\mathcal T$. A model whose calibration depends on a procedure outside $\mathcal T$ is using an undisclosed premise.
+
+4. **The sheaf condition is checked on every cover.** Descent is not a one-time audit; it must hold for *every* admissible cover the data admits. A model that passes descent on one cover and fails on another is half-coherent.
+
+$$
+\boxed{
+\begin{aligned}
+&\textbf{For a model to be true:}\\
+&\textbf{(a) it must be coherent — descent on every admissible cover;}\\
+&\textbf{(b) every contact point must be calibrated — Tarski at every }T\in\mathcal T.
+\end{aligned}}
+$$
+
+</div>
+
+<div class="md">
+
+### A practical protocol
+
+A six-step audit, applicable to any model — mathematical, physical, ML, historical, scientific:
+
+$$
+\underbrace{1.\ \text{name every claim}}_{\text{make the implicit explicit}}
+\;\;\to\;\;
+\underbrace{2.\ \text{name every contact point}}_{\text{where could Tarski apply?}}
+\;\;\to\;\;
+\underbrace{3.\ \text{check calibration of each }T\in\mathcal T}_{\text{is the bridge justified?}}
+\;\;\to\;\;
+$$
+$$
+\underbrace{4.\ \text{check descent on every admissible cover}}_{\text{coherence: do the parts fit?}}
+\;\;\to\;\;
+\underbrace{5.\ \text{apply Tarski at every contact}}_{\text{iff: claim iff world}}
+\;\;\to\;\;
+\underbrace{6.\ \text{record residuals}}_{\text{what remains unexplained?}}
+$$
+
+If step 5 fails, the model is *false at that contact point*. If step 4 fails, the model is *incoherent*. If step 3 fails, the model is *using an undisclosed premise*. Each failure mode has a different remedy — and the diagnosis matters, because the fix for incoherence is not the fix for falsehood.
+
+</div>
+
+<div class="md">
+
+### The closing synthesis
+
+Three sentences, each classical, each necessary:
+
+1. *Coherence*: a model is true only insofar as its parts hang together — the sheaf condition, descent on every admissible cover. Bradley, Blanshard, BonJour, in their different vocabularies.
+
+2. *Correspondence*: a model is true only insofar as its claims track the world — Tarski's Convention T, the if-and-only-if at every admissible contact point. Tarski, 1935.
+
+3. *Honesty about the gaps*: a model is true *only insofar as*. The discipline of recording residuals, of refusing to identify $G$ with $W$, of noting when the contact points are imperfect. The lesson of the box just above.
+
+$$
+\boxed{
+\begin{aligned}
+&\textbf{A world model is true when, and only when,}\\
+&\textbf{its internal coherence and its external correspondence}\\
+&\textbf{hold simultaneously — at every admissible contact,}\\
+&\textbf{on every admissible cover, without remainder.}
+\end{aligned}}
+$$
+
+A useful analogy is not a theorem. Tarski's Convention T *is* a theorem — of formal semantics. The use we make of it, here and now, is a *discipline* about how to live with models.
+
+</div>
