@@ -86,11 +86,11 @@ A camera produces pixels. A microphone produces a waveform. A radar produces a s
 
 The scientific question is not:
 
-> "Are these data literally the same?"
+**"Are these data literally the same?"**
 
 It is:
 
-> **Can we explain their differences by a sufficiently well-constrained system of transformations, and can the resulting descriptions be integrated into one coherent model?**
+**Can we explain their differences by a sufficiently well-constrained system of transformations, and can the resulting descriptions be integrated into one coherent model?**
 
 This distinction is the central idea of the chapter.
 
@@ -314,7 +314,7 @@ These are not interchangeable.
 
 A useful epistemology therefore asks:
 
-> **What notion of sameness is justified here?**
+**What notion of sameness is justified here?**
 
 If two functions agree pointwise on an overlap, that is strict equality.
 
@@ -400,7 +400,7 @@ Now imagine that we have data on each $U_i$.
 
 The local-to-global question is:
 
-> **When do these local descriptions come from one coherent description on all of $U$?**
+**When do these local descriptions come from one coherent description on all of $U$?**
 
 This is exactly the kind of question for which sheaf theory was developed.
 
@@ -515,7 +515,7 @@ $$
 
 The important correction is:
 
-> **An $\infty$-sheaf is not simply a sheaf where every equality sign is replaced by a path.**
+**An $\infty$-sheaf is not simply a sheaf where every equality sign is replaced by a path.**
 
 Rather, an $\infty$-sheaf is a sheaf-like object valued in an $\infty$-category, where descent is expressed using the homotopy-coherent structure of that target.
 
@@ -599,7 +599,7 @@ $$
 
 This is a clean formalization of a common pattern:
 
-> Two representations can be compared after sending them into a shared space.
+**Two representations can be compared after sending them into a shared space.**
 
 For empirical modeling, $Z$ might be a calibrated measurement space, a shared latent representation, or a set of quantities that both observations constrain.
 
@@ -774,11 +774,11 @@ This avoids two symmetrical errors.
 
 The first is:
 
-> "The report is extraordinary, therefore the extraordinary interpretation is true."
+**"The report is extraordinary, therefore the extraordinary interpretation is true."**
 
 The second is:
 
-> "The interpretation seems psychologically unusual, therefore there is no interesting datum here."
+**"The interpretation seems psychologically unusual, therefore there is no interesting datum here."**
 
 A better approach is:
 
@@ -831,7 +831,7 @@ A strong model should explain why apparently contradictory observations occur—
 
 The whole framework assumes something like:
 
-> Many observations can be related because they arise within one sufficiently connected causal domain.
+**Many observations can be related because they arise within one sufficiently connected causal domain.**
 
 Call this the **common-domain hypothesis**.
 
@@ -1059,11 +1059,11 @@ An embedding preserves some statistical or relational structure.
 
 Thus the correct question is not:
 
-> "Is this representation the world?"
+**"Is this representation the world?"**
 
 but:
 
-> **"Which structure of the world does this representation preserve, and what does it discard?"**
+**"Which structure of the world does this representation preserve, and what does it discard?"**
 
 </div>
 
@@ -1283,7 +1283,7 @@ This makes it tempting to speak of "gluing" layers.
 
 That can be a useful metaphor if it means:
 
-> multiple transformations contribute to one evolving representation.
+**multiple transformations contribute to one evolving representation.**
 
 But ordinary residual addition is not sheaf gluing.
 
@@ -1585,7 +1585,7 @@ $$
 
 Suppose a theory says:
 
-> Whenever two observations disagree, there exists some hidden transformation that makes them compatible.
+*Whenever two observations disagree, there exists some hidden transformation that makes them compatible.*
 
 If the transformation is completely unconstrained, the theory can survive anything.
 
