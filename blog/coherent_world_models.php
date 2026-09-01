@@ -770,9 +770,9 @@ $$
 
 <div class="md">
 
-## The chapter that survived: truth, correspondence, and the correlation of model and reality
+## Truth: coherence and correspondence
 
-The "One sentence" above names what a coherent world model *is*. It does not yet say when one is *true*. Coherence is necessary — a model whose parts contradict each other is not a description of any single subject matter. But coherence is not *sufficient*: a self-consistent fantasy is still a fantasy, and a hallucinating language model that satisfies its own internal regularities is still hallucinating. The rest of this chapter takes up the question coherence alone cannot answer:
+The "One sentence" above names what a coherent world model *is*. It does not yet say when one is *true*. Coherence is necessary — a model whose parts contradict each other is not a description of any single subject matter. But coherence is not *sufficient*: a self-consistent fantasy is still a fantasy, and a hallucinating language model that satisfies its own internal regularities is still hallucinating. This chapter takes up the question coherence alone cannot answer:
 
 $$
 \boxed{
@@ -783,6 +783,8 @@ $$
 $$
 
 The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Blanshard). The proper synthesis is to require *both*, jointly, at every admissible contact point.
+
+
 
 </div>
 
