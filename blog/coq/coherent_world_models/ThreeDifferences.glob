@@ -1,0 +1,225 @@
+DIGEST fdd7a2cb33628c13f953bbc2ec5e5364
+FThreeDifferences
+R2616:2622 Library <> <> lib
+R2640:2645 Traces <> <> lib
+rec 3147:3161 <> WorldDifference
+proj 3170:3174 <> WD_W1
+proj 3195:3199 <> WD_W2
+proj 3220:3229 <> WD_genuine
+R3178:3190 Library <> SubjectMatter rec
+R3203:3215 Library <> SubjectMatter rec
+R3238:3241 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R3233:3237 ThreeDifferences <> WD_W1:2 meth
+R3242:3246 ThreeDifferences <> WD_W2:3 meth
+rec 3580:3606 <> QuantumIndistinguishability
+proj 3615:3624 <> QI_carrier
+proj 3636:3655 <> QI_indistinguishable
+R3659:3662 Coq.Init.Logic <> True ind
+ind 4052:4070 <> WorldDifferenceKind
+constr 4079:4091 <> WDK_Particles
+constr 4119:4129 <> WDK_Regions
+R4095:4113 ThreeDifferences <> WorldDifferenceKind:8 ind
+R4135:4153 ThreeDifferences <> WorldDifferenceKind:8 ind
+scheme 4052:4070 <> WorldDifferenceKind_rect
+scheme 4052:4070 <> WorldDifferenceKind_ind
+scheme 4052:4070 <> WorldDifferenceKind_rec
+scheme 4052:4070 <> WorldDifferenceKind_sind
+rec 4246:4258 <> StonesExample
+proj 4267:4282 <> Stones_subject_A
+proj 4303:4318 <> Stones_subject_B
+proj 4339:4353 <> Stones_distinct
+R4286:4298 Library <> SubjectMatter rec
+R4322:4334 Library <> SubjectMatter rec
+R4373:4376 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R4357:4372 ThreeDifferences <> Stones_subject_A:11 meth
+R4377:4392 ThreeDifferences <> Stones_subject_B:12 meth
+rec 4894:4910 <> ChannelDifference
+proj 4919:4928 <> CD_subject
+proj 4949:4959 <> CD_codomain
+proj 4975:4979 <> CD_I1
+proj 5001:5005 <> CD_I2
+proj 5027:5035 <> CD_I1_src
+proj 5071:5079 <> CD_I1_tgt
+proj 5116:5124 <> CD_I2_src
+proj 5160:5168 <> CD_I2_tgt
+proj 5205:5215 <> CD_distinct
+R4932:4944 Library <> SubjectMatter rec
+R4963:4970 Library <> Codomain rec
+R4983:4996 Library <> AccessFunction rec
+R5009:5022 Library <> AccessFunction rec
+R5054:5056 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5039:5047 Library <> AF_source proj
+R5049:5053 ThreeDifferences <> CD_I1:17 meth
+R5057:5066 ThreeDifferences <> CD_subject:15 meth
+R5098:5100 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5083:5091 Library <> AF_target proj
+R5093:5097 ThreeDifferences <> CD_I1:17 meth
+R5101:5111 ThreeDifferences <> CD_codomain:16 meth
+R5143:5145 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5128:5136 Library <> AF_source proj
+R5138:5142 ThreeDifferences <> CD_I2:18 meth
+R5146:5155 ThreeDifferences <> CD_subject:15 meth
+R5187:5189 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5172:5180 Library <> AF_target proj
+R5182:5186 ThreeDifferences <> CD_I2:18 meth
+R5190:5200 ThreeDifferences <> CD_codomain:16 meth
+rec 5776:5795 <> CoLocatedInstruments
+proj 5804:5813 <> CL_subject
+proj 5834:5844 <> CL_codomain
+proj 5860:5864 <> CL_I1
+proj 5886:5890 <> CL_I2
+proj 5912:5920 <> CL_I1_src
+proj 5956:5964 <> CL_I1_tgt
+proj 6001:6009 <> CL_I2_src
+proj 6045:6053 <> CL_I2_tgt
+proj 6090:6103 <> CL_position_I1
+proj 6170:6183 <> CL_position_I2
+proj 6250:6265 <> CL_same_position
+R5817:5829 Library <> SubjectMatter rec
+R5848:5855 Library <> Codomain rec
+R5868:5881 Library <> AccessFunction rec
+R5894:5907 Library <> AccessFunction rec
+R5939:5941 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5924:5932 Library <> AF_source proj
+R5934:5938 ThreeDifferences <> CL_I1:27 meth
+R5942:5951 ThreeDifferences <> CL_subject:25 meth
+R5983:5985 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5968:5976 Library <> AF_target proj
+R5978:5982 ThreeDifferences <> CL_I1:27 meth
+R5986:5996 ThreeDifferences <> CL_codomain:26 meth
+R6028:6030 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6013:6021 Library <> AF_source proj
+R6023:6027 ThreeDifferences <> CL_I2:28 meth
+R6031:6040 ThreeDifferences <> CL_subject:25 meth
+R6072:6074 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6057:6065 Library <> AF_target proj
+R6067:6071 ThreeDifferences <> CL_I2:28 meth
+R6075:6085 ThreeDifferences <> CL_codomain:26 meth
+R6107:6113 Library <> :::'Region'_x not
+R6114:6123 ThreeDifferences <> CL_subject:25 meth
+R6187:6193 Library <> :::'Region'_x not
+R6194:6203 ThreeDifferences <> CL_subject:25 meth
+R6283:6285 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6269:6282 ThreeDifferences <> CL_position_I1:33 meth
+R6286:6299 ThreeDifferences <> CL_position_I2:34 meth
+ind 6475:6490 <> ChannelDiagnosis
+constr 6499:6528 <> ChannelDiff_calibration_needed
+constr 6660:6689 <> ChannelDiff_position_different
+constr 6821:6840 <> ChannelDiff_resolved
+scheme 6475:6490 <> ChannelDiagnosis_rect
+scheme 6475:6490 <> ChannelDiagnosis_ind
+scheme 6475:6490 <> ChannelDiagnosis_rec
+scheme 6475:6490 <> ChannelDiagnosis_sind
+rec 6986:7004 <> ThermometersExample
+proj 7013:7025 <> Therm_subject
+proj 7046:7059 <> Therm_codomain
+proj 7075:7082 <> Therm_I1
+proj 7104:7111 <> Therm_I2
+proj 7133:7144 <> Therm_I1_src
+proj 7186:7197 <> Therm_I1_tgt
+proj 7240:7251 <> Therm_I2_src
+proj 7293:7304 <> Therm_I2_tgt
+proj 7347:7362 <> Therm_reading_I1
+proj 7390:7405 <> Therm_reading_I2
+proj 7433:7455 <> Therm_readings_distinct
+R7029:7041 Library <> SubjectMatter rec
+R7063:7070 Library <> Codomain rec
+R7086:7099 Library <> AccessFunction rec
+R7115:7128 Library <> AccessFunction rec
+R7166:7168 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7148:7156 Library <> AF_source proj
+R7158:7165 ThreeDifferences <> Therm_I1:41 meth
+R7169:7181 ThreeDifferences <> Therm_subject:39 meth
+R7219:7221 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7201:7209 Library <> AF_target proj
+R7211:7218 ThreeDifferences <> Therm_I1:41 meth
+R7222:7235 ThreeDifferences <> Therm_codomain:40 meth
+R7273:7275 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7255:7263 Library <> AF_source proj
+R7265:7272 ThreeDifferences <> Therm_I2:42 meth
+R7276:7288 ThreeDifferences <> Therm_subject:39 meth
+R7326:7328 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7308:7316 Library <> AF_target proj
+R7318:7325 ThreeDifferences <> Therm_I2:42 meth
+R7329:7342 ThreeDifferences <> Therm_codomain:40 meth
+R7366:7371 Library <> :::'Trace'_x not
+R7372:7385 ThreeDifferences <> Therm_codomain:40 meth
+R7409:7414 Library <> :::'Trace'_x not
+R7415:7428 ThreeDifferences <> Therm_codomain:40 meth
+R7475:7478 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R7459:7474 ThreeDifferences <> Therm_reading_I1:47 meth
+R7479:7494 ThreeDifferences <> Therm_reading_I2:48 meth
+rec 8077:8096 <> ProcessingDifference
+proj 8105:8114 <> PD_subject
+proj 8135:8145 <> PD_codomain
+proj 8161:8169 <> PD_access
+proj 8191:8196 <> PD_src
+proj 8236:8241 <> PD_tgt
+proj 8282:8287 <> PD_nu1
+proj 8441:8446 <> PD_nu2
+proj 8522:8532 <> PD_disagree
+R8118:8130 Library <> SubjectMatter rec
+R8149:8156 Library <> Codomain rec
+R8173:8186 Library <> AccessFunction rec
+R8219:8221 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8200:8208 Library <> AF_source proj
+R8210:8218 ThreeDifferences <> PD_access:53 meth
+R8222:8231 ThreeDifferences <> PD_subject:51 meth
+R8264:8266 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8245:8253 Library <> AF_target proj
+R8255:8263 ThreeDifferences <> PD_access:53 meth
+R8267:8277 ThreeDifferences <> PD_codomain:52 meth
+R8308:8311 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8291:8296 Library <> :::'Trace'_x not
+R8297:8307 ThreeDifferences <> PD_codomain:52 meth
+R8467:8470 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8450:8455 Library <> :::'Trace'_x not
+R8456:8466 ThreeDifferences <> PD_codomain:52 meth
+R8536:8542 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R8564:8565 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R8547:8552 Library <> :::'Trace'_x not
+R8553:8563 ThreeDifferences <> PD_codomain:52 meth
+binder 8543:8543 <> t:58
+R8574:8577 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R8566:8571 ThreeDifferences <> PD_nu1:56 meth
+R8573:8573 ThreeDifferences <> t:58 var
+R8578:8579 Coq.Init.Logic <> ::type_scope:'~'_x not
+R8580:8585 ThreeDifferences <> PD_nu2:57 meth
+R8587:8587 ThreeDifferences <> t:58 var
+def 9167:9180 <> silent_upgrade
+binder 9183:9183 <> P:60
+binder 9185:9185 <> Q:61
+R9206:9209 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9205:9205 ThreeDifferences <> P:60 var
+R9210:9210 ThreeDifferences <> Q:61 var
+ind 9870:9885 <> DisagreementKind
+constr 9894:9901 <> DK_World
+constr 9977:9986 <> DK_Channel
+constr 10060:10072 <> DK_Processing
+constr 10143:10152 <> DK_Unknown
+R9910:9925 ThreeDifferences <> DisagreementKind:62 ind
+R9993:10008 ThreeDifferences <> DisagreementKind:62 ind
+R10076:10091 ThreeDifferences <> DisagreementKind:62 ind
+R10159:10174 ThreeDifferences <> DisagreementKind:62 ind
+scheme 9870:9885 <> DisagreementKind_rect
+scheme 9870:9885 <> DisagreementKind_ind
+scheme 9870:9885 <> DisagreementKind_rec
+scheme 9870:9885 <> DisagreementKind_sind
+ax 10389:10416 <> disagreement_underdetermined
+R10434:10446 Library <> SubjectMatter rec
+binder 10430:10430 <> s:64
+R10454:10461 Library <> Codomain rec
+binder 10450:10450 <> r:65
+R10473:10478 Library <> :::'Trace'_x not
+R10479:10479 ThreeDifferences <> r:65 var
+binder 10465:10466 <> t1:66
+binder 10468:10469 <> t2:67
+R10495:10498 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10489:10492 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R10487:10488 ThreeDifferences <> t1:66 var
+R10493:10494 ThreeDifferences <> t2:67 var
+R10499:10514 ThreeDifferences <> DisagreementKind ind
+def 10931:10947 <> locate_difference
+R10954:10969 ThreeDifferences <> DisagreementKind ind
+binder 10950:10950 <> k:70
+R10982:10985 Coq.Init.Logic <> True ind

@@ -1,0 +1,136 @@
+DIGEST ba6d3c6f150d4479523ba20163f678fa
+FCommitments
+R2468:2474 Library <> <> lib
+R2492:2497 Traces <> <> lib
+rec 3325:3339 <> IndirectRealism
+proj 3348:3357 <> IR_subject
+proj 3378:3388 <> IR_codomain
+proj 3404:3412 <> IR_access
+proj 3434:3439 <> IR_src
+proj 3479:3484 <> IR_tgt
+R3361:3373 Library <> SubjectMatter rec
+R3392:3399 Library <> Codomain rec
+R3416:3429 Library <> AccessFunction rec
+R3462:3464 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3443:3451 Library <> AF_source proj
+R3453:3461 Commitments <> IR_access:4 meth
+R3465:3474 Commitments <> IR_subject:2 meth
+R3507:3509 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3488:3496 Library <> AF_target proj
+R3498:3506 Commitments <> IR_access:4 meth
+R3510:3520 Commitments <> IR_codomain:3 meth
+rec 4259:4275 <> InternalStructure
+proj 4311:4321 <> IS_region_a
+proj 4340:4350 <> IS_region_b
+proj 4369:4379 <> IS_distinct
+R4282:4294 Library <> SubjectMatter rec
+binder 4278:4278 <> s:7
+R4325:4331 Library <> :::'Region'_x not
+R4332:4332 Commitments <> s:7 var
+R4354:4360 Library <> :::'Region'_x not
+R4361:4361 Commitments <> s:7 var
+R4394:4397 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R4383:4393 Commitments <> IS_region_a:9 meth
+R4398:4408 Commitments <> IS_region_b:10 meth
+rec 4907:4921 <> AdmissibleClass
+proj 4930:4943 <> AC_observation
+proj 4999:5012 <> AC_translation
+proj 5071:5083 <> AC_refinement
+R4947:4948 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4950:4952 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4967:4969 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4992:4993 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4953:4966 Library <> AccessFunction rec
+binder 4949:4949 <> O:13
+R4970:4989 Library <> observation_licensed def
+R4991:4991 Commitments <> O:13 var
+R5016:5017 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5020:5022 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5038:5040 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5064:5065 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5023:5037 Library <> ViewTranslation rec
+binder 5018:5019 <> T_:15
+R5041:5060 Library <> translation_licensed def
+R5062:5063 Commitments <> T_:15 var
+R5088:5089 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5091:5093 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5111:5113 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5135:5136 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R5094:5110 Library <> ContextRefinement rec
+binder 5090:5090 <> f:17
+R5114:5132 Library <> refinement_licensed def
+R5134:5134 Commitments <> f:17 var
+def 5714:5727 <> CoherenceHolds
+binder 5730:5730 <> G:19
+R5750:5753 Coq.Init.Logic <> True ind
+ax 5920:5943 <> coherence_not_sufficient
+binder 5957:5957 <> G:20
+R5974:5987 Commitments <> CoherenceHolds def
+R5989:5989 Commitments <> G:20 var
+binder 5968:5970 <> coh:21
+R5993:5994 Coq.Init.Logic <> ::type_scope:'~'_x not
+R5995:5998 Coq.Init.Logic <> True ind
+def 6765:6783 <> CorrespondenceHolds
+binder 6786:6786 <> G:24
+R6808:6811 Coq.Init.Logic <> True ind
+ax 6972:7010 <> correspondence_not_implied_by_coherence
+binder 7024:7024 <> G:25
+R7041:7054 Commitments <> CoherenceHolds def
+R7056:7056 Commitments <> G:25 var
+binder 7035:7037 <> coh:26
+R7064:7065 Coq.Init.Logic <> ::type_scope:'~'_x not
+R7066:7084 Commitments <> CorrespondenceHolds def
+R7086:7086 Commitments <> G:25 var
+ax 7306:7324 <> truth_requires_both
+binder 7338:7338 <> G:29
+R7369:7372 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7353:7366 Commitments <> CoherenceHolds def
+R7368:7368 Commitments <> G:29 var
+R7394:7397 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7373:7391 Commitments <> CorrespondenceHolds def
+R7393:7393 Commitments <> G:29 var
+R7398:7401 Coq.Init.Logic <> True ind
+ind 8176:8196 <> WordlessIntrospection
+constr 8212:8219 <> WI_intro
+R8223:8243 Commitments <> WordlessIntrospection:32 ind
+scheme 8176:8196 <> WordlessIntrospection_rect
+scheme 8176:8196 <> WordlessIntrospection_ind
+scheme 8176:8196 <> WordlessIntrospection_rec
+scheme 8176:8196 <> WordlessIntrospection_sind
+rec 8493:8501 <> LimitCase
+proj 8510:8517 <> LC_topic
+proj 8590:8601 <> LC_collapsed
+R8613:8615 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8605:8612 Commitments <> LC_topic:35 meth
+R8616:8623 Commitments <> LC_topic:35 meth
+ax 8997:9014 <> limit_case_fragile
+R9033:9041 Commitments <> LimitCase rec
+binder 9028:9029 <> lc:37
+R9045:9048 Coq.Init.Logic <> True ind
+rec 10080:10092 <> ThingInItself
+proj 10101:10110 <> TI_carrier
+proj 10122:10135 <> TI_unreachable
+R10149:10152 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10139:10148 Commitments <> TI_carrier:41 meth
+ax 10533:10556 <> never_reach_ding_an_sich
+R10575:10587 Commitments <> ThingInItself rec
+binder 10570:10571 <> ti:43
+R10591:10594 Coq.Init.Logic <> True ind
+ind 11141:11148 <> Position
+constr 11164:11185 <> IndirectRealismDefault
+constr 11202:11221 <> QualiaPrimaryDefault
+R11189:11196 Commitments <> Position:46 ind
+R11225:11232 Commitments <> Position:46 ind
+scheme 11141:11148 <> Position_rect
+scheme 11141:11148 <> Position_ind
+scheme 11141:11148 <> Position_rec
+scheme 11141:11148 <> Position_sind
+def 11487:11498 <> our_position
+R11502:11509 Commitments <> Position ind
+R11514:11535 Commitments <> IndirectRealismDefault constr
+ax 11545:11567 <> dispute_is_foundational
+R11584:11591 Commitments <> Position ind
+binder 11580:11580 <> p:48
+R11595:11597 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11594:11594 Commitments <> p:48 var
+R11598:11598 Commitments <> p:48 var
