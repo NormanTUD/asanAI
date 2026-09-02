@@ -269,8 +269,10 @@ In plain English, an **admissible cover** of a context $c$ is just a family of s
 Formally:
 
 $$
-\{c_i \xrightarrow{\,f_i\,} c\}_{i \in I}\ :\ f_i \in \mathcal{T}\ \text{for every }i,\quad
-\text{and}\quad \bigcup_{i\in I} \mathrm{im}(f_i) \;=\; c.
+\underbrace{\{c_i \xrightarrow{\,f_i\,} c\}_{i \in I}}_{\substack{\text{a family of smaller views }c_i\text{ of }c,\\\text{each put back into }c\text{ by its cover map }f_i}}\ :\
+\underbrace{f_i \in \mathcal{T}\ \text{for every }i}_{\text{every cover map is licensed}},\quad
+\text{and}\quad
+\underbrace{\bigcup_{i\in I} \mathrm{im}(f_i) \;=\; c}_{\text{their images together capture all of }c}.
 $$
 
 The two conditions are independent. A family of sub-views can satisfy the cover condition with maps we have no business trusting (raw, uncalibrated readings), and a family of trusted maps can fail to cover what matters. An *admissible* cover is the intersection: a covering whose maps are licensed. Only on admissible covers does the sheaf condition (compatible local data ⟹ unique global data) carry content; the next paragraph explains why.
@@ -393,10 +395,12 @@ Given parallel maps $f, g : X \rightrightarrows Y$, the equalizer selects the pa
 
 $$
 \underbrace{E}_{\text{agreement locus}}
-\xrightarrow{\;e\;} X 
-\underset{g}{\overset{f}{\rightrightarrows}} Y,
+\xrightarrow{\;e\;}
+\underbrace{X}_{\text{the space of candidates}}
+\underset{\underset{\text{one route}}{g}}{\overset{\overset{\text{the other route}}{f}}{\rightrightarrows}}
+\underbrace{Y}_{\text{the shared target}},
 \qquad
-\underbrace{E = \{x \in X : f(x) = g(x)\}}_{\text{in }\mathbf{Set}}.
+\underbrace{E = \{x \in X : f(x) = g(x)\}}_{\text{the points of }X\text{ on which the two routes coincide, in }\mathbf{Set}}.
 $$
 
 Two thermometers report a temperature over time: the equalizer is the *times* at which they agree exactly. Two proofs of the same theorem produce numeric outputs by two different routes: the equalizer is the inputs on which the outputs literally match. In an $(\infty,1)$-category the equalizer is a *space of paths of agreement*: same idea, more room.
@@ -426,7 +430,7 @@ The pullback *is* the object of agreements. Visual and radar tracks pull back ov
 Suppose three representations $A, B, C$ are related pairwise:
 
 $$
-A \xrightarrow{\;\phi_{AB}\;} B \xrightarrow{\;\phi_{BC}\;} C,\qquad A \xrightarrow{\;\phi_{AC}\;} C.
+\underbrace{A}_{\text{view 1}} \xrightarrow[\text{admissible transition}]{\;\phi_{AB}\;} \underbrace{B}_{\text{view 2}} \xrightarrow[\text{admissible transition}]{\;\phi_{BC}\;} \underbrace{C}_{\text{view 3}},\qquad \underbrace{A}_{\text{view 1}} \xrightarrow[\text{the direct route}]{\;\phi_{AC}\;} \underbrace{C}_{\text{view 3}}.
 $$
 
 There are now two ways to go from $A$ to $C$: directly via $\phi_{AC}$, or by composition $\phi_{BC} \circ \phi_{AB}$. The question is whether these two ways agree.
@@ -673,7 +677,13 @@ $$
 Three views shown; the cover can have any number. Replace the index by an arbitrary set $I$ (finite, countable, or uncountable) and add as many $R_i$, $O_i$, $T_i$ as you like:
 
 $$
-\cdots \;\xrightarrow{\,O_{i-1}\,}\; R_{i-1}\; \xleftarrow{\,O_i\,}\; W\; \xrightarrow{\,O_{i+1}\,}\; R_{i+1}\; \xrightarrow{\,O_{i+2}\,}\;\cdots
+\cdots \;\xrightarrow[\;{\scriptstyle O_{i-1}}\;]{\;}\;
+\underbrace{R_{i-1}}_{\text{view }i-1}\;
+\xleftarrow[\;{\scriptstyle O_i}\;]{\;}\;
+\underbrace{W}_{\text{the subject}}\;
+\xrightarrow[\;{\scriptstyle O_{i+1}}\;]{\;}\;
+\underbrace{R_{i+1}}_{\text{view }i+1}\;
+\xrightarrow[\;{\scriptstyle O_{i+2}}\;]{\;}\;\cdots
 $$
 
 and analogously for the $T_i$. The global model becomes the element $G \in F(c)$ obtained as the limit over *all* views in $I$ (three, a thousand, or uncountably many) — formally the equalizer of the Čech nerve applied to the family $\{s_i\}_{i\in I} \subseteq \prod_i F(c_i)$. The three-view picture above is the smallest non-trivial case; the machinery scales to covers of any size.
