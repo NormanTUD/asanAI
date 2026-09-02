@@ -177,11 +177,14 @@ Inductive SheafRegime :=
 
 Definition strict_compatible (A : Type) (s1 s2 : A) : Prop := s1 = s2.
 
-Definition homotopical_compatible (A : Type) (R : A -> A -> Prop) (s1 s2 : A) : Prop :=
-  fun x : A => R x s2.
-(* Note: in Coq 8.20+, the body of a Prop definition is sometimes parsed  *)
-(* differently. We use an explicit lambda to avoid ambiguity.              *)
-(* This is morally equivalent to R s1 s2 : Prop.                             *)
+Record CompatibleRegime := {
+  CR_A : Type;
+  CR_R : CR_A -> CR_A -> Prop
+}.
+
+Definition homotopical_compatible (regime : CompatibleRegime) (s1 s2 : CR_A regime) : Prop :=
+  CR_R regime s1 s2.
+(* Homotopical compatibility is captured abstractly via the regime record.*)
 
 Record EmpiricalSetup := {
   ES_metric : Type -> Type -> Prop;
@@ -200,10 +203,12 @@ Record TrainEvent := {
   TE_event : Type    (* the train-event in the world                          *)
 }.
 
-Record TrainChannel (name : Type) := {
-  TC_channel : name -> Type;       (* the channel's representation type     *)
-  TC_access : TE_event -> TC_channel name
+Record TrainChannel := {
+  TC_channel : Type -> Type;       (* a name -> representation-type        *)
+  TC_access : forall evt : TrainEvent, forall n : Type, TE_event evt -> TC_channel n
 }.
+(* Note: the access function is parameterised by a specific train event   *)
+(* and a channel name. Concrete instantiations specialise both.            *)
 
 (* Five channels: visual, auditory, radar, linguistic, archival.            *)
 
@@ -217,9 +222,9 @@ Inductive ChannelName :=
 (* The admissible cover of the event consists of five patches.              *)
 
 Record TrainCover := {
-  TC_event : TE_event;
+  TC_event : TrainEvent;
   TC_patches : ChannelName -> TrainEvent;
-  TC_maps : forall n : ChannelName, TC_patches n -> TC_event;
+  TC_maps : forall n : ChannelName, TE_event (TC_patches n) -> TE_event TC_event;
   TC_admissible : forall n : ChannelName, True   (* all maps are licensed   *)
 }.
 
