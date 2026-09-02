@@ -1,0 +1,97 @@
+DIGEST 50ca3322935290364ae26946126ef7db
+FTraces
+R2469:2475 Library <> <> lib
+rec 3386:3396 <> Transformed
+proj 3461:3480 <> transformed_evidence
+R3403:3415 Library <> SubjectMatter rec
+binder 3399:3399 <> s:1
+R3423:3430 Library <> Codomain rec
+binder 3419:3419 <> r:2
+R3438:3443 Library <> :::'Trace'_x not
+R3444:3444 Traces <> r:2 var
+binder 3434:3434 <> t:3
+R3484:3491 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R3510:3518 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R3496:3509 Library <> AccessFunction rec
+binder 3492:3492 <> O:5
+R3534:3537 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3530:3532 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3519:3527 Library <> AF_source proj
+R3529:3529 Traces <> O:5 var
+R3533:3533 Traces <> s:1 var
+R3549:3551 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3538:3546 Library <> AF_target proj
+R3548:3548 Traces <> O:5 var
+R3552:3552 Traces <> r:2 var
+rec 4541:4548 <> Mediated
+proj 4599:4609 <> mediated_O1
+proj 4634:4644 <> mediated_O2
+proj 4669:4683 <> mediated_O1_src
+proj 4719:4733 <> mediated_O1_tgt
+proj 4769:4783 <> mediated_O2_src
+proj 4819:4833 <> mediated_O2_tgt
+proj 4869:4883 <> mediated_O1_rew
+R4555:4567 Library <> SubjectMatter rec
+binder 4551:4551 <> s:7
+R4575:4582 Library <> Codomain rec
+binder 4571:4571 <> r:8
+R4613:4626 Library <> AccessFunction rec
+R4648:4661 Library <> AccessFunction rec
+R4708:4710 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4687:4695 Library <> AF_source proj
+R4697:4707 Traces <> mediated_O1:10 meth
+R4711:4711 Traces <> s:7 var
+R4758:4760 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4737:4745 Library <> AF_target proj
+R4747:4757 Traces <> mediated_O1:10 meth
+R4761:4761 Traces <> r:8 var
+R4808:4810 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4787:4795 Library <> AF_source proj
+R4797:4807 Traces <> mediated_O2:11 meth
+R4811:4811 Traces <> s:7 var
+R4858:4860 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4837:4845 Library <> AF_target proj
+R4847:4857 Traces <> mediated_O2:11 meth
+R4861:4861 Traces <> r:8 var
+R4926:4929 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4893:4901 Library <> W_carrier proj
+R4904:4912 Library <> AF_source proj
+R4914:4924 Traces <> mediated_O1:10 meth
+R4930:4938 Library <> R_carrier proj
+R4941:4949 Library <> AF_target proj
+R4951:4961 Traces <> mediated_O1:10 meth
+rec 5539:5555 <> MediatedWithProof
+proj 5606:5611 <> mwp_O1
+proj 5636:5641 <> mwp_O2
+proj 5666:5675 <> mwp_O1_src
+proj 5706:5715 <> mwp_O1_tgt
+proj 5746:5755 <> mwp_O2_src
+proj 5786:5795 <> mwp_O2_tgt
+proj 5826:5837 <> mwp_distinct
+R5562:5574 Library <> SubjectMatter rec
+binder 5558:5558 <> s:17
+R5582:5589 Library <> Codomain rec
+binder 5578:5578 <> r:18
+R5615:5628 Library <> AccessFunction rec
+R5645:5658 Library <> AccessFunction rec
+R5695:5697 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5679:5687 Library <> AF_source proj
+R5689:5694 Traces <> mwp_O1:20 meth
+R5698:5698 Traces <> s:17 var
+R5735:5737 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5719:5727 Library <> AF_target proj
+R5729:5734 Traces <> mwp_O1:20 meth
+R5738:5738 Traces <> r:18 var
+R5775:5777 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5759:5767 Library <> AF_source proj
+R5769:5774 Traces <> mwp_O2:21 meth
+R5778:5778 Traces <> s:17 var
+R5815:5817 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5799:5807 Library <> AF_target proj
+R5809:5814 Traces <> mwp_O2:21 meth
+R5818:5818 Traces <> r:18 var
+R5854:5857 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R5841:5846 Library <> AF_map proj
+R5848:5853 Traces <> mwp_O1:20 meth
+R5858:5863 Library <> AF_map proj
+R5865:5870 Traces <> mwp_O2:21 meth
