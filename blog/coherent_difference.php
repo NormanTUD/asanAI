@@ -232,7 +232,7 @@ And a handful more — less universal, but unavoidable in their own territories:
 
 - **Intransitive**: $a \mathrel{R} b$ and $b \mathrel{R} c \Rightarrow \neg(a \mathrel{R} c)$. Chains of length two are guaranteed to break. The textbook example is "is a parent of": if A is B's parent and B is C's parent, A is *not* C's parent. Intransitivity is also what makes rock–paper–scissors fail to be a relation, what keeps ancestry from collapsing, and what underlies the cycles (Condorcet paradox) that haunt collective choice.
 - **Left-unique** (or *injective* as a relation): $a \mathrel{R} b$ and $c \mathrel{R} b \Rightarrow a = c$. Each $b$ has at most one preimage. The mirror of *functional/right-unique* — functional says each input has one output, left-unique says each output comes from one input. Both together with serial gives a bijection onto the image.
-- **Acyclic**: there is no sequence $a_1, a_2, \dots, a_n$ with $a_1 \mathrel{R} a_2 \mathrel{R} \cdots \mathrel{R} a_n \mathrel{R} a_1$ and all $a_i$ distinct. No closed loops — only paths, trees, and DAGs. An irreflexive relation is acyclic iff it admits a topological ordering; strict partial orders are acyclic for free. Acyclic + irreflexive is the working definition of "hierarchy without cycles", and the combinatorial heart of half of computer science.
+- **Acyclic**: there is no sequence $a\sb{1}, a\sb{2}, \dots, a\sb{n}$ with $a\sb{1} \mathrel{R} a\sb{2} \mathrel{R} \cdots \mathrel{R} a\sb{n} \mathrel{R} a\sb{1}$ and all $a\sb{i}$ distinct. No closed loops — only paths, trees, and DAGs. An irreflexive relation is acyclic iff it admits a topological ordering; strict partial orders are acyclic for free. Acyclic + irreflexive is the working definition of "hierarchy without cycles", and the combinatorial heart of half of computer science.
 - **Semiorder** (or *interval order*): a strict partial order equipped with a perceptual threshold $\varepsilon > 0$ such that $a \prec b$ iff the gap between them exceeds $\varepsilon$ and anything smaller is registered as indifference. The motivating case is psychophysical comparison — you can feel that A is heavier than B and B heavier than C, but A versus C falls under the just-noticeable-difference and you shrug. Semiorders live between total orders (every difference sharp) and bare comparability (no structure at all); they are the order theory of perception.
 - **Quasi-transitive**: a relation whose *strict part* $\{(a, b) : a \mathrel{R} b \text{ and } \neg(b \mathrel{R} a)\}$ is transitive. Quasi-transitivity is the weakest condition that still rules out cycles among *strict* preferences, which is exactly why it shows up in social choice — Arrow's impossibility theorem operates on quasi-transitive preferences, where strict preferences are coherent but indifference is allowed to wander.
 
@@ -253,7 +253,7 @@ Some are extremal — the smallest, the largest, the diagonal:
 
 Some are structural — for termination, reachability, and rewriting:
 
-- **Well-founded**: no infinite descending chain $a_1 \mathrel{R} a_2 \mathrel{R} a_3 \mathrel{R} \cdots$. Equivalently, every nonempty subset of $A$ has an $R$-minimal element. Well-foundedness is what makes induction valid: prove it for the minimal elements, push up. In computer science it is the formal justification of *termination* — every recursive definition on a well-founded order is guaranteed to halt.
+- **Well-founded**: no infinite descending chain $a\sb{1} \mathrel{R} a\sb{2} \mathrel{R} a\sb{3} \mathrel{R} \cdots$. Equivalently, every nonempty subset of $A$ has an $R$-minimal element. Well-foundedness is what makes induction valid: prove it for the minimal elements, push up. In computer science it is the formal justification of *termination* — every recursive definition on a well-founded order is guaranteed to halt.
 - **Right-total** (or *surjective*): $\forall b \in A,\ \exists a \in A : a \mathrel{R} b$. The mirror of *serial*. Every element is hit by at least one arrow. Serial + functional + right-total is a surjective endofunction $A \to A$; on a *finite* set this already forces a bijection, but on an infinite set (e.g. $n \mapsto \lfloor n/2 \rfloor$ on $\mathbb{N}$) surjectivity need not be injective — add *left-unique* to obtain a bijection.
 - **Confluent** (the **Church–Rosser property**): if $a \mathrel{R}^* b$ and $a \mathrel{R}^* c$, then some $d$ satisfies $b \mathrel{R}^* d$ and $c \mathrel{R}^* d$. Two different ways of rewriting $a$ can be brought back together by further rewriting. The Church–Rosser theorem for the pure lambda calculus is the original instance: if $t \to^* u$ and $t \to^* v$, then some $w$ is reachable from both. Confluence is what makes the result of computation independent of the order in which rules were applied.
 - **Strongly confluent** (the **diamond property**): the same diagram but in one step. $a \mathrel{R} b$ and $a \mathrel{R} c$ implies $b \mathrel{R} d$ and $c \mathrel{R} d$ for some $d$, without the reflexive-transitive closure. Strictly stronger than confluence; when it holds, the uniqueness-of-normal-form proof is shorter. (Newman's lemma, the substitute: terminating + locally confluent $\Rightarrow$ confluent.)
@@ -351,7 +351,7 @@ and refuses to give a numerical answer. Instead it gives *which sets contain* $x
 
 Once you have a topology, you can attach data to every open set. A \citetitle{sheaf_mathematics} $\mathcal{F}$ assigns to each open $U \subseteq X$ a set $\mathcal{F}(U)$, the *sections* over $U$, together with restriction maps $\mathcal{F}(U) \to \mathcal{F}(V)$ for $V \subseteq U$ \cite{sheaf_mathematics}.
 
-The crucial axiom is the **gluing axiom**: if $U = \bigcup_i U_i$ is an open cover and you have local sections $s_i \in \mathcal{F}(U_i)$ which *agree on every pairwise overlap* $U_i \cap U_j$, then there is a unique global section $s \in \mathcal{F}(U)$ whose restriction to each $U_i$ is $s_i$.
+The crucial axiom is the **gluing axiom**: if $U = \bigcup\sb{i} U\sb{i}$ is an open cover and you have local sections $s\sb{i} \in \mathcal{F}(U\sb{i})$ which *agree on every pairwise overlap* $U\sb{i} \cap U\sb{j}$, then there is a unique global section $s \in \mathcal{F}(U)$ whose restriction to each $U\sb{i}$ is $s\sb{i}$.
 
 The picture is this:
 
@@ -434,18 +434,18 @@ Why does this matter for embeddings? Because an embedding space is, in spirit, a
 <div class="md">
 ## Equality becomes coherence
 
-In a classical sheaf, two sections are equal on the overlap: $s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}$. The equality sign is the flat equality of set theory: either the two things are the same element, or they are not.
+In a classical sheaf, two sections are equal on the overlap: $s\sb{i}|\sb{U\sb{i} \cap U\sb{j}} = s\sb{j}|\sb{U\sb{i} \cap U\sb{j}}$. The equality sign is the flat equality of set theory: either the two things are the same element, or they are not.
 
 In an $\infty$-sheaf, and in \citetitle{hottbook} (\citeyear{hottbook}) more generally, equality is replaced by *equivalence*:
 
 $$
-s_i|_{U_i \cap U_j} \;\simeq\; s_j|_{U_i \cap U_j}.
+s\sb{i}|\sb{U\sb{i} \cap U\sb{j}} \;\simeq\; s\sb{j}|\sb{U\sb{i} \cap U\sb{j}}.
 $$
 
 Now there is a homotopy $\alpha_{ij}$ between the two sections. But on a triple overlap $U_i \cap U_j \cap U_k$, the homotopies must themselves agree:
 
 $$
-\alpha_{ij} \circ \alpha_{jk} \;\simeq\; \alpha_{ik},
+\alpha\sb{ij} \circ \alpha\sb{jk} \;\simeq\; \alpha\sb{ik},
 $$
 
 and the coherence between these higher homotopies is again a higher homotopy, ad infinitum \cite{higher_category_wiki}. The chain
@@ -454,7 +454,7 @@ $$
 \text{objects} \;\to\; \text{morphisms} \;\to\; 2\text{-morphisms} \;\to\; 3\text{-morphisms} \;\to\; \cdots
 $$
 
-is the categorical expression of “relations can themselves be related” taken to its logical conclusion \cite{higher_category_wiki}. Homotopy Type Theory makes this the very definition of what a type is: a type is a space, an element is a point, an identification $p : a =_A b$ is a path from $a$ to $b$, and an identification of identifications is a homotopy between paths \cite{hottbook}. Sets, in this picture, are the special case where all higher homotopies are trivial, i.e. a set is a space whose only interesting structure is its points.
+is the categorical expression of “relations can themselves be related” taken to its logical conclusion \cite{higher_category_wiki}. Homotopy Type Theory makes this the very definition of what a type is: a type is a space, an element is a point, an identification $p : a =\sb{A} b$ is a path from $a$ to $b$, and an identification of identifications is a homotopy between paths \cite{hottbook}. Sets, in this picture, are the special case where all higher homotopies are trivial, i.e. a set is a space whose only interesting structure is its points.
 
 A physical example of an $\infty$-sheaf in disguise: lightning and thunder.
 
@@ -493,7 +493,7 @@ If your background is in type theory, a category is the natural setting for “t
 
 * Objects are types, but you are forbidden to ask what is *inside* an object.
 * Morphisms $f : A \to B$ are the primitive notion of “a way of turning an $A$ into a $B$”. They are *not* functions in the set-theoretic sense. They are simply arrows.
-* Composition $g \circ f : A \to C$ exists whenever the codomain of $f$ matches the domain of $g$, and it is associative with an identity $1_A : A \to A$.
+* Composition $g \circ f : A \to C$ exists whenever the codomain of $f$ matches the domain of $g$, and it is associative with an identity $1\sb{A} : A \to A$.
 
 From this thin starting point you can derive most of modern structural mathematics: functors (maps between categories that preserve the structure), natural transformations (maps between functors that commute with every morphism in the source category), and adjunctions (the universal “best approximation” of one functor by another). \citeauthor{awodey2010category}'s textbook \citetitle{awodey2010category} is the standard gentle introduction; \citeauthor{maclane1998categories}'s \citetitle{maclane1998categories} is the canonical reference.
 </div>
@@ -570,21 +570,21 @@ $$
 \mathrm{true}: 1 \hookrightarrow \Omega
 $$
 
-such that for every monomorphism $m: Y \hookrightarrow X$ there is a unique $\chi_m: X \to \Omega$ making the following square a pullback:
+such that for every monomorphism $m: Y \hookrightarrow X$ there is a unique $\chi\sb{m}: X \to \Omega$ making the following square a pullback:
 
 $$
 \begin{array}{ccc}
 Y & \to & 1 \\
 m \downarrow & & \downarrow \mathrm{true} \\
-X & \xrightarrow{\;\chi_m\;\;} & \Omega
+X & \xrightarrow{\;\chi\sb{m}\;\;} & \Omega
 \end{array}
 $$
 
-The intuition: every "sub-object of $X$" is the pullback of the truth morphism $\mathrm{true}$ along some morphism to $\Omega$. The morphism $\chi_m : X \to \Omega$ is the *characteristic morphism* of the subobject. In $\mathbf{Set}$, $\Omega = \{0, 1\}$ and $\chi_S$ is the indicator function; in $\mathbf{Sh}(X)$ (sheaves on a topological space $X$), $\Omega(U)$ is the set of all open subsets of $U$, and $\mathrm{true}_U: \{*\} \to \Omega(U)$ sends the single point to the open subset $U$ itself \cite{subobject_classifier_wiki}.
+The intuition: every "sub-object of $X$" is the pullback of the truth morphism $\mathrm{true}$ along some morphism to $\Omega$. The morphism $\chi\sb{m} : X \to \Omega$ is the *characteristic morphism* of the subobject. In $\mathbf{Set}$, $\Omega = \{0, 1\}$ and $\chi\sb{S}$ is the indicator function; in $\mathbf{Sh}(X)$ (sheaves on a topological space $X$), $\Omega(U)$ is the set of all open subsets of $U$, and $\mathrm{true}\sb{U}: \{*\} \to \Omega(U)$ sends the single point to the open subset $U$ itself \cite{subobject_classifier_wiki}.
 
 This single piece of structure does enormous work. From it you can recover:
 
-* a notion of *equality* (the diagonal $\Delta_X: X \to X \times X$ is a subobject, so it has a characteristic morphism);
+* a notion of *equality* (the diagonal $\Delta\sb{X}: X \to X \times X$ is a subobject, so it has a characteristic morphism);
 * a notion of *truth value* (a morphism $p: 1 \to \Omega$ is a "truth value");
 * a notion of *subobject* in general (every monomorphism corresponds to a morphism to $\Omega$);
 * the logical connectives, by pulling back along morphisms $\Omega \times \Omega \to \Omega$, $\Omega \to \Omega$, etc.
@@ -648,15 +648,15 @@ What is a "map" between two topoi? Not an ordinary functor: an ordinary functor 
 A geometric morphism $f: \mathcal{F} \to \mathcal{E}$ is a pair of adjoint functors
 
 $$
-f^* : \mathcal{E} \to \mathcal{F}, \qquad f_* : \mathcal{F} \to \mathcal{E},
+f^* : \mathcal{E} \to \mathcal{F}, \qquad f\sb{*} : \mathcal{F} \to \mathcal{E},
 $$
 
-with $f^*$ (the *inverse image*) left adjoint to $f_*$ (the *direct image*), and with $f^*$ required to preserve finite limits \cite{geometric_morphism_wiki}. The analogy is exact: for a continuous map $\varphi: X \to Y$ between topological spaces, pulling back a sheaf on $Y$ gives a sheaf on $X$, and that pullback is left adjoint to pushing forward. This is why geometric morphisms are the right notion. A geometric morphism is exactly the categorical shadow of a "geometric map of generalized spaces". The classification is exact: every continuous map $\varphi: X \to Y$ induces a geometric morphism $\mathbf{Sh}(X) \to \mathbf{Sh}(Y)$, and conversely "most" geometric morphisms between sheaf topoi arise this way.
+with $f^*$ (the *inverse image*) left adjoint to $f\sb{*}$ (the *direct image*), and with $f^*$ required to preserve finite limits \cite{geometric_morphism_wiki}. The analogy is exact: for a continuous map $\varphi: X \to Y$ between topological spaces, pulling back a sheaf on $Y$ gives a sheaf on $X$, and that pullback is left adjoint to pushing forward. This is why geometric morphisms are the right notion. A geometric morphism is exactly the categorical shadow of a "geometric map of generalized spaces". The classification is exact: every continuous map $\varphi: X \to Y$ induces a geometric morphism $\mathbf{Sh}(X) \to \mathbf{Sh}(Y)$, and conversely "most" geometric morphisms between sheaf topoi arise this way.
 
 Two special cases matter:
 
 * **Points.** A point of a topos $\mathcal{E}$ is a geometric morphism $p: \mathbf{Set} \to \mathcal{E}$. Geometrically: a way of recovering a "classical location" inside the generalized space. Algebraically: a way of evaluating an internal object as an ordinary set.
-* **Essential geometric morphisms.** A geometric morphism $f$ is *essential* if $f^*$ has a further left adjoint $f_!$. These correspond to a particularly well-behaved kind of map of topoi, and they form the natural setting for notions like connectedness and local triviality in the topos-theoretic sense.
+* **Essential geometric morphisms.** A geometric morphism $f$ is *essential* if $f^*$ has a further left adjoint $f\sb{!}$. These correspond to a particularly well-behaved kind of map of topoi, and they form the natural setting for notions like connectedness and local triviality in the topos-theoretic sense.
 
 The slogan:
 
@@ -665,7 +665,7 @@ $$
 $$
 
 <div class="optional md" data-headline="Why not just functors?">
-A functor $\mathcal{E} \to \mathcal{F}$ between topoi, if it preserves the right structure, induces a geometric morphism — but only one direction of it. The other direction, the "extra" functor $f_*$, is what distinguishes a geometric morphism from a plain functor, and it is essential: $f_*$ remembers the "size" or "extension" of objects under the map, and without it you do not have a map of spaces in the geometric sense. This is why topos theory has its own 2-category: objects are topoi, morphisms are geometric morphisms, 2-morphisms are natural transformations between the direct-image functors. The 2-categorical point of view is not a luxury; it is the only setting in which "maps of spaces" behave the way they do in classical topology \cite{geometric_morphism_wiki}.
+A functor $\mathcal{E} \to \mathcal{F}$ between topoi, if it preserves the right structure, induces a geometric morphism — but only one direction of it. The other direction, the "extra" functor $f\sb{*}$, is what distinguishes a geometric morphism from a plain functor, and it is essential: $f\sb{*}$ remembers the "size" or "extension" of objects under the map, and without it you do not have a map of spaces in the geometric sense. This is why topos theory has its own 2-category: objects are topoi, morphisms are geometric morphisms, 2-morphisms are natural transformations between the direct-image functors. The 2-categorical point of view is not a luxury; it is the only setting in which "maps of spaces" behave the way they do in classical topology \cite{geometric_morphism_wiki}.
 </div>
 
 </div>
@@ -738,7 +738,7 @@ It is worth saying the things we do *not* know, or that remain genuinely puzzlin
 2. **Is a topos a logic?** Or is the logic only a *shadow* the topos casts? A topos is, strictly speaking, a category with certain structure; the logic is the interpretation we get when we read that structure syntactically. How much of mathematics is "really" categorical, and how much is "really" logical?
 3. **Is the classical / Boolean topos the "true" one?** Working mathematicians default to $\mathbf{Set}$. Constructivists insist on topoi in which LEM fails. Who is right? Or is the question malformed?
 4. **What is the analogue of "topology" for a topos?** A topological space has open sets, a basis, a separation axiom, a notion of compactness. A topos has $\Omega$, a natural numbers object, a notion of "Boolean", and several notions of "compactness" — there are at least three: *coherent*, *quasi-compact*, and *compact* — that do not coincide in general. How much of ordinary topology survives the generalization, and what new phenomena appear?
-5. **Does a topos have "size"?** A Grothendieck topos has a small set of generators and all small colimits; an elementary topos has neither constraint. The notion of "size" inside a topos is given by the *universe* objects (Grothendieck universes, or type-theoretic universes $\mathcal{U}_i$); these exist in most topoi but not all. What does "small" or "large" mean when the meta-theory is itself a topos?
+5. **Does a topos have "size"?** A Grothendieck topos has a small set of generators and all small colimits; an elementary topos has neither constraint. The notion of "size" inside a topos is given by the *universe* objects (Grothendieck universes, or type-theoretic universes $\mathcal{U}\sb{i}$); these exist in most topoi but not all. What does "small" or "large" mean when the meta-theory is itself a topos?
 6. **What is the analogue of "continuity"?** A continuous map between spaces preserves open sets. A geometric morphism between topoi preserves finite limits under $f^*$. The two notions agree on the sheaf topoi. Is the topos one the more general, or is there a still more general notion waiting to be found — perhaps some cohesion or differentiability structure on a higher topos?
 7. **Can two different topoi be "the same"?** Yes: many non-equivalent sites give equivalent topoi. This is the *invariance of the topos*: the topos remembers the geometric content but forgets the particular presentation. Is the equivalence class the "real" object, or is each individual topos a real object, and the equivalences just accidental? Olivia Caramello's "topos-as-bridge" program \cite{topos_wiki} argues, persuasively, that the equivalence classes are the real objects and that topoi are best thought of as *bridges* between different mathematical theories.
 8. **Is there a "fundamental theorem of toposes"?** Not in the sense of Galois theory. But Barr's theorem says every topos is a quotient of a presheaf topos, and Diaconescu's theorem gives the AC $\Rightarrow$ LEM direction; together with Giraud's theorem classifying Grothendieck topoi by their colimit structure, these are the closest things to a "fundamental theorem" the subject has. Whether a deeper unifying theorem is waiting to be found is open.
@@ -937,7 +937,7 @@ This kind of cross-domain structural analogy is what \citeauthor{lumpschool}'s *
 <div class="optional md" data-headline="Coda: a remark on Whitehead and Heraclitus">
 A short historical note, since the chapter's thesis is older than mathematics and keeps being rediscovered.
 
-The 5th-century BCE philosopher \cite[Heraclitus]{heraclitus_unity} is reported (in fragment B12, in the Diels–Kranz numbering, with the wording "you cannot step into the same river twice" already current as a Platonic paraphrase in the *Cratylus* at 402a) to have said: *“You cannot step into the same river twice, for fresh waters are ever flowing in upon you.”* The fragment is usually read as a doctrine of *flux*, that everything changes, nothing stays. But it can equally be read as a doctrine of *coherent difference*: the river at time $t_1$ and the river at time $t_2$ are not identical, but they are related by a coherent transition (the flow of water), and the river-as-object is the coherent network of all those appearances across time. Heraclitus, on the second reading, is already gesturing at the sheaf picture.
+The 5th-century BCE philosopher \cite[Heraclitus]{heraclitus_unity} is reported (in fragment B12, in the Diels–Kranz numbering, with the wording "you cannot step into the same river twice" already current as a Platonic paraphrase in the *Cratylus* at 402a) to have said: *“You cannot step into the same river twice, for fresh waters are ever flowing in upon you.”* The fragment is usually read as a doctrine of *flux*, that everything changes, nothing stays. But it can equally be read as a doctrine of *coherent difference*: the river at time $t\sb{1}$ and the river at time $t\sb{2}$ are not identical, but they are related by a coherent transition (the flow of water), and the river-as-object is the coherent network of all those appearances across time. Heraclitus, on the second reading, is already gesturing at the sheaf picture.
 
 A little over two millennia later, \citeauthor{whitehead_process} (\citeyear{whitehead_process}) built an entire metaphysics on the idea that the world is made of *processes*, not *substances*, “becoming” rather than “being”. His word *concrescence* names exactly the operation we have been calling gluing: many prehensions (local graspings) come together into one actual occasion (a global entity) \cite{whitehead_process}. Whitehead's *Process and Reality* can be interpreted as a sheaf-theoretic picture of the world, decades before sheaves were formulated in their modern form.
 </div>
@@ -989,17 +989,17 @@ $$
 Every embodied system climbs a second ladder, running the other way. Same rungs, opposite direction:
 
 $$
-\underbrace{\text{coherent difference}}_{\text{grammar}}
+\underset{\text{grammar}}{\text{coherent difference}}
 \;\to\;
-\underbrace{\text{topos}}_{\text{world}}
+\underset{\text{world}}{\text{topos}}
 \;\to\;
-\underbrace{\text{manifold}}_{\text{geometry}}
+\underset{\text{geometry}}{\text{manifold}}
 \;\to\;
-\underbrace{\mathbb{R}^d}_{\text{linear}}
+\underset{\text{linear}}{\mathbb{R}^d}
 \;\to\;
-\underbrace{\text{float}^{d}}_{\text{lattice}}
+\underset{\text{lattice}}{\text{float}^{d}}
 \;\to\;
-\underbrace{\text{silicon}}_{\text{substrate}}
+\underset{\text{substrate}}{\text{silicon}}
 $$
 
 Each downward step: loss of generality, gain of operational reality. Grammar read one way; pronunciation read the other.
@@ -1015,7 +1015,7 @@ $$
 \text{Transformation} & \text{matrix } W \\
 \text{Locality} & \|v - w\| < \varepsilon \\
 \text{Compatibility} & \cos(v, w) \\
-\text{Gluing} & v = \sum_i \alpha_i e_i \\
+\text{Gluing} & v = \sum\sb{i} \alpha\sb{i} e\sb{i} \\
 \text{Invariance} & \text{basis-independent quantities}
 \end{array}
 $$
