@@ -1347,18 +1347,10 @@ $$
 - **The cover $\{c_i\}_{i \in I}$** is the *training corpus*: each $c_i$ is a document, a web page, a code repository, a conversation, a transcript. Each is a "patch" of partial evidence about $W$. The patches overlap — the same fact appears in many documents, the same code idiom in many repositories — and the union of their images is supposed to cover everything the model is meant to be able to speak about. The cover is not clean. Patches *disagree about the same facts* — different sources contradict each other, sometimes within the same document — and some are noisy, outdated, or biased. The chain from $W$ to the text in the corpus, written as the commuting diagram it actually is, has misremembering, badly-written prose, simple errors, lies, and altered states at every arrow — so the patches are not equal on overlaps but related by homotopies. In the strict sheaf regime this would be fatal; in the **homotopical regime** (the chapter's *Higher coherence* section, with $\infty\text{-Gpd}$ as target) local sections are *coherently equivalent* rather than equal — paraphrases, translations, corrections are homotopies, not disagreements — and descent absorbs the noise. What survives in $G$ is the *coherence class* of the cover, not any single patch.
 
   $$
-  \begin{array}{c}
-  \underbrace{W}_{\text{world}}\\
-  \overset{\text{perception}}{\underset{\text{stimulus pickup}}{\downarrow}}\\
-  \underbrace{S}_{\text{signal}}\\
-  \overset{\text{cognition}}{\underset{\text{memory / thought}}{\downarrow}}\\
-  \underbrace{\rho}_{\text{internal rep.}}\\
-  \overset{\text{language}}{\underset{\text{encoding}}{\downarrow}}\\
-  \underbrace{\Sigma}_{\text{spoken sentence}}\\
-  \overset{\text{writing}}{\underset{\text{composition}}{\downarrow}}\\
-  \underbrace{T}_{\text{written text}}\\
-  \overset{\text{aggregation}}{\underset{\text{scraping}}{\downarrow}}\\
-  \underbrace{C}_{\text{corpus}}
+  \begin{array}{ccc}
+  \underbrace{W}_{\text{world}} & \xrightarrow{\text{perception}} & \underbrace{S}_{\text{signal}} \\
+  \scriptstyle{\text{language}}\Big\downarrow & \circlearrowright & \Big\downarrow\scriptstyle{\text{memory}} \\
+  \underbrace{\Sigma}_{\text{spoken sentence}} & \xleftarrow[\text{writing}]{\phantom{xx}} & \underbrace{T}_{\text{written text}}
   \end{array}
   $$
 
