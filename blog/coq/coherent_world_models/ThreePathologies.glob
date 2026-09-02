@@ -1,4 +1,4 @@
-DIGEST 51b4b2bdf30c822973078537e6f593b3
+DIGEST 3d6b7bfa725945d99bf4043c7e32fa5b
 FThreePathologies
 R3569:3575 Library <> <> lib
 R3593:3598 Traces <> <> lib
@@ -37,3 +37,4 @@ def 5249:5264 <> SCF_failure_mode
 R5268:5278 ThreePathologies <> FailureMode ind
 R5283:5299 ThreePathologies <> FM_correspondence constr
 def 5395:5404 <> SCF_remedy
+R5418:5421 Coq.Init.Logic <> True ind

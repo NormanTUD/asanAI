@@ -131,7 +131,7 @@ Record ContactPointLiar' := {
 Definition CPL_failure_mode : FailureMode := FM_correspondence.
 
 Definition CPL_remedy : Prop :=
-  Prop.   (* the remedy is re-licensing: better calibration, formal          *)
+  True.   (* the remedy is re-licensing: better calibration, formal          *)
           (* verification where applicable                                  *)
 
 (* ---------------------------------------------------------------------------- *)
@@ -202,3 +202,4 @@ Axiom three_pathologies :
 (* and Tarski.v.                                                              *)
 (*                                                                             *)
 (* ============================================================================= *)
+*)
