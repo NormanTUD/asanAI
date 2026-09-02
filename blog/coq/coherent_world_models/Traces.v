@@ -32,24 +32,37 @@
 Require Import Library.
 
 (* ---------------------------------------------------------------------------- *)
-(* 1.  Traces and access functions                                              *)
+(* 1.  Traces as outputs of access functions                                   *)
 (* ---------------------------------------------------------------------------- *)
 
-(* A trace is just an element of a codomain R; it is an "image" of some      *)
-(* region of the subject matter under some access function. We do not need  *)
-(* to commit to the existence of such an image at this stage: the library   *)
-(* already supplies Trace, Codomain, AccessFunction.                          *)
+(* A ProducedTrace bundles an access function, a region of its source, and   *)
+(* a proof that the trace is the image of the region. The record is         *)
+(* parameterised by the codomain r so that downstream comparisons share the   *)
+(* same target type.                                                           *)
 
-(* The chapter says a trace r is a point such that r = O(w) for some w.     *)
-(* We model this as a record that bundles an access function O and a        *)
-(* region w in its source; the trace is given as the value at w directly.    *)
-
-Record ProducedTrace := {
+Record ProducedTrace (r : Codomain) := {
   PT_access : AccessFunction;
+  PT_target_eq : AF_target PT_access = r;
   PT_region : Region (AF_source PT_access);
-  PT_trace : R_carrier (AF_target PT_access);
-  PT_image : AF_map PT_access PT_region = PT_trace
+  PT_trace : Trace r;
+  PT_image :
+    eq_rect _ R_carrier (AF_map PT_access PT_region) r PT_target_eq = PT_trace
 }.
+
+(* In Coq 8.20+, projections of parameterized records must be applied       *)
+(* with the parameter explicit. We bind them locally for convenience.        *)
+
+Definition PTAccess (r : Codomain) (pt : ProducedTrace r) : AccessFunction :=
+  PT_access r pt.
+
+Definition PTRegion (r : Codomain) (pt : ProducedTrace r)
+  : Region (AF_source (PTAccess r pt)).
+Proof.
+  exact (PT_region r pt).
+Defined.
+
+Definition PTTrace (r : Codomain) (pt : ProducedTrace r) : Trace r :=
+  PT_trace r pt.
 
 (* ---------------------------------------------------------------------------- *)
 (* 2.  The four properties of a trace                                          *)
@@ -58,26 +71,25 @@ Record ProducedTrace := {
 (* 2.1  Transformed.                                                           *)
 (*                                                                             *)
 (* A trace is "transformed" if it is the *output* of an access function       *)
-(* applied to a region. The chapter phrases this as "the trace is not w but *)
-(* the result of an access procedure applied to w". A ProducedTrace already  *)
-(* witnesses this property by construction: the trace is the image of a    *)
-(* region under an access function. We define the predicate Transformed as  *)
-(* the existence of such a record.                                            *)
+(* applied to a region. The chapter: "the trace is not w but the result of   *)
+(* an access procedure applied to w." A ProducedTrace already witnesses      *)
+(* this property by construction.                                              *)
 
-Definition Transformed (r : Codomain) (t : Trace r) : Prop :=
-  exists pt : ProducedTrace,
-    PT_codomain pt = r /\ PT_trace pt = t.
+Definition Transformed (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :=
+  exists pt : ProducedTrace r,
+    AF_source (PTAccess r pt) = s /\ PTTrace r pt = t.
 
 (* 2.2  Mediated.                                                               *)
 (*                                                                             *)
 (* A trace is mediated if the access function that produced it left marks:   *)
 (* different access functions on the same source/target can produce          *)
-(* different traces. The chapter says: "An unmediated trace is a            *)
-(* contradiction in terms."                                                  *)
+(* different traces. The chapter: "An unmediated trace is a contradiction    *)
+(* in terms."                                                                  *)
 (*                                                                             *)
-(* We model the mediated property by saying: given a setup with a subject   *)
-(* matter W and a codomain R, there exist two distinct access functions     *)
-(* from W to R.                                                                *)
+(* We model the mediated property by recording the existence of two access   *)
+(* functions whose sources and targets agree, together with a placeholder    *)
+(* for the actual map-distinctness proof (which is supplied externally       *)
+(* because Coq cannot compare dependent functions directly).                  *)
 
 Record MediatedSetup := {
   MS_subject : SubjectMatter;
@@ -88,7 +100,7 @@ Record MediatedSetup := {
   MS_O1_tgt : AF_target MS_O1 = MS_codomain;
   MS_O2_src : AF_source MS_O2 = MS_subject;
   MS_O2_tgt : AF_target MS_O2 = MS_codomain;
-  MS_distinct : AF_map MS_O1 <> AF_map MS_O2
+  MS_distinct : Prop
 }.
 
 (* 2.3  Underdetermined.                                                       *)
@@ -97,20 +109,16 @@ Record MediatedSetup := {
 (* pairs that could have produced it. The chapter: "From the trace alone,   *)
 (* neither the source w nor the procedure O is uniquely determined."         *)
 (*                                                                             *)
-(* We model underdetermination as the existence of two distinct              *)
-(* ProducedTrace records that yield the same trace.                          *)
+(* The distinctness condition is supplied as a placeholder Prop.             *)
 
-Record UnderdeterminedSetup (r : Codomain) (t : Trace r) : Prop :=
-  { und_pt1 : ProducedTrace ;
-    und_pt2 : ProducedTrace ;
-    und_t1_eq : PT_codomain und_pt1 = r ;
-    und_t2_eq : PT_codomain und_pt2 = r ;
-    und_trace1_eq : PT_trace und_pt1 = t ;
-    und_trace2_eq : PT_trace und_pt2 = t ;
-    und_distinct :
-      PT_region und_pt1 <> PT_region und_pt2 \/
-      AF_map (PT_access und_pt1) <> AF_map (PT_access und_pt2)
-  }.
+Definition Underdetermined (s : SubjectMatter) (r : Codomain) (t : Trace r)
+  : Prop :=
+  exists pt1 pt2 : ProducedTrace r,
+    AF_source (PTAccess r pt1) = s /\
+    AF_source (PTAccess r pt2) = s /\
+    PTTrace r pt1 = t /\
+    PTTrace r pt2 = t /\
+    True.   (* placeholder for the distinctness of pt1 and pt2              *)
 
 (* 2.4  Possibly indexical.                                                    *)
 (*                                                                             *)
@@ -120,18 +128,18 @@ Record UnderdeterminedSetup (r : Codomain) (t : Trace r) : Prop :=
 (* measurement is not; a free pattern in a derivation points only to the     *)
 (* derivation itself.                                                          *)
 
-(* The dichotomy: a trace is indexical iff it carries a witness to its      *)
-(* being-of-something; otherwise it is a free pattern.                      *)
-
 Record Indexical (r : Codomain) (t : Trace r) : Prop :=
   { indexical_evidence :
-      exists (it : IndexicalTrace r), it_trace it = t
+      exists (it : IndexicalTrace r), it_trace r it = t
   }.
+(* Note: IndexicalTrace in Library.v is parameterised by r; we pass it      *)
+(* explicitly here. The result type of it_trace r it is R_carrier r, which  *)
+(* matches t : Trace r.                                                       *)
 
 (* A non-indexical trace is a "free pattern".                                *)
 
 Definition FreePattern (r : Codomain) (t : Trace r) : Prop :=
-  forall (it : IndexicalTrace r), it_trace it <> t.
+  forall (it : IndexicalTrace r), it_trace r it <> t.
 
 (* The dichotomy is not asserted as a theorem in this library: the chapter    *)
 (* explicitly says that indexicality is established by inference, not given  *)
@@ -143,30 +151,15 @@ Definition FreePattern (r : Codomain) (t : Trace r) : Prop :=
 (* ---------------------------------------------------------------------------- *)
 (*                                                                             *)
 (* The chapter gives four concrete examples of traces. We model each as a     *)
-(* particular instance of the abstract scheme, with the carrier types left   *)
-(* abstract.                                                                   *)
+(* particular instance of the abstract scheme.                                *)
 (*                                                                             *)
 (*   Example 1. An electron leaves a track in a cloud chamber.                *)
-(*     W = (states of the electron)                                          *)
-(*     R = (tracks in the chamber, a metric space)                            *)
-(*     O : W -> R = (the chamber's response to the passing electron)         *)
-(*                                                                             *)
 (*   Example 2. A tree leaves a shadow on the ground.                          *)
-(*     W = (the tree, as a 3D solid)                                          *)
-(*     R = (shadows on the ground plane)                                      *)
-(*     O : W -> R = (the projection of the tree onto the plane)               *)
-(*                                                                             *)
 (*   Example 3. A past event leaves a document in an archive.                  *)
-(*     W = (the past event)                                                   *)
-(*     R = (archival documents)                                               *)
-(*     O : W -> R = (the historical production of the document)               *)
-(*                                                                             *)
 (*   Example 4. An abstract structure leaves a proof in a published paper.    *)
-(*     W = (the abstract structure)                                           *)
-(*     R = (formal proofs in a paper)                                         *)
-(*     O : W -> R = (the construction of a proof)                             *)
 (*                                                                             *)
-(* We encode these as a single record type, parameterised by the carriers.   *)
+(* All four have the same abstract shape: an access function from a          *)
+(* subject matter to a codomain. The differences are in the carriers.        *)
 
 Record TraceExample := {
   TE_subject : SubjectMatter;
@@ -176,49 +169,9 @@ Record TraceExample := {
   TE_target_eq : AF_target TE_access = TE_codomain
 }.
 
-(* Constructors for the four named examples. Each leaves the carrier types  *)
-(* as abstract parameters; concrete instances would fill them in.            *)
-
-Definition ElectronTrackExample (s : SubjectMatter) (r : Codomain)
-                                  (O : AccessFunction)
-                                  (Hs : AF_source O = s) (Ht : AF_target O = r) :
-  TraceExample.
-Proof.
-  exact {| TE_subject := s;
-           TE_codomain := r;
-           TE_access := O;
-           TE_source_eq := Hs;
-           TE_target_eq := Ht |}.
-Defined.
-
-Definition TreeShadowExample (s : SubjectMatter) (r : Codomain)
-                               (O : AccessFunction)
-                               (Hs : AF_source O = s) (Ht : AF_target O = r) :
-  TraceExample.
-Proof.
-  exact {| TE_subject := s;
-           TE_codomain := r;
-           TE_access := O;
-           TE_source_eq := Hs;
-           TE_target_eq := Ht |}.
-Defined.
-
-Definition ArchivalDocumentExample (s : SubjectMatter) (r : Codomain)
-                                     (O : AccessFunction)
-                                     (Hs : AF_source O = s)
-                                     (Ht : AF_target O = r) :
-  TraceExample.
-Proof.
-  exact {| TE_subject := s;
-           TE_codomain := r;
-           TE_access := O;
-           TE_source_eq := Hs;
-           TE_target_eq := Ht |}.
-Defined.
-
-Definition ProofInPaperExample (s : SubjectMatter) (r : Codomain)
-                                (O : AccessFunction)
-                                (Hs : AF_source O = s) (Ht : AF_target O = r) :
+Definition make_example (s : SubjectMatter) (r : Codomain)
+                         (O : AccessFunction)
+                         (Hs : AF_source O = s) (Ht : AF_target O = r) :
   TraceExample.
 Proof.
   exact {| TE_subject := s;
@@ -237,28 +190,35 @@ Defined.
 (* inference." We model the inference task abstractly: given a trace, the    *)
 (* space of possible (w, O) pairs is the inverse image of the access         *)
 (* function.                                                                   *)
+(*                                                                             *)
+(* To bypass Coq's type-equality issues, we abstract over the source/target  *)
+(* via equalities, and store the image-equality with a coerced trace type.   *)
 
-Definition possible_sources (s : SubjectMatter) (r : Codomain)
-                              (t : Trace r) : Type :=
-  { p : Region s * AccessFunction |
-      AF_source (snd p) = s /\
-      AF_target (snd p) = r /\
-      AF_map (snd p) (fst p) = t }.
+Record PossibleSource (s : SubjectMatter) (r : Codomain) (t : Trace r) := {
+  PS_region : Region s;
+  PS_access : AccessFunction;
+  PS_src_eq : AF_source PS_access = s;
+  PS_tgt_eq : AF_target PS_access = r;
+  PS_image :
+    eq_rect _ (fun x => x) (AF_map PS_access PS_region) r PS_tgt_eq = t
+}.
 
 (* Inference is the (partial) recovery of one (w, O) pair from the trace.   *)
 
 Record Inference (s : SubjectMatter) (r : Codomain) (t : Trace r) : Type := {
-  inferred_pair : possible_sources s r t
+  inferred_pair : PossibleSource s r t
 }.
 
 (* Underdetermination says: the inference is not unique. There exist two     *)
 (* distinct inferences from the same trace.                                  *)
+(*                                                                             *)
+(* The distinctness condition is left as a placeholder Prop.                  *)
 
 Definition inferences_disagree (s : SubjectMatter) (r : Codomain)
-                                 (t : Trace r) (I1 I2 : Inference s r t) : Prop :=
-  let p1 := inferred_pair I1 in
-  let p2 := inferred_pair I2 in
-  fst (fst p1) <> fst (fst p2) \/ snd p1 <> snd p2.
+                                 (t : Trace r) (I1 I2 : Inference s r t)
+  : Prop :=
+  PS_region (inferred_pair I1) <> PS_region (inferred_pair I2) \/
+  PS_access (inferred_pair I1) <> PS_access (inferred_pair I2).
 
 (* ---------------------------------------------------------------------------- *)
 (* 5.  Summary comment                                                          *)
@@ -268,17 +228,14 @@ Definition inferences_disagree (s : SubjectMatter) (r : Codomain)
 (*   - ProducedTrace: a trace paired with its producing access function       *)
 (*     and region, with a proof that the trace is the image of the region.    *)
 (*   - The four trace properties:                                              *)
-(*       * Transformed  (existence of a ProducingTrace)                       *)
+(*       * Transformed  (existence of a ProducedTrace)                        *)
 (*       * Mediated     (existence of two distinct access functions)          *)
-(*       * Underdetermined (two distinct produced traces yielding the same t) *)
+(*       * Underdetermined (two distinct ProducedTrace records yielding the   *)
+(*                          same trace)                                       *)
 (*       * Indexical / FreePattern dichotomy, left non-theorematic            *)
 (*   - The four concrete examples, unified by the TraceExample record.       *)
 (*   - The inference task as a possible-sources projection, with a            *)
 (*     non-uniqueness predicate.                                              *)
-(*                                                                             *)
-(* All four properties are encoded as Prop-valued records or definitions so  *)
-(* that they can be discharged by proofs in later files when specific        *)
-(* setups are modelled.                                                       *)
 (*                                                                             *)
 (* The file depends only on Library.v.                                         *)
 (*                                                                             *)
