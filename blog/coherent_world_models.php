@@ -178,7 +178,7 @@ $$
 For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
 $$
-\underbrace{\mathcal{T}}_{\text{admissible transitions (licensed)}} \;\subseteq\; \underbrace{\{W \to R_i\} \cup \mathrm{Hom}(\mathcal{C})}_{\text{observation arrows and inter-context arrows}}.
+\underbrace{\mathcal{T}}_{\text{admissible transitions (licensed)}} \;\subseteq\; \underbrace{\{W \to R_i\} \cup \{R_i \to R_j\} \cup \mathrm{Hom}(\mathcal{C})}_{\text{observation, inter-representation, and inter-context arrows}}.
 $$
 
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:
@@ -189,7 +189,7 @@ What can belong in $\mathcal{T}$: the list is open; what matters is the justific
 - **proof-preserving translation** (mathematics)
 - **validated decoder** (machine learning)
 - **documented archival transmission** (history)
-- $\vdots$ *(any other map whose license has been argued for in advance)*
+- $\vdots$ *(any other map whose licence has been argued for in advance)*
 
 $$
 \boxed{
@@ -250,13 +250,13 @@ $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain co
 
 ## Sheaves: coherence = descent
 
-In plain English first. A presheaf $F$ assigns a set of "local sections" to every context: $F(c)$ is the data one can write down *on* $c$. Sheaf-ness is the rule that turns *compatible* local data into *unique* global data.
+In plain English first. A presheaf $F$ assigns a set of "local sections" to every context: $F(c)$ is the data one can write down *on* $c$. Sheaf-ness is the rule that turns *compatible* local data into *unique* global data — but only on covers the modelling setup is willing to license.
 
 $$
-\boxed{\;\text{compatible local data} \;\Longrightarrow\; \text{unique global data}.\;}
+\boxed{\;\text{compatible local data on an admissible cover} \;\Longrightarrow\; \text{unique global data}.\;}
 $$
 
-A family $\{s_i \in F(c_i)\}$ is **compatible** when, on every pairwise overlap $c_i \times_c c_j$, the two restrictions of $s_i$ and $s_j$ agree. A sheaf says: that condition alone is enough; there is exactly one global section in $F(c)$ whose restriction to each patch is $s_i$.
+A family $\{s_i \in F(c_i)\}$ is **compatible** when, on every pairwise overlap $c_i \times_c c_j$, the two restrictions of $s_i$ and $s_j$ agree. A sheaf says: that condition alone is enough; there is exactly one global section in $F(c)$ whose restriction to each patch is $s_i$. The condition is only asked of admissible covers; an unrestricted "every cover" statement is a different, sharper claim that we do not need here.
 
 Now the same content as an equation. For every admissible cover $\{c_i \to c\}_{i \in I}$:
 
@@ -283,7 +283,7 @@ The $\varprojlim$ in older presentations does exactly the same job; the equalize
 
 The isomorphism $F(c) \simeq \mathrm{Eq}(\cdots)$ is the **sheaf condition**: the smallest, sharpest statement of the local-to-global principle.
 
-Reading in plain English, one more time: **for every family of local sections that agree on every overlap, there is one and only one global section restricting to them.**
+Reading in plain English, one more time: **for every admissible cover and every family of local sections on it that agree on every overlap, there is one and only one global section restricting to them.**
 
 $$
 \begin{array}{c|c|c}
@@ -951,23 +951,23 @@ $$
 \end{array}
 $$
 
-Three sorts of arrows, each with a separate truth-condition.
+Three sorts of arrows, each with a separate *condition* — but only two of those conditions are truth conditions proper; the first is a prerequisite that makes the test meaningful.
 
 $$
 \begin{array}{c|c|c}
 \text{Arrow} & \text{Role} & \text{Condition}\\
 \hline
-W \xrightarrow{\,O_i\,} R_i & \text{observation} & O_i \in \mathcal{T} \text{ (licence)}\\
-R_i \xrightarrow{\,T_i\,} G & \text{gluing} & \text{coherence on overlaps (sheaf)}\\
-G \xrightarrow{\;\text{claim about }W\;} W & \text{use} & \text{Tarski at the contact point, via } T \in \mathcal{T}
+W \xrightarrow{\,O_i\,} R_i & \text{observation} & O_i \in \mathcal{T} \text{ (licence — prerequisite)}\\
+R_i \xrightarrow{\,T_i\,} G & \text{gluing} & \text{coherence on overlaps (sheaf) — truth condition}\\
+G \xrightarrow{\;\text{claim about }W\;} W & \text{use} & \text{Tarski at the contact point, via } T \in \mathcal{T} \text{ — truth condition}
 \end{array}
 $$
 
-- **The $O_i$ arrows** ($W \to R_i$) are observation arrows. They are *inside* the modelling setup, not correspondence arrows; the act of observing already distorts. We do not require them to satisfy Tarski directly; we require only that they are licensed, $O_i \in \mathcal{T}$, so that the comparison between world and trace is one we are entitled to make.
-- **The $T_i$ arrows** ($R_i \to G$) are admissible transitions. They do their *coherence* work: the sheaf condition is checked along them, agreement on overlaps is verified.
-- **The $G \to W$ arrow** (a claim from the model about the world) is the correspondence row, the new addition. Each specific claim $S$ produced by $G$ about $W$ must satisfy Tarski's if-and-only-if at its contact point: $S$ is true iff the corresponding fact $p$ holds. The check is performed via the licensed transitions $T \in \mathcal{T}$ that calibrate between the trace $R_i$ and the world; the if-and-only-if is the truth condition on the model's claim, applied at those bridges.
+- **The $O_i$ arrows** ($W \to R_i$) are observation arrows. They are *inside* the modelling setup, not correspondence arrows; the act of observing already distorts. We do not require them to satisfy Tarski directly; we require only that they are licensed, $O_i \in \mathcal{T}$, so that the comparison between world and trace is one we are entitled to make. This is a *prerequisite*: an unlicensed arrow gives no standing to ask whether the model is true.
+- **The $T_i$ arrows** ($R_i \to G$) are admissible transitions. They do their *coherence* work: the sheaf condition is checked along them, agreement on overlaps is verified. This is the first truth condition.
+- **The $G \to W$ arrow** (a claim from the model about the world) is the correspondence row, the new addition. Each specific claim $S$ produced by $G$ about $W$ must satisfy Tarski's if-and-only-if at its contact point: $S$ is true iff the corresponding fact $p$ holds. The check is performed via the licensed transitions $T \in \mathcal{T}$ that calibrate between the trace $R_i$ and the world; the if-and-only-if is the truth condition on the model's claim, applied at those bridges. This is the second truth condition.
 
-The model $G$ is true when all three rows hold simultaneously for every $i\in I$, and the third row is the new one this section adds.
+The model $G$ is true when the *two* truth conditions (coherence and correspondence) hold simultaneously at every licensed contact, with the licensing assumed throughout. The third row of the table above is the new addition this section makes; the second row was already the substance of "Sheaves: coherence = descent" above.
 
 </div>
 
@@ -1006,7 +1006,7 @@ $$
 \underbrace{\text{no }T\in\mathcal{T}\text{ passes Tarski}}_{\text{licence without empirical contact}}.
 $$
 
-Failure: *both*, but the diagnosis is that $\mathcal{T}$ has been chosen wrongly.
+Failure: *correspondence* (the same as (1), not a new failure mode). The diagnosis is that $\mathcal{T}$ has been chosen wrongly — i.e., the licensing was too permissive and admitted procedures that did not actually constrain the data to track $W$. The "both" reading some readers will reach is shorthand for *both the licensing setup and the correspondence at contact points are broken*; the truth-condition failure is correspondence alone.
 
 </div>
 
@@ -1019,7 +1019,7 @@ For a model $G$ to be true, every admissible transition $T\in\mathcal{T}$ must f
 1. **Every claim has a contact point.** A claim that is not anchored to any admissible transition is not a claim about the world; it is at best an internal regularity of the model. Refuse to call it "true".
 2. **Every contact point has a calibration.** The instrument, the translation, the proof, whatever bridges the model and the world, must be *itself* checkable. A Tarski arrow is only as good as the calibration that supports it.
 3. **Every calibration is itself admissible.** Calibration procedures belong in $\mathcal{T}$. A model whose calibration depends on a procedure outside $\mathcal{T}$ is using an undisclosed premise.
-4. **The sheaf condition is checked on every cover.** Descent is not a one-time audit; it must hold for *every* admissible cover the data admits. A model that passes descent on one cover and fails on another is half-coherent.
+4. **The sheaf condition is checked on every admissible cover.** Descent is not a one-time audit; it must hold for *every* admissible cover the data admits. A model that passes descent on one cover and fails on another is half-coherent.
 
 $$
 \boxed{
