@@ -79,7 +79,9 @@ Between "subject matter $W$" and "the trace $r \in R$ I received" sit at least t
 
 **2. The channel-level — $I_1 \neq I_2$.** Two *instruments* read the same world differently: thermometer vs. thermocouple, eye vs. microphone, uncalibrated vs. calibrated telescope.
 
-*Example.* Two thermometers *placed at the same point* read $20.01$ and $20.02$. A room, however, is not a single temperature but a temperature *field* — two thermometers at different positions may legitimately report different values, and that would be a *world-level* difference (different points in the field), not a channel-level one. The diagnostic is co-location: if two co-located instruments disagree, *at least one — possibly both* — is miscalibrated; the remedy is calibration against each other, against an external standard, or via a third instrument to adjudicate.
+*Example.* Two thermometers placed at the same point read $20.01$ and $20.02$. At that point the room has one temperature; the difference must be in the instruments — at least one, possibly both, is miscalibrated. The remedy is calibration against each other, against an external standard, or via a third instrument to adjudicate.
+
+*Co-location matters.* If the thermometers are at *different positions* in a non-uniform temperature field (one near a window, one near a heater), they may legitimately report different values — and that would be a *world-level* difference (different points in the field), not a channel-level one.
 
 **3. The processing-level — $\nu_1 \neq \nu_2$.** Two *interpretations* of the same trace yield different conclusions: a classical and a quantum reading of the same detector output, a literal and a metaphorical reading of the same text, an outdated and a current taxonomy applied to the same specimen.
 
