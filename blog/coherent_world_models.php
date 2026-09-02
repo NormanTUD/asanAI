@@ -615,11 +615,15 @@ So far the discussion has been structural: equalizers, pullbacks, Čech nerves, 
 Every access to a subject matter is a composite, in every domain:
 
 $$
-\underbrace{W}_{\text{subject}}
-\xrightarrow[\;\text{stimulus pickup}\;]{\;I\;}\underbrace{S}_{\text{stimulus/signal}}
-\xrightarrow[\;\text{neural processing}\;]{\;N\;}\underbrace{\rho}_{\text{internal rep.}}
-\xrightarrow[\;\text{language / encoding}\;]{\;L\;}\underbrace{\Sigma}_{\text{report/encoding}}
-\xrightarrow[\;\text{calibration / check}\;]{\;C\;}\underbrace{M}_{\text{model}}.
+\underbrace{W}_{\text{subject}}\\
+\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{stimulus pickup}\\\text{(I)}\\\hbox{$\Big\downarrow$}}}\\
+\underbrace{S}_{\text{stimulus/signal}}\\
+\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{neural processing}\\\text{(N)}\\\hbox{$\Big\downarrow$}}}\\
+\underbrace{\rho}_{\text{internal rep.}}\\
+\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{language / encoding}\\\text{(L)}\\\hbox{$\Big\downarrow$}}}\\
+\underbrace{\Sigma}_{\text{report/encoding}}\\
+\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{calibration / check}\\\text{(C)}\\\hbox{$\Big\downarrow$}}}\\
+\underbrace{M}_{\text{model}}
 $$
 
 $$
