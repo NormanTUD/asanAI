@@ -1,2 +1,5 @@
+Add LoadPath ".".
 Require Import Library.
-Check it_trace.
+Require Import Traces.
+
+Check PS_region.

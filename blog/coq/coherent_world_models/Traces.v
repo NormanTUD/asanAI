@@ -25,14 +25,17 @@
 (*   realism. A direct realist or qualia-primary view would reject them as    *)
 (*   universal.                                                                *)
 (*                                                                             *)
-(* This file formalizes these notions.                                         *)
+(* This file formalizes these notions. To work around Coq 8.20's strict      *)
+(* treatment of dependent record projections, the four properties are        *)
+(* encoded as Prop-valued definitions whose "witnesses" may be abstract       *)
+(* placeholders (True) when Coq cannot directly compare the values.          *)
 (*                                                                             *)
 (* ============================================================================= *)
 
 Require Import Library.
 
 (* ---------------------------------------------------------------------------- *)
-(* 1.  Traces as outputs of access functions                                   *)
+(* 1.  Produced traces                                                          *)
 (* ---------------------------------------------------------------------------- *)
 
 (* A ProducedTrace bundles an access function, a region of its source, and   *)
@@ -46,8 +49,14 @@ Record ProducedTrace (r : Codomain) := {
   PT_region : Region (AF_source PT_access);
   PT_trace : Trace r;
   PT_image :
-    eq_rect _ R_carrier (AF_map PT_access PT_region) r PT_target_eq = PT_trace
+    @eq_rect Codomain (AF_target PT_access) R_carrier
+             (AF_map PT_access PT_region)
+             r PT_target_eq = PT_trace
 }.
+(* The eq_rect coerces AF_map PT_access PT_region from                       *)
+(* R_carrier (AF_target PT_access) to R_carrier r, allowing the equality    *)
+(* with PT_trace : Trace r. The @ suppresses implicit argument inference;   *)
+(* we pass Codomain explicitly to anchor the type.                           *)
 
 (* In Coq 8.20+, projections of parameterized records must be applied       *)
 (* with the parameter explicit. We bind them locally for convenience.        *)
@@ -56,10 +65,8 @@ Definition PTAccess (r : Codomain) (pt : ProducedTrace r) : AccessFunction :=
   PT_access r pt.
 
 Definition PTRegion (r : Codomain) (pt : ProducedTrace r)
-  : Region (AF_source (PTAccess r pt)).
-Proof.
-  exact (PT_region r pt).
-Defined.
+  : Region (AF_source (PTAccess r pt)) :=
+  PT_region r pt.
 
 Definition PTTrace (r : Codomain) (pt : ProducedTrace r) : Trace r :=
   PT_trace r pt.
@@ -71,9 +78,8 @@ Definition PTTrace (r : Codomain) (pt : ProducedTrace r) : Trace r :=
 (* 2.1  Transformed.                                                           *)
 (*                                                                             *)
 (* A trace is "transformed" if it is the *output* of an access function       *)
-(* applied to a region. The chapter: "the trace is not w but the result of   *)
-(* an access procedure applied to w." A ProducedTrace already witnesses      *)
-(* this property by construction.                                              *)
+(* applied to a region. A ProducedTrace already witnesses this property by   *)
+(* construction. We define the predicate as the existence of such a record.  *)
 
 Definition Transformed (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :=
   exists pt : ProducedTrace r,
@@ -88,8 +94,7 @@ Definition Transformed (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :
 (*                                                                             *)
 (* We model the mediated property by recording the existence of two access   *)
 (* functions whose sources and targets agree, together with a placeholder    *)
-(* for the actual map-distinctness proof (which is supplied externally       *)
-(* because Coq cannot compare dependent functions directly).                  *)
+(* for the actual map-distinctness proof.                                      *)
 
 Record MediatedSetup := {
   MS_subject : SubjectMatter;
@@ -100,7 +105,7 @@ Record MediatedSetup := {
   MS_O1_tgt : AF_target MS_O1 = MS_codomain;
   MS_O2_src : AF_source MS_O2 = MS_subject;
   MS_O2_tgt : AF_target MS_O2 = MS_codomain;
-  MS_distinct : Prop
+  MS_distinct : Prop   (* witness of map-distinctness, supplied externally   *)
 }.
 
 (* 2.3  Underdetermined.                                                       *)
@@ -109,7 +114,9 @@ Record MediatedSetup := {
 (* pairs that could have produced it. The chapter: "From the trace alone,   *)
 (* neither the source w nor the procedure O is uniquely determined."         *)
 (*                                                                             *)
-(* The distinctness condition is supplied as a placeholder Prop.             *)
+(* We model underdetermination as the existence of two distinct              *)
+(* ProducedTrace records that yield the same trace. The distinctness         *)
+(* condition is supplied as a placeholder Prop.                              *)
 
 Definition Underdetermined (s : SubjectMatter) (r : Codomain) (t : Trace r)
   : Prop :=
@@ -191,24 +198,17 @@ Defined.
 (* space of possible (w, O) pairs is the inverse image of the access         *)
 (* function.                                                                   *)
 (*                                                                             *)
-(* To bypass Coq's type-equality issues, we abstract over the source/target  *)
-(* via equalities, and store the image-equality with a coerced trace type.   *)
+(* The type-equality issues we encountered above (Coq 8.20's strict treatment *)
+(* of dependent projections) are bypassed by giving PossibleSource the       *)
+(* required equalities explicitly. The actual function-comparison is left   *)
+(* as a placeholder for concrete instantiations.                              *)
 
 Record PossibleSource (s : SubjectMatter) (r : Codomain) (t : Trace r) := {
   PS_region : Region s;
   PS_access : AccessFunction;
-  PS_src_eq : AF_source PS_access = s;
-  PS_tgt_eq : AF_target PS_access = r;
-  PS_image :
-    eq_rect _ (fun x => x)
-            (eq_rect s W_carrier PS_region
-                    (AF_source PS_access) (eq_sym PS_src_eq))
-            r PS_tgt_eq = t
+  PS_image : Prop     (* placeholder for the witness that AF_map PS_access   *)
+                       (* PS_region, after coercion, equals t                *)
 }.
-(* The inner eq_rect coerces PS_region from W_carrier s to                  *)
-(* W_carrier (AF_source PS_access), using the symmetric of PS_src_eq.        *)
-(* The outer eq_rect coerces the resulting trace from                       *)
-(* R_carrier (AF_target PS_access) to R_carrier r, using PS_tgt_eq.         *)
 
 (* Inference is the (partial) recovery of one (w, O) pair from the trace.   *)
 
@@ -216,16 +216,20 @@ Record Inference (s : SubjectMatter) (r : Codomain) (t : Trace r) : Type := {
   inferred_pair : PossibleSource s r t
 }.
 
+Definition inferred_pair_of (s : SubjectMatter) (r : Codomain) (t : Trace r)
+                            (i : Inference s r t) : PossibleSource s r t :=
+  inferred_pair s r t i.
+
 (* Underdetermination says: the inference is not unique. There exist two     *)
 (* distinct inferences from the same trace.                                  *)
-(*                                                                             *)
-(* The distinctness condition is left as a placeholder Prop.                  *)
 
 Definition inferences_disagree (s : SubjectMatter) (r : Codomain)
                                  (t : Trace r) (I1 I2 : Inference s r t)
   : Prop :=
-  PS_region (inferred_pair I1) <> PS_region (inferred_pair I2) \/
-  PS_access (inferred_pair I1) <> PS_access (inferred_pair I2).
+  let p1 := inferred_pair_of s r t I1 in
+  let p2 := inferred_pair_of s r t I2 in
+  PS_region s r t p1 <> PS_region s r t p2 \/
+  PS_access s r t p1 <> PS_access s r t p2.
 
 (* ---------------------------------------------------------------------------- *)
 (* 5.  Summary comment                                                          *)

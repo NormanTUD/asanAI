@@ -1,291 +1,354 @@
-DIGEST 1c302442328d9b0fdfc1e3991f742e63
+DIGEST 6db488220f912d6585f209ba3e613bba
 FTraces
-R2469:2475 Library <> <> lib
-rec 3058:3070 <> ProducedTrace
-proj 3094:3102 <> PT_access
-proj 3124:3135 <> PT_target_eq
-proj 3166:3174 <> PT_region
-proj 3210:3217 <> PT_trace
-proj 3232:3239 <> PT_image
-R3077:3084 Library <> Codomain rec
-binder 3073:3073 <> r:1
-R3106:3119 Library <> AccessFunction rec
-R3158:3160 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R3139:3147 Library <> AF_target proj
-R3149:3157 Traces <> PT_access:3 meth
-R3161:3161 Traces <> r:1 var
-R3178:3185 Library <> :::'Region'_x not
-R3205:3205 Library <> :::'Region'_x not
-R3186:3194 Library <> AF_source proj
-R3196:3204 Traces <> PT_access:3 meth
-R3221:3226 Library <> :::'Trace'_x not
-R3227:3227 Traces <> r:1 var
-R3310:3312 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R3247:3253 Coq.Init.Logic <> eq_rect scheme
-R3298:3309 Traces <> PT_target_eq:4 meth
-R3296:3296 Traces <> r:1 var
-R3268:3273 Library <> AF_map proj
-R3275:3283 Traces <> PT_access:3 meth
-R3285:3293 Traces <> PT_region:5 meth
-R3257:3265 Library <> R_carrier proj
-R3313:3320 Traces <> PT_trace:6 meth
-def 3497:3504 <> PTAccess
-R3511:3518 Library <> Codomain rec
-binder 3507:3507 <> r:8
-R3527:3539 Traces <> ProducedTrace rec
-R3541:3541 Traces <> r:8 var
-binder 3522:3523 <> pt:9
-R3546:3559 Library <> AccessFunction rec
-R3566:3574 Traces <> PT_access proj
-R3576:3576 Traces <> r:8 var
-R3578:3579 Traces <> pt:9 var
-def 3594:3601 <> PTRegion
-R3608:3615 Library <> Codomain rec
-binder 3604:3604 <> r:10
-R3624:3636 Traces <> ProducedTrace rec
-R3638:3638 Traces <> r:10 var
-binder 3619:3620 <> pt:11
-R3645:3652 Library <> :::'Region'_x not
-R3678:3678 Library <> :::'Region'_x not
-R3653:3661 Library <> AF_source proj
-R3664:3671 Traces <> PTAccess def
-R3673:3673 Traces <> r:10 var
-R3675:3676 Traces <> pt:11 var
-R3697:3705 Traces <> PT_region proj
-R3697:3705 Traces <> PT_region proj
-def 3735:3741 <> PTTrace
-R3748:3755 Library <> Codomain rec
-binder 3744:3744 <> r:12
-R3764:3776 Traces <> ProducedTrace rec
-R3778:3778 Traces <> r:12 var
-binder 3759:3760 <> pt:13
-R3783:3788 Library <> :::'Trace'_x not
-R3789:3789 Traces <> r:12 var
-R3796:3803 Traces <> PT_trace proj
-R3805:3805 Traces <> r:12 var
-R3807:3808 Traces <> pt:13 var
-def 4560:4570 <> Transformed
-R4577:4589 Library <> SubjectMatter rec
-binder 4573:4573 <> s:14
-R4597:4604 Library <> Codomain rec
-binder 4593:4593 <> r:15
-R4612:4617 Library <> :::'Trace'_x not
-R4618:4618 Traces <> r:15 var
-binder 4608:4608 <> t:16
-R4633:4639 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R4660:4665 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R4645:4657 Traces <> ProducedTrace rec
-R4659:4659 Traces <> r:15 var
-binder 4640:4641 <> pt:17
-R4695:4698 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R4691:4693 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R4666:4674 Library <> AF_source proj
-R4677:4684 Traces <> PTAccess def
-R4686:4686 Traces <> r:15 var
-R4688:4689 Traces <> pt:17 var
-R4694:4694 Traces <> s:14 var
-R4711:4713 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R4699:4705 Traces <> PTTrace def
-R4707:4707 Traces <> r:15 var
-R4709:4710 Traces <> pt:17 var
-R4714:4714 Traces <> t:16 var
-rec 5616:5628 <> MediatedSetup
-proj 5637:5646 <> MS_subject
-proj 5667:5677 <> MS_codomain
-proj 5693:5697 <> MS_O1
-proj 5719:5723 <> MS_O2
-proj 5745:5753 <> MS_O1_src
-proj 5789:5797 <> MS_O1_tgt
-proj 5834:5842 <> MS_O2_src
-proj 5878:5886 <> MS_O2_tgt
-proj 5923:5933 <> MS_distinct
-R5650:5662 Library <> SubjectMatter rec
-R5681:5688 Library <> Codomain rec
-R5701:5714 Library <> AccessFunction rec
-R5727:5740 Library <> AccessFunction rec
-R5772:5774 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5757:5765 Library <> AF_source proj
-R5767:5771 Traces <> MS_O1:21 meth
-R5775:5784 Traces <> MS_subject:19 meth
-R5816:5818 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5801:5809 Library <> AF_target proj
-R5811:5815 Traces <> MS_O1:21 meth
-R5819:5829 Traces <> MS_codomain:20 meth
-R5861:5863 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5846:5854 Library <> AF_source proj
-R5856:5860 Traces <> MS_O2:22 meth
-R5864:5873 Traces <> MS_subject:19 meth
-R5905:5907 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5890:5898 Library <> AF_target proj
-R5900:5904 Traces <> MS_O2:22 meth
-R5908:5918 Traces <> MS_codomain:20 meth
-def 6523:6537 <> Underdetermined
-R6544:6556 Library <> SubjectMatter rec
-binder 6540:6540 <> s:28
-R6564:6571 Library <> Codomain rec
-binder 6560:6560 <> r:29
-R6579:6584 Library <> :::'Trace'_x not
-R6585:6585 Traces <> r:29 var
-binder 6575:6575 <> t:30
-R6602:6608 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R6634:6639 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R6619:6631 Traces <> ProducedTrace rec
-R6633:6633 Traces <> r:29 var
-binder 6609:6611 <> pt1:31
-R6619:6631 Traces <> ProducedTrace rec
-R6633:6633 Traces <> r:29 var
-binder 6613:6615 <> pt2:32
-R6670:6677 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6666:6668 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6640:6648 Library <> AF_source proj
-R6651:6658 Traces <> PTAccess def
-R6660:6660 Traces <> r:29 var
-R6662:6664 Traces <> pt1:31 var
-R6669:6669 Traces <> s:28 var
-R6708:6715 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6704:6706 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6678:6686 Library <> AF_source proj
-R6689:6696 Traces <> PTAccess def
-R6698:6698 Traces <> r:29 var
-R6700:6702 Traces <> pt2:32 var
-R6707:6707 Traces <> s:28 var
-R6733:6740 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6729:6731 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6716:6722 Traces <> PTTrace def
-R6724:6724 Traces <> r:29 var
-R6726:6728 Traces <> pt1:31 var
-R6732:6732 Traces <> t:30 var
-R6758:6765 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6754:6756 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6741:6747 Traces <> PTTrace def
-R6749:6749 Traces <> r:29 var
-R6751:6753 Traces <> pt2:32 var
-R6757:6757 Traces <> t:30 var
-R6766:6769 Coq.Init.Logic <> True ind
-rec 7416:7424 <> Indexical
-proj 7469:7486 <> indexical_evidence
-R7431:7438 Library <> Codomain rec
-binder 7427:7427 <> r:33
-R7446:7451 Library <> :::'Trace'_x not
-R7452:7452 Traces <> r:33 var
-binder 7442:7442 <> t:34
-R7496:7503 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R7525:7527 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R7509:7522 Library <> IndexicalTrace rec
-R7524:7524 Traces <> r:33 var
-binder 7504:7505 <> it:36
-R7541:7543 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R7528:7535 Library <> it_trace proj
-R7537:7537 Traces <> r:33 var
-R7539:7540 Traces <> it:36 var
-R7544:7544 Traces <> t:34 var
-def 7883:7893 <> FreePattern
-R7900:7907 Library <> Codomain rec
-binder 7896:7896 <> r:38
-R7915:7920 Library <> :::'Trace'_x not
-R7921:7921 Traces <> r:38 var
-binder 7911:7911 <> t:39
-R7949:7962 Library <> IndexicalTrace rec
-R7964:7964 Traces <> r:38 var
-binder 7944:7945 <> it:40
-R7981:7984 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
-R7968:7975 Library <> it_trace proj
-R7977:7977 Traces <> r:38 var
-R7979:7980 Traces <> it:40 var
-R7985:7985 Traces <> t:39 var
-rec 9462:9473 <> TraceExample
-proj 9482:9491 <> TE_subject
-proj 9512:9522 <> TE_codomain
-proj 9538:9546 <> TE_access
-proj 9568:9579 <> TE_source_eq
-proj 9619:9630 <> TE_target_eq
-R9495:9507 Library <> SubjectMatter rec
-R9526:9533 Library <> Codomain rec
-R9550:9563 Library <> AccessFunction rec
-R9602:9604 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9583:9591 Library <> AF_source proj
-R9593:9601 Traces <> TE_access:44 meth
-R9605:9614 Traces <> TE_subject:42 meth
-R9653:9655 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9634:9642 Library <> AF_target proj
-R9644:9652 Traces <> TE_access:44 meth
-R9656:9666 Traces <> TE_codomain:43 meth
-def 9683:9694 <> make_example
-R9701:9713 Library <> SubjectMatter rec
-binder 9697:9697 <> s:47
-R9721:9728 Library <> Codomain rec
-binder 9717:9717 <> r:48
-R9761:9774 Library <> AccessFunction rec
-binder 9757:9757 <> O:49
-R9819:9821 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9808:9816 Library <> AF_source proj
-R9818:9818 Traces <> O:49 var
-R9822:9822 Traces <> s:47 var
-binder 9803:9804 <> Hs:50
-R9842:9844 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9831:9839 Library <> AF_target proj
-R9841:9841 Traces <> O:49 var
-R9845:9845 Traces <> r:48 var
-binder 9826:9827 <> Ht:51
-R9852:9863 Traces <> TraceExample rec
-R9884:9893 Traces <> TE_subject proj
-R9884:9893 Traces <> TE_subject proj
-R9884:9893 Traces <> TE_subject proj
-R9912:9922 Traces <> TE_codomain proj
-R9912:9922 Traces <> TE_codomain proj
-R9941:9949 Traces <> TE_access proj
-R9941:9949 Traces <> TE_access proj
-R9968:9979 Traces <> TE_source_eq proj
-R9968:9979 Traces <> TE_source_eq proj
-R9999:10010 Traces <> TE_target_eq proj
-R9999:10010 Traces <> TE_target_eq proj
-R9884:9893 Traces <> TE_subject proj
-R9884:9893 Traces <> TE_subject proj
-R9884:9893 Traces <> TE_subject proj
-R9912:9922 Traces <> TE_codomain proj
-R9912:9922 Traces <> TE_codomain proj
-R9941:9949 Traces <> TE_access proj
-R9941:9949 Traces <> TE_access proj
-R9968:9979 Traces <> TE_source_eq proj
-R9968:9979 Traces <> TE_source_eq proj
-R9999:10010 Traces <> TE_target_eq proj
-R9999:10010 Traces <> TE_target_eq proj
-rec 10934:10947 <> PossibleSource
-proj 11005:11013 <> PS_region
-proj 11029:11037 <> PS_access
-proj 11059:11067 <> PS_src_eq
-proj 11098:11106 <> PS_tgt_eq
-proj 11137:11144 <> PS_image
-R10954:10966 Library <> SubjectMatter rec
-binder 10950:10950 <> s:52
-R10974:10981 Library <> Codomain rec
-binder 10970:10970 <> r:53
-R10989:10994 Library <> :::'Trace'_x not
-R10995:10995 Traces <> r:53 var
-binder 10985:10985 <> t:54
-R11017:11023 Library <> :::'Region'_x not
-R11024:11024 Traces <> s:52 var
-R11041:11054 Library <> AccessFunction rec
-R11090:11092 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11071:11079 Library <> AF_source proj
-R11081:11089 Traces <> PS_access:57 meth
-R11093:11093 Traces <> s:52 var
-R11129:11131 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11110:11118 Library <> AF_target proj
-R11120:11128 Traces <> PS_access:57 meth
-R11132:11132 Traces <> r:53 var
-R11303:11305 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11152:11158 Coq.Init.Logic <> eq_rect scheme
-R11294:11302 Traces <> PS_tgt_eq:59 meth
-R11292:11292 Traces <> r:53 var
-R11188:11194 Coq.Init.Logic <> eq_rect scheme
-R11261:11266 Coq.Init.Logic <> eq_sym thm
-R11268:11276 Traces <> PS_src_eq:58 meth
-R11239:11247 Library <> AF_source proj
-R11249:11257 Traces <> PS_access:57 meth
-R11208:11216 Traces <> PS_region:56 meth
-R11198:11206 Library <> W_carrier proj
-R11196:11196 Traces <> s:52 var
-binder 11167:11167 <> x:60
-R11172:11172 Traces <> x:60 var
-R11306:11306 Traces <> t:54 var
+R2708:2714 Library <> <> lib
+rec 3298:3310 <> ProducedTrace
+proj 3334:3342 <> PT_access
+proj 3364:3375 <> PT_target_eq
+proj 3406:3414 <> PT_region
+proj 3450:3457 <> PT_trace
+proj 3472:3479 <> PT_image
+R3317:3324 Library <> Codomain rec
+binder 3313:3313 <> r:1
+R3346:3359 Library <> AccessFunction rec
+R3398:3400 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3379:3387 Library <> AF_target proj
+R3389:3397 Traces <> PT_access:3 meth
+R3401:3401 Traces <> r:1 var
+R3418:3425 Library <> :::'Region'_x not
+R3445:3445 Library <> :::'Region'_x not
+R3426:3434 Library <> AF_source proj
+R3436:3444 Traces <> PT_access:3 meth
+R3461:3466 Library <> :::'Trace'_x not
+R3467:3467 Traces <> r:1 var
+R3606:3608 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3488:3494 Coq.Init.Logic <> eq_rect scheme
+R3496:3503 Library <> Codomain rec
+R3506:3514 Library <> AF_target proj
+R3516:3524 Traces <> PT_access:3 meth
+R3527:3535 Library <> R_carrier proj
+R3551:3556 Library <> AF_map proj
+R3558:3566 Traces <> PT_access:3 meth
+R3568:3576 Traces <> PT_region:5 meth
+R3592:3592 Traces <> r:1 var
+R3594:3605 Traces <> PT_target_eq:4 meth
+R3609:3616 Traces <> PT_trace:6 meth
+def 4111:4118 <> PTAccess
+R4125:4132 Library <> Codomain rec
+binder 4121:4121 <> r:8
+R4141:4153 Traces <> ProducedTrace rec
+R4155:4155 Traces <> r:8 var
+binder 4136:4137 <> pt:9
+R4160:4173 Library <> AccessFunction rec
+R4180:4188 Traces <> PT_access proj
+R4190:4190 Traces <> r:8 var
+R4192:4193 Traces <> pt:9 var
+def 4208:4215 <> PTRegion
+R4222:4229 Library <> Codomain rec
+binder 4218:4218 <> r:10
+R4238:4250 Traces <> ProducedTrace rec
+R4252:4252 Traces <> r:10 var
+binder 4233:4234 <> pt:11
+R4259:4266 Library <> :::'Region'_x not
+R4292:4292 Library <> :::'Region'_x not
+R4267:4275 Library <> AF_source proj
+R4278:4285 Traces <> PTAccess def
+R4287:4287 Traces <> r:10 var
+R4289:4290 Traces <> pt:11 var
+R4299:4307 Traces <> PT_region proj
+R4309:4309 Traces <> r:10 var
+R4311:4312 Traces <> pt:11 var
+def 4327:4333 <> PTTrace
+R4340:4347 Library <> Codomain rec
+binder 4336:4336 <> r:12
+R4356:4368 Traces <> ProducedTrace rec
+R4370:4370 Traces <> r:12 var
+binder 4351:4352 <> pt:13
+R4375:4380 Library <> :::'Trace'_x not
+R4381:4381 Traces <> r:12 var
+R4388:4395 Traces <> PT_trace proj
+R4397:4397 Traces <> r:12 var
+R4399:4400 Traces <> pt:13 var
+def 5070:5080 <> Transformed
+R5087:5099 Library <> SubjectMatter rec
+binder 5083:5083 <> s:14
+R5107:5114 Library <> Codomain rec
+binder 5103:5103 <> r:15
+R5122:5127 Library <> :::'Trace'_x not
+R5128:5128 Traces <> r:15 var
+binder 5118:5118 <> t:16
+R5143:5149 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R5170:5175 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R5155:5167 Traces <> ProducedTrace rec
+R5169:5169 Traces <> r:15 var
+binder 5150:5151 <> pt:17
+R5205:5208 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5201:5203 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5176:5184 Library <> AF_source proj
+R5187:5194 Traces <> PTAccess def
+R5196:5196 Traces <> r:15 var
+R5198:5199 Traces <> pt:17 var
+R5204:5204 Traces <> s:14 var
+R5221:5223 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5209:5215 Traces <> PTTrace def
+R5217:5217 Traces <> r:15 var
+R5219:5220 Traces <> pt:17 var
+R5224:5224 Traces <> t:16 var
+rec 6047:6059 <> MediatedSetup
+proj 6068:6077 <> MS_subject
+proj 6098:6108 <> MS_codomain
+proj 6124:6128 <> MS_O1
+proj 6150:6154 <> MS_O2
+proj 6176:6184 <> MS_O1_src
+proj 6220:6228 <> MS_O1_tgt
+proj 6265:6273 <> MS_O2_src
+proj 6309:6317 <> MS_O2_tgt
+proj 6354:6364 <> MS_distinct
+R6081:6093 Library <> SubjectMatter rec
+R6112:6119 Library <> Codomain rec
+R6132:6145 Library <> AccessFunction rec
+R6158:6171 Library <> AccessFunction rec
+R6203:6205 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6188:6196 Library <> AF_source proj
+R6198:6202 Traces <> MS_O1:21 meth
+R6206:6215 Traces <> MS_subject:19 meth
+R6247:6249 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6232:6240 Library <> AF_target proj
+R6242:6246 Traces <> MS_O1:21 meth
+R6250:6260 Traces <> MS_codomain:20 meth
+R6292:6294 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6277:6285 Library <> AF_source proj
+R6287:6291 Traces <> MS_O2:22 meth
+R6295:6304 Traces <> MS_subject:19 meth
+R6336:6338 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6321:6329 Library <> AF_target proj
+R6331:6335 Traces <> MS_O2:22 meth
+R6339:6349 Traces <> MS_codomain:20 meth
+def 7173:7187 <> Underdetermined
+R7194:7206 Library <> SubjectMatter rec
+binder 7190:7190 <> s:28
+R7214:7221 Library <> Codomain rec
+binder 7210:7210 <> r:29
+R7229:7234 Library <> :::'Trace'_x not
+R7235:7235 Traces <> r:29 var
+binder 7225:7225 <> t:30
+R7252:7258 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R7284:7289 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R7269:7281 Traces <> ProducedTrace rec
+R7283:7283 Traces <> r:29 var
+binder 7259:7261 <> pt1:31
+R7269:7281 Traces <> ProducedTrace rec
+R7283:7283 Traces <> r:29 var
+binder 7263:7265 <> pt2:32
+R7320:7327 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7316:7318 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7290:7298 Library <> AF_source proj
+R7301:7308 Traces <> PTAccess def
+R7310:7310 Traces <> r:29 var
+R7312:7314 Traces <> pt1:31 var
+R7319:7319 Traces <> s:28 var
+R7358:7365 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7354:7356 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7328:7336 Library <> AF_source proj
+R7339:7346 Traces <> PTAccess def
+R7348:7348 Traces <> r:29 var
+R7350:7352 Traces <> pt2:32 var
+R7357:7357 Traces <> s:28 var
+R7383:7390 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7379:7381 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7366:7372 Traces <> PTTrace def
+R7374:7374 Traces <> r:29 var
+R7376:7378 Traces <> pt1:31 var
+R7382:7382 Traces <> t:30 var
+R7408:7415 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7404:7406 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7391:7397 Traces <> PTTrace def
+R7399:7399 Traces <> r:29 var
+R7401:7403 Traces <> pt2:32 var
+R7407:7407 Traces <> t:30 var
+R7416:7419 Coq.Init.Logic <> True ind
+rec 8066:8074 <> Indexical
+proj 8119:8136 <> indexical_evidence
+R8081:8088 Library <> Codomain rec
+binder 8077:8077 <> r:33
+R8096:8101 Library <> :::'Trace'_x not
+R8102:8102 Traces <> r:33 var
+binder 8092:8092 <> t:34
+R8146:8153 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R8175:8177 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R8159:8172 Library <> IndexicalTrace rec
+R8174:8174 Traces <> r:33 var
+binder 8154:8155 <> it:36
+R8191:8193 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8178:8185 Library <> it_trace proj
+R8187:8187 Traces <> r:33 var
+R8189:8190 Traces <> it:36 var
+R8194:8194 Traces <> t:34 var
+def 8533:8543 <> FreePattern
+R8550:8557 Library <> Codomain rec
+binder 8546:8546 <> r:38
+R8565:8570 Library <> :::'Trace'_x not
+R8571:8571 Traces <> r:38 var
+binder 8561:8561 <> t:39
+R8599:8612 Library <> IndexicalTrace rec
+R8614:8614 Traces <> r:38 var
+binder 8594:8595 <> it:40
+R8631:8634 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R8618:8625 Library <> it_trace proj
+R8627:8627 Traces <> r:38 var
+R8629:8630 Traces <> it:40 var
+R8635:8635 Traces <> t:39 var
+rec 10112:10123 <> TraceExample
+proj 10132:10141 <> TE_subject
+proj 10162:10172 <> TE_codomain
+proj 10188:10196 <> TE_access
+proj 10218:10229 <> TE_source_eq
+proj 10269:10280 <> TE_target_eq
+R10145:10157 Library <> SubjectMatter rec
+R10176:10183 Library <> Codomain rec
+R10200:10213 Library <> AccessFunction rec
+R10252:10254 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10233:10241 Library <> AF_source proj
+R10243:10251 Traces <> TE_access:44 meth
+R10255:10264 Traces <> TE_subject:42 meth
+R10303:10305 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10284:10292 Library <> AF_target proj
+R10294:10302 Traces <> TE_access:44 meth
+R10306:10316 Traces <> TE_codomain:43 meth
+def 10333:10344 <> make_example
+R10351:10363 Library <> SubjectMatter rec
+binder 10347:10347 <> s:47
+R10371:10378 Library <> Codomain rec
+binder 10367:10367 <> r:48
+R10411:10424 Library <> AccessFunction rec
+binder 10407:10407 <> O:49
+R10469:10471 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10458:10466 Library <> AF_source proj
+R10468:10468 Traces <> O:49 var
+R10472:10472 Traces <> s:47 var
+binder 10453:10454 <> Hs:50
+R10492:10494 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10481:10489 Library <> AF_target proj
+R10491:10491 Traces <> O:49 var
+R10495:10495 Traces <> r:48 var
+binder 10476:10477 <> Ht:51
+R10502:10513 Traces <> TraceExample rec
+R10534:10543 Traces <> TE_subject proj
+R10534:10543 Traces <> TE_subject proj
+R10534:10543 Traces <> TE_subject proj
+R10562:10572 Traces <> TE_codomain proj
+R10562:10572 Traces <> TE_codomain proj
+R10591:10599 Traces <> TE_access proj
+R10591:10599 Traces <> TE_access proj
+R10618:10629 Traces <> TE_source_eq proj
+R10618:10629 Traces <> TE_source_eq proj
+R10649:10660 Traces <> TE_target_eq proj
+R10649:10660 Traces <> TE_target_eq proj
+R10534:10543 Traces <> TE_subject proj
+R10534:10543 Traces <> TE_subject proj
+R10534:10543 Traces <> TE_subject proj
+R10562:10572 Traces <> TE_codomain proj
+R10562:10572 Traces <> TE_codomain proj
+R10591:10599 Traces <> TE_access proj
+R10591:10599 Traces <> TE_access proj
+R10618:10629 Traces <> TE_source_eq proj
+R10618:10629 Traces <> TE_source_eq proj
+R10649:10660 Traces <> TE_target_eq proj
+R10649:10660 Traces <> TE_target_eq proj
+rec 11745:11758 <> PossibleSource
+proj 11816:11824 <> PS_region
+proj 11840:11848 <> PS_access
+proj 11870:11877 <> PS_image
+R11765:11777 Library <> SubjectMatter rec
+binder 11761:11761 <> s:52
+R11785:11792 Library <> Codomain rec
+binder 11781:11781 <> r:53
+R11800:11805 Library <> :::'Trace'_x not
+R11806:11806 Traces <> r:53 var
+binder 11796:11796 <> t:54
+R11828:11834 Library <> :::'Region'_x not
+R11835:11835 Traces <> s:52 var
+R11852:11865 Library <> AccessFunction rec
+rec 12119:12127 <> Inference
+proj 12192:12204 <> inferred_pair
+R12134:12146 Library <> SubjectMatter rec
+binder 12130:12130 <> s:59
+R12154:12161 Library <> Codomain rec
+binder 12150:12150 <> r:60
+R12169:12174 Library <> :::'Trace'_x not
+R12175:12175 Traces <> r:60 var
+binder 12165:12165 <> t:61
+R12208:12221 Traces <> PossibleSource rec
+R12223:12223 Traces <> s:59 var
+R12225:12225 Traces <> r:60 var
+R12227:12227 Traces <> t:61 var
+def 12244:12259 <> inferred_pair_of
+R12266:12278 Library <> SubjectMatter rec
+binder 12262:12262 <> s:64
+R12286:12293 Library <> Codomain rec
+binder 12282:12282 <> r:65
+R12301:12306 Library <> :::'Trace'_x not
+R12307:12307 Traces <> r:65 var
+binder 12297:12297 <> t:66
+R12343:12351 Traces <> Inference rec
+R12353:12353 Traces <> s:64 var
+R12355:12355 Traces <> r:65 var
+R12357:12357 Traces <> t:66 var
+binder 12339:12339 <> i:67
+R12362:12375 Traces <> PossibleSource rec
+R12377:12377 Traces <> s:64 var
+R12379:12379 Traces <> r:65 var
+R12381:12381 Traces <> t:66 var
+R12388:12400 Traces <> inferred_pair proj
+R12402:12402 Traces <> s:64 var
+R12404:12404 Traces <> r:65 var
+R12406:12406 Traces <> t:66 var
+R12408:12408 Traces <> i:67 var
+def 12584:12602 <> inferences_disagree
+R12609:12621 Library <> SubjectMatter rec
+binder 12605:12605 <> s:68
+R12629:12636 Library <> Codomain rec
+binder 12625:12625 <> r:69
+R12677:12682 Library <> :::'Trace'_x not
+R12683:12683 Traces <> r:69 var
+binder 12673:12673 <> t:70
+R12695:12703 Traces <> Inference rec
+R12705:12705 Traces <> s:68 var
+R12707:12707 Traces <> r:69 var
+R12709:12709 Traces <> t:70 var
+binder 12687:12688 <> I1:71
+binder 12690:12691 <> I2:72
+R12736:12751 Traces <> inferred_pair_of def
+R12753:12753 Traces <> s:68 var
+R12755:12755 Traces <> r:69 var
+R12757:12757 Traces <> t:70 var
+R12759:12760 Traces <> I1:71 var
+binder 12730:12731 <> p1:73
+R12777:12792 Traces <> inferred_pair_of def
+R12794:12794 Traces <> s:68 var
+R12796:12796 Traces <> r:69 var
+R12798:12798 Traces <> t:70 var
+R12800:12801 Traces <> I2:72 var
+binder 12771:12772 <> p2:74
+R12848:12853 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R12826:12829 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R12808:12816 Traces <> PS_region proj
+R12818:12818 Traces <> s:68 var
+R12820:12820 Traces <> r:69 var
+R12822:12822 Traces <> t:70 var
+R12824:12825 Traces <> p1:73 var
+R12830:12838 Traces <> PS_region proj
+R12840:12840 Traces <> s:68 var
+R12842:12842 Traces <> r:69 var
+R12844:12844 Traces <> t:70 var
+R12846:12847 Traces <> p2:74 var
+R12872:12875 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
+R12854:12862 Traces <> PS_access proj
+R12864:12864 Traces <> s:68 var
+R12866:12866 Traces <> r:69 var
+R12868:12868 Traces <> t:70 var
+R12870:12871 Traces <> p1:73 var
+R12876:12884 Traces <> PS_access proj
+R12886:12886 Traces <> s:68 var
+R12888:12888 Traces <> r:69 var
+R12890:12890 Traces <> t:70 var
+R12892:12893 Traces <> p2:74 var
