@@ -206,15 +206,47 @@ $$
 
 <div class="md">
 
+## Ologs: a diagram that pays its way
+
+Before going further it is worth naming the kind of diagram this chapter has been drawing. The picture we want — boxes for kinds of things, labelled arrows for functional relations, commutativity as an explicit constraint — has a name: the **olog**, short for *ontology log*. The term is due to Spivak & Kent's "Ologs: A Categorical Framework for Knowledge Representation" \cite{spivak2012ologs} (used more broadly in Spivak, *Category Theory for the Sciences* \cite{spivak2014cts}). The rules are simple enough to use without ever saying the words *category* or *functor*.
+
+**Three rules.**
+
+1. **Types** are drawn as boxes labelled with a *singular noun-phrase* — a kind of thing. *A person*, *a temperature*, *a trace*, *a theorem*.
+2. **Arrows** are drawn between boxes with a *singular verb-phrase* — a *functional* relation: every entity of the source type maps to exactly one entity of the target type. *mother-of : Person → Person*. *born-in : Person → City*.
+3. **Commutativity is asserted, not assumed.** If two paths from type $A$ to type $B$ are declared equal, the olog carries the equality. If unequal, the olog must show why — different arrows, a missing piece, an undecided question.
+
+Rule 3 is what turns a pretty picture into a working one. A labelled arrow is a promise ("every $A$ maps to exactly one $B$"); a commutative path is a second promise ("these two routes give the same answer"). When either promise is broken, the diagram is wrong, and the diagram tells you *where*.
+
+A worked fragment, abridged from Spivak–Kent:
+
+$$
+\begin{array}{ccc}
+\underbrace{\text{Parent}}_{\text{type}} & \xrightarrow[\;]{\text{mother-of}} & \underbrace{\text{Parent}}_{\text{type}}\\
+{\scriptstyle\text{father-of}}\downarrow & & \downarrow{\scriptstyle\text{age-of}}\\
+\underbrace{\text{Parent}}_{\text{type}} & \xrightarrow[\;]{\text{age-of}} & \underbrace{\text{Integer}}_{\text{type}}
+\end{array}
+$$
+
+Each arrow is functional (each parent has exactly one mother, one father, one age). The olog then *asks* whether two routes from Parent to Integer — the age of your mother, the age of your father — should agree. If yes, assert the commutativity; if no, the diagram must show why (different records with different ages, perhaps).
+
+For this chapter: every diagram so far is an olog in disguise. The master diagram has types $W, R_i, G$ and arrows $O_i : W \to R_i$ (each region of $W$ yields one trace) and $T_i : R_i \to G$ (each trace contributes to one global section); descent says this olog commutes. The transformation triangle has types $R_A, R_B, Z$ and arrows $T_A, T_B$ into the shared calibrated space. The pullback square has four types and four arrows and *is* the definition of a pullback as an olog of agreements. The advantage of the olog view is that it forces the diagram to *commit*: a picture with vague arrows is a story; a picture with functional arrows and asserted commutativity is a *specification* — wrong ones show where, right ones prove.
+
+</div>
+
+<div class="md">
+
 ## Admissible transitions
 
 For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
 $$
+\begin{aligned}
 \underset{\text{admissible transitions (licensed)}}{\mathcal{T}} \;\subseteq\;
-\underbrace{\{W \to R_{i}\}}_{\text{observations (world}\to\text{view)}}\;\cup\;
-\underbrace{\{R_{i} \to R_{j}\}}_{\text{translations between views}}\;\cup\;
-\underbrace{\mathrm{Hom}(\mathcal{C})}_{\text{refinements between contexts}}.
+&\underbrace{\{W \to R_i\}}_{\text{observations (world}\to\text{view)}}\\
+&\;\cup\;\underbrace{\{R_i \to R_j\}}_{\text{view-to-view translations}}\\
+&\;\cup\;\underbrace{\mathrm{Hom}(\mathcal{C})}_{\text{context refinements}}.
+\end{aligned}
 $$
 
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:
@@ -245,6 +277,8 @@ $$
 \end{array}
 $$
 
+A short definition of each, in plain words. **Subcategory.** $\mathcal{T}$ is a class of *permitted* arrows; anything outside it is not licensed and may not be used without further justification. The discipline is that the bare claim "there is a transformation" is empty until the transformation is named in $\mathcal{T}$. **Bayesian prior.** Choosing $\mathcal{T}$ is the *prior commitment* about which comparisons the modelling setup is willing to take seriously before looking at the data. The arrows you admit to $\mathcal{T}$ encode your background knowledge: a Fourier transform is licensed in physics, a hand-wave is not. **Occam penalty.** A richer $\mathcal{T}$ admits more candidate world-models and so widens the hypothesis space; the larger the space, the easier it is to fit the data by accident. Enlarging $\mathcal{T}$ is therefore an *act of over-fitting* in its own right, even before a single comparison is run. The three readings name the same restriction: subcategory from the side of allowed morphisms, prior from the side of beliefs before data, Occam from the side of model complexity. The chapter keeps all three.
+
 The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \citeauthor{sellars1956empiricism} (\citeyear{sellars1956empiricism}) rejects in his critique of the "myth of the given" \cite{sellars1956empiricism}:
 
 <div class="smart-quote" data-cite="sellars1956empiricism">
@@ -270,12 +304,13 @@ $$
 
 $$
 \begin{array}{ccc}
-& \underbrace{\text{the self-correcting web}}_{\text{any arrow may be re-justified at any contact point}} &\\
-R_1 & \rightleftarrows & R_2\\
-\updownarrow & & \updownarrow\\
-R_3 & \rightleftarrows & R_4
+\underbrace{R_1}_{\text{a calibrated reading}} & \underset{\text{calibration}}{\rightleftarrows} & \underbrace{R_2}_{\text{a derived quantity}}\\
+\underset{\text{measurement}}{\updownarrow} & & \underset{\text{measurement}}{\updownarrow}\\
+\underbrace{R_3}_{\text{a theoretical claim}} & \underset{\text{proof}}{\rightleftarrows} & \underbrace{R_4}_{\text{an archival document}}\\
 \end{array}
 $$
+
+What the picture says, in words. The four $R_i$ are deliberately heterogeneous: a sensor reading, a derived number, a theoretical claim, an archival document — different *kinds* of evidence, not four copies of the same. Every $\rightleftarrows$ is a *specific* licensed transition $T \in \mathcal{T}$: calibration in one row, measurement in the columns, proof in the bottom row, document transmission along the right. The web has no top and no bottom — there is no foundational claim that every other claim rests on. What holds it together is the *licences*: each arrow is justified in its own terms, and any arrow can be challenged at any contact point where Tarski's condition fails. Compare with the master diagram (the $W \to R_i \to G$ shape): the web is that picture *with every arrow made bidirectional*, because in the Sellarsian picture every licensed transition can also be *re*-licensed — re-justified, refined, or refused — at any point where it is put to the test.
 
 Sellars's "self-correcting enterprise" is exactly the picture of a global model $G$ that we have been building: $G$ is not the foundation of the observations $R_i$ (that would make the $R_i$ depend on $G$ in the wrong direction), nor is it the snake-tail-in-mouth picture in which every claim is supported only by other claims (the strict coherentist trap); it is the *self-correcting* enterprise, the one that gets to put *any* of its arrows in jeopardy when an admissible $T \in \mathcal{T}$ fails at the contact point. The structure of $\mathcal{T}$ is exactly the structure of the Sellarsian "space of reasons": a network of licences that justify local moves without being themselves grounded in a foundational layer, but that can be re-justified (or refused) at any contact point where Tarski's condition fails.
 
@@ -325,7 +360,7 @@ A **representation scheme** assigns to every context a set of "sections" (the th
 $$
 \underset{\text{rep. assignment}}{F}\ :\ 
 \underset{\text{contexts (arrows reversed, so refinements pull back data)}}{\mathcal{C}^{\mathrm{op}}} 
-\longrightarrow 
+\xrightarrow[\;\text{the set of sections on that context}\;]{\;\text{assign}\;}
 \underset{\text{target category (e.g. }\mathbf{Set}\text{, }\infty\text{-Gpd, }\ldots\text{)}}{\mathcal{V}}.
 $$
 
@@ -435,11 +470,15 @@ Given parallel maps $f, g : X \rightrightarrows Y$, the equalizer selects the pa
 $$
 \underbrace{E}_{\text{agreement locus}}
 \xrightarrow{\;e\;}
-\underbrace{X}_{\text{the space of candidates}}
-\underset{\underset{\text{one route}}{g}}{\overset{\overset{\text{the other route}}{f}}{\rightrightarrows}}
-\underbrace{Y}_{\text{the shared target}},
-\qquad
-\underbrace{E = \{x \in X : f(x) = g(x)\}}_{\text{the points of }X\text{ on which the two routes coincide, in }\mathbf{Set}}.
+\underbrace{X}_{\text{the candidates}}
+\underset{\underset{\text{route 2}}{g}}{\overset{\overset{\text{route 1}}{f}}{\rightrightarrows}}
+\underbrace{Y}_{\text{shared target}}
+$$
+
+In $\mathbf{Set}$, the agreement locus is spelled out explicitly:
+
+$$
+\underbrace{E = \{x \in X : f(x) = g(x)\}}_{\text{the points of }X\text{ where the two routes coincide.}}
 $$
 
 Two thermometers report a temperature over time: the equalizer is the *times* at which they agree exactly. Two proofs of the same theorem produce numeric outputs by two different routes: the equalizer is the inputs on which the outputs literally match. In an $(\infty,1)$-category the equalizer is a *space of paths of agreement*: same idea, more room.

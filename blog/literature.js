@@ -8467,5 +8467,23 @@ window.bibData = {
 		publisher: "Philosophy of Science",
 		url: "https://www.journals.uchicago.edu/doi/10.1086/392906",
 		alternativetitle: "The Ambits of Structural Realism"
+	},
+
+	"spivak2012ologs": {
+		title: "Ologs: A Categorical Framework for Knowledge Representation",
+		author: "David I. Spivak and Robert E. Kent",
+		year: 2012,
+		publisher: "PLoS ONE 7(1): e24274",
+		url: "https://doi.org/10.1371/journal.pone.0024274",
+		alternativetitle: "Ologs"
+	},
+
+	"spivak2014cts": {
+		title: "Category Theory for the Sciences",
+		author: "David I. Spivak",
+		year: 2014,
+		publisher: "MIT Press",
+		url: "https://mitpress.mit.edu/9780262028134/category-theory-for-the-sciences/",
+		alternativetitle: "Category Theory for the Sciences"
 	}
 };
