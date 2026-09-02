@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Coherent World Models — Interaktive Visualisierung</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#111823; --ink:#e6edf3; --dim:#8b98a5;
+    --accent:#7dd3fc; --accent2:#f0abfc; --good:#86efac; --bad:#fca5a5; --warn:#fcd34d;
+    --line:#1f2937;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  header{padding:40px 24px 20px;text-align:center;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f172a,#0a0e14)}
+  h1{margin:0;font-size:32px;letter-spacing:-.5px}
+  h1 span{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;color:transparent}
+  header p{color:var(--dim);margin:8px 0 0;max-width:780px;margin-inline:auto}
+  nav{position:sticky;top:0;background:rgba(10,14,20,.92);backdrop-filter:blur(10px);z-index:100;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  nav button{background:transparent;color:var(--dim);border:1px solid var(--line);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;transition:all .2s}
+  nav button:hover{color:var(--ink);border-color:var(--accent)}
+  nav button.active{color:var(--accent);border-color:var(--accent);background:rgba(125,211,252,.08)}
+  main{max-width:1200px;margin:0 auto;padding:24px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:24px}
+  section h2{margin-top:0;color:var(--accent);font-size:22px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  section h3{color:var(--accent2);font-size:16px;margin-top:20px}
+  .intro{color:var(--dim);font-size:14px;margin-bottom:16px}
+  .canvas-wrap{background:#050810;border:1px solid var(--line);border-radius:8px;padding:12px;margin:12px 0}
+  canvas{display:block;width:100%;height:auto}
+  .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:12px 0;padding:12px;background:#050810;border-radius:8px}
+  .controls label{font-size:13px;color:var(--dim);display:flex;align-items:center;gap:6px}
+  .controls input[type=range]{accent-color:var(--accent)}
+  .controls button{background:var(--accent);color:#0a0e14;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px}
+  .controls button:hover{background:var(--accent2)}
+  .controls button.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+  .box{background:#050810;border:1px solid var(--line);border-radius:8px;padding:14px}
+  .box h4{margin:0 0 8px;color:var(--accent);font-size:14px}
+  .box p{margin:4px 0;font-size:13px;color:var(--dim)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-right:4px}
+  .badge.good{background:rgba(134,239,172,.15);color:var(--good)}
+  .badge.bad{background:rgba(252,165,165,.15);color:var(--bad)}
+  .badge.warn{background:rgba(252,211,77,.15);color:var(--warn)}
+  .formula{background:#050810;border-left:3px solid var(--accent);padding:10px 14px;margin:10px 0;border-radius:4px;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--accent);font-weight:600}
+  td{color:var(--dim)}
+  .clickable{cursor:pointer;transition:all .2s}
+  .clickable:hover{background:rgba(125,211,252,.05)}
+  .highlight{background:rgba(240,171,252,.12) !important;color:var(--ink) !important}
+  .step-indicator{display:flex;gap:4px;margin:10px 0}
+  .step-indicator div{flex:1;height:4px;background:var(--line);border-radius:2px;transition:background .3s}
+  .step-indicator div.active{background:var(--accent)}
+  .tag{background:rgba(125,211,252,.1);color:var(--accent);padding:2px 8px;border-radius:12px;font-size:11px;margin-right:4px}
+  .kbd{font-family:monospace;background:#050810;padding:2px 6px;border-radius:3px;font-size:12px;color:var(--accent2)}
+  .flow-node{fill:#111823;stroke:var(--accent);stroke-width:2}
+  .flow-text{fill:var(--ink);font-size:12px;text-anchor:middle;font-family:sans-serif}
+  .status{padding:10px 14px;border-radius:6px;margin:10px 0;font-size:13px}
+  .status.ok{background:rgba(134,239,172,.1);border-left:3px solid var(--good);color:var(--good)}
+  .status.fail{background:rgba(252,165,165,.1);border-left:3px solid var(--bad);color:var(--bad)}
+  footer{text-align:center;color:var(--dim);padding:24px;font-size:12px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Coherent <span>World Models</span></h1>
+  <p>Von der Welt zum Modell — eine visuelle Reise durch <b>Traces</b>, <b>admissible transitions</b>, <b>Sheaves / Descent</b>, <b>Tarski's Wahrheit</b>, und was das alles mit <b>LLMs</b> zu tun hat.</p>
+</header>
+
+<nav id="nav">
+  <button class="active" data-target="s-question">1 · Die Frage</button>
+  <button data-target="s-traces">2 · Traces</button>
+  <button data-target="s-differences">3 · Differenz-Ebenen</button>
+  <button data-target="s-sameness">4 · Sameness-Hierarchie</button>
+  <button data-target="s-transitions">5 · Admissible T</button>
+  <button data-target="s-sheaf">6 · Sheaves & Descent</button>
+  <button data-target="s-pullback">7 · Pullback / Equalizer</button>
+  <button data-target="s-master">8 · Master-Diagramm</button>
+  <button data-target="s-tarski">9 · Tarski · Wahrheit</button>
+  <button data-target="s-llm">10 · LLMs & Halluzination</button>
+  <button data-target="s-summary">11 · Zusammenfassung</button>
+</nav>
+
+<main>
+
+<!-- ============================= 1 QUESTION ============================= -->
+<section id="s-question">
+  <h2>1 · Die zentrale Frage</h2>
+  <p class="intro">Ein Physiker greift nie das Elektron „an sich"; ein Historiker betritt nicht die Vergangenheit. Was ankommt sind <b>transformierte Spuren</b> (traces). Die Frage lautet:</p>
+  <div class="formula">
+    $$\text{Wann verdient eine Sammlung partieller, transformierter Spuren den Namen eine Beschreibung eines Gegenstands?}$$
+  </div>
+  <p class="intro">Die Antwort in drei Traditionen ist <b>dieselbe Operation</b> unter drei Namen:</p>
+  <div class="grid2">
+    <div class="box"><h4>Mathematik: Descent</h4><p>Kompatible lokale Daten auf einer zulässigen Überdeckung bestimmen eindeutig einen globalen Schnitt (Sheaf, ∞-Sheaf, Čech nerve).</p></div>
+    <div class="box"><h4>Philosophie: Kohärenz</h4><p>Ein Modell ist wahr insofern seine Teile zusammenhängen — Bradley, Blanshard, BonJour.</p></div>
+    <div class="box" style="grid-column:1/-1"><h4>Epistemologie: Struktur der Rechtfertigung</h4><p>Der Sellars'sche „Raum der Gründe" — post-foundationalistisch, ein Netz lizenzierter Übergänge statt eines privilegierten Fundaments.</p></div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="threeTraditions" height="220"></canvas>
+  </div>
+  <div class="status ok">Die drei Traditionen sind <b>ein Vokabular</b> für dieselbe Disziplin: locate every difference at the right level.</div>
+</section>
+
+<!-- ============================= 2 TRACES ============================= -->
+<section id="s-traces">
+  <h2>2 · Traces — was wir wirklich haben</h2>
+  <p class="intro">Ein <b>Trace</b> ist alles, was eine Access-Funktion $O: W \to R$ hinterlässt. Klick auf einen Kanal, um die vier Eigenschaften zu inspizieren.</p>
+  <div class="canvas-wrap">
+    <canvas id="traceCanvas" height="320"></canvas>
+  </div>
+  <div class="controls">
+    <button data-trace="visual">👁 Visuell (Zug)</button>
+    <button data-trace="audio">🔊 Akustisch</button>
+    <button data-trace="radar">📡 Radar</button>
+    <button data-trace="text">📄 Archiv (100J später)</button>
+  </div>
+  <div id="traceInfo" class="box"><p class="intro">Wähle einen Kanal oben.</p></div>
+</section>
+
+<!-- ============================= 3 DIFFERENCES ============================= -->
+<section id="s-differences">
+  <h2>3 · Drei Ebenen der Differenz</h2>
+  <p class="intro">Zwei Reports stimmen nicht überein. Das <b>Symptom</b> ist eins, die <b>Ursache</b> kann auf drei Ebenen liegen. Interaktiv: Ändere Welt / Instrument / Interpretation und sieh, wie die Reports divergieren.</p>
+  <div class="grid2">
+    <div>
+      <div class="controls" style="flex-direction:column;align-items:stretch">
+        <label>🌍 Welt-Differenz $W_1 \ne W_2$: <input type="range" id="dWorld" min="0" max="1" step=".01" value="0"></label>
+        <label>🔧 Instrument-Differenz $I_1 \ne I_2$: <input type="range" id="dInstr" min="0" max="1" step=".01" value="0"></label>
+        <label>🧠 Interpretations-Differenz $\nu_1 \ne \nu_2$: <input type="range" id="dInterp" min="0" max="1" step=".01" value="0"></label>
+      </div>
+      <div id="diffInfo" class="box"></div>
+    </div>
+    <div class="canvas-wrap"><div id="diffPlot" style="height:400px"></div></div>
+  </div>
+</section>
+
+<!-- ============================= 4 SAMENESS ============================= -->
+<section id="s-sameness">
+  <h2>4 · Die Hierarchie der „Selbigkeit"</h2>
+  <p class="intro">Nicht alles was „gleich" heißt ist gleich derselben Art. Jede Zeile <b>impliziert</b> jede darunter. Nach oben zu springen ohne Beweis ist der Kardinalfehler.</p>
+  <div class="canvas-wrap">
+    <canvas id="samenessLadder" height="480"></canvas>
+  </div>
+  <div id="samenessInfo" class="box"><p class="intro">Klick auf eine Stufe der Leiter.</p></div>
+  <div class="status fail"><b>Verboten:</b> Eine schwächere Sameness stillschweigend in eine stärkere upgraden.</div>
+</section>
+
+<!-- ============================= 5 TRANSITIONS ============================= -->
+<section id="s-transitions">
+  <h2>5 · Admissible Transitions $\mathcal{T}$</h2>
+  <p class="intro">Die bare Behauptung „es gibt eine Transformation" ist leer. $\mathcal{T}$ ist die <b>lizenzierte Klasse</b> — a priori gerechtfertigte Übergänge. Drei Rollen einer Restriction:</p>
+  <div class="grid2">
+    <div class="box"><h4>Subcategory</h4><p>Nur bestimmte Pfeile erlaubt. Ein Pfeil nicht auf der Liste hat keine Lizenz.</p></div>
+    <div class="box"><h4>Bayesian Prior</h4><p>Vor jeder Beobachtung: welche Vergleiche nehmen wir a priori ernst?</p></div>
+    <div class="box"><h4>Occam Penalty</h4><p>Zu großes $\mathcal{T}$ ⇒ Overfitting an Zufälle. Freiheit kostet Evidenz.</p></div>
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="transitionsCanvas" height="320"></canvas>
+  </div>
+  <div class="controls">
+    <label>Größe von $\mathcal{T}$ (Freiheit): <input type="range" id="tSize" min="1" max="50" step="1" value="10"></label>
+    <label>Datenmenge: <input type="range" id="tData" min="1" max="50" step="1" value="20"></label>
+  </div>
+  <div id="tInfo" class="box"></div>
+</section>
+
+<!-- ============================= 6 SHEAF ============================= -->
+<section id="s-sheaf">
+  <h2>6 · Sheaves & Descent — die Kern-Operation</h2>
+  <p class="intro">Ein <b>Sheaf</b> sagt: <i>compatible local data on an admissible cover ⇒ unique global data.</i> Klick auf zwei Patches; verschiebe ihre Werte auf dem Overlap. Der globale Schnitt existiert genau dann, wenn sie auf dem Overlap übereinstimmen.</p>
+  <div class="canvas-wrap">
+    <canvas id="sheafCanvas" height="360"></canvas>
+  </div>
+  <div class="controls">
+    <label>Patch A: <input type="range" id="patchA" min="0" max="100" value="50"></label>
+    <label>Patch B: <input type="range" id="patchB" min="0" max="100" value="50"></label>
+    <label>Toleranz $\varepsilon$: <input type="range" id="patchEps" min="0" max="30" value="2"></label>
+  </div>
+  <div id="sheafStatus" class="status"></div>
+  <div class="formula">
+    $$F(c) \;\xrightarrow{\;\sim\;}\; \mathrm{Eq}\!\left(\prod_i F(c_i)\;\rightrightarrows\;\prod_{ij} F(c_i \times_c c_j)\right)$$
+  </div>
+</section>
+
+<!-- ============================= 7 PULLBACK ============================= -->
+<section id="s-pullback">
+  <h2>7 · Pullback & Equalizer — das Objekt der Übereinstimmung</h2>
+  <p class="intro">Der <b>Equalizer</b> selektiert die Punkte, wo zwei Funktionen übereinstimmen. Der <b>Pullback</b> ist das Objekt der Paare, die in einem gemeinsamen Ziel gleich sind. Bewege die Kurven und sieh die Agreement-Locus in Echtzeit.</p>
+  <div class="canvas-wrap"><div id="equalizerPlot" style="height:420px"></div></div>
+  <div class="controls">
+    <label>$f$ Phase: <input type="range" id="fPhase" min="0" max="628" value="0"></label>
+    <label>$g$ Phase: <input type="range" id="gPhase" min="0" max="628" value="200"></label>
+    <label>Toleranz $\varepsilon$: <input type="range" id="eqEps" min="0" max="50" value="10"></label>
+  </div>
+  <p class="intro">Der Pullback ist die kategorielle Verallgemeinerung: zwei Views $X, Y$ die durch $f, g$ auf ein gemeinsames kalibriertes $Z$ abgebildet werden — der Pullback $X \times_Z Y$ ist das Objekt aller Paare, die in $Z$ übereinstimmen.</p>
+</section>
+
+<!-- ============================= 8 MASTER ============================= -->
+<section id="s-master">
+  <h2>8 · Das eine Diagramm — Master-Bild</h2>
+  <p class="intro">Alles läuft auf dieses Bild hinaus. Subject matter $W$ oben, mehrere Views $R_i$ (Beobachtungen $O_i$), globales Modell $G$ als Limes. Klick auf einen Pfeil, um ihn zu untersuchen.</p>
+  <div class="canvas-wrap">
+    <svg id="masterSvg" viewBox="0 0 800 500" style="width:100%;height:500px"></svg>
+  </div>
+  <div id="masterInfo" class="box"><p class="intro">Klick auf einen Knoten oder Pfeil im Diagramm.</p></div>
+  <table>
+    <tr><th>Setting</th><th>Was $G$ ist</th></tr>
+    <tr><td>Strict</td><td>Limit in $\mathbf{Set}$</td></tr>
+    <tr><td>Homotopical</td><td>Limit in $(\infty,1)$-topos</td></tr>
+    <tr><td>Model-theoretic</td><td>Objekt in $\mathrm{Mod}(T_D)$</td></tr>
+    <tr><td>Probabilistic</td><td>Posterior mode</td></tr>
+    <tr><td>ML</td><td>Gelernter Latent, der $R_i$ jointly predictable macht</td></tr>
+  </table>
+</section>
+
+<!-- ============================= 9 TARSKI ============================= -->
+<section id="s-tarski">
+  <h2>9 · Tarski's Convention T — Wahrheit als Kontakt</h2>
+  <p class="intro">Kohärenz ist notwendig aber nicht hinreichend. <b>Correspondence</b> ergänzt sie: ein Satz $S$ ist wahr genau dann, wenn $p$, wobei $p$ der Meta-Satz ist, der $S$ übersetzt.</p>
+  <div class="formula">
+    $$\underbrace{S}_{\text{Satz im Modell}} \;\;\text{ist wahr iff}\;\; \underbrace{p}_{\text{Fakt in der Meta-Sprache}}$$
+  </div>
+  <div class="canvas-wrap">
+    <canvas id="tarskiCanvas" height="320"></canvas>
+  </div>
+  <p class="intro">Die drei Pathologien — klick sie an:</p>
+  <div class="grid2">
+    <div class="box clickable" onclick="showPath(1)"><h4>① Self-consistent Fantasy</h4><p>Descent ✓, Tarski ✗ — perfekt kohärente Fiktion.</p></div>
+    <div class="box clickable" onclick="showPath(2)"><h4>② Factbook</h4><p>Tarski ✓ an jedem Punkt, Descent ✗ — Heap von Fakten ohne Struktur.</p></div>
+    <div class="box clickable" onclick="showPath(3)" style="grid-column:1/-1"><h4>③ Contact-point Liar (Hallucinating Model)</h4><p>Intern kohärent, keine echten Weltkontakte bestehen den Tarski-Test.</p></div>
+  </div>
+  <div id="tarskiInfo" class="box" style="margin-top:12px"></div>
+</section>
+
+<!-- ============================= 10 LLM ============================= -->
+<section id="s-llm">
+  <h2>10 · LLMs im Master-Diagramm</h2>
+  <p class="intro">Das ganze Kapitel angewandt: Ein LLM ist ein globaler Schnitt $G$, berechnet aus einem Cover $\{c_i\}$ = Trainingskorpus. <b>Interne</b> $\mathcal{T}$ (Tokenisierung, Attention, MLP) — aber <b>keine externen Beobachtungspfeile</b> zu $W$ ausser durch Augmentationen.</p>
+  <div class="canvas-wrap">
+    <svg id="llmSvg" viewBox="0 0 800 480" style="width:100%;height:480px"></svg>
+  </div>
+  <div class="controls">
+    <button data-aug="none">Baseline LLM</button>
+    <button data-aug="context">+ In-Context</button>
+    <button data-aug="rag">+ RAG (Retrieval)</button>
+    <button data-aug="tools">+ Tools / Code</button>
+    <button data-aug="formal">+ Formal Verification (Coq/Lean)</button>
+    <button data-aug="all">Vollausbau</button>
+  </div>
+  <div id="llmInfo" class="box"></div>
+
+  <h3>Halluzination — präzise diagnostiziert</h3>
+  <p class="intro">Typische Halluzination ist ein <b>non-glueable presheaf</b>: Trainingsdaten enthalten widersprüchliche Patches, das Modell erzwingt einen globalen Schnitt durch Mitteln/Auswahl. Doppelter Fehler: Kohärenz <i>und</i> Korrespondenz.</p>
+  <table>
+    <tr><th>Failure-Modus</th><th>Was bricht</th><th>Remedy</th></tr>
+    <tr><td>Non-glueable presheaf</td><td>Kohärenz + Korrespondenz</td><td>RAG, Tools, cleaner data</td></tr>
+    <tr><td>Self-consistent fantasy</td><td>nur Korrespondenz</td><td>Grounding in Quellen</td></tr>
+    <tr><td>Factbook</td><td>nur Kohärenz</td><td>CoT, Scratchpads</td></tr>
+    <tr><td>Calibrated error</td><td>Korrespondenz (subtil)</td><td>Re-Kalibrierung, formal verification</td></tr>
+  </table>
+</section>
+
+<!-- ============================= 11 SUMMARY ============================= -->
+<section id="s-summary">
+  <h2>11 · Der eine Satz</h2>
+  <div class="formula">
+    $$\boxed{\begin{aligned}
+    &\textbf{Ein Weltmodell ist der globale Schnitt, gewonnen aus lokalen}\\
+    &\textbf{Descent-Daten entlang einer admissiblen Überdeckung —}\\
+    &\textbf{provisorisch, revidierbar, niemals identisch}\\
+    &\textbf{mit dem Gegenstand, den es repräsentiert.}
+    \end{aligned}}$$
+  </div>
+  <p class="intro">Alles andere ist eine Wahl von drei Zutaten:</p>
+  <div class="canvas-wrap"><canvas id="finalCanvas" height="260"></canvas></div>
+  <h3>Die 9-Schritt-Disziplin</h3>
+  <ol style="color:var(--dim);font-size:14px;line-height:1.9">
+    <li>Nimm das rohe Datum $D$.</li>
+    <li>Interpretiere es als $I(D)$.</li>
+    <li>Zeichne die Kette $W \to D \to I$.</li>
+    <li>Identifiziere Overlaps.</li>
+    <li>Spezifiziere admissible Transitions $T_{ij} \in \mathcal{T}$.</li>
+    <li>Entscheide welche Sameness ($=,\cong,\simeq,\le\varepsilon,\text{stat},\exists M$).</li>
+    <li>Baue den Kandidaten $G$.</li>
+    <li>Notiere Residuen.</li>
+    <li>Plane die nächste Beobachtung.</li>
+  </ol>
+  <h3>Verboten</h3>
+  <div class="grid2">
+    <div class="box"><h4>1 · Silent upgrade</h4><p>Schwache Sameness stillschweigend zu stärkerer machen.</p></div>
+    <div class="box"><h4>2 · Unrestringiertes $\mathcal{T}$</h4><p>Kohärenz wird vakuös.</p></div>
+    <div class="box"><h4>3 · $G \equiv W$</h4><p>Modell mit Welt identifizieren.</p></div>
+    <div class="box"><h4>4 · Kohärenz $\equiv$ Descent</h4><p>Interne Konsistenz für grounded descent halten.</p></div>
+    <div class="box" style="grid-column:1/-1"><h4>5 · Analogie $\equiv$ Theorem</h4><p>Suggestive Analogien (Attention, Residuals, Embeddings) als Theorem in der geliehenen Kategorie behandeln.</p></div>
+  </div>
+  <div class="status ok" style="margin-top:16px"><b>A useful analogy is not a theorem.</b> Tarski's Convention T <i>ist</i> ein Theorem. Der Gebrauch, den wir davon machen, ist eine <i>Disziplin</i>.</div>
+</section>
+
+</main>
+
+<footer>
+  Interaktive Visualisierung · <span style="color:var(--accent)">Coherent World Models</span> · Traces → Descent → Tarski → LLMs
+</footer>
+
+<script>
+/* ============ NAV ============ */
+const navBtns = document.querySelectorAll('#nav button');
+navBtns.forEach(b=>b.addEventListener('click',()=>{
+  const el = document.getElementById(b.dataset.target);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+}));
+const sections = [...document.querySelectorAll('section')];
+window.addEventListener('scroll',()=>{
+  const y = window.scrollY + 120;
+  let current = sections[0].id;
+  sections.forEach(s=>{if(s.offsetTop <= y) current = s.id;});
+  navBtns.forEach(b=>b.classList.toggle('active', b.dataset.target===current));
+});
+
+/* ============ HELPERS ============ */
+function fitCanvas(c){
+  const dpr = window.devicePixelRatio || 1;
+  const w = c.clientWidth;
+  const h = c.height ? c.height : c.clientHeight;
+  c.width = w*dpr; c.height = h*dpr;
+  const ctx = c.getContext('2d'); ctx.scale(dpr,dpr);
+  return {ctx, w, h};
+}
+
+/* ============ 1 · THREE TRADITIONS ============ */
+(function(){
+  const c = document.getElementById('threeTraditions');
+  c.height = 220;
+  const {ctx,w,h} = fitCanvas(c);
+  const cx = w/2, cy = h/2;
+  const R = Math.min(w,h)*0.35;
+  const nodes = [
+    {label:'Mathematik: Descent', color:'#7dd3fc', a:-Math.PI/2},
+    {label:'Philosophie: Kohärenz', color:'#f0abfc', a:-Math.PI/2 + 2*Math.PI/3},
+    {label:'Epistemologie: Struktur', color:'#86efac', a:-Math.PI/2 + 4*Math.PI/3}
+  ];
+  // center
+  ctx.fillStyle = '#1f2937'; ctx.strokeStyle='#f0abfc'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,cy,32,0,2*Math.PI); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#e6edf3'; ctx.font='bold 12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Descent',cx,cy-2); ctx.fillText('= Coherence',cx,cy+12);
+  nodes.forEach(n=>{
+    const x = cx + Math.cos(n.a)*R, y = cy + Math.sin(n.a)*R;
+    ctx.strokeStyle = n.color; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(cx + Math.cos(n.a)*32, cy + Math.sin(n.a)*32);
+    ctx.lineTo(x - Math.cos(n.a)*45, y - Math.sin(n.a)*45); ctx.stroke();
+    ctx.fillStyle='#111823'; ctx.strokeStyle=n.color;
+    ctx.beginPath(); ctx.arc(x,y,42,0,2*Math.PI); ctx.fill(); ctx.stroke();
+    ctx.fillStyle=n.color; ctx.font='bold 11px sans-serif';
+    n.label.split(': ').forEach((line,i)=>{ ctx.fillText(line, x, y-5+i*14); });
+  });
+})();
+
+/* ============ 2 · TRACES ============ */
+const traceData = {
+  visual: {label:'👁 Visueller Kanal', color:'#7dd3fc',
+    props:['Transformed: Photonen → Retina → V1 → Wahrnehmung','Mediated: durch Sehsystem geformt','Underdetermined: viele (W,O) → gleiches r','Indexical? Ja, meist',],
+    formula:'O_v : W \\to R_v'},
+  audio:{label:'🔊 Akustischer Kanal', color:'#f0abfc',
+    props:['Transformed: Druckwellen → Cochlea → A1','Mediated: mit Doppler-Delay','Underdetermined: Quelle rekonstruieren','Indexical: bei Kalibrierung',],
+    formula:'O_a : W \\to R_a'},
+  radar:{label:'📡 Radar', color:'#86efac',
+    props:['Transformed: RF-Puls → Reflexion → digitales Sample','Mediated: durch Antennencharakteristik','Underdetermined: RCS-Ambiguität','Indexical: physikalisches Modell',],
+    formula:'O_r : W \\to R_r'},
+  text:{label:'📄 Archiv (100 Jahre später)', color:'#fcd34d',
+    props:['Transformed: Ereignis → Zeuge → Schrift → Kopie → Archiv','Mediated: durch jede Weitergabe','Underdetermined: massive Interpretation','Indexical: nur bei belegter Provenienz',],
+    formula:'C \\circ L_a \\circ O_a : W \\to R_h'}
+};
+(function(){
+  const c = document.getElementById('traceCanvas');
+  function draw(active){
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    // W center top
+    ctx.fillStyle='#1f2937'; ctx.strokeStyle='#f0abfc'; ctx.lineWidth=2;
+    const wx = w/2, wy=50;
+    ctx.beginPath(); ctx.arc(wx,wy,28,0,2*Math.PI); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#e6edf3'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('W',wx,wy+5);
+    ctx.font='11px sans-serif'; ctx.fillStyle='#8b98a5';
+    ctx.fillText('Subject Matter',wx,wy+45);
+    // channels
+    const channels = [
+      {k:'visual', x:w*0.15, y:h-80},
+      {k:'audio', x:w*0.4, y:h-80},
+      {k:'radar', x:w*0.65, y:h-80},
+      {k:'text', x:w*0.9, y:h-80}
+    ];
+    channels.forEach(ch=>{
+      const t = traceData[ch.k];
+      const isA = ch.k===active;
+      ctx.strokeStyle = isA ? t.color : '#1f2937';
+      ctx.lineWidth = isA ? 3 : 1;
+      ctx.beginPath(); ctx.moveTo(wx,wy+28); ctx.lineTo(ch.x,ch.y-25); ctx.stroke();
+      // arrow
+      if(isA){
+        const ang = Math.atan2(ch.y-25-(wy+28), ch.x-wx);
+        ctx.beginPath();
+        ctx.moveTo(ch.x,ch.y-25);
+        ctx.lineTo(ch.x-10*Math.cos(ang-.4), ch.y-25-10*Math.sin(ang-.4));
+        ctx.lineTo(ch.x-10*Math.cos(ang+.4), ch.y-25-10*Math.sin(ang+.4));
+        ctx.closePath(); ctx.fillStyle=t.color; ctx.fill();
+      }
+      ctx.fillStyle=isA ? '#111823' : '#0a0e14'; ctx.strokeStyle=isA?t.color:'#374151';
+      ctx.lineWidth=isA?2:1;
+      ctx.beginPath(); ctx.arc(ch.x,ch.y,25,0,2*Math.PI); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = isA ? t.color : '#8b98a5'; ctx.font='bold 12px sans-serif';
+      ctx.fillText('R_'+ch.k[0], ch.x, ch.y+5);
+      ctx.font='10px sans-serif'; ctx.fillStyle='#8b98a5';
+      ctx.fillText(t.label.split(' ')[0], ch.x, ch.y+42);
+    });
+  }
+  draw(null);
+  document.querySelectorAll('[data-trace]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const k = b.dataset.trace;
+      draw(k);
+      const t = traceData[k];
+      document.getElementById('traceInfo').innerHTML = `
+        <h4 style="color:${t.color}">${t.label}</h4>
+        <div class="formula">$$${t.formula}$$</div>
+        ${t.props.map(p=>`<p>• ${p}</p>`).join('')}
+      `;
+      if(window.MathJax) MathJax.typesetPromise([document.getElementById('traceInfo')]);
+    });
+  });
+  window.addEventListener('resize',()=>draw(null));
+})();
+
+/* ============ 3 · DIFFERENCES ============ */
+(function(){
+  const w = +document.getElementById('dWorld').value;
+  function update(){
+    const dW = +document.getElementById('dWorld').value;
+    const dI = +document.getElementById('dInstr').value;
+    const dV = +document.getElementById('dInterp').value;
+    const N = 100;
+    const xs = Array.from({length:N},(_,i)=>i/N*10);
+    const r1 = xs.map(x=> Math.sin(x) + dV*0.3*Math.cos(3*x));
+    const r2 = xs.map(x=> Math.sin(x + dW*0.5) * (1+dI*0.3) + (dV+dW)*0.2*Math.cos(3*x) + dI*0.1);
+    const totalDiff = (dW+dI+dV);
+    Plotly.newPlot('diffPlot',[
+      {x:xs,y:r1,name:'Report 1',line:{color:'#7dd3fc',width:3}},
+      {x:xs,y:r2,name:'Report 2',line:{color:'#f0abfc',width:3}}
+    ],{
+      paper_bgcolor:'#050810',plot_bgcolor:'#050810',
+      font:{color:'#8b98a5',family:'Inter'},
+      margin:{t:30,l:40,r:20,b:40},
+      xaxis:{title:'Zeit / Position',gridcolor:'#1f2937'},
+      yaxis:{title:'Messwert',gridcolor:'#1f2937'},
+      legend:{orientation:'h',y:1.15}
+    },{displayModeBar:false,responsive:true});
+    let diag='';
+    if(totalDiff<0.05) diag = '<span class="badge good">EINIG</span> Beide Reports stimmen überein.';
+    else{
+      const parts=[];
+      if(dW>.1) parts.push(`<span class="badge bad">Welt</span> $W_1 \\ne W_2$ — verschiedene Gegenstände`);
+      if(dI>.1) parts.push(`<span class="badge warn">Instrument</span> $I_1 \\ne I_2$ — Kalibrierung erforderlich`);
+      if(dV>.1) parts.push(`<span class="badge">Interpretation</span> $\\nu_1 \\ne \\nu_2$ — Framework-Konflikt`);
+      diag = parts.join('<br>');
+    }
+    document.getElementById('diffInfo').innerHTML = `
+      <h4>Diagnose</h4>
+      <p style="font-size:14px;color:var(--ink)">${diag}</p>
+      <p class="intro" style="margin-top:12px">Ein Symptom (zwei divergierende Reports) — drei mögliche Ursachen. Die <b>gesamte Disziplin</b> besteht darin, die Differenz an der richtigen Stelle zu lokalisieren.</p>
+    `;
+    if(window.MathJax) MathJax.typesetPromise([document.getElementById('diffInfo')]);
+  }
+  ['dWorld','dInstr','dInterp'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+  update();
+})();
+
+/* ============ 4 · SAMENESS LADDER ============ */
+const samenessLevels = [
+  {name:'x = y',            sub:'literal identity',    ex:'2+2=4; dasselbe Photon',              witness:'eine Identität',                 color:'#f0abfc'},
+  {name:'x ≅ y',            sub:'isomorphism',          ex:'ℤ/6 ≅ ℤ/2 × ℤ/3',                     witness:'invertible map',                 color:'#c084fc'},
+  {name:'x ≃ y',            sub:'homotopy equivalence', ex:'cup ≃ donut; Blitz & Donner',         witness:'coherent deformation',           color:'#a78bfa'},
+  {name:'d(x,y) ≤ ε',       sub:'approximation',        ex:'Thermometer: 20.01 vs 20.02',         witness:'quantified residual',            color:'#7dd3fc'},
+  {name:'P(D₁,D₂|M) hoch',  sub:'statistical',          ex:'zwei Studien verwerfen dasselbe H₀',  witness:'likelihood unter M',             color:'#67e8f9'},
+  {name:'∃M : M ⊨ 𝒮',        sub:'model-theoretic',      ex:'zwei Axiomatiken, ein Modell',        witness:'gemeinsames Modell',             color:'#86efac'}
+];
+(function(){
+  const c = document.getElementById('samenessLadder');
+  const boxes=[];
+  function draw(hover=-1){
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    const N = samenessLevels.length;
+    const boxH = (h-40)/N - 6;
+    boxes.length=0;
+    samenessLevels.forEach((s,i)=>{
+      const y = 20 + i*(boxH+6);
+      const isH = i===hover;
+      ctx.fillStyle = isH ? 'rgba(240,171,252,.15)' : '#111823';
+      ctx.strokeStyle = s.color; ctx.lineWidth = isH?3:2;
+      ctx.beginPath(); ctx.roundRect(40, y, w-80, boxH, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = s.color; ctx.font='bold 15px sans-serif'; ctx.textAlign='left';
+      ctx.fillText(s.name, 60, y+boxH/2+2);
+      ctx.fillStyle='#8b98a5'; ctx.font='12px sans-serif';
+      ctx.fillText(s.sub, 200, y+boxH/2+2);
+      ctx.fillStyle='#e6edf3'; ctx.font='11px sans-serif'; ctx.textAlign='right';
+      ctx.fillText(s.ex, w-60, y+boxH/2+2);
+      boxes.push({x:40,y,w:w-80,h:boxH,i});
+      // arrow ⇓
+      if(i<N-1){
+        ctx.strokeStyle = '#374151'; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(w/2, y+boxH+1); ctx.lineTo(w/2, y+boxH+5); ctx.stroke();
+        ctx.fillStyle='#374151'; ctx.font='10px monospace'; ctx.textAlign='center';
+        ctx.fillText('⇓ implies', w/2+30, y+boxH+5);
+      }
+    });
+    ctx.textAlign='left';
+  }
+  draw();
+  c.addEventListener('mousemove',e=>{
+    const rect = c.getBoundingClientRect();
+    const x = e.clientX-rect.left, y = e.clientY-rect.top;
+    const hit = boxes.find(b=> x>=b.x && x<=b.x+b.w && y>=b.y && y<=b.y+b.h);
+    draw(hit? hit.i : -1);
+    if(hit){
+      const s = samenessLevels[hit.i];
+      document.getElementById('samenessInfo').innerHTML = `
+        <h4 style="color:${s.color}">${s.name} — ${s.sub}</h4>
+        <p><b>Beispiel:</b> ${s.ex}</p>
+        <p><b>Witness:</b> ${s.witness}</p>
+        <p class="intro">Jede höhere Zeile ist automatisch Witness für jede niedrigere. Der umgekehrte Sprung ist der <b>silent upgrade</b> — der Kardinalfehler.</p>
+      `;
+    }
+  });
+  window.addEventListener('resize',()=>draw());
+})();
+
+/* ============ 5 · TRANSITIONS ============ */
+(function(){
+  const c = document.getElementById('transitionsCanvas');
+  function draw(){
+    const T = +document.getElementById('tSize').value;
+    const D = +document.getElementById('tData').value;
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    // Arrows in Hom(C) as small dots; a subset T highlighted
+    const total = 50;
+    const pts=[];
+    for(let i=0;i<total;i++){
+      const a = 2*Math.PI*i/total;
+      const r = 100 + 20*Math.sin(i*1.3);
+      pts.push({x:w/2 + Math.cos(a)*r, y:h/2 + Math.sin(a)*r, i});
+    }
+    // draw all as background
+    pts.forEach((p,i)=>{
+      const inT = i<T;
+      ctx.fillStyle = inT ? '#7dd3fc' : '#374151';
+      ctx.beginPath(); ctx.arc(p.x,p.y, inT?4:2, 0, 2*Math.PI); ctx.fill();
+    });
+    // outer ring label
+    ctx.strokeStyle='#374151'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(w/2,h/2,140,0,2*Math.PI); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#8b98a5'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Hom(𝒞) — alle verfügbaren Pfeile', w/2, h/2-155);
+    ctx.fillStyle='#7dd3fc';
+    ctx.fillText(`𝒯 (${T} lizenzierte Pfeile)`, w/2, h/2+165);
+    // computed occam / risk
+    const freedom = T/total;
+    const evidencePerT = D/T;
+    const overfitRisk = Math.max(0, 1 - Math.exp(-freedom*3/Math.max(0.5,evidencePerT)));
+    // bar chart
+    ctx.fillStyle='#050810'; ctx.fillRect(w-150,20,130,60);
+    ctx.strokeStyle='#1f2937'; ctx.strokeRect(w-150,20,130,60);
+    ctx.fillStyle='#fca5a5'; ctx.fillRect(w-140,50, 110*overfitRisk, 20);
+    ctx.fillStyle='#e6edf3'; ctx.font='11px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Overfit-Risk', w-140, 40);
+    ctx.fillStyle='#050810'; ctx.fillRect(w-150,90,130,60);
+    ctx.strokeStyle='#1f2937'; ctx.strokeRect(w-150,90,130,60);
+    const evidence = Math.min(1, evidencePerT/3);
+    ctx.fillStyle='#86efac'; ctx.fillRect(w-140,120, 110*evidence, 20);
+    ctx.fillStyle='#e6edf3'; ctx.fillText('Evidence/𝒯', w-140, 110);
+    // diagnosis
+    let diag;
+    if(T<=5 && D>10) diag = {t:'🔒 Zu restriktiv', c:'#fca5a5', msg:'𝒯 könnte echte Muster ausschließen. Underfitting.'};
+    else if(overfitRisk>.6) diag = {t:'⚠ Occam-Verletzung', c:'#fcd34d', msg:'Zu viel Freiheit für die Daten — Kohärenz wird vakuös.'};
+    else diag = {t:'✓ Balanciert', c:'#86efac', msg:'𝒯 ist eng genug, um Info zu tragen, weit genug, um Muster zu erlauben.'};
+    document.getElementById('tInfo').innerHTML = `
+      <h4 style="color:${diag.c}">${diag.t}</h4>
+      <p>${diag.msg}</p>
+      <p class="intro">Regel: <b>Mehr Transformations-Freiheit ⇒ mehr Evidenz erforderlich.</b> $\\mathcal{T}$ ist Prior, Subkategorie und Occam-Penalty in einem.</p>
+    `;
+    if(window.MathJax) MathJax.typesetPromise([document.getElementById('tInfo')]);
+  }
+  ['tSize','tData'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 6 · SHEAF / DESCENT ============ */
+(function(){
+  const c = document.getElementById('sheafCanvas');
+  function draw(){
+    const a = +document.getElementById('patchA').value;
+    const b = +document.getElementById('patchB').value;
+    const eps = +document.getElementById('patchEps').value;
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    // Two patches as overlapping rectangles
+    const cx = w/2, cy = h/2;
+    const pw = 220, ph = 120;
+    // Patch A (left)
+    ctx.fillStyle = 'rgba(125,211,252,.15)'; ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.roundRect(cx-pw-30, cy-ph/2, pw, ph, 12); ctx.fill(); ctx.stroke();
+    // Patch B (right)
+    ctx.fillStyle = 'rgba(240,171,252,.15)'; ctx.strokeStyle='#f0abfc';
+    ctx.beginPath(); ctx.roundRect(cx+30-40, cy-ph/2, pw, ph, 12); ctx.fill(); ctx.stroke();
+    // Overlap
+    ctx.fillStyle = 'rgba(252,211,77,.25)'; ctx.strokeStyle='#fcd34d';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.roundRect(cx-40, cy-ph/2, 40+30-40+pw-(cx-40)-((cx+30-40)-(cx-pw-30+pw))+30,  ph, 12);
+    // simpler overlap area
+    ctx.beginPath();
+    const oxL = cx-40, oxR = cx-pw-30+pw; // = cx-40 to cx-30 area
+    ctx.rect(oxL, cy-ph/2+8, (cx+30-40)+pw - oxL - 30, ph-16);
+    ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+    // labels
+    ctx.fillStyle='#7dd3fc'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('F(c₁)', cx-pw-30+40, cy-ph/2-8);
+    ctx.fillStyle='#f0abfc';
+    ctx.fillText('F(c₂)', cx+30-40+pw-40, cy-ph/2-8);
+    ctx.fillStyle='#fcd34d';
+    ctx.fillText('c₁ ×_c c₂', cx, cy+ph/2+18);
+    // draw value bars on each
+    // A value
+    const bx1 = cx-pw-30+40, by1 = cy+10;
+    ctx.fillStyle='#050810'; ctx.fillRect(bx1, by1, 100, 14);
+    ctx.fillStyle='#7dd3fc'; ctx.fillRect(bx1, by1, a, 14);
+    ctx.fillStyle='#e6edf3'; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText('s₁ = '+a, bx1, by1-4);
+    // B value
+    const bx2 = cx+30-40+pw-140, by2 = cy+10;
+    ctx.fillStyle='#050810'; ctx.fillRect(bx2, by2, 100, 14);
+    ctx.fillStyle='#f0abfc'; ctx.fillRect(bx2, by2, b, 14);
+    ctx.fillStyle='#e6edf3'; ctx.fillText('s₂ = '+b, bx2, by2-4);
+    // Overlap comparison
+    const diff = Math.abs(a-b);
+    const ok = diff <= eps;
+    ctx.strokeStyle = ok ? '#86efac' : '#fca5a5';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(bx1+a, by1+7);
+    const midX = (bx1+bx2)/2 + 50, midY = cy - 20;
+    ctx.quadraticCurveTo(midX, midY, bx2+b, by2+7);
+    ctx.stroke();
+    ctx.fillStyle = ok ? '#86efac' : '#fca5a5';
+    ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('|s₁ - s₂| = '+diff+' '+(ok?'≤':'>')+' ε='+eps, w/2, 40);
+    // Global section indicator
+    if(ok){
+      ctx.fillStyle='#86efac'; ctx.font='14px sans-serif';
+      ctx.fillText('✓ ∃! globaler Schnitt s ∈ F(c)', w/2, h-20);
+    } else {
+      ctx.fillStyle='#fca5a5'; ctx.font='14px sans-serif';
+      ctx.fillText('✗ Kein globaler Schnitt — descent scheitert', w/2, h-20);
+    }
+    // status
+    document.getElementById('sheafStatus').className = 'status ' + (ok?'ok':'fail');
+    document.getElementById('sheafStatus').innerHTML = ok
+      ? `<b>Descent hält.</b> Die lokalen Sektionen $s_1, s_2$ sind kompatibel auf dem Overlap ⇒ es existiert genau ein globaler Schnitt.`
+      : `<b>Descent scheitert.</b> $s_1$ und $s_2$ widersprechen sich auf dem Overlap. Kein $s \\in F(c)$ kann beide restringieren.`;
+    if(window.MathJax) MathJax.typesetPromise([document.getElementById('sheafStatus')]);
+  }
+  ['patchA','patchB','patchEps'].forEach(id=>document.getElementById(id).addEventListener('input',draw));
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 7 · EQUALIZER / PULLBACK ============ */
+(function(){
+  function update(){
+    const fP = +document.getElementById('fPhase').value/100;
+    const gP = +document.getElementById('gPhase').value/100;
+    const eps = +document.getElementById('eqEps').value/100;
+    const N = 300;
+    const xs = Array.from({length:N},(_,i)=>i/N*10);
+    const fY = xs.map(x=> Math.sin(x+fP)*50 + 50);
+    const gY = xs.map(x=> Math.sin(x+gP)*50 + 50);
+    // equalizer points
+    const eqX=[], eqY=[];
+    xs.forEach((x,i)=>{
+      if(Math.abs(fY[i]-gY[i]) <= eps*50){ eqX.push(x); eqY.push((fY[i]+gY[i])/2); }
+    });
+    Plotly.newPlot('equalizerPlot',[
+      {x:xs,y:fY,name:'f(x)',line:{color:'#7dd3fc',width:3}},
+      {x:xs,y:gY,name:'g(x)',line:{color:'#f0abfc',width:3}},
+      {x:eqX,y:eqY,name:'Equalizer E = {x : f(x)=g(x)}',mode:'markers',
+        marker:{color:'#86efac',size:10,line:{color:'#050810',width:1}}}
+    ],{
+      paper_bgcolor:'#050810',plot_bgcolor:'#050810',
+      font:{color:'#8b98a5',family:'Inter'},
+      margin:{t:30,l:40,r:20,b:40},
+      xaxis:{title:'x ∈ X',gridcolor:'#1f2937'},
+      yaxis:{title:'Wert in Y (shared target)',gridcolor:'#1f2937'},
+      legend:{orientation:'h',y:1.15},
+      title:{text:'Agreement Locus (grüne Punkte = Equalizer)',font:{color:'#e6edf3',size:14}}
+    },{displayModeBar:false,responsive:true});
+  }
+  ['fPhase','gPhase','eqEps'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+  update();
+})();
+
+/* ============ 8 · MASTER DIAGRAM (SVG) ============ */
+(function(){
+  const svg = document.getElementById('masterSvg');
+  const info = document.getElementById('masterInfo');
+  const nodes = [
+    {id:'W', x:400, y:60,  r:34, label:'W', sub:'Subject Matter', color:'#f0abfc',
+     desc:'<b>W = Subject Matter</b><p>Der Gegenstand mit interner Struktur (Regionen, Punkte, Sub-Systeme). Nie direkt zugänglich; nur durch Access-Funktionen $O_i$.</p><p>Kant: das <i>Ding an sich</i>. Wir kommen nie dorthin.</p>'},
+    {id:'R1', x:180, y:230, r:30, label:'R₁', sub:'View 1', color:'#7dd3fc',
+     desc:'<b>R₁ — erste Repräsentation</b><p>z.B. visueller Kanal, ein Dokument, eine mathematische Präsentation. Traces sind <i>transformed, mediated, underdetermined</i>.</p>'},
+    {id:'R2', x:400, y:230, r:30, label:'R₂', sub:'View 2', color:'#7dd3fc',
+     desc:'<b>R₂ — zweite Repräsentation</b><p>z.B. akustischer Kanal, eine andere Sprache, ein anderes Instrument. Kein View ist privilegiert.</p>'},
+    {id:'R3', x:620, y:230, r:30, label:'R₃', sub:'View 3', color:'#7dd3fc',
+     desc:'<b>R₃ — dritte Repräsentation</b><p>Cover kann beliebig viele $R_i$ haben. Wichtig: Overlaps $R_i \\times_c R_j$ ermöglichen den Kompatibilitäts-Test.</p>'},
+    {id:'G', x:400, y:400, r:38, label:'G', sub:'lim F', color:'#86efac',
+     desc:'<b>G — globaler kohärenter Schnitt</b><p>$G = \\varprojlim F$ — der Limes über den Cover. Existiert genau dann, wenn die $s_i$ auf allen Overlaps kompatibel sind. In verschiedenen Settings: Set-Limit, ∞-topos-Limit, Posterior-Mode, gelernter Latent.</p><p><b>Nie</b> mit $W$ identifizieren!</p>'}
+  ];
+  const arrows = [
+    {from:'W',to:'R1',label:'O₁',desc:'<b>O₁ : W → R₁</b> — Observation arrow. Muss in $\\mathcal{T}$ liegen (licensed). Prerequisite für jeden Wahrheitstest.'},
+    {from:'W',to:'R2',label:'O₂',desc:'<b>O₂ : W → R₂</b> — Zweite Access-Funktion. Verschiedene $O_i$ auf demselben $W$ produzieren verschiedene Traces.'},
+    {from:'W',to:'R3',label:'O₃',desc:'<b>O₃ : W → R₃</b> — Dritte Access-Funktion. Zusammen bilden $\\{O_i\\}$ den Cover.'},
+    {from:'R1',to:'G',label:'T₁',desc:'<b>T₁ : R₁ → G</b> — Admissible transition (glue). Coherence auf Overlaps wird hier geprüft.'},
+    {from:'R2',to:'G',label:'T₂',desc:'<b>T₂ : R₂ → G</b> — Zweiter glue-Pfeil.'},
+    {from:'R3',to:'G',label:'T₃',desc:'<b>T₃ : R₃ → G</b> — Dritter glue-Pfeil. Alle $T_i \\in \\mathcal{T}$.'},
+    {from:'G',to:'W',label:'claim',desc:'<b>Claim-Arrow G → W</b> — Der Wahrheitspfeil. Hier muss Tarski\'s if-and-only-if halten: <i>S ist wahr iff p</i>.',curved:true}
+  ];
+  function nodeById(id){return nodes.find(n=>n.id===id)}
+  function drawArrow(a){
+    const from = nodeById(a.from), to = nodeById(a.to);
+    let x1=from.x, y1=from.y, x2=to.x, y2=to.y;
+    const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy);
+    const ux=dx/len, uy=dy/len;
+    x1 += ux*from.r; y1 += uy*from.r;
+    x2 -= ux*to.r; y2 -= uy*to.r;
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor='pointer';
+    g.addEventListener('click',()=>{info.innerHTML = a.desc; if(window.MathJax) MathJax.typesetPromise([info]);});
+    let path;
+    if(a.curved){
+      path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      const cx = 720, cy = 230;
+      path.setAttribute('d',`M${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`);
+      path.setAttribute('fill','none');
+      path.setAttribute('stroke','#fcd34d');
+      path.setAttribute('stroke-width','2');
+      path.setAttribute('stroke-dasharray','6,4');
+    } else {
+      path = document.createElementNS('http://www.w3.org/2000/svg','line');
+      path.setAttribute('x1',x1); path.setAttribute('y1',y1);
+      path.setAttribute('x2',x2); path.setAttribute('y2',y2);
+      path.setAttribute('stroke','#7dd3fc');
+      path.setAttribute('stroke-width','2');
+    }
+    g.appendChild(path);
+    // arrowhead
+    const ang = Math.atan2(y2-y1, x2-x1);
+    const ah = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const p1 = `${x2},${y2}`;
+    const p2 = `${x2-10*Math.cos(ang-.4)},${y2-10*Math.sin(ang-.4)}`;
+    const p3 = `${x2-10*Math.cos(ang+.4)},${y2-10*Math.sin(ang+.4)}`;
+    ah.setAttribute('points',`${p1} ${p2} ${p3}`);
+    ah.setAttribute('fill', a.curved?'#fcd34d':'#7dd3fc');
+    g.appendChild(ah);
+    // label
+    const mx = (x1+x2)/2 + (a.curved?60:0), my = (y1+y2)/2 + (a.curved?0:-4);
+    const bg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    const tx = document.createElementNS('http://www.w3.org/2000/svg','text');
+    tx.setAttribute('x',mx); tx.setAttribute('y',my);
+    tx.setAttribute('fill', a.curved?'#fcd34d':'#7dd3fc');
+    tx.setAttribute('font-size','13');
+    tx.setAttribute('font-weight','bold');
+    tx.setAttribute('text-anchor','middle');
+    tx.setAttribute('font-family','sans-serif');
+    tx.textContent = a.label;
+    // background
+    bg.setAttribute('x', mx-18); bg.setAttribute('y', my-12);
+    bg.setAttribute('width',36); bg.setAttribute('height',18);
+    bg.setAttribute('fill','#050810');
+    bg.setAttribute('rx',4);
+    g.appendChild(bg);
+    g.appendChild(tx);
+    svg.appendChild(g);
+  }
+  arrows.forEach(drawArrow);
+  nodes.forEach(n=>{
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor='pointer';
+    g.addEventListener('click',()=>{info.innerHTML = n.desc; if(window.MathJax) MathJax.typesetPromise([info]);});
+    const circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx',n.x); circ.setAttribute('cy',n.y); circ.setAttribute('r',n.r);
+    circ.setAttribute('fill','#111823'); circ.setAttribute('stroke',n.color); circ.setAttribute('stroke-width','3');
+    g.appendChild(circ);
+    const tx = document.createElementNS('http://www.w3.org/2000/svg','text');
+    tx.setAttribute('x',n.x); tx.setAttribute('y',n.y+6);
+    tx.setAttribute('fill',n.color); tx.setAttribute('font-size','20');
+    tx.setAttribute('font-weight','bold'); tx.setAttribute('text-anchor','middle');
+    tx.setAttribute('font-family','serif');
+    tx.textContent = n.label;
+    g.appendChild(tx);
+    const sub = document.createElementNS('http://www.w3.org/2000/svg','text');
+    sub.setAttribute('x',n.x); sub.setAttribute('y',n.y+n.r+16);
+    sub.setAttribute('fill','#8b98a5'); sub.setAttribute('font-size','11');
+    sub.setAttribute('text-anchor','middle'); sub.setAttribute('font-family','sans-serif');
+    sub.textContent = n.sub;
+    g.appendChild(sub);
+    svg.appendChild(g);
+  });
+  // Legende
+  const legend = document.createElementNS('http://www.w3.org/2000/svg','text');
+  legend.setAttribute('x',20); legend.setAttribute('y',470);
+  legend.setAttribute('fill','#8b98a5'); legend.setAttribute('font-size','11');
+  legend.textContent = '💡 Klick auf Knoten oder Pfeile für Details';
+  svg.appendChild(legend);
+})();
+
+/* ============ 9 · TARSKI ============ */
+(function(){
+  const c = document.getElementById('tarskiCanvas');
+  function draw(){
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    // Two worlds: left = model (object language), right = world (meta)
+    const lx = w*0.25, rx = w*0.75, cy=h/2;
+    // Model box
+    ctx.fillStyle='rgba(125,211,252,.08)'; ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.roundRect(lx-140, 30, 280, h-60, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#7dd3fc'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Objekt-Sprache 𝓛 (Modell)', lx, 55);
+    // World box
+    ctx.fillStyle='rgba(240,171,252,.08)'; ctx.strokeStyle='#f0abfc';
+    ctx.beginPath(); ctx.roundRect(rx-140, 30, 280, h-60, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#f0abfc';
+    ctx.fillText('Meta-Sprache / Welt W', rx, 55);
+    // sentence S
+    ctx.fillStyle='#050810'; ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.roundRect(lx-100, cy-20, 200, 40, 8); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#e6edf3'; ctx.font='italic 14px serif';
+    ctx.fillText('"Schnee ist weiß"', lx, cy+5);
+    ctx.fillStyle='#8b98a5'; ctx.font='11px sans-serif';
+    ctx.fillText('Satz S', lx, cy-30);
+    // fact p
+    ctx.fillStyle='#050810'; ctx.strokeStyle='#f0abfc';
+    ctx.beginPath(); ctx.roundRect(rx-100, cy-20, 200, 40, 8); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#e6edf3'; ctx.font='14px serif';
+    ctx.fillText('Schnee ist weiß', rx, cy+5);
+    ctx.fillStyle='#8b98a5'; ctx.font='11px sans-serif';
+    
+    ctx.fillText('Fakt p', rx, cy-30);
+    // biconditional
+    ctx.strokeStyle='#fcd34d'; ctx.lineWidth=2;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(lx+100, cy); ctx.lineTo(rx-100, cy); ctx.stroke();
+    ctx.setLineDash([]);
+    // biconditional arrows
+    ctx.fillStyle='#fcd34d';
+    ctx.beginPath(); ctx.moveTo(lx+108,cy); ctx.lineTo(lx+100,cy-5); ctx.lineTo(lx+100,cy+5); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(rx-108,cy); ctx.lineTo(rx-100,cy-5); ctx.lineTo(rx-100,cy+5); ctx.closePath(); ctx.fill();
+    // label
+    ctx.fillStyle='#fcd34d'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('ist wahr iff', w/2, cy-10);
+    ctx.fillStyle='#8b98a5'; ctx.font='11px sans-serif';
+    ctx.fillText('Convention T', w/2, cy+22);
+    // quotation & reference arrows
+    ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(lx, cy+20); ctx.lineTo(lx, h-30); ctx.stroke();
+    ctx.fillStyle='#7dd3fc'; ctx.font='10px sans-serif';
+    ctx.fillText('quotation ⌜S⌝', lx, h-15);
+    ctx.strokeStyle='#f0abfc';
+    ctx.beginPath(); ctx.moveTo(rx, cy+20); ctx.lineTo(rx, h-30); ctx.stroke();
+    ctx.fillStyle='#f0abfc';
+    ctx.fillText('reference → W', rx, h-15);
+  }
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+function showPath(n){
+  const info = document.getElementById('tarskiInfo');
+  const data = {
+    1:{title:'① Self-consistent Fantasy',color:'#fca5a5',
+       body:'Descent hält perfekt: alle lokalen Sektionen glueen zu einem eindeutigen G. Aber $G \\to W$ (der claim-Pfeil) besteht Tarskis if-and-only-if <b>nirgends</b>.<br><br><b>Beispiel:</b> Eine perfekt kohärente Verschwörungstheorie, ein internally konsistentes Fantasy-Universum.<br><br><b>Was bricht:</b> Correspondence.<br><b>Remedy:</b> Grounding-Pfeile installieren (RAG, Sensoren, Tools).'},
+    2:{title:'② Factbook',color:'#fcd34d',
+       body:'Jeder einzelne claim $S_i$ besteht Tarski am contact point. Aber die $T_i$ Pfeile scheitern: die claims fügen sich nicht zu einem G.<br><br><b>Beispiel:</b> Eine Datenbank mit korrekten Fakten, die keine Theorie bildet.<br><br><b>Was bricht:</b> Coherence.<br><b>Remedy:</b> Struktur einführen — chain-of-thought, scratchpads, kausale Modelle.'},
+    3:{title:'③ Contact-point Liar (Hallucinating Model)',color:'#f472b6',
+       body:'Sonderfall von ①: intern kohärent, $\\mathcal{T}$ voll lizenziert, aber die Lizenzierung war zu permissiv — kein $T \\in \\mathcal{T}$ liefert echten Weltkontakt. Der LLM-Standardfall.<br><br><b>Diagnose:</b> $\\mathcal{T}$ falsch gewählt. Interne Konsistenz ohne empirischen contact.<br><b>Remedy:</b> RAG, tool use, formal verification — echte $O_i$-Pfeile hinzufügen.'}
+  };
+  const d = data[n];
+  info.innerHTML = `<h4 style="color:${d.color}">${d.title}</h4><p>${d.body}</p>`;
+  if(window.MathJax) MathJax.typesetPromise([info]);
+}
+
+/* ============ 10 · LLM DIAGRAM ============ */
+(function(){
+  const svg = document.getElementById('llmSvg');
+  const info = document.getElementById('llmInfo');
+  const augmentations = {
+    none:{
+      title:'Baseline LLM',color:'#fca5a5',
+      desc:'<b>Baseline LLM</b><p>Nur <b>interne</b> $\\mathcal{T}$: Tokenisierung, Attention, MLP, Logits. <b>Keine</b> Observation-Pfeile $O_i : W \\to R_i$. Der Trainingskorpus ist selbst ein transformierter Trace.</p><p>Kohärenz-Engine ohne Korrespondenz-Check ⇒ Halluzinationen bei Anfragen außerhalb der Trainingsverteilung.</p>',
+      arrows:['internal']
+    },
+    context:{
+      title:'+ In-Context Learning',color:'#fcd34d',
+      desc:'<b>In-Context Learning</b><p>Der Prompt wird zu einem <b>Cover-Patch</b> im Gespräch. Flacher Observation-Pfeil: text-in-prompt → text-in-completion.</p><p>Nicht zu $W$, aber zu <i>dem eingefügten Dokument</i>. Beste Antwort wird durch das Cover determiniert.</p>',
+      arrows:['internal','context']
+    },
+    rag:{
+      title:'+ Retrieval-Augmented Generation',color:'#7dd3fc',
+      desc:'<b>RAG</b><p>Ein Retriever holt Passagen aus einer externen Wissensbasis in den Prompt. <b>Neue Observation-Pfeile</b> zum Inferenzzeitpunkt.</p><p>Passagen sind näher an $W$ als die Parameter. Aber: Retriever selbst braucht Kalibrierung — sonst nur ein weiterer coherence-check.</p>',
+      arrows:['internal','context','rag']
+    },
+    tools:{
+      title:'+ Tools / Code Execution',color:'#86efac',
+      desc:'<b>Tool Use</b><p>Modell kann <b>handeln</b>: Code ausführen, DB queryen, APIs aufrufen. Echte $W \\to R_i$-Pfeile: das Verhalten des Programms ist Fakt über die Hardware.</p><p>Grobkörnige Observation ("läuft es?"). $\\mathcal{T}$ wird zur Inferenzzeit kontrolliert erweitert.</p>',
+      arrows:['internal','context','rag','tools']
+    },
+    formal:{
+      title:'+ Formal Verification (Coq/Lean)',color:'#f0abfc',
+      desc:'<b>Formal Verification</b><p>Stärkster verfügbarer Tarski-Check: Type-Checking eines Proofs in Coq/Lean. Der Kernel sagt "yes" = Meta-Sprach-Fakt $p$ der Convention T.</p><p>Feinkörnigste Korrespondenz. Wenn das Modell einen typcheckbaren Proof emittiert, ist der correspondence-check end-to-end.</p>',
+      arrows:['internal','context','rag','tools','formal']
+    },
+    all:{
+      title:'Full Deployment',color:'#a78bfa',
+      desc:'<b>Voll augmentiertes System</b><p>Alle Pfeile aktiv. Kohärenz-Engine (Baseline) + Korrespondenz-Bridges (Context, RAG, Tools, Formal). Jeder Pfeil einzeln lizenziert und auditierbar.</p><p><b>Das ist der einzige Weg:</b> Kohärenz nicht durch Skalierung reparieren — Korrespondenz stückweise anhängen.</p>',
+      arrows:['internal','context','rag','tools','formal']
+    }
+  };
+  function render(key){
+    svg.innerHTML = '';
+    const aug = augmentations[key];
+    // World
+    const nsu = 'http://www.w3.org/2000/svg';
+    function circle(x,y,r,color,label,sub){
+      const c = document.createElementNS(nsu,'circle');
+      c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',r);
+      c.setAttribute('fill','#111823');c.setAttribute('stroke',color);c.setAttribute('stroke-width','3');
+      svg.appendChild(c);
+      const t = document.createElementNS(nsu,'text');
+      t.setAttribute('x',x);t.setAttribute('y',y+6);t.setAttribute('fill',color);
+      t.setAttribute('font-size','18');t.setAttribute('font-weight','bold');
+      t.setAttribute('text-anchor','middle');t.setAttribute('font-family','serif');
+      t.textContent = label; svg.appendChild(t);
+      if(sub){
+        const s = document.createElementNS(nsu,'text');
+        s.setAttribute('x',x);s.setAttribute('y',y+r+16);s.setAttribute('fill','#8b98a5');
+        s.setAttribute('font-size','11');s.setAttribute('text-anchor','middle');
+        s.textContent=sub; svg.appendChild(s);
+      }
+    }
+    function arrow(x1,y1,x2,y2,color,label,dashed,curved){
+      const g = document.createElementNS(nsu,'g');
+      let path;
+      if(curved){
+        path = document.createElementNS(nsu,'path');
+        const mx=(x1+x2)/2 + curved, my=(y1+y2)/2;
+        path.setAttribute('d',`M${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`);
+        path.setAttribute('fill','none');
+      } else {
+        path = document.createElementNS(nsu,'line');
+        path.setAttribute('x1',x1);path.setAttribute('y1',y1);
+        path.setAttribute('x2',x2);path.setAttribute('y2',y2);
+      }
+      path.setAttribute('stroke',color);path.setAttribute('stroke-width','2');
+      if(dashed) path.setAttribute('stroke-dasharray','5,4');
+      g.appendChild(path);
+      const ang = Math.atan2(y2-y1,x2-x1);
+      const ah = document.createElementNS(nsu,'polygon');
+      ah.setAttribute('points',`${x2},${y2} ${x2-10*Math.cos(ang-.4)},${y2-10*Math.sin(ang-.4)} ${x2-10*Math.cos(ang+.4)},${y2-10*Math.sin(ang+.4)}`);
+      ah.setAttribute('fill',color);
+      g.appendChild(ah);
+      if(label){
+        const mx=(x1+x2)/2, my=(y1+y2)/2 - 6;
+        const bg = document.createElementNS(nsu,'rect');
+        bg.setAttribute('x',mx-24);bg.setAttribute('y',my-11);
+        bg.setAttribute('width',48);bg.setAttribute('height',16);
+        bg.setAttribute('fill','#050810');bg.setAttribute('rx',3);
+        g.appendChild(bg);
+        const t = document.createElementNS(nsu,'text');
+        t.setAttribute('x',mx);t.setAttribute('y',my+1);t.setAttribute('fill',color);
+        t.setAttribute('font-size','11');t.setAttribute('font-weight','600');
+        t.setAttribute('text-anchor','middle');t.textContent=label;
+        g.appendChild(t);
+      }
+      svg.appendChild(g);
+    }
+    // Layout
+    circle(400,50,34,'#f0abfc','W','Welt (Subject Matter)');
+    circle(120,180,28,'#7dd3fc','R₁','Korpus-Doc 1');
+    circle(280,180,28,'#7dd3fc','R₂','Korpus-Doc 2');
+    circle(440,180,28,'#7dd3fc','R₃','Korpus-Doc 3');
+    circle(400,320,38,'#86efac','G','LLM (globaler Schnitt)');
+    circle(650,320,32,'#fcd34d','Out','LLM-Output');
+    // Corpus training arrows (always present)
+    arrow(400-24,50+24, 130,155,'#7dd3fc','sample',true);
+    arrow(400-10,50+30, 280,155,'#7dd3fc','sample',true);
+    arrow(400+10,50+30, 435,155,'#7dd3fc','sample',true);
+    arrow(120,180+28, 380,300,'#7dd3fc','fit',false);
+    arrow(280,180+28, 395,290,'#7dd3fc','fit',false);
+    arrow(440,180+28, 415,290,'#7dd3fc','fit',false);
+    // G to Output
+    arrow(400+34,320, 618,320,'#86efac','generate');
+    // Augmentation arrows
+    if(aug.arrows.includes('context')){
+      circle(650,180,26,'#fcd34d','ctx','In-Context');
+      arrow(650,180+24, 650,290,'#fcd34d','prompt',false);
+    }
+    if(aug.arrows.includes('rag')){
+      circle(560,50,26,'#7dd3fc','KB','Knowledge Base');
+      arrow(560,50+26, 650,155,'#7dd3fc','retrieve',false);
+    }
+    if(aug.arrows.includes('tools')){
+      circle(720,180,26,'#86efac','tool','Tool / API');
+      arrow(682,320-16, 720,180+24,'#86efac','call',false);
+      arrow(720-20,180+10, 400+38*0.7,320-38*0.7,'#86efac','result',false,-40);
+    }
+    if(aug.arrows.includes('formal')){
+      circle(720,50,26,'#f0abfc','⊢','Coq/Lean');
+      arrow(720,50+24, 682,300,'#f0abfc','verify iff p',true);
+    }
+    // Claim arrow G -> W (Tarski)
+    arrow(365,300, 375,85,'#fcd34d','claim',true,-80);
+    // Legend
+    const leg = document.createElementNS(nsu,'text');
+    leg.setAttribute('x',20);leg.setAttribute('y',460);
+    leg.setAttribute('fill','#8b98a5');leg.setAttribute('font-size','11');
+    leg.textContent = '— durchgezogen: interne 𝒯 · - - - gestrichelt: claim / correspondence check';
+    svg.appendChild(leg);
+    // Info
+    info.innerHTML = `<h4 style="color:${aug.color}">${aug.title}</h4>${aug.desc}`;
+    if(window.MathJax) MathJax.typesetPromise([info]);
+  }
+  render('none');
+  document.querySelectorAll('[data-aug]').forEach(b=>b.addEventListener('click',()=>render(b.dataset.aug)));
+})();
+
+/* ============ 11 · FINAL SUMMARY CANVAS ============ */
+(function(){
+  const c = document.getElementById('finalCanvas');
+  function draw(){
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.clearRect(0,0,w,h);
+    // Three ingredients: C, V, T
+    const items = [
+      {x:w*0.2, label:'𝒞', sub:'Site of Contexts', color:'#7dd3fc',
+       ex:'Zeit · Ort · Instrument · Sprache · Tradition'},
+      {x:w*0.5, label:'𝒱', sub:'Target of Representations', color:'#f0abfc',
+       ex:'Set · Metric · ∞-Gpd · Mod(T) · Prob'},
+      {x:w*0.8, label:'𝒯', sub:'Admissible Transitions', color:'#86efac',
+       ex:'Calibration · Coord · Physical Law · Proof · Decoder'}
+    ];
+    // arrow flow
+    ctx.strokeStyle='#374151'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(w*0.2+50, h/2); ctx.lineTo(w*0.5-50, h/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w*0.5+50, h/2); ctx.lineTo(w*0.8-50, h/2); ctx.stroke();
+    items.forEach(it=>{
+      ctx.fillStyle='#111823'; ctx.strokeStyle=it.color; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(it.x, h/2, 42, 0, 2*Math.PI); ctx.fill(); ctx.stroke();
+      ctx.fillStyle=it.color; ctx.font='bold 28px serif'; ctx.textAlign='center';
+      ctx.fillText(it.label, it.x, h/2+10);
+      ctx.font='bold 12px sans-serif'; ctx.fillStyle=it.color;
+      ctx.fillText(it.sub, it.x, h/2+65);
+      ctx.font='10px sans-serif'; ctx.fillStyle='#8b98a5';
+      ctx.fillText(it.ex, it.x, h/2+82);
+    });
+    // header
+    ctx.fillStyle='#e6edf3'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Ein Weltmodell = Wahl von drei Zutaten', w/2, 30);
+  }
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+// polyfill roundRect for older browsers
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+    if(w<2*r) r=w/2; if(h<2*r) r=h/2;
+    this.beginPath();
+    this.moveTo(x+r,y);
+    this.arcTo(x+w,y,x+w,y+h,r);
+    this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r);
+    this.arcTo(x,y,x+w,y,r);
+    this.closePath();
+    return this;
+  };
+}
+</script>
+</body>
+</html>
