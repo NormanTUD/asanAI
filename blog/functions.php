@@ -481,11 +481,15 @@ if(!server_php_self_ends_with_index_php()) {
 			if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
 			document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
 		}
-		// Apply system preference on first load if no cookie
+		// Apply system preference on first load if no cookie.
+		// Dark is the default theme; we only save 'dark' explicitly when
+		// the OS asks for it (so the saved choice reflects user intent).
+		// A user who has clicked light first will have a 'light' cookie
+		// that takes priority above this check.
 		(function() {
 			if (document.cookie.indexOf('theme=') === -1) {
 				var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-				if (prefersDark) toggleTheme();
+				if (prefersDark) document.cookie = 'theme=dark; path=/; max-age=' + 60*60*24*365;
 			}
 		})();
 		</script>

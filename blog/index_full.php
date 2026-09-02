@@ -19,7 +19,8 @@
 	}
 	(function() {
 		if (document.cookie.indexOf('theme=') === -1) {
-			if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) toggleTheme();
+			var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (prefersDark) document.cookie = 'theme=dark; path=/; max-age=' + 60*60*24*365;
 		}
 	})();
 	</script>
