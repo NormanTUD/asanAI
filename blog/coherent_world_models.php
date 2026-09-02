@@ -249,6 +249,8 @@ $$
 \end{aligned}
 $$
 
+**A note on the notation $\mathrm{Hom}$.** Short for *homomorphism* — in algebra, a structure-preserving map between two objects of the same kind (a linear map between vector spaces, a continuous map between topological spaces, a group homomorphism between groups). Category theory generalises the idea: for any two objects $A, B$ of a category $\mathcal{C}$, one writes $\mathrm{Hom}(A, B)$ for the *set of all arrows from $A$ to $B$* — the whole pool of morphisms the category provides between those two objects. Writing $\mathrm{Hom}(\mathcal{C})$ with the whole category as the argument is a compressed way of saying: *all the arrows of $\mathcal{C}$, taken together* — every arrow, from every source to every target, pooled into one collection. (A textbook treatment: Spivak, *Category Theory for the Sciences* \cite{spivak2014cts}, chapter 3, where the same machinery is built from scratch.) In this chapter $\mathcal{C}$ is the category of contexts (a laboratory setup, a historical period, a formal system) and its arrows are the *refinements* (from "Tuesday afternoon" to "between 3 pm and 4 pm"; from "classical mechanics" to "the Lagrangian formulation on a configuration manifold"), so $\mathrm{Hom}(\mathcal{C})$ is the pool of every refinement the context-category happens to contain. The equation above then says that $\mathcal{T}$ is a *subset* of that pool: only some of the available refinements have earned the adjective "admissible". The gap between $\mathrm{Hom}(\mathcal{C})$ and $\mathcal{T}$ is exactly the gap between "an arrow exists" and "an arrow is licensed" — which is the whole content of this section.
+
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:
 
 - **sensor calibration** (measurement)
@@ -277,7 +279,13 @@ $$
 \end{array}
 $$
 
-A short definition of each, in plain words. **Subcategory.** $\mathcal{T}$ is a class of *permitted* arrows; anything outside it is not licensed and may not be used without further justification. The discipline is that the bare claim "there is a transformation" is empty until the transformation is named in $\mathcal{T}$. **Bayesian prior.** Choosing $\mathcal{T}$ is the *prior commitment* about which comparisons the modelling setup is willing to take seriously before looking at the data. The arrows you admit to $\mathcal{T}$ encode your background knowledge: a Fourier transform is licensed in physics, a hand-wave is not. **Occam penalty.** A richer $\mathcal{T}$ admits more candidate world-models and so widens the hypothesis space; the larger the space, the easier it is to fit the data by accident. Enlarging $\mathcal{T}$ is therefore an *act of over-fitting* in its own right, even before a single comparison is run. The three readings name the same restriction: subcategory from the side of allowed morphisms, prior from the side of beliefs before data, Occam from the side of model complexity. The chapter keeps all three.
+A short definition of each, in plain words:
+
+- **Subcategory** — $\mathcal{T}$ is the *list of permitted arrows*. An arrow that is not on the list has no licence to appear in any comparison. The bare claim "there is a transformation" is therefore empty until you can name the arrow and find it in $\mathcal{T}$.
+- **Bayesian prior** — $\mathcal{T}$ is the *prior* the modelling setup carries before any data are seen. Choosing what to admit encodes background knowledge: a Fourier transform is licensed in physics, a hand-wave is not. The arrows on the list are the comparisons the setup is willing to take seriously *a priori*; everything else is treated as a coincidence until proven otherwise.
+- **Occam penalty** — the *richer* $\mathcal{T}$ is, the wider the space of admissible world-models; the wider the space, the easier the data are fitted by accident. Enlarging $\mathcal{T}$ is therefore an act of over-fitting in its own right — even before a single comparison is run.
+
+Three names, one restriction: the same set of arrows is viewed from three sides — the morphisms it allows (subcategory), the beliefs it carries before data (prior), the model complexity it imposes (Occam). The chapter keeps all three.
 
 The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \citeauthor{sellars1956empiricism} (\citeyear{sellars1956empiricism}) rejects in his critique of the "myth of the given" \cite{sellars1956empiricism}:
 
