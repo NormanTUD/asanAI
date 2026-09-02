@@ -98,7 +98,7 @@ $$
 \end{aligned}}
 $$
 
-</div>
+The distinction between channels and interpretation is in part the moral of \citeauthor{cartwright1983laws}'s (\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived — a frictionless plane, an isolated system, an exactly spherical earth — and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \cite{cartwright1983laws} \cite{cartwright1999dappled}. The right model is rarely the one whose equations are most elegant; it is the one that respects which factors actually matter for the phenomenon at hand and which are genuinely absent. Conflating "the law is true" (a statement about a clean laboratory model) with "the law applies here" (a statement about a real situation) is one of the most common forms of silent upgrade between world-level and channel-level difference.</div>
 
 <div class="md">
 
@@ -106,7 +106,7 @@ $$
 
 Not everything called "the same" is the same *kind* of same. The vocabulary of *Coherent Difference* gave us a hierarchy. Here it is again, strongest to weakest:
 
-**Terminology.** A *witness* of a sameness claim is whatever evidence backs the claim — a certificate, a proof, an inhabitant of an identity type, a 2-morphism filling between two routes. Different sameness relations demand different kinds of witness: equality needs a literal identification; isomorphism needs an invertible map; homotopy equivalence needs a deformation; approximation needs a quantitative bound; statistical agreement needs a probabilistic model and a high likelihood; model-theoretic compatibility needs a common model. A witness of a stronger relation is automatically a witness of every weaker one (a literal identification trivially gives the invertible map, the deformation, the bound, …); the converse is false, and silently promoting a weaker witness to a stronger claim is the chapter's standing category error.
+**Terminology.** A *witness* of a sameness claim is whatever evidence backs the claim — a certificate, a proof, an inhabitant of an identity type, a 2-morphism filling between two routes. Different sameness relations demand different kinds of witness: equality needs a literal identification; isomorphism needs an invertible map; homotopy equivalence needs a deformation; approximation needs a quantitative bound; statistical agreement needs a probabilistic model and a high likelihood; model-theoretic compatibility needs a common model. A witness of a stronger relation is automatically a witness of every weaker one (a literal identification trivially gives the invertible map, the deformation, the bound, …); the converse is false, and silently promoting a weaker witness to a stronger claim is the chapter's standing category error. The contemporary philosophical form of this observation is \citeauthor{brandom1994making}'s (\citeyear{brandom1994making}) *inferentialism*: the meaning of a concept is fixed by its inferential role — by what it commits you to and what it commits you against \cite{brandom1994making} \cite{brandom2000articulating}. The hierarchy above is the explicit unfolding of that idea: each row of the table fixes a *different* set of inferential commitments, and moving silently from one row to the next is the chapter's forbidden move.
 
 - $x = y$: *literal*. The very same object, the very same datum.
 - $x \cong y$: *isomorphism*. Structurally indistinguishable; an invertible map carries one to the other.
@@ -203,7 +203,13 @@ $$
 \end{aligned}}
 $$
 
-$\mathcal{T}$ plays three roles at once: a **subcategory** constraint (only certain morphisms allowed), a **Bayesian prior** (some hypotheses are favoured a priori), and an **Occam penalty** (an unjustifiably large $\mathcal{T}$ is its own kind of over-fitting). Three presentations of one restriction.
+$\mathcal{T}$ plays three roles at once: a **subcategory** constraint (only certain morphisms allowed), a **Bayesian prior** (some hypotheses are favoured a priori), and an **Occam penalty** (an unjustifiably large $\mathcal{T}$ is its own kind of over-fitting). Three presentations of one restriction. The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \citeauthor{sellars1956empiricism} (\citeyear{sellars1956empiricism}) rejects in his critique of the "myth of the given" \cite{sellars1956empiricism}:
+
+<div class="smart-quote" data-cite="sellars1956empiricism">
+One seems forced to choose between the picture of an elephant which rests on a tortoise (What supports the tortoise?) and the picture of a great Hegelian serpent of knowledge with its tail in its mouth (Where does it begin?). Neither will do. For empirical knowledge, like its sophisticated extension, science, is rational, not because it has a foundation but because it is a self-correcting enterprise which can put any claim in jeopardy, though not all at once.
+</div>
+
+Sellars's "self-correcting enterprise" is exactly the picture of a global model $G$ that we have been building: $G$ is not the foundation of the observations $R_i$ (that would make the $R_i$ depend on $G$ in the wrong direction), nor is it the snake-tail-in-mouth picture in which every claim is supported only by other claims (the strict coherentist trap); it is the *self-correcting* enterprise, the one that gets to put *any* of its arrows in jeopardy when an admissible $T \in \mathcal{T}$ fails at the contact point. The structure of $\mathcal{T}$ is exactly the structure of the Sellarsian "space of reasons": a network of licences that justify local moves without being themselves grounded in a foundational layer, but that can be re-justified (or refused) at any contact point where Tarski's condition fails.
 
 </div>
 
@@ -443,6 +449,8 @@ $$
 
 So far everything has been a *specification*: a list of conditions that a coherent world model must satisfy. This section asks the converse question: does any part of modern machine learning *already* realise these conditions, even informally?
 
+The question is older than AI. \citeauthor{hacking1983representing} (\citeyear{hacking1983representing}) reopened the philosophy of science by insisting that representing is not the only epistemic relation we have to the world; *intervening* — doing something to the world, observing the difference, and so getting evidence about what is really there — is the other half \cite{hacking1983representing}. A trained neural network is, in Hacking's sense, *both* a representation and an intervention: it is a representation in that the parameters $\theta$ encode statistical structure in the data, and it is an intervention in that the model is *used* — its outputs change the world (a search query, a code suggestion, a medical diagnosis). The contact points $T \in \mathcal{T}$ of the previous section are, when applied to AI, exactly Hacking's "intervening" relation: not "is the model's output *true*?" in some abstract sense, but "does applying the model *make a difference* in the world in the way it says it will?". A representation that does not pay its debts in intervention is exactly the "self-consistent fantasy" the chapter has been diagnosing throughout.
+
 Neural networks compose **parametric maps**, functions of the form $f_\theta : X \to Y$ that depend on a parameter vector $\theta$ learnable from data. Composing such maps is not just function composition, because the parameters compose too; several frameworks make this precise:
 
 $$
@@ -627,7 +635,7 @@ $$
 \end{array}
 $$
 
-Different mathematics; one shape.
+Different mathematics; one shape. The unification is not a metaphor. It is the explicit programme of \citeauthor{caramello2017theories}'s (\citeyear{caramello2017theories}) *toposes-as-bridges* programme \cite{caramello2017theories}: the same topos can be presented as a sheaf topos, as a classifying topos of a geometric theory, and as a model category; facts and constructions provable in one presentation transfer to the others by the descent machinery. The diagram above is the one shape that all five rows exhibit; the rows differ only in the underlying category.
 
 </div>
 
@@ -730,6 +738,8 @@ $$
 \underbrace{G}_{\text{coherent whole}}.
 $$
 
+The chain has a direct counterpart in contemporary ontology of science. \citeauthor{worrall1989structural} (\citeyear{worrall1989structural}) proposed \emph{structural realism} as the philosophical position that takes seriously the chain's signature fact: across theory change (Fresnel → Maxwell, classical → relativistic), what is preserved is not the ontology of unobservables but the *structure* of the equations that relate them \cite{worrall1989structural}. The move was sharpened by \citeauthor{ladyman1998what} (\citeyear{ladyman1998what}) into \emph{ontic structural realism}: not "we only know the structure" but "there *is* nothing but the structure" — the world *is* the chain of admissible cover systems, not a thing-in-itself behind them \cite{ladyman1998what} \cite{ladymanross2007everything}. The present chapter's position is weaker and more operational: it does not commit to OSR, but it does commit to the structural-relational claim that any successful world model is the *global section of some admissible cover*, and that what survives an admissible change of cover is precisely the structural content.
+
 </div>
 
 <div class="md">
@@ -825,7 +835,7 @@ $$
 \end{aligned}}
 $$
 
-The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Blanshard). The proper synthesis is to require *both*, jointly, at every admissible contact point.
+The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Blanshard). The proper synthesis is to require *both*, jointly, at every admissible contact point. There is also a third position, well worth naming: \citeauthor{goodman1978ways}'s (\citeyear{goodman1978ways}) *irrealism* \cite{goodman1978ways}, which argues that the correspondence/coherence debate presupposes too much. On Goodman's reading, there are no "ready-made worlds" *and* no minds constructing them from nothing — there are *many* worlds, made by different symbol systems, each as legitimate in its own right as any other. Truth, on this picture, is not a relation between a model and a pre-given world; it is the property a symbol system has of *working* in the right way — of rightness, not of copying. Goodman's position is in deep sympathy with the present chapter: the world model $G$ is not a mirror of $W$; it is one among many possible right symbol systems that agree on overlaps with other admissible cover systems. The Tarskian addition this chapter makes is to insist that "rightness" must, somewhere, cash out in *contact points* $T \in \mathcal{T}$ where the model is constrained by the world; without that, Goodman's "right" can drift into any self-consistent fantasy. With it, the synthesis of all three positions is the standing practice: models are made, not found; their rightness is structural; and the structure must meet the world at every licenced contact.
 
 </div>
 

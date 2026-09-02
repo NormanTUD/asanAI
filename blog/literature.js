@@ -8189,5 +8189,283 @@ window.bibData = {
 		year: 2007,
 		url: "https://plato.stanford.edu/entries/tarski-truth/",
 		alternativetitle: "Tarski's Truth Definitions (Stanford Encyclopedia of Philosophy)"
+	},
+
+	"gunther1978idee": {
+		title: "Idee und Grundriss einer nicht-Aristotelischen Logik: die Idee und ihre philosophischen Voraussetzungen",
+		author: "Gotthard Günther",
+		year: 1978,
+		publisher: "Felix Meiner Verlag",
+		url: "https://www.vordenker.de/ggphilosophy/ggphilo.htm",
+		alternativetitle: "Idea and Outline of a Non-Aristotelian Logic (3rd ed.)"
+	},
+	"gunther2002bewusstsein": {
+		title: "Das Bewusstsein der Maschinen: eine Metaphysik der Kybernetik",
+		author: "Gotthard Günther",
+		year: 2002,
+		publisher: "Agis-Verlag",
+		url: "https://www.vordenker.de/ggphilosophy/ggphilo.htm",
+		alternativetitle: "Consciousness of Machines: A Metaphysics of Cybernetics (3rd ed.)"
+	},
+
+	"sellars1956empiricism": {
+		title: "Empiricism and the Philosophy of Mind",
+		author: "Wilfrid Sellars",
+		year: 1956,
+		publisher: "University of Minnesota; reprinted in SPR (1997) and KMG (2006)",
+		url: "https://www.ditext.com/Sellars/epm.html",
+		alternativetitle: "EPM"
+	},
+	"sellars1956sciimage": {
+		title: "Philosophy and the Scientific Image of Man",
+		author: "Wilfrid Sellars",
+		year: 1962,
+		publisher: "University of Minnesota; reprinted in SPR (1997) and KMG (2006)",
+		url: "https://www.ditext.com/Sellars/psim.html",
+		alternativetitle: "PSIM"
+	},
+
+	"brandom1994making": {
+		title: "Making It Explicit: Reasoning, Representing, and Discursive Commitment",
+		author: "Robert B. Brandom",
+		year: 1994,
+		publisher: "Harvard University Press",
+		url: "https://www.hup.harvard.edu/books/9780674543300",
+		alternativetitle: "Making It Explicit (MIE)"
+	},
+	"brandom2000articulating": {
+		title: "Articulating Reasons: An Introduction to Inferentialism",
+		author: "Robert B. Brandom",
+		year: 2000,
+		publisher: "Harvard University Press",
+		url: "https://www.hup.harvard.edu/books/9780674090768",
+		alternativetitle: "Articulating Reasons"
+	},
+
+	"goodman1978ways": {
+		title: "Ways of Worldmaking",
+		author: "Nelson Goodman",
+		year: 1978,
+		publisher: "Hackett Publishing",
+		url: "https://hackettpublishing.com/ways-of-worldmaking",
+		alternativetitle: "Ways of Worldmaking"
+	},
+	"goodman1951structure": {
+		title: "The Structure of Appearance",
+		author: "Nelson Goodman",
+		year: 1951,
+		publisher: "Harvard University Press / Reidel (3rd ed. 1977)",
+		url: "https://link.springer.com/book/10.1007/978-94-010-1136-6",
+		alternativetitle: "SA"
+	},
+
+	"weyl1949philosophy": {
+		title: "Philosophy of Mathematics and Natural Science",
+		author: "Hermann Weyl",
+		year: 1949,
+		publisher: "Princeton University Press",
+		url: "https://press.princeton.edu/books/paperback/9780691026238/philosophy-of-mathematics-and-natural-science",
+		alternativetitle: "PMNS"
+	},
+
+	"worrall1989structural": {
+		title: "Structural Realism: The Best of Both Worlds?",
+		author: "John Worrall",
+		year: 1989,
+		publisher: "Dialectica",
+		url: "https://www.dialectica.ch/issues/43-1-2/worrall",
+		alternativetitle: "Structural Realism"
+	},
+	"ladyman1998what": {
+		title: "What is Structural Realism?",
+		author: "John Ladyman",
+		year: 1998,
+		publisher: "Studies in History and Philosophy of Science",
+		url: "https://www.sciencedirect.com/science/article/pii/S0039368117000573",
+		alternativetitle: "OSR"
+	},
+	"ladymanross2007everything": {
+		title: "Everything Must Go: Metaphysics Naturalised",
+		author: "John Ladyman, Don Ross",
+		year: 2007,
+		publisher: "Oxford University Press",
+		url: "https://global.oup.com/academic/product/everything-must-go-9780199259287",
+		alternativetitle: "Everything Must Go"
+	},
+
+	"cartwright1983laws": {
+		title: "How the Laws of Physics Lie",
+		author: "Nancy Cartwright",
+		year: 1983,
+		publisher: "Oxford University Press",
+		url: "https://global.oup.com/academic/product/how-the-laws-of-physics-lie-9780198247048",
+		alternativetitle: "How the Laws of Physics Lie"
+	},
+	"cartwright1999dappled": {
+		title: "The Dappled World: A Study of the Boundaries of Science",
+		author: "Nancy Cartwright",
+		year: 1999,
+		publisher: "Cambridge University Press",
+		url: "https://www.cambridge.org/9780521641814",
+		alternativetitle: "The Dappled World"
+	},
+	"hacking1983representing": {
+		title: "Representing and Intervening: Introductory Topics in the Philosophy of Natural Science",
+		author: "Ian Hacking",
+		year: 1983,
+		publisher: "Cambridge University Press",
+		url: "https://www.cambridge.org/9780521455657",
+		alternativetitle: "Representing and Intervening"
+	},
+
+	"elgin2017true": {
+		title: "True Enough",
+		author: "Catherine Z. Elgin",
+		year: 2017,
+		publisher: "MIT Press",
+		url: "https://mitpress.mit.edu/9780262533029/true-enough/",
+		alternativetitle: "True Enough"
+	},
+	"elgin1996considered": {
+		title: "Considered Judgment",
+		author: "Catherine Z. Elgin",
+		year: 1996,
+		publisher: "Princeton University Press",
+		url: "https://press.princeton.edu/books/paperback/9780691025941/considered-judgment",
+		alternativetitle: "Considered Judgment"
+	},
+
+	"rescher1996process": {
+		title: "Process Metaphysics: An Introduction to Process Philosophy",
+		author: "Nicholas Rescher",
+		year: 1996,
+		publisher: "State University of New York Press",
+		url: "https://sunypress.edu/Books/P/Process-Metaphysics",
+		alternativetitle: "Process Metaphysics"
+	},
+	"hartshorne1972whitehead": {
+		title: "Whitehead's Philosophy: Selected Essays, 1935–1970",
+		author: "Charles Hartshorne",
+		year: 1972,
+		publisher: "University of Nebraska Press",
+		url: "https://nebraskapress.unl.edu/whiteheads-philosophy-9780803257788.html",
+		alternativetitle: "Whitehead's Philosophy"
+	},
+
+	"bergson1889essai": {
+		title: "Essai sur les données immédiates de la conscience",
+		author: "Henri Bergson",
+		year: 1889,
+		publisher: "Alcan; trans. Time and Free Will (1910)",
+		url: "https://www.gutenberg.org/ebooks/56843",
+		alternativetitle: "Time and Free Will (An Essay on the Immediate Data of Consciousness)"
+	},
+
+	"deleuze1968difference": {
+		title: "Différence et répétition",
+		author: "Gilles Deleuze",
+		year: 1968,
+		publisher: "Presses Universitaires de France; trans. Difference and Repetition (1994)",
+		url: "https://www.upress.umn.edu/9780816615552/difference-and-repetition/",
+		alternativetitle: "Difference and Repetition"
+	},
+
+	"merleauponty1945phenomenologie": {
+		title: "Phénoménologie de la perception",
+		author: "Maurice Merleau-Ponty",
+		year: 1945,
+		publisher: "Gallimard; trans. Phenomenology of Perception (1962)",
+		url: "https://www.routledge.com/Phenomenology-of-Perception/Merleau-Ponty/p/book/9780415834339",
+		alternativetitle: "Phenomenology of Perception"
+	},
+
+	"caramello2017theories": {
+		title: "Theories, Sites, Toposes: Relating and studying mathematical theories through topos-theoretic bridges",
+		author: "Olivia Caramello",
+		year: 2017,
+		publisher: "Oxford University Press",
+		url: "https://global.oup.com/academic/product/theories-sites-toposes-9780198758914",
+		alternativetitle: "Theories, Sites, Toposes"
+	},
+
+	"lawvere1993categories": {
+		title: "Categories of Space and of Quantity",
+		author: "F. William Lawvere",
+		year: 1993,
+		publisher: "Cambridge University Press; reprinted in TAC Reprints in Theory and Applications of Categories No. 13 (2005)",
+		url: "http://www.tac.mta.ca/tac/reprints/articles/13/tr13abs.html",
+		alternativetitle: "Categories of Space and of Quantity"
+	},
+
+	"lawvere2007taking": {
+		title: "Taking Categories Seriously",
+		author: "F. William Lawvere",
+		year: 2005,
+		publisher: "Reprints in Theory and Applications of Categories, No. 8, pp. 1–19",
+		url: "http://www.tac.mta.ca/tac/reprints/articles/8/tr8abs.html",
+		alternativetitle: "Taking Categories Seriously"
+	},
+
+	"rodin2014axiomatic": {
+		title: "Axiomatic Method and Category Theory",
+		author: "Andrei Rodin",
+		year: 2014,
+		publisher: "Springer",
+		url: "https://link.springer.com/book/10.1007/978-3-319-00404-4",
+		alternativetitle: "Axiomatic Method and Category Theory"
+	},
+
+	"corfield2003toward": {
+		title: "Toward a Philosophy of Real Mathematics",
+		author: "David Corfield",
+		year: 2003,
+		publisher: "Cambridge University Press",
+		url: "https://www.cambridge.org/9780521817226",
+		alternativetitle: "Toward a Philosophy of Real Mathematics"
+	},
+
+	"lewis_ci_1946mwo": {
+		title: "Mind and the World Order: Outline of a Theory of Knowledge",
+		author: "Clarence Irving Lewis",
+		year: 1946,
+		publisher: "Dover Publications",
+		url: "https://store.doverpublications.com/0486449069.html",
+		alternativetitle: "Mind and the World Order (MWO)"
+	},
+
+	"steiner1998applicability": {
+		title: "The Applicability of Mathematics as a Philosophical Problem",
+		author: "Mark Steiner",
+		year: 1998,
+		publisher: "Harvard University Press",
+		url: "https://www.hup.harvard.edu/books/9780674042957",
+		alternativetitle: "The Applicability of Mathematics"
+	},
+
+	"james1907pragmatism": {
+		title: "Pragmatism: A New Name for Some Old Ways of Thinking",
+		author: "William James",
+		year: 1907,
+		publisher: "Longmans, Green",
+		url: "https://www.gutenberg.org/ebooks/5116",
+		alternativetitle: "Pragmatism"
+	},
+
+	"putnam1981reason": {
+		title: "Reason, Truth, and History",
+		author: "Hilary Putnam",
+		year: 1981,
+		publisher: "Cambridge University Press",
+		url: "https://www.cambridge.org/9780521297762",
+		alternativetitle: "Reason, Truth, and History"
+	},
+
+	"teller2001ambit": {
+		title: "The Ambits of Structural Realism",
+		author: "Paul Teller",
+		year: 2001,
+		publisher: "Philosophy of Science",
+		url: "https://www.journals.uchicago.edu/doi/10.1086/392906",
+		alternativetitle: "The Ambits of Structural Realism"
 	}
 };
