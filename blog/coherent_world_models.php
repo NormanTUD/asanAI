@@ -106,6 +106,8 @@ $$
 
 Not everything called "the same" is the same *kind* of same. The vocabulary of *Coherent Difference* gave us a hierarchy. Here it is again, strongest to weakest:
 
+**Terminology.** A *witness* of a sameness claim is whatever evidence backs the claim — a certificate, a proof, an inhabitant of an identity type, a 2-morphism filling between two routes. Different sameness relations demand different kinds of witness: equality needs a literal identification; isomorphism needs an invertible map; homotopy equivalence needs a deformation; approximation needs a quantitative bound; statistical agreement needs a probabilistic model and a high likelihood; model-theoretic compatibility needs a common model. A witness of a stronger relation is automatically a witness of every weaker one (a literal identification trivially gives the invertible map, the deformation, the bound, …); the converse is false, and silently promoting a weaker witness to a stronger claim is the chapter's standing category error.
+
 - $x = y$: *literal*. The very same object, the very same datum.
 - $x \cong y$: *isomorphism*. Structurally indistinguishable; an invertible map carries one to the other.
 - $x \simeq y$: *homotopy equivalence*. Related by a deformation that can be undone, up to coherent witnesses.
@@ -609,7 +611,7 @@ $$
 \cdots \;\xrightarrow{\,O_{i-1}\,}\; R_{i-1}\; \xleftarrow{\,O_i\,}\; W\; \xrightarrow{\,O_{i+1}\,}\; R_{i+1}\; \xrightarrow{\,O_{i+2}\,}\;\cdots
 $$
 
-and analogously for the $T_i$. The global model becomes $G = \varprojlim_{\,i\in I} F(R_i)$, the limit over *all* views in $I$ (three, a thousand, or uncountably many). The three-view picture above is the smallest non-trivial case; the machinery scales to covers of any size.
+and analogously for the $T_i$. The global model becomes the element $G \in F(c)$ obtained as the limit over *all* views in $I$ (three, a thousand, or uncountably many) — formally the equalizer of the Čech nerve applied to the family $\{s_i\}_{i\in I} \subseteq \prod_i F(c_i)$. The three-view picture above is the smallest non-trivial case; the machinery scales to covers of any size.
 
 Different mathematics, one shape:
 
@@ -666,7 +668,7 @@ Given complicated evidence, in any domain:
 3. **Draw the chain $W \to D \to I$.** Where in the chain could disagreement enter?
 4. **Identify overlaps.** Where do independent channels meet?
 5. **Specify admissible transitions $T_{ij} \in \mathcal{T}$.** What licenses each comparison?
-6. **Decide which sameness.** $=$, $\cong$, $\simeq$, $\le \varepsilon$, statistical; pick the right one and refuse to upgrade.
+6. **Decide which sameness.** $=$, $\cong$, $\simeq$, $\le \varepsilon$, statistical, model-theoretic; pick the right one and refuse to upgrade.
 7. **Build the candidate global model $G$.** Does descent hold on every admissible cover?
 8. **Record residuals.** What is preserved, not erased?
 9. **Plan the next observation.** What evidence would discriminate?
