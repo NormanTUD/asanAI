@@ -1346,6 +1346,19 @@ $$
 
 - **The cover $\{c_i\}_{i \in I}$** is the *training corpus*: each $c_i$ is a document, a web page, a code repository, a conversation, a transcript. Each is a "patch" of partial evidence about $W$. The patches overlap — the same fact appears in many documents, the same code idiom in many repositories — and the union of their images is supposed to cover everything the model is meant to be able to speak about. The cover is not clean. Patches *disagree about the same facts* — different sources contradict each other, sometimes within the same document — and some are noisy, outdated, or biased. The chain from $W$ to the text in the corpus is $W \to \text{signal} \to \text{internal rep.} \to \text{language} \to \text{text} \to \text{corpus}$, with misremembering, badly-written prose, simple errors, lies, and altered states at every arrow — so the patches are not equal on overlaps but related by homotopies. In the strict sheaf regime this would be fatal; in the **homotopical regime** (the chapter's *Higher coherence* section, with $\infty\text{-Gpd}$ as target) local sections are *coherently equivalent* rather than equal — paraphrases, translations, corrections are homotopies, not disagreements — and descent absorbs the noise. What survives in $G$ is the *coherence class* of the cover, not any single patch.
 
+  The chain, written as the commuting diagram it actually is:
+
+  $$
+  \underbrace{W}_{\text{world}}
+  \xrightarrow[\;\text{stimulus pickup}\;]{\text{perception}}\underbrace{S}_{\text{signal}}
+  \xrightarrow[\;\text{memory / thought}\;]{\text{cognition}}\underbrace{\rho}_{\text{internal rep.}}
+  \xrightarrow[\;\text{encoding}\;]{\text{language}}\underbrace{\Sigma}_{\text{spoken sentence}}
+  \xrightarrow[\;\text{composition}\;]{\text{writing}}\underbrace{T}_{\text{written text}}
+  \xrightarrow[\;\text{scraping}\;]{\text{aggregation}}\underbrace{C}_{\text{corpus}}.
+  $$
+
+  Each arrow is a transformation that may distort, lose, or invent content.
+
 - **The representations $R_i$** are the model's internal states: token embeddings, hidden activations, attention patterns, the final logits. They are what *arrive* at the global section $G$, not what arrives from the world.
 
 - **The admissible transitions $\mathcal{T}$** are the model's *internal operations*: tokenisation, embedding, attention, layer normalisation, MLP transformations, logit computation, sampling. None of these is a bridge from the model to the world; all of them are bridges *inside* the model — operations on its own representations.
