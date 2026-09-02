@@ -29,7 +29,7 @@ Note on properties (1)-(3): they hold given our commitment to indirect realism. 
 
 1. *Indirect realism.* There is a subject matter distinct from any access to it; traces are outputs of access, not the thing itself.
 2. *Internal structure.* $W$ has regions, points, or sub-systems to which access can be applied.
-3. *Admissible transitions exist.* A non-trivial class $\mathcal{T}$ of arrows — both observation arrows $O : W \to R$ and inter-representation arrows $R_i \to R_j$ — is justified independently of any specific dataset. Membership in $\mathcal{T}$ is a licence to compare, not a guarantee that the comparison is correct.
+3. *Admissible transitions exist.* A non-trivial class $\mathcal{T}$ of arrows — observation arrows $O : W \to R$, inter-representation arrows $R_i \to R_j$, and inter-context arrows in $\mathrm{Hom}(\mathcal{C})$ (refinements between contexts) — is justified independently of any specific dataset. Membership in $\mathcal{T}$ is a licence to compare, not a guarantee that the comparison is correct.
 4. *Coherence is necessary but not sufficient.* A model whose parts contradict each other is not a description of any single subject matter.
 5. *Correspondence is separate.* Even a perfectly coherent model is not yet a true one; contact with the world is a second, distinct test.
 
@@ -111,6 +111,7 @@ Not everything called "the same" is the same *kind* of same. The vocabulary of *
 - $x \simeq y$: *homotopy equivalence*. Related by a deformation that can be undone, up to coherent witnesses.
 - $d(x, y) \le \varepsilon$: *approximation*. Close enough for current purposes, with a quantified residual.
 - $P(D_1, D_2 \mid M)$ high: *statistical*. Agreement under a probabilistic model, not on the nose.
+- $\exists M : M \models \mathcal{S}_{\text{all}}$: *model-theoretic*. The two theories admit a common interpretation, a model that satisfies both.
 
 Each form has a parallel in **sense data**, **measurement**, and **mathematics**:
 
@@ -121,6 +122,7 @@ Each form has a parallel in **sense data**, **measurement**, and **mathematics**
 | $x \simeq y$          | flash and bang from one strike          | two experiments, one phenomenon            | cup $\simeq$ donut                |
 | $d(x,y) \le \varepsilon$ | $20.01$ vs $20.02$ on a thermometer  | within tolerance                           | $\|f_n - f\|_\infty < \varepsilon$ |
 | $P$ high              | eyewitness and CCTV agree               | two studies reject the same $H_0$          | Monte-Carlo agrees with theorem   |
+| $\exists M$           | two witnesses agree on a single story   | two labs' data fit one shared model        | two axiomatisations admit a common model |
 
 In **dependent type theory** these are *literally different types*. To say $x = y$ in a type $A$ is to inhabit the type $\mathsf{Id}_A(x, y)$, a *space* of witnesses. To say $x \cong y$ is to inhabit $\mathsf{Iso}(x, y)$, a different space. To say $x \simeq y$ is yet another type.
 
