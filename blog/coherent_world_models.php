@@ -89,6 +89,16 @@ Between "subject matter $W$" and "the trace $r \in R$ I received" sit at least t
 
 *Example.* The same Doppler-shifted spectrum is read by one physicist as evidence for a moving source, by another as evidence for an expanding universe. The trace is fixed; the interpretive framework differs.
 
+One symptom, three places it can originate — the diagnostic picture:
+
+$$
+\begin{array}{ccccc}
+\underset{\text{two subjects}}{W_1 \neq W_2} && \underset{\text{two instruments}}{I_1 \neq I_2} && \underset{\text{two interpretations}}{\nu_1 \neq \nu_2}\\
+& \searrow & \downarrow & \swarrow &\\
+&& \underbrace{\text{two disagreeing reports}}_{\text{one symptom}}&&
+\end{array}
+$$
+
 $$
 \boxed{
 \begin{aligned}
@@ -130,6 +140,24 @@ Each form has a parallel in **sense data**, **measurement**, and **mathematics**
 In **dependent type theory** these are *literally different types*. To say $x = y$ in a type $A$ is to inhabit the type $\mathsf{Id}_A(x, y)$, a *space* of witnesses. To say $x \cong y$ is to inhabit $\mathsf{Iso}(x, y)$, a different space. To say $x \simeq y$ is yet another type.
 
 In **Homotopy Type Theory (HoTT)** the equality type is itself a space: its points are *paths* from $x$ to $y$, and these paths may themselves be related by higher paths. Under the **univalence axiom** this becomes literal: for types in a universe $\mathcal{U}$, an equality in $\mathcal{U}$ *is* an equivalence, so $(x =_{\mathcal{U}} y) \simeq (x \simeq y)$. A claim like "$R_A =_x R_B$" is not a proposition (yes/no) but a *space of answers*: paths from $R_A$ to $R_B$, possibly homotopic to each other or genuinely distinct. Asking "are these the same?" may have a whole space of witnesses, not one.
+
+The whole hierarchy, with its witness at each level — each $\Downarrow$ is a weakening (every witness of the row above is automatically a witness of every row below); the forbidden move is to read them silently upwards:
+
+$$
+\begin{array}{c}
+\underset{\text{witness: an identity}}{x = y}\\
+\Downarrow\\
+\underset{\text{witness: an invertible map}}{x \cong y}\\
+\Downarrow\\
+\underset{\text{witness: a coherent deformation}}{x \simeq y}\\
+\Downarrow\\
+\underset{\text{witness: a quantified residual}}{d(x, y) \le \varepsilon}\\
+\Downarrow\\
+\underset{\text{witness: a likelihood under }M}{P(D_1, D_2 \mid M)\text{ high}}\\
+\Downarrow\\
+\underset{\text{witness: a common model}}{\exists M : M \models \mathcal{S}_{\text{all}}}
+\end{array}
+$$
 
 This is why **silent upgrades between rows** are the most common category error in "world model" talk:
 
@@ -297,6 +325,22 @@ Three pieces, reading left to right:
 
 3. **The equalizer.** Out of all tuples in $\prod_i F(c_i)$, keep only those on which the two arrows give the same answer. Those are precisely the compatible tuples, and the sheaf condition says there is a *unique* global section in $F(c)$ sitting above each compatible tuple.
 
+For a cover of two patches, the whole condition is one square — and it is a pullback:
+
+$$
+\begin{array}{ccc}
+\underbrace{F(c)}_{\text{global on }c} & \xrightarrow{\;\mathrm{res}\;} & \underbrace{F(c_1)}_{\text{patch 1}}\\
+{\scriptstyle\mathrm{res}}\downarrow && \downarrow{\scriptstyle d_0}\\
+\underbrace{F(c_2)}_{\text{patch 2}} & \xrightarrow[\;d_1\;]{} & \underbrace{F(c_1 \times_c c_2)}_{\text{the overlap}}
+\end{array}
+$$
+
+The square always commutes for every genuine global section (restrict along either route; you land at the same section of the overlap). The sheaf condition is the converse: every pair $(s_1, s_2)$ whose restrictions $d_0 s_1 = d_1 s_2$ agree on the overlap comes from exactly one global section — so
+
+$$F(c) \;\simeq\; F(c_1) \times_{F(c_1 \times_c c_2)} F(c_2).$$
+
+For two patches, coherence *is* a pullback — the object of agreements, exactly as in the section "Pullbacks: agreement through a shared target" below. For more patches the same shape runs over the full Čech nerve.
+
 The $\varprojlim$ in older presentations does exactly the same job; the equalizer is just its name when the diagram is a single parallel pair. (For covers of more than two patches, $\varprojlim$ runs over the full *Čech nerve*; see "Higher coherence" below.)
 
 The isomorphism $F(c) \simeq \mathrm{Eq}(\cdots)$ is the **sheaf condition**: the smallest, sharpest statement of the local-to-global principle.
@@ -390,6 +434,18 @@ There are now two ways to go from $A$ to $C$: directly via $\phi_{AC}$, or by co
 - **Strict regime.** They agree *on the nose*: $\phi_{BC} \circ \phi_{AB} \;=\; \phi_{AC}$. Equality is a single yes/no answer.
 - **Homotopical regime.** They agree *up to a witness*, a **2-morphism** $\alpha_{ABC} : \phi_{BC} \phi_{AB} \Rightarrow \phi_{AC}$. Think of $\alpha_{ABC}$ as a "filler" that says the two routes are not the same path but can be *continuously deformed* into one another. The 2-morphism itself is data; you can ask further questions about *it*.
 - **Four representations.** Add $D$, with its own transitions. Now the fillers $\alpha_{ABC}$, $\alpha_{BCD}$, $\alpha_{ACD}$, $\alpha_{ABD}$ may themselves disagree, and you need a **3-morphism** filling between the fillers to certify higher-order consistency. And so on.
+
+The homotopical case, drawn — the $\Downarrow$ in the interior is the filler $\alpha_{ABC}$:
+
+$$
+\begin{array}{ccc}
+A & \xrightarrow{\;\phi_{AB}\;} & B\\
+{\scriptstyle\phi_{AC}}\searrow & \Downarrow{\scriptstyle\alpha_{ABC}} & \swarrow{\scriptstyle\phi_{BC}}\\
+& C &
+\end{array}
+$$
+
+The two routes — $\phi_{AC}$ directly, and $\phi_{BC} \circ \phi_{AB}$ by composition — are not equal; the filler says they can be deformed into one another, and the filler is itself data you can ask further questions about.
 
 The generalisation is clean: an **$n$-morphism** is a cell of dimension $n$ in a higher category.
 
@@ -897,6 +953,18 @@ $$
 \underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1935)}}
 $$
 
+The whole correlation, as one square:
+
+$$
+\begin{array}{ccc}
+\underbrace{S}_{\text{object sentence}} & \overset{\;\text{is true iff}\;}{\longleftrightarrow} & \underbrace{p}_{\text{fact in the meta-language}}\\
+{\scriptstyle\text{quotation}}\downarrow && \downarrow{\scriptstyle\text{reference}}\\
+\underbrace{\ulcorner S\urcorner}_{\text{name of }S} & \xrightarrow{\;\;T\in\mathcal{T}\;\;} & \underbrace{W}_{\text{the world}}
+\end{array}
+$$
+
+The top arrow is Convention T. The two verticals anchor each side — quotation turns the sentence into a name (the handle by which the object-sentence is gripped from outside); reference connects the meta-language fact to the world. The bottom arrow is the licensed bridge: without a $T\in\mathcal{T}$ underneath, the horizontal iff floats free of $W$ and certifies nothing. The square commutes exactly when the T-schema holds at this contact point.
+
 </div>
 
 <div class="md">
@@ -1029,6 +1097,20 @@ $$
 $$
 
 Failure: *correspondence* (the same as (1), not a new failure mode). The diagnosis is that $\mathcal{T}$ has been chosen wrongly — i.e., the licensing was too permissive and admitted procedures that did not actually constrain the data to track $W$. The "both" reading some readers will reach is shorthand for *both the licensing setup and the correspondence at contact points are broken*; the truth-condition failure is correspondence alone.
+
+All three, located on the one diagram:
+
+$$
+\begin{array}{ccccc}
+&&\underbrace{W}_{\text{subject matter}}\;{}^{(1)}\!\nwarrow{\scriptstyle\text{claim}}&&\\
+&{\scriptstyle O_1}\swarrow\,{}_{(3)}&{\scriptstyle O_2}\downarrow\,{}_{(3)}&{\scriptstyle O_3}\searrow\,{}_{(3)}&\\
+\underbrace{R_1}_{\text{view 1}}&&\underbrace{R_2}_{\text{view 2}}&&\underbrace{R_3}_{\text{view 3}}\\
+&{\scriptstyle T_1}\searrow\,{}^{(2)}&{\scriptstyle T_2}\downarrow\,{}^{(2)}&{\scriptstyle T_3}\swarrow\,{}^{(2)}&\\
+&&\underbrace{G}_{\text{coherent global model}}&&
+\end{array}
+$$
+
+$(1)$ breaks on the **claim arrow** $G \to W$: every arrow in the diagram is licensed, descent holds, yet Tarski fails at the contact — the self-consistent fantasy. $(2)$ breaks on the **$T_i$ arrows** into $G$: every claim is individually true at the contact, but descent never delivers a $G$ — the factbook. $(3)$ breaks on the **$O_i$ arrows**: licences are in order, but the data never tracked $W$ — the hallucinating model. Same diagram, three different break-points, three different remedies.
 
 </div>
 
