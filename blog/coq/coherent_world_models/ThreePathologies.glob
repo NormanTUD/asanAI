@@ -1,0 +1,39 @@
+DIGEST 51b4b2bdf30c822973078537e6f593b3
+FThreePathologies
+R3569:3575 Library <> <> lib
+R3593:3598 Traces <> <> lib
+R3616:3636 AdmissibleTransitions <> <> lib
+R3654:3669 ContextsAndSites <> <> lib
+R3687:3693 Sheaves <> <> lib
+R3711:3723 MasterDiagram <> <> lib
+R3741:3749 Forbidden <> <> lib
+R3767:3772 Tarski <> <> lib
+R3799:3808 Coq.Lists.List <> <> lib
+R3818:3830 Coq.Lists.List ListNotations <> mod
+ind 4094:4104 <> FailureMode
+constr 4113:4124 <> FM_coherence
+constr 4193:4209 <> FM_correspondence
+R4132:4142 ThreePathologies <> FailureMode:1 ind
+R4213:4223 ThreePathologies <> FailureMode:1 ind
+scheme 4094:4104 <> FailureMode_rect
+scheme 4094:4104 <> FailureMode_ind
+scheme 4094:4104 <> FailureMode_rec
+scheme 4094:4104 <> FailureMode_sind
+rec 4762:4783 <> SelfConsistentFantasy'
+proj 4792:4796 <> SCF_G
+proj 4808:4818 <> SCF_descent
+proj 4889:4902 <> SCF_O_licensed
+proj 4969:4982 <> SCF_T_licensed
+proj 5049:5064 <> SCF_tarski_fails
+proj 5129:5141 <> SCF_diagnosis
+R5156:5159 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5145:5155 ThreePathologies <> SCF_descent:5 meth
+R5174:5177 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5160:5173 ThreePathologies <> SCF_O_licensed:6 meth
+R5192:5216 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R5178:5191 ThreePathologies <> SCF_T_licensed:7 meth
+R5217:5232 ThreePathologies <> SCF_tarski_fails:8 meth
+def 5249:5264 <> SCF_failure_mode
+R5268:5278 ThreePathologies <> FailureMode ind
+R5283:5299 ThreePathologies <> FM_correspondence constr
+def 5395:5404 <> SCF_remedy
