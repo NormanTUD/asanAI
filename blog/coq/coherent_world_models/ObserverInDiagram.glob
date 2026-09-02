@@ -1,4 +1,4 @@
-DIGEST 4ede9f89977ed732a7a0e3d2ce1381ec
+DIGEST b1754998ebbd8ae09329648445b26863
 FObserverInDiagram
 R2356:2362 Library <> <> lib
 R2380:2385 Traces <> <> lib
@@ -26,14 +26,141 @@ R3435:3442 ObserverInDiagram <> OP_Sigma:5 meth
 R3517:3520 Coq.Init.Logic <> ::type_scope:x_'->'_x not
 R3509:3516 ObserverInDiagram <> OP_Sigma:5 meth
 R3521:3524 ObserverInDiagram <> OP_M:6 meth
-def 3680:3697 <> observer_composite
-R3704:3719 ObserverInDiagram <> ObserverPipeline rec
-binder 3700:3700 <> p:11
-R3744:3747 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3726:3734 Library <> W_carrier proj
-R3737:3740 ObserverInDiagram <> OP_W proj
-R3742:3742 ObserverInDiagram <> p:11 var
-R3748:3751 ObserverInDiagram <> OP_M proj
-R3753:3753 ObserverInDiagram <> p:11 var
-R3760:3763 ObserverInDiagram <> OP_C proj
-R3765:3765 ObserverInDiagram <> p:11 var
+def 3680:3686 <> compose
+binder 3689:3689 <> A:11
+binder 3691:3691 <> B:12
+binder 3693:3693 <> C:13
+R3709:3712 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3708:3708 ObserverInDiagram <> B:12 var
+R3713:3713 ObserverInDiagram <> C:13 var
+binder 3704:3704 <> g:14
+R3722:3725 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3721:3721 ObserverInDiagram <> A:11 var
+R3726:3726 ObserverInDiagram <> B:12 var
+binder 3717:3717 <> f:15
+R3732:3735 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3731:3731 ObserverInDiagram <> A:11 var
+R3736:3736 ObserverInDiagram <> C:13 var
+R3751:3751 ObserverInDiagram <> A:11 var
+binder 3747:3747 <> x:16
+R3756:3756 ObserverInDiagram <> g:14 var
+R3759:3759 ObserverInDiagram <> f:15 var
+R3761:3761 ObserverInDiagram <> x:16 var
+def 3777:3794 <> observer_composite
+R3801:3816 ObserverInDiagram <> ObserverPipeline rec
+binder 3797:3797 <> p:17
+R3841:3844 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3823:3831 Library <> W_carrier proj
+R3834:3837 ObserverInDiagram <> OP_W proj
+R3839:3839 ObserverInDiagram <> p:17 var
+R3845:3848 ObserverInDiagram <> OP_M proj
+R3850:3850 ObserverInDiagram <> p:17 var
+R3857:3863 ObserverInDiagram <> compose def
+R3875:3881 ObserverInDiagram <> compose def
+R3893:3899 ObserverInDiagram <> compose def
+R3911:3914 ObserverInDiagram <> OP_I proj
+R3916:3916 ObserverInDiagram <> p:17 var
+R3902:3905 ObserverInDiagram <> OP_N proj
+R3907:3907 ObserverInDiagram <> p:17 var
+R3884:3887 ObserverInDiagram <> OP_L proj
+R3889:3889 ObserverInDiagram <> p:17 var
+R3866:3869 ObserverInDiagram <> OP_C proj
+R3871:3871 ObserverInDiagram <> p:17 var
+rec 4339:4352 <> VisionPipeline
+proj 4361:4368 <> VP_light
+proj 4380:4389 <> VP_retinal
+proj 4401:4405 <> VP_V1
+proj 4417:4426 <> VP_percept
+proj 4438:4441 <> VP_I
+proj 4471:4474 <> VP_N
+proj 4501:4504 <> VP_L
+R4453:4456 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4445:4452 ObserverInDiagram <> VP_light:19 meth
+R4457:4466 ObserverInDiagram <> VP_retinal:20 meth
+R4488:4491 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4478:4487 ObserverInDiagram <> VP_retinal:20 meth
+R4492:4496 ObserverInDiagram <> VP_V1:21 meth
+R4513:4516 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4508:4512 ObserverInDiagram <> VP_V1:21 meth
+R4517:4526 ObserverInDiagram <> VP_percept:22 meth
+rec 4781:4796 <> AuditionPipeline
+proj 4805:4815 <> AP_pressure
+proj 4827:4837 <> AP_cochlear
+proj 4849:4857 <> AP_cortex
+proj 4869:4878 <> AP_percept
+proj 4890:4893 <> AP_I
+proj 4927:4930 <> AP_N
+proj 4962:4965 <> AP_L
+R4908:4911 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4897:4907 ObserverInDiagram <> AP_pressure:27 meth
+R4912:4922 ObserverInDiagram <> AP_cochlear:28 meth
+R4945:4948 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4934:4944 ObserverInDiagram <> AP_cochlear:28 meth
+R4949:4957 ObserverInDiagram <> AP_cortex:29 meth
+R4978:4981 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4969:4977 ObserverInDiagram <> AP_cortex:29 meth
+R4982:4991 ObserverInDiagram <> AP_percept:30 meth
+rec 5167:5185 <> MathematicsPipeline
+proj 5194:5205 <> MP_structure
+proj 5217:5229 <> MP_statements
+proj 5241:5254 <> MP_derivations
+proj 5266:5273 <> MP_proof
+proj 5285:5288 <> MP_I
+proj 5325:5328 <> MP_N
+proj 5367:5370 <> MP_L
+R5304:5307 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5292:5303 ObserverInDiagram <> MP_structure:35 meth
+R5308:5320 ObserverInDiagram <> MP_statements:36 meth
+R5345:5348 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5332:5344 ObserverInDiagram <> MP_statements:36 meth
+R5349:5362 ObserverInDiagram <> MP_derivations:37 meth
+R5388:5391 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5374:5387 ObserverInDiagram <> MP_derivations:37 meth
+R5392:5399 ObserverInDiagram <> MP_proof:38 meth
+rec 5575:5589 <> HistoryPipeline
+proj 5598:5606 <> HP_events
+proj 5618:5629 <> HP_documents
+proj 5641:5649 <> HP_claims
+proj 5661:5672 <> HP_narrative
+proj 5684:5687 <> HP_I
+proj 5720:5723 <> HP_N
+proj 5756:5759 <> HP_L
+R5700:5703 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5691:5699 ObserverInDiagram <> HP_events:43 meth
+R5704:5715 ObserverInDiagram <> HP_documents:44 meth
+R5739:5742 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5727:5738 ObserverInDiagram <> HP_documents:44 meth
+R5743:5751 ObserverInDiagram <> HP_claims:45 meth
+R5772:5775 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5763:5771 ObserverInDiagram <> HP_claims:45 meth
+R5776:5787 ObserverInDiagram <> HP_narrative:46 meth
+rec 6211:6232 <> RepresentationQuestion
+proj 6241:6251 <> RQ_pipeline
+proj 6275:6286 <> RQ_preserved
+proj 6355:6366 <> RQ_discarded
+R6255:6270 ObserverInDiagram <> ObserverPipeline rec
+R6294:6297 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6374:6377 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+def 6448:6463 <> ask_preservation
+R6470:6491 ObserverInDiagram <> RepresentationQuestion rec
+binder 6466:6466 <> q:54
+R6500:6503 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6514:6525 ObserverInDiagram <> RQ_preserved proj
+R6527:6527 ObserverInDiagram <> q:54 var
+def 6542:6555 <> ask_discarding
+R6562:6583 ObserverInDiagram <> RepresentationQuestion rec
+binder 6558:6558 <> q:55
+R6592:6595 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6606:6617 ObserverInDiagram <> RQ_discarded proj
+R6619:6619 ObserverInDiagram <> q:55 var
+rec 7193:7203 <> BackedClaim
+proj 7212:7222 <> BC_pipeline
+proj 7246:7257 <> BC_structure
+proj 7277:7287 <> BC_licensed
+R7226:7241 ObserverInDiagram <> ObserverPipeline rec
+R7265:7268 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+def 7368:7382 <> claim_is_backed
+R7389:7399 ObserverInDiagram <> BackedClaim rec
+binder 7385:7385 <> c:60
+R7414:7424 ObserverInDiagram <> BC_licensed proj
+R7426:7426 ObserverInDiagram <> c:60 var

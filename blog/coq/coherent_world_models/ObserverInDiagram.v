@@ -30,8 +30,6 @@
 
 Require Import Library.
 Require Import Traces.
-From Coq Require Import Basics.FunctionalExtensionality.
-Import Coq.Init.Notations.
 
 (* ---------------------------------------------------------------------------- *)
 (* 1.  The six-stage pipeline                                                    *)
@@ -55,9 +53,12 @@ Record ObserverPipeline := {
 
 (* The full composite is the pipeline from W to M.                           *)
 
+Definition compose {A B C : Type} (g : B -> C) (f : A -> B) : A -> C :=
+  fun x : A => g (f x).
+
 Definition observer_composite (p : ObserverPipeline)
   : W_carrier (OP_W p) -> OP_M p :=
-  OP_C p o OP_L p o OP_N p o OP_I p.
+  compose (OP_C p) (compose (OP_L p) (compose (OP_N p) (OP_I p))).
 (* This is the chapter's W -> M composite via the five stages.             *)
 
 (* ---------------------------------------------------------------------------- *)
