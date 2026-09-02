@@ -16,6 +16,13 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, type-theory, mode
 
 No inquirer has unmediated access to its subject matter. A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a listener can touch the speaker, but what their fingers meet is already a transformed trace — pressure into nerve signal into percept — never the sound source as it would be apart from any perception. A historian never enters the past. In every domain, we work with *transformed traces*: measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.
 
+**Definition (trace).** A *trace* is whatever an *access function* $O : W \to R$ leaves behind when applied to (a region of) a subject matter $W$. Formally, a trace is a point $r \in R$ such that $r = O(w)$ for some $w \in W$. Concretely: an electron leaves a track in a cloud chamber; a tree leaves a shadow on the ground; a past event leaves a document in an archive; an abstract structure leaves a proof in a published paper. Four properties follow:
+
+1. *Transformed.* The trace is *not* $w$ but the result of an access procedure applied to $w$. What we hold is the output of the procedure, never the input to it.
+2. *Mediated.* The trace carries the marks of $O$ — different access functions on the same $w$ produce different traces. The marks of $O$ are part of the trace; an unmediated trace is a contradiction in terms.
+3. *Underdetermined.* Many $(w, O)$ pairs can yield the same $r$. From the trace alone, neither the source $w$ nor the procedure $O$ is uniquely determined; recovering them is the whole task of inference.
+4. *Indexical.* A trace is *of* something — it points beyond itself to a source. Without indexicality, a trace would be just a free-floating datum, not evidence.
+
 What we receive is *always already mediated*. There is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*) — first introduced in the *Critique of Pure Reason* at KrV A26/B42 (§3 of Space, in the Transcendental Aesthetic) and developed systematically in the chapter "Of Phenomena and Noumena" at A235/B294 \cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not "how do we reach it?" but "what can we honestly do with the traces we have?"
 
 $$
