@@ -1,4 +1,4 @@
-DIGEST 9b3de6d5785c2e35b4b7ea50800e696f
+DIGEST 632b60edbbba42b10c19b3fcec1d8f3d
 FAILLM
 R2133:2139 Library <> <> lib
 R2157:2162 Traces <> <> lib
@@ -189,103 +189,103 @@ def 12068:12086 <> hallucination_table
 R12090:12093 Coq.Init.Datatypes <> list ind
 R12095:12117 AILLM <> HallucinationTableEntry rec
 R12122:12124 Coq.Init.Datatypes <> nil constr
-ax 13492:13519 <> diagnosis_matters_for_remedy
-R13541:13562 AILLM <> HallucinationDiagnosis ind
-binder 13533:13534 <> t1:99
-binder 13536:13537 <> t2:100
-R13570:13592 AILLM <> HallucinationTableEntry rec
-binder 13566:13566 <> e:101
-R13620:13627 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13615:13617 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13600:13612 AILLM <> HTE_pathology proj
-R13614:13614 AILLM <> e:101 var
-R13618:13619 AILLM <> t1:99 var
-R13648:13735 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13643:13645 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13628:13640 AILLM <> HTE_pathology proj
-R13642:13642 AILLM <> e:101 var
-R13646:13647 AILLM <> t2:100 var
-R13736:13736 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13816:13824 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-binder 13744:13745 <> r1:102
-binder 13747:13748 <> r2:103
-R13776:13779 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13771:13773 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13751:13768 AILLM <> HTE_typical_remedy proj
-R13770:13770 AILLM <> e:101 var
-R13774:13775 AILLM <> r1:102 var
-R13805:13808 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13800:13802 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13780:13797 AILLM <> HTE_typical_remedy proj
-R13799:13799 AILLM <> e:101 var
-R13803:13804 AILLM <> r2:103 var
-R13811:13813 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13809:13810 AILLM <> r1:102 var
-R13814:13815 AILLM <> r2:103 var
-R13825:13828 Coq.Init.Logic <> True ind
-rec 14000:14020 <> ValueAlignmentProblem
-proj 14029:14037 <> VAP_goals
-proj 14049:14060 <> VAP_observer
-proj 14072:14084 <> VAP_alignment
-proj 14125:14152 <> VAP_chapter_does_not_address
-R14097:14100 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R14088:14096 AILLM <> VAP_goals:107 meth
-R14113:14116 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R14101:14112 AILLM <> VAP_observer:108 meth
-ax 14171:14194 <> value_alignment_separate
-R14214:14234 AILLM <> ValueAlignmentProblem rec
-binder 14208:14210 <> vap:111
-rec 15555:15562 <> LLMAudit
-proj 15571:15578 <> LA_input
-proj 15653:15669 <> LA_interpretation
-proj 15693:15700 <> LA_chain
-proj 15774:15784 <> LA_overlaps
-proj 15801:15811 <> LA_licences
-proj 15838:15848 <> LA_sameness
-proj 15870:15878 <> LA_global
-proj 15890:15901 <> LA_residuals
-proj 15913:15919 <> LA_next
-R15681:15684 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R15673:15680 AILLM <> LA_input:115 meth
-R15704:15707 Coq.Init.Datatypes <> list ind
-R15788:15791 Coq.Init.Datatypes <> list ind
-R15815:15818 Coq.Init.Datatypes <> list ind
-R15820:15833 Library <> TransitionKind ind
-R15852:15865 PracticalProcedure <> SamenessChoice ind
-ind 16604:16617 <> FrameworkLimit
-constr 16626:16649 <> FL_emergent_capabilities
-constr 16678:16706 <> FL_in_context_meta_phenomenon
-constr 16730:16749 <> FL_training_dynamics
-constr 16782:16807 <> FL_value_alignment_problem
-R16659:16672 AILLM <> FrameworkLimit:124 ind
-R16711:16724 AILLM <> FrameworkLimit:124 ind
-R16763:16776 AILLM <> FrameworkLimit:124 ind
-R16815:16828 AILLM <> FrameworkLimit:124 ind
-scheme 16604:16617 <> FrameworkLimit_rect
-scheme 16604:16617 <> FrameworkLimit_ind
-scheme 16604:16617 <> FrameworkLimit_rec
-scheme 16604:16617 <> FrameworkLimit_sind
-ax 16995:17014 <> framework_has_limits
-R17032:17045 AILLM <> FrameworkLimit ind
-binder 17028:17028 <> l:126
-R17049:17052 Coq.Init.Logic <> True ind
-ind 17642:17652 <> HonestClaim
-constr 17661:17674 <> HC_useful_lens
-constr 17705:17729 <> HC_unification_hypothesis
-constr 17749:17770 <> HC_portable_discipline
-R17689:17699 AILLM <> HonestClaim:129 ind
-R17733:17743 AILLM <> HonestClaim:129 ind
-R17778:17788 AILLM <> HonestClaim:129 ind
-scheme 17642:17652 <> HonestClaim_rect
-scheme 17642:17652 <> HonestClaim_ind
-scheme 17642:17652 <> HonestClaim_rec
-scheme 17642:17652 <> HonestClaim_sind
-rec 17799:17811 <> HonestClosing
-proj 17820:17827 <> HC_claim
-proj 17846:17853 <> HC_bears
-R17831:17841 AILLM <> HonestClaim ind
-ax 18267:18286 <> llm_world_model_kind
-R18308:18315 AILLM <> LLMSetup rec
-binder 18300:18304 <> setup:134
-R18325:18336 AILLM <> AugmentedLLM rec
-binder 18319:18321 <> aug:135
+ax 13491:13518 <> diagnosis_matters_for_remedy
+R13540:13561 AILLM <> HallucinationDiagnosis ind
+binder 13532:13533 <> t1:99
+binder 13535:13536 <> t2:100
+R13569:13591 AILLM <> HallucinationTableEntry rec
+binder 13565:13565 <> e:101
+R13619:13626 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13614:13616 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13599:13611 AILLM <> HTE_pathology proj
+R13613:13613 AILLM <> e:101 var
+R13617:13618 AILLM <> t1:99 var
+R13647:13734 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13642:13644 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13627:13639 AILLM <> HTE_pathology proj
+R13641:13641 AILLM <> e:101 var
+R13645:13646 AILLM <> t2:100 var
+R13735:13735 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13815:13823 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 13743:13744 <> r1:102
+binder 13746:13747 <> r2:103
+R13775:13778 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13770:13772 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13750:13767 AILLM <> HTE_typical_remedy proj
+R13769:13769 AILLM <> e:101 var
+R13773:13774 AILLM <> r1:102 var
+R13804:13807 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13799:13801 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13779:13796 AILLM <> HTE_typical_remedy proj
+R13798:13798 AILLM <> e:101 var
+R13802:13803 AILLM <> r2:103 var
+R13810:13812 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13808:13809 AILLM <> r1:102 var
+R13813:13814 AILLM <> r2:103 var
+R13824:13827 Coq.Init.Logic <> True ind
+rec 13999:14019 <> ValueAlignmentProblem
+proj 14028:14036 <> VAP_goals
+proj 14048:14059 <> VAP_observer
+proj 14071:14083 <> VAP_alignment
+proj 14124:14151 <> VAP_chapter_does_not_address
+R14096:14099 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14087:14095 AILLM <> VAP_goals:107 meth
+R14112:14115 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14100:14111 AILLM <> VAP_observer:108 meth
+ax 14170:14193 <> value_alignment_separate
+R14213:14233 AILLM <> ValueAlignmentProblem rec
+binder 14207:14209 <> vap:111
+rec 15556:15563 <> LLMAudit
+proj 15572:15579 <> LA_input
+proj 15654:15670 <> LA_interpretation
+proj 15694:15701 <> LA_chain
+proj 15775:15785 <> LA_overlaps
+proj 15802:15812 <> LA_licences
+proj 15839:15849 <> LA_sameness
+proj 15871:15879 <> LA_global
+proj 15891:15902 <> LA_residuals
+proj 15914:15920 <> LA_next
+R15682:15685 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15674:15681 AILLM <> LA_input:115 meth
+R15705:15708 Coq.Init.Datatypes <> list ind
+R15789:15792 Coq.Init.Datatypes <> list ind
+R15816:15819 Coq.Init.Datatypes <> list ind
+R15821:15834 Library <> TransitionKind ind
+R15853:15866 PracticalProcedure <> SamenessChoice ind
+ind 16605:16618 <> FrameworkLimit
+constr 16627:16650 <> FL_emergent_capabilities
+constr 16679:16707 <> FL_in_context_meta_phenomenon
+constr 16731:16750 <> FL_training_dynamics
+constr 16783:16808 <> FL_value_alignment_problem
+R16660:16673 AILLM <> FrameworkLimit:124 ind
+R16712:16725 AILLM <> FrameworkLimit:124 ind
+R16764:16777 AILLM <> FrameworkLimit:124 ind
+R16816:16829 AILLM <> FrameworkLimit:124 ind
+scheme 16605:16618 <> FrameworkLimit_rect
+scheme 16605:16618 <> FrameworkLimit_ind
+scheme 16605:16618 <> FrameworkLimit_rec
+scheme 16605:16618 <> FrameworkLimit_sind
+ax 16996:17015 <> framework_has_limits
+R17033:17046 AILLM <> FrameworkLimit ind
+binder 17029:17029 <> l:126
+R17050:17053 Coq.Init.Logic <> True ind
+ind 17643:17653 <> HonestClaim
+constr 17662:17675 <> HC_useful_lens
+constr 17706:17730 <> HC_unification_hypothesis
+constr 17750:17771 <> HC_portable_discipline
+R17690:17700 AILLM <> HonestClaim:129 ind
+R17734:17744 AILLM <> HonestClaim:129 ind
+R17779:17789 AILLM <> HonestClaim:129 ind
+scheme 17643:17653 <> HonestClaim_rect
+scheme 17643:17653 <> HonestClaim_ind
+scheme 17643:17653 <> HonestClaim_rec
+scheme 17643:17653 <> HonestClaim_sind
+rec 17800:17812 <> HonestClosing
+proj 17821:17828 <> HC_claim
+proj 17847:17854 <> HC_bears
+R17832:17842 AILLM <> HonestClaim ind
+ax 18268:18287 <> llm_world_model_kind
+R18309:18316 AILLM <> LLMSetup rec
+binder 18301:18305 <> setup:134
+R18326:18337 AILLM <> AugmentedLLM rec
+binder 18320:18322 <> aug:135

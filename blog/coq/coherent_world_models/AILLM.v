@@ -267,10 +267,10 @@ Definition hallucination_table : list HallucinationTableEntry := nil.
 (*     Broken: correspondence.                                                *)
 (*     Remedy: re-calibrated licences, formal verification.                 *)
 
-(* The chapter: "The diagnosis matters because the remedy differs in each   *)
+(* The chapter: The diagnosis matters because the remedy differs in each   *)
 (* case. The typical hallucination needs both more coherence and more        *)
-(* correspondence... A single fix does not address all four, and conflating *)
-(* them is one of the most common ways to talk uselessly about AI safety."  *)
+(* correspondence. A single fix does not address all four, and conflating   *)
+(* them is one of the most common ways to talk uselessly about AI safety.   *)
 
 Axiom diagnosis_matters_for_remedy :
   forall (t1 t2 : HallucinationDiagnosis) (e : HallucinationTableEntry),
@@ -292,11 +292,11 @@ Record ValueAlignmentProblem := {
 
 Axiom value_alignment_separate :
   forall (vap : ValueAlignmentProblem), Prop.
-(* The chapter: "how to ensure that a system with the right epistemic       *)
-(* standing still pursues goals we want it to pursue. That is a separate   *)
+(* The chapter: how to ensure that a system with the right epistemic         *)
+(* standing still pursues goals we want it to pursue. That is a separate    *)
 (* problem, with separate tools (preference learning, Constitutional AI,    *)
-(* debate, scalable oversight, formal verification), and the chapter's     *)
-(* vocabulary does not extend to it."                                        *)
+(* debate, scalable oversight, formal verification), and the chapter's      *)
+(* vocabulary does not extend to it.                                        *)
 
 (* ---------------------------------------------------------------------------- *)
 (* 6.  The nine-step audit, applied to an LLM                                   *)
