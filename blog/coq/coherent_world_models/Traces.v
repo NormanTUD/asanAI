@@ -200,8 +200,15 @@ Record PossibleSource (s : SubjectMatter) (r : Codomain) (t : Trace r) := {
   PS_src_eq : AF_source PS_access = s;
   PS_tgt_eq : AF_target PS_access = r;
   PS_image :
-    eq_rect _ (fun x => x) (AF_map PS_access PS_region) r PS_tgt_eq = t
+    eq_rect _ (fun x => x)
+            (eq_rect s W_carrier PS_region
+                    (AF_source PS_access) (eq_sym PS_src_eq))
+            r PS_tgt_eq = t
 }.
+(* The inner eq_rect coerces PS_region from W_carrier s to                  *)
+(* W_carrier (AF_source PS_access), using the symmetric of PS_src_eq.        *)
+(* The outer eq_rect coerces the resulting trace from                       *)
+(* R_carrier (AF_target PS_access) to R_carrier r, using PS_tgt_eq.         *)
 
 (* Inference is the (partial) recovery of one (w, O) pair from the trace.   *)
 
