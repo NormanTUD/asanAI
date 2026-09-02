@@ -213,11 +213,15 @@ Inductive TargetCategory :=
   | TC_InfinityGroupoid : TargetCategory.
 
 (* A presheaf is a representation scheme whose target is Set.              *)
+(* NOTE: we name this SetValuedPresheaf to distinguish it from the main   *)
+(* Presheaf in Sheaves.v. The two are separate sketches of the same idea  *)
+(* and sharing the bare name Presheaf caused a shadowing collision across  *)
+(* files (a hazard resolved by this rename).                               *)
 
-Record Presheaf := {
-  PRS_sites : RepresentationScheme;
-  PRS_target : TargetCategory;
-  PRS_target_is_Set : PRS_target = TC_Set
+Record SetValuedPresheaf := {
+  SVP_scheme : RepresentationScheme;
+  SVP_target : TargetCategory;
+  SVP_target_is_Set : SVP_target = TC_Set
 }.
 
 (* The chapter: A presheaf F assigns a set of 'local sections' to every   *)
