@@ -417,6 +417,17 @@ function render_temml() {
 				user-select:all;
 				transition:opacity .2s ease}
 
+			.lp-code .lp-tok-comment{color:#6b7280;font-style:italic}
+			.lp-code .lp-tok-command{color:#7c3aed;font-weight:600}
+			.lp-code .lp-tok-brace{color:#dc2626}
+			.lp-code .lp-tok-special{color:#ea580c}
+			.lp-code .lp-tok-number{color:#059669}
+			html.dark .lp-code .lp-tok-comment{color:#9ca3af}
+			html.dark .lp-code .lp-tok-command{color:#a78bfa}
+			html.dark .lp-code .lp-tok-brace{color:#fca5a5}
+			html.dark .lp-code .lp-tok-special{color:#fdba74}
+			html.dark .lp-code .lp-tok-number{color:#6ee7b7}
+
 			.lp-footer{
 				padding:12px 20px;
 				border-top:1px solid #e5e7eb;text-align:center}
@@ -559,6 +570,61 @@ function render_temml() {
 			});
 		}
 
+		function _wireScroll(overlay) {
+			overlay.addEventListener('wheel', e => {
+				// Inside the box: let its own (inner) scrolling handle it
+				if (e.target.closest('.lp-box')) return;
+				// Over the dim background: scroll the page underneath
+				e.preventDefault();
+				window.scrollBy(0, e.deltaY);
+			}, {passive: false});
+		}
+
+		function _highlightLatex(src) {
+			const tokens = [];
+			const len = src.length;
+			let i = 0;
+			while (i < len) {
+				const c = src[i];
+				if (c === '%') {
+					let j = i;
+					while (j < len && src[j] !== '\n') j++;
+					tokens.push({t: 'comment', v: src.slice(i, j)});
+					i = j;
+				} else if (c === '\\') {
+					const n = src[i + 1];
+					if (n === undefined) {
+						tokens.push({t: 'command', v: '\\'});
+						i++;
+					} else if (!/[a-zA-Z@]/.test(n)) {
+						tokens.push({t: 'command', v: src.slice(i, i + 2)});
+						i += 2;
+					} else {
+						let j = i + 1;
+						while (j < len && /[a-zA-Z]/.test(src[j])) j++;
+						tokens.push({t: 'command', v: src.slice(i, j)});
+						i = j;
+					}
+				} else if (c === '{' || c === '}') {
+					tokens.push({t: 'brace', v: c});
+					i++;
+				} else if (c === '$' || c === '^' || c === '_' || c === '&') {
+					tokens.push({t: 'special', v: c});
+					i++;
+				} else if (c >= '0' && c <= '9') {
+					let j = i;
+					while (j < len && ((src[j] >= '0' && src[j] <= '9') || src[j] === '.')) j++;
+					tokens.push({t: 'number', v: src.slice(i, j)});
+					i = j;
+				} else {
+					tokens.push({t: 'plain', v: c});
+					i++;
+				}
+			}
+			const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			return tokens.map(tok => `<span class="lp-tok-${tok.t}">${esc(tok.v)}</span>`).join('');
+		}
+
 		/* ── Content update — two modes ── */
 
 		// Animated swap: fades out old → swaps → fades in new
@@ -573,7 +639,7 @@ function render_temml() {
 			setTimeout(() => {
 				overlay.querySelector('.lp-preview').innerHTML = '';
 				overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
-				overlay.querySelector('.lp-code').textContent = latex;
+				overlay.querySelector('.lp-code').innerHTML = _highlightLatex(latex);
 				_setBadge(overlay, isDisplay);
 				_resetCopyBtn(overlay);
 
@@ -590,7 +656,7 @@ function render_temml() {
 			// Swap content instantly — no flicker
 			overlay.querySelector('.lp-preview').innerHTML = '';
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
-			overlay.querySelector('.lp-code').textContent = latex;
+			overlay.querySelector('.lp-code').innerHTML = _highlightLatex(latex);
 			_setBadge(overlay, isDisplay);
 
 			// Gentle inset glow to signal the update
@@ -648,12 +714,13 @@ function render_temml() {
 					</div>
 				</div>`;
 
-			overlay.querySelector('.lp-code').textContent = latex;
+			overlay.querySelector('.lp-code').innerHTML = _highlightLatex(latex);
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
 			_setBadge(overlay, isDisplay);
 
 			_wireClose(overlay);
 			_wireCopy(overlay);
+			_wireScroll(overlay);
 
 			document.body.appendChild(overlay);
 
