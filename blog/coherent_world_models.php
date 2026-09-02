@@ -408,10 +408,11 @@ Equipping $\mathcal{C}$ with a rule for which families count as covers (one that
 A **representation scheme** assigns to every context a set of "sections" (the things one can write down *on* that context):
 
 $$
-\underset{\text{rep. assignment}}{F}\ :\ 
-\underset{\text{contexts (arrows reversed, so refinements pull back data)}}{\mathcal{C}^{\mathrm{op}}} 
-\xrightarrow[\;\text{the set of sections on that context}\;]{\;\text{assign}\;}
-\underset{\text{target category (e.g. }\mathbf{Set}\text{, }\infty\text{-Gpd, }\ldots\text{)}}{\mathcal{V}}.
+\begin{array}{c}
+\underset{\text{contexts (arrows reversed, so refinements pull back data)}}{\mathcal{C}^{\mathrm{op}}}\\
+\Big\downarrow\quad\text{assign (rep. assignment }F\text{)}\\
+\underset{\text{target category (e.g. }\mathbf{Set}\text{, }\infty\text{-Gpd, }\ldots\text{)}}{\mathcal{V}}
+\end{array}
 $$
 
 $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain complexes, or $\infty$-groupoids, depending on how much homotopy is needed.
@@ -615,15 +616,17 @@ So far the discussion has been structural: equalizers, pullbacks, Čech nerves, 
 Every access to a subject matter is a composite, in every domain:
 
 $$
+\begin{array}{c}
 \underbrace{W}_{\text{subject}}\\
-\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{stimulus pickup}\\\text{(I)}\\\hbox{$\Big\downarrow$}}}\\
+\Big\downarrow\quad\text{stimulus pickup (I)}\\
 \underbrace{S}_{\text{stimulus/signal}}\\
-\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{neural processing}\\\text{(N)}\\\hbox{$\Big\downarrow$}}}\\
+\Big\downarrow\quad\text{neural processing (N)}\\
 \underbrace{\rho}_{\text{internal rep.}}\\
-\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{language / encoding}\\\text{(L)}\\\hbox{$\Big\downarrow$}}}\\
+\Big\downarrow\quad\text{language / encoding (L)}\\
 \underbrace{\Sigma}_{\text{report/encoding}}\\
-\mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{calibration / check}\\\text{(C)}\\\hbox{$\Big\downarrow$}}}\\
+\Big\downarrow\quad\text{calibration / check (C)}\\
 \underbrace{M}_{\text{model}}
+\end{array}
 $$
 
 $$
