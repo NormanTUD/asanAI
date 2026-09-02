@@ -1,4 +1,4 @@
-DIGEST 28189668b4fb38618f649c37642c3716
+DIGEST 3218429d8cdaa02004ca1fc7489d44b9
 FAILLM
 R2135:2141 Library <> <> lib
 R2159:2164 Traces <> <> lib
@@ -99,90 +99,90 @@ proj 6829:6836 <> FV_proof
 proj 6848:6862 <> FV_kernel_check
 R6874:6877 Coq.Init.Logic <> ::type_scope:x_'->'_x not
 R6866:6873 AILLM <> FV_proof:47 meth
-rec 7427:7445 <> NonGlueablePresheaf
-proj 7454:7465 <> NGP_presheaf
-proj 7481:7498 <> NGP_local_sections
-proj 7530:7542 <> NGP_no_global
-proj 7610:7633 <> NGP_correspondence_fails
-R7469:7476 Sheaves <> Presheaf rec
-R7513:7519 Library <> Context rec
-binder 7509:7509 <> c:51
-ind 7788:7809 <> HallucinationDiagnosis
-constr 7818:7841 <> HD_non_glueable_presheaf
-constr 7898:7923 <> HD_self_consistent_fantasy
-constr 7978:7988 <> HD_factbook
-constr 8058:8076 <> HD_calibrated_error
-R7845:7866 AILLM <> HallucinationDiagnosis:55 ind
-R7927:7948 AILLM <> HallucinationDiagnosis:55 ind
-R7992:8013 AILLM <> HallucinationDiagnosis:55 ind
-R8080:8101 AILLM <> HallucinationDiagnosis:55 ind
-scheme 7788:7809 <> HallucinationDiagnosis_rect
-scheme 7788:7809 <> HallucinationDiagnosis_ind
-scheme 7788:7809 <> HallucinationDiagnosis_rec
-scheme 7788:7809 <> HallucinationDiagnosis_sind
-rec 8142:8158 <> HallucinationCase
-proj 8167:8178 <> HC_diagnosis
-proj 8208:8216 <> HC_broken
-proj 8291:8299 <> HC_remedy
-R8182:8203 AILLM <> HallucinationDiagnosis ind
-rec 8714:8725 <> AugmentedLLM
-proj 8734:8742 <> ALLM_base
-proj 8758:8765 <> ALLM_RAG
-proj 8839:8848 <> ALLM_tools
-proj 8921:8933 <> ALLM_verifier
-proj 9002:9010 <> ALLM_RLHF
-R8746:8753 AILLM <> LLMSetup rec
-rec 9505:9512 <> LLMAudit
-proj 9521:9528 <> LA_input
-proj 9603:9619 <> LA_interpretation
-proj 9643:9650 <> LA_chain
-proj 9724:9734 <> LA_overlaps
-proj 9751:9761 <> LA_licences
-proj 9788:9798 <> LA_sameness
-proj 9820:9828 <> LA_global
-proj 9840:9851 <> LA_residuals
-proj 9863:9869 <> LA_next
-R9631:9634 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9623:9630 AILLM <> LA_input:68 meth
-R9654:9657 Coq.Init.Datatypes <> list ind
-R9738:9741 Coq.Init.Datatypes <> list ind
-R9765:9768 Coq.Init.Datatypes <> list ind
-R9770:9783 Library <> TransitionKind ind
-R9802:9815 PracticalProcedure <> SamenessChoice ind
-ind 10554:10567 <> FrameworkLimit
-constr 10576:10599 <> FL_emergent_capabilities
-constr 10628:10656 <> FL_in_context_meta_phenomenon
-constr 10680:10699 <> FL_training_dynamics
-constr 10732:10757 <> FL_value_alignment_problem
-R10609:10622 AILLM <> FrameworkLimit:77 ind
-R10661:10674 AILLM <> FrameworkLimit:77 ind
-R10713:10726 AILLM <> FrameworkLimit:77 ind
-R10765:10778 AILLM <> FrameworkLimit:77 ind
-scheme 10554:10567 <> FrameworkLimit_rect
-scheme 10554:10567 <> FrameworkLimit_ind
-scheme 10554:10567 <> FrameworkLimit_rec
-scheme 10554:10567 <> FrameworkLimit_sind
-ax 10945:10964 <> framework_has_limits
-R10982:10995 AILLM <> FrameworkLimit ind
-binder 10978:10978 <> l:79
-R10999:11002 Coq.Init.Logic <> True ind
-ind 11592:11602 <> HonestClaim
-constr 11611:11624 <> HC_useful_lens
-constr 11655:11679 <> HC_unification_hypothesis
-constr 11699:11720 <> HC_portable_discipline
-R11639:11649 AILLM <> HonestClaim:82 ind
-R11683:11693 AILLM <> HonestClaim:82 ind
-R11728:11738 AILLM <> HonestClaim:82 ind
-scheme 11592:11602 <> HonestClaim_rect
-scheme 11592:11602 <> HonestClaim_ind
-scheme 11592:11602 <> HonestClaim_rec
-scheme 11592:11602 <> HonestClaim_sind
-rec 11749:11761 <> HonestClosing
-proj 11770:11777 <> HC_claim
-proj 11796:11803 <> HC_bears
-R11781:11791 AILLM <> HonestClaim ind
-ax 12217:12236 <> llm_world_model_kind
-R12258:12265 AILLM <> LLMSetup rec
-binder 12250:12254 <> setup:87
-R12275:12286 AILLM <> AugmentedLLM rec
-binder 12269:12271 <> aug:88
+rec 7426:7444 <> NonGlueablePresheaf
+proj 7453:7464 <> NGP_presheaf
+proj 7480:7497 <> NGP_local_sections
+proj 7529:7541 <> NGP_no_global
+proj 7609:7632 <> NGP_correspondence_fails
+R7468:7475 Sheaves <> Presheaf rec
+R7512:7518 Library <> Context rec
+binder 7508:7508 <> c:51
+ind 7787:7808 <> HallucinationDiagnosis
+constr 7817:7840 <> HD_non_glueable_presheaf
+constr 7897:7922 <> HD_self_consistent_fantasy
+constr 7977:7987 <> HD_factbook
+constr 8057:8075 <> HD_calibrated_error
+R7844:7865 AILLM <> HallucinationDiagnosis:55 ind
+R7926:7947 AILLM <> HallucinationDiagnosis:55 ind
+R7991:8012 AILLM <> HallucinationDiagnosis:55 ind
+R8079:8100 AILLM <> HallucinationDiagnosis:55 ind
+scheme 7787:7808 <> HallucinationDiagnosis_rect
+scheme 7787:7808 <> HallucinationDiagnosis_ind
+scheme 7787:7808 <> HallucinationDiagnosis_rec
+scheme 7787:7808 <> HallucinationDiagnosis_sind
+rec 8141:8157 <> HallucinationCase
+proj 8166:8177 <> HC_diagnosis
+proj 8207:8215 <> HC_broken
+proj 8290:8298 <> HC_remedy
+R8181:8202 AILLM <> HallucinationDiagnosis ind
+rec 8713:8724 <> AugmentedLLM
+proj 8733:8741 <> ALLM_base
+proj 8757:8764 <> ALLM_RAG
+proj 8838:8847 <> ALLM_tools
+proj 8920:8932 <> ALLM_verifier
+proj 9001:9009 <> ALLM_RLHF
+R8745:8752 AILLM <> LLMSetup rec
+rec 9504:9511 <> LLMAudit
+proj 9520:9527 <> LA_input
+proj 9602:9618 <> LA_interpretation
+proj 9642:9649 <> LA_chain
+proj 9723:9733 <> LA_overlaps
+proj 9750:9760 <> LA_licences
+proj 9787:9797 <> LA_sameness
+proj 9819:9827 <> LA_global
+proj 9839:9850 <> LA_residuals
+proj 9862:9868 <> LA_next
+R9630:9633 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9622:9629 AILLM <> LA_input:68 meth
+R9653:9656 Coq.Init.Datatypes <> list ind
+R9737:9740 Coq.Init.Datatypes <> list ind
+R9764:9767 Coq.Init.Datatypes <> list ind
+R9769:9782 Library <> TransitionKind ind
+R9801:9814 PracticalProcedure <> SamenessChoice ind
+ind 10553:10566 <> FrameworkLimit
+constr 10575:10598 <> FL_emergent_capabilities
+constr 10627:10655 <> FL_in_context_meta_phenomenon
+constr 10679:10698 <> FL_training_dynamics
+constr 10731:10756 <> FL_value_alignment_problem
+R10608:10621 AILLM <> FrameworkLimit:77 ind
+R10660:10673 AILLM <> FrameworkLimit:77 ind
+R10712:10725 AILLM <> FrameworkLimit:77 ind
+R10764:10777 AILLM <> FrameworkLimit:77 ind
+scheme 10553:10566 <> FrameworkLimit_rect
+scheme 10553:10566 <> FrameworkLimit_ind
+scheme 10553:10566 <> FrameworkLimit_rec
+scheme 10553:10566 <> FrameworkLimit_sind
+ax 10944:10963 <> framework_has_limits
+R10981:10994 AILLM <> FrameworkLimit ind
+binder 10977:10977 <> l:79
+R10998:11001 Coq.Init.Logic <> True ind
+ind 11591:11601 <> HonestClaim
+constr 11610:11623 <> HC_useful_lens
+constr 11654:11678 <> HC_unification_hypothesis
+constr 11698:11719 <> HC_portable_discipline
+R11638:11648 AILLM <> HonestClaim:82 ind
+R11682:11692 AILLM <> HonestClaim:82 ind
+R11727:11737 AILLM <> HonestClaim:82 ind
+scheme 11591:11601 <> HonestClaim_rect
+scheme 11591:11601 <> HonestClaim_ind
+scheme 11591:11601 <> HonestClaim_rec
+scheme 11591:11601 <> HonestClaim_sind
+rec 11748:11760 <> HonestClosing
+proj 11769:11776 <> HC_claim
+proj 11795:11802 <> HC_bears
+R11780:11790 AILLM <> HonestClaim ind
+ax 12216:12235 <> llm_world_model_kind
+R12257:12264 AILLM <> LLMSetup rec
+binder 12249:12253 <> setup:87
+R12274:12285 AILLM <> AugmentedLLM rec
+binder 12268:12270 <> aug:88

@@ -144,7 +144,7 @@ Record ToolUse := {
 Record FormalVerification := {
   FV_assistant : Type;              (* Coq, Lean, ...                         *)
   FV_proof : Type;
-  FV_kernel_check : FV_proof -> Prop  (* the kernel's "yes" is the meta p      *)
+  FV_kernel_check : FV_proof -> Prop  (* the kernel's yes is the meta-fact p. *)
 }.
 
 (* ---------------------------------------------------------------------------- *)
@@ -284,3 +284,4 @@ Axiom llm_world_model_kind :
 (* and ThreePathologies.v.                                                    *)
 (*                                                                             *)
 (* ============================================================================= *)
+*)
