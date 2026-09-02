@@ -21,9 +21,9 @@ No inquirer has unmediated access to its subject matter. A physicist never grasp
 1. *Transformed.* The trace is *not* $w$ but the result of an access procedure applied to $w$. What we hold is the output of the procedure, never the input to it.
 2. *Mediated.* The trace carries the marks of $O$ — different access functions on the same $w$ produce different traces. The marks of $O$ are part of the trace; an unmediated trace is a contradiction in terms.
 3. *Underdetermined.* Many $(w, O)$ pairs can yield the same $r$. From the trace alone, neither the source $w$ nor the procedure $O$ is uniquely determined; recovering them is the whole task of inference.
-4. *Indexical.* A trace is *of* something — it points beyond itself to a source. Without indexicality, a trace would be just a free-floating datum, not evidence.
+4. *Possibly indexical.* A trace *may* point beyond itself to a source — but not every trace does. A genuine measurement of a specific system is indexical; a hallucination that has the form of a measurement is not; pure noise is not; a free pattern in a derivation points only to the derivation itself, not to anything outside it. Whether a trace is *of* something, and *what* it is of, is a substantive question — not given in advance. The first three properties are universal; this fourth is conditional, and establishing it is most of the work of inference. A trace without indexicality is not yet evidence; it is data awaiting a source.
 
-What we receive is *always already mediated*. There is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*) — first introduced in the *Critique of Pure Reason* at KrV A26/B42 (§3 of Space, in the Transcendental Aesthetic) and developed systematically in the chapter "Of Phenomena and Noumena" at A235/B294 \cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not "how do we reach it?" but "what can we honestly do with the traces we have?"
+What we receive is *always already mediated* — qualia themselves are not exempt. The redness of red, the pain of a headache, the taste of coffee are not the world showing itself untransformed but the final output of a long pipeline (photoreceptors → retinal processing → lateral geniculate nucleus → visual cortex → attentional and mnemonic modulation → …) applied to it. They *feel* immediate only because we do not consciously witness the pipeline that produced them; the redness is the brain's construction, not the photon's revelation. There is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*) — first introduced in the *Critique of Pure Reason* at KrV A26/B42 (§3 of Space, in the Transcendental Aesthetic) and developed systematically in the chapter "Of Phenomena and Noumena" at A235/B294 \cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not "how do we reach it?" but "what can we honestly do with the traces we have?"
 
 $$
 \boxed{
@@ -53,13 +53,15 @@ One discipline runs through the whole chapter: $\boxed{\text{locate every differ
 
 Between "subject matter $W$" and "the trace $R$ I received" sit at least three independent sources of difference. They sit at *different places* in the chain and demand different remedies.
 
-**1. The world-level — $W_1 \neq W_2$.** Two *subjects* genuinely differ: two electrons, two events, two historical figures. Reports disagree because the world itself is different at the two accesses.
+**1. The world-level — $W_1 \neq W_2$.** Two *subjects* genuinely differ: two distinct stones, two historical events, two specific classical objects. Reports disagree because the world itself is different at the two accesses.
 
-*Example.* Alice measures an electron at $t_1$; Bob measures a *different* electron at $t_2$. Their data need not match — and the right response is not to reconcile them, but to note that they are about different things.
+*Example.* Alice weighs stone A; Bob weighs stone B (a different stone). Their data need not match — and the right response is not to reconcile them, but to note that they are about different things.
+
+*Caveat.* Identical quantum particles (electrons, photons) are *literally indistinguishable* — there is no fact of the matter about "this electron" versus "that electron", and asking whose data matches whose has no answer at the particle level. For such systems the world-level difference is the difference of *spacetime region* or *quantum state*, not of individual particles.
 
 **2. The channel-level — $I_1 \neq I_2$.** Two *instruments* read the same world differently: thermometer vs. thermocouple, eye vs. microphone, uncalibrated vs. calibrated telescope.
 
-*Example.* Two thermometers in the same room read $20.01$ and $20.02$. The room has one temperature; the difference is in the instruments. Calibrate one against the other, or both against a standard.
+*Example.* Two thermometers *placed at the same point* read $20.01$ and $20.02$. A room, however, is not a single temperature but a temperature *field* — two thermometers at different positions may legitimately report different values, and that would be a *world-level* difference (different points in the field), not a channel-level one. The diagnostic is co-location: if the readings differ at the same point, the difference is in the instruments; calibrate one against the other, or both against a standard.
 
 **3. The processing-level — $N_1 \neq N_2$.** Two *interpretations* of the same trace yield different conclusions: a classical and a quantum reading of the same detector output, a literal and a metaphorical reading of the same text, an outdated and a current taxonomy applied to the same specimen.
 
