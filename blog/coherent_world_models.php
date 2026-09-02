@@ -488,10 +488,10 @@ Every access to a subject matter is a composite, in every domain:
 
 $$
 \underbrace{W}_{\text{subject}}
-\xrightarrow{\;I\;}\underbrace{S}_{\text{stimulus/signal}}
-\xrightarrow{\;N\;}\underbrace{\rho}_{\text{internal rep.}}
-\xrightarrow{\;L\;}\underbrace{\Sigma}_{\text{report/encoding}}
-\xrightarrow{\;C\;}\underbrace{M}_{\text{model}}.
+\xrightarrow[\;\text{stimulus pickup}\;]{\;I\;}\underbrace{S}_{\text{stimulus/signal}}
+\xrightarrow[\;\text{neural processing}\;]{\;N\;}\underbrace{\rho}_{\text{internal rep.}}
+\xrightarrow[\;\text{language / encoding}\;]{\;L\;}\underbrace{\Sigma}_{\text{report/encoding}}
+\xrightarrow[\;\text{calibration / check}\;]{\;C\;}\underbrace{M}_{\text{model}}.
 $$
 
 $$
@@ -562,9 +562,9 @@ $$
 
 $$
 \begin{array}{ccc}
-\underbrace{\text{image}}_{c_v} & \xrightarrow{E_v} & \phantom{M_{\text{shared}}}\\
-\underbrace{\text{text}}_{c_l} & \xrightarrow{E_l} & M_{\text{shared}}\\
-\underbrace{\text{audio}}_{c_a} & \xrightarrow{E_a} & \phantom{M_{\text{shared}}}
+\underbrace{\text{image}}_{c_v} & \xrightarrow{\;E_v\;} & \phantom{M_{\text{shared}}}\\
+\underbrace{\text{text}}_{c_l} & \xrightarrow{\;E_l\;} & \underbrace{M_{\text{shared}}}_{\text{one shared latent}}\\
+\underbrace{\text{audio}}_{c_a} & \xrightarrow{\;E_a\;} & \phantom{M_{\text{shared}}}
 \end{array}
 $$
 
