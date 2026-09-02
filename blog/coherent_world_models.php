@@ -1330,11 +1330,15 @@ Return once more to the master diagram of the chapter, this time with an LLM fil
 
 $$
 \begin{array}{ccccc}
-&&\underbrace{W}_{\text{the world the corpus is about}}&&\\
-&\overset{\,O_1\,}{\swarrow}&\overset{\,O_2\,}{\downarrow}&\overset{\,O_3\,}{\searrow}&\\
+&&\underbrace{W}_{\text{world the corpus is about}}&&\\
+&\overset{O_1}{\underset{\text{sample}}{\swarrow}}&
+\overset{O_2}{\underset{\text{sample}}{\downarrow}}&
+\overset{O_3}{\underset{\text{sample}}{\searrow}}&\\
 \underbrace{R_1}_{\text{document}}&&\underbrace{R_2}_{\text{document}}&&\underbrace{R_3}_{\text{document}}\\
-&\underset{\,T_1\,}{\searrow}&\underset{\,T_2\,}{\downarrow}&\underset{\,T_3\,}{\swarrow}&\\
-&&\underbrace{G}_{\text{the trained model}}&&
+&\overset{T_1}{\underset{\text{fit}}{\searrow}}&
+\overset{T_2}{\underset{\text{fit}}{\downarrow}}&
+\overset{T_3}{\underset{\text{fit}}{\swarrow}}&\\
+&&\underbrace{G}_{\text{trained model}}&&
 \end{array}
 $$
 
