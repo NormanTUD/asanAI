@@ -29,7 +29,7 @@ Note on properties (1)-(3): they hold given our commitment to indirect realism. 
 
 1. *Indirect realism.* There is a subject matter distinct from any access to it; traces are outputs of access, not the thing itself.
 2. *Internal structure.* $W$ has regions, points, or sub-systems to which access can be applied.
-3. *Admissible transitions exist.* A non-trivial class $\mathcal{T} \subseteq \mathrm{Hom}(R, R')$ is justified independently of any specific dataset.
+3. *Admissible transitions exist.* A non-trivial class $\mathcal{T}$ of arrows — both observation arrows $O : W \to R$ and inter-representation arrows $R_i \to R_j$ — is justified independently of any specific dataset. Membership in $\mathcal{T}$ is a licence to compare, not a guarantee that the comparison is correct.
 4. *Coherence is necessary but not sufficient.* A model whose parts contradict each other is not a description of any single subject matter.
 5. *Correspondence is separate.* Even a perfectly coherent model is not yet a true one; contact with the world is a second, distinct test.
 
@@ -116,7 +116,7 @@ Each form has a parallel in **sense data**, **measurement**, and **mathematics**
 
 |                       | Sense data                              | Measurement                                | Mathematics                       |
 |-----------------------|-----------------------------------------|--------------------------------------------|-----------------------------------|
-| $x = y$               | the same photon, the same rod           | two clocks show the same tick              | $2 + 2 = 4$                       |
+| $x = y$               | the same rod, one photon tracked through time           | two clocks show the same tick              | $2 + 2 = 4$                       |
 | $x \cong y$           | two indistinguishable coins             | two calibrated meters, same reading        | $\mathbb{Z}/6 \cong \mathbb{Z}/2 \times \mathbb{Z}/3$ |
 | $x \simeq y$          | flash and bang from one strike          | two experiments, one phenomenon            | cup $\simeq$ donut                |
 | $d(x,y) \le \varepsilon$ | $20.01$ vs $20.02$ on a thermometer  | within tolerance                           | $\|f_n - f\|_\infty < \varepsilon$ |
@@ -175,10 +175,10 @@ $$
 
 ## Admissible transitions
 
-For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to:
+For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
 $$
-\underbrace{\mathcal{T}}_{\text{admissible transitions}} \;\subseteq\; \underbrace{\mathrm{Hom}(R_i, R_j)}_{\text{all conceivable maps}}.
+\underbrace{\mathcal{T}}_{\text{admissible transitions (licensed)}} \;\subseteq\; \underbrace{\{W \to R_i\} \cup \mathrm{Hom}(\mathcal{C})}_{\text{observation arrows and inter-context arrows}}.
 $$
 
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:
@@ -447,7 +447,7 @@ $$
 The point for us is only that a network is a **composable morphism**, not a set-theoretic function. A Transformer layer:
 
 $$
-\underbrace{H_{\ell+1} = H_\ell + G_\theta(H_\ell)}_{\text{residual update: keep old, add correction}}
+\underbrace{H_{\ell+1} = H_\ell + F_\theta(H_\ell)}_{\text{residual update: keep old, add correction}}
 $$
 
 is such a morphism whose output *retains* its input additively. In category theory, a structure with a natural "unfold-into-parts" operation is called a **coalgebra**; the residual layer looks coalgebra-like because it exposes an old-state component next to a new-state contribution. This is a structural analogy, not a theorem.
@@ -867,11 +867,11 @@ Tarski proved that for any formalised language rich enough to express its own se
 2. **Truth is semantic, not syntactic.** Two sentences with the same syntactic form may differ in truth-value; the value depends on what the symbols *refer to* in the world. Tarski is explicit about this in \citeyear{tarski1944semantic}, calling his account the *semantic* conception precisely to contrast it with formalist or syntactic theories.
 3. **The T-schema is conservative.** Adding "$\boldsymbol{x}$ is true iff $\boldsymbol{p}$" to a formalised language does not let you prove anything you could not already prove in the meta-language. Truth is content, not new deductive power.
 
-For this chapter: Tarski turns truth from a metaphysical mystery into an *interface condition*. At every point where the model's claim meets the world, an *if-and-only-if* must hold. The T-schema is, in effect, the categorical content of the admissible transitions $\mathcal{T}$, the catalogue of which *if-and-only-if* arrows we license.
+For this chapter: Tarski turns truth from a metaphysical mystery into an *interface condition*. At every point where the model's claim meets the world, an *if-and-only-if* must hold. The T-schema is, in effect, the empirical *content* of every check we perform at a licensed transition in $\mathcal{T}$: $\mathcal{T}$ catalogues the arrows we are *licensed* to test; the T-schema says what *passing* the test at such an arrow amounts to. Licencing is necessary for the test to be meaningful; passing the test is a separate, empirical matter.
 
 $$
-\underbrace{T\in\mathcal{T}}_{\text{admissible transition (this chapter)}}
-\;\;\longleftrightarrow\;\;\;
+\underbrace{T\in\mathcal{T}}_{\text{licensed transition (this chapter)}}
+\;\;\text{is tested by}\;\;\;
 \underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1935)}}
 $$
 
@@ -888,7 +888,7 @@ The demand that a model be *internally consistent* is older than Tarski and olde
 <div class="short-quote">Truth is the systematic coherence of ideas.</div>
 </div>
 
-Bradley's claim is not that coherence is *sufficient* (he grounds it explicitly in *the reality which the idea endeavours to represent*) but he gives it pride of place. A claim is not true by accident; it is true because it *fits into* a larger system of beliefs that hangs together. Brand Blanshard in *The Nature of Thought*\citeauthor{blanshard1939nature}\citeyear{blanshard1939nature}\citetitle{blanshard1939nature} develops the position more formally:
+Bradley's claim is not, on the most charitable reading, that coherence is *sufficient* on its own: the qualifier "*such coherence being determined ultimately by ... the reality which the idea endeavours to represent*" makes coherence's standing depend on its contact with reality. Read carefully, Bradley is saying coherence *of the right kind* (coherence grounded in reality) is what truth is, and a model whose coherence is detached from reality is not yet true — it is internally consistent without being in contact. A claim is not true by accident; it is true because it *fits into* a larger system of beliefs that hangs together *and* that system is anchored to its subject matter. Bradley gives coherence pride of place but does not, on this reading, separate it from correspondence. Brand Blanshard in *The Nature of Thought*\citeauthor{blanshard1939nature}\citeyear{blanshard1939nature}\citetitle{blanshard1939nature} develops the position more formally:
 
 <div class="smart-quote" data-cite="blanshard1939nature">
 <div class="full-quote">The truth of a proposition is nothing but its coherence with the whole of experience, and ultimately with the whole of reality.</div>
@@ -909,7 +909,7 @@ $$
 
 ### The synthesis: coherence and correspondence
 
-The two traditions look opposed only if read carelessly. Read carefully, they are *complementary*: each names a necessary condition that the other ignores.
+The two traditions look opposed only if read carelessly. Read carefully, they are *complementary*: each names a necessary condition that the other ignores. (A footnote on Bradley and Blanshard: both of them, on the most careful reading, *do* gesture toward correspondence — Bradley's "coherence determined ultimately by ... the reality which the idea endeavours to represent", Blanshard's "coherence with the whole of experience, and ultimately with the whole of reality". The tradition they founded is often read in their slipstream as *pure* coherence, and the table below follows that common reading; the slippage is the inheritance.)
 
 | Tradition                          | What it certifies                          | What it leaves unchecked                |
 |------------------------------------|--------------------------------------------|-----------------------------------------|
@@ -943,11 +943,11 @@ Return to the running picture from earlier. A subject matter $W$, observed by in
 
 $$
 \begin{array}{ccccccccc}
-&&\underbrace{W}_{\text{subject matter}}&&&&&\\
+&&\underbrace{W}_{\text{subject matter}}\!\nwarrow{\scriptstyle\text{claim}}&&&&&\\
 {}^{O_1}\!\swarrow&{}^{O_2}\!\downarrow&{}^{O_3}\!\searrow&\cdots&{}^{O_i}\!\downarrow&\cdots&\\
 \underbrace{R_1}_{\text{view 1}}&&\underbrace{R_2}_{\text{view 2}}&&\underbrace{R_3}_{\text{view 3}}&\cdots&\underbrace{R_i}_{\text{view }i}&\cdots&\\
 {}^{T_1}\!\searrow&{}^{T_2}\!\downarrow&{}^{T_3}\!\swarrow&\cdots&{}^{T_i}\!\downarrow&\cdots&\\
-&&\underbrace{G}_{\text{coherent global model}}&&&&&\\
+&&\underbrace{G}_{\text{coherent global model}}\uparrow&&&&\\
 \end{array}
 $$
 
@@ -955,17 +955,17 @@ Three sorts of arrows, each with a separate truth-condition.
 
 $$
 \begin{array}{c|c|c}
-\text{Arrow} & \text{Role} & \text{Truth-condition}\\
+\text{Arrow} & \text{Role} & \text{Condition}\\
 \hline
-W \xrightarrow{\,O_i\,} R_i & \text{observation} & O_i \in \mathcal{T} \text{ (admissibility)}\\
+W \xrightarrow{\,O_i\,} R_i & \text{observation} & O_i \in \mathcal{T} \text{ (licence)}\\
 R_i \xrightarrow{\,T_i\,} G & \text{gluing} & \text{coherence on overlaps (sheaf)}\\
-G \xrightarrow{\;\text{claim about }W\;} W & \text{use} & \text{Tarski at the contact point}
+G \xrightarrow{\;\text{claim about }W\;} W & \text{use} & \text{Tarski at the contact point, via } T \in \mathcal{T}
 \end{array}
 $$
 
-- **The $O_i$ arrows** ($W \to R_i$) are observation arrows. They are *inside* the modelling setup, not correspondence arrows; the act of observing already distorts. We do not require them to satisfy Tarski; we require only that they belong to $\mathcal{T}$.
+- **The $O_i$ arrows** ($W \to R_i$) are observation arrows. They are *inside* the modelling setup, not correspondence arrows; the act of observing already distorts. We do not require them to satisfy Tarski directly; we require only that they are licensed, $O_i \in \mathcal{T}$, so that the comparison between world and trace is one we are entitled to make.
 - **The $T_i$ arrows** ($R_i \to G$) are admissible transitions. They do their *coherence* work: the sheaf condition is checked along them, agreement on overlaps is verified.
-- **The $G \to W$ arrow** (a claim from the model about the world) is the correspondence row, the new addition. Each specific claim $S$ produced by $G$ about $W$ must satisfy Tarski's if-and-only-if at its contact point: $S$ is true iff the corresponding fact $p$ holds. Admissible transitions encode the calibration between the trace $R_i$ and the world; the if-and-only-if is the truth condition on the model's claim.
+- **The $G \to W$ arrow** (a claim from the model about the world) is the correspondence row, the new addition. Each specific claim $S$ produced by $G$ about $W$ must satisfy Tarski's if-and-only-if at its contact point: $S$ is true iff the corresponding fact $p$ holds. The check is performed via the licensed transitions $T \in \mathcal{T}$ that calibrate between the trace $R_i$ and the world; the if-and-only-if is the truth condition on the model's claim, applied at those bridges.
 
 The model $G$ is true when all three rows hold simultaneously for every $i\in I$, and the third row is the new one this section adds.
 
@@ -977,7 +977,7 @@ The model $G$ is true when all three rows hold simultaneously for every $i\in I$
 
 Each failure mode breaks exactly one of the two conditions.
 
-**1. The self-consistent fantasy.** The model $G$ satisfies the sheaf condition: every local section agrees on every overlap, descent holds, the global section is unique. The maps $O_i$ and $T_i$ all belong to $\mathcal{T}$. But the model is *uncalibrated*: the admissible transitions $\mathcal{T}$ were chosen carelessly, or the system has been allowed to drift. Result: a perfectly coherent fiction.
+**1. The self-consistent fantasy.** The model $G$ satisfies the sheaf condition: every local section agrees on every overlap, descent holds, the global section is unique. The maps $O_i$ and $T_i$ all belong to $\mathcal{T}$, so the modelling setup is *licensed* throughout. But the licence was granted carelessly, or the system has been allowed to drift: Tarski's if-and-only-if fails at the contact points even though every arrow in the diagram is licensed. Result: a perfectly coherent fiction.
 
 $$
 \underbrace{G\text{ self-consistent}}_{\text{descent holds}}
@@ -997,13 +997,13 @@ $$
 
 Failure: *coherence*.
 
-**3. The contact-point liar.** A special, important sub-case of (1): the model's *internal* logic is consistent, the maps $T_i\in\mathcal{T}$ are all admissible, but the system has been trained on data that does not actually reflect $W$. With enough data and enough fitting, descent holds internally; but the model's predictions at the contact points systematically miss. Result: the **hallucinating language model** of the section "Where AI actually enters".
+**3. The contact-point liar.** A special, important sub-case of (1): the model's *internal* logic is consistent, the maps $T_i\in\mathcal{T}$ are all licensed, but the system has been trained on data that does not actually reflect $W$. With enough data and enough fitting, descent holds internally; but the model's predictions at the contact points systematically miss because the licence does not deliver empirical contact. Result: the **hallucinating language model** of the section "Where AI actually enters".
 
 $$
 \underbrace{\text{hallucination}}_{\text{the dangerous case}} \;\;:=\;\;
 \underbrace{M_{\text{internal}}\text{ self-consistent}}_{\text{coherence holds internally}}
 \;\;\wedge\;\;
-\underbrace{\text{no grounded }T\in\mathcal{T}}_{\text{contact-point failure}}.
+\underbrace{\text{no }T\in\mathcal{T}\text{ passes Tarski}}_{\text{licence without empirical contact}}.
 $$
 
 Failure: *both*, but the diagnosis is that $\mathcal{T}$ has been chosen wrongly.
@@ -1053,19 +1053,20 @@ If step 5 fails, the model is *false at that contact point*. If step 4 fails, th
 
 ### The closing synthesis
 
-Three sentences, each classical, each necessary:
+Two conditions, each necessary and jointly sufficient:
 
 1. *Coherence*: a model is true only insofar as its parts hang together (the sheaf condition, descent on every admissible cover). Bradley, Blanshard, BonJour, in their different vocabularies.
-2. *Correspondence*: a model is true only insofar as its claims track the world (Tarski's Convention T, the if-and-only-if at every admissible contact point). Tarski, 1935.
-3. *Honesty about the gaps*: a model is true *only insofar as*. The discipline of recording residuals, of refusing to identify $G$ with $W$, of noting when the contact points are imperfect.
+2. *Correspondence*: a model is true only insofar as its claims track the world (Tarski's Convention T, the if-and-only-if at every licensed contact point). Tarski, 1935.
+
+And one discipline that lives with both: *honesty about the gaps*. A model is true *only insofar as*. The discipline of recording residuals, of refusing to identify $G$ with $W$, of noting when the contact points are imperfect. Honesty is not a third condition; it is the standing acknowledgement that the conjunction above is provisional, that residual mismatches must be visible, and that "without remainder" describes the *aim* of the audit (every admissible contact tested) rather than a guarantee that the audit is complete.
 
 $$
 \boxed{
 \begin{aligned}
 &\textbf{A world model is true when, and only when,}\\
 &\textbf{its internal coherence and its external correspondence}\\
-&\textbf{hold simultaneously (at every admissible contact,}\\
-&\textbf{on every admissible cover, without remainder).}
+&\textbf{hold simultaneously at every licensed contact,}\\
+&\textbf{on every admissible cover, with every residual recorded.}
 \end{aligned}}
 $$
 
