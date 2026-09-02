@@ -1501,17 +1501,25 @@ A framework aware of its reach must be clear about where it stops helping. The c
 
 **In-context learning as a meta-phenomenon.** The chapter treats in-context learning as *descent within the prompt*: the prompt is a cover, the continuation is the unique section compatible with it. This is descriptively right but explanatorily thin. Why does a fixed-parameter model perform *more* in-context learning at scale, with no architectural change? Why does the same model sometimes use the cover well and sometimes badly? The chapter's framework does not say.
 
-**The training dynamics.** The chapter's diagram is *static*: it shows the trained model, not the process that produced it. The dynamic counterpart, treated properly in the *Backpropagation*, *Optimisers*, and *Deep Learning* chapters, is the composition of four arrows in a square that commutes by definition:
+**The training dynamics.** The chapter's diagram is *static*: it shows the trained model, not the process that produced it. The dynamic counterpart, treated properly in the *Backpropagation*, *Optimisers*, and *Deep Learning* chapters, is the composition of arrows that commute by the chain rule:
 
 $$
-\begin{array}{ccc}
-\underbrace{D}_{\text{dataset}} & \xrightarrow{\text{sample mini-batch}} & \underbrace{B}_{\text{batch at step }t} \\
-\big\downarrow\scriptstyle{\text{quality / size filter}} & \circlearrowright & \big\downarrow\scriptstyle{\text{forward + loss}} \\
-\underbrace{D'}_{\text{effective data}} & \xrightarrow[\text{SGD: }\theta - \eta\nabla L]{\text{use in update}} & \underbrace{\theta_{t+1}}_{\text{updated parameters}} \\
+\begin{array}{ccccc}
+\underbrace{D}_{\text{dataset}} & \xrightarrow{\text{sample batch}} & \underbrace{B}_{\text{batch at }t} & \xrightarrow[\theta_t]{\text{forward + loss}} & \underbrace{L(\theta_t; B)}_{\text{loss value}} \\
+& & & & \big\downarrow\scriptstyle{\text{backward}} \\
+& & & & \underbrace{\nabla_\theta L}_{\text{gradient}} \\
+& & & & \big\downarrow\scriptstyle{\eta\text{-SGD}} \\
+& & & & \underbrace{\theta_{t+1}}_{\text{updated parameters}} \\
 \end{array}
 $$
 
-The square says, in one picture, what the four training-side phenomena are. *Data quality* and *scale* enter at the left edge ($D \to D'$): a cleaner or larger dataset reshapes the loss landscape before training touches it. *Forward pass + loss* enters at the right edge ($B \to \theta_{t+1}$): the model emits activations, the loss is computed. *Backpropagation* (in the *Backpropagation* chapter) is the chain-rule implementation of the implicit backward step. *Gradient descent* and the *loss landscape* enter as the geometry the SGD arrow follows. The square commutes because the four operations are independent functions of their inputs — there is exactly one path from any corner to any other, and reordering the operations around the perimeter gives the same final parameters $\theta_{t+1}$.
+The diagram commutes because the four operations compose to one step of gradient descent:
+
+$$
+\theta_t \xrightarrow{\text{forward} \circ \text{loss} \circ \text{backward} \circ \text{SGD}} \theta_{t+1}, \qquad \theta_{t+1} = \theta_t - \eta\,\nabla_\theta L,
+$$
+
+and the chain rule says the backward step is exactly the differential of the forward-plus-loss step. The other training-side phenomena factor through the same diagram. *Data quality* and *scale* enter at the top edge ($D \to B$): a cleaner or larger dataset reshapes the loss landscape before training touches it. *Backpropagation* is the chain-rule implementation of the implicit backward arrow. *Gradient descent* and the *loss landscape* enter as the geometry the SGD arrow follows. *SGD regularisation* is what happens when the implicit noise in $B$ (sampling from $D$) keeps the parameters from settling exactly on the noise — the source of the gap between training loss and generalisation.
 
 **The value-alignment problem in the strong sense.** The chapter can diagnose the *epistemic* failure modes — hallucination, factbook, contact-point liar — but it has nothing to say about the *value-alignment* problem: how to ensure that a system with the right epistemic standing still pursues goals we want it to pursue. That is a separate problem, with separate tools (preference learning, Constitutional AI, debate, scalable oversight, formal verification), and the chapter's vocabulary does not extend to it.
 

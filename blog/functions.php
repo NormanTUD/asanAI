@@ -532,7 +532,7 @@ function isCli(): bool
 
 function get_theme_class(): string {
 	$theme = $_COOKIE['theme'] ?? '';
-	return $theme === 'dark' ? 'dark' : '';
+	return $theme === 'light' ? '' : 'dark';
 }
 
 function get_module_nav_data(): array {
