@@ -339,9 +339,12 @@ function render_temml() {
 		s.textContent = `
 			.lp-overlay{
 				position:fixed;inset:0;
-				background:rgba(0,0,0,.18);backdrop-filter:blur(4px);
+				background:rgba(0,0,0,.10);backdrop-filter:blur(2px);
 				z-index:100000;display:flex;align-items:center;justify-content:center;
-				animation:lpFadeIn .18s ease-out}
+				animation:lpFadeIn .18s ease-out;
+				pointer-events:none;
+				touch-action:pan-y;
+				overscroll-behavior:contain}
 			@keyframes lpFadeIn{from{opacity:0}to{opacity:1}}
 			@keyframes lpSlideUp{from{opacity:0;transform:translateY(12px) scale(.97)}
 				to{opacity:1;transform:translateY(0) scale(1)}}
@@ -349,11 +352,13 @@ function render_temml() {
 			.lp-box{
 				background:#ffffff;
 				border:1px solid rgba(0,0,0,.1);border-radius:14px;
-				width:min(560px,90vw);max-height:80vh;overflow:hidden;
+				width:min(560px,90vw);max-height:80vh;
+				display:flex;flex-direction:column;overflow:hidden;
 				box-shadow:0 8px 40px rgba(0,0,0,.12),
 				           0 0 0 1px rgba(0,0,0,.04);
 				animation:lpSlideUp .22s ease-out;
-				font-family:'Inter','Segoe UI',system-ui,sans-serif}
+				font-family:'Inter','Segoe UI',system-ui,sans-serif;
+				pointer-events:auto}
 
 			.lp-header{
 				display:flex;align-items:center;justify-content:space-between;
@@ -377,15 +382,18 @@ function render_temml() {
 			.lp-close:hover{
 				background:#fee2e2;border-color:#fca5a5;color:#dc2626}
 
-			.lp-body{padding:20px}
+			.lp-body{padding:20px;flex:1 1 auto;min-height:0;overflow-y:auto}
 
 			.lp-preview{
 				background:#f8f9fb;
 				border:1px solid #e5e7eb;
 				border-radius:10px;padding:16px;margin-bottom:16px;
-				text-align:center;overflow-x:auto;color:#1f2937;font-size:1.3em;
-				pointer-events:none;
-				transition:opacity .2s ease}
+				text-align:center;
+				overflow:auto;max-height:45vh;
+				color:#1f2937;font-size:1.3em;
+				transition:opacity .2s ease;
+				cursor:grab;
+				scrollbar-width:thin}
 
 			.lp-code-wrap{
 				position:relative;background:#f9fafb;
@@ -429,13 +437,25 @@ function render_temml() {
 			html.dark .lp-code .lp-tok-number{color:#6ee7b7}
 
 			.lp-footer{
-				padding:12px 20px;
-				border-top:1px solid #e5e7eb;text-align:center}
-			.lp-footer span{font-size:11px;color:#9ca3af}
+				padding:10px 16px;
+				border-top:1px solid #e5e7eb;
+				display:flex;align-items:center;justify-content:space-between;gap:12px}
+			.lp-footer-hint{font-size:11px;color:#9ca3af;flex:1;text-align:center}
 			.lp-footer kbd{
 				background:#f3f4f6;
 				border:1px solid #e5e7eb;
 				border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}
+
+			.lp-scroll-btns{display:flex;gap:4px}
+			.lp-scroll-btn{
+				background:#f3f4f6;border:1px solid #e5e7eb;
+				color:#374151;width:30px;height:30px;
+				border-radius:6px;cursor:pointer;
+				display:flex;align-items:center;justify-content:center;
+				font-size:14px;font-weight:600;line-height:1;
+				transition:all .15s ease;font-family:inherit}
+			.lp-scroll-btn:hover{background:#e5e7eb;border-color:#cbd5e1;color:#1f2937}
+			.lp-scroll-btn:active{transform:translateY(1px)}
 
 			/* ── Animated swap (user switches to a different equation) ── */
 			.lp-swap .lp-preview,
@@ -483,10 +503,17 @@ function render_temml() {
 				border-bottom-color:var(--mn-border)}
 			html.dark .lp-code{color:var(--mn-text)}
 			html.dark .lp-footer{border-top-color:var(--mn-border)}
+			html.dark .lp-footer-hint{color:var(--mn-text-secondary)}
 			html.dark .lp-footer kbd{
 				background:var(--mn-surface-raised);
 				border-color:var(--mn-border);
 				color:var(--mn-text-secondary)}
+			html.dark .lp-scroll-btn{
+				background:var(--mn-surface-raised);
+				border-color:var(--mn-border);
+				color:var(--mn-text-secondary)}
+			html.dark .lp-scroll-btn:hover{
+				background:var(--mn-border);color:var(--mn-text)}
 			html.dark .lp-badge-display{
 				background:rgba(124,58,237,.2);color:#c4b5fd}
 			html.dark .lp-badge-inline{
@@ -550,8 +577,14 @@ function render_temml() {
 
 		function _wireClose(overlay) {
 			overlay.querySelector('.lp-close').addEventListener('click', _close);
-			overlay.addEventListener('click', e => { if (e.target === overlay) _close(); });
 		}
+
+		// Click-outside: any mousedown that isn't on the box closes the popup
+		document.addEventListener('mousedown', function(e) {
+			if (!render_temml._overlay) return;
+			if (e.target.closest && e.target.closest('.lp-box')) return;
+			_close();
+		}, true);
 
 		function _wireCopy(overlay) {
 			const btn = overlay.querySelector('.lp-copy');
@@ -570,14 +603,153 @@ function render_temml() {
 			});
 		}
 
+		function _getScrollPos() {
+			return window.pageYOffset
+				|| document.documentElement.scrollTop
+				|| document.body.scrollTop
+				|| 0;
+		}
+
+		// Tries every scrolling method known to work — returns true on success.
+		function _scrollPage(dy) {
+			if (!dy) return false;
+
+			// Force 'instant' so CSS `scroll-behavior:smooth` doesn't queue
+			// competing animations when the user wheels rapidly.
+			const before = _getScrollPos();
+			try { window.scrollBy({top: dy, behavior: 'instant'}); } catch(_) { window.scrollBy(0, dy); }
+			if (_getScrollPos() !== before) return true;
+
+			// Use the real scrolling element (handles quirks mode, mobile shenanigans)
+			const se = document.scrollingElement || document.documentElement;
+			if (se) {
+				se.scrollTop += dy;
+				if (_getScrollPos() !== before) return true;
+			}
+
+			// Direct element manipulation (works when window.scrollBy is muted)
+			document.documentElement.scrollTop += dy;
+			if (_getScrollPos() !== before) return true;
+			document.body.scrollTop += dy;
+			if (_getScrollPos() !== before) return true;
+
+			// Final fallback: walk up looking for a scrollable ancestor
+			let el = overlay && overlay.parentElement;
+			while (el && el !== document) {
+				if (el.scrollHeight > el.clientHeight + 1) {
+					el.scrollTop += dy;
+					if (_getScrollPos() !== before) return true;
+					break;
+				}
+				el = el.parentElement;
+			}
+
+			return false;
+		}
+
+		// Last-resort fallback: centre the right-clicked formula on screen.
+		function _scrollFallback(down) {
+			if (!render_temml._mathEl) return;
+			try {
+				render_temml._mathEl.scrollIntoView({behavior: 'smooth', block: down ? 'end' : 'start'});
+			} catch(_) { /* very old browser */ }
+		}
+
 		function _wireScroll(overlay) {
-			overlay.addEventListener('wheel', e => {
-				// Inside the box: let its own (inner) scrolling handle it
-				if (e.target.closest('.lp-box')) return;
-				// Over the dim background: scroll the page underneath
+			const box = overlay.querySelector('.lp-box');
+			const preview = () => overlay.querySelector('.lp-preview');
+
+			const onWheel = e => {
+				// Inside the code area: let it scroll vertically natively
+				if (e.target.closest && e.target.closest('.lp-code')) return;
+
+				// Inside the preview: scroll it (vertically natively, horizontally by mapping wheel)
+				const pv = e.target.closest && e.target.closest('.lp-preview');
+				if (pv) {
+					const hasX = pv.scrollWidth  > pv.clientWidth  + 1;
+					const hasY = pv.scrollHeight > pv.clientHeight + 1;
+					if (!hasX && !hasY) return; // preview fits → fall through to page scroll
+
+					e.preventDefault();
+					e.stopPropagation();
+
+					let dy = e.deltaY, dx = e.deltaX;
+					if (e.deltaMode === 1)      { dy *= 20; dx *= 20; }
+					else if (e.deltaMode === 2) { dy *= pv.clientHeight; dx *= pv.clientWidth; }
+
+					if (e.shiftKey) {
+						if (hasX) pv.scrollLeft += (dx || dy);
+					} else if (hasX && hasY) {
+						pv.scrollLeft  += dx;
+						pv.scrollTop   += dy;
+					} else if (hasY) {
+						pv.scrollTop   += (dy || dx);
+					} else if (hasX) {
+						pv.scrollLeft  += (dy || dx);  // map vertical wheel → horizontal
+					}
+					return;
+				}
+
+				// Anywhere else on the box → scroll the page underneath
 				e.preventDefault();
-				window.scrollBy(0, e.deltaY);
-			}, {passive: false});
+				e.stopPropagation();
+
+				let dy = e.deltaY, dx = e.deltaX;
+				if (e.deltaMode === 1)      { dy *= 20; dx *= 20; }
+				else if (e.deltaMode === 2) { dy *= window.innerHeight; dx *= window.innerWidth; }
+
+				if (e.shiftKey && dy === 0) dy = dx;
+				if (dy === 0 && dx !== 0)   dy = dx;
+
+				// Defer out of the event handler
+				requestAnimationFrame(() => {
+					if (!_scrollPage(dy)) _scrollFallback(dy > 0);
+				});
+			};
+
+			box.addEventListener('wheel', onWheel, {passive: false, capture: true});
+
+			// Drag-to-scroll on the preview (mouse)
+			preview().addEventListener('mousedown', e => {
+				const startX = e.clientX, startLeft = preview().scrollLeft;
+				const onMove = ev => { preview().scrollLeft = startLeft - (ev.clientX - startX); };
+				const onUp = () => {
+					document.removeEventListener('mousemove', onMove);
+					document.removeEventListener('mouseup', onUp);
+				};
+				document.addEventListener('mousemove', onMove);
+				document.addEventListener('mouseup', onUp);
+			});
+			preview().addEventListener('touchstart', e => {
+				if (e.touches.length !== 1) return;
+				const startX = e.touches[0].clientX, startLeft = preview().scrollLeft;
+				const onMove = ev => {
+					if (!ev.touches.length) return;
+					preview().scrollLeft = startLeft - (ev.touches[0].clientX - startX);
+				};
+				const onEnd = () => {
+					preview().removeEventListener('touchmove', onMove);
+					preview().removeEventListener('touchend', onEnd);
+				};
+				preview().addEventListener('touchmove', onMove, {passive: true});
+				preview().addEventListener('touchend', onEnd);
+			}, {passive: true});
+
+			overlay.querySelectorAll('.lp-scroll-btn').forEach(btn => {
+				const step = () => {
+					const dy = window.innerHeight * Number(btn.dataset.dy);
+					if (!_scrollPage(dy)) _scrollFallback(dy > 0);
+				};
+				btn.addEventListener('click', step);
+				let timer;
+				const start = () => { step(); timer = setInterval(step, 120); };
+				const stop  = () => clearInterval(timer);
+				btn.addEventListener('mousedown', e => { e.preventDefault(); start(); });
+				btn.addEventListener('mouseup', stop);
+				btn.addEventListener('mouseleave', stop);
+				btn.addEventListener('touchstart', e => { e.preventDefault(); start(); }, {passive: false});
+				btn.addEventListener('touchend', stop);
+			});
 		}
 
 		function _highlightLatex(src) {
@@ -710,7 +882,12 @@ function render_temml() {
 						</div>
 					</div>
 					<div class="lp-footer">
-						<span><kbd>Esc</kbd> to close</span>
+						<div class="lp-scroll-btns">
+							<button class="lp-scroll-btn" data-dy="-0.85" title="Scroll page up (↑)" aria-label="Scroll page up">↑</button>
+							<button class="lp-scroll-btn" data-dy="0.85" title="Scroll page down (↓)" aria-label="Scroll page down">↓</button>
+						</div>
+						<span class="lp-footer-hint"><kbd>Esc</kbd> to close · wheel scrolls page</span>
+						<div style="width:68px"></div>
 					</div>
 				</div>`;
 
@@ -771,7 +948,31 @@ function render_temml() {
 		});
 
 		document.addEventListener('keydown', function(e) {
-			if (e.key === 'Escape') _close();
+			if (!render_temml._overlay) return;
+
+			if (e.key === 'Escape') { _close(); return; }
+
+			// Don't hijack keys when user is selecting text in the code box
+			const ae = document.activeElement;
+			if (ae && ae.closest && ae.closest('.lp-code') &&
+			    (e.key.startsWith('Arrow') || e.key === 'Home' || e.key === 'End')) {
+				// Arrow / Home / End inside lp-code → let text selection handle it
+				if (!e.shiftKey || e.key === 'Home' || e.key === 'End') return;
+			}
+
+			if (e.key === 'PageUp' || (e.key === 'ArrowUp' && e.altKey)) {
+				e.preventDefault();
+				if (!_scrollPage(-window.innerHeight * 0.85)) _scrollFallback(false);
+			} else if (e.key === 'PageDown' || (e.key === 'ArrowDown' && e.altKey)) {
+				e.preventDefault();
+				if (!_scrollPage(window.innerHeight * 0.85)) _scrollFallback(true);
+			} else if (e.key === 'Home' && !e.shiftKey) {
+				e.preventDefault();
+				window.scrollTo({top: 0, behavior: 'instant'});
+			} else if (e.key === 'End' && !e.shiftKey) {
+				e.preventDefault();
+				window.scrollTo({top: document.documentElement.scrollHeight, behavior: 'instant'});
+			}
 		});
 
 	} /* end one-time bootstrap */
