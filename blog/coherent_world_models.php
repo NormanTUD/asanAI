@@ -1344,13 +1344,21 @@ $$
 
 - **The subject matter $W$** is, for an LLM, *the world the corpus is about*: facts about history, science, code, mathematics, language, the texture of human life that the training set was assembled from. This $W$ is enormously broad, mostly unobservable, and never directly available to the model.
 
-- **The cover $\{c_i\}_{i \in I}$** is the *training corpus*: each $c_i$ is a document, a web page, a code repository, a conversation, a transcript. Each is a "patch" of partial evidence about $W$. The patches overlap — the same fact appears in many documents, the same code idiom in many repositories — and the union of their images is supposed to cover everything the model is meant to be able to speak about. The cover is not clean. Patches *disagree about the same facts* — different sources contradict each other, sometimes within the same document — and some are noisy, outdated, or biased. The chain from $W$ to the text in the corpus, written as the commuting diagram it actually is, has misremembering, badly-written prose, simple errors, lies, and altered states at every arrow — so the patches are not equal on overlaps but related by homotopies. In the strict sheaf regime this would be fatal; in the **homotopical regime** (the chapter's *Higher coherence* section, with $\infty\text{-Gpd}$ as target) local sections are *coherently equivalent* rather than equal — paraphrases, translations, corrections are homotopies, not disagreements — and descent absorbs the noise. What survives in $G$ is the *coherence class* of the cover, not any single patch.
+- **The cover $\{c_i\}_{i \in I}$** is the *training corpus*: each $c_i$ is a document, a web page, a code repository, a conversation, a transcript. Each is a "patch" of partial evidence about $W$. The patches overlap — the same fact appears in many documents, the same code idiom in many repositories — and the union of their images is supposed to cover everything the model is meant to be able to speak about. The cover is not clean. Patches *disagree about the same facts* — different sources contradict each other, sometimes within the same document — and some are noisy, outdated, or biased. The chain from $W$ to the text in the corpus, written out as the olog it actually is, has misremembering, badly-written prose, simple errors, lies, and altered states at every arrow — so the patches are not equal on overlaps but related by homotopies, and the homotopies accumulate across stages. In the strict sheaf regime this would be fatal; in the **homotopical regime** (the chapter's *Higher coherence* section, with $\infty\text{-Gpd}$ as target) local sections are *coherently equivalent* rather than equal — paraphrases, translations, corrections are homotopies, not disagreements — and descent absorbs the noise, *when the homotopies compose coherently on triple overlaps*. What survives in $G$ is the *coherence class* of the cover, not any single patch.
 
   $$
-  \begin{array}{ccc}
-  \underbrace{W}_{\text{world}} & \xrightarrow{\text{perception}} & \underbrace{S}_{\text{signal}} \\
-  \scriptstyle{\text{language}}\Big\downarrow & \circlearrowright & \Big\downarrow\scriptstyle{\text{memory}} \\
-  \underbrace{\Sigma}_{\text{spoken sentence}} & \xleftarrow[\text{writing}]{\phantom{xx}} & \underbrace{T}_{\text{written text}}
+  \begin{array}{c}
+  \underbrace{W}_{\text{world}}\\
+  \overset{\text{perception}}{\underset{\text{misperception, simple errors}}{\downarrow}}\\
+  \underbrace{S}_{\text{signal}}\\
+  \overset{\text{cognition}}{\underset{\text{misremembering}}{\downarrow}}\\
+  \underbrace{\rho}_{\text{internal rep.}}\\
+  \overset{\text{language}}{\underset{\text{lies, altered states}}{\downarrow}}\\
+  \underbrace{\Sigma}_{\text{spoken sentence}}\\
+  \overset{\text{writing}}{\underset{\text{badly-written prose}}{\downarrow}}\\
+  \underbrace{T}_{\text{written text}}\\
+  \overset{\text{aggregation}}{\underset{\text{selection bias}}{\downarrow}}\\
+  \underbrace{C}_{\text{corpus}}
   \end{array}
   $$
 
@@ -1378,51 +1386,96 @@ These are the things the LLM is *for*: pattern completion, in-context coherence,
 
 ### What the LLM lacks: grounded observation
 
-What the LLM is *not* doing, by default, is anything the chapter would call *observation* in the strict sense. There is no arrow $O_i : W \to R_i$ in the architecture; the only arrows are *inside* the model, not between the world and the model. The training process uses the corpus $\{c_i\}$ as a proxy for $W$, but the corpus is itself a transformed trace — text written by humans, sampled from the world, frozen at training time. The LLM is connected to the world only through the bottleneck of *language about the world*, which is the entire mediation problem of the chapter's "Traces" section, repeated once for every document in the corpus.
+What the LLM is *not* doing, by default, is anything the chapter would call *observation* in the strict sense. The architecture has no observation arrow
 
-Three consequences follow, each diagnostic.
+$$
+\underbrace{O_i}_{\text{access to }w\subseteq W}\;:\;\underbrace{W}_{\text{the world}}\;\longrightarrow\;\underbrace{R_i}_{\text{trace in the model}}
+$$
 
-**The training cutoff.** The model has no observation arrows that touch the world after training. Events after the cutoff are invisible unless they are delivered through updated parameters (fine-tuning, continued pretraining) or through the deployment pipeline (RAG, tool use). The model cannot "know" something it has not been told, in any sense of "know" the chapter would license. When a user asks the model about an event from last week, the model has no privileged access to a contact point about that event; it has only the pattern-completion machinery that *would* complete such a question if asked often enough. Whether the completion is true is a separate, empirical matter.
+of the kind the chapter's framework treats as a *licensed* bridge from the world to a representation. The arrows that *do* exist in the architecture are *inside* the model (tokenisation, embedding, attention, MLP transformations, logit computation, sampling), not between the world and the model. The training process uses the corpus $\{c_i\}$ as a proxy for $W$, but the corpus is itself a transformed trace — text written by humans, sampled from the world, frozen at training time. The LLM is connected to the world only through the bottleneck of *language about the world*, which is the entire mediation problem of the chapter's "Traces" section, repeated once for every document in the corpus.
 
-**The grounding gap.** Symbols in the model refer to *other symbols in the model*, not to objects in the world. "Apple" is a point in embedding space, near "pear" and "fruit" and far from "carburetor" — the chapter's distributional semantics, exactly. The model has *internal* semantics; it does not have *external* semantics unless something in the deployment pipeline provides them. The Vector Grounding Problem of the philosophy chapter is, in the chapter's vocabulary, *the absence of any $O_i$ arrow that lands in $W$ and produces a representational trace in $R_i$*.
+The picture is only mostly true, though. Three different extensions each *partially* close the gap; none of them does so by default, and each carries its own caveats.
 
-**The Tarski gap.** Without observation arrows and without licensed transitions to the world, the Tarskian if-and-only-if "$S$ is true iff $p$" cannot be evaluated inside the model. The model can produce sentences that *look like* claims about the world; what it cannot do is independently verify them. Every output is, by default, an unverified claim.
+**In-context learning as a partial observation arrow.** When the prompt contains facts, the model can use them to answer the question that follows. In the chapter's vocabulary, the prompt acts as a small cover pasted into the conversation, and the model's continuation is the section on that cover. The "observation" arrow here is shallow — it runs from text-in-prompt to text-in-completion, both of which are *inside* the model — but it does let the model condition on evidence the corpus did not contain at training time. A user who pastes a relevant document into the prompt gives the model a $O_i$-like bridge to *that document*. The bridge is not a bridge to $W$ (the document is itself a transformed trace), but it is enough to displace a confidently wrong answer with one that uses the supplied text.
 
-These three gaps are not bugs in any particular model; they are *structural features of the whole paradigm*. The model is a coherence engine that has never been given a correspondence engine to work with.
+**Retrieval-Augmented Generation (RAG).** A retriever pulls passages from an external knowledge base and injects them into the prompt. The knowledge base can be updated continuously, so the model effectively gets fresh observation arrows at inference time — a partial mitigation of the training cutoff. The bridge still terminates in $R_i$ (passages as text), not directly in $W$, but the passages can be closer to $W$ than the model's parameters are (e.g., a documentation site that is updated nightly). This is the engineering reality: a partial observation arrow, licensed by the retrieval pipeline.
+
+**Tools and formal verification as $T \in \mathcal{T}$ for the world.** When the model is allowed to *act* on the world — to run code, query a database, call an API, write and check a proof — it acquires genuine observation arrows. Running a Python snippet and observing the output is a $W \to R_i$ arrow whose $R_i$ is the program's actual behaviour. Writing a proof in a proof assistant such as **Coq** \cite{bertot2013coq} or **Lean** \cite{moura2015lean} and type-checking it is, in the chapter's vocabulary, the strongest available Tarski check: the proof's type-correctness is the meta-language fact $p$ that licenses the claim $S$ ("such-and-such follows from these axioms"). An LLM that emits a Coq script the user runs and verifies has performed a real *correspondence check* — not because the model itself knows Coq, but because the licensed transition from the model's output to the world's facts is now end-to-end. Code execution is a coarse-grained observation; formal verification is the finest-grained one in current use. The two together cover the spectrum from "does it run?" to "does the proof type-check?". The catch: the model has to *know how to call* these tools, and the tools have to be calibrated against the questions asked. A calculator that mishandles a domain error is no observation arrow; it is just noise. The chapter's nine-step procedure applies to the tools the same way it applies to the model.
+
+The honest reading, then: the LLM, *by default*, has only internal arrows. With augmentation — in-context evidence, retrieval, tool use, code execution, formal proof — it acquires partial external ones, with the licensing earned piecemeal and audited per tool. None of this removes the structural gap; it narrows it. And the gap is *structural*: it lives in the architecture, not in any particular model's training, and it is the reason the next subsection's diagnosis (hallucination) reads the way it does.
 
 ### Hallucination, precisely
 
-In the chapter's vocabulary, a *hallucination* is a **self-consistent fantasy**: a model that satisfies its own internal sheaf condition — every local section agrees with every other local section on overlaps — without any licensed correspondence to the world. The diagnosis is precise:
+In the chapter's vocabulary, a *hallucination* is most accurately a **non-glueable presheaf with external correspondence failures**, and only very rarely the clean *self-consistent fantasy* the chapter's closing synthesis describes. The terminology matters: a *presheaf* assigns a section to each patch, but the *sheaf condition* — that compatible local sections glue into a unique global section — need not hold. The training corpus, as the previous section argued, contains contradictory patches: the same facts, different answers; the same code idiom, different conventions; the same historical event, different framings. The local sections are therefore *not* compatible on overlaps in the strict sense. They cannot be glued into a single coherent global section; at best, an $\infty$-sheaf gluing recovers a coherence class when the homotopies compose coherently on triple overlaps, which is a strong assumption that the corpus does not satisfy in general.
 
-- *Coherence holds.* The model's outputs are internally consistent: its descriptions cohere with each other, its arguments flow, its style is uniform.
-- *Licensing was granted, but the licence does not deliver contact.* The model's internal operations are licensed (they are in $\mathcal{T}$), but no transition reaches from the model to the world. The Tarski if-and-only-if never gets evaluated.
-- *The failure is correspondence, not coherence.* The model is not broken in the sense of contradicting itself; it is broken in the sense of having nothing to contradict.
+A more accurate diagnosis:
 
-This is the same diagnosis the chapter gave to the *self-consistent fantasy* in the closing synthesis, just applied to a specific class of systems. The chapter's three pathologies — self-consistent fantasy, factbook, contact-point liar — correspond, roughly, to the failure modes the AI literature has named:
+- *Local sections disagree.* The model can produce a fluent continuation on each local patch — locally, the section is fine — but the local sections do not agree with each other on overlaps, because the corpus's patches do not agree. The model often *forces* a global section by averaging conflicting patches, picking one and ignoring the others, or stitching incompatible pieces together with confident connective tissue. Each of these moves is a coherence failure on top of a correspondence failure.
+- *The model's outputs are not internally consistent.* A model that contradicts itself mid-paragraph, that invents a citation that does not exist, that gives three different answers to the same factual question across a single conversation, is *not* a self-consistent fantasy. It is a broken presheaf. Its outputs read fluently on any short window, but the longer windows accumulate contradictions. Hallucination, in the typical case, is *both* a coherence failure (the model's parts don't glue) *and* a correspondence failure (the model's claims don't track $W$).
+- *Licensing was granted, but the licence does not deliver contact.* The model's internal operations are licensed — they are admissible in $\mathcal{T}$ — but no transition inside the model reaches from the model's claims to the world. The Tarski if-and-only-if never gets evaluated, *except* in the partial ways the previous section described: in-context learning, retrieval, tool use, formal verification. In those cases the licence is real, and so is the Tarski check, but only at the augmented contact points; everywhere else, the licence is just a permit for the model to keep talking.
 
-| Chapter's pathology | LLM failure mode | What's broken |
-| :--- | :--- | :--- |
-| Self-consistent fantasy | Confident hallucination | Correspondence: model has no contact with $W$ |
-| Factbook | Disconnected reasoning: correct facts but no synthesis | Coherence: model's parts do not glue |
-| Contact-point liar | Subtle, calibrated errors | Correspondence: the licence was granted but does not deliver |
+This is a more honest diagnosis than the chapter's default *self-consistent fantasy*, and it changes the failure-mode table:
 
-The diagnosis matters because the *remedy* differs in each case. The factbook needs more coherence (better reasoning, better chain-of-thought); the self-consistent fantasy needs more correspondence (grounding in actual sources); the contact-point liar needs re-calibrated licences (better calibration of the existing bridges). A single fix does not address all three, and conflating them is one of the most common ways to talk uselessly about AI safety.
+| Chapter's pathology | LLM failure mode | What's broken | Typical remedy |
+| :--- | :--- | :--- | :--- |
+| Non-glueable presheaf | Confident hallucination, local incoherence | Coherence + correspondence | Retrieval, RAG, tools, calibration of training data |
+| Self-consistent fantasy (rare) | Fluent nonsense with internal consistency | Correspondence only | Grounding in actual sources |
+| Factbook | Disconnected reasoning: correct facts but no synthesis | Coherence | Better reasoning, chain-of-thought, structured scratchpads |
+| Calibrated error | Subtle, plausible-sounding mistakes | Correspondence | Re-calibrated licences (better calibration of the existing bridges, formal verification where applicable) |
+
+The diagnosis matters because the *remedy* differs in each case. The typical hallucination needs *both* more coherence (cleaner training data, better reasoning) *and* more correspondence (retrieval, tools, verification). The pure self-consistent fantasy needs grounding. The factbook needs more coherence. The calibrated error needs re-licensing. A single fix does not address all four, and conflating them is one of the most common ways to talk uselessly about AI safety.
 
 ### What helps: adding admissible transitions
 
-The chapter's vocabulary translates the standard remedies into moves in the diagram. Each remedy is, in the chapter's terms, *adding an admissible transition* that the system was missing.
+The chapter's vocabulary translates the standard remedies into moves in the diagram. Each remedy is, in the chapter's terms, *adding an admissible transition* that the system was missing. The augmented LLM, in olog form, looks like this:
 
-**Retrieval-Augmented Generation (RAG).** Before the model generates, an external retriever pulls relevant passages from a knowledge base and injects them into the prompt. In the diagram, the passages become *new patches* of the cover, and the licensing $T \in \mathcal{T}$ that connects the model's output to the passage text is now available. The model's claim "$X$" can be checked against the passage: is "$X$" supported by the retrieved evidence? If yes, the model has a *correspondence check* at a contact point. If the retrieval is good and the licensing is trusted, the hallucination rate on those queries drops sharply. The catch: the licence has to be earned. The retriever itself can be wrong (irrelevant passages, outdated knowledge base, poisoned documents), and a model that trusts a bad retriever is no better grounded than a model that trusts its own parameters. The chapter's nine-step procedure applies to the retriever the same way it applies to the model.
+$$
+\begin{array}{c}
+\underbrace{\text{User query}}_{\text{type}}\\
+\downarrow\scriptstyle{\text{feeds into}}\\
+\underbrace{\text{LLM}}_{\text{type}}\\
+\downarrow\scriptstyle{\text{emits}}\\
+\underbrace{\text{Output}}_{\text{type}}\\
+\downarrow\scriptstyle{\text{is checked by}}\\
+\underbrace{\text{Tool / verifier }(T\in\mathcal{T})}_{\text{type}}\\
+\downarrow\scriptstyle{\text{calibrates against}}\\
+\underbrace{\text{World fact (licensed contact point)}}_{\text{type}}
+\end{array}
+$$
 
-**Tool use and agents.** When the model can call external tools — a web search, a calculator, a code interpreter, a database query, an HTTP endpoint — it acquires *new observation arrows* $O_i : W \to R_i$ that were not available in its training. Each tool call is a *licensed transition* to a fresh source of evidence; the model's claim "$X$" can now be checked against the tool's response. The technique is powerful exactly because it expands $\mathcal{T}$ at inference time, in a controlled way. The catch: each tool is a new surface for error. A web search returns propaganda; a calculator mishandles a domain error; a code interpreter runs buggy code; an agent loops. The chapter's discipline applies to each: every tool needs its own calibration, its own licence, its own audit. The chapter's notion of *admissible cover* becomes the operational notion of a *bounded tool budget*: the agent is allowed a specified number of $T \in \mathcal{T}$ transitions, and the cover must be specified in advance.
+The new row — the tool/verifier between the LLM's output and the world fact — is what each remedy below installs. The arrow from the tool to the world fact is the licensed transition that closes the loop. Without it, the diagram is the baseline LLM: a coherence engine with no correspondence check.
 
-**Reinforcement Learning from Human Feedback (RLHF).** RLHF does not add admissible transitions to the world; it adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful, harmless, and honest; the policy is tuned to maximise that reward. In the chapter's vocabulary, RLHF installs a *Tarskian anchor* — but the anchor is human preference, not world fact. This is why RLHF-trained models are better at being *helpful* but not necessarily better at being *true*: the correspondence has been moved from the world to the human rater, which is one step closer to the world than pure next-token likelihood but is still not the world itself. The discipline: treat the human rater as a calibrated instrument, audit its calibration periodically, and refuse to upgrade "the rater prefers this" to "this is true".
+**Retrieval-Augmented Generation (RAG).** Before the model generates, an external retriever pulls relevant passages from a knowledge base and injects them into the prompt. In the diagram, the passages become *new patches* of the cover, and the licensing
+
+$$
+\underbrace{T}_{\text{licensed transition}}\;\in\;\underbrace{\mathcal{T}}_{\text{admissible set}}
+$$
+
+that connects the model's output to the passage text is now available. The model's claim "$X$" can be checked against the passage: is "$X$" supported by the retrieved evidence? If yes, the model has a *correspondence check* at a contact point. If the retrieval is good and the licensing is trusted, the hallucination rate on those queries drops sharply. The catch: the licence has to be earned. The retriever itself can be wrong (irrelevant passages, outdated knowledge base, poisoned documents), and a model that trusts a bad retriever is no better grounded than a model that trusts its own parameters. The chapter's nine-step procedure applies to the retriever the same way it applies to the model.
+
+**Tool use and agents.** When the model can call external tools — a web search, a calculator, a code interpreter, a database query, an HTTP endpoint — it acquires new observation arrows
+
+$$
+\underbrace{O_i}_{\text{newly licensed}}\;:\;\underbrace{W}_{\text{the world}}\;\longrightarrow\;\underbrace{R_i}_{\text{trace in the model}}
+$$
+
+that were not available in its training. Each tool call is a *licensed transition* to a fresh source of evidence; the model's claim "$X$" can now be checked against the tool's response. The technique is powerful exactly because it expands $\mathcal{T}$ at inference time, in a controlled way. The catch: each tool is a new surface for error. A web search returns propaganda; a calculator mishandles a domain error; a code interpreter runs buggy code; an agent loops. The chapter's discipline applies to each: every tool needs its own calibration, its own licence, its own audit. The chapter's notion of *admissible cover* becomes the operational notion of a *bounded tool budget*: the agent is allowed a specified number of
+
+$$
+\underbrace{T}_{\text{licensed transition}}\;\in\;\underbrace{\mathcal{T}}_{\text{admissible set}}
+$$
+
+transitions, and the cover must be specified in advance.
+
+**Code execution and formal verification as the strongest Tarski check.** When the model writes a Python snippet and the result is run, the user observes whether the program does what it should. That observation arrow is real: the program's actual behaviour is an $R_i$ produced from the hardware $W$. For mathematical claims, the strongest Tarski check currently available is type-checking a proof in an interactive theorem prover: **Coq** \cite{bertot2013coq} or **Lean** \cite{moura2015lean}. The model's claim "$S$: such-and-such follows from these axioms" is licensed by the proof assistant's small kernel, and the kernel's "yes" is the meta-language fact $p$ of Convention T. A model that emits a Lean proof the user runs is performing a real correspondence check; a model that only *describes* the proof in prose is not. Code execution is the coarse end of this spectrum ("does it run?"); formal verification is the fine end ("does the proof type-check under a checked kernel?"). The two together are the chapter's licensed transition to mathematical and computational reality.
+
+**Reinforcement Learning from Human Feedback (RLHF).** RLHF adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful, harmless, and honest; the policy is tuned to maximise that reward. In the chapter's vocabulary, RLHF installs a *Tarskian anchor* at the human rater's preference — and this is not a degenerate case. The raters' preferences, as observed, are real *facts in $W$*. The phenomenological tradition, in the line from \citeauthor{schmitz_neo_phenomenology}'s (\citeyear{schmitz_neo_phenomenology}) *Neue Phänomenologie* \cite{schmitz_neo_phenomenology}, takes subjective facts (feelings, preferences, situations) to be objective facts about the world — observable states of affairs that any witness can report on. The raters' preferences are simply facts of a kind the classical "objective" tradition underweighted; the chapter's $W$ is broad enough to include them. This is why RLHF-trained models are better at being *helpful*: the correspondence has been moved from the world-at-large to the rater's preference, but the rater's preference is a real, observable, licensable part of the world. The discipline: treat the human rater as a calibrated instrument, audit the rater's calibration periodically (do raters agree with each other? do raters' preferences track external ground truth where it is available?), and refuse to upgrade "the rater prefers this" to "this is true" without further licence. The rater is *one* licensed transition among many; not all transitions go through the rater; the rater's preferences are world facts, but not the only ones.
 
 **Chain-of-thought and self-consistency.** These are *coherence techniques* (the previous section), not correspondence techniques. They sharpen the model's internal consistency; they do not, by themselves, ground the model in the world. Their value is to *expose* the model's failures: when self-consistency collapses — the model's $k$ sampled continuations disagree — that is a diagnostic flag that the underlying claim is not robustly supported. They tell you when to be suspicious; they do not tell you when to trust. The chapter's hierarchy of sameness is the right ladder: a chain-of-thought that is internally consistent is *coherent*; that coherence does not entail *correspondence*.
 
 **Verifier-guided search.** This is the technique that comes closest to *adding a Tarskian check at every candidate*. Each candidate is a claim; the verifier is a licensed bridge from the candidate to a ground truth (or a proxy); the highest-scoring candidate is the one whose correspondence check passes most often. The technique only works if the verifier is itself licensed. A verifier trained on the same model, on the same corpus, scoring only fluency, is just another coherence check. A verifier trained against external ground truth, with its own calibration audit, is a real correspondence check. The Fitness-Beats-Truth result (a system that maximises a fitness payoff without estimating the true world state beats a system that estimates it) is, in the chapter's vocabulary, *the formal statement that an internal coherence engine, without licensed correspondence transitions, will beat a correspondence engine on fitness metrics* — and explains why the baseline LLM hallucinates rather than tracking truth.
 
-**Reading the table the other way.** The chapter's diagnosis predicts which remedies will and will not work, before trying them. If the failure is *correspondence* — the model has no contact with $W$ — no amount of coherence engineering (bigger models, longer chains of thought, more self-consistency) will fix it. If the failure is *coherence* — the model has the facts but cannot glue them — no amount of retrieval or tool use will fix it. The remedies are matched to the diagnoses, and a serious engineering effort on an LLM application should begin by locating which kind of failure is dominant.
+**Reading the table the other way.** The chapter's diagnosis predicts which remedies will and will not work, before trying them. The typical LLM hallucination involves *both* coherence and correspondence failures (the previous section's revised diagnosis). Coherence techniques (longer chains of thought, self-consistency, scratchpads, cleaner training data) help on the coherence side; correspondence techniques (retrieval, tools, formal verification, calibrated raters) help on the correspondence side. Both are usually needed. Treating hallucination as a purely coherence problem (just scale up the model) or a purely correspondence problem (just retrieve more) systematically undershoots the diagnosis.
 
 ### The nine-step audit, applied to an LLM
 
@@ -1460,20 +1513,27 @@ Three honest claims, to leave the chapter with.
 
 **This framework is a useful lens, not a finished theory.** It organises some intuitions, predicts some failure modes, suggests some remedies. It does not derive the architecture of a working LLM, and it does not replace the technical chapters of this book. The reader who finishes the chapter believing that she now has a theory of LLMs has misread it; the reader who finishes it with a sharper vocabulary for asking what an LLM is, and is not, doing has read it well.
 
-**The unification of mathematics, philosophy, and epistemology is a hypothesis.** We have argued that the same shape shows up in three traditions, and that the argument is productive. The argument is not a derivation. A reader who finds the unification forced, partial, or misleading is not asked to surrender the rest of the chapter; the individual diagnoses — hallucination as a self-consistent fantasy, in-context learning as descent within the prompt, retrieval as adding admissible transitions — stand on their own technical content, independent of the grand unification.
+**The unification of mathematics, philosophy, and epistemology is a hypothesis.** We have argued that the same shape shows up in three traditions, and that the argument is productive. The argument is not a derivation. A reader who finds the unification forced, partial, or misleading is not asked to surrender the rest of the chapter; the individual diagnoses — hallucination as a non-glueable presheaf, in-context learning as descent within the prompt, retrieval and tool use as adding admissible transitions, code execution and formal verification as the strongest Tarski check — stand on their own technical content, independent of the grand unification.
 
-**The discipline is portable.** The nine-step procedure, the three pathologies, the hierarchy of sameness, the question "where is the licensed transition?", the rule "never silently upgrade" — these survive even where the philosophical scaffolding is set aside. They are the practical content of the chapter. Take them into the next technical chapter, and into the next AI system you meet.
+**The discipline is portable.** The nine-step procedure, the pathologies (including the more accurate *non-glueable presheaf* version of hallucination), the hierarchy of sameness, the question "where is the licensed transition?", the rule "never silently upgrade" — these survive even where the philosophical scaffolding is set aside. They are the practical content of the chapter. Take them into the next technical chapter, and into the next AI system you meet.
 
-A useful analogy is not a theorem. The framework in this chapter is, on the author's own admission, mostly analogy — carefully drawn, repeatedly tested, but not derived. Where the analogy bites, it is because the underlying structural shape really is the same across domains. Where it does not, the reader is invited to notice, and to say so.
+A useful analogy is not a theorem. The framework in this chapter is, on the author's own admission, mostly analogy — carefully drawn, repeatedly tested, but not derived. Where the analogy bites, it is because the underlying structural shape really is the same across domains. Where it does not, the reader is invited to notice, and to say so. The diagnosis of LLMs, in particular, has been corrected twice in the writing of this section — once because code execution and formal verification count as observation arrows that the original draft underweighted, and once because hallucinations are usually *non-glueable presheaves*, not the cleaner self-consistent fantasies the chapter's closing synthesis describes. Both corrections were earned by readers (real and imagined) who noticed that the analogy had overreached. The discipline is the same: locate the difference at the right level, and refuse to upgrade a weaker sameness into a stronger one.
 
 $$
 \boxed{
 \begin{aligned}
-&\textbf{The LLM is a coherence engine without a built-in correspondence engine.}\\
-&\textbf{Useful, productive, brittle in predictable ways.}\\
-&\textbf{The fix is not to ask the coherence engine to also do correspondence;}\\
-&\textbf{the fix is to attach a correspondence engine — RAG, tools, verification,}\\
-&\textbf{human oversight, or some combination — to the outside.}
+&\textbf{A world model is the global section recovered from local}\\
+&\textbf{descent data along an admissible cover,}\\
+&\textbf{provisionally, revisably, and never identical}\\
+&\textbf{to the subject matter it represents.}\\
+&\textbf{An LLM is a world model of a kind: a global section computed}\\
+&\textbf{on a noisy, partially contradictory cover, without observation arrows}\\
+&\textbf{of its own, kept coherent by training on the one resource it has —}\\
+&\textbf{language about the world.}\\
+&\textbf{The fix is not to ask it to also do correspondence.}\\
+&\textbf{The fix is to attach correspondence, piecemeal, auditable, licensed:}\\
+&\textbf{retrieval, tools, code execution, formal verification,}\\
+&\textbf{calibrated raters — each transition earned and recorded.}
 \end{aligned}}
 $$
 
