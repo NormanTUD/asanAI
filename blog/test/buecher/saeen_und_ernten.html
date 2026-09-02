@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Récoltes et Semailles — Interaktiv</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root{
+    --bg:#0f0d1a; --bg2:#1a1530; --ink:#f4ecd8; --gold:#e8b923;
+    --rose:#e76f9a; --mint:#6ee7b7; --violet:#a78bfa; --sky:#7dd3fc;
+    --dim:#8b86a3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:'Georgia','Iowan Old Style',serif;line-height:1.6}
+  header{
+    padding:60px 20px 40px;text-align:center;
+    background:radial-gradient(ellipse at top,#2a1f4a 0%,var(--bg) 70%);
+    border-bottom:1px solid #2a2547;
+  }
+  header h1{font-size:clamp(2rem,5vw,3.5rem);margin:0 0 10px;
+    background:linear-gradient(90deg,var(--gold),var(--rose),var(--violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    font-style:italic}
+  header p{color:var(--dim);max-width:700px;margin:10px auto;font-size:1.1rem}
+  nav{position:sticky;top:0;background:rgba(15,13,26,.95);backdrop-filter:blur(10px);
+    padding:12px 20px;z-index:100;border-bottom:1px solid #2a2547;
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  nav a{color:var(--sky);text-decoration:none;padding:6px 12px;
+    border-radius:20px;font-size:.9rem;border:1px solid transparent;
+    transition:all .2s}
+  nav a:hover{background:#2a2547;border-color:var(--violet)}
+  section{max-width:1100px;margin:0 auto;padding:60px 20px;
+    border-bottom:1px solid #201b3a}
+  h2{font-size:2rem;color:var(--gold);margin-top:0;font-style:italic}
+  h2 .num{color:var(--rose);margin-right:12px;font-family:monospace}
+  .quote{border-left:3px solid var(--rose);padding:10px 20px;
+    margin:20px 0;font-style:italic;color:#d4c9a8;background:#1a1530;
+    border-radius:0 8px 8px 0}
+  .idea{background:linear-gradient(135deg,#1a1530,#241b40);
+    padding:16px 20px;border-radius:12px;margin:15px 0;
+    border:1px solid #3a2f5a}
+  .idea b{color:var(--mint)}
+  .controls{background:#1a1530;padding:20px;border-radius:12px;
+    margin:20px 0;border:1px solid #2a2547}
+  .controls label{display:block;margin:12px 0 4px;color:var(--sky);
+    font-family:sans-serif;font-size:.9rem}
+  .controls input[type=range]{width:100%;accent-color:var(--rose)}
+  .controls .val{color:var(--gold);font-family:monospace;font-weight:bold}
+  .controls button{background:var(--violet);color:white;border:none;
+    padding:8px 16px;border-radius:6px;cursor:pointer;margin:5px 5px 0 0;
+    font-family:sans-serif}
+  .controls button:hover{background:var(--rose)}
+  canvas{background:#0a0815;border-radius:8px;display:block;
+    max-width:100%;margin:10px auto}
+  .plot{min-height:400px;margin:10px 0;border-radius:8px;overflow:hidden}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:700px){.grid2{grid-template-columns:1fr}}
+  .pill{display:inline-block;padding:2px 10px;border-radius:12px;
+    background:#2a2547;color:var(--mint);font-size:.85rem;margin:2px;
+    font-family:sans-serif}
+  footer{text-align:center;padding:40px 20px;color:var(--dim);font-size:.9rem}
+  .glow{text-shadow:0 0 20px currentColor}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Récoltes et Semailles</h1>
+  <p>Eine interaktive Reise durch Alexandre Grothendiecks mathematisches Universum.
+     Schiebe, klicke, spiele — bis die Ideen sich in dir öffnen.</p>
+  <p style="color:var(--gold);font-style:italic">
+    „Es gibt nur einen Wein, der ein Leben lang reift, im Herzen meines Seins."</p>
+</header>
+
+<nav>
+  <a href="#punkt">① Standpunkt</a>
+  <a href="#garben">② Garben</a>
+  <a href="#schema">③ Schemata</a>
+  <a href="#topos">④ Topoi</a>
+  <a href="#motive">⑤ Motive</a>
+  <a href="#yin">⑥ Yin/Yang</a>
+  <a href="#flut">⑦ Steigende Flut</a>
+  <a href="#kind">⑧ Das Kind</a>
+</nav>
+
+<!-- ============ STANDPUNKT & VISION ============ -->
+<section id="punkt">
+  <h2><span class="num">①</span>Standpunkt & Vision</h2>
+  <div class="idea">
+    <b>Kernidee:</b> Ein einzelnes Objekt bleibt stumm. Erst wenn viele
+    <i>Standpunkte</i> auf dieselbe Wirklichkeit fallen, entsteht eine <b>Vision</b> —
+    wie Sonnenlicht aus Spektralfarben.
+  </div>
+  <div class="quote">
+    „Der fruchtbare Standpunkt ist das Auge, das uns entdecken und erkennen lässt,
+    wie in einer gemeinsamen Ganzheit organisiert das Vielfältige zusammengehört."
+  </div>
+  <p>Bewege die Standpunkte um das mysteriöse Objekt. Wenn genug Blickwinkel
+     zusammenkommen, wird die verborgene Form sichtbar.</p>
+  <div class="controls">
+    <label>Anzahl Standpunkte: <span class="val" id="npv">3</span></label>
+    <input type="range" id="np" min="1" max="24" value="3">
+    <label>Klarheit der Vision: <span class="val" id="clv">30</span>%</label>
+    <input type="range" id="cl" min="0" max="100" value="30">
+    <button onclick="rotateViews()">🌀 Blickwinkel rotieren</button>
+  </div>
+  <canvas id="viewCanvas" width="900" height="450"></canvas>
+</section>
+
+<!-- ============ GARBEN ============ -->
+<section id="garben">
+  <h2><span class="num">②</span>Garben — Die magischen Messstäbe</h2>
+  <div class="idea">
+    <b>Leray's Idee:</b> Statt einen Raum mit <i>einem</i> Maßstab zu vermessen,
+    gib ihm einen ganzen <b>Fächer von Messstäben</b> — für jede lokale Umgebung
+    einen eigenen. Das ist eine <span class="pill">Garbe</span>.
+  </div>
+  <p>Klicke auf den Raum und lege lokale „Messungen" ab. Die Garbe verklebt sie zu
+     globaler Information. <b>Konsistenz</b> = Werte stimmen auf Überlappungen überein.</p>
+  <div class="controls">
+    <label>Verklebungs-Radius: <span class="val" id="grv">60</span></label>
+    <input type="range" id="gr" min="20" max="150" value="60">
+    <button onclick="clearSheaf()">🧹 Zurücksetzen</button>
+    <button onclick="autoSheaf()">✨ Kohärente Garbe zeigen</button>
+  </div>
+  <canvas id="sheafCanvas" width="900" height="450"></canvas>
+  <div class="quote">
+    „Es war, als würde der alte kohomologische Messstab plötzlich in eine unvorstellbar
+    große Vielfalt neuer Messstäbe multipliziert, jeder intim mit dem Raum verbunden."
+  </div>
+</section>
+
+<!-- ============ SCHEMATA ============ -->
+<section id="schema">
+  <h2><span class="num">③</span>Schemata — Der magische Fächer</h2>
+  <div class="idea">
+    <b>Vor Grothendieck:</b> Für jede Primzahl p eine eigene Geometrie „in Charakteristik p".
+    <b>Grothendiecks Idee:</b> Ein einziges <span class="pill">Schema</span> vereint sie
+    alle — wie ein Fächer mit unendlich vielen Blättern.
+  </div>
+  <p>Bewege den Slider: Beobachte, wie <b>ein</b> Schema (z.B. die Kurve y²=x³+ax+b)
+     sich in seine verschiedenen „Inkarnationen" über verschiedenen Charakteristiken auffächert.</p>
+  <div class="controls">
+    <label>Parameter a: <span class="val" id="pav">-1</span></label>
+    <input type="range" id="pa" min="-3" max="3" step="0.1" value="-1">
+    <label>Parameter b: <span class="val" id="pbv">1</span></label>
+    <input type="range" id="pb" min="-3" max="3" step="0.1" value="1">
+    <label>Fächer-Öffnung: <span class="val" id="fov">50</span>%</label>
+    <input type="range" id="fo" min="0" max="100" value="50">
+  </div>
+  <div id="schemePlot" class="plot"></div>
+  <div class="quote">
+    „Die Idee des Schemas ist von kindlicher Einfachheit — so einfach, so demütig,
+    dass niemand vor mir daran dachte, sich so tief zu bücken."
+  </div>
+</section>
+
+<!-- ============ TOPOI ============ -->
+<section id="topos">
+  <h2><span class="num">④</span>Topoi — Das Doppelbett</h2>
+  <div class="idea">
+    <b>Das Problem:</b> Diskrete Arithmetik & kontinuierliche Geometrie waren getrennte Welten.
+    <b>Der Topos</b> ist das „geräumige Bett", in dem beide Bräute zusammenfinden.
+    Ein Raum ohne Punkte — nur definiert durch <i>was auf ihm lebt</i> (Garben).
+  </div>
+  <p>Ein Topos hat vielleicht keinen einzigen Punkt, aber unendlich viele „Nachbarschaften".
+     Spiele mit der Verwandlung: von klassischem Raum zu Topos.</p>
+  <div class="controls">
+    <label>Diskretheit ← → Kontinuität: <span class="val" id="dcv">50</span></label>
+    <input type="range" id="dc" min="0" max="100" value="50">
+    <label>Nachbarschaftsdichte: <span class="val" id="ndv">30</span></label>
+    <input type="range" id="nd" min="5" max="80" value="30">
+  </div>
+  <canvas id="toposCanvas" width="900" height="450"></canvas>
+  <div class="quote">
+    „Alle Pferde des Königs könnten daraus zugleich trinken..."
+  </div>
+</section>
+
+<!-- ============ MOTIVE ============ -->
+<section id="motive">
+  <h2><span class="num">⑤</span>Motive — Das Herz im Herzen</h2>
+  <div class="idea">
+    <b>Die tiefste Idee:</b> Verschiedene Kohomologie-Theorien (ℓ-adisch, de Rham, Hodge,
+    kristallin) sind wie verschiedene <i>musikalische Tonarten</i> desselben Motivs.
+    Das <span class="pill">Motiv</span> ist die reine Melodie, die durch alle klingt.
+  </div>
+  <p>Wähle ein Motiv (eine algebraische Varietät) und höre, wie es in verschiedenen
+     Kohomologie-„Tonarten" klingt. Alle geben dieselben Betti-Zahlen zurück!</p>
+  <div class="controls">
+    <label>Motiv wählen:</label>
+    <button onclick="setMotive('point')">Punkt</button>
+    <button onclick="setMotive('line')">Gerade</button>
+    <button onclick="setMotive('curve')">Elliptische Kurve</button>
+    <button onclick="setMotive('surface')">K3-Fläche</button>
+    <label>Kohomologie-Theorie: <span class="val" id="thv">ℓ-adisch</span></label>
+    <input type="range" id="th" min="0" max="3" value="0">
+  </div>
+  <div id="motivePlot" class="plot"></div>
+  <div id="motiveInfo" class="idea"></div>
+</section>
+
+<!-- ============ YIN YANG ============ -->
+<section id="yin">
+  <h2><span class="num">⑥</span>Yin & Yang der Entdeckung</h2>
+  <div class="idea">
+    <b>Zwei Kräfte im Werk:</b> <span style="color:var(--rose)">Yin</span> (Empfangen,
+    Träumen, Erahnen der Form aus dem Nebel) und
+    <span style="color:var(--sky)">Yang</span> (Bauen, Beweisen, Meißeln in Stein).
+    Beide sind untrennbar — wie Mutter und Vater der Schöpfung.
+  </div>
+  <p>Balanciere die beiden Kräfte. Zu viel Yang: sterile Muskelspiele.
+     Zu viel Yin: nebliger Traum. Beide zusammen: <b>Vision wird Werk</b>.</p>
+  <div class="controls">
+    <label>Yin (Empfangen) ← → Yang (Bauen): <span class="val" id="yyv">50</span></label>
+    <input type="range" id="yy" min="0" max="100" value="50">
+  </div>
+  <canvas id="yinCanvas" width="900" height="400"></canvas>
+</section>
+
+<!-- ============ STEIGENDE FLUT ============ -->
+<section id="flut">
+  <h2><span class="num">⑦</span>Die Steigende Flut</h2>
+  <div class="idea">
+    <b>Grothendiecks Methode:</b> Nicht mit Hammer & Meißel auf die Nuss einschlagen.
+    Sondern die Nuss in Wasser legen und warten, bis die <b>steigende Flut</b>
+    sie sanft öffnet — die richtige allgemeine Theorie macht das schwere Problem trivial.
+  </div>
+  <p>Der schwarze Punkt ist dein Problem. Die traditionelle Methode (Hammer) ist mühsam.
+     Grothendiecks Flut (Meer) hebt alles gleichzeitig — bis das Problem trivial wird.</p>
+  <div class="controls">
+    <label>Wasserstand (Allgemeinheit der Theorie): <span class="val" id="wsv">10</span>%</label>
+    <input type="range" id="ws" min="0" max="100" value="10">
+    <button onclick="animateTide()">🌊 Flut steigen lassen</button>
+  </div>
+  <canvas id="tideCanvas" width="900" height="400"></canvas>
+  <div class="quote">
+    „Das Meer steigt unmerklich, geräuschlos — nichts scheint zu geschehen, nichts
+    ist gestört, das Wasser ist so weit weg, dass man es kaum hört... doch am Ende
+    umgibt es die widerspenstige Substanz."
+  </div>
+</section>
+
+<!-- ============ DAS KIND ============ -->
+<section id="kind">
+  <h2><span class="num">⑧</span>Das Kind & die Mutter</h2>
+  <div class="idea">
+    <b>Das Kind in dir</b> ist die Gabe der Einsamkeit — die Fähigkeit, mit eigenen Augen
+    zu sehen, unabhängig vom Konsens. Es ist immer da, auch wenn verschüttet.
+    Es geht aus der Mutter (dem Bekannten) hervor und wandert zur Mutter (dem Unendlich-Unbekannten).
+  </div>
+  <div class="quote">
+    „Ich weiß nur, dass das Kind da ist, irgendwo, sehr lebendig. Und wenn du zuhörst,
+    wirst du in dem, was ich von meiner Erfahrung teile, ein Echo deines eigenen Lebens finden."
+  </div>
+  <canvas id="childCanvas" width="900" height="400"></canvas>
+  <p style="text-align:center;color:var(--gold);font-style:italic;margin-top:30px">
+    „Es gibt keine Schlusswort in Récoltes et Semailles, so wenig wie in meinem oder deinem Leben."
+  </p>
+</section>
+
+<footer>
+  <p>Basierend auf <i>Récoltes et Semailles</i> (1986) von Alexandre Grothendieck.<br>
+     Ein interaktiver Spaziergang durch ein Werk und ein Leben.</p>
+</footer>
+
+<script>
+/* ============ HELPERS ============ */
+function bind(id, valId, fn){
+  const el=document.getElementById(id), v=document.getElementById(valId);
+  el.addEventListener('input',()=>{v.textContent=el.value;fn();});
+}
+
+/* ============ ① STANDPUNKT & VISION ============ */
+const vc=document.getElementById('viewCanvas'), vx=vc.getContext('2d');
+let viewAngleOffset=0;
+function drawViews(){
+  const n=+document.getElementById('np').value;
+  const clarity=+document.getElementById('cl').value/100;
+  vx.fillStyle='#0a0815';vx.fillRect(0,0,vc.width,vc.height);
+  const cx=vc.width/2, cy=vc.height/2;
+  // hidden object (a rose curve)
+  vx.save();
+  vx.translate(cx,cy);
+  const alpha=Math.min(1, clarity + n/30);
+  vx.strokeStyle=`rgba(232,185,35,${alpha})`;
+  vx.lineWidth=2;
+  vx.beginPath();
+  for(let t=0;t<Math.PI*2;t+=0.01){
+    const r=90*Math.cos(3*t)+30;
+    const x=r*Math.cos(t), y=r*Math.sin(t);
+    if(t===0)vx.moveTo(x,y);else vx.lineTo(x,y);
+  }
+  vx.stroke();
+  // mist
+  vx.fillStyle=`rgba(15,13,26,${1-clarity*0.7})`;
+  vx.fillRect(-vc.width,-vc.height,vc.width*2,vc.height*2);
+  vx.restore();
+  // viewpoints
+  for(let i=0;i<n;i++){
+    const a=viewAngleOffset + i*(Math.PI*2/n);
+    const R=200;
+    const x=cx+R*Math.cos(a), y=cy+R*Math.sin(a);
+    // beam
+    const grad=vx.createLinearGradient(x,y,cx,cy);
+    grad.addColorStop(0,`rgba(167,139,250,${0.7})`);
+    grad.addColorStop(1,`rgba(167,139,250,0)`);
+    vx.strokeStyle=grad;vx.lineWidth=1.5;
+    vx.beginPath();vx.moveTo(x,y);vx.lineTo(cx,cy);vx.stroke();
+    // eye
+    vx.fillStyle='#e76f9a';
+    vx.beginPath();vx.arc(x,y,7,0,Math.PI*2);vx.fill();
+    vx.fillStyle='#fff';
+    vx.beginPath();vx.arc(x,y,3,0,Math.PI*2);vx.fill();
+  }
+  vx.fillStyle='#8b86a3';vx.font='14px sans-serif';
+  vx.fillText(n===1?'Ein einzelner Standpunkt sieht nur einen Aspekt':
+    n<5?'Mehr Standpunkte — die Form beginnt zu erscheinen':
+    'Eine Vision entsteht: viele Augen, eine Wirklichkeit', 20, vc.height-20);
+}
+function rotateViews(){
+  let start=Date.now();
+  const anim=()=>{
+    viewAngleOffset=(Date.now()-start)/2000;
+    drawViews();
+    if(Date.now()-start<3000)requestAnimationFrame(anim);
+  };
+  anim();
+}
+bind('np','npv',drawViews);bind('cl','clv',drawViews);
+drawViews();
+
+/* ============ ② GARBEN ============ */
+const sc=document.getElementById('sheafCanvas'), sx=sc.getContext('2d');
+let sheafPoints=[];
+sc.addEventListener('click',e=>{
+  const r=sc.getBoundingClientRect();
+  const x=(e.clientX-r.left)*sc.width/r.width;
+  const y=(e.clientY-r.top)*sc.height/r.height;
+  sheafPoints.push({x,y,val:Math.random()});
+  drawSheaf();
+});
+function clearSheaf(){sheafPoints=[];drawSheaf();}
+function autoSheaf(){
+  sheafPoints=[];
+  for(let i=0;i<15;i++){
+    const t=i/15*Math.PI*2;
+    sheafPoints.push({
+      x:sc.width/2+180*Math.cos(t)+Math.random()*40-20,
+      y:sc.height/2+130*Math.sin(t)+Math.random()*40-20,
+      val:(Math.sin(t*2)+1)/2
+    });
+  }
+  drawSheaf();
+}
+function drawSheaf(){
+  const rad=+document.getElementById('gr').value;
+  sx.fillStyle='#0a0815';sx.fillRect(0,0,sc.width,sc.height);
+  // base space
+  sx.strokeStyle='#2a2547';sx.lineWidth=1;
+  for(let i=0;i<sc.width;i+=40){
+    sx.beginPath();sx.moveTo(i,0);sx.lineTo(i,sc.height);sx.stroke();
+  }
+  for(let i=0;i<sc.height;i+=40){
+    sx.beginPath();sx.moveTo(0,i);sx.lineTo(sc.width,i);sx.stroke();
+  }
+  // overlap zones
+  for(let p of sheafPoints){
+    const grad=sx.createRadialGradient(p.x,p.y,0,p.x,p.y,rad);
+    const hue=p.val*280;
+    grad.addColorStop(0,`hsla(${hue},70%,60%,0.35)`);
+    grad.addColorStop(1,`hsla(${hue},70%,60%,0)`);
+    sx.fillStyle=grad;
+    sx.beginPath();sx.arc(p.x,p.y,rad,0,Math.PI*2);sx.fill();
+  }
+  // points
+  for(let p of sheafPoints){
+    const hue=p.val*280;
+    sx.fillStyle=`hsl(${hue},80%,65%)`;
+    sx.beginPath();sx.arc(p.x,p.y,6,0,Math.PI*2);sx.fill();
+    sx.strokeStyle='#fff';sx.lineWidth=1.5;sx.stroke();
+  }
+  // check coherence
+  let coherent=true;
+  for(let i=0;i<sheafPoints.length;i++){
+    for(let j=i+1;j<sheafPoints.length;j++){
+      const a=sheafPoints[i],b=sheafPoints[j];
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<rad && Math.abs(a.val-b.val)>0.3){coherent=false;
+        sx.strokeStyle='rgba(231,111,154,0.6)';sx.lineWidth=2;
+        sx.setLineDash([4,4]);
+        sx.beginPath();sx.moveTo(a.x,a.y);sx.lineTo(b.x,b.y);sx.stroke();
+        sx.setLineDash([]);
+      }
+    }
+  }
+  sx.fillStyle=coherent?'#6ee7b7':'#e76f9a';
+  sx.font='16px sans-serif';
+  sx.fillText(sheafPoints.length===0?'Klicke, um lokale Messungen zu setzen':
+    coherent?'✓ Kohärente Garbe — Messungen verkleben sich global':
+    '✗ Inkohärent — rote Linien: Werte widersprechen sich', 20, 30);
+}
+bind('gr','grv',drawSheaf);
+drawSheaf();
+
+/* ============ ③ SCHEMATA ============ */
+function drawScheme(){
+  const a=+document.getElementById('pa').value;
+  const b=+document.getElementById('pb').value;
+  const fan=+document.getElementById('fo').value/100;
+  const traces=[];
+  const chars=[0,2,3,5,7,11]; // "characteristics" — 0 = real
+  const colors=['#e8b923','#e76f9a','#a78bfa','#6ee7b7','#7dd3fc','#f4ecd8'];
+  chars.forEach((p,idx)=>{
+    const xs=[],ys=[];
+    // real curve y^2 = x^3 + ax + b, shifted by "fan angle"
+    for(let x=-3;x<=3;x+=0.02){
+      const rhs=x*x*x+a*x+b + (p===0?0:Math.sin(x*p)*0.3*fan);
+      if(rhs>=0){
+        xs.push(x);ys.push(Math.sqrt(rhs));
+        xs.push(x);ys.push(-Math.sqrt(rhs));
+      }
+    }
+    // fan-out offset
+    const angle=(idx-2.5)*fan*0.3;
+    const shifted_x=xs.map((v,i)=>v*Math.cos(angle)-ys[i]*Math.sin(angle)+idx*fan*0.8);
+    const shifted_y=ys.map((v,i)=>xs[i]*Math.sin(angle)+v*Math.cos(angle));
+    traces.push({
+      x:shifted_x,y:shifted_y,mode:'markers',type:'scatter',
+      name:p===0?'ℝ (char 0)':`𝔽${p} (char ${p})`,
+      marker:{size:3,color:colors[idx],opacity:0.7}
+    });
+  });
+  Plotly.newPlot('schemePlot',traces,{
+    paper_bgcolor:'#0a0815',plot_bgcolor:'#0a0815',
+    font:{color:'#f4ecd8',family:'Georgia'},
+    title:{text:'Ein Schema — viele Inkarnationen (Fächer)',font:{color:'#e8b923'}},
+    xaxis:{gridcolor:'#2a2547',zerolinecolor:'#3a2f5a',range:[-5,7]},
+    yaxis:{gridcolor:'#2a2547',zerolinecolor:'#3a2f5a',scaleanchor:'x'},
+    margin:{t:50,l:40,r:20,b:40},
+    legend:{bgcolor:'rgba(26,21,48,0.7)'}
+  },{displayModeBar:false});
+}
+bind('pa','pav',drawScheme);bind('pb','pbv',drawScheme);
+bind('fo','fov',drawScheme);
+drawScheme();
+
+/* ============ ④ TOPOI ============ */
+const tc=document.getElementById('toposCanvas'),tx=tc.getContext('2d');
+function drawTopos(){
+  const dc=+document.getElementById('dc').value/100;
+  const nd=+document.getElementById('nd').value;
+  tx.fillStyle='#0a0815';tx.fillRect(0,0,tc.width,tc.height);
+  // "points" — become fuzzier as we move to topos
+  const pts=[];
+  const rows=6,cols=10;
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    pts.push({
+      x:100+j*(tc.width-200)/(cols-1),
+      y:80+i*(tc.height-160)/(rows-1)
+    });
+  }
+  // neighborhoods (sheaves) — clouds around points
+  for(let p of pts){
+    for(let k=0;k<nd;k++){
+      const r=30+Math.random()*80*dc;
+      const angle=Math.random()*Math.PI*2;
+      const dist=Math.random()*40*dc;
+      const x=p.x+Math.cos(angle)*dist;
+      const y=p.y+Math.sin(angle)*dist;
+      const grad=tx.createRadialGradient(x,y,0,x,y,r);
+      grad.addColorStop(0,`hsla(${180+dc*100},70%,60%,${0.04+dc*0.05})`);
+      grad.addColorStop(1,'hsla(200,70%,60%,0)');
+      tx.fillStyle=grad;
+      tx.beginPath();tx.arc(x,y,r,0,Math.PI*2);tx.fill();
+    }
+  }
+  // points themselves — fade as we become "topos"
+  for(let p of pts){
+    tx.fillStyle=`rgba(232,185,35,${1-dc*0.8})`;
+    tx.beginPath();tx.arc(p.x,p.y,4-dc*3,0,Math.PI*2);tx.fill();
+  }
+  tx.fillStyle='#f4ecd8';tx.font='italic 15px Georgia';
+  const label=dc<0.2?'Klassischer Raum: klare Punkte, diskret':
+    dc<0.6?'Zwischenstadium: Punkte verschwimmen, Nachbarschaften treten hervor':
+    'Topos: keine Punkte mehr — nur noch Garben & Nachbarschaften. Das Doppelbett!';
+  tx.fillText(label,20,tc.height-20);
+  tx.fillStyle='#8b86a3';tx.font='13px sans-serif';
+  tx.fillText('Diskret ← Arithmetik | Kontinuierlich → Geometrie',20,25);
+}
+bind('dc','dcv',drawTopos);bind('nd','ndv',drawTopos);
+drawTopos();
+
+/* ============ ⑤ MOTIVE ============ */
+let currentMotive='curve';
+const motiveData={
+  point:{name:'Punkt',betti:[1],dim:0,desc:'Das einfachste Motiv. Alle Theorien geben: 1.'},
+  line:{name:'Affine Gerade 𝔸¹',betti:[1,0],dim:1,desc:'Kontrahierbar. Kohomologie: nur in Grad 0.'},
+  curve:{name:'Elliptische Kurve',betti:[1,2,1],dim:1,desc:'Genus 1. Betti-Zahlen (1,2,1) — dieselben in allen Theorien!'},
+  surface:{name:'K3-Fläche',betti:[1,0,22,0,1],dim:2,desc:'Berühmte Fläche. h¹¹=20, Motivische Struktur reich.'}
+};
+const theories=['ℓ-adisch','de Rham','Hodge','Kristallin'];
+function setMotive(m){currentMotive=m;drawMotive();}
+function drawMotive(){
+  const m=motiveData[currentMotive];
+  const th=+document.getElementById('th').value;
+  document.getElementById('thv').textContent=theories[th];
+  const colors=['#e76f9a','#a78bfa','#6ee7b7','#7dd3fc'];
+  // slight variations per theory (visual — Betti numbers are invariant!)
+  const traces=[{
+    x:m.betti.map((_,i)=>i),
+    y:m.betti,
+    type:'bar',
+    marker:{color:colors[th],line:{color:'#e8b923',width:2}},
+    name:theories[th],
+    text:m.betti.map(v=>`h=${v}`),
+    textposition:'outside',
+    textfont:{color:'#f4ecd8'}
+  }];
+  Plotly.newPlot('motivePlot',traces,{
+    paper_bgcolor:'#0a0815',plot_bgcolor:'#0a0815',
+    font:{color:'#f4ecd8',family:'Georgia'},
+    title:{text:`${m.name} — gehört in Tonart „${theories[th]}"`,font:{color:'#e8b923'}},
+    xaxis:{title:'Kohomologie-Grad i',gridcolor:'#2a2547',dtick:1},
+    yaxis:{title:'Betti-Zahl hⁱ',gridcolor:'#2a2547'},
+    margin:{t:60,l:60,r:20,b:60}
+  },{displayModeBar:false});
+  document.getElementById('motiveInfo').innerHTML=
+    `<b>${m.name}</b> — ${m.desc}<br>
+     <span style="color:var(--mint)">Das Wunder:</span> egal welche Theorie (ℓ-adisch, de Rham, Hodge, kristallin) —
+     die Betti-Zahlen sind <b>immer dieselben</b>. Das gemeinsame „Motiv" klingt in allen durch.`;
+}
+bind('th','thv',drawMotive);
+drawMotive();
+
+/* ============ ⑥ YIN YANG ============ */
+const yc=document.getElementById('yinCanvas'),yx=yc.getContext('2d');
+function drawYin(){
+  const bal=+document.getElementById('yy').value/100;
+  yx.fillStyle='#0a0815';yx.fillRect(0,0,yc.width,yc.height);
+  const cx=yc.width/2,cy=yc.height/2,R=140;
+  // yin-yang symbol
+  yx.save();yx.translate(cx,cy);
+  yx.rotate(bal*Math.PI*2);
+  // rose half (yin)
+  yx.fillStyle='#e76f9a';
+  yx.beginPath();yx.arc(0,0,R,-Math.PI/2,Math.PI/2);yx.fill();
+  // sky half (yang)
+  yx.fillStyle='#7dd3fc';
+  yx.beginPath();yx.arc(0,0,R,Math.PI/2,-Math.PI/2);yx.fill();
+  // small circles
+  yx.fillStyle='#e76f9a';yx.beginPath();yx.arc(0,-R/2,R/2,0,Math.PI*2);yx.fill();
+  yx.fillStyle='#7dd3fc';yx.beginPath();yx.arc(0,R/2,R/2,0,Math.PI*2);yx.fill();
+  yx.fillStyle='#0a0815';yx.beginPath();yx.arc(0,-R/2,R/6,0,Math.PI*2);yx.fill();
+  yx.beginPath();yx.arc(0,R/2,R/6,0,Math.PI*2);yx.fill();
+  yx.restore();
+  // labels
+  yx.font='italic 20px Georgia';
+  yx.fillStyle='#e76f9a';yx.fillText('☾ Yin — Empfangen',30,60);
+  yx.fillStyle='#8b86a3';yx.font='14px sans-serif';
+  yx.fillText('Träumen, Erahnen, im Nebel tasten',30,85);
+  yx.fillText('Die Frage stellen. Die Form ahnen.',30,105);
+  yx.font='italic 20px Georgia';
+  yx.fillStyle='#7dd3fc';
+  const yangX=yc.width-260;
+  yx.fillText('☀ Yang — Bauen',yangX,60);
+  yx.fillStyle='#8b86a3';yx.font='14px sans-serif';
+  yx.fillText('Beweisen, meißeln, konstruieren',yangX,85);
+  yx.fillText('Die Antwort formen. In Stein hauen.',yangX,105);
+  // status
+  yx.font='italic 16px Georgia';
+  let msg;
+  if(bal<0.25)msg='⚠ Zu viel Yin: Nebliger Traum ohne Form. Nichts wird gebaut.';
+  else if(bal>0.75)msg='⚠ Zu viel Yang: Sterile Kraftakte. Keine neue Vision.';
+  else msg='✓ Vision wird Werk. Mutter und Vater der Schöpfung im Gleichgewicht.';
+  yx.fillStyle=bal<0.25||bal>0.75?'#e76f9a':'#6ee7b7';
+  yx.fillText(msg,30,yc.height-30);
+}
+bind('yy','yyv',drawYin);
+drawYin();
+
+/* ============ ⑦ STEIGENDE FLUT ============ */
+const tdc=document.getElementById('tideCanvas'),tdx=tdc.getContext('2d');
+function drawTide(){
+  const ws=+document.getElementById('ws').value/100;
+  tdx.fillStyle='#0a0815';tdx.fillRect(0,0,tdc.width,tdc.height);
+  // sky
+  const skyGrad=tdx.createLinearGradient(0,0,0,tdc.height);
+  skyGrad.addColorStop(0,'#1a1530');skyGrad.addColorStop(1,'#2a2547');
+  tdx.fillStyle=skyGrad;tdx.fillRect(0,0,tdc.width,tdc.height);
+  // ground / nut (the problem)
+  const groundY=tdc.height-80;
+  tdx.fillStyle='#3a2f1a';tdx.fillRect(0,groundY,tdc.width,80);
+  // the nut
+  const nutX=tdc.width/2,nutY=groundY-15;
+  tdx.fillStyle='#0a0815';
+  tdx.beginPath();tdx.ellipse(nutX,nutY,35,25,0,0,Math.PI*2);tdx.fill();
+  tdx.strokeStyle='#8b86a3';tdx.lineWidth=2;tdx.stroke();
+  tdx.fillStyle='#e76f9a';tdx.font='bold 14px sans-serif';
+  tdx.fillText('Problem',nutX-25,nutY+4);
+  // hammer approach (left side, always shown as contrast)
+  tdx.strokeStyle='#8b86a3';tdx.lineWidth=1;
+  tdx.font='italic 12px Georgia';tdx.fillStyle='#8b86a3';
+  tdx.fillText('Traditioneller Weg: Hammer & Meißel →',20,30);
+  tdx.fillText('mühsam, Schlag für Schlag',20,48);
+  // rising sea (Grothendieck's tide)
+  const waterLevel=groundY-ws*(groundY-40);
+  const waterGrad=tdx.createLinearGradient(0,waterLevel,0,groundY);
+  waterGrad.addColorStop(0,'rgba(125,211,252,0.5)');
+  waterGrad.addColorStop(1,'rgba(167,139,250,0.7)');
+  tdx.fillStyle=waterGrad;
+  tdx.beginPath();
+  tdx.moveTo(0,waterLevel);
+  const t=Date.now()/1000;
+  for(let x=0;x<=tdc.width;x+=5){
+    const wave=Math.sin(x*0.02+t)*3+Math.sin(x*0.05+t*1.3)*2;
+    tdx.lineTo(x,waterLevel+wave);
+  }
+  tdx.lineTo(tdc.width,groundY);tdx.lineTo(0,groundY);tdx.closePath();tdx.fill();
+  // sparkles on water
+  for(let i=0;i<20;i++){
+    const x=Math.random()*tdc.width;
+    const y=waterLevel+Math.random()*(groundY-waterLevel);
+    tdx.fillStyle=`rgba(255,255,255,${Math.random()*0.5})`;
+    tdx.beginPath();tdx.arc(x,y,1,0,Math.PI*2);tdx.fill();
+  }
+  // label
+  tdx.fillStyle='#7dd3fc';tdx.font='italic 14px Georgia';
+  tdx.fillText('🌊 Die Flut der allgemeinen Theorie',tdc.width-280,waterLevel-10);
+  // status
+  tdx.fillStyle='#e8b923';tdx.font='italic 15px Georgia';
+  let msg;
+  if(ws<0.3)msg='Das Meer ist fern. Das Problem starrt uns an.';
+  else if(ws<0.7)msg='Die Flut steigt. Das Wasser umgibt sanft die Nuss.';
+  else if(ws<0.95)msg='Fast bedeckt. Die Härte des Problems löst sich in Kontext auf.';
+  else msg='✨ Die Nuss öffnet sich von selbst. Das Problem ist trivial geworden.';
+  tdx.fillText(msg,20,tdc.height-100);
+}
+let tideAnim=false;
+function animateTide(){
+  if(tideAnim)return;
+  tideAnim=true;
+  const slider=document.getElementById('ws');
+  const val=document.getElementById('wsv');
+  let v=parseInt(slider.value);
+  const step=()=>{
+    v+=1;
+    if(v>100){tideAnim=false;return;}
+    slider.value=v;val.textContent=v;
+    drawTide();
+    setTimeout(step,40);
+  };
+  step();
+}
+bind('ws','wsv',drawTide);
+setInterval(()=>{if(!tideAnim)drawTide();},80); // gentle wave animation
+drawTide();
+
+/* ============ ⑧ DAS KIND ============ */
+const cc=document.getElementById('childCanvas'),cx2=cc.getContext('2d');
+function drawChild(){
+  cx2.fillStyle='#0a0815';cx2.fillRect(0,0,cc.width,cc.height);
+  const t=Date.now()/1000;
+  // the Mother — vast background presence
+  const cx0=cc.width/2,cy0=cc.height/2;
+  for(let r=300;r>0;r-=20){
+    const alpha=(300-r)/300*0.08;
+    cx2.fillStyle=`rgba(231,111,154,${alpha})`;
+    cx2.beginPath();cx2.arc(cx0,cy0,r,0,Math.PI*2);cx2.fill();
+  }
+  // the path — from Mother (known) to Mother (unknown)
+  cx2.strokeStyle='rgba(232,185,35,0.3)';cx2.lineWidth=1;
+  cx2.setLineDash([5,5]);
+  cx2.beginPath();
+  for(let x=50;x<cc.width-50;x+=5){
+    const y=cy0+Math.sin(x*0.01+t*0.3)*40;
+    if(x===50)cx2.moveTo(x,y);else cx2.lineTo(x,y);
+  }
+  cx2.stroke();cx2.setLineDash([]);
+  // the child — walking along
+  const childX=100+((t*30)%(cc.width-200));
+  const childY=cy0+Math.sin(childX*0.01+t*0.3)*40;
+  // glow
+  const glow=cx2.createRadialGradient(childX,childY,0,childX,childY,40);
+  glow.addColorStop(0,'rgba(232,185,35,0.6)');
+  glow.addColorStop(1,'rgba(232,185,35,0)');
+  cx2.fillStyle=glow;
+  cx2.beginPath();cx2.arc(childX,childY,40,0,Math.PI*2);cx2.fill();
+  // child dot
+  cx2.fillStyle='#e8b923';
+  cx2.beginPath();cx2.arc(childX,childY,8,0,Math.PI*2);cx2.fill();
+  cx2.fillStyle='#fff';
+  cx2.beginPath();cx2.arc(childX,childY,3,0,Math.PI*2);cx2.fill();
+  // labels
+  cx2.font='italic 18px Georgia';
+  cx2.fillStyle='#e76f9a';
+  cx2.fillText('☾ Die Mutter (das Bekannte)',30,50);
+  cx2.fillStyle='#a78bfa';
+  cx2.fillText('☽ Die Mutter (das Unendlich-Unbekannte)',cc.width-370,50);
+  cx2.font='italic 14px Georgia';cx2.fillStyle='#8b86a3';
+  cx2.fillText('Das Kind wandert — mit eigenen Augen sehend, unabhängig vom Konsens.',
+    cc.width/2-260,cc.height-30);
+}
+setInterval(drawChild,50);
+
+</script>
+</body>
+</html>
