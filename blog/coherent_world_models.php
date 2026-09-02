@@ -158,9 +158,9 @@ Given two representations $R_A, R_B$, the naive question "$R_A = R_B$?" is usual
 
 $$
 \begin{array}{ccc}
-\underset{\text{one view}}{R\sb{A}} & \xrightarrow{\;T\sb{A}\;} & \underset{\text{shared calibrated space}}{Z}\\
-&& \uparrow{\scriptstyle T\sb{B}}\\
-&& \underset{\text{another view}}{R\sb{B}}
+\underset{\text{one view}}{R_{A}} & \xrightarrow{\;T_{A}\;} & \underset{\text{shared calibrated space}}{Z}\\
+&& \uparrow{\scriptstyle T_{B}}\\
+&& \underset{\text{another view}}{R_{B}}
 \end{array}
 $$
 
@@ -183,7 +183,7 @@ $$
 For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
 $$
-\underset{\text{admissible transitions (licensed)}}{\mathcal{T}} \;\subseteq\; \underset{\text{observation, inter-representation, and inter-context arrows}}{\{W \to R\sb{i}\} \cup \{R\sb{i} \to R\sb{j}\} \cup \mathrm{Hom}(\mathcal{C})}.
+\underset{\text{admissible transitions (licensed)}}{\mathcal{T}} \;\subseteq\; \underset{\text{observation, inter-representation, and inter-context arrows}}{\{W \to R_{i}\} \cup \{R_{i} \to R_{j}\} \cup \mathrm{Hom}(\mathcal{C})}.
 $$
 
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:
@@ -283,9 +283,9 @@ $$
 \;\xrightarrow{\;\sim\;}\;
 \underset{\substack{\text{the tuples that agree on every overlap}\\
 \text{(two restriction arrows: from $i$-side, from $j$-side)}}}{\;\mathrm{Eq}\!\Bigl(\;
-\underset{\text{a section on each patch}}{\prod\sb{i\in I} F(c\sb{i})}
+\underset{\text{a section on each patch}}{\prod_{i\in I} F(c_{i})}
 \;\rightrightarrows\;
-\underset{\text{a section on each pairwise overlap}}{\prod\sb{i,j\in I} F(c\sb{i} \times\sb{c} c\sb{j})}
+\underset{\text{a section on each pairwise overlap}}{\prod_{i,j\in I} F(c_{i} \times_{c} c_{j})}
 \;\Bigr)}.
 $$
 
@@ -326,12 +326,12 @@ A train passes a platform. Channels:
 $$
 \begin{array}{ccccc}
 &&\underset{\text{train event}}{W}&&\\
-&\swarrow{\scriptstyle O\sb{v}}&\downarrow{\scriptstyle O\sb{a}}&\searrow{\scriptstyle O\sb{r}}&\\
-\underset{\text{seen}}{R\sb{v}}&&\underset{\text{heard}}{R\sb{a}}&&\underset{\text{radar}}{R\sb{r}}\\
-&\searrow{\scriptstyle L\sb{v}}&\downarrow{\scriptstyle L\sb{a}}&\swarrow{\scriptstyle L\sb{r}}&\\
-&&\underset{\text{spoken report}}{R\sb{\ell}}&&\\
+&\swarrow{\scriptstyle O_{v}}&\downarrow{\scriptstyle O_{a}}&\searrow{\scriptstyle O_{r}}&\\
+\underset{\text{seen}}{R_{v}}&&\underset{\text{heard}}{R_{a}}&&\underset{\text{radar}}{R_{r}}\\
+&\searrow{\scriptstyle L_{v}}&\downarrow{\scriptstyle L_{a}}&\swarrow{\scriptstyle L_{r}}&\\
+&&\underset{\text{spoken report}}{R_{\ell}}&&\\
 &&\downarrow{\scriptstyle C}&&\\
-&&\underset{\text{archive, 100 yrs later}}{R\sb{h}}&&
+&&\underset{\text{archive, 100 yrs later}}{R_{h}}&&
 \end{array}
 $$
 
