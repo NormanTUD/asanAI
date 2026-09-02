@@ -160,7 +160,13 @@ Record TruthAsInterface := {
   TAI_claim : Type;          (* the model's claim                            *)
   TAI_fact : Type;           (* the corresponding fact                       *)
   TAI_licensed_T : Prop;     (* a licensed transition exists                 *)
-  TAI_iff : TAI_claim = TAI_fact   (* Convention T at the contact point       *)
+  TAI_claim_holds : Prop;    (* the claim's truth (Tarski: "S is true")      *)
+  TAI_fact_holds : Prop;     (* the fact holds in the world                  *)
+  TAI_iff : TAI_claim_holds <-> TAI_fact_holds
+  (* Convention T at the contact point: the claim is true iff the fact      *)
+  (* holds. Not an identification of claim with fact: the claim is a        *)
+  (* formal artefact inside the model, the fact is in the world, and the    *)
+  (* iff relates their truth-values, not their identity.                     *)
 }.
 
 (* ---------------------------------------------------------------------------- *)
