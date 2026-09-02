@@ -218,19 +218,19 @@ Before going further it is worth naming the kind of diagram this chapter has bee
 
 Rule 3 is what turns a pretty picture into a working one. A labelled arrow is a promise ("every $A$ maps to exactly one $B$"); a commutative path is a second promise ("these two routes give the same answer"). When either promise is broken, the diagram is wrong, and the diagram tells you *where*.
 
-A worked fragment, abridged from Spivak–Kent:
+A worked fragment — the olog for a calibrated thermometer, with three distinct types and one clean question:
 
 $$
 \begin{array}{ccc}
-\underbrace{\text{Parent}}_{\text{type}} & \xrightarrow[\;]{\text{mother-of}} & \underbrace{\text{Parent}}_{\text{type}}\\
-{\scriptstyle\text{father-of}}\downarrow & & \downarrow{\scriptstyle\text{age-of}}\\
-\underbrace{\text{Parent}}_{\text{type}} & \xrightarrow[\;]{\text{age-of}} & \underbrace{\text{Integer}}_{\text{type}}
+\underbrace{\text{Thermometer}}_{\text{type}} & \xrightarrow[\;]{\text{reading of}} & \underbrace{\text{Reading}}_{\text{type}}\\
+{\scriptstyle\text{true temperature of}}\downarrow & & \downarrow{\scriptstyle\text{indicates}}\\
+\underbrace{\text{Temperature}}_{\text{type}} & \xleftarrow[\;]{\;\mathrm{id}\;} & \underbrace{\text{Temperature}}_{\text{type}}\\
 \end{array}
 $$
 
-Each arrow is functional (each parent has exactly one mother, one father, one age). The olog then *asks* whether two routes from Parent to Integer — the age of your mother, the age of your father — should agree. If yes, assert the commutativity; if no, the diagram must show why (different records with different ages, perhaps).
+The arrows are functional: each thermometer has exactly one current reading; each reading indicates exactly one temperature; each temperature is identical with itself. There are two routes from Thermometer to Temperature — the *true* temperature (left column) and the *indicated* temperature (top row, then right column). The olog *asks* whether these two routes deliver the same answer. If yes, the thermometer is calibrated: its reading reflects the truth. If no, the diagram has a hole: the sensor drifts, or its calibration curve is wrong, or someone has applied the wrong correction. The olog shows the discrepancy *where* it lives — at the contact point between the indicated reading and the true temperature — and tells you exactly which licensed transition ($\mathcal{T}$-arrow) has failed.
 
-For this chapter: every diagram so far is an olog in disguise. The master diagram has types $W, R_i, G$ and arrows $O_i : W \to R_i$ (each region of $W$ yields one trace) and $T_i : R_i \to G$ (each trace contributes to one global section); descent says this olog commutes. The transformation triangle has types $R_A, R_B, Z$ and arrows $T_A, T_B$ into the shared calibrated space. The pullback square has four types and four arrows and *is* the definition of a pullback as an olog of agreements. The advantage of the olog view is that it forces the diagram to *commit*: a picture with vague arrows is a story; a picture with functional arrows and asserted commutativity is a *specification* — wrong ones show where, right ones prove.
+For this chapter: every diagram so far is an olog in disguise. The master diagram has types $W, R_i, G$ and arrows $O_i : W \to R_i$ (each region of $W$ yields one trace) and $T_i : R_i \to G$ (each trace contributes to one global section); descent says this olog commutes. The transformation triangle has types $R_A, R_B, Z$ and arrows $T_A, T_B$ into the shared calibrated space. The pullback square has four types and four arrows and *is* the definition of a pullback as an olog of agreements — the very type of "object of agreements" the thermometer olog exhibits in miniature, with three types instead of four. The advantage of the olog view is that it forces the diagram to *commit*: a picture with vague arrows is a story; a picture with functional arrows and asserted commutativity is a *specification* — wrong ones show where, right ones prove.
 
 </div>
 
