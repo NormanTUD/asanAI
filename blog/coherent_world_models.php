@@ -56,9 +56,9 @@ $$
 The answer, in the vocabulary of *Coherent Difference*: **when the traces cohere**, two complementary halves of one principle:
 
 $$
-\underbrace{\text{compatibility on overlaps}}_{\text{where two local descriptions meet, they agree}}
+\underset{\text{where two local descriptions meet, they agree}}{\text{compatibility on overlaps}}
 \;\;\Longleftrightarrow\;\;
-\underbrace{\text{uniqueness of the global}}_{\text{one whole extends them, and only one}.}
+\underset{\text{one whole extends them, and only one.}}{\text{uniqueness of the global}}.
 $$
 
 Mathematicians call the package *descent*; the philosophical tradition has long called it *coherence*. We keep both names.
@@ -158,9 +158,9 @@ Given two representations $R_A, R_B$, the naive question "$R_A = R_B$?" is usual
 
 $$
 \begin{array}{ccc}
-\underbrace{R_A}_{\text{one view}} & \xrightarrow{\;T_A\;} & \underbrace{Z}_{\text{shared calibrated space}}\\
-&& \uparrow{\scriptstyle T_B}\\
-&& \underbrace{R_B}_{\text{another view}}
+\underset{\text{one view}}{R\sb{A}} & \xrightarrow{\;T\sb{A}\;} & \underset{\text{shared calibrated space}}{Z}\\
+&& \uparrow{\scriptstyle T\sb{B}}\\
+&& \underset{\text{another view}}{R\sb{B}}
 \end{array}
 $$
 
@@ -183,7 +183,7 @@ $$
 For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
 $$
-\underbrace{\mathcal{T}}_{\text{admissible transitions (licensed)}} \;\subseteq\; \underbrace{\{W \to R_i\} \cup \{R_i \to R_j\} \cup \mathrm{Hom}(\mathcal{C})}_{\text{observation, inter-representation, and inter-context arrows}}.
+\underset{\text{admissible transitions (licensed)}}{\mathcal{T}} \;\subseteq\; \underset{\text{observation, inter-representation, and inter-context arrows}}{\{W \to R\sb{i}\} \cup \{R\sb{i} \to R\sb{j}\} \cup \mathrm{Hom}(\mathcal{C})}.
 $$
 
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:

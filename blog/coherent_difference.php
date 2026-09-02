@@ -357,12 +357,12 @@ The picture is this:
 
 <figure>
 	<img src="sheaf_sections.png" alt="A sheaf diagram showing two local sections lifted from two open sets" style="max-width: 380px; background: #ffffff; padding: 12px; border-radius: 6px;" />
-	<figcaption class="md">\citealternativetitle{sheaf_sections_image}: two local sections $s_1 \in \mathcal{F}(U_1)$ and $s_2 \in \mathcal{F}(U_2)$ lifted from open sets $U_1$ and $U_2$ of the two-point space \cite{sheaf_sections_image}.</figcaption>
+	<figcaption class="md">\citealternativetitle{sheaf_sections_image}: two local sections $s\sb{1} \in \mathcal{F}(U\sb{1})$ and $s\sb{2} \in \mathcal{F}(U\sb{2})$ lifted from open sets $U\sb{1}$ and $U\sb{2}$ of the two-point space \cite{sheaf_sections_image}.</figcaption>
 </figure>
 
 <figure>
 	<img src="sheaf_gluing.png" alt="A sheaf diagram showing the gluing of two compatible local sections into a single global section" style="max-width: 380px; background: #ffffff; padding: 12px; border-radius: 6px;" />
-	<figcaption class="md">\citealternativetitle{sheaf_gluing_image}: where the local sections agree on $U_1 \cap U_2$, the sheaf guarantees a unique global section $s \in \mathcal{F}(U_1 \cup U_2)$ that restricts back to each \cite{sheaf_gluing_image}. Local agreement $\Rightarrow$ global existence, and uniqueness.</figcaption>
+	<figcaption class="md">\citealternativetitle{sheaf_gluing_image}: where the local sections agree on $U\sb{1} \cap U\sb{2}$, the sheaf guarantees a unique global section $s \in \mathcal{F}(U\sb{1} \cup U\sb{2})$ that restricts back to each \cite{sheaf_gluing_image}. Local agreement $\Rightarrow$ global existence, and uniqueness.</figcaption>
 </figure>
 
 In one line:
@@ -392,7 +392,7 @@ A few terms you will meet constantly once you read anything about sheaf theory:
 
 * **Section over $U$.** An element of $\mathcal{F}(U)$. Think of it as “a complete description of what the sheaf knows about the region $U$”. For the sheaf of continuous functions, a section over $U$ is exactly a continuous real-valued function on $U$.
 
-* **Restriction.** Given $V \subseteq U$, the restriction map $\mathcal{F}(U) \to \mathcal{F}(V)$ takes a section over $U$ and tells you what it says when restricted to $V$. Compatibility on overlaps is, in the end, just: the restriction of $s_i$ to $U_i \cap U_j$ equals the restriction of $s_j$ to $U_i \cap U_j$.
+* **Restriction.** Given $V \subseteq U$, the restriction map $\mathcal{F}(U) \to \mathcal{F}(V)$ takes a section over $U$ and tells you what it says when restricted to $V$. Compatibility on overlaps is, in the end, just: the restriction of $s\sb{i}$ to $U\sb{i} \cap U\sb{j}$ equals the restriction of $s\sb{j}$ to $U\sb{i} \cap U\sb{j}$.
 
 * **Germ at $x$.** Two sections over possibly different opens are “equivalent at $x$” if they agree on some neighborhood of $x$. A germ is an equivalence class under this relation. It is the *smallest unit of local data at a point*.
 
@@ -442,7 +442,7 @@ $$
 s\sb{i}|\sb{U\sb{i} \cap U\sb{j}} \;\simeq\; s\sb{j}|\sb{U\sb{i} \cap U\sb{j}}.
 $$
 
-Now there is a homotopy $\alpha_{ij}$ between the two sections. But on a triple overlap $U_i \cap U_j \cap U_k$, the homotopies must themselves agree:
+Now there is a homotopy $\alpha\sb{ij}$ between the two sections. But on a triple overlap $U\sb{i} \cap U\sb{j} \cap U\sb{k}$, the homotopies must themselves agree:
 
 $$
 \alpha\sb{ij} \circ \alpha\sb{jk} \;\simeq\; \alpha\sb{ik},
