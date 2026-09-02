@@ -1,0 +1,300 @@
+DIGEST e77652167c7d71d4a881c87b2857498a
+FEqualizersAndPullbacks
+R3020:3026 Library <> <> lib
+R3044:3049 Traces <> <> lib
+rec 3551:3559 <> Equalizer
+proj 3596:3605 <> EQ_carrier
+proj 3679:3690 <> EQ_inclusion
+proj 3713:3723 <> EQ_commutes
+proj 3793:3804 <> EQ_universal
+binder 3562:3562 <> X:1
+binder 3564:3564 <> Y:2
+R3582:3585 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3581:3581 EqualizersAndPullbacks <> X:1 var
+R3586:3586 EqualizersAndPullbacks <> Y:2 var
+binder 3575:3575 <> f:3
+binder 3577:3577 <> g:4
+R3704:3707 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3694:3703 EqualizersAndPullbacks <> EQ_carrier:6 meth
+R3708:3708 EqualizersAndPullbacks <> X:1 var
+R3738:3747 EqualizersAndPullbacks <> EQ_carrier:6 meth
+binder 3734:3734 <> x:8
+R3768:3770 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3750:3750 EqualizersAndPullbacks <> f:3 var
+R3753:3764 EqualizersAndPullbacks <> EQ_inclusion:7 meth
+R3766:3766 EqualizersAndPullbacks <> x:8 var
+R3771:3771 EqualizersAndPullbacks <> g:4 var
+R3774:3785 EqualizersAndPullbacks <> EQ_inclusion:7 meth
+R3787:3787 EqualizersAndPullbacks <> x:8 var
+binder 3816:3816 <> W:10
+R3832:3835 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3831:3831 Library <> :::'W' not
+R3836:3836 EqualizersAndPullbacks <> X:1 var
+binder 3827:3827 <> h:11
+R3878:3878 Library <> :::'W' not
+binder 3874:3874 <> w:12
+R3888:3890 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3881:3881 EqualizersAndPullbacks <> f:3 var
+R3884:3884 EqualizersAndPullbacks <> h:11 var
+R3886:3886 EqualizersAndPullbacks <> w:12 var
+R3891:3891 EqualizersAndPullbacks <> g:4 var
+R3894:3894 EqualizersAndPullbacks <> h:11 var
+R3896:3896 EqualizersAndPullbacks <> w:12 var
+binder 3863:3863 <> H:13
+R3905:3911 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R3931:3938 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R3917:3920 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3916:3916 Library <> :::'W' not
+R3921:3930 EqualizersAndPullbacks <> EQ_carrier:6 meth
+binder 3912:3912 <> u:14
+R3950:3950 Library <> :::'W' not
+binder 3946:3946 <> w:15
+R3971:3973 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3953:3964 EqualizersAndPullbacks <> EQ_inclusion:7 meth
+R3967:3967 EqualizersAndPullbacks <> u:14 var
+R3969:3969 EqualizersAndPullbacks <> w:15 var
+R3974:3974 EqualizersAndPullbacks <> h:11 var
+R3976:3976 EqualizersAndPullbacks <> w:15 var
+def 4073:4085 <> set_equalizer
+binder 4088:4088 <> X:17
+binder 4090:4090 <> Y:18
+R4108:4111 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4107:4107 EqualizersAndPullbacks <> X:17 var
+R4112:4112 EqualizersAndPullbacks <> Y:18 var
+binder 4101:4101 <> f:19
+binder 4103:4103 <> g:20
+R4127:4128 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4130:4132 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4134:4136 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4146:4147 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R4133:4133 EqualizersAndPullbacks <> X:17 var
+binder 4129:4129 <> x:21
+R4140:4142 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4137:4137 EqualizersAndPullbacks <> f:19 var
+R4139:4139 EqualizersAndPullbacks <> x:21 var
+R4143:4143 EqualizersAndPullbacks <> g:20 var
+R4145:4145 EqualizersAndPullbacks <> x:21 var
+rec 4394:4415 <> TwoThermometersExample
+proj 4424:4428 <> TTE_X
+proj 4506:4510 <> TTE_Y
+proj 4588:4592 <> TTE_f
+proj 4669:4673 <> TTE_g
+proj 4750:4762 <> TTE_equalizer
+R4601:4604 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4596:4600 EqualizersAndPullbacks <> TTE_X:23 meth
+R4605:4609 EqualizersAndPullbacks <> TTE_Y:24 meth
+R4682:4685 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4677:4681 EqualizersAndPullbacks <> TTE_X:23 meth
+R4686:4690 EqualizersAndPullbacks <> TTE_Y:24 meth
+R4766:4774 EqualizersAndPullbacks <> Equalizer rec
+R4776:4780 EqualizersAndPullbacks <> TTE_X:23 meth
+R4782:4786 EqualizersAndPullbacks <> TTE_Y:24 meth
+R4788:4792 EqualizersAndPullbacks <> TTE_f:25 meth
+R4794:4798 EqualizersAndPullbacks <> TTE_g:26 meth
+def 4974:4991 <> times_of_agreement
+R4998:5019 EqualizersAndPullbacks <> TwoThermometersExample rec
+binder 4994:4994 <> e:28
+rec 5279:5294 <> TwoProofsExample
+proj 5303:5312 <> TPE_inputs
+proj 5385:5395 <> TPE_outputs
+proj 5467:5472 <> TPE_p1
+proj 5505:5510 <> TPE_p2
+proj 5543:5555 <> TPE_equalizer
+R5486:5489 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5476:5485 EqualizersAndPullbacks <> TPE_inputs:30 meth
+R5490:5500 EqualizersAndPullbacks <> TPE_outputs:31 meth
+R5524:5527 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5514:5523 EqualizersAndPullbacks <> TPE_inputs:30 meth
+R5528:5538 EqualizersAndPullbacks <> TPE_outputs:31 meth
+R5559:5567 EqualizersAndPullbacks <> Equalizer rec
+R5569:5578 EqualizersAndPullbacks <> TPE_inputs:30 meth
+R5580:5590 EqualizersAndPullbacks <> TPE_outputs:31 meth
+R5592:5597 EqualizersAndPullbacks <> TPE_p1:32 meth
+R5599:5604 EqualizersAndPullbacks <> TPE_p2:33 meth
+rec 5778:5797 <> HomotopicalEqualizer
+proj 5834:5843 <> HE_carrier
+proj 5855:5862 <> HE_paths
+proj 5885:5896 <> HE_agreement
+proj 5958:5970 <> HE_homotopies
+binder 5800:5800 <> X:35
+binder 5802:5802 <> Y:36
+R5820:5823 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5819:5819 EqualizersAndPullbacks <> X:35 var
+R5824:5824 EqualizersAndPullbacks <> Y:36 var
+binder 5813:5813 <> f:37
+binder 5815:5815 <> g:38
+R5876:5879 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5866:5875 EqualizersAndPullbacks <> HE_carrier:40 meth
+R5880:5880 EqualizersAndPullbacks <> X:35 var
+R5911:5920 EqualizersAndPullbacks <> HE_carrier:40 meth
+binder 5907:5907 <> x:42
+R5937:5939 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5923:5923 EqualizersAndPullbacks <> f:37 var
+R5926:5933 EqualizersAndPullbacks <> HE_paths:41 meth
+R5935:5935 EqualizersAndPullbacks <> x:42 var
+R5940:5940 EqualizersAndPullbacks <> g:38 var
+R5943:5950 EqualizersAndPullbacks <> HE_paths:41 meth
+R5952:5952 EqualizersAndPullbacks <> x:42 var
+R5990:5999 EqualizersAndPullbacks <> HE_carrier:40 meth
+binder 5986:5986 <> x:44
+R6021:6023 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6007:6007 EqualizersAndPullbacks <> f:37 var
+R6010:6017 EqualizersAndPullbacks <> HE_paths:41 meth
+R6019:6019 EqualizersAndPullbacks <> x:44 var
+R6024:6024 EqualizersAndPullbacks <> g:38 var
+R6027:6034 EqualizersAndPullbacks <> HE_paths:41 meth
+R6036:6036 EqualizersAndPullbacks <> x:44 var
+binder 6003:6003 <> p:45
+R6048:6050 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6047:6047 EqualizersAndPullbacks <> p:45 var
+R6051:6062 EqualizersAndPullbacks <> HE_agreement:43 meth
+R6064:6064 EqualizersAndPullbacks <> x:44 var
+rec 6648:6662 <> PullbackGeneral
+proj 6712:6721 <> PB_carrier
+proj 6733:6738 <> PB_pi1
+proj 6761:6766 <> PB_pi2
+proj 6789:6799 <> PB_commutes
+proj 6857:6868 <> PB_universal
+binder 6665:6665 <> X:47
+binder 6667:6667 <> Y:48
+binder 6669:6669 <> Z:49
+R6685:6688 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6684:6684 EqualizersAndPullbacks <> X:47 var
+R6689:6689 EqualizersAndPullbacks <> Z:49 var
+binder 6680:6680 <> f:50
+R6698:6701 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6697:6697 EqualizersAndPullbacks <> Y:48 var
+R6702:6702 EqualizersAndPullbacks <> Z:49 var
+binder 6693:6693 <> g:51
+R6752:6755 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6742:6751 EqualizersAndPullbacks <> PB_carrier:53 meth
+R6756:6756 EqualizersAndPullbacks <> X:47 var
+R6780:6783 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6770:6779 EqualizersAndPullbacks <> PB_carrier:53 meth
+R6784:6784 EqualizersAndPullbacks <> Y:48 var
+R6814:6823 EqualizersAndPullbacks <> PB_carrier:53 meth
+binder 6810:6810 <> z:56
+R6838:6840 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6826:6826 EqualizersAndPullbacks <> f:50 var
+R6829:6834 EqualizersAndPullbacks <> PB_pi1:54 meth
+R6836:6836 EqualizersAndPullbacks <> z:56 var
+R6841:6841 EqualizersAndPullbacks <> g:51 var
+R6844:6849 EqualizersAndPullbacks <> PB_pi2:55 meth
+R6851:6851 EqualizersAndPullbacks <> z:56 var
+binder 6880:6880 <> W:58
+R6897:6900 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6896:6896 Library <> :::'W' not
+R6901:6901 EqualizersAndPullbacks <> X:47 var
+binder 6891:6892 <> h1:59
+R6911:6914 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6910:6910 Library <> :::'W' not
+R6915:6915 EqualizersAndPullbacks <> Y:48 var
+binder 6905:6906 <> h2:60
+R6958:6958 Library <> :::'W' not
+binder 6954:6954 <> w:61
+R6969:6971 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6961:6961 EqualizersAndPullbacks <> f:50 var
+R6964:6965 EqualizersAndPullbacks <> h1:59 var
+R6967:6967 EqualizersAndPullbacks <> w:61 var
+R6972:6972 EqualizersAndPullbacks <> g:51 var
+R6975:6976 EqualizersAndPullbacks <> h2:60 var
+R6978:6978 EqualizersAndPullbacks <> w:61 var
+binder 6942:6943 <> eq:62
+R6987:6993 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R7013:7020 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R6999:7002 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6998:6998 Library <> :::'W' not
+R7003:7012 EqualizersAndPullbacks <> PB_carrier:53 meth
+binder 6994:6994 <> u:63
+R7021:7021 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7055:7066 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7100:7100 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7033:7033 Library <> :::'W' not
+binder 7029:7029 <> w:64
+R7048:7050 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7036:7041 EqualizersAndPullbacks <> PB_pi1:54 meth
+R7044:7044 EqualizersAndPullbacks <> u:63 var
+R7046:7046 EqualizersAndPullbacks <> w:64 var
+R7051:7052 EqualizersAndPullbacks <> h1:59 var
+R7054:7054 EqualizersAndPullbacks <> w:64 var
+R7078:7078 Library <> :::'W' not
+binder 7074:7074 <> w:65
+R7093:7095 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7081:7086 EqualizersAndPullbacks <> PB_pi2:55 meth
+R7089:7089 EqualizersAndPullbacks <> u:63 var
+R7091:7091 EqualizersAndPullbacks <> w:65 var
+R7096:7097 EqualizersAndPullbacks <> h2:60 var
+R7099:7099 EqualizersAndPullbacks <> w:65 var
+def 7277:7288 <> set_pullback
+binder 7291:7291 <> X:67
+binder 7293:7293 <> Y:68
+binder 7295:7295 <> Z:69
+R7311:7314 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7310:7310 EqualizersAndPullbacks <> X:67 var
+R7315:7315 EqualizersAndPullbacks <> Z:69 var
+binder 7306:7306 <> f:70
+R7324:7327 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7323:7323 EqualizersAndPullbacks <> Y:68 var
+R7328:7328 EqualizersAndPullbacks <> Z:69 var
+binder 7319:7319 <> g:71
+R7343:7344 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R7346:7348 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R7354:7356 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R7378:7379 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'|'_x_'}' not
+R7350:7352 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R7349:7349 EqualizersAndPullbacks <> X:67 var
+R7353:7353 EqualizersAndPullbacks <> Y:68 var
+binder 7345:7345 <> p:72
+R7366:7368 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7357:7357 EqualizersAndPullbacks <> f:70 var
+R7360:7362 Coq.Init.Datatypes <> fst def
+R7364:7364 EqualizersAndPullbacks <> p:72 var
+R7369:7369 EqualizersAndPullbacks <> g:71 var
+R7372:7374 Coq.Init.Datatypes <> snd def
+R7376:7376 EqualizersAndPullbacks <> p:72 var
+rec 7549:7564 <> TwoTracksExample
+proj 7573:7577 <> TTE_V
+proj 7655:7659 <> TTE_R
+proj 7737:7742 <> TTE_PT
+proj 7818:7828 <> TTE_to_PT_v
+proj 7851:7861 <> TTE_to_PT_r
+proj 7884:7895 <> TTE_pullback
+R7837:7840 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7832:7836 EqualizersAndPullbacks <> TTE_V:74 meth
+R7841:7846 EqualizersAndPullbacks <> TTE_PT:76 meth
+R7870:7873 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7865:7869 EqualizersAndPullbacks <> TTE_R:75 meth
+R7874:7879 EqualizersAndPullbacks <> TTE_PT:76 meth
+R7899:7913 EqualizersAndPullbacks <> PullbackGeneral rec
+R7915:7919 EqualizersAndPullbacks <> TTE_V:74 meth
+R7921:7925 EqualizersAndPullbacks <> TTE_R:75 meth
+R7927:7932 EqualizersAndPullbacks <> TTE_PT:76 meth
+R7934:7944 EqualizersAndPullbacks <> TTE_to_PT_v:77 meth
+R7946:7956 EqualizersAndPullbacks <> TTE_to_PT_r:78 meth
+rec 8128:8146 <> TwoPrimeDefinitions
+proj 8155:8159 <> TPD_Z
+proj 8237:8247 <> TPD_prime_1
+proj 8318:8328 <> TPD_prime_2
+proj 8399:8409 <> TPD_carrier
+proj 8480:8487 <> TPD_in_1
+proj 8515:8522 <> TPD_in_2
+proj 8550:8559 <> TPD_agrees
+R8256:8259 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8251:8255 EqualizersAndPullbacks <> TPD_Z:81 meth
+R8337:8340 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8332:8336 EqualizersAndPullbacks <> TPD_Z:81 meth
+R8502:8505 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8491:8501 EqualizersAndPullbacks <> TPD_carrier:84 meth
+R8506:8510 EqualizersAndPullbacks <> TPD_Z:81 meth
+R8537:8540 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8526:8536 EqualizersAndPullbacks <> TPD_carrier:84 meth
+R8541:8545 EqualizersAndPullbacks <> TPD_Z:81 meth
+R8574:8584 EqualizersAndPullbacks <> TPD_carrier:84 meth
+binder 8570:8570 <> n:87
+R8628:8632 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R8604:8614 EqualizersAndPullbacks <> TPD_prime_1:82 meth
+R8617:8624 EqualizersAndPullbacks <> TPD_in_1:85 meth
+R8626:8626 EqualizersAndPullbacks <> n:87 var
+R8633:8643 EqualizersAndPullbacks <> TPD_prime_2:83 meth
+R8646:8653 EqualizersAndPullbacks <> TPD_in_2:86 meth
+R8655:8655 EqualizersAndPullbacks <> n:87 var

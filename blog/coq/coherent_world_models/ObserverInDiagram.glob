@@ -1,0 +1,39 @@
+DIGEST 4ede9f89977ed732a7a0e3d2ce1381ec
+FObserverInDiagram
+R2356:2362 Library <> <> lib
+R2380:2385 Traces <> <> lib
+rec 2805:2820 <> ObserverPipeline
+proj 2829:2832 <> OP_W
+proj 2912:2915 <> OP_S
+proj 2996:3001 <> OP_rho
+proj 3080:3087 <> OP_Sigma
+proj 3164:3167 <> OP_M
+proj 3250:3253 <> OP_I
+proj 3334:3337 <> OP_N
+proj 3418:3421 <> OP_L
+proj 3502:3505 <> OP_C
+R2836:2848 Library <> SubjectMatter rec
+R3271:3274 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3257:3265 Library <> W_carrier proj
+R3267:3270 ObserverInDiagram <> OP_W:2 meth
+R3275:3278 ObserverInDiagram <> OP_S:3 meth
+R3345:3348 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3341:3344 ObserverInDiagram <> OP_S:3 meth
+R3349:3354 ObserverInDiagram <> OP_rho:4 meth
+R3431:3434 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3425:3430 ObserverInDiagram <> OP_rho:4 meth
+R3435:3442 ObserverInDiagram <> OP_Sigma:5 meth
+R3517:3520 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3509:3516 ObserverInDiagram <> OP_Sigma:5 meth
+R3521:3524 ObserverInDiagram <> OP_M:6 meth
+def 3680:3697 <> observer_composite
+R3704:3719 ObserverInDiagram <> ObserverPipeline rec
+binder 3700:3700 <> p:11
+R3744:3747 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3726:3734 Library <> W_carrier proj
+R3737:3740 ObserverInDiagram <> OP_W proj
+R3742:3742 ObserverInDiagram <> p:11 var
+R3748:3751 ObserverInDiagram <> OP_M proj
+R3753:3753 ObserverInDiagram <> p:11 var
+R3760:3763 ObserverInDiagram <> OP_C proj
+R3765:3765 ObserverInDiagram <> p:11 var

@@ -1,0 +1,256 @@
+DIGEST 30ad6e0fb28eace0b8b82c752bd0539b
+FHigherCoherence
+R3326:3332 Library <> <> lib
+R3350:3355 Traces <> <> lib
+R3373:3393 AdmissibleTransitions <> <> lib
+rec 3891:3905 <> StrictCoherence
+proj 3914:3917 <> SC_A
+proj 3929:3932 <> SC_B
+proj 3944:3947 <> SC_C
+proj 3959:3967 <> SC_phi_AB
+proj 3987:3995 <> SC_phi_BC
+proj 4015:4023 <> SC_phi_AC
+proj 4043:4053 <> SC_commutes
+R3975:3978 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3971:3974 HigherCoherence <> SC_A:2 meth
+R3979:3982 HigherCoherence <> SC_B:3 meth
+R4003:4006 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3999:4002 HigherCoherence <> SC_B:3 meth
+R4007:4010 HigherCoherence <> SC_C:4 meth
+R4031:4034 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4027:4030 HigherCoherence <> SC_A:2 meth
+R4035:4038 HigherCoherence <> SC_C:4 meth
+R4068:4071 HigherCoherence <> SC_A:2 meth
+binder 4064:4064 <> a:8
+R4097:4099 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4074:4082 HigherCoherence <> SC_phi_BC:6 meth
+R4085:4093 HigherCoherence <> SC_phi_AB:5 meth
+R4095:4095 HigherCoherence <> a:8 var
+R4100:4108 HigherCoherence <> SC_phi_AC:7 meth
+R4110:4110 HigherCoherence <> a:8 var
+rec 4279:4289 <> TwoMorphism
+proj 4298:4301 <> TM_A
+proj 4313:4316 <> TM_B
+proj 4328:4331 <> TM_C
+proj 4343:4351 <> TM_phi_AB
+proj 4371:4379 <> TM_phi_BC
+proj 4399:4407 <> TM_phi_AC
+proj 4427:4438 <> TM_alpha_ABC
+R4359:4362 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4355:4358 HigherCoherence <> TM_A:11 meth
+R4363:4366 HigherCoherence <> TM_B:12 meth
+R4387:4390 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4383:4386 HigherCoherence <> TM_B:12 meth
+R4391:4394 HigherCoherence <> TM_C:13 meth
+R4415:4418 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4411:4414 HigherCoherence <> TM_A:11 meth
+R4419:4422 HigherCoherence <> TM_C:13 meth
+R4453:4456 HigherCoherence <> TM_A:11 meth
+binder 4449:4449 <> a:17
+R4482:4484 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4459:4467 HigherCoherence <> TM_phi_BC:15 meth
+R4470:4478 HigherCoherence <> TM_phi_AB:14 meth
+R4480:4480 HigherCoherence <> a:17 var
+R4485:4493 HigherCoherence <> TM_phi_AC:16 meth
+R4495:4495 HigherCoherence <> a:17 var
+ind 5153:5161 <> Dimension
+constr 5177:5179 <> D_0
+constr 5197:5199 <> D_S
+R5183:5191 HigherCoherence <> Dimension:19 ind
+R5212:5215 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5203:5211 HigherCoherence <> Dimension:19 ind
+R5216:5224 HigherCoherence <> Dimension:19 ind
+scheme 5153:5161 <> Dimension_rect
+scheme 5153:5161 <> Dimension_ind
+scheme 5153:5161 <> Dimension_rec
+scheme 5153:5161 <> Dimension_sind
+rec 5515:5519 <> NCell
+proj 5544:5552 <> NC_source
+proj 5623:5631 <> NC_target
+R5526:5534 HigherCoherence <> Dimension ind
+binder 5522:5522 <> n:21
+rec 5947:5954 <> ZeroCell
+proj 5970:5979 <> ZC_carrier
+rec 6079:6085 <> OneCell
+proj 6101:6109 <> OC_source
+proj 6125:6133 <> OC_target
+proj 6149:6154 <> OC_map
+R6113:6120 HigherCoherence <> ZeroCell rec
+R6137:6144 HigherCoherence <> ZeroCell rec
+R6178:6181 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6158:6167 HigherCoherence <> ZC_carrier proj
+R6169:6177 HigherCoherence <> OC_source:28 meth
+R6182:6191 HigherCoherence <> ZC_carrier proj
+R6193:6201 HigherCoherence <> OC_target:29 meth
+rec 6214:6220 <> TwoCell
+proj 6236:6242 <> TC_low1
+proj 6257:6263 <> TC_low2
+proj 6278:6291 <> TC_same_source
+proj 6336:6349 <> TC_same_target
+proj 6394:6404 <> TC_homotopy
+R6246:6252 HigherCoherence <> OneCell rec
+R6267:6273 HigherCoherence <> OneCell rec
+R6312:6314 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6295:6303 HigherCoherence <> OC_source proj
+R6305:6311 HigherCoherence <> TC_low1:32 meth
+R6315:6323 HigherCoherence <> OC_source proj
+R6325:6331 HigherCoherence <> TC_low2:33 meth
+R6370:6372 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6353:6361 HigherCoherence <> OC_target proj
+R6363:6369 HigherCoherence <> TC_low1:32 meth
+R6373:6381 HigherCoherence <> OC_target proj
+R6383:6389 HigherCoherence <> TC_low2:33 meth
+rec 6801:6809 <> ThreeCell
+proj 6825:6832 <> ThC_low1
+proj 6847:6854 <> ThC_low2
+proj 6869:6881 <> ThC_same_low1
+proj 6924:6936 <> ThC_same_low2
+proj 6979:6990 <> ThC_homotopy
+R6836:6842 HigherCoherence <> TwoCell rec
+R6858:6864 HigherCoherence <> TwoCell rec
+R6901:6903 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6885:6891 HigherCoherence <> TC_low1 proj
+R6893:6900 HigherCoherence <> ThC_low1:38 meth
+R6904:6910 HigherCoherence <> TC_low1 proj
+R6912:6919 HigherCoherence <> ThC_low2:39 meth
+R6956:6958 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6940:6946 HigherCoherence <> TC_low2 proj
+R6948:6955 HigherCoherence <> ThC_low1:38 meth
+R6959:6965 HigherCoherence <> TC_low2 proj
+R6967:6974 HigherCoherence <> ThC_low2:39 meth
+rec 7710:7722 <> ThreeMorphism
+proj 7748:7760 <> TM_filler_ABC
+proj 7830:7842 <> TM_filler_BCD
+proj 7865:7877 <> TM_filler_ACD
+proj 7900:7912 <> TM_filler_ABD
+proj 7935:7950 <> TM_higher_filler
+binder 7725:7725 <> A:43
+binder 7727:7727 <> B:44
+binder 7729:7729 <> C:45
+binder 7731:7731 <> D:46
+R7775:7775 HigherCoherence <> A:43 var
+binder 7771:7771 <> a:48
+R7778:7778 HigherCoherence <> B:44 var
+R7857:7857 HigherCoherence <> B:44 var
+binder 7853:7853 <> b:50
+R7860:7860 HigherCoherence <> C:45 var
+R7892:7892 HigherCoherence <> A:43 var
+binder 7888:7888 <> a:52
+R7895:7895 HigherCoherence <> D:46 var
+R7927:7927 HigherCoherence <> A:43 var
+binder 7923:7923 <> a:54
+R7930:7930 HigherCoherence <> D:46 var
+R7954:7957 Coq.Init.Logic <> True ind
+rec 8590:8598 <> CechNerve
+proj 8621:8631 <> CN_degree_0
+proj 8705:8715 <> CN_degree_1
+proj 8788:8798 <> CN_degree_2
+proj 8871:8881 <> CN_degree_n
+proj 8954:8962 <> CN_face_0
+proj 9037:9045 <> CN_face_1
+proj 9079:9088 <> CN_face_00
+proj 9122:9131 <> CN_face_01
+proj 9165:9174 <> CN_face_02
+proj 9208:9222 <> CN_degeneracy_0
+proj 9256:9270 <> CN_degeneracy_1
+R8605:8611 Library <> Context rec
+binder 8601:8601 <> c:57
+R8888:8891 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8885:8887 Coq.Init.Datatypes <> nat ind
+R8977:8980 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8966:8976 HigherCoherence <> CN_degree_1:60 meth
+R8981:8991 HigherCoherence <> CN_degree_0:59 meth
+R9060:9063 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9049:9059 HigherCoherence <> CN_degree_1:60 meth
+R9064:9074 HigherCoherence <> CN_degree_0:59 meth
+R9103:9106 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9092:9102 HigherCoherence <> CN_degree_2:61 meth
+R9107:9117 HigherCoherence <> CN_degree_1:60 meth
+R9146:9149 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9135:9145 HigherCoherence <> CN_degree_2:61 meth
+R9150:9160 HigherCoherence <> CN_degree_1:60 meth
+R9189:9192 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9178:9188 HigherCoherence <> CN_degree_2:61 meth
+R9193:9203 HigherCoherence <> CN_degree_1:60 meth
+R9237:9240 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9226:9236 HigherCoherence <> CN_degree_0:59 meth
+R9241:9251 HigherCoherence <> CN_degree_1:60 meth
+R9285:9288 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9274:9284 HigherCoherence <> CN_degree_0:59 meth
+R9289:9299 HigherCoherence <> CN_degree_2:61 meth
+rec 9799:9814 <> InfinityGroupoid
+proj 9823:9832 <> IG_carrier
+rec 10008:10020 <> InfinitySheaf
+proj 10043:10052 <> IS_section
+proj 10091:10101 <> IS_locality
+R10027:10033 Library <> Context rec
+binder 10023:10023 <> c:72
+R10067:10070 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10056:10064 HigherCoherence <> CechNerve rec
+R10066:10066 HigherCoherence <> c:72 var
+R10071:10086 HigherCoherence <> InfinityGroupoid rec
+def 10501:10524 <> infinity_sheaf_condition
+R10531:10537 Library <> Context rec
+binder 10527:10527 <> c:76
+R10545:10557 HigherCoherence <> InfinitySheaf rec
+R10559:10559 HigherCoherence <> c:76 var
+binder 10541:10541 <> s:77
+R10585:10587 Coq.Init.Datatypes <> nat ind
+binder 10581:10581 <> n:78
+R10590:10600 HigherCoherence <> IS_locality proj
+R10602:10602 HigherCoherence <> c:76 var
+R10604:10604 HigherCoherence <> s:77 var
+rec 11227:11242 <> LightningThunder
+proj 11251:11262 <> LT_lightning
+proj 11274:11283 <> LT_thunder
+proj 11295:11302 <> LT_delay
+proj 11336:11346 <> LT_homotopy
+R11318:11321 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11306:11317 HigherCoherence <> LT_lightning:80 meth
+R11322:11331 HigherCoherence <> LT_thunder:81 meth
+R11361:11372 HigherCoherence <> LT_lightning:80 meth
+binder 11357:11357 <> x:83
+R11375:11378 Coq.Init.Logic <> True ind
+rec 11547:11561 <> LightningTriple
+proj 11570:11582 <> LTr_lightning
+proj 11594:11603 <> LTr_echo_1
+proj 11615:11624 <> LTr_echo_2
+proj 11636:11646 <> LTr_delay_1
+proj 11681:11691 <> LTr_delay_2
+proj 11726:11737 <> LTr_coherent
+R11663:11666 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11650:11662 HigherCoherence <> LTr_lightning:86 meth
+R11667:11676 HigherCoherence <> LTr_echo_1:87 meth
+R11708:11711 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11695:11707 HigherCoherence <> LTr_lightning:86 meth
+R11712:11721 HigherCoherence <> LTr_echo_2:88 meth
+R11752:11764 HigherCoherence <> LTr_lightning:86 meth
+binder 11748:11748 <> x:91
+R11767:11770 Coq.Init.Logic <> True ind
+rec 11863:11882 <> EquivalentCategories
+proj 11891:11894 <> EC_A
+proj 11906:11909 <> EC_B
+proj 11921:11924 <> EC_C
+proj 11936:11944 <> EC_phi_AB
+proj 11964:11972 <> EC_phi_BC
+proj 11992:12000 <> EC_phi_AC
+proj 12020:12036 <> EC_homotopy_AB_BC
+proj 12098:12107 <> EC_n_equiv
+R11952:11955 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11948:11951 HigherCoherence <> EC_A:94 meth
+R11956:11959 HigherCoherence <> EC_B:95 meth
+R11980:11983 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11976:11979 HigherCoherence <> EC_B:95 meth
+R11984:11987 HigherCoherence <> EC_C:96 meth
+R12008:12011 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12004:12007 HigherCoherence <> EC_A:94 meth
+R12012:12015 HigherCoherence <> EC_C:96 meth
+R12051:12054 HigherCoherence <> EC_A:94 meth
+binder 12047:12047 <> a:100
+R12080:12082 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R12057:12065 HigherCoherence <> EC_phi_BC:98 meth
+R12068:12076 HigherCoherence <> EC_phi_AB:97 meth
+R12078:12078 HigherCoherence <> a:100 var
+R12083:12091 HigherCoherence <> EC_phi_AC:99 meth
+R12093:12093 HigherCoherence <> a:100 var
+R12111:12114 Coq.Init.Logic <> True ind
