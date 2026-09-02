@@ -14,9 +14,39 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, type-theory, mode
 
 ## The question
 
-No inquirer has unmediated access to its subject matter. A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a listener can touch the speaker, but what their fingers meet is already a transformed trace, never the sound source as it would be apart from any perception. A historian never enters the past. In every domain we work with *transformed traces*: measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.
+What is a *world model*? A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a historian never enters the past. Even the listener who reaches out to touch the speaker meets only a transformed trace — never the sound source as it would be apart from any perception. What arrives in every domain — empirical, formal, archival — is the same: *transformed traces*. Measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.
 
-**Definition (trace).** A *trace* is whatever an *access function* $O : W \to R$ leaves behind when applied to a region $w$ of a subject matter $W$. Formally, a trace is a point $r \in R$ such that $r = O(w)$ for some $w \in W$. Concretely: an electron leaves a track in a cloud chamber; a tree leaves a shadow on the ground; a past event leaves a document in an archive; an abstract structure leaves a proof in a published paper. Here $W$ is the *subject matter with internal structure* (regions, points, or sub-systems); $R$ is the *codomain* (a set, a metric space, an $\infty$-groupoid, or whatever the access function lands in). Four properties follow:
+**What this chapter is.** A single machinery, run through three traditions at once. The chapter argues that one operation — *descent*, the recovery of a global whole from compatible local data on a licensed cover — is the same operation under three names, and that the apparent gulf between the three traditions is mostly a difference of vocabulary:
+
+- **In mathematics** the operation is called *descent*. It is the content of sheaf theory, $\infty$-sheaf theory, the Čech nerve, the Grothendieck programme: compatible local data on an admissible cover determines a unique global section.
+- **In philosophy** the operation is called *coherence*. It is the central claim of the coherence theory of truth (Bradley, Blanshard, BonJour): a model is true insofar as its parts hang together — a self-consistent system of beliefs whose local sections agree on overlaps.
+- **In epistemology** the operation is *justification through structure*: the Sellarsian "space of reasons", BonJour's *Structure of Empirical Knowledge*, the post-foundationalist picture in which empirical claims earn their standing not from a privileged foundation but from the web of *licensed transitions* that connect them.
+
+The unification is the chapter's central claim. Sheaf theory, coherence theory, and post-foundationalist epistemology are not three answers to three different questions; they are three vocabularies for one discipline — the discipline of asking when a collection of partial views deserves the name *one description*. The chapter closes where it opened, by joining that discipline to Tarski's correspondence, so that a coherent model is *true* (not merely internally consistent) at every licensed contact point with the world.
+
+The destination, in one sentence:
+
+$$
+\boxed{
+\begin{aligned}
+&\textbf{A world model is the global section recovered from local}\\
+&\textbf{descent data along an admissible cover,}\\
+&\textbf{provisionally, revisably, and never identical}\\
+&\textbf{to the subject matter it represents.}
+\end{aligned}}
+$$
+
+Everything below earns that sentence.
+
+**The status of this chapter.** What follows is offered as a *discipline*, not a derivation. We do not claim that sheaf theory, coherence theory, and post-foundationalist epistemology are *literally* the same object in three vocabularies; we claim only that, for the purposes of asking when a collection of partial views deserves the name *one description*, they are productive allies. The translations are useful, the boundaries of the analogy are not fully charted, and several of the deepest joints are merely gestured at. A reader who rejects the grand unification is not asked to surrender the chapter; they are asked only to notice which of the three traditions supplies the vocabulary that, in their judgement, the others must be measured against. The framework is offered as a *lens*. The lens makes some things visible and some things invisible; it has to be picked up, used, and set down again. The discipline survives even where the philosophical scaffolding is set aside: the nine-step procedure, the three pathologies, the hierarchy of sameness, the question "where is the licensed transition?", the rule "never silently upgrade" — these travel on their own.
+
+</div>
+
+<div class="md">
+
+## Traces
+
+A *trace* is whatever an *access function* $O : W \to R$ leaves behind when applied to a region $w$ of a subject matter $W$. Formally, a trace is a point $r \in R$ such that $r = O(w)$ for some $w \in W$. Concretely: an electron leaves a track in a cloud chamber; a tree leaves a shadow on the ground; a past event leaves a document in an archive; an abstract structure leaves a proof in a published paper. Here $W$ is the *subject matter with internal structure* (regions, points, or sub-systems); $R$ is the *codomain* (a set, a metric space, an $\infty$-groupoid, or whatever the access function lands in). Four properties follow:
 
 1. *Transformed.* The trace is *not* $w$ but the result of an access procedure applied to $w$. We hold the output of the procedure, never the input.
 2. *Mediated.* The trace carries the marks of $O$. Different access functions on the same $w$ produce different traces. An unmediated trace is a contradiction in terms.
@@ -24,6 +54,12 @@ No inquirer has unmediated access to its subject matter. A physicist never grasp
 4. *Possibly indexical.* A trace *may* point beyond itself to a source, but not every trace does. A genuine measurement of a specific system is indexical; a hallucination that has the form of a measurement is not; pure noise is not; a free pattern in a derivation points only to the derivation itself. Whether a trace is *of* something, and *what* it is of, is a substantive question, not given in advance. Establishing indexicality is most of the work of inference. A trace without indexicality is not yet evidence; it is data awaiting a source.
 
 Note on properties (1)-(3): they hold given our commitment to indirect realism. A direct realist or qualia-primary view would not accept them as universal; for them the trace may *be* the world.
+
+</div>
+
+<div class="md">
+
+## Commitments
 
 **Our commitments** (each is debatable; the dispute is *foundational*, not internal to the chapter):
 
@@ -44,6 +80,12 @@ The limit case is fragile and not stable. As soon as the experience enters *lang
 A philosopher who holds qualia to be primary, for whom the redness *is* the world's redness, not a brain construction, and for whom wordless introspection is the *primary* mode of experience, will say we have mis-described the boundary. They will read the present chapter as a useful tool for *communicated* experience but a poor account of *lived* experience, and they will refuse to grant that the mediated case is "default" rather than the limit. We take the mediated, communicable case as our default, openly: it is the case where epistemology, science, and language work, and where our machinery is productive. The dispute with qualia-primary views is *foundational*, acknowledged at the door, not settled inside.
 
 Inside our default, there is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*), first introduced in the *Critique of Pure Reason* at KrV A26/B40–42 (the Transcendental Exposition of the Concept of Space, the second part of §1 of the Transcendental Aesthetic) and developed systematically in the chapter "Of Phenomena and Noumena" at A235/B294 \cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not "how do we reach it?" but "what can we honestly do with the traces we have?"
+
+</div>
+
+<div class="md">
+
+## The question, boxed
 
 $$
 \boxed{
@@ -1271,5 +1313,156 @@ $$
 $$
 
 A useful analogy is not a theorem. Tarski's Convention T *is* a theorem (of formal semantics). The use we make of it, here and now, is a *discipline* about how to live with models.
+
+</div>
+
+<div class="md">
+
+## What this offers AI systems
+
+The point of this chapter was never the diagram. The point was what the diagram *buys you* when you point it at something concrete — and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk. The discipline built in the previous sections — traces, admissible transitions, descent, the Tarskian if-and-only-if, the three pathologies — was a *specification*. What follows is the specification, applied.
+
+The reading is offered as an *attempt at organisation*, not a finished theory of LLMs. It is a lens. Used well, it sharpens some intuitions and corrects some default mistakes; used badly, it forces a borrowed vocabulary onto a domain that has its own. The reader who finishes this section believing she now has a theory of LLMs has misread it; the reader who finishes it with a sharper vocabulary for asking what an LLM is, and is not, doing has read it well. Where the lens makes a phenomenon *visible*, we say so; where it does not, we say so too.
+
+### The LLM in the master diagram
+
+Return once more to the master diagram of the chapter, this time with an LLM filling the slots:
+
+$$
+\begin{array}{ccccc}
+&&\underbrace{W}_{\text{the world the corpus is about}}&&\\
+&\overset{\,O_1\,}{\swarrow}&\overset{\,O_2\,}{\downarrow}&\overset{\,O_3\,}{\searrow}&\\
+\underbrace{R_1}_{\text{document}}&&\underbrace{R_2}_{\text{document}}&&\underbrace{R_3}_{\text{document}}\\
+&\underset{\,T_1\,}{\searrow}&\underset{\,T_2\,}{\downarrow}&\underset{\,T_3\,}{\swarrow}&\\
+&&\underbrace{G}_{\text{the trained model}}&&
+\end{array}
+$$
+
+- **The subject matter $W$** is, for an LLM, *the world the corpus is about*: facts about history, science, code, mathematics, language, the texture of human life that the training set was assembled from. This $W$ is enormously broad, mostly unobservable, and never directly available to the model.
+
+- **The cover $\{c_i\}_{i \in I}$** is the *training corpus*: each $c_i$ is a document, a web page, a code repository, a conversation, a transcript. Each is a "patch" of partial evidence about $W$. The patches overlap — the same fact appears in many documents, the same code idiom in many repositories — and the union of their images is supposed to cover everything the model is meant to be able to speak about.
+
+- **The representations $R_i$** are the model's internal states: token embeddings, hidden activations, attention patterns, the final logits. They are what *arrive* at the global section $G$, not what arrives from the world.
+
+- **The admissible transitions $\mathcal{T}$** are the model's *internal operations*: tokenisation, embedding, attention, layer normalisation, MLP transformations, logit computation, sampling. None of these is a bridge from the model to the world; all of them are bridges *inside* the model — operations on its own representations.
+
+- **The global section $G$** is the trained model itself — the learned function from context to next-token distribution. It is what the model *is*, as a whole.
+
+The single most important observation, in the chapter's vocabulary, is that the LLM has *internal* admissible transitions but no *external* ones. The training process fits $G$ to make the $\{R_i\}$ jointly predictable, and that is the only sense in which $G$ is "of" $W$ — it is a function whose behaviour on the cover is consistent. Whether the behaviour continues *outside* the cover — at inference time, on questions the corpus did not contain, in domains the training distribution did not sample — is the central empirical question, and it is not answered by the architecture alone. The LLM, by default, is a global section computed without any direct observation arrows from $W$.
+
+### What the LLM does: internal descent
+
+Once this picture is in place, the LLM's *strengths* fall out as properties of internal descent — that is, coherence *within the model's own state space*, with no world involved.
+
+**In-context learning.** When the prompt supplies examples, the model's continuation tends to follow the pattern set by the examples. In the chapter's vocabulary, the prompt becomes a *cover* of the conversation, and the model's generation is the unique (or near-unique) section compatible with that cover. The mechanism is parametric — the model's parameters were tuned to make local patches of context cohere into continuations — and it works for any task where the cover in the prompt is representative enough to determine a stable answer.
+
+**Chain-of-thought.** Asking the model to "think step by step" populates its own context with intermediate steps, which then serve as further constraints on subsequent continuations. Each new step is a new patch; the chain coheres insofar as each step is consistent with the prior ones. The mechanism is *self-consistency amplification*: by writing out its reasoning, the model gives itself more evidence about its own answer.
+
+**Self-consistency.** Sampling $k$ independent chain-of-thoughts and taking the majority vote is, in the chapter's vocabulary, *checking descent* on $k$ admissible covers and aggregating the global sections. It works when the model is correct across covers — the majority agrees on the right answer — and degrades when the model is systematically wrong — the majority converges on the wrong shared answer. Self-consistency is a *coherence test*, not a truth test; it certifies that the model's different reasoning paths agree, not that they correspond to the world.
+
+**Verifier-guided search.** Sampling $k$ candidate continuations, scoring each with a learned verifier, and keeping the best is, in the chapter's vocabulary, *Tarski at every contact point*: each candidate is a claim, the verifier is a licensed transition to a Tarskian anchor (the verifier's ground-truth labels), and the highest-scoring candidate is the one whose correspondence check passes most often. The technique only works when the verifier is *itself* licensed — when its own contact points are calibrated. A verifier trained on the same model's outputs, scoring only fluency, is just another coherence check in disguise.
+
+These are the things the LLM is *for*: pattern completion, in-context coherence, internal consistency, and the long tail of fluent manipulation of structured representations. Read in the chapter's vocabulary, they are *coherence techniques*. They are powerful precisely to the extent that the underlying training has made the model's internal patches cohere, and they are *bounded* precisely to the extent that the world itself is not part of the cover.
+
+### What the LLM lacks: grounded observation
+
+What the LLM is *not* doing, by default, is anything the chapter would call *observation* in the strict sense. There is no arrow $O_i : W \to R_i$ in the architecture; the only arrows are *inside* the model, not between the world and the model. The training process uses the corpus $\{c_i\}$ as a proxy for $W$, but the corpus is itself a transformed trace — text written by humans, sampled from the world, frozen at training time. The LLM is connected to the world only through the bottleneck of *language about the world*, which is the entire mediation problem of the chapter's "Traces" section, repeated once for every document in the corpus.
+
+Three consequences follow, each diagnostic.
+
+**The training cutoff.** The model has no observation arrows that touch the world after training. Events after the cutoff are invisible unless they are delivered through updated parameters (fine-tuning, continued pretraining) or through the deployment pipeline (RAG, tool use). The model cannot "know" something it has not been told, in any sense of "know" the chapter would license. When a user asks the model about an event from last week, the model has no privileged access to a contact point about that event; it has only the pattern-completion machinery that *would* complete such a question if asked often enough. Whether the completion is true is a separate, empirical matter.
+
+**The grounding gap.** Symbols in the model refer to *other symbols in the model*, not to objects in the world. "Apple" is a point in embedding space, near "pear" and "fruit" and far from "carburetor" — the chapter's distributional semantics, exactly. The model has *internal* semantics; it does not have *external* semantics unless something in the deployment pipeline provides them. The Vector Grounding Problem of the philosophy chapter is, in the chapter's vocabulary, *the absence of any $O_i$ arrow that lands in $W$ and produces a representational trace in $R_i$*.
+
+**The Tarski gap.** Without observation arrows and without licensed transitions to the world, the Tarskian if-and-only-if "$S$ is true iff $p$" cannot be evaluated inside the model. The model can produce sentences that *look like* claims about the world; what it cannot do is independently verify them. Every output is, by default, an unverified claim.
+
+These three gaps are not bugs in any particular model; they are *structural features of the whole paradigm*. The model is a coherence engine that has never been given a correspondence engine to work with.
+
+### Hallucination, precisely
+
+In the chapter's vocabulary, a *hallucination* is a **self-consistent fantasy**: a model that satisfies its own internal sheaf condition — every local section agrees with every other local section on overlaps — without any licensed correspondence to the world. The diagnosis is precise:
+
+- *Coherence holds.* The model's outputs are internally consistent: its descriptions cohere with each other, its arguments flow, its style is uniform.
+- *Licensing was granted, but the licence does not deliver contact.* The model's internal operations are licensed (they are in $\mathcal{T}$), but no transition reaches from the model to the world. The Tarski if-and-only-if never gets evaluated.
+- *The failure is correspondence, not coherence.* The model is not broken in the sense of contradicting itself; it is broken in the sense of having nothing to contradict.
+
+This is the same diagnosis the chapter gave to the *self-consistent fantasy* in the closing synthesis, just applied to a specific class of systems. The chapter's three pathologies — self-consistent fantasy, factbook, contact-point liar — correspond, roughly, to the failure modes the AI literature has named:
+
+| Chapter's pathology | LLM failure mode | What's broken |
+| :--- | :--- | :--- |
+| Self-consistent fantasy | Confident hallucination | Correspondence: model has no contact with $W$ |
+| Factbook | Disconnected reasoning: correct facts but no synthesis | Coherence: model's parts do not glue |
+| Contact-point liar | Subtle, calibrated errors | Correspondence: the licence was granted but does not deliver |
+
+The diagnosis matters because the *remedy* differs in each case. The factbook needs more coherence (better reasoning, better chain-of-thought); the self-consistent fantasy needs more correspondence (grounding in actual sources); the contact-point liar needs re-calibrated licences (better calibration of the existing bridges). A single fix does not address all three, and conflating them is one of the most common ways to talk uselessly about AI safety.
+
+### What helps: adding admissible transitions
+
+The chapter's vocabulary translates the standard remedies into moves in the diagram. Each remedy is, in the chapter's terms, *adding an admissible transition* that the system was missing.
+
+**Retrieval-Augmented Generation (RAG).** Before the model generates, an external retriever pulls relevant passages from a knowledge base and injects them into the prompt. In the diagram, the passages become *new patches* of the cover, and the licensing $T \in \mathcal{T}$ that connects the model's output to the passage text is now available. The model's claim "$X$" can be checked against the passage: is "$X$" supported by the retrieved evidence? If yes, the model has a *correspondence check* at a contact point. If the retrieval is good and the licensing is trusted, the hallucination rate on those queries drops sharply. The catch: the licence has to be earned. The retriever itself can be wrong (irrelevant passages, outdated knowledge base, poisoned documents), and a model that trusts a bad retriever is no better grounded than a model that trusts its own parameters. The chapter's nine-step procedure applies to the retriever the same way it applies to the model.
+
+**Tool use and agents.** When the model can call external tools — a web search, a calculator, a code interpreter, a database query, an HTTP endpoint — it acquires *new observation arrows* $O_i : W \to R_i$ that were not available in its training. Each tool call is a *licensed transition* to a fresh source of evidence; the model's claim "$X$" can now be checked against the tool's response. The technique is powerful exactly because it expands $\mathcal{T}$ at inference time, in a controlled way. The catch: each tool is a new surface for error. A web search returns propaganda; a calculator mishandles a domain error; a code interpreter runs buggy code; an agent loops. The chapter's discipline applies to each: every tool needs its own calibration, its own licence, its own audit. The chapter's notion of *admissible cover* becomes the operational notion of a *bounded tool budget*: the agent is allowed a specified number of $T \in \mathcal{T}$ transitions, and the cover must be specified in advance.
+
+**Reinforcement Learning from Human Feedback (RLHF).** RLHF does not add admissible transitions to the world; it adds admissible transitions to *human preferences*. The reward model encodes what humans find helpful, harmless, and honest; the policy is tuned to maximise that reward. In the chapter's vocabulary, RLHF installs a *Tarskian anchor* — but the anchor is human preference, not world fact. This is why RLHF-trained models are better at being *helpful* but not necessarily better at being *true*: the correspondence has been moved from the world to the human rater, which is one step closer to the world than pure next-token likelihood but is still not the world itself. The discipline: treat the human rater as a calibrated instrument, audit its calibration periodically, and refuse to upgrade "the rater prefers this" to "this is true".
+
+**Chain-of-thought and self-consistency.** These are *coherence techniques* (the previous section), not correspondence techniques. They sharpen the model's internal consistency; they do not, by themselves, ground the model in the world. Their value is to *expose* the model's failures: when self-consistency collapses — the model's $k$ sampled continuations disagree — that is a diagnostic flag that the underlying claim is not robustly supported. They tell you when to be suspicious; they do not tell you when to trust. The chapter's hierarchy of sameness is the right ladder: a chain-of-thought that is internally consistent is *coherent*; that coherence does not entail *correspondence*.
+
+**Verifier-guided search.** This is the technique that comes closest to *adding a Tarskian check at every candidate*. Each candidate is a claim; the verifier is a licensed bridge from the candidate to a ground truth (or a proxy); the highest-scoring candidate is the one whose correspondence check passes most often. The technique only works if the verifier is itself licensed. A verifier trained on the same model, on the same corpus, scoring only fluency, is just another coherence check. A verifier trained against external ground truth, with its own calibration audit, is a real correspondence check. The Fitness-Beats-Truth result (a system that maximises a fitness payoff without estimating the true world state beats a system that estimates it) is, in the chapter's vocabulary, *the formal statement that an internal coherence engine, without licensed correspondence transitions, will beat a correspondence engine on fitness metrics* — and explains why the baseline LLM hallucinates rather than tracking truth.
+
+**Reading the table the other way.** The chapter's diagnosis predicts which remedies will and will not work, before trying them. If the failure is *correspondence* — the model has no contact with $W$ — no amount of coherence engineering (bigger models, longer chains of thought, more self-consistency) will fix it. If the failure is *coherence* — the model has the facts but cannot glue them — no amount of retrieval or tool use will fix it. The remedies are matched to the diagnoses, and a serious engineering effort on an LLM application should begin by locating which kind of failure is dominant.
+
+### The nine-step audit, applied to an LLM
+
+The chapter's nine-step procedure, applied to a deployed LLM answering a user query:
+
+1. **Take the raw datum $D$.** What is the model's input? The prompt, the context window, the system message, the available tools, the temperature, the sampling parameters.
+2. **Interpret it as $I(D)$.** What reading is the model imposing? What is its parsing of the instruction, the format, the implicit task? The system prompt and the few-shot examples are part of $I(D)$.
+3. **Draw the chain $W \to \text{corpus} \to \text{parameters} \to \text{prompt} \to \text{output}$.** Where in the chain could disagreement enter? Each arrow is a place things can go wrong.
+4. **Identify overlaps.** Where do independent channels meet? In an LLM, overlaps include: multiple documents in the corpus that mention the same fact, multiple reasoning paths in chain-of-thought, multiple sampled continuations in self-consistency, multiple tools that could verify the same claim, multiple human raters who could rate the same output.
+5. **Specify admissible transitions $T_{ij} \in \mathcal{T}$.** What licences each comparison? Tokenisation? Attention? Retrieval? Tool call? Calibration of an external sensor? Each needs to be named and audited.
+6. **Decide which sameness.** $=$, $\cong$, $\simeq$, $\le \varepsilon$, statistical, model-theoretic. For a factual query, equality is what we want. For a paraphrase, isomorphism. For a fuzzy comparison, approximation. Pick the right one and refuse to upgrade.
+7. **Build the candidate global model $G$.** Does descent hold on every admissible cover? For an LLM, this means: does the model produce a single, coherent answer that is consistent with all its available evidence? Are the chain-of-thought steps internally consistent? Do the self-consistency samples agree? Does the retrieved evidence support the claim?
+8. **Record residuals.** What is preserved, not erased? What does the model know that it did not say? What does it say that it should not? Where did the chain break?
+9. **Plan the next observation.** What evidence would discriminate? A second tool call? A different sampling temperature? A different prompt? An external verification? A human rater?
+
+The procedure is the same for any model — scientific, mathematical, historical, LLM — because the chapter's claim is that the *shape* is the same.
+
+### Where this framework reaches its limits
+
+A framework honest about its reach must be honest about where it stops helping. The chapter's machinery, applied to LLMs, runs out of steam in at least four directions:
+
+**Emergent capabilities.** Some LLM behaviours appear discontinuously at scale: few-shot in-context learning, chain-of-thought reasoning, code generation, instruction following, the long tail of surprising competencies the literature has catalogued since GPT-3. The chapter's vocabulary can *name* these as phenomena — they are local sections that begin to cohere at a critical scale — but it does not *explain* them. The mathematics of why descent becomes qualitatively different at scale is the open problem of modern deep learning theory, and this chapter has nothing to say about it.
+
+**In-context learning as a meta-phenomenon.** The chapter treats in-context learning as *descent within the prompt*: the prompt is a cover, the continuation is the unique section compatible with it. This is descriptively right but explanatorily thin. Why does a fixed-parameter model perform *more* in-context learning at scale, with no architectural change? Why does the same model sometimes use the cover well and sometimes badly? The chapter's framework does not say.
+
+**The training dynamics.** The chapter's diagram is *static*: it shows the trained model, not the process that trained it. Backpropagation, gradient descent, the loss landscape, the role of data quality, the effects of scale, the regularisation induced by SGD — these are all *training-side* phenomena the chapter does not engage. A serious account of LLMs has to include both the trained object and the training process; this chapter only covers the former.
+
+**The value-alignment problem in the strong sense.** The chapter can diagnose the *epistemic* failure modes — hallucination, factbook, contact-point liar — but it has nothing to say about the *value-alignment* problem: how to ensure that a system with the right epistemic standing still pursues goals we want it to pursue. That is a separate problem, with separate tools (preference learning, Constitutional AI, debate, scalable oversight, formal verification), and the chapter's vocabulary does not extend to it.
+
+These limits are not failings of the chapter; they are the *boundary* of what the chapter's machinery is competent to address. The framework is offered as a lens for the *epistemic* structure of world models; it is not a general theory of intelligence.
+
+### An honest closing
+
+Three honest claims, to leave the chapter with.
+
+**This framework is a useful lens, not a finished theory.** It organises some intuitions, predicts some failure modes, suggests some remedies. It does not derive the architecture of a working LLM, and it does not replace the technical chapters of this book. The reader who finishes the chapter believing that she now has a theory of LLMs has misread it; the reader who finishes it with a sharper vocabulary for asking what an LLM is, and is not, doing has read it well.
+
+**The unification of mathematics, philosophy, and epistemology is a hypothesis.** We have argued that the same shape shows up in three traditions, and that the argument is productive. The argument is not a derivation. A reader who finds the unification forced, partial, or misleading is not asked to surrender the rest of the chapter; the individual diagnoses — hallucination as a self-consistent fantasy, in-context learning as descent within the prompt, retrieval as adding admissible transitions — stand on their own technical content, independent of the grand unification.
+
+**The discipline is portable.** The nine-step procedure, the three pathologies, the hierarchy of sameness, the question "where is the licensed transition?", the rule "never silently upgrade" — these survive even where the philosophical scaffolding is set aside. They are the practical content of the chapter. Take them into the next technical chapter, and into the next AI system you meet.
+
+A useful analogy is not a theorem. The framework in this chapter is, on the author's own admission, mostly analogy — carefully drawn, repeatedly tested, but not derived. Where the analogy bites, it is because the underlying structural shape really is the same across domains. Where it does not, the reader is invited to notice, and to say so.
+
+$$
+\boxed{
+\begin{aligned}
+&\textbf{The LLM is a coherence engine without a built-in correspondence engine.}\\
+&\textbf{Useful, productive, brittle in predictable ways.}\\
+&\textbf{The fix is not to ask the coherence engine to also do correspondence;}\\
+&\textbf{the fix is to attach a correspondence engine — RAG, tools, verification,}\\
+&\textbf{human oversight, or some combination — to the outside.}
+\end{aligned}}
+$$
 
 </div>
