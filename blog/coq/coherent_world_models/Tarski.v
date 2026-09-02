@@ -119,7 +119,12 @@ Record ConventionT := {
   CT_S : OL_carrier CT_L;     (* the object-sentence                          *)
   CT_quoted : ML_carrier CT_ML; (* the quotation-name                       *)
   CT_p : ML_carrier CT_ML;    (* the proposition in the meta-language        *)
-  CT_iff : CT_quoted = CT_p   (* Convention T: S is true iff p                *)
+  CT_true : OL_carrier CT_L -> Prop; (* the truth-predicate "S is true in L" *)
+  CT_iff : CT_true CT_S <-> CT_p
+  (* Convention T: "S is true in L" iff p, a meta-level biconditional.     *)
+  (* The quotation-name CT_quoted is the handle by which we refer to S;    *)
+  (* it is not equal to p. Convention T relates the truth of the          *)
+  (* object-sentence to the proposition p, never identifying the two.       *)
 }.
 
 (* The classical illustration: snow is white is true iff snow is white.    *)

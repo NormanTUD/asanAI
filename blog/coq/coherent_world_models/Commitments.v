@@ -62,7 +62,7 @@ Record IndirectRealism := {
 (* We model this as the existence of at least two distinct regions of the    *)
 (* subject matter (so that regions is non-trivially plural).               *)
 
-Record InternalStructure (s : SubjectMatter) : Prop :=
+Record InternalStructure (s : SubjectMatter) : Type :=
   { IS_region_a : Region s ;
     IS_region_b : Region s ;
     IS_distinct : IS_region_a <> IS_region_b
