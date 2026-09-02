@@ -211,7 +211,10 @@ $$
 For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty; it carries no information. The real content is **a constrained class** $\mathcal{T}$, justified independently of the data it is later applied to. $\mathcal{T}$ is a *licence*: membership in $\mathcal{T}$ says we have an independent reason to take a comparison seriously, not that the comparison is correct in any given instance. Whether a given $T \in \mathcal{T}$ actually delivers (whether Tarski's if-and-only-if holds at $T$, whether the sensor still reads true) is a separate empirical check that the licence permits but does not perform:
 
 $$
-\underset{\text{admissible transitions (licensed)}}{\mathcal{T}} \;\subseteq\; \underset{\text{observation, inter-representation, and inter-context arrows}}{\{W \to R_{i}\} \cup \{R_{i} \to R_{j}\} \cup \mathrm{Hom}(\mathcal{C})}.
+\underset{\text{admissible transitions (licensed)}}{\mathcal{T}} \;\subseteq\;
+\underbrace{\{W \to R_{i}\}}_{\text{observations (world}\to\text{view)}}\;\cup\;
+\underbrace{\{R_{i} \to R_{j}\}}_{\text{translations between views}}\;\cup\;
+\underbrace{\mathrm{Hom}(\mathcal{C})}_{\text{refinements between contexts}}.
 $$
 
 What can belong in $\mathcal{T}$: the list is open; what matters is the justification, not exhaustiveness:
@@ -232,11 +235,47 @@ $$
 \end{aligned}}
 $$
 
-$\mathcal{T}$ plays three roles at once: a **subcategory** constraint (only certain morphisms allowed), a **Bayesian prior** (some hypotheses are favoured a priori), and an **Occam penalty** (an unjustifiably large $\mathcal{T}$ is its own kind of over-fitting). Three presentations of one restriction. The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \citeauthor{sellars1956empiricism} (\citeyear{sellars1956empiricism}) rejects in his critique of the "myth of the given" \cite{sellars1956empiricism}:
+$\mathcal{T}$ plays three roles at once: a **subcategory** constraint (only certain morphisms allowed), a **Bayesian prior** (some hypotheses are favoured a priori), and an **Occam penalty** (an unjustifiably large $\mathcal{T}$ is its own kind of over-fitting). Three presentations of one restriction:
+
+$$
+\begin{array}{ccccc}
+\underbrace{\text{subcategory}}_{\text{only certain arrows are allowed}} && \underbrace{\text{Bayesian prior}}_{\text{some comparisons favoured a priori}} && \underbrace{\text{Occam penalty}}_{\text{too much freedom over-fits}}\\[6pt]
+& \searrow & \downarrow & \swarrow &\\
+&& \underbrace{\mathcal{T}}_{\text{one constraint, three descriptions}}&&
+\end{array}
+$$
+
+The contrast with the classical foundationalist picture — there *must* be a privileged class of transitions that need no prior justification — is exactly the picture \citeauthor{sellars1956empiricism} (\citeyear{sellars1956empiricism}) rejects in his critique of the "myth of the given" \cite{sellars1956empiricism}:
 
 <div class="smart-quote" data-cite="sellars1956empiricism">
 One seems forced to choose between the picture of an elephant which rests on a tortoise (What supports the tortoise?) and the picture of a great Hegelian serpent of knowledge with its tail in its mouth (Where does it begin?). Neither will do. For empirical knowledge, like its sophisticated extension, science, is rational, not because it has a foundation but because it is a self-correcting enterprise which can put any claim in jeopardy, though not all at once.
 </div>
+
+The two pictures — the first is the foundationalist picture (rejected); the second is what this chapter builds.
+
+**The foundationalist picture (rejected):**
+
+$$
+\begin{array}{c}
+\underbrace{\text{elephant on a tortoise (and so on)}}_{\text{the foundation rests on something else}}\\
+\text{claims}\\
+\downarrow\text{supported by}\\
+\text{more claims}\\
+\downarrow\text{supported by}\\
+\text{the foundation}
+\end{array}
+$$
+
+**The Sellarsian alternative (what this chapter builds):**
+
+$$
+\begin{array}{ccc}
+& \underbrace{\text{the self-correcting web}}_{\text{any arrow may be re-justified at any contact point}} &\\
+R_1 & \rightleftarrows & R_2\\
+\updownarrow & & \updownarrow\\
+R_3 & \rightleftarrows & R_4
+\end{array}
+$$
 
 Sellars's "self-correcting enterprise" is exactly the picture of a global model $G$ that we have been building: $G$ is not the foundation of the observations $R_i$ (that would make the $R_i$ depend on $G$ in the wrong direction), nor is it the snake-tail-in-mouth picture in which every claim is supported only by other claims (the strict coherentist trap); it is the *self-correcting* enterprise, the one that gets to put *any* of its arrows in jeopardy when an admissible $T \in \mathcal{T}$ fails at the contact point. The structure of $\mathcal{T}$ is exactly the structure of the Sellarsian "space of reasons": a network of licences that justify local moves without being themselves grounded in a foundational layer, but that can be re-justified (or refused) at any contact point where Tarski's condition fails.
 
@@ -285,9 +324,9 @@ A **representation scheme** assigns to every context a set of "sections" (the th
 
 $$
 \underset{\text{rep. assignment}}{F}\ :\ 
-\underset{\text{contexts, refinements reversed}}{\mathcal{C}^{\mathrm{op}}} 
+\underset{\text{contexts (arrows reversed, so refinements pull back data)}}{\mathcal{C}^{\mathrm{op}}} 
 \longrightarrow 
-\underset{\text{target category}}{\mathcal{V}}.
+\underset{\text{target category (e.g. }\mathbf{Set}\text{, }\infty\text{-Gpd, }\ldots\text{)}}{\mathcal{V}}.
 $$
 
 $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain complexes, or $\infty$-groupoids, depending on how much homotopy is needed.
@@ -413,9 +452,9 @@ Two thermometers report a temperature over time: the equalizer is the *times* at
 
 $$
 \begin{array}{ccc}
-\underbrace{X \times_Z Y}_{\text{pairs that agree in }Z} & \xrightarrow{\;\pi_X\;} & X\\
-{\scriptstyle \pi_Y}\downarrow && \downarrow{\scriptstyle f}\\
-Y & \xrightarrow{\;g\;} & \underbrace{Z}_{\text{shared calibrated space}}
+\underbrace{X \times_Z Y}_{\text{pairs that agree in }Z} & \xrightarrow[\text{project onto first view}]{\;\pi_X\;} & \underbrace{X}_{\text{one view}}\\
+\underset{\text{project onto second view}}{\overset{\pi_Y}{\downarrow}} & & \underset{\text{into shared space}}{\overset{f}{\downarrow}}\\
+\underbrace{Y}_{\text{another view}} & \xrightarrow[\text{into shared space}]{g} & \underbrace{Z}_{\text{shared calibrated space}}
 \end{array}
 $$
 
