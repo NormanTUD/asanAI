@@ -222,14 +222,21 @@ Between two contexts there are *refinements*: from "Tuesday afternoon" to "betwe
 
 A **cover** of a context is a family of sub-contexts whose images together capture everything relevant about it. The everyday picture: overlapping photographs cover a room when every point of the room appears in at least one of them. In a topological space this is an **open cover**: a family of open sets whose union contains the whole. In category theory, the most general version (due to Grothendieck) is a *designated rule* saying which families of sub-objects count as covers; this rule is a **Grothendieck topology**, and the category equipped with it is a **site**. The name sounds forbidding, but the content is just: *here is how we decide when a family of smaller views "covers" a larger one*. The rule must respect refinements (narrowing a cover still covers) and composition (covers of covers are covers).
 
-In this chapter the cover must do one further job: every morphism in it must lie in the admissible class $\mathcal{T}$. We call such a cover **admissible**:
+In plain English, an **admissible cover** of a context $c$ is just a family of smaller views $\{c_i\}_{i\in I}$, together with morphisms $f_i : c_i \to c$ putting each view back into $c$, such that two things hold at once:
+
+1. **The cover condition.** Every part of $c$ that matters is captured by at least one view. In symbols: the union of the images $\bigcup_i \mathrm{im}(f_i)$ is the whole of $c$. (Topological version: the open sets cover the space. Picture version: the photographs together capture every point of the room.)
+2. **The admissibility condition.** Every morphism $f_i$ in the cover is a licensed transition: $f_i \in \mathcal{T}$. The maps that put the views back into $c$ are ones we have an independent reason to trust — calibration, coordinate change, physical law, validated decoding, documented transmission, anything that has earned its place in $\mathcal{T}$.
+
+Formally:
 
 $$
-\{c_i \xrightarrow{\,f_i\,} c\}_{i \in I}\ :\ f_i \in \mathcal{T},\quad
-\text{and the } \mathcal{T}\text{-images of the }c_i\text{ jointly determine }c.
+\{c_i \xrightarrow{\,f_i\,} c\}_{i \in I}\ :\ f_i \in \mathcal{T}\ \text{for every }i,\quad
+\text{and}\quad \bigcup_{i\in I} \mathrm{im}(f_i) \;=\; c.
 $$
 
-The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover", and the demand that local data cohere would become vacuous. By restricting to admissible covers, we turn the sheaf condition into a *meaningful* question about a specific modelling setup.
+The two conditions are independent. A family of sub-views can satisfy the cover condition with maps we have no business trusting (raw, uncalibrated readings), and a family of trusted maps can fail to cover what matters. An *admissible* cover is the intersection: a covering whose maps are licensed. Only on admissible covers does the sheaf condition (compatible local data ⟹ unique global data) carry content; the next paragraph explains why.
+
+The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover", and the demand that local data cohere would become vacuous: pick the most convenient family, declare it a cover, and coherence is automatic. By restricting to admissible covers, we turn the sheaf condition into a *meaningful* question about a specific modelling setup: the family is not chosen for our convenience; it is constrained by the licences we have actually earned.
 
 Equipping $\mathcal{C}$ with a rule for which families count as covers (one that closes under refinement and under composition) is a **Grothendieck topology** $J$; the pair $(\mathcal{C}, J)$ is a **site** (as sketched in *Coherent Difference*).
 
