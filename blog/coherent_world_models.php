@@ -14,9 +14,9 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, type-theory, mode
 
 ## The question
 
-No inquirer touches its subject matter directly. A physicist never touches an electron; a mathematician never touches a group-in-itself; a listener never touches the sound source; a historian never touches the past. Each receives *transformed traces*: measurements, sense data, symbolic reports, proof scripts, embeddings, archival documents.
+No inquirer has unmediated access to its subject matter. A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a listener can touch the speaker, but what their fingers meet is already a transformed trace — pressure into nerve signal into percept — never the sound source as it would be apart from any perception. A historian never enters the past. In every domain, we work with *transformed traces*: measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.
 
-"How do we get past the traces to the thing?" has no operational meaning. The useful question is:
+What we receive is *always already mediated*. There is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*); the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not "how do we reach it?" but "what can we honestly do with the traces we have?"
 
 $$
 \boxed{
@@ -26,15 +26,17 @@ $$
 \end{aligned}}
 $$
 
-The chapter's answer, in the vocabulary of *Coherent Difference*: **when the traces glue.**
+The chapter's answer, in the vocabulary of *Coherent Difference*: **when the traces cohere** — two complementary halves of one principle:
 
 $$
-\underbrace{\text{gluing}}_{\text{local pieces fit on their overlaps}}
-\;=\;
-\underbrace{\text{descent}}_{\text{a unique global object exists that restricts to each piece}}.
+\underbrace{\text{compatibility on overlaps}}_{\text{where two local descriptions meet, they agree}}
+\;\;\Longleftrightarrow\;\;
+\underbrace{\text{uniqueness of the global}}_{\text{one whole extends them, and only one}.}
 $$
 
-One discipline throughout: $\boxed{\text{a useful analogy is not a theorem.}}$
+Mathematicians call the package *descent*; the philosophical tradition has long called it *coherence*. We keep both names.
+
+One discipline runs through the whole chapter: $\boxed{\text{locate every difference at the right level.}}$ Is the disagreement between two reports a difference in the *world*, in the *instrument*, or in the *interpretation*? Conflating these is the most common failure of "world model" talk.
 
 </div>
 
@@ -42,24 +44,26 @@ One discipline throughout: $\boxed{\text{a useful analogy is not a theorem.}}$
 
 ## Three kinds of difference
 
-Between "subject matter $W$" and "the trace $R$ I received" sit at least three independent sources of difference:
+Between "subject matter $W$" and "the trace $R$ I received" sit at least three independent sources of difference. They sit at *different places* in the chain and demand different remedies.
+
+**1. The world-level — $W_1 \neq W_2$.** Two *subjects* genuinely differ: two electrons, two events, two historical figures. Reports disagree because the world itself is different at the two accesses.
+
+*Example.* Alice measures an electron at $t_1$; Bob measures a *different* electron at $t_2$. Their data need not match — and the right response is not to reconcile them, but to note that they are about different things.
+
+**2. The channel-level — $I_1 \neq I_2$.** Two *instruments* read the same world differently: thermometer vs. thermocouple, eye vs. microphone, uncalibrated vs. calibrated telescope.
+
+*Example.* Two thermometers in the same room read $20.01$ and $20.02$. The room has one temperature; the difference is in the instruments. Calibrate one against the other, or both against a standard.
+
+**3. The processing-level — $N_1 \neq N_2$.** Two *interpretations* of the same trace yield different conclusions: a classical and a quantum reading of the same detector output, a literal and a metaphorical reading of the same text, an outdated and a current taxonomy applied to the same specimen.
+
+*Example.* The same Doppler-shifted spectrum is read by one physicist as evidence for a moving source, by another as evidence for an expanding universe. The trace is fixed; the interpretive framework differs.
 
 $$
 \boxed{
 \begin{aligned}
-&\underbrace{W_1 \neq W_2}_{\text{the subjects actually differ}}\\[4pt]
-&\underbrace{I_1 \neq I_2}_{\text{the channels/instruments differ}}\\[4pt]
-&\underbrace{N_1 \neq N_2}_{\text{the post-processing differs}}
-\end{aligned}}
-$$
-
-Two reports disagreeing does not, by itself, tell you which level is responsible. The whole task of coherent modeling is: *locate the difference at the right level*.
-
-$$
-\boxed{
-\begin{aligned}
-&\text{Two different representations}\\
-&\text{do not imply two different subjects.}
+&\text{Two reports disagreeing does not, by itself,}\\
+&\text{tell you which level is responsible.}\\
+&\text{Locate the difference at the right level.}
 \end{aligned}}
 $$
 
@@ -69,29 +73,34 @@ $$
 
 ## Notions of sameness
 
-Not everything called "the same" is the same *kind* of same. The vocabulary of *Coherent Difference* already gave us the hierarchy; here it is with examples from **sense data**, **measurement**, and **mathematics**:
+Not everything called "the same" is the same *kind* of same. The vocabulary of *Coherent Difference* gave us a hierarchy. Here it is again, strongest to weakest:
 
-$$
-\underbrace{x=y}_{\text{literal}}\ \ 
-\underbrace{x\cong y}_{\text{iso}}\ \ 
-\underbrace{x\simeq y}_{\text{equiv}}\ \ 
-\underbrace{d(x,y)\le\varepsilon}_{\text{approx}}\ \ 
-\underbrace{P(D_1,D_2\mid M)\text{ high}}_{\text{statistical}}
-$$
+- $x = y$ — *literal*: the very same object, the very same datum.
+- $x \cong y$ — *isomorphism*: structurally indistinguishable; an invertible map carries one to the other.
+- $x \simeq y$ — *homotopy equivalence*: related by a deformation that can be undone, up to coherent witnesses.
+- $d(x, y) \le \varepsilon$ — *approximation*: close enough for current purposes, with a quantified residual.
+- $P(D_1, D_2 \mid M)$ high — *statistical*: agreement under a probabilistic model, not on the nose.
 
-$$
-\begin{array}{c|c|c|c}
-\text{Relation} & \text{Sense data} & \text{Measurement} & \text{Mathematics}\\
-\hline
-x=y & \text{same photon on same rod} & \text{two clocks show same tick} & 2+2=4\\
-x\cong y & \text{two indistinguishable coins} & \text{two calibrated meters, same reading} & \mathbb Z/6 \cong \mathbb Z/2\times\mathbb Z/3\\
-x\simeq y & \text{flash + bang from one strike} & \text{two experiments, one phenomenon} & \text{cup}\simeq\text{donut}\\
-d(x,y)\le\varepsilon & \text{20.01 vs 20.02 on thermometer} & \text{within tolerance} & \|f_n - f\|_\infty<\varepsilon\\
-P\text{ high} & \text{eyewitness + CCTV agree} & \text{two studies reject same }H_0 & \text{Monte-Carlo agrees with theorem}
-\end{array}
-$$
+Each form has a parallel in **sense data**, **measurement**, and **mathematics**:
 
-In dependent type theory these are *literally different types*: $\mathsf{Id}_A(x,y)$, $\mathsf{Iso}(x,y)$, and under univalence $(x=_{\mathcal U} y)\simeq(x\simeq y)$. Silent upgrades between rows are the most common category error in "world model" talk.
+|                       | Sense data                              | Measurement                                | Mathematics                       |
+|-----------------------|-----------------------------------------|--------------------------------------------|-----------------------------------|
+| $x = y$               | the same photon, the same rod           | two clocks show the same tick              | $2 + 2 = 4$                       |
+| $x \cong y$           | two indistinguishable coins             | two calibrated meters, same reading        | $\mathbb{Z}/6 \cong \mathbb{Z}/2 \times \mathbb{Z}/3$ |
+| $x \simeq y$          | flash and bang from one strike          | two experiments, one phenomenon            | cup $\simeq$ donut                |
+| $d(x,y) \le \varepsilon$ | $20.01$ vs $20.02$ on a thermometer  | within tolerance                           | $\|f_n - f\|_\infty < \varepsilon$ |
+| $P$ high              | eyewitness and CCTV agree               | two studies reject the same $H_0$          | Monte-Carlo agrees with theorem   |
+
+In **dependent type theory** these are not different phrases for the same thing; they are *literally different types*. To say $x = y$ in a type $A$ is to inhabit the type $\mathsf{Id}_A(x, y)$ — a *space* of witnesses. To say $x \cong y$ is to inhabit $\mathsf{Iso}(x, y)$ — a different space, with different inhabitants. To say $x \simeq y$ is yet another type.
+
+In **Homotopy Type Theory (HoTT)** the equality type is itself a space: its points are *paths* from $x$ to $y$, and these paths may themselves be related by higher paths. Under the **univalence axiom** this becomes literal: for types in a universe $\mathcal{U}$, an equality in $\mathcal{U}$ *is* an equivalence — so $(x =_{\mathcal{U}} y) \simeq (x \simeq y)$. So a claim like "$R_A =_x R_B$" is not a proposition (yes/no) but a *space of answers*: it contains paths from $R_A$ to $R_B$, and those paths may be homotopic to each other or genuinely distinct. Asking "are these the same?" may have a whole space of witnesses, not one.
+
+This is why **silent upgrades between rows** are the most common category error in "world model" talk:
+
+- *Treating an approximation as equality.* Two temperature readings within tolerance are not the same temperature; they are *within* $\varepsilon$ of each other.
+- *Treating an isomorphism as identity.* Two indistinguishable coins are not the same coin — exchange them and the world changes if anything depends on the swap.
+- *Treating statistical agreement as proof.* Two studies rejecting the same null hypothesis agree on a single test; their underlying assumptions can still differ.
+- *Treating model-theoretic consistency as truth.* A model with a common interpretation is internally consistent; it can still be the wrong model.
 
 $$
 \boxed{
@@ -100,6 +109,8 @@ $$
 &\text{sameness into a stronger one.}
 \end{aligned}}
 $$
+
+What "silent strengthening" means: passing from a witness of $\simeq$ to a claim of $=$, or from a proof of $\le\varepsilon$ to a proof of equality, without explicitly carrying the residual. Each promotion must be earned, witnessed, and recorded.
 
 </div>
 
@@ -133,22 +144,21 @@ $$
 
 ## Admissible transitions
 
-For any two finite sets of equal size, *some* bijection exists. So "there is a transformation" is empty by itself. The real content is **a constrained class** $\mathcal T$, justified independently:
+For any two finite sets of equal size, *some* bijection exists. So the bare claim "there is a transformation" is empty — it carries no information. The real content is **a constrained class** $\mathcal T$, justified independently of the data it is later applied to:
 
 $$
 \underbrace{\mathcal T}_{\text{admissible transitions}} \;\subseteq\; \underbrace{\mathrm{Hom}(R_i, R_j)}_{\text{all conceivable maps}}.
 $$
 
-What belongs in $\mathcal T$:
+What can belong in $\mathcal T$ — the list is open; what matters is the justification, not exhaustiveness:
 
-$$
-\underbrace{\text{sensor calibration}}_{\text{measurement}}\ \ 
-\underbrace{\text{coordinate change}}_{\text{geometry}}\ \ 
-\underbrace{\text{physical law}}_{\text{propagation}}\ \ 
-\underbrace{\text{proof-preserving translation}}_{\text{mathematics}}\ \ 
-\underbrace{\text{validated decoder}}_{\text{ML}}\ \ 
-\underbrace{\text{documented archival transmission}}_{\text{history}}
-$$
+- **sensor calibration** — measurement
+- **coordinate change** — geometry
+- **physical law** — propagation, signal transport
+- **proof-preserving translation** — mathematics
+- **validated decoder** — machine learning
+- **documented archival transmission** — history
+- $\vdots$ *(any other map whose license has been argued for in advance)*
 
 $$
 \boxed{
@@ -158,7 +168,7 @@ $$
 \end{aligned}}
 $$
 
-Simultaneously a **subcategory** constraint, a **Bayesian prior**, and an **Occam penalty** — three presentations of one restriction.
+$\mathcal T$ plays three roles at once: a **subcategory** constraint (only certain morphisms allowed), a **Bayesian prior** (some hypotheses are favoured a priori), and an **Occam penalty** (an unjustifiably large $\mathcal T$ is its own kind of over-fitting). Three presentations of one restriction.
 
 </div>
 
@@ -166,46 +176,42 @@ Simultaneously a **subcategory** constraint, a **Bayesian prior**, and an **Occa
 
 ## Contexts as a site
 
-Following *Coherent Difference*, **context** is used in the widest possible sense: anything that can index data points is a "space". So a context is a tuple:
+Following *Coherent Difference*, **context** is used in the widest possible sense: anything that can index data points counts as a "space". A context specifies the conditions under which a report was made:
+
+- *where* — place, system, domain
+- *when* — time, duration, dynamical regime
+- *who* — observer, agent, instrument
+- *how* — method, apparatus, procedure
+- *in what terms* — language, framework, formalism
+- *in what tradition* — culture, era, paradigm
+
+A historical period is a context. A laboratory setup is a context. A formal system is a context. A culture at a given moment is a context. The "spaces" of *Coherent Difference* all count.
+
+Between two contexts there are *refinements*: from "Tuesday afternoon" to "between 3 pm and 4 pm"; from "European philosophy" to "Kant circa 1781"; from "classical mechanics" to "the Lagrangian formulation on a configuration manifold". Morphisms in the context-category $\mathcal{C}$ are exactly these refinements — narrower, more specific, more constrained.
+
+A **cover** of a context is a family of sub-contexts whose images together capture everything relevant about it. The everyday picture: overlapping photographs cover a room when every point of the room appears in at least one of them. In a topological space this is an **open cover**: a family of open sets whose union contains the whole. In category theory, the most general version — due to Grothendieck — is a *designated rule* saying which families of sub-objects count as covers; this rule is a **Grothendieck topology**, and the category equipped with it is a **site**. The name sounds forbidding, but the content is just: *here is how we decide when a family of smaller views "covers" a larger one*. The rule must respect refinements (narrowing a cover still covers) and composition (covers of covers are covers).
+
+In this chapter the cover must do one further job: every morphism in it must lie in the admissible class $\mathcal T$. We call such a cover **admissible**:
 
 $$
-\underbrace{c \in \mathcal C}_{\text{a context}} = 
-(\underbrace{\text{place}}_{\text{where}},\ 
-\underbrace{\text{time}}_{\text{when}},\ 
-\underbrace{\text{observer}}_{\text{who}},\ 
-\underbrace{\text{instrument}}_{\text{how}},\ 
-\underbrace{\text{framework}}_{\text{in what terms}},\ 
-\underbrace{\text{culture / era}}_{\text{in what tradition}}).
+\{c_i \xrightarrow{\,O_i\,} c\}_{i \in I}\ :\ O_i \in \mathcal{T},\quad
+\text{and the } \mathcal{T}\text{-images of the }c_i\text{ jointly determine }c.
 $$
 
-Time is a context. Culture is a context. A historical period is a context. A conceptual framework is a context. A formal system is a context. Anything on the "space" list of *Coherent Difference* counts.
+The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover", and the demand that local data cohere would become vacuous. By restricting to admissible covers, we turn the sheaf condition into a *meaningful* question about a specific modelling setup.
 
-Morphisms in $\mathcal C$ are **refinements**: narrower time windows, tighter instruments, sub-frameworks, more specific coordinates.
+Equipping $\mathcal{C}$ with a rule for which families count as covers (one that closes under refinement and under composition) is a **Grothendieck topology** $J$; the pair $(\mathcal{C}, J)$ is a **site** (as sketched in *Coherent Difference*).
 
-A **cover** of a context $c$ is, in the most general sense, a family of sub-contexts $\{c_i \to c\}_{i \in I}$ whose images together contain everything relevant about $c$ — *no relevant feature of $c$ escapes all patches*. The everyday analogy: a set of overlapping photographs covers a room if every point of the room appears in at least one photograph. In a topological space, an **open cover** of an open set $U$ is a family $\{U_i\}$ of open sets whose union contains $U$. A **Grothendieck cover** generalises both: a family of morphisms $\{c_i \to c\}$ is a cover if it has been *designated* as covering by a rule on the category, called a Grothendieck topology.
-
-In this chapter the cover is required to do one more job: every morphism $c_i \to c$ must lie in the designated class $\mathcal T$ of admissible transitions. We call such a cover **admissible**:
+A **representation scheme** assigns to every context a set of "sections" — the things one can write down *on* that context:
 
 $$
-\underbrace{\{c_i \xrightarrow{\,O_i\,} c\}_{i \in I}}_{\text{admissible covering family}}\ :\ 
-\underbrace{\text{each }O_i\in\mathcal T}_{\text{morphisms are admissible}}\ ,\qquad
-\underbrace{\text{admissible-}\mathcal T\text{-images of the }c_i\text{ jointly determine }c}_{\text{"no relevant feature of }c\text{ escapes all patches"}}.
-$$
-
-The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover" and coherence would become vacuous. By restricting to admissible covers, we make the sheaf condition a *meaningful* question about the specific modelling context.
-
-Equipping $\mathcal C$ with a rule for which families count as covers (one that closes under pullback and under composition) is a **Grothendieck topology** $J$; the pair $(\mathcal C, J)$ is a **site** (as sketched in *Coherent Difference*).
-
-A **representation scheme** is a presheaf:
-
-$$
-\underbrace{F}_{\text{rep. assignment}} : 
-\underbrace{\mathcal C^{\mathrm{op}}}_{\text{contexts, arrows reversed}} 
+\underbrace{F}_{\text{rep. assignment}}\ :\ 
+\underbrace{\mathcal{C}^{\mathrm{op}}}_{\text{contexts, refinements reversed}} 
 \longrightarrow 
-\underbrace{\mathcal V}_{\text{target category}}.
+\underbrace{\mathcal{V}}_{\text{target category}}.
 $$
 
-$\mathcal V$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain complexes, or $\infty$-groupoids — depending on how much homotopy is needed.
+$\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain complexes, or $\infty$-groupoids — depending on how much homotopy is needed.
 
 </div>
 
@@ -340,12 +346,12 @@ There are now two ways to go from $A$ to $C$: directly via $\phi_{AC}$, or by co
 
 The generalisation is clean: an **$n$-morphism** is a cell of dimension $n$ in a higher category.
 
-$$
-\underbrace{\text{objects}}_{0\text{-cells}} \;\to\; 
-\underbrace{\text{morphisms}}_{1\text{-cells}} \;\to\; 
-\underbrace{2\text{-morphisms}}_{\text{morphisms between morphisms}} \;\to\; 
-\underbrace{3\text{-morphisms}}_{\text{morphisms between }2\text{-morphisms}} \;\to\; \cdots
-$$
+- $0$-cells: objects
+- $1$-cells: morphisms between objects
+- $2$-cells: morphisms between morphisms
+- $3$-cells: morphisms between $2$-cells
+- $\vdots$
+- $n$-cells: morphisms between $(n-1)$-cells
 
 $$
 \boxed{
@@ -487,16 +493,15 @@ $$
 
 ## Invariants: what survives a change of representation
 
-For $T \in \mathcal T$, ask what is preserved:
+For each admissible transition $T \in \mathcal T$, ask what is preserved — and what is discarded. The catalogue of invariants is open, but every entry must be defended:
 
-$$
-\underbrace{\text{causal order}}_{\text{before/after}}\ \ 
-\underbrace{\text{adjacency}}_{\text{who touches whom}}\ \ 
-\underbrace{\text{symmetry action}}_{\text{groups acting on the object}}\ \ 
-\underbrace{\text{conservation laws}}_{\text{energy, charge, count}}\ \ 
-\underbrace{\text{stat. dependence}}_{\text{correlations, information}}\ \ 
-\underbrace{\text{homotopy type}}_{\text{shape up to deformation}}.
-$$
+- *causal order* — what comes before / after
+- *adjacency* — what touches what
+- *symmetry actions* — groups acting on the object
+- *conservation laws* — energy, charge, count
+- *statistical dependence* — correlations, information flow
+- *homotopy type* — shape up to deformation
+- $\vdots$ *(anything else the admissible transitions of the domain preserve)*
 
 $$
 \boxed{
@@ -514,16 +519,16 @@ A representation is judged not by whether it *is* the subject matter but by *whi
 
 ## The hierarchy — never upgrade silently
 
-$$
-\underbrace{s_i|_U=s_j|_U}_{\text{strict: same on overlap}}\;\Rightarrow\;
-\underbrace{s_i\cong s_j}_{\text{iso}}\;\Rightarrow\;
-\underbrace{s_i\simeq s_j}_{\text{homotopy equiv.}}\;\Rightarrow\;
-\underbrace{d(s_i,s_j)\le\varepsilon}_{\text{approx}}\;\Rightarrow\;
-\underbrace{P(D_i,D_j\mid M)\text{ high}}_{\text{stat}}\;\Rightarrow\;
-\underbrace{\exists M:M\models T_{\text{all}}}_{\text{model-theoretic consistency}}.
-$$
+The forms of sameness form a tower from strongest to weakest. The arrow on each line means "implies the row below" — a witness of a stronger row is automatically a witness of every weaker one; the converse is false.
 
-Concrete examples in each column:
+- **strict** ($s_i|_U = s_j|_U$) — *same on overlap*. Implies iso.
+- **iso** ($s_i \cong s_j$) — *invertible comparison*. Implies homotopy equivalence.
+- **homotopy** ($s_i \simeq s_j$) — *coherent deformation*. Implies approximation under any compatible metric.
+- **approx** ($d(s_i, s_j) \le \varepsilon$) — *within tolerance*. Implies statistical agreement under any reasonable model.
+- **stat** ($P(D_i, D_j \mid M)$ high) — *probabilistic agreement*. Implies model-theoretic compatibility.
+- **model-theoretic** ($\exists M : M \models T_{\text{all}}$) — *common interpretation of the theories*.
+
+Concrete examples in each row:
 
 $$
 \begin{array}{c|c}
@@ -614,21 +619,15 @@ The whole framework, compressed into nine steps you can run through on any datas
 
 Given complicated evidence, in any domain:
 
-$$
-\underbrace{D}_{\text{raw datum}}\ \to\ 
-\underbrace{I(D)}_{\text{interpretation}}\ \to\ 
-\underbrace{W\to D\to I}_{\text{draw the chain}}\ \to\ 
-\underbrace{\text{overlaps}}_{\text{where do channels meet?}}\ \to\ 
-\underbrace{T_{ij}\in\mathcal T}_{\text{admissible transitions}}
-$$
-
-$$
-\to\ 
-\underbrace{\text{which sameness?}}_{=,\ \cong,\ \simeq,\ \le\varepsilon,\ \text{stat.}}\ \to\ 
-\underbrace{G}_{\text{candidate global model}}\ \to\ 
-\underbrace{\text{residuals}}_{\text{preserved, not erased}}\ \to\ 
-\underbrace{\text{next observation}}_{\text{discriminating evidence}}.
-$$
+1. **Take the raw datum $D$.** What is actually in front of you?
+2. **Interpret it as $I(D)$.** What reading are you imposing?
+3. **Draw the chain $W \to D \to I$.** Where in the chain could disagreement enter?
+4. **Identify overlaps.** Where do independent channels meet?
+5. **Specify admissible transitions $T_{ij} \in \mathcal T$.** What licenses each comparison?
+6. **Decide which sameness.** $=$, $\cong$, $\simeq$, $\le \varepsilon$, statistical — pick the right one and refuse to upgrade.
+7. **Build the candidate global model $G$.** Does descent hold on every admissible cover?
+8. **Record residuals.** What is preserved, not erased?
+9. **Plan the next observation.** What evidence would discriminate?
 
 $$
 \boxed{\text{Anomalies are constraints not yet integrated, not defeats.}}
@@ -643,23 +642,23 @@ $$
 $$
 \boxed{
 \begin{aligned}
-&\underbrace{\text{distinction}}_{\text{sets, type theory}}\\
+&\text{distinction} && \text{(sets, type theory)}\\
 &\quad\downarrow\\
-&\underbrace{\text{relation}}_{\text{graphs, typed identity}}\\
+&\text{relation} && \text{(graphs, typed identity)}\\
 &\quad\downarrow\\
-&\underbrace{\text{transformation}}_{\text{categories}}\\
+&\text{transformation} && \text{(categories)}\\
 &\quad\downarrow\\
-&\underbrace{\text{locality}}_{\text{topology, sites}}\\
+&\text{locality} && \text{(topology, sites)}\\
 &\quad\downarrow\\
-&\underbrace{\text{compatibility}}_{\text{sheaves}}\\
+&\text{compatibility} && \text{(sheaves)}\\
 &\quad\downarrow\\
-&\underbrace{\text{coherence}}_{\infty\text{-sheaves, HoTT}}\\
+&\text{coherence} && \text{($\infty$-sheaves, HoTT)}\\
 &\quad\downarrow\\
-&\underbrace{\text{gluing}}_{\text{descent}}\\
+&\text{gluing} && \text{(descent)}\\
 &\quad\downarrow\\
-&\underbrace{\text{globality}}_{\text{model theory, ML}}\\
+&\text{globality} && \text{(model theory, ML)}\\
 &\quad\downarrow\\
-&\underbrace{\text{invariance}}_{\text{what survives }\mathcal T}
+&\text{invariance} && \text{(what survives }\mathcal T\text{)}
 \end{aligned}}
 $$
 
@@ -883,14 +882,10 @@ $$
 
 The two traditions look opposed only if read carelessly. Read carefully, they are *complementary*: each names a necessary condition that the other ignores.
 
-$$
-\begin{array}{c|c|c}
-\text{Tradition} & \text{It checks that…} & \text{It ignores…}\\
-\hline
-\text{Correspondence (Tarski)} & \text{at each contact point, model}\leftrightarrow\text{world} & \text{the model's internal consistency}\\
-\text{Coherence (Bradley / Blanshard)} & \text{the model's parts fit on overlaps} & \text{whether the parts fit the world}
-\end{array}
-$$
+| Tradition                          | What it certifies                          | What it leaves unchecked                |
+|------------------------------------|--------------------------------------------|-----------------------------------------|
+| Correspondence (Tarski)            | at each contact point, model ↔ world       | whether the model's parts fit together  |
+| Coherence (Bradley / Blanshard)    | the model's parts cohere on their overlaps | whether the parts cohere with the world |
 
 A purely correspondence-based theory has no criterion for *which* claims to check: it can say "claim $S$ corresponds to fact $p$" but it has no story for whether $S$ itself hangs together with the rest of the model. A purely coherence-based theory has no anchor in the world: it can certify that a model is internally consistent, and nothing else.
 
@@ -1015,26 +1010,16 @@ $$
 </div>
 
 <div class="md">
-
 ### A practical protocol
 
 A six-step audit, applicable to any model — mathematical, physical, ML, historical, scientific:
 
-$$
-\underbrace{1.\ \text{name every claim}}_{\text{make the implicit explicit}}
-\;\;\to\;\;
-\underbrace{2.\ \text{name every contact point}}_{\text{where could Tarski apply?}}
-\;\;\to\;\;
-\underbrace{3.\ \text{check calibration of each }T\in\mathcal T}_{\text{is the bridge justified?}}
-\;\;\to\;\;
-$$
-$$
-\underbrace{4.\ \text{check descent on every admissible cover}}_{\text{coherence: do the parts fit?}}
-\;\;\to\;\;
-\underbrace{5.\ \text{apply Tarski at every contact}}_{\text{iff: claim iff world}}
-\;\;\to\;\;
-\underbrace{6.\ \text{record residuals}}_{\text{what remains unexplained?}}
-$$
+1. **Name every claim.** Make the implicit explicit.
+2. **Name every contact point.** Where could Tarski apply?
+3. **Check the calibration of each $T \in \mathcal{T}$.** Is the bridge between model and world itself justified?
+4. **Check descent on every admissible cover.** Do the parts of the model fit together?
+5. **Apply Tarski at every contact.** For each contact point: is the model's claim true iff the corresponding fact holds?
+6. **Record residuals.** What remains unexplained?
 
 If step 5 fails, the model is *false at that contact point*. If step 4 fails, the model is *incoherent*. If step 3 fails, the model is *using an undisclosed premise*. Each failure mode has a different remedy — and the diagnosis matters, because the fix for incoherence is not the fix for falsehood.
 
