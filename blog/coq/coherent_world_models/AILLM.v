@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 18_AILLM.v                                                                  *)
 (*                                                                             *)
-(* Section "What this offers AI systems" of coherent_world_models.php,         *)
+(* Section What this offers AI systems of coherent_world_models.php,         *)
 (* lines 1328-1565.                                                            *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)

@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 01_Traces.v                                                                 *)
 (*                                                                             *)
-(* Section "Traces" of coherent_world_models.php, lines 47-58.                *)
+(* Section Traces of coherent_world_models.php, lines 47-58.                *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
@@ -27,7 +27,7 @@
 (*                                                                             *)
 (* This file formalizes these notions. To work around Coq 8.20's strict      *)
 (* treatment of dependent record projections, the four properties are        *)
-(* encoded as Prop-valued definitions whose "witnesses" may be abstract       *)
+(* encoded as Prop-valued definitions whose witnesses may be abstract       *)
 (* placeholders (True) when Coq cannot directly compare the values.          *)
 (*                                                                             *)
 (* ============================================================================= *)
@@ -77,7 +77,7 @@ Definition PTTrace (r : Codomain) (pt : ProducedTrace r) : Trace r :=
 
 (* 2.1  Transformed.                                                           *)
 (*                                                                             *)
-(* A trace is "transformed" if it is the *output* of an access function       *)
+(* A trace is transformed if it is the *output* of an access function       *)
 (* applied to a region. A ProducedTrace already witnesses this property by   *)
 (* construction. We define the predicate as the existence of such a record.  *)
 
@@ -89,8 +89,8 @@ Definition Transformed (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :
 (*                                                                             *)
 (* A trace is mediated if the access function that produced it left marks:   *)
 (* different access functions on the same source/target can produce          *)
-(* different traces. The chapter: "An unmediated trace is a contradiction    *)
-(* in terms."                                                                  *)
+(* different traces. The chapter: An unmediated trace is a contradiction    *)
+(* in terms.                                                                  *)
 (*                                                                             *)
 (* We model the mediated property by recording the existence of two access   *)
 (* functions whose sources and targets agree, together with a placeholder    *)
@@ -111,8 +111,8 @@ Record MediatedSetup := {
 (* 2.3  Underdetermined.                                                       *)
 (*                                                                             *)
 (* A trace is underdetermined if there exist at least two distinct (w, O)    *)
-(* pairs that could have produced it. The chapter: "From the trace alone,   *)
-(* neither the source w nor the procedure O is uniquely determined."         *)
+(* pairs that could have produced it. The chapter: From the trace alone,   *)
+(* neither the source w nor the procedure O is uniquely determined.         *)
 (*                                                                             *)
 (* We model underdetermination as the existence of two distinct              *)
 (* ProducedTrace records that yield the same trace. The distinctness         *)
@@ -143,7 +143,7 @@ Record Indexical (r : Codomain) (t : Trace r) : Prop :=
 (* explicitly here. The result type of it_trace r it is R_carrier r, which  *)
 (* matches t : Trace r.                                                       *)
 
-(* A non-indexical trace is a "free pattern".                                *)
+(* A non-indexical trace is a free pattern.                                *)
 
 Definition FreePattern (r : Codomain) (t : Trace r) : Prop :=
   forall (it : IndexicalTrace r), it_trace r it <> t.
@@ -192,9 +192,9 @@ Defined.
 (* 4.  Inference: recovering (w, O) from a trace                               *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter says: "From the trace alone, neither the source w nor the      *)
+(* The chapter says: From the trace alone, neither the source w nor the      *)
 (* procedure O is uniquely determined; recovering them is the whole task of  *)
-(* inference." We model the inference task abstractly: given a trace, the    *)
+(* inference. We model the inference task abstractly: given a trace, the    *)
 (* space of possible (w, O) pairs is the inverse image of the access         *)
 (* function.                                                                   *)
 (*                                                                             *)

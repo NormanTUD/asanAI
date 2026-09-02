@@ -2,11 +2,11 @@
 (*                                                                             *)
 (* 15_Tarski.v                                                                 *)
 (*                                                                             *)
-(* Sections "Truth: coherence and correspondence", "Tarski's Convention T",  *)
-(* "Why Tarski's correspondence is structural", "The coherence tradition",   *)
-(* "The synthesis: coherence and correspondence", "The diagram, completed",   *)
-(* "Three pathologies", "Tarski's discipline, applied", "A practical         *)
-(* protocol", and "The closing synthesis" of coherent_world_models.php,       *)
+(* Sections Truth: coherence and correspondence, Tarski's Convention T,  *)
+(* Why Tarski's correspondence is structural, The coherence tradition,   *)
+(* The synthesis: coherence and correspondence, The diagram, completed,   *)
+(* Three pathologies, Tarski's discipline, applied, A practical         *)
+(* protocol, and The closing synthesis of coherent_world_models.php,       *)
 (* lines 1028-1324.                                                            *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
@@ -25,7 +25,7 @@
 (*     translates x. Four pieces: object-language, meta-language,           *)
 (*     quotation-name, proposition p.                                         *)
 (*                                                                             *)
-(*     The classical illustration: "snow is white" is true iff snow is white.*)
+(*     The classical illustration: snow is white is true iff snow is white.*)
 (*                                                                             *)
 (*   Why Tarski's correspondence is structural (lines 1085-1113).            *)
 (*                                                                             *)
@@ -39,7 +39,7 @@
 (*                                                                             *)
 (*   The coherence tradition (lines 1117-1141).                              *)
 (*                                                                             *)
-(*     Bradley's "Appearance and Reality": truth is systematic coherence of  *)
+(*     Bradley's Appearance and Reality: truth is systematic coherence of  *)
 (*     ideas, such coherence being determined ultimately by the reality.    *)
 (*     Blanshard: coherence with the whole of experience. BonJour: the      *)
 (*     structure of empirical knowledge. The sheaf condition IS the        *)
@@ -122,14 +122,14 @@ Record ConventionT := {
   CT_iff : CT_quoted = CT_p   (* Convention T: S is true iff p                *)
 }.
 
-(* The classical illustration: "snow is white" is true iff snow is white.    *)
+(* The classical illustration: snow is white is true iff snow is white.    *)
 
 Record SnowIsWhite := {
   SIW_S : Type;
   SIW_snow_is_white : SIW_S;
   SIW_p : Type;
   SIW_snow_is_white_fact : SIW_p;
-  SIW_iff : Prop   (* Convention T: "snow is white" is true iff snow is white *)
+  SIW_iff : Prop   (* Convention T: snow is white is true iff snow is white *)
 }.
 
 (* ---------------------------------------------------------------------------- *)
@@ -147,9 +147,9 @@ Inductive TarskiConsequence :=
   | TC_semantic      : TarskiConsequence
   | TC_conservative  : TarskiConsequence.
 
-(* The chapter's claim: "Tarski turns truth from a metaphysical mystery   *)
+(* The chapter's claim: Tarski turns truth from a metaphysical mystery   *)
 (* into an interface condition. At every point where the model's claim   *)
-(* meets the world, an if-and-only-if must hold."                            *)
+(* meets the world, an if-and-only-if must hold.                            *)
 
 Record TruthAsInterface := {
   TAI_claim : Type;          (* the model's claim                            *)
@@ -169,8 +169,8 @@ Record CoherenceTradition := {
   CT_global_section : Type;
   CT_coherence_holds : Prop   (* placeholder for sheaf-style coherence       *)
 }.
-(* The chapter: "the sheaf condition IS the coherence tradition in the      *)
-(* chapter's vocabulary."                                                    *)
+(* The chapter: the sheaf condition IS the coherence tradition in the      *)
+(* chapter's vocabulary.                                                    *)
 
 (* ---------------------------------------------------------------------------- *)
 (* 4.  The synthesis                                                              *)

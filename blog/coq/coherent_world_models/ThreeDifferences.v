@@ -2,12 +2,12 @@
 (*                                                                             *)
 (* 03_ThreeDifferences.v                                                       *)
 (*                                                                             *)
-(* Section "Three kinds of difference" of coherent_world_models.php,          *)
+(* Section Three kinds of difference of coherent_world_models.php,          *)
 (* lines 114-154.                                                              *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
-(*   Between the "subject matter W" and the trace r in R that was received,   *)
+(*   Between the subject matter W and the trace r in R that was received,   *)
 (* the chapter locates three independent sources of difference:              *)
 (*                                                                             *)
 (*     1. World-level difference (W_1 != W_2). Two subjects genuinely       *)
@@ -22,9 +22,9 @@
 (*        of the same trace yield different conclusions.                      *)
 (*        Example: Doppler shift read as moving source vs expanding universe.*)
 (*                                                                             *)
-(*   The chapter's moral: "Two reports disagreeing does not, by itself,     *)
+(*   The chapter's moral: Two reports disagreeing does not, by itself,     *)
 (*   tell you which level is responsible. Locate the difference at the      *)
-(*   right level."                                                              *)
+(*   right level.                                                              *)
 (*                                                                             *)
 (* This file formalizes each level as a record, and provides the diagnostic   *)
 (* disjunction.                                                                *)
@@ -38,9 +38,9 @@ Require Import Traces.
 (* 1.  World-level difference (W_1 != W_2)                                    *)
 (* ---------------------------------------------------------------------------- *)
 
-(* Two subject matters W_1 and W_2 are "different" when there is no          *)
-(* procedure to identify their regions. The chapter: "two distinct stones,   *)
-(* two historical events, two specific classical objects."                     *)
+(* Two subject matters W_1 and W_2 are different when there is no          *)
+(* procedure to identify their regions. The chapter: two distinct stones,   *)
+(* two historical events, two specific classical objects.                     *)
 
 Record WorldDifference := {
   WD_W1 : SubjectMatter;
@@ -95,10 +95,10 @@ Record ChannelDifference := {
   CD_distinct : Prop      (* witness of map-distinctness (placeholder)        *)
 }.
 
-(* Co-location matters. The chapter: "If the thermometers are at different   *)
+(* Co-location matters. The chapter: If the thermometers are at different   *)
 (* positions in a non-uniform temperature field... they may legitimately    *)
 (* report different values, and that would be a world-level difference       *)
-(* (different points in the field), not a channel-level one."                *)
+(* (different points in the field), not a channel-level one.                *)
 (*                                                                             *)
 (* We model co-location by tagging each instrument with a position in W.    *)
 
@@ -147,9 +147,9 @@ Record ThermometersExample := {
 (* ---------------------------------------------------------------------------- *)
 
 (* Two interpretations of the same trace yield different conclusions. The   *)
-(* chapter: "the same Doppler-shifted spectrum is read by one physicist as   *)
+(* chapter: the same Doppler-shifted spectrum is read by one physicist as   *)
 (* evidence for a moving source, by another as evidence for an expanding    *)
-(* universe."                                                                  *)
+(* universe.                                                                  *)
 
 Record ProcessingDifference := {
   PD_subject : SubjectMatter;
@@ -163,10 +163,10 @@ Record ProcessingDifference := {
   PD_disagree : exists t : Trace PD_codomain, PD_nu1 t /\ ~ PD_nu2 t
 }.
 
-(* The chapter's caveat: "the equations of fundamental physics are true of   *)
+(* The chapter's caveat: the equations of fundamental physics are true of   *)
 (* the highly idealized model setups in which they were derived... and       *)
 (* approximately true of many real systems, but often false of the messy,   *)
-(* multifactorial, dappled world in which we actually use them."              *)
+(* multifactorial, dappled world in which we actually use them.              *)
 (* (Cartwright, *How the Laws of Physics Lie*.)                              *)
 
 (* Silent upgrade between world-level and channel-level (or processing-       *)
@@ -190,8 +190,8 @@ Inductive DisagreementKind :=
   | DK_Processing : DisagreementKind   (* nu_1 != nu_2                          *)
   | DK_Unknown    : DisagreementKind.  (* cannot yet tell                       *)
 
-(* The chapter's boxed principle: "Two reports disagreeing does not, by     *)
-(* itself, tell you which level is responsible."                             *)
+(* The chapter's boxed principle: Two reports disagreeing does not, by     *)
+(* itself, tell you which level is responsible.                             *)
 
 Axiom disagreement_underdetermined :
   forall (s : SubjectMatter) (r : Codomain) (t1 t2 : Trace r),
@@ -200,8 +200,8 @@ Axiom disagreement_underdetermined :
 (* We model the underdetermination axiomatically. Concrete proofs would     *)
 (* require explicit evidence at one of the three levels.                    *)
 
-(* The chapter's boxed discipline: "Locate the difference at the right       *)
-(* level."                                                                      *)
+(* The chapter's boxed discipline: Locate the difference at the right       *)
+(* level.                                                                      *)
 
 Definition locate_difference (k : DisagreementKind) : Prop := True.
 (* The discipline is to *ask* which level; this is a placeholder for the     *)

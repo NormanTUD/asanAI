@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 13_Forbidden.v                                                               *)
 (*                                                                             *)
-(* Section "What is forbidden" of coherent_world_models.php, lines 846-866.  *)
+(* Section What is forbidden of coherent_world_models.php, lines 846-866.  *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
@@ -15,7 +15,7 @@
 (*     5. Treating a suggestive analogy (attention, residuals, embeddings)  *)
 (*        as a theorem in the borrowed category.                              *)
 (*                                                                             *)
-(*   The chapter's coda: "A useful analogy is not a theorem."                 *)
+(*   The chapter's coda: A useful analogy is not a theorem.                 *)
 (*                                                                             *)
 (* This file formalizes each forbidden move as a Prop.                       *)
 (*                                                                             *)
@@ -52,9 +52,9 @@ Record SilentUpgrade := {
                                             (* supplied (placeholder)          *)
 }.
 
-(* The chapter: "passing from a witness of ~= to a claim of =, or from a  *)
+(* The chapter: passing from a witness of ~= to a claim of =, or from a  *)
 (* proof of <=eps to a proof of equality, without explicitly carrying the  *)
-(* residual. Each promotion must be earned, witnessed, and recorded."      *)
+(* residual. Each promotion must be earned, witnessed, and recorded.      *)
 
 Axiom upgrade_must_be_earned :
   forall (su : SilentUpgrade), True.
@@ -65,9 +65,9 @@ Axiom upgrade_must_be_earned :
 (* 2.  Forbidden move 2: unconstrained T                                         *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "An unconstrained T: coherence becomes vacuous. Pick the  *)
+(* The chapter: An unconstrained T: coherence becomes vacuous. Pick the  *)
 (* most convenient family, declare it a cover, and coherence is            *)
-(* automatic."                                                                 *)
+(* automatic.                                                                 *)
 
 Record UnconstrainedT := {
   UCT_T : Prop;             (* membership in T is unrestricted               *)
@@ -83,7 +83,7 @@ Axiom coherence_vacuous_under_unconstrained_T :
 (* 3.  Forbidden move 3: identifying G with W                                     *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "Identifying G with W." G is the global section of some    *)
+(* The chapter: Identifying G with W. G is the global section of some    *)
 (* admissible cover; W is the subject matter. They are not the same.       *)
 
 Record Identification := {
@@ -103,8 +103,8 @@ Axiom identification_forbidden :
 (* 4.  Forbidden move 4: internal coherence as descent                           *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "Internal coherence mistaken for descent from grounded     *)
-(* contexts." This is the hallucination pathology.                          *)
+(* The chapter: Internal coherence mistaken for descent from grounded     *)
+(* contexts. This is the hallucination pathology.                          *)
 
 Record MistakenCoherence := {
   MC_G : Type;               (* the model's section                          *)
@@ -123,8 +123,8 @@ Axiom coherence_not_descent :
 (* 5.  Forbidden move 5: analogy as theorem                                       *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "Treating a suggestive analogy (attention, residuals,    *)
-(* embeddings) as a theorem in the borrowed category."                      *)
+(* The chapter: Treating a suggestive analogy (attention, residuals,    *)
+(* embeddings) as a theorem in the borrowed category.                      *)
 
 Record BorrowedAnalogy := {
   BA_source_category : Type;
@@ -136,7 +136,7 @@ Record BorrowedAnalogy := {
 Axiom analogy_not_theorem :
   forall (ba : BorrowedAnalogy), True.
 
-(* The chapter: "A useful analogy is not a theorem."                          *)
+(* The chapter: A useful analogy is not a theorem.                          *)
 
 Definition analogy_not_theorem_boxed : Prop :=
   forall (ba : BorrowedAnalogy), True.
@@ -153,8 +153,8 @@ Definition analogy_not_theorem_boxed : Prop :=
 (*   5. BorrowedAnalogy: structural similarity used as a theorem.            *)
 (*                                                                             *)
 (* Each forbidden move is captured by a record type and an axiom that       *)
-(* declares it out-of-bounds. The boxed principle "A useful analogy is    *)
-(* not a theorem" is the closing note of the section.                        *)
+(* declares it out-of-bounds. The boxed principle A useful analogy is    *)
+(* not a theorem is the closing note of the section.                        *)
 (*                                                                             *)
 (* The file depends on Library.v, Traces.v, AdmissibleTransitions.v,        *)
 (* Sheaves.v, and MasterDiagram.v.                                           *)

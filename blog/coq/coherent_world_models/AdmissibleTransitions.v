@@ -2,13 +2,13 @@
 (*                                                                             *)
 (* 06_AdmissibleTransitions.v                                                   *)
 (*                                                                             *)
-(* Section "Admissible transitions" of coherent_world_models.php,             *)
+(* Section Admissible transitions of coherent_world_models.php,             *)
 (* lines 281-367.                                                              *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
 (*   For any two finite sets of equal size, *some* bijection exists. So the   *)
-(*   bare claim "there is a transformation" is empty; it carries no          *)
+(*   bare claim there is a transformation is empty; it carries no          *)
 (*   information. The real content is a constrained class T of arrows,      *)
 (*   justified independently of the data it is later applied to.             *)
 (*                                                                             *)
@@ -30,7 +30,7 @@
 (*                                                                             *)
 (*   The chapter contrasts the foundationalist picture (rejected) with the   *)
 (*   Sellarsian alternative: a self-correcting enterprise whose structure   *)
-(*   is the structure of the "space of reasons".                              *)
+(*   is the structure of the space of reasons.                              *)
 (*                                                                             *)
 (* This file formalizes the class T, its three interpretations, the         *)
 (* examples, and the Sellarsian alternative.                                  *)
@@ -50,7 +50,7 @@ Import ListNotations.
 (* translation_licensed, refinement_licensed, and AdmissibleTransition.       *)
 (* Here we add the higher-level structure that the chapter uses.              *)
 
-(* The chapter: "T is a subset of the pool of morphisms." Concretely,        *)
+(* The chapter: T is a subset of the pool of morphisms. Concretely,        *)
 (*                                                                       *)
 (*   T  is a subset of                                                    *)
 (*     { W -> R_i } (observations)                                       *)
@@ -74,8 +74,8 @@ Inductive InT (k : TransitionKind) : Prop :=
 (* 2.  Three roles of T                                                          *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "T plays three roles at once: a subcategory constraint, a   *)
-(* Bayesian prior, and an Occam penalty."                                     *)
+(* The chapter: T plays three roles at once: a subcategory constraint, a   *)
+(* Bayesian prior, and an Occam penalty.                                     *)
 
 (* 2.1  Subcategory interpretation.                                             *)
 
@@ -107,8 +107,8 @@ Record OccamPenalty := {
 Axiom three_roles_one_set :
   forall (sc : SubcategoryConstraint) (bp : BayesianPrior),
     (forall k, InT k <-> In k (SC_permitted sc) \/ In k (BP_hypotheses bp)).
-(* The chapter: "Three names, one restriction: the same set of arrows is    *)
-(* viewed from three sides."                                                  *)
+(* The chapter: Three names, one restriction: the same set of arrows is    *)
+(* viewed from three sides.                                                  *)
 
 (* ---------------------------------------------------------------------------- *)
 (* 3.  Examples of admissible transitions                                       *)
@@ -125,7 +125,7 @@ Inductive AdmissibleKind : Type :=
   | AK_validated_decoder      : AdmissibleKind
   | AK_archival_transmission  : AdmissibleKind.
 
-(* Each kind is justified independently. We model the "justified" predicate *)
+(* Each kind is justified independently. We model the justified predicate *)
 (* as a flag, since the actual justification depends on the modelling setup. *)
 
 Definition justified (ak : AdmissibleKind) : Prop := True.
@@ -136,7 +136,7 @@ Definition justified (ak : AdmissibleKind) : Prop := True.
 (* 4.  The boxed principle                                                       *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "More transformation freedom => more evidence required."    *)
+(* The chapter: More transformation freedom => more evidence required.    *)
 
 Axiom more_freedom_more_evidence :
   forall (T1 T2 : Type) (size1 size2 : nat)
@@ -165,30 +165,30 @@ Axiom more_freedom_more_evidence :
 (*   The web has no top and no bottom; every arrow is a specific licensed    *)
 (*   transition T in T.                                                       *)
 
-(* The chapter: "Sellars's self-correcting enterprise is exactly the        *)
-(* picture of a global model G that we have been building."                  *)
+(* The chapter: Sellars's self-correcting enterprise is exactly the        *)
+(* picture of a global model G that we have been building.                  *)
 
 Record SellarsianWeb := {
   SW_R1 : Codomain;
   SW_R2 : Codomain;
   SW_R3 : Codomain;
   SW_R4 : Codomain;
-  SW_T12 : ViewTranslation;     (* R_1 -> R_2, "calibration"                  *)
+  SW_T12 : ViewTranslation;     (* R_1 -> R_2, calibration                  *)
   SW_T23 : ViewTranslation;     (* R_2 -> R_1, re-calibration                *)
-  SW_T13 : ViewTranslation;     (* R_1 -> R_3, "measurement"                  *)
+  SW_T13 : ViewTranslation;     (* R_1 -> R_3, measurement                  *)
   SW_T31 : ViewTranslation;     (* R_3 -> R_1, re-measurement                *)
-  SW_T24 : ViewTranslation;     (* R_2 -> R_4, "measurement"                  *)
+  SW_T24 : ViewTranslation;     (* R_2 -> R_4, measurement                  *)
   SW_T42 : ViewTranslation;     (* R_4 -> R_2, re-measurement                *)
-  SW_T34 : ViewTranslation;     (* R_3 -> R_4, "proof"                        *)
-  SW_T43 : ViewTranslation      (* R_4 -> R_3, "re-proof"                     *)
+  SW_T34 : ViewTranslation;     (* R_3 -> R_4, proof                        *)
+  SW_T43 : ViewTranslation      (* R_4 -> R_3, re-proof                     *)
 }.
 
 (* All arrows are licensed. We abstract this with a placeholder.              *)
 
 Definition web_is_licensed (sw : SellarsianWeb) : Prop := True.
 (* Each arrow in the web has been justified in its own terms. The chapter:  *)
-(* "any arrow can be challenged at any contact point where Tarski's         *)
-(* condition fails."                                                           *)
+(* any arrow can be challenged at any contact point where Tarski's         *)
+(* condition fails.                                                           *)
 
 (* ---------------------------------------------------------------------------- *)
 (* 6.  Summary comment                                                          *)
@@ -198,7 +198,7 @@ Definition web_is_licensed (sw : SellarsianWeb) : Prop := True.
 (*   - The class T (InT) as a disjunction of three kinds of arrow.           *)
 (*   - The three interpretations of T: subcategory, Bayesian prior, Occam.   *)
 (*   - Six kinds of admissible transitions, with justification placeholders. *)
-(*   - The "more freedom => more evidence" principle.                        *)
+(*   - The more freedom => more evidence principle.                        *)
 (*   - The Sellarsian web as a structure with no foundation.                 *)
 (*                                                                             *)
 (* The chapter's central claim -- that T is one restriction viewed three     *)

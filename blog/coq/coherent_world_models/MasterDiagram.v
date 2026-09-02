@@ -2,8 +2,8 @@
 (*                                                                             *)
 (* 12_MasterDiagram.v                                                           *)
 (*                                                                             *)
-(* Sections "Where AI actually enters", "Invariants", "The hierarchy: never *)
-(* upgrade silently", "The one diagram", and related, of                     *)
+(* Sections Where AI actually enters, Invariants, The hierarchy: never *)
+(* upgrade silently, The one diagram, and related, of                     *)
 (* coherent_world_models.php, lines 644-842.                                   *)
 (*                                                                             *)
 (* Summary of these sections.                                                 *)
@@ -216,7 +216,7 @@ Inductive MasterSetting :=
   | MS_probabilistic: MasterSetting   (* posterior mode                        *)
   | MS_ML           : MasterSetting.  (* learned latent                         *)
 
-(* The chapter's box: "Different mathematics; one shape."                    *)
+(* The chapter's box: Different mathematics; one shape.                    *)
 
 Axiom one_shape :
   forall (md : MasterDiagram) (s : MasterSetting), global_section_exists md.
@@ -227,8 +227,8 @@ Axiom one_shape :
 (* 6.  The hierarchy (already in NotionsOfSameness.v)                            *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The hierarchy of sameness is in NotionsOfSameness.v. The "hierarchy:     *)
-(* never upgrade silently" section restates the principle for the descent  *)
+(* The hierarchy of sameness is in NotionsOfSameness.v. The hierarchy:     *)
+(* never upgrade silently section restates the principle for the descent  *)
 (* context: strict -> iso -> homotopy -> approx -> stat -> model-theoretic. */
 
 (* We re-state the principle in the descent context.                          *)

@@ -1,175 +1,175 @@
-DIGEST a7a06b996916c433c3d950defc665bbf
+DIGEST a2049ce68ba145e0d15daf288aa581a6
 FOlogs
-R2297:2303 Library <> <> lib
-rec 2805:2812 <> OlogType
-proj 2821:2830 <> OT_carrier
-proj 2842:2849 <> OT_label
-R2865:2868 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R2855:2864 Ologs <> OT_carrier:2 meth
-rec 3340:3354 <> ThermometerType
-proj 3363:3381 <> thermometer_carrier
-rec 3401:3415 <> TemperatureType
-proj 3424:3442 <> temperature_carrier
-rec 3873:3881 <> OlogArrow
-proj 3890:3898 <> OA_source
-proj 3914:3922 <> OA_target
-proj 3938:3943 <> OA_map
-proj 3998:4005 <> OA_label
-R3902:3909 Ologs <> OlogType rec
-R3926:3933 Ologs <> OlogType rec
-R3970:3973 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3950:3959 Ologs <> OT_carrier proj
-R3961:3969 Ologs <> OA_source:9 meth
-R3974:3983 Ologs <> OT_carrier proj
-R3985:3993 Ologs <> OA_target:10 meth
-R4030:4033 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R4010:4019 Ologs <> OT_carrier proj
-R4021:4029 Ologs <> OA_source:9 meth
-def 4175:4190 <> functional_arrow
-R4197:4205 Ologs <> OlogArrow rec
-binder 4193:4193 <> a:13
-R4233:4242 Ologs <> OT_carrier proj
-R4245:4253 Ologs <> OA_source proj
-R4255:4255 Ologs <> a:13 var
-binder 4227:4227 <> x:14
-binder 4229:4229 <> y:15
-R4286:4289 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R4273:4275 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R4263:4268 Ologs <> OA_map proj
-R4270:4270 Ologs <> a:13 var
-R4272:4272 Ologs <> x:14 var
-R4276:4281 Ologs <> OA_map proj
-R4283:4283 Ologs <> a:13 var
-R4285:4285 Ologs <> y:15 var
-R4291:4293 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R4290:4290 Ologs <> x:14 var
-R4294:4294 Ologs <> y:15 var
-rec 5778:5794 <> CommutativeSquare
-proj 5803:5806 <> CS_A
-proj 5822:5825 <> CS_B
-proj 5841:5844 <> CS_C
-proj 5860:5863 <> CS_D
-proj 5879:5882 <> CS_f
-proj 5899:5902 <> CS_g
-proj 5919:5922 <> CS_h
-proj 5939:5942 <> CS_k
-proj 5959:5966 <> CS_f_src
-proj 5995:6002 <> CS_f_tgt
-proj 6031:6038 <> CS_g_src
-proj 6067:6074 <> CS_g_tgt
-proj 6103:6110 <> CS_h_src
-proj 6139:6146 <> CS_h_tgt
-proj 6175:6182 <> CS_k_src
-proj 6211:6218 <> CS_k_tgt
-proj 6247:6257 <> CS_commutes
-R5810:5817 Ologs <> OlogType rec
-R5829:5836 Ologs <> OlogType rec
-R5848:5855 Ologs <> OlogType rec
-R5867:5874 Ologs <> OlogType rec
+R2285:2291 Library <> <> lib
+rec 2791:2798 <> OlogType
+proj 2807:2816 <> OT_carrier
+proj 2828:2835 <> OT_label
+R2851:2854 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2841:2850 Ologs <> OT_carrier:2 meth
+rec 3326:3340 <> ThermometerType
+proj 3349:3367 <> thermometer_carrier
+rec 3387:3401 <> TemperatureType
+proj 3410:3428 <> temperature_carrier
+rec 3859:3867 <> OlogArrow
+proj 3876:3884 <> OA_source
+proj 3900:3908 <> OA_target
+proj 3924:3929 <> OA_map
+proj 3984:3991 <> OA_label
+R3888:3895 Ologs <> OlogType rec
+R3912:3919 Ologs <> OlogType rec
+R3956:3959 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3936:3945 Ologs <> OT_carrier proj
+R3947:3955 Ologs <> OA_source:9 meth
+R3960:3969 Ologs <> OT_carrier proj
+R3971:3979 Ologs <> OA_target:10 meth
+R4016:4019 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3996:4005 Ologs <> OT_carrier proj
+R4007:4015 Ologs <> OA_source:9 meth
+def 4159:4174 <> functional_arrow
+R4181:4189 Ologs <> OlogArrow rec
+binder 4177:4177 <> a:13
+R4217:4226 Ologs <> OT_carrier proj
+R4229:4237 Ologs <> OA_source proj
+R4239:4239 Ologs <> a:13 var
+binder 4211:4211 <> x:14
+binder 4213:4213 <> y:15
+R4270:4273 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4257:4259 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4247:4252 Ologs <> OA_map proj
+R4254:4254 Ologs <> a:13 var
+R4256:4256 Ologs <> x:14 var
+R4260:4265 Ologs <> OA_map proj
+R4267:4267 Ologs <> a:13 var
+R4269:4269 Ologs <> y:15 var
+R4275:4277 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4274:4274 Ologs <> x:14 var
+R4278:4278 Ologs <> y:15 var
+rec 5758:5774 <> CommutativeSquare
+proj 5783:5786 <> CS_A
+proj 5802:5805 <> CS_B
+proj 5821:5824 <> CS_C
+proj 5840:5843 <> CS_D
+proj 5859:5862 <> CS_f
+proj 5879:5882 <> CS_g
+proj 5899:5902 <> CS_h
+proj 5919:5922 <> CS_k
+proj 5939:5946 <> CS_f_src
+proj 5975:5982 <> CS_f_tgt
+proj 6011:6018 <> CS_g_src
+proj 6047:6054 <> CS_g_tgt
+proj 6083:6090 <> CS_h_src
+proj 6119:6126 <> CS_h_tgt
+proj 6155:6162 <> CS_k_src
+proj 6191:6198 <> CS_k_tgt
+proj 6227:6237 <> CS_commutes
+R5790:5797 Ologs <> OlogType rec
+R5809:5816 Ologs <> OlogType rec
+R5828:5835 Ologs <> OlogType rec
+R5847:5854 Ologs <> OlogType rec
+R5866:5874 Ologs <> OlogArrow rec
 R5886:5894 Ologs <> OlogArrow rec
 R5906:5914 Ologs <> OlogArrow rec
 R5926:5934 Ologs <> OlogArrow rec
-R5946:5954 Ologs <> OlogArrow rec
-R5984:5986 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5970:5978 Ologs <> OA_source proj
-R5980:5983 Ologs <> CS_f:21 meth
-R5987:5990 Ologs <> CS_A:17 meth
-R6020:6022 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6006:6014 Ologs <> OA_target proj
-R6016:6019 Ologs <> CS_f:21 meth
-R6023:6026 Ologs <> CS_B:18 meth
-R6056:6058 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6042:6050 Ologs <> OA_source proj
-R6052:6055 Ologs <> CS_g:22 meth
-R6059:6062 Ologs <> CS_A:17 meth
-R6092:6094 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6078:6086 Ologs <> OA_target proj
-R6088:6091 Ologs <> CS_g:22 meth
-R6095:6098 Ologs <> CS_C:19 meth
-R6128:6130 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6114:6122 Ologs <> OA_source proj
-R6124:6127 Ologs <> CS_h:23 meth
-R6131:6134 Ologs <> CS_B:18 meth
-R6164:6166 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6150:6158 Ologs <> OA_target proj
-R6160:6163 Ologs <> CS_h:23 meth
-R6167:6170 Ologs <> CS_D:20 meth
-R6200:6202 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6186:6194 Ologs <> OA_source proj
-R6196:6199 Ologs <> CS_k:24 meth
-R6203:6206 Ologs <> CS_C:19 meth
-R6236:6238 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6222:6230 Ologs <> OA_target proj
-R6232:6235 Ologs <> CS_k:24 meth
-R6239:6242 Ologs <> CS_D:20 meth
-rec 7722:7739 <> ThermometerReading
-proj 7748:7757 <> TR_reading
-R7761:7767 Library <> :::'Trace'_x not
-R7819:7819 Library <> :::'Trace'_x not
-R7768:7781 Library <> Build_Codomain constr
-R7799:7802 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R7784:7798 Ologs <> ThermometerType rec
-R7803:7817 Ologs <> TemperatureType rec
-rec 7992:8006 <> ThermometerOlog
-proj 8015:8024 <> TO_subject
-proj 8036:8045 <> TO_reading
-proj 8057:8070 <> TO_temperature
-proj 8082:8099 <> TO_current_reading
-proj 8131:8150 <> TO_reading_indicates
-proj 8186:8204 <> TO_true_temperature
-proj 8240:8252 <> TO_calibrated
-R8113:8116 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8103:8112 Ologs <> TO_subject:37 meth
-R8117:8126 Ologs <> TO_reading:38 meth
-R8164:8167 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8154:8163 Ologs <> TO_reading:38 meth
-R8168:8181 Ologs <> TO_temperature:39 meth
-R8218:8221 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8208:8217 Ologs <> TO_subject:37 meth
-R8222:8235 Ologs <> TO_temperature:39 meth
-R8267:8276 Ologs <> TO_subject:37 meth
-binder 8263:8263 <> x:43
-R8304:8306 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8283:8301 Ologs <> TO_true_temperature:42 meth
-R8303:8303 Ologs <> x:43 var
-R8307:8326 Ologs <> TO_reading_indicates:41 meth
-R8329:8346 Ologs <> TO_current_reading:40 meth
-R8348:8348 Ologs <> x:43 var
-ind 8927:8943 <> ThermometerStatus
-constr 8952:8964 <> TS_calibrated
-constr 8990:8996 <> TS_hole
-R8968:8984 Ologs <> ThermometerStatus:45 ind
-R9006:9022 Ologs <> ThermometerStatus:45 ind
-scheme 8927:8943 <> ThermometerStatus_rect
-scheme 8927:8943 <> ThermometerStatus_ind
-scheme 8927:8943 <> ThermometerStatus_rec
-scheme 8927:8943 <> ThermometerStatus_sind
-rec 9649:9658 <> MasterOlog
-proj 9667:9670 <> MO_W
-proj 9682:9685 <> MO_R
-proj 9842:9845 <> MO_G
-proj 9857:9860 <> MO_O
-proj 9937:9940 <> MO_T
-R9868:9871 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9864:9867 Ologs <> MO_W:48 meth
-R9872:9875 Ologs <> MO_R:49 meth
-R9948:9951 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9944:9947 Ologs <> MO_R:49 meth
-R9952:9955 Ologs <> MO_G:50 meth
-def 10110:10123 <> master_descent
-R10130:10139 Ologs <> MasterOlog rec
-binder 10126:10126 <> m:53
-R10165:10168 Ologs <> MO_W proj
-R10170:10170 Ologs <> m:53 var
-binder 10161:10161 <> w:54
-R10190:10192 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R10173:10176 Ologs <> MO_T proj
-R10178:10178 Ologs <> m:53 var
-R10181:10184 Ologs <> MO_O proj
-R10186:10186 Ologs <> m:53 var
-R10188:10188 Ologs <> w:54 var
-R10193:10196 Ologs <> MO_T proj
-R10198:10198 Ologs <> m:53 var
-R10201:10204 Ologs <> MO_O proj
-R10206:10206 Ologs <> m:53 var
-R10208:10208 Ologs <> w:54 var
+R5964:5966 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5950:5958 Ologs <> OA_source proj
+R5960:5963 Ologs <> CS_f:21 meth
+R5967:5970 Ologs <> CS_A:17 meth
+R6000:6002 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5986:5994 Ologs <> OA_target proj
+R5996:5999 Ologs <> CS_f:21 meth
+R6003:6006 Ologs <> CS_B:18 meth
+R6036:6038 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6022:6030 Ologs <> OA_source proj
+R6032:6035 Ologs <> CS_g:22 meth
+R6039:6042 Ologs <> CS_A:17 meth
+R6072:6074 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6058:6066 Ologs <> OA_target proj
+R6068:6071 Ologs <> CS_g:22 meth
+R6075:6078 Ologs <> CS_C:19 meth
+R6108:6110 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6094:6102 Ologs <> OA_source proj
+R6104:6107 Ologs <> CS_h:23 meth
+R6111:6114 Ologs <> CS_B:18 meth
+R6144:6146 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6130:6138 Ologs <> OA_target proj
+R6140:6143 Ologs <> CS_h:23 meth
+R6147:6150 Ologs <> CS_D:20 meth
+R6180:6182 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6166:6174 Ologs <> OA_source proj
+R6176:6179 Ologs <> CS_k:24 meth
+R6183:6186 Ologs <> CS_C:19 meth
+R6216:6218 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6202:6210 Ologs <> OA_target proj
+R6212:6215 Ologs <> CS_k:24 meth
+R6219:6222 Ologs <> CS_D:20 meth
+rec 7702:7719 <> ThermometerReading
+proj 7728:7737 <> TR_reading
+R7741:7747 Library <> :::'Trace'_x not
+R7799:7799 Library <> :::'Trace'_x not
+R7748:7761 Library <> Build_Codomain constr
+R7779:7782 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7764:7778 Ologs <> ThermometerType rec
+R7783:7797 Ologs <> TemperatureType rec
+rec 7972:7986 <> ThermometerOlog
+proj 7995:8004 <> TO_subject
+proj 8016:8025 <> TO_reading
+proj 8037:8050 <> TO_temperature
+proj 8062:8079 <> TO_current_reading
+proj 8111:8130 <> TO_reading_indicates
+proj 8166:8184 <> TO_true_temperature
+proj 8220:8232 <> TO_calibrated
+R8093:8096 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8083:8092 Ologs <> TO_subject:37 meth
+R8097:8106 Ologs <> TO_reading:38 meth
+R8144:8147 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8134:8143 Ologs <> TO_reading:38 meth
+R8148:8161 Ologs <> TO_temperature:39 meth
+R8198:8201 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8188:8197 Ologs <> TO_subject:37 meth
+R8202:8215 Ologs <> TO_temperature:39 meth
+R8247:8256 Ologs <> TO_subject:37 meth
+binder 8243:8243 <> x:43
+R8284:8286 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8263:8281 Ologs <> TO_true_temperature:42 meth
+R8283:8283 Ologs <> x:43 var
+R8287:8306 Ologs <> TO_reading_indicates:41 meth
+R8309:8326 Ologs <> TO_current_reading:40 meth
+R8328:8328 Ologs <> x:43 var
+ind 8905:8921 <> ThermometerStatus
+constr 8930:8942 <> TS_calibrated
+constr 8968:8974 <> TS_hole
+R8946:8962 Ologs <> ThermometerStatus:45 ind
+R8984:9000 Ologs <> ThermometerStatus:45 ind
+scheme 8905:8921 <> ThermometerStatus_rect
+scheme 8905:8921 <> ThermometerStatus_ind
+scheme 8905:8921 <> ThermometerStatus_rec
+scheme 8905:8921 <> ThermometerStatus_sind
+rec 9625:9634 <> MasterOlog
+proj 9643:9646 <> MO_W
+proj 9658:9661 <> MO_R
+proj 9818:9821 <> MO_G
+proj 9833:9836 <> MO_O
+proj 9913:9916 <> MO_T
+R9844:9847 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9840:9843 Ologs <> MO_W:48 meth
+R9848:9851 Ologs <> MO_R:49 meth
+R9924:9927 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9920:9923 Ologs <> MO_R:49 meth
+R9928:9931 Ologs <> MO_G:50 meth
+def 10086:10099 <> master_descent
+R10106:10115 Ologs <> MasterOlog rec
+binder 10102:10102 <> m:53
+R10141:10144 Ologs <> MO_W proj
+R10146:10146 Ologs <> m:53 var
+binder 10137:10137 <> w:54
+R10166:10168 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10149:10152 Ologs <> MO_T proj
+R10154:10154 Ologs <> m:53 var
+R10157:10160 Ologs <> MO_O proj
+R10162:10162 Ologs <> m:53 var
+R10164:10164 Ologs <> w:54 var
+R10169:10172 Ologs <> MO_T proj
+R10174:10174 Ologs <> m:53 var
+R10177:10180 Ologs <> MO_O proj
+R10182:10182 Ologs <> m:53 var
+R10184:10184 Ologs <> w:54 var

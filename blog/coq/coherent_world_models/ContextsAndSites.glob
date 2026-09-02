@@ -1,233 +1,233 @@
-DIGEST 5941c5bbe20f33da80fe6b6c4a6ee4c6
+DIGEST 1386bb8829b8256bff4a13e5ebe58bc2
 FContextsAndSites
-R3586:3592 Library <> <> lib
-R3610:3615 Traces <> <> lib
-R3633:3653 AdmissibleTransitions <> <> lib
-R3680:3689 Coq.Lists.List <> <> lib
-R3699:3711 Coq.Lists.List ListNotations <> mod
-rec 4214:4225 <> ContextFacet
-proj 4234:4241 <> CF_where
-proj 4316:4322 <> CF_when
-proj 4399:4404 <> CF_who
-proj 4481:4486 <> CF_how
-proj 4563:4570 <> CF_terms
-proj 4645:4651 <> CF_trad
-rec 4818:4831 <> IndexedContext
-proj 4840:4849 <> IC_carrier
-proj 4861:4869 <> IC_facets
-R4873:4884 ContextsAndSites <> ContextFacet rec
-rec 5138:5160 <> HistoricalPeriodExample
-proj 5169:5177 <> HP_period
-proj 5251:5256 <> HP_era
-rec 5276:5297 <> LaboratorySetupExample
-proj 5306:5313 <> LS_setup
-proj 5325:5336 <> LS_apparatus
-rec 5356:5374 <> FormalSystemExample
-proj 5383:5391 <> FS_axioms
-proj 5403:5410 <> FS_rules
-def 5514:5519 <> refine
-R5530:5536 Library <> Context rec
-binder 5522:5523 <> c1:20
-binder 5525:5526 <> c2:21
-R5556:5559 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R5544:5552 Library <> C_carrier proj
-R5554:5555 ContextsAndSites <> c1:20 var
-R5560:5568 Library <> C_carrier proj
-R5570:5571 ContextsAndSites <> c2:21 var
-binder 5540:5540 <> f:22
-R5586:5588 AdmissibleTransitions <> InT ind
-R5591:5602 Library <> TKRefinement constr
-R5607:5615 Library <> CR_source proj
-R5607:5615 Library <> CR_source proj
-R5607:5615 Library <> CR_source proj
-R5624:5632 Library <> CR_target proj
-R5624:5632 Library <> CR_target proj
-R5641:5646 Library <> CR_map proj
-R5641:5646 Library <> CR_map proj
-R5620:5621 ContextsAndSites <> c1:20 var
-R5637:5638 ContextsAndSites <> c2:21 var
-R5651:5651 ContextsAndSites <> f:22 var
-rec 6319:6323 <> Cover
-proj 6346:6353 <> CV_index
-proj 6430:6439 <> CV_patches
-proj 6512:6518 <> CV_maps
-proj 6594:6604 <> CV_image_of
-proj 6693:6703 <> CV_map_to_c
-R6330:6336 Library <> Context rec
-binder 6326:6326 <> c:23
-R6451:6454 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6443:6450 ContextsAndSites <> CV_index:25 meth
-R6455:6461 Library <> Context rec
-R6536:6543 ContextsAndSites <> CV_index:25 meth
-binder 6532:6532 <> i:27
-R6546:6562 Library <> ContextRefinement rec
-R6619:6626 ContextsAndSites <> CV_index:25 meth
-binder 6615:6615 <> i:29
-R6662:6664 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6629:6637 Library <> C_carrier proj
-R6640:6648 Library <> CR_source proj
-R6651:6657 ContextsAndSites <> CV_maps:28 meth
-R6659:6659 ContextsAndSites <> i:29 var
-R6665:6673 Library <> C_carrier proj
-R6676:6685 ContextsAndSites <> CV_patches:26 meth
-R6687:6687 ContextsAndSites <> i:29 var
-R6718:6725 ContextsAndSites <> CV_index:25 meth
-binder 6714:6714 <> i:31
-R6761:6763 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6728:6736 Library <> C_carrier proj
-R6739:6747 Library <> CR_target proj
-R6750:6756 ContextsAndSites <> CV_maps:28 meth
-R6758:6758 ContextsAndSites <> i:31 var
-R6764:6772 Library <> C_carrier proj
-R6774:6774 ContextsAndSites <> c:23 var
-def 6871:6885 <> cover_condition
-R6892:6898 Library <> Context rec
-binder 6888:6888 <> c:33
-R6908:6912 ContextsAndSites <> Cover rec
-R6914:6914 ContextsAndSites <> c:33 var
-binder 6902:6904 <> cov:34
-R6940:6948 Library <> C_carrier proj
-R6950:6950 ContextsAndSites <> c:33 var
-binder 6936:6936 <> x:35
-R6953:6956 Coq.Init.Logic <> True ind
-rec 7342:7356 <> AdmissibleCover
-proj 7379:7386 <> AC_cover
-proj 7401:7416 <> AC_admissibility
-R7363:7369 Library <> Context rec
-binder 7359:7359 <> c:36
-R7390:7394 ContextsAndSites <> Cover rec
-R7396:7396 ContextsAndSites <> c:36 var
-R7431:7438 ContextsAndSites <> CV_index proj
-R7440:7440 ContextsAndSites <> c:36 var
-R7443:7450 ContextsAndSites <> AC_cover:38 meth
-binder 7427:7427 <> i:39
-R7458:7460 AdmissibleTransitions <> InT ind
-R7463:7474 Library <> TKRefinement constr
-R7477:7483 ContextsAndSites <> CV_maps proj
-R7485:7485 ContextsAndSites <> c:36 var
-R7488:7495 ContextsAndSites <> AC_cover:38 meth
-R7498:7498 ContextsAndSites <> i:39 var
-rec 7671:7689 <> FullAdmissibleCover
-proj 7712:7720 <> FAC_cover
-proj 7745:7760 <> FAC_unions_whole
-R7696:7702 Library <> Context rec
-binder 7692:7692 <> c:41
-R7724:7738 ContextsAndSites <> AdmissibleCover rec
-R7740:7740 ContextsAndSites <> c:41 var
-R7764:7778 ContextsAndSites <> cover_condition def
-R7780:7780 ContextsAndSites <> c:41 var
-R7783:7790 ContextsAndSites <> AC_cover proj
-R7792:7792 ContextsAndSites <> c:41 var
-R7795:7803 ContextsAndSites <> FAC_cover:43 meth
-ind 8057:8070 <> CoverDiagnosis
-constr 8079:8091 <> CD_cover_only
-constr 8160:8175 <> CD_licensed_only
-constr 8241:8262 <> CD_admissible_complete
-constr 8322:8331 <> CD_neither
-R8104:8117 ContextsAndSites <> CoverDiagnosis:45 ind
-R8185:8198 ContextsAndSites <> CoverDiagnosis:45 ind
-R8266:8279 ContextsAndSites <> CoverDiagnosis:45 ind
-R8347:8360 ContextsAndSites <> CoverDiagnosis:45 ind
-scheme 8057:8070 <> CoverDiagnosis_rect
-scheme 8057:8070 <> CoverDiagnosis_ind
-scheme 8057:8070 <> CoverDiagnosis_rec
-scheme 8057:8070 <> CoverDiagnosis_sind
-rec 8940:8959 <> GrothendieckTopology
-proj 8968:8989 <> GT_underlying_category
-proj 9004:9012 <> GT_covers
-proj 9112:9129 <> GT_pullback_stable
-proj 9459:9471 <> GT_transitive
-R8993:8999 Library <> Context rec
-R9028:9036 Library <> C_carrier proj
-R9039:9060 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9024:9024 <> c:49
-R9071:9075 ContextsAndSites <> Cover rec
-R9078:9099 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9065:9067 <> cov:50
-R9145:9153 Library <> C_carrier proj
-R9156:9177 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9141:9141 <> c:52
-R9218:9222 ContextsAndSites <> Cover rec
-R9225:9246 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9212:9214 <> cov:53
-R9270:9277 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9255:9263 ContextsAndSites <> GT_covers:51 meth
-R9267:9269 ContextsAndSites <> cov:53 var
-R9265:9265 ContextsAndSites <> c:52 var
-R9290:9298 Library <> C_carrier proj
-R9301:9322 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9286:9286 <> d:54
-R9342:9350 Library <> C_carrier proj
-R9353:9374 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9338:9338 <> f:55
-R9385:9388 Coq.Init.Logic <> True ind
-R9487:9495 Library <> C_carrier proj
-R9498:9519 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9483:9483 <> c:57
-R9556:9560 ContextsAndSites <> Cover rec
-R9563:9584 ContextsAndSites <> GT_underlying_category:48 meth
-binder 9550:9552 <> cov:58
-R9608:9615 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9593:9601 ContextsAndSites <> GT_covers:51 meth
-R9605:9607 ContextsAndSites <> cov:58 var
-R9603:9603 ContextsAndSites <> c:57 var
-R9627:9634 ContextsAndSites <> CV_index proj
-R9637:9658 ContextsAndSites <> GT_underlying_category:48 meth
-R9661:9663 ContextsAndSites <> cov:58 var
-binder 9623:9623 <> i:59
-R9672:9675 Coq.Init.Logic <> True ind
-rec 9992:9995 <> Site
-proj 10004:10012 <> S_context
-proj 10027:10036 <> S_topology
-proj 10064:10072 <> S_witness
-R10016:10022 Library <> Context rec
-R10040:10059 ContextsAndSites <> GrothendieckTopology rec
-R10085:10087 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R10076:10084 ContextsAndSites <> S_context:62 meth
-R10088:10109 ContextsAndSites <> GT_underlying_category proj
-R10111:10120 ContextsAndSites <> S_topology:63 meth
-rec 10462:10481 <> RepresentationScheme
-proj 10490:10493 <> RS_V
-proj 10572:10584 <> RS_assignment
-proj 10652:10668 <> RS_contravariance
-R10595:10598 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10588:10594 Library <> Context rec
-R10599:10602 ContextsAndSites <> RS_V:66 meth
-R10692:10698 Library <> Context rec
-binder 10684:10685 <> c1:68
-binder 10687:10688 <> c2:69
-R10718:10721 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10706:10714 Library <> C_carrier proj
-R10716:10717 ContextsAndSites <> c1:68 var
-R10722:10730 Library <> C_carrier proj
-R10732:10733 ContextsAndSites <> c2:69 var
-binder 10702:10702 <> f:70
-R10759:10761 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R10743:10755 ContextsAndSites <> RS_assignment:67 meth
-R10757:10758 ContextsAndSites <> c2:69 var
-R10762:10774 ContextsAndSites <> RS_assignment:67 meth
-R10776:10777 ContextsAndSites <> c1:68 var
-ind 11187:11200 <> TargetCategory
-constr 11209:11214 <> TC_Set
-constr 11237:11250 <> TC_MetricSpace
-constr 11273:11286 <> TC_Probability
-constr 11309:11323 <> TC_ChainComplex
-constr 11346:11364 <> TC_InfinityGroupoid
-R11218:11231 ContextsAndSites <> TargetCategory:72 ind
-R11254:11267 ContextsAndSites <> TargetCategory:72 ind
-R11290:11303 ContextsAndSites <> TargetCategory:72 ind
-R11327:11340 ContextsAndSites <> TargetCategory:72 ind
-R11368:11381 ContextsAndSites <> TargetCategory:72 ind
-scheme 11187:11200 <> TargetCategory_rect
-scheme 11187:11200 <> TargetCategory_ind
-scheme 11187:11200 <> TargetCategory_rec
-scheme 11187:11200 <> TargetCategory_sind
-rec 11471:11478 <> Presheaf
-proj 11487:11495 <> PRS_sites
-proj 11523:11532 <> PRS_target
-proj 11554:11570 <> PRS_target_is_Set
-R11499:11518 ContextsAndSites <> RepresentationScheme rec
-R11536:11549 ContextsAndSites <> TargetCategory ind
-R11584:11586 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11574:11583 ContextsAndSites <> PRS_target:76 meth
-R11587:11592 ContextsAndSites <> TC_Set constr
+R3574:3580 Library <> <> lib
+R3598:3603 Traces <> <> lib
+R3621:3641 AdmissibleTransitions <> <> lib
+R3668:3677 Coq.Lists.List <> <> lib
+R3687:3699 Coq.Lists.List ListNotations <> mod
+rec 4200:4211 <> ContextFacet
+proj 4220:4227 <> CF_where
+proj 4302:4308 <> CF_when
+proj 4385:4390 <> CF_who
+proj 4467:4472 <> CF_how
+proj 4549:4556 <> CF_terms
+proj 4631:4637 <> CF_trad
+rec 4804:4817 <> IndexedContext
+proj 4826:4835 <> IC_carrier
+proj 4847:4855 <> IC_facets
+R4859:4870 ContextsAndSites <> ContextFacet rec
+rec 5124:5146 <> HistoricalPeriodExample
+proj 5155:5163 <> HP_period
+proj 5237:5242 <> HP_era
+rec 5262:5283 <> LaboratorySetupExample
+proj 5292:5299 <> LS_setup
+proj 5311:5322 <> LS_apparatus
+rec 5342:5360 <> FormalSystemExample
+proj 5369:5377 <> FS_axioms
+proj 5389:5396 <> FS_rules
+def 5500:5505 <> refine
+R5516:5522 Library <> Context rec
+binder 5508:5509 <> c1:20
+binder 5511:5512 <> c2:21
+R5542:5545 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5530:5538 Library <> C_carrier proj
+R5540:5541 ContextsAndSites <> c1:20 var
+R5546:5554 Library <> C_carrier proj
+R5556:5557 ContextsAndSites <> c2:21 var
+binder 5526:5526 <> f:22
+R5572:5574 AdmissibleTransitions <> InT ind
+R5577:5588 Library <> TKRefinement constr
+R5593:5601 Library <> CR_source proj
+R5593:5601 Library <> CR_source proj
+R5593:5601 Library <> CR_source proj
+R5610:5618 Library <> CR_target proj
+R5610:5618 Library <> CR_target proj
+R5627:5632 Library <> CR_map proj
+R5627:5632 Library <> CR_map proj
+R5606:5607 ContextsAndSites <> c1:20 var
+R5623:5624 ContextsAndSites <> c2:21 var
+R5637:5637 ContextsAndSites <> f:22 var
+rec 6303:6307 <> Cover
+proj 6330:6337 <> CV_index
+proj 6414:6423 <> CV_patches
+proj 6496:6502 <> CV_maps
+proj 6578:6588 <> CV_image_of
+proj 6677:6687 <> CV_map_to_c
+R6314:6320 Library <> Context rec
+binder 6310:6310 <> c:23
+R6435:6438 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6427:6434 ContextsAndSites <> CV_index:25 meth
+R6439:6445 Library <> Context rec
+R6520:6527 ContextsAndSites <> CV_index:25 meth
+binder 6516:6516 <> i:27
+R6530:6546 Library <> ContextRefinement rec
+R6603:6610 ContextsAndSites <> CV_index:25 meth
+binder 6599:6599 <> i:29
+R6646:6648 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6613:6621 Library <> C_carrier proj
+R6624:6632 Library <> CR_source proj
+R6635:6641 ContextsAndSites <> CV_maps:28 meth
+R6643:6643 ContextsAndSites <> i:29 var
+R6649:6657 Library <> C_carrier proj
+R6660:6669 ContextsAndSites <> CV_patches:26 meth
+R6671:6671 ContextsAndSites <> i:29 var
+R6702:6709 ContextsAndSites <> CV_index:25 meth
+binder 6698:6698 <> i:31
+R6745:6747 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6712:6720 Library <> C_carrier proj
+R6723:6731 Library <> CR_target proj
+R6734:6740 ContextsAndSites <> CV_maps:28 meth
+R6742:6742 ContextsAndSites <> i:31 var
+R6748:6756 Library <> C_carrier proj
+R6758:6758 ContextsAndSites <> c:23 var
+def 6855:6869 <> cover_condition
+R6876:6882 Library <> Context rec
+binder 6872:6872 <> c:33
+R6892:6896 ContextsAndSites <> Cover rec
+R6898:6898 ContextsAndSites <> c:33 var
+binder 6886:6888 <> cov:34
+R6924:6932 Library <> C_carrier proj
+R6934:6934 ContextsAndSites <> c:33 var
+binder 6920:6920 <> x:35
+R6937:6940 Coq.Init.Logic <> True ind
+rec 7326:7340 <> AdmissibleCover
+proj 7363:7370 <> AC_cover
+proj 7385:7400 <> AC_admissibility
+R7347:7353 Library <> Context rec
+binder 7343:7343 <> c:36
+R7374:7378 ContextsAndSites <> Cover rec
+R7380:7380 ContextsAndSites <> c:36 var
+R7415:7422 ContextsAndSites <> CV_index proj
+R7424:7424 ContextsAndSites <> c:36 var
+R7427:7434 ContextsAndSites <> AC_cover:38 meth
+binder 7411:7411 <> i:39
+R7442:7444 AdmissibleTransitions <> InT ind
+R7447:7458 Library <> TKRefinement constr
+R7461:7467 ContextsAndSites <> CV_maps proj
+R7469:7469 ContextsAndSites <> c:36 var
+R7472:7479 ContextsAndSites <> AC_cover:38 meth
+R7482:7482 ContextsAndSites <> i:39 var
+rec 7651:7669 <> FullAdmissibleCover
+proj 7692:7700 <> FAC_cover
+proj 7725:7740 <> FAC_unions_whole
+R7676:7682 Library <> Context rec
+binder 7672:7672 <> c:41
+R7704:7718 ContextsAndSites <> AdmissibleCover rec
+R7720:7720 ContextsAndSites <> c:41 var
+R7744:7758 ContextsAndSites <> cover_condition def
+R7760:7760 ContextsAndSites <> c:41 var
+R7763:7770 ContextsAndSites <> AC_cover proj
+R7772:7772 ContextsAndSites <> c:41 var
+R7775:7783 ContextsAndSites <> FAC_cover:43 meth
+ind 8035:8048 <> CoverDiagnosis
+constr 8057:8069 <> CD_cover_only
+constr 8138:8153 <> CD_licensed_only
+constr 8219:8240 <> CD_admissible_complete
+constr 8300:8309 <> CD_neither
+R8082:8095 ContextsAndSites <> CoverDiagnosis:45 ind
+R8163:8176 ContextsAndSites <> CoverDiagnosis:45 ind
+R8244:8257 ContextsAndSites <> CoverDiagnosis:45 ind
+R8325:8338 ContextsAndSites <> CoverDiagnosis:45 ind
+scheme 8035:8048 <> CoverDiagnosis_rect
+scheme 8035:8048 <> CoverDiagnosis_ind
+scheme 8035:8048 <> CoverDiagnosis_rec
+scheme 8035:8048 <> CoverDiagnosis_sind
+rec 8918:8937 <> GrothendieckTopology
+proj 8946:8967 <> GT_underlying_category
+proj 8982:8990 <> GT_covers
+proj 9090:9107 <> GT_pullback_stable
+proj 9437:9449 <> GT_transitive
+R8971:8977 Library <> Context rec
+R9006:9014 Library <> C_carrier proj
+R9017:9038 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9002:9002 <> c:49
+R9049:9053 ContextsAndSites <> Cover rec
+R9056:9077 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9043:9045 <> cov:50
+R9123:9131 Library <> C_carrier proj
+R9134:9155 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9119:9119 <> c:52
+R9196:9200 ContextsAndSites <> Cover rec
+R9203:9224 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9190:9192 <> cov:53
+R9248:9255 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9233:9241 ContextsAndSites <> GT_covers:51 meth
+R9245:9247 ContextsAndSites <> cov:53 var
+R9243:9243 ContextsAndSites <> c:52 var
+R9268:9276 Library <> C_carrier proj
+R9279:9300 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9264:9264 <> d:54
+R9320:9328 Library <> C_carrier proj
+R9331:9352 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9316:9316 <> f:55
+R9363:9366 Coq.Init.Logic <> True ind
+R9465:9473 Library <> C_carrier proj
+R9476:9497 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9461:9461 <> c:57
+R9534:9538 ContextsAndSites <> Cover rec
+R9541:9562 ContextsAndSites <> GT_underlying_category:48 meth
+binder 9528:9530 <> cov:58
+R9586:9593 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9571:9579 ContextsAndSites <> GT_covers:51 meth
+R9583:9585 ContextsAndSites <> cov:58 var
+R9581:9581 ContextsAndSites <> c:57 var
+R9605:9612 ContextsAndSites <> CV_index proj
+R9615:9636 ContextsAndSites <> GT_underlying_category:48 meth
+R9639:9641 ContextsAndSites <> cov:58 var
+binder 9601:9601 <> i:59
+R9650:9653 Coq.Init.Logic <> True ind
+rec 9970:9973 <> Site
+proj 9982:9990 <> S_context
+proj 10005:10014 <> S_topology
+proj 10042:10050 <> S_witness
+R9994:10000 Library <> Context rec
+R10018:10037 ContextsAndSites <> GrothendieckTopology rec
+R10063:10065 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10054:10062 ContextsAndSites <> S_context:62 meth
+R10066:10087 ContextsAndSites <> GT_underlying_category proj
+R10089:10098 ContextsAndSites <> S_topology:63 meth
+rec 10438:10457 <> RepresentationScheme
+proj 10466:10469 <> RS_V
+proj 10548:10560 <> RS_assignment
+proj 10628:10644 <> RS_contravariance
+R10571:10574 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10564:10570 Library <> Context rec
+R10575:10578 ContextsAndSites <> RS_V:66 meth
+R10668:10674 Library <> Context rec
+binder 10660:10661 <> c1:68
+binder 10663:10664 <> c2:69
+R10694:10697 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10682:10690 Library <> C_carrier proj
+R10692:10693 ContextsAndSites <> c1:68 var
+R10698:10706 Library <> C_carrier proj
+R10708:10709 ContextsAndSites <> c2:69 var
+binder 10678:10678 <> f:70
+R10735:10737 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10719:10731 ContextsAndSites <> RS_assignment:67 meth
+R10733:10734 ContextsAndSites <> c2:69 var
+R10738:10750 ContextsAndSites <> RS_assignment:67 meth
+R10752:10753 ContextsAndSites <> c1:68 var
+ind 11161:11174 <> TargetCategory
+constr 11183:11188 <> TC_Set
+constr 11211:11224 <> TC_MetricSpace
+constr 11247:11260 <> TC_Probability
+constr 11283:11297 <> TC_ChainComplex
+constr 11320:11338 <> TC_InfinityGroupoid
+R11192:11205 ContextsAndSites <> TargetCategory:72 ind
+R11228:11241 ContextsAndSites <> TargetCategory:72 ind
+R11264:11277 ContextsAndSites <> TargetCategory:72 ind
+R11301:11314 ContextsAndSites <> TargetCategory:72 ind
+R11342:11355 ContextsAndSites <> TargetCategory:72 ind
+scheme 11161:11174 <> TargetCategory_rect
+scheme 11161:11174 <> TargetCategory_ind
+scheme 11161:11174 <> TargetCategory_rec
+scheme 11161:11174 <> TargetCategory_sind
+rec 11445:11452 <> Presheaf
+proj 11461:11469 <> PRS_sites
+proj 11497:11506 <> PRS_target
+proj 11528:11544 <> PRS_target_is_Set
+R11473:11492 ContextsAndSites <> RepresentationScheme rec
+R11510:11523 ContextsAndSites <> TargetCategory ind
+R11558:11560 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11548:11557 ContextsAndSites <> PRS_target:76 meth
+R11561:11566 ContextsAndSites <> TC_Set constr

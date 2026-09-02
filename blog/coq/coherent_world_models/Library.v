@@ -3,7 +3,7 @@
 (* 00_Library.v                                                                *)
 (*                                                                             *)
 (* Shared library for the formalization of                                     *)
-(* "From World to Model: Coherent Representation"                              *)
+(* From World to Model: Coherent Representation                              *)
 (* (coherent_world_models.php).                                                *)
 (*                                                                             *)
 (* This file defines the most basic types and notions that later files depend  *)
@@ -11,15 +11,15 @@
 (* the conventions established here.                                            *)
 (*                                                                             *)
 (* Conventions used throughout:                                                 *)
-(*   * "Subject matter" : a type W with internal structure                     *)
-(*   * "Access function": O : W -> R, producing traces                         *)
-(*   * "Representation": a value living in some codomain R or F(c)             *)
-(*   * "Admissible transition": an arrow belonging to a class T                *)
-(*   * "Sameness relations" are encoded as explicit predicates with witnesses *)
+(*   * Subject matter : a type W with internal structure                     *)
+(*   * Access function: O : W -> R, producing traces                         *)
+(*   * Representation: a value living in some codomain R or F(c)             *)
+(*   * Admissible transition: an arrow belonging to a class T                *)
+(*   * Sameness relations are encoded as explicit predicates with witnesses *)
 (*                                                                             *)
 (* We deliberately keep the formalization at the level of plain type theory    *)
 (* plus a few higher-order predicates. Infinity-categorical content is        *)
-(* captured by explicit "homotopy" and "n-morphism" predicates rather than     *)
+(* captured by explicit homotopy and n-morphism predicates rather than     *)
 (* by literal higher inductive types, since the chapter itself uses the        *)
 (* latter only metaphorically.                                                  *)
 (*                                                                             *)
@@ -41,9 +41,9 @@ Record SubjectMatter := {
   W_carrier : Type
 }.
 
-(* A "region" of a subject matter is any element of the carrier type. We do  *)
+(* A region of a subject matter is any element of the carrier type. We do  *)
 (* not axiomatize which subsets qualify as regions; the chapter notes that    *)
-(* "regions, points, or sub-systems" is intentionally broad.                 *)
+(* regions, points, or sub-systems is intentionally broad.                 *)
 
 Definition Region (s : SubjectMatter) : Type := W_carrier s.
 
@@ -63,8 +63,8 @@ Definition Trace (r : Codomain) : Type := R_carrier r.
 (* ---------------------------------------------------------------------------- *)
 
 (* An access function O : W -> R maps a region w of the subject matter to a   *)
-(* trace r in the codomain. The chapter calls such a map "observation arrow"  *)
-(* and requires that such an arrow belong to T to be "licensed". Membership  *)
+(* trace r in the codomain. The chapter calls such a map observation arrow  *)
+(* and requires that such an arrow belong to T to be licensed. Membership  *)
 (* in T is a separate, additional property, defined later.                    *)
 
 Record AccessFunction := {
@@ -144,7 +144,7 @@ Inductive AdmissibleTransition : TransitionKind -> Prop :=
       forall f, refinement_licensed f ->
                 AdmissibleTransition (TKRefinement f).
 
-(* A useful abbreviation: "T" denotes the set of all admissible transitions   *)
+(* A useful abbreviation: T denotes the set of all admissible transitions   *)
 (* of any of the three kinds.                                                  *)
 
 Definition T (k : TransitionKind) : Prop := AdmissibleTransition k.
@@ -198,7 +198,7 @@ Definition Homotopic (A B : Type) : Type := HomotopyEquiv A B.
 
 (* A weaker, more homotopically-flavored version: allow the equalities to    *)
 (* themselves be paths up to higher cells. We model the higher cells as       *)
-(* separate "fillers" whose existence is left abstract.                       *)
+(* separate fillers whose existence is left abstract.                       *)
 
 Inductive HigherPath : forall (A : Type), A -> A -> Prop :=
   | hp_intro : forall (A : Type) (x y : A), x = y -> HigherPath A x y.
@@ -246,7 +246,7 @@ Record CommonModel (S_all : list Theory) : Type := {
 (*   v                                                                            *)
 (*   exists M (model-theoretic)                                                *)
 (*                                                                             *)
-(* Each implication is a "weakening": a witness of the stronger relation is   *)
+(* Each implication is a weakening: a witness of the stronger relation is   *)
 (* a witness of the weaker one. We give one such weakening here for           *)
 (* illustration; the others are defined similarly.                            *)
 
@@ -278,16 +278,16 @@ Qed.
 (* 7.  Indexicality                                                             *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter distinguishes "genuinely of something" from "free pattern".    *)
+(* The chapter distinguishes genuinely of something from free pattern.    *)
 (* A trace may or may not be indexical; the property is data.                *)
 
 Record IndexicalTrace (R : Codomain) := {
   it_trace : Trace R;
-  it_points_to : Type;    (* a possible "source" the trace points to          *)
+  it_points_to : Type;    (* a possible source the trace points to          *)
   it_is_of : it_points_to -> Prop   (* the substantive relation               *)
 }.
 
-(* A non-indexical "trace" is just a pattern.                                 *)
+(* A non-indexical trace is just a pattern.                                 *)
 
 Definition FreePattern (R : Codomain) : Type := Trace R.
 

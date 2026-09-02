@@ -1,122 +1,122 @@
-DIGEST eecf3e684714c2cbcf404494138971e5
+DIGEST 8188075ae157966f9b2871327edc76a5
 FPracticalProcedure
-R2609:2615 Library <> <> lib
-R2633:2638 Traces <> <> lib
-R2656:2676 AdmissibleTransitions <> <> lib
-R2694:2709 ContextsAndSites <> <> lib
-R2727:2733 Sheaves <> <> lib
-R2751:2767 NotionsOfSameness <> <> lib
-R2785:2797 MasterDiagram <> <> lib
-R2824:2833 Coq.Lists.List <> <> lib
-R2843:2855 Coq.Lists.List ListNotations <> mod
-rec 3202:3215 <> Step1_RawDatum
-proj 3224:3227 <> S1_D
-proj 3307:3320 <> S1_description
-R3328:3331 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3324:3327 PracticalProcedure <> S1_D:2 meth
-rec 3480:3499 <> Step2_Interpretation
-proj 3508:3511 <> S2_D
-proj 3523:3526 <> S2_I
-proj 3603:3612 <> S2_reading
-R3534:3537 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3530:3533 PracticalProcedure <> S2_D:5 meth
-R3620:3623 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3616:3619 PracticalProcedure <> S2_D:5 meth
-rec 3778:3788 <> Step3_Chain
-proj 3797:3800 <> S3_W
-proj 3821:3824 <> S3_D
-proj 3836:3839 <> S3_I
-proj 3859:3867 <> S3_W_to_D
-proj 3897:3918 <> S3_disagreement_points
-R3804:3816 Library <> SubjectMatter rec
-R3847:3850 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3843:3846 PracticalProcedure <> S3_D:10 meth
-R3885:3888 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R3871:3879 Library <> W_carrier proj
-R3881:3884 PracticalProcedure <> S3_W:9 meth
-R3889:3892 PracticalProcedure <> S3_D:10 meth
-R3922:3925 Coq.Init.Datatypes <> list ind
-R3942:3944 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
-R3928:3936 Library <> W_carrier proj
-R3938:3941 PracticalProcedure <> S3_W:9 meth
-R3945:3948 PracticalProcedure <> S3_D:10 meth
-rec 4156:4169 <> Step4_Overlaps
-proj 4178:4188 <> S4_channels
-proj 4261:4270 <> S4_overlap
-proj 4344:4350 <> S4_meet
-R4192:4195 Coq.Init.Datatypes <> list ind
-binder 4361:4361 <> c:17
-R4372:4375 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R4371:4371 PracticalProcedure <> c:17 var
-R4376:4385 PracticalProcedure <> S4_overlap:16 meth
-rec 4514:4527 <> Step5_Licences
-proj 4536:4539 <> S5_T
-proj 4619:4629 <> S5_licences
-R4543:4546 Coq.Init.Datatypes <> list ind
-R4548:4561 Library <> TransitionKind ind
-binder 4640:4640 <> t:21
-R4652:4655 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R4643:4644 Coq.Lists.List <> In def
-R4648:4651 PracticalProcedure <> S5_T:20 meth
-R4646:4646 PracticalProcedure <> t:21 var
-R4656:4658 AdmissibleTransitions <> InT ind
-R4660:4660 PracticalProcedure <> t:21 var
-ind 4760:4773 <> SamenessChoice
-constr 4782:4791 <> SC_literal
-constr 4822:4835 <> SC_isomorphism
-constr 4862:4872 <> SC_homotopy
-constr 4902:4917 <> SC_approximation
-constr 4942:4955 <> SC_statistical
-constr 4982:4999 <> SC_model_theoretic
-R4803:4816 PracticalProcedure <> SamenessChoice:23 ind
-R4843:4856 PracticalProcedure <> SamenessChoice:23 ind
-R4883:4896 PracticalProcedure <> SamenessChoice:23 ind
-R4923:4936 PracticalProcedure <> SamenessChoice:23 ind
-R4963:4976 PracticalProcedure <> SamenessChoice:23 ind
-R5003:5016 PracticalProcedure <> SamenessChoice:23 ind
-scheme 4760:4773 <> SamenessChoice_rect
-scheme 4760:4773 <> SamenessChoice_ind
-scheme 4760:4773 <> SamenessChoice_rec
-scheme 4760:4773 <> SamenessChoice_sind
-rec 5027:5040 <> Step6_Sameness
-proj 5049:5057 <> S6_choice
-proj 5079:5088 <> S6_witness
-proj 5160:5177 <> S6_refuses_upgrade
-R5061:5074 PracticalProcedure <> SamenessChoice ind
-rec 5332:5349 <> Step7_GlobalModel'
-proj 5358:5362 <> S7_G'
-proj 5374:5390 <> S7_descent_holds'
-rec 5548:5562 <> Step8_Residuals
-proj 5571:5582 <> S8_preserved
-proj 5602:5613 <> S8_discarded
-proj 5633:5645 <> S8_documented
-R5590:5593 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R5621:5624 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-rec 5805:5825 <> Step9_NextObservation
-proj 5834:5845 <> S9_current_G
-proj 5857:5882 <> S9_discriminating_evidence
-proj 5894:5900 <> S9_plan
-R5930:5933 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R5904:5929 PracticalProcedure <> S9_discriminating_evidence:38 meth
-rec 6318:6326 <> Procedure
-proj 6335:6341 <> P_step1
-proj 6363:6369 <> P_step2
-proj 6397:6403 <> P_step3
-proj 6422:6428 <> P_step4
-proj 6450:6456 <> P_step5
-proj 6478:6484 <> P_step6
-proj 6506:6512 <> P_step7
-proj 6538:6544 <> P_step8
-proj 6567:6573 <> P_step9
-R6345:6358 PracticalProcedure <> Step1_RawDatum rec
-R6373:6392 PracticalProcedure <> Step2_Interpretation rec
-R6407:6417 PracticalProcedure <> Step3_Chain rec
-R6432:6445 PracticalProcedure <> Step4_Overlaps rec
-R6460:6473 PracticalProcedure <> Step5_Licences rec
-R6488:6501 PracticalProcedure <> Step6_Sameness rec
-R6516:6533 PracticalProcedure <> Step7_GlobalModel' rec
-R6548:6562 PracticalProcedure <> Step8_Residuals rec
-R6577:6597 PracticalProcedure <> Step9_NextObservation rec
-ax 6944:6968 <> anomalies_are_constraints
-R6986:6994 PracticalProcedure <> Procedure rec
-binder 6982:6982 <> p:50
+R2605:2611 Library <> <> lib
+R2629:2634 Traces <> <> lib
+R2652:2672 AdmissibleTransitions <> <> lib
+R2690:2705 ContextsAndSites <> <> lib
+R2723:2729 Sheaves <> <> lib
+R2747:2763 NotionsOfSameness <> <> lib
+R2781:2793 MasterDiagram <> <> lib
+R2820:2829 Coq.Lists.List <> <> lib
+R2839:2851 Coq.Lists.List ListNotations <> mod
+rec 3198:3211 <> Step1_RawDatum
+proj 3220:3223 <> S1_D
+proj 3303:3316 <> S1_description
+R3324:3327 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3320:3323 PracticalProcedure <> S1_D:2 meth
+rec 3476:3495 <> Step2_Interpretation
+proj 3504:3507 <> S2_D
+proj 3519:3522 <> S2_I
+proj 3599:3608 <> S2_reading
+R3530:3533 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3526:3529 PracticalProcedure <> S2_D:5 meth
+R3616:3619 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3612:3615 PracticalProcedure <> S2_D:5 meth
+rec 3774:3784 <> Step3_Chain
+proj 3793:3796 <> S3_W
+proj 3817:3820 <> S3_D
+proj 3832:3835 <> S3_I
+proj 3855:3863 <> S3_W_to_D
+proj 3893:3914 <> S3_disagreement_points
+R3800:3812 Library <> SubjectMatter rec
+R3843:3846 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3839:3842 PracticalProcedure <> S3_D:10 meth
+R3881:3884 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3867:3875 Library <> W_carrier proj
+R3877:3880 PracticalProcedure <> S3_W:9 meth
+R3885:3888 PracticalProcedure <> S3_D:10 meth
+R3918:3921 Coq.Init.Datatypes <> list ind
+R3938:3940 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R3924:3932 Library <> W_carrier proj
+R3934:3937 PracticalProcedure <> S3_W:9 meth
+R3941:3944 PracticalProcedure <> S3_D:10 meth
+rec 4152:4165 <> Step4_Overlaps
+proj 4174:4184 <> S4_channels
+proj 4257:4266 <> S4_overlap
+proj 4340:4346 <> S4_meet
+R4188:4191 Coq.Init.Datatypes <> list ind
+binder 4357:4357 <> c:17
+R4368:4371 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4367:4367 PracticalProcedure <> c:17 var
+R4372:4381 PracticalProcedure <> S4_overlap:16 meth
+rec 4510:4523 <> Step5_Licences
+proj 4532:4535 <> S5_T
+proj 4615:4625 <> S5_licences
+R4539:4542 Coq.Init.Datatypes <> list ind
+R4544:4557 Library <> TransitionKind ind
+binder 4636:4636 <> t:21
+R4648:4651 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4639:4640 Coq.Lists.List <> In def
+R4644:4647 PracticalProcedure <> S5_T:20 meth
+R4642:4642 PracticalProcedure <> t:21 var
+R4652:4654 AdmissibleTransitions <> InT ind
+R4656:4656 PracticalProcedure <> t:21 var
+ind 4756:4769 <> SamenessChoice
+constr 4778:4787 <> SC_literal
+constr 4818:4831 <> SC_isomorphism
+constr 4858:4868 <> SC_homotopy
+constr 4898:4913 <> SC_approximation
+constr 4938:4951 <> SC_statistical
+constr 4978:4995 <> SC_model_theoretic
+R4799:4812 PracticalProcedure <> SamenessChoice:23 ind
+R4839:4852 PracticalProcedure <> SamenessChoice:23 ind
+R4879:4892 PracticalProcedure <> SamenessChoice:23 ind
+R4919:4932 PracticalProcedure <> SamenessChoice:23 ind
+R4959:4972 PracticalProcedure <> SamenessChoice:23 ind
+R4999:5012 PracticalProcedure <> SamenessChoice:23 ind
+scheme 4756:4769 <> SamenessChoice_rect
+scheme 4756:4769 <> SamenessChoice_ind
+scheme 4756:4769 <> SamenessChoice_rec
+scheme 4756:4769 <> SamenessChoice_sind
+rec 5023:5036 <> Step6_Sameness
+proj 5045:5053 <> S6_choice
+proj 5075:5084 <> S6_witness
+proj 5156:5173 <> S6_refuses_upgrade
+R5057:5070 PracticalProcedure <> SamenessChoice ind
+rec 5328:5345 <> Step7_GlobalModel'
+proj 5354:5358 <> S7_G'
+proj 5370:5386 <> S7_descent_holds'
+rec 5544:5558 <> Step8_Residuals
+proj 5567:5578 <> S8_preserved
+proj 5598:5609 <> S8_discarded
+proj 5629:5641 <> S8_documented
+R5586:5589 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5617:5620 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+rec 5801:5821 <> Step9_NextObservation
+proj 5830:5841 <> S9_current_G
+proj 5853:5878 <> S9_discriminating_evidence
+proj 5890:5896 <> S9_plan
+R5926:5929 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5900:5925 PracticalProcedure <> S9_discriminating_evidence:38 meth
+rec 6314:6322 <> Procedure
+proj 6331:6337 <> P_step1
+proj 6359:6365 <> P_step2
+proj 6393:6399 <> P_step3
+proj 6418:6424 <> P_step4
+proj 6446:6452 <> P_step5
+proj 6474:6480 <> P_step6
+proj 6502:6508 <> P_step7
+proj 6534:6540 <> P_step8
+proj 6563:6569 <> P_step9
+R6341:6354 PracticalProcedure <> Step1_RawDatum rec
+R6369:6388 PracticalProcedure <> Step2_Interpretation rec
+R6403:6413 PracticalProcedure <> Step3_Chain rec
+R6428:6441 PracticalProcedure <> Step4_Overlaps rec
+R6456:6469 PracticalProcedure <> Step5_Licences rec
+R6484:6497 PracticalProcedure <> Step6_Sameness rec
+R6512:6529 PracticalProcedure <> Step7_GlobalModel' rec
+R6544:6558 PracticalProcedure <> Step8_Residuals rec
+R6573:6593 PracticalProcedure <> Step9_NextObservation rec
+ax 6938:6962 <> anomalies_are_constraints
+R6980:6988 PracticalProcedure <> Procedure rec
+binder 6976:6976 <> p:50

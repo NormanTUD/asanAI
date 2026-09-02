@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 11_ObserverInDiagram.v                                                       *)
 (*                                                                             *)
-(* Section "The observer is part of the diagram" of                           *)
+(* Section The observer is part of the diagram of                           *)
 (* coherent_world_models.php, lines 612-640.                                   *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
@@ -20,8 +20,8 @@
 (*                                                                             *)
 (*     subject        signal         internal rep.    report         model   *)
 (*                                                                             *)
-(*   The boxed question: "Which structure of the subject matter does this *)
-(*   representation preserve, and what does it discard?"                    *)
+(*   The boxed question: Which structure of the subject matter does this *)
+(*   representation preserve, and what does it discard?                    *)
 (*                                                                             *)
 (* This file formalizes the observer's pipeline as a composite of six     *)
 (* stages.                                                                      *)
@@ -121,8 +121,8 @@ Record HistoryPipeline := {
 (* 3.  The boxed question                                                        *)
 (* ---------------------------------------------------------------------------- *)
 
-(* "Which structure of the subject matter does this representation         *)
-(* preserve, and what does it discard?"                                       *)
+(* Which structure of the subject matter does this representation         *)
+(* preserve, and what does it discard?                                       *)
 
 Record RepresentationQuestion := {
   RQ_pipeline : ObserverPipeline;
@@ -140,8 +140,8 @@ Definition ask_discarding (q : RepresentationQuestion) : Type -> Prop :=
 (* 4.  The invariance discipline                                                 *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter (in the later section "Invariants") says: "Speak only of    *)
-(* what your admissible transitions preserve." We capture this as a       *)
+(* The chapter (in the later section Invariants) says: Speak only of    *)
+(* what your admissible transitions preserve. We capture this as a       *)
 (* discipline: every claim about the subject matter should be backed by    *)
 (* an admissible transition that preserves the structure invoked.          *)
 
@@ -166,7 +166,7 @@ Definition claim_is_backed (c : BackedClaim) : Prop :=
 (*   - The backed-claim discipline: every claim about W should be backed   *)
 (*     by an admissible transition that preserves the structure invoked.   *)
 (*                                                                             *)
-(* The pipeline makes the abstract "subject matter" concrete: every claim *)
+(* The pipeline makes the abstract subject matter concrete: every claim *)
 (* about W arrives at M through a specific sequence of transformations.   *)
 (* Each transformation may discard structure, and the disciplines of the  *)
 (* rest of the chapter apply at each stage.                                  *)

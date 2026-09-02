@@ -1,354 +1,354 @@
-DIGEST 772d18d553ed5d44bdb75ab70fd0beb9
+DIGEST 438d2aa919e2557649522b367b153a68
 FLibrary
-R2162:2171 Coq.Lists.List <> <> lib
-R2181:2193 Coq.Lists.List ListNotations <> mod
-rec 2781:2793 <> SubjectMatter
-proj 2802:2810 <> W_carrier
-def 3076:3081 <> Region
-R3088:3100 Library <> SubjectMatter rec
-binder 3084:3084 <> s:3
-R3113:3121 Library <> W_carrier proj
-R3123:3123 Library <> s:3 var
-rec 3295:3302 <> Codomain
-proj 3311:3319 <> R_carrier
-def 3389:3393 <> Trace
-R3400:3407 Library <> Codomain rec
-binder 3396:3396 <> r:6
-R3420:3428 Library <> R_carrier proj
-R3430:3430 Library <> r:6 var
-rec 4015:4028 <> AccessFunction
-proj 4037:4045 <> AF_source
-proj 4066:4074 <> AF_target
-proj 4090:4095 <> AF_map
-R4049:4061 Library <> SubjectMatter rec
-R4078:4085 Library <> Codomain rec
-R4121:4124 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R4102:4110 Library <> W_carrier proj
-R4112:4120 Library <> AF_source:8 meth
-R4125:4133 Library <> R_carrier proj
-R4135:4143 Library <> AF_target:9 meth
-def 5178:5197 <> observation_licensed
-R5204:5217 Library <> AccessFunction rec
-binder 5200:5200 <> O:11
-R5477:5480 Coq.Init.Logic <> True ind
-rec 5653:5667 <> ViewTranslation
-proj 5676:5684 <> VT_source
-proj 5700:5708 <> VT_target
-proj 5724:5729 <> VT_map
+R2146:2155 Coq.Lists.List <> <> lib
+R2165:2177 Coq.Lists.List ListNotations <> mod
+rec 2765:2777 <> SubjectMatter
+proj 2786:2794 <> W_carrier
+def 3056:3061 <> Region
+R3068:3080 Library <> SubjectMatter rec
+binder 3064:3064 <> s:3
+R3093:3101 Library <> W_carrier proj
+R3103:3103 Library <> s:3 var
+rec 3275:3282 <> Codomain
+proj 3291:3299 <> R_carrier
+def 3369:3373 <> Trace
+R3380:3387 Library <> Codomain rec
+binder 3376:3376 <> r:6
+R3400:3408 Library <> R_carrier proj
+R3410:3410 Library <> r:6 var
+rec 3991:4004 <> AccessFunction
+proj 4013:4021 <> AF_source
+proj 4042:4050 <> AF_target
+proj 4066:4071 <> AF_map
+R4025:4037 Library <> SubjectMatter rec
+R4054:4061 Library <> Codomain rec
+R4097:4100 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4078:4086 Library <> W_carrier proj
+R4088:4096 Library <> AF_source:8 meth
+R4101:4109 Library <> R_carrier proj
+R4111:4119 Library <> AF_target:9 meth
+def 5154:5173 <> observation_licensed
+R5180:5193 Library <> AccessFunction rec
+binder 5176:5176 <> O:11
+R5453:5456 Coq.Init.Logic <> True ind
+rec 5629:5643 <> ViewTranslation
+proj 5652:5660 <> VT_source
+proj 5676:5684 <> VT_target
+proj 5700:5705 <> VT_map
+R5664:5671 Library <> Codomain rec
 R5688:5695 Library <> Codomain rec
-R5712:5719 Library <> Codomain rec
-R5755:5758 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R5736:5744 Library <> R_carrier proj
-R5746:5754 Library <> VT_source:13 meth
-R5759:5767 Library <> R_carrier proj
-R5769:5777 Library <> VT_target:14 meth
-def 5794:5813 <> translation_licensed
-R5821:5835 Library <> ViewTranslation rec
-binder 5816:5817 <> T_:16
-R5850:5853 Coq.Init.Logic <> True ind
-rec 6025:6031 <> Context
-proj 6040:6048 <> C_carrier
-rec 6068:6084 <> ContextRefinement
-proj 6093:6101 <> CR_source
-proj 6116:6124 <> CR_target
-proj 6139:6144 <> CR_map
-R6105:6111 Library <> Context rec
-R6128:6134 Library <> Context rec
-R6170:6173 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6151:6159 Library <> C_carrier proj
-R6161:6169 Library <> CR_source:20 meth
-R6174:6182 Library <> C_carrier proj
-R6184:6192 Library <> CR_target:21 meth
-def 6209:6227 <> refinement_licensed
-R6234:6250 Library <> ContextRefinement rec
-binder 6230:6230 <> f:23
-R6265:6268 Coq.Init.Logic <> True ind
-ind 6363:6376 <> TransitionKind
-constr 6385:6397 <> TKObservation
-constr 6438:6450 <> TKTranslation
-constr 6492:6503 <> TKRefinement
-R6415:6418 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6401:6414 Library <> AccessFunction rec
-R6419:6432 Library <> TransitionKind:24 ind
-R6469:6472 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6454:6468 Library <> ViewTranslation rec
-R6473:6486 Library <> TransitionKind:24 ind
-R6525:6528 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6508:6524 Library <> ContextRefinement rec
-R6529:6542 Library <> TransitionKind:24 ind
-scheme 6363:6376 <> TransitionKind_rect
-scheme 6363:6376 <> TransitionKind_ind
-scheme 6363:6376 <> TransitionKind_rec
-scheme 6363:6376 <> TransitionKind_sind
-ind 6637:6656 <> AdmissibleTransition
-constr 6690:6703 <> AT_Observation
-constr 6808:6821 <> AT_Translation
-constr 6930:6942 <> AT_Refinement
-R6674:6677 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6660:6673 Library <> TransitionKind ind
-binder 6720:6720 <> O:28
-R6745:6764 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6723:6742 Library <> observation_licensed def
-R6744:6744 Library <> O:28 var
-R6765:6784 Library <> AdmissibleTransition:26 ind
-R6787:6799 Library <> TKObservation constr
-R6801:6801 Library <> O:28 var
-binder 6838:6839 <> T_:29
-R6865:6885 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6842:6861 Library <> translation_licensed def
-R6863:6864 Library <> T_:29 var
-R6886:6905 Library <> AdmissibleTransition:26 ind
-R6908:6920 Library <> TKTranslation constr
-R6922:6923 Library <> T_:29 var
-binder 6959:6959 <> f:30
-R6983:7002 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6962:6980 Library <> refinement_licensed def
-R6982:6982 Library <> f:30 var
-R7003:7022 Library <> AdmissibleTransition:26 ind
-R7025:7036 Library <> TKRefinement constr
-R7038:7038 Library <> f:30 var
-scheme 6637:6656 <> AdmissibleTransition_ind
-scheme 6637:6656 <> AdmissibleTransition_sind
-def 7218:7218 <> T
-R7225:7238 Library <> TransitionKind ind
-binder 7221:7221 <> k:31
-R7251:7270 Library <> AdmissibleTransition ind
-R7272:7272 Library <> k:31 var
-rec 7696:7709 <> Representation
-proj 7718:7729 <> Rep_codomain
-proj 7745:7753 <> Rep_value
-R7733:7740 Library <> Codomain rec
-R7760:7768 Library <> R_carrier proj
-R7770:7781 Library <> Rep_codomain:33 meth
-def 8376:8379 <> Same
-binder 8382:8382 <> A:35
-R8399:8399 Library <> A:35 var
-binder 8393:8393 <> x:36
-binder 8395:8395 <> y:37
-R8413:8415 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8412:8412 Library <> x:36 var
-R8416:8416 Library <> y:37 var
-rec 8508:8510 <> Iso
-proj 8539:8544 <> iso_to
-proj 8560:8567 <> iso_from
-proj 8581:8591 <> iso_to_from
-proj 8632:8642 <> iso_from_to
-binder 8513:8513 <> A:38
-binder 8515:8515 <> B:39
-R8551:8554 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5731:5734 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5712:5720 Library <> R_carrier proj
+R5722:5730 Library <> VT_source:13 meth
+R5735:5743 Library <> R_carrier proj
+R5745:5753 Library <> VT_target:14 meth
+def 5770:5789 <> translation_licensed
+R5797:5811 Library <> ViewTranslation rec
+binder 5792:5793 <> T_:16
+R5826:5829 Coq.Init.Logic <> True ind
+rec 6001:6007 <> Context
+proj 6016:6024 <> C_carrier
+rec 6044:6060 <> ContextRefinement
+proj 6069:6077 <> CR_source
+proj 6092:6100 <> CR_target
+proj 6115:6120 <> CR_map
+R6081:6087 Library <> Context rec
+R6104:6110 Library <> Context rec
+R6146:6149 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6127:6135 Library <> C_carrier proj
+R6137:6145 Library <> CR_source:20 meth
+R6150:6158 Library <> C_carrier proj
+R6160:6168 Library <> CR_target:21 meth
+def 6185:6203 <> refinement_licensed
+R6210:6226 Library <> ContextRefinement rec
+binder 6206:6206 <> f:23
+R6241:6244 Coq.Init.Logic <> True ind
+ind 6339:6352 <> TransitionKind
+constr 6361:6373 <> TKObservation
+constr 6414:6426 <> TKTranslation
+constr 6468:6479 <> TKRefinement
+R6391:6394 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6377:6390 Library <> AccessFunction rec
+R6395:6408 Library <> TransitionKind:24 ind
+R6445:6448 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6430:6444 Library <> ViewTranslation rec
+R6449:6462 Library <> TransitionKind:24 ind
+R6501:6504 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6484:6500 Library <> ContextRefinement rec
+R6505:6518 Library <> TransitionKind:24 ind
+scheme 6339:6352 <> TransitionKind_rect
+scheme 6339:6352 <> TransitionKind_ind
+scheme 6339:6352 <> TransitionKind_rec
+scheme 6339:6352 <> TransitionKind_sind
+ind 6613:6632 <> AdmissibleTransition
+constr 6666:6679 <> AT_Observation
+constr 6784:6797 <> AT_Translation
+constr 6906:6918 <> AT_Refinement
+R6650:6653 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6636:6649 Library <> TransitionKind ind
+binder 6696:6696 <> O:28
+R6721:6740 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6699:6718 Library <> observation_licensed def
+R6720:6720 Library <> O:28 var
+R6741:6760 Library <> AdmissibleTransition:26 ind
+R6763:6775 Library <> TKObservation constr
+R6777:6777 Library <> O:28 var
+binder 6814:6815 <> T_:29
+R6841:6861 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6818:6837 Library <> translation_licensed def
+R6839:6840 Library <> T_:29 var
+R6862:6881 Library <> AdmissibleTransition:26 ind
+R6884:6896 Library <> TKTranslation constr
+R6898:6899 Library <> T_:29 var
+binder 6935:6935 <> f:30
+R6959:6978 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6938:6956 Library <> refinement_licensed def
+R6958:6958 Library <> f:30 var
+R6979:6998 Library <> AdmissibleTransition:26 ind
+R7001:7012 Library <> TKRefinement constr
+R7014:7014 Library <> f:30 var
+scheme 6613:6632 <> AdmissibleTransition_ind
+scheme 6613:6632 <> AdmissibleTransition_sind
+def 7192:7192 <> T
+R7199:7212 Library <> TransitionKind ind
+binder 7195:7195 <> k:31
+R7225:7244 Library <> AdmissibleTransition ind
+R7246:7246 Library <> k:31 var
+rec 7670:7683 <> Representation
+proj 7692:7703 <> Rep_codomain
+proj 7719:7727 <> Rep_value
+R7707:7714 Library <> Codomain rec
+R7734:7742 Library <> R_carrier proj
+R7744:7755 Library <> Rep_codomain:33 meth
+def 8350:8353 <> Same
+binder 8356:8356 <> A:35
+R8373:8373 Library <> A:35 var
+binder 8367:8367 <> x:36
+binder 8369:8369 <> y:37
+R8387:8389 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8386:8386 Library <> x:36 var
+R8390:8390 Library <> y:37 var
+rec 8482:8484 <> Iso
+proj 8513:8518 <> iso_to
+proj 8534:8541 <> iso_from
+proj 8555:8565 <> iso_to_from
+proj 8606:8616 <> iso_from_to
+binder 8487:8487 <> A:38
+binder 8489:8489 <> B:39
+R8525:8528 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8524:8524 Library <> A:38 var
+R8529:8529 Library <> B:39 var
+R8546:8549 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8545:8545 Library <> B:39 var
 R8550:8550 Library <> A:38 var
-R8555:8555 Library <> B:39 var
-R8572:8575 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8571:8571 Library <> B:39 var
-R8576:8576 Library <> A:38 var
-binder 8602:8602 <> b:43
-R8624:8626 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8605:8610 Library <> iso_to:41 meth
-R8613:8620 Library <> iso_from:42 meth
-R8622:8622 Library <> b:43 var
-R8627:8627 Library <> b:43 var
-binder 8653:8653 <> a:45
-R8675:8677 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8656:8663 Library <> iso_from:42 meth
-R8666:8671 Library <> iso_to:41 meth
-R8673:8673 Library <> a:45 var
-R8678:8678 Library <> a:45 var
-def 8695:8704 <> Isomorphic
-binder 8707:8707 <> A:47
-binder 8709:8709 <> B:48
-R8729:8731 Library <> Iso rec
-R8733:8733 Library <> A:47 var
-R8735:8735 Library <> B:48 var
-rec 8991:9003 <> HomotopyEquiv
-proj 9032:9036 <> he_to
-proj 9052:9058 <> he_from
-proj 9072:9085 <> he_homotopy_to
-proj 9126:9141 <> he_homotopy_from
-binder 9006:9006 <> A:49
-binder 9008:9008 <> B:50
-R9043:9046 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9042:9042 Library <> A:49 var
-R9047:9047 Library <> B:50 var
-R9063:9066 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9062:9062 Library <> B:50 var
-R9067:9067 Library <> A:49 var
-binder 9098:9098 <> a:54
-R9118:9120 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9101:9107 Library <> he_from:53 meth
-R9110:9114 Library <> he_to:52 meth
-R9116:9116 Library <> a:54 var
-R9121:9121 Library <> a:54 var
-binder 9152:9152 <> b:56
-R9172:9174 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9155:9159 Library <> he_to:52 meth
-R9162:9168 Library <> he_from:53 meth
-R9170:9170 Library <> b:56 var
-R9175:9175 Library <> b:56 var
-def 9192:9200 <> Homotopic
-binder 9203:9203 <> A:58
-binder 9205:9205 <> B:59
-R9225:9237 Library <> HomotopyEquiv rec
-R9239:9239 Library <> A:58 var
-R9241:9241 Library <> B:59 var
-ind 9498:9507 <> HigherPath
-constr 9552:9559 <> hp_intro
-binder 9519:9519 <> A:60
-R9531:9534 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9530:9530 Library <> A:60 var
-R9536:9539 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9535:9535 Library <> A:60 var
-binder 9571:9571 <> A:63
-R9588:9588 Library <> A:63 var
-binder 9582:9582 <> x:64
-binder 9584:9584 <> y:65
-R9597:9600 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9593:9595 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9592:9592 Library <> x:64 var
-R9596:9596 Library <> y:65 var
-R9601:9610 Library <> HigherPath:61 ind
-R9616:9616 Library <> y:65 var
-R9614:9614 Library <> x:64 var
-R9612:9612 Library <> A:63 var
-scheme 9498:9507 <> HigherPath_ind
-scheme 9498:9507 <> HigherPath_sind
-rec 9708:9713 <> Approx
-proj 9784:9795 <> approx_bound
-binder 9716:9716 <> A:66
-R9732:9735 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9731:9731 Library <> A:66 var
-R9737:9740 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9736:9736 Library <> A:66 var
-binder 9727:9727 <> d:67
-binder 9748:9750 <> eps:68
-R9767:9767 Library <> A:66 var
-binder 9761:9761 <> x:69
-binder 9763:9763 <> y:70
-R9799:9799 Library <> d:67 var
-R9803:9803 Library <> y:70 var
-R9801:9801 Library <> x:69 var
-ind 9900:9919 <> StatisticalAgreement
-constr 9952:9959 <> sa_intro
-binder 9922:9923 <> D1:73
-binder 9925:9926 <> D2:74
-binder 9928:9928 <> M:75
-R9992:9995 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9988:9991 Coq.Init.Logic <> True ind
-R9996:10015 Library <> StatisticalAgreement:76 ind
-R10023:10023 Library <> M:75 var
-R10020:10021 Library <> D2:74 var
-R10017:10018 Library <> D1:73 var
-scheme 9900:9919 <> StatisticalAgreement_rect
-scheme 9900:9919 <> StatisticalAgreement_ind
-scheme 9900:9919 <> StatisticalAgreement_rec
-scheme 9900:9919 <> StatisticalAgreement_sind
-rec 10116:10120 <> Model
-proj 10129:10141 <> Model_carrier
-rec 10161:10166 <> Theory
-proj 10175:10190 <> Theory_signature
-proj 10202:10214 <> Theory_models
-R10223:10226 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10218:10222 Library <> Model rec
-rec 10243:10253 <> CommonModel
-proj 10291:10298 <> cm_model
-proj 10311:10322 <> cm_satisfies
-R10264:10267 Coq.Init.Datatypes <> list ind
-R10269:10274 Library <> Theory rec
-binder 10256:10260 <> S_all:83
-R10302:10306 Library <> Model rec
-binder 10333:10333 <> t:86
-R10346:10349 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10336:10337 Coq.Lists.List <> In def
-R10341:10345 Library <> S_all:83 var
-R10339:10339 Library <> t:86 var
-R10350:10362 Library <> Theory_models proj
-R10364:10364 Library <> t:86 var
-R10366:10373 Library <> cm_model:85 meth
-prf 12119:12127 <> eq_to_iso
-binder 12139:12139 <> A:88
-R12156:12156 Library <> A:88 var
-binder 12150:12150 <> x:89
-binder 12152:12152 <> y:90
-R12169:12172 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R12165:12167 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R12164:12164 Library <> x:89 var
-R12168:12168 Library <> y:90 var
-R12173:12175 Library <> Iso rec
-R12177:12177 Library <> A:88 var
-R12179:12179 Library <> A:88 var
-R12218:12223 Library <> iso_to proj
-R12218:12223 Library <> iso_to proj
-R12218:12223 Library <> iso_to proj
-R12232:12239 Library <> iso_from proj
-R12232:12239 Library <> iso_from proj
-R12258:12268 Library <> iso_to_from proj
-R12258:12268 Library <> iso_to_from proj
-R12301:12311 Library <> iso_from_to proj
-R12301:12311 Library <> iso_from_to proj
-R12228:12229 Coq.Init.Datatypes <> id def
-R12244:12245 Coq.Init.Datatypes <> id def
-R12282:12288 Coq.Init.Logic <> eq_refl constr
-R12325:12331 Coq.Init.Logic <> eq_refl constr
-R12218:12223 Library <> iso_to proj
-R12218:12223 Library <> iso_to proj
-R12218:12223 Library <> iso_to proj
-R12232:12239 Library <> iso_from proj
-R12232:12239 Library <> iso_from proj
-R12258:12268 Library <> iso_to_from proj
-R12258:12268 Library <> iso_to_from proj
-R12301:12311 Library <> iso_from_to proj
-R12301:12311 Library <> iso_from_to proj
-R12228:12229 Coq.Init.Datatypes <> id def
-R12244:12245 Coq.Init.Datatypes <> id def
-R12282:12288 Coq.Init.Logic <> eq_refl constr
-R12325:12331 Coq.Init.Logic <> eq_refl constr
-prf 12431:12445 <> iso_to_homotopy
-binder 12457:12457 <> A:91
-binder 12459:12459 <> B:92
-R12481:12484 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R12474:12476 Library <> Iso rec
-R12478:12478 Library <> A:91 var
-R12480:12480 Library <> B:92 var
-R12485:12497 Library <> HomotopyEquiv rec
-R12499:12499 Library <> A:91 var
-R12501:12501 Library <> B:92 var
-R12581:12585 Library <> he_to proj
-R12581:12585 Library <> he_to proj
-R12581:12585 Library <> he_to proj
-R12594:12600 Library <> he_from proj
-R12594:12600 Library <> he_from proj
-R12621:12634 Library <> he_homotopy_to proj
-R12621:12634 Library <> he_homotopy_to proj
-R12658:12673 Library <> he_homotopy_from proj
-R12658:12673 Library <> he_homotopy_from proj
-R12581:12585 Library <> he_to proj
-R12581:12585 Library <> he_to proj
-R12581:12585 Library <> he_to proj
-R12594:12600 Library <> he_from proj
-R12594:12600 Library <> he_from proj
-R12621:12634 Library <> he_homotopy_to proj
-R12621:12634 Library <> he_homotopy_to proj
-R12658:12673 Library <> he_homotopy_from proj
-R12658:12673 Library <> he_homotopy_from proj
-rec 13115:13128 <> IndexicalTrace
-proj 13152:13159 <> it_trace
-proj 13174:13185 <> it_points_to
-proj 13255:13262 <> it_is_of
-R13135:13142 Library <> Codomain rec
-binder 13131:13131 <> R:93
-R13163:13167 Library <> Trace def
-R13169:13169 Library <> R:93 var
-R13278:13281 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13266:13277 Library <> it_points_to:96 meth
-def 13431:13441 <> FreePattern
-R13448:13455 Library <> Codomain rec
-binder 13444:13444 <> R:98
-R13468:13472 Library <> Trace def
-R13474:13474 Library <> R:98 var
-R13907:13919 Library <> SubjectMatter rec
-not 13898:13898 <> :::'W'
-R13940:13947 Library <> Codomain rec
-not 13931:13931 <> :::'R'
-R13976:13981 Library <> Region def
-not 13959:13959 <> :::'Region'_x
-R14026:14030 Library <> Trace def
-not 14010:14010 <> :::'Trace'_x
+binder 8576:8576 <> b:43
+R8598:8600 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8579:8584 Library <> iso_to:41 meth
+R8587:8594 Library <> iso_from:42 meth
+R8596:8596 Library <> b:43 var
+R8601:8601 Library <> b:43 var
+binder 8627:8627 <> a:45
+R8649:8651 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8630:8637 Library <> iso_from:42 meth
+R8640:8645 Library <> iso_to:41 meth
+R8647:8647 Library <> a:45 var
+R8652:8652 Library <> a:45 var
+def 8669:8678 <> Isomorphic
+binder 8681:8681 <> A:47
+binder 8683:8683 <> B:48
+R8703:8705 Library <> Iso rec
+R8707:8707 Library <> A:47 var
+R8709:8709 Library <> B:48 var
+rec 8965:8977 <> HomotopyEquiv
+proj 9006:9010 <> he_to
+proj 9026:9032 <> he_from
+proj 9046:9059 <> he_homotopy_to
+proj 9100:9115 <> he_homotopy_from
+binder 8980:8980 <> A:49
+binder 8982:8982 <> B:50
+R9017:9020 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9016:9016 Library <> A:49 var
+R9021:9021 Library <> B:50 var
+R9037:9040 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9036:9036 Library <> B:50 var
+R9041:9041 Library <> A:49 var
+binder 9072:9072 <> a:54
+R9092:9094 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9075:9081 Library <> he_from:53 meth
+R9084:9088 Library <> he_to:52 meth
+R9090:9090 Library <> a:54 var
+R9095:9095 Library <> a:54 var
+binder 9126:9126 <> b:56
+R9146:9148 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9129:9133 Library <> he_to:52 meth
+R9136:9142 Library <> he_from:53 meth
+R9144:9144 Library <> b:56 var
+R9149:9149 Library <> b:56 var
+def 9166:9174 <> Homotopic
+binder 9177:9177 <> A:58
+binder 9179:9179 <> B:59
+R9199:9211 Library <> HomotopyEquiv rec
+R9213:9213 Library <> A:58 var
+R9215:9215 Library <> B:59 var
+ind 9470:9479 <> HigherPath
+constr 9524:9531 <> hp_intro
+binder 9491:9491 <> A:60
+R9503:9506 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9502:9502 Library <> A:60 var
+R9508:9511 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9507:9507 Library <> A:60 var
+binder 9543:9543 <> A:63
+R9560:9560 Library <> A:63 var
+binder 9554:9554 <> x:64
+binder 9556:9556 <> y:65
+R9569:9572 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9565:9567 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9564:9564 Library <> x:64 var
+R9568:9568 Library <> y:65 var
+R9573:9582 Library <> HigherPath:61 ind
+R9588:9588 Library <> y:65 var
+R9586:9586 Library <> x:64 var
+R9584:9584 Library <> A:63 var
+scheme 9470:9479 <> HigherPath_ind
+scheme 9470:9479 <> HigherPath_sind
+rec 9680:9685 <> Approx
+proj 9756:9767 <> approx_bound
+binder 9688:9688 <> A:66
+R9704:9707 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9703:9703 Library <> A:66 var
+R9709:9712 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9708:9708 Library <> A:66 var
+binder 9699:9699 <> d:67
+binder 9720:9722 <> eps:68
+R9739:9739 Library <> A:66 var
+binder 9733:9733 <> x:69
+binder 9735:9735 <> y:70
+R9771:9771 Library <> d:67 var
+R9775:9775 Library <> y:70 var
+R9773:9773 Library <> x:69 var
+ind 9872:9891 <> StatisticalAgreement
+constr 9924:9931 <> sa_intro
+binder 9894:9895 <> D1:73
+binder 9897:9898 <> D2:74
+binder 9900:9900 <> M:75
+R9964:9967 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9960:9963 Coq.Init.Logic <> True ind
+R9968:9987 Library <> StatisticalAgreement:76 ind
+R9995:9995 Library <> M:75 var
+R9992:9993 Library <> D2:74 var
+R9989:9990 Library <> D1:73 var
+scheme 9872:9891 <> StatisticalAgreement_rect
+scheme 9872:9891 <> StatisticalAgreement_ind
+scheme 9872:9891 <> StatisticalAgreement_rec
+scheme 9872:9891 <> StatisticalAgreement_sind
+rec 10088:10092 <> Model
+proj 10101:10113 <> Model_carrier
+rec 10133:10138 <> Theory
+proj 10147:10162 <> Theory_signature
+proj 10174:10186 <> Theory_models
+R10195:10198 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10190:10194 Library <> Model rec
+rec 10215:10225 <> CommonModel
+proj 10263:10270 <> cm_model
+proj 10283:10294 <> cm_satisfies
+R10236:10239 Coq.Init.Datatypes <> list ind
+R10241:10246 Library <> Theory rec
+binder 10228:10232 <> S_all:83
+R10274:10278 Library <> Model rec
+binder 10305:10305 <> t:86
+R10318:10321 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10308:10309 Coq.Lists.List <> In def
+R10313:10317 Library <> S_all:83 var
+R10311:10311 Library <> t:86 var
+R10322:10334 Library <> Theory_models proj
+R10336:10336 Library <> t:86 var
+R10338:10345 Library <> cm_model:85 meth
+prf 12089:12097 <> eq_to_iso
+binder 12109:12109 <> A:88
+R12126:12126 Library <> A:88 var
+binder 12120:12120 <> x:89
+binder 12122:12122 <> y:90
+R12139:12142 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12135:12137 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R12134:12134 Library <> x:89 var
+R12138:12138 Library <> y:90 var
+R12143:12145 Library <> Iso rec
+R12147:12147 Library <> A:88 var
+R12149:12149 Library <> A:88 var
+R12188:12193 Library <> iso_to proj
+R12188:12193 Library <> iso_to proj
+R12188:12193 Library <> iso_to proj
+R12202:12209 Library <> iso_from proj
+R12202:12209 Library <> iso_from proj
+R12228:12238 Library <> iso_to_from proj
+R12228:12238 Library <> iso_to_from proj
+R12271:12281 Library <> iso_from_to proj
+R12271:12281 Library <> iso_from_to proj
+R12198:12199 Coq.Init.Datatypes <> id def
+R12214:12215 Coq.Init.Datatypes <> id def
+R12252:12258 Coq.Init.Logic <> eq_refl constr
+R12295:12301 Coq.Init.Logic <> eq_refl constr
+R12188:12193 Library <> iso_to proj
+R12188:12193 Library <> iso_to proj
+R12188:12193 Library <> iso_to proj
+R12202:12209 Library <> iso_from proj
+R12202:12209 Library <> iso_from proj
+R12228:12238 Library <> iso_to_from proj
+R12228:12238 Library <> iso_to_from proj
+R12271:12281 Library <> iso_from_to proj
+R12271:12281 Library <> iso_from_to proj
+R12198:12199 Coq.Init.Datatypes <> id def
+R12214:12215 Coq.Init.Datatypes <> id def
+R12252:12258 Coq.Init.Logic <> eq_refl constr
+R12295:12301 Coq.Init.Logic <> eq_refl constr
+prf 12401:12415 <> iso_to_homotopy
+binder 12427:12427 <> A:91
+binder 12429:12429 <> B:92
+R12451:12454 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12444:12446 Library <> Iso rec
+R12448:12448 Library <> A:91 var
+R12450:12450 Library <> B:92 var
+R12455:12467 Library <> HomotopyEquiv rec
+R12469:12469 Library <> A:91 var
+R12471:12471 Library <> B:92 var
+R12551:12555 Library <> he_to proj
+R12551:12555 Library <> he_to proj
+R12551:12555 Library <> he_to proj
+R12564:12570 Library <> he_from proj
+R12564:12570 Library <> he_from proj
+R12591:12604 Library <> he_homotopy_to proj
+R12591:12604 Library <> he_homotopy_to proj
+R12628:12643 Library <> he_homotopy_from proj
+R12628:12643 Library <> he_homotopy_from proj
+R12551:12555 Library <> he_to proj
+R12551:12555 Library <> he_to proj
+R12551:12555 Library <> he_to proj
+R12564:12570 Library <> he_from proj
+R12564:12570 Library <> he_from proj
+R12591:12604 Library <> he_homotopy_to proj
+R12591:12604 Library <> he_homotopy_to proj
+R12628:12643 Library <> he_homotopy_from proj
+R12628:12643 Library <> he_homotopy_from proj
+rec 13081:13094 <> IndexicalTrace
+proj 13118:13125 <> it_trace
+proj 13140:13151 <> it_points_to
+proj 13219:13226 <> it_is_of
+R13101:13108 Library <> Codomain rec
+binder 13097:13097 <> R:93
+R13129:13133 Library <> Trace def
+R13135:13135 Library <> R:93 var
+R13242:13245 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13230:13241 Library <> it_points_to:96 meth
+def 13393:13403 <> FreePattern
+R13410:13417 Library <> Codomain rec
+binder 13406:13406 <> R:98
+R13430:13434 Library <> Trace def
+R13436:13436 Library <> R:98 var
+R13869:13881 Library <> SubjectMatter rec
+not 13860:13860 <> :::'W'
+R13902:13909 Library <> Codomain rec
+not 13893:13893 <> :::'R'
+R13938:13943 Library <> Region def
+not 13921:13921 <> :::'Region'_x
+R13988:13992 Library <> Trace def
+not 13972:13972 <> :::'Trace'_x

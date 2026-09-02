@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 04_NotionsOfSameness.v                                                       *)
 (*                                                                             *)
-(* Sections "Notions of sameness" and "Transformation is the missing concept" *)
+(* Sections Notions of sameness and Transformation is the missing concept *)
 (* of coherent_world_models.php, lines 158-247.                                *)
 (*                                                                             *)
 (* Summary of the two sections.                                                *)
@@ -25,10 +25,10 @@
 (*                                                                             *)
 (*   Transformation is the missing concept (lines 225-247).                    *)
 (*                                                                             *)
-(*     The naive question "R_A = R_B?" is usually wrong. Replace it with     *)
+(*     The naive question R_A = R_B? is usually wrong. Replace it with     *)
 (*     a transition T : R_A -> R_B, or with a common target Z such that      *)
 (*     T_A : R_A -> Z and T_B : R_B -> Z. The chapter's box:                 *)
-(*     "Difference is informative when we know what produced it."            *)
+(*     Difference is informative when we know what produced it.            *)
 (*                                                                             *)
 (* This file formalizes the hierarchy, the weakening lemmas, and the         *)
 (* transformation triangle.                                                    *)
@@ -71,8 +71,8 @@ Definition HomotopySame (A B : Type) : Prop := exists (_ : HomotopyEquiv A B), T
 
 Record ApproxWitness (A : Type) (d : A -> A -> Prop) (eps : Prop) (x y : A) : Prop :=
   { approx_d_le_eps : d x y }.
-(* The chapter: "Close enough for current purposes, with a quantified         *)
-(* residual." The witness is the inequality itself.                           *)
+(* The chapter: Close enough for current purposes, with a quantified         *)
+(* residual. The witness is the inequality itself.                           *)
 
 Definition ApproxSame (A : Type) (d : A -> A -> Prop) (eps : Prop) (x y : A) : Prop
   := ApproxWitness A d eps x y.
@@ -125,8 +125,8 @@ Qed.
 
 (* 2.3  From homotopy to approximation.                                        *)
 (*                                                                             *)
-(* The chapter says: "homotopy equivalence implies approximation under any  *)
-(* compatible metric." The weakening is recorded as a Prop implication.      *)
+(* The chapter says: homotopy equivalence implies approximation under any  *)
+(* compatible metric. The weakening is recorded as a Prop implication.      *)
 (*                                                                             *)
 (* We make this schematic: concrete instantiations would require defining    *)
 (* a metric d : A -> A -> Prop and a bound, and showing that the homotopy    *)
@@ -154,8 +154,8 @@ Qed.
 
 (* The weakening here is a placeholder: a concrete proof would have to      *)
 (* show how a statistical model M witnesses a common model for the theories *)
-(* in S_all. The chapter: "statistical agreement implies model-theoretic    *)
-(* compatibility under any reasonable interpretation." We leave the concrete *)
+(* in S_all. The chapter: statistical agreement implies model-theoretic    *)
+(* compatibility under any reasonable interpretation. We leave the concrete *)
 (* claim as admitted.                                                          *)
 
 Lemma stat_to_model_witness : forall (D1 D2 M : Type) (S_all : list Theory),
@@ -176,8 +176,8 @@ Definition hierarchy_implications : Prop :=
 (* 3.  The forbidden move: silent upgrade                                       *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "Never silently strengthen a weaker sameness into a stronger  *)
-(* one." A silent upgrade is the bare implication without a witness.          *)
+(* The chapter: Never silently strengthen a weaker sameness into a stronger  *)
+(* one. A silent upgrade is the bare implication without a witness.          *)
 
 (* We model the silent-upgrade category error as a flag.                       *)
 
@@ -193,9 +193,9 @@ Inductive SilentUpgradeError :=
 
 Definition approx_is_not_eq (A : Type) (d : A -> A -> Prop) (eps : Prop)
                               (x y : A) (H : ApproxSame A d eps x y)
-  : Prop :=   (* the chapter: "Two temperature readings within tolerance are *)
+  : Prop :=   (* the chapter: Two temperature readings within tolerance are *)
               (* not the same temperature; they are within eps of each       *)
-              (* other."                                                       *)
+              (* other.                                                       *)
   ~ LiteralSame A x y.
 (* This is a placeholder; concrete instantiations would discharge it with    *)
 (* the actual claim that approximation does not imply equality.             *)
@@ -205,7 +205,7 @@ Definition approx_is_not_eq (A : Type) (d : A -> A -> Prop) (eps : Prop)
 (* ---------------------------------------------------------------------------- *)
 
 (* Given two representations R_A, R_B, the chapter replaces the question    *)
-(* "R_A = R_B?" with a transition, or with a common target Z.                *)
+(* R_A = R_B? with a transition, or with a common target Z.                *)
 (*                                                                             *)
 (*       R_A  --T_A-->  Z                                                      *)
 (*                          ^                                                  *)
@@ -225,8 +225,8 @@ Record TransformationTriangle := {
   TT_TB_tgt : VT_target TT_TB = TT_Z
 }.
 
-(* The chapter's boxed principle: "Difference is informative when we know    *)
-(* what produced it."                                                          *)
+(* The chapter's boxed principle: Difference is informative when we know    *)
+(* what produced it.                                                          *)
 
 Axiom difference_informative_when_known :
   forall (tt : TransformationTriangle), Prop.
@@ -247,50 +247,50 @@ Record MathExample := { math_carrier : Type }.
 (* 5.1  Equality row.                                                            *)
 
 Record EqualityRow := {
-  ER_sense_data  : SenseDataExample;   (* "the same rod, one photon tracked" *)
-  ER_measurement : MeasurementExample; (* "two clocks show the same tick"    *)
-  ER_math        : MathExample         (* "2 + 2 = 4"                         *)
+  ER_sense_data  : SenseDataExample;   (* the same rod, one photon tracked *)
+  ER_measurement : MeasurementExample; (* two clocks show the same tick    *)
+  ER_math        : MathExample         (* 2 + 2 = 4                         *)
 }.
 
 (* 5.2  Isomorphism row.                                                        *)
 
 Record IsomorphismRow := {
-  IsoR_sense_data  : SenseDataExample;   (* "two indistinguishable coins"     *)
-  IsoR_measurement : MeasurementExample; (* "two calibrated meters"           *)
-  IsoR_math        : MathExample         (* "Z/6 ~= Z/2 x Z/3"                *)
+  IsoR_sense_data  : SenseDataExample;   (* two indistinguishable coins     *)
+  IsoR_measurement : MeasurementExample; (* two calibrated meters           *)
+  IsoR_math        : MathExample         (* Z/6 ~= Z/2 x Z/3                *)
 }.
 
 (* 5.3  Homotopy row.                                                            *)
 
 Record HomotopyRow := {
-  HomR_sense_data  : SenseDataExample;   (* "flash and bang from one strike" *)
-  HomR_measurement : MeasurementExample; (* "two experiments, one phenomenon"*)
-  HomR_math        : MathExample         (* "cup ~= donut"                    *)
+  HomR_sense_data  : SenseDataExample;   (* flash and bang from one strike *)
+  HomR_measurement : MeasurementExample; (* two experiments, one phenomenon*)
+  HomR_math        : MathExample         (* cup ~= donut                    *)
 }.
 
 (* 5.4  Approximation row.                                                       *)
 
 Record ApproxRow := {
-  AppR_sense_data  : SenseDataExample;   (* "20.01 vs 20.02 on a thermometer" *)
-  AppR_measurement : MeasurementExample; (* "within tolerance"               *)
-  AppR_math        : MathExample         (* "|f_n - f|_inf < eps"            *)
+  AppR_sense_data  : SenseDataExample;   (* 20.01 vs 20.02 on a thermometer *)
+  AppR_measurement : MeasurementExample; (* within tolerance               *)
+  AppR_math        : MathExample         (* |f_n - f|_inf < eps            *)
 }.
 
 (* 5.5  Statistical row.                                                         *)
 
 Record StatRow := {
-  StatR_sense_data  : SenseDataExample;   (* "eyewitness and CCTV agree"      *)
-  StatR_measurement : MeasurementExample; (* "two studies reject H_0"         *)
-  StatR_math        : MathExample         (* "Monte-Carlo agrees with theorem"*)
+  StatR_sense_data  : SenseDataExample;   (* eyewitness and CCTV agree      *)
+  StatR_measurement : MeasurementExample; (* two studies reject H_0         *)
+  StatR_math        : MathExample         (* Monte-Carlo agrees with theorem*)
 }.
 
 (* 5.6  Model-theoretic row.                                                     *)
 
 Record ModelRow := {
-  ModR_sense_data  : SenseDataExample;   (* "two witnesses agree on story"   *)
-  ModR_measurement : MeasurementExample; (* "two labs' data fit shared model"*)
-  ModR_math        : MathExample         (* "two axiomatisations admit       *)
-                                         (*  common model"                    *)
+  ModR_sense_data  : SenseDataExample;   (* two witnesses agree on story   *)
+  ModR_measurement : MeasurementExample; (* two labs' data fit shared model*)
+  ModR_math        : MathExample         (* two axiomatisations admit       *)
+                                         (*  common model                    *)
 }.
 
 (* ---------------------------------------------------------------------------- *)

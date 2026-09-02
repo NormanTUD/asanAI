@@ -2,19 +2,19 @@
 (*                                                                             *)
 (* 05_Ologs.v                                                                  *)
 (*                                                                             *)
-(* Section "Ologs: a diagram that pays its way" of                            *)
+(* Section Ologs: a diagram that pays its way of                            *)
 (* coherent_world_models.php, lines 251-277.                                   *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
-(*   The chapter introduces "ologs", short for "ontology log", due to        *)
+(*   The chapter introduces ologs, short for ontology log, due to        *)
 (*   Spivak & Kent. An olog is a diagram with:                                *)
 (*                                                                             *)
 (*     1. Types drawn as boxes labelled with a singular noun-phrase           *)
-(*        ("a person", "a temperature").                                       *)
+(*        (a person, a temperature).                                       *)
 (*     2. Arrows drawn as boxes labelled with a singular verb-phrase, where   *)
 (*        each arrow is a *functional* relation: every entity of the source   *)
-(*        maps to exactly one entity of the target ("mother-of").              *)
+(*        maps to exactly one entity of the target (mother-of).              *)
 (*     3. Commutativity is asserted, not assumed. If two paths from type     *)
 (*        A to type B are declared equal, the olog carries the equality.     *)
 (*                                                                             *)
@@ -34,8 +34,8 @@ Require Import Library.
 (* ---------------------------------------------------------------------------- *)
 
 (* An olog type is a labelled kind-of-thing. The carrier is the underlying   *)
-(* type; the label is a singular noun-phrase. The chapter: "A person, a     *)
-(* temperature, a trace, a theorem."                                          *)
+(* type; the label is a singular noun-phrase. The chapter: A person, a     *)
+(* temperature, a trace, a theorem.                                          *)
 
 Record OlogType := {
   OT_carrier : Type;
@@ -70,12 +70,12 @@ Record OlogArrow := {
   OA_label  : OT_carrier OA_source -> Prop   (* the verb-phrase               *)
 }.
 
-(* Functional arrows: a "mother-of" arrow Person -> Person.                    *)
+(* Functional arrows: a mother-of arrow Person -> Person.                    *)
 
 Definition functional_arrow (a : OlogArrow) : Prop :=
   forall x y : OT_carrier (OA_source a),
     OA_map a x = OA_map a y -> x = y.
-(* Note: this is one direction of "functional" (injective). The full      *)
+(* Note: this is one direction of functional (injective). The full      *)
 (* functional condition would also require totality, which we get from the  *)
 (* type of OA_map (a total function).                                        *)
 
@@ -83,9 +83,9 @@ Definition functional_arrow (a : OlogArrow) : Prop :=
 (* 3.  Commutativity                                                             *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "Commutativity is asserted, not assumed. If two paths from   *)
+(* The chapter: Commutativity is asserted, not assumed. If two paths from   *)
 (* type A to type B are declared equal, the olog carries the equality. If    *)
-(* unequal, the olog must show why."                                            *)
+(* unequal, the olog must show why.                                            *)
 
 (* A commutative square:                                                        *)
 (*                                                                             *)
@@ -157,10 +157,10 @@ Record ThermometerOlog := {
 (* thermometer is calibrated. Its negation is the witness that the diagram  *)
 (* has a hole.                                                                 *)
 
-(* The chapter: "If yes, the thermometer is calibrated: its reading         *)
+(* The chapter: If yes, the thermometer is calibrated: its reading         *)
 (* reflects the truth. If no, the diagram has a hole: the sensor drifts,     *)
 (* or its calibration curve is wrong, or someone has applied the wrong       *)
-(* correction."                                                                 *)
+(* correction.                                                                 *)
 
 Inductive ThermometerStatus :=
   | TS_calibrated : ThermometerStatus
@@ -170,10 +170,10 @@ Inductive ThermometerStatus :=
 (* 5.  The master diagram as an olog                                            *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "every diagram so far is an olog in disguise. The master     *)
+(* The chapter: every diagram so far is an olog in disguise. The master     *)
 (* diagram has types W, R_i, G and arrows O_i : W -> R_i (each region of    *)
 (* W yields one trace) and T_i : R_i -> G (each trace contributes to one    *)
-(* global section)."                                                            *)
+(* global section).                                                            *)
 
 Record MasterOlog := {
   MO_W : Type;

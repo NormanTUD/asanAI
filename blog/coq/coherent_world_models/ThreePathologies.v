@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 17_ThreePathologies.v                                                        *)
 (*                                                                             *)
-(* Sections "Three pathologies" and related of coherent_world_models.php,     *)
+(* Sections Three pathologies and related of coherent_world_models.php,     *)
 (* lines 1211-1260.                                                             *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
@@ -93,7 +93,7 @@ Definition SCF_remedy : Prop :=
 (* ---------------------------------------------------------------------------- *)
 
 (* The contact-point junkie: every claim individually true, but the model   *)
-(* has no internal structure; descent fails; the "global model" is a heap. */
+(* has no internal structure; descent fails; the global model is a heap. */
 
 Record ContactPointJunkie' := {
   CPJ_claims : list Type;          (* a heap of individually-checked claims  *)

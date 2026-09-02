@@ -2,13 +2,13 @@
 (*                                                                             *)
 (* 07_ContextsAndSites.v                                                       *)
 (*                                                                             *)
-(* Section "Contexts as a site" of coherent_world_models.php,                 *)
+(* Section Contexts as a site of coherent_world_models.php,                 *)
 (* lines 371-420.                                                              *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
-(*   The chapter uses "context" in the widest possible sense: anything that  *)
-(*   can index data points counts as a "space". A context specifies the     *)
+(*   The chapter uses context in the widest possible sense: anything that  *)
+(*   can index data points counts as a space. A context specifies the     *)
 (*   conditions under which a report was made:                                *)
 (*                                                                             *)
 (*     - where: place, system, domain                                          *)
@@ -18,8 +18,8 @@
 (*     - in what terms: language, framework, formalism                         *)
 (*     - in what tradition: culture, era, paradigm                             *)
 (*                                                                             *)
-(*   Between two contexts there are *refinements*: from "Tuesday afternoon" *)
-(*   to "between 3 pm and 4 pm". Morphisms in the context-category C are     *)
+(*   Between two contexts there are *refinements*: from Tuesday afternoon *)
+(*   to between 3 pm and 4 pm. Morphisms in the context-category C are     *)
 (*   refinements.                                                              *)
 (*                                                                             *)
 (*   A **cover** of a context is a family of sub-contexts whose images        *)
@@ -35,7 +35,7 @@
 (*   Equipping C with a cover rule that closes under refinement and          *)
 (*   composition is a **Grothendieck topology** J; the pair (C, J) is a    *)
 (*   **site**. A **representation scheme** assigns to every context a set  *)
-(*   of "sections" via a functor C^op -> V (where V can be Set, metric,    *)
+(*   of sections via a functor C^op -> V (where V can be Set, metric,    *)
 (*   probability, etc.).                                                       *)
 (*                                                                             *)
 (* This file formalizes contexts, refinements, covers, sites, and          *)
@@ -54,7 +54,7 @@ Import ListNotations.
 (* ---------------------------------------------------------------------------- *)
 
 (* Library.v already supplies Context and ContextRefinement. Here we extend  *)
-(* them with the six "W-questions": where, when, who, how, in-what-terms,   *)
+(* them with the six W-questions: where, when, who, how, in-what-terms,   *)
 (* in-what-tradition.                                                          *)
 
 Record ContextFacet := {
@@ -96,9 +96,9 @@ Record FormalSystemExample := {
 
 Definition refine (c1 c2 : Context) (f : C_carrier c1 -> C_carrier c2) : Prop :=
   InT (TKRefinement {| CR_source := c1; CR_target := c2; CR_map := f |}).
-(* A refinement is a context morphism. The chapter: "Morphisms in the      *)
+(* A refinement is a context morphism. The chapter: Morphisms in the      *)
 (* context-category C are exactly these refinements: narrower, more          *)
-(* specific, more constrained."                                                *)
+(* specific, more constrained.                                                *)
 
 (* ---------------------------------------------------------------------------- *)
 (* 2.  Covers                                                                    *)
@@ -132,17 +132,17 @@ Record AdmissibleCover (c : Context) := {
     InT (TKRefinement (CV_maps c (AC_cover) i))
 }.
 
-(* The chapter: "the union of the images of the f_i is the whole of c"     *)
-(* AND "every morphism f_i in the cover is a licensed transition."          *)
+(* The chapter: the union of the images of the f_i is the whole of c     *)
+(* AND every morphism f_i in the cover is a licensed transition.          *)
 
 Record FullAdmissibleCover (c : Context) := {
   FAC_cover : AdmissibleCover c;
   FAC_unions_whole : cover_condition c (AC_cover c (FAC_cover))
 }.
 
-(* The chapter: "The two conditions are independent. A family of sub-views *)
+(* The chapter: The two conditions are independent. A family of sub-views *)
 (* can satisfy the cover condition with maps we have no business trusting, *)
-(* and a family of trusted maps can fail to cover what matters."            *)
+(* and a family of trusted maps can fail to cover what matters.            *)
 
 Inductive CoverDiagnosis :=
   | CD_cover_only          : CoverDiagnosis  (* cover holds, but not licensed *)
@@ -189,7 +189,7 @@ Record Site := {
 (* 5.  Representation schemes                                                   *)
 (* ---------------------------------------------------------------------------- *)
 
-(* A representation scheme assigns to every context a set of "sections".   *)
+(* A representation scheme assigns to every context a set of sections.   *)
 
 Record RepresentationScheme := {
   RS_V : Type;                  (* the target category                         *)
@@ -201,9 +201,9 @@ Record RepresentationScheme := {
 (* The contravariance axiom is a placeholder: a concrete instantiation    *)
 (* would specify how sections on c pull back along refinements c1 -> c2.  *)
 
-(* The chapter: "V can be Set, metric spaces, probability spaces, chain    *)
+(* The chapter: V can be Set, metric spaces, probability spaces, chain    *)
 (* complexes, or infinity-groupoids, depending on how much homotopy is     *)
-(* needed."                                                                     *)
+(* needed.                                                                     *)
 
 Inductive TargetCategory :=
   | TC_Set : TargetCategory
@@ -220,8 +220,8 @@ Record Presheaf := {
   PRS_target_is_Set : PRS_target = TC_Set
 }.
 
-(* The chapter: "A presheaf F assigns a set of 'local sections' to every   *)
-(* context: F(c) is the data one can write down *on* c."                    *)
+(* The chapter: A presheaf F assigns a set of 'local sections' to every   *)
+(* context: F(c) is the data one can write down *on* c.                    *)
 
 (* Sheaf-ness is the rule that turns compatible local data into unique     *)
 (* global data on admissible covers. See Sheaves.v for the formalisation. *)

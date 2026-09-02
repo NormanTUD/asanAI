@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 10_HigherCoherence.v                                                         *)
 (*                                                                             *)
-(* Section "Higher coherence" of coherent_world_models.php, lines 557-608.   *)
+(* Section Higher coherence of coherent_world_models.php, lines 557-608.   *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
 (*                                                                             *)
@@ -81,8 +81,8 @@ Record TwoMorphism := {
 (* 2.  n-morphisms                                                               *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "an n-morphism is a cell of dimension n in a higher        *)
-(* category." We model n-morphisms as a recursive type indexed by a       *)
+(* The chapter: an n-morphism is a cell of dimension n in a higher        *)
+(* category. We model n-morphisms as a recursive type indexed by a       *)
 (* dimension.                                                                  *)
 
 Inductive Dimension : Type :=
@@ -139,10 +139,10 @@ Record ThreeCell : Type := {
 (* 3.  Four representations: 3-morphisms                                         *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter: "Add D, with its own transitions. Now the fillers         *)
+(* The chapter: Add D, with its own transitions. Now the fillers         *)
 (* alpha_ABC, alpha_BCD, alpha_ACD, alpha_ABD may themselves disagree,   *)
 (* and you need a 3-morphism filling between the fillers to certify        *)
-(* higher-order consistency."                                                 *)
+(* higher-order consistency.                                                 *)
 
 Record ThreeMorphism (A B C D : Type) := {
   TM_filler_ABC : forall a : A, B;   (* placeholder structure                  *)

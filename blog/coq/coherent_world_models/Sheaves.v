@@ -2,14 +2,14 @@
 (*                                                                             *)
 (* 08_Sheaves.v                                                                *)
 (*                                                                             *)
-(* Sections "Sheaves: coherence = descent" and "The running example" of       *)
+(* Sections Sheaves: coherence = descent and The running example of       *)
 (* coherent_world_models.php, lines 424-513.                                  *)
 (*                                                                             *)
 (* Summary of the two sections.                                                *)
 (*                                                                             *)
 (*   Sheaves: coherence = descent (lines 424-489).                            *)
 (*                                                                             *)
-(*     In plain English: a presheaf F assigns a set of "local sections" to  *)
+(*     In plain English: a presheaf F assigns a set of local sections to  *)
 (*     every context; sheaf-ness is the rule that turns *compatible* local   *)
 (*     data into *unique* global data -- but only on covers the modelling   *)
 (*     setup is willing to license.                                           *)
@@ -36,7 +36,7 @@
 (*                                                                             *)
 (*     A train passes a platform. Five channels: visual, auditory, radar,    *)
 (*     linguistic, archival. The site C contains their contexts; the         *)
-(*     admissible cover of "the event" is {c_v, c_a, c_r, c_l, c_h}. A      *)
+(*     admissible cover of the event is {c_v, c_a, c_r, c_l, c_h}. A      *)
 (*     global G in F(c) exists iff descent holds.                            *)
 (*                                                                             *)
 (* This file formalizes the sheaf condition and the running example.          *)
@@ -52,7 +52,7 @@ Require Import ContextsAndSites.
 (* 1.  Presheaves                                                                *)
 (* ---------------------------------------------------------------------------- *)
 
-(* A presheaf F on a context c assigns a set of "local sections" F(c).     *)
+(* A presheaf F on a context c assigns a set of local sections F(c).     *)
 
 Record PresheafOn (c : Context) := {
   P_on_c : Type              (* F(c)                                            *)
@@ -127,8 +127,8 @@ Definition sheaf_condition (F : Presheaf) (c : Context)
 Axiom sheaf_boxed :
   forall (F : Presheaf) (c : Context) (cov : AdmissibleCover c),
     sheaf_condition F c cov.
-(* The chapter's box: "compatible local data on an admissible cover =>     *)
-(* unique global data." This is the assumption that the chapter makes;     *)
+(* The chapter's box: compatible local data on an admissible cover =>     *)
+(* unique global data. This is the assumption that the chapter makes;     *)
 (* concrete instantiations would supply an actual proof.                    *)
 
 (* ---------------------------------------------------------------------------- *)
@@ -173,7 +173,7 @@ Inductive SheafRegime :=
   | SR_homotopical   : SheafRegime   (* V = infinity-Gpd, coherent equivalence*)
   | SR_empirical     : SheafRegime.  (* V = metric/probability, small residual  *)
 
-(* "Compatible" means differently in each regime.                            *)
+(* Compatible means differently in each regime.                            *)
 
 Definition strict_compatible (A : Type) (s1 s2 : A) : Prop := s1 = s2.
 
@@ -235,10 +235,10 @@ Definition train_descent (cover : TrainCover) (F : Type) : Prop :=
 (* The sheaf condition for the train cover, asserting that the local       *)
 (* sections can be glued into a unique global one.                            *)
 
-(* The chapter: "the same shape governs mathematical data: a group         *)
+(* The chapter: the same shape governs mathematical data: a group         *)
 (* presented by generators-and-relations, by a Cayley table, by a          *)
 (* permutation action, by a matrix representation, by a character table.    *)
-(* Five presentations, five channels, one group."                            *)
+(* Five presentations, five channels, one group.                            *)
 
 Record GroupPresentations := {
   GP_generators_relations : Type;
@@ -270,7 +270,7 @@ Record GroupPresentations := {
 (*   - The running example: train at a platform, with five channels.         *)
 (*   - The mathematical parallel: group presentations.                        *)
 (*                                                                             *)
-(* Several "shape" predicates use placeholder Props; concrete instantiations *)
+(* Several shape predicates use placeholder Props; concrete instantiations *)
 (* would discharge them with explicit equalities, restrictions, and univer-*)
 (* sal properties.                                                             *)
 (*                                                                             *)

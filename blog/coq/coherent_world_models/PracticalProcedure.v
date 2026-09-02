@@ -2,7 +2,7 @@
 (*                                                                             *)
 (* 14_PracticalProcedure.v                                                       *)
 (*                                                                             *)
-(* Section "A practical procedure" of coherent_world_models.php,              *)
+(* Section A practical procedure of coherent_world_models.php,              *)
 (* lines 870-890.                                                              *)
 (*                                                                             *)
 (* Summary of the section.                                                     *)
@@ -24,8 +24,8 @@
 (*   8. Record residuals. What is preserved, not erased?                    *)
 (*   9. Plan the next observation. What evidence would discriminate?        *)
 (*                                                                             *)
-(*   The boxed principle: "Anomalies are constraints not yet integrated,    *)
-(*   not defeats."                                                              *)
+(*   The boxed principle: Anomalies are constraints not yet integrated,    *)
+(*   not defeats.                                                              *)
 (*                                                                             *)
 (* This file formalizes the nine steps as a sequence of records.            *)
 (*                                                                             *)
@@ -147,7 +147,7 @@ Record Procedure := {
 (* 3.  The boxed principle                                                        *)
 (* ---------------------------------------------------------------------------- *)
 
-(* "Anomalies are constraints not yet integrated, not defeats."                *)
+(* Anomalies are constraints not yet integrated, not defeats.                *)
 
 Axiom anomalies_are_constraints :
   forall (p : Procedure), Prop.

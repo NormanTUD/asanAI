@@ -2,8 +2,8 @@
 (*                                                                             *)
 (* 09_EqualizersAndPullbacks.v                                                  *)
 (*                                                                             *)
-(* Sections "Equalizers: where two maps agree" and "Pullbacks: agreement    *)
-(* through a shared target" of coherent_world_models.php, lines 517-553.     *)
+(* Sections Equalizers: where two maps agree and Pullbacks: agreement    *)
+(* through a shared target of coherent_world_models.php, lines 517-553.     *)
 (*                                                                             *)
 (* Summary of the two sections.                                                *)
 (*                                                                             *)
@@ -28,9 +28,9 @@
 (*                v                v                                          *)
 (*                Y -------g------> Z                                         *)
 (*                                                                             *)
-(*     The pullback IS the object of agreements. The chapter: "Visual and   *)
+(*     The pullback IS the object of agreements. The chapter: Visual and   *)
 (*     radar tracks pull back over a calibrated position-time space to      *)
-(*     give the pairs that could be the same train."                         *)
+(*     give the pairs that could be the same train.                         *)
 (*                                                                             *)
 (* This file formalizes equalizers and pullbacks.                            *)
 (*                                                                             *)
@@ -74,8 +74,8 @@ Record TwoThermometersExample := {
   TTE_equalizer : Equalizer TTE_X TTE_Y TTE_f TTE_g
 }.
 
-(* The chapter: "Two thermometers report a temperature over time: the      *)
-(* equalizer is the times at which they agree exactly."                      *)
+(* The chapter: Two thermometers report a temperature over time: the      *)
+(* equalizer is the times at which they agree exactly.                      *)
 
 Definition times_of_agreement (e : TwoThermometersExample) : Type :=
   Type.   (* placeholder; concrete form would extract EQ_carrier            *)
@@ -142,7 +142,7 @@ Record TwoTracksExample := {
   TTE_pullback : PullbackGeneral TTE_V TTE_R TTE_PT TTE_to_PT_v TTE_to_PT_r
 }.
 
-(* A second worked example: two definitions of "prime" pull back over Z    *)
+(* A second worked example: two definitions of prime pull back over Z    *)
 (* to the integers on which both definitions coincide.                       *)
 
 Record TwoPrimeDefinitions := {

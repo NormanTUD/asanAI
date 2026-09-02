@@ -1,206 +1,206 @@
-DIGEST 99419e9daf3c63250dd0934b0f25c895
+DIGEST a212193186c96d9b4f3c465e62310e69
 FMasterDiagram
-R4700:4706 Library <> <> lib
-R4724:4729 Traces <> <> lib
-R4747:4767 AdmissibleTransitions <> <> lib
-R4785:4800 ContextsAndSites <> <> lib
-R4818:4824 Sheaves <> <> lib
-R4851:4860 Coq.Lists.List <> <> lib
-R4870:4882 Coq.Lists.List ListNotations <> mod
-rec 5223:5235 <> ParametricMap
-proj 5244:5247 <> PM_X
-proj 5259:5262 <> PM_Y
-proj 5274:5281 <> PM_theta
-proj 5353:5356 <> PM_f
+R4692:4698 Library <> <> lib
+R4716:4721 Traces <> <> lib
+R4739:4759 AdmissibleTransitions <> <> lib
+R4777:4792 ContextsAndSites <> <> lib
+R4810:4816 Sheaves <> <> lib
+R4843:4852 Coq.Lists.List <> <> lib
+R4862:4874 Coq.Lists.List ListNotations <> mod
+rec 5215:5227 <> ParametricMap
+proj 5236:5239 <> PM_X
+proj 5251:5254 <> PM_Y
+proj 5266:5273 <> PM_theta
+proj 5345:5348 <> PM_f
+R5360:5363 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R5352:5359 MasterDiagram <> PM_theta:4 meth
 R5368:5371 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R5360:5367 MasterDiagram <> PM_theta:4 meth
-R5376:5379 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R5372:5375 MasterDiagram <> PM_X:2 meth
-R5380:5383 MasterDiagram <> PM_Y:3 meth
-ind 5481:5499 <> ParametricFramework
-constr 5508:5511 <> Para
-constr 5588:5593 <> Lenses
-constr 5668:5673 <> Optics
-R5518:5536 MasterDiagram <> ParametricFramework:6 ind
-R5598:5616 MasterDiagram <> ParametricFramework:6 ind
-R5678:5696 MasterDiagram <> ParametricFramework:6 ind
-scheme 5481:5499 <> ParametricFramework_rect
-scheme 5481:5499 <> ParametricFramework_ind
-scheme 5481:5499 <> ParametricFramework_rec
-scheme 5481:5499 <> ParametricFramework_sind
-rec 5753:5773 <> ParametricComposition
-proj 5782:5793 <> PC_framework
-proj 5820:5826 <> PC_maps
-proj 5852:5875 <> PC_composition_principle
-R5797:5815 MasterDiagram <> ParametricFramework ind
-R5830:5833 Coq.Init.Datatypes <> list ind
-R5835:5847 MasterDiagram <> ParametricMap rec
-rec 6024:6039 <> TransformerLayer
-proj 6048:6051 <> TL_H
-proj 6130:6133 <> TL_F
-proj 6212:6222 <> TL_residual
-R6141:6144 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6242:6245 MasterDiagram <> TL_H:13 meth
-binder 6238:6238 <> h:15
-R6253:6256 MasterDiagram <> TL_F:14 meth
-R6258:6261 MasterDiagram <> TL_H:13 meth
-binder 6249:6249 <> f:16
-R6265:6268 MasterDiagram <> TL_H:13 meth
-rec 6361:6374 <> ResidualUpdate
-proj 6383:6390 <> RU_input
-proj 6402:6410 <> RU_output
-proj 6422:6427 <> RU_add
-R6439:6442 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6431:6438 MasterDiagram <> RU_input:19 meth
-R6452:6455 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6443:6451 MasterDiagram <> RU_output:20 meth
-R6456:6464 MasterDiagram <> RU_output:20 meth
-rec 6560:6577 <> MultiHeadAttention
-proj 6586:6590 <> MHA_Q
-proj 6602:6606 <> MHA_K
-proj 6618:6622 <> MHA_V
-proj 6634:6640 <> MHA_d_k
-proj 6651:6659 <> MHA_score
-proj 6732:6742 <> MHA_softmax
-proj 6815:6824 <> MHA_output
-R6644:6646 Coq.Init.Datatypes <> nat ind
-R6668:6671 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6663:6667 MasterDiagram <> MHA_Q:23 meth
-R6677:6680 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6672:6676 MasterDiagram <> MHA_K:24 meth
-R6750:6753 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6754:6758 MasterDiagram <> MHA_V:25 meth
-R6828:6832 MasterDiagram <> MHA_V:25 meth
-rec 7337:7345 <> Embedding
-proj 7354:7358 <> Emb_V
-proj 7437:7441 <> Emb_d
-proj 7519:7525 <> Emb_map
-R7445:7447 Coq.Init.Datatypes <> nat ind
-R7534:7537 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R7529:7533 MasterDiagram <> Emb_V:31 meth
-rec 7851:7869 <> MultimodalAlignment
-proj 7878:7890 <> MA_modalities
-proj 7961:7969 <> MA_shared
-proj 8044:8054 <> MA_encoders
-R7894:7897 Coq.Init.Datatypes <> list ind
-binder 8065:8065 <> m:37
-R8076:8079 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8075:8075 MasterDiagram <> m:37 var
-R8080:8088 MasterDiagram <> MA_shared:36 meth
-rec 8515:8527 <> TrainingSetup
-proj 8536:8539 <> TS_D
-proj 8618:8625 <> TS_theta
-proj 8700:8703 <> TS_L
-proj 8781:8793 <> TS_theta_star
-proj 8864:8876 <> TS_minimality
+R5364:5367 MasterDiagram <> PM_X:2 meth
+R5372:5375 MasterDiagram <> PM_Y:3 meth
+ind 5473:5491 <> ParametricFramework
+constr 5500:5503 <> Para
+constr 5580:5585 <> Lenses
+constr 5660:5665 <> Optics
+R5510:5528 MasterDiagram <> ParametricFramework:6 ind
+R5590:5608 MasterDiagram <> ParametricFramework:6 ind
+R5670:5688 MasterDiagram <> ParametricFramework:6 ind
+scheme 5473:5491 <> ParametricFramework_rect
+scheme 5473:5491 <> ParametricFramework_ind
+scheme 5473:5491 <> ParametricFramework_rec
+scheme 5473:5491 <> ParametricFramework_sind
+rec 5745:5765 <> ParametricComposition
+proj 5774:5785 <> PC_framework
+proj 5812:5818 <> PC_maps
+proj 5844:5867 <> PC_composition_principle
+R5789:5807 MasterDiagram <> ParametricFramework ind
+R5822:5825 Coq.Init.Datatypes <> list ind
+R5827:5839 MasterDiagram <> ParametricMap rec
+rec 6016:6031 <> TransformerLayer
+proj 6040:6043 <> TL_H
+proj 6122:6125 <> TL_F
+proj 6204:6214 <> TL_residual
+R6133:6136 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6234:6237 MasterDiagram <> TL_H:13 meth
+binder 6230:6230 <> h:15
+R6245:6248 MasterDiagram <> TL_F:14 meth
+R6250:6253 MasterDiagram <> TL_H:13 meth
+binder 6241:6241 <> f:16
+R6257:6260 MasterDiagram <> TL_H:13 meth
+rec 6353:6366 <> ResidualUpdate
+proj 6375:6382 <> RU_input
+proj 6394:6402 <> RU_output
+proj 6414:6419 <> RU_add
+R6431:6434 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6423:6430 MasterDiagram <> RU_input:19 meth
+R6444:6447 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6435:6443 MasterDiagram <> RU_output:20 meth
+R6448:6456 MasterDiagram <> RU_output:20 meth
+rec 6552:6569 <> MultiHeadAttention
+proj 6578:6582 <> MHA_Q
+proj 6594:6598 <> MHA_K
+proj 6610:6614 <> MHA_V
+proj 6626:6632 <> MHA_d_k
+proj 6643:6651 <> MHA_score
+proj 6724:6734 <> MHA_softmax
+proj 6807:6816 <> MHA_output
+R6636:6638 Coq.Init.Datatypes <> nat ind
+R6660:6663 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6655:6659 MasterDiagram <> MHA_Q:23 meth
+R6669:6672 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6664:6668 MasterDiagram <> MHA_K:24 meth
+R6742:6745 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6746:6750 MasterDiagram <> MHA_V:25 meth
+R6820:6824 MasterDiagram <> MHA_V:25 meth
+rec 7329:7337 <> Embedding
+proj 7346:7350 <> Emb_V
+proj 7429:7433 <> Emb_d
+proj 7511:7517 <> Emb_map
+R7437:7439 Coq.Init.Datatypes <> nat ind
+R7526:7529 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7521:7525 MasterDiagram <> Emb_V:31 meth
+rec 7843:7861 <> MultimodalAlignment
+proj 7870:7882 <> MA_modalities
+proj 7953:7961 <> MA_shared
+proj 8036:8046 <> MA_encoders
+R7886:7889 Coq.Init.Datatypes <> list ind
+binder 8057:8057 <> m:37
+R8068:8071 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8067:8067 MasterDiagram <> m:37 var
+R8072:8080 MasterDiagram <> MA_shared:36 meth
+rec 8507:8519 <> TrainingSetup
+proj 8528:8531 <> TS_D
+proj 8610:8617 <> TS_theta
+proj 8692:8695 <> TS_L
+proj 8773:8785 <> TS_theta_star
+proj 8856:8868 <> TS_minimality
+R8707:8710 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8699:8706 MasterDiagram <> TS_theta:41 meth
 R8715:8718 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8707:8714 MasterDiagram <> TS_theta:41 meth
-R8723:8726 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8719:8722 MasterDiagram <> TS_D:40 meth
-R8797:8804 MasterDiagram <> TS_theta:41 meth
-R8895:8902 MasterDiagram <> TS_theta:41 meth
-binder 8887:8891 <> theta:44
-R8915:8917 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8905:8908 MasterDiagram <> TS_L:42 meth
-R8910:8914 MasterDiagram <> theta:44 var
-R8918:8921 MasterDiagram <> TS_L:42 meth
-R8923:8935 MasterDiagram <> TS_theta_star:43 meth
-rec 9027:9041 <> GenerativeModel
-proj 9050:9060 <> GM_observed
-proj 9132:9135 <> GM_z
-proj 9215:9226 <> GM_posterior
-proj 9298:9304 <> GM_data
-R9064:9067 Coq.Init.Datatypes <> list ind
-R9234:9237 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9230:9233 MasterDiagram <> GM_z:48 meth
-R9312:9315 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R9308:9311 MasterDiagram <> GM_z:48 meth
-R9316:9319 Coq.Init.Datatypes <> list ind
-rec 9668:9680 <> Hallucination
-proj 9689:9703 <> Hall_M_internal
-proj 9771:9790 <> Hall_self_consistent
-proj 9854:9859 <> Hall_W
-proj 9936:9948 <> Hall_grounded
-proj 10018:10038 <> Hall_is_hallucination
-R10066:10069 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R10046:10065 MasterDiagram <> Hall_self_consistent:53 meth
-R10070:10071 Coq.Init.Logic <> ::type_scope:'~'_x not
-R10072:10084 MasterDiagram <> Hall_grounded:55 meth
-rec 10509:10521 <> MasterDiagram
-proj 10530:10533 <> MD_W
-proj 10554:10557 <> MD_I
-proj 10637:10640 <> MD_R
-proj 10720:10723 <> MD_O
-proj 10799:10802 <> MD_G
-proj 10882:10885 <> MD_T
-proj 10961:10968 <> MD_O_src
-proj 11018:11025 <> MD_O_tgt
-proj 11077:11084 <> MD_T_src
-proj 11136:11143 <> MD_T_tgt
-R10537:10549 Library <> SubjectMatter rec
-R10648:10651 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10644:10647 MasterDiagram <> MD_I:59 meth
-R10652:10659 Library <> Codomain rec
-R10738:10741 MasterDiagram <> MD_I:59 meth
-binder 10734:10734 <> i:61
-R10744:10757 Library <> AccessFunction rec
-R10806:10813 Library <> Codomain rec
-R10900:10903 MasterDiagram <> MD_I:59 meth
-binder 10896:10896 <> i:64
-R10906:10920 Library <> ViewTranslation rec
-R10983:10986 MasterDiagram <> MD_I:59 meth
-binder 10979:10979 <> i:66
-R11007:11009 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R10989:10997 Library <> AF_source proj
-R11000:11003 MasterDiagram <> MD_O:62 meth
-R11005:11005 MasterDiagram <> i:66 var
-R11010:11013 MasterDiagram <> MD_W:58 meth
-R11040:11043 MasterDiagram <> MD_I:59 meth
-binder 11036:11036 <> i:68
-R11064:11066 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11046:11054 Library <> AF_target proj
-R11057:11060 MasterDiagram <> MD_O:62 meth
-R11062:11062 MasterDiagram <> i:68 var
-R11067:11070 MasterDiagram <> MD_R:60 meth
-R11072:11072 MasterDiagram <> i:68 var
-R11099:11102 MasterDiagram <> MD_I:59 meth
-binder 11095:11095 <> i:70
-R11123:11125 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11105:11113 Library <> VT_source proj
-R11116:11119 MasterDiagram <> MD_T:65 meth
-R11121:11121 MasterDiagram <> i:70 var
-R11126:11129 MasterDiagram <> MD_R:60 meth
-R11131:11131 MasterDiagram <> i:70 var
-R11158:11161 MasterDiagram <> MD_I:59 meth
-binder 11154:11154 <> i:72
-R11182:11184 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11164:11172 Library <> VT_target proj
-R11175:11178 MasterDiagram <> MD_T:65 meth
-R11180:11180 MasterDiagram <> i:72 var
-R11185:11188 MasterDiagram <> MD_G:63 meth
-def 11286:11306 <> global_section_exists
-R11314:11326 MasterDiagram <> MasterDiagram rec
-binder 11309:11310 <> md:74
-R11341:11344 Coq.Init.Logic <> True ind
-ind 11513:11525 <> MasterSetting
-constr 11534:11542 <> MS_strict
-constr 11616:11629 <> MS_homotopical
-constr 11698:11712 <> MS_model_theory
-constr 11779:11794 <> MS_probabilistic
-constr 11861:11865 <> MS_ML
-R11552:11564 MasterDiagram <> MasterSetting:75 ind
-R11634:11646 MasterDiagram <> MasterSetting:75 ind
-R11716:11728 MasterDiagram <> MasterSetting:75 ind
-R11797:11809 MasterDiagram <> MasterSetting:75 ind
-R11879:11891 MasterDiagram <> MasterSetting:75 ind
-scheme 11513:11525 <> MasterSetting_rect
-scheme 11513:11525 <> MasterSetting_ind
-scheme 11513:11525 <> MasterSetting_rec
-scheme 11513:11525 <> MasterSetting_sind
-ax 12028:12036 <> one_shape
-R12055:12067 MasterDiagram <> MasterDiagram rec
-binder 12050:12051 <> md:77
-R12075:12087 MasterDiagram <> MasterSetting ind
-binder 12071:12071 <> s:78
-R12091:12111 MasterDiagram <> global_section_exists def
-R12113:12114 MasterDiagram <> md:77 var
+R8711:8714 MasterDiagram <> TS_D:40 meth
+R8789:8796 MasterDiagram <> TS_theta:41 meth
+R8887:8894 MasterDiagram <> TS_theta:41 meth
+binder 8879:8883 <> theta:44
+R8907:8909 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8897:8900 MasterDiagram <> TS_L:42 meth
+R8902:8906 MasterDiagram <> theta:44 var
+R8910:8913 MasterDiagram <> TS_L:42 meth
+R8915:8927 MasterDiagram <> TS_theta_star:43 meth
+rec 9019:9033 <> GenerativeModel
+proj 9042:9052 <> GM_observed
+proj 9124:9127 <> GM_z
+proj 9207:9218 <> GM_posterior
+proj 9290:9296 <> GM_data
+R9056:9059 Coq.Init.Datatypes <> list ind
+R9226:9229 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9222:9225 MasterDiagram <> GM_z:48 meth
+R9304:9307 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9300:9303 MasterDiagram <> GM_z:48 meth
+R9308:9311 Coq.Init.Datatypes <> list ind
+rec 9660:9672 <> Hallucination
+proj 9681:9695 <> Hall_M_internal
+proj 9763:9782 <> Hall_self_consistent
+proj 9846:9851 <> Hall_W
+proj 9928:9940 <> Hall_grounded
+proj 10010:10030 <> Hall_is_hallucination
+R10058:10061 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R10038:10057 MasterDiagram <> Hall_self_consistent:53 meth
+R10062:10063 Coq.Init.Logic <> ::type_scope:'~'_x not
+R10064:10076 MasterDiagram <> Hall_grounded:55 meth
+rec 10501:10513 <> MasterDiagram
+proj 10522:10525 <> MD_W
+proj 10546:10549 <> MD_I
+proj 10629:10632 <> MD_R
+proj 10712:10715 <> MD_O
+proj 10791:10794 <> MD_G
+proj 10874:10877 <> MD_T
+proj 10953:10960 <> MD_O_src
+proj 11010:11017 <> MD_O_tgt
+proj 11069:11076 <> MD_T_src
+proj 11128:11135 <> MD_T_tgt
+R10529:10541 Library <> SubjectMatter rec
+R10640:10643 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10636:10639 MasterDiagram <> MD_I:59 meth
+R10644:10651 Library <> Codomain rec
+R10730:10733 MasterDiagram <> MD_I:59 meth
+binder 10726:10726 <> i:61
+R10736:10749 Library <> AccessFunction rec
+R10798:10805 Library <> Codomain rec
+R10892:10895 MasterDiagram <> MD_I:59 meth
+binder 10888:10888 <> i:64
+R10898:10912 Library <> ViewTranslation rec
+R10975:10978 MasterDiagram <> MD_I:59 meth
+binder 10971:10971 <> i:66
+R10999:11001 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10981:10989 Library <> AF_source proj
+R10992:10995 MasterDiagram <> MD_O:62 meth
+R10997:10997 MasterDiagram <> i:66 var
+R11002:11005 MasterDiagram <> MD_W:58 meth
+R11032:11035 MasterDiagram <> MD_I:59 meth
+binder 11028:11028 <> i:68
+R11056:11058 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11038:11046 Library <> AF_target proj
+R11049:11052 MasterDiagram <> MD_O:62 meth
+R11054:11054 MasterDiagram <> i:68 var
+R11059:11062 MasterDiagram <> MD_R:60 meth
+R11064:11064 MasterDiagram <> i:68 var
+R11091:11094 MasterDiagram <> MD_I:59 meth
+binder 11087:11087 <> i:70
+R11115:11117 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11097:11105 Library <> VT_source proj
+R11108:11111 MasterDiagram <> MD_T:65 meth
+R11113:11113 MasterDiagram <> i:70 var
+R11118:11121 MasterDiagram <> MD_R:60 meth
+R11123:11123 MasterDiagram <> i:70 var
+R11150:11153 MasterDiagram <> MD_I:59 meth
+binder 11146:11146 <> i:72
+R11174:11176 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11156:11164 Library <> VT_target proj
+R11167:11170 MasterDiagram <> MD_T:65 meth
+R11172:11172 MasterDiagram <> i:72 var
+R11177:11180 MasterDiagram <> MD_G:63 meth
+def 11278:11298 <> global_section_exists
+R11306:11318 MasterDiagram <> MasterDiagram rec
+binder 11301:11302 <> md:74
+R11333:11336 Coq.Init.Logic <> True ind
+ind 11505:11517 <> MasterSetting
+constr 11526:11534 <> MS_strict
+constr 11608:11621 <> MS_homotopical
+constr 11690:11704 <> MS_model_theory
+constr 11771:11786 <> MS_probabilistic
+constr 11853:11857 <> MS_ML
+R11544:11556 MasterDiagram <> MasterSetting:75 ind
+R11626:11638 MasterDiagram <> MasterSetting:75 ind
+R11708:11720 MasterDiagram <> MasterSetting:75 ind
+R11789:11801 MasterDiagram <> MasterSetting:75 ind
+R11871:11883 MasterDiagram <> MasterSetting:75 ind
+scheme 11505:11517 <> MasterSetting_rect
+scheme 11505:11517 <> MasterSetting_ind
+scheme 11505:11517 <> MasterSetting_rec
+scheme 11505:11517 <> MasterSetting_sind
+ax 12018:12026 <> one_shape
+R12045:12057 MasterDiagram <> MasterDiagram rec
+binder 12040:12041 <> md:77
+R12065:12077 MasterDiagram <> MasterSetting ind
+binder 12061:12061 <> s:78
+R12081:12101 MasterDiagram <> global_section_exists def
+R12103:12104 MasterDiagram <> md:77 var
