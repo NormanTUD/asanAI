@@ -16,12 +16,20 @@ topics: philosophy, math-i, math-ii, category-theory, sheaves, type-theory, mode
 
 No inquirer has unmediated access to its subject matter. A physicist never grasps an electron *as it is in itself*; a mathematician never inspects an abstract structure from a *view from nowhere*; a listener can touch the speaker, but what their fingers meet is already a transformed trace — pressure into nerve signal into percept — never the sound source as it would be apart from any perception. A historian never enters the past. In every domain, we work with *transformed traces*: measurements, sense-data, formal reports, proof scripts, embeddings, archival documents.
 
-**Definition (trace).** A *trace* is whatever an *access function* $O : W \to R$ leaves behind when applied to (a region of) a subject matter $W$. Formally, a trace is a point $r \in R$ such that $r = O(w)$ for some $w \in W$. Concretely: an electron leaves a track in a cloud chamber; a tree leaves a shadow on the ground; a past event leaves a document in an archive; an abstract structure leaves a proof in a published paper. Four properties follow:
+**Definition (trace).** A *trace* is whatever an *access function* $O : W \to R$ leaves behind when applied to a region $w$ of a subject matter $W$. Formally, a trace is a point $r \in R$ such that $r = O(w)$ for some $w \in W$. Concretely: an electron leaves a track in a cloud chamber; a tree leaves a shadow on the ground; a past event leaves a document in an archive; an abstract structure leaves a proof in a published paper. Here $W$ is the *subject matter with internal structure* (regions, points, or sub-systems); $R$ is the *codomain* — a set, a metric space, an $\infty$-groupoid, or whatever the access function lands in. Four properties follow:
 
 1. *Transformed.* Within the framework, the trace is *not* $w$ but the result of an access procedure applied to $w$. What we hold is the output of the procedure, never the input to it.
 2. *Mediated.* The trace carries the marks of $O$ — different access functions on the same $w$ produce different traces. The marks of $O$ are part of the trace; *within the framework*, an unmediated trace is a contradiction in terms.
 3. *Underdetermined.* Many $(w, O)$ pairs can yield the same $r$. From the trace alone, neither the source $w$ nor the procedure $O$ is uniquely determined; recovering them is the whole task of inference.
 4. *Possibly indexical.* A trace *may* point beyond itself to a source — but not every trace does. A genuine measurement of a specific system is indexical; a hallucination that has the form of a measurement is not; pure noise is not; a free pattern in a derivation points only to the derivation itself, not to anything outside it. Whether a trace is *of* something, and *what* it is of, is a substantive question — not given in advance. This fourth property is conditional; establishing it is most of the work of inference. The first three are *internal* to the framework — they hold for every trace *given* the framework's commitments, and they are not asserted against positions (direct realism, qualia-primary views) that reject those commitments. A trace without indexicality is not yet evidence; it is data awaiting a source.
+
+**Framework's commitments** (each is debatable; the dispute is *foundational*, not internal to the framework):
+
+1. *Indirect realism.* There is a subject matter distinct from any access to it; traces are outputs of access, not the thing itself.
+2. *Internal structure.* $W$ has regions, points, or sub-systems to which access can be applied; the framework is not about a single atomic datum.
+3. *Admissible transitions exist.* A non-trivial class $\mathcal T \subseteq \mathrm{Hom}(R, R')$ is justified independently of any specific dataset.
+4. *Coherence is necessary but not sufficient.* A model whose parts contradict each other is not a description of any single subject matter.
+5. *Correspondence is separate.* Even a perfectly coherent model is not yet a true one; contact with the world is a second, distinct test.
 
 What we receive is *always already mediated* — this is the framework's foundational commitment, not a neutral observation. The redness of red, the pain of a headache, the taste of coffee are, on the framework's account, the final output of a long pipeline (photoreceptors → retinal processing → lateral geniculate nucleus → visual cortex → attentional and mnemonic modulation → …) applied to the world; they *feel* immediate only because we do not consciously witness the pipeline that produced them; the redness is the brain's construction, not the photon's revelation. The framework here takes the indirect-realist / representationalist side: there is a subject matter distinct from access, and a thing-in-itself distinct from any appearance. A philosopher who holds qualia to be primary — for whom the redness *is* the world's redness, not a brain construction — will not share this starting point; they will say the framework has mis-described perception. The dispute is *foundational*: it cannot be settled inside the framework, only acknowledged at the door. Inside the framework, there is no Archimedean point from which the world shows itself untransformed. Kant's name for what is forever on the other side of this mediation is the *thing in itself* (*Ding an sich*) — first introduced in the *Critique of Pure Reason* at KrV A26/B42 (§3 of Space, in the Transcendental Aesthetic) and developed systematically in the chapter "Of Phenomena and Noumena" at A235/B294 \cite{kant_critique_pure_reason}; the technical term here is **the subject matter as it would be independent of any access**. We never get there. The right question is therefore not "how do we reach it?" but "what can we honestly do with the traces we have?"
 
@@ -61,9 +69,9 @@ Between "subject matter $W$" and "the trace $r \in R$ I received" sit at least t
 
 **2. The channel-level — $I_1 \neq I_2$.** Two *instruments* read the same world differently: thermometer vs. thermocouple, eye vs. microphone, uncalibrated vs. calibrated telescope.
 
-*Example.* Two thermometers *placed at the same point* read $20.01$ and $20.02$. A room, however, is not a single temperature but a temperature *field* — two thermometers at different positions may legitimately report different values, and that would be a *world-level* difference (different points in the field), not a channel-level one. The diagnostic is co-location: if the readings differ at the same point, the difference is in the instruments; calibrate one against the other, or both against a standard.
+*Example.* Two thermometers *placed at the same point* read $20.01$ and $20.02$. A room, however, is not a single temperature but a temperature *field* — two thermometers at different positions may legitimately report different values, and that would be a *world-level* difference (different points in the field), not a channel-level one. The diagnostic is co-location: if two co-located instruments disagree, *at least one — possibly both* — is miscalibrated; the remedy is calibration against each other, against an external standard, or via a third instrument to adjudicate.
 
-**3. The processing-level — $N_1 \neq N_2$.** Two *interpretations* of the same trace yield different conclusions: a classical and a quantum reading of the same detector output, a literal and a metaphorical reading of the same text, an outdated and a current taxonomy applied to the same specimen.
+**3. The processing-level — $\nu_1 \neq \nu_2$.** Two *interpretations* of the same trace yield different conclusions: a classical and a quantum reading of the same detector output, a literal and a metaphorical reading of the same text, an outdated and a current taxonomy applied to the same specimen.
 
 *Example.* The same Doppler-shifted spectrum is read by one physicist as evidence for a moving source, by another as evidence for an expanding universe. The trace is fixed; the interpretive framework differs.
 
@@ -203,7 +211,7 @@ A **cover** of a context is a family of sub-contexts whose images together captu
 In this chapter the cover must do one further job: every morphism in it must lie in the admissible class $\mathcal T$. We call such a cover **admissible**:
 
 $$
-\{c_i \xrightarrow{\,O_i\,} c\}_{i \in I}\ :\ O_i \in \mathcal{T},\quad
+\{c_i \xrightarrow{\,f_i\,} c\}_{i \in I}\ :\ f_i \in \mathcal{T},\quad
 \text{and the } \mathcal{T}\text{-images of the }c_i\text{ jointly determine }c.
 $$
 
@@ -295,7 +303,7 @@ $$
 \end{array}
 $$
 
-Five representations, five different categories. The site $\mathcal C$ contains their contexts; the **admissible cover** of "the event" is the family $\{c_v, c_a, c_r, c_\ell, c_h\} \to c$ — each arrow admissible, the patches together recovering everything relevant about $c$. $\mathcal T$ contains sensor calibration, physical propagation (sound delay, Doppler), validated linguistic reporting, and archival transmission with error bounds. A global $G \in F(c)$ exists iff descent holds.
+Five representations, five channels (visual, auditory, radar, linguistic, archival) — each a different kind of trace produced by its own access function. The site $\mathcal{C}$ contains their contexts; the **admissible cover** of "the event" is the family $\{c_v, c_a, c_r, c_\ell, c_h\} \to c$ — each arrow admissible, the patches together recovering everything relevant about $c$. $\mathcal T$ contains sensor calibration, physical propagation (sound delay, Doppler), validated linguistic reporting, and archival transmission with error bounds. A global $G \in F(c)$ exists iff descent holds.
 
 The same shape governs **mathematical data**: a group presented by generators-and-relations, by a Cayley table, by a permutation action, by a matrix representation, by a character table. Five presentations, five categories, one group — provided the transitions between presentations are admissible (isomorphisms of the appropriate kind).
 
@@ -384,12 +392,14 @@ An **$\infty$-sheaf** is a sheaf-like object valued in $\infty$-groupoids instea
 
 ## The observer is part of the diagram
 
+So far the discussion has been structural: equalizers, pullbacks, Čech nerves, higher cells. The diagrams have had *objects* and *morphisms*, but no *agents*. The next step is to put the inquirer back in: every structural claim about subject matter $W$ is made by *someone*, through *some* access pipeline, encoded in *some* report.
+
 Every access to a subject matter is a composite, in every domain:
 
 $$
 \underbrace{W}_{\text{subject}}
 \xrightarrow{\;I\;}\underbrace{S}_{\text{stimulus/signal}}
-\xrightarrow{\;N\;}\underbrace{R}_{\text{internal rep.}}
+\xrightarrow{\;N\;}\underbrace{\rho}_{\text{internal rep.}}
 \xrightarrow{\;L\;}\underbrace{\Sigma}_{\text{report/encoding}}
 \xrightarrow{\;C\;}\underbrace{M}_{\text{model}}.
 $$
@@ -492,7 +502,7 @@ $$
 \boxed{
 \begin{aligned}
 &\text{Internal coherence}\\
-&\neq\text{ descent from grounded contexts.}
+&\not\Rightarrow\text{ descent from grounded contexts.}
 \end{aligned}}
 $$
 
@@ -501,6 +511,8 @@ $$
 <div class="md">
 
 ## Invariants: what survives a change of representation
+
+The previous section argued that no current AI architecture is a sheaf in the strict sense, and that hallucination is the predictable consequence of internal coherence without grounded descent. The natural question is then: *what does survive the change of representation*? Even an imperfect model preserves *something*. Picking out what is preserved, against what is discarded, is the practical test of a representation.
 
 For each admissible transition $T \in \mathcal T$, ask what is preserved — and what is discarded. The catalogue of invariants is open, but every entry must be defended:
 
@@ -535,7 +547,7 @@ The forms of sameness form a tower from strongest to weakest. The arrow on each 
 - **homotopy** ($s_i \simeq s_j$) — *coherent deformation*. Implies approximation under any compatible metric.
 - **approx** ($d(s_i, s_j) \le \varepsilon$) — *within tolerance*. Implies statistical agreement under any reasonable model.
 - **stat** ($P(D_i, D_j \mid M)$ high) — *probabilistic agreement*. Implies model-theoretic compatibility.
-- **model-theoretic** ($\exists M : M \models T_{\text{all}}$) — *common interpretation of the theories*.
+- **model-theoretic** ($\exists M : M \models \mathcal{S}_{\text{all}}$) — *common interpretation of the theories*.
 
 Concrete examples in each row:
 
@@ -748,8 +760,8 @@ $$
 $$
 \boxed{
 \begin{aligned}
-&\textbf{A world model is a section of a representation}\\
-&\textbf{presheaf that descends along an admissible cover —}\\
+&\textbf{A world model is the global section recovered from local}\\
+&\textbf{descent data along an admissible cover —}\\
 &\textbf{provisionally, revisably, and never identical}\\
 &\textbf{to the subject matter it represents.}
 \end{aligned}}
@@ -758,7 +770,7 @@ $$
 Everything else — perception, measurement, physics, mathematics, model theory, neural networks — is a choice of:
 
 $$
-\underbrace{\mathcal C}_{\text{site of contexts}}\ ,\quad 
+\underbrace{\mathcal{C}}_{\text{site of contexts}}\ ,\quad 
 \underbrace{\mathcal V}_{\text{target of representations}}\ ,\quad 
 \underbrace{\mathcal T}_{\text{admissible transitions}}.
 $$
@@ -947,7 +959,7 @@ $$
 
 - **The $T_i$ arrows** ($R_i \to G$) are admissible transitions. They do their *coherence* work: the sheaf condition is checked along them, agreement on overlaps is verified.
 
-- **The implicit $W \leftrightarrow R_i$ contact.** This is what Tarski is about. Each *use* of an observation $R_i$ as a *claim* about $W$ is a Tarskian if-and-only-if: the claim is true iff the fact holds. Admissible transitions encode the calibration; the if-and-only-if encodes the truth.
+- **The $G \to W$ arrow** (a claim from the model about the world) is the correspondence row — the new addition. Each specific claim $S$ produced by $G$ about $W$ must satisfy Tarski's if-and-only-if at its contact point: $S$ is true iff the corresponding fact $p$ holds. Admissible transitions encode the calibration between the trace $R_i$ and the world; the if-and-only-if is the truth condition on the model's claim.
 
 The model $G$ is true when all three rows hold simultaneously for every $i\in I$ — and the third row is the new one this section adds.
 
@@ -982,11 +994,10 @@ Failure: *coherence*.
 **3. The contact-point liar.** A special, important sub-case of (1): the model's *internal* logic is consistent, the maps $T_i\in\mathcal T$ are all admissible, but the system has been trained on data that does not actually reflect $W$. With enough data and enough fitting, descent holds internally; but the model's predictions at the contact points systematically miss. Result: the **hallucinating language model** of the section "Where AI actually enters".
 
 $$
-\underbrace{M_{\text{internal}}\text{ self-consistent}}_{\text{coherence}}
+\underbrace{\text{hallucination}}_{\text{the dangerous case}} \;\;:=\;\;
+\underbrace{M_{\text{internal}}\text{ self-consistent}}_{\text{coherence holds internally}}
 \;\;\wedge\;\;
-\underbrace{\text{no grounded }T\in\mathcal T}_{\text{contact-point failure}}
-\;\;\Longleftrightarrow\;\;
-\underbrace{\text{hallucination}}_{\text{the dangerous case.}}
+\underbrace{\text{no grounded }T\in\mathcal T}_{\text{contact-point failure}}.
 $$
 
 Failure: *both* — but the diagnosis is that $\mathcal T$ has been chosen wrongly.
