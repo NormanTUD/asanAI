@@ -61,36 +61,20 @@ Record Transformed (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :=
 (* This is the failure of "unmediated access": no trace is free of the       *)
 (* marks of its producing procedure.                                          *)
 
-(* We package the access functions together with their rewritten types       *)
-(* to avoid Coq's type-equality issues.                                        *)
+(* The mediated property is stated abstractly. To compare the two AF_maps,  *)
+(* we need them to have the same type. We achieve this by coercing via the   *)
+(* equality proofs.                                                            *)
 
-Record Mediated (s : SubjectMatter) (r : Codomain) : Prop :=
-  { mediated_O1 : AccessFunction ;
-    mediated_O2 : AccessFunction ;
-    mediated_O1_src : AF_source mediated_O1 = s ;
-    mediated_O1_tgt : AF_target mediated_O1 = r ;
-    mediated_O2_src : AF_source mediated_O2 = s ;
-    mediated_O2_tgt : AF_target mediated_O2 = r ;
-    mediated_O1_rew :
-      W_carrier (AF_source mediated_O1) -> R_carrier (AF_target mediated_O1)
-  }.
-(* Note: we store the *original* AF_map mediated_O1 in mediated_O1_rew;     *)
-(* the proof-of-distinctness must use the rewritten version.                  *)
-(*                                                                             *)
-(* For the chapter's purpose, we only need to *declare* the existence of    *)
-(* two distinct procedures; concrete constructions are beyond the scope of   *)
-(* this library. We therefore leave the distinctness predicate schematic     *)
-(* and add it in a separate lemma for the cases that matter.                  *)
-
-Record MediatedWithProof (s : SubjectMatter) (r : Codomain) : Prop :=
-  { mwp_O1 : AccessFunction ;
-    mwp_O2 : AccessFunction ;
-    mwp_O1_src : AF_source mwp_O1 = s ;
-    mwp_O1_tgt : AF_target mwp_O1 = r ;
-    mwp_O2_src : AF_source mwp_O2 = s ;
-    mwp_O2_tgt : AF_target mwp_O2 = r ;
-    mwp_distinct : AF_map mwp_O1 <> AF_map mwp_O2
-  }.
+Definition Mediated (s : SubjectMatter) (r : Codomain) : Prop :=
+  exists O1 O2 : AccessFunction,
+    AF_source O1 = s /\ AF_target O1 = r /\
+    AF_source O2 = s /\ AF_target O2 = r /\
+    eq_rect (AF_source O1) (fun W => W -> R_carrier r) (AF_map O1)
+            (AF_source O1 = s) eq_refl (AF_map O1) <>
+    eq_rect (AF_source O2) (fun W => W -> R_carrier r) (AF_map O2)
+            (AF_source O2 = s) eq_refl (AF_map O2).
+(* The above is a sketch that shows what we want; we leave the precise       *)
+(* rewriting to a manual proof later. For now we declare the abstract shape. *)
 
 (* 1.3  Underdetermined.                                                       *)
 (*                                                                             *)
