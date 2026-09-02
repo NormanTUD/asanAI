@@ -120,6 +120,69 @@ function smartPunct(root) {
 	}
 }
 
+/* ── Math protection for marked.js ─────────────────────────────
+   marked.js would otherwise treat underscores/asterisks inside
+   LaTeX equations ($x_i$, $$\sum_{k=1}^n$$, …) as markdown
+   emphasis, producing <em>/<strong> tags that Temml then renders
+   as broken glyphs. We swap every $…$ / $$…$$ region for a
+   placeholder before marked parses, and put the untouched
+   original back afterwards. Result: Temml always receives the
+   exact LaTeX the author wrote, and the popup "copy LaTeX"
+   source stays pristine too.                               */
+(function installMathProtection() {
+	if (!window.marked || !window.marked.use || window.__mathHooksInstalled) return;
+	window.__mathHooksInstalled = true;
+
+	const PREFIX = 'zXq9MkPh';
+	let stash = [];
+	let counter = 0;
+
+	const makePh = () => PREFIX + 'PLACEHOLDER' + (counter++) + 'ENDPLACEHOLDER';
+
+	const looksLikeMath = (inner) => {
+		// Heuristic: if the content has no letters or backslashes,
+		// it's almost certainly a currency amount ("$100 and $200")
+		// rather than LaTeX. Don't touch it.
+		return /[A-Za-z\\]/.test(inner);
+	};
+
+	window.marked.use({
+		hooks: {
+			preprocess(html) {
+				stash = [];
+				counter = 0;
+				let out = html;
+
+				// Block math first so we don't shadow $$…$$ with the inline rule.
+				out = out.replace(/\$\$([\s\S]*?)\$\$/g, (m) => {
+					stash.push(m);
+					return makePh();
+				});
+
+				// Inline math on a single line; skip escaped \$ and $$.
+				out = out.replace(/(?<!\\)(?<!\$)\$(?!\$)([^$\n]+?)(?<!\\)(?<!\$)\$(?!\$)/g,
+					(match, inner) => {
+						if (!looksLikeMath(inner)) return match;
+						stash.push(match);
+						return makePh();
+					});
+
+				return out;
+			},
+			postprocess(html) {
+				let out = html;
+				for (let i = 0; i < stash.length; i++) {
+					out = out.split(PREFIX + 'PLACEHOLDER' + i + 'ENDPLACEHOLDER')
+					          .join(stash[i]);
+				}
+				stash = [];
+				counter = 0;
+				return out;
+			}
+		}
+	});
+})();
+
 function renderMarkdown() {
 	updateLoadingStatus("Rendering Markdown...");
 	getTopLevelMdContainers().forEach(container => {
