@@ -254,10 +254,10 @@ Equipping $\mathcal{C}$ with a rule for which families count as covers (one that
 A **representation scheme** assigns to every context a set of "sections" (the things one can write down *on* that context):
 
 $$
-\underbrace{F}_{\text{rep. assignment}}\ :\ 
-\underbrace{\mathcal{C}^{\mathrm{op}}}_{\text{contexts, refinements reversed}} 
+\underset{\text{rep. assignment}}{F}\ :\ 
+\underset{\text{contexts, refinements reversed}}{\mathcal{C}^{\mathrm{op}}} 
 \longrightarrow 
-\underbrace{\mathcal{V}}_{\text{target category}}.
+\underset{\text{target category}}{\mathcal{V}}.
 $$
 
 $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain complexes, or $\infty$-groupoids, depending on how much homotopy is needed.
@@ -279,14 +279,14 @@ A family $\{s_i \in F(c_i)\}$ is **compatible** when, on every pairwise overlap 
 Now the same content as an equation. For every admissible cover $\{c_i \to c\}_{i \in I}$:
 
 $$
-\underbrace{F(c)}_{\text{global section on }c}
+\underset{\text{global section on }c}{F(c)}
 \;\xrightarrow{\;\sim\;}\;
-\underbrace{\;\mathrm{Eq}\!\Bigl(\;
-\underbrace{\prod_{i\in I} F(c_i)}_{\text{a section on each patch}}
+\underset{\substack{\text{the tuples that agree on every overlap}\\
+\text{(two restriction arrows: from $i$-side, from $j$-side)}}}{\;\mathrm{Eq}\!\Bigl(\;
+\underset{\text{a section on each patch}}{\prod\sb{i\in I} F(c\sb{i})}
 \;\rightrightarrows\;
-\underbrace{\prod_{i,j\in I} F(c_i \times_c c_j)}_{\text{a section on each pairwise overlap}}
-\;\Bigr)}_{\substack{\text{the tuples that agree on every overlap}\\
-\text{(two restriction arrows: from $i$-side, from $j$-side)}}}
+\underset{\text{a section on each pairwise overlap}}{\prod\sb{i,j\in I} F(c\sb{i} \times\sb{c} c\sb{j})}
+\;\Bigr)}.
 $$
 
 Three pieces, reading left to right:
@@ -325,13 +325,13 @@ A train passes a platform. Channels:
 
 $$
 \begin{array}{ccccc}
-&&\underbrace{W}_{\text{train event}}&&\\
-&\swarrow{\scriptstyle O_v}&\downarrow{\scriptstyle O_a}&\searrow{\scriptstyle O_r}&\\
-\underbrace{R_v}_{\text{seen}}&&\underbrace{R_a}_{\text{heard}}&&\underbrace{R_r}_{\text{radar}}\\
-&\searrow{\scriptstyle L_v}&\downarrow{\scriptstyle L_a}&\swarrow{\scriptstyle L_r}&\\
-&&\underbrace{R_\ell}_{\text{spoken report}}&&\\
+&&\underset{\text{train event}}{W}&&\\
+&\swarrow{\scriptstyle O\sb{v}}&\downarrow{\scriptstyle O\sb{a}}&\searrow{\scriptstyle O\sb{r}}&\\
+\underset{\text{seen}}{R\sb{v}}&&\underset{\text{heard}}{R\sb{a}}&&\underset{\text{radar}}{R\sb{r}}\\
+&\searrow{\scriptstyle L\sb{v}}&\downarrow{\scriptstyle L\sb{a}}&\swarrow{\scriptstyle L\sb{r}}&\\
+&&\underset{\text{spoken report}}{R\sb{\ell}}&&\\
 &&\downarrow{\scriptstyle C}&&\\
-&&\underbrace{R_h}_{\text{archive, 100 yrs later}}&&
+&&\underset{\text{archive, 100 yrs later}}{R\sb{h}}&&
 \end{array}
 $$
 
