@@ -32,80 +32,87 @@
 Require Import Library.
 
 (* ---------------------------------------------------------------------------- *)
-(* 1.  The four properties of a trace                                          *)
+(* 1.  Traces and access functions                                              *)
 (* ---------------------------------------------------------------------------- *)
 
-(* The chapter lists four properties of a trace. We encode each as a         *)
-(* predicate that a particular Trace satisfies in a given setup.             *)
+(* A trace is just an element of a codomain R; it is an "image" of some      *)
+(* region of the subject matter under some access function. We do not need  *)
+(* to commit to the existence of such an image at this stage: the library   *)
+(* already supplies Trace, Codomain, AccessFunction.                          *)
 
-(* 1.1  Transformed.                                                           *)
+(* The chapter says a trace r is a point such that r = O(w) for some w.     *)
+(* We model this as a record that bundles an access function O and a        *)
+(* region w in its source; the trace is given as the value at w directly.    *)
+
+Record ProducedTrace := {
+  PT_access : AccessFunction;
+  PT_region : Region (AF_source PT_access);
+  PT_trace : R_carrier (AF_target PT_access);
+  PT_image : AF_map PT_access PT_region = PT_trace
+}.
+
+(* ---------------------------------------------------------------------------- *)
+(* 2.  The four properties of a trace                                          *)
+(* ---------------------------------------------------------------------------- *)
+
+(* 2.1  Transformed.                                                           *)
 (*                                                                             *)
 (* A trace is "transformed" if it is the *output* of an access function       *)
-(* applied to a region. That is, the trace has been produced by some access.  *)
-(* Equivalently: the trace lives in the codomain of an access function, not   *)
-(* in the subject matter itself.                                               *)
+(* applied to a region. The chapter phrases this as "the trace is not w but *)
+(* the result of an access procedure applied to w". A ProducedTrace already  *)
+(* witnesses this property by construction: the trace is the image of a    *)
+(* region under an access function. We define the predicate Transformed as  *)
+(* the existence of such a record.                                            *)
 
-(* We model the transformed property as the existence of an access function *)
-(* whose source is the subject matter, whose target is the codomain, and    *)
-(* which maps the (abstract) region to the trace.                            *)
+Definition Transformed (r : Codomain) (t : Trace r) : Prop :=
+  exists pt : ProducedTrace,
+    PT_codomain pt = r /\ PT_trace pt = t.
 
-Record Transformed (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :=
-  { transformed_O : AccessFunction ;
-    transformed_src : AF_source transformed_O = s ;
-    transformed_tgt : AF_target transformed_O = r ;
-    transformed_value :
-      eq_rect (W_carrier s) (fun W => W -> R_carrier r) (AF_map transformed_O)
-              transformed_src (AF_map transformed_O) = AF_map transformed_O
-  }.
-(* The eq_rect here is a no-op rewriting that holds definitionally. We     *)
-(* include it as a witness that the trace is the image of some region of s. *)
-(*                                                                             *)
-(* (In a richer formalization, the value witness would also include a       *)
-(* specific input w of type Region s and a proof that AF_map transformed_O  *)
-(* applied to w equals t. For the chapter's purpose, the existence of the  *)
-(* access function is sufficient.)                                           *)
-
-(* 1.2  Mediated.                                                               *)
+(* 2.2  Mediated.                                                               *)
 (*                                                                             *)
 (* A trace is mediated if the access function that produced it left marks:   *)
-(* different access functions on the same input give different traces.        *)
-(* This is the failure of "unmediated access": no trace is free of the       *)
-(* marks of its producing procedure.                                          *)
+(* different access functions on the same source/target can produce          *)
+(* different traces. The chapter says: "An unmediated trace is a            *)
+(* contradiction in terms."                                                  *)
+(*                                                                             *)
+(* We model the mediated property by saying: given a setup with a subject   *)
+(* matter W and a codomain R, there exist two distinct access functions     *)
+(* from W to R.                                                                *)
 
-(* The mediated property is encoded abstractly as a witness of the          *)
-(* existence of two distinct procedures. The internal comparison of the     *)
-(* maps is left abstract: what matters for the chapter's discipline is       *)
-(* the *existence* of the two procedures, not the concrete form of their    *)
-(* distinctness.                                                              *)
+Record MediatedSetup := {
+  MS_subject : SubjectMatter;
+  MS_codomain : Codomain;
+  MS_O1 : AccessFunction;
+  MS_O2 : AccessFunction;
+  MS_O1_src : AF_source MS_O1 = MS_subject;
+  MS_O1_tgt : AF_target MS_O1 = MS_codomain;
+  MS_O2_src : AF_source MS_O2 = MS_subject;
+  MS_O2_tgt : AF_target MS_O2 = MS_codomain;
+  MS_distinct : AF_map MS_O1 <> AF_map MS_O2
+}.
 
-Inductive Mediated : Type :=
-  | Mediated_intro :
-      forall (s : SubjectMatter) (r : Codomain),
-        (AccessFunction * AccessFunction) ->
-        Prop ->   (* placeholder for distinctness; concrete proofs are     *)
-                  (* supplied at instantiation time                        *)
-        Mediated.
-(* We do not actually need to construct inhabitants of Mediated to use it   *)
-(* as a marker: in this file we only declare its existence, and downstream *)
-(* uses import the inductive type and reason about it via pattern matching. *)
-(* This avoids Coq's type-equality issues without sacrificing the chapter's *)
-(* expressive power.                                                          *)
-
-(* 1.3  Underdetermined.                                                       *)
+(* 2.3  Underdetermined.                                                       *)
 (*                                                                             *)
 (* A trace is underdetermined if there exist at least two distinct (w, O)    *)
-(* pairs that could have produced it. The chapter stresses: recovering w and  *)
-(* O from the trace alone is "the whole task of inference".                   *)
+(* pairs that could have produced it. The chapter: "From the trace alone,   *)
+(* neither the source w nor the procedure O is uniquely determined."         *)
+(*                                                                             *)
+(* We model underdetermination as the existence of two distinct              *)
+(* ProducedTrace records that yield the same trace.                          *)
 
-Record Underdetermined (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :=
-  { underdetermined_witness :
-      exists (w1 w2 : Region s) (O1 O2 : AccessFunction),
-        AF_map O1 w1 = t /\
-        AF_map O2 w2 = t /\
-        (w1 <> w2 \/ O1 <> O2)
+Record UnderdeterminedSetup (r : Codomain) (t : Trace r) : Prop :=
+  { und_pt1 : ProducedTrace ;
+    und_pt2 : ProducedTrace ;
+    und_t1_eq : PT_codomain und_pt1 = r ;
+    und_t2_eq : PT_codomain und_pt2 = r ;
+    und_trace1_eq : PT_trace und_pt1 = t ;
+    und_trace2_eq : PT_trace und_pt2 = t ;
+    und_distinct :
+      PT_region und_pt1 <> PT_region und_pt2 \/
+      AF_map (PT_access und_pt1) <> AF_map (PT_access und_pt2)
   }.
 
-(* 1.4  Possibly indexical.                                                    *)
+(* 2.4  Possibly indexical.                                                    *)
 (*                                                                             *)
 (* A trace is indexical when it points beyond itself to a source. Not every  *)
 (* trace does so; the property is data, not given in advance. A pure noise   *)
@@ -113,30 +120,31 @@ Record Underdetermined (s : SubjectMatter) (r : Codomain) (t : Trace r) : Prop :
 (* measurement is not; a free pattern in a derivation points only to the     *)
 (* derivation itself.                                                          *)
 
-(* A trace is indexical iff it carries a witness to its being-of-something. *)
+(* The dichotomy: a trace is indexical iff it carries a witness to its      *)
+(* being-of-something; otherwise it is a free pattern.                      *)
 
 Record Indexical (r : Codomain) (t : Trace r) : Prop :=
   { indexical_evidence :
-      exists (it : IndexicalTrace r), it_trace it = t /\ it_is_of it = it_is_of it
+      exists (it : IndexicalTrace r), it_trace it = t
   }.
 
-(* A non-indexical trace is a "free pattern" (per the chapter).             *)
+(* A non-indexical trace is a "free pattern".                                *)
 
-Record FreePattern_ (r : Codomain) (t : Trace r) : Prop :=
-  { free_pattern_evidence :
-      forall (it : IndexicalTrace r), it_trace it <> t
-  }.
+Definition FreePattern (r : Codomain) (t : Trace r) : Prop :=
+  forall (it : IndexicalTrace r), it_trace it <> t.
 
-(* The dichotomy is: every trace is either indexical or free; the chapter   *)
-(* says this is established by inference, not given in advance. We do not   *)
-(* assert the dichotomy as a theorem; it is part of the discipline.          *)
+(* The dichotomy is not asserted as a theorem in this library: the chapter    *)
+(* explicitly says that indexicality is established by inference, not given  *)
+(* in advance. We provide both predicates; concrete instantiations may      *)
+(* discharge one or the other (or neither).                                  *)
 
 (* ---------------------------------------------------------------------------- *)
-(* 2.  Examples                                                                  *)
+(* 3.  Examples                                                                  *)
 (* ---------------------------------------------------------------------------- *)
 (*                                                                             *)
 (* The chapter gives four concrete examples of traces. We model each as a     *)
-(* particular instance of the abstract scheme.                                *)
+(* particular instance of the abstract scheme, with the carrier types left   *)
+(* abstract.                                                                   *)
 (*                                                                             *)
 (*   Example 1. An electron leaves a track in a cloud chamber.                *)
 (*     W = (states of the electron)                                          *)
@@ -158,10 +166,7 @@ Record FreePattern_ (r : Codomain) (t : Trace r) : Prop :=
 (*     R = (formal proofs in a paper)                                         *)
 (*     O : W -> R = (the construction of a proof)                             *)
 (*                                                                             *)
-(* We encode the examples abstractly; concrete instantiations would populate *)
-(* the carriers of the SubjectMatter and Codomain records.                    *)
-
-(* A "trace example" bundles the four pieces.                                 *)
+(* We encode these as a single record type, parameterised by the carriers.   *)
 
 Record TraceExample := {
   TE_subject : SubjectMatter;
@@ -171,11 +176,49 @@ Record TraceExample := {
   TE_target_eq : AF_target TE_access = TE_codomain
 }.
 
-(* The chapter's examples are all of this form. *)
+(* Constructors for the four named examples. Each leaves the carrier types  *)
+(* as abstract parameters; concrete instances would fill them in.            *)
 
-Definition is_trace_example (s : SubjectMatter) (r : Codomain)
-                              (O : AccessFunction)
-                              (Hs : AF_source O = s) (Ht : AF_target O = r) :
+Definition ElectronTrackExample (s : SubjectMatter) (r : Codomain)
+                                  (O : AccessFunction)
+                                  (Hs : AF_source O = s) (Ht : AF_target O = r) :
+  TraceExample.
+Proof.
+  exact {| TE_subject := s;
+           TE_codomain := r;
+           TE_access := O;
+           TE_source_eq := Hs;
+           TE_target_eq := Ht |}.
+Defined.
+
+Definition TreeShadowExample (s : SubjectMatter) (r : Codomain)
+                               (O : AccessFunction)
+                               (Hs : AF_source O = s) (Ht : AF_target O = r) :
+  TraceExample.
+Proof.
+  exact {| TE_subject := s;
+           TE_codomain := r;
+           TE_access := O;
+           TE_source_eq := Hs;
+           TE_target_eq := Ht |}.
+Defined.
+
+Definition ArchivalDocumentExample (s : SubjectMatter) (r : Codomain)
+                                     (O : AccessFunction)
+                                     (Hs : AF_source O = s)
+                                     (Ht : AF_target O = r) :
+  TraceExample.
+Proof.
+  exact {| TE_subject := s;
+           TE_codomain := r;
+           TE_access := O;
+           TE_source_eq := Hs;
+           TE_target_eq := Ht |}.
+Defined.
+
+Definition ProofInPaperExample (s : SubjectMatter) (r : Codomain)
+                                (O : AccessFunction)
+                                (Hs : AF_source O = s) (Ht : AF_target O = r) :
   TraceExample.
 Proof.
   exact {| TE_subject := s;
@@ -186,7 +229,7 @@ Proof.
 Defined.
 
 (* ---------------------------------------------------------------------------- *)
-(* 3.  Inference: recovering (w, O) from a trace                               *)
+(* 4.  Inference: recovering (w, O) from a trace                               *)
 (* ---------------------------------------------------------------------------- *)
 
 (* The chapter says: "From the trace alone, neither the source w nor the      *)
@@ -202,36 +245,40 @@ Definition possible_sources (s : SubjectMatter) (r : Codomain)
       AF_target (snd p) = r /\
       AF_map (snd p) (fst p) = t }.
 
-(* Inference is the (partial) recovery of one (w, O) pair from the trace.    *)
+(* Inference is the (partial) recovery of one (w, O) pair from the trace.   *)
 
 Record Inference (s : SubjectMatter) (r : Codomain) (t : Trace r) : Type := {
   inferred_pair : possible_sources s r t
 }.
 
-(* Underdetermination says: the inference is not unique.                     *)
+(* Underdetermination says: the inference is not unique. There exist two     *)
+(* distinct inferences from the same trace.                                  *)
 
-Definition inference_is_underdetermined (s : SubjectMatter) (r : Codomain)
-                                          (t : Trace r)
-                                          (I1 I2 : Inference s r t) : Prop :=
+Definition inferences_disagree (s : SubjectMatter) (r : Codomain)
+                                 (t : Trace r) (I1 I2 : Inference s r t) : Prop :=
   let p1 := inferred_pair I1 in
   let p2 := inferred_pair I2 in
   fst (fst p1) <> fst (fst p2) \/ snd p1 <> snd p2.
 
 (* ---------------------------------------------------------------------------- *)
-(* 4.  Summary comment                                                          *)
+(* 5.  Summary comment                                                          *)
 (* ---------------------------------------------------------------------------- *)
 (*                                                                             *)
 (* This file formalizes:                                                       *)
-(*   - The four trace properties: Transformed, Mediated, Underdetermined,     *)
-(*     and Possibly Indexical (with FreePattern_ as the negation).            *)
-(*   - The four concrete examples of traces (electron track, tree shadow,    *)
-(*     archival document, proof in a paper), unified by the TraceExample     *)
-(*     record.                                                                  *)
-(*   - The inference task as a possible-sources projection, and               *)
-(*     underdetermination as a non-uniqueness predicate on inferences.       *)
+(*   - ProducedTrace: a trace paired with its producing access function       *)
+(*     and region, with a proof that the trace is the image of the region.    *)
+(*   - The four trace properties:                                              *)
+(*       * Transformed  (existence of a ProducingTrace)                       *)
+(*       * Mediated     (existence of two distinct access functions)          *)
+(*       * Underdetermined (two distinct produced traces yielding the same t) *)
+(*       * Indexical / FreePattern dichotomy, left non-theorematic            *)
+(*   - The four concrete examples, unified by the TraceExample record.       *)
+(*   - The inference task as a possible-sources projection, with a            *)
+(*     non-uniqueness predicate.                                              *)
 (*                                                                             *)
-(* All four properties are encoded as Prop-valued records so that they can   *)
-(* be discharged by proofs in later files when specific setups are modelled. *)
+(* All four properties are encoded as Prop-valued records or definitions so  *)
+(* that they can be discharged by proofs in later files when specific        *)
+(* setups are modelled.                                                       *)
 (*                                                                             *)
 (* The file depends only on Library.v.                                         *)
 (*                                                                             *)

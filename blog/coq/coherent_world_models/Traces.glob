@@ -1,96 +1,27 @@
-DIGEST e622a2ec74ce9377c8f8393473838ec8
+DIGEST 0b826fe467ab0c0536171ebd7ecf4f54
 FTraces
 R2469:2475 Library <> <> lib
-rec 3386:3396 <> Transformed
-proj 3461:3480 <> transformed_evidence
-R3403:3415 Library <> SubjectMatter rec
-binder 3399:3399 <> s:1
-R3423:3430 Library <> Codomain rec
-binder 3419:3419 <> r:2
-R3438:3443 Library <> :::'Trace'_x not
-R3444:3444 Traces <> r:2 var
-binder 3434:3434 <> t:3
-R3484:3491 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R3510:3518 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R3496:3509 Library <> AccessFunction rec
-binder 3492:3492 <> O:5
-R3534:3537 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R3530:3532 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R3519:3527 Library <> AF_source proj
-R3529:3529 Traces <> O:5 var
-R3533:3533 Traces <> s:1 var
-R3549:3551 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R3538:3546 Library <> AF_target proj
-R3548:3548 Traces <> O:5 var
-R3552:3552 Traces <> r:2 var
-rec 4858:4865 <> Mediated
-proj 4916:4926 <> mediated_O1
-proj 4951:4961 <> mediated_O2
-proj 4986:5000 <> mediated_O1_src
-proj 5036:5050 <> mediated_O1_tgt
-proj 5086:5100 <> mediated_O2_src
-proj 5136:5150 <> mediated_O2_tgt
-proj 5186:5206 <> mediated_distinctness
-R4872:4884 Library <> SubjectMatter rec
-binder 4868:4868 <> s:7
-R4892:4899 Library <> Codomain rec
-binder 4888:4888 <> r:8
-R4930:4943 Library <> AccessFunction rec
-R4965:4978 Library <> AccessFunction rec
-R5025:5027 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5004:5012 Library <> AF_source proj
-R5014:5024 Traces <> mediated_O1:10 meth
-R5028:5028 Traces <> s:7 var
-R5075:5077 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5054:5062 Library <> AF_target proj
-R5064:5074 Traces <> mediated_O1:10 meth
-R5078:5078 Traces <> r:8 var
-R5125:5127 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5104:5112 Library <> AF_source proj
-R5114:5124 Traces <> mediated_O2:11 meth
-R5128:5128 Traces <> s:7 var
-R5175:5177 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R5154:5162 Library <> AF_target proj
-R5164:5174 Traces <> mediated_O2:11 meth
-R5178:5178 Traces <> r:8 var
-rec 6078:6092 <> Underdetermined
-proj 6157:6179 <> underdetermined_witness
-R6099:6111 Library <> SubjectMatter rec
-binder 6095:6095 <> s:17
-R6119:6126 Library <> Codomain rec
-binder 6115:6115 <> r:18
-R6134:6139 Library <> :::'Trace'_x not
-R6140:6140 Traces <> r:18 var
-binder 6130:6130 <> t:19
-R6189:6196 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R6238:6248 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R6205:6211 Library <> :::'Region'_x not
-R6212:6212 Traces <> s:17 var
-binder 6197:6198 <> w1:21
-R6205:6211 Library <> :::'Region'_x not
-R6212:6212 Traces <> s:17 var
-binder 6200:6201 <> w2:22
-R6224:6237 Library <> AccessFunction rec
-binder 6216:6217 <> O1:23
-R6224:6237 Library <> AccessFunction rec
-binder 6219:6220 <> O2:24
-R6265:6276 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6261:6263 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6249:6254 Library <> AF_map proj
-R6256:6257 Traces <> O1:23 var
-R6259:6260 Traces <> w1:21 var
-R6264:6264 Traces <> t:19 var
-R6293:6305 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6326:6326 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6289:6291 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R6277:6282 Library <> AF_map proj
-R6284:6285 Traces <> O2:24 var
-R6287:6288 Traces <> w2:22 var
-R6292:6292 Traces <> t:19 var
-R6314:6317 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R6308:6311 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
-R6306:6307 Traces <> w1:21 var
-R6312:6313 Traces <> w2:22 var
-R6320:6323 Coq.Init.Logic <> ::type_scope:x_'<>'_x not
-R6318:6319 Traces <> O1:23 var
-R6324:6325 Traces <> O2:24 var
+rec 3294:3306 <> ProducedTrace
+proj 3315:3323 <> PT_access
+proj 3345:3353 <> PT_region
+proj 3389:3399 <> PT_codomain
+proj 3415:3428 <> PT_codomain_eq
+proj 3469:3476 <> PT_trace
+proj 3501:3508 <> PT_image
+R3327:3340 Library <> AccessFunction rec
+R3357:3364 Library <> :::'Region'_x not
+R3384:3384 Library <> :::'Region'_x not
+R3365:3373 Library <> AF_source proj
+R3375:3383 Traces <> PT_access:2 meth
+R3403:3410 Library <> Codomain rec
+R3451:3453 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3432:3440 Library <> AF_target proj
+R3442:3450 Traces <> PT_access:2 meth
+R3454:3464 Traces <> PT_codomain:4 meth
+R3480:3485 Library <> :::'Trace'_x not
+R3486:3496 Traces <> PT_codomain:4 meth
+R3538:3540 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3512:3517 Library <> AF_map proj
+R3519:3527 Traces <> PT_access:2 meth
+R3529:3537 Traces <> PT_region:3 meth
+R3541:3548 Traces <> PT_trace:6 meth
