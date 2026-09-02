@@ -190,6 +190,122 @@ Record AugmentedLLM := {
   ALLM_RLHF : Prop                  (* reinforcement learning from human feedback *)
 }.
 
+(* The training dynamics: the chain D -> B -> L -> grad L -> theta_{t+1}.    *)
+
+Record TrainingDynamics := {
+  TD_D : Type;                       (* the dataset                              *)
+  TD_B : Type;                       (* the batch at time t                      *)
+  TD_L : Type;                       (* the loss value                           *)
+  TD_grad : Type;                    (* the gradient                             *)
+  TD_theta : Type;                   (* the parameter vector                    *)
+  TD_sample : TD_D -> TD_B;          (* D -> B (sample batch)                    *)
+  TD_forward : TD_B -> TD_L;          (* B -> L (forward + loss)                 *)
+  TD_backward : TD_L -> TD_grad;      (* L -> grad (backward)                     *)
+  TD_SGD : TD_grad -> TD_theta;       (* grad -> theta (eta-SGD)                  *)
+  TD_theta_t : TD_theta;             (* the current theta                        *)
+  TD_theta_tp1 : TD_theta;           (* the updated theta                        *)
+  TD_chain : Prop                    (* placeholder: the chain commutativity     *)
+}.
+
+(* The four operations compose to one step of gradient descent.            *)
+
+Axiom training_chain_commutes :
+  forall (td : TrainingDynamics), Prop.
+(* Concrete content: the chain rule says the backward step is exactly    *)
+(* the differential of the forward-plus-loss step.                          *)
+
+(* Data quality and scale enter at the top edge (D -> B).                  *)
+
+Record DataQuality := {
+  DQ_dataset : Type;
+  DQ_quality : DQ_dataset -> Prop;     (* the cleaner the better                  *)
+  DQ_scale : nat                      (* the size of the dataset                 *)
+}.
+
+(* Backpropagation is the chain-rule implementation of the implicit        *)
+(* backward arrow.                                                            *)
+
+Axiom backprop_is_chain_rule :
+  Prop.
+(* Concrete content: a real proof would exhibit the chain rule explicitly.*)
+
+(* Gradient descent and the loss landscape.                                  *)
+
+Record LossLandscape := {
+  LL_theta : Type;                   (* the parameter space                      *)
+  LL_loss : LL_theta -> Type;        (* the loss as a function                   *)
+  LL_geometry : Type -> Type -> Prop (* a notion of distance on the landscape  *)
+}.
+
+(* SGD regularisation: the implicit noise in B (sampling from D) keeps    *)
+(* the parameters from settling exactly on the noise.                        *)
+
+Axiom sgd_regularisation :
+  Prop.
+
+(* The hallucination table from the chapter. The chapter's revised diagnosis *)
+(* distinguishes four LLM failure modes, each with its own remedy.            *)
+
+Record HallucinationTableEntry := {
+  HTE_pathology : HallucinationDiagnosis;
+  HTE_failure_mode : Type -> Prop;        (* what's broken                       *)
+  HTE_typical_remedy : Prop              (* the typical remedy                   *)
+}.
+
+Definition hallucination_table : list HallucinationTableEntry := nil.
+(* A concrete formalization would populate this with:                         *)
+(*   - Non-glueable presheaf: confident hallucination, local incoherence.    *)
+(*     Broken: coherence + correspondence.                                   *)
+(*     Remedy: retrieval, RAG, tools, calibration of training data.          *)
+(*   - Self-consistent fantasy: fluent nonsense with internal consistency.   *)
+(*     Broken: correspondence only.                                          *)
+(*     Remedy: grounding in actual sources.                                  *)
+(*   - Factbook: disconnected reasoning; correct facts but no synthesis.    *)
+(*     Broken: coherence.                                                     *)
+(*     Remedy: better reasoning, chain-of-thought, structured scratchpads. *)
+(*   - Calibrated error: subtle, plausible-sounding mistakes.                 *)
+(*     Broken: correspondence.                                                *)
+(*     Remedy: re-calibrated licences, formal verification.                 *)
+
+(* The chapter: "The diagnosis matters because the remedy differs in each   *)
+(* case. The typical hallucination needs both more coherence and more        *)
+(* correspondence... A single fix does not address all four, and conflating *)
+(* them is one of the most common ways to talk uselessly about AI safety."  *)
+
+Axiom diagnosis_matters_for_remedy :
+  forall (t1 t2 : HallucinationDiagnosis) (e : HallucinationTableEntry),
+    HTE_pathology e = t1 ->
+    HTE_pathology e = t2 ->
+    (* same pathology, same remedy; different pathology, different remedy    *)
+    (forall r1 r2, HTE_typical_remedy e = r1 -> HTE_typical_remedy e = r2 -> r1 = r2) ->
+    True.
+
+(* The value-alignment problem in the strong sense. The chapter explicitly  *)
+(* acknowledges that it does not address this.                                *)
+
+Record ValueAlignmentProblem := {
+  VAP_goals : Type;
+  VAP_observer : Type;
+  VAP_alignment : VAP_goals -> VAP_observer -> Prop;
+  VAP_chapter_does_not_address : Prop
+}.
+
+Axiom value_alignment_separate :
+  forall (vap : ValueAlignmentProblem), Prop.
+(* The chapter: "how to ensure that a system with the right epistemic       *)
+(* standing still pursues goals we want it to pursue. That is a separate   *)
+(* problem, with separate tools (preference learning, Constitutional AI,    *)
+(* debate, scalable oversight, formal verification), and the chapter's     *)
+(* vocabulary does not extend to it."                                        *)
+
+(* ---------------------------------------------------------------------------- *)
+(* 6.  The nine-step audit, applied to an LLM                                   *)
+(* ---------------------------------------------------------------------------- *)
+
+(* ---------------------------------------------------------------------------- *)
+(* 6.  The nine-step audit, applied to an LLM                                   *)
+(* ---------------------------------------------------------------------------- *)
+
 (* ---------------------------------------------------------------------------- *)
 (* 6.  The nine-step audit, applied to an LLM                                   *)
 (* ---------------------------------------------------------------------------- *)

@@ -37,6 +37,8 @@
 
 Require Import Library.
 Require Import Traces.
+From Coq Require Import Lists.List.
+Import ListNotations.
 
 (* ---------------------------------------------------------------------------- *)
 (* 1.  The six forms of sameness                                                *)
@@ -191,14 +193,59 @@ Inductive SilentUpgradeError :=
 
 (* Concrete mistakes, formalized:                                              *)
 
+(* 4.1  Treating an approximation as equality.                                *)
+
+(* The chapter: Two temperature readings within tolerance are not the same *)
+(* temperature; they are within eps of each other. The placeholder states  *)
+(* the negation; concrete instantiations would supply the witness.         *)
+
 Definition approx_is_not_eq (A : Type) (d : A -> A -> Prop) (eps : Prop)
                               (x y : A) (H : ApproxSame A d eps x y)
   : Prop :=   (* the chapter: Two temperature readings within tolerance are *)
               (* not the same temperature; they are within eps of each       *)
               (* other.                                                       *)
   ~ LiteralSame A x y.
-(* This is a placeholder; concrete instantiations would discharge it with    *)
-(* the actual claim that approximation does not imply equality.             *)
+
+(* 4.2  Treating an isomorphism as identity.                                  *)
+
+(* The chapter: Two indistinguishable coins are not the same coin; exchange *)
+(* them and the world changes if anything depends on the swap.              *)
+
+Record IsoCoinsExample := {
+  IC_carrier : Type;
+  IC_two_coins : IC_carrier -> IC_carrier -> Prop;  (* the swap relation   *)
+  IC_indistinguishable : forall c1 c2 : IC_carrier, Iso IC_carrier IC_carrier;
+  IC_not_identity : forall c1 c2 : IC_carrier, c1 = c2 \/ False
+}.
+(* A pair of indistinguishable coins is isomorphic to itself, but the coins *)
+(* are not literally identical: swap them and the world changes.            *)
+
+(* 4.3  Treating statistical agreement as proof.                              *)
+
+(* The chapter: Two studies rejecting the same null hypothesis agree on a *)
+(* single test; their underlying assumptions can still differ.               *)
+
+Record StatAgreement := {
+  SA_studies : list Type;
+  SA_H_0 : Type;                   (* the null hypothesis                   *)
+  SA_rejections : forall s : Type, In s SA_studies -> Prop;
+  SA_assumptions_differ :
+    forall (s1 s2 : Type),
+      In s1 SA_studies -> In s2 SA_studies -> Prop
+}.
+(* The two studies reject H_0; their underlying assumptions can still differ.*)
+
+(* 4.4  Treating model-theoretic consistency as truth.                        *)
+
+(* The chapter: A model with a common interpretation is internally         *)
+(* consistent; it can still be the wrong model.                              *)
+
+Record ModelConsistency := {
+  MC_theories : list Theory;
+  MC_common_model : CommonModel MC_theories;
+  MC_wrongness : Prop   (* a witness that the model can still be wrong       *)
+}.
+(* The model is internally consistent but might be wrong.                  *)
 
 (* ---------------------------------------------------------------------------- *)
 (* 4.  The transformation triangle                                              *)

@@ -1,0 +1,285 @@
+DIGEST 808c3e3db5c9e1321300e6acf0a804a2
+FTheoryChain
+R5382:5388 Library <> <> lib
+R5406:5411 Traces <> <> lib
+R5429:5449 AdmissibleTransitions <> <> lib
+R5467:5482 ContextsAndSites <> <> lib
+R5500:5506 Sheaves <> <> lib
+R5524:5538 HigherCoherence <> <> lib
+R5565:5574 Coq.Lists.List <> <> lib
+R5584:5596 Coq.Lists.List ListNotations <> mod
+ind 6101:6110 <> ChainStage
+constr 6119:6132 <> CS_distinction
+constr 6200:6210 <> CS_relation
+constr 6281:6297 <> CS_transformation
+constr 6362:6372 <> CS_locality
+constr 6444:6459 <> CS_compatibility
+constr 6526:6537 <> CS_coherence
+constr 6608:6616 <> CS_gluing
+constr 6690:6701 <> CS_globality
+constr 6772:6784 <> CS_invariance
+R6137:6146 TheoryChain <> ChainStage:1 ind
+R6218:6227 TheoryChain <> ChainStage:1 ind
+R6301:6310 TheoryChain <> ChainStage:1 ind
+R6380:6389 TheoryChain <> ChainStage:1 ind
+R6463:6472 TheoryChain <> ChainStage:1 ind
+R6544:6553 TheoryChain <> ChainStage:1 ind
+R6626:6635 TheoryChain <> ChainStage:1 ind
+R6708:6717 TheoryChain <> ChainStage:1 ind
+R6790:6799 TheoryChain <> ChainStage:1 ind
+scheme 6101:6110 <> ChainStage_rect
+scheme 6101:6110 <> ChainStage_ind
+scheme 6101:6110 <> ChainStage_rec
+scheme 6101:6110 <> ChainStage_sind
+def 7097:7106 <> next_stage
+R7113:7122 TheoryChain <> ChainStage ind
+binder 7109:7109 <> s:3
+R7127:7132 Coq.Init.Datatypes <> option ind
+R7134:7143 TheoryChain <> ChainStage ind
+R7156:7156 TheoryChain <> s:3 var
+R7167:7180 TheoryChain <> CS_distinction constr
+R7188:7191 Coq.Init.Datatypes <> Some constr
+R7193:7203 TheoryChain <> CS_relation constr
+R7209:7219 TheoryChain <> CS_relation constr
+R7230:7233 Coq.Init.Datatypes <> Some constr
+R7235:7251 TheoryChain <> CS_transformation constr
+R7257:7273 TheoryChain <> CS_transformation constr
+R7278:7281 Coq.Init.Datatypes <> Some constr
+R7283:7293 TheoryChain <> CS_locality constr
+R7299:7309 TheoryChain <> CS_locality constr
+R7320:7323 Coq.Init.Datatypes <> Some constr
+R7325:7340 TheoryChain <> CS_compatibility constr
+R7346:7361 TheoryChain <> CS_compatibility constr
+R7368:7371 Coq.Init.Datatypes <> Some constr
+R7373:7384 TheoryChain <> CS_coherence constr
+R7390:7401 TheoryChain <> CS_coherence constr
+R7412:7415 Coq.Init.Datatypes <> Some constr
+R7417:7425 TheoryChain <> CS_gluing constr
+R7431:7439 TheoryChain <> CS_gluing constr
+R7453:7456 Coq.Init.Datatypes <> Some constr
+R7458:7469 TheoryChain <> CS_globality constr
+R7475:7486 TheoryChain <> CS_globality constr
+R7497:7500 Coq.Init.Datatypes <> Some constr
+R7502:7514 TheoryChain <> CS_invariance constr
+R7520:7532 TheoryChain <> CS_invariance constr
+R7542:7545 Coq.Init.Datatypes <> None constr
+rec 7642:7655 <> StageMachinery
+proj 7681:7690 <> SM_carrier
+proj 7764:7778 <> SM_construction
+proj 7847:7857 <> SM_position
+R7662:7671 TheoryChain <> ChainStage ind
+binder 7658:7658 <> s:5
+R7792:7795 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7782:7791 TheoryChain <> ChainStage ind
+R7861:7863 Coq.Init.Datatypes <> nat ind
+def 7942:7955 <> stage_position
+R7969:7972 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7959:7968 TheoryChain <> ChainStage ind
+R7973:7975 Coq.Init.Datatypes <> nat ind
+binder 7986:7986 <> s:10
+R7997:7997 TheoryChain <> s:10 var
+R8017:8030 TheoryChain <> CS_distinction constr
+R8053:8063 TheoryChain <> CS_relation constr
+R8089:8105 TheoryChain <> CS_transformation constr
+R8125:8135 TheoryChain <> CS_locality constr
+R8161:8176 TheoryChain <> CS_compatibility constr
+R8197:8208 TheoryChain <> CS_coherence constr
+R8233:8241 TheoryChain <> CS_gluing constr
+R8269:8280 TheoryChain <> CS_globality constr
+R8305:8317 TheoryChain <> CS_invariance constr
+ind 8688:8693 <> Theory
+constr 8702:8719 <> Th_set_type_theory
+constr 8781:8798 <> Th_category_theory
+constr 8859:8875 <> Th_topology_sites
+constr 8937:8951 <> Th_sheaf_theory
+constr 9016:9035 <> Th_higher_categories
+constr 9094:9108 <> Th_model_theory
+constr 9172:9185 <> Th_probability
+constr 9251:9269 <> Th_machine_learning
+R8726:8731 TheoryChain <> Theory:12 ind
+R8805:8810 TheoryChain <> Theory:12 ind
+R8883:8888 TheoryChain <> Theory:12 ind
+R8961:8966 TheoryChain <> Theory:12 ind
+R9040:9045 TheoryChain <> Theory:12 ind
+R9118:9123 TheoryChain <> Theory:12 ind
+R9196:9201 TheoryChain <> Theory:12 ind
+R9275:9280 TheoryChain <> Theory:12 ind
+scheme 8688:8693 <> Theory_rect
+scheme 8688:8693 <> Theory_ind
+scheme 8688:8693 <> Theory_rec
+scheme 8688:8693 <> Theory_sind
+rec 9334:9351 <> TheoryContribution
+proj 9360:9368 <> TC_theory
+proj 9382:9390 <> TC_stages
+R9372:9377 TheoryChain <> Theory ind
+R9394:9397 Coq.Init.Datatypes <> list ind
+R9399:9408 TheoryChain <> ChainStage ind
+def 9506:9532 <> set_type_theory_contributes
+R9536:9553 TheoryChain <> TheoryContribution rec
+R9563:9571 TheoryChain <> TC_theory proj
+R9563:9571 TheoryChain <> TC_theory proj
+R9563:9571 TheoryChain <> TC_theory proj
+R9601:9609 TheoryChain <> TC_stages proj
+R9601:9609 TheoryChain <> TC_stages proj
+R9576:9593 TheoryChain <> Th_set_type_theory constr
+R9614:9614 Coq.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R9629:9630 Coq.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R9642:9642 Coq.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R9615:9628 TheoryChain <> CS_distinction constr
+R9631:9641 TheoryChain <> CS_relation constr
+def 9739:9765 <> category_theory_contributes
+R9769:9786 TheoryChain <> TheoryContribution rec
+R9796:9804 TheoryChain <> TC_theory proj
+R9796:9804 TheoryChain <> TC_theory proj
+R9796:9804 TheoryChain <> TC_theory proj
+R9834:9842 TheoryChain <> TC_stages proj
+R9834:9842 TheoryChain <> TC_stages proj
+R9809:9826 TheoryChain <> Th_category_theory constr
+R9847:9847 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R9865:9865 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R9848:9864 TheoryChain <> CS_transformation constr
+def 9962:9987 <> topology_sites_contributes
+R9991:10008 TheoryChain <> TheoryContribution rec
+R10018:10026 TheoryChain <> TC_theory proj
+R10018:10026 TheoryChain <> TC_theory proj
+R10018:10026 TheoryChain <> TC_theory proj
+R10055:10063 TheoryChain <> TC_stages proj
+R10055:10063 TheoryChain <> TC_stages proj
+R10031:10047 TheoryChain <> Th_topology_sites constr
+R10068:10068 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10080:10080 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10069:10079 TheoryChain <> CS_locality constr
+def 10178:10201 <> sheaf_theory_contributes
+R10205:10222 TheoryChain <> TheoryContribution rec
+R10232:10240 TheoryChain <> TC_theory proj
+R10232:10240 TheoryChain <> TC_theory proj
+R10232:10240 TheoryChain <> TC_theory proj
+R10267:10275 TheoryChain <> TC_stages proj
+R10267:10275 TheoryChain <> TC_stages proj
+R10245:10259 TheoryChain <> Th_sheaf_theory constr
+R10280:10280 Coq.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R10297:10298 Coq.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R10308:10308 Coq.Lists.List ListNotations ::list_scope:'['_x_';'_x_';'_'..'_';'_x_']' not
+R10281:10296 TheoryChain <> CS_compatibility constr
+R10299:10307 TheoryChain <> CS_gluing constr
+def 10406:10433 <> higher_categories_contribute
+R10437:10454 TheoryChain <> TheoryContribution rec
+R10464:10472 TheoryChain <> TC_theory proj
+R10464:10472 TheoryChain <> TC_theory proj
+R10464:10472 TheoryChain <> TC_theory proj
+R10504:10512 TheoryChain <> TC_stages proj
+R10504:10512 TheoryChain <> TC_stages proj
+R10477:10496 TheoryChain <> Th_higher_categories constr
+R10517:10517 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10530:10530 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10518:10529 TheoryChain <> CS_coherence constr
+def 10627:10650 <> model_theory_contributes
+R10654:10671 TheoryChain <> TheoryContribution rec
+R10681:10689 TheoryChain <> TC_theory proj
+R10681:10689 TheoryChain <> TC_theory proj
+R10681:10689 TheoryChain <> TC_theory proj
+R10716:10724 TheoryChain <> TC_stages proj
+R10716:10724 TheoryChain <> TC_stages proj
+R10694:10708 TheoryChain <> Th_model_theory constr
+R10729:10729 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10742:10742 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10730:10741 TheoryChain <> CS_globality constr
+def 10840:10862 <> probability_contributes
+R10866:10883 TheoryChain <> TheoryContribution rec
+R10893:10901 TheoryChain <> TC_theory proj
+R10893:10901 TheoryChain <> TC_theory proj
+R10893:10901 TheoryChain <> TC_theory proj
+R10927:10935 TheoryChain <> TC_stages proj
+R10927:10935 TheoryChain <> TC_stages proj
+R10906:10919 TheoryChain <> Th_probability constr
+R10940:10940 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10957:10957 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R10941:10956 TheoryChain <> CS_compatibility constr
+def 11055:11082 <> machine_learning_contributes
+R11086:11103 TheoryChain <> TheoryContribution rec
+R11113:11121 TheoryChain <> TC_theory proj
+R11113:11121 TheoryChain <> TC_theory proj
+R11113:11121 TheoryChain <> TC_theory proj
+R11152:11160 TheoryChain <> TC_stages proj
+R11152:11160 TheoryChain <> TC_stages proj
+R11126:11144 TheoryChain <> Th_machine_learning constr
+R11165:11165 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R11178:11178 Coq.Lists.List ListNotations ::list_scope:'['_x_']' not
+R11166:11177 TheoryChain <> CS_globality constr
+def 11358:11374 <> all_contributions
+R11378:11381 Coq.Init.Datatypes <> list ind
+R11383:11400 TheoryChain <> TheoryContribution rec
+R11434:11439 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11407:11433 TheoryChain <> set_type_theory_contributes def
+R11467:11472 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11440:11466 TheoryChain <> category_theory_contributes def
+R11499:11504 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11473:11498 TheoryChain <> topology_sites_contributes def
+R11529:11534 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11505:11528 TheoryChain <> sheaf_theory_contributes def
+R11563:11568 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11535:11562 TheoryChain <> higher_categories_contribute def
+R11593:11598 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11569:11592 TheoryChain <> model_theory_contributes def
+R11622:11627 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11599:11621 TheoryChain <> probability_contributes def
+R11656:11661 Coq.Init.Datatypes <> ::list_scope:x_'::'_x not
+R11628:11655 TheoryChain <> machine_learning_contributes def
+R11662:11664 Coq.Init.Datatypes <> nil constr
+ind 12243:12259 <> StructuralRealism
+constr 12268:12288 <> SR_structural_realism
+constr 12350:12376 <> SR_ontic_structural_realism
+R12292:12308 TheoryChain <> StructuralRealism:17 ind
+R12380:12396 TheoryChain <> StructuralRealism:17 ind
+scheme 12243:12259 <> StructuralRealism_rect
+scheme 12243:12259 <> StructuralRealism_ind
+scheme 12243:12259 <> StructuralRealism_rec
+scheme 12243:12259 <> StructuralRealism_sind
+rec 12594:12608 <> ChapterPosition
+proj 12617:12637 <> CP_structural_realism
+proj 12662:12674 <> CP_commits_to
+proj 12741:12749 <> CP_denies
+R12641:12657 TheoryChain <> StructuralRealism ind
+def 12832:12847 <> chapter_position
+R12851:12865 TheoryChain <> ChapterPosition rec
+R12886:12906 TheoryChain <> CP_structural_realism proj
+R12886:12906 TheoryChain <> CP_structural_realism proj
+R12886:12906 TheoryChain <> CP_structural_realism proj
+R12945:12957 TheoryChain <> CP_commits_to proj
+R12945:12957 TheoryChain <> CP_commits_to proj
+R13182:13190 TheoryChain <> CP_denies proj
+R13182:13190 TheoryChain <> CP_denies proj
+R12911:12931 TheoryChain <> SR_structural_realism constr
+R12962:12965 Coq.Init.Logic <> True ind
+R13195:13198 Coq.Init.Logic <> True ind
+R12886:12906 TheoryChain <> CP_structural_realism proj
+R12886:12906 TheoryChain <> CP_structural_realism proj
+R12886:12906 TheoryChain <> CP_structural_realism proj
+R12945:12957 TheoryChain <> CP_commits_to proj
+R12945:12957 TheoryChain <> CP_commits_to proj
+R13182:13190 TheoryChain <> CP_denies proj
+R13182:13190 TheoryChain <> CP_denies proj
+R12911:12931 TheoryChain <> SR_structural_realism constr
+R12962:12965 Coq.Init.Logic <> True ind
+R13195:13198 Coq.Init.Logic <> True ind
+rec 13687:13697 <> MasterChain
+proj 13706:13709 <> MC_W
+proj 13787:13790 <> MC_R
+proj 13869:13872 <> MC_T
+proj 13950:13953 <> MC_G
+proj 14032:14039 <> MC_chain
+R13713:13725 Library <> SubjectMatter rec
+R13876:13879 Coq.Init.Datatypes <> list ind
+R13881:13894 Library <> TransitionKind ind
+R14057:14060 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14043:14051 Library <> W_carrier proj
+R14053:14056 TheoryChain <> MC_W:24 meth
+R14061:14064 TheoryChain <> MC_R:25 meth
+def 14287:14296 <> chain_step
+R14304:14314 TheoryChain <> MasterChain rec
+binder 14299:14300 <> mc:29
+R14408:14414 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R14429:14430 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R14419:14428 TheoryChain <> ChainStage ind
+binder 14415:14415 <> s:30
+R14431:14434 Coq.Init.Logic <> True ind
