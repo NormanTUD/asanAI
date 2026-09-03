@@ -403,7 +403,7 @@ The two conditions are independent. A family of sub-views can satisfy the cover 
 
 The adjective matters. Without the admissibility filter, *any* family of sub-contexts could be declared a "cover", and the demand that local data cohere would become vacuous: pick the most convenient family, declare it a cover, and coherence is automatic. By restricting to admissible covers, we turn the sheaf condition into a *meaningful* question about a specific modelling setup: the family is not chosen for our convenience; it is constrained by the licences we have actually earned.
 
-Equipping $\mathcal{C}$ with a rule for which families count as covers (one that closes under refinement and under composition) is a **Grothendieck topology** $J$; the pair $(\mathcal{C}, J)$ is a **site** (as sketched in *Coherent Difference*).
+Equipping $\mathcal{C}$ with a rule for which families count as covers (one that is stable under pullback, closed under refinement, and closed under composition) is a **Grothendieck topology** $J$; the pair $(\mathcal{C}, J)$ is a **site** (as sketched in *Coherent Difference*).
 
 A **representation scheme** assigns to every context a set of "sections" (the things one can write down *on* that context):
 
