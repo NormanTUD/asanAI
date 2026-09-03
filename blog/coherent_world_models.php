@@ -1383,6 +1383,30 @@ $$
 
 The single most important observation, in the chapter's vocabulary, is that the LLM has *internal* admissible transitions but no *external* ones. The training process fits $G$ to make the $\{R_i\}$ jointly predictable, and that is the only sense in which $G$ is "of" $W$ — it is a function whose behaviour on the cover is consistent. Whether the behaviour continues *outside* the cover — at inference time, on questions the corpus did not contain, in domains the training distribution did not sample — is the central empirical question, and it is not answered by the architecture alone. The LLM, by default, is a global section computed without any direct observation arrows from $W$.
 
+**Every document is already a derived trace.** The absence of an observation arrow is more radical than "the corpus is the cover and the cover is all we have". It is that every patch in that cover is *itself* the output of a long, mediated chain. Each document in the corpus was written by a person — a person who saw, heard, remembered, translated, and only then wrote. What sits in the corpus is not $W$ and not even raw observations; it is written text that a human *derived* from $W$ through senses, inference, memory, and language, in one culture and one time and one language. So the local section "this document" is not a direct section on $W$; it is the far end of a composite, homotopy-qualified arrow $W \Rightarrow \text{text}$. And today the chain stacks: an increasing share of the corpus is itself written by an AI, i.e. by a *previous* model holding the same position — its text was derived from its own derived corpus. Each generation of authors replaces the arrow $W \to \text{document}$ with one that already passes through a $G$, so the mediation compounds, and a model trained on model-written text is computing a global section over a cover whose patches were themselves global sections of an earlier, equally ungrounded model. The same shape, but the sheaf is now over *derived* patches — one commutative diagram of the whole route from world to world-model. The world sits on top, the AI model at the bottom, and in between each document is the result of a human who perceives something from the world and transfers it into that document:
+
+$$
+\begin{array}{c}
+\underbrace{W}_{\text{world}}\\[2mm]
+{\scriptstyle O_1}\swarrow\ {\scriptstyle O_2}\downarrow\ {\scriptstyle O_3}\searrow\\[2mm]
+\begin{array}{ccc}
+\underbrace{H_1}_{\text{author }1} & \qquad \underbrace{H_2}_{\text{author }2} & \qquad \underbrace{H_3}_{\text{author }3}
+\end{array}\\[3mm]
+\begin{array}{ccc}
+\swarrow\ \downarrow\ \searrow & \swarrow\ \downarrow\ \searrow & \swarrow\ \downarrow\ \searrow
+\end{array}\\[3mm]
+\begin{array}{ccc}
+\underbrace{R_{1,1}\ \; R_{1,2}\ \; R_{1,3}}_{\text{3 documents}} & \qquad \underbrace{R_{2,1}\ \; R_{2,2}\ \; R_{2,3}}_{\text{3 documents}} & \qquad \underbrace{R_{3,1}\ \; R_{3,2}\ \; R_{3,3}}_{\text{3 documents}}
+\end{array}\\[4mm]
+\Big\Downarrow\ \ {\scriptstyle\text{fit / train: merge all nine into one}}\\[3mm]
+\underbrace{\;G\;}_{\text{the AI world-model}}
+\end{array}
+$$
+
+From top to bottom, with the labels read separately alongside: **$W$** — the world; **$O_k$** — each author's perception ($W \to H_k$); **$H_1, H_2, H_3$** — three authors, each of whom writes three documents; the download arrows **$H_k \to R_{k,j}$** — writing; **$R_{1,1}\dots R_{3,3}$** — the nine documents (the cover); the download arrows **$\{R_{k,j}\} \to G$** — fit / training; **$G$** — the AI world-model, the global section merged from all nine.
+
+Read the diagram as a nesting of the sub-components. The *overarching* component is the AI-element diagram with world on top and model on bottom: the cover $\{R_{k,j}\}$ is fitted into a single trained model $G$ (the "fit"-arrows), and $G$ is the global section reconstructed from those patches. Inside it, each document $R_{k,j}$ is itself a sub-component of the very same shape: a small $W \to R_{k,j}$ diagram in which the "sample"-arrow is one author's perception — the $O_k$ arrow from $W$ into $H_k$, and then $H_k$'s transfer of what it perceived into a written document (the senses, memory, and language of the "Traces" section). So the three diagrams the chapter draws elsewhere (subject-matter → views → global model) reappear here *twice*: once at the top scale (each author perceiving $W$) and once at the bottom scale (all documents merging into $G$) — with the person in the middle being exactly the place where the first sub-diagram's output becomes the second sub-diagram's input. The model itself never leaves the bottom: it only ever sees the nine documents as text patches, and it cannot tell an eyewitness report $R_{1,1}$ from a translation $R_{1,2}$ from a page written by an earlier AI $R_{1,3}$, because all arrive as identical "text" cells with their human sub-diagrams un-drawn. Each is a *different admissible transition* in $\mathcal{T}$ with a different licence and a different distance from $W$; the training compresses all nine into a single $G$ and cannot tell them apart.
+
 ### What the LLM does: internal descent
 
 Once this picture is in place, the LLM's *strengths* fall out as properties of internal descent — that is, coherence *within the model's own state space*, with no world involved.
