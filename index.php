@@ -117,6 +117,7 @@
 		_js("optimizer.js");
 		_js("loss_metric.js");
 		_js("labels.js");
+		_js("cnn3d.js");
 		_js("validation.js");
 		_js("cookies_and_url.js");
 		_js("initializers.js");
