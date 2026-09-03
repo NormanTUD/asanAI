@@ -2532,6 +2532,34 @@ function confusion_matrix() {
 	return true;
 }
 
+function _get_cm_image_src(el) {
+	if (!el) {
+		return null;
+	}
+	if (el.tagName && el.tagName.toLowerCase() === "canvas") {
+		try {
+			return el.toDataURL("image/png");
+		} catch (e) {
+			return null;
+		}
+	}
+	try {
+		return el.src || null;
+	} catch (e) {
+		return null;
+	}
+}
+
+function _add_cm_image(cell, correct, predicted, src) {
+	var key = correct + "|" + predicted;
+	if (!cell[key]) {
+		cell[key] = [];
+	}
+	if (cell[key].indexOf(src) === -1) {
+		cell[key].push(src);
+	}
+}
+
 async function compute_confusion_table_data() {
 	var x_tensor = xy_data_global["x"];
 	var y_tensor = xy_data_global["y"];
@@ -2559,13 +2587,26 @@ async function compute_confusion_table_data() {
 		return labels[max_idx] || ("" + max_idx);
 	});
 
+	var dom_images = null;
+	if (x_tensor.shape && x_tensor.shape.length > 2 && typeof get_imgs_for_grid_vis === "function") {
+		try {
+			dom_images = get_imgs_for_grid_vis();
+		} catch (e) {
+			dom_images = null;
+		}
+	}
+
 	var total = true_labels.length;
 	var all_table = {};
 	var train_table = {};
 	var val_table = {};
+	var cell_all = {};
+	var cell_train = {};
+	var cell_val = {};
 
 	var train_set = new Set(train_val_split_info ? train_val_split_info.train_indices : []);
 	var val_set = new Set(train_val_split_info ? train_val_split_info.val_indices : []);
+	var has_split = train_set.size > 0;
 
 	for (var i = 0; i < total; i++) {
 		var correct = true_labels[i];
@@ -2574,12 +2615,25 @@ async function compute_confusion_table_data() {
 
 		_add_to_table(all_table, correct, predicted);
 
-		if (train_set.size > 0) {
+		var src = null;
+		if (dom_images && dom_images.length && orig !== undefined && orig !== null && orig >= 0 && orig < dom_images.length) {
+			src = _get_cm_image_src(dom_images[orig]);
+		}
+		if (src) {
+			_add_cm_image(cell_all, correct, predicted, src);
+		}
+
+		if (has_split) {
 			if (train_set.has(orig)) {
 				_add_to_table(train_table, correct, predicted);
-			}
-			if (val_set.has(orig)) {
+				if (src) {
+					_add_cm_image(cell_train, correct, predicted, src);
+				}
+			} else if (val_set.has(orig)) {
 				_add_to_table(val_table, correct, predicted);
+				if (src) {
+					_add_cm_image(cell_val, correct, predicted, src);
+				}
 			}
 		}
 	}
@@ -2587,7 +2641,8 @@ async function compute_confusion_table_data() {
 	return {
 		all: all_table,
 		train: train_table,
-		val: val_table
+		val: val_table,
+		cell_images: { all: cell_all, train: cell_train, val: cell_val }
 	};
 }
 
@@ -2616,8 +2671,15 @@ function _y_tensor_to_labels(y_tensor) {
 	});
 }
 
-function get_confusion_matrix_table(table_data) {
+var _confusion_cell_examples = {};
+var _confusion_matrix_tooltip = null;
+var _cm_pointer_client_x = null;
+var _cm_pointer_client_y = null;
+
+function get_confusion_matrix_table(table_data, cell_images, subset_label) {
 	let str = `<table class="confusion_matrix_table">`;
+
+	let N = labels.length;
 
 	str += `<tr><th class="confusion_matrix_tx" style="text-align:right">` +
 		`<i>${language[lang]["correct_category"]}</i> &rarr;<br>` +
@@ -2625,9 +2687,9 @@ function get_confusion_matrix_table(table_data) {
 		labels.map(h => `<th class="confusion_matrix_tx">${h}</th>`).join('') +
 		`</tr>`;
 
-	labels.forEach(left_header => {
+	labels.forEach((left_header, row) => {
 		str += `<tr><th class="confusion_matrix_tx">${left_header}</th>` +
-			labels.map(second_left_header => {
+			labels.map((second_left_header, col) => {
 				const value = table_data[left_header]?.[second_left_header] ?? 0;
 				const text = "" + value;
 
@@ -2640,7 +2702,17 @@ function get_confusion_matrix_table(table_data) {
 					cls += " cm-incorrect";
 				}
 
-				return `<td class="${cls}">${text}</td>`;
+				let cellConfig = "";
+				if (cell_images) {
+					var cellKey = left_header + "|" + second_left_header;
+					if (cell_images[cellKey] && cell_images[cellKey].length) {
+						cls += " cm-hover";
+						cellConfig = ` data-cm-idx="${subset_label}:${row * N + col}"`;
+						_confusion_cell_examples[subset_label + ":" + (row * N + col)] = cell_images[cellKey];
+					}
+				}
+
+				return `<td class="${cls}"${cellConfig}>${text}</td>`;
 			}).join('') +
 			`</tr>`;
 	});
@@ -2649,6 +2721,116 @@ function get_confusion_matrix_table(table_data) {
 
 	return str;
 }
+
+
+function _get_confusion_matrix_tooltip() {
+	if (_confusion_matrix_tooltip && _confusion_matrix_tooltip.parentNode) {
+		return _confusion_matrix_tooltip;
+	}
+	var div = document.createElement("div");
+	div.id = "confusion_matrix_tooltip";
+	div.style.display = "none";
+	div.style.position = "fixed";
+	div.style.zIndex = "99999";
+	document.body.appendChild(div);
+	_confusion_matrix_tooltip = div;
+	return div;
+}
+
+function _show_confusion_matrix_tooltip(idx, clientX, clientY) {
+	var examples = _confusion_cell_examples[idx];
+	if (!examples || !examples.length) {
+		_get_confusion_matrix_tooltip().style.display = "none";
+		return;
+	}
+
+	var html = "<h4>" + sprintf(language[lang]["confusion_matrix_examples"], examples.length) + "</h4><div class='cm-example-grid'>";
+	for (var e = 0; e < examples.length; e++) {
+		var src = examples[e];
+		html += "<div class='cm-example'><img src=\"" + _grid_escape_html(src) + "\"></div>";
+	}
+	html += "</div>";
+
+	var tooltip = _get_confusion_matrix_tooltip();
+	tooltip.innerHTML = html;
+	tooltip.style.display = "block";
+
+	var offset = 16;
+	var rect = tooltip.getBoundingClientRect();
+	var left = clientX + offset;
+	var top = clientY + offset;
+	if (left + rect.width > window.innerWidth - 8) {
+		left = clientX - rect.width - offset;
+	}
+	if (top + rect.height > window.innerHeight - 8) {
+		top = clientY - rect.height - offset;
+	}
+	tooltip.style.left = left + "px";
+	tooltip.style.top = top + "px";
+}
+
+function _hide_confusion_matrix_tooltip() {
+	var tooltip = _get_confusion_matrix_tooltip();
+	tooltip.style.display = "none";
+}
+
+function _setup_confusion_matrix_tooltip() {
+	if ($(document).data("cm_tooltip_bound")) {
+		return;
+	}
+	$(document).data("cm_tooltip_bound", true);
+
+	$(document).on("mouseover", ".confusion_matrix_table td.cm-hover", function(e) {
+		_cm_pointer_client_x = e.clientX;
+		_cm_pointer_client_y = e.clientY;
+		var idx = $(this).attr("data-cm-idx");
+		if (idx !== undefined && idx !== "") {
+			_show_confusion_matrix_tooltip(idx, e.clientX, e.clientY);
+		}
+	});
+
+	$(document).on("mousemove", ".confusion_matrix_table td.cm-hover", function(e) {
+		_cm_pointer_client_x = e.clientX;
+		_cm_pointer_client_y = e.clientY;
+		var idx = $(this).attr("data-cm-idx");
+		if (idx !== undefined && idx !== "") {
+			_show_confusion_matrix_tooltip(idx, e.clientX, e.clientY);
+		}
+	});
+
+	$(document).on("mouseleave", ".confusion_matrix_table td.cm-hover", function() {
+		_hide_confusion_matrix_tooltip();
+	});
+
+	$(document).on("mouseleave", ".confusion_matrix_table", function() {
+		_cm_pointer_client_x = null;
+		_cm_pointer_client_y = null;
+		_hide_confusion_matrix_tooltip();
+	});
+}
+
+function _cm_restore_tooltip_after_render() {
+	if (_cm_pointer_client_x === null || _cm_pointer_client_y === null) {
+		return;
+	}
+	if (typeof requestAnimationFrame !== "undefined") {
+		requestAnimationFrame(function() {
+			var el = document.elementFromPoint(_cm_pointer_client_x, _cm_pointer_client_y);
+			if (!el) {
+				return;
+			}
+			var td = $(el).closest("td.cm-hover")[0];
+			if (!td) {
+				return;
+			}
+			var idx = $(td).attr("data-cm-idx");
+			if (idx !== undefined && idx !== "") {
+				_show_confusion_matrix_tooltip(idx, _cm_pointer_client_x, _cm_pointer_client_y);
+			}
+		});
+	}
+}
+
 
 async function confusion_matrix_to_page () {
 	if(!labels && labels.length != 0) {
@@ -2677,20 +2859,25 @@ async function confusion_matrix_to_page () {
 	var has_split = train_val_split_info && train_val_split_info.val_count > 0;
 	var str = "";
 
+	var cell_images = tables.cell_images || { all: {}, train: {}, val: {} };
+	_setup_confusion_matrix_tooltip();
+	_confusion_cell_examples = {};
+
 	if(has_split) {
 		str += "<h2>" + sprintf(language[lang]["confusion_matrix_all_data"], train_val_split_info.total) + "</h2>\n";
-		str += get_confusion_matrix_table(tables.all);
+		str += get_confusion_matrix_table(tables.all, cell_images.all, "all");
 		str += "\n<h2>" + sprintf(language[lang]["confusion_matrix_training_data"], train_val_split_info.train_count) + "</h2>\n";
-		str += get_confusion_matrix_table(tables.train);
+		str += get_confusion_matrix_table(tables.train, cell_images.train, "train");
 		str += "\n<h2>" + sprintf(language[lang]["confusion_matrix_validation_data"], train_val_split_info.val_count) + "</h2>\n";
-		str += get_confusion_matrix_table(tables.val);
+		str += get_confusion_matrix_table(tables.val, cell_images.val, "val");
 	} else {
 		str += "<h2>" + language[lang]["confusion_matrix"] + "</h2>\n";
-		str += get_confusion_matrix_table(tables.all);
+		str += get_confusion_matrix_table(tables.all, cell_images.all, "all");
 	}
 
 	$("#confusion_matrix").html(str);
 	$("#confusion_matrix_training").html(str);
+	_cm_restore_tooltip_after_render();
 }
 
 function isolateEval(code) {

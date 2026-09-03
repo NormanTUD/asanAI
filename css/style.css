@@ -2872,6 +2872,54 @@ td.confusion_matrix_tx.cm-zero {
 	font-weight: 500;
 }
 
+td.confusion_matrix_tx.cm-hover {
+	cursor: pointer;
+}
+
+#confusion_matrix_tooltip {
+	background: #222;
+	color: #eee;
+	border: 1px solid #555;
+	border-radius: 6px;
+	padding: 10px 12px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+	font-family: inherit;
+	max-width: 420px;
+	max-height: 360px;
+	overflow: auto;
+	pointer-events: none;
+}
+
+#confusion_matrix_tooltip h4 {
+	margin: 0 0 8px 0;
+	font-size: 13px;
+	font-weight: 700;
+	color: #fff;
+}
+
+#confusion_matrix_tooltip .cm-example-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+#confusion_matrix_tooltip .cm-example {
+	width: 60px;
+	height: 60px;
+	border: 1px solid #555;
+	border-radius: 4px;
+	overflow: hidden;
+	background: #000;
+	flex: 0 0 auto;
+}
+
+#confusion_matrix_tooltip .cm-example img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
 .ui-tabs .ui-tabs-panel[aria-hidden="true"] {
 	display: none !important;
 }
