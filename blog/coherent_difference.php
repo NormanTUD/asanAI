@@ -3,7 +3,7 @@
 COURSE_METADATA:
 title: Coherent Difference
 description: Why meaning is built from local differences glued together coherently, the structural idea behind embeddings, space, and modern AI.
-icon: &#128376;
+icon: 🕸
 part: 4
 order: 20
 color: accent
@@ -90,7 +90,7 @@ Couples are things whole and things not whole, what is drawn together and what i
 
 This is exactly what locality, in the sheaf sense, asks for: an abstract pattern of "near" (the open-set lattice) that does not yet commit to what the things being brought near *are*. Weyl's line is the philosophical form of the topological move: keep the relation, postpone the relata.
 
-* **Compatibility.** If two open sets overlap, the data on each must agree on the overlap. This is the sheaf condition in one line: local sections that match on pairwise intersections can be glued \cite{sheaf_mathematics}.
+* **Compatibility.** If two open sets overlap, the data on each must agree on the overlap. This is the sheaf condition in one line: local sections that match on pairwise intersections can be glued \cite{sheaf_mathematics}. (What counts as an "overlap" and what counts as "agree" is decided by a choice of site; see the next chapter.)
 
 * **Coherence.** Compatibility can be thin (sections are *equal* on the overlap) or thick (sections are *equivalent* via a homotopy). Thick compatibility has its own structure: equivalences must themselves be coherent on triple overlaps \cite{higher_category_wiki}. It is here that the picture meets the deepest philosophical tradition. \citeauthor{sellars1956empiricism} (\citeyear{sellars1956empiricism}) put the point in his well-known summary of what knowledge is — not the matching of mental items to world items, but participation in a structure of reasons:
 
@@ -120,7 +120,7 @@ $$
 \text{Type theory} & \text{Relation, Transformation, with type-level structure} \\
 \text{Category theory} & \text{Transformation, Coherence} \\
 \text{Topology} & \text{Locality} \\
-\text{Sheaves} & \text{Locality} \to \text{Gluing} \to \text{Globality} \\
+\text{Sheaves} & \text{Compatibility} \to \text{Gluing} \to \text{Globality} \\
 \infty\text{-Sheaves, HoTT} & \text{Compatibility as higher Coherence} \\
 \text{Fiber bundles, manifolds} & \text{Globality + Invariance} \\
 \text{Embedding spaces} & \text{All of the above, applied to meaning} \\
@@ -371,6 +371,8 @@ $$
 \boxed{\text{local data} \;+\; \text{compatibility on overlaps} \;\Longrightarrow\; \text{global data}.}
 $$
 
+What counts as "local data", what counts as an "overlap", and what counts as "compatibility" are decided by a choice of *site* — a category equipped with a rule for which families of sub-objects count as covers. The formal development of sites, admissible covers, and the full sheaf condition appears in the next chapter (\citetitle{coherent_world_models}).
+
 The same sentence was written down, in different vocabulary, by philosophers long before the word “sheaf” existed. Two of them, in particular, said almost the same thing.
 
 <div class="smart-quote" data-cite="anaxagoras450fragments" data-after="Fragment B11">
@@ -383,7 +385,7 @@ In everything there is a portion of everything, except nous; and there are some 
 The order and connection of ideas is the same as the order and connection of things.
 </div>
 
-\citetitle{spinoza1677ethics} puts the same point in its modern, propositional form: what holds among the parts of a model *is* what holds among the parts of the world. Local consistency on the model side is local consistency on the world side, and they glue into one coherent picture, not because the model magically creates the world, but because the same coherence condition governs both. Twenty-four centuries before Grothendieck, Anaxagoras said the universe is governed by the same condition. Three hundred and fifty years before Grothendieck, Spinoza wrote it down as an axiom of his geometry.
+\citetitle{spinoza1677ethics} puts the same point in its modern, propositional form: what holds among the parts of a model *is* what holds among the parts of the world. Local consistency on the model side is local consistency on the world side, and they glue into one coherent picture, not because the model magically creates the world, but because the same coherence condition governs both. Twenty-four centuries before Grothendieck, Anaxagoras said the universe is governed by the same condition. Two hundred and eighty years before Grothendieck, Spinoza wrote it down as an axiom of his geometry.
 
 This is the formal crystallization of the intuition. Sheaves were introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} (\citeyear{grothendieck_sheaf}) in the 1950s and 60s, partly through the work of Jean Leray in the late 1940s \cite{sheaf_mathematics}, precisely to handle questions that resisted the older “patch a space together by gluing charts” picture of \citetitle{manifold_wiki}. Where manifolds ask you to specify a single chart and a transition map, sheaves ask you to specify local data on every open set and let the global object fall out of the consistency conditions. The local-to-global direction is so productive that it is the entire backbone of algebraic geometry and much of modern logic.
 
@@ -520,7 +522,7 @@ The concept was introduced by Grothendieck \cite{grothendieck_sheaf} in the earl
 
 For the reader who wants to go deeper: the defining textbook reference is \citeauthor{goldblatt1979topoi}'s \citetitle{goldblatt1979topoi}, still one of the clearest introductions; the canonical modern treatment is \citeauthor{johnstone_elephant}'s two-volume \citetitle{johnstone_elephant}; the standard first bridge from sheaf theory to logic is \citeauthor{maclanemoerdijk1992}'s \citetitle{maclanemoerdijk1992}; and the "toposes-as-bridges" programme of \citeauthor{caramello2017theories} \cite{caramello2017theories} is the contemporary extension that reads each topos as a *bridge* between the many mathematical theories that admit it as a classifying topos \cite{nlab_topos}. The nLab's encyclopedic entry on topoi \cite{nlab_topos} lists thirteen non-equivalent-sounding definitions, all known to be equivalent — "however you approach it, it is still the same animal".
 
-In the hands of \cite[the topos theorists]{topos_wiki}, a topos becomes more than a category. It is *a universe of mathematics*: a self-contained world with objects, morphisms, internal logic, and its own notion of truth. Different topoi correspond to different "logics": in a sheaf topos over a classical space the internal logic is classical (true or false), but in a more general topos it can be intuitionistic (you can have statements that are neither provably true nor provably false). This is why topos theory is the natural home of *constructive* mathematics, of synthetic differential geometry, and of the categorical logic that underlies some modern type theories \cite{topos_wiki} \cite{internal_logic_wiki}.
+In the hands of \cite[the topos theorists]{topos_wiki}, a topos becomes more than a category. It is *a universe of mathematics*: a self-contained world with objects, morphisms, internal logic, and its own notion of truth. Different topoi correspond to different "logics": in a sheaf topos $\mathbf{Sh}(X)$ the internal logic is *intuitionistic* (you can have statements that are neither provably true nor provably false on some open set), because the subobject classifier $\Omega$ is the Heyting algebra of open subsets, not $\{0,1\}$. Only in a *Boolean* topos — one for which $\Omega$ is internally $\{0,1\}$, as happens when $X$ is totally disconnected — does classical logic recover. This is why topos theory is the natural home of *constructive* mathematics, of synthetic differential geometry, and of the categorical logic that underlies some modern type theories \cite{topos_wiki} \cite{internal_logic_wiki} \cite{tarski1938topos}.
 
 For our purposes, the picture to remember is this:
 
@@ -713,7 +715,7 @@ Things that **hold in every (elementary) topos**:
 * **Stability of epis under pullback.** The (epi, mono) factorization is a stable factorization system. Yes, in every topos.
 * **Extensivity.** Coproducts are disjoint, and disjointness is part of the topos's structure. Yes, in every topos.
 * **Adhesiveness.** A topos is an adhesive category, which is what makes pushout–pullback arguments work as well as they do. Yes, in every topos.
-* **Barr's theorem.** Every topos is a quotient (in the 2-categorical sense) of a presheaf topos. Yes, every topos is "Morita-equivalent" to a presheaf topos, so the easy theory of $[\mathcal{C}^{\mathrm{op}}, \mathbf{Set}]$ is dense.
+* **Barr's theorem.** Every Grothendieck topos admits a surjective geometric morphism from a presheaf topos (Barr 1982). Every elementary topos can be covered by a Boolean topos \cite{freyd1972constructions}. This means the easy theory of $[\mathcal{C}^{\mathrm{op}}, \mathbf{Set}]$ is dense — many results proved first for presheaf topoi transfer to all topoi.
 
 Things that **hold in every Grothendieck topos** (but not necessarily in every elementary topos):
 
@@ -734,7 +736,7 @@ Things that **do not hold in every topos**, and which therefore require a choice
 
 It is worth saying the things we do *not* know, or that remain genuinely puzzling. None of the following is a claim of this textbook; they are questions that the topos picture makes it natural to ask, and that the topos picture does not, by itself, answer \cite{nlab_topos} \cite{johnstone_elephant} \cite{internal_logic_wiki}.
 
-1. **Is a topos a space?** Section 7.6 listed five different readings. Which one is "the right" reading? Or is the topos picture deliberately polymorphic on this point, the way a category is polymorphically an algebraic structure, a database, a type system, and a logic depending on what you do with it?
+1. **Is a topos a space?** What kind of "space" is it — a topological space, a locale, a site, a type system, or something that resists all of these? Or is the topos picture deliberately polymorphic on this point, the way a category is polymorphically an algebraic structure, a database, a type system, and a logic depending on what you do with it?
 2. **Is a topos a logic?** Or is the logic only a *shadow* the topos casts? A topos is, strictly speaking, a category with certain structure; the logic is the interpretation we get when we read that structure syntactically. How much of mathematics is "really" categorical, and how much is "really" logical?
 3. **Is the classical / Boolean topos the "true" one?** Working mathematicians default to $\mathbf{Set}$. Constructivists insist on topoi in which LEM fails. Who is right? Or is the question malformed?
 4. **What is the analogue of "topology" for a topos?** A topological space has open sets, a basis, a separation axiom, a notion of compactness. A topos has $\Omega$, a natural numbers object, a notion of "Boolean", and several notions of "compactness" — there are at least three: *coherent*, *quasi-compact*, and *compact* — that do not coincide in general. How much of ordinary topology survives the generalization, and what new phenomena appear?
@@ -772,7 +774,7 @@ The red glow of the sunset should be as much part of nature as are the molecules
 
 The bifurcation mistake is not that there are no molecules — there are. It is that to take the molecules alone as "what nature really is" is to mistake a *partial covering* of the network of appearances for the whole. The global object is not what lies behind the appearances — it is the unique section reconstructed from the compatible local appearances themselves, exactly the sheaf condition read off the train. \citeauthor{merleauponty1945phenomenologie}'s \citeyear{merleauponty1945phenomenologie} *Phenomenology of Perception* \cite{merleauponty1945phenomenologie} makes the same point, from a phenomenological rather than a process-philosophical starting place: perception is already synaesthetic and intermodal, the senses "interior to one another" before they are partitioned into the five external channels of the laboratory. The train's appearance to the *Leib* on the platform and the train's Doppler-tracked position in $\mathbb{R}^3$ are the same phenomenon read off two overlapping open sets.
 
-The mathematical structure of this chapter is the formal shape of the same insight. The train is not a hidden “thing in itself” sitting behind its appearances, à la Kant \cite{distinction_philosophy}. The train *is* the coherent network of its possible appearances. Strip the appearances and there is nothing left to talk about.
+The mathematical structure of this chapter is the formal shape of the same insight. There *is* a world independent of our observation of it, but we never encounter it directly — only through the coherent network of its appearances. Strip the appearances and there is nothing left to talk about. The structural realist thesis: we cannot access the *Ding an sich*, but what we *can* access — the invariant topology of the network of possible measurements — is objective, communal, and coherent. The object *is* the coherent network of its possible appearances.
 
 $$
 \boxed{\text{an object} \;\approx\; \text{the coherent network of its possible appearances}.}
@@ -780,7 +782,7 @@ $$
 
 The same point, expressed categorically, is what an $\infty$-sheaf on the space of perspectives would say. The same point, expressed linguistically, is what \citeauthor{saussure1916} (\citeyear{saussure1916}) said about language: a word's identity is its place in a web of differences from other words, not a positive property it carries inside itself. The same point, expressed geometrically, is what we will say about an embedding space in the next chapter: a word's meaning is its position in a high-dimensional manifold, not a label that sits in the word.
 
-Two and a half centuries before Whitehead's *prehension* and Saussure's *différence*, \citeauthor{leibniz1714monadology} (\citeyear{leibniz1714monadology}) said the same thing about the world at large, in the §56 of his *Monadology*:
+Two centuries before Saussure's *différence* and Whitehead's *prehension*, \citeauthor{leibniz1714monadology} (\citeyear{leibniz1714monadology}) said the same thing about the world at large, in the §56 of his *Monadology*:
 
 <div class="smart-quote" data-cite="leibniz1714monadology" data-after="§56">
 Now this connexion or adaptation of all created things to each and of each to all, means that each simple substance has relations which express all the others, and, consequently, that each is a perpetual living mirror of the universe.
@@ -849,7 +851,7 @@ The same chain also runs through:
 * **Sets.** Distinction and Relation only.
 * **Groups, rings, algebras.** Distinction, Relation, Transformation.
 * **Topological spaces.** All the way to Locality.
-* **Sheaves, fiber bundles, manifolds.** All the way to Invariance.
+* **Sheaves, fiber bundles, manifolds.** All the way to Globality, often carrying Invariance with them.
 * **Embedding spaces.** All the way to Invariance, applied to language.
 * **A trained neural network.** All the way to Invariance, applied to whatever task it was trained on.
 
@@ -897,7 +899,7 @@ Five things. Each is restated as a checklist item, the way you might want to rea
 
 1. **Meaning is relational, not intrinsic.** No word, no token, no vector has meaning in itself. Meaning is its position in the web of differences from the others. This is \citeauthor{saussure1916}'s “language as a system of pure differences” \cite{saussure1916}, \citeauthor{firth1957distributive}'s “you shall know a word by the company it keeps” \cite{firth1957distributive}, and the entire distributional semantics tradition, in one breath \cite{distributional_hypothesis}. The same point, in the contemporary vocabulary of philosophy of language, is what \citeauthor{brandom1994making} (\citeyear{brandom1994making}) calls *inferentialism*: to grasp a concept is to know its inferential relations to other concepts \cite{brandom1994making}. The formal echo of Brandom's claim is what an embedding space *measures*: not "what the token is in itself" but "where it sits in the cloud of its typical co-occurrences". This is the same structural move as the sheaf condition — only now applied to tokens in context windows instead of sections on open sets.
 
-The same observation, almost eighteen centuries before Firth and almost fourteen centuries before Saussure, is the core claim of Buddhist ontology, in the verse that is its best-known summary:
+The same observation, almost eighteen centuries before Firth and over seventeen centuries before Saussure, is the core claim of Buddhist ontology, in the verse that is its best-known summary:
 
 <div class="smart-quote" data-cite="nagarjuna150mmk" data-after="Chapter 24, verse 18">
 Whatever is dependently originated, that we declare to be emptiness.
@@ -958,11 +960,11 @@ The chapter's thesis — global unity as coherent local difference — has been 
 
 * **Nagarjuna** (\citeyear{nagarjuna150mmk}), *Mūlamadhyamakakārikā* 24:18. *“Whatever is dependently originated, that we declare to be emptiness.”* The radical distributional hypothesis, eighteen centuries before Firth. There is no *svabhāva* (intrinsic nature); there are only *pratītyasamutpāda* (dependent relations). Every thing's identity is exactly the network of relations in which it arises. Read in modern terminology: a word's meaning is its position in the embedding space, and that is all the meaning there is.
 
-* **Plotinus** (\citeyear{plotinus250enneads}), *Enneads* V.3 / V.8. The doctrine that each part of the Intellect contains the whole, and the whole is present in each part: *“all is each, each is all”* (πάντα ἐν πᾶσι). The sheaf, three centuries before the Christian era.
+* **Plotinus** (\citeyear{plotinus250enneads}), *Enneads* V.3 / V.8. The doctrine that each part of the Intellect contains the whole, and the whole is present in each part: *“all is each, each is all”* (πάντα ἐν πᾶσι). The sheaf, three centuries into the Christian era.
 
 * **Nicholas of Cusa** (\citeyear{cusanus1440docta}), *De Docta Ignorantia*. The doctrine of the *coincidentia oppositorum* — the coincidence of opposites — and the famous figure of God as *a sphere whose center is everywhere and its circumference nowhere*. Difference, on this picture, is the radius of a single sphere: each point sees the same whole from a different distance, and the whole is what holds every local view together as *aspects* of the same center.
 
-* **Spinoza** (\citeyear{spinoza1677ethics}), *Ethics* II, Proposition 7. *“The order and connection of ideas is the same as the order and connection of things.”* The sheaf axiom as a sentence of metaphysics. Three hundred and fifty years before Grothendieck, Spinoza's geometry of attributes already encoded the exact same local-to-global principle we have been building.
+* **Spinoza** (\citeyear{spinoza1677ethics}), *Ethics* II, Proposition 7. *“The order and connection of ideas is the same as the order and connection of things.”* The sheaf axiom as a sentence of metaphysics. Two hundred and eighty years before Grothendieck, Spinoza's geometry of attributes already encoded the exact same local-to-global principle we have been building.
 
 * **Leibniz** (\citeyear{leibniz1714monadology}), *Monadology* §56. *“Each [substance] is a perpetual living mirror of the universe.”* The phenomenology-of-one-phenomenon section, three centuries before Schmitz.
 

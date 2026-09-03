@@ -181,7 +181,7 @@ Each form has a parallel in **sense data**, **measurement**, and **mathematics**
 
 In **dependent type theory** these are *literally different types*. To say $x = y$ in a type $A$ is to inhabit the type $\mathsf{Id}_A(x, y)$, a *space* of witnesses. To say $x \cong y$ is to inhabit $\mathsf{Iso}(x, y)$, a different space. To say $x \simeq y$ is yet another type.
 
-In **Homotopy Type Theory (HoTT)** the equality type is itself a space: its points are *paths* from $x$ to $y$, and these paths may themselves be related by higher paths. Under the **univalence axiom** this becomes literal: for types in a universe $\mathcal{U}$, an equality in $\mathcal{U}$ *is* an equivalence, so $(x =_{\mathcal{U}} y) \simeq (x \simeq y)$. A claim like "$R_A =_x R_B$" is not a proposition (yes/no) but a *space of answers*: paths from $R_A$ to $R_B$, possibly homotopic to each other or genuinely distinct. Asking "are these the same?" may have a whole space of witnesses, not one.
+In **Homotopy Type Theory (HoTT)** the equality type is itself a space: its points are *paths* from $x$ to $y$, and these paths may themselves be related by higher paths. Under the **univalence axiom** this becomes literal: for types in a universe $\mathcal{U}$, an equality in $\mathcal{U}$ *is* an equivalence, so $(x =_{\mathcal{U}} y) \simeq (x \simeq y)$. A claim like "$R_A =_{\mathcal{U}} R_B$" is not a proposition (yes/no) but a *space of answers*: paths from $R_A$ to $R_B$, possibly homotopic to each other or genuinely distinct. Asking "are these the same?" may have a whole space of witnesses, not one.
 
 The whole hierarchy, with its witness at each level — each $\Downarrow$ is a weakening; the forbidden move is to read them silently upwards. Qualifier: the first four steps (identity $\Rightarrow$ iso $\Rightarrow$ homotopy $\Rightarrow$ approximation) are automatic — a witness of the stronger row is literally a witness of the weaker. The last step (statistical $\Rightarrow$ model-theoretic) is *not* automatic in the same way: high likelihood under a probabilistic model does not, by itself, guarantee a common classical model of the theories. It is a genuine step of the ladder, but a *contested* one, licensed only where the statistical and the model-theoretic descriptions pick out the same structures.
 
@@ -717,7 +717,10 @@ $$
 \underbrace{P(z \mid x_1,\dots,x_n)}_{\text{latent structure integrating them}}.
 $$
 
-**Hallucination** = internal coherence without descent from a grounded cover:
+**Hallucination** = internal coherence without descent from a grounded cover. Two sub-types:
+
+1. **Locally incoherent presheaf.** The model's outputs contradict each other on overlapping local patches (e.g. three different answers to the same factual question in one conversation). The presheaf is broken: local sections do not agree on overlaps.
+2. **Globally non-glueable presheaf.** Each local section is internally consistent, but they cannot be glued into a single global section that is coherent across all contexts. The model says plausible things locally, but no globally coherent picture emerges.
 
 $$
 \underbrace{M_{\text{internal}}\text{ self-consistent}}_{\text{fits its own outputs together}} 
@@ -957,7 +960,7 @@ $$
 &\text{it does not flatten them.}
 \end{aligned}}
 $$
-\bigskip {*Which* regime?} The uniqueness of the global section is *relative to a sameness-regime*: in the strict regime views agree literally on overlaps; in the homotopical regime they agree only up to (coherently composable) equivalence; in the approximate/statistical regimes, up to a small residual. "Not flattening" means the views need not *coincide literally*; it does **not** mean the views may fail the agreed-upon regime of coherence. So: their reports need not match on the nose, but they must be coherent in whatever regime is licensed.
+**Which** regime? The uniqueness of the global section is *relative to a sameness-regime*: in the strict regime views agree literally on overlaps; in the homotopical regime they agree only up to (coherently composable) equivalence; in the approximate/statistical regimes, up to a small residual. "Not flattening" means the views need not *coincide literally*; it does **not** mean the views may fail the agreed-upon regime of coherence. So: their reports need not match on the nose, but they must be coherent in whatever regime is licensed.
 
 Two observers, two instruments, two cultures, two centuries, two formal systems: their reports need not coincide to be about one subject. What is required is that the differences factor through admissible transitions — and factor *within the licensed regime* (isomorphic, homotopic, approximate, or statistical, as the case warrants):
 
@@ -1004,7 +1007,7 @@ $$
 &\textbf{to the subject matter it represents.}
 \end{aligned}}
 $$
-\bigskip {*Not* the whole of the subject matter.} The cover spans the region $c_{\mathrm{acc}}$ that our access functions can actually reach — that is the honest scope of the limit. Every instrument widens the cover; none closes it; $W$ itself stays on the other side of the mediation (see "Coherent Difference"). A world model is therefore *a coherent model of the interface to the world, under extendable-by-measurement* — never the thing itself. The discipline's rule of thumb: when a model is at risk of passing itself off as the whole of $W$, ask which $O_i$ are in the cover and which instruments that would widen it are not; the model's honest range is exactly $c_{\mathrm{acc}}$.
+**Not** the whole of the subject matter. The cover spans the region $c_{\mathrm{acc}}$ that our access functions can actually reach — that is the honest scope of the limit. Every instrument widens the cover; none closes it; $W$ itself stays on the other side of the mediation (see "Coherent Difference"). A world model is therefore *a coherent model of the interface to the world, under extendable-by-measurement* — never the thing itself. The discipline's rule of thumb: when a model is at risk of passing itself off as the whole of $W$, ask which $O_i$ are in the cover and which instruments that would widen it are not; the model's honest range is exactly $c_{\mathrm{acc}}$.
 
 Everything else (perception, measurement, physics, mathematics, model theory, neural networks) is a choice of:
 
@@ -1049,7 +1052,7 @@ The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Bl
 
 ### Tarski's Convention T
 
-In 1936 (the German-language paper "Der Wahrheitsbegriff in den formalisierten Sprachen", published in *Studia Philosophica*; the Polish original "Pojęcie prawdy w językach nauk dedukcyjnych" had appeared in 1933), Alfred Tarski \citeauthor{tarski1935wahrheitsbegriff}\citeyear{tarski1935wahrheitsbegriff}\citetitle{tarski1935wahrheitsbegriff} set out one of the most consequential short papers in the history of logic. (An accessible English rendering is the 1944 lecture \citetitle{tarski1944semantic}; the standard English translation appears in the 1956 collection \citetitle{tarski1956logic}.) Tarski's target was the *vagueness* of the classical correspondence intuition ("a sentence is true when it agrees with reality"), which, as he pointed out, uses the very word it tries to define. His replacement is the semantic Convention T:
+In 1935 (the German-language paper "Der Wahrheitsbegriff in den formalisierten Sprachen", published in *Studia Philosophica*; the Polish original "Pojęcie prawdy w językach nauk dedukcyjnych" had appeared in 1933), Alfred Tarski \citeauthor{tarski1935wahrheitsbegriff}\citeyear{tarski1935wahrheitsbegriff}\citetitle{tarski1935wahrheitsbegriff} set out one of the most consequential short papers in the history of logic. (An accessible English rendering is the 1944 lecture \citetitle{tarski1944semantic}; the standard English translation appears in the 1956 collection \citetitle{tarski1956logic}.) Tarski's target was the *vagueness* of the classical correspondence intuition ("a sentence is true when it agrees with reality"), which, as he pointed out, uses the very word it tries to define. His replacement is the semantic Convention T:
 
 <div class="smart-quote" data-cite="tarski1956logic">
 <div class="full-quote">A sentence $\boldsymbol{x}$ of a language $\mathcal{L}$ is *true in $\mathcal{L}$* if, and only if, $p$, where $p$ is any sentence of the meta-language which "expresses the same meaning" as $\boldsymbol{x}$.</div>
@@ -1455,7 +1458,8 @@ This is a more accurate diagnosis than the chapter's default *self-consistent fa
 
 | Chapter's pathology | LLM failure mode | What's broken | Typical remedy |
 | :--- | :--- | :--- | :--- |
-| Non-glueable presheaf | Confident hallucination, local incoherence | Coherence + correspondence | Retrieval, RAG, tools, calibration of training data |
+| Non-glueable presheaf (locally incoherent) | Confident hallucination, self-contradicting across contexts | Coherence + correspondence | Retrieval, RAG, tools, calibration of training data |
+| Non-glueable presheaf (globally non-glueable) | Fluent local statements, no coherent global picture | Coherence | Better reasoning, structured scratchpads, chain-of-thought |
 | Self-consistent fantasy (rare) | Fluent nonsense with internal consistency | Correspondence only | Grounding in actual sources |
 | Factbook | Disconnected reasoning: correct facts but no synthesis | Coherence | Better reasoning, chain-of-thought, structured scratchpads |
 | Calibrated error | Subtle, plausible-sounding mistakes | Correspondence | Re-calibrated licences (better calibration of the existing bridges, formal verification where applicable) |
