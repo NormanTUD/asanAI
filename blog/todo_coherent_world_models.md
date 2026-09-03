@@ -1,5 +1,44 @@
 # Coq Formalisation vs. PHP Source: Consistency Analysis
 
+## Status (updated)
+All 19 `.v` files now compile cleanly with zero warnings in dependency order
+(Library → Traces → Commitments → ThreeDifferences → NotionsOfSameness → Ologs →
+AdmissibleTransitions → ContextsAndSites → Sheaves → EqualizersAndPullbacks →
+HigherCoherence → ObserverInDiagram → MasterDiagram → Forbidden →
+PracticalProcedure → TheoryChain → Tarski → ThreePathologies → AILLM). AILLM.v
+that the old note below said "FAILS TO COMPILE" now builds cleanly.
+
+Fixes applied since the original audit:
+- **Commitments.v** `InternalStructure`: `: Prop` → `: Type` (fixed
+  cannot-define-projection warning).
+- **Tarski.v** `ConventionT.CT_iff` was `CT_quoted = CT_p` (wrongly identifying
+  quotation-name with proposition) → now `CT_true CT_S <-> CT_p`, with a
+  dedicated truth-predicate field and a comment spelling out Convention T as a
+  meta-level biconditional. `TruthAsInterface.TAI_iff` similarly became a
+  biconditional between separate `claim_holds`/`fact_holds` Props.
+- **Sheaves.v** `sheaf_condition` now asserts `exists g` with a comment noting
+  uniqueness is required (shape-only; uniqueness deliberately retained as a
+  placeholder).
+- **ContextsAndSites.v** `Presheaf` → `SetValuedPresheaf` (resolved the
+  name-collision with Sheaves.v `Presheaf` referenced by AILLM.v).
+- **Forbidden.v** `identification_forbidden` no longer asserts `False` for all
+  identifications (which was inconsistent); re-shaped as "no coherent model
+  identifies G with W" via a `CoherentModel` record. Removed stray quotes that
+  were triggering Coq's comment-terminator warnings.
+- **EqualizersAndPullbacks.v** `times_of_agreement` now returns the
+  equalizer-carrier type instead of a bare `Type` placeholder.
+
+Note: The Coq-side issues above have **no effect on the PHP content**. The PHP
+is the prose source of truth and is correct (e.g., its Convention T presentation
+is accurate). Issues were only in how the `.v` files encoded that content.
+
+A **separate content audit of the PHP itself** is in `corrections.md` (G-object/
+G-element conflation, cover/chain mismatch, "coherence = descent" self-referential
+tension, uniqueness vs. non-flattening, the admitted stat→model weakening,
+symbol overload, the hallucination-diagnosis reversal, and a Tarski date fix).
+
+---
+
 ## File-by-file comparison
 
 ### Library.v — Shared foundations
