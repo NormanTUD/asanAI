@@ -84,6 +84,10 @@ async function updated_page(no_graph_restart=null, disable_auto_enable_valid_lay
 	if($("#tda_analyzer_singleton").length) {
 		TopologicalAnalyzer.update();
 	}
+
+	if (typeof CNN3D !== "undefined" && $("#cnn3d").length) {
+		CNN3D.render("cnn3d");
+	}
 }
 
 var updated_page_internal = async (no_graph_restart, disable_auto_enable_valid_layer_types, no_prediction, no_update_initializers) => {

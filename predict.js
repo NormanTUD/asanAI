@@ -1380,6 +1380,10 @@ async function show_prediction (keep_show_after_training_hidden, dont_go_to_tab)
 			$("a[href=\"#predict_tab\"]").click();
 		}
 	}
+
+	if (typeof CNN3D !== "undefined" && $("#cnn3d").length) {
+		CNN3D.render("cnn3d");
+	}
 }
 
 function show_or_hide_predictions (count) {
