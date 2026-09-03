@@ -54,6 +54,7 @@
 
 		_js("tf/tf.min.js");
 		_js("base_wrappers.js");
+		_js("libs/three.min.js");
 		_js("libs/jstat.min.js");
 		_js("debug_layer.js");
 		_js("snake_activation_layer.js");
