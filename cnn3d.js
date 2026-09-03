@@ -1661,7 +1661,7 @@
 		return null;
 	}
 
-	function render(divOrId, options) {
+	function render(divOrId, options = null) {
 		var container = resolveContainer(divOrId);
 		if (!container) {
 			console.error("[cnn3d.js] render(): could not resolve container:", divOrId);
