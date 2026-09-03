@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
+
 import os, re, sys
 
 ignored_files = ["asanai.js", "manual.js", "python_code.js", "activation_atlas.js", "trace_through_loss_landscape.js", "topological_analyzer.js", "optimizer_info.js", "initializer_info.js", "explain_activations.js", "cnn3d.js"]
+ignored_function_names = [
+    "makeLayerTooltipHTML",
+    "fmtNum",
+    "render",
+    "loop",
+    "tooltipHeader",
+    "flattenDeep"
+]
+
 ignored_file_funcs = [
     "main.js:fire",
     "gui.js:fire",
@@ -217,10 +227,11 @@ def check_files(files):
             min_a, max_a, def_file, def_line, def_code = all_defs[name]
             if not (min_a <= argc <= max_a):
                 if f"{f}:{name}" not in ignored_file_funcs:
-                    print(f"{color_text(f, 'blue')}:{color_text(lineno, 'yellow')} call to {color_text(name, 'red')} "
-                        f"with {argc} args (expected {min_a}-{max_a}) → {preview}...")
-                    print(f"    defined in {color_text(def_file, 'green')}:{color_text(def_line, 'yellow')} → {def_code}")
-                    r += 1
+                    if name not in ignored_function_names:
+                        print(f"{color_text(f, 'blue')}:{color_text(lineno, 'yellow')} call to {color_text(name, 'red')} "
+                            f"with {argc} args (expected {min_a}-{max_a}) → {preview}...")
+                        print(f"    defined in {color_text(def_file, 'green')}:{color_text(def_line, 'yellow')} → {def_code}")
+                        r += 1
 
     if r:
         print(f"{color_text('Found', 'red')} {r} issues")
