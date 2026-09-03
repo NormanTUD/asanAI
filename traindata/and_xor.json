@@ -1,5 +1,5 @@
 {
-	"name": "CSV-like Data (AND/XOR)",
+	"name": "FF-NN (Feed-Forward NN)",
 	"loss": "meanSquaredError",
 	"metric": "mse",
 	"optimizer": "adam",
