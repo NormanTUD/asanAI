@@ -846,6 +846,10 @@ async function get_fit_data () {
 
 		await restart_fcnn();
 
+		if (typeof CNN3D !== "undefined" && $("#cnn3d").length) {
+			CNN3D.render("cnn3d");
+		}
+
 		current_loss_value = logs.loss;
 
 		//history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));

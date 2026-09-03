@@ -1366,84 +1366,82 @@
 	function buildConnectionLines(blockA, blockB, opts) {
 		if (!opts.showConnections) return null;
 
-		var nA, nB;
-		if (blockA.kind === 'dense') nA = blockA.unitCount;
-		else nA = null;
-		if (blockB.kind === 'dense') nB = blockB.unitCount;
-		else nB = null;
+		// Ensure matrices are current so localToWorld is correct
+		blockA.group.updateMatrixWorld(true);
+		blockB.group.updateMatrixWorld(true);
 
 		var MAX_SAMPLES_PER_SIDE = 64;
-
 		function sampleCountForBlock(block) {
-			if (block.kind === 'dense') {
-				return Math.min(block.unitCount, MAX_SAMPLES_PER_SIDE);
-			}
+			if (block.kind === 'dense') return Math.min(block.unitCount, MAX_SAMPLES_PER_SIDE);
 			return Math.min(16, MAX_SAMPLES_PER_SIDE);
 		}
 		var sA = sampleCountForBlock(blockA);
 		var sB = sampleCountForBlock(blockB);
 		if (sA <= 0 || sB <= 0) return null;
 
-		var aWorld = new THREE.Vector3();
-		var bWorld = new THREE.Vector3();
-		blockA.group.getWorldPosition(aWorld);
-		blockB.group.getWorldPosition(bWorld);
+		// For each block, produce sample points on the face that points toward the
+		// OTHER block. We express those points in the block's LOCAL space (before
+		// rotation), then use group.localToWorld(...) so we never have to hand-
+		// derive rotation math.
+		//
+		// Local coordinate conventions:
+		//   conv2d block: planes are XY, stacked along local Z.
+		//     Its "front face" (toward next layer, world +X after rotY=+π/2) is at
+		//     local +Z = +size.z/2? No — post rot Y=+π/2, local +Z maps to world +X.
+		//     So the face toward the NEXT layer is local +Z.
+		//     BUT: we sample across the plane extent (local X = width, local Y = height).
+		//   dense block: it's an actual box aligned to axes (no rotation).
+		//     Its face toward next layer is local +X = +size.x/2.
 
-		function faceExtentsForBlock(block) {
+		function makeLocalFaceSamples(block, count, towardNext) {
 			var sz = block.size;
-			if (block.kind === 'conv2d') {
-				return { halfX: sz.z / 2, halfY: sz.y / 2, halfZ: sz.x / 2 };
-			}
-			return { halfX: sz.x / 2, halfY: sz.y / 2, halfZ: sz.z / 2 };
-		}
-		var faA = faceExtentsForBlock(blockA);
-		var faB = faceExtentsForBlock(blockB);
-
-		var aX = aWorld.x + faA.halfX;
-		var bX = bWorld.x - faB.halfX;
-
-		function makeFaceSamples(block, count, worldPos, fe) {
 			var pts = [];
 			if (block.kind === 'dense') {
-				var top = worldPos.y - fe.halfY;
-				var step = (fe.halfY * 2) / Math.max(1, count - 1);
+				// Face is at local x = ± sz.x/2. Sample vertically along Y (and Z=0).
+				var faceX = towardNext ? +sz.x / 2 : -sz.x / 2;
+				var top = -sz.y / 2;
+				var step = sz.y / Math.max(1, count - 1);
 				for (var i = 0; i < count; i++) {
-					pts.push(new THREE.Vector3(0, top + i * step, worldPos.z));
+					pts.push(new THREE.Vector3(faceX, top + i * step, 0));
 				}
 			} else {
+				// conv2d: face is at local z = ± sz.z/2. Sample across local X (width)
+				// and local Y (height) in a grid.
+				var faceZ = towardNext ? +sz.z / 2 : -sz.z / 2;
 				var g = Math.max(1, Math.round(Math.sqrt(count)));
-				var stepY = (fe.halfY * 2) / Math.max(1, g - 1);
-				var stepZ = (fe.halfZ * 2) / Math.max(1, g - 1);
+				var stepX = sz.x / Math.max(1, g - 1);
+				var stepY = sz.y / Math.max(1, g - 1);
 				for (var iy = 0; iy < g; iy++) {
-					for (var iz = 0; iz < g; iz++) {
-						var yy = worldPos.y - fe.halfY + iy * stepY;
-						var zz = worldPos.z - fe.halfZ + iz * stepZ;
-						pts.push(new THREE.Vector3(0, yy, zz));
+					for (var ix = 0; ix < g; ix++) {
+						var xx = -sz.x / 2 + ix * stepX;
+						var yy = -sz.y / 2 + iy * stepY;
+						pts.push(new THREE.Vector3(xx, yy, faceZ));
 					}
 				}
 			}
 			return pts;
 		}
 
-		var ptsA = makeFaceSamples(blockA, sA, aWorld, faA);
-		var ptsB = makeFaceSamples(blockB, sB, bWorld, faB);
+		// Sample local points, then convert to WORLD using the group's transform.
+		var ptsA_local = makeLocalFaceSamples(blockA, sA, /*towardNext=*/true);
+		var ptsB_local = makeLocalFaceSamples(blockB, sB, /*towardNext=*/false);
 
+		var ptsA = ptsA_local.map(function (p) { return blockA.group.localToWorld(p.clone()); });
+		var ptsB = ptsB_local.map(function (p) { return blockB.group.localToWorld(p.clone()); });
+
+		// (weights lookup unchanged)
 		var weights = null;
 		if (blockB.kind === 'dense') {
 			try {
-				var layerB_idx = null;
 				var mName = blockB.group.name || "";
 				var m = mName.match(/_layer_(\d+)$/);
-				if (m) layerB_idx = parseInt(m[1], 10);
+				var layerB_idx = m ? parseInt(m[1], 10) : null;
 				if (layerB_idx !== null && typeof model !== "undefined" && model && model.layers && model.layers[layerB_idx]) {
 					var w = model.layers[layerB_idx].weights;
-					if (w && w.length > 0 && w[0].val) {
-						weights = w[0].val.dataSync();
-					}
+					if (w && w.length > 0 && w[0].val) weights = w[0].val.dataSync();
 				}
 			} catch (e) { weights = null; }
 		}
-
 		var wMin = 0, wMax = 1;
 		if (weights) {
 			wMin = Infinity; wMax = -Infinity;
@@ -1465,7 +1463,6 @@
 
 		var positions = [];
 		var colors = [];
-
 		var theme = getTheme();
 		var baseCol = theme.dark ? [0.75, 0.78, 0.85] : [0.30, 0.35, 0.55];
 
@@ -1473,8 +1470,8 @@
 			var a = ptsA[i2];
 			for (var j2 = 0; j2 < ptsB.length; j2 += strideB) {
 				var b = ptsB[j2];
-				positions.push(aX, a.y, a.z);
-				positions.push(bX, b.y, b.z);
+				positions.push(a.x, a.y, a.z);
+				positions.push(b.x, b.y, b.z);
 
 				var col = baseCol;
 				if (weights && blockA.kind === 'dense' && blockB.kind === 'dense') {
@@ -1495,7 +1492,6 @@
 				colors.push(col[0], col[1], col[2]);
 			}
 		}
-
 		if (positions.length === 0) return null;
 
 		var geom = new THREE.BufferGeometry();
@@ -1604,21 +1600,29 @@
 
 		inst.modelGroup.updateMatrixWorld(true);
 
+		// AFTER blocks are placed, BEFORE the box-centering step:
+		inst.modelGroup.updateMatrixWorld(true);
+
 		if (inst.opts.showConnections) {
 			for (var k = 0; k < blocks.length - 1; k++) {
 				var connLines = buildConnectionLines(blocks[k], blocks[k + 1], inst.opts);
-				if (connLines) inst.connectionsGroup.add(connLines);
+				if (connLines) {
+					// Convert world-space line coords into modelGroup's local space,
+					// then attach to modelGroup so any subsequent modelGroup transform
+					// (including the centering shift below) carries them along.
+					inst.modelGroup.attach(connLines);  // <-- key line
+				}
 			}
 		}
 
-		// Center on origin
+		// Now do the centering. Because connections are IN modelGroup, they move with it.
 		var box = new THREE.Box3().setFromObject(inst.modelGroup);
 		if (!box.isEmpty()) {
 			var center = box.getCenter(new THREE.Vector3());
 			inst.modelGroup.position.x -= center.x;
 			inst.modelGroup.position.y -= center.y;
 			inst.modelGroup.position.z -= center.z;
-			inst.connectionsGroup.position.copy(inst.modelGroup.position);
+			// NOTE: no longer touching connectionsGroup.position; it stays empty.
 		}
 
 		if (!inst._hasFramed) {
