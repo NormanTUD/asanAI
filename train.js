@@ -903,7 +903,7 @@ async function get_fit_data () {
 				Plotly.update('plotly_epoch_history', this_plot_data, get_plotly_layout(language[lang]["epochs"], "Loss"));
 			}
 		} catch (e) {
-			err("Error trying to write plotly_epoch_history plot!");
+			dbg("Error trying to write plotly_epoch_history plot!");
 		}
 
 		await visualize_train();
