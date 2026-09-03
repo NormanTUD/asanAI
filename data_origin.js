@@ -10,6 +10,8 @@ async function change_data_origin() {
 
 	var new_origin = $("#data_origin").val();
 
+	$("#model_dataset_tr").toggle(new_origin == "default");
+
 	var show_images_per_category = 0;
 
 	var show_own_images = 0;

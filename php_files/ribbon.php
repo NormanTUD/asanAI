@@ -31,16 +31,6 @@
 						</td>
 					</tr>
 					<tr>
-						<td>
-							<span class="TRANSLATEME_dataset"></span>
-						</td>
-						<td>
-							<select id="model_dataset" onchange="xy_data=null;change_data_origin();" style="width: 238px">
-							</select>
-						</td>
-					</tr>
-
-					<tr>
 						<td style="white-space: nowrap;"><span class='TRANSLATEME_own_data' /></td>
 						<td>
 							<select id="data_origin" onchange="change_data_origin()" style="width: 239px;">
@@ -48,6 +38,16 @@
 								<option value="tensordata" class="TRANSLATEME_yes_own_tensor"></option>
 								<option class="TRANSLATEME_yes_own_images" value="image"></option>
 								<option value="csv" class="TRANSLATEME_yes_own_csv"></option>
+							</select>
+						</td>
+					</tr>
+
+					<tr id="model_dataset_tr">
+						<td>
+							<span class="TRANSLATEME_dataset"></span>
+						</td>
+						<td>
+							<select id="model_dataset" onchange="xy_data=null;change_data_origin();" style="width: 238px">
 							</select>
 						</td>
 					</tr>
