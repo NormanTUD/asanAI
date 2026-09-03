@@ -390,7 +390,9 @@ The order and connection of ideas is the same as the order and connection of thi
 This is the formal crystallization of the intuition. Sheaves were introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} (\citeyear{grothendieck_sheaf}) in the 1950s and 60s, partly through the work of Jean Leray in the late 1940s \cite{sheaf_mathematics}, precisely to handle questions that resisted the older “patch a space together by gluing charts” picture of \citetitle{manifold_wiki}. Where manifolds ask you to specify a single chart and a transition map, sheaves ask you to specify local data on every open set and let the global object fall out of the consistency conditions. The local-to-global direction is so productive that it is the entire backbone of algebraic geometry and much of modern logic.
 
 <div class="optional md" data-headline="What the words mean, with a panorama">
-You're on a hilltop, photographing a valley. Five shots, panning left to right. Adjacent shots overlap: the same oak tree in shots 2 and 3, the same river bend in shots 3 and 4. If the overlaps match, you stitch them into one panorama. If the light shifted between shots and the oak is bright in one photo and dark in the other — you can't.
+You're on a hilltop, photographing a valley. Five shots, panning left to right. Adjacent shots overlap: the same oak tree in shots 2 and 3, the same river bend in shots 3 and 4. If the overlaps match, you stitch them into one panorama. If the light shifted between shots and the oak is bright in one photo and dark in the other — you can't (easily at least).
+
+If the mismatch is a *transformation* — a lighting shift, a time offset, or a rotation — rather than a genuine disagreement, a **stack** (or $\infty$-sheaf) handles it: the overlaps need only agree *up to isomorphism*, and these isomorphisms must be coherent on triple overlaps.
 
 This is sheaf theory.
 
@@ -408,6 +410,12 @@ This is sheaf theory.
 * **A cut.** A presheaf is photos before you check the overlaps — a tentative assignment, a "cut." It might glue; it might not. A sheaf is a cut that always glues.
 
 Three levels: **sections on regions, germs at points, stalks collecting all germs at one point.**
+
+---
+
+**Now make it a video.** Same valley, but you film it with sound. A bird crosses the frame from left to right, chirping. You see it, and you hear it, at one moment. Now the "data" on any open set is a pair: (visual, auditory). The sheaf condition demands that on the overlap where the bird is visible *and* audible, the visual position of the bird and the temporal position of the chirp agree. The visual "section" says the bird is at spatial point $x$ at time $t$. The auditory "section" says the chirp arrives at time $t$. Compatibility at the overlap is: same bird, same moment. If the audio lags the video by half a second, the two sections on the overlap disagree — the sheaf condition fails, and there is no coherent global experience of "a bird flying through." The stalk at that one point in spacetime collects both the visual germ (what the bird looks like right there) and the auditory germ (what the chirp sounds like right then), and they must be the *same* event seen from two modalities.
+
+This is why the sheaf condition is not a constraint *on* the data but a constraint *between* modalities. The global experience — the bird flying and chirping as one phenomenon — exists only if the local sections cohere.
 </div>
 
 <div class="optional md" data-headline="Heraclitus on the same point, twenty-five centuries earlier">
