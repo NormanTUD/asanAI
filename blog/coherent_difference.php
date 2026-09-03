@@ -161,7 +161,7 @@ The most ambitious direct heir of this move is \citeauthor{gunther1978idee} \cit
 
 The philosophical point is older than the algebraic one. The article on \citetitle{distinction_philosophy} traces the concept of a *real distinction* (a difference that exists in the world, not merely in the mind) from Aristotle's distinction between actuality and potentiality, through Aquinas's distinction between essence and existence, to Kant's distinction between appearance and thing-in-itself \cite{distinction_philosophy}. Each of these is the same move: carve a boundary, and you get two sides.
 
-The same observation, in fewer words and almost a thousand years earlier, is the second verse of the \citetitle{laozi400taoteching}:
+The same observation, in fewer words and over two millennia earlier, is the second verse of the \citetitle{laozi400taoteching}:
 
 <div class="smart-quote" data-cite="laozi400taoteching" data-after="Chapter 2">
 All in the world call beautiful what is beautiful, and thus ugliness appears. All call good what is good, and thus evil appears.
@@ -400,7 +400,7 @@ A few terms you will meet constantly once you read anything about sheaf theory:
 
 * **Stalk at $x$.** The set of all germs at $x$. It is the sheaf's entire “view from the point $x$”, built from every section that passes through $x$ at all, with sections that agree near $x$ identified.
 
-* **Cut.** A piecewise-defined section, the data you assemble before you check whether it glues. In Grothendieck's language, a presheaf is “a cut”, and a sheaf is “a cut that always glues”.
+* **Cut.** A piecewise-defined section, the data you assemble before you check whether it glues. A presheaf is a tentative assignment — a “cut” — that may or may not satisfy the gluing condition; a sheaf is a cut that always glues.
 
 The pattern: **sections live on opens, germs live on points, the stalk stitches all the germs together at one point**. This three-level picture (open / germ / stalk) is the standard way sheaf theorists think.
 </div>
@@ -950,7 +950,7 @@ The chapter's thesis — global unity as coherent local difference — has been 
 
 * **Parmenides** (\citeyear{parmenides480fragments}), fragment B2. *“It is, and it is impossible for it not to be.”* The first explicit insistence that *being* and *difference* cannot be separated without the world falling apart. The later \citeauthor{spinoza1677ethics} (\citeyear{spinoza1677ethics}) formula “the order and connection of ideas is the same as the order and connection of things” is, in a sense, just Parmenides with the local-to-global clause made explicit.
 
-* **Anaxagoras** (\citeyear{anaxagoras450fragments}), fragment B11. *“In everything there is a portion of everything, except nous; and there are some things in which there is nous also.”* The sheaf axiom in one line — with a deliberate exception — four and a half centuries before sheaves. Nothing physical is locally clean: every local region of the world carries, in its own substance, a portion of every other kind of thing. To know what a thing is, look at the whole; the whole is precisely the assembly of these mutually-informing local portions, once they agree on their overlaps. The exception for *nous* (mind) is the load-bearing clause: mind is the unmixed, and that is what makes the world knowable at all.
+* **Anaxagoras** (\citeyear{anaxagoras450fragments}), fragment B11. *“In everything there is a portion of everything, except nous; and there are some things in which there is nous also.”* The sheaf axiom in one line — with a deliberate exception — twenty-four centuries before sheaves. Nothing physical is locally clean: every local region of the world carries, in its own substance, a portion of every other kind of thing. To know what a thing is, look at the whole; the whole is precisely the assembly of these mutually-informing local portions, once they agree on their overlaps. The exception for *nous* (mind) is the load-bearing clause: mind is the unmixed, and that is what makes the world knowable at all.
 
 * **Heraclitus** (\citeyear{heraclitus500fragments}), fragments B10, B54, B67, B89. The unity of opposites; the hidden attunement better than the open; the waking world that is one, the dreaming worlds that are many. Read together, these fragments sketch the local-to-global picture more clearly than any prose summary could.
 

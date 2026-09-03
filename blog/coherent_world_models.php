@@ -38,7 +38,7 @@ $$
 
 Everything below earns that sentence.
 
-**The status of this chapter.** What follows is offered as a *discipline*, not a derivation. We do not claim that sheaf theory, coherence theory, and post-foundationalist epistemology are *literally* the same object in three vocabularies; we claim only that, for the purposes of asking when a collection of partial views deserves the name *one description*, they are productive allies. The translations are useful, the boundaries of the analogy are not fully charted, and several of the deepest joints are merely gestured at. A reader who rejects the grand unification is not asked to surrender the chapter; they are asked only to notice which of the three traditions supplies the vocabulary that, in their judgement, the others must be measured against. The framework is offered as a *lens*. The lens makes some things visible and some things invisible; it has to be picked up, used, and set down again. The discipline survives even where the philosophical scaffolding is set aside: the nine-step procedure, the three pathologies, the hierarchy of sameness, the question "where is the licensed transition?", the rule "never silently upgrade" — these travel on their own.
+**The status of this chapter.** What follows is offered as a *discipline*, not a derivation. We do not claim that sheaf theory, coherence theory, and post-foundationalist epistemology are *literally* the same object in three vocabularies; we claim only that, for the purposes of asking when a collection of partial views deserves the name *one description*, they are productive allies. The translations are useful, the boundaries of the analogy are not fully charted, and several of the deepest joints are merely gestured at. A reader who rejects the grand unification is not asked to surrender the chapter; they are asked only to notice which of the three traditions supplies the vocabulary that, in their judgement, the others must be measured against. The framework is offered as a *lens*. The lens makes some things visible and some things invisible; it has to be picked up, used, and set down again. The discipline survives even where the philosophical scaffolding is set aside: the nine-step procedure, the four pathologies, the hierarchy of sameness, the question "where is the licensed transition?", the rule "never silently upgrade" — these travel on their own.
 
 </div>
 
@@ -926,10 +926,10 @@ $$
 \text{Theory} & \text{Where it contributes}\\
 \hline
 \text{Set / type theory} & \text{distinction, typed sameness}\\
-\text{Category theory} & \text{transformation, composition}\\
+\text{Category theory} & \text{transformation, coherence}\\
 \text{Topology / sites} & \text{locality without metric}\\
-\text{Sheaf theory} & \text{compatibility}\to\text{gluing}\\
-\infty\text{-categories, HoTT} & \text{higher coherence}\\
+\text{Sheaf theory} & \text{compatibility}\to\text{gluing}\to\text{globality}\\
+\infty\text{-categories, HoTT} & \text{compatibility as higher coherence}\\
 \text{Model theory} & \text{structures satisfying constraints}\\
 \text{Probability} & \text{approximate compatibility}\\
 \text{Machine learning} & \text{learned }R,\ T,\text{ and }G
@@ -1007,7 +1007,7 @@ $$
 &\textbf{to the subject matter it represents.}
 \end{aligned}}
 $$
-**Not** the whole of the subject matter. The cover spans the region $c_{\mathrm{acc}}$ that our access functions can actually reach — that is the honest scope of the limit. Every instrument widens the cover; none closes it; $W$ itself stays on the other side of the mediation (see "Coherent Difference"). A world model is therefore *a coherent model of the interface to the world, under extendable-by-measurement* — never the thing itself. The discipline's rule of thumb: when a model is at risk of passing itself off as the whole of $W$, ask which $O_i$ are in the cover and which instruments that would widen it are not; the model's honest range is exactly $c_{\mathrm{acc}}$.
+**Not** the whole of the subject matter. The cover spans the region $c_{\mathrm{acc}}$ that our access functions can actually reach — that is the honest scope of the limit. Every instrument widens the cover; none closes it; $W$ itself stays on the other side of the mediation (see "Coherent Difference"). A world model is therefore *a coherent model of the interface to the world, extendable by measurement* — never the thing itself. The discipline's rule of thumb: when a model is at risk of passing itself off as the whole of $W$, ask which $O_i$ are in the cover and which instruments that would widen it are not; the model's honest range is exactly $c_{\mathrm{acc}}$.
 
 Everything else (perception, measurement, physics, mathematics, model theory, neural networks) is a choice of:
 
@@ -1102,7 +1102,7 @@ For this chapter: Tarski turns truth from a metaphysical mystery into an *interf
 $$
 \underbrace{T\in\mathcal{T}}_{\text{licensed transition (this chapter)}}
 \;\;\text{is tested by}\;\;\;
-\underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1933/1936)}}
+\underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1933/1935)}}
 $$
 
 The whole correlation, as one square:
@@ -1215,7 +1215,7 @@ The model $G$ is true when the *two* truth conditions (coherence and corresponde
 
 <div class="md">
 
-### Three pathologies
+### Four pathologies
 
 Each failure mode breaks exactly one of the two conditions.
 
@@ -1252,7 +1252,11 @@ Failure: *correspondence* (the same as (1), not a new failure mode). The diagnos
 
 > **Refinement.** The account above holds for the *pure* self-consistent fantasy — an internally perfect model that happens to be unconnected to $W$. For the *typical LLM*, the earlier "both" intuition is closer to the truth, and this pathology is refined by the AI section ("Hallucination, precisely"): there the hallucination is most accurately a *non-glueable presheaf* whose local sections disagree on overlaps, so that **coherence and correspondence fail together**. The present pathology-3 is that section's *rare* limiting case (fully coherent, merely ungrounded), not the usual one.
 
-All three, located on the one diagram:
+**4. The calibrated error.** A subtler case: the model's local sections agree on overlaps (coherence holds), the transitions $T_i \in \mathcal{T}$ are licensed, and Tarski passes at most contact points — but the calibration is systematically, slightly off. The model's outputs track the world closely enough to be useful, but with a small, consistent bias that no single contact point reveals. Result: a model that is *calibrated wrong* — not incoherent, not ungrounded, but consistently slightly off. The remedy is not more coherence or more grounding; it is *re-calibration*: auditing and correcting the bias in the transitions.
+
+Failure: *correspondence* (subtle, systematic).
+
+All four, located on the one diagram:
 
 $$
 \begin{array}{ccccc}
@@ -1314,7 +1318,7 @@ If step 5 fails, the model is *false at that contact point*. If step 4 fails, th
 Two conditions, each necessary and jointly sufficient:
 
 1. *Coherence*: a model is true only insofar as its parts hang together (the sheaf condition, descent on every admissible cover). Bradley, Blanshard, BonJour, in their different vocabularies.
-2. *Correspondence*: a model is true only insofar as its claims track the world (Tarski's Convention T, the if-and-only-if at every licensed contact point). Tarski, 1933/1936.
+2. *Correspondence*: a model is true only insofar as its claims track the world (Tarski's Convention T, the if-and-only-if at every licensed contact point). Tarski, 1933/1935.
 
 And one discipline that lives with both: *recording the gaps*. A model is true *only insofar as*. The discipline of recording residuals, of refusing to identify $G$ with $W$, of noting when the contact points are imperfect. This is not a third condition; it is the standing acknowledgement that the conjunction above is provisional, that residual mismatches must be visible, and that "without remainder" describes the *aim* of the audit (every admissible contact tested) rather than a guarantee that the audit is complete.
 
@@ -1336,7 +1340,7 @@ A useful analogy is not a theorem. Tarski's Convention T *is* a theorem (of form
 
 ## What this offers AI systems
 
-The point of this chapter was never the diagram. The point was what the diagram *buys you* when you point it at something concrete — and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk. The discipline built in the previous sections — traces, admissible transitions, descent, the Tarskian if-and-only-if, the three pathologies — was a *specification*. What follows is the specification, applied.
+The point of this chapter was never the diagram. The point was what the diagram *buys you* when you point it at something concrete — and the most concrete subject matter the reader of this textbook is likely to care about is the AI system on the desk. The discipline built in the previous sections — traces, admissible transitions, descent, the Tarskian if-and-only-if, the four pathologies — was a *specification*. What follows is the specification, applied.
 
 The reading is offered as an *attempt at organisation*, not a finished theory of LLMs. It is a lens. Used well, it sharpens some intuitions and corrects some default mistakes; used badly, it forces a borrowed vocabulary onto a domain that has its own. The reader who finishes this section believing she now has a theory of LLMs has misread it; the reader who finishes it with a sharper vocabulary for asking what an LLM is, and is not, doing has read it well. Where the lens makes a phenomenon *visible*, we say so; where it does not, we say so too.
 
@@ -1372,9 +1376,9 @@ $$
   \mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{language}\\\text{lies, altered states}\\\hbox{$\Big\downarrow$}}}\\
   \underbrace{\Sigma}_{\text{spoken sentence}}\\
   \mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{writing}\\\text{badly-written prose}\\\hbox{$\Big\downarrow$}}}\\
-  \underbrace{T}_{\text{written text}}\\
+  \underbrace{\mathrm{Txt}}_{\text{written text}}\\
   \mathrel{\vcenter{\hbox{$\Big\downarrow$}\\\text{aggregation}\\\text{selection bias}\\\hbox{$\Big\downarrow$}}}\\
-  \underbrace{C}_{\text{corpus}}
+  \underbrace{\mathrm{Corpus}}_{\text{corpus}}
   \end{array}
   $$
 
@@ -1406,7 +1410,7 @@ $$
 \end{array}
 $$
 
-From top to bottom, with the labels read separately alongside: **$W$** — the world; **$O_k$** — each author's perception ($W \to H_k$); **$H_1, H_2, H_3$** — three authors, each of whom writes three documents; the download arrows **$H_k \to R_{k,j}$** — writing; **$R_{1,1}\dots R_{3,3}$** — the nine documents (the cover); the download arrows **$\{R_{k,j}\} \to G$** — fit / training; **$G$** — the AI world-model, the global section merged from all documents. This plot is simplified, as in, the internals of how the human relates to their texts are left out for space reasons. Each human can have multiple conflicting world views (cognitive dissonance), or simply be wrong at times, and their world view, motivations, psychology and so on influences their texts, which in turn influences the model's world-model.
+From top to bottom, with the labels read separately alongside: **$W$** — the world; **$O_k$** — each author's perception ($W \to H_k$); **$H_1, H_2, H_3$** — three authors, each of whom writes three documents; the downward arrows **$H_k \to R_{k,j}$** — writing; **$R_{1,1}\dots R_{3,3}$** — the nine documents (the cover); the downward arrows **$\{R_{k,j}\} \to G$** — fit / training; **$G$** — the AI world-model, the global section merged from all documents. This plot is simplified, as in, the internals of how the human relates to their texts are left out for space reasons. Each human can have multiple conflicting world views (cognitive dissonance), or simply be wrong at times, and their world view, motivations, psychology and so on influences their texts, which in turn influences the model's world-model.
 
 Read the diagram as a nesting of the sub-components. The *overarching* component is the AI-element diagram with world on top and model on bottom: the cover $\{R_{k,j}\}$ is fitted into a single trained model $G$ (the "fit"-arrows), and $G$ is the global section reconstructed from those patches. Inside it, each document $R_{k,j}$ is itself a sub-component of the very same shape: a small $W \to R_{k,j}$ diagram in which the "sample"-arrow is one author's perception — the $O_k$ arrow from $W$ into $H_k$, and then $H_k$'s transfer of what it perceived into a written document (the senses, memory, and language of the "Traces" section). So the three diagrams the chapter draws elsewhere (subject-matter → views → global model) reappear here *twice*: once at the top scale (each author perceiving $W$) and once at the bottom scale (all documents merging into $G$) — with the person in the middle being exactly the place where the first sub-diagram's output becomes the second sub-diagram's input. The model itself never leaves the bottom: it only ever sees the nine documents as text patches, and it cannot tell an eyewitness report $R_{1,1}$ from a translation $R_{1,2}$ from a page written by an earlier AI $R_{1,3}$, because all arrive as identical "text" cells with their human sub-diagrams un-drawn. Each is a *different admissible transition* in $\mathcal{T}$ with a different licence and a different distance from $W$; the training compresses all documents into a single $G$ and cannot tell them apart.
 
@@ -1514,7 +1518,7 @@ transitions, and the cover must be specified in advance.
 
 **Chain-of-thought and self-consistency.** These are *coherence techniques* (the previous section), not correspondence techniques. They sharpen the model's internal consistency; they do not, by themselves, ground the model in the world. Their value is to *expose* the model's failures: when self-consistency collapses — the model's $k$ sampled continuations disagree — that is a diagnostic flag that the underlying claim is not robustly supported. They tell you when to be suspicious; they do not tell you when to trust. The chapter's hierarchy of sameness is the right ladder: a chain-of-thought that is internally consistent is *coherent*; that coherence does not entail *correspondence*.
 
-**Verifier-guided search.** This is the technique that comes closest to *adding a Tarskian check at every candidate*. Each candidate is a claim; the verifier is a licensed bridge from the candidate to a ground truth (or a proxy); the highest-scoring candidate is the one whose correspondence check passes most often. The technique only works if the verifier is itself licensed. A verifier trained on the same model, on the same corpus, scoring only fluency, is just another coherence check. A verifier trained against external ground truth, with its own calibration audit, is a real correspondence check. The Fitness-Beats-Truth result (a system that maximises a fitness payoff without estimating the true world state beats a system that estimates it) is, in the chapter's vocabulary, *the formal statement that an internal coherence engine, without licensed correspondence transitions, will beat a correspondence engine on fitness metrics* — and explains why the baseline LLM hallucinates rather than tracking truth.
+**Verifier-guided search.** This is the technique that comes closest to *adding a Tarskian check at every candidate*. Each candidate is a claim; the verifier is a licensed bridge from the candidate to a ground truth (or a proxy); the highest-scoring candidate is the one whose correspondence check passes most often. The technique only works if the verifier is itself licensed. A verifier trained on the same model, on the same corpus, scoring only fluency, is just another coherence check. A verifier trained against external ground truth, with its own calibration audit, is a real correspondence check. The Fitness-Beats-Truth result \cite{prakash2021fitness} (a system that maximises a fitness payoff without estimating the true world state beats a system that estimates it) is, in the chapter's vocabulary, *the formal statement that an internal coherence engine, without licensed correspondence transitions, will beat a correspondence engine on fitness metrics* — and explains why the baseline LLM hallucinates rather than tracking truth.
 
 **Reading the table the other way.** The chapter's diagnosis predicts which remedies will and will not work, before trying them. The typical LLM hallucination involves *both* coherence and correspondence failures (the previous section's revised diagnosis). Coherence techniques (longer chains of thought, self-consistency, scratchpads, cleaner training data) help on the coherence side; correspondence techniques (retrieval, tools, formal verification, calibrated raters) help on the correspondence side. Both are usually needed. Treating hallucination as a purely coherence problem (just scale up the model) or a purely correspondence problem (just retrieve more) systematically undershoots the diagnosis.
 
