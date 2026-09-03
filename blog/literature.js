@@ -788,13 +788,6 @@ window.bibData = {
 		url: "https://doi.org/10.1103/PhysRev.55.434"
 	},
 
-	"hoyle1954nuclear": {
-		title: "On Nuclear Reactions Occurring in Very Hot Stars. I. The Synthesis of Elements from Carbon to Nickel",
-		author: "Fred Hoyle",
-		year: 1954,
-		url: "https://doi.org/10.1086/190005"
-	},
-
 	"cameron1957nucleogenesis": {
 		title: "Nuclear Reactions in Stars and Nucleogenesis",
 		author: "Alastair Graham Walter Cameron",
@@ -830,11 +823,11 @@ window.bibData = {
 		url: "https://doi.org/10.1098/rsta.1902.0012"
 	},
 
-	"chandrasekhar1931whitedwarf": {
-		title: "The Maximum Mass of Ideal White Dwarfs",
+	"chandrasekhar1935structure": {
+		title: "An Introduction to the Study of Stellar Structure",
 		author: "Subrahmanyan Chandrasekhar",
-		year: 1931,
-		url: "https://doi.org/10.1086/143324"
+		year: 1935,
+		url: "https://archive.org/details/introductiontost0000chan_g5e4"
 	},
 
 	"hewish1968pulsar": {
