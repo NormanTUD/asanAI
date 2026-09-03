@@ -1216,6 +1216,10 @@
 		"color_computation_error" => "✗ Error: {error}. Using ImageNet defaults.",
 		"using_imagenet_defaults" => "Using ImageNet defaults.",
 		"function_placeholder" => "Function (only x and y variables allowed)",
+		"upload_csv_excel_file" => "Upload CSV / Excel file (.csv, .xls, .xlsx, .ods)",
+		"unsupported_file_format" => "Unsupported file format. Please use CSV, XLS, XLSX, or ODS files.",
+		"excel_file_is_empty" => "The Excel file appears to be empty or contains no data.",
+		"error_reading_excel_file" => "Error reading Excel file",
 
 		),
 
@@ -2433,6 +2437,10 @@
 			"color_computation_error" => "✗ Fehler: {error}. Nutze ImageNet-Standardwerte.",
 			"using_imagenet_defaults" => "Nutze ImageNet-Standardwerte.",
 			"function_placeholder" => "Funktion (nur x und y Variablen erlaubt)",
+			"upload_csv_excel_file" => "CSV / Excel-Datei hochladen (.csv, .xls, .xlsx, .ods)",
+			"unsupported_file_format" => "Nicht unterstütztes Dateiformat. Bitte verwende CSV-, XLS-, XLSX- oder ODS-Dateien.",
+			"excel_file_is_empty" => "Die Excel-Datei scheint leer zu sein oder enthält keine Daten.",
+			"error_reading_excel_file" => "Fehler beim Lesen der Excel-Datei",
 
 		)
 	);

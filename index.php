@@ -61,6 +61,7 @@
 		_js("libs/jsmanipulate.js", 1, 1);
 
 		_js("libs/zip.js");
+		_js("libs/xlsx.full.min.js");
 		_js("libs/md5.umd.min.js");
 		_js("libs/jquery.js");
 		_js("libs/jquery-ui.js");

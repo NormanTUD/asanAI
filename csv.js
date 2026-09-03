@@ -1,5 +1,55 @@
 "use strict";
 
+async function handle_csv_file_upload(event) {
+	var file = event.target.files[0];
+	if (!file) return;
+
+	var extension = file.name.split('.').pop().toLowerCase();
+	var is_csv = extension === 'csv';
+	var is_excel = ['xls', 'xlsx', 'ods'].includes(extension);
+
+	if (!is_csv && !is_excel) {
+		err(language[lang]["unsupported_file_format"]);
+		return;
+	}
+
+	$("#csv_upload_filename").text(file.name);
+
+	var reader = new FileReader();
+
+	if (is_csv) {
+		reader.onload = function(e) {
+			var text = e.target.result;
+			$("#csv_file").val(text).trigger("keyup");
+			show_csv_file();
+		};
+		reader.readAsText(file);
+	} else if (is_excel) {
+		reader.onload = function(e) {
+			try {
+				var data = new Uint8Array(e.target.result);
+				var workbook = XLSX.read(data, { type: "array" });
+
+				var first_sheet_name = workbook.SheetNames[0];
+				var worksheet = workbook.Sheets[first_sheet_name];
+
+				var csv_text = XLSX.utils.sheet_to_csv(worksheet);
+
+				if (!csv_text || csv_text.trim().length === 0) {
+					err(language[lang]["excel_file_is_empty"]);
+					return;
+				}
+
+				$("#csv_file").val(csv_text).trigger("keyup");
+				show_csv_file();
+			} catch (e) {
+				err(language[lang]["error_reading_excel_file"] + ": " + e.message);
+			}
+		};
+		reader.readAsArrayBuffer(file);
+	}
+}
+
 async function show_csv_file(disabled_show_head_data=false) {
 	if (t_show_csv_file) clearTimeout(t_show_csv_file);
 	t_show_csv_file = setTimeout(async function() {

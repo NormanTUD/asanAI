@@ -80,6 +80,16 @@
 				<br>
 				<br>
 
+				<table style="width: 100%; margin-bottom: 10px;">
+					<tr>
+						<td colspan="2">
+							<label for="csv_file_upload" class="TRANSLATEME_upload_csv_excel_file" style="font-weight: bold; cursor: pointer; display: inline-block; padding: 6px 12px; background: #4a90d9; color: white; border-radius: 4px;"></label>
+							<input type="file" id="csv_file_upload" accept=".csv,.xls,.xlsx,.ods" style="display: none" onchange="handle_csv_file_upload(event)">
+							<span id="csv_upload_filename" style="margin-left: 10px; color: #888;"></span>
+						</td>
+					</tr>
+				</table>
+
 				<span id="csv_parse_errors"></span>
 				<textarea id="csv_file" style="width: 98%; height: 400px" spellcheck="false" onkeyup="show_csv_file()"></textarea>
 			</td>
