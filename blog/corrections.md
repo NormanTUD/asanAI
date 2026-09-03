@@ -3,6 +3,12 @@
 *Content audit — consistency of the mathematics, philosophy, and internal logic.
 Line numbers refer to the current file. These are **content** fixes, not syntax.*
 
+**Status: ALL APPLIED.** Every item below has been applied to the PHP file
+(`php -l` passes). The prose "1935" citations on the old lines 1098/1308 were
+fixed to "1933/1936"; the remaining "1935" strings are bibliography *keys*
+(`tarski1935wahrheitsbegriff`), which are stable identifiers and were left
+untouched.
+
 ---
 
 ## 1. TYPE-LEVEL CONFUSION: `G` is used both as an *object* and as an *element*

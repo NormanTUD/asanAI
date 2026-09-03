@@ -165,8 +165,8 @@ Not everything called "the same" is the same *kind* of same. The vocabulary of *
 - $x \cong y$: *isomorphism*. Structurally indistinguishable; an invertible map carries one to the other.
 - $x \simeq y$: *homotopy equivalence*. Related by a deformation that can be undone, up to coherent witnesses.
 - $d(x, y) \le \varepsilon$: *approximation*. Close enough for current purposes, with a quantified residual.
-- $P(D_1, D_2 \mid M)$ high: *statistical*. Agreement under a probabilistic model, not on the nose.
-- $\exists M : M \models \mathcal{S}_{\text{all}}$: *model-theoretic*. The two theories admit a common interpretation, a model that satisfies both.
+- $P(D_1, D_2 \mid \mathcal{M})$ high: *statistical*. Agreement under a *probabilistic* model $\mathcal{M}$, not on the nose. (Keep $\mathcal{M}$ distinct from the classical model $M$ of the next row, and from the observer's model $M$ in the pipeline and the time-indexed $M_t$: these are three different kinds of "model".)
+- $\exists M : M \models \mathcal{S}_{\text{all}}$: *model-theoretic*. The two theories admit a common *classical* model $M$, a structure that satisfies both.
 
 Each form has a parallel in **sense data**, **measurement**, and **mathematics**:
 
@@ -183,7 +183,7 @@ In **dependent type theory** these are *literally different types*. To say $x = 
 
 In **Homotopy Type Theory (HoTT)** the equality type is itself a space: its points are *paths* from $x$ to $y$, and these paths may themselves be related by higher paths. Under the **univalence axiom** this becomes literal: for types in a universe $\mathcal{U}$, an equality in $\mathcal{U}$ *is* an equivalence, so $(x =_{\mathcal{U}} y) \simeq (x \simeq y)$. A claim like "$R_A =_x R_B$" is not a proposition (yes/no) but a *space of answers*: paths from $R_A$ to $R_B$, possibly homotopic to each other or genuinely distinct. Asking "are these the same?" may have a whole space of witnesses, not one.
 
-The whole hierarchy, with its witness at each level — each $\Downarrow$ is a weakening (every witness of the row above is automatically a witness of every row below); the forbidden move is to read them silently upwards:
+The whole hierarchy, with its witness at each level — each $\Downarrow$ is a weakening; the forbidden move is to read them silently upwards. Qualifier: the first four steps (identity $\Rightarrow$ iso $\Rightarrow$ homotopy $\Rightarrow$ approximation) are automatic — a witness of the stronger row is literally a witness of the weaker. The last step (statistical $\Rightarrow$ model-theoretic) is *not* automatic in the same way: high likelihood under a probabilistic model does not, by itself, guarantee a common classical model of the theories. It is a genuine step of the ladder, but a *contested* one, licensed only where the statistical and the model-theoretic descriptions pick out the same structures.
 
 $$
 \begin{array}{c}
@@ -195,7 +195,7 @@ $$
 \Downarrow\\
 \underset{\text{witness: a quantified residual}}{d(x, y) \le \varepsilon}\\
 \Downarrow\\
-\underset{\text{witness: a likelihood under }M}{P(D_1, D_2 \mid M)\text{ high}}\\
+\underset{\text{witness: a likelihood under }\mathcal{M}}{P(D_1, D_2 \mid \mathcal{M})\text{ high}}\\
 \Downarrow\\
 \underset{\text{witness: a common model}}{\exists M : M \models \mathcal{S}_{\text{all}}}
 \end{array}
@@ -387,7 +387,7 @@ A **cover** of a context is a family of sub-contexts whose images together captu
 
 In plain English, an **admissible cover** of a context $c$ is just a family of smaller views $\{c_i\}_{i\in I}$, together with morphisms $f_i : c_i \to c$ putting each view back into $c$, such that two things hold at once:
 
-1. **The cover condition.** Every part of $c$ that matters is captured by at least one view. In symbols: the union of the images $\bigcup_i \mathrm{im}(f_i)$ is the whole of $c$. (Topological version: the open sets cover the space. Picture version: the photographs together capture every point of the room.)
+1. **The cover condition.** Every part of $c$ that matters is captured by at least one view. In symbols: the union of the images $\bigcup_i \mathrm{im}(f_i)$ is the whole of $c$. (Topological version: the open sets cover the space. Picture version: the photographs together capture every point of the room.) **A caveat that carries through the whole chapter:** this is the *idealisation*, and it is the point at which the account is most vulnerable. Biology and engineering do not cover $c$; they cover only what their filters admit. We see no infrared, hear no ultrasound; a cover built from our sensory $O_i$ has images whose union is *not* all of $c$ but only the region $c_{\mathrm{acc}}$ — the accessible part, the interface where our access functions can land. The limit $G = \lim F$ over such a cover reconstructs a model of that interface, *not* of $c$ (nor of the subject matter $W$ behind it). Adding instruments (a Geiger counter, an infrared camera, an ultrasound probe) adds more $O_i$ and thereby *widens* $c_{\mathrm{acc}}$; it never reaches the whole of $c$. So the sheaf condition says: *within the accessible region, coherent data glue uniquely* — it does not say the accessible region exhausts the context. Correcting the over-claim "$= c$" to "$= c_{\mathrm{acc}} \subseteq c$" is the discipline this chapter imposes on itself at exactly this point.
 2. **The admissibility condition.** Every morphism $f_i$ in the cover is a licensed transition: $f_i \in \mathcal{T}$. The maps that put the views back into $c$ are ones we have an independent reason to trust — calibration, coordinate change, physical law, validated decoding, documented transmission, anything that has earned its place in $\mathcal{T}$.
 
 Formally:
@@ -396,7 +396,7 @@ $$
 \underbrace{\{c_i \xrightarrow{\,f_i\,} c\}_{i \in I}}_{\substack{\text{a family of smaller views }c_i\text{ of }c,\\\text{each put back into }c\text{ by its cover map }f_i}}\ :\
 \underbrace{f_i \in \mathcal{T}\ \text{for every }i}_{\text{every cover map is licensed}},\quad
 \text{and}\quad
-\underbrace{\bigcup_{i\in I} \mathrm{im}(f_i) \;=\; c}_{\text{their images together capture all of }c}.
+\underbrace{\bigcup_{i\in I} \mathrm{im}(f_i) \;=\; c_{\mathrm{acc}} \;\subseteq\; c}_{\text{their images together capture the accessible part of }c}.
 $$
 
 The two conditions are independent. A family of sub-views can satisfy the cover condition with maps we have no business trusting (raw, uncalibrated readings), and a family of trusted maps can fail to cover what matters. An *admissible* cover is the intersection: a covering whose maps are licensed. Only on admissible covers does the sheaf condition (compatible local data ⟹ unique global data) carry content; the next paragraph explains why.
@@ -506,9 +506,9 @@ $$
 \end{array}
 $$
 
-Five representations, five channels (visual, auditory, radar, linguistic, archival), each a different kind of trace produced by its own access function. The site $\mathcal{C}$ contains their contexts; the **admissible cover** of "the event" is the family $\{c_v, c_a, c_r, c_\ell, c_h\} \to c$ (each arrow admissible, the patches together recovering everything relevant about $c$). $\mathcal{T}$ contains sensor calibration, physical propagation (sound delay, Doppler), validated linguistic reporting, and archival transmission with error bounds. A global $G \in F(c)$ exists iff descent holds.
+Five representations, five channels (visual, auditory, radar, linguistic, archival), each a different kind of trace produced by its own access function. Note the structure carefully: the diagram is *not* five sibling patches of a flat cover. The three sensory channels $R_v, R_a, R_r$ form the admissible cover $\{c_v, c_a, c_r\} \to c$ (real observations out of $W$); the spoken report $R_\ell$ and the archive $R_h$ are *derived* stages — the outputs of admissible transitions $L_v, L_a, L_r : R_i \to R_\ell$ and $C : R_\ell \to R_h$ (the report is fed by the sensors, the archive comes a century later). So the running example is a cover *plus* a downstream transition chain, not just a cover. The site $\mathcal{C}$ contains their contexts; $\mathcal{T}$ contains sensor calibration, physical propagation (sound delay, Doppler), validated linguistic reporting, and archival transmission with error bounds. A global section $g \in G \cong F(c)$ exists iff the descent condition holds on the sensory cover and the downstream transitions are admissible. **What the example also shows, for honesty's sake:** $c$ here is the *event as our channels can reach it* — $c_{\mathrm{acc}}$. The train has a mass, a chemical composition, a nuclear decay profile, an infrared glow, an ultrasonic signature; none of these is in the cover unless we add an instrument. The coherent model recovered is a model of the *interface* to the event, not of the event *an sich*; add a Geiger counter and $c_{\mathrm{acc}}$ grows, and $G$ changes accordingly. The sheaf condition guaranteed uniqueness *given the cover*; it never promised the cover was the whole of $c$.
 
-The same shape governs **mathematical data**: a group presented by generators-and-relations, by a Cayley table, by a permutation action, by a matrix representation, by a character table. Five presentations, five channels, one group, provided the transitions between presentations are admissible (isomorphisms of the appropriate kind).
+The same shape governs **mathematical data** — here genuinely as a flat cover, with no downstream chain. A group presented by generators-and-relations, by a Cayley table, by a permutation action, by a matrix representation, by a character table: five sibling presentations, five channels, one group, provided the transitions between presentations are admissible (isomorphisms of the appropriate kind).
 
 </div>
 
@@ -773,7 +773,7 @@ The forms of sameness form a tower from strongest to weakest. The arrow on each 
 - **iso** ($s_i \cong s_j$): *invertible comparison*. Implies homotopy equivalence.
 - **homotopy** ($s_i \simeq s_j$): *coherent deformation*. Implies approximation under any compatible metric.
 - **approx** ($d(s_i, s_j) \le \varepsilon$): *within tolerance*. Implies statistical agreement under any reasonable model.
-- **stat** ($P(D_i, D_j \mid M)$ high): *probabilistic agreement*. Implies model-theoretic compatibility.
+- **stat** ($P(D_i, D_j \mid M)$ high): *probabilistic agreement*. Implies model-theoretic compatibility *where the statistical and model-theoretic descriptions pick out the same structures* — this is the weakest, most contested link of the chain, not an automatic consequence (see the caveat under "Never silently strengthen").
 - **model-theoretic** ($\exists M : M \models \mathcal{S}_{\text{all}}$): *common interpretation of the theories*.
 
 Concrete examples in each row:
@@ -821,7 +821,9 @@ $$
 \xrightarrow[\;{\scriptstyle O_{i+2}}\;]{\;}\;\cdots
 $$
 
-and analogously for the $T_i$. The global model becomes the element $G \in F(c)$ obtained as the limit over *all* views in $I$ (three, a thousand, or uncountably many) — formally the equalizer of the Čech nerve applied to the family $\{s_i\}_{i\in I} \subseteq \prod_i F(c_i)$. The three-view picture above is the smallest non-trivial case; the machinery scales to covers of any size.
+and analogously for the $T_i$. The global model is the limit object $G = \varprojlim F$ over *all* views in $I$ (three, a thousand, or uncountably many) — formally the equalizer of the Čech nerve applied to the family $\{s_i\}_{i\in I} \subseteq \prod_i F(c_i)$ — and the *selected global section* is the element $g \in G$, which under the sheaf identification $G \cong F(c)$ is just the compatible glue of the $s_i$. Keep the two distinct: $G$ is the object (the coherent whole the $T_i$ map into); $g \in G$ is the chosen section within it. The three-view picture above is the smallest non-trivial case; the machinery scales to covers of any size.
+
+**The limit is only as wide as the accessible region.** Read the diagram uncharitably and it looks like a circle: define $G$ as the coherent limit of the filters, then present that limit as "the world". That is the fallacy your honesty should pre-empt. $G$ is the limit of *these* $O_i$; if the sensory filters systematically exclude part of the reality (no infrared, no ultrasound, no nuclear decay we do not instrument), then $G$ is the consistent model of the *interface* — of $c_{\mathrm{acc}} \subseteq c$ — not of $c$, and still less of the subject matter $W$ behind the contexts. The limit inherits the blind spots of every arrow feeding it. Coherence puts the *accessible* local data in order; it cannot manufacture access that the cover never had. Every instrument added widens $I$ and so widens $c_{\mathrm{acc}}$; that is why measurement is *expansion of the cover*, and why no finite cover closes the gap to $W$. The chapter's one-sentence thesis (a world model is the global section recovered from local descent data) is therefore always, and should be read as, a model of the *accessed* aspect of the world — provisionally, revisably, and never the thing itself.
 
 Different mathematics, one shape:
 
@@ -874,8 +876,8 @@ Compressed into nine steps you can run through on any dataset, in any domain. Ea
 Given complicated evidence, in any domain:
 
 1. **Take the raw datum $D$.** What is actually in front of you?
-2. **Interpret it as $I(D)$.** What reading are you imposing?
-3. **Draw the chain $W \to D \to I$.** Where in the chain could disagreement enter?
+2. **Interpret it as $J(D)$.** What reading are you imposing?
+3. **Draw the chain $W \to D \to J$.** Where in the chain could disagreement enter?
 4. **Identify overlaps.** Where do independent channels meet?
 5. **Specify admissible transitions $T_{ij} \in \mathcal{T}$.** What licenses each comparison?
 6. **Decide which sameness.** $=$, $\cong$, $\simeq$, $\le \varepsilon$, statistical, model-theoretic; pick the right one and refuse to upgrade.
@@ -955,14 +957,15 @@ $$
 &\text{it does not flatten them.}
 \end{aligned}}
 $$
+\bigskip {*Which* regime?} The uniqueness of the global section is *relative to a sameness-regime*: in the strict regime views agree literally on overlaps; in the homotopical regime they agree only up to (coherently composable) equivalence; in the approximate/statistical regimes, up to a small residual. "Not flattening" means the views need not *coincide literally*; it does **not** mean the views may fail the agreed-upon regime of coherence. So: their reports need not match on the nose, but they must be coherent in whatever regime is licensed.
 
-Two observers, two instruments, two cultures, two centuries, two formal systems: their reports need not coincide to be about one subject. What is required is that the differences factor through admissible transitions.
+Two observers, two instruments, two cultures, two centuries, two formal systems: their reports need not coincide to be about one subject. What is required is that the differences factor through admissible transitions — and factor *within the licensed regime* (isomorphic, homotopic, approximate, or statistical, as the case warrants):
 
 $$
 \underbrace{\text{difference}}_{\text{many views}}\ +\ 
 \underbrace{\text{constrained }T}_{\text{justified maps}}\ +\ 
-\underbrace{\text{coherence}}_{\text{fits on overlaps}}\ \Longrightarrow\ 
-\underbrace{G}_{\text{global model}}.
+\underbrace{\text{coherence in the regime}}_{\text{fits on overlaps}}\ \Longrightarrow\ 
+\underbrace{g \in G}_{\text{global section in the limit}}.
 $$
 
 </div>
@@ -1001,6 +1004,7 @@ $$
 &\textbf{to the subject matter it represents.}
 \end{aligned}}
 $$
+\bigskip {*Not* the whole of the subject matter.} The cover spans the region $c_{\mathrm{acc}}$ that our access functions can actually reach — that is the honest scope of the limit. Every instrument widens the cover; none closes it; $W$ itself stays on the other side of the mediation (see "Coherent Difference"). A world model is therefore *a coherent model of the interface to the world, under extendable-by-measurement* — never the thing itself. The discipline's rule of thumb: when a model is at risk of passing itself off as the whole of $W$, ask which $O_i$ are in the cover and which instruments that would widen it are not; the model's honest range is exactly $c_{\mathrm{acc}}$.
 
 Everything else (perception, measurement, physics, mathematics, model theory, neural networks) is a choice of:
 
@@ -1010,7 +1014,7 @@ $$
 \underbrace{\mathcal{T}}_{\text{admissible transitions}}.
 $$
 
-And the safeguard, once more:
+And the safeguard, once more (its warrant — the distinction between coherence and correspondence — is developed in the very next section, "Truth: coherence and correspondence"):
 
 $$
 \boxed{
@@ -1095,7 +1099,7 @@ For this chapter: Tarski turns truth from a metaphysical mystery into an *interf
 $$
 \underbrace{T\in\mathcal{T}}_{\text{licensed transition (this chapter)}}
 \;\;\text{is tested by}\;\;\;
-\underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1935)}}
+\underbrace{\;S\text{ is true iff }p\;}_{\text{Tarski's Convention T (1933/1936)}}
 $$
 
 The whole correlation, as one square:
@@ -1132,10 +1136,10 @@ Bradley's claim is not, on the most charitable reading, that coherence is *suffi
 
 The Stanford Encyclopedia of Philosophy entry on coherence \citeauthor{walker2019coherence}\citeyear{walker2019coherence}\citetitle{walker2019coherence} traces the lineage further: H. H. Joachim's *The Nature of Truth*\citeauthor{joachim1906nature}\citeyear{joachim1906nature}\citetitle{joachim1906nature}; into twentieth-century epistemology (BonJour's *The Structure of Empirical Knowledge*\citeauthor{bonjour1985structure}\citeyear{bonjour1985structure}\citetitle{bonjour1985structure}); and into contemporary analytic philosophy where it appears in modified form under the labels *holism*, *structural realism*, and *coherentist epistemology*.
 
-What the coherence tradition gives us, in the language of this chapter, is **the sheaf condition**: a coherent model is one whose local sections agree on overlaps. Coherence is the structural heart of descent.
+What the coherence tradition gives us, in the language of this chapter, is **the sheaf condition**: a coherent model is one whose local sections agree on overlaps. A caveat, in the chapter's own spirit (see "The status of this chapter"): this is a *working definition* — a stipulation about how the chapter will use the word "coherence" — not a discovered identity between two pre-existing things. It is an upgrade the chapter *declares*, not one it silently assumes. With that caveat marked, coherence is, for this chapter, the structural heart of descent:
 
 $$
-\boxed{\;\text{coherence} = \text{descent on admissible covers}.\;}
+\boxed{\;\text{coherence} \;\stackrel{\text{def.}}{=}\; \text{descent on admissible covers}.\;}
 $$
 
 </div>
@@ -1243,6 +1247,8 @@ $$
 
 Failure: *correspondence* (the same as (1), not a new failure mode). The diagnosis is that $\mathcal{T}$ has been chosen wrongly — i.e., the licensing was too permissive and admitted procedures that did not actually constrain the data to track $W$. The "both" reading some readers will reach is shorthand for *both the licensing setup and the correspondence at contact points are broken*; the truth-condition failure is correspondence alone.
 
+> **Refinement.** The account above holds for the *pure* self-consistent fantasy — an internally perfect model that happens to be unconnected to $W$. For the *typical LLM*, the earlier "both" intuition is closer to the truth, and this pathology is refined by the AI section ("Hallucination, precisely"): there the hallucination is most accurately a *non-glueable presheaf* whose local sections disagree on overlaps, so that **coherence and correspondence fail together**. The present pathology-3 is that section's *rare* limiting case (fully coherent, merely ungrounded), not the usual one.
+
 All three, located on the one diagram:
 
 $$
@@ -1305,7 +1311,7 @@ If step 5 fails, the model is *false at that contact point*. If step 4 fails, th
 Two conditions, each necessary and jointly sufficient:
 
 1. *Coherence*: a model is true only insofar as its parts hang together (the sheaf condition, descent on every admissible cover). Bradley, Blanshard, BonJour, in their different vocabularies.
-2. *Correspondence*: a model is true only insofar as its claims track the world (Tarski's Convention T, the if-and-only-if at every licensed contact point). Tarski, 1935.
+2. *Correspondence*: a model is true only insofar as its claims track the world (Tarski's Convention T, the if-and-only-if at every licensed contact point). Tarski, 1933/1936.
 
 And one discipline that lives with both: *recording the gaps*. A model is true *only insofar as*. The discipline of recording residuals, of refusing to identify $G$ with $W$, of noting when the contact points are imperfect. This is not a third condition; it is the standing acknowledgement that the conjunction above is provisional, that residual mismatches must be visible, and that "without remainder" describes the *aim* of the audit (every admissible contact tested) rather than a guarantee that the audit is complete.
 
@@ -1489,7 +1495,7 @@ transitions, and the cover must be specified in advance.
 The chapter's nine-step procedure, applied to a deployed LLM answering a user query:
 
 1. **Take the raw datum $D$.** What is the model's input? The prompt, the context window, the system message, the available tools, the temperature, the sampling parameters.
-2. **Interpret it as $I(D)$.** What reading is the model imposing? What is its parsing of the instruction, the format, the implicit task? The system prompt and the few-shot examples are part of $I(D)$.
+2. **Interpret it as $J(D)$.** What reading is the model imposing? What is its parsing of the instruction, the format, the implicit task? The system prompt and the few-shot examples are part of $J(D)$.
 3. **Draw the chain $W \to \text{corpus} \to \text{parameters} \to \text{prompt} \to \text{output}$.** Where in the chain could disagreement enter? Each arrow is a place things can go wrong.
 4. **Identify overlaps.** Where do independent channels meet? In an LLM, overlaps include: multiple documents in the corpus that mention the same fact, multiple reasoning paths in chain-of-thought, multiple sampled continuations in self-consistency, multiple tools that could verify the same claim, multiple human raters who could rate the same output.
 5. **Specify admissible transitions $T_{ij} \in \mathcal{T}$.** What licences each comparison? Tokenisation? Attention? Retrieval? Tool call? Calibration of an external sensor? Each needs to be named and audited.
