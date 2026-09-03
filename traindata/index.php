@@ -33,9 +33,12 @@ $examples = array_key_exists("examples", $_GET);
 
 $max_number_of_files_per_category = 0;
 if(array_key_exists("max_number_of_files_per_category", $_GET)) {
-	$max_number_of_files_per_category = $_GET['max_number_of_files_per_category'];
-	if(is_numeric($max_number_of_files_per_category)) {
-		$max_number_of_files_per_category = (int)$max_number_of_files_per_category;
+	$val = $_GET['max_number_of_files_per_category'];
+	if($val !== "" && $val !== null && is_numeric($val)) {
+		$max_number_of_files_per_category = (int)$val;
+	} else {
+		// empty (or invalid) value means: use the whole dataset
+		$max_number_of_files_per_category = 0;
 	}
 }
 

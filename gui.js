@@ -3155,6 +3155,12 @@ function set_adam_lr (lr) {
 }
 
 function set_imgcat (new_nr) {
+	// allow empty value: empty = 0 = use the whole dataset
+	if (new_nr === "" || new_nr === null || new_nr === undefined) {
+		$("#max_number_of_files_per_category").val("").trigger("change");
+		return;
+	}
+
 	if(!looks_like_number(new_nr)) {
 		err(`set_imgcat: ${new_nr} is does not look like a number`);
 		return;
@@ -3169,7 +3175,10 @@ function set_imgcat (new_nr) {
 }
 
 function get_imgcat () {
-	return $("#max_number_of_files_per_category").val();
+	var v = $("#max_number_of_files_per_category").val();
+	if (v === "" || v === null || v === undefined) return 0;
+	var n = Number(v);
+	return Number.isNaN(n) ? 0 : n;
 }
 
 async function set_data_origin_and_wait(val) {

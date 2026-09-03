@@ -394,7 +394,7 @@
 					<div class="mobile-panel-row hide_when_custom_data">
 						<span class="mobile-panel-label"><span class="TRANSLATEME_img_per_cat"></span></span>
 						<div class="mobile-panel-control">
-							<input type="number" id="mobile_max_number_of_files_per_category" value="100" min="0" step="5" onchange="$('#max_number_of_files_per_category').val(this.value).trigger('change');">
+							<input type="number" id="mobile_max_number_of_files_per_category" value="100" min="0" step="5" class="no_red_bg_when_empty" onchange="$('#max_number_of_files_per_category').val(this.value).trigger('change');">
 						</div>
 					</div>
 					<div class="mobile-panel-row expert_mode_only">

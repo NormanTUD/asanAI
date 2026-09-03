@@ -133,7 +133,7 @@
 						</tr>
 						<tr id="max_number_of_files_per_category_tr" class="hide_when_custom_data" style="display: none">
 							<td><span class="TRANSLATEME_img_per_cat"></span></td>
-							<td><input type="number" step=5 min="0" value="100" id="max_number_of_files_per_category" style="width: 40px"></td>
+							<td><input type="number" step=5 min="0" value="100" id="max_number_of_files_per_category" class="no_red_bg_when_empty" style="width: 40px"></td>
 						</tr>
 						<tr class="expert_mode_only">
 							<td><span class="TRANSLATEME_augment"></span>?</td>
