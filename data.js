@@ -2678,14 +2678,14 @@ async function confusion_matrix_to_page () {
 	var str = "";
 
 	if(has_split) {
-		str += "<h2>Confusion Matrix - All Data (" + train_val_split_info.total + "):</h2>\n";
+		str += "<h2>" + sprintf(language[lang]["confusion_matrix_all_data"], train_val_split_info.total) + "</h2>\n";
 		str += get_confusion_matrix_table(tables.all);
-		str += "\n<h2>Confusion Matrix - Training Data (" + train_val_split_info.train_count + "):</h2>\n";
+		str += "\n<h2>" + sprintf(language[lang]["confusion_matrix_training_data"], train_val_split_info.train_count) + "</h2>\n";
 		str += get_confusion_matrix_table(tables.train);
-		str += "\n<h2>Confusion Matrix - Validation Data (" + train_val_split_info.val_count + "):</h2>\n";
+		str += "\n<h2>" + sprintf(language[lang]["confusion_matrix_validation_data"], train_val_split_info.val_count) + "</h2>\n";
 		str += get_confusion_matrix_table(tables.val);
 	} else {
-		str += "<h2>Confusion Matrix:</h2>\n";
+		str += "<h2>" + language[lang]["confusion_matrix"] + "</h2>\n";
 		str += get_confusion_matrix_table(tables.all);
 	}
 

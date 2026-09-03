@@ -169,6 +169,14 @@ async function update_translations(force=0) {
 		}
 	});
 
+	if (typeof confusion_matrix_to_page === "function") {
+		try {
+			await confusion_matrix_to_page();
+		} catch (e) {
+			dbg("[translations] confusion_matrix_to_page on language change failed: " + e);
+		}
+	}
+
 	if (typeof show_visual_explanations === 'function') {
 		await show_visual_explanations(wd);
 	}

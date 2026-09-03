@@ -9,6 +9,9 @@ var _grid_resize_timeout = null;
 var _grid_image_hit_regions = [];
 var _grid_tooltip = null;
 var _grid_tooltip_last_region_index = -1;
+var _grid_pointer_client_x = null;
+var _grid_pointer_client_y = null;
+var _grid_pointer_over_grid = false;
 
 function save_multi_run_weights(run) {
 	if (!model) return;
@@ -2799,6 +2802,8 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 
 	_setup_grid_tooltip(canvas);
 
+	_grid_restore_tooltip_after_redraw(canvas);
+
 	try {
 		_last_grid_canvas_data_url = canvas.toDataURL("image/png");
 	} catch (e) {
@@ -2853,39 +2858,16 @@ function _setup_grid_tooltip(canvas) {
 	canvas.style.cursor = "crosshair";
 
 	canvas.addEventListener("mousemove", function(e) {
-		var rect = canvas.getBoundingClientRect();
-		var scaleX = canvas.width / (rect.width || 1);
-		var scaleY = canvas.height / (rect.height || 1);
-		var mx = (e.clientX - rect.left) * scaleX;
-		var my = (e.clientY - rect.top) * scaleY;
-
-		var region = null;
-		var region_index = -1;
-		for (var i = _grid_image_hit_regions.length - 1; i >= 0; i--) {
-			var r = _grid_image_hit_regions[i];
-			if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
-				region = r;
-				region_index = i;
-				break;
-			}
-		}
-
-		if (!region) {
-			tooltip.style.display = "none";
-			_grid_tooltip_last_region_index = -1;
-			return;
-		}
-
-		if (region_index !== _grid_tooltip_last_region_index) {
-			_render_grid_tooltip(tooltip, region);
-			_grid_tooltip_last_region_index = region_index;
-		}
-
-		tooltip.style.display = "block";
-		_position_grid_tooltip(tooltip, e.clientX, e.clientY);
+		_grid_pointer_client_x = e.clientX;
+		_grid_pointer_client_y = e.clientY;
+		_grid_pointer_over_grid = true;
+		_grid_refresh_grid_tooltip(canvas, e.clientX, e.clientY);
 	});
 
 	canvas.addEventListener("mouseleave", function() {
+		_grid_pointer_over_grid = false;
+		_grid_pointer_client_x = null;
+		_grid_pointer_client_y = null;
 		tooltip.style.display = "none";
 		_grid_tooltip_last_region_index = -1;
 	});
@@ -2894,6 +2876,50 @@ function _setup_grid_tooltip(canvas) {
 		tooltip.style.display = "none";
 		_grid_tooltip_last_region_index = -1;
 	});
+}
+
+function _grid_refresh_grid_tooltip(canvas, clientX, clientY) {
+	var tooltip = _get_grid_tooltip_element();
+	var rect = canvas.getBoundingClientRect();
+	if (rect.width === 0 || rect.height === 0) return;
+	var scaleX = canvas.width / (rect.width || 1);
+	var scaleY = canvas.height / (rect.height || 1);
+	var mx = (clientX - rect.left) * scaleX;
+	var my = (clientY - rect.top) * scaleY;
+
+	var region = null;
+	var region_index = -1;
+	for (var i = _grid_image_hit_regions.length - 1; i >= 0; i--) {
+		var r = _grid_image_hit_regions[i];
+		if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
+			region = r;
+			region_index = i;
+			break;
+		}
+	}
+
+	if (!region) {
+		tooltip.style.display = "none";
+		_grid_tooltip_last_region_index = -1;
+		return;
+	}
+
+	if (region_index !== _grid_tooltip_last_region_index) {
+		_render_grid_tooltip(tooltip, region);
+		_grid_tooltip_last_region_index = region_index;
+	}
+
+	tooltip.style.display = "block";
+	_position_grid_tooltip(tooltip, clientX, clientY);
+}
+
+function _grid_restore_tooltip_after_redraw(canvas) {
+	if (!_grid_pointer_over_grid || _grid_pointer_client_x === null || _grid_pointer_client_y === null) return;
+	if (typeof requestAnimationFrame !== "undefined") {
+		requestAnimationFrame(function() {
+			_grid_refresh_grid_tooltip(canvas, _grid_pointer_client_x, _grid_pointer_client_y);
+		});
+	}
 }
 
 function _position_grid_tooltip(tooltip, clientX, clientY) {
