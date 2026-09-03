@@ -419,7 +419,11 @@ This is why the sheaf condition is not a constraint *on* the data but a constrai
 
 You see the flash. Three seconds later you hear the crack. At the instant of observation, the visual section says "bright event, here, now" and the auditory section says "loud event, here, three seconds later." On the overlap — the shared physical event, the strike — the times disagree. As a plain sheaf this is a failure: the local data is incompatible.
 
-But there is a transformation that reconciles them. Call it the **equalizer** $\phi$: shift the visual timestamp forward by $d/v_{\text{sound}}$, or equivalently shift the auditory timestamp backward. $\phi$ and its inverse $\phi^{-1}$ are your $f$ and $g$. They form an *isomorphism* between the two restricted sections on the overlap: the visual reading and the auditory reading are not equal, but they are *isomorphic* — related by an invertible map. (A *homomorphism* would be a structure-preserving map that need not be invertible; the time shift is invertible — you can undo it — so it is an isomorphism.)
+But there is a transformation that reconciles them. Call it the **equalizer** $\phi$: shift the visual timestamp forward by the delay between the flash and the crack,
+
+$$\underbrace{d \,/\, v_{\text{sound}}}_{\substack{\text{distance to strike} \\ / \text{ speed of sound} \\ = \text{delay (seconds)}}}$$
+
+or equivalently shift the auditory timestamp backward. $\phi$ and its inverse $\phi^{-1}$ are your $f$ and $g$. They form an *isomorphism* between the two restricted sections on the overlap: the visual reading and the auditory reading are not equal, but they are *isomorphic* — related by an invertible map. (A *homomorphism* would be a structure-preserving map that need not be invertible; the time shift is invertible — you can undo it — so it is an isomorphism.)
 
 A **groupoid** is a category in which every morphism is an isomorphism: all arrows are invertible. Think of it as a network of objects connected by reversible transformations, rather than one-directional functions. A presheaf whose values are groupoids (objects = readings, morphisms = equalizers like $\phi$), whose local data glues up to isomorphism, with the isomorphisms coherent on triple overlaps, is a **stack** (the 1-truncation of an $\infty$-sheaf). The global section is not a single object but an *equivalence class* — the set of all readings connected by the equalizer, collapsed into one: the lightning strike, seen and heard as one event once you account for the finite speed of sound. Add a third modality — the seismic tremor, arriving yet later — and the equalizers must satisfy a coherence condition on the triple overlap: going visual $\to$ auditory $\to$ seismic must equal going visual $\to$ seismic directly. That triangle closing is the stack's higher coherence.
 
@@ -427,9 +431,35 @@ The stack is what lets you say "I saw the flash and heard the thunder from the *
 
 **Now strip away the sensing entirely — this is where sheaf theory was born.**
 
-Let $X$ be a smooth manifold. The **sheaf of smooth functions** $\mathcal{C}^\infty_X$ assigns to each open $U \subseteq X$ the set $C^\infty(U)$ of smooth real-valued functions on $U$. Restriction is literal domain restriction: $f|_V(x) = f(x)$. The sheaf condition — the *gluing lemma* — says: if $f_i \in C^\infty(U_i)$ agree on all overlaps, they paste to a unique $f \in C^\infty(\bigcup_i U_i)$. This is a theorem of analysis, not a measurement. And it is the reason a manifold is a *global* object built from *local* coordinate charts: the charts are the open sets, the transition maps are the compatibility data, and $\mathcal{C}^\infty_X$ is what makes "smooth" a well-defined global notion. Every vector field, every differential form, every section of every vector bundle is a section of some sheaf.
+Let $X$ be a **smooth manifold** — a space that locally looks like flat Euclidean space $\mathbb{R}^n$ (the surface of the Earth looks flat to an ant standing on it), with the extra condition that where two local coordinate patches overlap, the change of coordinates between them is itself a smooth function. A **smooth function** on $X$ is one you can differentiate as many times as you like — no corners, no kinks, at any order of derivation.
 
-And the sheaf condition has teeth. On $X = \mathbb{C} \setminus \{0\}$, a holomorphic branch of $\log z$ exists on every simply-connected open set. The branches are compatible on overlaps (they differ by an element of $2\pi i\mathbb{Z}$). But no global holomorphic $\log$ exists on all of $X$: going once around $0$ shifts the branch by $2\pi i$. The local data is coherent *up to an integer*, and that integer is the first Čech cohomology class in $H^1(X, 2\pi i\mathbb{Z}) \cong \mathbb{Z}$. The failure to glue is not a defect — it is the winding number.
+The **sheaf of smooth functions** $\mathcal{C}^\infty_X$ assigns to each open region $U \subseteq X$ the set of all smooth real-valued functions on that region:
+
+$$\underbrace{C^\infty(U)}_{\text{all smooth real-valued functions on } U}$$
+
+*Restriction* means: take a smooth function $f$ defined on a big region $U$, and "read it only on" a smaller region $V \subseteq U$. The result, written $f|_V$, is the same function with a smaller domain — it doesn't change any values, it just forbids you from evaluating outside $V$:
+
+$$\underbrace{f|_V(x) = f(x)}_{\substack{\text{the restricted function has the same values as } f,} \\ \text{it is just not defined outside } V} \qquad \text{for all } x \in V$$
+
+The sheaf condition — the *gluing lemma* — says: if you have smooth functions on overlapping patches that agree where the patches overlap, they paste together to a unique smooth function on the whole union:
+
+$$\underbrace{f_i \in C^\infty(U_i), \quad f_i\big|_{U_i \cap U_j} = f_j\big|_{U_i \cap U_j} \;\; \forall\, i,j}}_{\substack{\text{smooth functions on overlapping patches,} \\ \text{agreeing on every overlap}}} \quad\Longrightarrow\quad \underbrace{\exists!\; f \in C^\infty\!\bigl(\textstyle\bigcup_i U_i\bigr) \;\text{ with } \; f|_{U_i} = f_i \;\; \forall\, i}}_{\substack{\text{a unique smooth function on the whole union,} \\ \text{restricting to each } f_i}}$$
+
+This is a theorem of analysis, not a measurement. And it is the reason a manifold is a *global* object built from *local* coordinate charts: the charts are the open sets, the transition maps are the compatibility data, and $\mathcal{C}^\infty_X$ is what makes "smooth" a well-defined global notion. Every vector field, every differential form, every section of every vector bundle is a section of some sheaf.
+
+And the sheaf condition has teeth. Take the complex plane with the origin removed:
+
+$$\underbrace{X = \mathbb{C} \setminus \{0\}}_{\text{the complex plane with the origin punched out}}$$
+
+A holomorphic branch of $\log z$ exists on every simply-connected open set of $X$. The branches are compatible on overlaps — they differ only by an integer multiple of $2\pi i$:
+
+$$\underbrace{\log_{\text{branch 1}}(z) - \log_{\text{branch 2}}(z) \in 2\pi i\,\mathbb{Z}}_{\substack{\text{any two local branches differ by} \\ \text{an integer multiple of } 2\pi i}}$$
+
+But no global holomorphic $\log$ exists on all of $X$: going once around $0$ shifts the branch by $2\pi i$. The local data is coherent *up to an integer*, and that integer — the number of times your loop winds around the origin — is the first Čech cohomology class:
+
+$$[\log] \;\in\; H^1\bigl(X,\; 2\pi i\mathbb{Z}\bigr) \;\cong\; \mathbb{Z}$$
+
+The failure to glue is not a defect — it is the **winding number**: how many times a closed loop around $0$ wraps around the origin. Go once, the branches disagree by $2\pi i$. Go twice, by $4\pi i$. The sheaf condition detects exactly this topological feature of the space.
 </div>
 
 <div class="optional md" data-headline="Heraclitus on the same point, twenty-five centuries earlier">
