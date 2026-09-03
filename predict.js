@@ -69,6 +69,10 @@ async function get_model_predict (data, __model = model, recursion = 0) {
 
 		renderLayerIOStats("health_status");
 
+		if (typeof CNN3D !== "undefined" && $("#cnn3d").length) {
+			CNN3D.render("cnn3d");
+		}
+
 		return res;
 	} catch (e) {
 		var ret = await handle_predict_internal_errors(e, data, __model, recursion);
