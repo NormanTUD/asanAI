@@ -1398,7 +1398,7 @@ $$
 \begin{array}{ccc}
 \underbrace{R_{1,1}\ \; R_{1,2}\ \; R_{1,3}}_{\text{3 documents}} & \qquad \underbrace{R_{2,1}\ \; R_{2,2}\ \; R_{2,3}}_{\text{3 documents}} & \qquad \underbrace{R_{3,1}\ \; R_{3,2}\ \; R_{3,3}}_{\text{3 documents}}
 \end{array}\\[4mm]
-\Big\Downarrow\ \ {\scriptstyle\text{fit / train: merge all nine into one}}\ \ \Big\Downarrow\\[3mm]
+\searrow \quad \text{fit / train: merge all nine into one} \quad \swarrow\\
 \underbrace{\;G\;}_{\text{the AI world-model}}
 \end{array}
 $$
