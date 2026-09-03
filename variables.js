@@ -185,6 +185,7 @@ var y_file = null;
 var y_shape = null;
 
 var xy_data_global = null;
+var train_val_split_info = null;
 
 var js_names_to_python_names = {
 	"dtype": `dtype`,
@@ -1612,6 +1613,7 @@ var last_status_hash_text_prediction = "";
 
 var csv_global_x = null;
 var csv_global_y = null;
+var csv_original_indices = [];
 
 var global_x = null;
 var global_y = null;

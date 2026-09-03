@@ -1555,6 +1555,80 @@ function warn_if_not_tensors(x, y) {
 	warn_if_not_tensor(y, "y");
 }
 
+function get_val_split_fraction() {
+	var val = parse_int($("#validationSplit").val());
+	if (isNaN(val) || val <= 0 || val >= 100) {
+		return 0;
+	}
+	return val / 100;
+}
+
+function build_train_val_split_info(x_and_y, validation_split) {
+	var total = 0;
+	if (x_and_y && x_and_y["x"]) {
+		total = x_and_y["x"].shape && x_and_y["x"].shape[0] ? x_and_y["x"].shape[0] : 0;
+	}
+	if (!total) {
+		train_val_split_info = { total: 0, train_indices: [], val_indices: [] };
+		return train_val_split_info;
+	}
+
+	var val_count = Math.floor(total * validation_split);
+	if (val_count >= total) {
+		val_count = 0;
+	}
+	var train_count = total - val_count;
+	if (train_count <= 0) {
+		val_count = 0;
+		train_count = total;
+	}
+
+	var original_indices = x_and_y["original_indices"] || Array.from({length: total}, (_, i) => i);
+
+	train_val_split_info = {
+		total: total,
+		train_count: train_count,
+		val_count: val_count,
+		train_indices: original_indices.slice(0, train_count),
+		val_indices: original_indices.slice(train_count)
+	};
+
+	return train_val_split_info;
+}
+
+function apply_train_val_split(x_and_y, validation_split) {
+	var split_info = build_train_val_split_info(x_and_y, validation_split);
+	var val_count = split_info.val_count;
+	var total = split_info.total;
+
+	let x = x_and_y["x"];
+	let y = x_and_y["y"];
+
+	if (is_tensor(x)) { x = [x, null]; } else {
+		var xArr = Array.isArray(x) ? x : array_sync(x);
+		x = [tensor(xArr), null];
+	}
+	if (is_tensor(y)) { y = [y, null]; } else {
+		var yArr = Array.isArray(y) ? y : array_sync(y);
+		y = [tensor(yArr), null];
+	}
+
+	var train_x, train_y, val_x, val_y;
+	if (val_count > 0) {
+		train_x = x[0].slice([0], [total - val_count]);
+		val_x = x[0].slice([total - val_count], [val_count]);
+		train_y = y[0].slice([0], [total - val_count]);
+		val_y = y[0].slice([total - val_count], [val_count]);
+	} else {
+		train_x = x[0];
+		val_x = null;
+		train_y = y[0];
+		val_y = null;
+	}
+
+	return { train_x, train_y, val_x, val_y, split_info };
+}
+
 async function fit_model(x_and_y) {
 	try {
 		const fit_data = await _get_fit_data(x_and_y);
@@ -1592,6 +1666,29 @@ async function fit_model(x_and_y) {
 
 		await wait_for_updated_page(2);
 
+		// Compute our own train/val split so the confusion matrix can
+		// report the real (non-approximate) train and val distributions.
+		var validation_split_fraction = get_val_split_fraction();
+		var split_result = null;
+		if (validation_split_fraction > 0) {
+			split_result = apply_train_val_split({ "x": x, "y": y, "original_indices": x_and_y["original_indices"] }, validation_split_fraction);
+			x = split_result.train_x;
+			y = split_result.train_y;
+			if (split_result.val_x && split_result.val_y) {
+				fit_data.validationData = [split_result.val_x, split_result.val_y];
+			}
+			fit_data.validationSplit = 0;
+			l(`[fit_model] Split data into ${split_result.split_info.train_count} train and ${split_result.split_info.val_count} validation samples`);
+		} else {
+			train_val_split_info = {
+				total: x_shape[0],
+				train_count: x_shape[0],
+				val_count: 0,
+				train_indices: (x_and_y["original_indices"] || Array.from({length: x_shape[0]}, (_, i) => i)).slice(0, x_shape[0]),
+				val_indices: []
+			};
+		}
+
 		let h;
 		try {
 			h = await model.fit(x, y, fit_data);
@@ -1609,6 +1706,13 @@ async function fit_model(x_and_y) {
 			} else {
 				throw fitErr;
 			}
+		}
+
+		if (split_result) {
+			await dispose(split_result.train_x);
+			await dispose(split_result.train_y);
+			if (split_result.val_x) { await dispose(split_result.val_x); }
+			if (split_result.val_y) { await dispose(split_result.val_y); }
 		}
 
 		await nextFrame();
@@ -2150,7 +2254,28 @@ async function _multi_train_single_run(run, num_runs, x_and_y, epochs, batchSize
 
 	remove_overlay();
 
-	const h = await model.fit(x_and_y.x, x_and_y.y, fit_data);
+	var fit_x = x_and_y.x;
+	var fit_y = x_and_y.y;
+	var split_result = null;
+	if (validationSplit > 0 && run === num_runs) {
+		split_result = apply_train_val_split(x_and_y, validationSplit);
+		fit_x = split_result.train_x;
+		fit_y = split_result.train_y;
+		if (split_result.val_x && split_result.val_y) {
+			fit_data.validationData = [split_result.val_x, split_result.val_y];
+		}
+		fit_data.validationSplit = 0;
+		l("[multi-train] run " + run + ": split data into " + split_result.split_info.train_count + " train and " + split_result.split_info.val_count + " validation samples");
+	}
+
+	const h = await model.fit(fit_x, fit_y, fit_data);
+
+	if (split_result) {
+		await dispose(split_result.train_x);
+		await dispose(split_result.train_y);
+		if (split_result.val_x) { await dispose(split_result.val_x); }
+		if (split_result.val_y) { await dispose(split_result.val_y); }
+	}
 
 	l("[multi-train] run " + run + ": model.fit completed, final loss=" + (h.history.loss ? h.history.loss[h.history.loss.length - 1] : "N/A"));
 	assert(typeof h === "object", "history object is not of type object");

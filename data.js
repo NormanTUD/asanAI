@@ -700,6 +700,9 @@ function get_max_number_values () {
 }
 
 function load_own_images_for_classification(keys, x, y, category_counter, divide_by) {
+	var original_indices = [];
+	var dom_image_counter = 0;
+
 	for (var label_nr = 0; label_nr < category_counter; label_nr++) {
 		var own_images_from_label_nr = $(".own_images")[label_nr];
 		var image_elements = $(own_images_from_label_nr).children().find("img,canvas");
@@ -728,8 +731,16 @@ function load_own_images_for_classification(keys, x, y, category_counter, divide
 
 				x.push(this_img);
 				y.push(label_nr);
+				original_indices.push(dom_image_counter);
 
+				var x_len_before_augment = x.length;
 				[x, y] = augment_custom_image_data(resized_image, label_nr, divide_by, x, y);
+				var num_augmented = x.length - x_len_before_augment;
+				for (var aug_i = 0; aug_i < num_augmented; aug_i++) {
+					original_indices.push(dom_image_counter);
+				}
+
+				dom_image_counter++;
 			}
 		}
 	}
@@ -741,7 +752,7 @@ function load_own_images_for_classification(keys, x, y, category_counter, divide
 	x = tensor(x);
 	y = tensor(y);
 
-	return [x, y, keys];
+	return [x, y, keys, original_indices];
 }
 
 function check_x_y_in_xy_data(xy_data) {
@@ -1060,31 +1071,58 @@ async function get_default_data() {
 
 	var xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
 
+	if (x && !x.isDisposed && typeof x.shape !== "undefined") {
+		xy_data["original_indices"] = Array.from({length: x.shape[0]}, (_, i) => i);
+	}
+
 	return xy_data;
 }
 
 function generate_data_from_images(is_classification, divide_by) {
 	var x = [], y = [], keys = [];
+	var original_indices = [];
 
 	l(language[lang]["generating_data_from_images"]);
 
 	const category_counter = $(".own_image_label").length;
 
 	if(is_classification) {
-		[x, y, keys] = load_own_images_for_classification(keys, x, y, category_counter, divide_by);
+		[x, y, keys, original_indices] = load_own_images_for_classification(keys, x, y, category_counter, divide_by);
 	} else {
 		[x, y, keys] = get_x_and_y_from_maps(category_counter, keys, x, y, divide_by);
+		for (var i = 0; i < x.length; i++) {
+			original_indices.push(i);
+		}
 	}
 
 	if(shuffle_data_is_checked()) {
-		shuffleCombo(x, y);
+		if (original_indices.length === x.length) {
+			_shuffle_with_indices(x, y, original_indices);
+		} else {
+			shuffleCombo(x, y);
+		}
 	}
 
 	l(language[lang]["done_generating_data_from_images"]);
 
-	var xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter};
+	var xy_data = {"x": x, "y": y, "keys": keys, "number_of_categories": category_counter, "original_indices": original_indices};
 
 	return xy_data;
+}
+
+function _shuffle_with_indices(x, y, indices) {
+	var n = x.length;
+	var swap = function(arr, a, b) {
+		var t = arr[a]; arr[a] = arr[b]; arr[b] = t;
+	};
+	var counter = n;
+	while (counter > 0) {
+		var index = Math.random() * counter | 0;
+		counter--;
+		swap(x, counter, index);
+		swap(y, counter, index);
+		swap(indices, counter, index);
+	}
 }
 
 function get_x_and_y_from_maps (category_counter, keys, x, y, divide_by) {
@@ -1353,7 +1391,8 @@ function get_xy_data_from_tensordata() {
 	const x = numpy_str_to_tf_tensor(x_file);
 	const y = numpy_str_to_tf_tensor(y_file);
 
-	const xy_data = {"x": x, "y": y};
+	const n = (x && !x.isDisposed && x.shape && x.shape[0]) ? x.shape[0] : 0;
+	const xy_data = {"x": x, "y": y, "original_indices": Array.from({length: n}, (_, i) => i)};
 
 	return xy_data;
 }
@@ -2319,7 +2358,15 @@ async function get_x_y_from_csv () {
 	}
 
 	if(shuffle_data_is_checked()) {
-		shuffleCombo(x_data["data"], y_data["data"]);
+		if (x_data["data"] && x_data["data"].length) {
+			var csv_idx = Array.from({length: x_data["data"].length}, (_, i) => i);
+			_shuffle_with_indices(x_data["data"], y_data["data"], csv_idx);
+			csv_original_indices = csv_idx;
+		} else {
+			shuffleCombo(x_data["data"], y_data["data"]);
+		}
+	} else {
+		csv_original_indices = x_data["data"] ? Array.from({length: x_data["data"].length}, (_, i) => i) : [];
 	}
 
 	if(auto_one_hot_is_checked()) {
@@ -2376,7 +2423,8 @@ async function get_x_y_from_csv () {
 		"keys": y_headers,
 		"number_of_categories": y_headers.length,
 		"y_between_0_and_1": y_between_0_and_1,
-		"is_one_hot_encoded": is_one_hot_encoded
+		"is_one_hot_encoded": is_one_hot_encoded,
+		"original_indices": csv_original_indices
 	};
 }
 
@@ -2454,7 +2502,7 @@ async function get_own_tensor (element) {
 	return [tensor_array, latex];
 }
 
-async function confusion_matrix() {
+function confusion_matrix() {
 	if(!labels.length) {
 		if(current_epoch < 2) {
 			dbg(`[confusion_matrix] ${language[lang]["no_y"]}`);
@@ -2471,158 +2519,101 @@ async function confusion_matrix() {
 		wrn("[confusion_matrix] model not defined. Cannot continue");
 	}
 
-	if(get_data_origin() != "default") {
-		dbg("Confusion matrix does not yet work for custom data");
-		return;
-	}
-
-	var imgs = $("#photos, #own_images_container").find("img,canvas");
-
-	if(!imgs.length) {
-		if(current_epoch == 1) {
-			wrn("[confusion_matrix] No images found");
-		}
+	if(!xy_data_global || !xy_data_global["x"] || xy_data_global["x"].isDisposed) {
+		dbg("[confusion_matrix] xy_data_global not available");
 		return "";
 	}
 
-	const table_data = await get_table_data_from_images(imgs);
-
-	if(table_data === "") {
+	if(!xy_data_global["y"] || xy_data_global["y"].isDisposed) {
+		dbg("[confusion_matrix] xy_data_global.y not available");
 		return "";
 	}
 
-	return get_confusion_matrix_table(table_data);
+	return true;
 }
 
-async function handle_get_confusion_matrix_table_from_images_error(e, img_tensor, predicted_tensor) {
-	if(Object.keys(e).includes("message")) {
-		e = e.message;
-	}
+async function compute_confusion_table_data() {
+	var x_tensor = xy_data_global["x"];
+	var y_tensor = xy_data_global["y"];
+	var original_indices = xy_data_global["original_indices"] || Array.from({length: x_tensor.shape[0]}, (_, i) => i);
 
-	dbg(language[lang]["cannot_predict_image"] + ": " + e);
-
-	await dispose(img_tensor);
-	await dispose(predicted_tensor);
-}
-
-async function get_table_data_from_images(imgs) {
-	var table_data = {};
-	var all_predictions = {};
-
-	var uncached_indices = [];
-	var uncached_tensors = [];
-
-	for (var img_idx = 0; img_idx < imgs.length; img_idx++) {
-		var image_element = imgs[img_idx];
-		var image_element_xpath = get_element_xpath(image_element);
-
-		if(confusion_matrix_and_grid_cache[image_element_xpath]) {
-			all_predictions[image_element_xpath] = confusion_matrix_and_grid_cache[image_element_xpath];
-			continue;
-		}
-
-		var img_tensor = tidy(() => {
-			try {
-				var res = cached_load_resized_image(image_element);
-				return res;
-			} catch (e) {
-				err(e);
-				return null;
-			}
+	var predictions;
+	try {
+		predictions = tidy(() => {
+			var pd = model.predict(x_tensor);
+			var res = array_sync(pd);
+			dispose(pd);
+			return res;
 		});
-
-		if(img_tensor === null) {
-			wrn("[confusion_matrix] Could not load image from pixels from this element:", image_element);
-			await dispose(img_tensor);
-			continue;
-		}
-
-		uncached_indices.push(img_idx);
-		uncached_tensors.push(img_tensor);
+	} catch (e) {
+		dbg("[confusion_matrix] model.predict failed: " + e);
+		return { all: "", train: "", val: "" };
 	}
 
-	if(uncached_tensors.length > 0) {
-		var batch_tensor = null;
+	var true_labels = _y_tensor_to_labels(y_tensor);
+	var pred_labels = predictions.map(function(row) {
+		var max_idx = 0;
+		for (var j = 1; j < row.length; j++) {
+			if (row[j] > row[max_idx]) max_idx = j;
+		}
+		return labels[max_idx] || ("" + max_idx);
+	});
 
-		try {
-			batch_tensor = tidy(() => {
-				return tf.concat(uncached_tensors, 0);
-			});
+	var total = true_labels.length;
+	var all_table = {};
+	var train_table = {};
+	var val_table = {};
 
-			var batch_predictions = tidy(() => {
-				const pd = model.predict(batch_tensor);
-				var _res = array_sync(pd);
-				dispose(pd);
-				return _res;
-			});
+	var train_set = new Set(train_val_split_info ? train_val_split_info.train_indices : []);
+	var val_set = new Set(train_val_split_info ? train_val_split_info.val_indices : []);
 
-			for(var i = 0; i < uncached_indices.length; i++) {
-				var idx = uncached_indices[i];
-				var el = imgs[idx];
-				var xpath = get_element_xpath(el);
-				confusion_matrix_and_grid_cache[xpath] = batch_predictions[i];
-				all_predictions[xpath] = batch_predictions[i];
+	for (var i = 0; i < total; i++) {
+		var correct = true_labels[i];
+		var predicted = pred_labels[i];
+		var orig = original_indices[i];
+
+		_add_to_table(all_table, correct, predicted);
+
+		if (train_set.size > 0) {
+			if (train_set.has(orig)) {
+				_add_to_table(train_table, correct, predicted);
 			}
-		} catch (e) {
-			await handle_get_confusion_matrix_table_from_images_error(e, batch_tensor, null);
-		}
-
-		await dispose(batch_tensor);
-
-		for(var i = 0; i < uncached_tensors.length; i++) {
-			await dispose(uncached_tensors[i]);
+			if (val_set.has(orig)) {
+				_add_to_table(val_table, correct, predicted);
+			}
 		}
 	}
 
-	return _collect_confusion_table_data(imgs, all_predictions, table_data);
+	return {
+		all: all_table,
+		train: train_table,
+		val: val_table
+	};
 }
 
-function _collect_confusion_table_data(imgs, all_predictions, table_data) {
-	var num_items = 0;
-
-	for(var img_idx = 0; img_idx < imgs.length; img_idx++) {
-		var image_element = imgs[img_idx];
-		var image_element_xpath = get_element_xpath(image_element);
-
-		var predicted_tensor = all_predictions[image_element_xpath];
-
-		if(!predicted_tensor) {
-			dbg("[confusion_matrix] Could not get predicted_tensor");
-			continue;
-		}
-
-		assert(Array.isArray(predicted_tensor), `predicted_tensor is not an array, but ${typeof(predicted_tensor)}, ${JSON.stringify(predicted_tensor)}`);
-
-		if(predicted_tensor === null || predicted_tensor === undefined) {
-			dbg(language[lang]["predicted_tensor_was_null_or_undefined"]);
-			continue;
-		}
-
-		var predicted_index = predicted_tensor.indexOf(Math.max(...predicted_tensor));
-		var predicted_category = labels[predicted_index];
-
-		var src = image_element.src;
-		var correct_category = extractCategoryFromURL(src, image_element);
-
-		if(!Object.keys(table_data).includes(correct_category)) {
-			table_data[correct_category] = {};
-		}
-
-		if(Object.keys(table_data[correct_category]).includes(predicted_category)) {
-			table_data[correct_category][predicted_category]++;
-		} else {
-			table_data[correct_category][predicted_category] = 1;
-		}
-
-		num_items++;
+function _add_to_table(table, correct, predicted) {
+	if (!table[correct]) {
+		table[correct] = {};
 	}
-
-	if(!num_items) {
-		dbg("[confusion_matrix] Could not get any items!");
-		return "";
+	if (table[correct][predicted]) {
+		table[correct][predicted]++;
+	} else {
+		table[correct][predicted] = 1;
 	}
+}
 
-	return table_data;
+function _y_tensor_to_labels(y_tensor) {
+	var y_arr = array_sync(y_tensor);
+	if (y_tensor.shape.length === 1) {
+		return y_arr.map(function(v) { return labels[v] || ("" + v); });
+	}
+	return y_arr.map(function(row) {
+		var max_idx = 0;
+		for (var j = 1; j < row.length; j++) {
+			if (row[j] > row[max_idx]) max_idx = j;
+		}
+		return labels[max_idx] || ("" + max_idx);
+	});
 }
 
 function get_confusion_matrix_table(table_data) {
@@ -2668,16 +2659,38 @@ async function confusion_matrix_to_page () {
 		return;
 	}
 
-	var confusion_matrix_html = await confusion_matrix();
-
-	if(confusion_matrix_html) {
-		var str = "<h2>Confusion Matrix:</h2>\n" + confusion_matrix_html;
-		$("#confusion_matrix").html(str);
-		$("#confusion_matrix_training").html(str);
-	} else {
+	var status = confusion_matrix();
+	if(!status) {
 		$("#confusion_matrix").html("");
 		$("#confusion_matrix_training").html("");
+		return;
 	}
+
+	var tables = await compute_confusion_table_data();
+
+	if(!tables.all || (typeof tables.all === "object" && Object.keys(tables.all).length === 0)) {
+		$("#confusion_matrix").html("");
+		$("#confusion_matrix_training").html("");
+		return;
+	}
+
+	var has_split = train_val_split_info && train_val_split_info.val_count > 0;
+	var str = "";
+
+	if(has_split) {
+		str += "<h2>Confusion Matrix - All Data (" + train_val_split_info.total + "):</h2>\n";
+		str += get_confusion_matrix_table(tables.all);
+		str += "\n<h2>Confusion Matrix - Training Data (" + train_val_split_info.train_count + "):</h2>\n";
+		str += get_confusion_matrix_table(tables.train);
+		str += "\n<h2>Confusion Matrix - Validation Data (" + train_val_split_info.val_count + "):</h2>\n";
+		str += get_confusion_matrix_table(tables.val);
+	} else {
+		str += "<h2>Confusion Matrix:</h2>\n";
+		str += get_confusion_matrix_table(tables.all);
+	}
+
+	$("#confusion_matrix").html(str);
+	$("#confusion_matrix_training").html(str);
 }
 
 function isolateEval(code) {
