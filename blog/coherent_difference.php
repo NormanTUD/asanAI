@@ -390,15 +390,22 @@ The order and connection of ideas is the same as the order and connection of thi
 This is the formal crystallization of the intuition. Sheaves were introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} (\citeyear{grothendieck_sheaf}) in the 1950s and 60s, partly through the work of Jean Leray in the late 1940s \cite{sheaf_mathematics}, precisely to handle questions that resisted the older “patch a space together by gluing charts” picture of \citetitle{manifold_wiki}. Where manifolds ask you to specify a single chart and a transition map, sheaves ask you to specify local data on every open set and let the global object fall out of the consistency conditions. The local-to-global direction is so productive that it is the entire backbone of algebraic geometry and much of modern logic.
 
 <div class="optional md" data-headline="What the words mean, with a panorama">
-You photograph a landscape from several angles. The photos overlap: the same trees, the same horizon appear in more than one frame. If the overlaps match, you stitch them into one panorama. If they don't (someone moved, the light changed), you can't.
+You're on a hilltop, photographing a valley. Five shots, panning left to right. Adjacent shots overlap: the same oak tree in shots 2 and 3, the same river bend in shots 3 and 4. If the overlaps match, you stitch them into one panorama. If the light shifted between shots and the oak is bright in one photo and dark in the other — you can't.
 
-* **Section.** Each photo is the *data on its region*. Formally: a section $s \in \mathcal{F}(U)$ is the data carried by the open region $U$.
-* **Restriction.** Crop a photo to a sub-region. The data on the big region, read on the small one: $s|_V$ for $V \subseteq U$.
-* **Compatibility.** Two photos overlap. They are *compatible* if the overlapping part of the scene looks the same in both: $s_1|_{U_1 \cap U_2} = s_2|_{U_1 \cap U_2}$.
-* **The sheaf condition.** Compatible local data patches together into exactly one global image. No contradictions, no ambiguity. A presheaf that fails this is two photos of the same overlap showing different things: locally fine, globally impossible.
-* **Germ.** Zoom to one point in the scene. Two photos give the same *germ* there if they show the same thing in a small neighborhood around that point. The germ is "what the scene looks like right here," independent of which photo you're looking at.
-* **Stalk.** All the germs at one point, collected. Every local fact the photos carry about that one spot.
-* **Cut.** A presheaf is a tentative assignment — a "cut" — that may or may not satisfy the gluing condition. A sheaf is a cut that always glues.
+This is sheaf theory.
+
+* **The space.** The valley is $X$. Each photo covers a *region* — an *open set* $U$. Open because: if a point is in the frame, a tiny neighborhood around it is too. You're photographing an area, not a pixel.
+* **A section.** Photo 3 is a *section* over its region $U_3$: the data (what the scene looks like) on that region. Formally: $s_3 \in \mathcal{F}(U_3)$.
+* **Restriction.** Crop photo 3 to just the river bend. Data on the big region, read on the small one: $s_3|_{U_3 \cap U_4}$. The *restriction map* $\mathcal{F}(U_3) \to \mathcal{F}(U_3 \cap U_4)$.
+* **Compatibility.** Photos 3 and 4 both show the river bend. They are *compatible* if the bend looks the same in both: $s_3|_{U_3 \cap U_4} = s_4|_{U_3 \cap U_4}$. Light shifted? Not compatible.
+* **The sheaf condition.** If all overlaps match, the photos stitch into *exactly one* panorama. Two halves:
+  - *Gluing* (existence): compatible local data produces a global section.
+  - *Separatedness* (uniqueness): the global section is determined by its local restrictions. Two panoramas that agree on every photo are the same panorama.
+  
+  A presheaf that isn't a sheaf: photo 3 shows the oak with leaves, photo 4 shows it bare. Each photo is locally fine. No global panorama exists.
+* **A germ.** Forget the photos. Stand at the river bend and ask: *what's right here?* Any photo covering this point answers. Two photos give the same *germ* at this point if they show the same thing on some small neighborhood around it. The germ $[s]_x$ is "what the scene looks like at $x$," independent of which photo you read it from.
+* **A stalk.** Collect *all* germs at the river bend. Every local fact the photos carry about that one spot: water color, bank angle, reflection. That's the stalk $\mathcal{F}_x$.
+* **A cut.** A presheaf is photos before you check the overlaps — a tentative assignment, a "cut." It might glue; it might not. A sheaf is a cut that always glues.
 
 Three levels: **sections on regions, germs at points, stalks collecting all germs at one point.**
 </div>
