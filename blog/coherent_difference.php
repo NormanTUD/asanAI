@@ -411,21 +411,17 @@ This is sheaf theory.
 
 Three levels: **sections on regions, germs at points, stalks collecting all germs at one point.**
 
----
-
 **Now make it a video.** Same valley, but you film it with sound. A bird crosses the frame from left to right, chirping. You see it, and you hear it, at one moment. Now the "data" on any open set is a pair: (visual, auditory). The sheaf condition demands that on the overlap where the bird is visible *and* audible, the visual position of the bird and the temporal position of the chirp agree. The visual "section" says the bird is at spatial point $x$ at time $t$. The auditory "section" says the chirp arrives at time $t$. Compatibility at the overlap is: same bird, same moment. If the audio lags the video by half a second, the two sections on the overlap disagree — the sheaf condition fails, and there is no coherent global experience of "a bird flying through." The stalk at that one point in spacetime collects both the visual germ (what the bird looks like right there) and the auditory germ (what the chirp sounds like right then), and they must be the *same* event seen from two modalities.
 
 This is why the sheaf condition is not a constraint *on* the data but a constraint *between* modalities. The global experience — the bird flying and chirping as one phenomenon — exists only if the local sections cohere.
 
----
-
-**Now the trickiest case: lightning and thunder.**
+**Now: lightning and thunder.**
 
 You see the flash. Three seconds later you hear the crack. At the instant of observation, the visual section says "bright event, here, now" and the auditory section says "loud event, here, three seconds later." On the overlap — the shared physical event, the strike — the times disagree. As a plain sheaf this is a failure: the local data is incompatible.
 
-But there is a transformation that reconciles them. Call it the **equalizer** $\phi$: shift the visual timestamp forward by $d/v_{\text{sound}}$, or equivalently shift the auditory timestamp backward. $\phi$ and its inverse $\phi^{-1}$ are your $f$ and $g$. They form an *isomorphism* between the two restricted sections on the overlap: the visual reading and the auditory reading are not equal, but they are *isomorphic* — related by $\phi$.
+But there is a transformation that reconciles them. Call it the **equalizer** $\phi$: shift the visual timestamp forward by $d/v_{\text{sound}}$, or equivalently shift the auditory timestamp backward. $\phi$ and its inverse $\phi^{-1}$ are your $f$ and $g$. They form an *isomorphism* between the two restricted sections on the overlap: the visual reading and the auditory reading are not equal, but they are *isomorphic* — related by an invertible map. (A *homomorphism* would be a structure-preserving map that need not be invertible; the time shift is invertible — you can undo it — so it is an isomorphism.)
 
-A presheaf whose values are groupoids (objects = readings, morphisms = equalizers like $\phi$), whose local data glues up to isomorphism, with the isomorphisms coherent on triple overlaps, is a **stack** (the 1-truncation of an $\infty$-sheaf). The global section is not a single object but an *equivalence class*: the lightning strike, seen and heard as one event once you account for the finite speed of sound. Add a third modality — the seismic tremor, arriving yet later — and the equalizers must satisfy a coherence condition on the triple overlap: going visual $\to$ auditory $\to$ seismic must equal going visual $\to$ seismic directly. That triangle closing is the stack's higher coherence.
+A **groupoid** is a category in which every morphism is an isomorphism: all arrows are invertible. Think of it as a network of objects connected by reversible transformations, rather than one-directional functions. A presheaf whose values are groupoids (objects = readings, morphisms = equalizers like $\phi$), whose local data glues up to isomorphism, with the isomorphisms coherent on triple overlaps, is a **stack** (the 1-truncation of an $\infty$-sheaf). The global section is not a single object but an *equivalence class* — the set of all readings connected by the equalizer, collapsed into one: the lightning strike, seen and heard as one event once you account for the finite speed of sound. Add a third modality — the seismic tremor, arriving yet later — and the equalizers must satisfy a coherence condition on the triple overlap: going visual $\to$ auditory $\to$ seismic must equal going visual $\to$ seismic directly. That triangle closing is the stack's higher coherence.
 
 The stack is what lets you say "I saw the flash and heard the thunder from the *same* strike" even though the raw data on the overlap was incoherent.
 </div>
