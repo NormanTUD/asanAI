@@ -767,6 +767,112 @@ window.bibData = {
 		url: "https://courses.seas.harvard.edu/climate/eli/Courses/EPS281r/Sources/Origin-of-the-Moon/more/Hartmann-Davis-1975.pdf"
 	},
 
+	"alperbethegamow1948": {
+		title: "The Origin of Chemical Elements",
+		author: "Ralph Alpher, Hans A. Bethe, George Gamow",
+		year: 1948,
+		url: "https://doi.org/10.1103/PhysRev.73.803"
+	},
+
+	"b2fh1957": {
+		title: "Synthesis of the Elements in Stars",
+		author: "Eleanor M. Burbidge, Geoffrey R. Burbidge, William A. Fowler, Fred Hoyle",
+		year: 1957,
+		url: "https://doi.org/10.1103/RevModPhys.29.547"
+	},
+
+	"bethe1939energy": {
+		title: "Energy Production in Stars",
+		author: "Hans A. Bethe",
+		year: 1939,
+		url: "https://doi.org/10.1103/PhysRev.55.434"
+	},
+
+	"hoyle1954nuclear": {
+		title: "On Nuclear Reactions Occurring in Very Hot Stars. I. The Synthesis of Elements from Carbon to Nickel",
+		author: "Fred Hoyle",
+		year: 1954,
+		url: "https://doi.org/10.1086/190005"
+	},
+
+	"cameron1957nucleogenesis": {
+		title: "Nuclear Reactions in Stars and Nucleogenesis",
+		author: "Alastair Graham Walter Cameron",
+		year: 1957,
+		url: "https://doi.org/10.1086/127051"
+	},
+
+	"gw170817multimessenger": {
+		title: "Multi-messenger Observations of a Binary Neutron Star Merger",
+		author: "B. P. Abbott et al. (LIGO Scientific Collaboration and the Virgo Collaboration)",
+		year: 2017,
+		url: "https://arxiv.org/pdf/1710.05833"
+	},
+
+	"kasen2017kilonova": {
+		title: "Origin of the heavy elements in binary neutron-star mergers from a gravitational-wave event",
+		author: "D. Kasen, B. Metzger, J. Barnes, E. Quataert, E. Ramirez-Ruiz",
+		year: 2017,
+		url: "https://arxiv.org/pdf/1710.05463"
+	},
+
+	"eddington1926stars": {
+		title: "The Internal Constitution of the Stars",
+		author: "Arthur Stanley Eddington",
+		year: 1926,
+		url: "https://archive.org/details/internalconstitu0000sira"
+	},
+
+	"jeans1902nebula": {
+		title: "The Stability of a Spherical Nebula",
+		author: "James Hopwood Jeans",
+		year: 1902,
+		url: "https://doi.org/10.1098/rsta.1902.0012"
+	},
+
+	"chandrasekhar1931whitedwarf": {
+		title: "The Maximum Mass of Ideal White Dwarfs",
+		author: "Subrahmanyan Chandrasekhar",
+		year: 1931,
+		url: "https://doi.org/10.1086/143324"
+	},
+
+	"hewish1968pulsar": {
+		title: "Observation of a Rapidly Pulsating Radio Source",
+		author: "Antony R. Hewish, Jocelyn Bell, John D. H. Pilkington, Phillip F. Scott, Robert A. Collins",
+		year: 1968,
+		url: "https://doi.org/10.1038/217709a0"
+	},
+
+	"kant1755heavens": {
+		title: "Allgemeine Naturgeschichte und Theorie des Himmels",
+		alternativetitle: "Universal Natural History and Theory of the Heavens",
+		author: "Immanuel Kant",
+		year: 1755,
+		url: "https://archive.org/details/kantscosmogonyas00kantuoft"
+	},
+
+	"canupasphaug2001moon": {
+		title: "Origin of the Moon in a giant impact near the end of the Earth's formation",
+		author: "Katharina Canup, Erik Asphaug",
+		year: 2001,
+		url: "https://doi.org/10.1038/35089010"
+	},
+
+	"gomes2005nice": {
+		title: "Origin of the cataclysmic Late Heavy Bombardment period of the terrestrial planets",
+		author: "R. Gomes, H. F. Levison, K. N. Tsiganis, A. Morbidelli",
+		year: 2005,
+		url: "https://doi.org/10.1038/nature03676"
+	},
+
+	"amelin2010solarsystem": {
+		title: "U-Pb chronology of the Solar System's oldest solids with variable 238U/235U",
+		author: "A. Amelin, D. J. Connelly, S. M. Andrews",
+		year: 2010,
+		url: "https://doi.org/10.1016/j.epsl.2010.10.015"
+	},
+
 
 	"racter1984": {
 		title: "The Policeman's Beard Is Half Constructed: Computer Prose and Poetry by Racter",
