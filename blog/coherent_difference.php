@@ -435,31 +435,23 @@ Let $X$ be a **smooth manifold** — a space that locally looks like flat Euclid
 
 The **sheaf of smooth functions** $\mathcal{C}^\infty_X$ assigns to each open region $U \subseteq X$ the set of all smooth real-valued functions on that region:
 
-$$\underbrace{C^\infty(U)}_{\text{all smooth real-valued functions on } U}$$
+$$\mathcal{C}^\infty_X(U) \;=\; C^\infty(U)$$
 
 *Restriction* means: take a smooth function $f$ defined on a big region $U$, and "read it only on" a smaller region $V \subseteq U$. The result, written $f|_V$, is the same function with a smaller domain — it doesn't change any values, it just forbids you from evaluating outside $V$:
 
-$$\underbrace{f|_V(x) = f(x)}_{\substack{\text{the restricted function has the same values as } f,} \\ \text{it is just not defined outside } V} \qquad \text{for all } x \in V$$
+$$f|_V(x) = f(x) \qquad \text{for all } x \in V$$
 
-The sheaf condition — the *gluing lemma* — says: if you have smooth functions on overlapping patches that agree where the patches overlap, they paste together to a unique smooth function on the whole union:
+The sheaf condition — the *gluing lemma* — says: given an open cover $\{U_i\}$ of some open set $U$, if you have smooth functions $f_i \in C^\infty(U_i)$ that agree on every overlap $U_i \cap U_j$, then there exists a *unique* smooth function $f \in C^\infty(U)$ that restricts to each $f_i$:
 
-$$\underbrace{f_i \in C^\infty(U_i), \quad f_i\big|_{U_i \cap U_j} = f_j\big|_{U_i \cap U_j} \;\; \forall\, i,j}}_{\substack{\text{smooth functions on overlapping patches,} \\ \text{agreeing on every overlap}}} \quad\Longrightarrow\quad \underbrace{\exists!\; f \in C^\infty\!\bigl(\textstyle\bigcup_i U_i\bigr) \;\text{ with } \; f|_{U_i} = f_i \;\; \forall\, i}}_{\substack{\text{a unique smooth function on the whole union,} \\ \text{restricting to each } f_i}}$$
+$$f_i\big|_{U_i \cap U_j} = f_j\big|_{U_i \cap U_j} \quad \forall\, i,j \qquad\Longrightarrow\qquad \exists!\; f \in C^\infty(U) \;\; \text{with} \;\; f|_{U_i} = f_i \;\; \forall\, i$$
 
-This is a theorem of analysis, not a measurement. And it is the reason a manifold is a *global* object built from *local* coordinate charts: the charts are the open sets, the transition maps are the compatibility data, and $\mathcal{C}^\infty_X$ is what makes "smooth" a well-defined global notion. Every vector field, every differential form, every section of every vector bundle is a section of some sheaf.
+This is a theorem of analysis, not a measurement. And it is the reason a manifold is a *global* object built from *local* coordinate charts: the charts are the open sets, the transition maps are the compatibility data, and $\mathcal{C}^\infty_X$ is what makes "smooth" a well-defined global notion. Every vector field, every differential form, every section of every vector bundle on $X$ is a section of some sheaf. De Rham cohomology, Hodge theory, the Atiyah–Singer index theorem — the entire machinery of geometric analysis is sheaf theory applied to specific choices of what data you assign to each open set.
 
-And the sheaf condition has teeth. Take the complex plane with the origin removed:
+And the sheaf condition has teeth. Consider the unit circle $S^1$ in the plane. On any small arc (less than a full loop), you can define a continuous *angle function*: a smooth "clock reading" in radians that tells you where on the circle you are. Two overlapping arcs give compatible angle functions — they agree on the shared portion. The local data is perfectly coherent.
 
-$$\underbrace{X = \mathbb{C} \setminus \{0\}}_{\text{the complex plane with the origin punched out}}$$
+But you cannot glue them into a continuous angle function on the *entire* circle. Walk all the way around, and your angle has increased by $2\pi$ (one full rotation in radians). When you return to your starting point, the angle must be both $0$ and $2\pi$ — a contradiction. The local data is compatible; the global object simply does not exist.
 
-A holomorphic branch of $\log z$ exists on every simply-connected open set of $X$. The branches are compatible on overlaps — they differ only by an integer multiple of $2\pi i$:
-
-$$\underbrace{\log_{\text{branch 1}}(z) - \log_{\text{branch 2}}(z) \in 2\pi i\,\mathbb{Z}}_{\substack{\text{any two local branches differ by} \\ \text{an integer multiple of } 2\pi i}}$$
-
-But no global holomorphic $\log$ exists on all of $X$: going once around $0$ shifts the branch by $2\pi i$. The local data is coherent *up to an integer*, and that integer — the number of times your loop winds around the origin — is the first Čech cohomology class:
-
-$$[\log] \;\in\; H^1\bigl(X,\; 2\pi i\mathbb{Z}\bigr) \;\cong\; \mathbb{Z}$$
-
-The failure to glue is not a defect — it is the **winding number**: how many times a closed loop around $0$ wraps around the origin. Go once, the branches disagree by $2\pi i$. Go twice, by $4\pi i$. The sheaf condition detects exactly this topological feature of the space.
+The obstruction is topological: the circle has a hole. The integer that measures the failure is the **winding number** — how many times your loop wraps around the hole. Go around once: the angle jumps by $2\pi$. Go around twice: by $4\pi$. This is the simplest non-trivial sheaf cohomology class, and it is what makes the circle a different space from a line segment.
 </div>
 
 <div class="optional md" data-headline="Heraclitus on the same point, twenty-five centuries earlier">
