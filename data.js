@@ -964,7 +964,7 @@ function check_xy_for_x_and_y(xy_data) {
 async function get_x_and_y () {
 	await reset_data();
 
-	const selected_dataset_name = $("#dataset option:selected").text();
+	const selected_dataset_name = $("#dataset").val();
 	const this_traindata_struct = traindata_struct[selected_dataset_name];
 	const has_custom_data = Object.keys(this_traindata_struct).includes("has_custom_data");
 	const validation_split = parse_int($("#validationSplit").val());

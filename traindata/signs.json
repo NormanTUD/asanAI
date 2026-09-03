@@ -1,5 +1,5 @@
 {
-	"name": "CNN",
+	"name": "CNN (Image Classification)",
 	"loss": "categoricalCrossentropy",
 	"metric": "categoricalCrossentropy",
 	"optimizer": "adam",

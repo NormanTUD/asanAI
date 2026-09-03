@@ -384,9 +384,11 @@ function init_categories () {
 	for (var j = 0; j < dataset_names.length; j++) {
 		var dataset_name = dataset_names[j];
 		if(!dataset_already_there(dataset_name)) {
-			var dataset_value = traindata_struct[dataset_names[j]]["name"];
+			var dataset_value = traindata_struct[dataset_name]["name"];
+			var translation_key = "dataset_" + dataset_name;
+			var display_name = (language[lang] && language[lang][translation_key]) || traindata_struct[dataset_name]["display"] || dataset_value;
 
-			$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
+			$("#dataset").append(`<option value="${dataset_value}" data-tr-option="${translation_key}">${display_name}</option>`);
 		}
 	}
 

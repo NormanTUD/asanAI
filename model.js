@@ -2080,7 +2080,7 @@ async function save_model () {
 }
 
 function get_current_chosen_object_default_weights_string () {
-	var dataset = $("#dataset option:selected").text();
+	var dataset = $("#dataset").val();
 	var this_struct = traindata_struct[dataset];
 
 	var response = "";

@@ -49,8 +49,9 @@
 
 				$name = $json_data["name"];
 
-				$data[$name] = [
+				$data[$file_basename] = [
 					"name" => $file_basename,
+					"display" => $name,
 					"user_id" => "has no user",
 					"filename" => "$this_path/$this_category_contents"
 				];
@@ -70,7 +71,7 @@
 					}
 
 					if($weights_file) {
-						$data[$name]["weights_file"][$this_trainable_data] = $weights_file;
+						$data[$file_basename]["weights_file"][$this_trainable_data] = $weights_file;
 					}
 				}
 			}

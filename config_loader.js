@@ -155,10 +155,10 @@ async function _get_configuration(index=undefined) {
 			}
 
 			var data_url, keras_url;
-			var filename = traindata_struct[$("#dataset option:selected").text()]["filename"];
+			var filename = traindata_struct[$("#dataset").val()]["filename"];
 
 			if(filename.startsWith("get_")) {
-				data_url = traindata_struct[$("#dataset option:selected").text()]["data"];
+				data_url = traindata_struct[$("#dataset").val()]["data"];
 				keras_url = filename;
 			} else {
 				data_url = "traindata/" + $("#dataset").val() + ".json";

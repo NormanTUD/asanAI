@@ -597,7 +597,7 @@ function hide_prediction_non_image () {
 function init_weight_file_list() {
 	$("#model_dataset").find("option").remove();
 
-	var chosen_dataset = $("#dataset").find(":selected").text();
+	var chosen_dataset = $("#dataset").val();
 
 	var this_struct = traindata_struct[chosen_dataset]["weights_file"];
 
