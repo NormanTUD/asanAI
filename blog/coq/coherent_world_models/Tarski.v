@@ -116,15 +116,19 @@ Record MetaLanguage := {
 Record ConventionT := {
   CT_L : ObjectLanguage;
   CT_ML : MetaLanguage;
-  CT_S : OL_carrier CT_L;     (* the object-sentence                          *)
-  CT_quoted : ML_carrier CT_ML; (* the quotation-name                       *)
-  CT_p : ML_carrier CT_ML;    (* the proposition in the meta-language        *)
-  CT_true : OL_carrier CT_L -> Prop; (* the truth-predicate "S is true in L" *)
+  CT_S : OL_carrier CT_L;      (* the object-sentence                        *)
+  CT_quoted : ML_carrier CT_ML; (* the quotation-name                        *)
+  CT_p : Prop;                 (* the proposition in the meta-language: the   *)
+                               (* content asserted as a claim about the world *)
+  CT_true : OL_carrier CT_L -> Prop; (* the truth-predicate: S is true in L   *)
   CT_iff : CT_true CT_S <-> CT_p
-  (* Convention T: "S is true in L" iff p, a meta-level biconditional.     *)
+  (* Convention T: S is true in L iff p, a meta-level biconditional.       *)
   (* The quotation-name CT_quoted is the handle by which we refer to S;    *)
-  (* it is not equal to p. Convention T relates the truth of the          *)
-  (* object-sentence to the proposition p, never identifying the two.       *)
+  (* it is not the proposition p. Convention T relates the TRUTH of the    *)
+  (* object-sentence to the proposition p, never identifying the sentence   *)
+  (* with the fact (the PHP: the right-hand side is not inside quotation    *)
+  (* marks: it is the sentence's content, asserted as a fact about the      *)
+  (* world).                                                               *)
 }.
 
 (* The classical illustration: snow is white is true iff snow is white.    *)

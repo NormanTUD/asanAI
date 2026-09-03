@@ -1,4 +1,4 @@
-DIGEST 8d6db8326710c72943e89507e901ce50
+DIGEST 424bfc4cbaa8d60104939a93a5e27a1e
 FTarski
 R6832:6838 Library <> <> lib
 R6856:6861 Traces <> <> lib
@@ -20,216 +20,221 @@ rec 8038:8048 <> ConventionT
 proj 8057:8060 <> CT_L
 proj 8082:8086 <> CT_ML
 proj 8106:8109 <> CT_S
-proj 8187:8195 <> CT_quoted
+proj 8186:8194 <> CT_quoted
 proj 8266:8269 <> CT_p
-proj 8346:8351 <> CT_iff
+proj 8428:8434 <> CT_true
+proj 8509:8514 <> CT_iff
 R8064:8077 Tarski <> ObjectLanguage rec
 R8090:8101 Tarski <> MetaLanguage rec
 R8113:8122 Tarski <> OL_carrier proj
 R8124:8127 Tarski <> CT_L:7 meth
-R8199:8208 Tarski <> ML_carrier proj
-R8210:8214 Tarski <> CT_ML:8 meth
-R8273:8282 Tarski <> ML_carrier proj
-R8284:8288 Tarski <> CT_ML:8 meth
-R8364:8366 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8355:8363 Tarski <> CT_quoted:10 meth
-R8367:8370 Tarski <> CT_p:11 meth
-rec 8515:8525 <> SnowIsWhite
-proj 8534:8538 <> SIW_S
-proj 8550:8566 <> SIW_snow_is_white
-proj 8579:8583 <> SIW_p
-proj 8595:8616 <> SIW_snow_is_white_fact
-proj 8629:8635 <> SIW_iff
-R8570:8574 Tarski <> SIW_S:14 meth
-R8620:8624 Tarski <> SIW_p:16 meth
-ind 9375:9391 <> TarskiConsequence
-constr 9400:9415 <> TC_not_primitive
-constr 9441:9451 <> TC_semantic
-constr 9482:9496 <> TC_conservative
-R9419:9435 Tarski <> TarskiConsequence:19 ind
-R9460:9476 Tarski <> TarskiConsequence:19 ind
-R9501:9517 Tarski <> TarskiConsequence:19 ind
-scheme 9375:9391 <> TarskiConsequence_rect
-scheme 9375:9391 <> TarskiConsequence_ind
-scheme 9375:9391 <> TarskiConsequence_rec
-scheme 9375:9391 <> TarskiConsequence_sind
-rec 9760:9775 <> TruthAsInterface
-proj 9784:9792 <> TAI_claim
-proj 9864:9871 <> TAI_fact
-proj 9944:9957 <> TAI_licensed_T
-proj 10024:10030 <> TAI_iff
-R10043:10045 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R10034:10042 Tarski <> TAI_claim:22 meth
-R10046:10053 Tarski <> TAI_fact:23 meth
-rec 10447:10464 <> CoherenceTradition
-proj 10473:10489 <> CT_local_sections
-proj 10501:10517 <> CT_global_section
-proj 10529:10546 <> CT_coherence_holds
-rec 11108:11133 <> CoherenceAndCorrespondence
-proj 11142:11146 <> CAC_G
-proj 11158:11168 <> CAC_descent
-proj 11228:11237 <> CAC_tarski
-proj 11288:11296 <> CAC_truth
-R11184:11190 Library <> Context rec
-binder 11180:11180 <> c:32
-R11200:11214 ContextsAndSites <> AdmissibleCover rec
-R11216:11216 Tarski <> c:32 var
-binder 11194:11196 <> cov:33
-binder 11249:11253 <> claim:35
-binder 11255:11258 <> fact:36
-binder 11269:11269 <> T:37
-R11304:11304 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R11336:11345 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R11390:11390 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-binder 11312:11312 <> c:39
-binder 11314:11316 <> cov:40
-R11319:11329 Tarski <> CAC_descent:34 meth
-R11333:11335 Tarski <> cov:40 var
-R11331:11331 Tarski <> c:39 var
-binder 11353:11357 <> claim:41
-binder 11359:11362 <> fact:42
-binder 11364:11364 <> T:43
-R11367:11376 Tarski <> CAC_tarski:38 meth
-R11389:11389 Tarski <> T:43 var
-R11384:11387 Tarski <> fact:42 var
-R11378:11382 Tarski <> claim:41 var
-ax 11485:11512 <> coherence_and_correspondence
-R11532:11557 Tarski <> CoherenceAndCorrespondence rec
-binder 11526:11528 <> cac:45
-rec 12070:12085 <> CompletedDiagram
-proj 12094:12097 <> CD_W
-proj 12118:12121 <> CD_R
-proj 12137:12140 <> CD_G
-proj 12156:12159 <> CD_O
-proj 12181:12184 <> CD_T
-proj 12207:12219 <> CD_O_licensed
-proj 12287:12298 <> CD_T_descent
-proj 12369:12377 <> CD_G_to_W
-R12101:12113 Library <> SubjectMatter rec
-R12125:12132 Library <> Codomain rec
-R12144:12151 Library <> Codomain rec
-R12163:12176 Library <> AccessFunction rec
-R12188:12202 Library <> ViewTranslation rec
-R12223:12242 Library <> observation_licensed def
-R12244:12247 Tarski <> CD_O:52 meth
-R12381:12396 Tarski <> TruthAsInterface rec
-rec 12875:12895 <> SelfConsistentFantasy
-proj 12904:12908 <> SCF_G
-proj 12920:12930 <> SCF_descent
-proj 13000:13015 <> SCF_tarski_fails
-proj 13027:13039 <> SCF_condition
-R13054:13057 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R13043:13053 Tarski <> SCF_descent:59 meth
-R13058:13073 Tarski <> SCF_tarski_fails:60 meth
-rec 13327:13344 <> ContactPointJunkie
-proj 13353:13357 <> CPJ_G
-proj 13369:13378 <> CPJ_claims
-proj 13448:13463 <> CPJ_tarski_holds
-proj 13511:13523 <> CPJ_no_global
-R13382:13385 Coq.Init.Datatypes <> list ind
-binder 13474:13474 <> c:65
-R13499:13502 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13484:13485 Coq.Lists.List <> In def
-R13489:13498 Tarski <> CPJ_claims:64 meth
-R13487:13487 Tarski <> c:65 var
-rec 13684:13699 <> ContactPointLiar
-proj 13708:13712 <> CPL_M
-proj 13724:13742 <> CPL_self_consistent
-proj 13754:13769 <> CPL_tarski_fails
-proj 13835:13847 <> CPL_condition
-R13870:13873 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R13851:13869 Tarski <> CPL_self_consistent:70 meth
-R13874:13889 Tarski <> CPL_tarski_fails:71 meth
-rec 14235:14250 <> TarskiDiscipline
-proj 14259:14262 <> TD_G
-proj 14274:14293 <> TD_claim_has_contact
-proj 14326:14351 <> TD_contact_has_calibration
-proj 14380:14404 <> TD_calibration_admissible
-proj 14435:14456 <> TD_descent_every_cover
-proj 14520:14533 <> TD_disciplines
-binder 14304:14308 <> claim:75
-binder 14362:14362 <> c:77
-binder 14415:14417 <> cal:79
-R14472:14478 Library <> Context rec
-binder 14468:14468 <> c:81
-R14488:14502 ContextsAndSites <> AdmissibleCover rec
-R14504:14504 Tarski <> c:81 var
-binder 14482:14484 <> cov:82
-R14541:14541 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R14582:14590 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-binder 14549:14553 <> claim:84
-R14556:14575 Tarski <> TD_claim_has_contact:76 meth
-R14577:14581 Tarski <> claim:84 var
-R14591:14591 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R14630:14638 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-binder 14599:14599 <> c:85
-R14602:14627 Tarski <> TD_contact_has_calibration:78 meth
-R14629:14629 Tarski <> c:85 var
-R14639:14639 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R14681:14690 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R14733:14733 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-binder 14647:14649 <> cal:86
-R14652:14676 Tarski <> TD_calibration_admissible:80 meth
-R14678:14680 Tarski <> cal:86 var
-binder 14698:14698 <> c:87
-binder 14700:14702 <> cov:88
-R14705:14726 Tarski <> TD_descent_every_cover:83 meth
-R14730:14732 Tarski <> cov:88 var
-R14728:14728 Tarski <> c:87 var
-ind 15084:15092 <> AuditStep
-constr 15101:15114 <> AS_name_claims
-constr 15138:15153 <> AS_name_contacts
-constr 15175:15194 <> AS_check_calibration
-constr 15212:15227 <> AS_check_descent
-constr 15249:15263 <> AS_apply_tarski
-constr 15286:15304 <> AS_record_residuals
-R15124:15132 Tarski <> AuditStep:90 ind
-R15161:15169 Tarski <> AuditStep:90 ind
-R15198:15206 Tarski <> AuditStep:90 ind
-R15235:15243 Tarski <> AuditStep:90 ind
-R15272:15280 Tarski <> AuditStep:90 ind
-R15309:15317 Tarski <> AuditStep:90 ind
-scheme 15084:15092 <> AuditStep_rect
-scheme 15084:15092 <> AuditStep_ind
-scheme 15084:15092 <> AuditStep_rec
-scheme 15084:15092 <> AuditStep_sind
-rec 15328:15337 <> AuditState
-proj 15346:15352 <> Au_step
-proj 15369:15380 <> Au_completed
-proj 15392:15402 <> Au_failures
-R15356:15364 Tarski <> AuditStep ind
-R15406:15409 Coq.Init.Datatypes <> list ind
-R15411:15419 Tarski <> AuditStep ind
-ax 15514:15535 <> for_a_model_to_be_true
-binder 15549:15549 <> g:96
-rec 16151:16166 <> ClosingSynthesis
-proj 16175:16178 <> CS_G
-proj 16190:16201 <> CS_coherence
-proj 16261:16277 <> CS_correspondence
-proj 16328:16347 <> CS_residual_recorded
-proj 16408:16415 <> CS_truth
-R16217:16223 Library <> Context rec
-binder 16213:16213 <> c:101
-R16233:16247 ContextsAndSites <> AdmissibleCover rec
-R16249:16249 Tarski <> c:101 var
-binder 16227:16229 <> cov:102
-binder 16289:16293 <> claim:104
-binder 16295:16298 <> fact:105
-binder 16309:16309 <> T:106
-R16423:16423 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R16456:16464 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-binder 16431:16431 <> c:109
-binder 16433:16435 <> cov:110
-R16438:16449 Tarski <> CS_coherence:103 meth
-R16453:16455 Tarski <> cov:110 var
-R16451:16451 Tarski <> c:109 var
-R16465:16465 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R16517:16525 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-binder 16473:16477 <> claim:111
-binder 16479:16482 <> fact:112
-binder 16484:16484 <> T:113
-R16487:16503 Tarski <> CS_correspondence:107 meth
-R16516:16516 Tarski <> T:113 var
-R16511:16514 Tarski <> fact:112 var
-R16505:16509 Tarski <> claim:111 var
-R16526:16545 Tarski <> CS_residual_recorded:108 meth
+R8198:8207 Tarski <> ML_carrier proj
+R8209:8213 Tarski <> CT_ML:8 meth
+R8453:8456 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R8438:8447 Tarski <> OL_carrier proj
+R8449:8452 Tarski <> CT_L:7 meth
+R8530:8534 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R8518:8524 Tarski <> CT_true:12 meth
+R8526:8529 Tarski <> CT_S:9 meth
+R8535:8538 Tarski <> CT_p:11 meth
+rec 9179:9189 <> SnowIsWhite
+proj 9198:9202 <> SIW_S
+proj 9214:9230 <> SIW_snow_is_white
+proj 9243:9247 <> SIW_p
+proj 9259:9280 <> SIW_snow_is_white_fact
+proj 9293:9299 <> SIW_iff
+R9234:9238 Tarski <> SIW_S:15 meth
+R9284:9288 Tarski <> SIW_p:17 meth
+ind 10039:10055 <> TarskiConsequence
+constr 10064:10079 <> TC_not_primitive
+constr 10105:10115 <> TC_semantic
+constr 10146:10160 <> TC_conservative
+R10083:10099 Tarski <> TarskiConsequence:20 ind
+R10124:10140 Tarski <> TarskiConsequence:20 ind
+R10165:10181 Tarski <> TarskiConsequence:20 ind
+scheme 10039:10055 <> TarskiConsequence_rect
+scheme 10039:10055 <> TarskiConsequence_ind
+scheme 10039:10055 <> TarskiConsequence_rec
+scheme 10039:10055 <> TarskiConsequence_sind
+rec 10424:10439 <> TruthAsInterface
+proj 10448:10456 <> TAI_claim
+proj 10528:10535 <> TAI_fact
+proj 10608:10621 <> TAI_licensed_T
+proj 10688:10702 <> TAI_claim_holds
+proj 10768:10781 <> TAI_fact_holds
+proj 10848:10854 <> TAI_iff
+R10873:10877 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R10858:10872 Tarski <> TAI_claim_holds:26 meth
+R10878:10891 Tarski <> TAI_fact_holds:27 meth
+rec 11554:11571 <> CoherenceTradition
+proj 11580:11596 <> CT_local_sections
+proj 11608:11624 <> CT_global_section
+proj 11636:11653 <> CT_coherence_holds
+rec 12215:12240 <> CoherenceAndCorrespondence
+proj 12249:12253 <> CAC_G
+proj 12265:12275 <> CAC_descent
+proj 12335:12344 <> CAC_tarski
+proj 12395:12403 <> CAC_truth
+R12291:12297 Library <> Context rec
+binder 12287:12287 <> c:35
+R12307:12321 ContextsAndSites <> AdmissibleCover rec
+R12323:12323 Tarski <> c:35 var
+binder 12301:12303 <> cov:36
+binder 12356:12360 <> claim:38
+binder 12362:12365 <> fact:39
+binder 12376:12376 <> T:40
+R12411:12411 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12443:12452 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R12497:12497 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+binder 12419:12419 <> c:42
+binder 12421:12423 <> cov:43
+R12426:12436 Tarski <> CAC_descent:37 meth
+R12440:12442 Tarski <> cov:43 var
+R12438:12438 Tarski <> c:42 var
+binder 12460:12464 <> claim:44
+binder 12466:12469 <> fact:45
+binder 12471:12471 <> T:46
+R12474:12483 Tarski <> CAC_tarski:41 meth
+R12496:12496 Tarski <> T:46 var
+R12491:12494 Tarski <> fact:45 var
+R12485:12489 Tarski <> claim:44 var
+ax 12592:12619 <> coherence_and_correspondence
+R12639:12664 Tarski <> CoherenceAndCorrespondence rec
+binder 12633:12635 <> cac:48
+rec 13177:13192 <> CompletedDiagram
+proj 13201:13204 <> CD_W
+proj 13225:13228 <> CD_R
+proj 13244:13247 <> CD_G
+proj 13263:13266 <> CD_O
+proj 13288:13291 <> CD_T
+proj 13314:13326 <> CD_O_licensed
+proj 13394:13405 <> CD_T_descent
+proj 13476:13484 <> CD_G_to_W
+R13208:13220 Library <> SubjectMatter rec
+R13232:13239 Library <> Codomain rec
+R13251:13258 Library <> Codomain rec
+R13270:13283 Library <> AccessFunction rec
+R13295:13309 Library <> ViewTranslation rec
+R13330:13349 Library <> observation_licensed def
+R13351:13354 Tarski <> CD_O:55 meth
+R13488:13503 Tarski <> TruthAsInterface rec
+rec 13982:14002 <> SelfConsistentFantasy
+proj 14011:14015 <> SCF_G
+proj 14027:14037 <> SCF_descent
+proj 14107:14122 <> SCF_tarski_fails
+proj 14134:14146 <> SCF_condition
+R14161:14164 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R14150:14160 Tarski <> SCF_descent:62 meth
+R14165:14180 Tarski <> SCF_tarski_fails:63 meth
+rec 14434:14451 <> ContactPointJunkie
+proj 14460:14464 <> CPJ_G
+proj 14476:14485 <> CPJ_claims
+proj 14555:14570 <> CPJ_tarski_holds
+proj 14618:14630 <> CPJ_no_global
+R14489:14492 Coq.Init.Datatypes <> list ind
+binder 14581:14581 <> c:68
+R14606:14609 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14591:14592 Coq.Lists.List <> In def
+R14596:14605 Tarski <> CPJ_claims:67 meth
+R14594:14594 Tarski <> c:68 var
+rec 14791:14806 <> ContactPointLiar
+proj 14815:14819 <> CPL_M
+proj 14831:14849 <> CPL_self_consistent
+proj 14861:14876 <> CPL_tarski_fails
+proj 14942:14954 <> CPL_condition
+R14977:14980 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R14958:14976 Tarski <> CPL_self_consistent:73 meth
+R14981:14996 Tarski <> CPL_tarski_fails:74 meth
+rec 15342:15357 <> TarskiDiscipline
+proj 15366:15369 <> TD_G
+proj 15381:15400 <> TD_claim_has_contact
+proj 15433:15458 <> TD_contact_has_calibration
+proj 15487:15511 <> TD_calibration_admissible
+proj 15542:15563 <> TD_descent_every_cover
+proj 15627:15640 <> TD_disciplines
+binder 15411:15415 <> claim:78
+binder 15469:15469 <> c:80
+binder 15522:15524 <> cal:82
+R15579:15585 Library <> Context rec
+binder 15575:15575 <> c:84
+R15595:15609 ContextsAndSites <> AdmissibleCover rec
+R15611:15611 Tarski <> c:84 var
+binder 15589:15591 <> cov:85
+R15648:15648 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R15689:15697 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+binder 15656:15660 <> claim:87
+R15663:15682 Tarski <> TD_claim_has_contact:79 meth
+R15684:15688 Tarski <> claim:87 var
+R15698:15698 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R15737:15745 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+binder 15706:15706 <> c:88
+R15709:15734 Tarski <> TD_contact_has_calibration:81 meth
+R15736:15736 Tarski <> c:88 var
+R15746:15746 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R15788:15797 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R15840:15840 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+binder 15754:15756 <> cal:89
+R15759:15783 Tarski <> TD_calibration_admissible:83 meth
+R15785:15787 Tarski <> cal:89 var
+binder 15805:15805 <> c:90
+binder 15807:15809 <> cov:91
+R15812:15833 Tarski <> TD_descent_every_cover:86 meth
+R15837:15839 Tarski <> cov:91 var
+R15835:15835 Tarski <> c:90 var
+ind 16191:16199 <> AuditStep
+constr 16208:16221 <> AS_name_claims
+constr 16245:16260 <> AS_name_contacts
+constr 16282:16301 <> AS_check_calibration
+constr 16319:16334 <> AS_check_descent
+constr 16356:16370 <> AS_apply_tarski
+constr 16393:16411 <> AS_record_residuals
+R16231:16239 Tarski <> AuditStep:93 ind
+R16268:16276 Tarski <> AuditStep:93 ind
+R16305:16313 Tarski <> AuditStep:93 ind
+R16342:16350 Tarski <> AuditStep:93 ind
+R16379:16387 Tarski <> AuditStep:93 ind
+R16416:16424 Tarski <> AuditStep:93 ind
+scheme 16191:16199 <> AuditStep_rect
+scheme 16191:16199 <> AuditStep_ind
+scheme 16191:16199 <> AuditStep_rec
+scheme 16191:16199 <> AuditStep_sind
+rec 16435:16444 <> AuditState
+proj 16453:16459 <> Au_step
+proj 16476:16487 <> Au_completed
+proj 16499:16509 <> Au_failures
+R16463:16471 Tarski <> AuditStep ind
+R16513:16516 Coq.Init.Datatypes <> list ind
+R16518:16526 Tarski <> AuditStep ind
+ax 16621:16642 <> for_a_model_to_be_true
+binder 16656:16656 <> g:99
+rec 17258:17273 <> ClosingSynthesis
+proj 17282:17285 <> CS_G
+proj 17297:17308 <> CS_coherence
+proj 17368:17384 <> CS_correspondence
+proj 17435:17454 <> CS_residual_recorded
+proj 17515:17522 <> CS_truth
+R17324:17330 Library <> Context rec
+binder 17320:17320 <> c:104
+R17340:17354 ContextsAndSites <> AdmissibleCover rec
+R17356:17356 Tarski <> c:104 var
+binder 17334:17336 <> cov:105
+binder 17396:17400 <> claim:107
+binder 17402:17405 <> fact:108
+binder 17416:17416 <> T:109
+R17530:17530 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R17563:17571 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+binder 17538:17538 <> c:112
+binder 17540:17542 <> cov:113
+R17545:17556 Tarski <> CS_coherence:106 meth
+R17560:17562 Tarski <> cov:113 var
+R17558:17558 Tarski <> c:112 var
+R17572:17572 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R17624:17632 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+binder 17580:17584 <> claim:114
+binder 17586:17589 <> fact:115
+binder 17591:17591 <> T:116
+R17594:17610 Tarski <> CS_correspondence:110 meth
+R17623:17623 Tarski <> T:116 var
+R17618:17621 Tarski <> fact:115 var
+R17612:17616 Tarski <> claim:114 var
+R17633:17652 Tarski <> CS_residual_recorded:111 meth

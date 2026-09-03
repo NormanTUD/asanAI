@@ -1,4 +1,4 @@
-DIGEST e7660894d9d422ed217909e139d72080
+DIGEST 8859f9909eb5f8cff7347e6fac90b2d0
 FSheaves
 R3580:3586 Library <> <> lib
 R3604:3609 Traces <> <> lib
@@ -93,258 +93,259 @@ R7103:7105 Coq.Init.Logic <> ::type_scope:x_'='_x not
 R7101:7102 Sheaves <> s1:31 var
 R7106:7107 Sheaves <> s2:32 var
 R7183:7189 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R7198:7199 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R7198:7265 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
 binder 7190:7190 <> g:33
-R7200:7203 Coq.Init.Logic <> True ind
-ax 7585:7595 <> sheaf_boxed
-R7613:7620 Sheaves <> Presheaf rec
-binder 7609:7609 <> F:34
-R7628:7634 Library <> Context rec
-binder 7624:7624 <> c:35
-R7644:7658 ContextsAndSites <> AdmissibleCover rec
-R7660:7660 Sheaves <> c:35 var
-binder 7638:7640 <> cov:36
-R7668:7682 Sheaves <> sheaf_condition def
-R7684:7684 Sheaves <> F:34 var
-R7686:7686 Sheaves <> c:35 var
-R7688:7690 Sheaves <> cov:36 var
-rec 8591:8598 <> Pullback
-proj 8648:8657 <> PB_carrier
-proj 8669:8674 <> PB_pi1
-proj 8697:8702 <> PB_pi2
-proj 8725:8735 <> PB_commutes
-proj 8793:8804 <> PB_universal
-binder 8601:8601 <> A:39
-binder 8603:8603 <> B:40
-binder 8605:8605 <> Z:41
-R8621:8624 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8620:8620 Sheaves <> A:39 var
-R8625:8625 Sheaves <> Z:41 var
-binder 8616:8616 <> f:42
-R8634:8637 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8633:8633 Sheaves <> B:40 var
-R8638:8638 Sheaves <> Z:41 var
-binder 8629:8629 <> g:43
-R8688:8691 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8678:8687 Sheaves <> PB_carrier:45 meth
-R8692:8692 Sheaves <> A:39 var
-R8716:8719 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8706:8715 Sheaves <> PB_carrier:45 meth
-R8720:8720 Sheaves <> B:40 var
-R8750:8759 Sheaves <> PB_carrier:45 meth
-binder 8746:8746 <> x:48
-R8774:8776 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8762:8762 Sheaves <> f:42 var
-R8765:8770 Sheaves <> PB_pi1:46 meth
-R8772:8772 Sheaves <> x:48 var
-R8777:8777 Sheaves <> g:43 var
-R8780:8785 Sheaves <> PB_pi2:47 meth
-R8787:8787 Sheaves <> x:48 var
-binder 8820:8820 <> W:50
-R8837:8840 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8836:8836 Library <> :::'W' not
-R8841:8841 Sheaves <> A:39 var
-binder 8831:8832 <> h1:51
-R8851:8854 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8850:8850 Library <> :::'W' not
-R8855:8855 Sheaves <> B:40 var
-binder 8845:8846 <> h2:52
-R8886:8886 Library <> :::'W' not
-binder 8882:8882 <> w:53
-R8897:8899 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8889:8889 Sheaves <> f:42 var
-R8892:8893 Sheaves <> h1:51 var
-R8895:8895 Sheaves <> w:53 var
-R8900:8900 Sheaves <> g:43 var
-R8903:8904 Sheaves <> h2:52 var
-R8906:8906 Sheaves <> w:53 var
-binder 8870:8871 <> eq:54
-R8917:8923 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R8943:8952 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
-R8929:8932 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R8928:8928 Library <> :::'W' not
-R8933:8942 Sheaves <> PB_carrier:45 meth
-binder 8924:8924 <> u:55
-R8953:8953 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R8987:9000 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R9034:9034 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R8965:8965 Library <> :::'W' not
-binder 8961:8961 <> w:56
-R8980:8982 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R8968:8973 Sheaves <> PB_pi1:46 meth
-R8976:8976 Sheaves <> u:55 var
-R8978:8978 Sheaves <> w:56 var
-R8983:8984 Sheaves <> h1:51 var
-R8986:8986 Sheaves <> w:56 var
-R9012:9012 Library <> :::'W' not
-binder 9008:9008 <> w:57
-R9027:9029 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R9015:9020 Sheaves <> PB_pi2:47 meth
-R9023:9023 Sheaves <> u:55 var
-R9025:9025 Sheaves <> w:57 var
-R9030:9031 Sheaves <> h2:52 var
-R9033:9033 Sheaves <> w:57 var
-def 9210:9223 <> sheaf_pullback
-R9230:9237 Sheaves <> Presheaf rec
-binder 9226:9226 <> F:59
-R9245:9251 Library <> Context rec
-binder 9241:9241 <> c:60
-R9261:9273 Sheaves <> TwoPatchCover rec
-R9275:9275 Sheaves <> c:60 var
-binder 9255:9257 <> cov:61
-R9290:9293 Coq.Init.Logic <> True ind
-ind 9865:9875 <> SheafRegime
-constr 9884:9892 <> SR_strict
-constr 9965:9978 <> SR_homotopical
-constr 10046:10057 <> SR_empirical
-R9903:9913 Sheaves <> SheafRegime:62 ind
-R9984:9994 Sheaves <> SheafRegime:62 ind
-R10065:10075 Sheaves <> SheafRegime:62 ind
-scheme 9865:9875 <> SheafRegime_rect
-scheme 9865:9875 <> SheafRegime_ind
-scheme 9865:9875 <> SheafRegime_rec
-scheme 9865:9875 <> SheafRegime_sind
-def 10216:10232 <> strict_compatible
-binder 10235:10235 <> A:64
-R10254:10254 Sheaves <> A:64 var
-binder 10246:10247 <> s1:65
-binder 10249:10250 <> s2:66
-R10269:10271 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R10267:10268 Sheaves <> s1:65 var
-R10272:10273 Sheaves <> s2:66 var
-rec 10284:10299 <> CompatibleRegime
-proj 10308:10311 <> CR_A
-proj 10323:10326 <> CR_R
-R10334:10337 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10330:10333 Sheaves <> CR_A:68 meth
-R10342:10345 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10338:10341 Sheaves <> CR_A:68 meth
-def 10366:10387 <> homotopical_compatible
-R10399:10414 Sheaves <> CompatibleRegime rec
-binder 10390:10395 <> regime:70
-R10426:10429 Sheaves <> CR_A proj
-R10431:10436 Sheaves <> regime:70 var
-binder 10418:10419 <> s1:71
-binder 10421:10422 <> s2:72
-R10451:10454 Sheaves <> CR_R proj
-R10456:10461 Sheaves <> regime:70 var
-R10463:10464 Sheaves <> s1:71 var
-R10466:10467 Sheaves <> s2:72 var
-rec 10555:10568 <> EmpiricalSetup
-proj 10577:10585 <> ES_metric
-proj 10613:10620 <> ES_bound
-proj 10632:10644 <> ES_compatible
-R10593:10596 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10601:10604 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-binder 10655:10655 <> A:76
-R10666:10669 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10665:10665 Sheaves <> A:76 var
-R10671:10674 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R10670:10670 Sheaves <> A:76 var
-rec 11099:11108 <> TrainEvent
-proj 11117:11124 <> TE_event
-rec 11207:11218 <> TrainChannel
-proj 11227:11236 <> TC_channel
-proj 11305:11313 <> TC_access
-R11244:11247 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R11330:11339 Sheaves <> TrainEvent rec
-binder 11324:11326 <> evt:82
-binder 11349:11349 <> n:83
-R11371:11374 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R11359:11366 Sheaves <> TE_event proj
-R11368:11370 Sheaves <> evt:82 var
-R11375:11384 Sheaves <> TC_channel:81 meth
-R11386:11386 Sheaves <> n:83 var
-ind 11637:11647 <> ChannelName
-constr 11656:11664 <> CN_visual
-constr 11687:11697 <> CN_auditory
-constr 11717:11724 <> CN_radar
-constr 11747:11759 <> CN_linguistic
-constr 11779:11789 <> CN_archival
-R11671:11681 Sheaves <> ChannelName:85 ind
-R11701:11711 Sheaves <> ChannelName:85 ind
-R11731:11741 Sheaves <> ChannelName:85 ind
-R11763:11773 Sheaves <> ChannelName:85 ind
-R11793:11803 Sheaves <> ChannelName:85 ind
-scheme 11637:11647 <> ChannelName_rect
-scheme 11637:11647 <> ChannelName_ind
-scheme 11637:11647 <> ChannelName_rec
-scheme 11637:11647 <> ChannelName_sind
-rec 11894:11903 <> TrainCover
-proj 11912:11919 <> TC_event
-proj 11937:11946 <> TC_patches
-proj 11979:11985 <> TC_maps
-proj 12061:12073 <> TC_admissible
-R11923:11932 Sheaves <> TrainEvent rec
-R11961:11964 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R11950:11960 Sheaves <> ChannelName ind
-R11965:11974 Sheaves <> TrainEvent rec
-R12000:12010 Sheaves <> ChannelName ind
-binder 11996:11996 <> n:90
-R12036:12039 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R12013:12020 Sheaves <> TE_event proj
-R12023:12032 Sheaves <> TC_patches:89 meth
-R12034:12034 Sheaves <> n:90 var
-R12040:12047 Sheaves <> TE_event proj
-R12049:12056 Sheaves <> TC_event:88 meth
-R12088:12098 Sheaves <> ChannelName ind
-binder 12084:12084 <> n:92
-R12101:12104 Coq.Init.Logic <> True ind
-def 12234:12246 <> train_descent
-R12257:12266 Sheaves <> TrainCover rec
-binder 12249:12253 <> cover:94
-binder 12270:12270 <> F:95
-R12315:12318 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R12304:12314 Sheaves <> ChannelName ind
-binder 12300:12300 <> s:96
-R12326:12329 Coq.Init.Logic <> True ind
-rec 12852:12869 <> GroupPresentations
-proj 12878:12900 <> GP_generators_relations
-proj 12912:12926 <> GP_cayley_table
-proj 12946:12966 <> GP_permutation_action
-proj 12980:13003 <> GP_matrix_representation
-proj 13015:13032 <> GP_character_table
-proj 13049:13062 <> GP_transitions
-binder 13078:13080 <> src:103
-binder 13091:13093 <> tgt:104
-R13269:13278 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13139:13142 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13113:13115 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13110:13112 Sheaves <> src:103 var
-R13116:13138 Sheaves <> GP_generators_relations:98 meth
-R13164:13173 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13146:13148 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13143:13145 Sheaves <> src:103 var
-R13149:13163 Sheaves <> GP_cayley_table:99 meth
-R13201:13204 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13177:13179 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13174:13176 Sheaves <> src:103 var
-R13180:13200 Sheaves <> GP_permutation_action:100 meth
-R13235:13244 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13208:13210 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13205:13207 Sheaves <> src:103 var
-R13211:13234 Sheaves <> GP_matrix_representation:101 meth
-R13248:13250 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13245:13247 Sheaves <> src:103 var
-R13251:13268 Sheaves <> GP_character_table:102 meth
-R13438:13447 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R13308:13311 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13282:13284 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13279:13281 Sheaves <> tgt:104 var
-R13285:13307 Sheaves <> GP_generators_relations:98 meth
-R13333:13342 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13315:13317 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13312:13314 Sheaves <> tgt:104 var
-R13318:13332 Sheaves <> GP_cayley_table:99 meth
-R13370:13373 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13346:13348 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13343:13345 Sheaves <> tgt:104 var
-R13349:13369 Sheaves <> GP_permutation_action:100 meth
-R13404:13413 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
-R13377:13379 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13374:13376 Sheaves <> tgt:104 var
-R13380:13403 Sheaves <> GP_matrix_representation:101 meth
-R13417:13419 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R13414:13416 Sheaves <> tgt:104 var
-R13420:13437 Sheaves <> GP_character_table:102 meth
-R13448:13451 Coq.Init.Logic <> True ind
+binder 7274:7275 <> g':34
+R7349:7352 Coq.Init.Logic <> True ind
+ax 8297:8307 <> sheaf_boxed
+R8325:8332 Sheaves <> Presheaf rec
+binder 8321:8321 <> F:35
+R8340:8346 Library <> Context rec
+binder 8336:8336 <> c:36
+R8356:8370 ContextsAndSites <> AdmissibleCover rec
+R8372:8372 Sheaves <> c:36 var
+binder 8350:8352 <> cov:37
+R8380:8394 Sheaves <> sheaf_condition def
+R8396:8396 Sheaves <> F:35 var
+R8398:8398 Sheaves <> c:36 var
+R8400:8402 Sheaves <> cov:37 var
+rec 9303:9310 <> Pullback
+proj 9360:9369 <> PB_carrier
+proj 9381:9386 <> PB_pi1
+proj 9409:9414 <> PB_pi2
+proj 9437:9447 <> PB_commutes
+proj 9505:9516 <> PB_universal
+binder 9313:9313 <> A:40
+binder 9315:9315 <> B:41
+binder 9317:9317 <> Z:42
+R9333:9336 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9332:9332 Sheaves <> A:40 var
+R9337:9337 Sheaves <> Z:42 var
+binder 9328:9328 <> f:43
+R9346:9349 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9345:9345 Sheaves <> B:41 var
+R9350:9350 Sheaves <> Z:42 var
+binder 9341:9341 <> g:44
+R9400:9403 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9390:9399 Sheaves <> PB_carrier:46 meth
+R9404:9404 Sheaves <> A:40 var
+R9428:9431 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9418:9427 Sheaves <> PB_carrier:46 meth
+R9432:9432 Sheaves <> B:41 var
+R9462:9471 Sheaves <> PB_carrier:46 meth
+binder 9458:9458 <> x:49
+R9486:9488 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9474:9474 Sheaves <> f:43 var
+R9477:9482 Sheaves <> PB_pi1:47 meth
+R9484:9484 Sheaves <> x:49 var
+R9489:9489 Sheaves <> g:44 var
+R9492:9497 Sheaves <> PB_pi2:48 meth
+R9499:9499 Sheaves <> x:49 var
+binder 9532:9532 <> W:51
+R9549:9552 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9548:9548 Library <> :::'W' not
+R9553:9553 Sheaves <> A:40 var
+binder 9543:9544 <> h1:52
+R9563:9566 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9562:9562 Library <> :::'W' not
+R9567:9567 Sheaves <> B:41 var
+binder 9557:9558 <> h2:53
+R9598:9598 Library <> :::'W' not
+binder 9594:9594 <> w:54
+R9609:9611 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9601:9601 Sheaves <> f:43 var
+R9604:9605 Sheaves <> h1:52 var
+R9607:9607 Sheaves <> w:54 var
+R9612:9612 Sheaves <> g:44 var
+R9615:9616 Sheaves <> h2:53 var
+R9618:9618 Sheaves <> w:54 var
+binder 9582:9583 <> eq:55
+R9629:9635 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R9655:9664 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R9641:9644 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9640:9640 Library <> :::'W' not
+R9645:9654 Sheaves <> PB_carrier:46 meth
+binder 9636:9636 <> u:56
+R9665:9665 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R9699:9712 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R9746:9746 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R9677:9677 Library <> :::'W' not
+binder 9673:9673 <> w:57
+R9692:9694 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9680:9685 Sheaves <> PB_pi1:47 meth
+R9688:9688 Sheaves <> u:56 var
+R9690:9690 Sheaves <> w:57 var
+R9695:9696 Sheaves <> h1:52 var
+R9698:9698 Sheaves <> w:57 var
+R9724:9724 Library <> :::'W' not
+binder 9720:9720 <> w:58
+R9739:9741 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9727:9732 Sheaves <> PB_pi2:48 meth
+R9735:9735 Sheaves <> u:56 var
+R9737:9737 Sheaves <> w:58 var
+R9742:9743 Sheaves <> h2:53 var
+R9745:9745 Sheaves <> w:58 var
+def 9922:9935 <> sheaf_pullback
+R9942:9949 Sheaves <> Presheaf rec
+binder 9938:9938 <> F:60
+R9957:9963 Library <> Context rec
+binder 9953:9953 <> c:61
+R9973:9985 Sheaves <> TwoPatchCover rec
+R9987:9987 Sheaves <> c:61 var
+binder 9967:9969 <> cov:62
+R10002:10005 Coq.Init.Logic <> True ind
+ind 10577:10587 <> SheafRegime
+constr 10596:10604 <> SR_strict
+constr 10677:10690 <> SR_homotopical
+constr 10758:10769 <> SR_empirical
+R10615:10625 Sheaves <> SheafRegime:63 ind
+R10696:10706 Sheaves <> SheafRegime:63 ind
+R10777:10787 Sheaves <> SheafRegime:63 ind
+scheme 10577:10587 <> SheafRegime_rect
+scheme 10577:10587 <> SheafRegime_ind
+scheme 10577:10587 <> SheafRegime_rec
+scheme 10577:10587 <> SheafRegime_sind
+def 10928:10944 <> strict_compatible
+binder 10947:10947 <> A:65
+R10966:10966 Sheaves <> A:65 var
+binder 10958:10959 <> s1:66
+binder 10961:10962 <> s2:67
+R10981:10983 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10979:10980 Sheaves <> s1:66 var
+R10984:10985 Sheaves <> s2:67 var
+rec 10996:11011 <> CompatibleRegime
+proj 11020:11023 <> CR_A
+proj 11035:11038 <> CR_R
+R11046:11049 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11042:11045 Sheaves <> CR_A:69 meth
+R11054:11057 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11050:11053 Sheaves <> CR_A:69 meth
+def 11078:11099 <> homotopical_compatible
+R11111:11126 Sheaves <> CompatibleRegime rec
+binder 11102:11107 <> regime:71
+R11138:11141 Sheaves <> CR_A proj
+R11143:11148 Sheaves <> regime:71 var
+binder 11130:11131 <> s1:72
+binder 11133:11134 <> s2:73
+R11163:11166 Sheaves <> CR_R proj
+R11168:11173 Sheaves <> regime:71 var
+R11175:11176 Sheaves <> s1:72 var
+R11178:11179 Sheaves <> s2:73 var
+rec 11267:11280 <> EmpiricalSetup
+proj 11289:11297 <> ES_metric
+proj 11325:11332 <> ES_bound
+proj 11344:11356 <> ES_compatible
+R11305:11308 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11313:11316 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 11367:11367 <> A:77
+R11378:11381 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11377:11377 Sheaves <> A:77 var
+R11383:11386 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R11382:11382 Sheaves <> A:77 var
+rec 11811:11820 <> TrainEvent
+proj 11829:11836 <> TE_event
+rec 11919:11930 <> TrainChannel
+proj 11939:11948 <> TC_channel
+proj 12017:12025 <> TC_access
+R11956:11959 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12042:12051 Sheaves <> TrainEvent rec
+binder 12036:12038 <> evt:83
+binder 12061:12061 <> n:84
+R12083:12086 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12071:12078 Sheaves <> TE_event proj
+R12080:12082 Sheaves <> evt:83 var
+R12087:12096 Sheaves <> TC_channel:82 meth
+R12098:12098 Sheaves <> n:84 var
+ind 12349:12359 <> ChannelName
+constr 12368:12376 <> CN_visual
+constr 12399:12409 <> CN_auditory
+constr 12429:12436 <> CN_radar
+constr 12459:12471 <> CN_linguistic
+constr 12491:12501 <> CN_archival
+R12383:12393 Sheaves <> ChannelName:86 ind
+R12413:12423 Sheaves <> ChannelName:86 ind
+R12443:12453 Sheaves <> ChannelName:86 ind
+R12475:12485 Sheaves <> ChannelName:86 ind
+R12505:12515 Sheaves <> ChannelName:86 ind
+scheme 12349:12359 <> ChannelName_rect
+scheme 12349:12359 <> ChannelName_ind
+scheme 12349:12359 <> ChannelName_rec
+scheme 12349:12359 <> ChannelName_sind
+rec 12606:12615 <> TrainCover
+proj 12624:12631 <> TC_event
+proj 12649:12658 <> TC_patches
+proj 12691:12697 <> TC_maps
+proj 12773:12785 <> TC_admissible
+R12635:12644 Sheaves <> TrainEvent rec
+R12673:12676 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12662:12672 Sheaves <> ChannelName ind
+R12677:12686 Sheaves <> TrainEvent rec
+R12712:12722 Sheaves <> ChannelName ind
+binder 12708:12708 <> n:91
+R12748:12751 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12725:12732 Sheaves <> TE_event proj
+R12735:12744 Sheaves <> TC_patches:90 meth
+R12746:12746 Sheaves <> n:91 var
+R12752:12759 Sheaves <> TE_event proj
+R12761:12768 Sheaves <> TC_event:89 meth
+R12800:12810 Sheaves <> ChannelName ind
+binder 12796:12796 <> n:93
+R12813:12816 Coq.Init.Logic <> True ind
+def 12946:12958 <> train_descent
+R12969:12978 Sheaves <> TrainCover rec
+binder 12961:12965 <> cover:95
+binder 12982:12982 <> F:96
+R13027:13030 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13016:13026 Sheaves <> ChannelName ind
+binder 13012:13012 <> s:97
+R13038:13041 Coq.Init.Logic <> True ind
+rec 13564:13581 <> GroupPresentations
+proj 13590:13612 <> GP_generators_relations
+proj 13624:13638 <> GP_cayley_table
+proj 13658:13678 <> GP_permutation_action
+proj 13692:13715 <> GP_matrix_representation
+proj 13727:13744 <> GP_character_table
+proj 13761:13774 <> GP_transitions
+binder 13790:13792 <> src:104
+binder 13803:13805 <> tgt:105
+R13981:13990 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R13851:13854 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13825:13827 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13822:13824 Sheaves <> src:104 var
+R13828:13850 Sheaves <> GP_generators_relations:99 meth
+R13876:13885 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13858:13860 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13855:13857 Sheaves <> src:104 var
+R13861:13875 Sheaves <> GP_cayley_table:100 meth
+R13913:13916 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13889:13891 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13886:13888 Sheaves <> src:104 var
+R13892:13912 Sheaves <> GP_permutation_action:101 meth
+R13947:13956 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13920:13922 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13917:13919 Sheaves <> src:104 var
+R13923:13946 Sheaves <> GP_matrix_representation:102 meth
+R13960:13962 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13957:13959 Sheaves <> src:104 var
+R13963:13980 Sheaves <> GP_character_table:103 meth
+R14150:14159 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R14020:14023 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R13994:13996 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R13991:13993 Sheaves <> tgt:105 var
+R13997:14019 Sheaves <> GP_generators_relations:99 meth
+R14045:14054 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R14027:14029 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14024:14026 Sheaves <> tgt:105 var
+R14030:14044 Sheaves <> GP_cayley_table:100 meth
+R14082:14085 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R14058:14060 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14055:14057 Sheaves <> tgt:105 var
+R14061:14081 Sheaves <> GP_permutation_action:101 meth
+R14116:14125 Coq.Init.Logic <> ::type_scope:x_'\/'_x not
+R14089:14091 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14086:14088 Sheaves <> tgt:105 var
+R14092:14115 Sheaves <> GP_matrix_representation:102 meth
+R14129:14131 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14126:14128 Sheaves <> tgt:105 var
+R14132:14149 Sheaves <> GP_character_table:103 meth
+R14160:14163 Coq.Init.Logic <> True ind

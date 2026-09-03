@@ -75,10 +75,12 @@ Record TwoThermometersExample := {
 }.
 
 (* The chapter: Two thermometers report a temperature over time: the      *)
-(* equalizer is the times at which they agree exactly.                      *)
+(* equalizer is the times at which they agree exactly.                    *)
 
 Definition times_of_agreement (e : TwoThermometersExample) : Type :=
-  Type.   (* placeholder; concrete form would extract EQ_carrier            *)
+  EQ_carrier (TTE_X e) (TTE_Y e) (TTE_f e) (TTE_g e) (TTE_equalizer e).
+(* The equalizer's carrier is exactly the times at which thermometer 1     *)
+(* and thermometer 2 agree: the agreement locus.                           *)
 
 (* A second worked example: two proofs of the same theorem produce numeric  *)
 (* outputs by two different routes.                                          *)

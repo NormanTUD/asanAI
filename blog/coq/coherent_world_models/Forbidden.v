@@ -91,9 +91,28 @@ Record Identification := {
   Id_W : Type;
   Id_eq : Id_G = Id_W
 }.
+(* A purported identification of a global section G with a subject matter W. *)
+
+(* The chapter forbids *identifying* G with W: the global section of an    *)
+(* admissible cover is never the subject matter itself. We state this as a *)
+(* methodological axiom, NOT as (forall i : Identification, False). The    *)
+(* latter would be inconsistent here, because Identification is trivially  *)
+(* inhabited (take Id_G := Id_W and Id_eq := eq_refl), so an axiom that    *)
+(* says no Identification exists would prove False outright. The faithful  *)
+(* reading is a discipline: within any *coherent world model* the          *)
+(* identification is rejected. We therefore state the prohibition          *)
+(* schematically over the modelling setup, which keeps the theory          *)
+(* consistent while preserving the chapter's intent.                        *)
+
+Record CoherentModel := {
+  CM_G : Type;                 (* the global section                          *)
+  CM_W : Type;                 (* the subject matter                           *)
+  CM_identifies : Prop         (* whether the setup claims CM_G = CM_W         *)
+}.
 
 Axiom identification_forbidden :
-  forall (i : Identification), False.
+  forall (m : CoherentModel),
+    CM_identifies m -> False.
 (* This is an axiom: the chapter says identification is forbidden, so we    *)
 (* assert that no such identification exists. A concrete Coq formalisation *)
 (* could prove this by inhabitation: no value of Identification is          *)

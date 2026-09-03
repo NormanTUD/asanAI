@@ -1,4 +1,4 @@
-DIGEST 1386bb8829b8256bff4a13e5ebe58bc2
+DIGEST 9086dd85f2eaf688bb6d83736fd68e8f
 FContextsAndSites
 R3574:3580 Library <> <> lib
 R3598:3603 Traces <> <> lib
@@ -222,12 +222,12 @@ scheme 11161:11174 <> TargetCategory_rect
 scheme 11161:11174 <> TargetCategory_ind
 scheme 11161:11174 <> TargetCategory_rec
 scheme 11161:11174 <> TargetCategory_sind
-rec 11445:11452 <> Presheaf
-proj 11461:11469 <> PRS_sites
-proj 11497:11506 <> PRS_target
-proj 11528:11544 <> PRS_target_is_Set
-R11473:11492 ContextsAndSites <> RepresentationScheme rec
-R11510:11523 ContextsAndSites <> TargetCategory ind
-R11558:11560 Coq.Init.Logic <> ::type_scope:x_'='_x not
-R11548:11557 ContextsAndSites <> PRS_target:76 meth
-R11561:11566 ContextsAndSites <> TC_Set constr
+rec 11755:11771 <> SetValuedPresheaf
+proj 11780:11789 <> SVP_scheme
+proj 11817:11826 <> SVP_target
+proj 11848:11864 <> SVP_target_is_Set
+R11793:11812 ContextsAndSites <> RepresentationScheme rec
+R11830:11843 ContextsAndSites <> TargetCategory ind
+R11878:11880 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R11868:11877 ContextsAndSites <> SVP_target:76 meth
+R11881:11886 ContextsAndSites <> TC_Set constr

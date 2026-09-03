@@ -1,4 +1,4 @@
-DIGEST f168db97e5b8e3bb15a8191a8c8cd3a9
+DIGEST 39752f2deb5fe1fde5b0978e41af06f0
 FForbidden
 R1802:1808 Library <> <> lib
 R1826:1831 Traces <> <> lib
@@ -48,37 +48,44 @@ proj 5041:5045 <> Id_eq
 R5053:5055 Coq.Init.Logic <> ::type_scope:x_'='_x not
 R5049:5052 Forbidden <> Id_G:19 meth
 R5056:5059 Forbidden <> Id_W:20 meth
-ax 5071:5094 <> identification_forbidden
-R5112:5125 Forbidden <> Identification rec
-binder 5108:5108 <> i:22
-R5129:5133 Coq.Init.Logic <> False ind
-rec 5866:5882 <> MistakenCoherence
-proj 5891:5894 <> MC_G
-proj 5971:5988 <> MC_self_consistent
-proj 6000:6010 <> MC_grounded
-proj 6022:6031 <> MC_mistake
-R6057:6060 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
-R6039:6056 Forbidden <> MC_self_consistent:27 meth
-R6061:6062 Coq.Init.Logic <> ::type_scope:'~'_x not
-R6063:6073 Forbidden <> MC_grounded:28 meth
-ax 6163:6183 <> coherence_not_descent
-R6202:6218 Forbidden <> MistakenCoherence rec
-binder 6197:6198 <> mc:30
-R6222:6225 Coq.Init.Logic <> True ind
-rec 6721:6735 <> BorrowedAnalogy
-proj 6744:6761 <> BA_source_category
-proj 6773:6790 <> BA_target_category
-proj 6802:6811 <> BA_analogy
-proj 6867:6892 <> BA_analogy_used_as_theorem
-R6833:6836 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6815:6832 Forbidden <> BA_source_category:34 meth
-R6855:6858 Coq.Init.Logic <> ::type_scope:x_'->'_x not
-R6837:6854 Forbidden <> BA_target_category:35 meth
-ax 6911:6929 <> analogy_not_theorem
-R6948:6962 Forbidden <> BorrowedAnalogy rec
-binder 6943:6944 <> ba:38
-R6966:6969 Coq.Init.Logic <> True ind
-def 7064:7088 <> analogy_not_theorem_boxed
-R7115:7129 Forbidden <> BorrowedAnalogy rec
-binder 7110:7111 <> ba:41
-R7133:7136 Coq.Init.Logic <> True ind
+rec 5934:5946 <> CoherentModel
+proj 5955:5958 <> CM_G
+proj 6036:6039 <> CM_W
+proj 6118:6130 <> CM_identifies
+ax 6208:6231 <> identification_forbidden
+R6249:6261 Forbidden <> CoherentModel rec
+binder 6245:6245 <> m:26
+R6284:6287 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R6269:6281 Forbidden <> CM_identifies proj
+R6283:6283 Forbidden <> m:26 var
+R6288:6292 Coq.Init.Logic <> False ind
+rec 7025:7041 <> MistakenCoherence
+proj 7050:7053 <> MC_G
+proj 7130:7147 <> MC_self_consistent
+proj 7159:7169 <> MC_grounded
+proj 7181:7190 <> MC_mistake
+R7216:7219 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R7198:7215 Forbidden <> MC_self_consistent:31 meth
+R7220:7221 Coq.Init.Logic <> ::type_scope:'~'_x not
+R7222:7232 Forbidden <> MC_grounded:32 meth
+ax 7322:7342 <> coherence_not_descent
+R7361:7377 Forbidden <> MistakenCoherence rec
+binder 7356:7357 <> mc:34
+R7381:7384 Coq.Init.Logic <> True ind
+rec 7880:7894 <> BorrowedAnalogy
+proj 7903:7920 <> BA_source_category
+proj 7932:7949 <> BA_target_category
+proj 7961:7970 <> BA_analogy
+proj 8026:8051 <> BA_analogy_used_as_theorem
+R7992:7995 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7974:7991 Forbidden <> BA_source_category:38 meth
+R8014:8017 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7996:8013 Forbidden <> BA_target_category:39 meth
+ax 8070:8088 <> analogy_not_theorem
+R8107:8121 Forbidden <> BorrowedAnalogy rec
+binder 8102:8103 <> ba:42
+R8125:8128 Coq.Init.Logic <> True ind
+def 8223:8247 <> analogy_not_theorem_boxed
+R8274:8288 Forbidden <> BorrowedAnalogy rec
+binder 8269:8270 <> ba:45
+R8292:8295 Coq.Init.Logic <> True ind
