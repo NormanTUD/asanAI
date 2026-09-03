@@ -132,7 +132,7 @@ function toc() {
 	// annotations, and read the rendered text.
 	function getHeaderTitle(header) {
 		var clone = header.cloneNode(true);
-		clone.querySelectorAll('annotation, [data-mjx-annotation], mjx-annotation')
+		clone.querySelectorAll('annotation, [data-mjx-annotation], mjx-annotation, .cl-h-anchor')
 			.forEach(function(a) { a.remove(); });
 
 		if (clone.textContent.indexOf('$') !== -1 &&
