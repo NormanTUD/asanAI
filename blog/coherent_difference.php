@@ -389,20 +389,18 @@ The order and connection of ideas is the same as the order and connection of thi
 
 This is the formal crystallization of the intuition. Sheaves were introduced by \cite[Alexander Grothendieck]{grothendieck_sheaf} (\citeyear{grothendieck_sheaf}) in the 1950s and 60s, partly through the work of Jean Leray in the late 1940s \cite{sheaf_mathematics}, precisely to handle questions that resisted the older “patch a space together by gluing charts” picture of \citetitle{manifold_wiki}. Where manifolds ask you to specify a single chart and a transition map, sheaves ask you to specify local data on every open set and let the global object fall out of the consistency conditions. The local-to-global direction is so productive that it is the entire backbone of algebraic geometry and much of modern logic.
 
-<div class="optional md" data-headline="Stalks, germs, and sections: the vocabulary of locality">
-A few terms you will meet constantly once you read anything about sheaf theory:
+<div class="optional md" data-headline="What the words mean, with a panorama">
+You photograph a landscape from several angles. The photos overlap: the same trees, the same horizon appear in more than one frame. If the overlaps match, you stitch them into one panorama. If they don't (someone moved, the light changed), you can't.
 
-* **Section over $U$.** An element of $\mathcal{F}(U)$. Think of it as “a complete description of what the sheaf knows about the region $U$”. For the sheaf of continuous functions, a section over $U$ is exactly a continuous real-valued function on $U$.
+* **Section.** Each photo is the *data on its region*. Formally: a section $s \in \mathcal{F}(U)$ is the data carried by the open region $U$.
+* **Restriction.** Crop a photo to a sub-region. The data on the big region, read on the small one: $s|_V$ for $V \subseteq U$.
+* **Compatibility.** Two photos overlap. They are *compatible* if the overlapping part of the scene looks the same in both: $s_1|_{U_1 \cap U_2} = s_2|_{U_1 \cap U_2}$.
+* **The sheaf condition.** Compatible local data patches together into exactly one global image. No contradictions, no ambiguity. A presheaf that fails this is two photos of the same overlap showing different things: locally fine, globally impossible.
+* **Germ.** Zoom to one point in the scene. Two photos give the same *germ* there if they show the same thing in a small neighborhood around that point. The germ is "what the scene looks like right here," independent of which photo you're looking at.
+* **Stalk.** All the germs at one point, collected. Every local fact the photos carry about that one spot.
+* **Cut.** A presheaf is a tentative assignment — a "cut" — that may or may not satisfy the gluing condition. A sheaf is a cut that always glues.
 
-* **Restriction.** Given $V \subseteq U$, the restriction map $\mathcal{F}(U) \to \mathcal{F}(V)$ takes a section over $U$ and tells you what it says when restricted to $V$. Compatibility on overlaps is, in the end, just: the restriction of $s_{i}$ to $U_{i} \cap U_{j}$ equals the restriction of $s_{j}$ to $U_{i} \cap U_{j}$.
-
-* **Germ at $x$.** Two sections over possibly different opens are “equivalent at $x$” if they agree on some neighborhood of $x$. A germ is an equivalence class under this relation. It is the *smallest unit of local data at a point*.
-
-* **Stalk at $x$.** The set of all germs at $x$. It is the sheaf's entire “view from the point $x$”, built from every section that passes through $x$ at all, with sections that agree near $x$ identified.
-
-* **Cut.** A piecewise-defined section, the data you assemble before you check whether it glues. A presheaf is a tentative assignment — a “cut” — that may or may not satisfy the gluing condition; a sheaf is a cut that always glues.
-
-The pattern: **sections live on opens, germs live on points, the stalk stitches all the germs together at one point**. This three-level picture (open / germ / stalk) is the standard way sheaf theorists think.
+Three levels: **sections on regions, germs at points, stalks collecting all germs at one point.**
 </div>
 
 <div class="optional md" data-headline="Heraclitus on the same point, twenty-five centuries earlier">
