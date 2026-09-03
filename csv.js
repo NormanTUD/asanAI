@@ -21,7 +21,7 @@ async function handle_csv_file_upload(event) {
 		reader.onload = function(e) {
 			var text = e.target.result;
 			$("#csv_file").val(text).trigger("keyup");
-			show_csv_file();
+			show_csv_file(); // await not possible here
 		};
 		reader.readAsText(file);
 	} else if (is_excel) {
@@ -41,7 +41,7 @@ async function handle_csv_file_upload(event) {
 				}
 
 				$("#csv_file").val(csv_text).trigger("keyup");
-				show_csv_file();
+				show_csv_file(); // await not possible here
 			} catch (e) {
 				err(language[lang]["error_reading_excel_file"] + ": " + e.message);
 			}
