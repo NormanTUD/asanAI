@@ -212,9 +212,9 @@ $$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}
 
 $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
-These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The Feed-Forward Network (FFN) learns to interpret these fixed “geometric fingerprints” by adjusting its weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
+These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
 
-The key to how the FFN learns from positional encodings lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity allows the FFN to infer relative positions by learning simple transformations that map positional relationships to meaningful patterns. Over multiple layers, the FFN entangles positional and semantic information, enabling the model to reason about sequence structure and relationships effectively. This process ensures that the model can generalize to unseen sequences and maintain positional understanding even when tokens are shifted or reordered.
+The key to how the model infers relative positions lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity is what lets the attention mechanism — through its $\mathbf{q}\cdot\mathbf{k}$ dot products — score a relative offset in a position-invariant way, so a head can learn to “attend $k$ steps back” regardless of the absolute location. (The FFN, being a pointwise operation, operates on the features that attention has already mixed; the relative-position geometry itself comes from the sinusoidal encodings interacting inside attention.) Over multiple layers, the network entangles positional and semantic information, enabling it to reason about sequence structure and relationships. This is what lets the model generalize to unseen sequences and retain positional understanding even when tokens are shifted or reordered.
 
 This is required because the network looks at all words simultaneously, instead of after another. Since the matrix can be permuted and the output doesn't change (except the permutation), having the order in the matrices alone isn't enough.
 </div>
@@ -369,11 +369,11 @@ In the paper \citealternativetitle{analyzingmultiheads}, the study identified th
 However, research into larger Decoder-only models from \cite[Elhage et al., 2021]{elhage2021mathematical} and \cite[Olsson et al., 2022]{incontextlearninghead} and recent discoveries in mechanistic interpretability have revealed even more specialized mechanisms:
 
 * **Induction Heads**: These specialized heads develop in the middle layers and are responsible for pattern matching. If they see a sequence like [A][B] and later encounter [A], they “induce” that [B] should follow. This is considered the primary mechanism behind a model's ability to follow instructions in a prompt.
-* **Successor Heads**: Identified as universal circuits across various architectures \cite[Gould et al., 2024]{successorheads}, these heads perform logical incrementation. They map tokens to their ordinal successors, such as “Monday” to “Tuesday”, “January” to “February”, or “1” to “2”.
+* **Successor Heads**: Identified as universal circuits across various architectures \cite[Gould et al., 2023]{successorheads}, these heads perform logical incrementation. They map tokens to their ordinal successors, such as “Monday” to “Tuesday”, “January” to “February”, or “1” to “2”.
 * **Name Mover Heads**: Observed in tasks like Indirect Object Identification by \cite[Wang et al., 2022]{interpretabilityinwild}, these heads extract specific entities (like names) from the earlier context and “move” them to the final token position to ensure logical consistency in the output.
 * **Negative / Copy Suppression Heads**: These heads, identified by \cite[McDougall et al., 2023]{copysuppression}, actively suppress tokens that are over-predicted by other circuits. They act as a corrective mechanism to prevent the model from repeating itself or making common probabilistic errors.
 * **Safety / Refusal Heads**: Recent research by \cite[Zhou et al.]{safetyheads} suggests that specific heads act as “gatekeepers” for safety alignment. When these heads are ablated, models may lose their ability to refuse harmful prompts, indicating they are key feature extractors for safety boundaries.
-* **S-Inhibition / Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a “resting place” for attention when no relevant semantic information is found.
+* **Delimiter Heads**: These heads act as structural anchors, often attending to punctuation or special tokens. They help the model manage signal-to-noise ratios by providing a “resting place” for attention when no relevant semantic information is found.
 </div>
 
 <div class="optional md" data-headline="Attention-Heads and In-Context-Learning">
@@ -598,7 +598,7 @@ $\text{cloglog}$ for the opposite tail of the distribution, as detailed by
 </div>
 
 <div class="optional md" data-headline="Temperature and the Shannon-Entropy">
-The **\citeauthorlastnameand{shannon1951communication} entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the “randomness” of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
+The **\citeauthorlastnameand{shannon1948communication} entropy** $H = -\sum_w P(w) \log_2 P(w)$ measures the “randomness” of the distribution. Lower temperature decreases entropy (more confident), higher temperature increases it (more exploratory). Maximum entropy $H_{\max} = \log_2(|V|)$ corresponds to a perfectly uniform distribution.
 </div>
 
 <div class="optional md" data-headline="Temperature Scaling">
@@ -672,13 +672,13 @@ While the architecture is identical in both modes, the behavior of the model dif
 |--------|-----------|----------|
 | **Goal** | Generate text | Update weights to minimize loss |
 | **Weights** | Frozen, never change | Updated via gradient descent |
-| **Dropout** | Disabled (all neurons active) | Enabled (randomly drops neurons) |
-| **Batch Normalization** | Uses running statistics | Uses batch statistics |
-| **KV Cache** | Active (stores past K/V for speed) | Not used (full sequence processed at once) |
+| **Dropout** | Not used in this model | Not used in this model |
+| **Normalization** | LayerNorm (feature-wise, no running stats) | LayerNorm (feature-wise, no running stats) |
+| **KV Cache** | Not used — the full context is recomputed every step | Not used (full sequence processed at once) |
 | **Gradients** | Not computed | Computed via backpropagation |
-| **Memory** | O(context) for KV cache | O(context²) for attention matrix + all intermediate activations |
+| **Memory** | O(context²) attention matrix, recomputed each step | O(context²) attention matrix + stored activations for backprop |
 | **Parallelism** | Sequential (one token at a time) | Parallel (all tokens in the batch processed simultaneously) |
-| **Randomness** | Controlled by temperature / top-p | Controlled by dropout / data shuffling |
+| **Randomness** | Controlled by temperature / top-p | Deterministic (given the same initialization) |
 
 **The key distinction:** During training, the model sees the entire target sequence and learns to predict each token conditioned on all previous tokens, computing gradients to update weights. During inference, the model has no target, it generates tokens one at a time, using its own previous outputs as context for the next prediction. This is why inference is inherently sequential while training can be parallelized across the sequence length.
 
