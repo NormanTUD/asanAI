@@ -773,9 +773,9 @@
             for (var pj = 0; pj < probs.length; pj++) probs[pj] = Math.max(0, probs[pj]) / probSum;
         }
 
-        // Sort top-k
+        // Keep original neuron order (no sorting by activation)
         var indexed = probs.map(function (p, i) { return { i: i, p: p, label: labels[i] || ("class_" + i) }; });
-        indexed.sort(function (a, b) { return b.p - a.p; });
+        var topRow = indexed[maxIdx];
 
         var el = ensureClassificationPanel(inst);
         var theme = getTheme();
@@ -784,17 +784,16 @@
         el.style.border = "1px solid " + theme.tooltipBorder;
         el.style.boxShadow = theme.tooltipShadow;
 
-        var topK = Math.min(5, indexed.length);
         var html = ''
             + '<div style="font-weight:700;font-size:11px;color:' + theme.tooltipAccent + ';letter-spacing:0.6px;text-transform:uppercase;margin-bottom:2px;">Prediction</div>'
-            + '<div style="font-weight:800;font-size:20px;margin-bottom:2px;letter-spacing:0.3px;">' + escapeHtml(indexed[0].label) + '</div>'
-            + '<div style="font-size:11px;opacity:0.75;margin-bottom:8px;">confidence ' + (indexed[0].p * 100).toFixed(1) + '%</div>';
+            + '<div style="font-weight:800;font-size:20px;margin-bottom:2px;letter-spacing:0.3px;">' + escapeHtml(topRow.label) + '</div>'
+            + '<div style="font-size:11px;opacity:0.75;margin-bottom:8px;">confidence ' + (topRow.p * 100).toFixed(1) + '%</div>';
 
-        for (var k = 0; k < topK; k++) {
+        for (var k = 0; k < indexed.length; k++) {
             var row = indexed[k];
             var pct = (row.p * 100);
             var barW = Math.max(2, Math.min(100, pct));
-            var isTop = k === 0;
+            var isTop = row.i === maxIdx;
             var barColor = isTop
                 ? 'linear-gradient(90deg,#4a67b8,#9fb5ff)'
                 : (theme.dark ? 'rgba(160,180,255,0.35)' : 'rgba(74,103,184,0.45)');
