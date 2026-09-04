@@ -117,6 +117,13 @@
 		_js("optimizer.js");
 		_js("loss_metric.js");
 		_js("labels.js");
+		_js("CopyShader.js");
+                _js("LuminosityHighPassShader.js");
+                _js("EffectComposer.js");
+                _js("RenderPass.js");
+                _js("ShaderPass.js");
+                _js("UnrealBloomPass.js");
+                _js("CSS2DRenderer.js");
 		_js("cnn3d.js");
 		_js("validation.js");
 		_js("cookies_and_url.js");
