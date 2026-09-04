@@ -3342,13 +3342,6 @@ window.bibData = {
 		title: "The Superintelligent Will: Motivation and Instrumental Rationality in Advanced Artificial Agents",
 		url: "https://nickbostrom.com/superintelligentwill.pdf",
 	},
-	"vaswani2017attention": {
-		author: "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin",
-		year: "2017",
-		title: "Attention Is All You Need",
-		alternativetitle: "Transformer-Architecture",
-		url: "https://arxiv.org/abs/1706.03762",
-	},
 	"box1987empirical": {
 		author: "George Edward Pelham Box, Norman Richard Draper",
 		year: "1987",
@@ -5025,7 +5018,7 @@ window.bibData = {
 	"vaswani2017attention": {
 		url: "https://arxiv.org/abs/1706.03762",
 		title: "Attention Is All You Need",
-		author: "Ashish Vaswani, Noam Shazeer, Niki Parmar, et al.",
+		author: "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin",
 		year: 2017,
 		alternativetitle: "Transformer"
 	},
