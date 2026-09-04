@@ -43,7 +43,7 @@
         showInputImage: true,
         autoUpdateHash: true,
         // new
-        bloom: true,
+        bloom: false,
         bloomStrength: 0.9,
         bloomRadius: 0.4,
         bloomThreshold: 0.25,
