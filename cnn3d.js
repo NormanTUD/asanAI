@@ -449,7 +449,7 @@
             + '  </div>'
             + '  <div class="cnn3d-gui-perlayer" style="min-width:280px;flex:2;">'
             + '    <div data-role="hdr-perlayer" style="font-weight:700;margin-bottom:8px;font-size:13px;letter-spacing:0.3px;">✦ Per-layer thresholds</div>'
-            + '    <div data-role="perlayer-list" style="max-height:280px;overflow-y:auto;padding-right:6px;"></div>'
+            + '    <div data-role="perlayer-list" style="padding-right:6px;"></div>'
             + '  </div>'
             + '</div>';
 
@@ -2333,7 +2333,13 @@
             }
             if (!built) continue;
 
-            built.group.position.set(currentX, 0, 0);
+            var advance;
+            if (built.kind === "conv2d") advance = built.size.z;
+            else advance = built.size.x;
+
+            // Place the block so its near face starts at currentX (input image
+            // acts as the first "layer" anchor, so slices can't run behind it)
+            built.group.position.set(currentX + advance / 2, 0, 0);
             if (built.kind === "conv2d") {
                 built.group.rotation.y = Math.PI / 2;
             }
@@ -2349,9 +2355,6 @@
             blocks.push(blockRec);
             inst.layerBlocks.push(blockRec);
 
-            var advance;
-            if (built.kind === "conv2d") advance = built.size.z;
-            else advance = built.size.x;
             currentX += Math.max(advance, 10) + inst.opts.layerGap;
         }
 
