@@ -227,7 +227,7 @@ A \citeyear{lu2023doublehelix} paper (\citetitle{lu2023doublehelix}) peered deep
 
 The phenomenon of \cite[**grokking**]{power2022grokking} occurs when a neural network trains on a small algorithmic dataset, first memorizes the training examples perfectly, then suddenly, well past the point of overfitting, generalizes to the test set. It is as if the network spends most of training simply memorizing answers, then has an “aha moment” where it discovers the underlying rule.
 
-\citeauthor{nanda2023grokking} reverse-engineered this process in a small Transformer trained on modular addition ($a + b \bmod p$). They discovered that the network learns a Fourier-based algorithm: it converts inputs to their discrete Fourier components, multiplies them (which corresponds to addition in the frequency domain), and converts back. This is exactly how you would add numbers on a clock: rotating around a circle by the sum of two angles.
+\citeauthor{nanda2023grokking} reverse-engineered this process in a small Transformer trained on modular addition ($a + b \bmod p$). They discovered that the network learns a Fourier-based algorithm: it converts inputs to their discrete Fourier components, multiplies them (which corresponds to addition in the original domain), and converts back. This is exactly how you would add numbers on a clock: rotating around a circle by the sum of two angles.
 
 Crucially, they identified three distinct phases of training:
 1. **Memorization:** The network stores individual input-output pairs in its weights without learning the structure
