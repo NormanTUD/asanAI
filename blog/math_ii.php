@@ -869,7 +869,7 @@ By adding a second number, we unlock an infinite flat surface.
 <div class="image-row md">
 	<figure>
 		<img src="rgb_color_cube.png" alt="RGB color cube diagram" />
-		<figcaption class="md">\citealternativetitle{rgb_color_cube}: every visible color corresponds to a single point inside this cube, parameterized by its Red, Green, and Blue coordinates.</figcaption>
+		<figcaption class="md">\citealternativetitle{rgb_color_cube}: every color in this RGB color cube is a single point inside it, located by its Red, Green, and Blue coordinates.</figcaption>
 	</figure>
 </div>
 
@@ -927,7 +927,7 @@ A *vector space over $k$* is a set $V$ together with two operations — vector a
 
 You don't need to memorise the eight axioms. What you need to remember is:
 
-1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The integers $\{0, 1, \ldots, 255\}$ that index pixel brightness are *not* scalars of a vector space over $\mathbb{R}$; they are just integers, and we use them as coordinate indices.
+1. **A scalar is not "any number".** A scalar lives in a specific number system $k$ — usually $\mathbb{R}$. The set of pixel brightnesses $\{0, 1, \ldots, 255\}$ is *not* a field (no negatives, no quotients), so it cannot serve as the base field $k$; the individual values are of course real numbers, used as coordinates.
 2. **A vector is not a "list of numbers".** A vector is an *element* of a vector space. The list-of-numbers representation only appears once you pick a basis — that is, once you choose how to measure vectors. The vector itself exists without that choice. (This is why we can rotate, stretch, or translate an embedding space in later chapters without changing the meaning of "vector".)
 3. **Every vector space has a basis.** A basis is a small set of vectors such that every other vector is a unique combination of them. This is a deep theorem (equivalent to the axiom of choice); for our purposes it just means: in $d$ dimensions, every vector is described by exactly $d$ coordinates.
 
@@ -942,7 +942,7 @@ A **scalar** is a single number from the base field — in this course, almost a
 
 $$ s \in \mathbb{R} \qquad \text{Example: } s = 2.5 $$
 
-A note on terminology: in machine learning, you will often see "scalar" used more loosely to mean "a single number of any kind" — for example a pixel brightness in $\{0, 1, \ldots, 255\}$. That is fine as a casual usage, but strictly speaking pixel brightnesses are integers, not elements of the vector space's base field. The two meanings rarely cause problems in practice; just be aware they exist.
+A note on terminology: in machine learning, you will often see "scalar" used more loosely to mean "a single number of any kind" — for example a pixel brightness in $\{0, 1, \ldots, 255\}$. That is fine as a casual usage, but strictly speaking the *set* $\{0, 1, \ldots, 255\}$ is not a field (no negatives, no quotients), so it cannot be the base field; each individual brightness value is just a real number. The two meanings rarely cause problems in practice; just be aware they exist.
 
 ### Vectors
 
@@ -954,7 +954,7 @@ $$ \vec{v} = \begin{pmatrix} 3 \\ 4 \\ 2 \end{pmatrix} $$
 
 Two important properties:
 
-* A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or at $(1, 1)$. This is what it means for vectors to be basis-free.
+* A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or at $(1, 1)$. This is what it means for vectors to be *free* (not anchored to a point).
 * You can stretch a vector by a scalar: $2 \cdot (3, 4, 2) = (6, 8, 4)$. You can add vectors component-wise: $(1, 2) + (3, 4) = (4, 6)$.
 
 To make a color, a computer needs a list of 3 numbers: one for Red, one for Green, one for Blue. This 3-tuple is a vector in $\mathbb{R}^3$:
@@ -967,7 +967,7 @@ $$ \vec{v}_{\text{color}} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \qquad \te
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
 <div class="md">
-A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or somewhere else. This is what it means for vectors to be basis-free.
+A vector is *not glued to one spot*. The arrow "3 right, 4 up" is the same arrow whether you draw it starting at the origin or somewhere else. This is what it means for vectors to be *free* (not anchored to a point).
 </div>
 
 <div style="text-align: center; margin-bottom: 10px;">
@@ -1039,8 +1039,8 @@ The same word — *tensor* — has a stricter meaning in mathematics and physics
 
 If you go on to read physics or differential geometry, you will encounter:
 
-* a *contravariant* index (subscript notation in physics, superscript in math),
-* a *covariant* index (the other way),
+* a *contravariant* index (a superscript, e.g. $V^{\mu}$),
+* a *covariant* index (a subscript, e.g. $V_{\mu}$),
 * a *type* $(p, q)$, meaning $p$ contravariant slots and $q$ covariant slots.
 
 In that language, a vector field is a $(1, 0)$-tensor, a one-form (linear functional) is a $(0, 1)$-tensor, and a metric tensor is a symmetric $(0, 2)$-tensor. None of this matters for the ML sense above — but it is why the word was tempting to borrow.
@@ -1079,7 +1079,7 @@ We can think of a pixel $P$ as a stack of three values:
 
 $$P = \begin{pmatrix} \color{red}{R} \\ \color{green}{G} \\ \color{blue}{B} \end{pmatrix}$$
 
-By mixing these three primary lights at different brightness levels (0 to 255), you can create any color in the world!
+By mixing these three primary lights at different brightness levels (0 to 255), you can create a vast range of colors — over 16 million of them!
 </div>
 
 <div id="section-rgb">
@@ -1131,7 +1131,7 @@ You can experiment with how two linear functions combine. Adjust the sliders to 
 </div>
 
 <div class="optional md" data-headline="As a category-theoretical diagram">
-We can visualize these relationships using a square diagram. It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data. In Category Theory, $A, B, C$ are *objects* (which can be any mathematical objects, like sets) and $f$ and $g$ (the arrows) are so-called *morphisms* (which can be anything that connects mathematical objects to each other, like functions). When both paths lead to the same result, we say the diagram **commutes**.
+We can visualize these relationships using a triangle diagram. It shows that there are two ways to reach the same result: either you transform your data first and then apply a function, or you apply a modified version of that function to your raw data. In Category Theory, $A, B, C$ are *objects* (which can be any mathematical objects, like sets) and $f$ and $g$ (the arrows) are so-called *morphisms* (which can be anything that connects mathematical objects to each other, like functions). When both paths lead to the same result, we say the diagram **commutes**.
 
 <center>
 <?php

@@ -93,7 +93,7 @@ $$f(x) = ax + b$$
 
 In this “toy” network equation:
 * **$x$**: Represents the input signal (the initial coordinate).
-* **$a$** (Weights): The scaling or rotation factor that determines the trajectory of data through the system.
+* **$a$** (Weights): The scaling factor that determines the trajectory of data through the system.
 * **$b$** (Bias): The translation factor that shifts the position of the output.
 
 ### Breaking Symmetry
@@ -149,7 +149,7 @@ The rule of “matching the data” extends to every domain:
 
 If the output layer's dimensions do not match the target data's dimensions, the **Loss Function** will be unable to compare the prediction to the reality, and the “loop” of learning will break.
 
-**The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your loss function must be probabilistic (i.e., softmax).
+**The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your output activation must produce a probability distribution (i.e., softmax), paired with a cross-entropy loss.
 
 ## The Statistical Nature of Learning
 
@@ -179,7 +179,7 @@ We previously mentioned initializing weights “randomly.” But “random” is
 To solve this, we use the **Normal Distribution** ($\mathcal{N}$) we saw in the **Statistics** part.
 Modern networks use “Xavier” or “He” initialization, which are just fancy ways of saying: *pick random numbers from a Gaussian Bell Curve where the width ($\sigma$) is carefully calculated based on the size of the network.*
 
-$$ W \sim \mathcal{N}\left(0, \sqrt{\frac{2}{n_\text{inputs}}}\right) $$
+$$ W \sim \mathcal{N}\left(0, \frac{2}{n_\text{inputs}}\right) \quad \text{(std } \sqrt{2/n_\text{inputs}}\text{)} $$
 
 This ensures that the “energy” (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
 
@@ -191,9 +191,9 @@ Instead of computing one neuron at a time, we pack all inputs into a vector $\ma
 
 $$\mathbf{y} = W\mathbf{x} + \mathbf{b}$$
 
-This single line represents thousands of individual multiplications and additions, all happening in parallel. Every row of $W$ is a separate “neuron” with its own set of weights. Every column of $W$ receives the same input $\mathbf{x}$. The matrix multiplication $W\mathbf{x}$ computes the dot product of every row with $\mathbf{x}$ simultaneously.
+This single line represents thousands of individual multiplications and additions, all happening in parallel. Every row of $W$ is a separate “neuron” with its own set of weights. Every row of $W$ receives the same input $\mathbf{x}$. The matrix multiplication $W\mathbf{x}$ computes the dot product of every row with $\mathbf{x}$ simultaneously.
 
-This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle. A modern GPU can execute a $4096 \times 4096$ matrix multiply, over 16 million individual multiplications, in a single operation. Without this parallelization, training a model like GPT-4 would be computationally impossible.
+This is why GPUs are so effective for deep learning: they are designed to perform matrix multiplications in hardware, processing thousands of operations per clock cycle. A modern GPU can execute a $4096 \times 4096$ matrix times a $4096$-dimensional vector, over 16 million individual multiplications, in a single operation. Without this parallelization, training a model like GPT-4 would be computationally impossible.
 
 So when you see $\mathbf{h} = \text{Attention}(Q, K, V)$, remember that every letter in that equation is a **matrix**, and every operation is a **batch of thousands of parallel arithmetic operations**, each one as simple as the single neuron $y = ax + b$.
 </div>

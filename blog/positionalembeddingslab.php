@@ -135,8 +135,8 @@ $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmat
 
 You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines. This is intentional:
 
-* **Frequency Scaling:** Each pair of dimensions uses a different frequency. The “speed” of the wave is determined by the divisor $10000^{2i/d_\text{model}}$, which is the dimensions Frequency $\omega$.
-* **The “Slow” Dimensions:** For a small $d_\text{model}$ like 4, the second pair of dimensions (indices 2 and 3) has a much larger divisor, making the wave stretch out over thousands of positions.
+* **Frequency Scaling:** Each pair of dimensions uses a different frequency. The “speed” of the wave is set by the divisor $10000^{2i/d_\text{model}}$; the frequency $\omega$ is its reciprocal, $\omega = 10000^{-2i/d_\text{model}} = 1/\text{divisor}$, so a larger divisor makes the wave slower.
+* **The “Slow” Dimensions:** For a small $d_\text{model}$ like 4, the second pair of dimensions (indices 2 and 3) has a much larger divisor ($10000^{2/4}=100$), stretching one full cycle out to $2\pi\cdot100\approx630$ positions.
 * **The Purpose:** The fast waves help the model distinguish between immediate neighbors, while the slow waves act like a “slow clock,” helping the model track position across very long sequences.
 
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
@@ -150,7 +150,7 @@ The wave plots above show each dimension's projection individually, flat curves 
 
 **Adjacent positions are close together.** Neighboring points sit right next to each other on the curve. The model does not memorize “position 5 is special”, nearness is encoded geometrically.
 
-**Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length and direction**. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute “3 hours from now” regardless of what time it currently is.
+**Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length** (equal chords of the helix), even though each points in a different direction as the helix turns. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute “3 hours from now” regardless of what time it currently is.
 
 **Generalization to unseen lengths.** Because the geometry of “nearby” vs “far away” is baked into the encoding rather than memorized, Transformers can generalize to sequence lengths they were never trained on.
 

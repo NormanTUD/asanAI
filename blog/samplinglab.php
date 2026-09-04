@@ -98,7 +98,7 @@ $$
 
 * $s = 0.1$: include any token within 10× of the max.
 * $s = 0.05$: more inclusive.
-* $s = 0.0$: greedy.
+* $s = 1.0$: greedy (only the top token qualifies). $s = 0.0$ switches the filter off (keeps every token).
 
 Min-$p$ **scales with confidence**: when the model is sharp, few tokens qualify; when uncertain, more. Empirically outperforms top-$p$ on quality benchmarks.
 </div>
@@ -131,7 +131,7 @@ Similar to min-$p$ but with a different criterion: cut off tokens with probabili
 Reduce the logits of tokens that have already appeared in the context:
 
 $$
-z_i' = \begin{cases} z_i / \theta & \text{if } i \in \text{context} \\ z_i \cdot \theta & \text{if } i \notin \text{context} \end{cases}
+z_i' = \begin{cases} z_i / \theta & \text{if } i \in \text{context} \\ z_i & \text{if } i \notin \text{context} \end{cases}
 $$
 
 * $\theta = 1.0$: no penalty.
@@ -166,7 +166,7 @@ A 2024 technique: randomly exclude the top token from sampling with some probabi
 A **deterministic** decoding strategy that picks the token maximizing:
 
 $$
-\text{score}(i) = (1 - \alpha) \cdot P(i) - \alpha \cdot \max_{j \in \text{context}} \text{sim}(\mathbf{h}_i, \mathbf{h}_j)
+\text{score}(i) = (1 - \alpha) \cdot \log P(i) - \alpha \cdot \max_{j \in \text{context}} \text{sim}(\mathbf{h}_i, \mathbf{h}_j)
 $$
 
 where $\mathbf{h}_i$ is the token's hidden state and $\alpha$ controls the degeneration penalty. Produces high-quality, **non-repetitive** output without randomness. Used in some summarization systems.
@@ -198,7 +198,7 @@ Produces output with consistent information density. Used by some LLM writers fo
 A generalization of speculative decoding: the draft model samples tokens probabilistically, the target model verifies, and corrections are sampled from the target's adjusted distribution:
 
 $$
-P_{\text{final}}(x) = \frac{\min(P_{\text{target}}(x),\, \alpha P_{\text{draft}}(x))}{\sum_x \min(P_{\text{target}}(x),\, \alpha P_{\text{draft}}(x))} + (1 - \alpha)\, P_{\text{target}}(x)
+\text{accept } x \text{ with probability } \min\!\left(1,\, \frac{P_{\text{target}}(x)}{P_{\text{draft}}(x)}\right);\; \text{on rejection, resample from } \frac{\max\!\left(0,\, P_{\text{target}}(x) - P_{\text{draft}}(x)\right)}{\sum_{x'} \max\!\left(0,\, P_{\text{target}}(x') - P_{\text{draft}}(x')\right)}
 $$
 
 This guarantees the output distribution exactly matches the target model's distribution, while achieving speedup.

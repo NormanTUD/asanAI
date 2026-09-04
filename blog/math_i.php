@@ -259,7 +259,7 @@ The factorial grows extremely quickly, much faster than exponential functions. T
 <div class="optional md" data-headline="Reasoning and History">
 The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp1808} (p. XI). He sought a notation to simplify the large products found in **combinatorics** and **power series**.
 
-Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, these essential mathematical laws would require complex exceptions or result in division by zero.
+Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$. Without this definition, $\binom{n}{0}$ and $\binom{n}{n}$ would be undefined (since $0!$ would have no value at all), forcing awkward special cases.
 </div>
 
 <div class="md">

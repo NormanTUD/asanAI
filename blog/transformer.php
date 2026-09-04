@@ -546,12 +546,12 @@ $$H = \begin{pmatrix}
 	h_0 \\
 	h_1 \\
 	\vdots \\
-	h_{n}
+	h_{n-1}
 \end{pmatrix} \in \mathbb{R}^{n \times d_{\text{model}}}$$
 
 The “Migration Map” prints the entire flattened matrix because it wants to show the path of every word. However, the final projection is only interested in the **prediction**:
 
-$$h_{\text{last}} = H[n]$$
+$$h_{\text{last}} = H[n-1]$$
 
 Remember that the $n$ is the number of tokens in the **Inference**-sequence, not in the training sequence, even though the $h_\text{after}$ may be from the training data.
 
@@ -559,7 +559,7 @@ This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When 
 </div>
 
 <div class="optional md" data-headline="The Unembedding Matrix as a Dual Space">
-The unembedding matrix $W_U$ (often equal to $W_E^T$ due to weight tying) does more than just produce logits. It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation. Each row of $W_U$ is a “detector” for a specific token: moving the residual stream vector in the direction of $W_U[\text{“Paris”}]$ literally increases the probability of outputting “Paris.”
+The unembedding matrix $W_U$ (often identical to $W_E$ due to weight tying) does more than just produce logits. It defines a **dual space** where every direction in the residual stream has a direct linguistic interpretation. Each row of $W_U$ is a “detector” for a specific token: moving the residual stream vector in the direction of $W_U[\text{“Paris”}]$ literally increases the probability of outputting “Paris.”
 
 This leads to the **logit lens** technique: by applying $W_U$ to the residual stream at any intermediate layer (not just the final one), you can see what the model “would predict” at that point. Research shows that the model's belief about the next token evolves continuously through the layers, often settling on the correct answer many layers before the output. The attention heads and FFN layers are not performing abstract, uninterpretable operations, they are nudging the residual stream toward or away from specific words, and the unembedding matrix lets us read off what they are doing at every step.
 </div>
@@ -647,7 +647,7 @@ Here is the complete path a prompt takes through the system, from raw text to ge
    - **Multi-Head Self-Attention:** Each token queries all others, computes relevance scores, and gathers contextual information. Multiple heads run in parallel, each specializing in different linguistic relationships (syntax, semantics, coreference).
    - **Feed-Forward Network (FFN):** Each token is processed independently through an expanding activation layer (detectors) and a contracting projection layer (knowledge retrieval). This is where memorized facts and patterns are applied.
 
-5. **Unembedding**, The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often the transpose of $W_E$), producing a logit score for every word in the vocabulary.
+5. **Unembedding**, The final hidden state of the last token is multiplied by the unembedding matrix $W_U$ (often identical to $W_E$), producing a logit score for every word in the vocabulary.
 
 6. **Sampling**, Logits are scaled by temperature and passed through softmax to produce probabilities. A token is sampled from this distribution (greedy: pick the max; stochastic: sample proportionally). The sampled token is appended to the input, and the process repeats from step 1 until the model emits an end-of-sequence token.
 

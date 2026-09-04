@@ -82,7 +82,7 @@ To visualize this, consider a simple **1D Embedding Space** representing tempera
 * **Warm**: $35$
 * **Boiling**: $100$
 
-In this one-dimensional world, “Cold” is mathematically proximal to “Frosty” but distant from “Boiling”.
+In this one-dimensional world, “Cold” is mathematically proximal to “Freezing” but distant from “Boiling”.
 
 This allows you to do calculations like $\underset{100}{\underbrace{\text{Boiling}}} - \underset{60}{\underbrace{\text{Hot}}} \approx \underset{40}{\underbrace{\text{Warm}}}$. Warm, by definition here, is 35, so it is only approximate, but it's the closest match and makes some sense.
 </div>
@@ -600,9 +600,7 @@ dimension* of the data manifold, not the ambient parameter space. Natural langua
 despite its surface complexity, has a much lower intrinsic dimension because of the
 constraints of grammar, logic, physics, and human cognition.
 
-LLMs don't overfit despite having more parameters than data
-points because the data constrains them to a low-dimensional manifold in parameter
-space. The 175 billion parameters are not 175 billion independent degrees of
+LLMs don't overfit despite having as many parameters as the data they're trained on — 175 billion of them for ~300 billion tokens — because the data constrains them to a low-dimensional manifold in parameter space. The 175 billion parameters are not 175 billion independent degrees of
 freedom, they're 175 billion coordinates describing a position on a manifold
 whose intrinsic dimension might be **orders of magnitude smaller**.
 
@@ -687,7 +685,7 @@ Standard embedding spaces use Euclidean geometry, but human language is rife wit
 
 $$ d_{\mathbb{H}}(\mathbf{u}, \mathbf{v}) = \operatorname{arccosh}\!\left(1 + 2\,\frac{\|\mathbf{u} - \mathbf{v}\|^2}{(1 - \|\mathbf{u}\|^2)(1 - \|\mathbf{v}\|^2)}\right) $$
 
-Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of “exponential room” near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement, leaves do not literally need to crowd the boundary, and how much “room” is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are not straight lines but **arcs of circles orthogonal to the boundary**, curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
+Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\| \to 1$), the distance **explodes**, even for vanishingly small Euclidean displacements. This is the geometric mechanism behind the informal idea of “exponential room” near the edge: hyperbolic volumes grow far faster than Euclidean ones, so deep hierarchies can be embedded with less distortion. That phrasing is a helpful intuition rather than a precise statement, leaves do not literally need to crowd the boundary, and how much “room” is actually required depends on the specific data and embedding. Geodesics in the Poincaré disk are **arcs of circles orthogonal to the boundary** (straight diameters through the center being the degenerate case), curving inward through the disk, \cite[a striking visual signature of negative curvature]{nickel2017poincare}.
 
 Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
 
@@ -913,7 +911,7 @@ This is not just a mathematical curiosity. The Voronoi tessellation is **mathema
 
 ### Why This Matters for LLMs
 
-* **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is equivalent to finding which Voronoi cell the output vector falls into, the cell boundaries *are* the decision boundaries.
+* **Decoding as territory lookup:** The final layer of a language model computes a score for each token in the vocabulary. The token with the highest score wins. Geometrically, this is the Voronoi picture of a nearest-neighbor lookup — exact when the token vectors have comparable lengths, so that the highest dot product really is the closest seed — and in that case the cell boundaries *are* the decision boundaries.
 * **Cell size is a geometric, not linguistic, property:** A cell's volume depends only on the positions of the neighboring seeds and the chosen metric. Frequency does not automatically inflate a cell. Whether common words like “the” end up with large cells, making them easier to “land in”, is an *empirical* question about the learned embedding geometry, not a consequence of the Voronoi construction itself.
 * **Neighbors may reflect semantics, but only if the embedding is well-trained:** Sharing a boundary merely means geometric closeness under the chosen metric. It translates into semantic relatedness only insofar as the trained embedding geometry actually groups related words together, which is true of well-trained models but is not guaranteed by the Voronoi construction. “Dog” and “Cat” may share a boundary in a good embedding; nothing in the geometry *requires* it.
 * **Interpolation risks:** When you average two token vectors (e.g., for smoothing or mixing), the result might land in a *third* token's Voronoi cell entirely, a concept that is neither of the two you intended. The Voronoi structure explains why naive interpolation in embedding space can produce surprising results.
@@ -1067,7 +1065,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
         plotted by its birth radius (x) and death radius (y).
         Dots far from the <span style="color:#94a3b8;">diagonal</span> are <b>persistent, real holes</b>;
         dots near the diagonal are noise. The <span style="color:#ef4444; font-weight:bold;">red dashed line</span>
-        shows the current radius $r$, features below it have been born, features to its left have died.
+        shows the current radius $r$: features to its left have been born (birth radius $\le r$), and any that are low enough to also have death radius $\le r$ have died.
     </div>
 </section>
 

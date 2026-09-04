@@ -43,9 +43,9 @@ Where:
 
 **The Gradient “Superhighway”:** Let's look at the gradient of this new block during backpropagation:
 
-$$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{1} $$
+$$ \frac{\partial y}{\partial x} = \frac{\partial (F(x) + x)}{\partial x} = \frac{\partial F(x)}{\partial x} + \mathbf{I} $$
 
-The **$+1$** term is the magic. It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
+The **$+\mathbf{I}$** term is the magic. It ensures that the gradient can flow *directly* from the later layers to the earlier layers without being multiplied by the weights of the intermediate layers. Even if the weights in $F(x)$ are very small (causing $\frac{\partial F}{\partial x} \approx 0$), the gradient signal is preserved by the identity term.
 
 ## Handling Dimension Mismatches ($1 \times 1$ Convs)
 
@@ -64,7 +64,7 @@ $$ y = F(x, \{W_i\}) + W_s x $$
 
 **Mathematical Operation at a single pixel $(i, j)$:** If input $x \in \mathbb{R}^{H \times W \times C_\text{in}}$ and we want output $y \in \mathbb{R}^{H \times W \times C_\text{out}}$:
 
-$$ y_{i,j,k} = \sum_{c=0}^{C_\text{in}} w_{k,c} \cdot x_{i,j,c} $$
+$$ y_{i,j,k} = \sum_{c=0}^{C_\text{in}-1} w_{k,c} \cdot x_{i,j,c} $$
 
 This allows the network to match the “shape” of the main path $F(x)$ so the residual connection can still function, keeping the flow of gradients intact.
 

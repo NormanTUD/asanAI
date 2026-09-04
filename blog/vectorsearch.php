@@ -360,7 +360,7 @@ The core operation is always the same: embed → store → search → retrieve.
 |----------|--------|
 | What is a vector database? | A database optimized for high-dimensional similarity search using ANN algorithms |
 | How is it different from SQL? | SQL matches exact values. Vector DBs match *meanings* via geometric distance |
-| How is search so fast? | ANN algorithms (HNSW, IVF, PQ) reduce $O(N)$ to $O(\log N)$ |
+| How is search so fast? | ANN algorithms skip most of the $O(N)$ scan — HNSW navigates in ~$O(\log N)$, IVF/PQ shrink the constant |
 | What is HNSW? | A multi-layer graph where search “hops” from coarse to fine, like navigating highways → local streets |
 | Keyword vs. semantic vs. hybrid? | Keywords match words, semantic matches meaning, hybrid combines both |
 | What is re-ranking? | A second, more accurate pass over retrieved candidates using a cross-encoder |

@@ -100,7 +100,7 @@ By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (
 
 ### Performer \cite[Choromanski et al., 2021]{choromanski2021performer}
 
-$\phi(x) = \exp(-\|x\|^2/2) \cdot (x, x^2 \text{ random features})$. Provably unbiased kernel approximation.
+$\phi(x) = \exp(-\|x\|^2/2) \cdot (\exp(\omega_1 \cdot x), \ldots, \exp(\omega_m \cdot x))$ for random $\omega_i \sim \mathcal{N}(0, I)$ (positive random features). Provably unbiased kernel approximation.
 
 ### RetNet (Sun et al., Microsoft, 2023)
 

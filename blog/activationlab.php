@@ -107,7 +107,7 @@ Because $e$ represents the “most natural” way to describe growth, the functi
 #### Why is $e$ the perfect choice for SoftMax?
 Neural networks don't use $e$ just because it's famous; they use it because of **Calculus**.
 
-* **The Derivative Property:** $e^x$ is the only function where the derivative is the function itself: $\frac{d}{dx}e^x = e^x$.
+* **The Derivative Property:** $e^x$ is the only function (up to a constant multiple) whose derivative is itself: $\frac{d}{dx}e^x = e^x$.
     * *Why this matters:* In backpropagation, we calculate “gradients” (slopes). When we combine the SoftMax function with Cross-Entropy Loss, the complex calculus simplifies into a incredibly elegant term: $(y_{pred} - y_{true})$. This efficiency makes training deep networks computationally feasible.
 
 * **The Positivity Constraint:** Probabilities cannot be negative. However, raw neural network outputs (logits) can be any real number from $-\infty$ to $+\infty$. Since $e^x$ is strictly positive for all real $x$, it maps negative numbers into the positive space required for probability.

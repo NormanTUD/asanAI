@@ -81,13 +81,13 @@ topics: math-i, programming
     ### What to Watch For
     1.  **The “Probe” Step:** Notice the red line. It shows the AI “looking ahead” by distance $h$. If you make $h$ very small, the AI gets a much more accurate sense of the slope exactly where it is standing.
     2.  **Learning in Action:** Click **“Take 1 Step Down.”** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves, it keeps moving “downhill” until its errors are as small as possible.
-    3.  **Getting Stuck:** Try the “Complex Hills” landscape. If you start the AI in the wrong place, it might find a small valley and get stuck there, even if there is a much deeper valley further away!
+    3.  **Getting Stuck:** Try the “Complex Hills” landscape. If you start the AI in the wrong place, it might find a valley and get stuck there, without ever noticing the other valley further away!
 
 ### Understanding the Partial Derivative ($\partial$)
 
 Above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
 
-The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}, yet later popularized by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) and \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
+The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}; the modern $\partial/\mathrm{d}x$ notation was created by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).
 
 #### The Theory: Isolation
 The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.

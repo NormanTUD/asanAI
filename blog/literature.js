@@ -2028,7 +2028,7 @@ window.bibData = {
 		url: "https://ia902808.us.archive.org/0/items/philtrans05474612/05474612.pdf",
 		title: "A Memoir on the Theory of Matrices",
 		author: "Arthur Cayley",
-		year: 1857
+		year: 1858
 	},
 	"gpt2": {
 		url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",

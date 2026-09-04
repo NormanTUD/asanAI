@@ -176,7 +176,7 @@ $$\mathbf{w}^{(t+1)} = \mathbf{w}^{(t)} - \eta \cdot \nabla L(\mathbf{w}^{(t)})$
 
 where $\eta$ is the learning rate. This is **gradient descent**, first described by \citeauthor{cauchy1847} in \citeyear{cauchy1847} in \citetitle{cauchy1847}.
 
-The interactive demo below shows gradient descent on a simple 2D loss landscape $L(w_1, w_2) = w_1^2 + w_2^2$ (a paraboloid). The gradient at any point $(w_1, w_2)$ is $\nabla L = (2w_1, 2w_2)$, which always points toward the minimum at the origin. You can adjust the learning rate and starting position to see how the optimizer converges.
+The interactive demo below shows gradient descent on a simple 2D loss landscape $L(w_1, w_2) = w_1^2 + w_2^2$ (a paraboloid). The gradient at any point $(w_1, w_2)$ is $\nabla L = (2w_1, 2w_2)$, which always points directly away from the minimum at the origin, in the direction of steepest ascent. Gradient descent moves against it, along $-\nabla L$, which is what carries the weights back toward the origin. You can adjust the learning rate and starting position to see how the optimizer converges.
 </div>
 
 <!-- ═══════════ Gradient Descent Visualization ═══════════ -->
@@ -358,9 +358,9 @@ Backpropagation through a deep network is really just multiplying a chain of <i>
 
 $$\frac{\partial \mathcal{L}}{\partial x^{(0)}} = \frac{\partial \mathcal{L}}{\partial x^{(L)}} \cdot J^{(L)} \cdot J^{(L-1)} \cdot \ldots \cdot J^{(1)}$$
 
-The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets fix this because their Jacobian is $I + J_F$, the identity term guarantees that singular values are at least 1, allowing gradients to flow through arbitrarily many layers.
+The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets ease this because their Jacobian is $I + J_F$: when $L$ such factors are multiplied, the expansion contains a term that skips every $J_F$, which is exactly the identity $I$, so a copy of the gradient always flows through along an untouched path, never multiplied by a small factor.
 
-This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU that maintain smooth, non-vanishing gradients across the full input range.
+This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU, which are smooth: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.
 </div>
 
 ## Summary

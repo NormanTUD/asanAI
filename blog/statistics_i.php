@@ -98,7 +98,7 @@ If two players are in a game where the first to 4 points wins, but the game is i
 
 <div class="optional md" data-headline="The History of the Binomial Distribution">
 ##### The Medieval Insight (c. 1250)
-The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly identified that there are only 16 ways to get sums with three dice that result in a specific value, noting for the first time that some totals occur more often than others.
+The earliest known mention of the differing frequencies of dice sums appears in a Latin poem called \citetitle{devetula} (p. 32), whose author is not certain. The author correctly noted, for the first time, that some totals with three dice occur more often than others — the earliest recognition that dice sums are not equally likely.
 
 ##### The Gambler's Manual: Gerolamo Cardano (1564)
 

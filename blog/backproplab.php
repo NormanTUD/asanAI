@@ -56,7 +56,7 @@ This means that once we know the output of a sigmoid neuron, we can instantly co
 
 ## Loss Function
 
-The network's error is measured using the **Sum of Squared Errors with a $\tfrac{1}{2}$ factor** (sometimes called *half-SSE* or *0.5·MSE*):
+The network's error is measured using the **Sum of Squared Errors with a $\tfrac{1}{2}$ factor** (sometimes called *half-SSE*, i.e. $\tfrac{1}{2}\cdot$SSE):
 
 $$
 E_{\text{total}} = \sum_i \frac{1}{2}(t_i - o_i)^2
@@ -87,7 +87,7 @@ The term $\delta$ quantifies how much a neuron contributed to the total error:
 
 (For a different activation $\phi$, the factor $h(1-h)$ generalises to $\phi'(z)$, the activation's derivative evaluated at the hidden neuron's pre-activation; the chain rule $\delta^{(\ell)} = \big(W^{(\ell+1)\top} \delta^{(\ell+1)}\big) \odot \phi'(z^{(\ell)})$ is the general form.)
 
-(The sign convention follows from the chain rule applied to $E = \tfrac{1}{2}(t - o)^2$ with $o = \sigma(z)$: $\delta = \partial E / \partial z = -(t - o) \cdot \sigma'(o) = -(t - o) \cdot o (1 - o)$, so the leading minus is part of the formula, not an extra sign flip. The update $w \leftarrow w - \eta \cdot \partial E / \partial w$ then moves the weights in the direction that *decreases* $E$. Note that this $\delta$ is for the *Sum of Squared Errors with a sigmoid output*; the gradient $\partial \mathcal{L} / \partial z_i = \hat{y}_i - y_i$ that appears in the Loss chapter is for the *cross-entropy + softmax* combination. These are gradients of two different objectives, so they are not the same quantity.)
+(The sign convention follows from the chain rule applied to $E = \tfrac{1}{2}(t - o)^2$ with $o = \sigma(z)$: $\delta = \partial E / \partial z = -(t - o) \cdot \sigma'(z) = -(t - o) \cdot o (1 - o)$, so the leading minus is part of the formula, not an extra sign flip. The update $w \leftarrow w - \eta \cdot \partial E / \partial w$ then moves the weights in the direction that *decreases* $E$. Note that this $\delta$ is for the *Sum of Squared Errors with a sigmoid output*; the gradient $\partial \mathcal{L} / \partial z_i = \hat{y}_i - y_i$ that appears in the Loss chapter is for the *cross-entropy + softmax* combination. These are gradients of two different objectives, so they are not the same quantity.)
 
 ## Weight Updates
 

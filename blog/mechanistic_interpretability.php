@@ -193,7 +193,7 @@ The Feed-Forward Network in a Transformer layer has a precise computational anal
 
 $$\text{FFN}(x) = \text{ReLU}(x W_1 + b_1) W_2 + b_2$$
 
-The rows of $W_1$ are **keys** (address patterns). The dot product $x W_1$ computes the match score between the input $x$ and every key. ReLU zeroes out non-matching keys. The columns of $W_2$ are **values** (the information retrieved when a key matches). The output is a weighted sum of values, weighted by match strength.
+The columns of $W_1$ are **keys** (address patterns). The dot product $x W_1$ computes the match score between the input $x$ and every key. ReLU zeroes out non-matching keys. The rows of $W_2$ are **values** (the information retrieved when a key matches). The output is a weighted sum of values, weighted by match strength.
 
 This is exactly a soft hash table: instead of exact-match lookup (hard hashing), the FFN performs **approximate-match retrieval** where multiple keys can partially match and their values are blended. The “hash function” is the learned projection $W_1$, and the “hash table entries” are the rows/columns of $W_1$ and $W_2$.
 

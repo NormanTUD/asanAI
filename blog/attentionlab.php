@@ -1569,7 +1569,7 @@ The same set of token vectors is viewed through three different “lenses” (Q,
 A single attention head can only attend from **one perspective** at a time. The Transformer instead runs $h$ heads in parallel, each with its own $W^Q, W^K, W^V$, and concatenates their outputs:
 
 $$
-\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)\, W^O, \quad \text{head}_i = \text{Attention}(Q W_i^Q,\ K_i^K,\ V_i^V)
+\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)\, W^O, \quad \text{head}_i = \text{Attention}(Q W_i^Q,\ K W_i^K,\ V W_i^V)
 $$
 
 with $W_i^Q, W_i^K \in \mathbb{R}^{d_{\text{model}} \times d_k}$, $W_i^V \in \mathbb{R}^{d_{\text{model}} \times d_v}$, and $W^O \in \mathbb{R}^{h \cdot d_v \times d_{\text{model}}}$. In the original paper, $h = 8$, $d_{\text{model}} = 512$, so each head works in a $d_k = d_v = 64$-dimensional subspace. The total per-head cost equals that of one big $512$-dim head, but the model gains the ability to **jointly attend to information from different representation subspaces**, one head can chase syntactic dependencies while another tracks coreference.
@@ -1680,7 +1680,7 @@ It is important to note that attention does not only disambiguate words with mul
 
 Each row of the attention matrix sums to 1 (due to softmax), making it **right-stochastic**. But the columns generally do **not** sum to 1. This asymmetry reveals something profound: some tokens are “attended to” much more than others, they become **information hubs**.
 
-In BERT, the `[CLS]` token often accumulates massive column-sums, acting as a sink that aggregates information from the entire sequence. In GPT-style models, the last (most recent) token plays a similar role. These tokens become gravitational centers that the entire sequence orbits around.
+In BERT, the `[CLS]` token often accumulates massive column-sums, acting as a sink that aggregates information from the entire sequence. In GPT-style models, the first (earliest) token plays a similar role. These tokens become gravitational centers that the entire sequence orbits around.
 
 The zero-sum nature of attention (each row sums to exactly 1) means attention is a **finite resource**. When one token receives more attention from a given query, every other token necessarily receives less. This is not a design choice, it is a mathematical consequence of the softmax normalization. It creates a competitive economy within every forward pass: tokens compete for attention the way organisms compete for resources in an ecosystem. A highly salient token (a proper noun, a negation word) can “starve” surrounding tokens of attention, causing the model to effectively ignore them.
 

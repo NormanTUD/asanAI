@@ -46,7 +46,7 @@ The more terms you include, the better the approximation. You can explore this b
 </div>
 <!-- ─── Interactive: Taylor Series Approximation ─── -->
 <div style="background: #fff; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 20px 0;">
-    <p style="color:#64748b; font-size:0.9em;">Increase the number of terms to see how the polynomial converges to the true $\sin$ curve. With just 5 terms, the match is nearly perfect over $[-2\pi, 2\pi]$!</p>
+    <p style="color:#64748b; font-size:0.9em;">Increase the number of terms to see how the polynomial converges to the true $\sin$ curve. Near $\theta = 0$ a few terms already track it well, but the match only becomes nearly perfect across the whole $[-2\pi, 2\pi]$ range once you push $N$ up toward the top of the slider — drag it up and watch the polynomial catch up at the edges!</p>
 
     <div style="margin-bottom:10px;">
         <strong>Number of Taylor terms $N$:</strong>

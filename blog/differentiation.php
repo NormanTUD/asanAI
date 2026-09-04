@@ -168,7 +168,7 @@ Some derivatives appear so frequently in AI and science that they are worth memo
 | Function $f(x)$ | Derivative $f'(x)$ | Notes |
 |---|---|---|
 | $x^n$ | $nx^{n-1}$ | Power Rule |
-| $e^x$ | $e^x$ | The only function equal to its own derivative! |
+| $e^x$ | $e^x$ | The only function equal to its own derivative, up to a constant multiple! |
 | $\ln(x)$ | $\frac{1}{x}$ | Natural logarithm |
 | $\sin(x)$ | $\cos(x)$ | |
 | $\cos(x)$ | $-\sin(x)$ | |
@@ -269,7 +269,7 @@ $$\nabla f = \begin{pmatrix} \frac{\partial f}{\partial x} \\ \frac{\partial f}{
 
 The gradient points in the direction of **steepest ascent**. To minimize a function (like a loss function), we move in the *opposite* direction of the gradient, this is **gradient descent**.
 
-The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}, yet later popularized by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) and \citeauthor{novaactaacdemiaeiscientiarumporopolitanae} in \citeyear{novaactaacdemiaeiscientiarumporopolitanae} (according to \citeauthor{historyofmathematicalnotation}, p. 222).
+The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}; the modern $\partial/\mathrm{d}x$ notation was created by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).
 </div>
 
 <!-- ─── Interactive: Gradient on a 3D Surface ─── -->

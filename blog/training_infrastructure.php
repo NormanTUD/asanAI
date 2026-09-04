@@ -51,9 +51,9 @@ Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: o
 
 The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters. ZeRO partitions these across $P$ GPUs:
 
-* **ZeRO-1**: partition optimizer states → memory $\frac{1}{P}$, communication increases ~50%.
-* **ZeRO-2**: partition optimizer states + gradients → memory $\frac{1}{P}$, more comms.
-* **ZeRO-3** (FSDP): partition optimizer + gradients + parameters → memory $\frac{1}{P}$, comms doubles but training fits much larger models.
+* **ZeRO-1**: partition optimizer states → memory $\frac{1}{P}$, communication same as DP.
+* **ZeRO-2**: partition optimizer states + gradients → memory $\frac{1}{P}$, communication still same as DP.
+* **ZeRO-3** (FSDP): partition optimizer + gradients + parameters → memory $\frac{1}{P}$, communication increases ~50% (1.5× DP) but training fits much larger models.
 
 FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3. With 64 H100s, you can train a 70B model that wouldn't fit on a single GPU.
 </div>
@@ -107,7 +107,7 @@ Llama 3 (Meta, 2024) was trained on **16,384 H100s** using a combination:
 * **Pipeline Parallelism** = 16 (across nodes, using InfiniBand)
 * **Data Parallelism** = 128 (model replicas)
 
-Total: $8 \times 16 \times 128 = 16{,}384$ GPUs, training a 405B model in ~3,700 GPU-days.
+Total: $8 \times 16 \times 128 = 16{,}384$ GPUs, training a 405B model using $\approx 3.8 \times 10^{25}$ FLOPs.
 
 GPT-4 was estimated at ~25,000 A100s for ~3 months. The trend: more GPUs, larger models, longer training, but the math is the same.
 </div>
@@ -137,7 +137,7 @@ Activations dominate memory at training time. For a 70B model with batch size 1 
 **Activation checkpointing** trades compute for memory: instead of storing all activations, store only every $k$-th. During backward pass, recompute the missing ones.
 
 $$
-\text{Memory} \propto \frac{L \cdot B \cdot S \cdot d}{k}, \quad \text{Compute} \propto \frac{L \cdot B \cdot S \cdot d \cdot (1 + 1/k)}{1}
+\text{Memory} \propto \frac{L \cdot B \cdot S \cdot d}{k}, \quad \text{Compute} \propto \tfrac{4}{3}\,(L \cdot B \cdot S \cdot d) \;\; (\approx 33\% \text{ extra})
 $$
 
 With $k = \sqrt{L}$, memory drops to $O(\sqrt{L})$ at 33% extra compute. Universal practice for frontier training.

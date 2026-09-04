@@ -117,7 +117,7 @@ These are real problems for classical statistical methods. Naïve nearest-neighb
 
 You may have heard of the “curse of dimensionality”: in high dimensions, distance metrics break down, and all points become roughly equidistant. But there is a corresponding **blessing of dimensionality** that makes neural networks possible.
 
-In high-dimensional spaces, random vectors are almost always **nearly orthogonal**. In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with small variance, the probability of a cosine above $0.1$ is only about $0.6\%$:
+In high-dimensional spaces, random vectors are almost always **nearly orthogonal**. In 768 dimensions (a typical embedding size), two random vectors have an expected cosine similarity near 0 with small variance, the probability that a cosine has magnitude above $0.1$ is only about $0.6\%$:
 
 $$
 P(|\cos(\mathbf{v}_1, \mathbf{v}_2)| > 0.1) \approx 0.006
@@ -142,7 +142,7 @@ This is possible precisely because high-dimensional space has exponentially many
 A foundational result in high-dimensional probability. For any function $f$ that is Lipschitz with constant $L$, the values of $f$ on random points in a high-dimensional ball are tightly concentrated around their mean:
 
 $$
-P\!\left(|f(\mathbf{x}) - \mathbb{E}[f(\mathbf{x})]| > t\right) \leq 2 \exp\!\left(-\frac{c t^2}{L^2 d}\right)
+P\!\left(|f(\mathbf{x}) - \mathbb{E}[f(\mathbf{x})]| > t\right) \leq 2 \exp\!\left(-\frac{c d t^2}{L^2}\right)
 $$
 
 In words: as dimension $d$ grows, the probability of deviating from the mean shrinks **exponentially**. Random high-dimensional vectors are almost deterministic in their statistical properties.
@@ -254,7 +254,7 @@ You can build new types from old with **type constructors**:
     | $\texttt{B}$ | $(\texttt{B}, \texttt{true})$  | $(\texttt{B}, \texttt{false})$ |
     | $\texttt{C}$ | $(\texttt{C}, \texttt{true})$  | $(\texttt{C}, \texttt{false})$ |
 
-, six inhabitants, which is $|A| \cdot |B| = 3 \cdot 2$. The same rule extends to three or more factors: an RGB image $\mathbb{R}^H \times \mathbb{R}^W \times \mathbb{R}^3$ has $|\mathbb{R}|^{H \cdot W \cdot 3}$ inhabitants.
+, six inhabitants, which is $|A| \cdot |B| = 3 \cdot 2$. The same rule extends to three or more factors: an RGB image $\mathbb{R}^{H \times W} \times \mathbb{R}^{H \times W} \times \mathbb{R}^{H \times W}$ has $|\mathbb{R}|^{H \cdot W \cdot 3}$ inhabitants.
 
     The two **projection maps** go the other way:
 

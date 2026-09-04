@@ -62,7 +62,7 @@ Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representati
 
 **Whisper** (Radford et al., OpenAI, 2022) is the dominant open ASR model. Architecture:
 
-* **Input**: 30-second audio chunks, converted to 80-channel log-mel spectrograms (frames at 50 Hz).
+* **Input**: 30-second audio chunks, converted to 80-channel log-mel spectrograms (100 Hz frames; 50 Hz after the conv stem).
 * **Encoder**: standard Transformer (ViT-style for the convolutional stem), processes the spectrogram into hidden states.
 * **Decoder**: autoregressive Transformer that produces text tokens.
 * **Training**: 680,000 hours of weakly-supervised multilingual audio with transcribed captions.

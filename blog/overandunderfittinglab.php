@@ -60,7 +60,7 @@ Knowing “how wrong am I?” is not enough, the model also needs a strategy for
 At each training step the model:
 
 1. Computes the loss (MSE) on the current batch of data.
-2. Calculates the **gradient**, the direction in which each weight $w_i$ should change to reduce the loss the fastest.
+2. Calculates the **gradient**, the direction in which each weight $w_i$ would *increase* the loss the fastest — so to shrink the loss, the model nudges each weight the opposite way.
 3. Updates every weight by a small step in that direction:
 
 $$

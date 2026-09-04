@@ -82,7 +82,7 @@ $$
 
 The projected visual tokens are concatenated with the text-token sequence and fed to the LLM as if they were ordinary words. **Only the projection layer is trained initially**; the LLM is frozen. The visual tokens literally become “foreign-language words” the LLM learns to read.
 
-LLaVA-1.5 \cite[Liu et al., 2023]{liu2023llava} used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 85.1% on VQA, matching GPT-4 on several multimodal benchmarks.
+LLaVA-1.5 \cite[Liu et al., 2023]{liu2023llava} used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.
 
 ### Pattern 2: Cross-Attention (Flamingo-style)
 
