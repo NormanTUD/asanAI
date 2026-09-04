@@ -1179,6 +1179,92 @@ This is the precise statement of what it means to say that a coherent world mode
 
 <div class="md">
 
+### Contact points: where consistency stops being enough
+
+The synthesis of the previous subsection — *coherence* (descent on every admissible cover) **and** *correspondence* (Tarski at every $T\in\mathcal{T}$) — can be sharpened into a single operational picture, and it is worth spelling out, because it is exactly the point where the chapter's abstract discipline becomes the day-to-day practice of science.
+
+**First, a structural restatement of what it even means for $G$ to be *one* model rather than a heap.** In the categorical vocabulary this chapter has been building, the global object $G$ is a single description only insofar as its parts are *mutually reachable*: for any two parts $a, b$ of the model there is, at least in principle, a licensed route of morphisms — a composite, or a zig-zag, of admissible transitions carrying one to the other.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{One description} \iff \text{the parts are interconnectable}\\
+&\text{by licensed morphisms, not merely co-present.}
+\end{aligned}}
+$$
+
+This is the positive form of what the *factbook* pathology — the second of the four — is the absence of: a heap of individually true, individually well-calibrated claims that no morphism connects. Every part of a genuine world model must, at least in theory, be *reducible to* every other part by some chain of licensed transitions. The morphisms are the connective tissue that turns "a collection of claims" into "one model of one subject matter"; a model whose parts are only co-present, never interconnectable, is not a model at all but a list.
+
+**Now the crucial qualification, which is the heart of the distinction the whole "Truth" section has been setting up.** The two conditions — coherence and contact — do not carry equal weight for every kind of subject matter.
+
+*For a purely logical or mathematical system, consistency is enough.* Its "world" is not an external reality but the class of its own models, and the model-existence machinery of first-order model theory does the work the external world would otherwise do: by completeness and compactness, a consistent first-order theory admits a model, so "no contradiction is derivable" literally guarantees "there exists a structure in which every theorem holds". The contact points are *internal* — theorems are the traces, proofs the access functions — and once they agree on every overlap (descent holds inside the theory) there is no further external test to pass. Consistency is therefore the *sufficient* criterion of internal adequacy: a consistent axiom system is, in the precise sense that matters, *true*, because it is the truth about a domain the theory itself defines.
+
+*For a theory about the world, consistency is not enough.* Here the subject matter $W$ is external, and nothing in the internal logic forces the physical world to be a model of the theory. The contact points are now *external* — observations, measurements, archival facts — and the demand is that at every one of them the model's claim and the world's fact *overlap*: the Tarski if-and-only-if must hold at the bridge. A self-consistent cosmology with no single observation touching it has passed the coherence test and failed the correspondence test, and on this chapter's accounting that is *not* a theory of the world — it is a fantasy.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{Pure math: consistency suffices,}\\
+&\quad\text{because the model exists by compactness.}\\
+&\text{Empirical science: consistency is only necessary;}\\
+&\quad\text{contact with }W\text{ is the separate, decisive test.}
+\end{aligned}}
+$$
+
+**The paradigm contact point is the perihelion of Mercury.** General relativity — \citeauthor{einstein1916foundation}'s (\citeyear{einstein1916foundation}) \citetitle{einstein1916foundation} — is a fully coherent theory: its field equations, its geodesic motion, and its recovery of the Newtonian limit hang together, and descent holds on every admissible cover of the theory's own reasoning. But coherence alone would have let it remain a beautiful fiction. What made it *right* (in the chapter's sense) was a single hard contact point: the anomalous precession of Mercury's perihelion, about $43$ arcseconds per century, which Newtonian gravity with all known perturbations could not account for and which general relativity reproduced from its own terms. That one point — where the model's output and the observed fact *overlapped* at a licensed bridge (the orbital calculation, the telescope, the ephemeris) — is the moment a coherent theory stops being merely consistent and starts being *about* the world.
+
+**Strip the example to its logical bones** and the discipline is a table, not a slogan:
+
+| Coherent (descent holds)? | Contacts overlap with $W$? | Status |
+| :--- | :--- | :--- |
+| yes | yes | *a good indicator of being right* — but not a proof |
+| yes | no | **certainly wrong** (or not yet a theory): the self-consistent fantasy |
+| no | (whatever) | **certainly wrong**: incoherent, no single subject matter |
+| no | yes | a factbook: true points, no model |
+
+The first row is the honest one, and the one the popular account of science overstates: *overlap plus consistency is a strong indicator that the model is right, but it is not a certificate of rightness.* The model can fit every contact point it has been put to and still be wrong at the points no one has yet probed — the lucky fit, the locally true but globally false theory. The other rows are the *certain* failures, and they are where the discipline gets its bite: **if coherence is missing, the model is certainly wrong** (it does not describe one subject matter); **if the contact points do not overlap — and the theory is more than a purely coherent mathematical construction — the model is certainly wrong** (it is not about $W$ at all). Both conditions are *necessary*; only their conjunction is ever *sufficient-looking*, and even then only provisionally.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{coherent} \wedge \text{contact} \;\not\Rightarrow\; \text{true}\quad(\text{only: a good indicator})\\
+&\neg\,\text{coherent} \;\Rightarrow\; \text{certainly wrong}\\
+&\neg\,\text{contact}\ \ (\text{for an empirical claim}) \;\Rightarrow\; \text{certainly wrong (not a theory of }W)
+\end{aligned}}
+$$
+
+This is the falsificationist spine of the picture made explicit. \citeauthor{popper1963conjectures} (\citeyear{popper1963conjectures}), in \citetitle{popper1963conjectures}, insisted that a scientific theory earns its status not from the accumulation of confirmations but from *risky* predictions — claims that, if they failed at a contact point, would refute it \cite{popper1963conjectures}. In this chapter's vocabulary: a theory is *empirical* only if it licenses contact points at which it could fail; a theory with no such point is, on the account this chapter has been building, not a coherent-but-untested theory but a *coherent-only* object — a mathematical fantasy wearing the costume of physics. The more contact points a theory exposes, the harder it is to fit them all by luck, and the cheaper each potential refutation becomes.
+
+**This is why an experiment is not "a test" in some loose sense but a piece of *contact-point engineering*.** Reality, on \citeauthor{cartwright1999dappled}'s (\citeyear{cartwright1999dappled}) \citetitle{cartwright1999dappled} account, is *dappled*: the clean laws of the idealised model setups are true of the clean setups and only approximately true of the messy, multifactorial world we actually want to know about \cite{cartwright1983laws} \cite{cartwright1999dappled}. An experiment's job is to *manufacture a contact point with as few free variables as possible* — to isolate the one licensed bridge between the model's prediction and a single observation, holding the confounders still — so that if the model connects to reality at that point and they agree, the agreement is a genuine indicator of rightness rather than a coincidence of many uncontrolled factors cancelling. The fewer the free variables at the bridge, the harder the contact point, and the more a pass at it counts.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{An experiment engineers a contact point}\\
+&\text{with as few free variables as it can.}\\
+&\text{Fewer variables at the bridge} \Rightarrow \text{harder test, stronger pass.}
+\end{aligned}}
+$$
+
+And the *count* of such points matters. A single overlapping contact point — even a spectacular one, even Mercury — is a necessary start, not a finish line. The more independent, hard, low-confounder points the model survives, the less room there is for the lucky fit, and the closer the *good indicator* approaches a *certificate*. This is the operational content of corroboration: not that any single point proves the theory, but that the *set* of points, each independently licensed and each low-confounder, makes the alternative (a lucky fit) progressively more improbable.
+
+**Finally, the limit case**, stated as a necessary condition a fully right theory — if such a thing exists — must satisfy:
+
+$$
+\boxed{
+\begin{aligned}
+&\textbf{A fully right theory has no contact point at which it fails.}\\
+&\text{Every observation and measurement, on every admissible cover,}\\
+&\text{agrees with what the theory tells it to expect.}
+\end{aligned}}
+$$
+
+The converse is what makes the criterion asymmetric and usable. A *single* genuine contact point — a measurement, correctly licensed, with the confounders controlled — at which the model's prediction and the world's fact do *not* overlap is decisive: it is the sheaf condition failing at a bridge, and the global section it was supposed to reconstruct does not exist. A hundred passes do not make a theory "proven"; one clean failure makes it wrong, at least in the region that failure touches. The model is true *only insofar as* no such point has been found, and the discipline of the whole chapter is the standing willingness to keep engineering harder contact points until one is.
+
+</div>
+
+<div class="md">
+
 ### The diagram, completed
 
 Return to the running picture from earlier. A subject matter $W$, observed by instruments to give representations $R_i$, glued through admissible transitions $T_i\in\mathcal{T}$ into a coherent global model $G$. Now overlay Tarski:

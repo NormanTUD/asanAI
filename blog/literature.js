@@ -8606,5 +8606,21 @@ window.bibData = {
 		year: 2026,
 		url: "https://ncatlab.org/nlab/show/%E2%88%9E-groupoid",
 		alternativetitle: "The nLab entry on ∞-groupoids (homotopy types: invertible morphisms at every level, all the way up)"
+	},
+	"einstein1916foundation": {
+		title: "Die Grundlage der allgemeinen Relativitätstheorie",
+		author: "Albert Einstein",
+		year: 1916,
+		publisher: "Annalen der Physik 354(7)",
+		url: "https://en.wikipedia.org/wiki/The_Foundation_of_the_General_Theory_of_Relativity",
+		alternativetitle: "The Foundation of the General Theory of Relativity"
+	},
+	"popper1963conjectures": {
+		title: "Conjectures and Refutations: The Growth of Scientific Knowledge",
+		author: "Karl R. Popper",
+		year: 1963,
+		publisher: "Routledge",
+		url: "https://plato.stanford.edu/entries/popper/",
+		alternativetitle: "Conjectures and Refutations"
 	}
 };
