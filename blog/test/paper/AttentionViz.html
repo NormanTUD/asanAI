@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>AttentionViz – Interaktive Erklärung</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #f0f0f0;
+    line-height: 1.6;
+  }
+  header {
+    padding: 60px 40px 40px;
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+  }
+  h1 {
+    font-size: 3em;
+    margin: 0;
+    background: linear-gradient(90deg, #ff6ec7, #7873f5, #4ade80);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle { color: #aaa; margin-top: 10px; font-size: 1.1em; }
+  section {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 30px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  h2 {
+    color: #7873f5;
+    border-bottom: 2px solid #7873f5;
+    padding-bottom: 8px;
+  }
+  h3 { color: #ff6ec7; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
+  @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } }
+  canvas { background: #111; border-radius: 10px; display: block; width: 100%; }
+  .controls {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+  }
+  label { display: block; margin: 10px 0 5px; font-weight: bold; }
+  input[type=range] { width: 100%; }
+  .val { color: #4ade80; font-family: monospace; }
+  .highlight {
+    background: rgba(255,110,199,0.15);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: #ff6ec7;
+  }
+  .card {
+    background: rgba(0,0,0,0.25);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    border-left: 4px solid #4ade80;
+  }
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #7873f5;
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin: 2px;
+  }
+  .math { color: #4ade80; }
+  #plot1, #plot2 { width: 100%; height: 400px; }
+  button {
+    background: linear-gradient(90deg, #ff6ec7, #7873f5);
+    color: white; border: none; padding: 8px 16px;
+    border-radius: 8px; cursor: pointer; font-weight: bold;
+  }
+  button:hover { opacity: 0.85; }
+  ul li { margin: 5px 0; }
+  .flow {
+    display: flex; justify-content: space-around; align-items: center;
+    flex-wrap: wrap; gap: 10px; margin: 20px 0;
+  }
+  .step {
+    background: rgba(120,115,245,0.2);
+    padding: 15px; border-radius: 10px;
+    flex: 1; min-width: 150px; text-align: center;
+    border: 1px solid #7873f5;
+  }
+  .arrow { color: #ff6ec7; font-size: 2em; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AttentionViz</h1>
+  <div class="subtitle">Ein globaler Blick auf Transformer-Attention · Yeh et al. 2023</div>
+  <div class="subtitle" style="font-size:0.9em;color:#888">Interaktive visuelle Erklärung</div>
+</header>
+
+<!-- 1. Das Problem -->
+<section>
+  <h2>🎯 Das Problem</h2>
+  <p>Transformer (GPT, BERT, ViT) sind überall – aber niemand versteht wirklich, <em>was in ihnen passiert</em>. Ihr Herzstück: der <span class="highlight">Self-Attention-Mechanismus</span>. Bisherige Visualisierungen zeigen nur <b>einen einzelnen Satz oder ein Bild</b> auf einmal.</p>
+  <div class="card">
+    <b>Frage:</b> Was macht ein Attention-Head <em>generell</em>? Über tausende Beispiele hinweg?<br>
+    <b>Bisher:</b> Ein Satz → ein Bipartite-Graph. Wiederholen. Ermüden. 😴
+  </div>
+</section>
+
+<!-- 2. Was ist Attention? -->
+<section>
+  <h2>🧠 Kurz: Was ist Attention?</h2>
+  <p>Jedes Wort (Token) bekommt zwei Vektoren: einen <span style="color:#4ade80;font-weight:bold">Query (Q)</span> und einen <span style="color:#ff6ec7;font-weight:bold">Key (K)</span>. Wie stark ein Token auf ein anderes „achtet“, hängt vom <b>Skalarprodukt</b> der beiden ab:</p>
+  <div id="math1" style="text-align:center;font-size:1.3em;margin:20px"></div>
+  <p>Danach wird das durch <b>Softmax</b> in eine Wahrscheinlichkeit verwandelt. <b>Große Skalarprodukte → hohe Attention.</b></p>
+
+  <h3>Interaktiv: Bewege einen Query, sieh die Attention</h3>
+  <div class="controls">
+    <label>Query-Position X: <span class="val" id="qxV">0</span></label>
+    <input type="range" id="qx" min="-3" max="3" step="0.05" value="0">
+    <label>Query-Position Y: <span class="val" id="qyV">0</span></label>
+    <input type="range" id="qy" min="-3" max="3" step="0.05" value="0">
+  </div>
+  <canvas id="attCanvas" width="800" height="400"></canvas>
+  <p style="font-size:0.9em;color:#aaa">Kreise = Keys. Die Größe zeigt die Attention, die der grüne Query auf jeden Key richtet. <b>Näher = mehr Aufmerksamkeit</b> (das ist genau die zentrale Idee des Papers!).</p>
+</section>
+
+<!-- 3. Die Kernidee -->
+<section>
+  <h2>💡 Die neue Idee: Gemeinsamer Query-Key-Raum</h2>
+  <div class="flow">
+    <div class="step">Satz / Bild</div>
+    <div class="arrow">→</div>
+    <div class="step">Q &amp; K Vektoren<br>(64-dim)</div>
+    <div class="arrow">→</div>
+    <div class="step">t-SNE / UMAP / PCA</div>
+    <div class="arrow">→</div>
+    <div class="step">2D Scatterplot<br>Q🟢 + K🩷 <b>zusammen</b></div>
+  </div>
+  <p>Da Attention vom Skalarprodukt abhängt, und Skalarprodukt eng mit <b>Distanz</b> zusammenhängt, gilt:</p>
+  <div class="card" style="border-left-color:#ff6ec7">
+    <b>Nahe Punkte im Plot ⇔ hohe Attention.</b><br>
+    Die <em>Form</em> eines Attention-Heads wird zur visuellen Signatur!
+  </div>
+</section>
+
+<!-- 4. Die zwei Tricks -->
+<section>
+  <h2>🪄 Zwei mathematische Tricks</h2>
+
+  <h3>Trick 1: Key-Translation</h3>
+  <p>Queries und Keys liegen oft in getrennten Wolken. Aber Softmax ist <b>translationsinvariant</b>:</p>
+  <div id="math2" style="text-align:center;font-size:1.1em;margin:15px"></div>
+  <p>Wir dürfen also alle Keys um einen konstanten Vektor <span class="math">v</span> verschieben, ohne die Attention zu verändern. → Wir zentrieren beide Wolken übereinander.</p>
+
+  <h3>Trick 2: Query-Key-Skalierung</h3>
+  <p>Wenn wir Queries mit <span class="math">c</span> und Keys mit <span class="math">1/c</span> skalieren, bleibt das Skalarprodukt gleich – aber der visuelle Abstand ändert sich. Wir wählen <span class="math">c</span> so, dass <b>Distanz ↔ Attention</b> optimal korreliert.</p>
+
+  <div class="controls">
+    <label>Translation v (verschiebe Keys): <span class="val" id="tV">0</span></label>
+    <input type="range" id="trans" min="-4" max="4" step="0.1" value="0">
+    <label>Skalierung c: <span class="val" id="cV">1.0</span></label>
+    <input type="range" id="scale" min="0.3" max="3" step="0.05" value="1">
+    <button onclick="resetTricks()">Zurücksetzen</button>
+    <button onclick="optimalTricks()">Optimale Werte</button>
+  </div>
+  <canvas id="trickCanvas" width="800" height="400"></canvas>
+  <p style="font-size:0.9em;color:#aaa">Ziel: Grüne und rosa Punkte sollen sich <b>mischen</b>, und die Wolke soll <b>eng</b> genug sein, damit Distanz die Attention sinnvoll spiegelt.</p>
+</section>
+
+<!-- 5. Distanz vs. Attention -->
+<section>
+  <h2>📉 Distanz als Proxy für Attention</h2>
+  <p>Das Paper zeigt empirisch: In BERT liegt die durchschnittliche Spearman-Korrelation zwischen <b>Query-Key-Distanz und Skalarprodukt bei -0.938</b>. Fast perfekt negativ!</p>
+  <div id="plot1"></div>
+  <p style="font-size:0.9em;color:#aaa">Simulierte Daten: Je größer die Distanz, desto niedriger das Skalarprodukt (und somit die Attention).</p>
+</section>
+
+<!-- 6. Die Entdeckungen -->
+<section>
+  <h2>🔬 Was AttentionViz entdeckt</h2>
+
+  <h3>a) Sprach-Transformer: „Spiralen“ &amp; „Cluster“</h3>
+  <div class="grid2">
+    <div>
+      <p>Manche BERT-Heads zeigen <b>spiralförmige</b> Muster – das sind <span class="tag">Positional Heads</span>. Sie beachten das <em>nächste Token</em>. Andere zeigen <b>semantische Cluster</b>: gleiche Wortbedeutungen liegen zusammen.</p>
+      <div class="controls">
+        <label>Positionsanteil vs. Semantik: <span class="val" id="pV">0.5</span></label>
+        <input type="range" id="posSem" min="0" max="1" step="0.01" value="0.5">
+      </div>
+    </div>
+    <canvas id="spiralCanvas" width="500" height="400"></canvas>
+  </div>
+
+  <h3>b) Vision-Transformer (ViT): Farbe &amp; Frequenz</h3>
+  <p>Ein Head in ViT-32 sortiert Patches nach <b>Helligkeit</b>, ein anderer nach <b>Farbton</b>, ein weiterer nach <b>Frequenz und Winkel</b> von Mustern!</p>
+  <div id="plot2"></div>
+
+  <h3>c) GPT-2 Anomalie: „Attend to First“</h3>
+  <p>Viele GPT-2 Heads richten die meiste Attention auf das <b>erste Token</b> – ein „Null-Attention“-Phänomen. Außerdem: riesige Norm-Unterschiede zwischen Queries und Keys (~-4.6 im Durchschnitt).</p>
+</section>
+
+<!-- 7. Warum das wichtig ist -->
+<section>
+  <h2>🌟 Warum ist das neu &amp; einzigartig?</h2>
+  <div class="card">
+    <span class="tag">Neu 1</span> Erste systematische <b>gemeinsame</b> Q/K-Einbettung
+  </div>
+  <div class="card">
+    <span class="tag">Neu 2</span> <b>Globale</b> Sicht (Matrix View) auf alle Attention-Heads statt Einzelbeispiele
+  </div>
+  <div class="card">
+    <span class="tag">Neu 3</span> Zwei mathematische Tricks (Translation + Skalierung), die Attention <b>ohne Informationsverlust</b> visualisierbar machen
+  </div>
+  <div class="card">
+    <span class="tag">Neu 4</span> Anwendbar auf <b>Sprache UND Vision</b> Transformer
+  </div>
+</section>
+
+<!-- 8. Zusammenfassung -->
+<section>
+  <h2>📚 Zusammenfassung</h2>
+  <ul>
+    <li><b>Problem:</b> Attention-Muster sind schwer zu verstehen, wenn man nur Einzelbeispiele sieht.</li>
+    <li><b>Lösung:</b> Projiziere Queries + Keys gemeinsam in 2D → nahe Punkte = hohe Attention.</li>
+    <li><b>Trick:</b> Softmax-Invarianzen erlauben Translation &amp; Skalierung ohne Bedeutungsverlust.</li>
+    <li><b>Tool:</b> AttentionViz – mit Matrix-, Single- und Sentence/Image-View.</li>
+    <li><b>Ergebnisse:</b> Positional Spirals in BERT, Farb-/Frequenz-Heads in ViT, Anomalien in GPT-2.</li>
+    <li><b>Basiert auf:</b> Activation Atlas (Carter et al.), t-SNE/UMAP/PCA, BertViz (Vig 2019).</li>
+  </ul>
+  <p style="text-align:center;margin-top:30px;color:#888">
+    Demo des Original-Tools: <a href="http://attentionviz.com" style="color:#4ade80">attentionviz.com</a>
+  </p>
+</section>
+
+<script>
+// ==== Math rendering ====
+temml.render(String.raw`f(x,y) = \frac{1}{\sqrt{d}} \langle W_Q x,\; W_K y \rangle`, document.getElementById('math1'));
+temml.render(String.raw`\mathrm{softmax}_j(\langle x, y_1+v\rangle, \langle x, y_2+v\rangle, \ldots) = \mathrm{softmax}_j(\langle x, y_1\rangle, \langle x, y_2\rangle, \ldots)`, document.getElementById('math2'));
+
+// ==== Canvas 1: Attention demo ====
+const attC = document.getElementById('attCanvas');
+const attCtx = attC.getContext('2d');
+const keys = [];
+for (let i = 0; i < 8; i++) {
+  keys.push({ x: (Math.random()-0.5)*5, y: (Math.random()-0.5)*3, label: 'K'+i });
+}
+function drawAtt() {
+  const W = attC.width, H = attC.height;
+  attCtx.fillStyle = '#111';
+  attCtx.fillRect(0,0,W,H);
+  const qx = parseFloat(document.getElementById('qx').value);
+  const qy = parseFloat(document.getElementById('qy').value);
+  document.getElementById('qxV').textContent = qx.toFixed(2);
+  document.getElementById('qyV').textContent = qy.toFixed(2);
+  const toX = x => W/2 + x*80;
+  const toY = y => H/2 - y*80;
+  // compute dot products
+  const dots = keys.map(k => qx*k.x + qy*k.y);
+  const maxD = Math.max(...dots);
+  const exps = dots.map(d => Math.exp(d - maxD));
+  const sum = exps.reduce((a,b)=>a+b,0);
+  const attn = exps.map(e => e/sum);
+  // draw lines
+  keys.forEach((k,i) => {
+    attCtx.strokeStyle = `rgba(255,110,199,${attn[i]})`;
+    attCtx.lineWidth = attn[i]*8+0.5;
+    attCtx.beginPath();
+    attCtx.moveTo(toX(qx), toY(qy));
+    attCtx.lineTo(toX(k.x), toY(k.y));
+    attCtx.stroke();
+  });
+  // keys
+  keys.forEach((k,i) => {
+    const r = 8 + attn[i]*40;
+    attCtx.fillStyle = '#ff6ec7';
+    attCtx.beginPath();
+    attCtx.arc(toX(k.x), toY(k.y), r, 0, Math.PI*2);
+    attCtx.fill();
+    attCtx.fillStyle = 'white';
+    attCtx.font = '12px sans-serif';
+    attCtx.fillText(k.label + ' ('+(attn[i]*100).toFixed(0)+'%)', toX(k.x)+r+3, toY(k.y));
+  });
+  // query
+  attCtx.fillStyle = '#4ade80';
+  attCtx.beginPath();
+  attCtx.arc(toX(qx), toY(qy), 14, 0, Math.PI*2);
+  attCtx.fill();
+  attCtx.fillStyle = 'white';
+  attCtx.fillText('Q', toX(qx)-4, toY(qy)+4);
+}
+document.getElementById('qx').addEventListener('input', drawAtt);
+document.getElementById('qy').addEventListener('input', drawAtt);
+drawAtt();
+
+// ==== Canvas 2: Tricks ====
+const trickC = document.getElementById('trickCanvas');
+const trickCtx = trickC.getContext('2d');
+// generate paired Q/K
+const pairs = [];
+for (let i = 0; i < 30; i++) {
+  const angle = Math.random()*Math.PI*2;
+  const r = Math.random()*1.5;
+  pairs.push({
+    qx: Math.cos(angle)*r - 1.5,
+    qy: Math.sin(angle)*r,
+    kx: Math.cos(angle)*r*0.8 + 1.5,
+    ky: Math.sin(angle)*r*0.8
+  });
+}
+function drawTricks() {
+  const W = trickC.width, H = trickC.height;
+  trickCtx.fillStyle = '#111';
+  trickCtx.fillRect(0,0,W,H);
+  const v = parseFloat(document.getElementById('trans').value);
+  const c = parseFloat(document.getElementById('scale').value);
+  document.getElementById('tV').textContent = v.toFixed(2);
+  document.getElementById('cV').textContent = c.toFixed(2);
+  const toX = x => W/2 + x*70;
+  const toY = y => H/2 - y*70;
+  // draw
+  pairs.forEach(p => {
+    // queries scaled by c
+    const qx = p.qx * c, qy = p.qy * c;
+    // keys translated by -v and scaled by 1/c
+    const kx = (p.kx - v) / c, ky = p.ky / c;
+    trickCtx.fillStyle = '#4ade80';
+    trickCtx.beginPath();
+    trickCtx.arc(toX(qx), toY(qy), 5, 0, Math.PI*2);
+    trickCtx.fill();
+    trickCtx.fillStyle = '#ff6ec7';
+    trickCtx.beginPath();
+    trickCtx.arc(toX(kx), toY(ky), 5, 0, Math.PI*2);
+    trickCtx.fill();
+  });
+  // legend
+  trickCtx.fillStyle = '#4ade80';
+  trickCtx.fillRect(10,10,15,15);
+  trickCtx.fillStyle = 'white';
+  trickCtx.font = '13px sans-serif';
+  trickCtx.fillText('Queries', 30, 22);
+  trickCtx.fillStyle = '#ff6ec7';
+  trickCtx.fillRect(10,30,15,15);
+  trickCtx.fillStyle = 'white';
+  trickCtx.fillText('Keys', 30, 42);
+}
+document.getElementById('trans').addEventListener('input', drawTricks);
+document.getElementById('scale').addEventListener('input', drawTricks);
+function resetTricks() {
+  document.getElementById('trans').value = 0;
+  document.getElementById('scale').value = 1;
+  drawTricks();
+}
+function optimalTricks() {
+  document.getElementById('trans').value = 3;
+  document.getElementById('scale').value = 1;
+  drawTricks();
+}
+drawTricks();
+
+// ==== Plotly 1: Distance vs Dot Product ====
+const N = 200;
+const dists = [], dots = [];
+for (let i = 0; i < N; i++) {
+  const d = Math.random()*3;
+  dists.push(d);
+  dots.push(-d*2 + (Math.random()-0.5)*0.8 + 2);
+}
+Plotly.newPlot('plot1', [{
+  x: dists, y: dots, mode: 'markers',
+  marker: { color: dots, colorscale: 'Viridis', size: 8, showscale: true, colorbar: {title:'Skalarprodukt'} },
+  type: 'scatter'
+}], {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0.3)',
+  font: { color: '#f0f0f0' },
+  xaxis: { title: 'Distanz (Query ↔ Key)' },
+  yaxis: { title: 'Skalarprodukt ⟨Q, K⟩' },
+  title: 'Korrelation ≈ -0.94 (wie in BERT)'
+}, {responsive: true});
+
+// ==== Canvas 3: Spiral vs semantic ====
+const spC = document.getElementById('spiralCanvas');
+const spCtx = spC.getContext('2d');
+function drawSpiral() {
+  const W = spC.width, H = spC.height;
+  spCtx.fillStyle = '#111';
+  spCtx.fillRect(0,0,W,H);
+  const t = parseFloat(document.getElementById('posSem').value);
+  document.getElementById('pV').textContent = t.toFixed(2);
+  // t=0 -> spiral (positional), t=1 -> clusters (semantic)
+  const N = 60;
+  const cx = W/2, cy = H/2;
+  for (let i = 0; i < N; i++) {
+    // spiral coords
+    const angle = i * 0.4;
+    const r = 5 + i * 2;
+    const sx = cx + Math.cos(angle) * r;
+    const sy = cy + Math.sin(angle) * r;
+    // cluster coords (3 clusters based on i%3)
+    const cluster = i % 3;
+    const cAngle = cluster * (Math.PI*2/3);
+    const cRadius = 100;
+    const jitter = () => (Math.random()-0.5)*40;
+    const clx = cx + Math.cos(cAngle)*cRadius + jitter();
+    const cly = cy + Math.sin(cAngle)*cRadius + jitter();
+    // interpolate
+    const x = sx*(1-t) + clx*t;
+    const y = sy*(1-t) + cly*t;
+    // color by position (for spiral) or cluster (for semantic)
+    const hue = t < 0.5 ? (i/N)*260 : cluster*120;
+    spCtx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+    spCtx.beginPath();
+    spCtx.arc(x, y, 5, 0, Math.PI*2);
+    spCtx.fill();
+  }
+  // label
+  spCtx.fillStyle = 'white';
+  spCtx.font = 'bold 14px sans-serif';
+  const label = t < 0.3 ? '🌀 Positional Spiral' : (t > 0.7 ? '🎯 Semantic Cluster' : '↔ Übergang');
+  spCtx.fillText(label, 15, 25);
+}
+document.getElementById('posSem').addEventListener('input', drawSpiral);
+drawSpiral();
+
+// ==== Plotly 2: ViT Hue/Frequency ====
+const vitX = [], vitY = [], vitColor = [], vitText = [];
+for (let i = 0; i < 60; i++) {
+  const hue = (i / 60) * 360;
+  const freq = Math.floor(i / 10);
+  vitX.push(freq + (Math.random()-0.5)*0.4);
+  vitY.push(Math.sin(hue*Math.PI/180)*3 + (Math.random()-0.5)*0.5);
+  vitColor.push(`hsl(${hue}, 80%, 55%)`);
+  vitText.push(`Patch ${i}<br>Hue: ${hue.toFixed(0)}°<br>Freq: ${freq}`);
+}
+Plotly.newPlot('plot2', [{
+  x: vitX, y: vitY, mode: 'markers',
+  marker: { color: vitColor, size: 14, line: {color:'white', width:1} },
+  text: vitText,
+  hoverinfo: 'text',
+  type: 'scatter'
+}], {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: 'rgba(0,0,0,0.3)',
+  font: { color: '#f0f0f0' },
+  xaxis: { title: 'Frequenz →' },
+  yaxis: { title: 'Farbton (Hue) →' },
+  title: 'Ein ViT-Head sortiert Patches nach Farbe & Frequenz'
+}, {responsive: true});
+</script>
+
+</body>
+</html>
