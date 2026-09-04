@@ -74,7 +74,7 @@ You might ask: how can *removing noise* ever create a picture? The trick is this
 That is the deep “why” of diffusion in one sentence. Two ways to make it more concrete:
 
 * **Coarse-to-fine**: at high noise levels, only the largest-scale structure of the data is recoverable. The network first sketches rough shapes, then refines detail. Generation is hierarchical *by construction*.
-* **Score matching** \cite[Song & Ermon, 2019]{song2019score}: a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the data distribution, the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
+* **Score matching** \cite[Song & Ermon, 2019]{song2019score}: a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the logarithm of the data distribution, the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
 
 Either view explains why “denoising” and “generation” are two sides of the same coin.
 </div>
