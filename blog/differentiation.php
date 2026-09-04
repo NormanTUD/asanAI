@@ -54,7 +54,7 @@ Geometrically, this is the slope of the **secant line** connecting the two point
 
 ### The Instantaneous Rate of Change (The Tangent Line)
 
-The **derivative** is what happens when we let $h$ approach zero. The secant line becomes a **tangent line**, touching the curve at exactly one point:
+The **derivative** is what happens when we let $h$ approach zero. The secant line becomes a **tangent line**, touching the curve at that point:
 
 $$f'(x) = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}$$
 
