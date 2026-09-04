@@ -62,8 +62,7 @@ class BPETokenizer {
 
 	/**
 	 * Tokenize a given text using the trained BPE vocabulary.
-	 * Produces ## prefixed continuation tokens for subword pieces.
-	 * Falls back to character-level with ## prefixes for unknown words.
+	 * Falls back to character-level for unknown words.
 	 * Preserves whitespace runs as their own tokens.
 	 * @param {string} text - The input text to tokenize.
 	 * @returns {Array<string>} - The BPE tokens.
@@ -110,7 +109,7 @@ class BPETokenizer {
 			// to avoid single-character splits for rare words
 			const subwords = this._greedyTokenize(part);
 
-			// Add ## prefix to continuation tokens (not the first piece)
+			// Push each subword token as-is
 			for (let i = 0; i < subwords.length; i++) {
 				tokens.push(subwords[i]);
 			}
