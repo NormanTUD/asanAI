@@ -8584,5 +8584,34 @@ window.bibData = {
 		publisher: "MIT Press",
 		url: "https://mitpress.mit.edu/9780262028134/category-theory-for-the-sciences/",
 		alternativetitle: "Category Theory for the Sciences"
+	},
+
+	"vanhoucke2024closeencounters": {
+		title: "Close Encounters of the LLM Kind: On the alien-ness of large language models",
+		author: "Vincent Vanhoucke",
+		year: 2024,
+		url: "https://vanhoucke.medium.com/close-encounters-of-the-llm-kind-61323cef25d3",
+		alternativetitle: "The LLM as a swarm-like 'multi-polarity' of latent personas, not a singular identity"
+	},
+	"nlab_group": {
+		title: "group",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/group",
+		alternativetitle: "The nLab entry on groups (a category with a single object, all morphisms invertible)"
+	},
+	"nlab_groupoid": {
+		title: "groupoid",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/groupoid",
+		alternativetitle: "The nLab entry on groupoids (a category in which every morphism is an isomorphism)"
+	},
+	"nlab_infinity_groupoid": {
+		title: "∞-groupoid",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/%E2%88%9E-groupoid",
+		alternativetitle: "The nLab entry on ∞-groupoids (homotopy types: invertible morphisms at every level, all the way up)"
 	}
 };
