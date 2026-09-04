@@ -437,7 +437,7 @@
             + '    <label data-tip="Show the original RGB input image before the first layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="si" checked> Show input image</label>'
             + '    <label data-tip="Show floating labels above each layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="lb" checked> Show layer labels</label>'
             + '    <label data-tip="Show a histogram of activations in the tooltip / side panel." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="hs" checked> Show histograms</label>'
-            + '    <label data-tip="Enable bloom / glow post-processing on bright activations." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="blen" checked> Bloom glow</label>'
+            + '    <label data-tip="Enable bloom / glow post-processing on bright activations." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="blen"> Bloom glow</label>'
             + '    <label data-tip="Enable depth fog fading far layers." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="fg" checked> Depth fog</label>'
             + '    <label data-tip="Slowly rotate the camera around the network." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="ar"> Auto rotate</label>'
             + '    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">'
