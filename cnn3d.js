@@ -50,7 +50,7 @@
         fog: true,
         curvedConnections: true,
         animateConnections: false,
-        showLabels: true,
+        showLabels: false,
         showHistograms: true,
         highlightTopK: 3,
         autoRotate: false,
