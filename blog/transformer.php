@@ -578,7 +578,7 @@ binary and categorical outcomes. The **logit function**, defined as
 $\log\left(\frac{p}{1 - p}\right)$, was first introduced by \citeauthor{logitorigin} in his \citeyear{logitorigin} paper
 “\citetitle{logitorigin}”. Berkson coined the term “logit” as an
 analogy to the already-established “probit.” The **probit model**, which uses the
-inverse of the standard normal cumulative distribution function $\phi^{-1}\left(p\right)$ as its link
+inverse of the standard normal cumulative distribution function $\Phi^{-1}\left(p\right)$ as its link
 function, was developed earlier by \citeauthor{probitorigin} in his \citeyear{probitorigin} paper “\citetitle{probitorigin}”.
 
 Beyond logits and probits, several other link functions serve similar purposes in
