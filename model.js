@@ -318,7 +318,9 @@ async function _compile_model_do_compile(new_model_config_hash) {
 		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
-	if (typeof model.compile !== "function") {
+	var model_to_compile = model;
+
+	if (typeof model_to_compile.compile !== "function") {
 		dbg("model has no compile() method");
 		return false;
 	}
@@ -326,13 +328,23 @@ async function _compile_model_do_compile(new_model_config_hash) {
 	try {
 		await get_model_data();
 
+		// The global model can be replaced (or set to undefined) by a concurrent
+		// create_model/compile_model while we were awaiting get_model_data().
+		// In that case compiling the stale reference would throw
+		// "Cannot read properties of undefined (reading 'compile')", so abort
+		// gracefully instead. The new model will be compiled by its own caller.
+		if (!model || model !== model_to_compile || typeof model_to_compile.compile !== "function") {
+			dbg("[compile_model] model changed while getting model data, skipping compile");
+			return false;
+		}
+
 		const compile_data = {
 			optimizer: global_model_data.optimizer,
 			loss: global_model_data.loss,
 			metrics: [global_model_data.metric]
 		};
 
-		model.compile(compile_data);
+		model_to_compile.compile(compile_data);
 		model_config_hash = new_model_config_hash;
 
 		if (typeof pyodideOnModelChanged === "function") {
@@ -429,7 +441,9 @@ async function handle_model_compile_error (e, recursion_level) {
 		err("[compile_model] " + e);
 		await delay(1000);
 		return await compile_model(recursion_level + 1);
-	} else if (("" + e).includes("model.compile is not a function")) {
+	} else if (("" + e).includes("model.compile is not a function") || ("" + e).includes("Cannot read properties of undefined (reading 'compile')")) {
+		// The model was replaced or disposed (set to undefined) while we were about
+		// to compile it. This is a harmless race during rapid model re-creation.
 		dbg("[compile_model] " + e);
 		return true;
 	} else {
