@@ -126,7 +126,7 @@ AlpacaEval: 805 questions, judged by GPT-4 Turbo, reports win-rate against GPT-4
 The gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
 
 $$
-E_A^{\text{new}} = E_A + K \cdot (S_{AB} - E_A / (E_A + E_B))
+E_A^{\text{new}} = E_A + K \cdot \left(S_{AB} - \frac{1}{1 + 10^{(E_B - E_A)/400}}\right)
 $$
 
 with $K=32$, $S_{AB} = 1$ if A wins. Updated continuously with hundreds of thousands of votes.
