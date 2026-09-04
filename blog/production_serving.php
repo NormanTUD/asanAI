@@ -94,7 +94,7 @@ Paged Attention \cite[Kwon et al., 2023]{kwon2023vllm} is now the standard in vL
 <div class="md">
 ## Speculative Decoding (\cite[Leviathan et al., 2023]{leviathan2023speculative})
 
-LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model can generate at most ~30 tokens/s on a single H100, regardless of FLOPs.
+LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model can generate at most ~20 tokens/s on a single H100, regardless of FLOPs.
 
 **Speculative decoding** breaks this:
 
