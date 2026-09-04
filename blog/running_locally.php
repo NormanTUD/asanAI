@@ -11,7 +11,7 @@ topics: hardware, programming, inference
 -->
 
 <div class="md">
-You don't need a GPU cluster to run a powerful LLM. A quantized 70B model runs on a MacBook. A 7B model in fp16 fits on a phone. The local-LLM ecosystem in 2025 is mature enough for serious work: privacy-preserving inference, offline use, fine-tuning on consumer hardware, and even agents that never touch the cloud.
+You don't need a GPU cluster to run a powerful LLM. A quantized 70B model runs on a MacBook. A 7B model in int4 fits on a phone. The local-LLM ecosystem in 2025 is mature enough for serious work: privacy-preserving inference, offline use, fine-tuning on consumer hardware, and even agents that never touch the cloud.
 
 This chapter covers the practical stack: from llama.cpp's GGUF format to Ollama's one-line setup.
 </div>
@@ -25,12 +25,12 @@ A consumer GPU in 2025:
 |-----|------|------------------|
 | RTX 3060 | 12 GB | 7B in int4, 13B in int3 |
 | RTX 4070 Ti | 12 GB | Same |
-| RTX 4090 | 24 GB | 13B fp16, 70B int4 |
-| RTX 5090 | 32 GB | 30B fp16, 70B int4/8 |
-| Apple M3 Max | 64–128 GB unified | 70B fp16, 405B int4 |
+| RTX 4090 | 24 GB | 13B int4, 30B int4 |
+| RTX 5090 | 32 GB | 30B int4, 70B Q2_K |
+| Apple M3 Max | 64–128 GB unified | 70B int4, 70B Q5_K_M |
 | Apple M4 Max | 64–128 GB unified | Same |
 
-The **unified memory** on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop. A Mac Studio M3 Ultra with 192 GB runs a 405B model in int4 at usable speeds.
+The **unified memory** on Apple Silicon is the killer feature: you can use 64–128 GB for both model weights and OS, making local 70B inference practical on a laptop. A Mac Studio M3 Ultra with 192 GB runs a 405B model in Q2_K at usable speeds.
 </div>
 
 <div class="md">
