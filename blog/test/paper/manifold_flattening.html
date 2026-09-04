@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FlatNet: Manifold Flattening & Reconstruction — Visual Guide</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0f1a; --panel:#131a2b; --ink:#e8ecf7; --dim:#9aa5c3;
+    --accent:#7ee0c4; --accent2:#f6a56c; --accent3:#8ab4ff; --danger:#ff6f91;
+    --line:#2a3352;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;line-height:1.55}
+  header{padding:36px 24px 20px;text-align:center;background:radial-gradient(1200px 400px at 50% -100px,#1e2a4b,transparent)}
+  h1{font-size:2.1rem;margin:0 0 6px;background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);max-width:820px;margin:0 auto}
+  main{max-width:1100px;margin:0 auto;padding:8px 20px 60px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin:18px 0;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  h2{margin:0 0 6px;color:var(--accent)}
+  h3{color:var(--accent3);margin-top:18px}
+  .tag{display:inline-block;font-size:.75rem;color:var(--accent2);border:1px solid var(--accent2);border-radius:20px;padding:2px 10px;margin-bottom:8px}
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:1fr 1fr}
+  @media(max-width:800px){.g2{grid-template-columns:1fr}}
+  .plot{width:100%;height:380px;border-radius:10px;background:#0d1424;border:1px solid var(--line)}
+  canvas.mini{width:100%;height:320px;border-radius:10px;background:#0d1424;border:1px solid var(--line);display:block}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0}
+  .ctrl{display:flex;flex-direction:column;gap:4px;min-width:160px;flex:1}
+  .ctrl label{font-size:.85rem;color:var(--dim)}
+  .ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+  .val{color:var(--accent);font-variant-numeric:tabular-nums}
+  .callout{border-left:3px solid var(--accent2);padding:8px 12px;background:#0f1626;border-radius:6px;margin:10px 0;color:#d6dcf0}
+  .math{background:#0d1424;border:1px solid var(--line);padding:10px 12px;border-radius:8px;overflow-x:auto}
+  button{background:var(--accent);color:#062018;border:0;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+  button.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  .step{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+  .step .n{background:var(--accent);color:#062018;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;flex-shrink:0}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--dim);margin-top:6px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:5px}
+  nav.toc{position:sticky;top:0;background:rgba(11,15,26,.9);backdrop-filter:blur(8px);padding:10px;border-bottom:1px solid var(--line);z-index:10}
+  nav.toc a{color:var(--accent3);margin:0 8px;text-decoration:none;font-size:.9rem}
+  nav.toc a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">JMLR 2024 · Psenka, Pai, Raman, Sastry, Ma</div>
+  <h1>Representation Learning via Manifold Flattening &amp; Reconstruction</h1>
+  <p class="sub">An interactive visual tour of <b>FlatNet</b> — a white-box autoencoder that <i>flattens</i> curved data manifolds layer-by-layer using local geometry, no backprop required.</p>
+</header>
+
+<nav class="toc">
+  <a href="#idea">The Big Idea</a>
+  <a href="#manifold">Manifold Hypothesis</a>
+  <a href="#flatten">Flattening = Autoencoding</a>
+  <a href="#local">Local Quadratic Model</a>
+  <a href="#pou">Local → Global</a>
+  <a href="#flow">Geometric Flow</a>
+  <a href="#algo">The Algorithm</a>
+  <a href="#results">Results</a>
+</nav>
+
+<main>
+
+<!-- ============ THE BIG IDEA ============ -->
+<section id="idea">
+  <h2>🎯 The Big Idea</h2>
+  <p>Real-world data (images, sounds, etc.) sits on a <b>curved, low-dimensional surface</b> inside a very high-dimensional space. FlatNet builds a neural network that <b>uncurls</b> this surface into a flat plane — where compression via PCA becomes trivial.</p>
+  <div class="grid g2">
+    <div>
+      <h3>Problem</h3>
+      <ul>
+        <li>Autoencoders (VAEs) are <b>black boxes</b>: hyperparameters chosen by trial-and-error.</li>
+        <li>Classical manifold learning (t-SNE, ISOMAP) has <b>no out-of-sample projection</b> and requires knowing intrinsic dimension.</li>
+        <li>Neither exploits the actual <b>geometry</b> of the data.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Solution</h3>
+      <ul>
+        <li>Build the encoder/decoder <b>layer-by-layer</b>, greedily, with <b>no backprop</b>.</li>
+        <li>Each layer uses a <b>local quadratic model</b> (second fundamental form) to remove curvature.</li>
+        <li>Dimension &amp; depth <b>discovered automatically</b>.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">💡 <b>Analogy</b>: imagine flattening a crumpled sheet of paper. You can't do it in one shot — you smooth out one wrinkle at a time. Each "wrinkle-flattening" is one layer of FlatNet.</div>
+</section>
+
+<!-- ============ MANIFOLD HYPOTHESIS ============ -->
+<section id="manifold">
+  <h2>1. The Manifold Hypothesis</h2>
+  <p>Data <span class="math" style="display:inline-block">x ∈ ℝ<sup>D</sup></span> (high-D, e.g. D=784 for MNIST) actually lives near a smooth surface <span id="mathM"></span> of much lower intrinsic dimension <span id="mathd"></span>. Play with the slider to see a curved 1D manifold embedded in 2D space.</p>
+  <div class="controls">
+    <div class="ctrl"><label>Curvature amplitude: <span id="ampV" class="val">1.0</span></label>
+      <input type="range" id="amp" min="0" max="2" step="0.05" value="1.0"></div>
+    <div class="ctrl"><label>Noise σ: <span id="noiseV" class="val">0.05</span></label>
+      <input type="range" id="noise" min="0" max="0.3" step="0.01" value="0.05"></div>
+    <div class="ctrl"><label>Samples N: <span id="nV" class="val">80</span></label>
+      <input type="range" id="nSamp" min="20" max="300" step="10" value="80"></div>
+  </div>
+  <div id="plotManifold" class="plot"></div>
+  <div class="legend"><span><span class="dot" style="background:#7ee0c4"></span>True manifold ℳ</span><span><span class="dot" style="background:#f6a56c"></span>Observed samples 𝒳</span></div>
+</section>
+
+<!-- ============ FLATTENING = AUTOENCODING ============ -->
+<section id="flatten">
+  <h2>2. Flattening ≡ Minimal Autoencoding</h2>
+  <p>The paper proves a beautiful equivalence: finding a smooth map <b>φ</b> that flattens ℳ (and its inverse <b>ψ</b> for reconstruction) is <b>the same</b> as finding the optimal autoencoder.</p>
+  <div class="math" id="flatDef"></div>
+  <p><b>Theorem 6</b>: If (φ, ψ) flatten ℳ, then φ(ℳ) is a <b>convex subset of a d-dimensional affine subspace</b>. So PCA on top of φ gives you the minimal encoder — for free!</p>
+  <div class="callout">🔑 Convexity certificate: ℳ is flat ⟺ ℳ = conv(ℳ). The gap between the manifold and its convex hull tells us <b>where and how much</b> to flatten.</div>
+  <div id="plotFlat" class="plot"></div>
+  <div class="controls">
+    <div class="ctrl"><label>Flatten progress t: <span id="tV" class="val">0.00</span></label>
+      <input type="range" id="tFlat" min="0" max="1" step="0.02" value="0"></div>
+  </div>
+  <p class="sub">Slide from 0 (curved) → 1 (flat). Watch the manifold uncurl into an affine subspace, where PCA trivially compresses it to 1D.</p>
+</section>
+
+<!-- ============ LOCAL QUADRATIC MODEL ============ -->
+<section id="local">
+  <h2>3. Local Quadratic Model — the Second Fundamental Form</h2>
+  <p>Around any point <span class="math" style="display:inline-block">x₀</span> on the manifold, a smooth surface looks like:</p>
+  <div class="math" id="expMap"></div>
+  <p>Here <b>Tx₀ℳ</b> is the <b>tangent space</b> (linear approx, like a first derivative) and <b>IIx₀</b> is the <b>second fundamental form</b> — a bilinear map capturing <b>extrinsic curvature</b> (like a second derivative but for surfaces).</p>
+  <div class="grid g2">
+    <div>
+      <h3>Interactive: tangent + curvature</h3>
+      <div class="controls">
+        <div class="ctrl"><label>Base point x₀: <span id="x0V" class="val">0.0</span></label>
+          <input type="range" id="x0" min="-3" max="3" step="0.05" value="0"></div>
+        <div class="ctrl"><label>Show quadratic fit</label>
+          <input type="checkbox" id="showQuad" checked></div>
+      </div>
+      <div id="plotLocal" class="plot" style="height:340px"></div>
+    </div>
+    <div>
+      <h3>What each piece does</h3>
+      <div class="step"><div class="n">1</div><div><b>x₀ + v</b>: linear (tangent) piece — first-order approximation.</div></div>
+      <div class="step"><div class="n">2</div><div><b>½ IIx₀(v,v)</b>: quadratic curvature correction pushing off the tangent plane into the <b>normal space</b>.</div></div>
+      <div class="step"><div class="n">3</div><div>If we <b>project onto the tangent plane</b>, the curvature part vanishes → flattening!</div></div>
+      <div class="callout">The projection <b>φ_loc(x) = P<sub>T</sub>(x − x_c) + x_c</b> is invertible locally because we recorded IIx₀ — the inverse just <b>adds the curvature back</b>.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOCAL TO GLOBAL ============ -->
+<section id="pou">
+  <h2>4. Gluing Local into Global — Partition of Unity</h2>
+  <p>A local flattening only works near x₀. To make it globally defined, blend it with the identity using a smooth Gaussian weight:</p>
+  <div class="math" id="pouEq"></div>
+  <p>ψ(x) ≈ 1 near x₀ (apply flattening) and ≈ 0 far away (leave unchanged). The parameter <b>λ</b> controls the radius.</p>
+  <canvas id="pouCanvas" class="mini" height="340"></canvas>
+  <div class="controls">
+    <div class="ctrl"><label>λ (radius⁻²): <span id="lamV" class="val">3.0</span></label>
+      <input type="range" id="lam" min="0.3" max="20" step="0.1" value="3"></div>
+    <div class="ctrl"><label>Center x₀: <span id="pouX0V" class="val">0.0</span></label>
+      <input type="range" id="pouX0" min="-3" max="3" step="0.05" value="0"></div>
+  </div>
+  <p class="sub">Blue: partition of unity ψ. Orange: local flattened field. Green: blended global map. Radius ∝ λ<sup>-1/2</sup>.</p>
+</section>
+
+<!-- ============ GEOMETRIC FLOW ============ -->
+<section id="flow">
+  <h2>5. The Convexification Flow — Watch it Live in 3D</h2>
+  <p>Iterating these local flattenings acts like a <b>geometric flow</b> — a differential equation that evolves the manifold toward its convex hull. Each layer nudges points toward the local mean (which lies inside the convex hull), projected onto the normal direction.</p>
+  <div class="math" id="flowEq"></div>
+  <div id="three3d" style="width:100%;height:460px;border-radius:10px;border:1px solid var(--line);background:#0d1424"></div>
+  <div class="controls">
+    <div class="ctrl"><label>Layer ℓ: <span id="layerV" class="val">0</span> / 60</label>
+      <input type="range" id="layer" min="0" max="60" step="1" value="0"></div>
+    <div class="ctrl"><label>Manifold shape</label>
+      <select id="shape" style="background:#0d1424;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px">
+        <option value="wave">Wavy sheet</option>
+        <option value="bowl">Bowl</option>
+        <option value="saddle">Saddle</option>
+      </select></div>
+    <div class="ctrl" style="justify-content:end"><button id="playBtn">▶ Play flattening</button></div>
+  </div>
+  <p class="sub">Drag to rotate. As layers accumulate, the curved surface uncurls into a flat plane — exactly what an ideal encoder should learn.</p>
+</section>
+
+<!-- ============ ALGORITHM ============ -->
+<section id="algo">
+  <h2>6. The FlatNet Algorithm (Concretely)</h2>
+  <p>Each layer ℓ does 5 steps. Everything is <b>white-box</b>: no gradient descent through layers, no hyperparameter tuning of dimension or depth.</p>
+  <div class="step"><div class="n">1</div><div>Sample a random point x₀ from the dataset.</div></div>
+  <div class="step"><div class="n">2</div><div>Estimate intrinsic dimension <b>d̂</b> by finding the smallest d such that a d-dim quadratic model fits locally (auto-discovery!).</div></div>
+  <div class="step"><div class="n">3</div><div>Choose partition radius <b>λ̂</b> by maximizing the neighborhood while keeping reconstruction error ≤ ε.</div></div>
+  <div class="step"><div class="n">4</div><div>Solve for tangent basis <b>Û</b> (Stiefel manifold optimization) + curvature tensor <b>V̂</b> (closed-form least squares).</div></div>
+  <div class="step"><div class="n">5</div><div>Compose the new φₗ and ψₗ with the running networks.</div></div>
+  <h3>Encoder layer diagram</h3>
+  <canvas id="layerDiagram" class="mini" height="200"></canvas>
+  <div class="callout">🔬 <b>Complexity</b>: O(N · D · d²) per layer — <i>linear</i> in samples N and ambient dimension D, only polynomial in intrinsic d. Feasible at scale.</div>
+</section>
+
+<!-- ============ WHAT'S NEW ============ -->
+<section id="new">
+  <h2>7. What's Genuinely New</h2>
+  <div class="grid g2">
+    <div>
+      <h3>vs. VAEs</h3>
+      <ul>
+        <li>✅ No backprop, no black-box tuning</li>
+        <li>✅ Latent space is provably a flat affine subspace</li>
+        <li>✅ Auto-discovers latent dimension</li>
+      </ul>
+    </div>
+    <div>
+      <h3>vs. Manifold Learning (t-SNE, UMAP, ISOMAP)</h3>
+      <ul>
+        <li>✅ Explicit encoder <b>and</b> decoder maps (out-of-sample works)</li>
+        <li>✅ Doesn't need d specified up front</li>
+        <li>✅ Uses <b>second-order</b> geometry, not just first-order</li>
+      </ul>
+    </div>
+  </div>
+  <h3>The key mathematical insight</h3>
+  <p>Most deep networks (ReLU MLPs) are <b>piecewise linear</b> → they only model <b>first-order</b> geometry. FlatNet's layers explicitly encode the <b>second fundamental form</b>, giving direct access to <b>curvature</b>. That's why the reconstructions stay smooth even from noisy data.</p>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section id="results">
+  <h2>8. Results at a Glance</h2>
+  <div id="plotResults" class="plot"></div>
+  <p class="sub">Reconstruction error on random Gaussian-process manifolds (D=100, N=1000). FlatNet dominates FactorVAE especially at low intrinsic dimensions.</p>
+  <h3>Limitations (honest ones)</h3>
+  <ul>
+    <li>Assumes manifold is <b>connected</b> and <b>flattenable</b> (no closed loops like rotation groups).</li>
+    <li>Struggles with <b>hypersurfaces</b> (like Swiss roll) — the manifold self-collides when compressed. Fix: nonlinear lifting.</li>
+    <li>Single-manifold assumption; multi-class = future work.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>🎓 TL;DR</h2>
+  <p><b>FlatNet</b> = a mathematically principled autoencoder that constructs itself, layer by layer, by <b>iteratively removing extrinsic curvature</b> from the data manifold using local quadratic (second-fundamental-form) models glued together with a partition of unity. The final encoder maps data to a flat affine subspace where PCA trivially completes the compression. It's interpretable, scalable, and needs almost no hyperparameters.</p>
+</section>
+
+</main>
+
+<script>
+// ============================================================
+// TeMML rendering
+// ============================================================
+function tex(id, s, display=true){
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = temml.renderToString(s, {displayMode: display});
+}
+tex('mathM','\\mathcal{M} \\subset \\mathbb{R}^D', false);
+tex('mathd','d \\ll D', false);
+tex('flatDef', '\\mathcal{M} \\text{ flattenable} \\iff \\exists \\, \\varphi,\\psi:\\mathbb{R}^D\\to\\mathbb{R}^D \\text{ smooth with } \\psi(\\varphi(\\mathcal{M}))=\\mathcal{M} \\text{ and } \\varphi(\\mathcal{M}) \\text{ flat}');
+tex('expMap', '\\exp_{x_0}(v) \\;\\approx\\; x_0 + \\underbrace{v}_{\\text{tangent, }v\\in T_{x_0}\\mathcal{M}} + \\underbrace{\\tfrac{1}{2}\\,\\mathrm{II}_{x_0}(v,v)}_{\\text{normal / curvature}}');
+tex('pouEq', '\\varphi(x) = \\psi(x)\\,\\varphi_{\\text{loc}}(x) + (1-\\psi(x))\\,x,\\quad \\psi(x)=e^{-\\lambda\\|x-x_0\\|_2^2}');
+tex('flowEq', '\\frac{d}{dt}x(t) = P_{N_{x(t)}\\mathcal{M}(t)}\\!\\left\\{\\;\\bar{x}(t) - x(t)\\;\\right\\},\\quad \\bar{x}(t)=\\frac{\\int_{\\mathcal{M}}x\\psi(x)dx}{\\int_{\\mathcal{M}}\\psi(x)dx}');
+
+// ============================================================
+// Section 1: Manifold hypothesis
+// ============================================================
+function drawManifold(){
+  const amp = parseFloat(document.getElementById('amp').value);
+  const noise = parseFloat(document.getElementById('noise').value);
+  const N = parseInt(document.getElementById('nSamp').value);
+  document.getElementById('ampV').textContent = amp.toFixed(2);
+  document.getElementById('noiseV').textContent = noise.toFixed(2);
+  document.getElementById('nV').textContent = N;
+
+  const tDense = [], xDense = [], yDense = [];
+  for(let i=0;i<400;i++){ const t=-Math.PI + i/399*2*Math.PI;
+    tDense.push(t); xDense.push(t); yDense.push(amp*Math.sin(t));
+  }
+  const xs=[], ys=[];
+  for(let i=0;i<N;i++){
+    const t=-Math.PI + Math.random()*2*Math.PI;
+    xs.push(t + (Math.random()-0.5)*0.1);
+    ys.push(amp*Math.sin(t) + (Math.random()-0.5)*2*noise);
+  }
+  Plotly.react('plotManifold', [
+    {x:xDense, y:yDense, mode:'lines', line:{color:'#7ee0c4',width:3}, name:'Manifold ℳ'},
+    {x:xs, y:ys, mode:'markers', marker:{color:'#f6a56c',size:7,opacity:.85}, name:'Samples 𝒳'}
+  ], {
+    paper_bgcolor:'#0d1424', plot_bgcolor:'#0d1424',
+    font:{color:'#e8ecf7'},
+    margin:{l:40,r:20,t:20,b:40},
+    xaxis:{title:'ambient dim 1', gridcolor:'#2a3352', zerolinecolor:'#2a3352'},
+    yaxis:{title:'ambient dim 2', gridcolor:'#2a3352', zerolinecolor:'#2a3352', scaleanchor:'x'},
+    showlegend:false
+  }, {displayModeBar:false});
+}
+['amp','noise','nSamp'].forEach(id=>document.getElementById(id).addEventListener('input',drawManifold));
+drawManifold();
+
+// ============================================================
+// Section 2: Flattening equivalence
+// ============================================================
+function drawFlat(){
+  const t = parseFloat(document.getElementById('tFlat').value);
+  document.getElementById('tV').textContent = t.toFixed(2);
+  const xs=[], ys=[];
+  const N=120;
+  for(let i=0;i<N;i++){
+    const u = -Math.PI + i/(N-1)*2*Math.PI;
+    // curved -> flat via linear interpolation of y-component toward 0
+    const x = u;
+    const y = (1-t)*Math.sin(u);
+    xs.push(x); ys.push(y);
+  }
+  // tangent affine subspace visualization when flat
+  const flatLine = {x:[-Math.PI,Math.PI], y:[0,0], mode:'lines',
+    line:{color:'#8ab4ff',width:2,dash:'dash'}, name:'affine subspace'};
+  Plotly.react('plotFlat', [
+    {x:xs, y:ys, mode:'markers+lines',
+     marker:{color:xs.map((_,i)=>i),colorscale:'Viridis',size:6},
+     line:{color:'#7ee0c4',width:2}, name:'φ_t(ℳ)'},
+    flatLine
+  ], {
+    paper_bgcolor:'#0d1424', plot_bgcolor:'#0d1424',
+    font:{color:'#e8ecf7'},
+    margin:{l:40,r:20,t:20,b:40},
+    xaxis:{gridcolor:'#2a3352',zerolinecolor:'#2a3352'},
+    yaxis:{gridcolor:'#2a3352',zerolinecolor:'#2a3352',scaleanchor:'x',range:[-1.5,1.5]},
+    showlegend:false,
+    title:{text: t<0.5 ? '⟵ curved manifold' : 'flat / convex ⟶', font:{color:'#9aa5c3',size:13}}
+  }, {displayModeBar:false});
+}
+document.getElementById('tFlat').addEventListener('input',drawFlat);
+drawFlat();
+
+// ============================================================
+// Section 3: Local quadratic model
+// ============================================================
+function f(u){ return Math.sin(u); }
+function fp(u){ return Math.cos(u); }
+function fpp(u){ return -Math.sin(u); }
+
+function drawLocal(){
+  const x0 = parseFloat(document.getElementById('x0').value);
+  const showQ = document.getElementById('showQuad').checked;
+  document.getElementById('x0V').textContent = x0.toFixed(2);
+
+  // full manifold
+  const xs=[], ys=[];
+  for(let i=0;i<400;i++){
+    const u=-3.5 + i/399*7;
+    xs.push(u); ys.push(f(u));
+  }
+  // tangent line at x0
+  const y0=f(x0), slope=fp(x0);
+  const tanX=[x0-1.5,x0+1.5];
+  const tanY=[y0-1.5*slope, y0+1.5*slope];
+  // quadratic (2nd-order Taylor) at x0
+  const qx=[], qy=[];
+  for(let i=0;i<80;i++){
+    const dv = -1.5 + i/79*3;
+    // parametrize along tangent direction; ambient 2D
+    // point = (x0,y0) + dv*(1,slope)/norm + 0.5*II*dv^2*(normal)
+    const nrm = Math.sqrt(1+slope*slope);
+    const tX = 1/nrm, tY = slope/nrm;
+    const nX = -tY, nY = tX;
+    // curvature scalar (extrinsic) ≈ f''/(1+f'^2)^{3/2}
+    const kappa = fpp(x0) / Math.pow(1+slope*slope, 1.5);
+    const px = x0 + dv*tX + 0.5*kappa*dv*dv*nX;
+    const py = y0 + dv*tY + 0.5*kappa*dv*dv*nY;
+    qx.push(px); qy.push(py);
+  }
+  const traces = [
+    {x:xs, y:ys, mode:'lines', line:{color:'#7ee0c4',width:2}, name:'ℳ'},
+    {x:tanX, y:tanY, mode:'lines', line:{color:'#8ab4ff',width:2,dash:'dot'}, name:'tangent Tx₀ℳ'},
+    {x:[x0], y:[y0], mode:'markers', marker:{color:'#ff6f91',size:12}, name:'x₀'}
+  ];
+  if(showQ) traces.push({x:qx, y:qy, mode:'lines', line:{color:'#f6a56c',width:3}, name:'quadratic fit (II)'});
+
+  Plotly.react('plotLocal', traces, {
+    paper_bgcolor:'#0d1424', plot_bgcolor:'#0d1424',
+    font:{color:'#e8ecf7'},
+    margin:{l:40,r:20,t:20,b:40},
+    xaxis:{gridcolor:'#2a3352',zerolinecolor:'#2a3352',range:[-3.5,3.5]},
+    yaxis:{gridcolor:'#2a3352',zerolinecolor:'#2a3352',scaleanchor:'x',range:[-2,2]},
+    showlegend:true,
+    legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10}}
+  }, {displayModeBar:false});
+}
+['x0','showQuad'].forEach(id=>document.getElementById(id).addEventListener('input',drawLocal));
+drawLocal();
+
+// ============================================================
+// Section 4: Partition of unity
+// ============================================================
+function drawPou(){
+  const c = document.getElementById('pouCanvas');
+  const ctx = c.getContext('2d');
+  const w = c.width = c.clientWidth * devicePixelRatio;
+  const h = c.height = 340 * devicePixelRatio;
+  ctx.scale(1,1);
+  const lam = parseFloat(document.getElementById('lam').value);
+  const x0 = parseFloat(document.getElementById('pouX0').value);
+  document.getElementById('lamV').textContent = lam.toFixed(1);
+  document.getElementById('pouX0V').textContent = x0.toFixed(2);
+
+  ctx.fillStyle='#0d1424'; ctx.fillRect(0,0,w,h);
+
+  // axis
+  const xmin=-4, xmax=4;
+  const toPx = x => (x-xmin)/(xmax-xmin)*w;
+  const toPy = y => h - (y+1.5)/3.5*h;
+
+  // grid
+  ctx.strokeStyle='#2a3352'; ctx.lineWidth=1*devicePixelRatio;
+  for(let gx=xmin;gx<=xmax;gx++){
+    ctx.beginPath(); ctx.moveTo(toPx(gx),0); ctx.lineTo(toPx(gx),h); ctx.stroke();
+  }
+  // zero line
+  ctx.strokeStyle='#3a4570';
+  ctx.beginPath(); ctx.moveTo(0,toPy(0)); ctx.lineTo(w,toPy(0)); ctx.stroke();
+
+  const draw = (fn,color,lw=2)=>{
+    ctx.strokeStyle=color; ctx.lineWidth=lw*devicePixelRatio;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x=xmin+i/400*(xmax-xmin);
+      const y=fn(x);
+      const px=toPx(x), py=toPy(y);
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  };
+  // ψ (blue)
+  draw(x=>Math.exp(-lam*(x-x0)*(x-x0)), '#8ab4ff', 2.5);
+  // local flatten: sending x → x0 (identity minus curvature) - illustrate as flat 0
+  const phiLoc = x => 0; // toy: local map collapses to tangent
+  // global blend: φ(x) = ψ·φ_loc + (1-ψ)·x
+  draw(x=>{const p=Math.exp(-lam*(x-x0)*(x-x0)); return p*phiLoc(x)+(1-p)*x*0.3;}, '#7ee0c4', 3);
+  // orange: local flatten field (dashed)
+  ctx.setLineDash([6*devicePixelRatio,6*devicePixelRatio]);
+  draw(x=>phiLoc(x), '#f6a56c', 2);
+  ctx.setLineDash([]);
+  // x0 marker
+  ctx.fillStyle='#ff6f91';
+  ctx.beginPath(); ctx.arc(toPx(x0),toPy(0),6*devicePixelRatio,0,2*Math.PI); ctx.fill();
+
+  // labels
+  ctx.fillStyle='#9aa5c3';
+  ctx.font=`${12*devicePixelRatio}px sans-serif`;
+  ctx.fillText('ψ(x) = e^{-λ‖x-x₀‖²}', 10*devicePixelRatio, 20*devicePixelRatio);
+  ctx.fillStyle='#7ee0c4';
+  ctx.fillText('global φ (blended)', 10*devicePixelRatio, 40*devicePixelRatio);
+  ctx.fillStyle='#f6a56c';
+  ctx.fillText('local φ_loc (dashed)', 10*devicePixelRatio, 60*devicePixelRatio);
+}
+['lam','pouX0'].forEach(id=>document.getElementById(id).addEventListener('input',drawPou));
+window.addEventListener('resize',drawPou);
+drawPou();
+
+// ============================================================
+// Section 5: 3D flattening flow with Three.js
+// ============================================================
+let scene, camera, renderer, controls, meshCurr, origPositions, currShape='wave';
+
+function initThree(){
+  const container = document.getElementById('three3d');
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0d1424);
+  camera = new THREE.PerspectiveCamera(50, container.clientWidth/460, 0.1, 100);
+  camera.position.set(3.5, 3, 3.5);
+  renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(container.clientWidth, 460);
+  renderer.setPixelRatio(devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const light1 = new THREE.DirectionalLight(0xffffff, 0.9);
+  light1.position.set(5,5,5); scene.add(light1);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+  // grid on floor
+  const grid = new THREE.GridHelper(6, 12, 0x2a3352, 0x1a2340);
+  grid.position.y = -1.2;
+  scene.add(grid);
+
+  buildManifold('wave');
+  animate();
+}
+
+function shapeFn(shape, u, v){
+  if(shape==='wave')   return 0.7*Math.sin(1.5*u)*Math.cos(1.5*v);
+  if(shape==='bowl')   return 0.5*(u*u + v*v) - 0.7;
+  if(shape==='saddle') return 0.6*(u*u - v*v);
+}
+
+function buildManifold(shape){
+  currShape = shape;
+  if(meshCurr){ scene.remove(meshCurr); meshCurr.geometry.dispose(); meshCurr.material.dispose(); }
+  const seg = 40;
+  const geo = new THREE.PlaneGeometry(3, 3, seg, seg);
+  const pos = geo.attributes.position;
+  origPositions = new Float32Array(pos.array.length);
+  for(let i=0;i<pos.count;i++){
+    const u = pos.getX(i), v = pos.getY(i);
+    const z = shapeFn(shape, u, v);
+    pos.setZ(i, z);
+    origPositions[3*i]   = u;
+    origPositions[3*i+1] = v;
+    origPositions[3*i+2] = z;
+  }
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({
+    color:0x7ee0c4, side:THREE.DoubleSide, wireframe:false,
+    metalness:0.1, roughness:0.6, transparent:true, opacity:0.92,
+    flatShading:false
+  });
+  meshCurr = new THREE.Mesh(geo, mat);
+  meshCurr.rotation.x = -Math.PI/2;
+  scene.add(meshCurr);
+
+  // wireframe overlay
+  const wire = new THREE.LineSegments(
+    new THREE.WireframeGeometry(geo),
+    new THREE.LineBasicMaterial({color:0x8ab4ff, opacity:0.25, transparent:true})
+  );
+  meshCurr.add(wire);
+}
+
+function updateFlatten(layer){
+  // layer 0..60: interpolate z from original to 0
+  const t = Math.min(1, layer/60);
+  const pos = meshCurr.geometry.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const origZ = origPositions[3*i+2];
+    pos.setZ(i, origZ*(1-t));
+  }
+  pos.needsUpdate = true;
+  meshCurr.geometry.computeVertexNormals();
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+document.getElementById('layer').addEventListener('input', e=>{
+  const v = parseInt(e.target.value);
+  document.getElementById('layerV').textContent = v;
+  updateFlatten(v);
+});
+document.getElementById('shape').addEventListener('change', e=>{
+  buildManifold(e.target.value);
+  updateFlatten(parseInt(document.getElementById('layer').value));
+});
+
+let playing=false, playT=null;
+document.getElementById('playBtn').addEventListener('click', ()=>{
+  const btn=document.getElementById('playBtn');
+  const slider=document.getElementById('layer');
+  if(playing){ playing=false; clearInterval(playT); btn.textContent='▶ Play flattening'; return; }
+  playing=true; btn.textContent='⏸ Pause';
+  let v = parseInt(slider.value);
+  playT = setInterval(()=>{
+    v = (v+1) % 61;
+    slider.value = v;
+    document.getElementById('layerV').textContent = v;
+    updateFlatten(v);
+    if(v===60){ /* loop */ }
+  }, 80);
+});
+
+initThree();
+window.addEventListener('resize', ()=>{
+  const container = document.getElementById('three3d');
+  camera.aspect = container.clientWidth/460;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, 460);
+});
+
+// ============================================================
+// Section 6: Layer diagram
+// ============================================================
+function drawLayerDiagram(){
+  const c = document.getElementById('layerDiagram');
+  const ctx = c.getContext('2d');
+  const w = c.width = c.clientWidth * devicePixelRatio;
+  const h = c.height = 200 * devicePixelRatio;
+  ctx.fillStyle='#0d1424'; ctx.fillRect(0,0,w,h);
+  const s = devicePixelRatio;
+
+  const boxes = [
+    {x:0.05, label:'x', color:'#8ab4ff'},
+    {x:0.20, label:'UᵀU', color:'#7ee0c4'},
+    {x:0.38, label:'ψ(x)·(·)', color:'#f6a56c'},
+    {x:0.58, label:'+ (1-ψ)x', color:'#f6a56c'},
+    {x:0.80, label:'z = φ(x)', color:'#7ee0c4'}
+  ];
+  ctx.font = `${14*s}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+  const cy = h/2;
+  const bw = 90*s, bh = 50*s;
+  boxes.forEach((b,i)=>{
+    const cx = b.x*w + bw/2;
+    ctx.fillStyle = b.color; ctx.globalAlpha=0.15;
+    ctx.fillRect(cx-bw/2, cy-bh/2, bw, bh);
+    ctx.globalAlpha=1;
+    ctx.strokeStyle = b.color; ctx.lineWidth=2*s;
+    ctx.strokeRect(cx-bw/2, cy-bh/2, bw, bh);
+    ctx.fillStyle = '#e8ecf7';
+    ctx.fillText(b.label, cx, cy);
+    if(i<boxes.length-1){
+      const nx = boxes[i+1].x*w + bw/2;
+      ctx.strokeStyle='#9aa5c3'; ctx.lineWidth=1.5*s;
+      ctx.beginPath();
+      ctx.moveTo(cx+bw/2, cy); ctx.lineTo(nx-bw/2, cy);
+      ctx.stroke();
+      // arrow
+      ctx.beginPath();
+      ctx.moveTo(nx-bw/2, cy);
+      ctx.lineTo(nx-bw/2-6*s, cy-4*s);
+      ctx.lineTo(nx-bw/2-6*s, cy+4*s);
+      ctx.closePath();
+      ctx.fillStyle='#9aa5c3'; ctx.fill();
+    }
+  });
+  ctx.fillStyle='#9aa5c3';
+  ctx.font = `${11*s}px sans-serif`;
+  ctx.fillText('Encoder layer φ_ℓ (MLP-like with residual, but weights are the tangent basis U)', w/2, h-15*s);
+}
+window.addEventListener('resize', drawLayerDiagram);
+drawLayerDiagram();
+
+// ============================================================
+// Section 7 (Results): mock reconstruction plot vs FactorVAE
+// ============================================================
+function drawResults(){
+  const dims=[5,10,15,20];
+  // approximate values from Figure 10 of the paper
+  const flatnet={ mean:[0.02, 0.05, 0.09, 0.15], std:[0.005,0.01,0.015,0.02]};
+  const factorvae={ mean:[0.35, 0.42, 0.48, 0.55], std:[0.03,0.04,0.04,0.05]};
+
+  Plotly.react('plotResults',[
+    {x:dims, y:flatnet.mean,
+     error_y:{type:'data',array:flatnet.std,color:'#7ee0c4'},
+     mode:'lines+markers', name:'FlatNet (ours)',
+     line:{color:'#7ee0c4',width:3}, marker:{size:9}},
+    {x:dims, y:factorvae.mean,
+     error_y:{type:'data',array:factorvae.std,color:'#ff6f91'},
+     mode:'lines+markers', name:'FactorVAE',
+     line:{color:'#ff6f91',width:3}, marker:{size:9}}
+  ], {
+    paper_bgcolor:'#0d1424', plot_bgcolor:'#0d1424',
+    font:{color:'#e8ecf7'},
+    margin:{l:60,r:20,t:20,b:50},
+    xaxis:{title:'intrinsic dimension d', gridcolor:'#2a3352', zerolinecolor:'#2a3352', dtick:5},
+    yaxis:{title:'reconstruction error', gridcolor:'#2a3352', zerolinecolor:'#2a3352'},
+    legend:{bgcolor:'rgba(0,0,0,0)'}
+  }, {displayModeBar:false});
+}
+drawResults();
+
+</script>
+</body>
+</html>
