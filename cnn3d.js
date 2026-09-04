@@ -436,7 +436,7 @@
             + '    <label data-tip="Draw curved animated connection lines between consecutive layers." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="sc" checked> Show weighted connections</label>'
             + '    <label data-tip="Animate light pulses flowing along the connections." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="ac"> Animate connections</label>'
             + '    <label data-tip="Show the original RGB input image before the first layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="si" checked> Show input image</label>'
-            + '    <label data-tip="Show floating labels above each layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="lb" checked> Show layer labels</label>'
+            + '    <label data-tip="Show floating labels above each layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="lb"> Show layer labels</label>'
             + '    <label data-tip="Show a histogram of activations in the tooltip / side panel." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="hs" checked> Show histograms</label>'
             + '    <label data-tip="Enable bloom / glow post-processing on bright activations." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="blen"> Bloom glow</label>'
             + '    <label data-tip="Enable depth fog fading far layers." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="fg" checked> Depth fog</label>'
