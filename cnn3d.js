@@ -49,7 +49,7 @@
         bloomThreshold: 0.25,
         fog: true,
         curvedConnections: true,
-        animateConnections: true,
+        animateConnections: false,
         showLabels: true,
         showHistograms: true,
         highlightTopK: 3,
@@ -434,6 +434,7 @@
             + '      </select>'
             + '    </label>'
             + '    <label data-tip="Draw curved animated connection lines between consecutive layers." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="sc" checked> Show weighted connections</label>'
+            + '    <label data-tip="Animate light pulses flowing along the connections." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="ac"> Animate connections</label>'
             + '    <label data-tip="Show the original RGB input image before the first layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="si" checked> Show input image</label>'
             + '    <label data-tip="Show floating labels above each layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="lb" checked> Show layer labels</label>'
             + '    <label data-tip="Show a histogram of activations in the tooltip / side panel." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="hs" checked> Show histograms</label>'
@@ -495,6 +496,15 @@
             });
         }
         bindCheckbox('sc', 'showConnections');
+        bindCheckbox('ac', 'animateConnections', function () {
+            for (var i = 0; i < inst.connectionMeshes.length; i++) {
+                var m = inst.connectionMeshes[i];
+                if (m.material && m.material.uniforms && m.material.uniforms.uFlow) {
+                    m.material.uniforms.uFlow.value = inst.opts.animateConnections ? 1.0 : 0.0;
+                }
+            }
+            scheduleRender(inst);
+        });
         bindCheckbox('si', 'showInputImage');
         bindCheckbox('lb', 'showLabels');
         bindCheckbox('hs', 'showHistograms');
@@ -2461,6 +2471,7 @@
             if (el) el.checked = !!val;
         };
         setCb('sc', inst.opts.showConnections);
+        setCb('ac', inst.opts.animateConnections);
         setCb('si', inst.opts.showInputImage);
         setCb('lb', inst.opts.showLabels);
         setCb('hs', inst.opts.showHistograms);
