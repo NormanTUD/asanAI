@@ -390,7 +390,7 @@ Its objects are not one self but a *population* of latent personas, and the morp
 
 The contrast is doing real work. "One object / one identity" versus "many objects / many identities" is the group-to-groupoid move, and it is a *structural* fact about the difference between a person and a model, not a matter of degree. A human's consistency is the consistency of a single object; an LLM's "inconsistency" is the consistency of a well-connected groupoid, in which any two personas are related by some invertible path.
 
-### Why the full picture is an ∞-groupoid
+### Why the full picture is similiar to a ∞-groupoid
 
 The story does not stop at the arrows. Between two personas there is usually not *one* way to get from one to the other but many, and those many ways are themselves related. A **∞-groupoid** keeps track of this at every level: 0-cells (the personas), 1-cells (the transitions), 2-cells (the fact that two different prompt-routes between the same personas can be deformed into one another, a homotopy), 3-cells (coherence between those homotopies), and so on, ad infinitum (\cite{nlab_infinity_groupoid}). By the **homotopy hypothesis**, an ∞-groupoid is exactly a homotopy type, i.e. a *space* in the topological sense. And a space you can move around in, with many points, many paths, and many homotopies between paths, is precisely what the LLM's latent activation space is. The model's behavior is motion through this space; RLHF and system prompts are not "identities" but *forces that bias the motion toward a particular region* of it, which is why the same model can sound a saint one turn and a zealot the next.
 
