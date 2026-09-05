@@ -15,7 +15,7 @@ The main history of AI traces the intellectual lineage, the ideas, algorithms, a
 </div>
 
 <div class="md">
-## The Development of the Earth and the Universe
+## The Development of the Universe and Earth
 
 According to the prevailing cosmological model, the universe began approximately 13.8 billion years ago in an event commonly known as the Big Bang, expanding from an extremely hot, dense state into the vast cosmos we observe today \cite[as described by Weinberg]{weinberg1977first}. Within the first few minutes, nucleosynthesis produced the lightest elements, primarily hydrogen and helium. Over hundreds of millions of years, gravity drew matter together to form the first stars and galaxies.
 
