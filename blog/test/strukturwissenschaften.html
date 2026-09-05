@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Strukturwissenschaften – Visuelle Intuition</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #eee; min-height: 100vh;
+  }
+  header {
+    padding: 2rem; text-align: center;
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  header h1 {
+    margin: 0; font-size: 2.5rem;
+    background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f, #4d9de0, #c060f0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p { color: #aaa; margin-top: 0.5rem; }
+  nav {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+    padding: 1rem; background: rgba(0,0,0,0.2); position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  nav button {
+    background: rgba(255,255,255,0.1); color: #eee; border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  nav button:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+  nav button.active { background: linear-gradient(90deg, #ff6b6b, #c060f0); border-color: transparent; }
+  .concept {
+    max-width: 1100px; margin: 2rem auto; padding: 2rem;
+    background: rgba(255,255,255,0.05); border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    display: none;
+  }
+  .concept.active { display: block; animation: fadeIn 0.5s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  .concept h2 {
+    margin-top: 0; font-size: 1.8rem;
+    background: linear-gradient(90deg, #ffd93d, #ff6b6b);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .intuition {
+    background: rgba(255,215,61,0.08); border-left: 4px solid #ffd93d;
+    padding: 1rem; margin: 1rem 0; border-radius: 4px;
+  }
+  .example {
+    background: rgba(107,207,127,0.08); border-left: 4px solid #6bcf7f;
+    padding: 1rem; margin: 1rem 0; border-radius: 4px;
+  }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0;
+    padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;
+  }
+  .control-group { display: flex; flex-direction: column; gap: 0.3rem; min-width: 180px; }
+  .control-group label { font-size: 0.85rem; color: #bbb; }
+  .control-group input[type="range"] { width: 100%; }
+  .value-badge {
+    display: inline-block; padding: 0.1rem 0.5rem;
+    background: rgba(192,96,240,0.3); border-radius: 10px;
+    font-family: monospace; font-size: 0.85rem;
+  }
+  canvas {
+    display: block; margin: 1rem auto; background: #0a0a1a;
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 8px;
+    max-width: 100%;
+  }
+  button.action {
+    background: linear-gradient(90deg, #4d9de0, #c060f0);
+    color: white; border: none; padding: 0.5rem 1rem;
+    border-radius: 6px; cursor: pointer; font-weight: bold;
+  }
+  button.action:hover { opacity: 0.85; }
+  .legend { display: flex; gap: 1rem; font-size: 0.85rem; flex-wrap: wrap; }
+  .legend span::before { content: '■ '; }
+  .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .grid-two { grid-template-columns: 1fr; } }
+  code { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧬 Strukturwissenschaften — Visuelle Intuition</h1>
+  <p>Die wiederkehrenden Kernkonzepte aus deinen Texten, zum Anfassen</p>
+</header>
+
+<nav id="nav"></nav>
+
+<!-- =========== KONZEPT 1: STRUKTUR =========== -->
+<section class="concept" data-concept="struktur">
+  <h2>1. Was ist eine Struktur? (Menge + Relationen)</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Eine Struktur ist eine <em>Menge</em> von Objekten <strong>plus</strong> die Beziehungen (Relationen, Funktionen, Konstanten) zwischen ihnen [[2]]. Ohne Relationen ist eine Menge "langweilig" — erst Beziehungen machen sie interessant.
+  </div>
+  <div class="example">
+    <strong>Beispiele aus dem Text:</strong> Ein Graph = Knoten + Kanten (relational) [[2]]. Eine Gruppe = Menge + Verknüpfung (algebraisch) [[2]]. Reelle Zahlen tragen sogar <em>mehrere</em> Strukturen: algebraisch (Körper), Ordnung (linear), topologisch (Umgebungen) [[2]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Füge Knoten hinzu und verbinde sie. Sieh, wie aus einer bloßen Menge (keine Kanten) durch Relationen eine <em>Struktur</em> wird.</p>
+  <div class="controls">
+    <button class="action" onclick="strukturAddNode()">+ Knoten</button>
+    <button class="action" onclick="strukturRandomEdge()">+ Zufällige Kante</button>
+    <button class="action" onclick="strukturReset()">Reset</button>
+    <div class="control-group" style="min-width: 250px;">
+      <label>Anzeige-Modus</label>
+      <select id="strukturMode" onchange="strukturDraw()">
+        <option value="menge">Nur Menge (strukturlos)</option>
+        <option value="relational" selected>Relationale Struktur (Graph)</option>
+        <option value="ordnung">Ordnungsstruktur (gerichtet)</option>
+      </select>
+    </div>
+  </div>
+  <canvas id="strukturCanvas" width="800" height="400"></canvas>
+</section>
+
+<!-- =========== KONZEPT 2: LINEAR vs. NICHTLINEAR =========== -->
+<section class="concept" data-concept="nichtlinear">
+  <h2>2. Linear vs. Nichtlinear — der Türöffner zu allem Interessanten</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Lineare Systeme (Variablen nur in erster Potenz) sind "brav" und vorhersehbar. Nichtlinearität ist die <em>notwendige Bedingung</em> für Chaos, Selbstorganisation und komplexe Muster [[6]].
+  </div>
+  <div class="example">
+    <strong>Beispiele aus dem Text:</strong> <code>y = 3x + 42</code> → Gerade (linear). <code>y = 3x² + 42</code> → Kurve (nichtlinear) [[6]]. Ein linearer Oszillator schwingt monoton; ein nichtlinearer kann "stolpern" und neue Kombinationsfrequenzen erzeugen [[6]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Schiebe die Nichtlinearität hoch. Beobachte, wie die schöne Gerade zu einer wilden Kurve wird.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Linearer Anteil a·x: <span class="value-badge" id="nlA">1.00</span></label>
+      <input type="range" id="nlAslider" min="-2" max="2" step="0.1" value="1" oninput="nlDraw()">
+    </div>
+    <div class="control-group">
+      <label>Nichtlinearer Anteil b·x²: <span class="value-badge" id="nlB">0.00</span></label>
+      <input type="range" id="nlBslider" min="-1" max="1" step="0.05" value="0" oninput="nlDraw()">
+    </div>
+    <div class="control-group">
+      <label>Kubisch c·x³: <span class="value-badge" id="nlC">0.00</span></label>
+      <input type="range" id="nlCslider" min="-0.3" max="0.3" step="0.01" value="0" oninput="nlDraw()">
+    </div>
+  </div>
+  <canvas id="nlCanvas" width="800" height="400"></canvas>
+</section>
+
+<!-- =========== KONZEPT 3: CONSTRAINTS =========== -->
+<section class="concept" data-concept="constraints">
+  <h2>3. Constraints — Freiheit mal minus eins</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Constraints schränken Freiheitsgrade ein — aber genau dadurch <em>ermöglichen</em> sie neue Systemfunktionen und Strukturen [[4]]. Ohne Constraints: pure Zufälligkeit. Mit zu vielen: Erstarrung. Dazwischen: Komplexität.
+  </div>
+  <div class="example">
+    <strong>Beispiele aus dem Text:</strong> Ein <em>holonomer Constraint</em> (Ort-Beschränkung): Roboter im zugestellten Raum — bestimmte Orte unerreichbar. Ein <em>nichtholonomer Constraint</em> (Richtungs-Beschränkung): Billardkugel — alle Orte erreichbar, aber nicht in jede Richtung [[4]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Regle Anzahl und Art der Constraints. Sieh live, wie Teilchen von "völlig frei" zu "hoch geordnet" wandern.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Anzahl Constraints: <span class="value-badge" id="cN">0</span></label>
+      <input type="range" id="cNslider" min="0" max="10" step="1" value="0" oninput="cUpdate()">
+    </div>
+    <div class="control-group">
+      <label>Constraint-Typ</label>
+      <select id="cType" onchange="cUpdate()">
+        <option value="holonom">Holonom (verbotene Orte)</option>
+        <option value="nichtholonom">Nichtholonom (verbotene Richtungen)</option>
+      </select>
+    </div>
+    <button class="action" onclick="cResetParticles()">Teilchen neu starten</button>
+  </div>
+  <canvas id="cCanvas" width="800" height="400"></canvas>
+  <p style="text-align:center; color:#aaa; font-size:0.9em;" id="cInfo">Freiheitsgrade: 2 (frei bewegliche Ebene)</p>
+</section>
+
+<!-- =========== KONZEPT 4: BIFURKATION & SYMMETRIEBRECHUNG =========== -->
+<section class="concept" data-concept="bifurkation">
+  <h2>4. Bifurkation & Symmetriebrechung — der Weg zum Chaos</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Wenn man einen Kontrollparameter langsam erhöht, "spaltet" sich das Systemverhalten plötzlich — eine Bifurkation. Das ist Symmetriebrechung: aus einer Lösung werden mehrere [[6]] [[7]].
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Die <em>logistische Abbildung</em> <code>x → r·x·(1−x)</code>. Für kleine <code>r</code>: ein Fixpunkt. Bei <code>r ≈ 3</code>: Aufspaltung in 2 Werte. Dann 4, 8, 16... und schließlich Chaos [[3]] [[6]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Sieh das legendäre Feigenbaum-Diagramm. Fahre die rote Linie durch die Werte von r und beobachte oben, was das System langfristig macht.</p>
+  <div class="controls">
+    <div class="control-group" style="min-width:300px;">
+      <label>Kontrollparameter r: <span class="value-badge" id="bR">3.20</span></label>
+      <input type="range" id="bRslider" min="2.5" max="4" step="0.005" value="3.2" oninput="bUpdate()">
+    </div>
+  </div>
+  <canvas id="bCanvasTop" width="800" height="200"></canvas>
+  <p style="text-align:center; color:#aaa; font-size:0.9em;">↑ Zeitliche Entwicklung von x bei aktuellem r &nbsp;&nbsp;|&nbsp;&nbsp; ↓ Feigenbaum: Langzeit-Attraktoren für alle r</p>
+  <canvas id="bCanvasBottom" width="800" height="350"></canvas>
+</section>
+
+<!-- =========== KONZEPT 5: EMERGENZ (Zellularautomat) =========== -->
+<section class="concept" data-concept="emergenz">
+  <h2>5. Emergenz — komplexe Muster aus simplen Regeln</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Aus <em>extrem</em> einfachen lokalen Regeln entstehen global überraschend komplexe Muster. Es gibt <strong>kein</strong> "Komplexitätserhaltungsgesetz" [[7]]. Ein Zellularautomat ist das perfekte Beispiel [[3]] [[6]].
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Wolframs 1D-Zellularautomaten — nur 8 Regeln entscheiden über die Zukunft jeder Zelle basierend auf ihren 2 Nachbarn. Regel 30 = Chaos, Regel 110 = komplexe Strukturen, Regel 90 = fraktales Sierpinski-Muster [[3]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Wähle eine Regel (0-255), sieh die Regel-Tabelle und das entstehende Muster. Probiere 30, 90, 110, 184!</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Regel-Nummer: <span class="value-badge" id="eR">30</span></label>
+      <input type="range" id="eRslider" min="0" max="255" step="1" value="30" oninput="eUpdate()">
+    </div>
+    <button class="action" onclick="document.getElementById('eRslider').value=30;eUpdate();">Regel 30 (Chaos)</button>
+    <button class="action" onclick="document.getElementById('eRslider').value=90;eUpdate();">Regel 90 (Fraktal)</button>
+    <button class="action" onclick="document.getElementById('eRslider').value=110;eUpdate();">Regel 110 (Komplex)</button>
+    <button class="action" onclick="document.getElementById('eRslider').value=184;eUpdate();">Regel 184</button>
+  </div>
+  <canvas id="eRuleCanvas" width="800" height="80"></canvas>
+  <canvas id="eCanvas" width="800" height="400"></canvas>
+</section>
+
+<!-- =========== KONZEPT 6: ATTRAKTOREN =========== -->
+<section class="concept" data-concept="attraktoren">
+  <h2>6. Attraktoren — wohin Systeme laufen</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Der Zustand eines Systems folgt einem Pfad (Trajektorie) im Phasenraum. Langfristig läuft er auf einen Attraktor zu: Punkt, Zyklus, Torus oder — bei chaotischen Systemen — auf einen <em>seltsamen Attraktor</em> [[6]].
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Das <em>Lorenz-System</em> mit 3 gekoppelten Differentialgleichungen (X, Y, Z). Bei Parameter B > 24.74 tritt der berühmte "Schmetterlings"-Attraktor auf — deterministisch, aber nie exakt wiederholt [[6]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Ändere den Kontrollparameter B des Lorenz-Systems. Sieh den Übergang vom Punkt-Attraktor zum Chaos.</p>
+  <div class="controls">
+    <div class="control-group" style="min-width:250px;">
+      <label>Parameter B (Rayleigh): <span class="value-badge" id="aB">28.0</span></label>
+      <input type="range" id="aBslider" min="0.5" max="35" step="0.1" value="28" oninput="aUpdate()">
+    </div>
+    <button class="action" onclick="aReset()">Neustart</button>
+  </div>
+  <canvas id="aCanvas" width="800" height="450"></canvas>
+</section>
+
+<!-- =========== KONZEPT 7: INFORMATION & ENTROPIE =========== -->
+<section class="concept" data-concept="information">
+  <h2>7. Information & Entropie — komplexes Leben zwischen Zufall und Regel</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Information = Unterscheidbarkeit [[1]]. Shannons Entropie H misst mittleren Informationsgehalt. <strong>Komplexe</strong> Information liegt zwischen reinem Zufall (weißes Rauschen, max. Entropie) und starrer Regularität (min. Entropie) [[1]].
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Eine Münze mit 50/50 → H = 1 bit. Eine "Münze", die immer Kopf zeigt → H = 0 bit. Ein Zeichenvorrat {a,b,c,d} mit Gleichverteilung → H = 2 bit [[1]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Verschiebe die Wahrscheinlichkeitsverteilung. Sieh live, wie H auf ihr Maximum steigt bei Gleichverteilung und auf 0 sinkt bei Determinismus.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>P(A): <span class="value-badge" id="ipA">0.25</span></label>
+      <input type="range" id="ipAs" min="0" max="1" step="0.01" value="0.25" oninput="iUpdate()">
+    </div>
+    <div class="control-group">
+      <label>P(B): <span class="value-badge" id="ipB">0.25</span></label>
+      <input type="range" id="ipBs" min="0" max="1" step="0.01" value="0.25" oninput="iUpdate()">
+    </div>
+    <div class="control-group">
+      <label>P(C): <span class="value-badge" id="ipC">0.25</span></label>
+      <input type="range" id="ipCs" min="0" max="1" step="0.01" value="0.25" oninput="iUpdate()">
+    </div>
+  </div>
+  <canvas id="iCanvas" width="800" height="350"></canvas>
+  <p style="text-align:center; font-size:1.2em;">Entropie H = <span class="value-badge" id="iH" style="font-size:1.3em;">2.00 bit</span> (Maximum bei Gleichverteilung: 2.00 bit)</p>
+</section>
+
+<!-- =========== KONZEPT 8: SELBSTORGANISATION (Reaktions-Diffusion) =========== -->
+<section class="concept" data-concept="selbstorganisation">
+  <h2>8. Selbstorganisation — Muster aus dem Nichts</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Offene Systeme fern vom Gleichgewicht können spontan Muster bilden, ohne äußere Vorgabe. Zwei chemische Substanzen (Aktivator + Inhibitor), die reagieren und diffundieren, erzeugen Turing-Muster wie auf Muschelschalen [[6]].
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Das <em>Gray-Scott-Modell</em> — Reaktions-Diffusions-System. Je nach Feed/Kill-Rate: Punkte, Streifen, Spiralen, Chaos — alles aus zwei simplen Substanzen [[6]].
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Klicke ins Feld, um Substanz einzubringen. Ändere die Parameter für unterschiedliche Muster.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Feed (F): <span class="value-badge" id="sF">0.055</span></label>
+      <input type="range" id="sFs" min="0.01" max="0.1" step="0.001" value="0.055" oninput="sUpdate()">
+    </div>
+    <div class="control-group">
+      <label>Kill (k): <span class="value-badge" id="sK">0.062</span></label>
+      <input type="range" id="sKs" min="0.04" max="0.08" step="0.001" value="0.062" oninput="sUpdate()">
+    </div>
+    <button class="action" onclick="sSeed()">Zufalls-Saat</button>
+    <button class="action" onclick="sClear()">Leeren</button>
+  </div>
+  <canvas id="sCanvas" width="300" height="300" style="cursor:crosshair;"></canvas>
+</section>
+
+<!-- =========== KONZEPT 9: EVOLUTION / GA =========== -->
+<section class="concept" data-concept="evolution">
+  <h2>9. Evolution — Mutation + Selektion + Feedback</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Evolution braucht nur drei Zutaten: <em>Variation</em> (Mutation), <em>Vererbung</em> (Replikation) und <em>Selektion</em> (Fitness-Filter) . Mit hierarchisch verschachtelten Feedback-Schleifen entsteht beliebig hohe Komplexität — ohne Designer .
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Manfred Eigens <em>Evolutionsmaschine</em> im Reagenzglas — Viren mutieren, replizieren, werden selektiert. Im Zeitraffer wird Darwins Prinzip sichtbar . Der berühmte "Baum des Lebens" ist strukturell nichts anderes als eine <em>symmetriebrechende Bifurkation</em> .
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Sieh eine Population von Punkten evolvieren. Ziel = grüner Kreis. Regle Mutationsrate und Selektionsdruck.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Mutationsrate: <span class="value-badge" id="evM">0.05</span></label>
+      <input type="range" id="evMs" min="0" max="0.3" step="0.005" value="0.05" oninput="evUpdate()">
+    </div>
+    <div class="control-group">
+      <label>Selektionsdruck: <span class="value-badge" id="evS">0.5</span></label>
+      <input type="range" id="evSs" min="0" max="1" step="0.05" value="0.5" oninput="evUpdate()">
+    </div>
+    <div class="control-group">
+      <label>Populationsgröße: <span class="value-badge" id="evP">80</span></label>
+      <input type="range" id="evPs" min="20" max="200" step="10" value="80" oninput="evReset()">
+    </div>
+    <button class="action" onclick="evReset()">Neustart</button>
+    <button class="action" onclick="evMoveTarget()">Umwelt verschiebt sich!</button>
+  </div>
+  <canvas id="evCanvas" width="800" height="400"></canvas>
+  <p style="text-align:center; color:#aaa; font-size:0.9em;">Generation: <span class="value-badge" id="evGen">0</span> &nbsp;|&nbsp; Beste Fitness: <span class="value-badge" id="evFit">0</span></p>
+</section>
+
+<!-- =========== KONZEPT 10: HIERARCHIE & INTEGRATION =========== -->
+<section class="concept" data-concept="hierarchie">
+  <h2>10. Hierarchie & Integration — der Weg zu echter Komplexität</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Lebendige Komplexität entsteht dadurch, dass Elemente <em>hierarchisch organisiert</em> werden — mit wenigen Typen pro Ebene, aber vielen Ebenen . Jede Integrationsebene (Atom → Molekül → Zelle → Organ → Organismus → Gesellschaft) schafft neue emergente Eigenschaften .
+  </div>
+  <div class="example">
+    <strong>Beispiele aus dem Text:</strong> Eine Zelle organisiert ~500 Milliarden Atome durch ~10 Hierarchieebenen . Proteine bestehen aus nur 20 Aminosäuren, Nukleinsäuren aus nur 4 Basen. "More is different" (P.W. Anderson): auf jeder Stufe erscheinen ganz neue Gesetzmäßigkeiten .
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Klicke auf jede Ebene, um dich rein- und rauszuzoomen und die Integrations-Kaskade der Realität zu sehen.</p>
+  <canvas id="hCanvas" width="800" height="500" style="cursor:pointer;"></canvas>
+  <p style="text-align:center;" id="hInfo">Klicke auf eine Ebene für Details</p>
+</section>
+
+<!-- =========== KONZEPT 11: CONSTRAINTS-HIERARCHIE =========== -->
+<section class="concept" data-concept="constraints2">
+  <h2>11. Bottom-Up vs. Top-Down Constraints (Juarrero)</h2>
+  <div class="intuition">
+    <strong>Kern-Idee:</strong> Constraints gliedern sich hierarchisch : <em>Kontextfreie</em> Constraints beschränken nur Verteilungen. <em>Kontextsensitive</em> (First-Order) Constraints koppeln Elemente aneinander. <em>Second-Order</em> (Top-Down) Constraints wirken als "Ordnungsparameter" auf das Gesamtsystem zurück.
+  </div>
+  <div class="example">
+    <strong>Beispiel aus dem Text:</strong> Durch Bottom-Up-Constraints entstehen Möglichkeiten, die dann durch Top-Down-Constraints selektiert werden . Ein Vogelschwarm: lokale Regeln (Bottom-Up: Nachbar-Abstand) + globale Formation (Top-Down: Schwarm hält Kohäsion).
+  </div>
+  <p>➡️ <strong>Interaktion:</strong> Boids-Simulation. Regle lokale (Bottom-Up) und globale (Top-Down) Constraints, um zu sehen, wie Selbstorganisation entsteht.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Separation (lokal): <span class="value-badge" id="bSep">1.0</span></label>
+      <input type="range" id="bSepS" min="0" max="3" step="0.1" value="1" oninput="bUpdate2()">
+    </div>
+    <div class="control-group">
+      <label>Alignment (kontextsens.): <span class="value-badge" id="bAli">1.0</span></label>
+      <input type="range" id="bAliS" min="0" max="3" step="0.1" value="1" oninput="bUpdate2()">
+    </div>
+    <div class="control-group">
+      <label>Kohäsion (Top-Down): <span class="value-badge" id="bCoh">1.0</span></label>
+      <input type="range" id="bCohS" min="0" max="3" step="0.1" value="1" oninput="bUpdate2()">
+    </div>
+    <button class="action" onclick="bReset2()">Neustart</button>
+  </div>
+  <canvas id="boidCanvas" width="800" height="400"></canvas>
+</section>
+
+<script>
+/* ============ NAVIGATION ============ */
+const concepts = [
+  {id:'struktur', label:'1. Struktur'},
+  {id:'nichtlinear', label:'2. Nichtlinear'},
+  {id:'constraints', label:'3. Constraints'},
+  {id:'bifurkation', label:'4. Bifurkation'},
+  {id:'emergenz', label:'5. Emergenz'},
+  {id:'attraktoren', label:'6. Attraktoren'},
+  {id:'information', label:'7. Information'},
+  {id:'selbstorganisation', label:'8. Selbstorg.'},
+  {id:'evolution', label:'9. Evolution'},
+  {id:'hierarchie', label:'10. Hierarchie'},
+  {id:'constraints2', label:'11. Bottom/Top'}
+];
+const nav = document.getElementById('nav');
+concepts.forEach((c,i) => {
+  const b = document.createElement('button');
+  b.textContent = c.label;
+  b.onclick = () => showConcept(c.id, b);
+  nav.appendChild(b);
+});
+function showConcept(id, btn) {
+  document.querySelectorAll('.concept').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-concept="${id}"]`).classList.add('active');
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('active'));
+  btn.classList.add('active');
+  window.scrollTo({top: 0, behavior:'smooth'});
+}
+showConcept('struktur', nav.firstChild);
+
+/* ============ 1. STRUKTUR ============ */
+let sNodes = [], sEdges = [];
+function strukturAddNode() {
+  const c = document.getElementById('strukturCanvas');
+  sNodes.push({x: 50 + Math.random()*(c.width-100), y: 50 + Math.random()*(c.height-100), id: sNodes.length});
+  strukturDraw();
+}
+function strukturRandomEdge() {
+  if (sNodes.length < 2) return;
+  const a = Math.floor(Math.random()*sNodes.length);
+  let b = Math.floor(Math.random()*sNodes.length);
+  while (b === a) b = Math.floor(Math.random()*sNodes.length);
+  sEdges.push([a,b]);
+  strukturDraw();
+}
+function strukturReset() { sNodes = []; sEdges = []; strukturDraw(); }
+function strukturDraw() {
+  const c = document.getElementById('strukturCanvas'), ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const mode = document.getElementById('strukturMode').value;
+  if (mode !== 'menge') {
+    sEdges.forEach(([a,b]) => {
+      ctx.strokeStyle = '#c060f0'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(sNodes[a].x, sNodes[a].y); ctx.lineTo(sNodes[b].x, sNodes[b].y); ctx.stroke();
+      if (mode === 'ordnung') {
+        const dx = sNodes[b].x - sNodes[a].x, dy = sNodes[b].y - sNodes[a].y, len = Math.hypot(dx,dy);
+        const ux = dx/len, uy = dy/len;
+        const tx = sNodes[b].x - ux*20, ty = sNodes[b].y - uy*20;
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(tx - ux*10 + uy*6, ty - uy*10 - ux*6);
+        ctx.lineTo(tx - ux*10 - uy*6, ty - uy*10 + ux*6);
+        ctx.closePath(); ctx.fillStyle = '#c060f0'; ctx.fill();
+      }
+    });
+  }
+  sNodes.forEach(n => {
+    ctx.beginPath(); ctx.arc(n.x, n.y, 15, 0, 2*Math.PI);
+    ctx.fillStyle = '#ffd93d'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(n.id, n.x, n.y);
+  });
+  ctx.fillStyle = '#888'; ctx.font = '13px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText(`Knoten: ${sNodes.length} | Kanten: ${mode==='menge'?0:sEdges.length}`, 10, 20);
+}
+strukturDraw();
+
+/* ============ 2. NICHTLINEAR ============ */
+function nlDraw() {
+  const c = document.getElementById('nlCanvas'), ctx = c.getContext('2d');
+  const a = parseFloat(document.getElementById('nlAslider').value);
+  const b = parseFloat(document.getElementById('nlBslider').value);
+  const cc = parseFloat(document.getElementById('nlCslider').value);
+  document.getElementById('nlA').textContent = a.toFixed(2);
+  document.getElementById('nlB').textContent = b.toFixed(2);
+  document.getElementById('nlC').textContent = cc.toFixed(2);
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, c.height/2); ctx.lineTo(c.width, c.height/2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(c.width/2, 0); ctx.lineTo(c.width/2, c.height); ctx.stroke();
+  ctx.strokeStyle = (b === 0 && cc === 0) ? '#6bcf7f' : '#ff6b6b';
+  ctx.lineWidth = 3; ctx.beginPath();
+  for (let px = 0; px < c.width; px++) {
+    const x = (px - c.width/2) / 40;
+    const y = a*x + b*x*x + cc*x*x*x;
+    const py = c.height/2 - y*20;
+    if (px === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#ccc'; ctx.font = '14px monospace';
+  ctx.fillText(`y = ${a.toFixed(2)}·x ${b>=0?'+':''}${b.toFixed(2)}·x² ${cc>=0?'+':''}${cc.toFixed(2)}·x³`, 10, 25);
+  ctx.fillStyle = (b===0 && cc===0) ? '#6bcf7f' : '#ff6b6b';
+  ctx.fillText((b===0 && cc===0) ? '→ LINEAR (Gerade)' : '→ NICHTLINEAR (Kurve)', 10, 45);
+}
+nlDraw();
+
+/* ============ 3. CONSTRAINTS ============ */
+let cParticles = [], cConstraints = [];
+function cResetParticles() {
+  const c = document.getElementById('cCanvas');
+  cParticles = [];
+  for (let i = 0; i < 40; i++) {
+    cParticles.push({
+      x: c.width/2 + (Math.random()-0.5)*100,
+      y: c.height/2 + (Math.random()-0.5)*100,
+      vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2,
+      trail: []
+    });
+  }
+}
+function cUpdate() {
+  const n = parseInt(document.getElementById('cNslider').value);
+  const type = document.getElementById('cType').value;
+  document.getElementById('cN').textContent = n;
+  const c = document.getElementById('cCanvas');
+  cConstraints = [];
+  for (let i = 0; i < n; i++) {
+    if (type === 'holonom') {
+      cConstraints.push({type:'circle', x: 100 + Math.random()*(c.width-200), y: 50 + Math.random()*(c.height-100), r: 30+Math.random()*40});
+    } else {
+      cConstraints.push({type:'wall', x1: Math.random()*c.width, y1: Math.random()*c.height, angle: Math.random()*Math.PI, len: 100});
+    }
+  }
+  const dof = Math.max(0, 2 - n*0.2);
+  document.getElementById('cInfo').textContent = `Freiheitsgrade: ${dof.toFixed(1)} (von 2 möglichen) — Constraint-Typ: ${type}`;
+}
+cResetParticles(); cUpdate();
+function cLoop() {
+  const c = document.getElementById('cCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(10,10,26,0.15)'; ctx.fillRect(0,0,c.width,c.height);
+  const type = document.getElementById('cType').value;
+  cConstraints.forEach(cn => {
+    if (cn.type === 'circle') {
+      ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cn.x, cn.y, cn.r, 0, 2*Math.PI); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,107,107,0.15)'; ctx.fill();
+    } else {
+      ctx.strokeStyle = '#ffd93d'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cn.x1, cn.y1);
+      ctx.lineTo(cn.x1 + Math.cos(cn.angle)*cn.len, cn.y1 + Math.sin(cn.angle)*cn.len);
+      ctx.stroke();
+    }
+  });
+  cParticles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > c.width) p.vx *= -1;
+    if (p.y < 0 || p.y > c.height) p.vy *= -1;
+    cConstraints.forEach(cn => {
+      if (cn.type === 'circle') {
+        const dx = p.x - cn.x, dy = p.y - cn.y, d = Math.hypot(dx, dy);
+        if (d < cn.r) {
+          const nx = dx/d, ny = dy/d;
+          p.x = cn.x + nx * cn.r; p.y = cn.y + ny * cn.r;
+          const dot = p.vx*nx + p.vy*ny;
+          p.vx -= 2*dot*nx; p.vy -= 2*dot*ny;
+        }
+      } else {
+        const nx = -Math.sin(cn.angle), ny = Math.cos(cn.angle);
+        const dot = p.vx*nx + p.vy*ny;
+        if (Math.abs(dot) > 1.2) {
+          p.vx -= 0.1*dot*nx; p.vy -= 0.1*dot*ny;
+        }
+      }
+    });
+    p.trail.push({x: p.x, y: p.y});
+    if (p.trail.length > 20) p.trail.shift();
+    ctx.strokeStyle = 'rgba(107,207,127,0.4)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    p.trail.forEach((t,i) => { if (i===0) ctx.moveTo(t.x,t.y); else ctx.lineTo(t.x,t.y); });
+    ctx.stroke();
+    ctx.fillStyle = '#6bcf7f'; ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, 2*Math.PI); ctx.fill();
+  });
+  requestAnimationFrame(cLoop);
+}
+cLoop();
+
+/* ============ 4. BIFURKATION (LOGISTIC) ============ */
+function bDrawFeigenbaum() {
+  const c = document.getElementById('bCanvasBottom'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,c.width,c.height);
+  const rmin = 2.5, rmax = 4;
+  for (let px = 0; px < c.width; px++) {
+    const r = rmin + (rmax-rmin) * px/c.width;
+    let x = 0.5;
+    for (let i = 0; i < 200; i++) x = r*x*(1-x); // skip transient
+    for (let i = 0; i < 200; i++) {
+      x = r*x*(1-x);
+      const py = c.height - x*c.height;
+      ctx.fillStyle = 'rgba(255,215,61,0.4)';
+      ctx.fillRect(px, py, 1, 1);
+    }
+  }
+  bDrawRLine();
+}
+function bDrawRLine() {
+  const c = document.getElementById('bCanvasBottom'), ctx = c.getContext('2d');
+  const r = parseFloat(document.getElementById('bRslider').value);
+  const px = (r - 2.5)/(4 - 2.5) * c.width;
+  ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, c.height); ctx.stroke();
+}
+function bDrawTimeSeries() {
+  const c = document.getElementById('bCanvasTop'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,c.width,c.height);
+  const r = parseFloat(document.getElementById('bRslider').value);
+  let x = 0.5;
+  for (let i = 0; i < 100; i++) x = r*x*(1-x);
+  ctx.strokeStyle = '#6bcf7f'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < c.width; i++) {
+    x = r*x*(1-x);
+    const py = c.height - x*c.height;
+    if (i===0) ctx.moveTo(i,py); else ctx.lineTo(i,py);
+  }
+  ctx.stroke();
+}
+function bUpdate() {
+  document.getElementById('bR').textContent = parseFloat(document.getElementById('bRslider').value).toFixed(3);
+  bDrawFeigenbaum();
+  bDrawTimeSeries();
+}
+bUpdate();
+
+/* ============ 5. EMERGENZ (CA) ============ */
+function eDrawRule(rule) {
+  const c = document.getElementById('eRuleCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,c.width,c.height);
+  const cellW = c.width / 8;
+  for (let i = 0; i < 8; i++) {
+    const pat = 7 - i;
+    const out = (rule >> i) & 1;
+    const x0 = i * cellW + 10;
+    for (let b = 0; b < 3; b++) {
+      const bit = (pat >> (2-b)) & 1;
+      ctx.fillStyle = bit ? '#ffd93d' : '#333';
+      ctx.fillRect(x0 + b*12, 10, 10, 10);
+    }
+    ctx.fillStyle = out ? '#6bcf7f' : '#333';
+    ctx.fillRect(x0 + 12, 35, 10, 10);
+    ctx.fillStyle = '#888'; ctx.font = '10px monospace';
+    ctx.fillText(pat.toString(2).padStart(3,'0'), x0 + 6, 62);
+  }
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif';
+  ctx.fillText(`Regel ${rule} = ${rule.toString(2).padStart(8,'0')}`, 10, 20);
+}
+let eGrid = null;
+function eUpdate() {
+  const rule = parseInt(document.getElementById('eRslider').value);
+  document.getElementById('eR').textContent = rule;
+  eDrawRule(rule);
+  const c = document.getElementById('eCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,c.width,c.height);
+  const cols = 200, rows = 100;
+  const cellW = c.width / cols, cellH = c.height / rows;
+  let row = new Array(cols).fill(0);
+  row[Math.floor(cols/2)] = 1;
+  for (let r = 0; r < rows; r++) {
+    for (let i = 0; i < cols; i++) {
+      if (row[i]) {
+        ctx.fillStyle = `hsl(${(r*3)%360}, 70%, 60%)`;
+        ctx.fillRect(i*cellW, r*cellH, cellW, cellH);
+      }
+    }
+    const newRow = new Array(cols).fill(0);
+    for (let i = 0; i < cols; i++) {
+      const l = row[(i-1+cols)%cols], m = row[i], rr = row[(i+1)%cols];
+      const pat = (l<<2)|(m<<1)|rr;
+      newRow[i] = (rule >> pat) & 1;
+    }
+    row = newRow;
+  }
+}
+eUpdate();
+
+/* ============ 6. LORENZ ATTRAKTOR ============ */
+let aState = {x:1, y:1, z:1, points:[]};
+function aReset() { aState = {x:1, y:1, z:1, points:[]}; }
+function aUpdate() {
+  document.getElementById('aB').textContent = parseFloat(document.getElementById('aBslider').value).toFixed(1);
+  aReset();
+}
+aUpdate();
+function aLoop() {
+  const c = document.getElementById('aCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(10,10,26,0.05)'; ctx.fillRect(0,0,c.width,c.height);
+  const A = 10, B = parseFloat(document.getElementById('aBslider').value), C = 8/3;
+  const dt = 0.01;
+  for (let step = 0; step < 5; step++) {
+    const dx = A*(aState.y - aState.x);
+    const dy = B*aState.x - aState.y - aState.x*aState.z;
+    const dz = aState.x*aState.y - C*aState.z;
+    aState.x += dx*dt; aState.y += dy*dt; aState.z += dz*dt;
+    aState.points.push({x: aState.x, y: aState.y, z: aState.z});
+    if (aState.points.length > 3000) aState.points.shift();
+  }
+  ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  aState.points.forEach((p, i) => {
+    const px = c.width/2 + p.x * 10;
+    const py = c.height - 50 - p.z * 8;
+    ctx.strokeStyle = `hsl(${(i/aState.points.length)*280}, 80%, 60%)`;
+    if (i === 0) ctx.moveTo(px, py);
+    else {
+      ctx.lineTo(px, py);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+    }
+  });
+  ctx.stroke();
+  ctx.fillStyle = '#aaa'; ctx.font = '12px monospace';
+  ctx.fillText(`dX/dt = 10(Y−X)`, 10, 20);
+  ctx.fillText(`dY/dt = ${B.toFixed(1)}·X − Y − X·Z`, 10, 35);
+  ctx.fillText(`dZ/dt = X·Y − 2.67·Z`, 10, 50);
+  requestAnimationFrame(aLoop);
+}
+aLoop();
+
+/* ============ 7. INFORMATION / ENTROPIE ============ */
+function iUpdate() {
+  let pa = parseFloat(document.getElementById('ipAs').value);
+  let pb = parseFloat(document.getElementById('ipBs').value);
+  let pc = parseFloat(document.getElementById('ipCs').value);
+  const sum = pa + pb + pc;
+  let pd = 1 - sum;
+  if (pd < 0) { pd = 0; const s = sum; pa/=s; pb/=s; pc/=s; }
+  document.getElementById('ipA').textContent = pa.toFixed(2);
+  document.getElementById('ipB').textContent = pb.toFixed(2);
+  document.getElementById('ipC').textContent = pc.toFixed(2);
+  const probs = [pa, pb, pc, pd];
+  let H = 0;
+  probs.forEach(p => { if (p > 0) H -= p * Math.log2(p); });
+  document.getElementById('iH').textContent = H.toFixed(3) + ' bit';
+  const c = document.getElementById('iCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,c.width,c.height);
+  const labels = ['A','B','C','D'];
+  const colors = ['#ff6b6b','#ffd93d','#6bcf7f','#4d9de0'];
+  const barW = 100, gap = 60, startX = 100;
+  const baseY = c.height - 60;
+  probs.forEach((p, i) => {
+    const x = startX + i*(barW+gap);
+    const h = p * (c.height - 100);
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(x, baseY - h, barW, h);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i], x + barW/2, baseY + 20);
+    ctx.font = '13px monospace';
+    ctx.fillText(p.toFixed(2), x + barW/2, baseY - h - 8);
+  });
+  ctx.textAlign = 'left';
+  ctx.strokeStyle = '#666'; ctx.beginPath();
+  ctx.moveTo(50, baseY); ctx.lineTo(c.width-30, baseY); ctx.stroke();
+}
+iUpdate();
+
+/* ============ 8. SELBSTORGANISATION (Gray-Scott) ============ */
+let sGridSize = 100, sU, sV;
+function sInitGrid() {
+  sU = new Float32Array(sGridSize*sGridSize);
+  sV = new Float32Array(sGridSize*sGridSize);
+  for (let i = 0; i < sU.length; i++) { sU[i] = 1; sV[i] = 0; }
+  sSeed();
+}
+function sSeed() {
+  for (let k = 0; k < 5; k++) {
+    const cx = Math.floor(Math.random()*sGridSize);
+    const cy = Math.floor(Math.random()*sGridSize);
+    for (let dy = -5; dy <= 5; dy++) for (let dx = -5; dx <= 5; dx++) {
+      const x = (cx+dx+sGridSize)%sGridSize, y = (cy+dy+sGridSize)%sGridSize;
+      sV[y*sGridSize+x] = 1; sU[y*sGridSize+x] = 0.5;
+    }
+  }
+}
+function sClear() {
+  for (let i = 0; i < sU.length; i++) { sU[i] = 1; sV[i] = 0; }
+}
+function sUpdate() {
+  document.getElementById('sF').textContent = parseFloat(document.getElementById('sFs').value).toFixed(3);
+  document.getElementById('sK').textContent = parseFloat(document.getElementById('sKs').value).toFixed(3);
+}
+sInitGrid(); sUpdate();
+function sStep() {
+  const F = parseFloat(document.getElementById('sFs').value);
+  const k = parseFloat(document.getElementById('sKs').value);
+  const Du = 1.0, Dv = 0.5, dt = 1.0;
+  const nU = new Float32Array(sU.length), nV = new Float32Array(sV.length);
+  const N = sGridSize;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const i = y*N+x;
+    const l = ((x-1+N)%N)+y*N, r = ((x+1)%N)+y*N;
+    const u = x+((y-1+N)%N)*N, d = x+((y+1)%N)*N;
+    const lapU = sU[l]+sU[r]+sU[u]+sU[d] - 4*sU[i];
+    const lapV = sV[l]+sV[r]+sV[u]+sV[d] - 4*sV[i];
+    const uvv = sU[i]*sV[i]*sV[i];
+    nU[i] = sU[i] + (Du*lapU - uvv + F*(1-sU[i]))*dt;
+    nV[i] = sV[i] + (Dv*lapV + uvv - (F+k)*sV[i])*dt;
+  }
+  sU = nU; sV = nV;
+}
+const sCan = document.getElementById('sCanvas');
+sCan.addEventListener('mousedown', e => {
+  const rect = sCan.getBoundingClientRect();
+  const cx = Math.floor((e.clientX-rect.left)/sCan.width*sGridSize);
+  const cy = Math.floor((e.clientY-rect.top)/sCan.height*sGridSize);
+  for (let dy=-3;dy<=3;dy++) for (let dx=-3;dx<=3;dx++) {
+    const x=(cx+dx+sGridSize)%sGridSize, y=(cy+dy+sGridSize)%sGridSize;
+    sV[y*sGridSize+x]=1; sU[y*sGridSize+x]=0.3;
+  }
+});
+function sLoop() {
+  for (let i = 0; i < 5; i++) sStep();
+  const ctx = sCan.getContext('2d');
+  const img = ctx.createImageData(sGridSize, sGridSize);
+  for (let i = 0; i < sV.length; i++) {
+    const v = Math.min(1, Math.max(0, sV[i]));
+    img.data[i*4]   = v*80;
+    img.data[i*4+1] = v*200 + 40;
+    img.data[i*4+2] = v*255;
+    img.data[i*4+3] = 255;
+  }
+  const tmp = document.createElement('canvas');
+  tmp.width = sGridSize; tmp.height = sGridSize;
+  tmp.getContext('2d').putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(tmp, 0, 0, sCan.width, sCan.height);
+  requestAnimationFrame(sLoop);
+}
+sLoop();
+
+/* ============ 9. EVOLUTION (GA) ============ */
+let evPop = [], evTarget = {x: 700, y: 100}, evGen = 0;
+function evUpdate() {
+  document.getElementById('evM').textContent = parseFloat(document.getElementById('evMs').value).toFixed(3);
+  document.getElementById('evS').textContent = parseFloat(document.getElementById('evSs').value).toFixed(2);
+  document.getElementById('evP').textContent = document.getElementById('evPs').value;
+}
+function evReset() {
+  const n = parseInt(document.getElementById('evPs').value);
+  evPop = [];
+  for (let i = 0; i < n; i++) {
+    evPop.push({x: 400+Math.random()*100, y: 300+Math.random()*100, fit: 0});
+  }
+  evGen = 0;
+  evUpdate();
+}
+function evMoveTarget() {
+  const c = document.getElementById('evCanvas');
+  evTarget.x = 50 + Math.random()*(c.width-100);
+  evTarget.y = 50 + Math.random()*(c.height-100);
+}
+evReset();
+let evStep = 0;
+function evLoop() {
+  const c = document.getElementById('evCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(10,10,26,0.15)'; ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle = '#6bcf7f'; ctx.beginPath();
+  ctx.arc(evTarget.x, evTarget.y, 20, 0, 2*Math.PI); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+  evPop.forEach(p => {
+    const d = Math.hypot(p.x-evTarget.x, p.y-evTarget.y);
+    p.fit = 1 / (1 + d/50);
+    ctx.fillStyle = `hsl(${p.fit*120}, 80%, 60%)`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, 2*Math.PI); ctx.fill();
+  });
+  evStep++;
+  if (evStep >= 30) {
+    evStep = 0; evGen++;
+    const mut = parseFloat(document.getElementById('evMs').value);
+    const sel = parseFloat(document.getElementById('evSs').value);
+    evPop.sort((a,b) => b.fit - a.fit);
+    const keep = Math.max(2, Math.floor(evPop.length * (1-sel)));
+    const parents = evPop.slice(0, keep);
+    const newPop = [];
+    while (newPop.length < evPop.length) {
+      const p = parents[Math.floor(Math.random()*parents.length)];
+      newPop.push({
+        x: p.x + (Math.random()-0.5)*c.width*mut,
+        y: p.y + (Math.random()-0.5)*c.height*mut,
+        fit: 0
+      });
+    }
+    evPop = newPop;
+    document.getElementById('evGen').textContent = evGen;
+    document.getElementById('evFit').textContent = evPop[0] ? evPop[0].fit.toFixed(3) : '0';
+  }
+  requestAnimationFrame(evLoop);
+}
+evLoop();
+
+/* ============ 10. HIERARCHIE ============ */
+const hLevels = [
+  {name:'Atom', ex:'~10⁻¹⁰ m — Wasserstoff, Kohlenstoff, Sauerstoff', color:'#ff6b6b'},
+  {name:'Molekül', ex:'H₂O, DNA-Base, Aminosäure — chemische Bindungen', color:'#ffa06b'},
+  {name:'Makromolekül', ex:'Protein (~20 Aminosäuren als Bausteine), DNA (4 Basen)', color:'#ffd93d'},
+  {name:'Organell', ex:'Mitochondrium, Ribosom, Zellkern', color:'#a8e063'},
+  {name:'Zelle', ex:'~500 Mrd. Atome, ~10 Hierarchieebenen organisiert', color:'#6bcf7f'},
+  {name:'Gewebe', ex:'Nervengewebe, Muskelgewebe — spezialisierte Zellen', color:'#4dcfba'},
+  {name:'Organ', ex:'Herz, Leber, Gehirn', color:'#4d9de0'},
+  {name:'Organismus', ex:'Mensch: ~10¹³ eigene Zellen + 10× mehr Mikroben', color:'#7d7cf0'},
+  {name:'Population/Gesellschaft', ex:'Familie, Staat, Ökosystem — soziale Kopplung', color:'#c060f0'},
+  {name:'Biosphäre', ex:'Alles Leben der Erde — koevolutionäres Netzwerk', color:'#f060a8'}
+];
+let hSelected = -1;
+function hDraw() {
+  const c = document.getElementById('hCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = '#0a0a1a'; ctx.fillRect(0,0,c.width,c.height);
+  const H = c.height / hLevels.length;
+  hLevels.forEach((lv, i) => {
+    const y = i*H;
+    ctx.fillStyle = i === hSelected ? lv.color : lv.color+'44';
+    ctx.fillRect(50, y+2, c.width-100, H-4);
+    ctx.strokeStyle = lv.color; ctx.lineWidth = 2;
+    ctx.strokeRect(50, y+2, c.width-100, H-4);
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(`Ebene ${i+1}: ${lv.name}`, 70, y + H/2);
+    if (i < hLevels.length - 1) {
+      ctx.strokeStyle = '#666'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(c.width/2, y+H-2); ctx.lineTo(c.width/2-6, y+H+4);
+      ctx.moveTo(c.width/2, y+H-2); ctx.lineTo(c.width/2+6, y+H+4);
+      ctx.stroke();
+    }
+  });
+  ctx.textBaseline = 'alphabetic';
+}
+document.getElementById('hCanvas').addEventListener('click', e => {
+  const c = document.getElementById('hCanvas');
+  const rect = c.getBoundingClientRect();
+  const y = (e.clientY-rect.top) * (c.height/rect.height);
+  hSelected = Math.floor(y / (c.height/hLevels.length));
+  document.getElementById('hInfo').innerHTML = `<strong>${hLevels[hSelected].name}:</strong> ${hLevels[hSelected].ex}`;
+  hDraw();
+});
+hDraw();
+
+/* ============ 11. BOIDS (Bottom-up/Top-down constraints) ============ */
+let boids = [];
+function bReset2() {
+  const c = document.getElementById('boidCanvas');
+  boids = [];
+  for (let i = 0; i < 80; i++) {
+    boids.push({
+      x: Math.random()*c.width, y: Math.random()*c.height,
+      vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2
+    });
+  }
+}
+function bUpdate2() {
+  document.getElementById('bSep').textContent = parseFloat(document.getElementById('bSepS').value).toFixed(1);
+  document.getElementById('bAli').textContent = parseFloat(document.getElementById('bAliS').value).toFixed(1);
+  document.getElementById('bCoh').textContent = parseFloat(document.getElementById('bCohS').value).toFixed(1);
+}
+bReset2(); bUpdate2();
+function bLoop2() {
+  const c = document.getElementById('boidCanvas'), ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(10,10,26,0.2)'; ctx.fillRect(0,0,c.width,c.height);
+  const sepW = parseFloat(document.getElementById('bSepS').value);
+  const aliW = parseFloat(document.getElementById('bAliS').value);
+  const cohW = parseFloat(document.getElementById('bCohS').value);
+  const R = 60;
+  boids.forEach(b => {
+    let sx=0, sy=0, ax=0, ay=0, cx=0, cy=0, n=0, sn=0;
+    boids.forEach(o => {
+      if (o === b) return;
+      const dx = o.x-b.x, dy = o.y-b.y, d = Math.hypot(dx,dy);
+      if (d < R && d > 0) {
+        ax += o.vx; ay += o.vy;
+        cx += o.x; cy += o.y; n++;
+        if (d < 25) { sx -= dx/d; sy -= dy/d; sn++; }
+      }
+    });
+    if (sn>0) { b.vx += sx*0.05*sepW; b.vy += sy*0.05*sepW; }
+    if (n>0) {
+      b.vx += (ax/n - b.vx)*0.03*aliW;
+      b.vy += (ay/n - b.vy)*0.03*aliW;
+      b.vx += (cx/n - b.x)*0.0008*cohW;
+      b.vy += (cy/n - b.y)*0.0008*cohW;
+    }
+    const sp = Math.hypot(b.vx, b.vy);
+    if (sp > 3) { b.vx = b.vx/sp*3; b.vy = b.vy/sp*3; }
+    b.x += b.vx; b.y += b.vy;
+    if (b.x < 0) b.x += c.width; if (b.x > c.width) b.x -= c.width;
+    if (b.y < 0) b.y += c.height; if (b.y > c.height) b.y -= c.height;
+    const ang = Math.atan2(b.vy, b.vx);
+    ctx.fillStyle = '#6bcf7f';
+    ctx.beginPath();
+    ctx.moveTo(b.x + Math.cos(ang)*8, b.y + Math.sin(ang)*8);
+    ctx.lineTo(b.x + Math.cos(ang+2.5)*5, b.y + Math.sin(ang+2.5)*5);
+    ctx.lineTo(b.x + Math.cos(ang-2.5)*5, b.y + Math.sin(ang-2.5)*5);
+    ctx.closePath(); ctx.fill();
+  });
+  requestAnimationFrame(bLoop2);
+}
+bLoop2();
+
+</script>
+</body>
+</html>
