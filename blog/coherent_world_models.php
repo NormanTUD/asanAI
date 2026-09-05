@@ -1236,6 +1236,29 @@ $$
 \end{aligned}}
 $$
 
+**A sealed system gains its semantics only through a contact point — the Rosetta Stone is the extreme case.** Language is itself just such a closed system: a self-contained representational whole, like a logic, whose relation to $W$ is *not* internal to the system. For more than a millennium after they ceased to be written, Egyptian hieroglyphs stayed complete, systematic, and unreadable — a perfect formal system with no licensed transition to the present — and its decipherer named it exactly that:
+
+<div class="smart-quote" data-cite="champollion1824precis">
+<div class="full-quote">… l'écriture hiéroglyphique est un système complexe, une écriture tout à la fois figurative, symbolique et phonétique, dans un même texte, une même phrase, je dirais presque dans le même mot.</div>
+<div class="short-quote">Hieroglyphic writing is a complex system — a script at once figurative, symbolic and phonetic, within one text, one sentence, almost one word.</div>
+</div>
+
+The Rosetta Stone (Decree of Memphis, 196 B.C.) supplied the missing $T \in \mathcal{T}$: the chapter's *documented archival transmission* made literal. The same decree was carved twice more, in Demotic and in Greek — and Greek was not sealed, its line of transmission to the present unbroken. So one had a key, and its starting points were the ring-enclosed royal names:
+
+<div class="smart-quote" data-cite="rosetta196bc">
+<div class="full-quote">This decree shall be inscribed on a stela of hard stone in sacred and native and Greek characters and set up in each of the first, second and third rank temples beside the image of the ever-living king.</div>
+<div class="short-quote">… inscribed on a stela of hard stone in sacred and native and Greek characters …</div>
+</div>
+
+From the few proper names that overlapped — Ptolemy on the stone, Cleopatra on the Philae obelisk — the phonetic value of each sign was fixed by *comparison on the overlaps*, then tested against further cartouches, and it held everywhere:
+
+<div class="smart-quote" data-cite="hieroglyphsdeciphered">
+<div class="full-quote">La valeur phonétique, déjà très probable, de ces douze signes deviendra incontestable, si, en appliquant ces valeurs à d'autres cartouches … on en fait sans effort une lecture régulière, produisant des noms propres de souverains étrangers à la langue égyptienne.</div>
+<div class="short-quote">The phonetic values of these twelve signs become incontestable once they yield, without effort, a regular reading of the proper names on further cartouches.</div>
+</div>
+
+That is descent in miniature: local agreement on a cover (the shared names) — unique global section (the whole script, *erschlossen aus dem Zusammenhang*, recovered from context). The moral is the chapter's own: coherence of a symbol system is not yet *semantics*. A logic, a corpus, a language model stays sealed until a licensed contact point touches it — and the touch, not the elegance of the internal architecture, is what opens the content.
+
 **The paradigm contact point is the perihelion of Mercury.** General relativity — \citeauthor{einstein1916foundation}'s (\citeyear{einstein1916foundation}) \citetitle{einstein1916foundation} — is a fully coherent theory: its field equations, its geodesic motion, and its recovery of the Newtonian limit hang together, and descent holds on every admissible cover of the theory's own reasoning. But coherence alone would have let it remain a beautiful fiction. What made it *right* (in the chapter's sense) was a single hard contact point: the anomalous precession of Mercury's perihelion, about $43$ arcseconds per century, which Newtonian gravity with all known perturbations could not account for and which general relativity reproduced from its own terms. That one point — where the model's output and the observed fact *overlapped* at a licensed bridge (the orbital calculation, the telescope, the ephemeris) — is the moment a coherent theory stops being merely consistent and starts being *about* the world.
 
 **Strip the example to its logical bones** and the discipline is a table, not a slogan:
