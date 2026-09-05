@@ -1220,6 +1220,20 @@ window.bibData = {
 		year:  1822,
 		title: "Lettre à M. Dacier relative à l'alphabet des hiéroglyphes phonétiques"
 	},
+	"champollion1824precis": {
+		title: "Précis du système hiéroglyphique des anciens Égyptiens",
+		author: "Jean-François Champollion",
+		year: 1824,
+		url: "https://gallica.bnf.fr/ark:/12148/bpt6k1047518v",
+		alternativetitle: "Précis du système hiéroglyphique (Paris: Imprimerie royale, 1824)"
+	},
+	"rosetta196bc": {
+		title: "Decree of Memphis (196 BC), tr. Carol Andrews, The Rosetta Stone",
+		author: "Priests of Memphis (tr. Carol Andrews)",
+		year: "196 B.C.",
+		url: "https://www.britishmuseum.org/collection/object/Y_EA24",
+		alternativetitle: "The Rosetta Stone (London: British Museum Publications, 1981)"
+	},
 	"tdnn1989": {
 		title: "Phoneme Recognition Using Time-Delay Neural Networks",
 		author: "Alexander Waibel, Toshiyuki Hanazawa, Geoffrey Hinton, Kiyohiro Shikano, Kevin J. Lang",
