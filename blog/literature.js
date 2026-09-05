@@ -8635,6 +8635,81 @@ window.bibData = {
 		year: 1963,
 		publisher: "Routledge",
 		url: "https://plato.stanford.edu/entries/popper/",
-		alternativetitle: "Conjectures and Refutations"
+		"tomayko1985hoelzer": {
+		title: "Helmut Hoelzer's Fully Electronic Analog Computer",
+		author: "James E. Tomayko",
+		year: 1985,
+		url: "https://doi.org/10.1109/MAHC.1985.10025",
+		alternativetitle: "IEEE Annals of the History of Computing, 7(3)"
+	},
+	"ulmann2019analogcomputer": {
+		title: "Analog Computer Development in Germany With a Focus on Telefunken",
+		author: "Bernd Ulmann",
+		year: 2019,
+		url: "https://doi.org/10.1109/JPROC.2019.2926611",
+		alternativetitle: "Proceedings of the IEEE, 107(8)"
+	},
+	"dickinson1964lvdc": {
+		title: "Saturn V Launch Vehicle Digital Computer and Data Adapter",
+		author: "M. M. Dickinson, J. B. Jackson, and G. C. Randa",
+		year: 1964,
+		url: "https://doi.org/10.1145/1464052.1464099",
+		alternativetitle: "IBM Space Guidance Center, AFIPS Fall Joint Computer Conference"
+	},
+	"burkey_lvdc": {
+		title: "The Launch Vehicle Digital Computer",
+		author: "Ron Burkey",
+		year: 2016,
+		url: "https://www.ibiblio.org/apollo/LVDC.html",
+		alternativetitle: "Virtual AGC: LVDC and LVDA"
+	},
+	"zak_gorodomlya": {
+		title: "Gorodomlya Island",
+		author: "Anatoly Zak",
+		year: 2021,
+		url: "https://www.russianspaceweb.com/gorodomlya.html",
+		alternativetitle: "Russian Space Web"
+	},
+	"gerovitch_argon": {
+		title: "Soviet Space Program: Computers",
+		author: "Slava Gerovitch",
+		year: 2003,
+		url: "https://web.mit.edu/slava/space/introduction.htm",
+		alternativetitle: "MIT: Computing in the Soviet Space Program"
+	},
+	"argon16_museum": {
+		title: "Argon-16 Computer",
+		author: "Russian Virtual Computer Museum",
+		year: 2004,
+		url: "https://www.computer-museum.ru/english/argon16.htm",
+		alternativetitle: "Russian Virtual Computer Museum"
+	},
+	"ieee_digital_soyuz": {
+		title: "A Digital Soyuz",
+		author: "IEEE Spectrum",
+		year: 2010,
+		url: "https://spectrum.ieee.org/a-digital-soyuz",
+		alternativetitle: "IEEE Spectrum, 28 September 2010"
+	},
+	"burancomputer_guide": {
+		title: "Buran: The On-board Computer",
+		author: "Buran.fr",
+		year: 2004,
+		url: "https://www.buran.fr/en/bourane-buran/bourane-consti-ordinateur-computer.php",
+		alternativetitle: "Buran.fr technical reference"
+	},
+	"buran_autoland": {
+		title: "Key Problems, Specific Features and Performances of the Terminal Phase of the Orbiter's Flight: Its Automatic Controlled Landing",
+		author: "M. P. Balashov",
+		year: 2000,
+		url: "https://www.buran-energia.com/documentation/documentation-akc-auto-landing-complex.php",
+		alternativetitle: "Buran-Energia.com documentation"
+	},
+	"ariane501_report": {
+		title: "ARIANE 5 Flight 501 Failure: Report by the Inquiry Board",
+		author: "Jacques-Louis Lions (Chair), et al.",
+		year: 1996,
+		url: "https://esamultimedia.esa.int/docs/esa-x-1819eng.pdf",
+		alternativetitle: "ESA and CNES Inquiry Board report, Paris, 19 July 1996"
 	}
 };
