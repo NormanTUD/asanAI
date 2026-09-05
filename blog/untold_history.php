@@ -702,7 +702,7 @@ None of these components was invented for AI. Yet remove any single element and 
 
 <div class="md">
 
-## From the Battlefield to the Blackboard: How Weapons Research Built Modern AI
+## From the Battlefield to AlphaGo: How War Research Helped to Build Modern AI
 
 ### The First Electronic Computers: Colossus and ENIAC
 
@@ -753,8 +753,6 @@ These threads, codebreaking, fire control, government patronage, and statistical
 </div>
 
 <div class="md">
-
-## From Los Alamos to AlphaGo: How Nuclear Weapons Research Built Modern AI
 
 The contribution of nuclear weapons research to AI is less well-known than that of the wartime codebreakers, but quantitatively and qualitatively it is comparable. Three threads deserve attention.
 
@@ -807,7 +805,13 @@ The history of AI is not only the history of algorithms. It is also the history 
 
 <div class="md">
 
-## To the Moon and Beyond: How Spaceflight Built the Invisible Scaffolding for Modern AI
+## To the Moon and Beyond: How Spaceflight Helped to Build the Invisible Scaffolding for Modern AI
+
+### The German Lineage: From Peenemünde to the Instrument Unit
+
+The first computer ever built into a flying machine was German. In 1941, engineer **Helmut Hölzer** at Peenemünde designed the *Mischgerät*, a fully electronic analog computer that stabilized the V-2 rocket during its roughly sixty seconds of powered flight \cite{tomayko1985hoelzer}. Gyroscope signals were integrated and differentiated by resistor–capacitor networks to derive the rocket's attitude *and* its rate of divergence, the damping signal no purely mechanical controller could supply fast enough \cite{ulmann2019analogcomputer}. Hölzer then built the first electronic general-purpose analog computer, on which the complete rocket steering loop was simulated in real time before it ever flew. Hardware-in-the-loop simulation, the standard way control policies are tested in every modern robotics and driving lab, began in that one room.
+
+The Peenemünde heritage split after the war, and both branches reached high ground. Under Wernher von Braun at Huntsville, the **Saturn V**'s Instrument Unit carried the **Launch Vehicle Digital Computer**, built by IBM, the first stored-program autopilot trusted with a launch vehicle \cite{dickinson1964lvdc}. It ran a two-second navigation-and-guidance loop and a 25-hertz attitude-control loop, voted its outputs across three redundant processors, and flew on every Saturn mission \cite{burkey_lvdc}. In the Soviet Union, roughly 170 German rocket engineers under Helmut Gröttrup were moved to Gorodomlya Island in 1946 to continue the V-2 lineage inside the R-1 programme \cite{zak_gorodomlya}, the technical bridge from Peenemünde to the Soviet guidance industry that would one day build the machines in the sections below.
 
 ### The Apollo Guidance Computer
 
@@ -825,6 +829,12 @@ What matters for AI history is not the hardware but the **software**. J. Halcomb
         <figcaption class="md">The \citealternativetitle{hamilton1969_image} (Public Domain, PD US no notice). Margaret Hamilton beside the printouts of the AGC software her MIT team produced for the Apollo Command and Lunar Modules, the “stacks” she is standing next to are taller than she is.</figcaption>
     </figure>
 </div>
+
+### The Soviet Counterpart: Argon, Soyuz, and Buran
+
+The Soviet Union developed its own flight computers in almost complete isolation, on a radically different schedule. When Korolev's bureau began designing Soyuz in the early 1960s, no Soviet computer maker could meet its specifications, and the spacecraft was initially designed with no onboard computer at all \cite{gerovitch_argon}. The Apollo program changed that: the **Argon-11S**, finished in 1968 for the abandoned lunar project, was the first Soviet spacecraft computer, and its successor the **Argon-16** became one of the longest-lived flight computers in history \cite{argon16_museum}. Triply redundant with hardware majority voting, it flew from the Soyuz T-2 in 1980 through Soyuz, Progress, Salyut, and Mir missions for more than thirty years, without a reported in-service failure \cite{ieee_digital_soyuz}.
+
+The **Buran** orbiter pushed that philosophy to its extreme. On its single orbital flight, 15 November 1988, Buran performed re-entry, approach, and landing entirely automatically, without a pilot \cite{buran_autoland}. Its central computer complex ran four **BISER-4** machines on a hardware-synchronized 3-of-5 clock vote, a design specified to tolerate any two simultaneous component failures \cite{burancomputer_guide}. When gusting wind changed the approach conditions seconds before touchdown, the onboard complex computed a new trajectory and landed into the wind on its own. Let that land: a multi-ton vehicle flew itself home before most of today's autonomy researchers were born, with zero human intervention, using hardware voting and hand-written control laws. The Argon and BISER lines are the direct ancestors of the fault-tolerant autopilots, fly-by-wire laws, and redundant vehicle stacks that autonomous platforms rely on today.
 
 ### From Fly-by-Wire to Fly-Yourself
 
@@ -846,6 +856,10 @@ Deep-space communication links are extraordinarily bandwidth-limited and noise-p
 ### Navigation: Kalman and GPS
 
 Rudolf Kálmán's recursive filter \cite{kalman1960filter} was developed at the Research Institute for Advanced Study in Baltimore with explicit guidance applications in mind. Every modern SLAM system, every inertial measurement unit on a smartphone, and every GPS receiver is a descendant. The Global Positioning System itself began as a Navy/Air Force program for submarine and missile navigation \cite{parkinson1996gps}, and is now the silent prerequisite for every mapped application on Earth.
+
+### When Space Software Fails: The Ariane 5 Lesson
+
+Spaceflight's gift to computing is not only success. On 4 June 1996 the maiden flight of the European **Ariane 5** launcher broke apart 39 seconds after lift-off. The cause, established beyond doubt by the inquiry board \cite{ariane501_report}, was an unremarkable line of code: a 64-bit floating-point value, the horizontal-bias estimate of an inertial reference unit, was converted to a 16-bit signed integer and overflowed. The exception disabled the active unit; the backup unit, running identical software, failed moments later for the same reason; the resulting attitude data steered the booster into aerodynamic loads that destroyed it. The alignment routine that caused the crash had already served its purpose on Ariane 4, whose trajectory it was written to handle, and simply did nothing useful on Ariane 5. For AI, the lesson is that numerical robustness is a systems property, not a library feature: silent overflows, unvalidated conversions, and trusted inherited defaults are not theoretical concerns. A single such bug destroyed a launch vehicle worth several hundred million dollars and redefined the modern discipline of software verification.
 
 None of these systems was built for AI. Together they form much of the navigational and operational backbone on which every mobile robot, including the autonomous vehicles studied by every modern ML lab, now depends.
 
