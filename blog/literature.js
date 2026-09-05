@@ -8635,7 +8635,9 @@ window.bibData = {
 		year: 1963,
 		publisher: "Routledge",
 		url: "https://plato.stanford.edu/entries/popper/",
-		"tomayko1985hoelzer": {
+		alternativetitle: "Conjectures and Refutations"
+	},
+	"tomayko1985hoelzer": {
 		title: "Helmut Hoelzer's Fully Electronic Analog Computer",
 		author: "James E. Tomayko",
 		year: 1985,
