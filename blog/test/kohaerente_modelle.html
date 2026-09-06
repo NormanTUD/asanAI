@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Garben, ∞-Garben & Erkenntnistheorie — Interaktiv</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  :root{
+    --bg:#0a0612;
+    --bg2:#150a24;
+    --ink:#f4ecff;
+    --muted:#a99cc9;
+    --accent:#ff6ec7;
+    --accent2:#6ee7ff;
+    --accent3:#ffd166;
+    --good:#7cffb2;
+    --bad:#ff6b8a;
+    --card:rgba(255,255,255,0.04);
+    --border:rgba(255,255,255,0.09);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:
+    radial-gradient(1200px 800px at 10% -10%, #2a0f4a 0%, transparent 60%),
+    radial-gradient(1000px 700px at 110% 10%, #0a3b52 0%, transparent 55%),
+    radial-gradient(900px 900px at 50% 120%, #4a0f3a 0%, transparent 60%),
+    var(--bg);
+    color:var(--ink);
+    font-family:"Inter","Helvetica Neue",system-ui,sans-serif;
+    line-height:1.55;
+  }
+  header{
+    padding:56px 24px 32px;text-align:center;
+  }
+  header h1{
+    font-size:clamp(28px,4.2vw,52px);
+    margin:0 0 12px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2) 60%,var(--accent3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    letter-spacing:-0.02em;
+  }
+  header p{color:var(--muted);max-width:760px;margin:8px auto;font-size:17px}
+  main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
+  section{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:28px;
+    margin:22px 0;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 40px rgba(0,0,0,0.35);
+  }
+  section h2{
+    margin-top:0;font-size:26px;
+    background:linear-gradient(90deg,var(--accent2),var(--accent));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  section h3{color:var(--accent3);margin-top:24px}
+  p{color:#e6dcf7}
+  .muted{color:var(--muted);font-size:14px}
+  code, .mono{font-family:"JetBrains Mono","Fira Code",ui-monospace,monospace;
+    background:rgba(255,255,255,0.06);padding:1px 6px;border-radius:6px;font-size:0.92em}
+  .formula{
+    display:block;text-align:center;
+    background:linear-gradient(135deg,rgba(255,110,199,0.08),rgba(110,231,255,0.08));
+    border:1px solid var(--border);
+    padding:16px;border-radius:12px;margin:14px 0;
+    font-family:"JetBrains Mono",monospace;font-size:16px;
+  }
+  canvas{
+    display:block;width:100%;height:auto;
+    background:radial-gradient(circle at 50% 50%,#12082a,#05020c);
+    border-radius:14px;border:1px solid var(--border);
+    margin-top:10px;
+  }
+  .controls{
+    display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+    margin-top:14px;padding:14px;
+    background:rgba(0,0,0,0.25);border-radius:12px;border:1px solid var(--border);
+  }
+  .controls label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px;min-width:140px}
+  input[type=range]{accent-color:var(--accent)}
+  button{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0a0612;border:0;padding:9px 16px;border-radius:10px;
+    font-weight:600;cursor:pointer;font-size:14px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,110,199,0.35)}
+  .status{padding:8px 12px;border-radius:8px;font-size:13px;font-family:monospace}
+  .ok{background:rgba(124,255,178,0.12);color:var(--good);border:1px solid rgba(124,255,178,0.3)}
+  .fail{background:rgba(255,107,138,0.12);color:var(--bad);border:1px solid rgba(255,107,138,0.3)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media (max-width:800px){.grid2{grid-template-columns:1fr}}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;
+    background:rgba(255,255,255,0.08);color:var(--muted);margin-right:6px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+  .toc a{text-decoration:none;color:var(--ink);background:rgba(255,255,255,0.06);
+    padding:6px 12px;border-radius:999px;font-size:13px;border:1px solid var(--border)}
+  .toc a:hover{background:rgba(255,110,199,0.15);border-color:var(--accent)}
+  .callout{
+    border-left:3px solid var(--accent2);
+    padding:12px 16px;background:rgba(110,231,255,0.06);
+    border-radius:8px;margin:14px 0;font-size:15px;
+  }
+  footer{text-align:center;color:var(--muted);padding:30px;font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Garben, ∞-Garben & die Welt als lokales Datum</h1>
+  <p>Eine interaktive Reise: Wie beschreibt Mathematik <em>konsistente Beobachtung</em>? Und was hat das mit Wahrnehmung, Wissenschaft und KI zu tun?</p>
+  <div class="toc">
+    <a href="#s1">1 · Präsheaf</a>
+    <a href="#s2">2 · Verklebung</a>
+    <a href="#s3">3 · Bruch der Konsistenz</a>
+    <a href="#s4">4 · ∞-Garben</a>
+    <a href="#s5">5 · HoTT: Raum als Möglichkeit</a>
+    <a href="#s6">6 · Erkenntnistheorie</a>
+    <a href="#s7">7 · KI & Halluzinationen</a>
+  </div>
+</header>
+
+<main>
+
+<!-- SECTION 1 -->
+<section id="s1">
+  <h2>1 · Lokale Daten: Was ist ein Präsheaf?</h2>
+  <p>Stell dir eine Funktion vor, z.B. <code>sin(x)</code>. Statt sie <em>global</em> in einem Rutsch anzusehen, betrachten wir sie durch viele kleine <strong>Fenster</strong> (offene Umgebungen). Auf jedem Fenster <span class="mono">U</span> haben wir Daten <span class="mono">F(U)</span> — hier: die Werte der Funktion auf <span class="mono">U</span>.</p>
+  <div class="formula">F : Open(X)<sup>op</sup> → Set,&nbsp;&nbsp; U ↦ F(U)</div>
+  <p>Wenn <span class="mono">V ⊆ U</span>, gibt es eine <strong>Einschränkung</strong> <span class="mono">res: F(U) → F(V)</span>. Das ist ein <em>Präsheaf</em>: lokale Daten mit natürlichem "Runterprojizieren".</p>
+  <canvas id="c1" width="900" height="320"></canvas>
+  <div class="controls">
+    <label>Zentrum x₀
+      <input id="c1x" type="range" min="0" max="10" step="0.01" value="3.14">
+    </label>
+    <label>Radius ε
+      <input id="c1e" type="range" min="0.2" max="2" step="0.01" value="0.9">
+    </label>
+    <span class="muted">Bewege das Fenster — <code>F(U) = { sin(x) | x ∈ U }</code></span>
+  </div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="s2">
+  <h2>2 · Die Verklebungsbedingung — Herz einer Garbe</h2>
+  <p>Ein Präsheaf wird zur <strong>Garbe</strong>, wenn lokale Daten sich zu globalen zusammensetzen lassen — vorausgesetzt sie sind auf den <em>Überlappungen</em> konsistent.</p>
+  <div class="formula">
+    Für Überdeckung {Uᵢ} von U und Schnitte sᵢ ∈ F(Uᵢ) mit<br>
+    <b>sᵢ|<sub>Uᵢ∩Uⱼ</sub> = sⱼ|<sub>Uᵢ∩Uⱼ</sub></b> für alle i,j<br>
+    ⟹ existiert eindeutig s ∈ F(U) mit s|<sub>Uᵢ</sub> = sᵢ
+  </div>
+  <p>Zwei Beobachter U und V sehen den gleichen Teil der Welt. Ihre Sicht muss dort <strong>identisch</strong> sein. Erst dann gibt es eine globale Wahrheit, die beide sehen.</p>
+  <canvas id="c2" width="900" height="340"></canvas>
+  <div class="controls">
+    <label>Fenster A Position
+      <input id="c2a" type="range" min="0" max="10" step="0.01" value="2.5">
+    </label>
+    <label>Fenster B Position
+      <input id="c2b" type="range" min="0" max="10" step="0.01" value="3.7">
+    </label>
+    <label>Fensterbreite
+      <input id="c2w" type="range" min="0.5" max="2.5" step="0.01" value="1.2">
+    </label>
+    <span id="c2status" class="status ok">verklebt ✓</span>
+  </div>
+  <p class="muted">Ziehe die Fenster so, dass sie sich überlappen — die Werte auf <span class="mono">A ∩ B</span> müssen übereinstimmen.</p>
+</section>
+
+<!-- SECTION 3 -->
+<section id="s3">
+  <h2>3 · Wenn Konsistenz bricht</h2>
+  <p>Was, wenn zwei Beobachter im Überlappungsbereich <em>Unterschiedliches</em> berichten? Dann verklebt es nicht — es gibt kein globales Objekt, das beide erklärt. Genau das passiert bei fehlerhaften Modellen, Widersprüchen in Theorien, oder in der Wahrnehmung: <strong>zwei Menschen, ein Ereignis, zwei Erlebnisse</strong>.</p>
+  <canvas id="c3" width="900" height="320"></canvas>
+  <div class="controls">
+    <label>Phasenverschiebung φ (Beobachter B)
+      <input id="c3p" type="range" min="-2" max="2" step="0.01" value="0">
+    </label>
+    <label>Rauschen σ
+      <input id="c3n" type="range" min="0" max="1" step="0.01" value="0">
+    </label>
+    <span id="c3status" class="status ok">Δ = 0.00 &nbsp; verklebt</span>
+  </div>
+  <div class="callout">Sobald φ ≠ 0 oder Rauschen groß wird, verklebt es <b>strikt</b> nicht mehr. Aber vielleicht "fast"? Genau da kommt die nächste Idee ins Spiel …</div>
+</section>
+
+<!-- SECTION 4 -->
+<section id="s4">
+  <h2>4 · ∞-Garben: Verklebung <em>bis auf Homotopie</em></h2>
+  <p>In einer <strong>gewöhnlichen</strong> Garbe fordern wir <span class="mono">sᵢ|<sub>ij</sub> = sⱼ|<sub>ij</sub></span> — strenge Gleichheit. In einer <strong>∞-Garbe</strong> reicht: es existiert ein <em>Isomorphismus</em> (eine Transformation) <span class="mono">α<sub>ij</sub> : sᵢ|<sub>ij</sub> ≅ sⱼ|<sub>ij</sub></span>, und diese Iso's erfüllen selbst wieder Kohärenz-Isomorphien auf Tripel-Überlappungen, und so weiter, unendlich hoch.</p>
+  <div class="formula">
+    s ~ t &nbsp;⟺&nbsp; ∃ α: s ≅ t &nbsp;(und α selbst ≅ ...)<br>
+    <span class="muted">Gleichheit wird zu einer <b>Struktur</b>, nicht zu einer bloßen Eigenschaft.</span>
+  </div>
+  <p>Beispiel: du siehst einen leuchtenden Punkt am Himmel als <em>Geburtstagsballon</em>. Dein Freund sieht ein <em>UFO</em>. In strikter Garbenlogik: Widerspruch. In der ∞-Garbe: es gibt eine Übersetzungsfunktion (z.B. "Wahrnehmungsfilter Schizophrenie", oder "Sprachspiel", oder "kulturelle Interpretation"), die beide Sichten verbindet — <em>höhere Kompatibilität</em>.</p>
+  <canvas id="c4" width="900" height="360"></canvas>
+  <div class="controls">
+    <label>Transformation α (Amplitude)
+      <input id="c4a" type="range" min="0" max="2" step="0.01" value="0">
+    </label>
+    <label>α-Frequenz
+      <input id="c4f" type="range" min="0.5" max="4" step="0.01" value="1.5">
+    </label>
+    <button id="c4reset">Reset</button>
+    <span id="c4status" class="status ok">Homotopie gefunden</span>
+  </div>
+</section>
+
+<!-- SECTION 5 -->
+<section id="s5">
+  <h2>5 · Homotopy Type Theory: Raum als Möglichkeitsstruktur</h2>
+  <p>In HoTT ist jeder Typ <span class="mono">A</span> ein <strong>Raum</strong>, jedes Element ein Punkt, und <em>Identität</em> <span class="mono">a =<sub>A</sub> b</span> ist ein <strong>Pfad</strong> von a nach b.</p>
+  <div class="formula">
+    (a =<sub>A</sub> b) &nbsp;=&nbsp; Path<sub>A</sub>(a,b)<br>
+    Pfade zwischen Pfaden = Homotopien, usw.
+  </div>
+  <p>Nähe heißt nicht mehr "Meter", sondern "Verbindbarkeit". Genau darum funktionieren <b>Embedding-Räume</b> in KI: <em>König − Mann + Frau ≈ Königin</em>, weil semantische Nähe ein Pfad im Bedeutungsraum ist.</p>
+  <canvas id="c5" width="900" height="380"></canvas>
+  <div class="controls">
+    <button id="c5add">Neuen Punkt</button>
+    <button id="c5clear">Alle löschen</button>
+    <span class="muted">Klicke zwei Punkte an, um einen Pfad (Identität) zu zeichnen. Mehrere Pfade zwischen denselben Punkten = Homotopie-Klasse.</span>
+  </div>
+</section>
+
+<!-- SECTION 6 -->
+<section id="s6">
+  <h2>6 · Erkenntnistheorie: Die Welt als Garbe von Spuren</h2>
+  <p>Sei <span class="mono">w</span> ein Ereignis <em>an sich</em> in der Welt, <span class="mono">e</span> eine Erfahrung. Wir haben nie direkten Zugriff auf <span class="mono">w</span>, nur auf <strong>Spuren</strong>:</p>
+  <div class="formula">
+    e = f(w) &nbsp;&nbsp; mit f : Welt → Erfahrung<br>
+    Jeder Sinn, jedes Instrument, jeder Bericht = eigenes f<sub>i</sub>
+  </div>
+  <p>Verschiedene Zugänge (Auge, Ohr, Messgerät, Zeugenaussage) sind <em>lokale Schnitte</em>. Ein Weltmodell ist "richtig", wenn diese Schnitte auf ihren Überlappungen kohärent verklebt werden können — mindestens bis auf Homotopie.</p>
+  <canvas id="c6" width="900" height="380"></canvas>
+  <div class="controls">
+    <label>Anzahl Beobachter
+      <input id="c6n" type="range" min="2" max="8" step="1" value="5">
+    </label>
+    <label>Modell-Fehler
+      <input id="c6err" type="range" min="0" max="1" step="0.01" value="0.1">
+    </label>
+    <span id="c6status" class="status ok">Modell konsistent</span>
+  </div>
+  <div class="callout"><b>Wissenschaft</b> ist die Kunst, Kontaktpunkte zwischen Modell und Welt zu isolieren — Experimente mit möglichst wenig freien Variablen, an denen sich zeigt, ob die Verklebung hält.</div>
+</section>
+
+<!-- SECTION 7 -->
+<section id="s7">
+  <h2>7 · KI, Loss-Landschaften & Halluzinationen</h2>
+  <p>Ein Sprachmodell hat im Training Milliarden von Spuren gesehen (Texte = Aufzeichnungen menschlicher Wahrnehmung). Es approximiert eine Funktion, die den Verlust minimiert — der Loss ist eine <strong>Energielandschaft</strong>, das Modell landet in einem Tal.</p>
+  <div class="formula">θ* = argmin<sub>θ</sub>&nbsp;𝔼<sub>(x,y)</sub>[L(f<sub>θ</sub>(x), y)]</div>
+  <p>Wenn im Antwort-Kontext lokale Schnitte gefragt sind, die nicht sauber verkleben (das Modell hat zu wenig kohärente Trainingsspuren dort), <em>interpoliert</em> es — plausibel klingend, aber falsch. Das ist eine <strong>Halluzination</strong>: eine Verklebung, wo keine sein sollte.</p>
+  <canvas id="c7" width="900" height="360"></canvas>
+  <div class="controls">
+    <label>Lernrate
+      <input id="c7lr" type="range" min="0.001" max="0.15" step="0.001" value="0.03">
+    </label>
+    <button id="c7step">Trainingsschritt</button>
+    <button id="c7run">Auto-Trainieren</button>
+    <button id="c7reset">Reset</button>
+    <span id="c7loss" class="status ok">Loss: —</span>
+  </div>
+  <p class="muted">Die Kugel rollt durch die Loss-Landschaft. Tiefstes Tal = beste Verklebung aller Trainingsspuren. Lokale Minima = konsistente, aber unvollständige Weltbilder.</p>
+</section>
+
+<footer>
+  Made with ♥ — Konzepte aus Garbentheorie, ∞-Topos-Theorie & Homotopy Type Theory, übersetzt in bewegte Bilder.
+</footer>
+
+</main>
+
+<script>
+// ==================== UTIL ====================
+function hidpi(canvas){
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * ratio;
+  canvas.height = rect.height * ratio;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+  return {ctx, w:rect.width, h:rect.height};
+}
+
+// ==================== SEC 1: Präsheaf ====================
+(function(){
+  const canvas = document.getElementById('c1');
+  const x0 = document.getElementById('c1x');
+  const eIn = document.getElementById('c1e');
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+    const pad=40;
+    const X = x=>pad + (x/10)*(w-2*pad);
+    const Y = y=>h/2 - y*(h/2-pad-10);
+
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,0.15)';
+    ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(pad,h/2);ctx.lineTo(w-pad,h/2);ctx.stroke();
+
+    // sin curve
+    ctx.strokeStyle='rgba(180,180,220,0.4)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x = i/400*10;
+      const y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y));
+      else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // window U
+    const cx = parseFloat(x0.value);
+    const eps = parseFloat(eIn.value);
+    const xL = Math.max(0, cx-eps), xR = Math.min(10, cx+eps);
+
+    // window shade
+    const grad = ctx.createLinearGradient(X(xL),0,X(xR),0);
+    grad.addColorStop(0,'rgba(255,110,199,0)');
+    grad.addColorStop(0.5,'rgba(255,110,199,0.25)');
+    grad.addColorStop(1,'rgba(255,110,199,0)');
+    ctx.fillStyle=grad;
+    ctx.fillRect(X(xL),pad-10,X(xR)-X(xL),h-2*pad+20);
+
+    // local section highlighted
+    ctx.strokeStyle='#ff6ec7';
+    ctx.lineWidth=3.5;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const x = xL + (xR-xL)*i/100;
+      const y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y));
+      else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // point at center
+    ctx.fillStyle='#6ee7ff';
+    ctx.beginPath();ctx.arc(X(cx),Y(Math.sin(cx)),6,0,Math.PI*2);ctx.fill();
+
+    // label
+    ctx.fillStyle='#f4ecff';
+    ctx.font='13px JetBrains Mono, monospace';
+    ctx.fillText(`U = (${xL.toFixed(2)}, ${xR.toFixed(2)})`, X(cx)-60, pad);
+    ctx.fillText(`F(U) ⊂ ℝ`, X(cx)-30, pad+16);
+  }
+  [x0,eIn].forEach(el=>el.addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+// ==================== SEC 2: Verklebung ====================
+(function(){
+  const canvas = document.getElementById('c2');
+  const aIn = document.getElementById('c2a');
+  const bIn = document.getElementById('c2b');
+  const wIn = document.getElementById('c2w');
+  const status = document.getElementById('c2status');
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+    const pad=40;
+    const X = x=>pad + (x/10)*(w-2*pad);
+    const Y = y=>h/2 - y*(h/2-pad-10);
+
+    // axis
+    ctx.strokeStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath();ctx.moveTo(pad,h/2);ctx.lineTo(w-pad,h/2);ctx.stroke();
+
+    // base function (ghost)
+    ctx.strokeStyle='rgba(180,180,220,0.25)';
+    ctx.lineWidth=1.2;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x = i/400*10, y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    const ca = parseFloat(aIn.value), cb = parseFloat(bIn.value);
+    const wd = parseFloat(wIn.value);
+    const aL = ca-wd, aR = ca+wd;
+    const bL = cb-wd, bR = cb+wd;
+
+    // window A shade
+    const gA = ctx.createLinearGradient(X(aL),0,X(aR),0);
+    gA.addColorStop(0,'rgba(255,110,199,0)');
+    gA.addColorStop(0.5,'rgba(255,110,199,0.22)');
+    gA.addColorStop(1,'rgba(255,110,199,0)');
+    ctx.fillStyle=gA; ctx.fillRect(X(aL),pad-10,X(aR)-X(aL),h-2*pad+20);
+
+    // window B shade
+    const gB = ctx.createLinearGradient(X(bL),0,X(bR),0);
+    gB.addColorStop(0,'rgba(110,231,255,0)');
+    gB.addColorStop(0.5,'rgba(110,231,255,0.22)');
+    gB.addColorStop(1,'rgba(110,231,255,0)');
+    ctx.fillStyle=gB; ctx.fillRect(X(bL),pad-10,X(bR)-X(bL),h-2*pad+20);
+
+    // section A
+    ctx.strokeStyle='#ff6ec7'; ctx.lineWidth=3.2;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const x = aL+(aR-aL)*i/100, y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // section B
+    ctx.strokeStyle='#6ee7ff'; ctx.lineWidth=3.2;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const x = bL+(bR-bL)*i/100, y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // overlap
+    const oL = Math.max(aL,bL), oR = Math.min(aR,bR);
+    const hasOverlap = oR > oL;
+    if(hasOverlap){
+      ctx.fillStyle='rgba(255,209,102,0.18)';
+      ctx.fillRect(X(oL),pad-10,X(oR)-X(oL),h-2*pad+20);
+      ctx.strokeStyle='#ffd166'; ctx.lineWidth=4;
+      ctx.setLineDash([6,6]);
+      ctx.beginPath();
+      for(let i=0;i<=80;i++){
+        const x = oL+(oR-oL)*i/80, y = Math.sin(x);
+        if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#ffd166';
+      ctx.font='13px JetBrains Mono, monospace';
+      ctx.fillText(`A ∩ B = (${oL.toFixed(2)}, ${oR.toFixed(2)})`, X((oL+oR)/2)-70, h-pad+22);
+      status.textContent = 'sᴬ|A∩B = sᴮ|A∩B  ✓  verklebt';
+      status.className = 'status ok';
+    } else {
+      status.textContent = 'A ∩ B = ∅ — keine Verklebungsbedingung';
+      status.className = 'status ok';
+    }
+
+    // labels
+    ctx.fillStyle='#ff6ec7'; ctx.font='13px JetBrains Mono, monospace';
+    ctx.fillText('A', X(ca)-4, pad);
+    ctx.fillStyle='#6ee7ff';
+    ctx.fillText('B', X(cb)-4, pad);
+  }
+  [aIn,bIn,wIn].forEach(el=>el.addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+// ==================== SEC 3: Bruch ====================
+(function(){
+  const canvas = document.getElementById('c3');
+  const phi = document.getElementById('c3p');
+  const noi = document.getElementById('c3n');
+  const status = document.getElementById('c3status');
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+    const pad=40;
+    const X = x=>pad + (x/10)*(w-2*pad);
+    const Y = y=>h/2 - y*(h/2-pad-10);
+    const p = parseFloat(phi.value);
+    const n = parseFloat(noi.value);
+
+    ctx.strokeStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath();ctx.moveTo(pad,h/2);ctx.lineTo(w-pad,h/2);ctx.stroke();
+
+    // observer A: sin(x)
+    ctx.strokeStyle='#ff6ec7'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x = i/400*10, y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // observer B: sin(x+phi) + noise
+    ctx.strokeStyle='#6ee7ff'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    let diffSum = 0, cnt=0;
+    for(let i=0;i<=400;i++){
+      const x = i/400*10;
+      const noise = n * (Math.sin(x*17.3)*0.5 + Math.sin(x*31.1)*0.5);
+      const y = Math.sin(x+p) + noise;
+      if(x>3 && x<7){ diffSum += Math.abs(y - Math.sin(x)); cnt++; }
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // overlap zone highlight
+    ctx.fillStyle='rgba(255,209,102,0.10)';
+    ctx.fillRect(X(3),pad-10,X(7)-X(3),h-2*pad+20);
+    ctx.fillStyle='#ffd166';
+    ctx.font='12px JetBrains Mono, monospace';
+    ctx.fillText('Überlappungszone', X(4.5), pad);
+
+    const delta = diffSum/cnt;
+    if(delta < 0.05){
+      status.textContent = `Δ = ${delta.toFixed(3)}  ✓ verklebt`;
+      status.className = 'status ok';
+    } else {
+      status.textContent = `Δ = ${delta.toFixed(3)}  ✗ Konsistenzbruch`;
+      status.className = 'status fail';
+    }
+  }
+  [phi,noi].forEach(el=>el.addEventListener('input',draw));
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+// ==================== SEC 4: ∞-Garben ====================
+(function(){
+  const canvas = document.getElementById('c4');
+  const aIn = document.getElementById('c4a');
+  const fIn = document.getElementById('c4f');
+  const reset = document.getElementById('c4reset');
+  const status = document.getElementById('c4status');
+  let t = 0;
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+    const pad=40;
+    const X = x=>pad + (x/10)*(w-2*pad);
+    const Y = y=>h/2 - y*(h/2-pad-10);
+    const amp = parseFloat(aIn.value);
+    const freq = parseFloat(fIn.value);
+
+    ctx.strokeStyle='rgba(255,255,255,0.12)';
+    ctx.beginPath();ctx.moveTo(pad,h/2);ctx.lineTo(w-pad,h/2);ctx.stroke();
+
+    // interpretation A: "Ballon" — sin
+    ctx.strokeStyle='#ff6ec7'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x = i/400*10, y = Math.sin(x);
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // interpretation B: "UFO" — modified via α
+    ctx.strokeStyle='#6ee7ff'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x = i/400*10;
+      const y_true = Math.sin(x);
+      const y_B_raw = Math.sin(x + 0.6) + 0.4*Math.sin(x*2);
+      // α interpolates B back toward A
+      const alpha_strength = amp * (0.5 + 0.5*Math.sin(x*freq + t));
+      const y = y_B_raw*(1-alpha_strength) + y_true*alpha_strength;
+      if(i===0)ctx.moveTo(X(x),Y(y)); else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.stroke();
+
+    // homotopy arrows
+    if(amp > 0.05){
+      ctx.strokeStyle=`rgba(255,209,102,${Math.min(0.9,amp*0.6)})`;
+      ctx.lineWidth=1.2;
+      for(let i=1;i<10;i++){
+        const x = i;
+        const yA = Math.sin(x);
+        const y_B_raw = Math.sin(x + 0.6) + 0.4*Math.sin(x*2);
+        const alpha_strength = amp * (0.5 + 0.5*Math.sin(x*freq + t));
+        const yB = y_B_raw*(1-alpha_strength) + yA*alpha_strength;
+        ctx.beginPath();
+        ctx.moveTo(X(x),Y(yA));
+        ctx.lineTo(X(x),Y(yB));
+        ctx.stroke();
+        // arrowhead
+        ctx.fillStyle='#ffd166';
+        ctx.beginPath();
+        ctx.arc(X(x),Y(yA),2.5,0,Math.PI*2); ctx.fill();
+        ctx.beginPath();
+        ctx.arc(X(x),Y(yB),2.5,0,Math.PI*2); ctx.fill();
+      }
+    }
+
+    // labels
+    ctx.font='13px JetBrains Mono, monospace';
+    ctx.fillStyle='#ff6ec7'; ctx.fillText('sᴬ  „Ballon"', pad, pad-8);
+    ctx.fillStyle='#6ee7ff'; ctx.fillText('sᴮ  „UFO" (via α)', pad+160, pad-8);
+    ctx.fillStyle='#ffd166'; ctx.fillText('α : sᴬ ≅ sᴮ', pad+360, pad-8);
+
+    if(amp < 0.05){
+      status.textContent = 'α = 0 · strikter Widerspruch';
+      status.className = 'status fail';
+    } else if(amp < 0.95){
+      status.textContent = `α aktiv · partielle Homotopie (${amp.toFixed(2)})`;
+      status.className = 'status ok';
+    } else {
+      status.textContent = 'α ≈ id · volle Homotopie ✓';
+      status.className = 'status ok';
+    }
+    t += 0.02;
+  }
+  reset.addEventListener('click',()=>{aIn.value=0;fIn.value=1.5;});
+  setInterval(draw,33);
+  window.addEventListener('resize',draw);
+})();
+
+// ==================== SEC 5: HoTT ====================
+(function(){
+  const canvas = document.getElementById('c5');
+  const addBtn = document.getElementById('c5add');
+  const clrBtn = document.getElementById('c5clear');
+  let points = [];
+  let paths = [];
+  let selected = null;
+
+  function seed(){
+    points = [];
+    for(let i=0;i<6;i++){
+      points.push({
+        x: 100 + Math.random()*700,
+        y: 60 + Math.random()*260,
+        label: String.fromCharCode(65+i)
+      });
+    }
+    paths = [
+      {a:0,b:1,curve:0.3},
+      {a:0,b:1,curve:-0.4},
+      {a:1,b:2,curve:0.2},
+      {a:2,b:3,curve:-0.2},
+      {a:3,b:4,curve:0.3},
+    ];
+  }
+  seed();
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+
+    // background field
+    const rg = ctx.createRadialGradient(w/2,h/2,20,w/2,h/2,Math.max(w,h)/1.5);
+    rg.addColorStop(0,'rgba(255,110,199,0.05)');
+    rg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=rg; ctx.fillRect(0,0,w,h);
+
+    // paths
+    paths.forEach(p=>{
+      const A = points[p.a], B = points[p.b];
+      if(!A||!B) return;
+      const mx = (A.x+B.x)/2, my = (A.y+B.y)/2;
+      const nx = -(B.y-A.y), ny = (B.x-A.x);
+      const nl = Math.hypot(nx,ny)||1;
+      const cx = mx + (nx/nl)*p.curve*80;
+      const cy = my + (ny/nl)*p.curve*80;
+      ctx.strokeStyle='rgba(110,231,255,0.7)';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(A.x,A.y);
+      ctx.quadraticCurveTo(cx,cy,B.x,B.y);
+      ctx.stroke();
+    });
+
+    // homotopy shading between multiple paths between same endpoints
+    const groups = {};
+    paths.forEach((p,i)=>{
+      const k = [Math.min(p.a,p.b),Math.max(p.a,p.b)].join('-');
+      (groups[k] = groups[k]||[]).push(p);
+    });
+    Object.values(groups).forEach(g=>{
+      if(g.length<2) return;
+      const A = points[g[0].a], B = points[g[0].b];
+      if(!A||!B) return;
+      ctx.fillStyle='rgba(255,209,102,0.12)';
+      ctx.beginPath();
+      g.forEach((p,idx)=>{
+        const mx=(A.x+B.x)/2, my=(A.y+B.y)/2;
+        const nx=-(B.y-A.y), ny=(B.x-A.x);
+        const nl=Math.hypot(nx,ny)||1;
+        const cx=mx+(nx/nl)*p.curve*80;
+        const cy=my+(ny/nl)*p.curve*80;
+        if(idx===0){ctx.moveTo(A.x,A.y);ctx.quadraticCurveTo(cx,cy,B.x,B.y);}
+        else{ctx.quadraticCurveTo(cx,cy,A.x,A.y);}
+      });
+      ctx.fill();
+    });
+
+    // points
+    points.forEach((p,i)=>{
+      ctx.fillStyle = (selected===i) ? '#ffd166' : '#ff6ec7';
+      ctx.beginPath();ctx.arc(p.x,p.y,9,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#0a0612';
+      ctx.font='bold 12px Inter,sans-serif';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(p.label,p.x,p.y);
+    });
+    ctx.textAlign='start';ctx.textBaseline='alphabetic';
+
+    // legend
+    ctx.fillStyle='#a99cc9';
+    ctx.font='12px JetBrains Mono, monospace';
+    ctx.fillText('Punkte = Elemente von Typ A · Kurven = Pfade a =ₐ b · gelbe Flächen = Homotopien zwischen Pfaden', 20, h-14);
+  }
+
+  canvas.addEventListener('click',(ev)=>{
+    const rect = canvas.getBoundingClientRect();
+    const x = ev.clientX-rect.left, y = ev.clientY-rect.top;
+    // find point
+    const idx = points.findIndex(p=>Math.hypot(p.x-x,p.y-y)<14);
+    if(idx>=0){
+      if(selected===null) selected=idx;
+      else if(selected===idx) selected=null;
+      else {
+        paths.push({a:selected,b:idx,curve:(Math.random()-0.5)*0.8});
+        selected=null;
+      }
+      draw();
+    }
+  });
+
+  addBtn.addEventListener('click',()=>{
+    const rect = canvas.getBoundingClientRect();
+    points.push({
+      x: 60+Math.random()*(rect.width-120),
+      y: 60+Math.random()*(rect.height-120),
+      label: String.fromCharCode(65+points.length)
+    });
+    draw();
+  });
+  clrBtn.addEventListener('click',()=>{points=[];paths=[];selected=null;seed();draw();});
+  window.addEventListener('resize',draw);
+  draw();
+})();
+
+// ==================== SEC 6: Erkenntnistheorie ====================
+(function(){
+  const canvas = document.getElementById('c6');
+  const nIn = document.getElementById('c6n');
+  const errIn = document.getElementById('c6err');
+  const status = document.getElementById('c6status');
+  let t=0;
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+    const n = parseInt(nIn.value);
+    const err = parseFloat(errIn.value);
+
+    // "world" — the thing in itself (hidden)
+    const cx=w/2, cy=h/2;
+    const R=Math.min(w,h)*0.32;
+
+    // world glow
+    const glow = ctx.createRadialGradient(cx,cy,10,cx,cy,R*1.4);
+    glow.addColorStop(0,'rgba(255,209,102,0.35)');
+    glow.addColorStop(0.5,'rgba(255,110,199,0.10)');
+    glow.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=glow; ctx.beginPath();ctx.arc(cx,cy,R*1.4,0,Math.PI*2);ctx.fill();
+
+    // world core
+    ctx.fillStyle='rgba(255,209,102,0.9)';
+    ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0a0612';
+    ctx.font='bold 11px Inter';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('w',cx,cy);
+
+    // observers on ring
+    const observers = [];
+    for(let i=0;i<n;i++){
+      const a = (i/n)*Math.PI*2 + t*0.1;
+      const x = cx + R*Math.cos(a);
+      const y = cy + R*Math.sin(a);
+      // each observer has a "reading" of w — with noise if err>0
+      const trueVal = Math.sin(t*0.5); // world truth over time
+      const reading = trueVal + (Math.sin(i*7.3+t)*err);
+      observers.push({x,y,a,reading,i});
+    }
+
+    // consistency check: are all readings close?
+    let maxDiff = 0;
+    for(let i=0;i<observers.length;i++){
+      for(let j=i+1;j<observers.length;j++){
+        maxDiff = Math.max(maxDiff, Math.abs(observers[i].reading - observers[j].reading));
+      }
+    }
+    const consistent = maxDiff < 0.3;
+
+    // draw trace arrows from world to observers
+    observers.forEach(o=>{
+      const grad = ctx.createLinearGradient(cx,cy,o.x,o.y);
+      grad.addColorStop(0,'rgba(255,209,102,0.8)');
+      grad.addColorStop(1, consistent ? 'rgba(110,231,255,0.6)' : 'rgba(255,107,138,0.6)');
+      ctx.strokeStyle=grad; ctx.lineWidth=1.5;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(o.x,o.y);ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // overlaps: neighboring observers share "views"
+    for(let i=0;i<observers.length;i++){
+      const a = observers[i], b = observers[(i+1)%observers.length];
+      const diff = Math.abs(a.reading - b.reading);
+      const ok = diff < 0.3;
+      ctx.strokeStyle = ok ? 'rgba(124,255,178,0.5)' : 'rgba(255,107,138,0.6)';
+      ctx.lineWidth = ok ? 1.5 : 2.2;
+      ctx.beginPath();
+      ctx.moveTo(a.x,a.y);
+      // curved arc between neighbors
+      const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      const dx=mx-cx, dy=my-cy;
+      const dl=Math.hypot(dx,dy)||1;
+      const bx=mx + (dx/dl)*30;
+      const by=my + (dy/dl)*30;
+      ctx.quadraticCurveTo(bx,by,b.x,b.y);
+      ctx.stroke();
+    }
+
+    // observer nodes
+    observers.forEach(o=>{
+      ctx.fillStyle = consistent ? '#6ee7ff' : '#ff6b8a';
+      ctx.beginPath();ctx.arc(o.x,o.y,11,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#0a0612';
+      ctx.font='bold 11px Inter';
+      ctx.fillText('e'+(o.i+1),o.x,o.y);
+      // reading bar
+      ctx.strokeStyle='rgba(255,255,255,0.4)';
+      ctx.lineWidth=1;
+      const rd = o.reading*15;
+      ctx.beginPath();
+      ctx.moveTo(o.x + (o.x-cx)/R*18, o.y + (o.y-cy)/R*18);
+      ctx.lineTo(o.x + (o.x-cx)/R*(18+rd+20), o.y + (o.y-cy)/R*(18+rd+20));
+      ctx.stroke();
+    });
+
+    ctx.textAlign='start';ctx.textBaseline='alphabetic';
+
+    // labels
+    ctx.fillStyle='#a99cc9';
+    ctx.font='12px JetBrains Mono, monospace';
+    ctx.fillText('w = Ding an sich  ·  eᵢ = f_i(w)  ·  Kanten = Verklebung auf eᵢ ∩ eⱼ', 20, h-14);
+
+    if(consistent){
+      status.textContent = `max Δ = ${maxDiff.toFixed(2)} · Modell konsistent ✓`;
+      status.className = 'status ok';
+    } else {
+      status.textContent = `max Δ = ${maxDiff.toFixed(2)} · Verklebung bricht ✗`;
+      status.className = 'status fail';
+    }
+    t += 0.02;
+  }
+  setInterval(draw, 33);
+  window.addEventListener('resize', draw);
+})();
+
+// ==================== SEC 7: KI / Loss Landscape ====================
+(function(){
+  const canvas = document.getElementById('c7');
+  const lrIn = document.getElementById('c7lr');
+  const stepBtn = document.getElementById('c7step');
+  const runBtn = document.getElementById('c7run');
+  const resetBtn = document.getElementById('c7reset');
+  const lossStatus = document.getElementById('c7loss');
+
+  let ball = { x: 1.5, vy: 0 };
+  let running = false;
+
+  // Loss landscape: multi-modal function
+  function L(x){
+    return 0.6*Math.sin(x*1.3) + 0.4*Math.sin(x*0.7 + 1) + 0.15*x*x*0.05 + 1.2;
+  }
+  function dL(x){
+    const h=0.001;
+    return (L(x+h)-L(x-h))/(2*h);
+  }
+
+  function draw(){
+    const {ctx,w,h} = hidpi(canvas);
+    ctx.clearRect(0,0,w,h);
+    const pad=40;
+    const xmin=-6, xmax=6;
+    const X = x=>pad + ((x-xmin)/(xmax-xmin))*(w-2*pad);
+    const ymin=0, ymax=3;
+    const Y = y=>h-pad - ((y-ymin)/(ymax-ymin))*(h-2*pad);
+
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,0.06)';
+    ctx.lineWidth=1;
+    for(let gx=xmin; gx<=xmax; gx++){
+      ctx.beginPath();ctx.moveTo(X(gx),pad);ctx.lineTo(X(gx),h-pad);ctx.stroke();
+    }
+
+    // loss curve filled
+    const grad = ctx.createLinearGradient(0,pad,0,h-pad);
+    grad.addColorStop(0,'rgba(255,110,199,0.05)');
+    grad.addColorStop(1,'rgba(110,231,255,0.35)');
+    ctx.fillStyle=grad;
+    ctx.beginPath();
+    ctx.moveTo(X(xmin), h-pad);
+    for(let i=0;i<=400;i++){
+      const x = xmin+(xmax-xmin)*i/400;
+      ctx.lineTo(X(x),Y(L(x)));
+    }
+    ctx.lineTo(X(xmax),h-pad);
+    ctx.closePath();
+    ctx.fill();
+
+    // loss curve line
+    ctx.strokeStyle='#6ee7ff'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=400;i++){
+      const x = xmin+(xmax-xmin)*i/400;
+      if(i===0) ctx.moveTo(X(x),Y(L(x)));
+      else ctx.lineTo(X(x),Y(L(x)));
+    }
+    ctx.stroke();
+
+    // mark minima
+    for(let x=xmin; x<=xmax; x+=0.05){
+      const d1 = dL(x), d2 = dL(x+0.05);
+      if(d1<0 && d2>0){
+        ctx.fillStyle='rgba(255,209,102,0.5)';
+        ctx.beginPath();ctx.arc(X(x),Y(L(x)),5,0,Math.PI*2);ctx.fill();
+      }
+    }
+
+    // ball
+    const by = L(ball.x);
+    ctx.shadowColor='#ff6ec7'; ctx.shadowBlur=20;
+    ctx.fillStyle='#ff6ec7';
+    ctx.beginPath();ctx.arc(X(ball.x), Y(by)-10, 10, 0, Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
+
+    // labels
+    ctx.fillStyle='#a99cc9';
+    ctx.font='12px JetBrains Mono, monospace';
+    ctx.fillText('θ (Parameterraum)', w-pad-140, h-14);
+    ctx.save();
+    ctx.translate(14, h/2);ctx.rotate(-Math.PI/2);
+    ctx.fillText('L(θ) — Loss', 0, 0);
+    ctx.restore();
+    ctx.fillStyle='#ffd166';
+    ctx.font='11px JetBrains Mono, monospace';
+    ctx.fillText('gelbe Punkte = lokale Minima (konsistente Weltbilder)', pad, pad-14);
+
+    lossStatus.textContent = `Loss: ${by.toFixed(4)}  ·  θ = ${ball.x.toFixed(3)}`;
+    lossStatus.className = by < 0.9 ? 'status ok' : 'status fail';
+  }
+
+  function step(){
+    const lr = parseFloat(lrIn.value);
+    const g = dL(ball.x);
+    ball.vy = 0.85*ball.vy - lr*g;
+    ball.x += ball.vy;
+    if(ball.x < -6) ball.x = -6;
+    if(ball.x > 6) ball.x = 6;
+    draw();
+  }
+
+  stepBtn.addEventListener('click', step);
+  runBtn.addEventListener('click', ()=>{
+    running = !running;
+    runBtn.textContent = running ? 'Stop' : 'Auto-Trainieren';
+  });
+  resetBtn.addEventListener('click', ()=>{
+    ball = { x: -4 + Math.random()*8, vy: 0 };
+    running = false;
+    runBtn.textContent = 'Auto-Trainieren';
+    draw();
+  });
+  setInterval(()=>{ if(running) step(); }, 33);
+  window.addEventListener('resize', draw);
+  draw();
+})();
+
+// ==================== INIT: re-render on resize once fonts load ====================
+window.addEventListener('load', ()=>{
+  window.dispatchEvent(new Event('resize'));
+});
+</script>
+
+</body>
+</html>
