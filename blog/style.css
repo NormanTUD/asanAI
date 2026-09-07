@@ -22,25 +22,40 @@
 }
 
 html {
-	background: #ffffff;
-	color: #1e293b;
+	/* Light mode is now a CREAM PAPER palette — like the page of a
+	   well-made hardback. White felt sterile; cream reads as warm,
+	   aged, considered, like a book that has been loved. The bg is
+	   FAFAF7 with a slightly warmer undertone so it harmonises with
+	   the warm taupe borders and the dark walnut body text. */
+	background: #FAF8F1;
+	color: #2A231C;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-synthesis: none;
 	font-size: clamp(1rem, 0.92rem + 0.4vw, 1.125rem);
 	color-scheme: light;
-	--mn-bg: #ffffff;
-	--mn-bg-subtle: #f8fafc;
-	--mn-bg-warm: #fffbf5;
-	--mn-bg-glass: rgba(255, 255, 255, 0.72);
-	--mn-surface: #ffffff;
-	--mn-surface-raised: #f1f5f9;
-	--mn-border: #e2e8f0;
-	--mn-border-light: #f1f5f9;
-	--mn-text: #1e293b;
-	--mn-text-secondary: #475569;
-	--mn-text-muted: #94a3b8;
-	--mn-heading: #0f172a;
+
+	/* Surfaces — five steps from paper-white to deep cream, so we
+	   can paint cards, raised tiles, callouts and sidenote backgrounds
+	   each at their own depth without ever reaching for true white. */
+	--mn-bg:            #FAF8F1;  /* page paper (Tufte cream)         */
+	--mn-bg-subtle:     #F2EBD9;  /* one step deeper, for rule-fills  */
+	--mn-bg-warm:       #F5EFDC;  /* warmer cream, for callouts       */
+	--mn-bg-cream:      #EFE7CF;  /* sidenote / marginote background  */
+	--mn-bg-glass:      rgba(250, 248, 241, 0.78);
+	--mn-surface:       #FDFAF1;  /* card surface — just a hair lighter than paper */
+	--mn-surface-raised:#EBE3CE;  /* raised chips / tags              */
+
+	/* Borders — warm taupe, never grey. */
+	--mn-border:        #D8CFB6;
+	--mn-border-light:  #E8DFC6;
+
+	/* Type — warm walnut for body, dark espresso for headings.
+	   Pure black (#000) and slate (#0f172a) felt wrong on cream. */
+	--mn-text:          #2A231C;
+	--mn-text-secondary:#5C5043;
+	--mn-text-muted:    #8C7E68;
+	--mn-heading:       #1A140E;
 
 	/* Fonts — system stacks (no webfonts loaded); these were referenced
 	   via var() throughout the file but never defined, so code blocks
@@ -1721,7 +1736,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #ffffff; /* Change to match your theme */
+	background-color: var(--mn-bg); /* matches the cream paper */
 	z-index: 9999;
 }
 

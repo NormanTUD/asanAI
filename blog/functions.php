@@ -466,7 +466,7 @@ if(!server_php_self_ends_with_index_php()) {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-		<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#ffffff'; ?>">
+		<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
 		<script>
 		function toggleTheme() {
 			var html = document.documentElement;
@@ -478,7 +478,7 @@ if(!server_php_self_ends_with_index_php()) {
 			}
 			var btn = document.getElementById('theme-toggle');
 			var meta = document.querySelector('meta[name="theme-color"]');
-			if (meta) meta.content = isDark ? '#0f172a' : '#ffffff';
+			if (meta) meta.content = isDark ? '#0f172a' : '#FAF8F1';
 			document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
 		}
 		// Apply system preference on first load if no cookie.
