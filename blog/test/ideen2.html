@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Kohärente Welten – 20 Konzepte zum Anfassen</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  color: #f0f0f0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+header {
+  text-align: center;
+  padding: 40px 20px 20px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+}
+h1 {
+  font-size: clamp(1.8em, 4vw, 3em);
+  background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ADEDE);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+.subtitle { color: #aaa; font-size: 1.1em; }
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  background: rgba(0,0,0,0.4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(15px);
+}
+.nav button {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.3s;
+}
+.nav button:hover, .nav button.active {
+  background: linear-gradient(90deg, #ff6ec4, #7873f5);
+  transform: scale(1.05);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 25px;
+  padding: 30px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 25px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+  scroll-margin-top: 90px;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(120, 115, 245, 0.3);
+}
+.card-num {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6ec4, #7873f5);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.card h2 {
+  font-size: 1.4em;
+  margin-bottom: 5px;
+  color: #4ADEDE;
+}
+.card .tagline {
+  font-style: italic;
+  color: #ff6ec4;
+  font-size: 0.95em;
+  margin-bottom: 15px;
+}
+canvas {
+  width: 100%;
+  height: 220px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  display: block;
+  margin: 15px 0;
+  cursor: crosshair;
+}
+.explanation {
+  margin-top: 15px;
+}
+.level {
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.level.kid {
+  background: rgba(255, 200, 100, 0.15);
+  border-left: 4px solid #FFC864;
+}
+.level.kid::before { content: "🧒 Für Kinder: "; font-weight: bold; color: #FFC864; }
+.level.pro {
+  background: rgba(120, 115, 245, 0.15);
+  border-left: 4px solid #7873f5;
+}
+.level.pro::before { content: "🎓 Für PhDs: "; font-weight: bold; color: #7873f5; }
+.hint {
+  font-size: 0.8em;
+  color: #888;
+  margin-top: 5px;
+  font-style: italic;
+}
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 0.9em;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✨ Kohärente Welten ✨</h1>
+  <p class="subtitle">20 Konzepte, die erklären, wie aus vielen Ansichten <em>eine Welt</em> wird</p>
+  <p class="hint">Klicke, ziehe, spiele auf jedem Canvas!</p>
+</header>
+
+<nav class="nav" id="nav"></nav>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Basierend auf <em>Coherent Difference</em> & <em>Coherent World Models</em> — eine visuelle Reise durch Distinktion, Kohärenz und Wahrheit.
+</footer>
+
+<script>
+// ============================================================
+// 20 CONCEPTS
+// ============================================================
+const concepts = [
+  {
+    title: "Distinktion",
+    tag: "Ziehe eine Grenze — und die Welt zerfällt in zwei.",
+    kid: "Bevor es zwei Dinge geben kann, muss jemand eine Linie ziehen. Vorher: nichts. Nachher: hier und dort.",
+    pro: "Spencer-Browns Axiom ¬¬x = x. Der erste Cut erzeugt das Marked/Unmarked. Alle Boolesche Algebra folgt daraus. Laozi 老子: 有無相生 — Sein und Nichtsein entstehen zusammen.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const x = mouse.x || w/2;
+      // gradient split
+      const g1 = ctx.createLinearGradient(0,0,x,0);
+      g1.addColorStop(0,"#ff6ec4"); g1.addColorStop(1,"#7873f5");
+      ctx.fillStyle = g1; ctx.fillRect(0,0,x,h);
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke();
+      ctx.fillStyle = "#fff"; ctx.font = "bold 24px sans-serif";
+      ctx.fillText("MARKED", 20, h/2);
+      ctx.fillText("unmarked", x+20, h/2);
+    }
+  },
+  {
+    title: "Relation",
+    tag: "Sobald es zwei gibt, können sie in Beziehung stehen.",
+    kid: "Zwei Punkte allein sind still. Verbinde sie — und sie erzählen eine Geschichte: nah, fern, gleich, verschieden.",
+    pro: "R ⊆ A×A. Reflexiv/symmetrisch/transitiv → Äquivalenzrelation → Partition. Antisym+trans+refl → Ordnung. Struktur entsteht aus zulässigen Paaren.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const pts = [[80,60],[280,80],[180,160],[80,180],[300,180]];
+      pts.forEach((p,i)=>{
+        pts.forEach((q,j)=>{
+          if(i<j){
+            const d = Math.hypot(p[0]-q[0],p[1]-q[1]);
+            const near = mouse.x ? Math.hypot(mouse.x-(p[0]+q[0])/2, mouse.y-(p[1]+q[1])/2) < 40 : false;
+            ctx.strokeStyle = near ? "#ff6ec4" : `rgba(120,115,245,${1-d/400})`;
+            ctx.lineWidth = near?3:1;
+            ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+          }
+        });
+      });
+      pts.forEach(p=>{
+        ctx.fillStyle = "#4ADEDE";
+        ctx.beginPath(); ctx.arc(p[0],p[1],8,0,Math.PI*2); ctx.fill();
+      });
+    }
+  },
+  {
+    title: "Transformation",
+    tag: "Beziehungen, die man mitnehmen kann.",
+    kid: "Ein Pfeil, der ein Ding in ein anderes verwandelt. Wie ein Zauberstab: hier ein Kreis, dort ein Quadrat.",
+    pro: "Morphismen einer Kategorie. Assoziativ komponierbar, mit Identität. Whitehead: die Welt ist Prozess, nicht Substanz. Objekte sind Muster, die durch Transformation persistieren.",
+    draw: (ctx, w, h, mouse) => {
+      const t = Date.now()/1000;
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const p = mouse.x ? (mouse.x/w) : (Math.sin(t)*0.5+0.5);
+      // morph circle -> square
+      const cx = w/2, cy = h/2, r = 50;
+      ctx.fillStyle = "#7873f5"; ctx.strokeStyle = "#4ADEDE"; ctx.lineWidth=2;
+      ctx.beginPath();
+      const N=64;
+      for(let i=0;i<=N;i++){
+        const a = i/N*Math.PI*2;
+        const cx0 = Math.cos(a)*r, cy0 = Math.sin(a)*r;
+        // square coordinate
+        const sx = Math.max(-r,Math.min(r,cx0*1.5)), sy = Math.max(-r,Math.min(r,cy0*1.5));
+        const x = cx + cx0*(1-p) + sx*p;
+        const y = cy + cy0*(1-p) + sy*p;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle="#fff"; ctx.font="14px sans-serif";
+      ctx.fillText("Kreis", 20, h-15); ctx.fillText("Quadrat", w-70, h-15);
+      ctx.fillText("t = "+p.toFixed(2), w/2-25, 20);
+    }
+  },
+  {
+    title: "Lokalität",
+    tag: "Was ist nahe? Ohne dass jemand messen muss.",
+    kid: "Auf einer Landkarte weißt du, was 'in der Nähe' ist, auch ohne ein Lineal. Nachbarschaften statt Zahlen.",
+    pro: "Topologie: eine Menge X plus offene Mengen 𝒪, abgeschlossen unter endlichen Schnitten & beliebigen Vereinigungen. 'Nah' ohne Metrik. Weyl: Mathematik ist die Untersuchung von Konnektivitätsmustern.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const mx = mouse.x || w/2, my = mouse.y || h/2;
+      // draw nested open sets
+      for(let r=90;r>10;r-=20){
+        ctx.strokeStyle = `hsla(${280+r},70%,60%,0.6)`;
+        ctx.fillStyle = `hsla(${280+r},70%,60%,0.08)`;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(mx,my,r,0,Math.PI*2);
+        ctx.fill(); ctx.stroke();
+      }
+      ctx.fillStyle="#ff6ec4";
+      ctx.beginPath(); ctx.arc(mx,my,5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="#fff"; ctx.font="12px sans-serif";
+      ctx.fillText("Bewege die Maus: jeder Punkt hat Nachbarschaften", 15, 20);
+    }
+  },
+  {
+    title: "Overlap & Kompatibilität",
+    tag: "Wo zwei Ansichten sich treffen, müssen sie sich einig sein.",
+    kid: "Zwei Fotos vom selben Baum. Wenn sich die Bilder überlappen, muss der Baum an derselben Stelle sein — sonst passt es nicht zusammen.",
+    pro: "Sheaf condition (pairwise): s_i|_{U_i∩U_j} = s_j|_{U_i∩U_j}. Ohne overlap-agreement kein Gluing. Im ∞-Sheaf: Gleichheit → kohärente Äquivalenz.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const shift = mouse.x ? (mouse.x - w/2)/5 : 0;
+      // two overlapping circles
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = "#ff6ec4";
+      ctx.beginPath(); ctx.arc(w/2-60,h/2,80,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = "#4ADEDE";
+      ctx.beginPath(); ctx.arc(w/2+60,h/2+shift,80,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+      // check
+      const ok = Math.abs(shift)<10;
+      ctx.fillStyle = ok ? "#88ff88" : "#ff5555";
+      ctx.font = "bold 40px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(ok?"✓ Passt!":"✗ Bruch!", w/2, h-20);
+      ctx.textAlign = "left";
+    }
+  },
+  {
+    title: "Sheaf & Gluing",
+    tag: "Lokale Daten + Kompatibilität ⟹ ein einziges Ganzes.",
+    kid: "Puzzleteile, die an den Rändern zusammenpassen, ergeben ein Bild. Jedes Teil kennt nur sich — trotzdem entsteht ein Bild.",
+    pro: "F(c) ≃ Eq(∏ F(c_i) ⇉ ∏ F(c_i×_c c_j)). Unique global section aus compatible local sections. Grothendieck-Leray. Der Motor moderner algebraischer Geometrie.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const t = mouse.x ? mouse.x/w : (Math.sin(Date.now()/1000)*0.5+0.5);
+      const cols = 5, rows = 3, cw = w/cols, ch = h/rows;
+      for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
+        const hue = (x*40+y*60);
+        const gap = (1-t)*8;
+        ctx.fillStyle = `hsl(${hue},60%,55%)`;
+        ctx.fillRect(x*cw+gap,y*ch+gap,cw-gap*2,ch-gap*2);
+      }
+      ctx.fillStyle = "rgba(0,0,0,0.6)";
+      ctx.fillRect(0,0,w,25);
+      ctx.fillStyle="#fff"; ctx.font="12px sans-serif";
+      ctx.fillText(t>0.8?"Global section":"Local patches", 10, 17);
+    }
+  },
+  {
+    title: "Traces",
+    tag: "Wir berühren die Welt nie direkt — nur ihre Spuren.",
+    kid: "Du siehst nicht die Sonne selbst — sondern nur ihr Licht in deinem Auge. Alle Wahrnehmung ist eine Spur.",
+    pro: "Trace r = O(w). Transformed, mediated, underdetermined, evtl. indexikalisch. Kant: das Ding an sich bleibt uneinsehbar (KrV A26/B40). Nur der Grenzfall wortloser Introspektion kollabiert Trace und Quelle.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const t = Date.now()/1000;
+      // sun
+      const sx = 60, sy = h/2;
+      const rad = ctx.createRadialGradient(sx,sy,10,sx,sy,50);
+      rad.addColorStop(0,"#fffb00"); rad.addColorStop(1,"transparent");
+      ctx.fillStyle = rad;
+      ctx.fillRect(0,0,w,h);
+      // eye
+      const ex = mouse.x || w-60, ey = mouse.y || h/2;
+      // rays
+      for(let i=0;i<8;i++){
+        const off = Math.sin(t+i)*10;
+        ctx.strokeStyle = `hsla(${50+i*5},100%,70%,${0.3+Math.sin(t*2+i)*0.2})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(sx,sy);
+        ctx.quadraticCurveTo((sx+ex)/2, (sy+ey)/2+off, ex, ey);
+        ctx.stroke();
+      }
+      ctx.fillStyle="#4ADEDE";
+      ctx.beginPath(); ctx.arc(ex,ey,15,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="#000";
+      ctx.beginPath(); ctx.arc(ex,ey,7,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="#fff"; ctx.font="12px sans-serif";
+      ctx.fillText("Sonne (W)", 20, h-15);
+      ctx.fillText("Auge (R) — bewege!", ex-70, ey+35);
+    }
+  },
+  {
+    title: "Drei Ebenen der Differenz",
+    tag: "Welt, Instrument oder Interpretation — wo liegt der Unterschied?",
+    kid: "Zwei Berichte widersprechen sich. Ist es, weil es zwei Dinge sind? Zwei Messgeräte? Oder zwei Deutungen?",
+    pro: "W₁≠W₂ (Welt) | I₁≠I₂ (Kanal/Kalibrierung) | ν₁≠ν₂ (Interpretation). Cartwright: die 'Gesetze der Physik lügen' — sie gelten idealen Setups, nicht der dappled world.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const labels = ["Welt", "Instrument", "Interpretation"];
+      const colors = ["#ff6ec4","#7873f5","#4ADEDE"];
+      const sel = mouse.x ? Math.floor(mouse.x/(w/3)) : -1;
+      labels.forEach((l,i)=>{
+        const x = i*(w/3)+w/6;
+        ctx.fillStyle = i===sel ? colors[i] : `${colors[i]}55`;
+        ctx.beginPath(); ctx.arc(x,80,40,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle="#fff"; ctx.font="13px sans-serif"; ctx.textAlign="center";
+        ctx.fillText(l,x,84);
+        // arrow to bottom
+        ctx.strokeStyle = colors[i];
+        ctx.lineWidth = i===sel?3:1;
+        ctx.beginPath(); ctx.moveTo(x,120); ctx.lineTo(w/2,180); ctx.stroke();
+      });
+      ctx.fillStyle="#fff"; ctx.font="bold 14px sans-serif";
+      ctx.fillText("Ein Symptom, drei Ursachen", w/2, 200);
+      ctx.textAlign="left";
+    }
+  },
+  {
+    title: "Hierarchie der Gleichheit",
+    tag: "Nicht jedes 'gleich' ist gleich gleich.",
+    kid: "Zwei Autos können 'dasselbe' sein: exakt dieselben Atome, oder nur dasselbe Modell, oder nur ähnlich lackiert. Verwechsele die Stufen nie!",
+    pro: "= ⇒ ≅ ⇒ ≃ ⇒ d≤ε ⇒ P|ℳ hoch ⇒ ∃M⊨𝒮. Univalence: (x=_𝒰 y) ≃ (x≃y). Silent upgrades zwischen Zeilen = die zentrale Kategorienverwechslung.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const levels = ["identisch =", "isomorph ≅", "homotop ≃", "approx ≤ε", "statistisch", "modelltheor."];
+      const hover = mouse.y ? Math.floor(mouse.y/(h/levels.length)) : -1;
+      levels.forEach((l,i)=>{
+        const y = i*(h/levels.length);
+        const strength = 1-i/levels.length;
+        ctx.fillStyle = i===hover ? "#ff6ec4" : `hsla(${280+i*20},60%,50%,${strength*0.6+0.2})`;
+        ctx.fillRect(0,y,w*(strength*0.8+0.2), h/levels.length-3);
+        ctx.fillStyle="#fff"; ctx.font="bold 14px sans-serif";
+        ctx.fillText(l, 10, y+22);
+      });
+      ctx.fillStyle="#fff"; ctx.font="10px sans-serif";
+      ctx.fillText("Nie stillschweigend nach oben klettern!", w-200, h-8);
+    }
+  },
+  {
+    title: "Admissible Transitions 𝒯",
+    tag: "Nicht jede Verbindung ist erlaubt — nur lizenzierte zählen.",
+    kid: "Nicht jede Brücke darf man bauen. Erst wer zeigt: 'Diese Brücke hält!', darf sie benutzen. 𝒯 ist die Liste der geprüften Brücken.",
+    pro: "𝒯 ⊆ {W→R_i} ∪ {R_i→R_j} ∪ Hom(𝒞). Dreifach-Rolle: Subkategorien-Constraint, Bayes-Prior, Occam-Penalty. Kalibration, Koordinatenwechsel, physik. Gesetz, proof-preserving translation. Mehr Freiheit ⟹ mehr Evidenz nötig.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const nodes = [[60,110],[160,50],[260,110],[160,180]];
+      const edges = [[0,1,true],[1,2,true],[2,3,false],[3,0,true],[0,2,false],[1,3,true]];
+      const hover = mouse.x ? Math.floor(mouse.x/(w/edges.length)) : -1;
+      edges.forEach(([a,b,ok],i)=>{
+        const licensed = i===hover ? !ok : ok;
+        ctx.strokeStyle = licensed ? "#4ADEDE" : "#ff5555";
+        ctx.setLineDash(licensed?[]:[5,5]);
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(nodes[a][0],nodes[a][1]); ctx.lineTo(nodes[b][0],nodes[b][1]); ctx.stroke();
+      });
+      ctx.setLineDash([]);
+      nodes.forEach((p,i)=>{
+        ctx.fillStyle = "#7873f5";
+        ctx.beginPath(); ctx.arc(p[0],p[1],12,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = "bold 12px sans-serif";
+        ctx.textAlign="center"; ctx.fillText("R"+i, p[0], p[1]+4);
+      });
+      ctx.textAlign="left";
+      ctx.fillStyle="#fff"; ctx.font="11px sans-serif";
+      ctx.fillText("— lizenziert  - - - unlizenziert (hover!)", 15, h-10);
+    }
+  },
+  {
+    title: "Traces & Drei Ebenen",
+    tag: "W ≠ I ≠ ν — wo liegt der Unterschied wirklich?",
+    kid: "Zwei Berichte stimmen nicht überein. Ist es die Welt, das Messgerät oder die Deutung? Frag immer: wo genau liegt der Unterschied?",
+    pro: "W₁≠W₂ (world) | I₁≠I₂ (channel) | ν₁≠ν₂ (interpretation). Ein Symptom, drei Ursachen. Cartwright: Naturgesetze gelten idealen Setups, nicht dem dappled world. Nicht kollabieren!",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const t = Date.now()/1000;
+      const layers = [
+        {y:50, c:"#ff6ec4", l:"Welt W"},
+        {y:105, c:"#7873f5", l:"Instrument I"},
+        {y:160, c:"#4ADEDE", l:"Interpretation ν"}
+      ];
+      const sel = mouse.y ? Math.floor(mouse.y/(h/3)) : -1;
+      layers.forEach((L,i)=>{
+        ctx.fillStyle = i===sel ? L.c : L.c+"55";
+        ctx.fillRect(30, L.y-15, w-60, 30);
+        ctx.fillStyle="#fff"; ctx.font="bold 14px sans-serif";
+        ctx.fillText(L.l, 45, L.y+5);
+        // symbols
+        for(let k=0;k<3;k++){
+          const x = w-150 + k*40;
+          const off = i===sel ? Math.sin(t*3+k)*3 : 0;
+          ctx.fillStyle = "#fff";
+          ctx.beginPath(); ctx.arc(x, L.y+off, 6, 0, Math.PI*2); ctx.fill();
+        }
+      });
+      ctx.fillStyle="#ff5555"; ctx.font="12px sans-serif";
+      ctx.fillText("Symptom: 2 Berichte stimmen nicht", 30, h-10);
+    }
+  },
+  {
+    title: "Hallucination (Selbst-Kohärenz ≠ Wahrheit)",
+    tag: "Ein perfekt kohärentes Modell kann trotzdem eine Fantasie sein.",
+    kid: "Ein Kind erzählt eine Geschichte, die perfekt zusammenpasst — aber komplett erfunden ist. Das ist Halluzination: kohärent, aber nicht wahr.",
+    pro: "M_internal self-consistent ⇏ M_internal ≈ W. Sheaf-Bedingung im Modell erfüllt, aber Tarski scheitert an Kontaktpunkten. LLM: kein live O_i-Pfeil bei Inferenz — nur frozen, mediated Korpus. Remedy: RAG, Tools, formale Verifikation.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const t = Date.now()/1000;
+      // model bubble (coherent internally)
+      const cx=w/2, cy=h/2-20;
+      ctx.strokeStyle="#7873f5"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(cx,cy,70,0,Math.PI*2); ctx.stroke();
+      // internal coherent nodes
+      for(let i=0;i<6;i++){
+        const a = i/6*Math.PI*2 + t*0.2;
+        const x = cx+Math.cos(a)*40, y = cy+Math.sin(a)*40;
+        ctx.fillStyle="#7873f5"; ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+        const na = (i+1)/6*Math.PI*2 + t*0.2;
+        const nx = cx+Math.cos(na)*40, ny=cy+Math.sin(na)*40;
+        ctx.strokeStyle="#7873f5aa"; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(nx,ny); ctx.stroke();
+      }
+      ctx.fillStyle="#fff"; ctx.font="bold 12px sans-serif"; ctx.textAlign="center";
+      ctx.fillText("Modell (kohärent)", cx, cy-80);
+      // world outside
+      ctx.fillStyle="#ff6ec4";
+      ctx.beginPath(); ctx.arc(30,h-30,15,0,Math.PI*2); ctx.fill();
+      ctx.fillText("W", 30, h-26);
+      // broken bridge
+      const grounded = mouse.x > w/2;
+      ctx.strokeStyle = grounded ? "#88ff88" : "#ff5555";
+      ctx.lineWidth = 2;
+      ctx.setLineDash(grounded?[]:[4,4]);
+      ctx.beginPath(); ctx.moveTo(45,h-30); ctx.lineTo(cx-70,cy); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = grounded?"#88ff88":"#ff5555"; ctx.font="12px sans-serif";
+      ctx.fillText(grounded?"✓ grounded (Tool!)":"✗ Halluzination (Maus rechts = grounding)", w/2, h-8);
+      ctx.textAlign="left";
+    }
+  },
+  {
+    title: "Topos: Welt zum Rechnen",
+    tag: "Ein Universum, in dem man Mathematik machen kann.",
+    kid: "Wie ein magisches Spielzimmer, in dem eigene Regeln gelten. Manche Räume haben andere Wahrheiten als deine.",
+    pro: "Elementarer Topos: endliche Limiten, Exponentiale B^A, Subobjekt-Klassifikator Ω. Intuitionistische interne Logik (Heyting-Algebra auf Ω). Diaconescu: AC ⟹ LEM. Grothendieck-Topos = Garben auf einem Site. Geometrische Morphismen f*⊣f_*.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#0a0a1e"; ctx.fillRect(0,0,w,h);
+      // multiple universes
+      const t = Date.now()/1000;
+      const universes = [
+        {x:w*0.25, y:h*0.4, c:"#ff6ec4", l:"Set"},
+        {x:w*0.5, y:h*0.6, c:"#7873f5", l:"Sh(X)"},
+        {x:w*0.75, y:h*0.35, c:"#4ADEDE", l:"Eff"}
+      ];
+      universes.forEach((u,i)=>{
+        const pulse = Math.sin(t+i)*5+40;
+        const grad = ctx.createRadialGradient(u.x,u.y,5,u.x,u.y,pulse);
+        grad.addColorStop(0,u.c);
+        grad.addColorStop(1,"transparent");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,w,h);
+        ctx.strokeStyle = u.c; ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(u.x,u.y,pulse,0,Math.PI*2); ctx.stroke();
+        ctx.fillStyle="#fff"; ctx.font="bold 13px sans-serif"; ctx.textAlign="center";
+        ctx.fillText(u.l, u.x, u.y+4);
+      });
+      // arrows between (geometric morphisms)
+      ctx.strokeStyle="#ffffff44"; ctx.lineWidth=1;
+      for(let i=0;i<universes.length-1;i++){
+        ctx.beginPath();
+        ctx.moveTo(universes[i].x+45,universes[i].y);
+        ctx.lineTo(universes[i+1].x-45,universes[i+1].y);
+        ctx.stroke();
+      }
+      ctx.textAlign="left";
+      ctx.fillStyle="#aaa"; ctx.font="11px sans-serif";
+      ctx.fillText("verschiedene Topoi = verschiedene Logiken", 10, h-10);
+    }
+  },
+  {
+    title: "Embedding-Raum",
+    tag: "Bedeutung als Position in einem hochdimensionalen Raum.",
+    kid: "Jedes Wort bekommt einen Platz im Raum. Ähnliche Wörter sitzen nah beieinander — 'Katze' neben 'Hund', weit weg von 'Traktor'.",
+    pro: "E: V → ℝ^d. Distributionelle Hypothese (Firth): 'You shall know a word by the company it keeps.' Näherungsweise ein Sheaf über Token-Kontexten. Nagarjuna's pratītyasamutpāda in geometrisch.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const words = [
+        {w:"Katze",x:80,y:80,c:"#ff6ec4"},
+        {w:"Hund",x:110,y:100,c:"#ff6ec4"},
+        {w:"Tier",x:95,y:130,c:"#ff6ec4"},
+        {w:"Auto",x:240,y:70,c:"#4ADEDE"},
+        {w:"LKW",x:270,y:95,c:"#4ADEDE"},
+        {w:"Motor",x:250,y:130,c:"#4ADEDE"},
+        {w:"Liebe",x:180,y:180,c:"#7873f5"},
+        {w:"Freund",x:210,y:170,c:"#7873f5"},
+      ];
+      // draw clusters
+      words.forEach(a=>{
+        words.forEach(b=>{
+          if(a!==b && a.c===b.c){
+            ctx.strokeStyle = a.c+"44";
+            ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+          }
+        });
+      });
+      // find nearest to mouse
+      let near=null, mind=99999;
+      if(mouse.x){
+        words.forEach(word=>{
+          const d = Math.hypot(mouse.x-word.x, mouse.y-word.y);
+          if(d<mind){mind=d; near=word;}
+        });
+      }
+      words.forEach(word=>{
+        const isNear = word===near;
+        ctx.fillStyle = word.c;
+        ctx.beginPath(); ctx.arc(word.x,word.y,isNear?10:6,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = (isNear?"bold ":"")+"11px sans-serif";
+        ctx.fillText(word.w, word.x+10, word.y+4);
+      });
+      ctx.fillStyle="#aaa"; ctx.font="10px sans-serif";
+      ctx.fillText("Nähe = Bedeutungs-Ähnlichkeit", 10, h-8);
+    }
+  },
+  {
+    title: "Kohärenz vs. Korrespondenz",
+    tag: "Passt es zusammen? UND: Stimmt es mit der Welt?",
+    kid: "Ein Bild kann perfekt gemalt sein (alles passt), aber trotzdem den falschen Baum zeigen. Zwei Tests: passt zusammen + stimmt mit echt.",
+    pro: "Truth = coherence (descent) ∧ correspondence (Tarski's T-schema an jedem T∈𝒯). Bradley/Blanshard vs. Tarski 1935. Weder allein reicht. 'S is true iff p'. Correspondence als Limes der Kohärenz unter Cover-Erweiterung.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0,0,w,h);
+      const coh = mouse.x ? (mouse.x < w/2) : true;
+      const cor = mouse.y ? (mouse.y < h/2) : true;
+      // 2x2 grid
+      const cells = [
+        {coh:true, cor:true, l:"✓ WAHR", c:"#88ff88"},
+        {coh:true, cor:false, l:"Fantasie", c:"#ff6ec4"},
+        {coh:false, cor:true, l:"Faktbuch", c:"#FFC864"},
+        {coh:false, cor:false, l:"✗ falsch", c:"#ff5555"}
+      ];
+      const cw=w/2, ch=(h-30)/2;
+      [[0,0],[1,0],[0,1],[1,1]].forEach(([x,y],i)=>{
+        const active = (x===0)===coh && (y===0)===cor;
+        ctx.fillStyle = active ? cells[i].c : cells[i].c+"33";
+        ctx.fillRect(x*cw+2, y*ch+22, cw-4, ch-4);
+        ctx.fillStyle = "#fff"; ctx.font=(active?"bold 15px":"13px")+" sans-serif";
+        ctx.textAlign="center";
+        ctx.fillText(cells[i].l, x*cw+cw/2, y*ch+ch/2+25);
+      });
+      ctx.fillStyle="#fff"; ctx.font="11px sans-serif";
+      ctx.textAlign="center";
+      ctx.fillText("← kohärent      inkohärent →", w/2, 15);
+      ctx.save(); ctx.translate(15, h/2); ctx.rotate(-Math.PI/2);
+      ctx.fillText("↑ passt zu W      passt nicht ↓", 0, 0);
+      ctx.restore();
+      ctx.textAlign="left";
+    }
+  },
+  {
+    title: "c_acc: Der zugängliche Bereich",
+    tag: "Wir erfassen nie die ganze Welt — nur was unsere Sensoren zulassen.",
+    kid: "Du siehst kein Infrarot, hörst kein Ultraschall. Deine Welt ist nur der Teil, den deine Sinne erreichen können.",
+    pro: "⋃ᵢ im(fᵢ) = c_acc ⊆ c. Das Cover erfasst nur den zugänglichen Teil des Kontexts. Jedes Instrument erweitert c_acc; keins schließt die Lücke zu W. G ist Modell des Interface, nicht des Ding-an-sich.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#0a0a1e"; ctx.fillRect(0,0,w,h);
+      // full world (big circle)
+      ctx.fillStyle="#7873f533";
+      ctx.beginPath(); ctx.arc(w/2,h/2,90,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle="#7873f5"; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.arc(w/2,h/2,90,0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      // accessible region grows with mouse
+      const inst = mouse.x ? Math.floor(mouse.x/(w/5))+1 : 2;
+      const colors = ["#ff6ec4","#4ADEDE","#FFC864","#88ff88","#ff9955"];
+      const angles = [0, 1.3, 2.6, 3.9, 5.2];
+      for(let i=0;i<inst;i++){
+        const cx = w/2 + Math.cos(angles[i])*35;
+        const cy = h/2 + Math.sin(angles[i])*35;
+        ctx.fillStyle = colors[i]+"88";
+        ctx.beginPath(); ctx.arc(cx,cy,35,0,Math.PI*2); ctx.fill();
+      }
+      ctx.fillStyle="#fff"; ctx.font="bold 14px sans-serif"; ctx.textAlign="center";
+      ctx.fillText("W (ganze Welt)", w/2, h/2-100);
+      ctx.font="11px sans-serif";
+      ctx.fillText("c_acc = "+inst+" Instrument(e)", w/2, h-10);
+      ctx.textAlign="left";
+    }
+  },
+  {
+    title: "Die Kette der Weltmodellierung",
+    tag: "Distinktion → Relation → ... → Invarianz. Neun Schritte, eine Geschichte.",
+    kid: "Wie wir aus Nichts eine ganze Welt bauen: zuerst ein Strich, dann Beziehungen, dann Bewegung, dann Nachbarschaft, ... bis eine Welt entsteht, die sich nicht mehr ändert, egal wie du sie ansiehst.",
+    pro: "Distinktion → Relation → Transformation → Lokalität → Kompatibilität → Kohärenz → Gluing → Globalität → Invarianz. Jede Theorie sitzt auf einer Stufe. Set/Type = Distinktion+Relation. Cat = Transformation. Top = Lokalität. Sheaves = Gluing. Bundles = Invarianz. AI-Embedding: alles zusammen.",
+    draw: (ctx, w, h, mouse) => {
+      ctx.fillStyle = "#0a0a1e"; ctx.fillRect(0,0,w,h);
+      const chain = ["Distinktion","Relation","Transform.","Lokalität","Kompat.","Kohärenz","Gluing","Globalität","Invarianz"];
+      const step = mouse.x ? Math.min(chain.length-1, Math.floor(mouse.x/(w/chain.length))) : Math.floor((Date.now()/500) % chain.length);
+      chain.forEach((c,i)=>{
+        const x = 20+i*(w-40)/chain.length;
+        const y = h/2;
+        const active = i<=step;
+        const hue = 280 + i*10;
+        ctx.fillStyle = active ? `hsl(${hue},70%,60%)` : "#333";
+        ctx.beginPath(); ctx.arc(x,y,active?12:6,0,Math.PI*2); ctx.fill();
+        if(i>0){
+          ctx.strokeStyle = active ? `hsl(${hue},70%,60%)` : "#333";
+          ctx.lineWidth = active?3:1;
+          const px = 20+(i-1)*(w-40)/chain.length;
+          ctx.beginPath(); ctx.moveTo(px+8,y); ctx.lineTo(x-8,y); ctx.stroke();
+        }
+        if(i===step){
+          ctx.fillStyle="#fff"; ctx.font="bold 12px sans-serif"; ctx.textAlign="center";
+          ctx.fillText(c, x, y-25);
+        } else {
+          ctx.fillStyle="#666"; ctx.font="9px sans-serif"; ctx.textAlign="center";
+          ctx.save(); ctx.translate(x,y+25); ctx.rotate(0.4);
+          ctx.fillText(c, 0, 0); ctx.restore();
+        }
+      });
+      ctx.textAlign="left";
+      ctx.fillStyle="#aaa"; ctx.font="11px sans-serif";
+      ctx.fillText("Bewege die Maus durch die Kette →", 15, h-10);
+    }
+  }
+];
+
+// ============================================================
+// RENDER
+// ============================================================
+const grid = document.getElementById("grid");
+const nav = document.getElementById("nav");
+
+concepts.forEach((c, i) => {
+  // nav button
+  const b = document.createElement("button");
+  b.textContent = (i+1)+". "+c.title;
+  b.onclick = () => {
+    document.getElementById("card-"+i).scrollIntoView({behavior:"smooth", block:"start"});
+    document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+  };
+  nav.appendChild(b);
+
+  // card
+  const card = document.createElement("div");
+  card.className = "card";
+  card.id = "card-"+i;
+  card.innerHTML = `
+    <div class="card-num">${i+1}</div>
+    <h2>${c.title}</h2>
+    <div class="tagline">${c.tag}</div>
+    <canvas id="cv-${i}"></canvas>
+    <div class="hint">↑ Bewege die Maus über das Canvas!</div>
+    <div class="explanation">
+      <div class="level kid">${c.kid}</div>
+      <div class="level pro">${c.pro}</div>
+    </div>
+  `;
+  grid.appendChild(card);
+
+  // canvas setup
+  const cv = document.getElementById("cv-"+i);
+  const ctx = cv.getContext("2d");
+  const mouse = {x: null, y: null};
+
+  function resize() {
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width;
+    cv.height = rect.height;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  cv.addEventListener("mousemove", e => {
+    const r = cv.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) * (cv.width / r.width);
+    mouse.y = (e.clientY - r.top) * (cv.height / r.height);
+  });
+  cv.addEventListener("mouseleave", () => { mouse.x = null; mouse.y = null; });
+  cv.addEventListener("touchmove", e => {
+    e.preventDefault();
+    const r = cv.getBoundingClientRect();
+    const t = e.touches[0];
+    mouse.x = (t.clientX - r.left) * (cv.width / r.width);
+    mouse.y = (t.clientY - r.top) * (cv.height / r.height);
+  }, {passive: false});
+
+  function loop() {
+    c.draw(ctx, cv.width, cv.height, mouse);
+    requestAnimationFrame(loop);
+  }
+  loop();
+});
+
+// scroll spy for nav highlight
+const cards = document.querySelectorAll(".card");
+const navBtns = document.querySelectorAll(".nav button");
+window.addEventListener("scroll", () => {
+  let current = 0;
+  cards.forEach((card, i) => {
+    const rect = card.getBoundingClientRect();
+    if (rect.top < window.innerHeight/2) current = i;
+  });
+  navBtns.forEach((b, i) => b.classList.toggle("active", i === current));
+});
+</script>
+
+</body>
+</html>
