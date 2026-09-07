@@ -117,12 +117,6 @@
 		_js("optimizer.js");
 		_js("loss_metric.js");
 		_js("labels.js");
-		_js("libs/CopyShader.js");
-                _js("libs/LuminosityHighPassShader.js");
-                _js("libs/EffectComposer.js");
-                _js("libs/RenderPass.js");
-                _js("libs/ShaderPass.js");
-                _js("libs/UnrealBloomPass.js");
                 _js("libs/CSS2DRenderer.js");
 		_js("cnn3d.js");
 		_js("validation.js");

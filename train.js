@@ -2733,7 +2733,8 @@ function _restore_last_grid_render() {
 	img.onload = function() {
 		if (!img.width || !img.height) {
 			// Degenerate cached render (captured while the training tab was hidden) → full re-draw at current width
-			if (_last_grid_draw_params) {
+			// Only if the params still describe the current problem (labels/model/dataset may have changed)
+			if (_grid_draw_params_still_valid()) {
 				var p = _last_grid_draw_params;
 				draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
 			}
@@ -2760,6 +2761,11 @@ function _restore_last_grid_render() {
 }
 
 function draw_images_in_grid(images, categories, probabilities, category_overview) {
+	if (typeof labels === "undefined" || !labels || !labels.length) {
+		// No categories (e.g. dataset switch emptied labels mid-flight) → keep current content, avoid 0-division and empty-grid state
+		dbg("[draw_images_in_grid] labels empty, skipping draw");
+		return;
+	}
 	_last_grid_draw_params = { images, categories, probabilities, category_overview };
 
 	_grid_image_hit_regions = [];
@@ -2787,15 +2793,22 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 
 	var scaleWidth = 40;
 	var relationScale = 1;
-	var pw = parse_int($("#training_tab").width() * relationScale);
-	if (!isFinite(pw) || pw < 200) {
+	function _grid_safe_width(source) {
+		var v = source;
+		if (typeof v === "number" && isFinite(v) && v > 0) {
+			return parse_int(v);
+		}
+		return 0;
+	}
+	var pw = _grid_safe_width($("#training_tab").width() * relationScale);
+	if (pw < 200) {
 		// Training tab hidden (display:none) or too narrow → .width() is 0/negative → canvas would be zero-width and render empty
 		dbg("[draw_images_in_grid] training_tab width unusable (pw=" + pw + "), using fallback width source");
-		pw = parse_int($("#right_side").width());
-		if (!isFinite(pw) || pw < 200) {
-			pw = parse_int($(window).width());
+		pw = _grid_safe_width($("#right_side").width());
+		if (pw < 200) {
+			pw = _grid_safe_width($(window).width());
 		}
-		if (!isFinite(pw) || pw < 200) {
+		if (pw < 200) {
 			pw = 800;
 		}
 	}
@@ -2850,6 +2863,21 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	});
 }
 
+function _grid_draw_params_still_valid() {
+	if (!_last_grid_draw_params) return false;
+	if (typeof is_classification === "undefined" || !is_classification) return false;
+	if (typeof input_shape_is_image !== "function" || !input_shape_is_image()) return false;
+	if (typeof get_last_layer_activation_function !== "function" || get_last_layer_activation_function() != "softmax") return false;
+	if (typeof labels === "undefined" || !labels || !labels.length) return false;
+	if (typeof model !== "undefined" && model && model.isDisposed === true) return false;
+	var imgs = _last_grid_draw_params.images;
+	if (!imgs || !imgs.length) return false;
+	for (var i = 0; i < imgs.length; i++) {
+		if (!document.body.contains(imgs[i])) return false;
+	}
+	return true;
+}
+
 function _setup_grid_resize_listener() {
 	if (_grid_resize_timeout !== null) return;
 
@@ -2857,7 +2885,8 @@ function _setup_grid_resize_listener() {
 		if (_grid_resize_timeout !== null) clearTimeout(_grid_resize_timeout);
 		_grid_resize_timeout = setTimeout(function() {
 			_grid_resize_timeout = null;
-			if (_last_grid_draw_params) {
+			// Only re-draw if the params describe the CURRENT problem (dataset/model/labels may have changed in the meantime)
+			if (_grid_draw_params_still_valid()) {
 				var p = _last_grid_draw_params;
 				draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
 			}
@@ -2877,12 +2906,13 @@ function _setup_grid_visibility_listener() {
 	_grid_visibility_observer = new IntersectionObserver(function(entries) {
 		for (var i = 0; i < entries.length; i++) {
 			if (!entries[i].isIntersecting) continue;
-			if (!_last_grid_draw_params) return;
+			if (!_grid_draw_params_still_valid()) return;
 
 			if (_grid_visibility_redraw_timeout !== null) clearTimeout(_grid_visibility_redraw_timeout);
 			_grid_visibility_redraw_timeout = setTimeout(function() {
 				_grid_visibility_redraw_timeout = null;
-				if (!_last_grid_draw_params) return;
+				// Re-check at draw time: labels/model/dataset may have changed while the timeout was pending
+				if (!_grid_draw_params_still_valid()) return;
 				var el = document.getElementById("canvas_grid_visualization");
 				if (!el || el.offsetParent === null) return;
 				var p = _last_grid_draw_params;

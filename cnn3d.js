@@ -15,8 +15,7 @@
  *   - Top channel highlighting driven by attribution instead of only |mean activation|
  *
  * Optional three.js addons (auto-detected; graceful fallback if missing):
- *   THREE.EffectComposer, THREE.RenderPass, THREE.UnrealBloomPass,
- *   THREE.ShaderPass, THREE.CopyShader, THREE.CSS2DRenderer, THREE.CSS2DObject
+ *   THREE.CSS2DRenderer, THREE.CSS2DObject
  *
  * Optional globals read (for the classification panel):
  *   window.labels
@@ -43,7 +42,6 @@
         return (typeof r === "number" && isFinite(r)) ? r : -1;
     }
 
-    var HAS_COMPOSER = !!(THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass);
     var HAS_CSS2D    = !!(THREE.CSS2DRenderer && THREE.CSS2DObject);
 
     // ------------------------------------------------------------------
@@ -62,10 +60,6 @@
         showConnections: true,
         showInputImage: true,
         autoUpdateHash: true,
-        bloom: false,
-        bloomStrength: 0.9,
-        bloomRadius: 0.4,
-        bloomThreshold: 0.25,
         fog: true,
         curvedConnections: true,
         animateConnections: false,
@@ -845,7 +839,6 @@
         parts.push("op=" + opts.opacity);
         parts.push("sc=" + opts.showConnections);
         parts.push("si=" + opts.showInputImage);
-        parts.push("bl=" + opts.bloom + "," + opts.bloomStrength + "," + opts.bloomRadius + "," + opts.bloomThreshold);
         parts.push("fg=" + opts.fog);
         parts.push("cc=" + opts.curvedConnections);
         parts.push("lb=" + opts.showLabels);
@@ -867,7 +860,6 @@
             container: container,
             opts: Object.assign({}, DEFAULTS),
             scene: null, camera: null, renderer: null,
-            composer: null, bloomPass: null,
             labelRenderer: null,
             minimapScene: null, minimapCamera: null, minimapRenderer: null,
             axesHelper: null,
@@ -934,9 +926,6 @@
             + '    <label data-tip="Overall opacity of activation textures." style="display:block;margin:6px 0;">Opacity: <span data-role="op-label">1.00</span>'
             + '      <input type="range" class="show_data" data-role="op" min="0.05" max="1" step="0.01" value="1" style="width:100%;">'
             + '    </label>'
-            + '    <label data-tip="Bloom (glow) strength for bright pixels." style="display:block;margin:6px 0;">Bloom: <span data-role="bl-label">0.90</span>'
-            + '      <input type="range" class="show_data" data-role="bl" min="0" max="3" step="0.05" value="0.9" style="width:100%;">'
-            + '    </label>'
             + '    <label data-tip="Color scheme used to map activation magnitude to color." style="display:block;margin:8px 0;">Colormap:'
             + '      <select class="show_data" data-role="cm" style="width:100%;padding:4px;">'
             + '        <option value="viridis">Viridis</option>'
@@ -961,7 +950,6 @@
             + '    <label data-tip="Show the original RGB input image before the first layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="si" checked> Show input image</label>'
             + '    <label data-tip="Show floating labels above each layer." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="lb"> Show layer labels</label>'
             + '    <label data-tip="Show a histogram of activations in the tooltip / side panel." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="hs" checked> Show histograms</label>'
-            + '    <label data-tip="Enable bloom / glow post-processing on bright activations." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="blen"> Bloom glow</label>'
             + '    <label data-tip="Enable depth fog fading far layers." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="fg" checked> Depth fog</label>'
             + '    <label data-tip="Slowly rotate the camera around the network." style="display:block;margin:6px 0;"><input type="checkbox" class="show_data" data-role="ar"> Auto rotate</label>'
             + '    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">'
@@ -989,10 +977,7 @@
             input.addEventListener('input', function () {
                 inst.opts[prop] = parseFloat(input.value);
                 if (label) label.textContent = fmt ? fmt(inst.opts[prop]) : inst.opts[prop];
-                if (prop === 'bloomStrength' && inst.bloomPass) {
-                    inst.bloomPass.strength = inst.opts.bloomStrength;
-                    scheduleRender(inst);
-                } else if (prop === 'explainOverlayAlpha') {
+                if (prop === 'explainOverlayAlpha') {
                     // Just re-render overlay without full rebuild
                     scheduleRebuild(inst);
                 } else {
@@ -1005,7 +990,6 @@
         bindRange('lg', 'layerGap',  function (v) { return v.toFixed(0); });
         bindRange('px', 'pixelSize', function (v) { return v.toFixed(1); });
         bindRange('op', 'opacity',   function (v) { return v.toFixed(2); });
-        bindRange('bl', 'bloomStrength', function (v) { return v.toFixed(2); });
         bindRange('ea', 'explainOverlayAlpha', function (v) { return v.toFixed(2); });
 
         var cmSel = gui.querySelector('[data-role="cm"]');
@@ -1044,10 +1028,6 @@
         bindCheckbox('si', 'showInputImage');
         bindCheckbox('lb', 'showLabels');
         bindCheckbox('hs', 'showHistograms');
-        bindCheckbox('blen', 'bloom', function () {
-            if (inst.bloomPass) inst.bloomPass.enabled = inst.opts.bloom;
-            scheduleRender(inst);
-        });
         bindCheckbox('fg', 'fog', function () {
             applyFog(inst);
             scheduleRender(inst);
@@ -1475,28 +1455,6 @@
         inst.renderer.setSize(w, h);
         wrapper.appendChild(inst.renderer.domElement);
 
-        // Composer / bloom (optional)
-        if (HAS_COMPOSER) {
-            try {
-                inst.composer = new THREE.EffectComposer(inst.renderer);
-                inst.composer.setSize(w, h);
-                var renderPass = new THREE.RenderPass(inst.scene, inst.camera);
-                inst.composer.addPass(renderPass);
-                inst.bloomPass = new THREE.UnrealBloomPass(
-                    new THREE.Vector2(w, h),
-                    inst.opts.bloomStrength,
-                    inst.opts.bloomRadius,
-                    inst.opts.bloomThreshold
-                );
-                inst.bloomPass.enabled = inst.opts.bloom;
-                inst.composer.addPass(inst.bloomPass);
-            } catch (e) {
-                console.warn("[cnn3d.js] Bloom composer setup failed, falling back to direct render.", e);
-                inst.composer = null;
-                inst.bloomPass = null;
-            }
-        }
-
         // CSS2D label renderer (optional)
         if (HAS_CSS2D) {
             try {
@@ -1551,7 +1509,6 @@
             var W = wrapper.clientWidth, H = wrapper.clientHeight;
             if (W > 0 && H > 0) {
                 inst.renderer.setSize(W, H);
-                if (inst.composer) inst.composer.setSize(W, H);
                 if (inst.labelRenderer) inst.labelRenderer.setSize(W, H);
                 inst.camera.aspect = W / H;
                 inst.camera.updateProjectionMatrix();
@@ -1772,8 +1729,7 @@
     // ------------------------------------------------------------------
     function downloadScreenshot(inst) {
         try {
-            if (inst.composer && inst.opts.bloom) inst.composer.render();
-            else inst.renderer.render(inst.scene, inst.camera);
+            inst.renderer.render(inst.scene, inst.camera);
             var url = inst.renderer.domElement.toDataURL('image/png');
             var a = document.createElement('a');
             a.href = url;
@@ -2041,11 +1997,7 @@
             dirty = false;
 
             try {
-                if (inst.composer && inst.opts.bloom && inst.bloomPass && inst.bloomPass.enabled) {
-                    inst.composer.render();
-                } else {
-                    inst.renderer.render(inst.scene, inst.camera);
-                }
+                inst.renderer.render(inst.scene, inst.camera);
                 if (inst.labelRenderer) {
                     inst.labelRenderer.render(inst.scene, inst.camera);
                 }
@@ -3557,7 +3509,6 @@
         setRange('lg', inst.opts.layerGap,  function (v) { return v.toFixed(0); });
         setRange('px', inst.opts.pixelSize, function (v) { return v.toFixed(1); });
         setRange('op', inst.opts.opacity,   function (v) { return v.toFixed(2); });
-        setRange('bl', inst.opts.bloomStrength, function (v) { return v.toFixed(2); });
         setRange('ea', inst.opts.explainOverlayAlpha, function (v) { return v.toFixed(2); });
         var cm = g.querySelector('[data-role="cm"]'); if (cm) cm.value = inst.opts.colormap;
         var ex = g.querySelector('[data-role="ex"]'); if (ex) ex.value = inst.opts.explainMode;
@@ -3570,7 +3521,6 @@
         setCb('si', inst.opts.showInputImage);
         setCb('lb', inst.opts.showLabels);
         setCb('hs', inst.opts.showHistograms);
-        setCb('blen', inst.opts.bloom);
         setCb('fg', inst.opts.fog);
         setCb('ar', inst.opts.autoRotate);
     }
@@ -3601,7 +3551,6 @@
                 inst.renderer.domElement.parentNode.removeChild(inst.renderer.domElement);
             }
         }
-        if (inst.composer && inst.composer.dispose) { try { inst.composer.dispose(); } catch (e) {} }
         if (inst.minimapRenderer) {
             try { inst.minimapRenderer.dispose(); } catch (e) {}
             if (inst.minimapRenderer.domElement && inst.minimapRenderer.domElement.parentNode) {
