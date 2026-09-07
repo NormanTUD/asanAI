@@ -2543,7 +2543,7 @@ async function repredict () {
 		_predict_pending_args = null;
 		await _predict_handdrawn_internal();
 	} else {
-		predict_handdrawn();
+		await predict_handdrawn();
 	}
 
 	await show_prediction(0, 1);
