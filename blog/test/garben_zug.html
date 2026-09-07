@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>🚂 Garbentheorie des vorbeifahrenden Zuges</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root {
+    --bg: #0a0e27;
+    --panel: #131a3a;
+    --accent: #ffb84d;
+    --accent2: #4dd0e1;
+    --accent3: #ff6b9d;
+    --text: #e8ecf7;
+    --muted: #8892b0;
+    --rail: #556;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1f4a 100%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    background: linear-gradient(90deg, #ffb84d, #ff6b9d, #4dd0e1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2.4em;
+    margin: 10px 0 6px;
+  }
+  .subtitle { text-align: center; color: var(--muted); margin-bottom: 24px; }
+  .container { max-width: 1200px; margin: auto; }
+  .stage {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .stage h2 {
+    color: var(--accent);
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #0a0e27;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.7em;
+    font-weight: 700;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    background: #05081a;
+    border-radius: 10px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    align-items: center;
+  }
+  button {
+    background: var(--accent2);
+    color: #0a0e27;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  button:hover { transform: translateY(-2px); }
+  button.secondary { background: var(--accent3); }
+  .formula {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid var(--accent2);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+  .kid-explain {
+    background: rgba(255,184,77,0.1);
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-size: 1.05em;
+  }
+  .kid-explain::before { content: "🧒 Für Kinder: "; font-weight: 700; color: var(--accent); }
+  .phd-explain {
+    background: rgba(77,208,225,0.08);
+    border-left: 3px solid var(--accent2);
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-size: 0.95em;
+  }
+  .phd-explain::before { content: "🎓 Für PhDs: "; font-weight: 700; color: var(--accent2); }
+  .readout {
+    font-family: 'JetBrains Mono', monospace;
+    background: #05081a;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 0.9em;
+  }
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.85em;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🚂 Die Garbentheorie eines vorbeifahrenden Zuges</h1>
+<p class="subtitle">Vom Keim zum globalen Ereignis — interaktiv, exakt, wunderschön.</p>
+
+<!-- ================= STAGE 0: MASTER SCENE ================= -->
+<div class="stage">
+  <h2>🎬 Die Bühne <span class="badge">Basisraum X = ℝ (Zeit)</span></h2>
+  <canvas id="scene" height="320"></canvas>
+  <div class="controls">
+    <button id="playBtn">▶ Zug fahren lassen</button>
+    <button class="secondary" id="soundBtn">🔊 Doppler-Sound an</button>
+    <span class="readout" id="timeReadout">t = 0.00 s</span>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:#ffb84d"></span>Zug (Realität)</span>
+    <span><span class="dot" style="background:#4dd0e1"></span>Beobachter</span>
+    <span><span class="dot" style="background:#ff6b9d"></span>Aktueller Zeitpunkt x</span>
+  </div>
+  <div class="kid-explain">Ein Zug fährt an dir vorbei. Du siehst ihn, du hörst ihn. Wir zerlegen dieses Ereignis in die kleinsten möglichen Bausteine — und bauen es Stück für Stück wieder zusammen!</div>
+</div>
+
+<!-- ================= STAGE 1: KEIM ================= -->
+<div class="stage">
+  <h2>1️⃣ Der Keim <span class="badge">germ</span></h2>
+  <canvas id="germCanvas" height="260"></canvas>
+  <div class="controls">
+    <span class="readout">Klicke auf die Zeitachse, um einen Keim zu wählen</span>
+  </div>
+  <div class="kid-explain">Ein Keim ist wie ein <b>Mini-Foto</b> von einem einzigen Punkt in der Zeit — plus dem allerkleinsten Rand drumherum. Alles, was du genau JETZT wahrnehmen kannst.</div>
+  <div class="formula">
+  $$ \mathcal{F}_x \;=\; \varinjlim_{U \ni x} \mathcal{F}(U) \;=\; \bigsqcup_{U \ni x} \mathcal{F}(U) \,\big/\!\sim $$
+  wobei $s \sim t$ genau dann, wenn eine Umgebung $W \subseteq U \cap V$ existiert mit $s|_W = t|_W$.
+  </div>
+  <div class="phd-explain">Der Halm $\mathcal{F}_x$ ist der direkte Limes über das gerichtete System offener Umgebungen von $x$. Ein <b>Keim</b> $[s]_x \in \mathcal{F}_x$ ist eine Äquivalenzklasse von Schnitten, die auf einer beliebig kleinen Umgebung übereinstimmen [[5]].</div>
+</div>
+
+<!-- ================= STAGE 2: HALM ================= -->
+<div class="stage">
+  <h2>2️⃣ Der Halm <span class="badge">stalk 𝓕ₓ</span></h2>
+  <canvas id="stalkCanvas" height="360"></canvas>
+  <div class="kid-explain">An dem gewählten Punkt stapeln wir <b>alle</b> möglichen Beobachtungen übereinander: Licht 👁️, Ton 🔊, Vibration 📳, Luftdruck 🌬️, Temperatur 🌡️. Das ist ein Halm — ein senkrechtes Bündel aus Perspektiven an einem einzigen Punkt.</div>
+  <div class="formula">
+  $$ \mathcal{F}_x \;=\; \mathcal{F}^{\text{vis}}_x \,\oplus\, \mathcal{F}^{\text{aud}}_x \,\oplus\, \mathcal{F}^{\text{vib}}_x \,\oplus\, \mathcal{F}^{\text{prs}}_x \,\oplus\, \mathcal{F}^{\text{tmp}}_x $$
+  </div>
+  <div class="phd-explain">Formal ist der Halm die Faser der étalen Raums $\pi: \text{Ét}(\mathcal{F}) \to X$ über $x$. Die direkte Summe modelliert das Bündel unabhängiger Sinnesmodalitäten als Produkt-Garbe $\mathcal{F} = \prod_i \mathcal{F}^{(i)}$.</div>
+</div>
+
+<!-- ================= STAGE 3: SCHNITT ================= -->
+<div class="stage">
+  <h2>3️⃣ Der Schnitt <span class="badge">section s ∈ 𝓕(U)</span></h2>
+  <canvas id="sectionCanvas" height="280"></canvas>
+  <div class="controls">
+    <span class="readout" id="sectionReadout">Ziehe ein Intervall U auf der Zeitachse auf</span>
+  </div>
+  <div class="kid-explain">Zieh mit der Maus ein <b>Zeitfenster</b> auf (z.B. 3 Sekunden). Was du in dieser Zeit siehst und hörst — die ganze Filmsequenz — ist ein Schnitt.</div>
+  <div class="formula">
+  $$ s \in \mathcal{F}(U), \quad U = (a,b) \subseteq X \text{ offen} $$
+  $$ \rho^U_V : \mathcal{F}(U) \to \mathcal{F}(V), \quad V \subseteq U \quad \text{(Restriktionsmorphismus)} $$
+  </div>
+  <div class="phd-explain">Ein Schnitt $s \in \mathcal{F}(U)$ ist ein Element der abelschen Gruppe (bzw. des Moduls) über der offenen Menge $U$. Die Restriktionen $\rho^U_V$ erfüllen $\rho^U_U = \text{id}$ und $\rho^V_W \circ \rho^U_V = \rho^U_W$ [[5]].</div>
+</div>
+
+<!-- ================= STAGE 4: PRÄGARBE ================= -->
+<div class="stage">
+  <h2>4️⃣ Die Prägarbe <span class="badge">presheaf 𝓕</span></h2>
+  <canvas id="presheafCanvas" height="300"></canvas>
+  <div class="kid-explain">Wir sammeln jetzt <b>für jedes mögliche Zeitfenster</b> die passenden Filmsequenzen ein. Bild und Ton laufen aber noch als getrennte Datenströme — es ist noch nicht garantiert, dass sie zum gleichen Zug gehören!</div>
+  <div class="formula">
+  $$ \mathcal{F} : \mathrm{Op}(X)^{\mathrm{op}} \longrightarrow \mathbf{Ab}, \quad U \mapsto \mathcal{F}(U) $$
+  </div>
+  <div class="phd-explain">Eine Prägarbe ist ein kontravarianter Funktor von der Kategorie $\mathrm{Op}(X)$ der offenen Mengen von $X$ (mit Inklusionen als Morphismen) in eine Zielkategorie, etwa $\mathbf{Ab}$, $\mathbf{Set}$ oder $\mathbf{Mod}_R$ [[5]] [[6]].</div>
+</div>
+
+<!-- ================= STAGE 5: GARBE ================= -->
+<div class="stage">
+  <h2>5️⃣ Die Garbe <span class="badge">sheaf — Verklebung ✓</span></h2>
+  <canvas id="sheafCanvas" height="340"></canvas>
+  <div class="controls">
+    <button id="glueBtn">🧩 Zwei Schnitte verkleben</button>
+    <span class="readout" id="glueReadout">Bereit</span>
+  </div>
+  <div class="kid-explain">Jetzt der Zauber: Wenn Bild-Schnitt und Ton-Schnitt auf ihrem <b>überlappenden Zeitstück</b> perfekt zusammenpassen, dann verkleben sie zu einem einzigen, eindeutigen Objekt: <b>DER Zug</b>. Kein anderer, keiner mehr!</div>
+  <div class="formula">
+  <b>Lokalitätsaxiom:</b>
+  $$ \text{Ist } \{U_i\} \text{ Überdeckung von } U \text{ und } s|_{U_i} = t|_{U_i} \;\forall i, \;\text{dann } s = t. $$
+  <b>Verklebungsaxiom:</b>
+  $$ \text{Sind } s_i \in \mathcal{F}(U_i) \text{ mit } s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}, \;\text{dann } \exists\, s \in \mathcal{F}(U) : s|_{U_i} = s_i. $$
+  </div>
+  <div class="phd-explain">Eine Garbe ist eine Prägarbe $\mathcal{F}$, für die die folgende Sequenz für jede offene Überdeckung $U = \bigcup_i U_i$ ein <b>Equalizer</b> ist:
+  $$ \mathcal{F}(U) \;\longrightarrow\; \prod_i \mathcal{F}(U_i) \;\rightrightarrows\; \prod_{i,j} \mathcal{F}(U_i \cap U_j) $$
+  Äquivalent: $\mathcal{F}$ ist ein Garben-Funktor gdw. er Kolimits offener Überdeckungen respektiert [[5]].</div>
+</div>
+
+<div class="stage" style="text-align:center; background: linear-gradient(135deg, #ffb84d22, #ff6b9d22);">
+  <h2 style="justify-content:center;">✨ Das Ergebnis</h2>
+  <p style="font-size:1.15em;">Aus <b>Keimen</b> (Punkte) → <b>Halmen</b> (Bündel an Punkten) → <b>Schnitten</b> (lokale Filme) → <b>Prägarbe</b> (Sammlung aller Filme) → <b>Garbe</b> (verklebte Realität) entsteht das eine, eindeutige globale Ereignis: <b>der vorbeifahrende Zug</b>.</p>
+</div>
+
+</div>
+
+<script>
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+const state = {
+  t: 0,              // Zugposition in [-1, 1]
+  playing: false,
+  soundOn: false,
+  selectedX: 0.5,    // gewählter Zeitpunkt in [0,1]
+  intervalStart: null,
+  intervalEnd: null,
+  glued: false,
+  audioCtx: null,
+  osc: null,
+  gain: null
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr;
+  c.height = c.height * dpr;
+  ctx.scale(dpr, dpr);
+  c.logicalWidth = rect.width;
+  c.logicalHeight = c.height / dpr;
+  return { c, ctx };
+}
+
+function timeAxis(ctx, w, y, label='Zeit t') {
+  ctx.strokeStyle = '#556';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(40, y);
+  ctx.lineTo(w-20, y);
+  ctx.stroke();
+  // ticks
+  ctx.fillStyle = '#8892b0';
+  ctx.font = '11px monospace';
+  for (let i = 0; i <= 10; i++) {
+    const x = 40 + (w-60) * i/10;
+    ctx.beginPath();
+    ctx.moveTo(x, y-4);
+    ctx.lineTo(x, y+4);
+    ctx.stroke();
+    if (i % 2 === 0) ctx.fillText((i/10).toFixed(1)+'s', x-10, y+18);
+  }
+  ctx.fillStyle = '#e8ecf7';
+  ctx.font = '13px sans-serif';
+  ctx.fillText(label, w-70, y-8);
+}
+
+function xToTime(x, w) { return Math.max(0, Math.min(1, (x-40)/(w-60))); }
+function timeToX(t, w) { return 40 + t*(w-60); }
+
+// ============================================================
+// STAGE 0: MASTER SCENE
+// ============================================================
+const scene = setupCanvas('scene');
+function drawScene() {
+  const { c, ctx } = scene;
+  const w = c.logicalWidth, h = c.logicalHeight;
+  ctx.clearRect(0, 0, w, h);
+  
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0, 0, 0, h*0.7);
+  sky.addColorStop(0, '#1a2050');
+  sky.addColorStop(1, '#2a3070');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, w, h*0.7);
+  
+  // Ground
+  ctx.fillStyle = '#0d1030';
+  ctx.fillRect(0, h*0.7, w, h*0.3);
+  
+  // Rails
+  ctx.strokeStyle = '#556';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, h*0.65);
+  ctx.lineTo(w, h*0.65);
+  ctx.moveTo(0, h*0.72);
+  ctx.lineTo(w, h*0.72);
+  ctx.stroke();
+  // Ties
+  for (let x = 0; x < w; x += 30) {
+    ctx.fillStyle = '#334';
+    ctx.fillRect(x, h*0.65, 20, 8);
+  }
+  
+  // Observer
+  const obsX = w * 0.5;
+  const obsY = h * 0.82;
+  ctx.fillStyle = '#4dd0e1';
+  ctx.beginPath();
+  ctx.arc(obsX, obsY, 8, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillRect(obsX-3, obsY+6, 6, 20);
+  ctx.font = '11px sans-serif';
+  ctx.fillText('👁️', obsX-8, obsY-12);
+  
+  // Train
+  const trainX = w * (0.1 + state.t * 0.9);
+  const trainY = h * 0.55;
+  const trainW = 180, trainH = 55;
+  
+  // Body
+  const bodyGrad = ctx.createLinearGradient(trainX, trainY, trainX, trainY+trainH);
+  bodyGrad.addColorStop(0, '#ffb84d');
+  bodyGrad.addColorStop(1, '#cc8800');
+  ctx.fillStyle = bodyGrad;
+  ctx.fillRect(trainX, trainY, trainW, trainH);
+  
+  // Nose
+  ctx.beginPath();
+  ctx.moveTo(trainX + trainW, trainY);
+  ctx.lineTo(trainX + trainW + 30, trainY + trainH/2);
+  ctx.lineTo(trainX + trainW, trainY + trainH);
+  ctx.fill();
+  
+  // Windows
+  ctx.fillStyle = '#4dd0e1';
+  for (let i = 0; i < 4; i++) {
+    ctx.fillRect(trainX + 15 + i*40, trainY + 8, 28, 18);
+  }
+  
+  // Red stripe
+  ctx.fillStyle = '#ff6b9d';
+  ctx.fillRect(trainX, trainY + 32, trainW + 25, 4);
+  
+  // Wheels
+  ctx.fillStyle = '#222';
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.arc(trainX + 30 + i*60, trainY + trainH + 5, 10, 0, Math.PI*2);
+    ctx.fill();
+  }
+  
+  // Speed lines
+  if (state.playing) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 5; i++) {
+      const y = trainY + 10 + i*10;
+      ctx.beginPath();
+      ctx.moveTo(trainX - 30 - Math.random()*20, y);
+      ctx.lineTo(trainX - 5, y);
+      ctx.stroke();
+    }
+  }
+  
+  // Update time readout
+  document.getElementById('timeReadout').textContent = 't = ' + (state.t * 3).toFixed(2) + ' s';
+  
+  // Ereignis-Markierung: aktueller Zeitpunkt x* auf Basisraum
+  const xStar = w * 0.5;
+  ctx.fillStyle = '#ff6b9d';
+  ctx.beginPath();
+  ctx.arc(xStar, h*0.65, 6, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,107,157,0.4)';
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(xStar, 0);
+  ctx.lineTo(xStar, h);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ============================================================
+// STAGE 1: KEIM
+// ============================================================
+const germ = setupCanvas('germCanvas');
+function drawGerm() {
+  const { c, ctx } = germ;
+  const w = c.logicalWidth, h = c.logicalHeight;
+  ctx.clearRect(0, 0, w, h);
+  
+  // Zeitachse
+  const axisY = h * 0.75;
+  timeAxis(ctx, w, axisY, 'Basisraum X (Zeit)');
+  
+  // Gewählter Punkt x
+  const px = timeToX(state.selectedX, w);
+  
+  // Winzige Umgebung U = (x-ε, x+ε)
+  const eps = 25;
+  const grad = ctx.createLinearGradient(px-eps, 0, px+eps, 0);
+  grad.addColorStop(0, 'rgba(255,184,77,0)');
+  grad.addColorStop(0.5, 'rgba(255,184,77,0.35)');
+  grad.addColorStop(1, 'rgba(255,184,77,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(px-eps, axisY-40, eps*2, 80);
+  
+  // Punkt x selbst
+  ctx.fillStyle = '#ff6b9d';
+  ctx.beginPath();
+  ctx.arc(px, axisY, 7, 0, Math.PI*2);
+  ctx.fill();
+  
+  // ε-Klammern
+  ctx.strokeStyle = '#ffb84d';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(px-eps, axisY-8); ctx.lineTo(px-eps, axisY+8);
+  ctx.moveTo(px+eps, axisY-8); ctx.lineTo(px+eps, axisY+8);
+  ctx.stroke();
+  
+  // Beschriftung
+  ctx.fillStyle = '#ff6b9d';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('x', px-4, axisY+34);
+  ctx.fillStyle = '#ffb84d';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('U = (x−ε, x+ε)', px-45, axisY-50);
+  
+  // Zoom-Lupe: der Keim als Mini-Foto
+  const zx = w*0.15, zy = h*0.25, zr = 60;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(zx, zy, zr, 0, Math.PI*2);
+  ctx.clip();
+  // Mini-Zug-Ausschnitt
+  ctx.fillStyle = '#ffb84d';
+  ctx.fillRect(zx-40, zy-15, 80, 30);
+  ctx.fillStyle = '#4dd0e1';
+  ctx.fillRect(zx-30, zy-10, 20, 12);
+  ctx.fillRect(zx-5, zy-10, 20, 12);
+  ctx.fillRect(zx+20, zy-10, 15, 12);
+  ctx.fillStyle = '#ff6b9d';
+  ctx.fillRect(zx-40, zy+2, 80, 2);
+  ctx.restore();
+  ctx.strokeStyle = '#ff6b9d';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(zx, zy, zr, 0, Math.PI*2);
+  ctx.stroke();
+  // Lupen-Verbindung
+  ctx.strokeStyle = 'rgba(255,107,157,0.4)';
+  ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo(zx+zr*0.7, zy+zr*0.7);
+  ctx.lineTo(px, axisY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#e8ecf7';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Keim [s]ₓ', zx-30, zy+zr+18);
+  
+  // Audio-Keim (kleine Wellenform rechts)
+  const ax = w*0.85, ay = h*0.25;
+  ctx.strokeStyle = '#4dd0e1';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < 80; i++) {
+    const t = i/80;
+    const yy = ay + Math.sin(t*20 + state.selectedX*10) * 15 * Math.exp(-Math.abs(t-0.5)*3);
+    if (i === 0) ctx.moveTo(ax-40+i, yy);
+    else ctx.lineTo(ax-40+i, yy);
+  }
+  ctx.stroke();
+  ctx.fillStyle = '#4dd0e1';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Audio-Keim', ax-30, ay+40);
+}
+
+// ============================================================
+// STAGE 2: HALM
+// ============================================================
+const stalk = setupCanvas('stalkCanvas');
+function drawStalk() {
+  const { c, ctx } = stalk;
+  const w = c.logicalWidth, h = c.logicalHeight;
+  ctx.clearRect(0, 0, w, h);
+  
+  const axisY = h * 0.88;
+  timeAxis(ctx, w, axisY, 'Basisraum X');
+  
+  const px = timeToX(state.selectedX, w);
+  
+  // Vertikale Faser (Halm) über x
+  const fiberGrad = ctx.createLinearGradient(px, 20, px, axisY);
+  fiberGrad.addColorStop(0, 'rgba(77,208,225,0.05)');
+  fiberGrad.addColorStop(0.5, 'rgba(77,208,225,0.25)');
+  fiberGrad.addColorStop(1, 'rgba(77,208,225,0.05)');
+  ctx.fillStyle = fiberGrad;
+  ctx.fillRect(px-60, 20, 120, axisY-30);
+  
+  // Faser-Rahmen
+  ctx.strokeStyle = 'rgba(77,208,225,0.6)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6,4]);
+  ctx.strokeRect(px-60, 20, 120, axisY-30);
+  ctx.setLineDash([]);
+  
+  // Fünf Modalitäten als übereinandergestapelte "Schichten"
+  const modalities = [
+    { icon: '👁️', label: 'Visuell 𝓕ᵛⁱˢ', color: '#ffb84d' },
+    { icon: '🔊', label: 'Akustisch 𝓕ᵃᵘᵈ', color: '#4dd0e1' },
+    { icon: '📳', label: 'Vibration 𝓕ᵛⁱᵇ', color: '#ff6b9d' },
+    { icon: '🌬️', label: 'Luftdruck 𝓕ᵖʳˢ', color: '#a78bfa' },
+    { icon: '🌡️', label: 'Temperatur 𝓕ᵗᵐᵖ', color: '#f87171' }
+  ];
+  
+  modalities.forEach((m, i) => {
+    const y = 45 + i * 50;
+    // Schicht-Box
+    ctx.fillStyle = m.color + '33';
+    ctx.strokeStyle = m.color;
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(px-50, y, 100, 36);
+    ctx.strokeRect(px-50, y, 100, 36);
+    // Icon
+    ctx.font = '20px sans-serif';
+    ctx.fillText(m.icon, px-40, y+24);
+    // Label neben Faser
+    ctx.fillStyle = m.color;
+    ctx.font = 'bold 12px sans-serif';
+    if (i % 2 === 0) ctx.fillText(m.label, px+70, y+22);
+    else ctx.fillText(m.label, px-180, y+22);
+    // Kleiner "Wert" in der Schicht
+    ctx.fillStyle = '#e8ecf7';
+    ctx.font = '11px monospace';
+    const val = (Math.sin(state.selectedX*10 + i)*50 + 50).toFixed(1);
+    ctx.fillText(val, px-8, y+24);
+  });
+  
+  // Punkt x auf Achse
+  ctx.fillStyle = '#ff6b9d';
+  ctx.beginPath();
+  ctx.arc(px, axisY, 7, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#ff6b9d';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('x', px-4, axisY+22);
+  
+  // Titel des Halms
+  ctx.fillStyle = '#4dd0e1';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Halm 𝓕ₓ  =  ⨁ᵢ 𝓕ᵢ,ₓ', px-70, 15);
+}
+
+// ============================================================
+// STAGE 3: SCHNITT
+// ============================================================
+const section = setupCanvas('sectionCanvas');
+let dragging = false;
+function drawSection() {
+  const { c, ctx } = section;
+  const w = c.logicalWidth, h = c.logicalHeight;
+  ctx.clearRect(0, 0, w, h);
+  
+  const axisY = h * 0.82;
+  timeAxis(ctx, w, axisY, 'Basisraum X');
+  
+  // Intervall U hervorheben
+  if (state.intervalStart !== null && state.intervalEnd !== null) {
+    const a = Math.min(state.intervalStart, state.intervalEnd);
+    const b = Math.max(state.intervalStart, state.intervalEnd);
+    const xa = timeToX(a, w), xb = timeToX(b, w);
+    
+    // Intervall-Band
+    ctx.fillStyle = 'rgba(255,184,77,0.15)';
+    ctx.fillRect(xa, 20, xb-xa, axisY-30);
+    ctx.strokeStyle = '#ffb84d';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(xa, 20, xb-xa, axisY-30);
+    
+    // Visueller Schnitt: Zug-Silhouetten über Zeit
+    const nFrames = Math.max(3, Math.floor((xb-xa)/40));
+    for (let i = 0; i < nFrames; i++) {
+      const frac = i/(nFrames-1);
+      const fx = xa + 20 + frac*(xb-xa-40);
+      const fy = 55;
+      // Mini-Zug (bewegt sich)
+      ctx.fillStyle = '#ffb84d';
+      ctx.fillRect(fx-15, fy, 30, 14);
+      ctx.fillStyle = '#4dd0e1';
+      ctx.fillRect(fx-10, fy+2, 8, 5);
+      ctx.fillRect(fx+2, fy+2, 8, 5);
+    }
+    ctx.fillStyle = '#ffb84d';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('👁️ Visueller Schnitt sᵥᵢₛ ∈ 𝓕ᵛⁱˢ(U)', xa+5, 45);
+    
+    // Audio-Schnitt: Doppler-Wellenform
+    ctx.strokeStyle = '#4dd0e1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const wavY = 130;
+    for (let i = 0; i < xb-xa; i++) {
+      const t = i/(xb-xa);
+      // Doppler: Frequenz ändert sich, Amplitude hat Peak in der Mitte
+      const freq = 15 - t*8;
+      const amp = 20 * Math.exp(-Math.pow((t-0.5)*3, 2));
+      const yy = wavY + Math.sin(t*100*freq/10) * amp;
+      if (i === 0) ctx.moveTo(xa+i, yy);
+      else ctx.lineTo(xa+i, yy);
+    }
+    ctx.stroke();
+    ctx.fillStyle = '#4dd0e1';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('🔊 Audio-Schnitt sₐᵤd ∈ 𝓕ᵃᵘᵈ(U)', xa+5, 115);
+    
+    // Intervall-Labels
+    ctx.fillStyle = '#ffb84d';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('a', xa-4, axisY+34);
+    ctx.fillText('b', xb-4, axisY+34);
+    ctx.fillText('U = (a,b)', (xa+xb)/2-30, 15);
+    
+    document.getElementById('sectionReadout').textContent =
+      `U = (${a.toFixed(2)}, ${b.toFixed(2)}) s  —  |U| = ${(b-a).toFixed(2)} s`;
+  } else {
+    ctx.fillStyle = '#8892b0';
+    ctx.font = '13px sans-serif';
+    ctx.fillText('← Ziehe mit der Maus ein Intervall U auf der Zeitachse auf →', w/2-180, h/2);
+  }
+}
+
+// Maus-Interaktion für Schnitt
+section.c.addEventListener('pointerdown', e => {
+  const rect = section.c.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  state.intervalStart = xToTime(x, section.c.logicalWidth);
+  state.intervalEnd = state.intervalStart;
+  dragging = true;
+  drawSection();
+});
+section.c.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const rect = section.c.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  state.intervalEnd = xToTime(x, section.c.logicalWidth);
+  drawSection();
+});
+window.addEventListener('pointerup', () => { dragging = false; });
+
+// ============================================================
+// STAGE 4: PRÄGARBE
+// ============================================================
+const presheaf = setupCanvas('presheafCanvas');
+function drawPresheaf() {
+  const { c, ctx } = presheaf;
+  const w = c.logicalWidth, h = c.logicalHeight;
+  ctx.clearRect(0, 0, w, h);
+  
+  const axisY = h * 0.85;
+  timeAxis(ctx, w, axisY, 'Basisraum X');
+  
+  // Verschiedene offene Mengen U₁, U₂, U₃, ... als geschachtelte Bögen
+  const intervals = [
+    { a: 0.05, b: 0.95, y: 40,  label: 'U₁', color: '#ffb84d' },
+    { a: 0.15, b: 0.60, y: 75,  label: 'U₂', color: '#4dd0e1' },
+    { a: 0.40, b: 0.85, y: 110, label: 'U₃', color: '#ff6b9d' },
+    { a: 0.25, b: 0.45, y: 145, label: 'U₄', color: '#a78bfa' },
+    { a: 0.55, b: 0.75, y: 180, label: 'U₅', color: '#f87171' }
+  ];
+  
+  intervals.forEach(iv => {
+    const xa = timeToX(iv.a, w), xb = timeToX(iv.b, w);
+    // Bogen von xa zu xb
+    ctx.strokeStyle = iv.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(xa, axisY);
+    ctx.bezierCurveTo(xa, iv.y, xb, iv.y, xb, axisY);
+    ctx.stroke();
+    // Schnitt-Box
+    ctx.fillStyle = iv.color + '33';
+    ctx.fillRect((xa+xb)/2 - 40, iv.y - 12, 80, 22);
+    ctx.strokeStyle = iv.color;
+    ctx.strokeRect((xa+xb)/2 - 40, iv.y - 12, 80, 22);
+    ctx.fillStyle = iv.color;
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText(`s ∈ 𝓕(${iv.label})`, (xa+xb)/2 - 32, iv.y + 4);
+  });
+  
+  // Restriktionspfeil ρ: 𝓕(U₁) → 𝓕(U₂)
+  ctx.strokeStyle = '#e8ecf7';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(w*0.35, 40);
+  ctx.lineTo(w*0.35, 75);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Pfeilspitze
+  ctx.beginPath();
+  ctx.moveTo(w*0.35-4, 71);
+  ctx.lineTo(w*0.35, 76);
+  ctx.lineTo(w*0.35+4, 71);
+  ctx.stroke();
+  ctx.fillStyle = '#e8ecf7';
+  ctx.font = 'italic 11px sans-serif';
+  ctx.fillText('ρ^{U₁}_{U₂}', w*0.36, 60);
+  
+  // Titel
+  ctx.fillStyle = '#a78bfa';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Prägarbe  𝓕 : Op(X)ᵒᵖ → Ab', 40, 20);
+}
+
+// ============================================================
+// STAGE 5: GARBE (Verklebung)
+// ============================================================
+const sheaf = setupCanvas('sheafCanvas');
+function drawSheaf() {
+  const { c, ctx } = sheaf;
+  const w = c.logicalWidth, h = c.logicalHeight;
+  ctx.clearRect(0, 0, w, h);
+  
+  const axisY = h * 0.85;
+  timeAxis(ctx, w, axisY, 'Basisraum X');
+  
+  // Zwei überlappende Intervalle U und V
+  const uA = 0.15, uB = 0.55;
+  const vA = 0.45, vB = 0.85;
+  const xUA = timeToX(uA, w), xUB = timeToX(uB, w);
+  const xVA = timeToX(vA, w), xVB = timeToX(vB, w);
+  
+  // U-Band
+  ctx.fillStyle = 'rgba(255,184,77,0.18)';
+  ctx.fillRect(xUA, 40, xUB-xUA, 80);
+  ctx.strokeStyle = '#ffb84d';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(xUA, 40, xUB-xUA, 80);
+  ctx.fillStyle = '#ffb84d';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('sᵤ ∈ 𝓕(U)', xUA+8, 55);
+  
+  // V-Band
+  ctx.fillStyle = 'rgba(77,208,225,0.18)';
+  ctx.fillRect(xVA, 140, xVB-xVA, 80);
+  ctx.strokeStyle = '#4dd0e1';
+  ctx.strokeRect(xVA, 140, xVB-xVA, 80);
+  ctx.fillStyle = '#4dd0e1';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('sᵥ ∈ 𝓕(V)', xVA+8, 155);
+  
+  // Überlappung U ∩ V
+  const xIA = Math.max(xUA, xVA), xIB = Math.min(xUB, xVB);
+  ctx.fillStyle = 'rgba(255,107,157,0.35)';
+  ctx.fillRect(xIA, axisY-40, xIB-xIA, 30);
+  ctx.strokeStyle = '#ff6b9d';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4,3]);
+  ctx.strokeRect(xIA, axisY-40, xIB-xIA, 30);
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#ff6b9d';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('U ∩ V', (xIA+xIB)/2 - 20, axisY-20);
+  
+  // Kompatibilitätscheck: sᵤ|_{U∩V} = sᵥ|_{U∩V} ?
+  ctx.strokeStyle = '#ff6b9d';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo((xIA+xIB)/2, 120);
+  ctx.lineTo((xIA+xIB)/2, axisY-40);
+  ctx.moveTo((xIA+xIB)/2, 140);
+  ctx.lineTo((xIA+xIB)/2, axisY-40);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Verklebtes globales Objekt (wenn glued)
+  if (state.glued) {
+    // Großer Bogen über U ∪ V
+    const xGA = Math.min(xUA, xVA), xGB = Math.max(xUB, xVB);
+    ctx.strokeStyle = '#a78bfa';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(xGA, axisY);
+    ctx.bezierCurveTo(xGA, axisY-90, xGB, axisY-90, xGB, axisY);
+    ctx.stroke();
+    // Glow
+    ctx.shadowColor = '#a78bfa';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = 'rgba(167,139,250,0.25)';
+    ctx.fillRect(xGA, axisY-75, xGB-xGA, 20);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#a78bfa';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.fillText('✓ ∃! s ∈ 𝓕(U ∪ V)  —  DER Zug!', (xGA+xGB)/2 - 100, axisY-60);
+  } else {
+    ctx.fillStyle = '#8892b0';
+    ctx.font = 'italic 12px sans-serif';
+    ctx.fillText('Drücke "Verkleben" um zu prüfen: sᵤ|_{U∩V} = sᵥ|_{U∩V} ?', 40, axisY-60);
+  }
+  
+  // Titel
+  ctx.fillStyle = state.glued ? '#a78bfa' : '#e8ecf7';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Garbe: Lokalität + Verklebung', 40, 25);
+}
+
+// ============================================================
+// AUDIO: Doppler-Effekt
+// ============================================================
+function initAudio() {
+  if (state.audioCtx) return;
+  state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  state.osc = state.audioCtx.createOscillator();
+  state.gain = state.audioCtx.createGain();
+  state.osc.type = 'sawtooth';
+  state.osc.frequency.value = 220;
+  state.gain.gain.value = 0;
+  state.osc.connect(state.gain);
+  state.gain.connect(state.audioCtx.destination);
+  state.osc.start();
+}
+function updateDoppler() {
+  if (!state.soundOn || !state.osc) return;
+  // Doppler: Zug bewegt sich von t=0 (weit weg, hoch) über t=0.5 (bei Beobachter) nach t=1 (weit weg, tief)
+  // Beobachter bei Position 0.5, Zug bei state.t
+  const relPos = state.t - 0.5;                 // -0.5 .. +0.5
+  const doppler = 1 - relPos * 0.6;             // > 1 wenn Zug sich nähert, < 1 wenn entfernt
+  const baseFreq = 280;
+  const distance = Math.abs(relPos) + 0.1;
+  const amplitude = 0.15 / (distance * 2);
+  state.osc.frequency.setTargetAtTime(baseFreq * doppler, state.audioCtx.currentTime, 0.05);
+  state.gain.gain.setTargetAtTime(Math.min(0.25, amplitude), state.audioCtx.currentTime, 0.05);
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+function render() {
+  drawScene();
+  drawGerm();
+  drawStalk();
+  drawSection();
+  drawPresheaf();
+  drawSheaf();
+  updateDoppler();
+}
+
+let lastT = performance.now();
+function loop(now) {
+  const dt = (now - lastT) / 1000;
+  lastT = now;
+  if (state.playing) {
+    state.t += dt * 0.35;
+    if (state.t > 1.1) state.t = -0.1;
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// BUTTONS & INTERACTIONS
+// ============================================================
+document.getElementById('playBtn').addEventListener('click', e => {
+  state.playing = !state.playing;
+  e.target.textContent = state.playing ? '⏸ Pause' : '▶ Zug fahren lassen';
+});
+
+document.getElementById('soundBtn').addEventListener('click', e => {
+  state.soundOn = !state.soundOn;
+  if (state.soundOn) {
+    initAudio();
+    if (state.audioCtx.state === 'suspended') state.audioCtx.resume();
+  } else if (state.gain) {
+    state.gain.gain.setTargetAtTime(0, state.audioCtx.currentTime, 0.05);
+  }
+  e.target.textContent = state.soundOn ? '🔇 Doppler-Sound aus' : '🔊 Doppler-Sound an';
+});
+
+document.getElementById('glueBtn').addEventListener('click', () => {
+  state.glued = !state.glued;
+  document.getElementById('glueReadout').textContent = state.glued
+    ? '✓ Kompatibel — eindeutiges globales s existiert!'
+    : 'Bereit';
+  drawSheaf();
+});
+
+// Keim/Halm: Klick auf Zeitachse wählt Punkt x
+[germ.c, stalk.c].forEach(canvas => {
+  canvas.addEventListener('pointerdown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    state.selectedX = xToTime(x, canvas.logicalWidth);
+    render();
+  });
+});
+
+// Start
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
