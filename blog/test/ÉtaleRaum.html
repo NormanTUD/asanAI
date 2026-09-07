@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Étale Raum & Étale Kohomologie — visuell</title>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root{
+    --bg:#0b0d17; --bg2:#141828; --fg:#e9ecff; --muted:#9aa3c7;
+    --accent:#7cf9d0; --accent2:#ff77c8; --accent3:#ffd166; --line:#2a2f4a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(1200px 800px at 20% -10%, #1b1f38 0%, var(--bg) 60%) fixed;color:var(--fg);font-family:"Inter","Segoe UI",system-ui,sans-serif;line-height:1.55}
+  header{padding:60px 8vw 30px;text-align:center;position:relative;overflow:hidden}
+  header h1{font-size:clamp(2rem,5vw,3.6rem);margin:0;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em}
+  header p{color:var(--muted);max-width:760px;margin:14px auto 0;font-size:1.05rem}
+  main{max-width:1180px;margin:0 auto;padding:20px 4vw 100px}
+  section{background:linear-gradient(180deg,var(--bg2),#10142400);border:1px solid var(--line);border-radius:22px;padding:28px;margin:28px 0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  section h2{margin-top:0;font-size:1.6rem;color:var(--accent)}
+  section h3{color:var(--accent2);margin-top:1.6em}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  canvas{width:100%;height:360px;background:#070912;border-radius:14px;border:1px solid var(--line);display:block;touch-action:none}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;align-items:center}
+  button,select,input[type=range]{background:#1a2038;color:var(--fg);border:1px solid var(--line);padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit}
+  button:hover{background:#242c4d;border-color:var(--accent)}
+  label{color:var(--muted);font-size:.9rem;display:flex;align-items:center;gap:8px}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#1c2340;color:var(--accent);font-size:.8rem;border:1px solid var(--line);margin-right:6px}
+  .callout{border-left:3px solid var(--accent);padding:10px 16px;background:#101528;border-radius:8px;margin:14px 0;color:#cfd6ff}
+  code,.mono{font-family:"JetBrains Mono",Menlo,monospace;background:#0d1224;padding:2px 6px;border-radius:6px;color:var(--accent3)}
+  footer{color:var(--muted);text-align:center;padding:20px;font-size:.9rem}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;margin-top:8px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Étale Raum & Étale Kohomologie</h1>
+  <p>Eine visuelle Reise durch eine der schönsten Ideen der modernen Mathematik — von Garben über Überlagerungen bis zu Grothendiecks Traum, Topologie auch dort zu treiben, wo es „keine offenen Kugeln“ gibt.</p>
+</header>
+
+<main>
+
+<!-- 1. Intuition: Étaler Raum einer Garbe -->
+<section>
+  <h2>1 · Der étale Raum einer Garbe — „Halme aufgeschichtet über dem Basisraum“</h2>
+  <p>Eine <b>Garbe</b> \( \mathcal{F} \) auf einem Raum \(X\) ordnet jedem offenen \(U\subset X\) eine Menge \( \mathcal{F}(U)\) zu (z.B. stetige Funktionen). Der <b>étale Raum</b> \( \mathrm{Ét}(\mathcal{F}) \) ist die disjunkte Vereinigung aller <em>Halme</em> \( \mathcal{F}_x = \varinjlim_{x\in U}\mathcal{F}(U) \), zusammengeklebt zu einem Raum mit einer Projektion</p>
+  <p style="text-align:center">\[ \pi:\mathrm{Ét}(\mathcal{F})\longrightarrow X,\quad \pi^{-1}(x)=\mathcal{F}_x \]</p>
+  <p>Ein <b>Schnitt</b> von \(\mathcal{F}\) über \(U\) ist dasselbe wie ein stetiger Schnitt \(s:U\to \mathrm{Ét}(\mathcal{F})\) mit \(\pi\circ s=\mathrm{id}\). Die Projektion ist ein <em>lokaler Homöomorphismus</em> — genau das nennt man <b>étale</b>.</p>
+
+  <div class="grid">
+    <div>
+      <canvas id="etaleSpace"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:#7cf9d0"></span>Basisraum \(X\)</span>
+        <span><span class="dot" style="background:#ff77c8"></span>Halme \(\mathcal{F}_x\)</span>
+        <span><span class="dot" style="background:#ffd166"></span>Schnitt \(s\)</span>
+      </div>
+      <div class="controls">
+        <label>Anzahl Blätter: <input id="sheets" type="range" min="1" max="6" value="3"></label>
+        <button id="wiggle">Schnitt wackeln</button>
+      </div>
+    </div>
+    <div>
+      <div class="callout">
+        <b>Bild:</b> Über jedem Punkt \(x\in X\) (untere Linie) schwebt der Halm \(\mathcal{F}_x\) (senkrechte Punkte). Der étale Raum ist die Gesamtheit aller dieser Halme. Ein Schnitt „läuft“ horizontal auf einer Ebene.
+      </div>
+      <div class="callout">
+        Weil \(\pi\) ein <b>lokaler Homöomorphismus</b> ist, sieht der étale Raum lokal genau aus wie \(X\) — nur „mehrblättrig“. Genau diese Idee überträgt Grothendieck in die algebraische Geometrie.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Étale Überlagerungen -->
+<section>
+  <h2>2 · Étale Morphismen = algebraische Überlagerungen</h2>
+  <p>In der algebraischen Geometrie ist ein Morphismus \(f:Y\to X\) von Schemata <b>étale</b>, wenn er <em>flach</em> und <em>unverzweigt</em> ist. Anschaulich: eine „glatte, unverzweigte Überlagerung“ — das algebraische Analogon eines lokalen Homöomorphismus, das sogar in positiver Charakteristik funktioniert.</p>
+
+  <div class="grid">
+    <div>
+      <canvas id="covering"></canvas>
+      <div class="controls">
+        <label>Grad n: <input id="deg" type="range" min="1" max="6" value="3"></label>
+        <button id="rotate">Monodromie drehen</button>
+      </div>
+    </div>
+    <div>
+      <p>Beispiel: die Abbildung \( z\mapsto z^n \) auf \(\mathbb{C}^\times\) ist eine <b>étale Überlagerung</b> vom Grad \(n\). Über jedem Punkt liegen \(n\) Urbilder, und wenn man einen Weg um 0 zieht, permutieren die Blätter (Monodromie).</p>
+        <p>In der Sprache der Schemata: \(\operatorname{Spec} k[t,t^{-1}]\to \operatorname{Spec} k[t,t^{-1}],\; t\mapsto t^n\) ist étale, sofern \(\operatorname{char}(k)\nmid n\).</p>
+      <div class="callout">
+        <b>Definition (Stacks Project):</b> \(f\) ist étale \(\iff\) formal étale + lokal von endlicher Präsentation \(\iff\) flach + \(\Omega_{Y/X}=0\).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Die étale Site -->
+<section>
+  <h2>3 · Grothendiecks Sprung: die étale Site</h2>
+  <p>In Zariski-Topologie sind offene Mengen zu wenige — Kohomologie mit \( \mathbb{Z}/\ell \)-Koeffizienten wird trivial. Grothendieck ersetzt „offene Mengen“ durch <b>étale Morphismen</b> \(U\to X\). Überdeckungen sind Familien \(\{U_i\to X\}\) mit surjektivem \(\bigsqcup U_i\to X\).</p>
+  <p>Das ist eine <b>Grothendieck-Topologie</b> — man braucht keine Punkte, nur eine Kategorie mit Überdeckungsbegriff. Darauf definiert man Garben und ihre Kohomologie:</p>
+  <p style="text-align:center">\[ H^i_{\text{ét}}(X,\mathcal{F}) := R^i\Gamma(X_{\text{ét}},\mathcal{F}) \]</p>
+
+  <div class="grid">
+    <div>
+      <canvas id="site"></canvas>
+      <div class="controls">
+        <button id="addCover">+ étale Überdeckung hinzufügen</button>
+        <button id="resetSite">Reset</button>
+      </div>
+    </div>
+    <div>
+      <div class="callout">
+        Jeder farbige „Deckel“ ist ein étaler Morphismus \(U_i\to X\). Zusammen bilden sie eine Überdeckung — auch wenn sie sich in „mehreren Blättern“ übereinanderlegen. Genau das gibt es in klassischer Topologie nicht!
+      </div>
+      <p><span class="pill">Merke</span> In der étalen Site gilt: <em>Überdeckung ≠ Vereinigung offener Teilmengen</em>, sondern surjektive étale Familie.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Čech / Kohomologie -->
+<section>
+  <h2>4 · Čech-Kohomologie visuell — das „Kleben“ auf Überschneidungen</h2>
+  <p>Für eine Überdeckung \(\mathcal{U}=\{U_i\to X\}\) und eine Garbe \(\mathcal{F}\) bildet man den Čech-Komplex</p>
+  <p style="text-align:center">\[ \check{C}^p(\mathcal{U},\mathcal{F})=\prod_{i_0<\dots<i_p}\mathcal{F}(U_{i_0}\times_X\cdots\times_X U_{i_p}) \]</p>
+  <p>mit Rand \( d\). Die Kohomologie \(\check H^p\) misst, wie stark lokale Schnitte <em>nicht</em> zu globalen zusammenkleben. Klicke Punkte an, um Schnitte auf Überlappungen zu setzen und den Kozykel-Test zu sehen.</p>
+
+  <canvas id="cech" style="height:380px"></canvas>
+  <div class="controls">
+    <button id="toggleCocycle">Kozykel-Bedingung prüfen</button>
+    <button id="resetCech">Reset</button>
+    <span id="cechStatus" style="color:var(--muted)"></span>
+  </div>
+</section>
+
+<!-- 5. Weil, ℓ-adisch -->
+<section>
+  <h2>5 · Warum das Ganze? — Weil-Vermutungen &amp; \(\ell\)-adische Kohomologie</h2>
+  <p>Étale Kohomologie wurde von Grothendieck erfunden, um die <b>Weil-Vermutungen</b> zu beweisen: für glatte projektive Varietäten \(X\) über \(\mathbb{F}_q\) zählt</p>
+  <p style="text-align:center">\[ \#X(\mathbb{F}_{q^n}) = \sum_{i=0}^{2\dim X}(-1)^i \operatorname{tr}(\mathrm{Frob}^n\mid H^i_{\text{ét}}(X_{\bar{\mathbb F}_q},\mathbb{Q}_\ell)) \]</p>
+  <p>Die Kohomologiegruppen \(H^i_{\text{ét}}(X,\mathbb{Q}_\ell)\) sind endlichdimensionale \(\mathbb{Q}_\ell\)-Vektorräume mit einer <b>Frobenius-Aktion</b>, deren Eigenwerte die Nullstellen der Zeta-Funktion sind. Deligne bewies mit dieser Maschinerie die Riemann-Hypothese über endlichen Körpern.</p>
+
+  <canvas id="frob" style="height:280px"></canvas>
+  <div class="controls">
+    <label>Frobenius-Potenz n: <input id="frobPow" type="range" min="1" max="12" value="1"></label>
+    <span id="frobLabel" class="mono"></span>
+  </div>
+</section>
+
+<!-- 6. Formalismus -->
+<section>
+  <h2>6 · Formalismus in einer Nussschale</h2>
+  <ul>
+    <li><span class="pill">Site</span> \(X_{\text{ét}}\): Kategorie der étalen \(X\)-Schemata mit surjektiven Familien als Überdeckungen.</li>
+    <li><span class="pill">Garbe</span> Kontravarianter Funktor \( \mathcal{F}:X_{\text{ét}}^{\mathrm{op}}\to \mathrm{Ab}\), der die Garbenaxiome bzgl. étaler Überdeckungen erfüllt.</li>
+    <li><span class="pill">Halm</span> \( \mathcal{F}_{\bar x}=\varinjlim_{(U,\bar u)}\mathcal{F}(U) \) über geometrischen Punkten \( \bar x:\operatorname{Spec}\bar k\to X\).</li>
+    <li><span class="pill">Kohomologie</span> \(H^i_{\text{ét}}(X,\mathcal{F})=R^i\Gamma(X_{\text{ét}},\mathcal{F})\), abgeleitete Funktoren des globalen Schnittfunktors.</li>
+    <li><span class="pill">Vergleich</span> Für \(X/\mathbb{C}\) glatt: \( H^i_{\text{ét}}(X,\mathbb{Z}/n)\cong H^i_{\mathrm{sing}}(X(\mathbb{C}),\mathbb{Z}/n) \).</li>
+  </ul>
+</section>
+
+<footer>Made with ♥ und ein bisschen Grothendieck-Magie. Alles rein visuell — die echte Theorie ist noch schöner.</footer>
+</main>
+
+<script>
+/* ---------- Utility ---------- */
+function setupCanvas(id){
+  const c=document.getElementById(id);
+  const ctx=c.getContext('2d');
+  function resize(){
+    const r=c.getBoundingClientRect();
+    c.width=r.width*devicePixelRatio; c.height=r.height*devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  resize(); window.addEventListener('resize',resize);
+  return {c,ctx,w:()=>c.clientWidth,h:()=>c.clientHeight};
+}
+
+/* ---------- 1. Étaler Raum ---------- */
+(function(){
+  const {c,ctx,w,h}=setupCanvas('etaleSpace');
+  let sheets=3, t=0, wiggle=0;
+  document.getElementById('sheets').oninput=e=>sheets=+e.target.value;
+  document.getElementById('wiggle').onclick=()=>wiggle=1;
+  function draw(){
+    const W=w(),H=h();
+    ctx.clearRect(0,0,W,H);
+    // base line X
+    const baseY=H-50;
+    ctx.strokeStyle='#7cf9d0'; ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(40,baseY);ctx.lineTo(W-40,baseY);ctx.stroke();
+    ctx.fillStyle='#7cf9d0';ctx.font='13px Inter';ctx.fillText('X',W-30,baseY+4);
+    // stalks: for many x values, draw vertical dots
+    for(let i=0;i<40;i++){
+      const x=40+(W-80)*i/39;
+      for(let k=0;k<sheets;k++){
+        const y=baseY-40-k*45 - 6*Math.sin(i*0.4+t+k);
+        ctx.fillStyle='rgba(255,119,200,'+(0.35+0.15*k)+')';
+        ctx.beginPath();ctx.arc(x,y,2.5,0,7);ctx.fill();
+      }
+      // projection line faint
+      if(i%4===0){ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.beginPath();ctx.moveTo(x,baseY);ctx.lineTo(x,baseY-40-(sheets-1)*45);ctx.stroke();}
+    }
+    // one section (choose sheet 1) horizontal curve
+    ctx.strokeStyle='#ffd166';ctx.lineWidth=2.5;ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const x=40+(W-80)*i/200;
+      const wob=wiggle*Math.sin(i*0.05+t*3)*15;
+      const y=baseY-40-1*45+wob-6*Math.sin(i*0.1+t+1);
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.fillStyle='#ffd166';ctx.fillText('Schnitt s',W-100,baseY-40-1*45-20);
+    // labels
+    ctx.fillStyle='#ff77c8';ctx.fillText('Ét(F)',20,40);
+    t+=0.02; if(wiggle>0)wiggle*=0.985;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---------- 2. Überlagerung z -> z^n ---------- */
+(function(){
+  const {c,ctx,w,h}=setupCanvas('covering');
+  let n=3,theta=0,rot=false;
+  document.getElementById('deg').oninput=e=>n=+e.target.value;
+  document.getElementById('rotate').onclick=()=>rot=!rot;
+  function draw(){
+    const W=w(),H=h();
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2,R=Math.min(W,H)/2-40;
+    // base circle
+    ctx.strokeStyle='#7cf9d0';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx,cy,R*0.55,0,7);ctx.stroke();
+    ctx.fillStyle='#7cf9d0';ctx.fillText('Basis: S¹ (bzw. C*)',cx-50,cy-R*0.55-10);
+    // point on base
+    const bx=cx+R*0.55*Math.cos(theta), by=cy+R*0.55*Math.sin(theta);
+    ctx.fillStyle='#7cf9d0';ctx.beginPath();ctx.arc(bx,by,5,0,7);ctx.fill();
+    // preimages: n points on inner circle
+    for(let k=0;k<n;k++){
+      const a=(theta+2*Math.PI*k)/n;
+      const px=cx+R*0.9*Math.cos(a), py=cy+R*0.9*Math.sin(a);
+      ctx.strokeStyle='rgba(255,119,200,0.35)';
+      ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(px,py);ctx.stroke();
+      ctx.fillStyle='#ff77c8';ctx.beginPath();ctx.arc(px,py,5,0,7);ctx.fill();
+    }
+    // outer ring (fiber locus)
+    ctx.strokeStyle='rgba(255,119,200,0.25)';ctx.beginPath();ctx.arc(cx,cy,R*0.9,0,7);ctx.stroke();
+    ctx.fillStyle='#ff77c8';ctx.fillText('Überlagerung Grad '+n+':  z ↦ z^'+n,20,30);
+    if(rot)theta+=0.01;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---------- 3. Étale Site ---------- */
+(function(){
+  const {c,ctx,w,h}=setupCanvas('site');
+  let covers=[];
+  function addCover(){
+    covers.push({
+      x:Math.random()*.6+.2,
+      wdt:Math.random()*.25+.15,
+      lift:Math.random()*60+30,
+      hue:Math.floor(Math.random()*360),
+      sheets:1+Math.floor(Math.random()*3)
+    });
+  }
+  addCover();addCover();
+  document.getElementById('addCover').onclick=addCover;
+  document.getElementById('resetSite').onclick=()=>{covers=[];addCover();};
+  function draw(){
+    const W=w(),H=h();ctx.clearRect(0,0,W,H);
+    const baseY=H-60;
+    ctx.strokeStyle='#7cf9d0';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(40,baseY);ctx.lineTo(W-40,baseY);ctx.stroke();
+    ctx.fillStyle='#7cf9d0';ctx.fillText('X',W-30,baseY+4);
+    covers.forEach((cv,i)=>{
+      for(let s=0;s<cv.sheets;s++){
+        const y=baseY-cv.lift-s*28;
+        const x1=(cv.x-cv.wdt/2)*W, x2=(cv.x+cv.wdt/2)*W;
+        // arc "lifted" open patch
+        ctx.strokeStyle=`hsl(${cv.hue},80%,65%)`;
+        ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(x1,baseY);
+        ctx.bezierCurveTo(x1,y,x2,y,x2,baseY);
+        ctx.stroke();
+        // fill translucent
+        ctx.fillStyle=`hsla(${cv.hue},80%,65%,0.12)`;
+        ctx.beginPath();
+        ctx.moveTo(x1,baseY);
+        ctx.bezierCurveTo(x1,y,x2,y,x2,baseY);
+        ctx.closePath();ctx.fill();
+      }
+      // label
+      ctx.fillStyle=`hsl(${cv.hue},80%,70%)`;
+      ctx.font='12px JetBrains Mono, monospace';
+      ctx.fillText('U'+(i+1)+'→X', cv.x*W-18, baseY-cv.lift-cv.sheets*28-8);
+      // projection arrows
+      ctx.strokeStyle=`hsla(${cv.hue},80%,65%,0.5)`;
+      ctx.setLineDash([3,4]);
+      ctx.beginPath();
+      ctx.moveTo(cv.x*W, baseY-cv.lift);
+      ctx.lineTo(cv.x*W, baseY-4);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    ctx.fillStyle='#e9ecff';ctx.font='13px Inter';
+    ctx.fillText('Étale Site X_ét — Überdeckungen liegen "über" X in mehreren Blättern',20,26);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---------- 4. Čech-Kohomologie ---------- */
+(function(){
+  const {c,ctx,w,h}=setupCanvas('cech');
+  const status=document.getElementById('cechStatus');
+  // three overlapping open sets U1,U2,U3 on a circle X = S^1
+  // user assigns integer values on pairwise intersections (Čech 1-cochain)
+  // cocycle condition on triple intersection: c12 - c13 + c23 = 0
+  let vals={12:0,13:0,23:0};
+  let check=false;
+  document.getElementById('toggleCocycle').onclick=()=>{check=!check;};
+  document.getElementById('resetCech').onclick=()=>{vals={12:0,13:0,23:0};check=false;status.textContent='';};
+
+  const buttons=[
+    {key:'12',label:'c₁₂'},
+    {key:'13',label:'c₁₃'},
+    {key:'23',label:'c₂₃'}
+  ];
+
+  c.addEventListener('click',e=>{
+    const r=c.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    buttons.forEach(b=>{
+      if(b.pos && Math.hypot(mx-b.pos.x,my-b.pos.y)<28){
+        vals[b.key]=(vals[b.key]+1)%4;
+      }
+    });
+  });
+
+  function draw(){
+    const W=w(),H=h();ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2+10,R=Math.min(W,H)/2-70;
+    // three overlapping disks (open sets U1,U2,U3)
+    const centers=[
+      {x:cx-R*0.35,y:cy-R*0.15,col:'#7cf9d0',name:'U₁'},
+      {x:cx+R*0.35,y:cy-R*0.15,col:'#ff77c8',name:'U₂'},
+      {x:cx,       y:cy+R*0.35,col:'#ffd166',name:'U₃'}
+    ];
+    centers.forEach(o=>{
+      ctx.fillStyle=o.col+'33';
+      ctx.strokeStyle=o.col;ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(o.x,o.y,R*0.42,0,7);ctx.fill();ctx.stroke();
+      ctx.fillStyle=o.col;ctx.font='bold 14px Inter';
+      ctx.fillText(o.name, o.x + (o.x<cx?-R*0.55:R*0.45), o.y-R*0.35);
+    });
+
+    // pairwise intersection midpoints (approx)
+    buttons[0].pos={x:(centers[0].x+centers[1].x)/2, y:(centers[0].y+centers[1].y)/2 -10};
+    buttons[1].pos={x:(centers[0].x+centers[2].x)/2, y:(centers[0].y+centers[2].y)/2};
+    buttons[2].pos={x:(centers[1].x+centers[2].x)/2, y:(centers[1].y+centers[2].y)/2};
+
+    buttons.forEach(b=>{
+      ctx.fillStyle='#141828';
+      ctx.strokeStyle='#e9ecff';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(b.pos.x,b.pos.y,24,0,7);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#e9ecff';ctx.font='bold 13px JetBrains Mono, monospace';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(b.label+'='+vals[b.key], b.pos.x, b.pos.y);
+      ctx.textAlign='start';ctx.textBaseline='alphabetic';
+    });
+
+    // triple intersection
+    const tx=(centers[0].x+centers[1].x+centers[2].x)/3;
+    const ty=(centers[0].y+centers[1].y+centers[2].y)/3;
+    ctx.fillStyle='rgba(255,255,255,0.15)';
+    ctx.beginPath();ctx.arc(tx,ty,22,0,7);ctx.fill();
+    ctx.fillStyle='#9aa3c7';ctx.font='11px JetBrains Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText('U₁∩U₂∩U₃',tx,ty+4);
+    ctx.textAlign='start';
+
+    // header
+    ctx.fillStyle='#e9ecff';ctx.font='13px Inter';
+    ctx.fillText('Čech 1-Kokette: Klicke die Kreise, um Werte in Z/4 zu ändern.',20,24);
+    ctx.fillStyle='#9aa3c7';
+    ctx.fillText('Kozykel-Bedingung (dc = 0): c₂₃ − c₁₃ + c₁₂ ≡ 0  (mod 4)',20,44);
+
+    if(check){
+      const d=(vals['23']-vals['13']+vals['12'])%4;
+      const dn=((d%4)+4)%4;
+      const ok=dn===0;
+      // draw a big check/cross at triple intersection
+      ctx.strokeStyle=ok?'#7cf9d0':'#ff5577';
+      ctx.lineWidth=3;
+      ctx.beginPath();
+      if(ok){ctx.moveTo(tx-10,ty-2);ctx.lineTo(tx-2,ty+8);ctx.lineTo(tx+12,ty-8);}
+      else  {ctx.moveTo(tx-8,ty-8);ctx.lineTo(tx+8,ty+8);ctx.moveTo(tx+8,ty-8);ctx.lineTo(tx-8,ty+8);}
+      ctx.stroke();
+      status.textContent = ok
+        ? '✓ Kozykel — repräsentiert eine Klasse in Ȟ¹(𝒰, ℱ).'
+        : '✗ Kein Kozykel: dc = '+dn+' ≠ 0.  Kein wohldefiniertes Element in Ȟ¹.';
+      status.style.color = ok ? 'var(--accent)' : '#ff8899';
+    } else {
+      status.textContent='';
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---------- 5. Frobenius-Eigenwerte ---------- */
+(function(){
+  const {c,ctx,w,h}=setupCanvas('frob');
+  const label=document.getElementById('frobLabel');
+  const pow=document.getElementById('frobPow');
+  // Beispiel: elliptische Kurve über F_q, q=5, mit Frobenius-Eigenwerten
+  // α, ᾱ auf H^1_ét mit |α|=√q (Riemann-Hypothese von Deligne)
+  const q=5;
+  const sqrtq=Math.sqrt(q);
+  const phi=1.15; // Winkel von α
+  // Eigenwerte auf H^0, H^1 (2 Stück), H^2
+  const eigs=[
+    {re:1, im:0, layer:0, col:'#7cf9d0', name:'H⁰: 1'},
+    {re:sqrtq*Math.cos(phi),  im:sqrtq*Math.sin(phi),  layer:1, col:'#ff77c8', name:'H¹: α'},
+    {re:sqrtq*Math.cos(-phi), im:sqrtq*Math.sin(-phi), layer:1, col:'#ff77c8', name:'H¹: ᾱ'},
+    {re:q, im:0, layer:2, col:'#ffd166', name:'H²: q'}
+  ];
+
+  function draw(){
+    const W=w(),H=h();ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, scale=Math.min(W,H)/2 - 50;
+    const n=+pow.value;
+
+    // axes
+    ctx.strokeStyle='#2a2f4a';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(20,cy);ctx.lineTo(W-20,cy);
+    ctx.moveTo(cx,20);ctx.lineTo(cx,H-20);ctx.stroke();
+
+    // Kreise mit Radien 1, √q, q (weight filtration)
+    [1,sqrtq,q].forEach((r,i)=>{
+      const rr = (r/q)*scale*0.9;
+      ctx.strokeStyle=['#7cf9d044','#ff77c844','#ffd16644'][i];
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.arc(cx,cy,rr,0,7);ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // draw eigenvalues raised to n-th power
+    let sum=0;
+    eigs.forEach(e=>{
+      // (r,θ)^n = (r^n, nθ)
+      const r=Math.hypot(e.re,e.im);
+      const th=Math.atan2(e.im,e.re);
+      const rn=Math.pow(r,n), thn=th*n;
+      const x=rn*Math.cos(thn), y=rn*Math.sin(thn);
+      // scale so q^n stays on screen: normalise by q^n
+      const scl = scale*0.9 / Math.pow(q,n);
+      const px=cx+x*scl, py=cy-y*scl;
+      ctx.fillStyle=e.col;
+      ctx.beginPath();ctx.arc(px,py,6,0,7);ctx.fill();
+      ctx.strokeStyle=e.col+'55';
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke();
+      ctx.fillStyle=e.col;ctx.font='11px JetBrains Mono, monospace';
+      ctx.fillText(e.name, px+8, py-6);
+      // Lefschetz: (-1)^layer * eigenvalue^n
+      sum += (e.layer%2===0?1:-1) * x; // real part contributes
+    });
+
+    ctx.fillStyle='#e9ecff';ctx.font='13px Inter';
+    ctx.fillText('Frobenius-Eigenwerte in ℂ (Kreise: |·|=1, √q, q mit q='+q+')',20,24);
+
+    label.textContent =
+      '#X(F_{q^'+n+'}) = Σ (-1)^i tr(Frob^'+n+' | H^i) ≈ '+sum.toFixed(2);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
