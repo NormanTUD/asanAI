@@ -6752,6 +6752,276 @@ html.dark .md sup.footnote-ref a:hover { color: #fff; }
 #footnotes li { margin-bottom: .35em; color: var(--mn-text-secondary); }
 #footnotes li::marker { color: var(--mn-text-muted); font-variant-numeric: tabular-nums; }
 
+/* ═══════════════════════════════════════════════════════════════
+   SIDENOTES  — Tufte-style margin annotations.
+
+   Authoring: write  \sidenote{anything the main column accepts —
+   LaTeX, markdown, images, HTML}  inline in the article.
+
+   Rendering: sidenotes.js extracts each one, processes the content
+   through the same pipeline as the main text (bibtexify → marked →
+   Temml → smart-punct), then positions the result on the right of
+   the column. On viewports too narrow for a margin column, the
+   sidenotes fall back to a "Sidenotes" section at the end of the
+   article (same behaviour as the existing footnotes).
+
+   The mobile breakpoint (single column) hides the rail via CSS and
+   reveals the fallback list. The JS picks this up too — it never
+   tries to lay out absolutely-positioned sidenotes on a hidden rail.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. The marker — sits inline in the running text. ──────────── */
+.md sup.sidenote-marker {
+	font-size: 0.62em;            /* smaller than footnote-ref so it
+	                                doesn't shout; Tufte uses ≈ 0.8em
+	                                relative to body, but the body is
+	                                bigger, so this is ≈ 0.62 in
+	                                absolute terms.                     */
+	vertical-align: super;
+	line-height: 0;
+	color: var(--mn-accent);
+	font-weight: 700;
+	cursor: pointer;
+	padding: 0 0.1em;
+	border-radius: 3px;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.md sup.sidenote-marker a {
+	color: inherit !important;
+	text-decoration: none !important;
+	display: inline-block;
+	padding: 0 0.18em;
+}
+.md sup.sidenote-marker:hover,
+.md sup.sidenote-marker:focus {
+	background: var(--mn-accent-light);
+	color: var(--mn-accent-dark);
+	outline: none;
+}
+html.dark .md sup.sidenote-marker:hover,
+html.dark .md sup.sidenote-marker:focus { color: #fff; }
+
+/* ── 2. The sidenote column — sits in the right margin. ──────────
+   It is a sibling of #contents, appended by sidenotes.js. The
+   column is a positioning context for absolute sidenote boxes.
+   Width is capped at 1/3 of the available space (the user-requested
+   cap) and also at a fixed pixel limit, so it never grows past a
+   comfortable measure even on ultra-wide screens.                */
+#sidenotes-rail {
+	position: relative;
+	display: none;                 /* hidden by default; shown by the
+	                                  media query below                */
+}
+@media (min-width: 1240px) {
+	body.has-sidenotes #sidenotes-rail {
+		display: block;
+		position: absolute;
+		top: 0;
+		right: max(1rem, calc((100vw - 1180px) / 2 + 1rem));
+		width: min(33%, 320px);
+		z-index: 2;
+		pointer-events: none;       /* sidenotes re-enable on themselves */
+	}
+}
+
+/* On very wide screens the rail sits further out. The rule above
+   already handles this via max(1rem, …); if we ever raise the
+   breakpoint we may need to tune that constant. */
+
+/* ── 3. The individual sidenote. ───────────────────────────────── */
+.sidenote {
+	position: absolute;             /* JS sets top/left/right         */
+	left: 0;
+	right: 0;
+	width: auto;
+
+	font-family: var(--mn-font-prose);
+	font-size: 0.82rem;
+	line-height: 1.5;
+	color: var(--mn-text-secondary);
+
+	background: var(--mn-bg-cream);
+	border-left: 2px solid var(--mn-accent);
+	border-radius: 0 4px 4px 0;
+	padding: 0.55rem 0.75rem 0.55rem 0.85rem;
+	margin: 0;
+
+	pointer-events: auto;           /* re-enable interaction          */
+	box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+	transition: background 0.15s ease, transform 0.15s ease;
+}
+.sidenote:hover {
+	background: var(--mn-bg-warm);
+}
+.sidenote p:first-child { margin-top: 0; }
+.sidenote p:last-child  { margin-bottom: 0; }
+.sidenote > *:first-child { margin-top: 0; }
+.sidenote > *:last-child  { margin-bottom: 0; }
+
+/* Tighter heading scale inside sidenotes. */
+.sidenote h1, .sidenote h2, .sidenote h3, .sidenote h4 {
+	font-size: 0.95rem;
+	margin: 0.4em 0 0.25em;
+	line-height: 1.3;
+	color: var(--mn-heading);
+	font-family: var(--mn-font-heading);
+}
+
+/* Inline code stays inline; block code stays block but compact. */
+.sidenote code { font-size: 0.85em; }
+.sidenote pre  { font-size: 0.78em; padding: 0.55em 0.75em !important; }
+
+/* Images inside sidenotes: small, framed, centered. */
+.sidenote img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0.4em auto;
+	border-radius: 3px;
+	border: 1px solid var(--mn-border);
+}
+
+/* Math scales down. */
+.sidenote .tml-display,
+.sidenote mjx-container[display="true"],
+.sidenote .MathJax_Display {
+	font-size: 0.85em;
+	margin: 0.45em 0 !important;
+}
+
+/* Lists inside sidenotes are tighter. */
+.sidenote ul, .sidenote ol { margin: 0.4em 0; padding-left: 1.3em; }
+.sidenote li { margin-bottom: 0.15em; }
+
+/* ── 4. The sidenote number + back-link. ───────────────────────── */
+.sidenote-counter {
+	display: inline-block;
+	color: var(--mn-accent);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	margin-right: 0.35em;
+	padding-right: 0.3em;
+	border-right: 1px solid var(--mn-border);
+	font-size: 0.78em;
+	vertical-align: 0.05em;
+	letter-spacing: 0.02em;
+}
+.sidenote-backlink {
+	float: right;
+	margin-left: 0.5em;
+	color: var(--mn-text-muted) !important;
+	text-decoration: none !important;
+	font-size: 0.85em;
+	line-height: 1;
+	padding: 0.1em 0.25em;
+	border-radius: 3px;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.sidenote-backlink:hover,
+.sidenote-backlink:focus {
+	background: var(--mn-accent-light);
+	color: var(--mn-accent-dark) !important;
+	outline: none;
+}
+
+/* ── 5. The fallback "Sidenotes" section (mobile / narrow). ──────
+   Hidden on desktop (the rail handles it there); shown on phones,
+   tablets, and any viewport under the breakpoint.                 */
+#sidenotes-section {
+	display: none;                  /* hidden when rail is visible     */
+}
+#sidenotes-section h2 {
+	font-family: var(--mn-font-heading);
+	font-size: 1.15rem;
+	color: var(--mn-heading);
+	margin: 2.5em 0 1em;
+	padding-bottom: 0.4em;
+	border-bottom: 1px solid var(--mn-border);
+	letter-spacing: -0.01em;
+}
+#sidenotes-section .sidenote-fallback {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	counter-reset: sidenote-counter;
+}
+#sidenotes-section .sidenote-fallback li {
+	position: relative;
+	padding: 0.7em 0.9em 0.7em 2.6em;
+	margin-bottom: 0.55em;
+	background: var(--mn-bg-cream);
+	border-left: 2px solid var(--mn-accent);
+	border-radius: 0 4px 4px 0;
+	font-size: 0.88em;
+	line-height: 1.55;
+	color: var(--mn-text-secondary);
+	counter-increment: sidenote-counter;
+}
+#sidenotes-section .sidenote-fallback li::before {
+	content: counter(sidenote-counter);
+	position: absolute;
+	left: 0.8em;
+	top: 0.72em;
+	color: var(--mn-accent);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	font-size: 0.78em;
+	padding-right: 0.45em;
+	border-right: 1px solid var(--mn-border);
+}
+#sidenotes-section .sidenote-fallback li p:first-child { margin-top: 0; }
+#sidenotes-section .sidenote-fallback li p:last-child  { margin-bottom: 0; }
+
+/* Show fallback section on narrow viewports. */
+@media (max-width: 1239.98px) {
+	body.has-sidenotes #sidenotes-section { display: block; }
+	body.has-sidenotes #sidenotes-rail    { display: none !important; }
+}
+
+/* ── 6. Source pool — hidden DOM nodes that hold the RAW sidenote
+   content while it is being processed by bibtexify + marked. They
+   are kept around until sidenotes.js copies their rendered HTML
+   into the actual sidenote / fallback positions.                */
+.sidenote-source {
+	position: absolute;
+	left: -99999px;
+	top: 0;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+/* ── 7. Inline hover preview — Tufte's books show the sidenote
+   content as a small caption next to the marker; we mimic that
+   with a tooltip on hover/focus. Defined here so polish.js can
+   wire it up without having to know our class names.            */
+.cl-sn-tip {
+	position: fixed;
+	z-index: 9998;
+	max-width: min(360px, 70vw);
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-md);
+	padding: 10px 14px;
+	font-size: 0.85em;
+	line-height: 1.5;
+	box-shadow: var(--mn-shadow-lg);
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity 0.12s ease, transform 0.12s ease;
+	pointer-events: none;
+}
+.cl-sn-tip.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+.cl-sn-tip .sidenote-counter {
+	font-size: 0.78em;
+}
+
 /* ── 11. Temml equations — slightly tighter spacing, block math centered ── */
 .md mjx-container, .md .tml-display, .md .MathJax_Display {
 	margin: 1.2em 0 !important;
