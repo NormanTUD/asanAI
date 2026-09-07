@@ -2536,9 +2536,18 @@ async function _classification_handdrawn (predictions_tensor, handdrawn_predicti
 }
 
 async function repredict () {
+	if (is_canvas_visible()) {
+		// Consume any pending observer args so the IntersectionObserver cannot
+		// fire a deferred sketcher predict that would race in after the example
+		// predictions and leave the (blank) sketcher as the last 3D-network input.
+		_predict_pending_args = null;
+		await _predict_handdrawn_internal();
+	} else {
+		predict_handdrawn();
+	}
+
 	await show_prediction(0, 1);
 	await predict_webcam();
-	await predict_handdrawn();
 
 	await force_restart_fcnn();
 
