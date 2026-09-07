@@ -6,6 +6,8 @@ var _grid_visualization_height = 0;
 var _last_grid_canvas_data_url = null;
 var _last_grid_draw_params = null;
 var _grid_resize_timeout = null;
+var _grid_visibility_observer = null;
+var _grid_visibility_redraw_timeout = null;
 var _grid_image_hit_regions = [];
 var _grid_tooltip = null;
 var _grid_tooltip_last_region_index = -1;
@@ -2729,6 +2731,14 @@ function _restore_last_grid_render() {
 	var $container = $("#canvas_grid_visualization");
 	var img = new Image();
 	img.onload = function() {
+		if (!img.width || !img.height) {
+			// Degenerate cached render (captured while the training tab was hidden) → full re-draw at current width
+			if (_last_grid_draw_params) {
+				var p = _last_grid_draw_params;
+				draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
+			}
+			return;
+		}
 		var currentHeight = $container.outerHeight();
 		if (currentHeight > 0) {
 			$container.css("min-height", currentHeight + "px");
@@ -2778,8 +2788,22 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	var scaleWidth = 40;
 	var relationScale = 1;
 	var pw = parse_int($("#training_tab").width() * relationScale);
+	if (!isFinite(pw) || pw < 200) {
+		// Training tab hidden (display:none) or too narrow → .width() is 0/negative → canvas would be zero-width and render empty
+		dbg("[draw_images_in_grid] training_tab width unusable (pw=" + pw + "), using fallback width source");
+		pw = parse_int($("#right_side").width());
+		if (!isFinite(pw) || pw < 200) {
+			pw = parse_int($(window).width());
+		}
+		if (!isFinite(pw) || pw < 200) {
+			pw = 800;
+		}
+	}
 	var totalWidth = pw;
 	var colWidth = parse_int((totalWidth - scaleWidth) / numCategories);
+	if (!isFinite(colWidth) || colWidth < 1) {
+		colWidth = 1;
+	}
 
 	var canvas = document.createElement("canvas");
 	canvas.width = totalWidth;
@@ -2809,12 +2833,17 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 	_grid_restore_tooltip_after_redraw(canvas);
 
 	try {
-		_last_grid_canvas_data_url = canvas.toDataURL("image/png");
+		if (canvas.width > 0 && canvas.height > 0) {
+			_last_grid_canvas_data_url = canvas.toDataURL("image/png");
+		} else {
+			wrn("[draw_images_in_grid] Refusing to cache zero-sized canvas render");
+		}
 	} catch (e) {
 		wrn("[draw_images_in_grid] Could not cache canvas: " + e);
 	}
 
 	_setup_grid_resize_listener();
+	_setup_grid_visibility_listener();
 
 	requestAnimationFrame(function () {
 		$container.css("min-height", "");
@@ -2834,6 +2863,36 @@ function _setup_grid_resize_listener() {
 			}
 		}, 200);
 	});
+}
+
+function _setup_grid_visibility_listener() {
+	if (_grid_visibility_observer !== null) return;
+
+	var $container = $("#canvas_grid_visualization");
+	if (!$container.length || typeof IntersectionObserver === "undefined") return;
+
+	// The grid is usually drawn from training callbacks while the training tab may still be hidden,
+	// which previously produced a zero-width (empty) canvas that was never re-drawn on tab activation.
+	// Re-draw (debounced) whenever the grid area becomes visible again.
+	_grid_visibility_observer = new IntersectionObserver(function(entries) {
+		for (var i = 0; i < entries.length; i++) {
+			if (!entries[i].isIntersecting) continue;
+			if (!_last_grid_draw_params) return;
+
+			if (_grid_visibility_redraw_timeout !== null) clearTimeout(_grid_visibility_redraw_timeout);
+			_grid_visibility_redraw_timeout = setTimeout(function() {
+				_grid_visibility_redraw_timeout = null;
+				if (!_last_grid_draw_params) return;
+				var el = document.getElementById("canvas_grid_visualization");
+				if (!el || el.offsetParent === null) return;
+				var p = _last_grid_draw_params;
+				draw_images_in_grid(p.images, p.categories, p.probabilities, p.category_overview);
+			}, 100);
+			return;
+		}
+	}, { threshold: 0 });
+
+	_grid_visibility_observer.observe($container[0]);
 }
 
 function _grid_escape_html(str) {
