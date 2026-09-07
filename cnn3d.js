@@ -63,6 +63,7 @@
         fog: true,
         curvedConnections: true,
         animateConnections: false,
+        connectionHoverThreshold: 2,
         showLabels: false,
         showHistograms: true,
         highlightTopK: 3,
@@ -1259,6 +1260,9 @@
         requestAnimationFrame(function () {
             t.style.opacity = '1';
             t.style.transform = 'translateY(0)';
+            // Re-measure now that layout is settled: the width/height used for
+            // flipping may have been stale on the first (synchronous) pass.
+            positionTooltip(inst, x, y);
         });
     }
     function positionTooltip(inst, x, y) {
@@ -1268,9 +1272,15 @@
         var w = t.offsetWidth || 200, h = t.offsetHeight || 80;
         var vw = window.innerWidth, vh = window.innerHeight;
         var left = x + pad, top = y + pad;
+        // If the tooltip would cross the right/bottom edge, flip it to the
+        // other side of the cursor first...
         if (left + w > vw - 8) left = x - w - pad;
         if (top + h > vh - 8) top = y - h - pad;
+        // ...then hard-clamp so the box can never leave the viewport, even if
+        // the measured size changed after positioning.
+        if (left + w > vw - 8) left = vw - w - 8;
         if (left < 8) left = 8;
+        if (top + h > vh - 8) top = vh - h - 8;
         if (top < 8) top = 8;
         t.style.left = left + 'px'; t.style.top = top + 'px';
     }
@@ -1545,6 +1555,7 @@
 
         startAnimationLoop(inst);
         startDarkModeWatcher(inst);
+        startLanguageWatcher(inst);
     }
 
     function applyFog(inst) {
@@ -1747,6 +1758,7 @@
     // ------------------------------------------------------------------
     function setup3DHover(inst) {
         var dom = inst.renderer.domElement;
+        inst.raycaster.params.Line.threshold = (inst.opts && inst.opts.connectionHoverThreshold) || 2;
         inst._pointerMoveHandler = function (e) {
             var rect = dom.getBoundingClientRect();
             var x = e.clientX - rect.left;
@@ -1755,34 +1767,56 @@
             inst.mouseNDC.y = -(y / rect.height) * 2 + 1;
 
             if (!inst.hoverables || inst.hoverables.length === 0) {
-                if (inst.lastHover) { inst.lastHover = null; hideTooltip(inst); }
+                if (inst.lastHover) { inst.lastHover = null; inst.lastHoverHtml = null; hideTooltip(inst); }
                 return;
             }
             inst.raycaster.setFromCamera(inst.mouseNDC, inst.camera);
-            var meshes = inst.hoverables.map(function (h) { return h.mesh; });
-            var hits = inst.raycaster.intersectObjects(meshes, false);
-            if (hits.length > 0) {
-                var hit = hits[0];
-                var entry = inst.hoverables.find(function (h) { return h.mesh === hit.object; });
-                if (entry) {
-                    if (inst.lastHover !== entry) {
-                        inst.lastHover = entry;
-                        showTooltip(inst, entry.html, e.clientX, e.clientY);
-                    } else {
-                        positionTooltip(inst, e.clientX, e.clientY);
-                    }
-                    dom.style.cursor = 'pointer';
-                    return;
+
+            var solid = [], lines = [];
+            for (var i = 0; i < inst.hoverables.length; i++) {
+                (inst.hoverables[i].isLine ? lines : solid).push(inst.hoverables[i].mesh);
+            }
+
+            var entry = null, hit = null;
+            if (solid.length > 0) {
+                var solidHits = inst.raycaster.intersectObjects(solid, false);
+                if (solidHits.length > 0) {
+                    hit = solidHits[0];
+                    entry = inst.hoverables.find(function (h) { return h.mesh === hit.object; });
                 }
+            }
+            // Only raycast connection lines when no solid block was hit (line raycasts are expensive).
+            if (!entry && lines.length > 0) {
+                var lineHits = inst.raycaster.intersectObjects(lines, false);
+                if (lineHits.length > 0) {
+                    hit = lineHits[0];
+                    entry = inst.hoverables.find(function (h) { return h.mesh === hit.object; });
+                }
+            }
+
+            if (entry) {
+                var html = (typeof entry.resolveHtml === 'function' && hit)
+                    ? entry.resolveHtml(hit)
+                    : entry.html;
+                if (inst.lastHover !== entry || inst.lastHoverHtml !== html) {
+                    inst.lastHover = entry;
+                    inst.lastHoverHtml = html;
+                    showTooltip(inst, html, e.clientX, e.clientY);
+                } else {
+                    positionTooltip(inst, e.clientX, e.clientY);
+                }
+                dom.style.cursor = 'pointer';
+                return;
             }
             if (inst.lastHover) {
                 inst.lastHover = null;
+                inst.lastHoverHtml = null;
                 hideTooltip(inst);
                 dom.style.cursor = 'grab';
             }
         };
         inst._pointerLeaveHandler = function () {
-            if (inst.lastHover) { inst.lastHover = null; hideTooltip(inst); }
+            if (inst.lastHover) { inst.lastHover = null; inst.lastHoverHtml = null; hideTooltip(inst); }
             dom.style.cursor = 'grab';
         };
         dom.style.cursor = 'grab';
@@ -1830,6 +1864,27 @@
                 scheduleRender(inst);
             }
         }, 300);
+    }
+
+    // ------------------------------------------------------------------
+    // Language watcher: regenerates the pre-rendered tooltip HTML (and any
+    // other language-dependent labels) whenever the UI language changes at
+    // runtime, mirroring the dark-mode watcher behaviour.
+    // ------------------------------------------------------------------
+    function startLanguageWatcher(inst) {
+        inst.lastLang = (typeof lang !== "undefined") ? lang : null;
+        inst._langInterval = setInterval(function () {
+            var cur = (typeof lang !== "undefined") ? lang : null;
+            if (cur === inst.lastLang) return;
+            inst.lastLang = cur;
+            // A tooltip may be visible with stale-language content: drop it so
+            // the next hover re-renders in the current language.
+            if (inst.lastHover) { inst.lastHover = null; inst.lastHoverHtml = null; hideTooltip(inst); }
+            // Force rebuild so every hoverable's static HTML is regenerated.
+            inst.dataDirty = true;
+            if (inst.isVisible) { doRebuild(inst); scheduleRender(inst); }
+            else { inst.pendingRender = true; }
+        }, 400);
     }
 
     // ------------------------------------------------------------------
@@ -2232,6 +2287,20 @@
     // ------------------------------------------------------------------
     // Tooltip HTML helpers
     // ------------------------------------------------------------------
+    function c3d_tr(key, fallback) {
+        try {
+            if (typeof language !== "undefined" && language && language[lang] && language[lang][key] != null) {
+                return language[lang][key];
+            }
+        } catch (e) { /* fall through to fallback */ }
+        return (fallback != null ? fallback : key);
+    }
+    function c3d_fill(tmpl, vars) {
+        if (typeof tmpl !== "string") return tmpl;
+        return tmpl.replace(/\{(\w+)\}/g, function (m, k) {
+            return (vars && vars[k] != null) ? String(vars[k]) : m;
+        });
+    }
     function fmtNum(v, digits) {
         if (typeof v !== "number" || !isFinite(v)) return "—";
         digits = digits == null ? 4 : digits;
@@ -2254,7 +2323,7 @@
     function tooltipHistogramHTML(flat, theme) {
         var canv = renderHistogramCanvas(flat, 300, 46, theme);
         return '<div style="margin-top:6px;padding-top:6px;border-top:1px solid ' + (theme.dark ? 'rgba(160,180,255,0.15)' : 'rgba(60,80,140,0.12)') + ';">'
-            + '<div style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">Distribution</div>'
+            + '<div style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:3px;">' + c3d_tr("cnn3d_distribution", "Distribution") + '</div>'
             + '<img src="' + canv.toDataURL() + '" style="width:100%;height:46px;display:block;image-rendering:pixelated;">'
             + '</div>';
     }
@@ -2262,27 +2331,27 @@
     function makeLayerTooltipHTML(layer, extraStats, flat, opts, attrScore) {
         var shapeStr = layer.outputShape ? layer.outputShape.filter(function (v) { return v !== null; }).join("×") : "?";
         var html = tooltipHeader(
-            "L" + layer.idx + " · " + (layer.className || layer.kind),
-            (layer.name || "") + " · shape [" + shapeStr + "]"
+            c3d_tr("cnn3d_layer", "Layer") + " " + layer.idx + " · " + (layer.className || layer.kind),
+            (layer.name || "") + " · " + c3d_tr("cnn3d_shape", "shape") + " [" + shapeStr + "]"
         );
         if (extraStats) {
-            html += tooltipRow("Elements", extraStats.count);
-            html += tooltipRow("Min", fmtNum(extraStats.min));
-            html += tooltipRow("Max", fmtNum(extraStats.max));
-            html += tooltipRow("|Max|", fmtNum(extraStats.maxAbs));
-            html += tooltipRow("Mean", fmtNum(extraStats.mean));
-            html += tooltipRow("Std", fmtNum(extraStats.std));
+            html += tooltipRow(c3d_tr("cnn3d_elements", "Elements"), extraStats.count);
+            html += tooltipRow(c3d_tr("cnn3d_min", "Min"), fmtNum(extraStats.min));
+            html += tooltipRow(c3d_tr("cnn3d_max", "Max"), fmtNum(extraStats.max));
+            html += tooltipRow(c3d_tr("cnn3d_absmax", "|Max|"), fmtNum(extraStats.maxAbs));
+            html += tooltipRow(c3d_tr("cnn3d_mean", "Mean"), fmtNum(extraStats.mean));
+            html += tooltipRow(c3d_tr("cnn3d_std", "Std dev"), fmtNum(extraStats.std));
             if (extraStats.aboveFrac != null) {
-                html += tooltipRow("Above threshold", (extraStats.aboveFrac * 100).toFixed(1) + "%");
+                html += tooltipRow(c3d_tr("cnn3d_above_thr", "Above threshold"), (extraStats.aboveFrac * 100).toFixed(1) + "%");
             }
         }
         if (attrScore != null) {
-            html += tooltipRow("Attribution score", fmtNum(attrScore));
+            html += tooltipRow(c3d_tr("cnn3d_attr_score", "Attribution score"), fmtNum(attrScore));
         }
         if (opts && opts.showHistograms && flat && flat.length > 0) {
             html += tooltipHistogramHTML(flat, getTheme());
         }
-        html += '<div style="margin-top:6px;font-size:10px;opacity:0.55;">Double-click to focus · F to frame · W for wave · E to cycle explain</div>';
+        html += '<div style="margin-top:6px;font-size:10px;opacity:0.55;">' + c3d_tr("cnn3d_nav_hint", "Double-click: focus · F: frame · W: wave · E: explain") + '</div>';
         return html;
     }
 
@@ -2291,20 +2360,20 @@
         var mm = minMaxAbs(flat);
         var ms = meanStd(flat);
         var af = fracAbove(flat, threshold * maxAbs);
-        var badge = isTopK ? ' <span style="background:linear-gradient(135deg,#d62c7a,#ff66aa);color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:0.3px;">ATTR</span>' : '';
+        var badge = isTopK ? ' <span style="background:linear-gradient(135deg,#d62c7a,#ff66aa);color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:0.3px;">' + c3d_tr("cnn3d_topk", "Top-K") + '</span>' : '';
         var html = tooltipHeader(
-            "L" + layer.idx + " · channel " + channelIdx + badge,
-            (layer.className || layer.kind) + " · slice " + channelIdx
+            c3d_tr("cnn3d_layer", "Layer") + " " + layer.idx + " · " + c3d_tr("cnn3d_channel", "Channel") + " " + channelIdx + badge,
+            (layer.className || layer.kind) + " · " + c3d_tr("cnn3d_slice", "slice") + " " + channelIdx
         );
-        html += tooltipRow("Size", channelData.length + "×" + channelData[0].length);
-        html += tooltipRow("Min", fmtNum(mm.min));
-        html += tooltipRow("Max", fmtNum(mm.max));
-        html += tooltipRow("|Max|", fmtNum(mm.maxAbs));
-        html += tooltipRow("Mean", fmtNum(ms.mean));
-        html += tooltipRow("Std", fmtNum(ms.std));
-        html += tooltipRow("Active pixels", (af * 100).toFixed(1) + "%");
+        html += tooltipRow(c3d_tr("cnn3d_size", "Size"), channelData.length + "×" + channelData[0].length);
+        html += tooltipRow(c3d_tr("cnn3d_min", "Min"), fmtNum(mm.min));
+        html += tooltipRow(c3d_tr("cnn3d_max", "Max"), fmtNum(mm.max));
+        html += tooltipRow(c3d_tr("cnn3d_absmax", "|Max|"), fmtNum(mm.maxAbs));
+        html += tooltipRow(c3d_tr("cnn3d_mean", "Mean"), fmtNum(ms.mean));
+        html += tooltipRow(c3d_tr("cnn3d_std", "Std dev"), fmtNum(ms.std));
+        html += tooltipRow(c3d_tr("cnn3d_active_px", "Active pixels"), (af * 100).toFixed(1) + "%");
         if (attrScore != null) {
-            html += tooltipRow("Attribution score", fmtNum(attrScore));
+            html += tooltipRow(c3d_tr("cnn3d_attr_score", "Attribution score"), fmtNum(attrScore));
         }
         if (opts && opts.showHistograms) {
             html += tooltipHistogramHTML(flat, getTheme());
@@ -2313,16 +2382,84 @@
     }
 
     function makeInputImageTooltipHTML(imgShape, stats, attribution) {
-        var html = tooltipHeader("Input image", imgShape[0] + "×" + imgShape[1] + " · RGB");
-        html += tooltipRow("Pixels", imgShape[0] * imgShape[1]);
-        html += tooltipRow("Min", fmtNum(stats.min));
-        html += tooltipRow("Max", fmtNum(stats.max));
-        html += tooltipRow("Mean", fmtNum(stats.mean));
+        var html = tooltipHeader(c3d_tr("cnn3d_input_image", "Input image"), imgShape[0] + "×" + imgShape[1] + " · RGB");
+        html += tooltipRow(c3d_tr("cnn3d_pixels", "Pixels"), imgShape[0] * imgShape[1]);
+        html += tooltipRow(c3d_tr("cnn3d_min", "Min"), fmtNum(stats.min));
+        html += tooltipRow(c3d_tr("cnn3d_max", "Max"), fmtNum(stats.max));
+        html += tooltipRow(c3d_tr("cnn3d_mean", "Mean"), fmtNum(stats.mean));
         if (attribution) {
             var modeName = { gradcam: 'Grad-CAM', saliency: 'Saliency', ig: 'Integrated Gradients', occlusion: 'Occlusion' }[attribution.mode] || attribution.mode;
-            html += tooltipRow("Attribution mode", modeName);
-            html += tooltipRow("Predicted class", "#" + attribution.classIdx +
+            html += tooltipRow(c3d_tr("cnn3d_attr_mode", "Attribution mode"), modeName);
+            html += tooltipRow(c3d_tr("cnn3d_predicted_class", "Predicted class"), "#" + attribution.classIdx +
                 (global.labels && global.labels[attribution.classIdx] ? " · " + escapeHtml(global.labels[attribution.classIdx]) : ""));
+        }
+        return html;
+    }
+
+    function _isSoftmaxLastLayer() {
+        try {
+            if (typeof global.get_last_layer_activation_function !== "function") return false;
+            return global.get_last_layer_activation_function().toLowerCase() === "softmax";
+        } catch (e) { return false; }
+    }
+
+    function makeNeuronTooltipHTML(layer, unitIdx, vec, N, mm, ms, maxAbs, winningUnitIdx, isLastLayer, histHtml) {
+        var v = vec[unitIdx];
+        var norm = maxAbs > 0 ? Math.abs(v) / maxAbs : 0;
+        var rank = 1;
+        for (var i = 0; i < N; i++) {
+            if (i !== unitIdx && Math.abs(vec[i]) > Math.abs(v)) rank++;
+        }
+        var isWinning = (unitIdx === winningUnitIdx);
+        var badge = isWinning
+            ? ' <span style="background:linear-gradient(135deg,#d62c7a,#ff66aa);color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:800;letter-spacing:0.3px;">' + c3d_tr("cnn3d_winning", "Winning neuron") + '</span>'
+            : '';
+        var shapeStr = layer.outputShape ? layer.outputShape.filter(function (x) { return x !== null; }).join("×") : String(N);
+        var html = tooltipHeader(
+            c3d_tr("cnn3d_neuron", "Neuron") + " " + unitIdx + badge,
+            c3d_tr("cnn3d_layer", "Layer") + " " + layer.idx + " · " +
+            c3d_fill(c3d_tr("cnn3d_unit_of", "unit {i} of {n}"), { i: unitIdx + 1, n: N }) +
+            " · " + c3d_tr("cnn3d_shape", "shape") + " [" + shapeStr + "]"
+        );
+        html += tooltipRow(c3d_tr("cnn3d_value", "Value"), fmtNum(v));
+        html += tooltipRow(c3d_tr("cnn3d_absval", "|Value|"), fmtNum(Math.abs(v)));
+        html += tooltipRow(c3d_tr("cnn3d_norm", "Normalized"), (norm * 100).toFixed(1) + "%");
+        html += tooltipRow(c3d_tr("cnn3d_rank", "Rank by |value|"), rank + " / " + N);
+        html += tooltipRow(c3d_tr("cnn3d_min", "Min") + " / " + c3d_tr("cnn3d_max", "Max"), fmtNum(mm.min) + " / " + fmtNum(mm.max));
+        var labelsArr = global.labels;
+        if (Array.isArray(labelsArr) && labelsArr.length === N) {
+            var lbl = (labelsArr[unitIdx] != null) ? labelsArr[unitIdx] : ("#" + unitIdx);
+            html += tooltipRow(c3d_tr("cnn3d_class", "Class"), escapeHtml(lbl));
+            if (isLastLayer && _isSoftmaxLastLayer() && v >= 0 && v <= 1.0001) {
+                html += tooltipRow(c3d_tr("cnn3d_probability", "Probability"), (v * 100).toFixed(2) + "%");
+            }
+        }
+        if (histHtml) {
+            html += histHtml;
+        }
+        return html;
+    }
+
+    function makeConnectionTooltipHTML(blockA, blockB, weightStats, nConn, weighted) {
+        var nameA = blockA.layer ? (blockA.layer.name || ("L" + blockA.layer.idx + " " + (blockA.layer.className || blockA.kind))) : "?";
+        var nameB = blockB.layer ? (blockB.layer.name || ("L" + blockB.layer.idx + " " + (blockB.layer.className || blockB.kind))) : "?";
+        var html = tooltipHeader(
+            c3d_tr("cnn3d_connections", "Connections"),
+            c3d_fill(c3d_tr("cnn3d_conn_between", "from {a} to {b}"), { a: escapeHtml(nameA), b: escapeHtml(nameB) })
+        );
+        html += tooltipRow(c3d_tr("cnn3d_conn_lines", "lines"), nConn);
+        if (weighted && weightStats) {
+            html += tooltipRow(c3d_tr("cnn3d_conn_range", "Weight range"), fmtNum(weightStats.min) + " … " + fmtNum(weightStats.max));
+            var th = getTheme();
+            html += '<div style="margin-top:6px;padding-top:6px;border-top:1px solid ' + (th.dark ? 'rgba(160,180,255,0.15)' : 'rgba(60,80,140,0.12)') + ';">';
+            html += '<div style="font-size:10px;opacity:0.6;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">' + c3d_tr("cnn3d_conn_weight", "Line color = weight") + '</div>';
+            html += '<div style="display:flex;gap:14px;font-size:11px;line-height:1.6;">'
+                + '<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#3a86ff;vertical-align:middle;margin-right:4px;"></span>' + c3d_tr("cnn3d_conn_pos", "blue = positive") + '</span>'
+                + '<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#ff5a36;vertical-align:middle;margin-right:4px;"></span>' + c3d_tr("cnn3d_conn_neg", "red = negative") + '</span></div>';
+            html += '<div style="font-size:11px;opacity:0.8;margin-top:2px;">' + c3d_tr("cnn3d_conn_strength", "brightness = magnitude") + '</div>';
+            html += '</div>';
+        } else {
+            html += '<div style="margin-top:4px;font-size:11px;opacity:0.7;line-height:1.4;">' + c3d_tr("cnn3d_conn_desc", "Synapses linking the units of the previous layer to this layer. Each line carries one learned weight.") + '</div>';
         }
         return html;
     }
@@ -2688,15 +2825,36 @@
             var proxyMat2 = new THREE.MeshBasicMaterial({ visible: false, transparent: true, opacity: 0 });
             var proxy2 = new THREE.Mesh(proxyGeom2, proxyMat2);
             group.add(proxy2);
+
+            var layerFallback = makeLayerTooltipHTML(layer, {
+                count: N,
+                min: mm.min, max: mm.max, maxAbs: mm.maxAbs,
+                mean: ms.mean, std: ms.std,
+                aboveFrac: fracAbove(vec, threshold * maxAbs)
+            }, vec, opts, null);
+
+            var isLastDense = (typeof model !== "undefined" && model && model.layers)
+                ? (layer.idx === model.layers.length - 1) : false;
+            var histHtml = (opts && opts.showHistograms) ? tooltipHistogramHTML(vec, theme) : "";
+
+            // Per-neuron hover: the whole column is one proxy, but we map the
+            // hit point's local Y to a specific unit so each neuron gets its own
+            // tooltip without adding N separate raycast meshes.
             hoverables.push({
                 mesh: proxy2,
                 layerIdx: layer.idx,
-                html: makeLayerTooltipHTML(layer, {
-                    count: N,
-                    min: mm.min, max: mm.max, maxAbs: mm.maxAbs,
-                    mean: ms.mean, std: ms.std,
-                    aboveFrac: fracAbove(vec, threshold * maxAbs)
-                }, vec, opts, null)
+                html: layerFallback,
+                resolveHtml: function (hit) {
+                    try {
+                        var local = proxy2.worldToLocal(hit.point.clone());
+                        var frac = (colHeight / 2 - local.y) / colHeight;
+                        var u = Math.floor(frac * N);
+                        u = Math.max(0, Math.min(N - 1, u));
+                        return makeNeuronTooltipHTML(layer, u, vec, N, mm, ms, maxAbs, winningUnitIdx, isLastDense, histHtml);
+                    } catch (e) {
+                        return layerFallback;
+                    }
+                }
             });
         }
 
@@ -3022,6 +3180,13 @@
         var lines = new THREE.LineSegments(geom, mat);
         lines.name = "connections_" + blockA.group.name + "_to_" + blockB.group.name;
         lines.frustumCulled = false;
+        lines.userData = {
+            blockA: blockA,
+            blockB: blockB,
+            nConn: Math.ceil(ptsA.length / strideA) * Math.ceil(ptsB.length / strideB),
+            weighted: !!(weights && blockA.kind === 'dense' && blockB.kind === 'dense'),
+            weightStats: weights ? { min: wMin, max: wMax, absMax: wAbsMax } : null
+        };
         return lines;
     }
 
@@ -3379,6 +3544,17 @@
                 if (connLines) {
                     inst.modelGroup.attach(connLines);
                     inst.connectionMeshes.push(connLines);
+                    if (hoverables) {
+                        var ud = connLines.userData || {};
+                        hoverables.push({
+                            mesh: connLines,
+                            layerIdx: -1,
+                            isLine: true,
+                            html: makeConnectionTooltipHTML(
+                                ud.blockA, ud.blockB, ud.weightStats, ud.nConn, ud.weighted
+                            )
+                        });
+                    }
                 }
             }
         }
