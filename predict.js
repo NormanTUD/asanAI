@@ -1904,78 +1904,78 @@ async function _predict_webcam_render (predictions, predictions_tensor, webcam_p
 async function predict_webcam () {
 	try {
 		if(_predict_webcam_validate()) {
-			currently_predicting_webcam = false;
 			return;
 		}
 
 		currently_predicting_webcam = true;
 
-		var webcam_image = await cam.capture();
-
-		if(!webcam_image) {
-			dbg("[predict_webcam] webcam_image is null or undefined, skipping this frame");
-			currently_predicting_webcam = false;
-			return;
-		}
-
-		show_predict_spinner("#webcam_prediction");
-
-		var wait = null;
-
 		try {
-			var predict_data = tidy(() => {
-				return _get_resized_webcam(webcam_image);
-			});
-		} catch (e) {
-			console.error(e);
-			hide_predict_spinner("#webcam_prediction");
-			currently_predicting_webcam = false;
-			return;
-		}
+			var webcam_image = await cam.capture();
 
-		await dispose(webcam_image);
+			if(!webcam_image) {
+				dbg("[predict_webcam] webcam_image is null or undefined, skipping this frame");
+				return;
+			}
 
-		if(!predict_data) {
-			dbg("[predict_webcam] predict_data is null after resize, skipping this frame");
-			hide_predict_spinner("#webcam_prediction");
-			currently_predicting_webcam = false;
-			return;
-		}
+			show_predict_spinner("#webcam_prediction");
 
-		var predictions_tensor = null;
-		try {
-			warn_if_tensor_is_disposed(predict_data);
-			predictions_tensor = await __predict(predict_data);
+			var wait = null;
 
-			if(!predictions_tensor) {
-				dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"]);
+			try {
+				var predict_data = tidy(() => {
+					return _get_resized_webcam(webcam_image);
+				});
+			} catch (e) {
+				console.error(e);
 				hide_predict_spinner("#webcam_prediction");
 				return;
 			}
-		} catch (e) {
+
+			await dispose(webcam_image);
+
+			if(!predict_data) {
+				dbg("[predict_webcam] predict_data is null after resize, skipping this frame");
+				hide_predict_spinner("#webcam_prediction");
+				return;
+			}
+
+			var predictions_tensor = null;
+			try {
+				warn_if_tensor_is_disposed(predict_data);
+				predictions_tensor = await __predict(predict_data);
+
+				if(!predictions_tensor) {
+					dbg(language[lang]["empty_predictions_tensor_in_predict_webcam"]);
+					hide_predict_spinner("#webcam_prediction");
+					return;
+				}
+			} catch (e) {
+				hide_predict_spinner("#webcam_prediction");
+				await handle_predict_webcam_error(e, predictions_tensor, predict_data);
+
+				return;
+			}
+
+			warn_if_tensor_is_disposed(predictions_tensor);
+			await draw_heatmap(predictions_tensor, predict_data, 1);
+
+			var predictions = array_sync(predictions_tensor);
+
+			var webcam_prediction = $("#webcam_prediction");
+			webcam_prediction.show();
+
+			await _predict_webcam_render(predictions, predictions_tensor, webcam_prediction);
+
 			hide_predict_spinner("#webcam_prediction");
-			await handle_predict_webcam_error(e, predictions_tensor, predict_data);
 
-			return;
+			await dispose(predictions_tensor, predict_data);
+
+			await nextFrame();
+		} finally {
+			// Always release the guard so subsequent webcam ticks are not
+			// silently aborted after a single error / null-tensor path.
+			currently_predicting_webcam = false;
 		}
-
-		warn_if_tensor_is_disposed(predictions_tensor);
-		await draw_heatmap(predictions_tensor, predict_data, 1);
-
-		var predictions = array_sync(predictions_tensor);
-
-		var webcam_prediction = $("#webcam_prediction");
-		webcam_prediction.show();
-
-		await _predict_webcam_render(predictions, predictions_tensor, webcam_prediction);
-
-		hide_predict_spinner("#webcam_prediction");
-
-		await dispose(predictions_tensor, predict_data);
-
-		await nextFrame();
-
-		currently_predicting_webcam = false;
 	} catch (e) {
 		e = extract_error_message(e);
 
@@ -2541,7 +2541,18 @@ async function repredict () {
 		// fire a deferred sketcher predict that would race in after the example
 		// predictions and leave the (blank) sketcher as the last 3D-network input.
 		_predict_pending_args = null;
-		await _predict_handdrawn_internal();
+		// Wait for any observer-triggered handdrawn prediction that is still
+		// running so we do not start a second _predict_handdrawn_internal()
+		// in parallel (race: two model.predict() calls, clobbering UI).
+		while (_predict_running) {
+			await new Promise(function(resolve) { setTimeout(resolve, 20); });
+		}
+		_predict_running = true;
+		try {
+			await _predict_handdrawn_internal();
+		} finally {
+			_predict_running = false;
+		}
 	} else {
 		await predict_handdrawn();
 	}

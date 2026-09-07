@@ -414,10 +414,22 @@ async function retrain_neural_network() {
 async function train_neural_network() {
 	reset_math_history();
 
+	// Synchronous guard: a rapid double-click (touch devices, impatient users)
+	// can fire train_neural_network() twice before the button is disabled in
+	// gui_in_training() (which only runs after several awaits inside
+	// _train_neural_network_start). Setting started_training and disabling the
+	// button synchronously here closes that window.
+	if (started_training) {
+		return null;
+	}
+
 	if ($($(".train_neural_network_button")[0]).prop("disabled")) {
 		err('Cannot train: train_neural_network is disabled.');
 		return null;
 	}
+
+	started_training = true;
+	$(".train_neural_network_button").prop("disabled", true);
 
 	if (!started_training && !$("#canvas_grid_visualization").children().length) {
 		_grid_visualization_height = 0;

@@ -6759,9 +6759,13 @@ class asanAI {
 			console.log("model-fit y:", _y.arraySync());
 			*/
 
-			var history = this.#model.fit(_x, _y, args);
+			var history = await this.#model.fit(_x, _y, args);
 
 			await this.#redo_what_has_to_be_redone(false);
+
+			await this.set_model(this.#model);
+
+			this.#model_is_trained = true;
 
 			return history;
 		} catch (e) {
@@ -6777,17 +6781,11 @@ class asanAI {
 				this.wrn(`A fit is already ongoing. Can only fit one model at a time.`);
 				return false;
 			} else {
-				this.#started_training = false;
 				throw new Error(e);
 			}
+		} finally {
+			this.#started_training = false;
 		}
-
-		this.#started_training = false;
-		await this.set_model(this.#model);
-
-		this.#model_is_trained = true;
-
-		return history;
 	}
 
 	get_custom_tensors () {

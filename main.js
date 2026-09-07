@@ -610,9 +610,24 @@ function set_auto_intervals () {
 	setInterval(model_is_ok, 300);
 	setInterval(label_debugger_icon_ok, 300);
 	setInterval(_temml, 500);
-	setInterval(_clean_custom_tensors, 800);
-	setInterval(force_restart_fcnn, 500);
-	setInterval(repredict_if_not_image_but_image_is_shown, 200);
+	// _clean_custom_tensors disposes tensors that an in-flight predict/fit may
+	// still reference. Skip while training is active.
+	setInterval(function () {
+		if (typeof started_training !== "undefined" && started_training) return;
+		_clean_custom_tensors();
+	}, 800);
+	// force_restart_fcnn reads model.layers and can race with an in-flight
+	// fit(); skip while training is active.
+	setInterval(function () {
+		if (typeof started_training !== "undefined" && started_training) return;
+		force_restart_fcnn();
+	}, 500);
+	// repredict_if_not_image_but_image_is_shown triggers model.predict() and
+	// shares the GPU queue with the training fit(); skip while training.
+	setInterval(function () {
+		if (typeof started_training !== "undefined" && started_training) return;
+		repredict_if_not_image_but_image_is_shown();
+	}, 200);
 	setInterval(trigger_plot, 500);
 	setInterval(write_descriptions, 500);
 	setInterval(show_layer_description_when_layer_is_visible, 500);
