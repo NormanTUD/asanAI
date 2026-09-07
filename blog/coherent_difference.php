@@ -843,7 +843,7 @@ For Leibniz, every monad — every genuine, indivisible unit of substance — se
 </div>
 
 <div class="md">
-## Why this is the lens for embeddings
+## Why this is a lens for embeddings
 
 Embeddings are the place where all of the above comes together in modern AI. A tokenizer (see the <a href="tokenizerlab">Tokenization chapter</a>) hands the network a list of integers: token IDs. The next step, which the <a href="embeddinglab">Embeddings chapter</a> treats in detail, is to *place* every token at a point in a high-dimensional vector space $\mathbb{R}^d$. From that point on, every operation in the network is an operation in that space: distances, dot products, attention weights, the residual stream.
 
