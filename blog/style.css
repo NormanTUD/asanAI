@@ -1530,7 +1530,7 @@ html.theme-transition *::after {
 	opacity: 0;
 	animation: bodyFadeIn 1s ease forwards;
 	line-height: 1.6;
-	color: #1e293b;
+	color: var(--mn-text);
 	-webkit-font-smoothing: antialiased; /* Macht Schrift auf Macs schärfer */
 	text-rendering: optimizeLegibility;
 	-webkit-overflow-scrolling: touch;
@@ -1540,7 +1540,9 @@ html.theme-transition *::after {
 #loader { font-family: var(--mn-font-body); }
 
 #contents {
-	/* 1. Dynamische Breite mit Obergrenze */
+	/* 1. Dynamische Breite mit Obergrenze — auf breiten Bildschirmen
+	   wird das Maximum hochgesetzt, damit die Sidenote-Spalte
+	   rechts daneben Platz hat. */
 	width: 95%;            /* Nimmt auf kleinen Screens fast alles ein */
 	max-width: 800px;
 
@@ -1557,7 +1559,19 @@ html.theme-transition *::after {
 	opacity: 0;
 	animation: bodyFadeIn 1s ease forwards;
 	line-height: 1.6;
-	color: #1e293b;
+	color: var(--mn-text);
+}
+
+/* On screens wide enough for a side-margin column, widen #contents so
+   the article doesn't shift when sidenotes appear/disappear. The extra
+   320px of room holds a max-30%-wide sidenote rail. This rule only
+   fires when the page actually contains sidenotes (the JS adds the
+   `has-sidenotes` class on <body>). */
+@media (min-width: 1240px) {
+	body.has-sidenotes #contents {
+		max-width: 1180px;
+		padding-right: 360px; /* reserve column for sidenotes */
+	}
 }
 
 /* ── Prose vs. chrome ───────────────────────────────────────
@@ -1707,7 +1721,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .row-label { text-align: right !important; padding-right: 15px !important; font-weight: bold; color: #64748b !important; font-size: 0.85rem; border: none !important; }
 .prob-item { cursor: pointer; padding: 10px; border-radius: 8px; transition: background 0.2s; border: 1px solid transparent; }
 .prob-item:hover { background: #eff6ff; border-color: #3b82f6; }
-.token-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; background: white; margin-top: 10px; }
+.token-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; background: var(--mn-surface); margin-top: 10px; }
 .token-table th { text-align: left; padding: 8px; border-bottom: 2px solid #e2e8f0; color: #64748b; }
 .token-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; font-family: monospace; }
 #prob-bars-container { max-height: 400px; overflow-y: auto; padding-right: 10px; }
@@ -1788,7 +1802,7 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 .sa-attn-table td { height: 70px; text-align: center; border: 1px solid #e2e8f0; font-size: 1.1rem; font-weight: 600; }
 .sa-row-label { font-weight: bold; background: #f8fafc; color: #1e293b; width: 120px; }
 
-.stage-card { position: relative; padding-top: 45px; min-height: 550px; display: flex; flex-direction: column; box-sizing: border-box; background: #fff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.stage-card { position: relative; padding-top: 45px; min-height: 550px; display: flex; flex-direction: column; box-sizing: border-box; background: var(--mn-surface); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
 
 .badge-label { position: absolute; top: 0; left: 20px; color: white; padding: 6px 15px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-weight: bold; font-size: 0.7rem; letter-spacing: 0.8px; }
 
