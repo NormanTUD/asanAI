@@ -69,6 +69,10 @@ async function get_model_predict (data, __model = model, recursion = 0) {
 
 		renderLayerIOStats("health_status");
 
+		// CNN3D guardrail (G1): monotonically bump the data revision so any
+		// visualizer can tell "a fresh prediction landed" apart from a no-op.
+		window.cnn3d_data_revision = (window.cnn3d_data_revision || 0) + 1;
+
 		if (typeof CNN3D !== "undefined" && $("#cnn3d").length) {
 			CNN3D.render("cnn3d");
 		}

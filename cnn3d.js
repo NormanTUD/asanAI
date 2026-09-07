@@ -32,6 +32,17 @@
         return;
     }
 
+    // Guardrail (G1): global monotonic counter, bumped by predict.js after every
+    // successful model.predict(). CNN3D uses it to know a fresh prediction landed,
+    // independently of content hashing.
+    if (typeof global.cnn3d_data_revision !== "number") {
+        global.cnn3d_data_revision = 0;
+    }
+    function currentDataRevision() {
+        var r = global.cnn3d_data_revision;
+        return (typeof r === "number" && isFinite(r)) ? r : -1;
+    }
+
     var HAS_COMPOSER = !!(THREE.EffectComposer && THREE.RenderPass && THREE.UnrealBloomPass);
     var HAS_CSS2D    = !!(THREE.CSS2DRenderer && THREE.CSS2DObject);
 
@@ -282,6 +293,23 @@
         res.modelPresent = true;
 
         var states = (typeof layer_states_saved !== "undefined" && layer_states_saved) ? layer_states_saved : null;
+
+        // Guardrail (G6): never render activations that belong to a different
+        // (stale) model instance, mirroring proper_layer_states_saved().
+        if (states) {
+            try {
+                if (model.uuid !== undefined && model.uuid !== null) {
+                    var ukeys = Object.keys(states);
+                    for (var uk = 0; uk < ukeys.length; uk++) {
+                        var su = states[ukeys[uk]] && states[ukeys[uk]].model_uuid;
+                        if (su !== undefined && su !== null && su !== model.uuid) {
+                            states = null;
+                            break;
+                        }
+                    }
+                }
+            } catch (e) { states = null; }
+        }
 
         if (states) {
             try {
@@ -752,9 +780,61 @@
     }
 
     // ------------------------------------------------------------------
-    // Hash for change detection
+    // Change detection
     // ------------------------------------------------------------------
-    function buildStateHash(state, opts, theme, attribution) {
+    // The old single "state hash" sampled ~50 activation values per layer and
+    // only min/max of the input image, so a genuinely new prediction could
+    // hash equal to the old one and the rebuild was silently skipped (the
+    // previously visible image stayed on screen). Change detection is now
+    // split into three independent, strong signals (guardrails G1+G2):
+    //   - currentDataRevision(): monotonic "a predict happened" counter
+    //   - fingerprintState():    collision-resistant hash of ALL input pixels
+    //                            and ALL activation values
+    //   - buildViewHash():       pure view options / theme
+    function fnvFeed(h, s) {
+        for (var i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 0x01000193) >>> 0;
+        }
+        return h >>> 0;
+    }
+
+    function strongHashNumbers(arr, h) {
+        h = (h === undefined) ? 0x811c9dc5 : (h >>> 0);
+        for (var i = 0; i < arr.length; i++) {
+            var v = arr[i];
+            if (typeof v !== "number" || !isFinite(v)) {
+                h = fnvFeed(h, "~");
+                continue;
+            }
+            // toFixed(6) is far below any visually meaningful change while
+            // still distinguishing distinct predictions
+            h = fnvFeed(h, v >= 0 ? ("p" + v.toFixed(6)) : ("n" + (-v).toFixed(6)) + ";");
+        }
+        return h >>> 0;
+    }
+
+    function fingerprintState(state) {
+        var h = 0x811c9dc5;
+        if (state.inputImage) {
+            h = fnvFeed(h, "img:" + state.inputImage.shape.join(",") + ":");
+            h = strongHashNumbers(flattenDeep(state.inputImage.data), h);
+        } else {
+            h = fnvFeed(h, "img:none:");
+        }
+        for (var i = 0; i < state.layers.length; i++) {
+            var L = state.layers[i];
+            h = fnvFeed(h, "L" + L.idx + ":" + L.kind + ":" + (L.outputShape ? L.outputShape.join(",") : "?") + ":");
+            if (L.activation) {
+                h = strongHashNumbers(flattenDeep(L.activation), h);
+            } else {
+                h = fnvFeed(h, "noact:");
+            }
+        }
+        return h >>> 0;
+    }
+
+    function buildViewHash(opts, theme) {
         var parts = [];
         parts.push("dark=" + theme.dark);
         parts.push("th=" + opts.threshold);
@@ -774,38 +854,8 @@
         parts.push("ex=" + opts.explainMode);
         parts.push("ea=" + opts.explainOverlayAlpha);
         parts.push("er=" + opts.explainRayCount);
-        if (attribution) {
-            parts.push("attr=" + attribution.mode + ",cls" + attribution.classIdx);
-            // Sample a few values from the map for hashing
-            var m = attribution.map2d;
-            var H = m.length, W = m[0].length;
-            for (var yi = 0; yi < H; yi += Math.max(1, Math.floor(H / 6))) {
-                for (var xi = 0; xi < W; xi += Math.max(1, Math.floor(W / 6))) {
-                    parts.push(m[yi][xi].toFixed(3));
-                }
-            }
-        }
         var keys = Object.keys(opts.perLayerThresholds).sort();
         for (var k = 0; k < keys.length; k++) parts.push("pt" + keys[k] + "=" + opts.perLayerThresholds[keys[k]]);
-
-        for (var i = 0; i < state.layers.length; i++) {
-            var L = state.layers[i];
-            parts.push("L" + i + ":" + L.kind + ":" + (L.outputShape ? L.outputShape.join(",") : "?"));
-            if (L.activation) {
-                var flat = flattenDeep(L.activation);
-                var stride = Math.max(1, Math.floor(flat.length / 50));
-                var mm = minMaxAbs(flat);
-                var s = mm.min.toFixed(4) + "|" + mm.max.toFixed(4) + "|" + mm.maxAbs.toFixed(4) + "|" + flat.length + "|";
-                for (var j = 0; j < flat.length; j += stride) s += flat[j].toFixed(3) + ",";
-                parts.push(s);
-            } else {
-                parts.push("noact");
-            }
-        }
-        if (state.inputImage) {
-            var mm2 = minMaxAbs(flattenDeep(state.inputImage.data));
-            parts.push("img=" + state.inputImage.shape.join(",") + "|" + mm2.min.toFixed(3) + "|" + mm2.max.toFixed(3));
-        }
         return hashString(parts.join(";"));
     }
 
@@ -833,7 +883,13 @@
             connectionMeshes: [],
             attributionRays: [],      // NEW: shader-animated rays
             lastHover: null,
-            lastHash: null, lastDarkMode: null,
+            lastDarkMode: null,
+            // Change-detection bookkeeping (guardrails G1/G2/G3/G7)
+            lastDataRevision: -1,
+            lastContentHash: null,
+            lastViewHash: null,
+            dataDirty: false,
+            pendingRender: false,
             sphericalTarget: null,
             _hasFramed: false,
             _lastLayerCount: 0,
@@ -1016,28 +1072,53 @@
             scheduleRebuild(inst);
             return;
         }
-        var state = readModelState();
-        if (!state.inputImage || !_hasTF() || !global.model) {
-            scheduleRebuild(inst);
+        if (!_hasTF() || !global.model) {
             return;
         }
-        inst._attributionInFlight = true;
-        // Show a hint overlay
-        var prevOverlayText = null;
-        if (inst.overlayEl && inst.overlayEl.style.display !== 'none') {
-            prevOverlayText = inst.overlayEl.textContent;
+        // Guardrail (G5): require a real input image. Bail WITHOUT scheduling
+        // anything when there is none — a no-op scheduleRebuild() here would
+        // create a rebuild -> recompute -> rebuild feedback loop for
+        // non-image models with explain mode enabled.
+        var preState = readModelState();
+        if (!preState.inputImage) {
+            if (inst._lastAttribution) {
+                inst._lastAttribution = null;
+                inst.dataDirty = true;
+                scheduleRebuild(inst);
+            }
+            return;
         }
+        var mode = inst.opts.explainMode;
+        inst._attributionInFlight = true;
         // Use setTimeout to let UI update
         setTimeout(function () {
-            try {
-                var attr = computeAttribution(state, inst.opts.explainMode);
-                inst._lastAttribution = attr;
-            } catch (e) {
-                console.warn("[cnn3d.js] Attribution failed:", e);
-                inst._lastAttribution = null;
+            // Guardrail (G5): read the LATEST state at computation time (the old
+            // code captured `state` before the timeout and could apply an
+            // attribution computed for a previous image).
+            var state = readModelState();
+            var revAtStart = currentDataRevision();
+            var attr = null;
+            if (state.inputImage) {
+                try {
+                    attr = computeAttribution(state, mode);
+                } catch (e) {
+                    console.warn("[cnn3d.js] Attribution failed:", e);
+                    attr = null;
+                }
             }
             inst._attributionInFlight = false;
-            inst.lastHash = null; // force rebuild
+            // Guardrail (G5): discard the result if the data changed while the
+            // (potentially long) computation was in flight.
+            if (attr && revAtStart !== currentDataRevision()) {
+                attr = null;
+            }
+            if (attr) {
+                attr.dataRevision = currentDataRevision();
+                attr.mode = mode;
+            }
+            inst._lastAttribution = attr;
+            // Force the scene to re-evaluate with (or without) the attribution
+            inst.dataDirty = true;
             scheduleRebuild(inst);
         }, 20);
     }
@@ -1479,20 +1560,28 @@
         });
         inst.resizeObserver.observe(wrapper);
 
+        // Guardrail (G3): consume pending work on EVERY callback where the
+        // element is (or becomes) visible, not only on the exact
+        // hidden->visible edge. If the edge is missed or inst.isVisible was
+        // stale, the rebuild would otherwise be dropped and the old scene
+        // would stay on screen. doRebuild() itself is cheap when nothing
+        // changed (strong fingerprint no-op), so calling it liberally is safe.
         inst.observer = new IntersectionObserver(function (entries) {
             for (var i = 0; i < entries.length; i++) {
                 var wasVisible = inst.isVisible;
                 inst.isVisible = entries[i].isIntersecting;
-                if (inst.isVisible && !wasVisible) {
-                    if (inst.lastDarkMode !== !!global.is_dark_mode) {
-                        inst.lastHash = null;
-                        doRebuild(inst);
-                    } else if (inst.pendingRender) {
-                        inst.pendingRender = false;
-                        doRebuild(inst);
-                    }
-                    scheduleRender(inst);
+                if (!inst.isVisible) {
+                    continue;
                 }
+                if (!wasVisible) {
+                    // Freshly visible: always re-evaluate against latest data
+                    inst.pendingRender = true;
+                }
+                if (inst.pendingRender) {
+                    inst.pendingRender = false;
+                    doRebuild(inst);
+                }
+                scheduleRender(inst);
             }
         }, { threshold: 0.01 });
         inst.observer.observe(wrapper);
@@ -1746,7 +1835,7 @@
     }
 
     // ------------------------------------------------------------------
-    // Dark mode watcher
+    // Dark mode watcher + data catch-up safety net
     // ------------------------------------------------------------------
     function startDarkModeWatcher(inst) {
         inst.lastDarkMode = !!global.is_dark_mode;
@@ -1768,9 +1857,21 @@
                     inst.overlayEl.style.background = theme.overlayBg;
                 }
                 styleGUI(inst);
-                inst.lastHash = null;
                 if (inst.isVisible) { doRebuild(inst); scheduleRender(inst); }
                 else { inst.pendingRender = true; }
+                return;
+            }
+
+            // Guardrail (G4): ultimate safety net. If a data update was missed
+            // by every other trigger (dropped rAF, missed intersection edge,
+            // stale visibility flag) while the view is on screen, self-heal
+            // within 300ms. The cheap checks below keep idle cost ~zero.
+            if (!inst.isVisible) return;
+            var revisionStale = (currentDataRevision() !== inst.lastDataRevision);
+            if (inst.pendingRender || revisionStale) {
+                inst.pendingRender = false;
+                doRebuild(inst);
+                scheduleRender(inst);
             }
         }, 300);
     }
@@ -3182,6 +3283,53 @@
             rebuildPerLayerControls(inst, state);
         }
 
+        var dataRevision = currentDataRevision();
+
+        // Guardrail (G5): attribution is only valid for the data revision it
+        // was computed for. A new prediction (clicked image, re-predict, ...)
+        // bumps the revision, so a cached attribution for the previous image
+        // is discarded instead of being drawn over the new one.
+        var attribution = inst._lastAttribution;
+        if (attribution && attribution.dataRevision !== dataRevision) {
+            inst._lastAttribution = null;
+            attribution = null;
+        }
+        // Trigger attribution recompute if mode is active but attribution is stale/missing
+        if (inst.opts.explainMode !== 'none' && !attribution && inst.opts.explainAutoCompute && !inst._attributionInFlight) {
+            // Kick off attribution async; will retrigger rebuild when done
+            recomputeAttributionAsync(inst);
+            // Continue with current build (without attribution) so user gets fast feedback
+        }
+        // Filter out stale attribution if it doesn't match the current explain mode
+        if (attribution && attribution.mode !== inst.opts.explainMode) {
+            inst._lastAttribution = null;
+            attribution = null;
+        }
+
+        // Guardrails (G1+G2+G7): rebuild unless every independent signal says
+        // "unchanged": the global predict-revision counter, a strong
+        // content fingerprint of ALL input pixels + ALL activation values,
+        // the view options/theme hash, and the explicit dataDirty flag set by
+        // CNN3D.render(). The old single weak hash could collide for two
+        // different predictions, silently skipping the rebuild and leaving
+        // the previously visible image on screen.
+        var contentFp = fingerprintState(state);
+        var viewHash = buildViewHash(inst.opts, theme);
+        var changed = inst.dataDirty
+            || (dataRevision !== inst.lastDataRevision)
+            || (contentFp !== inst.lastContentHash)
+            || (viewHash !== inst.lastViewHash);
+
+        if (!changed && inst.opts.autoUpdateHash) {
+            updateClassificationPanel(inst, state);
+            return;
+        }
+
+        inst.lastDataRevision = dataRevision;
+        inst.lastContentHash = contentFp;
+        inst.lastViewHash = viewHash;
+        inst.dataDirty = false;
+
         if (!state.modelPresent) {
             clearModelGroup(inst);
             updateClassificationPanel(inst, state);
@@ -3204,28 +3352,6 @@
             return;
         }
         hideOverlay(inst);
-
-        // Trigger attribution recompute if mode is active but attribution is stale/missing
-        var attribution = inst._lastAttribution;
-        if (inst.opts.explainMode !== 'none' && !attribution && inst.opts.explainAutoCompute && !inst._attributionInFlight) {
-            // Kick off attribution async; will retrigger rebuild when done
-            recomputeAttributionAsync(inst);
-            // Continue with current build (without attribution) so user gets fast feedback
-        }
-        // Filter out stale attribution if it doesn't match the current explain mode
-        if (attribution && attribution.mode !== inst.opts.explainMode) {
-            attribution = null;
-        }
-
-        // Hash-based no-op skip
-        if (inst.opts.autoUpdateHash) {
-            var newHash = buildStateHash(state, inst.opts, theme, attribution);
-            if (newHash === inst.lastHash) {
-                updateClassificationPanel(inst, state);
-                return;
-            }
-            inst.lastHash = newHash;
-        }
 
         clearModelGroup(inst);
         applyFog(inst);
@@ -3341,13 +3467,20 @@
     // Debounced rebuild scheduling
     // ------------------------------------------------------------------
     function scheduleRebuild(inst) {
+        // Guardrail (G3): always remember that a rebuild is owed, no matter
+        // what inst.isVisible currently claims (the flag is maintained by an
+        // async IntersectionObserver and can be stale). If the element really
+        // is visible we also run it on the next frame; otherwise it is
+        // consumed when the element becomes visible again (observer or the
+        // 300ms catch-up net). Either way the update can no longer be lost.
+        inst.pendingRender = true;
         if (!inst.isVisible) {
-            inst.pendingRender = true;
             return;
         }
         if (inst._rebuildTimer) return;
         inst._rebuildTimer = requestAnimationFrame(function () {
             inst._rebuildTimer = null;
+            inst.pendingRender = false;
             doRebuild(inst);
         });
     }
@@ -3380,16 +3513,31 @@
             if (options) Object.assign(inst.opts, options);
             setupThree(inst);
             ensureGUI(inst);
+            // Guardrail (G3): never force inst.isVisible here. The old code set
+            // it to true unconditionally (even while the tab was hidden), which
+            // left a stale "visible" flag behind and could make the observer's
+            // hidden->visible edge — the only place pendingRender was consumed
+            // — never fire. The IntersectionObserver owns this flag; the first
+            // build happens as soon as the element is actually visible (or
+            // immediately, if it already is).
+            inst.pendingRender = true;
             requestAnimationFrame(function () {
-                inst.isVisible = true;
-                doRebuild(inst);
-                scheduleRender(inst);
+                if (inst.isVisible) {
+                    inst.pendingRender = false;
+                    doRebuild(inst);
+                    scheduleRender(inst);
+                }
             });
         } else {
             if (options) {
                 Object.assign(inst.opts, options);
                 syncGUIFromOpts(inst);
             }
+            // Guardrail (G7): predict.js calls CNN3D.render() exactly when a
+            // fresh prediction landed, so treat every render() call as an
+            // explicit "data may be new" signal and let the strong
+            // fingerprint/revision check in doRebuild decide whether to build.
+            inst.dataDirty = true;
             scheduleRebuild(inst);
         }
         return inst;
@@ -3477,7 +3625,11 @@
         if (!container) return;
         var inst = INSTANCES.get(container);
         if (!inst) return;
-        inst.lastHash = null;
+        // Invalidate every change-detection signal so the next doRebuild
+        // cannot take the no-op path
+        inst.dataDirty = true;
+        inst.lastContentHash = null;
+        inst.lastViewHash = null;
         // Also invalidate attribution so it gets recomputed on next rebuild
         if (inst.opts.explainMode !== 'none') {
             inst._lastAttribution = null;
