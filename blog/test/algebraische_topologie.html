@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algebraische Geometrie – Visuell verstehen</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    color: #e8e8f0;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+  
+  header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: radial-gradient(ellipse at center, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+  }
+  
+  h1 {
+    font-size: 3.5em;
+    background: linear-gradient(90deg, #ff6ec4, #7873f5, #4ADEDE);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+  }
+  
+  header p {
+    font-size: 1.3em;
+    color: #b8b8d0;
+    max-width: 700px;
+    margin: 0 auto;
+    font-style: italic;
+  }
+  
+  nav {
+    position: sticky;
+    top: 0;
+    background: rgba(15, 12, 41, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    padding: 15px;
+    border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  nav a {
+    display: inline-block;
+    color: #7873f5;
+    text-decoration: none;
+    padding: 8px 14px;
+    margin: 0 4px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    transition: all 0.3s;
+    background: rgba(120, 115, 245, 0.1);
+  }
+  
+  nav a:hover {
+    background: rgba(120, 115, 245, 0.3);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+  
+  .concept {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+  }
+  
+  .concept h2 {
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    color: #ff6ec4;
+    border-bottom: 2px solid rgba(255, 110, 196, 0.3);
+    padding-bottom: 10px;
+  }
+  
+  .concept h2 .num {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6ec4, #7873f5);
+    color: white;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 15px;
+    font-size: 0.7em;
+    font-weight: bold;
+  }
+  
+  .intuition {
+    background: rgba(74, 222, 222, 0.1);
+    border-left: 4px solid #4ADEDE;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+    font-style: italic;
+  }
+  
+  .intuition strong { color: #4ADEDE; font-style: normal; }
+  
+  .formal {
+    background: rgba(120, 115, 245, 0.1);
+    border-left: 4px solid #7873f5;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+  }
+  
+  .formal strong { color: #7873f5; font-family: Georgia, serif; }
+  
+  .viz-container {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 25px;
+    border-radius: 15px;
+    margin: 25px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: #0a0a1a;
+    border-radius: 10px;
+    max-width: 100%;
+  }
+  
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    align-items: center;
+  }
+  
+  .control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+  }
+  
+  .control label {
+    font-size: 0.9em;
+    color: #b8b8d0;
+    margin-bottom: 8px;
+  }
+  
+  .control span {
+    color: #ff6ec4;
+    font-weight: bold;
+    font-family: monospace;
+  }
+  
+  input[type="range"] {
+    width: 180px;
+    -webkit-appearance: none;
+    height: 6px;
+    background: linear-gradient(90deg, #7873f5, #ff6ec4);
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 110, 196, 0.8);
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(255, 110, 196, 0.8);
+  }
+  
+  button {
+    background: linear-gradient(135deg, #ff6ec4, #7873f5);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: transform 0.2s;
+  }
+  
+  button:hover { transform: scale(1.05); }
+  
+  select {
+    background: rgba(120, 115, 245, 0.2);
+    color: white;
+    border: 1px solid #7873f5;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.95em;
+  }
+  
+  .example {
+    background: rgba(255, 200, 100, 0.1);
+    border-left: 4px solid #ffc864;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+  }
+  
+  .example strong { color: #ffc864; }
+  
+  .warning {
+    background: rgba(255, 100, 100, 0.1);
+    border-left: 4px solid #ff6464;
+    padding: 15px 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+  }
+  
+  .warning strong { color: #ff6464; }
+  
+  .math {
+    font-family: 'Cambria Math', 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 1.1em;
+    padding: 0 3px;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7873f5;
+    font-style: italic;
+  }
+  
+  @media (max-width: 768px) {
+    h1 { font-size: 2.2em; }
+    .concept { padding: 20px; margin: 20px 10px; }
+    .concept h2 { font-size: 1.5em; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Algebraische Geometrie</h1>
+  <p>Eine visuelle Reise durch die 20 wichtigsten Konzepte – von topologischen Räumen bis zum Satz von Riemann-Roch. Interagiere mit jedem Konzept, um es <em>wirklich</em> zu verstehen.</p>
+</header>
+
+<nav>
+  <a href="#c1">1. Topologie</a>
+  <a href="#c2">2. Irreduzibel</a>
+  <a href="#c3">3. Prägarbe</a>
+  <a href="#c4">4. Garbe</a>
+  <a href="#c5">5. Halme</a>
+  <a href="#c6">6. Vergarbung</a>
+  <a href="#c7">7. Exakte Sequenzen</a>
+  <a href="#c8">8. Bild/Kern</a>
+  <a href="#c9">9. Direktes Bild</a>
+  <a href="#c10">10. Kohomologie</a>
+  <a href="#c11">11. Spec(R)</a>
+  <a href="#c12">12. Zariski-Topologie</a>
+  <a href="#c13">13. Lokalisierung</a>
+  <a href="#c14">14. Schemata</a>
+  <a href="#c15">15. Quasikohärent</a>
+  <a href="#c16">16. Proj(S)</a>
+  <a href="#c17">17. ℙⁿ</a>
+  <a href="#c18">18. Linienbündel</a>
+  <a href="#c19">19. Chernklassen</a>
+  <a href="#c20">20. Riemann-Roch</a>
+</nav>
+
+<!-- ============ 1. TOPOLOGISCHE RÄUME ============ -->
+<section class="concept" id="c1">
+  <h2><span class="num">1</span>Topologische Räume</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Ein topologischer Raum ist eine Menge von Punkten, bei der wir sagen können: „diese Punkte gehören zusammen (offen)" oder „diese Punkte bilden einen Rand (abgeschlossen)". Es ist die minimale Struktur, um von <em>Nähe</em> und <em>Stetigkeit</em> zu sprechen — ohne Maß oder Winkel.
+  </div>
+  
+  <div class="formal">
+    <strong>Formal:</strong> Ein topologischer Raum ist eine Menge <span class="math">X</span> mit einem System <span class="math">𝒜</span> abgeschlossener Teilmengen, sodass: (1) endliche Vereinigungen abgeschlossen sind, (2) beliebige Durchschnitte abgeschlossen sind, (3) <span class="math">X</span> und <span class="math">∅</span> abgeschlossen sind. Die Komplemente heißen <em>offene Mengen</em>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas1" width="800" height="400"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Anzahl offene Mengen: <span id="c1-num">3</span></label>
+        <input type="range" id="c1-slider" min="1" max="8" value="3">
+      </div>
+      <button onclick="drawTopology()">Neu würfeln</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      🎨 Bewege die Maus über den Raum — der Punkt zeigt dir, in welchen offenen Mengen er liegt.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 2. IRREDUZIBEL & NOETHERSCH ============ -->
+<section class="concept" id="c2">
+  <h2><span class="num">2</span>Irreduzibilität & Noethersche Räume</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Ein Raum ist <em>irreduzibel</em>, wenn er nicht in zwei kleinere, echte Stücke zerlegt werden kann. Wie ein einzelnes Puzzleteil, das man nicht ohne Bruch weiter teilen kann. <em>Noethersch</em> heißt: jede absteigende Kette von abgeschlossenen Teilmengen wird irgendwann stabil.
+  </div>
+  
+  <div class="formal">
+    <strong>Formal:</strong> <span class="math">Y</span> ist irreduzibel, falls <span class="math">Y = Y₁ ∪ Y₂</span> (beide abgeschlossen) impliziert <span class="math">Y = Y₁</span> oder <span class="math">Y = Y₂</span>. Ein noetherscher Raum lässt sich eindeutig zerlegen: <span class="math">Y = Y₁ ∪ ... ∪ Yₙ</span> in irreduzible Komponenten.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas2" width="800" height="400"></canvas>
+    <div class="controls">
+      <button onclick="animateDecomp()">▶ Zerlegung animieren</button>
+      <div class="control">
+        <label>Anzahl Komponenten: <span id="c2-num">4</span></label>
+        <input type="range" id="c2-slider" min="1" max="6" value="4" oninput="drawIrreducible()">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. PRÄGARBEN ============ -->
+<section class="concept" id="c3">
+  <h2><span class="num">3</span>Prägarben</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Eine Prägarbe ordnet jeder offenen Menge <span class="math">U</span> eine abelsche Gruppe <span class="math">G(U)</span> zu — stell dir vor: „alle stetigen Funktionen auf U". Wenn <span class="math">V ⊂ U</span>, können wir jede Funktion auf <span class="math">U</span> auf <span class="math">V</span> einschränken. Das ist die <em>Restriktion</em>.
+  </div>
+  
+  <div class="formal">
+    <strong>Formal:</strong> <span class="math">G: U ↦ G(U)</span> mit Restriktionen <span class="math">res(V,U): G(V) → G(U)</span> für <span class="math">U ⊂ V</span>, sodass: (i) <span class="math">G(∅)=0</span>, (ii) <span class="math">res(U,U)=id</span>, (iii) Restriktionen komponieren transitiv.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas3" width="800" height="450"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Frequenz der Funktion: <span id="c3-freq">2</span></label>
+        <input type="range" id="c3-freq-slider" min="1" max="8" value="2" step="0.5" oninput="drawPresheaf()">
+      </div>
+      <div class="control">
+        <label>Restriktion auf V: <span id="c3-vsize">40</span>%</label>
+        <input type="range" id="c3-vsize-slider" min="20" max="90" value="40" oninput="drawPresheaf()">
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Die Funktion auf U (groß) wird auf V (klein) restringiert. Beobachte: nur der ausgewählte Teil bleibt.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 4. GARBEN ============ -->
+<section class="concept" id="c4">
+  <h2><span class="num">4</span>Garben — das Verklebungsaxiom</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Eine Garbe ist eine Prägarbe mit einer <em>magischen Eigenschaft</em>: lokale Daten, die auf Überlappungen übereinstimmen, kann man immer zu globalen Daten verkleben. Wie ein Puzzle, das sich immer zusammensetzen lässt, wenn die Kanten passen!
+  </div>
+  
+  <div class="formal">
+    <strong>Axiome:</strong> Für <span class="math">V = ⋃ Vᵢ</span>: <br>
+    <strong>G1</strong> (Trennung): Wenn <span class="math">s|Vᵢ = 0</span> für alle <span class="math">i</span>, dann <span class="math">s = 0</span>. <br>
+    <strong>G2</strong> (Verklebung): Schnitte <span class="math">sᵢ ∈ G(Vᵢ)</span>, die auf <span class="math">Vᵢ ∩ Vⱼ</span> übereinstimmen, lassen sich zu einem globalen <span class="math">s ∈ G(V)</span> verkleben.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas4" width="800" height="400"></canvas>
+    <div class="controls">
+      <button onclick="animateGluing()">▶ Verklebung animieren</button>
+      <div class="control">
+        <label>Kompatibilität: <span id="c4-comp">100</span>%</label>
+        <input type="range" id="c4-comp-slider" min="0" max="100" value="100" oninput="drawSheaf()">
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Wenn Kompatibilität = 100%, entsteht eine glatte globale Funktion. Sonst „bricht" sie im Überlappungsbereich.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 5. HALME ============ -->
+<section class="concept" id="c5">
+  <h2><span class="num">5</span>Halme (Stalks)</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Der Halm <span class="math">Fₓ</span> in einem Punkt <span class="math">x</span> ist das „infinitesimale Verhalten" der Garbe bei <span class="math">x</span>. Für holomorphe Funktionen: die Taylorreihe! Zwei Schnitte sind gleich im Halm, wenn sie in einer beliebig kleinen Umgebung übereinstimmen.
+  </div>
+  
+  <div class="formal">
+    <strong>Formal:</strong> <span class="math">Fₓ = colim<sub>U∋x</sub> F(U)</span> — der direkte Limes über alle offenen Umgebungen von <span class="math">x</span>. Zwei Paare <span class="math">(U,s), (V,t)</span> sind äquivalent, wenn es <span class="math">W ⊂ U∩V</span> gibt mit <span class="math">s|W = t|W</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas5" width="800" height="400"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Zoom-Level: <span id="c5-zoom">1</span>×</label>
+        <input type="range" id="c5-zoom-slider" min="1" max="50" value="1" oninput="drawStalk()">
+      </div>
+      <button onclick="animateStalk()">▶ Zoom animieren</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Wir zoomen zum Punkt x. Immer kleinere Umgebungen — im Limes: der Halm.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 6. VERGARBUNG ============ -->
+<section class="concept" id="c6">
+  <h2><span class="num">6</span>Vergarbung (F⁺)</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Nicht jede Prägarbe ist eine Garbe. Die Vergarbung <span class="math">F⁺</span> ist die „kleinste Garbe", die aus <span class="math">F</span> gemacht werden kann — indem man erlaubt, lokale Daten zu verkleben. Halme bleiben dabei gleich!
+  </div>
+  
+  <div class="formal">
+    <strong>Konstruktion:</strong> <span class="math">F⁺(V)</span> = Funktionen <span class="math">s: V → ⋃ Fₓ</span>, die (1) den Wert <span class="math">s(x) ∈ Fₓ</span> haben und (2) lokal von echten Schnitten repräsentiert werden. Universelle Eigenschaft: jeder Morphismus <span class="math">F → G</span> (G Garbe) faktorisiert eindeutig durch <span class="math">F⁺</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas6" width="800" height="380"></canvas>
+    <div class="controls">
+      <button onclick="toggleSheafification()">Prägarbe ↔ Vergarbung</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Links: Prägarbe hat „Lücken" — inkonsistente lokale Daten. Rechts: nach Vergarbung nahtlos verklebt.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 7. EXAKTE SEQUENZEN ============ -->
+<section class="concept" id="c7">
+  <h2><span class="num">7</span>Exakte Sequenzen</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Eine Sequenz <span class="math">A → B → C</span> ist exakt, wenn das „was von A nach B kommt" (Bild) genau das ist, „was in B stirbt beim Weg nach C" (Kern). Wie ein perfekter Datenstrom ohne Verlust und ohne Rauschen.
+  </div>
+  
+  <div class="formal">
+    <strong>Formal:</strong> <span class="math">A →ᶠ B →ᵍ C</span> exakt bei B ⟺ <span class="math">Bild(f) = Kern(g)</span>. Eine <em>kurze exakte Sequenz</em> <span class="math">0 → A → B → C → 0</span> bedeutet: <span class="math">A</span> injektiv in <span class="math">B</span>, und <span class="math">C = B/A</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas7" width="800" height="380"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Größe A: <span id="c7-a">3</span></label>
+        <input type="range" id="c7-a-slider" min="1" max="6" value="3" oninput="drawExact()">
+      </div>
+      <div class="control">
+        <label>Größe C: <span id="c7-c">4</span></label>
+        <input type="range" id="c7-c-slider" min="1" max="6" value="4" oninput="drawExact()">
+      </div>
+    </div>
+<p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Bild(φ) = Kern(ψ) — die Sequenz fließt perfekt.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 8. BILD / KERN / KOKERN ============ -->
+<section class="concept" id="c8">
+  <h2><span class="num">8</span>Bild, Kern & Kokern von Garbenmorphismen</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Bei Garben ist etwas Vorsicht geboten! Der <em>Kern</em> eines Garbenmorphismus ist immer eine Garbe — kein Problem. Aber das <em>Bild</em> und der <em>Kokern</em> im naiven Sinn sind oft nur Prägarben. Um echte Garben zu bekommen, müssen wir vergarben!
+  </div>
+  
+  <div class="formal">
+    <strong>Beispiel (exp):</strong> Auf <span class="math">X = ℂ*</span> ist <span class="math">exp: 𝒪 → 𝒪*</span> surjektiv auf Halmen, aber <span class="math">z ∈ 𝒪*(X)</span> ist <em>nicht</em> global von der Form <span class="math">exp(f)</span> (Umlaufintegral!). Also: Bild<sub>naiv</sub>(exp) ist keine Garbe.<br>
+    <strong>Lösung:</strong> Bild(φ) := (Bild<sub>naiv</sub>(φ))⁺ und Kokern(φ) := (Kokern<sub>naiv</sub>(φ))⁺.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas8" width="800" height="400"></canvas>
+    <div class="controls">
+      <button onclick="animateExp()">▶ exp-Sequenz zeigen</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Die kurze exakte Sequenz <span class="math">0 → 2πiℤ → 𝒪 → 𝒪* → 0</span> auf ℂ*.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 9. DIREKTES & INVERSES BILD ============ -->
+<section class="concept" id="c9">
+  <h2><span class="num">9</span>Direktes & Inverses Bild</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Wenn <span class="math">f: X → Y</span> stetig ist, können wir Garben zwischen X und Y transportieren. <em>Direktes Bild</em> <span class="math">f∗F</span>: „schiebe F von X nach Y", indem du Urbilder betrachtest. <em>Inverses Bild</em> <span class="math">f⁻¹G</span>: „ziehe G von Y nach X zurück".
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> <span class="math">(f∗F)(V) = F(f⁻¹(V))</span> für <span class="math">V ⊂ Y</span> offen.<br>
+    <span class="math">(f⁻¹G)ₓ = G_{f(x)}</span> auf Halmen. <br>
+    <strong>Adjunktion:</strong> <span class="math">Hom(f⁻¹G, F) ≅ Hom(G, f∗F)</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas9" width="800" height="400"></canvas>
+    <div class="controls">
+      <button onclick="toggleDirection()">Richtung wechseln: <span id="c9-dir">f∗ (direkt)</span></button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Beobachte, wie Schnitte zwischen den Räumen X und Y transportiert werden.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 10. KOHOMOLOGIE ============ -->
+<section class="concept" id="c10">
+  <h2><span class="num">10</span>Garbenkohomologie</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Kohomologie misst „was global fehlschlägt, obwohl es lokal klappt". <span class="math">H⁰(X, G) = G(X)</span> sind die globalen Schnitte. <span class="math">H¹(X, G)</span> misst die Obstruktion, lokale Lösungen zu globalen zu verkleben. Höhere <span class="math">Hⁱ</span> messen tiefere Verklebungshindernisse.
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> Wähle injektive Auflösung <span class="math">0 → G → I⁰ → I¹ → ...</span>, dann <br>
+    <span class="math">Hⁱ(X, G) = Hⁱ(Γ(X, I•))</span>.<br>
+    Zu jeder kurzen exakten Sequenz <span class="math">0 → F → G → H → 0</span> gehört eine <em>lange exakte Kohomologiesequenz</em>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas10" width="800" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Grad i: <span id="c10-i">1</span></label>
+        <input type="range" id="c10-i-slider" min="0" max="4" value="1" oninput="drawCohomology()">
+      </div>
+      <button onclick="animateLongExact()">▶ Lange exakte Sequenz</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. SPEC(R) ============ -->
+<section class="concept" id="c11">
+  <h2><span class="num">11</span>Spec(R) — Ringe werden Räume</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Das ist die zentrale Idee! Jeder Ring <span class="math">R</span> wird ein <em>geometrischer Raum</em>: die Punkte sind die <em>Primideale</em> von R. Ein Ringelement <span class="math">f ∈ R</span> wird zur „Funktion" auf Spec(R): <span class="math">f(x) = f mod pₓ</span>. Algebra ↔ Geometrie!
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> <span class="math">Spec(R) = {p ⊂ R | p Primideal}</span>. <br>
+    Ein Ringhomomorphismus <span class="math">φ: R → R'</span> induziert stetige Abbildung <span class="math">Spec(φ): Spec(R') → Spec(R)</span>, <span class="math">p ↦ φ⁻¹(p)</span>.<br>
+    <strong>Funktor:</strong> Ring<sup>op</sup> → Top.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas11" width="800" height="420"></canvas>
+    <div class="controls">
+      <select id="c11-ring" onchange="drawSpec()">
+        <option value="Z">Spec(ℤ) — Primzahlen</option>
+        <option value="k[x]">Spec(k[x]) — Affine Gerade</option>
+        <option value="k[x,y]">Spec(k[x,y]) — Affine Ebene</option>
+        <option value="Zp">Spec(ℤ_(p)) — lokal</option>
+      </select>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Jeder Punkt ist ein Primideal. Der <em>generische Punkt</em> (0) liegt „überall dicht".
+    </p>
+  </div>
+</section>
+
+<!-- ============ 12. ZARISKI-TOPOLOGIE ============ -->
+<section class="concept" id="c12">
+  <h2><span class="num">12</span>Zariski-Topologie</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Die Topologie auf Spec(R) ist <em>seltsam</em>: abgeschlossene Mengen sind Nullstellenmengen von Idealen. Sie ist sehr <em>grob</em> — jede nichtleere offene Menge ist riesig. Basis der offenen Mengen: <span class="math">Xf = {p | f ∉ p}</span>.
+  </div>
+  
+  <div class="formal">
+    <strong>Abgeschlossen:</strong> <span class="math">Z(I) = {p ∈ Spec(R) | I ⊂ p}</span> für Ideale <span class="math">I ⊂ R</span>.<br>
+    <strong>Basisoffen:</strong> <span class="math">Xf = Spec(R) \ Z(f) = Spec(Rf)</span>. <br>
+    <strong>Quasikompaktheit:</strong> Spec(R) ist immer quasikompakt!
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas12" width="800" height="400"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Ideal I = (f), f = <span id="c12-f">x</span></label>
+        <input type="range" id="c12-f-slider" min="0" max="5" value="1" oninput="drawZariski()">
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Die abgeschlossene Menge Z(f) sind alle Punkte, wo f verschwindet.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 13. LOKALISIERUNG ============ -->
+<section class="concept" id="c13">
+  <h2><span class="num">13</span>Lokalisierung</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Lokalisierung ist wie „Zoomen" in der Algebra. Bei <span class="math">Rf</span> machst du <span class="math">f</span> invertierbar — geometrisch entfernst du den Nullstellenort von f. Bei <span class="math">R_p</span> (lokal bei einem Primideal) betrachtest du nur, was „nahe bei p" passiert.
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> <span class="math">S⁻¹R = {r/s | s ∈ S}/≡</span>, wobei <span class="math">S</span> multiplikativ abgeschlossen ist.<br>
+    <strong>Spec-Interpretation:</strong> <span class="math">Spec(Rf) ↪ Spec(R)</span> ist offene Immersion auf <span class="math">Xf</span>. <br>
+    <strong>Lokal:</strong> <span class="math">Rp = (R\p)⁻¹R</span> ist lokaler Ring mit maximalem Ideal <span class="math">p·Rp</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas13" width="800" height="400"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Zoom auf Primideal: <span id="c13-p">p</span></label>
+        <input type="range" id="c13-p-slider" min="0" max="6" value="3" oninput="drawLocalization()">
+      </div>
+      <button onclick="animateLocalization()">▶ Lokalisierung animieren</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14. SCHEMATA ============ -->
+<section class="concept" id="c14">
+  <h2><span class="num">14</span>Schemata — die volle Verallgemeinerung</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Ein Schema ist ein <em>lokal geringter Raum</em>, der lokal aussieht wie Spec(R). Wie eine Mannigfaltigkeit lokal wie ℝⁿ aussieht! Schemata verkleben affine Stücke (Spec(R)) zu größeren geometrischen Objekten.
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> Ein Schema <span class="math">(X, 𝒪_X)</span> ist ein lokal geringter Raum, der eine offene Überdeckung <span class="math">X = ⋃ Xᵢ</span> besitzt, sodass jedes <span class="math">(Xᵢ, 𝒪_X|Xᵢ) ≅ Spec(Rᵢ)</span>.<br>
+    <strong>Kategorie:</strong> Affine Schemata ↔ Ringe (anti-äquivalent).
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas14" width="800" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Anzahl affine Karten: <span id="c14-num">3</span></label>
+        <input type="range" id="c14-num-slider" min="1" max="6" value="3" oninput="drawScheme()">
+      </div>
+      <button onclick="animateGluing2()">▶ Karten verkleben</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Affine Karten Spec(Rᵢ) werden auf Überlappungen zusammengeklebt.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 15. QUASIKOHÄRENT ============ -->
+<section class="concept" id="c15">
+  <h2><span class="num">15</span>Quasikohärente Garben</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Quasikohärente Garben sind das „richtige" Konzept von Modulgarbe auf Schemata. Lokal (auf einer affinen Karte Spec(R)) entsprechen sie einfach R-Moduln M via <span class="math">S(M)</span>. Sie sind die algebraisch-geometrischen Analoga von Vektorbündeln.
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> Garbe <span class="math">M</span> auf X ist quasikohärent, wenn eine affine Überdeckung <span class="math">Xᵢ = Spec(Rᵢ)</span> existiert mit <span class="math">M|Xᵢ ≅ S(Mᵢ)</span> für Rᵢ-Moduln Mᵢ.<br>
+    <strong>Kohärent:</strong> zusätzlich alle Mᵢ endlich erzeugt.<br>
+    <strong>Kategorie:</strong> Auf affinem X: <span class="math">QX ≅ Mod(R)</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas15" width="800" height="400"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Modul-Rang: <span id="c15-r">2</span></label>
+        <input type="range" id="c15-r-slider" min="1" max="5" value="2" oninput="drawQuasicoh()">
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Jede Faser ist ein R-Modul, das sich stetig ändert.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 16. PROJ(S) ============ -->
+<section class="concept" id="c16">
+  <h2><span class="num">16</span>Proj(S) — projektive Konstruktion</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Für einen graduierten Ring <span class="math">S = ⊕Sᵢ</span> ist Proj(S) das Analogon zu Spec, aber für „homogene" Daten. Punkte sind homogene Primideale, die <span class="math">S_{>0}</span> nicht umfassen. So bekommen wir <em>projektive</em> Räume statt affiner!
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> <span class="math">Proj(S) = {℘ ⊂ S | ℘ homogenes Primideal, ℘ ⊉ S_{>0}}</span>.<br>
+    <strong>Standardkarten:</strong> Für <span class="math">fᵢ ∈ S₁</span>: <span class="math">X_{fᵢ} ≅ Spec((S_{fᵢ})₀)</span>. <br>
+    <strong>Überdeckung:</strong> Wenn <span class="math">S₁ = Rf₀ + ... + Rfₙ</span>, dann <span class="math">X = ⋃ X_{fᵢ}</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas16" width="800" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Dimension n: <span id="c16-n">2</span></label>
+        <input type="range" id="c16-n-slider" min="1" max="4" value="2" oninput="drawProj()">
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Proj(S) wird von n+1 affinen Standardkarten überdeckt.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 17. PROJEKTIVER RAUM ============ -->
+<section class="concept" id="c17">
+  <h2><span class="num">17</span>ℙⁿ — der projektive Raum</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> <span class="math">ℙⁿ_R = Proj(R[X₀,...,Xₙ])</span>. Punkte sind „Geraden durch den Ursprung" in R^{n+1}. Homogene Koordinaten <span class="math">[X₀ : X₁ : ... : Xₙ]</span> — bis auf Skalierung! Der Prototyp aller projektiven Varietäten.
+  </div>
+  
+  <div class="formal">
+    <strong>Twist-Garben:</strong> Für jedes <span class="math">k ∈ ℤ</span> gibt es ein Linienbündel <span class="math">𝒪(k)</span> auf ℙⁿ.<br>
+    <strong>Kohomologie:</strong>
+    <span class="math">H⁰(ℙⁿ, 𝒪(k)) = R[X₀,...,Xₙ]ₖ</span> (homog. Polynome vom Grad k)<br>
+    <span class="math">Hⁿ(ℙⁿ, 𝒪(k)) = </span> dual (Serre-Dualität)<br>
+    <span class="math">Hⁱ = 0</span> für <span class="math">0 &lt; i &lt; n</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas17" width="800" height="450"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Grad k des Twists: <span id="c17-k">1</span></label>
+        <input type="range" id="c17-k-slider" min="-4" max="5" value="1" oninput="drawProjectiveSpace()">
+      </div>
+      <button onclick="rotateProj()">🔄 Rotieren</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      ℙ² als Menge von Geraden im ℝ³. Twist 𝒪(k) verändert die „Steigung".
+    </p>
+  </div>
+</section>
+
+<!-- ============ 18. LINIENBÜNDEL ============ -->
+<section class="concept" id="c18">
+  <h2><span class="num">18</span>Linienbündel & Picard-Gruppe</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Ein Linienbündel ist eine lokal freie Garbe vom Rang 1 — stell dir eine „verdrehte Kopie" von 𝒪_X vor, die auf jeder kleinen Umgebung wie 𝒪 aussieht, aber global verdreht sein kann. Die Menge aller solcher Bündel bildet die <em>Picard-Gruppe</em> Pic(X).
+  </div>
+  
+  <div class="formal">
+    <strong>Pic(X):</strong> Iso-Klassen von Linienbündeln unter <span class="math">⊗</span>. Einselement: <span class="math">𝒪_X</span>. Inverses: <span class="math">L∗ = Hom(L, 𝒪_X)</span>.<br>
+    <strong>Kartenwechsel:</strong> Auf <span class="math">Uᵢ ∩ Uⱼ</span> Isomorphismus <span class="math">ψᵢⱼ ∈ 𝒪_X*</span> mit Kozykel-Bedingung.<br>
+    <strong>Für Kurven:</strong> <span class="math">Pic(X) ↔ Divisorenklassen</span>.
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas18" width="800" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Twist-Grad: <span id="c18-t">2</span></label>
+        <input type="range" id="c18-t-slider" min="-3" max="5" value="2" oninput="drawLineBundle()">
+      </div>
+      <button onclick="animateBundle()">▶ Bündel drehen</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Ein Möbiusband ist ein nichttriviales Linienbündel über dem Kreis!
+    </p>
+  </div>
+</section>
+
+<!-- ============ 19. CHERNKLASSEN ============ -->
+<section class="concept" id="c19">
+  <h2><span class="num">19</span>Chernklassen</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Chernklassen sind „Invarianten" von Vektorbündeln — sie messen, wie sehr das Bündel „verdreht" ist. <span class="math">c₁</span> ist die grundlegendste; für Linienbündel ist es die einzige nichttriviale. Sie leben in den graduierten Stücken <span class="math">Gⁱ(X)</span> der K-Theorie.
+  </div>
+  
+  <div class="formal">
+    <strong>Definition:</strong> <span class="math">cᵢ(E) = γⁱ([E] - rang(E)) mod F^{i+1}K(X) ∈ Gⁱ(X)</span>.<br>
+    <strong>Splittingprinzip:</strong> Wenn <span class="math">E = L₁ ⊕ ... ⊕ Lₙ</span>, dann sind <span class="math">cᵢ(E)</span> die elementarsymm. Funktionen in <span class="math">c₁(Lⱼ)</span>.<br>
+    <strong>Cherncharakter:</strong> <span class="math">ch(E) = ∑ exp(c₁(Lⱼ)) = rang(E
+<p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      c₁(E) — die erste Chernklasse — visualisiert als Verdrehung.
+    </p>
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas19" width="800" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>c₁: <span id="c19-c1">1</span></label>
+        <input type="range" id="c19-c1-slider" min="-3" max="3" value="1" oninput="drawChern()">
+      </div>
+      <div class="control">
+        <label>c₂: <span id="c19-c2">0</span></label>
+        <input type="range" id="c19-c2-slider" min="-3" max="3" value="0" oninput="drawChern()">
+      </div>
+      <div class="control">
+        <label>Rang: <span id="c19-r">2</span></label>
+        <input type="range" id="c19-r-slider" min="1" max="4" value="2" oninput="drawChern()">
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      ch(E) = rang(E) + c₁ + ½(c₁² − 2c₂) + ... — der Cherncharakter als Polynom.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 20. RIEMANN-ROCH ============ -->
+<section class="concept" id="c20">
+  <h2><span class="num">20</span>Der Satz von Riemann-Roch</h2>
+  
+  <div class="intuition">
+    <strong>Intuition:</strong> Der Höhepunkt! Riemann-Roch verbindet <em>Topologie</em> (Todd-Klassen, Chernklassen) mit <em>Analysis</em> (Eulercharakteristik, Kohomologiedimensionen). Er sagt uns: „Die Kohomologie einer Garbe kann aus rein topologischen Invarianten berechnet werden."
+  </div>
+  
+  <div class="formal">
+    <strong>Grothendieck-Riemann-Roch:</strong> Für regulär projektiven <span class="math">f: Y → X</span>:<br>
+    <span class="math">ch(f_K(G)) = f_G(Todd(T_f) · ch(G))</span><br>
+    <strong>Für Kurven (klassisch):</strong> <span class="math">χ(L) = deg(L) + 1 − g_Y</span><br>
+    <strong>Für Flächen:</strong> <span class="math">χ(L) = ½⟨c₁(L),c₁(L)⟩ + ½⟨c₁(L),c₁(T_Y)⟩ + 1/12(c₁²(T_Y)+c₂(T_Y))</span>
+  </div>
+  
+  <div class="viz-container">
+    <canvas id="canvas20" width="800" height="450"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Grad(L): <span id="c20-d">3</span></label>
+        <input type="range" id="c20-d-slider" min="-5" max="10" value="3" oninput="drawRiemannRoch()">
+      </div>
+      <div class="control">
+        <label>Geschlecht g: <span id="c20-g">2</span></label>
+        <input type="range" id="c20-g-slider" min="0" max="5" value="2" oninput="drawRiemannRoch()">
+      </div>
+      <button onclick="animateRR()">▶ χ(L) berechnen</button>
+    </div>
+    <p style="text-align:center;margin-top:15px;color:#b8b8d0;font-size:0.9em;">
+      Für Kurven: χ(L) = h⁰(L) − h¹(L) = deg(L) + 1 − g. Ein Wunder der Mathematik!
+    </p>
+  </div>
+  
+  <div class="example">
+    <strong>🎉 Fertig!</strong> Du hast jetzt die 20 wichtigsten Konzepte der algebraischen Geometrie visuell durchlebt — vom topologischen Raum bis zum Satz von Riemann-Roch. Die Reise von <em>abstrakter Algebra</em> zu <em>konkreter Geometrie</em> und wieder zurück ist das Herz der modernen Mathematik.
+  </div>
+</section>
+
+<footer>
+  <p>„Geometry is the archetype of the beauty of the world." — Johannes Kepler</p>
+  <p style="margin-top:10px;font-size:0.9em;">Erstellt für tiefes visuelles Verstehen · Interagiere, spiele, lerne 💜</p>
+</footer>
+
+<script>
+// ============ HELPER ============
+function ctx(id) { return document.getElementById(id).getContext('2d'); }
+function clear(c, color='#0a0a1a') { 
+  c.fillStyle = color; 
+  c.fillRect(0,0,c.canvas.width,c.canvas.height); 
+}
+
+// ============ 1. TOPOLOGY ============
+let topo_sets = [];
+function generateTopo() {
+  const n = parseInt(document.getElementById('c1-slider').value);
+  document.getElementById('c1-num').textContent = n;
+  topo_sets = [];
+  for (let i = 0; i < n; i++) {
+    topo_sets.push({
+      cx: 150 + Math.random()*500,
+      cy: 100 + Math.random()*200,
+      rx: 60 + Math.random()*80,
+      ry: 50 + Math.random()*60,
+      color: `hsla(${i*360/n}, 70%, 60%, 0.25)`,
+      stroke: `hsl(${i*360/n}, 80%, 65%)`,
+      label: `U${i+1}`
+    });
+  }
+  drawTopology();
+}
+function drawTopology(mx=-1, my=-1) {
+  const c = ctx('canvas1'); clear(c);
+  c.strokeStyle = '#334'; c.strokeRect(20,20,760,360);
+  c.fillStyle = '#556'; c.font='16px Georgia'; c.fillText('Topologischer Raum X', 30, 40);
+  topo_sets.forEach(s => {
+    c.fillStyle = s.color; c.strokeStyle = s.stroke; c.lineWidth = 2;
+    c.beginPath(); c.ellipse(s.cx, s.cy, s.rx, s.ry, 0, 0, 2*Math.PI); c.fill(); c.stroke();
+    c.fillStyle = s.stroke; c.font = 'bold 14px Georgia';
+    c.fillText(s.label, s.cx-15, s.cy);
+  });
+  if (mx > 0) {
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(mx, my, 6, 0, 2*Math.PI); c.fill();
+    c.strokeStyle = '#ff6ec4'; c.lineWidth = 2; c.stroke();
+    let inside = topo_sets.filter(s => {
+      const dx = (mx-s.cx)/s.rx, dy = (my-s.cy)/s.ry;
+      return dx*dx + dy*dy < 1;
+    });
+    c.fillStyle = '#4ADEDE'; c.font = '13px Georgia';
+    c.fillText(`Punkt liegt in: ${inside.map(s=>s.label).join(', ') || 'nur X'}`, mx+15, my-10);
+  }
+}
+document.getElementById('canvas1').addEventListener('mousemove', e => {
+  const r = e.target.getBoundingClientRect();
+  const scale = e.target.width / r.width;
+  drawTopology((e.clientX-r.left)*scale, (e.clientY-r.top)*scale);
+});
+document.getElementById('c1-slider').oninput = generateTopo;
+generateTopo();
+
+// ============ 2. IRREDUCIBLE ============
+let decompStep = 0;
+function drawIrreducible() {
+  const n = parseInt(document.getElementById('c2-slider').value);
+  document.getElementById('c2-num').textContent = n;
+  const c = ctx('canvas2'); clear(c);
+  c.fillStyle = '#556'; c.font='16px Georgia';
+  c.fillText('Y = Y₁ ∪ Y₂ ∪ ... ∪ Yₙ  (irreduzible Zerlegung)', 30, 40);
+  const colors = ['#ff6ec4','#7873f5','#4ADEDE','#ffc864','#a0ff64','#ff9464'];
+  for (let i = 0; i < n; i++) {
+    const angle = (i/n) * 2*Math.PI;
+    const cx = 400 + Math.cos(angle)*120;
+    const cy = 220 + Math.sin(angle)*80;
+    const alpha = decompStep >= i ? 0.6 : 0.15;
+    c.fillStyle = colors[i % colors.length] + Math.floor(alpha*255).toString(16).padStart(2,'0');
+    c.strokeStyle = colors[i % colors.length];
+    c.lineWidth = decompStep >= i ? 3 : 1;
+    c.beginPath(); c.ellipse(cx, cy, 90, 70, angle, 0, 2*Math.PI); c.fill(); c.stroke();
+    c.fillStyle = '#fff'; c.font='bold 15px Georgia';
+    c.fillText(`Y${i+1}`, cx-10, cy);
+  }
+}
+function animateDecomp() {
+  decompStep = 0;
+  const n = parseInt(document.getElementById('c2-slider').value);
+  const iv = setInterval(() => {
+    decompStep++;
+    drawIrreducible();
+    if (decompStep > n) clearInterval(iv);
+  }, 500);
+}
+drawIrreducible();
+
+// ============ 3. PRESHEAF ============
+function drawPresheaf() {
+  const freq = parseFloat(document.getElementById('c3-freq-slider').value);
+  const vsize = parseInt(document.getElementById('c3-vsize-slider').value);
+  document.getElementById('c3-freq').textContent = freq;
+  document.getElementById('c3-vsize').textContent = vsize;
+  const c = ctx('canvas3'); clear(c);
+  c.fillStyle='#556'; c.font='14px Georgia';
+  c.fillText('U (grosse offene Menge)', 30, 30);
+  c.fillText('G(U) = { Funktionen auf U }', 30, 250);
+  c.fillText('res: G(U) → G(V)', 500, 250);
+  // Draw U
+  c.strokeStyle='#7873f5'; c.lineWidth=2;
+  c.strokeRect(50, 50, 700, 180);
+  // Function on U
+  c.strokeStyle='#ff6ec4'; c.lineWidth=2; c.beginPath();
+  for (let x = 50; x < 750; x++) {
+    const y = 140 + Math.sin((x-50)/700*Math.PI*freq)*60;
+    if (x === 50) c.moveTo(x,y); else c.lineTo(x,y);
+  }
+  c.stroke();
+  // V region
+  const vw = vsize*7;
+  const vx = 400 - vw/2;
+  c.strokeStyle='#4ADEDE'; c.lineWidth=3; c.setLineDash([5,5]);
+  c.strokeRect(vx, 300, vw, 120);
+  c.setLineDash([]);
+  c.fillStyle='#4ADEDE'; c.fillText('V ⊂ U', vx+10, 320);
+  // Restricted function
+  c.strokeStyle='#4ADEDE'; c.lineWidth=2; c.beginPath();
+  for (let x = vx; x < vx+vw; x++) {
+    const y = 380 + Math.sin((x-50)/700*Math.PI*freq)*30;
+    if (x === vx) c.moveTo(x,y); else c.lineTo(x,y);
+  }
+  c.stroke();
+  // Arrow
+  c.strokeStyle='#fff'; c.lineWidth=1;
+  c.beginPath(); c.moveTo(400,240); c.lineTo(400,290); c.stroke();
+  c.beginPath(); c.moveTo(395,285); c.lineTo(400,295); c.lineTo(405,285); c.stroke();
+}
+drawPresheaf();
+
+// ============ 4. SHEAF ============
+function drawSheaf() {
+  const comp = parseInt(document.getElementById('c4-comp-slider').value);
+  document.getElementById('c4-comp').textContent = comp;
+  const c = ctx('canvas4'); clear(c);
+  c.fillStyle='#556'; c.font='14px Georgia';
+  c.fillText('V₁ ∪ V₂ mit Überlappung', 30, 30);
+  // V1
+  c.strokeStyle='#ff6ec4'; c.lineWidth=2; c.fillStyle='rgba(255,110,196,0.1)';
+  c.fillRect(80, 100, 350, 200); c.strokeRect(80, 100, 350, 200);
+  c.fillStyle='#ff6ec4'; c.fillText('V₁', 100, 120);
+  // V2
+  c.strokeStyle='#4ADEDE'; c.fillStyle='rgba(74,222,222,0.1)';
+  c.fillRect(370, 100, 350, 200); c.strokeRect(370, 100, 350, 200);
+  c.fillStyle='#4ADEDE'; c.fillText('V₂', 700, 120);
+  // Overlap
+  c.fillStyle='rgba(255,255,255,0.1)'; c.fillRect(370,100,60,200);
+  // Function on V1
+  c.strokeStyle='#ff6ec4'; c.lineWidth=2; c.beginPath();
+  for (let x=80; x<430; x++) {
+    const y = 200 + Math.sin((x-80)/60)*30;
+    if (x===80) c.moveTo(x,y); else c.lineTo(x,y);
+  }
+  c.stroke();
+  // Function on V2 - varies with compatibility
+  const offset = (100-comp)*0.5;
+  c.strokeStyle='#4ADEDE'; c.lineWidth=2; c.beginPath();
+  for (let x=370; x<720; x++) {
+    const y = 200 + Math.sin((x-80)/60)*30 + offset;
+    if (x===370) c.moveTo(x,y); else c.lineTo(x,y);
+  }
+  c.stroke();
+  // Status
+  c.font='16px Georgia';
+  if (comp === 100) {
+    c.fillStyle='#4ADEDE';
+    c.fillText('✓ Kompatibel → Verklebung möglich (Garbe!)', 200, 360);
+  } else {
+    c.fillStyle='#ff6464';
+    c.fillText('✗ Inkompatibel → keine Verklebung', 250, 360);
+  }
+}
+function animateGluing() {
+  let v = 0;
+  const iv = setInterval(() => {
+    v += 5;
+    document.getElementById('c4-comp-slider').value = v;
+    drawSheaf();
+    if (v >= 100) clearInterval(iv);
+  }, 60);
+}
+drawSheaf();
+
+// ============ 5. STALK ============
+function drawStalk() {
+  const zoom = parseInt(document.getElementById('c5-zoom-slider').value);
+  document.getElementById('c5-zoom').textContent = zoom;
+  const c = ctx('canvas5'); clear(c);
+  const cx=400, cy=200;
+  c.fillStyle='#556'; c.font='14px Georgia';
+  c.fillText('Fₓ = colim Umgebungen von x', 30, 30);
+  // Concentric neighborhoods
+  for (let i=5; i>=1; i--) {
+    const r = (200/zoom) * i;
+    c.strokeStyle = `hsla(280, 70%, ${40+i*8}%, 0.6)`;
+    c.fillStyle = `hsla(280, 70%, ${20+i*5}%, 0.2)`;
+    c.lineWidth=2; c.beginPath();
+    c.arc(cx, cy, r, 0, 2*Math.PI); c.fill(); c.stroke();
+  }
+  // Point x
+  c.fillStyle='#ff6ec4'; c.beginPath();
+  c.arc(cx, cy, 6, 0, 2*Math.PI); c.fill();
+  c.strokeStyle='#fff'; c.lineWidth=2; c.stroke();
+  c.font='bold 16px Georgia';
+  c.fillText('x', cx+12, cy-8);
+  c.font='13px Georgia'; c.fillStyle='#b8b8d0';
+  c.fillText(`Zoom: ${zoom}×  → Halm ist der Limes`, cx-100, 380);
+}
+function animateStalk() {
+  let z = 1;
+  const iv = setInterval(() => {
+    z += 1;
+    document.getElementById('c5-zoom-slider').value = z;
+    drawStalk();
+    if (z >= 50) clearInterval(iv);
+  }, 40);
+}
+drawStalk();
+
+// ============ 6. SHEAFIFICATION ============
+let sheafState = false;
+function drawSheafification() {
+  const c = ctx('canvas6'); clear(c);
+  c.fillStyle='#556'; c.font='16px Georgia';
+  c.fillText(sheafState ? 'Vergarbung F⁺ (glatt, verklebbar)' : 'Prägarbe F (Lücken!)', 250, 30);
+  c.strokeStyle=sheafState?'#4ADEDE':'#ff6ec4'; c.lineWidth=3;
+  c.beginPath();
+  for (let x=50; x<750; x++) {
+    let y = 200 + Math.sin(x/40)*50;
+    if (!sheafState) {
+      // add gaps
+      if ((x>200 && x<230) || (x>450 && x<480) || (x>600 && x<630)) {
+        c.stroke();
+        c.beginPath();
+        continue;
+      }
+    }
+    if (x===50) c.moveTo(x,y); else c.lineTo(x,y);
+  }
+  c.stroke();
+  // Halme (unchanged!)
+  c.fillStyle='#7873f5'; c.font='13px Georgia';
+  c.fillText('Halme Fₓ = F⁺ₓ (unverändert!)', 250, 340);
+  for (let i=0; i<8; i++) {
+    const x = 100 + i*80;
+    c.beginPath(); c.arc(x, 300, 5, 0, 2*Math.PI); c.fill();
+  }
+}
+function toggleSheafification() { sheafState = !sheafState; drawSheafification(); }
+drawSheafification();
+
+// ============ 7. EXACT ============
+function drawExact() {
+  const a = parseInt(document.getElementById('c7-a-slider').value);
+  const cval = parseInt(document.getElementById('c7-c-slider').value);
+  document.getElementById('c7-a').textContent = a;
+  document.getElementById('c7-c').textContent = cval;
+  const c = ctx('canvas7'); clear(c);
+  c.fillStyle='#556'; c.font='16px Georgia';
+  c.fillText('A → B → C   (Bild(φ) = Kern(ψ))', 250, 30);
+  const drawBlob = (x,y,size,color,label) => {
+    c.fillStyle=color+'44'; c.strokeStyle=color; c.lineWidth=2;
+    c.beginPath(); c.arc(x,y,20+size*8,0,2*Math.PI); c.fill(); c.stroke();
+    c.fillStyle='#fff'; c.font='bold 20px Georgia'; c.fillText(label, x-8, y+7);
+  };
+  drawBlob(150, 200, a, '#ff6ec4', 'A');
+  drawBlob(400, 200, a+cval, '#7873f5', 'B');
+  drawBlob(650, 200, cval, '#4ADEDE', 'C');
+  // Arrows
+  c.strokeStyle='#fff'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(210,200); c.lineTo(360,200); c.stroke();
+  c.beginPath(); c.moveTo(355,195); c.lineTo(365,200); c.lineTo(355,205); c.stroke();
+  c.beginPath(); c.moveTo(460,200); c.lineTo(600,200); c.stroke();
+  c.beginPath(); c.moveTo(595,195); c.lineTo(605,200); c.lineTo(595,205); c.stroke();
+  c.font='16px Georgia'; c.fillStyle='#ff6ec4'; c.fillText('φ', 275, 190);
+  c.fillStyle='#4ADEDE'; c.fillText('ψ', 525, 190);
+  // Bild ⊂ B
+  c.fillStyle='rgba(255,110,196,0.4)';
+  c.beginPath(); c.arc(400, 200, 20+a*4, 0, 2*Math.PI); c.fill();
+  c.fillStyle='#ffc864'; c.font='13px Georgia';
+  c.fillText('Bild(φ) = Kern(ψ)', 340, 320);
+}
+drawExact();
+
+// ============ 8. EXP SEQUENCE ============
+let expStep = 0;
+function drawExp() {
+  const c = ctx('canvas8'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText('0 → 2πiℤ → 𝒪 → 𝒪* → 0  auf ℂ*', 200, 30);
+  const items = [
+    {x:100, label:'2πiℤ', color:'#ff6ec4', desc:'konst.'},
+    {x:300, label:'𝒪', color:'#7873f5', desc:'holom.'},
+    {x:500, label:'𝒪*', color:'#4ADEDE', desc:'invert.'},
+    {x:700, label:'0', color:'#666', desc:''}
+  ];
+  items.forEach((it,i) => {
+    const active = expStep >= i;
+    c.fillStyle = active ? it.color+'aa' : it.color+'33';
+    c.beginPath(); c.arc(it.x, 200, 40, 0, 2*Math.PI); c.fill();
+    c.fillStyle='#fff'; c.font='bold 18px Georgia';
+    c.fillText(it.label, it.x-15, 205);
+    c.font='11px Georgia'; c.fillStyle='#b8b8d0';
+    c.fillText(it.desc, it.x-20, 260);
+  });
+  // Draw ℂ*
+  c.strokeStyle='#ffc864'; c.lineWidth=2;
+  c.beginPath(); c.arc(400, 340, 30, 0, 2*Math.PI); c.stroke();
+  c.fillStyle='#ffc864'; c.fillText('ℂ*', 385, 345);
+  c.font='12px Georgia'; c.fillStyle='#b8b8d0';
+  c.fillText('exp lokal surjektiv, global nicht (Umlaufintegral!)', 250, 400);
+}
+function animateExp() {
+  expStep = 0;
+  const iv = setInterval(() => {
+    expStep++;
+    drawExp();
+    if (expStep >= 4) clearInterval(iv);
+  }, 600);
+}
+drawExp();
+
+// ============ 9. DIRECT/INVERSE IMAGE ============
+let dirState = true;
+function drawDirection() {
+  const c = ctx('canvas9'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(dirState ? 'Direktes Bild: f∗F auf Y' : 'Inverses Bild: f⁻¹G auf X', 250, 30);
+  // X space
+  c.strokeStyle='#ff6ec4'; c.lineWidth=2; c.fillStyle='rgba(255,110,196,0.08)';
+  c.fillRect(60, 80, 280, 240); c.strokeRect(60, 80, 280, 240);
+  c.fillStyle='#ff6ec4'; c.font='bold 18px Georgia';
+  c.fillText('X', 80, 105);
+  // Y space
+  c.strokeStyle='#4ADEDE'; c.fillStyle='rgba(74,222,222,0.08)';
+  c.fillRect(460, 80, 280, 240); c.strokeRect(460, 80, 280, 240);
+  c.fillStyle='#4ADEDE'; c.fillText('Y', 720, 105);
+  // f arrow
+  c.strokeStyle='#fff'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(340, 200); c.lineTo(460, 200); c.stroke();
+  c.beginPath(); c.moveTo(455,195); c.lineTo(465,200); c.lineTo(455,205); c.stroke();
+  c.fillStyle='#fff'; c.font='14px Georgia';
+  c.fillText('f: X → Y', 370, 190);
+  // Sections
+  for (let i = 0; i < 6; i++) {
+    const xX = 90 + Math.random()*220;
+    const yX = 130 + Math.random()*170;
+    const xY = 490 + Math.random()*220;
+    const yY = 130 + Math.random()*170;
+    c.fillStyle = dirState ? '#ff6ec4' : '#4ADEDE';
+    c.beginPath(); c.arc(dirState?xX:xY, dirState?yX:yY, 4, 0, 2*Math.PI); c.fill();
+    // Transported
+    c.fillStyle = dirState ? '#4ADEDE99' : '#ff6ec499';
+    c.beginPath(); c.arc(dirState?xY:xX, dirState?yY:yX, 4, 0, 2*Math.PI); c.fill();
+    // arrow
+    c.strokeStyle = 'rgba(255,255,255,0.2)'; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(dirState?xX:xY, dirState?yX:yY);
+    c.lineTo(dirState?xY:xX, dirState?yY:yX); c.stroke();
+  }
+  c.fillStyle='#b8b8d0'; c.font='13px Georgia';
+  c.fillText(dirState ? '(f∗F)(V) = F(f⁻¹(V))' : '(f⁻¹G)ₓ = G_{f(x)}', 300, 360);
+}
+function toggleDirection() {
+  dirState = !dirState;
+  document.getElementById('c9-dir').textContent = dirState ? 'f∗ (direkt)' : 'f⁻¹ (invers)';
+  drawDirection();
+}
+drawDirection();
+
+// ============ 10. COHOMOLOGY ============
+let leStep = 0;
+function drawCohomology() {
+  const i = parseInt(document.getElementById('c10-i-slider').value);
+  document.getElementById('c10-i').textContent = i;
+  const c = ctx('canvas10'); clear(c);
+  c.fillStyle='#556'; c.font='16px Georgia';
+  c.fillText(`H^${i}(X, G) — Kohomologie im Grad ${i}`, 250, 30);
+  // Injective resolution visualization
+  const items = ['G', 'I⁰', 'I¹', 'I²', 'I³', 'I⁴'];
+  const colors = ['#ff6ec4','#7873f5','#4ADEDE','#ffc864','#a0ff64','#ff9464'];
+  for (let k = 0; k < items.length; k++) {
+    const x = 80 + k*120;
+    c.fillStyle = colors[k] + (k === i+1 ? 'ff' : '55');
+    c.beginPath(); c.arc(x, 150, 30, 0, 2*Math.PI); c.fill();
+    c.fillStyle='#fff'; c.font='bold 16px Georgia';
+    c.fillText(items[k], x-10, 155);
+    if (k < items.length-1) {
+      c.strokeStyle='#fff'; c.lineWidth=1;
+      c.beginPath(); c.moveTo(x+30, 150); c.lineTo(x+90, 150); c.stroke();
+      c.beginPath(); c.moveTo(x+85,145); c.lineTo(x+92,150); c.lineTo(x+85,155); c.stroke();
+    }
+  }
+  // Explanation
+  c.fillStyle='#b8b8d0'; c.font='14px Georgia';
+  c.fillText('H^i(X, G) = Kern(dⁱ)/Bild(dⁱ⁻¹)', 250, 240);
+  c.fillText('misst „lokale Lösungen, die nicht global sind"', 220, 265);
+  // Long exact sequence
+  if (leStep > 0) {
+    c.fillStyle='#4ADEDE'; c.font='13px Georgia';
+    const seq = '... → H⁰(F) → H⁰(G) → H⁰(H) → H¹(F) → H¹(G) → H¹(H) → ...';
+    c.fillText(seq.substring(0, Math.min(leStep*4, seq.length)), 100, 340);
+  }
+  c.fillStyle='#7873f5'; c.font='12px Georgia';
+  c.fillText('H⁰ = globale Schnitte, H¹ = Obstruktion zur Verklebung', 180, 390);
+}
+function animateLongExact() {
+  leStep = 0;
+  const iv = setInterval(() => {
+    leStep++;
+    drawCohomology();
+    if (leStep > 25) clearInterval(iv);
+  }, 100);
+}
+drawCohomology();
+
+// ============ 11. SPEC(R) ============
+function drawSpec() {
+  const ring = document.getElementById('c11-ring').value;
+  const c = ctx('canvas11'); clear(c);
+  c.fillStyle='#556'; c.font='16px Georgia';
+  const titles = {
+    'Z': 'Spec(ℤ): Primideale (2), (3), (5), (7), ... und (0)',
+    'k[x]': 'Spec(k[x]): (x−a) für a ∈ k, und (0)',
+    'k[x,y]': 'Spec(k[x,y]): Punkte, Kurven, (0)',
+    'Zp': 'Spec(ℤ_(p)): ein Punkt (p) und (0)'
+  };
+  c.fillText(titles[ring], 60, 30);
+  
+  if (ring === 'Z') {
+    const primes = [2,3,5,7,11,13,17,19,23];
+    primes.forEach((p,i) => {
+      const x = 100 + i*70;
+      c.fillStyle='#ff6ec4'; c.beginPath(); c.arc(x, 200, 8, 0, 2*Math.PI); c.fill();
+      c.fillStyle='#fff'; c.font='13px Georgia';
+      c.fillText('('+p+')', x-12, 230);
+    });
+    // Generic point (0)
+    c.fillStyle='#4ADEDE44'; c.fillRect(80, 280, 680, 40);
+    c.strokeStyle='#4ADEDE'; c.strokeRect(80, 280, 680, 40);
+    c.fillStyle='#4ADEDE'; c.font='14px Georgia';
+    c.fillText('generischer Punkt (0) — überall dicht', 260, 305);
+  } else if (ring === 'k[x]') {
+    // affine line
+    c.strokeStyle='#7873f5'; c.lineWidth=2;
+    c.beginPath(); c.moveTo(80, 220); c.lineTo(720, 220); c.stroke();
+    for (let i = 0; i < 15; i++) {
+      const x = 100 + i*44;
+      c.fillStyle='#ff6ec4'; c.beginPath(); c.arc(x, 220, 5, 0, 2*Math.PI); c.fill();
+    }
+    c.fillStyle='#b8b8d0'; c.font='13px Georgia';
+    c.fillText('Abgeschlossene Punkte (x−a) bilden die affine Gerade 𝔸¹', 180, 280);
+    c.fillStyle='#4ADEDE';
+    c.fillText('+ ein generischer Punkt (0)', 280, 310);
+  } else if (ring === 'k[x,y]') {
+    // affine plane
+    for (let i = 0; i < 20; i++) {
+      for (let j = 0; j < 10; j++) {
+        c.fillStyle='#ff6ec455';
+        c.beginPath(); c.arc(100+i*32, 100+j*22, 2, 0, 2*Math.PI); c.fill();
+      }
+    }
+    // A curve
+    c.strokeStyle='#4ADEDE'; c.lineWidth=2; c.beginPath();
+    for (let x = 100; x < 740; x++) {
+      const y = 200 + Math.sin((x-100)/60)*60;
+      if (x === 100) c.moveTo(x,y); else c.lineTo(x,y);
+    }
+    c.stroke();
+    c.fillStyle='#b8b8d0'; c.font='13px Georgia';
+    c.fillText('Punkte (x−a, y−b), Kurven (f(x,y)), generisch (0)', 200, 380);
+  } else {
+    c.fillStyle='#ff6ec4'; c.beginPath(); c.arc(300, 220, 15, 0, 2*Math.PI); c.fill();
+    c.fillStyle='#fff'; c.font='14px Georgia'; c.fillText('(p)', 340, 225);
+    c.fillStyle='#4ADEDE'; c.beginPath(); c.arc(500, 220, 15, 0, 2*Math.PI); c.fill();
+    c.fillStyle='#fff'; c.fillText('(0)', 540, 225);
+    c.fillStyle='#b8b8d0'; c.font='13px Georgia';
+    c.fillText('Lokaler Ring: nur zwei Primideale', 250, 320);
+  }
+}
+drawSpec();
+
+// ============ 12. ZARISKI ============
+function drawZariski() {
+  const fv = parseInt(document.getElementById('c12-f-slider').value);
+  const labels = ['0', 'x', 'x²−1', 'x(x−1)', 'x²+1', '(x−2)(x+3)'];
+  document.getElementById('c12-f').textContent = labels[fv];
+  const c = ctx('canvas12'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(`Zariski-Topologie auf 𝔸¹: Z(f) = Nullstellen von f = ${labels[fv]}`, 100, 30);
+  // Line
+  c.strokeStyle='#7873f5'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(80, 200); c.lineTo(720, 200); c.stroke();
+  // Axis marks
+  for (let i = -6; i <= 6; i++) {
+    const x = 400 + i*45;
+    c.strokeStyle='#556'; c.lineWidth=1;
+    c.beginPath(); c.moveTo(x, 195); c.lineTo(x, 205); c.stroke();
+    c.fillStyle='#556'; c.font='11px Georgia'; c.fillText(i, x-5, 220);
+  }
+  // Zeros
+  let zeros = [];
+  if (fv === 1) zeros = [0];
+  else if (fv === 2) zeros = [-1, 1];
+  else if (fv === 3) zeros = [0, 1];
+  else if (fv === 4) zeros = [];
+  else if (fv === 5) zeros = [2, -3];
+  // fv=0: Z(0) = all
+  if (fv === 0) {
+    c.fillStyle='rgba(255,110,196,0.3)';
+    c.fillRect(80, 190, 640, 20);
+    c.fillStyle='#ff6ec4'; c.font='14px Georgia';
+    c.fillText('Z(0) = ganze Gerade (alles ist Nullstelle)', 220, 280);
+  } else {
+    zeros.forEach(z => {
+      const x = 400 + z*45;
+      c.fillStyle='#ff6ec4';
+      c.beginPath(); c.arc(x, 200, 10, 0, 2*Math.PI); c.fill();
+      c.strokeStyle='#fff'; c.lineWidth=2; c.stroke();
+    });
+    c.fillStyle='#4ADEDE'; c.font='13px Georgia';
+    c.fillText(`Z(f) = {${zeros.join(', ')}} — endlich, abgeschlossen`, 220, 280);
+    c.fillStyle='#b8b8d0';
+    c.fillText('Offene Menge X_f = Komplement (fast alles!)', 220, 310);
+  }
+  c.fillStyle='#7873f5'; c.font='12px Georgia';
+  c.fillText('Zariski ist SEHR grob: offene Mengen sind riesig', 240, 360);
+}
+drawZariski();
+
+// ============ 13. LOCALIZATION ============
+let locZoom = 1;
+function drawLocalization() {
+  const p = parseInt(document.getElementById('c13-p-slider').value);
+  document.getElementById('c13-p').textContent = 'p' + p;
+  const c = ctx('canvas13'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText('Lokalisierung: R → R_p (Zoom auf Primideal p)', 200, 30);
+  // Original spec
+  c.strokeStyle='#7873f5'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(80, 130); c.lineTo(720, 130); c.stroke();
+  for (let i = 0; i < 7; i++) {
+    const x = 100 + i*100;
+    c.fillStyle = i === p ? '#ff6ec4' : '#556';
+    c.beginPath(); c.arc(x, 130, i === p ? 12 : 6, 0, 2*Math.PI); c.fill();
+    c.fillStyle='#fff'; c.font='11px Georgia'; c.fillText('p'+i, x-8, 155);
+  }
+  c.fillStyle='#7873f5'; c.font='13px Georgia';
+  c.fillText('Spec(R)', 30, 135);
+  // Zoom arrow
+  c.strokeStyle='#4ADEDE'; c.lineWidth=2; c.setLineDash([5,5]);
+  const px = 100 + p*100;
+  c.beginPath(); c.moveTo(px, 145); c.lineTo(400, 250); c.stroke();
+  c.setLineDash([]);
+  // Zoomed spec
+  c.strokeStyle='#4ADEDE'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(80, 320); c.lineTo(720, 320); c.stroke();
+  c.fillStyle='#ff6ec4'; c.beginPath(); c.arc(400, 320, 15, 0, 2*Math.PI); c.fill();
+  c.fillStyle='#fff'; c.font='12px Georgia'; c.fillText('p·R_p', 380, 348);
+  c.fillStyle='#4ADEDE'; c.beginPath(); c.arc(650, 320, 10, 0, 2*Math.PI); c.fill();
+  c.fillStyle='#fff'; c.fillText('(0)', 640, 348);
+  c.fillStyle='#4ADEDE'; c.font='13px Georgia';
+  c.fillText('Spec(R_p): lokaler Ring — nur (0) und (p)', 250, 380);
+}
+function animateLocalization() {
+  locZoom = 1;
+  const iv = setInterval(() => {
+    locZoom += 0.5;
+    drawLocalization();
+    if (locZoom > 10) clearInterval(iv);
+  }, 100);
+}
+drawLocalization();
+
+// ============ 14. SCHEMES ============
+let schemeStep = 0;
+function drawScheme() {
+  const n = parseInt(document.getElementById('c14-num-slider').value);
+  document.getElementById('c14-num').textContent = n;
+  const c = ctx('canvas14'); clear(c);
+  c.fillStyle='#556'; c.font='16px Georgia';
+  c.fillText('Schema = verklebte affine Karten Spec(Rᵢ)', 220, 30);
+  const colors = ['#ff6ec4','#7873f5','#4ADEDE','#ffc864','#a0ff64','#ff9464'];
+  for (let i = 0; i < n; i++) {
+    const angle = (i/n) * 2*Math.PI - Math.PI/2;
+    const cx = 400 + Math.cos(angle)*100;
+    const cy = 230 + Math.sin(angle)*80;
+    const active = schemeStep === 0 || schemeStep > i;
+    c.fillStyle = colors[i]+'44';
+    c.strokeStyle = colors[i]; c.lineWidth=2;
+    c.beginPath(); c.ellipse(cx, cy, 90, 70, 0, 0, 2*Math.PI); c.fill(); c.stroke();
+    c.fillStyle='#fff'; c.font='bold 14px Georgia';
+    c.fillText(`Spec(R${i+1})`, cx-30, cy);
+  }
+  // Draw overlaps
+  if (schemeStep > 0) {
+    c.strokeStyle='#fff'; c.lineWidth=1; c.setLineDash([3,3]);
+    for (let i = 0; i < n; i++) {
+      const a1 = (i/n)*2*Math.PI - Math.PI/2;
+      const a2 = ((i+1)%n / n)*2*Math.PI - Math.PI/2;
+      const cx1 = 400 + Math.cos(a1)*100, cy1 = 230 + Math.sin(a1)*80;
+      const cx2 = 400 + Math.cos(a2)*100, cy2 = 230 + Math.sin(a2)*80;
+      c.beginPath(); c.moveTo(cx1, cy1); c.lineTo(cx2, cy2); c.stroke();
+    }
+    c.setLineDash([]);
+  }
+  c.fillStyle='#4ADEDE'; c.font='13px Georgia';
+  c.fillText('Lokal geringter Raum, lokal ≅ Spec(R)', 240, 400);
+}
+function animateGluing2() {
+  schemeStep = 0;
+  const n = parseInt(document.getElementById('c14-num-slider').value);
+  const iv = setInterval(() => {
+    schemeStep++;
+    drawScheme();
+    if (schemeStep > n) clearInterval(iv);
+  }, 400);
+}
+drawScheme();
+
+// ============ 15. QUASICOHERENT ============
+function drawQuasicoh() {
+  const r = parseInt(document.getElementById('c15-r-slider').value);
+  document.getElementById('c15-r').textContent = r;
+  const c = ctx('canvas15'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(`Quasikohärente Garbe: Fasern sind R-Moduln vom Rang ${r}`, 150, 30);
+  // Base
+  c.strokeStyle='#7873f5'; c.lineWidth=2;
+  c.beginPath(); c.moveTo(80, 330); c.lineTo(720, 330); c.stroke();
+  c.fillStyle='#7873f5'; c.font='13px Georgia';
+  c.fillText('X = Spec(R)', 30, 335);
+  // Fibers
+  for (let i = 0; i < 12; i++) {
+    const x = 100 + i*55;
+    c.fillStyle='#7873f5'; c.beginPath(); c.arc(x, 330, 4, 0, 2*Math.PI); c.fill();
+    // Fiber: R-module
+    for (let j = 0; j < r; j++) {
+      c.strokeStyle=`hsl(${j*60+280}, 70%, 60%)`; c.lineWidth=1.5;
+      c.beginPath();
+      const h = 60 + j*30;
+      c.moveTo(x, 330); c.lineTo(x, 330-h);
+      c.stroke();
+      c.fillStyle=`hsl(${j*60+280}, 70%, 60%)`;
+      c.beginPath(); c.arc(x, 330-h, 3, 0, 2*Math.PI); c.fill();
+    }
+  }
+  c.fillStyle='#4ADEDE'; c.font='13px Georgia';
+  c.fillText('Auf Spec(R): M ↦ S(M), Kategorie ≅ Mod(R)', 220, 380);
+}
+drawQuasicoh();
+
+// ============ 16. PROJ ============
+function drawProj() {
+  const n = parseInt(document.getElementById('c16-n-slider').value);
+  document.getElementById('c16-n').textContent = n;
+  const c = ctx('canvas16'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(`Proj(S): n+1 = ${n+1} affine Standardkarten überdecken`, 180, 30);
+  const colors = ['#ff6ec4','#7873f5','#4ADEDE','#ffc864','#a0ff64'];
+  // Central "projective space"
+  c.strokeStyle='#fff'; c.lineWidth=2;
+  c.beginPath(); c.arc(400, 230, 150, 0, 2*Math.PI); c.stroke();
+  c.fillStyle='#fff'; c.font='bold 16px Georgia';
+  c.fillText(`ℙⁿ = Proj(S)`, 340, 235);
+  // Charts
+  for (let i = 0; i <= n; i++) {
+    const angle = (i/(n+1))*2*Math.PI - Math.PI/2;
+    const cx = 400 + Math.cos(angle)*220;
+    const cy = 230 + Math.sin(angle)*140;
+    c.fillStyle = colors[i]+'55';
+    c.strokeStyle = colors[i]; c.lineWidth=2;
+    c.beginPath(); c.arc(cx, cy, 60, 0, 2*Math.PI); c.fill(); c.stroke();
+    c.fillStyle='#fff'; c.font='13px Georgia';
+    c.fillText(`X_f${i}`, cx-15, cy-5);
+    c.font='10px Georgia';
+    c.fillText('≅ Spec((S_fᵢ)₀)', cx-35, cy+15);
+    // arrow to center
+    c.strokeStyle='#556'; c.lineWidth=1; c.setLineDash([2,3]);
+    c.beginPath(); c.moveTo(cx-Math.cos(angle)*60, cy-Math.sin(angle)*60);
+    c.lineTo(400+Math.cos(angle)*150, 230+Math.sin(angle)*150);
+    c.stroke(); c.setLineDash([]);
+  }
+  
+}
+drawProj();
+
+// ============ 17. PROJECTIVE SPACE ============
+let projRot = 0;
+function drawProjectiveSpace() {
+  const k = parseInt(document.getElementById('c17-k-slider').value);
+  document.getElementById('c17-k').textContent = k;
+  const c = ctx('canvas17'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(`ℙ² = Geraden durch 0 in ℝ³, Twist 𝒪(${k})`, 200, 30);
+  const cx=400, cy=230;
+  // Draw axes (rotated)
+  const cos = Math.cos(projRot), sin = Math.sin(projRot);
+  const proj = (x,y,z) => ({
+    x: cx + (x*cos - z*sin)*80,
+    y: cy + y*80 - (x*sin + z*cos)*30
+  });
+  // Draw many lines through origin (each = point in ℙ²)
+  for (let i = 0; i < 24; i++) {
+    const theta = (i/24)*2*Math.PI;
+    for (let j = 0; j < 5; j++) {
+      const phi = (j/5)*Math.PI - Math.PI/2;
+      const dx = Math.cos(theta)*Math.cos(phi);
+      const dy = Math.sin(phi);
+      const dz = Math.sin(theta)*Math.cos(phi);
+      const p1 = proj(dx*2, dy*2, dz*2);
+      const p2 = proj(-dx*2, -dy*2, -dz*2);
+      const hue = (i*15 + j*30 + k*40) % 360;
+      c.strokeStyle = `hsla(${hue}, 70%, 60%, 0.5)`;
+      c.lineWidth = 1;
+      c.beginPath(); c.moveTo(p1.x, p1.y); c.lineTo(p2.x, p2.y); c.stroke();
+    }
+  }
+  // origin
+  c.fillStyle='#fff'; c.beginPath(); c.arc(cx, cy, 5, 0, 2*Math.PI); c.fill();
+  // Cohomology info
+  c.fillStyle='#4ADEDE'; c.font='13px Georgia';
+  const dim = k >= 0 ? Math.round((k+1)*(k+2)/2) : 0;
+  c.fillText(`H⁰(ℙ², 𝒪(${k})) hat Dimension ${dim}`, 250, 400);
+  c.fillStyle='#b8b8d0';
+  c.fillText(`(homogene Polynome vom Grad ${k})`, 280, 425);
+}
+function rotateProj() {
+  const iv = setInterval(() => {
+    projRot += 0.05;
+    drawProjectiveSpace();
+    if (projRot > 2*Math.PI) { projRot = 0; clearInterval(iv); }
+  }, 30);
+}
+drawProjectiveSpace();
+
+// ============ 18. LINE BUNDLES ============
+let bundleRot = 0;
+function drawLineBundle() {
+  const t = parseInt(document.getElementById('c18-t-slider').value);
+  document.getElementById('c18-t').textContent = t;
+  const c = ctx('canvas18'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(`Linienbündel mit Twist ${t} (Möbius-artig)`, 220, 30);
+  const cx=400, cy=230;
+  // Base circle
+  c.strokeStyle='#7873f5'; c.lineWidth=3;
+  c.beginPath(); c.arc(cx, cy, 130, 0, 2*Math.PI); c.stroke();
+  c.fillStyle='#7873f5'; c.font='13px Georgia';
+  c.fillText('Basis X = S¹', 30, 240);
+  // Fibers with twist
+  for (let i = 0; i < 60; i++) {
+    const theta = (i/60)*2*Math.PI;
+    const bx = cx + Math.cos(theta)*130;
+    const by = cy + Math.sin(theta)*130;
+    // twist angle
+    const twistAngle = theta * t/2 + bundleRot;
+    const fx1 = Math.cos(theta+Math.PI/2)*Math.cos(twistAngle)*40;
+    const fy1 = Math.sin(theta+Math.PI/2)*Math.cos(twistAngle)*40;
+    const fz1 = Math.sin(twistAngle)*20;
+    c.strokeStyle = `hsla(${(theta*180/Math.PI + t*30) % 360}, 70%, 60%, 0.7)`;
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(bx - fx1, by - fy1 + fz1);
+    c.lineTo(bx + fx1, by + fy1 - fz1);
+    c.stroke();
+  }
+  // Info
+  c.fillStyle=t===0?'#4ADEDE':'#ff6ec4'; c.font='14px Georgia';
+  c.fillText(t===0 ? '𝒪_X (trivial: Zylinder)' : `𝒪(${t}) mit c₁ = ${t}`, 280, 400);
+}
+function animateBundle() {
+  const iv = setInterval(() => {
+    bundleRot += 0.1;
+    drawLineBundle();
+    if (bundleRot > 2*Math.PI) { bundleRot = 0; clearInterval(iv); }
+  }, 40);
+}
+drawLineBundle();
+
+// ============ 19. CHERN CLASSES ============
+function drawChern() {
+  const c1v = parseInt(document.getElementById('c19-c1-slider').value);
+  const c2v = parseInt(document.getElementById('c19-c2-slider').value);
+  const rv = parseInt(document.getElementById('c19-r-slider').value);
+  document.getElementById('c19-c1').textContent = c1v;
+  document.getElementById('c19-c2').textContent = c2v;
+  document.getElementById('c19-r').textContent = rv;
+  const c = ctx('canvas19'); clear(c);
+  c.fillStyle='#556'; c.font='15px Georgia';
+  c.fillText(`Vektorbündel E: rang=${rv}, c₁=${c1v}, c₂=${c2v}`, 220, 30);
+  // Draw twisted bundle representation
+  const cx=400, cy=200;
+  for (let r = 0; r < rv; r++) {
+    for (let i = 0; i < 40; i++) {
+      const theta = (i/40)*2*Math.PI;
+      const radius = 60 + r*30;
+      const twist = theta*c1v + r*Math.sin(theta*Math.abs(c2v)+1)*10;
+      const x = cx + Math.cos(theta)*radius;
+      const y = cy + Math.sin(theta)*radius*0.6;
+      const height = 15 + Math.sin(twist)*10;
+      c.strokeStyle = `hsla(${(r*80 + theta*180/Math.PI) % 360}, 70%, 60%, 0.7)`;
+      c.lineWidth = 1.5;
+      c.beginPath(); c.moveTo(x, y); c.lineTo(x, y - height); c.stroke();
+      c.fillStyle = `hsla(${(r*80 + theta*180/Math.PI) % 360}, 70%, 60%, 0.9)`;
+      c.beginPath(); c.arc(x, y-height, 2, 0, 2*Math.PI); c.fill();
+    }
+  }
+  // Chern character formula
+  c.fillStyle='#4ADEDE'; c.font='14px Georgia';
+  const ch1 = c1v;
+  const ch2 = (c1v*c1v - 2*c2v)/2;
+  c.fillText(`ch(E) = ${rv} + ${ch1} + ${ch2.toFixed(1)} + ...`, 240, 380);
+  c.fillStyle='#b8b8d0'; c.font='12px Georgia';
+  c.fillText('Cherncharakter = Rang + c₁ + ½(c₁²−2c₂) + ...', 240, 405);
+}
+drawChern();
+
+// ============ 20. RIEMANN-ROCH ============
+let rrStep = 0;
+function drawRiemannRoch() {
+  const d = parseInt(document.getElementById('c20-d-slider').value);
+  const g = parseInt(document.getElementById('c20-g-slider').value);
+  document.getElementById('c20-d').textContent = d;
+  document.getElementById('c20-g').textContent = g;
+  const c = ctx('canvas20'); clear(c);
+  c.fillStyle='#556'; c.font='16px Georgia';
+  c.fillText('Riemann-Roch für Kurven', 280, 30);
+  // Draw a genus-g surface (schematic)
+  const cx=400, cy=180;
+  c.strokeStyle='#7873f5'; c.lineWidth=2;
+  c.fillStyle='rgba(120,115,245,0.15)';
+  c.beginPath();
+  // Draw g holes as an oval with loops
+  const w = 100 + g*40;
+  c.ellipse(cx, cy, w, 60, 0, 0, 2*Math.PI);
+  c.fill(); c.stroke();
+  // Draw g "holes"
+  for (let i = 0; i < g; i++) {
+    const hx = cx - w + 50 + i*(2*w-100)/(Math.max(g-1,1));
+    c.fillStyle='#0a0a1a';
+    c.beginPath(); c.ellipse(hx, cy, 15, 8, 0, 0, 2*Math.PI); c.fill();
+    c.strokeStyle='#7873f5'; c.lineWidth=1.5;
+    c.beginPath(); c.ellipse(hx, cy, 15, 8, 0, 0, 2*Math.PI); c.stroke();
+  }
+  c.fillStyle='#7873f5'; c.font='13px Georgia';
+  c.fillText(`Kurve X vom Geschlecht g = ${g}`, cx-100, 280);
+  // Compute χ(L)
+  const chi = d + 1 - g;
+  // Formula box
+  c.fillStyle='rgba(255,110,196,0.15)';
+  c.fillRect(150, 320, 500, 100);
+  c.strokeStyle='#ff6ec4'; c.lineWidth=2;
+  c.strokeRect(150, 320, 500, 100);
+  c.fillStyle='#ff6ec4'; c.font='bold 18px Georgia';
+  c.fillText('χ(L) = h⁰(L) − h¹(L) = deg(L) + 1 − g', 170, 355);
+  c.fillStyle='#4ADEDE'; c.font='16px Georgia';
+  c.fillText(`χ(L) = ${d} + 1 − ${g} = ${chi}`, 280, 395);
+  // Animation highlight
+  if (rrStep > 0) {
+    c.fillStyle=`rgba(74,222,222,${Math.min(rrStep/10,0.5)})`;
+    c.fillRect(150, 320, 500, 100);
+  }
+}
+function animateRR() {
+  rrStep = 0;
+  const iv = setInterval(() => {
+    rrStep++;
+    drawRiemannRoch();
+    if (rrStep >= 10) clearInterval(iv);
+  }, 100);
+}
+drawRiemannRoch();
+
+console.log('🎉 Alle 20 Konzepte geladen! Viel Spaß beim Lernen.');
+</script>
+
+</body>
+</html>
