@@ -1145,14 +1145,14 @@ function source_bibliography() {
 		entryText += `: *${data.title}*.`;
 		if (data.url) entryText += ` [Link](${data.url})`;
 
-		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:4px;">${entryText}</div>\n`;
+		const entryHtml = (window.marked && window.marked.parseInline) ? window.marked.parseInline(entryText) : entryText;
+		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:4px;">${entryHtml}</div>\n`;
 	});
 
 	sourcesDiv.innerHTML = html;
 
 	if (typeof renderMarkdown === "function") {
 		sourcesDiv.querySelectorAll('.bib-entry').forEach(el => {
-			if (window.marked) el.innerHTML = marked.parse(el.innerHTML);
 			smartPunct(el);
 		});
 	}
