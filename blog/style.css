@@ -6842,13 +6842,22 @@ html.dark .md sup.sidenote-marker:focus { color: var(--mn-heading); }
 /* ── 2. The sidenote column — lives OUTSIDE #contents, in the
    viewport's right margin. ────────────────────────────────────── */
 /* The rail is ANCHORED to the right of the content column with
-   a fixed gap, NOT centred in the viewport margin. This is the
-   Tufte / Navy convention: the annotation reads as belonging to
-   the paragraph it annotates, not floating in the middle of a
-   wide empty margin (which on 4K monitors looked "glued to the
-   right edge" because so much cream space sat to its right).
-   On viewports too narrow for the full 320px rail, the width
-   shrinks (min(50vw-440, 320)) so the box never overflows.   */
+   a fixed gap. It ALWAYS uses the full 320px width.
+
+   At wide viewports (vw ≥ 1480px) there is enough margin space
+   to the right of the content for the 320px rail + gap, so it
+   sits cleanly in the margin.
+
+   At narrow viewports (1280–1480px) the right margin is too
+   narrow to fit a 320px rail without overflowing the viewport.
+   Instead of shrinking the sidenote (200px is too narrow for
+   prose) the rail is REANCHORED from the viewport's right
+   edge. This lets it extend leftward and overlap the right
+   edge of the content column, staying within the viewport.
+
+   Below 1280px there isn't even room for a margin column at
+   all, so the rail is hidden and the JS renders an inline
+   fallback section instead.                                  */
 :root {
 	--sn-content-width: 800px;      /* must match #contents max-width */
 	--sn-rail-gap:      20px;       /* gap between content and rail    */
@@ -6857,19 +6866,15 @@ html.dark .md sup.sidenote-marker:focus { color: var(--mn-heading); }
 	   content_right = 50vw + content_width/2 = 50vw + 400px.
 	   So rail_left = 50vw + 400px + gap = 50vw + 420px.      */
 	--sn-rail-left:  calc(50% + var(--sn-content-width) / 2 + var(--sn-rail-gap));
-	/* Rail width shrinks on narrow viewports so it never overflows.
-	   50vw - 440px = (vw/2 - 400px content_right - 20px gap - 20px safety)
-	   At 1280px that's 200px, at 1600px+ it's capped at 320px. */
-	--sn-rail-width: min(calc(50vw - 440px), var(--sn-rail-max));
 }
 
 #sidenotes-rail {
 	position: absolute;
 	top: 0;
 	left:   var(--sn-rail-left);
-	width:  var(--sn-rail-width);
+	width:  var(--sn-rail-max);
 	max-width: var(--sn-rail-max);
-	min-width: 180px;
+	min-width: var(--sn-rail-max);  /* never shrink below 320px */
 	display: none;
 	z-index: 2;
 	pointer-events: none;
@@ -6881,7 +6886,7 @@ body.has-sidenotes #sidenotes-rail {
 }
 
 /* ANGLE 11 (narrow viewport): at viewports < 1280px we don't
-   even have room for a 200px rail, so hide it entirely and
+   even have room for a margin column, so hide it entirely and
    let the JS render an inline fallback section instead.      */
 @media (max-width: 1279.98px) {
 	body.has-sidenotes #sidenotes-rail {
@@ -6899,7 +6904,20 @@ body.has-sidenotes #sidenotes-rail {
    !important so it always wins against any later rule.       */
 body.has-sidenotes #sidenotes-rail {
 	left: var(--sn-rail-left) !important;
-	width: var(--sn-rail-width) !important;
+	width: var(--sn-rail-max) !important;
+}
+
+/* Narrow-but-not-tiny viewports (1280–1479px): the right margin
+   is narrower than 320px. Switch the rail to right-edge
+   anchoring so it overlaps the right edge of the content from
+   the left instead of pushing past the viewport. This rule
+   must come AFTER the final !important rule above so its
+   left: auto !important wins.                                */
+@media (min-width: 1280px) and (max-width: 1479.98px) {
+	body.has-sidenotes #sidenotes-rail {
+		left:  auto !important;
+		right: 20px !important;
+	}
 }
 
 /* ANGLE 16 (containing-block anchor): explicitly position the
@@ -7293,9 +7311,9 @@ html.dark #sidenotes-section .sidenote-fallback li::before {
 	position: absolute;
 	top: 0;
 	left:   var(--sn-rail-left);
-	width:  var(--sn-rail-width);
+	width:  var(--sn-rail-max);
 	max-width: var(--sn-rail-max);
-	min-width: 180px;
+	min-width: var(--sn-rail-max);
 	display: none;
 	z-index: 2;
 	pointer-events: none;
