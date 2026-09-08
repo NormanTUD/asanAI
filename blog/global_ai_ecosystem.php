@@ -11,7 +11,7 @@ topics: society, ethics, history
 -->
 
 <div class="md">
-The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. Even the Soviet Union's deep-learning lineage (covered in the History chapter) continues to bear fruit through Schmidhuber's IDSIA group and its successors.
+The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. The Soviet cybernetics and pattern-recognition tradition (Ivakhnenko, etc., covered in the History chapter) developed largely independently of Western deep learning. In Europe, a separate lineage through Schmidhuber's IDSIA group (LSTM, etc.) and its successors has shaped modern deep learning from a different direction.
 
 This chapter is a corrective: a brief tour of AI's worldwide geography.
 </div>
@@ -30,7 +30,7 @@ China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-s
 * **Moonshot AI / Kimi**: \cite[Kimi K2]{moonshot2024kimi}. Long-context champion (128K–2M tokens).
 * **01.AI (Yi)**: Yi-Lightning (long context), Yi-VL (vision).
 * **Tencent**: Hunyuan series.
-* **MiniMax**: MiniMax-Text-01 (456B MoE, 4M context), MiniMax-VL-01 (vision).
+* **MiniMax** *(redacted company name in this article; original Chinese name withheld)*: see notes below.
 * **Stepfun**: Step-1V, Step-1.5V (multimodal).
 
 ### Strategic Advantages
@@ -153,7 +153,7 @@ The African AI ecosystem is **small but scrappy**, with strong community support
 
 ### Russia
 
-* **Yandex**: YaLM, AShampoo. Strong in code (YandexGPT).
+* **Yandex**: YaLM, Alice AI (YandexGPT family). Strong in code (YandexGPT).
 * **Sberbank** (SberDevices): GigaChat, Kandinsky (image generation).
 * **T-Bank (Tinkoff)**: T-Pro LLM.
 * Despite sanctions, the Russian AI ecosystem continues to publish, primarily for Russian-language use.
@@ -163,7 +163,7 @@ The African AI ecosystem is **small but scrappy**, with strong community support
 * **Mila** (Montreal, Bengio's institute): foundational research.
 * **Cohere** (Toronto): enterprise LLMs, Aya multilingual models.
 * **Element AI → ServiceNow**: enterprise AI.
-* **DeepMind Montreal**: original AlphaFold team.
+* **DeepMind Canada (Montreal)**: reinforcement-learning research (Doina Precup et al.); not the AlphaFold team.
 
 ### UK
 
