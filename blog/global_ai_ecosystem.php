@@ -11,7 +11,7 @@ topics: society, ethics, history
 -->
 
 <div class="md">
-The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g.,][]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. Even the Soviet Union's deep-learning lineage (covered in the History chapter) continues to bear fruit through Schmidhuber's IDSIA group and its successors.
+The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g.,DeepSeek or Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. Even the Soviet Union's deep-learning lineage (covered in the History chapter) continues to bear fruit through Schmidhuber's IDSIA group and its successors.
 
 This chapter is a corrective: a brief tour of AI's worldwide geography.
 </div>
@@ -23,11 +23,11 @@ China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-s
 
 ### Frontier Model Builders
 
-* **DeepSeek** (Hangzhou): \cite[DeepSeek-V3][]{deepseekv3tech2024} (671B MoE), \cite[DeepSeek-R1][]{guo2025deepseekr1}. Trained reportedly for \$5–6M on H800s. State-of-the-art math/coding. Open weights.
-* **Alibaba / Qwen**: \cite[Qwen 2.5][]{qwen2024} family (0.5B–72B), Qwen2-VL (vision), Qwen2-Audio. Among the most-used open models globally.
-* **Zhipu AI / GLM**: \cite[ChatGLM][]{glm2024}. Strong bilingual EN/ZH performance.
+* **DeepSeek** (Hangzhou): \cite[DeepSeek-V3]{deepseekv3tech2024} (671B MoE), \cite[DeepSeek-R1]{guo2025deepseekr1}. Trained reportedly for \$5–6M on H800s. State-of-the-art math/coding. Open weights.
+* **Alibaba / Qwen**: \cite[Qwen 2.5]{qwen2024} family (0.5B–72B), Qwen2-VL (vision), Qwen2-Audio. Among the most-used open models globally.
+* **Zhipu AI / GLM**: \cite[ChatGLM]{glm2024}. Strong bilingual EN/ZH performance.
 * **Baidu**: ERNIE 4.0, Ernie Bot. Earlier proprietary; later opened some weights.
-* **Moonshot AI / Kimi**: \cite[Kimi K2][]{moonshot2024kimi}. Long-context champion (128K–2M tokens).
+* **Moonshot AI / Kimi**: \cite[Kimi K2]{moonshot2024kimi}. Long-context champion (128K–2M tokens).
 * **01.AI (Yi)**: Yi-Lightning (long context), Yi-VL (vision).
 * **Tencent**: Hunyuan series.
 * **MiniMax**: MiniMax-Text-01 (456B MoE, 4M context), MiniMax-VL-01 (vision).
@@ -54,7 +54,7 @@ India is **the world's largest AI talent producer** but a relatively small front
 
 ### Research Labs
 
-* **AI4Bharat** (IIT Madras): \cite[open-source models][]{ai4bharat2024} for 22 Indic languages. **Airavata**, **Navarasa-2.0** (15 Indic languages), **IndicTrans2** (translation).
+* **AI4Bharat** (IIT Madras): \cite[open-source models]{ai4bharat2024} for 22 Indic languages. **Airavata**, **Navarasa-2.0** (15 Indic languages), **IndicTrans2** (translation).
 * **Krishna et al.** (IIT Bombay): efficient Transformers, KV-cache compression.
 * **Microsoft Research India**: pioneering work on multilingual AI, code-mixing, low-resource NLP.
 * **Google Research India**: focused on agriculture, healthcare, education.
@@ -99,7 +99,7 @@ African AI is **early but rapidly growing**, focused on problems specific to the
 * **Sunbird AI** (Uganda): multilingual speech recognition for 40+ African languages.
 * **Awarri** (Nigeria): Yoruba, Igbo, Hausa NLP.
 * **Lelapa AI** (South Africa): “Vula Vulapha”, African language LLM.
-* **InstaDeep** (Tunisia): \cite[acquired by BioNTech for \$680M][]{insta2023}. AI for genomic surveillance, including early detection of COVID variants in Africa.
+* **InstaDeep** (Tunisia): \cite[acquired by BioNTech for \$680M]{insta2023}. AI for genomic surveillance, including early detection of COVID variants in Africa.
 
 ### Challenges
 
@@ -117,7 +117,7 @@ The African AI ecosystem is **small but scrappy**, with strong community support
 ### United Arab Emirates
 
 * **G42** (Abu Dhabi): backed by the ruling family, partnered with OpenAI, Cerebras, and others. Building Arabic-first LLMs.
-* **Falcon** (\cite[Technology Innovation Institute][]{technologyinnovation2024}, Abu Dhabi): open-source LLMs (Falcon 3, 7B–180B). Arabic language model leader.
+* **Falcon** (\cite[Technology Innovation Institute]{technologyinnovation2024}, Abu Dhabi): open-source LLMs (Falcon 3, 7B–180B). Arabic language model leader.
 * **MBZUAI** (Mohamed bin Zayed University of AI): graduate AI program, attracting faculty worldwide.
 
 ### France
@@ -176,7 +176,7 @@ The African AI ecosystem is **small but scrappy**, with strong community support
 
 The EU's AI strategy emphasizes **regulation + research**:
 
-* **European AI Office**: coordinates the \cite[AI Act][]{euaiact2024}.
+* **European AI Office**: coordinates the \cite[AI Act]{euaiact2024}.
 * **AI Factories** (2024–): subsidized supercomputers for SMEs and researchers.
 * **Horizon Europe**: €1B/year for AI research.
 * **EuroLLM, Project OpenGPT-X**: European open-source multilingual models.
@@ -191,7 +191,7 @@ Open-source models have **dramatically changed the geography of AI**:
 
 * A researcher in Nairobi can fine-tune Llama 3.1 70B on consumer hardware (with quantization).
 * A startup in Bangalore can serve a fine-tuned Qwen on Together.ai for \$50/month.
-* A student in São Paulo can read the \cite[DeepSeek-V3][]{deepseekv3tech2024} technical report and reproduce the results.
+* A student in São Paulo can read the \cite[DeepSeek-V3]{deepseekv3tech2024} technical report and reproduce the results.
 
 The **Hugging Face Hub** hosts 1M+ models from every country. The model release pattern in 2025: most frontier-capable models are published as open weights within months of their closed-source competition.
 
@@ -213,7 +213,7 @@ Three trends to watch:
 2. **Multipolarity**: India, UAE, France, Korea, and others are building independent AI capabilities, especially for their languages and cultures.
 3. **Open-source as soft power**: Chinese open-source releases (Qwen, DeepSeek) and Western ones (Llama, Mistral) compete for global developer mindshare. Adoption is a form of influence.
 
-The student of AI in 2025 should not assume that the latest OpenAI or Anthropic model represents the state of the art for *their* problem. **Look globally.** The best model for Yoruba is not the best model for English. The best model for code in Rust might be a 7B Chinese release. The best model for math might be \cite[DeepSeek-R1][]{guo2025deepseekr1}, not o1.
+The student of AI in 2025 should not assume that the latest OpenAI or Anthropic model represents the state of the art for *their* problem. **Look globally.** The best model for Yoruba is not the best model for English. The best model for code in Rust might be a 7B Chinese release. The best model for math might be \cite[DeepSeek-R1]{guo2025deepseekr1}, not o1.
 
 The global AI ecosystem in 2025 is the most dynamic and polycentric in computing history.
 </div>
