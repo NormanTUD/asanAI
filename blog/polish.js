@@ -948,6 +948,16 @@
 			numberEquations(root);
 			markAcronyms(root);
 		} catch (e) { /* silent */ }
+		// Smart-quote / dash / ellipsis autocorrect. Independent
+		// module; safe to call whether typography_fix.js is loaded
+		// or not. Runs AFTER all the structural pass above so the
+		// `.md` tree is in its final form (numbered headings, drop
+		// caps, acronyms) — only then do we touch the actual text.
+		try {
+			if (window.TypographyFix && window.TypographyFix.fixTypography) {
+				window.TypographyFix.fixTypography(root);
+			}
+		} catch (e) { /* silent */ }
 	}
 
 	/* bootstrap */

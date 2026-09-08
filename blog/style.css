@@ -28,7 +28,7 @@ html {
 	   FAFAF7 with a slightly warmer undertone so it harmonises with
 	   the warm taupe borders and the dark walnut body text. */
 	background: #FAF8F1;
-	color: #2A231C;
+	color: #3A2F25;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-synthesis: none;
@@ -51,8 +51,12 @@ html {
 	--mn-border-light:  #E8DFC6;
 
 	/* Type — warm walnut for body, dark espresso for headings.
-	   Pure black (#000) and slate (#0f172a) felt wrong on cream. */
-	--mn-text:          #2A231C;
+	   Pure black (#000) and slate (#0f172a) felt wrong on cream.
+	   Body text is a hair lighter than pure walnut so it reads as
+	   "dark gray on paper" rather than "ink on paper" (Butterick
+	   §color: black-on-white is the harshest possible pairing; a
+	   slightly lifted brown is easier on the eye for long-form). */
+	--mn-text:          #3A2F25;
 	--mn-text-secondary:#5C5043;
 	--mn-text-muted:    #8C7E68;
 	--mn-heading:       #1A140E;
@@ -1549,14 +1553,15 @@ html.theme-transition *::after {
 #loader { font-family: var(--mn-font-body); }
 
 #contents {
-	/* 1. Dynamische Breite mit Obergrenze — diese 800px sind NICHT
-	   verhandelbar. Sie sind der Lesetakt des Blogs, auf dem die
-	   gesamte Typografie, das Blocksatz-Verhalten, der hängende
-	   Erstbuchstabe etc. kalibriert sind. Sidenotes leben im
-	   Randbereich des Viewports — sie drücken den Artikel NICHT
-	   auseinander. */
-	width: 95%;            /* Nimmt auf kleinen Screens fast alles ein */
-	max-width: 800px;
+	/* 1. Fluid line length. Butterick's Practical Typography says
+	   45–90 characters per line is the readable range; 75–80 ch
+	   sits in the middle. We express the cap in `ch` units so the
+	   cap tracks the actual font the user has loaded — different
+	   fonts at the same px size have wildly different "0"-widths.
+	   Below ~580 px viewport we let it shrink to 92 vw; on tiny
+	   phones mobile.css takes over with explicit padding.        */
+	width: min(92vw, 80ch);
+	max-width: 80ch;
 
 	/* 2. Zentrierung des Containers — bleibt IMMER zentriert. */
 	margin-left: auto;
@@ -1598,17 +1603,25 @@ html.theme-transition *::after {
 
 /* Blocksatz für den Fließtext — bewusst nur auf die oberste
    Prosa-Ebene beschränkt (Markdown-Absätze, Top-Level-Listen,
-   Zitate). Lab-/Interaktions-Container bleiben im Flattersatz,
-   damit schmale Spalten keine Löcher bekommen. Silbentrennung
-   inkl. hyphenate-limit-* läuft über die .md-Regeln weiter unten. */
+   Zitate). Lab-/Interaktions-Container und kurze Callouts
+   (`.cl-block`) bleiben im Flattersatz, damit schmale Spalten
+   keine unschönen Wortlücken bekommen. Silbentrennung inkl.
+   hyphenate-limit-* läuft über die .md-Regeln weiter unten. */
 .md > p,
 .md > ul > li,
 .md > ol > li,
 .md blockquote p,
-.cl-block > p,
 #footnotes li,
 #sources li {
 	text-align: justify;
+}
+.cl-block > p,
+.cl-block > ul > li,
+.cl-block > ol > li {
+	/* Callouts / pull-quotes / box-outs stay ragged-right.
+	   Justified text in a 6-line callout produces ugly rivers. */
+	text-align: left;
+	hyphens: manual;
 }
 #footnotes li,
 #sources li {
@@ -1642,7 +1655,23 @@ html.theme-transition *::after {
 
 .caps {
 	font-variant: all-small-caps;
-	letter-spacing: 0.02em;
+	letter-spacing: 0.06em;
+}
+
+/* Butterick's Practical Typography: "Use 5–12% extra letterspacing
+   with all caps and small caps." Any element that is rendered in
+   uppercase gets the same tracking — applies to eyebrows, badge
+   labels, stage-card subtitles, drawer labels, etc., even if they
+   didn't think to add the class. Skipping nav buttons (chrome)
+   because those are interactive and tracked letters look sluggish. */
+.md .subtitle,
+.md [data-caps],
+.md .badge-label,
+.md .label,
+.md .eyebrow,
+.md .label-uppercase,
+.md .caption-tag {
+	letter-spacing: 0.08em;
 }
 
 /* 4. Der "Spationierungs"-Trick für Headlines */
@@ -2415,6 +2444,12 @@ input[type="number"] { border: 1px solid #ddd; padding: 2px; border-radius: 4px;
 #contents {
 	font-kerning: normal;
 	font-variant-ligatures: common-ligatures contextual;
+	/* Source Serif 4 has variable optical sizing — the glyphs are
+	   subtly redrawn at small sizes so the thin parts don't
+	   disappear. Enabling it on the body means headings (large
+	   optical size) keep their display cut while body text gets
+	   the screen-optimised cut, all in one font file. */
+	font-optical-sizing: auto;
 }
 
 p {
@@ -2476,9 +2511,12 @@ figcaption {
 	text-decoration-color: currentColor; /* Full opacity on hover */
 }
 
-/* Remove margin between consecutive paragraphs, use indent instead */
+/* Remove margin between consecutive paragraphs, use indent instead.
+   Butterick's Practical Typography: first-line indent should be 1-4×
+   the point size. 2 em sits in the middle of that range — visible
+   without disconnecting the first line from the left edge. */
 #contents p + p {
-	text-indent: 1.5em;
+	text-indent: 2em;
 	margin-top: 0;
 }
 
@@ -2658,9 +2696,13 @@ pre code {
 }
 
 /* ---- Headings ---- */
+/* Fluid type scale (Butterick §headings): the difference between
+   body and heading should be SMALL. 1.25×–1.6× is plenty; doubling
+   is the 1990s browser-default trap. We use clamp() so the heading
+   grows gently with the viewport without ever ballooning.        */
 .md h2 {
 	font-family: var(--mn-font-heading);
-	font-size: 1.75rem;
+	font-size: clamp(1.45rem, 1.1rem + 1.6vw, 2.15rem);
 	font-weight: 750;
 	color: var(--mn-heading);
 	margin: 3rem 0 1.25rem;
@@ -2682,11 +2724,31 @@ h2::after {
 
 .md h3 {
 	font-family: var(--mn-font-heading);
-	font-size: 1.3rem;
+	font-size: clamp(1.18rem, 0.98rem + 0.95vw, 1.6rem);
 	font-weight: 700;
 	color: var(--mn-heading);
 	margin: 2.25rem 0 0.75rem;
 	letter-spacing: -0.015em;
+}
+
+.md h4 {
+	font-family: var(--mn-font-heading);
+	font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.25rem);
+	font-weight: 700;
+	color: var(--mn-heading);
+	margin: 1.75rem 0 0.5rem;
+	letter-spacing: -0.005em;
+}
+
+.md h5,
+.md h6 {
+	font-family: var(--mn-font-heading);
+	font-size: 1rem;
+	font-weight: 700;
+	color: var(--mn-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	margin: 1.4rem 0 0.4rem;
 }
 
 .minimalneuron-page .smart-quote::before {
@@ -6206,9 +6268,9 @@ blockquote > p:first-of-type::before {
 	font-family: 'Floral Capitals', Georgia, 'Times New Roman', serif;
 	font-weight: 400;
 	float: left;
-	font-size: var(--cl-dc-size, 6.8em);
-	line-height: .82;
-	padding: .02em .12em 0 0;
+	font-size: var(--cl-dc-size, 5.5em);
+	line-height: .85;
+	padding: .04em .1em 0 0;
 	margin-top: 0;
 	background: linear-gradient(135deg,
 		hsl(199, 96%, 72%) 0%,
@@ -6313,18 +6375,35 @@ blockquote > p:first-of-type::before {
 	transition: color .15s ease;
 }
 
-/* ── 7. Elegant figcaption ── */
+/* ── 7. Elegant figcaption ──
+   Hangs at the image's left edge, italic for the body text, but
+   the auto-generated "Fig. X.Y" prefix is upright / small-caps /
+   slightly tracked so it reads as a label, not as part of the
+   caption's sentence. Old-style figures keep the numbers off the
+   baseline like real footnotes.                                    */
 .md figure figcaption,
 .md > figcaption {
-	font-size: .82em;
+	font-size: .84em;
 	font-style: italic;
 	color: var(--mn-text-muted);
-	margin-top: .8em;
-	padding-top: .55em;
-	border-top: 1px solid var(--mn-border);
+	margin-top: .85em;
+	padding-top: .6em;
+	border-top: 1px solid var(--mn-border-light);
 	text-align: left;
 	line-height: 1.5;
-	max-width: 90%;
+	max-width: 88%;
+	font-variant-numeric: oldstyle-nums proportional-nums;
+}
+/* When the prefix "Fig. X.Y" is auto-generated (see §15b), it
+   sits inside ::before; give it a typographic identity separate
+   from the body italic.                                            */
+.md figure figcaption::before,
+.md > figcaption::before {
+	font-style: normal;
+	font-weight: 600;
+	letter-spacing: .04em;
+	color: var(--mn-text-secondary);
+	font-variant-numeric: tabular-nums;
 }
 
 /* ── 8. Inline <kbd> — feels like an actual key ── */
@@ -6438,7 +6517,18 @@ html { scroll-behavior: smooth; }
    An h1's counter scope covers its following siblings and their descendants,
    so all .md fragments of an article share one sequence (1, 2, 3 …) no matter
    how many .md divs the article is split into — and on pages that embed many
-   articles (index_full), each article's <h1> starts its own numbering. */
+   articles (index_full), each article's <h1> starts its own numbering.
+
+   Format: §X.Y.Z
+     • h1  → none (it IS the chapter start; the surrounding chrome
+                    already names it)
+     • h2  → "1."  (chapter level, bold inline)
+     • h3  → "1.1"
+     • h4  → "1.1.1"   (rare; opt-in via the `.numbered-h4` ancestor)
+
+   Opt-out:
+     • `.no-num`     on the heading itself OR a direct-child span
+     • `.skip-num`   anywhere in the class list                     */
 body {
 	counter-reset: h2count h3count h4count figcount tabcount eqcount;
 	/* ANGLE 16 (containing-block anchor): make body a positioned
@@ -6458,8 +6548,14 @@ body {
 	margin: 0;
 }
 h1 { counter-reset: h2count h3count h4count figcount tabcount eqcount; }
-.md h2 { counter-reset: h3count figcount tabcount eqcount; counter-increment: h2count; }
+.md h2 {
+	counter-reset: h3count h4count figcount tabcount eqcount;
+	counter-increment: h2count;
+}
 .md h3 { counter-increment: h3count; }
+.md h4 { counter-increment: h4count; }
+
+/* The numbers themselves.                                        */
 .md h2::before {
 	content: counter(h2count, decimal) ".\00a0\00a0";
 	color: var(--mn-text-muted);
@@ -6478,16 +6574,49 @@ h1 { counter-reset: h2count h3count h4count figcount tabcount eqcount; }
 	letter-spacing: .02em;
 	font-variant-numeric: tabular-nums;
 }
+/* h4 only numbers when an ancestor opts in via `.numbered-h4` —
+   keeps the default chapter minimal (h2/h3 only).                */
+.numbered-h4 .md h4::before {
+	content: counter(h2count) "." counter(h3count) "." counter(h4count) "\00a0\00a0";
+	color: var(--mn-text-muted);
+	font-weight: 500;
+	font-size: .82em;
+	vertical-align: .14em;
+	letter-spacing: .02em;
+	font-variant-numeric: tabular-nums;
+}
 
-/* skip numbering if heading already starts with a number */
+/* ── 15a. Opt-outs ─────────────────────────────────────────────
+   Any heading may skip its own number in three ways:
+     1. `.no-num` class on the heading itself
+     2. `.no-num` on a direct-child inline span
+     3. `.skip-num` anywhere in the class list                     */
+.md h2.no-num,
+.md h3.no-num,
+.md h4.no-num,
+.md h2[class*="skip-num"],
+.md h3[class*="skip-num"],
+.md h4[class*="skip-num"] {
+	counter-increment: none;
+}
+.md h2.no-num::before,
+.md h3.no-num::before,
+.md h4.no-num::before,
 .md h2[class*="skip-num"]::before,
 .md h3[class*="skip-num"]::before,
-.md h2 > .skip-num-marker ~ ::before,
-.md h3 > .skip-num-marker ~ ::before { content: none; }
-
-/* Opt-out: any heading that contains a span.no-num does not get numbered */
+.md h4[class*="skip-num"]::before,
 .md h2:has(> .no-num)::before,
-.md h3:has(> .no-num)::before { content: none; }
+.md h3:has(> .no-num)::before,
+.md h4:has(> .no-num)::before {
+	content: none;
+}
+/* h2/h3/h4 that opt out should NOT reset their child counters
+   either — otherwise a skipped h2 would still bump the h3 count
+   and the next real h2 would start at "2.1" instead of "1.1".   */
+.md h2.no-num,
+.md h2[class*="skip-num"] {
+	counter-reset: none;
+}
 
 /* ── Figure / table / equation numbers ─────────────────────────
    All chapter-scoped (reset at every .md h2 via the counters above):
@@ -6758,32 +6887,86 @@ span.cl-eq {
 }
 
 /* ── 10. Footnote refinements ── */
+/* Inline footnote refs: small superscript, accent colour on hover
+   only — when idle they sit unobtrusively as part of the word.   */
 .md sup.footnote-ref {
 	font-size: .72em;
 	vertical-align: super;
 	line-height: 0;
 }
 .md sup.footnote-ref a {
-	color: var(--mn-accent);
+	color: var(--mn-text-secondary);
 	text-decoration: none;
 	padding: 0 .15em;
 	border-radius: 3px;
+	transition: color .15s ease, background .15s ease;
 }
 .md sup.footnote-ref a:hover {
 	background: var(--mn-accent-light);
 	color: var(--mn-accent-dark);
 }
 html.dark .md sup.footnote-ref a:hover { color: #fff; }
-#footnotes {
-	margin-top: 3em;
+
+/* Footnote block at the foot of an article. Hanging indent so
+   wrapped lines align with the first letter of the body of the
+   note, not with the tiny marker number. A subtle eyebrow label
+   (`FOOTNOTES`) sits above the rule, matching the brand voice
+   used by `.subtitle` etc.                                          */
+#footnotes,
+#sources {
+	position: relative;
+	margin-top: 3.5em;
 	padding-top: 2em;
 	border-top: 1px solid var(--mn-border-light);
 	font-size: .88em;
 	line-height: 1.55;
+	color: var(--mn-text-secondary);
 }
-#footnotes ol { padding-left: 1.4em; }
-#footnotes li { margin-bottom: .35em; color: var(--mn-text-secondary); }
-#footnotes li::marker { color: var(--mn-text-muted); font-variant-numeric: tabular-nums; }
+#footnotes::before,
+#sources::before {
+	content: 'Footnotes';
+	position: absolute;
+	top: -.55em;
+	left: 0;
+	background: var(--mn-bg);
+	padding-right: .8em;
+	font-size: .68em;
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--mn-text-muted);
+	font-weight: 600;
+}
+#sources::before { content: 'Sources'; }
+#footnotes ol,
+#sources ol {
+	padding-left: 0;
+	list-style: none;
+	counter-reset: fnitem;
+}
+#footnotes ol > li,
+#sources ol > li {
+	position: relative;
+	margin-bottom: .55em;
+	padding-left: 2.2em;
+	text-indent: 0;
+	color: var(--mn-text-secondary);
+	counter-increment: fnitem;
+}
+#footnotes ol > li::before,
+#sources ol > li::before {
+	content: counter(fnitem);
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 1.6em;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	font-size: .82em;
+	color: var(--mn-text-muted);
+	font-feature-settings: "tnum" 1;
+}
+#footnotes li::marker,
+#sources li::marker { content: ''; }
 
 /* ═══════════════════════════════════════════════════════════════
    SIDENOTES  — Tufte-style margin annotations.
@@ -7604,6 +7787,94 @@ html.dark #sidenotes-section .sidenote-fallback li.is-sn-target {
 /* ── 11.5.6. Heading anchor "copied" feedback ── */
 .cl-h-anchor.is-ok { color: var(--mn-emerald); }
 
+/* ─────────────────────────────────────────────────────────────
+   11.5b. Reader mode — single-column, chrome-stripped, generous.
+   Toggled with `R` (or click the book icon top-right). State lives
+   in localStorage so it survives reloads; the inline script in
+   functions.php applies the class pre-paint to avoid a flash.
+   The toggle button itself stays visible so the reader can always
+   leave the mode.                                                  */
+html.reader-mode #drawer-toggle,
+html.reader-mode #search-trigger,
+html.reader-mode #topics-toggle,
+html.reader-mode .drawer-backdrop,
+html.reader-mode #cl-top,
+html.reader-mode .organic-network,
+html.reader-mode .course-hero {
+	display: none !important;
+}
+
+html.reader-mode {
+	/* Slightly warmer bg so the page feels like a small booklet. */
+	background: #F8F2E4;
+}
+html.reader-mode.dark {
+	background: #10172a;
+}
+
+html.reader-mode #contents {
+	/* Reader mode: 90 ch max, single column, generous padding. */
+	width: min(92vw, 90ch);
+	max-width: 90ch;
+	font-size: clamp(1.08rem, 1rem + 0.4vw, 1.18rem);
+	line-height: 1.65;
+}
+
+/* Reader-mode body copy is left-aligned: with fewer characters per
+   line and a wider column, the justify+hypenate combo produces
+   bigger gaps between words on long paragraphs.                */
+html.reader-mode .md > p,
+html.reader-mode .md > ul > li,
+html.reader-mode .md > ol > li,
+html.reader-mode .md blockquote p {
+	text-align: left;
+}
+
+/* Hide sidenote rail entirely in reader mode — it competes for
+   attention and the user explicitly asked for focus.            */
+html.reader-mode #sidenotes-rail,
+html.reader-mode #sideimages-rail,
+html.reader-mode [data-sideimage-rail],
+html.reader-mode .sidenote-fallback {
+	display: none !important;
+}
+
+/* Bigger, looser headings in reader mode. */
+html.reader-mode .md h2 {
+	font-size: clamp(1.7rem, 1.3rem + 1.8vw, 2.4rem);
+	margin-top: 3.5rem;
+	margin-bottom: 1.5rem;
+}
+html.reader-mode .md h3 {
+	font-size: clamp(1.35rem, 1.1rem + 1.1vw, 1.75rem);
+	margin-top: 2.5rem;
+}
+
+/* Reader-mode pill for the toggle: stays visible, slightly larger. */
+html.reader-mode #reader-toggle {
+	top: 16px;
+	right: 80px;
+	background: var(--mn-surface);
+	color: var(--mn-accent);
+	border-color: var(--mn-accent);
+}
+
+/* Drop-cap in reader mode is one line shorter — the wider column
+   already gives plenty of visual weight to the opener.            */
+html.reader-mode .md > p.cl-dropcap::first-letter {
+	font-size: var(--cl-dc-size, 4.5em);
+}
+
+/* Smooth transition when entering / leaving reader mode.        */
+html.reader-mode,
+html.reader-mode #contents,
+html.reader-mode .md h2,
+html.reader-mode .md h3 {
+	transition: background-color .35s ease, font-size .35s ease,
+		max-width .35s ease, line-height .35s ease;
+}
+
+
 /* ── 11.6. Footnote hover tooltip ── */
 .cl-fn-tip,
 .cl-cite-tip {
@@ -7748,35 +8019,203 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	pointer-events: none !important;
 }
 
-/* ── 12. Print stylesheet — book-like, single column ── */
+/* ── 12. Print stylesheet — book-like, single column ──
+   Print a long-form technical essay the way it deserves: serif,
+   justified, hyphenated, with figures and tables kept intact and
+   URLs spelled out so they survive being photocopied.             */
+@page {
+	size: A4;
+	margin: 18mm 16mm 20mm 16mm;
+}
 @media print {
-	html, body { background: #fff !important; color: #000 !important; font-size: 11pt; }
+	/* ── 12.1 Page-level resets ───────────────────────────────── */
+	html, body {
+		background: #fff !important;
+		color: #000 !important;
+		font-size: 10.5pt;
+		line-height: 1.45;
+		-webkit-print-color-adjust: economy;
+		print-color-adjust: economy;
+	}
+	html.reader-mode { background: #fff !important; }
+
+	/* Disable all animations / transitions — they never survive
+	   the printer anyway, and mid-print motion blur is ugly.    */
+	*, *::before, *::after {
+		animation: none !important;
+		transition: none !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+	}
+
+	/* ── 12.2 Hide everything that isn't the article itself ──── */
 	#drawer-toggle, #drawer-panel, #drawer-backdrop, .drawer-backdrop,
-	#theme-toggle, #search-trigger, #toc, .km-hero, .km-lane-glow,
+	#theme-toggle, #search-trigger, #reader-toggle, #topics-toggle,
+	#toc, .km-hero, .km-lane-glow,
 	#cl-top, #cl-shortcut-help, #cl-progress, .cl-skip, #cl-lb,
 	nav.module-nav, .module-nav, .drawer-panel,
 	.cl-copy, .cl-fn-tip, .cl-cite-tip,
+	.cl-h-anchor, .cl-progress, .cl-progress > div,
 	.kn-lane-glow, .km-legend, .km-controls, .km-detail,
 	#reading-progress, #reading-progress > div,
-	.organic-network {
+	.organic-network, .course-hero, .module-nav,
+	.optional-header, .optional-icon,
+	#sidenotes-rail, #sideimages-rail, [data-sideimage-rail],
+	.image-row figure figcaption.no-print,
+	.no-print {
 		display: none !important;
 	}
-	.md a[target="_blank"]::after { content: '' !important; }
-	.md .cl-h-anchor { display: none !important; }
-	#contents { display: block !important; padding: 0 !important; max-width: none !important; }
-	.md h1 { page-break-before: always; font-size: 18pt; }
-	.md h1:first-child { page-break-before: avoid; }
-	.md h2, .md h3 { page-break-after: avoid; }
-	.md pre, .md table, .md figure { page-break-inside: avoid; }
-	.md a { color: #000 !important; text-decoration: underline; }
-	.md a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .8em; color: #555; }
-	.cl-block, .cl-inline, .cl-h-anchor, blockquote {
+
+	/* ── 12.3 Sidenotes fall to footnotes on paper ────────────── */
+	.sidenote-fallback, .sidenote-fallback h2 {
+		display: block !important;
+	}
+	.sidenote-fallback .sidenote-item {
+		font-size: 9pt;
+		line-height: 1.4;
+		margin-bottom: .35em;
+	}
+	.sidenote-fallback .sidenote-item::before {
+		content: counter(sidenote-counter) "  ";
+		font-variant-numeric: tabular-nums;
+		color: #000;
+	}
+
+	/* ── 12.4 Article layout ─────────────────────────────────── */
+	#contents {
+		display: block !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		width: 100% !important;
+		max-width: none !important;
+	}
+	.md {
+		max-width: none !important;
+	}
+
+	/* ── 12.5 Typography — paper, not screen ──────────────────── */
+	.md p, .md li {
+		text-align: justify !important;
+		hyphens: auto !important;
+		-webkit-hyphens: auto !important;
+		orphans: 3;
+		widows: 3;
+	}
+	.md p + p { text-indent: 1.5em; margin-top: 0; }   /* keep indent */
+	.md h1, .md h2, .md h3 {
+		font-family: Georgia, "Times New Roman", serif !important;
+		color: #000 !important;
+		text-wrap: balance;
+	}
+	.md h1 { font-size: 20pt; page-break-before: always; margin-top: 0; }
+	.md h1:first-of-type { page-break-before: avoid; }
+	.md h2 { font-size: 14pt; page-break-after: avoid; }
+	.md h3 { font-size: 12pt; page-break-after: avoid; }
+	.md h2::before, .md h3::before { color: #000 !important; }
+	.md h2::before { content: counter(h2count) "." !important; }
+	.md h3::before { content: counter(h2count) "." counter(h3count) !important; }
+
+	/* Code stays monospace, but smaller and unboxed.            */
+	.md code, .md pre, .md kbd, .md samp {
+		background: transparent !important;
+		border: none !important;
+		color: #000 !important;
+		font-family: "Courier New", Courier, monospace !important;
+		font-size: 9pt !important;
+	}
+	.md pre {
+		padding: 4pt 0 !important;
+		border-top: 1px solid #000 !important;
+		border-bottom: 1px solid #000 !important;
+		border-radius: 0 !important;
+		page-break-inside: avoid;
+	}
+	.md blockquote {
 		background: transparent !important;
 		box-shadow: none !important;
-		border-left: 2px solid #888 !important;
+		border-left: 2pt solid #000 !important;
+		font-style: italic;
+		margin: 8pt 0;
+		padding: 0 0 0 8pt;
 	}
-	.md p + p { text-indent: 0 !important; }
-	html.dark .md, html.dark .md * { color: #000 !important; background: transparent !important; }
+
+	/* ── 12.6 Links — spell the URL after the text ─────────────── */
+	.md a {
+		color: #000 !important;
+		text-decoration: underline !important;
+	}
+	.md a[href^="http"]:not(.cl-inline)::after,
+	.md a[href^="https"]:not(.cl-inline)::after,
+	.md a[href^="mailto"]:not(.cl-inline)::after {
+		content: " (" attr(href) ")";
+		font-size: 85%;
+		color: #555;
+		word-break: break-all;
+	}
+	.md a[href^="#"]::after { content: ""; }
+
+	/* Footnote refs print as superscript with no link underlining. */
+	.md sup.footnote-ref a,
+	.md sup.sidenote-marker a {
+		color: #000 !important;
+		text-decoration: none !important;
+	}
+
+	/* Footnotes themselves: small, justified, hanging indent.   */
+	#footnotes, #sources {
+		font-size: 9pt !important;
+		line-height: 1.4 !important;
+		border-top: 1px solid #000 !important;
+		margin-top: 14pt !important;
+		padding-top: 6pt !important;
+	}
+	#footnotes li, #sources li {
+		text-indent: -1.4em;
+		padding-left: 1.4em;
+	}
+
+	/* Figures / tables: avoid splitting them across pages.       */
+	.md figure { page-break-inside: avoid; }
+	.md table {
+		page-break-inside: avoid;
+		border-collapse: collapse !important;
+	}
+	.md th, .md td {
+		border: 0.5pt solid #000 !important;
+		padding: 3pt 5pt !important;
+	}
+	.md figure figcaption,
+	.md table > caption {
+		font-size: 9pt;
+		color: #000 !important;
+		font-style: italic;
+	}
+
+	/* Images scale to page width; no lightbox cursor.            */
+	.md img {
+		max-width: 100% !important;
+		cursor: default !important;
+	}
+
+	/* ── 12.7 Drop-cap is a print luxury — keep, but in B&W ────── */
+	.md > p.cl-dropcap::first-letter {
+		background: none !important;
+		-webkit-text-fill-color: #000 !important;
+		color: #000 !important;
+		font-family: Georgia, "Times New Roman", serif !important;
+	}
+
+	/* Strip accent / indigo colour everywhere it would dither.   */
+	* {
+		border-color: #000 !important;
+	}
+
+	html.dark .md, html.dark .md *,
+	html.dark .md p, html.dark .md li, html.dark .md h1,
+	html.dark .md h2, html.dark .md h3 {
+		color: #000 !important;
+		background: transparent !important;
+	}
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -8014,6 +8453,58 @@ html.dark #reading-progress {
 #topics-toggle:focus-visible {
 	outline: 2px solid var(--mn-accent);
 	outline-offset: 2px;
+}
+
+/* 📖 Reader mode toggle — sits to the LEFT of topics-toggle in the
+   top-right chrome bar. Same visual language; when active the
+   border + icon turn accent so the state is glance-readable. */
+#reader-toggle {
+	position: fixed;
+	top: 16px;
+	right: 188px;
+	z-index: 9999;
+	width: 40px;
+	height: 40px;
+	padding: 0;
+	border: 1px solid var(--mn-border);
+	border-radius: 12px;
+	background: var(--mn-surface);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	box-shadow: var(--mn-shadow-md);
+	color: var(--mn-text-secondary);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+}
+#reader-toggle svg {
+	width: 18px;
+	height: 18px;
+}
+#reader-toggle:hover {
+	border-color: var(--mn-accent);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+	color: var(--mn-accent);
+	transform: scale(1.05);
+}
+#reader-toggle:active { transform: scale(0.95); }
+#reader-toggle:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 2px;
+}
+html.reader-mode #reader-toggle {
+	border-color: var(--mn-accent);
+	color: var(--mn-accent);
+	background: var(--mn-accent-light);
+}
+@media (max-width: 600px) {
+	#reader-toggle {
+		right: 180px;
+		width: 36px;
+		height: 36px;
+	}
 }
 
 /* ── inline target icon (used in prose so it matches the toggle) ── */

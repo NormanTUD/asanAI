@@ -164,6 +164,7 @@ function load_base_js () {
 	js("init");
 	js("cluster");
 	js("polish");
+	js("typography_fix");
 	js("helper");
 	js("master_vis");
 	js("loader");
@@ -543,6 +544,37 @@ if(!server_php_self_ends_with_index_php()) {
 				if (prefersDark) document.cookie = 'theme=dark; path=/; max-age=' + 60*60*24*365;
 			}
 		})();
+		// Reader mode: localStorage-backed. Pure UI preference; we
+		// don't need to ship it to the server, so no cookie.
+		function toggleReaderMode() {
+			var html = document.documentElement;
+			var on = !html.classList.contains('reader-mode');
+			if (on) html.classList.add('reader-mode');
+			else html.classList.remove('reader-mode');
+			try { localStorage.setItem('readerMode', on ? '1' : '0'); } catch (e) {}
+			var meta = document.querySelector('meta[name="theme-color"]');
+			if (meta && on) {
+				meta.content = html.classList.contains('dark') ? '#10172a' : '#F8F2E4';
+			}
+		}
+		(function() {
+			try {
+				if (localStorage.getItem('readerMode') === '1') {
+					document.documentElement.classList.add('reader-mode');
+				}
+			} catch (e) {}
+		})();
+		// Keyboard shortcut: `r` toggles reader mode (ignored while
+		// typing in inputs / textareas).
+		document.addEventListener('keydown', function (ev) {
+			if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+			var t = ev.target;
+			if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+			if (ev.key === 'r' || ev.key === 'R') {
+				ev.preventDefault();
+				toggleReaderMode();
+			}
+		});
 		</script>
 <?php
 		print_dynamic_title();
@@ -556,6 +588,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 		<?php render_theme_toggle(); ?>
 		<?php render_topics_toggle(); ?>
+		<?php render_reader_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
@@ -680,6 +713,26 @@ function render_topics_toggle(): void {
 	echo '<circle cx="12" cy="12" r="9"/>';
 	echo '<circle cx="12" cy="12" r="5"/>';
 	echo '<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>';
+	echo '</svg></span>';
+	echo '</button>';
+}
+
+/**
+ * 📖 Reader mode toggle — strips chrome, widens the column one
+ * step, bumps body font ~10 %, hides sidenotes / topic pill /
+ * tile shimmer, and switches body text to left-aligned (justified
+ * with hyphens becomes aggressive on very long paragraphs).
+ * Pure CSS via `html.reader-mode`; state lives in localStorage so
+ * it survives reloads and is per-tab. Keyboard shortcut: `R`.
+ */
+function render_reader_toggle(): void {
+	echo '<button id="reader-toggle" type="button" aria-label="Toggle reader mode" title="Reader mode (R)" onclick="toggleReaderMode()">';
+	echo '<span class="ti-book" aria-hidden="true">';
+	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+	echo '<path d="M2 4h7a4 4 0 0 1 4 4v12"/>';
+	echo '<path d="M22 4h-7a4 4 0 0 0-4 4v12"/>';
+	echo '<path d="M2 4v16h7a4 4 0 0 0 4-4"/>';
+	echo '<path d="M22 4v16h-7a4 4 0 0 1-4-4"/>';
 	echo '</svg></span>';
 	echo '</button>';
 }
