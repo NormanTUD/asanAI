@@ -1113,7 +1113,7 @@ function source_bibliography() {
 	if (!sourcesDiv && mainContent && window.usedCitations.length > 0) {
 		const sourcesSection = document.createElement('section');
 		sourcesSection.id = 'sources-section';
-		sourcesSection.innerHTML = `<h1>Sources</h1><div id="sources"></div>`;
+		sourcesSection.innerHTML = `<div id="sources"></div>`;
 		mainContent.appendChild(sourcesSection);
 		sourcesDiv = document.getElementById('sources');
 	}
