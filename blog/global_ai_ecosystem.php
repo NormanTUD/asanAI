@@ -11,7 +11,7 @@ topics: society, ethics, history
 -->
 
 <div class="md">
-The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g.,DeepSeek or Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. Even the Soviet Union's deep-learning lineage (covered in the History chapter) continues to bear fruit through Schmidhuber's IDSIA group and its successors.
+The dominant narrative around AI is Silicon Valley-centric: OpenAI, Anthropic, Google DeepMind, Meta. But the global AI ecosystem is far richer. China has produced frontier-class open-source models \cite[e.g. DeepSeek and Qwen]{deepseekv3tech2024,qwen2024}. India has world-class applied AI work and a thriving open-source community \cite[AI4Bharat, 2024]{ai4bharat2024}. The UAE, France, Korea, Japan, Israel, and Singapore host serious AI efforts. Africa is building AI for low-resource languages and African challenges \cite[Masakhane, 2024]{masakhane2024}. Even the Soviet Union's deep-learning lineage (covered in the History chapter) continues to bear fruit through Schmidhuber's IDSIA group and its successors.
 
 This chapter is a corrective: a brief tour of AI's worldwide geography.
 </div>
