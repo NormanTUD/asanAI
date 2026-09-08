@@ -1059,7 +1059,7 @@ Introduced by \citeauthor{prinz2012conscious} in \citetitle{prinz2012conscious} 
 
 **Implications for AI:** Prinz's theory requires genuine sensory processing at multiple levels of abstraction, with an attention mechanism that selects intermediate representations for further processing. LLMs have attention mechanisms but no sensory hierarchy; their “representations” are statistical patterns over tokens, not perceptual features at varying levels of abstraction. The theory suggests that consciousness requires a specific kind of representational content (perceptual, intermediate-level) that text-only systems categorically lack.
 
-### Summary (Updated)
+### Summary
 
 | Theory | Key Mechanism | Consciousness possible in current LLMs? |
 |--------|--------------|----------------------------------------|
