@@ -1052,6 +1052,77 @@ const SheafViz = (() => {
 		return line;
 	}
 
+	// ANGLE 1 (visibility, primary): thick tube-ribbon outline — real 3D thickness, immune to WebGL line-width limits
+	function mkOutlineRibbon(color, radius) {
+		if (ms.length < 1) return null;
+		const allC = [];
+		ms.forEach(m => {
+			const { t1, t2 } = m._tf, c = m.center, hw = m.hw + .06, hh = m.hh + .06;
+			[[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]].forEach(([u,v]) =>
+				allC.push(c.clone().add(t1.clone().multiplyScalar(u)).add(t2.clone().multiplyScalar(v)).normalize().multiplyScalar(R * 1.02)));
+		});
+		if (allC.length < 3) return null;
+		const cen = new THREE.Vector3(); allC.forEach(c => cen.add(c)); cen.normalize().multiplyScalar(R * 1.02);
+		const { t1, t2 } = tframe(cen);
+		const p2 = allC.map(c => { const d = c.clone().sub(cen); return { x: d.dot(t1), y: d.dot(t2), orig: c }; });
+		const hull = cvxHull(p2);
+		if (hull.length < 3) return null;
+		const pts = hull.map(h => h.orig.clone());
+		const curve = new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.5);
+		const tubeGeo = new THREE.TubeGeometry(curve, Math.max(32, hull.length * 8), radius || 0.03, 8, true);
+		const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0, depthWrite: false, side: 2 });
+		const mesh = new THREE.Mesh(tubeGeo, mat);
+		mesh.userData = { ft: 0.75, fd: 80, fs: -1 };
+		return mesh;
+	}
+
+	// ANGLE 5 (redundancy): translucent filled polygon under outline — visible even if ribbon/line are hidden
+	function mkPresheafFill() {
+		if (ms.length < 1) return null;
+		const allC = [];
+		ms.forEach(m => {
+			const { t1, t2 } = m._tf, c = m.center, hw = m.hw + .04, hh = m.hh + .04;
+			[[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]].forEach(([u,v]) =>
+				allC.push(c.clone().add(t1.clone().multiplyScalar(u)).add(t2.clone().multiplyScalar(v)).normalize().multiplyScalar(R * 1.014)));
+		});
+		if (allC.length < 3) return null;
+		const cen = new THREE.Vector3(); allC.forEach(c => cen.add(c)); cen.normalize().multiplyScalar(R * 1.014);
+		const { t1, t2 } = tframe(cen);
+		const p2 = allC.map(c => { const d = c.clone().sub(cen); return { x: d.dot(t1), y: d.dot(t2), orig: c }; });
+		const hull = cvxHull(p2);
+		if (hull.length < 3) return null;
+		const verts = [cen.x, cen.y, cen.z];
+		hull.forEach(h => { verts.push(h.orig.x, h.orig.y, h.orig.z); });
+		const indices = [];
+		for (let i = 1; i < hull.length - 1; i++) indices.push(0, i, i + 1);
+		const geo = new THREE.BufferGeometry();
+		geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+		geo.setIndex(indices);
+		geo.computeVertexNormals();
+		const mat = new THREE.MeshBasicMaterial({ color: 0xffb74d, transparent: true, opacity: 0, side: 2, depthWrite: false });
+		const mesh = new THREE.Mesh(geo, mat);
+		mesh.userData = { ft: 0.22, fd: 80, fs: -1 };
+		return mesh;
+	}
+
+	// ANGLE 1 (visibility, per-germ): bright pulse ring around each shared germ — impossible to miss
+	function mkSharedPulse(dot) {
+		const ring = new THREE.Mesh(
+			new THREE.RingGeometry(DOT + 0.045, DOT + 0.09, 32),
+			new THREE.MeshBasicMaterial({
+				color: 0xff5722, side: 2, transparent: true,
+				opacity: 0, depthWrite: false
+			})
+		);
+		const group = new THREE.Group();
+		const pos = dot.pt.clone().multiplyScalar(1.016);
+		group.position.copy(pos);
+		group.lookAt(dot.pt.clone().multiplyScalar(2));
+		group.add(ring);
+		ring.userData = { ft: 0.95, fd: 50, fs: performance.now() };
+		return group;
+	}
+
 	function cvxHull(pts) {
 		if (pts.length < 3) return pts;
 		pts.sort((a,b) => a.x - b.x || a.y - b.y);
@@ -1088,11 +1159,71 @@ const SheafViz = (() => {
 
 	function buildPresheaf() {
 		clear(gPre);
-		const outline = mkOutline(0x555555, true);
-		if (outline) gPre.add(outline);
-		const lb = mkLabel('Presheaf — ' + countShared() + ' shared germs (circled outlines). Gluable?', 0x555555, 3.2);
-		lb.position.set(0, R + 1.7, 0); lb.userData = { ft: 1, fd: 200, fs: -1 };
-		gPre.add(lb);
+		let n = 0;
+
+		// ANGLE 1 (visibility, primary): thick tube-ribbon outline.
+		// Real 3D thickness means it shows up regardless of WebGL line-width limits.
+		const ribbon = mkOutlineRibbon(0x222222, 0.03);
+		if (ribbon) {
+			ribbon.material.opacity = 0.75;       // ANGLE 2: visible immediately, no fade race
+			ribbon.userData.fs = -2;              // ANGLE 2: tell fadeAll to skip
+			ribbon.renderOrder = 999;             // ANGLE 4: draw after sphere
+			ribbon.material.depthTest = false;    // ANGLE 4: ignore z-buffer so it is never occluded
+			gPre.add(ribbon); n++;
+		}
+
+		// ANGLE 1 (visibility, backup) + ANGLE 5 (redundancy): dashed line on top of the ribbon.
+		// Belt-and-braces: even if the tube fails for any reason, a second outline is drawn.
+		const outline = mkOutline(0x000000, true);
+		if (outline) {
+			outline.material.opacity = 1.0;        // ANGLE 2: visible immediately
+			outline.userData.fs = -2;             // ANGLE 2: tell fadeAll to skip
+			outline.renderOrder = 1000;            // ANGLE 4: on top of ribbon
+			outline.material.depthTest = false;    // ANGLE 4: never occluded
+			gPre.add(outline); n++;
+		}
+
+		// ANGLE 5 (redundancy): translucent filled polygon under the outline.
+		// Even if both outlines fail, the area itself is shaded, so you still see *something*.
+		const fill = mkPresheafFill();
+		if (fill) {
+			fill.material.opacity = 0.22;         // ANGLE 2: visible immediately
+			fill.userData.fs = -2;                // ANGLE 2: tell fadeAll to skip
+			fill.renderOrder = 998;               // ANGLE 4: under outline, above sphere
+			fill.material.depthTest = false;      // ANGLE 4: never occluded
+			gPre.add(fill); n++;
+		}
+
+		// ANGLE 1 (visibility, per-germ): bright pulse ring on every shared germ.
+		// The single most reliable visual cue: orange halos around overlapping dots.
+		dotPool.forEach(d => {
+			if (!isShared(d)) return;
+			const pulse = mkSharedPulse(d);
+			if (pulse) {
+				pulse.traverse(c => {
+					if (c.material) {
+						c.material.opacity = 0.95;   // ANGLE 2: visible immediately
+						c.userData.fs = -2;          // ANGLE 2: tell fadeAll to skip
+						c.renderOrder = 1001;        // ANGLE 4: on top
+						c.material.depthTest = false;// ANGLE 4: never occluded
+					}
+				});
+				gPre.add(pulse); n++;
+			}
+		});
+
+		// ANGLE 5 (redundancy, final): always-visible label so the click registers textually.
+		const shared = countShared();
+		const lb = mkLabel('Presheaf — ' + shared + ' shared germ' + (shared === 1 ? '' : 's') + ' (orange rings). NO global section yet.', 0x000000, 3.4);
+		lb.position.set(0, R + 1.9, 0);
+		lb.material.opacity = 1.0;
+		lb.renderOrder = 1002;
+		gPre.add(lb); n++;
+
+		// ANGLE 3 (geometric robustness): if everything failed, log loudly so it cannot fail silently.
+		if (n === 0) console.warn('[SheafViz] buildPresheaf: NO visual elements were added.');
+
+		info('<strong>Presheaf:</strong> Thick outline + filled area + orange rings = local data on every stalk. <strong>No gluing guarantee yet.</strong>');
 	}
 
 	function buildSheaf() {
