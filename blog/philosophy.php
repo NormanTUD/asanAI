@@ -795,14 +795,14 @@ $$
 
 A sheaf is the formal machinery that makes this principle precise: it specifies, for a given space $X$, what counts as "local data", what counts as "overlap", and how to recover a unique global object once the local data cohere.
 
-**A running analogy, only.** To make the abstract machinery concrete, the rest of this section uses one example throughout: a silver ICE passing by you on a platform. *This is an analogy.* The five levels we walk through (germ, stalk, section, presheaf, sheaf) apply to any space — perceptual, mathematical, or learned. The train is helpful because it lets us point at each level with a finger; once you see the pattern there, you will find it again in spaces that have no train at all.
+**A running analogy, only.** To make the abstract machinery concrete, the rest of this section uses one example throughout: a silver train passing by you on a platform. *This is an analogy.* The five levels we walk through (germ, stalk, section, presheaf, sheaf) apply to any space — perceptual, mathematical, or learned. The train is helpful because it lets us point at each level with a finger; once you see the pattern there, you will find it again in spaces that have no train at all.
 
 ### 1. The Germ
 
 The smallest measurable element is the **germ**: the data at one exact point of a space, together with the vanishingly small neighborhood around it where that data is still meaningful.
 
 * **Generally.** A germ is an equivalence class of local observations that agree on some neighborhood of a point $x$. Two readings at $x$ are "the same germ" when they coincide on some small region containing $x$.
-* **By analogy to the train.** A visual germ is the reflected light from a single point on the silver ICE at one instant; an auditory germ is the sound pressure at that same instant. Each is local, partial, and meaningful only in the context of its immediate surroundings.
+* **By analogy to the train.** A visual germ is the reflected light from a single point on the silver train at one instant; an auditory germ is the sound pressure at that same instant. Each is local, partial, and meaningful only in the context of its immediate surroundings.
 
 Germs exist in every space that admits local measurement: a color reading at one pixel of an image, an activation at one token of a Transformer, a temperature at one point of a manifold.
 
@@ -838,7 +838,7 @@ At this level, the data streams are still *separate*. Visual and auditory inform
 The sheaf is the presheaf that passes one further test: the **gluing axiom**. If sections agree on every overlap, they fuse into a single, unique global section.
 
 * **Generally.** For an open cover $\{U_i\}$ of $U$ and sections $s_i \in \mathcal{F}(U_i)$, if the restrictions agree on every pairwise overlap $s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}$, then there exists a *unique* $s \in \mathcal{F}(U)$ that restricts back to each $s_i$.
-* **By analogy to the train.** If your visual section (you see the silver ICE) and your auditory section (you hear the characteristic rushing sound) harmonize at every common moment of time and never contradict each other, the sheaf guarantees that there is a unique global object: the passing train as one real, complete event.
+* **By analogy to the train.** If your visual section (you see the silver train) and your auditory section (you hear the characteristic rushing sound) harmonize at every common moment of time and never contradict each other, the sheaf guarantees that there is a unique global object: the passing train as one real, complete event.
 
 The sheaf is the only one of the five that produces a *global* object with an existence and uniqueness guarantee. The presheaf may fail to glue. The sheaf, by construction, never does.
 
