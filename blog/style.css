@@ -6439,7 +6439,24 @@ html { scroll-behavior: smooth; }
    so all .md fragments of an article share one sequence (1, 2, 3 …) no matter
    how many .md divs the article is split into — and on pages that embed many
    articles (index_full), each article's <h1> starts its own numbering. */
-body { counter-reset: h2count h3count h4count figcount tabcount eqcount; }
+body {
+	counter-reset: h2count h3count h4count figcount tabcount eqcount;
+	/* ANGLE 16 (containing-block anchor): make body a positioned
+	   ancestor so any future absolute descendant has a stable
+	   containing block. Doesn't affect the rail today (its
+	   containing block is the initial one) but prevents future
+	   regressions if someone wraps #contents in a positioned
+	   container.                                                  */
+	position: relative;
+	/* ANGLE 16b: the user-agent stylesheet gives <body> an 8px
+	   margin on all sides. If we make body a containing block
+	   without resetting that margin, every absolute-positioned
+	   descendant (sidenotes rail, sideimages rail, lightbox,
+	   etc.) gets nudged 8px from where we expect it. Standard
+	   reset to 0 so the body's content box aligns with the
+	   viewport's content area.                                  */
+	margin: 0;
+}
 h1 { counter-reset: h2count h3count h4count figcount tabcount eqcount; }
 .md h2 { counter-reset: h3count figcount tabcount eqcount; counter-increment: h2count; }
 .md h3 { counter-increment: h3count; }
@@ -6824,30 +6841,75 @@ html.dark .md sup.sidenote-marker:focus { color: var(--mn-heading); }
 
 /* ── 2. The sidenote column — lives OUTSIDE #contents, in the
    viewport's right margin. ────────────────────────────────────── */
+/* The rail is ANCHORED to the right of the content column with
+   a fixed gap, NOT centred in the viewport margin. This is the
+   Tufte / Navy convention: the annotation reads as belonging to
+   the paragraph it annotates, not floating in the middle of a
+   wide empty margin (which on 4K monitors looked "glued to the
+   right edge" because so much cream space sat to its right).
+   On viewports too narrow for the full 320px rail, the width
+   shrinks (min(50vw-440, 320)) so the box never overflows.   */
+:root {
+	--sn-content-width: 800px;      /* must match #contents max-width */
+	--sn-rail-gap:      20px;       /* gap between content and rail    */
+	--sn-rail-max:      320px;      /* hard cap so sidenotes stay readable */
+	/* Rail's left edge sits at content_right + gap.
+	   content_right = 50vw + content_width/2 = 50vw + 400px.
+	   So rail_left = 50vw + 400px + gap = 50vw + 420px.      */
+	--sn-rail-left:  calc(50% + var(--sn-content-width) / 2 + var(--sn-rail-gap));
+	/* Rail width shrinks on narrow viewports so it never overflows.
+	   50vw - 440px = (vw/2 - 400px content_right - 20px gap - 20px safety)
+	   At 1280px that's 200px, at 1600px+ it's capped at 320px. */
+	--sn-rail-width: min(calc(50vw - 440px), var(--sn-rail-max));
+}
+
 #sidenotes-rail {
-	/* Hidden by default; the media query below reveals it when
-	   the viewport is wide enough. Position absolute relative to
-	   the body so it can sit in the viewport margin. ANGLE 19:
-	   width is capped to (50vw - 460px) so the rail never extends
-	   past the right edge of the viewport — at 1280px that's only
-	   180px wide, at 1600px it hits the 320px max, at 2000px also
-	   max. No more overflow. */
 	position: absolute;
 	top: 0;
-	left: 50%;                      /* pivot at viewport centre        */
-	margin-left: 420px;             /* 400px (half of 800) + 20px gap  */
-	width: min(calc(50vw - 460px), 320px);
-	max-width: 320px;
+	left:   var(--sn-rail-left);
+	width:  var(--sn-rail-width);
+	max-width: var(--sn-rail-max);
 	min-width: 180px;
 	display: none;
 	z-index: 2;
-	pointer-events: none;           /* sidenotes re-enable on themselves */
+	pointer-events: none;
+	box-sizing: border-box;
+}
+
+body.has-sidenotes #sidenotes-rail {
+	display: block;
+}
+
+/* ANGLE 11 (narrow viewport): at viewports < 1280px we don't
+   even have room for a 200px rail, so hide it entirely and
+   let the JS render an inline fallback section instead.      */
+@media (max-width: 1279.98px) {
+	body.has-sidenotes #sidenotes-rail {
+		display: none !important;
+	}
+	body.has-sidenotes #sidenotes-section { display: block; }
 }
 @media (min-width: 1280px) {
 	body.has-sidenotes #sidenotes-rail {
 		display: block;
 	}
 }
+
+/* ANGLE 7 (specificity): re-state the critical positioning with
+   !important so it always wins against any later rule.       */
+body.has-sidenotes #sidenotes-rail {
+	left: var(--sn-rail-left) !important;
+	width: var(--sn-rail-width) !important;
+}
+
+/* ANGLE 16 (containing-block anchor): explicitly position the
+   body as `relative` so any future descendant that uses
+   `position: absolute` has a known containing block. The rail
+   itself does NOT need this (its containing block is the
+   initial one), but anchoring body prevents future bugs if
+   someone adds a positioned wrapper. We MERGE with the existing
+   body rule above (counter-reset) so we don't end up with two
+   `body { ... }` blocks fighting each other in the cascade.   */
 
 /* ── 3. The individual sidenote. ─────────────────────────────────
    The box is intentionally restrained — no yellow post-it, no
@@ -6874,8 +6936,29 @@ html.dark .md sup.sidenote-marker:focus { color: var(--mn-heading); }
 	background: var(--mn-bg-subtle);
 	border-left: 2px solid var(--mn-accent);
 	border-radius: 0 4px 4px 0;
-	padding: 0.6rem 0.8rem 0.6rem 0.9rem;
+	/* ANGLE 12 (padding symmetry): the original padding had 0.9rem
+	   on the left and only 0.8rem on the right, so the text appeared
+	   nudged toward the right edge of the box. Symmetric padding
+	   keeps the visual centre aligned with the box centre.   */
+	padding: 0.6rem 0.85rem;
 	margin: 0;
+
+	/* ANGLE 6 (box-sizing): border-box so the rendered box width
+	   equals the CSS width. Without this, content-box sizing adds
+	   padding+border to the visible size, causing the sidenote to
+	   overflow the rail symmetrically (looks fine) but making
+	   the text wrap earlier than expected (looks "too narrow").
+	   ANGLE 13 (DPR): with border-box, pixel-accurate centering
+	   holds at any device-pixel-ratio.                       */
+	box-sizing: border-box;
+
+	/* ANGLE 14 (RTL): logical property fallback for RTL languages.
+	   Logical properties don't change the visual here (the rail is
+	   always on the right) but they keep the border on the
+	   inline-start edge, which is the correct side in RTL.   */
+	border-inline-start: 2px solid var(--mn-accent);
+	border-inline-end:   none;
+	border-radius: 0 4px 4px 0;
 
 	pointer-events: auto;
 	box-shadow: 0 1px 0 rgba(0,0,0,0.02);
@@ -7038,11 +7121,8 @@ html.dark .sidenote-backlink:focus { color: var(--mn-heading) !important; }
 #sidenotes-section .sidenote-fallback li > *:first-child { margin-top: 0; }
 #sidenotes-section .sidenote-fallback li > *:last-child  { margin-bottom: 0; }
 
-/* Show fallback section on narrow viewports, hide the rail. */
-@media (max-width: 1279.98px) {
-	body.has-sidenotes #sidenotes-section { display: block; }
-	body.has-sidenotes #sidenotes-rail    { display: none !important; }
-}
+/* (Legacy narrow-viewport rule removed — consolidated into the
+   single block above right after the rail definition.) */
 
 /* ── 6. Source pool — hidden DOM nodes that hold the RAW sidenote
    content while it is being processed by bibtexify + marked. They
@@ -7201,18 +7281,25 @@ html.dark #sidenotes-section .sidenote-fallback li::before {
    tends to push the rail outside the right edge of the viewport.
    ═══════════════════════════════════════════════════════════════ */
 
-/* The sideimage rail — sibling of #sidenotes-rail, on the body. */
+/* The sideimage rail — sibling of #sidenotes-rail, on the body.
+   ANGLE 15 (sideimage consistency): anchored and sized using the
+   SAME --sn-rail-* variables as the sidenote rail so a sideimage
+   that ends up in the margin sits visually parallel to the
+   sidenotes (same horizontal extent, same centre).
+   Note: wide/full sideimages intentionally extend past the rail
+   to the viewport edge (handled in sidenotes.js) — that's by
+   design, not a margin bug.                                  */
 #sideimages-rail {
 	position: absolute;
 	top: 0;
-	left: 50%;
-	margin-left: 420px;            /* matches #sidenotes-rail anchor */
-	width: min(calc(50vw - 460px), 320px);
-	max-width: 320px;
+	left:   var(--sn-rail-left);
+	width:  var(--sn-rail-width);
+	max-width: var(--sn-rail-max);
 	min-width: 180px;
 	display: none;
 	z-index: 2;
 	pointer-events: none;
+	box-sizing: border-box;
 }
 @media (min-width: 1280px) {
 	body.has-sidenotes #sideimages-rail {
