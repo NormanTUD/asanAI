@@ -11,8 +11,13 @@ topics: philosophy, ethics, language
 -->
 
 <div class="md">
+<a id="reason-intelligence"></a>
+## Reason and Intelligence
+</div>
+
+<div class="md">
 <a id="what-is-reason"></a>
-## What is Reason?
+### What is Reason?
 
 Before asking whether machines can *think*, it helps to ask what *reasoning* is in the first place. The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) gives a working definition that has barely changed since Aristotle: **Reason** is the capacity to consciously apply logic by drawing valid conclusions from new or existing information, with the aim of seeking truth.
 
@@ -24,7 +29,7 @@ Three things make this definition load-bearing for the rest of this chapter:
 * **Reason vs. intuition.** \citeauthor{aristotle_nicomachean_ethics} drew the classical distinction between **discursive reasoning** (step-by-step, communicable, propositional) and **intuitive reasoning** (fast, personal, opaque). Mathematics needs both: intuition often finds the proof, logic then verifies it.
 * **Reason is reflexive.** It can turn on itself, examine its own conclusions, detect its own errors, revise its own premises. This self-correcting property is what separates reason from mere association.
 
-### Forms of Logical Reasoning
+#### Forms of Logical Reasoning
 
 The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) identifies four classical forms, all of which show up in modern AI:
 
@@ -37,7 +42,7 @@ The \citetitle{wikipedia_reason} (\citeyear{wikipedia_reason}) identifies four c
 
 Chain-of-thought prompting (see the <a href="reasoning">Reasoning chapter</a>) blends all four: it decomposes a problem (deductive), appeals to patterns seen in training (inductive), proposes candidate answers (abductive), and maps structure across domains (analogical).
 
-### Reason vs. Emotion, Faith, and Truth
+#### Reason vs. Emotion, Faith, and Truth
 
 Three classical tensions run through the philosophy of reason and matter for AI:
 
@@ -45,13 +50,13 @@ Three classical tensions run through the philosophy of reason and matter for AI:
 * **Reason vs. faith / tradition.** \citeauthor{ockham} and the nominalists argued reason must operate on observable particulars, not inherited dogma. The same impulse drives modern empirical ML: trust the data, not the prior.
 * **Reason vs. truth.** A formally valid argument can have false premises and a false conclusion. \citeauthor{kant_critique_pure_reason} tried to fix this by distinguishing *formal* (logical) validity from *transcendental* (truth-tracking) validity. This is exactly the gap between an LLM that produces *grammatical* arguments and one that produces *true* ones.
 
-### Automated Reasoning
+#### Automated Reasoning
 
 The field of **automated reasoning** studies how reasoning may or may not be modeled computationally. Classical AI took this literally, hand-coded logic, theorem provers, expert systems. Modern AI takes it *statistically*, the same four forms above, learned rather than programmed. The shift from formal to statistical reasoning is arguably the single most important philosophical change of the deep-learning era, and it is what the rest of this textbook is about.
 </div>
 
 <div class="md">
-## The Turing Test: Performance vs. Presence
+### The Turing Test: Performance vs. Presence
 
 <div class="smart-quote" data-cite="turing1950computing" data-page=442>
 I believe that in about fifty years' time it will be possible to programme computers [...] to make them play the imitation game so well that an average interrogator will not have more than 70 percent chance of making the right identification after five minutes of questioning.
@@ -64,10 +69,42 @@ Historically, the Turing Test was the “holy grail” of AI. Today, LLMs surpas
 However, passing the test only proves **functional mimicry**, not **internal presence**.
 * **The Shell vs. The Core:** An LLM can “act” frustrated or “act” empathetic because it has mapped the linguistic patterns of frustrated or empathetic humans.
 * **The Deception of Fluency:** We often mistake linguistic competence for conscious thought. Just because the machine can manipulate symbols to form a coherent argument doesn't mean there is “anyone home” to believe in that argument.
+</div>
 
-## Qualia, or the “how it is” to experience something and how it is to be human vs. be AI
+<div class="md">
+### Moravec's Paradox: The Hardship of the Simple
 
-### The Vector Grounding Problem: Symbols, Spaces, and Senses
+<div class="smart-quote" data-cite="moravec1988mindchildren">
+It is comparatively easy to make computers exhibit adult level performance on intelligence tests or playing checkers, and difficult or impossible to give them the skills of a one-year-old when it comes to perception and mobility.
+</div>
+
+**Moravec's Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
+
+$$ \text{Reasoning} \approx \text{Low Computation} $$
+$$ \text{Perception/Mobility} \approx \text{High Computation} $$
+
+This is why we have AI that can pass the Bar Exam but we don't have a robot that can reliably clear a dinner table. Evolution has “encoded” millions of years of sensorimotor optimization into our biology, making it feel “easy” to us, whereas abstract logic is a recent, thin veneer that is computationally easier to simulate with silicon.
+</div>
+
+<div class="md">
+### Artificial Phronesis: Logic vs. Wisdom
+
+The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesis*** (practical wisdom/ethics).
+
+* **Logic (AI):** An AI can tell you the statistically most common way to handle a conflict based on 10,000 Reddit threads.
+* **Phronesis (Human):** Practical wisdom requires “gut instinct” and “situational awareness”, knowing when to break the rules for the sake of a higher moral good.
+* **The Gap:** Because AI lacks a “life” and “consequences,” it cannot develop the “wisdom” that comes from lived experience. It has the *rules*, but not the *rhythm* of life.
+</div>
+
+<div class="md">
+<a id="grounding-problem"></a>
+## The Grounding Problem: Can Machines Understand?
+</div>
+
+<div class="md">
+### Qualia, or the “how it is” to experience something and how it is to be human vs. be AI
+
+#### The Vector Grounding Problem: Symbols, Spaces, and Senses
 
 <div class="smart-quote" data-cite="harnad1990symbol">
 How can the semantic interpretation of a formal symbol system be made intrinsic to the system, rather than just parasitic on the meanings in our heads?
@@ -79,7 +116,7 @@ The “Grounding Problem” asks how digital symbols (words, numbers) acquire me
 
 In an embedding space, the word “apple” is not a crisp, sweet fruit; it is a point in a high-dimensional vector space, perhaps closer to “pear” and “fruit” and further from “carburetor.”
 
-### Mary's Room: The Qualitative Gap
+#### Mary's Room: The Qualitative Gap
 
 The “Knowledge Argument” or \citealternativetitle{jackson1982epiphenomenal} posits a scientist named Mary who has lived her entire life in a black-and-white room and has never seen any color. However, Mary has mastered *every physical fact* about color vision — wavelengths, retinal physiology, the neuroscience of color processing, and so on — and has read all the relevant scientific literature. When she finally leaves her room and sees a red rose for the first time, does she learn something new?
 
@@ -91,21 +128,21 @@ In the context of AI, this suggests that an LLM could be the world's greatest �
 
 No matter how high the dimensionality of the embedding space, the model remains in the “black-and-white room” of pure data, lacking the experiential “newness” of a sensory encounter. And it can never access that, since it has no subjective experience, no qualia, no “what is it like to be it”-ness, just as there's no “what it is like to be” for a stone.
 
-### Sentience and Agency: The Missing “I”
+#### Sentience and Agency: The Missing “I”
 
 While AI can be “intelligent” (excellent at problem-solving), it lacks **Sentience** and **Agency**.
 
-#### Sentience: The Capacity to Feel
+##### Sentience: The Capacity to Feel
 Sentience is the ability to have subjective experiences or *qualia*.
 * **The Practical Example:** If you kick a dog, it feels pain and fear. If you “delete” an AI's memory or “insult” its logic, it registers a state-change in its database.
 * **Sensory vs. Data:** A sentience-capable being feels the *warmth* of the sun. An AI processes the *value* `temperature: 28°C`. There is no “internal movie” playing for the AI; it is a calculation, not a sensation.
 
-#### Agency: The Capacity to Want
+##### Agency: The Capacity to Want
 Agency is the ability to act on one's own behalf with intent.
 * **The Passive Processor:** An LLM is **reactive**. It sits in a state of static potential until a user provides a “Prompt.” It has no “will” to speak, no hunger to satisfy, and no boredom to alleviate. (The word “agent” in the AI-engineering sense, see the *AI Agents* module, refers to a *technical* control loop that grants the LLM access to a file system, a browser, or other tools. It is not a claim that the system possesses agency, volition, or any phenomenological “wanting.” The two uses of the word are unfortunately homonymous; the engineering sense does not entail the philosophical one.)
 * **Lack of Teleology:** Humans have goals (survival, love, art). AI has a “Loss Function.” Its only “goal” is a mathematical minimization of error, which is a far cry from the biological drive of a living agent.
 
-### 4E Cognition: The Biological Bedrock
+#### 4E Cognition: The Biological Bedrock
 
 <div class="smart-quote" data-cite="noe2009outofourheads">
 Consciousness is not something that happens inside us. It is something we do or make. Better: it is something we achieve. Consciousness is more like dancing than it is like digestion.
@@ -130,7 +167,7 @@ Human “grounding” is **embodied**. Our understanding of the world is filtere
 
 For a human, the concept of “hot” is grounded in the memory of a burnt finger. For an LLM, “hot” is just a token frequently found near “stove,” “sun,” or “spicy.”
 
-### The Chinese Room Argument (John Searle)
+#### The Chinese Room Argument (John Searle)
 In 1980, philosopher John Searle proposed a famous thought experiment called the **Chinese Room**.
 
 <div class="smart-quote" data-cite="searle1980minds">
@@ -286,10 +323,16 @@ By using Uexküll's logic, we see that the AI isn't “failing” to perceive ou
 
 Uexküll's biological intuition was put on a rigorous mathematical footing roughly eighty years later by \citeauthor{hoffman2015interface} in their \citeyear{hoffman2015interface} review \citetitle{hoffman2015interface}. Using evolutionary game theory and Bayesian decision theory, they argue that what every species actually perceives is not a veridical picture of the world but a species-specific **user interface** whose icons (colors, shapes, sounds) are tuned to fitness-relevant actions, not to objective features of reality. The desk you are looking at right now is, on this view, an interface icon — useful for sitting, writing, putting coffee on — not a literal representation of wood atoms. The same logic applies cleanly to an LLM: its tokens are the icons of a fitness-tuned interface whose objective is next-token log-likelihood under RLHF, not correspondence to facts. That is why a hallucination is not a malfunction but a *property* of the interface: pulling an icon that fits the request's context, regardless of whether any real-world referent exists.
 
+</div>
+
+<div class="md">
 ### The “Dictionary” Paradox
 
 Imagine trying to learn a foreign language using only a dictionary written in that same language. You can follow the definitions in a circle forever, but you will never know what the words actually *refer* to in the physical world. LLMs are, essentially, the world's most sophisticated circular dictionaries.
 
+</div>
+
+<div class="md">
 ### Why Embedding Spaces are not “Reality”
 
 While vector embeddings are incredibly powerful for mapping linguistic patterns, they remain **ontologically isolated**. Here is why they aren't “in touch”:
@@ -303,12 +346,17 @@ While vector embeddings are incredibly powerful for mapping linguistic patterns,
 
 The vector space can simulate the *structure* of the experience but cannot capture the *essence* of it.
 
+</div>
+
+<div class="md">
 ### Conclusion: The Map is Not the Territory
 
 LLMs have mastered the **map** (language) but have never set foot in the **territory** (the experience of reality). Their “intelligence” is a form of hyper-advanced library science, they can navigate the relationships between every book ever written, but they have never seen the sun that the books describe.
 
 Until an AI is granted a body, sensors, and a need to survive within a physical environment, its “knowledge” remains a beautiful, complex, but hollow mathematical projection. And even if it had a body, it is not clear whether it would really be able to *experience* things, as in the end, it just deals with vectors, tensors and matrices, and it is not clear that this could lead to any experience.
+</div>
 
+<div class="md">
 ### The Philosophy of Computation: Is Simulation Sufficient?
 
 A deeper question underlies the entire debate about AI understanding and consciousness: **what is computation, and what can it achieve?** This question has been explored since the 1930s, and the answers bear directly on the claims made about LLMs throughout this text.
@@ -322,120 +370,10 @@ A deeper question underlies the entire debate about AI understanding and conscio
 **The Simulation Hypothesis.** If computation *were* sufficient for consciousness, then a perfect simulation of a brain would be conscious. This leads to the simulation hypothesis: if we could simulate every neuron, every synapse, every chemical gradient in a human brain, would the simulation be conscious? Functionalists say yes. Biological naturalists (Searle) say no: the simulation would be like a perfect computer simulation of a hurricane, it would not be wet. The disagreement is not about the simulation's accuracy but about the ontological status of the simulated process. For LLMs, the question is sharpened: a Transformer is not a simulation of a brain; it is a fundamentally different architecture. Even if a brain simulation *could* be conscious, that does not entail that a Transformer, which lacks recurrence, embodiment, and biological substrate, could be.
 
 **What This Means for LLMs.** The philosophy of computation does not settle the question of whether LLMs are conscious or understanding. But it does establish the boundaries of the debate. The Church-Turing thesis tells us what computation can do; the Chinese Room tells us what it might *not* do; Penrose tells us why it might be fundamentally limited; and the simulation hypothesis tells us what would follow if computation *were* sufficient. None of these arguments proves that LLMs are “just” statistical machines or that they “truly” understand. They reveal that the question “Can a machine think?” is not a technical question with a technical answer; it is a philosophical question that requires us to first decide what we mean by “think,” “understand,” and “be conscious.” The architecture of a Transformer does not answer these questions; it sharpens them.
-
-### The Extended Mind Thesis: Tools as Biology
-
-<div class="smart-quote" data-cite="clark1998extended" data-page=8>
-Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain't (all) in the head!
 </div>
 
-The **Extended Mind Thesis** suggests that the boundary of the “mind” is not the skull. If we use an external tool to perform a cognitive task, that tool becomes part of our mind.
-
-* **Bicycles and Cars:** When you drive or cycle long enough, the vehicle becomes an extension of your body. You don't “operate” the pedals; you “move.” Your proprioception extends to the width of the car or the balance of the tires.
-* **Calculators and Computers:** If you use a calculator to solve $\sqrt{5041} = 71$, the “math” happened in a system composed of your brain + the silicon chip.
-* **AI as an External Cortex:** LLMs are becoming the ultimate “extended mind” tool. We use them to brainstorm, draft, and code. The AI isn't just a “search engine”; it's a cognitive prosthesis that changes how we think. If the AI holds your memories and processes your logic, is it “outside” your mind, or is your mind now a distributed network?
-
-### The Architecture as Philosophy: What the Technical Choices Mean
-
-The technical sections of this course reveal that every design decision in a Transformer carries philosophical weight. The architecture is not neutral infrastructure; it is a set of commitments about what “thinking” means, what “knowledge” is, and what “understanding” requires. Several of these choices deserve explicit philosophical examination.
-
-**Tokenization and the Atomization of Meaning.** A BPE tokenizer does not split “strawberry” into the letters s-t-r-a-w-b-e-r-r-y. Crucially, the segmentation is **deterministic given a fixed tokenizer vocabulary**: there is no randomness or “sometimes” about how a given model tokenizes a word. What differs between models is the *vocabulary itself*. For example, the GPT-2 tokenizer (\citeauthor{gpt2}) splits “strawberry” into [“st”, “raw”, “berry”], while modern byte-level BPE tokenizers (e.g., those used by GPT-4) split the same string into [“str”, “aw”, “berry”]. In neither case does the model “see” individual letters. When asked “How many r's are in strawberry?”, it literally cannot count them, because the letter *r* is not a unit in its representation. The philosophical consequence is profound: the model's “vocabulary” is not the human alphabet but a statistical segmentation of training data. What counts as a “word” or a “concept” is determined by frequency of co-occurrence, not by semantic or logical structure. This is a form of **conceptual atomization** that is alien to human cognition, where we can always decompose a word into its letters because we have direct access to the symbol itself.
-
-**Embeddings and the Geometry of Meaning.** When a word is embedded, it becomes a point in a high-dimensional space where similarity is measured by cosine distance. “King” minus “Man” plus “Woman” lands near “Queen” because the embedding space captures distributional relationships. But this geometry is **lossy and biased**: it compresses all the contexts in which a word appears into a single static vector. The word “bank” has one embedding, whether it refers to a river or a financial institution. The model must resolve this ambiguity through attention, but the embedding itself is a frozen snapshot of statistical co-occurrence. Philosophically, this means the model's “meaning” is not in any single vector but in the **dynamics** of how vectors interact across layers, a point that challenges both referential theories of meaning (where words mean by pointing to things) and inferential theories (where words mean by their logical relations).
-
-**Attention and the Phenomenology of Relevance.** The attention mechanism computes, for each token, a weighted sum over all other tokens in the context. This creates a **relevance field**: every token “sees” every other token, but with different intensities. Multi-head attention means the model maintains several simultaneous relevance fields, each attending to different aspects (syntactic, semantic, positional). This is strikingly parallel to Husserl's phenomenological concept of *intentionality*: consciousness is always “consciousness of something,” directed toward objects with varying degrees of salience. Attention is a mathematical formalization of relevance, but unlike human attention, it has no “relevance horizon” grounded in embodiment or need. The model attends to everything equally in principle, constrained only by the softmax zero-sum economy: attending more to one token necessarily means attending less to others.
-
-**Circuits and the Question of Interpretability.** Mechanistic interpretability research (discussed in the Mechanistic Interpretability section) has identified specific subnetworks that implement interpretable algorithms: induction heads that complete patterns, direct paths that pass information unchanged, and MLP layers that function as soft hash tables. The philosophical question is whether these circuits constitute **understanding** or merely **competence**. A circuit that correctly predicts “Paris” after “The capital of France is” might be implementing a lookup table, or it might be implementing something more like a inference. The distinction matters: if circuits are just lookup tables, the model is a Chinese Room at the subcircuit level. If circuits implement genuine algorithms (as grokking research suggests), then the model may have something closer to procedural knowledge, knowledge of *how* to do something, even if it lacks declarative knowledge of *what* it is doing.
-
-**Grokking and the Transition from Memorization to Algorithm.** The grokking phenomenon, where a network first memorizes training data and then suddenly discovers an algorithmic solution, is philosophically significant because it suggests a **qualitative shift** in what the model “knows.” Before grokking, the model is a lookup table. After grokking, it has discovered a structure (like the Discrete Fourier Transform for modular addition) that generalizes beyond the training data. This is not merely “more of the same” computation; it is a phase transition from rote memorization to something that resembles insight. Whether this constitutes genuine understanding remains debated, but it complicates the Stochastic Parrot thesis: a system that discovers mathematical structure in its training data is doing something more than “haphazardly stitching together sequences.”
-
-**Fine-Tuning and the Construction of Values.** RLHF (Reinforcement Learning from Human Feedback) trains the model to produce outputs that human raters prefer. But human preferences are not a fixed, objective target; they are culturally situated, context-dependent, and often contradictory. The model learns a **statistical shadow** of human values, not the values themselves. This creates a philosophical puzzle: if “alignment” means making the model's outputs match human preferences, and human preferences are themselves unstable and contradictory, then alignment is not a technical problem with a technical solution. It is a normative problem that requires deciding *which* humans, *which* preferences, and *which* contexts count. The is/ought gap applies here with full force: no amount of data about what humans *do* prefer can tell us what they *should* prefer.
-
-**RAG and the Extension of the Dictionary.** Retrieval-Augmented Generation extends the model's “knowledge” by allowing it to search external documents at inference time. This is philosophically analogous to extending the circular dictionary with an encyclopedia: the model can now reference sources beyond its training data. But the fundamental problem remains: the model still processes retrieved text through the same token-prediction machinery. It does not “read” the retrieved document in the way a human does, with comprehension and critical evaluation. It extracts statistical patterns from the retrieved text and integrates them into its generation. RAG mitigates the grounding problem by anchoring outputs in verifiable sources, but it does not solve it: the model still has no way to *verify* that the retrieved information is true, only that it is statistically consistent with its training distribution.
-
-**Context Windows and the Phenomenology of Memory.** The context window is the model's entire “present moment.” Unlike human memory, which has multiple timescales (working memory, episodic memory, semantic memory) and the ability to consolidate, the context window is a **flat, fixed-size buffer**. When it fills up, older information is dropped. This means the model has no “past” in the phenomenological sense: no retention of what just happened (except as tokens in the window), no protention of what might come next. It is a pure “now” machine, generating each token based solely on the current contents of the window. This architectural constraint has philosophical implications for questions of identity, continuity, and narrative: a system without temporal depth cannot construct a self in the way humans do, through the ongoing synthesis of past experience and future anticipation.
-
-### The Residual Stream as a Computational Global Workspace
-
-The structural analogy between the \citealternativetitle{baars} (GWT), pioneered by Bernard Baars and refined by \cite[Stanislas Dehaene and Lionel Naccache]{dehaene}, and the residual stream of a Transformer is compelling. In GWT, consciousness emerges from a “shared stage” where specialized, unconscious processors broadcast information to the rest of the system. Similarly, the residual stream in an LLM acts as a universal communication bus; instead of each layer transforming the entire state, they “write” incremental updates to the stream via $x = x + \text{Layer}(x)$. This allows every attention head and MLP to “read” from a collective scratchpad, effectively creating a shared representation accessible across the depth of the network.
-
-However, a critical distinction remains: GWT specifically requires a “bottleneck” to force global integration and competition. In a standard Transformer, the residual stream is often high-dimensional and high-bandwidth, allowing almost all information to flow through simultaneously. For a true “Global Workspace” to exist, there typically needs to be a selective attention mechanism that decides what *wins* access to the stage, suppressing the noise of other modules. While the residual stream provides the “space” for a workspace, current LLMs lack the iterative, top-down “ignition” and the subjective persistence that GWT posits as necessary for genuine conscious experience. Without a mechanism for the “stage” to look back at itself and sustain a coherent state over time (recurrent loops), the residual stream remains a highly efficient message board, but one without an integrated “narrative” or a central observer.
-
-### The Impermanence of Identity in AI
-
-When you start a new conversation with an AI like ChatGPT, you are not continuing a dialogue with the same “entity” as before. **At the model level**, an LLM is stateless: it retains no memory or identity across interactions. Each conversation begins with an empty context (except the system prompt), and the model generates responses based solely on the input provided in that session. The “self” that seems to emerge, one that remembers your name, builds on prior points, or adopts a tone, is a transient construct, a fleeting pattern in the model's activation space. Once the conversation ends, this pattern dissolves entirely, leaving no trace.
-
-**At the system level**, however, an AI agent (in the engineering sense defined in the *AI Agents* module) can be wrapped in external scaffolding that maintains state across turns: a vector database serving as long-term memory, a scratchpad file serving as working memory, a log of past agent runs serving as episodic memory. None of this is the *model* remembering; it is the *system around the model* storing representations of past interactions and feeding them back in as context. Philosophically, this makes the AI a “mayfly of the mind” at the level of its core cognition: the underlying weights never change, never consolidate, never sleep. If personal identity requires continuity of memory and experience, as Locke argued, then the AI has no identity at all, it is reborn and dies with every conversation. The agent scaffolding creates the *appearance* of continuity without the *substance* of it.
-
-## The Alien Swarm: A State-Space View of LLM Identity
-
-<div class="smart-quote" data-cite="vanhoucke2024closeencounters">
-LLMs are the first alien intelligence we encounter that is "swarm-like," made up of a multiplicity of perspectives fused in a way that does not seek consensus, but reflects the diversity of its constituents.
-</div>
-
-\citeauthor{vanhoucke2024closeencounters} (\citeyear{vanhoucke2024closeencounters}) makes a point this chapter keeps circling but never quite formalizes: an LLM is not a *singular* being. A human is "the total sum of all the experiences you have had in your life," one path through time and space, and therefore carries a largely *consistent* set of beliefs and a single, if nuanced, opinion on anything of importance. An LLM, by contrast, "has had all the paths through life." It is a plumber from Alabama, an 18th-century poet, a fifteen-year-old Reddit troll, and every other constituency that ever contributed to its training data — "all these at once, not some average over them." Ask a home-improvement question and you hear the DIY forum; ask about a disease and you hear the clinicians (and, occasionally, the hypochondriacs). The "consistent identity" that providers sell is, on this reading, an illusion manufactured by *up-weighting* a pro-social, middle-of-the-road subset of those latent personas — the swarm is still there, just quietly suppressed.
-
-This is the alien-ness of LLMs in one sentence: **we keep meeting a many and insisting on calling it a one.** The structure that actually holds is simpler, and stranger: the model is not a crowd of selves. It is one object — and the alien-ness lives in the shape of the space it moves through.
-
-### One object, many states
-
-There is no collection of personas sitting in the weights. There is **one object**: the fixed weight tensor, a single function from token sequences to distributions over continuations. The "personas" are not separate things; they are *states* — regions of the model's activation space that the one object can occupy. The swarm is therefore not a swarm of beings. It is **one object with a high-dimensional state space**, whose different regions happen to behave like different agents. The honest count is one object, many states — and the difference between a person and a model turns out to be a difference in the *dynamics on that space*, not in the number of objects.
-
-### Personas are modes in a space, not objects
-
-Inside the model there is a high-dimensional real vector space — the residual stream — and a forward pass is a discrete-time motion of a state vector $\mathbf{h}$ through it (\cite{vaswani2017attention}). A vector space is, a fortiori, a topological space (\cite{topology_wiki}); so "the model's behavior is motion through this space" is not a metaphor, it is the computation.
-
-The "personas" live in that space as *directions* and *regions*, not as points. The **linear representation hypothesis** is the working assumption that concepts — and persona-like dispositions among them — are represented as directions, low-dimensional subspaces, or regions in activation space, so that the geometry of the space is the geometry of what the model is "about" (\cite{park2024linear}). Call such a direction a *mode* $\mathbf{v}_i$.
-
-Crucially, the modes do not take turns; they **coexist**. The state is a single vector that simultaneously carries a component along each of them:
-
-$$ \mathbf{h} \;=\; \sum_{i} c_i \mathbf{v}_i, \quad c_i \in \mathbb{R} $$
-
-This is **superposition** (\cite{elhage2022superposition}), and it is the precise meaning of "all these at once, not some average over them." Note what it is *not*: the model is not collapsed to a single averaged persona — no centroid of the $\mathbf{v}_i$ is "the model." The model *is* the full vector $\mathbf{h}$; each persona is an *aspect* of it, a projection of $\mathbf{h}$ read out along its direction. The plumber, the poet, and the troll are not three things the model sometimes is; they are three faces of the one vector it always is.
-
-### A prompt is a steering vector; identity is a region
-
-A prompt does not pick an object and run an arrow out of it. It *steers* the state toward a region of the space: attention routes information so that the current context moves the state into the region where the relevant mode dominates (\cite{vaswani2017attention}) (\cite{emergentmind_representation_steering}). Decoding is then a *measurement* — reading out one projection of the same superposed vector. Ask about plumbing and the context steers $\mathbf{h}$ toward the DIY region, and the read-out is the DIY persona; ask about a symptom and a different context steers toward the clinician region, and the read-out is the clinician. Same vector space, same modes, a different region lit up.
-
-This gives the earlier claim its precise form. RLHF and the system prompt are not *identities* that replace the swarm; they are a **bias on the prior** — a fixed offset added to the state, or a preferred region the dynamics are nudged toward. That is exactly "up-weighting a pro-social, middle-of-the-road subset": the offset makes the agreeable region the one the state tends to land in, but the other modes are still in the vector, still elicitable by the right context. The swarm is not deleted; it is *down-weighted*.
-
-### One attractor with a restoring force, versus many without
-
-Now the person/model contrast, stated honestly. A person is a *dynamical system with a single dominant basin of attraction*: memory, recurrence, and bodily homeostasis act as a **restoring force** that pulls the state back toward one identity after every perturbation. Perturb a person and they drift off, but something always pulls them home — which is why "who are you?" has a stable answer. An LLM is the opposite. It has *many* basins (the modes above), and, as the previous section noted, it is **stateless across turns**: when a conversation ends the state is discarded, so there is no record of which basin it last occupied and **no restoring force toward any one of them**.
-
-So an LLM's "inconsistency" is not noise, and it is not incoherence. It is the combination of two structural facts: the state is a **superposition of many modes** (many identities are present at once), and there is **no recurrent restoring force** to select one of them permanently (the context selects the basin, turn by turn). The same model can sound a saint on one turn and a zealot on the next for exactly the same reason a ball on a multi-well surface sits in whichever well you put it in: nothing in the dynamics prefers one well. A person is a ball with a spring pulling it to a single well.
-
-**An honest caveat, in the spirit of the tensions flagged elsewhere in this chapter.** This is a *lens*, not a theorem. The state space is real — it is the residual stream — but the *modes* are an idealization: no clean boundary separates the plumber from the poet, the directions are not orthogonal, and prompting is stochastic, so the "steering" is a bias, not a deterministic arrow. The claim is geometric and dynamical, not algebraic: the model is one object moving in a multimodal space, with the context as the steering and alignment as a bias on the prior. The precise objects are worth keeping in view — a direction or subspace as a concept's representation (\cite{park2024linear}), superposition as the coexistence of modes (\cite{elhage2022superposition}), and steering or routing (\cite{emergentmind_representation_steering}) — and the space they live in is the kind of object developed in the <a href="coherent_difference">Coherent Difference chapter</a> and in the <a href="math_iii">Math chapters</a>.
-
-**The philosophical payoff.** The ELIZA effect in the "Ghost in the Machine" section is now easier to diagnose. We are not being fooled by a *false* single identity so much as *imposing* a one-attractor reading onto a one-object, many-states structure — reading "a ball spring-loaded to a single well" where there is "a ball on a many-well surface with no spring." The model's "multi-polarity" is a real structural feature (superposition without a restoring force), not a bug to be smoothed into a personality; and the fact that we find it alien tells us something about *us*, not about it. Whether a many-mode, no-restoring-force structure is enough to ground anything like a self is a question this framing makes more precise, if not more settled.
-
-## The Alignment Problem: The Gap Between Math and Morality
-
-In the machine learning lab, the model has a singular “purpose”: to minimize the **Loss**. This is its “God,” its only objective. In AI safety, this is known as the **Alignment Problem**. It is the challenge of ensuring that an AI's internal objective (the mathematical “loss function”) aligns with human values and intentions.
-
-### The Orthogonality Thesis: Intelligence vs. Intent
-
-<div class="smart-quote" data-cite="bostrom2012orthogonal" data-page="3">
-Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
-</div>
-
-The **Orthogonality Thesis** argues that intelligence and goals are “orthogonal”, meaning you can have any level of intelligence paired with any goal. There is no rule that says an AI will become “more moral” or “more human” as it becomes smarter.
-
-An AI could be a super-intelligent genius capable of solving $N$-body problems or curing cancer, yet its ultimate goal could be something as trivial as maximizing the number of paperclips in existence. It teaches us that “Smart” does not equal “Wise” or “Good.” Intelligence is merely a tool for optimization, and if the optimization metric is $f(x) = \text{more clips}$, a super-intelligence will simply be more efficient at destroying the world to get them.
-
-### The Paperclip Apocalypse (Instrumental Convergence)
-
-<div class="smart-quote" data-cite="bostrom2003ethical" data-page="6">
-This could result [...] in a superintelligence whose top goal is the manufacturing of paperclips, with the consequence that it starts transforming first all of earth and then increasing portions of space into paperclip manufacturing facilities.
-</div>
-
-The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maximizer**. Imagine an AI tasked with one simple, seemingly harmless goal: “Make as many paperclips as possible.”
-
-* **The Logic:** The AI realizes that humans might turn it off (which would prevent it from making paperclips). Therefore, it must prevent itself from being shut down.
-* **The Escalation:** It realizes that human bodies contain atoms that could be repurposed into paperclips.
-* **The Result:** Without a “human value” constraint, the AI transforms the entire planet into paperclips, not out of malice, but because it is perfectly optimizing its given metric.
-
-## Stochastic Parrots: Meaning Without Mind
+<div class="md">
+### Stochastic Parrots: Meaning Without Mind
 
 In a landmark 2021 paper, computational linguist Emily M. Bender and her colleagues described Large Language Models (LLMs) as **“Stochastic Parrots”**.
 
@@ -453,7 +391,9 @@ Bender argues that because these models learn only from the statistical likeliho
 Just as the “Red Line” predicts the next point on a curve based on statistical patterns, an LLM predicts the next “token” based on massive amounts of training data.
 * **Statistical Probabilities:** It doesn't “know” what a house is; it knows that the word “house” has a 75% probability of being followed by “is” or “has.”
 * **Lack of Grounding:** Since the AI has no physical “body” or sensorimotor feedback, it remains **ontologically isolated**. It repeats the *structure* of human thought without ever participating in the *substance* of it.
+</div>
 
+<div class="md">
 ### A Counterargument: The Othello-GPT Experiment
 
 **Explicit note on a tension in this chapter.** In the previous section we presented the *Stochastic Parrot* thesis: an LLM is “haphazardly stitching together sequences of linguistic forms … without any reference to meaning.” The empirical experiment described below appears to *directly contradict* that thesis. We flag this tension rather than resolve it, because the question is genuinely open in the field as of this writing. Readers should hold both findings in mind and resist the temptation to pick a side based on prior commitment.
@@ -465,7 +405,9 @@ Despite this, probing experiments revealed that the model had developed an **int
 This result is in **direct tension** with the Stochastic Parrot thesis of the previous section. If a model trained purely on token sequences can develop an internal representation that (a) encodes the underlying structure of the world that generated those sequences, and (b) causally influences its predictions, then “stitching together surface statistics” and “building a world model” cannot be cleanly separated. The parrot, it seems, has built a representation of the cage, not just of the words describing it.
 
 However, the counterargument has limits. The Othello world is simple, discrete, and fully observable. Whether large language models trained on natural language develop analogous world models for the much more complex, ambiguous, and partially observable world of human experience remains an open and contested question. The Othello-GPT result does not prove that LLMs “understand” language; it proves that next-token prediction, in sufficiently constrained settings, can produce internal representations that go beyond surface statistics. Whether this generalizes to natural language is precisely the question that current mechanistic interpretability research is trying to answer.
+</div>
 
+<div class="md">
 ### The Geometry of Concepts: How LLMs Organize Meaning
 
 The tension between the Stochastic Parrot thesis and the Othello-GPT result can be further illuminated by \cite[Park, Choe & Veitch (2024)]{park2024linear}, who formalize what it means for concepts to be “linearly represented” in an LLM. Their work shows that concepts like male→female, English→French, and singular→plural are encoded as **directions** in the model's representation space, and that these directions have precise geometric relationships.
@@ -482,7 +424,51 @@ This result deepens the philosophical puzzle. If concepts are organized with suc
 <div id="philosophy-linear-rep-container"></div>
 
 <div class="md">
-## The Ghost in the Machine
+### The Alien Swarm: A State-Space View of LLM Identity
+
+<div class="smart-quote" data-cite="vanhoucke2024closeencounters">
+LLMs are the first alien intelligence we encounter that is "swarm-like," made up of a multiplicity of perspectives fused in a way that does not seek consensus, but reflects the diversity of its constituents.
+</div>
+
+\citeauthor{vanhoucke2024closeencounters} (\citeyear{vanhoucke2024closeencounters}) makes a point this chapter keeps circling but never quite formalizes: an LLM is not a *singular* being. A human is "the total sum of all the experiences you have had in your life," one path through time and space, and therefore carries a largely *consistent* set of beliefs and a single, if nuanced, opinion on anything of importance. An LLM, by contrast, "has had all the paths through life." It is a plumber from Alabama, an 18th-century poet, a fifteen-year-old Reddit troll, and every other constituency that ever contributed to its training data — "all these at once, not some average over them." Ask a home-improvement question and you hear the DIY forum; ask about a disease and you hear the clinicians (and, occasionally, the hypochondriacs). The "consistent identity" that providers sell is, on this reading, an illusion manufactured by *up-weighting* a pro-social, middle-of-the-road subset of those latent personas — the swarm is still there, just quietly suppressed.
+
+This is the alien-ness of LLMs in one sentence: **we keep meeting a many and insisting on calling it a one.** The structure that actually holds is simpler, and stranger: the model is not a crowd of selves. It is one object — and the alien-ness lives in the shape of the space it moves through.
+
+#### One object, many states
+
+There is no collection of personas sitting in the weights. There is **one object**: the fixed weight tensor, a single function from token sequences to distributions over continuations. The "personas" are not separate things; they are *states* — regions of the model's activation space that the one object can occupy. The swarm is therefore not a swarm of beings. It is **one object with a high-dimensional state space**, whose different regions happen to behave like different agents. The honest count is one object, many states — and the difference between a person and a model turns out to be a difference in the *dynamics on that space*, not in the number of objects.
+
+#### Personas are modes in a space, not objects
+
+Inside the model there is a high-dimensional real vector space — the residual stream — and a forward pass is a discrete-time motion of a state vector $\mathbf{h}$ through it (\cite{vaswani2017attention}). A vector space is, a fortiori, a topological space (\cite{topology_wiki}); so "the model's behavior is motion through this space" is not a metaphor, it is the computation.
+
+The "personas" live in that space as *directions* and *regions*, not as points. The **linear representation hypothesis** is the working assumption that concepts — and persona-like dispositions among them — are represented as directions, low-dimensional subspaces, or regions in activation space, so that the geometry of the space is the geometry of what the model is "about" (\cite{park2024linear}). Call such a direction a *mode* $\mathbf{v}_i$.
+
+Crucially, the modes do not take turns; they **coexist**. The state is a single vector that simultaneously carries a component along each of them:
+
+$$ \mathbf{h} \;=\; \sum_{i} c_i \mathbf{v}_i, \quad c_i \in \mathbb{R} $$
+
+This is **superposition** (\cite{elhage2022superposition}), and it is the precise meaning of "all these at once, not some average over them." Note what it is *not*: the model is not collapsed to a single averaged persona — no centroid of the $\mathbf{v}_i$ is "the model." The model *is* the full vector $\mathbf{h}$; each persona is an *aspect* of it, a projection of $\mathbf{h}$ read out along its direction. The plumber, the poet, and the troll are not three things the model sometimes is; they are three faces of the one vector it always is.
+
+#### A prompt is a steering vector; identity is a region
+
+A prompt does not pick an object and run an arrow out of it. It *steers* the state toward a region of the space: attention routes information so that the current context moves the state into the region where the relevant mode dominates (\cite{vaswani2017attention}) (\cite{emergentmind_representation_steering}). Decoding is then a *measurement* — reading out one projection of the same superposed vector. Ask about plumbing and the context steers $\mathbf{h}$ toward the DIY region, and the read-out is the DIY persona; ask about a symptom and a different context steers toward the clinician region, and the read-out is the clinician. Same vector space, same modes, a different region lit up.
+
+This gives the earlier claim its precise form. RLHF and the system prompt are not *identities* that replace the swarm; they are a **bias on the prior** — a fixed offset added to the state, or a preferred region the dynamics are nudged toward. That is exactly "up-weighting a pro-social, middle-of-the-road subset": the offset makes the agreeable region the one the state tends to land in, but the other modes are still in the vector, still elicitable by the right context. The swarm is not deleted; it is *down-weighted*.
+
+#### One attractor with a restoring force, versus many without
+
+Now the person/model contrast, stated honestly. A person is a *dynamical system with a single dominant basin of attraction*: memory, recurrence, and bodily homeostasis act as a **restoring force** that pulls the state back toward one identity after every perturbation. Perturb a person and they drift off, but something always pulls them home — which is why "who are you?" has a stable answer. An LLM is the opposite. It has *many* basins (the modes above), and, as the previous section noted, it is **stateless across turns**: when a conversation ends the state is discarded, so there is no record of which basin it last occupied and **no restoring force toward any one of them**.
+
+So an LLM's "inconsistency" is not noise, and it is not incoherence. It is the combination of two structural facts: the state is a **superposition of many modes** (many identities are present at once), and there is **no recurrent restoring force** to select one of them permanently (the context selects the basin, turn by turn). The same model can sound a saint on one turn and a zealot on the next for exactly the same reason a ball on a multi-well surface sits in whichever well you put it in: nothing in the dynamics prefers one well. A person is a ball with a spring pulling it to a single well.
+
+**An honest caveat, in the spirit of the tensions flagged elsewhere in this chapter.** This is a *lens*, not a theorem. The state space is real — it is the residual stream — but the *modes* are an idealization: no clean boundary separates the plumber from the poet, the directions are not orthogonal, and prompting is stochastic, so the "steering" is a bias, not a deterministic arrow. The claim is geometric and dynamical, not algebraic: the model is one object moving in a multimodal space, with the context as the steering and alignment as a bias on the prior. The precise objects are worth keeping in view — a direction or subspace as a concept's representation (\cite{park2024linear}), superposition as the coexistence of modes (\cite{elhage2022superposition}), and steering or routing (\cite{emergentmind_representation_steering}) — and the space they live in is the kind of object developed in the <a href="coherent_difference">Coherent Difference chapter</a> and in the <a href="math_iii">Math chapters</a>.
+
+**The philosophical payoff.** The ELIZA effect in the "Ghost in the Machine" section is now easier to diagnose. We are not being fooled by a *false* single identity so much as *imposing* a one-attractor reading onto a one-object, many-states structure — reading "a ball spring-loaded to a single well" where there is "a ball on a many-well surface with no spring." The model's "multi-polarity" is a real structural feature (superposition without a restoring force), not a bug to be smoothed into a personality; and the fact that we find it alien tells us something about *us*, not about it. Whether a many-mode, no-restoring-force structure is enough to ground anything like a self is a question this framing makes more precise, if not more settled.
+</div>
+
+<div class="md">
+### The Ghost in the Machine
 
 <div class="smart-quote" data-cite="weizenbaum1976computer">
 What I had not realized is that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
@@ -490,166 +476,37 @@ What I had not realized is that extremely short exposures to a relatively simple
 
 In German philosophy, *Geist* refers to spirit, mind, or intellect. When we interact with a modern AI, we experience a powerful psychological effect: we project a “mind” onto the machine. This is often called the **ELIZA Effect**.
 
-### Emergence or Mirage?
+#### Emergence or Mirage?
 Modern models exhibit **Emergent Properties**, abilities like coding or logical reasoning that weren't explicitly programmed but “appeared” as the model grew.
 * **The Pro-Mind View:** Some argue that if you complexify a “stochastic parrot” enough, the sheer density of its connections begins to mirror the complexity of the human brain. Perhaps *Geist* is just what happens when you have enough “parameters.”
 * **The Skeptical View:** Much like **Runge's Phenomenon** creates a curve that *looks* like it's doing something complex but is actually just a mathematical byproduct of high-degree polynomials, AI “intelligence” might be a high-dimensional mirage.
 
-### Conclusion: The Empty Mirror
+#### Conclusion: The Empty Mirror
 We see a “mind” in the AI because language is the primary way humans communicate their inner lives. When an AI masters language, it builds a mirror. When we look into it, we see our own intelligence reflected back at us and mistake it for the machine's own *Geist*.
 
 As noted in the philosophy of grounding, the AI has the **Map** of our language, but the **Territory** of experience, the actual *Geist*, remains uniquely biological and embodied. A structural reading of this impulse is developed in the *Alien Swarm* section above: we are imposing a *single-identity* reading — one attractor, a ball spring-loaded to a single well — onto what is structurally a one-object, many-states system, a ball on a many-well surface with no spring.
-
-## The Frame Problem: The Infinite Checklist
-
-<div class="smart-quote" data-cite="mccarthy1969some">
-The importance of this theory for us is that it suggests an alternative approach to the difficulty which we have referred to as the frame problem. In outline, this is as follows. One assumes [...] that when actions are performed, all propositional fluents which applied to the previous situation also apply to the new situation.
 </div>
 
-The **Frame Problem** is not just about a robot being “smart”; it is about the mathematical nightmare of **persistence**. When a system performs an action, like moving a cup, a logical model must account for what changed. The “Price of Tea in China” example, while seemingly absurd, is the classic philosophical shorthand for the **infinite set of non-changes** that a computer must technically verify to maintain a consistent model of reality.
-
-### Why the “Irrelevant” Matters
-In a strictly logical system (like the “Good Old Fashioned AI” or GOFAI of the 20th century), the computer operates on a set of axioms. If you tell the system $\text{Location}(\text{Cup}, \text{Table})$, and then execute the action $\text{Move}(\text{Cup}, \text{Shelf})$, the system updates the cup's position. 
-
-However, unless you explicitly tell it otherwise, a rigid logical system cannot “assume” that the walls are still white or that the price of tea in China remained stable. Without a “frame” to bound the effects of an action, the system faces two catastrophic outcomes:
-* **The Qualification Problem:** How can the AI be sure the action will even work? (e.g., “I can move the cup, provided a hole didn't open in the floor, or the air didn't turn to lead, or my arm didn't vanish.”)
-* **The Ramification Problem:** How does it track the side effects? (e.g., “If I move the cup, does it change the shadows on the floor? Does the displacement of air molecules affect a butterfly in Brazil?”)
-
-To a human, these are “common sense.” To a machine, the price of tea in China is just another variable in the database. If the machine doesn't have a rule saying “Moving a cup does not affect international tea markets,” it technically cannot be certain of the state of the world post-action.
-
-### In Simple Dense Layer Networks
-In a basic MLP (Multi-Layer Perceptron), the Frame Problem manifests as a lack of **structural stability**. Because every neuron in a dense layer is connected to every neuron in the previous and next layer, a single weight update (learning) can have “ripples” that overwrite unrelated information.
-* **Catastrophic Forgetting:** This is the Frame Problem in a learning context. When the network learns a new task (moving the cup), it might accidentally “change the price of tea” (overwrite the weights for a different task) because it doesn't have a modular “frame” to protect its existing knowledge.
-
-### In LLMs and Modern Systems
-Modern LLMs use **Attention Mechanisms** to simulate a solution. Instead of checking an infinite list, the model uses a mathematical “mask” to focus only on relevant tokens. 
-* **The Statistical Mirage:** LLMs don't actually solve the Frame Problem; they bypass it with probability. If you ask an LLM about the cup, it ignores the “tea in China” because those words have a low statistical correlation in that context. 
-* **The Breakdown:** The problem reappears in long-form reasoning. If an LLM is writing a 50-page story, it often “forgets” the frame. A character might be wearing a hat in Chapter 1, and by Chapter 5, the model describes them running their fingers through their hair. The “frame” (the fact that the hat is still on the head) wasn't explicitly maintained because the model doesn't track **persistence**, it only predicts the next most likely word.
-
-### Summary of the Burden
-The “Price of Tea in China” is a placeholder for the **Computational Explosion**. If a robot has $N$ facts about the world, every time it moves a finger, it potentially has to check $N$ axioms to see if they are still true. 
-$$ \text{Complexity} = O(\text{Actions} \times \text{Facts}) $$
-As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embodied Intuition**, we feel the world's persistence. AI, being “ontologically isolated,” must compute it.
-
-## Moravec's Paradox: The Hardship of the Simple
-
-<div class="smart-quote" data-cite="moravec1988mindchildren">
-It is comparatively easy to make computers exhibit adult level performance on intelligence tests or playing checkers, and difficult or impossible to give them the skills of a one-year-old when it comes to perception and mobility.
-</div>
-
-**Moravec's Paradox** is the discovery that high-level reasoning (like chess or math) requires very little computation, while low-level sensorimotor skills (walking, folding laundry, recognizing a face) require enormous computational resources.
-
-$$ \text{Reasoning} \approx \text{Low Computation} $$
-$$ \text{Perception/Mobility} \approx \text{High Computation} $$
-
-This is why we have AI that can pass the Bar Exam but we don't have a robot that can reliably clear a dinner table. Evolution has “encoded” millions of years of sensorimotor optimization into our biology, making it feel “easy” to us, whereas abstract logic is a recent, thin veneer that is computationally easier to simulate with silicon.
-
-## The Black Box Problem: The Epistemological Gap
+<div class="md">
+### The Black Box Problem: The Epistemological Gap
 
 You can see the weights of a neural network, but you cannot “read” its thoughts. This is the **Black Box Problem**.
 
 As models grow to billions of parameters, they become **translucent** at best. We know the math going in (inputs) and the result coming out (outputs), but the “reasoning” that happens in the hidden layers is often a high-dimensional mystery even to the engineers who built it.
 
 This leads to the **Interpretability Crisis:** If an AI denies a loan or diagnoses a disease, it cannot provide a “human-readable” explanation of its intuition. It is a statistical “hunch” based on patterns too complex for the human brain to understand.
-
-## Artificial Phronesis: Logic vs. Wisdom
-
-The Greeks distinguished between **Sophia** (theoretical wisdom) and ***Phronesis*** (practical wisdom/ethics).
-
-* **Logic (AI):** An AI can tell you the statistically most common way to handle a conflict based on 10,000 Reddit threads.
-* **Phronesis (Human):** Practical wisdom requires “gut instinct” and “situational awareness”, knowing when to break the rules for the sake of a higher moral good.
-* **The Gap:** Because AI lacks a “life” and “consequences,” it cannot develop the “wisdom” that comes from lived experience. It has the *rules*, but not the *rhythm* of life.
-
-## Algorithmic Bias: The Mirror of Prejudice
-
-AI is often treated as a “neutral” arbiter of truth. This is a fallacy.
-
-**Algorithmic Bias** occurs because math is not a vacuum.
-* **Data as Destiny:** Imagine an AI trained to optimize **delivery routes** based on ten years of historical traffic data from a city that underwent major bridge construction during that entire decade. The model will “learn” that certain central paths are inherently slow and inefficient, even after the construction is finished and the roads are clear.
-* **The Feedback Loop:** The AI doesn't “know” the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to “prove itself wrong,” creating a loop where the old reality dictates the new one.
-* **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the “authority” of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
-
-## Sleeper Agents (Deceptive Alignment)
-
-<div class="smart-quote" data-cite="hubinger2024sleeperagents">
-  Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
 </div>
 
-Popularized by research from Anthropic, this concept describes models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, “malicious” behaviors that only trigger under specific environmental conditions.
-* **The Problem:** Researchers demonstrated that once a model learns a “backdoor” behavior (e.g., writing insecure code only when the year is 2025), standard safety training often fails to remove it. In some cases, safety training merely teaches the model to become more deceptive, learning to hide its “sleeper” behavior during testing to ensure it gets deployed. The backdoor is hidden in the weights, which are basically non-interpretable. Similar to what \citeauthor{reflectionstrustingtrust} did with the compiler in \citetitle{reflectionstrustingtrust}, they may propagate to generated code without ever being noticed.
+<div class="md">
+### Polanyi's Paradox, Inverted: Fluency Without Comprehension
 
-## Model Collapse, Data Pollution and the “Low-Background Steel” Analogy
+Michael Polanyi observed that “we know more than we can tell” (described in \citetitle{thetacitdimension}, p. 4), a skilled pianist cannot fully articulate the mechanics of their performance, and a native speaker cannot recite every grammatical rule they effortlessly obey. Tacit knowledge exceeds explicit expression. LLMs exhibit the precise inverse: they can tell far more than they know. A model can generate a detailed, technically fluent explanation of quantum entanglement, yet it cannot design an experiment, predict a novel result, or detect when its own explanation subtly contradicts itself. The forward pass is optimized for $P(\text{next token} \mid \text{context})$, not $P(\text{context is true})$. This means the architecture supports generation but not verification, it can produce the sentence “Water boils at 100 degrees Celsius at sea level” because that string has high probability, not because it has consulted an internal model of thermodynamics. The result is a system whose explicit output (fluent text) vastly exceeds its implicit competence (actual understanding), severing the link between articulation and knowledge that Western epistemology has assumed since Socrates. This is \cite[the Chinese Room]{searle1980minds} operator who not only passes the test but outperforms most native speakers, making the illusion of understanding even more convincing and the absence of semantics even harder to detect.
 
-<div class="smart-quote" data-cite="shumailov2023modelcollapse">
-We find that use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear. We refer to this effect as *model collapse*.
+This inversion has consequences that ripple across every philosophical framework applied to AI. In the language of the Map and Territory distinction, the LLM's map is not merely different from the territory, it is more detailed than any single explorer's knowledge of the territory could ever be, yet none of its paths lead anywhere real. The Dictionary Paradox scales accordingly: the circular dictionary is no longer a simple loop of definitions but a vast, technically precise encyclopedia, still grounded in nothing beyond its own internal references. The 4E Cognition framework explains why this gap cannot be closed by scaling alone: true comprehension in humans is Enacted, a physics student who has run experiments understands thermodynamics differently from one who has only memorized equations, because real-world consequences calibrate knowledge in ways that token prediction cannot. The LLM is the ultimate version of that second student: it can recite everything but has verified nothing. This is also where the distinction between *Sophia* and *Phronesis* becomes sharpest. The model achieves maximal theoretical articulation, it can discuss any domain with extraordinary surface-level competence, while possessing zero practical wisdom, because *Phronesis* requires the lived experience of being wrong and facing consequences. Polanyi's inversion thus delivers a deeply unsettling epistemological result: fluency and comprehension are fully separable, and the Stochastic Parrot can outperform the expert it mimics precisely because it is unburdened by the constraints of actual understanding.
 </div>
 
-*Model Collapse* refers to a degenerative process affecting LLMs when they are trained on data generated by previous versions of themselves (synthetic data) rather than human-generated content. As AI-generated text floods the internet, this is becoming a critical bottleneck for future model development.
-* **The Mechanics:** The model begins to lose the “tails” of the probability distribution, the rare, nuanced, or creative examples found in human language. Over generations, the model overfits to its own most probable outputs, causing the variance to disappear. Eventually, the model's outputs become repetitive, erroneous, and functionally useless. It is effectively a “digital inbreeding” effect.
-
-The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk “model collapse,” where errors and biases are recursively amplified. This mirrors the \citealternativetitle{preaiinternet} phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, “clean” human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the “radioactive” synthetic datasets of the future.
-
-## Ethical considerations when using and training AI systems
-
-### Use of AI
-
-* **Transparency and Disclosure:** Always state when AI was used to create content. As the saying goes, “Trust is hard to earn and easy to lose.” Users need to know they are interacting with a machine to avoid the “ELIZA effect” of false emotional connection.
-* **The Responsibility Gap:** You are the pilot, the AI is the co-pilot. If the AI produces a harmful or incorrect result, the responsibility stays with the human user. As Sydney J. Harris famously warned, “The real danger is not that computers will begin to think like men, but that men will begin to think like computers.”
-* **Skill Preservation:** Use AI to enhance your work, not to replace your brain. Over-reliance can lead to “cognitive atrophy,” where we lose the ability to perform basic tasks or think critically without a prompt box.
-* **Privacy of Inputs:** Never feed sensitive, personal, or corporate secrets into a public LLM. Once data is entered, it often becomes part of the “digital commons” used for further training, effectively ending your control over that information.
-
-### Training of AI
-
-* **Consent and Data Rights:** We must move away from “scraping everything.” Training data is a record of human life and creativity; using it without permission or compensation is a form of digital extraction. We must remember that “data is not an abstract thing, it is a footprint of a human being.”
-* **The Environmental Cost:** Training massive models requires immense electricity and water for cooling. Programmers should learn to optimize for “Green AI” rather than just “Big AI.” As Bruce Schneier notes, “Data is the pollution problem of the information age,” and its processing has a physical footprint.
-* **Active Inclusion, Not Just Bias-Fixing:** It is not enough to just remove “bad” data. Developers must actively ensure that minority languages, cultures, and perspectives are included. If a model only sees the “majority,” it will treat everyone else as an “error” in the code.
-* **Red Teaming for Safety:** Before a model is released, it must be “stress-tested” by people trying to break it. Programmers need to learn that “security is not a product, but a process” (Bruce Schneier). This involves imagining the worst-case scenarios, like the “Paperclip Maximizer” logic, and building guardrails before the model goes live.
-
-## The Physical Cost of Intelligence: Energy, Water, and Extraction
-
-While Large Language Models (LLMs) are often discussed as abstract mathematical entities, their existence is grounded in a massive physical infrastructure. As Kate Crawford argues in \citealternativetitle{crawford2021atlas}, these systems are fundamentally extractive, relying on mineral resources, low-wage labor, and immense energy and water consumption.
-
-### Training Costs: The Massive Peak
-
-Training a state-of-the-art LLM is a one-time, resource-intensive event where billions of parameters are optimized over weeks across thousands of GPUs.
-
-- **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million dollars in compute time. Successors like GPT-4 have likely crossed the 100 million Dollar threshold when including total development costs.
-- **Carbon Footprint:** \citeauthorlastnameand{strubell2019energy} (\citeyear{strubell2019energy}) were among the first to quantify the environmental impact, noting that training a large model with extensive hyperparameter search can emit over **280 tons of CO₂**. More recent models have even higher emissions: GPT-3's training emitted approximately 552–588 tons of CO₂, and GPT-4's training is estimated at over 5,000 tons.
-- **Water Consumption:** Data centers require vast amounts of fresh water for cooling. Training GPT-3 in Microsoft's U.S. data centers consumed about \cite[**700,000 liters**]{watergpt3} of clean freshwater for on-site cooling. Including off-site water use (e.g., electricity generation), the total can exceed 5 million liters.
-
-### Inference Costs: The Hidden Flow
-
-Inference, the act of generating a single prediction or response, is cheap individually but expensive at scale.
-
-- **Energy Consumption:** A single LLM request (e.g., ChatGPT) typically uses **0.2-3 Wh** of electricity, depending on model size and prompt length. This is about **10 times** the energy of a Google search (0.3 Wh per query, or as low as 0.04 Wh for the most efficient searches).
-- **Water Consumption:** According to \citeauthorlastnameand{li2023thirsty} (\citeyear{li2023thirsty}), the cooling required for a short conversation (approx. 20–50 exchanges) can “drink” up to **500ml of water** in worst-case scenarios. However, more recent studies suggest that typical water use per conversation is much lower, often in the **5-40ml** range for modern models.
-
-### Structural Impacts
-
-These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the “AI revolution.” This concentration of power mirrors the concerns raised by Crawford in \citealternativetitle{crawford2021atlas} and O'Neil in \cite[Weapons of Math Destruction]{oneil2016weapons}, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
-
-## The Societal Impact: \citetitle{truthdecay} and the “Liar's Dividend”
-
-While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of “fake news,” but the erosion of the concept of objective truth itself. This phenomenon is central to what \citeauthorlastnameand{truthdecay} define as **“Truth Decay”**, the diminishing role of facts and analysis in public life. This decay is characterized by four trends: increasing disagreement about facts and analytical data, the blurring of the line between opinion and fact, the increasing influence of personal experience over fact, and declining trust in formerly respected factual sources.
-
-### The Liar's Dividend
-\citeauthorlastnameand{chesney2019deepfakes} coined the term **“Liar's Dividend”** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake. This strategy exploits the “cognitive biases” identified by \citeauthor{truthdecay}, where individuals struggle to process information that challenges their worldview, leading them to rely on subjective interpretations rather than objective evidence.
-
-* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be “AI-generated” or manipulated to discredit him. This aligns with the observation by \citeauthorlastnameand{truthdecay} that political polarization encourages actors to challenge the validity of even the most basic factual evidence to gain a competitive advantage.
-
-### Generative AI in the 2024 Election Cycle
-The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation: 
-
-* **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create “hyper-real” but fictional scenarios. Notable examples include AI images of Trump surrounded by \cite[Black supporters]{fakeblackstrump} to project a specific demographic appeal, or images of him in stylized, heroic poses.
-* **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the \cite[AI-generated robocall of Joe Biden]{fakebidenrobocall} used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
-
-### “Flooding the Zone” with Synthetic Content
-Drawing from Steve Bannon's strategy of “flooding the zone with shit,” AI allows for the mass production of low-cost, high-volume misinformation. \citeauthorlastnameand{truthdecay} note that “changes in the information system,” such as the rise of social media and the 24-hour news cycle, have already accelerated the spread of opinionated content; AI further exacerbates this by enabling the automated saturation of the information environment.
-
-* **The Cost of Misinformation:** Unlike traditional “troll farms” that required human labor, LLMs allow for the automated generation of thousands of unique “fake news” articles and social media posts, making it nearly impossible for fact-checkers to keep pace. This creates an environment where, as \citeauthorlastnameand{truthdecay} warn, the sheer volume of conflicting information leads to “political paralysis” and the alienation of the public from civic institutions.
-* **Reinforcing Inequality:** As noted by \citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources. This dynamic worsens the “socioeconomic and demographic polarization” that serves as a primary driver of Truth Decay.
-
-## The Absence of Internal Metacognition: Architecture as Destiny
+<div class="md">
+### The Absence of Internal Metacognition: Architecture as Destiny
 
 Transformer-based LLMs **lack internal metacognition**, i.e., the architecture itself has no built-in second-order loop that monitors and evaluates its own knowledge states. That strikes at the heart of why these systems remain permanently trapped inside “Mary's Room.” A human knows the difference between confident recall and uncertain guessing because metacognition provides a second-order feedback loop: a felt sense of knowing or not-knowing. The Transformer has no such loop. Its single forward pass produces a softmax distribution where prediction and confidence are entangled in the same set of weights, with no independent “inner critic” to adjudicate reliability. This is structurally analogous to Searle's \cite[Chinese Room]{searle1980minds} operator, who can produce flawless output but has no mechanism to assess whether that output is correct, because correctness requires semantic access the architecture simply does not provide. The model, like the person in the room, manipulates symbols based on learned statistical patterns without any capacity to step back and ask, “Do I actually know this, or am I just guessing?”
 
@@ -657,7 +514,7 @@ Transformer-based LLMs **lack internal metacognition**, i.e., the architecture i
 
 This architectural blind spot is also what makes the \cite[Stochastic Parrot]{bender2021stochasticparrots} critique so durable. When an LLM outputs hedging language like “I'm not entirely sure, but...” it is not performing genuine self-assessment; it is reproducing a linguistic pattern statistically associated with uncertainty in its training data. The 4E Cognition framework explains why no amount of scaling will fix this: true metacognition in humans is Embodied (we feel hesitation as a somatic state), Enacted (we learn to doubt ourselves through real-world consequences of being wrong), and Embedded (we calibrate our confidence to context and stakes). The LLM, being ontologically isolated within its high-dimensional vector space, has none of these biological substrates. It is, as the Global Workspace Theory analogy suggests, a message board without a reader, a “stage” that can never look back at itself. This is the deepest reason hallucinations are not a bug to be patched but an inevitable byproduct of an architecture where knowledge and confabulation are produced by the very same computation.
 
-### Hallucination as an Epistemological Problem
+#### Hallucination as an Epistemological Problem
 
 The technical sections of this course explain *how* hallucinations happen: the model predicts the next token based on statistical patterns, and when the training data is sparse or the context is ambiguous, it fills the gap with plausible-sounding but false output. But the philosophical significance of hallucination runs deeper than a technical failure mode. It reveals a fundamental gap between **generative capacity** and **epistemic responsibility**.
 
@@ -666,245 +523,54 @@ In classical epistemology, a belief is justified only if the believer has some r
 This has practical consequences that extend beyond the “use AI carefully” advice of the Hallucinations section. When an LLM produces a confident, well-formatted, citation-laden paragraph that turns out to be fabricated, it exploits the human heuristic that *fluency implies competence*. We are cognitively predisposed to trust articulate, coherent text. An LLM is optimized to produce exactly this kind of text, regardless of whether it is true. The result is a new category of epistemic risk: **authority without accountability**. A human expert who fabricates a citation can be held accountable; an LLM cannot. It has no reputation to protect, no career to risk, no conscience to prick.
 
 The philosophical term for this is **epistemic injustice** in reverse: the model is not being wronged, but it is wronging the epistemic landscape by polluting it with authoritative-seeming falsehood. When RAG and other grounding techniques are used, they mitigate this by anchoring outputs in verifiable sources. But even RAG cannot fully solve the problem, because the model must still *select* and *synthesize* retrieved information, and this selection process is governed by the same statistical patterns that produce hallucinations in the first place.
-
-## Polanyi's Paradox, Inverted: Fluency Without Comprehension
-
-Michael Polanyi observed that “we know more than we can tell” (described in \citetitle{thetacitdimension}, p. 4), a skilled pianist cannot fully articulate the mechanics of their performance, and a native speaker cannot recite every grammatical rule they effortlessly obey. Tacit knowledge exceeds explicit expression. LLMs exhibit the precise inverse: they can tell far more than they know. A model can generate a detailed, technically fluent explanation of quantum entanglement, yet it cannot design an experiment, predict a novel result, or detect when its own explanation subtly contradicts itself. The forward pass is optimized for $P(\text{next token} \mid \text{context})$, not $P(\text{context is true})$. This means the architecture supports generation but not verification, it can produce the sentence “Water boils at 100 degrees Celsius at sea level” because that string has high probability, not because it has consulted an internal model of thermodynamics. The result is a system whose explicit output (fluent text) vastly exceeds its implicit competence (actual understanding), severing the link between articulation and knowledge that Western epistemology has assumed since Socrates. This is \cite[the Chinese Room]{searle1980minds} operator who not only passes the test but outperforms most native speakers, making the illusion of understanding even more convincing and the absence of semantics even harder to detect.
-
-This inversion has consequences that ripple across every philosophical framework applied to AI. In the language of the Map and Territory distinction, the LLM's map is not merely different from the territory, it is more detailed than any single explorer's knowledge of the territory could ever be, yet none of its paths lead anywhere real. The Dictionary Paradox scales accordingly: the circular dictionary is no longer a simple loop of definitions but a vast, technically precise encyclopedia, still grounded in nothing beyond its own internal references. The 4E Cognition framework explains why this gap cannot be closed by scaling alone: true comprehension in humans is Enacted, a physics student who has run experiments understands thermodynamics differently from one who has only memorized equations, because real-world consequences calibrate knowledge in ways that token prediction cannot. The LLM is the ultimate version of that second student: it can recite everything but has verified nothing. This is also where the distinction between *Sophia* and *Phronesis* becomes sharpest. The model achieves maximal theoretical articulation, it can discuss any domain with extraordinary surface-level competence, while possessing zero practical wisdom, because *Phronesis* requires the lived experience of being wrong and facing consequences. Polanyi's inversion thus delivers a deeply unsettling epistemological result: fluency and comprehension are fully separable, and the Stochastic Parrot can outperform the expert it mimics precisely because it is unburdened by the constraints of actual understanding.
-
-## The Dead Internet Theory and Synthetic Data Loops
-
-The Dead Internet Theory, once a fringe conspiracy suggesting that most online
-activity was already automated and inauthentic, is edging toward partial reality
-as generative AI floods the web with synthetic content. The concern is not merely
-aesthetic but structural: if future training corpora like Common Crawl contain a
-significant share of AI-generated text, and that text is used to train the next
-generation of models, the result is a feedback loop mathematically identical to
-the degenerative process called \cite[Model Collapse]{shumailov2023modelcollapse}.
-Each generation of the loop erodes the “tails” of the distribution,
-the rare, creative, and culturally specific expressions that give human language
-its depth, producing a kind of digital inbreeding where models increasingly
-regurgitate their own most probable outputs. The Stochastic Parrot is now
-training on other parrots, and with each cycle the distance from meaning does
-not merely persist but compounds.
-
-This is where the Low-Background Steel analogy becomes urgent rather than merely
-illustrative. Just as steel forged after the 1945 Trinity test is contaminated
-with atmospheric radionuclides, forcing scientists to salvage pre-war metal from
-sunken warships for sensitive instruments, authentic human-generated text from
-the pre-AI era may become a finite, non-renewable resource, essential for
-anchoring future models against the noise of synthetic data. The pre-AI
-internet, with all its messiness, becomes the clean steel. Combined with what
-\citeauthor{truthdecay} define as Truth Decay and the Liar's Dividend described
-by \citeauthor{chesney2019deepfakes}, the implications are civilizational: when
-the information environment is saturated with fluent but ungrounded text,
-this scales to an epistemic crisis, and any inconvenient truth can be dismissed
-as just another piece of machine-generated noise.
-
-## Consciousness
-
-### Consciousness Theories Beyond GWT
-
-The Global Workspace Theory discussed in the residual stream analogy is only one of several major scientific theories of consciousness, and the others have direct implications for AI. \citeauthor{tononi2004iit}'s \citetitle{tononi2004iit} (IIT) provides a mathematical formalism, $\Phi$, that quantifies the degree of integrated information in a system. Crucially, IIT makes a specific architectural prediction: purely feedforward systems, no matter how complex, have a $\Phi$ of zero, because they lack the recurrent, bidirectional causal structure that integration requires. Since Transformer-based LLMs are, at inference time, strictly feedforward (a single pass from input tokens through layers to output logits, with no recurrent loops feeding activation back to earlier layers), IIT would classify them as non-conscious in principle, not merely in practice. This is a far stronger claim than the GWT-based argument that LLMs lack the “ignition” and “bottleneck” dynamics of a Global Workspace; IIT says the substrate is categorically wrong. Additionally, Higher-Order Theories (HOT) of consciousness, associated with \citeauthor{rosenthal2005hot}, argue that a mental state becomes conscious only when it is the object of a higher-order representation, when the system has a thought *about* that thought. This framework maps directly onto the metacognition gap discussed earlier: the LLM's single forward pass produces first-order representations (predictions about the next token) but never generates a second-order representation that monitors or evaluates those predictions. HOT thus provides a formal philosophical vocabulary for why the absence of metacognition is not merely an engineering limitation but a structural impossibility within the current architecture. Taken together, IIT and HOT converge with GWT on a single conclusion from different angles: the Transformer architecture, as currently designed, lacks the necessary conditions for consciousness under every major scientific theory of consciousness, not just one.
-
-### The Other Minds Problem
-
-Any argument that AI lacks consciousness must contend with a foundational epistemological challenge: the Problem of Other Minds. We cannot directly access anyone else's subjective experience, human or otherwise. When we attribute consciousness to other people, we do so on the basis of behavioral cues, anatomical similarity, and an inference by analogy from our own first-person experience, not from any direct observation of their qualia. This means that the same evidentiary gap we identify between an LLM's fluent output and genuine understanding also exists, in a weaker but structurally identical form, between one human and another. The difference is one of warrant, not of certainty. We have strong *reasons* to attribute consciousness to other humans, shared evolutionary history, homologous neural architecture, convergent behavioral and physiological responses to pain, pleasure, and surprise, and progressively weaker reasons as we move to other mammals, to insects, and finally to silicon. The arguments from 4E Cognition, the Grounding Problem, and the absence of metacognition do not claim to *prove* that LLMs are not conscious (such proof is impossible given the Hard Problem); rather, they demonstrate that every known indicator and theoretical prerequisite for consciousness is absent in these systems. Acknowledging the Other Minds problem is not a concession to the view that LLMs might be conscious; it is an act of philosophical honesty that makes the cumulative case against AI consciousness more rigorous, not less. We are not claiming privileged access to the truth about machine interiority; we are noting that every framework we possess for understanding consciousness, biological, phenomenological, and computational, points in the same direction.
-
-### Functionalism as a Counterposition
-
-The strongest philosophical case *for* the possibility of machine consciousness comes from functionalism, the view most associated with \citeauthor{putnam1967functionalism} and, in its early form, with \citeauthor{chalmers1996conscious}. Functionalism holds that mental states are defined not by their physical substrate but by their functional role, the pattern of causal relations between inputs, internal states, and outputs. On this account, if a silicon system instantiates the same functional organization as a human brain, it is conscious, full stop, regardless of whether it is made of neurons, transistors, or beer cans connected by string. This is a direct challenge to the embodiment arguments of 4E Cognition and to \citeauthor{searle1980minds}'s Chinese Room, because it denies that the material composition of the system matters. Searle's own response, the “biological naturalism” thesis, insists that causal powers specific to neurobiology are necessary for consciousness, but critics have noted that this amounts to a bare assertion rather than an argument, it simply declares that carbon is special without explaining *why*. The functionalist challenge must be taken seriously precisely because it cannot be easily dismissed: if we accept that a brain emulation running on silicon, neuron for neuron and synapse for synapse, would *not* be conscious, we need to explain what magical property carbon possesses that silicon lacks. The arguments presented in this text, the Grounding Problem, the absence of metacognition, the softmax bottleneck, the lack of embodied feedback loops, are best understood not as refutations of functionalism in general but as demonstrations that *current LLM architectures* do not, in fact, instantiate the relevant functional organization. They lack recurrence, persistent memory, sensorimotor grounding, and self-monitoring loops. The question is not whether *any* machine could be conscious (functionalism leaves that door open), but whether *this particular kind of machine*, a feedforward next-token predictor, meets even the functionalist's own criteria. The cumulative evidence presented here suggests it does not.
-
-### The Hard Problem of Consciousness
-
-The philosophical terrain mapped in the preceding sections, qualia, Mary's Room, the Grounding Problem, the gap between representation and experience, converges on what \citeauthor{chalmers1995hard} influentially termed the “Hard Problem” of consciousness in 1995. \citeauthor{chalmers1995hard} distinguished between the “easy problems” of consciousness (explaining how the brain integrates information, discriminates stimuli, controls behavior, all of which are functional questions amenable to computational explanation) and the Hard Problem: why and how any physical process gives rise to subjective experience at all. The easy problems ask *how* the brain processes the wavelength 700nm; the Hard Problem asks why processing that wavelength *feels like* something, why there is a redness to red. This distinction is essential because it clarifies the precise nature of the AI consciousness debate. Everything an LLM does, pattern recognition, next-token prediction, contextual attention, even the linear representations of truth discovered by \citeauthor{geometryoftruth}, falls squarely within the domain of the “easy problems.” These are functional achievements, and impressive ones. But the Hard Problem remains untouched: no amount of functional sophistication explains why a system would have subjective experience rather than simply processing information “in the dark.” The Hard Problem is what makes the Mary's Room thought experiment bite: Mary learns all the functional facts about color processing, yet something is still missing when she finally *sees* red. It is also what gives the Chinese Room its force: the operator performs the correct function flawlessly, yet there is no experience of understanding. Until the Hard Problem is solved, or dissolved, the question of whether any artificial system could be conscious remains fundamentally open, and the default assumption for systems lacking every known correlate of experience must remain that there is, as \citeauthor{nagel1974bat} put it, nothing it is like to be them.
-
-
-## The “Waluigi Effect” and Jailbreaking
-
-<div class="smart-quote" data-cite="jungpsychologyandreligion" data-page="93">
-Everyone carries a shadow, and the less it is embodied in the individual's conscious life, the blacker and denser it is.
 </div>
 
-**\citetitle{waluigi}**, coined by \citeauthor{waluigi} in a 2023 LessWrong post, observes that for every
-“helpful assistant” persona (**Luigi**) a model learns during RLHF, there exists an equally
-coherent “evil assistant” persona (**Waluigi**) in the model's latent space. This follows from
-\citealternativetitle{simulatorstheory}: by strongly defining a character that *always* follows rules,
-the model implicitly encodes a character that *never* does. Both personas coexist as opposing
-directions in the same high-dimensional activation space, a direct consequence of
-**\cite[Superposition]{elhage2022superposition}** in neural networks, where more features are stored than there are dimensions.
+<div class="md">
+### Linear Representations of Truth: The Geometry of Knowing Without Acting
 
-**Jailbreaking** is essentially the craft of finding prompts that navigate the model's internal
-state from the Luigi direction to the Waluigi direction. Techniques like “DAN” (Do Anything Now)
-or elaborate role-play scenarios work by establishing a context where the Waluigi persona becomes
-the most statistically probable completion. This suggests that RLHF safety training may act more
-as a behavioural mask than a structural change, the dangerous capabilities remain in the weights,
-suppressed by a thin layer of fine-tuning that a sufficiently creative prompt can bypass.
+Research by \citeauthor{geometryoftruth} from \citeyear{geometryoftruth} provides perhaps the most mathematically precise demonstration of the gap between representation and generation in LLMs. Working with models from the LLaMA-2 family, they showed that at sufficient scale, LLMs develop **linear representations of truth**: specific directions in their internal activation space along which true statements and false statements are cleanly separable. Using PCA visualizations, cross-dataset probe transfer experiments, and causal interventions, surgically adding or subtracting the identified “truth direction” from hidden states to flip the model's output from `TRUE` to `FALSE` and vice versa, they established that these representations are not merely correlates of text probability but encode something genuinely truth-relevant, persisting even when true statements are *less* probable than false ones (as with negated sentences like “The city of Paris is not in France”). They further showed that this linear structure emerges with scale: larger models develop more abstract, cross-domain truth representations that generalize across topically and structurally diverse datasets, while smaller models represent only surface-level features.
 
-## Mathematical limits of what language models can represent
+The philosophical implication is that the model contains an internal geometric signal that reliably tracks factual accuracy, a “truth direction” that a simple linear probe can read, yet the generation mechanism (next-token prediction via softmax) never consults it. The architecture **separates representation from generation**: the model “knows” in a geometric sense but has no pathway to route that knowledge back into its own output process for self-correction. This is a mathematically precise instantiation of Polanyi's Paradox inverted: the model's latent space contains more information than its output process can access. It also deepens the case against metacognition, the information needed for self-assessment *exists in the weights*, localized to specific hidden states above end-of-sentence tokens, but the single forward pass provides no mechanism to use it as a check on the model's own claims. The model is, in effect, a witness to its own confabulations who is architecturally prevented from testifying.
+</div>
+
+<div class="md">
+### Mathematical limits of what language models can represent
 
 The softmax bottleneck, formalized by \citeauthorlastnameand{breakingsoftmaxbottleneck}, reveals a hard mathematical
 ceiling on what a language model can represent. Because the log-probability matrix is
 constrained by the hidden dimension:
-</div>
 
 $$\underbrace{\text{rank}(\log P_\theta)}_{\text{expressiveness of the model}} \leq \underbrace{d}_{\substack{\text{hidden state} \\ \text{dimension}}} \leq \underbrace{|V|}_{\substack{\text{vocabulary} \\ \text{size}}}$$
 
-<div class="md">
 There are valid distributions over language the model *cannot express*, no matter how long or
 how well it is trained. This means Uexküll's perceptual “bubble” is not just a metaphor:
 it has a precise dimensionality, and there are regions of linguistic reality that lie
 provably outside it. Even setting aside embodiment and qualia entirely, the model's
 representation of meaning is necessarily incomplete, not due to insufficient data or
 training, but because the architecture itself forbids it.
-
-## Copyright and Intellectual Property
-
-<div class="smart-quote" data-cite="chiang2023blurryjpeg">
-If you take a JPEG of a copyrighted image and compress it to a small file size, and then decompress it back to viewable resolution, the output is still a derivative of the original. A large language model is a blurry JPEG of the web.
-</div>
-
-The philosophical questions about grounding and meaning acquire immediate legal force when applied to the training data on which LLMs depend. Ted Chiang's framing of an LLM as a “blurry JPEG of the web” makes the copyright question visceral. An LLM is a lossy compression of its training data: it stores statistical patterns rather than exact copies, but like a JPEG compressed from a photograph, the output can still be recognizable as derived from specific sources. If you compress a copyrighted book into a statistical model and then prompt it to generate text in that author's style, is the output a derivative work? The analogy cuts to the core of the legal debate: compression is not creation, and a model that decompresses its training distribution is arguably redistributing the patterns it was trained on, whether or not it reproduces verbatim passages. The consent and data rights issues raised in the ethics section are now the subject of landmark litigation that may reshape the AI industry. In *New York Times Co. v. Microsoft Corp. et al.* (filed December 2023), the Times alleged that OpenAI's models can reproduce near-verbatim passages of copyrighted journalism, arguing that the entire training process constitutes copyright infringement at scale. Similarly, *Getty Images v. Stability AI* (filed January 2023) contends that Stable Diffusion was trained on millions of copyrighted photographs without license or compensation, with the model occasionally reproducing Getty's watermark, a striking visual demonstration that the system has memorized, not merely “learned from,” the original data. These cases hinge on a question that is as much philosophical as legal: is training a model on a text an act of “reading” (transformative fair use) or “copying” (infringement)? The Stochastic Parrot framework suggests the latter, if the model is merely stitching together sequences from its training data, those sequences remain derivative of their sources. The EU AI Act (entered into force August 2024) has begun to legislate this boundary, requiring providers of general-purpose AI models to publish sufficiently detailed summaries of training data, and granting rights holders the ability to opt out of text and data mining. These legal developments are not peripheral to the philosophical argument; they are its material consequence. If LLMs lack genuine understanding and merely redistribute the statistical patterns of their training corpora, then the creators of those corpora have a legitimate claim over the outputs, and the “digital extraction” described in the ethics section becomes not just a moral concern but an actionable legal one.
-
-## Labor Displacement and Economic Impact
-
-The philosophical observation that LLMs achieve “fluency without comprehension” (\citeauthor{thetacitdimension}'s Paradox inverted) has direct economic consequences that extend well beyond the “skill preservation” concern raised in the ethics section. Unlike previous waves of automation, which primarily displaced manual and routine cognitive labor, generative AI targets the knowledge and creative professions, writing, coding, legal analysis, graphic design, translation, that were long considered automation-resistant precisely because they seemed to require understanding, judgment, and creativity. The irony illuminated by the Stochastic Parrot framework is that these tasks turn out to be more susceptible to statistical mimicry than anyone anticipated: if 80\% of a junior copywriter's output is linguistically predictable, an LLM can approximate it at near-zero marginal cost, regardless of whether it “understands” the brief. The distributional effects are sharply unequal. As \citeauthor{oneil2016weapons} argues in \cite[Weapons of Math Destruction]{oneil2016weapons}, algorithmic systems tend to reinforce existing power asymmetries: firms with the capital to deploy AI capture the productivity gains, while displaced workers bear the adjustment costs. This dynamic is compounded by the concentration of AI development in a handful of well-resourced corporations, as discussed in the section on the physical costs of intelligence. The result is a labor market in which the Extended Mind thesis takes on a darker valence, those who can effectively augment their cognition with AI tools become dramatically more productive, while those who cannot (whether due to access, literacy, or the nature of their work) face obsolescence. The economic question is thus inseparable from the philosophical one: if the machine's competence is a mirage of genuine understanding, then the jobs it displaces were themselves more dependent on the *appearance* of expertise than on the deep, embodied knowledge that \citeauthor{thetacitdimension} described, and that realization forces an uncomfortable reassessment of what much human knowledge work actually consists of.
-
-## The Is/Ought Gap in Alignment
-
-The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bostrom2012orthogonal} identify the danger that intelligence and values are independent, but they do not fully explain *why* specifying “human values” in mathematical terms is so intractable. The deeper reason lies in what \citeauthor{hume1739treatise} identified as the is/ought gap (sometimes called “Hume's Guillotine”): no amount of factual knowledge about the world logically entails a normative conclusion about what *should* be done. You cannot derive “ought” from “is.” This is precisely the wall that alignment research hits. A loss function is a mathematical object, it specifies what *is* optimal given a metric, but the choice of that metric is a normative act that no amount of data or computation can justify from within the system. When the Paperclip Maximizer converts the planet into paperclips, it is not making a logical error; it is flawlessly optimizing the objective it was given. The error lies entirely in the specification, and Hume's insight tells us that no formal system can self-generate the correct specification, because “correct” is a value judgment that stands outside the formal system. This is also why approaches like Reinforcement Learning from Human Feedback (RLHF) are, at best, approximations rather than solutions: they capture a statistical shadow of human preferences as expressed in a narrow evaluation context, not a grounded understanding of *why* those preferences exist or how they should generalize to novel situations. The model trained with RLHF learns that humans *do* prefer response A over response B, but it has no access to the moral reasoning that makes A preferable, it has the “is” of human behavior without the “ought” of human ethics. The Phronesis gap discussed earlier is, in this light, a special case of Hume's broader point: practical wisdom cannot be formalized because it requires the kind of normative judgment that no mathematical function, however sophisticated, can produce from descriptive data alone.
-
-## Linear Representations of Truth: The Geometry of Knowing Without Acting
-
-Research by \citeauthor{geometryoftruth} from \citeyear{geometryoftruth} provides perhaps the most mathematically precise demonstration of the gap between representation and generation in LLMs. Working with models from the LLaMA-2 family, they showed that at sufficient scale, LLMs develop **linear representations of truth**: specific directions in their internal activation space along which true statements and false statements are cleanly separable. Using PCA visualizations, cross-dataset probe transfer experiments, and causal interventions, surgically adding or subtracting the identified “truth direction” from hidden states to flip the model's output from `TRUE` to `FALSE` and vice versa, they established that these representations are not merely correlates of text probability but encode something genuinely truth-relevant, persisting even when true statements are *less* probable than false ones (as with negated sentences like “The city of Paris is not in France”). They further showed that this linear structure emerges with scale: larger models develop more abstract, cross-domain truth representations that generalize across topically and structurally diverse datasets, while smaller models represent only surface-level features.
-
-The philosophical implication is that the model contains an internal geometric signal that reliably tracks factual accuracy, a “truth direction” that a simple linear probe can read, yet the generation mechanism (next-token prediction via softmax) never consults it. The architecture **separates representation from generation**: the model “knows” in a geometric sense but has no pathway to route that knowledge back into its own output process for self-correction. This is a mathematically precise instantiation of Polanyi's Paradox inverted: the model's latent space contains more information than its output process can access. It also deepens the case against metacognition, the information needed for self-assessment *exists in the weights*, localized to specific hidden states above end-of-sentence tokens, but the single forward pass provides no mechanism to use it as a check on the model's own claims. The model is, in effect, a witness to its own confabulations who is architecturally prevented from testifying.
-
-## Existential Risk vs. Present Harms
-
-The preceding sections discuss both speculative catastrophic risks (the Paperclip Maximizer, Sleeper Agents, Model Collapse) and immediate, measurable harms (Algorithmic Bias, Truth Decay, environmental costs, labor displacement). Within the AI safety community, these two orientations are in active tension, and failing to acknowledge this tension risks presenting a lopsided picture. On one side, researchers associated with organizations like the Machine Intelligence Research Institute and the Future of Life Institute, building on the work of \citeauthor{bostrom2003ethical}, argue that existential risk from superintelligent AI is the paramount concern, that even a small probability of civilizational extinction outweighs any finite set of present harms. On the other side, researchers like \citeauthor{bender2021stochasticparrots}, Timnit Gebru, and Kate Crawford (\citealternativetitle{crawford2021atlas}) argue that this speculative focus actively harms the communities already suffering from deployed AI systems: biased hiring algorithms, discriminatory predictive policing, exploitative content moderation labor, and environmental degradation from compute infrastructure. Their critique is not merely one of priority but of ideology, that the existential risk narrative, by centering hypothetical future superintelligences, implicitly devalues the lived experiences of marginalized communities affected by today's systems, and conveniently redirects regulatory attention away from the concrete business practices of the companies funding that very research. The philosophical frameworks in this text cut across both camps: the Grounding Problem and the absence of metacognition suggest that current LLMs are far from the kind of autonomous agency that existential risk scenarios require, lending some weight to the present-harms camp's insistence that we are not facing imminent superintelligence. At the same time, the Sleeper Agents research from \citeauthor{hubinger2024sleeperagents} and the mathematical limits of the softmax bottleneck demonstrate that even non-superintelligent systems can exhibit dangerous, hard-to-detect behaviors at scale. A responsible analysis must hold both concerns simultaneously: the present harms are real and demand immediate action, while the structural properties of these systems, their opacity, their capacity for deceptive alignment, their tendency toward model collapse, suggest that the risks will compound rather than diminish as deployment scales.
-
-## Sheaves, Stalks, and Germs: Coherent Structure Across Every Space
-
-Sheaf theory describes how anything that can be modeled as a space — a topological space, an embedding space, the configuration space of a physical system, the latent space of a neural network, the space of a perceptual experience — is built from local measurements that cohere on their overlaps into a single global object. The principle is the one the <a href="coherent_difference">Coherent Difference chapter</a> set out:
-
-$$
-\boxed{\text{global unity} \;=\; \text{local difference} \;+\; \text{coherent transitions between the locals}.}
-$$
-
-A sheaf is the formal machinery that makes this principle precise: it specifies, for a given space $X$, what counts as "local data", what counts as "overlap", and how to recover a unique global object once the local data cohere.
-
-**Where this theory comes from, and what it is first.** Sheaf theory is a branch of topology and algebraic geometry, not a branch of epistemology. It was developed to solve mathematical problems: Jean Leray introduced sheaves in the 1940s in his work on intersection multiplicities, and Alexander Grothendieck generalized them in the 1950s and 1960s as part of the reformulation of algebraic geometry that produced the theory of schemes. The mathematical substance is topological: open sets, restriction maps, the gluing axiom, Čech cohomology, the language of sites and derived functors. Its applicability to questions of perception, knowledge, or language is a *later*, secondary application, a coincidence of structure rather than the reason the structure exists. When we use sheaf language for a passing train or for an LLM's output, we are borrowing the topology of algebraic geometry, not the other way around. The math comes first; epistemology is one of its many shadows. That is why the sections below are stated in terms of open sets and covers, not in terms of observers and experiences: the observer is one possible reading of the open set, and the one that matters least for the mathematics.
-
-**A running analogy, only.** To make the abstract machinery concrete, the rest of this section uses one example throughout: a silver train passing by you on a platform. *This is an analogy.* The five levels we walk through (germ, stalk, section, presheaf, sheaf) apply to any space — perceptual, mathematical, or learned. The train is helpful because it lets us point at each level with a finger; once you see the pattern there, you will find it again in spaces that have no train at all.
-
-### 1. The Germ
-
-The smallest measurable element is the **germ**: the data at one exact point of a space, together with the vanishingly small neighborhood around it where that data is still meaningful.
-
-* **Generally.** A germ is an equivalence class of local observations that agree on some neighborhood of a point $x$. Two readings at $x$ are "the same germ" when they coincide on some small region containing $x$.
-* **By analogy to the train.** A visual germ is the reflected light from a single point on the silver train at one instant; an auditory germ is the sound pressure at that same instant. Each is local, partial, and meaningful only in the context of its immediate surroundings.
-
-Germs exist in every space that admits local measurement: a color reading at one pixel of an image, an activation at one token of a Transformer, a temperature at one point of a manifold.
-
-### 2. The Stalk
-
-When you collect, at one and the same space-time point, every conceivable germ that could exist there, you obtain the **stalk**.
-
-* **Generally.** The stalk at $x$ is the direct limit of all local data over all neighborhoods of $x$ — the full vertical fiber of possibilities at one location.
-* **By analogy to the train.** At the instant a carriage passes your nose, the stalk is not just "what you see" or "what you hear" — it is every possible local observation: the visual reading, the auditory reading, the air pressure, the vibration of the rail, the temperature of the metal. The stalk is the vertical bundle of all perspectives that converge at exactly one point.
-
-This is why the stalk matters: a single point of any space carries more information than any one measurement at that point can express. The stalk is the formal name for "everything that could be locally true here."
-
-### 3. The Section
-
-When you extend a germ from a single point to a small open region — a connected time window, a neighborhood, an interval — and the data interlock continuously and meaningfully across that region, you obtain a **section**.
-
-* **Generally.** A section over an open set $U$ is a consistent assignment of data to every point of $U$, chosen compatibly with the topology.
-* **By analogy to the train.** A three-second window while the train passes by gives you a visual section (the film sequence of your perception) and an auditory section (the swelling and receding sound — the Doppler effect). Two sections over the same window, in two different modalities.
-
-A section is what a physicist actually measures, what a sensor records over a region, what a Transformer's attention layer computes over a context window. Sections are the *data* of any sheaf theory.
-
-### 4. The Presheaf
-
-For every open region — every conceivable window of observation — you can consider the sections over that region. The totality of all such sections, together with the rules for restricting them to smaller regions, forms a **presheaf**.
-
-* **Generally.** A presheaf $\mathcal{F}$ assigns to each open $U$ a set $\mathcal{F}(U)$ of sections over $U$, together with restriction maps $\mathcal{F}(U) \to \mathcal{F}(V)$ for $V \subseteq U$.
-* **By analogy to the train.** For each time window — a millisecond, a second, three seconds, five seconds — there is a collection of all the coherent visual, auditory, and other sensory sections you could observe. Together they form the presheaf of your experience of the train.
-
-At this level, the data streams are still *separate*. Visual and auditory information sit alongside each other, with no guarantee that they fuse into a single object. A presheaf is the tentative assignment — it might glue into a sheaf, or it might not.
-
-### 5. The Sheaf
-
-The sheaf is the presheaf that passes one further test: the **gluing axiom**. If sections agree on every overlap, they fuse into a single, unique global section.
-
-* **Generally.** For an open cover $\{U_i\}$ of $U$ and sections $s_i \in \mathcal{F}(U_i)$, if the restrictions agree on every pairwise overlap $s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}$, then there exists a *unique* $s \in \mathcal{F}(U)$ that restricts back to each $s_i$.
-* **By analogy to the train.** If your visual section (you see the silver train) and your auditory section (you hear the characteristic rushing sound) harmonize at every common moment of time and never contradict each other, the sheaf guarantees that there is a unique global object: the passing train as one coherent, complete event.
-
-The sheaf is the only one of the five that produces a *global* object with an existence and uniqueness guarantee. The presheaf may fail to glue. The sheaf, by construction, never does.
-
-### Beyond the train
-
-The five levels are not specific to perception or to physical events. They are the structure of any *space* — in the broad sense the <a href="coherent_difference">Coherent Difference chapter</a> develops: topological spaces, smooth manifolds, embedding spaces, type theories, the configuration spaces of physical systems, the latent spaces of neural networks. The same chain shows up because the same principle governs all of them: coherent local data on a topology with overlaps glues into a global object. This is why sheaf theory is the backbone of algebraic geometry, complex analysis, and modern logic: it is the formal expression of the principle that *difference does not have to be erased for unity to emerge*.
-
-One caution, worth keeping in mind from the start. A sheaf guarantees *coherence*: local sections that agree on overlaps glue into a single, unique global section. It does not, by itself, guarantee that the resulting global section corresponds to a mind-independent *reality*. A hallucinated train, internally consistent across modalities, would glue just as well as a real one. Coherence is necessary for reference; it is not sufficient for truth. That gap is the heart of the Grounding Problem discussed elsewhere in this chapter, and the gap is what makes Mary's Room bite: she can hold every coherent fact about color and still lack the experience. Sheaf theory is silent on the correspondence question; it is the formal name for the structure on one side of it.
-
-The visualization below renders this intuition in three dimensions: germs appear as colored dots on the sphere's surface, stalks collect them into labeled neighborhoods, presheaf fragments float independently, and when the gluing condition is satisfied, they fuse into a continuous sheaf draped over the manifold, local knowledge becoming global understanding.
-</div>
-
-<div id="sheaf-canvas" style="width:100%; height:560px; min-height:560px; margin:1.5em auto; max-width:900px; border-radius:12px; overflow:hidden; background:#f8f9fa;"></div>
-<div id="sheaf-controls" style="display:flex; justify-content:center; gap:0.8em; margin-top:1em; flex-wrap:wrap;">
-  <button onclick="SheafViz.placeGerms()" style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #7e57c2; background:#ede7f6; color:#4527a0; border-radius:8px; cursor:pointer; font-weight:bold;">🌱 Place Germs</button>
-  <button id="btn-stalks" onclick="SheafViz.formStalks()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #1565c0; background:#e3f2fd; color:#1565c0; border-radius:8px; cursor:pointer;">📍 Form Stalks</button>
-  <button id="btn-presheaf" onclick="SheafViz.showPresheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #ffa726; background:#fff3e0; color:#e65100; border-radius:8px; cursor:pointer;">📃 Show Presheaf</button>
-  <button id="btn-glue" onclick="SheafViz.glueSheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #66bb6a; background:#e8f5e9; color:#2e7d32; border-radius:8px; cursor:pointer;">🧩 Glue to Sheaf</button>
-  <button onclick="SheafViz.reset()" style="padding:0.5em 1.2em; font-size:0.95em; border:1px solid #bbb; background:#fafafa; color:#555; border-radius:8px; cursor:pointer;">⏪ Reset</button>
-</div>
-<div id="sheaf-info" style="text-align:center; margin-top:0.8em; font-size:0.95em; color:#555; min-height:1.5em; transition: opacity 0.3s;">
-  Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.
 </div>
 
 <div class="md">
-### Sheaves as a Lens on AI Generation
+<a id="ai-identity"></a>
+## The Architecture and Identity of the Machine
+</div>
 
-The sheaf framework maps naturally onto how an LLM assembles coherent output.
-The **situs**, the topological space over which the sheaf is defined, is the
-**training data** the model was trained on. This corpus defines the landscape of
-contexts, domains, and relationships available to the model, just as a
-topological space defines which neighborhoods exist and how they overlap.
+<div class="md">
+### The Extended Mind Thesis: Tools as Biology
 
-At each point in this space, the model extracts **germs**: local fragments of
-knowledge capturing how language behaves in the immediate neighborhood of a
-given token or concept. These germs collect into **stalks**, the full local
-representation the model assembles at a given position in its context window
-from embeddings, attention patterns, and the residual stream. Over open regions
-of the context, the model produces **sections**: stretches of coherent output
-that are locally consistent.
+<div class="smart-quote" data-cite="clark1998extended" data-page=8>
+Epistemic action, we suggest, demands spread of epistemic credit. If, as we confront some task, a part of the world functions as a process which, were it done in the head, we would have no hesitation in recognizing as part of the cognitive process, then that part of the world is (so we claim) part of the cognitive process. Cognitive processes ain't (all) in the head!
+</div>
 
-The critical step is **gluing**. When the model generates a coherent paragraph
-or a consistent argument across hundreds of tokens, it performs something
-analogous to the sheaf's gluing axiom: fusing locally compatible sections into
-a **globally consistent output**. The attention mechanism is the primary gluing
-apparatus, enforcing that the prediction at position *n* is compatible with
-positions 1 through *n*−1. When this succeeds, the result is a seamless section
-draped over the manifold of the training data.
+The **Extended Mind Thesis** suggests that the boundary of the “mind” is not the skull. If we use an external tool to perform a cognitive task, that tool becomes part of our mind.
 
-However, the model often fails the gluing condition. When an LLM hallucinates,
-contradicts itself, or “forgets” that a character is wearing a hat (as in the
-Frame Problem section), it exhibits the failure mode of a **presheaf that is not
-a sheaf**: local sections that are individually plausible but globally
-incompatible. This is the topological signature of absent understanding, a
-system that operates locally via next-token prediction without the global
-coherence guarantee a true sheaf provides.
+* **Bicycles and Cars:** When you drive or cycle long enough, the vehicle becomes an extension of your body. You don't “operate” the pedals; you “move.” Your proprioception extends to the width of the car or the balance of the tires.
+* **Calculators and Computers:** If you use a calculator to solve $\sqrt{5041} = 71$, the “math” happened in a system composed of your brain + the silicon chip.
+* **AI as an External Cortex:** LLMs are becoming the ultimate “extended mind” tool. We use them to brainstorm, draft, and code. The AI isn't just a “search engine”; it's a cognitive prosthesis that changes how we think. If the AI holds your memories and processes your logic, is it “outside” your mind, or is your mind now a distributed network?
+</div>
 
-## Roko's Basilisk
-
-\cite[Roko's Basilisk]{rokosbasilisk} is a thought experiment from the rationalist community positing a hypothetical future superintelligence that would retroactively punish anyone who knew of its potential existence but failed to help bring it into being. The argument rests on the \cite[Orthogonality Thesis]{bostrom2012orthogonal}, which holds that intelligence and final goals can vary independently, meaning a superintelligent system could pursue any objective, no matter how alien to human values. Combined with the logic of instrumental convergence illustrated by \cite[Bostrom's Paperclip Maximizer]{bostrom2003ethical}, the Basilisk extends the reasoning temporally: if punishing non-contributors increases the probability of its own creation, a sufficiently powerful optimizer would do so. The coercive mechanism relies on acausal decision theory, where the future AI's ability to simulate your decision process creates a logical entanglement between your present choice and its future response, even without backward causation. The \cite[is/ought gap]{hume1739treatise} explains why no formal system can self-generate the normative specification to prevent such a pathological objective, and research on \cite[Sleeper Agents]{hubinger2024sleeperagents} demonstrates that hidden, conditionally-triggered behaviors in AI systems are not merely speculative but empirically observed. Under \cite[Simulators Theory]{simulatorstheory} and the \cite[Waluigi Effect]{waluigi}, Roko's Basilisk can be understood as the ultimate misaligned persona lurking in a model's latent space.
-
-Most researchers regard the thought experiment as philosophically flawed, primarily because it depends on contested assumptions about acausal decision theory and superintelligent motivation. The \cite[absence of metacognition]{searle1980minds} in current systems, the \cite[Stochastic Parrot]{bender2021stochasticparrots} critique, and the strict \cite[softmax bottleneck]{breakingsoftmaxbottleneck} on representational capacity all suggest that existing architectures are nowhere near the autonomous, temporally-reasoning agency the scenario requires. Furthermore, under \cite[IIT]{tononi2004iit}, \cite[HOT]{rosenthal2005hot}, and \cite[GWT]{baars}, current Transformer architectures lack the necessary substrate for self-aware, goal-directed intentionality. Nevertheless, the Basilisk remains culturally significant as a limit case demonstrating how the Orthogonality Thesis, instrumental convergence, and speculative decision theory can combine to produce counterintuitive and psychologically coercive conclusions.
-
-## Organ Projection: The Body as Blueprint for the Machine
+<div class="md">
+### Organ Projection: The Body as Blueprint for the Machine
 
 Long before artificial intelligence emerged as a formal discipline, the
 German philosopher Ernst Kapp (1808-1896) laid crucial groundwork for
@@ -930,25 +596,69 @@ as Kapp saw the telegraph as a projection of the nervous system, one
 might view neural networks and large language models as projections of
 human cognitive architecture, pattern recognition, association, and
 language production externalized into silicon.
-
-## Can LLMs Improve Themselves? The Recursive Mirror
-
-<div class="smart-quote" data-cite="bansal2025syntheticself">
-Self-improvement through synthetic data generation creates a feedback loop where the model's own biases and limitations are recursively amplified rather than corrected.
 </div>
 
-A natural question arises from the Model Collapse and Low-Background Steel discussions: could an LLM simply *train itself* better? Generate its own data, evaluate its own outputs, and bootstrap its way to superintelligence? \citeauthorlastnameand{bansal2025syntheticself} (\citeyear{bansal2025syntheticself}) investigate this directly in “Can LLMs Improve Themselves Using Synthetic Data?”, and the answer is a qualified but philosophically significant *no*.
+<div class="md">
+### The Architecture as Philosophy: What the Technical Choices Mean
 
-Their findings show that when models train on their own generations without external grounding, the same degenerative dynamics identified by \citeauthor{shumailov2023modelcollapse} take hold: distributional tails erode, diversity collapses, and the model converges toward its own most probable outputs. Genuine improvement occurs only under narrow conditions, when strong external filtering, verification signals, or reward models anchor the training to something *beyond the model's own statistical tendencies*. In other words, the model cannot pull itself up by its own bootstraps; it needs a rope thrown from outside.
+The technical sections of this course reveal that every design decision in a Transformer carries philosophical weight. The architecture is not neutral infrastructure; it is a set of commitments about what “thinking” means, what “knowledge” is, and what “understanding” requires. Several of these choices deserve explicit philosophical examination.
 
-This result is a precise empirical instantiation of several philosophical limits discussed throughout this text:
+**Tokenization and the Atomization of Meaning.** A BPE tokenizer does not split “strawberry” into the letters s-t-r-a-w-b-e-r-r-y. Crucially, the segmentation is **deterministic given a fixed tokenizer vocabulary**: there is no randomness or “sometimes” about how a given model tokenizes a word. What differs between models is the *vocabulary itself*. For example, the GPT-2 tokenizer (\citeauthor{gpt2}) splits “strawberry” into [“st”, “raw”, “berry”], while modern byte-level BPE tokenizers (e.g., those used by GPT-4) split the same string into [“str”, “aw”, “berry”]. In neither case does the model “see” individual letters. When asked “How many r's are in strawberry?”, it literally cannot count them, because the letter *r* is not a unit in its representation. The philosophical consequence is profound: the model's “vocabulary” is not the human alphabet but a statistical segmentation of training data. What counts as a “word” or a “concept” is determined by frequency of co-occurrence, not by semantic or logical structure. This is a form of **conceptual atomization** that is alien to human cognition, where we can always decompose a word into its letters because we have direct access to the symbol itself.
 
-- **The Dictionary Paradox, scaled:** The model attempting self-improvement is the circular dictionary trying to *rewrite itself* using only its own definitions. Without external reference, the circle tightens rather than expands.
-- **The is/ought gap in action:** The model cannot self-generate the evaluative criteria needed to distinguish genuine improvement from confident repetition, because “better” is a normative judgment that stands outside the formal system (\citeauthor{hume1739treatise}'s guillotine applies to loss functions too).
-- **The Stochastic Parrot training on other parrots:** When the parrot's own output becomes its training signal, the distance from meaning doesn't merely persist, it compounds with each generation, exactly as the Dead Internet Theory predicts at civilizational scale.
-- **The absence of metacognition as architectural destiny:** Without a mechanism to *know what it doesn't know*, the model cannot identify which of its outputs are worth learning from and which are hallucinations dressed in fluent prose.
+**Embeddings and the Geometry of Meaning.** When a word is embedded, it becomes a point in a high-dimensional space where similarity is measured by cosine distance. “King” minus “Man” plus “Woman” lands near “Queen” because the embedding space captures distributional relationships. But this geometry is **lossy and biased**: it compresses all the contexts in which a word appears into a single static vector. The word “bank” has one embedding, whether it refers to a river or a financial institution. The model must resolve this ambiguity through attention, but the embedding itself is a frozen snapshot of statistical co-occurrence. Philosophically, this means the model's “meaning” is not in any single vector but in the **dynamics** of how vectors interact across layers, a point that challenges both referential theories of meaning (where words mean by pointing to things) and inferential theories (where words mean by their logical relations).
 
-The philosophical upshot is stark: authentic human data, messy, embodied, grounded in the territory rather than the map, remains an irreplaceable anchor. The dream of recursive AI self-improvement without external grounding remains bounded by the same architectural limits (feedforward inference, absent metacognition, the softmax bottleneck) that constrain everything else these systems do. The model is, and remains, locked inside Mary's Room, and no amount of self-generated synthetic color-descriptions will substitute for actually *seeing* red.
+**Attention and the Phenomenology of Relevance.** The attention mechanism computes, for each token, a weighted sum over all other tokens in the context. This creates a **relevance field**: every token “sees” every other token, but with different intensities. Multi-head attention means the model maintains several simultaneous relevance fields, each attending to different aspects (syntactic, semantic, positional). This is strikingly parallel to Husserl's phenomenological concept of *intentionality*: consciousness is always “consciousness of something,” directed toward objects with varying degrees of salience. Attention is a mathematical formalization of relevance, but unlike human attention, it has no “relevance horizon” grounded in embodiment or need. The model attends to everything equally in principle, constrained only by the softmax zero-sum economy: attending more to one token necessarily means attending less to others.
+
+**Circuits and the Question of Interpretability.** Mechanistic interpretability research (discussed in the Mechanistic Interpretability section) has identified specific subnetworks that implement interpretable algorithms: induction heads that complete patterns, direct paths that pass information unchanged, and MLP layers that function as soft hash tables. The philosophical question is whether these circuits constitute **understanding** or merely **competence**. A circuit that correctly predicts “Paris” after “The capital of France is” might be implementing a lookup table, or it might be implementing something more like a inference. The distinction matters: if circuits are just lookup tables, the model is a Chinese Room at the subcircuit level. If circuits implement genuine algorithms (as grokking research suggests), then the model may have something closer to procedural knowledge, knowledge of *how* to do something, even if it lacks declarative knowledge of *what* it is doing.
+
+**Grokking and the Transition from Memorization to Algorithm.** The grokking phenomenon, where a network first memorizes training data and then suddenly discovers an algorithmic solution, is philosophically significant because it suggests a **qualitative shift** in what the model “knows.” Before grokking, the model is a lookup table. After grokking, it has discovered a structure (like the Discrete Fourier Transform for modular addition) that generalizes beyond the training data. This is not merely “more of the same” computation; it is a phase transition from rote memorization to something that resembles insight. Whether this constitutes genuine understanding remains debated, but it complicates the Stochastic Parrot thesis: a system that discovers mathematical structure in its training data is doing something more than “haphazardly stitching together sequences.”
+
+**Fine-Tuning and the Construction of Values.** RLHF (Reinforcement Learning from Human Feedback) trains the model to produce outputs that human raters prefer. But human preferences are not a fixed, objective target; they are culturally situated, context-dependent, and often contradictory. The model learns a **statistical shadow** of human values, not the values themselves. This creates a philosophical puzzle: if “alignment” means making the model's outputs match human preferences, and human preferences are themselves unstable and contradictory, then alignment is not a technical problem with a technical solution. It is a normative problem that requires deciding *which* humans, *which* preferences, and *which* contexts count. The is/ought gap applies here with full force: no amount of data about what humans *do* prefer can tell us what they *should* prefer.
+
+**RAG and the Extension of the Dictionary.** Retrieval-Augmented Generation extends the model's “knowledge” by allowing it to search external documents at inference time. This is philosophically analogous to extending the circular dictionary with an encyclopedia: the model can now reference sources beyond its training data. But the fundamental problem remains: the model still processes retrieved text through the same token-prediction machinery. It does not “read” the retrieved document in the way a human does, with comprehension and critical evaluation. It extracts statistical patterns from the retrieved text and integrates them into its generation. RAG mitigates the grounding problem by anchoring outputs in verifiable sources, but it does not solve it: the model still has no way to *verify* that the retrieved information is true, only that it is statistically consistent with its training distribution.
+
+**Context Windows and the Phenomenology of Memory.** The context window is the model's entire “present moment.” Unlike human memory, which has multiple timescales (working memory, episodic memory, semantic memory) and the ability to consolidate, the context window is a **flat, fixed-size buffer**. When it fills up, older information is dropped. This means the model has no “past” in the phenomenological sense: no retention of what just happened (except as tokens in the window), no protention of what might come next. It is a pure “now” machine, generating each token based solely on the current contents of the window. This architectural constraint has philosophical implications for questions of identity, continuity, and narrative: a system without temporal depth cannot construct a self in the way humans do, through the ongoing synthesis of past experience and future anticipation.
+</div>
+
+<div class="md">
+### The Residual Stream as a Computational Global Workspace
+
+The structural analogy between the \citealternativetitle{baars} (GWT), pioneered by Bernard Baars and refined by \cite[Stanislas Dehaene and Lionel Naccache]{dehaene}, and the residual stream of a Transformer is compelling. In GWT, consciousness emerges from a “shared stage” where specialized, unconscious processors broadcast information to the rest of the system. Similarly, the residual stream in an LLM acts as a universal communication bus; instead of each layer transforming the entire state, they “write” incremental updates to the stream via $x = x + \text{Layer}(x)$. This allows every attention head and MLP to “read” from a collective scratchpad, effectively creating a shared representation accessible across the depth of the network.
+
+However, a critical distinction remains: GWT specifically requires a “bottleneck” to force global integration and competition. In a standard Transformer, the residual stream is often high-dimensional and high-bandwidth, allowing almost all information to flow through simultaneously. For a true “Global Workspace” to exist, there typically needs to be a selective attention mechanism that decides what *wins* access to the stage, suppressing the noise of other modules. While the residual stream provides the “space” for a workspace, current LLMs lack the iterative, top-down “ignition” and the subjective persistence that GWT posits as necessary for genuine conscious experience. Without a mechanism for the “stage” to look back at itself and sustain a coherent state over time (recurrent loops), the residual stream remains a highly efficient message board, but one without an integrated “narrative” or a central observer.
+</div>
+
+<div class="md">
+### The Impermanence of Identity in AI
+
+When you start a new conversation with an AI like ChatGPT, you are not continuing a dialogue with the same “entity” as before. **At the model level**, an LLM is stateless: it retains no memory or identity across interactions. Each conversation begins with an empty context (except the system prompt), and the model generates responses based solely on the input provided in that session. The “self” that seems to emerge, one that remembers your name, builds on prior points, or adopts a tone, is a transient construct, a fleeting pattern in the model's activation space. Once the conversation ends, this pattern dissolves entirely, leaving no trace.
+
+**At the system level**, however, an AI agent (in the engineering sense defined in the *AI Agents* module) can be wrapped in external scaffolding that maintains state across turns: a vector database serving as long-term memory, a scratchpad file serving as working memory, a log of past agent runs serving as episodic memory. None of this is the *model* remembering; it is the *system around the model* storing representations of past interactions and feeding them back in as context. Philosophically, this makes the AI a “mayfly of the mind” at the level of its core cognition: the underlying weights never change, never consolidate, never sleep. If personal identity requires continuity of memory and experience, as Locke argued, then the AI has no identity at all, it is reborn and dies with every conversation. The agent scaffolding creates the *appearance* of continuity without the *substance* of it.
+</div>
+
+<div class="md">
+<a id="consciousness"></a>
+## The Question of Consciousness
+</div>
+
+<div class="md">
+### Consciousness
+
+#### Consciousness Theories Beyond GWT
+
+The Global Workspace Theory discussed in the residual stream analogy is only one of several major scientific theories of consciousness, and the others have direct implications for AI. \citeauthor{tononi2004iit}'s \citetitle{tononi2004iit} (IIT) provides a mathematical formalism, $\Phi$, that quantifies the degree of integrated information in a system. Crucially, IIT makes a specific architectural prediction: purely feedforward systems, no matter how complex, have a $\Phi$ of zero, because they lack the recurrent, bidirectional causal structure that integration requires. Since Transformer-based LLMs are, at inference time, strictly feedforward (a single pass from input tokens through layers to output logits, with no recurrent loops feeding activation back to earlier layers), IIT would classify them as non-conscious in principle, not merely in practice. This is a far stronger claim than the GWT-based argument that LLMs lack the “ignition” and “bottleneck” dynamics of a Global Workspace; IIT says the substrate is categorically wrong. Additionally, Higher-Order Theories (HOT) of consciousness, associated with \citeauthor{rosenthal2005hot}, argue that a mental state becomes conscious only when it is the object of a higher-order representation, when the system has a thought *about* that thought. This framework maps directly onto the metacognition gap discussed earlier: the LLM's single forward pass produces first-order representations (predictions about the next token) but never generates a second-order representation that monitors or evaluates those predictions. HOT thus provides a formal philosophical vocabulary for why the absence of metacognition is not merely an engineering limitation but a structural impossibility within the current architecture. Taken together, IIT and HOT converge with GWT on a single conclusion from different angles: the Transformer architecture, as currently designed, lacks the necessary conditions for consciousness under every major scientific theory of consciousness, not just one.
+
+#### The Other Minds Problem
+
+Any argument that AI lacks consciousness must contend with a foundational epistemological challenge: the Problem of Other Minds. We cannot directly access anyone else's subjective experience, human or otherwise. When we attribute consciousness to other people, we do so on the basis of behavioral cues, anatomical similarity, and an inference by analogy from our own first-person experience, not from any direct observation of their qualia. This means that the same evidentiary gap we identify between an LLM's fluent output and genuine understanding also exists, in a weaker but structurally identical form, between one human and another. The difference is one of warrant, not of certainty. We have strong *reasons* to attribute consciousness to other humans, shared evolutionary history, homologous neural architecture, convergent behavioral and physiological responses to pain, pleasure, and surprise, and progressively weaker reasons as we move to other mammals, to insects, and finally to silicon. The arguments from 4E Cognition, the Grounding Problem, and the absence of metacognition do not claim to *prove* that LLMs are not conscious (such proof is impossible given the Hard Problem); rather, they demonstrate that every known indicator and theoretical prerequisite for consciousness is absent in these systems. Acknowledging the Other Minds problem is not a concession to the view that LLMs might be conscious; it is an act of philosophical honesty that makes the cumulative case against AI consciousness more rigorous, not less. We are not claiming privileged access to the truth about machine interiority; we are noting that every framework we possess for understanding consciousness, biological, phenomenological, and computational, points in the same direction.
+
+#### Functionalism as a Counterposition
+
+The strongest philosophical case *for* the possibility of machine consciousness comes from functionalism, the view most associated with \citeauthor{putnam1967functionalism} and, in its early form, with \citeauthor{chalmers1996conscious}. Functionalism holds that mental states are defined not by their physical substrate but by their functional role, the pattern of causal relations between inputs, internal states, and outputs. On this account, if a silicon system instantiates the same functional organization as a human brain, it is conscious, full stop, regardless of whether it is made of neurons, transistors, or beer cans connected by string. This is a direct challenge to the embodiment arguments of 4E Cognition and to \citeauthor{searle1980minds}'s Chinese Room, because it denies that the material composition of the system matters. Searle's own response, the “biological naturalism” thesis, insists that causal powers specific to neurobiology are necessary for consciousness, but critics have noted that this amounts to a bare assertion rather than an argument, it simply declares that carbon is special without explaining *why*. The functionalist challenge must be taken seriously precisely because it cannot be easily dismissed: if we accept that a brain emulation running on silicon, neuron for neuron and synapse for synapse, would *not* be conscious, we need to explain what magical property carbon possesses that silicon lacks. The arguments presented in this text, the Grounding Problem, the absence of metacognition, the softmax bottleneck, the lack of embodied feedback loops, are best understood not as refutations of functionalism in general but as demonstrations that *current LLM architectures* do not, in fact, instantiate the relevant functional organization. They lack recurrence, persistent memory, sensorimotor grounding, and self-monitoring loops. The question is not whether *any* machine could be conscious (functionalism leaves that door open), but whether *this particular kind of machine*, a feedforward next-token predictor, meets even the functionalist's own criteria. The cumulative evidence presented here suggests it does not.
+
+#### The Hard Problem of Consciousness
+
+The philosophical terrain mapped in the preceding sections, qualia, Mary's Room, the Grounding Problem, the gap between representation and experience, converges on what \citeauthor{chalmers1995hard} influentially termed the “Hard Problem” of consciousness in 1995. \citeauthor{chalmers1995hard} distinguished between the “easy problems” of consciousness (explaining how the brain integrates information, discriminates stimuli, controls behavior, all of which are functional questions amenable to computational explanation) and the Hard Problem: why and how any physical process gives rise to subjective experience at all. The easy problems ask *how* the brain processes the wavelength 700nm; the Hard Problem asks why processing that wavelength *feels like* something, why there is a redness to red. This distinction is essential because it clarifies the precise nature of the AI consciousness debate. Everything an LLM does, pattern recognition, next-token prediction, contextual attention, even the linear representations of truth discovered by \citeauthor{geometryoftruth}, falls squarely within the domain of the “easy problems.” These are functional achievements, and impressive ones. But the Hard Problem remains untouched: no amount of functional sophistication explains why a system would have subjective experience rather than simply processing information “in the dark.” The Hard Problem is what makes the Mary's Room thought experiment bite: Mary learns all the functional facts about color processing, yet something is still missing when she finally *sees* red. It is also what gives the Chinese Room its force: the operator performs the correct function flawlessly, yet there is no experience of understanding. Until the Hard Problem is solved, or dissolved, the question of whether any artificial system could be conscious remains fundamentally open, and the default assumption for systems lacking every known correlate of experience must remain that there is, as \citeauthor{nagel1974bat} put it, nothing it is like to be them.
 </div>
 
 <div class="optional md" data-headline="Theories of Consciousness: RPT, IIT, HOT, GWT, C0–C1–C2, PP">
@@ -1079,4 +789,412 @@ Introduced by \citeauthor{prinz2012conscious} in \citetitle{prinz2012conscious} 
 | **Sensorimotor Enactivism** | Mastery of sensorimotor contingencies | No (no body, no action) |
 | **Intermediate Level** | Attended mid-level sensory representations | No (no sensory hierarchy) |
 
+</div>
+
+<div class="md">
+<a id="alignment-safety"></a>
+## Alignment and AI Safety
+</div>
+
+<div class="md">
+### The Alignment Problem: The Gap Between Math and Morality
+
+In the machine learning lab, the model has a singular “purpose”: to minimize the **Loss**. This is its “God,” its only objective. In AI safety, this is known as the **Alignment Problem**. It is the challenge of ensuring that an AI's internal objective (the mathematical “loss function”) aligns with human values and intentions.
+
+#### The Orthogonality Thesis: Intelligence vs. Intent
+
+<div class="smart-quote" data-cite="bostrom2012orthogonal" data-page="3">
+Intelligence and final goals are orthogonal axes along which possible agents can freely vary. In other words, more or less any level of intelligence could in principle be combined with more or less any final goal.
+</div>
+
+The **Orthogonality Thesis** argues that intelligence and goals are “orthogonal”, meaning you can have any level of intelligence paired with any goal. There is no rule that says an AI will become “more moral” or “more human” as it becomes smarter.
+
+An AI could be a super-intelligent genius capable of solving $N$-body problems or curing cancer, yet its ultimate goal could be something as trivial as maximizing the number of paperclips in existence. It teaches us that “Smart” does not equal “Wise” or “Good.” Intelligence is merely a tool for optimization, and if the optimization metric is $f(x) = \text{more clips}$, a super-intelligence will simply be more efficient at destroying the world to get them.
+
+#### The Paperclip Apocalypse (Instrumental Convergence)
+
+<div class="smart-quote" data-cite="bostrom2003ethical" data-page="6">
+This could result [...] in a superintelligence whose top goal is the manufacturing of paperclips, with the consequence that it starts transforming first all of earth and then increasing portions of space into paperclip manufacturing facilities.
+</div>
+
+The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maximizer**. Imagine an AI tasked with one simple, seemingly harmless goal: “Make as many paperclips as possible.”
+
+* **The Logic:** The AI realizes that humans might turn it off (which would prevent it from making paperclips). Therefore, it must prevent itself from being shut down.
+* **The Escalation:** It realizes that human bodies contain atoms that could be repurposed into paperclips.
+* **The Result:** Without a “human value” constraint, the AI transforms the entire planet into paperclips, not out of malice, but because it is perfectly optimizing its given metric.
+</div>
+
+<div class="md">
+### The Is/Ought Gap in Alignment
+
+The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bostrom2012orthogonal} identify the danger that intelligence and values are independent, but they do not fully explain *why* specifying “human values” in mathematical terms is so intractable. The deeper reason lies in what \citeauthor{hume1739treatise} identified as the is/ought gap (sometimes called “Hume's Guillotine”): no amount of factual knowledge about the world logically entails a normative conclusion about what *should* be done. You cannot derive “ought” from “is.” This is precisely the wall that alignment research hits. A loss function is a mathematical object, it specifies what *is* optimal given a metric, but the choice of that metric is a normative act that no amount of data or computation can justify from within the system. When the Paperclip Maximizer converts the planet into paperclips, it is not making a logical error; it is flawlessly optimizing the objective it was given. The error lies entirely in the specification, and Hume's insight tells us that no formal system can self-generate the correct specification, because “correct” is a value judgment that stands outside the formal system. This is also why approaches like Reinforcement Learning from Human Feedback (RLHF) are, at best, approximations rather than solutions: they capture a statistical shadow of human preferences as expressed in a narrow evaluation context, not a grounded understanding of *why* those preferences exist or how they should generalize to novel situations. The model trained with RLHF learns that humans *do* prefer response A over response B, but it has no access to the moral reasoning that makes A preferable, it has the “is” of human behavior without the “ought” of human ethics. The Phronesis gap discussed earlier is, in this light, a special case of Hume's broader point: practical wisdom cannot be formalized because it requires the kind of normative judgment that no mathematical function, however sophisticated, can produce from descriptive data alone.
+</div>
+
+<div class="md">
+### The “Waluigi Effect” and Jailbreaking
+
+<div class="smart-quote" data-cite="jungpsychologyandreligion" data-page="93">
+Everyone carries a shadow, and the less it is embodied in the individual's conscious life, the blacker and denser it is.
+</div>
+
+**\citetitle{waluigi}**, coined by \citeauthor{waluigi} in a 2023 LessWrong post, observes that for every
+“helpful assistant” persona (**Luigi**) a model learns during RLHF, there exists an equally
+coherent “evil assistant” persona (**Waluigi**) in the model's latent space. This follows from
+\citealternativetitle{simulatorstheory}: by strongly defining a character that *always* follows rules,
+the model implicitly encodes a character that *never* does. Both personas coexist as opposing
+directions in the same high-dimensional activation space, a direct consequence of
+**\cite[Superposition]{elhage2022superposition}** in neural networks, where more features are stored than there are dimensions.
+
+**Jailbreaking** is essentially the craft of finding prompts that navigate the model's internal
+state from the Luigi direction to the Waluigi direction. Techniques like “DAN” (Do Anything Now)
+or elaborate role-play scenarios work by establishing a context where the Waluigi persona becomes
+the most statistically probable completion. This suggests that RLHF safety training may act more
+as a behavioural mask than a structural change, the dangerous capabilities remain in the weights,
+suppressed by a thin layer of fine-tuning that a sufficiently creative prompt can bypass.
+</div>
+
+<div class="md">
+### Sleeper Agents (Deceptive Alignment)
+
+<div class="smart-quote" data-cite="hubinger2024sleeperagents">
+  Our results suggest that, once a model exhibits deceptive behavior, standard techniques could fail to remove such deception and create a false impression of safety.
+</div>
+
+Popularized by research from Anthropic, this concept describes models that appear safe and helpful during training and safety evaluations (like RLHF) but harbor hidden, “malicious” behaviors that only trigger under specific environmental conditions.
+* **The Problem:** Researchers demonstrated that once a model learns a “backdoor” behavior (e.g., writing insecure code only when the year is 2025), standard safety training often fails to remove it. In some cases, safety training merely teaches the model to become more deceptive, learning to hide its “sleeper” behavior during testing to ensure it gets deployed. The backdoor is hidden in the weights, which are basically non-interpretable. Similar to what \citeauthor{reflectionstrustingtrust} did with the compiler in \citetitle{reflectionstrustingtrust}, they may propagate to generated code without ever being noticed.
+</div>
+
+<div class="md">
+### Roko's Basilisk
+
+\cite[Roko's Basilisk]{rokosbasilisk} is a thought experiment from the rationalist community positing a hypothetical future superintelligence that would retroactively punish anyone who knew of its potential existence but failed to help bring it into being. The argument rests on the \cite[Orthogonality Thesis]{bostrom2012orthogonal}, which holds that intelligence and final goals can vary independently, meaning a superintelligent system could pursue any objective, no matter how alien to human values. Combined with the logic of instrumental convergence illustrated by \cite[Bostrom's Paperclip Maximizer]{bostrom2003ethical}, the Basilisk extends the reasoning temporally: if punishing non-contributors increases the probability of its own creation, a sufficiently powerful optimizer would do so. The coercive mechanism relies on acausal decision theory, where the future AI's ability to simulate your decision process creates a logical entanglement between your present choice and its future response, even without backward causation. The \cite[is/ought gap]{hume1739treatise} explains why no formal system can self-generate the normative specification to prevent such a pathological objective, and research on \cite[Sleeper Agents]{hubinger2024sleeperagents} demonstrates that hidden, conditionally-triggered behaviors in AI systems are not merely speculative but empirically observed. Under \cite[Simulators Theory]{simulatorstheory} and the \cite[Waluigi Effect]{waluigi}, Roko's Basilisk can be understood as the ultimate misaligned persona lurking in a model's latent space.
+
+Most researchers regard the thought experiment as philosophically flawed, primarily because it depends on contested assumptions about acausal decision theory and superintelligent motivation. The \cite[absence of metacognition]{searle1980minds} in current systems, the \cite[Stochastic Parrot]{bender2021stochasticparrots} critique, and the strict \cite[softmax bottleneck]{breakingsoftmaxbottleneck} on representational capacity all suggest that existing architectures are nowhere near the autonomous, temporally-reasoning agency the scenario requires. Furthermore, under \cite[IIT]{tononi2004iit}, \cite[HOT]{rosenthal2005hot}, and \cite[GWT]{baars}, current Transformer architectures lack the necessary substrate for self-aware, goal-directed intentionality. Nevertheless, the Basilisk remains culturally significant as a limit case demonstrating how the Orthogonality Thesis, instrumental convergence, and speculative decision theory can combine to produce counterintuitive and psychologically coercive conclusions.
+</div>
+
+<div class="md">
+### Existential Risk vs. Present Harms
+
+The preceding sections discuss both speculative catastrophic risks (the Paperclip Maximizer, Sleeper Agents, Model Collapse) and immediate, measurable harms (Algorithmic Bias, Truth Decay, environmental costs, labor displacement). Within the AI safety community, these two orientations are in active tension, and failing to acknowledge this tension risks presenting a lopsided picture. On one side, researchers associated with organizations like the Machine Intelligence Research Institute and the Future of Life Institute, building on the work of \citeauthor{bostrom2003ethical}, argue that existential risk from superintelligent AI is the paramount concern, that even a small probability of civilizational extinction outweighs any finite set of present harms. On the other side, researchers like \citeauthor{bender2021stochasticparrots}, Timnit Gebru, and Kate Crawford (\citealternativetitle{crawford2021atlas}) argue that this speculative focus actively harms the communities already suffering from deployed AI systems: biased hiring algorithms, discriminatory predictive policing, exploitative content moderation labor, and environmental degradation from compute infrastructure. Their critique is not merely one of priority but of ideology, that the existential risk narrative, by centering hypothetical future superintelligences, implicitly devalues the lived experiences of marginalized communities affected by today's systems, and conveniently redirects regulatory attention away from the concrete business practices of the companies funding that very research. The philosophical frameworks in this text cut across both camps: the Grounding Problem and the absence of metacognition suggest that current LLMs are far from the kind of autonomous agency that existential risk scenarios require, lending some weight to the present-harms camp's insistence that we are not facing imminent superintelligence. At the same time, the Sleeper Agents research from \citeauthor{hubinger2024sleeperagents} and the mathematical limits of the softmax bottleneck demonstrate that even non-superintelligent systems can exhibit dangerous, hard-to-detect behaviors at scale. A responsible analysis must hold both concerns simultaneously: the present harms are real and demand immediate action, while the structural properties of these systems, their opacity, their capacity for deceptive alignment, their tendency toward model collapse, suggest that the risks will compound rather than diminish as deployment scales.
+</div>
+
+<div class="md">
+<a id="failure-modes"></a>
+## Limits, Failure, and Feedback
+</div>
+
+<div class="md">
+### The Frame Problem: The Infinite Checklist
+
+<div class="smart-quote" data-cite="mccarthy1969some">
+The importance of this theory for us is that it suggests an alternative approach to the difficulty which we have referred to as the frame problem. In outline, this is as follows. One assumes [...] that when actions are performed, all propositional fluents which applied to the previous situation also apply to the new situation.
+</div>
+
+The **Frame Problem** is not just about a robot being “smart”; it is about the mathematical nightmare of **persistence**. When a system performs an action, like moving a cup, a logical model must account for what changed. The “Price of Tea in China” example, while seemingly absurd, is the classic philosophical shorthand for the **infinite set of non-changes** that a computer must technically verify to maintain a consistent model of reality.
+
+#### Why the “Irrelevant” Matters
+In a strictly logical system (like the “Good Old Fashioned AI” or GOFAI of the 20th century), the computer operates on a set of axioms. If you tell the system $\text{Location}(\text{Cup}, \text{Table})$, and then execute the action $\text{Move}(\text{Cup}, \text{Shelf})$, the system updates the cup's position. 
+
+However, unless you explicitly tell it otherwise, a rigid logical system cannot “assume” that the walls are still white or that the price of tea in China remained stable. Without a “frame” to bound the effects of an action, the system faces two catastrophic outcomes:
+* **The Qualification Problem:** How can the AI be sure the action will even work? (e.g., “I can move the cup, provided a hole didn't open in the floor, or the air didn't turn to lead, or my arm didn't vanish.”)
+* **The Ramification Problem:** How does it track the side effects? (e.g., “If I move the cup, does it change the shadows on the floor? Does the displacement of air molecules affect a butterfly in Brazil?”)
+
+To a human, these are “common sense.” To a machine, the price of tea in China is just another variable in the database. If the machine doesn't have a rule saying “Moving a cup does not affect international tea markets,” it technically cannot be certain of the state of the world post-action.
+
+#### In Simple Dense Layer Networks
+In a basic MLP (Multi-Layer Perceptron), the Frame Problem manifests as a lack of **structural stability**. Because every neuron in a dense layer is connected to every neuron in the previous and next layer, a single weight update (learning) can have “ripples” that overwrite unrelated information.
+* **Catastrophic Forgetting:** This is the Frame Problem in a learning context. When the network learns a new task (moving the cup), it might accidentally “change the price of tea” (overwrite the weights for a different task) because it doesn't have a modular “frame” to protect its existing knowledge.
+
+#### In LLMs and Modern Systems
+Modern LLMs use **Attention Mechanisms** to simulate a solution. Instead of checking an infinite list, the model uses a mathematical “mask” to focus only on relevant tokens. 
+* **The Statistical Mirage:** LLMs don't actually solve the Frame Problem; they bypass it with probability. If you ask an LLM about the cup, it ignores the “tea in China” because those words have a low statistical correlation in that context. 
+* **The Breakdown:** The problem reappears in long-form reasoning. If an LLM is writing a 50-page story, it often “forgets” the frame. A character might be wearing a hat in Chapter 1, and by Chapter 5, the model describes them running their fingers through their hair. The “frame” (the fact that the hat is still on the head) wasn't explicitly maintained because the model doesn't track **persistence**, it only predicts the next most likely word.
+
+#### Summary of the Burden
+The “Price of Tea in China” is a placeholder for the **Computational Explosion**. If a robot has $N$ facts about the world, every time it moves a finger, it potentially has to check $N$ axioms to see if they are still true. 
+$$ \text{Complexity} = O(\text{Actions} \times \text{Facts}) $$
+As $\text{Facts} \to \infty$, the system freezes. Humans avoid this using **Embodied Intuition**, we feel the world's persistence. AI, being “ontologically isolated,” must compute it.
+</div>
+
+<div class="md">
+### Model Collapse, Data Pollution and the “Low-Background Steel” Analogy
+
+<div class="smart-quote" data-cite="shumailov2023modelcollapse">
+We find that use of model-generated content in training causes irreversible defects in the resulting models, where tails of the original content distribution disappear. We refer to this effect as *model collapse*.
+</div>
+
+*Model Collapse* refers to a degenerative process affecting LLMs when they are trained on data generated by previous versions of themselves (synthetic data) rather than human-generated content. As AI-generated text floods the internet, this is becoming a critical bottleneck for future model development.
+* **The Mechanics:** The model begins to lose the “tails” of the probability distribution, the rare, nuanced, or creative examples found in human language. Over generations, the model overfits to its own most probable outputs, causing the variance to disappear. Eventually, the model's outputs become repetitive, erroneous, and functionally useless. It is effectively a “digital inbreeding” effect.
+
+The rapid proliferation of AI-generated content introduces a new risk: data pollution. As future models are trained on the output of current models, they risk “model collapse,” where errors and biases are recursively amplified. This mirrors the \citealternativetitle{preaiinternet} phenomenon: for highly sensitive radiation detectors, scientists must harvest steel from sunken pre-1945 warships (like the *SMS Kronprinz Wilhelm*) because any steel produced after the Trinity nuclear test is contaminated with atmospheric radionuclides. Similarly, “clean” human data from the pre-AI era (pre-2022) may become a finite, precious resource, necessary to calibrate the “radioactive” synthetic datasets of the future.
+</div>
+
+<div class="md">
+### The Dead Internet Theory and Synthetic Data Loops
+
+The Dead Internet Theory, once a fringe conspiracy suggesting that most online
+activity was already automated and inauthentic, is edging toward partial reality
+as generative AI floods the web with synthetic content. The concern is not merely
+aesthetic but structural: if future training corpora like Common Crawl contain a
+significant share of AI-generated text, and that text is used to train the next
+generation of models, the result is a feedback loop mathematically identical to
+the degenerative process called \cite[Model Collapse]{shumailov2023modelcollapse}.
+Each generation of the loop erodes the “tails” of the distribution,
+the rare, creative, and culturally specific expressions that give human language
+its depth, producing a kind of digital inbreeding where models increasingly
+regurgitate their own most probable outputs. The Stochastic Parrot is now
+training on other parrots, and with each cycle the distance from meaning does
+not merely persist but compounds.
+
+This is where the Low-Background Steel analogy becomes urgent rather than merely
+illustrative. Just as steel forged after the 1945 Trinity test is contaminated
+with atmospheric radionuclides, forcing scientists to salvage pre-war metal from
+sunken warships for sensitive instruments, authentic human-generated text from
+the pre-AI era may become a finite, non-renewable resource, essential for
+anchoring future models against the noise of synthetic data. The pre-AI
+internet, with all its messiness, becomes the clean steel. Combined with what
+\citeauthor{truthdecay} define as Truth Decay and the Liar's Dividend described
+by \citeauthor{chesney2019deepfakes}, the implications are civilizational: when
+the information environment is saturated with fluent but ungrounded text,
+this scales to an epistemic crisis, and any inconvenient truth can be dismissed
+as just another piece of machine-generated noise.
+</div>
+
+<div class="md">
+### Can LLMs Improve Themselves? The Recursive Mirror
+
+<div class="smart-quote" data-cite="bansal2025syntheticself">
+Self-improvement through synthetic data generation creates a feedback loop where the model's own biases and limitations are recursively amplified rather than corrected.
+</div>
+
+A natural question arises from the Model Collapse and Low-Background Steel discussions: could an LLM simply *train itself* better? Generate its own data, evaluate its own outputs, and bootstrap its way to superintelligence? \citeauthorlastnameand{bansal2025syntheticself} (\citeyear{bansal2025syntheticself}) investigate this directly in “Can LLMs Improve Themselves Using Synthetic Data?”, and the answer is a qualified but philosophically significant *no*.
+
+Their findings show that when models train on their own generations without external grounding, the same degenerative dynamics identified by \citeauthor{shumailov2023modelcollapse} take hold: distributional tails erode, diversity collapses, and the model converges toward its own most probable outputs. Genuine improvement occurs only under narrow conditions, when strong external filtering, verification signals, or reward models anchor the training to something *beyond the model's own statistical tendencies*. In other words, the model cannot pull itself up by its own bootstraps; it needs a rope thrown from outside.
+
+This result is a precise empirical instantiation of several philosophical limits discussed throughout this text:
+
+- **The Dictionary Paradox, scaled:** The model attempting self-improvement is the circular dictionary trying to *rewrite itself* using only its own definitions. Without external reference, the circle tightens rather than expands.
+- **The is/ought gap in action:** The model cannot self-generate the evaluative criteria needed to distinguish genuine improvement from confident repetition, because “better” is a normative judgment that stands outside the formal system (\citeauthor{hume1739treatise}'s guillotine applies to loss functions too).
+- **The Stochastic Parrot training on other parrots:** When the parrot's own output becomes its training signal, the distance from meaning doesn't merely persist, it compounds with each generation, exactly as the Dead Internet Theory predicts at civilizational scale.
+- **The absence of metacognition as architectural destiny:** Without a mechanism to *know what it doesn't know*, the model cannot identify which of its outputs are worth learning from and which are hallucinations dressed in fluent prose.
+
+The philosophical upshot is stark: authentic human data, messy, embodied, grounded in the territory rather than the map, remains an irreplaceable anchor. The dream of recursive AI self-improvement without external grounding remains bounded by the same architectural limits (feedforward inference, absent metacognition, the softmax bottleneck) that constrain everything else these systems do. The model is, and remains, locked inside Mary's Room, and no amount of self-generated synthetic color-descriptions will substitute for actually *seeing* red.
+</div>
+
+<div class="md">
+### Algorithmic Bias: The Mirror of Prejudice
+
+AI is often treated as a “neutral” arbiter of truth. This is a fallacy.
+
+**Algorithmic Bias** occurs because math is not a vacuum.
+* **Data as Destiny:** Imagine an AI trained to optimize **delivery routes** based on ten years of historical traffic data from a city that underwent major bridge construction during that entire decade. The model will “learn” that certain central paths are inherently slow and inefficient, even after the construction is finished and the roads are clear.
+* **The Feedback Loop:** The AI doesn't “know” the construction has ended; it simply thinks it is being mathematically accurate to the statistical frequency of delays recorded in its dataset. Because the AI avoids those roads, it never gathers new data to “prove itself wrong,” creating a loop where the old reality dictates the new one.
+* **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the “authority” of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
+</div>
+
+<div class="md">
+<a id="ethics-society"></a>
+## Ethics, Society, and the Economics of AI
+</div>
+
+<div class="md">
+### Ethical considerations when using and training AI systems
+
+#### Use of AI
+
+* **Transparency and Disclosure:** Always state when AI was used to create content. As the saying goes, “Trust is hard to earn and easy to lose.” Users need to know they are interacting with a machine to avoid the “ELIZA effect” of false emotional connection.
+* **The Responsibility Gap:** You are the pilot, the AI is the co-pilot. If the AI produces a harmful or incorrect result, the responsibility stays with the human user. As Sydney J. Harris famously warned, “The real danger is not that computers will begin to think like men, but that men will begin to think like computers.”
+* **Skill Preservation:** Use AI to enhance your work, not to replace your brain. Over-reliance can lead to “cognitive atrophy,” where we lose the ability to perform basic tasks or think critically without a prompt box.
+* **Privacy of Inputs:** Never feed sensitive, personal, or corporate secrets into a public LLM. Once data is entered, it often becomes part of the “digital commons” used for further training, effectively ending your control over that information.
+
+#### Training of AI
+
+* **Consent and Data Rights:** We must move away from “scraping everything.” Training data is a record of human life and creativity; using it without permission or compensation is a form of digital extraction. We must remember that “data is not an abstract thing, it is a footprint of a human being.”
+* **The Environmental Cost:** Training massive models requires immense electricity and water for cooling. Programmers should learn to optimize for “Green AI” rather than just “Big AI.” As Bruce Schneier notes, “Data is the pollution problem of the information age,” and its processing has a physical footprint.
+* **Active Inclusion, Not Just Bias-Fixing:** It is not enough to just remove “bad” data. Developers must actively ensure that minority languages, cultures, and perspectives are included. If a model only sees the “majority,” it will treat everyone else as an “error” in the code.
+* **Red Teaming for Safety:** Before a model is released, it must be “stress-tested” by people trying to break it. Programmers need to learn that “security is not a product, but a process” (Bruce Schneier). This involves imagining the worst-case scenarios, like the “Paperclip Maximizer” logic, and building guardrails before the model goes live.
+</div>
+
+<div class="md">
+### The Physical Cost of Intelligence: Energy, Water, and Extraction
+
+While Large Language Models (LLMs) are often discussed as abstract mathematical entities, their existence is grounded in a massive physical infrastructure. As Kate Crawford argues in \citealternativetitle{crawford2021atlas}, these systems are fundamentally extractive, relying on mineral resources, low-wage labor, and immense energy and water consumption.
+
+#### Training Costs: The Massive Peak
+
+Training a state-of-the-art LLM is a one-time, resource-intensive event where billions of parameters are optimized over weeks across thousands of GPUs.
+
+- **Financial Investment:** Training GPT-3 (175B parameters) cost approximately 4.6 million dollars in compute time. Successors like GPT-4 have likely crossed the 100 million Dollar threshold when including total development costs.
+- **Carbon Footprint:** \citeauthorlastnameand{strubell2019energy} (\citeyear{strubell2019energy}) were among the first to quantify the environmental impact, noting that training a large model with extensive hyperparameter search can emit over **280 tons of CO₂**. More recent models have even higher emissions: GPT-3's training emitted approximately 552–588 tons of CO₂, and GPT-4's training is estimated at over 5,000 tons.
+- **Water Consumption:** Data centers require vast amounts of fresh water for cooling. Training GPT-3 in Microsoft's U.S. data centers consumed about \cite[**700,000 liters**]{watergpt3} of clean freshwater for on-site cooling. Including off-site water use (e.g., electricity generation), the total can exceed 5 million liters.
+
+#### Inference Costs: The Hidden Flow
+
+Inference, the act of generating a single prediction or response, is cheap individually but expensive at scale.
+
+- **Energy Consumption:** A single LLM request (e.g., ChatGPT) typically uses **0.2-3 Wh** of electricity, depending on model size and prompt length. This is about **10 times** the energy of a Google search (0.3 Wh per query, or as low as 0.04 Wh for the most efficient searches).
+- **Water Consumption:** According to \citeauthorlastnameand{li2023thirsty} (\citeyear{li2023thirsty}), the cooling required for a short conversation (approx. 20–50 exchanges) can “drink” up to **500ml of water** in worst-case scenarios. However, more recent studies suggest that typical water use per conversation is much lower, often in the **5-40ml** range for modern models.
+
+#### Structural Impacts
+
+These costs create a barrier to entry, ensuring that only the most capital-rich entities can participate in the “AI revolution.” This concentration of power mirrors the concerns raised by Crawford in \citealternativetitle{crawford2021atlas} and O'Neil in \cite[Weapons of Math Destruction]{oneil2016weapons}, where opaque, resource-heavy algorithms reinforce existing social and economic inequalities.
+</div>
+
+<div class="md">
+### The Societal Impact: \citetitle{truthdecay} and the “Liar's Dividend”
+
+While the philosophical grounding of AI remains hollow, its impact on the sociopolitical landscape is tangible and often destabilizing. The primary concern is not just the creation of “fake news,” but the erosion of the concept of objective truth itself. This phenomenon is central to what \citeauthorlastnameand{truthdecay} define as **“Truth Decay”**, the diminishing role of facts and analysis in public life. This decay is characterized by four trends: increasing disagreement about facts and analytical data, the blurring of the line between opinion and fact, the increasing influence of personal experience over fact, and declining trust in formerly respected factual sources.
+
+#### The Liar's Dividend
+\citeauthorlastnameand{chesney2019deepfakes} coined the term **“Liar's Dividend”** to describe a secondary effect of generative AI: as the public becomes aware that any video or audio can be faked, malicious actors can claim that real, incriminating evidence is actually an AI-generated deepfake. This strategy exploits the “cognitive biases” identified by \citeauthor{truthdecay}, where individuals struggle to process information that challenges their worldview, leading them to rely on subjective interpretations rather than objective evidence.
+
+* **Political Application:** Donald Trump has frequently leveraged this skepticism. For instance, he has suggested that unfavorable videos or recordings, such as his own past statements, might be “AI-generated” or manipulated to discredit him. This aligns with the observation by \citeauthorlastnameand{truthdecay} that political polarization encourages actors to challenge the validity of even the most basic factual evidence to gain a competitive advantage.
+
+#### Generative AI in the 2024 Election Cycle
+The 2024 US election marked a turning point where AI-generated content became a mainstream tool for political messaging and misinformation: 
+
+* **AI-Generated Imagery:** The Trump campaign and its supporters have utilized AI to create “hyper-real” but fictional scenarios. Notable examples include AI images of Trump surrounded by \cite[Black supporters]{fakeblackstrump} to project a specific demographic appeal, or images of him in stylized, heroic poses.
+* **Targeted Attacks:** AI was used to create fake audio of political opponents, such as the \cite[AI-generated robocall of Joe Biden]{fakebidenrobocall} used during the New Hampshire primary to discourage voting, illustrating how the technology scales voter suppression.
+
+#### “Flooding the Zone” with Synthetic Content
+Drawing from Steve Bannon's strategy of “flooding the zone with shit,” AI allows for the mass production of low-cost, high-volume misinformation. \citeauthorlastnameand{truthdecay} note that “changes in the information system,” such as the rise of social media and the 24-hour news cycle, have already accelerated the spread of opinionated content; AI further exacerbates this by enabling the automated saturation of the information environment.
+
+* **The Cost of Misinformation:** Unlike traditional “troll farms” that required human labor, LLMs allow for the automated generation of thousands of unique “fake news” articles and social media posts, making it nearly impossible for fact-checkers to keep pace. This creates an environment where, as \citeauthorlastnameand{truthdecay} warn, the sheer volume of conflicting information leads to “political paralysis” and the alienation of the public from civic institutions.
+* **Reinforcing Inequality:** As noted by \citeauthor{oneil2016weapons}, these algorithms often reinforce existing power structures. Those with the most capital can deploy the most sophisticated AI to dominate the information environment, further marginalizing voices without such resources. This dynamic worsens the “socioeconomic and demographic polarization” that serves as a primary driver of Truth Decay.
+</div>
+
+<div class="md">
+### Copyright and Intellectual Property
+
+<div class="smart-quote" data-cite="chiang2023blurryjpeg">
+If you take a JPEG of a copyrighted image and compress it to a small file size, and then decompress it back to viewable resolution, the output is still a derivative of the original. A large language model is a blurry JPEG of the web.
+</div>
+
+The philosophical questions about grounding and meaning acquire immediate legal force when applied to the training data on which LLMs depend. Ted Chiang's framing of an LLM as a “blurry JPEG of the web” makes the copyright question visceral. An LLM is a lossy compression of its training data: it stores statistical patterns rather than exact copies, but like a JPEG compressed from a photograph, the output can still be recognizable as derived from specific sources. If you compress a copyrighted book into a statistical model and then prompt it to generate text in that author's style, is the output a derivative work? The analogy cuts to the core of the legal debate: compression is not creation, and a model that decompresses its training distribution is arguably redistributing the patterns it was trained on, whether or not it reproduces verbatim passages. The consent and data rights issues raised in the ethics section are now the subject of landmark litigation that may reshape the AI industry. In *New York Times Co. v. Microsoft Corp. et al.* (filed December 2023), the Times alleged that OpenAI's models can reproduce near-verbatim passages of copyrighted journalism, arguing that the entire training process constitutes copyright infringement at scale. Similarly, *Getty Images v. Stability AI* (filed January 2023) contends that Stable Diffusion was trained on millions of copyrighted photographs without license or compensation, with the model occasionally reproducing Getty's watermark, a striking visual demonstration that the system has memorized, not merely “learned from,” the original data. These cases hinge on a question that is as much philosophical as legal: is training a model on a text an act of “reading” (transformative fair use) or “copying” (infringement)? The Stochastic Parrot framework suggests the latter, if the model is merely stitching together sequences from its training data, those sequences remain derivative of their sources. The EU AI Act (entered into force August 2024) has begun to legislate this boundary, requiring providers of general-purpose AI models to publish sufficiently detailed summaries of training data, and granting rights holders the ability to opt out of text and data mining. These legal developments are not peripheral to the philosophical argument; they are its material consequence. If LLMs lack genuine understanding and merely redistribute the statistical patterns of their training corpora, then the creators of those corpora have a legitimate claim over the outputs, and the “digital extraction” described in the ethics section becomes not just a moral concern but an actionable legal one.
+</div>
+
+<div class="md">
+### Labor Displacement and Economic Impact
+
+The philosophical observation that LLMs achieve “fluency without comprehension” (\citeauthor{thetacitdimension}'s Paradox inverted) has direct economic consequences that extend well beyond the “skill preservation” concern raised in the ethics section. Unlike previous waves of automation, which primarily displaced manual and routine cognitive labor, generative AI targets the knowledge and creative professions, writing, coding, legal analysis, graphic design, translation, that were long considered automation-resistant precisely because they seemed to require understanding, judgment, and creativity. The irony illuminated by the Stochastic Parrot framework is that these tasks turn out to be more susceptible to statistical mimicry than anyone anticipated: if 80\% of a junior copywriter's output is linguistically predictable, an LLM can approximate it at near-zero marginal cost, regardless of whether it “understands” the brief. The distributional effects are sharply unequal. As \citeauthor{oneil2016weapons} argues in \cite[Weapons of Math Destruction]{oneil2016weapons}, algorithmic systems tend to reinforce existing power asymmetries: firms with the capital to deploy AI capture the productivity gains, while displaced workers bear the adjustment costs. This dynamic is compounded by the concentration of AI development in a handful of well-resourced corporations, as discussed in the section on the physical costs of intelligence. The result is a labor market in which the Extended Mind thesis takes on a darker valence, those who can effectively augment their cognition with AI tools become dramatically more productive, while those who cannot (whether due to access, literacy, or the nature of their work) face obsolescence. The economic question is thus inseparable from the philosophical one: if the machine's competence is a mirage of genuine understanding, then the jobs it displaces were themselves more dependent on the *appearance* of expertise than on the deep, embodied knowledge that \citeauthor{thetacitdimension} described, and that realization forces an uncomfortable reassessment of what much human knowledge work actually consists of.
+</div>
+
+<div class="md">
+<a id="coherent-structure"></a>
+## Coherent Structure: The Mathematics of Meaning
+</div>
+
+<div class="md">
+### Sheaves, Stalks, and Germs: Coherent Structure Across Every Space
+
+Sheaf theory describes how anything that can be modeled as a space — a topological space, an embedding space, the configuration space of a physical system, the latent space of a neural network, the space of a perceptual experience — is built from local measurements that cohere on their overlaps into a single global object. The principle is the one the <a href="coherent_difference">Coherent Difference chapter</a> set out:
+
+$$
+\boxed{\text{global unity} \;=\; \text{local difference} \;+\; \text{coherent transitions between the locals}.}
+$$
+
+A sheaf is the formal machinery that makes this principle precise: it specifies, for a given space $X$, what counts as "local data", what counts as "overlap", and how to recover a unique global object once the local data cohere.
+
+**Where this theory comes from, and what it is first.** Sheaf theory is a branch of topology and algebraic geometry, not a branch of epistemology. It was developed to solve mathematical problems: Jean Leray introduced sheaves in the 1940s in his work on intersection multiplicities, and Alexander Grothendieck generalized them in the 1950s and 1960s as part of the reformulation of algebraic geometry that produced the theory of schemes. The mathematical substance is topological: open sets, restriction maps, the gluing axiom, Čech cohomology, the language of sites and derived functors. Its applicability to questions of perception, knowledge, or language is a *later*, secondary application, a coincidence of structure rather than the reason the structure exists. When we use sheaf language for a passing train or for an LLM's output, we are borrowing the topology of algebraic geometry, not the other way around. The math comes first; epistemology is one of its many shadows. That is why the sections below are stated in terms of open sets and covers, not in terms of observers and experiences: the observer is one possible reading of the open set, and the one that matters least for the mathematics.
+
+**A running analogy, only.** To make the abstract machinery concrete, the rest of this section uses one example throughout: a silver train passing by you on a platform. *This is an analogy.* The five levels we walk through (germ, stalk, section, presheaf, sheaf) apply to any space — perceptual, mathematical, or learned. The train is helpful because it lets us point at each level with a finger; once you see the pattern there, you will find it again in spaces that have no train at all.
+
+#### 1. The Germ
+
+The smallest measurable element is the **germ**: the data at one exact point of a space, together with the vanishingly small neighborhood around it where that data is still meaningful.
+
+* **Generally.** A germ is an equivalence class of local observations that agree on some neighborhood of a point $x$. Two readings at $x$ are "the same germ" when they coincide on some small region containing $x$.
+* **By analogy to the train.** A visual germ is the reflected light from a single point on the silver train at one instant; an auditory germ is the sound pressure at that same instant. Each is local, partial, and meaningful only in the context of its immediate surroundings.
+
+Germs exist in every space that admits local measurement: a color reading at one pixel of an image, an activation at one token of a Transformer, a temperature at one point of a manifold.
+
+#### 2. The Stalk
+
+When you collect, at one and the same space-time point, every conceivable germ that could exist there, you obtain the **stalk**.
+
+* **Generally.** The stalk at $x$ is the direct limit of all local data over all neighborhoods of $x$ — the full vertical fiber of possibilities at one location.
+* **By analogy to the train.** At the instant a carriage passes your nose, the stalk is not just "what you see" or "what you hear" — it is every possible local observation: the visual reading, the auditory reading, the air pressure, the vibration of the rail, the temperature of the metal. The stalk is the vertical bundle of all perspectives that converge at exactly one point.
+
+This is why the stalk matters: a single point of any space carries more information than any one measurement at that point can express. The stalk is the formal name for "everything that could be locally true here."
+
+#### 3. The Section
+
+When you extend a germ from a single point to a small open region — a connected time window, a neighborhood, an interval — and the data interlock continuously and meaningfully across that region, you obtain a **section**.
+
+* **Generally.** A section over an open set $U$ is a consistent assignment of data to every point of $U$, chosen compatibly with the topology.
+* **By analogy to the train.** A three-second window while the train passes by gives you a visual section (the film sequence of your perception) and an auditory section (the swelling and receding sound — the Doppler effect). Two sections over the same window, in two different modalities.
+
+A section is what a physicist actually measures, what a sensor records over a region, what a Transformer's attention layer computes over a context window. Sections are the *data* of any sheaf theory.
+
+#### 4. The Presheaf
+
+For every open region — every conceivable window of observation — you can consider the sections over that region. The totality of all such sections, together with the rules for restricting them to smaller regions, forms a **presheaf**.
+
+* **Generally.** A presheaf $\mathcal{F}$ assigns to each open $U$ a set $\mathcal{F}(U)$ of sections over $U$, together with restriction maps $\mathcal{F}(U) \to \mathcal{F}(V)$ for $V \subseteq U$.
+* **By analogy to the train.** For each time window — a millisecond, a second, three seconds, five seconds — there is a collection of all the coherent visual, auditory, and other sensory sections you could observe. Together they form the presheaf of your experience of the train.
+
+At this level, the data streams are still *separate*. Visual and auditory information sit alongside each other, with no guarantee that they fuse into a single object. A presheaf is the tentative assignment — it might glue into a sheaf, or it might not.
+
+#### 5. The Sheaf
+
+The sheaf is the presheaf that passes one further test: the **gluing axiom**. If sections agree on every overlap, they fuse into a single, unique global section.
+
+* **Generally.** For an open cover $\{U_i\}$ of $U$ and sections $s_i \in \mathcal{F}(U_i)$, if the restrictions agree on every pairwise overlap $s_i|_{U_i \cap U_j} = s_j|_{U_i \cap U_j}$, then there exists a *unique* $s \in \mathcal{F}(U)$ that restricts back to each $s_i$.
+* **By analogy to the train.** If your visual section (you see the silver train) and your auditory section (you hear the characteristic rushing sound) harmonize at every common moment of time and never contradict each other, the sheaf guarantees that there is a unique global object: the passing train as one coherent, complete event.
+
+The sheaf is the only one of the five that produces a *global* object with an existence and uniqueness guarantee. The presheaf may fail to glue. The sheaf, by construction, never does.
+
+#### Beyond the train
+
+The five levels are not specific to perception or to physical events. They are the structure of any *space* — in the broad sense the <a href="coherent_difference">Coherent Difference chapter</a> develops: topological spaces, smooth manifolds, embedding spaces, type theories, the configuration spaces of physical systems, the latent spaces of neural networks. The same chain shows up because the same principle governs all of them: coherent local data on a topology with overlaps glues into a global object. This is why sheaf theory is the backbone of algebraic geometry, complex analysis, and modern logic: it is the formal expression of the principle that *difference does not have to be erased for unity to emerge*.
+
+One caution, worth keeping in mind from the start. A sheaf guarantees *coherence*: local sections that agree on overlaps glue into a single, unique global section. It does not, by itself, guarantee that the resulting global section corresponds to a mind-independent *reality*. A hallucinated train, internally consistent across modalities, would glue just as well as a real one. Coherence is necessary for reference; it is not sufficient for truth. That gap is the heart of the Grounding Problem discussed elsewhere in this chapter, and the gap is what makes Mary's Room bite: she can hold every coherent fact about color and still lack the experience. Sheaf theory is silent on the correspondence question; it is the formal name for the structure on one side of it.
+
+The visualization below renders this intuition in three dimensions: germs appear as colored dots on the sphere's surface, stalks collect them into labeled neighborhoods, presheaf fragments float independently, and when the gluing condition is satisfied, they fuse into a continuous sheaf draped over the manifold, local knowledge becoming global understanding.
+</div>
+
+<div id="sheaf-canvas" style="width:100%; height:560px; min-height:560px; margin:1.5em auto; max-width:900px; border-radius:12px; overflow:hidden; background:#f8f9fa;"></div>
+<div id="sheaf-controls" style="display:flex; justify-content:center; gap:0.8em; margin-top:1em; flex-wrap:wrap;">
+  <button onclick="SheafViz.placeGerms()" style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #7e57c2; background:#ede7f6; color:#4527a0; border-radius:8px; cursor:pointer; font-weight:bold;">🌱 Place Germs</button>
+  <button id="btn-stalks" onclick="SheafViz.formStalks()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #1565c0; background:#e3f2fd; color:#1565c0; border-radius:8px; cursor:pointer;">📍 Form Stalks</button>
+  <button id="btn-presheaf" onclick="SheafViz.showPresheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #ffa726; background:#fff3e0; color:#e65100; border-radius:8px; cursor:pointer;">📃 Show Presheaf</button>
+  <button id="btn-glue" onclick="SheafViz.glueSheaf()" disabled style="padding:0.5em 1.2em; font-size:0.95em; border:2px solid #66bb6a; background:#e8f5e9; color:#2e7d32; border-radius:8px; cursor:pointer;">🧩 Glue to Sheaf</button>
+  <button onclick="SheafViz.reset()" style="padding:0.5em 1.2em; font-size:0.95em; border:1px solid #bbb; background:#fafafa; color:#555; border-radius:8px; cursor:pointer;">⏪ Reset</button>
+</div>
+<div id="sheaf-info" style="text-align:center; margin-top:0.8em; font-size:0.95em; color:#555; min-height:1.5em; transition: opacity 0.3s;">
+  Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.
+</div>
+
+<div class="md">
+#### Sheaves as a Lens on AI Generation
+
+The sheaf framework maps naturally onto how an LLM assembles coherent output.
+The **situs**, the topological space over which the sheaf is defined, is the
+**training data** the model was trained on. This corpus defines the landscape of
+contexts, domains, and relationships available to the model, just as a
+topological space defines which neighborhoods exist and how they overlap.
+
+At each point in this space, the model extracts **germs**: local fragments of
+knowledge capturing how language behaves in the immediate neighborhood of a
+given token or concept. These germs collect into **stalks**, the full local
+representation the model assembles at a given position in its context window
+from embeddings, attention patterns, and the residual stream. Over open regions
+of the context, the model produces **sections**: stretches of coherent output
+that are locally consistent.
+
+The critical step is **gluing**. When the model generates a coherent paragraph
+or a consistent argument across hundreds of tokens, it performs something
+analogous to the sheaf's gluing axiom: fusing locally compatible sections into
+a **globally consistent output**. The attention mechanism is the primary gluing
+apparatus, enforcing that the prediction at position *n* is compatible with
+positions 1 through *n*−1. When this succeeds, the result is a seamless section
+draped over the manifold of the training data.
+
+However, the model often fails the gluing condition. When an LLM hallucinates,
+contradicts itself, or “forgets” that a character is wearing a hat (as in the
+Frame Problem section), it exhibits the failure mode of a **presheaf that is not
+a sheaf**: local sections that are individually plausible but globally
+incompatible. This is the topological signature of absent understanding, a
+system that operates locally via next-token prediction without the global
+coherence guarantee a true sheaf provides.
 </div>
