@@ -152,6 +152,7 @@ function load_base_js () {
 	js("echarts-gl.min.js");
 	js("prism.min");
 	js("prism-python.min");
+	js("sidenotes");
 	js("literature");
 	js("citation_graph");
 	js("jquery-3.7.1.min");
@@ -196,8 +197,29 @@ function load_base_js () {
 			_postLoadDone = true;
 
 			try {
+				/* Sidenote extraction MUST run BEFORE bibtexify so that
+				   citations inside sidenote arguments get picked up by
+				   the same pass. The sidenote content is stashed in
+				   hidden .sidenote-source.md containers that the main
+				   pipelines walk into automatically.
+
+				   IMPORTANT: extract() is invoked ONCE via the
+				   DOMContentLoaded handler below (see comment near the
+				   addEventListener call). It must NOT run a second time
+				   here — doing so would reset the in-memory store and
+				   lose track of the markers we already inserted on the
+				   first run. We therefore check `_sidenotesExtracted` to
+				   avoid double-extraction.                                  */
+				if (!window._sidenotesExtracted &&
+				    window.BlogSidenotes && BlogSidenotes.extract) {
+					BlogSidenotes.extract();
+					window._sidenotesExtracted = true;
+				}
 				await bibtexify();
 				renderMarkdown();
+				if (window.BlogSidenotes && BlogSidenotes.finalize) {
+					BlogSidenotes.finalize();
+				}
 				postLoadInit();
 				make_external_a_href_target_blank();
 				revealContent();
@@ -216,6 +238,35 @@ function load_base_js () {
 		}
 
 		window.addEventListener('DOMContentLoaded', loader_fn);
+
+		/* CRITICAL: Sidenote extraction must happen BEFORE init.js's
+		   window.onload fires its renderMarkdown(). If marked.js runs
+		   first, it MUNGES `\sidenote{…}` text in some edge cases,
+		   leaving the directive unrecoverable.
+
+		   DOMContentLoaded fires BEFORE 'load', and our addEventListener
+		   here runs in registration order. Crucially, init.js does NOT
+		   register a DOMContentLoaded handler — only a window.onload —
+		   so this DOMContentLoaded handler fires before init.js's
+		   renderMarkdown, ensuring sidenote extraction sees the raw
+		   markdown before marked.js munges it.
+
+		   We set `_sidenotesExtracted = true` here so the 'load'
+		   handler's runPostLoad() does NOT call extract() a second
+		   time (which would reset the store and lose the markers).  */
+		window.addEventListener('DOMContentLoaded', function () {
+			if (window.BlogSidenotes && BlogSidenotes.extract) {
+				try {
+					BlogSidenotes.extract();
+					window._sidenotesExtracted = true;
+				} catch (err) {
+					console.error('[functions.php] BlogSidenotes.extract() threw:', err);
+				}
+			} else {
+				console.warn('[functions.php] BlogSidenotes not available at DOMContentLoaded — extract() will be retried in runPostLoad. ' +
+					'(This usually means sidenotes.js failed to load — check the Network tab.)');
+			}
+		});
 
 		window.addEventListener('load', async (event) => {
 			_windowLoaded = true;

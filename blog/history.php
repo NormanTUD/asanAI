@@ -56,10 +56,8 @@ The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal}
 It can be thought of as the earliest surviving external mathematical memory of early humans.
 
 #### The Ishango Bone
-<figure style="float: right; width: 30%; max-width: 200px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="ishango.jpg" alt="Ishango Bone" />
-    <figcaption class="md">The \citealternativetitle{ishangobonephoto} is one of the earliest known attempts of outsourcing mathematical thought to physical objects</figcaption>
-</figure>
+
+\marginfig{ishango.jpg}{The \citealternativetitle{ishangobonephoto} is one of the earliest known attempts of outsourcing mathematical thought to physical objects — a baboon fibula carved with grouped notches that may encode prime numbers, lunar months, or a tally of goods.}
 
 The **Ishango bone** is a Paleolithic artifact discovered in 1950 by Belgian geologist \citeauthor{ishangobone} in what is now the Democratic Republic of the Congo. Dated to approximately **c. 18,000 BCE**, this baboon fibula predates the Sumerian and Babylonian mathematical records by over 15,000 years. It features three columns of grouped notches that exhibit curious mathematical properties, such as a column of prime numbers (11, 13, 17, 19) and groups that sum to 60 or 48, though it is not clear whether the prime numbers are intentional of coincidental.
 
@@ -126,8 +124,8 @@ This transition from philosophical dialogue to a rigid logical calculus paved th
 ## The Antikythera Mechanism: Ancient Analog Computing
 
 <figure>
-    <img style="width: 100%" src="antikythera.jpg" alt="Antikythera Mechanism" />
-    <figcaption class="md">\citealternativetitle{antikytheraimage}</figcaption>
+    <img style="max-width: 100%" src="antikythera.jpg" alt="Fragments of the Antikythera Mechanism" />
+    <figcaption>\citealternativetitle{antikytheraimage}. A handheld orrery of at least 30 meshing bronze gears recovered from a 1st-century BCE shipwreck — older than any geared technology that would follow it by more than a millennium.</figcaption>
 </figure>
 
 The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orrery, often described as the world's oldest known analog computer. It was used to predict astronomical positions and eclipses for calendar and astrological purposes decades in advance. It could also track the four-year cycle of athletic games, including the ancient Olympic Games.
@@ -138,7 +136,7 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 
 ## The idea that logical thought can be mechanically calculated
 
-### The earliest attempt: \citeauthor{arsmagna}
+### The earliest attempt: Ramon Llull
 
 <figure>
     <img style="width: 100%" src="FigurScheiben.jpg" alt="Ars Magna" />
@@ -151,7 +149,7 @@ While it looks like a curious mix of mysticism and combinatorics, it is the firs
 
 A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found in \cite[Collins, 2017]{artandlogicofllull}.
 
-Medieval scholar Ramon Llull had quite an interesting life, and has done many things. One of the earliest novels in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person whose works were condemned as heretical by one pope (Gregor XI.), \cite[yet whose legacy was later honored by another]{arsmagnavolvelle} (Pius IX.).
+Medieval scholar Ramon Llull had quite an interesting life, and has done many things beyond his combinatorial wheels.\sidenote{One of the earliest novels in medieval Europe after antiquity, *Blanquerna* (\citetitle{blanquerna}), was by him: it tells the rise of a monk through the ranks of the church to the papacy. He is also the only person whose writings were condemned as heretical by one pope — Gregory XI., in 1376 — \cite[yet whose legacy was later explicitly honoured by another]{arsmagnavolvelle}, Pius IX., roughly five centuries later.} His intellectual range, theology, novel-writing, and combinatorial logic together, is a useful reminder that the boundary between "mystic" and "logician" was much thinner in the 13th century than it is now.
 
 Eight centuries later, a \citeyear{zhao2025thinkingmachine} paper \cite{zhao2025thinkingmachine} directly reconstructed Llull's thinking machine for the age of large language models. By mining three compositional axes, Theme, Domain, and Method, from conference papers and combining them via templates inspired by Llull's combinatorial wheels, the authors built a pipeline that generates diverse, grounded research ideas automatically. This modern incarnation demonstrates that Llull's fundamental insight, that new knowledge can be produced through systematic symbolic recombination, remains productive even in the era of deep learning.
 
@@ -221,7 +219,7 @@ Zuse did not directly work on modern AI systems, but together with people like A
 </div>
 
 <div class="optional md" data-headline="Prerequisite for artificial Neurons: the discovery of the natural neuron">
-The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory. His discovery that neurons are the fundamental signaling units of the nervous system earned him the *Nobel Prize in Physiology or Medicine* in 1906.
+The foundation of AI rests upon the *Neuron Doctrine*, established by the Spanish neuroanatomist \citeauthor{cajaltextura}. Working in the late 19th century, he used specialized staining techniques to prove that the brain was composed of discrete, individual cells rather than a continuous web, a concept known as the Reticular Theory.\sidenote{Cajal shared the 1906 *Nobel Prize in Physiology or Medicine* with his former antagonist Camillo Golgi, who had invented the silver-staining technique Cajal used and who continued to defend the Reticular Theory almost to the end of his life. Their joint ceremony in Stockholm is one of the great "discoverer-vs-inventor" confrontations in the history of science — both men used the same method, looked at the same slides, and saw almost opposite things. The cell doctrine won, and that victory is the precondition for every "artificial neuron" ever written down.} His discovery that neurons are the fundamental signaling units of the nervous system is what eventually let us even imagine building one.
 
 This shift provided the physical blueprint that would later be digitized into the first artificial neural models.
 </div>
@@ -427,10 +425,7 @@ A \citeyear{jensen2026perceptron} \cite{jensen2026perceptron} by the historian G
 A \citeyear{lindquist2026weirdai} \cite{lindquist2026weirdai} in the same “Think Piece” department argues that midcentury neural-AI architects (Rosenblatt, then Rumelhart, Hinton, McClelland and the PDP group in the 1980s) deliberately engineered **nonrationality** into their machines rather than stumbling onto it. Lindquist reads the perceptron, and later PDP, as part of a Romantic countercurrent inside computing, a refusal to reduce thought to logical manipulation. In the original \citeyear{darthmouthartificialintelligence} proposal, IBM engineer **Nathaniel Rochester** himself argued that introducing randomness into neural networks could foster originality, comparing the effect to dreaming or intoxication. When Minsky and Papert wrote in \citetitle{minskyperceptrons} that perceptron work was “romantic,” they meant it as a *critique*; the PDP community later wore the label as a badge of pride. What we now dismiss as LLM “hallucinations,” Lindquist points out, is essentially the same property midcentury researchers deliberately prized: outputs landing in the thin tails of the probability distribution, the unreliability from which surprising new associations were supposed to emerge. Modern accounts that frame today's neural nets as a product of “big data and GPUs” alone miss that the original appeal of the architecture was never just pattern-matching; it was a wager that a machine which occasionally did the unexpected could be more useful than one which never did.
 </div>
 
-<figure style="float: right; width: 45%; max-width: 300px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="navy.png" alt="New York Times article about the Perceptron" />
-    <figcaption class="md">\citealternativetitle{newyorktimesperceptron}, \citeyear{newyorktimesperceptron}</figcaption>
-</figure>
+\sideimage[float]{navy.png}{\citealternativetitle{newyorktimesperceptron}, \citeyear{newyorktimesperceptron}}
 
 Rosenblatt's \cite[Mark I Perceptron]{perceptronresults} (p. 136) achieved up to 100% accuracy on binary classification tasks like shape and letter recognition using single-layer architectures of 500 to 1,000 neurons. Across various experiments, it processed training sets of 20 to 10,000 images, maintaining high performance (80%–100%) despite variations in position and rotation (\cite{rosenblattperceptronresults}).
 
@@ -506,7 +501,7 @@ Since early Perceptrons could only classify linearly separable data, they could 
 
 An important nuance: **Minsky and Papert knew multi-layer networks could solve XOR.** They said so in \citetitle{minskyperceptrons}. Their argument was not that neural networks were fundamentally flawed, but that **no one knew how to train multi-layer networks efficiently**. Backpropagation was already being developed by \citeauthor{linnainmaa1970} (\citeyear{linnainmaa1970}), but it took two decades to be rediscovered and popularized.
 
-#### The Lighthill Report (\citeyear{lighthillreport}) and The Collapse (1974–1980)
+#### The Lighthill Report (1973) and The Collapse (1974–1980)
 
 <div class="smart-quote" data-cite="lighthillreport" data-page=8>
 In no part of the field have the discoveries made so far produced the
@@ -730,7 +725,7 @@ This represents a pivotal moment in the intellectual history of LLMs: the eventu
 
 The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of “brute-force” parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
 
-## The Deep Learning Revolution (\citeyear{krizhevsky2012imagenet})
+## The Deep Learning Revolution (2012)
 After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, the \citealternativetitle{krizhevsky2012imagenet} paper demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods. This validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition.
 
 ### Highway Networks: The First Very Deep Feedforward NNs (2015)
@@ -785,7 +780,7 @@ Just as Richardson's vision remained a “researcher's graveyard” until electr
 
 Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
 
-## The Transformer and Attention (\citeyear{vaswani2017attention})
+## The Transformer and Attention (2017)
 Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
 
 In this context, “attention” is a mathematical mechanism for weighting information, not a form of awareness or intent.
