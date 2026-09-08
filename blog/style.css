@@ -1332,17 +1332,26 @@ html.dark div[_echarts_instance_] canvas {
 	background: transparent !important;
 }
 
-/* 7. The Dirichlet ternary Plotly in statistics.php:
-      paper_bgcolor + plot_bgcolor are explicitly transparent,
-      so the triangle reads whatever sits behind it.  Give the
-      container an explicit dark surface. */
+/* 7. The Dirichlet ternary Plotly in statistics.php and the OR/XOR
+      gate plots in history.php: paper_bgcolor + plot_bgcolor are
+      explicitly transparent, so the chart reads whatever sits behind
+      it.  Give the container an explicit themed surface in BOTH modes
+      (the helper.js global Plotly observer would otherwise double-swap
+      the already-dark paper/plot backgrounds back to light). */
+#plot-dirichlet-simplex,
+#plot-gmm-clusters,
+#plot-zarathustra-convergence,
+#plot-or-gate,
+#plot-xor-gate {
+	background: var(--mn-bg) !important;
+	border-radius: 8px;
+}
 html.dark #plot-dirichlet-simplex,
 html.dark #plot-gmm-clusters,
 html.dark #plot-zarathustra-convergence,
 html.dark #plot-or-gate,
 html.dark #plot-xor-gate {
-	background: var(--mn-bg) !important;
-	border-radius: 8px;
+	border-color: var(--mn-border) !important;
 }
 
 /* 8. The visionlab convolution math-step box and feature-map

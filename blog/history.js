@@ -20,8 +20,8 @@ function renderLinearSeparability() {
 		},
 		margin: { l: 60, r: 40, b: 60, t: 40 },
 		showlegend: false,
-		plot_bgcolor: themeColor('#fff'),
-		paper_bgcolor: themeColor('#fff'),
+		plot_bgcolor: 'rgba(0,0,0,0)',
+		paper_bgcolor: 'rgba(0,0,0,0)',
 		font: { color: themeColor('#1e293b') }
 	};
 
@@ -56,5 +56,9 @@ async function loadHistoryModule() {
 }
 
 if (window.__MN_DARK) {
-	window.__MN_DARK.onChange(() => renderLinearSeparability());
+	// Defer one tick so the helper.js global Plotly observer (also
+	// scheduled via setTimeout(0) and registered first) runs first.
+	// Without this, the observer would double-swap our already-themed
+	// colors back to the wrong palette.
+	window.__MN_DARK.onChange(() => setTimeout(renderLinearSeparability, 0));
 }
