@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: "Recursion and the Shape of Coherent Difference"
+title: Recursion and the Shape of Coherent Difference
 description: Where recursion fits into the sheaf-theoretic picture — from the tower of higher coherence to the regress of licences, from Spencer-Brown's distinction to the Hegelian serpent.
 icon: ♾
 part: 4
