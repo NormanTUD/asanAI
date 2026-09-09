@@ -175,7 +175,7 @@ The sheaf relation: a sheaf on a *well-founded* site has a simpler gluing condit
 
 The central recursive process of proof theory is *normalization* — the reduction of a proof to a canonical form. A natural-deduction proof can contain *detours*: an introduction immediately followed by an elimination on the same connective. Normalization removes them, step by step, until none remain. Each step produces a shorter proof; the procedure is applied to the result of the previous step. The *normalization theorem* says the process terminates.
 
-The sheaf connection is structural. A proof in a dependent type theory is a *section* of a type family over a context (a site); normalization is the analogue of *descent* — it takes compatible local data (proof fragments in each context) and assembles them into a unique global section (the normal form). Girard's normalization theorem for System F every well-typed term has a normal form — states that this gluing succeeds; *strong normalization* — every reduction sequence terminates — states that descent is well-founded. Gentzen's cut-elimination theorem (*Hauptsatz*) is the same statement in sequent calculus: a cut is an intermediate formula introduced and then eliminated, and cut-elimination removes them recursively; the resulting cut-free proof is normal and satisfies the subformula property.
+The sheaf connection is structural. A proof in a dependent type theory is a *section* of a type family over a context (a site); normalization is the analogue of *descent* — it takes compatible local data (proof fragments in each context) and assembles them into a unique global section (the normal form). Girard's normalization theorem for System F — that every well-typed term has a normal form — states that this gluing succeeds; *strong normalization* — every reduction sequence terminates — states that descent is well-founded. Gentzen's cut-elimination theorem (*Hauptsatz*) is the same statement in sequent calculus: a cut is an intermediate formula introduced and then eliminated, and cut-elimination removes them recursively; the resulting cut-free proof is normal and satisfies the subformula property.
 
 $$
 \boxed{
@@ -222,13 +222,11 @@ $$
 </div>
 
 <div class="optional md" data-headline="The Y combinator: recursion without self-reference">
-In the untyped lambda calculus — the formal system that underlies both Spencer-Brown's calculus and the computational content of type theory — recursion is not a primitive. There is no `let rec` or `def f(x) = f(x-1) + 1`. There are only functions and application. The question is: how do you define a recursive function without self-reference?
+In the untyped lambda calculus, recursion is not a primitive. There is no `let rec` or `def f(x) = f(x-1) + 1` — only functions and application. How, then, do you define a recursive function?
 
-The answer is the **Y combinator**: $Y = \lambda f. (\lambda x. f(x\,x))(\lambda x. f(x\,x))$. Given any function $g$, $Y\,g$ reduces to $g(Y\,g)$ — a term that "applies $g$ to itself". The Y combinator is a *fixed-point combinator*: it finds, for any $g$, a term $t$ such that $g\,t = t$. It is the lambda-calculus implementation of Brouwer's theorem, in the special case where the "space" is the space of lambda terms and the "continuity" condition is dropped (untyped lambda calculus is not topologically well-behaved, which is why the fixed point it produces can diverge).
+The answer is the **Y combinator**: $Y = \lambda f. (\lambda x. f(x\,x))(\lambda x. f(x\,x))$. For any $g$, $Y\,g$ reduces to $g(Y\,g)$ — a term that "applies $g$ to itself". Y is a *fixed-point combinator*: it finds a $t$ with $g\,t = t$. It is the lambda-calculus implementation of Brouwer's theorem, with the "space" being the space of lambda terms and the continuity condition dropped — which is why its fixed point can diverge.
 
-The Y combinator is recursion *made explicit as a function*. It says: self-reference is not a primitive ability of a system; it is a *constructible* ability, built from simpler parts (function abstraction and application). Any system that has function abstraction and application can, in principle, construct its own recursion. This is the computational content of the observation that the sheaf picture — which is built from simpler parts (distinction, relation, transformation) — can, at sufficient complexity, encode self-reference.
-
-The parallel with Spencer-Brown is exact. The distinction $\neg\neg x = x$ is the logical fixed point: the operation that, applied twice, returns the original. The Y combinator is the computational fixed point: the function that, applied to any $g$, returns a term that satisfies $g\,t = t$. Both are instances of the same recursive structure: a system that refers to itself and finds a stable answer — or does not.
+The point for recursion: self-reference is not a primitive ability but a *constructible* one, built from function abstraction and application. Any system with those two ingredients can construct its own recursion. The parallel with Spencer-Brown is exact: the distinction $\neg\neg x = x$ is the logical fixed point, Y the computational one. Both are a system that refers to itself and finds a stable answer — or does not.
 </div>
 
 <div class="md">
@@ -242,11 +240,11 @@ $$
 \end{aligned}
 $$
 
-Each link is defined in terms of the previous links. Relation presupposes Distinction. Transformation presupposes Relation. Locality presupposes Transformation. And so on, up to Invariance. The chain is a *recursive construction*: each term is the output of a function applied to the previous term.
+Each link presupposes the previous: Relation presupposes Distinction, Transformation presupposes Relation, and so on. A *recursive construction* — each term the output of a function applied to the previous.
 
-But the chain does not end at Invariance. Invariance feeds back into practice: once you have an invariant global object, you can *change your cover*, re-distinguish, re-relate, re-transform, and start again. The chain is not a line; it is a *spiral* — the same structure, revisited at a higher level of understanding each time through. This is the Hegelian serpent, made operational.
+But the chain does not end at Invariance. Invariance feeds back into practice: once you have an invariant global object, you change your cover and start again. The chain is a *spiral*, the same structure revisited at a higher level of understanding — the Hegelian serpent, made operational.
 
-The recursive structure of the chain is also the recursive structure of *understanding*. You do not grasp the sheaf condition all at once. You grasp Distinction first, then Relation, then Transformation, and at each step you *re-understand* the earlier links in light of the later ones. The backward pass — re-reading the chain from Invariance back to Distinction — is the hermeneutic circle: the part is understood in terms of the whole, and the whole in terms of the parts, and the understanding deepens with each pass.
+The recursion is also the recursion of *understanding*. You grasp Distinction first, then Relation, then Transformation, and at each step *re-understand* the earlier links in light of the later ones. The backward pass from Invariance to Distinction is the hermeneutic circle: the part in terms of the whole, the whole in terms of the parts, deepening with each pass.
 
 $$
 \boxed{
@@ -262,13 +260,11 @@ $$
 <div class="md">
 ## What recursion tells us
 
-Three things.
+**First:** the sheaf condition is not a single axiom but a recursive scheme, generating a new axiom at each dimension. The scheme does not terminate, which is why $\infty$-categories and HoTT are needed: the recursive structure of coherence is genuinely infinite.
 
-**First:** the sheaf condition is not a single axiom but a recursive scheme. The $\infty$-sheaf condition generates a new axiom at each dimension — pairwise coherence, triple coherence, quadruple coherence, ... — and the scheme does not terminate. This is why $\infty$-categories and HoTT are needed: the recursive structure of coherence is genuinely infinite, and truncating it throws away real mathematical content.
+**Second:** the regress of licences is not a defect but a feature. Every transition needs a licence; every licence needs a licence. The recursion does not terminate, but it is *productive* — each cycle can widen the cover. The Hegelian serpent is the right picture for a knowledge system that has no foundation yet is not arbitrary.
 
-**Second:** the regress of licences is not a defect but a feature. Every admissible transition needs a licence; every licence is itself an admissible transition that needs a licence. The recursion does not terminate, but it is *productive*: each cycle can widen the cover, bringing new contact points into range. The Hegelian serpent is the right picture for a knowledge system that has no foundation but is not therefore arbitrary.
-
-**Third:** self-reference — the recursion of a system applied to itself — is both the deepest source of power and the deepest source of paradox in the picture. Spencer-Brown's distinction, Tarski's truth, Gödel's incompleteness, Lawvere's fixed-point theorem: all are instances of a system rich enough to encode its own recursion, and the consequences range from the foundational (truth is a regulative ideal, not an attainable state) to the practical (a model's honest range is limited by its cover, and outside that range it can only fabricate).
+**Third:** self-reference — the recursion of a system applied to itself — is both the deepest source of power and of paradox. Spencer-Brown's distinction, Tarski's truth, Gödel's incompleteness, Lawvere's fixed-point theorem: all are systems rich enough to encode their own recursion. The consequences range from the foundational (truth is a regulative ideal, not an attainable state) to the practical (a model's honest range is limited by its cover — outside that range it can only fabricate).
 
 $$
 \boxed{
