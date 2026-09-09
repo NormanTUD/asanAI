@@ -63,19 +63,19 @@ This is also what makes $\infty$-categories *strictly more general* than finitel
 <div class="md">
 ## The regress of licences
 
-The second place recursion appears is less formal but more vertiginous. In \citetitle{coherent_world_models}, every admissible transition $T \in \mathcal{T}$ requires a *licence* — an independent justification that the comparison is worth making. But the licence is itself a claim, and claims need grounding:
+In \citetitle{coherent_world_models}, every admissible transition $T \in \mathcal{T}$ requires a *licence* — an independent justification that the comparison is worth making. But licences need grounding:
 
-A *physical law* is a licence only *relative to* the idealised setup in which it was derived, and only *approximately* of the messy world we actually want to know about; so the law is a licence *for a region*, not an unconditional one. *Calibration* is a comparison against a standard that must itself already be trustworthy — the classical regress in which the second thermometer had to be calibrated first.
+A *physical law* is a licence only relative to the idealised setup in which it was derived, and only approximately of the messy world we want to know about. *Calibration* is a comparison against a standard that must itself already be trustworthy.
 
-Each licence is a transition, and each transition needs a licence. The structure is recursive: the justification of $T$ is itself a $T'$, which needs a $T''$, and so on. The regress is not a defect; it is the price of taking the framework seriously. Sellars saw this clearly:
+Each licence is a transition, and each transition needs a licence. The justification of $T$ is itself a $T'$, which needs a $T''$, and so on. Sellars saw this clearly:
 
 <div class="smart-quote" data-cite="sellars1956empiricism">
 One seems forced to choose between the picture of an elephant which rests on a tortoise (What supports the tortoise?) and the picture of a great Hegelian serpent of knowledge with its tail in its mouth (Where does it begin?). Neither will do.
 </div>
 
-The foundationalist picture — an elephant on a tortoise on a turtle — is a *well-founded* recursion: it terminates in a base case, a foundation that supports everything above it without needing support itself. Sellars rejects it. The Hegelian serpent — knowledge with its tail in its mouth — is a *non-well-founded* recursion: the chain of justification loops back on itself, with no base case, no termination, no foundation.
+The foundationalist picture — an elephant on a tortoise — is *well-founded* recursion: it terminates in a base case. The Hegelian serpent — knowledge with its tail in its mouth — is *non-well-founded* recursion: no base case, no termination, no foundation.
 
-The sheaf-theoretic picture of \citetitle{coherent_world_models} occupies a middle ground. It does not posit a foundation (that would be foundationalism). It does not embrace the full serpent (that would be pure coherentism, which the chapter explicitly rejects). Instead, it treats the regress as *open-ended and self-correcting*: each licence can be re-justified, refined, or refused at any contact point where Tarski's condition fails. The recursion is *partial* — it runs as far as the current cover reaches — and *productive* — each cycle can widen the cover, bringing new contact points into range. The Hegelian serpent is not denied; it is *disciplined*.
+\citetitle{coherent_world_models} occupies a middle ground. It does not posit a foundation (that would be foundationalism). It does not embrace the full serpent (that would be pure coherentism, which the chapter explicitly rejects). Instead, it treats the regress as *open-ended and self-correcting*: each licence can be re-justified, refined, or refused at any contact point where Tarski's condition fails. The recursion is *partial* — it runs as far as the current cover reaches — and *productive* — each cycle can widen the cover. The Hegelian serpent is not denied; it is *disciplined*.
 
 $$
 \boxed{
