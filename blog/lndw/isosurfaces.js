@@ -1,7 +1,7 @@
 // ============================================================
 // ISOSURFACES.JS – Wahrscheinlichkeits-Isoflächen (Truth Tunnels)
 // "Es war einmal..." – Abspaltungen an JEDEM Token,
-// auch auf nicht-gewählten Pfaden. Fixe Temperatur, Temperature-Demo am Ende.
+// auch auf nicht-gewählten Pfaden. Fixe Temperatur.
 // ============================================================
 
 const IsosurfaceDemo = (() => {
@@ -200,19 +200,23 @@ const IsosurfaceDemo = (() => {
         }
     ];
 
+    // ── Wörter GANZ AUSSERHALB des Funnels (praktisch ausgeschlossen) ──
+    // Erscheinen ab dem selben Punkt wie die großen Branches (nach "ein"),
+    // aber weit außerhalb der König-/Mädchen-Pfade.
+    const farWords = [
+        { token: 'Excel', pos: { x: 0.18, y: 0.12 }, fromStep: 3 },
+        { token: 'Comma', pos: { x: 0.22, y: 0.88 }, fromStep: 3 },
+        { token: 'Schraubenschlüssel', pos: { x: 0.62, y: 0.93 }, fromStep: 3 },
+    ];
+
     // ── Schritte ───────────────────────────────────────────────
     const GEN_TOKENS = generated.length; // 9
-    const TOTAL_STEPS = GEN_TOKENS + 1; // 10 (letzter = Temp-Demo)
+    const TOTAL_STEPS = GEN_TOKENS; // 9
 
     const BASE_TEMP = 0.7;
-    const HIGH_TEMP = 1.8;
 
     function getDisplayTarget(step) {
-        if (step < GEN_TOKENS) {
-            return { step: step + prompt.length, temperature: BASE_TEMP, phase: 'generate' };
-        } else {
-            return { step: prompt.length + 1, temperature: HIGH_TEMP, phase: 'temp-demo' };
-        }
+        return { step: step + prompt.length, temperature: BASE_TEMP, phase: 'generate' };
     }
 
     // ── Slide Detection ────────────────────────────────────────
@@ -334,11 +338,10 @@ const IsosurfaceDemo = (() => {
         const step = displayState.step;
         const temp = displayState.temperature;
         const visibleStep = Math.floor(step);
-        const phase = displayState.phase;
 
-        const hueBase = phase === 'temp-demo' ? 280 : 220;
-        const mainColor = phase === 'temp-demo' ? '#a78bfa' : '#60a5fa';
-        const envelopeRgba = phase === 'temp-demo' ? 'rgba(167, 139, 250, ' : 'rgba(96, 165, 250, ';
+        const hueBase = 220;
+        const mainColor = '#60a5fa';
+        const envelopeRgba = 'rgba(96, 165, 250, ';
 
         // Clear
         ctx.fillStyle = '#0f172a';
@@ -461,6 +464,38 @@ const IsosurfaceDemo = (() => {
                     }
                 });
             }
+        });
+
+        // ── Wörter GANZ AUSSERHALB des Funnels ─────────────────
+        farWords.forEach(fw => {
+            if (visibleStep < fw.fromStep) return;
+            const age = visibleStep - fw.fromStep;
+            const fade = Math.max(0.18, 0.55 - age * 0.03);
+            const origin = toCanvas(path[fw.fromStep]);
+            const fp = toCanvas(fw.pos);
+
+            ctx.beginPath();
+            ctx.moveTo(origin.x, origin.y);
+            ctx.lineTo(fp.x, fp.y);
+            ctx.strokeStyle = `rgba(100, 116, 139, ${fade * 0.4})`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.beginPath();
+            ctx.arc(fp.x, fp.y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(100, 116, 139, ${fade * 0.7})`;
+            ctx.fill();
+
+            const label = '✗ ' + fw.token;
+            ctx.font = '9px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            const tw = ctx.measureText(label).width;
+            ctx.fillStyle = `rgba(15, 23, 42, ${fade * 0.7})`;
+            ctx.fillRect(fp.x - tw / 2 - 3, fp.y - 16, tw + 6, 12);
+            ctx.fillStyle = `rgba(148, 163, 184, ${fade})`;
+            ctx.fillText(label, fp.x, fp.y - 6);
         });
 
         // ── Main envelope ──────────────────────────────────────
@@ -622,16 +657,11 @@ const IsosurfaceDemo = (() => {
         ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
         ctx.fillText(tempLabel, 14, 52);
 
-        // Phase indicator
+        // Step indicator
         ctx.textAlign = 'right';
         ctx.font = 'bold 11px system-ui, sans-serif';
-        if (phase === 'temp-demo') {
-            ctx.fillStyle = '#a78bfa';
-            ctx.fillText('🔥 Temperature-Demo: Was wäre bei T=1.8?', W - 14, 24);
-        } else {
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
-            ctx.fillText(`Schritt ${currentStep + 1} / ${TOTAL_STEPS}`, W - 14, 24);
-        }
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
+        ctx.fillText(`Schritt ${currentStep + 1} / ${TOTAL_STEPS}`, W - 14, 24);
 
         ctx.font = '10px system-ui, sans-serif';
         ctx.fillStyle = 'rgba(148, 163, 184, 0.3)';
@@ -716,7 +746,6 @@ const IsosurfaceDemo = (() => {
 
         const visibleStep = Math.min(Math.floor(displayState.step), allTokens.length - 1);
         const temp = displayState.temperature;
-        const phase = displayState.phase;
 
         // Sentence display: Prompt immer sichtbar, generierte Tokens nur bis visibleStep
         let html = '';
@@ -794,17 +823,19 @@ const IsosurfaceDemo = (() => {
             }
         });
 
-        // Temperature demo info
-        let tempDemoHtml = '';
-        if (phase === 'temp-demo') {
-            tempDemoHtml = `<div style="margin-top:8px; padding:6px 8px; background:rgba(167,139,250,0.1); border-radius:4px; border-left:3px solid #a78bfa;">
-                <b style="color:#7c3aed;">🔥 Temperature-Demo</b><br>
-                <span style="color:#475569; font-size:0.82em;">Gleicher Punkt, aber T=1.8 statt T=0.7.<br>
-                Der Tunnel ist jetzt viel weiter → "Mädchen" oder "Zauberer" wären genauso plausibel gewesen!</span>
-            </div>`;
+        // Wörter außerhalb des Funnels
+        let farHtml = '';
+        if (visibleStep >= 3) {
+            farHtml = `<div style="margin-top:6px; padding:5px 8px; background:rgba(100,116,139,0.1); border-radius:4px; border-left:3px solid #64748b; font-size:0.8em;">
+                <span style="color:#64748b;">✗ Außerhalb des Funnels (praktisch ausgeschlossen):</span><br>`;
+            farWords.forEach((fw, i) => {
+                farHtml += `<span style="color:#94a3b8;">${fw.token}</span>`;
+                if (i < farWords.length - 1) farHtml += ', ';
+            });
+            farHtml += `</div>`;
         }
 
-        const mainCol = phase === 'temp-demo' ? '#a78bfa' : '#60a5fa';
+        const mainCol = '#60a5fa';
 
         infoDisplay.innerHTML = `
             <div style="margin-bottom:6px;">
@@ -825,10 +856,10 @@ const IsosurfaceDemo = (() => {
             ${branchHtml}
             ${splitHtml}
             ${divergeHtml}
-            ${tempDemoHtml}
+            ${farHtml}
             <hr style="border:none; border-top:1px solid #e2e8f0; margin:6px 0;">
             <div style="font-size:0.72em; color:#94a3b8;">
-                Schritt ${currentStep + 1} / ${TOTAL_STEPS} ${phase === 'temp-demo' ? '(🔥 Was wäre bei hoher Temperatur?)' : ''}
+                Schritt ${currentStep + 1} / ${TOTAL_STEPS}
             </div>
         `;
     }
