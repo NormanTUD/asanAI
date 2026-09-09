@@ -19,7 +19,7 @@ The two preceding chapters built a picture: global unity from local difference, 
 <div class="md">
 ## The tower
 
-The first place recursion appears is the most visible. In \citetitle{coherent_difference}, the chain from Distinction to Invariance runs through Coherence, and at Coherence something happens that the earlier links did not demand: *the compatibility condition itself must be compatible*.
+In \citetitle{coherent_difference}, the chain from Distinction to Invariance runs through Coherence, and at Coherence something happens that the earlier links did not demand: *the compatibility condition itself must be compatible*.
 
 In a classical sheaf, two sections are equal on the overlap:
 
@@ -27,13 +27,13 @@ $$
 s_{i}|_{U_{i} \cap U_{j}} \;=\; s_{j}|_{U_{i} \cap U_{j}}.
 $$
 
-Equality is a yes/no predicate. There is nothing further to check. But in an $\infty$-sheaf, two sections are *equivalent* on the overlap:
+Equality is binary. Nothing further to check. But in an $\infty$-sheaf, two sections are *equivalent* on the overlap:
 
 $$
 s_{i}|_{U_{i} \cap U_{j}} \;\simeq\; s_{j}|_{U_{i} \cap U_{j}},
 $$
 
-and the equivalence is witnessed by a homotopy $\alpha_{ij}$. Now the homotopies must themselves cohere on triple overlaps:
+and the equivalence is witnessed by a homotopy $\alpha_{ij}$. Now the homotopies must cohere on triple overlaps:
 
 $$
 \alpha_{ij} \circ \alpha_{jk} \;\simeq\; \alpha_{ik},
@@ -42,24 +42,22 @@ $$
 and *that* coherence is witnessed by a 2-morphism, which must cohere with other 2-morphisms on quadruple overlaps, and so on. The tower:
 
 $$
-\begin{aligned}
-&\text{objects} \to \text{morphisms} \to \text{2-morphisms} \to \text{3-morphisms} \to \cdots
-\end{aligned}
+\text{objects} \to \text{morphisms} \to \text{2-morphisms} \to \text{3-morphisms} \to \cdots
 $$
 
-is not decoration. It is the *recursive unfolding of a single question*: "do these agree?" asked at successively higher levels of structure. Each level applies the same operation — *test coherence* — to the output of the level below. That is recursion. The $\infty$-sheaf condition is not a finite list of axioms; it is a recursive scheme that generates an axiom at each dimension.
+is the *recursive unfolding of a single question*: "do these agree?" asked at successively higher levels. Each level applies the same operation — *test coherence* — to the output of the level below. The $\infty$-sheaf condition is not a finite list of axioms; it is a recursive scheme that generates an axiom at each dimension.
 
-The Čech nerve makes the recursion explicit. Given a cover $\{c_i \to c\}$, the nerve is a simplicial object: degree 0 lists the patches, degree 1 lists pairwise overlaps, degree 2 lists triple overlaps, degree 3 lists quadruple overlaps, and so on. The face and degeneracy maps that connect the degrees are *combinatorial recipes for applying the same operation one level deeper*. The sheaf condition is the requirement that the limit over the entire nerve — an infinite, recursively structured diagram — reproduces $F(c)$. A finite check would not suffice; the condition is inherently infinite because the recursion does not terminate.
+The Čech nerve makes this explicit. Given a cover $\{c_i \to c\}$, the nerve is a simplicial object: degree 0 lists patches, degree 1 lists pairwise overlaps, degree 2 lists triple overlaps, and so on. The face and degeneracy maps are combinatorial recipes for applying the same operation one level deeper. The sheaf condition is the requirement that the limit over the entire nerve — an infinite, recursively structured diagram — reproduces $F(c)$. A finite check would not suffice; the condition is inherently infinite.
 
 **Relations can themselves have relations. The tower is not decoration.**
 </div>
 
 <div class="optional md" data-headline="Why the tower does not collapse">
-A natural question: why can't we just stop at some finite level? In many concrete cases we can. If the target category is $\mathbf{Set}$ — the category of sets — then all higher homotopies are trivial: there is nothing to check beyond pairwise equality, and the tower collapses to a single rung. Sets are *0-truncated* types in HoTT: spaces whose only interesting structure is their points.
+Why not stop at some finite level? In many cases we can. If the target is $\mathbf{Set}$, all higher homotopies are trivial: nothing to check beyond pairwise equality, and the tower collapses. Sets are *0-truncated* types in HoTT: spaces whose only structure is their points.
 
-The tower matters precisely when the target is *not* sets. In $\infty$-groupoids (the target for homotopical sheaves), in chain complexes (the target for cohomological sheaves), in spectra (the target for stable homotopy theory), the higher cells carry genuine information. The winding number on $S^1$ — the obstruction to gluing local angle functions into a global one — lives at level 1. The anomaly in a gauge theory lives at level 2. The elements of $\pi_3(S^2) \cong \mathbb{Z}$ live at level 3. Each level of the tower can carry independent topological content, and truncating the recursion throws away real structure.
+The tower matters when the target is *not* sets. In $\infty$-groupoids, chain complexes, or spectra, higher cells carry genuine information. The winding number on $S^1$ lives at level 1. The anomaly in a gauge theory lives at level 2. The elements of $\pi_3(S^2) \cong \mathbb{Z}$ live at level 3. Truncating the recursion throws away real structure.
 
-The recursive structure is also what makes the $\infty$-categorical setting *strictly more general* than the finitely-categorical one. A 2-category has objects, morphisms, and 2-morphisms, and then stops. An $(\infty,1)$-category has them all, with the rule that every $n$-morphism for $n \ge 2$ is invertible. The recursion is bounded (all higher cells are equivalences) but not truncated (there are arbitrarily many levels). This bounded-but-infinite recursion is the technical heart of homotopy type theory, where the univalence axiom says that *identity itself is recursive*: to identify two types is to exhibit an equivalence, and to identify two equivalences is to exhibit a homotopy, and so on.
+This is also what makes $\infty$-categories *strictly more general* than finitely-categorical ones. A 2-category has objects, morphisms, and 2-morphisms, and stops. An $(\infty,1)$-category has them all, with every $n$-morphism for $n \ge 2$ invertible. The recursion is bounded (all higher cells are equivalences) but not truncated. This bounded-but-infinite recursion is the technical heart of HoTT, where univalence says *identity itself is recursive*: to identify two types is to exhibit an equivalence, to identify two equivalences is to exhibit a homotopy, and so on.
 </div>
 
 <div class="md">
