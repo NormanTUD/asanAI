@@ -8713,5 +8713,355 @@ window.bibData = {
 		year: 1996,
 		url: "https://esamultimedia.esa.int/docs/esa-x-1819eng.pdf",
 		alternativetitle: "ESA and CNES Inquiry Board report, Paris, 19 July 1996"
+	},
+	"rawls1971theoryofjustice": {
+		title: "A Theory of Justice",
+		author: "John Rawls",
+		year: 1971,
+		url: "https://en.wikipedia.org/wiki/A_Theory_of_Justice",
+		alternativetitle: "Rawls, A Theory of Justice"
+	},
+	"kant1785groundwork": {
+		title: "Groundwork of the Metaphysics of Morals",
+		author: "Immanuel Kant",
+		year: 1785,
+		url: "https://en.wikipedia.org/wiki/Groundwork_of_the_Metaphysics_of_Morals",
+		alternativetitle: "Kant, Groundwork of the Metaphysics of Morals"
+	},
+	"mill1863utilitarianism": {
+		title: "Utilitarianism",
+		author: "John Stuart Mill",
+		year: 1863,
+		url: "https://en.wikipedia.org/wiki/Utilitarianism_(book)",
+		alternativetitle: "Mill, Utilitarianism"
+	},
+	"nietzsche1882gayscience": {
+		title: "The Gay Science",
+		author: "Friedrich Nietzsche",
+		year: 1882,
+		url: "https://en.wikipedia.org/wiki/The_Gay_Science",
+		alternativetitle: "Nietzsche, The Gay Science"
+	},
+	"nietzsche1886beyondgoodandevil": {
+		title: "Beyond Good and Evil",
+		author: "Friedrich Nietzsche",
+		year: 1886,
+		url: "https://en.wikipedia.org/wiki/Beyond_Good_and_Evil",
+		alternativetitle: "Nietzsche, Beyond Good and Evil"
+	},
+	"nietzsche1889twilightofidols": {
+		title: "Twilight of the Idols",
+		author: "Friedrich Nietzsche",
+		year: 1889,
+		url: "https://en.wikipedia.org/wiki/Twilight_of_the_Idols",
+		alternativetitle: "Nietzsche, Twilight of the Idols"
+	},
+	"camus1942mythofsisyphus": {
+		title: "The Myth of Sisyphus",
+		author: "Albert Camus",
+		year: 1942,
+		url: "https://en.wikipedia.org/wiki/The_Myth_of_Sisyphus",
+		alternativetitle: "Camus, The Myth of Sisyphus"
+	},
+	"sartre1943beingandnothingness": {
+		title: "Being and Nothingness",
+		author: "Jean-Paul Sartre",
+		year: 1943,
+		url: "https://en.wikipedia.org/wiki/Being_and_Nothingness",
+		alternativetitle: "Sartre, Being and Nothingness"
+	},
+	"sartre1946existentialismishumanism": {
+		title: "Existentialism Is a Humanism",
+		author: "Jean-Paul Sartre",
+		year: 1946,
+		url: "https://en.wikipedia.org/wiki/Existentialism_Is_a_Humanism",
+		alternativetitle: "Sartre, Existentialism Is a Humanism"
+	},
+	"kierkegaard1844conceptofanxiety": {
+		title: "The Concept of Anxiety",
+		author: "Søren Kierkegaard",
+		year: 1844,
+		url: "https://en.wikipedia.org/wiki/The_Concept_of_Anxiety",
+		alternativetitle: "Kierkegaard, The Concept of Anxiety"
+	},
+	"kierkegaard1849sicknessuntodeath": {
+		title: "The Sickness Unto Death",
+		author: "Søren Kierkegaard",
+		year: 1849,
+		url: "https://en.wikipedia.org/wiki/The_Sickness_Unto_Death",
+		alternativetitle: "Kierkegaard, The Sickness Unto Death"
+	},
+	"heidegger1927beingandtime": {
+		title: "Being and Time",
+		author: "Martin Heidegger",
+		year: 1927,
+		url: "https://en.wikipedia.org/wiki/Being_and_Time",
+		alternativetitle: "Heidegger, Being and Time"
+	},
+	"aurelius180meditations": {
+		title: "Meditations",
+		author: "Marcus Aurelius",
+		year: 180,
+		url: "https://en.wikipedia.org/wiki/Meditations",
+		alternativetitle: "Marcus Aurelius, Meditations"
+	},
+	"seneca49onshortness": {
+		title: "On the Shortness of Life",
+		author: "Seneca the Younger",
+		year: 49,
+		url: "https://en.wikipedia.org/wiki/On_the_Shortness_of_Life",
+		alternativetitle: "Seneca, On the Shortness of Life"
+	},
+	"seneca64letters": {
+		title: "Epistulae Morales ad Lucilium (Letters to Lucilius)",
+		author: "Seneca the Younger",
+		year: 64,
+		url: "https://en.wikipedia.org/wiki/Epistulae_Morales_ad_Lucilium",
+		alternativetitle: "Seneca, Letters to Lucilius"
+	},
+	"epictetus108enchiridion": {
+		title: "Enchiridion",
+		author: "Epictetus",
+		year: "c. 108 CE",
+		url: "https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus",
+		alternativetitle: "Epictetus, Enchiridion"
+	},
+	"epicurus300lettertomenoeceus": {
+		title: "Letter to Menoeceus",
+		author: "Epicurus",
+		year: "c. 300 BCE",
+		url: "https://en.wikipedia.org/wiki/Letter_to_Menoeceus",
+		alternativetitle: "Epicurus, Letter to Menoeceus"
+	},
+	"lucretius50rerumnatura": {
+		title: "De Rerum Natura (On the Nature of Things)",
+		author: "Lucretius",
+		year: "c. 50 BCE",
+		url: "https://en.wikipedia.org/wiki/De_rerum_natura",
+		alternativetitle: "Lucretius, On the Nature of Things"
+	},
+	"confucius500analects": {
+		title: "Analects",
+		author: "Confucius",
+		year: "c. 500 BCE",
+		url: "https://en.wikipedia.org/wiki/Analects",
+		alternativetitle: "Confucius, Analects"
+	},
+	"buddha400dhammapada": {
+		title: "Dhammapada",
+		author: "Gautama Buddha (attributed)",
+		year: "c. 400 BCE",
+		url: "https://en.wikipedia.org/wiki/Dhammapada",
+		alternativetitle: "The Dhammapada"
+	},
+	"zhuangzi300zhuangzi": {
+		title: "Zhuangzi (Book of Chuang Tzu)",
+		author: "Zhuangzi",
+		year: "c. 300 BCE",
+		url: "https://en.wikipedia.org/wiki/Zhuangzi_(book)",
+		alternativetitle: "The Book of Chuang Tzu"
+	},
+	"pascal1670pensees": {
+		title: "Pensées",
+		author: "Blaise Pascal",
+		year: 1670,
+		url: "https://en.wikipedia.org/wiki/Pensées",
+		alternativetitle: "Pascal, Pensées"
+	},
+	"aquinas1274summa": {
+		title: "Summa Theologica",
+		author: "Thomas Aquinas",
+		year: 1274,
+		url: "https://en.wikipedia.org/wiki/Summa_Theologica",
+		alternativetitle: "Aquinas, Summa Theologica"
+	},
+	"hume1779dialogues": {
+		title: "Dialogues Concerning Natural Religion",
+		author: "David Hume",
+		year: 1779,
+		url: "https://en.wikipedia.org/wiki/Dialogues_Concerning_Natural_Religion",
+		alternativetitle: "Hume, Dialogues Concerning Natural Religion"
+	},
+	"russell1927whyiamnotachristian": {
+		title: "Why I Am Not a Christian",
+		author: "Bertrand Russell",
+		year: 1927,
+		url: "https://en.wikipedia.org/wiki/Why_I_Am_Not_a_Christian",
+		alternativetitle: "Russell, Why I Am Not a Christian"
+	},
+	"dawkins2006goddelusion": {
+		title: "The God Delusion",
+		author: "Richard Dawkins",
+		year: 2006,
+		url: "https://en.wikipedia.org/wiki/The_God_Delusion",
+		alternativetitle: "Dawkins, The God Delusion"
+	},
+	"mackie1977inventingrightandwrong": {
+		title: "Ethics: Inventing Right and Wrong",
+		author: "J. L. Mackie",
+		year: 1977,
+		url: "https://en.wikipedia.org/wiki/Ethics:_Inventing_Right_and_Wrong",
+		alternativetitle: "Mackie, Ethics: Inventing Right and Wrong"
+	},
+	"scanlon1998whatweowtoeachother": {
+		title: "What We Owe to Each Other",
+		author: "T. M. Scanlon",
+		year: 1998,
+		url: "https://en.wikipedia.org/wiki/What_We_Owe_to_Each_Other",
+		alternativetitle: "Scanlon, What We Owe to Each Other"
+	},
+	"harris2010morallandscape": {
+		title: "The Moral Landscape",
+		author: "Sam Harris",
+		year: 2010,
+		url: "https://en.wikipedia.org/wiki/The_Moral_Landscape",
+		alternativetitle: "Harris, The Moral Landscape"
+	},
+	"harris2012freewill": {
+		title: "Free Will",
+		author: "Sam Harris",
+		year: 2012,
+		url: "https://en.wikipedia.org/wiki/Free_Will_(Sam_Harris_book)",
+		alternativetitle: "Harris, Free Will"
+	},
+	"dennett1984elbowroom": {
+		title: "Elbow Room: The Varieties of Free Will Worth Wanting",
+		author: "Daniel Dennett",
+		year: 1984,
+		url: "https://en.wikipedia.org/wiki/Elbow_Room_(book)",
+		alternativetitle: "Dennett, Elbow Room"
+	},
+	"frankfurt1969alternatepossibilities": {
+		title: "Alternate Possibilities and Moral Responsibility",
+		author: "Harry Frankfurt",
+		year: 1969,
+		url: "https://en.wikipedia.org/wiki/Alternate_Possibilities_and_Moral_Responsibility",
+		alternativetitle: "Frankfurt, Alternate Possibilities and Moral Responsibility"
+	},
+	"james1897willtobelieve": {
+		title: "The Will to Believe",
+		author: "William James",
+		year: 1897,
+		url: "https://en.wikipedia.org/wiki/The_Will_to_Believe",
+		alternativetitle: "James, The Will to Believe"
+	},
+	"frankl1946manssearch": {
+		title: "Man's Search for Meaning",
+		author: "Viktor Frankl",
+		year: 1946,
+		url: "https://en.wikipedia.org/wiki/Man%27s_Search_for_Meaning",
+		alternativetitle: "Frankl, Man's Search for Meaning"
+	},
+	"singer1972famine": {
+		title: "Famine, Affluence, and Morality",
+		author: "Peter Singer",
+		year: 1972,
+		url: "https://en.wikipedia.org/wiki/Famine,_Affluence,_and_Morality",
+		alternativetitle: "Singer, Famine, Affluence, and Morality"
+	},
+	"singer1981expandingcircle": {
+		title: "The Expanding Circle: Ethics and Sociobiology",
+		author: "Peter Singer",
+		year: 1981,
+		url: "https://en.wikipedia.org/wiki/The_Expanding_Circle",
+		alternativetitle: "Singer, The Expanding Circle"
+	},
+	"singer2009lifeyoucansave": {
+		title: "The Life You Can Save",
+		author: "Peter Singer",
+		year: 2009,
+		url: "https://en.wikipedia.org/wiki/The_Life_You_Can_Save",
+		alternativetitle: "Singer, The Life You Can Save"
+	},
+	"macaskill2015doinggoodbetter": {
+		title: "Doing Good Better",
+		author: "William MacAskill",
+		year: 2015,
+		url: "https://en.wikipedia.org/wiki/Doing_Good_Better",
+		alternativetitle: "MacAskill, Doing Good Better"
+	},
+	"macintyre1981aftervirtue": {
+		title: "After Virtue",
+		author: "Alasdair MacIntyre",
+		year: 1981,
+		url: "https://en.wikipedia.org/wiki/After_Virtue",
+		alternativetitle: "MacIntyre, After Virtue"
+	},
+	"sandel2009justice": {
+		title: "Justice: What's the Right Thing to Do?",
+		author: "Michael Sandel",
+		year: 2009,
+		url: "https://en.wikipedia.org/wiki/Justice:_What%27s_the_Right_Thing_to_Do%3F",
+		alternativetitle: "Sandel, Justice"
+	},
+	"brooks2015roadtocharacter": {
+		title: "The Road to Character",
+		author: "David Brooks",
+		year: 2015,
+		url: "https://en.wikipedia.org/wiki/The_Road_to_Character",
+		alternativetitle: "Brooks, The Road to Character"
+	},
+	"tillich1952couragetobe": {
+		title: "The Courage to Be",
+		author: "Paul Tillich",
+		year: 1952,
+		url: "https://en.wikipedia.org/wiki/The_Courage_to_Be",
+		alternativetitle: "Tillich, The Courage to Be"
+	},
+	"suzuki1970zenmind": {
+		title: "Zen Mind, Beginner's Mind",
+		author: "Shunryu Suzuki",
+		year: 1970,
+		url: "https://en.wikipedia.org/wiki/Zen_Mind,_Beginner%27s_Mind",
+		alternativetitle: "Suzuki, Zen Mind, Beginner's Mind"
+	},
+	"hoff1982taoofpooh": {
+		title: "The Tao of Pooh",
+		author: "Benjamin Hoff",
+		year: 1982,
+		url: "https://en.wikipedia.org/wiki/The_Tao_of_Pooh",
+		alternativetitle: "Hoff, The Tao of Pooh"
+	},
+	"wilson2019howtobeanepicurean": {
+		title: "How to Be an Epicurean: The Ancient Art of Living Well",
+		author: "Catherine Wilson",
+		year: 2019,
+		url: "https://en.wikipedia.org/wiki/Epicureanism",
+		alternativetitle: "Wilson, How to Be an Epicurean"
+	},
+	"greenblatt2011swerve": {
+		title: "The Swerve: How the World Became Modern",
+		author: "Stephen Greenblatt",
+		year: 2011,
+		url: "https://en.wikipedia.org/wiki/The_Swerve:_How_the_World_Became_Modern",
+		alternativetitle: "Greenblatt, The Swerve"
+	},
+	"plato399apology": {
+		title: "Apology",
+		author: "Plato",
+		year: "c. 399 BCE",
+		url: "https://en.wikipedia.org/wiki/Apology_(Plato)",
+		alternativetitle: "Plato, Apology"
+	},
+	"socraticmethod": {
+		title: "Socratic method",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Socratic_method",
+		alternativetitle: "Socratic method (Wikipedia)"
+	},
+	"rumi": {
+		title: "Rumi",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Rumi",
+		alternativetitle: "Rumi (Wikipedia)"
+	},
+	"frost1914northofboston": {
+		title: "North of Boston",
+		author: "Robert Frost",
+		year: 1914,
+		url: "https://en.wikipedia.org/wiki/North_of_Boston",
+		alternativetitle: "Frost, North of Boston"
 	}
 };
