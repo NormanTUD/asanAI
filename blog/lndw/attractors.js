@@ -135,7 +135,7 @@ function renderStep(step) {
         '<b>Lorenz-Attraktor:</b> Deterministisches Chaos – die Punkte folgen dem Attraktor auf unvorhersagbaren, aber gebundenen Bahnen.',
         '<b>Komplexe Becken:</b> Attraktoren (blau/grün/gelb) ziehen Teilchen an. <b>Repeller (rot)</b> stoßen Teilchen ab und verformen die Einzugsbereiche.',
         '<b>3D-Becken:</b> In höheren Dimensionen überlappen sich Einzugsbecken auf komplexe Weise – Grenzen sind fraktal und verschlungen.',
-        '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen.',
+        '<b>🐴 Seahorse-Emoji:</b> Es gibt kein Seahorse-Emoji – aber das Modell kreist endlos um die Becken von "horse", "sea", "fish", "coral", "dolphin". Der Zustand ist ein <b>stabiler Attraktor</b>, der eine <b>Mischung</b> aus mehreren semantischen Becken ist. Das Modell "pendelt sich ein" und kreist im Kreis, ohne je anzukommen. <b>Und: all diese Teil-Becken — Pferd, Ozean, Fisch, Mythisch — liegen selbst in einem noch größeren Becken: „Emoji"</b> (gestrichelte Umrandung). Das Modell verlässt es nie — egal wie es kreist, es bleibt immer in der „Emoji-Welt".',
         '<b>Generator (Quelle):</b> Der Generator emittiert die Wörter von «die hauptstadt von frankreich ist paris» — <b>eins nach dem anderen</b>. Jedes Wort ist ein Partikel, das von seinem <b>semantischen Einzugsbecken</b> angezogen und hineingesogen wird: «die», «von», «ist» → Funktionswort, «hauptstadt» → Substantive, «frankreich» → Länder, «Paris» → Städte. Genau wie beim Punkt-Attraktor verschwindet es im Kern. <b>Erst wenn ein Wort gelandet ist, wird das nächste generiert</b>.'
     ];    const captionEl = document.getElementById('attractor-caption');
     if (captionEl) captionEl.innerHTML = captions[step] || '';
@@ -175,15 +175,33 @@ function renderSeahorseEmoji(container) {
 
     // === Semantische Cluster (Becken) ===
     const clusters = [
-        { x: vizCx, y: vizCy - vizW * 0.30, label: '🐴 Pferd', color: '#f59e0b', hue: 35, radius: 38 },
-        { x: vizCx - vizW * 0.34, y: vizCy + vizW * 0.08, label: '🌊 Ozean', color: '#3b82f6', hue: 220, radius: 36 },
-        { x: vizCx + vizW * 0.34, y: vizCy + vizW * 0.08, label: '🐟 Fisch', color: '#10b981', hue: 160, radius: 34 },
-        { x: vizCx, y: vizCy + vizW * 0.35, label: '🦄 Mythisch', color: '#8b5cf6', hue: 270, radius: 34 },
+        { x: vizCx, y: vizCy - vizW * 0.26, label: '🐴 Pferd', color: '#f59e0b', hue: 35, radius: 38 },
+        { x: vizCx - vizW * 0.34, y: vizCy + vizW * 0.06, label: '🌊 Ozean', color: '#3b82f6', hue: 220, radius: 36 },
+        { x: vizCx + vizW * 0.34, y: vizCy + vizW * 0.06, label: '🐟 Fisch', color: '#10b981', hue: 160, radius: 34 },
+        { x: vizCx, y: vizCy + vizW * 0.32, label: '🦄 Mythisch', color: '#8b5cf6', hue: 270, radius: 34 },
     ];
 
     // Geist-Attraktor (das nicht-existente Emoji)
     const ghostX = vizCx;
     const ghostY = vizCy;
+
+    // === Großes Meta-Becken: alle Teil-Becken liegen in einem Becken „Emoji" ===
+    const basin = (() => {
+        let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+        clusters.forEach(c => {
+            left = Math.min(left, c.x - c.radius - 8);
+            right = Math.max(right, c.x + c.radius + 8);
+            top = Math.min(top, c.y - c.radius - 24); // 24 = Platz für Label über dem Cluster
+            bottom = Math.max(bottom, c.y + c.radius + 8);
+        });
+        return {
+            cx: (left + right) / 2,
+            cy: (top + bottom) / 2,
+            rx: (right - left) / 2,
+            ry: (bottom - top) / 2
+        };
+    })();
+    const basinVisible = vizW >= 360;
 
     // === Chat-Text: EIN zusammenhängender Block, KEINE Emoji-Wiederholungen ===
     const chatSegments = [
@@ -431,6 +449,52 @@ function renderSeahorseEmoji(container) {
             ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
             ctx.fill();
         });
+
+        // === Großes „Emoji"-Becken (Meta-Becken um alle Teil-Becken) ===
+        if (basinVisible) {
+            const basinAlpha = Math.min(1, t / 60);
+            ctx.save();
+            ctx.beginPath();
+            const SEG = 120;
+            for (let i = 0; i <= SEG; i++) {
+                const th = (i / SEG) * Math.PI * 2;
+                const wobble = 1 + 0.015 * Math.sin(3 * th + 1.2) + 0.01 * Math.sin(5 * th + 0.5);
+                const bx = basin.cx + basin.rx * wobble * Math.cos(th);
+                const by = basin.cy + basin.ry * wobble * Math.sin(th);
+                if (i === 0) ctx.moveTo(bx, by); else ctx.lineTo(bx, by);
+            }
+            ctx.closePath();
+            ctx.fillStyle = `rgba(99, 102, 241, ${0.07 * basinAlpha})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(129, 140, 248, ${0.55 * basinAlpha})`;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([9, 6]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Badge auf dem Rand (oben rechts)
+            const bth = -Math.PI / 3.6;
+            const bpx = basin.cx + basin.rx * Math.cos(bth);
+            const bpy = basin.cy + basin.ry * Math.sin(bth);
+            const bw = 136, bh = 30;
+            ctx.globalAlpha = basinAlpha;
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+            ctx.beginPath();
+            ctx.roundRect(bpx - bw / 2, bpy - bh / 2, bw, bh, 7);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(129, 140, 248, 0.7)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#a5b4fc';
+            ctx.fillText('🌍 das „Emoji"-Becken', bpx, bpy - 3);
+            ctx.font = '9.5px system-ui';
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('umfasst alle Teil-Becken', bpx, bpy + 10);
+            ctx.globalAlpha = 1;
+            ctx.restore();
+        }
 
         // Cluster zeichnen
         clusters.forEach((cluster, idx) => {
