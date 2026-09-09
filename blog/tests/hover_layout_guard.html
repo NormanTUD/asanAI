@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>hover layout guard</title>
+<!--
+	HOVER LAYOUT GUARD — regression test for "hovering a mouseoverable
+	text (glossary entry, citation, ...) in a chapter introduction must
+	NOT move the stuff around the drop cap".
+
+	Self-verifying: loads the real stylesheet + real pipeline scripts
+	(helper/start/polish/typography_fix), runs the real init sequence,
+	lets the drop cap settle, then dispatches a full hover cycle over
+	every glossary term inside the drop-cap paragraph and asserts that
+	NOTHING moves:
+	  • no element rect in #contents changes
+	  • no line box of the drop-cap paragraph changes
+	  • document / paragraph geometry is unchanged
+	  • --cl-dc-size / --cl-dc-lines are unchanged
+	  • no inline style is written to any ancestor of the term
+	  • the term's own layout metrics are unchanged on hover
+	  • the drop cap is actually sized (not stuck pending)
+
+	Reported in <title> and in #guard-result as
+	  HOVER_LAYOUT_GUARD: PASS
+	  HOVER_LAYOUT_GUARD: FAIL — <reason>
+
+	Run (see tests/hover_layout_guard.sh):
+	  chromium --headless --no-sandbox --virtual-time-budget=30000 \
+	    --dump-dom http://<host>/asanai/blog/tests/hover_layout_guard.html
+-->
+<script src="../temml.min.js"></script>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="../style.css">
+<script src="../marked.min.js"></script>
+<script src="../sidenotes.js"></script>
+<script src="../toc.js"></script>
+<script src="../start.js"></script>
+<script src="../polish.js"></script>
+<script src="../typography_fix.js"></script>
+<script src="../helper.js"></script>
+</head>
+<body>
+<div id="contents">
+	<h1>Basic Math Concepts I — The Numerical Foundations</h1>
+	<div class="md">
+		<p>Before we can understand a neural network, we have to understand the language it speaks: mathematics. This first of three math chapters covers the numerical foundations, the symbols and operations that appear constantly in AI code. The attention mechanism and each embedding of a token are introduced before the first gradient step, so the reader always knows what every symbol means the moment it is written down for the first time in this course.</p>
+	</div>
+	<div class="md">
+		<p>By the end, you will be comfortable with the sum symbol, Euler's number, logarithms, and the way a computer represents infinity without crashing. None of this requires a physics degree; it requires care, and the willingness to write the same equation three times until it stops being magic.</p>
+	</div>
+</div>
+<div id="guard-result" aria-live="polite">HOVER_LAYOUT_GUARD: RUNNING</div>
+<script>
+(function () {
+	'use strict';
+	var failures = [];
+	var finished = false;
+	function finish(status, detail) {
+		if (finished) return; // report exactly once
+		finished = true;
+		var msg = 'HOVER_LAYOUT_GUARD ' + status + (detail ? ' :: ' + detail : '');
+		document.title = msg;
+		document.body.setAttribute('data-guard', msg);
+		var el = document.getElementById('guard-result');
+		if (el) el.textContent = msg;
+		window.__guardDone = true;
+	}
+	// Collect every failure; the verdict is reported once at the end
+	// (or immediately on a hard abort).
+	function fail(reason) {
+		if (failures.indexOf(reason) === -1) failures.push(reason);
+	}
+	function abort(msg) {
+		fail(msg);
+		finish('FAIL', failures.join(' | '));
+	}
+	function verdict() {
+		finish(failures.length ? 'FAIL' : 'PASS',
+			failures.length ? failures.join(' | ')
+				: 'drop cap sized, all glossary terms hovered twice, zero layout movement');
+	}
+
+	// Geometry fingerprint of the drop-cap region + the term's chain.
+	function fp(p, term) {
+		var out = { sh: document.documentElement.scrollHeight, oh: p.offsetHeight, ow: p.offsetWidth, lines: [] };
+		var rng = document.createRange();
+		rng.selectNodeContents(p);
+		Array.prototype.forEach.call(rng.getClientRects(), function (r) {
+			if (r.width > 2 && r.height > 2) {
+				out.lines.push([Math.round(r.top * 100) / 100, Math.round(r.left * 100) / 100, Math.round(r.width * 100) / 100, Math.round(r.height * 100) / 100]);
+			}
+		});
+		var cs = getComputedStyle(p);
+		out.vars = { lines: cs.getPropertyValue('--cl-dc-lines'), size: cs.getPropertyValue('--cl-dc-size') };
+		out.rects = {};
+		document.querySelectorAll('#contents *').forEach(function (el, i) {
+			var r = el.getBoundingClientRect();
+			out.rects[i] = [Math.round(r.x * 100) / 100, Math.round(r.y * 100) / 100, Math.round(r.width * 100) / 100, Math.round(r.height * 100) / 100];
+		});
+		// inline styles of every ancestor of the term (any write shows up here)
+		out.chain = [];
+		var n = term;
+		while (n && n !== document.documentElement) {
+			out.chain.push((n.tagName || '').toLowerCase() + ' style="' + (n.getAttribute('style') || '') + '"');
+			n = n.parentElement;
+		}
+		return out;
+	}
+	var TERM_METRIC_PROPS = ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle',
+		'letterSpacing', 'wordSpacing', 'textTransform', 'lineHeight',
+		'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
+		'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+		'marginTop', 'marginRight', 'marginBottom', 'marginLeft'];
+	function termMetrics(el) {
+		var cs = getComputedStyle(el);
+		var out = {};
+		TERM_METRIC_PROPS.forEach(function (p) { out[p] = cs[p]; });
+		var r = el.getBoundingClientRect();
+		out.rect = [Math.round(r.x * 100) / 100, Math.round(r.y * 100) / 100, Math.round(r.width * 100) / 100, Math.round(r.height * 100) / 100];
+		return out;
+	}
+	function diffFp(label, a, b) {
+		var d = [];
+		if (a.sh !== b.sh) d.push(label + ': document scrollHeight ' + a.sh + ' -> ' + b.sh);
+		if (a.oh !== b.oh || a.ow !== b.ow) d.push(label + ': paragraph size ' + a.ow + 'x' + a.oh + ' -> ' + b.ow + 'x' + b.oh);
+		if (JSON.stringify(a.lines) !== JSON.stringify(b.lines)) d.push(label + ': line boxes changed');
+		if (JSON.stringify(a.vars) !== JSON.stringify(b.vars)) d.push(label + ': dropcap vars ' + JSON.stringify(a.vars) + ' -> ' + JSON.stringify(b.vars));
+		if (JSON.stringify(a.chain) !== JSON.stringify(b.chain)) d.push(label + ': ancestor inline styles changed: ' + JSON.stringify(b.chain).slice(0, 240));
+		var moved = 0, ex = null;
+		Object.keys(a.rects).forEach(function (k) {
+			var x = a.rects[k], y = b.rects[k];
+			if (x && y && (x[0] !== y[0] || x[1] !== y[1] || x[2] !== y[2] || x[3] !== y[3])) {
+				moved++;
+				if (!ex) ex = 'rect#' + k + ' ' + JSON.stringify(x) + ' -> ' + JSON.stringify(y);
+			}
+		});
+		if (moved) d.push(label + ': ' + moved + ' element rects moved, e.g. ' + ex);
+		return d;
+	}
+	function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+	function runHoverCycle(term, fp0) {
+		return new Promise(function (resolve) {
+			var r = term.getBoundingClientRect();
+			var tm0 = termMetrics(term);
+			term.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: r.x + 4, clientY: r.y + 4 }));
+			setTimeout(function () {
+				var during = fp(document.querySelector('.cl-dropcap'), term);
+				var tm1 = termMetrics(term);
+				diffFp('hover[' + term.textContent.slice(0, 20) + ']', fp0, during).forEach(fail);
+				TERM_METRIC_PROPS.concat(['rect']).forEach(function (k) {
+					if (JSON.stringify(tm0[k]) !== JSON.stringify(tm1[k])) {
+						fail('term metric ' + k + ' changed on hover: ' + JSON.stringify(tm0[k]) + ' -> ' + JSON.stringify(tm1[k]));
+					}
+				});
+				term.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, clientX: -300, clientY: -300 }));
+				setTimeout(function () {
+					var after = fp(document.querySelector('.cl-dropcap'), term);
+					diffFp('after-hover[' + term.textContent.slice(0, 20) + ']', fp0, after).forEach(fail);
+					resolve();
+				}, 350);
+			}, 350);
+		});
+	}
+
+	function waitSized() {
+		return new Promise(function (resolve, reject) {
+			var t0 = Date.now();
+			(function poll() {
+				var p = document.querySelector('.cl-dropcap');
+				if (window.__guardDone) return resolve();
+				if (p && p.classList.contains('cl-dc-sized')) return resolve();
+				if (Date.now() - t0 > 12000) return reject(new Error('drop cap never reached cl-dc-sized (pending timeout?)'));
+				setTimeout(poll, 100);
+			})();
+		});
+	}
+
+	window.addEventListener('load', function () {
+		setTimeout(function () {
+			try {
+				postLoadInit();
+				revealContent();
+			} catch (e) {
+				abort('init threw: ' + e.message);
+				return;
+			}
+			waitSized().then(function () {
+				// Settle past all scheduled reveal cleanups
+				// (revealContent removes its inline transition at
+				// +800 ms and sweeps at +3000 ms) so the hover
+				// cycle starts from a fully quiescent DOM.
+				return sleep(1800);
+			}).then(function () {
+				var p = document.querySelector('.cl-dropcap');
+				var terms = p ? Array.prototype.slice.call(p.querySelectorAll('.glossary-term')) : [];
+				if (!p) { abort('no .cl-dropcap paragraph found'); return; }
+				if (!terms.length) { abort('no glossary terms in the drop-cap paragraph'); return; }
+				var cs = getComputedStyle(p);
+				if (!cs.getPropertyValue('--cl-dc-lines') && !cs.getPropertyValue('--cl-dc-size')) {
+					abort('drop cap has neither --cl-dc-lines nor --cl-dc-size');
+					return;
+				}
+				// Two full hover cycles over every term in the drop-cap
+				// paragraph; the second catches restore/restore bugs.
+				return terms.reduce(function (chain, term) {
+					return chain.then(function () { return runHoverCycle(term, fp(p, term)); });
+				}, Promise.resolve()).then(function () {
+					return terms.reduce(function (chain, term) {
+						return chain.then(function () { return runHoverCycle(term, fp(p, term)); });
+					}, Promise.resolve());
+				});
+			}).then(verdict, function (e) {
+				fail(String(e && e.message || e));
+				verdict();
+			}).catch(function (e) {
+				fail(String(e && e.message || e));
+				verdict();
+			});
+		}, 300);
+	});
+	// Hard deadline: if nothing reported within 25 s of virtual time,
+	// mark it as a timeout failure (the runner treats absence of PASS
+	// as failure anyway, but an explicit title is friendlier).
+	setTimeout(function () {
+		if (!window.__guardDone) finish('FAIL', 'no result within virtual-time budget');
+	}, 25000);
+})();
+</script>
+</body>
+</html>
