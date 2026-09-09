@@ -1629,18 +1629,39 @@ function renderTorusEarth(container) {
         ctx.font = '22px serif';
         ctx.fillText('🌍', earthX, earthY);
 
-        // Moon orbit around earth
+        // Moon orbit around earth (Führungslinie, immer im Hintergrund)
         ctx.beginPath();
         ctx.ellipse(earthX, earthY, moonOrbitR, moonOrbitR * 0.55, 0, 0, Math.PI * 2);
         ctx.strokeStyle = 'rgba(200,200,200,0.2)';
         ctx.lineWidth = 0.5;
         ctx.stroke();
 
-        // Moon (normal full moon emoji)
-        ctx.font = '14px serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('🌕', moonX, moonY);
+        // GUARDRAIL (Tiefe links): Die gestauchte Ellipse = schräg gekippter
+        // Orbit. Obere Hälfte (sin<0) ist die ENTFERNTE Seite → Mond hinter der
+        // Erde; untere Hälfte (sin>=0) die NAHE Seite → Mond vor der Erde.
+        // Kein Alpha-/Größenwechsel: der Mond bleibt gleich hell, nur die
+        // Zeichenreihenfolge ändert sich (wie beim Torus).
+        const moonBehind = Math.sin(moonAngle) < 0;
+        const paintMoon = () => {
+            ctx.font = '14px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🌕', moonX, moonY);
+        };
+        const paintEarth = () => {
+            ctx.font = '22px serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('🌍', earthX, earthY);
+        };
+
+        if (moonBehind) {
+            paintMoon();
+            paintEarth();
+        } else {
+            paintEarth();
+            paintMoon();
+        }
 
         // Labels
         ctx.font = '11px system-ui';
