@@ -1,0 +1,2425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deinen Körper verstehen – 10 Schlüsselkonzepte</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #222240;
+            --accent-1: #ff6b6b;
+            --accent-2: #4ecdc4;
+            --accent-3: #45b7d1;
+            --accent-4: #96ceb4;
+            --accent-5: #feca57;
+            --accent-6: #ff9ff3;
+            --accent-7: #54a0ff;
+            --accent-8: #5f27cd;
+            --accent-9: #01a3a4;
+            --accent-10: #f368e0;
+            --text-primary: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-dim: #6a6a82;
+            --border: rgba(255,255,255,0.06);
+            --glow: rgba(78, 205, 196, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb:nth-child(1) { width: 600px; height: 600px; background: var(--accent-2); top: -200px; left: -200px; animation-delay: 0s; }
+        .orb:nth-child(2) { width: 400px; height: 400px; background: var(--accent-6); top: 50%; right: -100px; animation-delay: -7s; }
+        .orb:nth-child(3) { width: 500px; height: 500px; background: var(--accent-7); bottom: -200px; left: 30%; animation-delay: -14s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -80px) scale(1.1); }
+            50% { transform: translate(-30px, 50px) scale(0.9); }
+            75% { transform: translate(80px, 30px) scale(1.05); }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--accent-2);
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-2) 50%, var(--accent-6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin-bottom: 3rem;
+        }
+
+        .hero-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-width: 900px;
+        }
+
+        .hero-nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .hero-nav a:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .hero-nav a .num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-dim);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* Section Styles */
+        .concept-section {
+            min-height: 100vh;
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .concept-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(100%, 1200px);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            opacity: 0.2;
+        }
+
+        .section-title-group h2 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title-group .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .info-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .chart-container .js-plotly-plot .plotly .modebar {
+            top: 5px !important;
+            right: 5px !important;
+        }
+
+        /* Interactive Controls */
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 120px;
+        }
+
+        .control-group input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            flex: 1;
+            min-width: 150px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.4);
+        }
+
+        .control-group input[type="number"],
+        .control-group select {
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            width: 100px;
+        }
+
+        .control-group select {
+            width: auto;
+        }
+
+        .value-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-2);
+        }
+
+        .result-box {
+            padding: 1.5rem;
+            background: rgba(78, 205, 196, 0.05);
+            border: 1px solid rgba(78, 205, 196, 0.15);
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        .result-box h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-2);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-box .result-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .result-box .result-detail {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Practical Tips */
+        .tip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .tip {
+            padding: 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .tip .icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .tip strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .tip span {
+            color: var(--text-secondary);
+        }
+
+        /* Canvas container */
+        .canvas-wrapper {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .canvas-wrapper canvas {
+            display: block;
+            width: 100%;
+        }
+
+        /* Tabs */
+        .tab-group {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-dim);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Heartbeat animation */
+        .heart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .heart-svg {
+            width: 100px;
+            height: 100px;
+            animation: heartbeat 1s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+        }
+
+        /* Breathing animation */
+        .breath-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 2rem auto;
+            transition: all 0.1s ease;
+        }
+
+        /* Progress bars */
+        .progress-bar-container {
+            margin: 0.8rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Molecule viewer */
+        .molecule-viewer {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .molecule-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .molecule-card:hover, .molecule-card.active {
+            border-color: rgba(78, 205, 196, 0.3);
+            background: var(--bg-card-hover);
+        }
+
+        .molecule-card .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .molecule-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .molecule-card p {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Body map */
+        .body-map-container {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .body-map-svg {
+            flex: 0 0 300px;
+        }
+
+        .body-map-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .body-map-svg svg {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .body-part {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .body-part:hover {
+            filter: brightness(1.3);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent-2);
+            text-decoration: none;
+        }
+
+        /* Animations on scroll */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Button */
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        /* Warning / info boxes */
+        .info-box {
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+
+        .info-box.warning {
+            background: rgba(254, 202, 87, 0.08);
+            border: 1px solid rgba(254, 202, 87, 0.2);
+            color: var(--accent-5);
+        }
+
+        .info-box.success {
+            background: rgba(78, 205, 196, 0.08);
+            border: 1px solid rgba(78, 205, 196, 0.2);
+            color: var(--accent-2);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .concept-section { padding: 4rem 1rem; }
+            .section-header { flex-direction: column; gap: 0.5rem; }
+            .section-number { font-size: 2rem; }
+            .control-group { flex-direction: column; align-items: stretch; }
+            .body-map-svg { flex: 0 0 auto; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">
+        <span class="pulse"></span>
+        Interaktiver Körper-Guide · 10 Schlüsselkonzepte
+    </div>
+    <h1>Versteh deinen<br>Körper.</h1>
+    <p>Die 10 wichtigsten Konzepte aus Biologie & Medizin – interaktiv erklärt, wissenschaftlich fundiert und mit praktischem Impact für deinen Alltag.</p>
+    <div class="hero-nav">
+        <a href="#s1"><span class="num" style="background:rgba(255,107,107,0.2);color:var(--accent-1)">01</span> Homöostase</a>
+        <a href="#s2"><span class="num" style="background:rgba(78,205,196,0.2);color:var(--accent-2)">02</span> Energiebilanz</a>
+        <a href="#s3"><span class="num" style="background:rgba(69,183,209,0.2);color:var(--accent-3)">03</span> Nervensystem</a>
+        <a href="#s4"><span class="num" style="background:rgba(150,206,180,0.2);color:var(--accent-4)">04</span> Hormone</a>
+        <a href="#s5"><span class="num" style="background:rgba(254,202,87,0.2);color:var(--accent-5)">05</span> Immunsystem</a>
+        <a href="#s6"><span class="num" style="background:rgba(255,159,243,0.2);color:var(--accent-6)">06</span> Mikrobiom</a>
+        <a href="#s7"><span class="num" style="background:rgba(84,160,255,0.2);color:var(--accent-7)">07</span> Zirkadianer Rhythmus</a>
+        <a href="#s8"><span class="num" style="background:rgba(95,39,205,0.2);color:var(--accent-8)">08</span> Entzündung</a>
+        <a href="#s9"><span class="num" style="background:rgba(1,163,164,0.2);color:var(--accent-9)">09</span> Epigenetik</a>
+        <a href="#s10"><span class="num" style="background:rgba(243,104,224,0.2);color:var(--accent-10)">10</span> Neuroplastizität</a>
+    </div>
+    <div class="scroll-indicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 1: HOMÖOSTASE ==================== -->
+<section class="concept-section" id="s1">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-1)">01</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-1)">Homöostase</h2>
+                <div class="subtitle">Dein Körper strebt immer nach Gleichgewicht – versteh das, und du verstehst fast alles.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🎯 Was ist Homöostase?</h3>
+                <p>Dein Körper hat für fast alles einen „Sollwert" – Temperatur (37°C), Blutzucker (70-100 mg/dL), pH-Wert (7.35-7.45), Blutdruck. Weicht ein Wert ab, steuert dein Körper automatisch gegen. <strong>Das ist das fundamentalste Prinzip der Medizin.</strong></p>
+            </div>
+            <div class="info-card">
+                <h3>⚙️ Warum ist das wichtig?</h3>
+                <p>Fast jede Krankheit lässt sich als gestörte Homöostase verstehen: Diabetes = Blutzucker-Regulation gestört. Fieber = Temperatur-Sollwert bewusst hochgesetzt. Bluthochdruck = Druckregulation aus dem Gleichgewicht. <strong>Wenn du Homöostase verstehst, verstehst du Krankheit.</strong></p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🌡️ Interaktiv: Thermoregulation simulieren</h3>
+        <div class="control-group">
+            <label>Umgebungstemperatur:</label>
+            <input type="range" id="envTemp" min="-10" max="50" value="22" oninput="updateHomeo()">
+            <span class="value-display" id="envTempVal">22°C</span>
+            <label>Aktivitätslevel:</label>
+            <input type="range" id="actLevel" min="0" max="100" value="20" oninput="updateHomeo()">
+            <span class="value-display" id="actLevelVal">20%</span>
+        </div>
+        <div class="chart-container">
+            <div id="homeoChart" style="height:350px;"></div>
+        </div>
+        <div class="result-box" id="homeoResult">
+            <h4>Körperreaktion</h4>
+            <div class="result-value" id="homeoBodyTemp">37.0°C</div>
+            <div class="result-detail" id="homeoDetail">Dein Körper ist im Gleichgewicht. Keine besonderen Maßnahmen nötig.</div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🧊</span><div><strong>Kälteexposition</strong><span>Kalte Duschen trainieren deine Thermoregulation. Der Körper lernt, schneller gegenzusteuern.</span></div></div>
+            <div class="tip"><span class="icon">🌡️</span><div><strong>Fieber nicht sofort senken</strong><span>Fieber bis 39°C ist eine gewollte Sollwert-Erhöhung – dein Immunsystem arbeitet besser bei höherer Temperatur.</span></div></div>
+            <div class="tip"><span class="icon">💧</span><div><strong>Hydration = Homöostase</strong><span>Wasser ist das Medium, in dem alle Regulationsprozesse stattfinden. Dehydration stört ALLES.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 2: ENERGIEBILANZ ==================== -->
+<section class="concept-section" id="s2">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-2)">02</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-2)">Energiebilanz & Stoffwechsel</h2>
+                <div class="subtitle">Alles in deinem Körper braucht Energie. Versteh den Fluss, und du verstehst Ernährung, Gewicht und Leistung.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🔥 Die Grundgleichung</h3>
+                <p><strong>Energie rein – Energie raus = Bilanz.</strong> Dein Grundumsatz (BMR) macht 60-75% des Verbrauchs aus – das ist die Energie, die dein Körper in Ruhe braucht. Dein Gehirn allein verbraucht ~20% davon, obwohl es nur 2% deiner Masse ausmacht.</p>
+            </div>
+            <div class="info-card">
+                <h3>⚡ ATP – Die Energiewährung</h3>
+                <p>Jede Zelle nutzt ATP (Adenosintriphosphat) als Energiewährung. Dein Körper produziert und verbraucht täglich ca. <strong>40-70 kg ATP</strong> – ja, dein eigenes Körpergewicht in Energiemolekülen, jeden Tag!</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">⚖️ Dein persönlicher Energieverbrauch (Mifflin-St Jeor)</h3>
+        <div class="control-group">
+            <label>Geschlecht:</label>
+            <select id="bmrSex" onchange="updateBMR()">
+                <option value="m">Männlich</option>
+                <option value="f">Weiblich</option>
+            </select>
+            <label>Alter:</label>
+            <input type="number" id="bmrAge" value="30" min="15" max="100" onchange="updateBMR()">
+            <label>
+Gewicht (kg):</label>
+            <input type="number" id="bmrWeight" value="75" min="30" max="250" onchange="updateBMR()">
+            <label>Größe (cm):</label>
+            <input type="number" id="bmrHeight" value="175" min="100" max="230" onchange="updateBMR()">
+            <label>Aktivität:</label>
+            <select id="bmrActivity" onchange="updateBMR()">
+                <option value="1.2">Sitzend (Bürojob)</option>
+                <option value="1.375">Leicht aktiv (1-3x Sport/Woche)</option>
+                <option value="1.55" selected>Moderat aktiv (3-5x Sport/Woche)</option>
+                <option value="1.725">Sehr aktiv (6-7x Sport/Woche)</option>
+                <option value="1.9">Extrem aktiv (Leistungssport)</option>
+            </select>
+        </div>
+        <div class="section-grid">
+            <div class="result-box">
+                <h4>Grundumsatz (BMR)</h4>
+                <div class="result-value" id="bmrValue">1,700 kcal</div>
+                <div class="result-detail">Das verbraucht dein Körper in völliger Ruhe – nur um am Leben zu bleiben.</div>
+            </div>
+            <div class="result-box">
+                <h4>Gesamtumsatz (TDEE)</h4>
+                <div class="result-value" id="tdeeValue">2,635 kcal</div>
+                <div class="result-detail" id="tdeeDetail">Das ist dein tatsächlicher Tagesverbrauch inklusive Aktivität.</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div id="energyChart" style="height:380px;"></div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">📊 Wohin geht deine Energie?</h3>
+        <div class="chart-container">
+            <div id="energyPieChart" style="height:350px;"></div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🧠</span><div><strong>Dein Gehirn ist ein Energiefresser</strong><span>~20% deines Grundumsatzes gehen ans Gehirn. Deshalb macht intensives Denken tatsächlich hungrig.</span></div></div>
+            <div class="tip"><span class="icon">💪</span><div><strong>Muskeln erhöhen den Grundumsatz</strong><span>1 kg Muskelmasse verbrennt ~13 kcal/Tag in Ruhe. 10 kg mehr Muskeln = 130 kcal/Tag extra – automatisch.</span></div></div>
+            <div class="tip"><span class="icon">🍽️</span><div><strong>Thermic Effect of Food</strong><span>Protein zu verdauen kostet 20-30% der Kalorien. Fett nur 0-3%. Deshalb sättigt Protein besser.</span></div></div>
+            <div class="tip"><span class="icon">⚠️</span><div><strong>Crash-Diäten senken den Grundumsatz</strong><span>Dein Körper fährt den Verbrauch runter (adaptive Thermogenese). Langsam abnehmen ist nachhaltiger.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 3: NERVENSYSTEM ==================== -->
+<section class="concept-section" id="s3">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-3)">03</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-3)">Autonomes Nervensystem</h2>
+                <div class="subtitle">Sympathikus vs. Parasympathikus – der Schalter zwischen Stress und Erholung, den du bewusst beeinflussen kannst.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>⚡ Sympathikus – „Fight or Flight"</h3>
+                <p>Aktiviert bei Stress, Gefahr, Aufregung. <strong>Herzfrequenz ↑, Blutdruck ↑, Pupillen weiten sich, Verdauung ↓, Cortisol ↑.</strong> Evolutionär überlebenswichtig – aber chronische Aktivierung macht krank (Burnout, Bluthochdruck, Immunschwäche).</p>
+            </div>
+            <div class="info-card">
+                <h3>🧘 Parasympathikus – „Rest & Digest"</h3>
+                <p>Aktiviert bei Ruhe, Sicherheit, Entspannung. <strong>Herzfrequenz ↓, Verdauung ↑, Regeneration ↑, Immunsystem ↑.</strong> Der Vagusnerv ist der Hauptnerv des Parasympathikus – und du kannst ihn gezielt aktivieren!</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🫁 Interaktiv: Atemübung – Aktiviere deinen Parasympathikus</h3>
+        <p style="color:var(--text-secondary);margin-bottom:1rem;">Längeres Ausatmen als Einatmen stimuliert den Vagusnerv. Probier es jetzt aus!</p>
+
+        <div class="control-group">
+            <label>Einatmen (Sek):</label>
+            <input type="number" id="breathIn" value="4" min="2" max="10" style="width:70px">
+            <label>Halten (Sek):</label>
+            <input type="number" id="breathHold" value="4" min="0" max="10" style="width:70px">
+            <label>Ausatmen (Sek):</label>
+            <input type="number" id="breathOut" value="6" min="2" max="15" style="width:70px">
+            <button class="btn" id="breathBtn" onclick="startBreathing()">▶ Starten</button>
+        </div>
+
+        <div class="canvas-wrapper" style="padding:2rem;text-align:center;">
+            <div class="breath-circle" id="breathCircle" style="background:rgba(69,183,209,0.15);border:2px solid var(--accent-3);">
+                <span id="breathText">Bereit</span>
+            </div>
+            <div id="breathCounter" style="font-family:'JetBrains Mono',monospace;font-size:2rem;margin-top:1rem;color:var(--accent-3);">–</div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">💓 Sympathikus vs. Parasympathikus – Live-Balance</h3>
+        <div class="control-group">
+            <label>Stresslevel:</label>
+            <input type="range" id="stressLevel" min="0" max="100" value="50" oninput="updateANS()">
+            <span class="value-display" id="stressVal">50%</span>
+        </div>
+        <div class="chart-container">
+            <div id="ansChart" style="height:350px;"></div>
+        </div>
+
+        <div class="section-grid" style="margin-top:1.5rem;">
+            <div class="result-box" id="sympathResult">
+                <h4>⚡ Sympathikus-Effekte</h4>
+                <div id="sympathEffects"></div>
+            </div>
+            <div class="result-box" id="parasympathResult">
+                <h4>🧘 Parasympathikus-Effekte</h4>
+                <div id="parasympathEffects"></div>
+            </div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🫁</span><div><strong>Box Breathing (4-4-4-4)</strong><span>Navy SEALs nutzen diese Technik. 4 Sek ein, 4 halten, 4 aus, 4 halten. Sofortige Stressreduktion.</span></div></div>
+            <div class="tip"><span class="icon">❄️</span><div><strong>Kaltes Wasser ins Gesicht</strong><span>Aktiviert den „Dive Reflex" – sofortige Parasympathikus-Aktivierung. Hilft bei Panikattacken.</span></div></div>
+            <div class="tip"><span class="icon">🎵</span><div><strong>Summen / Singen</strong><span>Vibrationen im Kehlkopf stimulieren den Vagusnerv direkt. Deshalb beruhigt Singen.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 4: HORMONE ==================== -->
+<section class="concept-section" id="s4">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-4)">04</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-4)">Hormone – Deine chemischen Botenstoffe</h2>
+                <div class="subtitle">Hormone steuern Stimmung, Energie, Schlaf, Hunger, Libido – fast alles. Versteh die wichtigsten.</div>
+            </div>
+        </div>
+
+        <div class="molecule-viewer" id="hormoneCards">
+            <div class="molecule-card active" onclick="selectHormone('cortisol')">
+                <div class="emoji">😰</div>
+                <h4>Cortisol</h4>
+                <p>Stresshormon</p>
+            </div>
+            <div class="molecule-card" onclick="selectHormone('insulin')">
+                <div class="emoji">🍬</div>
+                <h4>Insulin</h4>
+                <p>Blutzucker</p>
+            </div>
+            <div class="molecule-card" onclick="selectHormone('dopamin')">
+                <div class="emoji">🎯</div>
+                <h4>Dopamin</h4>
+                <p>Motivation</p>
+            </div>
+            <div class="molecule-card" onclick="selectHormone('serotonin')">
+                <div class="emoji">😊</div>
+                <h4>Serotonin</h4>
+                <p>Wohlbefinden</p>
+            </div>
+            <div class="molecule-card" onclick="selectHormone('melatonin')">
+                <div class="emoji">🌙</div>
+                <h4>Melatonin</h4>
+                <p>Schlaf</p>
+            </div>
+            <div class="molecule-card" onclick="selectHormone('testosteron')">
+                <div class="emoji">💪</div>
+                <h4>Testosteron</h4>
+                <p>Aufbau & Antrieb</p>
+            </div>
+        </div>
+
+        <div class="chart-container" style="margin-top:1.5rem;">
+            <div id="hormoneChart" style="height:350px;"></div>
+        </div>
+
+        <div class="info-card full-width" id="hormoneInfo" style="margin-top:1.5rem;">
+            <h3 id="hormoneInfoTitle">😰 Cortisol – Das Stresshormon</h3>
+            <p id="hormoneInfoText">Cortisol folgt einem natürlichen Tagesrhythmus: Hoch am Morgen (weckt dich auf), niedrig am Abend (lässt dich schlafen). <strong>Chronischer Stress hält Cortisol dauerhaft hoch</strong> → Schlafstörungen, Gewichtszunahme (besonders Bauchfett), Immunschwäche, Gedächtnisprobleme. Praktisch: Morgens Sonnenlicht hilft, den Cortisol-Peak richtig zu timen.</p>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">☀️</span><div><strong>Morgensonne = Cortisol-Reset</strong><span>10 Min Sonnenlicht morgens synchronisiert deinen Cortisol-Rhythmus. Bessere Energie tagsüber, besserer Schlaf nachts.</span></div></div>
+            <div class="tip"><span class="icon">🏋️</span><div><strong>Krafttraining → Testosteron & Wachstumshormon</strong><span>Schwere Compound-Übungen (Kniebeugen, Kreuzheben) boosten anabole Hormone natürlich.</span></div></div>
+            <div class="tip"><span class="icon">📱</span><div><strong>Dopamin-Detox</strong><span>Social Media, Zucker, Pornos → chronisch erhöhtes Dopamin → Rezeptor-Downregulation → du brauchst immer mehr für den gleichen Effekt.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 5: IMMUNSYSTEM ==================== -->
+<section class="concept-section" id="s5">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-5)">05</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-5)">Immunsystem – Deine Armee</h2>
+                <div class="subtitle">Angeboren vs. erworben, Entzündung als Werkzeug, und warum Schlaf die beste Medizin ist.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🛡️ Angeborenes Immunsystem</h3>
+                <p><strong>Erste Verteidigungslinie.</strong> Haut, Schleimhäute, Magensäure, Fresszellen (Makrophagen), natürliche Killerzellen. Reagiert sofort (Minuten bis Stunden), aber unspezifisch – wie eine Polizeistreife, die alles Verdächtige stoppt.</p>
+            </div>
+            <div class="info-card">
+                <h3>🎯 Erworbenes Immunsystem</h3>
+                <p><strong>Präzisionswaffe.</strong> T-Zellen und B-Zellen lernen spezifische Erreger kennen. Braucht Tage beim ersten Kontakt, aber bildet <strong>Gedächtniszellen</strong> – beim zweiten Mal reagiert es blitzschnell. Das ist das Prinzip hinter Impfungen.</p>
+            </div>
+            <div class="info-card full-width">
+                <h3>⏱️ Timeline einer Immunantwort</h3>
+                <div id="immuneTimeline" style="height:200px;margin-top:1rem;"></div>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🔬 Interaktiv: Dein Immunsystem-Score</h3>
+        <div class="control-group" style="flex-direction:column;align-items:stretch;">
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Schlaf (Stunden):</label>
+                <input type="range" id="immuneSleep" min="3" max="10" value="7" step="0.5" oninput="updateImmuneScore()">
+                <span id="immuneSleepVal" style="font-family:'JetBrains Mono';color:var(--accent-5)">7h</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Stress (0-10):</label>
+                <input type="range" id="immuneStress" min="0" max="10" value="5" oninput="updateImmuneScore()">
+                <span id="immuneStressVal" style="font-family:'JetBrains Mono';color:var(--accent-5)">5</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Bewegung (Min/Tag):</label>
+                <input type="range" id="immuneExercise" min="0" max="120" value="30" oninput="updateImmuneScore()">
+                <span id="immuneExerciseVal" style="font-family:'JetBrains Mono';color:var(--accent-5)">30 min</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Ernährungsqualität:</label>
+                <input type="range" id="immuneNutrition" min="0" max="10" value="6" oninput="updateImmuneScore()">
+                <span id="immuneNutritionVal" style="font-family:'JetBrains Mono';color:var(--accent-5)">6/10</span>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div id="immuneRadar" style="height:400px;"></div>
+        </div>
+        <div class="result-box">
+            <h4>Dein Immunsystem-Score</h4>
+            <div class="result-value" id="immuneScoreVal">65/100</div>
+            <div class="result-detail" id="immuneScoreDetail">Verbesserungspotenzial vorhanden.</div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">😴</span><div><strong>Schlaf ist #1</strong><span>Eine Nacht mit <6h Schlaf reduziert die Aktivität natürlicher Killerzellen um bis zu 70%. Schlaf ist die mächtigste Immunmaßnahme.</span></div></div>
+            <div class="tip"><span class="icon">🏃</span><div><strong>Moderate Bewegung boosted</strong><span>30-60 Min moderate Bewegung erhöht die Zirkulation von Immunzellen. Aber: Übertraining schwächt das Immunsystem!</span></div></div>
+            <div class="tip"><span class="icon">🍊</span><div><strong>Vitamin D ist entscheidend</strong><span>80% der Deutschen haben im Winter zu wenig Vitamin D. Es aktiviert T-Zellen direkt. Supplementierung im Winter sinnvoll.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 6: MIKROBIOM ==================== -->
+<section class="concept-section" id="s6">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-6)">06</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-6)">Mikrobiom – Dein zweites Gehirn</h2>
+                <div class="subtitle">~39 Billionen Bakterien leben in dir – mehr als du eigene Zellen hast. Sie beeinflussen Stimmung, Gewicht, Immunsystem und mehr.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🦠 Die Darm-Hirn-Achse</h3>
+                <p>Dein Darm produziert <strong>~95% deines Serotonins</strong> und kommuniziert über den Vagusnerv direkt mit dem Gehirn. Darmbakterien beeinflussen Stimmung, Angst, Depression. „Bauchgefühl" ist wörtlich zu nehmen!</p>
+            </div>
+            <div class="info-card">
+                <h3>🌿 Diversität ist der Schlüssel</h3>
+                <p>Je vielfältiger dein Mikrobiom, desto gesünder bist du. <strong>Menschen mit >30 verschiedenen Pflanzen pro Woche</strong> haben ein signifikant diverseres Mikrobiom als Menschen mit <10. Jedes Gemüse, Obst, Nuss, Samen, Gewürz zählt!</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🥗 Interaktiv: Wie divers isst du?</h3>
+        <p style="color:var(--text-secondary);margin-bottom:1rem;">Klicke auf die Lebensmittelgruppen, die du diese Woche gegessen hast:</p>
+
+        <div id="foodDiversity" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.5rem;"></div>
+
+        <div class="result-box">
+            <h4>Deine Pflanzen-Diversität diese Woche</h4>
+            <div class="result-value" id="diversityScore">0 / 30+</div>
+            <div class="result-detail" id="diversityDetail">Klicke oben auf die Lebensmittel, die du diese Woche gegessen hast.</div>
+        </div>
+
+        <div class="chart-container">
+            <div id="microbiomeChart" style="height:350px;"></div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🥬</span><div><strong>30 Pflanzen pro Woche</strong><span>Zähle Gemüse, Obst, Nüsse, Samen, Kräuter, Gewürze. Vielfalt schlägt Menge.</span></div></div>
+            <div class="tip"><span class="icon">🫙</span><div><strong>Fermentierte Lebensmittel</strong><span>Sauerkraut, Kimchi, Joghurt, Kefir, Kombucha – liefern lebende Bakterien direkt in den Darm.</span></div></div>
+            <div class="tip"><span class="icon">🚫</span><div><strong>Antibiotika nur wenn nötig</strong><span>Ein Antibiotika-Kurs kann dein Mikrobiom für 6-12 Monate stören. Nur nehmen wenn wirklich indiziert.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 7: ZIRKADIANER RHYTHMUS ==================== -->
+<section class="concept-section" id="s7">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-7)">07</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-7)">Zirkadianer Rhythmus – Deine innere Uhr</h2>
+                <div class="subtitle">Jede Zelle hat eine Uhr. Wenn du gegen sie lebst, wirst du krank. Wenn du mit ihr lebst, optimierst du alles.</div>
+            </div>
+        </div>
+
+        <div class="info-card full-width">
+            <h3>⏰ Die Masteruhr: Suprachiasmatischer Nucleus (SCN)</h3>
+            <p>Im Hypothalamus sitzt eine winzige Struktur aus ~20.000 Neuronen, die deinen gesamten Körper taktet. Sie wird primär durch <strong>Licht über die Retina</strong> synchronisiert. Jedes Organ hat zusätzlich eigene „periphere Uhren", die durch Essenszeiten, Bewegung und Temperatur beeinflusst werden.</p>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🕐 Dein Körper über 24 Stunden</h3>
+        <div class="chart-container">
+            <div id="circadianChart" style="height:450px;"></div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🦉🐦 Bist du Eule oder Lerche?</h3>
+        <div class="control-group">
+            <label>Wann wachst du natürlich auf (ohne Wecker)?</label>
+            <select id="chronoWake" onchange="updateChronotype()">
+                <option value="5">Vor 6:00</option>
+                <option value="6">6:00 – 7:00</option>
+                <option value="7" selected>7:00 – 8:00</option>
+                <option value="8">8:00 – 9:00</option>
+                <option value="9">9:00 – 10:00</option>
+                <option value="10">Nach 10:00</option>
+            </select>
+            <label>Wann bist du am produktivsten?</label>
+            <select id="chronoPeak" onchange="updateChronotype()">
+                <option value="morning">Morgens (8-11)</option>
+                <option value="midday" selected>Mittags (11-14)</option>
+                <option value="afternoon">Nachmittags (14-17)</option>
+                <option value="evening">Abends (17-21)</option>
+                <option value="night">Nachts (21+)</option>
+            </select>
+        </div>
+        <div class="result-box">
+            <h4>Dein Chronotyp</h4>
+            <div class="result-value" id="chronoResult">🐦🦉 Intermediär</div>
+            <div class="result-detail" id="chronoDetail">Du bist ein Mischtyp. Dein optimales Schlaffenster liegt bei ca. 23:00 – 7:00.</div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🌅</span><div><strong>Morgenlicht ist der #1 Zeitgeber</strong><span>Innerhalb von 30 Min nach dem Aufwachen rausgehen. Auch bei Wolken: draußen = 10.000+ Lux, drinnen = 200-500 Lux.</span></div></div>
+            <div class="tip"><span class="icon">📱</span><div><strong>Blaulicht abends vermeiden</strong><span>Bildschirme unterdrücken Melatonin. Ab 2h vor dem Schlafen: Blaulichtfilter, dimmes warmes Licht.</span></div></div>
+            <div class="tip"><span class="icon">🍽️</span><div><strong>Essenszeiten = Zeitgeber</strong><span>Regelmäßige Essenszeiten synchronisieren periphere Uhren. Spät essen verwirrt deine Leber-Uhr.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 8: ENTZÜNDUNG ==================== -->
+<section class="concept-section" id="s8">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-8)">08</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-8)">Entzündung – Freund & Feind</h2>
+                <div class="subtitle">Akute Entzündung heilt. Chronische Entzündung tötet. Der Unterschied ist entscheidend.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🔥 Akute Entzündung (GUT)</h3>
+                <p>Du schneidest dich → Rötung, Schwellung, Wärme, Schmerz. Das ist <strong>Heilung in Aktion</strong>: Immunzellen strömen ein, räumen Erreger auf, reparieren Gewebe. Dauert Stunden bis Tage. <strong>Nicht unterdrücken!</strong> (Eis auf Verletzungen ist oft kontraproduktiv.)</p>
+            </div>
+            <div class="info-card">
+                <h3>💀 Chronische Entzündung (SCHLECHT)</h3>
+                <p>Niedriggradige, dauerhafte Entzündung – du spürst sie nicht direkt. Aber sie ist an <strong>fast jeder chronischen Krankheit beteiligt</strong>: Herzerkrankungen, Diabetes Typ 2, Alzheimer, Krebs, Depression. Ausgelöst durch: Schlafmangel, Stress, Zucker, Bewegungsmangel, viszerales Fett.</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">📊 Entzündungs-Risiko-Rechner</h3>
+        <div class="control-group" style="flex-direction:column;align-items:stretch;">
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Bauchumfang (cm):</label>
+                <input type="number" id="waistCirc" value="85" min="50" max="180" onchange="updateInflammation()">
+                <label>Zucker (Teelöffel/Tag):</label>
+                <input type="range" id="sugarIntake" min="0" max="30" value="10" oninput="updateInflammation()">
+                <span id="sugarVal" style="font-family:'JetBrains Mono';color:var(--accent-8)">10 TL</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Schlaf (h):</label>
+                <input type="range" id="inflammSleep" min="3" max="10" value="7" step="0.5" oninput="updateInflammation()">
+                <span id="inflammSleepVal" style="font-family:'JetBrains Mono';color:var(--accent-8)">7h</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Bewegung (Min/Tag):</label>
+                <input type="range" id="inflammExercise" min="0" max="120" value="20" oninput="updateInflammation()">
+                <span id="inflammExerciseVal" style="font-family:'JetBrains Mono';color:var(--accent-8)">20 min</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Alkohol (Drinks/Woche):</label>
+                <input type="range" id="alcoholIntake" min="0" max="30" value="5" oninput="updateInflammation()">
+                <span id="alcoholVal" style="font-family:'JetBrains Mono';color:var(--accent-8)">5</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Raucher:</label>
+                <select id="smokerStatus" onchange="updateInflammation()">
+                    <option value="0">Nein</option>
+                    <option value="1">Gelegentlich</option>
+                    <option value="2">Ja, täglich</option>
+                </select>
+            </div>
+        </div>
+        <div class="chart-container">
+            <div id="inflammationChart" style="height:350px;"></div>
+        </div>
+        <div class="result-box">
+            <h4>Dein Entzündungs-Risiko</h4>
+            <div class="result-value" id="inflammScore">Moderat</div>
+            <div class="result-detail" id="inflammDetail">Einige Risikofaktoren vorhanden. Siehe Empfehlungen unten.</div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🐟</span><div><strong>Omega-3 Fettsäuren</strong><span>EPA & DHA (fetter Fisch, Algenöl) sind die stärksten natürlichen Entzündungshemmer. 2-3x Fisch/Woche oder supplementieren.</span></div></div>
+            <div class="tip"><span class="icon">🫄</span><div><strong>Viszerales Fett abbauen</strong><span>Bauchfett ist ein aktives Entzündungsorgan – es produziert ständig entzündungsfördernde Zytokine. Bauchumfang > 94cm (Männer) / 80cm (Frauen) = erhöhtes Risiko.</span></div></div>
+            <div class="tip"><span class="icon">🫐</span><div><strong>Polyphenole</strong><span>Beeren, grüner Tee, Kurkuma, dunkle Schokolade (>70%) – starke antientzündliche Wirkung durch sekundäre Pflanzenstoffe.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 9: EPIGENETIK ==================== -->
+<section class="concept-section" id="s9">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-9)">09</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-9)">Epigenetik – Deine Gene sind nicht dein Schicksal</h2>
+                <div class="subtitle">Du kannst nicht deine DNA ändern, aber du kannst beeinflussen, welche Gene an- und ausgeschaltet werden.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🧬 DNA ≠ Schicksal</h3>
+                <p>Stell dir deine DNA als Buch vor. <strong>Epigenetik bestimmt, welche Kapitel gelesen werden.</strong> Durch chemische Markierungen (Methylierung, Histon-Modifikation) werden Gene aktiviert oder stumm geschaltet – ohne die DNA-Sequenz zu ändern. Dein Lebensstil schreibt diese Markierungen!</p>
+            </div>
+            <div class="info-card">
+                <h3>👶 Vererbbar!</h3>
+                <p>Das Schockierende: Epigenetische Veränderungen können an Kinder und sogar Enkel weitergegeben werden. <strong>Die Hungersnot in den Niederlanden 1944</strong> zeigte: Kinder und Enkel der Betroffenen hatten erhöhte Raten von Diabetes und Herzerkrankungen – obwohl sie selbst nie hungerten.</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🔬 Interaktiv: Gen-Schalter Simulation</h3>
+        <p style="color:var(--text-secondary);margin-bottom:1rem;">Sieh, wie Lebensstilfaktoren Gene an- und ausschalten:</p>
+
+        <div class="control-group" style="flex-direction:column;align-items:stretch;">
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Ernährungsqualität:</label>
+                <input type="range" id="epiNutrition" min="0" max="10" value="5" oninput="updateEpigenetics()">
+                <span id="epiNutritionVal" style="font-family:'JetBrains Mono';color:var(--accent-9)">5/10</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Bewegung:</label>
+                <input type="range" id="epiExercise" min="0" max="10" value="5" oninput="updateEpigenetics()">
+                <span id="epiExerciseVal" style="font-family:'JetBrains Mono';color:var(--accent-9)">5/10</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Stress-Management:</label>
+                <input type="range" id="epiStress" min="0" max="10" value="5" oninput="updateEpigenetics()">
+                <span id="epiStressVal" style="font-family:'JetBrains Mono';color:var(--accent-9)">5/10</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Schlafqualität:</label>
+                <input type="range" id="epiSleep" min="0" max="10" value="5" oninput="updateEpigenetics()">
+                <span id="epiSleepVal" style="font-family:'JetBrains Mono';color:var(--accent-9)">5/10</span>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                <label>Toxin-Exposition (Rauchen, Alkohol):</label>
+                <input type="range" id="epiToxins" min="0" max="10" value="3" oninput="updateEpigenetics()">
+                <span id="epiToxinsVal" style="font-family:'JetBrains Mono';color:var(--accent-9)">3/10</span>
+            </div>
+        </div>
+
+        <div class="canvas-wrapper" style="padding:1rem;">
+            <canvas id="epigeneticsCanvas" width="1000" height="400"></canvas>
+        </div>
+
+        <div class="section-grid" style="margin-top:1.5rem;">
+            <div class="result-box">
+                <h4>🟢 Aktivierte Schutzgene</h4>
+                <div id="goodGenes" style="font-size:0.9rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
+            </div>
+            <div class="result-box">
+                <h4>🔴 Aktivierte Risikogene</h4>
+                <div id="badGenes" style="font-size:0.9rem;color:var(--text-secondary);margin-top:0.5rem;"></div>
+            </div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🥦</span><div><strong>Sulforaphan (Brokkoli-Sprossen)</strong><span>Einer der stärksten epigenetischen Modulatoren in der Nahrung. Aktiviert Nrf2-Pathway → schaltet hunderte Schutzgene an.</span></div></div>
+            <div class="tip"><span class="icon">🧘</span><div><strong>Meditation verändert Genexpression</strong><span>Studien zeigen: 8 Wochen Meditation verändern die Expression von >200 Genen – weniger Entzündung, bessere Zellreparatur.</span></div></div>
+            <div class="tip"><span class="icon">🏃</span><div><strong>Sport ist epigenetische Medizin</strong><span>Eine einzige Trainingseinheit verändert die Methylierung von >7.000 Genen. Regelmäßiger Sport programmiert dein Epigenom um.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CONCEPT 10: NEUROPLASTIZITÄT ==================== -->
+<section class="concept-section" id="s10">
+    <div class="section-inner fade-in">
+        <div class="section-header">
+            <div class="section-number" style="color:var(--accent-10)">10</div>
+            <div class="section-title-group">
+                <h2 style="color:var(--accent-10)">Neuroplastizität – Dein Gehirn formt sich ständig um</h2>
+                <div class="subtitle">„Neurons that fire together, wire together." Dein Gehirn ist kein fertiger Computer – es baut sich ständig um, basierend auf dem, was du tust.</div>
+            </div>
+        </div>
+
+        <div class="section-grid">
+            <div class="info-card">
+                <h3>🧠 Was ist Neuroplastizität?</h3>
+                <p>Dein Gehirn hat ~86 Milliarden Neuronen mit ~100 Billionen Verbindungen (Synapsen). <strong>Jede Erfahrung, jeder Gedanke, jede Handlung stärkt oder schwächt diese Verbindungen.</strong> Was du wiederholst, wird stärker. Was du nicht nutzt, wird abgebaut. Du bist buchstäblich, was du wiederholt tust.</p>
+            </div>
+            <div class="info-card">
+                <h3>⚡ Praktische Bedeutung</h3>
+                <p><strong>Gewohnheiten</strong> sind neuronale Autobahnen – je öfter du einen Pfad gehst, desto breiter wird er. Sucht, Angststörungen, aber auch Expertise und Resilienz sind alle Produkte von Neuroplastizität. <strong>Du kannst dein Gehirn bewusst umbauen</strong> – aber es braucht Wiederholung und Zeit.</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">🔗 Interaktiv: Neuronales Netzwerk – Sieh Plastizität in Aktion</h3>
+        <p style="color:var(--text-secondary);margin-bottom:1rem;">Klicke wiederholt auf Neuronen, um Verbindungen zu stärken. Beobachte, wie sich das Netzwerk verändert.</p>
+
+        <div class="canvas-wrapper" style="padding:0;">
+            <canvas id="neuralCanvas" width="1000" height="500"></canvas>
+        </div>
+
+        <div class="control-group">
+            <button class="btn" onclick="resetNeural()">🔄 Netzwerk zurücksetzen</button>
+            <button class="btn" onclick="autoFire()" style="background:linear-gradient(135deg,var(--accent-10),var(--accent-8));">⚡ Auto-Feuern (Übung simulieren)</button>
+            <button class="btn" onclick="decayNeural()" style="background:linear-gradient(135deg,#666,#444);">💤 Verfall simulieren (Nicht-Nutzung)</button>
+        </div>
+
+        <div class="result-box" style="margin-top:1rem;">
+            <h4>Netzwerk-Status</h4>
+            <div class="result-detail" id="neuralStatus">Klicke auf Neuronen oder nutze die Buttons, um Neuroplastizität zu beobachten.</div>
+        </div>
+
+        <h3 style="margin-top:2rem;margin-bottom:1rem;">📈 Lernkurve: Wie Wiederholung Verbindungen stärkt</h3>
+        <div class="chart-container">
+            <div id="plasticityChart" style="height:350px;"></div>
+        </div>
+
+        <div class="tip-grid">
+            <div class="tip"><span class="icon">🔁</span><div><strong>Wiederholung ist alles</strong><span>Eine neue Gewohnheit braucht im Schnitt 66 Tage (nicht 21!). Die neuronale Verbindung wird mit jeder Wiederholung stärker.</span></div></div>
+            <div class="tip"><span class="icon">😰</span><div><strong>Stress + Fokus = Plastizität</strong><span>Neuroplastizität braucht zwei Dinge: Aufmerksamkeit (Fokus) und einen leichten Stressreiz (Herausforderung). Komfortzone verlassen ist neurologisch notwendig.</span></div></div>
+            <div class="tip"><span class="icon">😴</span><div><strong>Schlaf konsolidiert</strong><span>Im Schlaf werden die tagsüber gebildeten Verbindungen gefestigt. Ohne Schlaf kein Lernen. Schlaf NACH dem Lernen ist entscheidend.</span></div></div>
+            <div class="tip"><span class="icon">🏃</span><div><strong>BDNF durch Sport</strong><span>Sport erhöht BDNF (Brain-Derived Neurotrophic Factor) – das „Düngemittel" für Neuronen. Besonders Ausdauersport fördert Neurogenese im Hippocampus.</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+    <p>Erstellt als interaktiver Lern-Guide · Basierend auf aktueller Forschung aus Biologie, Neurowissenschaft & Medizin</p>
+    <p style="margin-top:0.5rem;">⚠️ Dies ist ein Bildungstool, kein medizinischer Rat. Bei gesundheitlichen Fragen wende dich an einen Arzt.</p>
+</footer>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ============================================
+// UTILITY
+// ============================================
+const plotlyLayout = {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#a0a0b8', family: 'Inter, sans-serif' },
+    margin: { t: 40, r: 30, b: 50, l: 60 },
+    xaxis: { gridcolor: 'rgba(255,255,255,0.05)', zerolinecolor: 'rgba(255,255,255,0.1)' },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.05)', zerolinecolor: 'rgba(255,255,255,0.1)' }
+};
+
+const plotlyConfig = { responsive: true, displayModeBar: false };
+
+// ============================================
+// 1. HOMÖOSTASE
+// ============================================
+function updateHomeo() {
+    const envTemp = +document.getElementById('envTemp').value;
+    const actLevel = +document.getElementById('actLevel').value;
+    document.getElementById('envTempVal').textContent = envTemp + '°C';
+    document.getElementById('actLevelVal').textContent = actLevel + '%';
+
+    // Simulate body temperature regulation
+    const heatFromActivity = actLevel * 0.03;
+    const heatExchange = (envTemp - 37) * 0.015;
+    let bodyTemp = 37 + heatExchange + heatFromActivity;
+
+    // Body tries to regulate
+    const regulationStrength = 0.85;
+    bodyTemp = 37 + (bodyTemp - 37) * (1 - regulationStrength);
+
+    // Extreme conditions overwhelm regulation
+    if (envTemp > 42) bodyTemp += (envTemp - 42) * 0.05;
+    if (envTemp < -5) bodyTemp -= (-5 - envTemp) * 0.03;
+    if (actLevel > 80) bodyTemp += (actLevel - 80) * 0.02;
+
+    bodyTemp = Math.round(bodyTemp * 10) / 10;
+
+    document.getElementById('homeoBodyTemp').textContent = bodyTemp.toFixed(1) + '°C';
+
+    let detail = '';
+    let color = '#4ecdc4';
+    if (bodyTemp < 35) { detail = '⚠️ Hypothermie-Gefahr! Dein Körper kann die Kälte nicht mehr kompensieren. Zittern, Vasokonstriktion maximal.'; color = '#54a0ff'; }
+    else if (bodyTemp < 36.5) { detail = '🥶 Leichte Unterkühlung. Dein Körper zittert, verengt Blutgefäße in der Haut und erhöht den Stoffwechsel.'; color = '#45b7d1'; }
+    else if (bodyTemp <= 37.5) { detail = '✅ Perfekte Homöostase! Dein Körper hält die Temperatur im optimalen Bereich. Alle Enzyme arbeiten optimal.'; color = '#4ecdc4'; }
+    else if (bodyTemp <= 38.5) { detail = '🌡️ Leicht erhöht. Dein Körper schwitzt, weitet Blutgefäße in der Haut, erhöht die Herzfrequenz.'; color = '#feca57'; }
+    else if (bodyTemp <= 40) { detail = '🔥 Fieber-Bereich! Starkes Schwitzen, Vasodilatation, erhöhte Herzfrequenz. Bei Sport: Pause machen!'; color = '#ff6b6b'; }
+    else { detail = '🚨 Hitzschlag-Gefahr! Über 40°C versagen Enzyme, Proteine denaturieren. Lebensbedrohlich!'; color = '#ff6b6b'; }
+
+    document.getElementById('homeoDetail').textContent = detail;
+    document.getElementById('homeoBodyTemp').style.color = color;
+
+    // Chart: Temperature over time simulation
+    const times = [];
+    const temps = [];
+    const setpoint = [];
+    let t = 37;
+    for (let i = 0; i < 60; i++) {
+        times.push(i);
+        const disturbance = (i > 10 && i < 40) ? (envTemp - 22) * 0.02 + actLevel * 0.005 : 0;
+        t += disturbance * 0.1;
+        t += (37 - t) * 0.15; // regulation
+        t += (Math.random() - 0.5) * 0.05;
+        temps.push(Math.round(t * 100) / 100);
+        setpoint.push(37);
+    }
+
+    Plotly.newPlot('homeoChart', [
+        { x: times, y: temps, type: 'scatter', mode: 'lines', name: 'Körpertemperatur', line: { color: color, width: 3 } },
+        { x: times, y: setpoint, type: 'scatter', mode: 'lines', name: 'Sollwert (37°C)', line: { color: '#ffffff30', width: 2, dash: 'dash' } }
+    ], {
+        ...plotlyLayout,
+        title: { text: 'Thermoregulation über Zeit', font: { size: 14, color: '#e8e8f0' } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Zeit (Minuten)' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Temperatur (°C)', range: [34, 42] },
+        showlegend: true,
+        legend: { font: { size: 11 } }
+    }, plotlyConfig);
+}
+
+// ============================================
+// 2. ENERGIEBILANZ
+// ============================================
+function updateBMR() {
+    const sex = document.getElementById('bmrSex').value;
+    const age = +document.getElementById('bmrAge').value;
+    const weight = +document.getElementById('bmrWeight').value;
+    const height = +document.getElementById('bmrHeight').value;
+    const activity = +document.getElementById('bmrActivity').value;
+
+    // Mifflin-St Jeor
+    let bmr;
+    if (sex === 'm') {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+    bmr = Math.round(bmr);
+    const tdee = Math.round(bmr * activity);
+
+    document.getElementById('bmrValue').textContent = bmr.toLocaleString() + ' kcal';
+    document.getElementById('tdeeValue').textContent = tdee.toLocaleString() + ' kcal';
+
+    const deficit500 = ((tdee - 500) > bmr * 0.8) ? 'Ja, sicher' : '⚠️ Zu aggressiv';
+    document.getElementById('tdeeDetail').textContent =
+        `Zum Abnehmen: ~${tdee - 500} kcal/Tag (500 kcal Defizit ≈ 0.5 kg/Woche). Zum Zunehmen: ~${tdee + 300} kcal/Tag.`;
+
+    // Energy distribution pie chart
+    const brain = Math.round(bmr * 0.20);
+    const liver = Math.round(bmr * 0.21);
+    const muscle = Math.round(bmr * 0.22);
+    const heart = Math.round(bmr * 0.09);
+    const kidneys = Math.round(bmr * 0.08);
+    const other = bmr - brain - liver - muscle - heart - kidneys;
+    const activityCal = tdee - bmr;
+    const tef = Math.round(tdee * 0.1);
+
+    Plotly.newPlot('energyPieChart', [{
+        values: [brain, liver, muscle, heart, kidneys, other, activityCal, tef],
+        labels: ['Gehirn 🧠', 'Leber', 'Muskeln 💪', 'Herz ❤️', 'Nieren', 'Rest (Organe)', 'Aktivität 🏃', 'Verdauung 🍽️'],
+        type: 'pie',
+        hole: 0.5,
+        marker: {
+            colors: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#ff9ff3', '#feca57', '#96ceb4', '#54a0ff', '#5f27cd']
+        },
+        textinfo: 'label+percent',
+        textfont: { size: 11, color: '#e8e8f0' }
+    }], {
+        ...plotlyLayout,
+        title: { text: `Wohin gehen deine ${tdee} kcal?`, font: { size: 14, color: '#e8e8f0' } },
+        showlegend: false
+    }, plotlyConfig);
+
+    // Bar chart comparison
+    const activities = ['Schlafen', 'Sitzen', 'Gehen', 'Joggen', 'Radfahren', 'Schwimmen', 'HIIT', 'Krafttraining'];
+    const mets = [0.9, 1.0, 3.5, 7.0, 6.0, 8.0, 10.0, 5.0];
+    const calsPerHour = mets.map(m => Math.round(m * 3.5 * weight / 200 * 60));
+
+    Plotly.newPlot('energyChart', [{
+        x: activities,
+        y: calsPerHour,
+        type: 'bar',
+        marker: {
+            color: calsPerHour.map((_, i) => `hsl(${170 + i * 20}, 70%, 55%)`),
+            borderRadius: 8
+        },
+        text: calsPerHour.map(c => c + ' kcal/h'),
+        textposition: 'outside',
+        textfont: { color: '#e8e8f0', size: 12 }
+    }], {
+        ...plotlyLayout,
+        title: { text: 'Kalorienverbrauch pro Stunde (für dein Gewicht)', font: { size: 14, color: '#e8e8f0' } },
+        xaxis: { ...plotlyLayout.xaxis },
+        yaxis: { ...plotlyLayout.yaxis, title: 'kcal / Stunde' }
+    }, plotlyConfig);
+}
+
+// ============================================
+// 3. NERVENSYSTEM
+// ============================================
+let breathingInterval = null;
+
+function startBreathing() {
+    const btn = document.getElementById('breathBtn');
+    if (breathingInterval) {
+        clearInterval(breathingInterval);
+        breathingInterval = null;
+        btn.textContent = '▶ Starten';
+        document.getElementById('breathText').textContent = 'Bereit';
+        document.getElementById('breathCounter').textContent = '–';
+        document.getElementById('breathCircle').style.transform = 'scale(1)';
+        return;
+    }
+
+    btn.textContent = '⏹ Stoppen';
+    const inTime = +document.getElementById('breathIn').value;
+    const holdTime = +document.getElementById('breathHold').value;
+    const outTime = +document.getElementById('breathOut').value;
+    const totalCycle = inTime + holdTime + outTime;
+
+    let elapsed = 0;
+    const circle = document.getElementById('breathCircle');
+    const text = document.getElementById('breathText');
+    const counter = document.getElementById('breathCounter');
+
+    breathingInterval = setInterval(() => {
+        const phase = elapsed % totalCycle;
+        if (phase < inTime) {
+            const progress = phase / inTime;
+            const scale = 1 + progress * 0.6;
+            circle.style.transform = `scale(${scale})`;
+            circle.style.background = 'rgba(78, 205, 196, 0.15)';
+            circle.style.borderColor = 'var(--accent-2)';
+            text.textContent = '🫁 Einatmen';
+            counter.textContent = Math.ceil(inTime - phase);
+        } else if (phase < inTime + holdTime) {
+            circle.style.transform = 'scale(1.6)';
+            circle.style.background = 'rgba(254, 202, 87, 0.15)';
+            circle.style.borderColor = 'var(--accent-5)';
+            text.textContent = '⏸️ Halten';
+            counter.textContent = Math.ceil(inTime + holdTime - phase);
+        } else {
+            const progress = (phase - inTime - holdTime) / outTime;
+            const scale = 1.6 - progress * 0.6;
+            circle.style.transform = `scale(${scale})`;
+            circle.style.background = 'rgba(255, 159, 243, 0.15)';
+            circle.style.borderColor = 'var(--accent-6)';
+            text.textContent = '💨 Ausatmen';
+            counter.textContent = Math.ceil(outTime - (phase - inTime - holdTime));
+        }
+        elapsed += 0.1;
+    }, 100);
+}
+
+function updateANS() {
+    const stress = +document.getElementById('stressLevel').value;
+    document.getElementById('stressVal').textContent = stress + '%';
+
+    const symp = stress;
+    const para = 100 - stress;
+
+    // Effects
+    const hr = Math.round(60 + stress * 0.8);
+    const bp = Math.round(120 + stress * 0.4) + '/' + Math.round(80 + stress * 0.2);
+    const digestion = Math.round(100 - stress * 0.8);
+    const immune = Math.round(100 - stress * 0.5);
+    const pupil = stress > 50 ? 'Erweitert' : 'Normal';
+    const breathing = Math.round(12 + stress * 0.15);
+
+    document.getElementById('sympathEffects').innerHTML = `
+        <div style="margin-top:0.5rem;">
+        <div>❤️ Herzfrequenz: <strong>${hr} bpm</strong></div>
+        <div>🩸 Blutdruck: <strong>${bp} mmHg</strong></div>
+        <div>👁️ Pupillen: <strong>${pupil}</strong></div>
+        <div>🫁 Atemfrequenz: <strong>${breathing}/min</strong></div>
+        <div>⚡ Cortisol: <strong>${stress > 60 ? 'HOCH' : stress > 30 ? 'Moderat' : 'Normal'}</strong></div>
+        </div>`;
+
+    document.getElementById('parasympathEffects').innerHTML = `
+        <div style="margin-top:0.5rem;">
+        <div>🍽️ Verdauung: <strong>${digestion}%</strong></div>
+        <div>🛡️ Immunaktivität: <strong>${immune}%</strong></div>
+        <div>🔧 Regeneration: <strong>${para > 60 ? 'Aktiv' : para > 30 ? 'Reduziert' : 'Minimal'}</strong></div>
+        
+        <div>😴 Schlafbereitschaft: <strong>${para > 50 ? 'Hoch' : 'Niedrig'}</strong></div>
+        <div>🧠 Kreativität: <strong>${para > 60 ? 'Erhöht' : para > 30 ? 'Normal' : 'Blockiert'}</strong></div>
+        </div>`;
+
+    // ANS Balance Chart
+    Plotly.newPlot('ansChart', [
+        {
+            x: ['Sympathikus ⚡', 'Parasympathikus 🧘'],
+            y: [symp, para],
+            type: 'bar',
+            marker: {
+                color: ['#ff6b6b', '#4ecdc4'],
+                opacity: 0.85
+            },
+            text: [symp + '%', para + '%'],
+            textposition: 'outside',
+            textfont: { color: '#e8e8f0', size: 16, family: 'JetBrains Mono' }
+        }
+    ], {
+        ...plotlyLayout,
+        title: { text: 'Autonomes Nervensystem Balance', font: { size: 14, color: '#e8e8f0' } },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Aktivierung (%)', range: [0, 110] }
+    }, plotlyConfig);
+}
+
+// ============================================
+// 4. HORMONE
+// ============================================
+const hormoneData = {
+    cortisol: {
+        title: '😰 Cortisol – Das Stresshormon',
+        text: 'Cortisol folgt einem natürlichen Tagesrhythmus: Hoch am Morgen (weckt dich auf), niedrig am Abend (lässt dich schlafen). <strong>Chronischer Stress hält Cortisol dauerhaft hoch</strong> → Schlafstörungen, Gewichtszunahme (besonders Bauchfett), Immunschwäche, Gedächtnisprobleme. Praktisch: Morgens Sonnenlicht hilft, den Cortisol-Peak richtig zu timen.',
+        hours: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        values: [5,4,3,3,4,8,18,25,22,18,15,13,14,12,10,9,8,7,6,5,5,5,5,5],
+        color: '#ff6b6b'
+    },
+    insulin: {
+        title: '🍬 Insulin – Der Blutzucker-Regulator',
+        text: 'Insulin wird von der Bauchspeicheldrüse ausgeschüttet, wenn Blutzucker steigt (nach dem Essen). Es öffnet die Zellen für Glukose. <strong>Chronisch hoher Insulin-Spiegel (durch ständiges Snacken, Zucker) führt zu Insulinresistenz</strong> → Typ-2-Diabetes. Praktisch: Essenspausen (mind. 4h) lassen Insulin sinken. Ballaststoffe + Protein + Fett VOR Kohlenhydraten = flacherer Blutzucker.',
+        hours: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        values: [3,3,2,2,2,2,3,15,25,12,5,4,5,20,30,15,6,4,5,18,25,10,5,3],
+        color: '#feca57'
+    },
+    dopamin: {
+        title: '🎯 Dopamin – Das Motivationsmolekül',
+        text: 'Dopamin ist NICHT das "Glückshormon" – es ist das <strong>Antriebsmolekül</strong>. Es wird ausgeschüttet in Erwartung einer Belohnung, nicht bei der Belohnung selbst. Es treibt dich an, Dinge zu tun. Problem: Social Media, Zucker, Pornos → künstlich hohe Dopamin-Spikes → Rezeptor-Downregulation → du brauchst immer mehr für den gleichen Effekt → Antriebslosigkeit.',
+        hours: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        values: [4,3,3,3,3,4,6,10,14,16,15,13,11,13,14,12,10,11,9,8,7,6,5,4],
+        color: '#54a0ff'
+    },
+    serotonin: {
+        title: '😊 Serotonin – Zufriedenheit & Stabilität',
+        text: '<strong>~95% des Serotonins wird im Darm produziert.</strong> Es reguliert Stimmung, Schlaf, Appetit, Schmerzempfinden. Niedrig bei Depression. Wird aus Tryptophan hergestellt (Truthahn, Eier, Käse, Nüsse). Sonnenlicht, Bewegung und soziale Verbindung erhöhen Serotonin natürlich. SSRIs (Antidepressiva) wirken, indem sie Serotonin im synaptischen Spalt halten.',
+        hours: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        values: [5,4,4,4,4,5,7,10,13,15,16,15,14,14,13,12,11,10,9,8,7,6,5,5],
+        color: '#96ceb4'
+    },
+    melatonin: {
+        title: '🌙 Melatonin – Das Schlafhormon',
+        text: 'Melatonin wird in der Zirbeldrüse produziert, wenn es dunkel wird. <strong>Licht (besonders blaues Licht) unterdrückt die Produktion sofort.</strong> Es macht dich nicht direkt müde, sondern signalisiert dem Körper: "Es ist Nacht, fahr runter." Praktisch: 2h vor dem Schlafen dimmes, warmes Licht. Bildschirme mit Blaulichtfilter. Schlafzimmer komplett abdunkeln.',
+        hours: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        values: [50,55,55,50,40,20,5,1,0,0,0,0,0,0,0,0,0,0,1,5,15,30,40,48],
+        color: '#5f27cd'
+    },
+    testosteron: {
+        title: '💪 Testosteron – Aufbau & Antrieb',
+        text: 'Wichtig für BEIDE Geschlechter (Frauen haben weniger, aber brauchen es genauso). Beeinflusst Muskelmasse, Knochendichte, Libido, Energie, Stimmung, Selbstvertrauen. <strong>Peak morgens, sinkt über den Tag.</strong> Natürlich erhöhen: Krafttraining (schwer!), ausreichend Schlaf (Testosteron wird im Tiefschlaf produziert), Vitamin D, Zink, gesunde Fette, Stress reduzieren.',
+        hours: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        values: [15,14,13,14,16,20,25,28,26,23,20,18,17,16,15,14,13,12,12,12,13,14,14,15],
+        color: '#ff9ff3'
+    }
+};
+
+function selectHormone(key) {
+    const data = hormoneData[key];
+    document.getElementById('hormoneInfoTitle').textContent = data.title;
+    document.getElementById('hormoneInfoText').innerHTML = data.text;
+
+    // Update active card
+    document.querySelectorAll('.molecule-card').forEach(c => c.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Plot
+    Plotly.newPlot('hormoneChart', [{
+        x: data.hours.map(h => h + ':00'),
+        y: data.values,
+        type: 'scatter',
+        mode: 'lines+markers',
+        fill: 'tozeroy',
+        fillcolor: data.color + '15',
+        line: { color: data.color, width: 3, shape: 'spline' },
+        marker: { size: 6, color: data.color }
+    }], {
+        ...plotlyLayout,
+        title: { text: 'Tagesverlauf', font: { size: 14, color: '#e8e8f0' } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Uhrzeit', tickangle: -45 },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Relativer Spiegel (%)' }
+    }, plotlyConfig);
+}
+
+// ============================================
+// 5. IMMUNSYSTEM
+// ============================================
+function updateImmuneScore() {
+    const sleep = +document.getElementById('immuneSleep').value;
+    const stress = +document.getElementById('immuneStress').value;
+    const exercise = +document.getElementById('immuneExercise').value;
+    const nutrition = +document.getElementById('immuneNutrition').value;
+
+    document.getElementById('immuneSleepVal').textContent = sleep + 'h';
+    document.getElementById('immuneStressVal').textContent = stress;
+    document.getElementById('immuneExerciseVal').textContent = exercise + ' min';
+    document.getElementById('immuneNutritionVal').textContent = nutrition + '/10';
+
+    // Calculate scores
+    let sleepScore = sleep >= 7 && sleep <= 9 ? 100 : sleep >= 6 ? 70 : sleep >= 5 ? 40 : 20;
+    let stressScore = Math.max(0, 100 - stress * 10);
+    let exerciseScore = exercise >= 30 && exercise <= 75 ? 100 : exercise >= 15 ? 70 : exercise > 90 ? 60 : exercise === 0 ? 20 : 50;
+    let nutritionScore = nutrition * 10;
+
+    const total = Math.round((sleepScore * 0.3 + stressScore * 0.25 + exerciseScore * 0.2 + nutritionScore * 0.25));
+
+    document.getElementById('immuneScoreVal').textContent = total + '/100';
+    document.getElementById('immuneScoreVal').style.color =
+        total >= 80 ? '#4ecdc4' : total >= 60 ? '#feca57' : '#ff6b6b';
+
+    let detail = '';
+    if (total >= 80) detail = '🛡️ Ausgezeichnet! Dein Immunsystem ist gut aufgestellt.';
+    else if (total >= 60) detail = '⚠️ Verbesserungspotenzial. Fokussiere auf: ' +
+        (sleepScore < 70 ? 'Schlaf, ' : '') + (stressScore < 70 ? 'Stressreduktion, ' : '') +
+        (exerciseScore < 70 ? 'Bewegung, ' : '') + (nutritionScore < 70 ? 'Ernährung' : '');
+    else detail = '🚨 Dein Immunsystem ist geschwächt. Mehrere Bereiche brauchen Aufmerksamkeit.';
+
+    document.getElementById('immuneScoreDetail').textContent = detail;
+
+    // Radar chart
+    Plotly.newPlot('immuneRadar', [{
+        type: 'scatterpolar',
+        r: [sleepScore, stressScore, exerciseScore, nutritionScore, sleepScore],
+        theta: ['Schlaf 😴', 'Stressresistenz 🧘', 'Bewegung 🏃', 'Ernährung 🥗', 'Schlaf 😴'],
+        fill: 'toself',
+        fillcolor: 'rgba(78, 205, 196, 0.15)',
+        line: { color: '#4ecdc4', width: 2 },
+        marker: { size: 8, color: '#4ecdc4' }
+    }], {
+        ...plotlyLayout,
+        polar: {
+            bgcolor: 'rgba(0,0,0,0)',
+            radialaxis: { visible: true, range: [0, 100], gridcolor: 'rgba(255,255,255,0.05)', color: '#a0a0b8' },
+            angularaxis: { gridcolor: 'rgba(255,255,255,0.08)', color: '#e8e8f0' }
+        },
+        title: { text: 'Immunsystem-Profil', font: { size: 14, color: '#e8e8f0' } }
+    }, plotlyConfig);
+}
+
+// Immune timeline
+function drawImmuneTimeline() {
+    const hours = Array.from({length: 169}, (_, i) => i);
+    const innate = hours.map(h => {
+        if (h < 1) return h * 60;
+        if (h < 6) return 60 + (h - 1) * 5;
+        if (h < 24) return 85 - (h - 6) * 2;
+        return Math.max(10, 49 - (h - 24) * 0.2);
+    });
+    const adaptive = hours.map(h => {
+        if (h < 24) return h * 0.5;
+        if (h < 72) return 12 + (h - 24) * 1.5;
+        if (h < 120) return 84 + (h - 72) * 0.3;
+        return 98;
+    });
+
+    Plotly.newPlot('immuneTimeline', [
+        { x: hours, y: innate, name: '🛡️ Angeboren', type: 'scatter', mode: 'lines', fill: 'tozeroy', fillcolor: 'rgba(254,202,87,0.1)', line: { color: '#feca57', width: 2 } },
+        { x: hours, y: adaptive, name: '🎯 Erworben', type: 'scatter', mode: 'lines', fill: 'tozeroy', fillcolor: 'rgba(84,160,255,0.1)', line: { color: '#54a0ff', width: 2 } }
+    ], {
+        ...plotlyLayout,
+        margin: { t: 10, r: 20, b: 40, l: 50 },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Stunden nach Infektion' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Aktivität (%)', range: [0, 110] },
+        showlegend: true,
+        legend: { x: 0.5, y: 1.1, orientation: 'h', font: { size: 11 } }
+    }, plotlyConfig);
+}
+
+// ============================================
+// 6. MIKROBIOM
+// ============================================
+const foodItems = [
+    { name: 'Brokkoli', cat: 'Gemüse', emoji: '🥦' },
+    { name: 'Spinat', cat: 'Gemüse', emoji: '🥬' },
+    { name: 'Karotten', cat: 'Gemüse', emoji: '🥕' },
+    { name: 'Tomaten', cat: 'Gemüse', emoji: '🍅' },
+    { name: 'Paprika', cat: 'Gemüse', emoji: '🫑' },
+    { name: 'Zwiebeln', cat: 'Gemüse', emoji: '🧅' },
+    { name: 'Knoblauch', cat: 'Gemüse', emoji: '🧄' },
+    { name: 'Süßkartoffel', cat: 'Gemüse', emoji: '🍠' },
+    { name: 'Zucchini', cat: 'Gemüse', emoji: '🥒' },
+    { name: 'Pilze', cat: 'Gemüse', emoji: '🍄' },
+    { name: 'Äpfel', cat: 'Obst', emoji: '🍎' },
+    { name: 'Bananen', cat: 'Obst', emoji: '🍌' },
+    { name: 'Beeren', cat: 'Obst', emoji: '🫐' },
+    { name: 'Orangen', cat: 'Obst', emoji: '🍊' },
+    { name: 'Avocado', cat: 'Obst', emoji: '🥑' },
+    { name: 'Trauben', cat: 'Obst', emoji: '🍇' },
+    { name: 'Mandeln', cat: 'Nüsse', emoji: '🥜' },
+    { name: 'Walnüsse', cat: 'Nüsse', emoji: '🌰' },
+    { name: 'Leinsamen', cat: 'Samen', emoji: '🫘' },
+    { name: 'Chiasamen', cat: 'Samen', emoji: '🌱' },
+    { name: 'Sonnenblumenkerne', cat: 'Samen', emoji: '🌻' },
+    { name: 'Haferflocken', cat: 'Getreide', emoji: '🌾' },
+    { name: 'Vollkornreis', cat: 'Getreide', emoji: '🍚' },
+    { name: 'Quinoa', cat: 'Getreide', emoji: '🫙' },
+    { name: 'Linsen', cat: 'Hülsenfrüchte', emoji: '🫘' },
+    { name: 'Kichererbsen', cat: 'Hülsenfrüchte', emoji: '🥣' },
+    { name: 'Bohnen', cat: 'Hülsenfrüchte', emoji: '🫛' },
+    { name: 'Kurkuma', cat: 'Gewürze', emoji: '🟡' },
+    { name: 'Ingwer', cat: 'Gewürze', emoji: '🫚' },
+    { name: 'Zimt', cat: 'Gewürze', emoji: '🟤' },
+    { name: 'Basilikum', cat: 'Kräuter', emoji: '🌿' },
+    { name: 'Petersilie', cat: 'Kräuter', emoji: '🍃' },
+    { name: 'Minze', cat: 'Kräuter', emoji: '🌿' },
+    { name: 'Sauerkraut', cat: 'Fermentiert', emoji: '🥬' },
+    { name: 'Joghurt', cat: 'Fermentiert', emoji: '🥛' },
+    { name: 'Kimchi', cat: 'Fermentiert', emoji: '🌶️' },
+];
+
+let selectedFoods = new Set();
+
+function initFoodDiversity() {
+    const container = document.getElementById('foodDiversity');
+    foodItems.forEach((item, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.style.cssText = 'padding:8px 14px;font-size:0.8rem;border-radius:10px;border:1px solid rgba(255,255,255,0.06);';
+        btn.textContent = item.emoji + ' ' + item.name;
+        btn.onclick = () => {
+            if (selectedFoods.has(i)) {
+                selectedFoods.delete(i);
+                btn.style.background = 'transparent';
+                btn.style.borderColor = 'rgba(255,255,255,0.06)';
+                btn.style.color = 'var(--text-dim)';
+            } else {
+                selectedFoods.add(i);
+                btn.style.background = 'rgba(255,159,243,0.15)';
+                btn.style.borderColor = 'rgba(255,159,243,0.3)';
+                btn.style.color = '#ff9ff3';
+            }
+            updateDiversity();
+        };
+        container.appendChild(btn);
+    });
+}
+
+function updateDiversity() {
+    const count = selectedFoods.size;
+    document.getElementById('diversityScore').textContent = count + ' / 30+';
+    document.getElementById('diversityScore').style.color =
+        count >= 30 ? '#4ecdc4' : count >= 20 ? '#96ceb4' : count >= 10 ? '#feca57' : '#ff6b6b';
+
+    let detail = '';
+    if (count >= 30) detail = '🌟 Fantastisch! Du erreichst die empfohlene Diversität. Dein Mikrobiom dankt es dir!';
+    else if (count >= 20) detail = '👍 Gut! Du bist auf dem richtigen Weg. Versuche noch mehr Vielfalt einzubauen.';
+    else if (count >= 10) detail = '⚠️ Ausbaufähig. Versuche jede Woche 2-3 neue Pflanzen hinzuzufügen.';
+    else detail = '🚨 Sehr geringe Diversität. Dein Mikrobiom braucht mehr Vielfalt!';
+    document.getElementById('diversityDetail').textContent = detail;
+
+    // Category breakdown
+    const categories = {};
+    selectedFoods.forEach(i => {
+        const cat = foodItems[i].cat;
+        categories[cat] = (categories[cat] || 0) + 1;
+    });
+
+    const cats = Object.keys(categories);
+    const vals = Object.values(categories);
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#feca57', '#ff9ff3', '#96ceb4', '#54a0ff', '#5f27cd'];
+
+    if (cats.length > 0) {
+        Plotly.newPlot('microbiomeChart', [{
+            labels: cats,
+            values: vals,
+            type: 'pie',
+            hole: 0.4,
+            marker: { colors: colors },
+            textinfo: 'label+value',
+            textfont: { size: 12, color: '#e8e8f0' }
+        }], {
+            ...plotlyLayout,
+            title: { text: 'Deine Pflanzen-Kategorien', font: { size: 14, color: '#e8e8f0' } },
+            showlegend: false
+        }, plotlyConfig);
+    }
+}
+
+// ============================================
+// 7. ZIRKADIANER RHYTHMUS
+// ============================================
+function drawCircadianChart() {
+    const hours = Array.from({length: 24}, (_, i) => i);
+    const labels = hours.map(h => h + ':00');
+
+    const alertness = [10,5,3,2,3,8,20,45,65,80,85,82,70,60,55,60,65,60,50,40,30,25,18,12];
+    const cortisol = [5,4,3,3,4,8,18,25,22,18,15,13,14,12,10,9,8,7,6,5,5,5,5,5];
+    const melatonin = [50,55,55,50,40,20,5,1,0,0,0,0,0,0,0,0,0,0,1,5,15,30,40,48];
+    const bodyTemp = [36.2,36.1,36.0,36.0,36.1,36.3,36.5,36.7,36.9,37.0,37.1,37.1,37.0,36.9,36.8,37.0,37.1,37.1,37.0,36.8,36.6,36.5,36.4,36.3];
+
+    Plotly.newPlot('circadianChart', [
+        { x: labels, y: alertness, name: '⚡ Wachheit', type: 'scatter', mode: 'lines', line: { color: '#feca57', width: 2.5, shape: 'spline' } },
+        { x: labels, y: cortisol, name: '😰 Cortisol', type: 'scatter', mode: 'lines', line: { color: '#ff6b6b', width: 2, shape: 'spline' } },
+        { x: labels, y: melatonin, name: '🌙 Melatonin', type: 'scatter', mode: 'lines', line: { color: '#5f27cd', width: 2, shape: 'spline' } },
+        { x: labels, y: bodyTemp.map(t => (t - 36) * 100), name: '🌡️ Körpertemp (skaliert)', type: 'scatter', mode: 'lines', line: { color: '#4ecdc4', width: 2, shape: 'spline', dash: 'dot' } }
+    ], {
+        ...plotlyLayout,
+        title: { text: 'Dein Körper über 24 Stunden', font: { size: 14, color: '#e8e8f0' } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Uhrzeit', tickangle: -45 },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Relativer Level (%)' },
+        showlegend: true,
+        legend: { font: { size: 11 }, orientation: 'h', y: 1.12 },
+        annotations: [
+            { x: '7:00', y: 25, text: '☀️ Cortisol-Peak', showarrow: true, arrowhead: 2, arrowcolor: '#ff6b6b', font: { size: 10, color: '#ff6b6b' } },
+            { x: '2:00', y: 55, text: '🌙 Melatonin-Peak', showarrow: true, arrowhead: 2, arrowcolor: '#5f27cd', font: { size: 10, color: '#5f27cd' } },
+            { x: '10:00', y: 85, text: '🧠 Kognitions-Peak', showarrow: true, arrowhead: 2, arrowcolor: '#feca57', font: { size: 10, color: '#feca57' } }
+        ]
+    }, plotlyConfig);
+}
+
+function updateChronotype() {
+    const wake = +document.getElementById('chronoWake').value;
+    const peak = document.getElementById('chronoPeak').value;
+
+    let type = '';
+    let detail = '';
+
+    if (wake <= 6 && (peak === 'morning' || peak === 'midday')) {
+        type = '🐦 Definitive Lerche';
+        detail = `Du bist ein Frühtyp. Optimales Schlaffenster: ~21:30 – ${wake}:00. Nutze den Morgen für wichtige kognitive Arbeit. Dein Leistungstief liegt am frühen Nachmittag.`;
+    } else if (wake >= 9 && (peak === 'evening' || peak === 'night')) {
+        type = '🦉 Definitive Eule';
+        detail = `Du bist ein Spättyp. Optimales Schlaffenster: ~1:00 – ${wake}:00. Dein kognitiver Peak liegt am späten Nachmittag/Abend. Frühe Meetings sind Gift für dich.`;
+    } else if (wake >= 9 || peak === 'night') {
+        type = '🦉 Tendenz Eule';
+        detail = `Du neigst zum Spättyp. Optimales Schlaffenster: ~0:00 – ${wake}:00. Versuche, wichtige Aufgaben auf den späteren Vormittag oder Nachmittag zu legen.`;
+    } else if (wake <= 6 || peak === 'morning') {
+        type = '🐦 Tendenz Lerche';
+        detail = `Du neigst zum Frühtyp. Optimales Schlaffenster: ~22:00 – ${wake}:00. Nutze die Morgenstunden für Deep Work.`;
+    } else {
+        type = '🐦🦉 Intermediär';
+        detail = `Du bist ein Mischtyp – die häufigste Variante. Optimales Schlaffenster: ~23:00 – ${wake}:00. Dein kognitiver Peak liegt am späten Vormittag.`;
+    }
+
+    document.getElementById('chronoResult').textContent = type;
+    document.getElementById('chronoDetail').textContent = detail;
+}
+
+// ============================================
+// 8. ENTZÜNDUNG
+// ============================================
+function updateInflammation() {
+    const waist = +document.getElementById('waistCirc').value;
+    const sugar = +document.getElementById('sugarIntake').value;
+    const sleep = +document.getElementById('inflammSleep').value;
+    const exercise = +document.getElementById('inflammExercise').value;
+    const alcohol = +document.getElementById('alcoholIntake').value;
+    const smoker = +document.getElementById('smokerStatus').value;
+
+    document.getElementById('sugarVal').textContent = sugar + ' TL';
+    document.getElementById('inflammSleepVal').textContent = sleep + 'h';
+    document.getElementById('inflammExerciseVal').textContent = exercise + ' min';
+    document.getElementById('alcoholVal').textContent = alcohol;
+
+    // Risk factors
+    const waistRisk = waist > 102 ? 30 : waist > 94 ? 20 : waist > 80 ? 10 : 0;
+    const sugarRisk = Math.min(25, sugar * 1.5);
+    const sleepRisk = sleep < 6 ? 25 : sleep < 7 ? 15 : sleep > 9 ? 5 : 0;
+    const exerciseRisk = exercise < 15 ? 20 : exercise < 30 ? 10 : exercise > 90 ? 10 : 0;
+    const alcoholRisk = Math.min(20, alcohol * 2);
+    const smokerRisk = smoker * 20;
+
+    const totalRisk = Math.min(100, waistRisk + sugarRisk + sleepRisk + exerciseRisk + alcoholRisk + smokerRisk);
+
+    let label, color;
+    if (totalRisk < 20) { label = '🟢 Niedrig'; color = '#4ecdc4'; }
+    else if (totalRisk < 40) { label = '🟡 Leicht erhöht'; color = '#96ceb4'; }
+    else if (totalRisk < 60) { label = '🟠 Moderat'; color = '#feca57'; }
+    else if (totalRisk < 80) { label = '🔴 Hoch'; color = '#ff6b6b'; }
+    else { label = '🔴🔴 Sehr hoch'; color = '#ff0000'; }
+
+    document.getElementById('inflammScore').textContent = label;
+    document.getElementById('inflammScore').style.color = color;
+
+    let details = [];
+    if (waistRisk > 15) details.push('Bauchumfang reduzieren (viszerales Fett ist ein Entzündungsherd)');
+    if (sugarRisk > 10) details.push('Zuckerkonsum senken (max. 6 TL/Tag empfohlen)');
+    if (sleepRisk > 10) details.push('Schlaf verbessern (7-9h optimal)');
+    if (exerciseRisk > 10) details.push('Mehr moderate Bewegung einbauen');
+    if (alcoholRisk > 10) details.push('Alkoholkonsum reduzieren');
+    if (smokerRisk > 0) details.push('Rauchen aufhören – stärkster einzelner Entzündungsfaktor');
+
+    document.getElementById('inflammDetail').textContent = details.length > 0 ?
+        'Empfehlungen: ' + details.join('. ') + '.' :
+        'Sehr gut! Dein Lebensstil ist entzündungsarm. Weiter so!';
+
+    // Inflammation bar chart
+    const factors = ['Bauchumfang', 'Zucker', 'Schlafmangel', 'Bewegungsmangel', 'Alkohol', 'Rauchen'];
+    const risks = [waistRisk, sugarRisk, sleepRisk, exerciseRisk, alcoholRisk, smokerRisk];
+    const barColors = risks.map(r => r > 15 ? '#ff6b6b' : r > 8 ? '#feca57' : '#4ecdc4');
+
+    Plotly.newPlot('inflammationChart', [{
+        x: factors,
+        y: risks,
+        type: 'bar',
+        marker: { color: barColors },
+        text: risks.map(r => Math.round(r) + '%'),
+        textposition: 'outside',
+        textfont: { color: '#e8e8f0', size: 12, family: 'JetBrains Mono' }
+    }], {
+        ...plotlyLayout,
+        title: { text: `Entzündungs-Risikofaktoren (Gesamt: ${Math.round(totalRisk)}%)`, font: { size: 14, color: '#e8e8f0' } },
+        xaxis: { ...plotlyLayout.xaxis },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Risikobeitrag (%)', range: [0, 45] }
+    }, plotlyConfig);
+}
+
+// ============================================
+// 9. EPIGENETIK
+// ============================================
+function updateEpigenetics() {
+    const nutrition = +document.getElementById('epiNutrition').value;
+    const exercise = +document.getElementById('epiExercise').value;
+    const stress = +document.getElementById('epiStress').value;
+    const sleep = +document.getElementById('epiSleep').value;
+    const toxins = +document.getElementById('epiToxins').value;
+
+    document.getElementById('epiNutritionVal').textContent = nutrition + '/10';
+    document.getElementById('epiExerciseVal').textContent = exercise + '/10';
+    document.getElementById('epiStressVal').textContent = stress + '/10';
+    document.getElementById('epiSleepVal').textContent = sleep + '/10';
+    document.getElementById('epiToxinsVal').textContent = toxins + '/10';
+
+    const positiveScore = (nutrition + exercise + stress + sleep) / 4;
+    const negativeScore = toxins;
+
+    // Gene lists
+    const protectiveGenes = [
+        { name: 'SIRT1 (Langlebigkeit)', threshold: 5, factor: 'Kalorienrestriktion, Bewegung' },
+        { name: 'NRF2 (Antioxidans-Abwehr)', threshold: 4, factor: 'Brokkoli, Kurkuma, Sport' },
+        { name: 'BDNF (Gehirn-Wachstum)', threshold: 5, factor: 'Sport, Lernen, Schlaf' },
+        { name: 'FOXO3 (DNA-Reparatur)', threshold: 6, factor: 'Fasten, Stressresistenz' },
+        { name: 'Telomerase (Zellalterung)', threshold: 6, factor: 'Meditation, Bewegung, Schlaf' },
+        { name: 'p53 (Tumorsuppressor)', threshold: 4, factor: 'Schlaf, wenig Toxine' },
+        { name: 'SOD2 (Zellschutz)', threshold: 5, factor: 'Ernährung, Bewegung' },
+        { name: 'IL-10 (Anti-Entzündung)', threshold: 5, factor: 'Omega-3, Schlaf, Stressmanagement' }
+    ];
+
+    const riskGenes = [
+        { name: 'NF-κB (Entzündungsmaster)', threshold: 4, factor: 'Zucker, Stress, Schlafmangel' },
+        { name: 'TNF-α (Entzündung)', threshold: 5, factor: 'Viszerales Fett, Stress' },
+        { name: 'IL-6 (chronische Entzündung)', threshold: 5, factor: 'Bewegungsmangel, Schlafmangel' },
+        { name: 'MMP (Gewebeabbau)', threshold: 6, factor: 'Rauchen, UV, Stress' },
+        { name: 'COX-2 (Schmerz/Entzündung)', threshold: 4, factor: 'Omega-6-Überschuss, Stress' },
+        { name: 'Onkogene (Krebsrisiko)', threshold: 7, factor: 'Toxine, Strahlung, Alkohol' }
+    ];
+
+    let goodHTML = '';
+    let activeGood = 0;
+    protectiveGenes.forEach(g => {
+        const active = positiveScore >= g.threshold && negativeScore < 7;
+        if (active) activeGood++;
+        goodHTML += `<div style="padding:4px 0;opacity:${active ? 1 : 0.4}">
+            ${active ? '✅' : '⬜'} <strong>${g.name}</strong> – ${g.factor}
+        </div>`;
+    });
+
+    let badHTML = '';
+    let activeRisk = 0;
+    riskGenes.forEach(g => {
+        const active = positiveScore < g.threshold || negativeScore > 5;
+        if (active) activeRisk++;
+        badHTML += `<div style="padding:4px 0;opacity:${active ? 1 : 0.4}">
+            ${active ? '🔴' : '⬜'} <strong>${g.name}</strong> – ${g.factor}
+        </div>`;
+    });
+
+    document.getElementById('goodGenes').innerHTML = goodHTML;
+    document.getElementById('badGenes').innerHTML = badHTML;
+
+    // Draw epigenetics canvas
+    drawEpigeneticsCanvas(positiveScore, negativeScore, activeGood, activeRisk);
+}
+
+function drawEpigeneticsCanvas(positive, negative, goodCount, badCount) {
+    const canvas = document.getElementById('epigeneticsCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw DNA double helix
+    const centerY = H / 2;
+    const amplitude = 60;
+    const frequency = 0.02;
+
+    for (let x = 50; x < W - 50; x += 2) {
+        const y1 = centerY + Math.sin(x * frequency) * amplitude;
+        const y2 = centerY + Math.sin(x * frequency + Math.PI) * amplitude;
+
+        // Strand 1
+        ctx.beginPath();
+        ctx.arc(x, y1, 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(78, 205, 196, ${0.3 + positive / 15})`;
+        ctx.fill();
+
+        // Strand 2
+        ctx.beginPath();
+        ctx.arc(x, y2, 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 159, 243, ${0.3 + positive / 15})`;
+        ctx.fill();
+
+        // Base pairs (rungs)
+        if (x % 30 < 2) {
+            const geneIndex = Math.floor(x / 30) % 14;
+            const isProtective = geneIndex < 8;
+            const isActive = isProtective ? (positive >= 5) : (positive < 5 || negative > 5);
+
+            ctx.beginPath();
+            ctx.moveTo(x, y1);
+            ctx.lineTo(x, y2);
+            ctx.strokeStyle = isActive ?
+                (isProtective ? 'rgba(78, 205, 196, 0.6)' : 'rgba(255, 107, 107, 0.6)') :
+                'rgba(255,255,255,0.08)';
+            ctx.lineWidth = isActive ? 3 : 1;
+            ctx.stroke();
+
+            // Methylation marks
+            if (!isProtective && negative > 3) {
+                ctx.beginPath();
+                ctx.arc(x, (y1 + y2) / 2, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 107, 107, 0.5)';
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px JetBrains Mono';
+                ctx.textAlign = 'center';
+                ctx.fillText('CH₃', x, (y1 + y2) / 2 + 3);
+            }
+
+            if (isProtective && positive > 5) {
+                ctx.beginPath();
+                ctx.arc(x, (y1 + y2) / 2, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(78, 205, 196, 0.5)';
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px JetBrains Mono';
+                ctx.textAlign = 'center';
+                ctx.fillText('Ac', x, (y1 + y2) / 2 + 3);
+            }
+        }
+    }
+
+    // Labels
+    ctx.font = '14px Inter';
+    ctx.fillStyle = '#4ecdc4';
+    ctx.textAlign = 'left';
+    ctx.fillText(`🟢 ${goodCount} Schutzgene aktiv`, 60, 30);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText(`🔴 ${badCount} Risikogene aktiv`, 60, 55);
+
+    ctx.fillStyle = '#a0a0b8';
+    ctx.font = '11px Inter';
+    ctx.fillText('Ac = Acetylierung (Gen AN) | CH₃ = Methylierung (Gen AUS)', 60, H - 20);
+}
+
+// ============================================
+// 10. NEUROPLASTIZITÄT
+// ============================================
+let neurons = [];
+let connections = [];
+let neuralCanvas, neuralCtx;
+
+function initNeural() {
+    neuralCanvas = document.getElementById('neuralCanvas');
+    neuralCtx = neuralCanvas.getContext('2d');
+
+    // Create neurons
+    const W = neuralCanvas.width;
+    const H = neuralCanvas.height;
+    for (let i = 0; i < 25; i++) {
+        neurons.push({
+            x: 80 + Math.random() * (W - 160),
+            y: 60 + Math.random() * (H - 120),
+            r: 12 + Math.random() * 8,
+            activation: 0,
+            color: `hsl(${280 + Math.random() * 60}, 70%, 60%)`,
+            fireCount: 0
+        });
+    }
+
+    // Create initial weak connections
+    for (let i = 0; i < neurons.length; i++) {
+        for (let j = i + 1; j < neurons.length; j++) {
+            const dist = Math.hypot(neurons[i].x - neurons[j].x, neurons[i].y - neurons[j].y);
+            if (dist < 200 && Math.random() < 0.4) {
+                connections.push({ from: i, to: j, strength: 0.1 + Math.random() * 0.2, fireCount: 0 });
+            }
+        }
+    }
+
+    neuralCanvas.addEventListener('click', (e) => {
+        const rect = neuralCanvas.getBoundingClientRect();
+        const scaleX = neuralCanvas.width / rect.width;
+        const scaleY = neuralCanvas.height / rect.height;
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+
+        neurons.forEach((n, i) => {
+            const dist = Math.hypot(n.x - mx, n.y - my);
+            if (dist < n.r + 10) {
+                fireNeuron(i);
+            }
+        });
+    });
+
+    drawNeural();
+}
+
+function fireNeuron(index) {
+    const n = neurons[index];
+    n.activation = 1;
+    n.fireCount++;
+
+    // Strengthen connected synapses and propagate
+    connections.forEach(c => {
+        if (c.from === index || c.to === index) {
+            c.strength = Math.min(1, c.strength + 0.08);
+            c.fireCount++;
+            const otherIdx = c.from === index ? c.to : c.from;
+            if (Math.random() < c.strength * 0.7) {
+                setTimeout(() => {
+                    neurons[otherIdx].activation = 0.7;
+                    neurons[otherIdx].fireCount++;
+                }, 100 + Math.random() * 200);
+            }
+        }
+    });
+
+    updateNeuralStatus();
+}
+
+function autoFire() {
+    let count = 0;
+    const interval = setInterval(() => {
+        const idx = Math.floor(Math.random() * neurons.length);
+        fireNeuron(idx);
+        count++;
+        if (count > 40) clearInterval(interval);
+    }, 80);
+}
+
+function decayNeural() {
+    connections.forEach(c => {
+        c.strength = Math.max(0.05, c.strength * 0.6);
+    });
+    neurons.forEach(n => {
+        n.fireCount = Math.floor(n.fireCount * 0.5);
+    });
+    updateNeuralStatus();
+}
+
+function resetNeural() {
+    connections.forEach(c => {
+        c.strength = 0.1 + Math.random() * 0.2;
+        c.fireCount = 0;
+    });
+    neurons.forEach(n => {
+        n.activation = 0;
+        n.fireCount = 0;
+    });
+    updateNeuralStatus();
+}
+
+function updateNeuralStatus() {
+    const avgStrength = connections.reduce((s, c) => s + c.strength, 0) / connections.length;
+    const totalFires = neurons.reduce((s, n) => s + n.fireCount, 0);
+    const strongConns = connections.filter(c => c.strength > 0.5).length;
+
+    document.getElementById('neuralStatus').innerHTML =
+        `🔗 Verbindungen: <strong>${connections.length}</strong> | ` +
+        `💪 Starke Verbindungen (>50%): <strong>${strongConns}</strong> | ` +
+        `⚡ Gesamt-Feuerungen: <strong>${totalFires}</strong> | ` +
+        `📊 Durchschnittliche Stärke: <strong>${(avgStrength * 100).toFixed(0)}%</strong>`;
+}
+
+function drawNeural() {
+    const ctx = neuralCtx;
+    const W = neuralCanvas.width;
+    const H = neuralCanvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw connections
+    connections.forEach(c => {
+        const from = neurons[c.from];
+        const to = neurons[c.to];
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.strokeStyle = `rgba(243, 104, 224, ${c.strength * 0.8})`;
+        ctx.lineWidth = c.strength * 5;
+        ctx.stroke();
+
+        // Pulse effect for strong connections
+        if (c.strength > 0.5) {
+            const midX = (from.x + to.x) / 2;
+            const midY = (from.y + to.y) / 2;
+            ctx.beginPath();
+            ctx.arc(midX, midY, c.strength * 4, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(243, 104, 224, ${c.strength * 0.3})`;
+            ctx.fill();
+        }
+    });
+
+    // Draw neurons
+    neurons.forEach((n, i) => {
+        // Glow
+        if (n.activation > 0.1) {
+            const gradient = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r * 3);
+            gradient.addColorStop(0, `rgba(243, 104, 224, ${n.activation * 0.4})`);
+            gradient.addColorStop(1, 'rgba(243, 104, 224, 0)');
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r * 3, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+        }
+
+        // Neuron body
+        const size = n.r + n.fireCount * 0.3;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, Math.min(size, 30), 0, Math.PI * 2);
+        const brightness = 40 + n.activation * 30;
+        ctx.fillStyle = `hsl(300, 70%, ${brightness}%)`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255,255,255,${0.1 + n.activation * 0.4})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Fire count label
+        if (n.fireCount > 0) {
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px JetBrains Mono';
+            ctx.textAlign = 'center';
+            ctx.fillText(n.fireCount, n.x, n.y + 4);
+        }
+
+        // Decay activation
+        n.activation *= 0.95;
+    });
+
+    requestAnimationFrame(drawNeural);
+}
+
+function drawPlasticityChart() {
+    const reps = Array.from({length: 100}, (_, i) => i + 1);
+    const strength = reps.map(r => 100 * (1 - Math.exp(-r / 25)));
+    const speed = reps.map(r => {
+        const s = 100 * (1 - Math.exp(-r / 20));
+        return s + (Math.random() - 0.5) * 5;
+    });
+
+    Plotly.newPlot('plasticityChart', [
+        {
+            x: reps, y: strength, name: 'Synaptische Stärke',
+            type: 'scatter', mode: 'lines',
+            fill: 'tozeroy', fillcolor: 'rgba(243,104,224,0.1)',
+            line: { color: '#f368e0', width: 3, shape: 'spline' }
+        },
+        {
+            x: reps, y: speed, name: 'Ausführungsgeschwindigkeit',
+            type: 'scatter', mode: 'lines',
+            line: { color: '#54a0ff', width: 2, shape: 'spline', dash: 'dot' }
+        }
+    ], {
+        ...plotlyLayout,
+        title: { text: 'Wie Wiederholung neuronale Verbindungen stärkt', font: { size: 14, color: '#e8e8f0' } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Wiederholungen' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Stärke (%)', range: [0, 110] },
+        showlegend: true,
+        legend: { font: { size: 11 } },
+        annotations: [
+            { x: 20, y: 55, text: '📈 Schnelle Anfangsphase', showarrow: false, font: { size: 11, color: '#f368e0' } },
+            { x: 70, y: 98, text: '📊 Plateau (Automatisierung)', showarrow: false, font: { size: 11, color: '#54a0ff' } }
+        ]
+    }, plotlyConfig);
+}
+
+// ============================================
+// SCROLL ANIMATIONS
+// ============================================
+function initScrollAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+}
+
+// ============================================
+// INIT EVERYTHING
+// ============================================
+document.addEventListener('DOMContentLoaded', () => {
+    // Init all interactive elements
+    updateHomeo();
+    updateBMR();
+    updateANS();
+    selectHormone('cortisol');
+    drawImmuneTimeline();
+    updateImmuneScore();
+    initFoodDiversity();
+    drawCircadianChart();
+    updateChronotype();
+    updateInflammation();
+    updateEpigenetics();
+    initNeural();
+    drawPlasticityChart();
+    initScrollAnimations();
+});
+</script>
+
+</body>
+</html>
