@@ -19,7 +19,7 @@ The two preceding chapters built a picture: global unity from local difference, 
 <div class="md">
 ## The tower
 
-In \citetitle{coherent_difference}, the chain from Distinction to Invariance runs through Coherence, and at Coherence something happens that the earlier links did not demand: *the compatibility condition itself must be compatible*.
+In the picture the preceding chapters built, the chain from Distinction to Invariance runs through Coherence, and at Coherence something happens that the earlier links did not demand: *the compatibility condition itself must be compatible*.
 
 In a classical sheaf, two sections are equal on the overlap:
 
@@ -137,7 +137,7 @@ The sheaf parallel is structural. The system's proof-generating capacity, like t
 <div class="md">
 ## The type hierarchy: recursion as construction
 
-In \citetitle{coherent_difference}, the passage from sets to types introduces a hierarchy:
+The passage from sets to types introduces a hierarchy:
 
 $$
 \text{term} \;\to\; \text{type} \;\to\; \text{type of types} \;\to\; \cdots
@@ -232,11 +232,27 @@ The point for recursion: self-reference is not a primitive ability but a *constr
 <div class="md">
 ## The recursive structure of the chain itself
 
-Return, finally, to the chain that opened \citetitle{coherent_difference}:
+Return, finally, to the chain from Distinction to Invariance:
 
 $$
 \begin{aligned}
-&\text{Distinction} \to \text{Relation} \to \text{Transformation} \to \text{Locality} \to \text{Compatibility} \to \text{Coherence} \to \text{Gluing} \to \text{Globality} \to \text{Invariance}
+&\text{Distinction} \\
+&\downarrow \\
+&\text{Relation} \\
+&\downarrow \\
+&\text{Transformation} \\
+&\downarrow \\
+&\text{Locality} \\
+&\downarrow \\
+&\text{Compatibility} \\
+&\downarrow \\
+&\text{Coherence} \\
+&\downarrow \\
+&\text{Gluing} \\
+&\downarrow \\
+&\text{Globality} \\
+&\downarrow \\
+&\text{Invariance}
 \end{aligned}
 $$
 
