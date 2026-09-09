@@ -20,3 +20,9 @@ php tests/search_test.php
 node tests/search_js_test.js
 
 node tests/topics_test.js
+
+# Layout guard: hovering a mouseoverable term (glossary entry, citation,
+# ...) in a chapter introduction must never move the stuff around the
+# drop cap. Runs headless Chromium against the live site; degrades to a
+# SKIP when Chromium or the site is unavailable.
+bash tests/hover_layout_guard.sh
