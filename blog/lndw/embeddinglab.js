@@ -533,6 +533,9 @@ function renderSpace(key, highlightPos = null, steps = []) {
 let _calcEvoFocusState = {};
 let _calcEvoTimers = {};
 let _renderingInProgress = {};
+// Höhe des res-2d-Boxes im Mathe-Zustand merken, damit die Richtungs-Demo
+// (die kürzeren Textzeilen) auf exakt dieselbe Höhe bleibt → kein Layout-Sprung.
+let _res2dMathHeight = 0;
 
 function calcEvo(key) {
     const inputEl = document.getElementById(`input-${key}`);
@@ -690,6 +693,12 @@ function calcEvo(key) {
         // ═══════════════════════════════════════════════════════════
         resDiv.setAttribute('data-math-rendered', 'true');
         resDiv.innerHTML = `<div data-math-rendered="true" style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">${renderedHtml}</div>`;
+
+        // Höhe des Mathe-Boxes merken (1 Frame warten, bis das Layout steht),
+        // damit die spätere Richtungs-Demo auf exakt dieselbe Höhe springt.
+        if (key === '2d') {
+            requestAnimationFrame(() => { _res2dMathHeight = resDiv.offsetHeight; });
+        }
 
         // ═══════════════════════════════════════════════════════════
         // CRITICAL FIX: Restore input value AND focus immediately
@@ -2091,6 +2100,11 @@ function renderDirectionDemo(stage) {
         resDiv.innerHTML = stage === 'power'
             ? 'Die Richtung <b style="color:#f59e0b">mann → prinz → könig</b> ist dieselbe wie <b style="color:#f59e0b">frau → prinzessin → königin</b>. Bedeutung steckt also nicht nur in der <b>Position</b>, sondern auch in der <b>Richtung</b> zwischen Wörtern.'
             : 'Die Vektorrichtung von <b style="color:#10b981">mann</b> nach <b style="color:#10b981">frau</b> zeigt genau so wie von <b style="color:#10b981">könig</b> nach <b style="color:#10b981">königin</b>: „Geschlecht“ ist eine <b>Richtung</b> im Raum — und zwar dieselbe, egal wo man sie ansetzt.';
+        // Box auf exakt dieselbe Höhe wie im Mathe-Zustand halten (mindestens
+        // so groß wie der Text selbst), damit beim Wechsel nicht gesprungen wird.
+        const naturalH = resDiv.offsetHeight;
+        const targetH = Math.max(_res2dMathHeight || 0, naturalH);
+        if (targetH > 0) resDiv.style.minHeight = targetH + 'px';
     }
 }
 
