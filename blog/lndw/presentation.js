@@ -177,6 +177,8 @@ const FragmentActions = {
 	    backward: () => {
 		document.querySelectorAll('.halluc-word').forEach(word => {
 		    word.classList.remove('active');
+		    const bubble = word.querySelector('.halluc-bubble');
+		    if (bubble) bubble.remove();
 		});
 	    },
 	},
@@ -242,7 +244,6 @@ const Presentation = (() => {
         if (idx < 0 || idx >= slides.length) return;
         slides[currentSlide].classList.remove('active');
         currentSlide = idx;
-        slides[currentSlide].classList.remove('slide-entering');
         slides[currentSlide].classList.add('active');
 
         const fragments = getFragments(currentSlide);
@@ -260,7 +261,7 @@ const Presentation = (() => {
         updateUI();
         closeOverview();
         triggerSlideInit(currentSlide);
-        setTimeout(fitSlides, 50);
+        requestAnimationFrame(fitSlides);
     }
 
     function updateUI() {

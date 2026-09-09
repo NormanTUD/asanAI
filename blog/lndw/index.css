@@ -12,30 +12,8 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 /* ============ SLIDES ============ */
 
 .slide.active {
-	display: flex;
 	opacity: 1;
-}
-
-.dim-btn {
-	padding: 8px 18px;
-	border-radius: 8px;
-	border: 2px solid #cbd5e1;
-	background: #fff;
-	font-weight: bold;
-	font-size: 1em;
-	cursor: pointer;
-	transition: all 0.2s;
-}
-.dim-btn:hover { background: #f8fafc; }
-.dim-btn-active {
-	border-color: #3b82f6 !important;
-	background: #eff6ff !important;
-	color: #1e40af;
-}
-
-.slide.slide-entering {
-	display: flex;
-	opacity: 0;
+	pointer-events: auto;
 }
 
 /* Slide content wrapper */
@@ -44,13 +22,17 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    display: none;
+    display: flex;
     flex-direction: column;
-    justify-content: center;    /* ← von flex-start zu center */
+    justify-content: center;
     align-items: center;
     padding: 0;
     background: #ffffff;
     overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+	transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
 }
 
 .slide-content {
@@ -76,15 +58,6 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	background: #eff6ff !important;
 	color: #1e40af;
 }
-
-/* ============ TYPOGRAPHY ============ */
-.slide h1 { font-size: 2.8em; color: #1e40af; margin-bottom: 20px; line-height: 1.2; }
-.slide h2 { font-size: 2.2em; color: #3b82f6; margin-bottom: 16px; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; }
-.slide h3 { font-size: 1.6em; color: #6366f1; margin-top: 20px; margin-bottom: 12px; }
-.slide p { font-size: 1.2em; line-height: 1.8; margin-bottom: 14px; color: #334155; }
-.slide ul, .slide ol { font-size: 1.15em; line-height: 1.8; margin: 12px 0 12px 30px; color: #334155; }
-.slide li { margin-bottom: 8px; }
-.slide code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
 
 /* ============ SPECIAL BOXES ============ */
 .formula-box {
@@ -126,7 +99,8 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .fragment {
 	opacity: 0;
 	transform: translateY(20px);
-	transition: opacity 0.5s ease, transform 0.5s ease;
+	transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity, transform;
 }
 .fragment.visible {
 	opacity: 1;
@@ -167,7 +141,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 #progress-bar {
 	position: fixed; top: 0; left: 0; height: 4px;
 	background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-	transition: width 0.4s ease; z-index: 1001;
+	transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1001;
 }
 
 /* ============ SLIDE OVERVIEW (thumbnail grid) ============ */
@@ -219,7 +193,6 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 /* ============ ANIMATIONS ============ */
 @keyframes tokenAppear { from { opacity:0; transform:translateY(10px) scale(0.8); } to { opacity:1; transform:translateY(0) scale(1); } }
 @keyframes arPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
-@keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
@@ -276,7 +249,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     font-weight: bold;
     font-size: 0.85em;
     color: #64748b;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .know-indicator.active {
@@ -325,7 +298,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     display: flex;
     gap: 12px;
     margin-bottom: 16px;
-    animation: slideIn 0.3s ease;
+    animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .message-avatar {
@@ -495,11 +468,11 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 
 .nb-annotation {
-    transition: opacity 0.4s ease;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nb-annotation-appear {
-    animation: nbAppear 0.5s ease forwards;
+    animation: nbAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes nbAppear {
@@ -529,7 +502,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     background: #f1f5f9;
     color: #64748b;
     border: 2px solid #e2e8f0;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nb-indicator.active {
@@ -611,7 +584,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     background: #f1f5f9;
     color: #64748b;
     border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .attr-indicator.active {
@@ -628,7 +601,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     font-weight: bold;
     color: #dc2626;
     cursor: default;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .halluc-word.active {
@@ -652,7 +625,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
@@ -758,7 +731,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #loading-spinner.hidden {
     opacity: 0;

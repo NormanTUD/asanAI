@@ -362,11 +362,12 @@ const IsosurfaceDemo = (() => {
         // ── Mini-Splits auf dem Hauptpfad ──────────────────────
         miniSplits.forEach(ms => {
             if (visibleStep >= ms.atStep) {
-                const origin = toCanvas(path[ms.atStep]);
+                const prevOrigin = toCanvas(path[Math.max(0, ms.atStep - 1)]);
+                const currentX = toCanvas(path[ms.atStep]).x;
                 const age = visibleStep - ms.atStep;
                 const fade = Math.max(0.08, 0.7 - age * 0.08);
                 ms.alts.forEach(alt => {
-                    drawMiniSplit(origin, alt, temp, fade);
+                    drawMiniSplit(prevOrigin, alt, temp, fade, currentX);
                 });
             }
         });
@@ -619,11 +620,12 @@ const IsosurfaceDemo = (() => {
         // ── Mini-Splits an jedem generierten Token ─────────────
         miniSplits.forEach(ms => {
             if (visibleStep >= ms.atStep) {
-                const origin = toCanvas(path[ms.atStep]);
+                const prevOrigin = toCanvas(path[Math.max(0, ms.atStep - 1)]);
+                const currentX = toCanvas(path[ms.atStep]).x;
                 const age = visibleStep - ms.atStep;
                 const fade = Math.max(0.06, 0.65 - age * 0.07);
                 ms.alts.forEach(alt => {
-                    drawMiniSplit(origin, alt, temp, fade);
+                    drawMiniSplit(prevOrigin, alt, temp, fade, currentX);
                 });
             }
         });
@@ -704,8 +706,9 @@ const IsosurfaceDemo = (() => {
         }
     }
 
-    function drawMiniSplit(origin, alt, temp, fade) {
-        const target = { x: origin.x + alt.dir.dx * W * 2.5, y: origin.y + alt.dir.dy * H * 2.5 };
+    function drawMiniSplit(origin, alt, temp, fade, targetX) {
+        const tx = targetX !== undefined ? targetX : origin.x + alt.dir.dx * W * 2.5;
+        const target = { x: tx, y: origin.y + alt.dir.dy * H * 2.5 };
 
         // Gestrichelte Linie
         ctx.beginPath();

@@ -39,7 +39,7 @@
 				<li class="fragment">Das System antwortet mit einer (hoffentlich) sinnvollen Antwort</li>
 			</ul>
 			<p class="fragment">Systeme wie diese heißen <b>Large Language Model</b> oder kurz <b>LLM.</b></p>
-		<p class="fragment">Sprachmodelle dieser Art sind Grundlage vieler moderner KI-Systeme, sei es Bild- oder Audiogenerierung.</b></p>
+		<p class="fragment">Sprachmodelle dieser Art sind Grundlage vieler moderner KI-Systeme, sei es Bild- oder Audiogenerierung.</p>
 	</div>
 </div>
 </div>
@@ -185,9 +185,9 @@
                 </div>
                 <p class="fragment" style="text-align:center; margin-top:8px;"><b>Warren McCulloch &amp; Walter Pitts (1943)</b> bewiesen, dass ein vereinfachtes Neuron logische Operationen ausführen kann.</p>
 
-                <center>
+                <div style="text-align:center">
                 <img style="max-width:100%; max-height:22vh; border-radius:8px;" class="fragment" src="../snarc.jpg" alt="SNARC" />
-                </center>
+                </div>
                 <p class="fragment" style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b> von Minsky &amp; Edmonds: das erste physische neuronale Netz — 40 Neuronen aus Vakuumröhren, die eine Ratte im Labyrinth simulierten.</p>
             </div>
 
@@ -226,7 +226,7 @@
             </div>
             <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
             <br>
-            <center>
+            <div style="text-align:center">
                 <div id="nn-bottom-images" style="display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: opacity 0.5s ease;">
                     <img height="100" class="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto;">
                     <div style="font-size: 24px; color: #333;">→</div>
@@ -234,7 +234,7 @@
                     <div style="font-size: 24px; color: #333;">→</div>
                     <img height="100" class="sunrise-bg-img" src="transformer.png" alt="LLM Beschreibung" style="width: auto;">
                 </div>
-            </center>
+            </div>
         </div>
     </div>
 </div>
@@ -247,9 +247,9 @@
 		Beim <b>Deep Learning</b> schaltet man viele dieser Neuronen nebeneinander und hintereinander, so dass alle mit jedem aus der vorherigen und nächsten Schicht verbunden sind.
 	</div>
 
-	<center>
+	<div style="text-align:center">
 	<img class="fragment" src="dense.png" />
-	</center>
+	</div>
 
         <div class="fragment">
 		Die ersten Layer übernehmen normalerweise die einfachsten Aufgaben, die späteren können auf den Ergebnissen der vorherigen aufbauen.
@@ -259,9 +259,9 @@
 		Beispiel: Gesichtserkennung. Die frühesten Layer achten nur auf sehr kleine lokale Verläufe, aus denen sich dann immer komplexere Strukturen zusammenbauen, die er erkennen kann.
 	</div>
 
-	<center>
+	<div style="text-align:center">
 	<img class="fragment" src="first_layers_vs_last_layers.png" />
-	</center>
+	</div>
     </div>
 </div>
 
@@ -690,7 +690,7 @@
 <div class="slide" data-title="Wahrscheinlichkeits-Tunnel">
     <div class="slide-content">
         <h2>Isoflächen der Wahrscheinlichkeit: Der "Truth Tunnel"</h2>
-        <p style="margin-bottom:10px;">Stell dir eine Hülle um jeden Bereich vor, den das Modell für <b>plausibel</b> hält. Mit jedem Token <bverändertverengt</b> sich der Tunnel – wie ein Scheinwerfer zeigt er auf die Region der möglichen nächsten Token.</p>
+        <p style="margin-bottom:10px;">Stell dir eine Hülle um jeden Bereich vor, den das Modell für <b>plausibel</b> hält. Mit jedem Token <b>verändert, verengt</b></b> sich der Tunnel – wie ein Scheinwerfer zeigt er auf die Region der möglichen nächsten Token.</p>
 
         <div class="demo-box" style="min-height:auto; padding:16px;">
             <div style="display:grid; grid-template-columns:1fr 230px; gap:14px; align-items:start;">
@@ -955,12 +955,12 @@
 				</div>
 			</div>
 
-			<center class="fragment" >
+			<div style="text-align:center" class="fragment">
 				<figure>
 					<img style="width: 50%; height: auto;" src="juelich.jpeg" />
 					<figcaption>Zum Vergleich: das größte Rechenzentrum in Deutschland (Jülich) hat 1 ExaFLOP.</figcaption>
 				</figure>
-			</center>
+			</div>
 
 			<!-- Quelle: https://epoch.ai/data/ai-models?utm_source=you.com&view=graph&tab=notable -->
 
@@ -1039,9 +1039,9 @@
 				Aber sie hat <b>keinen Körper</b>. Keine Sinne. Kein Grounding.
 				</p>
 
-				<center>
+				<div style="text-align:center">
 					<img style="max-height: 300px" src="vector_grounding_problem_2.jpeg" />
-				</center>
+				</div>
 
 				<div class="fragment" style="padding:14px 18px; background:#fef3c7; border-radius:10px; border:1px solid #fde68a; margin:16px 0;">
 					<strong style="color:#92400e;">🗺️ Das Vector Grounding Problem:</strong><br>
@@ -1475,13 +1475,16 @@
 
 	// Aufrufen bei Load und Resize
 	window.addEventListener('load', () => {
-		// Kurz warten bis alles gerendert ist (Plots, MathML etc.)
-		setTimeout(() => {
+		requestAnimationFrame(() => {
 			fitSlides();
 			document.getElementById('loading-spinner').classList.add('hidden');
-		}, 300);
+		});
 	});
-	window.addEventListener('resize', fitSlides);
+	let resizeRaf;
+	window.addEventListener('resize', () => {
+		cancelAnimationFrame(resizeRaf);
+		resizeRaf = requestAnimationFrame(fitSlides);
+	});
 </script>
 
 </body>
