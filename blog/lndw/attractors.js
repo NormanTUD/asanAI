@@ -1323,16 +1323,18 @@ function renderTorusEarth(container) {
 
         // Determine if moon is on front or back of torus
         // z > 0 means closer to viewer (front), z < 0 means behind (back)
-        const moonIsInFront = moonPos.z > 0;
+        const moonZ = Number.isFinite(moonPos.z) ? moonPos.z : 0;
+        const earthZ = Number.isFinite(earthCenter.z) ? earthCenter.z : 0;
 
-        // Similarly for earth (earth is on the skeleton, always "inside")
-        const earthIsInFront = earthCenter.z > 0;
+        // GUARDRAIL: Tiefenbeziehungen sind konsistent geprüft.
+        const moonInFrontOfEarth = moonZ > earthZ;
 
         // We'll draw in layers:
         // 1. Back wireframe lines (z < 0 portions)
-        // 2. Earth and Moon if they are BEHIND
+        // 2. Bodies im hinteren Halbraum (z < 0), weitester zuerst
         // 3. Front wireframe lines (z > 0 portions)
-        // 4. Earth and Moon if they are IN FRONT
+        // 4. Bodies im vorderen Halbraum (z >= 0), weitester zuerst
+        // 5. Guardrail: Erde ist nie vom Wireframe überdeckt
 
         // Helper: draw a torus line segment only if it's in back or front
         function drawTorusCircle(thetaFn, phiFn, steps, isBackPass, style, lineWidth) {
@@ -1437,20 +1439,26 @@ function renderTorusEarth(container) {
         }
 
         function drawEarth() {
-            // Earth drawn as a small filled circle (inside the tube)
+            // GUARDRAIL: setzt alle Zustände selbst, damit die Reihenfolge
+            // der draw-Einrufe nichts korrumpieren kann.
+            ctx.save();
             ctx.font = '14px serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#ffffff';
             ctx.fillText('🌍', earthCenter.x, earthCenter.y);
 
             ctx.font = '9px system-ui';
             ctx.fillStyle = 'rgba(100, 180, 255, 0.8)';
-            ctx.textAlign = 'center';
             ctx.textBaseline = 'alphabetic';
             ctx.fillText('Erde', earthCenter.x, earthCenter.y + 14);
+            ctx.restore();
         }
 
         function drawMoon() {
+            // GUARDRAIL: setzt alle Zustände selbst (farbige Emojis ignorieren
+            // fillStyle, aber Labels/Glow sollen nicht aus vorherigen Calls leaken).
+            ctx.save();
             // Glow
             const moonGlow = ctx.createRadialGradient(moonPos.x, moonPos.y, 0, moonPos.x, moonPos.y, 12);
             moonGlow.addColorStop(0, 'rgba(220, 220, 220, 0.5)');
@@ -1462,26 +1470,49 @@ function renderTorusEarth(container) {
 
             // Moon emoji (normal full moon, not face)
             ctx.font = '13px serif';
+            ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('🌕', moonPos.x, moonPos.y);
+            ctx.restore();
         }
 
         ctx.save();
 
+        // GUARDRAIL: Körper nach Tiefe (z) sortiert zeichnen — weitester zuerst.
+        // So liegt der Mond je nach z mal UNTER, mal ÜBER der Erde
+        // (vorher wurde er immer nach der Erde gezeichnet und verschwand nie hinter ihr).
+        const bodies = [
+            { key: 'moon', z: moonZ, draw: drawMoon },
+            { key: 'earth', z: earthZ, draw: drawEarth }
+        ];
+
         // === LAYER 1: Back wireframe ===
         drawAllWireframe(true);
 
-        // === LAYER 2: Objects that are BEHIND ===
-        if (!earthIsInFront) drawEarth();
-        if (!moonIsInFront) drawMoon();
+        // === LAYER 2: Bodies im hinteren Halbraum (z<0), weiteste zuerst ===
+        bodies
+            .filter(b => b.z < 0)
+            .sort((a, b) => a.z - b.z)
+            .forEach(b => b.draw());
 
         // === LAYER 3: Front wireframe ===
         drawAllWireframe(false);
 
-        // === LAYER 4: Objects that are IN FRONT ===
-        if (earthIsInFront) drawEarth();
-        if (moonIsInFront) drawMoon();
+        // === LAYER 4: Bodies im vorderen Halbraum (z>=0), weiteste zuerst ===
+        bodies
+            .filter(b => b.z >= 0)
+            .sort((a, b) => a.z - b.z)
+            .forEach(b => b.draw());
+
+        // === LAYER 5 (GUARDRAIL): Erde ist nie vom Wireframe verdeckt ===
+        // War die Erde im hinteren Halbraum (z<0), würde das Front-Wireframe sie
+        // übermalen → sie wird aufs Vorderste geholt, volle Sichtbarkeit.
+        if (earthZ < 0) {
+            drawEarth();
+            // Mond, der VOR der Erde liegt (näher am Betrachter), bleibt über ihr sichtbar
+            if (moonInFrontOfEarth) drawMoon();
+        }
 
         ctx.restore();
 
