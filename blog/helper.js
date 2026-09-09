@@ -310,23 +310,110 @@ function revealContent() {
     requestAnimationFrame(() => {
         content.style.opacity = '1';
     });
+    // The #contents fade is a one-shot; drop the inline transition once
+    // it is done so no reveal residue survives on the scroll container.
+    setTimeout(() => {
+        content.style.removeProperty('transition');
+    }, 800);
 
     const sections = content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2');
     const perSection = Math.max(40, Math.min(120, 800 / sections.length));
 
+    /* ─────────────────────────────────────────────────────────────
+       GUARDRAIL (cause 2) — reveal styles must never survive the
+       reveal. The old code left PERMANENT inline
+       transform:translateY(0) + filter:blur(0) + transition on every
+       heading/section of #contents. The chapter title (h1) sits
+       directly above the drop-cap paragraph, and that residue:
+       (a) made each heading a permanent containing-block / stacking-
+           context candidate,
+       (b) let the old hover "ancestor neutralisation" (glossary /
+           citation tooltips) cancel the transform/filter DURING
+           hover — and because the transition declaration was still
+           inline, the cancellation was ANIMATED: the heading
+           visibly slid and blurred on every hover, dragging the
+           drop-cap paragraph with it,
+       (c) would have survived forever even if the animation never
+           completed (display:none elements never fire transitionend).
+       Rules now:
+       • h1/h2 (drop-cap neighbours) animate OPACITY ONLY — they
+         never carry an inline transform/filter at all;
+       • transform/filter are never written on an element that
+         already computes to non-none (extension / page CSS wins);
+       • when the reveal finishes (transitionend + timeout fallback)
+         every inline reveal style is removed;
+       • a 3 s post-load sweep clears anything missed and logs it.
+       ───────────────────────────────────────────────────────────── */
+    function cleanupReveal(section) {
+        section.style.removeProperty('opacity');
+        section.style.removeProperty('transform');
+        section.style.removeProperty('filter');
+        section.style.removeProperty('transition');
+        section.setAttribute('data-revealed', '1');
+    }
+
     sections.forEach((section, i) => {
+        const delay = i * perSection;
+        const isHeading = section.tagName === 'H1' || section.tagName === 'H2';
+
+        // Motion (transform + blur) is reserved for non-heading blocks,
+        // and only when the element is in a clean state.
+        let withMotion = !isHeading;
+        if (withMotion) {
+            const cs = getComputedStyle(section);
+            if (cs.transform !== 'none' || cs.filter !== 'none') withMotion = false;
+        }
+
         section.style.opacity = '0';
-        section.style.transform = 'translateY(10px)';
-        section.style.filter = 'blur(4px)';
-        section.style.transition = `opacity 0.5s ease ${i * perSection}ms,
-                                     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) ${i * perSection}ms,
-                                     filter 0.5s ease ${i * perSection}ms`;
+        if (withMotion) {
+            section.style.transform = 'translateY(10px)';
+            section.style.filter = 'blur(4px)';
+            section.style.transition = `opacity 0.5s ease ${delay}ms, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms, filter 0.5s ease ${delay}ms`;
+        } else {
+            section.style.transition = `opacity 0.5s ease ${delay}ms`;
+        }
         requestAnimationFrame(() => {
             section.style.opacity = '1';
-            section.style.transform = 'translateY(0)';
-            section.style.filter = 'blur(0)';
+            if (withMotion) {
+                section.style.transform = 'translateY(0)';
+                section.style.filter = 'blur(0)';
+            }
         });
+
+        // Remove ALL inline reveal styles when the reveal is done —
+        // transitionend may fire per property; the flag makes this
+        // idempotent, the timeout covers display:none / aborted runs.
+        let cleaned = false;
+        const done = () => {
+            if (cleaned) return;
+            cleaned = true;
+            section.removeEventListener('transitionend', done);
+            cleanupReveal(section);
+        };
+        section.addEventListener('transitionend', done);
+        setTimeout(done, delay + 700);
     });
+
+    // Final sweep: 3 s after load, no #contents child may still carry
+    // an inline transform/filter. Anything left (transitionend lost to
+    // a display:none element) is cleared and flagged.
+    setTimeout(() => {
+        content.querySelectorAll(':scope > section, :scope > .category-block, :scope > h1, :scope > h2').forEach((s) => {
+            const hasResidue = (s.style.transform && s.style.transform !== 'none') ||
+                               (s.style.filter && s.style.filter !== 'none');
+            if (hasResidue) {
+                try {
+                    console.warn('[reveal] clearing residual inline transform/filter on <' +
+                        s.tagName.toLowerCase() + '> — reveal styles must not survive past load');
+                } catch (e) {}
+            }
+            s.style.removeProperty('transform');
+            s.style.removeProperty('filter');
+            s.style.removeProperty('opacity');
+            s.style.removeProperty('transition');
+            s.setAttribute('data-revealed', '1');
+        });
+    }, 3000);
 }
 
 function make_external_a_href_target_blank() {

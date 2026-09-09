@@ -5766,6 +5766,66 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	contain: none !important;
 }
 
+/* ════════════════════════════════════════════════════════════
+   GUARDRAIL (cause 4) — DROP-CAP CONTAINING-CONTEXT LOCK.
+
+   The blanket rule above gives `contain: layout !important` to every
+   element inside #contents. The drop-cap paragraph MUST keep a stable
+   formatting context: it contains the floated ::first-letter, and
+   toggling its `contain` (even momentarily) changes how the float and
+   the justified text wrapping it are laid out — i.e. "the stuff
+   around the drop cap moves".
+
+   History: the old glossary hover code wrote an inline
+   `contain: none` onto this exact paragraph on every hover and
+   restored it on mouseout. It was a no-op ONLY because of the
+   `!important` above; the moment that `!important` was weakened the
+   hover would have reflowed the paragraph on every term hover.
+
+   The rules now:
+   1. this dedicated rule pins the drop-cap paragraph's formatting
+      context explicitly (survives any future trimming of the blanket
+      rule);
+   2. `contain` was removed from the JS "neutralise" property list —
+      `contain: layout` does NOT create a containing block for
+      position:fixed descendants, so it was never needed for the
+      portaled tooltips (see the reference block below);
+   3. start.js reverts any inline write of the containing-block
+      properties (transform / filter / backdrop-filter / perspective /
+      clip-path / mask / mask-image / will-change / contain) on any
+      element that contains hoverable content, unless the element
+      opts in with data-allow-cb-style.
+
+   REFERENCE — which properties create a containing block for
+   position:fixed descendants (and thus could trap a portaled
+   tooltip): transform, perspective, filter, backdrop-filter,
+   will-change (any value other than auto), contain: PAINT, and
+   view-transition-name. `contain: layout` is NOT on that list — it
+   only traps absolutely-positioned descendants — so it must never be
+   "neutralised" for fixed tooltips.
+   ════════════════════════════════════════════════════════════ */
+#contents p.cl-dropcap,
+.md p.cl-dropcap {
+	contain: layout !important;
+}
+
+/* GUARDRAIL (cause 5) — the drop cap is HIDDEN until polish.js has
+   measured its final size. Before sizing it would render at the CSS
+   fallback (5.5em / 4 lines) and then JUMP to the measured size — a
+   visible reflow of every line wrapping the float. cl-dc-pending is
+   added when the paragraph is tagged and removed the moment the
+   measured --cl-dc-size / --cl-dc-lines is applied (polish.js
+   sizeDropcap); a 2 s safety timer in polish.js reveals the fallback
+   size if the font API never settles, so the first letter can never
+   stay invisible. */
+.md > p.cl-dropcap.cl-dc-pending::first-letter {
+	font-size: 0;
+	line-height: 0;
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+}
+
 .glossary-term {
 	cursor: help;
 	border-bottom: 1px dotted rgba(148, 163, 184, 0.7);
@@ -5800,19 +5860,57 @@ html.dark #theme-toggle .ti-moon { display: none; }
 	text-align: left;
 	box-shadow: var(--mn-shadow-lg);
 	visibility: hidden;
-	/* GUARDRAIL: any of these on an ancestor would break position:fixed.
-	   The JS scanner also strips them, but belt-and-suspenders. */
+	/* GUARDRAIL (cause 1): the tooltip is portaled to <body>, so its
+	   containing block is the viewport — nothing the term's ancestors
+	   do can reach it. These !important self-locks are belt-and-
+	   suspenders against a rule accidentally matching the tooltip
+	   itself. (The old "JS scanner strips ancestor styles on hover"
+	   is gone on purpose: it wrote transform/filter/contain:none on
+	   every ancestor during hover and restored them on mouseout, which
+	   is exactly how the content around the drop cap used to jump.) */
 	transform: none !important;
 	filter: none !important;
 	clip-path: none !important;
 	mask: none !important;
 	perspective: none !important;
 	backdrop-filter: none !important;
-	/* Hard guarantee: force the browser to composite this element in its
-	   own layer above everything. will-change creates a new stacking
-	   context; contain prevents ancestor styles from leaking in. */
-	will-change: transform, opacity !important;
+	/* GUARDRAIL (cause 5): NO `will-change` here. A persistent
+	   will-change:transform parks the tooltip on its own compositing
+	   layer for the whole page life; layer churn over the justified
+	   drop-cap paragraph is one of the ways engines re-rasterise the
+	   underlying text (sub-pixel shift / AA change) when the tip
+	   appears. The opacity transition is composited transiently
+	   without a permanent layer. contain:layout/style isolates the
+	   tip's own styles so the page can't leak in. */
 	contain: layout style !important;
+}
+
+/* GUARDRAIL (cause 1) — unified containing-block lock for ALL four
+   portaled hover tooltips (glossary, citation, footnote, sidenote).
+   Every one of them lives in <body> and is position:fixed; the lock
+   makes it structurally impossible for a stray rule (or a future
+   rule) to give one of them a transform/filter that would (a) trap
+   it in a containing block or (b) re-rasterise the text underneath.
+   NOTE: .cl-sn-tip is exempt from the transform lock only — its own
+   4px entrance slide is self-contained (the tip has no positioned
+   descendants) and does not touch the content layout. */
+body > .glossary-tooltip,
+body > .cl-cite-tip,
+body > .cl-fn-tip,
+body > .cl-sn-tip {
+	position: fixed !important;
+	filter: none !important;
+	backdrop-filter: none !important;
+	perspective: none !important;
+	clip-path: none !important;
+	mask: none !important;
+	mask-image: none !important;
+	will-change: auto !important;
+}
+body > .glossary-tooltip,
+body > .cl-cite-tip,
+body > .cl-fn-tip {
+	transform: none !important;
 }
 .glossary-term:hover .glossary-tooltip,
 .glossary-term:focus .glossary-tooltip {
@@ -9501,6 +9599,39 @@ html.dark .topics-preset-fun {
 		bottom: 8px;
 		right: 14px;
 	}
+}
+
+/* ════════════════════════════════════════════════════════════
+   GUARDRAIL (cause 4) — FINAL WORD: drop-cap layout locks.
+
+   This block sits at the very end of the stylesheet on purpose:
+   with equal specificity, the last rule wins, so nothing written
+   earlier (or accidentally added above) can silently change the
+   formatting context the drop cap depends on. If you are about to
+   add a `contain` / `overflow` rule for #contents, .md or the
+   drop-cap paragraph, update THIS block too — it is the single
+   place that defines the invariant "hovering a glossary term must
+   never reflow the text around the drop cap".
+   ════════════════════════════════════════════════════════════ */
+#contents,
+.md,
+.optional,
+.optional-content {
+	contain: none !important;
+	overflow: visible !important;
+}
+#contents h1, #contents h2, #contents h3,
+#contents h4, #contents h5, #contents h6,
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6,
+.optional h1, .optional h2, .optional h3,
+.optional-content h1, .optional-content h2, .optional-content h3 {
+	contain: none !important;
+}
+/* The drop-cap paragraph keeps its independent formatting context
+   (it contains the floated ::first-letter). Never relax. */
+#contents p.cl-dropcap,
+.md p.cl-dropcap {
+	contain: layout !important;
 }
 
 

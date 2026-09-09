@@ -393,52 +393,45 @@
 	   context the surrounding animated quote/figure created (quoteReveal,
 	   imgReveal keep a transform via fill-mode:both), so the tip's
 	   z-index was trapped beneath following text.
-	   Fix: portal each tooltip to <body>, position it with position:fixed
-	   from the anchor's viewport rect, and temporarily neutralize any
-	   ancestor that would create a containing block for fixed positioning.
-	   This is the same guardrailed pattern the glossary tooltip uses. */
-
-	var _previewSavedStyles = new WeakMap();
+	   Fix: portal each tooltip to <body> and position it with
+	   position:fixed from the anchor's viewport rect. Because the tip
+	   lives in <body>, its containing block is the viewport and NO
+	   ancestor of the anchor can affect it — so (GUARDRAIL, cause 1)
+	   hover must never write styles to the anchor's ancestors. The old
+	   "temporarily neutralize any ancestor" code wrote inline
+	   transform/filter/contain: none on every element up to <html> on
+	   each hover and restored them on mouseout; whenever an ancestor
+	   actually carried one of those properties the content jumped on
+	   hover and jumped back on mouseout. neutralizeContainingBlock() is
+	   now a read-only audit (same contract as the glossary version in
+	   start.js) and restoreAncestors() is the symmetric no-op. */
 
 	function neutralizeContainingBlock(el) {
+		// Read-only audit. `contain` is deliberately not part of the
+		// containing-block risk for position:fixed descendants
+		// (contain:layout traps absolute, only contain:paint traps
+		// fixed) — see the block comment at the end of style.css.
 		var node = el;
-		var stack = [];
 		var props = ['transform', 'filter', 'backdropFilter', 'perspective',
-			'clipPath', 'mask', 'maskImage', 'willChange', 'contain'];
+			'clipPath', 'mask', 'maskImage', 'willChange'];
 		while (node && node !== document.documentElement) {
 			var cs = window.getComputedStyle(node);
-			var saved = _previewSavedStyles.get(node) || {};
-			var touched = false;
 			for (var i = 0; i < props.length; i++) {
 				var p = props[i];
 				var v = cs[p];
 				if (v && v !== 'none' && v !== 'normal' && v !== 'auto' && !(p === 'willChange' && v === 'auto')) {
-					if (!(p in saved)) {
-						saved[p] = node.style[p] || '';
-						node.style[p] = 'none';
-						touched = true;
-					}
+					try {
+						console.debug('[polish] preview-anchor ancestor carries ' + p + ': ' + v +
+							' (audited only — never neutralised, tips are portaled to <body>)');
+					} catch (e) {}
 				}
 			}
-			if (touched) _previewSavedStyles.set(node, saved);
-			stack.push(node);
 			node = node.parentElement;
 		}
-		return stack;
+		return [];
 	}
 
-	function restoreAncestors(stack) {
-		for (var i = 0; i < stack.length; i++) {
-			var node = stack[i];
-			var saved = _previewSavedStyles.get(node);
-			if (!saved) continue;
-			for (var p in saved) {
-				if (saved[p]) node.style[p] = saved[p];
-				else node.style.removeProperty(p);
-			}
-			_previewSavedStyles.delete(node);
-		}
-	}
+	function restoreAncestors() { /* no-op — nothing is ever saved or written */ }
 
 	function positionPreviewTip(anchor, tip) {
 		var aRect = anchor.getBoundingClientRect();
@@ -469,10 +462,12 @@
 	function wirePreviewTip(anchor, tip) {
 		tip._anchor = anchor;
 		var timer = null;
-		var neutralized = null;
 		var show = function () {
 			clearTimeout(timer);
-			neutralized = neutralizeContainingBlock(anchor);
+			// GUARDRAIL (cause 1): audit only — never writes ancestor
+			// styles, so hovering a citation/footnote can never move
+			// the content around the drop cap.
+			neutralizeContainingBlock(anchor);
 			positionPreviewTip(anchor, tip);
 			tip.classList.add('is-visible');
 		};
@@ -480,10 +475,6 @@
 			clearTimeout(timer);
 			timer = setTimeout(function () {
 				tip.classList.remove('is-visible');
-				if (neutralized) {
-					restoreAncestors(neutralized);
-					neutralized = null;
-				}
 			}, 80);
 		};
 		anchor.addEventListener('mouseenter', show);
@@ -776,18 +767,71 @@
 		} catch (e) { /* keep fallback */ }
 		return 0.72;
 	}
-	function sizeDropcap(p) {
+	/* GUARDRAIL (cause 3) — helpers for idempotent drop-cap sizing.
+	   The old code re-ran the full measure-and-step loop on every
+	   polish run() (i.e. 80 ms after ANY node added inside .md),
+	   repeatedly writing --cl-dc-size while reading layout. Any
+	   hover-related DOM churn could therefore re-size the cap and
+	   reflow the justified text wrapping the float. The rules now:
+	   • a sized cap is LOCKED — only a force call (viewport
+	     breakpoint change) may re-measure it;
+	   • the paragraph's measurement key (font-size | line-height |
+	     width | text length) gates re-measure — if nothing the
+	     measurement depends on changed, nothing is re-measured;
+	   • writes that differ by < 0.5px from the current value are
+	     skipped (no sub-pixel layout churn);
+	   • the cap is hidden (cl-dc-pending, font-size:0 in CSS) until
+	     sizing completes, so the user never sees a fallback-size cap
+	     jump to its measured size. A 2 s safety timer reveals the
+	     fallback if the font API never settles. */
+	function dcKey(p) {
+		const cs = getComputedStyle(p);
+		return cs.fontSize + '|' + cs.lineHeight + '|' + p.clientWidth + '|' + (p.textContent || '').length;
+	}
+	function finishDropcapSizing(p) {
+		try {
+			p.classList.remove('cl-dc-pending');
+			p.classList.add('cl-dc-sized');
+			p.dataset.dcLocked = '1';
+			p.dataset.dcKey = dcKey(p);
+			if (p.__dcPendingTimer) { clearTimeout(p.__dcPendingTimer); p.__dcPendingTimer = null; }
+		} catch (e) {}
+	}
+	function sizeDropcap(p, force) {
+		// GUARDRAIL (cause 3): a locked cap is never re-measured except
+		// on force (the viewport-breakpoint path).
+		if (p.dataset.dcLocked === '1' && !force) return;
+		if (force) delete p.dataset.dcLocked;
+		// GUARDRAIL (cause 5): cap hidden until the measured size is
+		// applied — no visible fallback-size -> measured-size jump.
+		p.classList.add('cl-dc-pending');
+		if (!p.__dcPendingTimer) {
+			p.__dcPendingTimer = setTimeout(function () {
+				// Font API never settled — reveal the CSS fallback size
+				// rather than leaving the first letter invisible.
+				p.__dcPendingTimer = null;
+				if (p.classList.contains('cl-dc-pending')) finishDropcapSizing(p);
+			}, 2000);
+		}
 		if (DC_NATIVE) {
 			// The @supports block in style.css does the layout; just say
 			// how tall the cap should be.
 			p.style.setProperty('--cl-dc-lines', dcLineTarget(p));
+			finishDropcapSizing(p);
 			return;
 		}
 		const apply = function (lines, ratio, cs) {
 			const fs = parseFloat(cs.fontSize) || 18;
 			const lh = parseFloat(cs.lineHeight) || fs * 1.25;
-			p.style.setProperty('--cl-dc-size',
-				((lines * lh) / ratio).toFixed(1) + 'px');
+			const next = ((lines * lh) / ratio).toFixed(1) + 'px';
+			// GUARDRAIL (cause 3): epsilon clamp — a change < 0.5px is
+			// invisible and only costs a layout pass.
+			const cur = p.style.getPropertyValue('--cl-dc-size');
+			if (cur) {
+				const a = parseFloat(cur), b = parseFloat(next);
+				if (!isNaN(a) && !isNaN(b) && Math.abs(a - b) < 0.5) return;
+			}
+			p.style.setProperty('--cl-dc-size', next);
 		};
 		// Count the paragraph's real text line boxes. NOTE: comparing
 		// against p.offsetHeight does NOT work — Blink grows the block
@@ -815,6 +859,7 @@
 				// reading rects forces a re-layout with the new size
 				if (lines <= textLineCount(lh) || lines === DC_LINES_MIN) break;
 			}
+			finishDropcapSizing(p);
 		};
 		const ch = (p.textContent.trim()[0] || 'A');
 		if (document.fonts && document.fonts.check('16px "' + DC_FONT + '"', ch)) {
@@ -827,10 +872,19 @@
 			fit(0.72);
 		}
 	}
-	function markDropcapParagraph() {
+	function markDropcapParagraph(force) {
+		// GUARDRAIL (cause 3): idempotency. If the already-tagged
+		// paragraph's measurement key is unchanged, nothing depends on
+		// the cap size has changed — skip the whole re-tag + re-measure
+		// instead of churning the drop-cap paragraph's inline styles.
+		const existing = document.querySelector('.md > p.cl-dropcap');
+		if (existing && existing.dataset.dcLocked === '1' && !force) {
+			if (existing.dataset.dcKey === dcKey(existing)) return;
+		}
 		document.querySelectorAll('.md > p.cl-dropcap').forEach(function (p) {
-			p.classList.remove('cl-dropcap');
+			p.classList.remove('cl-dropcap', 'cl-dc-pending', 'cl-dc-sized');
 			p.style.removeProperty('--cl-dc-size');
+			delete p.dataset.dcLocked;
 		});
 		// Walk every .md block in document order — the page may OPEN with
 		// a figure row, heading or anchor wrapper that holds no <p> at all
@@ -846,18 +900,19 @@
 					// skip layout-only paragraphs (lone anchors, spacing)
 					if ((p.textContent || '').trim()) {
 						p.classList.add('cl-dropcap');
-						sizeDropcap(p);
+						sizeDropcap(p, force);
 						return;
 					}
 				}
 			}
 		}
 	}
-	// re-measure when the viewport crosses the narrow/desktop boundary
+	// re-measure when the viewport crosses the narrow/desktop boundary —
+	// the ONE legitimate re-measure trigger (hence force=true).
 	if (!markDropcapParagraph._mqBound && window.matchMedia) {
 		markDropcapParagraph._mqBound = true;
 		window.matchMedia('(max-width: 700px)').addEventListener('change', function () {
-			markDropcapParagraph();
+			markDropcapParagraph(true);
 		});
 	}
 
@@ -981,6 +1036,14 @@
 			for (const m of muts) {
 				m.addedNodes.forEach(function (n) {
 					if (!(n instanceof Element)) return;
+					// GUARDRAIL (cause 3): tooltip re-parenting (glossary
+					// tooltips portaled to <body>, citation/footnote/
+					// sidenote tips, the image lightbox) must NEVER
+					// trigger a polish re-run — that would re-measure
+					// the drop cap 80 ms later and reflow the text
+					// around it right while the user is hovering.
+					if (n.matches && n.matches('.glossary-tooltip, .cl-cite-tip, .cl-fn-tip, .cl-sn-tip')) return;
+					if (n.closest && n.closest('#cl-lb')) return;
 					if (n.matches && n.matches('.md, .md *')) { touched = true; return; }
 					if (n.querySelector && n.querySelector('.md h2, .md h3, .md pre, .md figure img')) touched = true;
 					if (n.tagName === 'H1' || (n.querySelector && n.querySelector('.md h1'))) h1Appeared = true;

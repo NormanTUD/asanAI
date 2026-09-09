@@ -1428,51 +1428,119 @@ function initGlossary() {
 		});
 	}
 
-	// ANGLE 5: ancestor scanner. Before showing a tooltip, walk up from the
-	// term and temporarily neutralize any property that would create a
-	// containing block for position:fixed descendants. The original
-	// values are saved so they can be restored on mouseout.
-	var _savedAncestorStyles = new WeakMap();
-
-	function neutralizeContainingBlock(el) {
+	// ─────────────────────────────────────────────────────────────────
+	// GUARDRAIL (cause 1) — the tooltip NEVER modifies ancestor styles.
+	//
+	// The tooltip is portaled to <body> and positioned with
+	// position:fixed, so its containing block is the viewport no matter
+	// what the term's ancestors do. The old code walked up the ancestor
+	// chain on every hover and wrote inline
+	// `transform/filter/backdrop-filter/perspective/clip-path/mask/
+	//  will-change/contain: none` on every element up to <html>,
+	// restoring them on mouseout. Whenever an ancestor actually carried
+	// one of those properties (a browser extension, an entrance
+	// animation's fill state, revealContent's residual inline styles,
+	// page-specific CSS), the hover REMOVED it — the content around the
+	// drop cap visibly jumped, and jumped back on mouseout.
+	//
+	// neutralizeContainingBlock() is now a READ-ONLY AUDIT: it reports
+	// (console.debug + window.__cbNeutralizeAudit) what it WOULD have
+	// touched, and never writes a single style. restoreAncestors() is
+	// the symmetric no-op. If a containing-block problem ever returns,
+	// the audit tells us exactly which element/property caused it
+	// without ever being able to move the page.
+	//
+	// NOTE: `contain` is intentionally NOT a containing-block risk for
+	// position:fixed descendants — `contain: layout` creates a
+	// containing block for absolutely-positioned descendants only
+	// (`contain: paint` is the one that traps fixed). See the block
+	// comment at the end of style.css.
+	// ─────────────────────────────────────────────────────────────────
+	function auditContainingBlock(el) {
 		var node = el;
-		var stack = [];
+		// `contain` is deliberately NOT audited: `contain: layout`
+		// (which the stylesheet applies to all of #contents) does not
+		// create a containing block for position:fixed descendants, so
+		// it is not a tooltip risk — including it here would log noise
+		// on every hover. See the reference block in style.css.
+		var props = ['transform', 'filter', 'backdropFilter', 'perspective',
+			'clipPath', 'mask', 'maskImage', 'willChange'];
 		while (node && node !== document.documentElement) {
 			var cs = window.getComputedStyle(node);
-			var props = ['transform', 'filter', 'backdropFilter', 'perspective',
-				'clipPath', 'mask', 'maskImage', 'willChange', 'contain'];
-			var saved = _savedAncestorStyles.get(node) || {};
-			var touched = false;
 			for (var i = 0; i < props.length; i++) {
 				var p = props[i];
 				var v = cs[p];
 				if (v && v !== 'none' && v !== 'normal' && v !== 'auto' && !(p === 'willChange' && v === 'auto')) {
-					if (!(p in saved)) {
-						saved[p] = node.style[p] || '';
-						node.style[p] = 'none';
-						touched = true;
+					try {
+						window.__cbNeutralizeAudit = window.__cbNeutralizeAudit || [];
+						if (window.__cbNeutralizeAudit.length < 50) {
+							window.__cbNeutralizeAudit.push({
+								el: (node.tagName || '').toLowerCase() + (node.id ? '#' + node.id : '') +
+									(node.className && typeof node.className === 'string' ? '.' + node.className.trim().split(/\s+/).join('.') : ''),
+								prop: p, value: v
+							});
+						}
+						console.debug('[glossary] ancestor carries ' + p + ': ' + v +
+							' (audited only — never neutralised, tooltips are portaled to <body>)');
+					} catch (e) {}
+				}
+			}
+			node = node.parentElement;
+		}
+		return [];
+	}
+
+	// Kept for call-site compatibility: never writes anything.
+	function neutralizeContainingBlock(el) { return auditContainingBlock(el); }
+	function restoreAncestors() { /* no-op — nothing is ever saved or written */ }
+
+	// ─────────────────────────────────────────────────────────────────
+	// GUARDRAIL (cause 1, belt) — revert any style write to the
+	// containing-block / stacking-context properties on an element that
+	// actually contains hoverable content (a glossary term, a citation
+	// link or a footnote ref). CSS owns those properties here (the
+	// `contain` rules are !important-locked; transform/filter are meant
+	// to stay none), so any inline write to them — by future JS, a
+	// loader, or a browser extension — is removed in the next
+	// microtask. Elements that opt in explicitly (e.g. a future
+	// reveal animation that genuinely needs an inline transform) set
+	// data-allow-cb-style and are left alone.
+	// ─────────────────────────────────────────────────────────────────
+	var CB_PROPS = ['transform', 'filter', 'backdropFilter', 'perspective',
+		'clipPath', 'mask', 'maskImage', 'willChange', 'contain'];
+	var CB_STYLE_RE = /\b(transform|filter|backdrop-filter|perspective|clip-path|mask|mask-image|will-change|contain)\s*:/i;
+	function installAncestorStyleReverter() {
+		if (!window.MutationObserver) return;
+		var revertObserver = new MutationObserver(function (muts) {
+			for (var i = 0; i < muts.length; i++) {
+				var m = muts[i];
+				if (m.type !== 'attributes' || m.attributeName !== 'style') continue;
+				var el = m.target;
+				if (!el || el.nodeType !== 1) continue;
+				if (el.hasAttribute && el.hasAttribute('data-allow-cb-style')) continue;
+				var s = el.getAttribute('style');
+				if (!s || !CB_STYLE_RE.test(s)) continue;
+				// Only guard elements that contain hoverable content —
+				// i.e. real ancestors of a glossary term / citation.
+				if (!el.querySelector || !el.querySelector('.glossary-term, a.cite-stealth, a[data-target^="bib-"], sup.footnote-ref a')) continue;
+				var inContents = el.id === 'contents' || (el.closest && el.closest('#contents, .md, .optional, .optional-content'));
+				if (!inContents) continue;
+				for (var j = 0; j < CB_PROPS.length; j++) {
+					var cp = CB_PROPS[j];
+					var kebab = cp === 'backdropFilter' ? 'backdrop-filter' : cp === 'clipPath' ? 'clip-path' : cp === 'maskImage' ? 'mask-image' : cp === 'willChange' ? 'will-change' : cp;
+					var cs2 = window.getComputedStyle(el);
+					var inlineVal = el.style.getPropertyValue(kebab);
+					if (inlineVal) {
+						el.style.removeProperty(kebab);
+						try { console.warn('[glossary] reverted inline ' + kebab + ' on ' +
+							(el.tagName || '').toLowerCase() + ' — containing-block properties must not be written to content ancestors (tooltips are portaled to <body>)'); } catch (e2) {}
 					}
 				}
 			}
-			if (touched) _savedAncestorStyles.set(node, saved);
-			stack.push(node);
-			node = node.parentElement;
-		}
-		return stack;
+		});
+		revertObserver.observe(document.body, { attributes: true, attributeFilter: ['style'], subtree: true });
 	}
-
-	function restoreAncestors(stack) {
-		for (var i = 0; i < stack.length; i++) {
-			var node = stack[i];
-			var saved = _savedAncestorStyles.get(node);
-			if (!saved) continue;
-			for (var p in saved) {
-				if (saved[p]) node.style[p] = saved[p];
-				else node.style.removeProperty(p);
-			}
-			_savedAncestorStyles.delete(node);
-		}
-	}
+	installAncestorStyleReverter();
 
 	// Position each tooltip. The tooltip is portaled to document.body,
 	// so position:fixed is always relative to the viewport — no matter
@@ -1668,6 +1736,100 @@ function initGlossary() {
 	// Guardrail: querySelectorAll is cheap for <1000 terms.
 	// Guardrail: runs in idle callback when available, else setTimeout.
 	// ════════════════════════════════════════════════════════════════
+	// ─────────────────────────────────────────────────────────────────
+	// GUARDRAIL (causes 3 + 5) — drop-cap geometry canary.
+	//
+	// The drop cap's size (--cl-dc-size / --cl-dc-lines) is measured
+	// once by polish.js. Anything that later re-sizes the cap — the
+	// MutationObserver re-measure loop, a stray inline write, a
+	// font-swap — reflows the justified text wrapping the float, i.e.
+	// "the stuff around the drop cap moves". We cache the paragraph's
+	// document-space geometry after the first settled reading and, on
+	// every sweep, verify it is unchanged unless the viewport itself
+	// changed (the one legitimate re-size trigger). On drift we re-pin
+	// the last known-good --cl-dc-* values and log loudly.
+	// ─────────────────────────────────────────────────────────────────
+	var dcCanary = { p: null, w: 0, h: 0, vw: 0, vh: 0, vars: null, settled: false };
+	function dropcapCanary() {
+		var p = document.querySelector('.cl-dropcap');
+		if (!p || p.classList.contains('cl-dc-pending')) return; // not sized yet
+		var vw = window.innerWidth, vh = window.innerHeight;
+		if (!dcCanary.settled) {
+			dcCanary.p = p;
+			dcCanary.w = p.offsetWidth;
+			dcCanary.h = p.offsetHeight;
+			dcCanary.vw = vw;
+			dcCanary.vh = vh;
+			var cs = window.getComputedStyle(p);
+			dcCanary.vars = {
+				lines: cs.getPropertyValue('--cl-dc-lines'),
+				size: cs.getPropertyValue('--cl-dc-size')
+			};
+			dcCanary.settled = true;
+			return;
+		}
+		// Viewport changed (resize / rotation) — legitimate re-measure
+		// territory; re-baseline quietly.
+		if (vw !== dcCanary.vw || vh !== dcCanary.vh) {
+			dcCanary.p = p;
+			dcCanary.w = p.offsetWidth;
+			dcCanary.h = p.offsetHeight;
+			dcCanary.vw = vw;
+			dcCanary.vh = vh;
+			var cs2 = window.getComputedStyle(p);
+			dcCanary.vars = {
+				lines: cs2.getPropertyValue('--cl-dc-lines'),
+				size: cs2.getPropertyValue('--cl-dc-size')
+			};
+			return;
+		}
+		if (dcCanary.p !== p) {
+			// A different paragraph is now the drop cap (content swap) —
+			// re-baseline.
+			dcCanary.p = p;
+			dcCanary.w = p.offsetWidth;
+			dcCanary.h = p.offsetHeight;
+			var cs3 = window.getComputedStyle(p);
+			dcCanary.vars = {
+				lines: cs3.getPropertyValue('--cl-dc-lines'),
+				size: cs3.getPropertyValue('--cl-dc-size')
+			};
+			return;
+		}
+		var w = p.offsetWidth, h = p.offsetHeight;
+		if (w === dcCanary.w && h === dcCanary.h) return;
+		// Geometry changed without a viewport resize. Two cases:
+		//  • the --cl-dc-* vars themselves drifted (a stray re-measure
+		//    or stray inline write re-sized the cap) — re-pin them to
+		//    the last known-good values and log loudly;
+		//  • the vars are intact and only the paragraph reflowed
+		//    (legitimate: reader mode, dark-mode metrics, content
+		//    swap) — re-baseline quietly.
+		var csNow = window.getComputedStyle(p);
+		var varsNow = {
+			lines: csNow.getPropertyValue('--cl-dc-lines'),
+			size: csNow.getPropertyValue('--cl-dc-size')
+		};
+		if (JSON.stringify(varsNow) !== JSON.stringify(dcCanary.vars)) {
+			try {
+				console.error('[glossary] DROP-CAP DRIFT: --cl-dc-* changed ' +
+					JSON.stringify(dcCanary.vars) + ' -> ' + JSON.stringify(varsNow) +
+					' without a viewport resize. Re-pinning last known good values.');
+			} catch (e) {}
+			if (dcCanary.vars && dcCanary.vars.lines) p.style.setProperty('--cl-dc-lines', dcCanary.vars.lines);
+			if (dcCanary.vars && dcCanary.vars.size) p.style.setProperty('--cl-dc-size', dcCanary.vars.size);
+			try {
+				console.error('[glossary] DROP-CAP DRIFT: paragraph geometry ' +
+					dcCanary.w + 'x' + dcCanary.h + ' -> ' + w + 'x' + h);
+			} catch (e) {}
+			// Keep the last known-good values as the canary baseline.
+		} else {
+			dcCanary.vars = varsNow;
+		}
+		dcCanary.w = w;
+		dcCanary.h = h;
+	}
+
 	function periodicSweep() {
 		// Sweep titles
 		sweepAllTerms();
@@ -1682,6 +1844,8 @@ function initGlossary() {
 				tip.style.zIndex = '2147483647';
 			}
 		}
+		// Drop-cap geometry canary (causes 3 + 5).
+		try { dropcapCanary(); } catch (e) {}
 	}
 	setInterval(function() {
 		if (window.requestIdleCallback) {
@@ -1690,6 +1854,48 @@ function initGlossary() {
 			periodicSweep();
 		}
 	}, 2000);
+
+	// ════════════════════════════════════════════════════════════════
+	// GUARDRAIL (cause 5) — metric-invariant canary for the term.
+	//
+	// The paragraph around the drop cap is text-align:justify with
+	// hyphens:auto and wraps a floating ::first-letter, so its line
+	// breaks are hypersensitive to ANY change in the metrics of the
+	// inline boxes on the first lines. A hover must change NONE of
+	// them. We capture the term's layout-affecting computed values
+	// just before showing the tooltip and verify they are unchanged
+	// afterwards; a violation is a layout regression and is logged
+	// with the exact property so it is caught in the field, not in
+	// the next browser-only reproduction session.
+	// ════════════════════════════════════════════════════════════════
+	var TERM_METRIC_PROPS = ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle',
+		'letterSpacing', 'wordSpacing', 'textTransform', 'lineHeight',
+		'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
+		'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+		'marginTop', 'marginRight', 'marginBottom', 'marginLeft'];
+	function captureTermMetrics(el) {
+		var cs = window.getComputedStyle(el);
+		var out = {};
+		for (var i = 0; i < TERM_METRIC_PROPS.length; i++) {
+			out[TERM_METRIC_PROPS[i]] = cs[TERM_METRIC_PROPS[i]];
+		}
+		out.w = el.getBoundingClientRect().width;
+		return out;
+	}
+	function checkTermMetrics(term) {
+		var base = term.__dcMetricBaseline;
+		if (!base) return;
+		var now = captureTermMetrics(term);
+		for (var k in base) {
+			if (base[k] !== now[k]) {
+				try {
+					console.error('[glossary] LAYOUT REGRESSION: term metric ' + k +
+						' changed on hover: ' + base[k] + ' -> ' + now[k] +
+						' (hover must be layout-neutral around the drop cap)');
+				} catch (e) {}
+			}
+		}
+	}
 
 	// ════════════════════════════════════════════════════════════════
 	// GUARDRAIL 1 — showTooltip ALSO strips title on every hover
@@ -1705,10 +1911,19 @@ function initGlossary() {
 		if (!tipId) return;
 		var tip = document.querySelector('.glossary-tooltip[data-tooltip-id="' + tipId + '"]');
 		if (!tip) return;
-		term._neutralizedAncestors = neutralizeContainingBlock(term);
+		// GUARDRAIL (cause 1): read-only audit only — see the block
+		// comment above. No ancestor style is ever written on hover, so
+		// hover can never move or repaint the content around the term.
+		auditContainingBlock(term);
+		// GUARDRAIL (cause 5): metric-invariant canary. Capture the
+		// term's layout-affecting computed values before showing the
+		// tooltip; re-checked after the show, and any difference is a
+		// layout regression the moment it happens.
+		term.__dcMetricBaseline = captureTermMetrics(term);
 		tip.style.opacity = '1';
 		tip.style.visibility = 'visible';
 		positionTooltip(term);
+		checkTermMetrics(term);
 	}
 
 	function hideTooltip(term) {
@@ -1722,10 +1937,7 @@ function initGlossary() {
 		tip.style.top = '';
 		tip.classList.remove('glossary-tooltip--below');
 		tip.style.removeProperty('--arrow-x');
-		if (term._neutralizedAncestors) {
-			restoreAncestors(term._neutralizedAncestors);
-			term._neutralizedAncestors = null;
-		}
+		term.__dcMetricBaseline = null;
 	}
 
 	// Use document-level delegation so tooltips are positioned on every page,
