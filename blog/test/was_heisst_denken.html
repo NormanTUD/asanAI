@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heidegger: Was heißt Denken? — Interactive Explorer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a26;
+    --accent1: #c9a84c;
+    --accent2: #7b8cde;
+    --accent3: #de7b8c;
+    --accent4: #7bde9a;
+    --accent5: #de9a7b;
+    --text: #e0ddd5;
+    --text-dim: #8a8780;
+    --text-bright: #f5f3ee;
+    --border: #2a2a3a;
+    --glow: rgba(201, 168, 76, 0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(123,140,222,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .hero-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent1);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent1);
+  }
+
+  .hero-author {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
+
+  .hero-desc {
+    max-width: 600px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 1s ease 1.8s forwards, bounce 2s ease-in-out 2.5s infinite;
+    color: var(--accent1);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+  }
+
+  .scroll-hint svg {
+    display: block;
+    margin: 0.5rem auto 0;
+    width: 24px;
+    height: 24px;
+    stroke: var(--accent1);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  /* NAV TABS */
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .nav-tab {
+    padding: 1rem 1.2rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active {
+    color: var(--accent1);
+    border-bottom-color: var(--accent1);
+  }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    padding: 3rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    max-width: 700px;
+  }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.8rem;
+    cursor: pointer;
+    transition: all 0.35s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover {
+    border-color: var(--accent1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent1);
+    opacity: 0.3;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.7rem;
+  }
+
+  .card-body {
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: var(--text-dim);
+  }
+
+  .card-expand {
+    display: none;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .card.expanded .card-expand { display: block; }
+
+  .card-toggle {
+    display: inline-block;
+    margin-top: 0.8rem;
+    font-size: 0.75rem;
+    color: var(--accent1);
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+
+  /* FOURFOLD QUESTION INTERACTIVE */
+  .fourfold {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 700px) {
+    .fourfold { grid-template-columns: 1fr; }
+  }
+
+  .fq-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.35s;
+    position: relative;
+  }
+
+  .fq-item:hover, .fq-item.active {
+    border-color: var(--accent1);
+    box-shadow: 0 0 20px var(--glow);
+  }
+
+  .fq-item.active {
+    background: var(--bg3);
+  }
+
+  .fq-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .fq-item:nth-child(1) .fq-badge { background: rgba(201,168,76,0.15); color: var(--accent1); }
+  .fq-item:nth-child(2) .fq-badge { background: rgba(123,140,222,0.15); color: var(--accent2); }
+  .fq-item:nth-child(3) .fq-badge { background: rgba(222,123,140,0.15); color: var(--accent3); }
+  .fq-item:nth-child(4) .fq-badge { background: rgba(123,222,154,0.15); color: var(--accent4); }
+
+  .fq-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .fq-desc {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .fq-detail {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .fq-detail.visible { display: block; }
+
+  .fq-detail h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--accent1);
+    margin-bottom: 1rem;
+  }
+
+  .fq-detail p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    margin: 2rem 0;
+    padding-left: 2.5rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.6rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent1), var(--accent2), var(--accent3));
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .tl-item:hover {
+    border-color: var(--accent1);
+    transform: translateX(4px);
+  }
+
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -2.15rem;
+    top: 1.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent1);
+    border: 2px solid var(--bg);
+  }
+
+  .tl-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent1);
+    margin-bottom: 0.3rem;
+  }
+
+  .tl-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+
+  .tl-body {
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .tl-expand {
+    display: none;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .tl-item.expanded .tl-expand { display: block; }
+
+  /* CONCEPT MAP */
+  .concept-map-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .concept-map-container canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cm-tooltip {
+    position: absolute;
+    background: rgba(18,18,26,0.95);
+    border: 1px solid var(--accent1);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    max-width: 300px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+
+  .cm-tooltip.visible { opacity: 1; }
+
+  .cm-tooltip h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--accent1);
+    margin-bottom: 0.4rem;
+  }
+
+  /* QUOTE BLOCKS */
+  .quote-block {
+    background: var(--bg3);
+    border-left: 3px solid var(--accent1);
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .quote-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .quote-block cite {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-style: normal;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* GREEK TERM EXPLORER */
+  .term-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.2rem;
+    margin: 2rem 0;
+  }
+
+  .term-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.35s;
+  }
+
+  .term-card:hover {
+    border-color: var(--accent2);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+
+  .term-card.active {
+    border-color: var(--accent1);
+    background: var(--bg3);
+  }
+
+  .term-greek {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent1);
+    margin-bottom: 0.3rem;
+  }
+
+  .term-trans {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 0.3rem;
+  }
+
+  .term-heidegger {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent2);
+  }
+
+  .term-detail-panel {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .term-detail-panel.visible { display: block; }
+
+  .term-detail-panel h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--accent1);
+    margin-bottom: 1rem;
+  }
+
+  .term-detail-panel p {
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+  }
+
+  /* SLIDER / BRIDGE DIAGRAM */
+  .bridge-container {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .bridge-visual {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .bridge-pole {
+    width: 160px;
+    padding: 1.2rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s;
+    z-index: 2;
+  }
+
+  .bridge-pole.active {
+    border-color: var(--accent1);
+    box-shadow: 0 0 15px var(--glow);
+  }
+
+  .bridge-pole h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 0.3rem;
+  }
+
+  .bridge-pole p {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .bridge-line {
+    flex: 1;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent1), var(--accent4));
+    position: relative;
+    margin: 0 -10px;
+    z-index: 1;
+  }
+
+  .bridge-label {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent1);
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  .bridge-slider-wrap {
+    margin-top: 1.5rem;
+  }
+
+  .bridge-slider-wrap label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .bridge-slider-wrap input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  .bridge-slider-wrap input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent1);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(201,168,76,0.4);
+  }
+
+  .bridge-explanation {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: var(--bg3);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text);
+    min-height: 80px;
+  }
+
+  /* PARMENIDES SECTION */
+  .spruch-container {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 2.5rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .spruch-greek {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--accent1);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+  }
+
+  .spruch-trans {
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .spruch-words {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+  }
+
+  .spruch-word {
+    padding: 0.6rem 1.2rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+  }
+
+  .spruch-word:hover, .spruch-word.active {
+    border-color: var(--accent1);
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  .spruch-word .sw-greek {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--accent1);
+    display: block;
+  }
+
+  .spruch-word .sw-meaning {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 0.2rem;
+    display: block;
+  }
+
+  .spruch-detail {
+    text-align: left;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--bg3);
+    border-radius: 8px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .spruch-detail.visible { display: block; }
+
+  .spruch-detail h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--accent1);
+    margin-bottom: 0.8rem;
+  }
+
+  .spruch-detail p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ZWIEFALT DIAGRAM */
+  .zwiefalt-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .zw-pair {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin: 1rem 0;
+  }
+
+  .zw-node {
+    padding: 1rem 1.8rem;
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .zw-node.being {
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--accent1);
+    color: var(--accent1);
+  }
+
+  .zw-node.beings {
+    background: rgba(123,140,222,0.12);
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+  }
+
+  .zw-arrow {
+    font-size: 1.5rem;
+    color: var(--text-dim);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .zw-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.6;
+    margin-top: 1rem;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  .footer p {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .bridge-visual { flex-direction: column; gap: 1rem; }
+    .bridge-line { width: 3px; height: 40px; margin: 0; }
+    .bridge-label { top: auto; left: auto; right: -80px; transform: none; }
+    .nav-tab { padding: 0.8rem 0.8rem; font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero" id="hero">
+  <div class="hero-subtitle">An Interactive Philosophical Explorer</div>
+  <h1 class="hero-title"><em>Was heißt Denken?</em></h1>
+  <div class="hero-author">Martin Heidegger · Freiburg Lectures 1951–52</div>
+  <p class="hero-desc">
+    What calls us to think? Heidegger's lecture series is a journey through the essence of thinking itself — from Nietzsche's "growing desert" to Parmenides' ancient saying on Being. Explore the key ideas interactively below.
+  </p>
+  <div class="scroll-hint" onclick="document.querySelector('.nav-bar').scrollIntoView({behavior:'smooth'})">
+    BEGIN EXPLORING
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-bar" id="navbar">
+  <div class="nav-tab active" data-section="overview">Overview</div>
+  <div class="nav-tab" data-section="fourfold">The Fourfold Question</div>
+  <div class="nav-tab" data-section="structure">Lecture Structure</div>
+  <div class="nav-tab" data-section="nietzsche">Nietzsche & The Desert</div>
+  <div class="nav-tab" data-section="parmenides">Parmenides' Saying</div>
+  <div class="nav-tab" data-section="greekterms">Key Greek Terms</div>
+  <div class="nav-tab" data-section="concepts">Concept Map</div>
+  <div class="nav-tab" data-section="bridge">The Bridge (Übergang)</div>
+</nav>
+
+<!-- SECTION: OVERVIEW -->
+<div class="section active" id="overview">
+  <h2 class="section-title">The Central Question</h2>
+  <p class="section-subtitle">Heidegger's lecture series circles around one deceptively simple question — "Was heißt Denken?" (What is called thinking?) — and reveals it to be the most profound question of our age.</p>
+
+  <div class="quote-block">
+    <p>"Das Bedenklichste in unserer bedenklichen Zeit ist, daß wir noch nicht denken."</p>
+    <cite>— The most thought-provoking thing in our thought-provoking time is that we are still not thinking.</cite>
+  </div>
+
+  <div class="card-grid">
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">01</div>
+      <div class="card-title">The Provocation</div>
+      <div class="card-body">Heidegger claims that despite all our science, philosophy, and intellectual activity, we have "still not" begun to truly think.</div>
+      <div class="card-expand">
+        This is not pessimism. The "noch nicht" (not yet) contains a hidden promise — we are already <em>on the way</em> toward thinking. The withdrawal of what calls us to think is itself the most thought-provoking event. What withdraws from us draws us along with it — we are like migratory birds pulled toward what recedes.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">02</div>
+      <div class="card-title">Science Does Not Think</div>
+      <div class="card-body">One of Heidegger's most provocative claims: "Die Wissenschaft denkt nicht" — science does not think. This is not an insult but a structural observation.</div>
+      <div class="card-expand">
+        Sciences operate within pre-given domains (history, nature, language) but can never question the <em>essence</em> of those domains. A historian cannot historically determine what history <em>is</em>. A mathematician cannot mathematically show what the mathematical <em>is</em>. The essence of their fields is the matter of thinking — and there is an unbridgeable gap between thinking and the sciences. No bridge, only a leap.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">03</div>
+      <div class="card-title">Thinking as Hand-Work</div>
+      <div class="card-body">Thinking is the simplest and therefore hardest "Handwerk" (handicraft) of the human being.</div>
+      <div class="card-expand">
+        The hand is not merely a grasping organ — apes have those. The hand reaches, receives, carries, draws, folds in prayer. Every gesture of the hand passes through language. Thinking is itself a kind of craft that requires the whole being, not just the intellect. Like a cabinetmaker who must correspond to the hidden forms sleeping in the wood, the thinker must correspond to what gives itself to be thought.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">04</div>
+      <div class="card-title">Two Lecture Series</div>
+      <div class="card-body">Part I (Winter 1951–52) engages Nietzsche as the last metaphysician. Part II (Summer 1952) returns to Parmenides and the dawn of Western thought.</div>
+      <div class="card-expand">
+        The two parts mirror each other: the end and the beginning of Western philosophy. Nietzsche's cry "Die Wüste wächst" (The desert grows) marks the culmination of metaphysics. Parmenides' saying "χρή τό λέγειν τε νοεῖν τ' ἐόν ἔμμεναι" marks its inception. Between them stretches the entire history of what we call "thinking" — a history Heidegger wants us to re-enter, not as historians, but as thinkers.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: FOURFOLD QUESTION -->
+<div class="section" id="fourfold">
+  <h2 class="section-title">The Fourfold Question</h2>
+  <p class="section-subtitle">In Part II, Heidegger reveals that "Was heißt Denken?" is not one question but four — and their unity is what matters. Click each to explore.</p>
+
+  <div class="fourfold">
+    <div class="fq-item" onclick="showFQ(0)">
+      <div class="fq-badge">Question 1</div>
+      <div class="fq-title">What does the word "thinking" mean?</div>
+      <div class="fq-desc">What is named by the word "Denken"? What do the words Gedanke, Gedächtnis, Dank tell us?</div>
+    </div>
+    <div class="fq-item" onclick="showFQ(1)">
+      <div class="fq-badge">Question 2</div>
+      <div class="fq-title">What does the tradition understand by thinking?</div>
+      <div class="fq-desc">How has the inherited doctrine — Logic — defined and delimited thinking for 2,500 years?</div>
+    </div>
+    <div class="fq-item" onclick="showFQ(2)">
+      <div class="fq-badge">Question 3</div>
+      <div class="fq-title">What must we bring to think properly?</div>
+      <div class="fq-desc">What is required of us so that we can accomplish thinking in a way true to its essence?</div>
+    </div>
+    <div class="fq-item" onclick="showFQ(3)">
+      <div class="fq-badge">Question 4 — The Decisive One</div>
+      <div class="fq-title">What calls us into thinking?</div>
+      <div class="fq-desc">What is it that commands, summons, and entrusts us to thinking? This is the governing question.</div>
+    </div>
+  </div>
+
+  <div class="fq-detail" id="fq-detail">
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<!-- SECTION: LECTURE STRUCTURE -->
+<div class="section" id="structure">
+  <h2 class="section-title">Lecture Structure</h2>
+  <p class="section-subtitle">The two lecture series form a single arc — from the end of metaphysics (Nietzsche) back to its dawn (Parmenides). Click any item to expand.</p>
+
+  <div class="timeline">
+    <div class="tl-item" onclick="toggleTL(this)">
+      <div class="tl-label">Part I · Lectures I–III</div>
+      <div class="tl-title">The Provocation: We Are Not Yet Thinking</div>
+      <div class="tl-body">Heidegger introduces the central claim and its paradoxes. What withdraws from us is what most concerns us.</div>
+      <div class="tl-expand">
+        <p>The opening lectures establish the key paradox: what most gives us to think is that we are not yet thinking. This is not a moral failing but a structural condition — what calls us to think has itself withdrawn. Yet this withdrawal is not nothing; it draws us along. Heidegger invokes Hölderlin's line "Ein Zeichen sind wir, deutungslos" (We are a sign, without interpretation) from the hymn Mnemosyne — the goddess of Memory, mother of the Muses.</p>
+        <p>He also introduces the gap between thinking and science, the nature of teaching and learning, and thinking as "Hand-Werk" — the simplest and hardest craft.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="toggleTL(this)">
+      <div class="tl-label">Part I · Lectures IV–VI</div>
+      <div class="tl-title">Vorstellen: The Reign of Representation</div>
+      <div class="tl-body">What is "representing" (Vorstellen)? How has it shaped all previous thinking? The example of the blossoming tree.</div>
+      <div class="tl-expand">
+        <p>Heidegger asks: when we stand before a blossoming tree, where does the "representing" happen? In our heads? In consciousness? Or do we and the tree stand before each other in a mutual presenting? He argues we must leap out of the scientific framework — which reduces the tree to electrical charges — and land on the ground where we actually live and die.</p>
+        <p>The entire history of Western thought may be the history of Vorstellen (representation) — a mode of thinking that places everything before itself as an object. This is the deep structure Heidegger wants to make visible.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="toggleTL(this)">
+      <div class="tl-label">Part I · Lectures VI–X</div>
+      <div class="tl-title">Nietzsche: The Desert Grows</div>
+      <div class="tl-body">Nietzsche as the last thinker of the West. The Übermensch, the spirit of revenge, and the eternal return of the same.</div>
+      <div class="tl-expand">
+        <p>Heidegger reads Nietzsche not as a cultural critic but as a metaphysician. "Die Wüste wächst: weh dem, der Wüsten birgt!" — The desert grows: woe to him who harbors deserts! The "last man" blinks — his mode of representation reduces everything to surfaces. The Übermensch is not a super-powered human but one who crosses over from the old human essence.</p>
+        <p>The bridge to this crossing is "Erlösung von der Rache" — redemption from the spirit of revenge. Revenge is the will's ill-will against time and its "it was." The eternal return of the same is Nietzsche's attempt to free the will from this revenge — to will the return of everything, including the past. This is the summit of Western metaphysics.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="toggleTL(this)">
+      <div class="tl-label">Part II · Lectures I–IV</div>
+      <div class="tl-title">The Fourfold Question & the Word "Denken"</div>
+      <div class="tl-body">The four ways of asking "What is called thinking?" The old word "Gedanc" — heart, memory, thanks.</div>
+      <div class="tl-expand">
+        <p>Part II begins fresh. Heidegger unfolds the fourfold question and shows that the fourth — "What calls us to think?" — is the governing one. He then explores the German word "Denken" through its old form "der Gedanc," which means the gathered heart, the innermost of the human being. From this root spring Gedächtnis (memory as devoted attention), Dank (thanks), and Andenken (commemorative thinking).</p>
+        <p>The deepest thanks would be: simply to think what most gives itself to be thought. Thinking is thanking.</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="toggleTL(this)">
+      <div class="tl-label">Part II · Lectures V–VIII</div>
+      <div class="tl-title">Logic, Λόγος, and the Saying of Parmenides</div>
+      <div class="tl-body">Why is the doctrine of thinking called "Logic"? What does λέγειν really mean? Translating Parmenides' saying.</div>
+      <div class="tl-expand">
+        <p>Heidegger traces "Logic" back to λόγος and λέγειν. But λέγειν originally means "to lay" and "to let lie before" — not primarily "to say." Saying, for the Greeks, is a mode of letting-lie-before, of letting what is present appear. Similarly, νοεῖν is not "thinking" in our sense but "taking-into-regard" — a caring attentiveness.</p>
+        <p>The Parmenides fragment χρή τό λέγειν τε νοεῖν τ' ἐόν ἔμμεναι is painstakingly translated not as "It is necessary to say and think that beings are" but as: "It is needful: the letting-lie-before-us so (the) taking-to-heart also: beings in being."</p>
+      </div>
+    </div>
+    <div class="tl-item" onclick="toggleTL(this)">
+      <div class="tl-label">Part II · Lectures IX–XI</div>
+      <div class="tl-title">Ἐόν: The Twofold of Being and Beings</div>
+      <div class="tl-body">The word ἐόν as the "participle of all participles." The Zwiefalt (twofold) that grounds all Western metaphysics.</div>
+      <div class="tl-expand">
+        <p>The word ἐόν (being/a being) is grammatically a participle — it participates in both nominal and verbal meaning. "A being" and "being" (in the sense of presencing). This duality — the Zwiefalt — is the unthought ground of all metaphysics. Every philosophical question moves within it, but it has never itself been questioned.</p>
+        <p>Heidegger translates ἐόν as "Anwesendes anwesend" — the presencing of what is present. From this twofold, the entire history of Western thought unfolds — from Parmenides through Plato's χωρισμός to Kant's conditions of experience to Hegel's absolute logic.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: NIETZSCHE -->
+<div class="section" id="nietzsche">
+  <h2 class="section-title">Nietzsche & The Growing Desert</h2>
+  <p class="section-subtitle">Part I is dominated by Heidegger's reading of Nietzsche as the last metaphysician. Explore the key concepts.</p>
+
+  <div class="quote-block">
+    <p>"Die Wüste wächst: weh dem, der Wüsten birgt!"</p>
+    <cite>— The desert grows: woe to him who harbors deserts! (Nietzsche, Also sprach Zarathustra IV)</cite>
+  </div>
+
+  <div class="card-grid">
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">I</div>
+      <div class="card-title">The Last Man (Der letzte Mensch)</div>
+      <div class="card-body">The human who can no longer surpass himself. He "blinks" — his mode of representation reduces everything to manageable surfaces.</div>
+      <div class="card-expand">
+        "We have invented happiness," say the last men, and blink. The last man lives longest — his reign is not an ending but a strange durability. His "blinking" is not mere eye-twitching but the fundamental mode of modern representation: presenting everything as surface, as what can be agreed upon without further inquiry. This is the metaphysical ground of the modern age.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">II</div>
+      <div class="card-title">The Übermensch</div>
+      <div class="card-body">Not a super-powered human, but one who crosses over from the old essence. "Poorer, simpler, tenderer and harder, quieter and more sacrificing."</div>
+      <div class="card-expand">
+        Heidegger insists the Übermensch is not a titan or a dictator. He is the one who first brings the essence of the previous human to its truth and takes it over. He is "Caesar with the soul of Christ." The Übermensch never appears in the noisy processions of supposed power-holders. His appearance remains inaccessible to reporters and the public.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">III</div>
+      <div class="card-title">The Spirit of Revenge (Geist der Rache)</div>
+      <div class="card-body">"The spirit of revenge: my friends, that has been humanity's best thinking until now." — Zarathustra</div>
+      <div class="card-expand">
+        Revenge is the will's ill-will against time and its "it was." The will cannot will backwards — the past stands as an immovable stone. This generates resentment at the core of all willing. Revenge names itself "punishment" and cloaks its hostility in the appearance of justice. For Nietzsche, all previous representation is secretly governed by this spirit.
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-num">IV</div>
+      <div class="card-title">Eternal Return of the Same</div>
+      <div class="card-body">The bridge from revenge to freedom. The will that eternally wills the return of everything — including the "it was."</div>
+      <div class="card-expand">
+        If the will can will the eternal return of everything, then nothing is merely past. The "it was" returns. The will is freed from its ill-will against time. This is the summit of Western metaphysics — "the extreme approximation of a world of becoming to a world of being." Yet this summit remains shrouded in clouds, even for Nietzsche himself. The thought remains "the heaviest thought."
+      </div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+  </div>
+
+  <div class="bridge-container">
+    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--text-bright);margin-bottom:1rem;">The Structure of the Übergang (Crossing-Over)</h3>
+    <div class="bridge-visual">
+      <div class="bridge-pole" id="bp-left">
+        <h4>Der letzte Mensch</h4>
+        <p>The last man. Blinks. Spirit of revenge.</p>
+      </div>
+      <div class="bridge-line">
+        <div class="bridge-label">Erlösung von der Rache</div>
+      </div>
+      <div class="bridge-pole" id="bp-right">
+        <h4>Der Übermensch</h4>
+        <p>Wills eternal return. Freedom from revenge.</p>
+      </div>
+    </div>
+    <div class="bridge-slider-wrap">
+      <label>Slide to explore the crossing</label>
+      <input type="range" min="0" max="100" value="0" id="bridgeSlider" oninput="updateBridge(this.value)">
+    </div>
+    <div class="bridge-explanation" id="bridgeExplanation">
+      <strong>The Last Man:</strong> The human who has settled into the surface of his previous essence. His representing "blinks" — it presents everything as agreed-upon appearance. "We have invented happiness," say the last men. The will is trapped in its ill-will against time.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: PARMENIDES -->
+<div class="section" id="parmenides">
+  <h2 class="section-title">Parmenides' Saying</h2>
+  <p class="section-subtitle">The climax of Part II: a painstaking translation of a single fragment that contains the seed of all Western thought. Click the Greek words to explore Heidegger's reading.</p>
+
+  <div class="spruch-container">
+    <div class="spruch-greek">χρή τό λέγειν τε νοεῖν τ' ἐόν ἔμμεναι</div>
+    <div class="spruch-trans">
+      <strong>Conventional:</strong> "It is necessary to say and to think that beings are."<br>
+      <strong>Heidegger:</strong> "It is needful: the letting-lie-before-us so the taking-to-heart also: beings in being."
+    </div>
+
+    <div class="spruch-words">
+      <div class="spruch-word" onclick="showSpruch(0)">
+        <span class="sw-greek">χρή</span>
+        <span class="sw-meaning">It is needful / It needs</span>
+      </div>
+      <div class="spruch-word" onclick="showSpruch(1)">
+        <span class="sw-greek">λέγειν</span>
+        <span class="sw-meaning">Letting-lie-before</span>
+      </div>
+      <div class="spruch-word" onclick="showSpruch(2)">
+        <span class="sw-greek">νοεῖν</span>
+        <span class="sw-meaning">Taking-to-heart</span>
+      </div>
+      <div class="spruch-word" onclick="showSpruch(3)">
+        <span class="sw-greek">ἐόν</span>
+        <span class="sw-meaning">Beings / presencing</span>
+      </div>
+      <div class="spruch-word" onclick="showSpruch(4)">
+        <span class="sw-greek">ἔμμεναι</span>
+        <span class="sw-meaning">to be / to presence</span>
+      </div>
+    </div>
+
+    <div class="spruch-detail" id="spruch-detail"></div>
+  </div>
+</div>
+
+<!-- SECTION: GREEK TERMS -->
+<div class="section" id="greekterms">
+  <h2 class="section-title">Key Greek Terms</h2>
+  <p class="section-subtitle">Heidegger's entire project depends on hearing Greek words in their original resonance, before they were flattened by Latin translation and modern usage. Click to explore.</p>
+
+  <div class="term-grid">
+    <div class="term-card" onclick="showTerm(0)">
+      <div class="term-greek">λέγειν / λόγος</div>
+      <div class="term-trans">Usually: "to say" / "reason"</div>
+      <div class="term-heidegger">Letting-lie-before / Gathering</div>
+    </div>
+    <div class="term-card" onclick="showTerm(1)">
+      <div class="term-greek">νοεῖν / νοῦς</div>
+      <div class="term-trans">Usually: "to think" / "mind"</div>
+      <div class="term-heidegger">Taking-into-regard / Heeding</div>
+    </div>
+    <div class="term-card" onclick="showTerm(2)">
+      <div class="term-greek">ἐόν / εἶναι</div>
+      <div class="term-trans">Usually: "being" / "to be"</div>
+      <div class="term-heidegger">Presencing / The Twofold</div>
+    </div>
+    <div class="term-card" onclick="showTerm(3)">
+      <div class="term-greek">ἀλήθεια</div>
+      <div class="term-trans">Usually: "truth"</div>
+      <div class="term-heidegger">Un-concealment / Un-hiddenness</div>
+    </div>
+    <div class="term-card" onclick="showTerm(4)">
+      <div class="term-greek">φύσις</div>
+      <div class="term-trans">Usually: "nature"</div>
+      <div class="term-heidegger">Self-emerging presencing</div>
+    </div>
+    <div class="term-card" onclick="showTerm(5)">
+      <div class="term-greek">μετοχή</div>
+      <div class="term-trans">Usually: "participation"</div>
+      <div class="term-heidegger">The Participle / The Twofold</div>
+    </div>
+  </div>
+
+  <div class="term-detail-panel" id="term-detail-panel"></div>
+</div>
+
+<!-- SECTION: CONCEPT MAP -->
+<div class="section" id="concepts">
+  <h2 class="section-title">Concept Map</h2>
+  <p class="section-subtitle">An interactive map of the key relationships in the text. Hover over nodes to see descriptions. Drag to explore.</p>
+
+  <div class="concept-map-container" id="cmContainer">
+    <canvas id="cmCanvas"></canvas>
+    <div class="cm-tooltip" id="cmTooltip">
+      <h4 id="cmTtTitle"></h4>
+      <p id="cmTtDesc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: BRIDGE / ZWIEFALT -->
+<div class="section" id="bridge">
+  <h2 class="section-title">The Zwiefalt (Twofold)</h2>
+  <p class="section-subtitle">The unthought ground of all Western metaphysics: the twofold of beings and Being, named in the single word ἐόν.</p>
+
+  <div class="zwiefalt-diagram">
+    <div style="font-size:0.8rem;color:var(--text-dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;">The Twofold that grounds all metaphysics</div>
+    <div class="zw-pair">
+      <div class="zw-node being">Sein<br><span style="font-size:0.75rem;opacity:0.7">Being / Anwesen</span></div>
+      <div class="zw-arrow">⟷</div>
+      <div class="zw-node beings">Seiendes<br><span style="font-size:0.75rem;opacity:0.7">Beings / Anwesendes</span></div>
+    </div>
+    <div class="zw-label">
+      The word ἐόν names both at once — it is the "participle of all participles." Every philosophical question moves within this twofold, but the twofold itself has never been questioned. It fell into oblivion at the very beginning of Western thought.
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-title">Plato's χωρισμός</div>
+      <div class="card-body">Plato interprets the twofold as a separation of places — beings and Being are differently located. The Ideas dwell apart from sensible things.</div>
+      <div class="card-expand">This interpretation of the twofold as "participation" (μέθεξις) becomes the template for all subsequent metaphysics. But the twofold itself — the fact that there IS a difference between beings and Being — is never questioned. It is simply used.</div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-title">Kant's Transcendental Turn</div>
+      <div class="card-body">Kant's supreme principle — "the conditions of possibility of experience are at the same time conditions of possibility of objects of experience" — is a variation on Parmenides.</div>
+      <div class="card-expand">The "zugleich" (at the same time) is Kant's interpretation of Parmenides' τό αὐτό (the Same). Thinking and Being belong together. But for Kant, Being appears as the objectivity of objects, and thinking as the representing of the transcendental subject.</div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-title">Hegel's Absolute</div>
+      <div class="card-body">"That Being is Thinking" — Hegel transposes Kant's principle into the Absolute. Logic becomes the self-organization of Spirit.</div>
+      <div class="card-expand">For Hegel, "Logic" reaches its highest dignity: it names the element in which the Absolute Spirit spreads out its moments. This is the grandest variation on Parmenides' theme — but it still moves within the unquestioned twofold.</div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-title">The Unthought</div>
+      <div class="card-body">The twofold itself — the "between" of beings and Being — has never been thought. It fell into forgetting at the very dawn of philosophy.</div>
+      <div class="card-expand">This forgetting is not a failure. The beginning conceals itself in the commencement. The twofold is the most used and therefore most overlooked structure in all thinking. To question it is to step outside the entire tradition of metaphysics — which is precisely what Heidegger's question "Was heißt Denken?" attempts.</div>
+      <div class="card-toggle">↓ Read more</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Interactive visualization of Martin Heidegger's <em>Was heißt Denken?</em> (Gesamtausgabe Band 8)<br>
+  Freiburg Lectures, Winter 1951–52 & Summer 1952<br>
+  <span style="color:var(--accent1);">Click, slide, and explore to understand the structure of the text.</span></p>
+</div>
+
+<script>
+// === NAV TABS ===
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.section).classList.add('active');
+    window.scrollTo({ top: document.getElementById('navbar').offsetTop, behavior: 'smooth' });
+  });
+});
+
+// === CARD TOGGLE ===
+function toggleCard(el) {
+  el.classList.toggle('expanded');
+  const tog = el.querySelector('.card-toggle');
+  if (tog) tog.textContent = el.classList.contains('expanded') ? '↑ Less' : '↓ Read more';
+}
+
+// === TIMELINE TOGGLE ===
+function toggleTL(el) {
+  el.classList.toggle('expanded');
+}
+
+// === FOURFOLD QUESTIONS ===
+const fqData = [
+  {
+    title: "Question 1: What does the word 'thinking' mean?",
+    text: `<p>Heidegger traces the German word "Denken" back to the old High German "der Gedanc" — which means not "a thought" in our thin modern sense, but the gathered heart, the innermost of the human being that reaches furthest outward.</p>
+    <p>From this root spring three interconnected words:</p>
+    <p><strong>Gedächtnis</strong> (Memory) — not the psychological faculty of retention, but devoted attention, the gathering of the heart toward what essentially addresses all our senses.</p>
+    <p><strong>Dank</strong> (Thanks) — not mere social courtesy, but the deepest response to what gives itself to be thought. The highest thanks is: simply to think.</p>
+    <p><strong>Andenken</strong> (Commemorative thinking) — devoted attention to what claims us, what we belong to.</p>
+    <p>The deepest thinking is thanking. The deepest thanks is thinking what most gives itself to be thought.</p>`
+  },
+  {
+    title: "Question 2: What does the tradition understand by thinking?",
+    text: `<p>The inherited doctrine of thinking is called <strong>Logic</strong>. But why "Logic"? Because thinking was determined from the <strong>λόγος</strong> (logos) — specifically from <strong>λέγειν τι κατά τινος</strong>: saying something about something, i.e., the assertion, the judgment.</p>
+    <p>The basic form of thinking became the <strong>proposition</strong> (Aussage/Satz): Subject + Predicate. "The tree blooms." This structure then governed all subsequent understanding of what thinking is.</p>
+    <p>From this came the principle of non-contradiction, the rules of inference, and eventually the entire apparatus of formal logic — culminating today in <strong>Logistik</strong> (mathematical logic/logistics), which Heidegger sees as the planetary organization of all representation.</p>
+    <p>But Heidegger asks: what <em>heißt</em> (commands) thinking into this particular form? What Geheiß (bidding) sent Western thought down the path of λόγος?</p>`
+  },
+  {
+    title: "Question 3: What must we bring to think properly?",
+    text: `<p>This is the <strong>hardest question to answer</strong> — because the answer cannot be delivered in propositions or instructions.</p>
+    <p>Heidegger says: the answer to this question can least of all be supplied through statements and sentences. Here, each person must <em>come to it themselves</em>. We must hear what the bidding demands of us.</p>
+    <p>If we don't notice this on our own, all speaking and hearing is in vain. "You could destroy the most exact transcript of this lecture sooner rather than later."</p>
+    <p>What is required is not a method or technique, but a <strong>transformation of our entire relation to what is</strong>. We must be willing to unlearn the previous essence of thinking from the ground up — while simultaneously coming to know it.</p>
+    <p>Four things thinking is <em>not</em>:</p>
+    <p>1. It leads to no knowledge like the sciences.<br>
+    2. It brings no usable life-wisdom.<br>
+    3. It solves no world-riddles.<br>
+    4. It directly grants no powers for action.</p>
+    <p>Thinking is the most preliminary of all preliminary human activities.</p>`
+  },
+  {
+    title: "Question 4 — The Decisive One: What calls us into thinking?",
+    text: `<p>This is the <strong>governing question</strong>. "Was heißt uns denken?" — What is it that bids us, commands us, entrusts us to thinking?</p>
+    <p>The word "heißen" does not primarily mean "to be called" or "to mean." In its original sense, it means: <strong>to bid, to command, to send on the way, to entrust to a sheltering</strong>. Like the Greek κελεύειν — to set upon the path.</p>
+    <p>What calls us to think is that which <em>most gives itself to be thought</em> — <strong>das Bedenklichste</strong>. And what most gives itself to be thought is that <em>we are still not thinking</em>.</p>
+    <p>This is not because we are lazy or distracted. It is because <strong>what most needs to be thought has itself withdrawn</strong> from us. Yet this withdrawal is not nothing — it draws us along with it. We are like migratory birds pulled toward what recedes.</p>
+    <p>Ultimately, what calls us to think is <strong>ἐόν ἔμμεναι</strong> — the presencing of what is present, the twofold of beings and Being. This is the unthought ground that has commanded all Western thinking from Parmenides to Nietzsche — and still commands us today.</p>`
+  }
+];
+
+function showFQ(idx) {
+  document.querySelectorAll('.fq-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  const detail = document.getElementById('fq-detail');
+  detail.innerHTML = `<h3>${fqData[idx].title}</h3>${fqData[idx].text}`;
+  detail.classList.add('visible');
+}
+
+// === PARMENIDES SPRUCH ===
+const spruchData = [
+  {
+    title: "χρή — It is needful / It needs / There is need",
+    text: `<p>Heidegger translates χρή not as the flat "it is necessary" but as <strong>"Es brauchet"</strong> — "It needs" or "There is a using/needing." The word comes from χράω, χράομαι — to handle, to use, to need.</p>
+    <p>But "Brauchen" (using/needing) in its high sense means: <strong>to let something into its own essence and to keep it there</strong>. Not to exploit or consume, but to shelter in essence. This is the opposite of modern "utilization."</p>
+    <p>The χρή speaks from what Heidegger calls the <strong>Geheiß</strong> — the bidding that commands thinking into its essence. It is the most mysterious word in the fragment.</p>`
+  },
+  {
+    title: "λέγειν — Letting-lie-before / Laying forth",
+    text: `<p>λέγειν does NOT primarily mean "to say." It means <strong>"to lay," "to let lie before."</strong> The same word as Latin <em>legere</em> and German <em>legen</em>.</p>
+    <p>When we "say" something (vor-legen, dar-legen, über-legen), we are laying it forth, letting it lie before us as what it is. The Greeks understood saying from laying — not the other way around.</p>
+    <p>This is why the doctrine of thinking is called "Logic" — from λόγος. But λόγος originally means <strong>the gathering that lets things lie before us as they are</strong>, not "reason" or "rational argument."</p>
+    <p>Parmenides names λέγειν BEFORE νοεῖν because: the letting-lie-before must first bring something forth, so that it can then be taken into regard.</p>`
+  },
+  {
+    title: "νοεῖν — Taking-to-heart / Heeding / Perceiving",
+    text: `<p>νοεῖν does NOT primarily mean "to think" in our sense. It means <strong>"to take into regard," "to take into the Acht (heed/care)."</strong></p>
+    <p>The noun νοῦς originally means almost exactly what the old German "Gedanc" means — the gathered heart, devoted attention. The Greek phrase ἐν νῷ ἔχειν means "to keep in one's heart/mind" — not "to keep in one's reason."</p>
+    <p>νοεῖν is a kind of <strong>Witterung</strong> (scenting, sensing) — an attentive receptivity that is not passive but actively caring. It takes what presents itself into safekeeping.</p>
+    <p>Together, λέγειν and νοεῖν form a <strong>Gefüge</strong> (jointure/structure) — each folding into the other. The letting-lie-before unfolds into the taking-to-heart, and the taking-to-heart gathers back into the letting-lie-before.</p>`
+  },
+  {
+    title: "ἐόν — Beings / Presencing / The Twofold",
+    text: `<p>ἐόν is grammatically a <strong>participle</strong> — the participle of the verb "to be." As such, it has both a nominal meaning (a being, something present) and a verbal meaning (being, presencing).</p>
+    <p>This is the <strong>Zwiefalt</strong> (twofold): <em>Seiendes seiend</em> — beings in their being, the present in its presencing, <strong>Anwesendes anwesend</strong>.</p>
+    <p>ἐόν is the "participle of all participles" — the one word that names the duality at the heart of everything that is. Every other participle (blooming, flowing, resting) silently contains this one.</p>
+    <p>The entire history of Western metaphysics moves within this twofold — but the twofold itself has never been questioned. It fell into oblivion at the very beginning.</p>`
+  },
+  {
+    title: "ἔμμεναι — To be / To presence / Anwesen",
+    text: `<p>ἔμμεναι is an older form of εἶναι — "to be." But what does "to be" mean, heard in Greek?</p>
+    <p>Heidegger translates it as <strong>Anwesen</strong> — <em>to presence</em>, to come into presence, to dwell forth. The German "wesen" (to essence/to dwell) comes from Old High German "wesan" — to remain, to dwell. Related to Sanskrit "vāsati" — he dwells.</p>
+    <p>For the Greeks, "being" means: <strong>emerging from unconcealment into a lingering presence</strong>. It is an event — a coming-forth that gathers itself into a while of shining appearance.</p>
+    <p>The whole fragment says: what calls us to think is this — that beings presence, that there IS presencing of what is present. This simplest fact is the most thought-provoking, the most mysterious, and the most overlooked.</p>`
+  }
+];
+
+function showSpruch(idx) {
+  document.querySelectorAll('.spruch-word').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  const detail = document.getElementById('spruch-detail');
+  detail.innerHTML = `<h4>${spruchData[idx].title}</h4>${spruchData[idx].text}`;
+  detail.classList.add('visible');
+}
+
+// === GREEK TERMS ===
+const termData = [
+  {
+    title: "λέγειν / λόγος — From 'Laying' to 'Logic'",
+    text: `<p><strong>Original meaning:</strong> λέγειν means "to lay," "to gather," "to let lie before." λόγος is the gathering that lets things appear as what they are.</p>
+    <p><strong>Heidegger's reading:</strong> The Greeks understood <em>saying</em> as a form of <em>laying forth</em>. When we say something, we lay it before us — we let it lie there in its appearance. This is why the sea, the mountains, a temple all "lie before" us — they are λεγόμενα, things laid forth.</p>
+    <p><strong>What happened:</strong> Through Plato and Aristotle, λόγος narrowed to mean "assertion" (λέγειν τι κατά τινος — saying something about something). This became the foundation of Logic. The original sense of gathering and letting-lie-before was forgotten.</p>
+    <p><strong>The consequence:</strong> From λόγος came ratio (Latin), Vernunft (German), "reason." The entire apparatus of Western rationality — from Aristotelian syllogisms to modern logistics — descends from this one Greek word.</p>`
+  },
+  {
+    title: "νοεῖν / νοῦς — From 'Heart' to 'Reason'",
+    text: `<p><strong>Original meaning:</strong> νοεῖν means "to take into regard," "to heed," "to take to heart." νοῦς is the gathered attentiveness of the whole human being — closer to "heart" than to "intellect."</p>
+    <p><strong>Evidence:</strong> The Greek phrase χαῖρε νόῳ means "he rejoiced in his heart" — NOT "he rejoiced in his reason." ἐν νῷ ἔχειν means "to keep in one's heart/memory."</p>
+    <p><strong>What happened:</strong> Through the Latin translation as intellectus and the coupling with ratio, νοῦς became "Reason" — the faculty of abstract thought, separated from feeling and sensation.</p>
+    <p><strong>Heidegger's point:</strong> The original νοεῖν is a kind of "scenting" (Witterung) — an alert, caring attentiveness that lets what presents itself come into safekeeping. It is the opposite of detached rational analysis.</p>`
+  },
+  {
+    title: "ἐόν / εἶναι — Being as Presencing",
+    text: `<p><strong>Original meaning:</strong> ἐόν is the participle of εἶναι (to be). It names both "a being" (nominal) and "being/presencing" (verbal). This duality — the <strong>Zwiefalt</strong> — is the unthought ground of all metaphysics.</p>
+    <p><strong>Heidegger's translation:</strong> Anwesendes anwesend — "the presencing of what is present." Being means: coming forth from concealment into an abiding appearance.</p>
+    <p><strong>The key insight:</strong> Every philosophical question since Parmenides moves within this twofold of beings and Being — but the twofold itself has never been questioned. It is the most used and most overlooked structure in all thinking.</p>
+    <p><strong>Historical trajectory:</strong> From Parmenides' ἐόν through Plato's ἰδέα, Aristotle's ἐνέργεια, Kant's Gegenständigkeit, Hegel's absolute Subjektivität, to Nietzsche's Wille zur Macht — all are variations on the theme of "what does it mean for beings to be?"</p>`
+  },
+  {
+    title: "ἀλήθεια — Truth as Un-concealment",
+    text: `<p><strong>Standard translation:</strong> "Truth." But this misses the word's structure entirely.</p>
+    <p><strong>Heidegger's reading:</strong> ἀ-λήθεια = un-concealment, un-hiddenness. The α- is privative (like "un-"). λήθη means concealment, forgetting (cf. the river Lethe). Truth is not "correctness of representation" but the <em>event of coming out of hiddenness</em>.</p>
+    <p><strong>Why it matters:</strong> If truth is unconcealment, then concealment is not simply the absence of truth but belongs to truth's own essence. Every revealing is also a concealing. Every lighting-up casts shadows.</p>
+    <p><strong>Connection to thinking:</strong> The bidding (χρή) that calls thinking into its essence speaks from ἀλήθεια. Thinking is the human response to the event of unconcealment.</p>`
+  },
+  {
+    title: "φύσις — The Self-Emerging",
+    text: `<p><strong>Standard translation:</strong> "Nature." But this is deeply misleading.</p>
+    <p><strong>Original meaning:</strong> φύσις comes from φύειν — to grow, to emerge, to come forth of itself. It names the <em>self-emerging presencing</em> of everything that is. Not "nature" as opposed to "culture," but the fundamental way beings come to be.</p>
+    <p><strong>Heidegger's point:</strong> For the early Greeks, φύσις was the broadest name for Being itself — encompassing what we separate into "nature," "spirit," "history," "art." The narrowing of φύσις to "nature" (as opposed to τέχνη, art/technology) was a fateful step in the history of metaphysics.</p>`
+  },
+  {
+    title: "μετοχή — Participation / The Participle",
+    text: `<p><strong>Grammatical meaning:</strong> μετοχή is the Greek word for "participle" — a word-form that "participates" in both nominal and verbal meaning.</p>
+    <p><strong>Philosophical meaning:</strong> Plato uses μέθεξις (participation) to describe how individual beings "participate" in the Ideas/Forms. A table participates in the Idea of Table-ness.</p>
+    <p><strong>Heidegger's insight:</strong> The grammatical participle ἐόν (being/a being) is the "participle of all participles." Its twofold structure — naming both "a being" and "being" — is the linguistic trace of the ontological difference between beings and Being.</p>
+    <p>Plato's μέθεξις (participation of beings in Being) already presupposes this twofold — but never questions it. The twofold is used but never thought.</p>`
+  }
+];
+
+function showTerm(idx) {
+  document.querySelectorAll('.term-card').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  const panel = document.getElementById('term-detail-panel');
+  panel.innerHTML = `<h3>${termData[idx].title}</h3>${termData[idx].text}`;
+  panel.classList.add('visible');
+}
+
+// === BRIDGE SLIDER ===
+const bridgeStages = [
+  { text: `<strong>The Last Man:</strong> The human who has settled into the surface of his previous essence. His representing "blinks" — it presents everything as agreed-upon appearance. "We have invented happiness," say the last men. The will is trapped in its ill-will against time.`, left: true, right: false },
+  { text: `<strong>The Spirit of Revenge:</strong> "The spirit of revenge: my friends, that has been humanity's best thinking until now." Revenge is the will's Widerwille (counter-will) against time and its "it was." The past stands as an immovable stone against which the will rages.`, left: true, right: false },
+  { text: `<strong>The Bridge Appears:</strong> "That the human being be redeemed from revenge: that is for me the bridge to the highest hope." The crossing requires not destruction of the will, but its transformation. The will must learn to will differently.`, left: false, right: false },
+  { text: `<strong>The Eternal Return:</strong> If the will can will the eternal return of everything — including the "it was" — then nothing is merely past. The will is freed from its counter-will against time. "That everything recurs is the most extreme approximation of a world of becoming to a world of being — summit of contemplation."`, left: false, right: false },
+  { text: `<strong>The Übermensch:</strong> The one who wills the eternal return of the same. Not a super-powered human, but one who has crossed over from revenge to affirmation. "Poorer, simpler, tenderer and harder, quieter and more sacrificing." Caesar with the soul of Christ.`, left: false, right: true }
+];
+
+function updateBridge(val) {
+  const idx = Math.min(Math.floor(val / 20), 4);
+  const stage = bridgeStages[idx];
+  document.getElementById('bridgeExplanation').innerHTML = stage.text;
+  document.getElementById('bp-left').classList.toggle('active', stage.left);
+  document.getElementById('bp-right').classList.toggle('active', stage.right);
+}
+
+// === CONCEPT MAP ===
+const cmNodes = [
+  { id: 0, label: "Was heißt\nDenken?", x: 0.5, y: 0.08, r: 32, color: '#c9a84c', desc: "The central question of the lecture series. Not one question but four — and their unity is what matters." },
+  { id: 1, label: "Das\nBedenklichste", x: 0.5, y: 0.25, r: 28, color: '#c9a84c', desc: "The most thought-provoking: that we are still not thinking. What withdraws from us draws us along." },
+  { id: 2, label: "Nietzsche", x: 0.18, y: 0.42, r: 26, color: '#de7b8c', desc: "The last thinker of the West. His thought of the eternal return is the summit of metaphysics." },
+  { id: 3, label: "Parmenides", x: 0.82, y: 0.42, r: 26, color: '#7bde9a', desc: "The dawn of Western thought. His saying names the twofold of beings and Being for the first time." },
+  { id: 4, label: "Übermensch", x: 0.08, y: 0.6, r: 22, color: '#de9a7b', desc: "The one who crosses over from the last man. Not a titan but one freed from the spirit of revenge." },
+  { id: 5, label: "Ewige\nWiederkehr", x: 0.28, y: 0.6, r: 22, color: '#de9a7b', desc: "The eternal return of the same — Nietzsche's heaviest thought. The will that wills everything to return." },
+  { id: 6, label: "Geist der\nRache", x: 0.18, y: 0.78, r: 20, color: '#de7b8c', desc: "The spirit of revenge: the will's ill-will against time and its 'it was.' The ground of all previous thinking." },
+  { id: 7, label: "λέγειν", x: 0.68, y: 0.58, r: 22, color: '#7bde9a', desc: "Letting-lie-before. The original meaning of 'saying' — laying forth what presents itself." },
+  { id: 8, label: "νοεῖν", x: 0.88, y: 0.58, r: 22, color: '#7bde9a', desc: "Taking-to-heart. Attentive heeding that takes what presents itself into safekeeping." },
+  { id: 9, label: "ἐόν", x: 0.78, y: 0.75, r: 24, color: '#7bde9a', desc: "Beings in their being. The participle of all participles. Names the Zwiefalt (twofold)." },
+  { id: 10, label: "Zwiefalt", x: 0.62, y: 0.88, r: 24, color: '#7b8cde', desc: "The twofold of beings and Being. The unthought ground of all metaphysics." },
+  { id: 11, label: "Logik", x: 0.5, y: 0.45, r: 20, color: '#7b8cde', desc: "The doctrine of thinking, derived from λόγος. Governs all Western understanding of thought." },
+  { id: 12, label: "Gedanc", x: 0.38, y: 0.88, r: 20, color: '#c9a84c', desc: "The old word for thinking: the gathered heart. Root of Gedächtnis (memory), Dank (thanks), Andenken." },
+  { id: 13, label: "Vorstellen", x: 0.35, y: 0.25, r: 20, color: '#de7b8c', desc: "Representation. The fundamental character of all previous thinking. Everything is placed before the subject." },
+  { id: 14, label: "Hand-Werk", x: 0.7, y: 0.15, r: 18, color: '#c9a84c', desc: "Thinking as handicraft — the simplest and therefore hardest work of the human being." }
+];
+
+const cmEdges = [
+  [0, 1], [0, 11], [0, 14],
+  [1, 2], [1, 3], [1, 13],
+  [2, 4], [2, 5], [2, 6], [2, 13],
+  [3, 7], [3, 8], [3, 9],
+  [4, 5], [5, 6],
+  [7, 8], [7, 9], [8, 9],
+  [9, 10], [10, 11], [10, 12],
+  [11, 7], [11, 8], [11, 13],
+  [12, 0], [12, 1]
+];
+
+function initConceptMap() {
+  const container = document.getElementById('cmContainer');
+  const canvas = document.getElementById('cmCanvas');
+  const tooltip = document.getElementById('cmTooltip');
+  const ctx = canvas.getContext('2d');
+  let W, H, dpr;
+  let hoveredNode = null;
+  let dragNode = null;
+  let offsetX = 0, offsetY = 0;
+
+  function resize() {
+    const rect = container.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    W = rect.width;
+    H = rect.height;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // edges
+    cmEdges.forEach(([a, b]) => {
+      const na = cmNodes[a], nb = cmNodes[b];
+      ctx.beginPath();
+      ctx.moveTo(na.x * W, na.y * H);
+      ctx.lineTo(nb.x * W, nb.y * H);
+      ctx.strokeStyle = 'rgba(201,168,76,0.12)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+    // nodes
+    cmNodes.forEach(n => {
+      const x = n.x * W, y = n.y * H;
+      const isHovered = hoveredNode === n.id;
+      // glow
+      if (isHovered) {
+        ctx.beginPath();
+        ctx.arc(x, y, n.r + 8, 0, Math.PI * 2);
+        ctx.fillStyle = n.color + '22';
+        ctx.fill();
+      }
+      // circle
+      ctx.beginPath();
+      ctx.arc(x, y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = isHovered ? n.color + '33' : 'rgba(18,18,26,0.9)';
+      ctx.fill();
+      ctx.strokeStyle = isHovered ? n.color : n.color + '66';
+      ctx.lineWidth = isHovered ? 2 : 1;
+      ctx.stroke();
+      // label
+      ctx.fillStyle = isHovered ? '#f5f3ee' : '#e0ddd5';
+      ctx.font = `${isHovered ? '600' : '400'} ${n.r > 24 ? 11 : 10}px Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const lines = n.label.split('\n');
+      lines.forEach((line, i) => {
+        ctx.fillText(line, x, y + (i - (lines.length - 1) / 2) * 13);
+      });
+    });
+  }
+
+  function getNode(mx, my) {
+    for (let i = cmNodes.length - 1; i >= 0; i--) {
+      const n = cmNodes[i];
+      const dx = mx - n.x * W, dy = my - n.y * H;
+      if (dx * dx + dy * dy < (n.r + 5) * (n.r + 5)) return n;
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    if (dragNode !== null) {
+      cmNodes[dragNode].x = Math.max(0.05, Math.min(0.95, (mx - offsetX) / W));
+      cmNodes[dragNode].y = Math.max(0.05, Math.min(0.95, (my - offsetY) / H));
+      draw();
+      return;
+    }
+    const node = getNode(mx, my);
+    hoveredNode = node ? node.id : null;
+    draw();
+    if (node) {
+      document.getElementById('cmTtTitle').textContent = node.label.replace('\n', ' ');
+      document.getElementById('cmTtDesc').textContent = node.desc;
+      tooltip.style.left = Math.min(mx + 15, W - 320) + 'px';
+      tooltip.style.top = Math.min(my + 15, H - 100) + 'px';
+      tooltip.classList.add('visible');
+      canvas.style.cursor = 'grab';
+    } else {
+      tooltip.classList.remove('visible');
+      canvas.style.cursor = 'default';
+    }
+  });
+
+  canvas.addEventListener('mousedown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const node = getNode(mx, my);
+    if (node) {
+      dragNode = node.id;
+      offsetX = mx - node.x * W;
+      offsetY = my - node.y * H;
+      canvas.style.cursor = 'grabbing';
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    dragNode = null;
+    canvas.style.cursor = 'default';
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    hoveredNode = null;
+    dragNode = null;
+    tooltip.classList.remove('visible');
+    draw();
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+}
+
+// Init concept map when section becomes visible
+const observer = new MutationObserver(() => {
+  if (document.getElementById('concepts').classList.contains('active')) {
+    initConceptMap();
+  }
+});
+observer.observe(document.getElementById('concepts'), { attributes: true, attributeFilter: ['class'] });
+
+// Also init if already active
+if (document.getElementById('concepts').classList.contains('active')) {
+  initConceptMap();
+}
+</script>
+</body>
+</html>
