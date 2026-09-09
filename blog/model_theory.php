@@ -39,7 +39,10 @@ Model theory begins by fixing a **language** — the alphabet a theory is allowe
 A structure for the language is where the symbols get their meaning:
 
 $$
-M \;=\; \bigl(A;\; c^{M},\, f^{M},\, R^{M}\bigr):
+M \;=\; \Bigl(\, \underbrace{A}_{\text{domain}};\;
+\underbrace{c^{M}}_{\text{constants}},\
+\underbrace{f^{M}}_{\text{functions}},\
+\underbrace{R^{M}}_{\text{relations}} \,\Bigr):
 $$
 
 a nonempty set $A$ (the *domain*), an element $c^{M} \in A$ for each constant, a function $f^{M}: A^{k} \to A$ for each $k$-ary function symbol, and a relation $R^{M} \subseteq A^{k}$ for each $k$-ary relation symbol. The variables range over $A$.
@@ -47,7 +50,8 @@ a nonempty set $A$ (the *domain*), an element $c^{M} \in A$ for each constant, a
 A **theory** $T$ is a set of sentences of $L$. A **model** of $T$ is a structure that makes every sentence of $T$ true:
 
 $$
-M \models \sigma \quad \text{for every } \sigma \in T.
+\underbrace{M \models \sigma}_{\sigma \text{ is true in } M}
+\quad \text{for every } \sigma \in T.
 $$
 
 The symbol $\models$ is read "satisfies." Note where the word *model* sits: the theory is the text, the model is the structure the text is true about. The etymology is apt — *model* comes from the Latin *modulus*, a measure or standard: the structure is what the theory measures up against.
@@ -60,7 +64,7 @@ Two questions organize the discipline:
 The second question has a structural echo of algebraic geometry. A formula $\varphi(x_{1},\dots,x_{n})$ defines in $M$ the set of its solutions:
 
 $$
-D_{\varphi}(M) \;=\; \{\, a \in A^{n} : M \models \varphi(a) \,\}.
+D_{\varphi}(M) \;=\; \underbrace{\{\, a \in A^{n} : M \models \varphi(a) \,\}}_{\text{the points of } A^{n} \text{ where } \varphi \text{ is true}}.
 $$
 
 A *definable set* is a set of this form — the points at which the formula comes out true. For the theory of algebraically closed fields, the definable sets are exactly the constructible sets of algebraic geometry: the finite Boolean combinations of solution sets of polynomial equations, a fact that falls out of *quantifier elimination*, one of the discipline's oldest results. Model theory is, on this reading, algebraic geometry with polynomials promoted to first-order formulas — an analogy with real mathematical content, exploited throughout the subject (\citeauthor{hodges1993modeltheory}, \citetitle{hodges1993modeltheory}).
@@ -72,19 +76,23 @@ A *definable set* is a set of this form — the points at which the formula come
 For any structure $M$, collect everything true in it:
 
 $$
-\mathrm{Th}(M) \;=\; \{\, \sigma \text{ a sentence} : M \models \sigma \,\}.
+\mathrm{Th}(M) \;=\; \underbrace{\{\, \sigma \text{ a sentence} : M \models \sigma \,\}}_{\text{every sentence true in } M}.
 $$
 
 $\mathrm{Th}(M)$ is always a *complete* theory: for every sentence $\sigma$, exactly one of $\sigma$ and $\neg\sigma$ belongs to it. Between theories and structures there is a *Galois connection* — the same mathematical shape as the correspondence the world-model chapter built between models and claims. Writing $\mathrm{Mod}(T)$ for the class of models of $T$:
 
 $$
-T \;\subseteq\; \mathrm{Th}(M) \;\Longleftrightarrow\; M \in \mathrm{Mod}(T).
+\underbrace{T \;\subseteq\; \mathrm{Th}(M)}_{\text{every sentence of } T \text{ is true in } M}
+\;\Longleftrightarrow\;
+\underbrace{M \in \mathrm{Mod}(T)}_{M \text{ is a model of } T}.
 $$
 
 Theory inclusion and model-class inclusion run in opposite directions:
 
 $$
-T_{1} \subseteq T_{2} \;\Longrightarrow\; \mathrm{Mod}(T_{2}) \subseteq \mathrm{Mod}(T_{1}).
+\underbrace{T_{1} \subseteq T_{2}}_{\text{more axioms}}
+\;\Longrightarrow\;
+\underbrace{\mathrm{Mod}(T_{2}) \subseteq \mathrm{Mod}(T_{1})}_{\text{fewer models}}.
 $$
 
 More axioms, fewer models. A structure $M$ is a model of $T$ precisely when the theory named $T$ is contained in the theory named $M$; the relation is symmetric in the way a correlation is, and the polarity is the same polarity the course already met at the level of single sentences: a model is true *of* a theory exactly when the theory is true *in* the model. Convention T, lifted from single claims to whole theories.
