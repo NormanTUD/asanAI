@@ -201,7 +201,7 @@ $$
 \end{aligned}}
 $$
 
-And the LLM case footnote itself in the same words. A trained model is not a structure satisfying axioms — it is a distribution over text — but the out-of-cover query is the same hole as a nonstandard cut: fluent, locally coherent, and with no formula inside that distinguishes it. The course has been saying this in three languages; model theory is the fourth, and here the sentence "a model exists" is a *theorem*. The impostors work for free — and the contact points are how you tell them apart.
+And the LLM case footnotes itself in the same words. A trained model is not a structure satisfying axioms — it is a distribution over text — but the out-of-cover query is the same hole as a nonstandard cut: fluent, locally coherent, and with no formula inside that distinguishes it. The course has been saying this in three languages; model theory is the fourth, and here the sentence "a model exists" is a *theorem*. The impostors work for free — and the contact points are how you tell them apart.
 </div>
 
 <div class="md">
