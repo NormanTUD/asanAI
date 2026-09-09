@@ -7984,6 +7984,27 @@ window.bibData = {
 		alternativetitle: "Representation Steering"
 	},
 
+	"coherent_difference": {
+		title: "Coherent Difference — Why meaning is built from local differences glued together coherently",
+		author: "Asanai Blog",
+		year: 2026,
+		url: "https://asanai.blog/coherent_difference.php",
+		alternativetitle: "Coherent Difference (chapter)"
+	},
+	"coherent_world_models": {
+		title: "From World to Model: Coherent Representation",
+		author: "Asanai Blog",
+		year: 2026,
+		url: "https://asanai.blog/coherent_world_models.php",
+		alternativetitle: "From World to Model: Coherent Representation (chapter)"
+	},
+	"recursion_coherent_difference": {
+		title: "Recursion and the Shape of Coherent Difference",
+		author: "Asanai Blog",
+		year: 2026,
+		url: "https://asanai.blog/recursion_coherent_difference.php",
+		alternativetitle: "Recursion and the Shape of Coherent Difference (chapter)"
+	},
 	"coherent_difference_chapter": {
 		title: "Coherent Difference — Why meaning is built from local differences glued together coherently",
 		author: "Asanai Blog",
