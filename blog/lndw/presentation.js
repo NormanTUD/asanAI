@@ -220,9 +220,7 @@ const Presentation = (() => {
             executeFragmentAction(frag, 'forward');
             return;
         }
-        if (currentSlide < slides.length - 1) {
-            goTo(currentSlide + 1);
-        }
+        goTo((currentSlide + 1) % slides.length);
     }
 
     function prev() {
@@ -270,9 +268,7 @@ const Presentation = (() => {
             `${currentSlide + 1} / ${slides.length}`;
         document.getElementById('btn-prev').disabled =
             (currentSlide === 0 && fragmentIndex[0] === 0);
-        document.getElementById('btn-next').disabled =
-            (currentSlide === slides.length - 1 &&
-             fragmentIndex[currentSlide] >= getFragments(currentSlide).length);
+        document.getElementById('btn-next').disabled = false;
         const progress = (currentSlide / (slides.length - 1)) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
         document.querySelectorAll('.overview-thumb').forEach((thumb, i) => {
