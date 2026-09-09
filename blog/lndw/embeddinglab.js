@@ -692,6 +692,8 @@ function calcEvo(key) {
         // MutationObserver doesn't re-trigger render_temml on it
         // ═══════════════════════════════════════════════════════════
         resDiv.setAttribute('data-math-rendered', 'true');
+        // Eventuelle Min-Höhe aus der Richtungs-Demo entfernen → Mathe in natürlicher Höhe
+        resDiv.style.minHeight = '';
         resDiv.innerHTML = `<div data-math-rendered="true" style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">${renderedHtml}</div>`;
 
         // Höhe des Mathe-Boxes merken (1 Frame warten, bis das Layout steht),
