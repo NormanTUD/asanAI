@@ -533,8 +533,9 @@ function renderSpace(key, highlightPos = null, steps = []) {
 let _calcEvoFocusState = {};
 let _calcEvoTimers = {};
 let _renderingInProgress = {};
-// Höhe des res-2d-Boxes im Mathe-Zustand merken, damit die Richtungs-Demo
-// (die kürzeren Textzeilen) auf exakt dieselbe Höhe bleibt → kein Layout-Sprung.
+// Höhe, die eine 2D-Mathe-Gleichung im res-2d-Box belegt. Wird beim Betreten
+// der Folie gemessen und als min-height auf res-2d gesetzt, damit alle Zustände
+// (Platzhalter, Mathe, Richtungs-Text) dieselbe Höhe haben → kein Layout-Sprung.
 let _res2dMathHeight = 0;
 
 function calcEvo(key) {
@@ -2097,6 +2098,37 @@ function renderDirectionDemo(stage) {
     }
 }
 
+// Misst die Höhe, die ein 2D-Mathe-Ergebnis im res-2d-Box belegt, indem dieselbe
+// Gleichungsstruktur (selbe temml-Renderung + selbe Box-Stile + selbe Breite) in
+// einem versteckten Probeer-Element gerendert wird. So können wir die Höhe bereits
+// vorm ersten Beispiel reservieren → kein Layout-Sprung mehr.
+function measureMath2dHeight() {
+    const resDiv = document.getElementById('res-2d');
+    if (!resDiv || typeof temml === 'undefined') return 0;
+    const boxW = resDiv.offsetWidth;
+    if (!boxW) return 0;
+    const toVecTex = arr => `\\begin{pmatrix} ${arr.map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
+    const tex = `\\underbrace{${toVecTex([25, -10])}}_{\\text{K\\u00f6nig}} - \\underbrace{${toVecTex([5, -10])}}_{\\text{Mann}} + \\underbrace{${toVecTex([5, 10])}}_{\\text{Frau}} = \\underbrace{${toVecTex([25, 10])}}_{\\substack{ = \\text{ K\\u00f6nigin} \\\\ ${toVecTex([25, 10])} }}`;
+    let rendered;
+    try { rendered = temml.renderToString(tex, { displayMode: true }); }
+    catch (e) { return 0; }
+    const probe = document.createElement('div');
+    probe.setAttribute('data-math-rendered', 'true');
+    probe.style.cssText = resDiv.style.cssText;
+    probe.style.position = 'absolute';
+    probe.style.visibility = 'hidden';
+    probe.style.pointerEvents = 'none';
+    probe.style.left = '-99999px';
+    probe.style.top = '0';
+    probe.style.width = boxW + 'px';
+    probe.style.minHeight = '0';
+    probe.innerHTML = `<div data-math-rendered="true" style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">${rendered}</div>`;
+    resDiv.parentNode.appendChild(probe);
+    const h = probe.offsetHeight;
+    probe.remove();
+    return h;
+}
+
 const EmbeddingAutoDemo = (() => {
     const examples = [
         'König - Mann + Frau',
@@ -2208,11 +2240,20 @@ const EmbeddingAutoDemo = (() => {
     }
 
     // Beim Betreten der Folie: aktivieren, aber NICHT sofort ein Beispiel zeigen
-    // Der User muss erst Pfeiltaste drücken
+    // Der User muss erst Pfeiltaste drücken.
+    // Außerdem: Die Höhe der Mathe-Gleichung sofort reservieren (min-height auf
+    // res-2d), damit weder das initiale "Match: -" noch der Wechsel auf die
+    // Gleichung bzw. auf den Richtungs-Text einen Layout-Sprung verursacht.
+    // Die Min-Höhe bleibt über alle Zustände (Mathe/Richtungen) erhalten.
     function activate() {
         if (active) return;
         active = true;
         currentExample = -1; // Startet bei -1, erster Pfeil → Index 0
+        requestAnimationFrame(() => {
+            if (!_res2dMathHeight) _res2dMathHeight = measureMath2dHeight();
+            const resDiv = document.getElementById('res-2d');
+            if (resDiv && _res2dMathHeight) resDiv.style.minHeight = _res2dMathHeight + 'px';
+        });
     }
 
     return { next, prev, canGoNext, canGoPrev, reset, activate, isOnEmbeddingSlide };
