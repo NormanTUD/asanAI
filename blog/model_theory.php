@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: "Model Theory: What a Model Is"
+title: Model Theory: What a Model Is
 description: The precise sense in which a theory has a model — syntax and semantics, Tarski's recursive definition of truth-in-a-structure, completeness, compactness, Löwenheim–Skolem, and what a consistent theory can and cannot force a model to be.
 icon: ⊨
 part: 4
