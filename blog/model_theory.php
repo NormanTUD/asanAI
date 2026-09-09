@@ -143,9 +143,9 @@ $$
 T \text{ has a model} \;\Longleftrightarrow\; \text{every finite } T_{0} \subseteq T \text{ has a model}.
 $$
 
-**Löwenheim–Skolem** (downward form, in Skolem's 1920 generalization). A theory in a countable language has a model if and only if it has a model whose domain is at most countable. If countably many symbols can express the axioms at all, and any structure satisfies them, then a small structure does.
+**Löwenheim–Skolem** (downward form, in Skolem's 1920 generalization \cite{skolem1922formergebilde}). A theory in a countable language has a model if and only if it has a model whose domain is at most countable. If countably many symbols can express the axioms at all, and any structure satisfies them, then a small structure does.
 
-These three are not independent strands; they are one fabric, and the same construction proves all of them. Completeness is proved by building a model directly out of the *terms* of the language (a "term model," following Henkin's 1949 method of constants). That term model is at most countable when the language is countable — which is Löwenheim–Skolem — and checking the construction shows that a contradiction can only be derived from finitely many axioms — which is compactness, as a corollary of completeness plus the mundane fact that proofs are finite.
+These three are not independent strands; they are one fabric, and the same construction proves all of them. Completeness is proved by building a model directly out of the *terms* of the language (a "term model," following Henkin's 1949 method of constants \cite{henkin1950completeness}). That term model is at most countable when the language is countable — which is Löwenheim–Skolem — and checking the construction shows that a contradiction can only be derived from finitely many axioms — which is compactness, as a corollary of completeness plus the mundane fact that proofs are finite.
 
 <div class="optional md" data-headline="Why the name 'compact'">
 Two unrelated-looking finiteness properties share the name, and the model-theoretic one is worth its name twice.
@@ -156,7 +156,7 @@ Second, the topological route. A *complete type* is a maximal consistent descrip
 </div>
 
 <div class="optional md" data-headline="The class of models, categorically">
-Pushed one level up, the same facts take categorical dress. The models of a first-order theory, with *elementary embeddings* as morphisms, form an **accessible category**: every model is a filtered colimit of small sub-models, and the category is recoverable from a tiny subcategory by taking directed unions of chains. That closure under chains is exactly Löwenheim–Skolem and compactness put together — the categorically minded reader may see the whole of base model theory in the single phrase "the category of models is accessible" (Makkai–Paré, 1989; the programme is spelled out in their *Accessible Categories: The Foundations of Categorical Model Theory*). It is the same descent-flavored shape the course has been running all along: the global object is a limit of local data, and the local data are just the small, realizable pieces.
+Pushed one level up, the same facts take categorical dress. The models of a first-order theory, with *elementary embeddings* as morphisms, form an **accessible category**: every model is a filtered colimit of small sub-models, and the category is recoverable from a tiny subcategory by taking directed unions of chains. That closure under chains is exactly Löwenheim–Skolem and compactness put together — the categorically minded reader may see the whole of base model theory in the single phrase "the category of models is accessible" (Makkai–Paré \citeyear{makkai1989accessible}; the programme is spelled out in their \citetitle{makkai1989accessible}). It is the same descent-flavored shape the course has been running all along: the global object is a limit of local data, and the local data are just the small, realizable pieces.
 </div>
 </div>
 

@@ -8209,6 +8209,48 @@ window.bibData = {
 		publisher: "Transactions of the American Mathematical Society 114",
 		alternativetitle: "Morley, Categoricity in Power, Trans. Amer. Math. Soc. 114 (1965) 514–538"
 	},
+	"skolem1922formergebilde": {
+		title: "Über die durch den endlichen Axionsatz der reinen Logik bestimmten Formengebilde, I und II",
+		author: "Thoralf Skolem",
+		year: 1922,
+		publisher: "Mathematische Zeitschrift 12",
+		alternativetitle: "Skolem, On the structures determined by the finite axiomatizability theorem of pure logic, Math. Z. 12 (1922) 1–13, 149–155"
+	},
+	"henkin1950completeness": {
+		title: "The Completeness of the First-Order Functional Calculus",
+		author: "Leon Henkin",
+		year: 1950,
+		publisher: "Journal of Symbolic Logic 15",
+		alternativetitle: "Henkin, The Completeness of the First-Order Functional Calculus, J. Symbolic Logic 15 (1950) 81–91"
+	},
+	"makkai1989accessible": {
+		title: "Accessible Categories: The Foundations of Categorical Model Theory",
+		author: "Michael Makkai and Robert Paré",
+		year: 1989,
+		publisher: "London Mathematical Society Lecture Note Series 104, Cambridge University Press",
+		alternativetitle: "Makkai and Paré, Accessible Categories: The Foundations of Categorical Model Theory, LMS Lecture Note Series 104, Cambridge University Press (1989)"
+	},
+	"barr1974toposes": {
+		title: "Locally Cartesian Closed Categories and Toposes",
+		author: "Michael Barr",
+		year: 1974,
+		publisher: "Journal of Symbolic Logic 39",
+		alternativetitle: "Barr, Locally Cartesian Closed Categories and Toposes, J. Symbolic Logic 39 (1974) 65–74"
+	},
+	"giraud1964descente": {
+		title: "Précis de descente",
+		author: "Jean Giraud",
+		year: 1964,
+		publisher: "Séminaire Bourbaki 1963/64, exp. no. 202",
+		alternativetitle: "Giraud, Précis de descente, Séminaire Bourbaki 1963/64 (1964) — source of Giraud's theorem on Grothendieck topoi"
+	},
+	"leray1948calcul": {
+		title: "Le calcul différentiel et intégral sur une variété analytique complexe (Produits analytiques, cohomologie)",
+		author: "Jean Leray",
+		year: 1948,
+		publisher: "Acta Mathematica 80",
+		alternativetitle: "Leray, The differential and integral calculus on a complex analytic variety, Acta Math. 80 (1948) 199–255"
+	},
 	"morsetelegraph": {
 		title: "Improvement in the Mode of Communicating Information by Signals by the Application of Electromagnetism (U.S. Patent 1,647)",
 		author: "Samuel F. B. Morse",
