@@ -811,20 +811,6 @@ const IsosurfaceDemo = (() => {
 
         // Diverging paths info
         let divergeHtml = '';
-        branches.forEach(branch => {
-            if (visibleStep > branch.atStep) {
-                const dist = visibleStep - branch.atStep;
-                if (dist <= branch.alternatives[0].path.length) {
-                    divergeHtml += `<div style="margin-top:6px; padding:5px 8px; background:rgba(251,191,36,0.05); border-radius:4px; font-size:0.78em; color:#94a3b8;">
-                        <span style="color:#f59e0b;">⤳</span> Verworfene Pfade entfernen sich:<br>`;
-                    branch.alternatives.forEach(alt => {
-                        const futureToken = alt.futureTokens && alt.futureTokens[dist] ? alt.futureTokens[dist] : '…';
-                        divergeHtml += `<span style="color:#fbbf24; font-size:0.9em;">"${alt.token}" → "${futureToken}"</span><br>`;
-                    });
-                    divergeHtml += `</div>`;
-                }
-            }
-        });
 
         // Wörter außerhalb des Funnels
         let farHtml = '';
