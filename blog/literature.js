@@ -9064,4 +9064,11 @@ window.bibData = {
 		url: "https://www.gutenberg.org/ebooks/3026",
 		alternativetitle: "Frost, North of Boston"
 	}
+	"heidegger1954whatiscalledthinking": {
+		title: "What Is Called Thinking?",
+		author: "Martin Heidegger",
+		year: 1954,
+		url: "https://en.wikipedia.org/wiki/What_Is_Called_Thinking%3F",
+		alternativetitle: "Heidegger, What Is Called Thinking?"
+	},
 };
