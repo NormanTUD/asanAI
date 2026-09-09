@@ -921,32 +921,32 @@ Gewicht (kg):</label>
         </div>
 
         <div class="molecule-viewer" id="hormoneCards">
-            <div class="molecule-card active" onclick="selectHormone('cortisol')">
+            <div class="molecule-card active" onclick="selectHormone('cortisol', this)">
                 <div class="emoji">😰</div>
                 <h4>Cortisol</h4>
                 <p>Stresshormon</p>
             </div>
-            <div class="molecule-card" onclick="selectHormone('insulin')">
+            <div class="molecule-card" onclick="selectHormone('insulin', this)">
                 <div class="emoji">🍬</div>
                 <h4>Insulin</h4>
                 <p>Blutzucker</p>
             </div>
-            <div class="molecule-card" onclick="selectHormone('dopamin')">
+            <div class="molecule-card" onclick="selectHormone('dopamin', this)">
                 <div class="emoji">🎯</div>
                 <h4>Dopamin</h4>
                 <p>Motivation</p>
             </div>
-            <div class="molecule-card" onclick="selectHormone('serotonin')">
+            <div class="molecule-card" onclick="selectHormone('serotonin', this)">
                 <div class="emoji">😊</div>
                 <h4>Serotonin</h4>
                 <p>Wohlbefinden</p>
             </div>
-            <div class="molecule-card" onclick="selectHormone('melatonin')">
+            <div class="molecule-card" onclick="selectHormone('melatonin', this)">
                 <div class="emoji">🌙</div>
                 <h4>Melatonin</h4>
                 <p>Schlaf</p>
             </div>
-            <div class="molecule-card" onclick="selectHormone('testosteron')">
+            <div class="molecule-card" onclick="selectHormone('testosteron', this)">
                 <div class="emoji">💪</div>
                 <h4>Testosteron</h4>
                 <p>Aufbau & Antrieb</p>
@@ -1664,14 +1664,15 @@ const hormoneData = {
     }
 };
 
-function selectHormone(key) {
+function selectHormone(key, el) {
     const data = hormoneData[key];
     document.getElementById('hormoneInfoTitle').textContent = data.title;
     document.getElementById('hormoneInfoText').innerHTML = data.text;
 
     // Update active card
     document.querySelectorAll('.molecule-card').forEach(c => c.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if (!el) el = document.querySelector(`.molecule-card[onclick*="'${key}'"]`);
+    if (el) el.classList.add('active');
 
     // Plot
     Plotly.newPlot('hormoneChart', [{
