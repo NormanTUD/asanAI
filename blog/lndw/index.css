@@ -14,6 +14,14 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .slide.active {
 	opacity: 1;
 	pointer-events: auto;
+	z-index: 1;
+}
+
+/* Inaktive Folien: ALLE Nachfahren ohne Pointer-Events erzwingen —
+   Plotly setzt z.B. explizit pointer-events:all auf dem SVG, was den
+   geerbten Wert sonst überschreibt und Maus-Events stehlen würde. */
+.slide:not(.active) * {
+	pointer-events: none !important;
 }
 
 /* Slide content wrapper */
