@@ -6046,7 +6046,7 @@ window.bibData = {
 		author: "nLab contributors",
 		year: 2026,
 		url: "https://ncatlab.org/nlab/show/topos",
-		alternativetitle: "The nLab entry on topos (an encyclopedic survey of all the equivalent definitions and perspectives)"
+		alternativetitle: "nLab's encyclopedic survey of the topos notion — its many equivalent definitions (elementary, Grothendieck/sheaf, W-topos) and the perspectives on it (category of spaces, internal logic, generalized space)"
 	},
 	"elementary_topos_wiki": {
 		title: "Elementary topos",
@@ -6075,7 +6075,7 @@ window.bibData = {
 		author: "nLab contributors",
 		year: 2026,
 		url: "https://ncatlab.org/nlab/show/internal+logic",
-		alternativetitle: "The internal logic of a topos and the Mitchell-Bénabou language"
+		alternativetitle: "nLab's survey of internal logic in categories — categorical (Kripke–Joyal) semantics, the Mitchell–Bénabou language of a topos, and how ordinary logic is read internal to a category"
 	},
 	"geometric_morphism_wiki": {
 		title: "Geometric morphism",

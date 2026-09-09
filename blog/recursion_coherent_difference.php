@@ -63,7 +63,7 @@ This is also what makes $\infty$-categories *strictly more general* than finitel
 <div class="md">
 ## The regress of licences
 
-In \citetitle{coherent_world_models}, every admissible transition $T \in \mathcal{T}$ requires a *licence* — an independent justification that the comparison is worth making. But licences need grounding:
+In the world-model chapter, every admissible transition $T \in \mathcal{T}$ requires a *licence* — an independent justification that the comparison is worth making. But licences need grounding:
 
 A *physical law* is a licence only relative to the idealised setup in which it was derived, and only approximately of the messy world we want to know about. *Calibration* is a comparison against a standard that must itself already be trustworthy.
 
@@ -75,7 +75,7 @@ One seems forced to choose between the picture of an elephant which rests on a t
 
 The foundationalist picture — an elephant on a tortoise — is *well-founded* recursion: it terminates in a base case. The Hegelian serpent — knowledge with its tail in its mouth — is *non-well-founded* recursion: no base case, no termination, no foundation.
 
-\citetitle{coherent_world_models} occupies a middle ground. It does not posit a foundation (that would be foundationalism). It does not embrace the full serpent (that would be pure coherentism, which the chapter explicitly rejects). Instead, it treats the regress as *open-ended and self-correcting*: each licence can be re-justified, refined, or refused at any contact point where Tarski's condition fails. The recursion is *partial* — it runs as far as the current cover reaches — and *productive* — each cycle can widen the cover. The Hegelian serpent is not denied; it is *disciplined*.
+The world-model chapter occupies a middle ground. It does not posit a foundation (that would be foundationalism). It does not embrace the full serpent (that would be pure coherentism, which the chapter explicitly rejects). Instead, it treats the regress as *open-ended and self-correcting*: each licence can be re-justified, refined, or refused at any contact point where Tarski's condition fails. The recursion is *partial* — it runs as far as the current cover reaches — and *productive* — each cycle can widen the cover. The Hegelian serpent is not denied; it is *disciplined*.
 
 $$
 \boxed{
@@ -121,7 +121,7 @@ Tarski's undefinability theorem — a language rich enough to express its own se
 
 Assume a truth predicate $\mathrm{Tr}(x)$ exists inside the language, then construct a sentence $\lambda$ that says "$\lambda$ is not true". If $\mathrm{Tr}(\lambda)$ holds, $\lambda$ is false — contradiction. If $\neg\mathrm{Tr}(\lambda)$ holds, $\lambda$ is true — contradiction. The sentence $\lambda$ is the *fixed point* of the operation "negate what you're currently evaluating", manufactured by diagonalization — itself the proof technique.
 
-In \citetitle{coherent_world_models}, Tarski's Convention T is the *correspondence* leg of truth: a model is true iff, at every licensed contact point, its claims match the world. But the right-hand side — the "fact $p$" in the meta-language — is itself a trace, itself the output of an access function. The anchor of truth is *another model*, one level up:
+In the world-model chapter, Tarski's Convention T is the *correspondence* leg of truth: a model is true iff, at every licensed contact point, its claims match the world. But the right-hand side — the "fact $p$" in the meta-language — is itself a trace, itself the output of an access function. The anchor of truth is *another model*, one level up:
 
 $$
 \underbrace{S}_{\text{claim in model}} \;\;\text{is true iff}\;\; \underbrace{p}_{\text{fact, itself a model}} \;\;\text{is true iff}\;\; \underbrace{p'}_{\text{fact about } p} \;\;\cdots
@@ -131,7 +131,7 @@ The chapter's resolution — correspondence as *the limit of coherence under wid
 
 Gödel's incompleteness theorem is the recursion-theoretic twin. Any consistent formal system strong enough for arithmetic contains a sentence $G$ equivalent to "$G$ is not provable in this system". Two recursive ingredients: *Gödel numbering*, which encodes each formula as a number via primitive recursive functions, making syntax expressible inside arithmetic; and the *Diagonalization Lemma* (Fixed-Point Lemma), which takes any property $\varphi(x)$ and produces a sentence $\lambda$ such that the system proves $\lambda \leftrightarrow \varphi(\ulcorner\lambda\urcorner)$. The lemma builds a self-referencing sentence by a fixed-point trick structurally identical to the Y combinator. Applied to "is not provable", it yields $G$: true (if consistent) but unprovable — a fixed point of "not provable in this system" that the system cannot reach.
 
-The sheaf parallel is structural. The system's proof-generating capacity, like the cover of a sheaf, cannot reach every point of the space it inhabits: $G$ is coherent on the current cover but undecidable from within. The out-of-cover query pathology of \citetitle{coherent_world_models} — where the query lies outside $c_{\mathrm{acc}}$ and no contact point exists — is the epistemic analogue: a claim the model cannot test, not because it is false, but because the cover does not reach far enough.
+The sheaf parallel is structural. The system's proof-generating capacity, like the cover of a sheaf, cannot reach every point of the space it inhabits: $G$ is coherent on the current cover but undecidable from within. The out-of-cover query pathology of the world-model chapter — where the query lies outside $c_{\mathrm{acc}}$ and no contact point exists — is the epistemic analogue: a claim the model cannot test, not because it is false, but because the cover does not reach far enough.
 </div>
 
 <div class="md">
@@ -167,7 +167,7 @@ The coherent difference chain — Distinction $\to \cdots \to$ Invariance — is
 
 In *formal* systems, well-foundedness is non-negotiable. A recursive function that does not terminate is not a function. The natural numbers object is well-founded by construction. W-types (well-founded trees) formalize recursion with multiple constructors. And the *effective topos* — the universe of computable mathematics — is one in which every function is total, every recursion terminates, and the internal logic is intuitionistic: classical reasoning would admit non-constructive recursion (choice, which by Diaconescu's theorem implies excluded middle).
 
-The sheaf relation: a sheaf on a *well-founded* site has a simpler gluing condition, because "compatible on overlaps" terminates. A sheaf on a *non-well-founded* site — arising in non-well-founded set theory, coalgebra, the semantics of concurrent processes — needs the full $\infty$-sheaf machinery, because compatibility must be checked along chains that do not terminate. \citetitle{coherent_world_models} presents the world as not well-founded: every observation leads to a further observation, every licence to a further licence. The sheaf condition on such a world is necessarily recursive and necessarily open-ended.
+The sheaf relation: a sheaf on a *well-founded* site has a simpler gluing condition, because "compatible on overlaps" terminates. A sheaf on a *non-well-founded* site — arising in non-well-founded set theory, coalgebra, the semantics of concurrent processes — needs the full $\infty$-sheaf machinery, because compatibility must be checked along chains that do not terminate. The world-model chapter presents the world as not well-founded: every observation leads to a further observation, every licence to a further licence. The sheaf condition on such a world is necessarily recursive and necessarily open-ended.
 </div>
 
 <div class="md">

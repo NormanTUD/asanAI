@@ -371,7 +371,7 @@ $$
 \boxed{\text{local data} \;+\; \text{compatibility on overlaps} \;\Longrightarrow\; \text{global data}.}
 $$
 
-What counts as "local data", what counts as an "overlap", and what counts as "compatibility" are decided by a choice of *site* — a category equipped with a rule for which families of sub-objects count as covers. The formal development of sites, admissible covers, and the full sheaf condition appears in the next chapter (\citetitle{coherent_world_models}).
+What counts as "local data", what counts as an "overlap", and what counts as "compatibility" are decided by a choice of *site* — a category equipped with a rule for which families of sub-objects count as covers. The formal development of sites, admissible covers, and the full sheaf condition appears in the next chapter.
 
 The same sentence was written down, in different vocabulary, by philosophers long before the word “sheaf” existed. Two of them, in particular, said almost the same thing.
 

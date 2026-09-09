@@ -13,9 +13,9 @@ topics: philosophy, math-i, math-ii, logic, model-theory, proof-theory, category
 <div class="md">
 ## The question
 
-The word *model* has been load-bearing since \citetitle{coherent_difference}: a world model is the global section recovered by descent from compatible local data on a licensed cover; it is *true* where Tarski's if-and-only-if holds at a contact point and coherent where its local sections agree on overlaps. But logic has an older, fully exact sense of the same word, and it is the one that anchors all the others. It comes from **model theory** — not "the study of how to model things," but the mathematical discipline that studies the relation between a *theory* and the *structures that satisfy it*.
+The word *model* has been load-bearing since the Coherent Difference chapter: a world model is the global section recovered by descent from compatible local data on a licensed cover; it is *true* where Tarski's if-and-only-if holds at a contact point and coherent where its local sections agree on overlaps. But logic has an older, fully exact sense of the same word, and it is the one that anchors all the others. It comes from **model theory** — not "the study of how to model things," but the mathematical discipline that studies the relation between a *theory* and the *structures that satisfy it*.
 
-This chapter is a short, accurate account of that discipline: its vocabulary, its central theorems, and the single fact the course has been leaning on since \citetitle{coherent_world_models} — that a consistent first-order theory automatically *has* a model. That fact is the discipline's great gift and its great warning, delivered in the same breath. Consistency alone produces a structure the sentences are true in; but it produces *a* structure, not *the* structure, and nothing inside the logic can tell the chosen one from the impostors.
+This chapter is a short, accurate account of that discipline: its vocabulary, its central theorems, and the single fact the course has been leaning on since the world-model chapter — that a consistent first-order theory automatically *has* a model. That fact is the discipline's great gift and its great warning, delivered in the same breath. Consistency alone produces a structure the sentences are true in; but it produces *a* structure, not *the* structure, and nothing inside the logic can tell the chosen one from the impostors.
 
 The destination, in one sentence:
 
@@ -101,7 +101,7 @@ More axioms, fewer models. A structure $M$ is a model of $T$ precisely when the 
 <div class="md">
 ## Truth is recursive
 
-In \citetitle{recursion_coherent_difference}, the recursion principle was shown to be the engine of the whole structure: the tower of higher coherence is one operation applied to its own output. Tarski's 1933 definition of truth is a piece of the same machinery \citeauthor{tarski1935wahrheitsbegriff}\citeyear{tarski1935wahrheitsbegriff}\citetitle{tarski1935wahrheitsbegriff} (the standard English translation appears in \citetitle{tarski1956logic}; an accessible statement of the strategy is in \citetitle{hodges2007tarski}).
+In the recursion chapter, the recursion principle was shown to be the engine of the whole structure: the tower of higher coherence is one operation applied to its own output. Tarski's 1933 definition of truth is a piece of the same machinery \citeauthor{tarski1935wahrheitsbegriff}\citeyear{tarski1935wahrheitsbegriff}\citetitle{tarski1935wahrheitsbegriff} (the standard English translation appears in \citetitle{tarski1956logic}; an accessible statement of the strategy is in \citetitle{hodges2007tarski}).
 
 Truth-in-a-structure is *defined*, not assumed. For a formula $\varphi$ with free variables $x_{1}, \dots, x_{n}$, and an assignment $a = (a_{1},\dots,a_{n})$ of elements of $M$, the relation "$M \models \varphi(a)$" is built by recursion on the complexity of $\varphi$:
 
@@ -173,7 +173,7 @@ Every finite subset is satisfied in the standard model itself: pick $c$ to be a 
 
 Now the surprising part, and the whole point. From inside $M$, the *boundary* between the standard elements and the rest cannot be drawn: if some formula $\varphi(x)$ held of exactly the standard elements, then — since $\varphi$ holds of all the standard numerals, a fact $\mathbb{N}$ itself certifies — the overspill lemma for a model of $\mathrm{Th}(\mathbb{N})$ forces $\varphi$ to hold of some nonstandard element as well. Contradiction. No formula defines the standard cut. The structure $M$ is perfectly coherent on its standard region, satisfies every theorem of true arithmetic, and has a further region of genuine elements it can never name.
 
-This is precisely the situation of \citetitle{coherent_world_models}'s fifth pathology, *the out-of-cover query*: the model is coherent on its cover, Tarski passes at every in-cover contact point, and yet the region beyond $c_{\mathrm{acc}}$ — here, the nonstandard elements — is real, populated, and structurally invisible from within. In the world-model chapter the unlicensed region is $c_{\mathrm{acc}}$; in model theory it is any class the structure cannot define. Same shape, same reason: what a system cannot define from within, it cannot audit from within.
+This is precisely the situation of the world-model chapter's fifth pathology, *the out-of-cover query*: the model is coherent on its cover, Tarski passes at every in-cover contact point, and yet the region beyond $c_{\mathrm{acc}}$ — here, the nonstandard elements — is real, populated, and structurally invisible from within. In the world-model chapter the unlicensed region is $c_{\mathrm{acc}}$; in model theory it is any class the structure cannot define. Same shape, same reason: what a system cannot define from within, it cannot audit from within.
 
 **Skolem's paradox** is the same fact worn on its head. $\mathsf{ZFC}$ — the theory intended to capture all of mathematics — has, if it is consistent, a countable model (Löwenheim–Skolem). Inside that model, the set the model calls "the uncountable set $\mathbb{R}$" is uncountable in the only sense the model can express: there is no bijection *inside the model* between it and the model's natural numbers $\omega$. From outside, we can exhibit such a bijection — but the bijection lives outside the model, is not an element of it, and so cannot be seen by it. A system that proves the existence of uncountable sets sits inside a countable universe, without contradiction, because the countability is not expressible in its own language. The honest range of the theory ends where its definability ends; compactness has already made sure there is room for the rest.
 </div>
@@ -193,11 +193,11 @@ Categoricity, when it happens at all, is an all-or-nothing affair above the firs
 <div class="md">
 ## What this does to the course
 
-In \citetitle{coherent_world_models}, "the model-existence machinery of first-order model theory does the work the external world would otherwise do: by completeness and compactness, a consistent first-order theory admits a model." Model theory now lets the course see exactly how much that buys, and exactly where it stops.
+In the world-model chapter, "the model-existence machinery of first-order model theory does the work the external world would otherwise do: by completeness and compactness, a consistent first-order theory admits a model." Model theory now lets the course see exactly how much that buys, and exactly where it stops.
 
 **What consistency buys: everything internal.** If every contact point is internal — theorems, proofs, derivations — then a consistent theory is *true* in a precise sense: it has models, and so it is the truth about a domain it defines for itself. The model is not merely asserted to exist; it is *built* from the theory's own terms. This is the formal half of the world-model chapter's claim that consistency is a sufficient criterion of internal adequacy.
 
-**What consistency does not buy: the external contact.** Nothing in the logic forces the physical world to be one of those models. Compactness guarantees existence; it makes no recommendation among the zoo. The *self-consistent fantasy* of \citetitle{coherent_world_models} is exactly a theory with models on which Tarski's if-and-only-if passes at no external contact point: internally coherent, semantically inhabited, and about nothing. In model-theory dress, the pathology reads: *consistency implies that a model exists; correspondence requires that the world be one of them — and no test inside the theory can run that check.* That is the sharpest two-line summary of the course's epistemology the discipline can supply:
+**What consistency does not buy: the external contact.** Nothing in the logic forces the physical world to be one of those models. Compactness guarantees existence; it makes no recommendation among the zoo. The *self-consistent fantasy* of the world-model chapter is exactly a theory with models on which Tarski's if-and-only-if passes at no external contact point: internally coherent, semantically inhabited, and about nothing. In model-theory dress, the pathology reads: *consistency implies that a model exists; correspondence requires that the world be one of them — and no test inside the theory can run that check.* That is the sharpest two-line summary of the course's epistemology the discipline can supply:
 
 $$
 \boxed{
@@ -215,7 +215,7 @@ And the LLM case footnotes itself in the same words. A trained model is not a st
 <div class="md">
 ## The audit
 
-The discipline of \citetitle{coherent_world_models} demands that a chapter run its own Tarski check at its load-bearing claims. Here is the inventory.
+The discipline of the world-model chapter demands that a chapter run its own Tarski check at its load-bearing claims. Here is the inventory.
 
 **Theorems.** The statements of completeness, compactness, and downward Löwenheim–Skolem; Morley's categoricity theorem; quantifier elimination for algebraically closed fields; the existence of nonstandard models and the overspill argument; Tarski's undefinability of truth. All are standard results, expressed in the vocabulary of \citetitle{hodges1993modeltheory}; the categoricity statement follows \citetitle{morley1965categoricity}, the completeness statement \citetitle{godel1930completeness}, the satisfaction recursion \citetitle{tarski1935wahrheitsbegriff}.
 
