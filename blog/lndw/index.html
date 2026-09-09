@@ -39,9 +39,41 @@
 				<li class="fragment">Das System antwortet mit einer (hoffentlich) sinnvollen Antwort</li>
 			</ul>
 			<p class="fragment">Systeme wie diese heißen <b>Large Language Model</b> oder kurz <b>LLM.</b></p>
-			<p class="fragment">Sprachmodelle dieser Art sind Grundlage vieler moderner KI-Systeme, sei es Bild- oder Audiogenerierung.</b></p>
-		</div>
+		<p class="fragment">Sprachmodelle dieser Art sind Grundlage vieler moderner KI-Systeme, sei es Bild- oder Audiogenerierung.</b></p>
 	</div>
+</div>
+</div>
+
+<!-- ==================== SLIDE: Sonnenbahn (Die Wirklichkeit hat Muster) ==================== -->
+<div class="slide" data-title="Sonnenbahn">
+    <div class="slide-content">
+        <h2>Die Wirklichkeit hat mathematische Muster</h2>
+        <p style="margin-bottom:10px;">Und diese Muster spiegeln sich in Texten wider, weil manche Texte versuchen, die Wirklichkeit zu beschreiben.</p>
+
+        <!-- Fragment 1: Sonnenbild -->
+        <div id="sunrise-fragment-1">
+            <div id="sunrise-overlay-container" style="position:relative; width:100%; max-width:1100px; margin:0 auto; border-radius:10px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.12);">
+                <img id="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width:100%; display:block;">
+                <div id="sunrise-plot" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; mix-blend-mode: multiply; opacity:0; transition: opacity 0.5s ease;"></div>
+            </div>
+        </div>
+
+        <!-- Fragment 2: Sinus-Overlay einblenden -->
+        <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus"></div>
+        <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn über Concordia (75°S, Antarktis) über 24 Stunden an einem Polartag, 24 Aufnahmen im Stundenabstand, zusammengefügt zu einem Panorama.</p>
+
+        <!-- Sinus-Formel (vereinfacht) -->
+        <div class="fragment" style="margin-top:16px;">
+            <div class="formula-box" style="max-width:900px; margin-left:auto; margin-right:auto;">
+                <div class="math-display">$$\underbrace{h(t)}_{\text{Sonnenstand zur Zeit } t} = \sin\!\left(t\right)$$</div>
+            </div>
+        </div>
+
+        <div class="fragment" style="margin-top:12px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; color:#92400e; max-width:900px; margin-left:auto; margin-right:auto;">
+            <b>Der Zusammenhang:</b> In Texten steht "Um Mitternacht steht die Sonne nur 10° über dem Horizont" und "Mittags erreicht sie fast 40°".
+            Implizit steckt darin die modellhafte Vorstellung einer Sinusfunktion, solche Muster kann ein Modell aus Textzusammenhängen lernen.
+        </div>
+    </div>
 </div>
 
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
