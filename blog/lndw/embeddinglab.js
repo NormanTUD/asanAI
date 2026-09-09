@@ -2211,6 +2211,11 @@ const EmbeddingAutoDemo = (() => {
             // Plot zurücksetzen (z.B. nach Richtungs-Demo)
             renderSpace('2d', null, []);
         }
+        const resDiv = document.getElementById('res-2d');
+        if (resDiv) {
+            // Min-Höhe der Richtungs-Demo entfernen, damit sie nicht hängen bleibt
+            resDiv.style.minHeight = '';
+        }
     }
 
     // Beim Betreten der Folie: aktivieren, aber NICHT sofort ein Beispiel zeigen
