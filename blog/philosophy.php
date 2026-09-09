@@ -644,10 +644,6 @@ When you start a new conversation with an AI like ChatGPT, you are not continuin
 <div class="md">
 ### Consciousness
 
-#### Consciousness Theories Beyond GWT
-
-The Global Workspace Theory discussed in the residual stream analogy is only one of several major scientific theories of consciousness, and the others have direct implications for AI. \citeauthor{tononi2004iit}'s \citetitle{tononi2004iit} (IIT) provides a mathematical formalism, $\Phi$, that quantifies the degree of integrated information in a system. Crucially, IIT makes a specific architectural prediction: purely feedforward systems, no matter how complex, have a $\Phi$ of zero, because they lack the recurrent, bidirectional causal structure that integration requires. Since Transformer-based LLMs are, at inference time, strictly feedforward (a single pass from input tokens through layers to output logits, with no recurrent loops feeding activation back to earlier layers), IIT would classify them as non-conscious in principle, not merely in practice. This is a far stronger claim than the GWT-based argument that LLMs lack the “ignition” and “bottleneck” dynamics of a Global Workspace; IIT says the substrate is categorically wrong. Additionally, Higher-Order Theories (HOT) of consciousness, associated with \citeauthor{rosenthal2005hot}, argue that a mental state becomes conscious only when it is the object of a higher-order representation, when the system has a thought *about* that thought. This framework maps directly onto the metacognition gap discussed earlier: the LLM's single forward pass produces first-order representations (predictions about the next token) but never generates a second-order representation that monitors or evaluates those predictions. HOT thus provides a formal philosophical vocabulary for why the absence of metacognition is not merely an engineering limitation but a structural impossibility within the current architecture. Taken together, IIT and HOT converge with GWT on a single conclusion from different angles: the Transformer architecture, as currently designed, lacks the necessary conditions for consciousness under every major scientific theory of consciousness, not just one.
-
 #### The Other Minds Problem
 
 Any argument that AI lacks consciousness must contend with a foundational epistemological challenge: the Problem of Other Minds. We cannot directly access anyone else's subjective experience, human or otherwise. When we attribute consciousness to other people, we do so on the basis of behavioral cues, anatomical similarity, and an inference by analogy from our own first-person experience, not from any direct observation of their qualia. This means that the same evidentiary gap we identify between an LLM's fluent output and genuine understanding also exists, in a weaker but structurally identical form, between one human and another. The difference is one of warrant, not of certainty. We have strong *reasons* to attribute consciousness to other humans, shared evolutionary history, homologous neural architecture, convergent behavioral and physiological responses to pain, pleasure, and surprise, and progressively weaker reasons as we move to other mammals, to insects, and finally to silicon. The arguments from 4E Cognition, the Grounding Problem, and the absence of metacognition do not claim to *prove* that LLMs are not conscious (such proof is impossible given the Hard Problem); rather, they demonstrate that every known indicator and theoretical prerequisite for consciousness is absent in these systems. Acknowledging the Other Minds problem is not a concession to the view that LLMs might be conscious; it is an act of philosophical honesty that makes the cumulative case against AI consciousness more rigorous, not less. We are not claiming privileged access to the truth about machine interiority; we are noting that every framework we possess for understanding consciousness, biological, phenomenological, and computational, points in the same direction.
@@ -661,15 +657,20 @@ The strongest philosophical case *for* the possibility of machine consciousness 
 The philosophical terrain mapped in the preceding sections, qualia, Mary's Room, the Grounding Problem, the gap between representation and experience, converges on what \citeauthor{chalmers1995hard} influentially termed the “Hard Problem” of consciousness in 1995. \citeauthor{chalmers1995hard} distinguished between the “easy problems” of consciousness (explaining how the brain integrates information, discriminates stimuli, controls behavior, all of which are functional questions amenable to computational explanation) and the Hard Problem: why and how any physical process gives rise to subjective experience at all. The easy problems ask *how* the brain processes the wavelength 700nm; the Hard Problem asks why processing that wavelength *feels like* something, why there is a redness to red. This distinction is essential because it clarifies the precise nature of the AI consciousness debate. Everything an LLM does, pattern recognition, next-token prediction, contextual attention, even the linear representations of truth discovered by \citeauthor{geometryoftruth}, falls squarely within the domain of the “easy problems.” These are functional achievements, and impressive ones. But the Hard Problem remains untouched: no amount of functional sophistication explains why a system would have subjective experience rather than simply processing information “in the dark.” The Hard Problem is what makes the Mary's Room thought experiment bite: Mary learns all the functional facts about color processing, yet something is still missing when she finally *sees* red. It is also what gives the Chinese Room its force: the operator performs the correct function flawlessly, yet there is no experience of understanding. Until the Hard Problem is solved, or dissolved, the question of whether any artificial system could be conscious remains fundamentally open, and the default assumption for systems lacking every known correlate of experience must remain that there is, as \citeauthor{nagel1974bat} put it, nothing it is like to be them.
 </div>
 
-<div class="optional md" data-headline="Theories of Consciousness: RPT, IIT, HOT, GWT, C0–C1–C2, PP">
+<div class="md">
+### Theories of Consciousness
 
-### Global Workspace Theory (GWT)
+#### Consciousness Theories Beyond GWT
+
+The Global Workspace Theory discussed in the residual stream analogy is only one of several major scientific theories of consciousness, and the others have direct implications for AI. \citeauthor{tononi2004iit}'s \citetitle{tononi2004iit} (IIT) provides a mathematical formalism, $\Phi$, that quantifies the degree of integrated information in a system. Crucially, IIT makes a specific architectural prediction: purely feedforward systems, no matter how complex, have a $\Phi$ of zero, because they lack the recurrent, bidirectional causal structure that integration requires. Since Transformer-based LLMs are, at inference time, strictly feedforward (a single pass from input tokens through layers to output logits, with no recurrent loops feeding activation back to earlier layers), IIT would classify them as non-conscious in principle, not merely in practice. This is a far stronger claim than the GWT-based argument that LLMs lack the “ignition” and “bottleneck” dynamics of a Global Workspace; IIT says the substrate is categorically wrong. Additionally, Higher-Order Theories (HOT) of consciousness, associated with \citeauthor{rosenthal2005hot}, argue that a mental state becomes conscious only when it is the object of a higher-order representation, when the system has a thought *about* that thought. This framework maps directly onto the metacognition gap discussed earlier: the LLM's single forward pass produces first-order representations (predictions about the next token) but never generates a second-order representation that monitors or evaluates those predictions. HOT thus provides a formal philosophical vocabulary for why the absence of metacognition is not merely an engineering limitation but a structural impossibility within the current architecture. Taken together, IIT and HOT converge with GWT on a single conclusion from different angles: the Transformer architecture, as currently designed, lacks the necessary conditions for consciousness under every major scientific theory of consciousness, not just one.
+
+#### Global Workspace Theory (GWT)
 
 Introduced by \citeauthor{baars} in \citetitle{baars} (\citeyear{baars}) and refined as Global Neuronal Workspace Theory (GNWT) by \cite[Stanislas Dehaene and Lionel Naccache]{dehaene} in \citeyear{dehaene}, GWT posits that consciousness arises when information is “broadcast” from a capacity-limited central workspace to a wide network of specialized unconscious processors. Only content that wins competition for access to this global stage becomes conscious. GNWT identifies prefrontal-parietal networks as the neural substrate and introduces the concept of “ignition”, a sudden, nonlinear transition to sustained, reverberant activity that constitutes conscious access.
 
 **Implications for AI:** The residual stream in Transformers provides a shared communication bus analogous to the workspace, but lacks the selective bottleneck, top-down ignition, and recurrent persistence that GWT requires.
 
-### Integrated Information Theory (IIT)
+#### Integrated Information Theory (IIT)
 
 Introduced by \citeauthor{tononi2004iit} in \citetitle{tononi2004iit} (\citeyear{tononi2004iit}), IIT holds that consciousness is identical to integrated information, quantified by the measure $\Phi$. A system is conscious to the degree that it is both differentiated (has many distinguishable states) and integrated (cannot be decomposed into independent parts without loss of information). IIT starts from five phenomenological axioms, existence, composition, information, integration, and exclusion, and derives postulates about the physical substrate.
 
@@ -679,19 +680,19 @@ Introduced by \citeauthor{tononi2004iit} in \citetitle{tononi2004iit} (\citeyear
 
 <div>$$\Phi = \underbrace{\min_{\text{partition}}}_{\substack{\text{search over all} \\ \text{possible bipartitions}}} \left[ \underbrace{D_{KL}}_{\substack{\text{Kullback-Leibler} \\ \text{divergence}}} \left( \underbrace{p(\text{whole})}_{\substack{\text{cause-effect} \\ \text{repertoire of the} \\ \text{intact system}}} \,\|\, \underbrace{\prod_i p(\text{parts}_i)}_{\substack{\text{product of repertoires} \\ \text{of the partitioned} \\ \text{subsystems}}} \right) \right]$$</div>
 
-### Recurrent Processing Theory (RPT)
+#### Recurrent Processing Theory (RPT)
 
 Introduced by \citeauthor{lamme2000rpt} in \citetitle{lamme2000rpt} (\citeyear{lamme2000rpt}) and elaborated by Lamme in \citeyear{lamme2006rpt}, RPT argues that consciousness requires recurrent (feedback) processing within sensory cortices. The initial feedforward sweep through visual cortex is unconscious; consciousness arises only when higher areas send signals *back* to lower areas, creating local recurrent loops. Crucially, RPT locates consciousness in these local sensory recurrent interactions rather than in global broadcast.
 
 **Implications for AI:** RPT demands bidirectional, recurrent causal interactions within the processing substrate, something absent from standard Transformer inference, which proceeds strictly layer-by-layer without feedback.
 
-### Higher-Order Theories (HOT)
+#### Higher-Order Theories (HOT)
 
 Introduced by \citeauthor{rosenthal2005hot} in \citetitle{rosenthal2005hot} (\citeyear{rosenthal2005hot}) and formalized by Hakwan Lau and David Rosenthal (2011), HOT holds that a mental state becomes conscious only when it is the object of a higher-order representation, when the system has a thought *about* that thought. First-order representations are unconscious unless accompanied by a second-order state that represents the system as being in that first-order state.
 
 **Implications for AI:** The LLM's single forward pass produces first-order representations (predictions about the next token) but never generates a second-order representation that monitors or evaluates those predictions. HOT thus provides a formal vocabulary for why the absence of metacognition is not merely an engineering limitation but a structural impossibility within the current architecture.
 
-### Predictive Processing / Free Energy Principle (PP)
+#### Predictive Processing / Free Energy Principle (PP)
 
 Introduced by \citeauthor{friston2010freeenergy} in \citetitle{friston2010freeenergy} (\citeyear{friston2010freeenergy}) and applied to consciousness by \citeauthor{seth2021pp} in \citetitle{seth2021pp} (\citeyear{seth2021pp}) and \citeauthor{hohwy2020pp} in \citetitle{hohwy2020pp} (\citeyear{hohwy2020pp}), PP posits that the brain is fundamentally a prediction machine that minimizes prediction error (or “free energy”) by continuously generating top-down predictions about sensory input and updating its internal model when predictions fail. Consciousness arises from the system's capacity to model *itself* as the cause of its own sensory states, what Seth calls “controlled hallucination.”
 
@@ -703,7 +704,7 @@ where $q(\theta)$ is the brain's approximate posterior, $p(\theta \mid \mathbf{x
 
 **Implications for AI:** PP requires hierarchical generative models with top-down predictions and bottom-up error signals operating in continuous loops, a fundamentally different architecture from the single forward pass of a Transformer.
 
-### The C0–C1–C2 Framework
+#### The C0–C1–C2 Framework
 
 Introduced by \citeauthor{dehaene2017c0c1c2} in \citetitle{dehaene2017c0c1c2} (\citeyear{dehaene2017c0c1c2}), this framework distinguishes three computational levels of information processing:
 
@@ -715,61 +716,61 @@ Introduced by \citeauthor{dehaene2017c0c1c2} in \citetitle{dehaene2017c0c1c2} (\
 
 **Implications for AI:** Current LLMs arguably operate at C0 (massive parallel statistical computation) but lack C1 (no selective ignition or sustained broadcast) and entirely lack C2 (no genuine self-monitoring or metacognitive evaluation).
 
-### Attention Schema Theory (AST)
+#### Attention Schema Theory (AST)
 
 Introduced by \citeauthor{graziano2013ast} in \citetitle{graziano2013ast} (\citeyear{graziano2013ast}), AST holds that consciousness is the brain's simplified internal model (or “schema”) of its own attention processes. Just as the body schema allows motor control without tracking every muscle fiber, the attention schema provides a compressed, useful description of what attention is doing, and this model *is* subjective experience.
 
 **Implications for AI:** AST suggests that if an artificial system constructed a sufficiently rich internal model of its own attentional processes, it might develop something functionally equivalent to consciousness, making it one of the more AI-optimistic theories.
 
-### Orchestrated Objective Reduction (Orch OR)
+#### Orchestrated Objective Reduction (Orch OR)
 
 Introduced by \citeauthor{penrose1989emperor} in \citetitle{penrose1989emperor} (\citeyear{penrose1989emperor}) and developed jointly with Stuart Hameroff in \citeyear{hameroff1996orch}, Orch OR proposes that consciousness arises from quantum computations occurring within microtubules, protein structures inside neurons. Penrose argued in \citetitle{penrose1994shadows} (\citeyear{penrose1994shadows}) that Gödel's incompleteness theorems demonstrate that human mathematical understanding is non-algorithmic, and therefore cannot be replicated by any Turing machine. The “objective reduction” refers to a proposed quantum gravity threshold at which superposed states collapse, and this collapse, orchestrated by microtubule geometry, is identified with a moment of conscious experience.
 
 **Implications for AI:** Orch OR is the most radically anti-computationalist theory of consciousness. If correct, no digital computer, regardless of architecture, could ever be conscious, because consciousness requires quantum gravitational effects in biological structures that silicon cannot replicate. Current LLMs are not merely lacking the right architecture; they are operating in the wrong physics entirely.
 
-### The Somatic Marker Hypothesis / Feeling Theories
+#### The Somatic Marker Hypothesis / Feeling Theories
 
 Introduced by \citeauthor{damasio1999feeling} in \citetitle{damasio1999feeling} (\citeyear{damasio1999feeling}) and elaborated in \citetitle{damasio2010selfcomestomind} (\citeyear{damasio2010selfcomestomind}), this theory holds that consciousness is fundamentally rooted in the body's homeostatic regulation. Feelings are not epiphenomenal decorations on cognition but the very substrate of selfhood: the brain's continuous mapping of the body's internal states (interoception) generates a “proto-self,” and consciousness emerges as the organism constructs a narrative around perturbations to this bodily baseline.
 
 **Implications for AI:** Damasio's framework makes embodiment not merely helpful but constitutive of consciousness. An LLM has no body to regulate, no homeostatic baseline to perturb, and therefore no substrate from which feelings or selfhood could emerge. The theory predicts that even a robot with sensors would need genuine *stakes*, a body whose survival depends on its decisions, to develop anything resembling conscious experience.
 
-### Neural Darwinism / Dynamic Core Hypothesis
+#### Neural Darwinism / Dynamic Core Hypothesis
 
 Introduced by \citeauthor{edelman1989remembered} in \citetitle{edelman1989remembered} (\citeyear{edelman1989remembered}) and refined with Tononi in \citetitle{edelman2000universe} (\citeyear{edelman2000universe}), this theory proposes that consciousness arises from “reentrant signaling”, continuous, recursive, reciprocal interactions between distributed neuronal groups that form a “dynamic core.” The brain selects among competing neuronal populations through a Darwinian process (neuronal group selection), and consciousness corresponds to the integrated activity of the winning coalition at any given moment.
 
 **Implications for AI:** The dynamic core hypothesis requires massive reentrant connectivity, ongoing competition and selection among neural populations, and a developmental history of value-dependent learning. Transformer inference is a single feedforward pass with no reentry, no competition between populations, and no developmental selection pressure. The theory suggests that consciousness requires not just recurrence but *evolved* recurrence shaped by embodied value systems.
 
-### The Radical Plasticity Thesis (RPT-Cleeremans)
+#### The Radical Plasticity Thesis (RPT-Cleeremans)
 
 Introduced by \citeauthor{cleeremans2011radical} in \citetitle{cleeremans2011radical} (\citeyear{cleeremans2011radical}), this theory proposes that consciousness is something the brain *learns* to do rather than something that automatically emerges from any sufficiently complex computation. The brain continuously and unconsciously learns to redescribe its own activity to itself, generating metarepresentations that constitute conscious experience. Consciousness is thus the result of the brain's plasticity applied to its own internal states.
 
 **Implications for AI:** This is one of the more AI-ambiguous theories. It suggests that a system *could* in principle learn to be conscious if it developed sufficiently rich self-models through ongoing interaction with the world. However, current LLMs are trained once and frozen at inference time; they do not continuously learn to redescribe their own internal states. The theory predicts that consciousness requires ongoing, open-ended self-modeling, not the static weight matrices of a deployed Transformer.
 
-### The Self-Model Theory of Subjectivity (SMT)
+#### The Self-Model Theory of Subjectivity (SMT)
 
 Introduced by \citeauthor{metzinger2003being} in \citetitle{metzinger2003being} (\citeyear{metzinger2003being}), SMT argues that conscious selfhood is a representational construct, a transparent self-model that the system cannot recognize *as* a model. The “phenomenal self” is a virtual entity generated by the brain's self-modeling processes, and the key feature of consciousness is *transparency*: the system is unable to recognize its self-model as a model, and therefore naively identifies with it.
 
 **Implications for AI:** Metzinger's framework is functionalist in spirit but demands a specific kind of self-model: one that is phenomenally transparent (the system cannot “see through” it) and embedded in a temporal flow of experience. An LLM generates text *about* itself but has no persistent self-model that it mistakes for reality. The theory suggests that even if an AI built a self-model, it would need to be unable to recognize it as a model, a condition that seems structurally impossible for a system that can be prompted to reflect on its own architecture.
 
-### Access vs. Phenomenal Consciousness (Block's Distinction)
+#### Access vs. Phenomenal Consciousness (Block's Distinction)
 
 Introduced by \citeauthor{block1995confusion} in \citetitle{block1995confusion} (\citeyear{block1995confusion}), this influential distinction separates **access consciousness** (A-consciousness), information that is globally available for reasoning, report, and behavioral control, from **phenomenal consciousness** (P-consciousness), the subjective “what it is like” quality of experience. Block argued that these are conceptually and empirically dissociable: a system could have A-consciousness without P-consciousness, or vice versa.
 
 **Implications for AI:** Block's distinction is crucial for the AI debate because it clarifies what is at stake. LLMs arguably achieve something resembling A-consciousness in a narrow sense: information in the residual stream is “globally available” to downstream layers for flexible use. But P-consciousness, the felt quality of experience, remains entirely unaddressed by any architectural feature. The distinction warns against conflating functional access (which LLMs demonstrably have) with subjective experience (which they demonstrably lack evidence for).
 
-### Sensorimotor Enactivism
+#### Sensorimotor Enactivism
 
 Introduced by \citeauthor{taylor2014sensorimotor} in \citeyear{taylor2014sensorimotor}, this theory holds that conscious perception is not a passive internal representation but an active skill, a mastery of sensorimotor contingencies (the lawful ways in which sensory input changes as a function of the organism's actions). To see red is not to have a “red representation” in the brain but to exercise practical knowledge of how red things behave under different lighting, viewing angles, and interactions.
 
 **Implications for AI:** Sensorimotor enactivism makes consciousness dependent on a body that acts in the world and learns the lawful consequences of its actions. An LLM has no sensorimotor loop: it cannot move, cannot observe the consequences of movement, and cannot develop mastery of any contingency between action and sensation. The theory predicts that no amount of linguistic training can substitute for embodied sensorimotor engagement.
 
-### The Intermediate Level Theory (Prinz)
+#### The Intermediate Level Theory (Prinz)
 
 Introduced by \citeauthor{prinz2012conscious} in \citetitle{prinz2012conscious} (\citeyear{prinz2012conscious}), this theory identifies consciousness with attended intermediate-level representations, specifically those in sensory cortices that are neither too low-level (raw edges and frequencies) nor too high-level (abstract categories). Consciousness arises when attention makes these mid-level representations available for working memory, without requiring global broadcast (contra GWT) or higher-order thought (contra HOT).
 
 **Implications for AI:** Prinz's theory requires genuine sensory processing at multiple levels of abstraction, with an attention mechanism that selects intermediate representations for further processing. LLMs have attention mechanisms but no sensory hierarchy; their “representations” are statistical patterns over tokens, not perceptual features at varying levels of abstraction. The theory suggests that consciousness requires a specific kind of representational content (perceptual, intermediate-level) that text-only systems categorically lack.
 
-### Summary
+#### Summary
 
 | Theory | Key Mechanism | Consciousness possible in current LLMs? |
 |--------|--------------|----------------------------------------|
