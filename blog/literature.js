@@ -3550,6 +3550,12 @@ window.bibData = {
 
 	// From here on, they are auto generated
 
+	"godel1930completeness": {
+		year: 1930,
+		author: "Kurt Gödel",
+		title: "Die Vollständigkeit der Axiome des logischen Funktionenkalküls",
+		alternativetitle: "Gödel, On the Completeness of the Axioms of the Functional Calculus of Logic, Monatshefte für Mathematik und Physik 37 (1930) 349–360"
+	},
 	"godel1931incompleteness": {
 		year: 1931,
 		author: "Kurt Gödel",
@@ -8175,6 +8181,13 @@ window.bibData = {
 		url: "https://patents.google.com/patent/US879532A/en",
 		alternativetitle: "De Forest Audion Patent"
 	},
+	"morley1965categoricity": {
+		title: "Categoricity in Power",
+		author: "Michael Morley",
+		year: 1965,
+		publisher: "Transactions of the American Mathematical Society 114",
+		alternativetitle: "Morley, Categoricity in Power, Trans. Amer. Math. Soc. 114 (1965) 514–538"
+	},
 	"morsetelegraph": {
 		title: "Improvement in the Mode of Communicating Information by Signals by the Application of Electromagnetism (U.S. Patent 1,647)",
 		author: "Samuel F. B. Morse",
@@ -8288,6 +8301,13 @@ window.bibData = {
 		year: 2019,
 		url: "https://plato.stanford.edu/entries/truth-coherence/",
 		alternativetitle: "The Coherence Theory of Truth (Stanford Encyclopedia of Philosophy)"
+	},
+	"hodges1993modeltheory": {
+		title: "Model Theory",
+		author: "Wilfrid Hodges",
+		year: 1993,
+		publisher: "Cambridge University Press",
+		alternativetitle: "Hodges, Model Theory (Encyclopedia of Mathematics and its Applications 42, Cambridge University Press, 1993)"
 	},
 	"hodges2007tarski": {
 		title: "Tarski's Truth Definitions",
