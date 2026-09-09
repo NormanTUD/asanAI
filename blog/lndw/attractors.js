@@ -3,7 +3,6 @@
 // ============================================================
 const AttractorViz = (() => {
     let currentStep = 0;
-    let subStep = 0;
     const totalSteps = 7;
     let activeAnimation = null;
     let animationRunning = false;
@@ -49,7 +48,6 @@ const AttractorViz = (() => {
 
     function reset() {
         currentStep = 0;
-        subStep = 0;
         retryCount = 0;
         stopAllAnimations();
     }
@@ -2642,7 +2640,6 @@ function render3DBasins(container) {
         const container = document.getElementById('attractor-viz-container');
         if (!container) return;
         currentStep = 0;
-        subStep = 0;
         retryCount = 0;
         renderStep(0);
     }

@@ -42,23 +42,6 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
     /* max-height ENTFERNEN */
 }
 
-.dim-btn {
-	padding: 8px 18px;
-	border-radius: 8px;
-	border: 2px solid #cbd5e1;
-	background: #fff;
-	font-weight: bold;
-	font-size: 0.95em;
-	cursor: pointer;
-	transition: all 0.2s;
-}
-.dim-btn:hover { background: #f8fafc; }
-.dim-btn-active {
-	border-color: #3b82f6 !important;
-	background: #eff6ff !important;
-	color: #1e40af;
-}
-
 /* ============ SPECIAL BOXES ============ */
 .formula-box {
 	background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;

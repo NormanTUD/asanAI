@@ -237,6 +237,9 @@ const Presentation = (() => {
         }
         if (currentSlide > 0) {
             goTo(currentSlide - 1, true);
+        } else {
+            // Loop: von der ersten Folie zurück zur letzten
+            goTo(slides.length - 1, true);
         }
     }
 
@@ -267,8 +270,7 @@ const Presentation = (() => {
     function updateUI() {
         document.getElementById('slide-counter').textContent =
             `${currentSlide + 1} / ${slides.length}`;
-        document.getElementById('btn-prev').disabled =
-            (currentSlide === 0 && fragmentIndex[0] === 0);
+        document.getElementById('btn-prev').disabled = false;
         document.getElementById('btn-next').disabled = false;
         const progress = (currentSlide / (slides.length - 1)) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
@@ -342,7 +344,8 @@ const InputHandler = (() => {
 
     function navigate(direction) {
         if (!DemoRegistry.tryNavigate(direction)) {
-            direction === 'next' ? Presentation.next() : Presentation.prev();
+            if (direction === 'next') Presentation.next();
+            else Presentation.prev();
         }
     }
 
@@ -436,5 +439,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof loadIntuitionModule === 'function') loadIntuitionModule();
     if (typeof runAttention === 'function') runAttention();
-    $("#dim-btn-1").click();
 });
