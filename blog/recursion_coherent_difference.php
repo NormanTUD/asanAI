@@ -13,9 +13,7 @@ topics: philosophy, math-i, math-ii, logic, proof-theory, topology
 <div class="md">
 ## The question
 
-The two preceding chapters — \citetitle{coherent_difference} and \citetitle{coherent_world_models} — built a picture: global unity from local difference, glued by coherent transitions, with the sheaf condition as the formal heart. The picture is powerful. It is also, on inspection, *recursive at every level* — and the recursion is not an accident. It is the structural reason the picture works, and the structural reason it has limits.
-
-This chapter asks: where does recursion sit in the picture, and what does its presence (and its absence) tell us?
+The two preceding chapters built a picture: global unity from local difference, glued by coherent transitions, with the sheaf condition as the formal heart. The picture is powerful — and *recursive at every level*. That recursion is not an accident. It is the structural reason the picture works, and the structural reason it has limits.
 </div>
 
 <div class="md">
