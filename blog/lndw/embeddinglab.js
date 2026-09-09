@@ -24,7 +24,7 @@ const evoSpaces = {
 			'König': [25, -10, 0], 'Königin': [25, 10, 0],
 			'Macht': [15, 0, 0]
 		},
-		axes: { x: 'Power / Age', y: 'Gender' }, 
+		axes: { x: 'Macht', y: 'Geschlecht' }, 
 		dims: 2,
 		rangeX: [-15, 40]
 	},
