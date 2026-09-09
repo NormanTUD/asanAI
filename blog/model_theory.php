@@ -101,7 +101,7 @@ More axioms, fewer models. A structure $M$ is a model of $T$ precisely when the 
 <div class="md">
 ## Truth is recursive
 
-In the recursion chapter, the recursion principle was shown to be the engine of the whole structure: the tower of higher coherence is one operation applied to its own output. Tarski's 1933 definition of truth is a piece of the same machinery \citeauthor{tarski1935wahrheitsbegriff}\citeyear{tarski1935wahrheitsbegriff}\citetitle{tarski1935wahrheitsbegriff} (the standard English translation appears in \citetitle{tarski1956logic}; an accessible statement of the strategy is in \citetitle{hodges2007tarski}).
+In the recursion chapter, the recursion principle was shown to be the engine of the whole structure: the tower of higher coherence is one operation applied to its own output. Tarski's 1933 definition of truth is a piece of the same machinery \citeauthor{tarski1935wahrheitsbegriff} \citeyear{tarski1935wahrheitsbegriff} \citetitle{tarski1935wahrheitsbegriff} (the standard English translation appears in \citetitle{tarski1956logic}; an accessible statement of the strategy is in \citetitle{hodges2007tarski}).
 
 Truth-in-a-structure is *defined*, not assumed. For a formula $\varphi$ with free variables $x_{1}, \dots, x_{n}$, and an assignment $a = (a_{1},\dots,a_{n})$ of elements of $M$, the relation "$M \models \varphi(a)$" is built by recursion on the complexity of $\varphi$:
 
@@ -111,7 +111,7 @@ Truth-in-a-structure is *defined*, not assumed. For a formula $\varphi$ with fre
 
 A *sentence* is true in $M$ — written $M \models \sigma$ — iff it is satisfied by the empty assignment. Nothing else. No hidden truth axiom: truth is a recursive definition over the construction of formulas, exactly as the recursion chapter would predict. The same recursion that builds the tower of coherence builds the relation $\models$ from the ground up.
 
-And the diagonal argument reappears with it. Tarski's undefinability theorem — a diagonalization through the same material as Gödel's \citeauthor{godel1931incompleteness}\citeyear{godel1931incompleteness}\citetitle{godel1931incompleteness} — says that no formula of arithmetic can define the relation "this sentence is true in $\mathbb{N}$": the satisfaction relation of a structure rich enough to talk about itself slips entirely out of that structure's own reach. Every structure's truth is accessible from *outside*, by a higher-level structure — which is exactly the world-model chapter's conclusion that the anchor of the T-schema is another model one level up.
+And the diagonal argument reappears with it. Tarski's undefinability theorem — a diagonalization through the same material as Gödel's \citeauthor{godel1931incompleteness} \citeyear{godel1931incompleteness} \citetitle{godel1931incompleteness} — says that no formula of arithmetic can define the relation "this sentence is true in $\mathbb{N}$": the satisfaction relation of a structure rich enough to talk about itself slips entirely out of that structure's own reach. Every structure's truth is accessible from *outside*, by a higher-level structure — which is exactly the world-model chapter's conclusion that the anchor of the T-schema is another model one level up.
 
 <div class="optional md" data-headline="Why this is not circular">
 The recursion is not circular, and the reason is worth making explicit, because the name "circular" tends to get attached to any self-reference.
@@ -125,7 +125,7 @@ The one genuine self-touch is diagonal: the language is allowed to name its own 
 <div class="md">
 ## Three pillars
 
-Three theorems carry the whole subject, and each is worth stating with full precision, because the course has been leaning on them informally and they deserve to be exact \citeauthor{hodges1993modeltheory}\citeyear{hodges1993modeltheory}\citetitle{hodges1993modeltheory}.
+Three theorems carry the whole subject, and each is worth stating with full precision, because the course has been leaning on them informally and they deserve to be exact \citeauthor{hodges1993modeltheory} \citeyear{hodges1993modeltheory} \citetitle{hodges1993modeltheory}.
 
 **Completeness** \cite[Gödel's dissertation, 1929, published in 1930]{godel1930completeness}. For a first-order theory $T$ and a sentence $\sigma$:
 
@@ -185,7 +185,7 @@ Put the three pillars together and one moral falls out: first-order theories are
 
 The precise theory of "when is a theory unambiguous" is the theory of *categoricity*. A theory $T$ is $\kappa$-categorical if it has exactly one model of cardinality $\kappa$, up to isomorphism. The rarity of the phenomenon was measured by Morley:
 
-**Morley's theorem** \citeauthor{morley1965categoricity}\citeyear{morley1965categoricity}\citetitle{morley1965categoricity}: *if a complete countable first-order theory is $\kappa$-categorical for some uncountable $\kappa$, then it is $\lambda$-categorical for every uncountable $\lambda$.*
+**Morley's theorem** \citeauthor{morley1965categoricity} \citeyear{morley1965categoricity} \citetitle{morley1965categoricity}: *if a complete countable first-order theory is $\kappa$-categorical for some uncountable $\kappa$, then it is $\lambda$-categorical for every uncountable $\lambda$.*
 
 Categoricity, when it happens at all, is an all-or-nothing affair above the first threshold — and it is rare. The countable case is the exception to the exception: an $\aleph_{0}$-categorical theory is highly constrained (for each $n$, only finitely many $n$-types), and $\aleph_{0}$-categoricity never forces categoricity higher up. This is why the subject's energy went into classification: stable theories — where the number of types is controlled — admit a taxonomy, and the flagship tame class, the *o-minimal* structures (an ordered structure where every definable set is a finite union of points and intervals; the ordered reals are the original example), are everywhere in mathematics. But the discipline's own verdict stands: for a first-order theory to describe exactly one structure is a great rarity; generically a theory describes a whole zoo, and choosing which animal you meant is a fact no axiom can encode.
 </div>
