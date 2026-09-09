@@ -1520,11 +1520,13 @@ function initGlossary() {
 				if (el.hasAttribute && el.hasAttribute('data-allow-cb-style')) continue;
 				var s = el.getAttribute('style');
 				if (!s || !CB_STYLE_RE.test(s)) continue;
+				// Cheap checks first (these fire on every style write,
+				// e.g. chart transforms each animation frame).
+				var inContents = el.id === 'contents' || (el.closest && el.closest('#contents, .md, .optional, .optional-content'));
+				if (!inContents) continue;
 				// Only guard elements that contain hoverable content —
 				// i.e. real ancestors of a glossary term / citation.
 				if (!el.querySelector || !el.querySelector('.glossary-term, a.cite-stealth, a[data-target^="bib-"], sup.footnote-ref a')) continue;
-				var inContents = el.id === 'contents' || (el.closest && el.closest('#contents, .md, .optional, .optional-content'));
-				if (!inContents) continue;
 				for (var j = 0; j < CB_PROPS.length; j++) {
 					var cp = CB_PROPS[j];
 					var kebab = cp === 'backdropFilter' ? 'backdrop-filter' : cp === 'clipPath' ? 'clip-path' : cp === 'maskImage' ? 'mask-image' : cp === 'willChange' ? 'will-change' : cp;

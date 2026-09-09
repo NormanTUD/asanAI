@@ -5818,12 +5818,15 @@ html.dark #theme-toggle .ti-moon { display: none; }
    sizeDropcap); a 2 s safety timer in polish.js reveals the fallback
    size if the font API never settles, so the first letter can never
    stay invisible. */
+/* !important on purpose: must beat EVERY other ::first-letter rule
+   (reader mode uses html.reader-mode ... which carries higher
+   specificity), while cl-dc-pending is active. */
 .md > p.cl-dropcap.cl-dc-pending::first-letter {
-	font-size: 0;
-	line-height: 0;
-	padding: 0;
-	margin: 0;
-	overflow: hidden;
+	font-size: 0 !important;
+	line-height: 0 !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	overflow: hidden !important;
 }
 
 .glossary-term {
