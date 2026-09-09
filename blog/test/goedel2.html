@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gödel's Incompleteness Theorems — Interactive Explainer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    color: #f0f0f0;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  header {
+    text-align: center;
+    padding: 30px 20px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  h1 {
+    font-size: 2.6em;
+    background: linear-gradient(90deg, #ffd700, #ff6b9d, #c471f5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  header p { color: #b0b0d0; font-style: italic; font-size: 1.1em; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .tab {
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    color: #ddd;
+    font-size: 0.95em;
+  }
+  .tab:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+  .tab.active {
+    background: linear-gradient(90deg, #ff6b9d, #c471f5);
+    color: white;
+    box-shadow: 0 4px 20px rgba(196,113,245,0.4);
+  }
+  .panel {
+    display: none;
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    animation: fadeIn 0.5s;
+  }
+  .panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  h2 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.8em;
+  }
+  h3 { color: #ff6b9d; margin: 20px 0 10px; }
+  p, li { line-height: 1.7; margin-bottom: 10px; color: #e0e0f0; }
+  ul { margin-left: 25px; }
+  .highlight {
+    background: rgba(255,215,0,0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #ffd700;
+    font-weight: bold;
+  }
+  .interactive-box {
+    background: rgba(0,0,0,0.4);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border-left: 4px solid #c471f5;
+  }
+  input[type=text], input[type=number] {
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 1em;
+    width: 250px;
+  }
+  button {
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #ff6b9d, #c471f5);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1em;
+    margin: 5px;
+    transition: transform 0.2s;
+  }
+  button:hover { transform: scale(1.05); }
+  .output {
+    background: #1a1a2e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    font-family: 'Courier New', monospace;
+    color: #0ff;
+    word-wrap: break-word;
+    border: 1px solid #444;
+    min-height: 40px;
+  }
+  .symbol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .symbol-card {
+    background: rgba(255,255,255,0.08);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .symbol-card:hover {
+    background: rgba(196,113,245,0.2);
+    transform: translateY(-3px);
+  }
+  .symbol-card .sym { font-size: 1.8em; color: #ffd700; display: block; margin-bottom: 5px; }
+  .symbol-card .num { color: #0ff; font-family: monospace; font-size: 1.2em; }
+  .symbol-card .desc { font-size: 0.8em; color: #aaa; margin-top: 5px; }
+  .step-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  .step {
+    background: rgba(0,0,0,0.3);
+    padding: 15px 20px;
+    border-radius: 10px;
+    border-left: 4px solid #ffd700;
+    opacity: 0.4;
+    transition: all 0.5s;
+  }
+  .step.revealed {
+    opacity: 1;
+    transform: translateX(10px);
+    border-left-color: #ff6b9d;
+  }
+  .step .num-badge {
+    display: inline-block;
+    background: #ff6b9d;
+    color: white;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  .liar-container {
+    text-align: center;
+    padding: 30px;
+    background: radial-gradient(circle, rgba(255,107,157,0.2), transparent);
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+  .liar-sentence {
+    font-size: 1.4em;
+    padding: 20px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 10px;
+    margin: 15px 0;
+    font-style: italic;
+    color: #ffd700;
+    transition: all 0.5s;
+  }
+  .paradox-arrow {
+    font-size: 2em;
+    color: #ff6b9d;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .system-diagram {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 30px 0;
+  }
+  .system-box {
+    background: linear-gradient(135deg, rgba(196,113,245,0.2), rgba(255,107,157,0.2));
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 180px;
+    border: 2px solid rgba(255,255,255,0.2);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .system-box:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(196,113,245,0.3); }
+  .system-box .title { color: #ffd700; font-weight: bold; margin-bottom: 8px; }
+  .arrow { font-size: 2em; color: #ff6b9d; }
+  .quote {
+    background: rgba(0,0,0,0.4);
+    padding: 20px;
+    border-left: 4px solid #ffd700;
+    font-style: italic;
+    margin: 20px 0;
+    border-radius: 6px;
+    color: #ffe;
+  }
+  .theorem-card {
+    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(196,113,245,0.1));
+    padding: 25px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border: 1px solid rgba(255,215,0,0.3);
+  }
+  .theorem-card h4 { color: #ffd700; font-size: 1.3em; margin-bottom: 10px; }
+  .slider-container { margin: 20px 0; }
+  .slider-container label { display: block; margin-bottom: 10px; color: #ffd700; }
+  input[type=range] { width: 100%; }
+  .conclusion {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(196,113,245,0.15));
+    border-radius: 12px;
+    margin-top: 20px;
+    font-size: 1.2em;
+    border: 2px solid rgba(255,215,0,0.4);
+  }
+  footer { text-align: center; margin-top: 30px; color: #888; font-size: 0.9em; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Gödel's Incompleteness Theorems</h1>
+    <p>An interactive tour through Kurt Gödel's 1931 masterpiece:<br>
+    "On Formally Undecidable Propositions of Principia Mathematica and Related Systems I"</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab(0)">🎯 The Problem</button>
+    <button class="tab" onclick="showTab(1)">🔢 Gödel Numbering</button>
+    <button class="tab" onclick="showTab(2)">🪞 Self-Reference</button>
+    <button class="tab" onclick="showTab(3)">⚡ The Proof</button>
+    <button class="tab" onclick="showTab(4)">💥 Theorems</button>
+    <button class="tab" onclick="showTab(5)">🌌 Implications</button>
+  </div>
+
+  <!-- TAB 0: The Problem -->
+  <div class="panel active">
+    <h2>🎯 The Grand Dream of Mathematics</h2>
+    <p>Around 1900, mathematicians like <span class="highlight">Hilbert, Russell &amp; Whitehead</span> had a bold dream: to build a <strong>complete and consistent formal system</strong> — a set of axioms and mechanical rules from which <em>every</em> mathematical truth could be derived.</p>
+
+    <div class="system-diagram">
+      <div class="system-box">
+        <div class="title">Axioms</div>
+        <div>A few basic truths</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="system-box">
+        <div class="title">Rules</div>
+        <div>Mechanical inference</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="system-box">
+        <div class="title">All Truths?</div>
+        <div>Every theorem provable</div>
+      </div>
+    </div>
+
+    <div class="quote">
+      "The most comprehensive formal systems are Principia Mathematica (PM) and the Zermelo-Fraenkel axiomatic set theory. These systems are so wide that all methods of proof used in mathematics today are formalized in them." — Gödel, 1931
+    </div>
+
+    <h3>🤔 The Question Gödel Asked</h3>
+    <p>Are these axioms sufficient to decide <strong>every</strong> mathematical statement expressible in the system?</p>
+    <p>Click below to reveal Gödel's shocking answer:</p>
+    <button onclick="document.getElementById('answer').style.display='block'">Reveal Gödel's Answer</button>
+    <div id="answer" style="display:none;" class="conclusion">
+      <strong>NO! 💥</strong><br>
+      There exist relatively simple statements about ordinary integers that <em>cannot be decided</em> from the axioms — they are neither provable nor disprovable within the system.
+    </div>
+  </div>
+
+  <!-- TAB 1: Gödel Numbering -->
+  <div class="panel">
+    <h2>🔢 Gödel Numbering: Turning Math into Numbers</h2>
+    <p>Gödel's first brilliant trick: <span class="highlight">encode every symbol, formula, and proof as a unique natural number</span>. This lets mathematics talk <em>about itself</em>.</p>
+
+    <h3>Step 1: Assign numbers to basic symbols</h3>
+    <div class="symbol-grid" id="symbolGrid"></div>
+
+    <h3>Step 2: Encode a sequence using prime factorization</h3>
+    <p>A sequence of symbols with codes n₁, n₂, n₃, ... becomes:</p>
+    <div class="output" style="text-align:center; font-size:1.3em;">2<sup>n₁</sup> × 3<sup>n₂</sup> × 5<sup>n₃</sup> × 7<sup>n₄</sup> × ...</div>
+    <p>Since prime factorization is unique, we can always <em>decode</em> the original sequence!</p>
+
+    <div class="interactive-box">
+      <h3>🎮 Try It Yourself</h3>
+      <p>Enter a small sequence of symbol codes (comma-separated, e.g., <code>1,3,5</code>) to see its Gödel number:</p>
+      <input type="text" id="seqInput" value="1,3,5" placeholder="e.g. 1,3,5">
+      <button onclick="computeGodel()">Compute Gödel Number</button>
+      <div class="output" id="godelOutput">Result will appear here...</div>
+    </div>
+
+    <div class="quote">
+      Now formulas ARE numbers. Proofs ARE numbers. "Provability" becomes an arithmetic property!
+    </div>
+  </div>
+
+  <!-- TAB 2: Self-Reference -->
+  <div class="panel">
+    <h2>🪞 The Liar's Paradox, Made Mathematical</h2>
+    <p>Gödel's inspiration came from ancient paradoxes of self-reference:</p>
+
+    <div class="liar-container">
+      <div class="liar-sentence">"This sentence is false."</div>
+      <div class="paradox-arrow">⇅</div>
+      <p>If true → it's false. If false → it's true. 🤯</p>
+    </div>
+
+    <h3>Gödel's Mathematical Version</h3>
+    <p>He constructed a formula that says:</p>
+    <div class="liar-container">
+      <div class="liar-sentence" id="godelSentence">"This formula is <span id="verb">not provable</span> in the system."</div>
+      <button onclick="toggleGodel()">🔄 Reason About It</button>
+      <div class="output" id="godelReason">Click the button above to explore the logic...</div>
+    </div>
+
+    <h3>How Did He Build It?</h3>
+    <p>Using Gödel numbering, he constructed a formula <span class="highlight">R(q); q</span> — a formula that, when interpreted, states its own <em>unprovability</em>.</p>
+
+    <div class="quote">
+      "We are thus presented with a proposition which asserts its own unprovability." — Gödel
+    </div>
+
+    <div class="interactive-box">
+      <h3>🧠 The Key Insight</h3>
+      <p>Slide to reveal the layers of self-reference:</p>
+      <div class="slider-container">
+        <label>Depth of understanding: <span id="depthLabel">0</span></label>
+        <input type="range" id="depthSlider" min="0" max="4" value="0" oninput="updateDepth(this.value)">
+      </div>
+      <div id="depthContent" class="output">Move the slider to explore...</div>
+    </div>
+  </div>
+
+  <!-- TAB 3: The Proof -->
+  <div class="panel">
+    <h2>⚡ The Proof — Step by Step</h2>
+    <p>Let's walk through Gödel's argument. Click "Next Step" to reveal each part.</p>
+
+    <div class="step-flow" id="proofSteps">
+      <div class="step"><span class="num-badge">1</span> <strong>Setup:</strong> Consider system P (Peano arithmetic + logic of PM). Every formula and proof gets a unique Gödel number.</div>
+      <div class="step"><span class="num-badge">2</span> <strong>Define "Provable":</strong> Show that "x is a proof of y" (written xBy) is a <em>recursive</em> relation on numbers, hence expressible in P.</div>
+      <div class="step"><span class="num-badge">3</span> <strong>Class sign R(n):</strong> List all formulas with one free variable. R(n) is the n-th such formula. [R(n); k] means "substitute k into R(n)".</div>
+      <div class="step"><span class="num-badge">4</span> <strong>Define set K:</strong> n ∈ K ⟺ ¬Bew[R(n); n] — i.e., n belongs to K iff the formula you get by plugging n into R(n) is <em>not provable</em>.</div>
+      <div class="step"><span class="num-badge">5</span> <strong>K is expressible!</strong> Since all its ingredients are expressible in P, K corresponds to some class sign S. So S = R(q) for some specific number q.</div>
+      <div class="step"><span class="num-badge">6</span> <strong>The magic formula:</strong> Consider [R(q); q]. This formula says "q ∈ K" — which means "[R(q); q] is not provable". <span class="highlight">It talks about itself!</span></div>
+      <div class="step"><span class="num-badge">7</span> <strong>Case A:</strong> If [R(q); q] IS provable → then it's true → so it's NOT provable. Contradiction! 💥</div>
+      <div class="step"><span class="num-badge">8</span> <strong>Case B:</strong> If ¬[R(q); q] is provable → then q ∈ K holds → so [R(q); q] IS provable. Both provable = contradiction! 💥</div>
+      <div class="step"><span class="num-badge">9</span> <strong>Conclusion:</strong> [R(q); q] is <span class="highlight">undecidable</span> — neither it nor its negation can be proven. Yet, from the outside, we see it's <em>true</em>!</div>
+    </div>
+
+    <button onclick="revealNextStep()">Next Step ▶</button>
+    <button onclick="revealAllSteps()">Reveal All</button>
+    <button onclick="resetSteps()">Reset</button>
+  </div>
+
+  <!-- TAB 4: Theorems -->
+  <div class="panel">
+    <h2>💥 The Two Incompleteness Theorems</h2>
+
+    <div class="theorem-card">
+      <h4>🥇 First Incompleteness Theorem (Satz VI)</h4>
+      <p>For every ω-consistent recursive class κ of formulas, there exist recursive class signs r such that <strong>neither v Gen r nor Neg(v Gen r) belongs to Flg(κ)</strong>.</p>
+      <p><em>In plain English:</em> Any sufficiently powerful, consistent formal system contains true statements that cannot be proven within the system.</p>
+    </div>
+
+    <div class="theorem-card">
+      <h4>🥈 Second Incompleteness Theorem (Satz XI)</h4>
+      <p>The formula that expresses "κ is consistent" is <strong>not κ-provable</strong>. In particular, the consistency of P cannot be proven within P itself (assuming P is consistent).</p>
+      <p><em>In plain English:</em> No consistent system can prove its own consistency.</p>
+    </div>
+
+    <div class="interactive-box">
+      <h3>🎮 Interactive: Test a System</h3>
+      <p>Choose properties of a formal system and see what Gödel says:</p>
+      <div>
+        <label><input type="checkbox" id="propConsistent" checked> Consistent</label><br>
+        <label><input type="checkbox" id="propPowerful" checked> Powerful enough (contains arithmetic)</label><br>
+        <label><input type="checkbox" id="propRecursive" checked> Recursively axiomatizable</label>
+      </div>
+      <button onclick="evaluateSystem()">Evaluate System</button>
+      <div class="output" id="systemResult">Select properties and click evaluate...</div>
+    </div>
+
+    <div class="theorem-card">
+      <h4>🎯 Theorem VII: Every recursive relation is arithmetic</h4>
+      <p>Any question about provability can be reframed as a pure question about integers involving +, ×, and quantifiers.</p>
+    </div>
+
+    <div class="theorem-card">
+      <h4>🎯 Theorem X: Undecidability in first-order logic</h4>
+      <p>The decision problem (Entscheidungsproblem) for first-order predicate logic is unsolvable.</p>
+    </div>
+  </div>
+
+  <!-- TAB 5: Implications -->
+  <div class="panel">
+    <h2>🌌 Why It Matters</h2>
+
+    <h3>💔 The Death of Hilbert's Program</h3>
+    <p>Hilbert dreamed of proving mathematics both <strong>complete</strong> (every truth provable) and <strong>consistent</strong> (no contradictions) using finite methods. Gödel showed this is impossible for any system rich enough to include arithmetic.</p>
+
+    <div class="system-diagram">
+      <div class="system-box" style="background: rgba(255,107,157,0.2);">
+        <div class="title">❌ Complete</div>
+        <div>Not both possible</div>
+      </div>
+      <div class="arrow">✗</div>
+      <div class="system-box" style="background: rgba(196,113,245,0.2);">
+        <div class="title">❌ Consistent</div>
+        <div>at the same time</div>
+      </div>
+    </div>
+
+    <h3>🌊 Ripple Effects</h3>
+    <ul>
+      <li><span class="highlight">Turing (1936):</span> Building on Gödel, proved the Halting Problem is undecidable → foundations of computer science</li>
+      <li><span class="highlight">Church:</span> Independently proved undecidability of first-order logic</li>
+      <li><span class="highlight">Cohen (1963):</span> Continuum Hypothesis independent of ZFC — a concrete Gödelian statement</li>
+      <li><span class="highlight">Philosophy of mind:</span> Penrose &amp; others argue this shows minds transcend algorithms (controversial!)</li>
+      <li><span class="highlight">AI &amp; consciousness:</span> Ongoing debates about what "understanding" means</li>
+    </ul>
+
+    <div class="quote">
+      "Gödel's theorem is the most signed, sealed, and delivered bad news for the ambitions of formalism." — Douglas Hofstadter
+    </div>
+
+    <h3>🎨 The Beautiful Paradox</h3>
+    <p>Gödel used pure logic and arithmetic to prove that logic and arithmetic have fundamental limits. He didn't destroy mathematics — he revealed its <em>infinite depth</em>. There will always be new truths, new theorems, new frontiers.</p>
+
+    <div class="conclusion">
+      Mathematics is not a closed book — it's an open, endless adventure. 🚀
+    </div>
+  </div>
+
+  <footer>
+    Based on Kurt Gödel's "Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I" (1931) [[11]]
+  </footer>
+</div>
+
+<script>
+  // Tab switching
+  function showTab(idx) {
+    document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+    document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+  }
+
+  // Symbol grid for Gödel numbering
+  const symbols = [
+    { sym: '0', num: 1, desc: 'zero' },
+    { sym: 'f', num: 3, desc: 'successor' },
+    { sym: '¬', num: 5, desc: 'not' },
+    { sym: '∨', num: 7, desc: 'or' },
+    { sym: '∀', num: 9, desc: 'for all' },
+    { sym: '(', num: 11, desc: 'open paren' },
+    { sym: ')', num: 13, desc: 'close paren' },
+    { sym: 'x₁', num: 17, desc: 'var (type 1)' },
+    { sym: 'y₁', num: 19, desc: 'var (type 1)' },
+    { sym: 'x₂', num: 289, desc: 'var (type 2)' }
+  ];
+  const grid = document.getElementById('symbolGrid');
+  symbols.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'symbol-card';
+    card.innerHTML = `<span class="sym">${s.sym}</span><span class="num">${s.num}</span><div class="desc">${s.desc}</div>`;
+    grid.appendChild(card);
+  });
+
+  // Compute Gödel number
+  const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
+  function computeGodel() {
+    const input = document.getElementById('seqInput').value;
+    const nums = input.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+    if (nums.length === 0) {
+      document.getElementById('godelOutput').textContent = 'Please enter valid numbers.';
+      return;
+    }
+    if (nums.length > 6) {
+      document.getElementById('godelOutput').textContent = 'Too many! Try 6 or fewer to avoid huge numbers.';
+      return;
+    }
+    let result = 1n;
+    let breakdown = [];
+    for (let i = 0; i < nums.length; i++) {
+      const p = BigInt(primes[i]);
+      const e = BigInt(nums[i]);
+      let pow = 1n;
+      for (let j = 0n; j < e; j++) pow *= p;
+      result *= pow;
+      breakdown.push(`${primes[i]}^${nums[i]}`);
+    }
+    document.getElementById('godelOutput').innerHTML =
+      `Sequence: [${nums.join(', ')}]<br>` +
+      `= ${breakdown.join(' × ')}<br>` +
+      `= <strong style="color:#ffd700">${result.toString()}</strong>`;
+  }
+
+  // Self-reference reasoning
+  let godelState = 0;
+  function toggleGodel() {
+    const reasons = [
+      "🤔 Assume it IS provable → then it's TRUE → but it says it's NOT provable → CONTRADICTION! 💥",
+      "🤔 Assume it IS NOT provable → then it's TRUE (as it claims) → but we can't prove true things? Something's wrong with 'complete'! 💡",
+      "✨ Conclusion: The formula must be TRUE but UNPROVABLE within the system. Gödel found a truth that escapes formal proof!"
+    ];
+    document.getElementById('godelReason').innerHTML = reasons[godelState % reasons.length];
+    godelState++;
+  }
+
+  // Depth slider
+  const depthTexts = [
+    "Level 0: A sentence is just a string of symbols.",
+    "Level 1: With Gödel numbering, every sentence is also a NUMBER.",
+    "Level 2: Statements about provability become statements about NUMBERS — pure arithmetic!",
+    "Level 3: A formula can now REFER TO ITSELF by referring to its own Gödel number.",
+    "Level 4: 🎯 Gödel built formula G whose Gödel number encodes the statement 'G is not provable'. Self-reference achieved!"
+  ];
+  function updateDepth(v) {
+    document.getElementById('depthLabel').textContent = v;
+    document.getElementById('depthContent').textContent = depthTexts[v];
+  }
+
+  // Proof steps
+  let currentStep = 0;
+  function revealNextStep() {
+    const steps = document.querySelectorAll('#proofSteps .step');
+    if (currentStep < steps.length) {
+      steps[currentStep].classList.add('revealed');
+      currentStep++;
+    }
+  }
+  function revealAllSteps() {
+    document.querySelectorAll('#proofSteps .step').forEach(s => s.classList.add('revealed'));
+    currentStep = document.querySelectorAll('#proofSteps .step').length;
+  }
+  function resetSteps() {
+    document.querySelectorAll('#proofSteps .step').forEach(s => s.classList.remove('revealed'));
+    currentStep = 0;
+  }
+
+  // System evaluator
+  function evaluateSystem() {
+    const c = document.getElementById('propConsistent').checked;
+    const p = document.getElementById('propPowerful').checked;
+    const r = document.getElementById('propRecursive').checked;
+    let result = '';
+    if (!p) {
+      result = "✅ Your system is too weak to contain arithmetic. Gödel's theorem doesn't apply — you might be complete! (But you can't do much math.)";
+    } else if (!c) {
+      result = "⚠️ An inconsistent system proves EVERYTHING, including contradictions. Not useful!";
+    } else if (!r) {
+      result = "🤷 Without recursive axioms, we can't mechanically check proofs. The theorem's premises aren't met.";
+    } else {
+      result = "💥 GÖDEL STRIKES! Your system is consistent, powerful, and recursive → it MUST be incomplete! There exist true statements it cannot prove. Furthermore, it cannot prove its own consistency (2nd theorem).";
+    }
+    document.getElementById('systemResult').innerHTML = result;
+  }
+</script>
+</body>
+</html>
