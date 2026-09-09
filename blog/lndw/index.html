@@ -1477,6 +1477,8 @@
 	window.addEventListener('load', () => {
 		requestAnimationFrame(() => {
 			fitSlides();
+			// Plotly/Temml rendern asynchron: ein zweiter Durchlauf fängt Layout-Shift ab
+			setTimeout(fitSlides, 300);
 			document.getElementById('loading-spinner').classList.add('hidden');
 		});
 	});
