@@ -2015,12 +2015,93 @@ document.querySelectorAll('input[id^="input-"]').forEach(input => {
 // EMBEDDING DEMO AUTO-EXAMPLES
 // Automatisch Beispiele durchspielen auf der "Embedding-Raum"-Folie
 // ============================================================
+// ============================================================
+// DIREKTIONS ENCODE MEANING — letzte Schritte der Embedding-Folie
+// Zeigt auf dem 2D-Plot, dass Richtungen zwischen Wörtern
+// Bedeutung kodieren (Geschlecht: mann→frau, Macht: mann→prinz)
+// ============================================================
+function renderDirectionDemo(stage) {
+    const space = evoSpaces['2d'];
+    const plotDiv = document.getElementById('plot-2d');
+    if (!space || !plotDiv) return;
+
+    const traces = [];
+    const annotations = [];
+
+    Object.keys(space.vocab).forEach(word => {
+        const v = space.vocab[word];
+        traces.push({
+            type: 'scatter',
+            x: [v[0]], y: [v[1]],
+            mode: 'markers+text',
+            name: word, text: [word], textposition: 'top center',
+            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+            cliponaxis: false
+        });
+    });
+
+    function addArrow(x0, y0, x1, y1, color, dashed) {
+        annotations.push({
+            ax: x0, ay: y0, axref: 'x', ayref: 'y',
+            x: x1, y: y1, xref: 'x', yref: 'y',
+            showarrow: true, arrowhead: 3, arrowsize: 1.6,
+            arrowwidth: 2, arrowcolor: color,
+            arrowdash: dashed ? 'dash' : 'solid'
+        });
+    }
+
+    const GREEN = '#10b981';
+    const ORANGE = '#f59e0b';
+
+    // Geschlechts-Richtung: dieselbe Richtung an allen Stellen
+    addArrow(5, -10, 5, 10, GREEN);    // Mann → Frau
+    addArrow(25, -10, 25, 10, GREEN);  // König → Königin
+    annotations.push({
+        x: 15, y: 24, text: '„Geschlecht“ — überall dieselbe Richtung',
+        showarrow: false,
+        font: { size: 15, color: GREEN, family: 'system-ui, sans-serif' },
+        align: 'center'
+    });
+
+    if (stage === 'power') {
+        // Macht-Richtung: dieselbe Richtung, beide "Zeilen"
+        addArrow(5, -10, 15, -10, ORANGE);   // Mann → Prinz
+        addArrow(15, -10, 25, -10, ORANGE);  // Prinz → König
+        addArrow(5, 10, 15, 10, ORANGE);     // Frau → Prinzessin
+        addArrow(15, 10, 25, 10, ORANGE);    // Prinzessin → Königin
+        annotations.push({
+            x: 15, y: -24, text: '„Macht“ — auch hier: dieselbe Richtung',
+            showarrow: false,
+            font: { size: 15, color: ORANGE, family: 'system-ui, sans-serif' },
+            align: 'center'
+        });
+    }
+
+    Plotly.react(plotDiv, traces, {
+        margin: { l: 40, r: 40, b: 40, t: 20 },
+        showlegend: false,
+        xaxis: { range: space.rangeX || [-15, 40], title: space.axes.x },
+        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: true },
+        annotations
+    });
+
+    const resDiv = document.getElementById('res-2d');
+    if (resDiv) {
+        resDiv.setAttribute('data-math-rendered', 'true');
+        resDiv.innerHTML = stage === 'power'
+            ? 'Die Richtung <b style="color:#f59e0b">mann → prinz → könig</b> ist dieselbe wie <b style="color:#f59e0b">frau → prinzessin → königin</b>. Bedeutung steckt also nicht nur in der <b>Position</b>, sondern auch in der <b>Richtung</b> zwischen Wörtern.'
+            : 'Die Vektorrichtung von <b style="color:#10b981">mann</b> nach <b style="color:#10b981">frau</b> zeigt genau so wie von <b style="color:#10b981">könig</b> nach <b style="color:#10b981">königin</b>: „Geschlecht“ ist eine <b>Richtung</b> im Raum — und zwar dieselbe, egal wo man sie ansetzt.';
+    }
+}
+
 const EmbeddingAutoDemo = (() => {
     const examples = [
         'König - Mann + Frau',
         'Mann + Macht',
         'Frau + 2*Macht',
-        'Prinz + Macht'
+        'Prinz + Macht',
+        { type: 'directions', stage: 'gender' },
+        { type: 'directions', stage: 'power' }
     ];
 
     let currentExample = -1;
@@ -2043,11 +2124,19 @@ const EmbeddingAutoDemo = (() => {
     }
 
     function setExample(index) {
+        currentExample = index;
+        const example = examples[currentExample];
+
+        // Richtungs-Demo (letzte Schritte): Plot statt Input
+        if (typeof example === 'object' && example.type === 'directions') {
+            renderDirectionDemo(example.stage);
+            return;
+        }
+
         const inputEl = document.getElementById('input-2d');
         if (!inputEl) return;
 
-        currentExample = index;
-        const text = examples[currentExample];
+        const text = example;
 
         // Wert setzen
         inputEl.value = text;
@@ -2102,6 +2191,11 @@ const EmbeddingAutoDemo = (() => {
         const inputEl = document.getElementById('input-2d');
         if (inputEl) {
             inputEl.value = '';
+        }
+        const plotDiv = document.getElementById('plot-2d');
+        if (plotDiv) {
+            // Plot zurücksetzen (z.B. nach Richtungs-Demo)
+            renderSpace('2d', null, []);
         }
     }
 

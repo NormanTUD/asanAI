@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Training eines Neuronalen Netzes (Entwurf)</title>
+	<script src="jquery.min.js"></script>
+	<script src="plotly.min.js"></script>
+	<script src="temml.min.js"></script>
+	<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<div id="loading-spinner">
+    <div class="spinner"></div>
+    <div class="spinner-text">Lade Folien…</div>
+</div>
+
+<!-- Progress Bar -->
+<div id="progress-bar" style="width: 0%;"></div>
+
+<!-- Presentation Container -->
+<div id="presentation">
+
+    <!-- ==================================================== -->
+    <!-- ENTWURF: Aus index.html ausgelagert (noch nicht fertig) -->
+    <!-- ==================================================== -->
+    <div class="slide active" data-title="Training">
+        <div class="slide-content">
+            <h2>Training eines Neuronalen Netzes</h2>
+            <p style="margin-bottom:6px; font-size:1em;">Bildklassifikation: <b>Katze vs. Hund</b> — Vorwärtspass, Fehlerberechnung &amp; Rückwärtspropagation</p>
+            <div class="training-layout">
+                <div class="training-left">
+                    <canvas id="training-network-canvas" width="580" height="460" style="width:100%; height:auto; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc;"></canvas>
+                </div>
+                <div class="training-arrow-col">
+                    <div class="training-arrow-group">
+                        <svg width="32" height="80" viewBox="0 0 32 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 4 L16 64" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 3"/>
+                            <path d="M10 58 L16 70 L22 58" stroke="#94a3b8" stroke-width="2" fill="none"/>
+                        </svg>
+                        <span class="training-arrow-label">Gewichte<br>wirken auf<br>Loss</span>
+                        <svg width="32" height="80" viewBox="0 0 32 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 76 L16 16" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/>
+                            <path d="M10 22 L16 10 L22 22" stroke="#f59e0b" stroke-width="2" fill="none"/>
+                        </svg>
+                        <span class="training-arrow-label" style="color:#f59e0b">Gradient<br>verändert<br>Gewichte</span>
+                    </div>
+                </div>
+                <div class="training-right">
+                    <div id="training-loss-landscape" style="width:100%; height:380px; border-radius:8px; border:1px solid #e2e8f0; background:#fff;"></div>
+                    <div class="training-hint">Der Fehlerraum ist <b>hochdimensional</b> — hier ein 2D-Schnitt. Die Kugel rollt den Gradienten hinunter.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============ SLIDE OVERVIEW ============ -->
+<div id="slide-overview">
+    <div class="overview-grid" id="overview-grid"></div>
+</div>
+
+<!-- ============ NAVIGATION BAR ============ -->
+<div id="nav-bar">
+    <button id="btn-prev" onclick="Presentation.prev()">← Zurück</button>
+    <div class="nav-center">
+        <span id="slide-counter">1 / 1</span>
+        <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Übersicht (O)">▦</button>
+        <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Vollbild (F)">⛶</button>
+    </div>
+    <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="presentation.js"></script>
+<script src="training_demo.js"></script>
+<script>
+	function fitSlides() {
+		const slides = document.querySelectorAll('.slide');
+		const viewportHeight = window.innerHeight;
+
+		slides.forEach(slide => {
+			const content = slide.querySelector('.slide-content');
+			if (!content) return;
+
+			content.style.transform = 'scale(1)';
+
+			const naturalHeight = content.scrollHeight;
+			const available = viewportHeight - 52;
+
+			const scale = Math.min(available / naturalHeight, 1);
+
+			content.style.transform = `scale(${scale})`;
+			content.style.transformOrigin = 'center center';
+		});
+	}
+
+	window.addEventListener('load', () => {
+		setTimeout(() => {
+			if (typeof TrainingDemo !== 'undefined') {
+				TrainingDemo.init();
+				setTimeout(() => TrainingDemo.start(), 200);
+			}
+			fitSlides();
+			document.getElementById('loading-spinner').classList.add('hidden');
+		}, 300);
+	});
+	window.addEventListener('resize', fitSlides);
+</script>
+
+</body>
+</html>

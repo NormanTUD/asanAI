@@ -175,36 +175,7 @@
     </div>
 </div>
 
-<!-- ==================== SLIDE: Training ==================== -->
-<div class="slide" data-title="Training">
-    <div class="slide-content">
-        <h2>Training eines Neuronalen Netzes</h2>
-        <p style="margin-bottom:6px; font-size:1em;">Bildklassifikation: <b>Katze vs. Hund</b> — Vorwärtspass, Fehlerberechnung &amp; Rückwärtspropagation</p>
-        <div class="training-layout">
-            <div class="training-left">
-                <canvas id="training-network-canvas" width="580" height="460" style="width:100%; height:auto; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc;"></canvas>
-            </div>
-            <div class="training-arrow-col">
-                <div class="training-arrow-group">
-                    <svg width="32" height="80" viewBox="0 0 32 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 4 L16 64" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 3"/>
-                        <path d="M10 58 L16 70 L22 58" stroke="#94a3b8" stroke-width="2" fill="none"/>
-                    </svg>
-                    <span class="training-arrow-label">Gewichte<br>wirken auf<br>Loss</span>
-                    <svg width="32" height="80" viewBox="0 0 32 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 76 L16 16" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/>
-                        <path d="M10 22 L16 10 L22 22" stroke="#f59e0b" stroke-width="2" fill="none"/>
-                    </svg>
-                    <span class="training-arrow-label" style="color:#f59e0b">Gradient<br>verändert<br>Gewichte</span>
-                </div>
-            </div>
-            <div class="training-right">
-                <div id="training-loss-landscape" style="width:100%; height:380px; border-radius:8px; border:1px solid #e2e8f0; background:#fff;"></div>
-                <div class="training-hint">Der Fehlerraum ist <b>hochdimensional</b> — hier ein 2D-Schnitt. Die Kugel rollt den Gradienten hinunter.</div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- SLIDE "Training eines Neuronalen Netzes": noch nicht fertig — nach training.html ausgelagert (dort weiterarbeiten) -->
 
 <div class="slide" data-title="Neuronales Netz Geschichte">
     <div class="slide-content">
@@ -229,13 +200,10 @@
                     <b>Rosenblatts Perceptron (1958)</b> baute auf McCulloch &amp; Pitts auf und konnte Buchstaben klassifizieren.
                 </div>
 
-                <center>
-                <img style="max-width:100%; border-radius:8px;" class="fragment" src="../FrankRosenblattWiringPerceptron.jpg" />
-                </center>
-
-                <center>
-                <img style="max-width:100%; border-radius:8px;" class="fragment" src="../perceptron2.jpg" />
-                </center>
+                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" class="fragment" src="../FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" class="fragment" src="../perceptron2.jpg" alt="Das Perceptron" />
+                </div>
             </div>
         </div>
     </div>
