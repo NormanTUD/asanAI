@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Was heißt Denken? — Interactive Visual Exploration</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-deep: #0a0a12;
+  --bg-mid: #12121f;
+  --bg-card: #1a1a2e;
+  --accent-gold: #c9a84c;
+  --accent-blue: #4a7cc9;
+  --accent-rose: #c94a6e;
+  --accent-green: #4ac98a;
+  --accent-purple: #8a4ac9;
+  --text-primary: #e8e4dd;
+  --text-muted: #8a8690;
+  --text-dim: #55515a;
+}
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+
+.hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#heroCanvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+.hero-text {
+  z-index: 1;
+  text-align: center;
+  pointer-events: none;
+}
+
+.hero-text h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  color: var(--accent-gold);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3em;
+  text-shadow: 0 0 40px rgba(201,168,76,0.3);
+}
+
+.hero-text .subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.hero-text .scroll-hint {
+  margin-top: 3rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.nav-dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nav-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  position: relative;
+}
+
+.nav-dot:hover, .nav-dot.active {
+  background: var(--accent-gold);
+  transform: scale(1.4);
+}
+
+.nav-dot .tooltip {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.nav-dot:hover .tooltip { opacity: 1; }
+
+section {
+  min-height: 100vh;
+  padding: 80px 5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--accent-gold);
+  margin-bottom: 0.5em;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 600px;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.4s;
+  cursor: pointer;
+}
+
+.card:hover {
+  border-color: var(--accent-gold);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(201,168,76,0.1);
+}
+
+.card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5em;
+  color: var(--accent-gold);
+}
+
+.card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.viz-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.interactive-panel {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.06);
+  width: 100%;
+  max-width: 1100px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.ctrl-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-primary);
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s;
+}
+
+.ctrl-btn:hover, .ctrl-btn.active {
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+  border-color: var(--accent-gold);
+}
+
+.slider-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  justify-content: center;
+}
+
+.slider-group label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  min-width: 120px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  background: rgba(255,255,255,0.1);
+  height: 4px;
+  border-radius: 2px;
+  width: 200px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  cursor: pointer;
+}
+
+.three-container {
+  width: 100%;
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.plotly-chart {
+  width: 100%;
+  height: 450px;
+}
+
+.canvas-viz {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+.quote-box {
+  background: rgba(201,168,76,0.06);
+  border-left: 3px solid var(--accent-gold);
+  padding: 20px 24px;
+  margin: 20px 0;
+  border-radius: 0 8px 8px 0;
+  max-width: 700px;
+}
+
+.quote-box p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.quote-box .attr {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-style: normal;
+  margin-top: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.flow-node {
+  background: var(--bg-card);
+  border: 2px solid var(--accent-blue);
+  border-radius: 12px;
+  padding: 14px 22px;
+  text-align: center;
+  transition: all 0.4s;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.flow-node:hover {
+  border-color: var(--accent-gold);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(201,168,76,0.2);
+}
+
+.flow-node h4 {
+  font-size: 0.95rem;
+  color: var(--accent-gold);
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.flow-node p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.flow-arrow {
+  font-size: 1.5rem;
+  color: var(--text-dim);
+}
+
+.tab-system {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.tab-headers {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.tab-header {
+  padding: 12px 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: all 0.3s;
+  font-family: 'Inter', sans-serif;
+}
+
+.tab-header:hover, .tab-header.active {
+  background: var(--bg-card);
+  color: var(--accent-gold);
+}
+
+.tab-content {
+  background: var(--bg-card);
+  border-radius: 0 12px 12px 12px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: none;
+}
+
+.tab-content.active { display: block; }
+
+footer {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  section { padding: 60px 4vw; }
+  .three-container { height: 350px; }
+  .nav-dots { display: none; }
+  .flow-diagram { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV DOTS -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- HERO -->
+<section class="hero" id="sec-hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-text">
+    <h1>Was heißt Denken?</h1>
+    <div class="subtitle">What Is Called Thinking? — Martin Heidegger, 1951–52</div>
+    <div class="scroll-hint">↓ Scroll to explore visually ↓</div>
+  </div>
+</section>
+
+<!-- SECTION 1: THE FOUR QUESTIONS -->
+<section id="sec-four">
+  <h2 class="section-title">The Four Ways of Asking</h2>
+  <div class="section-subtitle">
+    Heidegger unfolds one question into four intertwined modes. Click each to see how they relate.
+  </div>
+  <div class="card-grid" id="fourCards">
+    <div class="card" data-q="1" onclick="highlightQuestion(1)">
+      <h3>① What does the word "thinking" mean?</h3>
+      <p>Gedanc → memory, thanks, devotion. The word itself carries forgotten depths.</p>
+    </div>
+    <div class="card" data-q="2" onclick="highlightQuestion(2)">
+      <h3>② What has tradition understood as thinking?</h3>
+      <p>Logic, λόγος, assertion, judgment — the 2500-year path from Parmenides through Hegel.</p>
+    </div>
+    <div class="card" data-q="3" onclick="highlightQuestion(3)">
+      <h3>③ What must we bring to think properly?</h3>
+      <p>Not knowledge but readiness — a leap, not a method. No formula can answer this.</p>
+    </div>
+    <div class="card" data-q="4" onclick="highlightQuestion(4)">
+      <h3>④ What calls us into thinking?</h3>
+      <p>The decisive question. What commands (heißt) us to think? The most thought-provoking.</p>
+    </div>
+  </div>
+  <div class="viz-container" style="margin-top:30px;">
+    <div id="fourQuestionsPlot" class="plotly-chart"></div>
+  </div>
+</section>
+
+<!-- SECTION 2: THE WITHDRAWAL -->
+<section id="sec-withdrawal">
+  <h2 class="section-title">The Withdrawal That Draws Us</h2>
+  <div class="section-subtitle">
+    What most calls for thinking withdraws from us — yet this very withdrawal draws us toward it.
+    Drag the slider to feel the paradox.
+  </div>
+  <div class="interactive-panel">
+    <div class="slider-group">
+      <label>Withdrawal intensity:</label>
+      <input type="range" id="withdrawSlider" min="0" max="100" value="50" oninput="updateWithdrawal()">
+      <span id="withdrawVal" style="color:var(--accent-gold);min-width:40px;">50</span>
+    </div>
+    <canvas id="withdrawalCanvas" class="canvas-viz"></canvas>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent-gold)"></div>What calls for thinking</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div>Human being (the sign)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent-rose)"></div>The pull / draft (Zug)</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: NIETZSCHE'S BRIDGE -->
+<section id="sec-nietzsche">
+  <h2 class="section-title">Nietzsche's Bridge</h2>
+  <div class="section-subtitle">
+    The Übermensch crosses from the "last man" over the bridge of liberation from revenge.
+    Explore the topology of the crossing.
+  </div>
+  <div class="interactive-panel">
+    <div class="three-container" id="bridgeThree"></div>
+    <div class="controls" style="margin-top:16px;">
+      <button class="ctrl-btn active" onclick="setBridgeView('overview')">Overview</button>
+      <button class="ctrl-btn" onclick="setBridgeView('lastman')">Last Man</button>
+      <button class="ctrl-btn" onclick="setBridgeView('bridge')">The Bridge</button>
+      <button class="ctrl-btn" onclick="setBridgeView('overman')">Übermensch</button>
+    </div>
+    <div id="bridgeInfo" style="text-align:center;margin-top:12px;color:var(--text-muted);font-size:0.85rem;">
+      Click a view to explore. Drag to rotate.
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: REVENGE & WILL -->
+<section id="sec-revenge">
+  <h2 class="section-title">The Spirit of Revenge</h2>
+  <div class="section-subtitle">
+    Revenge = the will's ill-will against time and its "it was."
+    See how the will relates to time, becoming, and eternal return.
+  </div>
+  <div class="interactive-panel">
+    <div id="revengePlot" class="plotly-chart"></div>
+    <div class="controls">
+      <button class="ctrl-btn active" onclick="setRevengeView('spiral')">Time Spiral</button>
+      <button class="ctrl-btn" onclick="setRevengeView('return')">Eternal Return</button>
+      <button class="ctrl-btn" onclick="setRevengeView('liberation')">Liberation</button>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: PARMENIDES -->
+<section id="sec-parmenides">
+  <h2 class="section-title">χρή τὸ λέγειν τε νοεῖν τ᾿ ἐὸν ἔμμεναι</h2>
+  <div class="section-subtitle">
+    Parmenides' saying: the command (Geheiß) that first called Western thinking into being.
+    Explore each word interactively.
+  </div>
+  <div class="tab-system">
+    <div class="tab-headers">
+      <div class="tab-header active" onclick="setTab(0)">χρή</div>
+      <div class="tab-header" onclick="setTab(1)">λέγειν</div>
+      <div class="tab-header" onclick="setTab(2)">νοεῖν</div>
+      <div class="tab-header" onclick="setTab(3)">ἐόν</div>
+      <div class="tab-header" onclick="setTab(4)">ἔμμεναι</div>
+    </div>
+    <div class="tab-content active" id="tab0">
+      <h3 style="color:var(--accent-gold);font-size:1.5rem;">χρή — "It needs" / "There is a use for"</h3>
+      <p style="color:var(--text-muted);margin:12px 0;">Not mere necessity or compulsion. From χράω: to handle, to use — in the high sense of letting something into its essence and keeping it there. A sheltering command.</p>
+      <canvas id="chreCanvas" width="800" height="300" style="width:100%;height:300px;border-radius:8px;margin-top:16px;"></canvas>
+    </div>
+    <div class="tab-content" id="tab1">
+      <h3 style="color:var(--accent-gold);font-size:1.5rem;">λέγειν — Letting-lie-before</h3>
+      <p style="color:var(--text-muted);margin:12px 0;">Not "saying" in the vocal sense. From λέγω = to lay, to gather. Saying is a laying-forth: letting what lies before us lie forth as what it is.</p>
+      <div id="legeinPlot" class="plotly-chart" style="height:350px;"></div>
+    </div>
+    <div class="tab-content" id="tab2">
+      <h3 style="color:var(--accent-gold);font-size:1.5rem;">νοεῖν — Taking-to-heart</h3>
+      <p style="color:var(--text-muted);margin:12px 0;">Not "thinking" in the logical sense. From νοῦς: apprehending, heeding, perceiving with the heart-mind. Taking into safe-keeping (Acht).</p>
+      <canvas id="noeinCanvas" width="800" height="300" style="width:100%;height:300px;border-radius:8px;margin-top:16px;"></canvas>
+    </div>
+    <div class="tab-content" id="tab3">
+      <h3 style="color:var(--accent-gold);font-size:1.5rem;">ἐόν — Present being / what presences</h3>
+      <p style="color:var(--text-muted);margin:12px 0;">The supreme participle: "being" as both noun and verb. It names the Twofold (Zwiefalt) — beings in their Being, presencing of what presences.</p>
+      <div id="eonPlot" class="plotly-chart" style="height:350px;"></div>
+    </div>
+    <div class="tab-content" id="tab4">
+      <h3 style="color:var(--accent-gold);font-size:1.5rem;">ἔμμεναι — to be / presencing</h3>
+      <p style="color:var(--text-muted);margin:12px 0;">The infinitive of εἶναι. Presencing as such — the coming-into-presence, the emerging from unconcealment into the open.</p>
+      <canvas id="emmenaiCanvas" width="800" height="300" style="width:100%;height:300px;border-radius:8px;margin-top:16px;"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: THE TWOFOLD -->
+<section id="sec-twofold">
+  <h2 class="section-title">The Unthought Twofold</h2>
+  <div class="section-subtitle">
+    All metaphysics moves within the difference between beings and Being — yet this difference itself remains unthought. Interact with the Zwiefalt.
+  </div>
+  <div class="interactive-panel">
+    <div class="three-container" id="twofoldThree"></div>
+    <div class="slider-group">
+      <label>Reveal the Twofold:</label>
+      <input type="range" id="twofoldSlider" min="0" max="100" value="20" oninput="updateTwofold()">
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#4ac98a"></div>Beings (Seiendes)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div>Being (Sein)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#c94a6e"></div>The Twofold (Zwiefalt)</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7: HISTORY FLOW -->
+<section id="sec-history">
+  <h2 class="section-title">The Path of Western Thinking</h2>
+  <div class="section-subtitle">
+    From Parmenides to Nietzsche — how the Geheiß unfolds through history.
+  </div>
+  <div class="interactive-panel">
+    <div id="historyPlot" class="plotly-chart" style="height:500px;"></div>
+  </div>
+</section>
+
+<!-- SECTION 8: GEDANC -->
+<section id="sec-gedanc">
+  <h2 class="section-title">Gedanc: The Heart of Thinking</h2>
+  <div class="section-subtitle">
+    Thinking, Memory, Thanks — all spring from one root.
+  </div>
+  <div class="flow-diagram">
+    <div class="flow-node" onclick="pulseNode(this)">
+      <h4>Gedanc</h4>
+      <p>Heart / Gemüt</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="pulseNode(this)">
+      <h4>Gedächtnis</h4>
+      <p>Memory / Devotion</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="pulseNode(this)">
+      <h4>Andenken</h4>
+      <p>Remembrance</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="pulseNode(this)">
+      <h4>Dank</h4>
+      <p>Thanks / Gratitude</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node" onclick="pulseNode(this)">
+      <h4>Denken</h4>
+      <p>Thinking</p>
+    </div>
+  </div>
+  <div class="interactive-panel" style="margin-top:24px;">
+    <canvas id="gedancCanvas" class="canvas-viz"></canvas>
+  </div>
+</section>
+
+<footer>
+  <p>Interactive visualization of Martin Heidegger's <em>Was heißt Denken?</em> (GA 8, 1951–52)</p>
+  <p style="margin-top:8px;">Built for visual, playful understanding — not a substitute for the text.</p>
+</footer>
+
+<script>
+// ============ NAVIGATION ============
+const sections = [
+  {id:'sec-hero', label:'Home'},
+  {id:'sec-four', label:'Four Questions'},
+  {id:'sec-withdrawal', label:'Withdrawal'},
+  {id:'sec-nietzsche', label:'Nietzsche'},
+  {id:'sec-revenge', label:'Revenge'},
+  {id:'sec-parmenides', label:'Parmenides'},
+  {id:'sec-twofold', label:'Twofold'},
+  {id:'sec-history', label:'History'},
+  {id:'sec-gedanc', label:'Gedanc'}
+];
+
+const navDots = document.getElementById('navDots');
+sections.forEach((s,i) => {
+  const d = document.createElement('button');
+  d.className = 'nav-dot';
+  d.innerHTML = `<span class="tooltip">${s.label}</span>`;
+  d.onclick = () => document.getElementById(s.id).scrollIntoView({behavior:'smooth'});
+  navDots.appendChild(d);
+});
+
+window.addEventListener('scroll', () => {
+  const dots = navDots.querySelectorAll('.nav-dot');
+  let closest = 0, minDist = Infinity;
+  sections.forEach((s,i) => {
+    const el = document.getElementById(s.id);
+    const d = Math.abs(el.getBoundingClientRect().top);
+    if(d < minDist) { minDist = d; closest = i; }
+  });
+  dots.forEach((d,i) => d.classList.toggle('active', i===closest));
+});
+
+// ============ HERO CANVAS (particle field) ============
+(function() {
+  const c = document.getElementById('heroCanvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  for(let i=0; i<120; i++) {
+    particles.push({
+      x: Math.random()*2000-500, y: Math.random()*1200-100,
+      vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+      r: Math.random()*2+1,
+      color: ['#c9a84c','#4a7cc9','#c94a6e','#4ac98a','#8a4ac9'][Math.floor(Math.random()*5)]
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(10,10,18,0.15)';
+    ctx.fillRect(0,0,W,H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<-50) p.x=W+50; if(p.x>W+50) p.x=-50;
+      if(p.y<-50) p.y=H+50; if(p.y>H+50) p.y=-50;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.6;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+    // connections
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<150){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle = particles[i].color;
+          ctx.globalAlpha = 0.08*(1-dist/150);
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ FOUR QUESTIONS RADAR ============
+function highlightQuestion(q) {
+  document.querySelectorAll('.card').forEach(c => {
+    c.style.borderColor = c.dataset.q == q ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)';
+  });
+}
+
+(function() {
+  const data = [{
+    type: 'scatterpolar',
+    r: [9, 7, 8, 10, 9],
+    theta: ['① Word Meaning','② Tradition/Logic','③ What We Must Bring','④ What Calls Us','① Word Meaning'],
+    fill: 'toself',
+    fillcolor: 'rgba(201,168,76,0.15)',
+    line: { color: '#c9a84c', width: 2 },
+    marker: { size: 8, color: '#c9a84c' },
+    name: 'Depth of Question'
+  },{
+    type: 'scatterpolar',
+    r: [6, 9, 5, 3, 6],
+    theta: ['① Word Meaning','② Tradition/Logic','③ What We Must Bring','④ What Calls Us','① Word Meaning'],
+    fill: 'toself',
+    fillcolor: 'rgba(74,124,201,0.15)',
+    line: { color: '#4a7cc9', width: 2 },
+    marker: { size: 8, color: '#4a7cc9' },
+    name: 'Familiarity to Us'
+  }];
+  Plotly.newPlot('fourQuestionsPlot', data, {
+    polar: {
+      bgcolor: 'rgba(0,0,0,0)',
+      radialaxis: { visible: true, range: [0,10], color: '#55515a', gridcolor: 'rgba(255,255,255,0.06)' },
+      angularaxis: { color: '#8a8690', gridcolor: 'rgba(255,255,255,0.06)' }
+    },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#8a8690', family: 'Inter' },
+    legend: { font: { color: '#8a8690' } },
+    margin: { t: 40, b: 40 }
+  }, {responsive: true});
+})();
+
+// ============ WITHDRAWAL CANVAS ============
+let withdrawCtx, withdrawW, withdrawH;
+(function() {
+  const c = document.getElementById('withdrawalCanvas');
+  withdrawCtx = c.getContext('2d');
+  function resize() {
+    withdrawW = c.width = c.offsetWidth * 2;
+    withdrawH = c.height = c.offsetHeight * 2;
+    withdrawCtx.scale(1,1);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  updateWithdrawal();
+})();
+
+function updateWithdrawal() {
+  const val = +document.getElementById('withdrawSlider').value;
+  document.getElementById('withdrawVal').textContent = val;
+  const ctx = withdrawCtx;
+  const W = withdrawW, H = withdrawH;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0f0f1a';
+  ctx.fillRect(0,0,W,H);
+
+  const t = Date.now()/1000;
+  const withdrawDist = 100 + val * 3;
+  const goldX = W*0.7 + Math.sin(t*0.3)*30 + withdrawDist;
+  const goldY = H*0.45 + Math.cos(t*0.4)*20;
+  const humanX = W*0.3;
+  const humanY = H*0.5;
+
+  // Draw pull lines
+  const numLines = 12;
+  for(let i=0; i<numLines; i++) {
+    const frac = i/numLines;
+    const ox = humanX + (goldX-humanX)*frac;
+    const oy = humanY + (goldY-humanY)*frac + Math.sin(t*2+i)*8;
+    ctx.beginPath();
+    ctx.arc(ox, oy, 3+frac*4, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(201,74,110,${0.15+frac*0.4})`;
+    ctx.fill();
+  }
+
+  // Dashed line
+  ctx.setLineDash([8,12]);
+  ctx.beginPath();
+  ctx.moveTo(humanX, humanY);
+  ctx.lineTo(goldX, goldY);
+  ctx.strokeStyle = 'rgba(201,74,110,0.3)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Arrow from human pointing toward gold
+  const angle = Math.atan2(goldY-humanY, goldX-humanX);
+  const arrowLen = 60;
+  const arrowX = humanX + Math.cos(angle)*arrowLen;
+  const arrowY = humanY + Math.sin(angle)*arrowLen;
+  ctx.beginPath();
+  ctx.moveTo(humanX+20, humanY);
+  ctx.lineTo(arrowX, arrowY);
+  ctx.strokeStyle = 'rgba(74,124,201,0.7)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(arrowX, arrowY);
+  ctx.lineTo(arrowX-12*Math.cos(angle-0.4), arrowY-12*Math.sin(angle-0.4));
+  ctx.lineTo(arrowX-12*Math.cos(angle+0.4), arrowY-12*Math.sin(angle+0.4));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(74,124,201,0.7)';
+  ctx.fill();
+
+  // Human (sign)
+  ctx.beginPath();
+  ctx.arc(humanX, humanY, 28, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(74,124,201,0.25)';
+  ctx.fill();
+  ctx.strokeStyle = '#4a7cc9';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = '#4a7cc9';
+  ctx.font = '24px Inter';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('☉', humanX, humanY);
+  ctx.font = '14px Inter';
+  ctx.fillStyle = '#8a8690';
+  ctx.fillText('Human (the Sign)', humanX, humanY+50);
+
+  // Gold orb (what calls for thinking)
+  const glowR = 40 + Math.sin(t*1.5)*5;
+  const grad = ctx.createRadialGradient(goldX, goldY, 0, goldX, goldY, glowR*3);
+  grad.addColorStop(0, 'rgba(201,168,76,0.5)');
+  grad.addColorStop(0.5, 'rgba(201,168,76,0.1)');
+  grad.addColorStop(1, 'rgba(201,168,76,0)');
+  ctx.beginPath();
+  ctx.arc(goldX, goldY, glowR*3, 0, Math.PI*2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(goldX, goldY, glowR, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(201,168,76,0.3)';
+  ctx.fill();
+  ctx.strokeStyle = '#c9a84c';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = '#c9a84c';
+  ctx.font = '14px Inter';
+  ctx.fillText('What calls for thinking', goldX, goldY+60);
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#55515a';
+  ctx.fillText('(withdraws yet draws)', goldX, goldY+78);
+
+  // Withdrawal arrow
+  if(val > 20) {
+    const wArrowX = goldX + 40;
+    ctx.beginPath();
+    ctx.moveTo(goldX+glowR+10, goldY);
+    ctx.lineTo(wArrowX + val*0.5, goldY);
+    ctx.strokeStyle = 'rgba(201,168,76,0.4)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4,6]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(201,168,76,0.5)';
+    ctx.font = '12px Inter';
+    ctx.fillText('← withdraws', wArrowX + val*0.5 + 40, goldY+4);
+  }
+
+  // Paradox text
+  const paradoxAlpha = Math.min(1, val/60);
+  ctx.fillStyle = `rgba(201,74,110,${paradoxAlpha*0.7})`;
+  ctx.font = '13px Cormorant Garamond';
+  ctx.textAlign = 'center';
+  ctx.fillText('The more it withdraws, the more it draws us toward it', W/2, H - 40);
+
+  requestAnimationFrame(updateWithdrawal);
+}
+
+// ============ NIETZSCHE BRIDGE (Three.js) ============
+let bridgeScene, bridgeCamera, bridgeRenderer, bridgeMeshes = {};
+(function() {
+  const container = document.getElementById('bridgeThree');
+  if(!container) return;
+  bridgeScene = new THREE.Scene();
+  bridgeScene.fog = new THREE.FogExp2(0x0a0a12, 0.008);
+  bridgeCamera = new THREE.PerspectiveCamera(60, container.offsetWidth/container.offsetHeight, 0.1, 1000);
+  bridgeCamera.position.set(0, 8, 25);
+  bridgeCamera.lookAt(0, 2, 0);
+
+  bridgeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  bridgeRenderer.setSize(container.offsetWidth, container.offsetHeight);
+  bridgeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(bridgeRenderer.domElement);
+
+  // Lights
+  const amb = new THREE.AmbientLight(0x333344, 0.6);
+  bridgeScene.add(amb);
+  const dir = new THREE.DirectionalLight(0xc9a84c, 0.8);
+  dir.position.set(5, 10, 5);
+  bridgeScene.add(dir);
+  const pt = new THREE.PointLight(0x4a7cc9, 1, 50);
+  pt.position.set(-10, 5, 0);
+  bridgeScene.add(pt);
+
+  // Ground plane
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(80, 80),
+    new THREE.MeshStandardMaterial({ color: 0x12121f, roughness: 1 })
+  );
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -2;
+  bridgeScene.add(ground);
+
+  // Last Man platform (left)
+  const lastManGeo = new THREE.BoxGeometry(6, 4, 6);
+  const lastManMat = new THREE.MeshStandardMaterial({ color: 0x553333, roughness: 0.8 });
+  const lastMan = new THREE.Mesh(lastManGeo, lastManMat);
+  lastMan.position.set(-12, 0, 0);
+  bridgeScene.add(lastMan);
+  bridgeMeshes.lastman = lastMan;
+
+  // Label sphere for last man
+  const lmSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.8, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xc94a6e, emissive: 0xc94a6e, emissiveIntensity: 0.3 })
+  );
+  lmSphere.position.set(-12, 3.5, 0);
+  bridgeScene.add(lmSphere);
+
+  // Bridge
+  const bridgeGeo = new THREE.BoxGeometry(18, 0.5, 3);
+  const bridgeMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, roughness: 0.6, metalness: 0.3 });
+  const bridge = new THREE.Mesh(bridgeGeo, bridgeMat);
+  bridge.position.set(0, 1.5, 0);
+  bridgeScene.add(bridge);
+  bridgeMeshes.bridge = bridge;
+
+  // Bridge rails
+  for(let side of [-1, 1]) {
+    for(let i = -8; i <= 8; i += 2) {
+      const post = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 2),
+        new THREE.MeshStandardMaterial({ color: 0x8a6a2c })
+      );
+      post.position.set(i, 2.5, side * 1.5);
+      bridgeScene.add(post);
+    }
+  }
+
+  // Übermensch platform (right)
+  const overGeo = new THREE.BoxGeometry(6, 4, 6);
+  const overMat = new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.8 });
+  const overMan = new THREE.Mesh(overGeo, overMat);
+  overMan.position.set(12, 0, 0);
+  bridgeScene.add(overMan);
+  bridgeMeshes.overman = overMan;
+
+  const omSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.8, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0x4ac98a, emissive: 0x4ac98a, emissiveIntensity: 0.3 })
+  );
+  omSphere.position.set(12, 3.5, 0);
+  bridgeScene.add(omSphere);
+
+  // Abyss particles
+  for(let i = 0; i < 60; i++) {
+    const p = new THREE.Mesh(
+      new THREE.SphereGeometry(0.08, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0x8a4ac9, transparent: true, opacity: 0.4 })
+    );
+    p.position.set((Math.random()-0.5)*30, -2 + Math.random()*-8, (Math.random()-0.5)*10);
+    p.userData = { vy: Math.random()*0.01-0.005, vx: Math.random()*0.01-0.005 };
+    bridgeScene.add(p);
+    if(!bridgeMeshes.particles) bridgeMeshes.particles = [];
+    bridgeMeshes.particles.push(p);
+  }
+
+  // Mouse drag
+  let isDragging = false, prevX = 0;
+  bridgeRenderer.domElement.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; });
+  window.addEventListener('mouseup', () => isDragging = false);
+  bridgeRenderer.domElement.addEventListener('mousemove', e => {
+    if(!isDragging) return;
+    const dx = e.clientX - prevX;
+    bridgeScene.rotation.y += dx * 0.005;
+    prevX = e.clientX;
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if(bridgeMeshes.particles) {
+      bridgeMeshes.particles.forEach(p => {
+        p.position.y += p.userData.vy;
+        p.position.x += p.userData.vx;
+        if(p.position.y < -10) p.position.y = -2;
+        if(p.position.y > -1) p.position.y = -10;
+      });
+    }
+    bridgeRenderer.render(bridgeScene, bridgeCamera);
+  }
+  animate();
+})();
+
+function setBridgeView(view) {
+  document.querySelectorAll('#sec-nietzsche .ctrl-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const info = document.getElementById('bridgeInfo');
+  const cam = bridgeCamera;
+  switch(view) {
+    case 'overview':
+      cam.position.set(0, 8, 25);
+      cam.lookAt(0, 2, 0);
+      info.textContent = 'The bridge from the Last Man to the Übermensch: liberation from the spirit of revenge.';
+      break;
+    case 'lastman':
+      cam.position.set(-12, 6, 12);
+      cam.lookAt(-12, 1, 0);
+      info.textContent = '"The last man lives longest." He blinks — represents everything as surface. His will is revenge against time.';
+      break;
+    case 'bridge':
+      cam.position.set(0, 4, 8);
+      cam.lookAt(0, 2, 0);
+      info.textContent = '"That man be redeemed from revenge — that is the bridge to the highest hope." The crossing itself.';
+      break;
+    case 'overman':
+      cam.position.set(12, 6, 12);
+      cam.lookAt(12, 1, 0);
+      info.textContent = 'The Übermensch: not a super-powered human, but one who wills the eternal return — poorer, simpler, stiller.';
+      break;
+  }
+}
+
+// ============ REVENGE / WILL / TIME (Plotly) ============
+function setRevengeView(view) {
+  document.querySelectorAll('#sec-revenge .ctrl-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const div = document.getElementById('revengePlot');
+  const layout = {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#8a8690', family: 'Inter' },
+    margin: { t: 40, b: 40, l: 50, r: 50 },
+    showlegend: true,
+    legend: { font: { color: '#8a8690' } }
+  };
+
+  if(view === 'spiral') {
+    const t = [];
+    const x = [], y = [], z = [];
+    for(let i = 0; i < 500; i++) {
+      const tt = i * 0.05;
+      t.push(tt);
+      x.push(Math.cos(tt) * (1 + tt*0.1));
+      y.push(Math.sin(tt) * (1 + tt*0.1));
+      z.push(tt * 0.3);
+    }
+    const colors = t.map(v => v < 10 ? '#c94a6e' : v < 18 ? '#c9a84c' : '#4ac98a');
+    Plotly.newPlot(div, [{
+      type: 'scatter3d', mode: 'lines',
+      x, y, z,
+      line: { color: colors, width: 4 },
+      name: 'Time\'s passage'
+    },{
+      type: 'scatter3d', mode: 'markers',
+      x: [x[0]], y: [y[0]], z: [z[0]],
+      marker: { size: 8, color: '#c94a6e' },
+      name: '"Es war" (It was)'
+    },{
+      type: 'scatter3d', mode: 'markers',
+      x: [x[200]], y: [y[200]], z: [z[200]],
+      marker: { size: 8, color: '#c9a84c' },
+      name: 'Now'
+    },{
+      type: 'scatter3d', mode: 'markers',
+      x: [x[499]], y: [y[499]], z: [z[499]],
+      marker: { size: 8, color: '#4ac98a' },
+      name: 'Future'
+    }], {...layout, scene: {
+      xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+      yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+      zaxis: { showgrid: false, zeroline: false, title: 'Time →', color: '#55515a' },
+      bgcolor: 'rgba(0,0,0,0)'
+    }, title: { text: 'Time as Passing — The Will\'s Adversary', font: { color: '#c9a84c', size: 14 } }
+    }, {responsive: true});
+  } else if(view === 'return') {
+    const theta = [], r = [];
+    for(let i = 0; i < 720; i++) {
+      theta.push(i);
+      r.push(2 + Math.sin(i * Math.PI / 180 * 3) * 0.5);
+    }
+    Plotly.newPlot(div, [{
+      type: 'scatterpolar', mode: 'lines',
+      theta, r,
+      line: { color: '#c9a84c', width: 3 },
+      fill: 'toself',
+      fillcolor: 'rgba(201,168,76,0.08)',
+      name: 'Eternal Return of the Same'
+    }], {...layout,
+      polar: {
+        bgcolor: 'rgba(0,0,0,0)',
+        radialaxis: { visible: false },
+        angularaxis: { color: '#55515a', gridcolor: 'rgba(255,255,255,0.04)' }
+      },
+      title: { text: 'Eternal Return — The Will wills its own eternity', font: { color: '#c9a84c', size: 14 } }
+    }, {responsive: true});
+  } else {
+    const x = ['Revenge\n(Widerwille)', 'Will against\nTime', '"It was"\n(frozen past)', 'Liberation\n(Erlösung)', 'Eternal Return\n(will wills itself)'];
+    const y = [9, 7, 8, 6, 10];
+    const colors = ['#c94a6e','#c94a6e','#c94a6e','#4ac98a','#c9a84c'];
+    Plotly.newPlot(div, [{
+      type: 'bar', x, y,
+      marker: { color: colors, opacity: 0.8 },
+      name: 'Intensity'
+    }], {...layout,
+      xaxis: { color: '#8a8690' },
+      yaxis: { color: '#55515a', gridcolor: 'rgba(255,255,255,0.04)', title: 'Metaphysical Weight' },
+      title: { text: 'From Revenge to Liberation', font: { color: '#c9a84c', size: 14 } }
+    }, {responsive: true});
+  }
+}
+setRevengeView('spiral');
+
+// ============ PARMENIDES TABS ============
+function setTab(idx) {
+  document.querySelectorAll('.tab-header').forEach((h,i) => h.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-content').forEach((c,i) => c.classList.toggle('active', i===idx));
+  if(idx === 0) drawChre();
+  if(idx === 1) drawLegein();
+  if(idx === 2) drawNoein();
+  if(idx === 3) drawEon();
+  if(idx === 4) drawEmmenai();
+}
+
+function drawChre() {
+  const c = document.getElementById('chreCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  c.width = c.offsetWidth * 2;
+  c.height = 600;
+  const W = c.width, H = c.height;
+  ctx.fillStyle = '#12121f';
+  ctx.fillRect(0,0,W,H);
+
+  // Concentric circles representing sheltering
+  const cx = W/2, cy = H/2;
+  for(let i = 5; i > 0; i--) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, i*50, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(201,168,76,${0.1+i*0.08})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#c9a84c';
+  ctx.font = '28px Cormorant Garamond';
+  ctx.textAlign = 'center';
+  ctx.fillText('χρή', cx, cy-10);
+  ctx.font = '14px Inter';
+  ctx.fillStyle = '#8a8690';
+  ctx.fillText('"It needs" — sheltering use', cx, cy+20);
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#55515a';
+  ctx.fillText('Not compulsion, but letting-into-essence', cx, cy+42);
+}
+drawChre();
+
+function drawLegein() {
+  const div = document.getElementById('legeinPlot');
+  if(!div) return;
+  // Sankey-like flow
+  Plotly.newPlot(div, [{
+    type: 'sankey',
+    node: {
+      label: ['λέγειν (laying)', 'Vor-liegen-lassen', 'Gathering', 'Letting-appear', 'Saying', 'λόγος'],
+      color: ['#c9a84c','#4a7cc9','#4ac98a','#c94a6e','#8a4ac9','#c9a84c'],
+      pad: 20
+    },
+    link: {
+      source: [0,0,0,1,2,3],
+      target: [1,2,3,5,5,4],
+      value: [3,2,2,2,2,2],
+      color: ['rgba(201,168,76,0.2)','rgba(74,201,138,0.2)','rgba(201,74,110,0.2)','rgba(201,168,76,0.15)','rgba(74,201,138,0.15)','rgba(201,74,110,0.15)']
+    }
+  }], {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#8a8690', family: 'Inter', size: 12 },
+    margin: { t: 20, b: 20, l: 20, r: 20 }
+  }, {responsive: true});
+}
+
+function drawNoein() {
+  const c = document.getElementById('noeinCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  c.width = c.offsetWidth * 2;
+  c.height = 600;
+  const W = c.width, H = c.height;
+  ctx.fillStyle = '#12121f';
+  ctx.fillRect(0,0,W,H);
+
+  // Eye/heart symbol
+  const cx = W/2, cy = H/2;
+  // Heart shape
+  ctx.beginPath();
+  ctx.moveTo(cx, cy+30);
+  ctx.bezierCurveTo(cx-60, cy-20, cx-80, cy-60, cx, cy-30);
+  ctx.bezierCurveTo(cx+80, cy-60, cx+60, cy-20, cx, cy+30);
+  ctx.strokeStyle = '#4a7cc9';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(74,124,201,0.1)';
+  ctx.fill();
+
+  // Arrows pointing inward
+  for(let a = 0; a < Math.PI*2; a += Math.PI/4) {
+    const r = 120;
+    const sx = cx + Math.cos(a)*r;
+    const sy = cy + Math.sin(a)*r;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(cx + Math.cos(a)*60, cy + Math.sin(a)*60);
+    ctx.strokeStyle = 'rgba(74,124,201,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#4a7cc9';
+  ctx.font = '28px Cormorant Garamond';
+  ctx.textAlign = 'center';
+  ctx.fillText('νοεῖν', cx, cy+5);
+  ctx.font = '14px Inter';
+  ctx.fillStyle = '#8a8690';
+  ctx.fillText('Taking-to-heart — In-die-Acht-nehmen', cx, cy+60);
+}
+
+function drawEon() {
+  const div = document.getElementById('eonPlot');
+  if(!div) return;
+  // The Twofold as overlapping areas
+  const theta1 = [], r1 = [], theta2 = [], r2 = [];
+  for(let i = 0; i <= 360; i++) {
+    theta1.push(i);
+    r1.push(3 + 1.5*Math.cos(i*Math.PI/180*2));
+    theta2.push(i);
+    r2.push(2.5 + 1.2*Math.sin(i*Math.PI/180*3));
+  }
+  Plotly.newPlot(div, [{
+    type: 'scatterpolar', mode: 'lines',
+    theta: theta1, r: r1,
+    line: { color: '#4ac98a', width: 2 },
+    fill: 'toself', fillcolor: 'rgba(74,201,138,0.1)',
+    name: 'Beings (Seiendes)'
+  },{
+    type: 'scatterpolar', mode: 'lines',
+    theta: theta2, r: r2,
+    line: { color: '#c9a84c', width: 2 },
+    fill: 'toself', fillcolor: 'rgba(201,168,76,0.1)',
+    name: 'Being (Sein)'
+  }], {
+    polar: {
+      bgcolor: 'rgba(0,0,0,0)',
+      radialaxis: { visible: false },
+      angularaxis: { visible: false }
+    },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#8a8690', family: 'Inter' },
+    legend: { font: { color: '#8a8690' } },
+    title: { text: 'ἐόν — The Supreme Participle: Beings ↔ Being', font: { color: '#c9a84c', size: 14 } },
+    margin: { t: 50, b: 30 }
+  }, {responsive: true});
+}
+
+function drawEmmenai() {
+  const c = document.getElementById('emmenaiCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  c.width = c.offsetWidth * 2;
+  c.height = 600;
+  const W = c.width, H = c.height;
+  ctx.fillStyle = '#12121f';
+  ctx.fillRect(0,0,W,H);
+
+  const cx = W/2, cy = H/2;
+  const t = Date.now()/1000;
+
+  // Emerging waves from center
+  for(let i = 8; i > 0; i--) {
+    const r = i * 35 + Math.sin(t + i)*10;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(74,201,138,${0.05 + (8-i)*0.03})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Rising particles
+  for(let i = 0; i < 20; i++) {
+    const px = cx + Math.sin(t*0.5 + i*0.7)*100;
+    const py = cy + 80 - ((t*30 + i*40) % 200);
+    ctx.beginPath();
+    ctx.arc(px, py, 2, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(74,201,138,${0.3 + Math.sin(t+i)*0.2})`;
+    ctx.fill();
+  }
+
+  ctx.fillStyle = '#4ac98a';
+  ctx.font = '28px Cormorant Garamond';
+  ctx.textAlign = 'center';
+  ctx.fillText('ἔμμεναι', cx, cy-5);
+  ctx.font = '14px Inter';
+  ctx.fillStyle = '#8a8690';
+  ctx.fillText('Presencing — coming-into-presence', cx, cy+25);
+  ctx.font = '11px Inter';
+  ctx.fillStyle = '#55515a';
+  ctx.fillText('Emerging from unconcealment into the open', cx, cy+45);
+
+  requestAnimationFrame(drawEmmenai);
+}
+
+// ============ TWOFOLD (Three.js) ============
+let twofoldScene, twofoldCamera, twofoldRenderer;
+let twofoldBeings = [], twofoldBeing = [], twofoldZwiefalt = [];
+(function() {
+  const container = document.getElementById('twofoldThree');
+  if(!container) return;
+
+  twofoldScene = new THREE.Scene();
+  twofoldScene.fog = new THREE.FogExp2(0x0a0a12, 0.006);
+  twofoldCamera = new THREE.PerspectiveCamera(60, container.offsetWidth/container.offsetHeight, 0.1, 1000);
+  twofoldCamera.position.set(0, 5, 30);
+  twofoldCamera.lookAt(0, 0, 0);
+
+  twofoldRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  twofoldRenderer.setSize(container.offsetWidth, container.offsetHeight);
+  twofoldRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(twofoldRenderer.domElement);
+
+  const amb = new THREE.AmbientLight(0x333344, 0.5);
+  twofoldScene.add(amb);
+  const dir = new THREE.DirectionalLight(0xffffff, 0.6);
+  dir.position.set(5, 10, 5);
+  twofoldScene.add(dir);
+
+  // Beings (Seiendes) - green spheres scattered
+  for(let i = 0; i < 40; i++) {
+    const s = new THREE.Mesh(
+      new THREE.SphereGeometry(0.3 + Math.random()*0.4, 12, 12),
+      new THREE.MeshStandardMaterial({ color: 0x4ac98a, roughness: 0.6, transparent: true, opacity: 0.7 })
+    );
+    s.position.set((Math.random()-0.5)*25, (Math.random()-0.5)*15, (Math.random()-0.5)*15);
+    twofoldScene.add(s);
+    twofoldBeings.push(s);
+  }
+
+  // Being (Sein) - golden torus
+  const torusGeo = new THREE.TorusGeometry(6, 0.15, 16, 100);
+  const torusMat = new THREE.MeshStandardMaterial({ color: 0xc9a84c, emissive: 0xc9a84c, emissiveIntensity: 0.3, transparent: true, opacity: 0.6 });
+  const torus = new THREE.Mesh(torusGeo, torusMat);
+  twofoldScene.add(torus);
+  twofoldBeing.push(torus);
+
+  const torus2 = new THREE.Mesh(
+    new THREE.TorusGeometry(8, 0.1, 16, 100),
+    new THREE.MeshStandardMaterial({ color: 0xc9a84c, emissive: 0xc9a84c, emissiveIntensity: 0.2, transparent: true, opacity: 0.4 })
+  );
+  torus2.rotation.x = Math.PI/3;
+  twofoldScene.add(torus2);
+  twofoldBeing.push(torus2);
+
+  // Zwiefalt (Twofold) - rose particles connecting them
+  for(let i = 0; i < 60; i++) {
+    const p = new THREE.Mesh(
+      new THREE.SphereGeometry(0.06, 6, 6),
+      new THREE.MeshBasicMaterial({ color: 0xc94a6e, transparent: true, opacity: 0 })
+    );
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    const r = 5 + Math.random()*5;
+    p.position.set(r*Math.sin(phi)*Math.cos(theta), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(theta));
+    twofoldScene.add(p);
+    twofoldZwiefalt.push(p);
+  }
+
+  // Mouse drag
+  let isDragging = false, prevX = 0, prevY = 0;
+  twofoldRenderer.domElement.addEventListener('mousedown', e => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
+  window.addEventListener('mouseup', () => isDragging = false);
+  twofoldRenderer.domElement.addEventListener('mousemove', e => {
+    if(!isDragging) return;
+    twofoldScene.rotation.y += (e.clientX - prevX) * 0.005;
+    twofoldScene.rotation.x += (e.clientY - prevY) * 0.003;
+    prevX = e.clientX;
+    prevY = e.clientY;
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = Date.now() / 1000;
+    twofoldBeing.forEach((m, i) => {
+      m.rotation.z = t * 0.2 * (i+1);
+      m.rotation.y = t * 0.1;
+    });
+    twofoldBeings.forEach((s, i) => {
+      s.position.y += Math.sin(t + i) * 0.003;
+    });
+    twofoldRenderer.render(twofoldScene, twofoldCamera);
+  }
+  animate();
+})();
+
+function updateTwofold() {
+  const val = +document.getElementById('twofoldSlider').value / 100;
+  // Reveal the Zwiefalt particles
+  twofoldZwiefalt.forEach(p => {
+    p.material.opacity = val * 0.7;
+  });
+  // Make Being more visible
+  twofoldBeing.forEach(m => {
+    m.material.opacity = 0.3 + val * 0.5;
+    m.material.emissiveIntensity = val * 0.6;
+  });
+}
+
+// ============ HISTORY FLOW (Plotly) ============
+(function() {
+  const thinkers = ['Parmenides', 'Heraclitus', 'Plato', 'Aristotle', 'Plotinus', 'Augustine', 'Aquinas', 'Descartes', 'Leibniz', 'Kant', 'Hegel', 'Schelling', 'Schopenhauer', 'Nietzsche', 'Heidegger'];
+  const years = [-515, -500, -427, -384, 204, 354, 1225, 1596, 1646, 1724, 1770, 1775, 1788, 1844, 1889];
+  const depths = [10, 9, 9.5, 9, 7, 6.5, 6, 7, 7.5, 9, 8.5, 8, 7, 9.5, 10];
+  const colors = thinkers.map((t, i) => {
+    if(i <= 3) return '#4ac98a'; // early Greek
+    if(i <= 6) return '#4a7cc9'; // medieval
+    if(i <= 12) return '#8a4ac9'; // modern
+    return '#c9a84c'; // Nietzsche & Heidegger
+  });
+
+  Plotly.newPlot('historyPlot', [{
+    type: 'scatter',
+    x: years,
+    y: depths,
+    mode: 'markers+text',
+    text: thinkers,
+    textposition: 'top center',
+    textfont: { color: '#8a8690', size: 10, family: 'Cormorant Garamond' },
+    marker: { size: depths.map(d => d*3), color: colors, opacity: 0.8, line: { color: colors, width: 1 } },
+    hoverinfo: 'text+x'
+  },{
+    type: 'scatter',
+    x: years,
+    y: depths,
+    mode: 'lines',
+    line: { color: 'rgba(201,168,76,0.2)', width: 2, shape: 'spline' },
+    hoverinfo: 'skip'
+  }], {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: { color: '#8a8690', family: 'Inter' },
+    xaxis: { color: '#55515a', gridcolor: 'rgba(255,255,255,0.04)', title: 'Year', zeroline: false },
+    yaxis: { color: '#55515a', gridcolor: 'rgba(255,255,255,0.04)', title: 'Proximity to the Geheiß', range: [4, 11] },
+    showlegend: false,
+    margin: { t: 30, b: 50, l: 60, r: 30 },
+    title: { text: 'The Path of Western Thinking — Proximity to the Unthought', font: { color: '#c9a84c', size: 14 } },
+    annotations: [
+      { x: -450, y: 4.5, text: 'Early Greek', showarrow: false, font: { color: '#4ac98a', size: 11 } },
+      { x: 600, y: 4.5, text: 'Medieval', showarrow: false, font: { color: '#4a7cc9', size: 11 } },
+      { x: 1700, y: 4.5, text: 'Modern', showarrow: false, font: { color: '#8a4ac9', size: 11 } }
+    ]
+  }, {responsive: true});
+})();
+
+// ============ GEDANC CANVAS ============
+(function() {
+  const c = document.getElementById('gedancCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+
+  function resize() {
+    c.width = c.offsetWidth * 2;
+    c.height = 800;
+  }
+  resize();
+
+  const words = [
+    { label: 'Gedanc', sub: 'Heart / Gemüt', x: 0.5, y: 0.5, r: 70, color: '#c9a84c' },
+    { label: 'Denken', sub: 'Thinking', x: 0.2, y: 0.25, r: 45, color: '#4a7cc9' },
+    { label: 'Gedächtnis', sub: 'Memory', x: 0.8, y: 0.25, r: 45, color: '#4ac98a' },
+    { label: 'Dank', sub: 'Thanks', x: 0.2, y: 0.75, r: 45, color: '#c94a6e' },
+    { label: 'Andenken', sub: 'Remembrance', x: 0.8, y: 0.75, r: 45, color: '#8a4ac9' }
+  ];
+
+  function draw() {
+    const W = c.width, H = c.height;
+    const t = Date.now() / 1000;
+    ctx.fillStyle = 'rgba(18,18,31,0.1)';
+    ctx.fillRect(0,0,W,H);
+
+    // Draw connections from center to all
+    words.forEach((w, i) => {
+      if(i === 0) return;
+      const cx = words[0].x * W, cy = words[0].y * H;
+      const wx = w.x * W, wy = w.y * H;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      // Bezier curves
+      const mx = (cx + wx)/2 + Math.sin(t + i)*30;
+      const my = (cy + wy)/2 + Math.cos(t + i)*30;
+      ctx.quadraticCurveTo(mx, my, wx, wy);
+      ctx.strokeStyle = w.color + '33';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Flowing particles along connection
+      for(let p = 0; p < 5; p++) {
+        const frac = ((t*0.3 + p*0.2 + i*0.1) % 1);
+        const px = cx + (wx-cx)*frac + Math.sin(t+p+i)*10*(1-Math.abs(frac-0.5)*2);
+        const py = cy + (wy-cy)*frac + Math.cos(t+p+i)*10*(1-Math.abs(frac-0.5)*2);
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI*2);
+        ctx.fillStyle = w.color + '66';
+        ctx.fill();
+      }
+    });
+
+    // Draw word circles
+    words.forEach((w, i) => {
+      const wx = w.x * W, wy = w.y * H;
+      const r = w.r + Math.sin(t*1.5 + i)*5;
+
+      // Glow
+      const grad = ctx.createRadialGradient(wx, wy, 0, wx, wy, r*2);
+      grad.addColorStop(0, w.color + '22');
+      grad.addColorStop(1, w.color + '00');
+      ctx.beginPath();
+      ctx.arc(wx, wy, r*2, 0, Math.PI*2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Circle
+      ctx.beginPath();
+      ctx.arc(wx, wy, r, 0, Math.PI*2);
+      ctx.fillStyle = w.color + '15';
+      ctx.fill();
+      ctx.strokeStyle = w.color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Text
+      ctx.fillStyle = w.color;
+      ctx.font = `${i===0?'24':'18'}px Cormorant Garamond`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(w.label, wx, wy - 8);
+      ctx.font = '11px Inter';
+      ctx.fillStyle = '#8a8690';
+      ctx.fillText(w.sub, wx, wy + 14);
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ FLOW NODE PULSE ============
+function pulseNode(el) {
+  el.style.boxShadow = '0 0 30px rgba(201,168,76,0.5)';
+  el.style.borderColor = 'var(--accent-gold)';
+  setTimeout(() => {
+    el.style.boxShadow = '';
+    el.style.borderColor = 'var(--accent-blue)';
+  }, 800);
+}
+
+// ============ INIT TABS ============
+setTimeout(() => { drawChre(); }, 500);
+</script>
+</body>
+</html>
