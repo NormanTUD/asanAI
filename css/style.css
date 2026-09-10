@@ -1037,9 +1037,10 @@ input {
 }
 
 #math_tab {
-	overflow: scroll;
-	width: 99%; 
-	max-height: 100%; 
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 99%;
+	max-height: 100%;
 }
 
 .link:link, .link:active, .link:visited, .link:hover, .link:active {
@@ -1649,7 +1650,7 @@ input, select {
 }
 
 #math_tab_code {
-	width: fit-content;
+	width: 100%;
 }
 
 #example_predictions_parent {
@@ -1808,6 +1809,13 @@ input:focus, textarea:focus, select:focus {
 
 .temml_me {
 	user-select: none;
+}
+
+/* Wide equations (matrices, optimizer algorithms) must not stretch or
+   horizontally scroll the whole math tab: each equation scrolls
+   horizontally inside its own full-width box instead. */
+#math_tab_code .temml_me {
+	overflow-x: auto;
 }
 
 :root {
