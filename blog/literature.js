@@ -12,6 +12,55 @@ window.bibData = {
 		url: "https://www.ams.org/bookstore/getitem/itemview-GSM108",
 		alternativetitle: "The Shape of Space"
 	},
+	"heronmetrica": {
+		title: "Metrica (Geometrica)",
+		author: "Heron of Alexandria (Hero)",
+		year: "1st century CE",
+		url: "https://en.wikipedia.org/wiki/Heron%27s_formula",
+		alternativetitle: "Heron's formula (Metrica)"
+	},
+	"keplerastronomianova": {
+		title: "Astronomia Nova (The New Astronomy)",
+		author: "Johannes Kepler",
+		year: 1609,
+		url: "https://en.wikipedia.org/wiki/Astronomia_Nova",
+		alternativetitle: "Astronomia Nova"
+	},
+	"newtonprincipia": {
+		title: "Philosophiæ Naturalis Principia Mathematica",
+		author: "Isaac Newton",
+		year: 1687,
+		url: "https://en.wikipedia.org/wiki/Philosophi%C3%A6_Naturalis_Principia_Mathematica",
+		alternativetitle: "Principia"
+	},
+	"mercatoratlas": {
+		title: "Nova et Aucta Orbis Terrarum Descriptio ad Usum Navigantium (1569 world map)",
+		author: "Gerardus Mercator",
+		year: 1569,
+		url: "https://en.wikipedia.org/wiki/Mercator_projection",
+		alternativetitle: "Mercator's 1569 world map"
+	},
+	"docarmo": {
+		title: "Differential Geometry of Curves and Surfaces",
+		author: "Manfredo Perdigão do Carmo",
+		year: 1976,
+		url: "https://en.wikipedia.org/wiki/Differential_Geometry_of_Curves_and_Surfaces",
+		alternativetitle: "do Carmo, Differential Geometry"
+	},
+	"perelmanpoincare": {
+		title: "The Entropy Formulas for the Ricci Flow and a Proof of the Geometric and Topological Poincaré Conjectures",
+		author: "Grigori Perelman",
+		year: 2002,
+		url: "https://arxiv.org/abs/math/0211159",
+		alternativetitle: "Perelman's proof of the Poincaré conjecture"
+	},
+	"hatcher": {
+		title: "Algebraic Topology",
+		author: "John Hatcher",
+		year: 2002,
+		url: "https://www.algebraic-topology.org/",
+		alternativetitle: "Hatcher, Algebraic Topology"
+	},
 	"trinilshell": {
 		title: "Homo erectus at Trinil on Java used shells for tool production and engraving",
 		author: "J. C. A. Joordens, F. Fitzer-Räpplin, S. P. B. G. Brink, E. H. S. Langforren, K. Douka, M. C. Aris, W. H. F. S. Kibenge, J. G. M. van der Geer, E. H. d'Errico",
