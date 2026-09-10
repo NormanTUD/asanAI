@@ -3227,6 +3227,155 @@ window.bibData = {
 		url: "https://www.cs.cmu.edu/~epxing/Class/10715/reading/McCulloch.and.Pitts.pdf"
 	},
 
+	/* ── The Cyberneticians (1943-1953) ── */
+	"behaviorpurpose1943": {
+		author: "Arturo Rosenblueth, Norbert Wiener, Julian Bigelow",
+		year: "1943",
+		title: "Behavior, Purpose and Teleology",
+		alternativetitle: "Behavior, Purpose and Teleology",
+		url: "https://www.jstor.org/stable/2187012"
+	},
+	"wienergodandgolem1937": {
+		author: "Norbert Wiener",
+		year: "1937",
+		title: "God and Golem, or Can Robots Think?",
+		alternativetitle: "Can Robots Think?",
+		url: "https://en.wikipedia.org/wiki/Norbert_Wiener"
+	},
+	"wienerhumaneuse1950": {
+		author: "Norbert Wiener",
+		year: "1950",
+		title: "The Human Use of Human Beings: Cybernetics and Society",
+		alternativetitle: "The Human Use of Human Beings",
+		url: "https://en.wikipedia.org/wiki/The_Human_Use_of_Human_Beings"
+	},
+	"macyconferences": {
+		author: "Josiah Macy Jr. Foundation (eds. Heinz von Foerster, Margaret Mead, Hans-Lukas Teuber)",
+		year: "1946-1953",
+		title: "Cybernetics: Circular Causal and Feedback Mechanisms in Biological and Social Systems (Transactions of the 7th-10th Conferences)",
+		alternativetitle: "The Macy Conferences",
+		url: "https://asc-cybernetics.org/foundations/history/MacySummary.htm"
+	},
+	"heims1991cyberneticsgroup": {
+		author: "Steve J. Heims",
+		year: "1991",
+		title: "The Cybernetics Group: A Social History of the Macy Conferences in Cybernetics, 1946-1953",
+		alternativetitle: "The Cybernetics Group",
+		url: "https://mitpress.mit.edu/9780262082006/the-cybernetics-group/"
+	},
+	"pias2003macy": {
+		author: "Claus Pias (ed.)",
+		year: "2003",
+		title: "Cybernetics: The Macy-Conferences 1946-1953",
+		alternativetitle: "Cybernetics | The Macy-Conferences 1946-1953",
+		url: "https://en.wikipedia.org/wiki/Macy_conferences"
+	},
+	"ratioclub": {
+		author: "John Bates (founder); members incl. C. S. Sherrington, G. D. Priestley, W. Ross Ashby",
+		year: "1949-1958",
+		title: "The Ratio Club (Cambridge)",
+		alternativetitle: "The Ratio Club",
+		url: "https://en.wikipedia.org/wiki/Ratio_Club"
+	},
+	"ashbyhomeostat1948": {
+		author: "W. Ross Ashby",
+		year: "1948",
+		title: "The Homeostat",
+		alternativetitle: "The Homeostat",
+		url: "http://www.panarchy.org/ashby/homeostat.1948.html"
+	},
+	"ashbydesigndbrain1952": {
+		author: "W. Ross Ashby",
+		year: "1952",
+		title: "Design for a Brain",
+		alternativetitle: "Design for a Brain",
+		url: "https://archive.org/details/designforbrainor00ashb"
+	},
+	"ashbyintrocybernetics1956": {
+		author: "W. Ross Ashby",
+		year: "1956",
+		title: "An Introduction to Cybernetics",
+		alternativetitle: "An Introduction to Cybernetics",
+		url: "http://pespmc1.vub.ac.be/ASHBBOOK.html"
+	},
+	"conantashby1970": {
+		author: "Roger C. Conant, W. Ross Ashby",
+		year: "1970",
+		title: "Every good regulator of a system must be a model of that system",
+		alternativetitle: "The Good Regulator Theorem",
+		url: "https://doi.org/10.1080/00207727008920220"
+	},
+	"batesonesteps1972": {
+		author: "Gregory Bateson",
+		year: "1972",
+		title: "Steps to an Ecology of Mind",
+		alternativetitle: "Steps to an Ecology of Mind",
+		url: "https://en.wikipedia.org/wiki/Steps_to_an_Ecology_of_Mind"
+	},
+	"batesondoublebind1956": {
+		author: "Gregory Bateson, Donald Jackson, Jay Haley, John H. Weakland",
+		year: "1956",
+		title: "Toward a Theory of Schizophrenia (the double bind)",
+		alternativetitle: "The Double Bind",
+		url: "https://en.wikipedia.org/wiki/Double_bind"
+	},
+	"shannonchess1950": {
+		author: "Claude Elwood Shannon",
+		year: "1950",
+		title: "Programming a Computer for Playing Chess",
+		alternativetitle: "Shannon's Chess Program",
+		url: "https://en.wikipedia.org/wiki/History_of_chess_software"
+	},
+	/* cybernetics portraits / machines (images) */
+	"wienerphoto": {
+		author: "Konrad Jacobs (Oberwolfach Photo Collection)",
+		year: "1950s",
+		title: "Norbert Wiener",
+		alternativetitle: "Norbert Wiener",
+		url: "https://commons.wikimedia.org/wiki/File:Norbert_wiener.jpg",
+		license: "CC BY-SA 2.0 DE"
+	},
+	"vonneumannphoto": {
+		author: "Los Alamos National Laboratory",
+		year: "1943-1947",
+		title: "John von Neumann (Los Alamos)",
+		alternativetitle: "John von Neumann",
+		url: "https://commons.wikimedia.org/wiki/File:JohnvonNeumann-LosAlamos.jpg",
+		license: "Public domain"
+	},
+	"shannonphoto": {
+		author: "UM Bentley Historical Library",
+		year: "c. 1930",
+		title: "Claude Elwood Shannon",
+		alternativetitle: "Claude Shannon",
+		url: "https://commons.wikimedia.org/wiki/File:Claude_Shannon_c1930.png",
+		license: "Public domain"
+	},
+	"ashbyphoto": {
+		author: "unknown (W. Ross Ashby Digital Archive)",
+		year: "1948",
+		title: "W. Ross Ashby",
+		alternativetitle: "W. Ross Ashby",
+		url: "https://commons.wikimedia.org/wiki/File:W._Ross_Ashby_(1948).jpg",
+		license: "Public domain"
+	},
+	"homeostatphoto": {
+		author: "Mick Ashby, on behalf of the Estate of W. Ross Ashby",
+		year: "1948",
+		title: "W. Ross Ashby's Homeostat",
+		alternativetitle: "The Homeostat (1948)",
+		url: "https://commons.wikimedia.org/wiki/File:W._Ross_Ashby%27s_1948_Homeostat.jpg",
+		license: "CC BY-SA 4.0"
+	},
+	"batesonphoto": {
+		author: "I Ketut Ngendon (Library of Congress exhibit)",
+		year: "1938",
+		title: "Margaret Mead and Gregory Bateson leaving Bali",
+		alternativetitle: "Gregory Bateson (with Margaret Mead), c. 1938",
+		url: "https://commons.wikimedia.org/wiki/File:Goodbye_and_Good_Luck_to_Margaret_Mead_and_Gregory_Bateson.jpg",
+		license: "Public domain"
+	},
+
 	"asimovlaws": {
 		author: "Isaac Asimov",
 		year: "1942",
