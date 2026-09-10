@@ -1359,6 +1359,19 @@
 				_parkInRail(fig, rail);
 				return;
 			}
+			/* Guard W11: a float/figure inserted into a <tr>/<td> is invalid
+			   HTML and would corrupt the table. If the marker lives in a
+			   table, keep the figure in the rail (hidden on narrow screens)
+			   rather than breaking the table layout. */
+			const hostParent = anchor.parentNode;
+			if (hostParent &&
+			    /^(TR|TABLE|THEAD|TBODY|TFOOT|TD|TH)$/i.test(hostParent.tagName || '')) {
+				logWarn('WRAP_TABLE_CONTEXT',
+					'\\marginfig #' + entry.id + ' marker is inside a table — ' +
+					'cannot flow the figure around it; parking in rail.');
+				_parkInRail(fig, rail);
+				return;
+			}
 			/* Clean reset to a neutral in-flow state. */
 			fig.classList.remove('sideimage-inline', 'sideimage-wrap');
 			fig.style.position    = '';
