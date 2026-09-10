@@ -1,0 +1,916 @@
+// ============================================================
+// FORWARD PASS 3D VISUALIZATION
+// ============================================================
+
+const ForwardPassViz = {
+    tokens: ['Die', 'Katze', 'saß', 'auf', 'der'],
+    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+    currentStep: 0,
+    maxSteps: 5, // 0=embed, 1=layer1, 2=layer2, 3=layer3, 4=unembedding, 5=result
+    plotDiv: null,
+    animating: false,
+
+    // Positions at each step (simulated 3D trajectory)
+    positions: null,
+
+    _generatePositions: function() {
+        const rng = (seed) => { let s = seed; return () => { s = (s * 16807 + 7) % 2147483647; return (s - 1) / 2147483646; }; };
+        this.positions = [];
+        
+        // Step 0: Embedding (spread out, no context)
+        const embed = [
+            [1.2, 0.5, -0.3],   // Die
+            [-0.8, 1.5, 0.7],   // Katze
+            [0.3, -1.2, 1.4],   // saß
+            [1.8, 0.8, -1.0],   // auf
+            [0.9, -0.5, 0.2],   // der
+        ];
+        this.positions.push(embed);
+
+        // Step 1: After Layer 1 (local grouping, subword composition)
+        this.positions.push([
+            [1.0, 0.6, -0.1],
+            [-0.5, 1.8, 0.9],
+            [0.5, -0.8, 1.2],
+            [1.5, 0.5, -0.7],
+            [1.1, 0.0, 0.0],
+        ]);
+
+        // Step 2: After Layer 2 (semantic clustering)
+        this.positions.push([
+            [0.8, 0.9, 0.2],
+            [-0.2, 2.1, 1.1],
+            [0.7, -0.3, 0.8],
+            [1.2, 0.3, -0.3],
+            [1.0, 0.5, 0.3],
+        ]);
+
+        // Step 3: After Layer 3 (strong context, convergence)
+        this.positions.push([
+            [0.6, 1.1, 0.5],
+            [0.1, 2.0, 1.3],
+            [0.8, 0.2, 0.5],
+            [0.9, 0.8, 0.1],
+            [0.8, 1.0, 0.6],  // "der" accumulates context
+        ]);
+
+        // Step 4: Final (last token moves toward prediction region)
+        this.positions.push([
+            [0.5, 1.0, 0.5],
+            [0.0, 1.9, 1.2],
+            [0.7, 0.3, 0.5],
+            [0.8, 0.9, 0.2],
+            [1.5, 1.8, 1.0],  // "der" → prediction region
+        ]);
+
+        // Step 5: Unembedding (show result token)
+        this.positions.push([
+            [0.5, 1.0, 0.5],
+            [0.0, 1.9, 1.2],
+            [0.7, 0.3, 0.5],
+            [0.8, 0.9, 0.2],
+            [1.8, 2.0, 1.2],  // lands near "Matte"
+        ]);
+    },
+
+    render: function() {
+        const plotDiv = document.getElementById('forward-pass-3d');
+        if (!plotDiv) return;
+        this.plotDiv = plotDiv;
+        if (!this.positions) this._generatePositions();
+
+        const step = this.currentStep;
+        const pos = this.positions[Math.min(step, this.positions.length - 1)];
+        const traces = [];
+
+        // Token points
+        traces.push({
+            x: pos.map(p => p[0]),
+            y: pos.map(p => p[1]),
+            z: pos.map(p => p[2]),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: this.tokens,
+            textposition: 'top center',
+            textfont: { size: 12, color: this.colors },
+            marker: { size: 10, color: this.colors, line: { width: 1, color: '#fff' } },
+            hovertemplate: '<b>%{text}</b><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>',
+            name: 'Tokens'
+        });
+
+        // Movement trails (show path from embedding to current)
+        if (step > 0) {
+            for (let t = 0; t < this.tokens.length; t++) {
+                const pathX = [], pathY = [], pathZ = [];
+                for (let s = 0; s <= Math.min(step, this.positions.length - 1); s++) {
+                    pathX.push(this.positions[s][t][0]);
+                    pathY.push(this.positions[s][t][1]);
+                    pathZ.push(this.positions[s][t][2]);
+                }
+                traces.push({
+                    x: pathX, y: pathY, z: pathZ,
+                    mode: 'lines',
+                    type: 'scatter3d',
+                    line: { color: this.colors[t], width: 3, dash: t === 4 ? 'solid' : 'dot' },
+                    opacity: t === 4 ? 1 : 0.5,
+                    showlegend: false,
+                    hoverinfo: 'none'
+                });
+            }
+        }
+
+        // Prediction region (show at step 4+)
+        if (step >= 4) {
+            // Target words as faint points
+            const targets = [
+                { word: 'Matte', pos: [1.9, 2.1, 1.1] },
+                { word: 'Bank', pos: [2.2, 1.5, 0.8] },
+                { word: 'Straße', pos: [1.6, 2.3, 1.4] },
+            ];
+            traces.push({
+                x: targets.map(t => t.pos[0]),
+                y: targets.map(t => t.pos[1]),
+                z: targets.map(t => t.pos[2]),
+                mode: 'markers+text',
+                type: 'scatter3d',
+                text: targets.map(t => t.word),
+                textposition: 'bottom center',
+                textfont: { size: 10, color: '#94a3b8' },
+                marker: { size: 6, color: '#cbd5e1', symbol: 'diamond' },
+                showlegend: false,
+                hovertemplate: '<b>%{text}</b> (Vokabular)<extra></extra>'
+            });
+        }
+
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: { title: 'Dim 1', range: [-2, 3], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                yaxis: { title: 'Dim 2', range: [-2, 3], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                zaxis: { title: 'Dim 3', range: [-2, 2.5], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                camera: { eye: { x: 1.8, y: 1.2, z: 0.8 } },
+                aspectratio: { x: 1, y: 1, z: 0.7 },
+                dragmode: 'turntable'
+            },
+            showlegend: false,
+            hovermode: 'closest'
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true, scrollZoom: true });
+        this._updateUI();
+    },
+
+    _updateUI: function() {
+        const label = document.getElementById('forward-pass-step-label');
+        const info = document.getElementById('forward-pass-info');
+        const stepNames = ['Embedding', 'Layer 1 (Syntax)', 'Layer 2 (Semantik)', 'Layer 3 (Kontext)', 'Unembedding', 'Vorhersage: "Matte"'];
+        const stepDescs = [
+            'Jedes Token wird zu einem Punkt im Raum. Noch kein Kontext – "Katze" weiß noch nicht, dass sie sitzt.',
+            '<b>Layer 1:</b> Lokale Verschiebung. "Die" und "Katze" rücken zusammen (Nominalphrase). Punkte bewegen sich nur wenig.',
+            '<b>Layer 2:</b> Semantische Beziehungen. "saß" wird zum Subjekt "Katze" gezogen. Wer-tat-was wird kodiert.',
+            '<b>Layer 3:</b> Voller Kontext akkumuliert im letzten Token "der". Es sammelt die Gesamtbedeutung des Satzes.',
+            '<b>Unembedding:</b> Der finale Punkt von "der" wird mit allen Vokabular-Embeddings verglichen. Das nächste Wort, dessen Embedding am nächsten zeigt, gewinnt.',
+            '🎯 <b>"Matte"</b> gewinnt! Der Punkt von "der" landet in der Region, die auf Orte/Oberflächen zeigt. → "Die Katze saß auf der <b>Matte</b>"'
+        ];
+        if (label) label.textContent = 'Schritt: ' + stepNames[Math.min(this.currentStep, 5)];
+        if (info) info.innerHTML = stepDescs[Math.min(this.currentStep, 5)] + '<br><span style="font-size:0.8em; color:#64748b;">⚠️ 3D-Projektion eines 4096+-dimensionalen Raums. Abstände vereinfacht.</span>';
+    },
+
+    stepForward: function() {
+        if (this.currentStep < this.maxSteps) {
+            this.currentStep++;
+            this.render();
+        }
+    },
+
+    reset: function() {
+        this.currentStep = 0;
+        this.animating = false;
+        this.render();
+    },
+
+    animateAll: function() {
+        if (this.animating) return;
+        this.animating = true;
+        this.currentStep = 0;
+        this.render();
+        let step = 0;
+        const interval = setInterval(() => {
+            step++;
+            this.currentStep = step;
+            this.render();
+            if (step >= this.maxSteps) {
+                clearInterval(interval);
+                this.animating = false;
+            }
+        }, 1200);
+    }
+};
+
+// ============================================================
+// EMBEDDING 3D VISUALIZATION
+// ============================================================
+
+const Embedding3DViz = {
+    plotDiv: null,
+    showClusters: true,
+    showDirections: true,
+    showArith: false,
+
+    words: {
+        'König': { pos: [2.0, -0.8, 1.5], color: '#3b82f6', cluster: 'royalty' },
+        'Königin': { pos: [2.0, 0.8, 1.5], color: '#ec4899', cluster: 'royalty' },
+        'Mann': { pos: [0.5, -1.2, 0.3], color: '#6366f1', cluster: 'people' },
+        'Frau': { pos: [0.5, 1.2, 0.3], color: '#f43f5e', cluster: 'people' },
+        'Katze': { pos: [-2.0, 0.3, -0.5], color: '#10b981', cluster: 'animals' },
+        'Hund': { pos: [-2.2, -0.3, -0.7], color: '#f59e0b', cluster: 'animals' },
+        'Hamburg': { pos: [-0.5, -0.2, 2.5], color: '#0ea5e9', cluster: 'geo' },
+        'Elbe': { pos: [-0.3, 0.1, 2.3], color: '#06b6d4', cluster: 'geo' },
+        'Spree': { pos: [0.8, 0.4, 2.1], color: '#14b8a6', cluster: 'geo' },
+        'Berlin': { pos: [1.0, 0.2, 2.4], color: '#0284c7', cluster: 'geo' },
+        'Liebe': { pos: [1.5, 2.0, -1.0], color: '#e11d48', cluster: 'abstract' },
+        'Hass': { pos: [1.5, -2.0, -1.0], color: '#7f1d1d', cluster: 'abstract' },
+        'schnell': { pos: [-1.0, -1.5, -2.0], color: '#84cc16', cluster: 'adj' },
+        'langsam': { pos: [-1.0, 1.5, -2.0], color: '#65a30d', cluster: 'adj' },
+    },
+
+    clusters: {
+        royalty: { center: [2.0, 0.0, 1.5], radius: 1.2, color: 'rgba(59,130,246,0.08)', label: 'Adel' },
+        people: { center: [0.5, 0.0, 0.3], radius: 1.5, color: 'rgba(99,102,241,0.06)', label: 'Menschen' },
+        animals: { center: [-2.1, 0.0, -0.6], radius: 1.0, color: 'rgba(16,185,129,0.08)', label: 'Tiere' },
+        geo: { center: [0.3, 0.1, 2.3], radius: 1.3, color: 'rgba(14,165,233,0.07)', label: 'Geographie' },
+        abstract: { center: [1.5, 0.0, -1.0], radius: 2.2, color: 'rgba(225,29,72,0.05)', label: 'Emotion' },
+    },
+
+    directions: [
+        { from: [-0.5, -1.5, 0], to: [-0.5, 1.5, 0], label: 'Gender ♂→♀', color: '#a855f7' },
+        { from: [-1.5, 0, 0], to: [2.5, 0, 0], label: 'Rang (gewöhnlich→königlich)', color: '#f59e0b' },
+        { from: [0, 0, -2], to: [0, 0, 2.5], label: 'Konkretheit (abstrakt→konkret)', color: '#06b6d4' },
+    ],
+
+    arithStep: 0,
+    arithInterval: null,
+
+    // Pre-computed cluster sphere points (generated once)
+    _clusterPointsCache: null,
+
+    _getClusterPoints: function() {
+        if (this._clusterPointsCache) return this._clusterPointsCache;
+
+        // Generate all cluster sphere points once, deterministically
+        const allX = [], allY = [], allZ = [], allColors = [];
+        const labelX = [], labelY = [], labelZ = [], labelTexts = [], labelColors = [];
+
+        const clusters = Object.values(this.clusters);
+        // Use seeded pseudo-random for deterministic points
+        let seed = 42;
+        const seededRandom = () => {
+            seed = (seed * 16807 + 7) % 2147483647;
+            return (seed - 1) / 2147483646;
+        };
+
+        clusters.forEach(cl => {
+            const pts = 30;
+            for (let i = 0; i < pts; i++) {
+                const phi = Math.acos(2 * seededRandom() - 1);
+                const theta = seededRandom() * Math.PI * 2;
+                allX.push(cl.center[0] + cl.radius * Math.sin(phi) * Math.cos(theta));
+                allY.push(cl.center[1] + cl.radius * Math.sin(phi) * Math.sin(theta));
+                allZ.push(cl.center[2] + cl.radius * Math.cos(phi));
+                allColors.push(cl.color.replace('0.0', '0.3'));
+            }
+            labelX.push(cl.center[0]);
+            labelY.push(cl.center[1]);
+            labelZ.push(cl.center[2] + cl.radius + 0.2);
+            labelTexts.push(cl.label);
+            labelColors.push('#94a3b8');
+        });
+
+        this._clusterPointsCache = {
+            points: { x: allX, y: allY, z: allZ, colors: allColors },
+            labels: { x: labelX, y: labelY, z: labelZ, texts: labelTexts, colors: labelColors }
+        };
+        return this._clusterPointsCache;
+    },
+
+    render: function() {
+        const plotDiv = document.getElementById('embedding-3d-plot');
+        if (!plotDiv) return;
+        this.plotDiv = plotDiv;
+
+        const traces = [];
+        const wordEntries = Object.entries(this.words);
+
+        // Trace 0: All word points (single trace)
+        traces.push({
+            x: wordEntries.map(([_, w]) => w.pos[0]),
+            y: wordEntries.map(([_, w]) => w.pos[1]),
+            z: wordEntries.map(([_, w]) => w.pos[2]),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: wordEntries.map(([name]) => name),
+            textposition: 'top center',
+            textfont: { size: 11, color: wordEntries.map(([_, w]) => w.color) },
+            marker: {
+                size: 8,
+                color: wordEntries.map(([_, w]) => w.color),
+                line: { width: 1, color: '#fff' }
+            },
+            hovertemplate: '<b>%{text}</b><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>',
+            name: 'Wörter'
+        });
+
+        // Trace 1: All cluster sphere points (single trace, cached)
+        if (this.showClusters) {
+            const cached = this._getClusterPoints();
+            traces.push({
+                x: cached.points.x,
+                y: cached.points.y,
+                z: cached.points.z,
+                mode: 'markers',
+                type: 'scatter3d',
+                marker: { size: 3, color: cached.points.colors, opacity: 0.15 },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+            // Trace 2: All cluster labels (single trace)
+            traces.push({
+                x: cached.labels.x,
+                y: cached.labels.y,
+                z: cached.labels.z,
+                mode: 'text',
+                type: 'scatter3d',
+                text: cached.labels.texts,
+                textfont: { size: 10, color: cached.labels.colors },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+        }
+
+        // Trace 3: All direction lines (single trace using null separators)
+        if (this.showDirections) {
+            const dirX = [], dirY = [], dirZ = [];
+            const dirLabelX = [], dirLabelY = [], dirLabelZ = [], dirLabelTexts = [], dirLabelColors = [];
+
+            this.directions.forEach(dir => {
+                dirX.push(dir.from[0], dir.to[0], null);
+                dirY.push(dir.from[1], dir.to[1], null);
+                dirZ.push(dir.from[2], dir.to[2], null);
+                dirLabelX.push(dir.to[0]);
+                dirLabelY.push(dir.to[1]);
+                dirLabelZ.push(dir.to[2]);
+                dirLabelTexts.push(dir.label);
+                dirLabelColors.push(dir.color);
+            });
+
+            traces.push({
+                x: dirX,
+                y: dirY,
+                z: dirZ,
+                mode: 'lines',
+                type: 'scatter3d',
+                line: { color: '#a855f7', width: 4, dash: 'dash' },
+                hoverinfo: 'none',
+                showlegend: false,
+                connectgaps: false
+            });
+            // Trace 4: All direction labels (single trace)
+            traces.push({
+                x: dirLabelX,
+                y: dirLabelY,
+                z: dirLabelZ,
+                mode: 'text',
+                type: 'scatter3d',
+                text: dirLabelTexts,
+                textfont: { size: 9, color: dirLabelColors },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+        }
+
+        // Arithmetic visualization (max 2 additional traces)
+        if (this.showArith && this.arithStep > 0) {
+            this._renderArithTraces(traces);
+        }
+
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: { title: 'Dim 1', range: [-3.5, 3.5], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                yaxis: { title: 'Dim 2', range: [-3, 3], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                zaxis: { title: 'Dim 3', range: [-3, 3.5], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                camera: { eye: { x: 1.6, y: 1.4, z: 0.9 } },
+                aspectratio: { x: 1, y: 1, z: 0.8 },
+                dragmode: 'turntable'
+            },
+            showlegend: false,
+            hovermode: 'closest'
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true, scrollZoom: true });
+    },
+
+    _renderArithTraces: function(traces) {
+        const king = this.words['König'].pos;
+        const man = this.words['Mann'].pos;
+        const woman = this.words['Frau'].pos;
+
+        const step2 = [king[0] - man[0], king[1] - man[1], king[2] - man[2]];
+        const step3 = [step2[0] + woman[0], step2[1] + woman[1], step2[2] + woman[2]];
+
+        const pathX = [king[0]], pathY = [king[1]], pathZ = [king[2]];
+        if (this.arithStep >= 2) { pathX.push(step2[0]); pathY.push(step2[1]); pathZ.push(step2[2]); }
+        if (this.arithStep >= 3) { pathX.push(step3[0]); pathY.push(step3[1]); pathZ.push(step3[2]); }
+
+        // Single trace for path + markers
+        traces.push({
+            x: pathX,
+            y: pathY,
+            z: pathZ,
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: { color: '#ef4444', width: 5 },
+            marker: { size: 6, color: '#ef4444' },
+            hoverinfo: 'none',
+            showlegend: false
+        });
+
+        // Result label (step 3)
+        if (this.arithStep >= 3) {
+            traces.push({
+                x: [step3[0]], y: [step3[1]], z: [step3[2]],
+                mode: 'markers+text',
+                type: 'scatter3d',
+                text: ['≈ Königin!'],
+                textposition: 'bottom center',
+                textfont: { size: 13, color: '#ef4444', weight: 'bold' },
+                marker: { size: 14, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: '#fff' } },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+        }
+    },
+
+    showArithmetic: function() {
+        if (this.arithInterval) { clearInterval(this.arithInterval); this.arithInterval = null; }
+        this.showArith = true;
+        this.arithStep = 0;
+        const info = document.getElementById('embedding-3d-info');
+
+        const steps = [
+            'Starte bei <b>König</b> (2.0, -0.8, 1.5)...',
+            '<b>König − Mann</b>: Subtrahiere die "Mann-Richtung" → der Punkt verschiebt sich...',
+            '<b>+ Frau</b>: Addiere die "Frau-Richtung" → der Punkt landet bei <b>≈ Königin!</b> Vektorarithmetik funktioniert, weil Bedeutung als Richtung kodiert ist.'
+        ];
+
+        let step = 0;
+        this.arithInterval = setInterval(() => {
+            step++;
+            this.arithStep = step;
+            if (info) info.innerHTML = '👉 ' + steps[Math.min(step - 1, steps.length - 1)];
+            this.render();
+            if (step >= 3) { clearInterval(this.arithInterval); this.arithInterval = null; }
+        }, 1200);
+    },
+
+    toggleClusters: function() {
+        this.showClusters = !this.showClusters;
+        this.render();
+    },
+
+    toggleDirections: function() {
+        this.showDirections = !this.showDirections;
+        this.render();
+    }
+};
+
+// ============================================================
+// ATTENTION 3D VISUALIZATION
+// ============================================================
+
+const Attention3DViz = {
+    tokens: ['Die', 'Katze', 'saß', 'auf', 'der'],
+    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+    currentLayer: 0,
+    plotDiv: null,
+    animating: false,
+
+    // Base positions (embedding)
+    basePositions: [
+        [1.0, 0.5, -0.3],
+        [-0.8, 1.5, 0.7],
+        [0.3, -1.0, 1.2],
+        [1.6, 0.8, -0.8],
+        [0.8, -0.4, 0.1],
+    ],
+
+    // How much each token moves at each layer (simulated attention effect)
+    // [layer][token] = displacement vector
+    layerDisplacements: [
+        // Layer 0: very local, subword composition
+        [[0.05, 0.02, 0.01], [0.1, 0.05, 0.03], [0.02, 0.03, -0.02], [0.03, -0.02, 0.04], [0.08, 0.04, 0.02]],
+        // Layer 1: moderate, syntactic grouping
+        [[0.15, 0.1, 0.05], [0.2, 0.15, 0.1], [0.1, 0.2, -0.1], [0.08, -0.05, 0.12], [0.18, 0.12, 0.08]],
+        // Layer 2: larger, semantic relationships
+        [[0.3, 0.2, 0.15], [0.4, 0.3, 0.2], [0.25, 0.35, -0.15], [0.15, -0.1, 0.25], [0.35, 0.25, 0.2]],
+        // Layer 3: strong context accumulation
+        [[0.4, 0.3, 0.2], [0.5, 0.4, 0.3], [0.35, 0.45, -0.1], [0.2, -0.05, 0.35], [0.6, 0.5, 0.4]],
+        // Layer 4: final, last token moves most
+        [[0.4, 0.3, 0.2], [0.5, 0.4, 0.3], [0.35, 0.45, -0.1], [0.2, -0.05, 0.35], [0.9, 0.7, 0.6]],
+    ],
+
+    // Attention heads (which tokens attend to which, per layer)
+    attentionHeads: [
+        // Layer 0: local attention (adjacent tokens)
+        [{ from: 1, to: 0, strength: 0.8, head: 'Syntax' }, { from: 4, to: 3, strength: 0.7, head: 'Syntax' }],
+        // Layer 1: noun-verb links
+        [{ from: 2, to: 1, strength: 0.9, head: 'Subjekt' }, { from: 4, to: 0, strength: 0.5, head: 'Artikel' }],
+        // Layer 2: broader context
+        [{ from: 4, to: 1, strength: 0.8, head: 'Semantik' }, { from: 4, to: 2, strength: 0.6, head: 'Verb' }, { from: 2, to: 1, strength: 0.7, head: 'Agens' }],
+        // Layer 3: full context to last token
+        [{ from: 4, to: 0, strength: 0.5, head: 'Kontext' }, { from: 4, to: 1, strength: 0.9, head: 'Kontext' }, { from: 4, to: 2, strength: 0.8, head: 'Kontext' }, { from: 4, to: 3, strength: 0.6, head: 'Kontext' }],
+        // Layer 4: prediction focus
+        [{ from: 4, to: 1, strength: 0.95, head: 'Vorhersage' }, { from: 4, to: 2, strength: 0.7, head: 'Vorhersage' }],
+    ],
+
+    getPositionAtLayer: function(tokenIdx, layer) {
+        const base = this.basePositions[tokenIdx];
+        let pos = [...base];
+        for (let l = 0; l <= layer; l++) {
+            const disp = this.layerDisplacements[l][tokenIdx];
+            pos = pos.map((v, i) => v + disp[i]);
+        }
+        return pos;
+    },
+
+    render: function() {
+        const plotDiv = document.getElementById('attention-3d-plot');
+        if (!plotDiv) return;
+        this.plotDiv = plotDiv;
+
+        const layer = this.currentLayer;
+        const traces = [];
+
+        // Current positions
+        const positions = this.tokens.map((_, i) => this.getPositionAtLayer(i, layer));
+
+        // Token points
+        traces.push({
+            x: positions.map(p => p[0]),
+            y: positions.map(p => p[1]),
+            z: positions.map(p => p[2]),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: this.tokens,
+            textposition: 'top center',
+            textfont: { size: 12, color: this.colors },
+            marker: { size: 10, color: this.colors, line: { width: 1, color: '#fff' } },
+            hovertemplate: '<b>%{text}</b><br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>',
+            name: 'Tokens'
+        });
+
+        // Ghost positions (where they were at layer 0)
+        if (layer > 0) {
+            const ghostPos = this.tokens.map((_, i) => this.basePositions[i]);
+            traces.push({
+                x: ghostPos.map(p => p[0]),
+                y: ghostPos.map(p => p[1]),
+                z: ghostPos.map(p => p[2]),
+                mode: 'markers',
+                type: 'scatter3d',
+                marker: { size: 5, color: '#e2e8f0', opacity: 0.4 },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+            // Trails from ghost to current
+            for (let t = 0; t < this.tokens.length; t++) {
+                traces.push({
+                    x: [ghostPos[t][0], positions[t][0]],
+                    y: [ghostPos[t][1], positions[t][1]],
+                    z: [ghostPos[t][2], positions[t][2]],
+                    mode: 'lines',
+                    type: 'scatter3d',
+                    line: { color: this.colors[t], width: 2, dash: 'dot' },
+                    opacity: 0.4,
+                    hoverinfo: 'none',
+                    showlegend: false
+                });
+            }
+        }
+
+        // Attention lines
+        const headColors = { 'Syntax': '#3b82f6', 'Subjekt': '#10b981', 'Artikel': '#f59e0b', 'Semantik': '#8b5cf6', 'Verb': '#ec4899', 'Agens': '#06b6d4', 'Kontext': '#6366f1', 'Vorhersage': '#ef4444' };
+        const heads = this.attentionHeads[layer] || [];
+
+        heads.forEach(attn => {
+            const fromPos = positions[attn.from];
+            const toPos = positions[attn.to];
+            const color = headColors[attn.head] || '#94a3b8';
+
+            traces.push({
+                x: [fromPos[0], toPos[0]],
+                y: [fromPos[1], toPos[1]],
+                z: [fromPos[2], toPos[2]],
+                mode: 'lines',
+                type: 'scatter3d',
+                line: { color: color, width: Math.max(2, attn.strength * 6) },
+                opacity: 0.7,
+                hoverinfo: 'none',
+                showlegend: false
+            });
+            // Midpoint label
+            const mid = [(fromPos[0] + toPos[0]) / 2, (fromPos[1] + toPos[1]) / 2, (fromPos[2] + toPos[2]) / 2];
+            traces.push({
+                x: [mid[0]], y: [mid[1]], z: [mid[2]],
+                mode: 'text',
+                type: 'scatter3d',
+                text: [attn.head],
+                textfont: { size: 9, color: color },
+                hoverinfo: 'none',
+                showlegend: false
+            });
+        });
+
+        // Causal mask visualization: show which tokens CAN'T attend
+        // (faint X marks for future tokens)
+
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: { title: 'Dim 1', range: [-2, 4], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                yaxis: { title: 'Dim 2', range: [-2, 3.5], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                zaxis: { title: 'Dim 3', range: [-2, 3], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                camera: { eye: { x: 1.7, y: 1.3, z: 0.9 } },
+                aspectratio: { x: 1, y: 1, z: 0.7 },
+                dragmode: 'turntable'
+            },
+            showlegend: false,
+            hovermode: 'closest'
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true, scrollZoom: true });
+        this._updateLabel();
+    },
+
+    _updateLabel: function() {
+        const label = document.getElementById('attention-layer-label');
+        const info = document.getElementById('attention-3d-info');
+        const layerNames = ['Layer 0 (früh)', 'Layer 1', 'Layer 2', 'Layer 3', 'Layer 4 (spät)'];
+        const layerDescs = [
+            'Lokale Attention: Benachbarte Tokens gruppieren sich. "Die"→"Katze" (Nominalphrase). Verschiebung minimal.',
+            'Syntaktische Rollen: "saß" erkennt "Katze" als Subjekt. Punkte bewegen sich stärker.',
+            'Semantische Beziehungen: "der" beginnt Kontext zu sammeln. Breitere Attention-Muster.',
+            'Voller Kontext: "der" (letztes Token) sammelt Information von ALLEN vorherigen Tokens. Starke Verschiebung.',
+            'Vorhersage-Fokus: Das letzte Token akkumuliert die Gesamtbedeutung. Es bewegt sich am stärksten – bereit für Unembedding.'
+        ];
+        if (label) label.textContent = layerNames[this.currentLayer];
+        if (info) info.innerHTML = '🧲 ' + layerDescs[this.currentLayer] + '<br><span style="font-size:0.8em; color:#64748b;">Farbige Linien = verschiedene Attention-Köpfe. Stärke = Linienstärke. Kausale Maske: nur links→rechts.</span>';
+    },
+
+    setLayer: function(layer) {
+        this.currentLayer = layer;
+        document.getElementById('attention-layer-slider').value = layer;
+        this.render();
+    },
+
+    animateLayers: function() {
+        if (this.animating) return;
+        this.animating = true;
+        this.currentLayer = 0;
+        this.render();
+        let layer = 0;
+        const interval = setInterval(() => {
+            layer++;
+            this.currentLayer = layer;
+            document.getElementById('attention-layer-slider').value = layer;
+            this.render();
+            if (layer >= 4) {
+                clearInterval(interval);
+                this.animating = false;
+            }
+        }, 1500);
+    }
+};
+
+// ============================================================
+// FFN 3D VISUALIZATION
+// ============================================================
+
+const FFN3DViz = {
+    plotDiv: null,
+    currentFact: 'rare',
+    animating: false,
+
+    facts: {
+        rare: {
+            label: 'Selten: "Hauptstadt von Liechtenstein = Vaduz"',
+            startPos: [0.5, 1.0, 0.3],
+            endPos: [0.8, 1.3, 0.5],
+            arrowLength: 0.5,
+            activeNeurons: 3,
+            totalNeurons: 20,
+            description: '<b>Wenige Neuronen aktiv</b> (3 von tausenden) → kurzer, spezifischer Verschiebungsvektor. Seltenes Wissen ist <b>lokal kodiert</b>.',
+            detectors: ['Hauptstadt?', 'Kleinstaat?', 'Europa?'],
+            detectorStates: [true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+        },
+        common: {
+            label: 'Häufig: "nach Artikel kommt Nomen"',
+            startPos: [0.5, 1.0, 0.3],
+            endPos: [1.8, 2.2, 1.5],
+            arrowLength: 2.2,
+            activeNeurons: 15,
+            totalNeurons: 20,
+            description: '<b>Viele Neuronen aktiv</b> (15 von tausenden) → langer, verteilter Verschiebungsvektor. Häufiges Muster ist <b>global kodiert</b>.',
+            detectors: ['Artikel?', 'Nomen-Kontext?', 'Syntax?', 'Deutsch?', 'Singular?'],
+            detectorStates: [true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
+        },
+        medium: {
+            label: 'Mittel: "Katzen sind Tiere"',
+            startPos: [0.5, 1.0, 0.3],
+            endPos: [1.2, 1.7, 0.9],
+            arrowLength: 1.2,
+            activeNeurons: 8,
+            totalNeurons: 20,
+            description: '<b>Mittlere Aktivierung</b> (8 Neuronen) → mittlerer Verschiebungsvektor. Allgemeinwissen liegt auf dem Spektrum zwischen lokal und global.',
+            detectors: ['Tier?', 'Lebewesen?', 'Kategorie?', 'Haustier?'],
+            detectorStates: [true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false],
+        }
+    },
+
+    render: function() {
+        const plotDiv = document.getElementById('ffn-3d-plot');
+        if (!plotDiv) return;
+        this.plotDiv = plotDiv;
+
+        const fact = this.facts[this.currentFact];
+        const traces = [];
+
+        // Trace 0: Start point
+        traces.push({
+            x: [fact.startPos[0]], y: [fact.startPos[1]], z: [fact.startPos[2]],
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: ['Punkt A (vorher)'],
+            textposition: 'bottom center',
+            textfont: { size: 11, color: '#64748b' },
+            marker: { size: 10, color: '#94a3b8', line: { width: 1, color: '#fff' } },
+            name: 'Start'
+        });
+
+        // Trace 1: End point
+        traces.push({
+            x: [fact.endPos[0]], y: [fact.endPos[1]], z: [fact.endPos[2]],
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: ['Punkt B (nachher)'],
+            textposition: 'top center',
+            textfont: { size: 11, color: '#d97706', weight: 'bold' },
+            marker: { size: 12, color: '#d97706', symbol: 'diamond', line: { width: 2, color: '#fff' } },
+            name: 'Ende'
+        });
+
+        // Trace 2: Arrow line
+        traces.push({
+            x: [fact.startPos[0], fact.endPos[0]],
+            y: [fact.startPos[1], fact.endPos[1]],
+            z: [fact.startPos[2], fact.endPos[2]],
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { color: '#ef4444', width: 6 },
+            hoverinfo: 'none',
+            showlegend: false
+        });
+
+        // Trace 3: ALL neurons as a single batched trace
+        const neuronY = -1.5;
+        const neuronX = [], neuronYArr = [], neuronZ = [];
+        const neuronSizes = [], neuronColors = [], neuronOpacities = [];
+        const neuronHoverTexts = [];
+
+        for (let i = 0; i < fact.totalNeurons; i++) {
+            const active = fact.detectorStates[i];
+            neuronX.push(-2 + i * 0.25);
+            neuronYArr.push(neuronY);
+            neuronZ.push(-1.5);
+            neuronSizes.push(active ? 8 : 4);
+            neuronColors.push(active ? '#f59e0b' : '#e2e8f0');
+            neuronOpacities.push(active ? 1 : 0.4);
+            neuronHoverTexts.push(active ? `Neuron ${i + 1}: AKTIV 🔥` : `Neuron ${i + 1}: still`);
+        }
+
+        traces.push({
+            x: neuronX,
+            y: neuronYArr,
+            z: neuronZ,
+            mode: 'markers',
+            type: 'scatter3d',
+            marker: {
+                size: neuronSizes,
+                color: neuronColors,
+                opacity: neuronOpacities
+            },
+            text: neuronHoverTexts,
+            hovertemplate: '%{text}<extra></extra>',
+            showlegend: false
+        });
+
+        // Trace 4: Neuron count label
+        traces.push({
+            x: [-2], y: [neuronY], z: [-1.9],
+            mode: 'text',
+            type: 'scatter3d',
+            text: [`${fact.activeNeurons}/${fact.totalNeurons} aktiv`],
+            textfont: { size: 10, color: '#92400e' },
+            hoverinfo: 'none',
+            showlegend: false
+        });
+
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: { title: 'Dim 1', range: [-3, 3], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                yaxis: { title: 'Dim 2', range: [-2, 3], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                zaxis: { title: 'Dim 3', range: [-2.5, 2], gridcolor: '#f1f5f9', backgroundcolor: '#fafafa' },
+                camera: { eye: { x: 1.5, y: 1.3, z: 1.0 } },
+                aspectratio: { x: 1, y: 1, z: 0.7 },
+                dragmode: 'turntable'
+            },
+            showlegend: false,
+            hovermode: 'closest'
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true, scrollZoom: true });
+
+        // Update info
+        const info = document.getElementById('ffn-3d-info');
+        if (info) info.innerHTML = fact.description;
+    },
+
+    setFact: function(factKey) {
+        this.currentFact = factKey;
+        this.render();
+    },
+
+    animateShift: function() {
+        if (this.animating) return;
+        this.animating = true;
+        const fact = this.facts[this.currentFact];
+        const plotDiv = this.plotDiv;
+        if (!plotDiv) { this.animating = false; return; }
+
+        // Animate the point moving from start to end
+        const steps = 30;
+        let step = 0;
+        const interval = setInterval(() => {
+            step++;
+            const t = step / steps;
+            const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            const currentPos = fact.startPos.map((s, i) => s + (fact.endPos[i] - s) * eased);
+
+            Plotly.restyle(plotDiv, {
+                x: [[currentPos[0]]],
+                y: [[currentPos[1]]],
+                z: [[currentPos[2]]]
+            }, [0]);
+
+            if (step >= steps) {
+                clearInterval(interval);
+                this.animating = false;
+            }
+        }, 40);
+    }
+};
+
+// ============================================================
+// LAZY LOADING REGISTRATION FOR NEW SLIDES
+// ============================================================
+
+// Add to the existing lazy loading system for the new forward-pass slides
+
+async function initForwardPassSlides() {
+    // Forward Pass Overview
+        ForwardPassViz.render();
+
+    // Embedding 3D
+        Embedding3DViz.render();
+
+    // Attention 3D
+        Attention3DViz.render();
+
+    // FFN 3D
+        FFN3DViz.render();
+
+    // Start observing
+    _lazyCreateObserver();
+}
+
+// Hook into the existing DOMContentLoaded or call after loadIntuitionModule
+// We check if loadIntuitionModule already ran; if so, just init directly
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        initForwardPassSlides();
+    });
+} else {
+    // DOM already loaded
+    initForwardPassSlides();
+}

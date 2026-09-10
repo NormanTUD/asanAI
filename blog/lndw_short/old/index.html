@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How LLMs Really Work — A Geometric Intuition</title>
+
+<!-- Temml for LaTeX rendering (use Local CSS to avoid font 404) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<!-- Marked.js for Markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+
+<!-- Highlight.js for code blocks (use cdnjs for reliable MIME types) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<style>
+:root {
+  --bg-primary: #0a0a1a;
+  --bg-slide: #12122a;
+  --bg-card: #1a1a3e;
+  --accent: #6c63ff;
+  --accent-glow: rgba(108, 99, 255, 0.3);
+  --accent2: #00d4aa;
+  --accent3: #ff6b9d;
+  --text-primary: #e8e8f0;
+  --text-secondary: #a0a0c0;
+  --text-muted: #606080;
+  --border: rgba(108, 99, 255, 0.2);
+  --transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+#presentation { width: 100%; height: 100%; position: relative; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transform: translateX(60px) scale(0.97);
+  transition: opacity var(--transition), transform var(--transition);
+  pointer-events: none;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: all;
+}
+
+.slide.exit-left {
+  opacity: 0;
+  transform: translateX(-60px) scale(0.97);
+}
+
+.slide-inner { max-width: 1100px; width: 100%; }
+
+.slide h1 {
+  font-size: 2.8rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; margin-bottom: 0.5em; line-height: 1.2;
+}
+
+.slide h2 {
+  font-size: 2rem; font-weight: 700; color: var(--accent);
+  margin-bottom: 0.5em; border-bottom: 2px solid var(--border); padding-bottom: 0.3em;
+}
+
+.slide h3 { font-size: 1.4rem; font-weight: 600; color: var(--accent2); margin-bottom: 0.4em; }
+
+.slide p { font-size: 1.2rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 1em; }
+
+.slide ul, .slide ol {
+  font-size: 1.15rem; line-height: 2; color: var(--text-secondary);
+  margin-left: 1.5em; margin-bottom: 1em;
+}
+
+.slide li::marker { color: var(--accent); }
+.slide strong { color: var(--text-primary); font-weight: 700; }
+.slide em { color: var(--accent2); font-style: italic; }
+
+.slide blockquote {
+  border-left: 4px solid var(--accent); padding: 0.8em 1.2em; margin: 1em 0;
+  background: rgba(108, 99, 255, 0.05); border-radius: 0 8px 8px 0;
+  font-style: italic; color: var(--text-secondary);
+}
+
+.slide code {
+  font-family: 'Fira Code', monospace;
+  background: rgba(108, 99, 255, 0.1); padding: 0.15em 0.4em;
+  border-radius: 4px; font-size: 0.9em; color: var(--accent2);
+}
+
+.math-block {
+  display: flex; justify-content: center; margin: 1em 0; padding: 0.8em;
+  background: rgba(0, 212, 170, 0.03); border-radius: 12px;
+  border: 1px solid rgba(0, 212, 170, 0.1); overflow-x: auto;
+}
+
+.tool-container {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 1.5em; margin: 1em 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+.tool-container button {
+  background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white;
+  border: none; padding: 0.6em 1.5em; border-radius: 8px; font-size: 1rem;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin: 0.3em;
+}
+
+.tool-container button:hover {
+  transform: translateY(-2px); box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.tool-container button.active-btn {
+  background: linear-gradient(135deg, #00d4aa, #10b981);
+  box-shadow: 0 0 12px rgba(0, 212, 170, 0.4);
+}
+
+.tool-container canvas {
+  border-radius: 8px; background: #080818; display: block; margin: 0.5em auto;
+}
+
+.tool-output {
+  font-family: 'Fira Code', monospace; font-size: 1.3rem; color: var(--accent2);
+  text-align: center; padding: 0.5em; min-height: 2em;
+}
+
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  transition: width 0.4s ease; z-index: 1000;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+#slide-counter {
+  position: fixed; bottom: 20px; right: 30px; font-size: 0.9rem;
+  color: var(--text-muted); font-family: 'Fira Code', monospace; z-index: 1000; user-select: none;
+}
+
+#nav-hint {
+  position: fixed; bottom: 20px; left: 30px; font-size: 0.8rem;
+  color: var(--text-muted); z-index: 1000; user-select: none; opacity: 0.6;
+}
+
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; align-items: center; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide.active .slide-inner > * { animation: fadeInUp 0.6s ease both; }
+.slide.active .slide-inner > *:nth-child(1) { animation-delay: 0.05s; }
+.slide.active .slide-inner > *:nth-child(2) { animation-delay: 0.12s; }
+.slide.active .slide-inner > *:nth-child(3) { animation-delay: 0.19s; }
+.slide.active .slide-inner > *:nth-child(4) { animation-delay: 0.26s; }
+.slide.active .slide-inner > *:nth-child(5) { animation-delay: 0.33s; }
+.slide.active .slide-inner > *:nth-child(6) { animation-delay: 0.40s; }
+
+.highlight-box {
+  background: rgba(108, 99, 255, 0.08);
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  border-radius: 12px; padding: 1.2em; margin: 1em 0;
+}
+
+.analogy-grid {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 1em; align-items: center;
+  margin: 1em 0;
+}
+
+.analogy-arrow { font-size: 2em; color: var(--accent); text-align: center; }
+
+.img-figure {
+  text-align: center; margin: 1em 0;
+}
+
+.img-figure img {
+  max-width: 100%; max-height: 50vh; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.img-figure figcaption {
+  font-size: 0.85em; color: var(--text-muted); margin-top: 0.5em;
+}
+
+@media (max-width: 768px) {
+  .slide { padding: 30px 24px; }
+  .slide h1 { font-size: 2rem; }
+  .slide h2 { font-size: 1.5rem; }
+  .slide p, .slide li { font-size: 1rem; }
+  .columns { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="slide-counter"></div>
+<div id="nav-hint">← → arrows · scroll · [F]ullscreen</div>
+
+<div id="presentation">
+
+<!-- ═══════════ SLIDE 1: Title ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h1>How LLMs Really Work:<br>Space-Bending Machines 🌀</h1>
+    <p>A visual, interactive journey into a geometric theory of how AI language models think.</p>
+    <blockquote>The AI doesn't move words through space. It <strong>bends space itself</strong> — and the information is stored in the bending.</blockquote>
+    <p style="font-size:1rem; color:var(--text-muted);">Press → or scroll to continue. Press [F] for fullscreen.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 2: What You Already Know ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Quick Recap: The Embedding Space 📍</h2>
+    <p>You already know that LLMs represent words as <strong>points in a high-dimensional space</strong> — the <em>embedding space</em>.</p>
+    <p>Words with similar meanings end up <strong>close together</strong>. "King" is near "Queen". "Cat" is near "Dog". "Banana" is far from "Monarchy".</p>
+    <div class="highlight-box">
+      <p style="text-align:center; font-size:1.3em;">Think of the embedding space as the <strong>lowest-resolution photograph</strong> of everything the AI has ever read.</p>
+      <p style="text-align:center;">It's blurry — all concepts compressed into one space — but it captures the <em>rough shape</em> of human knowledge.</p>
+    </div>
+    <p>The question is: <strong>what happens next?</strong> How does the AI go from this blurry map to generating precise, coherent text?</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 3: The Standard View ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>The Standard Story: Moving Points 🏓</h2>
+    <p>The usual explanation says: each word is a point (vector), and each layer of the neural network <strong>moves that point</strong> to a better position.</p>
+    <div class="img-figure">
+      <img src="figures/former_interpretation.png" alt="Standard transformer interpretation showing points moving through layers">
+      <figcaption>The standard picture: tokens as balls being pushed through a pipeline.</figcaption>
+    </div>
+    <p>This is <em>operationally correct</em> — but it hides a deeper story.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 4: The New Idea ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>The New Idea: Bending Space 🌊</h2>
+    <p>What if the AI doesn't move the points — it <strong>bends the space the points live in</strong>?</p>
+    <div class="analogy-grid">
+      <div class="highlight-box" style="text-align:center;">
+        <p><strong>🏓 Old View</strong></p>
+        <p>Push a ball across a flat table</p>
+      </div>
+      <div class="analogy-arrow">→</div>
+      <div class="highlight-box" style="text-align:center;">
+        <p><strong>🌍 New View</strong></p>
+        <p>Warp the table — the ball rolls on its own</p>
+      </div>
+    </div>
+    <p>This is exactly what <strong>Einstein did with gravity</strong>: instead of "a force pulls objects", he said "mass bends space, and objects follow the curves."</p>
+    <blockquote>The AI's layers don't push tokens around. They <strong>deform the geometry of meaning-space</strong>, and the tokens follow the new shape.</blockquote>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 5: What is Topology? ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>What is Topology? ☕ = 🍩</h2>
+    <p><strong>Topology</strong> is the branch of mathematics that studies shapes — but it <em>throws away distances</em>. It only cares about <strong>what's connected to what</strong>.</p>
+    <p>The famous example: a coffee mug and a donut (torus) are <strong>topologically the same</strong>, because you can smoothly deform one into the other without cutting or gluing.</p>
+
+      <img src="figures/output.gif" alt="A Coffee Mug can smoothly be transformed into a Torus, without cutting or glueing">
+
+    <p>Why does this matter for AI? Because the AI's computations are <strong>topological</strong> — they care about the <em>shape</em> of relationships, not exact distances.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 6: Continuous Deformation = Computation ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Deformation = Computation 🔄</h2>
+    <p>Here's the key insight: in the AI, <strong>each layer deforms space</strong>. And the <em>information is stored in the deformation itself</em>.</p>
+    <p>Imagine you have a flat rubber sheet with a grid drawn on it. Now stretch, compress, and twist different parts of it:</p>
+    <div class="img-figure">
+      <img src="figures/deformed_grid_2d.png" alt="2D deformed grid showing how a transformer layer warps space">
+      <figcaption>A regular grid, deformed by a transformer layer. Blue = compressed, Red = expanded. The warping IS the computation.</figcaption>
+    </div>
+    <p>The <strong>blue regions</strong> are where the AI is "making a decision" — compressing multiple possibilities into one. The <strong>red regions</strong> are where it's "opening up options."</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 7: Winding Numbers (Interactive) ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Winding Numbers: Counting Loops 🔢</h2>
+    <p>In topology, one of the simplest but most powerful ideas is the <strong>winding number</strong>: how many times does a path loop around a point?</p>
+    <p>A path that goes around <strong>once counterclockwise</strong> has winding number +1. Twice = +2. Clockwise = negative numbers. Not at all = 0.</p>
+    <div class="tool-container">
+      <p style="text-align:center; color:var(--text-secondary);">Click buttons to see different winding numbers on a circle:</p>
+      <canvas id="winding-canvas" width="700" height="400"></canvas>
+      <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+        <button onclick="setWindingNum(-3)">n = -3</button>
+        <button onclick="setWindingNum(-2)">n = -2</button>
+        <button onclick="setWindingNum(-1)">n = -1</button>
+        <button onclick="setWindingNum(0)" class="active-btn" id="wbtn-0">n = 0</button>
+        <button onclick="setWindingNum(1)">n = 1</button>
+        <button onclick="setWindingNum(2)">n = 2</button>
+        <button onclick="setWindingNum(3)">n = 3</button>
+      </div>
+      <p id="winding-info" style="text-align:center; margin-top:10px; color:var(--accent2); font-weight:bold;">n = 0: The constant loop (stay put)</p>
+    </div>
+    <p>Why does this matter? Because in the AI, <strong>information is encoded in how paths wind through the deformed space</strong>. Different winding = different meaning.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 8: Loop Spaces ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Loop Spaces: Paths That Return Home 🏠</h2>
+    <p>A <strong>loop</strong> is a path that starts and ends at the same point. The collection of <em>all possible loops</em> from a point is called the <strong>loop space</strong>.</p>
+    <div class="tool-container">
+      <p style="text-align:center; color:var(--text-secondary);">Click to add loops. Each loop is a different "thought" the AI could have:</p>
+      <canvas id="loops-canvas" width="700" height="400"></canvas>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button onclick="addLoopDemo()">+ Add Loop</button>
+        <button onclick="clearLoopsDemo()">Clear</button>
+      </div>
+      <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:8px;">The pink dot is the "base point" — where every loop starts and ends. Each colored path is a different loop.</p>
+    </div>
+    <p>In the AI, these loops represent <strong>patterns of deformation</strong> that encode information. Two loops that can be smoothly deformed into each other carry the <em>same</em> information — they're "topologically equivalent."</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 9: Waves in Space ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Waves of Space-Bending 🌊</h2>
+    <p>As data flows through the AI's layers, each layer bends space a little more. The sequence of bendings is like a <strong>wave propagating through the network</strong>.</p>
+    <div class="img-figure">
+      <img src="figures/fibre_view.png" alt="Fibre view showing how token representations evolve across layers">
+      <figcaption>Each vertical strand is one word, tracked from bottom (input) to top (output). The sideways movement shows how space bends differently at each layer.</figcaption>
+    </div>
+    <p>The information isn't stored in any single layer — it's stored <strong>holographically in the wave pattern</strong> of all the deformations together.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 10: Holographic Storage ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Holographic Storage: Information Everywhere 🌐</h2>
+    <p>In a normal photograph, each pixel stores one spot. Scratch a corner → that corner is gone forever.</p>
+    <p>In a <strong>hologram</strong>, every piece stores the <em>whole image</em> as a wave pattern. Scratch a corner → the whole image gets slightly blurrier, but nothing disappears.</p>
+    <div class="tool-container" id="holo-demo">
+      <p style="text-align:center; color:var(--text-secondary); margin-bottom:1em;">Click tiles to "destroy" them. See the difference:</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div style="text-align:center;">
+          <h3 style="color:var(--accent3);">📷 Photograph (Localized)</h3>
+          <canvas id="holo-photo-grid" width="200" height="200"></canvas>
+          <p style="font-size:0.8em; color:var(--text-muted);">↓ Reconstructed ↓</p>
+          <canvas id="holo-photo-img" width="200" height="200"></canvas>
+        </div>
+        <div style="text-align:center;">
+          <h3 style="color:var(--accent2);">🌐 Hologram (Distributed)</h3>
+          <canvas id="holo-holo-grid" width="200" height="200"></canvas>
+          <p style="font-size:0.8em; color:var(--text-muted);">↓ Reconstructed ↓</p>
+          <canvas id="holo-holo-img" width="200" height="200"></canvas>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button onclick="holoReset()">🔄 Reset</button>
+        <button onclick="holoRandomDamage(0.25)" style="background:#ef4444;">💥 25% Damage</button>
+        <button onclick="holoRandomDamage(0.5)" style="background:#ef4444;">💥 50% Damage</button>
+      </div>
+    </div>
+    <p><strong>LLMs work like holograms.</strong> The concept "dog" isn't in neuron #42 — it's a wave pattern across <em>all</em> dimensions. Damage some → it gets fuzzier, but never fully disappears.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 11: Zooming In ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Zooming In: From Blurry to Sharp 🔍</h2>
+    <p>Remember: the embedding space is the "lowest resolution image" of all knowledge. So what happens when you give the AI a prompt?</p>
+    <div class="highlight-box">
+      <h3>The Zoom Analogy</h3>
+      <ul>
+        <li><strong>Your prompt</strong> = choosing where to point the magnifying glass</li>
+        <li><strong>Each layer</strong> = one more level of zoom, generating finer detail</li>
+        <li><strong>The detail at each zoom level</strong> = generated from patterns the AI learned, not from stored data</li>
+      </ul>
+    </div>
+    <p>Each zoom stage produces something that <em>looks plausible</em>. If the AI saw similar things during training, the generated detail is <strong>accurate</strong>. If not, it might <strong>hallucinate</strong> — generate confident-looking nonsense.</p>
+    <blockquote>Hallucination = the AI zooms into a region of its map where it never had real data, and fills it in with "topologically plausible" patterns that happen to be wrong.</blockquote>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 12: Diffeomorphisms and Singularities ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Smooth Maps vs. Singularities ⚡</h2>
+    <p>In math, a <strong>diffeomorphism</strong> is a perfectly smooth, reversible deformation. Like stretching a rubber sheet — every point maps to exactly one other point, and you can always undo it.</p>
+    <p>But neural networks use <strong>ReLU</strong>: $\text{ReLU}(x) = \max(0, x)$</p>
+    <div class="tool-container" id="relu-tool">
+      <p style="text-align:center; color:var(--text-secondary);">See the problem at x = 0:</p>
+      <canvas id="relu-canvas" width="700" height="300"></canvas>
+      <p style="text-align:center; margin-top:10px; color:var(--accent3); font-weight:bold;">The "kink" at x=0 is a <strong>singularity</strong> — a point where the function isn't smooth.</p>
+    </div>
+    <p>At a singularity, <strong>multiple inputs map to the same output</strong> (everything negative → 0). This means you <em>can't reverse</em> the transformation. Information is lost.</p>
+    <p>So the AI's maps are NOT perfect diffeomorphisms. They're <strong>Lipschitz maps</strong> — "almost smooth, with controlled kinks."</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 13: Singularity = Loss of Information ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Singularity = Many → One (Information Loss) 🕳️</h2>
+    <p>A <strong>singularity</strong> is where multiple different inputs produce the same output. This breaks <em>bijectivity</em> (one-to-one mapping).</p>
+    <div class="tool-container" id="singularity-tool">
+      <p style="text-align:center; color:var(--text-secondary);">Move the input points and watch them collapse:</p>
+      <canvas id="singularity-canvas" width="700" height="300"></canvas>
+      <div style="display:flex; gap:8px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
+        <button onclick="singularitySetMode('bijective')">Bijective (smooth, reversible)</button>
+        <button onclick="singularitySetMode('relu')" class="active-btn">ReLU (singularity at 0)</button>
+        <button onclick="singularitySetMode('collapse')">Full collapse</button>
+      </div>
+      <p id="singularity-info" style="text-align:center; margin-top:10px; font-size:0.9em; color:var(--text-secondary);"></p>
+    </div>
+    <p>In the AI, these singularities are <em>deliberate</em>. They're how the network <strong>makes decisions</strong> — collapsing many possibilities into fewer ones. But they also mean the computation is fundamentally <strong>irreversible</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 14: Lipschitz Maps ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Lipschitz Maps: Controlled Stretching 📏</h2>
+    <p>A <strong>Lipschitz map</strong> is a function that can stretch space, but only by a <em>bounded amount</em>. There's a maximum "stretching factor" — it can't rip space apart.</p>
+    <div class="highlight-box">
+      <p style="text-align:center; font-size:1.2em;">$|f(x) - f(y)| \leq K \cdot |x - y|$</p>
+      <p style="text-align:center; color:var(--text-secondary);">No two points can get more than K times farther apart than they started.</p>
+    </div>
+    <p>The AI's layer maps are Lipschitz because:</p>
+    <ul>
+      <li>They can <strong>stretch</strong> (expand regions of meaning)</li>
+      <li>They can <strong>compress</strong> (collapse possibilities into fewer)</li>
+      <li>They can have <strong>kinks</strong> (singularities from ReLU)</li>
+      <li>But they <strong>can't rip</strong> — nearby points stay somewhat nearby</li>
+    </ul>
+    <p>This is the mathematical guarantee that the AI's computations are <em>stable</em>. Small changes in input → bounded changes in output. No infinite stretching allowed.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 15: Putting It All Together ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Putting It All Together 🧩</h2>
+    <p>Here's the full picture of how an LLM works geometrically:</p>
+    <div class="highlight-box">
+      <ol style="font-size:1.1em; line-height:2.2;">
+        <li><strong>Embedding space</strong> = lowest-resolution photo of all knowledge</li>
+        <li><strong>Your prompt</strong> = choosing where to point the magnifying glass</li>
+        <li><strong>Each layer</strong> = one more zoom level, bending space to generate detail</li>
+        <li><strong>Attention</strong> = deciding which parts of the map to look at</li>
+        <li><strong>FFN</strong> = selecting which deformation patterns to apply</li>
+        <li><strong>Information</strong> = stored holographically in the wave patterns of deformation</li>
+        <li><strong>Winding numbers & loops</strong> = the topological "calculations" happening in bent space</li>
+        <li><strong>Output</strong> = reading off the final shape of the deformed space</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 16: Hallucinations Explained ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Why AI Hallucinates 🌫️</h2>
+    <p>Now we can explain hallucinations geometrically:</p>
+    <div class="tool-container">
+      <canvas id="hallucination-canvas" width="700" height="350"></canvas>
+      <p style="text-align:center; margin-top:10px; font-size:0.9em; color:var(--text-secondary);">
+        <span style="color:#4ade80;">●</span> Green = regions with training data (reliable zoom) &nbsp;
+        <span style="color:#ef4444;">●</span> Red = regions without data (hallucination zone)
+      </p>
+    </div>
+    <p>The AI's deformation patterns are <em>smooth</em> — they naturally continue into regions where there was no training data. The generated detail <strong>looks plausible</strong> (topologically consistent) but may be <strong>completely wrong</strong>.</p>
+    <blockquote>Hallucination = zooming into a blank area of the map and filling it with "what looks right" based on nearby patterns.</blockquote>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 17: Summary ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>The Key Takeaways 🎯</h2>
+    <ul style="font-size:1.15em; line-height:2.4;">
+      <li>LLMs don't just move words around — they <strong>bend the space words live in</strong></li>
+      <li>Information is stored <strong>holographically</strong> in the bending patterns (like a hologram, not a photograph)</li>
+      <li>The bending is done by <strong>Lipschitz maps</strong> — smooth-ish functions with controlled kinks</li>
+      <li>Topology (loops, winding numbers) captures the <strong>shape of reasoning</strong></li>
+      <li>Each layer <strong>zooms in</strong>, generating finer detail from coarse patterns</li>
+      <li>Hallucinations happen when the AI <strong>extrapolates into unmapped territory</strong></li>
+    </ul>
+    <div class="highlight-box" style="margin-top:1em;">
+      <p style="text-align:center; font-size:1.3em; color:var(--accent);">The geometry is there. We just need to learn to see it. 🔭</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #presentation -->
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════════════════════════
+// CORE ENGINE
+// ══════════════════════════════════════════════════════════
+
+let currentSlide = 0;
+let slides = [];
+let scrollCooldown = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+  slides = document.querySelectorAll('.slide');
+  goToSlide(0);
+  initTorusMorph();
+  initWindingDemo();
+  initLoopsDemo();
+  initReluDemo();
+  initSingularityDemo();
+  initHallucinationDemo();
+  renderAllLatex();
+
+  setTimeout(() => {
+    const hint = document.getElementById('nav-hint');
+    if (hint) { hint.style.opacity = '0'; setTimeout(() => hint.style.display = 'none', 1000); }
+  }, 6000);
+});
+
+function goToSlide(index) {
+  if (index < 0 || index >= slides.length) return;
+  slides.forEach((slide, i) => {
+    slide.classList.remove('active', 'exit-left');
+    if (i < index) slide.classList.add('exit-left');
+  });
+  currentSlide = index;
+  slides[currentSlide].classList.add('active');
+  slides[currentSlide].scrollTop = 0;
+  updateUI();
+}
+
+function nextSlide() { if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1); }
+function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide - 1); }
+
+function updateUI() {
+  const progress = slides.length > 1 ? (currentSlide / (slides.length - 1)) * 100 : 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+  document.getElementById('slide-counter').textContent = (currentSlide + 1) + ' / ' + slides.length;
+}
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  switch (e.key) {
+    case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+      e.preventDefault(); nextSlide(); break;
+    case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+      e.preventDefault(); prevSlide(); break;
+    case 'Home': e.preventDefault(); goToSlide(0); break;
+    case 'End': e.preventDefault(); goToSlide(slides.length - 1); break;
+    case 'f': case 'F': toggleFullscreen(); break;
+  }
+});
+
+// Scroll
+document.addEventListener('wheel', (e) => {
+  const activeSlide = slides[currentSlide];
+  const isScrollable = activeSlide.scrollHeight > activeSlide.clientHeight + 1;
+  if (isScrollable) {
+    const atTop = activeSlide.scrollTop <= 0;
+    const atBottom = activeSlide.scrollTop + activeSlide.clientHeight >= activeSlide.scrollHeight - 2;
+    if (e.deltaY > 0 && !atBottom) return;
+    if (e.deltaY < 0 && !atTop) return;
+    if (!scrollCooldown) { scrollCooldown = true; setTimeout(() => scrollCooldown = false, 300); return; }
+  }
+  if (scrollCooldown) return;
+  scrollCooldown = true;
+  setTimeout(() => scrollCooldown = false, 600);
+  if (e.deltaY > 0) nextSlide(); else if (e.deltaY < 0) prevSlide();
+}, { passive: true });
+
+// Touch
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) { if (dx < 0) nextSlide(); else prevSlide(); }
+});
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+  else document.exitFullscreen();
+}
+
+// ══════════════════════════════════════════════════════════
+// LATEX RENDERING
+// ══════════════════════════════════════════════════════════
+
+function renderAllLatex() {
+  if (typeof temml === 'undefined') return;
+  document.querySelectorAll('.slide').forEach(slide => {
+    const walker = document.createTreeWalker(slide, NodeFilter.SHOW_TEXT, null, false);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    textNodes.forEach(node => {
+      const parent = node.parentNode;
+      if (parent.tagName === 'CODE' || parent.tagName === 'PRE' || parent.tagName === 'SCRIPT') return;
+      let text = node.textContent;
+      if (!text.includes('$')) return;
+
+      let hasMatch = false;
+      const fragment = document.createDocumentFragment();
+      const displayParts = text.split(/(\$\$[\s\S]*?\$\$)/);
+
+      displayParts.forEach(part => {
+        if (part.startsWith('$$') && part.endsWith('$$')) {
+          hasMatch = true;
+          const latex = part.slice(2, -2).trim();
+          const span = document.createElement('span');
+          span.className = 'math-block';
+          try { temml.render(latex, span, { displayMode: true }); }
+          catch (e) { span.textContent = latex; span.style.color = '#ff6b6b'; }
+          fragment.appendChild(span);
+        } else {
+          const inlineParts = part.split(/(\$[^$\n]+?\$)/);
+          inlineParts.forEach(iPart => {
+            if (iPart.startsWith('$') && iPart.endsWith('$') && iPart.length > 2) {
+              hasMatch = true;
+              const latex = iPart.slice(1, -1).trim();
+              const span = document.createElement('span');
+              span.className = 'math-inline';
+              try { temml.render(latex, span, { displayMode: false }); }
+              catch (e) { span.textContent = latex; span.style.color = '#ff6b6b'; }
+              fragment.appendChild(span);
+            } else if (iPart) {
+              fragment.appendChild(document.createTextNode(iPart));
+            }
+          });
+        }
+      });
+      if (hasMatch) parent.replaceChild(fragment, node);
+    });
+  });
+}
+
+
+
+// ══════════════════════════════════════════════════════════
+// WINDING NUMBERS DEMO
+// ══════════════════════════════════════════════════════════
+
+let windingNum = 0;
+let windingAnimId = null;
+let windingTime = 0;
+
+function setWindingNum(n) {
+  windingNum = n;
+  windingTime = 0;
+  // Update button states
+  document.querySelectorAll('#wbtn-0').forEach(b => b.classList.remove('active-btn'));
+  const info = document.getElementById('winding-info');
+  if (info) {
+    const descriptions = {
+      '-3': 'n = -3: Three times clockwise',
+      '-2': 'n = -2: Twice clockwise',
+      '-1': 'n = -1: Once clockwise',
+      '0': 'n = 0: The constant loop (stay put)',
+      '1': 'n = 1: Once counterclockwise',
+      '2': 'n = 2: Twice counterclockwise',
+      '3': 'n = 3: Three times counterclockwise'
+    };
+    info.textContent = descriptions[n] || '';
+  }
+}
+
+function initWindingDemo() {
+  const canvas = document.getElementById('winding-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const cx = w / 2, cy = h / 2, R = 120;
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(108, 99, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(108, 99, 255, 0.15)';
+    ctx.font = '14px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('S¹ (the circle)', cx, cy - R - 15);
+
+    const n = windingNum;
+
+    if (n === 0) {
+      // Constant loop — just a dot
+      ctx.beginPath();
+      ctx.arc(cx + R, cy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#00d4aa';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#00d4aa';
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Stays put (refl)', cx, cy + R + 35);
+    } else {
+      const absN = Math.abs(n);
+      const dir = Math.sign(n);
+      const totalAngle = dir * absN * Math.PI * 2;
+
+      // Draw the winding path
+      ctx.beginPath();
+      const hue = n > 0 ? 160 : 340;
+      ctx.strokeStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = `hsl(${hue}, 80%, 60%)`;
+      ctx.shadowBlur = 6;
+
+      const steps = absN * 200;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const angle = t * totalAngle;
+        const spiralOffset = 8 * Math.sin(t * absN * Math.PI) * (1 + t * 0.3);
+        const r = R + spiralOffset;
+        const x = cx + r * Math.cos(angle);
+        const y = cy - r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Animated point
+      windingTime = (windingTime + 0.004) % 1;
+      const tPt = windingTime;
+      const anglePt = tPt * totalAngle;
+      const spiralPt = 8 * Math.sin(tPt * absN * Math.PI) * (1 + tPt * 0.3);
+      const rPt = R + spiralPt;
+      const px = cx + rPt * Math.cos(anglePt);
+      const py = cy - rPt * Math.sin(anglePt);
+
+      ctx.beginPath();
+      ctx.arc(px, py, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.strokeStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Direction label
+      ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      const dirLabel = n > 0 ? 'counterclockwise' : 'clockwise';
+      ctx.fillText(`${absN}× ${dirLabel}`, cx, cy + R + 35);
+    }
+
+    // Basepoint
+    ctx.beginPath();
+    ctx.arc(cx + R, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('start', cx + R + 10, cy - 10);
+
+    // Winding number display
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = 'bold 22px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`n = ${n}`, 20, 30);
+
+    windingAnimId = requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+// ══════════════════════════════════════════════════════════
+// LOOP SPACE DEMO
+// ══════════════════════════════════════════════════════════
+
+let loopsDemoData = [];
+const loopColors = ['#6c63ff', '#00d4aa', '#ff6b9d', '#ffcc00', '#38bdf8', '#a78bfa', '#f97316'];
+let loopsAnimId = null;
+let loopsTime = 0;
+
+function addLoopDemo() {
+  if (loopsDemoData.length >= 7) return;
+  const angle = Math.random() * Math.PI * 2;
+  const rx = 50 + Math.random() * 100;
+  const ry = 30 + Math.random() * 80;
+  const rotation = Math.random() * Math.PI * 2;
+  const lobes = Math.floor(Math.random() * 3) + 1;
+  const phase = Math.random() * Math.PI * 2;
+  loopsDemoData.push({ rx, ry, rotation, lobes, phase });
+}
+
+function clearLoopsDemo() { loopsDemoData = []; }
+
+// Start with 2 loops
+addLoopDemo(); addLoopDemo();
+
+function initLoopsDemo() {
+  const canvas = document.getElementById('loops-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const bx = w / 2, by = h / 2;
+
+  function getLoopPt(loop, t) {
+    const theta = t * Math.PI * 2 * loop.lobes;
+    const r = Math.sin(t * Math.PI);
+    const x = r * loop.rx * Math.cos(theta);
+    const y = r * loop.ry * Math.sin(theta);
+    const cos = Math.cos(loop.rotation);
+    const sin = Math.sin(loop.rotation);
+    return { x: bx + x * cos - y * sin, y: by + x * sin + y * cos };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    loopsTime += 0.005;
+
+    // Draw loops
+    loopsDemoData.forEach((loop, idx) => {
+      ctx.beginPath();
+      ctx.strokeStyle = loopColors[idx % loopColors.length];
+      ctx.lineWidth = 2.5;
+      ctx.globalAlpha = 0.7;
+      for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const pt = getLoopPt(loop, t);
+        if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Moving point
+      const tPoint = ((loopsTime + loop.phase) % 1);
+      const pt = getLoopPt(loop, tPoint);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.strokeStyle = loopColors[idx % loopColors.length];
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
+    // Basepoint
+    ctx.beginPath();
+    ctx.arc(bx, by, 8, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('x₀', bx + 12, by + 5);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${loopsDemoData.length} loop(s) in Ω(X, x₀)`, 12, h - 12);
+
+    loopsAnimId = requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+// ══════════════════════════════════════════════════════════
+// RELU / SINGULARITY DEMO
+// ══════════════════════════════════════════════════════════
+
+function initReluDemo() {
+  const canvas = document.getElementById('relu-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+
+  // Grid
+  ctx.strokeStyle = 'rgba(108, 99, 255, 0.08)';
+  for (let x = 0; x < w; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  // ReLU function
+  ctx.beginPath();
+  ctx.strokeStyle = '#6c63ff';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = '#6c63ff';
+  ctx.shadowBlur = 8;
+
+  const scale = 80;
+  for (let px = 0; px < w; px++) {
+    const x = (px - w / 2) / scale;
+    const y = Math.max(0, x);
+    const py = h / 2 - y * scale;
+    if (px === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Mark the singularity
+  ctx.beginPath();
+  ctx.arc(w / 2, h / 2, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff6b9d';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Arrow pointing to singularity
+  ctx.fillStyle = '#ff6b9d';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('← KINK (singularity)', w / 2 + 100, h / 2 + 25);
+  ctx.fillText('All negatives → 0', w / 4, h / 2 + 50);
+  ctx.fillText('(information lost!)', w / 4, h / 2 + 68);
+
+  // Labels
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '12px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('ReLU(x) = max(0, x)', w - 15, 20);
+
+  // Show the flat part (many inputs → one output = 0)
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+  ctx.fillRect(0, h / 2 - 2, w / 2, h / 2 + 2);
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('x = -5, -3, -1, -0.001 → ALL map to 0', w / 4, h / 2 - 15);
+}
+
+// ══════════════════════════════════════════════════════════
+// SINGULARITY INTERACTIVE DEMO
+// ══════════════════════════════════════════════════════════
+
+let singularityMode = 'relu';
+
+function singularitySetMode(mode) {
+  singularityMode = mode;
+  drawSingularity();
+}
+
+function initSingularityDemo() {
+  drawSingularity();
+}
+
+function drawSingularity() {
+  const canvas = document.getElementById('singularity-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const leftX = 100, rightX = w - 100;
+  const inputY = h / 2;
+
+  // Input points
+  const inputs = [-3, -2, -1, -0.5, 0, 0.5, 1, 2, 3];
+  const spacing = 28;
+
+  // Compute outputs based on mode
+  let outputs;
+  switch (singularityMode) {
+    case 'bijective':
+      outputs = inputs.map(x => x * 0.8); // simple scaling, bijective
+      break;
+    case 'relu':
+      outputs = inputs.map(x => Math.max(0, x));
+      break;
+    case 'collapse':
+      outputs = inputs.map(x => 0); // everything maps to 0
+      break;
+  }
+
+  // Get unique outputs for positioning
+  const uniqueOutputs = [...new Set(outputs.map(o => o.toFixed(2)))].map(Number);
+
+  // Draw input side
+  ctx.fillStyle = 'rgba(108, 99, 255, 0.1)';
+  ctx.fillRect(20, 20, 180, h - 40);
+  ctx.fillStyle = '#6c63ff';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('INPUT', leftX, 25);
+  ctx.fillText('Bijective', 30, 25);
+
+  // Draw input points
+  inputs.forEach((val, i) => {
+    const y = inputY - val * spacing;
+    const x = leftX;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = val < 0 ? '#ef4444' : '#6c63ff';
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(val.toFixed(1), x - 10, y + 4);
+  });
+
+  // Draw output side
+  ctx.fillStyle = 'rgba(0, 212, 170, 0.1)';
+  ctx.fillRect(w - 200, 20, 180, h - 40);
+  ctx.fillStyle = '#00d4aa';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('OUTPUT', rightX, 25);
+
+  // Compute and draw outputs + connections
+  const outputPositions = {};
+  outputs.forEach((val, i) => {
+    const key = val.toFixed(2);
+    if (!outputPositions[key]) outputPositions[key] = [];
+    outputPositions[key].push(i);
+  });
+
+  inputs.forEach((val, i) => {
+    const inY = inputY - val * spacing;
+    const outVal = outputs[i];
+    const outY = inputY - outVal * spacing;
+
+    // Connection line
+    const isCollapsed = (singularityMode === 'relu' && val < 0) || singularityMode === 'collapse';
+    ctx.beginPath();
+    ctx.moveTo(leftX + 8, inY);
+    ctx.lineTo(rightX - 8, outY);
+    ctx.strokeStyle = isCollapsed ? 'rgba(239, 68, 68, 0.5)' : 'rgba(108, 99, 255, 0.4)';
+    ctx.lineWidth = isCollapsed ? 2 : 1.5;
+    ctx.stroke();
+
+    // Output point
+    ctx.beginPath();
+    ctx.arc(rightX, outY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = isCollapsed ? '#ef4444' : '#00d4aa';
+    ctx.fill();
+  });
+
+  // Draw output labels
+  Object.entries(outputPositions).forEach(([key, indices]) => {
+    const val = parseFloat(key);
+    const y = inputY - val * spacing;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(val.toFixed(1), rightX + 10, y + 4);
+
+    if (indices.length > 1) {
+      ctx.fillStyle = '#ff6b9d';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.fillText(`← ${indices.length} inputs!`, rightX + 35, y + 4);
+    }
+  });
+
+  // Info text
+  const info = document.getElementById('singularity-info');
+  if (info) {
+    switch (singularityMode) {
+      case 'bijective':
+        info.innerHTML = '<span style="color:#00d4aa;">✓ Every input maps to a unique output. Fully reversible. No information lost.</span>';
+        break;
+      case 'relu':
+        info.innerHTML = '<span style="color:#ff6b9d;">⚠ All negative inputs collapse to 0. Multiple inputs → one output. Information is LOST.</span>';
+        break;
+      case 'collapse':
+        info.innerHTML = '<span style="color:#ef4444;">✗ Everything maps to 0. Total information destruction. Maximum singularity.</span>';
+        break;
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// HALLUCINATION DEMO
+// ══════════════════════════════════════════════════════════
+
+function initHallucinationDemo() {
+  const canvas = document.getElementById('hallucination-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  // Draw a 2D "knowledge map" with data-rich and data-poor regions
+  ctx.clearRect(0, 0, w, h);
+
+  // Background gradient
+  const bgGrad = ctx.createRadialGradient(w / 2, h / 2, 50, w / 2, h / 2, 350);
+  bgGrad.addColorStop(0, '#0a1628');
+  bgGrad.addColorStop(1, '#080818');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Data-rich regions (green clusters)
+  const clusters = [
+    { x: 150, y: 120, r: 80, label: 'History' },
+    { x: 380, y: 100, r: 70, label: 'Science' },
+    { x: 550, y: 150, r: 60, label: 'Code' },
+    { x: 250, y: 250, r: 90, label: 'Language' },
+    { x: 500, y: 280, r: 65, label: 'Math' },
+  ];
+
+  // Draw data-rich regions
+  clusters.forEach(c => {
+    const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+    grad.addColorStop(0, 'rgba(74, 222, 128, 0.25)');
+    grad.addColorStop(0.7, 'rgba(74, 222, 128, 0.08)');
+    grad.addColorStop(1, 'rgba(74, 222, 128, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Scatter some "data points"
+    for (let i = 0; i < 20; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * c.r * 0.8;
+      const px = c.x + Math.cos(angle) * dist;
+      const py = c.y + Math.sin(angle) * dist;
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(74, 222, 128, 0.5)';
+      ctx.fill();
+    }
+
+    // Label
+    ctx.fillStyle = 'rgba(74, 222, 128, 0.7)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(c.label, c.x, c.y + c.r + 15);
+  });
+
+  // Hallucination zones (red, between clusters)
+  const halluZones = [
+    { x: 100, y: 300, r: 50 },
+    { x: 620, y: 80, r: 45 },
+    { x: 350, y: 320, r: 40 },
+    { x: 650, y: 300, r: 55 },
+  ];
+
+  halluZones.forEach(z => {
+    const grad = ctx.createRadialGradient(z.x, z.y, 0, z.x, z.y, z.r);
+    grad.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
+    grad.addColorStop(0.7, 'rgba(239, 68, 68, 0.05)');
+    grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(z.x, z.y, z.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Question marks
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('?', z.x, z.y + 5);
+  });
+
+  // Draw a "zoom" arrow showing the prompt pointing into a region
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(50, 50);
+  ctx.lineTo(150, 120);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Zoom label
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Your prompt', 20, 40);
+  ctx.fillText('"zooms in" here', 20, 55);
+
+  // Legend
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Green = training data (reliable)', w - 15, h - 25);
+  ctx.fillText('Red = no data (hallucination risk)', w - 15, h - 10);
+}
+
+// ══════════════════════════════════════════════════════════
+// HOLOGRAPHIC STORAGE DEMO (simplified)
+// ══════════════════════════════════════════════════════════
+
+const HOLO_N = 8;
+const HOLO_TILE = 4;
+let holoPhotoScratched = new Array(4).fill(false);
+let holoHoloScratched = new Array(4).fill(false);
+
+// Simple 8x8 image (smiley)
+const HOLO_IMG = [
+  0,0,0,0,0,0,0,0,
+  0,0,1,0,0,1,0,0,
+  0,0,1,0,0,1,0,0,
+  0,0,0,0,0,0,0,0,
+  0,1,0,0,0,0,1,0,
+  0,0,1,1,1,1,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+];
+
+function holoReset() {
+  holoPhotoScratched = new Array(4).fill(false);
+  holoHoloScratched = new Array(4).fill(false);
+  holoRender();
+}
+
+function holoRandomDamage(frac) {
+  holoReset();
+  const indices = [0, 1, 2, 3];
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  const k = Math.round(frac * 4);
+  for (let i = 0; i < k; i++) {
+    holoPhotoScratched[indices[i]] = true;
+    holoHoloScratched[indices[i]] = true;
+  }
+  holoRender();
+}
+
+function holoRender() {
+  // Photo grid
+  const pgCanvas = document.getElementById('holo-photo-grid');
+  const piCanvas = document.getElementById('holo-photo-img');
+  const hgCanvas = document.getElementById('holo-holo-grid');
+  const hiCanvas = document.getElementById('holo-holo-img');
+  if (!pgCanvas) return;
+
+  const size = 200;
+  const tileSize = size / 2;
+  const pixSize = size / HOLO_N;
+
+  // Draw photo grid
+  const pgCtx = pgCanvas.getContext('2d');
+  pgCtx.clearRect(0, 0, size, size);
+  for (let tr = 0; tr < 2; tr++) {
+    for (let tc = 0; tc < 2; tc++) {
+      const idx = tr * 2 + tc;
+      const x = tc * tileSize, y = tr * tileSize;
+      if (holoPhotoScratched[idx]) {
+        pgCtx.fillStyle = '#1a1a2e';
+        pgCtx.fillRect(x, y, tileSize, tileSize);
+        pgCtx.strokeStyle = '#ef4444';
+        pgCtx.lineWidth = 2;
+        pgCtx.beginPath();
+        pgCtx.moveTo(x + 10, y + 10); pgCtx.lineTo(x + tileSize - 10, y + tileSize - 10); pgCtx.stroke();
+        pgCtx.beginPath();
+        pgCtx.moveTo(x + tileSize - 10, y + 10); pgCtx.lineTo(x + 10, y + tileSize - 10); pgCtx.stroke();
+      } else {
+        // Draw the pixels in this quadrant
+        for (let i = 0; i < HOLO_TILE; i++) {
+          for (let j = 0; j < HOLO_TILE; j++) {
+            const gi = tr * HOLO_TILE + i;
+            const gj = tc * HOLO_TILE + j;
+            const v = HOLO_IMG[gi * HOLO_N + gj];
+            pgCtx.fillStyle = v ? '#4ade80' : '#1e293b';
+            pgCtx.fillRect(x + j * (tileSize / HOLO_TILE), y + i * (tileSize / HOLO_TILE),
+              tileSize / HOLO_TILE, tileSize / HOLO_TILE);
+          }
+        }
+      }
+      pgCtx.strokeStyle = '#334155';
+      pgCtx.lineWidth = 1;
+      pgCtx.strokeRect(x, y, tileSize, tileSize);
+    }
+  }
+
+  // Reconstruct photo (just show surviving quadrants)
+  const piCtx = piCanvas.getContext('2d');
+  piCtx.clearRect(0, 0, size, size);
+  piCtx.fillStyle = '#0a0a1a';
+  piCtx.fillRect(0, 0, size, size);
+  for (let i = 0; i < HOLO_N; i++) {
+    for (let j = 0; j < HOLO_N; j++) {
+      const tr = Math.floor(i / HOLO_TILE);
+      const tc = Math.floor(j / HOLO_TILE);
+      const idx = tr * 2 + tc;
+      if (holoPhotoScratched[idx]) continue;
+      const v = HOLO_IMG[i * HOLO_N + j];
+      piCtx.fillStyle = v ? '#4ade80' : '#1e293b';
+      piCtx.fillRect(j * pixSize, i * pixSize, pixSize, pixSize);
+    }
+  }
+
+  // Hologram grid (show wave patterns)
+  const hgCtx = hgCanvas.getContext('2d');
+  hgCtx.clearRect(0, 0, size, size);
+  for (let tr = 0; tr < 2; tr++) {
+    for (let tc = 0; tc < 2; tc++) {
+      const idx = tr * 2 + tc;
+      const x = tc * tileSize, y = tr * tileSize;
+      if (holoHoloScratched[idx]) {
+        hgCtx.fillStyle = '#1a1a2e';
+        hgCtx.fillRect(x, y, tileSize, tileSize);
+        hgCtx.strokeStyle = '#ef4444';
+        hgCtx.lineWidth = 2;
+        hgCtx.beginPath();
+        hgCtx.moveTo(x + 10, y + 10); hgCtx.lineTo(x + tileSize - 10, y + tileSize - 10); hgCtx.stroke();
+        hgCtx.beginPath();
+        hgCtx.moveTo(x + tileSize - 10, y + 10); hgCtx.lineTo(x + 10, y + tileSize - 10); hgCtx.stroke();
+      } else {
+        // Draw a wave pattern for this frequency tile
+        for (let i = 0; i < HOLO_TILE; i++) {
+          for (let j = 0; j < HOLO_TILE; j++) {
+            const freq = (tr + 1) * (tc + 1);
+            const v = Math.sin((i + j) * freq * 0.8) * 0.5 + 0.5;
+            const r = Math.round(50 + v * 150);
+            const g = Math.round(30 + v * 80);
+            const b = Math.round(90 + v * 100);
+            hgCtx.fillStyle = `rgb(${r},${g},${b})`;
+            hgCtx.fillRect(x + j * (tileSize / HOLO_TILE), y + i * (tileSize / HOLO_TILE),
+              tileSize / HOLO_TILE + 1, tileSize / HOLO_TILE + 1);
+          }
+        }
+      }
+      hgCtx.strokeStyle = '#334155';
+      hgCtx.lineWidth = 1;
+      hgCtx.strokeRect(x, y, tileSize, tileSize);
+    }
+  }
+
+  // Reconstruct hologram (surviving tiles contribute to whole image, but blurrier)
+  const hiCtx = hiCanvas.getContext('2d');
+  hiCtx.clearRect(0, 0, size, size);
+  const survivingCount = holoHoloScratched.filter(x => !x).length;
+  const blurFactor = survivingCount / 4;
+
+  for (let i = 0; i < HOLO_N; i++) {
+    for (let j = 0; j < HOLO_N; j++) {
+      const v = HOLO_IMG[i * HOLO_N + j];
+      // Blend toward gray based on damage
+      const target = v ? 0.85 : 0.15;
+      const blended = 0.5 + (target - 0.5) * blurFactor;
+      const brightness = Math.round(blended * 255);
+      const g = v ? Math.round(blended * 200 + 55) : Math.round(blended * 60);
+      hiCtx.fillStyle = v ?
+        `rgb(${Math.round(blended * 100)}, ${g}, ${Math.round(blended * 80)})` :
+        `rgb(${Math.round(blended * 50)}, ${Math.round(blended * 60)}, ${Math.round(blended * 80)})`;
+      hiCtx.fillRect(j * pixSize, i * pixSize, pixSize, pixSize);
+    }
+  }
+
+  // Make grids clickable
+  pgCanvas.onclick = (e) => {
+    const rect = pgCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const tc = Math.floor(mx / tileSize), tr = Math.floor(my / tileSize);
+    if (tc >= 0 && tc < 2 && tr >= 0 && tr < 2) {
+      holoPhotoScratched[tr * 2 + tc] = !holoPhotoScratched[tr * 2 + tc];
+      holoHoloScratched[tr * 2 + tc] = holoPhotoScratched[tr * 2 + tc];
+      holoRender();
+    }
+  };
+
+  hgCanvas.onclick = (e) => {
+    const rect = hgCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const tc = Math.floor(mx / tileSize), tr = Math.floor(my / tileSize);
+    if (tc >= 0 && tc < 2 && tr >= 0 && tr < 2) {
+      holoHoloScratched[tr * 2 + tc] = !holoHoloScratched[tr * 2 + tc];
+      holoPhotoScratched[tr * 2 + tc] = holoHoloScratched[tr * 2 + tc];
+      holoRender();
+    }
+  };
+}
+
+// Initialize hologram demo
+setTimeout(() => { holoRender(); }, 100);
+
+</script>
+</body>
+</html>
