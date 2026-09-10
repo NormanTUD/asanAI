@@ -3143,7 +3143,7 @@ var _lp_popup = (function() {
 
 		_ensureCSS();
 
-		var dark = is_dark_mode;
+		var dark = (typeof is_dark_mode !== "undefined") ? !!is_dark_mode : false;
 		var overlay = document.createElement("div");
 		overlay.className = "lp-overlay" + (dark ? " lp-dark" : "");
 		overlay.innerHTML = '\
@@ -3171,11 +3171,6 @@ var _lp_popup = (function() {
 		if (mathEl) overlay.querySelector(".lp-preview").appendChild(mathEl.cloneNode(true));
 
 		overlay.querySelector(".lp-close").addEventListener("click", _close);
-
-		overlay.addEventListener("mousedown", function(e) {
-			if (e.target.closest && e.target.closest(".lp-box")) return;
-			_close();
-		}, true);
 
 		var copyBtn = overlay.querySelector(".lp-copy");
 		var copyTimeout;
@@ -3232,6 +3227,21 @@ var _lp_popup = (function() {
 			window.scrollTo({top: document.documentElement.scrollHeight, behavior: "instant"});
 		}
 	});
+
+	document.addEventListener("mousedown", function(e) {
+		if (!_overlay) return;
+		if (e.button !== 0) return;
+		if (e.target && e.target.closest && e.target.closest(".lp-box")) return;
+		_close();
+	});
+
+	var _lastDark = (typeof is_dark_mode !== "undefined") ? !!is_dark_mode : false;
+	setInterval(function() {
+		var cur = (typeof is_dark_mode !== "undefined") ? !!is_dark_mode : false;
+		if (cur === _lastDark) return;
+		_lastDark = cur;
+		if (_overlay) _overlay.classList.toggle("lp-dark", cur);
+	}, 250);
 
 	return { close: _close, show: _show };
 })();
