@@ -1610,9 +1610,92 @@ window.bibData = {
 	},
 	"madhava": {
 		title: "യുക്തിഭാഷ (Compendium of Astronomical Rationale)",
-		author: "ज्येष्ठदेव (Jyeṣṭhadeva)",
+		author: "ज्येष୍ठदेव (Jyeṣṭhadeva)",
 		year: "c. 1500-1570",
 		url: "https://web.archive.org/web/20060928203221/http://www.new.dli.ernet.in/insa/INSA_1/20005ac0_185.pdf"
+	},
+	"achleuleankariandusi": {
+		title: "An earlier origin for the Acheulian",
+		author: "Charles J. Lepre, Hélène Roche, Dennis V. Kent, Sonia Harmand, Robert L. Quinn, Jean-Pierre Brugal, Pierre-Jean Texier, Anne Lenoble, C. S. Feibel",
+		year: 2011,
+		url: "https://doi.org/10.1038/nature10372",
+		alternativetitle: "Acheulean handaxes, West Turkana (1.76 Ma)"
+	},
+	"handaxementaltemplate": {
+		title: "The Mental Template in Handaxe Manufacture: New Insights into Acheulean Lithic Technological Behavior at Boxgrove, Sussex, UK",
+		author: "Pablo García-Medrano, Andreu Ollé, Nick Ashton, Mark B. Roberts",
+		year: 2018,
+		url: "https://doi.org/10.1007/s10816-018-9376-0",
+		alternativetitle: "Handaxe mental template"
+	},
+	"handaxesymmetry": {
+		title: "Symmetry is its own reward: on the character and significance of Acheulean handaxe symmetry in the Middle Pleistocene",
+		author: "Michael D. White, Philip Foulds",
+		year: 2018,
+		url: "https://doi.org/10.15184/aqy.2018.35",
+		alternativetitle: "Handaxe symmetry"
+	},
+	"hipparchuschords": {
+		title: "Table of Chords (the first trigonometric table)",
+		author: "Hipparchus of Nicaea",
+		year: "c. 140 BCE",
+		url: "https://en.wikipedia.org/wiki/Table_of_chords",
+		alternativetitle: "Table of Chords"
+	},
+	"ptolemyalmagest": {
+		title: "Almagest (Mathematical Syntaxis), Book I: the table of chords",
+		author: "Claudius Ptolemy",
+		year: "c. 150 CE",
+		url: "https://en.wikipedia.org/wiki/Almagest",
+		alternativetitle: "Almagest"
+	},
+	"aryabhatiya": {
+		title: "Āryabhaṭīya",
+		author: "Aryabhata",
+		year: "499 CE",
+		url: "https://en.wikipedia.org/wiki/Aryabhatiya",
+		alternativetitle: "Aryabhatiya"
+	},
+	"altusitrig": {
+		title: "Memoir on Spherical Trigonometry (Treatise on the Parts of Spheres)",
+		author: "Nasir al-Din al-Tusi",
+		year: "c. 1265",
+		url: "https://en.wikipedia.org/wiki/Nasir_al-Din_al-Tusi",
+		alternativetitle: "al-Tusi's trigonometry"
+	},
+	"sextanthistory": {
+		title: "Sextant — history (independently invented by John Hadley and Thomas Godfrey, 1731)",
+		author: "Wikipedia contributors",
+		url: "https://en.wikipedia.org/wiki/Sextant",
+		alternativetitle: "Sextant"
+	},
+	"achleuleanhandaxe_image": {
+		title: "Acheulean handaxes from the Kariandusi site, West Turkana, Kenya",
+		url: "https://commons.wikimedia.org/wiki/File:Kariandusi_Acheulean_Tools.jpg",
+		author: "Xmd5a",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Acheulean handaxes"
+	},
+	"humboldtsextant": {
+		title: "Sextant used by Alexander von Humboldt (made in London, 1773)",
+		url: "https://commons.wikimedia.org/wiki/File:Sextant_von_Alexander_von_Humboldt.jpg",
+		author: "Burkhard Mücke",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "A sextant"
+	},
+	"trigfunctions_image": {
+		title: "Trigonometric functions (sine, cosine and tangent on the unit circle)",
+		url: "https://commons.wikimedia.org/wiki/File:Trigonometric_functions.svg",
+		author: "Alessio Damato",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Sine, cosine, tangent"
+	},
+	"astrolabe_image": {
+		title: "Persian astrolabe (Mohammad Amin b. Mohammad Tahir, 1715)",
+		url: "https://commons.wikimedia.org/wiki/File:Persian_astrolabe_at_the_Saint_Louis_Art_Museum.jpg",
+		author: "Lewis Hulbert",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "An astrolabe"
 	},
 	"newtonquadratura": {
 		url: "https://www.digitale-sammlungen.de/de/view/bsb10053711?page=,1",

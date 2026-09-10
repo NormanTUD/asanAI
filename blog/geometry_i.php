@@ -27,7 +27,18 @@ This chapter follows that growth step by step. For each turn we ask four questio
 <div class="md">
 ## I. Before writing: space etched in shell and bone
 
-The oldest geometric objects we have are not calculations at all. They are *patterns* — marks made by a hand that was doing something else (shaping a tool, decorating, keeping score), where a deliberate regularity shows up anyway. That regularity is the first thing: the sense that *the same shape* can be repeated, and that repeating it is meaningful. No one sat down to invent geometry; geometry is what a pattern-making mind leaves behind when it is not, strictly, being *about* geometry at all.
+The oldest geometric objects we have are not calculations at all. The very oldest is not even a mark but a *shape* — a handaxe, a three-dimensional object worked to a mental template of symmetry and proportion a million and a half years before anyone etched a line. After it come the *patterns*: marks made by a hand that was doing something else (shaping a tool, decorating, keeping score), in which a deliberate regularity shows up. That regularity is the first thing geometry notices — the sense that *the same shape* can be repeated, and that repeating it is meaningful. No one sat down to invent geometry; geometry is what a shape-making, pattern-making mind leaves behind when it is not, strictly, being *about* geometry at all.
+
+### The Acheulean handaxe (c. 1.76 million years ago)
+
+Before there were etched shells or tally bones, there was the **handaxe**. The Acheulean industry — the bifacial, almond- or pear-shaped handaxe — begins about **1.76 million years ago** at West Turkana in Kenya, where handaxes from the Kariandusi locality were dated by magnetostratigraphy to that age, pushing the start of the Acheulean back by roughly two hundred thousand years \cite{achleuleankariandusi}. That is about three and a half times older than the Trinil shell below, and the maker, almost certainly *Homo erectus* (or *H. ergaster*), was not scratching a pattern but *shaping a volume*.
+
+<figure>
+	<img style="width: 100%" src="acheulean_handaxe.jpg" alt="Acheulean handaxes from the Kariandusi site, West Turkana, Kenya" />
+	<figcaption class="md">Acheulean handaxes from the Kariandusi site, West Turkana, Kenya — the region that holds the oldest known examples (\citealternativetitle{achleuleanhandaxe_image}). Each one is a three-dimensional form worked to a template that existed in the maker's mind before the first blow.</figcaption>
+</figure>
+
+The geometry here is not trivial. A handaxe has **bilateral (mirror) symmetry**: two working faces flaked toward a shared central ridge, a pointed end and a rounded base, held in controlled proportion. To make one, the knapper must carry a *mental template* — the finished, ideal shape — and work both faces by reference to it over dozens of flake removals \cite{handaxementaltemplate}. The symmetry is not an accident and not merely cosmetic: it is actively maintained as the tool is made, and it is the most consistent feature of the whole industry across Africa, Asia and Europe \cite{handaxesymmetry}. In other words, well before any line was drawn, a hominin was already reasoning about **axial symmetry, proportion and the geometry of a surface in three dimensions** — a spatial understanding no two-dimensional mark can capture. The *why* is a cutting edge that works from either hand; the *capability* — a stable internal model of a 3-D form — is the oldest piece of geometry we have.
 
 ### The Trinil shell (c. 500,000 years ago)
 
@@ -205,7 +216,7 @@ The tradition also preserves the legend that Plato had written above the door of
 Everything before Euclid was a collection of results; the **\citealternativetitle{euclidelements}** (composed c. 300 BCE in Alexandria, the standard edition edited and translated by \citeauthor{euclidelements_heath}) is the first *system* \cite{euclidelements} \cite{euclidelements_heath}. The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it. Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *hysteron* — that marks "it has been proved". That architecture is the template for every proof-based subject that followed:
 
 * **Definitions** (point, line, circle, angle, …) — what the objects *are*.
-* **Postulates** (five) — what you are *allowed to do* with them. The first four are self-evident constructions; the **fifth** is the **parallel postulate**: through a point not on a line there passes *at most one* line that never meets the given line. For over two thousand years this fifth postulate was treated as slightly less obvious than the others, and every attempt to "fix" it is, in retrospect, the road to non-Euclidean geometry (Section VI).
+* **Postulates** (five) — what you are *allowed to do* with them. The first four are self-evident constructions; the **fifth** is the **parallel postulate**: through a point not on a line there passes *at most one* line that never meets the given line. For over two thousand years this fifth postulate was treated as slightly less obvious than the others, and every attempt to "fix" it is, in retrospect, the road to non-Euclidean geometry (Section VII).
 * **Common notions** (five) — the basic, self-evident truths about equality and magnitude ("things equal to the same thing are equal to one another").
 * **Propositions** — statements proved *only* from the definitions, postulates and common notions, plus earlier propositions.
 
@@ -249,7 +260,7 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 	<figcaption class="md">The Antikythera mechanism (c. 2nd c. BCE), a geared astronomical computer — the geometry of the heavens reduced to bronze gears and epicycles.</figcaption>
 </figure>
 
-**Menelaus of Alexandria** (c. 70–140 CE) wrote the **\citealternativetitle{menelaussphaerica}**, the first systematic treatise on **spherical geometry** — the geometry of the *surface* of a sphere, where the straight line is replaced by a great circle and the angles of a triangle sum to *more* than two right angles \cite{menelaussphaerica}. Menelaus' theorem is the spherical tool for astronomy (locating the stars), and it quietly plants the second seed of Section VI: *curved* space has its own, genuinely different, geometry.
+**Menelaus of Alexandria** (c. 70–140 CE) wrote the **\citealternativetitle{menelaussphaerica}**, the first systematic treatise on **spherical geometry** — the geometry of the *surface* of a sphere, where the straight line is replaced by a great circle and the angles of a triangle sum to *more* than two right angles \cite{menelaussphaerica}. Menelaus' theorem is the spherical tool for astronomy (locating the stars), and it quietly plants the second seed of Section VII: *curved* space has its own, genuinely different, geometry.
 </div>
 
 <div class="md">
@@ -271,7 +282,60 @@ His **\citealternativetitle{alhazenoetic}** (completed c. 1021) is a *geometry o
 </div>
 
 <div class="md">
-## V. Space made visible: perspective, coordinates and projection
+## V. The geometry of the sky: angles, sines and the functions of a triangle
+
+Up to now geometry has been about the ground — fields to square, altars to convert, temples to raise. But the same right triangle that measured a field can be turned around and pointed at the sky, and the moment it does, something new is born: a **function of an angle**. This is the load-bearing idea of the second half of the chapter, because it is the bridge from *shapes in the plane* to *a number attached to a direction* — and a direction, in the modern language, is exactly what a vector (and therefore an embedding) is.
+
+### The Greek chord: measuring the heavens
+
+The need that created trigonometry was not the surveyor's but the astronomer's. To predict the positions of the sun, moon and planets — and the eclipses that carried religious weight — you must measure *angles in the sky*, and angles in the sky are read by the lines they cut across the celestial sphere. **Hipparchus of Nicaea** (c. 180–125 BCE), called the "father of trigonometry," was the first to tabulate them: for a series of arcs he listed the length of the **chord**, the straight line joining the two ends of the arc \cite{hipparchuschords}. A chord of an angle subtends that angle, and its perpendicular bisector runs through the centre and halves it, so one half of the bisected chord is $r\sin(\theta/2)$: the **sine is secretly the half-chord**. Hipparchus' table is lost, but **Ptolemy's** *Almagest* (c. 150 CE) rebuilt and extended it, giving the chord of every half-degree up to a semicircle for a circle of diameter $120$, and in doing so fixed the **360° circle** and the **sexagesimal** division — sixty parts to a degree, sixty to a part — inherited from the Babylonian base-60, which is why a minute and a second of *angle* are the same words as a minute and a second of *time* \cite{ptolemyalmagest} \cite{neugebauerexactsciences}.
+
+### The Indian sine: the chord becomes a function
+
+The decisive leap came in India. In the **\citealternativetitle{aryabhatiya}** (composed **499 CE**), the mathematician-astronomer **Aryabhata** (476–550 CE) tabulated not the chord but the *half-chord* — the Sanskrit **jya**, literally "bowstring" — in steps of $3.75^{\circ}$ from $0^{\circ}$ to $90^{\circ}$, to four decimal places \cite{aryabhatiya}. That small change is the whole invention: a chord is a line segment in one particular circle, but the half-chord, measured as a *fraction of the radius*, is a **ratio that depends only on the angle**. The object stops being a bit of a diagram and becomes a *function* — a number you can attach to a direction. This is the sense in which the "Indian guy" invented the sine: not the shape, but the *function*.
+
+The companion function was there too, the **kojya** (the "adjacent" half-chord): what we now call the **cosine** — the sine of the *complementary* angle, $\sin\theta = \cos(90^{\circ} - \theta)$ — and the "co-" prefix has meant exactly that, "the one for the complement," ever since. The word *sine* itself is a happy accident: as the Indian tables were carried into Arabic in the 8th century, *jya* was misread as the Arabic **jayb** ("a fold," or the open bay of a garment), and that became the Latin *sinus*, a bay. A bowstring, through two mistranslations, became a bay of the sea.
+
+<figure>
+	<img style="width: 100%" src="trig_functions.svg" alt="Sine, cosine and tangent on the unit circle" />
+	<figcaption class="md">Sine, cosine and tangent read off a single right triangle on the unit circle (\citealternativetitle{trigfunctions_image}): $\sin\theta$ is the height, $\cos\theta$ the run, $\tan\theta$ the slope of the terminal side. So what does sine <em>mean</em>, in the end? It is a <strong>ratio</strong> — opposite over hypotenuse — and because it is a ratio, not a length, it generalises from the triangle, to the circle, to a function on the whole real line.</figcaption>
+</figure>
+
+### The Islamic formalisation: six functions and a subject of its own
+
+In the medieval Islamic world trigonometry was pulled out of astronomy and made a subject in its own right. **Nasir al-Din al-Tusi** (1201–1274) was the first to treat it independently, and he established all **six** functions — sine, cosine, tangent, cotangent, secant, cosecant — with proofs, together with the plane and spherical **laws of sines** in exactly the form still taught today \cite{altusitrig}. The **tangent** and **secant** take their names straight from the circle: a *tangent* line *touches* it (Latin *tangens*), a *secant* line *cuts* it (*secans*). What drove all of it was the **spherical** version — the geometry of the *celestial sphere*, where the "straight line" is a great circle. Spherical trigonometry is what lets you find the **qibla** (the direction of Mecca) from anywhere on Earth, and it is the same engine that later made navigation possible: a problem on the sphere, not on the plane.
+
+\marginfig{astrolabe.jpg}{A Persian astrolabe (made 1715). A model of the celestial sphere on a metal plate — swing it to a star and it reads the star's altitude, a portable protractor for the sky (\citealternativetitle{astrolabe_image}).}
+
+### Calculating the functions: from tables to infinite series
+
+For centuries the working method was the **trig table**: a list of sines at regular angles, with *interpolation* between the printed entries. **Bhāskara I** (7th c.) did something better — a *formula* for the sine of an acute angle with no table at all, $\sin x \approx \tfrac{16\,x(\pi - x)}{5\pi^{2} - 4x(\pi - x)}$, accurate to under two percent.
+
+Then came the idea that would feed every numerical computation in this book: express the sine as an **infinite series**. Astonishingly, it was done first in the **Kerala school** of India, by **Madhava of Sangamagrama** (c. 1340–1425) — some *three hundred years before Brook Taylor* (1715) lent his name to the construction. The proof is preserved in the *Yuktibhāṣā* \cite{madhava}:
+
+$$\sin x = x - \frac{x^{3}}{3!} + \frac{x^{5}}{5!} - \frac{x^{7}}{7!} + \cdots, \qquad \cos x = 1 - \frac{x^{2}}{2!} + \frac{x^{4}}{4!} - \frac{x^{6}}{6!} + \cdots$$
+
+Note the quiet trap in that formula: it is only true when $x$ is measured in **radians**, not degrees. The degree is a human convenience ($360$ to a turn); the radian is the angle's *natural* unit, the one for which the arc-length equals the angle. That the cleanest formula for sine *demands* radians is the first hint that the angle's real home is not the protractor but the circle. **Taylor** (1715) and then **Euler** (1748) carried the idea to its modern form; Euler in particular made the functions functions of the *arc* and welded them to the exponential and the complex number in $e^{i\theta} = \cos\theta + i\sin\theta$, the identity that ties geometry to growth and, downstream, to all of signal processing.
+
+### How do you measure an angle? (the instruments)
+
+An angle is a *rotation*, so you measure it by comparing one direction to another. The **protractor** — a straight-edged half-circle ruled in degrees — does this on the page. The **astrolabe** does it in the sky: a portable model of the celestial sphere that you swing to a star and read off its altitude. The **sextant**, invented independently in **1731** by John Hadley in England and Thomas Godfrey in America \cite{sextanthistory}, is the astrolabe's successor at sea: by bouncing the image of a celestial body off a pair of mirrors onto the horizon, it measures the *angle between them* to a fraction of a degree; that angle, combined with a good chronometer, is what fixes your position on the globe. Navigation is, at bottom, applied spherical trigonometry — the same triangle, scaled to the size of the Earth.
+
+\marginfig{sextant.jpg}{A sextant (this one made in London, 1773, and carried by Alexander von Humboldt). It measures the angle between a star and the horizon; that angle plus the time is your position at sea (\citealternativetitle{humboldtsextant}).}
+
+### The payoff: dot product, cosine similarity, and how we measure spaces now
+
+Here the thread comes home. Place two vectors on the circle and the angle between them is read straight off their **dot product**:
+
+$$\mathbf{a} \cdot \mathbf{b} = \|\mathbf{a}\| \|\mathbf{b}\| \cos\theta \quad\Longrightarrow\quad \cos\theta = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}$$
+
+That quotient, $\frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}$, is the **cosine similarity**. It is a measure of *direction*, not size: it is $1$ when the vectors point the same way, $0$ when they are at right angles, and $-1$ when they point opposite. A century before anyone had a neural network, **Salton's** vector-space model of information retrieval already used this exact quantity to decide how "parallel" two document vectors were — meaning how close in meaning \cite{salton1975vectorspace}. That is the same machinery behind [the embeddings chapter](embeddinglab): a word or a document is a vector in a high-dimensional space, and **cosine similarity** asks how close two of them are *directionally* — which is why "king" lands near "queen" while both stay far from "car." The geometry of a two-thousand-year-old triangle is doing the comparing.
+
+Step back and the pattern is a single idea refined again and again. A **metric** is a rule $d(a, b)$ that says how far two points are, obeying three laws: $d(a, b) \ge 0$ with equality only for identical points, $d(a, b) = d(b, a)$ (symmetry), and the triangle inequality $d(a, c) \le d(a, b) + d(b, c)$. The **Euclidean** distance $\sqrt{\sum_{i} (a_{i} - b_{i})^{2}}$ is the straight-line case; the **cosine distance** $(1 - \cos\theta)$ measures orientation rather than size; Minkowski and Mahalanobis distances generalise it further. And as Section VII will show, the most general "distance" of all is Riemann's **metric tensor** $g_{\mu\nu}$ — the rule that tells a curved space how to measure infinitesimal separation. So the chain runs: the right triangle, then a ratio of a side to the hypotenuse, then an angle, then the dot product, then cosine similarity, and finally the metric on a manifold. Every link is the same question — *how do I measure the relation between two things?* — answered a little more deeply each time.
+</div>
+
+<div class="md">
+## VI. Space made visible: perspective, coordinates and projection
 
 The mathematics of projection that Alhazen opened is taken up, on the *artistic* side, by the Renaissance, and on the *mathematical* side, by the 17th century. These two streams meet in a single, decisive idea: **space can be turned into numbers**.
 
@@ -305,7 +369,7 @@ Projection was not only an art and a philosophy; it was a navigational *necessit
 
 $$y = \ln\!\left(\tan\!\left(\tfrac{\pi}{4} + \tfrac{\varphi}{2}\right)\right) = \operatorname{artanh}(\sin\varphi)$$
 
-The map is **conformal** — it preserves *angles* (so compass bearings are right) at the price of wildly distorting *areas* (Greenland looks as big as Africa). It is the earliest example, in a working tool, of a deep fact we will meet in full in Section VI: that a curved surface (the sphere) can be flattened only by *distorting* it, and that the choice of *what to preserve* (angle? area? distance?) is a mathematical choice with no perfect answer.
+The map is **conformal** — it preserves *angles* (so compass bearings are right) at the price of wildly distorting *areas* (Greenland looks as big as Africa). It is the earliest example, in a working tool, of a deep fact we will meet in full in Section VII: that a curved surface (the sphere) can be flattened only by *distorting* it, and that the choice of *what to preserve* (angle? area? distance?) is a mathematical choice with no perfect answer.
 
 <figure>
 	<img style="width: 100%" src="mercator_1569.png" alt="Mercator's 1569 world map" />
@@ -314,7 +378,7 @@ The map is **conformal** — it preserves *angles* (so compass bearings are righ
 </div>
 
 <div class="md">
-## VI. When space bends: topology and non-Euclidean geometry
+## VII. When space bends: topology and non-Euclidean geometry
 
 For two thousand years, "the" geometry was Euclid's, and everyone assumed that space *must* be flat — that the parallel postulate is a fact about the universe, not just a convenient assumption. The 18th and 19th centuries shattered that in two different directions at once: they found geometry *without metric* (topology), and geometry *without parallelism* (non-Euclidean space).
 
@@ -368,7 +432,7 @@ and for a *closed* surface the boundary term vanishes, leaving
 
 $$\iint_{S} K\, dA \;=\; 2\pi\,\chi(S)$$
 
-\cite{docarmo}. In words: **no matter how you bend a surface, the total curvature you can accumulate on it is fixed by how many "holes" it has.** A sphere can hold exactly $4\pi$ of curvature, a torus exactly $0$. This single formula is the master key that ties the two halves of Section VI together — curvature (Gauss) and connectivity (Euler) are the same coin \cite{docarmo}.
+\cite{docarmo}. In words: **no matter how you bend a surface, the total curvature you can accumulate on it is fixed by how many "holes" it has.** A sphere can hold exactly $4\pi$ of curvature, a torus exactly $0$. This single formula is the master key that ties the two halves of Section VII together — curvature (Gauss) and connectivity (Euler) are the same coin \cite{docarmo}.
 
 ### Lobachevsky and Bolyai: the parallel postulate is a choice
 
@@ -417,7 +481,7 @@ The message of Möbius and Listing is the message of Euler's bridges: some of th
 </div>
 
 <div class="md">
-## VII. The modern shape of space — and why it matters for AI
+## VIII. The modern shape of space — and why it matters for AI
 
 The last great reorganisation of the 19th century was **\citeauthor{poincareanalysissitus}**'s **\citetitle{poincareanalysissitus}** (1895), which turned topology from a collection of curiosities into a full theory \cite{poincareanalysissitus}.
 
@@ -430,6 +494,7 @@ So where does this leave us, and why is a history of geometry a chapter in a cou
 * **Prehistoric**, geometry was the *repetition of a shape* — a zig-zag in a shell.
 * **In the first cities**, it was the *measurement of the land* — the surveyor's right angle on clay, $A=\tfrac{1}{2}bh$, $V=\tfrac{1}{3}Bh$.
 * **In Greece**, it became *proof* — the Euclidean machine, $a^{2}+b^{2}=c^{2}$ with a reason attached.
+* **For the sky**, it turned a *shape into a function* — the Greek chord, the Indian sine, the six functions, Madhava's series, and the sextant that reads a star's height.
 * **In the Islamic and early-modern periods**, it became *projection and coordinates* — Alhazen, Descartes, Desargues, Mercator.
 * **In the 19th century**, it became *curved space and connectivity* — Gauss, Riemann, Poincaré, the Theorema Egregium and Gauss–Bonnet.
 * **Today**, the newest need is the geometry of **representation**: a word is no longer a letter but a *point in a high-dimensional space*, and "meaning" is the *distance* and *direction* between those points. The [Embeddings](embeddinglab) chapter is, in a very real sense, the latest chapter of this same story — the point where the two-thousand-year-old question "what is the shape of space?" is asked of the *space of ideas* instead of the space of the field.

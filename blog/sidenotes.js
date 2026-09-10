@@ -63,12 +63,29 @@
 	const MAX_Y         = 200000; /* sanity cap for absolute top    */
 	const MAX_NOTES     = 100;    /* performance warning threshold  */
 	const MAX_IMAGES    = 30;
+	/* ANGLE 36 (sideimage wrap): when the right margin is too narrow to
+	   hold the rail clear of the text, the rail's left edge digs into the
+	   article. We then move the margin figures into the article flow as
+	   right floats so the prose bends around them. These two constants are
+	   the hysteresis band (in px of measured rail↔text overlap) that keeps
+	   the margin/wrap decision from flip-flopping while the user resizes
+	   the window across the boundary:
+	     • enter wrap  only once the rail intrudes ≥ WRAP_ENTER px
+	     • leave wrap  only once the rail is clear by ≥ WRAP_EXIT px       */
+	const WRAP_ENTER    = 2;      /* px — intrusion needed to ENTER wrap mode */
+	const WRAP_EXIT     = 2;      /* px — clearance needed to LEAVE  wrap mode */
+	const WRAP_MIN_W    = 180;    /* px — never make a wrap figure narrower  */
+	const WRAP_MAX_W    = 560;    /* px — never make a wrap figure wider     */
 
 	let layoutRaf      = 0;
 	let layoutFailsafe = 0;       /* consecutive layout failures    */
 	let relayoutObserver = null;
 	let ioObserver       = null;  /* IntersectionObserver           */
 	let visibilityMap  = {};      /* { id: boolean } — markers currently in viewport */
+	/* ANGLE 36: hysteresis state — true while the margin sideimages are
+	   currently living in the article flow as floats (wrap mode) rather
+	   than absolutely positioned in the rail. Reset on every extract(). */
+	let sideimageWrapActive = false;
 
 	/* GUARD RAIL G2: warning-suppression set.
 	   Some warnings (NOTABLY "DETACHED") can fire during transient states
@@ -450,6 +467,7 @@
 	function extract() {
 		store = { notes: [], images: [] };
 		visibilityMap = {};
+		sideimageWrapActive = false;   /* ANGLE 36: fresh run → start in margin mode */
 
 		if (!_domReady()) {
 			logError('NO_DOM', 'extract() ran before document.body existed — aborting.');
@@ -1121,65 +1139,284 @@
 	}
 
 	/* ═════════════════════════════════════════════════════════════════
-	   Inline conversion — when the viewport is too narrow, move each
-	   sideimage figure OUT of the rail and INTO the article flow.
+	   ANGLE 36 — Sideimage placement state machine.
+
+	   A \marginfig figure has three possible homes, chosen per layout
+	   pass from the CURRENT viewport (measured, never hard-coded):
+
+	     • 'margin'  — wide: it lives in #sideimages-rail, absolutely
+	                     positioned at the marker's Y, clear of the text.
+	     • 'wrap'    — the rail's left edge intrudes into the article.
+	                     The figure is moved into the article flow as a
+	                     float:right spanning the rail's horizontal
+	                     extent, so the prose BENDS around it.
+	     • 'inline'  — below BREAKPOINT: a centred block figure in the
+	                     article flow (the old narrow-viewport fallback).
+
+	   _reconcileSideimagesTo() drives every \marginfig figure to the
+	   requested state, whatever state it is in now, so a resize that
+	   crosses several boundaries at once is still handled correctly.
 	   ═════════════════════════════════════════════════════════════════ */
-	function _convertSideimagesToInline() {
-		const rail = document.getElementById('sideimages-rail');
-		if (!rail) return;
-		store.images.forEach(function (entry) {
-			/* Only margin-mode figures move between rail and inline.
-			   Inline-mode figures are already inline and stay there. */
-			if (entry.mode !== 'margin') return;
-			const fig = rail.querySelector(
-				'.sideimage[data-si-id="' + entry.id + '"]'
-			);
-			if (!fig) return;
-			/* ANGLE 9: re-find the marker — it may have been replaced
-			   by renderMarkdown since extract(). */
-			const marker = _refreshMarker(entry, 'image');
-			if (!marker || !_isRendered(marker)) {
-				fig.style.display = 'none';
-				return;
-			}
-			let target = entry.marker.parentElement;
-			/* Guard #13: walk up to the nearest block-level parent. */
-			let guard = 0;
-			while (target && target !== document.body && guard++ < 20) {
-				const cs = window.getComputedStyle(target);
-				if (cs.display !== 'inline' && cs.display !== 'contents' &&
-					cs.display !== 'inline-block') break;
-				target = target.parentElement;
-			}
-			if (!target || target === document.body) {
-				logWarn('NO_INLINE_ANCHOR',
-					'Could not determine inline insertion point for sideimage #' + entry.id +
-					' — hiding the figure.');
-				fig.style.display = 'none';
-				return;
-			}
-			fig.classList.add('sideimage-inline');
-			fig.style.display = '';
-			fig.style.position = '';
-			fig.style.top = '';
-			fig.style.left = '';
-			fig.style.right = '';
-			fig.style.width = '';
-			target.parentNode.insertBefore(fig, target.nextSibling);
-		});
+
+	/* ANGLE 36 / Guard W1: measure how far the sideimage rail's LEFT
+	   edge intrudes into the article's right edge. Returns null on any
+	   failure so the caller can safely fall back to the previous mode.
+
+	     overlap > 0  → the rail digs into the text (intrusion)
+	     overlap < 0  → the rail is clear of the text (gap)          */
+	function _measureRailOverlap(ir) {
+		try {
+			const contents = document.getElementById('contents');
+			/* Guard W2: both elements must exist. */
+			if (!contents || !ir) return null;
+			const railRect = ir.getBoundingClientRect();
+			const cRect    = contents.getBoundingClientRect();
+			/* Guard W3: use the CONTENT-box right edge of #contents —
+			   that is where the prose actually ends (floats align to
+			   the content edge, and hanging-punctuation / padding can
+			   inset the text). */
+			const cs   = window.getComputedStyle(contents);
+			const pr   = parseFloat(cs.paddingRight)     || 0;
+			const br   = parseFloat(cs.borderRightWidth) || 0;
+			const articleRight = cRect.right - pr - br;
+			const railLeft     = railRect.left;
+			const overlap = articleRight - railLeft;
+			/* Guard W4: refuse non-finite results (getBoundingClientRect
+			   can return 0s for detached / display:none subtrees). */
+			if (!Number.isFinite(overlap) ||
+			    !Number.isFinite(articleRight) ||
+			    !Number.isFinite(railLeft)) return null;
+			return {
+				overlap:      overlap,
+				articleRight: articleRight,
+				railLeft:     railLeft,
+				railRight:    railRect.right,
+				railRect:     railRect
+			};
+		} catch (err) {
+			logWarn('WRAP_MEASURE_FAIL',
+				'_measureRailOverlap() threw: ' + (err && err.message));
+			return null;
+		}
 	}
 
-	function _restoreSideimagesToRail() {
-		const rail = document.getElementById('sideimages-rail');
-		if (!rail) return;
-		document.querySelectorAll('.sideimage-inline').forEach(function (fig) {
-			/* Only margin-mode figures go back into the rail.
-			   Inline-mode figures stay inline forever. */
-			if (fig.getAttribute('data-si-mode') !== 'margin') return;
-			rail.appendChild(fig);
-			fig.classList.remove('sideimage-inline');
-			fig.style.display = 'none';
+	/* ANGLE 36: size a wrap figure so its box spans EXACTLY the rail's
+	   horizontal extent (railLeft → railRight). The figure is a
+	   float:right child of the article, so a negative margin-right is
+	   required to push its right edge out into the margin, to the rail's
+	   right edge. The part of the box that intrudes into the text column
+	   is what the prose bends around. All inputs are guarded.           */
+	function _sizeWrapFig(fig, m) {
+		try {
+			/* Guard W5: need a valid rail measurement. */
+			const railRect = (m && m.railRect) ? m.railRect : null;
+			if (!railRect || !Number.isFinite(railRect.width) ||
+			    railRect.width <= 0 || !Number.isFinite(railRect.right)) {
+				logWarn('WRAP_NO_MEASURE',
+					'Wrap figure has no usable rail measurement — using a safe default width.');
+			}
+			/* Guard W6: clamp the width to a readable band. */
+			let figWidth = railRect ? railRect.width : 320;
+			if (!Number.isFinite(figWidth) || figWidth <= 0) figWidth = 320;
+			figWidth = Math.max(WRAP_MIN_W, Math.min(WRAP_MAX_W, figWidth));
+
+			/* Guard W7: the float aligns to its PARENT's content-box
+			   right edge; measure that to derive the exact negative
+			   margin-right. If the parent can't be measured we fall
+			   back to margin-right:0 (figure stays at the text edge). */
+			const parent = fig.parentNode;
+			let containerRight = NaN;
+			if (parent && parent.nodeType === 1) {
+				const pres = parent.getBoundingClientRect();
+				const pcs  = window.getComputedStyle(parent);
+				const pr   = parseFloat(pcs.paddingRight)     || 0;
+				const br   = parseFloat(pcs.borderRightWidth) || 0;
+				containerRight = pres.right - pr - br;
+			}
+			let marginRight = 0;
+			if (Number.isFinite(containerRight) && Number.isFinite(railRect ? railRect.right : NaN)) {
+				marginRight = containerRight - (railRect ? railRect.right : containerRight);
+			}
+			if (!Number.isFinite(marginRight)) marginRight = 0;
+
+			/* Guard W8: never emit NaN/Infinity into the style. */
+			fig.style.width       = Math.round(figWidth)    + 'px';
+			fig.style.marginRight = Math.round(marginRight) + 'px';
+		} catch (err) {
+			logWarn('WRAP_SIZE_FAIL',
+				'Failed to size wrap figure: ' + (err && err.message));
+		}
+	}
+
+	/* ANGLE 36: walk up from the marker to the nearest block-level
+	   ancestor — the element we insert the float/inline figure next to.
+	   Returns null if no safe anchor can be found.                     */
+	function _flowAnchorFor(marker) {
+		if (!marker || !marker.parentElement) return null;
+		let target = marker.parentElement;
+		let guard  = 0;
+		while (target && target !== document.body && guard++ < 20) {
+			let cs;
+			try { cs = window.getComputedStyle(target); }
+			catch (_) { break; }
+			if (cs.display !== 'inline' && cs.display !== 'contents' &&
+			    cs.display !== 'inline-block') break;
+			target = target.parentElement;
+		}
+		if (!target || target === document.body || !target.parentNode) return null;
+		return target;
+	}
+
+	/* ANGLE 36: park a figure back in the rail, hidden, with a clean
+	   inline-geometry reset so the next margin pass can reposition it. */
+	function _parkInRail(fig, rail) {
+		if (!fig) return;
+		if (rail && fig.parentNode !== rail) {
+			try { rail.appendChild(fig); } catch (_) { return; }
+		}
+		fig.classList.remove('sideimage-inline', 'sideimage-wrap');
+		fig.style.display     = 'none';
+		fig.style.position    = '';
+		fig.style.top         = '';
+		fig.style.left        = '';
+		fig.style.right       = '';
+		fig.style.width       = '';
+		fig.style.marginRight = '';
+		fig.style.maxHeight   = '';
+		fig.style.overflow    = '';
+	}
+
+	/* ANGLE 36: the single entry point that drives every \marginfig
+	   figure to the requested state ('margin' | 'wrap' | 'inline').     */
+	function _reconcileSideimagesTo(state, ir, m) {
+		const rail = (ir && ir.nodeType === 1) ? ir : document.getElementById('sideimages-rail');
+		if (!store || !store.images.length) return;
+
+		store.images.forEach(function (entry) {
+			/* Only margin-mode figures move between rail / wrap / inline.
+			   \sideimage (inline) and \sideimage[float] stay put. */
+			if (entry.mode !== 'margin') return;
+			/* ANGLE 9: find the figure wherever it currently is — the
+			   whole document, because it may be in the rail OR in the
+			   article flow from a previous pass. */
+			let fig;
+			try { fig = document.querySelector('.sideimage[data-si-id="' + entry.id + '"]'); }
+			catch (_) { fig = null; }
+			if (!fig) return;
+			const marker = _refreshMarker(entry, 'image');
+
+			/* ── margin: absolutely positioned in the rail ───────── */
+			if (state === 'margin') {
+				if (rail && fig.parentNode !== rail) {
+					try { rail.appendChild(fig); } catch (_) { return; }
+				}
+				fig.classList.remove('sideimage-inline', 'sideimage-wrap');
+				fig.style.position    = 'absolute';
+				fig.style.top         = '';
+				fig.style.marginRight = '';
+				fig.style.display     = '';
+				const size     = entry.size || 'normal';
+				let railRect = null;
+				if (rail) { try { railRect = rail.getBoundingClientRect(); } catch (_) { railRect = null; } }
+				if (size === 'full' || size === 'wide') {
+					/* Wide/full: extend to the viewport's right edge. */
+					const railGap = railRect ? (railRect.right - (window.innerWidth - 24)) : 0;
+					fig.style.left    = 'auto';
+					fig.style.right   = (Number.isFinite(railGap) ? railGap : 0) + 'px';
+					fig.style.width   = (size === 'full' ? '420px' : '360px');
+					fig.style.maxHeight = 'calc(100vh - 48px)';
+					fig.style.overflow  = 'auto';
+				} else {
+					/* Normal: fill the rail width. */
+					fig.style.left    = '0';
+					fig.style.right   = '0';
+					fig.style.width   = 'auto';
+					fig.style.maxHeight = 'calc(100vh - 80px)';
+					fig.style.overflow  = '';
+				}
+				if (marker) {
+					let r;
+					try { r = marker.getBoundingClientRect(); } catch (_) { r = null; }
+					if (r && Number.isFinite(r.top)) {
+						fig.style.top = (r.top + window.scrollY) + 'px';
+					}
+				}
+				return;
+			}
+
+			/* ── inline / wrap: figure lives in the article flow ─── */
+			/* Guard W9: without a rendered marker we cannot anchor the
+			   figure in the flow — park it in the rail, hidden. */
+			if (!marker || !_isRendered(marker)) {
+				_parkInRail(fig, rail);
+				return;
+			}
+			const anchor = _flowAnchorFor(marker);
+			if (!anchor) {
+				logWarn('NO_FLOW_ANCHOR_SI',
+					'No block-level flow anchor for \\marginfig #' + entry.id +
+					' (' + state + ' mode) — parking in rail, hidden.');
+				_parkInRail(fig, rail);
+				return;
+			}
+			/* Clean reset to a neutral in-flow state. */
+			fig.classList.remove('sideimage-inline', 'sideimage-wrap');
+			fig.style.position    = '';
+			fig.style.top         = '';
+			fig.style.left        = '';
+			fig.style.right       = '';
+			fig.style.width       = '';
+			fig.style.marginRight = '';
+			fig.style.maxHeight   = '';
+			fig.style.overflow    = '';
+			fig.style.display     = '';
+			if (state === 'wrap') fig.classList.add('sideimage-wrap');
+			else                  fig.classList.add('sideimage-inline');
+			/* Insert after the marker's block so the following prose
+			   wraps around the float. Guard W10: layout() runs on every
+			   scroll/resize, so only touch the DOM when the figure is NOT
+			   already sitting exactly where it belongs — otherwise a
+			   redundant move would force a reflow on every frame. */
+			const alreadyPlaced =
+				fig.parentNode === anchor.parentNode &&
+				fig.previousElementSibling === anchor;
+			if (!alreadyPlaced) {
+				try {
+					anchor.parentNode.insertBefore(fig, anchor.nextSibling);
+				} catch (err) {
+					logWarn('WRAP_INSERT_FAIL',
+						'Could not insert \\marginfig #' + entry.id + ' into the flow: ' + (err && err.message));
+					_parkInRail(fig, rail);
+					return;
+				}
+			}
+			/* Re-size every pass: the viewport (and thus the rail extent)
+			   can change between passes even when the DOM doesn't move. */
+			if (state === 'wrap') _sizeWrapFig(fig, m);
 		});
+
+		/* Rail height bookkeeping: the rail only needs extra height while
+		   it actually holds absolutely-positioned figures. */
+		if (!rail) return;
+		if (state === 'margin') {
+			let railBottom = 0;
+			store.images.forEach(function (entry) {
+				if (entry.mode !== 'margin') return;
+				const f2 = rail.querySelector('.sideimage[data-si-id="' + entry.id + '"]');
+				if (!f2) return;
+				const mk = _refreshMarker(entry, 'image');
+				if (!mk) return;
+				let r; try { r = mk.getBoundingClientRect(); } catch (_) { return; }
+				if (!r || !Number.isFinite(r.top)) return;
+				const mBot = r.top + window.scrollY + r.height + f2.offsetHeight + 200;
+				if (mBot > railBottom) railBottom = mBot;
+			});
+			rail.style.minHeight = (railBottom + 80) + 'px';
+		} else {
+			/* No margin figures in the rail right now — release the
+			   reserved height so an empty rail doesn't stretch the page. */
+			rail.style.minHeight = '';
+		}
 	}
 
 	/* ═════════════════════════════════════════════════════════════════
@@ -1517,116 +1754,63 @@
 			}
 		}
 
-		/* ─── Sideimages ─── */
+		/* ─── Sideimages ───────────────────────────────────────────
+		   ANGLE 36: three possible homes for a \marginfig, chosen per
+		   pass from the CURRENT (measured) viewport:
+
+		     1. vw < BREAKPOINT          → 'inline'  (centred block in
+	                                        the article — no margin at all)
+		     2. rail intrudes into text   → 'wrap'    (float:right in the
+	                                        article so the prose bends
+	                                        around the figure)
+		     3. rail clear of the text    → 'margin'  (absolute in the
+	                                        right-margin rail, at the
+	                                        marker's Y — the classic Tufte
+	                                        sticky figure)
+
+		   The wrap/margin decision is measured, not hard-coded, and
+		   hysteresis (WRAP_ENTER / WRAP_EXIT) keeps it from flip-
+	   flopping while the window is resized across the boundary. */
 		if (ir) {
 			if (!irVisible) {
-				/* ANGLE 11: same as sidenotes — preserve fallback state. */
-				Array.prototype.forEach.call(
-					ir.querySelectorAll('.sideimage'),
-					function (el) {
-						if (el.style.display === '' || el.classList.contains('is-visible')) return;
-						el.style.display = 'none';
-					}
-				);
-				_convertSideimagesToInline();
+				/* Below BREAKPOINT there is no room for a margin column
+				   at all — every \marginfig becomes a centred inline
+				   figure in the article flow. */
+				sideimageWrapActive = false;
+				_reconcileSideimagesTo('inline', ir, null);
+				return;
+			}
+
+			/* The rail is visible: measure how far its left edge intrudes
+			   into the article. Guard W9: if the measurement fails for
+			   any reason, default to 'margin' (the previous, safe
+			   behaviour) rather than guessing. */
+			const m       = _measureRailOverlap(ir);
+			const overlap = (m && Number.isFinite(m.overlap)) ? m.overlap : 0;
+
+			/* Hysteresis: enter wrap only once clearly intruding, leave
+			   only once clearly clear. This is what prevents the figure
+			   from bouncing between the rail and the flow while the user
+			   hovers the window edge near the boundary. */
+			const shouldWrap = sideimageWrapActive
+				? !(overlap <= -WRAP_EXIT)   // already wrapping → stay until clearly clear
+				: (overlap >= WRAP_ENTER);   // not wrapping  → enter once clearly intruding
+
+			if (shouldWrap) {
+				if (!sideimageWrapActive) {
+					logInfo('sideimages → WRAP mode (rail intrudes ' +
+						Math.round(overlap) + 'px into the text; ' +
+						'figures now float and the prose bends around them).');
+				}
+				sideimageWrapActive = true;
+				_reconcileSideimagesTo('wrap', ir, m);
 			} else {
-				_restoreSideimagesToRail();
-				const scrollY = window.scrollY;
-				const viewTop = scrollY;
-				const viewBot = scrollY + window.innerHeight;
-				const STICK   = 24;
-
-				/* ANGLE 24: margin figures are positioned at their
-				   marker's Y in the rail (position:absolute). They
-				   scroll with the page — when the user reaches the
-				   marker, the figure is right there. When they
-				   scroll past, the figure scrolls off with the page.
-				   No more "takes half the page, doesn't move"
-				   complaint — figures behave like normal content.
-
-				   For "wide" / "full" figures (like the navy
-				   newspaper article) the container is wider so the
-				   content is readable. The figure has overflow:auto
-				   so the user can scroll inside it (e.g. to read a
-				   long newspaper article) without affecting the
-				   main page scroll.                                */
-				store.images.forEach(function (entry) {
-					/* ANGLE 22: only position margin-mode figures in
-					   the rail. Inline-mode figures are already in the
-					   article flow — never touch them. */
-					if (entry.mode !== 'margin') return;
-					const fig = ir.querySelector(
-						'.sideimage[data-si-id="' + entry.id + '"]'
-					);
-					if (!fig) return;
-					fig.style.display = '';
-					fig.style.position = 'absolute';
-					const size = entry.size || 'normal';
-					const railRect = ir.getBoundingClientRect();
-					if (size === 'full' || size === 'wide') {
-						/* Wide / full: extend from rail's right edge
-						   to viewport's right edge (24px from the
-						   viewport's right). We measure from the
-						   RAIL's coordinate system (since the rail
-						   is our containing block), so we use a
-						   NEGATIVE right offset to push the figure
-						   past the rail to the viewport edge.
-
-						   Formula:
-						     viewport_right = window.innerWidth
-						     rail_right     = railRect.right
-						     figure_right_edge in rail coords =
-						       rail_right - (window.innerWidth - 24)
-						   If positive, figure is inside rail's right.
-						   If negative, figure extends past rail's right.
-						   We want the latter so the figure reaches
-						   viewport's right edge.                       */
-						const railGap = railRect.right - (window.innerWidth - 24);
-						fig.style.left = 'auto';
-						fig.style.right = railGap + 'px';
-						if (size === 'full') {
-							fig.style.width = '420px';
-						} else {
-							fig.style.width = '360px';
-						}
-						fig.style.maxHeight = 'calc(100vh - 48px)';
-						fig.style.overflow = 'auto';
-					} else {
-						/* Normal: rail width. */
-						fig.style.left = '0';
-						fig.style.right = '0';
-						fig.style.width = 'auto';
-						fig.style.maxHeight = 'calc(100vh - 80px)';
-					}
-					/* Position at the marker's Y. */
-					const marker = _refreshMarker(entry, 'image');
-					if (marker) {
-						let r;
-						try { r = marker.getBoundingClientRect(); }
-						catch (_) { r = null; }
-						if (r) {
-							fig.style.top = (r.top + window.scrollY) + 'px';
-						}
-					}
-				});
-
-				/* Extend the sideimages-rail so absolute-positioned
-				   figures have room to live. */
-				let railBottom = 0;
-				store.images.forEach(function (entry) {
-					if (entry.mode !== 'margin') return;
-					const fig = ir.querySelector(
-						'.sideimage[data-si-id="' + entry.id + '"]'
-					);
-					if (!fig) return;
-					const marker = _refreshMarker(entry, 'image');
-					if (!marker) return;
-					let r;
-					try { r = marker.getBoundingClientRect(); } catch (_) { return; }
-					const mBot = r.top + window.scrollY + r.height + fig.offsetHeight + 200;
-					if (mBot > railBottom) railBottom = mBot;
-				});
-				ir.style.minHeight = (railBottom + 80) + 'px';
+				if (sideimageWrapActive) {
+					logInfo('sideimages → MARGIN mode (rail is ' +
+						Math.round(-overlap) + 'px clear of the text).');
+				}
+				sideimageWrapActive = false;
+				_reconcileSideimagesTo('margin', ir, null);
 			}
 		}
 	}
@@ -2230,6 +2414,58 @@
 				add('      ↳ ' + child.tagName + '.' + child.className +
 					' (id=' + child.id + ', h=' + child.offsetHeight + 'px, position=' +
 					window.getComputedStyle(child).position + ')');
+			});
+		}
+
+		/* ── ANGLE 36: MARGINFIG PLACEMENT (margin / wrap / inline) ── */
+		/*  Reports the live rail↔text geometry and which home every
+		    \marginfig is currently in, so the margin/wrap boundary can
+		    be verified by eye from the console. */
+		add('');
+		add('  ANGLE 36 — MARGINFIG PLACEMENT (margin / wrap / inline)');
+		{
+			const mainEl = document.getElementById('contents');
+			const railEl = document.getElementById('sideimages-rail');
+			const m = (railEl && mainEl) ? _measureRailOverlap(railEl) : null;
+			if (!m) {
+				add('    ⚠ Could not measure rail↔text geometry ' +
+					'(missing #contents or #sideimages-rail, or measurement threw).');
+			} else {
+				const state = m.overlap >= WRAP_ENTER ? 'WRAP (intruding)' :
+				              (m.overlap <= -WRAP_EXIT ? 'MARGIN (clear)' : 'Hysteresis band (keep current)');
+				add('    viewport width:        ' + window.innerWidth + 'px');
+				add('    #contents right edge:  ' + m.articleRight.toFixed(1) + 'px (content box)');
+				add('    rail left edge:        ' + m.railLeft.toFixed(1) + 'px');
+				add('    rail right edge:       ' + m.railRight.toFixed(1) + 'px');
+				add('    overlap (text−rail):   ' + m.overlap.toFixed(1) + 'px   ' +
+					(m.overlap > 0 ? '→ rail intrudes into the text' : '→ rail clear of the text'));
+				add('    hysteresis band:       enter wrap ≥ +' + WRAP_ENTER +
+					'px, leave wrap ≤ −' + WRAP_EXIT + 'px');
+				add('    sideimageWrapActive:   ' + sideimageWrapActive);
+				add('    → current decision:    ' + state);
+			}
+			store.images.forEach(function (entry) {
+				if (entry.mode !== 'margin') return;
+				let fig = null;
+				try { fig = document.querySelector('.sideimage[data-si-id="' + entry.id + '"]'); }
+				catch (_) {}
+				if (!fig) {
+					add('    ✘ \\marginfig #' + entry.id + ': figure not in DOM.');
+					return;
+				}
+				const inRail   = railEl ? (fig.parentNode === railEl) : false;
+				const isWrap   = fig.classList.contains('sideimage-wrap');
+				const isInline = fig.classList.contains('sideimage-inline');
+				const home = inRail ? 'rail (margin)' : (isWrap ? 'flow (wrap/float)' : (isInline ? 'flow (inline)' : 'flow (unclassified)'));
+				const cs = window.getComputedStyle(fig);
+				let r = null;
+				try { r = fig.getBoundingClientRect(); } catch (_) {}
+				add('    \\marginfig #' + entry.id + ' (size=' + (entry.size || 'normal') +
+					'): home=' + home +
+					', float=' + cs.float +
+					', width=' + (r ? Math.round(r.width) : '?') + 'px' +
+					', left=' + (r ? Math.round(r.left) : '?') +
+					', right=' + (r ? Math.round(r.right) : '?') + 'px');
 			});
 		}
 

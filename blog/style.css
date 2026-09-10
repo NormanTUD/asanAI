@@ -7565,22 +7565,36 @@ html.dark #sidenotes-section .sidenote-fallback li::before {
 /* ═══════════════════════════════════════════════════════════════
    SIDEIMAGES — sticky right-margin figures (Tufte-style).
 
-   Authoring:  \sideimage{URL}{CAPTION}
+   Authoring:  \marginfig{URL}{CAPTION}   (right-margin figure)
+               \sideimage{URL}{CAPTION}   (inline figure)
 
-   The image sits in the right margin, sticky to the viewport as
+   A \marginfig lives in the right margin, sticky to the viewport as
    you scroll, while the paragraph that references it is on screen.
-   When you scroll past the paragraph, the figure slides out.
-   On viewports too narrow for a right column, it falls back to a
-   regular inline <figure> — handled by layout() in sidenotes.js,
-   which moves the figure back into the article flow as a plain
-   <figure> rather than letting it overflow into the margin.
+   When you scroll past the paragraph, the figure scrolls off with the
+   page. When there isn't enough room, it degrades gracefully — handled
+   by layout() in sidenotes.js, which moves the figure back into the
+   article flow rather than letting it overflow the viewport.
 
-   ANGLE 13: Breakpoint math.
-   The rail needs (half #contents) + (gap) + (rail width) = 400 + 40 + 320 = 760px
-   from the viewport centre. Doubled: 1520px minimum viewport.
-   Below 1500px the rail is hidden and sideimages fall back to
-   inline — even if there is room in raw pixels, going under 1500px
-   tends to push the rail outside the right edge of the viewport.
+   ANGLE 13 + ANGLE 36: the three homes of a \marginfig, chosen per
+   layout pass from the MEASURED viewport (not hard-coded px):
+
+     • margin  — wide: the 320px rail sits clear of the text in the
+                 right margin; the figure is absolutely positioned at
+                 the marker's Y. This is the classic Tufte figure.
+     • wrap    — the rail's left edge digs into the article (the right
+                 margin is narrower than the rail). The figure is moved
+                 into the article flow as a float:right spanning the
+                 rail's extent, so the prose BENDS around it (see the
+                 .sideimage.sideimage-wrap rule below). This is what
+                 fixes the old bug where the figure sat on top of the
+                 text without the text re-flowing around it.
+     • inline  — below 1280px there is no margin column at all, so the
+                 figure becomes a plain centred <figure> in the text.
+
+   The margin/wrap boundary is measured live (rail left edge vs. the
+   #contents content-box right edge) with a small hysteresis band, so
+   it tracks the real #contents width (min(92vw, 80ch)) and never
+   depends on the font's exact ch width.
    ═══════════════════════════════════════════════════════════════ */
 
 /* The sideimage rail — sibling of #sidenotes-rail, on the body.
@@ -7749,6 +7763,74 @@ p:has(> .sideimage-marker:only-child) {
 .sideimage.sideimage-inline img {
 	max-height: 75vh;
 	object-fit: contain;
+}
+
+/* ANGLE 36: "wrap" sideimage — a \marginfig whose rail intrudes into
+   the article (the right margin is too narrow to hold it clear of the
+   text). sidenotes.js moves the figure OUT of the rail and INTO the
+   article flow, where it becomes a right-float. The figure is sized by
+   JS to span EXACTLY the rail's horizontal extent:
+     • its right edge  → the rail's right edge (near the viewport edge)
+     • its left edge   → the rail's left edge (digging into the text)
+   so the part of the box that overlaps the text column is precisely
+   what the surrounding prose bends around (classic float wrap).
+
+   KEY invariants, each guarded:
+     • float:right  → the only CSS mechanism that makes block prose
+                      re-flow around an element. `clear:right` stops two
+                      wrap figures from stacking on top of each other.
+     • overflow:visible + contain:none are guaranteed on .md / #contents
+                      (see the GUARDRAIL block at the very end of this
+                      file) so the portion of the figure that pokes into
+                      the margin is NEVER clipped by the article box.
+     • max-height:none → the float must keep its full natural height, or
+                      the text would wrap around a shorter box than the
+                      image actually occupies.
+   width and margin-right are set inline by JS (_sizeWrapFig); the
+   !important rules below only lock down everything JS does NOT touch.   */
+.sideimage.sideimage-wrap {
+	position: static !important;
+	float: right !important;
+	clear: right !important;
+	display: block !important;
+	/* width and margin-right are driven by JS (_sizeWrapFig) via inline
+	   styles, so they are deliberately NOT !important-locked here — an
+	   !important would beat the inline values and freeze the box at the
+	   CSS default. `width:auto` / `margin-right:0` are just the fallbacks
+	   JS overwrites on the very next line. */
+	width: auto;
+	max-width: 100%;
+	margin: 0.5rem 0 1.5rem 1.5rem;   /* margin-right:0 → JS sets the negative value */
+	left: auto !important;
+	right: auto !important;
+	top: auto !important;
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-md);
+	padding: 0.65rem 0.65rem 0.5rem;
+	background: var(--mn-surface);
+	box-shadow: var(--mn-shadow-md);
+	max-height: none !important;
+	overflow: visible !important;
+}
+/* The image fills the (JS-sized) wrap box but is never allowed to blow
+   the box out — object-fit:contain letterboxes instead. */
+.sideimage.sideimage-wrap img {
+	width: 100%;
+	height: auto;
+	max-height: none;
+	object-fit: contain;
+}
+.sideimage.sideimage-wrap figcaption {
+	font-size: 0.82rem;
+	line-height: 1.45;
+	color: var(--mn-text-secondary);
+	margin-top: 0.6rem;
+}
+/* GUARDRAIL (ANGLE 36): if the image fails to load, the wrap box must
+   still occupy space and let the text wrap around the placeholder, not
+   collapse to zero height and yank the surrounding prose. */
+.sideimage.sideimage-wrap:empty {
+	min-height: 120px;
 }
 
 /* ANGLE 34: \sideimage[float] — float:right at the right border
