@@ -151,6 +151,8 @@ If the output layer's dimensions do not match the target data's dimensions, the 
 
 **The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your output activation must produce a probability distribution (i.e., softmax), paired with a cross-entropy loss.
 
+**The mirror rule is a theorem, not just a convention.** In 1970, Conant and Ashby proved the **Good Regulator Theorem**: *every good regulator of a system must be a model of that system* \cite{conantashby1970}. The controller that best tames a system must internally carry a structure-preserving image of it — and no amount of tuning closes the gap when the controller's structure cannot represent the thing it controls. The output layer is the sharpest place this shows up in a network: its shape is a one-to-one image of the target it is to regulate — a thermostat "models" a room insofar as it carries a one-parameter image of its temperature, a classifier "models" its label set insofar as its output is a one-hot image of the categories. When the mirror is wrong, training cannot fix it, which is why the Golden Rule is a *structural* requirement rather than a stylistic one.
+
 ## The Statistical Nature of Learning
 
 We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
