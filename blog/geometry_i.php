@@ -478,13 +478,13 @@ So a triangle's area is read directly from its *angular defect*, and there is no
 
 ### Riemann: the general idea of "space"
 
-\marginfig{riemann.jpeg}{\citeauthor{hypothesengeometrie} (1826–1866), whose 1854 habilitation lecture generalised the very idea of a "space".}
-
 <div class="smart-quote" data-cite="hypothesengeometrieenglish" data-after="translated by William Kingdon Clifford">
 I consider it necessary to examine in general the hypotheses on which geometry is based, and to inquire whether we cannot give a more general meaning to the proposition about the measure of extension.
 </div>
 
 \citeauthor{hypothesengeometrie}, in his 1854 habilitation lecture \citetitle{hypothesengeometrie} \cite{hypothesengeometrie}, took one final, enormous step. The *why* was to give the new geometries — Euclidean, spherical, hyperbolic — a single frame that explained *why* they all worked, and to ask what "space" even means when it is not 3-D and not flat. His answer is the **manifold** (German *Mannigfaltigkeit*, literally "many-folds") — an $n$-dimensional surface that, *locally*, looks like ordinary flat $\mathbb{R}^{n}$, but may be curved in a way that can vary from point to point, and whose "metric" (the rule for measuring distances) is given by a tensor field $g_{\mu\nu}$:
+
+\marginfig{riemann.jpeg}{\citeauthor{hypothesengeometrie} (1826–1866), whose 1854 habilitation lecture generalised the very idea of a "space".}
 
 $$ds^{2} = g_{\mu\nu}\, dx^{\mu} dx^{\nu}$$
 $$\underbrace{ds^{2}}_{\substack{\text{the tiny distance}\\\text{squared}}} = \underbrace{g_{\mu\nu}}_{\substack{\text{the "measuring rules", which}\\\text{can change from point to point}}} \;\underbrace{dx^{\mu}\, dx^{\nu}}_{\substack{\text{tiny steps in each}\\\text{of the }n\text{ directions}}}$$
