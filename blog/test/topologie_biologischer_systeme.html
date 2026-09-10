@@ -833,7 +833,21 @@ Diese vier Fälle sind die Grundbausteine des gesamten Papers.
 
 <div class="card">
 <h3>System & Umgebung: Z = N ∪ M</h3>
-<p>Das Paper unterscheidet zwischen <strong>Eigeneigenschaften N</strong> des Systems und <strong>Umgebungseigenschaften M</strong>.
+<p>Das Paper unterscheidet zwischen <strong>Eigeneigenschaften N</strong> des Systems und <strong>Umgebungseigenschaften M</strong>. Je stärker der Einfluss der Umgebung, desto mehr M-Elemente werden Berührungs‑/Adhärenzpunkte des Systems.</p>
+<div class="interactive-area">
+<canvas id="envCanvas" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Einfluss der Umgebung</label>
+<input type="range" id="envInfluence" min="0" max="4" value="0">
+</div>
+<div class="btn-group">
+<button class="btn" onclick="toggleEnvLabels()">Labels umschalten</button>
+</div>
+<div id="fullSet" class="status-item" style="font-size: 0.85rem;"></div>
+</div>
+</div>
+</div>
 <script>
 // ============================================================
 // UTILITY FUNCTIONS
@@ -1424,8 +1438,7 @@ const dgNodes = [
   { id: 'c', x: 0.55, y: 0.15 },
   { id: 'd', x: 0.75, y: 0.3 },
   { id: 'e', x: 0.85, y: 0.55 },
-  { id: 'f', x: 0.65, y: 0
-.65 },
+  { id: 'f', x: 0.65, y: 0.65 },
   { id: 'g', x: 0.45, y: 0.75 },
   { id: 'h', x: 0.2, y: 0.7 },
 ];

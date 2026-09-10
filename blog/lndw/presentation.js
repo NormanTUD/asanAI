@@ -193,9 +193,47 @@ const Presentation = (() => {
     let slides = [];
     let fragmentIndex = {};
 
+    // ────────────────────────────────────────────────────────────
+    // SLIDE-AUSWAHL via URL:  ?slides=0,1,2,3,10-16,17,19-30
+    // 0-basierte Indexe der Ursprungsfolge, Bereiche inkl. der Enden.
+    // Ohne Parameter (oder leer) → alle Folien.
+    // ────────────────────────────────────────────────────────────
+    function parseSlideSelection(total) {
+        const raw = new URLSearchParams(window.location.search).get('slides');
+        if (!raw) return null;
+        const selected = new Set();
+        raw.split(',').forEach(part => {
+            part = part.trim();
+            if (!part) return;
+            const range = part.split('-');
+            let a, b;
+            if (range.length === 2) {
+                a = parseInt(range[0].trim(), 10);
+                b = parseInt(range[1].trim(), 10);
+            } else {
+                a = b = parseInt(part, 10);
+            }
+            if (isNaN(a) || isNaN(b)) return;
+            const [lo, hi] = a <= b ? [a, b] : [b, a];
+            for (let i = lo; i <= hi; i++) {
+                if (i >= 0 && i < total) selected.add(i);
+            }
+        });
+        return selected;
+    }
+
     function init() {
-        slides = Array.from(document.querySelectorAll('.slide'));
+        const allSlides = Array.from(document.querySelectorAll('.slide'));
+        const selection = parseSlideSelection(allSlides.length);
+        slides = selection ? allSlides.filter((_, i) => selection.has(i)) : allSlides;
+        if (slides.length === 0) {
+            console.warn('slides= hat keine Folie ausgewaehlt – zeige alle Folien.');
+            slides = allSlides;
+        }
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
+        // Nur die erste sichtbare Folie aktivieren (Folie 0 hat "active" hartkodiert).
+        allSlides.forEach(s => s.classList.remove('active'));
+        if (slides.length) slides[0].classList.add('active');
         updateUI();
         buildOverview();
     }
@@ -317,7 +355,7 @@ const Presentation = (() => {
         });
     }
 
-    return { init, next, prev, goTo, toggleOverview, toggleFullscreen, closeOverview };
+    return { init, next, prev, goTo, count: () => slides.length, toggleOverview, toggleFullscreen, closeOverview };
 })();
 
 // ────────────────────────────────────────────────────────────
@@ -336,7 +374,7 @@ const InputHandler = (() => {
         'O': () => Presentation.toggleOverview(),
         'Escape': () => Presentation.closeOverview(),
         'Home': () => Presentation.goTo(0),
-        'End': () => Presentation.goTo(document.querySelectorAll('.slide').length - 1),
+        'End': () => Presentation.goTo(Presentation.count() - 1),
     };
 
     let digitBuffer = '';
