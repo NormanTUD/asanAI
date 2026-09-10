@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Schleifenraum – interaktiv verstehen</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<style>
+  :root{
+    --bg:#0b1020; --bg2:#111a35; --panel:#151f3f; --ink:#e7ecff; --dim:#9aa7d1;
+    --accent:#7cf9c8; --accent2:#ff8ad8; --accent3:#ffd166; --line:#2a366b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:linear-gradient(180deg,#070a18,#0b1020 30%,#0b1020);color:var(--ink);font-family:-apple-system,Inter,Segoe UI,Roboto,sans-serif;line-height:1.55}
+  header{padding:60px 24px 30px;text-align:center;background:radial-gradient(ellipse at top,#1a2560 0%,transparent 60%)}
+  header h1{font-size:clamp(28px,4.5vw,52px);margin:0;background:linear-gradient(90deg,#7cf9c8,#ff8ad8,#ffd166);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.5px}
+  header p{color:var(--dim);max-width:720px;margin:14px auto 0}
+  main{max-width:1100px;margin:0 auto;padding:20px}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;margin:26px 0;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  section h2{margin-top:0;font-size:26px;color:#fff;display:flex;align-items:center;gap:10px}
+  section h2 .num{font-size:14px;padding:4px 10px;border-radius:99px;background:linear-gradient(90deg,#7cf9c8,#ff8ad8);color:#0b1020;font-weight:800}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+  canvas{background:#070c1f;border-radius:12px;display:block;width:100%}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0;align-items:center}
+  .controls label{display:flex;flex-direction:column;font-size:12px;color:var(--dim);gap:4px;min-width:140px}
+  input[type=range]{accent-color:#7cf9c8}
+  button{background:linear-gradient(90deg,#7cf9c8,#54d0a0);border:0;color:#0b1020;padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+  button.alt{background:linear-gradient(90deg,#ff8ad8,#c56bff);color:#fff}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  .note{background:#0d1631;border-left:4px solid var(--accent);padding:12px 14px;border-radius:8px;font-size:14px;color:#cfd8ff;margin:10px 0}
+  .warn{border-left-color:var(--accent2)}
+  .ok{border-left-color:var(--accent3)}
+  .pill{display:inline-block;padding:2px 8px;background:#1c2a5a;border-radius:99px;font-size:12px;color:var(--dim);margin-right:4px}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px}
+  .toc a{color:#cfd8ff;text-decoration:none;padding:6px 12px;border:1px solid var(--line);border-radius:99px;font-size:13px;transition:.2s}
+  .toc a:hover{background:#1c2a5a;border-color:var(--accent)}
+  .kbd{font-family:ui-monospace,monospace;background:#0a1230;padding:2px 6px;border-radius:6px;color:var(--accent)}
+  .kv{display:flex;justify-content:space-between;padding:6px 10px;background:#0d1631;border-radius:6px;margin:4px 0;font-family:ui-monospace,monospace;font-size:13px}
+  .kv span:last-child{color:var(--accent)}
+  .stepper{display:flex;gap:6px;margin:10px 0}
+  .stepper div{flex:1;height:6px;background:#1c2a5a;border-radius:3px;transition:.3s}
+  .stepper div.active{background:linear-gradient(90deg,#7cf9c8,#ff8ad8)}
+  footer{padding:40px;text-align:center;color:var(--dim)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Der Schleifenraum ΩX</h1>
+  <p>Ein interaktiver Spaziergang durch punktierte Räume, Schleifen, die Fundamentalgruppe, die Einhängung ΣX und die schöne Dualität <em>ΣX ⊣ ΩX</em>. Weniger lesen. Mehr schieben, klicken, verstehen.</p>
+  <div class="toc">
+    <a href="#s1">1 · Motivation</a>
+    <a href="#s2">2 · Punktierter Raum</a>
+    <a href="#s3">3 · Was ist eine Schleife?</a>
+    <a href="#s4">4 · Der Schleifenraum ΩX</a>
+    <a href="#s5">5 · Kompakt-offen-Topologie</a>
+    <a href="#s6">6 · Homotopie & Verknüpfung</a>
+    <a href="#s7">7 · Fundamentalgruppe π₁</a>
+    <a href="#s8">8 · Einhängung ΣX</a>
+    <a href="#s9">9 · Adjunktion Σ ⊣ Ω</a>
+    <a href="#s10">10 · Höhere Homotopiegruppen</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 1. MOTIVATION ============ -->
+<section id="s1">
+  <h2><span class="num">1</span> Motivation: Warum interessieren uns Schleifen?</h2>
+  <p>Wenn du einen Raum verstehen willst, frag: <b>welche Wege gibt es darin, die zum Ausgangspunkt zurückkehren?</b> Bei einem Donut (Torus) kann eine Schleife um das Loch <em>oder</em> durchs Loch laufen – bei einer Kugel niemals um ein Loch, weil es keins gibt. Schleifen <b>fühlen die Löcher</b>.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="motivCanvas" height="360"></canvas>
+      <div class="controls">
+        <label>Raum
+          <select id="motivShape">
+            <option value="disk">Scheibe (kein Loch)</option>
+            <option value="annulus" selected>Ring (1 Loch)</option>
+            <option value="twoholes">2 Löcher</option>
+          </select>
+        </label>
+        <label>Umläufe der Schleife: <span id="motivWLbl">1</span>
+          <input type="range" id="motivW" min="-3" max="3" step="1" value="1">
+        </label>
+        <button id="motivShrink">Versuche, zusammenzuziehen</button>
+      </div>
+    </div>
+    <div>
+      <div class="note">Die Schleife wird versuchen, sich auf den Basispunkt zusammenzuziehen. <b>Wo Löcher sind, bleibt sie hängen.</b></div>
+      <div class="note ok">Die zentrale Idee: <b>Alle Schleifen zusammen bilden selbst wieder einen Raum</b> — den <span class="pill">Schleifenraum ΩX</span>. In diesem Raum können wir wieder Topologie machen, wieder Schleifen betrachten (→ π₂), und so tiefer in die "Form" von X eindringen.</div>
+      <div class="note warn">Frage, die dieses Dokument beantwortet:<br><em>"Wie macht man aus Schleifen einen sinnvollen Raum, wie multipliziert man sie, wie hängt das mit Suspensions zusammen und warum sind Ω und Σ eigentlich Zwillinge?"</em></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. POINTED SPACE ============ -->
+<section id="s2">
+  <h2><span class="num">2</span> Punktierter Raum <span style="color:var(--accent)">(X, x₀)</span></h2>
+  <p>Ein <b>punktierter Raum</b> ist einfach ein topologischer Raum X, in dem wir <b>einen Punkt</b> x₀ auszeichnen — den <em>Basispunkt</em>. Klingt trivial. Ist es aber nicht: fast die gesamte Homotopietheorie hängt an dieser Wahl <span class="pill">Quelle 1</span>.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="pointedCanvas" height="320"></canvas>
+      <div class="controls">
+        <label>Basispunkt x-Position
+          <input type="range" id="bpx" min="-1" max="1" step="0.01" value="1">
+        </label>
+        <label>Basispunkt y-Position
+          <input type="range" id="bpy" min="-1" max="1" step="0.01" value="0">
+        </label>
+        <button id="bpReset">Standard-Basispunkt</button>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Beispiele</h3>
+      <div class="kv"><span>Sphäre S²</span><span>Basispunkt = Nordpol</span></div>
+      <div class="kv"><span>Intervall [0,1]</span><span>Basispunkt = 0</span></div>
+      <div class="kv"><span>Top. Gruppe</span><span>Basispunkt = neutrales Element</span></div>
+      <h3>Was ist eine "punktierte Abbildung"?</h3>
+      <p>Eine stetige Abbildung <span id="tex1"></span> mit der zusätzlichen Regel <b>f(x₀) = y₀</b>. Der Basispunkt muss auf den Basispunkt geschickt werden.</p>
+      <div class="note">Bewege den Basispunkt oben. Der grüne Pfeil zeigt an, wohin eine beispielhafte punktierte Abbildung ihn schickt — sie muss ihn immer auf den Zielbasispunkt schicken.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. WHAT IS A LOOP ============ -->
+<section id="s3">
+  <h2><span class="num">3</span> Was ist eine Schleife?</h2>
+  <p>Eine <b>Schleife</b> an x₀ ist eine stetige Abbildung <span id="tex2"></span> mit w(0) = w(1) = x₀. Anschaulich: du startest bei x₀, läufst irgendwie herum und kommst am Ende wieder bei x₀ an.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="loopCanvas" height="360"></canvas>
+      <div class="controls">
+        <label>Parameter t: <span id="tLbl">0.00</span>
+          <input type="range" id="tParam" min="0" max="1" step="0.005" value="0">
+        </label>
+        <label>Schleifentyp
+          <select id="loopType">
+            <option value="circle">Kreis um Loch</option>
+            <option value="figure8">Achterschleife</option>
+            <option value="squiggle">Kringel</option>
+            <option value="constant">Konstante Schleife k</option>
+          </select>
+        </label>
+        <button id="playLoop">▶ Abspielen</button>
+      </div>
+    </div>
+    <div>
+      <div class="stepper"><div id="ss0"></div><div id="ss1"></div><div id="ss2"></div><div id="ss3"></div></div>
+      <div class="note">Links: der <b>Definitionsbereich [0,1]</b> als Balken. Der bewegliche Punkt ist t. Rechts: das <b>Bild w(t)</b> im Raum X.</div>
+      <div class="note ok"><b>Konstante Schleife k</b>: w(t)=x₀ für alle t. Sie ist das <em>neutrale Element</em> der Fundamentalgruppe, das <em>"nichts tun"</em>.</div>
+      <p>Der Kreis S¹ ist übrigens dasselbe wie [0,1] mit verklebten Enden. Eine Schleife ist also nichts anderes als eine <b>punktierte Abbildung S¹ → X</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. LOOP SPACE ============ -->
+<section id="s4">
+  <h2><span class="num">4</span> Der Schleifenraum <span style="color:var(--accent)">ΩX</span></h2>
+  <p>Kern-Idee: <b>jede einzelne Schleife wird zu einem Punkt in einem neuen Raum</b>. Dieser neue Raum ist ΩX. Wenn zwei Schleifen "nahe beieinander liegen" (überall fast dieselben Werte haben), dann sind die zugehörigen Punkte in ΩX nahe beieinander.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="omegaCanvas" height="380"></canvas>
+      <div class="controls">
+        <label>Wähle Schleife (2 Parameter)
+          <input type="range" id="paramA" min="0" max="6.28" step="0.01" value="1.2">
+        </label>
+        <label>Amplitude
+          <input type="range" id="paramB" min="0.1" max="1" step="0.01" value="0.5">
+        </label>
+      </div>
+    </div>
+    <div>
+      <div class="note">Links siehst du <b>eine Schleife in X</b>. Rechts siehst du <b>einen Punkt im Schleifenraum ΩX</b> (hier zweidimensional visualisiert – in Wahrheit ist ΩX riesig, unendlich-dimensional!). Wenn du die Slider bewegst, bewegt sich <em>gleichzeitig</em> die Schleife links UND der Punkt rechts.</div>
+      <div class="note ok"><b>Basispunkt von ΩX</b>: die konstante Schleife k. Damit ist auch ΩX wieder ein <em>punktierter</em> Raum — und man kann rekursiv erneut den Schleifenraum davon bilden: <b>Ω(ΩX) = Ω²X</b>.</div>
+      <p style="color:var(--dim);font-size:13px">In der formalen Definition: <br><span id="tex3"></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. COMPACT-OPEN ============ -->
+<section id="s5">
+  <h2><span class="num">5</span> Wie topologisiert man einen Raum von Funktionen? <em>Kompakt-offen-Topologie</em></h2>
+  <p>Damit ΩX wirklich ein Raum ist, brauchen wir eine Vorstellung von <b>Nähe zwischen Funktionen</b>. Man sagt: zwei Schleifen sind "nah", wenn sie auf jedem <b>kompakten</b> Teil des Definitionsbereichs in eine kleine <b>offene</b> Umgebung des Zielraums abgebildet werden. Kurz: <em>überall punktweise ähnlich, gleichmäßig auf kompakten Stücken</em>.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="coCanvas" height="320"></canvas>
+      <div class="controls">
+        <label>Störung ε: <span id="epsLbl">0.10</span>
+          <input type="range" id="epsSlider" min="0" max="0.5" step="0.01" value="0.1">
+        </label>
+        <label>Frequenz der Störung
+          <input type="range" id="freqSlider" min="1" max="30" step="1" value="6">
+        </label>
+      </div>
+    </div>
+    <div>
+      <div class="note">Die blaue Schleife ist fix. Die rosa Schleife wird gestört. Der <b>grüne Streifen</b> markiert die "ε-Umgebung" der blauen Schleife. Solange die rosa Schleife im grünen Streifen bleibt, gilt sie in ΩX als <b>nahe</b> bei der blauen.</div>
+      <div class="note warn">Merke: In dieser Topologie sind zwei Schleifen "gleich" (als Punkte in ΩX) genau dann, wenn sie <b>überall identisch</b> sind — nicht schon dann, wenn sie ineinander deformierbar sind. Für "deformierbar" brauchen wir <b>Homotopie</b> (nächste Sektion!).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. HOMOTOPY & CONCAT ============ -->
+<section id="s6">
+  <h2><span class="num">6</span> Zwei Schleifen deformieren & verknüpfen</h2>
+  <p><b>Homotopie</b> zwischen v und w ist eine stetige "Film-Abbildung" H(s,t), die bei t=0 v zeigt, bei t=1 w, und dabei die Basispunkte festhält. Zwei Schleifen sind <em>homotop</em>, wenn es einen solchen Film gibt.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="homCanvas" height="320"></canvas>
+      <div class="controls">
+        <label>Homotopie-Parameter t: <span id="hLbl">0.00</span>
+          <input type="range" id="hSlider" min="0" max="1" step="0.005" value="0">
+        </label>
+        <label>Zielschleife
+          <select id="hTarget">
+            <option value="const">konstante Schleife</option>
+            <option value="wiggle" selected>gewellte Schleife</option>
+          </select>
+        </label>
+        <button id="hPlay">▶ Film abspielen</button>
+      </div>
+    </div>
+    <div>
+      <div class="note">Wenn eine Schleife sich auf die konstante Schleife zusammenziehen lässt, heißt sie <b>nullhomotop</b>. Auf der Scheibe ist <em>jede</em> Schleife nullhomotop. Auf dem Ring gilt das nur für Schleifen, die keinen Umlauf ums Loch machen.</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:30px">Verknüpfung v ∗ w — "erst v laufen, dann w laufen"</h3>
+  <div class="grid2">
+    <div>
+      <canvas id="concatCanvas" height="320"></canvas>
+      <div class="controls">
+        <label>t im Gesamtlauf: <span id="cLbl">0.00</span>
+          <input type="range" id="cSlider" min="0" max="1" step="0.005" value="0">
+        </label>
+        <button id="cPlay">▶ v∗w abspielen</button>
+      </div>
+    </div>
+    <div>
+      <p>Definition: <span id="tex4"></span></p>
+      <div class="note ok">Auf dem <b>ersten halben Intervall</b> läufst du die Schleife v — aber <b>doppelt so schnell</b>. Auf dem zweiten halben Intervall dann w, ebenfalls doppelt so schnell. So passt alles wieder in [0,1] rein.</div>
+      <div class="note">Diese Verknüpfung ist <b>nicht assoziativ auf der Nase</b> — (u∗v)∗w hat andere Geschwindigkeitsprofile als u∗(v∗w). Aber sie ist <b>bis auf Homotopie</b> assoziativ. Das nennt man <span class="pill">A∞-Struktur</span>: "homotopie-kohärent assoziativ".</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. FUNDAMENTAL GROUP ============ -->
+<section id="s7">
+  <h2><span class="num">7</span> Die Fundamentalgruppe <span style="color:var(--accent)">π₁(X, x₀)</span></h2>
+  <p>Wenn wir Schleifen bis auf Homotopie identifizieren, wird die Verknüpfung ∗ <b>assoziativ auf der Nase</b>, es gibt ein neutrales Element [k], und jede Schleife hat eine Inverse (rückwärts laufen). Das Ergebnis: eine <b>Gruppe</b>.</p>
+  <div class="grid2">
+    <div>
+      <canvas id="piCanvas" height="360"></canvas>
+      <div class="controls">
+        <label>Element n = 
+          <input type="range" id="piN" min="-4" max="4" step="1" value="1">
+          <span id="piNLbl">1</span>
+        </label>
+        <label>Element m = 
+          <input type="range" id="piM" min="-4" max="4" step="1" value="2">
+          <span id="piMLbl">2</span>
+        </label>
+        <button id="piCompose">Rechne n ∗ m</button>
+      </div>
+    </div>
+    <div>
+      <div class="note ok"><b>Beispiel Ring/Kreis:</b> π₁(S¹) = ℤ. Ein Element ist einfach die Anzahl der Umläufe (mit Vorzeichen). Verknüpfung = Addition.</div>
+      <div class="kv"><span>n ∗ m =</span><span id="piResult">3</span></div>
+      <div class="note">Beobachte: die Anzahl der Umläufe der verknüpften Schleife ist genau n+m. So sehen wir konkret: <b>π₁(S¹) ≅ ℤ</b>.</div>
+      <div class="note warn"><b>ΩX selbst</b> ist keine Gruppe — die Verknüpfung ist nicht assoziativ. Erst <b>π₀(ΩX)</b>, die Menge der Zusammenhangskomponenten von ΩX, wird zur Gruppe — und diese Gruppe ist genau <b>π₁(X)</b>! Formel: <span id="tex5"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. SUSPENSION ============ -->
+<section id="s8">
+  <h2><span class="num">8</span> Die Einhängung <span style="color:var(--accent)">ΣX</span></h2>
+  <p>Die <b>reduzierte Einhängung</b> ΣX ist das duale Gegenstück zu ΩX. Man nimmt X × [0,1] und drückt die "Deckel" X×{0}, X×{1} sowie die "Naht" {x₀}×[0,1] alle auf einen einzigen Punkt zusammen. Bildlich: eine <b>Doppelspitze</b>, die X in der Mitte hat.</p>
+  <div class="grid2">
+    <div>
+      <div id="suspPlot" style="height:400px;background:#070c1f;border-radius:12px"></div>
+      <div class="controls">
+        <label>Zeit-Höhe t: <span id="sLbl">0.50</span>
+          <input type="range" id="sSlider" min="0" max="1" step="0.01" value="0.5">
+        </label>
+        <label>Basisraum X
+          <select id="sShape">
+            <option value="circle" selected>S¹ (Kreis) → ΣS¹ = S²</option>
+            <option value="s0">S⁰ (2 Punkte) → ΣS⁰ = S¹</option>
+            <option value="interval">Intervall</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div>
+      <div class="note ok"><b>Zauber:</b> ΣSⁿ = Sⁿ⁺¹. Aus dem Kreis wird die Sphäre, aus der Sphäre die 3-Sphäre, immer eine Dimension mehr.</div>
+      <div class="note">Der Schieber t zeigt eine <b>horizontale Schicht</b> des Doppelkegels. Bei t=0 und t=1 kollabiert alles zu einem Punkt (den Polen). Dazwischen sieht die Schicht aus wie X selbst (skaliert).</div>
+      <p>Formal: <span id="tex6"></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. ADJUNCTION ============ -->
+<section id="s9">
+  <h2><span class="num">9</span> Die Adjunktion <span style="color:var(--accent)">Σ ⊣ Ω</span> — Eckmann–Hilton-Dualität</h2>
+  <p>Das Herzstück der Theorie. Es gibt eine natürliche Bijektion zwischen zwei Mengen von Abbildungen:</p>
+  <div style="text-align:center;margin:20px 0;font-size:20px" id="tex7"></div>
+  <p>Eine Abbildung "von ΣX nach Y" ist <b>dasselbe wie</b> eine Abbildung "von X in den Schleifenraum von Y". Das ist eine höherdimensionale Version von <b>Currying</b> aus der Informatik.</p>
+  
+  <div class="grid2">
+    <div>
+      <canvas id="adjCanvas" height="400"></canvas>
+      <div class="controls">
+        <label>Punkt in X (Winkel): <span id="ax">0.00</span>
+          <input type="range" id="axSlider" min="0" max="6.28" step="0.01" value="1.5">
+        </label>
+        <label>Zeit t in Einhängung: <span id="at">0.50</span>
+          <input type="range" id="atSlider" min="0" max="1" step="0.01" value="0.5">
+        </label>
+      </div>
+    </div>
+    <div>
+      <div class="note"><b>Links:</b> ein Punkt in ΣX (Winkel × Höhe), abgebildet durch f nach Y.<br><b>Rechts:</b> derselbe Vorgang, uminterpretiert: der Winkel wählt einen Punkt in X, dieser Punkt wird auf eine <em>ganze Schleife</em> in Y geschickt, und t sagt uns, an welcher Stelle der Schleife wir sind.</div>
+      <div class="note ok">Ein <b>Bild = eine ganze Schleife</b>. Das ist Currying: statt "f(x, t)" schreibst du "(f̃(x))(t)".</div>
+      <div class="note warn">Diese Adjunktion ist der Grund, warum ΩX so wichtig für die <b>stabile Homotopietheorie</b> ist: viele Konstruktionen "verschieben" Dimension per Σ und werden per Ω zurückverschoben.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. HIGHER HOMOTOPY ============ -->
+<section id="s10">
+  <h2><span class="num">10</span> Höhere Homotopiegruppen aus ΩX</h2>
+  <p>Aus der Adjunktion folgt sofort die vielleicht schönste Formel der Homotopietheorie:</p>
+  <div style="text-align:center;margin:20px 0;font-size:22px" id="tex8"></div>
+  <p>Warum? Setze Z = S<sup>k-1</sup> in die Adjunktion ein. Dann ist ΣZ = ΣS<sup>k-1</sup> = S<sup>k</sup>. Also entsprechen Schleifen der k-Sphäre in X genau Schleifen der (k-1)-Sphäre in ΩX.</p>
+  
+  <div class="grid2">
+    <div>
+      <canvas id="iterCanvas" height="360"></canvas>
+      <div class="controls">
+        <label>Iterationstiefe k: <span id="kLbl">1</span>
+          <input type="range" id="kSlider" min="0" max="4" step="1" value="1">
+        </label>
+      </div>
+    </div>
+    <div>
+      <div class="note"><b>Iterierte Schleifenräume:</b> Ω⁰X = X, Ω¹X = ΩX, Ω²X = Ω(ΩX), ...</div>
+      <div class="kv"><span>π₀(Ω⁰X) = π₀(X)</span><span>Wegkomponenten</span></div>
+      <div class="kv"><span>π₀(Ω¹X) = π₁(X)</span><span>Fundamentalgruppe</span></div>
+      <div class="kv"><span>π₀(Ω²X) = π₂(X)</span><span>2. Homotopiegruppe (kommutativ!)</span></div>
+      <div class="kv"><span>π₀(Ω³X) = π₃(X)</span><span>3. Homotopiegruppe</span></div>
+      <div class="note ok"><b>Die eine große Idee dieses gesamten Dokuments:</b> Durch wiederholtes Anwenden des Schleifenraum-Funktors Ω verwandeln wir <b>hochdimensionale Frage</b> ("wie sehen k-dimensionale Löcher in X aus?") in eine <b>niedrigdimensionale Frage über einen komplizierteren Raum</b> ("welche Wegkomponenten hat Ω<sup>k</sup>X?"). Das ist die Macht der Adjunktion Σ ⊣ Ω.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Interaktive Erkundung des Schleifenraums · ΩX ⊣ ΣX · Eckmann–Hilton-Dualität<br>
+  <span style="color:var(--dim);font-size:12px">Ziel: nichts lesen müssen. Alles verstehen durch Bewegung.</span>
+</footer>
+
+</main>
+
+<script>
+/* ============ KaTeX Rendering ============ */
+function texify(){
+  const rules = [
+    ['tex1', 'f : (X, x_0) \\to (Y, y_0)'],
+    ['tex2', 'w : [0,1] \\to X'],
+    ['tex3', '\\Omega(X,x_0) = \\{w \\in C([0,1],X) \\mid w(0)=w(1)=x_0\\}'],
+    ['tex4', '(v*w)(t) = \\begin{cases} v(2t) & t\\in[0,\\tfrac12] \\\\ w(2t-1) & t\\in[\\tfrac12,1]\\end{cases}'],
+    ['tex5', '\\pi_1(X, x_0) = \\pi_0(\\Omega X)'],
+    ['tex6', '\\Sigma X = (X\\times[0,1]) / (X\\times\\{0\\} \\cup X\\times\\{1\\} \\cup \\{x_0\\}\\times[0,1])'],
+    ['tex7', '[\\Sigma X, Y] \\;\\cong\\; [X, \\Omega Y]'],
+    ['tex8', '\\pi_k(X) \\;\\cong\\; \\pi_{k-1}(\\Omega X)']
+  ];
+  rules.forEach(([id,tex])=>{
+    const el = document.getElementById(id);
+    if(el) katex.render(tex, el, {throwOnError:false});
+  });
+}
+window.addEventListener('load', texify);
+
+/* ============ Helpers ============ */
+function fitCanvas(c){
+  const r = c.getBoundingClientRect();
+  const dpr = window.devicePixelRatio||1;
+  c.width = r.width*dpr; c.height = (c.height||360)*dpr;
+  const ctx = c.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w:r.width, h:c.height/dpr};
+}
+
+/* ============ 1. MOTIVATION ============ */
+(function(){
+  const c = document.getElementById('motivCanvas');
+  const shape = document.getElementById('motivShape');
+  const wSl = document.getElementById('motivW');
+  const wLbl = document.getElementById('motivWLbl');
+  const btn = document.getElementById('motivShrink');
+  let shrink = 1.0, anim=null;
+
+  function draw(){
+    const {ctx,w,h} = fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.38;
+    
+    // Draw the space
+    ctx.fillStyle='#1c2a5a';
+    if(shape.value==='disk'){
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+    } else if(shape.value==='annulus'){
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+      ctx.fillStyle='#070c1f';
+      ctx.beginPath(); ctx.arc(cx,cy,R*0.35,0,7); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+      ctx.fillStyle='#070c1f';
+      ctx.beginPath(); ctx.arc(cx-R*0.4,cy,R*0.2,0,7); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx+R*0.4,cy,R*0.2,0,7); ctx.fill();
+    }
+    
+    // Basepoint
+    const bx = cx+R*0.85, by = cy;
+    
+    // Loop
+    const n = parseInt(wSl.value);
+    const rr = R*0.6*shrink;
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=i/200;
+      const ang = 2*Math.PI*n*t;
+      const px = cx + rr*Math.cos(ang) + (bx-cx-rr)*(1-shrink);
+      const py = cy + rr*Math.sin(ang) + 0;
+      // interpolate towards basepoint
+      const ipx = bx + (px-bx)*shrink;
+      const ipy = by + (py-by)*shrink;
+      if(i===0)ctx.moveTo(ipx,ipy); else ctx.lineTo(ipx,ipy);
+    }
+    ctx.stroke();
+    
+    // basepoint dot
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(bx,by,7,0,7); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='11px sans-serif';
+    ctx.fillText('x₀', bx-6, by+4);
+  }
+  wSl.oninput=()=>{wLbl.textContent=wSl.value; shrink=1; draw();};
+  shape.onchange=()=>{shrink=1; draw();};
+  btn.onclick=()=>{
+    if(anim)cancelAnimationFrame(anim);
+    const n=parseInt(wSl.value);
+    const canShrink = (shape.value==='disk') || (n===0);
+    const target = canShrink ? 0.02 : 0.55;
+    function step(){
+      shrink += (target-shrink)*0.05;
+      draw();
+      if(Math.abs(shrink-target)>0.01) anim=requestAnimationFrame(step);
+    }
+    step();
+  };
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 2. POINTED SPACE ============ */
+(function(){
+  const c = document.getElementById('pointedCanvas');
+  const bx = document.getElementById('bpx'), by=document.getElementById('bpy');
+  const reset = document.getElementById('bpReset');
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    // Two spaces side by side
+    const rX = Math.min(w,h)*0.32;
+    const cx1=w*0.28, cy=h/2, cx2=w*0.72;
+    ctx.fillStyle='#1c2a5a';
+    ctx.beginPath(); ctx.arc(cx1,cy,rX,0,7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx2,cy,rX,0,7); ctx.fill();
+    ctx.fillStyle='#9aa7d1'; ctx.font='14px sans-serif';
+    ctx.fillText('X',cx1-8,cy-rX-10); ctx.fillText('Y',cx2-8,cy-rX-10);
+    
+    // basepoints
+    const px = cx1 + parseFloat(bx.value)*rX*0.8;
+    const py = cy + parseFloat(by.value)*rX*0.8;
+    const qx = cx2 + rX*0.6, qy = cy - rX*0.3;
+    
+    // arrow f
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(px,py);
+    const mx=(px+qx)/2, my=(py+qy)/2 - 40;
+    ctx.quadraticCurveTo(mx,my,qx,qy); ctx.stroke();
+    // arrowhead
+    ctx.fillStyle='#7cf9c8';
+    const ang = Math.atan2(qy-my,qx-mx);
+    ctx.beginPath(); ctx.moveTo(qx,qy);
+    ctx.lineTo(qx-10*Math.cos(ang-0.4),qy-10*Math.sin(ang-0.4));
+    ctx.lineTo(qx-10*Math.cos(ang+0.4),qy-10*Math.sin(ang+0.4));
+    ctx.fill();
+    
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(px,py,8,0,7); ctx.fill();
+    ctx.beginPath(); ctx.arc(qx,qy,8,0,7); ctx.fill();
+    ctx.fillStyle='#0b1020'; ctx.font='bold 11px sans-serif';
+    ctx.fillText('x₀',px-8,py+4); ctx.fillText('y₀',qx-8,qy+4);
+    
+    ctx.fillStyle='#7cf9c8'; ctx.font='italic 14px sans-serif';
+    ctx.fillText('f(x₀)=y₀', mx-30, my-5);
+  }
+  bx.oninput=by.oninput=draw;
+  reset.onclick=()=>{bx.value=1;by.value=0;draw();};
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 3. WHAT IS A LOOP ============ */
+(function(){
+  const c=document.getElementById('loopCanvas');
+  const tSl=document.getElementById('tParam');
+  const tLbl=document.getElementById('tLbl');
+  const type=document.getElementById('loopType');
+  const play=document.getElementById('playLoop');
+  let anim=null;
+  const steps=['ss0','ss1','ss2','ss3'].map(id=>document.getElementById(id));
+  
+  function loopFn(t,kind){
+    const T=2*Math.PI*t;
+    switch(kind){
+      case 'circle': return [Math.cos(T-Math.PI), Math.sin(T-Math.PI)];
+      case 'figure8': return [Math.sin(2*T)*0.7, Math.sin(T)*0.7];
+      case 'squiggle': return [Math.cos(T-Math.PI)*(0.6+0.3*Math.sin(5*T)), Math.sin(T-Math.PI)*(0.6+0.3*Math.sin(5*T))];
+      case 'constant': return [1,0];
+    }
+  }
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    
+    // Left: interval [0,1]
+    const lx=30, ly=h/2, lw=w*0.28;
+    ctx.strokeStyle='#2a366b'; ctx.lineWidth=6;
+    ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+lw,ly); ctx.stroke();
+    ctx.fillStyle='#9aa7d1'; ctx.font='12px sans-serif';
+    ctx.fillText('0',lx-4,ly+22); ctx.fillText('1',lx+lw-4,ly+22);
+    ctx.fillText('Definitionsbereich [0,1]',lx,ly-15);
+    
+    const t=parseFloat(tSl.value);
+    ctx.fillStyle='#ff8ad8';
+    ctx.beginPath(); ctx.arc(lx+lw*t, ly, 8, 0, 7); ctx.fill();
+    
+    // Right: X
+    const cx=w*0.72, cy=h/2, R=Math.min(w,h)*0.32;
+    ctx.fillStyle='#1c2a5a';
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+    ctx.fillStyle='#9aa7d1'; ctx.fillText('Bildraum X',cx-40,cy-R-10);
+    
+    // draw whole loop faint
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=2; ctx.globalAlpha=0.35;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const [x,y]=loopFn(i/200,type.value);
+      const px=cx+x*R*0.75, py=cy+y*R*0.75;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.globalAlpha=1;
+    // draw up to t
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=200*t;i++){
+      const [x,y]=loopFn(i/200,type.value);
+      const px=cx+x*R*0.75, py=cy+y*R*0.75;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    
+    // basepoint
+    const [bx0,by0]=loopFn(0,type.value);
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(cx+bx0*R*0.75, cy+by0*R*0.75, 7, 0, 7); ctx.fill();
+    // current point
+    const [wx,wy]=loopFn(t,type.value);
+    ctx.fillStyle='#ff8ad8';
+    ctx.beginPath(); ctx.arc(cx+wx*R*0.75, cy+wy*R*0.75, 8, 0, 7); ctx.fill();
+    
+    // step indicator
+    const idx=Math.min(3,Math.floor(t*4));
+    steps.forEach((s,i)=>s.className = i<=idx?'active':'');
+  }
+  tSl.oninput=()=>{tLbl.textContent=parseFloat(tSl.value).toFixed(2);draw();};
+  type.onchange=draw;
+  play.onclick=()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;play.textContent='▶ Abspielen';return;}
+    play.textContent='⏸ Pause';
+    let t=0;
+    function step(){
+      t+=0.005; if(t>1)t=0;
+      tSl.value=t; tLbl.textContent=t.toFixed(2); draw();
+      anim=requestAnimationFrame(step);
+    }
+    step();
+  };
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 4. LOOP SPACE ============ */
+(function(){
+  const c=document.getElementById('omegaCanvas');
+  const a=document.getElementById('paramA'), b=document.getElementById('paramB');
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    
+    // Left: loop in X
+    const cx1=w*0.28, cy=h/2, R=Math.min(w,h)*0.3;
+    ctx.fillStyle='#1c2a5a';
+    ctx.beginPath(); ctx.arc(cx1,cy,R,0,7); ctx.fill();
+    ctx.fillStyle='#9aa7d1'; ctx.font='13px sans-serif';
+    ctx.fillText('X mit einer Schleife',cx1-60,cy-R-10);
+    
+    const A=parseFloat(a.value), B=parseFloat(b.value);
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=2*Math.PI*i/200;
+      const r = 0.5 + B*Math.sin(t+A);
+      const px = cx1 + r*R*0.75*Math.cos(t);
+      const py = cy + r*R*0.75*Math.sin(t);
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // basepoint
+    ctx.fillStyle='#ffd166';
+    const r0 = 0.5 + B*Math.sin(A);
+    ctx.beginPath(); ctx.arc(cx1+r0*R*0.75, cy, 7, 0, 7); ctx.fill();
+    
+    // Right: ΩX as a 2D plane (schematic)
+    const cx2=w*0.72;
+    ctx.strokeStyle='#2a366b'; ctx.lineWidth=1;
+    // grid
+    for(let i=-3;i<=3;i++){
+      ctx.beginPath();
+      ctx.moveTo(cx2-R+i*R/3, cy-R); ctx.lineTo(cx2-R+i*R/3, cy+R);
+      ctx.moveTo(cx2-R, cy-R+i*R/3); ctx.lineTo(cx2+R, cy-R+i*R/3);
+      ctx.stroke();
+    }
+    // frame
+    ctx.strokeStyle='#4a5a9a'; ctx.lineWidth=2;
+    ctx.strokeRect(cx2-R,cy-R,2*R,2*R);
+    ctx.fillStyle='#9aa7d1'; ctx.font='13px sans-serif';
+    ctx.fillText('ΩX (schematisch, 2D)',cx2-70,cy-R-10);
+    
+    // basepoint of ΩX = constant loop
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(cx2, cy, 6, 0, 7); ctx.fill();
+    ctx.fillStyle='#9aa7d1'; ctx.font='11px sans-serif';
+    ctx.fillText('k (konst.)',cx2+10,cy+4);
+    
+    // current loop as a point in ΩX
+    const dotX = cx2 + (A-Math.PI)/Math.PI * R * 0.85;
+    const dotY = cy + (B-0.5) * R * 1.5;
+    ctx.fillStyle='#ff8ad8';
+    ctx.beginPath(); ctx.arc(dotX,dotY,10,0,7); ctx.fill();
+    ctx.strokeStyle='#ff8ad8'; ctx.lineWidth=1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(cx1,cy-R-5); ctx.lineTo(dotX,dotY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#ff8ad8'; ctx.font='12px sans-serif';
+    ctx.fillText('= diese Schleife',dotX+12,dotY+4);
+  }
+  a.oninput=b.oninput=draw;
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 5. COMPACT-OPEN ============ */
+(function(){
+  const c=document.getElementById('coCanvas');
+  const eps=document.getElementById('epsSlider');
+  const epsL=document.getElementById('epsLbl');
+  const freq=document.getElementById('freqSlider');
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    const pad=40, W=w-2*pad, H=h-2*pad;
+    // axes
+    ctx.strokeStyle='#2a366b'; ctx.lineWidth=1;
+    ctx.strokeRect(pad,pad,W,H);
+    ctx.fillStyle='#9aa7d1'; ctx.font='12px sans-serif';
+    ctx.fillText('t',pad+W+10,pad+H); ctx.fillText('w(t)',pad-30,pad-5);
+    
+    const E=parseFloat(eps.value), F=parseInt(freq.value);
+    // green tube around blue
+    ctx.fillStyle='rgba(124,249,200,0.15)';
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=i/200; const y=Math.sin(2*Math.PI*t)*0.4+0.5+E;
+      const px=pad+t*W, py=pad+(1-y)*H;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    for(let i=200;i>=0;i--){
+      const t=i/200; const y=Math.sin(2*Math.PI*t)*0.4+0.5-E;
+      const px=pad+t*W, py=pad+(1-y)*H;
+      ctx.lineTo(px,py);
+    }
+    ctx.closePath(); ctx.fill();
+    
+    // blue reference loop
+    ctx.strokeStyle='#5aa9ff'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const t=i/200; const y=Math.sin(2*Math.PI*t)*0.4+0.5;
+      const px=pad+t*W, py=pad+(1-y)*H;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    
+    // pink perturbed loop
+    ctx.strokeStyle='#ff8ad8'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    let inside=true;
+    for(let i=0;i<=200;i++){
+      const t=i/200;
+      const base=Math.sin(2*Math.PI*t)*0.4+0.5;
+      const y = base + E*0.9*Math.sin(F*2*Math.PI*t);
+      if(Math.abs(y-base)>E)inside=false;
+      const px=pad+t*W, py=pad+(1-y)*H;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    
+    // status
+    ctx.fillStyle=inside?'#7cf9c8':'#ff8ad8';
+    ctx.font='bold 14px sans-serif';
+    ctx.fillText(inside?'✓ innerhalb ε-Umgebung → NAH in ΩX':'✗ verlässt Umgebung → NICHT nah', pad, pad-15);
+  }
+  eps.oninput=()=>{epsL.textContent=parseFloat(eps.value).toFixed(2);draw();};
+  freq.oninput=draw;
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 6. HOMOTOPY & CONCAT ============ */
+(function(){
+  const c=document.getElementById('homCanvas');
+  const h=document.getElementById('hSlider');
+  const hL=document.getElementById('hLbl');
+  const tgt=document.getElementById('hTarget');
+  const play=document.getElementById('hPlay');
+  let anim=null;
+  function draw(){
+    const {ctx,w,h:H}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,H);
+    const cx=w/2, cy=H/2, R=Math.min(w,H)*0.35;
+    ctx.fillStyle='#1c2a5a';
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+    
+    const t=parseFloat(h.value);
+    // interpolate between circle loop (t=0) and target (t=1)
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const s=2*Math.PI*i/200;
+      let x0=Math.cos(s-Math.PI)*0.7, y0=Math.sin(s-Math.PI)*0.7;
+      let x1,y1;
+      if(tgt.value==='const'){ x1=1; y1=0; }
+      else { x1=Math.cos(s-Math.PI)*0.7*(1+0.3*Math.sin(6*s)); y1=Math.sin(s-Math.PI)*0.7*(1+0.3*Math.sin(6*s)); }
+      const x=(1-t)*x0+t*x1, y=(1-t)*y0+t*y1;
+      const px=cx+x*R, py=cy+y*R;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(cx+R,cy,7,0,7); ctx.fill();
+    ctx.fillStyle='#9aa7d1'; ctx.font='13px sans-serif';
+    ctx.fillText('Film-Frame H(·,t) bei t='+t.toFixed(2),20,25);
+  }
+  h.oninput=()=>{hL.textContent=parseFloat(h.value).toFixed(2);draw();};
+  tgt.onchange=draw;
+  play.onclick=()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;play.textContent='▶ Film abspielen';return;}
+    play.textContent='⏸ Pause';
+    let t=0,d=1;
+    function step(){
+      t+=0.008*d; if(t>=1){t=1;d=-1;} if(t<=0){t=0;d=1;}
+      h.value=t; hL.textContent=t.toFixed(2); draw();
+      anim=requestAnimationFrame(step);
+    }
+    step();
+  };
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 6b. CONCATENATION ============ */
+(function(){
+  const c=document.getElementById('concatCanvas');
+  const s=document.getElementById('cSlider');
+  const L=document.getElementById('cLbl');
+  const play=document.getElementById('cPlay');
+  let anim=null;
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.32;
+    ctx.fillStyle='#1c2a5a';
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+    
+    // v: small circle upper; w: small circle lower
+    function v(u){ const a=2*Math.PI*u; return [Math.cos(a-Math.PI/2)*0.5, -0.3+Math.sin(a-Math.PI/2)*0.5]; }
+    function pw(u){ const a=-2*Math.PI*u; return [Math.cos(a-Math.PI/2)*0.5, 0.3+Math.sin(a-Math.PI/2)*0.5]; }
+    // basepoint at (0.5, ?)
+    // Draw both faint
+    ctx.globalAlpha=0.25;
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){const[x,y]=v(i/100);const px=cx+x*R,py=cy+y*R;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.stroke();
+    ctx.strokeStyle='#ff8ad8';
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){const[x,y]=pw(i/100);const px=cx+x*R,py=cy+y*R;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.stroke();
+    ctx.globalAlpha=1;
+    
+    const t=parseFloat(s.value);
+    // current combined path
+    ctx.lineWidth=3.5;
+    ctx.beginPath();
+    for(let i=0;i<=200*t;i++){
+      const u=i/200;
+      let pt;
+      if(u<0.5){ pt=v(2*u); ctx.strokeStyle='#7cf9c8'; }
+      else { pt=pw(2*u-1); ctx.strokeStyle='#ff8ad8'; }
+      const px=cx+pt[0]*R, py=cy+pt[1]*R;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    
+    // current point
+    let cur;
+    if(t<0.5)cur=v(2*t); else cur=pw(2*t-1);
+    ctx.fillStyle=t<0.5?'#7cf9c8':'#ff8ad8';
+    ctx.beginPath(); ctx.arc(cx+cur[0]*R, cy+cur[1]*R, 9, 0, 7); ctx.fill();
+    
+    // basepoint
+    const [bx,by]=v(0);
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(cx+bx*R, cy+by*R, 7, 0, 7); ctx.fill();
+    
+    // labels
+    ctx.fillStyle='#7cf9c8'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('v (Phase 1: doppelte Geschwindigkeit)',20,25);
+    ctx.fillStyle='#ff8ad8';
+    ctx.fillText('w (Phase 2: doppelte Geschwindigkeit)',20,45);
+  }
+  s.oninput=()=>{L.textContent=parseFloat(s.value).toFixed(2);draw();};
+  play.onclick=()=>{
+    if(anim){cancelAnimationFrame(anim);anim=null;play.textContent='▶ v∗w abspielen';return;}
+    play.textContent='⏸ Pause';
+    let t=0;
+    function step(){
+      t+=0.006; if(t>1)t=0;
+      s.value=t; L.textContent=t.toFixed(2); draw();
+      anim=requestAnimationFrame(step);
+    }
+    step();
+  };
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 7. FUNDAMENTAL GROUP ============ */
+(function(){
+  const c=document.getElementById('piCanvas');
+  const nSl=document.getElementById('piN'), mSl=document.getElementById('piM');
+  const nL=document.getElementById('piNLbl'), mL=document.getElementById('piMLbl');
+  const btn=document.getElementById('piCompose');
+  const res=document.getElementById('piResult');
+  let showResult=false;
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    // annulus X
+    const cx=w/2, cy=h/2, R=Math.min(w,h)*0.38;
+    ctx.fillStyle='#1c2a5a';
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,7); ctx.fill();
+    ctx.fillStyle='#070c1f';
+    ctx.beginPath(); ctx.arc(cx,cy,R*0.3,0,7); ctx.fill();
+    
+    const n=parseInt(nSl.value), m=parseInt(mSl.value);
+    const sum=n+m;
+    res.textContent = sum;
+    
+    function drawLoop(count, radius, color, offset){
+      if(count===0){
+        ctx.fillStyle=color;
+        ctx.beginPath(); ctx.arc(cx+R*0.85,cy+offset,6,0,7); ctx.fill();
+        return;
+      }
+      ctx.strokeStyle=color; ctx.lineWidth=2.5;
+      ctx.beginPath();
+      for(let i=0;i<=400;i++){
+        const t=i/400;
+        const ang = 2*Math.PI*count*t;
+        const rr = radius + Math.sin(ang)*2;
+        const px = cx + rr*Math.cos(ang);
+        const py = cy + rr*Math.sin(ang) + offset;
+        if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      // arrow direction
+      const ang0 = 2*Math.PI*count*0.05;
+      const rx = cx+radius*Math.cos(ang0), ry=cy+radius*Math.sin(ang0)+offset;
+      const dir = count>0?1:-1;
+      ctx.fillStyle=color;
+      ctx.beginPath();
+      ctx.arc(rx,ry,4,0,7); ctx.fill();
+    }
+    
+    if(!showResult){
+      drawLoop(n, R*0.55, '#7cf9c8', 0);
+      drawLoop(m, R*0.7, '#ff8ad8', 0);
+      ctx.fillStyle='#7cf9c8'; ctx.font='bold 14px sans-serif';
+      ctx.fillText('n = '+n+' Umläufe', 20, 25);
+      ctx.fillStyle='#ff8ad8';
+      ctx.fillText('m = '+m+' Umläufe', 20, 45);
+    } else {
+      drawLoop(sum, R*0.6, '#ffd166', 0);
+      ctx.fillStyle='#ffd166'; ctx.font='bold 16px sans-serif';
+      ctx.fillText('n ∗ m = '+sum+' Umläufe', 20, 25);
+      ctx.font='13px sans-serif';
+      ctx.fillText('→ π₁(S¹) ≅ ℤ (Addition)', 20, 47);
+    }
+    // basepoint
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(cx+R*0.85,cy,7,0,7); ctx.fill();
+  }
+  nSl.oninput=()=>{nL.textContent=nSl.value; showResult=false; draw();};
+  mSl.oninput=()=>{mL.textContent=mSl.value; showResult=false; draw();};
+  btn.onclick=()=>{showResult=!showResult; draw();};
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 8. SUSPENSION (Plotly 3D) ============ */
+(function(){
+  const el=document.getElementById('suspPlot');
+  const sSl=document.getElementById('sSlider');
+  const sL=document.getElementById('sLbl');
+  const shape=document.getElementById('sShape');
+  
+  function build(){
+    const T = parseFloat(sSl.value);
+    const kind = shape.value;
+    const N=40, M=40;
+    const xs=[], ys=[], zs=[];
+    // Double cone surface: at height h in [0,1], radius profile ~ sin(pi*h)
+    for(let i=0;i<=N;i++){
+      const h=i/N;
+      const rr = Math.sin(Math.PI*h);
+      const row_x=[], row_y=[], row_z=[];
+      for(let j=0;j<=M;j++){
+        const u=j/M;
+        let x,y;
+        if(kind==='circle'){
+          const a=2*Math.PI*u; x=rr*Math.cos(a); y=rr*Math.sin(a);
+        } else if(kind==='s0'){
+          x=rr*(u<0.5?-1:1); y=0;
+        } else {
+          x=rr*(2*u-1); y=0;
+        }
+        row_x.push(x); row_y.push(y); row_z.push(h);
+      }
+      xs.push(row_x); ys.push(row_y); zs.push(row_z);
+    }
+    // Cross-section at T
+    const rr=Math.sin(Math.PI*T);
+    const cx=[], cy=[], cz=[];
+    for(let j=0;j<=100;j++){
+      const u=j/100;
+      let x,y;
+      if(kind==='circle'){ const a=2*Math.PI*u; x=rr*Math.cos(a); y=rr*Math.sin(a); }
+      else if(kind==='s0'){ x=rr*(u<0.5?-1:1); y=0; }
+      else { x=rr*(2*u-1); y=0; }
+      cx.push(x); cy.push(y); cz.push(T);
+    }
+    Plotly.newPlot(el,[
+      {type:'surface', x:xs, y:ys, z:zs, opacity:0.55, showscale:false,
+       colorscale:[[0,'#7cf9c8'],[0.5,'#5aa9ff'],[1,'#ff8ad8']]},
+      {type:'scatter3d', x:cx, y:cy, z:cz, mode:'lines',
+       line:{color:'#ffd166', width:8}, name:'Schicht bei t'},
+      {type:'scatter3d', x:[0,0], y:[0,0], z:[0,1], mode:'markers',
+       marker:{color:'#ffd166', size:8}, name:'Basispunkt (Pole)'}
+    ],{
+      paper_bgcolor:'#070c1f', plot_bgcolor:'#070c1f',
+      font:{color:'#e7ecff'}, margin:{l:0,r:0,t:0,b:0},
+      scene:{
+        xaxis:{color:'#4a5a9a', backgroundcolor:'#070c1f'},
+        yaxis:{color:'#4a5a9a', backgroundcolor:'#070c1f'},
+        zaxis:{color:'#4a5a9a', backgroundcolor:'#070c1f', title:'t'}
+      },
+      showlegend:false
+    },{responsive:true, displayModeBar:false});
+  }
+  sSl.oninput=()=>{sL.textContent=parseFloat(sSl.value).toFixed(2); build();};
+  shape.onchange=build;
+  build();
+})();
+
+/* ============ 9. ADJUNCTION ============ */
+(function(){
+  const c=document.getElementById('adjCanvas');
+  const ax=document.getElementById('axSlider'), at=document.getElementById('atSlider');
+  const axL=document.getElementById('ax'), atL=document.getElementById('at');
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    
+    const A=parseFloat(ax.value), T=parseFloat(at.value);
+    
+    // LEFT: ΣX as double cone → point → Y
+    const cx1=w*0.25, cy=h/2;
+    const CH=Math.min(w,h)*0.35;
+    ctx.strokeStyle='#4a5a9a'; ctx.lineWidth=2;
+    // double cone outline
+    ctx.beginPath();
+    ctx.moveTo(cx1,cy-CH); ctx.lineTo(cx1-CH*0.5,    ctx.beginPath();
+    ctx.moveTo(cx1,cy-CH); ctx.lineTo(cx1-CH*0.5,cy); ctx.lineTo(cx1,cy+CH);
+    ctx.lineTo(cx1+CH*0.5,cy); ctx.closePath(); ctx.stroke();
+    // equator (X)
+    ctx.strokeStyle='#5aa9ff'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.ellipse(cx1,cy,CH*0.5,CH*0.12,0,0,7); ctx.stroke();
+    // point in ΣX
+    const px = cx1 + CH*0.5*(1-Math.abs(2*T-1))*Math.cos(A);
+    const py = cy + CH*(2*T-1) + CH*0.12*(1-Math.abs(2*T-1))*Math.sin(A);
+    ctx.fillStyle='#ff8ad8';
+    ctx.beginPath(); ctx.arc(px,py,8,0,7); ctx.fill();
+    // basepoint (both poles + seam)
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(cx1,cy-CH,6,0,7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx1,cy+CH,6,0,7); ctx.fill();
+    ctx.fillStyle='#9aa7d1'; ctx.font='13px sans-serif';
+    ctx.fillText('ΣX', cx1-10, cy-CH-15);
+    ctx.fillText('X (Äquator)', cx1-30, cy+CH*0.25);
+    
+    // arrow f
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(w*0.48, cy);
+    ctx.stroke();
+    ctx.fillStyle='#7cf9c8'; ctx.font='italic 13px sans-serif';
+    ctx.fillText('f', (px+w*0.48)/2, cy-8);
+    
+    // Y (target space) - small circle in middle
+    const cyx=w*0.5, cyy=cy, YR=CH*0.35;
+    ctx.strokeStyle='#4a5a9a'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cyx,cyy,YR,0,7); ctx.stroke();
+    ctx.fillStyle='#9aa7d1'; ctx.fillText('Y', cyx-6, cyy-YR-8);
+    // f(point)
+    const fAng = A + T*Math.PI;
+    const fx = cyx + YR*0.7*Math.cos(fAng), fy = cyy + YR*0.7*Math.sin(fAng);
+    ctx.fillStyle='#ff8ad8';
+    ctx.beginPath(); ctx.arc(fx,fy,7,0,7); ctx.fill();
+    
+    // ============ RIGHT SIDE: curried version ============
+    // X (circle) → ΩY (loop in Y)
+    const cx3 = w*0.78;
+    // X shown as circle
+    ctx.strokeStyle='#4a5a9a'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx3, cy-CH*0.55, CH*0.25, 0, 7); ctx.stroke();
+    ctx.fillStyle='#9aa7d1'; ctx.font='13px sans-serif';
+    ctx.fillText('X', cx3-6, cy-CH*0.55-CH*0.25-8);
+    // point in X at angle A
+    const xpx = cx3 + CH*0.25*Math.cos(A), xpy = cy-CH*0.55 + CH*0.25*Math.sin(A);
+    ctx.fillStyle='#ff8ad8';
+    ctx.beginPath(); ctx.arc(xpx,xpy,7,0,7); ctx.fill();
+    
+    // Y with a WHOLE loop drawn
+    ctx.strokeStyle='#4a5a9a'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx3, cy+CH*0.35, YR, 0, 7); ctx.stroke();
+    ctx.fillStyle='#9aa7d1'; ctx.fillText('Y', cx3-6, cy+CH*0.35-YR-8);
+    // the loop f̃(x): [0,1] → Y (whole loop for this fixed x)
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const tt=i/100;
+      const ang = A + tt*Math.PI*2;
+      const lx = cx3 + YR*0.7*Math.cos(ang);
+      const ly = cy+CH*0.35 + YR*0.7*Math.sin(ang);
+      if(i===0)ctx.moveTo(lx,ly); else ctx.lineTo(lx,ly);
+    }
+    ctx.stroke();
+    // current position along the loop at parameter T
+    const angT = A + T*Math.PI*2;
+    const lpx = cx3 + YR*0.7*Math.cos(angT);
+    const lpy = cy+CH*0.35 + YR*0.7*Math.sin(angT);
+    ctx.fillStyle='#ffd166';
+    ctx.beginPath(); ctx.arc(lpx,lpy,7,0,7); ctx.fill();
+    
+    // arrow x → loop
+    ctx.strokeStyle='#7cf9c8'; ctx.lineWidth=2;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(xpx, xpy);
+    ctx.lineTo(cx3, cy+CH*0.35-YR);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#7cf9c8'; ctx.font='italic 13px sans-serif';
+    ctx.fillText('f̃(x)', cx3+15, cy);
+    
+    // Divider
+    ctx.strokeStyle='#2a366b'; ctx.lineWidth=1;
+    ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.moveTo(w*0.6, 20); ctx.lineTo(w*0.6, h-20); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#9aa7d1'; ctx.font='bold 12px sans-serif';
+    ctx.fillText('ΣX → Y', w*0.2, 25);
+    ctx.fillText('X → ΩY  (dieselbe Info!)', w*0.66, 25);
+  }
+  ax.oninput=()=>{axL.textContent=parseFloat(ax.value).toFixed(2); draw();};
+  at.oninput=()=>{atL.textContent=parseFloat(at.value).toFixed(2); draw();};
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+/* ============ 10. ITERATED LOOP SPACES ============ */
+(function(){
+  const c=document.getElementById('iterCanvas');
+  const k=document.getElementById('kSlider');
+  const kL=document.getElementById('kLbl');
+  function draw(){
+    const {ctx,w,h}=fitCanvas(c);
+    ctx.fillStyle='#070c1f'; ctx.fillRect(0,0,w,h);
+    
+    const K = parseInt(k.value);
+    // Draw a chain of nested boxes representing Ω^k X
+    const labels = ['X','ΩX','Ω²X','Ω³X','Ω⁴X'];
+    const boxW = w/6;
+    const cy = h/2;
+    
+    for(let i=0;i<=K;i++){
+      const x = 30 + i*(boxW+10);
+      const size = boxW * (1 - i*0.08);
+      const alpha = i<=K ? 1 : 0.2;
+      ctx.globalAlpha = alpha;
+      
+      // box
+      const grd = ctx.createLinearGradient(x, cy-size/2, x+size, cy+size/2);
+      grd.addColorStop(0, '#1c2a5a');
+      grd.addColorStop(1, '#2a3f7d');
+      ctx.fillStyle = grd;
+      ctx.strokeStyle = i===K ? '#7cf9c8' : '#4a5a9a';
+      ctx.lineWidth = i===K ? 3 : 1.5;
+      ctx.fillRect(x, cy-size/2, size, size);
+      ctx.strokeRect(x, cy-size/2, size, size);
+      
+      // label
+      ctx.fillStyle='#fff'; ctx.font='bold 18px sans-serif';
+      ctx.fillText(labels[i], x+size/2-15, cy+6);
+      
+      // π info
+      ctx.font='11px sans-serif'; ctx.fillStyle='#9aa7d1';
+      ctx.fillText('π₀ = π'+i+'(X)', x+size/2-32, cy+size/2+18);
+      
+      // arrow Ω
+      if(i<K){
+        ctx.strokeStyle='#ff8ad8'; ctx.lineWidth=2;
+        ctx.beginPath();
+        ctx.moveTo(x+size, cy);
+        ctx.lineTo(x+size+8, cy);
+        ctx.stroke();
+        ctx.fillStyle='#ff8ad8'; ctx.font='italic 12px sans-serif';
+        ctx.fillText('Ω', x+size+2, cy-6);
+      }
+    }
+    ctx.globalAlpha=1;
+    
+    // Draw the little "loops-in-loops" visual below
+    const vy = h - 60;
+    ctx.fillStyle='#9aa7d1'; ctx.font='13px sans-serif';
+    ctx.fillText('Schleifen von Schleifen von Schleifen ... = höhere Homotopie', 30, vy-15);
+    
+    // Nested loops visualization
+    const bx0 = w/2, by0 = vy+15;
+    for(let i=0;i<=K;i++){
+      const r = 25 - i*4;
+      const cols = ['#7cf9c8','#ff8ad8','#ffd166','#5aa9ff','#c56bff'];
+      ctx.strokeStyle=cols[i%cols.length];
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(bx0 + i*15, by0, r, 0, 7);
+      ctx.stroke();
+    }
+    
+    // formula
+    ctx.fillStyle='#7cf9c8'; ctx.font='bold 16px sans-serif';
+    ctx.fillText('π'+K+'(X) = π₀(Ω'+(K===0?'⁰':(K===1?'':(K===2?'²':(K===3?'³':'⁴'))))+'X)', 30, 30);
+  }
+  k.oninput=()=>{kL.textContent=k.value; draw();};
+  draw();
+  window.addEventListener('resize',draw);
+})();
+
+</script>
+</body>
+</html>
