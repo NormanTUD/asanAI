@@ -423,7 +423,7 @@ async function train_neural_network() {
 	// uses started_training to distinguish "start training" (false) from
 	// "user clicked the stop button during training" (true).
 	if ($($(".train_neural_network_button")[0]).prop("disabled")) {
-		err('Cannot train: train_neural_network is disabled.');
+		dbg('Cannot train: train_neural_network is disabled.');
 		return null;
 	}
 
