@@ -1170,24 +1170,38 @@ function get_activation_functions_equations () {
 	};
 }
 
+// Translate an optimizer-related string via the translations (translations.php).
+// Falls back to the given English fallback if the key is missing.
+function otrans(key, fallback) {
+	try {
+		if(language && language[lang] && typeof(language[lang][key]) == "string" && language[lang][key].length) {
+			return language[lang][key];
+		}
+	} catch (e) {
+		wrn(e);
+	}
+
+	return fallback;
+}
+
 function get_default_vars() {
 	return {
 		"g": {
-			"name": "Gradient estimate"
+			"name": otrans("opt_var_gradient_estimate", "Gradient estimate")
 		},
 		"nabla_operator": {
-			"name": "Nabla-Operator (Vector of partial derivatives), 3d example: ",
+			"name": otrans("opt_var_nabla", "Nabla-Operator (Vector of partial derivatives), 3d example: "),
 			"value": "\\begin{bmatrix} \\frac{\\partial}{\\partial x} \\\\ \\frac{\\partial}{\\partial y} \\\\ \\frac{\\partial}{\\partial z} \\end{bmatrix}"
 		},
 		"theta": {
-			"name": "Weights"
+			"name": otrans("opt_var_theta", "Weights")
 		},
 		"eta": {
-			"name": "Learning rate",
+			"name": otrans("opt_var_eta", "Learning rate"),
 			"origin": "learningRate_OPTIMIZERNAME"
 		},
 		"epsilon": {
-			"name": "Epsilon",
+			"name": otrans("opt_var_epsilon", "Epsilon"),
 			"origin": "epsilon_OPTIMIZERNAME"
 		}
 	};
@@ -1227,25 +1241,25 @@ function get_optimizer_equations() {
 				`
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{input} : \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-						& \\hspace{13mm} \\mu \\text{ (momentum)}, \\tau \\text{ (dampening)}, \\text{ nesterov} & \\\\[-1.ex]
+						& \\textbf{${otrans("opt_input", "input")}} : \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}}, f(\\theta) \\text{ ${otrans("opt_paren_objective", "(objective)")}}, \\lambda \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}}, & \\\\
+						& \\hspace{13mm} \\mu \\text{ ${otrans("opt_paren_momentum", "(momentum)")}}, \\tau \\text{ ${otrans("opt_paren_dampening", "(dampening)")}}, \\text{ nesterov} & \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs}\\\\
-						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-						& \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\mu \\neq 0 & \\text{If momentum is used} \\\\
-						& \\hspace{10mm}\\textbf{if} \\: t > 1 & \\\\
-						& \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{Update the buffer with momentum and dampening} \\\\
-						& \\hspace{10mm}\\textbf{else} & \\\\
-						& \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{Set the buffer to the gradient} \\\\
-						& \\hspace{10mm}\\textbf{if} \\: \\text{nesterov} & \\text{If using Nesterov momentum} \\\\
-						& \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{Update the gradient with Nesterov momentum} \\\\
-						& \\hspace{10mm}\\textbf{else} & \\\\[-1.ex]
-						& \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{Set the gradient to the buffer} \\\\
-						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{Update parameters for minimization} \\\\[-1.ex]
+						& \\textbf{${otrans("opt_for", "for")}} \\: t=1 \\: \\textbf{${otrans("opt_to", "to")}} \\: \\text{${otrans("opt_epochs", "epochs")}} \\: \\textbf{${otrans("opt_do", "do")}} & \\text{${otrans("opt_comment_loop", "Loop from t=1 to epochs")}}\\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{${otrans("opt_comment_gradient", "Compute the gradient of the objective function")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\lambda \\neq 0 & \\text{${otrans("opt_comment_if_weight_decay", "If weight decay is not zero")}} \\\\
+						& \\hspace{10mm} g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{${otrans("opt_comment_add_weight_decay", "Add weight decay term to the gradient")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\mu \\neq 0 & \\text{${otrans("opt_comment_if_momentum", "If momentum is used")}} \\\\
+						& \\hspace{10mm}\\textbf{${otrans("opt_if", "if")}} \\: t > 1 & \\\\
+						& \\hspace{15mm} \\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + (1-\\tau) g_t & \\text{${otrans("opt_comment_buffer_update", "Update the buffer with momentum and dampening")}} \\\\
+						& \\hspace{10mm}\\textbf{${otrans("opt_else", "else")}} & \\\\
+						& \\hspace{15mm} \\textbf{b}_t \\leftarrow g_t & \\text{${otrans("opt_comment_set_buffer", "Set the buffer to the gradient")}} \\\\
+						& \\hspace{10mm}\\textbf{${otrans("opt_if", "if")}} \\: \\text{nesterov} & \\text{${otrans("opt_comment_if_nesterov", "If using Nesterov momentum")}} \\\\
+						& \\hspace{15mm} g_t \\leftarrow g_t + \\mu \\textbf{b}_t & \\text{${otrans("opt_comment_nesterov", "Update the gradient with Nesterov momentum")}} \\\\
+						& \\hspace{10mm}\\textbf{${otrans("opt_else", "else")}} & \\\\[-1.ex]
+						& \\hspace{15mm} g_t \\leftarrow \\textbf{b}_t & \\text{${otrans("opt_comment_set_gradient", "Set the gradient to the buffer")}} \\\\
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t & \\text{${otrans("opt_comment_update_min", "Update parameters for minimization")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
-						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\bf{${otrans("opt_return", "return")}} \\: \\theta_t & \\text{${otrans("opt_comment_return", "Return the updated parameters")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 				`
@@ -1281,20 +1295,20 @@ function get_optimizer_equations() {
 				`
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{input}: \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta)
-							\\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-						& \\hspace{12mm} \\tau \\text{ (initial accumulator value)}, \\eta \\text{ (lr decay)} & \\\\
-						& \\textbf{initialize} : \\text{state\\_sum}_0 \\leftarrow 0 & \\text{Initialize the accumulated gradient sum} \\\\[-1.ex]
+						& \\textbf{input}: \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}}, f(\\theta)
+							\\text{ ${otrans("opt_paren_objective", "(objective)")}}, \\lambda \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}}, & \\\\
+						& \\hspace{12mm} \\tau \\text{ ${otrans("opt_paren_initial_accumulator_value", "(initial accumulator value)")}}, \\eta \\text{ ${otrans("opt_paren_lr_decay", "(lr decay)")}} & \\\\
+						& \\textbf{${otrans("opt_initialize", "initialize")}} : \\text{state\\_sum}_0 \\leftarrow 0 & \\text{${otrans("opt_comment_init_state_sum", "Initialize the accumulated gradient sum")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-						& \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{Adjust the learning rate with decay} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-						& \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{Update the accumulated gradient sum} \\\\
-						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{Update the parameters using Adagrad rule} \\\\
+						& \\textbf{${otrans("opt_for", "for")}} \\: t=1 \\: \\textbf{${otrans("opt_to", "to")}} \\: \\text{${otrans("opt_epochs", "epochs")}} \\: \\textbf{${otrans("opt_do", "do")}} & \\text{${otrans("opt_comment_loop", "Loop from t=1 to epochs")}} \\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{${otrans("opt_comment_gradient", "Compute the gradient of the objective function")}} \\\\
+						& \\hspace{5mm}\\tilde{\\gamma} \\leftarrow \\gamma / (1 +(t-1) \\eta) & \\text{${otrans("opt_comment_lr_decay", "Adjust the learning rate with decay")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\lambda \\neq 0 & \\text{${otrans("opt_comment_if_weight_decay", "If weight decay is not zero")}} \\\\
+						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{${otrans("opt_comment_add_weight_decay", "Add weight decay term to the gradient")}} \\\\
+						& \\hspace{5mm}\\text{state\\_sum}_t \\leftarrow \\text{state\\_sum}_{t-1} + g^2_t & \\text{${otrans("opt_comment_update_state_sum", "Update the accumulated gradient sum")}} \\\\
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\tilde{\\gamma} \\frac{g_t}{\\sqrt{\\text{state\\_sum}_t} + \\epsilon} & \\text{${otrans("opt_comment_adagrad_update", "Update the parameters using Adagrad rule")}} \\\\
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
-						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\bf{${otrans("opt_return", "return")}} \\: \\theta_t & \\text{${otrans("opt_comment_return", "Return the updated parameters")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 
