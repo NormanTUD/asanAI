@@ -274,9 +274,18 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 <div class="md">
 ## IV. Transmission: the Islamic Golden Age
 
-When the Greek world passed its knowledge eastward, it was not lost but *worked on*. In the great translation and research centres of the Islamic world — above all the **House of Wisdom** in Baghdad (8th–13th c.) — the *Elements*, the *Conics* and the astronomical treatises were rendered into Arabic, corrected, and extended. The *why* was both intellectual and legal: the new science of **algebra** was driven in part by Islamic inheritance law, which required estates to be divided into fractional shares, and by the *kharaj*, a land tax that required surveying. Figures such as **al-Khwārizmī** (c. 780–850) re-founded algebra (the very word is his, from *al-jabr*, "the restoring/completing") and did so in the *geometric* spirit inherited from Babylon and Greece, solving equations by the same cutting-and-completing-of-the-square operations \cite{hoyrup2021algebra}.
+<div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; margin:0 0 1.5rem;">
+<figure style="margin:0; width:45%; max-width:260px;">
+<img style="width:100%; height:auto; border-radius:4px;" src="alkhwarizmi.jpg" alt="Muḥammad ibn Mūsā al-Khwārizmī" />
+<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;">Muḥammad ibn Mūsā <strong>al-Khwārizmī</strong> (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em>.</figcaption>
+</figure>
+<figure style="margin:0; width:45%; max-width:260px;">
+<img style="width:100%; height:auto; border-radius:4px;" src="alhazen.jpg" alt="Ibn al-Haytham (Alhazen)" />
+<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;"><strong>Ibn al-Haytham</strong> (Alhazen), c. 965–1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye.</figcaption>
+</figure>
+</div>
 
-\marginfig{alkhwarizmi.jpg}{Muḥammad ibn Mūsā al-Khwārizmī (c. 780–850), whose treatise on *al-jabr* gave algebra its name — and whose surname gave us the word *algorithm*.}
+When the Greek world passed its knowledge eastward, it was not lost but *worked on*. In the great translation and research centres of the Islamic world — above all the **House of Wisdom** in Baghdad (8th–13th c.) — the *Elements*, the *Conics* and the astronomical treatises were rendered into Arabic, corrected, and extended. The *why* was both intellectual and legal: the new science of **algebra** was driven in part by Islamic inheritance law, which required estates to be divided into fractional shares, and by the *kharaj*, a land tax that required surveying. Figures such as **al-Khwārizmī** (c. 780–850) re-founded algebra (the very word is his, from *al-jabr*, "the restoring/completing") and did so in the *geometric* spirit inherited from Babylon and Greece, solving equations by the same cutting-and-completing-of-the-square operations \cite{hoyrup2021algebra}.
 
 Al-Khwārizmī's canonical example, in modern dress, is the problem "a square and ten times its side make thirty-nine" — $x^{2} + 10x = 39$. He completes the square: halve the ten to get $5$, square it to get $25$, add to $39$ to get $64$, take the root $8$, subtract the $5$, and obtain $x = 3$. In symbols, the move that is his legacy is exactly the Babylonian one, now general:
 
@@ -284,8 +293,6 @@ $$x^{2} + bx = A \quad\Longrightarrow\quad x = -\tfrac{b}{2} + \sqrt{A + \left(\
 $$\underbrace{x^{2} + bx}_{\text{a square plus a strip, totalling }A} \;\Longrightarrow\; \underbrace{x}_{\text{the side we are after}} = -\underbrace{\tfrac{b}{2}}_{\text{half the strip}} + \sqrt{\;A + \underbrace{\left(\tfrac{b}{2}\right)^{2}}_{\text{the little added square}}\;}$$
 
 The single most important geometric achievement of the period, however, is the work of **Ibn al-Haytham** (Latinised **Alhazen**, c. 965–1040).
-
-\marginfig{alhazen.jpg}{Ibn al-Haytham (Alhazen), c. 965–1040, whose *Book of Optics* made geometry the mathematics of how the world projects itself onto the eye.}
 
 His **\citealternativetitle{alhazenoetic}** (completed c. 1021) is a *geometry of seeing*: it treats the eye, the mirror, and the path of light as objects of rigorous geometric analysis, and famously inverts the old "emission" theory of vision by arguing that we see by light *entering* the eye along straight rays \cite{alhazenoetic}. The law he formalises is the **law of reflection**, $\theta_{\text{incident}} = \theta_{\text{reflected}}$ (measured from the normal to the surface), and the **Alhazen problem** — finding the point on a mirror where a ray from an object reflects to the eye — is a genuinely hard geometric problem that he reduces to an algebraic (in fact quartic) equation. His treatment of the **camera obscura** is the direct ancestor of both the scientific camera and the mathematics of *perspective* \cite{alhazenoetic}. It is a pivot: geometry becomes the mathematics of *projection* — of how a three-dimensional world is faithfully laid down on a two-dimensional surface.
 </div>
