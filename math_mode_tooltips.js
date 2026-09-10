@@ -1111,9 +1111,10 @@ function _mvt_svg_sparkline(values, W, H) {
 }
 
 // A line from min to max with a tick at the mean and a dot at the value.
+// The min/max endpoints are labeled, so the scale is readable.
 function _mvt_svg_dist_strip(value, min, max, mean, W) {
 	W = W || 150;
-	var H = 12, cx = 6;
+	var H = 22, cx = 4;
 	if (max <= min) {
 		min = value - 1;
 		max = value + 1;
@@ -1123,10 +1124,17 @@ function _mvt_svg_dist_strip(value, min, max, mean, W) {
 		if (v > max) v = max;
 		return (cx + (v - min) / (max - min) * (W - 2 * cx)).toFixed(1);
 	}
+	var fs = 8;
+	var ml = _mvt_fmt(min);
+	var xl = _mvt_fmt(max);
+	if (ml.length > 10) fs = 7;
+	if (xl.length > 10) fs = 7;
 	return "<svg width='" + W + "' height='" + H + "' style='vertical-align:middle'>"
-		+ "<line x1='" + cx + "' y1='6' x2='" + (W - cx) + "' y2='6' stroke='currentColor' stroke-width='1' opacity='0.4'/>"
-		+ "<line x1='" + pos(mean) + "' y1='2' x2='" + pos(mean) + "' y2='10' stroke='currentColor' stroke-width='1' opacity='0.5'/>"
-		+ "<circle cx='" + pos(value) + "' cy='6' r='3' fill='#7ec8ff'/>"
+		+ "<line x1='" + cx + "' y1='8' x2='" + (W - cx) + "' y2='8' stroke='currentColor' stroke-width='1' opacity='0.4'/>"
+		+ "<line x1='" + pos(mean) + "' y1='3' x2='" + pos(mean) + "' y2='13' stroke='currentColor' stroke-width='1' stroke-dasharray='2,1' opacity='0.6'/>"
+		+ "<circle cx='" + pos(value) + "' cy='8' r='3' fill='#7ec8ff'/>"
+		+ "<text x='" + cx + "' y='" + (H - 2) + "' font-size='" + fs + "' fill='currentColor' opacity='0.6'>" + ml + "</text>"
+		+ "<text x='" + (W - cx) + "' y='" + (H - 2) + "' font-size='" + fs + "' fill='currentColor' opacity='0.6' text-anchor='end'>" + xl + "</text>"
 		+ "</svg>";
 }
 
@@ -1185,16 +1193,18 @@ function _mvt_svg_tensor_map(data, shape, hi) {
 
 function _mvt_svg_histogram(values, W, H) {
 	W = W || 150;
-	H = H || 30;
+	H = H || 40;
 	if (!values || values.length < 2) {
 		return "";
 	}
 	var bins = 12;
-	var min = Infinity, max = -Infinity;
+	var min = Infinity, max = -Infinity, sum = 0;
 	for (var i = 0; i < values.length; i++) {
 		if (values[i] < min) min = values[i];
 		if (values[i] > max) max = values[i];
+		sum += values[i];
 	}
+	var mean = sum / values.length;
 	if (min === max) {
 		min -= 1;
 		max += 1;
@@ -1211,11 +1221,22 @@ function _mvt_svg_histogram(values, W, H) {
 		if (counts[c2] > mc) mc = counts[c2];
 	}
 	var bw = W / bins;
+	var chart_h = H - 14;
+	var base = chart_h - 2;
+	var mean_x = ((mean - min) / (max - min) * W).toFixed(1);
+	var fs = 8;
+	var ml = _mvt_fmt(min);
+	var xl = _mvt_fmt(max);
+	if (ml.length > 10) fs = 7;
+	if (xl.length > 10) fs = 7;
 	var out = "<svg width='" + W + "' height='" + H + "' style='vertical-align:middle'>";
 	for (var k = 0; k < bins; k++) {
-		var bh = mc ? (counts[k] / mc) * (H - 4) : 0;
-		out += "<rect x='" + (k * bw + 0.5).toFixed(1) + "' y='" + (H - 2 - bh).toFixed(1) + "' width='" + (bw - 1).toFixed(1) + "' height='" + bh.toFixed(1) + "' fill='#7ec8ff' opacity='0.75'/>";
+		var bh = mc ? (counts[k] / mc) * (chart_h - 4) : 0;
+		out += "<rect x='" + (k * bw + 0.5).toFixed(1) + "' y='" + (base - bh).toFixed(1) + "' width='" + (bw - 1).toFixed(1) + "' height='" + bh.toFixed(1) + "' fill='#7ec8ff' opacity='0.75'/>";
 	}
+	out += "<line x1='" + mean_x + "' y1='2' x2='" + mean_x + "' y2='" + base + "' stroke='currentColor' stroke-width='1' stroke-dasharray='2,1' opacity='0.6'/>";
+	out += "<text x='4' y='" + (H - 2) + "' font-size='" + fs + "' fill='currentColor' opacity='0.6'>" + ml + "</text>";
+	out += "<text x='" + (W - 4) + "' y='" + (H - 2) + "' font-size='" + fs + "' fill='currentColor' opacity='0.6' text-anchor='end'>" + xl + "</text>";
 	return out + "</svg>";
 }
 
@@ -1472,12 +1493,34 @@ function _mvt_append_weight_info(tag, pooled, hover_id) {
 			var st = _mvt_stats(tensor_data);
 			var shp = w.variable.shape || [];
 			var s_html = "<div class='mvt_dim'>" + language[lang]["mv_tooltip_tensor_stats"] + " (n=" + st.n + ")</div>";
-			s_html += "<div>min " + _mvt_fmt(st.min) + " · mean " + _mvt_fmt(st.mean) + " · max " + _mvt_fmt(st.max) + " · std " + _mvt_fmt(st.std) + "</div>";
 
-			if (value !== null) {
-				var p = _mvt_percentile(tensor_data, value);
-				s_html += "<div>" + _mvt_svg_dist_strip(value, st.min, st.max, st.mean) + "</div>";
-				s_html += "<div class='mvt_dim'>" + language[lang]["mv_tooltip_percentile"] + ": " + (100 * p).toFixed(1) + "%</div>";
+			if (st.min === st.max) {
+				s_html += "<div>" + language[lang]["mv_tooltip_all_identical"] + ": " + _mvt_fmt(st.min) + "</div>";
+			} else {
+				s_html += "<div>" + language[lang]["mv_tooltip_mean"] + " " + _mvt_fmt(st.mean)
+					+ " · " + language[lang]["mv_tooltip_typ_range"] + ": " + _mvt_fmt(st.mean - st.std) + " … " + _mvt_fmt(st.mean + st.std) + "</div>";
+
+				if (value !== null) {
+					var p = _mvt_percentile(tensor_data, value);
+					s_html += "<div>" + _mvt_svg_dist_strip(value, st.min, st.max, st.mean) + "</div>";
+
+					var less = 0, equal = 0, larger = 0;
+					for (var ci = 0; ci < tensor_data.length; ci++) {
+						if (tensor_data[ci] < value) less++;
+						else if (tensor_data[ci] === value) equal++;
+						else larger++;
+					}
+					s_html += "<div>" + less + " " + language[lang]["mv_tooltip_of"] + " " + st.n + " " + language[lang]["mv_tooltip_smaller"]
+						+ ", " + larger + " " + language[lang]["mv_tooltip_larger"];
+					if (equal > 0) {
+						s_html += ", " + equal + " " + language[lang]["mv_tooltip_equal"];
+					}
+					s_html += " <span class='mvt_muted'>(= " + (100 * p).toFixed(1) + " " + language[lang]["mv_tooltip_percentile"] + ")</span></div>";
+
+					var z = (value - st.mean) / st.std;
+					s_html += "<div>" + language[lang]["mv_tooltip_z"]
+						+ ": (" + _mvt_fmt(value) + " − (" + _mvt_fmt(st.mean) + ")) / " + _mvt_fmt(st.std) + " = " + _mvt_fmt(z) + "</div>";
+				}
 			}
 
 			var map = "";
@@ -1583,7 +1626,12 @@ function _mvt_append_h_info(tag, hover_id) {
 				var st = _mvt_stats(acts.all);
 				html += "<div class='mvt_dim' style='margin-top:4px'>" + language[lang]["mv_tooltip_batch_hist"] + " (n=" + st.n + ")</div>";
 				html += _mvt_svg_histogram(acts.all);
-				html += "<div class='mvt_dim'>min " + _mvt_fmt(st.min) + " · mean " + _mvt_fmt(st.mean) + " · max " + _mvt_fmt(st.max) + " · std " + _mvt_fmt(st.std) + "</div>";
+				if (st.min === st.max) {
+					html += "<div>" + language[lang]["mv_tooltip_all_identical"] + ": " + _mvt_fmt(st.min) + "</div>";
+				} else {
+					html += "<div>" + language[lang]["mv_tooltip_mean"] + " " + _mvt_fmt(st.mean)
+						+ " · " + language[lang]["mv_tooltip_typ_range"] + ": " + _mvt_fmt(st.mean - st.std) + " … " + _mvt_fmt(st.mean + st.std) + "</div>";
+				}
 
 				var zeros = 0;
 				for (var z = 0; z < acts.all.length; z++) {
