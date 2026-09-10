@@ -97,15 +97,14 @@
 		});
 	}
 
+	// Trainings-Demo in die Lade-Pipeline einhängen (läuft nach dem Formel-Rendering,
+	// meldet sich über LoadingStatus / den Plotly-Wrapper im Lade-Text an).
+	if (typeof TrainingDemo !== 'undefined') {
+		LoadingTasks.add('Initialisiere Trainings-Demo (Katze vs. Hund) …', () => TrainingDemo.init());
+		LoadingTasks.add('Starte Trainings-Animation …', () => TrainingDemo.start());
+	}
 	window.addEventListener('load', () => {
-		setTimeout(() => {
-			if (typeof TrainingDemo !== 'undefined') {
-				TrainingDemo.init();
-				setTimeout(() => TrainingDemo.start(), 200);
-			}
-			fitSlides();
-			document.getElementById('loading-spinner').classList.add('hidden');
-		}, 300);
+		setTimeout(fitSlides, 300);
 	});
 	window.addEventListener('resize', fitSlides);
 </script>

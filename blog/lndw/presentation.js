@@ -448,6 +448,8 @@ const Presentation = (() => {
 
     return {
         init, next, prev, goTo, count: () => slides.length,
+        slides: () => slides,
+        slideTitleAt: (i) => (slides[i] ? slideTitle(slides[i], i) : ''),
         toggleOverview, toggleFullscreen, closeOverview,
         searchAppend, searchBackspace, clearOverviewSearch, overviewEscape,
     };
@@ -561,7 +563,68 @@ const InputHandler = (() => {
 })();
 
 // ────────────────────────────────────────────────────────────
-// BOOTSTRAP
+// LOADING STATUS – dynamischer Lade-Text
+// Zeigt konkret, was gerade geladen wird: jede Folie beim
+// Formel-Rendering, jeder Plot beim Zeichnen. Seiten hängen
+// schwere Init-Schritte (Plots, Demos) über LoadingTasks ein.
+// ────────────────────────────────────────────────────────────
+const LoadingStatus = (() => {
+    function spinnerEl() { return document.getElementById('loading-spinner'); }
+    function textEl() {
+        const s = spinnerEl();
+        return s ? s.querySelector('.spinner-text') : null;
+    }
+    function active() {
+        const s = spinnerEl();
+        return !!(s && !s.classList.contains('hidden'));
+    }
+    function set(text) {
+        const e = textEl();
+        if (e) e.textContent = text;
+    }
+    function done() {
+        const s = spinnerEl();
+        if (s) s.classList.add('hidden');
+    }
+    return { set, done, active };
+})();
+
+// Warteschlange für schwere, seiten-spezifische Lade-Schritte (Plots, Demos).
+const LoadingTasks = {
+    _q: [],
+    add(label, fn) { this._q.push({ label, fn }); },
+    drain() { const q = this._q; this._q = []; return q; }
+};
+
+// Lesebarer Name für ein Plot-Container-Element:
+// 1) explizites data-loading-label, sonst aus der ID abgeleitet.
+function plotLabel(div) {
+    if (typeof div === 'string') div = document.getElementById(div);
+    if (!div || !div.nodeType) return 'Plot';
+    const explicit = div.getAttribute('data-loading-label');
+    if (explicit) return explicit;
+    if (div.id) {
+        const pretty = div.id.replace(/[-_]+/g, ' ').replace(/\bplot(s)?\b/i, '').trim();
+        return pretty || 'Plot';
+    }
+    return 'Plot';
+}
+
+// Jedes Plotly-Rendering meldet sich im Lade-Text an ("Zeichne …").
+(function wrapPlotly() {
+    if (typeof Plotly === 'undefined') return;
+    ['newPlot', 'react'].forEach(method => {
+        const orig = Plotly[method];
+        if (typeof orig !== 'function') return;
+        Plotly[method] = function (div, ...args) {
+            if (LoadingStatus.active()) LoadingStatus.set('Zeichne ' + plotLabel(div) + ' …');
+            return orig.apply(this, [div, ...args]);
+        };
+    });
+})();
+
+// ────────────────────────────────────────────────────────────
+// BOOTSTRAP + LADE-PIPELINE
 // ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     Presentation.init();
@@ -578,24 +641,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Temml Math Rendering
-    const renderMath = (selector, displayMode, sliceStart, sliceEnd) => {
-        document.querySelectorAll(selector).forEach(el => {
-            let tex = el.textContent.trim();
-            if (tex.startsWith(sliceStart) && tex.endsWith(sliceEnd)) {
-                tex = tex.slice(sliceStart.length, -sliceEnd.length);
-            }
-            try {
-                el.innerHTML = temml.renderToString(tex, { displayMode });
-            } catch (e) {
-                console.warn('Temml render error:', e);
-            }
-        });
-    };
-
-    renderMath('.math-display', true, '$$', '$$');
-    renderMath('.math-inline', false, '$', '$');
-
-    if (typeof loadIntuitionModule === 'function') loadIntuitionModule();
-    if (typeof runAttention === 'function') runAttention();
+    runBootSequence();
 });
+
+// Einen Frame abgeben, damit der Lade-Text sichtbar aktualisiert wird.
+const yieldFrame = () => new Promise(r => requestAnimationFrame(() => setTimeout(r, 0)));
+
+function renderOneMath(el, displayMode, sliceStart, sliceEnd) {
+    let tex = el.textContent.trim();
+    if (tex.startsWith(sliceStart) && tex.endsWith(sliceEnd)) {
+        tex = tex.slice(sliceStart.length, -sliceEnd.length);
+    }
+    try {
+        el.innerHTML = temml.renderToString(tex, { displayMode });
+    } catch (e) {
+        console.warn('Temml render error:', e);
+    }
+}
+
+// Lade-Sequenz: rendert die Formeln Folie für Folie (mit Status-Update pro
+// Folie), arbeitet dann die schweren Plot-/Demo-Schritte ab und blendet den
+// Lade-Screen erst dann aus, wenn alles fertig ist.
+async function runBootSequence() {
+    const allSlides = Presentation.slides();
+    try {
+        for (let i = 0; i < allSlides.length; i++) {
+            LoadingStatus.set('Rendere Folie ' + (i + 1) + '/' + allSlides.length + ' · ' + Presentation.slideTitleAt(i) + ' …');
+            await yieldFrame();
+            allSlides[i].querySelectorAll('.math-display').forEach(el => renderOneMath(el, true, '$$', '$$'));
+            allSlides[i].querySelectorAll('.math-inline').forEach(el => renderOneMath(el, false, '$', '$'));
+        }
+
+        // Sicherheitsnetz: Formeln, die nicht in einer Folie liegen (falls vorhanden),
+        // werden ebenfalls gerendert – exakt wie im alten synchronen Durchlauf.
+        document.querySelectorAll('.math-display, .math-inline').forEach(el => {
+            if (el.closest('.slide')) return;
+            const isDisplay = el.classList.contains('math-display');
+            renderOneMath(el, isDisplay, isDisplay ? '$$' : '$', isDisplay ? '$$' : '$');
+        });
+
+        const tasks = LoadingTasks.drain();
+        for (const t of tasks) {
+            LoadingStatus.set(t.label);
+            await yieldFrame();
+            try { t.fn(); } catch (err) { console.warn('Lade-Schritt fehlgeschlagen:', err); }
+            await yieldFrame();
+        }
+
+        if (typeof loadIntuitionModule === 'function') {
+            LoadingStatus.set('Initialisiere Intuition-Demos …');
+            await yieldFrame();
+            loadIntuitionModule();
+        }
+        if (typeof runAttention === 'function') {
+            LoadingStatus.set('Zeichne Attention-Beispiel …');
+            await yieldFrame();
+            runAttention();
+        }
+    } finally {
+        LoadingStatus.set('Fast fertig …');
+        await yieldFrame();
+        if (typeof fitSlides === 'function') fitSlides();
+        LoadingStatus.done();
+    }
+}

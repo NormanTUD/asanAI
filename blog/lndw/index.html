@@ -600,7 +600,7 @@
         <p style="margin-bottom:12px;">
 		Da in verschiedenen Sprachen Worte mit ähnlicher Bedeutung oft in ähnlichen Konstellationen vorkommen, ergeben sich sogenannte Mannigfaltigkeiten: das sind Strukturen im Embedding-Raum, die durch ihre Anordnung untereinander eine Ähnlichkeit zueinander haben. Kennt man eine Mannigfaltigkeit, kann man durch Bewegung, Drehung und Verschiebung <b>Übersetzungen</b> finden.
         </p>
-        <div id="plot-dual-manifolds" style="height: 520px; border-radius: 8px; width: 100%;"></div>
+        <div id="plot-dual-manifolds" data-loading-label="Dual-Manifolds (Übersetzungsraum)" style="height: 520px; border-radius: 8px; width: 100%;"></div>
 
         <!-- Hidden sliders (needed by the code but not shown to user) -->
         <div style="display:none;">
@@ -670,7 +670,7 @@
 		    <div id="attention-sentence-display" style="text-align:center; padding:14px 20px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:12px; font-size:1.2em; color:#1e293b; font-weight:500; min-height:48px; display:flex; align-items:center; justify-content:center;">
 			Ich bringe mein <b style="color:#3b82f6;">Geld</b> auf die <b style="color:#3b82f6;">Bank</b>.
 		    </div>
-		    <div id="transformer-plot" class="plot-container" style="height:380px;"></div>
+		    <div id="transformer-plot" class="plot-container" data-loading-label="Attention-Beispiel (Geld auf die Bank)" style="height:380px;"></div>
 		</div>
 
 		<div class="key-insight fragment" style="margin-top:14px;">
@@ -1450,7 +1450,9 @@
 <script src="training_demo.js"></script>
 
 <script>
-	renderDualManifolds();
+	// Schweren Plot in die Lade-Pipeline einhängen (läuft nach dem Formel-Rendering,
+	// meldet sich über den Plotly-Wrapper im Lade-Text an).
+	LoadingTasks.add('Zeichne Dual-Manifolds (Übersetzungsraum) …', renderDualManifolds);
 
 	function fitSlides() {
 		const slides = document.querySelectorAll('.slide');
@@ -1478,7 +1480,7 @@
 			fitSlides();
 			// Plotly/Temml rendern asynchron: ein zweiter Durchlauf fängt Layout-Shift ab
 			setTimeout(fitSlides, 300);
-			document.getElementById('loading-spinner').classList.add('hidden');
+			// Hinweis: Der Lade-Screen wird von der Lade-Pipeline (LoadingStatus) ausgeblendet.
 		});
 	});
 	let resizeRaf;

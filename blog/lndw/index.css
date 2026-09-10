@@ -741,9 +741,13 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 .spinner-text {
     margin-top: 20px;
-    color: #94a3b8;
+    color: #cbd5e1;
     font-size: 1em;
     font-family: system-ui, sans-serif;
+    max-width: 86vw;
+    padding: 0 16px;
+    text-align: center;
+    line-height: 1.4;
 }
 @keyframes spin {
     to { transform: rotate(360deg); }
