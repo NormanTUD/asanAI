@@ -848,6 +848,216 @@ Diese vier Fälle sind die Grundbausteine des gesamten Papers.
 </div>
 </div>
 </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- CLOSED LOOPS -->
+<section class="section" id="closed-loops">
+<div class="section-header">
+<div class="section-number">Kapitel 3</div>
+<h2>Zusammenhang & Schleifen</h2>
+<p class="section-desc">Ein biologisches System muss zusammenhängend sein — und das Leben beruht auf geschlossenen Schleifen.</p>
+</div>
+
+<div class="card">
+<h3>Statement 1: Das System muss zusammenhängend sein</h3>
+<p>Jede Funktion muss über die Kanten erreichbar sein. Isolierst du einen Knoten, bricht der Zusammenhang zusammen — das System kann so nicht funktionieren.</p>
+<div class="interactive-area">
+<canvas id="connectedCanvas" width="800" height="450"></canvas>
+<div class="controls">
+<div class="btn-group">
+<button class="btn active" onclick="toggleIsolation(false)">Zusammenhängend</button>
+<button class="btn" onclick="toggleIsolation(true)">Knoten „e" isolieren</button>
+</div>
+</div>
+<div id="connectedInfo" class="info-box">System ist zusammenhängend — alle Funktionen sind erreichbar. (Aussage 1 erfüllt)</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Geschlossene Schleifen im Verdauungssystem</h3>
+<p>Im Modell existieren eine <strong>Hauptschleife</strong> und <strong>Nebenschleifen</strong>. Ein Fehler auf der Hauptschleife ist gefährlicher. Ein Puls läuft animiert entlang der gewählten Schleife.</p>
+<div class="interactive-area">
+<canvas id="loopCanvas" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Schleife</label>
+<div class="btn-group" id="loopModeBtns">
+<button class="btn active" onclick="setLoopMode('main')">Hauptschleife</button>
+<button class="btn" onclick="setLoopMode('secondary')">Nebenschleife</button>
+<button class="btn" onclick="setLoopMode('all')">Alle</button>
+</div>
+</div>
+<div class="control-group">
+<label>Puls-Geschwindigkeit</label>
+<input type="range" id="loopSpeed" min="1" max="10" value="3">
+</div>
+</div>
+<div class="status-bar">
+<div class="status-item"><span class="status-dot green"></span> Pfad: <span id="mainLoopLabel">—</span></div>
+<div class="status-item"><span class="status-dot blue"></span> Länge: <span id="mainLoopLen">—</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- CONTINUOUS MAPPINGS -->
+<section class="section" id="continuous">
+<div class="section-header">
+<div class="section-number">Kapitel 4</div>
+<h2>Stetige Abbildungen</h2>
+<p class="section-desc">Eine Verfeinerung des Modells muss die Struktur erhalten: Die Abbildung t: T → T* ist stetig.</p>
+</div>
+
+<div class="card">
+<h3>Modellverfeinerung: T → T*</h3>
+<p>Ein Knoten kann in <strong>Untereigenschaften</strong> aufgeteilt werden. Die Pfeilrichtungen bleiben erhalten — die Struktur wird beibehalten. Bewege den Slider, um die Verfeinerung zu sehen.</p>
+<div class="interactive-area">
+<canvas id="mappingCanvas" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Verfeinerungsstufe</label>
+<input type="range" id="detailLevel" min="0" max="3" value="0" step="1">
+</div>
+<div class="btn-group">
+<button class="btn" id="showMappingBtn" onclick="toggleMappingLines()">Zuordnung anzeigen</button>
+</div>
+</div>
+<div id="mappingInfo" class="info-box">Stufe 0: Das einfache Modell. Bewege den Slider nach rechts, um Knoten in Untereigenschaften aufzuteilen.</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Was bedeutet „stetig"?</h3>
+<p>Eine Abbildung ist stetig, wenn das <strong>Urbild</strong> jeder offenen Menge wieder offen ist. Das Bild zeigt es: Das Urbild der Umgebung in T* ist eine offene Menge in T.</p>
+<div class="interactive-area">
+<canvas id="continuousExplainCanvas" width="800" height="350"></canvas>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- SYNDROMES -->
+<section class="section" id="syndromes">
+<div class="section-header">
+<div class="section-number">Kapitel 5</div>
+<h2>Syndrome &amp; Asyndromes</h2>
+<p class="section-desc">Aus einem Fehler breitet sich aus, welche Funktionen betroffen sind — das Syndrom. Der Rest ist das Asyndrom.</p>
+</div>
+
+<div class="card">
+<h3>Fehlerausbreitung im System</h3>
+<p>Wähle einen Fehlerknoten und beobachte, wie das <strong>Syndrom</strong> (betroffene Funktionen) sich ausbreitet. Ein Fehler ist <strong>gefährlich</strong>, wenn er die Hauptschleife erreicht.</p>
+<div class="interactive-area">
+<canvas id="syndromeCanvas" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Fehlerknoten wählen</label>
+<div class="btn-group" id="syndromeBtns"></div>
+<button class="btn" onclick="resetSyndrome()">Zurücksetzen</button>
+</div>
+<div class="control-group">
+<label>Zeit der Ausbreitung</label>
+<input type="range" id="spreadTime" min="0" max="100" value="0">
+</div>
+</div>
+<div class="status-bar">
+<div class="status-item"><span class="status-dot orange"></span> Syndrom = <span id="syndromeSet">—</span></div>
+<div class="status-item"><span class="status-dot blue"></span> Asyndrom = <span id="asyndromeSet">∅</span></div>
+<div class="status-item"><span class="status-dot green"></span> Gefährlich? <span id="dangerousLabel">—</span></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Invarianz unter Verfeinerung</h3>
+<p>Ergebnisse bleiben <strong>invariant</strong>, wenn das Modell verfeinert wird: Aus einer Schleife werden mehrere, aber die Zusammenhangseigenschaften bleiben erhalten.</p>
+<div class="interactive-area">
+<canvas id="invarianceCanvas" width="800" height="450"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Detailstufe</label>
+<input type="range" id="invarianceDetail" min="0" max="2" value="0" step="1">
+</div>
+</div>
+<div class="status-bar">
+<div class="status-item"><span class="status-dot green"></span> Zusammenhangskomponenten: <span id="disjointCount">—</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- DIAGNOSTICS -->
+<section class="section" id="diagnostics">
+<div class="section-header">
+<div class="section-number">Kapitel 6</div>
+<h2>Diagnostik &amp; Homöostase</h2>
+<p class="section-desc">Weil der Körper kompensiert, sehen ähnliche Krankheiten gleich aus. Das topologische Modell unterscheidet sie trotzdem.</p>
+</div>
+
+<div class="card">
+<h3>Kompensation verwischt Symptome</h3>
+<p>Wähle eine Krankheit und die Stärke der <strong>Kompensation</strong> (Homöostase). Je stärker kompensiert, desto „normaler" sehen die Werte aus — und desto schwieriger wird die Diagnose.</p>
+<div class="interactive-area">
+<canvas id="homeostasisCanvas" width="800" height="450"></canvas>
+<div class="controls">
+<div class="btn-group" id="diseaseBtns">
+<button class="btn active" onclick="setDisease(0)">Gesund</button>
+<button class="btn" onclick="setDisease(1)">Herztamponade</button>
+<button class="btn" onclick="setDisease(2)">Herzinsuffizienz</button>
+</div>
+<div class="control-group">
+<label>Kompensation</label>
+<input type="range" id="compensationLevel" min="0" max="100" value="0">
+</div>
+</div>
+<div id="homeostasisInfo" class="info-box">Gesundes System — alle Werte im Normalbereich (grüne Linie).</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Automatische Diagnose</h3>
+<p>Stelle die klinischen Werte ein. Der Entscheidungsbaum leitet die Diagnose mit einer Konfidenzwertung ab.</p>
+<div class="interactive-area">
+<canvas id="diagnosticCanvas" width="800" height="520"></canvas>
+<div class="controls">
+<div class="control-group"><label>RVP</label><div class="btn-group"><button class="btn active" data-var="rvp" data-val="up" onclick="setDiagVar(this)">↑</button><button class="btn" data-var="rvp" data-val="down" onclick="setDiagVar(this)">↓</button></div></div>
+<div class="control-group"><label>LVP</label><div class="btn-group"><button class="btn active" data-var="lvp" data-val="up" onclick="setDiagVar(this)">↑</button><button class="btn" data-var="lvp" data-val="down" onclick="setDiagVar(this)">↓</button></div></div>
+<div class="control-group"><label>SP</label><div class="btn-group"><button class="btn" data-var="sp" data-val="up" onclick="setDiagVar(this)">↑</button><button class="btn active" data-var="sp" data-val="down" onclick="setDiagVar(this)">↓</button></div></div>
+<div class="control-group"><label>DP</label><div class="btn-group"><button class="btn" data-var="dp" data-val="up" onclick="setDiagVar(this)">↑</button><button class="btn active" data-var="dp" data-val="down" onclick="setDiagVar(this)">↓</button></div></div>
+<div class="control-group"><label>DIUR</label><div class="btn-group"><button class="btn" data-var="diur" data-val="up" onclick="setDiagVar(this)">↑</button><button class="btn active" data-var="diur" data-val="down" onclick="setDiagVar(this)">↓</button></div></div>
+<div class="control-group"><label>Blutverlust &gt; 500</label><div class="btn-group"><button class="btn active" data-var="bl500" data-val="yes" onclick="setDiagVar(this)">Ja</button><button class="btn" data-var="bl500" data-val="no" onclick="setDiagVar(this)">Nein</button></div></div>
+</div>
+<div id="diagnosisResult" class="info-box"></div>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- CONCLUSION -->
+<section class="section" id="conclusion">
+<div class="section-header">
+<div class="section-number">Fazit</div>
+<h2>Vom System zur Diagnose</h2>
+<p class="section-desc">Ein roter Faden: Biologisches System → Digraph → topologischer Raum → Syndrome → automatische Diagnose.</p>
+</div>
+
+<div class="card">
+<h3>Der rote Faden</h3>
+<div class="interactive-area">
+<canvas id="summaryCanvas" width="900" height="300"></canvas>
+</div>
+<p>Das Paper zeigt, wie mathematische Abstraktion komplexe biologische Systeme begreifbar macht und letztlich zu <strong>automatischen, nachvollziehbaren Diagnosen</strong> führt.</p>
+</div>
+</section>
+
 <script>
 // ============================================================
 // UTILITY FUNCTIONS
@@ -1923,7 +2133,7 @@ let loopAnimFrame = null;
 
 function setLoopMode(mode) {
   loopMode = mode;
-  document.querySelectorAll('#closed-loops .btn-group .btn').forEach(b => {
+  document.querySelectorAll('#loopModeBtns .btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase().includes(
       mode === 'main' ? 'haupt' : mode === 'secondary' ? 'neben' : 'alle'
     ));
@@ -2462,7 +2672,7 @@ let currentDisease = 0;
 
 function setDisease(d) {
   currentDisease = d;
-  document.querySelectorAll('#diagnostics .card:first-child .btn-group .btn').forEach((b, i) => {
+  document.querySelectorAll('#diseaseBtns .btn').forEach((b, i) => {
     b.classList.toggle('active', i === d);
   });
   drawHomeostasis();

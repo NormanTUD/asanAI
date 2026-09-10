@@ -192,6 +192,7 @@ const Presentation = (() => {
     let currentSlide = 0;
     let slides = [];
     let fragmentIndex = {};
+    let searchQuery = '';
 
     // ────────────────────────────────────────────────────────────
     // SLIDE-AUSWAHL via URL:  ?slides=0,1,2,3,10-16,17,19-30
