@@ -33,7 +33,7 @@ The oldest geometric objects we have are not calculations at all. They are *patt
 
 <figure>
 	<img style="width: 100%" src="trinil_shell.jpg" alt="Homo erectus-engraved shell (Trinil, Java)" />
-	<figcaption class="md">\citealternativetitle{trinilshell_image}: a freshwater river-clam shell engraved by *Homo erectus* at Trinil, Java, c. 500,000 years ago, showing a precise zig-zag of grooves (detail at right).</figcaption>
+	<figcaption class="md">\citealternativetitle{trinilshell_image}: a freshwater river-clam shell engraved by <em>Homo erectus</em> at Trinil, Java, c. 500,000 years ago, showing a precise zig-zag of grooves (detail at right).</figcaption>
 </figure>
 
 The **Trinil shell** is the oldest known deliberate geometric incision. Working at the Sangiran–Trinil site in Java, an international excavation team — the study reported by Joordens and colleagues in \citeyear{trinilshell} \cite{trinilshell} — documented a series of paired grooves cut into the shell of a river clam, arranged in a regular zig-zag. Crucially, the marks are not a by-product of using the shell as a scraper or a drinking vessel; the groove spacing and the way it runs off the shell indicate a *pattern* was being produced on purpose. Why anyone engraves a shell half a million years ago is, honestly, unclear — decoration, ritual, practice, or a test of the hand are all live hypotheses. But it is a strikingly simple fact — *Homo erectus*, not *Homo sapiens*, was capable of a repeated, symmetric, non-utilitarian shape more than half a million years ago — and it is the true starting line of this story.
@@ -49,13 +49,16 @@ A second, independent thread runs through the Middle Stone Age of southern Afric
 
 ### Tally bones: Lebombo and Ishango
 
-\marginfig{ishango.jpg}{The \citealternativetitle{ishangobonephoto}, a baboon fibula of the Late Paleolithic (c. 18,000 BCE) with three columns of grouped notches — one interpretation of the earliest externalization of *quantity*.}
-
 If the shell and the ochre mark the birth of *form*, the **Ishango bone** and the earlier **Lebombo bone** mark the birth of *counting* as a spatial act: quantities are not held in the mind, they are laid out as marks in a row, and rows as *groupings* in the plane \cite{ishangobone} \cite{lebombobone}. Geometry and arithmetic are born in the same gesture — a number is a *shape* of marks, and a shape is a *count* of something.
 
 <figure>
+	<img style="width: 100%" src="ishango.jpg" alt="The Ishango bone" />
+	<figcaption class="md">The <cite-alternativetitle>ishango</cite-alternativetitle> is a baboon fibula of the Late Paleolithic (c. 18,000 BCE) with three columns of grouped notches \cite{ishangobone}. \citealternativetitle{ishangobonephoto}. Its groupings have been read as a lunar calendar, a base-10/60 number system, or simply a score-keeping tally — the earliest *external memory* we have.</figcaption>
+</figure>
+
+<figure>
 	<img style="width: 100%" src="lebombo.jpg" alt="The Lebombo bone, a tally bone from c. 43,000 BCE" />
-	<figcaption class="md">The **Lebombo bone** (c. 43,000 BCE, Lesotho), a hyoid bone with 29 notches arranged in groups — a *spatial* record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}. The Ishango bone (left, c. 18,000 BCE) is its more famous cousin, with columns of notches whose groupings have been read as a lunar calendar, a base-10/60 number system, or simply a score-keeping tally.</figcaption>
+	<figcaption class="md">The <strong>Lebombo bone</strong> (c. 43,000 BCE, Lesotho), a hyoid bone with 29 notches arranged in groups — a <em>spatial</em> record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}.</figcaption>
 </figure>
 
 (We return to both artifacts in the [History of AI](history) chapter, where they matter as the first *external memory*; here we only need that the notches are themselves a two-dimensional arrangement — the earliest "database" was a pattern on a bone.)
@@ -82,6 +85,11 @@ That list is the entire practical geometry of the ancient world, and it is more 
 
 ### Egypt: the Rhind Papyrus
 
+<figure>
+	<img style="width: 560px; max-width: 100%;" src="rhind_papyrus.png" alt="A page of the Rhind Mathematical Papyrus in hieratic script" />
+	<figcaption class="md">A page of the <strong>Rhind Mathematical Papyrus</strong> (Papyrus Ahmes) in hieratic script: a column of word problems, each followed by its worked solution and a check — the recipe-style metric geometry described here \cite{rhindpapyrus}.</figcaption>
+</figure>
+
 The best single window into Egyptian practical geometry is the **\citealternativetitle{rhindpapyrus}**, copied by the scribe *Ahmes* around 1650 BCE (from an older source) \cite{rhindpapyrus}. It is a problem book for scribes, and its geometry is entirely *metric* — it asks for areas and volumes, and gives rules that work, without any "why".
 
 Two results are worth knowing, because they show the level of sophistication:
@@ -95,7 +103,10 @@ Note what is *absent*: there is no proof, no postulate, no general argument. The
 
 The Babylonian tradition is even richer, and even stranger, because the Babylonians thought in a **base-60 (sexagesimal)** positional system — the ancestor of our 60-second minute — and because they had no letters for "side" or "diagonal" in the way we do. Their "algebra" was, in the words of \citeauthor{hoyrup2021algebra}, a *geometric* technique: equations were solved by literally **cutting and pasting squares and rectangles** on a diagram (or in the scribe's head) \cite{hoyrup2021algebra} \cite{hoyruplengths}. The reason a base-60 system survived into our clocks is that 60 is *geometrically* convenient: it is divisible by 2, 3, 4, 5, 6 and 10, so the fractions that keep appearing when you halve a field or cut a corner come out exact.
 
-\marginfig{si_427.jpg}{\citealternativetitle{si427_image}, a hand-tablet from the Old Babylonian period (c. 1900–1600 BCE): a field being subdivided, its boundary lines set out with right angles made exact by Pythagorean triples.}
+<figure>
+	<img style="width: 100%" src="si_427.jpg" alt="The Si.427 field plan, an Old Babylonian surveyor's tablet" />
+	<figcaption class="md">\citealternativetitle{si427_image}, a hand-tablet from the Old Babylonian period (c. 1900–1600 BCE): a field being subdivided, its boundary lines set out with right angles made exact by Pythagorean triples.</figcaption>
+</figure>
 
 **Si.427 — the oldest applied geometry.** The clearest physical proof that this was a *surveying* discipline, not just classroom arithmetic, is the tablet **Si.427**, a field plan made by an Old Babylonian surveyor. \citeauthor{si427} traced the tablet from a 19th-century excavation record to the Archaeological Museum in Istanbul and showed that the surveyor used **Pythagorean triples** to make the boundary lines *truly perpendicular* \cite{si427} \cite{si427_baublatt}. The point is not only that it is ancient; it is that it is *before Pythagoras by more than a thousand years*. The famous 3-4-5 right triangle was a working tool of Mesopotamian land-surveyors long before it became a Greek theorem:
 
@@ -123,7 +134,7 @@ The right side is now a perfect square, so the scribe takes its (sexagesimal) sq
 
 \citeauthor{hoyrup2021algebra} notes a remarkable after-life of the diagonal problem: the very same "given the diagonal and the area, find the sides" puzzle, with the very same solution procedure, reappears **1,900 years later** in a Hebrew mathematical handbook dated 1116 CE — a tradition that ran from Old Babylonian field-measurers, through the scribal schools, and into the medieval world \cite{hoyrup2021algebra}.
 
-<div class="optional md" data-headline="What "algebra" really was">
+<div class="optional md" data-headline="What algebra really was">
 This is the insight that separates modern scholarship from older accounts. For most of the 20th century these texts were read as *numeric* algebra: the scribe was "solving $x^{2}+x=a$". \citeauthor{hoyrup2021algebra} showed that reading is impossible to sustain, because the terminology only makes sense against a *geometric* background — the operations are additions, subtractions and multiplications of *measurable* lengths and areas, and the "quadratic completion" is a literal rearrangement of square and rectangle pieces \cite{hoyrup2021algebra} \cite{hoyruplengths}. The Babylonians did not have "algebra" and "geometry" as two subjects; they had one geometry that *happened* to compute. Euclid, a millennium later, would re-cast much of this into the axiomatic *Elements* — which is why the story now turns to Greece.
 </div>
 
@@ -151,18 +162,16 @@ The Greeks did not invent geometry. They did something more radical: they made i
 
 ### Thales, Pythagoras and the theorem
 
-\marginfig{pythagoras.jpg}{Pythagoras of Samos (c. 570–495 BCE), founder of the circle that gave its name to the most famous theorem in the world.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="pythagoras.jpg" alt="Pythagoras of Samos" />
+	<figcaption class="md">Pythagoras of Samos (c. 570–495 BCE), founder of the school that gave its name to the most famous theorem in the world.</figcaption>
+</figure>
 
 The tradition places the first proofs with **Thales of Miletus** (c. 624–546 BCE) — for example, that a circle is bisected by its diameter (Thales' theorem, *Elements* I.31) and that the angles of a triangle sum to two right angles (I.32) \cite{heathgreekmath}. Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\angle ABC = 90^{\circ}$. The Pythagoreans, the circle around **Pythagoras** (c. 570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,
 
 $$a^{2} + b^{2} = c^{2}$$
 
 and, more, they (allegedly) proved the converse — that a triangle with $a^{2}+b^{2}=c^{2}$ *must* be right-angled. The Babylonians and the Indians had *used* the relation for a thousand years; the Greeks *understood* it, and — for them, this was the dangerous part — the understanding led to a crisis, because they found figures (the diagonal of a square) whose side ratio could not be written as a ratio of whole numbers at all. The discovery of the incommensurable, $\sqrt{2} \notin \mathbb{Q}$, is arguably the first genuine "mathematical" result: a statement about what *cannot* be done \cite{heathgreekmath}.
-
-<figure>
-	<img style="width: 100%" src="pythagorean_proof.png" alt="A visual proof of the Pythagorean theorem" />
-	<figcaption class="md">One of the many dissection proofs of $a^{2}+b^{2}=c^{2}$ (here the four-triangle arrangement of the 12th-century Indian mathematician Bhāskara): cut the two smaller squares into pieces and rearrange them into the larger one, and the area is conserved. There are more than four hundred known proofs of this single sentence \cite{heathgreekmath}.</figcaption>
-</figure>
 
 ### Hippocrates and Eudoxus: the method of exhaustion
 
@@ -173,6 +182,11 @@ $$A_{\text{circle}} = \pi r^{2}, \qquad C_{\text{circle}} = 2\pi r$$
 and Euclid's *Elements* XII is built on it \cite{heathgreekmath}.
 
 ### Archimedes: exhaustion perfected
+
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="archimedes.jpg" alt="Archimedes of Syracuse" />
+	<figcaption class="md">Archimedes of Syracuse (c. 287–212 BCE), who perfected the method of exhaustion and computed the sphere's volume and surface with proofs that survive today.</figcaption>
+</figure>
 
 If Eudoxus gave the *method*, **Archimedes of Syracuse** (c. 287–212 BCE) gave it its masterpieces \cite{heathgreekmath}. Working with the same exhaustion engine, he computed, with proofs that survive today, the area and circumference of the circle, and then the *volumes* that were the great open problem: the sphere, the cone, the cylinder, the paraboloid and the spheroid. His results, in modern symbols,
 
@@ -192,7 +206,10 @@ The tradition also preserves the legend that Plato had written above the door of
 
 ### Euclid's Elements: the machine of proof
 
-\marginfig{euclid.jpg}{Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="euclid.jpg" alt="Euclid demonstrating a proposition to a student" />
+	<figcaption class="md">Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed.</figcaption>
+</figure>
 
 Everything before Euclid was a collection of results; the **\citealternativetitle{euclidelements}** (composed c. 300 BCE in Alexandria, the standard edition edited and translated by \citeauthor{euclidelements_heath}) is the first *system* \cite{euclidelements} \cite{euclidelements_heath}. The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it. Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *hysteron* — that marks "it has been proved". That architecture is the template for every proof-based subject that followed:
 
@@ -210,7 +227,7 @@ The books are organised by theme: **Book I** is plane geometry (angles, triangle
 
 <figure>
 	<img style="width: 100%" src="platonic_solids.jpg" alt="The five Platonic solids" />
-	<figcaption class="md">The five **regular solids** of *Elements* XIII — the only convex polyhedra whose faces are identical regular polygons and whose identical corners fit together. Euclid constructs all five and proves there can be no sixth; the *proof* of the "exactly five" fact, however, is usually attributed to a later reading of his construction \cite{euclidelements}.</figcaption>
+	<figcaption class="md">The five <strong>regular solids</strong> of <em>Elements</em> XIII — the only convex polyhedra whose faces are identical regular polygons and whose identical corners fit together. Euclid constructs all five and proves there can be no sixth; the <em>proof</em> of the "exactly five" fact, however, is usually attributed to a later reading of his construction \cite{euclidelements}.</figcaption>
 </figure>
 
 The anecdote (told by Proclus) is that when **Ptolemy** complained the *Elements* were too hard for beginners, Euclid replied that **there is no royal road to geometry**. The line captures the whole Greek shift: the *Elements* are not a shortcut to the right answers; they are the *long way around*, and it is precisely that long way — the insistence on proof — that makes the discipline permanent. Every theorem in this book, and every formal proof a machine checks, is a descendant of Euclid's first line: *"Let AB be a given finite straight line."*
@@ -231,12 +248,15 @@ $$\text{ellipse: } \frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} = 1 \qquad \text{pa
 
 <figure>
 	<img style="width: 100%" src="conic_sections.png" alt="The three conic sections: ellipse, parabola and hyperbola" />
-	<figcaption class="md">The three **conic sections**: tilt a cutting plane against a cone and it carves out an ellipse (shallow cut, $a>b$), a parabola (plane parallel to a side), or a hyperbola (steep cut through both nappes). All three are degree-two curves — the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \cite{apolloniusconics}.</figcaption>
+	<figcaption class="md">The three <strong>conic sections</strong>: tilt a cutting plane against a cone and it carves out an ellipse (a shallow cut), a parabola (a plane parallel to a side), or a hyperbola (a steep cut through both nappes). All three are degree-two curves — the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \cite{apolloniusconics}.</figcaption>
 </figure>
 
 The *why* is partly optical and partly astronomical. The parabola is the only conic that **focuses**: a ray sent in parallel to its axis reflects through a single point (the focus), which is why parabolic mirrors and dishes concentrate light and sound — the old legend that Archimedes burned Roman ships with a focusing mirror is a story about this. And the ellipse is the shape of an orbit: it will take **Kepler** (1609) to read the conics back into the sky and discover that planets move on ellipses with the Sun at one focus \cite{keplerastronomianova}, and **Newton** (1687) to prove that an inverse-square force *must* produce conic orbits \cite{newtonprincipia}. The conics sit, in other words, exactly at the hinge between pure geometry and the physics of the heavens.
 
-\marginfig{antikythera.jpg}{The Antikythera mechanism (c. 2nd c. BCE), a geared astronomical computer — the geometry of the heavens reduced to bronze gears and epicycles.}
+<figure>
+	<img style="width: 100%" src="antikythera.jpg" alt="The Antikythera mechanism" />
+	<figcaption class="md">The Antikythera mechanism (c. 2nd c. BCE), a geared astronomical computer — the geometry of the heavens reduced to bronze gears and epicycles.</figcaption>
+</figure>
 
 **Menelaus of Alexandria** (c. 70–140 CE) wrote the **\citealternativetitle{menelaussphaerica}**, the first systematic treatise on **spherical geometry** — the geometry of the *surface* of a sphere, where the straight line is replaced by a great circle and the angles of a triangle sum to *more* than two right angles \cite{menelaussphaerica}. Menelaus' theorem is the spherical tool for astronomy (locating the stars), and it quietly plants the second seed of Section VI: *curved* space has its own, genuinely different, geometry.
 </div>
@@ -246,7 +266,10 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 
 When the Greek world passed its knowledge eastward, it was not lost but *worked on*. In the great translation and research centres of the Islamic world — above all the **House of Wisdom** in Baghdad (8th–13th c.) — the *Elements*, the *Conics* and the astronomical treatises were rendered into Arabic, corrected, and extended. The *why* was both intellectual and legal: the new science of **algebra** was driven in part by Islamic inheritance law, which required estates to be divided into fractional shares, and by the *kharaj*, a land tax that required surveying. Figures such as **al-Khwārizmī** (c. 780–850) re-founded algebra (the very word is his, from *al-jabr*, "the restoring/completing") and did so in the *geometric* spirit inherited from Babylon and Greece, solving equations by the same cutting-and-completing-of-the-square operations \cite{hoyrup2021algebra}.
 
-\marginfig{alkhwarizmi.jpg}{Muḥammad ibn Mūsā al-Khwārizmī (c. 780–850), whose treatise on *al-jabr* gave algebra its name — and whose surname gave us the word *algorithm*.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="alkhwarizmi.jpg" alt="Al-Khwarizmi" />
+	<figcaption class="md">Muḥammad ibn Mūsā al-Khwārizmī (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em>.</figcaption>
+</figure>
 
 Al-Khwārizmī's canonical example, in modern dress, is the problem "a square and ten times its side make thirty-nine" — $x^{2} + 10x = 39$. He completes the square: halve the ten to get $5$, square it to get $25$, add to $39$ to get $64$, take the root $8$, subtract the $5$, and obtain $x = 3$. In symbols, the move that is his legacy is exactly the Babylonian one, now general:
 
@@ -254,7 +277,10 @@ $$x^{2} + bx = A \quad\Longrightarrow\quad x = -\tfrac{b}{2} + \sqrt{A + \left(\
 
 The single most important geometric achievement of the period, however, is the work of **Ibn al-Haytham** (Latinised **Alhazen**, c. 965–1040).
 
-\marginfig{alhazen.jpg}{Ibn al-Haytham (Alhazen), c. 965–1040, whose *Book of Optics* made geometry the mathematics of *how the world projects itself onto the eye*.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="alhazen.jpg" alt="Ibn al-Haytham (Alhazen)" />
+	<figcaption class="md">Ibn al-Haytham (Alhazen), c. 965–1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye.</figcaption>
+</figure>
 
 His **\citealternativetitle{alhazenoetic}** (completed c. 1021) is a *geometry of seeing*: it treats the eye, the mirror, and the path of light as objects of rigorous geometric analysis, and famously inverts the old "emission" theory of vision by arguing that we see by light *entering* the eye along straight rays \cite{alhazenoetic}. The law he formalises is the **law of reflection**, $\theta_{\text{incident}} = \theta_{\text{reflected}}$ (measured from the normal to the surface), and the **Alhazen problem** — finding the point on a mirror where a ray from an object reflects to the eye — is a genuinely hard geometric problem that he reduces to an algebraic (in fact quartic) equation. His treatment of the **camera obscura** is the direct ancestor of both the scientific camera and the mathematics of *perspective* \cite{alhazenoetic}. It is a pivot: geometry becomes the mathematics of *projection* — of how a three-dimensional world is faithfully laid down on a two-dimensional surface.
 </div>
@@ -274,7 +300,10 @@ a *projective* transformation. The Renaissance discovery of perspective is thus,
 
 ### Descartes and analytic geometry (1637)
 
-\marginfig{descartes.jpg}{René Descartes (1596–1650), painted by Frans Hals. His *Géométrie* fused algebra and geometry into a single subject.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="descartes.jpg" alt="René Descartes, by Frans Hals" />
+	<figcaption class="md">René Descartes (1596–1650), painted by Frans Hals. His <em>Géométrie</em> fused algebra and geometry into a single subject.</figcaption>
+</figure>
 
 \citeauthor{descartesgeometrie}'s **\citealternativetitle{descartesgeometrie}** (1637), the final part of his *Discourse on the Method*, is the hinge on which all of later mathematics turns \cite{descartesgeometrie}. His move is the simplest and most powerful in the book of mathematics: put a **grid of coordinates** on the plane, so that every point is a *pair of numbers* and every curve is an *equation*. A line is $y = mx + c$; a circle is $x^{2} + y^{2} = r^{2}$; the conics are the degree-two equations. Geometry and algebra, which had walked in parallel for two thousand years, are now *the same subject written in two languages*. (It was **Fermat**, working independently, who developed the same idea in the same decade.)
 
@@ -313,7 +342,7 @@ For two thousand years, "the" geometry was Euclid's, and everyone assumed that s
 
 <figure>
 	<img style="width: 100%" src="konigsberg_bridges.png" alt="The seven bridges of Königsberg" />
-	<figcaption class="md">The seven bridges of Königsberg. Euler replaced the river and the banks with four dots and seven lines, and the question became a statement about *degrees*: the sum of the degrees is always $2E$ (each edge touches two points), so the number of odd-degree vertices is even — here four, which is neither $0$ nor $2$, so the walk is impossible \cite{eulerbridges}.</figcaption>
+	<figcaption class="md">The seven bridges of Königsberg. Euler replaced the river and the banks with four dots and seven lines, and the question became a statement about <em>degrees</em>: the sum of the degrees is always $2E$ (each edge touches two points), so the number of odd-degree vertices is even — here four, which is neither $0$ nor $2$, so the walk is impossible \cite{eulerbridges}.</figcaption>
 </figure>
 
 The problem "*ad geometriam situs*" ("regarding position") is the birth of **graph theory** and, more broadly, of the study of properties that survive stretching and tearing: **topology**.
@@ -330,7 +359,10 @@ That a shape's identity is captured by a single *integer* — not by its angles,
 
 ### Gauss: curvature is intrinsic
 
-\marginfig{gauss.jpg}{Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="gauss.jpg" alt="Carl Friedrich Gauss" />
+	<figcaption class="md">Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside.</figcaption>
+</figure>
 
 **\citeauthor{gaussdisquisitiones}** (1777–1855), while surveying the state of Hanover for a living, was led to a question that looks innocent and is profound \cite{gaussdisquisitiones}. Surveying means measuring the angles of a *triangle* of survey markers on the ground. If the Earth's surface is truly flat, the three angles always sum to $180^{\circ}$; if it is curved, the sum is *more* (the more, the larger and curvier the triangle). So a sufficiently careful survey of a sufficiently large triangle could, in principle, tell us whether *space itself* is Euclidean. That made the *parallel postulate* — the axiom that guarantees the flat angle-sum — into an **empirical** question about the physical world, which was a scandal for a subject that was supposed to be true by pure reason alone.
 
@@ -346,7 +378,7 @@ so $K$ depends only on the surface's *own* measuring-stick, not on how it sits i
 
 <figure>
 	<img style="width: 100%" src="theorema_egregium.png" alt="Gauss's original statement of the Theorema Egregium" />
-	<figcaption class="md">Gauss's original statement of the Theorema Egregium. The message, in a phrase, is that *curvature is not a property of the shape embedded in a higher space, but a property of the space itself*, readable from within — the theorem that makes general relativity possible \cite{gaussdisquisitiones}.</figcaption>
+	<figcaption class="md">Gauss's original statement of the Theorema Egregium. The message, in a phrase, is that <em>curvature is not a property of the shape embedded in a higher space, but a property of the space itself</em>, readable from within — the theorem that makes general relativity possible \cite{gaussdisquisitiones}.</figcaption>
 </figure>
 
 The Theorema Egregium has a grand descendant, the **Gauss–Bonnet theorem**, which turns curvature into *topology*. For a region $D$ of a surface with boundary, the total curvature inside plus the twist of the boundary equals a purely topological number:
@@ -363,7 +395,10 @@ $$\iint_{S} K\, dA \;=\; 2\pi\,\chi(S)$$
 
 The parallel postulate had resisted proof for 2,000 years. The breakthrough was to stop trying to prove it and to *negate* it. **\citeauthor{lobachevskygeometry}** (1792–1856) and, independently, **\citeauthor{bolyaiappendix}** (1802–1860), each discovered that if you *replace* Euclid's fifth postulate with "through a point not on a line there pass *infinitely many* lines that never meet it", a perfectly consistent geometry results — **hyperbolic (or "non-Euclidean") geometry** \cite{lobachevskygeometry} \cite{bolyaiappendix}.
 
-\marginfig{lobachevsky.jpg}{Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="lobachevsky.jpg" alt="Nikolai Lobachevsky" />
+	<figcaption class="md">Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829.</figcaption>
+</figure>
 
 The *why* is the 2,000-year hang-up on the fifth postulate itself: it had always looked less self-evident than the other four, and for two centuries mathematicians (Saccheri, Legendre, and others) had tried and failed to prove it from the rest. The daring move was to ask what happens if you *assume the opposite* — and to find not a contradiction but a *world*. In the hyperbolic plane, the angles of a triangle sum to *less* than two right angles, and the shortfall is not a bug but the *area*: for a triangle on a surface of curvature $K=-1$,
 
@@ -371,12 +406,15 @@ $$A + B + C \;<\; \pi, \qquad \text{Area} \;=\; \pi - (A+B+C)$$
 
 So a triangle's area is read directly from its *angular defect*, and there is no largest triangle — the total area of the whole hyperbolic plane is finite in angular terms yet infinite in extent. (In the opposite, spherical geometry, the sum is *more* than $\pi$ and the excess is the area.) The result was shocking, because it was not a contradiction: it was a *different, equally valid, geometry of space*. The father **Farkas Bolyai** and **Gauss** (who had found the same geometry independently but never published) both recognised that the *truth* of Euclidean versus hyperbolic geometry is no longer a question of pure reason — it is, as Gauss put it, an **empirical** question, to be settled by measuring the angle-sum of a *very large* triangle in the real world. Geometry had become a question about *physical space*, not just a set of theorems.
 
-\marginfig{bolyai.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in a 1832 appendix to his father's book.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="bolyai.jpg" alt="János Bolyai" />
+	<figcaption class="md">János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in a 1832 appendix to his father's book.</figcaption>
+</figure>
 
 ### Riemann: the general idea of "space"
 
 <figure>
-	<img style="width: 100%" src="riemann.jpeg" alt="Bernhard Riemann" />
+	<img style="width: 400px; max-width: 100%;" src="riemann.jpeg" alt="Bernhard Riemann" />
 	<figcaption class="md">\citeauthor{hypothesengeometrie} (1826–1866), whose 1854 habilitation lecture generalised the very idea of a "space".</figcaption>
 </figure>
 
@@ -398,11 +436,14 @@ the Einstein field equation: *the curvature of spacetime on the left equals the 
 
 In the same decade the *metric-free* side was named. **\citeauthor{mobiusband}** (1790–1868) discovered the one-sided band that bears his name (1858) \cite{mobiusband}, and **\citeauthor{listingtopologie}** (1808–1882) coined the very word **"topology"** (from *topos*, "place") in his *Vorstudien zur Topologie* (1847) \cite{listingtopologie}.
 
-\marginfig{mobius.jpg}{August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation.}
+<figure>
+	<img style="width: 400px; max-width: 100%;" src="mobius.jpg" alt="August Ferdinand Möbius" />
+	<figcaption class="md">August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation.</figcaption>
+</figure>
 
 <figure>
 	<img style="width: 100%" src="mobius_strip.jpg" alt="The Möbius strip" />
-	<figcaption class="md">The **Möbius strip**: a band with a single half-twist. It has only *one* surface and *one* boundary, so an ant walking along it returns to its starting point having traversed "both sides" without crossing an edge. Its Euler characteristic is $\chi = 0$ and it is *non-orientable* — you cannot consistently mark a "left" and "right" on it. It is the simplest possible object that is genuinely non-flat in the topological sense \cite{mobiusband}.</figcaption>
+	<figcaption class="md">The <strong>Möbius strip</strong>: a band with a single half-twist. It has only <em>one</em> surface and <em>one</em> boundary, so an ant walking along it returns to its starting point having traversed "both sides" without crossing an edge. Its Euler characteristic is $\chi = 0$ and it is <em>non-orientable</em> — you cannot consistently mark a "left" and a "right" on it. It is the simplest possible object that is genuinely non-flat in the topological sense \cite{mobiusband}.</figcaption>
 </figure>
 
 The message of Möbius and Listing is the message of Euler's bridges: some of the deepest facts about a space are not about how far apart things are, but about *how it is connected* — and those facts (the number of "holes", orientability, the Euler characteristic) are the *real* invariants of shape. A later, complete result — the **classification of surfaces** — says every closed surface is, up to deformation, a sphere with a certain number of handles and cross-caps attached, so the integers $g$ (handles) and $k$ (cross-caps) are the *entire* topological identity of a surface \cite{hatcher}.
@@ -413,13 +454,11 @@ The message of Möbius and Listing is the message of Euler's bridges: some of th
 
 The last great reorganisation of the 19th century was **\citeauthor{poincareanalysissitus}**'s **\citetitle{poincareanalysissitus}** (1895), which turned topology from a collection of curiosities into a full theory \cite{poincareanalysissitus}.
 
-\marginfig{poincare.jpg}{Henri Poincaré (1854–1912), who in *Analysis Situs* gave topology its first real structure: the fundamental group, homology, and the conjecture that would occupy the century.}
-
 The *why* was to extend Euler's and Gauss's ideas from 2-D surfaces to *spaces* of any dimension, and to answer the question "what does a space look like, up to deformation?" Poincaré's answers were the **fundamental group** $\pi_{1}$ (the algebraic record of all the ways a loop can be twisted around a space, up to continuous shrinking) and the beginnings of **homology** $H_{n}$ (counting "holes" of each dimension by signed sums of chains and boundaries) \cite{poincareanalysissitus} \cite{hatcher}. And in a stroke he posed the **Poincaré conjecture**: a closed 3-dimensional space in which every loop can be continuously shrunk to a point must be a 3-sphere. That is, *topology (how the loops behave) determines geometry (the space is a sphere)*.
 
 <figure>
-	<img style="width: 100%" src="poincare.jpg" alt="Henri Poincaré" />
-	<figcaption class="md">Poincaré's conjecture resisted every tool 20th-century mathematics had. It was finally proved by **Grigori Perelman** in 2002–2003, who used **Richard Hamilton's Ricci flow** — a process that smooths the curvature of a space over "time", like heat diffusing — to show that any such space must flow to a round sphere \cite{perelmanpoincare} \cite{poincareanalysissitus}.</figcaption>
+	<img style="width: 400px; max-width: 100%;" src="poincare.jpg" alt="Henri Poincaré" />
+	<figcaption class="md">Henri Poincaré (1854–1912). His conjecture resisted every tool 20th-century mathematics had. It was finally proved by <strong>Grigori Perelman</strong> in 2002–2003, who used <strong>Richard Hamilton's Ricci flow</strong> — a process that smooths the curvature of a space over "time", like heat diffusing — to show that any such space must flow to a round sphere \cite{perelmanpoincare} \cite{poincareanalysissitus}.</figcaption>
 </figure>
 
 So where does this leave us, and why is a history of geometry a chapter in a course about machines? Because the discipline never stopped responding to the needs of its era, exactly as the opening line of \citeauthor{weeksshapespace} (\citeyear{weeksshapespace}) says \cite{weeksshapespace}. Its "needs" have changed, not its method:
