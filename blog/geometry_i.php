@@ -58,11 +58,11 @@ The **Trinil shell** is the oldest known deliberate geometric incision. Working 
 
 A second, independent thread runs through the Middle Stone Age of southern Africa. The engraved pieces from **Blombos Cave**, dating to roughly 75,000 years ago, carry cross-hatched grids and rhomboid fields of incisions on red ochre \cite{emergenceofmodernhumanbehaviour} \cite{blombosochre}. Read purely as geometry, they are a study in the *partition of a plane*: a surface divided into a regular network of cells by crossing lines. That is, in miniature, exactly the operation that later surveyors and mapmakers would perform on a much larger scale. The motivation here is again not mathematical but *symbolic* — a decorated surface is a claim about order, and order is the raw material geometry will later formalise.
 
+\marginfig{ishango.jpg}{The **Ishango bone** (\citealternativetitle{ishangobonephoto}) is a baboon fibula of the Late Paleolithic (c. 18,000 BCE) with three columns of grouped notches \cite{ishangobone} — read as a lunar calendar, a base-10/60 number system, or simply a score-keeping tally.}
+
 ### Tally bones: Lebombo and Ishango
 
 If the shell and the ochre mark the birth of *form*, the **Ishango bone** and the earlier **Lebombo bone** mark the birth of *counting* as a spatial act: quantities are not held in the mind, they are laid out as marks in a row, and rows as *groupings* in the plane \cite{ishangobone} \cite{lebombobone}. Geometry and arithmetic are born in the same gesture — a number is a *shape* of marks, and a shape is a *count* of something.
-
-\marginfig{ishango.jpg}{The **Ishango bone** (\citealternativetitle{ishangobonephoto}) is a baboon fibula of the Late Paleolithic (c. 18,000 BCE) with three columns of grouped notches \cite{ishangobone} — read as a lunar calendar, a base-10/60 number system, or simply a score-keeping tally: the earliest <em>external memory</em> we have.}
 
 <figure>
 	<img style="width: 100%" src="lebombo.jpg" alt="The Lebombo bone, a tally bone from c. 43,000 BCE" />
