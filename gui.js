@@ -3163,7 +3163,7 @@ var _lp_popup = (function() {
 					</div>\
 				</div>\
 				<div class="lp-footer">\
-					<span class="lp-footer-hint"><kbd>Esc</kbd> to close</span>\
+					<span class="lp-footer-hint"><kbd>Esc</kbd> ' + (typeof language !== "undefined" && language[lang] && language[lang]["esc_to_close"] ? language[lang]["esc_to_close"] : "Esc to close") + '</span>\
 				</div>\
 			</div>';
 
