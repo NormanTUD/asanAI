@@ -318,25 +318,106 @@ const Presentation = (() => {
         });
     }
 
+    function slideTitle(slide, i) {
+        return slide.getAttribute('data-title') || `Folie ${i + 1}`;
+    }
+
+    function escapeHtml(s) {
+        return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function overviewVisible() {
+        const el = document.getElementById('slide-overview');
+        return !!(el && el.classList.contains('visible'));
+    }
+
     function buildOverview() {
         const grid = document.getElementById('overview-grid');
         grid.innerHTML = '';
+        const q = searchQuery.trim().toLowerCase();
+        let shown = 0;
         slides.forEach((slide, i) => {
-            const title = slide.getAttribute('data-title') || `Folie ${i + 1}`;
+            const title = slideTitle(slide, i);
+            if (q && !title.toLowerCase().includes(q)) return;
             const thumb = document.createElement('div');
             thumb.className = 'overview-thumb' + (i === currentSlide ? ' current' : '');
             thumb.innerHTML = `<div class="thumb-number">Folie ${i + 1}</div><div class="thumb-title">${title}</div>`;
             thumb.onclick = () => goTo(i);
             grid.appendChild(thumb);
+            shown++;
         });
+        renderSearchBar(shown);
+    }
+
+    // Suchleiste – dynamisch erzeugt, damit sie in allen Decks funktioniert
+    function renderSearchBar(shown) {
+        const ov = document.getElementById('slide-overview');
+        if (!ov) return;
+        let bar = document.getElementById('overview-searchbar');
+        if (!bar) {
+            bar = document.createElement('div');
+            bar.id = 'overview-searchbar';
+            bar.style.cssText =
+                'position:sticky;top:-40px;z-index:10;max-width:1400px;margin:0 auto 20px auto;' +
+                'display:flex;align-items:center;gap:12px;min-height:34px;' +
+                'padding:8px 12px;background:rgba(15,23,42,0.98);border:1px solid #334155;border-radius:10px;';
+            ov.insertBefore(bar, ov.firstChild);
+        }
+        bar.innerHTML = '';
+        const label = document.createElement('span');
+        if (!searchQuery) {
+            label.style.cssText = 'color:#94a3b8;font-size:0.9em;';
+            label.innerHTML = '🔍 Tippe, um nach Titel zu filtern <span style="color:#64748b;">· Esc schließt</span>';
+        } else {
+            label.style.cssText = 'color:#e2e8f0;font-size:0.95em;';
+            label.innerHTML = `🔍 “${escapeHtml(searchQuery)}” <span style="color:#64748b;font-size:0.85em;">· ${shown} von ${slides.length}</span>`;
+            bar.appendChild(label);
+            const btn = document.createElement('button');
+            btn.textContent = '✕ löschen';
+            btn.style.cssText = 'margin-left:auto;background:#334155;border:none;color:#e2e8f0;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:0.85em;';
+            btn.onclick = () => clearOverviewSearch();
+            bar.appendChild(btn);
+            return;
+        }
+        bar.appendChild(label);
     }
 
     function toggleOverview() {
-        document.getElementById('slide-overview').classList.toggle('visible');
+        const el = document.getElementById('slide-overview');
+        if (el.classList.contains('visible')) {
+            closeOverview();
+        } else {
+            el.classList.add('visible');
+            buildOverview();
+        }
     }
 
     function closeOverview() {
+        searchQuery = '';
         document.getElementById('slide-overview').classList.remove('visible');
+    }
+
+    // ── Typ-zum-Filtern in der Übersicht ──
+    function searchAppend(ch) {
+        if (!overviewVisible()) return;
+        searchQuery += ch;
+        buildOverview();
+    }
+
+    function searchBackspace() {
+        if (!overviewVisible() || !searchQuery) return;
+        searchQuery = searchQuery.slice(0, -1);
+        buildOverview();
+    }
+
+    function clearOverviewSearch() {
+        searchQuery = '';
+        buildOverview();
+    }
+
+    function overviewEscape() {
+        if (searchQuery) clearOverviewSearch();
+        else closeOverview();
     }
 
     function toggleFullscreen() {
@@ -356,7 +437,11 @@ const Presentation = (() => {
         });
     }
 
-    return { init, next, prev, goTo, count: () => slides.length, toggleOverview, toggleFullscreen, closeOverview };
+    return {
+        init, next, prev, goTo, count: () => slides.length,
+        toggleOverview, toggleFullscreen, closeOverview,
+        searchAppend, searchBackspace, clearOverviewSearch, overviewEscape,
+    };
 })();
 
 // ────────────────────────────────────────────────────────────
@@ -388,8 +473,33 @@ const InputHandler = (() => {
         }
     }
 
+    function isOverviewOpen() {
+        const el = document.getElementById('slide-overview');
+        return !!(el && el.classList.contains('visible'));
+    }
+
     function handleKeydown(e) {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        // Übersicht offen → Tippen filtert die Folien nach Titel
+        if (isOverviewOpen()) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                Presentation.overviewEscape();
+                return;
+            }
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                Presentation.searchBackspace();
+                return;
+            }
+            if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                Presentation.searchAppend(e.key);
+                return;
+            }
+            // Pfeile / Home / End / Enter etc. → unten (normale Navigation)
+        }
 
         if (KEY_ACTIONS.next.includes(e.key)) {
             e.preventDefault();
