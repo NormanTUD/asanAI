@@ -122,6 +122,7 @@ The Babylonian tradition is even richer, and even stranger, because the Babyloni
 **Si.427 — the oldest applied geometry.** The clearest physical proof that this was a *surveying* discipline, not just classroom arithmetic, is the tablet **Si.427**, a field plan made by an Old Babylonian surveyor. \citeauthor{si427} traced the tablet from a 19th-century excavation record to the Archaeological Museum in Istanbul and showed that the surveyor used **Pythagorean triples** to make the boundary lines *truly perpendicular* \cite{si427} \cite{si427_baublatt}. The point is not only that it is ancient; it is that it is *before Pythagoras by more than a thousand years*. The famous 3-4-5 right triangle was a working tool of Mesopotamian land-surveyors long before it became a Greek theorem:
 
 $$3^{2} + 4^{2} = 5^{2} \qquad (9 + 16 = 25)$$
+$$\underbrace{3^{2}}_{\text{one side, squared}} + \underbrace{4^{2}}_{\text{the other side, squared}} = \underbrace{5^{2}}_{\text{the diagonal, squared}} \;\;\Longrightarrow\;\; \text{a corner that is exactly square}$$
 
 A rectangle with sides in the ratio 3 : 4 and diagonal 5 is, by construction, a rectangle with exact right angles. The surveyor could lay it out on the ground with ropes of the right lengths and be certain the corners were square — no protractor required.
 
@@ -135,6 +136,7 @@ A rectangle with sides in the ratio 3 : 4 and diagonal 5 is, by construction, a 
 The engine behind both is **completing the square**, the single most important move in all of pre-modern algebra. To solve $x^{2} + bx = A$, the Babylonian (and later the Greek, the Arabic, and the European) adds the square of half the coefficient to both sides so that the left side *becomes* a square:
 
 $$x^{2} + bx = A \quad\Longrightarrow\quad \left(x + \tfrac{b}{2}\right)^{2} = A + \left(\tfrac{b}{2}\right)^{2}$$
+$$\underbrace{x^{2} + bx}_{\substack{\text{a square of side }x,\\\text{plus a strip next to it}}} \;\Longrightarrow\; \underbrace{\left(x + \tfrac{b}{2}\right)^{2}}_{\substack{\text{one complete square}}} = A + \underbrace{\left(\tfrac{b}{2}\right)^{2}}_{\substack{\text{the little square}\\\text{you add to finish it}}}$$
 
 The right side is now a perfect square, so the scribe takes its (sexagesimal) square root and has the answer. This is *literal* square-completion: you add a little square of side $b/2$ to the L-shape (gnomon) that $x^{2}+bx$ forms, and the whole becomes one big square. Geometry *is* the algebra.
 
@@ -155,7 +157,8 @@ In the Vedic tradition of India, the driving force was not the field but the **f
 
 The most celebrated result is a recipe for $\sqrt{2}$. Starting from a rectangle of area 1, one "cuts off" a corner and folds in a smaller triangle (the *diagonal* operation), producing a square of the same area. The diagonal of the unit square is $\sqrt{2}$, and the *Baudhāyana Śulba Sūtra* gives it to the fifth decimal place:
 
-$$\sqrt{2} \approx 1 + \tfrac{1}{2} + \tfrac{1}{2\cdot 3} - \tfrac{1}{2\cdot 3\cdot 5} + \tfrac{1}{2\cdot 3\cdot 5\cdot 7} \approx 1.41421569$$
+$$\sqrt{2} \;\approx\; 1 + \tfrac{1}{3} + \tfrac{1}{3\cdot 4} - \tfrac{1}{3\cdot 4\cdot 34} \;=\; \tfrac{577}{408} \;\approx\; 1.41421$$
+$$\sqrt{2} \;\approx\; \underbrace{1}_{\text{the whole side}} + \underbrace{\tfrac{1}{3}}_{\text{add a third of it}} + \underbrace{\tfrac{1}{3\cdot 4}}_{\text{add a fourth of that}} - \underbrace{\tfrac{1}{3\cdot 4\cdot 34}}_{\text{take back a hair's-breadth}} \;=\; \underbrace{1.41421\dots}_{\text{the diagonal of a unit square}}$$
 
 The famous line, roughly, is that *"the length obtained along the diagonal makes an area equal to that made by length and width together"* — a geometric statement of $d^{2} = a^{2} + b^{2}$ made, once again, *independently* of Greece and *before* the theorem bore Pythagoras's name \cite{sulbasutras}. Here the *why* is ritual precision: an altar whose corner is off by a hair is, in the logic of the text, a failed offering.
 
@@ -178,6 +181,7 @@ The Greeks did not invent geometry. They did something more radical: they made i
 The tradition places the first proofs with **Thales of Miletus** (c. 624–546 BCE) — for example, that a circle is bisected by its diameter (Thales' theorem, *Elements* I.31) and that the angles of a triangle sum to two right angles (I.32) \cite{heathgreekmath}. Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\angle ABC = 90^{\circ}$. The Pythagoreans, the circle around **Pythagoras** (c. 570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,
 
 $$a^{2} + b^{2} = c^{2}$$
+$$\underbrace{a^{2}}_{\substack{\text{the square on}\\\text{the shorter leg}}} + \underbrace{b^{2}}_{\substack{\text{the square on}\\\text{the longer leg}}} = \underbrace{c^{2}}_{\substack{\text{the square on the}\\\text{hypotenuse}}}$$
 
 and, more, they (allegedly) proved the converse — that a triangle with $a^{2}+b^{2}=c^{2}$ *must* be right-angled. The Babylonians and the Indians had *used* the relation for a thousand years; the Greeks *understood* it, and — for them, this was the dangerous part — the understanding led to a crisis, because they found figures (the diagonal of a square) whose side ratio could not be written as a ratio of whole numbers at all. The discovery of the incommensurable, $\sqrt{2} \notin \mathbb{Q}$, is arguably the first genuine "mathematical" result: a statement about what *cannot* be done \cite{heathgreekmath}.
 
@@ -186,6 +190,7 @@ and, more, they (allegedly) proved the converse — that a triangle with $a^{2}+
 **Hippocrates of Chios** (c. 470–410 BCE) is said to have been the first to "square the lunes" — to cut a crescent-shaped figure bounded by two circular arcs and show it has an area exactly equal to a plain rectilinear one \cite{heathgreekmath}. It is the first *quadrature of a curved figure*, and it points the way to the circle itself. A century later **Eudoxus of Cnidus** (c. 408–355 BCE) supplied the rigorous engine that had been missing: the **method of exhaustion**, the idea that a curved area can be pinned down by inscribing and circumscribing polygons and showing the "remainder" can be made smaller than *any* given piece. This is the ancient ancestor of the integral. Applied to the circle, it proves
 
 $$A_{\text{circle}} = \pi r^{2}, \qquad C_{\text{circle}} = 2\pi r$$
+$$\underbrace{A_{\text{circle}}}_{\text{the amount of disk}} = \pi\,\underbrace{r^{2}}_{\text{the radius, squared}}, \qquad \underbrace{C_{\text{circle}}}_{\text{the length of the rim}} = \underbrace{2\pi}_{\approx 6.28}\;\underbrace{r}_{\text{the radius}}$$
 
 and Euclid's *Elements* XII is built on it \cite{heathgreekmath}.
 
@@ -196,6 +201,7 @@ and Euclid's *Elements* XII is built on it \cite{heathgreekmath}.
 If Eudoxus gave the *method*, **Archimedes of Syracuse** (c. 287–212 BCE) gave it its masterpieces \cite{heathgreekmath}. Working with the same exhaustion engine, he computed, with proofs that survive today, the area and circumference of the circle, and then the *volumes* that were the great open problem: the sphere, the cone, the cylinder, the paraboloid and the spheroid. His results, in modern symbols,
 
 $$V_{\text{sphere}} = \tfrac{4}{3}\pi r^{3}, \qquad S_{\text{sphere}} = 4\pi r^{2}, \qquad V_{\text{cone}} = \tfrac{1}{3}\,(\text{cylinder of same base and height})$$
+$$\underbrace{V_{\text{sphere}}}_{\substack{\text{how much solid}\\\text{is inside}}} = \tfrac{4}{3}\pi r^{3}, \qquad \underbrace{S_{\text{sphere}}}_{\substack{\text{how large the}\\\text{skin is}}} = 4\pi r^{2}, \qquad \underbrace{V_{\text{cone}}}_{\text{a third of its cylinder}} = \tfrac{1}{3}\,Bh$$
 
 The cone result is the $V=\tfrac{1}{3}Bh$ we saw in the Rhind Papyrus, now *proved*; Archimedes showed the sphere is exactly two-thirds of the cylinder that circumscribes it, a ratio he considered his finest discovery and asked to be carved on his tomb. The *why* here is not taxation but intellectual pride: Archimedes was answering the Pythagorean demand for proof at the hardest scale — three-dimensional curved bodies.
 
@@ -241,12 +247,14 @@ Two threads push geometry past the plane and past the conic.
 **Heron of Alexandria** (1st century CE), in his *Metrica*, collected and proved the practical metric formulas, the most famous of them giving the **area of a triangle from its three sides** — no height required:
 
 $$A = \sqrt{s(s-a)(s-b)(s-c)}, \qquad s = \tfrac{a+b+c}{2}$$
+$$\underbrace{A}_{\text{the area of the field}} = \sqrt{\;\underbrace{s(s-a)(s-b)(s-c)}_{\substack{\text{built only from the}\\\text{three measured sides}}}\;}, \qquad \underbrace{s}_{\text{half the perimeter}} = \frac{a+b+c}{2}$$
 
 \cite{heronmetrica}. This is the tool a surveyor actually needed — you can measure the three sides of an irregular field on the ground, but dropping a perpendicular to get a height is often impossible. It also generalises naturally, with two sides and the included angle $C$, to $A = \tfrac{1}{2}ab\sin C$, and, replacing the sine term, to the **law of cosines**, $c^{2} = a^{2} + b^{2} - 2ab\cos C$, which is the Pythagorean theorem for *every* triangle (and reduces to it when $C = 90^{\circ}$) \cite{heronmetrica} \cite{heathgreekmath}.
 
 **Apollonius of Perga** (c. 262–190 BCE) wrote the eight-book **\citealternativetitle{apolloniusconics}**, in which he names and classifies the **conic sections** — the ellipse, the parabola and the hyperbola — as the curves a plane cuts from a cone, and develops their full metric theory \cite{apolloniusconics}. Written in the language of coordinates that Descartes would later supply, the three conics are simply
 
 $$\text{ellipse: } \frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} = 1 \qquad \text{parabola: } y^{2} = 4ax \qquad \text{hyperbola: } \frac{x^{2}}{a^{2}} - \frac{y^{2}}{b^{2}} = 1$$
+$$\underbrace{\frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} = 1}_{\text{a closed loop}} \qquad \underbrace{y^{2} = 4ax}_{\text{one open arc (focuses light)}} \qquad \underbrace{\frac{x^{2}}{a^{2}} - \frac{y^{2}}{b^{2}} = 1}_{\text{two open arcs}}$$
 
 <figure>
 	<img style="width: 100%" src="conic_sections.png" alt="The three conic sections: ellipse, parabola and hyperbola" />
@@ -273,6 +281,7 @@ When the Greek world passed its knowledge eastward, it was not lost but *worked 
 Al-Khwārizmī's canonical example, in modern dress, is the problem "a square and ten times its side make thirty-nine" — $x^{2} + 10x = 39$. He completes the square: halve the ten to get $5$, square it to get $25$, add to $39$ to get $64$, take the root $8$, subtract the $5$, and obtain $x = 3$. In symbols, the move that is his legacy is exactly the Babylonian one, now general:
 
 $$x^{2} + bx = A \quad\Longrightarrow\quad x = -\tfrac{b}{2} + \sqrt{A + \left(\tfrac{b}{2}\right)^{2}}$$
+$$\underbrace{x^{2} + bx}_{\text{a square plus a strip, totalling }A} \;\Longrightarrow\; \underbrace{x}_{\text{the side we are after}} = -\underbrace{\tfrac{b}{2}}_{\text{half the strip}} + \sqrt{\;A + \underbrace{\left(\tfrac{b}{2}\right)^{2}}_{\text{the little added square}}\;}$$
 
 The single most important geometric achievement of the period, however, is the work of **Ibn al-Haytham** (Latinised **Alhazen**, c. 965–1040).
 
@@ -314,6 +323,7 @@ For centuries the working method was the **trig table**: a list of sines at regu
 Then came the idea that would feed every numerical computation in this book: express the sine as an **infinite series**. Astonishingly, it was done first in the **Kerala school** of India, by **Madhava of Sangamagrama** (c. 1340–1425) — some *three hundred years before Brook Taylor* (1715) lent his name to the construction. The proof is preserved in the *Yuktibhāṣā* \cite{madhava}:
 
 $$\sin x = x - \frac{x^{3}}{3!} + \frac{x^{5}}{5!} - \frac{x^{7}}{7!} + \cdots, \qquad \cos x = 1 - \frac{x^{2}}{2!} + \frac{x^{4}}{4!} - \frac{x^{6}}{6!} + \cdots$$
+$$\sin x = \underbrace{x}_{\text{first guess}} - \underbrace{\frac{x^{3}}{3!}}_{\text{a correction}} + \underbrace{\frac{x^{5}}{5!}}_{\text{a smaller correction}} - \cdots \qquad \cos x = \underbrace{1}_{\text{first guess}} - \underbrace{\frac{x^{2}}{2!}}_{\text{a correction}} + \underbrace{\frac{x^{4}}{4!}}_{\text{a smaller one}} - \cdots$$
 
 Note the quiet trap in that formula: it is only true when $x$ is measured in **radians**, not degrees. The degree is a human convenience ($360$ to a turn); the radian is the angle's *natural* unit, the one for which the arc-length equals the angle. That the cleanest formula for sine *demands* radians is the first hint that the angle's real home is not the protractor but the circle. **Taylor** (1715) and then **Euler** (1748) carried the idea to its modern form; Euler in particular made the functions functions of the *arc* and welded them to the exponential and the complex number in $e^{i\theta} = \cos\theta + i\sin\theta$, the identity that ties geometry to growth and, downstream, to all of signal processing.
 
@@ -328,6 +338,7 @@ An angle is a *rotation*, so you measure it by comparing one direction to anothe
 Here the thread comes home. Place two vectors on the circle and the angle between them is read straight off their **dot product**:
 
 $$\mathbf{a} \cdot \mathbf{b} = \|\mathbf{a}\| \|\mathbf{b}\| \cos\theta \quad\Longrightarrow\quad \cos\theta = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}$$
+$$\underbrace{\mathbf{a} \cdot \mathbf{b}}_{\text{the dot product (one number)}} = \underbrace{\|\mathbf{a}\|\,\|\mathbf{b}\|}_{\text{the two sizes}} \;\underbrace{\cos\theta}_{\text{how aligned they point}} \;\Longrightarrow\; \underbrace{\cos\theta}_{\substack{\text{cosine similarity:}\\\text{1 same, 0 crossed,}\\\text{-1 opposite}}} = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}$$
 
 That quotient, $\frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}$, is the **cosine similarity**. It is a measure of *direction*, not size: it is $1$ when the vectors point the same way, $0$ when they are at right angles, and $-1$ when they point opposite. A century before anyone had a neural network, **Salton's** vector-space model of information retrieval already used this exact quantity to decide how "parallel" two document vectors were — meaning how close in meaning \cite{salton1975vectorspace}. That is the same machinery behind [the embeddings chapter](embeddinglab): a word or a document is a vector in a high-dimensional space, and **cosine similarity** asks how close two of them are *directionally* — which is why "king" lands near "queen" while both stay far from "car." The geometry of a two-thousand-year-old triangle is doing the comparing.
 
@@ -344,6 +355,7 @@ The mathematics of projection that Alhazen opened is taken up, on the *artistic*
 **Leon Battista Alberti**, in his **\citealternativetitle{albertidepictura}** (1435), gives the first *mathematical* account of **linear perspective** \cite{albertidepictura}: the picture plane, the vanishing point, and the rule that all parallel lines receding into depth appear to meet at a single point on the horizon. The *why* is the painter's: Brunelleschi and the Florentine workshops had found, by experiment, how to make a flat panel look "deep", and Alberti was the first to write down the *rule* behind the trick. In modern language that rule is a **central projection** of 3-D space onto a 2-D plane. A point $(x, y, z)$ in front of a pinhole at focal length $f$ lands on the picture plane at
 
 $$x' = f\,\frac{x}{z}, \qquad y' = f\,\frac{y}{z}$$
+$$\underbrace{x'}_{\text{where it lands on the picture}} = \underbrace{f}_{\text{the focal length}} \cdot \frac{x}{\underbrace{z}_{\text{how far away it is}}} \,, \qquad \underbrace{y'}_{\text{where it lands on the picture}} = \underbrace{f}_{\text{the focal length}} \cdot \frac{y}{\underbrace{z}_{\text{how far away it is}}}$$
 
 a *projective* transformation. The Renaissance discovery of perspective is thus, in modern language, the birth of **projective geometry**, the geometry of what survives projection.
 
@@ -356,6 +368,7 @@ a *projective* transformation. The Renaissance discovery of perspective is thus,
 Descartes' coordinates also give a clean *algebraic* re-statement of Apollonius' conics. Every curve of degree two in the plane satisfies
 
 $$Ax^{2} + Bxy + Cy^{2} + Dx + Ey + F = 0$$
+$$\underbrace{Ax^{2} + Bxy + Cy^{2}}_{\substack{\text{the degree-2 part:}\\\text{it decides the shape}}} + \underbrace{Dx + Ey}_{\text{the straight-line part: shifts it}} + \underbrace{F}_{\text{a constant: scales it}} = 0$$
 
 and the single number $B^{2} - 4AC$ — the **discriminant** — tells you which conic it is: $<0$ an ellipse (or a point, or nothing), $=0$ a parabola, $>0$ a hyperbola. Two thousand years of "cutting a cone" have become a sign test on a coefficient. From this point on, "the geometry of a thing" can be *computed* by solving "the equation of a thing" — which is, one small step removed, exactly what a neural network does when it treats a geometric object as a set of numbers and a rule as a function.
 
@@ -368,6 +381,7 @@ Almost simultaneously, the French engineer **Gérard Desargues**, in his **\cite
 Projection was not only an art and a philosophy; it was a navigational *necessity*. In 1569 **Gerardus Mercator** published the world map that bears his name \cite{mercatoratlas}, solving a problem that had defeated cartographers: how to draw a flat chart on which a straight line is a *constant compass bearing* (a *rhumb line*), so a sailor could steer by a straight edge. His answer is a genuine piece of differential geometry, the **Mercator projection**, which stretches a latitude $\varphi$ to a vertical coordinate
 
 $$y = \ln\!\left(\tan\!\left(\tfrac{\pi}{4} + \tfrac{\varphi}{2}\right)\right) = \operatorname{artanh}(\sin\varphi)$$
+$$\underbrace{y}_{\text{its height on the flat map}} = \ln\!\left(\tan\!\left(\tfrac{\pi}{4} + \tfrac{\underbrace{\varphi}_{\text{the true latitude}}}{2}\right)\right) = \operatorname{artanh}(\sin\varphi)$$
 
 The map is **conformal** — it preserves *angles* (so compass bearings are right) at the price of wildly distorting *areas* (Greenland looks as big as Africa). It is the earliest example, in a working tool, of a deep fact we will meet in full in Section VII: that a curved surface (the sphere) can be flattened only by *distorting* it, and that the choice of *what to preserve* (angle? area? distance?) is a mathematical choice with no perfect answer.
 
@@ -396,10 +410,12 @@ The problem "*ad geometriam situs*" ("regarding position") is the birth of **gra
 Euler also found the first genuine topological *invariant*. For any convex solid built from flat faces (a polyhedron), the number of vertices $V$, edges $E$ and faces $F$ always satisfies
 
 $$V - E + F = 2$$
+$$\underbrace{V}_{\substack{\text{corners}\\\text{(vertices)}}} - \underbrace{E}_{\text{edges}} + \underbrace{F}_{\substack{\text{flat}\\\text{faces}}} = \underbrace{2}_{\substack{\text{always, for any}\\\text{ball-shaped solid}}}$$
 
 (\citeyear{eulersolids}; the general statement in \citetitle{eulersolids}) \cite{eulersolids}. A cube ($8 - 12 + 6$), a pyramid ($5 - 9 + 5$) and an arbitrarily twisted dodecahedron all give $2$. The number $2$ is the **Euler characteristic** $\chi$ of the sphere; it is *the same for every shape that can be deformed into a sphere* and *different* for anything that cannot. Generalised, a closed surface of genus $g$ (a sphere with $g$ handles) has
 
 $$\chi = 2 - 2g \qquad \text{(sphere: } g=0, \chi=2;\ \text{ torus: } g=1, \chi=0)$$
+$$\underbrace{\chi}_{\text{the topological identity number}} = 2 - 2\,\underbrace{g}_{\substack{\text{number of}\\\text{handles}}} \qquad \big(g=0:\ \text{sphere} \Rightarrow \chi=2;\ \ g=1:\ \text{donut} \Rightarrow \chi=0\big)$$
 
 That a shape's identity is captured by a single *integer* — not by its angles, not by its side lengths, but by something that cannot change under continuous deformation — is the founding intuition of topology \cite{eulersolids}.
 
@@ -412,10 +428,12 @@ That a shape's identity is captured by a single *integer* — not by its angles,
 In the course of working out exactly how a surface curves, Gauss proved in his **\citetitle{gaussdisquisitiones}** (1827) what he called the **Theorema Egregium**, the "remarkable theorem" \cite{gaussdisquisitiones}. The Gaussian curvature
 
 $$K = \frac{1}{R_{1} R_{2}}$$
+$$\underbrace{K}_{\substack{\text{Gaussian curvature:}\\\text{how hard it bends}}} = \frac{1}{\underbrace{R_{1}}_{\text{radius of the steepest bend}} \;\cdot\; \underbrace{R_{2}}_{\text{radius of the shallowest bend}}}$$
 
 at a point (where $R_{1}, R_{2}$ are the two principal radii of curvature — the radii of the steepest and shallowest normal sections) is *intrinsic*: it can be read off **entirely from the distances and angles measured on the surface itself**, and cannot be changed by bending the surface without stretching it. A sheet of paper bent into a cylinder has $K = 0$ everywhere (you could have rolled it from flat, so it is "still flat"); a sphere has $K > 0$; a saddle has $K < 0$. In terms of the metric coefficients $E, F, G$ of the first fundamental form,
 
 $$K = \frac{LN - M^{2}}{EG - F^{2}}$$
+$$\underbrace{K}_{\text{the curvature}} = \frac{\underbrace{LN - M^{2}}_{\substack{\text{how the surface bends}\\\text{(2nd fundamental form)}}}}{\underbrace{EG - F^{2}}_{\substack{\text{the surface's own measuring-stick}\\\text{(1st fundamental form)}}}}$$
 
 so $K$ depends only on the surface's *own* measuring-stick, not on how it sits in a surrounding 3-D space \cite{gaussdisquisitiones} \cite{docarmo}.
 
@@ -427,10 +445,12 @@ so $K$ depends only on the surface's *own* measuring-stick, not on how it sits i
 The Theorema Egregium has a grand descendant, the **Gauss–Bonnet theorem**, which turns curvature into *topology*. For a region $D$ of a surface with boundary, the total curvature inside plus the twist of the boundary equals a purely topological number:
 
 $$\iint_{D} K\, dA \;+\; \oint_{\partial D} k_{g}\, ds \;=\; 2\pi\,\chi(D)$$
+$$\underbrace{\iint_{D}\; \underbrace{K}_{\substack{\text{the curvature}\\\text{at each point}}}\; dA}_{\substack{\text{add up all the bend}\\\text{inside the region }D}} \;+\; \underbrace{\oint_{\partial D}\; \underbrace{k_{g}}_{\substack{\text{how the boundary}\\\text{edge itself curves}}}\; ds}_{\substack{\text{the twist of}\\\text{the edge}}}\; =\; \underbrace{2\pi\,\chi(D)}_{\substack{\text{a fixed number set by the}\\\text{shape's holes (topology)}}}$$
 
 and for a *closed* surface the boundary term vanishes, leaving
 
 $$\iint_{S} K\, dA \;=\; 2\pi\,\chi(S)$$
+$$\underbrace{\iint_{S} K\, dA}_{\substack{\text{add up ALL the bend}\\\text{on a closed surface}}} \;=\; \underbrace{2\pi\,\chi(S)}_{\substack{\text{always }4\pi\text{ on a sphere,}\\\text{always }0\text{ on a donut}}}$$
 
 \cite{docarmo}. In words: **no matter how you bend a surface, the total curvature you can accumulate on it is fixed by how many "holes" it has.** A sphere can hold exactly $4\pi$ of curvature, a torus exactly $0$. This single formula is the master key that ties the two halves of Section VII together — curvature (Gauss) and connectivity (Euler) are the same coin \cite{docarmo}.
 
@@ -443,6 +463,7 @@ The parallel postulate had resisted proof for 2,000 years. The breakthrough was 
 The *why* is the 2,000-year hang-up on the fifth postulate itself: it had always looked less self-evident than the other four, and for two centuries mathematicians (Saccheri, Legendre, and others) had tried and failed to prove it from the rest. The daring move was to ask what happens if you *assume the opposite* — and to find not a contradiction but a *world*. In the hyperbolic plane, the angles of a triangle sum to *less* than two right angles, and the shortfall is not a bug but the *area*: for a triangle on a surface of curvature $K=-1$,
 
 $$A + B + C \;<\; \pi, \qquad \text{Area} \;=\; \pi - (A+B+C)$$
+$$\underbrace{A + B + C}_{\text{its three angles, added up}} \;<\; \underbrace{\pi}_{\text{a straight angle } (=180^{\circ})} \qquad \text{Area} = \underbrace{\pi - (A+B+C)}_{\substack{\text{the "missing angle" IS}\\\text{the triangle's area}}}$$
 
 So a triangle's area is read directly from its *angular defect*, and there is no largest triangle — the total area of the whole hyperbolic plane is finite in angular terms yet infinite in extent. (In the opposite, spherical geometry, the sum is *more* than $\pi$ and the excess is the area.) The result was shocking, because it was not a contradiction: it was a *different, equally valid, geometry of space*. The father **Farkas Bolyai** and **Gauss** (who had found the same geometry independently but never published) both recognised that the *truth* of Euclidean versus hyperbolic geometry is no longer a question of pure reason — it is, as Gauss put it, an **empirical** question, to be settled by measuring the angle-sum of a *very large* triangle in the real world. Geometry had become a question about *physical space*, not just a set of theorems.
 
@@ -459,10 +480,12 @@ I consider it necessary to examine in general the hypotheses on which geometry i
 \citeauthor{hypothesengeometrie}, in his 1854 habilitation lecture \citetitle{hypothesengeometrie} \cite{hypothesengeometrie}, took one final, enormous step. The *why* was to give the new geometries — Euclidean, spherical, hyperbolic — a single frame that explained *why* they all worked, and to ask what "space" even means when it is not 3-D and not flat. His answer is the **manifold** (German *Mannigfaltigkeit*, literally "many-folds") — an $n$-dimensional surface that, *locally*, looks like ordinary flat $\mathbb{R}^{n}$, but may be curved in a way that can vary from point to point, and whose "metric" (the rule for measuring distances) is given by a tensor field $g_{\mu\nu}$:
 
 $$ds^{2} = g_{\mu\nu}\, dx^{\mu} dx^{\nu}$$
+$$\underbrace{ds^{2}}_{\substack{\text{the tiny distance}\\\text{squared}}} = \underbrace{g_{\mu\nu}}_{\substack{\text{the "measuring rules", which}\\\text{can change from point to point}}} \;\underbrace{dx^{\mu}\, dx^{\nu}}_{\substack{\text{tiny steps in each}\\\text{of the }n\text{ directions}}}$$
 
 Every geometry you have met so far is a *special case*: Euclidean space has $g_{\mu\nu}$ constant; hyperbolic space has a specific negative-curvature $g_{\mu\nu}$; a curved surface is a two-dimensional example. The curvature of such a space is encoded in the **Riemann curvature tensor** $R^{\rho}{}_{\sigma\mu\nu}$, built from derivatives of $g_{\mu\nu}$; in two dimensions it collapses to the single Gaussian number $K$, so Riemann's tensor is the $n$-dimensional generalisation of Gauss's $K$. Riemann's framework is the mathematics that **Einstein** would use in 1915 to describe gravity not as a force but as the curvature of four-dimensional spacetime,
 
 $$G_{\mu\nu} = \frac{8\pi G}{c^{4}}\, T_{\mu\nu}$$
+$$\underbrace{G_{\mu\nu}}_{\substack{\text{how spacetime}\\\text{curves}}}\; =\; \frac{8\pi\,\underbrace{G}_{\text{Newton's constant}}}{\underbrace{c^{4}}_{\text{the speed of light, to the 4th}}} \;\cdot\; \underbrace{T_{\mu\nu}}_{\substack{\text{the matter and energy}\\\text{that does the bending}}}$$
 
 the Einstein field equation: *the curvature of spacetime on the left equals the matter-and-energy on the right*. The *theorema egregium* of Gauss, generalised by Riemann, finally applied to the universe itself \cite{hypothesengeometrie} \cite{newtonprincipia}.
 
