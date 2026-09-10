@@ -1295,7 +1295,7 @@ function get_optimizer_equations() {
 				`
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{input}: \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}}, f(\\theta)
+						& \\textbf{${otrans("opt_input", "input")}}: \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}}, f(\\theta)
 							\\text{ ${otrans("opt_paren_objective", "(objective)")}}, \\lambda \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}}, & \\\\
 						& \\hspace{12mm} \\tau \\text{ ${otrans("opt_paren_initial_accumulator_value", "(initial accumulator value)")}}, \\eta \\text{ ${otrans("opt_paren_lr_decay", "(lr decay)")}} & \\\\
 						& \\textbf{${otrans("opt_initialize", "initialize")}} : \\text{state\\_sum}_0 \\leftarrow 0 & \\text{${otrans("opt_comment_init_state_sum", "Initialize the accumulated gradient sum")}} \\\\[-1.ex]
@@ -1325,22 +1325,22 @@ function get_optimizer_equations() {
 				`
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{input}: \\gamma \\text{ (lr)}, \\: \\theta_0 \\text{ (params)},
-							\\: f(\\theta) \\text{ (objective)}, \\: \\rho \\text{ (decay)},
-							\\: \\eta \\text{ (weight decay)} & \\\\
-						& \\textbf{initialize} : v_0 \\leftarrow 0 \\: \\text{ (square avg)},
-							\\: u_0 \\leftarrow 0 \\: \\text{ (accumulate variables)} & \\\\[-1.ex]
+						& \\textbf{${otrans("opt_input", "input")}}: \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\: \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}},
+							\\: f(\\theta) \\text{ ${otrans("opt_paren_objective", "(objective)")}}, \\: \\rho \\text{ ${otrans("opt_paren_decay", "(decay)")}},
+							\\: \\eta \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}} & \\\\
+						& \\textbf{${otrans("opt_initialize", "initialize")}} : v_0 \\leftarrow 0 \\: \\text{ ${otrans("opt_paren_square_avg", "(square avg)")}},
+							\\: u_0 \\leftarrow 0 \\: \\text{ ${otrans("opt_paren_accumulate_variables", "(accumulate variables)")}} & \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function at the current parameters} \\\\
-						& \\hspace{5mm}\\text{if} \\: \\eta \\neq 0 & \\text{If weight decay is not zero} \\\\
-						& \\hspace{10mm} g_t \\leftarrow g_t + \\eta \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-						& \\hspace{5mm} v_t \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{Update the squared average with decay} \\\\
-						& \\hspace{5mm}\\Delta x_t \\leftarrow \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon} }g_t \\hspace{21mm} & \\text{Compute the update step using squared averages and gradient} \\\\
-						& \\hspace{5mm} u_t \\leftarrow u_{t-1} \\rho + \\Delta x^2_t (1 - \\rho) & \\text{Update the accumulated updates with decay} \\\\
-						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\Delta x_t & \\text{Update the parameters using the computed step size} \\\\
+						& \\textbf{${otrans("opt_for", "for")}} \\: t=1 \\: \\textbf{${otrans("opt_to", "to")}} \\: \\text{${otrans("opt_epochs", "epochs")}} \\: \\textbf{${otrans("opt_do", "do")}} & \\text{${otrans("opt_comment_loop", "Loop from t=1 to epochs")}} \\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{${otrans("opt_comment_gradient_current", "Compute the gradient of the objective function at the current parameters")}} \\\\
+						& \\hspace{5mm}\\text{${otrans("opt_if", "if")}} \\: \\eta \\neq 0 & \\text{${otrans("opt_comment_if_weight_decay", "If weight decay is not zero")}} \\\\
+						& \\hspace{10mm} g_t \\leftarrow g_t + \\eta \\theta_{t-1} & \\text{${otrans("opt_comment_add_weight_decay", "Add weight decay term to the gradient")}} \\\\
+						& \\hspace{5mm} v_t \\leftarrow v_{t-1} \\rho + g^2_t (1 - \\rho) & \\text{${otrans("opt_comment_adadelta_v", "Update the squared average with decay")}} \\\\
+						& \\hspace{5mm}\\Delta x_t \\leftarrow \\frac{\\sqrt{u_{t-1} + \\epsilon }}{ \\sqrt{v_t + \\epsilon} }g_t \\hspace{21mm} & \\text{${otrans("opt_comment_adadelta_dx", "Compute the update step using squared averages and gradient")}} \\\\
+						& \\hspace{5mm} u_t \\leftarrow u_{t-1} \\rho + \\Delta x^2_t (1 - \\rho) & \\text{${otrans("opt_comment_adadelta_u", "Update the accumulated updates with decay")}} \\\\
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\Delta x_t & \\text{${otrans("opt_comment_adadelta_theta", "Update the parameters using the computed step size")}} \\\\
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
-						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\bf{${otrans("opt_return", "return")}} \\: \\theta_t & \\text{${otrans("opt_comment_return", "Return the updated parameters")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 				`
@@ -1350,7 +1350,7 @@ function get_optimizer_equations() {
 				"\\theta": default_vars["theta"],
 				"\\epsilon": default_vars["epsilon"],
 				"\\rho": {
-					"name": "Decay rate for the moving average of the squared gradients"
+					"name": otrans("opt_var_rho_decay", "Decay rate for the moving average of the squared gradients")
 				},
 			}
 		},
@@ -1359,19 +1359,19 @@ function get_optimizer_equations() {
 				`
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2 \\text{ (betas)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, \\lambda \\text{ (weight decay)}, & \\\\
-						& \\hspace{13mm} \\epsilon \\text{ (epsilon)} & \\\\
-						& \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)}, u_0 \\leftarrow 0 \\text{ (infinity norm)} & \\text{Initialize first moment and infinity norm} \\\\[-1.ex]
+						& \\textbf{${otrans("opt_input", "input")}} : \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\beta_1, \\beta_2 \\text{ ${otrans("opt_paren_betas", "(betas)")}}, \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}}, f(\\theta) \\text{ ${otrans("opt_paren_objective", "(objective)")}}, \\lambda \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}}, & \\\\
+						& \\hspace{13mm} \\epsilon \\text{ ${otrans("opt_paren_epsilon", "(epsilon)")}} & \\\\
+						& \\textbf{${otrans("opt_initialize", "initialize")}} : m_0 \\leftarrow 0 \\text{ ${otrans("opt_paren_first_moment", "(first moment)")}}, u_0 \\leftarrow 0 \\text{ ${otrans("opt_paren_infinity_norm", "(infinity norm)")}} & \\text{${otrans("opt_comment_adamax_init", "Initialize first moment and infinity norm")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-						& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
-						& \\hspace{5mm}u_t \\leftarrow \\mathrm{max}(\\beta_2 u_{t-1}, |g_t| + \\epsilon) & \\text{Update the infinity norm} \\\\
-						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\gamma m_t}{(1 - \\beta^t_1) u_t} & \\text{Update the parameters using the computed values} \\\\
+						& \\textbf{${otrans("opt_for", "for")}} \\: t=1 \\: \\textbf{${otrans("opt_to", "to")}} \\: \\text{${otrans("opt_epochs", "epochs")}} \\: \\textbf{${otrans("opt_do", "do")}} & \\text{${otrans("opt_comment_loop", "Loop from t=1 to epochs")}} \\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{${otrans("opt_comment_gradient", "Compute the gradient of the objective function")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\lambda \\neq 0 & \\text{${otrans("opt_comment_if_weight_decay", "If weight decay is not zero")}} \\\\
+						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{${otrans("opt_comment_add_weight_decay", "Add weight decay term to the gradient")}} \\\\
+						& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{${otrans("opt_comment_adam_m", "Update biased first moment estimate")}} \\\\
+						& \\hspace{5mm}u_t \\leftarrow \\mathrm{max}(\\beta_2 u_{t-1}, |g_t| + \\epsilon) & \\text{${otrans("opt_comment_adamax_u", "Update the infinity norm")}} \\\\
+						& \\hspace{5mm}\\theta_t \\leftarrow \\theta_{t-1} - \\frac{\\gamma m_t}{(1 - \\beta^t_1) u_t} & \\text{${otrans("opt_comment_adamax_theta", "Update the parameters using the computed values")}} \\\\
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
-						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\bf{${otrans("opt_return", "return")}} \\: \\theta_t & \\text{${otrans("opt_comment_return", "Return the updated parameters")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 `
@@ -1382,26 +1382,26 @@ function get_optimizer_equations() {
 				"\\nabla": default_vars["nabla_operator"],
 				"\\epsilon": default_vars["epsilon"],
 				"g_t": {
-					"name": "Gradient at time t along } \\theta^j \\text{ "
+					"name": otrans("opt_var_g_t", "Gradient at time t along } \\theta^j \\text{ ")
 				},
 				"\\alpha": {
-					"name": "Learning rate",
+					"name": otrans("opt_var_eta", "Learning rate"),
 					"origin": "learningRate_adamax"
 
 				},
 				"\\beta_1 \\in [0,1)": {
-					"name": "Exponential decay rates",
+					"name": otrans("opt_var_beta", "Exponential decay rates"),
 					"origin": "beta1_adamax"
 				},
 				"\\beta_2 \\in [0,1)": {
-					"name": "Exponential decay rates",
+					"name": otrans("opt_var_beta", "Exponential decay rates"),
 					"origin": "beta2_adamax"
 				},
 				"f(\\theta)": {
-					"name": "Stochastic objective function"
+					"name": otrans("opt_var_f_theta", "Stochastic objective function")
 				},
 				"\\theta_0": {
-					"name": "Initial parameter vector"
+					"name": otrans("opt_var_theta_0", "Initial parameter vector")
 				}
 			}
 		},
@@ -1410,26 +1410,26 @@ function get_optimizer_equations() {
 				`
 					\\begin{aligned}
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{input} : \\alpha \\text{ (alpha)}, \\gamma \\text{ (lr)}, \\theta_0 \\text{ (params)}, f(\\theta) \\text{ (objective)}, & \\\\
-						& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\mu \\text{ (momentum)}, \\text{centered} & \\\\
-						& \\textbf{initialize} : v_0 \\leftarrow 0 \\text{ (square average)}, \\textbf{b}_0 \\leftarrow 0 \\text{ (buffer)}, g^\\mathrm{ave}_0 \\leftarrow 0 & \\text{Initialize square average, buffer, and average gradient} \\\\[-1.ex]
+						& \\textbf{${otrans("opt_input", "input")}} : \\alpha \\text{ (alpha)}, \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}}, f(\\theta) \\text{ ${otrans("opt_paren_objective", "(objective)")}}, & \\\\
+						& \\hspace{13mm} \\lambda \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}}, \\mu \\text{ ${otrans("opt_paren_momentum", "(momentum)")}}, \\text{centered} & \\\\
+						& \\textbf{${otrans("opt_initialize", "initialize")}} : v_0 \\leftarrow 0 \\text{ ${otrans("opt_paren_square_avg", "(square average)")}}, \\textbf{b}_0 \\leftarrow 0 \\text{ ${otrans("opt_paren_buffer", "(buffer)")}}, g^\\mathrm{ave}_0 \\leftarrow 0 & \\text{${otrans("opt_comment_rmsprop_init", "Initialize square average, buffer, and average gradient")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\
-						& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
-						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute the gradient of the objective function} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-						& \\hspace{5mm}v_t \\leftarrow \\alpha v_{t-1} + (1 - \\alpha) g^2_t & \\text{Update the square average of gradients} \\\\
-						& \\hspace{5mm}\\tilde{v_t} \\leftarrow v_t & \\text{Initialize \\(\\tilde{v_t}\\) with \\(v_t\\)} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\text{centered} & \\text{If centered RMSProp} \\\\
-						& \\hspace{10mm}g^\\mathrm{ave}_t \\leftarrow g^\\mathrm{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{Update the moving average of gradients} \\\\
-						& \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^\\mathrm{ave}_{t})^2 & \\text{Center the second moment estimate} \\\\
-						& \\hspace{5mm}\\textbf{if} \\: \\mu > 0 & \\text{If momentum is used} \\\\
-						& \\hspace{10mm}\\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the buffer with momentum} \\\\
-						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{Update the parameters with momentum} \\\\
-						& \\hspace{5mm}\\textbf{else} & \\text{If no momentum is used} \\\\
-						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{Update the parameters without momentum} \\\\
+						& \\textbf{${otrans("opt_for", "for")}} \\: t=1 \\: \\textbf{${otrans("opt_to", "to")}} \\: \\text{${otrans("opt_epochs", "epochs")}} \\: \\textbf{${otrans("opt_do", "do")}} & \\text{${otrans("opt_comment_loop", "Loop from t=1 to epochs")}} \\\\
+						& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{${otrans("opt_comment_gradient", "Compute the gradient of the objective function")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\lambda \\neq 0 & \\text{${otrans("opt_comment_if_weight_decay", "If weight decay is not zero")}} \\\\
+						& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{${otrans("opt_comment_add_weight_decay", "Add weight decay term to the gradient")}} \\\\
+						& \\hspace{5mm}v_t \\leftarrow \\alpha v_{t-1} + (1 - \\alpha) g^2_t & \\text{${otrans("opt_comment_rmsprop_v", "Update the square average of gradients")}} \\\\
+						& \\hspace{5mm}\\tilde{v_t} \\leftarrow v_t & \\text{${otrans("opt_comment_rmsprop_vt_init", "Initialize \\(\\tilde{v_t}\\) with \\(v_t\\)")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\text{centered} & \\text{${otrans("opt_comment_if_centered", "If centered RMSProp")}} \\\\
+						& \\hspace{10mm}g^\\mathrm{ave}_t \\leftarrow g^\\mathrm{ave}_{t-1} \\alpha + (1-\\alpha) g_t & \\text{${otrans("opt_comment_g_ave", "Update the moving average of gradients")}} \\\\
+						& \\hspace{10mm}\\tilde{v_t} \\leftarrow \\tilde{v_t} - (g^\\mathrm{ave}_{t})^2 & \\text{${otrans("opt_comment_center_v", "Center the second moment estimate")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\mu > 0 & \\text{${otrans("opt_comment_if_momentum", "If momentum is used")}} \\\\
+						& \\hspace{10mm}\\textbf{b}_t \\leftarrow \\mu \\textbf{b}_{t-1} + g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{${otrans("opt_comment_rmsprop_b", "Update the buffer with momentum")}} \\\\
+						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\textbf{b}_t & \\text{${otrans("opt_comment_rmsprop_theta_momentum", "Update the parameters with momentum")}} \\\\
+						& \\hspace{5mm}\\textbf{${otrans("opt_else", "else")}} & \\text{${otrans("opt_comment_if_no_momentum", "If no momentum is used")}} \\\\
+						& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma g_t / (\\sqrt{\\tilde{v_t}} + \\epsilon) & \\text{${otrans("opt_comment_rmsprop_theta", "Update the parameters without momentum")}} \\\\
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
-						& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+						& \\bf{${otrans("opt_return", "return")}} \\: \\theta_t & \\text{${otrans("opt_comment_return", "Return the updated parameters")}} \\\\[-1.ex]
 						& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 					\\end{aligned}
 
@@ -1446,28 +1446,28 @@ function get_optimizer_equations() {
 				`
 				\\begin{aligned}
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\
-					& \\textbf{input} : \\gamma \\text{ (lr)}, \\beta_1, \\beta_2
-					\\text{ (betas)},\\theta_0 \\text{ (params)},f(\\theta) \\text{ (objective)} & \\\\
-					& \\hspace{13mm} \\lambda \\text{ (weight decay)}, \\: \\text{amsgrad} & \\\\
-					& \\textbf{initialize} : m_0 \\leftarrow 0 \\text{ (first moment)},
-						v_0\\leftarrow 0 \\text{ (second moment)},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{Initialize first and second moments, and maximum second moment} \\\\[-1.ex]
+					& \\textbf{${otrans("opt_input", "input")}} : \\gamma \\text{ ${otrans("opt_paren_lr", "(lr)")}}, \\beta_1, \\beta_2
+					\\text{ ${otrans("opt_paren_betas", "(betas)")}},\\theta_0 \\text{ ${otrans("opt_paren_params", "(params)")}},f(\\theta) \\text{ ${otrans("opt_paren_objective", "(objective)")}} & \\\\
+					& \\hspace{13mm} \\lambda \\text{ ${otrans("opt_paren_weight_decay", "(weight decay)")}}, \\: \\text{amsgrad} & \\\\
+					& \\textbf{${otrans("opt_initialize", "initialize")}} : m_0 \\leftarrow 0 \\text{ ${otrans("opt_paren_first_moment", "(first moment)")}},
+						v_0\\leftarrow 0 \\text{ ${otrans("opt_paren_second_moment", "(second moment)")}},\\: \\widehat{v_0}^\\mathrm{max}\\leftarrow 0 & \\text{${otrans("opt_comment_adam_init", "Initialize first and second moments, and maximum second moment")}} \\\\[-1.ex]
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\
-					& \\textbf{for} \\: t=1 \\: \\textbf{to} \\: \\text{epochs} \\: \\textbf{do} & \\text{Loop from t=1 to epochs} \\\\
+					& \\textbf{${otrans("opt_for", "for")}} \\: t=1 \\: \\textbf{${otrans("opt_to", "to")}} \\: \\text{${otrans("opt_epochs", "epochs")}} \\: \\textbf{${otrans("opt_do", "do")}} & \\text{${otrans("opt_comment_loop", "Loop from t=1 to epochs")}} \\\\
 
-					& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{Compute gradient of the objective function} \\\\
-					& \\hspace{5mm}\\textbf{if} \\: \\lambda \\neq 0 & \\text{If weight decay is not zero} \\\\
-					& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{Add weight decay term to the gradient} \\\\
-					& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{Update biased first moment estimate} \\\\
-					& \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{Update biased second moment estimate} \\\\
-					& \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{Compute bias-corrected first moment estimate} \\\\
-					& \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{Compute bias-corrected second moment estimate} \\\\
-					& \\hspace{5mm}\\textbf{if} \\: \\text{amsgrad} & \\\\
-					& \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{Update the maximum of the second moment estimates} \\\\
-					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{Update parameters with AMSGrad correction} \\\\
-					& \\hspace{5mm}\\textbf{else} & \\\\
-					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{Update parameters without AMSGrad correction} \\\\
+					& \\hspace{5mm}g_t \\leftarrow \\nabla_{\\theta} f_t (\\theta_{t-1}) & \\text{${otrans("opt_comment_gradient", "Compute gradient of the objective function")}} \\\\
+					& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\lambda \\neq 0 & \\text{${otrans("opt_comment_if_weight_decay", "If weight decay is not zero")}} \\\\
+					& \\hspace{10mm}g_t \\leftarrow g_t + \\lambda \\theta_{t-1} & \\text{${otrans("opt_comment_add_weight_decay", "Add weight decay term to the gradient")}} \\\\
+					& \\hspace{5mm}m_t \\leftarrow \\beta_1 m_{t-1} + (1 - \\beta_1) g_t & \\text{${otrans("opt_comment_adam_m", "Update biased first moment estimate")}} \\\\
+					& \\hspace{5mm}v_t \\leftarrow \\beta_2 v_{t-1} + (1-\\beta_2) g^2_t & \\text{${otrans("opt_comment_adam_v", "Update biased second moment estimate")}} \\\\
+					& \\hspace{5mm}\\widehat{m_t} \\leftarrow m_t/\\big(1-\\beta_1^t \\big) & \\text{${otrans("opt_comment_adam_mhat", "Compute bias-corrected first moment estimate")}} \\\\
+					& \\hspace{5mm}\\widehat{v_t} \\leftarrow v_t/\\big(1-\\beta_2^t \\big) & \\text{${otrans("opt_comment_adam_vhat", "Compute bias-corrected second moment estimate")}} \\\\
+					& \\hspace{5mm}\\textbf{${otrans("opt_if", "if")}} \\: \\text{amsgrad} & \\\\
+					& \\hspace{10mm}\\widehat{v_t}^\\mathrm{max} \\leftarrow \\mathrm{max}(\\widehat{v_t}^\\mathrm{max}, \\widehat{v_t}) & \\text{${otrans("opt_comment_adam_vmax", "Update the maximum of the second moment estimates")}} \\\\
+					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}^\\mathrm{max}} + \\epsilon \\big) & \\text{${otrans("opt_comment_adam_theta_amsgrad", "Update parameters with AMSGrad correction")}} \\\\
+					& \\hspace{5mm}\\textbf{${otrans("opt_else", "else")}} & \\\\
+					& \\hspace{10mm}\\theta_t \\leftarrow \\theta_{t-1} - \\gamma \\widehat{m_t}/\\big(\\sqrt{\\widehat{v_t}} + \\epsilon \\big) & \\text{${otrans("opt_comment_adam_theta", "Update parameters without AMSGrad correction")}} \\\\
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
-					& \\bf{return} \\: \\theta_t & \\text{Return the updated parameters} \\\\[-1.ex]
+					& \\bf{${otrans("opt_return", "return")}} \\: \\theta_t & \\text{${otrans("opt_comment_return", "Return the updated parameters")}} \\\\[-1.ex]
 					& \\rule{${rule_width}mm}{0.4pt} & \\\\[-1.ex]
 				\\end{aligned}
 			`
@@ -1475,7 +1475,7 @@ function get_optimizer_equations() {
 			"dependencies": [],
 			"variables": {
 				"\\theta": {
-					"name": "Weights"
+					"name": otrans("opt_var_theta", "Weights")
 				},
 				"\\eta": default_vars["eta"],
 				"\\epsilon": default_vars["epsilon"],
@@ -3282,12 +3282,12 @@ function get_optimizer_latex_equations () {
 		str += "<h2>Optimizer:</h2>\n";
 
 		if(this_optimizer.variables) {
-			var varnames = Object.keys(this_optimizer.variables);
-			for (var m = 0; m < varnames.length; m++) {
-				var thisvarname = varnames[m];
-				if(!m) {
-					str += "<h3>Variables and definitions:</h3>\n";
-				}
+				var varnames = Object.keys(this_optimizer.variables);
+				for (var m = 0; m < varnames.length; m++) {
+					var thisvarname = varnames[m];
+					if(!m) {
+						str += "<h3>" + otrans("optimizer_variables_definitions", "Variables and definitions") + ":</h3>\n";
+					}
 
 				var origin = this_optimizer.variables[thisvarname]["origin"];
 
@@ -3310,7 +3310,13 @@ function get_optimizer_latex_equations () {
 			str += "<div style='display: none' id='optimizer_variables_div'></div>";
 
 			str += `<h3>${language[lang]["optimizer_algorithm"]}:</h3>\n`;
-			str += "<p>Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.</p>";
+
+			var optimizer_description = otrans("optimizer_description_" + optimizer, "");
+			if(optimizer_description.length) {
+				str += "<p class='optimizer_description'>" + optimizer_description + "</p>\n";
+			}
+
+			str += "<p>" + otrans("taken_from_pytorch_optimizer_api", "Taken (and slightly modified) from the <a href='https://pytorch.org/docs/stable/optim.html' target='_blank'>PyTorch-Optimizer API, where there's more info on all optimizers</a>.") + "</p>";
 		}
 
 		if (dependencies) {
