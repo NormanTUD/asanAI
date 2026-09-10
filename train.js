@@ -417,18 +417,16 @@ async function train_neural_network() {
 	// Synchronous guard: a rapid double-click (touch devices, impatient users)
 	// can fire train_neural_network() twice before the button is disabled in
 	// gui_in_training() (which only runs after several awaits inside
-	// _train_neural_network_start). Setting started_training and disabling the
-	// button synchronously here closes that window.
-	if (started_training) {
-		return null;
-	}
-
+	// _train_neural_network_start). Disabling the button synchronously here
+	// closes that window: the second click hits the disabled check below.
+	// IMPORTANT: do NOT set started_training here. _train_neural_network()
+	// uses started_training to distinguish "start training" (false) from
+	// "user clicked the stop button during training" (true).
 	if ($($(".train_neural_network_button")[0]).prop("disabled")) {
 		err('Cannot train: train_neural_network is disabled.');
 		return null;
 	}
 
-	started_training = true;
 	$(".train_neural_network_button").prop("disabled", true);
 
 	if (!started_training && !$("#canvas_grid_visualization").children().length) {
@@ -553,6 +551,8 @@ async function _train_neural_network_start () {
 
 		await show_webcam();
 	}
+
+	started_training = false;
 
 	await enable_everything();
 
