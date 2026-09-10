@@ -211,6 +211,10 @@ async function update_lang(la) {
 		set_lang_cookie(lang, 99999);
 
 		setOptimizerTooltips();
+
+		if (typeof write_model_to_latex_to_page === "function") {
+			await write_model_to_latex_to_page();
+		}
 	} else {
 		void(0); err(`Language unknown: ${la}`);
 	}

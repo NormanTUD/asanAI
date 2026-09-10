@@ -153,6 +153,12 @@ function run_pending_latex_write() {
 		})
 		.finally(function() {
 			_write_latex_running = false;
+
+			// A new request may have arrived while this render was running
+			// (e.g. language switch) — process it now.
+			if (_write_latex_pending_args) {
+				run_pending_latex_write();
+			}
 		});
 }
 
