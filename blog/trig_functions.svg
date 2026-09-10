@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="744.09448" height="485.43304" id="svg11209" sodipodi:version="0.32" inkscape:version="0.48.1 " version="1.0" sodipodi:docname="Trigonometric_functions.svg">
+  <defs id="defs11211">
+    <inkscape:perspective sodipodi:type="inkscape:persp3d" inkscape:vp_x="0 : 242.71652 : 1" inkscape:vp_y="0 : 1000 : 0" inkscape:vp_z="744.09448 : 242.71652 : 1" inkscape:persp3d-origin="372.04724 : 161.81101 : 1" id="perspective91"/>
+  </defs>
+  <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" gridtolerance="10000" guidetolerance="10" objecttolerance="10" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="1.0300082" inkscape:cx="412.86912" inkscape:cy="286.84766" inkscape:document-units="px" inkscape:current-layer="layer1" width="21cm" height="13.7cm" inkscape:window-width="1214" inkscape:window-height="750" inkscape:window-x="0" inkscape:window-y="0" showgrid="false" inkscape:window-maximized="0"/>
+  <metadata id="metadata11214">
+    <rdf:RDF>
+      <cc:Work rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+        <dc:title/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
+    <path style="color: gray; fill: none; stroke: currentcolor; stroke-width: 1;" id="path26" d="M 42.804546,429.48586 L 544.80455,429.48586"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path30" d="M 42.804546,429.48586 L 55.804546,429.48586 M 544.80455,429.48586 L 531.80455,429.48586"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text34" x="30.8046" y="436.486">
+      <tspan id="tspan36">-3</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path40" d="M 42.804546,362.48586 L 544.80455,362.48586"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path44" d="M 42.804546,362.48586 L 55.804546,362.48586 M 544.80455,362.48586 L 531.80455,362.48586"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text48" x="30.8046" y="369.486">
+      <tspan id="tspan50">-2</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path54" d="M 42.804546,294.48586 L 544.80455,294.48586"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path58" d="M 42.804546,294.48586 L 55.804546,294.48586 M 544.80455,294.48586 L 531.80455,294.48586"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text62" x="30.8046" y="301.486">
+      <tspan id="tspan64">-1</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path68" d="M 42.804546,227.48586 L 544.80455,227.48586"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path72" d="M 42.804546,227.48586 L 55.804546,227.48586 M 544.80455,227.48586 L 531.80455,227.48586"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text76" x="30.8046" y="234.486">
+      <tspan id="tspan78">0</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path82" d="M 42.804546,160.48586 L 544.80455,160.48586"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path86" d="M 42.804546,160.48586 L 55.804546,160.48586 M 544.80455,160.48586 L 531.80455,160.48586"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text90" x="30.8046" y="167.486">
+      <tspan id="tspan92">1</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path96" d="M 42.804546,92.485857 L 544.80455,92.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path100" d="M 42.804546,92.485857 L 55.804546,92.485857 M 544.80455,92.485857 L 531.80455,92.485857"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text104" x="30.8046" y="99.4859">
+      <tspan id="tspan106">2</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: currentcolor; stroke-width: 1;" id="path110" d="M 42.804546,25.485857 L 544.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path114" d="M 42.804546,25.485857 L 55.804546,25.485857 M 544.80455,25.485857 L 531.80455,25.485857"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text118" x="30.8046" y="32.4859">
+      <tspan id="tspan120">3</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path124" d="M 80.804546,429.48586 L 80.804546,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path128" d="M 80.804546,429.48586 L 80.804546,416.48586 M 80.804546,25.485857 L 80.804546,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text132" x="80.8046" y="462.486">
+      <tspan id="tspan134">-4</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path138" d="M 133.80455,429.48586 L 133.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path142" d="M 133.80455,429.48586 L 133.80455,416.48586 M 133.80455,25.485857 L 133.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text146" x="133.805" y="462.486">
+      <tspan id="tspan148">-3</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path152" d="M 186.80455,429.48586 L 186.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path156" d="M 186.80455,429.48586 L 186.80455,416.48586 M 186.80455,25.485857 L 186.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text160" x="186.805" y="462.486">
+      <tspan id="tspan162">-2</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path166" d="M 240.80455,429.48586 L 240.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path170" d="M 240.80455,429.48586 L 240.80455,416.48586 M 240.80455,25.485857 L 240.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text174" x="240.805" y="462.486">
+      <tspan id="tspan176">-1</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path180" d="M 293.80455,429.48586 L 293.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path184" d="M 293.80455,429.48586 L 293.80455,416.48586 M 293.80455,25.485857 L 293.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text188" x="293.805" y="462.486">
+      <tspan id="tspan190">0</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path194" d="M 346.80455,429.48586 L 346.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path198" d="M 346.80455,429.48586 L 346.80455,416.48586 M 346.80455,25.485857 L 346.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text202" x="346.805" y="462.486">
+      <tspan id="tspan204">1</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path208" d="M 400.80455,429.48586 L 400.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path212" d="M 400.80455,429.48586 L 400.80455,416.48586 M 400.80455,25.485857 L 400.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text216" x="400.805" y="462.486">
+      <tspan id="tspan218">2</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path222" d="M 453.80455,429.48586 L 453.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path226" d="M 453.80455,429.48586 L 453.80455,416.48586 M 453.80455,25.485857 L 453.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text230" x="453.805" y="462.486">
+      <tspan id="tspan232">3</tspan>
+    </text></switch>
+    <path style="color: gray; fill: none; stroke: rgb(160, 160, 160); stroke-width: 1; stroke-miterlimit: 4; stroke-dasharray: 1, 2; stroke-dashoffset: 0pt; stroke-opacity: 1;" id="path236" d="M 506.80455,429.48586 L 506.80455,25.485857"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path240" d="M 506.80455,429.48586 L 506.80455,416.48586 M 506.80455,25.485857 L 506.80455,38.485857"/>
+    <switch style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;"><text style="font-size: 18px; text-anchor: middle; color: black; fill: black; stroke: none; stroke-width: 1; font-family: Times;" id="text244" x="506.805" y="462.486">
+      <tspan id="tspan246">4</tspan>
+    </text></switch>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path248" d="M 42.804546,429.48586 L 544.80455,429.48586 L 544.80455,25.485857 L 42.804546,25.485857 L 42.804546,429.48586"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text258-pt-br" x="654.805" y="32.4859" systemLanguage="pt-br">
+      <tspan id="tspan260-pt-br">seno</tspan>
+    </text><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text258" x="654.805" y="32.4859">
+      <tspan id="tspan260">sine</tspan>
+    </text></switch>
+    <path style="color:#ff0000;fill:none;stroke:#0000aa;stroke-width:2;stroke-opacity:1" d="m 666.80455,25.485857 c 20.33333,0 40.66667,0 61,0 M 42.804546,160.48586 c 23.686706,-0.35808 41.638193,18.33207 56.945577,34.13469 c 27.066927,30.82648 48.550517,67.39785 82.587527,91.38517 c 19.95892,14.53706 48.83314,9.61878 65.77365,-7.36526 c 25.74779,-22.947 44.95898,-51.82272 67.47556,-77.69337 c 14.12585,-15.73532 29.13431,-34.1869 50.58851,-39.1897 c 23.2188,-6.48607 44.89476,8.3479 59.76245,24.86174 c 33.98762,31.1044 53.8293,76.32703 93.86673,100.86673 c 7.23138,5.04734 16.2851,7.11207 25,7" id="path264" inkscape:connector-curvature="0"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text272-pt-br" x="654.805" y="58.4859" systemLanguage="pt-br">
+      <tspan id="tspan274-pt-br">cosseno</tspan>
+    </text><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text272" x="654.805" y="58.4859">
+      <tspan id="tspan274">cosine</tspan>
+    </text></switch>
+    <path style="color:#008000;fill:none;stroke:#00aa00;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" d="m 666.80455,51.485857 c 20.33333,0 40.66667,0 61,0 M 42.804546,227.48586 c 18.82381,24.38201 38.127602,49.57497 66.000004,64 c 25.50098,10.29726 51.70054,-6.23218 68.53886,-24.96249 c 28.59482,-30.69471 50.77622,-67.33214 83.46114,-94.03751 c 16.72615,-12.65828 40.5006,-17.37702 58.50191,-4.49885 c 26.21329,16.15051 43.61517,42.61468 63.49809,65.49885 c 19.20523,24.66721 39.38613,52.5728 71,61 c 20.60716,2.64621 38.61983,-9.53741 53.02661,-22.969 c 14.40406,-12.80732 25.86121,-29.02741 37.97339,-44.031" id="path278" inkscape:connector-curvature="0"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text286-pt-br" x="654.805" y="84.4859" systemLanguage="pt-br">
+      <tspan id="tspan288-pt-br">tangente</tspan>
+    </text><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text286" x="654.805" y="84.4859">
+      <tspan id="tspan288">tangent</tspan>
+    </text></switch>
+    <path style="color:#0000ff;fill:none;stroke:#aa0000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" d="m 666.80455,77.485857 c 20.33333,0 40.66667,0 61,0 M 59.804546,429.48586 c 4.40456,-47.76865 8.081357,-96.9166 27.937205,-141.23673 C 106.05799,243.43815 145.66451,211.95348 165.36701,168.02347 c 18.58985,-45.1247 23.25308,-94.377421 27.43754,-142.537613 m 35,404.000003 c 5.37808,-56.91085 9.75551,-117.13071 40.49125,-166.986 c 16.04302,-27.93909 41.17977,-49.18804 55.7915,-78.12296 c 26.359,-48.2895 30.6903,-105.142664 35.71725,-158.891043 m 35,404.000003 c 5.17741,-55.46171 9.61285,-113.7085 38,-163 c 15.42829,-23.82193 34.58088,-44.94222 50.15208,-68.64333 c 24.96598,-37.39573 35.42779,-82.04276 40.20514,-126.200079 c 2.32715,-15.299476 3.14444,-30.764046 4.64278,-46.156594" id="path292" inkscape:connector-curvature="0"/>
+    <switch style="font-size:18px;text-anchor:end;color:#000000;fill:#000000;stroke:none;font-family:Times"><text style="font-size:18px;text-anchor:end;color:#000000;fill:#000000;stroke:none;font-family:Times" id="text300-pt-br" x="654.80499" y="136.48599" systemLanguage="pt-br">
+      <tspan id="tspan302-pt-br">secante</tspan>
+    </text><text style="font-size:18px;text-anchor:end;color:#000000;fill:#000000;stroke:none;font-family:Times" id="text300" x="654.80499" y="136.48599">
+      <tspan id="tspan302">secant</tspan>
+    </text></switch>
+    <path style="color:#00ffff;fill:none;stroke:#00aa00;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 4, 2, 4;stroke-dashoffset:0" d="m 666.80455,129.48604 c 20.33333,0 40.66667,0 61,0 M 60.804546,429.48586 c 3.536913,-32.73517 6.254803,-66.5894 19.248377,-97.12203 c 8.651885,-19.87669 26.473537,-40.51236 50.286347,-37.57103 c 27.70055,3.09209 42.59084,30.71036 48.66679,55.13791 c 7.06692,25.95624 10.32741,52.81481 12.79849,79.55515 m 37,-404.000003 c 4.3014,38.387947 7.06774,78.930763 27,113.000003 c 11.32106,17.41722 34.10404,27.57762 53.90635,18.83746 c 29.32226,-14.12157 36.22999,-49.48976 42.32136,-78.385925 c 2.64652,-17.776073 5.47015,-35.511531 6.77229,-53.451538 m 37,404.000003 c 4.3014,-38.38795 7.06774,-78.93076 27,-113 c 12.91662,-19.93636 42.41171,-29.77567 62.22215,-14.02228 c 26.15544,20.93207 32.37006,56.18311 37.055,87.5069 c 2.16121,13.10785 3.61017,26.28056 4.72285,39.51538" id="path306" inkscape:connector-curvature="0"/>
+    <switch style="font-size:18px;text-anchor:end;color:#000000;fill:#000000;stroke:none;font-family:Times"><text style="font-size:18px;text-anchor:end;color:#000000;fill:#000000;stroke:none;font-family:Times" id="text314-pt-br" x="654.80499" y="110.486" systemLanguage="pt-br">
+      <tspan id="tspan316-pt-br">cossecante</tspan>
+    </text><text style="font-size:18px;text-anchor:end;color:#000000;fill:#000000;stroke:none;font-family:Times" id="text314" x="654.80499" y="110.486">
+      <tspan id="tspan316">cosecant</tspan>
+    </text></switch>
+    <path style="color:#157545;fill:none;stroke:#0000aa;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 4, 2, 4;stroke-dashoffset:0" d="m 666.80455,103.48604 c 20.33333,0 40.66667,0 61,0 M 42.804546,160.48586 c 23.360502,-1.33253 41.204329,-20.81718 48.291724,-41.95848 c 11.02914,-29.722694 13.78655,-61.711217 16.70828,-93.041523 m 37,404.000003 c 2.71932,-34.62462 7.55031,-69.7642 21.42751,-101.85501 c 8.32037,-20.55837 30.82289,-38.06178 53.57249,-31.14499 c 25.82703,5.15159 37.62598,33.19545 43.43703,56.26071 c 6.79005,25.08121 9.31795,51.03021 12.56297,76.73929 m 36,-404.000003 c 5.35867,37.728451 6.9721,78.056193 26.85531,111.597443 c 10.29772,17.77164 32.62332,27.47249 52.27471,20.77656 c 28.28453,-10.70533 36.87377,-43.39518 42.90864,-70.047991 c 5.71529,-20.375491 6.78378,-41.384101 8.96134,-62.326012 m 37,404.000003 c 3.88947,-37.34818 6.02915,-76.9402 25.03866,-110.21177 c 9.6155,-13.65198 22.87164,-23.67731 39.96134,-24.78823" id="path320" inkscape:connector-curvature="0"/>
+    <switch style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;"><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text328-pt-br" x="654.805" y="162.486" systemLanguage="pt-br">
+      <tspan id="tspan330-pt-br">cotangente</tspan>
+    </text><text style="font-size: 18px; text-anchor: end; color: black; fill: black; stroke: none; stroke-width: 2; font-family: Times;" id="text328" x="654.805" y="162.486">
+      <tspan id="tspan330">cotangent</tspan>
+    </text></switch>
+    <path style="color:#000094;fill:none;stroke:#aa0000;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 4, 2, 4;stroke-dashoffset:0" d="m 666.80455,155.48586 c 20.33333,0 40.66667,0 61,0 m -685.000004,72 c 25.496609,31.31657 46.748836,67.19642 53.829661,107.45051 c 6.827293,31.04232 10.412793,62.86777 12.170343,94.54949 m 35,-404.000003 c 2.32817,46.817027 9.97175,93.803393 26,138.000003 c 14.28843,36.56321 42.5851,64.59841 64.38352,96.41363 c 32.61697,50.06457 35.92811,111.99878 42.61648,169.58637 m 34,-404.000003 c 6.64744,57.291174 9.91486,118.348733 41.84588,168.353413 c 21.56171,32.21331 50.34609,60.09725 64.77713,96.81721 c 16.34872,44.18681 23.87739,91.32195 26.37699,138.21339 l 0,0.61599 m 35,-404.000003 c 3.09788,47.108797 8.23894,95.174653 25.76425,139.401123 c 11.03233,22.31571 24.42727,43.34838 40.23575,62.59888" id="path334" inkscape:connector-curvature="0"/>
+    <path style="color: black; fill: none; stroke: currentcolor; stroke-width: 1;" id="path340" d="M 42.804546,429.48586 L 544.80455,429.48586 L 544.80455,25.485857 L 42.804546,25.485857 L 42.804546,429.48586"/>
+  </g>
+</svg>
