@@ -1,0 +1,3974 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure HPC Workflow — Interaktive Erkundung</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg-deep: #0a0a0f;
+    --bg-card: #12121a;
+    --bg-card-hover: #1a1a28;
+    --bg-surface: #16162266;
+    --accent-blue: #4f8fff;
+    --accent-cyan: #00d4ff;
+    --accent-purple: #8b5cf6;
+    --accent-pink: #ec4899;
+    --accent-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-red: #ef4444;
+    --text-primary: #e8e8f0;
+    --text-secondary: #9898b0;
+    --text-muted: #5a5a78;
+    --border: #2a2a3e;
+    --glow-blue: 0 0 40px rgba(79,143,255,0.15);
+    --glow-purple: 0 0 40px rgba(139,92,246,0.15);
+    --glow-cyan: 0 0 40px rgba(0,212,255,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-blue) var(--bg-deep);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  .hero-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .hero p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    max-width: 650px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    background: rgba(79,143,255,0.1);
+    border: 1px solid rgba(79,143,255,0.25);
+    border-radius: 100px;
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    animation: bounce 2s infinite;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .scroll-indicator svg {
+    display: block;
+    margin: 0.5rem auto 0;
+    width: 24px;
+    height: 24px;
+    stroke: var(--text-muted);
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* ─── Navigation ─── */
+  .nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .nav-bar.visible { transform: translateY(0); }
+
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: 56px;
+    gap: 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav-inner::-webkit-scrollbar { display: none; }
+
+  .nav-link {
+    flex-shrink: 0;
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--accent-cyan);
+    background: rgba(0,212,255,0.08);
+    border-color: rgba(0,212,255,0.2);
+  }
+
+  /* ─── Sections ─── */
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-number {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    padding: 0.3rem 0.8rem;
+    background: rgba(139,92,246,0.1);
+    border-radius: 100px;
+    border: 1px solid rgba(139,92,246,0.2);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  .gradient-text-blue {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-purple {
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-green {
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── Cards ─── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(79,143,255,0.3);
+    box-shadow: var(--glow-blue);
+    transform: translateY(-2px);
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .card p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+  }
+
+  /* ─── Interactive Demo Containers ─── */
+  .demo-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .demo-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+  }
+
+  .demo-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+
+  .demo-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .demo-canvas-wrap {
+    position: relative;
+    width: 100%;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background: rgba(0,0,0,0.3);
+  }
+
+  .demo-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ─── Controls ─── */
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    align-items: flex-end;
+  }
+
+  .control-group {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .control-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  .control-value {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(79,143,255,0.5);
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(79,143,255,0.5);
+  }
+
+  /* ─── Buttons ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: white;
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0 25px rgba(79,143,255,0.4);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background: rgba(79,143,255,0.1);
+    color: var(--accent-blue);
+    border: 1px solid rgba(79,143,255,0.25);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(79,143,255,0.2);
+  }
+
+  .btn-danger {
+    background: rgba(239,68,68,0.15);
+    color: var(--accent-red);
+    border: 1px solid rgba(239,68,68,0.25);
+  }
+
+  .btn-success {
+    background: rgba(16,185,129,0.15);
+    color: var(--accent-green);
+    border: 1px solid rgba(16,185,129,0.25);
+  }
+
+  /* ─── Workflow Diagram ─── */
+  .workflow-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 3rem;
+  }
+
+  .workflow-step {
+    position: relative;
+    padding: 1.5rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.5rem;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+
+  .workflow-step.active {
+    opacity: 1;
+    border-color: var(--accent-blue);
+    box-shadow: var(--glow-blue);
+  }
+
+  .workflow-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -3rem;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.4s;
+  }
+
+  .workflow-step.active::before {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+    box-shadow: 0 0 15px rgba(79,143,255,0.5);
+  }
+
+  .workflow-step.done::before {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+    content: '✓';
+  }
+
+  .workflow-line {
+    position: absolute;
+    left: calc(-3rem + 17px - 3rem/2 + 18px);
+    left: calc(3rem - 18px);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+    transform: translateX(-50%);
+  }
+
+  .workflow-line-fill {
+    position: absolute;
+    left: calc(3rem - 18px);
+    top: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple));
+    transform: translateX(-50%);
+    transition: height 0.6s ease;
+  }
+
+  .step-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .step-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+
+  /* ─── Threat Model Visual ─── */
+  .threat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .threat-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .threat-item:hover {
+    border-color: var(--accent-red);
+    box-shadow: 0 0 20px rgba(239,68,68,0.1);
+  }
+
+  .threat-item.mitigated {
+    border-color: var(--accent-green);
+  }
+
+  .threat-item.mitigated:hover {
+    box-shadow: 0 0 20px rgba(16,185,129,0.1);
+  }
+
+  .threat-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .threat-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .threat-detail {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  /* ─── Comparison Table ─── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    font-size: 0.88rem;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 1rem 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comparison-table th {
+    font-weight: 700;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .comparison-table tr:hover td {
+    background: rgba(79,143,255,0.03);
+  }
+
+  .check { color: var(--accent-green); }
+  .cross { color: var(--accent-red); }
+  .partial { color: var(--accent-orange); }
+
+  /* ─── Encryption Demo ─── */
+  .crypto-visual {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+
+  .crypto-box {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.2rem;
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    word-break: break-all;
+    transition: all 0.3s;
+  }
+
+  .crypto-arrow {
+    font-size: 1.5rem;
+    color: var(--accent-purple);
+    text-align: center;
+  }
+
+  /* ─── Performance Chart ─── */
+  .perf-chart {
+    width: 100%;
+    min-height: 400px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  /* ─── Tooltips ─── */
+  .tooltip-trigger {
+    border-bottom: 1px dashed var(--accent-blue);
+    cursor: help;
+    position: relative;
+  }
+
+  /* ─── Animated Flow ─── */
+  .flow-canvas {
+    width: 100%;
+    height: 400px;
+    border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.2);
+  }
+
+  /* ─── Tabs ─── */
+  .tab-bar {
+    display: flex;
+    gap: 0.25rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.6rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active {
+    background: var(--accent-blue);
+    color: white;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Info Callout ─── */
+  .callout {
+    padding: 1.2rem 1.5rem;
+    border-radius: var(--radius-sm);
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .callout-info {
+    background: rgba(79,143,255,0.08);
+    border: 1px solid rgba(79,143,255,0.2);
+    color: var(--accent-blue);
+  }
+
+  .callout-warn {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    color: var(--accent-orange);
+  }
+
+  .callout-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  /* ─── Progress Bar ─── */
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  /* ─── Topology Canvas ─── */
+  .topo-canvas {
+    width: 100%;
+    height: 500px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ─── Separator ─── */
+  .section-sep {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    border-radius: 2px;
+    margin: 6rem auto;
+  }
+
+  /* ─── Footer ─── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    .section { padding: 4rem 1rem; }
+    .crypto-visual { grid-template-columns: 1fr; }
+    .crypto-arrow { transform: rotate(90deg); }
+    .card-grid { grid-template-columns: 1fr; }
+    .controls { flex-direction: column; }
+    .control-group { min-width: 100%; }
+    .workflow-steps { padding-left: 2.5rem; }
+  }
+
+  /* ─── Animations ─── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── Packet animation ─── */
+  @keyframes packetMove {
+    0% { transform: translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+  }
+
+  /* ─── Status indicator ─── */
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.4rem;
+  }
+
+  .status-dot.green { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+  .status-dot.red { background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red); }
+  .status-dot.orange { background: var(--accent-orange); box-shadow: 0 0 6px var(--accent-orange); }
+
+  /* ─── Toggle switch ─── */
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0.5rem 0;
+  }
+
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+
+  .toggle.on { background: var(--accent-green); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    transition: transform 0.3s;
+  }
+
+  .toggle.on::after { transform: translateX(20px); }
+
+  .toggle-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  /* ─── Data flow animation ─── */
+  .data-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ─── Key visual ─── */
+  .key-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+  }
+
+  .key-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    min-width: 140px;
+    transition: all 0.3s;
+  }
+
+  .key-item:hover {
+    transform: scale(1.05);
+  }
+
+  .key-emoji {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .key-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  /* Plotly fix */
+  .js-plotly-plot .plotly .modebar { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="hero">
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">📄 IEEE/ACM CCGrid 2022 — Interaktive Erkundung</div>
+    <h1>Secure Workflow für Shared HPC</h1>
+    <p>Wie verarbeitet man hochsensible Daten auf einem geteilten Supercomputer, dem man nicht vertraut? Entdecke die Lösung Schritt für Schritt — durch Spielen, nicht durch Lesen.</p>
+    <a href="#motivation" class="btn btn-primary">Erkundung starten ↓</a>
+  </div>
+  <div class="scroll-indicator">
+    Scroll
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+      <path d="M12 5v14M5 12l 19"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══════════════ NAV BAR ═══════════════ -->
+<nav class="nav-bar" id="navBar">
+  <div class="nav-inner">
+    <a href="#motivation" class="nav-link">Motivation</a>
+    <a href="#prerequisites" class="nav-link">Grundlagen</a>
+    <a href="#threat" class="nav-link">Bedrohungsmodell</a>
+    <a href="#encryption" class="nav-link">Verschlüsselung</a>
+    <a href="#containers" class="nav-link">Container</a>
+    <a href="#workflow" class="nav-link">Workflow</a>
+    <a href="#isolation" class="nav-link">Isolation</a>
+    <a href="#performance" class="nav-link">Performance</a>
+    <a href="#comparison" class="nav-link">Vergleich</a>
+    <a href="#conclusion" class="nav-link">Fazit</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ 1. MOTIVATION ═══════════════ -->
+<section class="section" id="motivation">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 01</div>
+    <h2 class="section-title">Warum ist das ein <span class="gradient-text-blue">Problem</span>?</h2>
+    <p class="section-subtitle">Forscher mit sensiblen Daten brauchen Rechenpower — aber geteilte Supercomputer sind nicht für Datenschutz gebaut.</p>
+  </div>
+
+  <div class="card-grid fade-up">
+    <div class="card">
+      <div class="card-icon" style="background:rgba(79,143,255,0.12);">🧬</div>
+      <h3>Sensible Daten</h3>
+      <p>Genomdaten, Patientenakten, Sozialforschung — Daten, die unter strengen Datenschutzgesetzen (DSGVO, HIPAA) stehen und nicht in falsche Hände geraten dürfen.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(139,92,246,0.12);">⚡</div>
+      <h3>Rechenpower nötig</h3>
+      <p>Machine Learning, Genomsequenzierung, Simulationen — diese Methoden brauchen tausende CPU-Kerne und GPUs, die nur HPC-Cluster bieten.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="background:rgba(236,72,153,0.12);">👥</div>
+      <h3>Geteilte Systeme</h3>
+      <p>HPC-Cluster werden von hunderten Nutzern gleichzeitig verwendet. Admins haben Root-Zugriff. Andere Nutzer teilen sich Netzwerk und Dateisystem.</p>
+    </div>
+  </div>
+
+  <!-- Interactive: The Tension Visualizer -->
+  <div class="demo-container fade-up" style="margin-top:3rem;">
+    <div class="demo-title">🎮 Interaktiv: Das Spannungsfeld</div>
+    <div class="demo-desc">Bewege die Regler und beobachte, wie Datensensibilität und Rechenaufwand die Notwendigkeit einer sicheren Lösung bestimmen.</div>
+    <div class="demo-canvas-wrap">
+      <canvas id="tensionCanvas" width="900" height="400"></canvas>
+    </div>
+    <div class="controls">
+      <div class="control-group">
+        <label class="control-label">Datensensibilität: <span class="control-value" id="sensVal">50%</span></label>
+        <input type="range" id="sensSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control-group">
+        <label class="control-label">Rechenaufwand: <span class="control-value" id="compVal">50%</span></label>
+        <input type="range" id="compSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control-group">
+        <label class="control-label">Anzahl Nutzer auf dem Cluster: <span class="control-value" id="usersVal">50</span></label>
+        <input type="range" id="usersSlider" min="1" max="200" value="50">
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 2. PREREQUISITES ═══════════════ -->
+<section class="section" id="prerequisites">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 02</div>
+    <h2 class="section-title">Die <span class="gradient-text-purple">Grundlagen</span></h2>
+    <p class="section-subtitle">Bevor wir die Lösung verstehen, brauchen wir ein paar Konzepte. Hier lernst du sie interaktiv.</p>
+  </div>
+
+  <!-- Tabs for prerequisites -->
+  <div class="fade-up">
+    <div class="tab-bar" id="prereqTabs">
+      <button class="tab-btn active" data-tab="tab-symm">Symmetrische Verschlüsselung</button>
+      <button class="tab-btn" data-tab="tab-asymm">Asymmetrische Verschlüsselung</button>
+      <button class="tab-btn" data-tab="tab-sign">Digitale Signaturen</button>
+      <button class="tab-btn" data-tab="tab-container">Container</button>
+      <button class="tab-btn" data-tab="tab-hpc">HPC & Slurm</button>
+    </div>
+
+    <!-- TAB: Symmetric Encryption -->
+    <div class="tab-content active" id="tab-symm">
+      <div class="demo-container">
+        <div class="demo-title">🔐 Symmetrische Verschlüsselung (AES)</div>
+        <div class="demo-desc">Ein Schlüssel zum Ver- und Entschlüsseln. Wie ein Tresor mit einem einzigen Schlüssel — wer den Schlüssel hat, kann öffnen und schließen.</div>
+
+        <div class="crypto-visual">
+          <div class="crypto-box" id="symmPlain" style="border-color: var(--accent-green);">
+            <div style="font-size:0.7rem;color:var(--accent-green);margin-bottom:0.5rem;">KLARTEXT</div>
+            <div id="symmPlainText">Hallo Welt!</div>
+          </div>
+          <div class="crypto-arrow">
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:0.3rem;">AES-256</div>
+            →
+          </div>
+          <div class="crypto-box" id="symmCipher" style="border-color: var(--accent-red);">
+            <div style="font-size:0.7rem;color:var(--accent-red);margin-bottom:0.5rem;">CHIFFRETEXT</div>
+            <div id="symmCipherText" style="color:var(--accent-red);">—</div>
+          </div>
+        </div>
+
+        <div class="controls" style="margin-top:1rem;">
+          <div class="control-group" style="flex:2;">
+            <label class="control-label">Deine Nachricht</label>
+            <input type="text" id="symmInput" value="Patientendaten: Max Mustermann, Diagnose XY" style="width:100%;padding:0.6rem 1rem;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:inherit;font-size:0.85rem;">
+          </div>
+          <div class="control-group" style="flex:1;">
+            <label class="control-label">Schlüssellänge: <span class="control-value" id="keyLenVal">256</span> Bit</label>
+            <input type="range" id="keyLenSlider" min="0" max="2" value="2" step="1">
+          </div>
+        </div>
+        <div style="margin-top:1rem;">
+          <button class="btn btn-primary" id="symmEncBtn">🔒 Verschlüsseln</button>
+          <button class="btn btn-secondary" id="symmDecBtn" style="margin-left:0.5rem;">🔓 Entschlüsseln</button>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1.5rem;">
+          <span class="callout-icon">💡</span>
+          <div><strong>Warum AES?</strong> AES (Advanced Encryption Standard) ist der Goldstandard für symmetrische Verschlüsselung. AES-256 hat 2²⁵⁶ mögliche Schlüssel — mehr als Atome im Universum. Das Paper nutzt AES-256 für die Datenverschlüsselung.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Asymmetric Encryption -->
+    <div class="tab-content" id="tab-asymm">
+      <div class="demo-container">
+        <div class="demo-title">🔑 Asymmetrische Verschlüsselung (RSA)</div>
+        <div class="demo-desc">Zwei Schlüssel: ein öffentlicher zum Verschlüsseln, ein privater zum Entschlüsseln. Wie ein Briefkasten — jeder kann einwerfen, nur du kannst öffnen.</div>
+
+        <div class="demo-canvas-wrap">
+          <canvas id="asymmCanvas" width="900" height="420"></canvas>
+        </div>
+
+        <div class="controls">
+          <div class="control-group">
+            <label class="control-label">RSA-Schlüssellänge: <span class="control-value" id="rsaKeyVal">2048</span> Bit</label>
+            <input type="range" id="rsaKeySlider" min="0" max="3" value="1" step="1">
+          </div>
+          <div class="control-group">
+            <button class="btn btn-primary" id="asymmAnimBtn">▶ Animation starten</button>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1rem;">
+          <span class="callout-icon">💡</span>
+          <div><strong>Hybride Verschlüsselung:</strong> In der Praxis (und im Paper) wird RSA nur genutzt, um den AES-Schlüssel zu verschlüsseln. Die eigentlichen Daten werden mit AES verschlüsselt. So kombiniert man die Vorteile beider Verfahren.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Digital Signatures -->
+    <div class="tab-content" id="tab-sign">
+      <div class="demo-container">
+        <div class="demo-title">✍️ Digitale Signaturen</div>
+        <div class="demo-desc">Beweist, dass eine Nachricht wirklich von dir kommt und nicht verändert wurde. Wie ein Siegel auf einem Brief.</div>
+
+        <div class="demo-canvas-wrap">
+          <canvas id="signCanvas" width="900" height="380"></canvas>
+        </div>
+
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem;">
+          <button class="btn btn-primary" id="signBtn">✍️ Signieren</button>
+          <button class="btn btn-success" id="verifyBtn">✅ Verifizieren</button>
+          <button class="btn btn-danger" id="tamperBtn">🔨 Manipulieren!</button>
+        </div>
+
+        <div class="callout callout-warn" style="margin-top:1rem;">
+          <span class="callout-icon">⚠️</span>
+          <div><strong>Im Paper:</strong> Batch-Skripte werden vom Nutzer signiert. So kann das System sicherstellen, dass kein Angreifer das Skript verändert hat, bevor es ausgeführt wird.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: Containers -->
+    <div class="tab-content" id="tab-container">
+      <div class="demo-container">
+        <div class="demo-title">📦 Container (Singularity/Apptainer)</div>
+        <div class="demo-desc">Ein Container packt Software + Abhängigkeiten in ein portables Paket. Wie eine Lunchbox — alles drin, was man braucht.</div>
+
+        <div class="demo-canvas-wrap">
+          <canvas id="containerCanvas" width="900" height="450"></canvas>
+        </div>
+
+        <div class="controls">
+          <div class="control-group">
+            <label class="control-label">Container-Schichten</label>
+            <input type="range" id="layerSlider" min="1" max="6" value="3" step="1">
+            <span class="control-value" id="layerVal">3</span>
+          </div>
+          <div class="control-group">
+            <div class="toggle-wrap">
+              <div class="toggle" id="encryptToggle"></div>
+              <span class="toggle-label">Container verschlüsselt</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info" style="margin-top:1rem;">
+          <span class="callout-icon">💡</span>
+          <div><strong>Warum Singularity?</strong> Anders als Docker läuft Singularity ohne Root-Rechte — perfekt für HPC. Das Paper verschlüsselt den gesamten Container mit AES, sodass niemand den Inhalt sehen kann.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: HPC & Slurm -->
+    <div class="tab-content" id="tab-hpc">
+      <div class="demo-container">
+        <div class="demo-title">🖥️ HPC-Cluster & Slurm Job Scheduler</div>
+        <div class="demo-desc">Ein Supercomputer besteht aus vielen Knoten. Slurm verteilt Jobs an freie Knoten — wie ein Kellner, der Gäste an Tische verteilt.</div>
+
+        <div class="demo-canvas-wrap">
+          <canvas id="hpcCanvas" width="900" height="500"></canvas>
+        </div>
+
+        <div class="controls">
+          <div class="control-group">
+            <label class="control-label">Anzahl Knoten: <span class="control-value" id="nodeVal">12</span></label>
+            <input type="range" id="nodeSlider" min="4" max="32" value="12" step="1">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Jobs in der Warteschlange: <span class="control-value" id="jobVal">5</span></label>
+            <input type="range" id="jobSlider" min="1" max="15" value="5" step="1">
+          </div>
+          <div class="control-group">
+            <button class="btn btn-primary" id="scheduleBtn">📋 Jobs verteilen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 3. THREAT MODEL ═══════════════ -->
+<section class="section" id="threat">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 03</div>
+    <h2 class="section-title">Das <span class="gradient-text-blue">Bedrohungsmodell</span></h2>
+    <p class="section-subtitle">Wem vertrauen wir nicht? Und wovor schützen wir uns? Klicke auf die Bedrohungen, um zu sehen, wie sie abgewehrt werden.</p>
+  </div>
+
+  <div class="demo-container fade-up">
+    <div class="demo-title">🛡️ Interaktiv: Angriffsvektoren & Abwehr</div>
+    <div class="demo-desc">Klicke auf eine Bedrohung, um zu sehen, wie der Secure Workflow sie neutralisiert. Grün = abgewehrt.</div>
+
+    <div class="demo-canvas-wrap">
+      <canvas id="threatCanvas" width="900" height="500"></canvas>
+    </div>
+
+    <div class="threat-grid" id="threatGrid">
+      <div class="threat-item" data-threat="admin" onclick="toggleThreat(this)">
+        <span class="threat-icon">👤</span>
+        <div>
+          <div class="threat-name">Böswilliger Admin</div>
+          <div class="threat-detail">Root-Zugriff auf alle Daten und Prozesse</div>
+        </div>
+      </div>
+      <div class="threat-item" data-threat="user" onclick="toggleThreat(this)">
+        <span class="threat-icon">🕵️</span>
+        <div>
+          <div class="threat-name">Anderer Nutzer</div>
+          <div class="threat-detail">Liest Dateien, belauscht Netzwerk</div>
+        </div>
+      </div>
+      <div class="threat-item" data-threat="network" onclick="toggleThreat(this)">
+        <span class="threat-icon">🌐</span>
+        <div>
+          <div class="threat-name">Netzwerk-Angriff</div>
+          <div class="threat-detail">Man-in-the-Middle, Packet Sniffing</div>
+        </div>
+      </div>
+      <div class="threat-item" data-threat="filesystem" onclick="toggleThreat(this)">
+        <span class="threat-icon">💾</span>
+        <div>
+          <div class="threat-name">Dateisystem-Zugriff</div>
+          <div class="threat-detail">Lesen von Daten auf dem Shared Filesystem</div>
+        </div>
+      </div>
+      <div class="threat-item" data-threat="tamper" onclick="toggleThreat(this)">
+        <span class="threat-icon">🔨</span>
+        <div>
+          <div class="threat-name">Skript-Manipulation</div>
+          <div class="threat-detail">Batch-Skript wird vor Ausführung verändert</div>
+        </div>
+      </div>
+      <div class="threat-item" data-threat="memory" onclick="toggleThreat(this)">
+        <span class="threat-icon">🧠</span>
+        <div>
+          <div class="threat-name">Speicher-Auslesen</div>
+          <div class="threat-detail">RAM-Dump während der Berechnung</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="threatExplanation" class="callout callout-info" style="display:none;">
+      <span class="callout-icon">🛡️</span>
+      <div id="threatExplanationText"></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 4. THE CORE IDEA ═══════════════ -->
+<section class="section" id="encryption">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 04</div>
+    <h2 class="section-title">Die <span class="gradient-text-green">Kernidee</span></h2>
+    <p class="section-subtitle">Alles verschlüsseln, bevor es den eigenen Rechner verlässt. Auf dem Cluster nur in isolierten Knoten entschlüsseln.</p>
+  </div>
+
+  <div class="demo-container fade-up">
+    <div class="demo-title">🔐 Interaktiv: Verschlüsselungsschichten</div>
+    <div class="demo-desc">Beobachte, wie drei Komponenten — Daten, Container und Batch-Skript — einzeln verschlüsselt und dann zusammen hochgeladen werden.</div>
+
+    <div class="demo-canvas-wrap">
+      <canvas id="layeredEncCanvas" width="900" height="550"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label class="control-label">Verschlüsselungsfortschritt</label>
+        <input type="range" id="encProgressSlider" min="0" max="100" value="0">
+        <span class="control-value" id="encProgressVal">0%</span>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-primary" id="encAnimBtn">▶ Automatisch abspielen</button>
+      </div>
+    </div>
+
+    <div class="key-visual" style="margin-top:2rem;">
+      <div class="key-item" id="keyItem1">
+        <div class="key-emoji">📄</div>
+        <div class="key-name">Sensible Daten</div>
+        <div class="progress-bar"><div class="progress-fill" id="dataEncProgress" style="width:0%;background:var(--accent-green);"></div></div>
+      </div>
+      <div class="key-item" id="keyItem2">
+        <div class="key-emoji">📦</div>
+        <div class="key-name">Container (SIF)</div>
+        <div class="progress-bar"><div class="progress-fill" id="contEncProgress" style="width:0%;background:var(--accent-purple);"></div></div>
+      </div>
+      <div class="key-item" id="keyItem3">
+        <div class="key-emoji">📜</div>
+        <div class="key-name">Batch-Skript</div>
+        <div class="progress-bar"><div class="progress-fill" id="scriptEncProgress" style="width:0%;background:var(--accent-orange);"></div></div>
+      </div>
+      <div class="key-item" id="keyItem4">
+        <div class="key-emoji">✍️</div>
+        <div class="key-name">Signatur</div>
+        <div class="progress-bar"><div class="progress-fill" id="sigProgress" style="width:0%;background:var(--accent-pink);"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 5. THE WORKFLOW ═══════════════ -->
+<section class="section" id="workflow">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 05</div>
+    <h2 class="section-title">Der <span class="gradient-text-purple">Workflow</span></h2>
+    <p class="section-subtitle">Vom lokalen Rechner bis zum Ergebnis — Schritt für Schritt durch den sicheren Ablauf.</p>
+  </div>
+
+  <div class="demo-container fade-up">
+    <div class="demo-title">🔄 Interaktiv: Der komplette Workflow</div>
+    <div class="demo-desc">Klicke auf „Nächster Schritt" oder nutze den Slider, um durch den gesamten Ablauf zu navigieren.</div>
+
+    <div class="demo-canvas-wrap">
+      <canvas id="workflowCanvas" width="900" height="520"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="control-group" style="flex:2;">
+        <label class="control-label">Workflow-Schritt: <span class="control-value" id="wfStepVal">1 / 8</span></label>
+        <input type="range" id="wfStepSlider" min="1" max="8" value="1" step="1">
+      </div>
+      <div class="control-group">
+        <button class="btn btn-primary" id="wfNextBtn">Nächster Schritt →</button>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-secondary" id="wfAutoBtn">▶ Auto-Play</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workflow Steps Detail -->
+  <div class="fade-up" style="margin-top:3rem;position:relative;">
+    <div class="workflow-line"></div>
+    <div class="workflow-line-fill" id="wfLineFill" style="height:0%;"></div>
+    <div class="workflow-steps" id="wfSteps">
+      <div class="workflow-step active" data-step="1">
+        <div class="step-title">1. Verschlüsselung auf dem lokalen Rechner</div>
+        <div class="step-desc">Daten, Container und Batch-Skript werden mit AES-256 verschlüsselt. Der AES-Schlüssel wird mit dem RSA-Public-Key des Secure-Partition-Servers verschlüsselt.</div>
+      </div>
+      <div class="workflow-step" data-step="2">
+        <div class="step-title">2. Signierung des Batch-Skripts</div>
+        <div class="step-desc">Das Batch-Skript wird mit dem privaten Schlüssel des Nutzers signiert, um Integrität und Authentizität zu garantieren.</div>
+      </div>
+      <div class="workflow-step" data-step="3">
+        <div class="step-title">3. Upload auf das Shared Filesystem</div>
+        <div class="step-desc">Alles ist verschlüsselt — sicher zum Hochladen auf das geteilte Dateisystem des HPC-Clusters (z.B. via SCP/SFTP).</div>
+      </div>
+      <div class="workflow-step" data-step="4">
+        <div class="step-title">4. Job-Einreichung bei Slurm</div>
+        <div class="step-desc">Der Nutzer reicht den verschlüsselten Job bei Slurm ein. Slurm weist einen Compute-Knoten zu.</div>
+      </div>
+      <div class="workflow-step" data-step="5">
+        <div class="step-title">5. Knoten-Isolation</div>
+        <div class="step-desc">Der zugewiesene Knoten wird vom Netzwerk isoliert (Firewall-Regeln). Nur noch Kommunikation mit dem Secure-Partition-Server möglich.</div>
+      </div>
+      <div class="workflow-step" data-step="6">
+        <div class="step-title">6. Entschlüsselung & Signaturprüfung</div>
+        <div class="step-desc">Der Secure-Partition-Server entschlüsselt den AES-Schlüssel mit seinem privaten RSA-Schlüssel. Die Signatur des Batch-Skripts wird verifiziert.</div>
+      </div>
+      <div class="workflow-step" data-step="7">
+        <div class="step-title">7. Ausführung im Container</div>
+        <div class="step-desc">Der entschlüsselte Container wird gestartet, die Daten werden verarbeitet. Alles geschieht auf dem isolierten Knoten.</div>
+      </div>
+      <div class="workflow-step" data-step="8">
+        <div class="step-title">8. Ergebnis-Verschlüsselung & Cleanup</div>
+        <div class="step-desc">Ergebnisse werden verschlüsselt zurückgeschrieben. Alle temporären Daten werden sicher gelöscht. Der Knoten wird wieder freigegeben.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 6. NODE ISOLATION ═══════════════ -->
+<section class="section" id="isolation">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 06</div>
+    <h2 class="section-title">Knoten-<span class="gradient-text-blue">Isolation</span></h2>
+    <p class="section-subtitle">Der Schlüssel zur Sicherheit: Den Compute-Knoten vom Rest des Clusters abschneiden.</p>
+  </div>
+
+  <div class="demo-container fade-up">
+    <div class="demo-title">🏝️ Interaktiv: Netzwerk-Isolation</div>
+    <div class="demo-desc">Schalte die Isolation ein und aus und beobachte, wie sich die Netzwerkverbindungen ändern. Versuche, als Angreifer auf den isolierten Knoten zuzugreifen!</div>
+
+    <div class="demo-canvas-wrap">
+      <canvas id="isolationCanvas" width="900" height="500"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <div class="toggle-wrap">
+          <div class="toggle" id="isolationToggle" onclick="toggleIsolation()"></div>
+          <span class="toggle-label" id="isolationLabel">Isolation: <strong style="color:var(--accent-red);">AUS</strong></span>
+        </div>
+      </div>
+      <div class="control-group">
+        <button class="btn btn-danger" id="attackBtn" onclick="simulateAttack()">🕵️ Angriff simulieren</button>
+      </div>
+      <div class="control-group">
+        <div id="attackResult" style="font-size:0.85rem;color:var(--text-secondary);min-height:1.5em;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 7. PERFORMANCE ═══════════════ -->
+<section class="section" id="performance">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 07</div>
+    <h2 class="section-title"><span class="gradient-text-green">Performance</span>-Overhead</h2>
+    <p class="section-subtitle">Sicherheit kostet Rechenzeit. Aber wie viel? Die Antwort: überraschend wenig.</p>
+  </div>
+
+  <div class="demo-container fade-up">
+    <div class="demo-title">📊 Interaktiv: Overhead-Analyse</div>
+    <div class="demo-desc">Vergleiche die Laufzeiten mit und ohne Sicherheitsmaßnahmen. Verändere die Datengröße und beobachte den Overhead.</div>
+
+    <div id="perfPlot" class="perf-chart"></div>
+
+    <div class="controls" style="margin-top:1.5rem;">
+      <div class="control-group">
+        <label class="control-label">Datengröße: <span class="control-value" id="dataSizeVal">1 GB</span></label>
+        <input type="range" id="dataSizeSlider" min="1" max="100" value="1">
+      </div>
+      <div class="control-group">
+        <label class="control-label">Anzahl CPU-Kerne: <span class="control-value" id="coreVal">8</span></label>
+        <input type="range" id="coreSlider" min="1" max="64" value="8">
+      </div>
+      <div class="control-group">
+        <label class="control-label">Berechnungsdauer (Minuten): <span class="control-value" id="computeVal">30</span></label>
+        <input type="range" id="computeSlider" min="1" max="480" value="30">
+      </div>
+    </div>
+
+    <div class="callout callout-info" style="margin-top:1.5rem;">
+      <span class="callout-icon">📈</span>
+      <div><strong>Ergebnis des Papers:</strong> Der Overhead durch Verschlüsselung und Container beträgt typischerweise nur wenige Sekunden bis Minuten — bei Jobs, die Stunden oder Tage laufen, ist das vernachlässigbar. Der größte Overhead entsteht durch die Verschlüsselung/Entschlüsselung der Daten, nicht durch die Isolation.</div>
+    </div>
+  </div>
+
+  <!-- Overhead Breakdown -->
+  <div class="demo-container fade-up" style="margin-top:2rem;">
+    <div class="demo-title">⏱️ Overhead-Aufschlüsselung</div>
+    <div class="demo-desc">Wo genau entsteht der Zeitverlust? Bewege den Slider, um verschiedene Szenarien zu sehen.</div>
+
+    <div id="breakdownPlot" class="perf-chart"></div>
+
+    <div class="controls" style="margin-top:1rem;">
+      <div class="control-group">
+        <label class="control-label">Szenario</label>
+        <div class="tab-bar" id="scenarioTabs" style="margin-bottom:0;">
+          <button class="tab-btn active" data-scenario="small" onclick="setScenario('small')">Kleiner Job</button>
+          <button class="tab-btn" data-scenario="medium" onclick="setScenario('medium')">Mittlerer Job</button>
+          <button class="tab-btn" data-scenario="large" onclick="setScenario('large')">Großer Job</button>
+          <button class="tab-btn" data-scenario="huge" onclick="setScenario('huge')">HPC-Scale</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 8. COMPARISON ═══════════════ -->
+<section class="section" id="comparison">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 08</div>
+    <h2 class="section-title"><span class="gradient-text-purple">Vergleich</span> mit Alternativen</h2>
+    <p class="section-subtitle">Wie schneidet dieser Ansatz im Vergleich zu anderen Lösungen ab?</p>
+  </div>
+
+  <div class="demo-container fade-up">
+    <div class="demo-title">⚖️ Interaktiv: Lösungsvergleich</div>
+    <div class="demo-desc">Klicke auf die verschiedenen Ansätze, um ihre Stärken und Schwächen zu vergleichen.</div>
+
+    <div style="overflow-x:auto;">
+      <table class="comparison-table" id="compTable">
+        <thead>
+          <tr>
+            <th>Eigenschaft</th>
+            <th>Nur Unix-Rechte</th>
+            <th>Dediziertes Cluster</th>
+            <th>Cloud (AWS/GCP)</th>
+            <th>TEE (SGX/SEV)</th>
+            <th style="background:rgba(79,143,255,0.1);color:var(--accent-cyan);">Secure HPC (Paper)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Schutz vor Admins</strong></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Schutz vor anderen Nutzern</strong></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Keine spezielle Hardware nötig</strong></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Volle HPC-Leistung</strong></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Kosteneffizient</strong></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Daten-Integrität (Signaturen)</strong></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>Netzwerk-Isolation</strong></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+          <tr>
+            <td><strong>DSGVO-konform</strong></td>
+            <td><span class="cross">✗</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="partial">◐</span></td>
+            <td><span class="check">✓</span></td>
+            <td><span class="check">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="compRadarPlot" class="perf-chart" style="min-height:450px;margin-top:2rem;"></div>
+
+    <div class="controls" style="margin-top:1rem;">
+      <div class="control-group">
+        <label class="control-label">Vergleiche mit:</label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;">
+          <button class="btn btn-secondary comp-btn active" data-comp="unix" onclick="toggleComp(this)">Unix-Rechte</button>
+          <button class="btn btn-secondary comp-btn active" data-comp="dedicated" onclick="toggleComp(this)">Dediziertes Cluster</button>
+          <button class="btn btn-secondary comp-btn active" data-comp="cloud" onclick="toggleComp(this)">Cloud</button>
+          <button class="btn btn-secondary comp-btn active" data-comp="tee" onclick="toggleComp(this)">TEE (SGX)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-sep"></div>
+
+<!-- ═══════════════ 9. CONCLUSION ═══════════════ -->
+<section class="section" id="conclusion">
+  <div class="section-header fade-up">
+    <div class="section-number">Kapitel 09</div>
+    <h2 class="section-title">Das <span class="gradient-text-blue">Fazit</span></h2>
+    <p class="section-subtitle">Was hat das Paper erreicht? Was sind die Grenzen? Und was kommt als Nächstes?</p>
+  </div>
+
+  <div class="card-grid fade-up">
+    <div class="card" style="border-top:3px solid var(--accent-green);">
+      <div class="card-icon" style="background:rgba(16,185,129,0.12);">✅</div>
+      <h3>Erreicht</h3>
+      <p>Ein praktischer, implementierter Workflow, der sensible Daten auf geteilten HPC-Systemen schützt — ohne spezielle Hardware, mit minimalem Overhead und als Open Source verfügbar.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-orange);">
+      <div class="card-icon" style="background:rgba(245,158,11,0.12);">⚠️</div>
+      <h3>Einschränkungen</h3>
+      <p>Kein Schutz gegen physische Angriffe auf die Hardware. RAM-Inhalte sind während der Berechnung theoretisch auslesbar. Vertrauensanker ist der Secure-Partition-Server.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-purple);">
+      <div class="card-icon" style="background:rgba(139,92,246,0.12);">🔮</div>
+      <h3>Ausblick</h3>
+      <p>Integration mit Hardware-TEEs (AMD SEV, Intel SGX) für noch stärkeren Schutz. Verbessertes Key-Management mit HashiCorp Vault. Multi-Node-Jobs mit sicherer Kommunikation.</p>
+    </div>
+  </div>
+
+  <!-- Final Interactive Summary -->
+  <div class="demo-container fade-up" style="margin-top:3rem;">
+    <div class="demo-title">🎯 Interaktiv: Gesamtbild</div>
+    <div class="demo-desc">Ziehe den Slider von links nach rechts, um den gesamten Datenfluss vom Forscher bis zum Ergebnis zu sehen — die komplette Geschichte in einer Animation.</div>
+
+    <div class="demo-canvas-wrap">
+      <canvas id="summaryCanvas" width="900" height="550"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="control-group" style="flex:3;">
+        <label class="control-label">Gesamter Ablauf: <span class="control-value" id="summaryVal">0%</span></label>
+        <input type="range" id="summarySlider" min="0" max="100" value="0">
+      </div>
+      <div class="control-group">
+        <button class="btn btn-primary" id="summaryPlayBtn">▶ Abspielen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="footer">
+  <p>Basierend auf: <em>"A Secure Workflow for Shared HPC Systems"</em> — IEEE/ACM CCGrid 2022</p>
+  <p style="margin-top:0.5rem;">Interaktive Visualisierung erstellt mit ❤️ für besseres Verständnis</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ═══════════════ JAVASCRIPT ═══════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+// ─── Utility ───
+const $ = id => document.getElementById(id);
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const TAU = Math.PI * 2;
+
+// ─── DPR-aware canvas setup ───
+function setupCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = canvas.getAttribute('width') || rect.width;
+  const h = canvas.getAttribute('height') || rect.height;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: +w, h: +h };
+}
+
+// ─── Scroll-based fade-in ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ─── Nav bar visibility ───
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = $('navBar');
+  if (window.scrollY > 400) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+  lastScroll = window.scrollY;
+});
+
+// ─── Tab switching ───
+document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabId = btn.dataset.tab;
+    btn.closest('.fade-up, section').querySelectorAll('.tab-btn[data-tab]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    btn.closest('.fade-up, section').querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    $(tabId).classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════
+// ═══ HERO CANVAS — Particle Network ═══
+// ═══════════════════════════════════════
+(function heroAnim() {
+  const canvas = $('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.r = Math.random() * 2 + 0.5;
+      this.alpha = Math.random() * 0.5 + 0.1;
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > W) this.vx *= -1;
+      if (this.y < 0 || this.y > H) this.vy *= -1;
+    }
+  }
+
+  for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(79,143,255,${0.08 * (1 - dist / 150)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    // particles
+    particles.forEach(p => {
+      p.update();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, TAU);
+      ctx.fillStyle = `rgba(79,143,255,${p.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ TENSION CANVAS (Motivation) ══════
+// ═══════════════════════════════════════
+(function tensionDemo() {
+  const { ctx, w, h } = setupCanvas($('tensionCanvas'));
+  const sensSlider = $('sensSlider');
+  const compSlider = $('compSlider');
+  const usersSlider = $('usersSlider');
+
+  function draw() {
+    const sens = +sensSlider.value;
+    const comp = +compSlider.value;
+    const users = +usersSlider.value;
+
+    $('sensVal').textContent = sens + '%';
+    $('compVal').textContent = comp + '%';
+    $('usersVal').textContent = users;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Background grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    // Risk score
+    const risk = (sens / 100) * (comp / 100) * Math.min(users / 50, 1);
+    const needScore = Math.min(risk * 1.5, 1);
+
+    // Draw zones
+    const cx = w / 2, cy = h / 2;
+
+    // Sensitivity zone (left)
+    const sensR = 40 + sens * 1.2;
+    const sensGrad = ctx.createRadialGradient(cx - 180, cy, 0, cx - 180, cy, sensR);
+    sensGrad.addColorStop(0, `rgba(239,68,68,${0.1 + sens / 200})`);
+    sensGrad.addColorStop(1, 'rgba(239,68,68,0)');
+    ctx.beginPath();
+    ctx.arc(cx - 180, cy, sensR, 0, TAU);
+    ctx.fillStyle = sensGrad;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx - 180, cy, sensR, 0, TAU);
+    ctx.strokeStyle = `rgba(239,68,68,${0.3 + sens / 200})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '600 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('🔒 Sensibilität', cx - 180, cy - sensR - 15);
+    ctx.font = '700 28px Inter';
+    ctx.fillText(sens + '%', cx - 180, cy + 8);
+
+    // Compute zone (right)
+    const compR = 40 + comp * 1.2;
+    const compGrad = ctx.createRadialGradient(cx + 180, cy, 0, cx + 180, cy, compR);
+    compGrad.addColorStop(0, `rgba(79,143,255,${0.1 + comp / 200})`);
+    compGrad.addColorStop(1, 'rgba(79,143,255,0)');
+    ctx.beginPath();
+    ctx.arc(cx + 180, cy, compR, 0, TAU);
+    ctx.fillStyle = compGrad;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 180, cy, compR, 0, TAU);
+    ctx.strokeStyle = `rgba(79,143,255,${0.3 + comp / 200})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#4f8fff';
+    ctx.font = '600 14px Inter';
+    ctx.fillText('⚡ Rechenpower', cx + 180, cy - compR - 15);
+    ctx.font = '700 28px Inter';
+    ctx.fillText(comp + '%', cx + 180, cy + 8);
+
+    // Users (small dots around)
+    ctx.fillStyle = 'rgba(245,158,11,0.6)';
+    for (let i = 0; i < Math.min(users, 100); i++) {
+      const angle = (i / Math.min(users, 100)) * TAU;
+      const r = 160 + Math.sin(i * 7) * 20;
+      const ux = cx + Math.cos(angle) * r;
+      const uy = cy + Math.sin(angle) * r;
+      ctx.beginPath();
+      ctx.arc(ux, uy, 3, 0, TAU);
+      ctx.fill();
+    }
+    ctx.fillStyle = '#f59e0b';
+    ctx.font = '600 12px Inter';
+    ctx.fillText(`👥 ${users} Nutzer`, cx, h - 30);
+
+    // Overlap / Need indicator
+    const overlapX = cx;
+    const overlapR = needScore * 80;
+    if (overlapR > 5) {
+      const oGrad = ctx.createRadialGradient(overlapX, cy, 0, overlapX, cy, overlapR);
+      oGrad.addColorStop(0, `rgba(139,92,246,${0.3 + needScore * 0.4})`);
+      oGrad.addColorStop(1, 'rgba(139,92,246,0)');
+      ctx.beginPath();
+      ctx.arc(overlapX, cy, overlapR, 0, TAU);
+      ctx.fillStyle = oGrad;
+      ctx.fill();
+    }
+
+    // Need label
+    const needPct = Math.round(needScore * 100);
+    ctx.fillStyle = needPct > 60 ? '#ef4444' : needPct > 30 ? '#f59e0b' : '#10b981';
+    ctx.font = '700 16px Inter';
+    ctx.fillText('Bedarf an Secure HPC:', cx, 35);
+    ctx.font = '900 36px Inter';
+    ctx.fillText(needPct + '%', cx, 75);
+
+    // Bottom bar
+    const barW = w - 100;
+    const barH = 8;
+    const barX = 50;
+    const barY = h - 55;
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    ctx.beginPath();
+    ctx.roundRect(barX, barY, barW, barH, 4);
+    ctx.fill();
+
+    const fillColor = needPct > 60 ? '#ef4444' : needPct > 30 ? '#f59e0b' : '#10b981';
+    const fillGrad = ctx.createLinearGradient(barX, 0, barX + barW * needScore, 0);
+    fillGrad.addColorStop(0, fillColor);
+    fillGrad.addColorStop(1, fillColor + '88');
+    ctx.fillStyle = fillGrad;
+    ctx.beginPath();
+    ctx.roundRect(barX, barY, barW * needScore, barH, 4);
+    ctx.fill();
+  }
+
+  [sensSlider, compSlider, usersSlider].forEach(s => s.addEventListener('input', draw));
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ SYMMETRIC ENCRYPTION DEMO ════════
+// ═══════════════════════════════════════
+(function symmDemo() {
+  const keyLens = [128, 192, 256];
+  const keySlider = $('keyLenSlider');
+  const input = $('symmInput');
+
+  function simpleEncrypt(text, keyLen) {
+    let result = '';
+    const seed = keyLen * 7;
+    for (let i = 0; i < text.length; i++) {
+      const code = text.charCodeAt(i);
+      const shifted = code ^ ((seed + i * 13) % 256);
+      result += shifted.toString(16).padStart(2, '0');
+    }
+    return result.toUpperCase();
+  }
+
+  keySlider.addEventListener('input', () => {
+    $('keyLenVal').textContent = keyLens[+keySlider.value];
+  });
+
+  $('symmEncBtn').addEventListener('click', () => {
+    const text = input.value || 'Hallo Welt!';
+    const keyLen = keyLens[+keySlider.value];
+    const cipher = simpleEncrypt(text, keyLen);
+    $('symmPlainText').textContent = text;
+    $('symmCipherText').textContent = cipher.substring(0, 60) + (cipher.length > 60 ? '...' : '');
+    $('symmCipher').style.borderColor = 'var(--accent-red)';
+    $('symmCipherText').style.color = 'var(--accent-red)';
+  });
+
+  $('symmDecBtn').addEventListener('click', () => {
+    const text = input.value || 'Hallo Welt!';
+    $('symmCipherText').textContent = text;
+    $('symmCipherText').style.color = 'var(--accent-green)';
+    $('symmCipher').style.borderColor = 'var(--accent-green)';
+  });
+})();
+
+// ═══════════════════════════════════════
+// ═══ ASYMMETRIC ENCRYPTION CANVAS ═════
+// ═══════════════════════════════════════
+(function asymmDemo() {
+  const { ctx, w, h } = setupCanvas($('asymmCanvas'));
+  const rsaSlider = $('rsaKeySlider');
+  const rsaLens = [1024, 2048, 3072, 4096];
+  let animPhase = -1;
+  let animT = 0;
+
+  rsaSlider.addEventListener('input', () => {
+    $('rsaKeyVal').textContent = rsaLens[+rsaSlider.value];
+    draw();
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    const keyLen = rsaLens[+rsaSlider.value];
+
+    // Alice (sender)
+    drawPerson(ctx, 120, 200, '👩‍🔬', 'Alice (Forscherin)', '#4f8fff');
+    // Bob (server)
+    drawPerson(ctx, w - 120, 200, '🖥️', 'Secure-Partition-Server', '#8b5cf6');
+
+    // Keys
+    // Public key (open)
+    drawKey(ctx, 300, 100, '🔓', `Public Key (${keyLen} Bit)`, '#10b981', false);
+    // Private key (closed)
+    drawKey(ctx, w - 300, 100, '🔐', `Private Key (${keyLen} Bit)`, '#ef4444', true);
+
+    // Message / AES key
+    const msgX = lerp(200, w - 200, clamp(animT, 0, 1));
+    const msgY = 300 + Math.sin(animT * Math.PI) * -60;
+
+    if (animPhase >= 0) {
+      // Draw message
+      ctx.save();
+      ctx.shadowColor = animPhase >= 1 ? 'rgba(239,68,68,0.5)' : 'rgba(16,185,129,0.5)';
+      ctx.shadowBlur = 15;
+      ctx.fillStyle = animPhase >= 1 && animPhase < 3 ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)';
+      ctx.strokeStyle = animPhase >= 1 && animPhase < 3 ? '#ef4444' : '#10b981';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(msgX - 60, msgY - 25, 120, 50, 10);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = 'var(--text-primary)';
+      ctx.font = '600 12px Inter';
+      ctx.textAlign = 'center';
+      if (animPhase === 0) ctx.fillText('AES-Schlüssel', msgX, msgY - 5);
+      else if (animPhase === 1) ctx.fillText('🔒 Verschlüsselt', msgX, msgY - 5);
+      else if (animPhase === 2) ctx.fillText('🔒 Unterwegs...', msgX, msgY, msgY - 5);
+      else if (animPhase === 3) ctx.fillText('🔓 Entschlüsselt!', msgX, msgY - 5);
+
+      ctx.font = '400 10px Inter';
+      ctx.fillStyle = '#9898b0';
+      if (animPhase === 0) ctx.fillText('(Klartext)', msgX, msgY + 12);
+      else if (animPhase === 1) ctx.fillText('(mit Public Key)', msgX, msgY + 12);
+      else if (animPhase === 2) ctx.fillText('(sicher übertragen)', msgX, msgY + 12);
+      else if (animPhase === 3) ctx.fillText('(mit Private Key)', msgX, msgY + 12);
+    }
+
+    // Arrow line
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(200, 300);
+    ctx.lineTo(w - 200, 300);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Phase labels
+    const phases = ['1. Klartext', '2. Verschlüsseln', '3. Übertragen', '4. Entschlüsseln'];
+    ctx.font = '500 11px Inter';
+    ctx.textAlign = 'center';
+    phases.forEach((p, i) => {
+      const px = 150 + i * ((w - 300) / 3);
+      ctx.fillStyle = animPhase === i ? '#4f8fff' : '#5a5a78';
+      ctx.fillText(p, px, h - 20);
+      // dot
+      ctx.beginPath();
+      ctx.arc(px, h - 35, 4, 0, TAU);
+      ctx.fillStyle = animPhase === i ? '#4f8fff' : '#2a2a3e';
+      ctx.fill();
+    });
+  }
+
+  function drawPerson(ctx, x, y, emoji, label, color) {
+    ctx.save();
+    ctx.shadowColor = color + '44';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = color + '15';
+    ctx.strokeStyle = color + '55';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(x, y, 45, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    ctx.font = '36px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(emoji, x, y + 12);
+    ctx.font = '500 11px Inter';
+    ctx.fillStyle = color;
+    ctx.fillText(label, x, y + 65);
+  }
+
+  function drawKey(ctx, x, y, emoji, label, color, isPrivate) {
+    ctx.save();
+    ctx.fillStyle = color + '12';
+    ctx.strokeStyle = color + '44';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x - 70, y - 22, 140, 44, 22);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    ctx.font = '18px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(emoji, x - 45, y + 6);
+    ctx.font = '500 10px Inter';
+    ctx.fillStyle = color;
+    ctx.fillText(label, x + 10, y + 4);
+  }
+
+  let animInterval = null;
+  $('asymmAnimBtn').addEventListener('click', () => {
+    if (animInterval) { clearInterval(animInterval); animInterval = null; }
+    animPhase = 0;
+    animT = 0;
+    draw();
+
+    animInterval = setInterval(() => {
+      animT += 0.02;
+      if (animT >= 1) {
+        animPhase++;
+        animT = 0;
+        if (animPhase > 3) {
+          clearInterval(animInterval);
+          animInterval = null;
+          animPhase = 3;
+          animT = 1;
+        }
+      }
+      draw();
+    }, 30);
+  });
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ DIGITAL SIGNATURES CANVAS ════════
+// ═══════════════════════════════════════
+(function signDemo() {
+  const { ctx, w, h } = setupCanvas($('signCanvas'));
+  let state = 'unsigned'; // unsigned, signed, verified, tampered
+  let animT = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    // Document
+    const docX = 200, docY = h / 2;
+    ctx.save();
+    ctx.shadowColor = state === 'tampered' ? 'rgba(239,68,68,0.3)' : 'rgba(79,143,255,0.2)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = '#1a1a28';
+    ctx.strokeStyle = state === 'tampered' ? '#ef4444' : state === 'verified' ? '#10b981' : state === 'signed' ? '#8b5cf6' : '#2a2a3e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(docX - 80, docY - 90, 160, 180, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Document content lines
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    for (let i = 0; i < 5; i++) {
+      const lw = 80 + Math.sin(i * 3) * 30;
+      ctx.beginPath();
+      ctx.roundRect(docX - 55, docY - 60 + i * 22, lw, 6, 3);
+      ctx.fill();
+    }
+
+    ctx.font = '600 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#e8e8f0';
+    ctx.fillText('📜 Batch-Skript', docX, docY - 100);
+
+    if (state === 'tampered') {
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '500 11px Inter';
+      ctx.fillText('⚠️ MANIPULIERT!', docX, docY + 110);
+      // Red X over doc
+      ctx.strokeStyle = 'rgba(239,68,68,0.6)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(docX - 50, docY - 50);
+      ctx.lineTo(docX + 50, docY + 50);
+      ctx.moveTo(docX + 50, docY - 50);
+      ctx.lineTo(docX - 50, docY + 50);
+      ctx.stroke();
+    }
+
+    // Signature area
+    if (state === 'signed' || state === 'verified') {
+      ctx.fillStyle = '#8b5cf6' + '22';
+      ctx.strokeStyle = '#8b5cf6';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(docX - 55, docY + 40, 110, 30, 6);
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = '500 10px JetBrains Mono';
+      ctx.fillStyle = '#8b5cf6';
+      ctx.fillText('SIG: a3f8...c2d1', docX, docY + 60);
+    }
+
+    // Hash visualization
+    const hashX = w / 2, hashY = h / 2;
+    ctx.fillStyle = '#1a1a28';
+    ctx.strokeStyle = '#f59e0b55';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(hashX - 70, hashY - 35, 140, 70, 10);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = '600 12px Inter';
+    ctx.fillStyle = '#f59e0b';
+    ctx.textAlign = 'center';
+    ctx.fillText('Hash (SHA-256)', hashX, hashY - 12);
+    ctx.font = '500 9px JetBrains Mono';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText(state === 'tampered' ? 'e7b2...XXXX ≠' : 'e7b2...9f4a', hashX, hashY + 8);
+
+    // Arrow doc -> hash
+    drawArrow(ctx, docX + 80, docY, hashX - 70, hashY, '#f59e0b44');
+
+    // Verification result
+    const resX = w - 200, resY = h / 2;
+    if (state === 'verified') {
+      ctx.save();
+      ctx.shadowColor = 'rgba(16,185,129,0.4)';
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = 'rgba(16,185,129,0.1)';
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(resX, resY, 50, 0, TAU);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+      ctx.font = '40px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('✅', resX, resY + 14);
+      ctx.font = '600 13px Inter';
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('GÜLTIG', resX, resY + 70);
+      drawArrow(ctx, hashX + 70, hashY, resX - 50, resY, '#10b98144');
+    } else if (state === 'tampered') {
+      ctx.save();
+      ctx.shadowColor = 'rgba(239,68,68,0.4)';
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = 'rgba(239,68,68,0.1)';
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(resX, resY, 50, 0, TAU);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+      ctx.font = '40px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('❌', resX, resY + 14);
+      ctx.font = '600 13px Inter';
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText('UNGÜLTIG!', resX, resY + 70);
+      drawArrow(ctx, hashX + 70, hashY, resX - 50, resY, '#ef444444');
+    }
+
+    // Status text
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    const statusTexts = {
+      unsigned: 'Klicke "Signieren", um das Batch-Skript zu signieren.',
+      signed: 'Signiert! Klicke "Verifizieren" oder "Manipulieren".',
+      verified: 'Signatur ist gültig — das Skript wurde nicht verändert!',
+      tampered: 'Manipulation erkannt! Der Hash stimmt nicht mehr überein.'
+    };
+    ctx.fillText(statusTexts[state], w / 2, h - 20);
+  }
+
+  function drawArrow(ctx, x1, y1, x2, y2, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  $('signBtn').addEventListener('click', () => { state = 'signed'; draw(); });
+  $('verifyBtn').addEventListener('click', () => { state = state === 'tampered' ? 'tampered' : 'verified'; draw(); });
+  $('tamperBtn').addEventListener('click', () => { state = 'tampered'; draw(); });
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ CONTAINER CANVAS ═════════════════
+// ═══════════════════════════════════════
+(function containerDemo() {
+  const { ctx, w, h } = setupCanvas($('containerCanvas'));
+  const layerSlider = $('layerSlider');
+  const encToggle = $('encryptToggle');
+  let encrypted = false;
+
+  encToggle.addEventListener('click', () => {
+    encrypted = !encrypted;
+    encToggle.classList.toggle('on', encrypted);
+    draw();
+  });
+
+  layerSlider.addEventListener('input', () => {
+    $('layerVal').textContent = layerSlider.value;
+    draw();
+  });
+
+  const layerNames = ['OS (Ubuntu)', 'Python 3.10', 'NumPy / SciPy', 'TensorFlow', 'Eigener Code', 'Daten-Mount'];
+  const layerColors = ['#ef4444', '#f59e0b', '#10b981', '#4f8fff', '#8b5cf6', '#ec4899'];
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    const numLayers = +layerSlider.value;
+    const cx = w / 2;
+    const baseY = h - 80;
+    const layerH = 45;
+    const layerW = 320;
+
+    // Container outline
+    const totalH = numLayers * layerH + 30;
+    ctx.save();
+    if (encrypted) {
+      ctx.shadowColor = 'rgba(239,68,68,0.3)';
+      ctx.shadowBlur = 30;
+      ctx.strokeStyle = '#ef4444';
+      ctx.setLineDash([8, 4]);
+    } else {
+      ctx.shadowColor = 'rgba(79,143,255,0.2)';
+      ctx.shadowBlur = 20;
+      ctx.strokeStyle = '#4f8fff55';
+      ctx.setLineDash([]);
+    }
+    ctx.lineWidth = 2;
+    ctx.fillStyle = encrypted ? 'rgba(239,68,68,0.03)' : 'rgba(79,143,255,0.03)';
+    ctx.beginPath();
+    ctx.roundRect(cx - layerW / 2 - 20, baseY - totalH - 10, layerW + 40, totalH + 30, 16);
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Label
+    ctx.font = '700 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = encrypted ? '#ef4444' : '#4f8fff';
+    ctx.fillText(encrypted ? '🔒 Verschlüsselter Container (SIF)' : '📦 Singularity Container (SIF)', cx, baseY - totalH - 25);
+
+    // Layers
+    for (let i = 0; i < numLayers; i++) {
+      const ly = baseY - (i + 1) * layerH;
+      const color = layerColors[i];
+
+      ctx.fillStyle = color + '18';
+      ctx.strokeStyle = color + '55';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(cx - layerW / 2, ly, layerW, layerH - 6, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      if (encrypted) {
+        // Show garbled text
+        ctx.font = '500 12px JetBrains Mono';
+        ctx.fillStyle = '#ef4444';
+        ctx.textAlign = 'center';
+        const garbled = Array.from({ length: 20 }, () => String.fromCharCode(0x2580 + Math.floor(Math.random() * 32))).join('');
+        ctx.fillText(garbled, cx, ly + layerH / 2 + 2);
+      } else {
+        ctx.font = '600 12px Inter';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(layerNames[i], cx - layerW / 2 + 15, ly + layerH / 2 + 2);
+      }
+    }
+
+    // Host system comparison
+    const hostX = 100;
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.strokeStyle = '#2a2a3e';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(hostX - 80, 40, 160, 100, 10);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = '600 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#5a5a78';
+    ctx.fillText('🖥️ Host-System', hostX, 35);
+    ctx.font = '400 10px Inter';
+    ctx.fillStyle = '#5a5a78';
+    ctx.fillText('Kernel + Hardware', hostX, 75);
+    ctx.fillText('Shared Filesystem', hostX, 95);
+    ctx.fillText('Netzwerk', hostX, 115);
+
+    // Arrow from host to container
+    ctx.strokeStyle = '#2a2a3e';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hostX + 80, 90);
+    ctx.lineTo(cx - layerW / 2 - 20, baseY - totalH / 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Singularity vs Docker comparison
+    const compX = w - 130;
+    ctx.fillStyle = 'rgba(16,185,129,0.06)';
+    ctx.strokeStyle = '#10b98133';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(compX - 100, 30, 200, 140, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = '700 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#10b981';
+    ctx.fillText('Warum Singularity?', compX, 55);
+
+    const reasons = ['✓ Kein Root nötig', '✓ HPC-optimiert', '✓ Einzelne SIF-Datei', '✓ Verschlüsselbar', '✗ Docker braucht Root'];
+    ctx.font = '400 11px Inter';
+    ctx.textAlign = 'left';
+    reasons.forEach((r, i) => {
+      ctx.fillStyle = r.startsWith('✗') ? '#ef4444' : '#10b981';
+      ctx.fillText(r, compX - 80, 80 + i * 20);
+    });
+  }
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ HPC & SLURM CANVAS ══════════════
+// ═══════════════════════════════════════
+(function hpcDemo() {
+  const { ctx, w, h } = setupCanvas($('hpcCanvas'));
+  const nodeSlider = $('nodeSlider');
+  const jobSlider = $('jobSlider');
+  let nodes = [];
+  let jobs = [];
+  let scheduled = false;
+
+  function generateNodes() {
+    const n = +nodeSlider.value;
+    nodes = [];
+    const cols = Math.ceil(Math.sqrt(n * 1.5));
+    const rows = Math.ceil(n / cols);
+    const startX = 300, startY = 80;
+    const gapX = 70, gapY = 65;
+    for (let i = 0; i < n; i++) {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      nodes.push({
+        x: startX + col * gapX,
+        y: startY + row * gapY,
+        state: 'idle', // idle, busy, secure
+        jobId: -1
+      });
+    }
+  }
+
+  function generateJobs() {
+    const n = +jobSlider.value;
+    jobs = [];
+    const colors = ['#4f8fff', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#84cc16'];
+    for (let i = 0; i < n; i++) {
+      jobs.push({
+        id: i,
+        name: `Job ${i + 1}`,
+        color: colors[i % colors.length],
+        nodes: 1 + Math.floor(Math.random() * 3),
+        assigned: false
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    $('nodeVal').textContent = nodeSlider.value;
+    $('jobVal').textContent = jobSlider.value;
+
+    // Slurm controller
+    ctx.fillStyle = 'rgba(139,92,246,0.08)';
+    ctx.strokeStyle = '#8b5cf655';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(20, 30, 200, 80, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = '700 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fillText('📋 Slurm Scheduler', 120, 60);
+    ctx.font = '400 11px Inter';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText(`${jobs.filter(j => j.assigned).length}/${jobs.length} Jobs verteilt`, 120, 85);
+
+    // Job queue
+    ctx.font = '600 11px Inter';
+    ctx.fillStyle = '#9898b0';
+    ctx.textAlign = 'left';
+    ctx.fillText('Warteschlange:', 20, 140);
+
+    jobs.forEach((job, i) => {
+      const jx = 20, jy = 155 + i * 28;
+      if (jy > h - 20) return;
+      ctx.fillStyle = job.assigned ? job.color + '33' : job.color + '18';
+      ctx.strokeStyle = job.color + '55';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(jx, jy, 180, 22, 6);
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = '500 10px Inter';
+      ctx.fillStyle = job.color;
+      ctx.textAlign = 'left';
+      ctx.fillText(`${job.name} (${job.nodes} Knoten)`, jx + 8, jy + 15);
+      if (job.assigned) {
+        ctx.fillStyle = '#10b981';
+        ctx.textAlign = 'right';
+        ctx.fillText('✓', jx + 172, jy + 15);
+      }
+    });
+
+    // Nodes
+    nodes.forEach((node, i) => {
+      const size = 50;
+      let color = '#2a2a3e';
+      let borderColor = '#3a3a4e';
+      let label = 'Frei';
+
+      if (node.state === 'busy') {
+        const job = jobs[node.jobId];
+        color = job ? job.color + '22' : '#4f8fff22';
+        borderColor = job ? job.color : '#4f8fff';
+        label = job ? job.name : 'Busy';
+      } else if (node.state === 'secure') {
+        color = 'rgba(16,185,129,0.12)';
+        borderColor = '#10b981';
+        label = '🔒 Secure';
+      }
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = node.state === 'idle' ? 1 : 2;
+      ctx.beginPath();
+      ctx.roundRect(node.x - size / 2, node.y - size / 2 + 20, size, size, 8);
+      ctx.fill();
+      ctx.stroke();
+
+      if (node.state === 'secure') {
+        ctx.save();
+        ctx.shadowColor = 'rgba(16,185,129,0.4)';
+        ctx.shadowBlur = 15;
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(node.x - size / 2 - 4, node.y - size / 2 + 16, size + 8, size + 8, 10);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.font = '400 9px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = node.state === 'idle' ? '#5a5a78' : borderColor;
+      ctx.fillText(label, node.x, node.y + 50);
+      ctx.fillText(`N${i}`, node.x, node.y + 30);
+    });
+
+    // Legend
+    ctx.font = '500 10px Inter';
+    ctx.textAlign = 'left';
+    const legendY = h - 40;
+    [['Frei', '#2a2a3e', '#5a5a78'], ['Belegt', '#4f8fff22', '#4f8fff'], ['Secure', 'rgba(16,185,129,0.12)', '#10b981']].forEach(([label, bg, fg], i) => {
+      const lx = w - 300 + i * 100;
+      ctx.fillStyle = bg;
+      ctx.strokeStyle = fg;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(lx, legendY, 14, 14, 3);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = fg;
+      ctx.fillText(label, lx + 20, legendY + 11);
+    });
+  }
+
+  $('scheduleBtn').addEventListener('click', () => {
+    generateNodes();
+    generateJobs();
+    // Assign jobs to nodes
+    let nodeIdx = 0;
+    jobs.forEach(job => {
+      let assigned = 0;
+      while (assigned < job.nodes && nodeIdx < nodes.length) {
+        nodes[nodeIdx].state = 'busy';
+        nodes[nodeIdx].jobId = job.id;
+        job.assigned = true;
+        nodeIdx++;
+        assigned++;
+      }
+    });
+    // Mark one as secure
+    if (nodes.length > 0) {
+      const secIdx = Math.min(nodeIdx, nodes.length - 1);
+      nodes[secIdx].state = 'secure';
+    }
+    draw();
+  });
+
+  nodeSlider.addEventListener('input', () => { generateNodes(); generateJobs(); draw(); });
+  jobSlider.addEventListener('input', () => { generateNodes(); generateJobs(); draw(); });
+
+  generateNodes();
+  generateJobs();
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ THREAT MODEL CANVAS ══════════════
+// ═══════════════════════════════════════
+const threatExplanations = {
+  admin: '<strong>Abwehr: Verschlüsselung.</strong> Alle Daten sind mit AES-256 verschlüsselt. Selbst ein Admin mit Root-Zugriff sieht nur Chiffretext. Der private Schlüssel liegt auf dem Secure-Partition-Server, nicht auf dem Cluster.',
+  user: '<strong>Abwehr: Verschlüsselung + Isolation.</strong> Daten sind verschlüsselt auf dem Shared Filesystem. Während der Berechnung ist der Knoten vom Netzwerk isoliert — kein anderer Nutzer kann zugreifen.',
+  network: '<strong>Abwehr: Netzwerk-Isolation.</strong> Der Compute-Knoten wird per Firewall vom Cluster-Netzwerk getrennt. Kein SSH, kein Netzwerkverkehr — nur Kommunikation mit dem Secure-Partition-Server.',
+  filesystem: '<strong>Abwehr: Verschlüsselung at rest.</strong> Auf dem Shared Filesystem liegen nur verschlüsselte Dateien. Ohne den AES-Schlüssel sind sie wertlos.',
+  tamper: '<strong>Abwehr: Digitale Signaturen.</strong> Das Batch-Skript wird vom Nutzer signiert. Vor der Ausführung wird die Signatur geprüft. Jede Manipulation wird erkannt.',
+  memory: '<strong>Teilweise Abwehr.</strong> Dies ist eine bekannte Einschränkung. Während der Berechnung sind Daten im RAM unverschlüsselt. Hardware-TEEs (AMD SEV, Intel SGX) könnten dies in Zukunft lösen.'
+};
+
+function toggleThreat(el) {
+  el.classList.toggle('mitigated');
+  const threat = el.dataset.threat;
+  const expEl = $('threatExplanation');
+  const textEl = $('threatExplanationText');
+  textEl.innerHTML = threatExplanations[threat];
+  expEl.style.display = 'flex';
+  drawThreatCanvas();
+}
+
+(function threatCanvasInit() {
+  const { ctx, w, h } = setupCanvas($('threatCanvas'));
+  window.drawThreatCanvas = function () {
+    ctx.clearRect(0, 0, w, h);
+
+    // Central HPC cluster
+    const cx = w / 2, cy = h / 2;
+    ctx.save();
+    ctx.shadowColor = 'rgba(79,143,255,0.2)';
+    ctx.shadowBlur = 30;
+    ctx.fillStyle = 'rgba(79,143,255,0.06)';
+    ctx.strokeStyle = '#4f8fff44';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 100, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.font = '32px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🖥️', cx, cy - 10);
+    ctx.font = '700 14px Inter';
+    ctx.fillStyle = '#4f8fff';
+    ctx.fillText('HPC Cluster', cx, cy + 25);
+
+    // Secure partition inside
+    const mitigatedItems = document.querySelectorAll('.threat-item.mitigated');
+    if (mitigatedItems.length > 0) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(16,185,129,0.3)';
+      ctx.shadowBlur = 20;
+      ctx.fillStyle = 'rgba(16,185,129,0.08)';
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 3]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 60, 0, TAU);
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      ctx.font = '500 10px Inter';
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('🛡️ Secure Partition', cx, cy + 45);
+    }
+
+    // Threat actors around the cluster
+    const threats = [
+      { key: 'admin', emoji: '👤', label: 'Admin', angle: -Math.PI / 3 },
+      { key: 'user', emoji: '🕵️', label: 'Nutzer', angle: -Math.PI / 6 },
+      { key: 'network', emoji: '🌐', label: 'Netzwerk', angle: Math.PI / 6 },
+      { key: 'filesystem', emoji: '💾', label: 'Dateisystem', angle: Math.PI / 3 },
+      { key: 'tamper', emoji: '🔨', label: 'Manipulation', angle: 2 * Math.PI / 3 },
+      { key: 'memory', emoji: '🧠', label: 'Speicher', angle: -2 * Math.PI / 3 }
+    ];
+
+    threats.forEach(t => {
+      const r = 200;
+      const tx = cx + Math.cos(t.angle) * r;
+      const ty = cy + Math.sin(t.angle) * r;
+      const el = document.querySelector(`.threat-item[data-threat="${t.key}"]`);
+      const mitigated = el && el.classList.contains('mitigated');
+
+      // Line to cluster
+      ctx.strokeStyle = mitigated ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.25)';
+      ctx.lineWidth = mitigated ? 1 : 2;
+      ctx.setLineDash(mitigated ? [4, 6] : []);
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Block symbol if mitigated
+      if (mitigated) {
+        const mx = (tx + cx) / 2, my = (ty + cy) / 2;
+        ctx.save();
+        ctx.shadowColor = 'rgba(16,185,129,0.5)';
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = '#0a0a0f';
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(mx, my, 14, 0, TAU);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+        ctx.font = '14px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🛡️', mx, my + 5);
+      }
+
+      // Threat actor circle
+      ctx.save();
+      ctx.shadowColor = mitigated ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+      ctx.shadowBlur = 15;
+      ctx.fillStyle = mitigated ? 'rgba(16,185,129,0.08)' : 'rgba(239,68,68,0.08)';
+      ctx.strokeStyle = mitigated ? '#10b981' : '#ef4444';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(tx, ty, 32, 0, TAU);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.font = '22px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(t.emoji, tx, ty + 7);
+      ctx.font = '500 10px Inter';
+      ctx.fillStyle = mitigated ? '#10b981' : '#ef4444';
+      ctx.fillText(t.label, tx, ty + 45);
+    });
+  };
+  drawThreatCanvas();
+})();
+
+// ═══════════════════════════════════════
+// ═══ LAYERED ENCRYPTION CANVAS ════════
+// ═══════════════════════════════════════
+(function layeredEncDemo() {
+  const { ctx, w, h } = setupCanvas($('layeredEncCanvas'));
+  const slider = $('encProgressSlider');
+  let autoPlaying = false;
+  let autoInterval = null;
+
+  function draw() {
+    const progress = +slider.value;
+    $('encProgressVal').textContent = progress + '%';
+    ctx.clearRect(0, 0, w, h);
+
+    // Progress bars for sub-items
+    const dataP = clamp((progress - 0) / 25, 0, 1);
+    const contP = clamp((progress - 25) / 25, 0, 1);
+    const scriptP = clamp((progress - 50) / 25, 0, 1);
+    const sigP = clamp((progress - 75) / 25, 0, 1);
+
+    $('dataEncProgress').style.width = (dataP * 100) + '%';
+    $('contEncProgress').style.width = (contP * 100) + '%';
+    $('scriptEncProgress').style.width = (scriptP * 100) + '%';
+    $('sigProgress').style.width = (sigP * 100) + '%';
+
+    // Scene: local machine on left, shared filesystem on right
+    const localX = 140, remoteX = w - 140;
+    const midY = h / 2;
+
+    // Local machine
+    ctx.save();
+    ctx.shadowColor = 'rgba(79,143,255,0.2)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = 'rgba(79,143,255,0.05)';
+    ctx.strokeStyle = '#4f8fff44';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(30, 40, 220, h - 80, 16);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    ctx.font = '700 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#4f8fff';
+    ctx.fillText('💻 Lokaler Rechner', localX, 30);
+
+    // Remote filesystem
+    ctx.save();
+    ctx.shadowColor = 'rgba(139,92,246,0.2)';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = 'rgba(139,92,246,0.05)';
+    ctx.strokeStyle = '#8b5cf644';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(w - 250, 40, 220, h - 80, 16);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    ctx.font = '700 13px Inter';
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fillText('📁 Shared Filesystem', remoteX, 30);
+
+    // Three items to encrypt
+    const items = [
+      { name: '📄 Sensible Daten', color: '#10b981', progress: dataP, y: midY - 130 },
+      { name: '📦 Container (SIF)', color: '#8b5cf6', progress: contP, y: midY },
+      { name: '📜 Batch-Skript', color: '#f59e0b', progress: scriptP, y: midY + 130 }
+    ];
+
+    items.forEach(item => {
+      const boxW = 160, boxH = 55;
+
+      // Left side (original or encrypting)
+      const leftAlpha = 1 - item.progress * 0.5;
+      ctx.globalAlpha = leftAlpha;
+      ctx.fillStyle = item.color + '15';
+      ctx.strokeStyle = item.color + '55';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(localX - boxW / 2, item.y - boxH / 2, boxW, boxH, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '600 11px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = item.color;
+      ctx.fillText(item.name, localX, item.y - 5);
+
+      if (item.progress > 0 && item.progress < 1) {
+        ctx.font = '500 10px Inter';
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText(`🔒 ${Math.round(item.progress * 100)}%`, localX, item.y + 15);
+      }
+      ctx.globalAlpha = 1;
+
+      // Transfer arrow
+      if (item.progress > 0) {
+        const arrowProgress = item.progress;
+        const ax1 = localX + boxW / 2 + 10;
+        const ax2 = remoteX - boxW / 2 - 10;
+        const arrowX = lerp(ax1, ax2, arrowProgress);
+
+        ctx.strokeStyle = item.color + '33';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(ax1, item.y);
+        ctx.lineTo(ax2, item.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Moving packet
+        if (item.progress < 1) {
+          ctx.save();
+          ctx.shadowColor = item.color;
+          ctx.shadowBlur = 10;
+          ctx.fillStyle = item.color;
+          ctx.beginPath();
+          ctx.arc(arrowX, item.y, 5, 0, TAU);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // Right side (encrypted version)
+      if (item.progress > 0.3) {
+        const rightAlpha = clamp((item.progress - 0.3) / 0.7, 0, 1);
+        ctx.globalAlpha = rightAlpha;
+        ctx.fillStyle = 'rgba(239,68,68,0.08)';
+        ctx.strokeStyle = '#ef444466';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(remoteX - boxW / 2, item.y - boxH / 2, boxW, boxH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = '600 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText('🔒 ' + item.name.split(' ').slice(1).join(' '), remoteX, item.y - 5);
+        ctx.font = '400 9px JetBrains Mono';
+        ctx.fillStyle = '#ef4444aa';
+        ctx.fillText('AES-256 encrypted', remoteX, item.y + 14);
+        ctx.globalAlpha = 1;
+      }
+    });
+
+    // Signature (bottom)
+    if (sigP > 0) {
+      const sigAlpha = sigP;
+      ctx.globalAlpha = sigAlpha;
+      const sigY = midY + 130;
+      ctx.fillStyle = 'rgba(236,72,153,0.1)';
+      ctx.strokeStyle = '#ec489966';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(remoteX - 80, sigY + 35, 160, 35, 8);
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = '600 10px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ec4899';
+      ctx.fillText('✍️ Signatur (RSA)', remoteX, sigY + 58);
+      ctx.globalAlpha = 1;
+    }
+
+    // Phase label
+    ctx.font = '600 14px Inter';
+    ctx.textAlign = 'center';
+    let phaseText = '';
+    let phaseColor = '#9898b0';
+    if (progress < 25) { phaseText = '1/4 — Daten verschlüsseln...'; phaseColor = '#10b981'; }
+    else if (progress < 50) { phaseText = '2/4 — Container verschlüsseln...'; phaseColor = '#8b5cf6'; }
+    else if (progress < 75) { phaseText = '3/4 — Batch-Skript verschlüsseln...'; phaseColor = '#f59e0b'; }
+    else { phaseText = '4/4 — Skript signieren...'; phaseColor = '#ec4899'; }
+    if (progress >= 100) { phaseText = '✅ Alles bereit zum Upload!'; phaseColor = '#10b981'; }
+    ctx.fillStyle = phaseColor;
+    ctx.fillText(phaseText, w / 2, h - 15);
+  }
+
+  slider.addEventListener('input', draw);
+
+  $('encAnimBtn').addEventListener('click', () => {
+    if (autoPlaying) {
+      clearInterval(autoInterval);
+      autoPlaying = false;
+      $('encAnimBtn').textContent = '▶ Automatisch abspielen';
+      return;
+    }
+    autoPlaying = true;
+    $('encAnimBtn').textContent = '⏸ Pause';
+    slider.value = 0;
+    autoInterval = setInterval(() => {
+      slider.value = +slider.value + 1;
+      draw();
+      if (+slider.value >= 100) {
+        clearInterval(autoInterval);
+        autoPlaying = false;
+        $('encAnimBtn').textContent = '▶ Automatisch abspielen';
+      }
+    }, 60);
+  });
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ WORKFLOW CANVAS ══════════════════
+// ═══════════════════════════════════════
+(function workflowDemo() {
+  const { ctx, w, h } = setupCanvas($('workflowCanvas'));
+  const slider = $('wfStepSlider');
+  let autoPlaying = false;
+  let autoInterval = null;
+
+  const steps = [
+    { title: 'Verschlüsselung', desc: 'Lokal: AES + RSA', icon: '🔐', color: '#4f8fff',
+      drawFn: drawStep1 },
+    { title: 'Signierung', desc: 'Batch-Skript signieren', icon: '✍️', color: '#8b5cf6',
+      drawFn: drawStep2 },
+    { title: 'Upload', desc: 'SCP → Shared FS', icon: '📤', color: '#10b981',
+      drawFn: drawStep3 },
+    { title: 'Job einreichen', desc: 'sbatch → Slurm', icon: '📋', color: '#f59e0b',
+      drawFn: drawStep4 },
+    { title: 'Isolation', desc: 'Firewall aktivieren', icon: '🏝️', color: '#ef4444',
+      drawFn: drawStep5 },
+    { title: 'Entschlüsselung', desc: 'AES-Key via RSA', icon: '🔓', color: '#ec4899',
+      drawFn: drawStep6 },
+    { title: 'Ausführung', desc: 'Container starten', icon: '⚙️', color: '#06b6d4',
+      drawFn: drawStep7 },
+    { title: 'Cleanup', desc: 'Ergebnis + Löschen', icon: '🧹', color: '#84cc16',
+      drawFn: drawStep8 }
+  ];
+
+  function draw() {
+    const step = +slider.value;
+    $('wfStepVal').textContent = step + ' / 8';
+    ctx.clearRect(0, 0, w, h);
+
+    // Timeline at top
+    const tlY = 35;
+    const tlX1 = 60, tlX2 = w - 60;
+    ctx.strokeStyle = '#2a2a3e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(tlX1, tlY);
+    ctx.lineTo(tlX2, tlY);
+    ctx.stroke();
+
+    // Progress fill
+    const fillW = ((step - 1) / 7) * (tlX2 - tlX1);
+    const grad = ctx.createLinearGradient(tlX1, 0, tlX1 + fillW, 0);
+    grad.addColorStop(0, '#4f8fff');
+    grad.addColorStop(1, steps[step - 1].color);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(tlX1, tlY);
+    ctx.lineTo(tlX1 + fillW, tlY);
+    ctx.stroke();
+
+    // Step dots
+    steps.forEach((s, i) => {
+      const sx = tlX1 + (i / 7) * (tlX2 - tlX1);
+      const isActive = i + 1 === step;
+      const isDone = i + 1 < step;
+
+      ctx.beginPath();
+      ctx.arc(sx, tlY, isActive ? 10 : 6, 0, TAU);
+      if (isDone) {
+        ctx.fillStyle = '#10b981';
+      } else if (isActive) {
+        ctx.fillStyle = s.color;
+        ctx.save();
+        ctx.shadowColor = s.color;
+        ctx.shadowBlur = 15;
+      } else {
+        ctx.fillStyle = '#2a2a3e';
+      }
+      ctx.fill();
+      if (isActive) ctx.restore();
+
+      ctx.font = isActive ? '600 9px Inter' : '400 8px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = isActive ? s.color : '#5a5a78';
+      ctx.fillText(s.icon + ' ' + s.title, sx, tlY + 22);
+    });
+
+    // Draw current step scene
+    steps[step - 1].drawFn(ctx, w, h);
+
+    // Update workflow steps list
+    document.querySelectorAll('.workflow-step').forEach((el, i) => {
+      el.classList.remove('active', 'done');
+      if (i + 1 === step) el.classList.add('active');
+      else if (i + 1 < step) el.classList.add('done');
+    });
+
+    // Workflow line fill
+    const linePct = ((step - 1) / 7) * 100;
+    $('wfLineFill').style.height = linePct + '%';
+  }
+
+  function drawStep1(ctx, w, h) {
+    drawSceneBox(ctx, 100, 120, 250, 350, '💻 Lokaler Rechner', '#4f8fff');
+    drawItem(ctx, 170, 200, '📄', 'Daten', '#10b981');
+    drawItem(ctx, 170, 270, '📦', 'Container', '#8b5cf6');
+    drawItem(ctx, 170, 340, '📜', 'Skript', '#f59e0b');
+    // Lock icons
+    drawLock(ctx, 280, 200, '#10b981');
+    drawLock(ctx, 280, 270, '#8b5cf6');
+    drawLock(ctx, 280, 340, '#f59e0b');
+    // AES key
+    drawItem(ctx, 500, 250, '🔑', 'AES-256 Key', '#ef4444');
+    // RSA encryption of key
+    drawArrowLine(ctx, 540, 270, 650, 270, '#ef444466');
+    drawItem(ctx, 700, 250, '🔒', 'Key (RSA-enc)', '#ef4444');
+    // Explanation
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Alles wird lokal verschlüsselt, bevor es den Rechner verlässt.', w / 2, h - 30);
+  }
+
+  function drawStep2(ctx, w, h) {
+    drawSceneBox(ctx, 100, 120, 250, 200, '💻 Lokaler Rechner', '#8b5cf6');
+    drawItem(ctx, 170, 200, '📜', 'Batch-Skript', '#f59e0b');
+    drawArrowLine(ctx, 250, 200, 400, 200, '#8b5cf644');
+    drawItem(ctx, 460, 180, '✍️', 'Hash + Sign', '#8b5cf6');
+    drawArrowLine(ctx, 520, 200, 650, 200, '#ec489944');
+    drawItem(ctx, 710, 180, '📜✍️', 'Signiertes Skript', '#ec4899');
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Das Skript wird mit dem privaten Schlüssel des Nutzers signiert.', w / 2, h - 30);
+  }
+
+  function drawStep3(ctx, w, h) {
+    drawSceneBox(ctx, 50, 120, 200, 300, '💻 Lokal', '#4f8fff');
+    drawSceneBox(ctx, w - 280, 120, 250, 300, '📁 Shared FS', '#8b5cf6');
+    // Items moving
+    const items = [
+      { emoji: '🔒📄', label: 'Daten (enc)', y: 200, color: '#10b981' },
+      { emoji: '🔒📦', label: 'Container (enc)', y: 270, color: '#8b5cf6' },
+      { emoji: '🔒📜✍️', label: 'Skript (enc+sig)', y: 340, color: '#f59e0b' }
+    ];
+    items.forEach(item => {
+      drawArrowLine(ctx, 260, item.y, w - 290, item.y, item.color + '44');
+      ctx.font = '16px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('→', w / 2, item.y + 5);
+      drawItem(ctx, 130, item.y - 20, item.emoji, item.label, item.color);
+    });
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Upload via SCP/SFTP — alles ist verschlüsselt, also sicher.', w / 2, h - 30);
+  }
+
+  function drawStep4(ctx, w, h) {
+    drawSceneBox(ctx, w / 2 - 130, 100, 260, 120, '📋 Slurm Scheduler', '#f59e0b');
+    drawItem(ctx, w / 2 - 40, 170, '📜', 'Job', '#f59e0b');
+    drawArrowLine(ctx, w / 2, 230, w / 2, 310, '#f59e0b44');
+    drawSceneBox(ctx, w / 2 - 100, 320, 200, 100, '🖥️ Compute Node', '#4f8fff');
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Slurm weist dem Job einen Compute-Knoten zu.', w / 2, h - 30);
+  }
+
+  function drawStep5(ctx, w, h) {
+    // Isolated node
+    const cx = w / 2, cy = 280;
+    ctx.save();
+    ctx.shadowColor = 'rgba(239,68,68,0.4)';
+    ctx.shadowBlur = 30;
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 100, 0, TAU);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(239,68,68,0.05)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 100, 0, TAU);
+    ctx.fill();
+    drawItem(ctx, cx - 20, cy - 20, '🖥️', 'Isolierter Knoten', '#ef4444');
+    // Blocked connections
+    const blockedAngles = [0, Math.PI / 3, 2 * Math.PI / 3, Math.PI, -Math.PI / 3, -2 * Math.PI / 3];
+    blockedAngles.forEach(a => {
+      const bx = cx + Math.cos(a) * 140;
+      const by = cy + Math.sin(a) * 140;
+      ctx.strokeStyle = 'rgba(239,68,68,0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * 100, cy + Math.sin(a) * 100);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+      ctx.font = '16px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🚫', bx, by + 6);
+    });
+    // Only SP server allowed
+    drawItem(ctx, cx + 20, cy + 140, '🛡️', 'SP-Server ✓', '#10b981');
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Firewall isoliert den Knoten — nur SP-Server-Kommunikation erlaubt.', w / 2, h - 30);
+  }
+
+  function drawStep6(ctx, w, h) {
+    drawSceneBox(ctx, 50, 120, 220, 200, '🛡️ SP-Server', '#10b981');
+    drawItem(ctx, 130, 200, '🔐', 'RSA Private Key', '#ef4444');
+    drawArrowLine(ctx, 270, 220, 420, 220, '#10b98144');
+    drawItem(ctx, 480, 200, '🔑', 'AES Key (klar)', '#f59e0b');
+    drawArrowLine(ctx, 540, 220, 680, 220, '#f59e0b44');
+    drawItem(ctx, 740, 200, '🔓', 'Daten entschlüsselt', '#10b981');
+    // Signature check
+    drawItem(ctx, 480, 320, '✅', 'Signatur OK', '#10b981');
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('SP-Server entschlüsselt den AES-Key und prüft die Signatur.', w / 2, h - 30);
+  }
+
+  function drawStep7(ctx, w, h) {
+    drawSceneBox(ctx, w / 2 - 160, 100, 320, 300, '🖥️ Isolierter Knoten', '#06b6d4');
+    // Container inside
+    ctx.fillStyle = 'rgba(139,92,246,0.08)';
+    ctx.strokeStyle = '#8b5cf644';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(w / 2 - 120, 160, 240, 180, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = '600 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fillText('📦 Singularity Container', w / 2, 185);
+    drawItem(ctx, w / 2 - 40, 240, '⚙️', 'Berechnung', '#06b6d4');
+    drawItem(ctx, w / 2 - 40, 300, '📄', 'Sensible Daten', '#10b981');
+    // Spinning indicator
+    ctx.font = '500 12px Inter';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Berechnung läuft im verschlüsselten Container auf dem isolierten Knoten.', w / 2, h - 30);
+  }
+
+  function drawStep8(ctx, w, h) {
+    drawSceneBox(ctx, 50, 120, 220, 200, '🖥️ Knoten', '#84cc16');
+    drawItem(ctx, 130, 200, '📊', 'Ergebnis', '#84cc16');
+    drawArrowLine(ctx, 270, 200, 420, 200, '#84cc1644');
+    drawItem(ctx, 480, 180, '🔒', 'Ergebnis (enc)', '#ef4444');
+    drawArrowLine(ctx, 540, 200, 680, 200, '#ef444444');
+    drawSceneBox(ctx, 650, 120, 200, 200, '💻 Nutzer', '#4f8fff');
+    drawItem(ctx, 720, 200, '📊🔓', 'Ergebnis (klar)', '#10b981');
+    // Cleanup
+    drawItem(ctx, 130, 340, '🧹', 'Cleanup: alles gelöscht', '#ef4444');
+    ctx.font = '500 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText('Ergebnisse verschlüsselt zurück. Temporäre Daten sicher gelöscht. Knoten freigegeben.', w / 2, h - 30);
+  }
+
+  // Helper drawing functions
+  function drawSceneBox(ctx, x, y, bw, bh, label, color) {
+    ctx.fillStyle = color + '08';
+    ctx.strokeStyle = color + '33';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x, y, bw, bh, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = '600 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = color;
+    ctx.fillText(label, x + bw / 2, y - 8);
+  }
+
+  function drawItem(ctx, x, y, emoji, label, color) {
+    ctx.font = '22px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(emoji, x + 20, y + 22);
+    ctx.font = '500 10px Inter';
+    ctx.fillStyle = color;
+    ctx.fillText(label, x + 20, y + 42);
+  }
+
+  function drawLock(ctx, x, y, color) {
+    ctx.font = '18px serif';
+    ctx.textAlign = 'center';
+    
+    ctx.fillText('🔒', x, y + 6);
+  }
+
+  function drawArrowLine(ctx, x1, y1, x2, y2, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Arrowhead
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 8 * Math.cos(angle - 0.4), y2 - 8 * Math.sin(angle - 0.4));
+    ctx.lineTo(x2 - 8 * Math.cos(angle + 0.4), y2 - 8 * Math.sin(angle + 0.4));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  slider.addEventListener('input', draw);
+
+  $('wfNextBtn').addEventListener('click', () => {
+    let v = +slider.value + 1;
+    if (v > 8) v = 1;
+    slider.value = v;
+    draw();
+  });
+
+  $('wfAutoBtn').addEventListener('click', () => {
+    if (autoPlaying) {
+      clearInterval(autoInterval);
+      autoPlaying = false;
+      $('wfAutoBtn').textContent = '▶ Auto-Play';
+      return;
+    }
+    autoPlaying = true;
+    $('wfAutoBtn').textContent = '⏸ Stopp';
+    slider.value = 1;
+    draw();
+    autoInterval = setInterval(() => {
+      let v = +slider.value + 1;
+      if (v > 8) {
+        clearInterval(autoInterval);
+        autoPlaying = false;
+        $('wfAutoBtn').textContent = '▶ Auto-Play';
+        return;
+      }
+      slider.value = v;
+      draw();
+    }, 2500);
+  });
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ ISOLATION CANVAS ═════════════════
+// ═══════════════════════════════════════
+(function isolationDemo() {
+  const { ctx, w, h } = setupCanvas($('isolationCanvas'));
+  let isolated = false;
+  let attackResult = '';
+  let attackAnim = null;
+  let particles = [];
+
+  window.toggleIsolation = function () {
+    isolated = !isolated;
+    $('isolationToggle').classList.toggle('on', isolated);
+    $('isolationLabel').innerHTML = isolated
+      ? 'Isolation: <strong style="color:var(--accent-green);">AN</strong>'
+      : 'Isolation: <strong style="color:var(--accent-red);">AUS</strong>';
+    attackResult = '';
+    $('attackResult').textContent = '';
+    draw();
+  };
+
+  window.simulateAttack = function () {
+    particles = [];
+    const startX = 100, startY = 150;
+    const targetX = w / 2, targetY = h / 2;
+
+    // Create attack particles
+    for (let i = 0; i < 8; i++) {
+      particles.push({
+        x: startX + Math.random() * 40 - 20,
+        y: startY + Math.random() * 40 - 20,
+        tx: targetX + Math.random() * 60 - 30,
+        ty: targetY + Math.random() * 60 - 30,
+        t: 0,
+        speed: 0.01 + Math.random() * 0.015,
+        blocked: false
+      });
+    }
+
+    if (attackAnim) cancelAnimationFrame(attackAnim);
+
+    function animate() {
+      let allDone = true;
+      particles.forEach(p => {
+        p.t += p.speed;
+        if (p.t >= 1) {
+          p.t = 1;
+        } else {
+          allDone = false;
+        }
+        // Check if blocked by firewall
+        if (isolated && p.t > 0.55 && !p.blocked) {
+          p.blocked = true;
+          p.blockX = lerp(p.x, p.tx, 0.55);
+          p.blockY = lerp(p.y, p.ty, 0.55);
+        }
+      });
+
+      draw();
+
+      if (!allDone) {
+        attackAnim = requestAnimationFrame(animate);
+      } else {
+        if (isolated) {
+          attackResult = '🛡️ Angriff blockiert! Die Firewall hat alle Pakete abgewiesen.';
+          $('attackResult').innerHTML = '<span style="color:var(--accent-green);">' + attackResult + '</span>';
+        } else {
+          attackResult = '⚠️ Angriff erfolgreich! Ohne Isolation konnte der Angreifer auf den Knoten zugreifen.';
+          $('attackResult').innerHTML = '<span style="color:var(--accent-red);">' + attackResult + '</span>';
+        }
+      }
+    }
+    animate();
+  };
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+
+    // Background network nodes
+    const netNodes = [
+      { x: 100, y: 150, label: '🕵️ Angreifer', color: '#ef4444' },
+      { x: 100, y: 300, label: '👤 Nutzer B', color: '#f59e0b' },
+      { x: 100, y: 400, label: '👤 Nutzer C', color: '#f59e0b' },
+      { x: w - 100, y: 120, label: '📁 Shared FS', color: '#8b5cf6' },
+      { x: w - 100, y: 260, label: '🌐 Internet', color: '#06b6d4' },
+      { x: w - 100, y: 400, label: '🛡️ SP-Server', color: '#10b981' }
+    ];
+
+    // Connections
+    netNodes.forEach(n => {
+      const blocked = isolated && n.label !== '🛡️ SP-Server';
+      ctx.strokeStyle = blocked ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash(blocked ? [3, 6] : []);
+      ctx.beginPath();
+      ctx.moveTo(n.x, n.y);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Block symbol
+      if (blocked) {
+        const mx = (n.x + cx) / 2, my = (n.y + cy) / 2;
+        ctx.font = '16px serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🚫', mx, my + 5);
+      }
+    });
+
+    // SP-Server connection (always allowed)
+    if (isolated) {
+      const sp = netNodes[5];
+      ctx.strokeStyle = 'rgba(16,185,129,0.4)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(sp.x, sp.y);
+      ctx.lineTo(cx, cy);
+      ctx.stroke();
+      ctx.font = '500 9px Inter';
+      ctx.fillStyle = '#10b981';
+      ctx.textAlign = 'center';
+      ctx.fillText('✓ erlaubt', (sp.x + cx) / 2, (sp.y + cy) / 2 - 10);
+    }
+
+    // Firewall ring
+    if (isolated) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(239,68,68,0.4)';
+      ctx.shadowBlur = 25;
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([10, 5]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 110, 0, TAU);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      ctx.font = '600 11px Inter';
+      ctx.fillStyle = '#ef4444';
+      ctx.textAlign = 'center';
+      ctx.fillText('🔥 Firewall', cx, cy - 120);
+    }
+
+    // Central compute node
+    ctx.save();
+    ctx.shadowColor = isolated ? 'rgba(16,185,129,0.3)' : 'rgba(79,143,255,0.2)';
+    ctx.shadowBlur = 25;
+    ctx.fillStyle = isolated ? 'rgba(16,185,129,0.08)' : 'rgba(79,143,255,0.06)';
+    ctx.strokeStyle = isolated ? '#10b981' : '#4f8fff55';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 65, 0, TAU);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.font = '32px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(isolated ? '🔒' : '🖥️', cx, cy - 5);
+    ctx.font = '700 12px Inter';
+    ctx.fillStyle = isolated ? '#10b981' : '#4f8fff';
+    ctx.fillText(isolated ? 'Isolierter Knoten' : 'Compute-Knoten', cx, cy + 25);
+    ctx.font = '400 10px Inter';
+    ctx.fillStyle = '#9898b0';
+    ctx.fillText(isolated ? 'Nur SP-Server erreichbar' : 'Voller Netzwerkzugriff', cx, cy + 42);
+
+    // Network nodes
+    netNodes.forEach(n => {
+      ctx.save();
+      ctx.shadowColor = n.color + '33';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = n.color + '12';
+      ctx.strokeStyle = n.color + '44';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 30, 0, TAU);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.font = '20px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.label.split(' ')[0], n.x, n.y + 7);
+      ctx.font = '500 9px Inter';
+      ctx.fillStyle = n.color;
+      ctx.fillText(n.label.split(' ').slice(1).join(' '), n.x, n.y + 48);
+    });
+
+    // Attack particles
+    particles.forEach(p => {
+      const currentT = p.blocked ? Math.min(p.t, 0.55) : p.t;
+      const px = lerp(p.x, p.tx, currentT);
+      const py = lerp(p.y, p.ty, currentT);
+
+      if (p.blocked) {
+        // Explosion at block point
+        ctx.save();
+        ctx.shadowColor = 'rgba(239,68,68,0.8)';
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(p.blockX, p.blockY, 4 + (p.t - 0.55) * 20, 0, TAU);
+        ctx.globalAlpha = Math.max(0, 1 - (p.t - 0.55) * 2.5);
+        ctx.fill();
+        ctx.restore();
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.save();
+        ctx.shadowColor = p.t >= 1 && !isolated ? 'rgba(239,68,68,0.8)' : 'rgba(239,68,68,0.5)';
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, TAU);
+        ctx.fill();
+        ctx.restore();
+      }
+    });
+  }
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ PERFORMANCE PLOTS (Plotly) ═══════
+// ═══════════════════════════════════════
+(function perfDemo() {
+  const dataSizeSlider = $('dataSizeSlider');
+  const coreSlider = $('coreSlider');
+  const computeSlider = $('computeSlider');
+
+  function updatePlot() {
+    const dataSize = +dataSizeSlider.value;
+    const cores = +coreSlider.value;
+    const computeMin = +computeSlider.value;
+
+    $('dataSizeVal').textContent = dataSize + ' GB';
+    $('coreVal').textContent = cores;
+    $('computeVal').textContent = computeMin + ' min';
+
+    // Model overhead times (in seconds)
+    const encTime = dataSize * 2.5; // ~2.5s per GB for AES-256
+    const decTime = dataSize * 2.5;
+    const containerDecTime = 3 + dataSize * 0.5;
+    const sigVerifyTime = 0.5;
+    const isolationTime = 2;
+    const cleanupTime = 1 + dataSize * 0.3;
+
+    const totalOverhead = encTime + decTime + containerDecTime + sigVerifyTime + isolationTime + cleanupTime;
+    const computeSec = computeMin * 60;
+    const overheadPct = (totalOverhead / (computeSec + totalOverhead)) * 100;
+
+    const categories = ['Berechnung', 'Verschlüsselung', 'Entschlüsselung', 'Container-Entschl.', 'Signaturprüfung', 'Isolation', 'Cleanup'];
+    const values = [computeSec, encTime, decTime, containerDecTime, sigVerifyTime, isolationTime, cleanupTime];
+    const colors = ['#4f8fff', '#10b981', '#8b5cf6', '#ec4899', '#f59e0b', '#ef4444', '#84cc16'];
+
+    Plotly.newPlot('perfPlot', [{
+      type: 'bar',
+      x: categories,
+      y: values,
+      marker: {
+        color: colors,
+        line: { color: colors.map(c => c + '88'), width: 1 }
+      },
+      text: values.map(v => v < 60 ? v.toFixed(1) + 's' : (v / 60).toFixed(1) + 'min'),
+      textposition: 'outside',
+      textfont: { color: '#9898b0', size: 11 }
+    }], {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { color: '#9898b0', family: 'Inter' },
+      margin: { t: 50, b: 80, l: 60, r: 20 },
+      title: {
+        text: `Overhead: ${totalOverhead.toFixed(1)}s von ${(computeSec + totalOverhead).toFixed(0)}s gesamt (${overheadPct.toFixed(2)}%)`,
+        font: { size: 14, color: '#e8e8f0' }
+      },
+      yaxis: {
+        title: 'Zeit (Sekunden)',
+        gridcolor: 'rgba(255,255,255,0.04)',
+        type: computeSec > 1000 ? 'log' : 'linear'
+      },
+      xaxis: {
+        tickangle: -30
+      }
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  [dataSizeSlider, coreSlider, computeSlider].forEach(s => s.addEventListener('input', updatePlot));
+  updatePlot();
+
+  // Breakdown plot
+  window.setScenario = function (scenario) {
+    document.querySelectorAll('#scenarioTabs .tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`#scenarioTabs .tab-btn[data-scenario="${scenario}"]`).classList.add('active');
+
+    const scenarios = {
+      small: { data: 0.1, compute: 5, label: 'Kleiner Job (100MB, 5min)' },
+      medium: { data: 1, compute: 30, label: 'Mittlerer Job (1GB, 30min)' },
+      large: { data: 10, compute: 180, label: 'Großer Job (10GB, 3h)' },
+      huge: { data: 100, compute: 1440, label: 'HPC-Scale (100GB, 24h)' }
+    };
+
+    const s = scenarios[scenario];
+    const enc = s.data * 2.5;
+    const dec = s.data * 2.5;
+    const contDec = 3 + s.data * 0.5;
+    const sig = 0.5;
+    const iso = 2;
+    const clean = 1 + s.data * 0.3;
+    const total = enc + dec + contDec + sig + iso + clean;
+    const computeSec = s.compute * 60;
+
+    Plotly.newPlot('breakdownPlot', [
+      {
+        type: 'pie',
+        labels: ['Berechnung', 'Verschlüsselung', 'Entschlüsselung', 'Container', 'Signatur', 'Isolation', 'Cleanup'],
+        values: [computeSec, enc, dec, contDec, sig, iso, clean],
+        marker: {
+          colors: ['#4f8fff', '#10b981', '#8b5cf6', '#ec4899', '#f59e0b', '#ef4444', '#84cc16']
+        },
+        hole: 0.5,
+        textinfo: 'label+percent',
+        textfont: { size: 11, color: '#e8e8f0' },
+        domain: { x: [0, 0.5] }
+      },
+      {
+        type: 'pie',
+        labels: ['Verschlüsselung', 'Entschlüsselung', 'Container', 'Signatur', 'Isolation', 'Cleanup'],
+        values: [enc, dec, contDec, sig, iso, clean],
+        marker: {
+          colors: ['#10b981', '#8b5cf6', '#ec4899', '#f59e0b', '#ef4444', '#84cc16']
+        },
+        hole: 0.4,
+        textinfo: 'label+percent',
+        textfont: { size: 10, color: '#e8e8f0' },
+        domain: { x: [0.55, 1] },
+        title: { text: 'Nur Overhead', font: { size: 12, color: '#9898b0' } }
+      }
+    ], {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { color: '#9898b0', family: 'Inter' },
+      margin: { t: 50, b: 30, l: 20, r: 20 },
+      title: {
+        text: `${s.label} — Overhead: ${total.toFixed(1)}s (${((total / (computeSec + total)) * 100).toFixed(3)}%)`,
+        font: { size: 13, color: '#e8e8f0' }
+      },
+      showlegend: false
+    }, { responsive: true, displayModeBar: false });
+  };
+
+  setScenario('medium');
+})();
+
+// ═══════════════════════════════════════
+// ═══ COMPARISON RADAR (Plotly) ════════
+// ═══════════════════════════════════════
+(function compDemo() {
+  const approaches = {
+    unix: { name: 'Unix-Rechte', color: '#5a5a78', scores: [1, 3, 5, 5, 5, 1, 1, 1] },
+    dedicated: { name: 'Dediziertes Cluster', color: '#f59e0b', scores: [2, 5, 1, 5, 1, 1, 5, 5] },
+    cloud: { name: 'Cloud', color: '#06b6d4', scores: [1, 5, 5, 3, 1, 3, 3, 3] },
+    tee: { name: 'TEE (SGX/SEV)', color: '#ec4899', scores: [5, 5, 1, 3, 3, 5, 1, 5] },
+    secure: { name: 'Secure HPC (Paper)', color: '#4f8fff', scores: [5, 5, 5, 5, 5, 5, 5, 5] }
+  };
+
+  const categories = ['Admin-Schutz', 'Nutzer-Schutz', 'Keine Spez. HW', 'HPC-Leistung', 'Kosteneffizient', 'Integrität', 'Netzwerk-Iso.', 'DSGVO'];
+
+  let activeComps = new Set(['unix', 'dedicated', 'cloud', 'tee']);
+
+  window.toggleComp = function (btn) {
+    const comp = btn.dataset.comp;
+    if (activeComps.has(comp)) {
+      activeComps.delete(comp);
+      btn.classList.remove('active');
+    } else {
+      activeComps.add(comp);
+      btn.classList.add('active');
+    }
+    updateRadar();
+  };
+
+  function updateRadar() {
+    const traces = [];
+
+    // Always show secure HPC
+    traces.push({
+      type: 'scatterpolar',
+      r: [...approaches.secure.scores, approaches.secure.scores[0]],
+      theta: [...categories, categories[0]],
+      fill: 'toself',
+      fillcolor: 'rgba(79,143,255,0.15)',
+      line: { color: '#4f8fff', width: 3 },
+      name: approaches.secure.name,
+      marker: { size: 6 }
+    });
+
+    activeComps.forEach(key => {
+      const a = approaches[key];
+      traces.push({
+        type: 'scatterpolar',
+        r: [...a.scores, a.scores[0]],
+        theta: [...categories, categories[0]],
+        fill: 'toself',
+        fillcolor: a.color + '10',
+        line: { color: a.color, width: 1.5, dash: 'dot' },
+        name: a.name,
+        marker: { size: 4 }
+      });
+    });
+
+    Plotly.newPlot('compRadarPlot', traces, {
+      polar: {
+        bgcolor: 'rgba(0,0,0,0)',
+        radialaxis: {
+          visible: true,
+          range: [0, 5.5],
+          gridcolor: 'rgba(255,255,255,0.05)',
+          tickfont: { color: '#5a5a78', size: 9 }
+        },
+        angularaxis: {
+          gridcolor: 'rgba(255,255,255,0.05)',
+          tickfont: { color: '#9898b0', size: 10 }
+        }
+      },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      font: { color: '#9898b0', family: 'Inter' },
+      margin: { t: 40, b: 40, l: 80, r: 80 },
+      legend: {
+        font: { size: 11 },
+        bgcolor: 'rgba(0,0,0,0.3)',
+        bordercolor: '#2a2a3e',
+        borderwidth: 1
+      },
+      showlegend: true
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  updateRadar();
+})();
+
+// ═══════════════════════════════════════
+// ═══ SUMMARY CANVAS ══════════════════
+// ═══════════════════════════════════════
+(function summaryDemo() {
+  const { ctx, w, h } = setupCanvas($('summaryCanvas'));
+  const slider = $('summarySlider');
+  let autoPlaying = false;
+  let autoInterval = null;
+
+  const phases = [
+    { range: [0, 10], label: '👩‍🔬 Forscherin hat sensible Daten', color: '#4f8fff' },
+    { range: [10, 25], label: '🔐 Verschlüsselung auf lokalem Rechner', color: '#10b981' },
+    { range: [25, 35], label: '✍️ Batch-Skript signieren', color: '#8b5cf6' },
+    { range: [35, 45], label: '📤 Upload auf Shared Filesystem', color: '#f59e0b' },
+    { range: [45, 55], label: '📋 Job bei Slurm einreichen', color: '#06b6d4' },
+    { range: [55, 65], label: '🏝️ Knoten isolieren (Firewall)', color: '#ef4444' },
+    { range: [65, 75], label: '🔓 Entschlüsselung + Signaturprüfung', color: '#ec4899' },
+    { range: [75, 88], label: '⚙️ Berechnung im Container', color: '#06b6d4' },
+    { range: [88, 95], label: '🔒 Ergebnis verschlüsseln + Cleanup', color: '#84cc16' },
+    { range: [95, 100], label: '✅ Forscherin erhält Ergebnis', color: '#10b981' }
+  ];
+
+  function draw() {
+    const progress = +slider.value;
+    $('summaryVal').textContent = progress + '%';
+    ctx.clearRect(0, 0, w, h);
+
+    // Find current phase
+    let currentPhase = phases[0];
+    phases.forEach(p => {
+      if (progress >= p.range[0]) currentPhase = p;
+    });
+
+    // Background: flowing pipeline
+    const pipeY = h / 2;
+    const pipeH = 60;
+
+    // Pipeline background
+    ctx.fillStyle = 'rgba(255,255,255,0.02)';
+    ctx.beginPath();
+    ctx.roundRect(40, pipeY - pipeH / 2, w - 80, pipeH, 30);
+    ctx.fill();
+    ctx.strokeStyle = '#2a2a3e';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(40, pipeY - pipeH / 2, w - 80, pipeH, 30);
+    ctx.stroke();
+
+    // Pipeline fill
+    const fillW = (progress / 100) * (w - 80);
+    const fillGrad = ctx.createLinearGradient(40, 0, 40 + fillW, 0);
+    fillGrad.addColorStop(0, '#4f8fff33');
+    fillGrad.addColorStop(1, currentPhase.color + '44');
+    ctx.fillStyle = fillGrad;
+    ctx.beginPath();
+    ctx.roundRect(40, pipeY - pipeH / 2, fillW, pipeH, 30);
+    ctx.fill();
+
+    // Phase markers on pipeline
+    phases.forEach((p, i) => {
+      const px = 40 + (p.range[0] / 100) * (w - 80);
+      const isActive = progress >= p.range[0] && progress < p.range[1];
+      const isDone = progress >= p.range[1];
+
+      // Marker dot
+      ctx.beginPath();
+      ctx.arc(px, pipeY, isActive ? 8 : 5, 0, TAU);
+      if (isDone) {
+        ctx.fillStyle = '#10b981';
+      } else if (isActive) {
+        ctx.fillStyle = p.color;
+        ctx.save();
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 15;
+      } else {
+        ctx.fillStyle = '#2a2a3e';
+      }
+      ctx.fill();
+      if (isActive) ctx.restore();
+
+      // Label (alternating above/below)
+      const above = i % 2 === 0;
+      const ly = above ? pipeY - pipeH / 2 - 20 - (isActive ? 15 : 0) : pipeY + pipeH / 2 + 30 + (isActive ? 15 : 0);
+
+      ctx.font = isActive ? '600 11px Inter' : '400 9px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = isActive ? p.color : isDone ? '#5a5a78' : '#3a3a4e';
+
+      // Wrap text
+      const words = p.label.split(' ');
+      const emoji = words[0];
+      const text = words.slice(1).join(' ');
+
+      if (isActive) {
+        ctx.font = '20px serif';
+        ctx.fillText(emoji, px, ly - 8);
+        ctx.font = '600 10px Inter';
+        ctx.fillStyle = p.color;
+        ctx.fillText(text, px, ly + 10);
+      } else {
+        ctx.font = '14px serif';
+        ctx.fillText(emoji, px, ly);
+      }
+
+      // Connector line
+      ctx.strokeStyle = isActive ? p.color + '44' : '#2a2a3e';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px, above ? pipeY - pipeH / 2 : pipeY + pipeH / 2);
+      ctx.lineTo(px, above ? ly + 15 : ly - 20);
+      ctx.stroke();
+    });
+
+    // Current phase big label
+    ctx.font = '700 18px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = currentPhase.color;
+    ctx.fillText(currentPhase.label, w / 2, 50);
+
+    // Data flow particles inside pipeline
+    const numParticles = 15;
+    const time = Date.now() / 1000;
+    for (let i = 0; i < numParticles; i++) {
+      const px = 60 + ((i / numParticles + time * 0.05) % 1) * (fillW - 40);
+      if (px > fillW + 40) continue;
+      const py = pipeY + Math.sin(time * 2 + i * 1.5) * 15;
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, TAU);
+      ctx.fillStyle = currentPhase.color + '66';
+      ctx.fill();
+    }
+
+    // Security indicators at bottom
+    const indicators = [
+      { label: 'Daten verschlüsselt', active: progress >= 10, color: '#10b981' },
+      { label: 'Skript signiert', active: progress >= 25, color: '#8b5cf6' },
+      { label: 'Knoten isoliert', active: progress >= 55, color: '#ef4444' },
+      { label: 'Container aktiv', active: progress >= 75 && progress < 88, color: '#06b6d4' },
+      { label: 'Ergebnis sicher', active: progress >= 95, color: '#84cc16' }
+    ];
+
+    const indY = h - 40;
+    const indSpacing = (w - 80) / indicators.length;
+    indicators.forEach((ind, i) => {
+      const ix = 60 + i * indSpacing;
+      ctx.beginPath();
+      ctx.arc(ix, indY, 5, 0, TAU);
+      ctx.fillStyle = ind.active ? ind.color : '#2a2a3e';
+      if (ind.active) {
+        ctx.save();
+        ctx.shadowColor = ind.color;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.restore();
+      } else {
+        ctx.fill();
+      }
+      ctx.font = '500 9px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = ind.active ? ind.color : '#3a3a4e';
+      ctx.fillText(ind.label, ix + 40, indY + 4);
+    });
+  }
+
+  // Animate particles continuously
+  let rafId = null;
+  function animLoop() {
+    draw();
+    rafId = requestAnimationFrame(animLoop);
+  }
+
+  slider.addEventListener('input', () => {
+    if (!rafId) animLoop();
+  });
+
+  $('summaryPlayBtn').addEventListener('click', () => {
+    if (autoPlaying) {
+      clearInterval(autoInterval);
+      autoPlaying = false;
+      $('summaryPlayBtn').textContent = '▶ Abspielen';
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      return;
+    }
+    autoPlaying = true;
+    $('summaryPlayBtn').textContent = '⏸ Pause';
+    slider.value = 0;
+    animLoop();
+    autoInterval = setInterval(() => {
+      slider.value = +slider.value + 1;
+      if (+slider.value >= 100) {
+        clearInterval(autoInterval);
+        autoPlaying = false;
+        $('summaryPlayBtn').textContent = '▶ Abspielen';
+        setTimeout(() => {
+          if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        }, 1000);
+      }
+    }, 120);
+  });
+
+  draw();
+})();
+
+// ═══════════════════════════════════════
+// ═══ ACTIVE NAV LINK HIGHLIGHTING ════
+// ═══════════════════════════════════════
+(function navHighlight() {
+  const sections = ['motivation', 'prerequisites', 'threat', 'encryption', 'workflow', 'isolation', 'performance', 'comparison', 'conclusion'];
+  const links = document.querySelectorAll('.nav-link');
+
+  function update() {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 300) {
+        current = id;
+      }
+    });
+    links.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// ═══════════════════════════════════════
+// ═══ CANVAS RESIZE HANDLER ═══════════
+// ═══════════════════════════════════════
+(function handleResize() {
+  let resizeTimeout;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      // Re-trigger plotly resize
+      if (window.Plotly) {
+        Plotly.Plots.resize('perfPlot');
+        Plotly.Plots.resize('breakdownPlot');
+        Plotly.Plots.resize('compRadarPlot');
+      }
+    }, 250);
+  });
+})();
+
+// ═══════════════════════════════════════
+// ═══ SMOOTH SCROLL FOR NAV LINKS ═════
+// ═══════════════════════════════════════
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+</script>
+</body>
+</html>
