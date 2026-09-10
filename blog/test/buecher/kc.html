@@ -464,6 +464,10 @@ function showSection(id) {
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     event.target.classList.add('active');
+    requestAnimationFrame(() => {
+        (sectionCharts[id] || []).forEach(c => c.resize());
+        if (id === 'dynamics') resizeD3();
+    });
 }
 
 // CHART 1: Overview Mind Map (ECharts)
@@ -947,7 +951,7 @@ const networkData = {
 };
 
 const svgContainer = document.getElementById('d3-network');
-const width = svgContainer.clientWidth || 800;
+let width = svgContainer.clientWidth || 800;
 const height = 500;
 
 const svg = d3.select('#d3-network')
@@ -1160,6 +1164,27 @@ theoryChart.setOption({
         ]
     }]
 });
+
+// Charts grouped by the section they live in (resized when that section becomes visible)
+const sectionCharts = {
+    overview: [overviewChart],
+    structure: [radarChart, sizeChart],
+    identity: [identityChart, berndChart],
+    creativity: [memeChart, rulesChart, { resize: () => Plotly.Plots.resize(lifecycleDiv) }],
+    aggression: [aggressionChart, raidChart],
+    gender: [genderChart, { resize: () => Plotly.Plots.resize(tensionDiv) }],
+    dynamics: [layersChart, { resize: () => Plotly.Plots.resize(memoryDiv) }],
+    theory: [modelChart, theoryChart]
+};
+
+// D3 network: SVG is built at a fixed width, so re-measure + re-center when shown
+function resizeD3() {
+    const w = svgContainer.clientWidth || 800;
+    width = w;
+    svg.attr('width', w);
+    simulation.force('center', d3.forceCenter(w / 2, height / 2));
+    simulation.alpha(0.3).restart();
+}
 
 // Responsive resize
 window.addEventListener('resize', () => {
