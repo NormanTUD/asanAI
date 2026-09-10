@@ -350,10 +350,16 @@ In World War II Bateson served in the OSS designing "black propaganda" radio bro
 
 ### Shannon, chess and the rat
 
-<figure>
-	<img style="width: 100%; max-width: 460px;" src="shannon.png" alt="Claude Shannon" />
-	<figcaption class="md">\citealternativetitle{shannonphoto}, \citeyear{shannonphoto}</figcaption>
-</figure>
+<div class="image-row">
+	<figure>
+		<img src="shannon.png" alt="Claude Shannon" />
+		<figcaption class="md">\citealternativetitle{shannonphoto}, \citeyear{shannonphoto}</figcaption>
+	</figure>
+	<figure>
+		<img src="shannons_mouse.jpg" alt="Claude Shannon with Theseus, his electronic maze-solving mouse" />
+		<figcaption class="md">Claude Shannon with <em>Theseus</em> (originally <em>Rat</em>), his relay mouse that learned to navigate a 25-square maze by trial and error \cite{shannonratphoto}.</figcaption>
+	</figure>
+</div>
 
 Before he formalized \citealternativetitle{shannon1948communication}, \citeauthor{shannon1948communication} had already written the first real computer-chess program \cite{shannonchess1950}: a minimax search over a small board plus a ten-term evaluation function — the very template **Deep Blue** and, later, **AlphaGo** would scale up. At the Macy meetings he also showed **Shannon's rat**, a relay maze-solver that recalled its past paths to reach a goal, but which would sometimes loop forever, chasing its tail, until someone pulled the plug \cite{macyconferences}.
 

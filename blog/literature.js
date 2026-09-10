@@ -3375,6 +3375,13 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Goodbye_and_Good_Luck_to_Margaret_Mead_and_Gregory_Bateson.jpg",
 		license: "Public domain"
 	},
+	"shannonratphoto": {
+		author: "Bell Laboratories",
+		year: "c. 1952",
+		title: "Theseus, a robot rat, runs a maze set up by Claude Shannon",
+		alternativetitle: "Claude Shannon with Theseus, his electronic maze-solving mouse",
+		url: "https://circlesofemotion.org/vocabularies/faces/item/31e7bb6b/faces-of-human-to-non-human-encounter"
+	},
 
 	"asimovlaws": {
 		author: "Isaac Asimov",
