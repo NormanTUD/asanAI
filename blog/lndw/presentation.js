@@ -191,7 +191,6 @@ const FragmentActions = {
 const Presentation = (() => {
     let currentSlide = 0;
     let slides = [];
-    let originalIndices = [];
     let fragmentIndex = {};
     let searchQuery = '';
 
@@ -227,26 +226,19 @@ const Presentation = (() => {
     function init() {
         const allSlides = Array.from(document.querySelectorAll('.slide'));
         const selection = parseSlideSelection(allSlides.length);
-        originalIndices = allSlides.map((_, i) => i).filter(i => !selection || selection.has(i));
-        slides = originalIndices.map(i => allSlides[i]);
+        slides = selection ? allSlides.filter((_, i) => selection.has(i)) : allSlides;
         if (slides.length === 0) {
             console.warn('slides= hat keine Folie ausgewaehlt – zeige alle Folien.');
             slides = allSlides;
-            originalIndices = allSlides.map((_, i) => i);
         }
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
 
-        // Startfolie: ?start=<Original-Index> (gleiche Nummerierung wie slides=).
-        // Liegt die Folie nicht in der Auswahl → erste verfügbare ab dort (sonst letzte).
+        // Startfolie: ?start=N (1-basiert, wie im Zähler / wie #N) → die N-te Folie,
+        // geclampt auf [1..Anzahl].
         const startParam = new URLSearchParams(window.location.search).get('start');
         if (startParam !== null && startParam.trim() !== '' && !isNaN(parseInt(startParam, 10))) {
-            const target = parseInt(startParam, 10);
-            let k = originalIndices.indexOf(target);
-            if (k === -1) {
-                const next = originalIndices.findIndex(o => o >= target);
-                k = next === -1 ? originalIndices.length - 1 : next;
-            }
-            currentSlide = Math.max(0, Math.min(k, slides.length - 1));
+            const pos = parseInt(startParam, 10);
+            currentSlide = Math.max(0, Math.min(pos - 1, slides.length - 1));
         }
 
         // Nur die Startfolie aktivieren (Folie 0 hat "active" hartkodiert).
