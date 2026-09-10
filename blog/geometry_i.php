@@ -503,6 +503,7 @@ The thread that runs from *Homo erectus* to the embedding space is the same thre
 </div>
 
 <div class="optional md" data-headline="A compact timeline">
+* **c. 1.76 Ma** — Acheulean handaxe: the first 3-D form, bilateral symmetry held in a mental template \cite{achleuleankariandusi}.
 * **c. 500,000 BCE** — Trinil shell: oldest deliberate geometric incision \cite{trinilshell}.
 * **c. 43,000 / 18,000 BCE** — Lebombo and Ishango bones: quantity as a spatial pattern \cite{lebombobone} \cite{ishangobone}.
 * **c. 75,000 BCE** — Blombos ochre: abstract grid patterning \cite{emergenceofmodernhumanbehaviour}.
@@ -518,10 +519,15 @@ The thread that runs from *Homo erectus* to the embedding space is the same thre
 * **c. 300 BCE** — Euclid's *Elements*: the axiomatic system, I.47 the Pythagorean theorem \cite{euclidelements}.
 * **1st c. CE** — Heron's formula $A=\sqrt{s(s-a)(s-b)(s-c)}$; Menelaus's *Sphaerica* (spherical geometry) \cite{heronmetrica} \cite{menelaussphaerica}.
 * **c. 215 BCE** — Apollonius's *Conics*: the ellipse, parabola and hyperbola \cite{apolloniusconics}.
+* **c. 140 BCE** — Hipparchus' table of chords; the 360° circle and the sexagesimal division of angles \cite{hipparchuschords} \cite{ptolemyalmagest}.
+* **499 CE** — Aryabhata's *Aryabhatiya*: the sine (*jya*) becomes a function of the angle \cite{aryabhatiya}.
 * **c. 820 CE** — al-Khwārizmī: *al-jabr*, completing the square \cite{hoyrup2021algebra}.
 * **c. 1021 CE** — Ibn al-Haytham's optics: the law of reflection and the geometry of projection \cite{alhazenoetic}.
+* **c. 1265 CE** — al-Tusi: the six trigonometric functions and the (spherical) law of sines, trigonometry as its own subject \cite{altusitrig}.
+* **c. 1400** — Madhava of Sangamagrama (Kerala): the power series for sine, cosine and tangent, $\sin x = x - x^{3}/3! + \cdots$ \cite{madhava}.
 * **1435 / 1569 / 1637 / 1639** — Alberti (perspective), Mercator (conformal map), Descartes (analytic geometry), Desargues (projective geometry) \cite{albertidepictura} \cite{mercatoratlas} \cite{descartesgeometrie} \cite{desarguesbrouillon}.
 * **1609 / 1687** — Kepler (planetary ellipses) and Newton (conics as orbits) \cite{keplerastronomianova} \cite{newtonprincipia}.
+* **1731** — the sextant (Hadley and Godfrey): a star's angle, plus the time, fixes a position at sea \cite{sextanthistory}.
 * **1736 / 1752** — Euler: Königsberg bridges (graph theory) and $V-E+F=2$ \cite{eulerbridges} \cite{eulersolids}.
 * **1827** — Gauss's Theorema Egregium (intrinsic curvature) and, via Gauss–Bonnet, $\iint K\,dA = 2\pi\chi$ \cite{gaussdisquisitiones} \cite{docarmo}.
 * **1829 / 1837** — Lobachevsky and Bolyai: hyperbolic geometry, triangle area $=\pi-(A+B+C)$ \cite{lobachevskygeometry} \cite{bolyaiappendix}.
