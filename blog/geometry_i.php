@@ -53,7 +53,7 @@ If the shell and the ochre mark the birth of *form*, the **Ishango bone** and th
 
 <figure>
 	<img style="width: 100%" src="ishango.jpg" alt="The Ishango bone" />
-	<figcaption class="md">The <cite-alternativetitle>ishango</cite-alternativetitle> is a baboon fibula of the Late Paleolithic (c. 18,000 BCE) with three columns of grouped notches \cite{ishangobone}. \citealternativetitle{ishangobonephoto}. Its groupings have been read as a lunar calendar, a base-10/60 number system, or simply a score-keeping tally — the earliest *external memory* we have.</figcaption>
+	<figcaption class="md">The <strong>Ishango bone</strong> (\citealternativetitle{ishangobonephoto}) is a baboon fibula of the Late Paleolithic (c. 18,000 BCE) with three columns of grouped notches \cite{ishangobone}. Its groupings have been read as a lunar calendar, a base-10/60 number system, or simply a score-keeping tally — the earliest <em>external memory</em> we have.</figcaption>
 </figure>
 
 <figure>
