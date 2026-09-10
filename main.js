@@ -620,13 +620,13 @@ function set_auto_intervals () {
 	// fit(); skip while training is active.
 	setInterval(function () {
 		if (typeof started_training !== "undefined" && started_training) return;
-		force_restart_fcnn();
+		force_restart_fcnn(); // await not possible
 	}, 500);
 	// repredict_if_not_image_but_image_is_shown triggers model.predict() and
 	// shares the GPU queue with the training fit(); skip while training.
 	setInterval(function () {
 		if (typeof started_training !== "undefined" && started_training) return;
-		repredict_if_not_image_but_image_is_shown();
+		repredict_if_not_image_but_image_is_shown(); // await not possible
 	}, 200);
 	setInterval(trigger_plot, 500);
 	setInterval(write_descriptions, 500);
