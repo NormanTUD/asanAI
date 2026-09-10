@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topologische Modellierung Biologischer Systeme — Interaktiv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #0a0a0f;
+--bg2: #12121a;
+--bg3: #1a1a28;
+--bg4: #222236;
+--accent: #6c63ff;
+--accent2: #ff6b9d;
+--accent3: #00d4aa;
+--accent4: #ffa726;
+--accent5: #42a5f5;
+--text: #e8e6f0;
+--text2: #a09cb0;
+--text3: #6b6780;
+--glow: rgba(108, 99, 255, 0.3);
+--glow2: rgba(255, 107, 157, 0.3);
+--glow3: rgba(0, 212, 170, 0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+scroll-behavior: smooth;
+scrollbar-width: thin;
+scrollbar-color: var(--accent) var(--bg2);
+}
+
+body {
+font-family: 'Inter', -apple-system, sans-serif;
+background: var(--bg);
+color: var(--text);
+line-height: 1.7;
+overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+/* Hero */
+.hero {
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+position: relative;
+overflow: hidden;
+padding: 2rem;
+}
+
+.hero-bg {
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+z-index: 0;
+}
+
+.hero-content {
+position: relative;
+z-index: 1;
+text-align: center;
+max-width: 900px;
+}
+
+.hero h1 {
+font-size: clamp(2rem, 5vw, 4rem);
+font-weight: 900;
+background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin-bottom: 1rem;
+letter-spacing: -0.02em;
+line-height: 1.1;
+}
+
+.hero .subtitle {
+font-size: clamp(1rem, 2vw, 1.4rem);
+color: var(--text2);
+font-weight: 300;
+margin-bottom: 2rem;
+}
+
+.hero .authors {
+font-size: 0.9rem;
+color: var(--text3);
+margin-bottom: 3rem;
+}
+
+.scroll-hint {
+animation: bounce 2s infinite;
+color: var(--accent);
+font-size: 1.5rem;
+cursor: pointer;
+}
+
+@keyframes bounce {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(10px); }
+}
+
+/* Navigation */
+.nav {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+z-index: 1000;
+background: rgba(10, 10, 15, 0.85);
+backdrop-filter: blur(20px);
+border-bottom: 1px solid rgba(108, 99, 255, 0.15);
+padding: 0.6rem 1rem;
+display: flex;
+gap: 0.3rem;
+overflow-x: auto;
+transition: transform 0.3s;
+}
+
+.nav.hidden { transform: translateY(-100%); }
+
+.nav a {
+color: var(--text2);
+text-decoration: none;
+font-size: 0.75rem;
+font-weight: 500;
+padding: 0.4rem 0.8rem;
+border-radius: 6px;
+white-space: nowrap;
+transition: all 0.2s;
+}
+
+.nav a:hover, .nav a.active {
+color: var(--text);
+background: var(--bg3);
+}
+
+/* Sections */
+.section {
+max-width: 1200px;
+margin: 0 auto;
+padding: 4rem 1.5rem;
+min-height: 80vh;
+}
+
+.section-header {
+text-align: center;
+margin-bottom: 3rem;
+}
+
+.section-number {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.8rem;
+color: var(--accent);
+letter-spacing: 0.15em;
+text-transform: uppercase;
+margin-bottom: 0.5rem;
+}
+
+.section h2 {
+font-size: clamp(1.5rem, 3vw, 2.5rem);
+font-weight: 800;
+margin-bottom: 0.8rem;
+letter-spacing: -0.02em;
+}
+
+.section .section-desc {
+color: var(--text2);
+max-width: 700px;
+margin: 0 auto;
+font-size: 0.95rem;
+}
+
+/* Cards */
+.card {
+background: var(--bg2);
+border: 1px solid rgba(108, 99, 255, 0.1);
+border-radius: 16px;
+padding: 2rem;
+margin-bottom: 2rem;
+transition: all 0.3s;
+position: relative;
+overflow: hidden;
+}
+
+.card::before {
+content: '';
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+opacity: 0;
+transition: opacity 0.3s;
+}
+
+.card:hover::before { opacity: 1; }
+
+.card h3 {
+font-size: 1.2rem;
+font-weight: 700;
+margin-bottom: 1rem;
+color: var(--text);
+}
+
+.card p {
+color: var(--text2);
+font-size: 0.9rem;
+margin-bottom: 1rem;
+}
+
+/* Interactive containers */
+.interactive-area {
+background: var(--bg3);
+border-radius: 12px;
+padding: 1.5rem;
+margin: 1rem 0;
+border: 1px solid rgba(255,255,255,0.05);
+}
+
+canvas {
+display: block;
+border-radius: 8px;
+cursor: pointer;
+max-width: 100%;
+}
+
+/* Controls */
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+margin: 1rem 0;
+align-items: center;
+}
+
+.control-group {
+display: flex;
+flex-direction: column;
+gap: 0.3rem;
+}
+
+.control-group label {
+font-size: 0.75rem;
+color: var(--text3);
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+}
+
+input[type="range"] {
+-webkit-appearance: none;
+appearance: none;
+width: 160px;
+height: 4px;
+background: var(--bg4);
+border-radius: 2px;
+outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background: var(--accent);
+cursor: pointer;
+box-shadow: 0 0 10px var(--glow);
+}
+
+input[type="range"]::-moz-range-thumb {
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background: var(--accent);
+cursor: pointer;
+border: none;
+box-shadow: 0 0 10px var(--glow);
+}
+
+.btn {
+padding: 0.5rem 1.2rem;
+border: 1px solid rgba(108, 99, 255, 0.3);
+background: rgba(108, 99, 255, 0.1);
+color: var(--accent);
+border-radius: 8px;
+cursor: pointer;
+font-family: 'Inter', sans-serif;
+font-size: 0.8rem;
+font-weight: 600;
+transition: all 0.2s;
+}
+
+.btn:hover {
+background: rgba(108, 99, 255, 0.25);
+border-color: var(--accent);
+box-shadow: 0 0 20px var(--glow);
+}
+
+.btn.active {
+background: var(--accent);
+color: white;
+}
+
+.btn-group {
+display: flex;
+gap: 0.5rem;
+flex-wrap: wrap;
+}
+
+/* Info boxes */
+.info-box {
+background: rgba(108, 99, 255, 0.08);
+border-left: 3px solid var(--accent);
+padding: 1rem 1.2rem;
+border-radius: 0 8px 8px 0;
+margin: 1rem 0;
+font-size: 0.85rem;
+color: var(--text2);
+}
+
+.info-box.warn {
+background: rgba(255, 167, 38, 0.08);
+border-left-color: var(--accent4);
+}
+
+.info-box.success {
+background: rgba(0, 212, 170, 0.08);
+border-left-color: var(--accent3);
+}
+
+.info-box strong {
+color: var(--text);
+}
+
+/* Status displays */
+.status-bar {
+display: flex;
+gap: 1rem;
+flex-wrap: wrap;
+margin: 1rem 0;
+}
+
+.status-item {
+background: var(--bg4);
+padding: 0.6rem 1rem;
+border-radius: 8px;
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.8rem;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.status-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+}
+
+.status-dot.green { background: var(--accent3); box-shadow: 0 0 8px var(--glow3); }
+.status-dot.red { background: var(--accent2); box-shadow: 0 0 8px var(--glow2); }
+.status-dot.blue { background: var(--accent5); }
+.status-dot.orange { background: var(--accent4); }
+
+/* Grid layouts */
+.grid-2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+}
+
+.grid-3 {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 1rem;
+}
+
+@media (max-width: 768px) {
+.grid-2, .grid-3 {
+grid-template-columns: 1fr;
+}
+input[type="range"] { width: 100%; }
+.controls { flex-direction: column; }
+}
+
+/* Matrix display */
+.matrix {
+font-family: 'JetBrains Mono', monospace;
+display: inline-block;
+margin: 1rem auto;
+}
+
+.matrix-row {
+display: flex;
+gap: 2px;
+}
+
+.matrix-cell {
+width: 36px;
+height: 36px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.75rem;
+font-weight: 600;
+border-radius: 4px;
+transition: all 0.3s;
+}
+
+/* Tooltip */
+.tooltip {
+position: absolute;
+background: var(--bg4);
+border: 1px solid var(--accent);
+padding: 0.5rem 0.8rem;
+border-radius: 8px;
+font-size: 0.8rem;
+pointer-events: none;
+z-index: 100;
+max-width: 250px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+/* Stepper */
+.stepper {
+display: flex;
+align-items: center;
+gap: 1rem;
+margin: 1.5rem 0;
+flex-wrap: wrap;
+}
+
+.step-indicator {
+display: flex;
+gap: 0.3rem;
+}
+
+.step-dot {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background: var(--bg4);
+transition: all 0.3s;
+}
+
+.step-dot.active {
+background: var(--accent);
+box-shadow: 0 0 8px var(--glow);
+}
+
+.step-dot.done {
+background: var(--accent3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.5; }
+}
+
+.pulse { animation: pulse 2s infinite; }
+
+/* Flow chart styles */
+.flow-node {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+padding: 0.4rem 0.8rem;
+border-radius: 8px;
+font-size: 0.75rem;
+font-weight: 600;
+font-family: 'JetBrains Mono', monospace;
+}
+
+/* Legend */
+.legend {
+display: flex;
+flex-wrap: wrap;
+gap: 0.8rem;
+margin: 1rem 0;
+font-size: 0.8rem;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+}
+
+.legend-color {
+width: 12px;
+height: 12px;
+border-radius: 3px;
+}
+
+/* Tabs */
+.tabs {
+display: flex;
+gap: 0.3rem;
+margin-bottom: 1rem;
+border-bottom: 1px solid var(--bg4);
+padding-bottom: 0.5rem;
+}
+
+.tab {
+padding: 0.4rem 1rem;
+border-radius: 6px 6px 0 0;
+cursor: pointer;
+font-size: 0.8rem;
+font-weight: 600;
+color: var(--text3);
+transition: all 0.2s;
+border: none;
+background: none;
+font-family: 'Inter', sans-serif;
+}
+
+.tab.active {
+color: var(--accent);
+background: var(--bg3);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Progress bar */
+.progress-track {
+width: 100%;
+height: 6px;
+background: var(--bg4);
+border-radius: 3px;
+overflow: hidden;
+margin: 0.5rem 0;
+}
+
+.progress-fill {
+height: 100%;
+border-radius: 3px;
+transition: width 0.5s ease;
+}
+
+/* Separator */
+.sep {
+width: 60px;
+height: 3px;
+background: linear-gradient(90deg, var(--accent), var(--accent2));
+border-radius: 2px;
+margin: 3rem auto;
+}
+
+/* Equation display */
+.eq {
+font-family: 'JetBrains Mono', monospace;
+background: var(--bg3);
+padding: 0.8rem 1.2rem;
+border-radius: 8px;
+display: inline-block;
+margin: 0.5rem 0;
+font-size: 0.85rem;
+border: 1px solid rgba(108, 99, 255, 0.15);
+}
+
+/* Footer */
+.footer {
+text-align: center;
+padding: 3rem 1rem;
+color: var(--text3);
+font-size: 0.8rem;
+border-top: 1px solid var(--bg3);
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+<a href="#hero">Start</a>
+<a href="#motivation">Motivation</a>
+<a href="#prereq-sets">Mengen</a>
+<a href="#prereq-topology">Topologie</a>
+<a href="#prereq-digraph">Digraphen</a>
+<a href="#model">Modell</a>
+<a href="#closed-loops">Schleifen</a>
+<a href="#continuous">Abbildungen</a>
+<a href="#syndromes">Syndrome</a>
+<a href="#diagnostics">Diagnostik</a>
+<a href="#conclusion">Fazit</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+<canvas id="heroBg" class="hero-bg"></canvas>
+<div class="hero-content">
+<h1>Topologische Modellierung Biologischer Systeme</h1>
+<p class="subtitle">Wie Mathematik hilft, komplexe biologische Systeme zu verstehen, Fehler zu finden und Krankheiten zu diagnostizieren</p>
+<p class="authors">J. Osis (Riga) & L. Beghi (Padova) — IFAC 1997 — Interaktiv aufbereitet</p>
+<div class="scroll-hint" onclick="document.getElementById('motivation').scrollIntoView()">▼</div>
+</div>
+</section>
+
+<!-- MOTIVATION -->
+<section class="section" id="motivation">
+<div class="section-header">
+<div class="section-number">Kapitel 0</div>
+<h2>Warum dieses Paper?</h2>
+<p class="section-desc">Biologische Systeme sind komplex. Dieses Paper zeigt einen eleganten Weg, sie mathematisch zu beschreiben — und daraus automatische Diagnosen abzuleiten.</p>
+</div>
+
+<div class="card">
+<h3>🎯 Das Problem</h3>
+<p>Stell dir vor, du bist Arzt nach einer Herzoperation. Der Patient zeigt Symptome — aber welche Krankheit steckt dahinter? Verschiedene Krankheiten können <strong>dieselben Symptome</strong> zeigen, weil der Körper kompensiert (Homöostase).</p>
+<div class="interactive-area">
+<canvas id="motivationCanvas" width="800" height="350"></canvas>
+<div class="controls">
+<div class="btn-group">
+<button class="btn active" onclick="setMotivationView(0)">Gesundes System</button>
+<button class="btn" onclick="setMotivationView(1)">Fehler A → Symptome</button>
+<button class="btn" onclick="setMotivationView(2)">Fehler B → gleiche Symptome!</button>
+<button class="btn" onclick="setMotivationView(3)">Lösung: Topologisches Modell</button>
+</div>
+</div>
+<div id="motivationInfo" class="info-box">
+Klicke auf die Buttons, um zu sehen, warum Diagnose schwierig ist — und wie topologische Modelle helfen.
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>💡 Die Idee</h3>
+<div class="grid-2">
+<div>
+<p><strong>Schritt 1:</strong> Beschreibe ein biologisches System als <em>gerichteten Graphen</em> (Digraph)</p>
+<p><strong>Schritt 2:</strong> Die Knoten sind funktionale Eigenschaften (z.B. "Nahrung verdauen", "Energie verteilen")</p>
+<p><strong>Schritt 3:</strong> Die Kanten zeigen Ursache-Wirkungs-Beziehungen</p>
+<p><strong>Schritt 4:</strong> Nutze mathematische Eigenschaften dieses Graphen, um Fehlerausbreitung zu verstehen</p>
+</div>
+<div>
+<p><strong>Ergebnis:</strong></p>
+<p>✅ Vorhersage, welche Funktionen bei einem Fehler ausfallen</p>
+<p>✅ Unterscheidung ähnlicher Krankheiten</p>
+<p>✅ Automatische Diagnose-Algorithmen</p>
+<p>✅ Vergleich verschiedener Systeme</p>
+</div>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- PREREQUISITE: SETS -->
+<section class="section" id="prereq-sets">
+<div class="section-header">
+<div class="section-number">Grundlage 1</div>
+<h2>Mengen & Binäre Relationen</h2>
+<p class="section-desc">Die Bausteine: Mengen von Elementen und Beziehungen zwischen ihnen.</p>
+</div>
+
+<div class="card">
+<h3>Mengen — interaktiv</h3>
+<p>Eine Menge ist eine Sammlung von Elementen. Klicke auf Elemente, um sie einer Teilmenge Y hinzuzufügen oder zu entfernen.</p>
+<div class="interactive-area">
+<canvas id="setsCanvas" width="800" height="300"></canvas>
+<div class="status-bar" id="setsStatus">
+<div class="status-item"><span class="status-dot blue"></span> X = {a,b,c,d,e,f}</div>
+<div class="status-item"><span class="status-dot green"></span> Y = <span id="subsetY">{}</span></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Binäre Relationen — die vier Möglichkeiten</h3>
+<p>Zwischen zwei Elementen a und b gibt es genau <strong>4 mögliche Beziehungsarten</strong>. Bewege den Slider, um sie zu sehen.</p>
+<div class="interactive-area">
+<canvas id="relationsCanvas" width="800" height="280"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Relationstyp</label>
+<input type="range" id="relationType" min="0" max="3" value="0" step="1">
+</div>
+<div id="relationLabel" class="status-item" style="font-size: 0.9rem;"></div>
+</div>
+</div>
+<div class="info-box">
+<strong>R</strong> = "beeinflusst" (Binäre Relation). <strong>R*</strong> = Umkehrrelation. <strong>R̄</strong> = keine Relation.
+Diese vier Fälle sind die Grundbausteine des gesamten Papers.
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- PREREQUISITE: TOPOLOGY -->
+<section class="section" id="prereq-topology">
+<div class="section-header">
+<div class="section-number">Grundlage 2</div>
+<h2>Was ist Topologie?</h2>
+<p class="section-desc">Topologie beschreibt "Nachbarschaft" — welche Elemente zusammenhängen. Keine Abstände nötig, nur Struktur.</p>
+</div>
+
+<div class="card">
+<h3>Umgebungen (Neighbourhoods)</h3>
+<p>Jedes Element hat eine <strong>Umgebung</strong>: es selbst + alle Elemente, die es direkt beeinflusst. Die Sammlung aller Umgebungen bildet die <strong>Topologie</strong>.</p>
+<div class="interactive-area">
+<canvas id="topologyCanvas" width="800" height="400"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Wähle Element</label>
+<div class="btn-group" id="topoElementBtns"></div>
+</div>
+</div>
+<div id="topoInfo" class="info-box">Klicke auf ein Element, um seine Umgebung zu sehen.</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Abschluss (Closure) & Berührungspunkte</h3>
+<p>Ein <strong>Berührungspunkt</strong> von Y ist ein Element, dessen Umgebung mindestens ein Element von Y enthält. Der <strong>Abschluss [Y]</strong> ist die Menge aller Berührungspunkte.</p>
+<div class="interactive-area">
+<canvas id="closureCanvas" width="800" height="350"></canvas>
+<div class="controls">
+<div class="btn-group">
+<button class="btn active" onclick="toggleClosureElement('a')">a</button>
+<button class="btn" onclick="toggleClosureElement('b')">b</button>
+<button class="btn" onclick="toggleClosureElement('c')">c</button>
+<button class="btn" onclick="toggleClosureElement('d')">d</button>
+<button class="btn" onclick="toggleClosureElement('e')">e</button>
+<button class="btn" onclick="toggleClosureElement('f')">f</button>
+</div>
+<span style="color: var(--text3); font-size: 0.8rem;">← Toggle Elemente für Y</span>
+</div>
+<div class="status-bar">
+<div class="status-item"><span class="status-dot blue"></span> Y = <span id="closureY">{a}</span></div>
+<div class="status-item"><span class="status-dot green"></span> [Y] = <span id="closureResult">{}</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- PREREQUISITE: DIGRAPHS -->
+<section class="section" id="prereq-digraph">
+<div class="section-header">
+<div class="section-number">Grundlage 3</div>
+<h2>Gerichtete Graphen (Digraphen)</h2>
+<p class="section-desc">Ein Digraph besteht aus Knoten (Vertices) und gerichteten Kanten (Arcs). Er ist das zentrale Werkzeug dieses Papers.</p>
+</div>
+
+<div class="card">
+<h3>Baue deinen eigenen Digraphen</h3>
+<p>Klicke auf einen Knoten, dann auf einen anderen, um eine gerichtete Kante zu erzeugen. Doppelklick löscht alle Kanten eines Knotens.</p>
+<div class="interactive-area">
+<canvas id="digraphCanvas" width="800" height="450"></canvas>
+<div class="controls">
+<button class="btn" onclick="resetDigraph()">Zurücksetzen</button>
+<button class="btn" onclick="loadExampleDigraph()">Beispiel laden</button>
+<button class="btn" onclick="showDigraphMatrix()">Adjazenzmatrix zeigen</button>
+</div>
+<div id="digraphInfo" class="info-box">Klicke auf Knoten, um Kanten zu zeichnen. Der erste Klick wählt den Startknoten, der zweite den Endknoten.</div>
+<div id="matrixDisplay" style="display:none; margin-top: 1rem;"></div>
+</div>
+</div>
+
+<div class="card">
+<h3>Erreichbarkeit (Reachability)</h3>
+<p>Von einem Knoten a aus: Welche anderen Knoten kann man erreichen, indem man den Pfeilen folgt? Das ist die <strong>Erreichbarkeitsmenge D(a)</strong>.</p>
+<div class="interactive-area">
+<canvas id="reachCanvas" width="800" height="400"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Startknoten wählen</label>
+<div class="btn-group" id="reachBtns"></div>
+</div>
+<div class="control-group">
+<label>Max. Distanz δ</label>
+<input type="range" id="reachDist" min="1" max="8" value="8">
+<span id="reachDistVal" style="font-family: 'JetBrains Mono'; font-size: 0.8rem;">∞</span>
+</div>
+</div>
+<div class="status-bar">
+<div class="status-item"><span class="status-dot green"></span> D(a) = <span id="reachSet">{}</span></div>
+<div class="status-item"><span class="status-dot orange"></span> S(a) = X \ D(a) = <span id="asyncSet">{}</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<div class="sep"></div>
+
+<!-- THE MODEL -->
+<section class="section" id="model">
+<div class="section-header">
+<div class="section-number">Kapitel 1–2</div>
+<h2>Das Topologische Systemmodell</h2>
+<p class="section-desc">Jetzt verbinden wir alles: Ein biologisches System wird als topologischer Raum (X, θ) dargestellt.</p>
+</div>
+
+<div class="card">
+<h3>🔬 Beispiel: Verdauungssystem eines Organismus</h3>
+<p>Das Paper modelliert einen einfachen Organismus mit 8 Funktionen. Bewege den Slider, um den Modellaufbau Schritt für Schritt zu verfolgen.</p>
+<div class="interactive-area">
+<canvas id="bioSystemCanvas" width="800" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Aufbauschritt</label>
+<input type="range" id="bioStep" min="0" max="8" value="0">
+</div>
+<div id="bioStepLabel" class="status-item" style="font-size: 0.85rem;">Schritt 0: Leeres System</div>
+</div>
+<div class="stepper">
+<div class="step-indicator" id="bioStepDots"></div>
+</div>
+<div id="bioStepInfo" class="info-box">Bewege den Slider, um das Modell schrittweise aufzubauen.</div>
+</div>
+</div>
+
+<div class="card">
+<h3>System & Umgebung: Z = N ∪ M</h3>
+<p>Das Paper unterscheidet zwischen <strong>Eigeneigenschaften N</strong> des Systems und <strong>Umgebungseigenschaften M</strong>.
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+const TAU = Math.PI * 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const easeInOut = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+const COLORS = {
+  accent: '#6c63ff', accent2: '#ff6b9d', accent3: '#00d4aa',
+  accent4: '#ffa726', accent5: '#42a5f5', bg: '#0a0a0f',
+  bg2: '#12121a', bg3: '#1a1a28', bg4: '#222236',
+  text: '#e8e6f0', text2: '#a09cb0', text3: '#6b6780',
+  red: '#ff4757', green: '#2ed573',
+};
+
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  if (!c) return [null, null, 0, 0];
+  const dpr = window.devicePixelRatio || 1;
+  const rect = c.getBoundingClientRect();
+  c.width = rect.width * dpr;
+  c.height = rect.height * dpr;
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return [c, ctx, rect.width, rect.height];
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color='#6c63ff', width=2, headSize=10) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  if (len < 1) return;
+  const ux = dx/len, uy = dy/len;
+  // shorten line so it doesn't poke through arrowhead
+  const sx = x2 - ux * headSize * 0.8;
+  const sy = y2 - uy * headSize * 0.8;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(sx, sy);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+  // arrowhead
+  const ax = x2 - ux * headSize;
+  const ay = y2 - uy * headSize;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(ax - uy * headSize * 0.4, ay + ux * headSize * 0.4);
+  ctx.lineTo(ax + uy * headSize * 0.4, ay - ux * headSize * 0.4);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawNode(ctx, x, y, label, radius, fillColor, textColor, glowColor, strokeColor) {
+  radius = radius || 22;
+  fillColor = fillColor || COLORS.accent;
+  textColor = textColor || '#fff';
+  if (glowColor) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius + 8, 0, TAU);
+    ctx.fillStyle = hexToRgba(glowColor, 0.2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, y, radius + 4, 0, TAU);
+    ctx.fillStyle = hexToRgba(glowColor, 0.15);
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, TAU);
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  if (strokeColor) {
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  ctx.fillStyle = textColor;
+  ctx.font = `600 ${Math.max(10, radius * 0.6)}px 'Inter', sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, x, y);
+}
+
+function edgeEndpoints(x1, y1, x2, y2, r1, r2) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  if (len < 1) return [x1, y1, x2, y2];
+  const ux = dx/len, uy = dy/len;
+  return [x1 + ux*r1, y1 + uy*r1, x2 - ux*r2, y2 - uy*r2];
+}
+
+// ============================================================
+// HERO BACKGROUND
+// ============================================================
+(function() {
+  const c = document.getElementById('heroBg');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, nodes = [];
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < 40; i++) {
+    nodes.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 3 + 1,
+    });
+  }
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i+1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 180) {
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(108,99,255,${0.15 * (1 - d/180)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    for (const n of nodes) {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, TAU);
+      ctx.fillStyle = 'rgba(108,99,255,0.4)';
+      ctx.fill();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ============================================================
+// NAV SCROLL
+// ============================================================
+(function() {
+  let lastScroll = 0;
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    const st = window.scrollY;
+    if (st > lastScroll && st > 100) nav.classList.add('hidden');
+    else nav.classList.remove('hidden');
+    lastScroll = st;
+    const sections = document.querySelectorAll('.section, .hero');
+    const links = nav.querySelectorAll('a');
+    let current = '';
+    sections.forEach(s => {
+      if (st >= s.offsetTop - 200) current = s.id;
+    });
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  });
+})();
+
+// ============================================================
+// MOTIVATION CANVAS
+// ============================================================
+let motivationView = 0;
+function setMotivationView(v) {
+  motivationView = v;
+  document.querySelectorAll('#motivation .btn-group .btn').forEach((b, i) => {
+    b.classList.toggle('active', i === v);
+  });
+  drawMotivation();
+}
+
+function drawMotivation() {
+  const [c, ctx, W, H] = setupCanvas('motivationCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const organs = [
+    { x: W*0.15, y: H*0.5, label: 'Herz', icon: '❤️' },
+    { x: W*0.35, y: H*0.3, label: 'Lunge', icon: '🫁' },
+    { x: W*0.35, y: H*0.7, label: 'Niere', icon: '🫘' },
+    { x: W*0.55, y: H*0.5, label: 'Leber', icon: '🟤' },
+    { x: W*0.75, y: H*0.3, label: 'Gehirn', icon: '🧠' },
+    { x: W*0.75, y: H*0.7, label: 'Muskeln', icon: '💪' },
+  ];
+
+  const edges = [[0,1],[0,2],[1,3],[2,3],[3,4],[3,5],[4,0],[5,0]];
+  const info = document.getElementById('motivationInfo');
+
+  // draw edges
+  edges.forEach(([i,j]) => {
+    const a = organs[i], b = organs[j];
+    let col = 'rgba(108,99,255,0.3)';
+    let w = 1.5;
+    if (motivationView === 3) { col = 'rgba(108,99,255,0.5)'; w = 2; }
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x, a.y, b.x, b.y, 28, 28);
+    drawArrow(ctx, ex1, ey1, ex2, ey2, col, w, 8);
+  });
+
+  // draw nodes
+  organs.forEach((o, i) => {
+    let fill = COLORS.bg4;
+    let glow = null;
+    let stroke = 'rgba(108,99,255,0.3)';
+
+    if (motivationView === 0) {
+      fill = COLORS.bg3; glow = COLORS.accent3; stroke = COLORS.accent3;
+    } else if (motivationView === 1) {
+      // Fehler A: Herz kaputt, Lunge und Gehirn betroffen
+      if (i === 0) { fill = COLORS.red; glow = COLORS.red; stroke = COLORS.red; }
+      else if ([1,2,4].includes(i)) { fill = '#553333'; glow = COLORS.accent2; stroke = COLORS.accent2; }
+      else { fill = COLORS.bg3; stroke = COLORS.accent3; }
+    } else if (motivationView === 2) {
+      // Fehler B: Leber kaputt, aber gleiche Symptome bei Lunge und Gehirn
+      if (i === 3) { fill = COLORS.red; glow = COLORS.red; stroke = COLORS.red; }
+      else if ([4,5].includes(i)) { fill = '#553333'; glow = COLORS.accent2; stroke = COLORS.accent2; }
+      else { fill = COLORS.bg3; stroke = COLORS.accent3; }
+    } else if (motivationView === 3) {
+      fill = COLORS.bg3; glow = COLORS.accent; stroke = COLORS.accent;
+    }
+
+    drawNode(ctx, o.x, o.y, o.icon, 26, fill, '#fff', glow, stroke);
+    ctx.fillStyle = COLORS.text2;
+    ctx.font = "500 11px 'Inter', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.fillText(o.label, o.x, o.y + 38);
+  });
+
+  if (motivationView === 0) {
+    info.className = 'info-box success';
+    info.innerHTML = '✅ <strong>Gesundes System:</strong> Alle Organe funktionieren normal und sind verbunden.';
+  } else if (motivationView === 1) {
+    info.className = 'info-box warn';
+    info.innerHTML = '⚠️ <strong>Fehler A (Herz):</strong> Herz fällt aus → Lunge, Niere, Gehirn zeigen Symptome. Symptome: Atemnot, Nierenversagen, Bewusstlosigkeit.';
+  } else if (motivationView === 2) {
+    info.className = 'info-box warn';
+    info.innerHTML = '⚠️ <strong>Fehler B (Leber):</strong> Leber fällt aus → Gehirn und Muskeln zeigen Symptome. <strong>Ähnliche Symptome wie bei Fehler A!</strong> Wie unterscheiden?';
+  } else {
+    info.className = 'info-box';
+    info.innerHTML = '💡 <strong>Lösung:</strong> Ein topologisches Modell zeigt die <em>Ursache-Wirkungs-Struktur</em>. Durch Analyse der Syndrome (Erreichbarkeitsmengen) kann man die Fehlerquelle eindeutig identifizieren!';
+  }
+}
+drawMotivation();
+
+// ============================================================
+// SETS CANVAS
+// ============================================================
+const setsElements = ['a','b','c','d','e','f'];
+let setsSelected = new Set();
+
+function drawSets() {
+  const [c, ctx, W, H] = setupCanvas('setsCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw big set X
+  ctx.beginPath();
+  ctx.roundRect(30, 20, W-60, H-40, 16);
+  ctx.strokeStyle = 'rgba(108,99,255,0.3)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "600 14px 'Inter'";
+  ctx.textAlign = 'left';
+  ctx.fillText('X = {a, b, c, d, e, f}', 45, 45);
+
+  // Draw subset Y highlight
+  if (setsSelected.size > 0) {
+    const selIndices = setsElements.map((e,i) => setsSelected.has(e) ? i : -1).filter(i => i >= 0);
+    const minI = Math.min(...selIndices);
+    const maxI = Math.max(...selIndices);
+    const spacing = (W - 120) / (setsElements.length - 1);
+    const x1 = 60 + minI * spacing - 35;
+    const x2 = 60 + maxI * spacing + 35;
+    ctx.beginPath();
+    ctx.roundRect(x1, H*0.35, x2-x1, H*0.45, 12);
+    ctx.fillStyle = 'rgba(0,212,170,0.06)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,212,170,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Draw elements
+  const spacing = (W - 120) / (setsElements.length - 1);
+  setsElements.forEach((el, i) => {
+    const x = 60 + i * spacing;
+    const y = H * 0.58;
+    const selected = setsSelected.has(el);
+    drawNode(ctx, x, y, el, 24,
+      selected ? COLORS.accent3 : COLORS.bg4,
+      '#fff',
+      selected ? COLORS.accent3 : null,
+      selected ? COLORS.accent3 : 'rgba(108,99,255,0.3)'
+    );
+  });
+
+  document.getElementById('subsetY').textContent =
+    setsSelected.size === 0 ? '∅' : '{' + [...setsSelected].join(',') + '}';
+}
+
+(function() {
+  const c = document.getElementById('setsCanvas');
+  if (!c) return;
+  c.addEventListener('click', (e) => {
+    const rect = c.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const W = rect.width, H = rect.height;
+    const spacing = (W - 120) / (setsElements.length - 1);
+    setsElements.forEach((el, i) => {
+      const x = 60 + i * spacing;
+      const y = H * 0.58;
+      if (Math.hypot(mx - x, my - y) < 28) {
+        if (setsSelected.has(el)) setsSelected.delete(el);
+        else setsSelected.add(el);
+        drawSets();
+      }
+    });
+  });
+  drawSets();
+})();
+
+// ============================================================
+// BINARY RELATIONS CANVAS
+// ============================================================
+function drawRelations() {
+  const [c, ctx, W, H] = setupCanvas('relationsCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const type = parseInt(document.getElementById('relationType').value);
+  const cx1 = W * 0.35, cx2 = W * 0.65, cy = H * 0.5;
+  const r = 30;
+
+  const labels = [
+    ['aRb, bRa', 'Gegenseitige Beeinflussung — a beeinflusst b UND b beeinflusst a'],
+    ['aRb, bR̄a', 'Einseitig — a beeinflusst b, aber b beeinflusst a NICHT'],
+    ['aR̄b, bRa', 'Einseitig umgekehrt — b beeinflusst a, aber a beeinflusst b NICHT'],
+    ['aR̄b, bR̄a', 'Keine Beziehung — a und b beeinflussen sich gegenseitig NICHT'],
+  ];
+
+  // Draw arrows based on type
+  const [ex1t, ey1t, ex2t, ey2t] = edgeEndpoints(cx1, cy, cx2, cy, r+2, r+2);
+  const [ex2b, ey2b, ex1b, ey1b] = edgeEndpoints(cx2, cy, cx1, cy, r+2, r+2);
+
+  if (type === 0) {
+    drawArrow(ctx, ex1t, ey1t - 8, ex2t, ey2t - 8, COLORS.accent, 2.5, 10);
+    drawArrow(ctx, ex2b, ey2b + 8, ex1b, ey1b + 8, COLORS.accent2, 2.5, 10);
+  } else if (type === 1) {
+    drawArrow(ctx, ex1t, ey1t, ex2t, ey2t, COLORS.accent, 2.5, 10);
+    // dashed "no relation"
+    ctx.beginPath();
+    ctx.moveTo(ex2b, ey2b + 12);
+    ctx.lineTo(ex1b, ey1b + 12);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  } else if (type === 2) {
+    ctx.beginPath();
+    ctx.moveTo(ex1t, ey1t - 8);
+    ctx.lineTo(ex2t, ey2t - 8);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawArrow(ctx, ex2b, ey2b + 8, ex1b, ey1b + 8, COLORS.accent2, 2.5, 10);
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(cx1 + r + 10, cy);
+    ctx.lineTo(cx2 - r - 10, cy);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // X mark in middle
+    const mx = (cx1+cx2)/2;
+    ctx.strokeStyle = COLORS.red;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(mx-8, cy-8); ctx.lineTo(mx+8, cy+8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(mx+8, cy-8); ctx.lineTo(mx-8, cy+8); ctx.stroke();
+  }
+
+  drawNode(ctx, cx1, cy, 'a', r, COLORS.bg3, COLORS.text, null, COLORS.accent);
+  drawNode(ctx, cx2, cy, 'b', r, COLORS.bg3, COLORS.text, null, COLORS.accent2);
+
+  document.getElementById('relationLabel').innerHTML =
+    `<strong>${labels[type][0]}</strong> — ${labels[type][1]}`;
+}
+
+document.getElementById('relationType').addEventListener('input', drawRelations);
+drawRelations();
+
+// ============================================================
+// TOPOLOGY / NEIGHBOURHOOD CANVAS
+// ============================================================
+const topoNodes = [
+  { id: 'a', x: 0.2, y: 0.3 },
+  { id: 'b', x: 0.5, y: 0.15 },
+  { id: 'c', x: 0.8, y: 0.3 },
+  { id: 'd', x: 0.2, y: 0.7 },
+  { id: 'e', x: 0.5, y: 0.85 },
+  { id: 'f', x: 0.8, y: 0.7 },
+];
+const topoEdges = [
+  [0,1],[1,2],[0,3],[3,4],[4,5],[5,2],[2,0],[1,4]
+];
+let topoSelected = 0;
+
+function getTopoNeighbourhood(idx) {
+  const nb = new Set([idx]);
+  topoEdges.forEach(([i,j]) => { if (i === idx) nb.add(j); });
+  return nb;
+}
+
+function drawTopology() {
+  const [c, ctx, W, H] = setupCanvas('topologyCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const nb = getTopoNeighbourhood(topoSelected);
+
+  // Draw neighbourhood highlight
+  if (nb.size > 0) {
+    const pts = [...nb].map(i => ({ x: topoNodes[i].x * W, y: topoNodes[i].y * H }));
+    // draw a soft blob around neighbourhood
+    pts.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 45, 0, TAU);
+      ctx.fillStyle = 'rgba(0,212,170,0.06)';
+      ctx.fill();
+    });
+  }
+
+  // Draw edges
+  topoEdges.forEach(([i,j]) => {
+    const a = topoNodes[i], b = topoNodes[j];
+    const ax = a.x*W, ay = a.y*H, bx = b.x*W, by = b.y*H;
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(ax, ay, bx, by, 24, 24);
+    const isNb = (i === topoSelected);
+    drawArrow(ctx, ex1, ey1, ex2, ey2,
+      isNb ? COLORS.accent3 : 'rgba(108,99,255,0.25)',
+      isNb ? 2.5 : 1.5, 8);
+  });
+
+  // Draw nodes
+  topoNodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const inNb = nb.has(i);
+    const isSel = i === topoSelected;
+    drawNode(ctx, x, y, n.id, 22,
+      isSel ? COLORS.accent : (inNb ? COLORS.accent3 : COLORS.bg4),
+      '#fff',
+      isSel ? COLORS.accent : (inNb ? COLORS.accent3 : null),
+      isSel ? COLORS.accent : (inNb ? COLORS.accent3 : 'rgba(108,99,255,0.3)')
+    );
+  });
+
+  // Label
+  const nbLabels = [...nb].map(i => topoNodes[i].id);
+  document.getElementById('topoInfo').innerHTML =
+    `Umgebung von <strong>${topoNodes[topoSelected].id}</strong>: U(${topoNodes[topoSelected].id}) = {${nbLabels.join(', ')}} — das Element selbst + alle direkten Nachfolger.`;
+}
+
+// Create buttons
+(function() {
+  const container = document.getElementById('topoElementBtns');
+  if (!container) return;
+  topoNodes.forEach((n, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn' + (i === 0 ? ' active' : '');
+    btn.textContent = n.id;
+    btn.onclick = () => {
+      topoSelected = i;
+      container.querySelectorAll('.btn').forEach((b, j) => b.classList.toggle('active', j === i));
+      drawTopology();
+    };
+    container.appendChild(btn);
+  });
+  drawTopology();
+})();
+
+// ============================================================
+// CLOSURE CANVAS
+// ============================================================
+let closureSet = new Set(['a']);
+
+function toggleClosureElement(el) {
+  if (closureSet.has(el)) closureSet.delete(el);
+  else closureSet.add(el);
+  // update button states
+  document.querySelectorAll('#prereq-topology .card:nth-child(2) .btn-group .btn').forEach(b => {
+    b.classList.toggle('active', closureSet.has(b.textContent));
+  });
+  drawClosure();
+}
+
+function computeClosure(Y) {
+  // Adherence point: a is adherence point of Y if neighbourhood of a intersects Y
+  const closure = new Set();
+  topoNodes.forEach((n, i) => {
+    const nb = getTopoNeighbourhood(i);
+    const yIndices = new Set([...Y].map(el => topoNodes.findIndex(tn => tn.id === el)));
+    for (const ni of nb) {
+      if (yIndices.has(ni)) { closure.add(topoNodes[i].id); break; }
+    }
+  });
+  return closure;
+}
+
+function drawClosure() {
+  const [c, ctx, W, H] = setupCanvas('closureCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const closure = computeClosure(closureSet);
+
+  // Draw edges
+  topoEdges.forEach(([i,j]) => {
+    const a = topoNodes[i], b = topoNodes[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 22, 22);
+    drawArrow(ctx, ex1, ey1, ex2, ey2, 'rgba(108,99,255,0.2)', 1.5, 7);
+  });
+
+  // Draw nodes
+  topoNodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const inY = closureSet.has(n.id);
+    const inClosure = closure.has(n.id);
+    let fill = COLORS.bg4, glow = null, stroke = 'rgba(108,99,255,0.3)';
+    if (inY) { fill = COLORS.accent5; glow = COLORS.accent5; stroke = COLORS.accent5; }
+    else if (inClosure) { fill = COLORS.accent3; glow = COLORS.accent3; stroke = COLORS.accent3; }
+    drawNode(ctx, x, y, n.id, 22, fill, '#fff', glow, stroke);
+    // label
+    if (inY) {
+      ctx.fillStyle = COLORS.accent5;
+      ctx.font = "500 10px 'Inter'";
+      ctx.textAlign = 'center';
+      ctx.fillText('∈ Y', x, y + 32);
+    } else if (inClosure) {
+      ctx.fillStyle = COLORS.accent3;
+      ctx.font = "500 10px 'Inter'";
+      ctx.textAlign = 'center';
+      ctx.fillText('∈ [Y]', x, y + 32);
+    }
+  });
+
+  document.getElementById('closureY').textContent =
+    closureSet.size === 0 ? '∅' : '{' + [...closureSet].join(',') + '}';
+  document.getElementById('closureResult').textContent =
+    closure.size === 0 ? '∅' : '{' + [...closure].join(',') + '}';
+}
+drawClosure();
+
+// ============================================================
+// DIGRAPH BUILDER
+// ============================================================
+const dgNodes = [
+  { id: 'a', x: 0.15, y: 0.3 },
+  { id: 'b', x: 0.35, y: 0.15 },
+  { id: 'c', x: 0.55, y: 0.15 },
+  { id: 'd', x: 0.75, y: 0.3 },
+  { id: 'e', x: 0.85, y: 0.55 },
+  { id: 'f', x: 0.65, y: 0
+.65 },
+  { id: 'g', x: 0.45, y: 0.75 },
+  { id: 'h', x: 0.2, y: 0.7 },
+];
+let dgEdges = [];
+let dgFirstClick = -1;
+
+function resetDigraph() {
+  dgEdges = [];
+  dgFirstClick = -1;
+  document.getElementById('digraphInfo').innerHTML = 'Klicke auf Knoten, um Kanten zu zeichnen.';
+  document.getElementById('matrixDisplay').style.display = 'none';
+  drawDigraph();
+}
+
+function loadExampleDigraph() {
+  dgEdges = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[2,5],[3,1]];
+  dgFirstClick = -1;
+  drawDigraph();
+}
+
+function showDigraphMatrix() {
+  const md = document.getElementById('matrixDisplay');
+  md.style.display = 'block';
+  let html = '<div class="matrix">';
+  html += '<div class="matrix-row"><div class="matrix-cell" style="background:transparent"></div>';
+  dgNodes.forEach(n => {
+    html += `<div class="matrix-cell" style="background:${COLORS.bg3};color:${COLORS.accent}">${n.id}</div>`;
+  });
+  html += '</div>';
+  dgNodes.forEach((ni, i) => {
+    html += '<div class="matrix-row">';
+    html += `<div class="matrix-cell" style="background:${COLORS.bg3};color:${COLORS.accent}">${ni.id}</div>`;
+    dgNodes.forEach((nj, j) => {
+      const hasEdge = dgEdges.some(([a,b]) => a === i && b === j);
+      html += `<div class="matrix-cell" style="background:${hasEdge ? COLORS.accent : COLORS.bg4};color:${hasEdge ? '#fff' : COLORS.text3}">${hasEdge ? '1' : '0'}</div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '<p style="color:var(--text3);font-size:0.8rem;margin-top:0.5rem;">Adjazenzmatrix: 1 = Kante existiert, 0 = keine Kante</p>';
+  md.innerHTML = html;
+}
+
+function drawDigraph() {
+  const [c, ctx, W, H] = setupCanvas('digraphCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw edges
+  dgEdges.forEach(([i,j]) => {
+    const a = dgNodes[i], b = dgNodes[j];
+    const ax = a.x*W, ay = a.y*H, bx = b.x*W, by = b.y*H;
+    // check if reverse edge exists for offset
+    const hasReverse = dgEdges.some(([ri,rj]) => ri === j && rj === i);
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(ax, ay, bx, by, 22, 22);
+    if (hasReverse) {
+      const dx = bx - ax, dy = by - ay;
+      const len = Math.sqrt(dx*dx+dy*dy);
+      const nx = -dy/len * 6, ny = dx/len * 6;
+      drawArrow(ctx, ex1+nx, ey1+ny, ex2+nx, ey2+ny, COLORS.accent, 2, 8);
+    } else {
+      drawArrow(ctx, ex1, ey1, ex2, ey2, COLORS.accent, 2, 8);
+    }
+  });
+
+  // Draw nodes
+  dgNodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const isFirst = dgFirstClick === i;
+    drawNode(ctx, x, y, n.id, 22,
+      isFirst ? COLORS.accent2 : COLORS.bg3,
+      '#fff',
+      isFirst ? COLORS.accent2 : null,
+      isFirst ? COLORS.accent2 : COLORS.accent
+    );
+  });
+}
+
+(function() {
+  const c = document.getElementById('digraphCanvas');
+  if (!c) return;
+  c.addEventListener('click', (e) => {
+    const rect = c.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const W = rect.width, H = rect.height;
+    let clicked = -1;
+    dgNodes.forEach((n, i) => {
+      if (Math.hypot(mx - n.x*W, my - n.y*H) < 26) clicked = i;
+    });
+    if (clicked < 0) return;
+    if (dgFirstClick < 0) {
+      dgFirstClick = clicked;
+      document.getElementById('digraphInfo').innerHTML =
+        `Startknoten <strong>${dgNodes[clicked].id}</strong> gewählt. Klicke jetzt auf den Zielknoten.`;
+    } else {
+      if (dgFirstClick !== clicked) {
+        const exists = dgEdges.some(([a,b]) => a === dgFirstClick && b === clicked);
+        if (exists) {
+          dgEdges = dgEdges.filter(([a,b]) => !(a === dgFirstClick && b === clicked));
+          document.getElementById('digraphInfo').innerHTML =
+            `Kante ${dgNodes[dgFirstClick].id}→${dgNodes[clicked].id} <strong>entfernt</strong>.`;
+        } else {
+          dgEdges.push([dgFirstClick, clicked]);
+          document.getElementById('digraphInfo').innerHTML =
+            `Kante ${dgNodes[dgFirstClick].id}→${dgNodes[clicked].id} <strong>hinzugefügt</strong>.`;
+        }
+      }
+      dgFirstClick = -1;
+    }
+    drawDigraph();
+  });
+  drawDigraph();
+})();
+
+// ============================================================
+// REACHABILITY CANVAS
+// ============================================================
+const reachNodes = [
+  { id: 'a', x: 0.12, y: 0.25 },
+  { id: 'b', x: 0.3, y: 0.12 },
+  { id: 'c', x: 0.5, y: 0.12 },
+  { id: 'd', x: 0.7, y: 0.25 },
+  { id: 'e', x: 0.82, y: 0.5 },
+  { id: 'f', x: 0.7, y: 0.75 },
+  { id: 'g', x: 0.42, y: 0.85 },
+  { id: 'h', x: 0.15, y: 0.65 },
+];
+const reachEdges = [[0,1],[1,2],[2,3],[3,5],[5,6],[6,0],[7,0],[3,4],[4,1]];
+let reachSelected = 0;
+
+function computeReachability(start, maxDist) {
+  const visited = new Map();
+  const queue = [[start, 0]];
+  visited.set(start, 0);
+  while (queue.length > 0) {
+    const [node, dist] = queue.shift();
+    if (dist >= maxDist) continue;
+    reachEdges.forEach(([i,j]) => {
+      if (i === node && !visited.has(j)) {
+        visited.set(j, dist + 1);
+        queue.push([j, dist + 1]);
+      }
+    });
+  }
+  return visited;
+}
+
+function drawReachability() {
+  const [c, ctx, W, H] = setupCanvas('reachCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const maxDist = parseInt(document.getElementById('reachDist').value);
+  document.getElementById('reachDistVal').textContent = maxDist >= 8 ? '∞' : 'δ=' + maxDist;
+  const reached = computeReachability(reachSelected, maxDist >= 8 ? 999 : maxDist);
+
+  // Draw edges
+  reachEdges.forEach(([i,j]) => {
+    const a = reachNodes[i], b = reachNodes[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 22, 22);
+    const isReachEdge = reached.has(i) && reached.has(j) && reached.get(j) === reached.get(i) + 1;
+    drawArrow(ctx, ex1, ey1, ex2, ey2,
+      isReachEdge ? COLORS.accent3 : 'rgba(108,99,255,0.2)',
+      isReachEdge ? 2.5 : 1.5, 8);
+  });
+
+  // Draw nodes
+  reachNodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const dist = reached.get(i);
+    const isReached = reached.has(i);
+    const isSel = i === reachSelected;
+    let fill = COLORS.bg4, glow = null, stroke = 'rgba(108,99,255,0.3)';
+    if (isSel) { fill = COLORS.accent; glow = COLORS.accent; stroke = COLORS.accent; }
+    else if (isReached) {
+      const t = clamp(dist / 6, 0, 1);
+      fill = `hsl(${lerp(160, 0, t)}, 70%, 35%)`;
+      glow = fill;
+      stroke = fill;
+    }
+    drawNode(ctx, x, y, n.id, 22, fill, '#fff', glow, stroke);
+    if (isReached && !isSel) {
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = "600 9px 'JetBrains Mono'";
+      ctx.textAlign = 'center';
+      ctx.fillText('d=' + dist, x, y + 30);
+    }
+  });
+
+  const reachIds = [...reached.keys()].map(i => reachNodes[i].id);
+  const unreachIds = reachNodes.filter((n,i) => !reached.has(i)).map(n => n.id);
+  document.getElementById('reachSet').textContent = '{' + reachIds.join(',') + '}';
+  document.getElementById('asyncSet').textContent = unreachIds.length === 0 ? '∅' : '{' + unreachIds.join(',') + '}';
+}
+
+(function() {
+  const container = document.getElementById('reachBtns');
+  if (!container) return;
+  reachNodes.forEach((n, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn' + (i === 0 ? ' active' : '');
+    btn.textContent = n.id;
+    btn.onclick = () => {
+      reachSelected = i;
+      container.querySelectorAll('.btn').forEach((b, j) => b.classList.toggle('active', j === i));
+      drawReachability();
+    };
+    container.appendChild(btn);
+  });
+  document.getElementById('reachDist').addEventListener('input', drawReachability);
+  drawReachability();
+})();
+
+// ============================================================
+// BIO SYSTEM CANVAS (Step-by-step model building)
+// ============================================================
+const bioLabels = [
+  'Nahrungskontakt', 'Schlucken', 'Verdauen', 'Absorption',
+  'Ausscheidung', 'Energieverteilung', 'Nahrungssuche', 'Nahrung (Umgebung)'
+];
+const bioIds = ['a','b','c','d','e','f','g','h'];
+const bioPositions = [
+  { x: 0.12, y: 0.35 },
+  { x: 0.28, y: 0.15 },
+  { x: 0.48, y: 0.12 },
+  { x: 0.68, y: 0.18 },
+  { x: 0.85, y: 0.38 },
+  { x: 0.72, y: 0.62 },
+  { x: 0.42, y: 0.78 },
+  { x: 0.15, y: 0.7 },
+];
+const bioEdgesAll = [[0,1],[1,2],[2,3],[3,5],[5,6],[6,0],[7,0],[3,4],[4,1]];
+const bioStepDescriptions = [
+  'Leeres System — wir beginnen mit der Identifikation der Funktionen.',
+  'a: Nahrungskontakt — der Organismus trifft auf Nahrung.',
+  'b: Schlucken — die Nahrung wird aufgenommen.',
+  'c: Verdauen — die Nahrung wird zerlegt.',
+  'd: Absorption — Nährstoffe werden von Zellen aufgenommen.',
+  'e: Ausscheidung — Abfallstoffe werden entfernt.',
+  'f: Energieverteilung — Energie wird im Körper verteilt.',
+  'g: Nahrungssuche — der Organismus bewegt sich zur Nahrung.',
+  'h: Nahrung aus der Umgebung — externe Nahrungsquelle. Jetzt sind alle Kanten sichtbar!',
+];
+
+function drawBioSystem() {
+  const [c, ctx, W, H] = setupCanvas('bioSystemCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const step = parseInt(document.getElementById('bioStep').value);
+
+  // Draw edges that are visible at this step
+  bioEdgesAll.forEach(([i,j]) => {
+    if (i >= step || j >= step) return;
+    const a = bioPositions[i], b = bioPositions[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 26, 26);
+    // highlight main loop edges
+    const mainLoop = [[0,1],[1,2],[2,3],[3,5],[5,6],[6,0]];
+    const isMain = mainLoop.some(([mi,mj]) => mi === i && mj === j);
+    drawArrow(ctx, ex1, ey1, ex2, ey2,
+      isMain ? COLORS.accent : COLORS.accent4,
+      isMain ? 2.5 : 1.5, 9);
+  });
+
+  // Draw nodes
+  bioPositions.forEach((p, i) => {
+    if (i >= step) return;
+    const x = p.x * W, y = p.y * H;
+    const isEnv = i === 7;
+    drawNode(ctx, x, y, bioIds[i], 24,
+      isEnv ? COLORS.accent4 : COLORS.accent,
+      '#fff',
+      i === step - 1 ? (isEnv ? COLORS.accent4 : COLORS.accent) : null,
+      isEnv ? COLORS.accent4 : COLORS.accent
+    );
+    // label below
+    ctx.fillStyle = COLORS.text2;
+    ctx.font = "500 10px 'Inter'";
+    ctx.textAlign = 'center';
+    const labelY = y + 34;
+    ctx.fillText(bioLabels[i], x, labelY);
+  });
+
+  document.getElementById('bioStepLabel').textContent = `Schritt ${step}: ${bioStepDescriptions[step].split('—')[0]}`;
+  document.getElementById('bioStepInfo').innerHTML = bioStepDescriptions[step];
+
+  // Update step dots
+  const dotsContainer = document.getElementById('bioStepDots');
+  dotsContainer.innerHTML = '';
+  for (let i = 0; i <= 8; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot' + (i === step ? ' active' : (i < step ? ' done' : ''));
+    dotsContainer.appendChild(dot);
+  }
+}
+
+document.getElementById('bioStep').addEventListener('input', drawBioSystem);
+drawBioSystem();
+
+// ============================================================
+// ENVIRONMENT CANVAS (Z = N ∪ M)
+// ============================================================
+let envShowLabels = true;
+function toggleEnvLabels() { envShowLabels = !envShowLabels; drawEnvironment(); }
+
+function drawEnvironment() {
+  const [c, ctx, W, H] = setupCanvas('envCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const influence = parseInt(document.getElementById('envInfluence').value);
+
+  // N elements (inner)
+  const nNodes = [
+    { id: 'a', x: 0.3, y: 0.25 },
+    { id: 'b', x: 0.45, y: 0.15 },
+    { id: 'c', x: 0.6, y: 0.2 },
+    { id: 'd', x: 0.65, y: 0.45 },
+    { id: 'e', x: 0.5, y: 0.65 },
+    { id: 'f', x: 0.3, y: 0.55 },
+  ];
+
+  // M elements (outer / environment)
+  const mNodes = [
+    { id: 'α', x: 0.08, y: 0.15 },
+    { id: 'β', x: 0.15, y: 0.8 },
+    { id: 'γ', x: 0.85, y: 0.2 },
+    { id: 'δ', x: 0.9, y: 0.6 },
+    { id: 'ε', x: 0.5, y: 0.9 },
+    { id: 'ν', x: 0.1, y: 0.45 },
+  ];
+
+  // Edges from M to N depending on influence level
+  const envEdges = [
+    [[2, 2]], // γ → c
+    [[2, 2], [3, 3]], // + δ → d
+    [[2, 2], [3, 3], [0, 0]], // + α → a
+    [[2, 2], [3, 3], [0, 0], [5, 4]], // + ν → e
+    [[2, 2], [3, 3], [0, 0], [5, 4], [1, 5], [4, 4]], // + β → f, ε → e
+  ];
+
+  const activeEnvEdges = envEdges[influence] || [];
+
+  // Inner region
+  ctx.beginPath();
+  ctx.ellipse(W*0.47, H*0.4, W*0.28, H*0.35, 0, 0, TAU);
+  ctx.fillStyle = 'rgba(108,99,255,0.04)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(108,99,255,0.2)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "600 12px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText('N (Eigeneigenschaften)', W*0.47, H*0.03 + 14);
+
+  // Some inner edges
+  const innerEdges = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[1,4]];
+  innerEdges.forEach(([i,j]) => {
+    const a = nNodes[i], b = nNodes[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 18, 18);
+    drawArrow(ctx, ex1, ey1, ex2, ey2, 'rgba(108,99,255,0.3)', 1.5, 7);
+  });
+
+  // Env edges
+  const adherenceFromM = new Set();
+  activeEnvEdges.forEach(([mi, ni]) => {
+    const a = mNodes[mi], b = nNodes[ni];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 16, 18);
+    drawArrow(ctx, ex1, ey1, ex2, ey2, COLORS.accent4, 2, 8);
+    adherenceFromM.add(mNodes[mi].id);
+  });
+
+  // Draw M nodes
+  mNodes.forEach((n) => {
+    const x = n.x * W, y = n.y * H;
+    const isAdherence = adherenceFromM.has(n.id);
+    drawNode(ctx, x, y, n.id, 16,
+      isAdherence ? COLORS.accent4 : COLORS.bg4,
+      '#fff', isAdherence ? COLORS.accent4 : null,
+      isAdherence ? COLORS.accent4 : 'rgba(255,167,38,0.3)'
+    );
+    if (envShowLabels) {
+      ctx.fillStyle = COLORS.text3;
+      ctx.font = "400 9px 'Inter'";
+      ctx.textAlign = 'center';
+      ctx.fillText('M', x, y + 22);
+    }
+  });
+
+  // Draw N nodes
+  nNodes.forEach((n) => {
+    const x = n.x * W, y = n.y * H;
+    drawNode(ctx, x, y, n.id, 18, COLORS.accent, '#fff', null, COLORS.accent);
+    if (envShowLabels) {
+      ctx.fillStyle = COLORS.text2;
+      ctx.font = "400 9px 'Inter'";
+      ctx.textAlign = 'center';
+      ctx.fillText('N', x, y + 26);
+    }
+  });
+
+  // Update labels
+  const xSet = nNodes.map(n => n.id).concat([...adherenceFromM]);
+  document.getElementById('fullSet').textContent = '{' + xSet.join(',') + '}';
+}
+
+document.getElementById('envInfluence').addEventListener('input', drawEnvironment);
+drawEnvironment();
+
+// ============================================================
+// CONNECTED CANVAS (Statement 1)
+// ============================================================
+let isolatedNode = -1;
+
+function toggleIsolation(isolate) {
+  isolatedNode = isolate ? 4 : -1; // isolate node 'e'
+  drawConnected();
+}
+
+function drawConnected() {
+  const [c, ctx, W, H] = setupCanvas('connectedCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const nodes = [
+    { id: 'a', x: 0.12, y: 0.4 },
+    { id: 'b', x: 0.28, y: 0.2 },
+    { id: 'c', x: 0.48, y: 0.15 },
+    { id: 'd', x: 0.68, y: 0.25 },
+    { id: 'e', x: 0.88, y: 0.5 },
+    { id: 'f', x: 0.55, y: 0.7 },
+    { id: 'g', x: 0.3, y: 0.75 },
+  ];
+  const edges = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0],[2,5]];
+
+  // Draw edges
+  edges.forEach(([i,j]) => {
+    if (isolatedNode >= 0 && (i === isolatedNode || j === isolatedNode)) return;
+    const a = nodes[i], b = nodes[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 22, 22);
+    drawArrow(ctx, ex1, ey1, ex2, ey2, 'rgba(108,99,255,0.4)', 2, 8);
+  });
+
+  // Draw nodes
+  nodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const isIsolated = i === isolatedNode;
+    drawNode(ctx, x, y, n.id, 22,
+      isIsolated ? COLORS.red : COLORS.bg3,
+      '#fff',
+      isIsolated ? COLORS.red : null,
+      isIsolated ? COLORS.red : COLORS.accent
+    );
+    if (isIsolated) {
+      ctx.fillStyle = COLORS.red;
+      ctx.font = "600 10px 'Inter'";
+      ctx.textAlign = 'center';
+      ctx.fillText('ISOLIERT!', x, y + 32);
+    }
+  });
+
+  const info = document.getElementById('connectedInfo');
+  if (isolatedNode >= 0) {
+    info.className = 'info-box warn';
+    info.innerHTML = `❌ Knoten <strong>${nodes[isolatedNode].id}</strong> ist isoliert — das System ist <strong>nicht zusammenhängend</strong> und kann so nicht funktionieren! (Verletzung von Aussage 1)`;
+  } else {
+    info.className = 'info-box success';
+    info.innerHTML = '✅ System ist zusammenhängend — alle Funktionen sind erreichbar. (Aussage 1 erfüllt)';
+  }
+}
+drawConnected();
+
+// ============================================================
+// CLOSED LOOP CANVAS
+// ============================================================
+let loopMode = 'main';
+let loopAnimT = 0;
+let loopAnimFrame = null;
+
+function setLoopMode(mode) {
+  loopMode = mode;
+  document.querySelectorAll('#closed-loops .btn-group .btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(
+      mode === 'main' ? 'haupt' : mode === 'secondary' ? 'neben' : 'alle'
+    ));
+  });
+  drawLoop();
+}
+
+const loopNodes = bioPositions.map((p, i) => ({ ...p, id: bioIds[i] }));
+const loopEdgesAll = bioEdgesAll;
+const mainLoopPath = [0, 1, 2, 3, 5, 6, 0];
+const secondaryLoopPath = [2, 3, 5, 6, 0, 1, 2]; // cdfbea... actually: c,d,f,b,e per paper
+
+function drawLoop() {
+  const [c, ctx, W, H] = setupCanvas('loopCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const speed = parseInt(document.getElementById('loopSpeed').value);
+
+  // Determine highlighted path
+  let highlightEdges = [];
+  if (loopMode === 'main') {
+    for (let i = 0; i < mainLoopPath.length - 1; i++) {
+      highlightEdges.push([mainLoopPath[i], mainLoopPath[i+1]]);
+    }
+  } else if (loopMode === 'secondary') {
+    highlightEdges = [[2,3],[3,5],[5,6],[6,0],[0,1],[1,2]]; // another loop
+    // Actually use a different secondary: c→d→e→b (via 3→4→1)
+    highlightEdges = [[2,3],[3,4],[4,1],[1,2]];
+  }
+
+  // Draw all edges
+  loopEdgesAll.forEach(([i,j]) => {
+    const a = loopNodes[i], b = loopNodes[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 24, 24);
+    const isHighlight = highlightEdges.some(([hi,hj]) => hi === i && hj === j);
+    const isAny = loopMode === 'all';
+    drawArrow(ctx, ex1, ey1, ex2, ey2,
+      isHighlight ? COLORS.accent3 : (isAny ? COLORS.accent : 'rgba(108,99,255,0.15)'),
+      isHighlight ? 3 : (isAny ? 2 : 1.5), 9);
+  });
+
+  // Animate a "pulse" along the highlighted path
+  const pathNodes = loopMode === 'main' ? mainLoopPath :
+    loopMode === 'secondary' ? [2,3,4,1,2] : mainLoopPath;
+  const progress = (Date.now() * speed * 0.0003) % 1;
+  const segIdx = Math.floor(progress * (pathNodes.length - 1));
+  const segT = (progress * (pathNodes.length - 1)) - segIdx;
+  if (segIdx < pathNodes.length - 1) {
+    const ni = pathNodes[segIdx], nj = pathNodes[segIdx + 1];
+    const a = loopNodes[ni], b = loopNodes[nj];
+    const px = lerp(a.x*W, b.x*W, segT);
+    const py = lerp(a.y*H, b.y*H, segT);
+    ctx.beginPath();
+    ctx.arc(px, py, 6, 0, TAU);
+    ctx.fillStyle = COLORS.accent3;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(px, py, 12, 0, TAU);
+    ctx.fillStyle = hexToRgba(COLORS.accent3, 0.2);
+    ctx.fill();
+  }
+
+  // Draw nodes
+  loopNodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const inLoop = loopMode === 'main' ? mainLoopPath.includes(i) :
+      loopMode === 'secondary' ? [1,2,3,4].includes(i) : true;
+    drawNode(ctx, x, y, n.id, 22,
+      inLoop ? COLORS.bg3 : COLORS.bg4,
+      '#fff', null,
+      inLoop ? COLORS.accent3 : 'rgba(108,99,255,0.3)'
+    );
+    ctx.fillStyle = COLORS.text2;
+    ctx.font = "500 9px 'Inter'";
+    ctx.textAlign = 'center';
+    ctx.fillText(bioLabels[i], x, y + 32);
+  });
+
+  if (loopMode === 'main') {
+    document.getElementById('mainLoopLabel').textContent = 'a→b→c→d→f→g→a';
+    document.getElementById('mainLoopLen').textContent = '6';
+  } else if (loopMode === 'secondary') {
+    document.getElementById('mainLoopLabel').textContent = 'c→d→e→b→c (Nebenschleife)';
+    document.getElementById('mainLoopLen').textContent = '4';
+  } else {
+    document.getElementById('mainLoopLabel').textContent = 'Alle Pfade sichtbar';
+    document.getElementById('mainLoopLen').textContent = '—';
+  }
+
+  requestAnimationFrame(drawLoop);
+}
+drawLoop();
+
+// ============================================================
+// CONTINUOUS MAPPING CANVAS
+// ============================================================
+let showMappingLines = false;
+function toggleMappingLines() {
+  showMappingLines = !showMappingLines;
+  document.getElementById('showMappingBtn').classList.toggle('active', showMappingLines);
+  drawMapping();
+}
+
+function drawMapping() {
+  const [c, ctx, W, H] = setupCanvas('mappingCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const detail = parseInt(document.getElementById('detailLevel').value);
+
+  // Simple model (top)
+  const simpleY = H * 0.2;
+  const simpleNodes = [
+    { id: 'A', x: 0.15 }, { id: 'B', x: 0.35 }, { id: 'C', x: 0.55 },
+    { id: 'D', x: 0.75 }, { id: 'E', x: 0.9 },
+  ];
+  const simpleEdges = [[0,1],[1,2],[2,3],[3,4],[4,0]];
+
+  // Detailed expansions for each detail level
+  const detailMaps = [
+    [], // level 0: no expansion
+    [{ parent: 2, children: ['C₁','C₂'], positions: [0.5, 0.6] }],
+    [
+      { parent: 2, children: ['C₁','C₂'], positions: [0.48, 0.62] },
+      { parent: 3, children: ['D₁','D₂','D₃'], positions: [0.7, 0.78, 0.86] },
+    ],
+    [
+      { parent: 2, children: ['C₁','C₂'], positions: [0.48, 0.62] },
+      { parent: 3, children: ['D₁','D₂','D₃'], positions: [0.68, 0.76, 0.84] },
+      { parent: 0, children: ['A₁','A₂'], positions: [0.1, 0.2] },
+    ],
+  ];
+
+  const expansions = detailMaps[detail] || [];
+  const detailY = H * 0.7;
+
+  // Build detailed node list
+  let detailedNodes = [];
+  let parentMap = {}; // detailedIdx -> simpleIdx
+  simpleNodes.forEach((sn, si) => {
+    const expansion = expansions.find(e => e.parent === si);
+    if (expansion) {
+      expansion.children.forEach((ch, ci) => {
+        const idx = detailedNodes.length;
+        detailedNodes.push({ id: ch, x: expansion.positions[ci] });
+        parentMap[idx] = si;
+      });
+    } else {
+      const idx = detailedNodes.length;
+      detailedNodes.push({ id: sn.id, x: sn.x });
+      parentMap[idx] = si;
+    }
+  });
+
+  // Build detailed edges (preserve structure)
+  let detailedEdges = [];
+  simpleEdges.forEach(([si, sj]) => {
+    // find last node of si-group and first node of sj-group
+    const siNodes = Object.entries(parentMap).filter(([k,v]) => v === si).map(([k]) => parseInt(k));
+    const sjNodes = Object.entries(parentMap).filter(([k,v]) => v === sj).map(([k]) => parseInt(k));
+    if (siNodes.length > 0 && sjNodes.length > 0) {
+      // internal edges within expansion
+      for (let i = 0; i < siNodes.length - 1; i++) {
+        detailedEdges.push([siNodes[i], siNodes[i+1]]);
+      }
+      // edge from last of si to first of sj
+      detailedEdges.push([siNodes[siNodes.length - 1], sjNodes[0]]);
+    }
+  });
+  // also add internal edges for last group
+  const lastGroup = Object.entries(parentMap).filter(([k,v]) => v === simpleNodes.length - 1).map(([k]) => parseInt(k));
+  for (let i = 0; i < lastGroup.length - 1; i++) {
+    detailedEdges.push([lastGroup[i], lastGroup[i+1]]);
+  }
+
+  // --- DRAW SIMPLE MODEL (top) ---
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "600 11px 'Inter'";
+  ctx.textAlign = 'left';
+  ctx.fillText('Einfaches Modell T*', 10, simpleY - 30);
+
+  simpleEdges.forEach(([i,j]) => {
+    const a = simpleNodes[i], b = simpleNodes[j];
+    const ax = a.x * W, bx = b.x * W;
+    if (j === 0 && i === simpleNodes.length - 1) {
+      // wrap-around edge: draw curved
+      ctx.beginPath();
+      ctx.moveTo(ax, simpleY);
+      ctx.bezierCurveTo(ax + 30, simpleY - 60, simpleNodes[0].x * W - 30, simpleY - 60, simpleNodes[0].x * W, simpleY);
+      ctx.strokeStyle = 'rgba(108,99,255,0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    } else {
+      const [ex1,ey1,ex2,ey2] = edgeEndpoints(ax, simpleY, bx, simpleY, 20, 20);
+      drawArrow(ctx, ex1, ey1, ex2, ey2, 'rgba(108,99,255,0.4)', 2, 8);
+    }
+  });
+
+  simpleNodes.forEach((n) => {
+    drawNode(ctx, n.x * W, simpleY, n.id, 18, COLORS.bg3, '#fff', null, COLORS.accent);
+  });
+
+  // --- DRAW DETAILED MODEL (bottom) ---
+  if (detail > 0) {
+    ctx.fillStyle = COLORS.text3;
+    ctx.font = "600 11px 'Inter'";
+    ctx.textAlign = 'left';
+    ctx.fillText(`Detailliertes Modell T (Stufe ${detail})`, 10, detailY - 30);
+
+    // Remove duplicate edges
+    const edgeSet = new Set();
+    const uniqueEdges = detailedEdges.filter(([i,j]) => {
+      const key = i + ',' + j;
+      if (edgeSet.has(key)) return false;
+      edgeSet.add(key);
+      return true;
+    });
+
+    uniqueEdges.forEach(([i,j]) => {
+      if (i >= detailedNodes.length || j >= detailedNodes.length) return;
+      const a = detailedNodes[i], b = detailedNodes[j];
+      const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, detailY, b.x*W, detailY, 16, 16);
+      drawArrow(ctx, ex1, ey1, ex2, ey2, 'rgba(0,212,170,0.5)', 2, 7);
+    });
+
+    detailedNodes.forEach((n) => {
+      const isExpanded = n.id.includes('₁') || n.id.includes('₂') || n.id.includes('₃');
+      drawNode(ctx, n.x * W, detailY, n.id, 15,
+        isExpanded ? COLORS.accent3 : COLORS.bg3,
+        '#fff', null,
+        isExpanded ? COLORS.accent3 : COLORS.accent
+      );
+    });
+
+    // --- MAPPING LINES ---
+    if (showMappingLines) {
+      detailedNodes.forEach((dn, di) => {
+        const si = parentMap[di];
+        const sn = simpleNodes[si];
+        ctx.beginPath();
+        ctx.moveTo(dn.x * W, detailY - 18);
+        ctx.lineTo(sn.x * W, simpleY + 22);
+        ctx.strokeStyle = 'rgba(255,107,157,0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+
+      // Label
+      ctx.fillStyle = COLORS.accent2;
+      ctx.font = "600 12px 'Inter'";
+      ctx.textAlign = 'center';
+      ctx.fillText('t: T → T* (stetige Abbildung)', W * 0.5, H * 0.48);
+    }
+  }
+
+  const info = document.getElementById('mappingInfo');
+  if (detail === 0) {
+    info.innerHTML = 'Stufe 0: Das einfache Modell. Bewege den Slider nach rechts, um Knoten in Untereigenschaften aufzuteilen.';
+  } else {
+    info.innerHTML = `Stufe ${detail}: ${expansions.length} Knoten wurden verfeinert. Die Pfeilrichtungen bleiben erhalten! ${showMappingLines ? 'Die rosa Linien zeigen die Zuordnung t: T → T*.' : 'Klicke "Zuordnung anzeigen" für die Abbildungslinien.'}`;
+  }
+}
+
+document.getElementById('detailLevel').addEventListener('input', drawMapping);
+drawMapping();
+
+// ============================================================
+// CONTINUOUS EXPLAIN CANVAS
+// ============================================================
+function drawContinuousExplain() {
+  const [c, ctx, W, H] = setupCanvas('continuousExplainCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  // Left: T* (simple) with a neighbourhood highlighted
+  const lx = W * 0.25, ly = H * 0.5;
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "600 12px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText('T* (einfach)', lx, 20);
+
+  // neighbourhood blob
+  ctx.beginPath();
+  ctx.ellipse(lx, ly, 70, 45, 0, 0, TAU);
+  ctx.fillStyle = 'rgba(108,99,255,0.08)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(108,99,255,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "500 10px 'Inter'";
+  ctx.fillText('Offene Menge in T*', lx, ly + 60);
+
+  drawNode(ctx, lx - 20, ly - 5, 'p', 14, COLORS.accent, '#fff');
+  drawNode(ctx, lx + 25, ly + 5, 'q', 14, COLORS.accent, '#fff');
+  const [ex1,ey1,ex2,ey2] = edgeEndpoints(lx-20, ly-5, lx+25, ly+5, 16, 16);
+  drawArrow(ctx, ex1, ey1, ex2, ey2, COLORS.accent, 1.5, 6);
+
+  // Arrow in middle
+  ctx.beginPath();
+  ctx.moveTo(W * 0.42, H * 0.5);
+  ctx.lineTo(W * 0.56, H * 0.5);
+  ctx.strokeStyle = COLORS.accent2;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // arrowhead
+  ctx.beginPath();
+  ctx.moveTo(W * 0.56, H * 0.5);
+  ctx.lineTo(W * 0.53, H * 0.46);
+  ctx.lineTo(W * 0.53, H * 0.54);
+  ctx.closePath();
+  ctx.fillStyle = COLORS.accent2;
+  ctx.fill();
+  ctx.fillStyle = COLORS.accent2;
+  ctx.font = "600 11px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText('t⁻¹ (Urbild)', W * 0.49, H * 0.42);
+
+  // Right: T (detailed) with pre-image highlighted
+  const rx = W * 0.75, ry = H * 0.5;
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "600 12px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText('T (detailliert)', rx, 20);
+
+  ctx.beginPath();
+  ctx.ellipse(rx, ry, 85, 50, 0, 0, TAU);
+  ctx.fillStyle = 'rgba(0,212,170,0.08)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,212,170,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "500 10px 'Inter'";
+  ctx.fillText('Urbild = auch offen ✓', rx, ry + 65);
+
+  drawNode(ctx, rx - 30, ry - 10, 'p₁', 12, COLORS.accent3, '#fff');
+  drawNode(ctx, rx, ry - 10, 'p₂', 12, COLORS.accent3, '#fff');
+  drawNode(ctx, rx + 30, ry + 8, 'q₁', 12, COLORS.accent3, '#fff');
+  const pts = [[rx-30, ry-10, rx, ry-10], [rx, ry-10, rx+30, ry+8]];
+  pts.forEach(([ax,ay,bx,by]) => {
+    const [e1,e2,e3,e4] = edgeEndpoints(ax, ay, bx, by, 14, 14);
+    drawArrow(ctx, e1, e2, e3, e4, COLORS.accent3, 1.5, 5);
+  });
+}
+drawContinuousExplain();
+
+// ============================================================
+// SYNDROME CANVAS
+// ============================================================
+let syndromeSelected = -1;
+let syndromeSpreadProgress = 0;
+
+const synNodes = bioPositions.map((p, i) => ({ ...p, id: bioIds[i], label: bioLabels[i] }));
+const synEdges = bioEdgesAll;
+const synMainLoop = [0,1,2,3,5,6]; // indices of main loop nodes
+
+function resetSyndrome() {
+  syndromeSelected = -1;
+  document.getElementById('spreadTime').value = 0;
+  document.querySelectorAll('#syndromeBtns .btn').forEach(b => b.classList.remove('active'));
+  drawSyndrome();
+}
+
+function drawSyndrome() {
+  const [c, ctx, W, H] = setupCanvas('syndromeCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const spreadVal = parseInt(document.getElementById('spreadTime').value);
+
+  // Compute reachability with distance
+  let reached = new Map();
+  if (syndromeSelected >= 0) {
+    const queue = [[syndromeSelected, 0]];
+    reached.set(syndromeSelected, 0);
+    while (queue.length > 0) {
+      const [node, dist] = queue.shift();
+      synEdges.forEach(([i,j]) => {
+        if (i === node && !reached.has(j)) {
+          reached.set(j, dist + 1);
+          queue.push([j, dist + 1]);
+        }
+      });
+    }
+  }
+
+  // Max distance in reached
+  const maxDist = reached.size > 0 ? Math.max(...reached.values()) : 1;
+  const spreadThreshold = (spreadVal / 100) * (maxDist + 1);
+
+  // Draw edges
+  synEdges.forEach(([i,j]) => {
+    const a = synNodes[i], b = synNodes[j];
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(a.x*W, a.y*H, b.x*W, b.y*H, 24, 24);
+    const iAffected = reached.has(i) && reached.get(i) < spreadThreshold;
+    const jAffected = reached.has(j) && reached.get(j) < spreadThreshold;
+    drawArrow(ctx, ex1, ey1, ex2, ey2,
+      (iAffected && jAffected) ? COLORS.red : 'rgba(108,99,255,0.2)',
+      (iAffected && jAffected) ? 2.5 : 1.5, 8);
+  });
+
+  // Draw nodes
+  const syndromeSet = [];
+  const asyndromeSet = [];
+  synNodes.forEach((n, i) => {
+    const x = n.x * W, y = n.y * H;
+    const dist = reached.get(i);
+    const isAffected = reached.has(i) && dist < spreadThreshold;
+    const isSel = i === syndromeSelected;
+
+    let fill = COLORS.bg4, glow = null, stroke = 'rgba(108,99,255,0.3)';
+    if (isSel) {
+      fill = COLORS.red; glow = COLORS.red; stroke = COLORS.red;
+    } else if (isAffected) {
+      const t = clamp(dist / maxDist, 0, 1);
+      fill = `hsl(${lerp(0, 40, t)}, 80%, ${lerp(40, 55, t)}%)`;
+      glow = COLORS.accent2; stroke = COLORS.accent2;
+    } else {
+      fill = COLORS.bg3; stroke = COLORS.accent3;
+    }
+
+    drawNode(ctx, x, y, n.id, 22, fill, '#fff', glow, stroke);
+
+    // label
+    ctx.fillStyle = COLORS.text2;
+    ctx.font = "500 9px 'Inter'";
+    ctx.textAlign = 'center';
+    ctx.fillText(n.label, x, y + 32);
+
+    if (isAffected || isSel) syndromeSet.push(n.id);
+    else asyndromeSet.push(n.id);
+  });
+
+  document.getElementById('syndromeSet').textContent =
+    syndromeSet.length === 0 ? '—' : '{' + syndromeSet.join(',') + '}';
+  document.getElementById('asyndromeSet').textContent =
+    asyndromeSet.length === 0 ? '∅' : '{' + asyndromeSet.join(',') + '}';
+
+  // Check if dangerous
+  const isDangerous = syndromeSelected >= 0 && syndromeSet.some(id => {
+    const idx = synNodes.findIndex(n => n.id === id);
+    return synMainLoop.includes(idx);
+  });
+  document.getElementById('dangerousLabel').textContent =
+    syndromeSelected < 0 ? '—' : (isDangerous ? '⚠️ JA' : '✅ Nein');
+  document.getElementById('dangerousLabel').style.color =
+    isDangerous ? COLORS.red : COLORS.accent3;
+}
+
+(function() {
+  const container = document.getElementById('syndromeBtns');
+  if (!container) return;
+  synNodes.forEach((n, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = n.id;
+    btn.onclick = () => {
+      syndromeSelected = i;
+      document.getElementById('spreadTime').value = 100;
+      container.querySelectorAll('.btn').forEach((b, j) => b.classList.toggle('active', j === i));
+      drawSyndrome();
+    };
+    container.appendChild(btn);
+  });
+  document.getElementById('spreadTime').addEventListener('input', drawSyndrome);
+  drawSyndrome();
+})();
+
+// ============================================================
+// INVARIANCE CANVAS
+// ============================================================
+function drawInvariance() {
+  const [c, ctx, W, H] = setupCanvas('invarianceCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const detail = parseInt(document.getElementById('invarianceDetail').value);
+
+  const configs = [
+    { nodes: ['A','B','C','D'], edges: [[0,1],[1,2],[2,3],[3,0]], syndromes: ['{A,B,C,D}', '{A,B,C,D}'] },
+    { nodes: ['A','B₁','B₂','C','D'], edges: [[0,1],[1,2],[2,3],[3,4],[4,0]], syndromes: ['{A,B₁,B₂,C,D}', '{A,B₁,B₂,C,D}'] },
+    { nodes: ['A₁','A₂','B₁','B₂','C','D₁','D₂'], edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]], syndromes: ['{A₁,A₂,B₁,B₂,C,D₁,D₂}', '{A₁,A₂,B₁,B₂,C,D₁,D₂}'] },
+  ];
+
+  const cfg = configs[detail];
+  const n = cfg.nodes.length;
+  const cx = W / 2, cy = H / 2;
+  const radius = Math.min(W, H) * 0.3;
+
+  // Position nodes in circle
+  const positions = cfg.nodes.map((_, i) => ({
+    x: cx + radius * Math.cos(TAU * i / n - Math.PI/2),
+    y: cy + radius * Math.sin(TAU * i / n - Math.PI/2),
+  }));
+
+  // Draw edges
+  cfg.edges.forEach(([i,j]) => {
+    const [ex1,ey1,ex2,ey2] = edgeEndpoints(positions[i].x, positions[i].y, positions[j].x, positions[j].y, 18, 18);
+    drawArrow(ctx, ex1, ey1, ex2, ey2, COLORS.accent, 2, 7);
+  });
+
+  // Draw nodes
+  cfg.nodes.forEach((label, i) => {
+    const isExpanded = label.includes('₁') || label.includes('₂');
+    drawNode(ctx, positions[i].x, positions[i].y, label, 16,
+      isExpanded ? COLORS.accent3 : COLORS.bg3,
+      '#fff', null,
+      isExpanded ? COLORS.accent3 : COLORS.accent
+    );
+  });
+
+  // Label
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "600 11px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText(`Detailstufe ${detail} — ${n} Knoten`, cx, H - 15);
+
+  document.getElementById('disjointCount').textContent = '1 (alle in einer Schleife)';
+}
+
+document.getElementById('invarianceDetail').addEventListener('input', drawInvariance);
+drawInvariance();
+
+// ============================================================
+// HOMEOSTASIS CANVAS
+// ============================================================
+let currentDisease = 0;
+
+function setDisease(d) {
+  currentDisease = d;
+  document.querySelectorAll('#diagnostics .card:first-child .btn-group .btn').forEach((b, i) => {
+    b.classList.toggle('active', i === d);
+  });
+  drawHomeostasis();
+}
+
+function drawHomeostasis() {
+  const [c, ctx, W, H] = setupCanvas('homeostasisCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const comp = parseInt(document.getElementById('compensationLevel').value) / 100;
+
+  // Symptoms: [RVP, LVP, SP, DP, DIUR]
+  const symptomLabels = ['RVP', 'LVP', 'Syst.BD', 'Diast.BD', 'Diurese'];
+  const normal = [50, 50, 50, 50, 50];
+  const tamponade = [85, 80, 20, 25, 15]; // cardiac tamponade
+  const heartFail = [75, 85, 25, 30, 20]; // heart failure
+
+  let values;
+  if (currentDisease === 0) {
+    values = normal;
+  } else if (currentDisease === 1) {
+    values = tamponade.map((v, i) => lerp(v, lerp(v, normal[i], comp * 0.6), 0));
+  } else {
+    values = heartFail.map((v, i) => lerp(v, lerp(v, normal[i], comp * 0.6), 0));
+  }
+
+  // With compensation, values move toward normal
+  if (currentDisease > 0) {
+    values = values.map((v, i) => {
+      const target = currentDisease === 1 ? tamponade[i] : heartFail[i];
+      return lerp(target, normal[i], comp * 0.7);
+    });
+  }
+
+  // Draw bar chart
+  const barW = 80;
+  const gap = (W - symptomLabels.length * barW) / (symptomLabels.length + 1);
+  const barMaxH = H - 100;
+
+  symptomLabels.forEach((label, i) => {
+    const x = gap + i * (barW + gap);
+    const barH = (values[i] / 100) * barMaxH;
+    const y = H - 40 - barH;
+
+    // Normal range indicator
+    const normalH = (normal[i] / 100) * barMaxH;
+    const normalY = H - 40 - normalH;
+    ctx.beginPath();
+    ctx.rect(x - 2, normalY - 5, barW + 4, 10);
+    ctx.fillStyle = 'rgba(0,212,170,0.15)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x, normalY);
+    ctx.lineTo(x + barW, normalY);
+    ctx.strokeStyle = COLORS.accent3;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Bar
+    const isAbnormal = Math.abs(values[i] - normal[i]) > 10;
+    const gradient = ctx.createLinearGradient(x, y, x, H - 40);
+    if (isAbnormal) {
+      gradient.addColorStop(0, COLORS.accent2);
+      gradient.addColorStop(1, hexToRgba(COLORS.accent2, 0.3));
+    } else {
+      gradient.addColorStop(0, COLORS.accent);
+      gradient.addColorStop(1, hexToRgba(COLORS.accent, 0.3));
+    }
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = COLORS.text2;
+    ctx.font = "600 10px 'Inter'";
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + barW/2, H - 22);
+
+    // Value
+    ctx.fillStyle = '#fff';
+    ctx.font = "600 11px 'JetBrains Mono'";
+    ctx.fillText(Math.round(values[i]), x + barW/2, y - 8);
+  });
+
+  // Title
+  ctx.fillStyle = COLORS.text;
+  ctx.font = "600 13px 'Inter'";
+  ctx.textAlign = 'left';
+  const titles = ['Gesund', 'Herztamponade', 'Herzinsuffizienz'];
+  ctx.fillText(titles[currentDisease], 15, 25);
+
+  // Similarity indicator
+  if (currentDisease > 0 && comp > 0.3) {
+    const similarity = comp * 0.8;
+    ctx.fillStyle = COLORS.accent4;
+    ctx.font = "600 11px 'Inter'";
+    ctx.textAlign = 'right';
+    ctx.fillText(`Symptom-Ähnlichkeit: ${Math.round(similarity * 100)}%`, W - 15, 25);
+  }
+
+  const info = document.getElementById('homeostasisInfo');
+  if (currentDisease === 0) {
+    info.innerHTML = 'Gesundes System — alle Werte im Normalbereich (grüne Linie).';
+  } else if (comp < 0.3) {
+    info.innerHTML = `<strong>${titles[currentDisease]}:</strong> Deutliche Abweichungen sichtbar. Diagnose wäre relativ einfach.`;
+  } else if (comp < 0.7) {
+    info.innerHTML = `<strong>${titles[currentDisease]}:</strong> Kompensation aktiv — Werte nähern sich dem Normalbereich. Diagnose wird schwieriger!`;
+  } else {
+    info.innerHTML = `⚠️ <strong>${titles[currentDisease]}:</strong> Starke Kompensation — Symptome sehen fast normal aus! Herztamponade und Herzinsuffizienz sind kaum zu unterscheiden. Hier hilft das topologische Modell!`;
+  }
+}
+
+document.getElementById('compensationLevel').addEventListener('input', drawHomeostasis);
+drawHomeostasis();
+
+// ============================================================
+// DIAGNOSTIC CANVAS
+// ============================================================
+const diagVars = {
+  rvp: 'up', lvp: 'up', sp: 'down', dp: 'down', diur: 'down', bl500: 'yes'
+};
+
+function setDiagVar(btn) {
+  const varName = btn.dataset.var;
+  const val = btn.dataset.val;
+  diagVars[varName] = val;
+  // Update button states
+  btn.parentElement.querySelectorAll('.btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === val);
+  });
+  drawDiagnostic();
+}
+
+function evaluateDiagnosis() {
+  const { rvp, lvp, sp, dp, diur, bl500 } = diagVars;
+
+  // Simplified decision tree based on the paper's diagnostic diagram
+  if (rvp === 'up' && lvp === 'up') {
+    if (sp === 'down' || dp === 'down') {
+      if (diur === 'down') {
+        if (bl500 === 'yes') {
+          return { diagnosis: 'SOH', label: '🩸 Verdacht auf okkulte Blutung (SOH)', color: COLORS.accent4, confidence: 75 };
+        } else {
+          return { diagnosis: 'CT', label: '❤️‍🩹 Herztamponade (CT)', color: COLORS.red, confidence: 85 };
+        }
+      } else {
+        return { diagnosis: 'CT', label: '❤️‍🩹 Herztamponade (CT) — Diurese stabil, aber Druckwerte kritisch', color: COLORS.red, confidence: 65 };
+      }
+    } else {
+      return { diagnosis: 'WATCH', label: '👁️ Beobachten — Venendruck erhöht, aber Blutdruck stabil', color: COLORS.accent5, confidence: 40 };
+    }
+  } else if (rvp === 'up' && lvp !== 'up') {
+    if (sp === 'down') {
+      return { diagnosis: 'SOH', label: '🩸 Verdacht auf okkulte Blutung (SOH) — asymmetrischer Venendruck', color: COLORS.accent4, confidence: 70 };
+    } else {
+      return { diagnosis: 'WATCH', label: '👁️ Beobachten — nur RVP erhöht', color: COLORS.accent5, confidence: 30 };
+    }
+  } else if (rvp === 'down' || lvp === 'down') {
+    if (bl500 === 'yes') {
+      return { diagnosis: 'BLEED', label: '🩸 Aktive Blutung — sofortige Intervention!', color: COLORS.red, confidence: 90 };
+    } else if (sp === 'down' && dp === 'down') {
+      return { diagnosis: 'HF', label: '💔 Herzinsuffizienz — niedrige Druckwerte bei fallendem Venendruck', color: COLORS.accent2, confidence: 60 };
+    } else {
+      return { diagnosis: 'WATCH', label: '👁️ Beobachten — Venendruck fällt, Blutdruck stabil', color: COLORS.accent5, confidence: 35 };
+    }
+  } else {
+    // rvp same, lvp same
+    if (sp === 'down' && dp === 'down' && diur === 'down') {
+      return { diagnosis: 'HF', label: '💔 Mögliche Herzinsuffizienz — schleichender Verlauf', color: COLORS.accent2, confidence: 50 };
+    } else {
+      return { diagnosis: 'OK', label: '✅ Stabil — keine akuten Anzeichen', color: COLORS.accent3, confidence: 95 };
+    }
+  }
+}
+
+function drawDiagnostic() {
+  const [c, ctx, W, H] = setupCanvas('diagnosticCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const result = evaluateDiagnosis();
+
+  // Draw decision tree visualization
+  const levels = [
+    { label: 'RVP / LVP', y: 0.08, vars: ['rvp', 'lvp'] },
+    { label: 'SP / DP', y: 0.3, vars: ['sp', 'dp'] },
+    { label: 'DIUR', y: 0.52, vars: ['diur'] },
+    { label: 'Blutverlust', y: 0.72, vars: ['bl500'] },
+  ];
+
+  // Draw connecting lines between levels
+  levels.forEach((level, li) => {
+    if (li < levels.length - 1) {
+      const y1 = level.y * H + 30;
+      const y2 = levels[li + 1].y * H - 5;
+      ctx.beginPath();
+      ctx.moveTo(W * 0.5, y1);
+      ctx.lineTo(W * 0.5, y2);
+      ctx.strokeStyle = 'rgba(108,99,255,0.15)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+
+  // Draw each decision level
+  levels.forEach((level, li) => {
+    const y = level.y * H;
+
+    // Level label
+    ctx.fillStyle = COLORS.text3;
+    ctx.font = "600 10px 'Inter'";
+    ctx.textAlign = 'left';
+    ctx.fillText(`Stufe ${li + 1}`, 15, y + 5);
+
+    // Variable boxes
+    const totalVars = level.vars.length;
+    const boxW = 120;
+    const totalW = totalVars * boxW + (totalVars - 1) * 20;
+    const startX = (W - totalW) / 2;
+
+    level.vars.forEach((varName, vi) => {
+      const x = startX + vi * (boxW + 20);
+      const val = diagVars[varName];
+
+      // Box
+      ctx.beginPath();
+      ctx.roundRect(x, y - 12, boxW, 36, 8);
+      const isActive = (val === 'up' || val === 'yes');
+      const isDown = (val === 'down');
+      let boxColor = COLORS.bg4;
+      if (isActive) boxColor = hexToRgba(COLORS.accent2, 0.2);
+      else if (isDown) boxColor = hexToRgba(COLORS.accent3, 0.2);
+      ctx.fillStyle = boxColor;
+      ctx.fill();
+      ctx.strokeStyle = isActive ? COLORS.accent2 : (isDown ? COLORS.accent3 : 'rgba(255,255,255,0.1)');
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = COLORS.text;
+      ctx.font = "600 11px 'JetBrains Mono'";
+      ctx.textAlign = 'center';
+      const arrow = val === 'up' ? '↑' : val === 'down' ? '↓' : val === 'yes' ? '✓' : val === 'no' ? '✗' : '=';
+      ctx.fillText(`${varName.toUpperCase()} ${arrow}`, x + boxW / 2, y + 8);
+    });
+  });
+
+  // Draw result at bottom
+  const resultY = H * 0.9;
+  const resultW = Math.min(W - 40, 500);
+  const resultX = (W - resultW) / 2;
+
+  ctx.beginPath();
+  ctx.roundRect(resultX, resultY - 18, resultW, 42, 10);
+  ctx.fillStyle = hexToRgba(result.color, 0.15);
+  ctx.fill();
+  ctx.strokeStyle = result.color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = result.color;
+  ctx.font = "700 13px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText(result.label, W / 2, resultY + 8);
+
+  // Confidence bar
+  const barX = resultX + 10;
+  const barY = resultY + 28;
+  const barW = resultW - 20;
+  ctx.beginPath();
+  ctx.roundRect(barX, barY, barW, 6, 3);
+  ctx.fillStyle = COLORS.bg4;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.roundRect(barX, barY, barW * (result.confidence / 100), 6, 3);
+  ctx.fillStyle = result.color;
+  ctx.fill();
+
+  // Update result text
+  const resultDiv = document.getElementById('diagnosisResult');
+  if (result.diagnosis === 'CT') {
+    resultDiv.className = 'info-box warn';
+    resultDiv.innerHTML = `⚠️ <strong>Diagnose: ${result.label}</strong><br>Konfidenz: ${result.confidence}% — Sofortige Intervention empfohlen! Das topologische Modell zeigt, dass Herztamponade die Hauptschleife des Kreislaufsystems betrifft → <strong>gefährlicher Fehler</strong> (Definition 8).`;
+  } else if (result.diagnosis === 'SOH') {
+    resultDiv.className = 'info-box warn';
+    resultDiv.innerHTML = `🩸 <strong>Diagnose: ${result.label}</strong><br>Konfidenz: ${result.confidence}% — Weitere Untersuchung nötig. Blutverlust als externer Transmitter (aus M).`;
+  } else if (result.diagnosis === 'HF') {
+    resultDiv.className = 'info-box warn';
+    resultDiv.innerHTML = `💔 <strong>Diagnose: ${result.label}</strong><br>Konfidenz: ${result.confidence}% — Herzinsuffizienz betrifft ebenfalls die Hauptschleife, aber mit anderem Syndrom als Tamponade.`;
+  } else if (result.diagnosis === 'OK') {
+    resultDiv.className = 'info-box success';
+    resultDiv.innerHTML = `✅ <strong>${result.label}</strong><br>Konfidenz: ${result.confidence}% — Alle Werte stabil. Weiter beobachten.`;
+  } else if (result.diagnosis === 'BLEED') {
+    resultDiv.className = 'info-box warn';
+    resultDiv.innerHTML = `🩸 <strong>${result.label}</strong><br>Konfidenz: ${result.confidence}% — Äußerer Transmitter! Sofortige chirurgische Intervention.`;
+  } else {
+    resultDiv.className = 'info-box';
+    resultDiv.innerHTML = `👁️ <strong>${result.label}</strong><br>Konfidenz: ${result.confidence}% — Nächsten Diagnosezyklus abwarten (Abtastzeit ≈ 1 Stunde).`;
+  }
+}
+drawDiagnostic();
+
+// ============================================================
+// SUMMARY CANVAS
+// ============================================================
+function drawSummary() {
+  const [c, ctx, W, H] = setupCanvas('summaryCanvas');
+  if (!ctx) return;
+  ctx.clearRect(0, 0, W, H);
+
+  const steps = [
+    { x: 0.08, y: 0.5, label: 'Biologisches\nSystem', icon: '🧬', color: COLORS.accent },
+    { x: 0.25, y: 0.25, label: 'Funktionale\nEigenschaften', icon: '⚙️', color: COLORS.accent5 },
+    { x: 0.42, y: 0.5, label: 'Digraph\nG(X,V)', icon: '🔗', color: COLORS.accent },
+    { x: 0.58, y: 0.25, label: 'Topologischer\nRaum (X,θ)', icon: '📐', color: COLORS.accent2 },
+    { x: 0.75, y: 0.5, label: 'Syndrome &\nAsyndromes', icon: '🔍', color: COLORS.accent4 },
+    { x: 0.92, y: 0.25, label: 'Automatische\nDiagnose', icon: '🏥', color: COLORS.accent3 },
+  ];
+
+  // Draw flow arrows
+  for (let i = 0; i < steps.length - 1; i++) {
+    const a = steps[i], b = steps[i + 1];
+    const ax = a.x * W, ay = a.y * H;
+    const bx = b.x * W, by = b.y * H;
+    const [ex1, ey1, ex2, ey2] = edgeEndpoints(ax, ay, bx, by, 40, 40);
+
+    // Gradient arrow
+    const grad = ctx.createLinearGradient(ex1, ey1, ex2, ey2);
+    grad.addColorStop(0, a.color);
+    grad.addColorStop(1, b.color);
+
+    ctx.beginPath();
+    ctx.moveTo(ex1, ey1);
+    ctx.lineTo(ex2, ey2);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Arrowhead
+    const dx = ex2 - ex1, dy = ey2 - ey1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / len, uy = dy / len;
+    const hx = ex2 - ux * 10, hy = ey2 - uy * 10;
+    ctx.beginPath();
+    ctx.moveTo(ex2, ey2);
+    ctx.lineTo(hx - uy * 5, hy + ux * 5);
+    ctx.lineTo(hx + uy * 5, hy - ux * 5);
+    ctx.closePath();
+    ctx.fillStyle = b.color;
+    ctx.fill();
+  }
+
+  // Draw step nodes
+  steps.forEach((s) => {
+    const x = s.x * W, y = s.y * H;
+
+    // Glow
+    ctx.beginPath();
+    ctx.arc(x, y, 38, 0, TAU);
+    ctx.fillStyle = hexToRgba(s.color, 0.1);
+    ctx.fill();
+
+    // Circle
+    ctx.beginPath();
+    ctx.arc(x, y, 30, 0, TAU);
+    ctx.fillStyle = COLORS.bg2;
+    ctx.fill();
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Icon
+    ctx.font = '20px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s.icon, x, y);
+
+    // Label
+    ctx.fillStyle = COLORS.text2;
+    ctx.font = "500 10px 'Inter'";
+    ctx.textBaseline = 'top';
+    const lines = s.label.split('\n');
+    lines.forEach((line, li) => {
+      ctx.fillText(line, x, y + 36 + li * 14);
+    });
+    ctx.textBaseline = 'middle';
+  });
+
+  // Bottom summary text
+  ctx.fillStyle = COLORS.text3;
+  ctx.font = "500 11px 'Inter'";
+  ctx.textAlign = 'center';
+  ctx.fillText('Der rote Faden: Vom realen System über mathematische Abstraktion zur klinischen Entscheidung', W / 2, H - 15);
+}
+drawSummary();
+
+// ============================================================
+// RESIZE HANDLER — redraw all canvases
+// ============================================================
+let resizeTimeout;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    drawMotivation();
+    drawSets();
+    drawRelations();
+    drawTopology();
+    drawClosure();
+    drawDigraph();
+    drawReachability();
+    drawBioSystem();
+    drawEnvironment();
+    drawConnected();
+    // drawLoop is self-animating via rAF
+    drawMapping();
+    drawContinuousExplain();
+    drawSyndrome();
+    drawInvariance();
+    drawHomeostasis();
+    drawDiagnostic();
+    drawSummary();
+  }, 200);
+});
+
+// ============================================================
+// INTERSECTION OBSERVER — fade in sections
+// ============================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('fade-in');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.card').forEach(card => observer.observe(card));
+</script>
+</body>
+</html>
