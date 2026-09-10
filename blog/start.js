@@ -882,11 +882,7 @@ function render_temml() {
 						</div>
 					</div>
 					<div class="lp-footer">
-						<div class="lp-scroll-btns">
-							<button class="lp-scroll-btn" data-dy="-0.85" title="Scroll page up (↑)" aria-label="Scroll page up">↑</button>
-							<button class="lp-scroll-btn" data-dy="0.85" title="Scroll page down (↓)" aria-label="Scroll page down">↓</button>
-						</div>
-						<span class="lp-footer-hint"><kbd>Esc</kbd> to close · wheel scrolls page</span>
+						<span class="lp-footer-hint"><kbd>Esc</kbd> to close</span>
 						<div style="width:68px"></div>
 					</div>
 				</div>`;
