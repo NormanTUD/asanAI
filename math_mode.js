@@ -794,6 +794,51 @@ function array_to_fixed (_array, fixnr) {
 	return _array;
 }
 
+// ============================================================
+// MATH VALUE TAGGING (for gradient tooltips)
+// Every number written into the static math tab can be wrapped
+// in \class{mv-...}{value} so that math_mode_tooltips.js can
+// later identify it in the rendered MathML DOM and attach a
+// hover-tooltip showing its gradient/influence.
+// ============================================================
+
+function mv_make_tag(kind, layer_idx, indices, weight_name) {
+	if (kind === undefined || kind === null) {
+		return null;
+	}
+
+	var tag = { kind: kind, layer: layer_idx, indices: indices || [], weight_name: weight_name || null };
+
+	return tag;
+}
+
+function mv_tag_to_class(tag) {
+	if (!tag) {
+		return "";
+	}
+
+	var parts = ["mv", tag.kind, "L" + tag.layer];
+	for (var i = 0; i < tag.indices.length; i++) {
+		parts.push("" + tag.indices[i]);
+	}
+
+	var cls = parts.join("-");
+
+	if (tag.weight_name) {
+		cls += "-" + tag.weight_name;
+	}
+
+	return cls;
+}
+
+function mv_wrap_value(value, tag) {
+	if (!tag || !looks_like_number(value)) {
+		return "" + value;
+	}
+
+	return "\\class{" + mv_tag_to_class(tag) + "}{" + value + "}";
+}
+
 function array_to_color (_array, color) {
 	if(contains_convolution()) {
 		return _array;
@@ -821,11 +866,11 @@ function array_to_color (_array, color) {
 	return new_array;
 }
 
-function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = get_max_nr_cols_rows()) {
+function array_to_latex_color(original_array, desc, color = null, newline_instead_of_ampersand = 0, max_values = get_max_nr_cols_rows(), tag = null) {
 	original_array = array_to_fixed(original_array, get_dec_points_math_mode());
 
 	if (!color) {
-		return array_to_latex(original_array, desc, newline_instead_of_ampersand);
+		return array_to_latex(original_array, desc, newline_instead_of_ampersand, tag);
 	}
 
 	var _array = JSON.parse(JSON.stringify(original_array));
@@ -861,7 +906,14 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 		}
 
 		try {
-			row = array_to_color(row, color[display_row_idx]);
+			var tagged_row = row;
+			if (tag) {
+				tagged_row = [];
+				for (var cell_idx = 0; cell_idx < row.length; cell_idx++) {
+					tagged_row.push(mv_wrap_value(row[cell_idx], mv_make_tag(tag.kind, tag.layer, [display_row_idx, cell_idx], tag.weight_name)));
+				}
+			}
+			row = array_to_color(tagged_row, color[display_row_idx]);
 			arr.push(row.join(joiner));
 		} catch (e) {
 			err("ERROR in math mode (e, _array, display_row_idx, color):", e, _array, display_row_idx, color);
@@ -885,7 +937,7 @@ function array_to_latex_color(original_array, desc, color = null, newline_instea
 	return str;
 }
 
-function array_to_latex (_array, desc = false, newline_instead_of_ampersand = false) {
+function array_to_latex (_array, desc = false, newline_instead_of_ampersand = false, tag = null) {
 	typeassert(_array, array, "_array");
 
 	var str = "\\underbrace{\\begin{pmatrix}\n";
@@ -899,7 +951,14 @@ function array_to_latex (_array, desc = false, newline_instead_of_ampersand = fa
 
 	for (var arr_idx = 0; arr_idx < _array.length; arr_idx++) {
 		_array[arr_idx] = array_to_fixed(_array[arr_idx], get_dec_points_math_mode());
-		arr.push(_array[arr_idx].join(joiner));
+		var row_arr = _array[arr_idx];
+		if (tag) {
+			row_arr = [];
+			for (var cell_idx = 0; cell_idx < _array[arr_idx].length; cell_idx++) {
+				row_arr.push(mv_wrap_value(_array[arr_idx][cell_idx], mv_make_tag(tag.kind, tag.layer, [arr_idx, cell_idx], tag.weight_name)));
+			}
+		}
+		arr.push(row_arr.join(joiner));
 	}
 
 	str += arr.join("\\\\\n");
@@ -1046,12 +1105,12 @@ function get_layer_output_shape_as_string (layer_idx) {
 }
 
 function _get_h (layer_idx) {
-	var res = "h_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + "'".repeat(layer_idx);
+	var res = "\\class{mv-h-L" + layer_idx + "}{h}_{\\text{Shape: }" + get_layer_output_shape_as_string(layer_idx) + "}" + "'".repeat(layer_idx);
 
 	return res;
 }
 
-function array_to_latex_matrix(_array, level = 0, no_brackets = false, max_nr = 33) {
+function array_to_latex_matrix(_array, level = 0, no_brackets = false, max_nr = 33, tag = null, indices = []) {
 	_array = array_to_fixed(_array, get_dec_points_math_mode());
 
 	var base_tab = "";
@@ -1070,11 +1129,14 @@ function array_to_latex_matrix(_array, level = 0, no_brackets = false, max_nr = 
 					var cell = row[k];
 
 					if (typeof cell == "object") {
-						str += array_to_latex_matrix(cell, level + 1);
+						str += array_to_latex_matrix(cell, level + 1, no_brackets, max_nr, tag, indices.concat([arr_idx, k]));
 						continue;
 					}
 
 					var is_last = (k == row.length - 1);
+					if (tag) {
+						cell = mv_wrap_value(cell, mv_make_tag(tag.kind, tag.layer, indices.concat([arr_idx, k]), tag.weight_name));
+					}
 					if (is_last) {
 						str += base_tab + "\t" + cell + "\\\\\n";
 					} else {
@@ -1082,11 +1144,19 @@ function array_to_latex_matrix(_array, level = 0, no_brackets = false, max_nr = 
 					}
 				}
 			} else {
-				str += base_tab + "\t" + row + "\\\\\n";
+				var cell_row = row;
+				if (tag) {
+					cell_row = mv_wrap_value(cell_row, mv_make_tag(tag.kind, tag.layer, indices.concat([arr_idx]), tag.weight_name));
+				}
+				str += base_tab + "\t" + cell_row + "\\\\\n";
 			}
 		}
 	} else {
-		str += base_tab + "\t" + _array + "\n";
+		var cell_flat = _array;
+		if (tag) {
+			cell_flat = mv_wrap_value(cell_flat, mv_make_tag(tag.kind, tag.layer, indices, tag.weight_name));
+		}
+		str += base_tab + "\t" + cell_flat + "\n";
 	}
 
 	str += base_tab + "\\end{matrix}" + (no_brackets ? "" : "\\right)") + "\n";
@@ -1525,13 +1595,13 @@ function get_layer_normalization_equation(layer_idx) {
 	const gamma_val = model?.layers[layer_idx]?.weights[0]?.val;
 	var gamma = "\\text{Cannot be determined}";
 	if (gamma_val !== undefined) {
-		gamma = array_to_latex_matrix(array_sync(gamma_val));
+		gamma = array_to_latex_matrix(array_sync(gamma_val), 0, false, 33, { kind: "gamma", layer: layer_idx });
 	}
 
 	const beta_val = model?.layers[layer_idx]?.weights[1]?.val;
 	var beta = "\\text{Cannot be determined}";
 	if (beta_val !== undefined) {
-		beta = array_to_latex_matrix(array_sync(beta_val));
+		beta = array_to_latex_matrix(array_sync(beta_val), 0, false, 33, { kind: "beta", layer: layer_idx });
 	}
 
 	return `
@@ -2271,7 +2341,7 @@ function _get_skip_connection_weight_latex(layer_idx, gui_layer_idx) {
 
 	if (skip_proj_layer) {
 		// Projection layer found — extract its current kernel weights
-		return _extract_skip_kernel_latex(skip_proj_layer);
+		return _extract_skip_kernel_latex(skip_proj_layer, layer_idx);
 	}
 
 	// No projection layer found — check if there's a skip_add (identity skip)
@@ -2385,7 +2455,7 @@ function _build_identity_matrix_latex(layer_idx) {
 /**
  * Extracts the current kernel weights from a skip projection layer and formats as LaTeX.
  */
-function _extract_skip_kernel_latex(skip_proj_layer) {
+function _extract_skip_kernel_latex(skip_proj_layer, layer_idx = null) {
 	try {
 		var kernel_weight = _extract_kernel_from_layer(skip_proj_layer);
 
@@ -2396,7 +2466,8 @@ function _extract_skip_kernel_latex(skip_proj_layer) {
 				synced_kernel = array_to_fixed(synced_kernel, get_dec_points_math_mode());
 				var kernel_shape = get_shape_from_array(synced_kernel);
 				var shape_str = kernel_shape.join(" \\times ");
-				return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
+				var skip_tag = { kind: "skip", layer: (layer_idx !== null ? layer_idx : 0), weight_name: (skip_proj_layer.name || "") };
+				return "\\underbrace{\\begin{pmatrix}\n" + _format_skip_kernel_rows(synced_kernel, skip_tag) + "\n\\end{pmatrix}}_{W_{\\text{skip}}^{" + shape_str + "}}";
 			}
 		}
 	} catch (e) {
@@ -2561,14 +2632,18 @@ function _skip_proj_belongs_to_layer(layer_name, gui_layer_idx) {
  * Formats the rows of a skip kernel matrix into LaTeX pmatrix rows.
  * Respects max_nr_cols_rows for truncation.
  */
-function _format_skip_kernel_rows(kernel) {
+function _format_skip_kernel_rows(kernel, tag = null) {
 	var max_vals = get_max_nr_cols_rows();
 	var shape = get_shape_from_array(kernel);
 
 	if (shape.length === 1) {
 		// 1D kernel (e.g., for 1x1 conv or single-dim projection)
 		var truncated = kernel.slice(0, max_vals);
-		var row_str = truncated.join(" & ");
+		var row_cells = [];
+		for (var ci = 0; ci < truncated.length; ci++) {
+			row_cells.push(mv_wrap_value(truncated[ci], mv_make_tag(tag ? tag.kind : null, tag ? tag.layer : null, [0, ci], tag ? tag.weight_name : null)));
+		}
+		var row_str = row_cells.join(" & ");
 		if (kernel.length > max_vals) {
 			row_str += " & \\cdots";
 		}
@@ -2582,7 +2657,11 @@ function _format_skip_kernel_rows(kernel) {
 
 	for (var i = 0; i < num_rows; i++) {
 		var row = kernel[i].slice(0, num_cols);
-		var row_str = row.join(" & ");
+		var cells = [];
+		for (var cj = 0; cj < row.length; cj++) {
+			cells.push(mv_wrap_value(row[cj], mv_make_tag(tag ? tag.kind : null, tag ? tag.layer : null, [i, cj], tag ? tag.weight_name : null)));
+		}
+		var row_str = cells.join(" & ");
 		if (kernel[i].length > num_cols) {
 			row_str += " & \\cdots";
 		}
@@ -2667,10 +2746,10 @@ function get_multiactivation_layer_latex(layer_idx) {
 
 	// Latex-String bauen
 	const terms = [];
-	if (aRelu !== 0) terms.push(`${aRelu} \\cdot \\mathrm{ReLU}(${_h})`);
-	if (aSnake !== 0) terms.push(`${aSnake} \\cdot \\left(${_h} + \\frac{\\sin^2(${snakeAlpha} \\cdot ${_h})}{${snakeAlpha}}\\right)`);
-	if (aElu !== 0) terms.push(`${aElu} \\cdot \\mathrm{ELU}(${_h})`);
-	if (aSin !== 0) terms.push(`${aSin} \\cdot \\sin(${_h})`);
+	if (aRelu !== 0) terms.push(`${mv_wrap_value(aRelu, mv_make_tag("ma", layer_idx, [], "aRelu"))} \\cdot \\mathrm{ReLU}(${_h})`);
+	if (aSnake !== 0) terms.push(`${mv_wrap_value(aSnake, mv_make_tag("ma", layer_idx, [], "aSnake"))} \\cdot \\left(${_h} + \\frac{\\sin^2(${mv_wrap_value(snakeAlpha, mv_make_tag("ma", layer_idx, [], "snakeAlpha"))} \\cdot ${_h})}{${mv_wrap_value(snakeAlpha, mv_make_tag("ma", layer_idx, [], "snakeAlpha"))}}\\right)`);
+	if (aElu !== 0) terms.push(`${mv_wrap_value(aElu, mv_make_tag("ma", layer_idx, [], "aElu"))} \\cdot \\mathrm{ELU}(${_h})`);
+	if (aSin !== 0) terms.push(`${mv_wrap_value(aSin, mv_make_tag("ma", layer_idx, [], "aSin"))} \\cdot \\sin(${_h})`);
 
 	if (terms.length === 0) return "\\text{All weights are zero}";
 
@@ -2688,7 +2767,7 @@ function get_snake_layer_latex (layer_idx) {
 
 	alpha = array_sync(alpha);
 
-	return `${_h} + \\frac{\\sin^2\\left(${alpha} \\cdot ${_h} \\right)}{${alpha}}`;
+	return `${_h} + \\frac{\\sin^2\\left(${mv_wrap_value(alpha, mv_make_tag("snake", layer_idx, [], "alpha"))} \\cdot ${_h} \\right)}{${mv_wrap_value(alpha, mv_make_tag("snake", layer_idx, [], "alpha"))}}`;
 }
 
 function get_debug_layer_latex() {
@@ -2761,18 +2840,18 @@ function get_depthwise_conv2d_latex(layer_idx) {
 
 	if (kernel && !tensor_is_disposed(kernel)) {
 		const synced_kernel = array_sync(kernel);
-		kernel_latex = array_to_latex_matrix(synced_kernel);
+		kernel_latex = array_to_latex_matrix(synced_kernel, 0, false, 33, { kind: "kernel", layer: layer_idx });
 	}
 
 	if (bias && !tensor_is_disposed(bias)) {
 		const synced_bias = array_sync(bias);
-		bias_latex = array_to_latex_matrix(synced_bias);
+		bias_latex = array_to_latex_matrix(synced_bias, 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	return `
-\\sum_{m=0}^{k_h-1} \\sum_{n=0}^{k_w-1}
-	${kernel_latex}_{m,n,c} \\cdot
-h^{(${layer_idx})}_{\\frac{i+m-p_h}{s_h},\\frac{j+n-p_w}{s_w},c}
+\sum_{m=0}^{k_h-1} \sum_{n=0}^{k_w-1}
+	${kernel_latex}_{m,n,c} \cdot
+h^{(${layer_idx})}_{\frac{i+m-p_h}{s_h},\frac{j+n-p_w}{s_w},c}
 	${bias_latex ? "+ " + bias_latex : ""}
 `;
 }
@@ -2788,17 +2867,17 @@ function get_seperable_conv2d_latex(layer_idx) {
 
 	if (depthwise_kernel && !tensor_is_disposed(depthwise_kernel)) {
 		const synced_depthwise = array_sync(depthwise_kernel);
-		depthwise_latex = array_to_latex_matrix(synced_depthwise);
+		depthwise_latex = array_to_latex_matrix(synced_depthwise, 0, false, 33, { kind: "kernel", layer: layer_idx, weight_name: "depthwise" });
 	}
 
 	if (pointwise_kernel && !tensor_is_disposed(pointwise_kernel)) {
 		const synced_pointwise = array_sync(pointwise_kernel);
-		pointwise_latex = array_to_latex_matrix(synced_pointwise);
+		pointwise_latex = array_to_latex_matrix(synced_pointwise, 0, false, 33, { kind: "kernel", layer: layer_idx, weight_name: "pointwise" });
 	}
 
 	if (bias && !tensor_is_disposed(bias)) {
 		const synced_bias = array_sync(bias);
-		bias_latex = array_to_latex_matrix(synced_bias);
+		bias_latex = array_to_latex_matrix(synced_bias, 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	return `
@@ -2822,12 +2901,12 @@ function get_conv2d_transpose_latex(layer_idx) {
 
 	if(kernel && !tensor_is_disposed(kernel)) {
 		var synced_kernel = array_sync(kernel);
-		kernel_latex = array_to_latex_matrix(synced_kernel);
+		kernel_latex = array_to_latex_matrix(synced_kernel, 0, false, 33, { kind: "kernel", layer: layer_idx });
 	}
 
 	if(bias && !tensor_is_disposed(bias)) {
 		var synced_bias = array_sync(bias);
-		bias_latex = array_to_latex_matrix(synced_bias);
+		bias_latex = array_to_latex_matrix(synced_bias, 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	return `
@@ -2850,7 +2929,7 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 	if(layer_has_bias) {
 		str += " + \\text{bias}(k)";
 		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
-		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true), 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	str += " \\\\";
@@ -2863,7 +2942,7 @@ function get_conv3d_latex (layer_idx, _af, layer_has_bias) {
 	}
 
 	var kernel_shape = get_shape_from_array(array_sync(kernel_val, true));
-	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true), 0, false, 33, { kind: "kernel", layer: layer_idx });
 
 	if(layer_bias_string) {
 		str += ` \\\\ \n${layer_bias_string}`;
@@ -2917,7 +2996,7 @@ function _get_conv2d_latex_static(layer_idx, _af, layer_has_bias) {
 				let synced_bias = tidy(() => { return array_sync(bias_val, true); });
 				if (synced_bias) {
 					var bias_shape = get_shape_from_array(synced_bias);
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
+					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias, 0, false, 33, { kind: "bias", layer: layer_idx });
 				}
 			} else {
 				show_could_not_get_msg("bias");
@@ -2948,7 +3027,7 @@ function _get_conv2d_latex_static(layer_idx, _af, layer_has_bias) {
 			let synced_kernel = array_sync(this_kernel_val, true);
 			if (synced_kernel) {
 				var kernel_shape = get_shape_from_array(synced_kernel);
-				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel);
+				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel, 0, false, 33, { kind: "kernel", layer: layer_idx });
 			} else {
 				show_could_not_get_msg("kernel");
 			}
@@ -2991,13 +3070,13 @@ function get_conv1d_latex (layer_idx, layer_has_bias) {
 	if(layer_has_bias) {
 		str += " + \\text{bias}(k)";
 		var bias_shape = get_shape_from_array(array_sync(model.layers[layer_idx].bias.val, true));
-		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true));
+		layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(array_sync(model.layers[layer_idx].bias.val, true), 0, false, 33, { kind: "bias", layer: layer_idx });
 	}
 
 	str += " \\\\";
 
 	var kernel_shape = get_shape_from_array(array_sync(model.layers[layer_idx].kernel.val, true));
-	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true));
+	str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = `+ array_to_latex_matrix(array_sync(model.layers[layer_idx].kernel.val, true), 0, false, 33, { kind: "kernel", layer: layer_idx });
 
 	if(layer_bias_string) {
 		str += ` \\\\ \n${layer_bias_string}`;
@@ -3100,12 +3179,12 @@ function _get_dense_latex_static(layer_idx, layer_data, colors, input_layer) {
 		if (this_layer_data_kernel.length) {
 			var kernel_name = "\\text{" + language[lang]["weight_matrix"] + "}^{" + array_size(this_layer_data_kernel).join(" \\times ") + "}";
 			this_layer_data_kernel = replace_non_numbers_with_matching_latex(this_layer_data_kernel);
-			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel);
+			var first_part = array_to_latex_color(this_layer_data_kernel, kernel_name, colors[layer_idx].kernel, 0, get_max_nr_cols_rows(), { kind: "kernel", layer: layer_idx });
 			var right_side = get_right_side(layer_idx, input_layer);
 			str += a_times_b(first_part, right_side);
 			try {
 				if (layer_data[layer_idx] && "bias" in layer_data[layer_idx] && layer_data[layer_idx].bias.length) {
-					str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1);
+					str += " + " + array_to_latex_color([layer_data[layer_idx].bias], "Bias", [colors[layer_idx].bias], 1, get_max_nr_cols_rows(), { kind: "bias", layer: layer_idx });
 				}
 			} catch (e) {
 				err(e);
@@ -3169,15 +3248,15 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 				var var_float = parse_float(var_str);
 
 				if(typeof(var_float) == "number") {
-					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + var_float + "}");
-					this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + var_float + `}_{\\${varname}} \\cdot `);
+					this_activation_string = this_activation_string.replaceAll("ALPHAREPL", "{" + mv_wrap_value(var_float, mv_make_tag("param", layer_idx, [], varname)) + "}");
+					this_activation_string = this_activation_string.replaceAll(`\\${varname}`, "\\underbrace{" + mv_wrap_value(var_float, mv_make_tag("param", layer_idx, [], varname)) + `}_{\\${varname}} \\cdot `);
 				}
 
 				var $theta = get_item_value(layer_idx, "theta");
 				if(looks_like_number($theta)) {
 					var theta = parse_float($theta);
 					if(typeof(theta) == "number") {
-						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + theta + "} \\cdot ");
+						this_activation_string = this_activation_string.replaceAll("\\theta", "{\\theta = " + mv_wrap_value(theta, mv_make_tag("param", layer_idx, [], "theta")) + "} \\cdot ");
 					}
 				}
 
@@ -3247,17 +3326,17 @@ function _get_batch_normalization_latex_static(layer_data, y_layer, layer_idx) {
 	var x_equation = '\\epsilon \\text{could not be determined}';
 
 	if(_epsilon !== undefined) {
-		x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + _epsilon + "\\right)}}}_\\text{Normalize}";
+		x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + mv_wrap_value(_epsilon, mv_make_tag("epsilon", layer_idx, [], null)) + "\\right)}}}_\\text{Normalize}";
 	}
 
 	var beta_string = "";
 	var gamma_string = "";
 	if(layer_data[layer_idx] && "beta" in layer_data[layer_idx]) {
-		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode()));
+		beta_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].beta, get_dec_points_math_mode()), 0, false, 33, { kind: "beta", layer: layer_idx });
 		beta_string = "\\displaystyle " + beta_string;
 	}
 	if(layer_data[layer_idx] && "gamma" in layer_data[layer_idx]) {
-		gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, get_dec_points_math_mode()));
+		gamma_string = array_to_latex_matrix(array_to_fixed(layer_data[layer_idx].gamma, get_dec_points_math_mode()), 0, false, 33, { kind: "gamma", layer: layer_idx });
 		gamma_string = "\\displaystyle " + gamma_string;
 	}
 

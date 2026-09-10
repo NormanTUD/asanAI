@@ -93,6 +93,7 @@
 		_js("explain_losses.js");
 		_js("math_editable.js");
 		_js("math_mode.js");
+		_js("math_mode_tooltips.js");
 		_js("feature_maps.js");
 		_js("grad_cam.js");
 		_js("data.js");

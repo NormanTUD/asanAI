@@ -38,7 +38,11 @@ function render_temml_quick(e) {
 
 	try {
 		const tmp = document.createElement("span");
-		temml.render(latex, tmp, { annotate: true });
+		const temml_options = { annotate: true };
+		if (e.closest && e.closest("#math_tab_code")) {
+			temml_options.trust = (context) => context.command === "\\class";
+		}
+		temml.render(latex, tmp, temml_options);
 		e.innerHTML = tmp.innerHTML;
 		e.dataset.rendered = "1";
 		e.dataset.latex = latex;
