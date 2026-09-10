@@ -282,7 +282,7 @@ They proved that a simplified model of a biological neuron, often called the **M
 
 $$y = \begin{cases} 1 & \text{if } \sum_{i=1}^{n} w_i x_i \geq \theta \\ 0 & \text{otherwise} \end{cases}$$
 
-This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **\citealternativetitle{wiener1948cybernetics}** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow.
+This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **\citealternativetitle{wiener1948cybernetics}** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow. The full cast of these **cyberneticians** is covered in its own section below.
 
 This was the conceptual shift from “calculating machines” to the idea that cognition itself might be formalized (see the work of \citeauthor{piccini} for more details).
 
@@ -298,6 +298,70 @@ This was the conceptual shift from “calculating machines” to the idea that c
 Built by **Marvin Minsky** and **Dean Edmonds** in 1951, the **SNARC** (Stochastic Neural Analog Reinforcement Calculator) was the world's first physical artificial neural network. Inspired directly by the theoretical logic calculus of \citeauthorlastnameand{mccullochpitts1943} (\citeyear{mccullochpitts1943}), the SNARC translated abstract mathematical neurons into stochastic, learning hardware. It consisted of a randomly connected network of 40 artificial neurons constructed from vacuum tubes, salvaged B-24 bomber gyropilots, and magnetic clutches, designed to simulate a rat learning to navigate a virtual maze.
 
 Rather than relying on explicit programming, the machine learned via mechanical reinforcement. When the network made a random but “correct” move, a reinforcement signal engaged the clutches to turn potentiometers, physically altering the electrical resistance of the active connections. This increased the probability that those specific, successful pathways would fire again. By mechanically formalizing trial-and-error learning, concepts Minsky later detailed in his Princeton dissertation, *\citetitle{minsky1954}* (\citeyear{minsky1954}), the SNARC proved that a decentralized network of McCulloch-Pitts cells could autonomously calculate behavioral adaptation.
+
+## The Cyberneticians (1943-1953)
+
+<div class="image-row">
+	<figure>
+		<img src="wiener.jpg" alt="Norbert Wiener" />
+		<figcaption class="md">\citealternativetitle{wienerphoto}, \citeyear{wienerphoto}</figcaption>
+	</figure>
+	<figure>
+		<img src="vonneumann.jpg" alt="John von Neumann" />
+		<figcaption class="md">\citealternativetitle{vonneumannphoto}, \citeyear{vonneumannphoto}</figcaption>
+	</figure>
+</div>
+
+Between the 1943 neuron papers and the 1956 Dartmouth workshop, a loose, deliberately cross-disciplinary group of mathematicians, neurophysiologists, engineers and anthropologists briefly gave the emerging field a different name: **\citealternativetitle{wiener1948cybernetics}**. The word is Greek — κυβερνήτης, *kybernētēs*, "the steersman". Steer a ship and you are running a feedback loop, turning the rudder in response to the effect it already had. \citeauthor{wiener1948cybernetics} and his circle coined it in the summer of 1947 for "control and communication in the animal and the machine", the one logic shared by a thermostat, a gun's fire-control, and a nervous system \cite{wiener1948cybernetics}.
+
+The field was born in a room, not a lab: the **Macy Conferences** (1946-1953), ten meetings funded by the Josiah Macy Jr. Foundation and chaired by **McCulloch**, whose stated aim was "a general science of the workings of the human mind" \cite{macyconferences} \cite{heims1991cyberneticsgroup}. In Britain the **Ratio Club** did the same thing over dinner in Cambridge \cite{ratioclub}. Its two founding papers both date to 1943 — McCulloch-Pitts (above), and *Behavior, Purpose and Teleology*, which asked what "purpose" even means when a machine acts \cite{behaviorpurpose1943}.
+
+### Ross Ashby and the Homeostat
+
+<div class="image-row">
+	<figure>
+		<img src="homeostat.jpg" alt="The Homeostat" />
+		<figcaption class="md">\citealternativetitle{homeostatphoto}</figcaption>
+	</figure>
+	<figure>
+		<img src="ashby.jpg" alt="W. Ross Ashby" />
+		<figcaption class="md">\citealternativetitle{ashbyphoto}, \citeyear{ashbyphoto}</figcaption>
+	</figure>
+</div>
+
+The most under-rated of the group, the psychiatrist \citeauthor{ashbyintrocybernetics1956}, built a machine to prove his ideas. His **Homeostat** (1948) wired four scrapped Royal-Air-Force bomb-control units into a maze of feedback; dropped into any state, it mechanically hunted its way back to equilibrium — a "self-organizing" machine that appeared to act with purpose \cite{ashbyhomeostat1948} \cite{ashbydesigndbrain1952}. \citeauthor{wienerhumaneuse1950} called the emergence of purposeful behaviour in it "one of the great philosophical contributions of the present day" \cite{wienerhumaneuse1950}. From the same insight came the **Law of Requisite Variety** (1956): a controller can cancel the variety (number of possible states) thrown at it only with its own variety — "only variety can destroy variety" \cite{ashbyintrocybernetics1956}. Conant and Ashby sharpened this in 1970 into the **Good Regulator Theorem**: every good regulator of a system must be a *model of that system* \cite{conantashby1970} — a prediction that a controller must resemble the thing it controls, made decades before deep learning rediscovered it.
+
+<div class="optional md" data-headline="A 7,189-page journal">
+Ashby kept a private notebook of ideas for 44 years — 25 volumes, 7,189 pages, now digitized as the W. Ross Ashby Digital Archive. He took correspondence courses in "Effective English and Personal Efficiency" before daring to write his first book, warning: "My fear is now that I may become conspicuous, for a book of mine is in the press." And in 1946 \citeauthor{turing1937} wrote to him suggesting he use the Automatic Computing Engine for his experiments instead of building his own machine.
+</div>
+
+### Gregory Bateson: information as difference
+
+<figure>
+	<img style="width: 100%; max-width: 460px;" src="bateson.jpg" alt="Margaret Mead and Gregory Bateson" />
+	<figcaption class="md">\citealternativetitle{batesonphoto}</figcaption>
+</figure>
+
+The anthropologist \citeauthor{batesonesteps1972} dragged the social and behavioural sciences into the group and rewired its vocabulary. For him a unit of information is simply "the difference which makes a difference", and a system learns when the *pattern* of differences around it changes \cite{batesonesteps1972}. With Jackson, Haley and Weakland he worked out the **double bind** — contradictory messages at different logical levels, with no way to step out — originally to explain schizophrenia \cite{batesondoublebind1956}. In the 1970s he turned the lens onto the observer, founding **second-order cybernetics**, "the cybernetics of cybernetics" \cite{batesonesteps1972}.
+
+<div class="optional md" data-headline="A war fought in patterns">
+In World War II Bateson served in the OSS designing "black propaganda" radio broadcasts, using his theory of schismogenesis to drive rival enemy factions against each other. In 1973 he went further: only two events, he argued, were anthropologically important in the twentieth century — the Treaty of Versailles, and cybernetics.
+</div>
+
+### Shannon, chess and the rat
+
+<figure>
+	<img style="width: 100%; max-width: 460px;" src="shannon.png" alt="Claude Shannon" />
+	<figcaption class="md">\citealternativetitle{shannonphoto}, \citeyear{shannonphoto}</figcaption>
+</figure>
+
+Before he formalized \citealternativetitle{shannon1948communication}, \citeauthor{shannon1948communication} had already written the first real computer-chess program \cite{shannonchess1950}: a minimax search over a small board plus a ten-term evaluation function — the very template **Deep Blue** and, later, **AlphaGo** would scale up. At the Macy meetings he also showed **Shannon's rat**, a relay maze-solver that recalled its past paths to reach a goal, but which would sometimes loop forever, chasing its tail, until someone pulled the plug \cite{macyconferences}.
+
+### Wiener had already asked "can it think?"
+
+The group's horizon opened before Turing's. In **\citetitle{wienergodandgolem1937}** (\citeyear{wienergodandgolem1937}) — thirteen years before the Imitation Game — \citeauthor{wienergodandgolem1937} was already asking whether a machine could think, and how to keep one in its place; the piece was rewritten a quarter-century later as *God and Golem, Inc.* \cite{wienergodandgolem1937}.
+
+This transdisciplinary group is the direct parent of AI. When the field formalised in 1956 at \citealternativetitle{darthmouthartificialintelligence} \cite{darthmouthartificialintelligence}, it split off from cybernetics — and, as we will see, the neural-net wing was downplayed while symbolic AI took the funding.
 
 ## Further developments of Computer Hardware and Computing Theory
 
