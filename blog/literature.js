@@ -195,6 +195,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Apollonius_of_Perga",
 		alternativetitle: "Conics"
 	},
+	"conicsections_wiki": {
+		title: "Conic section — diagram of the three conics cut from a cone",
+		url: "https://en.wikipedia.org/wiki/Conic_section",
+		author: "Wikipedia contributors",
+		alternativetitle: "Conic sections (Wikipedia)",
+		license: "CC BY-SA"
+	},
 	"menelaussphaerica": {
 		title: "Sphaerica",
 		author: "Menelaus of Alexandria",
@@ -1493,8 +1500,8 @@ window.bibData = {
 	"hypothesengeometrieenglish": {
 		title: "On the Hypotheses which lie at the Bases of Geometry",
 		url: "https://www.emis.de/classics/Riemann/WKCGeom.pdf",
-		author: "William Kingdon Clifford",
-		year: 1867
+		author: "Georg Friedrich Bernhard Riemann",
+		year: 1854
 	},
 	"hypothesengeometrie": {
 		url: "https://ia800708.us.archive.org/4/items/uberdiehypothese00b_343/uberdiehypothese00b_343.pdf",

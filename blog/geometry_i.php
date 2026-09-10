@@ -162,10 +162,7 @@ The Greeks did not invent geometry. They did something more radical: they made i
 
 ### Thales, Pythagoras and the theorem
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="pythagoras.jpg" alt="Pythagoras of Samos" />
-	<figcaption class="md">Pythagoras of Samos (c. 570–495 BCE), founder of the school that gave its name to the most famous theorem in the world.</figcaption>
-</figure>
+\marginfig{pythagoras.jpg}{Pythagoras of Samos (c. 570–495 BCE), founder of the school that gave its name to the most famous theorem in the world.}
 
 The tradition places the first proofs with **Thales of Miletus** (c. 624–546 BCE) — for example, that a circle is bisected by its diameter (Thales' theorem, *Elements* I.31) and that the angles of a triangle sum to two right angles (I.32) \cite{heathgreekmath}. Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\angle ABC = 90^{\circ}$. The Pythagoreans, the circle around **Pythagoras** (c. 570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,
 
@@ -183,10 +180,7 @@ and Euclid's *Elements* XII is built on it \cite{heathgreekmath}.
 
 ### Archimedes: exhaustion perfected
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="archimedes.jpg" alt="Archimedes of Syracuse" />
-	<figcaption class="md">Archimedes of Syracuse (c. 287–212 BCE), who perfected the method of exhaustion and computed the sphere's volume and surface with proofs that survive today.</figcaption>
-</figure>
+\marginfig{archimedes.jpg}{Archimedes of Syracuse (c. 287–212 BCE), who perfected the method of exhaustion and computed the sphere's volume and surface with proofs that survive today.}
 
 If Eudoxus gave the *method*, **Archimedes of Syracuse** (c. 287–212 BCE) gave it its masterpieces \cite{heathgreekmath}. Working with the same exhaustion engine, he computed, with proofs that survive today, the area and circumference of the circle, and then the *volumes* that were the great open problem: the sphere, the cone, the cylinder, the paraboloid and the spheroid. His results, in modern symbols,
 
@@ -206,10 +200,7 @@ The tradition also preserves the legend that Plato had written above the door of
 
 ### Euclid's Elements: the machine of proof
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="euclid.jpg" alt="Euclid demonstrating a proposition to a student" />
-	<figcaption class="md">Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed.</figcaption>
-</figure>
+\marginfig{euclid.jpg}{Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed.}
 
 Everything before Euclid was a collection of results; the **\citealternativetitle{euclidelements}** (composed c. 300 BCE in Alexandria, the standard edition edited and translated by \citeauthor{euclidelements_heath}) is the first *system* \cite{euclidelements} \cite{euclidelements_heath}. The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it. Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *hysteron* — that marks "it has been proved". That architecture is the template for every proof-based subject that followed:
 
@@ -248,7 +239,7 @@ $$\text{ellipse: } \frac{x^{2}}{a^{2}} + \frac{y^{2}}{b^{2}} = 1 \qquad \text{pa
 
 <figure>
 	<img style="width: 100%" src="conic_sections.png" alt="The three conic sections: ellipse, parabola and hyperbola" />
-	<figcaption class="md">The three <strong>conic sections</strong>: tilt a cutting plane against a cone and it carves out an ellipse (a shallow cut), a parabola (a plane parallel to a side), or a hyperbola (a steep cut through both nappes). All three are degree-two curves — the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \cite{apolloniusconics}.</figcaption>
+	<figcaption class="md">The three <strong>conic sections</strong> (\citealternativetitle{conicsections_wiki}): tilt a cutting plane against a cone and it carves out an ellipse (a shallow cut), a parabola (a plane parallel to a side), or a hyperbola (a steep cut through both nappes). All three are degree-two curves — the geometry that Descartes would turn into the $B^{2}-4AC$ sign test \cite{apolloniusconics}.</figcaption>
 </figure>
 
 The *why* is partly optical and partly astronomical. The parabola is the only conic that **focuses**: a ray sent in parallel to its axis reflects through a single point (the focus), which is why parabolic mirrors and dishes concentrate light and sound — the old legend that Archimedes burned Roman ships with a focusing mirror is a story about this. And the ellipse is the shape of an orbit: it will take **Kepler** (1609) to read the conics back into the sky and discover that planets move on ellipses with the Sun at one focus \cite{keplerastronomianova}, and **Newton** (1687) to prove that an inverse-square force *must* produce conic orbits \cite{newtonprincipia}. The conics sit, in other words, exactly at the hinge between pure geometry and the physics of the heavens.
@@ -266,10 +257,7 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 
 When the Greek world passed its knowledge eastward, it was not lost but *worked on*. In the great translation and research centres of the Islamic world — above all the **House of Wisdom** in Baghdad (8th–13th c.) — the *Elements*, the *Conics* and the astronomical treatises were rendered into Arabic, corrected, and extended. The *why* was both intellectual and legal: the new science of **algebra** was driven in part by Islamic inheritance law, which required estates to be divided into fractional shares, and by the *kharaj*, a land tax that required surveying. Figures such as **al-Khwārizmī** (c. 780–850) re-founded algebra (the very word is his, from *al-jabr*, "the restoring/completing") and did so in the *geometric* spirit inherited from Babylon and Greece, solving equations by the same cutting-and-completing-of-the-square operations \cite{hoyrup2021algebra}.
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="alkhwarizmi.jpg" alt="Al-Khwarizmi" />
-	<figcaption class="md">Muḥammad ibn Mūsā al-Khwārizmī (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em>.</figcaption>
-</figure>
+\marginfig{alkhwarizmi.jpg}{Muḥammad ibn Mūsā al-Khwārizmī (c. 780–850), whose treatise on *al-jabr* gave algebra its name — and whose surname gave us the word *algorithm*.}
 
 Al-Khwārizmī's canonical example, in modern dress, is the problem "a square and ten times its side make thirty-nine" — $x^{2} + 10x = 39$. He completes the square: halve the ten to get $5$, square it to get $25$, add to $39$ to get $64$, take the root $8$, subtract the $5$, and obtain $x = 3$. In symbols, the move that is his legacy is exactly the Babylonian one, now general:
 
@@ -277,10 +265,7 @@ $$x^{2} + bx = A \quad\Longrightarrow\quad x = -\tfrac{b}{2} + \sqrt{A + \left(\
 
 The single most important geometric achievement of the period, however, is the work of **Ibn al-Haytham** (Latinised **Alhazen**, c. 965–1040).
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="alhazen.jpg" alt="Ibn al-Haytham (Alhazen)" />
-	<figcaption class="md">Ibn al-Haytham (Alhazen), c. 965–1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye.</figcaption>
-</figure>
+\marginfig{alhazen.jpg}{Ibn al-Haytham (Alhazen), c. 965–1040, whose *Book of Optics* made geometry the mathematics of how the world projects itself onto the eye.}
 
 His **\citealternativetitle{alhazenoetic}** (completed c. 1021) is a *geometry of seeing*: it treats the eye, the mirror, and the path of light as objects of rigorous geometric analysis, and famously inverts the old "emission" theory of vision by arguing that we see by light *entering* the eye along straight rays \cite{alhazenoetic}. The law he formalises is the **law of reflection**, $\theta_{\text{incident}} = \theta_{\text{reflected}}$ (measured from the normal to the surface), and the **Alhazen problem** — finding the point on a mirror where a ray from an object reflects to the eye — is a genuinely hard geometric problem that he reduces to an algebraic (in fact quartic) equation. His treatment of the **camera obscura** is the direct ancestor of both the scientific camera and the mathematics of *perspective* \cite{alhazenoetic}. It is a pivot: geometry becomes the mathematics of *projection* — of how a three-dimensional world is faithfully laid down on a two-dimensional surface.
 </div>
@@ -300,10 +285,7 @@ a *projective* transformation. The Renaissance discovery of perspective is thus,
 
 ### Descartes and analytic geometry (1637)
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="descartes.jpg" alt="René Descartes, by Frans Hals" />
-	<figcaption class="md">René Descartes (1596–1650), painted by Frans Hals. His <em>Géométrie</em> fused algebra and geometry into a single subject.</figcaption>
-</figure>
+\marginfig{descartes.jpg}{René Descartes (1596–1650), painted by Frans Hals. His *Géométrie* fused algebra and geometry into a single subject.}
 
 \citeauthor{descartesgeometrie}'s **\citealternativetitle{descartesgeometrie}** (1637), the final part of his *Discourse on the Method*, is the hinge on which all of later mathematics turns \cite{descartesgeometrie}. His move is the simplest and most powerful in the book of mathematics: put a **grid of coordinates** on the plane, so that every point is a *pair of numbers* and every curve is an *equation*. A line is $y = mx + c$; a circle is $x^{2} + y^{2} = r^{2}$; the conics are the degree-two equations. Geometry and algebra, which had walked in parallel for two thousand years, are now *the same subject written in two languages*. (It was **Fermat**, working independently, who developed the same idea in the same decade.)
 
@@ -359,10 +341,7 @@ That a shape's identity is captured by a single *integer* — not by its angles,
 
 ### Gauss: curvature is intrinsic
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="gauss.jpg" alt="Carl Friedrich Gauss" />
-	<figcaption class="md">Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside.</figcaption>
-</figure>
+\marginfig{gauss.jpg}{Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside.}
 
 **\citeauthor{gaussdisquisitiones}** (1777–1855), while surveying the state of Hanover for a living, was led to a question that looks innocent and is profound \cite{gaussdisquisitiones}. Surveying means measuring the angles of a *triangle* of survey markers on the ground. If the Earth's surface is truly flat, the three angles always sum to $180^{\circ}$; if it is curved, the sum is *more* (the more, the larger and curvier the triangle). So a sufficiently careful survey of a sufficiently large triangle could, in principle, tell us whether *space itself* is Euclidean. That made the *parallel postulate* — the axiom that guarantees the flat angle-sum — into an **empirical** question about the physical world, which was a scandal for a subject that was supposed to be true by pure reason alone.
 
@@ -395,10 +374,7 @@ $$\iint_{S} K\, dA \;=\; 2\pi\,\chi(S)$$
 
 The parallel postulate had resisted proof for 2,000 years. The breakthrough was to stop trying to prove it and to *negate* it. **\citeauthor{lobachevskygeometry}** (1792–1856) and, independently, **\citeauthor{bolyaiappendix}** (1802–1860), each discovered that if you *replace* Euclid's fifth postulate with "through a point not on a line there pass *infinitely many* lines that never meet it", a perfectly consistent geometry results — **hyperbolic (or "non-Euclidean") geometry** \cite{lobachevskygeometry} \cite{bolyaiappendix}.
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="lobachevsky.jpg" alt="Nikolai Lobachevsky" />
-	<figcaption class="md">Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829.</figcaption>
-</figure>
+\marginfig{lobachevsky.jpg}{Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829.}
 
 The *why* is the 2,000-year hang-up on the fifth postulate itself: it had always looked less self-evident than the other four, and for two centuries mathematicians (Saccheri, Legendre, and others) had tried and failed to prove it from the rest. The daring move was to ask what happens if you *assume the opposite* — and to find not a contradiction but a *world*. In the hyperbolic plane, the angles of a triangle sum to *less* than two right angles, and the shortfall is not a bug but the *area*: for a triangle on a surface of curvature $K=-1$,
 
@@ -406,19 +382,13 @@ $$A + B + C \;<\; \pi, \qquad \text{Area} \;=\; \pi - (A+B+C)$$
 
 So a triangle's area is read directly from its *angular defect*, and there is no largest triangle — the total area of the whole hyperbolic plane is finite in angular terms yet infinite in extent. (In the opposite, spherical geometry, the sum is *more* than $\pi$ and the excess is the area.) The result was shocking, because it was not a contradiction: it was a *different, equally valid, geometry of space*. The father **Farkas Bolyai** and **Gauss** (who had found the same geometry independently but never published) both recognised that the *truth* of Euclidean versus hyperbolic geometry is no longer a question of pure reason — it is, as Gauss put it, an **empirical** question, to be settled by measuring the angle-sum of a *very large* triangle in the real world. Geometry had become a question about *physical space*, not just a set of theorems.
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="bolyai.jpg" alt="János Bolyai" />
-	<figcaption class="md">János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in a 1832 appendix to his father's book.</figcaption>
-</figure>
+\marginfig{bolyai.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in a 1832 appendix to his father's book.}
 
 ### Riemann: the general idea of "space"
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="riemann.jpeg" alt="Bernhard Riemann" />
-	<figcaption class="md">\citeauthor{hypothesengeometrie} (1826–1866), whose 1854 habilitation lecture generalised the very idea of a "space".</figcaption>
-</figure>
+\marginfig{riemann.jpeg}{\citeauthor{hypothesengeometrie} (1826–1866), whose 1854 habilitation lecture generalised the very idea of a "space".}
 
-<div class="smart-quote" data-cite="hypothesengeometrieenglish">
+<div class="smart-quote" data-cite="hypothesengeometrieenglish" data-after="translated by William Kingdon Clifford">
 I consider it necessary to examine in general the hypotheses on which geometry is based, and to inquire whether we cannot give a more general meaning to the proposition about the measure of extension.
 </div>
 
@@ -436,10 +406,7 @@ the Einstein field equation: *the curvature of spacetime on the left equals the 
 
 In the same decade the *metric-free* side was named. **\citeauthor{mobiusband}** (1790–1868) discovered the one-sided band that bears his name (1858) \cite{mobiusband}, and **\citeauthor{listingtopologie}** (1808–1882) coined the very word **"topology"** (from *topos*, "place") in his *Vorstudien zur Topologie* (1847) \cite{listingtopologie}.
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="mobius.jpg" alt="August Ferdinand Möbius" />
-	<figcaption class="md">August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation.</figcaption>
-</figure>
+\marginfig{mobius.jpg}{August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation.}
 
 <figure>
 	<img style="width: 100%" src="mobius_strip.jpg" alt="The Möbius strip" />
@@ -456,10 +423,7 @@ The last great reorganisation of the 19th century was **\citeauthor{poincareanal
 
 The *why* was to extend Euler's and Gauss's ideas from 2-D surfaces to *spaces* of any dimension, and to answer the question "what does a space look like, up to deformation?" Poincaré's answers were the **fundamental group** $\pi_{1}$ (the algebraic record of all the ways a loop can be twisted around a space, up to continuous shrinking) and the beginnings of **homology** $H_{n}$ (counting "holes" of each dimension by signed sums of chains and boundaries) \cite{poincareanalysissitus} \cite{hatcher}. And in a stroke he posed the **Poincaré conjecture**: a closed 3-dimensional space in which every loop can be continuously shrunk to a point must be a 3-sphere. That is, *topology (how the loops behave) determines geometry (the space is a sphere)*.
 
-<figure>
-	<img style="width: 400px; max-width: 100%;" src="poincare.jpg" alt="Henri Poincaré" />
-	<figcaption class="md">Henri Poincaré (1854–1912). His conjecture resisted every tool 20th-century mathematics had. It was finally proved by <strong>Grigori Perelman</strong> in 2002–2003, who used <strong>Richard Hamilton's Ricci flow</strong> — a process that smooths the curvature of a space over "time", like heat diffusing — to show that any such space must flow to a round sphere \cite{perelmanpoincare} \cite{poincareanalysissitus}.</figcaption>
-</figure>
+\marginfig{poincare.jpg}{Henri Poincaré (1854–1912). His conjecture resisted every tool 20th-century mathematics had. It was finally proved by **Grigori Perelman** in 2002–2003, who used **Richard Hamilton's Ricci flow** — a process that smooths the curvature of a space over "time", like heat diffusing — to show that any such space must flow to a round sphere \cite{perelmanpoincare} \cite{poincareanalysissitus}.}
 
 So where does this leave us, and why is a history of geometry a chapter in a course about machines? Because the discipline never stopped responding to the needs of its era, exactly as the opening line of \citeauthor{weeksshapespace} (\citeyear{weeksshapespace}) says \cite{weeksshapespace}. Its "needs" have changed, not its method:
 

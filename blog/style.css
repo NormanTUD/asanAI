@@ -7609,6 +7609,18 @@ html.dark #sidenotes-section .sidenote-fallback li::before {
 	}
 }
 
+/* ANGLE 31 (sideimage overflow): in the 1280–1479px range the right
+   margin is narrower than 320px, so a left-anchored rail (50% + 420px)
+   would push its right edge past the viewport. Right-anchor it (20px
+   from the viewport edge) so the figures stay on screen — mirrors the
+   #sidenotes-rail rule. Must come after the base rule to win.     */
+@media (min-width: 1280px) and (max-width: 1479.98px) {
+	body.has-sidenotes #sideimages-rail {
+		left:  auto !important;
+		right: 20px !important;
+	}
+}
+
 /* A single sideimage. JS sets position/top/left/right dynamically
    based on the marker's scroll position. The box itself is a clean
    editorial frame: warm paper, soft shadow, tight caption.        */
