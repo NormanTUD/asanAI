@@ -191,6 +191,7 @@ const FragmentActions = {
 const Presentation = (() => {
     let currentSlide = 0;
     let slides = [];
+    let originalIndices = [];
     let fragmentIndex = {};
     let searchQuery = '';
 
@@ -226,15 +227,31 @@ const Presentation = (() => {
     function init() {
         const allSlides = Array.from(document.querySelectorAll('.slide'));
         const selection = parseSlideSelection(allSlides.length);
-        slides = selection ? allSlides.filter((_, i) => selection.has(i)) : allSlides;
+        originalIndices = allSlides.map((_, i) => i).filter(i => !selection || selection.has(i));
+        slides = originalIndices.map(i => allSlides[i]);
         if (slides.length === 0) {
             console.warn('slides= hat keine Folie ausgewaehlt – zeige alle Folien.');
             slides = allSlides;
+            originalIndices = allSlides.map((_, i) => i);
         }
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
-        // Nur die erste sichtbare Folie aktivieren (Folie 0 hat "active" hartkodiert).
+
+        // Startfolie: ?start=<Original-Index> (gleiche Nummerierung wie slides=).
+        // Liegt die Folie nicht in der Auswahl → erste verfügbare ab dort (sonst letzte).
+        const startParam = new URLSearchParams(window.location.search).get('start');
+        if (startParam !== null && startParam.trim() !== '' && !isNaN(parseInt(startParam, 10))) {
+            const target = parseInt(startParam, 10);
+            let k = originalIndices.indexOf(target);
+            if (k === -1) {
+                const next = originalIndices.findIndex(o => o >= target);
+                k = next === -1 ? originalIndices.length - 1 : next;
+            }
+            currentSlide = Math.max(0, Math.min(k, slides.length - 1));
+        }
+
+        // Nur die Startfolie aktivieren (Folie 0 hat "active" hartkodiert).
         allSlides.forEach(s => s.classList.remove('active'));
-        if (slides.length) slides[0].classList.add('active');
+        if (slides.length) slides[currentSlide].classList.add('active');
         updateUI();
         buildOverview();
     }
@@ -558,9 +575,10 @@ document.addEventListener('DOMContentLoaded', () => {
     Presentation.init();
     InputHandler.init();
 
-    // URL hash navigation (#N → slide N)
+    // URL-Hash-Navigation (#N → Folie N, 1-basiert) – nur ohne ?start=
+    const hasStart = new URLSearchParams(window.location.search).has('start');
     const hash = window.location.hash;
-    if (hash) {
+    if (hash && !hasStart) {
         const match = hash.match(/^#(\d+)$/);
         if (match) {
             const slideNum = parseInt(match[1], 10);
