@@ -74,6 +74,7 @@
 	incl("Basic Math Concepts I — The Numerical Foundations", "math_i");
 	incl("Basic Math Concepts II — Linear Algebra for AI", "math_ii");
 	incl("Basic Math Concepts III — Approximation & The Geometry of High Dimensions", "math_iii");
+	incl("The Shape of Space — A History of Geometry", "geometry_i");
 	incl("The History of Language: From Sanskrit to LLMs", "language");
 	incl("Statistics I — Distributions and Inference", "statistics_i");
 	incl("Statistics II — Inference and Information", "statistics_ii");

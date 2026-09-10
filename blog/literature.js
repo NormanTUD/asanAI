@@ -1,4 +1,243 @@
 window.bibData = {
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Geometry: History of Geometry  (geometry_i.php)
+	 *  Prehistoric → Babylonian / Egyptian / Indian / Chinese → Greek
+	 *  formalisation (Euclid) → Islamic / Early Modern → Topology &
+	 *  non-Euclidean geometry.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"weeksshapespace": {
+		title: "The Shape of Space (3rd ed.)",
+		author: "Jeffrey R. Weeks",
+		year: 2007,
+		url: "https://www.ams.org/bookstore/getitem/itemview-GSM108",
+		alternativetitle: "The Shape of Space"
+	},
+	"trinilshell": {
+		title: "Homo erectus at Trinil on Java used shells for tool production and engraving",
+		author: "J. C. A. Joordens, F. Fitzer-Räpplin, S. P. B. G. Brink, E. H. S. Langforren, K. Douka, M. C. Aris, W. H. F. S. Kibenge, J. G. M. van der Geer, E. H. d'Errico",
+		year: 2015,
+		url: "https://www.nature.com/articles/nature14164",
+		alternativetitle: "Trinil Shell (Joordens 2015)"
+	},
+	"trinilshell_image": {
+		title: "Homo erectus shell with geometric incisions, c. 500,000 BP (with detail)",
+		author: "Naturalis Biodiversity Center, The Netherlands",
+		year: 2015,
+		url: "https://commons.wikimedia.org/wiki/File:Homo_Erectus_shell_with_geometric_incisions_circa_500,000_BP,_Naturalis_Biodiversity_Center,_Netherlands_(with_detail).jpg",
+		license: "CC-BY-4.0",
+		alternativetitle: "Trinil Shell"
+	},
+	"rhindpapyrus": {
+		title: "Rhind Mathematical Papyrus (Papyrus Ahmes)",
+		author: "Ahmes (the scribe)",
+		year: "ca. 1650 BCE",
+		url: "https://en.wikipedia.org/wiki/Rhind_Mathematical_Papyrus",
+		alternativetitle: "Rhind Papyrus"
+	},
+	"neugebauerexactsciences": {
+		title: "The Exact Sciences in Antiquity",
+		author: "Otto Neugebauer",
+		year: 1969,
+		url: "https://en.wikipedia.org/wiki/The_Exact_Sciences_in_Antiquity",
+		alternativetitle: "The Exact Sciences in Antiquity"
+	},
+	"si427": {
+		title: "Perpendicular Lines and Diagonal Triples in Old Babylonian Surveying",
+		author: "Daniel F. Mansfield",
+		year: 2020,
+		url: "https://doi.org/10.1086/709309",
+		alternativetitle: "Si.427"
+	},
+	"si427_baublatt": {
+		title: "Babylonier nutzten vor 3700 Jahren Geometrie zur Landvermessung",
+		author: "Baublatt",
+		year: 2021,
+		url: "https://www.baublatt.ch/verschiedenes/babylonier-nutzten-vor-3700-jahren-geometrie-zur-landvermessung-31453",
+		alternativetitle: "Si.427 (Baublatt 2021)"
+	},
+	"si427_image": {
+		title: "Si.427, Old Babylonian surveyor's field plan (c. 1900–1600 BCE)",
+		author: "UNSW Sydney / Archaeological Museum, Istanbul",
+		year: 2021,
+		url: "https://news.unsw.edu.au/en/australian-mathematician-reveals-oldest-applied-geometry",
+		alternativetitle: "Si.427 Tablet"
+	},
+	"plimpton322": {
+		title: "Plimpton 322 is Babylonian exact sexagesimal trigonometry",
+		author: "Daniel F. Mansfield, N. J. Wildberger",
+		year: 2017,
+		url: "https://doi.org/10.1016/j.hm.2017.08.001",
+		alternativetitle: "Plimpton 322"
+	},
+	"hoyrup2021algebra": {
+		title: "Algebra in Keilschrift: Einführung in eine altbabylonische geometrische Technik",
+		author: "Jens Høyrup",
+		year: 2021,
+		url: "https://mprl-series.mpg.de/textbooks/3/index.html",
+		alternativetitle: "Algebra in Keilschrift"
+	},
+	"hoyruplengths": {
+		title: "Lengths, Widths, Surfaces: A Portrait of Old Babylonian Algebra and its Kin",
+		author: "Jens Høyrup",
+		year: 2002,
+		url: "https://doi.org/10.1007/978-1-4757-3685-4",
+		alternativetitle: "Lengths, Widths, Surfaces"
+	},
+	"sulbasutras": {
+		title: "Baudhāyana Śulba Sūtra (and the Śulba Sūtras)",
+		author: "Baudhāyana",
+		year: "ca. 800 BCE",
+		url: "https://en.wikipedia.org/wiki/Sulba_Sutras",
+		alternativetitle: "Śulba Sūtras"
+	},
+	"jiuzhangsuanshu": {
+		title: "The Nine Chapters on the Mathematical Art (九章算術, Jiǔzhāng Suànshū)",
+		author: "Anonymous Han-dynasty compilers",
+		year: "ca. 1st c. BCE",
+		url: "https://en.wikipedia.org/wiki/The_Nine_Chapters_on_the_Mathematical_Art",
+		alternativetitle: "Jiuzhang Suanshu"
+	},
+	"heathgreekmath": {
+		title: "A History of Greek Mathematics (2 vols.)",
+		author: "T. L. Heath",
+		year: 1921,
+		url: "https://en.wikipedia.org/wiki/A_History_of_Greek_Mathematics",
+		alternativetitle: "A History of Greek Mathematics"
+	},
+	"euclidelements": {
+		title: "The Elements (Στοιχεῖα)",
+		author: "Euclid of Alexandria",
+		year: "ca. 300 BCE",
+		url: "https://en.wikisource.org/wiki/The_Elements_(Euclid,_Heath)",
+		alternativetitle: "The Elements"
+	},
+	"euclidelements_heath": {
+		title: "The Thirteen Books of the Elements (3 vols.)",
+		author: "T. L. Heath (translator)",
+		year: 1908,
+		url: "https://en.wikisource.org/wiki/The_Elements_(Euclid,_Heath)",
+		alternativetitle: "The Elements (Heath trans.)"
+	},
+	"platomeno": {
+		title: "Meno (72a–84b)",
+		author: "Plato",
+		year: "ca. 385 BCE",
+		url: "https://en.wikisource.org/wiki/Plato/Meno",
+		alternativetitle: "Meno"
+	},
+	"platorepublic": {
+		title: "Republic (527a)",
+		author: "Plato",
+		year: "ca. 375 BCE",
+		url: "https://en.wikisource.org/wiki/Plato/Republic",
+		alternativetitle: "Republic"
+	},
+	"aristotlephysics": {
+		title: "Physics (Book IV)",
+		author: "Aristotle",
+		year: "ca. 350 BCE",
+		url: "https://en.wikisource.org/wiki/Physics_(Aristotle)",
+		alternativetitle: "Physics"
+	},
+	"apolloniusconics": {
+		title: "Conics (Κωνικά)",
+		author: "Apollonius of Perga",
+		year: "ca. 215 BCE",
+		url: "https://en.wikipedia.org/wiki/Apollonius_of_Perga",
+		alternativetitle: "Conics"
+	},
+	"menelaussphaerica": {
+		title: "Sphaerica",
+		author: "Menelaus of Alexandria",
+		year: "ca. 100 CE",
+		url: "https://en.wikipedia.org/wiki/Menelaus_of_Alexandria",
+		alternativetitle: "Sphaerica"
+	},
+	"alhazenoetic": {
+		title: "Kitāb al-Manāẓir (Book of Optics)",
+		author: "Ibn al-Haytham (Alhazen)",
+		year: "ca. 1021 CE",
+		url: "https://en.wikipedia.org/wiki/Ibn_al-Haytham",
+		alternativetitle: "Book of Optics"
+	},
+	"albertidepictura": {
+		title: "De Pictura (On Painting)",
+		author: "Leon Battista Alberti",
+		year: 1435,
+		url: "https://en.wikipedia.org/wiki/De_Pictura",
+		alternativetitle: "De Pictura"
+	},
+	"descartesgeometrie": {
+		title: "La Géométrie (appendix to Discours de la méthode)",
+		author: "René Descartes",
+		year: 1637,
+		url: "https://en.wikisource.org/wiki/Discourse_on_Method/Part_IV",
+		alternativetitle: "La Géométrie"
+	},
+	"desarguesbrouillon": {
+		title: "Brouillon project d'une atteinte aux evenemens des rencontres du cône avec un plan",
+		author: "Gérard Desargues",
+		year: 1639,
+		url: "https://en.wikipedia.org/wiki/André_Desargues",
+		alternativetitle: "Brouillon Project"
+	},
+	"eulerbridges": {
+		title: "Solutio problematis ad geometriam situs pertinentis",
+		author: "Leonhard Euler",
+		year: 1741,
+		url: "https://en.wikipedia.org/wiki/Solution_of_the_K%C3%B6nigsberg_bridges_problem",
+		alternativetitle: "Solutio problematis (1741)"
+	},
+	"eulersolids": {
+		title: "Elementa doctrinae solidorum",
+		author: "Leonhard Euler",
+		year: 1758,
+		url: "https://en.wikipedia.org/wiki/Euler_characteristic",
+		alternativetitle: "Elementa doctrinae solidorum"
+	},
+	"gaussdisquisitiones": {
+		title: "Disquisitiones generales circa superficies curvas",
+		author: "Carl Friedrich Gauss",
+		year: 1828,
+		url: "https://en.wikipedia.org/wiki/Theorema_egregium",
+		alternativetitle: "Disquisitiones (1827)"
+	},
+	"lobachevskygeometry": {
+		title: "Geometrische Untersuchungen zur Theorie des Raumes",
+		author: "Nikolai Ivanovich Lobachevsky",
+		year: 1840,
+		url: "https://en.wikipedia.org/wiki/Nikolai_Lobachevsky",
+		alternativetitle: "Geometrische Untersuchungen"
+	},
+	"bolyaiappendix": {
+		title: "Appendix: Scientiam Spatii Absolute Veram Exhibens",
+		author: "János Bolyai",
+		year: 1837,
+		url: "https://en.wikipedia.org/wiki/J%C3%A1nos_Bolyai",
+		alternativetitle: "Appendix (1837)"
+	},
+	"mobiusband": {
+		title: "Über die Bestimmung des Inhalts eines Polyëders",
+		author: "August Ferdinand Möbius",
+		year: 1858,
+		url: "https://en.wikipedia.org/wiki/August_Ferdinand_M%C3%B6bius",
+		alternativetitle: "Möbius Band (1858)"
+	},
+	"listingtopologie": {
+		title: "Vorstudien zur Topologie",
+		author: "Johann Benedict Listing",
+		year: 1847,
+		url: "https://en.wikipedia.org/wiki/Johann_Benedict_Listing",
+		alternativetitle: "Vorstudien zur Topologie"
+	},
+	"poincareanalysissitus": {
+		title: "Analysis Situs",
+		author: "Henri Poincaré",
+		year: 1895,
+		url: "https://en.wikipedia.org/wiki/Analysis_situs",
+		alternativetitle: "Analysis Situs"
+	},
+
 	"li2022othello_iclr": {
 		author: "Kenneth Li, Aspen K. Hopkins, David Bau, Fernanda Viégas, Hanspeter Pfister, Martin Wattenberg",
 		year: 2023,

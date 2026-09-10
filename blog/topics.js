@@ -32,6 +32,7 @@
 		{ id: 'math-i',           label: 'Math I',           icon: '∑',    desc: 'Algebra, derivatives' },
 		{ id: 'math-ii',          label: 'Math II',          icon: '∫',    desc: 'Integrals, linear algebra' },
 		{ id: 'math-iii',         label: 'Math III',         icon: '∮',    desc: 'Probability, real analysis' },
+		{ id: 'geometry',         label: 'Geometry',         icon: '▲',    desc: 'Space, curves, non-Euclidean, topology' },
 		{ id: 'statistics-i',     label: 'Stats I',          icon: 'σ',    desc: 'Basic probability, distributions' },
 		{ id: 'statistics-ii',    label: 'Stats II',         icon: 'μ',    desc: 'Inference, hypothesis testing, advanced' },
 		{ id: 'programming',      label: 'Programming',      icon: '{ }',  desc: 'Code, algorithms' },
@@ -95,7 +96,7 @@
 			hs:        [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'statistics-i' ],
 			undergrad: [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming' ],
 			grad:      [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents' ],
-			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents', 'math-iii', 'reasoning', 'inference', 'data' ]
+			phd:       [ 'history', 'philosophy', 'ethics', 'language', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'programming', 'architecture', 'training', 'agents', 'math-iii', 'geometry', 'reasoning', 'inference', 'data' ]
 		},
 		engineer: {
 			hs:        [ 'math-i', 'statistics-i', 'programming', 'data', 'hardware' ],
@@ -107,7 +108,7 @@
 			hs:        [ 'history', 'philosophy', 'math-i', 'statistics-i', 'language' ],
 			undergrad: [ 'history', 'philosophy', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture' ],
 			grad:      [ 'history', 'philosophy', 'math-i', 'math-ii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents' ],
-			phd:       [ 'history', 'philosophy', 'math-i', 'math-ii', 'math-iii', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
+			phd:       [ 'history', 'philosophy', 'math-i', 'math-ii', 'math-iii', 'geometry', 'statistics-i', 'statistics-ii', 'language', 'programming', 'architecture', 'training', 'reasoning', 'interpretability', 'frontier', 'agents', 'ethics', 'inference', 'data', 'multimodal', 'vision', 'audio', 'safety', 'law', 'society', 'hardware' ]
 		}
 	};
 
