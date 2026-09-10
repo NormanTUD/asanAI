@@ -439,8 +439,8 @@ function render_temml() {
 			.lp-footer{
 				padding:10px 16px;
 				border-top:1px solid #e5e7eb;
-				display:flex;align-items:center;justify-content:space-between;gap:12px}
-			.lp-footer-hint{font-size:11px;color:#9ca3af;flex:1;text-align:center}
+				display:flex;align-items:center;justify-content:center}
+			.lp-footer-hint{font-size:11px;color:#9ca3af;text-align:center}
 			.lp-footer kbd{
 				background:#f3f4f6;
 				border:1px solid #e5e7eb;
@@ -467,13 +467,6 @@ function render_temml() {
 				100%{box-shadow:inset 0 0 0 2px transparent}}
 			.lp-live-pulse .lp-code-wrap{animation:lpPulse .5s ease-out}
 			.lp-live-pulse .lp-preview{animation:lpPulse .5s ease-out}
-
-			.lp-badge{
-				display:inline-block;font-size:10px;font-weight:600;
-				padding:2px 7px;border-radius:4px;margin-left:8px;
-				vertical-align:middle}
-			.lp-badge-display{background:#ede9fe;color:#6d28d9}
-			.lp-badge-inline{background:#e0f2fe;color:#0369a1}
 
 			/* ── Dark mode overrides ── */
 			html.dark .lp-box{
@@ -514,10 +507,6 @@ function render_temml() {
 				color:var(--mn-text-secondary)}
 			html.dark .lp-scroll-btn:hover{
 				background:var(--mn-border);color:var(--mn-text)}
-			html.dark .lp-badge-display{
-				background:rgba(124,58,237,.2);color:#c4b5fd}
-			html.dark .lp-badge-inline{
-				background:rgba(14,165,233,.2);color:#7dd3fc}
 		`;
 		document.head.appendChild(s);
 
@@ -556,17 +545,6 @@ function render_temml() {
 				if (all[i] === mathEl) return i;
 			}
 			return -1;
-		}
-
-		function _setBadge(overlay, isDisplay) {
-			const oldBadge = overlay.querySelector('.lp-badge');
-			if (oldBadge) oldBadge.remove();
-			const badge = document.createElement('span');
-			badge.className = isDisplay
-				? 'lp-badge lp-badge-display'
-				: 'lp-badge lp-badge-inline';
-			badge.textContent = isDisplay ? 'display' : 'inline';
-			overlay.querySelector('.lp-header h3').appendChild(badge);
 		}
 
 		function _resetCopyBtn(overlay) {
@@ -812,7 +790,6 @@ function render_temml() {
 				overlay.querySelector('.lp-preview').innerHTML = '';
 				overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
 				overlay.querySelector('.lp-code').innerHTML = _highlightLatex(latex);
-				_setBadge(overlay, isDisplay);
 				_resetCopyBtn(overlay);
 
 				requestAnimationFrame(() => box.classList.remove('lp-swap'));
@@ -829,7 +806,6 @@ function render_temml() {
 			overlay.querySelector('.lp-preview').innerHTML = '';
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
 			overlay.querySelector('.lp-code').innerHTML = _highlightLatex(latex);
-			_setBadge(overlay, isDisplay);
 
 			// Gentle inset glow to signal the update
 			const box = overlay.querySelector('.lp-box');
@@ -883,13 +859,11 @@ function render_temml() {
 					</div>
 					<div class="lp-footer">
 						<span class="lp-footer-hint"><kbd>Esc</kbd> to close</span>
-						<div style="width:68px"></div>
 					</div>
 				</div>`;
 
 			overlay.querySelector('.lp-code').innerHTML = _highlightLatex(latex);
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
-			_setBadge(overlay, isDisplay);
 
 			_wireClose(overlay);
 			_wireCopy(overlay);
