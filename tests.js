@@ -626,35 +626,35 @@ function is_valid_ret_object (ret, wanted_epochs) {
 function test_math_box () {
 	const wanted_text = "hello";
 
-	create_centered_window_with_text(wanted_text);
+	create_centered_window_with_text(wanted_text, null);
 
-	if(!$(".math_copier").length) {
-		console.error(".math_copier could not be found");
+	if(!$(".lp-overlay").length) {
+		console.error(".lp-overlay could not be found");
 		return false;
 	}
 
-	const $textarea = $(".math_copier").find("textarea");
+	const $code = $(".lp-overlay").find(".lp-code");
 
-	if(!$textarea.length) {
-		console.error(".math_copier does not contain textarea");
+	if(!$code.length) {
+		console.error(".lp-overlay does not contain .lp-code");
 		return false;
 	}
 
-	const text = $textarea.val();
+	const text = $code.text();
 
 	if(text != wanted_text) {
-		console.error(`.math_copier does not contain wanted text: '${wanted_text}', but contains '${text}'`);
+		console.error(`.lp-overlay does not contain wanted text: '${wanted_text}', but contains '${text}'`);
 		return false;
 	}
 
-	const $x_button = $($(".math_copier").children()[0]);
+	const $close_button = $(".lp-overlay").find(".lp-close");
 
-	if($x_button.text() != "x") {
-		console.error(`.math_copier: first child does not contain 'x' button`);
+	if(!$close_button.length) {
+		console.error(`.lp-overlay: no .lp-close button found`);
 		return false;
 	}
 
-	$x_button.click();
+	$close_button.click();
 
 	return true;
 }

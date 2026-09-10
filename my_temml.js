@@ -38,13 +38,13 @@ function render_temml_quick(e) {
 
 	try {
 		const tmp = document.createElement("span");
-		temml.render(latex, tmp);
+		temml.render(latex, tmp, { annotate: true });
 		e.innerHTML = tmp.innerHTML;
 		e.dataset.rendered = "1";
 		e.dataset.latex = latex;
 		$e.off("contextmenu.temml").on("contextmenu.temml", ev => {
 			ev.preventDefault();
-			create_centered_window_with_text(latex);
+			create_centered_window_with_text(latex, e.querySelector("math"));
 		});
 	} catch (err) {
 		wrn("temml error:", err);

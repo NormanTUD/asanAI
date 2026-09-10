@@ -2789,84 +2789,459 @@ function reload_js(src) {
 
 // reload_all_js();
 
-function create_centered_window_with_text(parameter) {
-	$(".math_copier").remove();
+/* ═══════════════════════════════════════════════════════════════
+   LATEX POPUP — right-click any rendered equation to see its
+   LaTeX source with syntax highlighting, live preview, and copy.
+   Adapted from blog/start.js render_temml() popup system.
+   ═══════════════════════════════════════════════════════════════ */
+var _lp_popup = (function() {
+	var _overlay = null;
+	var _mathEl = null;
+	var _currentLatex = null;
 
-	// Create a div for the window
-	var windowDiv = document.createElement("div");
-	windowDiv.style.position = "fixed";
-	windowDiv.style.top = "50%"; // Center vertically
-	windowDiv.style.left = "50%"; // Center horizontally
-	windowDiv.style.transform = "translate(-50%, -50%)"; // Center using transform
-	windowDiv.style.width = "98%";
-	windowDiv.style.minWidth = "300px";
-	windowDiv.style.zIndex = 9;
-	windowDiv.style.backgroundColor = is_dark_mode ? "black" : "white";
-	windowDiv.style.border = "1px solid #ccc";
-	windowDiv.style.padding = "10px";
-	windowDiv.style.boxShadow = "0px 0px 10px rgba(0, 0, 0, 0.2)";
-	windowDiv.style.zIndex = 999999;
-	windowDiv.classList.add("math_copier");
-
-	// Create the "x" button
-	var closeButton = document.createElement("button");
-	closeButton.textContent = "x";
-	closeButton.style.position = "absolute";
-	closeButton.style.top = "5px";
-	closeButton.style.right = "5px";
-	closeButton.style.border = "none";
-	closeButton.style.backgroundColor = "red";
-	closeButton.style.cursor = "pointer";
-	closeButton.classList.add("math_copier_close_button");
-
-	// Create the readonly textarea
-	var textarea = document.createElement("textarea");
-	textarea.readOnly = true;
-	textarea.style.width = "100%";
-	textarea.style.height = "100%";
-	textarea.style.minHeight = "500px";
-	textarea.style.height = "80%";
-	textarea.textContent = parameter;
-
-	// Create the "Copy to Clipboard" button
-	var copyButton = document.createElement("button");
-	copyButton.textContent = language[lang]["copy_to_clipboard"];
-	copyButton.style.width = "100%";
-	copyButton.style.marginTop = "10px";
-
-	// Add a click event listener to copy the textarea's content to the clipboard
-	copyButton.addEventListener("click", () => {
-		textarea.select();
-		document.execCommand("copy");
-	});
-
-	// Add the textarea, copy button, and close button to the window
-	windowDiv.appendChild(closeButton);
-	windowDiv.appendChild(textarea);
-	windowDiv.appendChild(copyButton);
-
-	// Add an event listener to close the window when the "x" button is clicked
-	closeButton.addEventListener("click", () => {
-		document.body.removeChild(windowDiv);
-	});
-
-	// Append the window to the body to display it
-	document.body.appendChild(windowDiv);
-
-	function esc_listener(e) {
-		if (e.key === "Escape") {
-			if (document.body.contains(windowDiv)) {
-				document.body.removeChild(windowDiv);
-			}
-			document.removeEventListener("keydown", esc_listener);
-		}
+	function _ensureCSS() {
+		if (document.getElementById("lp-popup-css")) return;
+		var s = document.createElement("style");
+		s.id = "lp-popup-css";
+		s.textContent = '\
+			.lp-overlay{\
+				position:fixed;inset:0;\
+				background:rgba(0,0,0,.10);backdrop-filter:blur(2px);\
+				z-index:100000;display:flex;align-items:center;justify-content:center;\
+				animation:lpFadeIn .18s ease-out;\
+				pointer-events:none;\
+				touch-action:pan-y;\
+				overscroll-behavior:contain}\
+			@keyframes lpFadeIn{from{opacity:0}to{opacity:1}}\
+			@keyframes lpSlideUp{from{opacity:0;transform:translateY(12px) scale(.97)}\
+				to{opacity:1;transform:translateY(0) scale(1)}}\
+			\
+			.lp-box{\
+				background:#ffffff;\
+				border:1px solid rgba(0,0,0,.1);border-radius:14px;\
+				width:min(560px,90vw);max-height:80vh;\
+				display:flex;flex-direction:column;overflow:hidden;\
+				box-shadow:0 8px 40px rgba(0,0,0,.12),0 0 0 1px rgba(0,0,0,.04);\
+				animation:lpSlideUp .22s ease-out;\
+				font-family:\'Inter\',\'Segoe UI\',system-ui,sans-serif;\
+				pointer-events:auto}\
+			\
+			.lp-header{\
+				display:flex;align-items:center;justify-content:space-between;\
+				padding:14px 20px;\
+				border-bottom:1px solid #e5e7eb;\
+				background:#fafbfc}\
+			.lp-header h3{\
+				margin:0;font-size:14px;font-weight:600;color:#1f2937;\
+				display:flex;align-items:center;gap:8px}\
+			.lp-header h3::before{\
+				content:\'\u03A3\';font-size:18px;\
+				background:linear-gradient(135deg,#4f46e5,#7c3aed);\
+				-webkit-background-clip:text;-webkit-text-fill-color:transparent}\
+			\
+			.lp-close{\
+				background:#f3f4f6;border:1px solid #e5e7eb;\
+				color:#6b7280;font-size:18px;width:32px;height:32px;\
+				border-radius:8px;cursor:pointer;\
+				display:flex;align-items:center;justify-content:center;\
+				transition:all .15s ease}\
+			.lp-close:hover{\
+				background:#fee2e2;border-color:#fca5a5;color:#dc2626}\
+			\
+			.lp-body{padding:20px;flex:1 1 auto;min-height:0;overflow-y:auto}\
+			\
+			.lp-preview{\
+				background:#f8f9fb;\
+				border:1px solid #e5e7eb;\
+				border-radius:10px;padding:16px;margin-bottom:16px;\
+				text-align:center;\
+				overflow:auto;max-height:45vh;\
+				color:#1f2937;font-size:1.3em;\
+				transition:opacity .2s ease;\
+				cursor:grab;\
+				scrollbar-width:thin}\
+			\
+			.lp-code-wrap{\
+				position:relative;background:#f9fafb;\
+				border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}\
+			.lp-code-bar{\
+				display:flex;align-items:center;justify-content:space-between;\
+				padding:8px 14px;\
+				background:#f3f4f6;\
+				border-bottom:1px solid #e5e7eb}\
+			.lp-code-bar span{\
+				font-size:11px;color:#9ca3af;text-transform:uppercase;\
+				letter-spacing:.5px;font-weight:600}\
+			\
+			.lp-copy{\
+				background:linear-gradient(135deg,#4f46e5,#7c3aed);\
+				color:#fff;border:none;padding:5px 14px;border-radius:6px;\
+				font-size:12px;font-weight:600;cursor:pointer;transition:all .2s ease}\
+			.lp-copy:hover{transform:translateY(-1px);\
+				box-shadow:0 4px 12px rgba(79,70,229,.3)}\
+			.lp-copy.copied{\
+				background:linear-gradient(135deg,#059669,#10b981)}\
+			\
+			.lp-code{\
+				padding:14px 16px;margin:0;\
+				font-family:\'JetBrains Mono\',\'Fira Code\',\'Cascadia Code\',monospace;\
+				font-size:13.5px;line-height:1.6;color:#1e293b;\
+				white-space:pre-wrap;word-break:break-all;\
+				overflow-y:auto;max-height:35vh;tab-size:2;\
+				user-select:all;\
+				transition:opacity .2s ease}\
+			\
+			.lp-code .lp-tok-comment{color:#6b7280;font-style:italic}\
+			.lp-code .lp-tok-command{color:#7c3aed;font-weight:600}\
+			.lp-code .lp-tok-brace{color:#dc2626}\
+			.lp-code .lp-tok-special{color:#ea580c}\
+			.lp-code .lp-tok-number{color:#059669}\
+			\
+			.lp-footer{\
+				padding:10px 16px;\
+				border-top:1px solid #e5e7eb;\
+				display:flex;align-items:center;justify-content:center}\
+			.lp-footer-hint{font-size:11px;color:#9ca3af;text-align:center}\
+			.lp-footer kbd{\
+				background:#f3f4f6;\
+				border:1px solid #e5e7eb;\
+				border-radius:4px;padding:1px 5px;font-size:10px;color:#6b7280}\
+			\
+			.lp-scroll-btns{display:flex;gap:4px}\
+			.lp-scroll-btn{\
+				background:#f3f4f6;border:1px solid #e5e7eb;\
+				color:#374151;width:30px;height:30px;\
+				border-radius:6px;cursor:pointer;\
+				display:flex;align-items:center;justify-content:center;\
+				font-size:14px;font-weight:600;line-height:1;\
+				transition:all .15s ease;font-family:inherit}\
+			.lp-scroll-btn:hover{background:#e5e7eb;border-color:#cbd5e1;color:#1f2937}\
+			.lp-scroll-btn:active{transform:translateY(1px)}\
+			\
+			.lp-swap .lp-preview,.lp-swap .lp-code{opacity:.15}\
+			\
+			@keyframes lpPulse{\
+				0%{box-shadow:inset 0 0 0 2px rgba(79,70,229,.2)}\
+				100%{box-shadow:inset 0 0 0 2px transparent}}\
+			.lp-live-pulse .lp-code-wrap{animation:lpPulse .5s ease-out}\
+			.lp-live-pulse .lp-preview{animation:lpPulse .5s ease-out}\
+			\
+			.lp-dark .lp-box{\
+				background:#1e1e2e;\
+				border-color:rgba(255,255,255,.08);\
+				box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04)}\
+			.lp-dark .lp-header{\
+				background:#181825;border-bottom-color:rgba(255,255,255,.08)}\
+			.lp-dark .lp-header h3{color:#cdd6f4}\
+			.lp-dark .lp-close{\
+				background:#313244;border-color:rgba(255,255,255,.08);\
+				color:#a6adc8}\
+			.lp-dark .lp-close:hover{\
+				background:#7f1d1d;border-color:#b91c1c;color:#fecaca}\
+			.lp-dark .lp-preview{\
+				background:#181825;\
+				border-color:rgba(255,255,255,.08);\
+				color:#cdd6f4}\
+			.lp-dark .lp-code-wrap{\
+				background:#181825;\
+				border-color:rgba(255,255,255,.08)}\
+			.lp-dark .lp-code-bar{\
+				background:#313244;\
+				border-bottom-color:rgba(255,255,255,.08)}\
+			.lp-dark .lp-code{color:#cdd6f4}\
+			.lp-dark .lp-code .lp-tok-comment{color:#9ca3af}\
+			.lp-dark .lp-code .lp-tok-command{color:#a78bfa}\
+			.lp-dark .lp-code .lp-tok-brace{color:#fca5a5}\
+			.lp-dark .lp-code .lp-tok-special{color:#fdba74}\
+			.lp-dark .lp-code .lp-tok-number{color:#6ee7b7}\
+			.lp-dark .lp-footer{border-top-color:rgba(255,255,255,.08)}\
+			.lp-dark .lp-footer-hint{color:#a6adc8}\
+			.lp-dark .lp-footer kbd{\
+				background:#313244;\
+				border-color:rgba(255,255,255,.08);\
+				color:#a6adc8}\
+			.lp-dark .lp-scroll-btn{\
+				background:#313244;\
+				border-color:rgba(255,255,255,.08);\
+				color:#a6adc8}\
+			.lp-dark .lp-scroll-btn:hover{\
+				background:#45475a;color:#cdd6f4}';
+		document.head.appendChild(s);
 	}
 
-        document.addEventListener("keydown", esc_listener);
+	function _close() {
+		if (!_overlay) return;
+		_overlay.remove();
+		_overlay = null;
+		_mathEl = null;
+		_currentLatex = null;
+	}
+
+	function _extractLatex(mathEl) {
+		if (!mathEl) return null;
+		var ann = mathEl.querySelector('annotation[encoding="application/x-tex"]');
+		if (ann) return ann.textContent.trim();
+		if (mathEl.dataset && mathEl.dataset.tex) return mathEl.dataset.tex.trim();
+		var wrapper = mathEl.closest(".temml_me");
+		if (wrapper && wrapper.dataset.latex) return wrapper.dataset.latex.trim();
+		return null;
+	}
+
+	function _highlightLatex(src) {
+		var tokens = [];
+		var len = src.length;
+		var i = 0;
+		while (i < len) {
+			var c = src[i];
+			if (c === "%") {
+				var j = i;
+				while (j < len && src[j] !== "\n") j++;
+				tokens.push({t: "comment", v: src.slice(i, j)});
+				i = j;
+			} else if (c === "\\") {
+				var n = src[i + 1];
+				if (n === undefined) {
+					tokens.push({t: "command", v: "\\"});
+					i++;
+				} else if (!/[a-zA-Z@]/.test(n)) {
+					tokens.push({t: "command", v: src.slice(i, i + 2)});
+					i += 2;
+				} else {
+					var j2 = i + 1;
+					while (j2 < len && /[a-zA-Z]/.test(src[j2])) j2++;
+					tokens.push({t: "command", v: src.slice(i, j2)});
+					i = j2;
+				}
+			} else if (c === "{" || c === "}") {
+				tokens.push({t: "brace", v: c});
+				i++;
+			} else if (c === "$" || c === "^" || c === "_" || c === "&") {
+				tokens.push({t: "special", v: c});
+				i++;
+			} else if (c >= "0" && c <= "9") {
+				var j3 = i;
+				while (j3 < len && ((src[j3] >= "0" && src[j3] <= "9") || src[j3] === ".")) j3++;
+				tokens.push({t: "number", v: src.slice(i, j3)});
+				i = j3;
+			} else {
+				tokens.push({t: "plain", v: c});
+				i++;
+			}
+		}
+		var esc = function(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
+		return tokens.map(function(tok) { return '<span class="lp-tok-' + tok.t + '">' + esc(tok.v) + '</span>'; }).join("");
+	}
+
+	function _getScrollPos() {
+		return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+	}
+
+	function _scrollPage(dy) {
+		if (!dy) return false;
+		var before = _getScrollPos();
+		try { window.scrollBy({top: dy, behavior: "instant"}); } catch(_) { window.scrollBy(0, dy); }
+		if (_getScrollPos() !== before) return true;
+		var se = document.scrollingElement || document.documentElement;
+		if (se) { se.scrollTop += dy; if (_getScrollPos() !== before) return true; }
+		document.documentElement.scrollTop += dy;
+		if (_getScrollPos() !== before) return true;
+		document.body.scrollTop += dy;
+		if (_getScrollPos() !== before) return true;
+		return false;
+	}
+
+	function _scrollFallback(down) {
+		if (!_mathEl) return;
+		try { _mathEl.scrollIntoView({behavior: "smooth", block: down ? "end" : "start"}); } catch(_) {}
+	}
+
+	function _wireScroll(overlay) {
+		var box = overlay.querySelector(".lp-box");
+		var pv = function() { return overlay.querySelector(".lp-preview"); };
+
+		box.addEventListener("wheel", function(e) {
+			if (e.target.closest && e.target.closest(".lp-code")) return;
+			var preview = e.target.closest && e.target.closest(".lp-preview");
+			if (preview) {
+				var hasX = preview.scrollWidth > preview.clientWidth + 1;
+				var hasY = preview.scrollHeight > preview.clientHeight + 1;
+				if (!hasX && !hasY) return;
+				e.preventDefault();
+				e.stopPropagation();
+				var dy = e.deltaY, dx = e.deltaX;
+				if (e.deltaMode === 1) { dy *= 20; dx *= 20; }
+				else if (e.deltaMode === 2) { dy *= preview.clientHeight; dx *= preview.clientWidth; }
+				if (e.shiftKey) { if (hasX) preview.scrollLeft += (dx || dy); }
+				else if (hasX && hasY) { preview.scrollLeft += dx; preview.scrollTop += dy; }
+				else if (hasY) { preview.scrollTop += (dy || dx); }
+				else if (hasX) { preview.scrollLeft += (dy || dx); }
+				return;
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			var dy2 = e.deltaY, dx2 = e.deltaX;
+			if (e.deltaMode === 1) { dy2 *= 20; dx2 *= 20; }
+			else if (e.deltaMode === 2) { dy2 *= window.innerHeight; dx2 *= window.innerWidth; }
+			if (e.shiftKey && dy2 === 0) dy2 = dx2;
+			if (dy2 === 0 && dx2 !== 0) dy2 = dx2;
+			requestAnimationFrame(function() { if (!_scrollPage(dy2)) _scrollFallback(dy2 > 0); });
+		}, {passive: false, capture: true});
+
+		var previewEl = pv();
+		previewEl.addEventListener("mousedown", function(e) {
+			var startX = e.clientX, startLeft = previewEl.scrollLeft;
+			var onMove = function(ev) { previewEl.scrollLeft = startLeft - (ev.clientX - startX); };
+			var onUp = function() { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
+			document.addEventListener("mousemove", onMove);
+			document.addEventListener("mouseup", onUp);
+		});
+		previewEl.addEventListener("touchstart", function(e) {
+			if (e.touches.length !== 1) return;
+			var startX = e.touches[0].clientX, startLeft = previewEl.scrollLeft;
+			var onMove = function(ev) { if (!ev.touches.length) return; previewEl.scrollLeft = startLeft - (ev.touches[0].clientX - startX); };
+			var onEnd = function() { previewEl.removeEventListener("touchmove", onMove); previewEl.removeEventListener("touchend", onEnd); };
+			previewEl.addEventListener("touchmove", onMove, {passive: true});
+			previewEl.addEventListener("touchend", onEnd);
+		}, {passive: true});
+
+		overlay.querySelectorAll(".lp-scroll-btn").forEach(function(btn) {
+			var step = function() {
+				var dy = window.innerHeight * Number(btn.dataset.dy);
+				if (!_scrollPage(dy)) _scrollFallback(dy > 0);
+			};
+			btn.addEventListener("click", step);
+			var timer;
+			var start = function() { step(); timer = setInterval(step, 120); };
+			var stop = function() { clearInterval(timer); };
+			btn.addEventListener("mousedown", function(e) { e.preventDefault(); start(); });
+			btn.addEventListener("mouseup", stop);
+			btn.addEventListener("mouseleave", stop);
+			btn.addEventListener("touchstart", function(e) { e.preventDefault(); start(); }, {passive: false});
+			btn.addEventListener("touchend", stop);
+		});
+	}
+
+	function _animatedSwap(overlay, latex, mathEl) {
+		_mathEl = mathEl;
+		_currentLatex = latex;
+		var box = overlay.querySelector(".lp-box");
+		box.classList.add("lp-swap");
+		setTimeout(function() {
+			overlay.querySelector(".lp-preview").innerHTML = "";
+			overlay.querySelector(".lp-preview").appendChild(mathEl.cloneNode(true));
+			overlay.querySelector(".lp-code").innerHTML = _highlightLatex(latex);
+			overlay.querySelector(".lp-copy").textContent = "Copy";
+			overlay.querySelector(".lp-copy").classList.remove("copied");
+			requestAnimationFrame(function() { box.classList.remove("lp-swap"); });
+		}, 180);
+	}
+
+	function _show(latex, mathEl) {
+		if (!latex) return;
+		if (_overlay && _mathEl === mathEl && _currentLatex === latex) return;
+		if (_overlay) { _animatedSwap(_overlay, latex, mathEl); return; }
+
+		_ensureCSS();
+
+		var dark = is_dark_mode;
+		var overlay = document.createElement("div");
+		overlay.className = "lp-overlay" + (dark ? " lp-dark" : "");
+		overlay.innerHTML = '\
+			<div class="lp-box" role="dialog" aria-label="LaTeX Source">\
+				<div class="lp-header">\
+					<h3>LaTeX Source</h3>\
+					<button class="lp-close" aria-label="Close" title="Close">&times;</button>\
+				</div>\
+				<div class="lp-body">\
+					<div class="lp-preview"></div>\
+					<div class="lp-code-wrap">\
+						<div class="lp-code-bar">\
+							<span>LaTeX</span>\
+							<button class="lp-copy">Copy</button>\
+						</div>\
+						<pre class="lp-code"></pre>\
+					</div>\
+				</div>\
+				<div class="lp-footer">\
+					<span class="lp-footer-hint"><kbd>Esc</kbd> to close</span>\
+				</div>\
+			</div>';
+
+		overlay.querySelector(".lp-code").innerHTML = _highlightLatex(latex);
+		if (mathEl) overlay.querySelector(".lp-preview").appendChild(mathEl.cloneNode(true));
+
+		overlay.querySelector(".lp-close").addEventListener("click", _close);
+
+		overlay.addEventListener("mousedown", function(e) {
+			if (e.target.closest && e.target.closest(".lp-box")) return;
+			_close();
+		}, true);
+
+		var copyBtn = overlay.querySelector(".lp-copy");
+		var copyTimeout;
+		copyBtn.addEventListener("click", function() {
+			var text = overlay.querySelector(".lp-code").textContent;
+			navigator.clipboard.writeText(text).then(function() {
+				copyBtn.textContent = "\u2713 Copied!";
+				copyBtn.classList.add("copied");
+				clearTimeout(copyTimeout);
+				copyTimeout = setTimeout(function() {
+					copyBtn.textContent = "Copy";
+					copyBtn.classList.remove("copied");
+				}, 2000);
+			});
+		});
+
+		_wireScroll(overlay);
+
+		document.body.appendChild(overlay);
+		_overlay = overlay;
+		_mathEl = mathEl;
+		_currentLatex = latex;
+	}
+
+	document.addEventListener("contextmenu", function(e) {
+		var mathEl = e.target.closest("math");
+		if (!mathEl) return;
+		if (mathEl.closest(".lp-overlay")) return;
+		var latex = _extractLatex(mathEl);
+		if (!latex) return;
+		e.preventDefault();
+		_show(latex, mathEl);
+	});
+
+	document.addEventListener("keydown", function(e) {
+		if (!_overlay) return;
+		if (e.key === "Escape") { _close(); return; }
+		var ae = document.activeElement;
+		if (ae && ae.closest && ae.closest(".lp-code") &&
+		    (e.key.indexOf("Arrow") === 0 || e.key === "Home" || e.key === "End")) {
+			if (!e.shiftKey || e.key === "Home" || e.key === "End") return;
+		}
+		if (e.key === "PageUp" || (e.key === "ArrowUp" && e.altKey)) {
+			e.preventDefault();
+			if (!_scrollPage(-window.innerHeight * 0.85)) _scrollFallback(false);
+		} else if (e.key === "PageDown" || (e.key === "ArrowDown" && e.altKey)) {
+			e.preventDefault();
+			if (!_scrollPage(window.innerHeight * 0.85)) _scrollFallback(true);
+		} else if (e.key === "Home" && !e.shiftKey) {
+			e.preventDefault();
+			window.scrollTo({top: 0, behavior: "instant"});
+		} else if (e.key === "End" && !e.shiftKey) {
+			e.preventDefault();
+			window.scrollTo({top: document.documentElement.scrollHeight, behavior: "instant"});
+		}
+	});
+
+	return { close: _close, show: _show };
+})();
+
+function create_centered_window_with_text(latex, mathEl) {
+	_lp_popup.show(latex, mathEl);
 }
 
-function close_math_copiers () {
-	$(".math_copier_close_button").click();
+function close_math_copiers() {
+	_lp_popup.close();
 }
 
 function get_last_element_of_class_end_y(name) {
