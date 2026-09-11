@@ -227,6 +227,8 @@ Glass was made in Mesopotamia and Egypt as early as 3500 BCE, but the transparen
 
 No electrical computer can exist without electricity, yet the phenomenon was first observed in a context utterly alien to computation. Around 600 BCE, **Thales of Miletus** noticed that rubbing amber (*ἤλεκτρον*, *elektron* in Greek) against fur caused it to attract lightweight objects like feathers, an observation recorded attributed to Thales, later catalogued by \citeauthor{laertius} in \citetitle{laertius} (Book I, §15). For over two millennia, this remained a philosophical curiosity, a parlor trick of nature.
 
+\marginfig{volta_portrait.jpg}{\citeauthor{volta_portrait}, inventor of the first true electric battery.}
+
 The transformation of this curiosity into a usable force required a cascade of unrelated breakthroughs:
 
 * **Alessandro Volta** (1800) created the first true battery (the *voltaic pile*), proving that electricity could be generated chemically and sustained as a steady current, not just produced as a momentary spark. He announced the device in a letter to Sir Joseph Banks, president of the Royal Society, subsequently published as \citetitle{volta}.
@@ -236,13 +238,6 @@ The transformation of this curiosity into a usable force required a cascade of u
 * **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current. He described the effect in \citetitle{faraday}. This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines. Without it, there is no power grid, no data center, and no GPU cluster.
 
 * **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture “A New System of Alternate Current Motors and Transformers” (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
-
-<div class="image-row">
-    <figure>
-        <img src="volta_portrait.jpg" alt="Engraved portrait of Alessandro Volta" />
-        <figcaption class="md">\citeauthor{volta_portrait}, inventor of the first true electric battery.</figcaption>
-    </figure>
-</div>
 
 <div class="image-row">
     <figure>
