@@ -144,7 +144,7 @@ window.bibData = {
 		title: "De Thiende (De la disme, “The Art of Tenths”)",
 		author: "Simon Stevin",
 		year: 1585,
-		url: "https://en.wikipedia.org/wiki/Disme,_the_Art_of_Tenths",
+		url: "https://en.wikipedia.org/wiki/De_Thiende",
 		alternativetitle: "De Thiende"
 	},
 	"hoyrup2021algebra": {
