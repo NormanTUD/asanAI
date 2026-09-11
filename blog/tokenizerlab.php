@@ -5,7 +5,6 @@ title: Tokenization: How Words become Numbers
 description: How words become numbers, word-level, N-gram, and subword methods compared.
 icon: &#9000;
 part: 4
-order: 19
 color: sky
 topics: language, programming
 -->

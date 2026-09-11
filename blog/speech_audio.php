@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Speech & Audio Models
 description: Whisper, TTS, music generation — how sound becomes tokens and back again.
 icon: &#127908;
-part: 4
-order: 30
+part: 44
 color: sky
 topics: multimodal, audio, architecture, programming
 -->

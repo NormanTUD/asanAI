@@ -5,7 +5,6 @@ title: Semantic Search & Vector Databases: Finding Needles in Haystacks
 description: Finding needles in haystacks, BM25, dense vectors, hybrid search, and ANN.
 icon: &#128279;
 part: 5
-order: 32
 color: rose
 topics: inference, language, math-i, math-ii, programming
 -->

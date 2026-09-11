@@ -5,7 +5,6 @@ title: The Architecture of Meaning: A Deep Dive into Transformers
 description: A deep interactive dive, configure heads, layers, and dimensions, then watch it compute.
 icon: &#129516;
 part: 4
-order: 25
 color: sky
 topics: architecture, math-i, math-ii, programming
 featured: true

@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Reasoning & Test-Time Compute
 description: Chain-of-thought, self-consistency, ToT, and the o1/R1 paradigm of scaling compute at inference.
 icon: &#129518;
-part: 5
-order: 37
+part: 55
 color: rose
 topics: reasoning, agents, architecture, philosophy
 -->

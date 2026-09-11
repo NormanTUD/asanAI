@@ -10191,5 +10191,47 @@ window.bibData = {
 		year: 2011,
 		url: "https://doi.org/10.1111/j.1468-5906.2011.01564.x",
 		alternativetitle: "Barrett, Cognitive Science of Religion"
+	},
+	"brainlateral_image": {
+		title: "Lateral view of the human brain",
+		url: "https://commons.wikimedia.org/wiki/File:Brain_Lateral_(NIH_BioArt_60).png",
+		author: "NIH / NIAID (Ryan Kissinger)",
+		license: "Public domain",
+		alternativetitle: "The human brain"
+	},
+	"galilei_image": {
+		title: "Portrait of Galileo Galilei by Justus Sustermans (1636)",
+		url: "https://commons.wikimedia.org/wiki/File:Justus_Sustermans_-_Portrait_of_Galileo_Galilei_(Uffizi)_(cropped).jpg",
+		author: "Justus Sustermans",
+		license: "Public domain",
+		alternativetitle: "Galileo Galilei"
+	},
+	"poincare_image": {
+		title: "Portrait of Henri Poincaré (1854–1912), Mathematician",
+		url: "https://commons.wikimedia.org/wiki/File:Portrait_of_Henri_Poincar%C3%A9_(1854-1912),_Mathematician_(2551042945).jpg",
+		author: "Smithsonian Institution",
+		license: "Public domain",
+		alternativetitle: "Henri Poincaré"
+	},
+	"simonnewell_image": {
+		title: "Herbert A. Simon and Allen Newell, chess match (1981)",
+		url: "https://commons.wikimedia.org/wiki/File:Herbert_A._Simon_and_Allen_Newell_Chess_Match.jpg",
+		author: "Paolo Massa",
+		license: "Public domain",
+		alternativetitle: "Herbert A. Simon and Allen Newell"
+	},
+	"dawkins_image": {
+		title: "Richard Dawkins",
+		url: "https://commons.wikimedia.org/wiki/File:Richard_Dawkins_Cooper_Union_Shankbone.jpg",
+		author: "David Shankbone",
+		license: "CC BY 3.0",
+		alternativetitle: "Richard Dawkins"
+	},
+	"mirrorselfrecognition_image": {
+		title: "Orangutan recognizing its own reflection (mirror test)",
+		url: "https://commons.wikimedia.org/wiki/File:Mirror_Self-Recognition.jpg",
+		author: "Steve Jurvetson",
+		license: "CC BY 2.0",
+		alternativetitle: "Mirror self-recognition"
 	}
 };

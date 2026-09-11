@@ -5,7 +5,6 @@ title: Understanding Layer Normalization
 description: Keeping activations stable, the math behind GPT's pre-norm architecture.
 icon: &#9878;
 part: 3
-order: 18
 color: emerald
 topics: math-i, math-ii, architecture
 -->

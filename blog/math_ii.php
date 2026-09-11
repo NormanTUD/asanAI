@@ -5,7 +5,6 @@ title: Basic Math Concepts II — Linear Algebra for AI
 description: Vector spaces, tensors, function composition, Hadamard product, matrix transposition.
 icon: &#128290;
 part: 1
-order: 3
 color: accent
 topics: math-ii
 -->

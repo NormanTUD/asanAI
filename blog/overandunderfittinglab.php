@@ -5,7 +5,6 @@ title: Over- and underfitting
 description: The delicate balance, when a model learns the pattern vs. when it memorizes the noise.
 icon: &#127922;
 part: 3
-order: 16
 color: emerald
 topics: math-i, programming, training
 -->

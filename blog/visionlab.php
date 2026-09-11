@@ -5,7 +5,6 @@ title: Convolutions: How a Computer Learns to See
 description: Sliding kernels, edge detection, and the CNN revolution, with interactive filters.
 icon: &#128065;
 part: 3
-order: 14
 color: emerald
 topics: vision, programming
 -->

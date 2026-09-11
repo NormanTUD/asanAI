@@ -5,7 +5,6 @@ title: The Untold History of AI
 description: The displaced prerequisites—discoveries from unrelated fields that made AI physically possible.
 icon: &#128295;
 part: 6
-order: 35
 color: text-secondary
 topics: history, philosophy, society
 -->

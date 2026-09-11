@@ -5,7 +5,6 @@ title: The Semantic Tug-of-War: How Transformers 'Think'
 description: How Transformers overcome RNN signal decay, direct access across any distance.
 icon: &#128269;
 part: 4
-order: 22
 color: sky
 topics: architecture, math-i, math-ii
 -->

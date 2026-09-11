@@ -5,7 +5,6 @@ title: Fine-Tuning & Post-Training
 description: SFT, RLHF, DPO, KTO, GRPO, and the modern alignment stack from internet to assistant.
 icon: &#127912;
 part: 5
-order: 27
 color: rose
 topics: programming, architecture, training
 -->

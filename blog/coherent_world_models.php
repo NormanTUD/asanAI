@@ -5,7 +5,6 @@ title: From World to Model: Coherent Representation
 description: Partial observations, admissible transitions, and descent: a careful bridge from perception to sheaves, ∞-descent, model theory, and AI.
 icon: 🧩
 part: 4
-order: 22
 color: accent
 topics: philosophy, math-i, math-ii, category-theory, sheaves, type-theory, model-theory, ai, epistemology
 -->

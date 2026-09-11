@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: How Transformers Execute Algorithms
 description: Grokking: when networks stop memorizing and start discovering the Discrete Fourier Transform.
 icon: &#128295;
-part: 4
-order: 27
+part: 41
 color: sky
 topics: programming, architecture, math-i, math-ii
 -->

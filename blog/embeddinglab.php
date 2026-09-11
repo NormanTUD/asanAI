@@ -5,7 +5,6 @@ title: Embeddings: The Geometry of Meaning
 description: Words as vectors in space, from Wittgenstein to Riemannian manifolds.
 icon: &#127758;
 part: 4
-order: 21
 color: sky
 topics: language, math-i, math-ii, architecture
 -->

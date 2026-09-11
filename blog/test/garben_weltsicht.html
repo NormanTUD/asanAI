@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kohärente Welt — Garben, Keime, Situs</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #e2e8f0; }
+
+#presentation { position: relative; width: 100vw; height: 100vh; }
+.slide {
+  position: absolute; inset: 0;
+  display: none;
+  padding: 40px 60px 80px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+}
+.slide.active { display: flex; flex-direction: column; }
+.slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+
+h1 { font-size: 3em; background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: center; }
+h2 { font-size: 2em; color: #f1f5f9; text-align: center; margin-bottom: 10px; }
+.mini { font-size: 0.9em; color: #94a3b8; text-align: center; }
+
+#nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 56px; background: rgba(15,23,42,0.9); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; border-top: 1px solid rgba(148,163,184,0.15); z-index: 100;
+}
+#nav button {
+  background: linear-gradient(135deg, #6366f1, #a78bfa); border: none; color: white;
+  padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;
+}
+#nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+#counter { color: #cbd5e1; font-family: monospace; }
+#progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6); z-index: 101; transition: width 0.3s; }
+
+.plot { background: #0b1220; border-radius: 12px; border: 1px solid rgba(148,163,184,0.15); }
+.card { background: rgba(30,41,59,0.6); border: 1px solid rgba(148,163,184,0.15); border-radius: 14px; padding: 20px; backdrop-filter: blur(10px); }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; max-width: 1400px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; max-width: 1400px; }
+
+.big-word { font-size: 1.4em; font-weight: bold; }
+.accent-cyan { color: #22d3ee; }
+.accent-pink { color: #f472b6; }
+.accent-amber { color: #fbbf24; }
+.accent-green { color: #34d399; }
+.accent-purple { color: #a78bfa; }
+
+.slider-row { display: flex; align-items: center; gap: 16px; width: 100%; max-width: 900px; }
+.slider-row input[type=range] { flex: 1; accent-color: #a78bfa; }
+.slider-row .val { font-family: monospace; color: #a78bfa; min-width: 60px; text-align: right; font-weight: bold; }
+
+.formula { font-family: 'Cambria Math', serif; font-style: italic; color: #f0abfc; background: rgba(15,23,42,0.6); padding: 8px 16px; border-radius: 8px; display: inline-block; }
+
+/* Manhattan slider */
+.compare {
+  position: relative; width: 100%; max-width: 1100px; aspect-ratio: 16/9;
+  overflow: hidden; border-radius: 12px; user-select: none;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.compare .after { clip-path: inset(0 0 0 50%); }
+.compare .handle {
+  position: absolute; top: 0; bottom: 0; left: 50%; width: 4px;
+  background: white; transform: translateX(-50%); cursor: ew-resize;
+  box-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+.compare .handle::after {
+  content: '⇔'; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); background: white; color: #0f172a;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: bold;
+}
+.compare .lbl {
+  position: absolute; top: 12px; padding: 4px 12px; background: rgba(0,0,0,0.6);
+  color: white; border-radius: 4px; font-size: 0.9em;
+}
+.compare .lbl.left { left: 12px; }
+.compare .lbl.right { right: 12px; }
+
+.node-net { width: 100%; max-width: 900px; height: 500px; }
+
+.big-quote {
+  font-size: 1.8em; font-style: italic; color: #f1f5f9;
+  text-align: center; max-width: 900px; line-height: 1.4;
+  padding: 30px; border-left: 4px solid #a78bfa;
+  background: rgba(167,139,250,0.05);
+}
+.big-quote .who { display: block; margin-top: 20px; font-size: 0.6em; color: #94a3b8; font-style: normal; }
+
+.legend-badge {
+  display: inline-block; padding: 6px 12px; border-radius: 6px;
+  background: rgba(30,41,59,0.8); border: 1px solid rgba(148,163,184,0.2);
+  font-size: 0.85em; margin: 4px;
+}
+
+.chain-node {
+  padding: 12px 18px; background: rgba(30,41,59,0.8);
+  border-radius: 10px; border-left: 4px solid;
+  color: #e2e8f0; font-weight: 500; min-width: 200px; text-align: center;
+}
+.chain-arrow { color: #64748b; font-size: 1.5em; }
+
+.hint { position: absolute; bottom: 70px; right: 24px; font-size: 0.8em; color: #64748b; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="presentation">
+
+<!-- SLIDE 1: Titel -->
+<div class="slide active">
+  <div class="slide-content">
+    <h1>Kohärente Welt</h1>
+    <div class="mini" style="font-size:1.2em; margin-top:20px;">Keime · Halme · Garben · ∞-Kohärenz</div>
+    <div style="margin-top:60px; opacity:0.6; font-size:0.9em;">▶ Pfeiltasten oder unten klicken</div>
+  </div>
+</div>
+
+<!-- SLIDE 2: Ein Punkt -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Ein Punkt.</h2>
+    <div id="slide-point" class="plot" style="width:600px; height:400px;"></div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Umgebung -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Eine Umgebung.</h2>
+    <div id="slide-neighborhood" class="plot" style="width:700px; height:450px;"></div>
+    <div class="mini">Nachbarschaft — ohne Distanz.</div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Eine Messung -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Eine Messung.</h2>
+    <div class="two-col">
+      <div id="slide-thermo-space" class="plot" style="height:400px;"></div>
+      <div id="slide-thermo-value" class="plot" style="height:400px;"></div>
+    </div>
+    <div class="mini">Thermometer → Zahl</div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Viele Messungen am selben Punkt -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Viele Messungen. Ein Punkt.</h2>
+    <div id="slide-stalk" class="plot" style="width:900px; height:520px;"></div>
+    <div class="mini">Temperatur · Farbe · Ton · Feuchte · Druck · … → <span class="accent-purple big-word">Halm</span></div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Keim -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Der Keim.</h2>
+    <div id="slide-germ" class="plot" style="width:900px; height:500px;"></div>
+    <div class="mini">Das Verhalten in beliebig kleiner Umgebung um <span class="accent-pink">x</span>.</div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Mehrere Keime -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Mehrere Keime.</h2>
+    <div id="slide-multi-germs" class="plot" style="width:1000px; height:520px;"></div>
+    <div class="mini">Jeder Keim: ein lokaler Halm auf seiner Umgebung.</div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Überlappung -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Umgebungen überlappen.</h2>
+    <div id="slide-overlap" class="plot" style="width:1000px; height:520px;"></div>
+    <div class="mini">Wo sie sich treffen: gleiches Objekt → gleiche Werte?</div>
+  </div>
+</div>
+
+<!-- SLIDE 9: Kompatibel -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Kompatibel.</h2>
+    <div id="slide-compat" class="plot" style="width:1000px; height:480px;"></div>
+    <div class="formula" style="font-size:1.4em;">s₁|<sub>U∩V</sub>  =  s₂|<sub>U∩V</sub></div>
+    <div class="mini">Auf der Überlappung stimmen die Messungen überein.</div>
+  </div>
+</div>
+
+<!-- SLIDE 10: Inkompatibel -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Inkompatibel.</h2>
+    <div id="slide-incompat" class="plot" style="width:1000px; height:480px;"></div>
+    <div class="formula" style="font-size:1.4em; color:#f87171;">s₁|<sub>U∩V</sub>  ≠  s₂|<sub>U∩V</sub></div>
+    <div class="mini">Messfehler · falsches Modell · verschiedene Objekte · Lüge · Halluzination</div>
+  </div>
+</div>
+
+<!-- SLIDE 11: Prägarbe → Garbe -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Prägarbe → Garbe.</h2>
+    <div id="slide-sheaf" class="plot" style="width:1000px; height:500px;"></div>
+    <div class="mini">Verkleben lokaler Sektionen zu <span class="accent-green big-word">einer globalen</span>.</div>
+  </div>
+</div>
+
+<!-- SLIDE 12: Blitz und Donner - das Problem -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Blitz und Donner.</h2>
+    <div id="slide-lightning" class="plot" style="width:1000px; height:480px;"></div>
+    <div class="mini">Zwei Halme, gleicher Ursprung — auf der Zeitachse <span style="color:#f87171">nicht gleich</span>.</div>
+  </div>
+</div>
+
+<!-- SLIDE 13: Equalizer-Funktion -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Aber: f(x) = g(y).</h2>
+    <div id="slide-equalizer" class="plot" style="width:1000px; height:480px;"></div>
+    <div class="formula" style="font-size:1.4em;">t<sub>Ton</sub> = t<sub>Blitz</sub> + d/v<sub>Schall</sub></div>
+    <div class="mini">Die Halme sind <span class="accent-cyan big-word">homotop</span> — verbunden durch eine reversible Transformation.</div>
+  </div>
+</div>
+
+<!-- SLIDE 14: ∞-Garbe Konzept -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>∞-Garbe.</h2>
+    <div class="two-col">
+      <div class="card" style="text-align:center;">
+        <div class="mini" style="margin-bottom:10px;">Klassisch (Garbe)</div>
+        <div class="formula" style="font-size:1.6em;">s₁ = s₂</div>
+        <div class="mini" style="margin-top:10px;">strikte Gleichheit</div>
+      </div>
+      <div class="card" style="text-align:center; border-color:#22d3ee;">
+        <div class="mini" style="margin-bottom:10px;">∞-Garbe</div>
+        <div class="formula" style="font-size:1.6em; color:#22d3ee;">s₁ ≃ s₂  via  f</div>
+        <div class="mini" style="margin-top:10px;">kohärente Äquivalenz</div>
+      </div>
+    </div>
+    <div id="slide-inf-sheaf" class="plot" style="width:1000px; height:340px; margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Manhattan Homotopie -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Manhattan. Stetig deformiert.</h2>
+    <div class="compare" id="manhattan-compare">
+      <img class="before" src="../garben/manhattan_1600.jpg" alt="Manhattan früher" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1600 900%22><rect fill=%22%23334155%22 width=%221600%22 height=%22900%22/><text x=%22800%22 y=%22450%22 fill=%22white%22 font-size=%2260%22 text-anchor=%22middle%22>Manhattan ~1600</text></svg>'">
+      <img class="after" src="../garben/manhattan_now.jpg" alt="Manhattan heute" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1600 900%22><rect fill=%22%23475569%22 width=%221600%22 height=%22900%22/><text x=%22800%22 y=%22450%22 fill=%22white%22 font-size=%2260%22 text-anchor=%22middle%22>Manhattan heute</text></svg>'">
+      <div class="handle" id="mh-handle"></div>
+      <div class="lbl left">damals</div>
+      <div class="lbl right">heute</div>
+    </div>
+    <div class="mini">Nicht gleich. Aber homotop. Schritt für Schritt verbunden.</div>
+  </div>
+</div>
+
+<!-- SLIDE 16: Perspektive und Wahrheit -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Kohärent ≠ wahr.</h2>
+    <div id="slide-coherent-not-true" class="plot" style="width:1000px; height:500px;"></div>
+    <div class="mini">Eine in sich stimmige Welt kann trotzdem am Situs vorbeilaufen.</div>
+  </div>
+</div>
+
+<!-- SLIDE 17: Situs -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Der Situs.</h2>
+    <div id="slide-situs" class="plot" style="width:1100px; height:540px;"></div>
+    <div class="mini">Alle Perspektiven zeigen auf <span class="accent-pink big-word">ein</span> Ding — jedes Ding ist ein Knoten im Netz.</div>
+  </div>
+</div>
+
+<!-- SLIDE 18: Yoneda -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Was ist ein Ding?</h2>
+    <div class="big-quote">
+      Ein Ding ist das kohärente Netzwerk seiner möglichen Erscheinungen.
+      <span class="who">— Yoneda, Whitehead, Buddhismus, Leibniz.</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: Grenzen -->
+<div class="slide">
+  <div class="slide-content">
+    <h2>Grenzen.</h2>
+    <div class="three-col">
+      <div class="card" style="text-align:center;">
+        <div class="big-word accent-amber">Gödel</div>
+        <div class="mini" style="margin-top:8px;">nicht alles ist beweisbar</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="big-word accent-cyan">Turing</div>
+        <div class="mini" style="margin-top:8px;">nicht alles ist berechenbar</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="big-word accent-pink">Heisenberg</div>
+        <div class="mini" style="margin-top:8px;">nicht alles ist messbar</div>
+      </div>
+    </div>
+    <div id="slide-limits" class="plot" style="width:900px; height:360px; margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- SLIDE 20: Schluss -->
+<div class="slide">
+  <div class="slide-content">
+    <div class="big-quote">
+      φύσις κρύπτεσθαι φιλεῖ.
+      <span class="who">Die Natur liebt es, sich zu verbergen. — Heraklit, Fragment 123</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="hint">← → Pfeiltasten</div>
+
+<div id="nav">
+  <button id="prev">← zurück</button>
+  <span id="counter">1 / 20</span>
+  <button id="next">weiter →</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// Navigation
+// ═══════════════════════════════════════════════════════════════
+const slides = document.querySelectorAll('.slide');
+let cur = 0;
+const total = slides.length;
+const renderers = {}; // slideIndex -> render function
+const rendered = new Set();
+
+function show(i) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(i, total - 1));
+  slides[cur].classList.add('active');
+  document.getElementById('counter').textContent = `${cur+1} / ${total}`;
+  document.getElementById('progress').style.width = `${((cur+1)/total)*100}%`;
+  document.getElementById('prev').disabled = cur === 0;
+  document.getElementById('next').disabled = cur === total - 1;
+  // lazy render
+  if (renderers[cur] && !rendered.has(cur)) {
+    setTimeout(() => { renderers[cur](); rendered.add(cur); }, 50);
+  }
+}
+
+document.getElementById('prev').onclick = () => show(cur - 1);
+document.getElementById('next').onclick = () => show(cur + 1);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') show(cur + 1);
+  if (e.key === 'ArrowLeft') show(cur - 1);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Plotly defaults
+// ═══════════════════════════════════════════════════════════════
+const DARK = {
+  paper_bgcolor: '#0b1220',  plot_bgcolor: '#0b1220',
+  font: { family: 'Inter, system-ui, sans-serif', color: '#e2e8f0' },
+  margin: { l: 40, r: 20, t: 20, b: 40 }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// Helpers
+// ═══════════════════════════════════════════════════════════════
+function seedRand(seed) {
+  let s = seed;
+  return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+}
+function gauss(rand) {
+  let u = 0, v = 0;
+  while (u === 0) u = rand();
+  while (v === 0) v = rand();
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 2: Ein Punkt
+// ═══════════════════════════════════════════════════════════════
+renderers[1] = () => {
+  Plotly.newPlot('slide-point', [{
+    x: [0], y: [0],
+    mode: 'markers',
+    marker: { size: 24, color: '#f472b6', line: { color: '#fff', width: 2 } },
+    hoverinfo: 'skip'
+  }], {
+    ...DARK,
+    xaxis: { range: [-3, 3], zeroline: true, zerolinecolor: 'rgba(148,163,184,0.2)', gridcolor: 'rgba(148,163,184,0.08)', showticklabels: false },
+    yaxis: { range: [-2, 2], zeroline: true, zerolinecolor: 'rgba(148,163,184,0.2)', gridcolor: 'rgba(148,163,184,0.08)', showticklabels: false, scaleanchor: 'x' },
+    showlegend: false
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 3: Umgebung (Nachbarschaft ohne Metrik)
+// ═══════════════════════════════════════════════════════════════
+renderers[2] = () => {
+  // konzentrische, unregelmäßige "offene Mengen"
+  const traces = [];
+  const rand = seedRand(7);
+  for (let k = 0; k < 3; k++) {
+    const r = 0.6 + k * 0.55;
+    const pts = [];
+    const N = 80;
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * 2 * Math.PI;
+      const jitter = 1 + 0.15 * Math.sin(3 * t + k) + 0.08 * Math.cos(5 * t + k * 2);
+      pts.push([r * jitter * Math.cos(t), r * jitter * Math.sin(t)]);
+    }
+    traces.push({
+      x: pts.map(p => p[0]), y: pts.map(p => p[1]),
+      mode: 'lines', fill: 'toself',
+      line: { color: `rgba(96,165,250,${0.9 - k * 0.25})`, width: 2 },
+      fillcolor: `rgba(96,165,250,${0.15 - k * 0.04})`,
+      hoverinfo: 'skip', showlegend: false
+    });
+  }
+  traces.push({
+    x: [0], y: [0], mode: 'markers',
+    marker: { size: 20, color: '#f472b6', line: { color: '#fff', width: 2 } },
+    hoverinfo: 'skip', showlegend: false
+  });
+  Plotly.newPlot('slide-neighborhood', traces, {
+    ...DARK,
+    xaxis: { range: [-3, 3], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)', zeroline: false },
+    yaxis: { range: [-2.2, 2.2], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)', zeroline: false, scaleanchor: 'x' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 4: Eine Messung (Thermometer → Zahl)
+// ═══════════════════════════════════════════════════════════════
+renderers[3] = () => {
+  // Links: Punkt im Raum
+  Plotly.newPlot('slide-thermo-space', [{
+    x: [0], y: [0],
+    mode: 'markers+text',
+    marker: { size: 30, color: '#f472b6', line: { color: '#fff', width: 2 }, symbol: 'circle' },
+    text: ['🌡'], textposition: 'middle center',
+    textfont: { size: 22 },
+    hoverinfo: 'skip'
+  }], {
+    ...DARK,
+    xaxis: { range: [-2, 2], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.5, 1.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)', scaleanchor: 'x' },
+    showlegend: false
+  }, { displayModeBar: false, responsive: true });
+
+  // Rechts: die Zahl
+  Plotly.newPlot('slide-thermo-value', [{
+    x: [0.5], y: [0.5],
+    mode: 'text',
+    text: ['20.0173 °C'],
+    textfont: { size: 42, color: '#22d3ee', family: 'monospace' },
+    hoverinfo: 'skip'
+  }], {
+    ...DARK,
+    xaxis: { range: [0, 1], showticklabels: false, showgrid: false, zeroline: false },
+    yaxis: { range: [0, 1], showticklabels: false, showgrid: false, zeroline: false },
+    showlegend: false
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 5: Halm — viele Messungen an einem Punkt
+// ═══════════════════════════════════════════════════════════════
+renderers[4] = () => {
+  // Stapel farbiger Scheiben über einem Punkt
+  const layers = [
+    { label: '🌡 20.017 °C', color: '#f87171', y: 0.0 },
+    { label: '🎨 #a3c4f3',   color: '#60a5fa', y: 0.8 },
+    { label: '🔊 42 dB',     color: '#34d399', y: 1.6 },
+    { label: '💧 63 %',      color: '#22d3ee', y: 2.4 },
+    { label: '🌀 1013 hPa',  color: '#a78bfa', y: 3.2 },
+    { label: '⚡ 0.3 V/m',   color: '#fbbf24', y: 4.0 }
+  ];
+  const traces = [];
+
+  // vertikale "Faser"-Linie
+  traces.push({
+    x: [0, 0], y: [-0.5, 4.7],
+    mode: 'lines',
+    line: { color: 'rgba(148,163,184,0.3)', width: 2, dash: 'dot' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  layers.forEach(L => {
+    // Scheibe als Ellipse
+    const N = 40;
+    const rx = 1.4, ry = 0.22;
+    const xs = [], ys = [];
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * 2 * Math.PI;
+      xs.push(rx * Math.cos(t));
+      ys.push(L.y + ry * Math.sin(t));
+    }
+    traces.push({
+      x: xs, y: ys, mode: 'lines', fill: 'toself',
+      line: { color: L.color, width: 2 },
+      fillcolor: L.color + '40',
+      hoverinfo: 'skip', showlegend: false
+    });
+    traces.push({
+      x: [1.7], y: [L.y], mode: 'text',
+      text: [L.label],
+      textfont: { size: 16, color: L.color },
+      textposition: 'middle right',
+      hoverinfo: 'skip', showlegend: false
+    });
+  });
+
+  // Basispunkt
+  traces.push({
+    x: [0], y: [-0.5], mode: 'markers',
+    marker: { size: 18, color: '#f472b6', line: { color: '#fff', width: 2 } },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-stalk', traces, {
+    ...DARK,
+    xaxis: { range: [-2.5, 4.5], showticklabels: false, showgrid: false, zeroline: false },
+    yaxis: { range: [-1, 5], showticklabels: false, showgrid: false, zeroline: false }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 6: Keim — infinitesimale Umgebung + Funktion drauf
+// ═══════════════════════════════════════════════════════════════
+renderers[5] = () => {
+  // Kurve, ein hervorgehobener Punkt, und immer kleinere Umgebungen
+  const xs = [], ys = [];
+  for (let i = -100; i <= 100; i++) {
+    const x = i / 40;
+    xs.push(x);
+    ys.push(0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+  }
+  const x0 = 0.6;
+  const y0 = 0.5 * Math.sin(1.5 * x0) + 0.3 * Math.cos(2.7 * x0);
+
+  const traces = [{
+    x: xs, y: ys, mode: 'lines',
+    line: { color: '#60a5fa', width: 3 },
+    hoverinfo: 'skip', showlegend: false
+  }];
+
+  // konzentrische Umgebungen (immer kleiner → Keim)
+  [0.7, 0.4, 0.2, 0.08].forEach((r, i) => {
+    const cxs = [], cys = [];
+    for (let k = 0; k <= 60; k++) {
+      const t = (k / 60) * 2 * Math.PI;
+      cxs.push(x0 + r * Math.cos(t));
+      cys.push(y0 + r * 0.4 * Math.sin(t));
+    }
+    traces.push({
+      x: cxs, y: cys, mode: 'lines', fill: 'toself',
+      line: { color: `rgba(244,114,182,${0.9 - i * 0.15})`, width: 1.5 },
+      fillcolor: `rgba(244,114,182,${0.08 - i * 0.015})`,
+      hoverinfo: 'skip', showlegend: false
+    });
+  });
+
+  traces.push({
+    x: [x0], y: [y0], mode: 'markers',
+    marker: { size: 14, color: '#f472b6', line: { color: '#fff', width: 2 } },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-germ', traces, {
+    ...DARK,
+    xaxis: { range: [-2.5, 2.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.5, 1.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 7: Mehrere Keime — mehrere Halme auf einer Kurve
+// ═══════════════════════════════════════════════════════════════
+renderers[6] = () => {
+  const xs = [], ys = [];
+  for (let i = -120; i <= 120; i++) {
+    const x = i / 40;
+    xs.push(x);
+    ys.push(0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+  }
+  const traces = [{
+    x: xs, y: ys, mode: 'lines',
+    line: { color: '#60a5fa', width: 2.5 },
+    hoverinfo: 'skip', showlegend: false
+  }];
+
+  const centers = [-2, -0.7, 0.6, 1.9];
+  const colors = ['#f472b6', '#34d399', '#fbbf24', '#a78bfa'];
+  centers.forEach((x0, idx) => {
+    const y0 = 0.5 * Math.sin(1.5 * x0) + 0.3 * Math.cos(2.7 * x0);
+    // Umgebung
+    const cxs = [], cys = [];
+    for (let k = 0; k <= 60; k++) {
+      const t = (k / 60) * 2 * Math.PI;
+      cxs.push(x0 + 0.45 * Math.cos(t));
+      cys.push(y0 + 0.35 * Math.sin(t));
+    }
+    traces.push({
+      x: cxs, y: cys, mode: 'lines', fill: 'toself',
+      line: { color: colors[idx], width: 2 },
+      fillcolor: colors[idx] + '20',
+      hoverinfo: 'skip', showlegend: false
+    });
+    traces.push({
+      x: [x0], y: [y0], mode: 'markers',
+      marker: { size: 14, color: colors[idx], line: { color: '#fff', width: 2 } },
+      hoverinfo: 'skip', showlegend: false
+    });
+  });
+
+  Plotly.newPlot('slide-multi-germs', traces, {
+    ...DARK,
+    xaxis: { range: [-3, 3], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.5, 1.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 8: Überlappung
+// ═══════════════════════════════════════════════════════════════
+renderers[7] = () => {
+  const xs = [], ys = [];
+  for (let i = -120; i <= 120; i++) {
+    const x = i / 40;
+    xs.push(x);
+    ys.push(0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+  }
+  const traces = [{
+    x: xs, y: ys, mode: 'lines',
+    line: { color: '#60a5fa', width: 2.5 },
+    hoverinfo: 'skip', showlegend: false
+  }];
+
+  // zwei überlappende Umgebungen
+  const regions = [
+    { x0: -0.3, r: 0.9, color: '#f472b6' },
+    { x0:  0.5, r: 0.9, color: '#34d399' }
+  ];
+  regions.forEach(R => {
+    const cxs = [], cys = [];
+    const y0 = 0.5 * Math.sin(1.5 * R.x0) + 0.3 * Math.cos(2.7 * R.x0);
+    for (let k = 0; k <= 60; k++) {
+      const t = (k / 60) * 2 * Math.PI;
+      cxs.push(R.x0 + R.r * Math.cos(t));
+      cys.push(y0 + R.r * 0.5 * Math.sin(t));
+    }
+    traces.push({
+      x: cxs, y: cys, mode: 'lines', fill: 'toself',
+      line: { color: R.color, width: 2 },
+      fillcolor: R.color + '25',
+      hoverinfo: 'skip', showlegend: false
+    });
+  });
+
+  // Überlappungsbereich hervorheben
+  traces.push({
+    x: [0.1, 0.1], y: [-1.3, 1.3],
+    mode: 'lines',
+    line: { color: '#fbbf24', width: 1.5, dash: 'dash' },
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [0.1], y: [1.35], mode: 'text',
+    text: ['U ∩ V'],
+    textfont: { size: 18, color: '#fbbf24' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-overlap', traces, {
+    ...DARK,
+    xaxis: { range: [-3, 3], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.8, 1.8], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 9: Kompatibel (zwei Messreihen stimmen auf Overlap überein)
+// ═══════════════════════════════════════════════════════════════
+renderers[8] = () => {
+  const xs = [];
+  for (let i = -120; i <= 120; i++) xs.push(i / 40);
+  const truth = xs.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+
+  // Zwei Instrumente, gleiche Werte im Overlap
+  const xs1 = xs.filter(x => x >= -1.2 && x <= 0.5);
+  const ys1 = xs1.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+  const xs2 = xs.filter(x => x >= 0.0 && x <= 1.7);
+  const ys2 = xs2.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+
+  const traces = [
+    {
+      x: xs, y: truth.map(() => null), mode: 'lines',
+      line: { color: 'rgba(148,163,184,0.15)', width: 1 },
+      showlegend: false, hoverinfo: 'skip'
+    },
+    // Overlap-Schattierung
+    {
+      x: [0.0, 0.5, 0.5, 0.0], y: [-1.5, -1.5, 1.5, 1.5],
+      fill: 'toself', mode: 'lines',
+      line: { color: 'rgba(251,191,36,0.3)', width: 0 },
+      fillcolor: 'rgba(251,191,36,0.12)',
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: xs1, y: ys1, mode: 'lines+markers',
+      line: { color: '#f472b6', width: 3 },
+      marker: { size: 5, color: '#f472b6' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: xs2, y: ys2, mode: 'lines+markers',
+      line: { color: '#34d399', width: 3 },
+      marker: { size: 5, color: '#34d399' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: [0.25], y: [1.35], mode: 'text',
+      text: ['✓'],
+      textfont: { size: 36, color: '#fbbf24' },
+      hoverinfo: 'skip', showlegend: false
+    }
+  ];
+
+  Plotly.newPlot('slide-compat', traces, {
+    ...DARK,
+    xaxis: { range: [-2, 2.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.5, 1.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 10: Inkompatibel
+// ═══════════════════════════════════════════════════════════════
+renderers[9] = () => {
+  const xs = [];
+  for (let i = -120; i <= 120; i++) xs.push(i / 40);
+
+  const xs1 = xs.filter(x => x >= -1.2 && x <= 0.5);
+  const ys1 = xs1.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+  const xs2 = xs.filter(x => x >= 0.0 && x <= 1.7);
+  // deutliche Abweichung
+  const ys2 = xs2.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x) + 0.7);
+
+  const traces = [
+    {
+      x: [0.0, 0.5, 0.5, 0.0], y: [-1.8, -1.8, 1.8, 1.8],
+      fill: 'toself', mode: 'lines',
+      line: { color: 'rgba(248,113,113,0.3)', width: 0 },
+      fillcolor: 'rgba(248,113,113,0.15)',
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: xs1, y: ys1, mode: 'lines+markers',
+      line: { color: '#f472b6', width: 3 },
+      marker: { size: 5, color: '#f472b6' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: xs2, y: ys2, mode: 'lines+markers',
+      line: { color: '#34d399', width: 3 },
+      marker: { size: 5, color: '#34d399' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: [0.25], y: [1.55], mode: 'text',
+      text: ['✗'],
+      textfont: { size: 40, color: '#f87171' },
+      hoverinfo: 'skip', showlegend: false
+    }
+  ];
+
+  Plotly.newPlot('slide-incompat', traces, {
+    ...DARK,
+    xaxis: { range: [-2, 2.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.8, 1.8], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 11: Prägarbe → Garbe (Verklebung)
+// ═══════════════════════════════════════════════════════════════
+renderers[10] = () => {
+  const xs = [];
+  for (let i = -120; i <= 120; i++) xs.push(i / 40);
+
+  // drei lokale Sektionen, die kohärent verkleben
+  const segments = [
+    { x0: -2.0, x1: -0.5, color: '#f472b6' },
+    { x0: -0.7, x1:  0.8, color: '#34d399' },
+    { x0:  0.6, x1:  2.0, color: '#a78bfa' }
+  ];
+
+  const traces = [];
+  segments.forEach(S => {
+    const sx = xs.filter(x => x >= S.x0 && x <= S.x1);
+    const sy = sx.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+    traces.push({
+      x: sx, y: sy, mode: 'lines',
+      line: { color: S.color, width: 4 },
+      hoverinfo: 'skip', showlegend: false
+    });
+  });
+
+  // die verklebte globale Sektion (etwas darüber, dünn)
+  const gxs = xs.filter(x => x >= -2.0 && x <= 2.0);
+  const gys = gxs.map(x => 0.5 * Math.sin(1.5 * x) + 0.3 * Math.cos(2.7 * x));
+  traces.push({
+    x: gxs, y: gys.map(y => y + 1.1), mode: 'lines',
+    line: { color: '#fbbf24', width: 2, dash: 'dash' },
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [0], y: [1.35 + 0.5 * Math.sin(0) + 0.3 * Math.cos(0)], mode: 'text',
+    text: ['globale Sektion s ∈ F(U)'],
+    textfont: { size: 14, color: '#fbbf24' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-sheaf', traces, {
+    ...DARK,
+    xaxis: { range: [-2.5, 2.5], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' },
+    yaxis: { range: [-1.5, 2.2], showticklabels: false, gridcolor: 'rgba(148,163,184,0.05)' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 12: Blitz und Donner - das Problem
+// ═══════════════════════════════════════════════════════════════
+renderers[11] = () => {
+  // Zwei Zeitreihen: Blitz (visuell, sofort) und Donner (auditiv, verzögert)
+  const N = 200;
+  const ts = [];
+  for (let i = 0; i < N; i++) ts.push(i * 0.05);
+
+  // Blitz: scharfer Peak bei t=1
+  const blitz = ts.map(t => Math.exp(-Math.pow((t - 1) / 0.08, 2)));
+  // Donner: verzögerter, breiterer Peak bei t=4
+  const donner = ts.map(t => 0.9 * Math.exp(-Math.pow((t - 4) / 0.35, 2)));
+
+  const traces = [
+    {
+      x: ts, y: blitz, mode: 'lines', fill: 'tozeroy',
+      line: { color: '#fbbf24', width: 2 },
+      fillcolor: 'rgba(251,191,36,0.3)',
+      name: 'Blitz', hoverinfo: 'skip'
+    },
+    {
+      x: ts, y: donner.map(v => -v), mode: 'lines', fill: 'tozeroy',
+      line: { color: '#60a5fa', width: 2 },
+      fillcolor: 'rgba(96,165,250,0.3)',
+      name: 'Donner', hoverinfo: 'skip'
+    },
+    // Markierung Blitz
+    {
+      x: [1], y: [1.1], mode: 'text',
+      text: ['⚡ t=1s'],
+      textfont: { size: 16, color: '#fbbf24' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    // Markierung Donner
+    {
+      x: [4], y: [-1.05], mode: 'text',
+      text: ['🔊 t=4s'],
+      textfont: { size: 16, color: '#60a5fa' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    // Roter Pfeil-Balken der die Diskrepanz zeigt
+    {
+      x: [1, 4], y: [0, 0], mode: 'lines',
+      line: { color: '#f87171', width: 3, dash: 'dash' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: [2.5], y: [0.15], mode: 'text',
+      text: ['Δt = 3s'],
+      textfont: { size: 18, color: '#f87171' },
+      hoverinfo: 'skip', showlegend: false
+    }
+  ];
+
+  Plotly.newPlot('slide-lightning', traces, {
+    ...DARK,
+    xaxis: { title: { text: 'Zeit (s)', font: { color: '#94a3b8' } }, range: [0, 6], gridcolor: 'rgba(148,163,184,0.08)' },
+    yaxis: { title: { text: 'Intensität', font: { color: '#94a3b8' } }, range: [-1.3, 1.3], gridcolor: 'rgba(148,163,184,0.08)' },
+    showlegend: false
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 13: Equalizer-Funktion (die Homotopie)
+// ═══════════════════════════════════════════════════════════════
+renderers[12] = () => {
+  const N = 200;
+  const ts = [];
+  for (let i = 0; i < N; i++) ts.push(i * 0.05);
+
+  const blitz = ts.map(t => Math.exp(-Math.pow((t - 1) / 0.08, 2)));
+  // Donner nach Zeitkorrektur — jetzt "ausgerichtet"
+  const donnerCorrected = ts.map(t => 0.9 * Math.exp(-Math.pow((t - 1) / 0.15, 2)));
+
+  const traces = [
+    {
+      x: ts, y: blitz, mode: 'lines', fill: 'tozeroy',
+      line: { color: '#fbbf24', width: 2 },
+      fillcolor: 'rgba(251,191,36,0.3)',
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: ts, y: donnerCorrected.map(v => -v), mode: 'lines', fill: 'tozeroy',
+      line: { color: '#60a5fa', width: 2 },
+      fillcolor: 'rgba(96,165,250,0.3)',
+      hoverinfo: 'skip', showlegend: false
+    },
+    // Grüner Haken bei Übereinstimmung
+    {
+      x: [1], y: [0.15], mode: 'text',
+      text: ['✓'],
+      textfont: { size: 40, color: '#34d399' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    // Beschriftung mit Equalizer-Funktion
+    {
+      x: [3.5], y: [0.8], mode: 'text',
+      text: ['⚡ Blitz (t)'],
+      textfont: { size: 14, color: '#fbbf24' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: [3.5], y: [-0.8], mode: 'text',
+      text: ['🔊 Donner (t + d/v)'],
+      textfont: { size: 14, color: '#60a5fa' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    // gekrümmter Pfeil, der die Transformation andeutet
+    {
+      x: [3.5, 3.0, 2.5, 2.0, 1.5, 1.2, 1.05], 
+      y: [-0.5, -0.3, 0.0, 0.3, 0.4, 0.35, 0.2],
+      mode: 'lines',
+      line: { color: '#22d3ee', width: 2.5, dash: 'dot', shape: 'spline' },
+      hoverinfo: 'skip', showlegend: false
+    },
+    {
+      x: [3.7], y: [-0.2], mode: 'text',
+      text: ['f: t ↦ t + d/v'],
+      textfont: { size: 13, color: '#22d3ee', family: 'Cambria Math, serif' },
+      hoverinfo: 'skip', showlegend: false
+    }
+  ];
+
+  Plotly.newPlot('slide-equalizer', traces, {
+    ...DARK,
+    xaxis: { title: { text: 'Zeit (korrigiert)', font: { color: '#94a3b8' } }, range: [0, 6], gridcolor: 'rgba(148,163,184,0.08)' },
+    yaxis: { title: '', range: [-1.3, 1.3], gridcolor: 'rgba(148,163,184,0.08)' },
+    showlegend: false
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 14: ∞-Garbe konzeptuell (Vergleich strikt vs. homotop)
+// ═══════════════════════════════════════════════════════════════
+renderers[13] = () => {
+  // Kleines Bild das zeigt: zwei Punkte, verbunden durch einen Pfad (Homotopie)
+  const traces = [];
+
+  // Links: strikt — zwei identische Punkte
+  traces.push({
+    x: [-2, -2], y: [0.3, -0.3], mode: 'markers+text',
+    marker: { size: 22, color: '#a78bfa', line: { color: '#fff', width: 2 } },
+    text: ['s₁', 's₂'],
+    textfont: { size: 14, color: '#fff' },
+    textposition: 'middle center',
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [-2, -2], y: [0.3, -0.3], mode: 'lines',
+    line: { color: '#a78bfa', width: 4 },
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [-2], y: [-1], mode: 'text',
+    text: ['s₁ = s₂'],
+    textfont: { size: 16, color: '#a78bfa' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // Rechts: homotop — zwei getrennte Punkte mit gekrümmter Verbindung
+  traces.push({
+    x: [1.5, 2.5], y: [0.5, -0.5], mode: 'markers+text',
+    marker: { size: 22, color: '#22d3ee', line: { color: '#fff', width: 2 } },
+    text: ['s₁', 's₂'],
+    textfont: { size: 14, color: '#fff' },
+    textposition: 'middle center',
+    hoverinfo: 'skip', showlegend: false
+  });
+  // gekrümmte Homotopie
+  const hx = [], hy = [];
+  for (let i = 0; i <= 40; i++) {
+    const t = i / 40;
+    hx.push(1.5 + t * 1.0);
+    hy.push(0.5 - t * 1.0 + 0.35 * Math.sin(t * Math.PI));
+  }
+  traces.push({
+    x: hx, y: hy, mode: 'lines',
+    line: { color: '#22d3ee', width: 3 },
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [2.7], y: [0.1], mode: 'text',
+    text: ['f'],
+    textfont: { size: 20, color: '#22d3ee', family: 'Cambria Math, serif' },
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [2], y: [-1], mode: 'text',
+    text: ['s₁ ≃ s₂'],
+    textfont: { size: 16, color: '#22d3ee' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-inf-sheaf', traces, {
+    ...DARK,
+    xaxis: { range: [-3.5, 3.5], showticklabels: false, showgrid: false, zeroline: false },
+    yaxis: { range: [-1.5, 1.2], showticklabels: false, showgrid: false, zeroline: false }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 15: Manhattan Slider — interaktiver Vergleich
+// ═══════════════════════════════════════════════════════════════
+renderers[14] = () => {
+  const compare = document.getElementById('manhattan-compare');
+  const handle = document.getElementById('mh-handle');
+  const after = compare.querySelector('.after');
+
+  let dragging = false;
+
+  function setPos(px) {
+    const rect = compare.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(100, (px - rect.left) / rect.width * 100));
+    handle.style.left = pct + '%';
+    after.style.clipPath = `inset(0 0 0 ${pct}%)`;
+  }
+
+  handle.addEventListener('mousedown', () => { dragging = true; });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  window.addEventListener('mousemove', (e) => {
+    if (dragging) setPos(e.clientX);
+  });
+  // Touch
+  handle.addEventListener('touchstart', () => { dragging = true; });
+  window.addEventListener('touchend', () => { dragging = false; });
+  window.addEventListener('touchmove', (e) => {
+    if (dragging && e.touches[0]) setPos(e.touches[0].clientX);
+  });
+  // Click zum Setzen
+  compare.addEventListener('click', (e) => {
+    if (e.target !== handle) setPos(e.clientX);
+  });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 16: Kohärent ≠ wahr (Schizophrenie-Beispiel abstrakt)
+// ═══════════════════════════════════════════════════════════════
+renderers[15] = () => {
+  // Zwei Beobachter, gleicher Punkt in der Welt, unterschiedliche Halme
+  const traces = [];
+
+  // Der Situs (das reale Objekt) als Punkt in der Mitte
+  traces.push({
+    x: [0], y: [0], mode: 'markers+text',
+    marker: { size: 30, color: '#f472b6', line: { color: '#fff', width: 2 } },
+    text: ['Situs'],
+    textfont: { size: 14, color: '#f472b6' },
+    textposition: 'top center',
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // Beobachter 1 (links)
+  traces.push({
+    x: [-3], y: [1.5], mode: 'markers+text',
+    marker: { size: 26, color: '#34d399', line: { color: '#fff', width: 2 } },
+    text: ['Beobachter A'],
+    textfont: { size: 14, color: '#34d399' },
+    textposition: 'top center',
+    hoverinfo: 'skip', showlegend: false
+  });
+  // Sein Halm (Stapel von Messungen)
+  for (let i = 0; i < 4; i++) {
+    const y0 = 0.5 - i * 0.35;
+    const cxs = [], cys = [];
+    for (let k = 0; k <= 40; k++) {
+      const t = (k / 40) * 2 * Math.PI;
+      cxs.push(-3 + 0.6 * Math.cos(t));
+      cys.push(y0 + 0.13 * Math.sin(t));
+    }
+    traces.push({
+      x: cxs, y: cys, mode: 'lines', fill: 'toself',
+      line: { color: '#34d399', width: 1.5 },
+      fillcolor: 'rgba(52,211,153,0.15)',
+      hoverinfo: 'skip', showlegend: false
+    });
+  }
+  // Pfeil A -> Situs
+  traces.push({
+    x: [-2.4, -0.3], y: [0.5, 0.1], mode: 'lines',
+    line: { color: '#34d399', width: 2, dash: 'dot' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // Beobachter 2 (rechts)
+  traces.push({
+    x: [3], y: [1.5], mode: 'markers+text',
+    marker: { size: 26, color: '#f87171', line: { color: '#fff', width: 2 } },
+    text: ['Beobachter B'],
+    textfont: { size: 14, color: '#f87171' },
+    textposition: 'top center',
+    hoverinfo: 'skip', showlegend: false
+  });
+  // Sein Halm — anders!
+  for (let i = 0; i < 4; i++) {
+    const y0 = 0.5 - i * 0.35;
+    const cxs = [], cys = [];
+    for (let k = 0; k <= 40; k++) {
+      const t = (k / 40) * 2 * Math.PI;
+      cxs.push(3 + 0.6 * Math.cos(t));
+      cys.push(y0 + 0.13 * Math.sin(t));
+    }
+    traces.push({
+      x: cxs, y: cys, mode: 'lines', fill: 'toself',
+      line: { color: '#f87171', width: 1.5 },
+      fillcolor: 'rgba(248,113,113,0.15)',
+      hoverinfo: 'skip', showlegend: false
+    });
+  }
+  // Pfeil B -> Situs
+  traces.push({
+    x: [2.4, 0.3], y: [0.5, 0.1], mode: 'lines',
+    line: { color: '#f87171', width: 2, dash: 'dot' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // Roter X in der Mitte — keine Verklebung möglich
+  traces.push({
+    x: [0], y: [-1.5], mode: 'text',
+    text: ['keine Equalizer-Funktion f: g(x) ≠ f(x)'],
+    textfont: { size: 15, color: '#f87171' },
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [0], y: [-2], mode: 'text',
+    text: ['Bs Welt ist in sich stimmig — aber nicht real'],
+    textfont: { size: 13, color: '#94a3b8', family: 'Inter' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-coherent-not-true', traces, {
+    ...DARK,
+    xaxis: { range: [-4.5, 4.5], showticklabels: false, showgrid: false, zeroline: false },
+    yaxis: { range: [-2.5, 2.3], showticklabels: false, showgrid: false, zeroline: false, scaleanchor: 'x' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 17: Situs — Netzwerk von Perspektiven auf ein Ding
+// ═══════════════════════════════════════════════════════════════
+renderers[16] = () => {
+  // Zentrales Objekt, viele Perspektiven drumherum, alle deuten drauf
+  const traces = [];
+
+  // Zentrum
+  traces.push({
+    x: [0], y: [0], mode: 'markers+text',
+    marker: { size: 50, color: '#f472b6', line: { color: '#fff', width: 3 } },
+    text: ['DAS DING'],
+    textfont: { size: 12, color: '#fff' },
+    textposition: 'middle center',
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // Perspektiven ringsherum
+  const N = 12;
+  const colors = ['#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#22d3ee', '#f87171',
+                  '#f472b6', '#84cc16', '#fb923c', '#a3e635', '#67e8f9', '#c084fc'];
+  for (let i = 0; i < N; i++) {
+    const angle = (i / N) * 2 * Math.PI;
+    const r = 3.5;
+    const px = r * Math.cos(angle);
+    const py = r * Math.sin(angle);
+    const color = colors[i];
+
+    // Perspektive-Punkt
+    traces.push({
+      x: [px], y: [py], mode: 'markers',
+      marker: { size: 16, color: color, line: { color: '#fff', width: 1.5 } },
+      hoverinfo: 'skip', showlegend: false
+    });
+
+    // Pfeil zum Zentrum
+    const inner = 0.6;
+    traces.push({
+      x: [px * (1 - 0.15), inner * Math.cos(angle)],
+      y: [py * (1 - 0.15), inner * Math.sin(angle)],
+      mode: 'lines',
+      line: { color: color, width: 1.5 },
+      opacity: 0.6,
+      hoverinfo: 'skip', showlegend: false
+    });
+
+    // kleiner Halm bei jeder Perspektive
+    for (let j = 0; j < 3; j++) {
+      const offY = 0.35 + j * 0.18;
+      const cxs = [], cys = [];
+      const rx = 0.35, ry = 0.08;
+      for (let k = 0; k <= 30; k++) {
+        const t = (k / 30) * 2 * Math.PI;
+        cxs.push(px + 0.9 * Math.cos(angle) + rx * Math.cos(t));
+        cys.push(py + 0.9 * Math.sin(angle) + offY + ry * Math.sin(t));
+      }
+      traces.push({
+        x: cxs, y: cys, mode: 'lines', fill: 'toself',
+        line: { color: color, width: 1 },
+        fillcolor: color + '25',
+        hoverinfo: 'skip', showlegend: false
+      });
+    }
+  }
+
+  // Ring der andeutet: alle sind untereinander verbunden (kohärent)
+  const ringX = [], ringY = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = (i / 100) * 2 * Math.PI;
+    ringX.push(3.5 * Math.cos(t));
+    ringY.push(3.5 * Math.sin(t));
+  }
+  traces.push({
+    x: ringX, y: ringY, mode: 'lines',
+    line: { color: 'rgba(148,163,184,0.2)', width: 1, dash: 'dot' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-situs', traces, {
+    ...DARK,
+    xaxis: { range: [-5.5, 5.5], showticklabels: false, showgrid: false, zeroline: false },
+    yaxis: { range: [-5, 5], showticklabels: false, showgrid: false, zeroline: false, scaleanchor: 'x' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// SLIDE 19: Grenzen der Berechenbarkeit — Illustration
+// ═══════════════════════════════════════════════════════════════
+renderers[18] = () => {
+  // Kreis mit "sichtbarem" und "unerreichbarem" Bereich
+  const traces = [];
+
+  // Sichtbarer Bereich (grau) — der Kreis der Erkenntnis
+  const N = 100;
+  const cxs = [], cys = [];
+  for (let i = 0; i <= N; i++) {
+    const t = (i / N) * 2 * Math.PI;
+    cxs.push(2 * Math.cos(t));
+    cys.push(2 * Math.sin(t));
+  }
+  traces.push({
+    x: cxs, y: cys, mode: 'lines', fill: 'toself',
+    line: { color: '#22d3ee', width: 2 },
+    fillcolor: 'rgba(34,211,238,0.08)',
+    hoverinfo: 'skip', showlegend: false
+  });
+  traces.push({
+    x: [0], y: [0], mode: 'text',
+    text: ['erreichbar'],
+    textfont: { size: 20, color: '#22d3ee' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // Fragezeichen außerhalb, die die Grenzen andeuten
+  const questionPositions = [
+    { x: 3.2, y: 0.5, color: '#fbbf24', label: 'Gödel' },
+    { x: -3.2, y: 0.5, color: '#22d3ee', label: 'Turing' },
+    { x: 0, y: 3, color: '#f472b6', label: 'Heisenberg' },
+    { x: 2.5, y: -2, color: '#a78bfa', label: '?' },
+    { x: -2.5, y: -2, color: '#34d399', label: '?' },
+    { x: 3, y: 2.5, color: '#f87171', label: '?' },
+    { x: -3, y: 2.5, color: '#60a5fa', label: '?' }
+  ];
+  questionPositions.forEach(q => {
+    traces.push({
+      x: [q.x], y: [q.y], mode: 'text',
+      text: [q.label],
+      textfont: { size: 22, color: q.color },
+      hoverinfo: 'skip', showlegend: false
+    });
+  });
+
+  // gestrichelter äußerer Ring (die Grenze)
+  const boundaryX = [], boundaryY = [];
+  for (let i = 0; i <= N; i++) {
+    const t = (i / N) * 2 * Math.PI;
+    boundaryX.push(3.8 * Math.cos(t));
+    boundaryY.push(3.8 * Math.sin(t));
+  }
+  traces.push({
+    x: boundaryX, y: boundaryY, mode: 'lines',
+    line: { color: 'rgba(148,163,184,0.3)', width: 1.5, dash: 'dash' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  // "unerreichbar"-Beschriftung
+  traces.push({
+    x: [0], y: [-3.5], mode: 'text',
+    text: ['unerreichbar'],
+    textfont: { size: 14, color: 'rgba(148,163,184,0.6)', family: 'Inter' },
+    hoverinfo: 'skip', showlegend: false
+  });
+
+  Plotly.newPlot('slide-limits', traces, {
+    ...DARK,
+    xaxis: { range: [-4.2, 4.2], showticklabels: false, showgrid: false, zeroline: false },
+    yaxis: { range: [-4, 3.5], showticklabels: false, showgrid: false, zeroline: false, scaleanchor: 'x' }
+  }, { displayModeBar: false, responsive: true });
+};
+
+// ═══════════════════════════════════════════════════════════════
+// Erste Folie sofort rendern falls sie einen Renderer hat
+// ═══════════════════════════════════════════════════════════════
+// (Slide 1 hat keinen Plot, also nichts zu tun; ab Slide 2 lazy)
+
+// Progressbar init
+document.getElementById('progress').style.width = `${(1/total)*100}%`;
+document.getElementById('prev').disabled = true;
+
+</script>
+</body>
+</html>

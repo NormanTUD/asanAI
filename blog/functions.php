@@ -61,20 +61,26 @@ function js($file, $loaderLabel = null, $defer = false) {
 	if (!in_array($file, $GLOBALS["loaded_js"])) {
 		$should_load = false;
 		$is_proxy = str_starts_with($file, 'asanai_blog_proxy');
+		$is_url   = str_starts_with($file, 'http');
 
-		if ($is_proxy || file_exists($file)) {
+		// Anchor local file lookups to this file's directory so behavior
+		// does not depend on the current working directory.
+		$abs    = (!$is_proxy && !$is_url) ? __DIR__ . '/' . $file : null;
+		$exists = $abs !== null && file_exists($abs);
+
+		if ($is_proxy || $exists) {
 			$should_load = true;
 		}
 
 		if ($should_load) {
 			$deferAttr = $defer ? " defer" : "";
-			$v = (!$is_proxy && file_exists($file)) ? "?v=" . filemtime($file) : "";
+			$v = $exists ? "?v=" . filemtime($abs) : "";
 			print("<script src='$file$v'$deferAttr></script>\n");
 			$GLOBALS["loaded_js"][] = $file;
 
 			// 3. Check for module loader function pattern
-			if (!$is_proxy && file_exists($file)) {
-				$content = file_get_contents($file);
+			if ($exists) {
+				$content = file_get_contents($abs);
 				if (preg_match('/(?:async\s+)?function\s+(load\w+Module)\s*\(/', $content, $matches)) {
 					$functionName = $matches[1];
 
@@ -112,17 +118,18 @@ function css($file) {
 		$file .= ".css";
 	}
 
-	$v = "";
-	if (file_exists($file)) {
-		$v = "?v=" . filemtime($file);
-	}
+	// Anchor local file lookups to this file's directory (see js()).
+	$abs    = !str_starts_with($file, 'http') ? __DIR__ . '/' . $file : null;
+	$exists = $abs !== null && file_exists($abs);
+
+	$v = $exists ? "?v=" . filemtime($abs) : "";
 
 	print("<link rel='stylesheet' href='$file$v' type='text/css' media='all'>\n");
 }
 
 function incl($headline, $base_name) {
 	$js_file  = $base_name . ".js";
-	$php_file = $base_name . ".php";
+	$php_file = __DIR__ . '/' . $base_name . ".php";
 
 	// Pass the headline so js() can use it as the loader label
 	js($js_file, $headline);
@@ -136,7 +143,7 @@ function incl($headline, $base_name) {
 
 	$isOpen = ($allOpen || $thisOpen) ? " open" : "";
 
-	print("<h1>$headline</h1>\n");
+	print("<h1>" . htmlspecialchars($headline, ENT_QUOTES) . "</h1>\n");
 	include($php_file);
 }
 
@@ -173,7 +180,7 @@ function load_base_js () {
 	js("topics");
 	js("progress_tracker");
 
-	$files = glob("modules/*.js");
+	$files = glob(__DIR__ . "/modules/*.js");
 
 	if ($files) {
 		foreach ($files as $file) {
@@ -404,12 +411,16 @@ function print_dynamic_title($tag = "title") {
 		$headline = str_replace('$', '', $headline);
 	}
 
-	echo "<$tag>$headline</$tag>\n";
+	echo "<$tag>" . htmlspecialchars($headline, ENT_QUOTES) . "</$tag>\n";
 }
 
 function get_ai_course_labels($indexFile = 'index_full.php') {
 	$labelsMap = [];
-	$content = file_get_contents($indexFile);
+	// Anchor to this directory unless an absolute / already-qualified path was given.
+	$indexPath = (strpos($indexFile, '/') !== false || strpos($indexFile, ':') !== false)
+		? $indexFile
+		: __DIR__ . '/' . $indexFile;
+	$content = file_get_contents($indexPath);
 
 	// 1. Extrahiere alle Dateinamen aus den incl() Aufrufen
 	// Sucht nach: incl("Titel", "dateiname");
@@ -418,7 +429,7 @@ function get_ai_course_labels($indexFile = 'index_full.php') {
 	$files = $matches[1]; // Enthält z.B. ['intro', 'history', 'attentionlab', ...]
 
 	foreach ($files as $fileName) {
-		$fullPath = $fileName . ".php";
+		$fullPath = __DIR__ . '/' . $fileName . ".php";
 
 		if (file_exists($fullPath)) {
 			$fileContent = file_get_contents($fullPath);
@@ -437,7 +448,7 @@ function get_ai_course_labels($indexFile = 'index_full.php') {
 }
 
 function parse_course_metadata() {
-	$modules = glob("*.php");
+	$modules = glob(__DIR__ . '/*.php');
 	$results = [];
 
 	foreach ($modules as $file) {
@@ -469,7 +480,10 @@ function parse_course_metadata() {
 		}
 	}
 
-	usort($results, fn($a, $b) => $a['order'] <=> $b['order']);
+	// Sort by part first, then by order within the part. This guarantees
+	// parts always appear in numeric order and modules within a part in
+	// their intended sequence, regardless of the absolute order values.
+	usort($results, fn($a, $b) => [$a['part'], $a['order']] <=> [$b['part'], $b['order']]);
 
 	$grouped = [];
 	foreach ($results as $m) {

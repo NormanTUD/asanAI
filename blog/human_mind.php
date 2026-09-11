@@ -5,7 +5,6 @@ title: The Mind That Built Machines
 description: The human cognitive, psychological, and evolutionary prerequisites of AI — the mind that made computation possible.
 icon: &#129504;
 part: 6
-order: 36
 color: text-secondary
 topics: history, philosophy, society
 -->
@@ -26,6 +25,11 @@ This chapter follows that thread as far down as the evidence allows. It is, like
 ### The Expensive Brain
 
 The first obstacle was not intellectual but **metabolic**. A human brain is roughly two per cent of body mass yet consumes close to a quarter of the body's resting energy. For millions of years our ancestors had a brain of roughly ape-size, and the central puzzle of human evolution is how the species could *afford* to triple it. The **expensive-tissue hypothesis** of \citeauthorlastnameand{aiello1995expensivetissue} offers the most economical accounting: the brain could only be paid for by *spending less* elsewhere, and the organ that gave up the most was the gut. A larger, more expensive brain and a smaller, cheaper digestive tract are, on this account, two sides of the same metabolic coin, and the shift that made both possible was the move to **cooking**.
+
+<figure>
+	<img style="width: 100%; height: auto; display: block;" src="brain_lateral.png" alt="Lateral view of the human brain" />
+	<figcaption class="md">\citealternativetitle{brainlateral_image} — the organ that did the building. About two per cent of body mass and close to a quarter of the body's resting energy: the most expensive tissue the body makes, and the prerequisite behind every other prerequisite in this chapter.</figcaption>
+</figure>
 
 \citeauthor{wrangham2009catching} argues in \citetitle{wrangham2009catching} that the controlled use of fire — a turning point already discussed in the material history — did more than protect and gather. By pre-digesting food, cooking made a far greater share of calories available per mouthful, which let the gut shrink and the brain expand. This is where the history of **energy** and the history of **cognition** quietly meet: the caloric surplus of the hearth is what bought the first cognitive surplus. There is no abstract thought in a body that must spend all its fuel on digesting raw tubers. The "need" that made AI possible was, at the deepest level, a **budget line item in an ancient metabolizing animal**.
 
@@ -123,6 +127,11 @@ Fiction is, in this light, a form of **counterfactual training data**. Before a 
 
 The archaeological record gives us a rough date for when all of this became visible. Around the **Upper Paleolithic**, roughly fifty to seventy thousand years ago, the human record changes in kind: pigment, engraved symbols, carved figurines, and the great painted caves appear, in a burst that is often called a **behavioral** or **symbolic** "revolution". The decorated ochre and complex tools documented from sites such as Blombos Cave, and the painted walls of caves in Europe, are the earliest surviving artifacts of a mind that can represent **something that is not present**, a mind that can make a mark *stand for* a thing. \cite[as documented from South Africa]{emergenceofmodernhumanbehaviour} This is the first **generative model** we have direct evidence for: a system for producing and sharing representations of a world beyond the immediate.
 
+<figure>
+	<img style="width: 100%; height: auto; display: block;" src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina" />
+	<figcaption class="md">\citealternativetitle{cuevadelasmanos_image} — hand stencils at Cueva de las Manos, Argentina: a record of a body that is not there. The oldest surviving "document" is, in this sense, an externalized memory of an absent mind.</figcaption>
+</figure>
+
 The connection to AI is not that a cave painting "was" a neural network. It is that the *capacity* demonstrated in the painting — to build an internal model of the world, to render parts of it in a durable medium, and to share the rendering with others — is the same capacity, pushed to an extreme, that a language model now performs over text. The forager who painted a horse had, in miniature, built a world model and externalized a piece of it. The model that now generates a thousand horses at a time has scaled that same move until the "cave wall" is a vector space and the "pigment" is a probability distribution.
 </div>
 
@@ -132,6 +141,11 @@ The connection to AI is not that a cave painting "was" a neural network. It is t
 ### From Wonder to Philosophy
 
 The Greeks did not begin their science with a hypothesis; they began with a feeling. In the opening of the *Metaphysics*, \citeauthor{aristotlemetaphysics} writes that the pursuit of understanding begins in **wonder** (Greek: *thaumazein*), the felt strangeness of the fact that things are the way they are. "It is through wonder that men now begin and once began to philosophize," he says, and from the wonder at particular things the mind is drawn, step by step, to the question of the whole. This single sentence is the oldest statement in the history of science, and it locates the origin of the scientific mind not in a method but in an **emotion**: the discomfort of not-understanding, and the pleasure of resolving it.
+
+<figure>
+	<img style="width: 560px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="Sanzio_01_Plato_Aristotle.jpg" alt="Plato (left) and Aristotle (right) in Raphael's 'The School of Athens'" />
+	<figcaption class="md">\citealternativetitle{aristotleandplato} (detail) — Aristotle, at right, in Raphael's *Scuola di Atene*: the philosopher who located the origin of science in the felt discomfort of not-understanding.</figcaption>
+</figure>
 
 That emotion is the same one as curiosity, and the same one as the "information gap". The "ideengeschichte" of science, the history of the *idea* of science, begins with the decision to take the feeling of wonder **seriously**, to treat a puzzled mind as a mind that *ought* to be unpuzzled, and to treat the resolution of that puzzle as worth doing for its own sake. Every later "scientific method" is a technology for managing that original discomfort: a way to make wonder productive, to aim it, to check it, and to make the un-puzzled mind reliable enough to build on.
 
@@ -145,11 +159,21 @@ The reason this is a prerequisite of AI is that modern machine learning is, at i
 
 The turning point of that quantification is often placed with \citeauthor{galileodialogue1632}, who wrote, in his *Dialogue*, that the "book of nature" is "written in the language of mathematics" and that its characters are "triangles, circles, and other geometric figures, without which it is humanly impossible to understand a single word of it." Here is the deepest single "idea" in the entire history of science, and it is not a discovery of a *fact* about the world but a **commitment about how to read** the world: the claim that the structure of reality is, at bottom, **geometric and quantitative**, and that to understand a thing is to find its shape.
 
+<figure>
+	<img style="width: 250px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="galilei.jpg" alt="Portrait of Galileo Galilei by Justus Sustermans, 1636" />
+	<figcaption class="md">\citealternativetitle{galilei_image} — Galileo, from Justus Sustermans's 1636 portrait (Uffizi), who bet that the "book of nature" was written in the language of mathematics.</figcaption>
+</figure>
+
 It is worth dwelling on this, because it is the idea that made AI *thinkable*. The assumption that the world has a **formal structure** that can be *discovered* and *manipulated symbolically* is the assumption that a machine can one day be made to do the discovering. If nature is a text written in mathematics, then a machine that manipulates mathematics is, in principle, a machine that can *read nature*. Every theorem prover, every symbolic system, every "the world as a model" is a downstream consequence of Galileo's commitment. The history of AI is, at this level, the history of a single wager, made in the seventeenth century, that the world is legible by a formal language, and that a sufficiently clever reader could be built out of the same symbols.
 
 ### The Psychology of Mathematical Discovery
 
 How, then, does a human *find* a new piece of that formal structure? The most important first-person account in the history of the subject is \citeauthor{poincare1910creation}'s *Mathematical Creation*, in which he describes, with unusual honesty, how his own breakthroughs actually happened. Not by grinding, but by a **preparation** of intense effort, followed by a period when he deliberately *stopped* working on the problem and let his mind wander, followed by a sudden **illumination** — a combination that appeared "out of nowhere", in an instant, and was then checked by conscious work. Poincaré reported that the **unconscious** mind was doing the combinatorial search: it tried countless combinations of ideas while he slept or walked, and delivered only the ones that fit, for him to verify.
+
+<figure>
+	<img style="width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="poincare.jpg" alt="Portrait of Henri Poincaré" />
+	<figcaption class="md">\citealternativetitle{poincare_image} — Henri Poincaré, who in *Mathematical Creation* described how his breakthroughs arrived by unconscious recombination, not grinding.</figcaption>
+</figure>
 
 This is the "aha" of the earlier section, now applied to the highest form of abstract thought. And it carries a second, subtler insight: Poincaré emphasized that the unconscious search is **guided by an aesthetic**. The mind does not accept every combination that fits; it is drawn to the ones that are **simple, symmetric, and "beautiful"**, and that aesthetic is, in effect, a heuristic for **compression** — the elegant proof is the *short* proof, the one with the least redundant description. There is a deep reason mathematicians chase beauty: beauty is a shadow of **low complexity**, of the short program that generates the pattern, and chasing the short description is a reliable (if never guaranteed) way to find the *right* abstraction. The "taste" of the mathematician is an intuition for Kolmogorov complexity, for the ratio of a pattern's information to the length of the rule that makes it. \citeauthor{polya1945solve} later systematized the *conscious* side of this — the heuristics, the "how to attack a problem" — but the engine, Poincaré showed, was the loose, aesthetic, **offline** search that the focused mind cannot perform.
 
@@ -164,6 +188,11 @@ This is the psychological root of the **practicality** that the whole course kee
 The idea that the mind could be understood as **information processing** crystallized in the 1950s, and the event usually dated as the beginning of cognitive science is the 1959 review in which \citeauthor{chomsky1959review} demolished the behaviorist idea that language was learned by simple stimulus-reward conditioning, arguing instead that the human mind must contain an **innate, generative structure** — a "language faculty" — that could produce the infinite sentences no one had ever heard. The "mind as a system of formal rules manipulating symbols" was now on the table, and it was a system that could, in principle, be **implemented in a machine**.
 
 From there the path to AI was short. \citeauthorlastnameand{newellsimon1972problemsolving} had already built general problem solvers that searched symbolic trees; \citeauthor{minsky1986society} would later argue that a mind is not one computer but a **society** of simple agents, each doing a small thing, and that intelligence emerges from their interaction. The "society of mind" is, in its own way, a precursor to the "ensemble" and the "mixture of experts", and it reflects the deep, persistent intuition that a mind is a *system of parts*. The birth of AI as a discipline was not the birth of a new idea about *machines*; it was the birth of a new idea about *minds*, and the realization that the two descriptions were starting to look like the same thing. "Artificial intelligence" is the point at which the psychology of the mind and the engineering of the machine decided to be **one field**.
+
+<figure>
+	<img style="width: 420px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="simon_newell.jpg" alt="Herbert A. Simon and Allen Newell playing chess" />
+	<figcaption class="md">\citealternativetitle{simonnewell_image} — Herbert A. Simon and Allen Newell, co-founders of the "mind as information processing", who built the first general problem solvers and, with the rest, satisfied the "good enough" that made engineering possible.</figcaption>
+</figure>
 </div>
 
 <div class="md">

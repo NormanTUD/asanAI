@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Running Models Locally
 description: llama.cpp, Ollama, LM Studio, GGUF, and how to run a frontier-class LLM on your laptop.
 icon: &#128187;
-part: 5
-order: 42
+part: 50
 color: rose
 topics: hardware, programming, inference
 -->

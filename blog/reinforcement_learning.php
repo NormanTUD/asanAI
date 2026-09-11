@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Reinforcement Learning
 description: From Q-learning to PPO to GRPO — the foundations of RL that power modern LLM alignment.
 icon: &#127918;
-part: 2
-order: 15
+part: 20
 color: coral
 topics: math-i, math-ii, programming, training
 -->

@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Training Infrastructure
 description: Distributed training, FSDP, tensor/pipeline parallelism, and how to fit a 70B model in memory.
 icon: &#128296;
-part: 5
-order: 40
+part: 53
 color: rose
 topics: training, hardware, data, programming
 -->

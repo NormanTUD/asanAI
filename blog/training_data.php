@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Training Data Curation
 description: Common Crawl, FineWeb, deduplication, contamination, and why data is half the secret.
 icon: &#128190;
-part: 5
-order: 39
+part: 52
 color: rose
 topics: training, data, programming, society
 -->

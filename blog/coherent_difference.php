@@ -5,7 +5,6 @@ title: Coherent Difference
 description: Why meaning is built from local differences glued together coherently, the structural idea behind embeddings, space, and modern AI.
 icon: 🕸
 part: 4
-order: 20
 color: accent
 topics: language, math-i, math-ii, philosophy
 -->

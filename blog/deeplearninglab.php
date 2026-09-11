@@ -5,7 +5,6 @@ title: Deep Learning
 description: From linear units to deep architectures, function composition and the Universal Approximation Theorem.
 icon: &#127961;
 part: 3
-order: 15
 color: emerald
 topics: math-i, math-ii, architecture, training
 -->

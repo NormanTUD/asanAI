@@ -4,8 +4,7 @@ COURSE_METADATA:
 title: Multimodal & Vision-Language Models
 description: How CLIP, LLaVA, and GPT-4V bridge pixels and text — visual tokens, projection, and cross-attention.
 icon: &#128064;
-part: 4
-order: 28
+part: 42
 color: sky
 topics: multimodal, vision, architecture, programming
 -->

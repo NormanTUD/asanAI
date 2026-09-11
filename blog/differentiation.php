@@ -5,7 +5,6 @@ title: Differentiation: The Mathematics of Change
 description: The derivative: one of the most important ideas in all of mathematics, from secant to tangent.
 icon: &#128208;
 part: 2
-order: 8
 color: coral
 topics: math-i, programming
 -->
