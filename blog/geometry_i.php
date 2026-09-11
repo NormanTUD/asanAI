@@ -109,7 +109,14 @@ Note what is *absent*: there is no proof, no postulate, no general argument. The
 
 ### Babylon: geometry on clay
 
+<figure>
+	<img style="width: 100%" src="susa_geometry_tablet.jpg" alt="Geometry problem on a clay tablet from a scribe school in Susa" />
+	<figcaption class="md">The \citealternativetitle{susa_geometry_tablet} — object Sb 13088 in the Louvre — a school exercise from the first half of the 2nd millennium BCE. A geometry problem, set out in cuneiform on clay for a student to solve; the "homework" plate of an Old Babylonian mathematics class \cite{susa_geometry_tablet}.</figcaption>
+</figure>
+
 The Babylonian tradition is even richer, and even stranger, because the Babylonians thought in a **base-60 (sexagesimal)** positional system — the ancestor of our 60-second minute — and because they had no letters for "side" or "diagonal" in the way we do. Their "algebra" was, in the words of \citeauthor{hoyrup2021algebra}, a *geometric* technique: equations were solved by literally **cutting and pasting squares and rectangles** on a diagram (or in the scribe's head) \cite{hoyrup2021algebra} \cite{hoyruplengths}. The reason a base-60 system survived into our clocks is that 60 is *geometrically* convenient: it is divisible by 2, 3, 4, 5, 6 and 10, so the fractions that keep appearing when you halve a field or cut a corner come out exact.
+
+Where did all these problems come from? The surprising answer is a *social* one: **the scribe school**. The more than 400 clay tablets that carry Babylonian mathematics were all inscribed while the clay was still moist and then baked hard in an oven or by the sun — and, tellingly, *"some of these appear to be graded homework"* \cite{historyofmath_wikipedia}. Geometry, in other words, had already become a **curriculum** a thousand years before Pythagoras: a young scribe did not simply watch a surveyor at work, he sat in a classroom and worked through problem sheets, complete with diagrams his teacher could check. The tablet below is exactly that kind of thing.
 
 <figure>
 	<img style="width: 100%" src="si_427.jpg" alt="The Si.427 field plan, an Old Babylonian surveyor's tablet" />
@@ -513,7 +520,7 @@ The thread that runs from *Homo erectus* to the embedding space is the same thre
 * **c. 43,000 / 18,000 BCE** — Lebombo and Ishango bones: quantity as a spatial pattern \cite{lebombobone} \cite{ishangobone}.
 * **c. 75,000 BCE** — Blombos ochre: abstract grid patterning \cite{emergenceofmodernhumanbehaviour}.
 * **c. 1650 BCE** — Rhind Papyrus: Egyptian areas, the circle rule $\pi\approx 256/81$, and the frustum volume $V=\tfrac{h}{3}(a^{2}+ab+b^{2})$ \cite{rhindpapyrus}.
-* **c. 1900–1600 BCE** — Si.427 and Plimpton 322: Babylonian surveying geometry, Pythagorean triples \cite{si427} \cite{plimpton322}; BM 85200 + VAT 6599, Db2-146 \cite{hoyrup2021algebra}.
+* **c. 1900–1600 BCE** — Si.427 and Plimpton 322: Babylonian surveying geometry, Pythagorean triples \cite{si427} \cite{plimpton322}; BM 85200 + VAT 6599, Db2-146 \cite{hoyrup2021algebra}; scribe-school geometry exercises \cite{historyofmath_wikipedia} \cite{susa_geometry_tablet}.
 * **c. 800 BCE** — Śulba Sūtras: the fire-altar geometry and a five-decimal $\sqrt{2}$ \cite{sulbasutras}.
 * **c. 1st c. BCE** — Jiuzhang Suanshu: Chinese metric geometry, the trapezoid area, and negative numbers \cite{jiuzhangsuanshu}.
 * **c. 600–500 BCE** — Thales (angle in a semicircle) and the Pythagoreans (first proof of $a^{2}+b^{2}=c^{2}$; discovery of $\sqrt{2}\notin\mathbb{Q}$) \cite{heathgreekmath}.
