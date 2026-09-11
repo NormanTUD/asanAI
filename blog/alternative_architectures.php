@@ -4,7 +4,8 @@ COURSE_METADATA:
 title: Beyond Transformers (Mamba, RWKV, RetNet)
 description: State-space models (Mamba, S4), linear attention, RWKV, and the post-transformer landscape.
 icon: &#9883;
-part: 45
+part: 4
+order: 15
 color: sky
 topics: architecture, math-i, math-ii, programming
 -->
