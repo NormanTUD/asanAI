@@ -6505,6 +6505,16 @@ window.bibData = {
 		url: "https://doi.org/10.1007/BF01456931",
 		alternativetitle: "Brouwer's fixed-point theorem"
 	},
+	"morse1929foundations": {
+		title: "The Foundations of the Calculus of Variations in the Large in m-Space (First Paper)",
+		author: "Marston Morse",
+		year: 1929,
+		journal: "Transactions of the American Mathematical Society",
+		volume: 31,
+		pages: "379–404",
+		url: "https://doi.org/10.1090/S0002-9947-1929-1501489-9",
+		alternativetitle: "Morse theory: the shape of a space from the critical points of one function"
+	},
 	"mclarty2006noether": {
 		title: "Emmy Noether's 'Set Theoretic' Topology: From Dedekind to the Rise of Functors",
 		author: "Colin McLarty",
