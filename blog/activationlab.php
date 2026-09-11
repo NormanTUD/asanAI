@@ -5,6 +5,7 @@ title: Activation Functions: The Neural Decision Makers
 description: The neural decision makers, why without non-linearity, a network collapses to nothing.
 icon: &#9889;
 part: 2
+order: 8
 color: coral
 topics: math-i, programming
 -->
