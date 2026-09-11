@@ -6497,30 +6497,41 @@ window.bibData = {
 	},
 	"brouwer1911fixed": {
 		title: "Über Abbildungen von Mannigfaltigkeiten",
-		author: "Luitzen Egbertus Jan Brouwer",
+		author: "L. E. J. Brouwer",
 		year: 1911,
-		url: "https://en.wikipedia.org/wiki/Brouwer_fixed-point_theorem",
+		journal: "Mathematische Annalen",
+		volume: 71,
+		pages: "97–115",
+		url: "http://resolver.sub.uni-goettingen.de/purl?GDZPPN002264021",
 		alternativetitle: "Brouwer's fixed-point theorem"
 	},
-	"noether1926homology": {
-		title: "Emmy Noether and the algebraisation of topology",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Emmy_Noether",
-		alternativetitle: "Emmy Noether (Wikipedia)"
+	"mclarty2006noether": {
+		title: "Emmy Noether's 'Set Theoretic' Topology: From Dedekind to the Rise of Functors",
+		author: "Colin McLarty",
+		year: 2006,
+		publisher: "The Architecture of Modern Mathematics (ed. J. Ferreriós, J. Gray), Oxford University Press",
+		pages: "187–208",
+		url: "https://www.academia.edu/3249793/Emmy_Noethers_Set_Theoretic_Topology_From_Dedekind_to_the_Rise_of_Functors",
+		alternativetitle: "Noether and the first homology groups"
 	},
 	"hopf1931fibration": {
 		title: "Über die Abbildungen der dreidimensionalen Sphäre auf die Kugelfläche",
 		author: "Heinz Hopf",
 		year: 1931,
-		url: "https://en.wikipedia.org/wiki/Hopf_fibration",
+		journal: "Mathematische Annalen",
+		volume: 104,
+		pages: "637–665",
+		url: "https://eudml.org/doc/159489",
 		alternativetitle: "Hopf fibration"
 	},
 	"derham1931": {
 		title: "Sur l'analysis situs des variétés à n dimensions",
 		author: "Georges de Rham",
 		year: 1931,
-		url: "https://en.wikipedia.org/wiki/De_Rham_cohomology",
+		journal: "Journal de Mathématiques Pures et Appliquées",
+		volume: 10,
+		pages: "115–200",
+		url: "https://www.numdam.org/item/JMPA_1931_9_10__115_0/",
 		alternativetitle: "De Rham's theorem"
 	},
 	"chern1946": {
@@ -6530,7 +6541,7 @@ window.bibData = {
 		journal: "Annals of Mathematics",
 		volume: 47,
 		pages: "85–121",
-		url: "https://en.wikipedia.org/wiki/Chern_class",
+		url: "https://doi.org/10.2307/1969037",
 		alternativetitle: "Chern classes"
 	},
 	"milnor1956exotic": {
@@ -6540,7 +6551,7 @@ window.bibData = {
 		journal: "Annals of Mathematics",
 		volume: 64,
 		pages: "399–405",
-		url: "https://en.wikipedia.org/wiki/Exotic_sphere",
+		url: "https://webhomes.maths.ed.ac.uk/~v1ranick/papers/exotic.pdf",
 		alternativetitle: "Exotic spheres"
 	},
 	"smale1961hccobordism": {
@@ -6550,7 +6561,7 @@ window.bibData = {
 		journal: "Annals of Mathematics",
 		volume: 74,
 		pages: "391–406",
-		url: "https://en.wikipedia.org/wiki/H-cobordism",
+		url: "https://www.jstor.org/stable/1970239",
 		alternativetitle: "h-cobordism"
 	},
 	"atiyahsinger1963": {
@@ -6560,7 +6571,7 @@ window.bibData = {
 		journal: "Bulletin of the American Mathematical Society",
 		volume: 69,
 		pages: "422–433",
-		url: "https://en.wikipedia.org/wiki/Atiyah%E2%80%93Singer_index_theorem",
+		url: "https://www.ams.org/journals/bull/1963-69-03/S0002-9904-1963-10957-X/",
 		alternativetitle: "Atiyah–Singer index theorem"
 	},
 	"thurston1982geometrization": {
@@ -6570,7 +6581,7 @@ window.bibData = {
 		journal: "Bulletin of the American Mathematical Society",
 		volume: 6,
 		pages: "357–381",
-		url: "https://en.wikipedia.org/wiki/Geometrization_conjecture",
+		url: "https://www.ams.org/journals/bull/1982-06-03/S0273-0979-1982-15003-0/",
 		alternativetitle: "Thurston's geometrisation programme"
 	},
 	"freedman1982topology": {
@@ -6580,7 +6591,7 @@ window.bibData = {
 		journal: "Journal of Differential Geometry",
 		volume: 17,
 		pages: "357–453",
-		url: "https://en.wikipedia.org/wiki/4-manifold",
+		url: "https://doi.org/10.4310/jdg/1214437136",
 		alternativetitle: "Freedman's 4-manifold classification"
 	},
 	"donaldson1983gauge": {
@@ -6590,7 +6601,7 @@ window.bibData = {
 		journal: "Journal of Differential Geometry",
 		volume: 18,
 		pages: "279–315",
-		url: "https://en.wikipedia.org/wiki/Donaldson%27s_theorem",
+		url: "https://doi.org/10.4310/jdg/1214437665",
 		alternativetitle: "Donaldson's theorem"
 	},
 	"deligne1974weil": {
@@ -6600,14 +6611,35 @@ window.bibData = {
 		journal: "Publications Mathématiques de l'IHÉS",
 		volume: 43,
 		pages: "273–307",
-		url: "https://en.wikipedia.org/wiki/Weil_conjectures",
-		alternativetitle: "Weil conjectures"
+		url: "https://www.numdam.org/item/PMIHES_1974__43__273_0/",
+		alternativetitle: "Deligne's proof of the Weil conjectures"
 	},
-	"weilconjectures_wiki": {
-		title: "Weil conjectures",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Weil_conjectures"
+	"weil1949numbers": {
+		title: "Numbers of Solutions of Equations in Finite Fields",
+		author: "André Weil",
+		year: 1949,
+		journal: "Bulletin of the American Mathematical Society",
+		volume: 55,
+		pages: "497–508",
+		url: "https://www.ams.org/journals/bull/1949-55-05/S0002-9904-1949-09219-4/",
+		alternativetitle: "The Weil conjectures, first stated"
+	},
+	"grothedieck_ega1960": {
+		title: "Éléments de géométrie algébrique. I. Le langage des schémas",
+		author: "Alexander Grothendieck, Jean Dieudonné",
+		year: 1960,
+		journal: "Publications Mathématiques de l'IHÉS",
+		volume: 4,
+		pages: "5–228",
+		url: "https://www.numdam.org/item/PMIHES_1960__4__5_0/",
+		alternativetitle: "EGA I — schemes and their language"
+	},
+	"grothedieck_res": {
+		title: "Récoltes et Semailles: Réflexions et témoignage sur un passé de mathématicien",
+		author: "Alexander Grothendieck",
+		year: 1986,
+		url: "https://webusers.imj-prg.fr/~leila.schneps/grothendieckcircle/ReS.pdf",
+		alternativetitle: "Grothendieck's autobiographical manuscript"
 	},
 	"awodey2010category": {
 		title: "Category Theory",
