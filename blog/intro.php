@@ -32,6 +32,7 @@ To understand a Neural Network is to understand a tapestry of ideas that often s
 
 * **Astronomy and Precision:** We will see how astronomers from the fourth century and beyond, trying to map the stars with imperfect data, developed the very optimization tools that allow modern LLMs to learn from the internet.
 * **The Technical and The Philosophical:** We will not just look at code. We will explore how concepts of logic, language, and “Geist” have transitioned from philosophical debates into billions of trainable parameters.
+* **The Number and the Token:** We will follow the number itself — from the Babylonians’ place value and the Indian zero, through the Chinese minus sign and Leibniz’s binary, to the token vocabularies modern models actually read — because the “token” a Transformer predicts is a direct descendant of the first numerals, and every integer in the code you write inherits the same chain.
 * **AI in Society:** We address the technology as a cultural mirror by looking at how these systems interact with human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 
 We will try to overcome the “\citetitle{twocultures}-Problem”, i.e. that the sciences and the humanities have become split into two distinct worlds, unable to communicate or understand the methods and values of the other. We believe that reality is One, and different sciences are different ways of looking at the same world and as such, we need both ways of looking at it.
