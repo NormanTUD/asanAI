@@ -29,6 +29,11 @@ The first obstacle was not intellectual but **metabolic**. A human brain is roug
 
 \citeauthor{wrangham2009catching} argues in \citetitle{wrangham2009catching} that the controlled use of fire — a turning point already discussed in the material history — did more than protect and gather. By pre-digesting food, cooking made a far greater share of calories available per mouthful, which let the gut shrink and the brain expand. This is where the history of **energy** and the history of **cognition** quietly meet: the caloric surplus of the hearth is what bought the first cognitive surplus. There is no abstract thought in a body that must spend all its fuel on digesting raw tubers. The "need" that made AI possible was, at the deepest level, a **budget line item in an ancient metabolizing animal**.
 
+<figure>
+	<img style="width: 100%; height: auto; display: block;" src="flames.jpg" alt="Close-up of flames" />
+	<figcaption class="md">\citealternativetitle{flames_image} — the caloric surplus of the hearth: fire did the pre-digesting that let the gut shrink and the brain expand.</figcaption>
+</figure>
+
 ### The Social Brain
 
 If cooking paid for the brain, sociality is what gave the extra brain *something to do with*. \citeauthorlastnameand{dunbar2012socialbrain} and others have long noted that across primates the size of the neocortex scales with the **size of the social group** an individual must track: who is allied with whom, who owes what to whom, who is a threat, who is a mate. Managing a society of hundreds is a combinatorial problem of staggering difficulty, and the "currency" in which it is managed is **information about other minds**. \citeauthor{dunbar2012socialbrain} proposed that **language** itself evolved, at least in part, as a "vocal grooming" technology, a way to maintain and manipulate those social bonds at a distance and in parallel, the way a chimp can groom only one individual at a time. The brain that made AI possible was, first and foremost, a **social** brain, and the "theory of mind" — the capacity to model what others know, want, and believe — is its signature achievement. We will return to that machinery, because it is also the machinery that an LLM most crudely *fakes* when it "predicts the user".
@@ -232,6 +237,11 @@ The parallel to machine learning is close, and it is not new: the "offline" phas
 
 The mind's relationship to **uncertain reward** is tuned by the same dynamics that run a casino. The psychologist \citeauthor{schultz1997dopamine} and the behaviorists before him found that the most "addictive" schedule of reinforcement is the **variable-ratio** one, the one in which the reward comes after an unpredictable number of tries, the exact schedule of a slot machine, and the one that produces the most persistent, "unbreakable" behavior. The dopamine system is, as we saw, a **reward-prediction** system, and the interplay of *exploration* (try a new thing, maybe it pays) and *exploitation* (keep doing the thing that pays) is the brain's native form of the **bandit problem** that now decides whether an agent should try a new action or repeat a known good one.
 
+<figure>
+	<img style="width: 440px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="slot_machine.jpg" alt="Slot machines at a casino" />
+	<figcaption class="md">\citealternativetitle{slotmachine_image} — the variable-ratio machine the brain's dopamine system runs on: the reward comes after an unpredictable number of tries, which is why the behavior never breaks.</figcaption>
+</figure>
+
 The "exploration/exploitation" trade-off, one of the central problems of modern reinforcement learning and of "agentic" AI, is not a technical invention; it is the brain's oldest decision, the forager's eternal question of whether to stay in the grove that has fruit or to walk toward the unknown grove that might have more. The "curiosity" of the earlier section is the *reward* side of the bandit (the gap that is worth closing); the "variable-ratio" pull is the *dopamine* side. The bandit problem is, in a real sense, a description of what the animal brain has been doing for a hundred million years, formalized.
 
 ### Religion and the Hyperactive Mind-Reader
@@ -259,6 +269,40 @@ A milder physicalism, **functionalism**, says a mental state is defined by its *
 Each answer gives the machine a different verdict. On **physicalism** and **functionalism** the substrate is not sacred: a complex enough information-processing system could, in principle, have a mind, and the only question left is whether an LLM's organization counts. On **dualism** the answer is a flat no: a machine has no mind, only a very elaborate simulation. On **panpsychism** the answer is a cautious maybe: even a simple system has a glimmer, and the real question is whether those glimmers *combine* into anything like a unified mind. On **idealism** the question changes shape: a "physical" machine is not, on this view, literally physical at all, so "does it have a mind?" is a little like asking "does the map have a territory?", the terms of the question having already shifted.
 
 The honest summary is that we do not know which of these, if any, is right, and that no experiment yet designed would settle it; that is a genuinely open question, and it is worth saying so plainly rather than dressing it up. What is worth noting, though, is that the claim this chapter has been making all along — that the LLM is an *externalization* of a capacity the evolved mind had first — does **not** depend on picking a side. On every one of these views, the signature achievement of the mind is the capacity to build a model of the world and to reason over it, and that capacity is the one that got externalized, scaled, and re-implemented in silicon. Whether the result is *a* mind, *a kind of* mind, a *simulation* of a mind, or a *filter* on a mind that was there all along is a question this course has been circling since the first chapter, and the honest answer is still: it depends on an answer we do not yet have.
+
+### The Interior: Knowing the Mind from the Inside
+
+So far this chapter has mostly looked at the mind from the *outside* — what it does, how it chunks and predicts and socializes, and how those capacities can be re-implemented in silicon. But there is another, older, and far more controversial way of studying the mind: **from the inside**. For two centuries a succession of thinkers tried to know the mind not by observing its behavior but by turning the instrument of observation — the mind — on itself. This "first-person" turn is one of the great contributions to the psychology of the mind, and it is precisely the dimension that the outside, computational view can never reach.
+
+Sigmund Freud opened the door. His central claim was that the mind has depths it does not command — the **unconscious** — and that these depths are not to be read off the surface of behavior but explored by the subject themselves, through free association, the analysis of dreams, slips, and symptoms. In \citetitle{freud1900dreams} \cite{freud1900dreams} the whole method rests on a radical move: the person *is* the instrument, and the truth of the inner life is reached by letting it talk. The mind comes to be known from within, by itself, with a guide.
+
+<figure>
+	<img style="width: 250px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="freud.jpg" alt="Sigmund Freud, 1926" />
+	<figcaption class="md">\citealternativetitle{freud_image} — Sigmund Freud, who made the inner, uncommanded life of the mind an object of study at all.</figcaption>
+</figure>
+
+\citeauthor{jungpsychologyandreligion} pushed this into a full geography of the interior. Beyond the personal unconscious he postulated a **collective unconscious** carrying **archetypes** — the shadow, the self, the anima — recurring structures that seem inherited rather than learned. His method, **active imagination**, was a disciplined inward journey: a sustained, first-person mapping of one's own psyche, treated as a landscape to be explored and inhabited rather than a mechanism to be dissected.
+
+<figure>
+	<img style="width: 220px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="jung.jpg" alt="Carl Gustav Jung" />
+	<figcaption class="md">\citealternativetitle{jung_image} — Carl Gustav Jung, who mapped the interior as a landscape with its own inherited structures, the archetypes.</figcaption>
+</figure>
+
+Phenomenology turned the question one level deeper. \citeauthor{heidegger1927beingandtime} shifted it from "what do I experience?" to "what is it to *be* a mind, an existing human being he called **Dasein**?" The human is not a detached spectator with an interior room; it is **being-in-the-world**, always already caught up in concern, project, and mood. The "interior" is not a private theater but the way existence *discloses itself from within*; the "I" is the "who" of Dasein, understood by looking at how we find ourselves already there, thrown and already understanding.
+
+<figure>
+	<img style="width: 240px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="heidegger.jpg" alt="Martin Heidegger, 1960" />
+	<figcaption class="md">\citealternativetitle{heidegger_image} — Martin Heidegger, for whom the "interior" is not a private room but the way existing discloses itself from within (Dasein, being-in-the-world).</figcaption>
+</figure>
+
+\citeauthor{schmitz_neo_phenomenology} carried the first-person program to a point the others never reached, in what he called **pathos-phenomenology**. For him the irreducible core of the person is not a thought but a **pathos** — an affective, *intensive* center, the "Person" as the "who" that feels and intends, distinct from everything "extensive" that can be measured, located, and behaved. The interior, on this view, is a real and independent dimension of the real, not a by-product of the measurable.
+
+<figure>
+	<img style="width: 520px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="schmitz.jpg" alt="Hermann Schmitz" />
+	<figcaption class="md">\citealternativetitle{schmitz_image} — Hermann Schmitz, whose pathos-phenomenology treats the interior as an intensive, irreducible dimension of reality.</figcaption>
+</figure>
+
+This whole interior tradition is what makes the hard problem vivid, and it is the key to the machine question. A machine can be described exhaustively from the *outside* — every weight, every input, every output — and a modern model can even *talk about* having an interior. But no one has shown that it *has* one in the first-person sense, that there is genuinely "something it is like" to be the model. The inside that Freud, Jung, Heidegger, and Schmitz spent their lives exploring is exactly the "what it is like" that \citeauthor{chalmers1995consciousmind} names, and exactly the dimension the outside description never reaches. So "does the LLM have a mind?" is, at bottom, a question about the *interior* — and the interior is the one dimension that, by definition, the outside cannot certify from where it stands. These first-person methods are also the most *contested*: introspection is unreliable, the unconscious resists the kind of falsification physics enjoys, and phenomenology is charged with being armchair. That contestation is itself part of why the question stays open.
 
 ### The Self-Model and the Mirror
 

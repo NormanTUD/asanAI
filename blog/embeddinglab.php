@@ -35,6 +35,31 @@ $$E \in \mathbb{R}^{|V| \times d}, \qquad \vec e_i = E[i, :]$$
 That is the *entire* bridge between Tokenization and this chapter. Everything below assumes this lookup happened: we are now in $\mathbb{R}^d$, no longer in token-ID-land. The geometry you see in the plots is what happens *after* one row of $E$ was selected per token.
 </div>
 
+<div class="optional md" data-headline="The ID you just left behind is compressed text">
+You just watched an ID get turned into a vector. Before going deeper, it is worth asking what that ID *was*. It is not a neutral label; it is a **compressed form of the text itself**, because **Byte-Pair Encoding** (\citealternativetitle{gage1994bpe}) is, at its root, a **lossless data-compression algorithm**. \citeauthor{gage1994bpe} published it in \citeyear{gage1994bpe} to shrink files, long before anyone fed it to a neural network; \citeauthor{sennrich2016subword} later repurposed the very same merging procedure to build a tokenizer. The algorithm is one idea repeated:
+
+1. Start with the raw symbols (bytes or characters).
+2. Find the **most frequent adjacent pair** and fuse it into a **new single symbol**.
+3. Give that new symbol the next **ID** in the vocabulary and keep merging.
+
+The accumulating list of merges is a **codebook**. Re-expressing the text as the sequence of those IDs is a shorter, **lossless** encoding of it — you can always decode the IDs back to the exact original bytes, so this genuinely *compresses data*, exactly as \citeauthor{gage1994bpe} used it. Watch it compress the 32-character string “the ” written eight times:
+
+| after merge | new symbol | ID | one ID now stands for |
+|---|---|---|---|
+| start | `t`, `h`, `e`, `␠` | 0–3 | one character each |
+| 1 | `th` | 4 | “th” (2 chars) |
+| 2 | `the` | 5 | “the” (3 chars) |
+| 3 | `the␠` | 6 | “the ” (4 chars) |
+
+Three merges and the entire corpus collapses to **eight copies of the single ID 6**:
+
+$$\underbrace{\text{“the the the the the the the the”}}_{32\ \text{characters}} \;=\; \underbrace{[6,\,6,\,6,\,6,\,6,\,6,\,6,\,6]}_{8\ \text{short IDs}}$$
+
+That is the whole trick: every merged symbol is a **short ID that replaces a longer string**. Because BPE always promotes the *most frequent* pair, **frequent** patterns end up as **one small ID** (a short code) while **rare** material has to be spelled out of several symbols (a long code) — precisely the length asymmetry that makes a code compressive. Count bits and it is real, not metaphor: 32 characters at 8 bits is 256 bits, but 8 IDs drawn from a 50,000-token vocabulary need $8 \times 16 = 128$ bits, so this toy corpus is already half its original size (real corpora, dominated by repeated frequent patterns, compress far more).
+
+So the “compressed file” and the “input to a language model” are the same object. A compressor would store the small merge table once and then the short ID sequence on disk; a Transformer instead **looks each ID up in the embedding matrix** and lets the network learn what the code *means*. The vocabulary table is the codebook, the bridge, and the integer you are about to embed is the text in its shortest lossless form.
+</div>
+
 <div class="optional md" data-headline="The History of Manifolds">
 
 <figure>

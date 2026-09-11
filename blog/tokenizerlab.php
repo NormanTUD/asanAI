@@ -152,6 +152,8 @@ The history of BPE is a classic case of an algorithm being repurposed for a new 
 
 <div class="md">
 **Why BPE works: Zipf's Law.** The reason BPE's merge strategy is so effective is that it mirrors the statistical structure of language itself. \citeauthor{zipf1949human} observed that in any natural language corpus, a few words (like “the,” “of,” “and”) appear with very high frequency, while most words are rare. BPE's iterative merging naturally produces a token vocabulary that follows this same distribution: common words stay intact as single tokens, while rare words are broken into fragments that reuse frequent subword units. This aligns the tokenizer's granularity with the data's statistical structure, frequent patterns get short codes, rare ones get longer compositions. In effect, BPE is a lossless compression scheme that happens to produce excellent tokenizations for language models.
+
+**Reading it as compression.** Every merge fuses a frequent pair into a single new symbol, so each new symbol is a **short ID that replaces a longer string**. The more often a pattern appears, the more often it gets promoted to one small ID; the rarer a pattern, the more symbols (a longer code) it needs. Point the same machinery at a file instead of a corpus and it *is* a compressor: store the small merge table once, then store the shorter sequence of IDs, and you have a smaller file that decodes back to the identical original text. That is exactly how \citeauthor{gage1994bpe} used it in \citeyear{gage1994bpe}, before \citeauthor{sennrich2016subword} turned the codebook into a vocabulary.
 </div>
 
 

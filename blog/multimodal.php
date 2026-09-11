@@ -90,7 +90,7 @@ The vision tokens are not concatenated into the text sequence; instead, the LLM'
 
 ### Pattern 3: Native Multimodality (GPT-4o, Gemini)
 
-The Transformer is trained from scratch on interleaved image, audio, text, and video tokens. There is no projection layer; the model has always seen pixels as first-class tokens. Tokens representing 1/24-second audio frames, $16 \times 16$ image patches, and BPE text tokens all flow through the same residual stream. This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.
+The Transformer is trained from scratch on interleaved image, audio, text, and video tokens. There is no projection layer; the model has always seen pixels as first-class tokens. Tokens representing 1/24-second audio frames, $16 \times 16$ image patches, and BPE text tokens all flow through the same residual stream. (The text side is BPE, a **compression** algorithm repurposed as a tokenizer: it fuses frequent patterns into short-ID tokens, so the text enters already in a shorter, lossless form.) This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.
 </div>
 
 <div class="md">

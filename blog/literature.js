@@ -10268,5 +10268,54 @@ window.bibData = {
 		year: 1641,
 		url: "https://archive.org/details/meditations-on-first-philosophy-rene-descartes-arch_202607",
 		alternativetitle: "Descartes, Meditations on First Philosophy"
+	},
+	"freud1900dreams": {
+		title: "The Interpretation of Dreams",
+		author: "Sigmund Freud",
+		year: 1900,
+		url: "https://archive.org/details/the-interpretation-of-dreams-sigmund-freud-1900",
+		alternativetitle: "Freud, The Interpretation of Dreams"
+	},
+	"freud_image": {
+		title: "Sigmund Freud (1926)",
+		url: "https://commons.wikimedia.org/wiki/File:Sigmund_Freud_1926_(cropped).jpg",
+		author: "Ferdinand Schmutzer",
+		license: "Public domain",
+		alternativetitle: "Sigmund Freud"
+	},
+	"jung_image": {
+		title: "Carl Gustav Jung",
+		url: "https://commons.wikimedia.org/wiki/File:Carl_Gustav_Jung_portrait.jpg",
+		author: "Unknown author",
+		license: "Public domain",
+		alternativetitle: "Carl Gustav Jung"
+	},
+	"heidegger_image": {
+		title: "Martin Heidegger (1960)",
+		url: "https://commons.wikimedia.org/wiki/File:Martin_Heidegger_for_WP.jpg",
+		author: "Herbert Wetterauer",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Martin Heidegger"
+	},
+	"schmitz_image": {
+		title: "Hermann Schmitz",
+		url: "https://commons.wikimedia.org/wiki/File:Hermann_Schmitz_(Philosoph).jpg",
+		author: "Alexander Risse",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Hermann Schmitz"
+	},
+	"flames_image": {
+		title: "Flames, close-up",
+		url: "https://commons.wikimedia.org/wiki/File:Flames,_closeup.jpg",
+		author: "J.smith",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Fire"
+	},
+	"slotmachine_image": {
+		title: "Slot machines, Rio Casino, Las Vegas",
+		url: "https://commons.wikimedia.org/wiki/File:Slot_Machines_at_the_Rio_Casino_in_Las_Vegas_1.jpg",
+		author: "Lchung9779",
+		license: "CC BY 4.0",
+		alternativetitle: "A slot machine"
 	}
 };

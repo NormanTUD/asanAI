@@ -176,7 +176,7 @@ For those training their own models, the rough sequence is:
 5. **Deduplicate**: exact hash + MinHash + suffix-array.
 6. **Decontaminate**: against benchmarks you care about.
 7. **Mix and balance**: per-source sampling weights, target ratio (e.g., 50% web, 15% code, 10% books, 5% math).
-8. **Tokenize**: BPE/SentencePiece over a representative sample.
+8. **Tokenize**: BPE/SentencePiece over a representative sample. (BPE is a **compression** algorithm from \citeyear{gage1994bpe} \cite{gage1994bpe} repurposed for tokenization: it fuses frequent adjacent pairs into single short-ID tokens, so the token stream is a shorter, lossless form of the raw text.)
 9. **Pack**: concatenate and chunk into fixed-length training sequences.
 
 This pipeline takes weeks of engineering and significant compute. The result is what you train on.

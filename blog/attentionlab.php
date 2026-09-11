@@ -61,7 +61,7 @@ This costs $O(L^2)$ memory and compute, doubling context quadruples cost. But fo
 
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from “apple” to “existentialism”, is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
 
-Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to *Byte-Pair-Encodings*, invented by \citeauthor{gage1994bpe}.
+Even though in this example, we treat tokens as words, they can also be parts of words or single characters like a comma or a semicolon due to *Byte-Pair-Encodings*, invented by \citeauthor{gage1994bpe} as a **data-compression** algorithm in \citeyear{gage1994bpe} \cite{gage1994bpe}. The compression idea is what produces the subwords: each merge fuses the most frequent adjacent pair into a single new symbol — a **short ID that stands in for a longer string** — so frequent patterns get short codes, rare ones long, and the resulting token stream is usually a shorter, lossless form of the original text.
 
 In the history of linguistics, the work of \citeauthor{firth1957distributive} (\citeyear{firth1957distributive}) provides the theoretical bedrock for modern word embeddings. Known as the Distributional Hypothesis, his famous maxim, “You shall know a word by the company it keeps”, suggests that words occurring in similar contexts share similar meanings. This shift away from fixed dictionary definitions to context-based identity allowed later researchers like \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}) to mathematically map language into the vector spaces we see in modern LLMs today.
 
