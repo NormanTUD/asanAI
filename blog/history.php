@@ -88,6 +88,21 @@ The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Ep
 
 As noted by \citeauthor{salminictablesource} (\citetitle{salminictablesource}, 1899, p. 393f), this device confirms that modern computation began by reducing thought to a formal calculus executed via a physical interface.
 
+### The Number System You Program In
+
+The digits a machine works with today are not self-evident — they are the accumulation of four separate inventions, each of which once seemed strange. And they are the single most load-bearing fact about "how numbers work" that any programmer relies on:
+
+* **Place value (c. 2000 BCE).** Unlike the Egyptians, Greeks or Romans, the Babylonians wrote positionally: a symbol in the left column meant a larger value, just as in the decimal system. The gain was enormous — fractions multiplied exactly like whole numbers, and the notation remained the best on the planet until the Renaissance \cite{historyofmath_wikipedia}. But the Babylonians lacked a decimal point, and their zero was only a placeholder that never appeared in final position, so a symbol's value often had to be guessed from context.
+* **Zero as a number (628 CE).** The missing piece was supplied in India: \citeauthor{brahmagupta628}, in his *\citetitle{brahmagupta628}*, was the first to treat zero as a *digit and a number* and to give rules for arithmetic with it — including that something plus nothing is that something \cite{historyofmath_wikipedia} \cite{brahmagupta628}. Carried to Europe via the Islamic world, the Indian system (digits, zero, place value) replaced the abacus as the standard way to calculate.
+* **Negative numbers (Han dynasty).** In roughly the same era Indian bookkeeping was completing the number line, Chinese mathematics contributed the other side of it: the *\citealternativetitle{jiuzhangsuanshu}* handles negative quantities as book-keeping entries in systems of simultaneous linear equations — the first use of negative numbers anywhere \cite{historyofmath_wikipedia}. A Chinese accountant, not a philosopher, is why your `int` can go below zero.
+* **Decimal fractions (1585).** The final layer arrived in Europe with \citeauthor{stevin} *De Thiende* ("the art of tenths"): for the first time, fractions below the unit were fixed with a decimal point, so a number between 0 and 1 became as writable as any whole number.
+
+Put together, these four moves are the entire arithmetic of the modern machine. An `int` is Babylonian place value on a base-2 (binary) wheel; a `float` is Stevin's decimal with a binary exponent; zero and negative numbers make the number line *complete* so that subtraction and division always have an answer. When a compiler evaluates `float x = 0.1`, it is running a notational technology that took four civilizations and thirty-five centuries to assemble.
+
+### Pingala: the binary before Leibniz
+
+One more "first" belongs in this chain. The Indian prosodist **Pingala** (c. 3rd–1st century BCE), working out a system for counting Sanskrit poetic metres, used a device that corresponds exactly to a binary number system, and his combinatorics of metres is an elementary version of the binomial theorem \cite{historyofmath_wikipedia}. In other words, the alphabet of 0 and 1 was being written — literally, in the counting of Sanskrit poetic feet — some two millennia before \citeauthor{leibniz1686calculus} formalized binary notation for the digital age below.
+
 ## The Roots of Formal Logic
 
 <figure>
@@ -119,7 +134,13 @@ $$
 
 By proving that truth could be derived through the mechanical application of formal rules, Aristotle provided the blueprint for everything from medieval scholasticism to modern computation.
 
-This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra.
+This transition from philosophical dialogue to a rigid logical calculus paved the way for thinkers to treat thought as a form of algebra.\sidenote{The very word *mathematics* comes from the Greek *μάθημα* (mathema), "that which is learned", and was coined by the Pythagoreans — the first school to study the subject *for its own sake*, not for surveying or taxes \cite{historyofmath_wikipedia}.}
+
+### The oldest grammar: Pāṇini (c. 5th–4th century BCE)
+
+Western logic was not the only formal science of the ancient world — nor was it the first, if language counts. On the other side of the same landmass, the Sanskrit grammarian \citeauthor{panini_ashtadhyayi} had, centuries before Aristotle, built the first fully *generative* formal system in history: his **\citealternativetitle{panini_ashtadhyayi}** ("eight chapters") \cite{panini_ashtadhyayi} specifies the entire Sanskrit language with a compact notation of **metarules**, **transformations** and **recursion** — a machinery startlingly close to modern mathematical and later programming-language notation, written down some 2,400 years ago \cite{historyofmath_wikipedia}. Where Aristotle captured *reasoning*, Pāṇini captured *speech*: given his rules, every acceptable sentence is generated and every deviant one rejected — the same logical contract a compiler holds with a programming language.
+
+That twin founding matters for the story of AI, because it shows the *symbol-manipulation* view of mind was never exclusively Greek. The "if-then" rule-books of the 1970s expert systems, and the recursive grammars that dominated the first decades of computational linguistics, are the direct heirs of Pāṇini's eight chapters; and the grammar the Transformer silently learns while predicting the next token is, in a sense, the same ambition achieved statistically. For the full arc of language-as-formal-system, see the [Language](language) chapter.
 
 ## The Antikythera Mechanism: Ancient Analog Computing
 
@@ -714,6 +735,10 @@ Sutton writes from the perspective of a research director surveying decades of f
 
 The idea of modeling language statistically predates computers themselves. In the 1940s, \citeauthor{shannon1948communication} applied information theory to English text, treating language as a stochastic process and showing that **n-gram models**, which predict the next word from the previous *n* words, could capture statistical regularities in language. His 1948 paper, \citetitle{shannon1948communication}, laid the mathematical foundation for all subsequent language modeling. Through the 1980s and 1990s, n-gram-based statistical language models dominated speech recognition and machine translation, championed by researchers like Frederick Jelinek at IBM. Meanwhile, **ELIZA** (1966), created by \citeauthorlastnameand{weizenbaum1976computer}, demonstrated early natural language interaction through simple pattern matching, but had no statistical understanding of language whatsoever.
 
+<div class="optional md" data-headline="The other ancestor: frequency analysis (9th century)">
+Long before Shannon counted letters, so did the code-breakers. The great Arab polymath \citeauthor{alkindi_cryptanalysis} (c. 801–873), in his *Manuscript on Deciphering Cryptographic Messages*, invented **frequency analysis** \cite{historyofmath_wikipedia} \cite{alkindi_cryptanalysis}: count how often each symbol occurs in an intercepted message, compare the tallies against the known letter-frequencies of the language, and the ciphertext begins to crack itself. That is a *statistical model of language* — the very insight Shannon's n-grams would formalize a thousand years later, and, ultimately, the one on which "predict the next word" rests: language carries measurable statistical structure, and that structure alone suffices to do useful work. Frequency analysis is, in a real sense, the ninth-century great-grandparent of the language model — the point where the *counter* (al-Kindi) first out-performed the *rule-book* (Pāṇini).
+</div>
+
 The neural revolution in language modeling began with Bengio et al.'s \citeyear{neuralprobabilistic} paper \citetitle{neuralprobabilistic}, which replaced sparse n-gram tables with dense, continuous **word embeddings**, learned vector representations capturing semantic similarity. This was supercharged in 2013 by \citealternativetitle{mikolov2013word2vec}, which efficiently trained embeddings on large corpora and revealed striking algebraic properties of language (e.g., $\text{king} - \text{man} + \text{woman} \approx \text{queen}$). In \citeyear{elmo}, \citealternativetitle{elmo} introduced **contextualized embeddings** that changed depending on surrounding context, finally addressing polysemy, ie. the idea that one word can have multiple meanings.
 
 The concept of a neural probabilistic text model was first published by \citeauthorlastnameand{schmidhuber1996nplm} in \citeyear{schmidhuber1996nplm}, who used a neural network to predict the next character in a text sequence for the purpose of text compression, effectively creating the first neural language model. The basic concepts of this approach were later reused and extended in the more widely known 2003 work by Bengio et al.
@@ -725,6 +750,18 @@ A crucial refinement came with the **Chinchilla scaling laws** (\citeauthor{hoff
 Combined with \citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as described in the \citealternativetitle{ouyang2022instructgpt} paper, this lineage culminated in **ChatGPT** in November 2022, the moment large language models crossed from research artifact into mainstream cultural phenomenon.
 
 The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \citealternativetitle{sutton2019bitter}.
+
+## The Machine's Alphabet: Tokens
+
+There is a step in the previous story that is easy to miss, because it happens before any model is trained — yet without it, *none* of the "next-word prediction" above would even be defined: an LLM does not read words, and it does not read letters. It reads **tokens**, small fragments of text chosen in advance, and every one of its trillion predictions is a probability over that fixed token table. Tokenization is the invisible alphabet of the age \cite{sennrich2016subword}.
+
+How did the alphabet form? Each of the three candidate granularities fails alone:
+
+* **Words** are the natural unit, and the first neural language models — from the \citeyear{neuralprobabilistic} work already described down to \citeauthorlastnameand{mikolov2013word2vec} — built fixed vocabularies of the most frequent words \cite{neuralprobabilistic}. But language mints new words without end; anything outside the list is crushed into an "unknown" token and the model's memory of it is thrown away. This is the **out-of-vocabulary (OOV) wall**.
+* **Characters** never hit the wall — a model that predicts characters can emit *any* future text. But the price is brutal: a sentence becomes five to ten times longer, and the statistical dependencies the model must learn stretch ten times further.
+* The resolution was **subwords**: fragments between word and letter. \citeauthorlastnameand{gage1994bpe} had invented **Byte Pair Encoding** in \citeyear{gage1994bpe} as a *data-compression* trick — repeatedly merge the single most frequent adjacent pair of bytes into a new symbol until the file shrinks \cite{gage1994bpe}. In \citeyear{sennrich2016subword}, \citeauthorlastnameand{sennrich2016subword} noticed that the same iterative merging builds a vocabulary that can *reconstruct every word in training data* — rare words included — by composing frequent fragments \cite{sennrich2016subword}. The compression algorithm became a segmentation algorithm, the OOV wall collapsed, and nearly every transformer language model since GPT-2 (whose byte-level BPE vocabulary of ~50,000 tokens set the pattern) reads its text through subword units.
+
+In the modern decoding path, "predicting the next word" is literally "predicting the next *token ID*" — a number in a fixed table, looked up through the embedding matrix described in the [Embeddings](embeddinglab) chapter. You can watch a byte-pair vocabulary grow in the [Tokenizer Lab](tokenizerlab). And the historical irony is worth stating plainly: the machine that "thinks" is doing it over an alphabet that a 1994 file-compressor forged out of byte counts — the same statistical instinct that made al-Kindi's ninth-century frequency analysis work, now baked into the very units of thought.
 
 ## Computer-Generated Text: Early Examples
 
@@ -854,6 +891,8 @@ Before the modern Transformer, neural networks suffered from a “representation
 Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
 
 In this context, “attention” is a mathematical mechanism for weighting information, not a form of awareness or intent.
+
+There is a second, quiet invention inside the same paper that is just as load-bearing, and it is easily overlooked. Pure self-attention is **insensitive to word order**: it weighs every pair of tokens against every other, so a layer that has seen "the dog bites the man" and "the man bites the dog" sees, at its input, the same two clouds of tokens arranged differently — and would happily map both to the same output. Language would collapse into a bag of words. The authors solved this by adding **positional encodings** to every token: a deterministic pattern of sine and cosine waves overlaid on the embeddings so that each position in the sequence carries its own signature \cite{vaswani2017attention}. Its descendants — learned position vectors, and later **rotary** embeddings (RoPE), which rotate pairs of embedding coordinates by an angle proportional to the position — remain inside every modern LLM. Attention supplies the *what-goes-with-what*; positional encoding supplies the *where-it-was*, and both are needed, because neither order nor association alone is language.
 
 The Attention Mechanism will be explained in detail later on.
 
