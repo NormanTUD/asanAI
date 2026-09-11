@@ -5,6 +5,7 @@ title: The Mind That Built Machines
 description: The human cognitive, psychological, and evolutionary prerequisites of AI — the mind that made computation possible.
 icon: &#129504;
 part: 6
+order: 3
 color: text-secondary
 topics: history, philosophy, society
 -->
@@ -25,11 +26,6 @@ This chapter follows that thread as far down as the evidence allows. It is, like
 ### The Expensive Brain
 
 The first obstacle was not intellectual but **metabolic**. A human brain is roughly two per cent of body mass yet consumes close to a quarter of the body's resting energy. For millions of years our ancestors had a brain of roughly ape-size, and the central puzzle of human evolution is how the species could *afford* to triple it. The **expensive-tissue hypothesis** of \citeauthorlastnameand{aiello1995expensivetissue} offers the most economical accounting: the brain could only be paid for by *spending less* elsewhere, and the organ that gave up the most was the gut. A larger, more expensive brain and a smaller, cheaper digestive tract are, on this account, two sides of the same metabolic coin, and the shift that made both possible was the move to **cooking**.
-
-<figure>
-	<img style="width: 100%; height: auto; display: block;" src="brain_lateral.png" alt="Lateral view of the human brain" />
-	<figcaption class="md">\citealternativetitle{brainlateral_image} — the organ that did the building. About two per cent of body mass and close to a quarter of the body's resting energy: the most expensive tissue the body makes, and the prerequisite behind every other prerequisite in this chapter.</figcaption>
-</figure>
 
 \citeauthor{wrangham2009catching} argues in \citetitle{wrangham2009catching} that the controlled use of fire — a turning point already discussed in the material history — did more than protect and gather. By pre-digesting food, cooking made a far greater share of calories available per mouthful, which let the gut shrink and the brain expand. This is where the history of **energy** and the history of **cognition** quietly meet: the caloric surplus of the hearth is what bought the first cognitive surplus. There is no abstract thought in a body that must spend all its fuel on digesting raw tubers. The "need" that made AI possible was, at the deepest level, a **budget line item in an ancient metabolizing animal**.
 
@@ -248,11 +244,21 @@ The connection to AI is both humble and striking. The human mind is, at bottom, 
 
 A mind must, in order to navigate the world, also keep a model of **itself**. The classic test is the **mirror test**: when a mark is placed on an animal's face, the animal either reacts to the *other* animal in the glass (the reflection as an other) or to *itself*, touching its own face. Great apes pass; most other animals do not, as \citeauthorlastnameand{suarezgallup1981mirror} documented. Passing is taken as a sign of a **self-model**, a representation of "me" as an object that can be inspected and compared with the world, the "I" that the metacognition of the earlier section monitors.
 
+<figure>
+	<img style="width: 100%; height: auto; display: block;" src="mirror_self_recognition.jpg" alt="An orangutan meeting its own reflection" />
+	<figcaption class="md">\citealternativetitle{mirrorselfrecognition_image} — an orangutan meeting its own reflection, the classic mirror test: the behavioral signature of a self-model, a representation of the agent that is doing the modeling.</figcaption>
+</figure>
+
 The "self" in this account is itself a **world model**, a model of *the agent that is doing the modeling*, and the philosopher \citeauthorlastnameand{maturavarela1980autopoiesis} described the related idea that a living system is a self-producing, self-defining loop, a system whose boundaries are constituted by its own activity. The "self" is not a thing in the head; it is a *process*, a model that the brain maintains of the agent it is. For AI, the "self" question is the sharpest open problem: does a model that can talk about "I" have a self-model, or is it generating the *word* "I" without the *thing*? The human mind's answer, that the self is a model and not a soul, is the only answer available to a machine, and it is the one that makes the question both possible and, so far, open.
 
 ### The Collective Brain and the Meme
 
 Finally, the "mind that built machines" is, in the most literal sense, a **collective** mind. \citeauthor{dawkins1976selfishgene} introduced the idea of the **meme**, a unit of cultural transmission that copies and varies the way a gene does, and the "memes" of a culture — its ideas, its methods, its stories — are, in this picture, a kind of **second genome**, a parallel evolution running on the substrate of imitation rather than DNA. The "collective brain" of a civilization is a system of minds and memes, and it is *that* system, not any individual skull, that is the "organism" that has built, over millennia, the tools and the ideas that culminate in a machine.
+
+<figure>
+	<img style="width: 250px; max-width: 100%; height: auto; display: block; margin: 0 auto;" src="dawkins.jpg" alt="Richard Dawkins" />
+	<figcaption class="md">\citealternativetitle{dawkins_image} — Richard Dawkins, who named the "meme", the cultural unit that copies and varies the way a gene does.</figcaption>
+</figure>
 
 This is the exaptation of the whole chapter, stated at the highest level. The "cultural" is not a by-product of the "biological"; it is a **co-evolution** of the two, a "dual inheritance" in which the brain evolved to use the culture and the culture evolved to use the brain. The mind that built AI is a **two-part mind**: a biological half, evolved for a million years to forage and socialize, and a cultural half, accumulated over fifty thousand, that ratchets, shares, externalizes, and compounds. Remove either half and there is no AI. The biology gives the mind that can *think*; the culture gives the *accumulation* that makes the thinking strong enough to build a machine. The human is, in the end, the only animal that is a **mind plus a library**, and it is the *library* — the ratcheted, externalized, shared, ratcheted-again work of the species — that finally gave the mind enough "compute" to build a second one.
 </div>
