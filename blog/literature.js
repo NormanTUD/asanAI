@@ -9922,4 +9922,274 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/What_Is_Called_Thinking%3F",
 		alternativetitle: "Heidegger, What Is Called Thinking?"
 	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The Mind That Built Machines  (human_mind.php)
+	 *  The biological, cognitive, psychological and evolutionary
+	 *  prerequisites of AI: the mind that made computation possible.
+	 * ───────────────────────────────────────────────────────────────────── */
+
+	/* ── Biology & the social brain ── */
+	"aiello1995expensivetissue": {
+		title: "In Defense of the Expensive Tissue Hypothesis",
+		author: "Leslie C. Aiello, Nicola Bates and Tracey Joffe",
+		year: 2001,
+		url: "https://doi.org/10.1017/cbo9780511897085.006",
+		alternativetitle: "The Expensive-Tissue Hypothesis"
+	},
+	"dunbar2012socialbrain": {
+		title: "The Social Brain Meets Neuroimaging",
+		author: "Robin I. M. Dunbar",
+		year: 2012,
+		url: "https://doi.org/10.1016/j.tics.2011.11.013",
+		alternativetitle: "The Social Brain (Dunbar 2012)"
+	},
+	"schultz1997dopamine": {
+		title: "A Neural Substrate of Prediction and Reward",
+		author: "Wolfram Schultz, Peter Dayan and P. Read Montague",
+		year: 1997,
+		url: "https://www.science.org/doi/10.1126/science.275.5306.1593",
+		alternativetitle: "Schultz, Dayan & Montague (1997)"
+	},
+	"miller1956magicalnumber": {
+		title: "The Magical Number Seven, Plus or Minus Two: Some Limits on Our Capacity for Processing Information",
+		author: "George A. Miller",
+		year: 1956,
+		url: "https://doi.org/10.1037/h0043154",
+		alternativetitle: "Miller, The Magical Number Seven"
+	},
+	"premackwoodruff1978tom": {
+		title: "Does the Chimpanzee Have a Theory of Mind?",
+		author: "David Premack and Guy Woodruff",
+		year: 1978,
+		url: "https://doi.org/10.1017/s0140525x00076512",
+		alternativetitle: "Premack & Woodruff, Theory of Mind"
+	},
+	"suarezgallup1981mirror": {
+		title: "Self-Recognition in Chimpanzees and Orangutans, but Not Gorillas",
+		author: "Susan D. Suarez and Gordon G. Gallup",
+		year: 1981,
+		url: "https://doi.org/10.1016/s0047-2484(81)80016-4",
+		alternativetitle: "Suarez & Gallup, Mirror Self-Recognition"
+	},
+
+	/* ── Cognition: abstraction, analogy, metaphor, metacognition ── */
+	"chasesimon1973chess": {
+		title: "Perception in Chess",
+		author: "William G. Chase and Herbert A. Simon",
+		year: 1973,
+		url: "https://doi.org/10.1016/0010-0285(73)90004-2",
+		alternativetitle: "Chase & Simon, Perception in Chess"
+	},
+	"rosch1975familyresemblance": {
+		title: "Family Resemblances: Studies in the Internal Structure of Categories",
+		author: "Eleanor Rosch and Carolyn B. Mervis",
+		year: 1975,
+		url: "https://doi.org/10.1016/0010-0285(75)90024-9",
+		alternativetitle: "Rosch & Mervis, Family Resemblances"
+	},
+	"gentner1983structuremapping": {
+		title: "Structure-Mapping: A Theoretical Framework for Analogy",
+		author: "Dedre Gentner",
+		year: 1983,
+		url: "https://doi.org/10.1207/s15516709cog0702_3",
+		alternativetitle: "Gentner, Structure-Mapping"
+	},
+	"lakoff1993metaphor": {
+		title: "The Contemporary Theory of Metaphor",
+		author: "George Lakoff",
+		year: 1993,
+		url: "https://doi.org/10.1017/cbo9781139173865.013",
+		alternativetitle: "Lakoff, The Contemporary Theory of Metaphor"
+	},
+	"flavell1979metacognition": {
+		title: "Metacognition and Cognitive Monitoring: A New Area of Cognitive-Developmental Investigation",
+		author: "John H. Flavell",
+		year: 1979,
+		url: "https://pubmed.ncbi.nlm.nih.gov/505949/",
+		alternativetitle: "Flavell, Metacognition"
+	},
+	"dehaene1997numbersense": {
+		title: "The Number Sense: How the Mind Creates Mathematics",
+		author: "Stanislas Dehaene",
+		year: 1997,
+		url: "https://archive.org/details/numbersensehowmi0000deha_b8w0",
+		alternativetitle: "Dehaene, The Number Sense"
+	},
+	"clarkchalmers1998extended": {
+		title: "The Extended Mind",
+		author: "Andy Clark and David J. Chalmers",
+		year: 1998,
+		url: "https://doi.org/10.1093/analys/58.1.7",
+		alternativetitle: "Clark & Chalmers, The Extended Mind"
+	},
+
+	/* ── Play, curiosity, insight ── */
+	"loewenstein1994curiosity": {
+		title: "The Psychology of Curiosity: A Review and Reinterpretation",
+		author: "George Loewenstein",
+		year: 1994,
+		url: "https://doi.org/10.1037/0033-2909.116.1.75",
+		alternativetitle: "Loewenstein, The Psychology of Curiosity"
+	},
+	"mehta2020play": {
+		title: "Let Children Play! Connecting Evolutionary Psychology and Creativity with Peter Gray's Play Deficit Hypothesis",
+		author: "Rohit Mehta, Danah Henriksen and Punya Mishra",
+		year: 2020,
+		url: "https://doi.org/10.1007/s11528-020-00535-y",
+		alternativetitle: "Mehta et al., Let Children Play!"
+	},
+	"kohler1925mentality": {
+		title: "The Mentality of Apes",
+		author: "Wolfgang Köhler",
+		year: 1925,
+		url: "https://doi.org/10.4324/9781315009452",
+		alternativetitle: "Köhler, The Mentality of Apes"
+	},
+	"mednick1962creative": {
+		title: "The Associative Basis of the Creative Process",
+		author: "Sarnoff Mednick",
+		year: 1962,
+		url: "https://doi.org/10.1037/h0048850",
+		alternativetitle: "Mednick, The Associative Basis of the Creative Process"
+	},
+	"raichle2007defaultmode": {
+		title: "A Default Mode of Brain Function: A Brief History of an Evolving Idea",
+		author: "Marcus E. Raichle and Abraham Z. Snyder",
+		year: 2007,
+		url: "https://doi.org/10.1016/j.neuroimage.2007.02.041",
+		alternativetitle: "Raichle & Snyder, The Default Mode"
+	},
+
+	/* ── The history of the scientific mind ── */
+	"aristotlemetaphysics": {
+		title: "Metaphysics, Book I (on wonder)",
+		author: "Aristotle",
+		year: "4th century BCE",
+		url: "https://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.01.0057%3Abook%3D1",
+		alternativetitle: "Aristotle, Metaphysics"
+	},
+	"galileodialogue1632": {
+		title: "Dialogue Concerning the Two Chief World Systems",
+		author: "Galileo Galilei",
+		year: 1632,
+		url: "https://archive.org/details/dialogue-concerning-the-two-chief-world-systems-galileo-galilei-stephen-jay-gould",
+		alternativetitle: "Galileo, Dialogue"
+	},
+	"daston1988probability": {
+		title: "Classical Probability in the Enlightenment",
+		author: "Lorraine Daston",
+		year: 1988,
+		url: "https://archive.org/details/classicalprobabi0000dast",
+		alternativetitle: "Daston, Classical Probability in the Enlightenment"
+	},
+	"poincare1910creation": {
+		title: "Mathematical Creation",
+		author: "H. Poincaré",
+		year: 1910,
+		url: "https://doi.org/10.1093/monist/20.3.321",
+		alternativetitle: "Poincaré, Mathematical Creation"
+	},
+	"polya1945solve": {
+		title: "How to Solve It: A New Aspect of Mathematical Method",
+		author: "George Pólya",
+		year: 1945,
+		url: "https://archive.org/details/how-to-solve-it-a-new-aspect-of-mathematical-method-george-polya",
+		alternativetitle: "Pólya, How to Solve It"
+	},
+	"simon1955bounded": {
+		title: "A Behavioral Model of Rational Choice",
+		author: "Herbert A. Simon",
+		year: 1955,
+		url: "https://doi.org/10.7249/p365",
+		alternativetitle: "Simon, A Behavioral Model of Rational Choice"
+	},
+	"chomsky1959review": {
+		title: "A Review of B. F. Skinner's Verbal Behavior",
+		author: "Noam Chomsky",
+		year: 1959,
+		url: "https://doi.org/10.2307/411334",
+		alternativetitle: "Chomsky, Review of Verbal Behavior"
+	},
+	"minsky1986society": {
+		title: "The Society of Mind",
+		author: "Marvin Minsky",
+		year: 1986,
+		url: "https://archive.org/details/marvin-minsky-the-society-of-mind",
+		alternativetitle: "Minsky, The Society of Mind"
+	},
+	"newellsimon1972problemsolving": {
+		title: "The Theory of Human Problem Solving",
+		author: "Allen Newell and H. A. Simon",
+		year: 1972,
+		url: "https://doi.org/10.1016/b978-1-4832-1446-7.50009-1",
+		alternativetitle: "Newell & Simon, Human Problem Solving"
+	},
+
+	/* ── Culture, shared mind, exaptation ── */
+	"henrich2016secret": {
+		title: "The Secret of Our Success: How Culture Is Driving Human Evolution, Making Us Smarter, Changing Our Brains, and Enabling Us to Conquer the World",
+		author: "Joseph Henrich",
+		year: 2016,
+		url: "https://doi.org/10.1515/9781400873296",
+		alternativetitle: "Henrich, The Secret of Our Success"
+	},
+	"tomasello2014thinking": {
+		title: "The Natural History of Human Thinking",
+		author: "Michael Tomasello",
+		year: 2014,
+		url: "https://doi.org/10.4159/9780674726369",
+		alternativetitle: "Tomasello, The Natural History of Human Thinking"
+	},
+	"goody1977writing": {
+		title: "The Logic of Writing and the Organization of Society",
+		author: "Jack Goody",
+		year: 1977,
+		url: "https://doi.org/10.1017/cbo9780511621598",
+		alternativetitle: "Goody, The Logic of Writing"
+	},
+	"hutchins1995cognitionwild": {
+		title: "Cognition in the Wild",
+		author: "Edwin Hutchins",
+		year: 1995,
+		url: "https://archive.org/details/cognitioninwild0000hutc",
+		alternativetitle: "Hutchins, Cognition in the Wild"
+	},
+	"kirsh2013external": {
+		title: "Thinking with External Representations",
+		author: "David Kirsh",
+		year: 2013,
+		url: "https://doi.org/10.1007/978-3-319-49115-8_4",
+		alternativetitle: "Kirsh, Thinking with External Representations"
+	},
+	"dawkins1976selfishgene": {
+		title: "The Selfish Gene",
+		author: "Richard Dawkins",
+		year: 1976,
+		url: "https://archive.org/details/the-selfish-gene-r.-dawkins-1976-ww",
+		alternativetitle: "Dawkins, The Selfish Gene"
+	},
+
+	/* ── The deep cuts ── */
+	"diekelmann2010sleep": {
+		title: "The Memory Function of Sleep",
+		author: "Sonja Diekelmann and Jana Born",
+		year: 2010,
+		url: "https://www.nature.com/articles/nrn2873",
+		alternativetitle: "Diekelmann & Born, The Memory Function of Sleep"
+	},
+	"maturavarela1980autopoiesis": {
+		title: "Diversity in Autopoiesis",
+		author: "Humberto R. Maturana and Francisco J. Varela",
+		year: 1980,
+		url: "https://doi.org/10.1007/978-94-009-8947-4_12",
+		alternativetitle: "Maturana & Varela, Autopoiesis"
+	},
+	"barrett2011religion": {
+		title: "Cognitive Science of Religion: Looking Back, Looking Forward",
+		author: "Justin L. Barrett",
+		year: 2011,
+		url: "https://doi.org/10.1111/j.1468-5906.2011.01564.x",
+		alternativetitle: "Barrett, Cognitive Science of Religion"
+	}
 };

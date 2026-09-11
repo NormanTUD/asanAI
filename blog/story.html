@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Was passiert da eigentlich? — Von der Sprache ins Modell</title>
+<style>
+  :root {
+    --bg-0: #0a0e1a;
+    --bg-1: #131a2e;
+    --bg-2: #1a2140;
+    --ink: #e8ecf5;
+    --ink-dim: #8a95b0;
+    --accent: #6ea8ff;
+    --accent-2: #a78bfa;
+    --accent-3: #34d399;
+    --warn: #fbbf24;
+    --pill-bg: rgba(110, 168, 255, 0.14);
+    --pill-border: rgba(110, 168, 255, 0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, var(--bg-1) 0%, var(--bg-0) 100%);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Sanft driftende Sterne im Hintergrund — subtil, dezent */
+  .starfield {
+    position: fixed; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.35), transparent),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 30% 10%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 70% 90%, rgba(255,255,255,0.3), transparent);
+    background-size: 100% 100%;
+    animation: drift 60s linear infinite;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(-40px, -20px); }
+  }
+
+  /* =========================
+     Die Bühne — hier passiert alles
+     ========================= */
+  .stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    perspective: 1600px;
+    overflow: hidden;
+  }
+
+  /* =========================
+     Das Smartphone (CSS-Kunst)
+     ========================= */
+  .phone {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 320px; height: 640px;
+    transform: translate(-50%, -50%) scale(1) translateZ(0);
+    transform-origin: center center;
+    transition: transform 2.2s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity 1.2s ease;
+    will-change: transform, opacity;
+  }
+
+  .phone-frame {
+    position: absolute; inset: 0;
+    background: linear-gradient(145deg, #1a1f2e 0%, #0f1420 100%);
+    border-radius: 44px;
+    box-shadow:
+      0 0 0 2px #2a3040,
+      0 20px 60px rgba(0, 0, 0, 0.6),
+      0 0 80px rgba(110, 168, 255, 0.15),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 90px; height: 24px;
+    background: #05070d;
+    border-radius: 14px;
+    z-index: 3;
+  }
+
+  .phone-screen {
+    position: absolute;
+    top: 12px; left: 12px; right: 12px; bottom: 12px;
+    background: linear-gradient(180deg, #f7f9fc 0%, #eef2f8 100%);
+    border-radius: 34px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 24px;
+  }
+
+  .app-logo {
+    font-size: 32px;
+    font-weight: 700;
+    color: #4285f4;
+    letter-spacing: -1px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+  }
+  .app-logo .l2 { color: #ea4335; }
+  .app-logo .l3 { color: #fbbc04; }
+  .app-logo .l4 { color: #4285f4; }
+  .app-logo .l5 { color: #34a853; }
+  .app-logo .l6 { color: #ea4335; }
+
+  .search-bar {
+    width: 100%;
+    height: 48px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08), inset 0 0 0 1px #dfe1e5;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    position: relative;
+  }
+
+  .search-icon {
+    width: 18px; height: 18px;
+    border: 2px solid #9aa0a6;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .search-icon::after {
+    content: '';
+    position: absolute;
+    right: -6px; bottom: -6px;
+    width: 8px; height: 2px;
+    background: #9aa0a6;
+    transform: rotate(45deg);
+    border-radius: 1px;
+  }
+
+  .search-text {
+    flex: 1;
+    font-size: 15px;
+    color: #202124;
+    overflow: hidden;
+    white-space: nowrap;
+    min-height: 20px;
+  }
+  .search-text .caret {
+    display: inline-block;
+    width: 1.5px; height: 18px;
+    background: #4285f4;
+    vertical-align: middle;
+    margin-left: 1px;
+    animation: blink 1s step-end infinite;
+    opacity: 0;
+  }
+  .search-text.typing .caret { opacity: 1; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .mic-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .mic-btn.listening {
+    background: rgba(66, 133, 244, 0.15);
+    animation: micPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
+    50%      { box-shadow: 0 0 0 12px rgba(66, 133, 244, 0); }
+  }
+  .mic-icon {
+    width: 14px; height: 20px;
+    background: #4285f4;
+    border-radius: 7px 7px 7px 7px;
+    position: relative;
+  }
+  .mic-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 5px;
+    border: 2px solid #4285f4;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+  }
+
+  /* Waveform, die sichtbar wird beim Sprechen */
+  .waveform {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% + 100px));
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 40px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .waveform.active { opacity: 1; }
+  .waveform .bar {
+    width: 3px;
+    background: linear-gradient(180deg, #4285f4, #a78bfa);
+    border-radius: 2px;
+    animation: wave 0.9s ease-in-out infinite;
+  }
+  .waveform .bar:nth-child(1) { animation-delay: 0.0s; }
+  .waveform .bar:nth-child(2) { animation-delay: 0.1s; }
+  .waveform .bar:nth-child(3) { animation-delay: 0.2s; }
+  .waveform .bar:nth-child(4) { animation-delay: 0.3s; }
+  .waveform .bar:nth-child(5) { animation-delay: 0.4s; }
+  .waveform .bar:nth-child(6) { animation-delay: 0.5s; }
+  .waveform .bar:nth-child(7) { animation-delay: 0.4s; }
+  .waveform .bar:nth-child(8) { animation-delay: 0.3s; }
+  .waveform .bar:nth-child(9) { animation-delay: 0.2s; }
+  .waveform .bar:nth-child(10) { animation-delay: 0.1s; }
+  .waveform .bar:nth-child(11) { animation-delay: 0.0s; }
+  @keyframes wave {
+    0%, 100% { height: 6px; }
+    50%      { height: 34px; }
+  }
+
+  /* Kleiner Zeigefinger / Person, die tippt */
+  .hand-hint {
+    position: absolute;
+    bottom: -50px;
+    right: 40px;
+    font-size: 44px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    transform: rotate(-15deg);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  }
+
+  /* =========================
+     Kontext-Frage („Was passiert da eigentlich?")
+     ========================= */
+  .question-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% + 380px));
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease, transform 1s ease;
+    max-width: 700px;
+    pointer-events: none;
+  }
+  .question-overlay .q-title {
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+  }
+  .question-overlay .q-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  /* =========================
+     Text, der frei im Raum schwebt (nach dem Zoom)
+     ========================= */
+  .floating-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.3);
+    font-size: 46px;
+    font-weight: 300;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    opacity: 0;
+    transition: opacity 1.2s ease, transform 1.8s cubic-bezier(0.65, 0, 0.35, 1);
+    text-shadow: 0 0 30px rgba(110, 168, 255, 0.3);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* =========================
+     Tokens (die aus dem Text entstehen)
+     ========================= */
+  .tokens-layer {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+  .token-pill {
+    padding: 14px 22px;
+    background: var(--pill-bg);
+    border: 1.5px solid var(--pill-border);
+    border-radius: 999px;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--ink);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(110, 168, 255, 0.15);
+    transform: translateY(0) scale(1);
+    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.6s ease,
+                border-color 0.6s ease;
+    will-change: transform;
+  }
+  .token-pill.p1 { --tc: #6ea8ff; }
+  .token-pill.p2 { --tc: #a78bfa; }
+  .token-pill.p3 { --tc: #34d399; }
+  .token-pill.p4 { --tc: #fbbf24; }
+  .token-pill.p5 { --tc: #f472b6; }
+  .token-pill:nth-child(odd)  { border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.14); }
+  .token-pill:nth-child(3n)   { border-color: rgba(52, 211, 153, 0.5);  background: rgba(52, 211, 153, 0.14); }
+  .token-pill:nth-child(4n)   { border-color: rgba(251, 191, 36, 0.5);  background: rgba(251, 191, 36, 0.14); }
+
+  /* Kleines Label unter den Tokens */
+  .layer-label {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% - 100px));
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+  .layer-label .accent { color: var(--accent); }
+
+  /* =========================
+     Embedding-Raum (2D-Plot)
+     ========================= */
+  .embedding-space {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 900px; height: 560px;
+    transform: translate(-50%, -50%) scale(0.85);
+    opacity: 0;
+    transition: opacity 1.2s ease, transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+    pointer-events: none;
+  }
+  .embedding-space .axis {
+    position: absolute;
+    background: rgba(138, 149, 176, 0.25);
+  }
+  .embedding-space .axis-x {
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+  }
+  .embedding-space .axis-y {
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 1px;
+  }
+  .embedding-space .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(138, 149, 176, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138, 149, 176, 0.08) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .embed-point {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.6s ease;
+    opacity: 0;
+  }
+  .embed-point.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  .embed-point .dot {
+    width: 12px; height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 16px currentColor;
+    color: var(--accent);
+  }
+  .embed-point .label {
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+
+  /* König/Königin/Mann/Frau — spezielle Farben */
+  .embed-point.royal  .dot { color: #fbbf24; background: #fbbf24; }
+  .embed-point.person .dot { color: #6ea8ff; background: #6ea8ff; }
+  .embed-point.query  .dot { color: #34d399; background: #34d399; }
+  .embed-point.sky    .dot { color: #a78bfa; background: #a78bfa; }
+  .embed-point.color  .dot { color: #f472b6; background: #f472b6; }
+
+  /* Analogie-Pfeile */
+  .analogy-arrow {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0), rgba(251, 191, 36, 0.7), rgba(251, 191, 36, 0));
+    transform-origin: left center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .analogy-arrow::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    border-left: 8px solid rgba(251, 191, 36, 0.8);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .analogy-caption {
+    position: absolute;
+    font-size: 15px;
+    color: var(--warn);
+    font-style: italic;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  }
+
+  /* =========================
+     Modell-Block (die letzte Übergabe)
+     ========================= */
+  .model-block {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    transition: opacity 1.2s ease, transform 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+    width: 380px;
+    padding: 32px 40px;
+    background: linear-gradient(135deg, rgba(110, 168, 255, 0.1), rgba(167, 139, 250, 0.1));
+    border: 2px solid rgba(110, 168, 255, 0.4);
+    border-radius: 20px;
+    text-align: center;
+    box-shadow:
+      0 0 60px rgba(110, 168, 255, 0.3),
+      inset 0 0 40px rgba(167, 139, 250, 0.08);
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+  }
+  .model-block .m-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .model-block .m-name {
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .model-block .m-sub {
+    font-size: 14px;
+    color: var(--ink-dim);
+    font-style: italic;
+  }
+  .model-block .m-layers {
+    margin-top: 18px;
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+  }
+  .model-block .m-layer {
+    width: 32px; height: 8px;
+    background: rgba(110, 168, 255, 0.25);
+    border-radius: 2px;
+    animation: layerPulse 2s ease-in-out infinite;
+  }
+  .model-block .m-layer:nth-child(2) { animation-delay: 0.15s; }
+  .model-block .m-layer:nth-child(3) { animation-delay: 0.3s; }
+  .model-block .m-layer:nth-child(4) { animation-delay: 0.45s; }
+  .model-block .m-layer:nth-child(5) { animation-delay: 0.6s; }
+  .model-block .m-layer:nth-child(6) { animation-delay: 0.75s; }
+  @keyframes layerPulse {
+    0%, 100% { background: rgba(110, 168, 255, 0.25); }
+    50%      { background: rgba(110, 168, 255, 0.9); }
+  }
+
+  /* Kleiner Hinweis: „hier setzt der technische Teil an" */
+  .handoff-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, calc(-50% + 240px));
+    font-size: 14px;
+    color: var(--ink-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+  }
+
+  /* =========================
+     Navigation / Fortschritt
+     ========================= */
+  .nav-hint {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--ink-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0.6;
+    z-index: 100;
+  }
+  .nav-hint kbd {
+    display: inline-block;
+    padding: 2px 8px;
+    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 10px;
+    color: var(--ink);
+  }
+
+  /* Fortschrittspunkte */
+  .beat-dots {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+    opacity: 0.5;
+  }
+  .beat-dots .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ink-dim);
+    transition: background 0.4s ease, transform 0.4s ease;
+  }
+  .beat-dots .dot.active {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+  .beat-dots .dot.past {
+    background: var(--ink-dim);
+    opacity: 0.7;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="starfield"></div>
+
+<div class="beat-dots" id="beatDots"></div>
+
+<div class="stage" id="stage">
+
+  <!-- ============ Das Smartphone ============ -->
+  <div class="phone" id="phone">
+    <div class="phone-frame"></div>
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      <div class="app-logo" id="appLogo">
+        <span class="l1">G</span><span class="l2">o</span><span class="l3">o</span><span class="l4">g</span><span class="l5">l</span><span class="l6">e</span>
+      </div>
+      <div class="search-bar">
+        <div class="search-icon"></div>
+        <div class="search-text" id="searchText"><span class="caret"></span></div>
+        <div class="mic-btn" id="micBtn">
+          <div class="mic-icon"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Waveform, die beim Sprechen erscheint -->
+  <div class="waveform" id="waveform">
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div class="bar"></div><div class="bar"></div>
+  </div>
+
+  <!-- Die Frage, die sich im Raum entfaltet -->
+  <div class="question-overlay" id="questionOverlay">
+    <div class="q-title">Aber <em>was passiert da eigentlich</em>?</div>
+  </div>
+
+  <!-- Der schwebende Text nach dem Zoom -->
+  <div class="floating-text" id="floatingText">warum ist der himmel blau</div>
+
+  <!-- Layer-Label über den Tokens/Embeddings -->
+  <div class="layer-label" id="layerLabel">
+    <span id="layerLabelText">Tokenisierung</span>
+  </div>
+
+  <!-- Die Tokens -->
+  <div class="tokens-layer" id="tokensLayer">
+    <div class="token-pill">warum</div>
+    <div class="token-pill">ist</div>
+    <div class="token-pill">der</div>
+    <div class="token-pill">himmel</div>
+    <div class="token-pill">blau</div>
+  </div>
+
+  <!-- Der Embedding-Raum (2D-Plot) -->
+  <div class="embedding-space" id="embeddingSpace">
+    <div class="grid"></div>
+    <div class="axis axis-x"></div>
+    <div class="axis axis-y"></div>
+
+    <!-- Königs-Analogie: king, queen, mann, frau -->
+    <div class="embed-point royal" data-key="king" style="left: 62%; top: 32%;">
+      <div class="dot"></div><div class="label">könig</div>
+    </div>
+    <div class="embed-point royal" data-key="queen" style="left: 62%; top: 62%;">
+      <div class="dot"></div><div class="label">königin</div>
+    </div>
+    <div class="embed-point person" data-key="man" style="left: 32%; top: 32%;">
+      <div class="dot"></div><div class="label">mann</div>
+    </div>
+    <div class="embed-point person" data-key="woman" style="left: 32%; top: 62%;">
+      <div class="dot"></div><div class="label">frau</div>
+    </div>
+
+    <!-- Die Query-Tokens (unsere gesprochene Frage) -->
+    <div class="embed-point query" data-key="warum" style="left: 15%; top: 78%;">
+      <div class="dot"></div><div class="label">warum</div>
+    </div>
+    <div class="embed-point query" data-key="ist" style="left: 22%; top: 82%;">
+      <div class="dot"></div><div class="label">ist</div>
+    </div>
+    <div class="embed-point query" data-key="der" style="left: 44%; top: 85%;">
+      <div class="dot"></div><div class="label">der</div>
+    </div>
+    <div class="embed-point sky" data-key="himmel" style="left: 78%; top: 20%;">
+      <div class="dot"></div><div class="label">himmel</div>
+    </div>
+    <div class="embed-point color" data-key="blau" style="left: 85%; top: 45%;">
+      <div class="dot"></div><div class="label">blau</div>
+    </div>
+
+    <!-- Analogie-Pfeile: mann → könig, frau → königin -->
+    <div class="analogy-arrow" id="arrowManKing"
+         style="left: 34%; top: 33%; width: 27%; transform: rotate(0deg);"></div>
+    <div class="analogy-arrow" id="arrowWomanQueen"
+         style="left: 34%; top: 63%; width: 27%; transform: rotate(0deg);"></div>
+    <div class="analogy-caption" id="analogyCaption"
+         style="left: 42%; top: 15%;">
+      könig − mann + frau ≈ königin
+    </div>
+  </div>
+
+  <!-- Der Modell-Block als Übergabe -->
+  <div class="model-block" id="modelBlock">
+    <div class="m-title">Sprachmodell</div>
+    <div class="m-name">Transformer</div>
+    <div class="m-sub">verarbeitet die Bedeutung</div>
+    <div class="m-layers">
+      <div class="m-layer"></div>
+      <div class="m-layer"></div>
+      <div class="m-layer"></div>
+      <div class="m-layer"></div>
+      <div class="m-layer"></div>
+      <div class="m-layer"></div>
+    </div>
+  </div>
+
+  <div class="handoff-hint" id="handoffHint">
+    Und hier beginnt der technische Teil …
+  </div>
+
+</div>
+
+<div class="nav-hint">
+  <kbd>→</kbd> weiter &nbsp;·&nbsp; <kbd>←</kbd> zurück &nbsp;·&nbsp; <kbd>Leertaste</kbd> weiter
+</div>
+
+<script>
+  // =========================================================
+  // Choreographie: eine Sequenz von Beats.
+  // Jeder Beat ist eine Funktion, die den Zielzustand setzt.
+  // Rückwärts ist immer möglich, weil wir den State neu setzen
+  // statt Animationen "abzuspielen" — CSS interpoliert.
+  // =========================================================
+
+  const $ = (id) => document.getElementById(id);
+
+  // Elemente
+  const phone         = $('phone');
+  const appLogo       = $('appLogo');
+  const searchText    = $('searchText');
+  const micBtn        = $('micBtn');
+  const waveform      = $('waveform');
+  const questionOv    = $('questionOverlay');
+  const floatingText  = $('floatingText');
+  const tokensLayer   = $('tokensLayer');
+  const layerLabel    = $('layerLabel');
+  const layerLabelTxt = $('layerLabelText');
+  const embeddingSp   = $('embeddingSpace');
+  const arrowMK       = $('arrowManKing');
+  const arrowWQ       = $('arrowWomanQueen');
+  const analogyCap    = $('analogyCaption');
+  const modelBlock    = $('modelBlock');
+  const handoff       = $('handoffHint');
+
+  const SATZ = 'warum ist der himmel blau';
+
+  // Hilfsfunktionen
+  function setPhone({scale=1, x=0, y=0, opacity=1}) {
+    phone.style.transform =
+      `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+    phone.style.opacity = opacity;
+  }
+
+  function setSearchText(text, typing=false) {
+    if (typing) {
+      searchText.classList.add('typing');
+      searchText.innerHTML = text + '<span class="caret"></span>';
+    } else {
+      searchText.classList.remove('typing');
+      searchText.textContent = text;
+    }
+  }
+
+  function showEmbedPoints(keys) {
+    const all = document.querySelectorAll('.embed-point');
+    all.forEach(pt => {
+      const k = pt.getAttribute('data-key');
+      if (keys.includes(k)) pt.classList.add('visible');
+      else pt.classList.remove('visible');
+    });
+  }
+
+  // =========================================================
+  // BEATS – jede Funktion setzt den kompletten Zustand
+  // =========================================================
+
+  const beats = [
+
+    // BEAT 0 — Ruhezustand: Handy zentral, leere Suche, Google-Logo an
+    () => {
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+      appLogo.style.opacity = '1';
+      setSearchText('', false);
+      micBtn.classList.remove('listening');
+      waveform.classList.remove('active');
+      questionOv.style.opacity = '0';
+      questionOv.style.transform = 'translate(-50%, calc(-50% + 380px))';
+      floatingText.style.opacity = '0';
+      floatingText.style.transform = 'translate(-50%, -50%) scale(0.3)';
+      tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '0';
+      embeddingSp.style.opacity = '0';
+      embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.85)';
+      showEmbedPoints([]);
+      arrowMK.style.opacity = '0';
+      arrowWQ.style.opacity = '0';
+      analogyCap.style.opacity = '0';
+      modelBlock.style.opacity = '0';
+      modelBlock.style.transform = 'translate(-50%, -50%) scale(0.5)';
+      handoff.style.opacity = '0';
+    },
+
+    // BEAT 1 — Mikrofon aktiv, Waveform pulsiert
+    () => {
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+      appLogo.style.opacity = '1';
+      setSearchText('', true);
+      micBtn.classList.add('listening');
+      waveform.classList.add('active');
+      questionOv.style.opacity = '0';
+      floatingText.style.opacity = '0';
+      tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '0';
+      embeddingSp.style.opacity = '0';
+      modelBlock.style.opacity = '0';
+      handoff.style.opacity = '0';
+    },
+
+    // BEAT 2 — Speech-to-Text: Satz erscheint im Suchfeld
+    () => {
+      setPhone({scale: 1, x: 0, y: 0, opacity: 1});
+      appLogo.style.opacity = '1';
+      setSearchText(SATZ, true);
+      micBtn.classList.remove('listening');
+      waveform.classList.remove('active');
+      questionOv.style.opacity = '0';
+      floatingText.style.opacity = '0';
+    },
+
+    // BEAT 3 — Die Frage taucht auf: "was passiert da eigentlich?"
+    () => {
+      setPhone({scale: 1, x: 0, y: -60, opacity: 1});
+      setSearchText(SATZ, false);
+      appLogo.style.opacity = '1';
+      questionOv.style.opacity = '1';
+      questionOv.style.transform = 'translate(-50%, calc(-50% + 340px))';
+      floatingText.style.opacity = '0';
+    },
+
+    // BEAT 4 — Kamera zoomt in den Bildschirm hinein
+    // Das Handy wird riesig und fadet dann weg, Text erscheint zentral
+    () => {
+      setPhone({scale: 3.2, x: 0, y: 40, opacity: 0});
+      appLogo.style.opacity = '0';
+      questionOv.style.opacity = '0';
+      floatingText.style.opacity = '1';
+      floatingText.style.transform = 'translate(-50%, -50%) scale(1)';
+      tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '0';
+    },
+
+    // BEAT 5 — Tokenisierung: Text zerbricht in Token-Pillen
+    () => {
+      setPhone({scale: 3.2, x: 0, y: 40, opacity: 0});
+      floatingText.style.opacity = '0';
+      floatingText.style.transform = 'translate(-50%, -50%) scale(1.4)';
+      tokensLayer.style.opacity = '1';
+      layerLabel.style.opacity = '1';
+      layerLabelTxt.innerHTML = '<span class="accent">Tokenisierung</span> — der Satz wird in Stücke zerlegt';
+      embeddingSp.style.opacity = '0';
+      modelBlock.style.opacity = '0';
+    },
+
+    // BEAT 6 — Embedding: Tokens werden zu Punkten im Raum
+    // Query-Tokens (warum, ist, der, himmel, blau) tauchen auf
+    () => {
+      tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '1';
+      layerLabelTxt.innerHTML = '<span class="accent">Embedding</span> — jedes Wort wird zu einem Punkt im Bedeutungsraum';
+      embeddingSp.style.opacity = '1';
+      embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
+      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau']);
+      arrowMK.style.opacity = '0';
+      arrowWQ.style.opacity = '0';
+      analogyCap.style.opacity = '0';
+      modelBlock.style.opacity = '0';
+      handoff.style.opacity = '0';
+    },
+
+    // BEAT 7 — Der Raum hat Struktur: König/Königin/Mann/Frau erscheinen,
+    // die Analogie wird sichtbar
+    () => {
+      tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '1';
+      layerLabelTxt.innerHTML = 'Die Positionen sind <span class="accent">nicht zufällig</span> — Bedeutung wird Geometrie';
+      embeddingSp.style.opacity = '1';
+      embeddingSp.style.transform = 'translate(-50%, -50%) scale(1)';
+      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau', 'king', 'queen', 'man', 'woman']);
+      arrowMK.style.opacity = '0.9';
+      arrowWQ.style.opacity = '0.9';
+      analogyCap.style.opacity = '1';
+      modelBlock.style.opacity = '0';
+    },
+
+    // BEAT 8 — Übergabe: Alles verdichtet sich zum Modell-Block
+    () => {
+      tokensLayer.style.opacity = '0';
+      layerLabel.style.opacity = '0';
+      embeddingSp.style.opacity = '0.15';
+      embeddingSp.style.transform = 'translate(-50%, -50%) scale(0.6)';
+      showEmbedPoints(['warum', 'ist', 'der', 'himmel', 'blau', 'king', 'queen', 'man', 'woman']);
+      arrowMK.style.opacity = '0';
+      arrowWQ.style.opacity = '0';
+      analogyCap.style.opacity = '0';
+      modelBlock.style.opacity = '1';
+      modelBlock.style.transform = 'translate(-50%, -50%) scale(1)';
+      handoff.style.opacity = '0.8';
+    },
+
+  ];
+
+  // =========================================================
+  // Navigation
+  // =========================================================
+  let current = 0;
+
+  function renderBeat(idx) {
+    if (idx < 0 || idx >= beats.length) return;
+    current = idx;
+    beats[idx]();
+    renderDots();
+  }
+
+  function next() {
+    if (current < beats.length - 1) renderBeat(current + 1);
+  }
+  function prev() {
+    if (current > 0) renderBeat(current - 1);
+  }
+
+  // Fortschrittspunkte
+  const beatDots = $('beatDots');
+  beats.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    beatDots.appendChild(d);
+  });
+  function renderDots() {
+    const dots = beatDots.querySelectorAll('.dot');
+    dots.forEach((d, i) => {
+      d.classList.remove('active', 'past');
+      if (i === current) d.classList.add('active');
+      else if (i < current) d.classList.add('past');
+    });
+  }
+
+  // Tastatur
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'ArrowUp' || e.key === 'Backspace') {
+      e.preventDefault();
+      prev();
+    } else if (e.key === 'Home') {
+      renderBeat(0);
+    } else if (e.key === 'End') {
+      renderBeat(beats.length - 1);
+    }
+  });
+
+  // Touch / Swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) next(); else prev();
+    }
+  }, { passive: true });
+
+  // Klick auf die Bühne = weiter
+  $('stage').addEventListener('click', (e) => {
+    // Ignoriere Klicks auf die Nav-Elemente
+    if (e.target.closest('.nav-hint') || e.target.closest('.beat-dots')) return;
+    next();
+  });
+
+  // Initial-Zustand
+  renderBeat(0);
+
+</script>
+
+</body>
+</html>
+
+<iframe src="story.html" style="width:100%; height:100vh; border:0;"></iframe>
