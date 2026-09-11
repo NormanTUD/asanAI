@@ -3501,7 +3501,7 @@ window.bibData = {
 	"newyorktimesperceptron": {
 		url: "https://timesmachine.nytimes.com/timesmachine/1958/07/08/83417341.html?pageNumber=25",
 		title: "New Navy Device Learns by Doing",
-		author: "Unnamed Author",
+		author: "The New York Times",
 		year: "1958",
 		alternativetitle: "New York Times"
 	},
@@ -6226,6 +6226,42 @@ window.bibData = {
 		year: 2021,
 		url: "https://photojournal.jpl.nasa.gov/catalog/PIA24430",
 		alternativetitle: "NASA's official Perseverance selfie at the Rochette abrasion patch (September 2021)"
+	},
+	"verma2023autonomy": {
+		title: "Autonomous Robotics Is Driving Perseverance Rover's Progress on Mars",
+		author: "Vandi Verma, Mark W. Maimone, Daniel M. Gaines, Raymond Francis, Tara A. Estlin, et al.",
+		year: 2023,
+		journal: "Science Robotics",
+		volume: "8",
+		number: "80",
+		pages: "eadi3099",
+		url: "https://www.science.org/doi/10.1126/scirobotics.adi3099",
+		alternativetitle: "JPL's overview of Perseverance's AutoNav, AEGIS, and OnBoard Planner autonomy"
+	},
+	"toupet2025enav": {
+		title: "Enhanced Autonomous Navigation on the Perseverance Mars Rover",
+		author: "O. Toupet, M. Ono, T. D. Sesto, M. Maimone, M. McHenry",
+		year: 2025,
+		journal: "IEEE Transactions on Field Robotics",
+		url: "https://doi.org/10.1109/TFR.2025.3636366",
+		alternativetitle: "The ENav algorithm: orientation-sensitive hazard assessment for Perseverance's self-driving"
+	},
+	"francis2017aegis": {
+		title: "AEGIS Autonomous Targeting for ChemCam on Mars Science Laboratory: Deployment and Results of Initial Science Team Use",
+		author: "Raymond Francis, Tara Estlin, G. Doran, S. Johnstone, D. Gaines, V. Verma, et al.",
+		year: 2017,
+		journal: "Science Robotics",
+		volume: "2",
+		number: "7",
+		url: "https://www.science.org/doi/10.1126/scirobotics.aan4582",
+		alternativetitle: "AEGIS, the autonomous science-target selection system that first flew on Curiosity"
+	},
+	"jpl2023mobility": {
+		title: "Mars 2020 Rover: Mobility (Perseverance)",
+		author: "NASA Jet Propulsion Laboratory, Robotics and Automation Department",
+		year: 2023,
+		url: "https://www-robotics.jpl.nasa.gov/what-we-do/flight-projects/mars-2020-rover/m2020mobility/",
+		alternativetitle: "JPL robotics on ENav, thinking-while-driving, and hazard avoidance on Perseverance"
 	},
 	"agc_module_image": {
 		title: "Apollo Guidance Computer solid-state modules and backplane",

@@ -231,6 +231,8 @@ The transformation of this curiosity into a usable force required a cascade of u
 
 * **Alessandro Volta** (1800) created the first true battery (the *voltaic pile*), proving that electricity could be generated chemically and sustained as a steady current, not just produced as a momentary spark. He announced the device in a letter to Sir Joseph Banks, president of the Royal Society, subsequently published as \citetitle{volta}.
 
+\marginfig{voltaic_pile.png}{\citealternativetitle{voltaic_pile} (1800): stacked disks of copper and zinc separated by brine-soaked cloth, the first electric battery.}
+
 * **Michael Faraday** (1831) discovered **electromagnetic induction**, the dynamo principle, demonstrating that moving a magnet through a coil of wire generates electric current. He described the effect in \citetitle{faraday}. This single insight is the basis of virtually all electrical power generation on Earth, from coal plants to wind turbines. Without it, there is no power grid, no data center, and no GPU cluster.
 
 * **Nikola Tesla** and **George Westinghouse** (1880s–1890s) championed **alternating current (AC)**, which allowed electricity to be transmitted over long distances without catastrophic loss. Tesla's foundational polyphase AC patents (U.S. Patents \cite[381,968]{teslaelectricmotor}–\cite[382,282]{teslacurrent}, filed 1887, granted 1888) and his landmark lecture “A New System of Alternate Current Motors and Transformers” (delivered before the American Institute of Electrical Engineers, May 1888) laid the technical basis. The ability to centralize power generation and distribute it across cities and continents is a silent prerequisite for every server farm that trains an LLM.
@@ -239,10 +241,6 @@ The transformation of this curiosity into a usable force required a cascade of u
     <figure>
         <img src="volta_portrait.jpg" alt="Engraved portrait of Alessandro Volta" />
         <figcaption class="md">\citeauthor{volta_portrait}, inventor of the first true electric battery.</figcaption>
-    </figure>
-    <figure>
-        <img src="voltaic_pile.png" alt="Cross-section illustration of Alessandro Volta's voltaic pile, the first electric battery" />
-        <figcaption class="md">\citealternativetitle{voltaic_pile} (1800): stacked disks of copper and zinc separated by brine-soaked cloth, the first electric battery.</figcaption>
     </figure>
 </div>
 
@@ -771,10 +769,7 @@ By 1953, Metropolis and co-workers at Los Alamos had turned the same idea into a
 
 While consulting at Los Alamos, John von Neumann co-authored *Theory of Games and Economic Behavior* (1944) with Oskar Morgenstern \cite{vonneumann_morgenstern1944}. The book's mathematical framework, minimax, Nash equilibrium, repeated games, became the foundation of **multi-agent reinforcement learning**, algorithmic game theory, and modern mechanism design.
 
-<figure>
-    <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="von_neumann_lanl.gif" alt="Photograph of John von Neumann at Los Alamos, in the late 1940s" />
-    <figcaption class="md">The \citealternativetitle{vonneumann_lanl_image} (LANL, Public Domain). Von Neumann spent 1943–1955 commuting between Los Alamos, Princeton's IAS, and various weapons-related advisory committees. Almost every foundational structure of modern computing, the stored-program architecture, cellular automata, game theory, Monte Carlo methods, was touched by his work.</figcaption>
-</figure>
+\marginfig{von_neumann_lanl.gif}{The \citealternativetitle{vonneumann_lanl_image} (LANL, Public Domain). Von Neumann spent 1943–1955 commuting between Los Alamos, Princeton's IAS, and various weapons-related advisory committees. Almost every foundational structure of modern computing, the stored-program architecture, cellular automata, game theory, Monte Carlo methods, was touched by his work.}
 
 Von Neumann also sketched the **stored-program architecture** (\citeyear{vonneumann}) during his weapons work, and later designed self-reproducing **cellular automata** with Ulam at Los Alamos, the conceptual ancestor of agent-based simulation.
 
@@ -842,12 +837,21 @@ NASA's F-8 Digital Fly-by-Wire program (1972) used an AGC derivative to demonstr
 
 ### Robotic Autonomy on Mars
 
-Since Spirit and Opportunity landed in 2004, NASA/JPL rovers have carried **Visual Odometry** algorithms that estimate rover motion by tracking features between stereo image pairs \cite{maimone2007vo}. From Curiosity onward, the AEGIS system autonomously selects science targets on board, without waiting for Earth round-trip \cite{estlin2009aegis}. Perseverance (\citeyear{nasa2021perseverance}) extends this to onboard path planning. The combination of SLAM, visual odometry, and on-board science selection developed for Mars is a direct ancestor of every autonomous-driving stack.
+Since Spirit and Opportunity landed in 2004, NASA/JPL rovers have carried **Visual Odometry** algorithms that estimate rover motion by tracking features between stereo image pairs \cite{maimone2007vo}. From Curiosity onward, the **AEGIS** system (Autonomous Exploration for Gathering Increased Science) selects science targets on the rover itself, without waiting for the months-long Earth round-trip \cite{estlin2009aegis} \cite{francis2017aegis}: it scores each candidate rock it can image, and when a freshly spotted target looks scientifically better than the one on the plan, it re-prioritises to chase it. Perseverance (\citeyear{nasa2021perseverance}) pushes the autonomy into the driving itself. Its **AutoNav** / **Enhanced Navigation (ENav)** algorithm \cite{toupet2025enav} \cite{verma2023autonomy} \cite{jpl2023mobility} runs on a dedicated Vision Compute Element co-processor and uses a "thinking-while-driving" design, so that stereo ranging, visual odometry, and an orientation-sensitive hazard assessment all keep running *while the wheels are still turning*; the rover detects the rocks and slopes ahead of it and re-plans its own path in real time. It is precisely this pair, autonomous target selection (AEGIS) plus autonomous hazard-avoidant path planning (AutoNav/ENav), that lets it choose which rocks to stop for and steer itself clear of the boulders that would otherwise trap it. In its first Martian year the self-driving algorithm covered 88 per cent of the 17.7 kilometres the rover travelled, and it has since set the records for the longest drive without human review and the longest single-day traverse \cite{verma2023autonomy}. The combination of SLAM, visual odometry, autonomous science selection, and autonomous path planning developed for Mars is a direct ancestor of every modern autonomous-driving stack.
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="perseverance_selfie.gif" alt="NASA Perseverance rover self-portrait at the Rochette abrasion patch on Mars" />
-    <figcaption class="md">The \citealternativetitle{perseverance_selfie_image} (NASA / JPL-Caltech, Public Domain). The same rover that decides for itself which rocks to drill also decides for itself how to avoid getting stuck.</figcaption>
+    <figcaption class="md">The \citealternativetitle{perseverance_selfie_image} (NASA / JPL-Caltech, Public Domain). The same rover whose AEGIS lets it pick, on its own, which rock is worth stopping for is the one whose ENav lets it steer itself around the boulders that would otherwise trap it \cite{verma2023autonomy}.</figcaption>
 </figure>
+
+<div class="smart-quote" data-cite="newyorktimesperceptron">
+    <div class="full-quote">
+        Dr. Rosenblatt, a research psychologist at the Cornell Aeronautical Laboratory, Buffalo, said Perceptrons might be fired to the planets as mechanical space explorers.
+    </div>
+    <div class="short-quote">fired to the planets as mechanical space explorers</div>
+</div>
+
+That was the \citeyear{newyorktimesperceptron} prediction, made as the Perceptron first learned to tell shapes apart at Cornell. Six decades later the "mechanical space explorer" is a car-sized rover that, with no operator in the loop, decides for itself which rocks to drill and how to keep from getting stuck.
 
 ### Coding Theory for Noisy Channels
 
