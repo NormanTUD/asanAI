@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Donaldsons Theorem — Interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0b14; --bg2:#141629; --accent:#7ee7ff; --accent2:#ff7ee7;
+    --accent3:#ffd66b; --text:#e8ecff; --muted:#8b93b8; --panel:#171a2f;
+    --good:#7cffc4; --bad:#ff7c9c;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,#1a1d3a 0%,#0a0b14 60%);color:var(--text);font-family:'Inter',-apple-system,system-ui,sans-serif;line-height:1.6}
+  header{
+    text-align:center;padding:60px 20px 40px;
+    background:radial-gradient(ellipse at center, rgba(126,231,255,0.15), transparent 70%);
+  }
+  h1{
+    font-size:clamp(2rem,5vw,3.8rem);margin:0;font-weight:800;
+    background:linear-gradient(135deg,#7ee7ff 0%,#ff7ee7 50%,#ffd66b 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;letter-spacing:-0.02em;
+  }
+  header p{color:var(--muted);max-width:700px;margin:20px auto 0;font-size:1.1rem}
+  main{max-width:1200px;margin:0 auto;padding:20px}
+  section{
+    background:linear-gradient(180deg,var(--panel) 0%,rgba(23,26,47,0.5) 100%);
+    border:1px solid rgba(126,231,255,0.15);border-radius:20px;
+    padding:36px;margin:32px 0;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  h2{
+    font-size:1.9rem;margin-top:0;color:var(--accent);
+    border-bottom:2px solid rgba(126,231,255,0.2);padding-bottom:12px;
+  }
+  h3{color:var(--accent2);font-size:1.3rem;margin-top:28px}
+  .step-badge{
+    display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#000;font-weight:700;padding:4px 14px;border-radius:20px;
+    font-size:0.85rem;margin-bottom:10px;
+  }
+  .demo-box{
+    background:#0a0b14;border:1px solid rgba(126,231,255,0.2);
+    border-radius:14px;padding:20px;margin:20px 0;
+  }
+  canvas{display:block;max-width:100%;background:#05060f;border-radius:10px}
+  .controls{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0;align-items:center}
+  .control{display:flex;flex-direction:column;gap:6px;min-width:180px}
+  .control label{font-size:0.85rem;color:var(--muted)}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;height:6px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:3px;outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:#fff;cursor:pointer;box-shadow:0 0 12px var(--accent);
+  }
+  button{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#000;border:none;padding:10px 22px;border-radius:10px;
+    font-weight:700;cursor:pointer;font-size:0.95rem;
+    transition:transform 0.15s,box-shadow 0.15s;
+  }
+  button:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(126,231,255,0.3)}
+  button.secondary{background:#2a2e50;color:var(--text)}
+  .matrix-grid{display:inline-grid;gap:4px;margin:12px;font-family:'JetBrains Mono',monospace}
+  .matrix-cell{
+    width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+    background:#1c2040;border-radius:6px;font-weight:600;
+  }
+  .matrix-cell.diag{background:linear-gradient(135deg,#7ee7ff,#3aa8d1);color:#000}
+  .matrix-cell.pos{background:#1c4d3a;color:var(--good)}
+  .matrix-cell.neg{background:#4d1c2e;color:var(--bad)}
+  .info{
+    background:rgba(126,231,255,0.08);border-left:3px solid var(--accent);
+    padding:14px 18px;border-radius:8px;margin:14px 0;
+  }
+  .warn{
+    background:rgba(255,214,107,0.08);border-left:3px solid var(--accent3);
+    padding:14px 18px;border-radius:8px;margin:14px 0;
+  }
+  .success{
+    background:rgba(124,255,196,0.08);border-left:3px solid var(--good);
+    padding:14px 18px;border-radius:8px;margin:14px 0;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:800px){.grid2{grid-template-columns:1fr}}
+  .output{
+    font-family:'JetBrains Mono',monospace;background:#05060f;
+    padding:12px 16px;border-radius:8px;font-size:0.95rem;
+    color:var(--accent);border:1px solid rgba(126,231,255,0.15);
+  }
+  .toc{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;margin:24px 0;
+  }
+  .toc a{
+    display:block;padding:14px;background:rgba(126,231,255,0.05);
+    border:1px solid rgba(126,231,255,0.15);border-radius:10px;
+    color:var(--text);text-decoration:none;transition:all 0.2s;
+  }
+  .toc a:hover{background:rgba(126,231,255,0.15);transform:translateY(-2px)}
+  .toc .num{color:var(--accent);font-weight:700;margin-right:8px}
+  footer{text-align:center;padding:40px;color:var(--muted);font-size:0.9rem}
+  .highlight{color:var(--accent3);font-weight:600}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Donaldsons Theorem</h1>
+  <p>Eine interaktive Reise durch eines der spektakulärsten Ergebnisse der Mathematik des 20. Jahrhunderts — ganz ohne trockene Lektüre. Spiel mit den Bildern, dreh an den Reglern, und verstehe, was Simon Donaldson 1983 die Fields-Medaille einbrachte.</p>
+</header>
+
+<main>
+
+<section>
+  <h2>🗺 Was dich erwartet</h2>
+  <div class="toc">
+    <a href="#s1"><span class="num">1</span>Was ist eine Mannigfaltigkeit?</a>
+    <a href="#s2"><span class="num">2</span>Was ist speziell an Dimension 4?</a>
+    <a href="#s3"><span class="num">3</span>Homologie & Schnitte</a>
+    <a href="#s4"><span class="num">4</span>Die Schnittform</a>
+    <a href="#s5"><span class="num">5</span>Definit & Diagonalisierbar</a>
+    <a href="#s6"><span class="num">6</span>Die Motivation: Freedmans Rätsel</a>
+    <a href="#s7"><span class="num">7</span>Bündel & Zusammenhänge</a>
+    <a href="#s8"><span class="num">8</span>Yang–Mills & ASD</a>
+    <a href="#s9"><span class="num">9</span>Der Modulraum</a>
+    <a href="#s10"><span class="num">10</span>Der Kobordismus-Trick</a>
+    <a href="#s11"><span class="num">11</span>Die Antwort & ihre Folgen</a>
+  </div>
+  <div class="info">💡 <b>Tipp:</b> Jeder Abschnitt hat eine interaktive Demo. Spiel damit! Die Konzepte werden erst greifbar, wenn du die Regler bewegst.</div>
+</section>
+
+<!-- ================== SECTION 1 ================== -->
+<section id="s1">
+  <span class="step-badge">Schritt 1 · Grundlagen</span>
+  <h2>Was ist eine Mannigfaltigkeit?</h2>
+  <p>Stell dir vor, du stehst auf der Erde. Lokal sieht alles flach aus — wie ein Stück Papier. Aber global ist die Erde eine Kugel. Genau das ist eine <b>Mannigfaltigkeit</b>: ein Raum, der <i>lokal</i> aussieht wie der gewohnte <span class="highlight">ℝⁿ</span>, aber global ganz anders geformt sein kann.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Zoom auf eine gekrümmte Fläche</h3>
+    <div class="controls">
+      <div class="control">
+        <label>Zoom: <span id="zoomVal">1.0</span></label>
+        <input type="range" id="zoomSlider" min="1" max="50" step="0.5" value="1">
+      </div>
+      <div class="control">
+        <label>Form</label>
+        <select id="shapeSelect" style="padding:6px;background:#1c2040;color:#fff;border:1px solid #333;border-radius:6px">
+          <option value="sphere">Sphäre S²</option>
+          <option value="torus">Torus T²</option>
+          <option value="klein">Sattel</option>
+        </select>
+      </div>
+    </div>
+    <div id="manifoldPlot" style="height:400px"></div>
+    <div class="info">Beobachte: Je mehr du hineinzoomst, desto flacher wird die Oberfläche. <b>Lokal ist jede Mannigfaltigkeit wie ℝⁿ.</b></div>
+  </div>
+</section>
+
+<!-- ================== SECTION 2 ================== -->
+<section id="s2">
+  <span class="step-badge">Schritt 2 · Das Mysterium</span>
+  <h2>Warum ist Dimension 4 so besonders?</h2>
+  <p>In Dimensionen 1, 2, 3 ist alles "brav". Ab Dimension 5 auch. Aber <span class="highlight">Dimension 4</span> ist der wilde Westen der Topologie. Warum? Weil sie groß genug ist für komplizierte Verknotungen, aber zu klein für die "chirurgischen" Tricks höherer Dimensionen.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Dimensionsvergleich</h3>
+    <div class="controls">
+      <div class="control">
+        <label>Dimension: <span id="dimVal">4</span></label>
+        <input type="range" id="dimSlider" min="1" max="8" step="1" value="4">
+      </div>
+    </div>
+    <canvas id="dimCanvas" width="900" height="220"></canvas>
+    <div id="dimText" class="info"></div>
+  </div>
+</section>
+
+<!-- ================== SECTION 3 ================== -->
+<section id="s3">
+  <span class="step-badge">Schritt 3 · Bausteine</span>
+  <h2>Wie Flächen sich in Mannigfaltigkeiten schneiden</h2>
+  <p>In einer 4-Mannigfaltigkeit leben 2-dimensionale Flächen. Zwei solche Flächen können sich in <b>Punkten</b> schneiden (2 + 2 = 4, genau die richtige Dimension!). Jeder Schnittpunkt zählt <span class="highlight">+1 oder −1</span> — je nach Orientierung.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Zwei Flächen schneiden sich</h3>
+    <div class="controls">
+      <div class="control">
+        <label>Rotation Fläche A: <span id="rotAVal">0</span>°</label>
+        <input type="range" id="rotA" min="0" max="360" value="0">
+      </div>
+      <div class="control">
+        <label>Verschiebung: <span id="shiftVal">0</span></label>
+        <input type="range" id="shiftS" min="-100" max="100" value="0">
+      </div>
+    </div>
+    <canvas id="intersectCanvas" width="900" height="350"></canvas>
+    <div class="output" id="intersectOut">Schnittzahl: 0</div>
+    <div class="info">Die <b>Schnittzahl</b> zweier Flächen ist eine ganze Zahl — sie ändert sich nicht, wenn du die Flächen glatt verformst (Homotopie-Invariante).</div>
+  </div>
+</section>
+
+<!-- ================== SECTION 4 ================== -->
+<section id="s4">
+  <span class="step-badge">Schritt 4 · Das Herzstück</span>
+  <h2>Die Schnittform Q</h2>
+  <p>Wenn du <i>alle</i> möglichen 2-Flächen einer 4-Mannigfaltigkeit nimmst (technisch: eine Basis von H₂), bekommst du eine Tabelle aller paarweisen Schnittzahlen. Diese Tabelle ist eine <b>symmetrische Matrix mit ganzzahligen Einträgen</b> — die <span class="highlight">Schnittform Q</span>.</p>
+
+  <p>Q ist der "genetische Code" der 4-Mannigfaltigkeit — sie enthält erstaunlich viel Information.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Beispiel-Schnittformen berühmter 4-Mannigfaltigkeiten</h3>
+    <div class="controls">
+      <button onclick="showForm('S4')">S⁴ (Sphäre)</button>
+      <button onclick="showForm('CP2')">ℂP²</button>
+      <button onclick="showForm('S2S2')">S²×S²</button>
+      <button onclick="showForm('E8')">E₈-Mannigfaltigkeit</button>
+      <button onclick="showForm('K3')">K3-Fläche</button>
+    </div>
+    <div id="formDisplay" style="text-align:center;margin-top:20px"></div>
+    <div id="formInfo" class="info"></div>
+  </div>
+</section>
+
+<!-- ================== SECTION 5 ================== -->
+<section id="s5">
+  <span class="step-badge">Schritt 5 · Die Schlüsselbegriffe</span>
+  <h2>Definit & Diagonalisierbar</h2>
+  <div class="grid2">
+    <div>
+      <h3>Positiv definit</h3>
+      <p>Eine Matrix Q heißt <b>positiv definit</b>, wenn für jeden Nicht-Null-Vektor v gilt: <span id="posdefMath"></span>. Alle "Selbstschnittzahlen" sind also positiv.</p>
+    </div>
+    <div>
+      <h3>Diagonalisierbar über ℤ</h3>
+      <p>Q ist <b>ganzzahlig diagonalisierbar</b>, wenn es eine <b>ganzzahlige</b> Basis-Änderung gibt, die Q in eine reine Diagonalmatrix mit ±1 auf der Diagonalen verwandelt.</p>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Ist deine Matrix positiv definit?</h3>
+    <p>Verändere die 3×3-Matrix und sieh, wann sie positiv definit ist:</p>
+    <div id="matrixEditor" style="text-align:center"></div>
+    <div class="output" id="defOut"></div>
+    <canvas id="quadCanvas" width="600" height="300" style="margin-top:16px"></canvas>
+    <div class="info">Die Grafik zeigt die quadratische Form Q(v,v) auf dem Einheitskreis. <span style="color:var(--good)">Grün</span> = positiv, <span style="color:var(--bad)">rot</span> = negativ.</div>
+  </div>
+</section>
+
+<!-- ================== SECTION 6 ================== -->
+<section id="s6">
+  <span class="step-badge">Schritt 6 · Die Frage</span>
+  <h2>Freedmans Rätsel: Was hat Donaldson gelöst?</h2>
+  <p>1982 bewies <b>Michael Freedman</b> etwas Erstaunliches: <span class="highlight">Jede</span> symmetrische, ganzzahlige, unimodulare Matrix kommt als Schnittform einer <i>topologischen</i> 4-Mannigfaltigkeit vor. Es gibt also unendlich viele!</p>
+
+  <p>Aber die Frage blieb: Welche dieser Mannigfaltigkeiten haben auch eine <b>glatte</b> Struktur? Können wir sie mit einer wohldefinierten Differentialrechnung ausstatten?</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Topologisch vs. Glatt</h3>
+    <canvas id="topoSmoothCanvas" width="900" height="280"></canvas>
+    <div class="controls" style="justify-content:center">
+      <button onclick="animateSmooth()">▶ Animiere: Topologisch → Glatt</button>
+    </div>
+    <div class="warn">🔑 <b>Donaldsons Antwort:</b> Wenn Q <b>definit</b> ist, dann existiert eine glatte Struktur <b>nur dann</b>, wenn Q diagonalisierbar ist (also ±Identitätsmatrix). Alle anderen definiten Formen ergeben Mannigfaltigkeiten <i>ohne</i> glatte Struktur!</div>
+  </div>
+</section>
+
+<!-- ================== SECTION 7 ================== -->
+<section id="s7">
+  <span class="step-badge">Schritt 7 · Werkzeug</span>
+  <h2>Bündel & Zusammenhänge (der Physik-Hintergrund)</h2>
+  <p>Donaldsons Werkzeug kommt aus der Physik: die <b>Eichtheorie</b>. Über jeder Mannigfaltigkeit können wir ein "Bündel" bauen — stell dir vor, an jedem Punkt hängt ein kleiner Vektorraum. Ein <b>Zusammenhang</b> sagt, wie man diese Vektorräume von Punkt zu Punkt "vergleicht".</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Parallel-Transport auf einer Sphäre</h3>
+    <div class="controls">
+      <div class="control">
+        <label>Bahn-Größe: <span id="pathVal">45</span>°</label>
+        <input type="range" id="pathSize" min="10" max="90" value="45">
+      </div>
+      <div class="control">
+        <label>Position: <span id="posVal">0</span>%</label>
+        <input type="range" id="posSlider" min="0" max="100" value="0">
+      </div>
+    </div>
+    <div id="parallelPlot" style="height:400px"></div>
+    <div class="info">Der Vektor wird "parallel transportiert". Nach einem geschlossenen Weg kommt er <b>gedreht</b> zurück — diese Drehung ist die <b>Krümmung</b> des Zusammenhangs.</div>
+  </div>
+</section>
+
+<!-- ================== SECTION 8 ================== -->
+<section id="s8">
+  <span class="step-badge">Schritt 8 · Die Physik-Gleichung</span>
+  <h2>Yang–Mills & Anti-Self-Dual (ASD)</h2>
+  <p>Die Krümmung F eines Zusammenhangs ist eine "2-Form". In Dimension 4 hat sie eine magische Zerlegung: <span id="asdMath"></span>. Ein Zusammenhang heißt <b>anti-selbstdual</b> (ASD), wenn F⁺ = 0. Das sind die "physikalisch interessanten" Lösungen — <b>Instantonen</b>.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Selbstdual vs. Anti-selbstdual</h3>
+    <div class="controls">
+      <div class="control">
+        <label>Mischung: <span id="asdMix">0.5</span></label>
+        <input type="range" id="asdSlider" min="0" max="100" value="50">
+      </div>
+    </div>
+    <canvas id="asdCanvas" width="900" height="300"></canvas>
+    <div class="output" id="asdOut"></div>
+  </div>
+</section>
+
+<!-- ================== SECTION 9 ================== -->
+<section id="s9">
+  <span class="step-badge">Schritt 9 · Der Modulraum</span>
+  <h2>Der Yang–Mills Modulraum ℳ</h2>
+  <p>Betrachte <b>alle</b> ASD-Zusammenhänge (modulo Symmetrie) auf einem festen SU(2)-Bündel mit c₂ = 1. Das ergibt einen Raum ℳ. Der Atiyah–Singer-Indexsatz sagt uns:</p>
+  <div class="output" style="text-align:center;font-size:1.2rem">dim ℳ = 8k − 3(1 − b₁(X) + b₊(X))</div>
+  <p>Für einfach-zusammenhängendes X mit definiter Schnittform und k=1: <b>dim ℳ = 5</b>.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Die Struktur des Modulraums</h3>
+    <div id="moduliPlot" style="height:500px"></div>
+    <div class="info">Der Modulraum ℳ ist ein <b>5-dimensionaler Raum</b> (hier symbolisch dargestellt). Er hat:
+      <ul>
+        <li>Ein "Ende" bei ∞, das aussieht wie X × (0,ε) — dank <b>Uhlenbeck & Taubes</b></li>
+        <li><b>Singularitäten</b> bei den "reduziblen" Zusammenhängen — dort sieht er aus wie Kegel über ℂP²</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Wie viele reduzible Zusammenhänge gibt es?</h3>
+    <p>Reduzible Zusammenhänge entsprechen Zerlegungen E = L ⊕ L⁻¹. Für jede solche Zerlegung gilt:</p>
+    <div class="output" style="text-align:center">1 = k = c₂(E) = −Q(c₁(L), c₁(L))</div>
+    <p>Also: Wir suchen alle α ∈ H²(X;ℤ) mit <b>Q(α,α) = −1</b>. Die Anzahl solcher Paare ±α nennen wir <b>n(Q)</b>.</p>
+    <div class="controls">
+      <button onclick="loadRedForm('diag2')">Q = −I₂ (diagonal)</button>
+      <button onclick="loadRedForm('diag3')">Q = −I₃ (diagonal)</button>
+      <button onclick="loadRedForm('E8neg')">Q = −E₈ (nicht diagonal)</button>
+    </div>
+    <canvas id="redCanvas" width="900" height="360"></canvas>
+    <div class="output" id="redOut"></div>
+    <div class="warn">🔑 <b>Elementares Lemma:</b> Für jede negativ definite ganzzahlige Form Q gilt n(Q) ≤ rang(Q), mit <b>Gleichheit</b> genau dann, wenn Q diagonalisierbar ist.</div>
+  </div>
+</section>
+
+<!-- ================== SECTION 10 ================== -->
+<section id="s10">
+  <span class="step-badge">Schritt 10 · Der Geniestreich</span>
+  <h2>Der Kobordismus-Trick</h2>
+  <p>Jetzt kommt Donaldsons magischer Zug. Er nimmt den 5-dimensionalen Modulraum ℳ und macht ihn <b>kompakt</b>:</p>
+  <ol>
+    <li>An jeder Singularität (Kegel über ℂP²) schneidet er den Kegel ab und klebt eine Kopie von <b>ℂP²</b> ein.</li>
+    <li>Am "Unendlichen" (Ende ≅ X×(0,ε)) klebt er eine Kopie von <b>X</b> selbst ein.</li>
+  </ol>
+  <p>Das Ergebnis: eine <b>Kobordismus</b> — eine glatte 5-dim Mannigfaltigkeit, deren Rand aus X und n(Q) Kopien von ℂP² besteht.</p>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Der Kobordismus zusammengebaut</h3>
+    <div class="controls">
+      <div class="control">
+        <label>n(Q) — Anzahl reduzibler Punkte: <span id="nqVal">3</span></label>
+        <input type="range" id="nqSlider" min="1" max="8" value="3">
+      </div>
+      <div class="control">
+        <label>Baustadium: <span id="stageVal">1</span>/4</label>
+        <input type="range" id="stageSlider" min="1" max="4" value="1">
+      </div>
+    </div>
+    <canvas id="cobCanvas" width="900" height="450"></canvas>
+    <div id="cobDesc" class="info"></div>
+  </div>
+
+  <div class="demo-box">
+    <h3>Warum das die Antwort gibt: Signatur-Invarianz</h3>
+    <p>Die <b>Signatur</b> σ (Anzahl positiver minus negativer Eigenwerte der Schnittform) ist eine Kobordismus-Invariante. Da X definit ist, gilt σ(X) = rang(Q). Für die ℂP²'s gilt σ(ℂP²) = ±1.</p>
+    <div class="output" style="text-align:center;font-size:1.1rem">
+      rang(Q) = b₂(X) = σ(X) = σ(⊔ n(Q) · ℂP²) ≤ n(Q)
+    </div>
+    <p>Kombiniert mit dem Lemma n(Q) ≤ rang(Q) folgt <b>n(Q) = rang(Q)</b> — und damit ist Q <span class="highlight">diagonalisierbar</span>. QED.</p>
+  </div>
+</section>
+
+<!-- ================== SECTION 11 ================== -->
+<section id="s11">
+  <span class="step-badge">Schritt 11 · Die Konsequenzen</span>
+  <h2>Die Antwort & ihre erschütternden Folgen</h2>
+  <div class="success">
+    🏆 <b>Donaldsons Theorem (1983):</b> Wenn eine geschlossene, orientierte, glatte 4-Mannigfaltigkeit eine <b>definite</b> Schnittform hat, dann ist diese über ℤ <b>diagonalisierbar</b> — also entweder die Identitätsmatrix I oder −I.
+  </div>
+
+  <div class="grid2">
+    <div class="demo-box">
+      <h3>Folge 1: Exotische topologische Mannigfaltigkeiten</h3>
+      <p>Nimm die <b>E₈-Form</b>: sie ist definit und ganzzahlig, aber <i>nicht</i> diagonalisierbar. Freedman sagt: es gibt eine topologische 4-Mannigfaltigkeit mit dieser Schnittform. Donaldson sagt: sie kann <b>keine glatte Struktur</b> tragen!</p>
+      <canvas id="e8Canvas" width="400" height="300"></canvas>
+    </div>
+    <div class="demo-box">
+      <h3>Folge 2: Klassifikation glatter 4-Mannigfaltigkeiten</h3>
+      <p>Zwei einfach-zusammenhängende glatte 4-Mannigfaltigkeiten sind <b>homöomorph</b> ⟺ ihre Schnittformen haben gleichen Rang, gleiche Signatur, gleiche Parität.</p>
+      <canvas id="classifyCanvas" width="400" height="300"></canvas>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <h3>Interaktiv: Prüfe eine Schnittform</h3>
+    <p>Gib eine definite Form ein — kann sie glatt realisiert werden?</p>
+    <div id="checkerUI" style="text-align:center"></div>
+    <div class="output" id="checkerOut"></div>
+  </div>
+
+  <div class="info">
+    <b>💫 Der Kontext:</b> Vor Donaldson dachte man, glatte und topologische Kategorien seien in Dimension 4 ähnlich zu höheren Dimensionen. Donaldson zeigte: Dimension 4 ist <b>fundamental verschieden</b>. Später entdeckte man <b>exotische ℝ⁴</b>'s — unendlich viele glatte Strukturen auf dem gewöhnlichen ℝ⁴! In keiner anderen Dimension gibt es das.
+  </div>
+</section>
+
+<footer>
+  <p>Gebaut mit ❤ für alle, die verstehen wollen, warum Dimension 4 die wildeste aller Dimensionen ist.</p>
+  <p>Basierend auf: Donaldson, S. K. (1983) — "An application of gauge theory to four-dimensional topology"</p>
+</footer>
+
+</main>
+
+<script>
+/* ============ KaTeX ============ */
+document.addEventListener("DOMContentLoaded", () => {
+  renderMathInElement(document.body, {
+    delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}]
+  });
+  document.getElementById("posdefMath").innerHTML = katex.renderToString("v^T Q v > 0");
+  document.getElementById("asdMath").innerHTML = katex.renderToString("F = F^+ + F^-");
+});
+
+/* ============ SECTION 1: Manifold zoom ============ */
+function makeManifoldSurface(shape, zoom){
+  const N = 40;
+  const u = [], v = [], x = [], y = [], z = [];
+  for(let i=0;i<=N;i++){
+    const ui = i/N;
+    const row_x=[], row_y=[], row_z=[];
+    for(let j=0;j<=N;j++){
+      const vj = j/N;
+      const uu = (ui-0.5)/zoom + 0.5;
+      const vv = (vj-0.5)/zoom + 0.5;
+      let X,Y,Z;
+      if(shape==='sphere'){
+        const th = uu*Math.PI, ph = vv*2*Math.PI;
+        X = Math.sin(th)*Math.cos(ph);
+        Y = Math.sin(th)*Math.sin(ph);
+        Z = Math.cos(th);
+      } else if(shape==='torus'){
+        const th = uu*2*Math.PI, ph = vv*2*Math.PI;
+        const R=1, r=0.4;
+        X = (R+r*Math.cos(ph))*Math.cos(th);
+        Y = (R+r*Math.cos(ph))*Math.sin(th);
+        Z = r*Math.sin(ph);
+      } else {
+        const s = (uu-0.5)*2, t = (vv-0.5)*2;
+        X = s; Y = t; Z = s*s - t*t;
+      }
+      row_x.push(X); row_y.push(Y); row_z.push(Z);
+    }
+    x.push(row_x); y.push(row_y); z.push(row_z);
+  }
+  return {x,y,z};
+}
+function updateManifold(){
+  const zoom = parseFloat(document.getElementById('zoomSlider').value);
+  const shape = document.getElementById('shapeSelect').value;
+  document.getElementById('zoomVal').textContent = zoom.toFixed(1);
+  const s = makeManifoldSurface(shape, zoom);
+  Plotly.react('manifoldPlot', [{
+    type:'surface', x:s.x, y:s.y, z:s.z,
+    colorscale:[[0,'#7ee7ff'],[1,'#ff7ee7']],
+    showscale:false, opacity:0.95
+  }], {
+    paper_bgcolor:'#05060f', plot_bgcolor:'#05060f',
+    scene:{
+      xaxis:{showgrid:false,zeroline:false,showticklabels:false,color:'#fff'},
+      yaxis:{showgrid:false,zeroline:false,showticklabels:false,color:'#fff'},
+      zaxis:{showgrid:false,zeroline:false,showticklabels:false,color:'#fff'},
+      bgcolor:'#05060f'
+    },
+    margin:{l:0,r:0,t:0,b:0}
+  }, {displayModeBar:false});
+}
+document.getElementById('zoomSlider').addEventListener('input', updateManifold);
+document.getElementById('shapeSelect').addEventListener('change', updateManifold);
+updateManifold();
+
+/* ============ SECTION 2: Dimension comparison ============ */
+const dimCanvas = document.getElementById('dimCanvas');
+const dctx = dimCanvas.getContext('2d');
+const dimInfo = {
+  1:{name:"Dim 1: Kreis, Linie",desc:"Trivial — nur Punkte und Intervalle. Alle Mannigfaltigkeiten klassifiziert."},
+  2:{name:"Dim 2: Flächen",desc:"Vollständig klassifiziert nach Geschlecht (Anzahl der Löcher)."},
+  3:{name:"Dim 3: Thurston-Geometrisierung",desc:"Perelman bewies die Poincaré-Vermutung (2003). Alles verstanden."},
+  4:{name:"Dim 4: DER WILDE WESTEN 🌪",desc:"Hier lebt Donaldsons Theorem. Exotische ℝ⁴'s. Glatt ≠ topologisch. Extrem kompliziert."},
+  5:{name:"Dim 5: Wieder brav",desc:"h-Kobordismus-Satz (Smale) funktioniert wieder. Poincaré-Vermutung bewiesen 1961."},
+  6:{name:"Dim 6",desc:"Chirurgie-Techniken funktionieren. Vieles klassifiziert."},
+  7:{name:"Dim 7: Exotische Sphären",desc:"Milnor entdeckte 28 verschiedene glatte Strukturen auf S⁷."},
+  8:{name:"Dim 8+",desc:"Homotopie-Theorie & Chirurgie geben vollständige Kontrolle."}
+};
+function drawDim(){
+  const d = parseInt(document.getElementById('dimSlider').value);
+  document.getElementById('dimVal').textContent = d;
+  dctx.clearRect(0,0,900,220);
+  // Draw scale
+  for(let i=1;i<=8;i++){
+    const x = 60 + (i-1)*105;
+    const isD = i===d;
+    const isCrazy = i===4;
+    dctx.beginPath();
+    dctx.arc(x, 110, isD?36:22, 0, Math.PI*2);
+    if(isCrazy){
+      const g = dctx.createRadialGradient(x,110,5,x,110,isD?36:22);
+      g.addColorStop(0,'#ff7ee7'); g.addColorStop(1,'#7ee7ff');
+      dctx.fillStyle=g;
+    } else {
+      dctx.fillStyle = isD ? '#7ee7ff' : '#2a2e50';
+    }
+    dctx.fill();
+    dctx.fillStyle = isD ? '#000' : '#8b93b8';
+    dctx.font = 'bold 18px sans-serif';
+    dctx.textAlign='center'; dctx.textBaseline='middle';
+    dctx.fillText(i, x, 110);
+    if(i<8){
+      dctx.strokeStyle='#333'; dctx.lineWidth=2;
+      dctx.beginPath(); dctx.moveTo(x+25,110); dctx.lineTo(x+80,110); dctx.stroke();
+    }
+  }
+  document.getElementById('dimText').innerHTML =
+    `<b>${dimInfo[d].name}</b><br>${dimInfo[d].desc}`;
+}
+document.getElementById('dimSlider').addEventListener('input', drawDim);
+drawDim();
+
+/* ============ SECTION 3: Intersection of surfaces ============ */
+const iCanvas = document.getElementById('intersectCanvas');
+const ictx = iCanvas.getContext('2d');
+function drawIntersect(){
+  const rot = parseFloat(document.getElementById('rotA').value) * Math.PI/180;
+  const shift = parseFloat(document.getElementById('shiftS').value);
+  document.getElementById('rotAVal').textContent = document.getElementById('rotA').value;
+  document.getElementById('shiftVal').textContent = shift;
+  ictx.clearRect(0,0,900,350);
+  const cx=450, cy=175;
+  // Fläche B (horizontal ellipse-like)
+  ictx.strokeStyle='#7ee7ff'; ictx.lineWidth=3;
+  ictx.beginPath();
+  for(let t=0;t<=Math.PI*2;t+=0.02){
+    const x = cx + 300*Math.cos(t);
+    const y = cy + 60*Math.sin(t);
+    if(t===0) ictx.moveTo(x,y); else ictx.lineTo(x,y);
+  }
+  ictx.closePath(); ictx.stroke();
+  ictx.fillStyle='rgba(126,231,255,0.1)'; ictx.fill();
+  ictx.fillStyle='#7ee7ff'; ictx.font='14px sans-serif';
+  ictx.fillText('Fläche B', cx+220, cy-70);
+  // Fläche A (rotated)
+  ictx.save();
+  ictx.translate(cx, cy+shift);
+  ictx.rotate(rot);
+  ictx.strokeStyle='#ff7ee7'; ictx.lineWidth=3;
+  ictx.beginPath();
+  for(let t=0;t<=Math.PI*2;t+=0.02){
+    const x = 250*Math.cos(t);
+    const y = 50*Math.sin(t);
+    if(t===0) ictx.moveTo(x,y); else ictx.lineTo(x,y);
+  }
+  ictx.closePath(); ictx.stroke();
+  ictx.fillStyle='rgba(255,126,231,0.1)'; ictx.fill();
+  ictx.restore();
+  ictx.fillStyle='#ff7ee7';
+  ictx.fillText('Fläche A', cx-330, cy+shift-60);
+  // Compute intersections (approximate: parameterize A, find where crosses B)
+  let pts = [];
+  for(let t=0;t<Math.PI*2;t+=0.005){
+    const ax = 250*Math.cos(t), ay = 50*Math.sin(t);
+    const gx = cx + ax*Math.cos(rot) - ay*Math.sin(rot);
+    const gy = cy+shift + ax*Math.sin(rot) + ay*Math.cos(rot);
+    // check if on ellipse B: ((gx-cx)/300)^2 + ((gy-cy)/60)^2 = 1
+    const val = ((gx-cx)/300)**2 + ((gy-cy)/60)**2 - 1;
+    pts.push({t, gx, gy, val});
+  }
+  let signs = 0; let intersections = [];
+  for(let i=1;i<pts.length;i++){
+    if(pts[i-1].val * pts[i].val < 0){
+      intersections.push(pts[i]);
+      // sign from cross product of tangents
+      const dax = -250*Math.sin(pts[i].t)*Math.cos(rot) - 50*Math.cos(pts[i].t)*Math.sin(rot);
+      const day = -250*Math.sin(pts[i].t)*Math.sin(rot) + 50*Math.cos(pts[i].t)*Math.cos(rot);
+      // tangent of B at gx: derivative wrt angle where B(u)=cx+300cos u, cy+60sin u
+      // Just compute sign of da x tangent-of-B-numerically
+      // Approximation: use +/- based on sign of dax*Bty - day*Btx roughly
+      // For visualization we alternate; but let's compute properly
+      // Find u on B closest:
+      const dx = pts[i].gx - cx, dy = pts[i].gy - cy;
+      const u = Math.atan2(dy/60, dx/300);
+      const btx = -300*Math.sin(u), bty = 60*Math.cos(u);
+      const cross = dax*bty - day*btx;
+      signs += Math.sign(cross);
+      // Draw
+      ictx.beginPath();
+      ictx.arc(pts[i].gx, pts[i].gy, 10, 0, Math.PI*2);
+      ictx.fillStyle = cross>0 ? '#7cffc4' : '#ff7c9c';
+      ictx.fill();
+      ictx.strokeStyle='#fff'; ictx.lineWidth=2; ictx.stroke();
+      ictx.fillStyle='#000'; ictx.font='bold 14px sans-serif';
+      ictx.textAlign='center'; ictx.textBaseline='middle';
+      ictx.fillText(cross>0?'+':'−', pts[i].gx, pts[i].gy);
+    }
+  }
+  document.getElementById('intersectOut').textContent =
+    `Rohe Schnittpunkte: ${intersections.length}   |   Signierte Schnittzahl A·B = ${signs}`;
+}
+document.getElementById('rotA').addEventListener('input', drawIntersect);
+document.getElementById('shiftS').addEventListener('input', drawIntersect);
+drawIntersect();
+
+/* ============ SECTION 4: Famous forms ============ */
+const forms = {
+  S4:{name:'S⁴ (4-Sphäre)',matrix:[],desc:'Trivial — b₂ = 0. Es gibt keine 2-Zykel, also ist Q die leere Matrix.'},
+  CP2:{name:'ℂP² (komplexe projektive Ebene)',matrix:[[1]],desc:'Rang 1, Signatur +1. Positiv definit, diagonal.'},
+  S2S2:{name:'S² × S²',matrix:[[0,1],[1,0]],desc:'Hyperbolische Form. Nicht definit (Signatur 0).'},
+  E8:{name:'E₈-Mannigfaltigkeit (Freedman)',matrix:[
+    [2,-1,0,0,0,0,0,0],[-1,2,-1,0,0,0,0,0],[0,-1,2,-1,0,0,0,-1],
+    [0,0,-1,2,-1,0,0,0],[0,0,0,-1,2,-1,0,0],[0,0,0,0,-1,2,-1,0],
+    [0,0,0,0,0,-1,2,0],[0,0,-1,0,0,0,0,2]
+  ],desc:'⚠ Positiv definit, aber NICHT diagonalisierbar über ℤ! → Donaldson: keine glatte Struktur möglich!'},
+  K3:{name:'K3-Fläche',matrix:'2·(−E₈) ⊕ 3·H',desc:'Signatur −16. Nicht definit. Berühmte Kalabi–Yau-Mannigfaltigkeit.'}
+};
+function showForm(key){
+  const f = forms[key];
+  const disp = document.getElementById('formDisplay');
+  let html = `<h3 style="color:var(--accent3)">${f.name}</h3>`;
+  if(Array.isArray(f.matrix) && f.matrix.length>0){
+    html += '<div class="matrix-grid" style="grid-template-columns:repeat('+f.matrix.length+',44px)">';
+    f.matrix.forEach((row,i)=>{
+      row.forEach((v,j)=>{
+        let cls='matrix-cell';
+        if(i===j) cls+=' diag';
+        else if(v>0) cls+=' pos';
+        else if(v<0) cls+=' neg';
+        html += `<div class="${cls}">${v}</div>`;
+      });
+    });
+    html += '</div>';
+  } else if(typeof f.matrix==='string'){
+    html += `<div class="output" style="display:inline-block;font-size:1.2rem">${f.matrix}</div>`;
+  } else {
+    html += `<div class="output" style="display:inline-block">Ø (leere Matrix)</div>`;
+  }
+  disp.innerHTML = html;
+  document.getElementById('formInfo').innerHTML = f.desc;
+}
+showForm('CP2');
+
+/* ============ SECTION 5: Matrix editor + quadratic form ============ */
+let M = [[2,-1,0],[-1,2,-1],[0,-1,2]];
+function buildMatrixEditor(){
+  const c = document.getElementById('matrixEditor');
+  let h = '<div style="display:inline-grid;grid-template-columns:repeat(3,60px);gap:6px">';
+  for(let i=0;i<3;i++)for(let j=0;j<3;j++){
+    h += `<input type="number" step="1" value="${M[i][j]}" id="m${i}${j}" 
+      style="width:60px;padding:8px;background:#1c2040;color:#fff;border:1px solid #333;border-radius:6px;text-align:center;font-weight:600" oninput="updateM(${i},${j},this.value)">`;
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+function updateM(i,j,v){
+  M[i][j] = parseFloat(v)||0;
+  drawQuad();
+}
+function isPositiveDefinite(m){
+  // Sylvester's criterion for 3x3 symmetric
+  const a = m[0][0];
+  const d2 = m[0][0]*m[1][1] - m[0][1]*m[1][0];
+  const d3 = m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])
+           - m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])
+           + m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+  return {a, d2, d3, pos: a>0 && d2>0 && d3>0, neg: a<0 && d2>0 && d3<0};
+}
+const qCanvas = document.getElementById('quadCanvas');
+const qctx = qCanvas.getContext('2d');
+function drawQuad(){
+  const info = isPositiveDefinite(M);
+  let status = 'indefinit';
+  let color = 'var(--accent3)';
+  if(info.pos){ status='positiv definit ✓'; color='var(--good)'; }
+  else if(info.neg){ status='negativ definit ✓'; color='var(--bad)'; }
+  document.getElementById('defOut').innerHTML =
+    `Hauptminoren: Δ₁=${info.a}, Δ₂=${info.d2}, Δ₃=${info.d3}<br>Status: <span style="color:${color};font-weight:700">${status}</span>`;
+  // Draw Q(v,v) for v on unit circle in 2D (first 2 coords)
+  qctx.clearRect(0,0,600,300);
+  const cx=300, cy=150, R=120;
+  qctx.strokeStyle='#333'; qctx.lineWidth=1;
+  qctx.beginPath(); qctx.arc(cx,cy,R,0,Math.PI*2); qctx.stroke();
+  // Axes
+  qctx.strokeStyle='#444';
+  qctx.beginPath(); qctx.moveTo(50,cy); qctx.lineTo(550,cy); qctx.stroke();
+  qctx.beginPath(); qctx.moveTo(cx,20); qctx.lineTo(cx,280); qctx.stroke();
+  // Plot Q(cos t, sin t, 0)
+  let maxQ = 0;
+  for(let t=0;t<Math.PI*2;t+=0.01){
+    const v = [Math.cos(t), Math.sin(t), 0];
+    let q = 0;
+    for(let i=0;i<3;i++)for(let j=0;j<3;j++) q += M[i][j]*v[i]*v[j];
+    maxQ = Math.max(maxQ, Math.abs(q));
+  }
+  if(maxQ < 0.01) maxQ = 1;
+  for(let t=0;t<Math.PI*2;t+=0.005){
+    const v = [Math.cos(t), Math.sin(t), 0];
+    let q = 0;
+    for(let i=0;i<3;i++)for(let j=0;j<3;j++) q += M[i][j]*v[i]*v[j];
+    const nq = q/maxQ;
+    const x = cx + R*Math.cos(t);
+    const y = cy - R*Math.sin(t);
+    qctx.fillStyle = q>0 ? '#7cffc4' : (q<0 ? '#ff7c9c' : '#888');
+    qctx.globalAlpha = 0.4 + 0.6*Math.abs(nq);
+    qctx.beginPath(); qctx.arc(x,y,4,0,Math.PI*2); qctx.fill();
+  }
+  qctx.globalAlpha = 1;
+  qctx.fillStyle='#8b93b8'; qctx.font='12px sans-serif';
+  qctx.fillText('Q(v,v) auf Einheitskreis (v₁,v₂-Ebene)', 20, 20);
+}
+buildMatrixEditor();
+drawQuad();
+
+/* ============ SECTION 6: Topo vs Smooth animation ============ */
+const tsCanvas = document.getElementById('topoSmoothCanvas');
+const tctx = tsCanvas.getContext('2d');
+let smoothAnim = 0;
+function drawTopoSmooth(){
+  tctx.clearRect(0,0,900,280);
+  // Left: topological (jagged blob)
+  tctx.fillStyle='#8b93b8'; tctx.font='bold 16px sans-serif';
+  tctx.textAlign='center';
+  tctx.fillText('Topologische Mannigfaltigkeit', 200, 30);
+  tctx.fillText('Glatte Mannigfaltigkeit', 700, 30);
+  // Blob left
+  tctx.beginPath();
+  const cx1=200, cy1=150;
+  for(let t=0;t<=Math.PI*2;t+=0.01){
+    const r = 70 + 15*Math.sin(t*7) + 8*Math.cos(t*13) + 10*Math.sin(t*3);
+    const x = cx1 + r*Math.cos(t), y = cy1 + r*Math.sin(t);
+    if(t===0) tctx.moveTo(x,y); else tctx.lineTo(x,y);
+  }
+  tctx.closePath();
+  tctx.fillStyle='rgba(255,126,231,0.2)';
+  tctx.strokeStyle='#ff7ee7'; tctx.lineWidth=2;
+  tctx.fill(); tctx.stroke();
+  // Arrow
+  tctx.strokeStyle='#7ee7ff'; tctx.lineWidth=3;
+  tctx.beginPath(); tctx.moveTo(350,150); tctx.lineTo(500,150); tctx.stroke();
+  tctx.beginPath(); tctx.moveTo(500,150); tctx.lineTo(490,143); tctx.lineTo(490,157); tctx.closePath();
+  tctx.fillStyle='#7ee7ff'; tctx.fill();
+  tctx.fillStyle='#7ee7ff'; tctx.font='13px sans-serif';
+  tctx.fillText('glätten?', 425, 140);
+  // Right: smooth blob (interpolated)
+  const cx2=700, cy2=150;
+  tctx.beginPath();
+  for(let t=0;t<=Math.PI*2;t+=0.01){
+    const roughness = 1 - smoothAnim;
+    const r = 70 + (15*Math.sin(t*7) + 8*Math.cos(t*13) + 10*Math.sin(t*3))*roughness;
+    const x = cx2 + r*Math.cos(t), y = cy2 + r*Math.sin(t);
+    if(t===0) tctx.moveTo(x,y); else tctx.lineTo(x,y);
+  }
+  tctx.closePath();
+  tctx.fillStyle='rgba(126,231,255,0.2)';
+  tctx.strokeStyle='#7ee7ff'; tctx.lineWidth=2;
+  tctx.fill(); tctx.stroke();
+  // Label question
+  tctx.fillStyle='#ffd66b'; tctx.font='14px sans-serif';
+  tctx.textAlign='center';
+  tctx.fillText('Frage: Geht das immer?', 450, 260);
+}
+function animateSmooth(){
+  smoothAnim = 0;
+  const iv = setInterval(()=>{
+    smoothAnim += 0.02;
+    if(smoothAnim >= 1){ smoothAnim = 1; clearInterval(iv); }
+    drawTopoSmooth();
+  }, 20);
+}
+drawTopoSmooth();
+
+/* ============ SECTION 7: Parallel transport on sphere ============ */
+function updateParallel(){
+  const psize = parseFloat(document.getElementById('pathSize').value);
+  const pos = parseFloat(document.getElementById('posSlider').value)/100;
+  document.getElementById('pathVal').textContent = psize;
+  document.getElementById('posVal').textContent = document.getElementById('posSlider').value;
+  const th0 = psize * Math.PI/180; // co-latitude of circle
+  // Sphere
+  const N=30;
+  const sx=[],sy=[],sz=[];
+  for(let i=0;i<=N;i++){
+    const rx=[],ry=[],rz=[];
+    for(let j=0;j<=N;j++){
+      const u=i/N*Math.PI, v=j/N*2*Math.PI;
+      rx.push(Math.sin(u)*Math.cos(v));
+      ry.push(Math.sin(u)*Math.sin(v));
+      rz.push(Math.cos(u));
+    }
+    sx.push(rx); sy.push(ry); sz.push(rz);
+  }
+  // Path: circle at co-latitude th0
+  const px=[], py=[], pz=[];
+  for(let t=0;t<=Math.PI*2;t+=0.05){
+    px.push(Math.sin(th0)*Math.cos(t));
+    py.push(Math.sin(th0)*Math.sin(t));
+    pz.push(Math.cos(th0));
+  }
+  // Current position
+  const phi = pos * 2*Math.PI;
+  const cxp = Math.sin(th0)*Math.cos(phi);
+  const cyp = Math.sin(th0)*Math.sin(phi);
+  const czp = Math.cos(th0);
+  // Parallel-transported vector: rotates by angle = phi*(1-cos(th0))
+  const holonomy = phi * (1 - Math.cos(th0));
+  // Local frame: e1 = tangent along circle, e2 = north-pointing tangent
+  const e1 = [-Math.sin(phi), Math.cos(phi), 0];
+  // e2: derivative wrt th0
+  const e2 = [Math.cos(th0)*Math.cos(phi), Math.cos(th0)*Math.sin(phi), -Math.sin(th0)];
+  const vx = Math.cos(-holonomy)*e2[0] + Math.sin(-holonomy)*e1[0];
+  const vy = Math.cos(-holonomy)*e2[1] + Math.sin(-holonomy)*e1[1];
+  const vz = Math.cos(-holonomy)*e2[2] + Math.sin(-holonomy)*e1[2];
+  const scale = 0.35;
+  Plotly.react('parallelPlot', [
+    {type:'surface', x:sx, y:sy, z:sz, opacity:0.4,
+     colorscale:[[0,'#1a1d3a'],[1,'#7ee7ff']], showscale:false},
+    {type:'scatter3d', mode:'lines', x:px, y:py, z:pz,
+     line:{color:'#ffd66b', width:6}, showlegend:false},
+    {type:'scatter3d', mode:'markers', x:[cxp], y:[cyp], z:[czp],
+     marker:{size:8, color:'#ff7ee7'}, showlegend:false},
+    {type:'scatter3d', mode:'lines',
+     x:[cxp, cxp+vx*scale], y:[cyp, cyp+vy*scale], z:[czp, czp+vz*scale],
+     line:{color:'#ff7ee7', width:10}, showlegend:false}
+  ], {
+    paper_bgcolor:'#05060f',
+    scene:{
+      xaxis:{showgrid:false,showticklabels:false,color:'#fff',title:''},
+      yaxis:{showgrid:false,showticklabels:false,color:'#fff',title:''},
+      zaxis:{showgrid:false,showticklabels:false,color:'#fff',title:''},
+      bgcolor:'#05060f',
+      annotations:[{
+        showarrow:false, x:0, y:0, z:1.4,
+        text:`Holonomie: ${(holonomy*180/Math.PI).toFixed(0)}°`,
+        font:{color:'#7ee7ff',size:14}
+      }]
+    },
+    margin:{l:0,r:0,t:0,b:0}
+  }, {displayModeBar:false});
+}
+document.getElementById('pathSize').addEventListener('input', updateParallel);
+document.getElementById('posSlider').addEventListener('input', updateParallel);
+updateParallel();
+
+/* ============ SECTION 8: ASD visualization ============ */
+const asdCanvas = document.getElementById('asdCanvas');
+const actx = asdCanvas.getContext('2d');
+function drawASD(){
+  const mix = parseFloat(document.getElementById('asdSlider').value)/100;
+  document.getElementById('asdMix').textContent = mix.toFixed(2);
+  actx.clearRect(0,0,900,300);
+  // Left: F+ (self-dual, symmetric swirl)
+  // Middle: F (mix)
+  // Right: F- (anti-self-dual)
+  function drawSwirl(cx, cy, kind, label){
+    for(let i=0;i<30;i++){
+      for(let j=0;j<30;j++){
+        const x = -70 + i*5, y = -70 + j*5;
+        const r = Math.sqrt(x*x+y*y);
+        if(r>75) continue;
+        const th = Math.atan2(y,x);
+        let vx, vy;
+        if(kind==='sd'){
+          // Self-dual: rotational field (F12 = F34)
+          vx = -y/(r+5); vy = x/(r+5);
+        } else if(kind==='asd'){
+          // Anti-self-dual
+          vx = y/(r+5); vy = -x/(r+5);
+        } else {
+          // Mix: (1-mix)*sd + mix*asd
+          const sdvx = -y/(r+5), sdvy = x/(r+5);
+          const asvx = y/(r+5), asvy = -x/(r+5);
+          vx = (1-mix)*sdvx + mix*asvx;
+          vy = (1-mix)*sdvy + mix*asvy;
+        }
+        const mag = Math.sqrt(vx*vx+vy*vy);
+        const alpha = Math.exp(-r*r/2000);
+        actx.strokeStyle = kind==='sd' ? `rgba(126,231,255,${alpha})` :
+                          kind==='asd' ? `rgba(255,126,231,${alpha})` :
+                          `rgba(255,214,107,${alpha})`;
+        actx.lineWidth = 1.5;
+        actx.beginPath();
+        actx.moveTo(cx+x, cy+y);
+        actx.lineTo(cx+x+vx*6, cy+y+vy*6);
+        actx.stroke();
+      }
+    }
+    actx.fillStyle='#fff'; actx.font='bold 14px sans-serif';
+    actx.textAlign='center';
+    actx.fillText(label, cx, cy+110);
+  }
+  drawSwirl(150, 150, 'sd', 'F⁺ (selbstdual)');
+  drawSwirl(450, 150, 'mix', 'F = F⁺ + F⁻ (Mischung)');
+  drawSwirl(750, 150, 'asd', 'F⁻ (anti-selbstdual)');
+  const asdness = mix;
+  document.getElementById('asdOut').textContent =
+    `ASD-Anteil: ${(asdness*100).toFixed(0)}%   |   ${mix===1?'✓ REINE ASD-Lösung — ein Instanton!':mix===0?'Reine SD-Lösung':'Gemischte Krümmung'}`;
+}
+document.getElementById('asdSlider').addEventListener('input', drawASD);
+drawASD();
+
+/* ============ SECTION 9a: Moduli space visualization ============ */
+function drawModuli(){
+  // Symbolic 3D representation: a "cone" with singularities and an end
+  const N = 40;
+  const x=[], y=[], z=[];
+  for(let i=0;i<=N;i++){
+    const rx=[],ry=[],rz=[];
+    for(let j=0;j<=N;j++){
+      const u = i/N; // 0=singular tip, 1=infinity
+      const v = j/N*2*Math.PI;
+      const rr = 0.1 + u*u*1.5;
+      rx.push(rr*Math.cos(v));
+      ry.push(rr*Math.sin(v));
+      rz.push(u*3);
+    }
+    x.push(rx); y.push(ry); z.push(rz);
+  }
+  // Singular points (cones)
+  const sx=[0.7, -0.6, 0.2], sy=[0.3, -0.4, 0.7], sz=[0.5, 0.8, 1.2];
+  Plotly.react('moduliPlot', [
+    {type:'surface', x:x, y:y, z:z, opacity:0.5,
+     colorscale:[[0,'#ff7ee7'],[0.5,'#7ee7ff'],[1,'#ffd66b']],
+     showscale:false},
+    {type:'scatter3d', mode:'markers+text',
+     x:sx, y:sy, z:sz,
+     marker:{size:10, color:'#ff7c9c', symbol:'diamond'},
+     text:['Kegel über ℂP²','Singulär','Reduzibel'],
+     textposition:'top center',
+     textfont:{color:'#ffd66b',size:11},
+     showlegend:false},
+    {type:'scatter3d', mode:'text', x:[0], y:[0], z:[3.3],
+     text:['Ende ≅ X × (0,ε)'], textfont:{color:'#7ee7ff',size:14},
+     showlegend:false}
+  ], {
+    paper_bgcolor:'#05060f',
+    scene:{
+      xaxis:{showgrid:false,showticklabels:false,color:'#fff',title:''},
+      yaxis:{showgrid:false,showticklabels:false,color:'#fff',title:''},
+      zaxis:{showgrid:false,showticklabels:false,color:'#fff',title:'Skala'},
+      bgcolor:'#05060f'
+    },
+    margin:{l:0,r:0,t:20,b:0},
+    title:{text:'Modulraum ℳ (schematisch, dim=5)', font:{color:'#7ee7ff'}}
+  }, {displayModeBar:false});
+}
+drawModuli();
+
+/* ============ SECTION 9b: Reducible connections count ============ */
+const redCanvas = document.getElementById('redCanvas');
+const rctx = redCanvas.getContext('2d');
+let currentRedForm = 'diag3';
+const redForms = {
+  diag2: {name:'Q = −I₂', matrix:[[-1,0],[0,-1]], rank:2},
+  diag3: {name:'Q = −I₃', matrix:[[-1,0,0],[0,-1,0],[0,0,-1]], rank:3},
+  E8neg: {name:'Q = −E₈', matrix:[
+    [-2,1,0,0,0,0,0,0],[1,-2,1,0,0,0,0,0],[0,1,-2,1,0,0,0,1],
+    [0,0,1,-2,1,0,0,0],[0,0,0,1,-2,1,0,0],[0,0,0,0,1,-2,1,0],
+    [0,0,0,0,0,1,-2,0],[0,0,1,0,0,0,0,-2]
+  ], rank:8}
+};
+function findVectorsWithQeqNeg1(Q, maxCoord=2){
+  const n = Q.length;
+  const vectors = [];
+  function rec(idx, current){
+    if(idx===n){
+      let val = 0;
+      for(let i=0;i<n;i++)for(let j=0;j<n;j++) val += Q[i][j]*current[i]*current[j];
+      if(val===-1) vectors.push([...current]);
+      return;
+    }
+    for(let c=-maxCoord;c<=maxCoord;c++){
+      current[idx]=c;
+      rec(idx+1, current);
+    }
+  }
+  rec(0, new Array(n).fill(0));
+  return vectors;
+}
+function loadRedForm(key){
+  currentRedForm = key;
+  const f = redForms[key];
+  const vectors = findVectorsWithQeqNeg1(f.matrix, 2);
+  // Group into ±α pairs
+  const pairs = [];
+  const seen = new Set();
+  for(const v of vectors){
+    const key = v.join(',');
+    const negKey = v.map(x=>-x).join(',');
+    if(!seen.has(key) && !seen.has(negKey)){
+      pairs.push(v);
+      seen.add(key); seen.add(negKey);
+    }
+  }
+  const nQ = pairs.length;
+  // Draw
+  rctx.clearRect(0,0,900,360);
+  rctx.fillStyle='#fff'; rctx.font='bold 18px sans-serif';
+  rctx.textAlign='center';
+  rctx.fillText(`Form: ${f.name}   |   Rang = ${f.rank}   |   n(Q) = ${nQ}`, 450, 30);
+  // Show vectors as dots
+  const cols = Math.min(10, pairs.length);
+  const rows = Math.ceil(pairs.length/cols);
+  for(let i=0;i<pairs.length;i++){
+    const r = Math.floor(i/cols), c = i%cols;
+    const x = 100 + c*70, y = 90 + r*70;
+    rctx.beginPath(); rctx.arc(x,y,26,0,Math.PI*2);
+    rctx.fillStyle = 'rgba(126,231,255,0.15)';
+    rctx.fill();
+    rctx.strokeStyle='#7ee7ff'; rctx.lineWidth=2; rctx.stroke();
+    rctx.fillStyle='#7ee7ff'; rctx.font='10px monospace';
+    rctx.fillText('±'+pairs[i].join(','), x, y+3);
+  }
+  // Diagnosis
+  const equal = nQ === f.rank;
+  const diagText = equal
+    ? `✓ n(Q) = rang(Q) = ${f.rank}  →  Q IST diagonalisierbar`
+    : `✗ n(Q) = ${nQ} < rang(Q) = ${f.rank}  →  Q ist NICHT diagonalisierbar`;
+  document.getElementById('redOut').innerHTML = diagText;
+}
+loadRedForm('diag3');
+
+/* ============ SECTION 10: Cobordism visualization ============ */
+const cobCanvas = document.getElementById('cobCanvas');
+const cctx = cobCanvas.getContext('2d');
+function drawCobordism(){
+  const nq = parseInt(document.getElementById('nqSlider').value);
+  const stage = parseInt(document.getElementById('stageSlider').value);
+  document.getElementById('nqVal').textContent = nq;
+  document.getElementById('stageVal').textContent = stage;
+  cctx.clearRect(0,0,900,450);
+  const descs = {
+    1: '<b>Stadium 1:</b> Der Modulraum ℳ (5-dim, offen). Zeigt Singularitäten (Kegel über ℂP²) und offenes Ende bei ∞.',
+    2: '<b>Stadium 2:</b> Schneide jeden Kegel ab und klebe eine Kopie von ℂP² ein — die Singularitäten sind "geheilt".',
+    3: '<b>Stadium 3:</b> Klebe am ∞-Ende eine Kopie von X selbst ein. Jetzt ist ℳ kompakt!',
+    4: '<b>Stadium 4:</b> Ergebnis: Ein Kobordismus zwischen X und n(Q) Kopien von ℂP². Signatur-Argument gibt uns die Antwort!'
+  };
+  document.getElementById('cobDesc').innerHTML = descs[stage];
+
+  // Draw the moduli space horizontally as a "tube" from left to right
+  const yMid = 225;
+  
+  // Base tube (moduli space)
+  cctx.strokeStyle = '#7ee7ff';
+  cctx.lineWidth = 2;
+  cctx.fillStyle = 'rgba(126,231,255,0.1)';
+  
+  // Left side: X (bottom boundary)
+  if(stage >= 3){
+    // Draw X as a blob on the left
+    cctx.beginPath();
+    cctx.ellipse(90, yMid, 40, 90, 0, 0, Math.PI*2);
+    cctx.fillStyle = 'rgba(255,214,107,0.25)';
+    cctx.fill();
+    cctx.strokeStyle = '#ffd66b'; cctx.lineWidth = 3;
+    cctx.stroke();
+    cctx.fillStyle = '#ffd66b'; cctx.font = 'bold 16px sans-serif';
+    cctx.textAlign = 'center';
+    cctx.fillText('X', 90, yMid+5);
+    cctx.font = '11px sans-serif';
+    cctx.fillText('(bei ∞ eingeklebt)', 90, yMid+115);
+  } else {
+    // Open end
+    cctx.strokeStyle = '#8b93b8'; cctx.lineWidth = 2;
+    cctx.setLineDash([5,5]);
+    cctx.beginPath();
+    cctx.ellipse(90, yMid, 40, 90, 0, 0, Math.PI*2);
+    cctx.stroke();
+    cctx.setLineDash([]);
+    cctx.fillStyle = '#8b93b8'; cctx.font = '11px sans-serif';
+    cctx.textAlign = 'center';
+    cctx.fillText('offenes Ende', 90, yMid-105);
+    cctx.fillText('≅ X × (0,ε)', 90, yMid+110);
+  }
+  
+  // Middle: tube (moduli space)
+  cctx.fillStyle = 'rgba(126,231,255,0.08)';
+  cctx.strokeStyle = '#7ee7ff';
+  cctx.lineWidth = 2;
+  cctx.beginPath();
+  cctx.moveTo(130, yMid - 90);
+  cctx.bezierCurveTo(300, yMid-100, 500, yMid-80, 810, yMid-70);
+  cctx.lineTo(810, yMid+70);
+  cctx.bezierCurveTo(500, yMid+80, 300, yMid+100, 130, yMid+90);
+  cctx.closePath();
+  cctx.fill(); cctx.stroke();
+  cctx.fillStyle = '#7ee7ff'; cctx.font = 'italic 14px sans-serif';
+  cctx.textAlign = 'center';
+  cctx.fillText('Modulraum ℳ (5-dim Kobordismus)', 470, yMid-115);
+  
+  // Right side: n(Q) copies of CP²
+  const cpX = 810;
+  const spacing = Math.min(60, 300/nq);
+  const totalH = (nq-1)*spacing;
+  for(let i=0;i<nq;i++){
+    const cy = yMid - totalH/2 + i*spacing;
+    if(stage >= 2){
+      // Filled CP²
+      cctx.beginPath();
+      cctx.arc(cpX, cy, 22, 0, Math.PI*2);
+      cctx.fillStyle = 'rgba(255,126,231,0.3)';
+      cctx.fill();
+      cctx.strokeStyle = '#ff7ee7'; cctx.lineWidth = 2;
+      cctx.stroke();
+      cctx.fillStyle = '#ff7ee7'; cctx.font = 'bold 11px sans-serif';
+      cctx.textAlign = 'center';
+      cctx.fillText('ℂP²', cpX, cy+4);
+    } else {
+      // Singular cone (before gluing)
+      cctx.strokeStyle = '#ff7c9c'; cctx.lineWidth = 2;
+      cctx.setLineDash([3,3]);
+      cctx.beginPath();
+      cctx.moveTo(cpX-15, cy-15);
+      cctx.lineTo(cpX, cy);
+      cctx.lineTo(cpX-15, cy+15);
+      cctx.stroke();
+      cctx.beginPath();
+      cctx.arc(cpX, cy, 5, 0, Math.PI*2);
+      cctx.fillStyle = '#ff7c9c'; cctx.fill();
+      cctx.setLineDash([]);
+    }
+  }
+  cctx.fillStyle = stage >=2 ? '#ff7ee7' : '#ff7c9c';
+  cctx.font = 'bold 13px sans-serif';
+  cctx.textAlign = 'center';
+  cctx.fillText(`${nq} × ${stage>=2?'ℂP²':'Singularitäten'}`, cpX, yMid+totalH/2+50);
+  cctx.font = '11px sans-serif';
+  cctx.fillText('(reduzible Zush.)', cpX, yMid+totalH/2+68);
+  
+  // Stage 4: show the equation
+  if(stage === 4){
+    cctx.fillStyle = '#ffd66b';
+    cctx.font = 'bold 15px monospace';
+    cctx.textAlign = 'center';
+    cctx.fillText('∂(ℳ) = X ⊔ (n(Q) · ℂP²)', 470, 410);
+    cctx.font = '13px monospace';
+    cctx.fillStyle = '#7cffc4';
+    cctx.fillText('⟹ σ(X) ≤ n(Q) ≤ rang(Q) = σ(X)   ⟹   n(Q) = rang(Q)   ⟹   Q diagonalisierbar ✓', 470, 435);
+  }
+}
+document.getElementById('nqSlider').addEventListener('input', drawCobordism);
+document.getElementById('stageSlider').addEventListener('input', drawCobordism);
+drawCobordism();
+
+/* ============ SECTION 11a: E8 visualization ============ */
+const e8Canvas = document.getElementById('e8Canvas');
+const ectx = e8Canvas.getContext('2d');
+function drawE8(){
+  ectx.clearRect(0,0,400,300);
+  // Draw E8 Dynkin diagram
+  const nodes = [
+    {x:60, y:200}, {x:110, y:200}, {x:160, y:200}, {x:210, y:200},
+    {x:260, y:200}, {x:310, y:200}, {x:360, y:200}, {x:210, y:130}
+  ];
+  // Edges
+  ectx.strokeStyle = '#7ee7ff'; ectx.lineWidth = 2;
+  for(let i=0;i<6;i++){
+    ectx.beginPath();
+    ectx.moveTo(nodes[i].x, nodes[i].y);
+    ectx.lineTo(nodes[i+1].x, nodes[i+1].y);
+    ectx.stroke();
+  }
+  // Branch edge (node 2 to node 7)
+  ectx.beginPath();
+  ectx.moveTo(nodes[2].x, nodes[2].y);
+  ectx.lineTo(nodes[7].x, nodes[7].y);
+  ectx.stroke();
+  // Nodes
+  for(let i=0;i<8;i++){
+    ectx.beginPath();
+    ectx.arc(nodes[i].x, nodes[i].y, 12, 0, Math.PI*2);
+    ectx.fillStyle = '#ff7ee7';
+    ectx.fill();
+    ectx.strokeStyle = '#fff'; ectx.lineWidth = 2;
+    ectx.stroke();
+  }
+  ectx.fillStyle = '#fff'; ectx.font = 'bold 14px sans-serif';
+  ectx.textAlign = 'center';
+  ectx.fillText('E₈ Dynkin-Diagramm', 200, 40);
+  ectx.fillStyle = '#ffd66b'; ectx.font = '12px sans-serif';
+  ectx.fillText('positiv definit, unimodular', 200, 65);
+  ectx.fillText('aber NICHT diagonalisierbar über ℤ', 200, 85);
+  ectx.fillStyle = '#ff7c9c'; ectx.font = 'bold 13px sans-serif';
+  ectx.fillText('⟹ topologisch existent, glatt UNMÖGLICH', 200, 270);
+}
+drawE8();
+
+/* ============ SECTION 11b: Classification ============ */
+const classCanvas = document.getElementById('classifyCanvas');
+const clctx = classCanvas.getContext('2d');
+function drawClassify(){
+  clctx.clearRect(0,0,400,300);
+  // Show three "invariants" as axes
+  clctx.fillStyle = '#fff'; clctx.font = 'bold 14px sans-serif';
+  clctx.textAlign = 'center';
+  clctx.fillText('Vollständige Invarianten (glatt, s.z.)', 200, 30);
+  
+  const items = [
+    {label:'Rang', color:'#7ee7ff', val:'b₂(X)', y:80},
+    {label:'Signatur', color:'#ff7ee7', val:'σ(X) = b₊ − b₋', y:140},
+    {label:'Parität', color:'#ffd66b', val:'gerade / ungerade', y:200}
+  ];
+  for(const it of items){
+    clctx.fillStyle = it.color;
+    clctx.beginPath();
+    clctx.arc(60, it.y, 15, 0, Math.PI*2);
+    clctx.fill();
+    clctx.fillStyle = '#fff'; clctx.font = 'bold 13px sans-serif';
+    clctx.textAlign = 'left';
+    clctx.fillText(it.label, 85, it.y-3);
+    clctx.font = '11px monospace'; clctx.fillStyle = '#8b93b8';
+    clctx.fillText(it.val, 85, it.y+13);
+  }
+  clctx.fillStyle = '#7cffc4'; clctx.font = 'bold 12px sans-serif';
+  clctx.textAlign = 'center';
+  clctx.fillText('Diese drei Zahlen bestimmen X', 200, 260);
+  clctx.fillText('bis auf Homöomorphie eindeutig!', 200, 278);
+}
+drawClassify();
+
+/* ============ SECTION 11c: Interactive checker ============ */
+let checkM = [[1,0],[0,1]];
+function buildChecker(){
+  const c = document.getElementById('checkerUI');
+  let h = '<div style="display:inline-grid;grid-template-columns:repeat(2,60px);gap:6px;margin-bottom:10px">';
+  for(let i=0;i<2;i++)for(let j=0;j<2;j++){
+    h += `<input type="number" step="1" value="${checkM[i][j]}" 
+      id="ch${i}${j}" oninput="updateCheck(${i},${j},this.value)"
+      style="width:60px;padding:8px;background:#1c2040;color:#fff;border:1px solid #333;border-radius:6px;text-align:center;font-weight:600">`;
+  }
+  h += '</div>';
+  c.innerHTML = h;
+}
+function updateCheck(i,j,v){
+  checkM[i][j] = parseFloat(v)||0;
+  // Symmetrize
+  if(i!==j){
+    checkM[j][i] = checkM[i][j];
+    document.getElementById(`ch${j}${i}`).value = checkM[i][j];
+  }
+  evalCheck();
+}
+function evalCheck(){
+  const a = checkM[0][0], b = checkM[0][1], d = checkM[1][1];
+  const det = a*d - b*b;
+  const trace = a + d;
+  // Eigenvalues
+  const disc = Math.sqrt(Math.max(0, trace*trace - 4*det));
+  const l1 = (trace + disc)/2, l2 = (trace - disc)/2;
+  const isDefinite = det > 0 && a !== 0;
+  const posDef = isDefinite && a > 0;
+  const negDef = isDefinite && a < 0;
+  // Unimodular?
+  const unimod = Math.abs(det) === 1;
+  // Diagonalizable over Z if it equals ±I₂ or diagonalizable via integer basis change
+  // For 2x2 definite unimodular: diagonalizable iff represents ±1 (has α with Q(α,α) = ±1)
+  let hasPM1 = false;
+  for(let x=-3;x<=3;x++)for(let y=-3;y<=3;y++){
+    if(x===0 && y===0) continue;
+    const val = a*x*x + 2*b*x*y + d*y*y;
+    if(Math.abs(val)===1){ hasPM1 = true; break; }
+  }
+  const diagOverZ = unimod && isDefinite && hasPM1;
+  
+  let msg = '';
+  msg += `det = ${det}, trace = ${trace}<br>`;
+  msg += `Eigenwerte: λ₁ ≈ ${l1.toFixed(2)}, λ₂ ≈ ${l2.toFixed(2)}<br>`;
+  msg += `Unimodular (|det|=1): ${unimod?'✓':'✗'}<br>`;
+  msg += `Definit: ${posDef?'positiv ✓':negDef?'negativ ✓':'nein ✗'}<br>`;
+  if(!isDefinite){
+    msg += `<span style="color:var(--accent3)">→ Donaldsons Satz nicht anwendbar (nicht definit)</span>`;
+  } else if(!unimod){
+    msg += `<span style="color:var(--accent3)">→ Nicht unimodular — kommt gar nicht als Schnittform vor</span>`;
+  } else if(diagOverZ){
+    msg += `<span style="color:var(--good)">✓ Diagonalisierbar über ℤ → glatte Struktur EXISTIERT</span>`;
+  } else {
+    msg += `<span style="color:var(--bad)">✗ NICHT diagonalisierbar → KEINE glatte Struktur (nach Donaldson)</span>`;
+  }
+  document.getElementById('checkerOut').innerHTML = msg;
+}
+buildChecker();
+evalCheck();
+
+</script>
+</body>
+</html>
