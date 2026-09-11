@@ -6641,6 +6641,12 @@ window.bibData = {
 		url: "https://uberty.org/wp-content/uploads/2015/12/Grothendeick-RetS.pdf",
 		alternativetitle: "Grothendieck's autobiographical manuscript"
 	},
+	"grothendieck_image": {
+		title: "Portrait of Alexander Grothendieck",
+		author: "Heidelberg Laureate Forum Foundation",
+		url: "https://www.heidelberg-laureate-forum.org/laureate/alexander-grothendieck/",
+		alternativetitle: "Grothendieck portrait (Heidelberg Laureate Forum)"
+	},
 	"awodey2010category": {
 		title: "Category Theory",
 		author: "Steve Awodey",
