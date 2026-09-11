@@ -5,6 +5,7 @@ title: Retrieval-Augmented Generation: Giving LLMs a Search Engine
 description: Giving LLMs a search engine, chunking, embedding, and the RAG pipeline.
 icon: &#128270;
 part: 5
+order: 3
 color: rose
 topics: inference, language, programming, architecture
 -->

@@ -4,7 +4,8 @@ COURSE_METADATA:
 title: Production Serving & Inference
 description: vLLM, continuous batching, paged attention, and how to serve an LLM to millions of users.
 icon: &#9889;
-part: 54
+part: 5
+order: 14
 color: rose
 topics: inference, hardware, programming, society
 -->

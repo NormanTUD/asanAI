@@ -5,6 +5,7 @@ title: Inference Optimization
 description: Quantization, KV-cache, paged attention, FlashAttention, speculative decoding — every knob.
 icon: &#9889;
 part: 5
+order: 9
 color: rose
 topics: inference, hardware, programming, math-i, math-ii
 -->

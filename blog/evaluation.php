@@ -4,7 +4,8 @@ COURSE_METADATA:
 title: Evaluation & Benchmarks
 description: How we measure LLM capability — MMLU, HumanEval, contamination, and the limits of benchmarks.
 icon: &#127942;
-part: 56
+part: 5
+order: 16
 color: rose
 topics: programming, philosophy, society
 -->

@@ -5,6 +5,7 @@ title: Smallest possible neural network
 description: The simplest AI: y = ax + b. A single neuron, linear regression, and the birth of learning.
 icon: &#10024;
 part: 2
+order: 7
 color: coral
 topics: math-i, math-ii, programming
 -->

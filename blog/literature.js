@@ -10192,13 +10192,6 @@ window.bibData = {
 		url: "https://doi.org/10.1111/j.1468-5906.2011.01564.x",
 		alternativetitle: "Barrett, Cognitive Science of Religion"
 	},
-	"brainlateral_image": {
-		title: "Lateral view of the human brain",
-		url: "https://commons.wikimedia.org/wiki/File:Brain_Lateral_(NIH_BioArt_60).png",
-		author: "NIH / NIAID (Ryan Kissinger)",
-		license: "Public domain",
-		alternativetitle: "The human brain"
-	},
 	"galilei_image": {
 		title: "Portrait of Galileo Galilei by Justus Sustermans (1636)",
 		url: "https://commons.wikimedia.org/wiki/File:Justus_Sustermans_-_Portrait_of_Galileo_Galilei_(Uffizi)_(cropped).jpg",

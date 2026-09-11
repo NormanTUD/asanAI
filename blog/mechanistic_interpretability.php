@@ -5,6 +5,7 @@ title: Mechanistic Interpretability
 description: Reverse-engineering Transformers: circuits, induction heads, superposition, sparse autoencoders, and the tools that open the black box.
 icon: &#128268;
 part: 4
+order: 9
 color: sky
 topics: interpretability, architecture, philosophy, math-ii, math-iii
 -->

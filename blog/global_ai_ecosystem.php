@@ -5,6 +5,7 @@ title: The Global AI Ecosystem
 description: Beyond the Anglosphere — Chinese AI, Indian AI, African AI, and the rest of the world.
 icon: &#127760;
 part: 6
+order: 1
 color: text-secondary
 topics: society, ethics, history
 -->

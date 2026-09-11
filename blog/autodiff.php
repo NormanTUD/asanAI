@@ -5,6 +5,7 @@ title: Automatic Differentiation: How Machines Learn
 description: How machines compute gradients at scale, the chain rule, forward and reverse mode.
 icon: &#9881;
 part: 2
+order: 4
 color: coral
 topics: math-i, programming
 -->

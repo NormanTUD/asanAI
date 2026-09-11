@@ -4,7 +4,8 @@ COURSE_METADATA:
 title: Diffusion Models
 description: How Denoising Diffusion Probabilistic Models (DDPM) and Latent Diffusion (Stable Diffusion) generate images by reversing noise.
 icon: &#127912;
-part: 43
+part: 4
+order: 13
 color: sky
 topics: multimodal, vision, architecture, programming
 -->

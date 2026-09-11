@@ -5,6 +5,7 @@ title: Statistics I — Distributions and Inference
 description: The shape of data — Bernoulli, Binomial, Normal, CLT, Chi-Square, Z-scores, Zipf.
 icon: &#128200;
 part: 1
+order: 8
 color: accent
 topics: math-i, statistics-i
 -->

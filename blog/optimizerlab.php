@@ -5,6 +5,7 @@ title: The Optimizer: Navigating the Loss Landscape
 description: Navigating the loss landscape, SGD, Momentum, and Adam compared interactively.
 icon: &#127757;
 part: 2
+order: 6
 color: coral
 topics: training, math-i, math-ii, programming
 -->

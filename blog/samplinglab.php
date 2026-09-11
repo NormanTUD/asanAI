@@ -5,6 +5,7 @@ title: Temperature & Sampling
 description: Top-k, top-p, min-p, top-n, repetition penalty — every decoding strategy.
 icon: &#127922;
 part: 4
+order: 7
 color: sky
 topics: architecture, statistics-i, statistics-ii
 -->

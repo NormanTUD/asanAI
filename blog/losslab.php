@@ -5,6 +5,7 @@ title: Loss: Teaching through Failure
 description: How models know they're wrong, MSE, cross-entropy, and the mathematics of measuring error.
 icon: &#127919;
 part: 2
+order: 1
 color: coral
 topics: training, math-i, programming
 -->

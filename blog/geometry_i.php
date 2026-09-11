@@ -5,6 +5,7 @@ title: The Shape of Space — A History of Geometry
 description: From a zig-zag etched in a shell to non-Euclidean manifolds: who found each piece of space, when, and why — with the equations as they first appeared.
 icon: &#128208;
 part: 1
+order: 6
 color: accent
 topics: geometry, math-iii, history
 -->

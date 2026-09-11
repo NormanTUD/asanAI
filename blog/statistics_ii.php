@@ -5,6 +5,7 @@ title: Statistics II — Inference and Information
 description: Bayesian updating, entropy, the Dirichlet distribution, EM, Markov chains, Zipf.
 icon: &#128200;
 part: 1
+order: 9
 color: accent
 topics: math-ii, math-iii, statistics-ii
 -->

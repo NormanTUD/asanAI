@@ -5,6 +5,7 @@ title: Basic Math Concepts III — Approximation & The Geometry of High Dimensio
 description: Why AI works on approximations, accuracy vs precision, and the blessing of dimensionality.
 icon: &#128290;
 part: 1
+order: 5
 color: accent
 topics: math-iii
 -->

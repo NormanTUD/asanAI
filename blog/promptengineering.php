@@ -4,7 +4,8 @@ COURSE_METADATA:
 title: Prompt Engineering: How to talk to LLMs
 description: The practical craft of talking to LLMs, roles, delimiters, and canonicalization.
 icon: &#9999;
-part: 57
+part: 5
+order: 17
 color: rose
 topics: language, programming
 -->

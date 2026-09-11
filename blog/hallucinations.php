@@ -5,6 +5,7 @@ title: Hallucinations and Dangers of AI and How to use AI Safely
 description: Why AI lies, how pattern completion goes wrong, and using AI safely.
 icon: &#9888;
 part: 5
+order: 2
 color: rose
 topics: safety, ethics, language, programming
 -->

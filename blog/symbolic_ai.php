@@ -4,7 +4,8 @@ COURSE_METADATA:
 title: Symbolic AI, Knowledge Graphs & Neuro-Symbolic AI
 description: The other branch of AI: formal logic, knowledge representation, and the new synthesis.
 icon: &#128200;
-part: 51
+part: 5
+order: 11
 color: rose
 topics: programming, philosophy, architecture
 -->

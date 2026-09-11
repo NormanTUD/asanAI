@@ -5,6 +5,7 @@ title: Context Windows & Memory: What LLMs Can Hold in Mind
 description: What LLMs can hold in mind, from GPT-2's 1K to Gemini's 1M+ tokens.
 icon: &#128196;
 part: 5
+order: 7
 color: rose
 topics: language, architecture, programming
 -->

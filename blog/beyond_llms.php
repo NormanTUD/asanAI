@@ -5,6 +5,7 @@ title: Beyond LLMs — The Wider World of Algorithms & Models
 description: The Wake-Sleep algorithm, clustering, classical ML, Bayesian methods, evolutionary search, symbolic reasoning, and dozens of other model families that LLM-centric writing tends to forget.
 icon: &#127757;
 part: 6
+order: 4
 color: accent
 topics: architecture, training, programming, math-i, math-ii, math-iii, statistics-i, statistics-ii, history, philosophy
 -->

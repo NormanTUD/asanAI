@@ -128,6 +128,7 @@
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("The Global AI Ecosystem", "global_ai_ecosystem");
 	incl("The Untold History of AI", "untold_history");
+	incl("The Mind That Built Machines", "human_mind");
 	incl("Beyond LLMs — The Wider World of Algorithms & Models", "beyond_llms");
 	incl("Frontier Topics", "frontier");
 	incl("AI Law & Regulation", "law_regulation");

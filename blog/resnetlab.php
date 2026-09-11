@@ -5,6 +5,7 @@ title: Deep Learning Mechanics: ResNets & Vanishing Gradients
 description: Why plain networks fail at depth, and the elegant residual shortcut that fixed everything.
 icon: &#128739;
 part: 3
+order: 4
 color: emerald
 topics: math-i, math-ii, architecture
 -->

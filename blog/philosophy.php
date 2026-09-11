@@ -5,6 +5,7 @@ title: Philosophical and societal implications, ethical usage of AI
 description: The Turing Test, the Vector Grounding Problem, Mary's Room, sentience, and what it means to think.
 icon: &#128218;
 part: 6
+order: 7
 color: text-secondary
 topics: philosophy, ethics, language
 -->
