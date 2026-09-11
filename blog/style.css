@@ -1631,7 +1631,7 @@ html.theme-transition *::after {
 
 #contents p {
 	hanging-punctuation: first last;
-	hyphenate-limit-chars: 6 3 3; 
+	hyphenate-limit-chars: 5 2 2; 
 	font-variant-numeric: tabular-nums; /* Zahlen stehen sauber untereinander */
 
 	text-wrap: pretty; /* Verhindert einzelne Wörter in der letzten Zeile */
@@ -9054,7 +9054,7 @@ html.dark .topics-preset-fun {
 	line-height: 1.25;
 	font-family: var(--mn-font-body);
 	letter-spacing: -0.005em;
-	overflow-wrap: anywhere;
+	overflow-wrap: break-word;
 	text-align: left;
 	justify-self: start;
 	width: 100%;
