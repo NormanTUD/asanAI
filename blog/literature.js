@@ -6502,7 +6502,7 @@ window.bibData = {
 		journal: "Mathematische Annalen",
 		volume: 71,
 		pages: "97–115",
-		url: "http://resolver.sub.uni-goettingen.de/purl?GDZPPN002264021",
+		url: "https://doi.org/10.1007/BF01456931",
 		alternativetitle: "Brouwer's fixed-point theorem"
 	},
 	"mclarty2006noether": {
@@ -6638,7 +6638,7 @@ window.bibData = {
 		title: "Récoltes et Semailles: Réflexions et témoignage sur un passé de mathématicien",
 		author: "Alexander Grothendieck",
 		year: 1986,
-		url: "https://webusers.imj-prg.fr/~leila.schneps/grothendieckcircle/ReS.pdf",
+		url: "https://uberty.org/wp-content/uploads/2015/12/Grothendeick-RetS.pdf",
 		alternativetitle: "Grothendieck's autobiographical manuscript"
 	},
 	"awodey2010category": {
