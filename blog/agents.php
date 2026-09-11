@@ -5,6 +5,7 @@ title: AI Agents: Autonomous Reasoning and Tool Use
 description: History, architecture, and internals of LLM-based agents, from early cognitive architectures to ReAct and beyond.
 icon: &#129302;
 part: 5
+order: 5
 color: rose
 topics: reasoning, agents, programming, language
 -->
