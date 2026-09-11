@@ -27,7 +27,7 @@ This chapter follows that growth step by step. For each turn we ask four questio
 <div class="md">
 ## I. Before writing: space etched in shell and bone
 
-The oldest geometric objects we have are not calculations at all. The very oldest is not even a mark but a *shape* — a handaxe, a three-dimensional object worked to a mental template of symmetry and proportion a million and a half years before anyone etched a line. After it come the *patterns*: marks made by a hand that was doing something else (shaping a tool, decorating, keeping score), in which a deliberate regularity shows up. That regularity is the first thing geometry notices — the sense that *the same shape* can be repeated, and that repeating it is meaningful. No one sat down to invent geometry; geometry is what a shape-making, pattern-making mind leaves behind when it is not, strictly, being *about* geometry at all.
+**What motivated the earliest geometry?** Not profit and not fear of the gods — a quieter need: to make space *orderly*, to hold a shape in the mind and repeat it, and to recognise *the same shape* in the world again. The oldest geometric objects we have are not calculations at all. The very oldest is not even a mark but a *shape* — a handaxe, a three-dimensional object worked to a mental template of symmetry and proportion a million and a half years before anyone etched a line. After it come the *patterns*: marks made by a hand that was doing something else (shaping a tool, decorating, keeping score), in which a deliberate regularity shows up. That regularity is the first thing geometry notices — the sense that *the same shape* can be repeated, and that repeating it is meaningful. No one sat down to invent geometry; geometry is what a shape-making, pattern-making mind leaves behind when it is not, strictly, being *about* geometry at all.
 
 ### The Acheulean handaxe (c. 1.76 million years ago)
 
@@ -75,7 +75,7 @@ If the shell and the ochre mark the birth of *form*, the **Ishango bone** and th
 <div class="md">
 ## II. Measuring the land: the surveyor's equations
 
-For most of its early history, geometry was not a body of theorems. It was a *technique of state*: the discipline of measuring fields, dividing inheritances, and erecting temples that had to be square. It appears almost simultaneously in the first great urban cultures — Egypt, Mesopotamia, the Indus Valley, China — each with its own tools and its own number system. The *why* is a single, shared, unglamorous fact: **when the river rose, the boundaries vanished.**
+**What motivated geometry's first rise?** A single, shared, unglamorous fact of land: **when the river rose, the boundaries vanished.** For most of its early history geometry was not a body of theorems but a *technique of state*: the discipline of measuring fields, dividing inheritances, and erecting temples that had to be square. It appears almost simultaneously in the first great urban cultures — Egypt, Mesopotamia, the Indus Valley, China — each with its own tools and its own number system.
 
 In Egypt the Nile's annual inundation wiped out every field boundary, and each year the fields had to be *re-measured* — and, crucially, the crown's grain tax was assessed by the *area* of a holding, so a wrong area meant a wrong tax. In Mesopotamia, where there was no single river but a dense mesh of canals and private plots, the need to settle *disputable* boundaries between neighbours was constant. In China the state had to tax land, move armies, and move earth (dikes, canals, granaries), and every one of those is a *geometry* problem. So in all three places the same small kit of formulas was invented, independently, for the same reason: to put an exact number on a piece of land.
 
@@ -173,7 +173,7 @@ A fair summary of this whole section: by the first millennium BCE, three unrelat
 <div class="md">
 ## III. The Greek turn: from measuring to proving
 
-The Greeks did not invent geometry. They did something more radical: they made it *demonstrative*. A Babylonian scribe could give you the right answer and trust the recipe. A Greek wanted to know **why it must be so, and why it cannot fail**. That single demand — for *apodeixis*, proof — is what separates the *Elements* from everything before it, and it is the habit of mind that all of modern mathematics (and, in the end, all of the formal reasoning a computer performs) inherits. The *why* is cultural: the Greeks, and the Pythagoreans in particular, believed *number* was the substance of reality ("all is number"), so a fact about number could not merely be *useful*; it had to be *necessary* — true in every possible world, not just in the field you are surveying today.
+**What motivated proof?** Not doubt — the opposite: belief. The Greeks, and the Pythagoreans in particular, held that *number* was the substance of reality ("all is number"); so a fact about number could not merely be *useful* — it had to be *necessary*, true in every possible world, not just in the field you are surveying today. When the Greeks met geometry they therefore did not simply inherit it: they made it *demonstrative*. A Babylonian scribe could give you the right answer and trust the recipe; a Greek wanted to know **why it must be so, and why it cannot fail**. That single demand — for *apodeixis*, proof — is what separates the *Elements* from everything before it, and it is the habit of mind that all of modern mathematics (and, in the end, all of the formal reasoning a computer performs) inherits.
 
 ### Thales, Pythagoras and the theorem
 
@@ -281,7 +281,7 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 </figure>
 </div>
 
-When the Greek world passed its knowledge eastward, it was not lost but *worked on*. In the great translation and research centres of the Islamic world — above all the **House of Wisdom** in Baghdad (8th–13th c.) — the *Elements*, the *Conics* and the astronomical treatises were rendered into Arabic, corrected, and extended. The *why* was both intellectual and legal: the new science of **algebra** was driven in part by Islamic inheritance law, which required estates to be divided into fractional shares, and by the *kharaj*, a land tax that required surveying. Figures such as **al-Khwārizmī** (c. 780–850) re-founded algebra (the very word is his, from *al-jabr*, "the restoring/completing") and did so in the *geometric* spirit inherited from Babylon and Greece, solving equations by the same cutting-and-completing-of-the-square operations \cite{hoyrup2021algebra}.
+**What motivated the turn east?** Not scholarship only: Islamic inheritance law required estates to be divided into fractional shares, and the *kharaj* land tax required surveying — the new science of **algebra** served the counting of the estate as directly as it served the counting of the stars. When the Greek world passed its knowledge eastward, it was not lost but *worked on*. In the great translation and research centres of the Islamic world — above all the **House of Wisdom** in Baghdad (8th–13th c.) — the *Elements*, the *Conics* and the astronomical treatises were rendered into Arabic, corrected, and extended. Figures such as **al-Khwārizmī** (c. 780–850) re-founded algebra (the very word is his, from *al-jabr*, "the restoring/completing") and did so in the *geometric* spirit inherited from Babylon and Greece, solving equations by the same cutting-and-completing-of-the-square operations \cite{hoyrup2021algebra}.
 
 Al-Khwārizmī's canonical example, in modern dress, is the problem "a square and ten times its side make thirty-nine" — $x^{2} + 10x = 39$. He completes the square: halve the ten to get $5$, square it to get $25$, add to $39$ to get $64$, take the root $8$, subtract the $5$, and obtain $x = 3$. In symbols, the move that is his legacy is exactly the Babylonian one, now general:
 
@@ -295,7 +295,7 @@ His **\citealternativetitle{alhazenoetic}** (completed c. 1021) is a *geometry o
 <div class="md">
 ## V. The geometry of the sky: angles, sines and the functions of a triangle
 
-Up to now geometry has been about the ground — fields to square, altars to convert, temples to raise. But the same right triangle that measured a field can be turned around and pointed at the sky, and the moment it does, something new is born: a **function of an angle**. This is the load-bearing idea of the second half of the chapter, because it is the bridge from *shapes in the plane* to *a number attached to a direction* — and a direction, in the modern language, is exactly what a vector (and therefore an embedding) is.
+**What motivated geometry to look up?** The merchant and the sailor who were out of sight of land, and the priest who had to keep the calendar: all three measured the sky by *angles* — the height of a star, the run of the sun, the turning of the year. Up to now geometry has been about the ground — fields to square, altars to convert, temples to raise. But the same right triangle that measured a field can now be turned around and pointed at the sky, and the moment it does, something new is born: a **function of an angle**. This is the load-bearing idea of the second half of the chapter, because it is the bridge from *shapes in the plane* to *a number attached to a direction* — and a direction, in the modern language, is exactly what a vector (and therefore an embedding) is.
 
 ### The Greek chord: measuring the heavens
 
@@ -348,7 +348,7 @@ Step back and the pattern is a single idea refined again and again. A **metric**
 <div class="md">
 ## VI. Space made visible: perspective, coordinates and projection
 
-The mathematics of projection that Alhazen opened is taken up, on the *artistic* side, by the Renaissance, and on the *mathematical* side, by the 17th century. These two streams meet in a single, decisive idea: **space can be turned into numbers**.
+**What motivated geometry to leave the page?** Two needs that could only be served by *flattening the world honestly*: the painter who had to persuade an eye, and the navigator who had to find a harbour in an ocean without landmarks. The mathematics of projection that Alhazen opened is taken up, on the *artistic* side, by the Renaissance, and on the *mathematical* side, by the 17th century. These two streams meet in a single, decisive idea: **space can be turned into numbers**.
 
 ### Alberti and linear perspective (1435)
 
@@ -392,7 +392,7 @@ The map is **conformal** — it preserves *angles* (so compass bearings are righ
 <div class="md">
 ## VII. When space bends: topology and non-Euclidean geometry
 
-For two thousand years, "the" geometry was Euclid's, and everyone assumed that space *must* be flat — that the parallel postulate is a fact about the universe, not just a convenient assumption. The 18th and 19th centuries shattered that in two different directions at once: they found geometry *without metric* (topology), and geometry *without parallelism* (non-Euclidean space).
+**What motivated doubting the obvious?** A technical embarrassment that outlived two millennia: the parallel postulate refused every attempt to be proved from Euclid's other four axioms — and a proposition that cannot be proved is a question wearing the mask of a fact. For two thousand years "the" geometry was Euclid's, and everyone assumed that space *must* be flat — that the parallel postulate is a fact about the universe, not just a convenient assumption. The 18th and 19th centuries shattered that in two different directions at once: they found geometry *without metric* (topology), and geometry *without parallelism* (non-Euclidean space).
 
 ### Euler: the geometry of connectivity
 
@@ -495,7 +495,7 @@ The message of Möbius and Listing is the message of Euler's bridges: some of th
 <div class="md">
 ## VIII. The modern shape of space — and why it matters for AI
 
-The last great reorganisation of the 19th century was **\citeauthor{poincareanalysissitus}**'s **\citetitle{poincareanalysissitus}** (1895), which turned topology from a collection of curiosities into a full theory \cite{poincareanalysissitus}.
+**What motivated the study of shape itself?** The reverse of the coordinate turn: once coordinates had turned all of space into numbers, the question became whether two shapes could be told apart *without* measuring at all — by how they fit together at a boundary, stretch for stretch. The last great reorganisation of the 19th century was **\citeauthor{poincareanalysissitus}**'s **\citetitle{poincareanalysissitus}** (1895), which turned topology from a collection of curiosities into a full theory \cite{poincareanalysissitus}.
 
 The *why* was to extend Euler's and Gauss's ideas from 2-D surfaces to *spaces* of any dimension, and to answer the question "what does a space look like, up to deformation?" Poincaré's answers were the **fundamental group** $\pi_{1}$ (the algebraic record of all the ways a loop can be twisted around a space, up to continuous shrinking) and the beginnings of **homology** $H_{n}$ (counting "holes" of each dimension by signed sums of chains and boundaries) \cite{poincareanalysissitus} \cite{hatcher}. And in a stroke he posed the **Poincaré conjecture**: a closed 3-dimensional space in which every loop can be continuously shrunk to a point must be a 3-sphere. That is, *topology (how the loops behave) determines geometry (the space is a sphere)*.
 
