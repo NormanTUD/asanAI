@@ -10226,5 +10226,47 @@ window.bibData = {
 		author: "Steve Jurvetson",
 		license: "CC BY 2.0",
 		alternativetitle: "Mirror self-recognition"
+	},
+	"nagel1974bat": {
+		title: "What Is It Like to Be a Bat?",
+		author: "Thomas Nagel",
+		year: 1974,
+		url: "https://doi.org/10.2307/2183914",
+		alternativetitle: "Nagel, What Is It Like to Be a Bat?"
+	},
+	"chalmers1995consciousmind": {
+		title: "The Conscious Mind: In Search of a Fundamental Theory",
+		author: "David J. Chalmers",
+		year: 1995,
+		url: "https://archive.org/details/chalmers-the-conscious-mind",
+		alternativetitle: "Chalmers, The Conscious Mind"
+	},
+	"churchland1981eliminative": {
+		title: "Eliminative Materialism and the Propositional Attitudes",
+		author: "Paul M. Churchland",
+		year: 1981,
+		url: "https://doi.org/10.4324/9780203987698-39",
+		alternativetitle: "Churchland, Eliminative Materialism"
+	},
+	"kastrup2019ideaworld": {
+		title: "The Idea of the World: A Cosmology of Consciousness",
+		author: "Bernardo Kastrup",
+		year: 2019,
+		url: "https://archive.org/details/the-idea-of-the-world-a-multi-disciplinary-argument-for-the-mental-nature-of-rea",
+		alternativetitle: "Kastrup, The Idea of the World"
+	},
+	"dennett2017bacteria": {
+		title: "From Bacteria to Bach and Back",
+		author: "Daniel C. Dennett",
+		year: 2017,
+		url: "https://archive.org/details/daniel-dennett-consciousness-explained-from-bacteria-to-bach-and-back-the-evolut",
+		alternativetitle: "Dennett, From Bacteria to Bach and Back"
+	},
+	"descartesmeditations": {
+		title: "Meditations on First Philosophy",
+		author: "René Descartes",
+		year: 1641,
+		url: "https://archive.org/details/meditations-on-first-philosophy-rene-descartes-arch_202607",
+		alternativetitle: "Descartes, Meditations on First Philosophy"
 	}
 };

@@ -543,3 +543,13 @@ maus
 acdc
 qkv
 ioi
+# --- human_mind.php: human-cognition / philosophy-of-mind terms ---
+exaptation exapted neocortex reframing reframed categorizer metarepresentation
+unphysical counterfactuals satisficing satisfice panpsychism physicalist
+memes dna
+# proper nouns (human_mind.php)
+rosch chalmers churchland dawkins justus sustermans
+# roman-numeral section markers
+iii vii
+# foreign / place names in image captions
+cueva las manos scuola atene thaumazein ideengeschichte unpuzzled
