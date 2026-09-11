@@ -159,7 +159,7 @@ In the Vedic tradition of India, the driving force was not the field but the **f
 
 The most celebrated result is a recipe for $\sqrt{2}$. Starting from a rectangle of area 1, one "cuts off" a corner and folds in a smaller triangle (the *diagonal* operation), producing a square of the same area. The diagonal of the unit square is $\sqrt{2}$, and the *Baudhāyana Śulba Sūtra* gives it to the fifth decimal place:
 
-$$\sqrt{2} \;\approx\; \underbrace{1}_{\text{the whole side}} + \underbrace{\tfrac{1}{3}}_{\text{add a third of it}} + \underbrace{\tfrac{1}{3\cdot 4}}_{\text{add a fourth of that}} - \underbrace{\tfrac{1}{3\cdot 4\cdot 34}}_{\text{take back a hair's-breadth}} \;=\; \tfrac{577}{408} \;\approx\; \underbrace{1.41421\dots}_{\text{the diagonal of a unit square}}$$
+$$\sqrt{2} \;\approx\; \underbrace{1}_{\text{the whole side}} + \underbrace{\tfrac{1}{3}}_{\text{add a third of it}} + \underbrace{\tfrac{1}{3\cdot 4}}_{\text{add a fourth of that}} - \underbrace{\tfrac{1}{3\cdot 4\cdot 34}}_{\text{take back a hair's-breadth}} \;=\; \tfrac{577}{408} \;\approx\; 1.41421\dots$$
 
 The famous line, roughly, is that *"the length obtained along the diagonal makes an area equal to that made by length and width together"* — a geometric statement of $d^{2} = a^{2} + b^{2}$ made, once again, *independently* of Greece and *before* the theorem bore Pythagoras's name \cite{sulbasutras}. Here the *why* is ritual precision: an altar whose corner is off by a hair is, in the logic of the text, a failed offering.
 
