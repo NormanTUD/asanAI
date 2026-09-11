@@ -845,10 +845,7 @@ Since Spirit and Opportunity landed in 2004, NASA/JPL rovers have carried **Visu
 </figure>
 
 <div class="smart-quote" data-cite="newyorktimesperceptron">
-    <div class="full-quote">
         Dr. Rosenblatt, a research psychologist at the Cornell Aeronautical Laboratory, Buffalo, said Perceptrons might be fired to the planets as mechanical space explorers.
-    </div>
-    <div class="short-quote">fired to the planets as mechanical space explorers</div>
 </div>
 
 That was the \citeyear{newyorktimesperceptron} prediction, made as the Perceptron first learned to tell shapes apart at Cornell. Six decades later the "mechanical space explorer" is a car-sized rover that, with no operator in the loop, decides for itself which rocks to drill and how to keep from getting stuck.
