@@ -1892,8 +1892,6 @@ p, .assistant-frame {
 	text-align: justify; /* Verhindert Flattersatz */
 	hyphens: auto;       /* Trennt Wörter automatisch, damit keine großen Lücken entstehen */
 	overflow-wrap: break-word;
-	word-break: break-word;
-	line-break: strict;
 }
 
 /* Elemente gleiten sanft von unten nach oben ein */

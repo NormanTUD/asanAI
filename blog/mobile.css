@@ -322,8 +322,7 @@ body {
 
 	/* Inline code: don't let it cause horizontal scroll. */
 	:not(pre) > code {
-		word-break: break-word;
-		overflow-wrap: anywhere;
+		overflow-wrap: break-word;
 	}
 
 	/* ── 3h. Math (Temml / LaTeX) ───────────────────────────
@@ -657,8 +656,7 @@ body {
      finger taps.
    ────────────────────────────────────────────────────────────────── */
 #contents a[href^="http"]:not(.cl-inline):not(.cl-h-anchor):not(.module-nav-link):not(.drawer-module) {
-	word-break: break-word;
-	overflow-wrap: anywhere;
+	overflow-wrap: break-word;
 }
 
 @media (max-width: 600px) {
