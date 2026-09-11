@@ -4766,7 +4766,12 @@ TOKENIZER LAB — Visual Polish
 }
 
 .autociteelement {
-	word-break: break-all;
+	word-break: normal;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	-webkit-hyphens: auto;
+	contain: none !important;
+	line-break: auto;
 }
 
 .quote-guillemet {
@@ -9727,6 +9732,166 @@ html.dark .topics-preset-fun {
 #contents p.cl-dropcap,
 .md p.cl-dropcap {
 	contain: layout !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   GUARDRAIL — WORD-BREAKING LOCK.
+
+   Prevents mid-word line breaks (splits without hyphens) in
+   all prose. Sits at the very end of the stylesheet: with
+   equal specificity the last rule wins, so nothing written
+   earlier can silently reintroduce mid-word splitting.
+
+   Five angles, each with multiple guardrails:
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Angle 1: word-break on citation spans ──────────────────
+   .autociteelement wraps every \cite / \citeauthor / \citetitle.
+   The old `word-break: break-all` split "Grothendieck" →
+   "Grothendiec" / "k" and "Laureate" → "L" / "aureate". */
+.autociteelement,
+.autociteelement *,
+.cite-stealth,
+.cite-stealth * {
+	/* 1a. Never break mid-word */
+	word-break: normal !important;
+	/* 1b. Only break a word if it would overflow the container */
+	overflow-wrap: break-word !important;
+	/* 1c. Use proper linguistic hyphenation instead */
+	hyphens: auto !important;
+	-webkit-hyphens: auto !important;
+	/* 1d. No layout containment (see Angle 3) */
+	contain: none !important;
+	/* 1e. Default line-breaking, not CJK strict */
+	line-break: auto !important;
+}
+
+/* ── Angle 2: word-break on all inline prose elements ───────
+   Locks word-break to normal on every element inside a
+   paragraph or list item. Prevents any future break-all or
+   break-word from sneaking onto spans, em, strong, etc. */
+#contents p, #contents li, #contents blockquote,
+.md p, .md li, .md blockquote,
+#contents p *, #contents li *, #contents blockquote *,
+.md p *, .md li *, .md blockquote * {
+	/* 2a. Words break at spaces only, never mid-character */
+	word-break: normal !important;
+	/* 2b. Default line-breaking algorithm */
+	line-break: auto !important;
+}
+/* 2c. Long URLs and inline code: allow breaking on overflow */
+#contents a[href^="http"], .md a[href^="http"],
+#contents :not(pre) > code, .md :not(pre) > code {
+	overflow-wrap: break-word !important;
+}
+/* 2d. Headings: balance instead of break */
+#contents h1, #contents h2, #contents h3,
+#contents h4, #contents h5, #contents h6,
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+	word-break: normal !important;
+	overflow-wrap: normal !important;
+}
+/* 2e. Figcaptions and credit lines: same rules as prose */
+#contents figcaption, .md figcaption,
+.sideimage figcaption {
+	word-break: normal !important;
+	overflow-wrap: break-word !important;
+	hyphens: auto !important;
+	-webkit-hyphens: auto !important;
+}
+
+/* ── Angle 3: containment on inline text elements ───────────
+   The blanket rule at ~L5733 applies `contain: layout
+   !important` to every descendant of #contents / .md.
+   On a <span> or <em> this creates a new layout context
+   that can alter how the browser computes line breaks. */
+#contents p > *, #contents li > *, #contents blockquote > *,
+.md p > *, .md li > *, .md blockquote > * {
+	/* 3a. No layout containment on direct children of prose */
+	contain: none !important;
+}
+/* 3b. Deep inline descendants (nested spans inside spans) */
+#contents p span, #contents p em, #contents p strong,
+#contents p code, #contents p sup, #contents p sub,
+#contents p i, #contents p b, #contents p u, #contents p s,
+#contents li span, #contents li em, #contents li strong,
+#contents li code, #contents li sup,
+.md p span, .md p em, .md p strong,
+.md p code, .md p sup, .md p sub,
+.md li span, .md li em, .md li strong,
+.md li code, .md li sup,
+.md blockquote span, .md blockquote em, .md blockquote strong,
+.md blockquote code {
+	/* 3c. Same for deeply nested inline elements */
+	contain: none !important;
+}
+/* 3d. Math elements: no containment (already atomic via
+   display: inline-flex from Temml) */
+#contents math, .md math,
+#contents math *, .md math * {
+	contain: none !important;
+}
+/* 3e. Sideimage / marginfig credit lines */
+.sideimage, .sideimage *,
+.sideimage figcaption, .sideimage figcaption * {
+	contain: none !important;
+}
+
+/* ── Angle 4: math elements as atomic units ─────────────────
+   Temml renders <math> as inline-flex (atomic, unbreakable —
+   correct for math). But the surrounding text must still
+   break at word boundaries. */
+#contents p math, .md p math,
+#contents li math, .md li math,
+#contents blockquote math, .md blockquote math {
+	/* 4a. Math itself: no hyphenation, no overflow-breaking */
+	hyphens: manual !important;
+	-webkit-hyphens: manual !important;
+	overflow-wrap: normal !important;
+	word-break: normal !important;
+	/* 4b. Keep it as a single unbreakable unit */
+	white-space: nowrap !important;
+}
+/* 4c. Inline math in figcaptions (e.g. $e$, Specℤ) */
+#contents figcaption math, .md figcaption math,
+.sideimage figcaption math {
+	hyphens: manual !important;
+	overflow-wrap: normal !important;
+	white-space: nowrap !important;
+}
+/* 4d. Isolate the flex context so it doesn't affect the
+   parent paragraph's line-breaking algorithm */
+math {
+	float: none !important;
+	clear: none !important;
+}
+
+/* ── Angle 5: justified prose hyphenation settings ──────────
+   With text-align: justify the browser stretches inter-word
+   spaces. If a line can't be filled, the browser needs a
+   fallback: (a) hyphens: auto inserts a proper hyphen —
+   preferred; (b) overflow-wrap: break-word breaks the word
+   with no hyphen — last resort. These settings make (a)
+   kick in sooner so (b) is rarely needed. */
+#contents p,
+.md p,
+.md li,
+.md blockquote,
+#contents figcaption,
+.md figcaption {
+	/* 5a. Always allow linguistic hyphenation */
+	hyphens: auto !important;
+	-webkit-hyphens: auto !important;
+	/* 5b. Reasonable limits: ≥5 chars before, ≥2 after */
+	hyphenate-limit-chars: 5 2 2 !important;
+	/* 5c. Max 2 consecutive hyphenated lines */
+	hyphenate-limit-lines: 2 !important;
+	/* 5d. Hyphenate when a line is ≥6% short (was 8%) —
+	   triggers sooner, preventing overflow-wrap fallback */
+	hyphenate-limit-zone: 6% !important;
+	/* 5e. Safety net: if hyphenation is unavailable,
+	   break-word is the fallback. Never `anywhere`. */
+	overflow-wrap: break-word !important;
 }
 
 
