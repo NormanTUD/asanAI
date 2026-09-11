@@ -514,6 +514,53 @@ So where does this leave us, and why is a history of geometry a chapter in a cou
 The thread that runs from *Homo erectus* to the embedding space is the same thread: the conviction that the world is made of *relations between points in a space*, and that those relations can be written down, proved, and, in the end, *computed*.
 </div>
 
+<div class="md">
+## IX. Higher dimensions: the space the machine lives in
+
+If the 19th century discovered that space can *bend*, the 20th discovered that it can have *any number of dimensions* — including infinitely many — and that geometry survives the trip. This is not an academic curiosity: the machine in this course computes *inside* that geometry. An embedding vector is a point in $\mathbb{R}^{d}$, with $d$ in the hundreds or thousands; a training set is a cloud of such points; a neural network is a rule for moving those points around. Every tool built in this chapter — the dot product of Section V, the curvature of Section VII, the topology of Section VIII — is now applied to that high-dimensional space, and each of the modern insights below is a 20th- or 21st-century answer to the chapter's oldest question: *what space, and how do you measure distance in it?*
+
+### Hilbert: geometry with infinitely many dimensions
+
+At the turn of the 20th century, \citeauthor{hilbert1903grundlagen} performed a double service. In his **\citetitle{hilbert1903grundlagen}** (1899) he re-axiomatised Euclid — the first complete, rigorous rebuild of the *Elements* in 2,200 years — and in doing so made "geometry" mean *any* formal system that satisfies the axioms: "point", "line" and "plane" need no longer be Greek diagrams, they can stand for anything that obeys the rules \cite{hilbert1903grundlagen}. That is the modern meaning of a *space*: not a fixed stage, but any domain in which the axioms hold. And in the same era, in his work on integral equations (with *Erhard Schmidt*), Hilbert exhibited the space that matters most to machines: a **Hilbert space** — a vector space of *functions* or feature vectors, equipped with a dot product and a length, in infinitely many dimensions. The dot product and the cosine of Section V survive unchanged; only the list of coordinates runs longer than $x, y, z$. The plane geometry of Euclid became, from then on, one special case among uncountably many.
+
+### The kernel trick: climb a dimension to draw a line
+
+The first *practical* payoff of higher-dimensional geometry came inside machine learning itself. Some data simply cannot be separated by a straight line in the plane. But lift the points by a map $\phi$ into a higher-dimensional space, and a *hyperplane* up there separates them cleanly. **Support-vector machines** (\citeauthorlastnameand{boser1992svm}, \citeyear{boser1992svm}) made this precise in the most economical way possible \cite{boser1992svm} \cite{vapnik1995book}: the learned classifier is defined entirely by dot products $\langle \phi(\mathbf{x}), \phi(\mathbf{y}) \rangle$, so instead of ever writing the high-dimensional coordinates — which may even be infinite — one supplies a **kernel** $k(\mathbf{x},\mathbf{y})$ that returns that dot product directly. The **Gaussian (RBF)** kernel, in particular, corresponds to a Hilbert space of *infinite* dimension, in which any data set free of exact-duplicate contradictions is separable. The intuition of \citeauthorlastnameand{vapnik1963pattern} in the 1960s, made computable by the 1990s "kernel trick", is thus an engineering use of Riemann's and Hilbert's century: *if the flat space is too small to draw the line, climb to a roomier one — without ever paying to write the extra coordinates.*
+
+### Concentration of measure: high dimensions are not the plane writ large
+
+Here is where 20th-century insight overturns a two-thousand-year-old intuition. The Greeks reasoned in two and three dimensions, where "distance" behaves as it appears to. In high dimension it does not — and the failure is at once the **curse** and the **opportunity** of machine learning:
+
+* **The shell effect.** In $\mathbb{R}^{d}$, essentially all of the volume of a sphere or cube lies within an $\epsilon$-thin shell of its surface: the fraction of the cube within distance $\epsilon$ of its surface is $1 - (1-2\epsilon)^{d}$, which for $d$ in the tens is indistinguishable from $1$. A "random point" drawn from a high-dimensional cloud is therefore almost surely *on its boundary*, not in its interior.
+* **Near-orthogonality.** The dot product of two independent random unit vectors has mean $0$ and standard deviation $1/\sqrt{d}$. In an embedding space with $d \approx 2000$, that spread is about $0.02$: two random directions are *almost exactly perpendicular*, in every practical sense.
+* **Distance concentration.** The *relative* gap between the nearest and the farthest neighbours shrinks: the standard deviation of pairwise distances of a random sample becomes comparable to (or smaller than) the mean, so a cloud of random points "becomes equidistant" in relative terms.
+
+Part of this is the famous **"curse of dimensionality"** of \citeauthor{bellman1957dynamic}, the price of living in more and more coordinates: raw Euclidean distance among random points stops carrying information \cite{bellman1957dynamic}. But the *near-orthogonality* half of the curse is also the opportunity. If thousands of directions are all mutually near-perpendicular, there is *room* for thousands of mutually distinct notions — which is precisely why a semantic space can park thousands of words in nearly separate directions, and why "meaning" must be read by **direction** (cosine similarity, Section V) rather than by raw distance. High dimensions do not ruin distance; they *retire it* in favour of angle.
+
+### The manifold hypothesis: data does not fill space
+
+The resolution of the curse is the most consequential bet in modern geometry-for-AI: **data does not fill the space it is written in.** A natural image is a vector in a pixel space of dimension, say, $3 \times 256 \times 256 \approx 200{,}000$; but a random vector in that space is grey noise, not a face. Real images, speech, and indeed the semantic embeddings of [the Embeddings](embeddinglab) chapter are confined to a **low-dimensional manifold** — a curved sheet — embedded in the huge ambient space \cite{manifold_wiki}. The **manifold hypothesis** claims that the datasets that matter lie on or near such a manifold, and that its *intrinsic dimension* is far below the ambient one. The scaffolding is classical: \citeauthorlastnameand{whitney1936manifolds}'s theorem (1936) that any smooth $d$-dimensional manifold can be embedded in $\mathbb{R}^{2d+1}$ \cite{whitney1936manifolds} — which quietly guarantees that the "embed" in *embeddings* is not a metaphor but a proven fact.
+
+The hypothesis is what a dozen standard tools *assume*, and it explains why they work:
+
+* **Autoencoders** bottle every sample through a few dozen numbers and rebuild it; the encoder is literally *computing coordinates on the manifold*, the decoder *evaluates the sheet at those coordinates* \cite{hinton1989autoencoder}.
+* **Dimensionality-reduction visualisations** — t-SNE (\citeauthorlastnameand{van2009dimensionality}, \citeyear{van2009dimensionality}) \cite{van2009dimensionality} and UMAP (\citeauthorlastnameand{mcinnes2018umap}, \citeyear{mcinnes2018umap}) — flatten the high-dimensional cloud onto the page while preserving neighbourhoods \cite{mcinnes2018umap}, the computational heir of Mercator's flattening of the sphere (Section VI), now for a surface whose dimension we must first *infer*.
+* **Interpolation and vector arithmetic work.** On the (locally near-flat) sheet, a weighted average of two points remains on the sheet — which is why "king − man + woman ≈ queen" and why morphing two images through the manifold yields meaningful intermediates. If data filled its ambient space, every averaged point would be noise; that it does not is the entire reason "vector semantics" has a geometric meaning.
+* **Only the intrinsic dimension matters.** A million-pixel image is, for geometry, a point on a sheet of perhaps a few dozen intrinsic dimensions; all the "wasted" coordinates are directions *off the data*, which is why the models can confidently ignore the noise directions that dominate the ambient space.
+
+### Geometric deep learning: the shape of the input dictates the machine (2021)
+
+The newest chapter folds the old question back onto the machine itself. **Geometric deep learning**, as systematised by \citeauthorlastnameand{bronstein2021geometric} (2021), observes that the *architecture* of every successful neural network is a footprint of the *symmetries of the space its data lives on* \cite{bronstein2021geometric}:
+
+* **CNNs** live on a *regular grid*, and they are translation-equivariant by construction: the same filter slides to every cell of the grid, because on a grid every cell is geometrically the same as every other.
+* **Graph networks** live on a *set with edges* (molecules, social networks), and their aggregations are permutation-equivariant, because the ordering of nodes is a convention of the file format, not a fact about the data.
+* **Transformers** live on a *complete set of tokens*: attention weighs every token against every other regardless of position — which is exactly why they needed the hand-added *positional encodings* you read about in the [History of AI](history) chapter. Ordered or not, the data's geometry is a design choice the architect must either respect or repair.
+
+The three architectures of modern AI are therefore not arbitrary inventions: they are three answers to "in what space does this data live?", answered with the same 2,400-year-old strategy — *match the structure of the stage*. This is the computing-age fulfilment of the chapter's opening line: geometry is a living subject, and now it literally determines the shape of the computer that learns.
+
+And one recent, mildly startling data point closes the loop with Section III. \citeauthorlastnameand{huh2024platonic} (2024) found empirically that very different models, trained on different tasks, converge to **approximately the same internal representation** of the visual world \cite{huh2024platonic} — a shared latent "geometry of reality" that seems to be learned, not invented, by whichever learner is pressed against the same visual data. Whether that shared space is *the* true one is an open question — but it is hard to read the **Platonic representation hypothesis** as anything but the *Meno* argument, stated in 2024 computer science: there is a single latent geometry behind appearances, and "learning" is the process of *recovering* it.
+</div>
+
 <div class="optional md" data-headline="A compact timeline">
 * **c. 1.76 Ma** — Acheulean handaxe: the first 3-D form, bilateral symmetry held in a mental template \cite{achleuleankariandusi}.
 * **c. 500,000 BCE** — Trinil shell: oldest deliberate geometric incision \cite{trinilshell}.
@@ -547,4 +594,11 @@ The thread that runs from *Homo erectus* to the embedding space is the same thre
 * **1858 / 1847** — Möbius's band; Listing's *Vorstudien zur Topologie* \cite{mobiusband} \cite{listingtopologie}.
 * **1895** — Poincaré's *Analysis Situs*: fundamental group, homology, the Poincaré conjecture \cite{poincareanalysissitus}.
 * **2002–2003** — Perelman proves the Poincaré conjecture via Ricci flow \cite{perelmanpoincare}.
+* **1899 / 1903** — Hilbert: *Grundlagen der Geometrie* — geometry as a formal axiomatic system, "points" need no longer be diagrams \cite{hilbert1903grundlagen}.
+* **1936** — Whitney: any smooth $d$-dimensional manifold embeds in $\mathbb{R}^{2d+1}$ — the theorem behind "embeddings" \cite{whitney1936manifolds}.
+* **1957** — Bellman coins the "curse of dimensionality" \cite{bellman1957dynamic}.
+* **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik: the kernel trick and support-vector machines — nonlinearity by climbing dimensions \cite{vapnik1963pattern} \cite{boser1992svm} \cite{vapnik1995book}.
+* **2006 / 2009 / 2018** — bottleneck autoencoders, t-SNE, UMAP: the manifold hypothesis turned into working tools \cite{hinton2006} \cite{van2009dimensionality} \cite{mcinnes2018umap}.
+* **2021** — Geometric Deep Learning: the data's symmetry space dictates the network architecture \cite{bronstein2021geometric}.
+* **2024** — Platonic Representation Hypothesis: unrelated models converge on a shared internal geometry of reality \cite{huh2024platonic}.
 </div>

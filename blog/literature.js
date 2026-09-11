@@ -4292,6 +4292,13 @@ window.bibData = {
 		year: 2021,
 		url: "https://arxiv.org/abs/2104.13478"
 	},
+	"bellman1957dynamic": {
+		title: "Dynamic Programming",
+		author: "Richard Bellman",
+		year: 1957,
+		url: "https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming",
+		alternativetitle: "Bellman, Dynamic Programming"
+	},
 
 	"leibniz1684nova": {
 		author: "Gottfried Wilhelm Leibniz",
