@@ -1024,6 +1024,13 @@ window.bibData = {
 		year: 1714,
 		url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf"
 	},
+	"naturanonfacitsaltus": {
+		title: "Philosophia Botanica",
+		author: "Carl Linnaeus",
+		year: 1751,
+		alternativetitle: "Natura non facit saltus",
+		url: "https://en.wikipedia.org/wiki/Natura_non_facit_saltus"
+	},
 	"heidegger1935metaphysics": {
 		title: "Einführung in die Metaphysik",
 		author: "Martin Heidegger",

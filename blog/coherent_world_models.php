@@ -486,6 +486,15 @@ $$
 
 The empirical row is not a theorem of sheaf theory; it is the same **shape** in a different target.
 
+**Why descent is licensed at all — the axiom under the sheaf condition.** The gluing is not a bare stipulation; it is the rigorous shadow of an older axiom about the world itself, that things change gradually rather than by a leap. The Latin states it in a single clause:
+
+<div class="smart-quote" data-cite="naturanonfacitsaltus">
+<div class="full-quote"><i>Natura non facit saltus</i> — "nature does not make jumps."</div>
+<div class="short-quote"><i>Natura non facit saltus</i> — nature does not make jumps.</div>
+</div>
+
+It is the premise that makes local-to-global gluing *legitimate* rather than mere convention. If the accessible region $c_{\mathrm{acc}}$ made jumps — discontinuities invisible from inside any single patch — then two local sections could agree on every overlap and still fail to glue, the difference hiding on a seam no patch spans. The sheaf condition is precisely the claim that no such hidden seam lies inside the accessible region: because there is nothing to jump across, agreement on overlaps *forces* a unique global section. Continuity is what turns "the parts match where they meet" into "there is one whole". (The companion chapter's circle example — the angle function that creeps up by $2\pi$ around the loop — is the precise picture of what a *jump* does to descent: a local-to-global failure whose discontinuity is wrapped around a hole, invisible on every patch yet fatal to the global section.)
+
 </div>
 
 <div class="md">
@@ -1140,7 +1149,7 @@ $$
 \end{aligned}}
 $$
 
-This does two things at once. It *rescues* the two-condition test: coherence is the test *within* a fixed cover (do the parts fit?); correspondence is the test *across* covers (do they still fit as the cover grows?). They are now two *genuinely distinct* procedures — one runs over the patches of a single cover, the other over the *sequence* of covers — so the synthesis is not circular. One condition must be stated, because it is where the circularity could still hide: the widening has to be by *independent, W-anchored* accesses — each new patch a *fresh* look at $W$, not a trace of an earlier model. A cover widened only by *derived* patches (text written by an earlier model, a copy of a copy) does **not** advance the limit; it adds more of the same mediation. The non-circularity holds relative to the net of *genuinely new* looks at the world — a net the framework can *test* but not *guarantee*, since guaranteeing it would require the unmediated $W$ that Commitment #1 denies. And it *owns* the residual: the model is true **only in the limit**, only insofar as no widening of the cover breaks its coherence. "As true as possible" is not a modest slogan here; it is the *precise* status of any model that lives behind mediation. A fully reached $W$ would be a cover that can no longer be widened — and by Commitment #1 no such cover exists, which is why the chapter's standing phrase is *provisionally, revisably, never identical.*
+This does two things at once. It *rescues* the two-condition test: coherence is the test *within* a fixed cover (do the parts fit?); correspondence is the test *across* covers (do they still fit as the cover grows?). They are now two *genuinely distinct* procedures — one runs over the patches of a single cover, the other over the *sequence* of covers — so the synthesis is not circular. One condition must be stated, because it is where the circularity could still hide: the widening has to be by *independent, W-anchored* accesses — each new patch a *fresh* look at $W$, not a trace of an earlier model. A cover widened only by *derived* patches (text written by an earlier model, a copy of a copy) does **not** advance the limit; it adds more of the same mediation. The non-circularity holds relative to the net of *genuinely new* looks at the world — a net the framework can *test* but not *guarantee*, since guaranteeing it would require the unmediated $W$ that Commitment #1 denies. And it *owns* the residual: the model is true **only in the limit**, only insofar as no widening of the cover breaks its coherence. "As true as possible" is not a modest slogan here; it is the *precise* status of any model that lives behind mediation. A fully reached $W$ would be a cover that can no longer be widened — and by Commitment #1 no such cover exists, which is why the chapter's standing phrase is *provisionally, revisably, never identical.* And the limit itself honours the same axiom the sheaf condition encodes — *Natura non facit saltus*, "nature does not make jumps" \cite{naturanonfacitsaltus}: the cover is widened by *accumulating* fresh, independent contact points, so the approach to $W$ is continuous — a limit — never a single unlicensed leap straight to "the truth".
 
 </div>
 
