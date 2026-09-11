@@ -6495,6 +6495,120 @@ window.bibData = {
 		pages: "231–294",
 		url: "https://en.wikipedia.org/wiki/Category_theory"
 	},
+	"brouwer1911fixed": {
+		title: "Über Abbildungen von Mannigfaltigkeiten",
+		author: "Luitzen Egbertus Jan Brouwer",
+		year: 1911,
+		url: "https://en.wikipedia.org/wiki/Brouwer_fixed-point_theorem",
+		alternativetitle: "Brouwer's fixed-point theorem"
+	},
+	"noether1926homology": {
+		title: "Emmy Noether and the algebraisation of topology",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Emmy_Noether",
+		alternativetitle: "Emmy Noether (Wikipedia)"
+	},
+	"hopf1931fibration": {
+		title: "Über die Abbildungen der dreidimensionalen Sphäre auf die Kugelfläche",
+		author: "Heinz Hopf",
+		year: 1931,
+		url: "https://en.wikipedia.org/wiki/Hopf_fibration",
+		alternativetitle: "Hopf fibration"
+	},
+	"derham1931": {
+		title: "Sur l'analysis situs des variétés à n dimensions",
+		author: "Georges de Rham",
+		year: 1931,
+		url: "https://en.wikipedia.org/wiki/De_Rham_cohomology",
+		alternativetitle: "De Rham's theorem"
+	},
+	"chern1946": {
+		title: "Characteristic Classes of Hermitian Manifolds",
+		author: "Shiing-Shen Chern",
+		year: 1946,
+		journal: "Annals of Mathematics",
+		volume: 47,
+		pages: "85–121",
+		url: "https://en.wikipedia.org/wiki/Chern_class",
+		alternativetitle: "Chern classes"
+	},
+	"milnor1956exotic": {
+		title: "On Manifolds Homeomorphic to the 7-Sphere",
+		author: "John Milnor",
+		year: 1956,
+		journal: "Annals of Mathematics",
+		volume: 64,
+		pages: "399–405",
+		url: "https://en.wikipedia.org/wiki/Exotic_sphere",
+		alternativetitle: "Exotic spheres"
+	},
+	"smale1961hccobordism": {
+		title: "Generalized Poincaré's Conjecture in Dimensions Greater Than Four",
+		author: "Stephen Smale",
+		year: 1961,
+		journal: "Annals of Mathematics",
+		volume: 74,
+		pages: "391–406",
+		url: "https://en.wikipedia.org/wiki/H-cobordism",
+		alternativetitle: "h-cobordism"
+	},
+	"atiyahsinger1963": {
+		title: "The Index of Elliptic Operators on Compact Manifolds",
+		author: "Michael Atiyah, Isadore Singer",
+		year: 1963,
+		journal: "Bulletin of the American Mathematical Society",
+		volume: 69,
+		pages: "422–433",
+		url: "https://en.wikipedia.org/wiki/Atiyah%E2%80%93Singer_index_theorem",
+		alternativetitle: "Atiyah–Singer index theorem"
+	},
+	"thurston1982geometrization": {
+		title: "Three-Dimensional Manifolds, Kleinian Groups and Hyperbolic Geometry",
+		author: "William Thurston",
+		year: 1982,
+		journal: "Bulletin of the American Mathematical Society",
+		volume: 6,
+		pages: "357–381",
+		url: "https://en.wikipedia.org/wiki/Geometrization_conjecture",
+		alternativetitle: "Thurston's geometrisation programme"
+	},
+	"freedman1982topology": {
+		title: "The Topology of Four-Dimensional Manifolds",
+		author: "Michael Freedman",
+		year: 1982,
+		journal: "Journal of Differential Geometry",
+		volume: 17,
+		pages: "357–453",
+		url: "https://en.wikipedia.org/wiki/4-manifold",
+		alternativetitle: "Freedman's 4-manifold classification"
+	},
+	"donaldson1983gauge": {
+		title: "An Application of Gauge Theory to Four-Dimensional Topology",
+		author: "Simon Donaldson",
+		year: 1983,
+		journal: "Journal of Differential Geometry",
+		volume: 18,
+		pages: "279–315",
+		url: "https://en.wikipedia.org/wiki/Donaldson%27s_theorem",
+		alternativetitle: "Donaldson's theorem"
+	},
+	"deligne1974weil": {
+		title: "La conjecture de Weil. I",
+		author: "Pierre Deligne",
+		year: 1974,
+		journal: "Publications Mathématiques de l'IHÉS",
+		volume: 43,
+		pages: "273–307",
+		url: "https://en.wikipedia.org/wiki/Weil_conjectures",
+		alternativetitle: "Weil conjectures"
+	},
+	"weilconjectures_wiki": {
+		title: "Weil conjectures",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Weil_conjectures"
+	},
 	"awodey2010category": {
 		title: "Category Theory",
 		author: "Steve Awodey",
