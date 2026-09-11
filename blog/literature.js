@@ -118,6 +118,35 @@ window.bibData = {
 		url: "https://doi.org/10.1016/j.hm.2017.08.001",
 		alternativetitle: "Plimpton 322"
 	},
+	"susa_geometry_tablet": {
+		title: "Geometry problem on a clay tablet belonging to a school for scribes; Susa, first half of the 2nd millennium BC",
+		author: "Rama (photograph); clay tablet Sb 13088, Louvre Museum, Paris",
+		year: "c. 2000–1600 BCE (tablet) / 2017 (photograph)",
+		url: "https://commons.wikimedia.org/wiki/File:Geometry_problem-Sb_13088-IMG_0593-white.jpg",
+		license: "CC BY-SA 2.0 fr",
+		alternativetitle: "Susa geometry tablet (Sb 13088)"
+	},
+	"historyofmath_wikipedia": {
+		title: "History of mathematics",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/History_of_mathematics",
+		alternativetitle: "History of mathematics (Wikipedia)"
+	},
+	"alkindi_cryptanalysis": {
+		title: "Al-Kindi — father of cryptanalysis (frequency analysis)",
+		author: "Al-Kindi (Abū Yūsuf Yaʿqūb ibn ʿIsḥāq aṣ-Ṣabbāḥ al-Kindī)",
+		year: "c. 850 (Manuscript on Deciphering Cryptographic Messages)",
+		url: "https://en.wikipedia.org/wiki/Al-Kindi",
+		alternativetitle: "al-Kindi, cryptanalysis"
+	},
+	"stevin": {
+		title: "De Thiende (De la disme, “The Art of Tenths”)",
+		author: "Simon Stevin",
+		year: 1585,
+		url: "https://en.wikipedia.org/wiki/Disme,_the_Art_of_Tenths",
+		alternativetitle: "De Thiende"
+	},
 	"hoyrup2021algebra": {
 		title: "Algebra in Keilschrift: Einführung in eine altbabylonische geometrische Technik",
 		author: "Jens Høyrup",
