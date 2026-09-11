@@ -5,6 +5,7 @@ title: How LLMs Search the Web
 description: Behind the scenes of tool use, intent detection, fetch, extract, and rank.
 icon: &#127760;
 part: 5
+order: 4
 color: rose
 topics: inference, language, agents, programming
 -->
