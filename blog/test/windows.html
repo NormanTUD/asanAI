@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Die Geschichte von Windows - Interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Segoe UI', sans-serif;
+    background: #0a0e27;
+    color: #e8ecf1;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+  .hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: radial-gradient(ellipse at center, #1e3a8a 0%, #0a0e27 70%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #00bcf2, #0078d4, #7c3aed, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    padding: 0 20px;
+    z-index: 2;
+  }
+  .hero p {
+    font-size: 1.3rem;
+    color: #94a3b8;
+    margin-top: 20px;
+    z-index: 2;
+  }
+  #starfield {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    color: #64748b;
+    animation: bounce 2s infinite;
+    z-index: 2;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  section {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #00bcf2, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  h3 {
+    font-size: 1.5rem;
+    color: #00bcf2;
+    margin: 20px 0 10px;
+  }
+  p { margin-bottom: 15px; color: #cbd5e1; }
+  .card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+    align-items: center;
+  }
+  .controls label {
+    display: flex;
+    flex-direction: column;
+    color: #94a3b8;
+    font-size: 0.9rem;
+  }
+  input[type="range"] {
+    width: 200px;
+    accent-color: #00bcf2;
+  }
+  button {
+    background: linear-gradient(135deg, #0078d4, #00bcf2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 188, 242, 0.4);
+  }
+  canvas {
+    max-width: 100%;
+    border-radius: 12px;
+    background: #0f172a;
+    display: block;
+    margin: 10px auto;
+  }
+  .timeline {
+    position: relative;
+    padding: 40px 0;
+  }
+  .timeline-track {
+    height: 6px;
+    background: linear-gradient(90deg, #1e293b, #334155);
+    border-radius: 3px;
+    position: relative;
+    margin: 40px 0;
+  }
+  .timeline-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00bcf2, #7c3aed);
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+  .version-display {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    min-height: 250px;
+    border-left: 4px solid #00bcf2;
+  }
+  .version-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #00bcf2;
+  }
+  .version-year {
+    color: #f472b6;
+    font-size: 1.2rem;
+    margin: 5px 0 15px;
+  }
+  .version-badge {
+    display: inline-block;
+    background: #7c3aed;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-right: 8px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 768px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  .simulated-window {
+    background: #c0c0c0;
+    color: #000;
+    border: 2px outset #dfdfdf;
+    border-radius: 0;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 500px;
+    font-family: 'MS Sans Serif', sans-serif;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  }
+  .sim-titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: white;
+    padding: 4px 8px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sim-content {
+    padding: 15px;
+    min-height: 150px;
+  }
+  .sim-button {
+    background: #c0c0c0;
+    border: 2px outset #dfdfdf;
+    padding: 4px 12px;
+    color: #000;
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: 0;
+  }
+  .sim-button:active { border-style: inset; transform: none; box-shadow: none; }
+  .kpi {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+  .kpi-item {
+    background: rgba(0, 188, 242, 0.1);
+    border: 1px solid rgba(0, 188, 242, 0.3);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .kpi-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #00bcf2;
+  }
+  .kpi-label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+  }
+  .beta-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+  }
+  .beta-tab {
+    background: rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #e8ecf1;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .beta-tab.active {
+    background: linear-gradient(135deg, #7c3aed, #f472b6);
+    border-color: transparent;
+  }
+  .beta-tab:hover { transform: translateY(-2px); }
+  .desktop-preview {
+    width: 100%;
+    height: 300px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid #334155;
+    margin: 10px 0;
+  }
+  .taskbar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 0.8rem;
+  }
+  .intro-text {
+    font-size: 1.1rem;
+    color: #cbd5e1;
+    max-width: 800px;
+  }
+  .highlight {
+    color: #00bcf2;
+    font-weight: 600;
+  }
+  .section-num {
+    color: #7c3aed;
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <canvas id="starfield"></canvas>
+  <h1>Die Geschichte von Windows</h1>
+  <p>Eine interaktive Reise durch 40 Jahre Betriebssystem-Evolution</p>
+  <div class="scroll-hint">↓ Scrolle zum Entdecken</div>
+</div>
+
+<section>
+  <div class="section-num">Kapitel 01</div>
+  <h2>Warum überhaupt Windows?</h2>
+  <p class="intro-text">
+    In den frühen 1980er Jahren war Computerbedienung <span class="highlight">Textkommandos in einem schwarzen Terminal</span>.
+    Du wolltest eine Datei kopieren? Tippe <code style="background:#1e293b;padding:2px 6px;border-radius:4px">copy a:\datei.txt c:\</code>.
+    Microsoft wollte Computer für <em>alle</em> zugänglich machen – nicht nur für Techniker.
+  </p>
+  <div class="card">
+    <h3>Interaktiv: Terminal vs. GUI</h3>
+    <p>Versuche eine Datei zu "kopieren" – einmal im Terminal, einmal per Klick.</p>
+    <div class="grid-2">
+      <div>
+        <h4 style="color:#94a3b8">DOS Terminal (1981)</h4>
+        <div id="terminal" style="background:#000;color:#0f0;font-family:monospace;padding:15px;border-radius:8px;min-height:180px;font-size:0.9rem">
+          <div>Microsoft(R) MS-DOS(R) Version 5.0</div>
+          <div>C:\&gt; <span id="term-input"></span><span style="animation:blink 1s infinite">_</span></div>
+          <div id="term-output"></div>
+        </div>
+        <button onclick="runTerminalDemo()" style="margin-top:10px">▶ Kopier-Befehl ausführen</button>
+      </div>
+      <div>
+        <h4 style="color:#94a3b8">Windows GUI (ab 1985)</h4>
+        <div class="simulated-window">
+          <div class="sim-titlebar">
+            <span>📁 Datei-Manager</span>
+            <span>_ □ ×</span>
+          </div>
+          <div class="sim-content">
+            <div id="gui-file" style="cursor:pointer;padding:8px;border:1px dashed #666;display:inline-block" draggable="true">
+              📄 datei.txt
+            </div>
+            <div id="gui-target" style="border:2px dashed #000080;padding:15px;margin-top:15px;text-align:center">
+              Ziel-Ordner: C:\
+              <div id="gui-status" style="color:green;font-weight:bold;margin-top:8px"></div>
+            </div>
+            <button class="sim-button" onclick="simulateCopy()" style="margin-top:10px">Kopieren</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-num">Kapitel 02</div>
+  <h2>Die interaktive Zeitleiste</h2>
+  <p class="intro-text">
+    Bewege den Schieberegler durch die Jahre und erlebe jede große Windows-Version mit ihren
+    <span class="highlight">Innovationen, Codenamen und Beta-Phasen</span>.
+  </p>
+  <div class="card">
+    <div class="controls">
+      <label>
+        Jahr: <span id="year-display" style="color:#00bcf2;font-weight:bold">1985</span>
+        <input type="range" id="timeline-slider" min="0" max="17" value="0" style="width:100%">
+      </label>
+      <button onclick="playTimeline()">▶ Auto-Play</button>
+    </div>
+    <div class="timeline-track">
+      <div class="timeline-progress" id="timeline-progress" style="width:0%"></div>
+    </div>
+    <div class="version-display" id="version-display"></div>
+    <div class="desktop-preview" id="desktop-preview"></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-num">Kapitel 03</div>
+  <h2>Die Beta-Kultur: Wie Windows entsteht</h2>
+  <p class="intro-text">
+    Bevor eine Windows-Version veröffentlicht wird, durchläuft sie <span class="highlight">Alpha-, Beta- und RC-Phasen</span>.
+    Klicke auf jede Phase, um zu sehen, was dort passiert.
+  </p>
+  <div class="card">
+    <div class="beta-tabs" id="beta-tabs"></div>
+    <div id="beta-info" class="version-display"></div>
+    <canvas id="beta-canvas" width="900" height="200"></canvas>
+  </div>
+</section>
+
+<section>
+  <div class="section-num">Kapitel 04</div>
+  <h2>Berühmte Beta-Builds & Codenamen</h2>
+  <p class="intro-text">
+    Jede Windows-Version hatte einen geheimen Codenamen während der Entwicklung.
+    Manche wurden legendär – wie <span class="highlight">"Chicago"</span> (Windows 95) oder <span class="highlight">"Longhorn"</span> (Vista).
+  </p>
+  <div class="card">
+    <h3>Marktanteile über die Zeit</h3>
+    <div id="marketshare-chart" style="height:400px"></div>
+  </div>
+  <div class="card">
+    <h3>Build-Nummern-Explosion</h3>
+    <p>Windows-Builds werden intern durchnummeriert. Sieh, wie sie über die Jahre wuchsen:</p>
+    <div id="build-chart" style="height:400px"></div>
+  </div>
+</section>
+
+<section>
+  <div class="section-num">Kapitel 05</div>
+  <h2>Das Windows Insider Programm</h2>
+  <p class="intro-text">
+    Seit 2014 können <span class="highlight">Millionen von Nutzern weltweit</span> Beta-Versionen von Windows testen.
+    Es gibt verschiedene "Kanäle" mit unterschiedlicher Stabilität:
+  </p>
+  <div class="card">
+    <div class="controls">
+      <label>Risikobereitschaft:
+        <input type="range" id="risk-slider" min="0" max="100" value="50">
+      </label>
+      <label>Feature-Neuheit:
+        <input type="range" id="freshness-slider" min="0" max="100" value="50">
+      </label>
+    </div>
+    <div id="channel-recommendation" class="version-display"></div>
+    <canvas id="channel-canvas" width="900" height="300"></canvas>
+  </div>
+</section>
+
+<section>
+  <div class="section-num">Kapitel 06</div>
+  <h2>Die Kernel-Evolution</h2>
+  <p class="intro-text">
+    Unter der schönen Oberfläche steckt der <span class="highlight">Kernel</span> – das Herzstück des Betriebssystems.
+    Windows hatte zwei große Kernel-Linien, die sich schließlich vereinten.
+  </p>
+  <div class="card">
+    <canvas id="kernel-canvas" width="900" height="400"></canvas>
+    <div class="kpi">
+      <div class="kpi-item"><div class="kpi-value">1993</div><div class="kpi-label">NT-Kernel geboren</div></div>
+      <div class="kpi-item"><div class="kpi-value">2001</div><div class="kpi-label">Vereinigung mit XP</div></div>
+      <div class="kpi-item"><div class="kpi-value">10.0</div><div class="kpi-label">Aktuelle NT-Version</div></div>
+      <div class="kpi-item"><div class="kpi-value">~50M</div><div class="kpi-label">Zeilen Code</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="section-num">Fazit</div>
+  <h2>Was haben wir gelernt?</h2>
+  <div class="card">
+    <h3>🎯 Die Motivation</h3>
+    <p>Computer für jeden zugänglich machen – nicht nur für Experten mit Kommandozeilen-Wissen.</p>
+    <h3>💡 Die Idee</h3>
+    <p>Eine grafische Oberfläche mit "Fenstern" (Windows), Maus, Icons und Menüs – das sogenannte <span class="highlight">WIMP-Paradigma</span>.</p>
+    <h3>🔧 Der Lösungsweg</h3>
+    <p>Über 40 Jahre iterative Entwicklung: Von 16-Bit-Aufsatz auf DOS (1985), über den revolutionären NT-Kernel (1993), zur Vereinigung in XP (2001), bis zum modernen Cloud-integrierten Windows 11.</p>
+    <h3>✨ Die Beta-Kultur</h3>
+    <p>Durch systematische Alpha-, Beta- und Insider-Programme werden Millionen Nutzer zu Mit-Entwicklern. Bugs werden gefunden, bevor sie Milliarden Geräte erreichen.</p>
+    <h3>🏆 Das Ergebnis</h3>
+    <p>Windows läuft heute auf <span class="highlight">über 1,4 Milliarden Geräten</span> weltweit und ist das meistverbreitete Desktop-Betriebssystem der Welt.</p>
+  </div>
+</section>
+
+<div class="footer">
+  <p>Erstellt mit ❤️ – Eine interaktive Reise durch die Geschichte von Windows</p>
+</div>
+
+<style>@keyframes blink { 50% { opacity: 0; } }</style>
+
+<script>
+// ===== STARFIELD =====
+const sf = document.getElementById('starfield');
+const sctx = sf.getContext('2d');
+function resizeStarfield() { sf.width = window.innerWidth; sf.height = window.innerHeight; }
+resizeStarfield();
+window.addEventListener('resize', resizeStarfield);
+const stars = Array.from({length: 200}, () => ({
+  x: Math.random() * sf.width,
+  y: Math.random() * sf.height,
+  z: Math.random() * 3,
+  s: Math.random() * 1.5 + 0.3
+}));
+function animateStars() {
+  sctx.fillStyle = 'rgba(10, 14, 39, 0.3)';
+  sctx.fillRect(0, 0, sf.width, sf.height);
+  stars.forEach(s => {
+    s.y += s.z * 0.3;
+    if (s.y > sf.height) { s.y = 0; s.x = Math.random() * sf.width; }
+    sctx.fillStyle = `rgba(200, 220, 255, ${s.z / 3})`;
+    sctx.beginPath();
+    sctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+    sctx.fill();
+  });
+  requestAnimationFrame(animateStars);
+}
+animateStars();
+
+// ===== TERMINAL DEMO =====
+function runTerminalDemo() {
+  const input = document.getElementById('term-input');
+  const output = document.getElementById('term-output');
+  const cmd = 'copy a:\\datei.txt c:\\';
+  input.textContent = '';
+  output.innerHTML = '';
+  let i = 0;
+  const type = setInterval(() => {
+    if (i < cmd.length) {
+      input.textContent += cmd[i++];
+    } else {
+      clearInterval(type);
+      setTimeout(() => {
+        output.innerHTML = '<div>        1 file(s) copied</div><div>C:\\&gt; _</div>';
+      }, 500);
+    }
+  }, 80);
+}
+
+function simulateCopy() {
+  const status = document.getElementById('gui-status');
+  status.textContent = '✓ Datei kopiert!';
+  setTimeout(() => status.textContent = '', 2000);
+}
+
+// ===== TIMELINE DATA =====
+const windowsHistory = [
+  {v: 'Windows 1.0', y: 1985, code: 'Interface Manager', badges: ['16-bit', 'DOS-basiert'],
+   desc: 'Der Anfang! Fenster konnten sich noch nicht überlappen (kachelartig). Enthielt Paint, Notepad und Reversi.',
+   bg: '#008080', ui: 'tiled', beta: 'Beta 1985'},
+  {v: 'Windows 2.0', y: 1987, code: 'Windows 2', badges: ['Überlappend'],
+   desc: 'Erste überlappende Fenster! Excel und Word erschienen. Apple verklagte Microsoft wegen der GUI.',
+   bg: '#000080', ui: 'overlap'},
+  {v: 'Windows 3.0/3.1', y: 1990, code: 'Janus', badges: ['Bestseller', 'Multimedia'],
+   desc: '10 Millionen Verkäufe! Der Programm-Manager wurde ikonisch. TrueType-Schriften kamen hinzu.',
+   bg: '#008080', ui: 'progman'},
+  {v: 'Windows NT 3.1', y: 1993, code: 'Razzle', badges: ['32-bit', 'Enterprise', 'Neuer Kernel'],
+   desc: 'Komplett neu geschrieben von Dave Cutler (ehem. DEC). Multitasking, Sicherheit, für Server gedacht.',
+   bg: '#008080', ui: 'nt'},
+  {v: 'Windows 95', y: 1995, code: 'Chicago', badges: ['Startmenü', 'Kult'],
+   desc: 'Revolution! Startmenü, Taskleiste, "Plug and Play", 32-bit. Beta hatte 400.000 Tester – riesig für damals.',
+   bg: '#008080', ui: 'win95'},
+  {v: 'Windows 98', y: 1998, code: 'Memphis', badges: ['Internet', 'USB'],
+   desc: 'Internet Explorer tief integriert. USB-Unterstützung, FAT32. Berühmte Bluescreen-Demo bei der Präsentation!',
+   bg: '#008080', ui: 'win98'},
+  {v: 'Windows 2000', y: 2000, code: 'Cairo/NT 5.0', badges: ['NT-Kernel', 'Business'],
+   desc: 'Erste "moderne" NT-Version für Firmen. Active Directory eingeführt. Extrem stabil und beliebt bei Admins.',
+   bg: '#3a6ea5', ui: 'win2k'},
+  {v: 'Windows XP', y: 2001, code: 'Whistler', badges: ['Vereinigung', 'Luna-Design', 'Legende'],
+   desc: 'Die Vereinigung! Consumer- und NT-Linie verschmelzen. Buntes "Luna"-Theme, blau-grüne Wiese als Hintergrund. Lief 12+ Jahre bei vielen.',
+   bg: '#245edb', ui: 'winxp'},
+  {v: 'Windows Vista', y: 2007, code: 'Longhorn', badges: ['Aero Glass', 'Umstritten'],
+   desc: 'Wunderschöne transparente "Aero Glass"-Optik, aber hungrig nach Ressourcen. Berüchtigt für UAC-Popups und Treiberprobleme.',
+   bg: '#1e3a5f', ui: 'vista'},
+  {v: 'Windows 7', y: 2009, code: 'Blackcomb/Vienna', badges: ['Beliebt', 'Superbar'],
+   desc: 'Die Verbesserung von Vista – schneller, schlanker, mit neuer Taskleiste ("Superbar"). Weit über eine Milliarde Installationen.',
+   bg: '#0a4d8c', ui: 'win7'},
+  {v: 'Windows 8', y: 2012, code: 'Redlia', badges: ['Kacheln', 'Touch', 'Kontrovers'],
+   desc: 'Radikal neu: Startbildschirm mit "Live Tiles" statt Startmenü. Für Tablets gedacht, verwirrte Desktop-Nutzer massiv.',
+   bg: '#00b294', ui: 'win8'},
+  {v: 'Windows 10', y: 2015, code: 'Threshold', badges: ['Insider-Programm', 'Startmenü zurück'],
+   desc: 'Nummer 9 übersprungen! Startmenü kehrt zurück, kombiniert mit Kacheln. Erstes Windows-as-a-Service mit ständigen Updates.',
+   bg: '#0078d4', ui: 'win10'},
+  {v: 'Windows 11', y: 2021, code: 'Sun Valley', badges: ['Zentriert', 'Fluent Design'],
+   desc: 'Zentrierte Taskleiste, abgerundete Ecken, neues "Fluent Design". TPM 2.0 als Voraussetzung sorgte für Diskussionen.',
+   bg: '#1a5fb4', ui: 'win11'},
+  {v: 'Windows 11 24H2', y: 2024, code: 'Hudson Valley', badges: ['Copilot+', 'AI'],
+   desc: 'KI-Integration mit Copilot+. Recall, Live Captions, neue NPU-Beschleunigung für ARM- und x86-Chips.',
+   bg: '#0f2557', ui: 'win11ai'},
+  {v: 'Windows 12 (Gerüchte)', y: 2026, code: 'Next Valley?', badges: ['Spekulation', 'AI-first'],
+   desc: 'Noch nicht offiziell angekündigt. Gerüchte: modulares Design, tiefere KI-Integration, weitere Cloud-Verzahnung.',
+   bg: '#2d1b69', ui: 'future'}
+];
+
+// ===== TIMELINE LOGIC =====
+const slider = document.getElementById('timeline-slider');
+const yearDisplay = document.getElementById('year-display');
+const progress = document.getElementById('timeline-progress');
+const versionDisplay = document.getElementById('version-display');
+const desktopPreview = document.getElementById('desktop-preview');
+
+function renderDesktop(item) {
+  const ui = item.ui;
+  let content = `<div style="background:${item.bg};width:100%;height:100%;position:relative;color:white;font-family:sans-serif">`;
+  
+  if (ui === 'tiled') {
+    content += `
+      <div style="position:absolute;top:10px;left:10px;background:#c0c0c0;color:#000;padding:8px;width:180px;border:2px outset #dfdfdf">
+        <b>MS-DOS Executive</b><br><small>WIN.COM  PAINT.EXE</small>
+      </div>
+      <div style="position:absolute;top:10px;right:10px;background:#c0c0c0;color:#000;padding:8px;width:180px;border:2px outset #dfdfdf">
+        <b>Calculator</b><br><small>[ 0 ]</small>
+      </div>
+      <div style="position:absolute;bottom:10px;left:10px;background:#c0c0c0;color:#000;padding:8px;width:180px;border:2px outset #dfdfdf">
+        <b>Reversi</b><br><small>● ○ ● ○</small>
+      </div>`;
+  } else if (ui === 'win95') {
+    content += `
+      <div style="position:absolute;top:20px;left:20px;text-align:center;font-size:0.75rem">
+        <div style="font-size:2rem">💻</div>Arbeitsplatz
+      </div>
+      <div style="position:absolute;top:100px;left:20px;text-align:center;font-size:0.75rem">
+        <div style="font-size:2rem">🗑️</div>Papierkorb
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:28px;background:#c0c0c0;border-top:2px solid #fff;display:flex;align-items:center;padding:0 5px">
+        <div style="background:#c0c0c0;border:2px outset #dfdfdf;color:#000;padding:2px 8px;font-weight:bold;font-size:0.8rem">⊞ Start</div>
+        <div style="flex:1"></div>
+        <div style="color:#000;font-size:0.75rem;padding:0 8px">14:30</div>
+      </div>`;
+  } else if (ui === 'winxp') {
+    content += `
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,#5db2ea 0%,#7ec850 60%,#5a9f3e 100%)"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(180deg,#245edb,#1941a5);display:flex;align-items:center">
+        <div style="background:linear-gradient(180deg,#3fa22f,#2d8f1a);color:white;padding:5px 20px;border-radius:0 15px 15px 0;font-weight:bold;font-style:italic">start</div>
+      </div>`;
+  } else if (ui === 'vista') {
+    content += `
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,#4a90d9,#0a1e3d)"></div>
+      <div style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:15px;border-radius:8px;border:1px solid rgba(255,255,255,0.3);color:white">
+        <b>Sidebar</b><br>🕐 14:30<br>🌡️ 22°C
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:36px;background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);display:flex;align-items:center;padding:0 10px">
+        <div style="width:32px;height:32px;background:radial-gradient(circle,#4a90d9,#0a1e3d);border-radius:50%;border:1px solid rgba(255,255,255,0.5)"></div>
+      </div>`;
+  } else if (ui === 'win7') {
+    content += `
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,#4a90d9,#1a3a6c)"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(180deg,rgba(80,120,180,0.85),rgba(30,60,120,0.85));backdrop-filter:blur(20px);display:flex;align-items:center;padding:0 8px;gap:6px">
+        <div style="width:32px;height:32px;background:radial-gradient(circle,#7bc3ff,#1a5fb4);border-radius:50%"></div>
+        <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:4px;display:flex;align-items:center;justify-content:center">📁</div>
+        <div style="width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:4px;display:flex;align-items:center;justify-content:center">🌐</div>
+      </div>`;
+  } else if (ui === 'win8') {
+    content += `
+      <div style="position:absolute;inset:0;background:#008272;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:60px;gap:6px;padding:20px">
+        <div style="background:#e3008c;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold">Mail</div>
+        <div style="background:#0078d4;color:white;display:flex;align-items:center;justify-content:center">📷</div>
+        <div style="background:#7fba00;color:white;grid-column:span 2;display:flex;align-items:center;justify-content:center">Wetter 22°</div>
+        <div style="background:#f7630c;color:white;display:flex;align-items:center;justify-content:center">Store</div>
+        <div style="background:#5c2d91;color:white;display:flex;align-items:center;justify-content:center">🎮</div>
+        <div style="background:#008272;color:white;grid-column:span 2;border:1px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center">People</div>
+      </div>`;
+  } else if (ui === 'win10') {
+    content += `
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0078d4,#00188f)"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:36px;background:rgba(0,0,0,0.7);display:flex;align-items:center;padding:0 8px;gap:6px">
+        <div style="width:28px;height:28px;background:white;clip-path:polygon(0 15%,50% 5%,50% 48%,0 48%,0 52%,50% 52%,50% 95%,0 85%);"></div>
+        <div style="background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:2px;font-size:0.75rem">🔍 Cortana durchsucht...</div>
+      </div>`;
+  } else if (ui === 'win11' || ui === 'win11ai') {
+    content += `
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,#4a7fd6,#1a3a6c)"></div>
+      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(30,40,60,0.7);backdrop-filter:blur(20px);border-radius:12px;padding:6px 10px;display:flex;gap:8px;border:1px solid rgba(255,255,255,0.1)">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,#00bcf2,#7c3aed);border-radius:4px;display:flex;align-items:center;justify-content:center">⊞</div>
+        <div style="width:28px;height:28px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center">🔍</div>
+        ${ui==='win11ai' ? '<div style="width:28px;height:28px;background:linear-gradient(135deg,#f472b6,#7c3aed);border-radius:4px;display:flex;align-items:center;justify-content:center">✨</div>' : ''}
+        <div style="width:28px;height:28px;background:rgba(255,255,255,0.1);border-radius:4px;display:flex;align-items:center;justify-content:center">📁</div>
+      </div>`;
+  } else if (ui === 'future') {
+    content += `
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#7c3aed,#1a0a3d)"></div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:2rem;opacity:0.6">
+        ✨ Zukunft ✨<br><span style="font-size:0.9rem">Nur Spekulation</span>
+      </div>`;
+  } else {
+    content += `
+      <div style="position:absolute;top:20px;left:20px;background:#c0c0c0;color:#000;padding:15px;border:2px outset #dfdfdf;min-width:200px">
+        <div style="background:#000080;color:white;margin:-15px -15px 10px -15px;padding:4px 8px;font-weight:bold">Programm-Manager</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;font-size:0.75rem">
+          <div>📝<br>Editor</div><div>🎨<br>Paint</div><div>🕹️<br>Solitär</div>
+        </div>
+      </div>`;
+  }
+  
+  content += `</div>`;
+  return content;
+}
+
+function updateTimeline(idx) {
+  const item = windowsHistory[idx];
+  yearDisplay.textContent = item.y;
+  progress.style.width = `${(idx / (windowsHistory.length - 1)) * 100}%`;
+  
+  versionDisplay.innerHTML = `
+    <div class="version-title">${item.v}</div>
+    <div class="version-year">Jahr: ${item.y} · Codename: <em>${item.code}</em></div>
+    <div style="margin:12px 0">${item.badges.map(b => `<span class="version-badge">${b}</span>`).join('')}</div>
+    <p style="color:#e8ecf1;font-size:1.05rem">${item.desc}</p>
+  `;
+  desktopPreview.innerHTML = renderDesktop(item);
+}
+
+slider.addEventListener('input', e => updateTimeline(parseInt(e.target.value)));
+updateTimeline(0);
+
+let playing = false;
+function playTimeline() {
+  if (playing) return;
+  playing = true;
+  let i = 0;
+  const iv = setInterval(() => {
+    slider.value = i;
+    updateTimeline(i);
+    i++;
+    if (i >= windowsHistory.length) { clearInterval(iv); playing = false; }
+  }, 1500);
+}
+
+// ===== BETA PHASES =====
+const betaPhases = [
+  {name: 'Pre-Alpha', color: '#64748b',
+   desc: 'Interne Entwicklung. Nur Microsoft-Ingenieure sehen den Code. Vieles ist unfertig oder komplett kaputt. Neue Features werden noch geplant und diskutiert.',
+   example: 'Bei Windows 95 (Codename Chicago) lief die Pre-Alpha ab 1992 – drei Jahre vor Release!'},
+  {name: 'Alpha', color: '#f472b6',
+   desc: 'Erste testbare Version. Grundfunktionen stehen, aber viele Bugs. Wird an ausgewählte Partner (OEMs, Entwickler) verteilt. Absolut nicht für Endnutzer geeignet.',
+   example: 'Windows Longhorn (Vista) hatte legendäre Alpha-Leaks, die die Community aufregten.'},
+  {name: 'Beta', color: '#7c3aed',
+   desc: 'Feature-komplett. Die Software macht, was sie soll – aber es sind noch viele Fehler drin. Öffentliche Beta-Programme geben Millionen Nutzern Zugriff.',
+   example: 'Windows 95 Beta (März 1995) hatte über 400.000 registrierte Tester weltweit.'},
+  {name: 'Release Candidate', color: '#00bcf2',
+   desc: '"Kandidat" für die finale Version. Nur noch kritische Bugs werden gefixt. Wenn nichts Ernstes gefunden wird, wird DIESER Build zum Release.',
+   example: 'Windows 7 RC (Mai 2009) lief bei vielen so gut, dass Microsoft überzeugt war.'},
+  {name: 'RTM', color: '#10b981',
+   desc: '"Release to Manufacturing" – die finale Version wird an Hardware-Hersteller (Dell, HP, Lenovo) geschickt, damit sie auf neuen PCs vorinstalliert werden kann.',
+   example: 'Windows 10 RTM ging im Juli 2015 an die OEMs, öffentlicher Release Ende Juli.'},
+  {name: 'GA (General Availability)', color: '#eab308',
+   desc: 'Offizieller Verkaufsstart. Jeder kann kaufen und installieren. Aber: Für Windows läuft das Insider-Programm parallel weiter für die NÄCHSTE Version!',
+   example: 'Windows 11 GA war der 5. Oktober 2021.'}
+];
+
+const betaTabs = document.getElementById('beta-tabs');
+const betaInfo = document.getElementById('beta-info');
+const betaCanvas = document.getElementById('beta-canvas');
+const bctx = betaCanvas.getContext('2d');
+
+betaPhases.forEach((phase, i) => {
+  const tab = document.createElement('div');
+  tab.className = 'beta-tab' + (i === 0 ? ' active' : '');
+  tab.textContent = phase.name;
+  tab.onclick = () => selectPhase(i);
+  betaTabs.appendChild(tab);
+});
+
+function drawBetaPipeline(activeIdx) {
+  bctx.clearRect(0, 0, 900, 200);
+  const w = 900, cx = 900 / betaPhases.length;
+  betaPhases.forEach((p, i) => {
+    const x = cx * i + cx / 2;
+    const y = 100;
+    // connector line
+    if (i < betaPhases.length - 1) {
+      const grad = bctx.createLinearGradient(x, y, x + cx, y);
+      grad.addColorStop(0, p.color);
+      grad.addColorStop(1, betaPhases[i+1].color);
+      bctx.strokeStyle = grad;
+      bctx.lineWidth = 4;
+      bctx.beginPath();
+      bctx.moveTo(x + 35, y);
+      bctx.lineTo(x + cx - 35, y);
+      bctx.stroke();
+    }
+    // circle
+    const r = i === activeIdx ? 40 : 28;
+    bctx.fillStyle = p.color;
+    bctx.globalAlpha = i === activeIdx ? 1 : 0.5;
+    bctx.beginPath();
+    bctx.arc(x, y, r, 0, Math.PI * 2);
+    bctx.fill();
+    bctx.globalAlpha = 1;
+    // label
+    bctx.fillStyle = '#e8ecf1';
+    bctx.font = i === activeIdx ? 'bold 13px sans-serif' : '12px sans-serif';
+    bctx.textAlign = 'center';
+    bctx.fillText(p.name, x, y + r + 20);
+    // maturity %
+    bctx.fillStyle = 'white';
+    bctx.font = 'bold 11px sans-serif';
+    bctx.fillText(`${Math.round((i+1) / betaPhases.length * 100)}%`, x, y + 4);
+  });
+}
+
+function selectPhase(i) {
+  document.querySelectorAll('.beta-tab').forEach((t, j) => t.classList.toggle('active', i === j));
+  const p = betaPhases[i];
+  betaInfo.style.borderLeftColor = p.color;
+  betaInfo.innerHTML = `
+    <div class="version-title" style="color:${p.color}">${p.name}</div>
+    <p style="margin-top:10px">${p.desc}</p>
+    <div style="margin-top:15px;padding:12px;background:rgba(0,0,0,0.3);border-radius:8px;border-left:3px solid ${p.color}">
+      <strong>📌 Beispiel:</strong> ${p.example}
+    </div>
+  `;
+  drawBetaPipeline(i);
+}
+selectPhase(0);
+
+// ===== MARKET SHARE CHART =====
+const years = [1995, 2000, 2005, 2010, 2015, 2020, 2024];
+Plotly.newPlot('marketshare-chart', [
+  {x: years, y: [50, 15, 5, 2, 1, 0, 0], name: 'Win 95/98/ME', type: 'scatter', mode: 'lines', stackgroup: 'a', line: {color:'#f472b6'}},
+  {x: years, y: [0, 30, 20, 5, 1, 0, 0], name: 'Win 2000/XP', type: 'scatter', mode: 'lines', stackgroup: 'a', line: {color:'#00bcf2'}},
+  {x: years, y: [0, 0, 5, 25, 5, 1, 0], name: 'Vista/7', type: 'scatter', mode: 'lines', stackgroup: 'a', line: {color:'#7c3aed'}},
+  {x: years, y: [0, 0, 0, 0, 15, 5, 2], name: 'Windows 8/8.1', type: 'scatter', mode: 'lines', stackgroup: 'a', line: {color:'#10b981'}},
+  {x: years, y: [0, 0, 0, 0, 30, 60, 45], name: 'Windows 10', type: 'scatter', mode: 'lines', stackgroup: 'a', line: {color:'#0078d4'}},
+  {x: years, y: [0, 0, 0, 0, 0, 0, 35], name: 'Windows 11', type: 'scatter', mode: 'lines', stackgroup: 'a', line: {color:'#eab308'}}
+], {
+  paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+  font: {color: '#cbd5e1'}, margin: {t:10, r:10, b:40, l:50},
+  xaxis: {title: 'Jahr', gridcolor: '#334155'},
+  yaxis: {title: 'Geschätzter Anteil (%)', gridcolor: '#334155'},
+  legend: {orientation:'h', y:-0.2}
+}, {responsive: true});
+
+// ===== BUILD NUMBERS =====
+const buildData = [
+  {v: 'Win 3.1', b: 103}, {v: 'NT 3.1', b: 528}, {v: 'Win 95', b: 950},
+  {v: 'NT 4.0', b: 1381}, {v: 'Win 98', b: 1998}, {v: 'Win 2000', b: 2195},
+  {v: 'Win XP', b: 2600}, {v: 'Vista', b: 6000}, {v: 'Win 7', b: 7600},
+  {v: 'Win 8', b: 9200}, {v: 'Win 10', b: 10240}, {v: 'Win 11', b: 22000}, {v: 'Win 11 24H2', b: 26100}
+];
+
+Plotly.newPlot('build-chart', [{
+  x: buildData.map(d => d.v),
+  y: buildData.map(d => d.b),
+  type: 'bar',
+  marker: {
+    color: buildData.map(d => d.b),
+    colorscale: [[0, '#0078d4'], [0.5, '#7c3aed'], [1, '#f472b6']],
+    line: {color: '#00bcf2', width: 1}
+  },
+  text: buildData.map(d => d.b.toLocaleString()),
+  textposition: 'outside',
+  textfont: {color: '#e8ecf1'}
+}], {
+  paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+  font: {color: '#cbd5e1'}, margin: {t:20, r:10, b:60, l:60},
+  xaxis: {gridcolor: '#334155', tickangle: -30},
+  yaxis: {title: 'Build-Nummer (log)', type: 'log', gridcolor: '#334155'}
+}, {responsive: true});
+
+// ===== INSIDER CHANNELS =====
+const riskSlider = document.getElementById('risk-slider');
+const freshSlider = document.getElementById('freshness-slider');
+const channelRec = document.getElementById('channel-recommendation');
+const chCanvas = document.getElementById('channel-canvas');
+const chctx = chCanvas.getContext('2d');
+
+const channels = [
+  {name: 'Canary Channel', risk: 95, fresh: 100, color: '#f472b6',
+   desc: 'Der wildeste Kanal. Frischeste Builds direkt aus der Entwicklung. Häufige Abstürze, experimentelle Features, die vielleicht nie erscheinen. Für echte Enthusiasten.',
+   users: '~50.000 weltweit'},
+  {name: 'Dev Channel', risk: 75, fresh: 85, color: '#7c3aed',
+   desc: 'Für Entwickler und Enthusiasten. Neue Features werden hier zuerst breit getestet. Instabil, aber spannend. Kein direktes Update auf stabilere Kanäle möglich.',
+   users: '~500.000 weltweit'},
+  {name: 'Beta Channel', risk: 40, fresh: 60, color: '#00bcf2',
+   desc: 'Der Sweet Spot. Zuverlässiger als Dev, aber trotzdem neue Features vor allen anderen. Ideal für tägliche Nutzung mit etwas Risikobereitschaft.',
+   users: '~2 Millionen weltweit'},
+  {name: 'Release Preview', risk: 15, fresh: 30, color: '#10b981',
+   desc: 'Nächste finale Version, kurz vor Release. Nahezu identisch mit dem, was bald alle bekommen. Ideal für IT-Admins, die vorher testen wollen.',
+   users: '~5 Millionen weltweit'}
+];
+
+function drawChannels(activeIdx) {
+  chctx.clearRect(0, 0, 900, 300);
+  const w = 900, h = 300;
+  // Grid
+  chctx.strokeStyle = '#1e293b';
+  chctx.lineWidth = 1;
+  for (let i = 0; i <= 10; i++) {
+    const x = (w / 10) * i;
+    const y = (h / 10) * i;
+    chctx.beginPath(); chctx.moveTo(x, 0); chctx.lineTo(x, h); chctx.stroke();
+    chctx.beginPath(); chctx.moveTo(0, y); chctx.lineTo(w, y); chctx.stroke();
+  }
+  // Axis labels
+  chctx.fillStyle = '#64748b';
+  chctx.font = '11px sans-serif';
+  chctx.textAlign = 'left';
+  chctx.fillText('← Weniger neue Features        Feature-Neuheit →', 10, h - 8);
+  chctx.save();
+  chctx.translate(15, h - 20);
+  chctx.rotate(-Math.PI / 2);
+  chctx.fillText('← Weniger Risiko        Risiko →', 0, 0);
+  chctx.restore();
+  
+  // Channel bubbles
+  channels.forEach((ch, i) => {
+    const x = (ch.fresh / 100) * (w - 100) + 50;
+    const y = h - ((ch.risk / 100) * (h - 60) + 30);
+    const r = i === activeIdx ? 45 : 30;
+    
+    // glow
+    if (i === activeIdx) {
+      const grad = chctx.createRadialGradient(x, y, 0, x, y, 80);
+      grad.addColorStop(0, ch.color + 'aa');
+      grad.addColorStop(1, 'transparent');
+      chctx.fillStyle = grad;
+      chctx.beginPath();
+      chctx.arc(x, y, 80, 0, Math.PI * 2);
+      chctx.fill();
+    }
+    
+    chctx.fillStyle = ch.color;
+    chctx.globalAlpha = i === activeIdx ? 1 : 0.7;
+    chctx.beginPath();
+    chctx.arc(x, y, r, 0, Math.PI * 2);
+    chctx.fill();
+    chctx.globalAlpha = 1;
+    
+    chctx.fillStyle = 'white';
+    chctx.font = i === activeIdx ? 'bold 12px sans-serif' : '11px sans-serif';
+    chctx.textAlign = 'center';
+    chctx.fillText(ch.name, x, y + r + 15);
+  });
+  
+  // User marker
+  const ux = (parseInt(freshSlider.value) / 100) * (w - 100) + 50;
+  const uy = h - ((parseInt(riskSlider.value) / 100) * (h - 60) + 30);
+  chctx.strokeStyle = '#eab308';
+  chctx.lineWidth = 3;
+  chctx.beginPath();
+  chctx.arc(ux, uy, 12, 0, Math.PI * 2);
+  chctx.stroke();
+  chctx.fillStyle = '#eab308';
+  chctx.font = 'bold 11px sans-serif';
+  chctx.fillText('DU', ux, uy - 18);
+}
+
+function updateChannel() {
+  const risk = parseInt(riskSlider.value);
+  const fresh = parseInt(freshSlider.value);
+  // find closest channel
+  let best = 0, bestDist = Infinity;
+  channels.forEach((ch, i) => {
+    const d = Math.hypot(ch.risk - risk, ch.fresh - fresh);
+    if (d < bestDist) { bestDist = d; best = i; }
+  });
+  const c = channels[best];
+  channelRec.style.borderLeftColor = c.color;
+  channelRec.innerHTML = `
+    <div style="color:#94a3b8;font-size:0.9rem">Empfehlung für dich:</div>
+    <div class="version-title" style="color:${c.color}">${c.name}</div>
+    <p style="margin-top:10px">${c.desc}</p>
+    <div style="margin-top:10px;color:#94a3b8;font-size:0.9rem">👥 ${c.users}</div>
+  `;
+  drawChannels(best);
+}
+riskSlider.addEventListener('input', updateChannel);
+freshSlider.addEventListener('input', updateChannel);
+updateChannel();
+
+// ===== KERNEL EVOLUTION =====
+const kCanvas = document.getElementById('kernel-canvas');
+const kctx = kCanvas.getContext('2d');
+
+function drawKernelTree() {
+  const w = 900, h = 400;
+  kctx.clearRect(0, 0, w, h);
+  
+  // Two branches merging
+  const events = [
+    // DOS/9x branch (upper)
+    {x: 50, y: 80, label: 'MS-DOS', year: '1981', branch: 'dos', color: '#f472b6'},
+    {x: 180, y: 80, label: 'Win 3.x', year: '1990', branch: 'dos', color: '#f472b6'},
+    {x: 310, y: 80, label: 'Win 95', year: '1995', branch: 'dos', color: '#f472b6'},
+    {x: 440, y: 80, label: 'Win 98', year: '1998', branch: 'dos', color: '#f472b6'},
+    {x: 570, y: 80, label: 'Win ME', year: '2000', branch: 'dos', color: '#f472b6'},
+    // NT branch (lower)
+    {x: 180, y: 280, label: 'NT 3.1', year: '1993', branch: 'nt', color: '#00bcf2'},
+    {x: 310, y: 280, label: 'NT 4.0', year: '1996', branch: 'nt', color: '#00bcf2'},
+    {x: 440, y: 280, label: 'Win 2000', year: '2000', branch: 'nt', color: '#00bcf2'},
+    // Merge!
+    {x: 620, y: 180, label: 'Windows XP', year: '2001', branch: 'merge', color: '#7c3aed'},
+    {x: 750, y: 180, label: 'Vista → 7 → 10 → 11', year: '2007-heute', branch: 'merge', color: '#7c3aed'}
+  ];
+  
+  // Draw connections
+  kctx.lineWidth = 3;
+  // DOS line
+  kctx.strokeStyle = '#f472b6';
+  kctx.beginPath();
+  kctx.moveTo(50, 80);
+  kctx.lineTo(570, 80);
+  kctx.quadraticCurveTo(600, 80, 620, 180);
+  kctx.stroke();
+  // NT line
+  kctx.strokeStyle = '#00bcf2';
+  kctx.beginPath();
+  kctx.moveTo(180, 280);
+  kctx.lineTo(440, 280);
+  kctx.quadraticCurveTo(560, 280, 620, 180);
+  kctx.stroke();
+  // Merged line
+  kctx.strokeStyle = '#7c3aed';
+  kctx.lineWidth = 4;
+  kctx.beginPath();
+  kctx.moveTo(620, 180);
+  kctx.lineTo(880, 180);
+  kctx.stroke();
+  
+  // Draw nodes
+  events.forEach(e => {
+    kctx.fillStyle = e.color;
+    kctx.beginPath();
+    kctx.arc(e.x, e.y, 18, 0, Math.PI * 2);
+    kctx.fill();
+    kctx.strokeStyle = '#0a0e27';
+    kctx.lineWidth = 3;
+    kctx.stroke();
+    
+    kctx.fillStyle = '#e8ecf1';
+    kctx.font = 'bold 12px sans-serif';
+    kctx.textAlign = 'center';
+    kctx.fillText(e.label, e.x, e.y - 28);
+    kctx.fillStyle = '#94a3b8';
+    kctx.font = '10px sans-serif';
+    kctx.fillText(e.year, e.x, e.y + 40);
+  });
+  
+  // Labels for branches
+  kctx.fillStyle = '#f472b6';
+  kctx.font = 'bold 14px sans-serif';
+  kctx.textAlign = 'left';
+  kctx.fillText('🏠 Consumer-Linie (DOS-basiert)', 20, 30);
+  kctx.fillStyle = '#00bcf2';
+  kctx.fillText('🏢 Enterprise-Linie (NT-Kernel)', 20, 230);
+  kctx.fillStyle = '#7c3aed';
+  kctx.fillText('✨ Vereint!', 640, 150);
+  
+  // Merge arrow annotation
+  kctx.strokeStyle = '#eab308';
+  kctx.lineWidth = 2;
+  kctx.setLineDash([5, 5]);
+  kctx.beginPath();
+  kctx.moveTo(700, 40);
+  kctx.lineTo(650, 160);
+  kctx.stroke();
+  kctx.setLineDash([]);
+  kctx.fillStyle = '#eab308';
+  kctx.font = 'italic 12px sans-serif';
+  kctx.textAlign = 'left';
+  kctx.fillText('👆 Historischer Moment:', 640, 30);
+  kctx.fillText('Beide Linien werden vereint!', 640, 48);
+}
+drawKernelTree();
+
+</script>
+</body>
+</html>
