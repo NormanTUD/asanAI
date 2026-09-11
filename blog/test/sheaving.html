@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sheaving — Interaktive Reise durch Phillips (2019)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0f1a; --bg2:#111828; --panel:#151d30; --panel2:#1b2540;
+    --ink:#e8ecf7; --mute:#9aa4bf; --acc:#7cf0c1; --acc2:#8ab4ff; --warn:#ffb86b; --pink:#ff7ab6;
+    --line:#2a3554;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(1200px 800px at 20% -10%,#1a2447 0%,transparent 60%),
+                                       radial-gradient(1000px 700px at 120% 10%,#221a3a 0%,transparent 55%),
+                                       var(--bg);
+            color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;
+            line-height:1.55;}
+  header{padding:60px 24px 24px; text-align:center;}
+  header h1{font-size:clamp(28px,4.2vw,52px); margin:0 0 8px;
+    background:linear-gradient(90deg,#7cf0c1,#8ab4ff,#ff7ab6);
+    -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:-.02em;}
+  header p{color:var(--mute); max-width:820px; margin:8px auto 0;}
+  nav.toc{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:16px; max-width:1100px; margin:0 auto;}
+  nav.toc a{padding:6px 12px; border:1px solid var(--line); border-radius:999px; color:var(--ink);
+            text-decoration:none; font-size:13px; background:rgba(255,255,255,.02);}
+  nav.toc a:hover{border-color:var(--acc); color:var(--acc);}
+  main{max-width:1100px; margin:0 auto; padding:12px 20px 120px;}
+  section{background:linear-gradient(180deg,var(--panel),var(--panel2));
+          border:1px solid var(--line); border-radius:18px; padding:26px; margin:24px 0;
+          box-shadow:0 20px 60px rgba(0,0,0,.35);}
+  section h2{margin-top:0; font-size:26px; letter-spacing:-.01em;
+             display:flex; align-items:center; gap:12px;}
+  section h2 .num{display:inline-flex; align-items:center; justify-content:center;
+                  width:36px;height:36px; border-radius:12px;
+                  background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#0b0f1a; font-weight:800; font-size:16px;}
+  section h3{margin-top:22px; color:var(--acc);}
+  .intuition{background:rgba(124,240,193,.06); border-left:3px solid var(--acc);
+             padding:10px 14px; border-radius:8px; margin:10px 0;}
+  .warn{background:rgba(255,184,107,.06); border-left:3px solid var(--warn);
+        padding:10px 14px; border-radius:8px;}
+  .grid{display:grid; gap:18px;}
+  .grid.g2{grid-template-columns:1fr 1fr;}
+  .grid.g3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:820px){ .grid.g2,.grid.g3{grid-template-columns:1fr;} }
+  .panel{background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:14px; padding:16px;}
+  canvas{display:block; width:100%; height:auto; background:#0a1020; border-radius:12px; border:1px solid var(--line);}
+  label.slider{display:block; margin:8px 0 4px; color:var(--mute); font-size:13px;}
+  input[type=range]{width:100%; accent-color:var(--acc);}
+  button{background:linear-gradient(135deg,var(--acc),var(--acc2)); color:#0b0f1a; border:none;
+         padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer; margin:4px 4px 0 0;}
+  button.ghost{background:transparent; color:var(--ink); border:1px solid var(--line);}
+  button:hover{filter:brightness(1.08);}
+  .kbd{background:#0a1020; border:1px solid var(--line); padding:1px 6px; border-radius:6px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px;}
+  table.tbl{border-collapse:collapse; width:100%; font-size:13px;}
+  table.tbl th,table.tbl td{border:1px solid var(--line); padding:6px 8px; text-align:center;}
+  table.tbl th{background:rgba(138,180,255,.08); color:var(--acc2);}
+  .chip{display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; margin-right:6px;
+        border:1px solid var(--line); color:var(--mute); background:rgba(255,255,255,.02);}
+  .chip.on{border-color:var(--acc); color:var(--acc);}
+  .flow{display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+        padding:14px; background:rgba(255,255,255,.02); border-radius:12px; border:1px dashed var(--line);}
+  .flow .step{padding:8px 12px; border-radius:10px; background:#0a1020; border:1px solid var(--line); min-width:120px; text-align:center;}
+  .arrow{color:var(--acc); font-weight:800;}
+  details{margin:10px 0; background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:10px; padding:10px 14px;}
+  summary{cursor:pointer; color:var(--acc2); font-weight:600;}
+  .badge{display:inline-block; background:rgba(138,180,255,.12); color:var(--acc2); padding:2px 8px; border-radius:6px; font-size:12px;}
+  footer{color:var(--mute); text-align:center; padding:40px 20px;}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; font-size:12px; color:var(--mute);}
+  .swatch{display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:middle;}
+  .card-vis{font-family:ui-monospace,Menlo,Consolas,monospace;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sheaving — eine universelle Konstruktion für Bedeutung</h1>
+  <p>Eine interaktive Reise durch <em>Phillips (2019): "Sheaving — a universal construction for semantic compositionality"</em>.
+     Spielen statt lesen: bewege Slider, klicke, sieh zu, wie sich Kategorien, Topologien, Pullbacks und Sheaves aufeinanderschichten,
+     bis das ganze Paper wie ein Puzzle zusammenpasst.</p>
+</header>
+
+<nav class="toc">
+  <a href="#motivation">0 · Motivation</a>
+  <a href="#sets">1 · Mengen &amp; Funktionen</a>
+  <a href="#cats">2 · Kategorien</a>
+  <a href="#topo">3 · Topologie</a>
+  <a href="#funct">4 · Funktoren &amp; Natürliche Trafos</a>
+  <a href="#uni">5 · Universelle Konstruktionen</a>
+  <a href="#pull">6 · Pullback</a>
+  <a href="#sheaf">7 · Presheaf &amp; Sheaf</a>
+  <a href="#sheaving">8 · Sheaving</a>
+  <a href="#cards">9 · Beispiel: Karten</a>
+  <a href="#binding">10 · Beispiel: Feature-Binding</a>
+  <a href="#depth">11 · Beispiel: Tiefenwahrnehmung</a>
+  <a href="#recap">12 · Die Antwort</a>
+</nav>
+
+<main>
+
+<!-- =========================================================== 0 -->
+<section id="motivation">
+  <h2><span class="num">0</span> Was will das Paper eigentlich?</h2>
+  <p>Wenn du den Satz <em>"John liebt Mary"</em> verstehst, verstehst du auch <em>"Mary liebt John"</em>. Das nennt man
+  <b>Systematizität</b>. Sie legt nahe: Bedeutung ist <b>kompositional</b> — die Bedeutung des Ganzen ergibt sich aus den Bedeutungen der Teile
+  und ihrer Struktur.</p>
+
+  <div class="grid g2">
+    <div class="panel">
+      <h3>Die Streitfrage</h3>
+      <p>Die Kognitionswissenschaft ist gespalten:</p>
+      <ul>
+        <li><b>Sprache des Denkens</b> (Symbole, Fodor): Bedeutung = kombinierte Symbole.</li>
+        <li><b>Geometrie des Denkens</b> (Vektoren, Neuronen): Bedeutung = Muster im Raum.</li>
+      </ul>
+      <p>Beide erklären nicht wirklich, <b>warum</b> Kognition kompositional ist — nur <em>wie</em> es funktionieren könnte.</p>
+    </div>
+    <div class="panel">
+      <h3>Phillips' Vorschlag</h3>
+      <p>Nutze <b>Kategorientheorie</b> — genauer: die Konstruktion <b>Sheaving</b>. Sie sitzt
+      zwischen Algebra und Geometrie, verbindet also beide Lager.</p>
+      <p class="intuition"><b>Kernidee in einem Satz:</b> Bedeutung entsteht, wenn man <b>lokales Wissen</b> so
+      zusammenklebt, dass es <b>global konsistent</b> ist. Dieses Zusammenkleben ist "sheaving".</p>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="step">Lokales Wissen<br/><small>(Fragmente)</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Sheaving<br/><small>(universell zusammenkleben)</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Globale Bedeutung<br/><small>(kohärentes Ganzes)</small></div>
+  </div>
+</section>
+
+<!-- =========================================================== 1 -->
+<section id="sets">
+  <h2><span class="num">1</span> Baustein: Mengen &amp; Funktionen</h2>
+  <p>Eine <b>Menge</b> ist eine Sammlung von Elementen. Eine <b>Funktion</b> $f:A\to B$ ordnet jedem Element aus $A$ genau ein Element aus $B$ zu.</p>
+  <p>Klick auf Elemente links, um Pfeile zu einer beliebigen Zielmenge rechts zu ziehen:</p>
+  <div class="panel">
+    <canvas id="cvSets" height="320"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:#7cf0c1"></span>Element in A</span>
+      <span><span class="swatch" style="background:#8ab4ff"></span>Element in B</span>
+      <span><span class="swatch" style="background:#ff7ab6"></span>Pfeil = Funktionswert</span>
+    </div>
+    <button onclick="setsReset()">Zurücksetzen</button>
+    <button class="ghost" onclick="setsRandom()">Zufällige Funktion</button>
+  </div>
+  <p class="intuition">Wichtig: eine Funktion darf ein Element in $A$ nicht auf <em>mehrere</em> in $B$ schicken.
+  Genau das prüft das Bild — probier’s aus.</p>
+</section>
+
+<!-- =========================================================== 2 -->
+<section id="cats">
+  <h2><span class="num">2</span> Baustein: Kategorien</h2>
+  <p>Eine <b>Kategorie</b> hat:</p>
+  <ul>
+    <li><b>Objekte</b> (Punkte)</li>
+    <li><b>Morphismen</b> (Pfeile zwischen Objekten)</li>
+    <li>eine <b>Komposition</b>: kann man zwei Pfeile hintereinanderschalten, entsteht wieder ein Pfeil.</li>
+    <li>zu jedem Objekt einen <b>Identitätspfeil</b>.</li>
+  </ul>
+  <p>Die Kategorie <b>Set</b>: Objekte sind Mengen, Morphismen sind Funktionen.</p>
+
+  <div class="panel">
+    <p>Wähle einen Pfeil <b>f</b> und einen <b>kompatiblen</b> Pfeil <b>g</b> (Codomain von f = Domain von g). Der Button komponiert:</p>
+    <canvas id="cvCat" height="340"></canvas>
+    <div style="margin-top:8px">
+      <button onclick="catCompose()">g ∘ f komponieren</button>
+      <button class="ghost" onclick="catReset()">Reset</button>
+      <span id="catMsg" style="margin-left:10px; color:var(--mute);"></span>
+    </div>
+  </div>
+  <div class="intuition">Kategorientheorie ist die Sprache, in der Mathematiker Strukturen <em>vergleichen</em>. Wir werden gleich sehen, warum das für Bedeutung so mächtig ist.</div>
+</section>
+
+<!-- =========================================================== 3 -->
+<section id="topo">
+  <h2><span class="num">3</span> Baustein: Topologie (in menschlich)</h2>
+  <p>Eine <b>Topologie</b> auf einer Menge $X$ ist eine Auswahl von "<b>offenen Mengen</b>". Sie sagt, welche Teile "nah beieinander" oder "zusammenhängend" sind.</p>
+  <p>Regeln:</p>
+  <ul>
+    <li>Die leere Menge $\emptyset$ und $X$ selbst sind offen.</li>
+    <li>Vereinigungen offener Mengen sind offen.</li>
+    <li>Endliche Schnitte offener Mengen sind offen.</li>
+  </ul>
+
+  <p>Wähle Punkte in $X$ und baue durch An-/Abklicken deine eigene Topologie. Wir prüfen live, ob es wirklich eine Topologie ist:</p>
+  <div class="panel">
+    <div id="topoUniverse" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;"></div>
+    <div id="topoSubsets" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    <div id="topoStatus" style="margin-top:10px;"></div>
+    <div style="margin-top:10px;">
+      <button onclick="topoLoad('discrete')">Diskrete Topologie</button>
+      <button onclick="topoLoad('indiscrete')">Indiskrete Topologie</button>
+      <button onclick="topoLoad('binding')">Wie im Feature-Binding-Beispiel</button>
+      <button class="ghost" onclick="topoClear()">Alles zurücksetzen</button>
+    </div>
+    <p class="intuition" style="margin-top:12px">
+      <b>Diskret</b> = jede Kombination von Punkten ist offen → maximal "getrennt".
+      <b>Indiskret</b> = nur $\emptyset$ und $X$ → alles "gleich".
+      Zwischen diesen Extremen liegt der spannende Bereich.
+    </p>
+  </div>
+
+  <h3>Inklusionen als Pfeile</h3>
+  <p>Jede Topologie ist selbst eine Kategorie! Objekte = offene Mengen, Pfeile = Inklusionen $V \subseteq U$.</p>
+  <div class="panel"><canvas id="cvIncl" height="280"></canvas></div>
+</section>
+
+<!-- =========================================================== 4 -->
+<section id="funct">
+  <h2><span class="num">4</span> Funktoren &amp; natürliche Transformationen</h2>
+  <p>Ein <b>Funktor</b> $F:\mathcal{C}\to\mathcal{D}$ übersetzt eine Kategorie in eine andere und respektiert dabei Pfeile und Komposition.</p>
+  <p>Eine <b>natürliche Transformation</b> $\eta:F\Rightarrow G$ ist eine "verträgliche Familie" von Pfeilen, die zwei Funktoren vergleicht.</p>
+
+  <div class="panel">
+    <p>Bewege den Slider, um zwei Funktoren $F,G$ punktweise zu interpolieren — die Pfeile $\eta_A$ zeigen die natürliche Trafo:</p>
+    <label class="slider">Interpolation t = <span id="natTVal">0.00</span></label>
+    <input type="range" id="natT" min="0" max="100" value="0"/>
+    <canvas id="cvNat" height="300"></canvas>
+  </div>
+</section>
+
+<!-- =========================================================== 5 -->
+<section id="uni">
+  <h2><span class="num">5</span> Universelle Konstruktion — die "beste" Lösung</h2>
+  <p>Eine <b>universelle Konstruktion</b> ist eine Lösung eines Problems, durch die <em>alle anderen Lösungen eindeutig hindurchgehen</em>. Das klingt abstrakt — hier das Bilderbuch-Beispiel: das <b>Produkt</b> $A\times B$.</p>
+
+  <div class="panel">
+    <p>Für jede Menge $Z$ mit zwei Pfeilen $f:Z\to A$, $g:Z\to B$ gibt es genau <b>einen</b> Pfeil $\langle f,g\rangle:Z\to A\times B$, sodass alles kommutiert. Zieh $Z$ herum — der Pfeil zum Produkt taucht automatisch auf:</p>
+    <canvas id="cvProd" height="360"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:#7cf0c1"></span>gegebene Pfeile f,g</span>
+      <span><span class="swatch" style="background:#ff7ab6"></span>eindeutiger Pfeil ⟨f,g⟩</span>
+    </div>
+  </div>
+  <p class="intuition"><b>Universell = "keine mehr, keine weniger als nötig"</b>. Genau das macht Sheaving für Bedeutung: nicht mehr, nicht weniger dazuerfinden als nötig, um lokales Wissen konsistent zu machen.</p>
+</section>
+
+<!-- =========================================================== 6 -->
+<section id="pull">
+  <h2><span class="num">6</span> Pullback — Produkt mit Bedingung</h2>
+  <p>Ein <b>Pullback</b> von $f:A\to C$ und $g:B\to C$ ist die Teilmenge aller Paare $(a,b)$, für die $f(a)=g(b)$. Also ein Produkt <em>eingeschränkt</em> durch eine gemeinsame Eigenschaft.</p>
+
+  <div class="panel">
+    <p>Hier: $A$ = Personen, $B$ = Rezepte, $C$ = Krankheiten. Der Pullback liefert die Paare, deren "Krankheit" übereinstimmt — das sind die Personen, für die das Rezept passt.</p>
+    <canvas id="cvPB" height="380"></canvas>
+    <div style="margin-top:8px">
+      <button onclick="pbShuffle()">Daten neu würfeln</button>
+      <button class="ghost" onclick="pbHighlight()">Pullback hervorheben</button>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:#7cf0c1"></span>A → C (Person hat Krankheit)</span>
+      <span><span class="swatch" style="background:#8ab4ff"></span>B → C (Rezept behandelt Krankheit)</span>
+      <span><span class="swatch" style="background:#ff7ab6"></span>Pullback-Paare (Übereinstimmung)</span>
+    </div>
+  </div>
+  <p class="intuition">Merke: Pullbacks = "join at matching value". Das ist genau die Datenbank-Operation <b>natural join</b> — und das Herzstück von Sheaving.</p>
+</section>
+
+<!-- =========================================================== 7 -->
+<section id="sheaf">
+  <h2><span class="num">7</span> Presheaf &amp; Sheaf — Daten auf einer Form</h2>
+  <p>Ein <b>Presheaf</b> heftet jeder offenen Menge $U$ eine Menge von "Sections" $F(U)$ an — und respektiert Einschränkungen: wenn $V\subseteq U$, gibt es eine Restriktion $F(U)\to F(V)$.</p>
+  <p>Ein <b>Sheaf</b> ist ein Presheaf mit zwei zusätzlichen Bedingungen:</p>
+  <ul>
+    <li><b>Gluing</b>: Wenn lokale Daten auf Überlappungen übereinstimmen, gibt es eine globale Section, die sie zusammenfasst.</li>
+    <li><b>Locality</b>: Diese globale Section ist eindeutig.</li>
+  </ul>
+
+  <div class="panel">
+    <p>Zwei offene Mengen $U$ und $V$ überlappen sich in $U\cap V$. Wähle links Werte für die "lokale Section" auf $U$ und rechts für $V$. Wenn beide auf $U\cap V$ übereinstimmen, dürfen sie zu einer globalen Section auf $U\cup V$ verklebt werden:</p>
+    <canvas id="cvSheaf" height="360"></canvas>
+    <div style="margin-top:10px">
+      <label class="slider">Section über U (Wert auf Überlappung): <span id="sU">A</span></label>
+      <input type="range" id="rangeU" min="0" max="3" value="0"/>
+      <label class="slider">Section über V (Wert auf Überlappung): <span id="sV">A</span></label>
+      <input type="range" id="rangeV" min="0" max="3" value="0"/>
+    </div>
+    <div id="sheafStatus" style="margin-top:10px;"></div>
+  </div>
+
+  <p class="intuition"><b>Presheaf</b> = lokale Daten mit Einschränkungen. <b>Sheaf</b> = lokale Daten, die kohärent zu einem globalen Ganzen verklebbar sind. Der Unterschied ist genau die Bedingung, die aus einem Chaos ein <em>Bedeutungsgefüge</em> macht.</p>
+</section>
+
+<!-- =========================================================== 8 -->
+<section id="sheaving">
+  <h2><span class="num">8</span> Sheaving — das Herzstück</h2>
+  <p><b>Sheaving</b> ist die universelle Konstruktion, die aus einem Presheaf $\mathcal{F}$ den <em>nächstgelegenen</em> Sheaf $\mathcal{F}^+$ macht — also lokale Daten <em>minimal</em> so ergänzt, dass sie global kohärent werden.</p>
+
+  <div class="flow">
+    <div class="step">Presheaf $\mathcal{F}$<br/><small>lokale Fragmente</small></div>
+    <div class="arrow">→ sheaving →</div>
+    <div class="step">Sheaf $\mathcal{F}^+$<br/><small>kohärentes Ganzes</small></div>
+  </div>
+
+  <h3>Als Datenbank-Operation: der <em>natural join</em></h3>
+  <p>Phillips' Lieblingsbild: Sheaving ist der <b>natural join</b> zweier Tabellen an ihrem gemeinsamen Attribut. Klick auf Zeilen der linken und rechten Tabelle — der Join baut sich live rechts unten auf:</p>
+
+  <div class="panel">
+    <div class="grid g3" style="align-items:start">
+      <div>
+        <b>Tabelle 1: A|C</b>
+        <table class="tbl" id="tblAC"></table>
+      </div>
+      <div>
+        <b>Tabelle 2: B|C</b>
+        <table class="tbl" id="tblBC"></table>
+      </div>
+      <div>
+        <b>Join (Sheaf-Section) A|B|C</b>
+        <table class="tbl" id="tblJoin"></table>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <button onclick="joinAuto()">Auto-Join berechnen</button>
+      <button class="ghost" onclick="joinReset()">Reset</button>
+    </div>
+  </div>
+
+  <p class="intuition">Genau dieses Bild (Fig. 1 im Paper) illustriert Sheaving: aus lokal getrennten Tabellen entsteht durch Übereinstimmung an $C$ eine <b>globale</b> Tabelle. Nicht mehr, nicht weniger als nötig — <em>universell</em>.</p>
+</section>
+
+<!-- =========================================================== 9 -->
+<section id="cards">
+  <h2><span class="num">9</span> Beispiel 1 — Spielkarten</h2>
+  <p><b>Problem:</b> Du kennst 13 Ränge und 4 Farben. Kannst du dir daraus <em>alle 52</em> Karten erschließen?</p>
+
+  <div class="panel">
+    <p>Wähle eine Topologie über $D=\{R,S\}$:</p>
+    <div style="margin:8px 0">
+      <button id="btnDisc" onclick="cardsTopo('disc')">Diskret {∅,{R},{S},{R,S}}</button>
+      <button id="btnIndisc" class="ghost" onclick="cardsTopo('indisc')">Indiskret {∅,{R,S}}</button>
+    </div>
+    <div id="cardsGrid"></div>
+    <div id="cardsMsg" style="margin-top:10px; color:var(--mute)"></div>
+  </div>
+
+  <p class="intuition">
+    <b>Diskrete Topologie</b> → Rang und Farbe sind <em>unabhängige</em> Dimensionen → sheaving liefert das kartesische Produkt → alle 52 Karten emergieren. <b>Systematizität!</b><br/>
+    <b>Indiskrete Topologie</b> → keine echte innere Struktur → sheaving ergänzt <em>nichts</em> → du kennst nur die Karten, die du schon gesehen hast. Keine Generalisierung.
+  </p>
+  <p>Phillips nutzt genau diesen Kontrast, um zu erklären, warum manche Versuchspersonen in Cue-Target-Experimenten generalisieren und andere nicht: sie haben effektiv unterschiedliche <em>Topologien</em> gelernt.</p>
+</section>
+
+<!-- =========================================================== 10 -->
+<section id="binding">
+  <h2><span class="num">10</span> Beispiel 2 — Visuelles Feature-Binding</h2>
+  <p><b>Problem:</b> Wie weiß dein Gehirn, dass das rote Quadrat rot <em>und</em> quadratisch ist — und nicht das rote Dreieck? Antwort: über den geteilten <b>Ort</b>.</p>
+
+  <p>Die Dimensionen sind $D=\{C,O,F,L\}$ (Farbe, Orientierung, Frequenz, Ort). Die Topologie verlangt: jede offene Menge außer $\emptyset$ enthält $L$. Ort ist also "global", Features "spezialisieren" den Ort:</p>
+
+  <div class="panel">
+    <p>4 Objekte, 4 Orte. Bewege die Slider, um Features neu zu würfeln, und drücke "Binden" — der Pullback über $L$ verheiratet die Feature-Karten zu Objekten:</p>
+    <canvas id="cvBind" height="420"></canvas>
+    <div style="margin-top:10px">
+      <button onclick="bindShuffle()">Neu würfeln</button>
+      <button onclick="bindGlue()">Binden (Pullback über L)</button>
+      <button class="ghost" onclick="bindReset()">Nur Feature-Karten zeigen</button>
+    </div>
+    <div id="bindMsg" style="margin-top:8px; color:var(--mute)"></div>
+  </div>
+
+  <p class="intuition">Der Ort $L$ ist der "Klebstoff": nur wenn zwei Feature-Werte am <em>gleichen Ort</em> sitzen, gehören sie zum gleichen Objekt. Genau das leistet Sheaving formal.</p>
+</section>
+
+<!-- =========================================================== 11 -->
+<section id="depth">
+  <h2><span class="num">11</span> Beispiel 3 — Tiefenwahrnehmung</h2>
+  <p><b>Problem:</b> Zwei Augen, zwei Blickwinkel — wo ist das Objekt im Raum? Die Antwort ist der Schnittpunkt der Sichtstrahlen, und dieser Schnittpunkt ist — ein <b>Pullback</b>.</p>
+
+  <div class="panel">
+    <div class="grid g2">
+      <div>
+        <label class="slider">Winkel links λ: <span id="lamVal">60°</span></label>
+        <input type="range" id="lam" min="10" max="170" value="60"/>
+        <label class="slider">Winkel rechts ρ: <span id="rhoVal">120°</span></label>
+        <input type="range" id="rho" min="10" max="170" value="120"/>
+        <label class="slider">Augenabstand: <span id="eyeVal">2.0</span></label>
+        <input type="range" id="eye" min="5" max="60" value="20"/>
+        <canvas id="cvDepth" height="360"></canvas>
+      </div>
+      <div>
+        <div id="depth3d" style="width:100%; height:400px;"></div>
+        <p style="color:var(--mute); font-size:13px; margin-top:8px">
+          Die 3D-Ansicht zeigt die beiden Sichtstrahlen als Geraden.
+          Ihr Schnittpunkt ist der Pullback $LP\times_P RP$ — die geschätzte Objektposition.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <p class="intuition">
+    Auch hier trägt die <b>Topologie</b> Bedeutung: $\{\emptyset,\{P\},\{L,P\},\{R,P\},\{L,R,P\}\}$.
+    Position $P$ ist wieder "global" — beide Augen "spezialisieren" $P$. Sheaving liefert die Triangulation als universelle Konstruktion.
+  </p>
+</section>
+
+<!-- =========================================================== 12 -->
+<section id="recap">
+  <h2><span class="num">12</span> Die Antwort auf Phillips' Frage</h2>
+
+  <p><b>Die Frage:</b> Warum ist Kognition kompositional — nicht bloß <em>wie</em>, sondern <em>warum</em>?</p>
+
+  <p><b>Die Antwort:</b> Weil Bedeutung als <em>Daten auf einer Form</em> (Topologie) verstanden werden kann, und weil das Verkleben lokaler Daten zu einem global konsistenten Ganzen durch eine <b>universelle Konstruktion</b> — Sheaving — geleistet wird. Universell = die "beste mögliche" Lösung, keine Ad-hoc-Wahl. Damit ist Systematizität nicht Zufall, sondern <em>notwendige Folge</em> der zugrunde liegenden Struktur.</p>
+
+  <div class="grid g3">
+    <div class="panel">
+      <h3>Vertikal</h3>
+      <p>Presheaves übersetzen räumliche Inklusionen in algebraische Restriktionen — Geometrie ↔ Algebra.</p>
+    </div>
+    <div class="panel">
+      <h3>Horizontal</h3>
+      <p>Sheaving klebt lokale Daten zu globalen Daten zusammen — Fragmente ↔ Ganzes.</p>
+    </div>
+    <div class="panel">
+      <h3>Universell</h3>
+      <p>Die Konstruktion ist bis auf eindeutigen Isomorphismus einzigartig — keine willkürlichen Erfindungen.</p>
+    </div>
+  </div>
+
+  <p class="intuition"><b>Das große Bild:</b> Der Streit zwischen "Sprache des Denkens" (Symbole) und "Geometrie des Denkens" (Vektoren) löst sich in Kategorientheorie auf — Sheaving lebt genau am Knotenpunkt beider Welten [[11]].</p>
+
+  <details>
+    <summary>Bonus: die drei Beispiele nebeneinander</summary>
+    <table class="tbl" style="margin-top:10px">
+      <tr><th>Beispiel</th><th>Lokal</th><th>Global</th><th>Rolle der Topologie</th></tr>
+      <tr><td>Karten</td><td>Ränge, Farben</td><td>52 Karten</td><td>Diskret ⇒ Produkt</td></tr>
+      <tr><td>Binding</td><td>Farb-Ort, Form-Ort, ...</td><td>Objekte im Sehfeld</td><td>L ist "global"</td></tr>
+      <tr><td>Tiefe</td><td>Sichtstrahl links, rechts</td><td>3D-Position</td><td>P ist "global"</td></tr>
+    </table>
+  </details>
+</section>
+
+</main>
+
+<footer>
+  Interaktive Umsetzung von Phillips, S. (2019): <em>Sheaving — a universal construction for semantic compositionality</em>,
+  Phil. Trans. R. Soc. B 375: 20190303 [[11]]. Gebaut mit Canvas, KaTeX und Plotly.
+</footer>
+
+<script>
+/* =========================================================
+   1. Mengen & Funktionen (cvSets)
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvSets');
+  const ctx = cv.getContext('2d');
+  function resize(){ cv.width = cv.clientWidth; cv.height = 320; draw(); }
+  window.addEventListener('resize', resize);
+
+  const A = ['a₁','a₂','a₃','a₄'];
+  const B = ['b₁','b₂','b₃'];
+  let map = [null,null,null,null];
+  let dragging = null;
+
+  function posA(i){ return {x: 120, y: 60 + i*60}; }
+  function posB(i){ return {x: cv.width-120, y: 80 + i*70}; }
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // frames
+    ctx.strokeStyle='#2a3554'; ctx.lineWidth=1.5;
+    roundRect(60,20,120,280,14); ctx.stroke();
+    roundRect(cv.width-180,20,120,280,14); ctx.stroke();
+    ctx.fillStyle='#9aa4bf'; ctx.font='13px sans-serif';
+    ctx.fillText('A', 70, 40); ctx.fillText('B', cv.width-170, 40);
+
+    // arrows
+    for(let i=0;i<A.length;i++){
+      if(map[i]!==null){
+        const p=posA(i), q=posB(map[i]);
+        arrow(p.x+18,p.y,q.x-18,q.y,'#ff7ab6');
+      }
+    }
+    if(dragging!==null){
+      const p=posA(dragging);
+      arrow(p.x+18,p.y,mouse.x,mouse.y,'#ffb86b');
+    }
+    // nodes
+    A.forEach((n,i)=>{ const p=posA(i); node(p.x,p.y,n,'#7cf0c1'); });
+    B.forEach((n,i)=>{ const p=posB(i); node(p.x,p.y,n,'#8ab4ff'); });
+  }
+  function node(x,y,l,c){
+    ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+    ctx.fillStyle='#0b0f1a'; ctx.font='bold 12px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(l,x,y);
+  }
+  function arrow(x1,y1,x2,y2,c){
+    ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const a=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4));
+    ctx.lineTo(x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4));
+    ctx.closePath(); ctx.fill();
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  }
+
+  const mouse={x:0,y:0};
+  cv.addEventListener('mousedown', e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    for(let i=0;i<A.length;i++){
+      const p=posA(i); if(Math.hypot(mx-p.x,my-p.y)<20){ dragging=i; return; }
+    }
+  });
+  cv.addEventListener('mousemove', e=>{
+    const r=cv.getBoundingClientRect();
+    mouse.x=e.clientX-r.left; mouse.y=e.clientY-r.top;
+    if(dragging!==null) draw();
+  });
+  cv.addEventListener('mouseup', e=>{
+    if(dragging===null) return;
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    for(let j=0;j<B.length;j++){
+      const p=posB(j); if(Math.hypot(mx-p.x,my-p.y)<20){ map[dragging]=j; break; }
+    }
+    dragging=null; draw();
+  });
+
+  window.setsReset = ()=>{ map=[null,null,null,null]; draw(); };
+  window.setsRandom = ()=>{ map=map.map(()=>Math.floor(Math.random()*B.length)); draw(); };
+  resize();
+})();
+
+/* =========================================================
+   2. Kategorien (cvCat)
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvCat');
+  const ctx = cv.getContext('2d');
+  function resize(){ cv.width=cv.clientWidth; cv.height=340; draw(); }
+  window.addEventListener('resize',resize);
+
+  let objs = [
+    {n:'A',x:.2,y:.5},{n:'B',x:.5,y:.25},{n:'C',x:.8,y:.5},{n:'D',x:.5,y:.8}
+  ];
+  let arrows = [
+    {from:0,to:1,name:'f',sel:false},
+    {from:1,to:2,name:'g',sel:false},
+    {from:2,to:3,name:'h',sel:false},
+    {from:0,to:3,name:'k',sel:false}
+  ];
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // arrows
+    arrows.forEach(a=>{
+      const p=obj(a.from), q=obj(a.to);
+      curve(p.x,p.y,q.x,q.y,a.sel?'#ff7ab6':'#8ab4ff',a.name);
+    });
+    objs.forEach(o=>{
+      const p=obj_(o);
+      ctx.beginPath(); ctx.arc(p.x,p.y,22,0,Math.PI*2);
+      ctx.fillStyle='#7cf0c1'; ctx.fill();
+      ctx.fillStyle='#0b0f1a'; ctx.font='bold 14px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(o.n,p.x,p.y);
+    });
+  }
+  function obj_(o){ return {x:o.x*cv.width, y:o.y*cv.height}; }
+  function obj(i){ return obj_(objs[i]); }
+  function curve(x1,y1,x2,y2,c,name){
+    const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy);
+    const nx=-dy/L, ny=dx/L;
+    const cx=(x1+x2)/2+nx*24, cy=(y1+y2)/2+ny*24;
+    ctx.strokeStyle=c; ctx.lineWidth=2; ctx.fillStyle=c;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo(cx,cy,x2,y2); ctx.stroke();
+    // head
+    const a=Math.atan2(y2-cy,x2-cx);
+    ctx.beginPath();
+    ctx.moveTo(x2-22*Math.cos(a),y2-22*Math.sin(a));
+    ctx.lineTo(x2-22*Math.cos(a)-10*Math.cos(a-.4),y2-22*Math.sin(a)-10*Math.sin(a-.4));
+    ctx.lineTo(x2-22*Math.cos(a)-10*Math.cos(a+.4),y2-22*Math.sin(a)-10*Math.sin(a+.4));
+    ctx.closePath(); ctx.fill();
+    ctx.font='italic 14px serif';
+    ctx.fillText(name,cx+nx*8,cy+ny*8);
+  }
+  cv.addEventListener('click', e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    // click near midpoint of arrow
+    let best=-1, bd=25;
+    arrows.forEach((a,i)=>{
+      const p=obj(a.from), q=obj(a.to);
+      const cx=(p.x+q.x)/2, cy=(p.y+q.y)/2;
+      const d=Math.hypot(mx-cx,my-cy);
+      if(d<bd){ bd=d; best=i; }
+    });
+    if(best>=0){
+      arrows[best].sel=!arrows[best].sel;
+      draw();
+    }
+  });
+  window.catCompose = ()=>{
+    const sel=arrows.filter(a=>a.sel);
+    const msg=document.getElementById('catMsg');
+    if(sel.length!==2){ msg.textContent='Wähle genau zwei Pfeile.'; return; }
+    const [f,g]=sel;
+    if(f.to!==g.from){
+      if(g.to===f.from){ msg.textContent='Reihenfolge tauschen: komponierbar wäre '+g.name+' dann '+f.name; return;}
+      msg.textContent='Nicht kompatibel: Codomain von '+f.name+' ≠ Domain von '+g.name+'.';
+      return;
+    }
+    const name=g.name+'∘'+f.name;
+    if(!arrows.find(a=>a.from===f.from&&a.to===g.to&&a.name===name))
+      arrows.push({from:f.from,to:g.to,name,sel:false});
+    arrows.forEach(a=>a.sel=false);
+    msg.textContent='Komposition '+name+' hinzugefügt ✓';
+    draw();
+  };
+  window.catReset = ()=>{
+    arrows = arrows.slice(0,4).map(a=>({...a,sel:false}));
+    document.getElementById('catMsg').textContent='';
+    draw();
+  };
+  resize();
+})();
+
+/* =========================================================
+   3. Topologie
+   ========================================================= */
+(() => {
+  const universe = ['a','b','c','d'];
+  const uDiv = document.getElementById('topoUniverse');
+  const sDiv = document.getElementById('topoSubsets');
+  const status = document.getElementById('topoStatus');
+
+  // Alle 2^n Teilmengen
+  const allSubsets = [];
+  for(let mask=0; mask<(1<<universe.length); mask++){
+    const s = [];
+    for(let i=0;i<universe.length;i++) if(mask&(1<<i)) s.push(universe[i]);
+    allSubsets.push(s);
+  }
+  let selected = new Set(); // Indizes in allSubsets
+
+  uDiv.innerHTML = '<b style="color:var(--acc2)">X =</b> ' + universe.map(e=>`<span class="chip on">${e}</span>`).join(' ');
+
+  function render(){
+    sDiv.innerHTML = '';
+    allSubsets.forEach((s,i)=>{
+      const chip = document.createElement('span');
+      chip.className = 'chip' + (selected.has(i)?' on':'');
+      chip.style.cursor='pointer';
+      chip.textContent = s.length===0 ? '∅' : '{'+s.join(',')+'}';
+      chip.onclick = ()=>{ selected.has(i)?selected.delete(i):selected.add(i); render(); check(); };
+      sDiv.appendChild(chip);
+    });
+    check();
+  }
+  function eqSet(a,b){ if(a.length!==b.length) return false; const bs=new Set(b); return a.every(x=>bs.has(x)); }
+  function findIdx(s){ return allSubsets.findIndex(x=>eqSet(x,s)); }
+  function check(){
+    const sel = [...selected].map(i=>allSubsets[i]);
+    const issues = [];
+    if(!sel.some(s=>s.length===0)) issues.push('∅ fehlt');
+    if(!sel.some(s=>s.length===universe.length)) issues.push('X selbst fehlt');
+    // Vereinigungen
+    for(let i=0;i<sel.length;i++) for(let j=i+1;j<sel.length;j++){
+      const u = [...new Set([...sel[i],...sel[j]])].sort();
+      if(findIdx(u)===-1 || !selected.has(findIdx(u)))
+        issues.push('{'+sel[i].join(',')+'} ∪ {'+sel[j].join(',')+'} fehlt');
+    }
+    // Schnitte
+    for(let i=0;i<sel.length;i++) for(let j=i+1;j<sel.length;j++){
+      const bs=new Set(sel[j]);
+      const inter = sel[i].filter(x=>bs.has(x)).sort();
+      if(findIdx(inter)===-1 || !selected.has(findIdx(inter)))
+        issues.push('{'+sel[i].join(',')+'} ∩ {'+sel[j].join(',')+'} fehlt');
+    }
+    const uniq = [...new Set(issues)].slice(0,4);
+    if(uniq.length===0){
+      status.innerHTML = '<span style="color:var(--acc)">✓ Das ist eine gültige Topologie ('+sel.length+' offene Mengen).</span>';
+    } else {
+      status.innerHTML = '<span style="color:var(--warn)">✗ Noch keine Topologie — es fehlt: '+uniq.join(', ')+(issues.length>uniq.length?' …':'')+'</span>';
+    }
+    drawIncl();
+  }
+  window.topoLoad = (kind) => {
+    selected.clear();
+    if(kind==='discrete') allSubsets.forEach((s,i)=>selected.add(i));
+    else if(kind==='indiscrete'){ selected.add(findIdx([])); selected.add(findIdx(universe)); }
+    else if(kind==='binding'){
+      // ∅, {a}, {a,b}, {a,c}, {a,d}, {a,b,c}, {a,b,d}, {a,c,d}, {a,b,c,d}   (a spielt Rolle von L)
+      [[], ['a'], ['a','b'], ['a','c'], ['a','d'],
+       ['a','b','c'], ['a','b','d'], ['a','c','d'], ['a','b','c','d']]
+        .forEach(s=>{ const i=findIdx(s); if(i>=0) selected.add(i); });
+    }
+    render();
+  };
+  window.topoClear = ()=>{ selected.clear(); render(); };
+
+  // Inklusions-Diagramm (Hasse-artig)
+  const cvI = document.getElementById('cvIncl');
+  const ctxI = cvI.getContext('2d');
+  function resizeI(){ cvI.width=cvI.clientWidth; cvI.height=280; drawIncl(); }
+  window.addEventListener('resize',resizeI);
+  function drawIncl(){
+    ctxI.clearRect(0,0,cvI.width,cvI.height);
+    const sel = [...selected].map(i=>allSubsets[i]).sort((a,b)=>a.length-b.length);
+    if(sel.length===0){ ctxI.fillStyle='#9aa4bf'; ctxI.font='14px sans-serif';
+      ctxI.fillText('Wähle offene Mengen oben — hier erscheint der Inklusionsgraph.', 20, 30); return; }
+    // levels by size
+    const lvl = {};
+    sel.forEach(s=>{ (lvl[s.length]=lvl[s.length]||[]).push(s); });
+    const sizes = Object.keys(lvl).map(Number).sort((a,b)=>a-b);
+    const H = cvI.height, W = cvI.width;
+    const positions = new Map();
+    sizes.forEach((sz,li)=>{
+      const arr = lvl[sz];
+      const y = H - 30 - li*((H-60)/Math.max(1,sizes.length-1));
+      arr.forEach((s,i)=>{
+        const x = (i+1) * W / (arr.length+1);
+        positions.set(s.join(','), {x,y,s});
+      });
+    });
+    // Kanten: direkte Inklusionen (kein Zwischenglied)
+    positions.forEach((p1,k1)=>{
+      positions.forEach((p2,k2)=>{
+        if(p1.s.length>=p2.s.length) return;
+        const bs=new Set(p2.s);
+        if(!p1.s.every(x=>bs.has(x))) return;
+        // direkt: keine anderen Menge dazwischen
+        let direct=true;
+        positions.forEach((p3,k3)=>{
+          if(k3===k1||k3===k2) return;
+          if(p3.s.length<=p1.s.length||p3.s.length>=p2.s.length) return;
+          const bs3=new Set(p3.s);
+          if(p1.s.every(x=>bs3.has(x)) && p3.s.every(x=>bs.has(x))) direct=false;
+        });
+        if(direct){
+          ctxI.strokeStyle='#8ab4ff'; ctxI.lineWidth=1.5;
+          ctxI.beginPath(); ctxI.moveTo(p1.x,p1.y); ctxI.lineTo(p2.x,p2.y); ctxI.stroke();
+        }
+      });
+    });
+    positions.forEach(p=>{
+      const label = p.s.length===0 ? '∅' : '{'+p.s.join(',')+'}';
+      const w = ctxI.measureText(label).width+14;
+      ctxI.fillStyle='#0a1020'; ctxI.strokeStyle='#7cf0c1'; ctxI.lineWidth=1.5;
+      ctxI.beginPath(); ctxI.roundRect ? ctxI.roundRect(p.x-w/2,p.y-14,w,26,8) : ctxI.rect(p.x-w/2,p.y-14,w,26);
+      ctxI.fill(); ctxI.stroke();
+      ctxI.fillStyle='#e8ecf7'; ctxI.font='12px ui-monospace,monospace';
+      ctxI.textAlign='center'; ctxI.textBaseline='middle';
+      ctxI.fillText(label,p.x,p.y);
+    });
+  }
+  render(); resizeI();
+})();
+
+/* =========================================================
+   4. Natürliche Transformation
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvNat');
+  const ctx = cv.getContext('2d');
+  const slider = document.getElementById('natT');
+  const label = document.getElementById('natTVal');
+  function resize(){ cv.width=cv.clientWidth; cv.height=300; draw(); }
+  window.addEventListener('resize',resize);
+
+  const objs = ['A','B','C'];
+  // Positionen für F(X) und G(X)
+  function draw(){
+    const t = slider.value/100;
+    label.textContent = t.toFixed(2);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const W=cv.width, H=cv.height;
+    // links: Domänenkategorie
+    ctx.fillStyle='#9aa4bf'; ctx.font='13px sans-serif';
+    ctx.fillText('Kategorie C', 20, 20);
+    ctx.fillText('Kategorie D', W-100, 20);
+    objs.forEach((o,i)=>{
+      const y = 60 + i*80;
+      // Objekt in C
+      node(60,y,o,'#7cf0c1');
+      // F(o) und G(o) in D — auf zwei "Ebenen"
+      const fx = W-260 + Math.sin(i)*10;
+      const fy = 70 + i*70;
+      const gx = W-100;
+      const gy = 90 + i*60;
+      // interpolierte Position (η_A geht von F(A) zu G(A))
+      const ix = fx + t*(gx-fx);
+      const iy = fy + t*(gy-fy);
+      node(fx,fy,'F('+o+')','#8ab4ff');
+      node(gx,gy,'G('+o+')','#ff7ab6');
+      // η_A Pfeil
+      ctx.strokeStyle='#ffb86b'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(fx+24,fy); ctx.lineTo(gx-24,gy); ctx.stroke();
+      // Interpolationspunkt
+      ctx.fillStyle='#ffb86b';
+      ctx.beginPath(); ctx.arc(ix,iy,5,0,Math.PI*2); ctx.fill();
+      // F und G Pfeile vom C-Objekt
+      arrow(80,y,fx-24,fy,'#8ab4ff','F');
+      arrow(80,y,gx-24,gy,'#ff7ab6','G');
+    });
+  }
+  function node(x,y,l,c){
+    ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+    ctx.fillStyle='#0b0f1a'; ctx.font='bold 11px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(l,x,y);
+  }
+  function arrow(x1,y1,x2,y2,c){
+    ctx.strokeStyle=c; ctx.lineWidth=1.2; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  slider.addEventListener('input',draw);
+  resize();
+})();
+
+/* =========================================================
+   5. Produkt (universelle Konstruktion)
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvProd');
+  const ctx = cv.getContext('2d');
+  function resize(){ cv.width=cv.clientWidth; cv.height=360; draw(); }
+  window.addEventListener('resize',resize);
+
+  let Z = {x:0.15, y:0.5};
+  const A = {x:0.55, y:0.2, label:'A'};
+  const B = {x:0.55, y:0.8, label:'B'};
+  const P = {x:0.85, y:0.5, label:'A×B'};
+  let dragging = false;
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const W=cv.width, H=cv.height;
+    const z = {x:Z.x*W, y:Z.y*H};
+    const a = {x:A.x*W, y:A.y*H};
+    const b = {x:B.x*W, y:B.y*H};
+    const p = {x:P.x*W, y:P.y*H};
+    // π1, π2
+    arrow(p.x-24,p.y,a.x+24,a.y,'#8ab4ff','π₁');
+    arrow(p.x-24,p.y,b.x+24,b.y,'#8ab4ff','π₂');
+    // f, g
+    arrow(z.x+24,z.y,a.x-24,a.y,'#7cf0c1','f');
+    arrow(z.x+24,z.y,b.x-24,b.y,'#7cf0c1','g');
+    // eindeutiger ⟨f,g⟩
+    ctx.setLineDash([6,4]);
+    arrow(z.x+24,z.y,p.x-24,p.y,'#ff7ab6','⟨f,g⟩');
+    ctx.setLineDash([]);
+    // Knoten
+    node(z.x,z.y,'Z','#ffb86b');
+    node(a.x,a.y,A.label,'#7cf0c1');
+    node(b.x,b.y,B.label,'#7cf0c1');
+    node(p.x,p.y,P.label,'#8ab4ff');
+    // Hint
+    ctx.fillStyle='#9aa4bf'; ctx.font='12px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Zieh Z herum — der pinke Pfeil ⟨f,g⟩ existiert immer und ist eindeutig.', 12, H-10);
+  }
+  function node(x,y,l,c){
+    ctx.beginPath(); ctx.arc(x,y,24,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+    ctx.fillStyle='#0b0f1a'; ctx.font='bold 12px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(l,x,y);
+  }
+  function arrow(x1,y1,x2,y2,c,label){
+    ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const a=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4));
+    ctx.lineTo(x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4));
+    ctx.closePath(); ctx.fill();
+    if(label){
+      ctx.font='italic 13px serif';
+      ctx.fillText(label,(x1+x2)/2+6,(y1+y2)/2-6);
+    }
+  }
+  cv.addEventListener('mousedown',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    if(Math.hypot(mx-Z.x*cv.width,my-Z.y*cv.height)<28) dragging=true;
+  });
+  cv.addEventListener('mousemove',e=>{
+    if(!dragging) return;
+    const r=cv.getBoundingClientRect();
+    Z.x = Math.max(0.05,Math.min(0.45,(e.clientX-r.left)/cv.width));
+    Z.y = Math.max(0.1, Math.min(0.9, (e.clientY-r.top)/cv.height));
+    draw();
+  });
+  cv.addEventListener('mouseup',()=>dragging=false);
+  cv.addEventListener('mouseleave',()=>dragging=false);
+  resize();
+})();
+
+/* =========================================================
+   6. Pullback (cvPB)
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvPB');
+  const ctx = cv.getContext('2d');
+  function resize(){ cv.width=cv.clientWidth; cv.height=380; draw(); }
+  window.addEventListener('resize',resize);
+
+  const persons = ['Anna','Ben','Cara','Dan','Eva'];
+  const recipes = ['Rx-α','Rx-β','Rx-γ','Rx-δ'];
+  const diseases = ['🤒','🤧','🤕'];
+  let pMap=[], rMap=[], highlight=false;
+
+  function shuffle(){
+    pMap = persons.map(()=>Math.floor(Math.random()*diseases.length));
+    rMap = recipes.map(()=>Math.floor(Math.random()*diseases.length));
+    highlight=false; draw();
+  }
+  window.pbShuffle = shuffle;
+  window.pbHighlight = ()=>{ highlight=!highlight; draw(); };
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const W=cv.width, H=cv.height;
+    const Ax=100, Bx=W-100, Cx=W/2;
+    // Titel
+    ctx.fillStyle='#9aa4bf'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('A: Personen', Ax, 20);
+    ctx.fillText('B: Rezepte', Bx, 20);
+    ctx.fillText('C: Krankheiten', Cx, 20);
+
+    // Positionen
+    const posA = persons.map((_,i)=>({x:Ax, y:50+i*55}));
+    const posB = recipes.map((_,i)=>({x:Bx, y:50+i*60}));
+    const posC = diseases.map((_,i)=>({x:Cx, y:80+i*100}));
+
+    // Pfeile
+    pMap.forEach((d,i)=>{
+      const p=posA[i], q=posC[d];
+      const hl = highlight && rMap.some(rd=>rd===d);
+      arrow(p.x+22,p.y,q.x-22,q.y,hl?'#ff7ab6':'#7cf0c1',hl?2.5:1.5);
+    });
+    rMap.forEach((d,i)=>{
+      const p=posB[i], q=posC[d];
+      const hl = highlight && pMap.some(pd=>pd===d);
+      arrow(p.x-22,p.y,q.x+22,q.y,hl?'#ff7ab6':'#8ab4ff',hl?2.5:1.5);
+    });
+
+    // Knoten
+    posA.forEach((p,i)=>node(p.x,p.y,persons[i],'#7cf0c1'));
+    posB.forEach((p,i)=>node(p.x,p.y,recipes[i],'#8ab4ff'));
+    posC.forEach((p,i)=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,26,0,Math.PI*2);
+      ctx.fillStyle='#ffb86b'; ctx.fill();
+      ctx.font='20px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(diseases[i],p.x,p.y);
+    });
+
+    // Pullback-Paare unten
+    if(highlight){
+      ctx.fillStyle='#ff7ab6'; ctx.font='bold 13px sans-serif';
+      ctx.textAlign='left';
+      let y = H-20;
+      const pairs=[];
+      pMap.forEach((pd,i)=>rMap.forEach((rd,j)=>{ if(pd===rd) pairs.push(persons[i]+' — '+recipes[j]); }));
+      ctx.fillText('Pullback: '+pairs.join(', '), 20, y);
+    }
+  }
+  function node(x,y,l,c){
+    ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2);
+    ctx.fillStyle=c; ctx.fill();
+    ctx.fillStyle='#0b0f1a'; ctx.font='bold 11px sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(l,x,y);
+  }
+  function arrow(x1,y1,x2,y2,c,w){
+    ctx.strokeStyle=c; ctx.fillStyle=c; ctx.lineWidth=w||2;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const a=Math.atan2(y2-y1,x2-x1);
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-8*Math.cos(a-.4),y2-8*Math.sin(a-.4));
+    ctx.lineTo(x2-8*Math.cos(a+.4),y2-8*Math.sin(a+.4));
+    ctx.closePath(); ctx.fill();
+  }
+  shuffle();
+})();
+
+/* =========================================================
+   7. Sheaf: Gluing
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvSheaf');
+  const ctx = cv.getContext('2d');
+  const rU = document.getElementById('rangeU');
+  const rV = document.getElementById('rangeV');
+  const sU = document.getElementById('sU');
+  const sV = document.getElementById('sV');
+  const status = document.getElementById('sheafStatus');
+  const values = ['A','B','C','D'];
+  function resize(){ cv.width=cv.clientWidth; cv.height=360; draw(); }
+  window.addEventListener('resize',resize);
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const W=cv.width, H=cv.height;
+    const cU = {x:W*0.35, y:H*0.5, r:110};
+    const cV = {x:W*0.65, y:H*0.5, r:110};
+    // U
+    ctx.fillStyle='rgba(124,240,193,.15)'; ctx.strokeStyle='#7cf0c1'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cU.x,cU.y,cU.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    // V
+    ctx.fillStyle='rgba(138,180,255,.15)'; ctx.strokeStyle='#8ab4ff';
+    ctx.beginPath(); ctx.arc(cV.x,cV.y,cV.r,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    // Labels
+    ctx.font='bold 16px sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#7cf0c1';
+    ctx.fillText('U', cU.x-70, cU.y-cU.r+20);
+    ctx.fillStyle='#8ab4ff'; ctx.fillText('V', cV.x+70, cV.y-cV.r+20);
+
+    // Überlappungs-Label
+    ctx.fillStyle='#ffb86b'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('U ∩ V', W/2, cU.y-cU.r+40);
+
+    // Werte
+    const vU = values[rU.value];
+    const vV = values[rV.value];
+    sU.textContent = vU;
+    sV.textContent = vV;
+
+    // Section-Werte
+    ctx.font='bold 22px sans-serif';
+    ctx.fillStyle='#7cf0c1'; ctx.fillText(vU, cU.x-70, cU.y+8);
+    ctx.fillStyle='#8ab4ff'; ctx.fillText(vV, cV.x+70, cV.y+8);
+
+    // Werte in der Überlappung
+    ctx.fillStyle='#7cf0c1'; ctx.font='bold 20px sans-serif';
+    ctx.fillText(vU, W/2-18, cU.y+8);
+    ctx.fillStyle='#8ab4ff';
+    ctx.fillText(vV, W/2+18, cU.y+8);
+
+    // Status
+    if(vU===vV){
+      status.innerHTML = '<span style="color:var(--acc)">✓ Werte stimmen auf U∩V überein → sie verkleben zu einer eindeutigen globalen Section auf U∪V mit Wert '+vU+'.</span>';
+      // Zeichne "verklebte" globale Section
+      ctx.fillStyle='#ff7ab6'; ctx.font='bold 14px sans-serif';
+      ctx.fillText('globale Section: '+vU, W/2, H-20);
+    } else {
+      status.innerHTML = '<span style="color:var(--warn)">✗ Werte widersprechen sich auf U∩V ('+vU+' ≠ '+vV+') → kein Verkleben möglich.</span>';
+    }
+  }
+  rU.addEventListener('input',draw);
+  rV.addEventListener('input',draw);
+  resize();
+})();
+
+/* =========================================================
+   8. Sheaving als Natural Join (Tabellen)
+   ========================================================= */
+(() => {
+  const tAC = document.getElementById('tblAC');
+  const tBC = document.getElementById('tblBC');
+  const tJ  = document.getElementById('tblJoin');
+
+  let dataAC = [
+    {A:'a₁', C:'c₁'},
+    {A:'a₂', C:'c₁'},
+    {A:'a₃', C:'c₂'}
+  ];
+  let dataBC = [
+    {B:'b₁', C:'c₁'},
+    {B:'b₂', C:'c₂'},
+    {B:'b₃', C:'c₂'}
+  ];
+  let joinResult = [];
+
+  function render(){
+    tAC.innerHTML = '<tr><th>A</th><th>C</th></tr>' +
+      dataAC.map(r=>`<tr><td>${r.A}</td><td style="color:var(--warn)">${r.C}</td></tr>`).join('');
+    tBC.innerHTML = '<tr><th>B</th><th>C</th></tr>' +
+      dataBC.map(r=>`<tr><td>${r.B}</td><td style="color:var(--warn)">${r.C}</td></tr>`).join('');
+    tJ.innerHTML  = '<tr><th>A</th><th>B</th><th>C</th></tr>' +
+      (joinResult.length===0
+        ? '<tr><td colspan="3" style="color:var(--mute)">— noch leer —</td></tr>'
+        : joinResult.map(r=>`<tr><td style="color:var(--acc)">${r.A}</td><td style="color:var(--acc2)">${r.B}</td><td style="color:var(--warn)">${r.C}</td></tr>`).join(''));
+  }
+  window.joinAuto = ()=>{
+    joinResult = [];
+    dataAC.forEach(a=>dataBC.forEach(b=>{
+      if(a.C===b.C) joinResult.push({A:a.A, B:b.B, C:a.C});
+    }));
+    render();
+  };
+  window.joinReset = ()=>{ joinResult=[]; render(); };
+  render();
+})();
+
+/* =========================================================
+   9. Beispiel: Karten (Systematizität)
+   ========================================================= */
+(() => {
+  const grid = document.getElementById('cardsGrid');
+  const msg  = document.getElementById('cardsMsg');
+  const ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+  const suits = ['♠','♣','♦','♥'];
+  const suitColor = s => (s==='♦'||s==='♥') ? '#ff7ab6' : '#e8ecf7';
+  // Ein paar "bekannte" Karten als Ausgangspunkt (Presheaf)
+  const knownPairs = [['Q','♥'],['2','♠'],['A','♣']];
+
+  window.cardsTopo = (mode)=>{
+    document.getElementById('btnDisc').className    = mode==='disc'   ? '' : 'ghost';
+    document.getElementById('btnIndisc').className  = mode==='indisc' ? '' : 'ghost';
+
+    let cells = '';
+    let count = 0;
+    for(const s of suits){
+      for(const r of ranks){
+        const isKnown = knownPairs.some(([R,S])=>R===r && S===s);
+        let shown = false;
+        if(mode==='disc') shown = true;                 // sheaving = Produkt: alle 52
+        else if(mode==='indisc') shown = isKnown;       // sheaving = trivial: nur bekannte
+
+        if(shown){ count++; }
+        cells += `<div style="
+          width:52px;height:70px;
+          border:1px solid ${isKnown?'#ff7ab6':'#2a3554'};
+          border-radius:8px;
+          display:inline-flex;flex-direction:column;
+          align-items:center;justify-content:center;
+          margin:3px;font-family:ui-monospace,monospace;
+          background:${shown?'#0a1020':'rgba(255,255,255,.01)'};
+          color:${shown?suitColor(s):'#2a3554'};
+          opacity:${shown?1:0.25};
+          ${isKnown?'box-shadow:0 0 0 2px rgba(255,122,182,.3);':''}
+          ">
+          <div style="font-weight:700">${r}</div>
+          <div style="font-size:20px">${s}</div>
+        </div>`;
+      }
+      cells += '<br/>';
+    }
+    grid.innerHTML = cells;
+    if(mode==='disc'){
+      msg.innerHTML = `<b style="color:var(--acc)">Sheaving auf diskreter Topologie</b> → aus ${knownPairs.length} bekannten Karten + Kenntnis der Dimensionen entstehen alle <b>${count}</b> Karten (das kartesische Produkt Rank × Suit). <b>Systematizität!</b>`;
+    } else {
+      msg.innerHTML = `<b style="color:var(--warn)">Sheaving auf indiskreter Topologie</b> → nur die ${count} bereits bekannten Karten. Keine Generalisierung, keine Systematizität.`;
+    }
+  };
+  window.cardsTopo('disc');
+})();
+
+/* =========================================================
+   10. Feature-Binding
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvBind');
+  const ctx = cv.getContext('2d');
+  const msg = document.getElementById('bindMsg');
+  function resize(){ cv.width=cv.clientWidth; cv.height=420; draw(); }
+  window.addEventListener('resize',resize);
+
+  const N = 4;
+  const colors = ['#ff5c5c','#5cc8ff'];
+  const colorNames = ['rot','blau'];
+  const orients = ['—','|'];
+  const orientNames = ['horiz','vert'];
+  const freqs = ['·','⋮⋮'];
+  const freqNames = ['tief','hoch'];
+
+  let cMap, oMap, fMap;
+  let showBound = false;
+
+  function shuffle(){
+    cMap = Array.from({length:N},()=>Math.floor(Math.random()*2));
+    oMap = Array.from({length:N},()=>Math.floor(Math.random()*2));
+    fMap = Array.from({length:N},()=>Math.floor(Math.random()*2));
+    showBound=false; draw(); msg.textContent='';
+  }
+  window.bindShuffle = shuffle;
+  window.bindGlue = ()=>{
+    showBound = true; draw();
+    let s = 'Gebunden (Pullback über L): ';
+    const objs = [];
+    for(let i=0;i<N;i++){
+      objs.push(`(${colorNames[cMap[i]]}, ${orientNames[oMap[i]]}, ${freqNames[fMap[i]]})@L${i+1}`);
+    }
+    msg.innerHTML = s + objs.join(' · ');
+  };
+  window.bindReset = ()=>{ showBound=false; draw(); msg.textContent=''; };
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const W=cv.width, H=cv.height;
+    const colW = W/(N+1);
+    // 3 Feature-Zeilen: Colour, Orientation, Frequency
+    const rows = [
+      {label:'C→L (Farbe)', map:cMap, render:(x,y,v)=>{
+        ctx.fillStyle=colors[v]; ctx.fillRect(x-18,y-18,36,36);
+      }},
+      {label:'O→L (Orient.)', map:oMap, render:(x,y,v)=>{
+        ctx.strokeStyle='#e8ecf7'; ctx.lineWidth=4; ctx.beginPath();
+        if(v===0){ ctx.moveTo(x-18,y); ctx.lineTo(x+18,y); }
+        else     { ctx.moveTo(x,y-18); ctx.lineTo(x,y+18); }
+        ctx.stroke();
+      }},
+      {label:'F→L (Freq.)', map:fMap, render:(x,y,v)=>{
+        ctx.fillStyle='#ffb86b';
+        if(v===0){ ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill(); }
+        else {
+          for(let i=-1;i<=1;i++) for(let j=-1;j<=1;j+=2){
+            ctx.beginPath(); ctx.arc(x+i*8,y+j*5,3,0,Math.PI*2); ctx.fill();
+          }
+        }
+      }}
+    ];
+    rows.forEach((row,ri)=>{
+      const y = 40 + ri*80;
+      ctx.fillStyle='#9aa4bf'; ctx.font='12px sans-serif'; ctx.textAlign='left';
+      ctx.fillText(row.label, 12, y-24);
+      for(let i=0;i<N;i++){
+        const x = colW*(i+1);
+        // Kasten für Ort
+        ctx.strokeStyle='#2a3554'; ctx.lineWidth=1;
+        ctx.strokeRect(x-24,y-24,48,48);
+        row.render(x,y,row.map[i]);
+        ctx.fillStyle='#9aa4bf'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('L'+(i+1), x, y+38);
+      }
+    });
+
+    // Ort-Achse ganz unten
+    const yL = 40 + 3*80 + 20;
+    ctx.fillStyle='#9aa4bf'; ctx.font='12px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Orte L (gemeinsame Basis / "global")', 12, yL-6);
+    for(let i=0;i<N;i++){
+      const x = colW*(i+1);
+      ctx.beginPath(); ctx.arc(x,yL+18,14,0,Math.PI*2);
+      ctx.fillStyle='#8ab4ff'; ctx.fill();
+      ctx.fillStyle='#0b0f1a'; ctx.font='bold 11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('L'+(i+1),x,yL+18);
+    }
+
+    // Gebundene Objekte
+    if(showBound){
+      const yB = yL+60;
+      ctx.fillStyle='#ff7ab6'; ctx.font='bold 13px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+      ctx.fillText('Gebundene Objekte (durch Pullback über L verheiratet):', 12, yB);
+      for(let i=0;i<N;i++){
+        const x = colW*(i+1);
+        // Kombiniertes Objekt
+        ctx.save();
+        ctx.translate(x, yB+38);
+        ctx.fillStyle=colors[cMap[i]];
+        if(oMap[i]===0) ctx.fillRect(-18,-6,36,12);
+        else            ctx.fillRect(-6,-18,12,36);
+        ctx.restore();
+        if(fMap[i]===1){
+          ctx.strokeStyle='#ffb86b'; ctx.lineWidth=1;
+          ctx.strokeRect(x-22, yB+16, 44, 44);
+        }
+      }
+    }
+  }
+  shuffle();
+})();
+
+/* =========================================================
+   11. Tiefenwahrnehmung
+   ========================================================= */
+(() => {
+  const cv = document.getElementById('cvDepth');
+  const ctx = cv.getContext('2d');
+  const lam = document.getElementById('lam');
+  const rho = document.getElementById('rho');
+  const eye = document.getElementById('eye');
+  const lamVal = document.getElementById('lamVal');
+  const rhoVal = document.getElementById('rhoVal');
+  const eyeVal = document.getElementById('eyeVal');
+
+  function resize(){ cv.width=cv.clientWidth; cv.height=360; draw(); }
+  window.addEventListener('resize',resize);
+
+  function intersect(x1,y1,l, x2,y2,r){
+    // linke Linie: (x1,y1) + t*(cos l, -sin l)   (y-Achse invertiert für Canvas)
+    // rechte Linie: (x2,y2) + s*(cos(180-r), -sin(180-r)) ~ (-cos r, -sin r)? Wir nutzen einfache Form:
+    const c1 = Math.cos(l), s1 = Math.sin(l);
+    const c2 = Math.cos(r), s2 = Math.sin(r);
+    // Löse: x1 + t*c1 = x2 + s*c2  und  y1 - t*s1 = y2 - s*s2
+    const det = c1*(-s2) - (-s1)*c2;
+    if(Math.abs(det)<1e-6) return null;
+    const dx = x2-x1, dy = y2-y1;
+    const t = (dx*(-s2) - dy*c2) / det;
+    return {x: x1 + t*c1, y: y1 - t*s1, t};
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const W=cv.width, H=cv.height;
+    const l = +lam.value * Math.PI/180;
+    const r = +rho.value * Math.PI/180;
+    const eyeDist = +eye.value;
+    lamVal.textContent = lam.value + '°';
+    rhoVal.textContent = rho.value + '°';
+    eyeVal.textContent = (eyeDist/10).toFixed(1);
+
+    // Boden
+    ctx.strokeStyle='#2a3554'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,H-40); ctx.lineTo(W,H-40); ctx.stroke();
+
+    // Augenpositionen
+    const cx = W/2;
+    const eyeY = H-40;
+    const eL = {x: cx - eyeDist*5, y: eyeY};
+    const eR = {x: cx + eyeDist*5, y: eyeY};
+
+    // Strahlen
+    const rayLen = 600;
+    const pL = {x: eL.x + Math.cos(l)*rayLen, y: eL.y - Math.sin(l)*rayLen};
+    const pR = {x: eR.x + Math.cos(Math.PI - r)*rayLen, y: eR.y - Math.sin(Math.PI - r)*rayLen};
+
+    ctx.strokeStyle='#7cf0c1'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(eL.x,eL.y); ctx.lineTo(pL.x,pL.y); ctx.stroke();
+    ctx.strokeStyle='#8ab4ff';
+    ctx.beginPath(); ctx.moveTo(eR.x,eR.y); ctx.lineTo(pR.x,pR.y); ctx.stroke();
+
+    // Schnitt (Pullback)
+    const rr = Math.PI - r;
+    const inter = intersect(eL.x, eL.y, l, eR.x, eR.y, rr);
+
+    // Augen
+    ctx.fillStyle='#7cf0c1';
+    ctx.beginPath(); ctx.arc(eL.x,eL.y,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#8ab4ff';
+    ctx.beginPath(); ctx.arc(eR.x,eR.y,10,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#9aa4bf'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('linkes Auge', eL.x, eL.y+22);
+    ctx.fillText('rechtes Auge', eR.x, eR.y+22);
+
+    // Schnittpunkt
+    if(inter && inter.y>0 && inter.y<H && inter.x>0 && inter.x<W && inter.t>0){
+      ctx.fillStyle='#ff7ab6';
+      ctx.beginPath(); ctx.arc(inter.x, inter.y, 12, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#ff7ab6'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.arc(inter.x, inter.y, 22, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#ff7ab6'; ctx.font='bold 13px sans-serif';
+      ctx.fillText('Objekt (Pullback)', inter.x, inter.y-22);
+    } else {
+      ctx.fillStyle='#ffb86b'; ctx.font='13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Sichtstrahlen schneiden sich nicht sichtbar — Winkel anpassen.', W/2, 30);
+    }
+
+    // 3D update
+    update3D(eL, eR, l, rr, inter);
+  }
+
+  let plotInit = false;
+  function update3D(eL, eR, l, r, inter){
+    if(typeof Plotly === 'undefined') return;
+    const T = 40;
+    const rayL = {
+      x: [eL.x, eL.x + Math.cos(l)*T*5],
+      y: [0, 0],
+      z: [0, Math.sin(l)*T*5],
+      mode:'lines', type:'scatter3d',
+      line:{color:'#7cf0c1', width:6}, name:'links'
+    };
+    const rayR = {
+      x: [eR.x, eR.x + Math.cos(r)*T*5],
+      y: [0, 0],
+      z: [0, Math.sin(r)*T*5],
+      mode:'lines', type:'scatter3d',
+      line:{color:'#8ab4ff', width:6}, name:'rechts'
+    };
+    const eyes = {
+      x:[eL.x, eR.x], y:[0,0], z:[0,0], mode:'markers', type:'scatter3d',
+      marker:{size:8, color:['#7cf0c1','#8ab4ff']}, name:'Augen'
+    };
+    const traces = [rayL, rayR, eyes];
+    if(inter){
+      traces.push({
+        x:[inter.x], y:[0], z:[Math.max(0, (cv.height-40)-inter.y)],
+        mode:'markers', type:'scatter3d',
+        marker:{size:12, color:'#ff7ab6', symbol:'diamond'}, name:'Pullback'
+      });
+    }
+    const layout = {
+      paper_bgcolor:'#0a1020', plot_bgcolor:'#0a1020',
+      font:{color:'#e8ecf7', size:11},
+      margin:{l:0,r:0,t:0,b:0},
+      scene:{
+        xaxis:{title:'x', gridcolor:'#2a3554', color:'#9aa4bf', backgroundcolor:'#0a1020'},
+        yaxis:{title:'y', gridcolor:'#2a3554', color:'#9aa4bf', backgroundcolor:'#0a1020'},
+        zaxis:{title:'Tiefe', gridcolor:'#2a3554', color:'#9aa4bf', backgroundcolor:'#0a1020'},
+        camera:{eye:{x:1.5,y:1.5,z:0.8}}
+      },
+      showlegend:false
+    };
+    if(!plotInit){ Plotly.newPlot('depth3d', traces, layout, {displayModeBar:false}); plotInit=true; }
+    else Plotly.react('depth3d', traces, layout);
+  }
+  lam.addEventListener('input',draw);
+  rho.addEventListener('input',draw);
+  eye.addEventListener('input',draw);
+  resize();
+})();
+
+// Polyfill für roundRect falls nötig
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+    this.beginPath();
+    this.moveTo(x+r,y); this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r);
+    this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r);
+    this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y);
+    return this;
+  };
+}
+</script>
+
+</body>
+</html>
