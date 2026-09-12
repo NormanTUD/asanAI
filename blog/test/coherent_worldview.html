@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COHERENT — a wordless visual essay</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: #0e1116;
+    color: #e8e6e1;
+    font-family: -apple-system, system-ui, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+  :root {
+    --edge: #f5b461;
+    --teal: #6bb6a8;
+    --moss: #8fb26b;
+    --clay: #d68a5c;
+    --slate: #7a92b8;
+    --plum: #b481b8;
+    --glue: #ffd88a;
+    --whole: #f2ede4;
+    --ink: #0e1116;
+    --ink2: #141a22;
+    --ink3: #1c242f;
+  }
+  .spine {
+    position: fixed; left: 20px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .spine-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #2a323e;
+    border: 1px solid #3a4452;
+    cursor: pointer;
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+  }
+  .spine-dot::after {
+    content: ''; position: absolute; top: 12px; left: 4.5px;
+    width: 1px; height: 14px; background: #2a323e;
+  }
+  .spine-dot:last-child::after { display: none; }
+  .spine-dot.active {
+    background: var(--edge);
+    box-shadow: 0 0 12px var(--edge);
+    transform: scale(1.4);
+  }
+  .spine-dot:hover { background: var(--glue); }
+
+  section {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+  }
+  .stage {
+    width: 100%; max-width: 900px;
+    aspect-ratio: 16/10;
+    max-height: 80vh;
+    background: var(--ink2);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  canvas, svg { width: 100%; height: 100%; display: block; }
+
+  /* Progress bar */
+  .progress {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--edge); z-index: 200;
+    width: 0; transition: width 0.2s;
+  }
+
+  /* Reveal on scroll */
+  section { opacity: 0; transform: translateY(30px); transition: all 1s cubic-bezier(0.22, 1, 0.36, 1); }
+  section.visible { opacity: 1; transform: translateY(0); }
+
+  /* Controls (visual only, no text) */
+  .controls {
+    position: absolute; bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 12px;
+    background: rgba(14,17,22,0.7);
+    padding: 8px 14px; border-radius: 20px;
+    backdrop-filter: blur(8px);
+  }
+  .ctl {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--ink3); border: 1px solid #3a4452;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .ctl:hover { border-color: var(--edge); }
+  .ctl.active { background: var(--edge); border-color: var(--edge); }
+  .ctl svg { width: 14px; height: 14px; }
+
+  .slider-wrap {
+    display: flex; align-items: center; gap: 8px;
+  }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 140px; height: 4px; background: #2a323e; border-radius: 2px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--edge); cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--edge); cursor: pointer; border: none;
+  }
+
+  @media (max-width: 700px) {
+    .spine { display: none; }
+    .stage { aspect-ratio: 4/5; max-height: 90vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<nav class="spine" id="spine"></nav>
+
+<!-- S0: Hero — line becomes distinction becomes patches becomes whole -->
+<section id="s0"><div class="stage"><canvas id="c0"></canvas></div></section>
+
+<!-- S1: The Chain — 9 rungs, each glowing sequentially -->
+<section id="s1"><div class="stage"><svg id="c1" viewBox="0 0 900 560"></svg></div></section>
+
+<!-- S2: Distinction — draw a cut -->
+<section id="s2"><div class="stage"><canvas id="c2"></canvas>
+  <div class="controls"><div class="ctl" id="c2reset" title="reset"><svg viewBox="0 0 24 24" fill="none" stroke="#e8e6e1" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></div></div>
+</div></section>
+
+<!-- S3: Partition — dots sort into boxes -->
+<section id="s3"><div class="stage"><canvas id="c3"></canvas>
+  <div class="controls">
+    <div class="ctl active" data-k="2" title="2"><span style="color:#e8e6e1;font-size:12px">2</span></div>
+    <div class="ctl" data-k="3"><span style="color:#e8e6e1;font-size:12px">3</span></div>
+    <div class="ctl" data-k="4"><span style="color:#e8e6e1;font-size:12px">4</span></div>
+    <div class="ctl" data-k="5"><span style="color:#e8e6e1;font-size:12px">5</span></div>
+  </div>
+</div></section>
+
+<!-- S4: Locality — nested open sets -->
+<section id="s4"><div class="stage"><canvas id="c4"></canvas></div></section>
+
+<!-- S5: The Sheaf — panorama, misalign to break -->
+<section id="s5"><div class="stage"><canvas id="c5"></canvas>
+  <div class="controls">
+    <div class="slider-wrap"><input type="range" id="c5slider" min="-40" max="40" value="0"></div>
+  </div>
+</div></section>
+
+<!-- S6: Train — 5 streams, desync -->
+<section id="s6"><div class="stage"><canvas id="c6"></canvas>
+  <div class="controls">
+    <div class="slider-wrap"><input type="range" id="c6slider" min="0" max="100" value="0"></div>
+  </div>
+</div></section>
+
+<!-- S7: Lightning triangle — equality→equivalence -->
+<section id="s7"><div class="stage"><canvas id="c7"></canvas></div></section>
+
+<!-- S8: Three kinds of difference -->
+<section id="s8"><div class="stage"><svg id="c8" viewBox="0 0 900 560"></svg>
+  <div class="controls">
+    <div class="ctl" data-diag="W" title="world"><span style="color:var(--teal);font-size:11px">W</span></div>
+    <div class="ctl" data-diag="I" title="instrument"><span style="color:var(--clay);font-size:11px">I</span></div>
+    <div class="ctl" data-diag="J" title="interpretation"><span style="color:var(--plum);font-size:11px">J</span></div>
+  </div>
+</div></section>
+
+<!-- S9: Sameness ladder -->
+<section id="s9"><div class="stage"><svg id="c9" viewBox="0 0 900 560"></svg></div></section>
+
+<!-- S10: Admissible transitions — widen T slider -->
+<section id="s10"><div class="stage"><canvas id="c10"></canvas>
+  <div class="controls">
+    <div class="slider-wrap"><input type="range" id="c10slider" min="0" max="100" value="30"></div>
+  </div>
+</div></section>
+
+<!-- S11: Master diagram — W → Ri → G with blind-spot ring -->
+<section id="s11"><div class="stage"><canvas id="c11"></canvas></div></section>
+
+<!-- S12: Truth 2x2 — coherence x correspondence -->
+<section id="s12"><div class="stage"><svg id="c12" viewBox="0 0 900 560"></svg></div></section>
+
+<!-- S13: Five pathologies -->
+<section id="s13"><div class="stage"><canvas id="c13"></canvas>
+  <div class="controls">
+    <div class="ctl active" data-path="1"><span style="color:#e8e6e1;font-size:12px">1</span></div>
+    <div class="ctl" data-path="2"><span style="color:#e8e6e1;font-size:12px">2</span></div>
+    <div class="ctl" data-path="3"><span style="color:#e8e6e1;font-size:12px">3</span></div>
+    <div class="ctl" data-path="4"><span style="color:#e8e6e1;font-size:12px">4</span></div>
+    <div class="ctl" data-path="5"><span style="color:#e8e6e1;font-size:12px">5</span></div>
+  </div>
+</div></section>
+
+<!-- S14: LLM — nesting, corpus-as-cover -->
+<section id="s14"><div class="stage"><canvas id="c14"></canvas></div></section>
+
+<!-- S15: Self-audit mirror -->
+<section id="s15"><div class="stage"><canvas id="c15"></canvas></div></section>
+
+<!-- S16: History constellation -->
+<section id="s16"><div class="stage"><canvas id="c16"></canvas></div></section>
+
+<!-- S17: Embodiment ladder -->
+<section id="s17"><div class="stage"><svg id="c17" viewBox="0 0 900 560"></svg></div></section>
+
+<!-- S18: Coda — seams visible in the whole -->
+<section id="s18"><div class="stage"><canvas id="c18"></canvas></div></section>
+
+<script>
+'use strict';
+
+// ============ UTILITIES ============
+const PAL = {
+  edge: '#f5b461', teal: '#6bb6a8', moss: '#8fb26b',
+  clay: '#d68a5c', slate: '#7a92b8', plum: '#b481b8',
+  glue: '#ffd88a', whole: '#f2ede4', ink: '#0e1116',
+  ink2: '#141a22', ink3: '#1c242f', mute: '#2a323e'
+};
+const PATCH_COLORS = [PAL.teal, PAL.moss, PAL.clay, PAL.slate, PAL.plum];
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function setupCanvas(id) {
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  function resize() {
+    const r = c.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    c.width = r.width * dpr; c.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c._w = r.width; c._h = r.height;
+  }
+  resize();
+  new ResizeObserver(resize).observe(c);
+  return { c, ctx, w: () => c._w, h: () => c._h };
+}
+
+// Spine
+const spine = document.getElementById('spine');
+const N = 19;
+for (let i = 0; i < N; i++) {
+  const d = document.createElement('div');
+  d.className = 'spine-dot';
+  d.dataset.i = i;
+  d.onclick = () => document.getElementById('s' + i).scrollIntoView({behavior:'smooth'});
+  spine.appendChild(d);
+}
+const dots = document.querySelectorAll('.spine-dot');
+
+// Reveal + progress + active spine
+const sections = document.querySelectorAll('section');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      const idx = parseInt(e.target.id.slice(1));
+      dots.forEach(d => d.classList.remove('active'));
+      if (dots[idx]) dots[idx].classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => io.observe(s));
+
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress').style.width = (window.scrollY/h*100) + '%';
+});
+
+// Global animation clock
+let T = 0;
+function tick() { T += 0.016; requestAnimationFrame(tick); }
+tick();
+
+// ============ S0: HERO ============
+// Line draws itself, splits plane, patches assemble into coherent whole
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c0');
+  const patches = [];
+  const N = 40;
+  for (let i = 0; i < N; i++) {
+    patches.push({
+      tx: 0, ty: 0, // will set on init
+      sx: (Math.random()-0.5)*2000, sy: (Math.random()-0.5)*1500,
+      color: PATCH_COLORS[i % PATCH_COLORS.length],
+      r: 30 + Math.random()*40,
+      phase: Math.random()*Math.PI*2
+    });
+  }
+  function init() {
+    // targets form a rough circle/blob
+    const cx = w()/2, cy = h()/2, R = Math.min(w(),h())*0.3;
+    patches.forEach((p,i) => {
+      const a = (i/N)*Math.PI*2;
+      const rr = R + Math.sin(a*3)*20;
+      p.tx = cx + Math.cos(a)*rr + (Math.random()-0.5)*40;
+      p.ty = cy + Math.sin(a)*rr + (Math.random()-0.5)*40;
+    });
+  }
+  let initialized = false;
+  function draw() {
+    if (!initialized) { init(); initialized = true; }
+    ctx.fillStyle = PAL.ink;
+    ctx.fillRect(0,0,w(),h());
+    const t = (T % 8) / 8; // 8-second loop
+    const cx = w()/2, cy = h()/2;
+
+    // Phase 1 (0-0.15): line draws
+    // Phase 2 (0.15-0.35): plane tints
+    // Phase 3 (0.35-0.7): patches fly in
+    // Phase 4 (0.7-1): coherent whole breathes, seams visible
+
+    // Background tint (two sides)
+    if (t > 0.15) {
+      const a = Math.min(1,(t-0.15)/0.2)*0.15;
+      ctx.fillStyle = `rgba(107,182,168,${a})`;
+      ctx.fillRect(0,0,w()/2,h());
+      ctx.fillStyle = `rgba(214,138,92,${a})`;
+      ctx.fillRect(w()/2,0,w()/2,h());
+    }
+
+    // Patches
+    if (t > 0.35) {
+      const pt = Math.min(1,(t-0.35)/0.35);
+      const ease = 1 - Math.pow(1-pt, 3);
+      patches.forEach(p => {
+        const px = p.sx + (p.tx - p.sx) * ease;
+        const py = p.sy + (p.ty - p.sy) * ease;
+        const breathe = t > 0.7 ? Math.sin(T*1.5 + p.phase)*3 : 0;
+        ctx.beginPath();
+        ctx.fillStyle = p.color + 'dd';
+        ctx.arc(px + breathe, py, p.r*ease, 0, Math.PI*2);
+        ctx.fill();
+      });
+
+      // Glue seams (phase 4)
+      if (t > 0.7) {
+        const gt = (t-0.7)/0.3;
+        ctx.strokeStyle = `rgba(255,216,138,${gt*0.4})`;
+        ctx.lineWidth = 1;
+        for (let i = 0; i < patches.length; i++) {
+          for (let j = i+1; j < patches.length; j++) {
+            const dx = patches[i].tx - patches[j].tx;
+            const dy = patches[i].ty - patches[j].ty;
+            const d = Math.sqrt(dx*dx+dy*dy);
+            if (d < 100) {
+              ctx.beginPath();
+              ctx.moveTo(patches[i].tx, patches[i].ty);
+              ctx.lineTo(patches[j].tx, patches[j].ty);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+    }
+
+    // The line (always visible after phase 1)
+    if (t < 0.15) {
+      const lt = t/0.15;
+      ctx.strokeStyle = PAL.edge;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(w()/2, h()*(1-lt));
+      ctx.lineTo(w()/2, h());
+      ctx.stroke();
+    } else if (t < 0.7) {
+      const fade = 1 - (t-0.15)/0.55;
+      ctx.strokeStyle = `rgba(245,180,97,${fade})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(w()/2, 0);
+      ctx.lineTo(w()/2, h());
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S1: THE CHAIN ============
+(function(){
+  const svg = document.getElementById('c1');
+  const rungs = ['Distinction','Relation','Transformation','Locality','Compatibility','Coherence','Gluing','Globality','Invariance'];
+  const cx = 450;
+  let html = '';
+  rungs.forEach((_, i) => {
+    const y = 60 + i*55;
+    html += `<line x1="${cx}" y1="${y+10}" x2="${cx}" y2="${y+45}" stroke="#2a323e" stroke-width="1"/>`;
+  });
+  rungs.forEach((label, i) => {
+    const y = 60 + i*55;
+    // icon per rung
+    let icon = '';
+    if (i===0) icon = `<line x1="${cx-20}" y1="${y}" x2="${cx+20}" y2="${y}" stroke="${PAL.edge}" stroke-width="2"/>`;
+    else if (i===1) icon = `<circle cx="${cx-15}" cy="${y}" r="4" fill="${PAL.teal}"/><circle cx="${cx+15}" cy="${y}" r="4" fill="${PAL.clay}"/><line x1="${cx-11}" y1="${y}" x2="${cx+11}" y2="${y}" stroke="${PAL.glue}" stroke-width="1"/>`;
+    else if (i===2) icon = `<circle cx="${cx-15}" cy="${y}" r="4" fill="${PAL.teal}"/><path d="M${cx-11} ${y} L${cx+11} ${y}" stroke="${PAL.edge}" stroke-width="1.5" marker-end="url(#arr)"/><circle cx="${cx+15}" cy="${y}" r="4" fill="${PAL.clay}"/>`;
+    else if (i===3) icon = `<circle cx="${cx}" cy="${y}" r="12" fill="none" stroke="${PAL.slate}" stroke-width="1"/><circle cx="${cx}" cy="${y}" r="6" fill="none" stroke="${PAL.slate}" stroke-width="1"/><circle cx="${cx}" cy="${y}" r="2" fill="${PAL.slate}"/>`;
+    else if (i===4) icon = `<circle cx="${cx-8}" cy="${y}" r="10" fill="${PAL.teal}44" stroke="${PAL.teal}"/><circle cx="${cx+8}" cy="${y}" r="10" fill="${PAL.clay}44" stroke="${PAL.clay}"/>`;
+    else if (i===5) icon = `<path d="M${cx-15} ${y} Q${cx} ${y-8} ${cx+15} ${y} Q${cx} ${y+8} ${cx-15} ${y}" fill="none" stroke="${PAL.glue}" stroke-width="1.5"/>`;
+    else if (i===6) icon = `<rect x="${cx-18}" y="${y-6}" width="14" height="12" fill="${PAL.teal}88"/><rect x="${cx+4}" y="${y-6}" width="14" height="12" fill="${PAL.clay}88"/><line x1="${cx-4}" y1="${y-6}" x2="${cx+4}" y2="${y-6}" stroke="${PAL.glue}"/><line x1="${cx-4}" y1="${y+6}" x2="${cx+4}" y2="${y+6}" stroke="${PAL.glue}"/>`;
+    else if (i===7) icon = `<circle cx="${cx}" cy="${y}" r="12" fill="${PAL.whole}" opacity="0.9"/>`;
+    else icon = `<circle cx="${cx}" cy="${y}" r="12" fill="none" stroke="${PAL.whole}" stroke-width="1.5"/><circle cx="${cx}" cy="${y}" r="4" fill="${PAL.whole}"/>`;
+    html += `<g class="rung" data-i="${i}">${icon}</g>`;
+  });
+  svg.innerHTML = `<defs><marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="${PAL.edge}"/></marker></defs>` + html;
+
+  // Sequential glow animation
+  function pulse() {
+    const groups = svg.querySelectorAll('.rung');
+    const active = Math.floor((T*0.8) % rungs.length);
+    groups.forEach((g, i) => {
+      g.style.transition = 'opacity 0.6s, filter 0.6s';
+      if (i === active) {
+        g.style.opacity = '1';
+        g.style.filter = `drop-shadow(0 0 8px ${PAL.edge})`;
+      } else {
+        g.style.opacity = '0.35';
+        g.style.filter = 'none';
+      }
+    });
+    requestAnimationFrame(pulse);
+  }
+  pulse();
+})();
+
+// ============ S2: DISTINCTION ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c2');
+  let line = null; // {x1,y1,x2,y2, progress}
+  let drawing = false;
+  let auto = true;
+  let autoT = 0;
+
+  function reset() { line = null; drawing = false; auto = true; autoT = 0; }
+  document.getElementById('c2reset').onclick = reset;
+
+  c.addEventListener('pointerdown', (e) => {
+    auto = false;
+    const r = c.getBoundingClientRect();
+    line = { x1: e.clientX - r.left, y1: e.clientY - r.top, x2: e.clientX - r.left, y2: e.clientY - r.top, progress: 1 };
+    drawing = true;
+  });
+  c.addEventListener('pointermove', (e) => {
+    if (!drawing) return;
+    const r = c.getBoundingClientRect();
+    line.x2 = e.clientX - r.left; line.y2 = e.clientY - r.top;
+  });
+  c.addEventListener('pointerup', () => { drawing = false; });
+
+  // Tint one side based on line orientation
+  function tintSides() {
+    if (!line) return;
+    const {x1,y1,x2,y2} = line;
+    const nx = -(y2-y1), ny = (x2-x1); // normal
+    // Sample: fill pixels on each side with two tints
+    ctx.save();
+    const grad1 = `rgba(107,182,168,0.15)`;
+    const grad2 = `rgba(214,138,92,0.15)`;
+    // Use clipping via polygons across canvas
+    const W = w(), H = h();
+    // Compute which side of infinite line: sign of (nx*(px-x1) + ny*(py-y1))
+    // Build two big polygons: for each corner determine sign
+    const corners = [[0,0],[W,0],[W,H],[0,H]];
+    const signs = corners.map(([px,py]) => Math.sign(nx*(px-x1) + ny*(py-y1)));
+    // Simple approach: paint whole canvas with grad1 where sign>0 using compositing
+    // Instead: for each pixel row use image data — too heavy. Use two half-plane polygons via extending line to canvas edges.
+    // Extend line to canvas bounds
+    const t = 3000;
+    const dx = x2-x1, dy = y2-y1;
+    const len = Math.hypot(dx,dy) || 1;
+    const ux = dx/len, uy = dy/len;
+    const ax = x1 - ux*t, ay = y1 - uy*t;
+    const bx = x1 + ux*t, by = y1 + uy*t;
+    // Side A polygon: a, b, b+normal, a+normal
+    const sx = -uy, sy = ux;
+    ctx.fillStyle = grad1;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+    ctx.lineTo(bx + sx*t, by + sy*t);
+    ctx.lineTo(ax + sx*t, ay + sy*t);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = grad2;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+    ctx.lineTo(bx - sx*t, by - sy*t);
+    ctx.lineTo(ax - sx*t, ay - sy*t);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    if (auto) {
+      autoT += 0.008;
+      const p = (Math.sin(autoT) + 1) / 2;
+      const cx = w()/2, cy = h()/2;
+      line = {
+        x1: cx - 200, y1: cy - 120 + p*40,
+        x2: cx + 200, y2: cy + 120 - p*40,
+        progress: 1
+      };
+    }
+
+    if (line) {
+      tintSides();
+      // Double-cross micro-anim (occasional)
+      const dc = Math.sin(T*0.7);
+      const pulse = dc > 0.95 ? (dc - 0.95) * 20 : 0;
+
+      ctx.strokeStyle = PAL.edge;
+      ctx.lineWidth = 2 + pulse*2;
+      ctx.shadowColor = PAL.edge;
+      ctx.shadowBlur = 8 + pulse*10;
+      ctx.beginPath();
+      ctx.moveTo(line.x1, line.y1);
+      ctx.lineTo(line.x2, line.y2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Endpoint dots
+      ctx.fillStyle = PAL.edge;
+      ctx.beginPath(); ctx.arc(line.x1, line.y1, 4, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(line.x2, line.y2, 4, 0, Math.PI*2); ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S3: PARTITION ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c3');
+  let k = 2;
+  const dots = [];
+  const N = 60;
+  for (let i = 0; i < N; i++) {
+    dots.push({
+      x: Math.random(), y: Math.random(),
+      tx: 0, ty: 0,
+      group: 0,
+      phase: Math.random()*Math.PI*2
+    });
+  }
+
+  document.querySelectorAll('#s3 .ctl').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#s3 .ctl').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      k = parseInt(btn.dataset.k);
+      assign();
+    };
+  });
+
+  function assign() {
+    // Group by position (Voronoi-like clustering by angle+radius)
+    dots.forEach((d, i) => {
+      d.group = i % k; // simple deterministic assignment
+    });
+  }
+  assign();
+
+  function targets() {
+    const W = w(), H = h();
+    const cols = Math.ceil(Math.sqrt(k));
+    const rows = Math.ceil(k / cols);
+    const boxW = W / (cols + 1);
+    const boxH = H / (rows + 1);
+    const centers = [];
+    for (let i = 0; i < k; i++) {
+      const cc = i % cols, rr = Math.floor(i / cols);
+      centers.push({
+        x: boxW * (cc + 1) + boxW*0.1,
+        y: boxH * (rr + 1),
+        w: boxW * 0.75,
+        h: boxH * 0.7
+      });
+    }
+    dots.forEach(d => {
+      const box = centers[d.group];
+      // Deterministic offset inside box
+      const idx = dots.indexOf(d);
+      const per = Math.max(1, Math.floor(N / k));
+      const local = idx % per;
+      const cols2 = Math.ceil(Math.sqrt(per));
+      const cx = local % cols2, cy = Math.floor(local / cols2);
+      d.tx = box.x - box.w/2 + (cx + 0.5) * box.w/cols2;
+      d.ty = box.y - box.h/2 + (cy + 0.5) * box.h/cols2;
+    });
+    return centers;
+  }
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const centers = targets();
+
+    // Boxes
+    centers.forEach((b, i) => {
+      const col = PATCH_COLORS[i % PATCH_COLORS.length];
+      ctx.strokeStyle = col + '66';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4,4]);
+      ctx.strokeRect(b.x - b.w/2, b.y - b.h/2, b.w, b.h);
+      ctx.setLineDash([]);
+    });
+
+    // Dots animate toward targets
+    dots.forEach(d => {
+      // Init position if uninitialized
+      if (d.px === undefined) {
+        d.px = d.x * w();
+        d.py = d.y * h();
+      }
+      d.px += (d.tx - d.px) * 0.06;
+      d.py += (d.ty - d.py) * 0.06;
+      const col = PATCH_COLORS[d.group % PATCH_COLORS.length];
+      const wobble = Math.sin(T*2 + d.phase) * 1.5;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(d.px + wobble, d.py, 6, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S4: LOCALITY (nested open sets) ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c4');
+  let mx = 0.5, my = 0.5;
+  c.addEventListener('pointermove', (e) => {
+    const r = c.getBoundingClientRect();
+    mx = (e.clientX - r.left) / r.width;
+    my = (e.clientY - r.top) / r.height;
+  });
+
+  // Generate a "city" of dots
+  const city = [];
+  for (let i = 0; i < 200; i++) {
+    city.push({ x: Math.random(), y: Math.random(), r: 1 + Math.random()*2 });
+  }
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    // City dots
+    city.forEach(d => {
+      ctx.fillStyle = '#3a4452';
+      ctx.beginPath();
+      ctx.arc(d.x*w(), d.y*h(), d.r, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // Point of interest — auto-orbits if no mouse
+    const auto = !c._touched;
+    const px = auto ? (0.5 + Math.cos(T*0.3)*0.15) * w() : mx * w();
+    const py = auto ? (0.5 + Math.sin(T*0.3)*0.15) * h() : my * h();
+
+    // Nested open sets — 4 concentric rings, breathing
+    const baseR = Math.min(w(),h()) * 0.05;
+    for (let i = 4; i >= 1; i--) {
+      const rr = baseR * i * (1 + Math.sin(T*0.8 + i)*0.05);
+      const col = PATCH_COLORS[(i-1) % PATCH_COLORS.length];
+      ctx.fillStyle = col + '22';
+      ctx.strokeStyle = col + 'aa';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      // Irregular blob shape
+      ctx.moveTo(px + rr, py);
+      const pts = 40;
+      for (let j = 0; j <= pts; j++) {
+        const a = (j/pts) * Math.PI * 2;
+        const wob = 1 + Math.sin(a*3 + i*1.5 + T*0.5)*0.08;
+        ctx.lineTo(px + Math.cos(a)*rr*wob, py + Math.sin(a)*rr*wob);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // Central point
+    ctx.fillStyle = PAL.edge;
+    ctx.shadowColor = PAL.edge;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    requestAnimationFrame(draw);
+  }
+  c.addEventListener('pointerdown', () => c._touched = true);
+  draw();
+})();
+
+// ============ S5: PANORAMA / SHEAF ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c5');
+  const slider = document.getElementById('c5slider');
+  let misalign = 0;
+  slider.addEventListener('input', (e) => { misalign = parseFloat(e.target.value); });
+
+  // Fake "valley" — draw procedural landscape sampled at x
+  function landscape(x, offset = 0) {
+    // Returns y (mountains), and a color palette hint
+    const s = x * 0.008;
+    return 0.55 + Math.sin(s)*0.08 + Math.sin(s*2.3 + 1)*0.05 + Math.sin(s*5.7)*0.02 + offset*0.001;
+  }
+
+  function drawFrame(fx, fy, fw, fh, offsetX, tintShift, alpha) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(fx, fy, fw, fh);
+    ctx.clip();
+
+    // Sky
+    const skyGrad = ctx.createLinearGradient(0, fy, 0, fy+fh);
+    skyGrad.addColorStop(0, `rgba(122,146,184,${alpha})`);
+    skyGrad.addColorStop(1, `rgba(245,180,97,${alpha*0.5})`);
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(fx, fy, fw, fh);
+
+    // Mountains (background)
+    ctx.fillStyle = `rgba(60,72,90,${alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(fx, fy+fh);
+    for (let x = 0; x <= fw; x += 3) {
+      const worldX = x + offsetX;
+      const yn = landscape(worldX);
+      ctx.lineTo(fx + x, fy + yn * fh);
+    }
+    ctx.lineTo(fx + fw, fy + fh);
+    ctx.closePath();
+    ctx.fill();
+
+    // Foreground (river/ground)
+    ctx.fillStyle = `rgba(${107 + tintShift},${182 - tintShift/2},${168 - tintShift/2},${alpha})`;
+    ctx.beginPath();
+    ctx.moveTo(fx, fy+fh);
+    for (let x = 0; x <= fw; x += 3) {
+      const worldX = x + offsetX;
+      const yn = 0.75 + Math.sin(worldX*0.02)*0.05;
+      ctx.lineTo(fx + x, fy + yn * fh);
+    }
+    ctx.lineTo(fx + fw, fy + fh);
+    ctx.closePath();
+    ctx.fill();
+
+    // The oak tree — a marker on overlaps
+    const treeWorldX = 400;
+    const treeScreenX = fx + (treeWorldX - offsetX);
+    if (treeScreenX > fx - 20 && treeScreenX < fx + fw + 20) {
+      const brightness = tintShift;
+      ctx.fillStyle = `rgba(${100+brightness*2},${80+brightness},${50},${alpha})`;
+      ctx.fillRect(treeScreenX-3, fy + fh*0.6, 6, fh*0.15);
+      ctx.beginPath();
+      ctx.arc(treeScreenX, fy + fh*0.58, 18, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${60+brightness*2},${120+brightness},${60},${alpha})`;
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.fillStyle = PAL.ink;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const frameH = H * 0.5;
+    const frameY = H * 0.15;
+    const nFrames = 5;
+    const frameW = W * 0.28;
+    const overlap = frameW * 0.4;
+    const step = frameW - overlap;
+    const totalW = frameW + step * (nFrames - 1);
+    const startX = (W - totalW) / 2;
+
+    // Middle frame gets the misalignment tint
+    for (let i = 0; i < nFrames; i++) {
+      const fx = startX + i * step;
+      const fy = frameY;
+      // World offset so overlaps show same content
+      const offsetX = i * step;
+      const tintShift = (i === 2) ? misalign : 0;
+      const alpha = 0.9;
+
+      drawFrame(fx, fy, frameW, frameH, offsetX, tintShift, alpha);
+
+      // Frame border
+      const misBadge = i === 2 && Math.abs(misalign) > 5;
+      ctx.strokeStyle = misBadge ? PAL.clay : PAL.whole + '66';
+      ctx.lineWidth = misBadge ? 2 : 1;
+      ctx.strokeRect(fx, fy, frameW, frameH);
+    }
+
+    // Glue indicator (bottom)
+    const glued = Math.abs(misalign) < 5;
+    const gy = frameY + frameH + 30;
+    ctx.strokeStyle = glued ? PAL.glue : PAL.mute;
+    ctx.lineWidth = glued ? 2 : 1;
+    ctx.setLineDash(glued ? [] : [3,3]);
+    ctx.beginPath();
+    ctx.moveTo(startX, gy);
+    ctx.lineTo(startX + totalW, gy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // "Click" indicator when glued
+    if (glued) {
+      const pulse = (Math.sin(T*2) + 1)/2;
+      ctx.fillStyle = `rgba(255,216,138,${0.3 + pulse*0.3})`;
+      ctx.beginPath();
+      ctx.arc(W/2, gy, 6 + pulse*3, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S6: TRAIN (5 streams, desync) ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c6');
+  const slider = document.getElementById('c6slider');
+  let desync = 0;
+  slider.addEventListener('input', (e) => { desync = parseFloat(e.target.value)/100; });
+
+  const streams = [
+    { name: 'V', color: PAL.teal, freq: 1.2, amp: 0.8 },  // see
+    { name: 'A', color: PAL.clay, freq: 3.5, amp: 0.6 },  // hear
+    { name: 'F', color: PAL.moss, freq: 0.8, amp: 0.9 },  // feel
+    { name: 'S', color: PAL.slate, freq: 1.5, amp: 0.7 }, // spatial
+    { name: 'O', color: PAL.plum, freq: 0.5, amp: 0.5 }   // smell
+  ];
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const laneH = H / (streams.length + 1);
+
+    // Train position — a moving envelope center
+    const trainX = ((T*0.15) % 1.4 - 0.2) * W;
+
+    streams.forEach((s, i) => {
+      const y = laneH * (i + 0.7);
+      const shift = (i === 1) ? desync * 100 : 0; // auditory desync
+
+      // Baseline
+      ctx.strokeStyle = '#2a323e';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(20, y); ctx.lineTo(W-20, y); ctx.stroke();
+
+      // Waveform — envelope centered near trainX
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let x = 20; x <= W-20; x += 2) {
+        const dist = Math.abs(x - trainX - shift);
+        const env = Math.exp(-dist*dist / (W*W*0.02));
+        const wave = Math.sin((x - T*80) * 0.05 * s.freq) * s.amp * env * laneH * 0.35;
+        if (x === 20) ctx.moveTo(x, y + wave);
+        else ctx.lineTo(x, y + wave);
+      }
+      ctx.stroke();
+
+      // Label dot
+      ctx.fillStyle = s.color;
+      ctx.beginPath(); ctx.arc(12, y, 4, 0, Math.PI*2); ctx.fill();
+    });
+
+    // Coherence indicator — vertical line showing "the one event"
+    const coherent = desync < 0.1;
+    if (coherent) {
+      ctx.strokeStyle = PAL.glue + 'aa';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2,4]);
+      ctx.beginPath();
+      ctx.moveTo(trainX, laneH*0.3);
+      ctx.lineTo(trainX, H - laneH*0.3);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else {
+      // Two conflicting event markers
+      ctx.strokeStyle = PAL.clay + '88';
+      ctx.setLineDash([2,3]);
+      ctx.beginPath();
+      ctx.moveTo(trainX, laneH*0.3);
+      ctx.lineTo(trainX, H - laneH*0.3);
+      ctx.stroke();
+      ctx.strokeStyle = PAL.teal + '88';
+      ctx.beginPath();
+      ctx.moveTo(trainX + desync*100, laneH*1.5);
+      ctx.lineTo(trainX + desync*100, laneH*2.5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S7: LIGHTNING TRIANGLE ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c7');
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const cx = W/2, cy = H/2;
+    const R = Math.min(W,H) * 0.28;
+
+    // Three vertices: Visual (top), Auditory (bottom-right), Seismic (bottom-left)
+    const A = { x: cx, y: cy - R, col: PAL.edge, label: 'V' };
+    const B = { x: cx + R*0.87, y: cy + R*0.5, col: PAL.clay, label: 'A' };
+    const C = { x: cx - R*0.87, y: cy + R*0.5, col: PAL.slate, label: 'S' };
+
+    // 8-second cycle: flash, then wave to auditory, then to seismic, then close triangle
+    const cycle = (T % 6) / 6;
+
+    // Draw triangle edges (base)
+    ctx.strokeStyle = '#2a323e';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y);
+    ctx.lineTo(C.x, C.y); ctx.closePath();
+    ctx.stroke();
+
+    // Animated arrows: A->B (visual to audio, cycle 0.1-0.35)
+    function drawArrow(p1, p2, color, prog, glow) {
+      if (prog <= 0) return;
+      const dx = p2.x - p1.x, dy = p2.y - p1.y;
+      const ex = p1.x + dx * Math.min(1, prog);
+      const ey = p1.y + dy * Math.min(1, prog);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      if (glow) { ctx.shadowColor = color; ctx.shadowBlur = 10; }
+      ctx
+      if (glow) { ctx.shadowColor = color; ctx.shadowBlur = 10; }
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      // Arrowhead
+      if (prog >= 1) {
+        const ang = Math.atan2(dy, dx);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(p2.x, p2.y);
+        ctx.lineTo(p2.x - Math.cos(ang - 0.4)*10, p2.y - Math.sin(ang - 0.4)*10);
+        ctx.lineTo(p2.x - Math.cos(ang + 0.4)*10, p2.y - Math.sin(ang + 0.4)*10);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    // Progress of the three edges
+    let pAB = 0, pAC = 0, pBC = 0;
+    if (cycle < 0.15) {
+      // Flash at A
+      const fp = cycle / 0.15;
+      ctx.fillStyle = `rgba(245,180,97,${1 - fp*0.5})`;
+      ctx.shadowColor = PAL.edge; ctx.shadowBlur = 30 * (1 - fp);
+      ctx.beginPath(); ctx.arc(A.x, A.y, 20 + fp*10, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    } else if (cycle < 0.4) {
+      pAB = (cycle - 0.15) / 0.25;
+    } else if (cycle < 0.55) {
+      pAB = 1;
+      // Arrive at B
+      const fp = (cycle - 0.4)/0.15;
+      ctx.fillStyle = `rgba(214,138,92,${1 - fp*0.5})`;
+      ctx.beginPath(); ctx.arc(B.x, B.y, 15 + fp*8, 0, Math.PI*2); ctx.fill();
+    } else if (cycle < 0.75) {
+      pAB = 1; pAC = (cycle - 0.55)/0.2;
+    } else if (cycle < 0.85) {
+      pAB = 1; pAC = 1;
+      const fp = (cycle - 0.75)/0.1;
+      ctx.fillStyle = `rgba(122,146,184,${1 - fp*0.5})`;
+      ctx.beginPath(); ctx.arc(C.x, C.y, 15 + fp*8, 0, Math.PI*2); ctx.fill();
+    } else {
+      pAB = 1; pAC = 1; pBC = (cycle - 0.85)/0.15;
+    }
+
+    drawArrow(A, B, PAL.clay, pAB, true);
+    drawArrow(A, C, PAL.slate, pAC, true);
+    drawArrow(B, C, PAL.moss, pBC, true);
+
+    // Vertex dots
+    [A, B, C].forEach(p => {
+      ctx.fillStyle = p.col;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+    });
+
+    // Triangle closes → coherent glow
+    if (pBC >= 1) {
+      ctx.strokeStyle = PAL.glue;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.5 + Math.sin(T*3)*0.3;
+      ctx.beginPath();
+      ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y);
+      ctx.lineTo(C.x, C.y); ctx.closePath();
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      // Fill
+      ctx.fillStyle = `rgba(255,216,138,0.08)`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S8: THREE KINDS OF DIFFERENCE ============
+(function(){
+  const svg = document.getElementById('c8');
+  let active = 'W';
+
+  function render() {
+    const W = 900, H = 560;
+    const bottomY = 450;
+    const topY = 100;
+    const bottomX = W/2;
+    const posX = [W*0.22, W*0.5, W*0.78];
+    const labels = ['W', 'I', 'J'];
+    const cols = [PAL.teal, PAL.clay, PAL.plum];
+    const names = ['World', 'Instrument', 'Interpretation'];
+
+    let html = '';
+
+    // Arrows from bottom to three tops
+    for (let i = 0; i < 3; i++) {
+      const isActive = active === labels[i];
+      const stroke = isActive ? cols[i] : '#2a323e';
+      const sw = isActive ? 2.5 : 1;
+      html += `<line x1="${bottomX}" y1="${bottomY}" x2="${posX[i]}" y2="${topY+40}" stroke="${stroke}" stroke-width="${sw}" ${isActive ? `filter="url(#glow)"` : ''}/>`;
+    }
+
+    // Three source circles
+    for (let i = 0; i < 3; i++) {
+      const isActive = active === labels[i];
+      const op = isActive ? 1 : 0.35;
+      // Icon per level
+      let inner = '';
+      if (labels[i] === 'W') {
+        // Two stones
+        inner += `<circle cx="${posX[i]-15}" cy="${topY}" r="14" fill="${cols[i]}" opacity="${op}"/>`;
+        inner += `<circle cx="${posX[i]+15}" cy="${topY+5}" r="12" fill="${cols[i]}" opacity="${op*0.8}"/>`;
+      } else if (labels[i] === 'I') {
+        // Two thermometers
+        for (let j = 0; j < 2; j++) {
+          const tx = posX[i] - 15 + j*30;
+          inner += `<rect x="${tx-4}" y="${topY-15}" width="8" height="25" rx="4" fill="${cols[i]}" opacity="${op}"/>`;
+          inner += `<circle cx="${tx}" cy="${topY+13}" r="6" fill="${cols[i]}" opacity="${op}"/>`;
+          // Reading text
+          inner += `<text x="${tx}" y="${topY-20}" fill="${cols[i]}" opacity="${op}" font-size="9" text-anchor="middle">${j===0?'20.01':'20.02'}</text>`;
+        }
+      } else {
+        // Two lenses / interpretations
+        inner += `<circle cx="${posX[i]-12}" cy="${topY}" r="14" fill="none" stroke="${cols[i]}" stroke-width="2" opacity="${op}"/>`;
+        inner += `<rect x="${posX[i]+3}" y="${topY-12}" width="24" height="24" fill="none" stroke="${cols[i]}" stroke-width="2" opacity="${op}"/>`;
+      }
+      html += inner;
+      // Label letter
+      html += `<text x="${posX[i]}" y="${topY+55}" fill="${cols[i]}" opacity="${op}" font-size="14" text-anchor="middle" font-family="serif" font-style="italic">${labels[i]}</text>`;
+    }
+
+    // Bottom: two disagreeing reports
+    html += `<circle cx="${bottomX-25}" cy="${bottomY}" r="10" fill="${PAL.whole}"/>`;
+    html += `<circle cx="${bottomX+25}" cy="${bottomY}" r="10" fill="${PAL.whole}"/>`;
+    html += `<line x1="${bottomX-15}" y1="${bottomY}" x2="${bottomX+15}" y2="${bottomY}" stroke="${PAL.edge}" stroke-width="2" stroke-dasharray="3,3"/>`;
+    html += `<text x="${bottomX}" y="${bottomY+30}" fill="${PAL.edge}" font-size="18" text-anchor="middle" font-family="serif" font-style="italic">≠</text>`;
+
+    svg.innerHTML = `<defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` + html;
+  }
+
+  document.querySelectorAll('#s8 .ctl').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#s8 .ctl').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      active = btn.dataset.diag;
+      render();
+    };
+  });
+
+  // Auto-cycle
+  let idx = 0;
+  setInterval(() => {
+    if (!document.querySelector('#s8 .ctl.active') || !document.querySelector('#s8 .ctl.active').dataset._manual) {
+      idx = (idx + 1) % 3;
+      active = ['W','I','J'][idx];
+      document.querySelectorAll('#s8 .ctl').forEach((b,i) => b.classList.toggle('active', i === idx));
+      render();
+    }
+  }, 2500);
+
+  render();
+})();
+
+// ============ S9: SAMENESS LADDER ============
+(function(){
+  const svg = document.getElementById('c9');
+  const rungs = [
+    { sym: '=', label: 'identity', col: PAL.edge },
+    { sym: '≅', label: 'isomorphism', col: PAL.teal },
+    { sym: '≃', label: 'equivalence', col: PAL.moss },
+    { sym: '≈', label: 'approximation', col: PAL.slate },
+    { sym: 'P', label: 'statistical', col: PAL.plum },
+    { sym: '⊨', label: 'model-th.', col: PAL.clay }
+  ];
+
+  function render(dragging = null, refuseFlash = 0) {
+    const W = 900, H = 560;
+    let html = '';
+    const centerX = W/2;
+    const startY = 60, gap = 70;
+
+    // Ladder frame
+    html += `<line x1="${centerX-120}" y1="${startY}" x2="${centerX-120}" y2="${startY + rungs.length*gap}" stroke="#3a4452" stroke-width="2"/>`;
+    html += `<line x1="${centerX+120}" y1="${startY}" x2="${centerX+120}" y2="${startY + rungs.length*gap}" stroke="#3a4452" stroke-width="2"/>`;
+
+    rungs.forEach((r, i) => {
+      const y = startY + i*gap + 35;
+      // Rail rung
+      html += `<line x1="${centerX-120}" y1="${y}" x2="${centerX+120}" y2="${y}" stroke="#2a323e" stroke-width="1"/>`;
+      // Symbol
+      const bright = refuseFlash > 0 && i === 0 ? PAL.clay : r.col;
+      html += `<circle cx="${centerX-70}" cy="${y}" r="18" fill="${bright}" opacity="0.85"/>`;
+      html += `<text x="${centerX-70}" y="${y+5}" fill="${PAL.ink}" font-size="16" text-anchor="middle" font-weight="bold">${r.sym}</text>`;
+      // Label as small dots (visual, minimal text)
+      html += `<text x="${centerX-40}" y="${y+4}" fill="${r.col}" opacity="0.6" font-size="10" font-family="serif" font-style="italic">${r.label}</text>`;
+      // Witness icon on right (a small shape per row)
+      const wx = centerX + 60;
+      if (i === 0) html += `<circle cx="${wx}" cy="${y}" r="6" fill="${r.col}"/>`;
+      else if (i === 1) html += `<circle cx="${wx-6}" cy="${y}" r="5" fill="${r.col}"/><circle cx="${wx+6}" cy="${y}" r="5" fill="${r.col}"/><line x1="${wx-3}" y1="${y}" x2="${wx+3}" y2="${y}" stroke="${r.col}"/>`;
+      else if (i === 2) html += `<path d="M${wx-8} ${y} Q${wx} ${y-5} ${wx+8} ${y}" fill="none" stroke="${r.col}" stroke-width="1.5"/>`;
+      else if (i === 3) html += `<line x1="${wx-8}" y1="${y}" x2="${wx+8}" y2="${y}" stroke="${r.col}" stroke-dasharray="2,2"/>`;
+      else if (i === 4) html += `<circle cx="${wx}" cy="${y}" r="6" fill="none" stroke="${r.col}"/><circle cx="${wx-3}" cy="${y-2}" r="1.5" fill="${r.col}"/><circle cx="${wx+2}" cy="${y+1}" r="1.5" fill="${r.col}"/><circle cx="${wx+3}" cy="${y-3}" r="1.5" fill="${r.col}"/>`;
+      else html += `<rect x="${wx-7}" y="${y-6}" width="14" height="12" fill="none" stroke="${r.col}"/><line x1="${wx-7}" y1="${y}" x2="${wx+7}" y2="${y}" stroke="${r.col}"/>`;
+    });
+
+    // The auto-demo: a weaker badge tries to drag up, gets refused
+    const cycle = (T % 5) / 5;
+    let badgeY, sourceI, targetI = 0;
+    if (cycle < 0.3) {
+      sourceI = 3; // approximation
+      badgeY = startY + sourceI*gap + 35;
+    } else if (cycle < 0.55) {
+      sourceI = 3;
+      const p = (cycle - 0.3)/0.25;
+      badgeY = startY + sourceI*gap + 35 - p*(sourceI - targetI)*gap;
+    } else if (cycle < 0.7) {
+      // Refuse flash
+      badgeY = startY + targetI*gap + 35;
+    } else {
+      const p = (cycle - 0.7)/0.3;
+      badgeY = startY + targetI*gap + 35 + p*(3 - targetI)*gap;
+    }
+    const isRefusing = cycle >= 0.55 && cycle < 0.7;
+    const shake = isRefusing ? Math.sin(T*40)*4 : 0;
+
+    html += `<g transform="translate(${centerX - 200 + shake}, ${badgeY - 15})">`;
+    html += `<rect x="0" y="0" width="30" height="30" rx="15" fill="${isRefusing ? PAL.clay : PAL.slate}" opacity="0.9"/>`;
+    html += `<text x="15" y="20" fill="${PAL.ink}" font-size="14" text-anchor="middle" font-weight="bold">≈</text>`;
+    html += `</g>`;
+
+    // Refuse mark
+    if (isRefusing) {
+      const y = startY + targetI*gap + 35;
+      html += `<text x="${centerX - 200 + shake + 15}" y="${badgeY - 25}" fill="${PAL.clay}" font-size="20" text-anchor="middle">✕</text>`;
+    }
+
+    svg.innerHTML = html;
+  }
+
+  function loop() {
+    render();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============ S10: LICENCE POOL / ADMISSIBLE T ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c10');
+  const slider = document.getElementById('c10slider');
+  let width = 0.3;
+  slider.addEventListener('input', (e) => { width = parseFloat(e.target.value)/100; });
+
+  // Generate a cloud of "possible transitions" as arrows
+  const arrows = [];
+  const N = 120;
+  for (let i = 0; i < N; i++) {
+    arrows.push({
+      x: Math.random(),
+      y: Math.random(),
+      angle: Math.random()*Math.PI*2,
+      len: 15 + Math.random()*20,
+      quality: Math.random() // 0..1; only low-quality (well-licensed) inside T
+    });
+  }
+
+  // Simulated "data points" we're trying to fit
+  const dataPts = [];
+  for (let i = 0; i < 8; i++) {
+    dataPts.push({ x: 0.2 + Math.random()*0.6, y: 0.2 + Math.random()*0.6, r: 4 });
+  }
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const cx = W/2, cy = H/2;
+    // T region = ellipse centered, whose radius = width
+    const rx = W*0.15 + width * W*0.35;
+    const ry = H*0.2 + width * H*0.3;
+
+    // Draw the T region as a soft ellipse
+    ctx.fillStyle = `rgba(245,180,97,${0.08 + width*0.15})`;
+    ctx.strokeStyle = PAL.edge + '88';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw arrows: inside T = colored, outside = grey
+    arrows.forEach(a => {
+      const px = a.x * W;
+      const py = a.y * H;
+      // Point in ellipse?
+      const dx = (px - cx)/rx, dy = (py - cy)/ry;
+      const inside = dx*dx + dy*dy < 1;
+      const drift = Math.sin(T*0.3 + a.angle)*5;
+      const ex = px + Math.cos(a.angle) * a.len;
+      const ey = py + Math.sin(a.angle) * a.len;
+      if (inside) {
+        ctx.strokeStyle = PAL.edge;
+        ctx.globalAlpha = 0.85;
+      } else {
+        ctx.strokeStyle = PAL.mute;
+        ctx.globalAlpha = 0.4;
+      }
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px + drift, py);
+      ctx.lineTo(ex + drift, ey);
+      ctx.stroke();
+      // Arrowhead
+      const ah = 4;
+      ctx.beginPath();
+      ctx.moveTo(ex + drift, ey);
+      ctx.lineTo(ex + drift - Math.cos(a.angle - 0.4)*ah, ey - Math.sin(a.angle - 0.4)*ah);
+      ctx.lineTo(ex + drift - Math.cos(a.angle + 0.4)*ah, ey - Math.sin(a.angle + 0.4)*ah);
+      ctx.closePath();
+      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Data points — as T widens, spurious fits appear
+    dataPts.forEach((d,i) => {
+      const px = d.x * W, py = d.y * H;
+      ctx.fillStyle = PAL.whole;
+      ctx.beginPath();
+      ctx.arc(px, py, d.r, 0, Math.PI*2);
+      ctx.fill();
+      // Spurious fit lines when T is wide
+      if (width > 0.5) {
+        for (let j = i+1; j < dataPts.length; j++) {
+          const p2 = dataPts[j];
+          const px2 = p2.x*W, py2 = p2.y*H;
+          const dist = Math.hypot(px2-px, py2-py);
+          if (dist < width * W * 0.8) {
+            ctx.strokeStyle = `rgba(180,129,184,${(width-0.5)*0.4})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(px, py); ctx.lineTo(px2, py2);
+            ctx.stroke();
+          }
+        }
+      }
+    });
+
+    // Overfit indicator: at high width, more "connections" light up
+    ctx.fillStyle = width > 0.7 ? PAL.clay : (width > 0.4 ? PAL.edge : PAL.moss);
+    ctx.beginPath();
+    ctx.arc(30, 30, 6, 0, Math.PI*2);
+    ctx.fill();
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S11: MASTER DIAGRAM W → Ri → G ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c11');
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const wx = W/2, wy = H*0.15;
+    const gx = W/2, gy = H*0.85;
+    const rCount = 5;
+    const midY = H*0.5;
+    const rs = [];
+    for (let i = 0; i < rCount; i++) {
+      const rx = W*0.2 + (W*0.6) * (i/(rCount-1));
+      rs.push({ x: rx, y: midY, col: PATCH_COLORS[i] });
+    }
+
+    // Blind-spot ring around W — the c_acc ⊂ W caveat
+    const ringR = 55 + Math.sin(T*0.8)*3;
+    ctx.strokeStyle = PAL.mute;
+    ctx.setLineDash([3,4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(wx, wy, ringR + 25, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Flowing particles W → R → G to show descent
+    const cycle = (T*0.4) % 1;
+    // Phase 1: W → R (particles fall)
+    // Phase 2: R → G (particles converge)
+    rs.forEach((r, i) => {
+      // W → R particles
+      const offset = (T*0.5 + i*0.2) % 1;
+      const p1 = offset;
+      const px1 = wx + (r.x - wx) * p1;
+      const py1 = wy + (r.y - wy) * p1;
+      ctx.fillStyle = r.col;
+      ctx.globalAlpha = Math.sin(p1 * Math.PI);
+      ctx.beginPath();
+      ctx.arc(px1, py1, 2.5, 0, Math.PI*2);
+      ctx.fill();
+
+      // R → G particles
+      const offset2 = (T*0.5 + i*0.2 + 0.5) % 1;
+      const px2 = r.x + (gx - r.x) * offset2;
+      const py2 = r.y + (gy - r.y) * offset2;
+      ctx.globalAlpha = Math.sin(offset2 * Math.PI);
+      ctx.beginPath();
+      ctx.arc(px2, py2, 2.5, 0, Math.PI*2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Arrows (static)
+    rs.forEach(r => {
+      // W → R
+      ctx.strokeStyle = r.col + '55';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(wx, wy + 15);
+      ctx.lineTo(r.x, r.y - 15);
+      ctx.stroke();
+      // R → G
+      ctx.beginPath();
+      ctx.moveTo(r.x, r.y + 15);
+      ctx.lineTo(gx, gy - 15);
+      ctx.stroke();
+    });
+
+    // W node (top)
+    ctx.fillStyle = PAL.whole;
+    ctx.beginPath();
+    ctx.arc(wx, wy, ringR/2, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = PAL.ink;
+    ctx.font = 'italic 16px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('W', wx, wy);
+
+    // R_i nodes (middle)
+    rs.forEach((r, i) => {
+      ctx.fillStyle = r.col;
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, 14, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = PAL.ink;
+      ctx.font = 'italic 11px serif';
+      ctx.fillText('R', r.x - 3, r.y);
+      ctx.font = '9px serif';
+      ctx.fillText(String(i+1), r.x + 5, r.y + 3);
+    });
+
+    // G node (bottom) — coherent whole, breathing
+    const breath = 1 + Math.sin(T*1.2)*0.05;
+    ctx.fillStyle = PAL.glue;
+    ctx.shadowColor = PAL.glue;
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.arc(gx, gy, 22 * breath, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = PAL.ink;
+    ctx.font = 'italic 18px serif';
+    ctx.fillText('G', gx, gy);
+
+    // Small labels
+    ctx.fillStyle = PAL.mute;
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('O', wx + 35, wy + 40);
+    ctx.fillText('T', rs[rs.length-1].x + 15, midY + 40);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S12: TRUTH 2x2 ============
+(function(){
+  const svg = document.getElementById('c12');
+
+  function render() {
+    const W = 900, H = 560;
+    const cx = W/2, cy = H/2;
+    const cellW = 200, cellH = 160;
+    const gap = 20;
+
+    // Axes labels via small icons
+    let html = '';
+    // Axis lines
+    html += `<line x1="${cx - cellW - gap/2}" y1="${cy}" x2="${cx + cellW + gap/2}" y2="${cy}" stroke="${PAL.mute}" stroke-width="1"/>`;
+    html += `<line x1="${cx}" y1="${cy - cellH - gap/2}" x2="${cx}" y2="${cy + cellH + gap/2}" stroke="${PAL.mute}" stroke-width="1"/>`;
+
+    // Four cells — animate one at a time to demonstrate
+    const cycle = Math.floor((T % 12) / 3); // 0..3, changes every 3s
+
+    const cells = [
+      // TL: coherent ∧ contact → good indicator
+      { x: cx - cellW - gap/2, y: cy - cellH - gap/2, w: cellW, h: cellH, col: PAL.moss, kind: 'good' },
+      // TR: incoherent ∧ contact → factbook
+      { x: cx + gap/2, y: cy - cellH - gap/2, w: cellW, h: cellH, col: PAL.slate, kind: 'factbook' },
+      // BL: coherent ∧ no contact → fantasy
+      { x: cx - cellW - gap/2, y: cy + gap/2, w: cellW, h: cellH, col: PAL.plum, kind: 'fantasy' },
+      // BR: incoherent ∧ no contact → wrong
+      { x: cx + gap/2, y: cy + gap/2, w: cellW, h: cellH, col: PAL.clay, kind: 'wrong' }
+    ];
+
+    cells.forEach((c, i) => {
+      const active = i === cycle;
+      const op = active ? 1 : 0.4;
+      html += `<rect x="${c.x}" y="${c.y}" width="${c.w}" height="${c.h}" fill="${c.col}22" stroke="${c.col}" stroke-width="${active ? 2 : 1}" opacity="${op}" rx="4"/>`;
+
+      const icx = c.x + c.w/2, icy = c.y + c.h/2;
+
+      if (c.kind === 'good') {
+        // Model connected to world with matching contact
+        html += `<circle cx="${icx - 40}" cy="${icy}" r="20" fill="${PAL.whole}" opacity="${op}"/>`;
+        html += `<circle cx="${icx + 40}" cy="${icy}" r="20" fill="${c.col}" opacity="${op}"/>`;
+        html += `<line x1="${icx - 20}" y1="${icy}" x2="${icx + 20}" y2="${icy}" stroke="${PAL.glue}" stroke-width="2" opacity="${op}"/>`;
+        html += `<text x="${icx}" y="${icy + 5}" fill="${PAL.glue}" text-anchor="middle" font-size="14" opacity="${op}">✓</text>`;
+      } else if (c.kind === 'fantasy') {
+        // Coherent internal, no external contact
+        html += `<circle cx="${icx + 40}" cy="${icy}" r="20" fill="${c.col}" opacity="${op}"/>`;
+        html += `<circle cx="${icx + 30}" cy="${icy - 10}" r="6" fill="${c.col}" opacity="${op}"/>`;
+        html += `<circle cx="${icx + 50}" cy="${icy + 8}" r="6" fill="${c.col}" opacity="${op}"/>`;
+        // Empty space where world should be
+        html += `<circle cx="${icx - 40}" cy="${icy}" r="20" fill="none" stroke="${PAL.mute}" stroke-dasharray="3,3" opacity="${op}"/>`;
+        // Broken bridge
+        html += `<line x1="${icx - 20}" y1="${icy}" x2="${icx - 5}" y2="${icy}" stroke="${PAL.clay}" stroke-width="2" opacity="${op}"/>`;
+        html += `<line x1="${icx + 5}" y1="${icy}" x2="${icx + 20}" y2="${icy}" stroke="${PAL.clay}" stroke-width="2" opacity="${op}"/>`;
+        html += `<text x="${icx}" y="${icy + 5}" fill="${PAL.clay}" text-anchor="middle" font-size="16" opacity="${op}">✕</text>`;
+      } else if (c.kind === 'factbook') {
+        // Individual true dots, no coherence
+        for (let k = 0; k < 5; k++) {
+          const ax = icx - 50 + (k%3)*40;
+          const ay = icy - 20 + Math.floor(k/3)*30;
+          html += `<circle cx="${ax}" cy="${ay}" r="8" fill="${c.col}" opacity="${op}"/>`;
+          html += `<line x1="${ax}" y1="${ay}" x2="${ax + 20}" y2="${ay + 10}" stroke="${PAL.glue}" stroke-width="1" opacity="${op*0.6}"/>`;
+        }
+        // No connecting structure — dashed exes
+        html += `<text x="${icx + 60}" y="${icy}" fill="${PAL.clay}" font-size="14" opacity="${op}">✕</text>`;
+      } else {
+        // Wrong: contradictory pieces
+        html += `<circle cx="${icx - 15}" cy="${icy - 10}" r="15" fill="${c.col}" opacity="${op}"/>`;
+        html += `<circle cx="${icx + 15}" cy="${icy + 10}" r="15" fill="${c.col}" opacity="${op}"/>`;
+        html += `<line x1="${icx - 25}" y1="${icy - 20}" x2="${icx + 25}" y2="${icy + 20}" stroke="${PAL.clay}" stroke-width="2" opacity="${op}"/>`;
+        html += `<line x1="${icx + 25}" y1="${icy - 20}" x2="${icx - 25}" y2="${icy + 20}" stroke="${PAL.clay}" stroke-width="2" opacity="${op}"/>`;
+      }
+    });
+
+    // Axis labels: coherence (horizontal), correspondence (vertical) — visual only
+    // Small legends: ✓ / ✕ at the tick ends
+    html += `<text x="${cx - cellW - gap/2 + 15}" y="${cy + 5}" fill="${PAL.moss}" font-size="18" text-anchor="middle">✓</text>`;
+    html += `<text x="${cx + cellW + gap/2 - 15}" y="${cy + 5}" fill="${PAL.clay}" font-size="18" text-anchor="middle">✕</text>`;
+    html += `<text x="${cx - 5}" y="${cy - cellH - gap/2 + 20}" fill="${PAL.moss}" font-size="18" text-anchor="middle">✓</text>`;
+    html += `<text x="${cx - 5}" y="${cy + cellH + gap/2 - 8}" fill="${PAL.clay}" font-size="18" text-anchor="middle">✕</text>`;
+
+    // Corner symbols: horizontal axis label = ⇌ (coherence), vertical = 🌐/W
+    html += `<text x="${cx}" y="${cy - cellH - gap/2 - 8}" fill="${PAL.whole}" font-size="14" text-anchor="middle" font-family="serif">W</text>`;
+    html += `<text x="${cx + cellW + gap/2 + 15}" y="${cy + 5}" fill="${PAL.whole}" font-size="14" text-anchor="middle">⇌</text>`;
+
+    svg.innerHTML = html;
+  }
+
+  function loop() { render(); requestAnimationFrame(loop); }
+  loop();
+})();
+
+// ============ S13: FIVE PATHOLOGIES ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c13');
+  let pathology = 1;
+
+  document.querySelectorAll('#s13 .ctl').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#s13 .ctl').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      pathology = parseInt(btn.dataset.path);
+    };
+  });
+
+  // Auto-cycle
+  let lastCycle = -1;
+  function autoUpdate() {
+    const idx = Math.floor((T % 15) / 3);
+    if (idx !== lastCycle) {
+      lastCycle = idx;
+      pathology = idx + 1;
+      document.querySelectorAll('#s13 .ctl').forEach((b, i) => b.classList.toggle('active', i === idx));
+    }
+  }
+
+  function draw() {
+    autoUpdate();
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const wx = W/2, wy = H*0.15;
+    const gx = W/2, gy = H*0.85;
+    const rCount = 4;
+    const midY = H*0.5;
+    const rs = [];
+    for (let i = 0; i < rCount; i++) {
+      const rx = W*0.25 + (W*0.5) * (i/(rCount-1));
+      rs.push({ x: rx, y: midY, col: PATCH_COLORS[i] });
+    }
+
+    // Which arrows break per pathology
+    // 1: fantasy — G→W claim arrow breaks (top disconnected)
+    // 2: factbook — T arrows to G break (no global section)
+    // 3: liar — O arrows break (source untethered)
+    // 4: calibrated — small bias (offset)
+    // 5: out-of-cover — query outside c_acc
+
+    // Draw W
+    const wDim = pathology === 1 || pathology === 3 || pathology === 5;
+    ctx.fillStyle = wDim ? PAL.whole + '55' : PAL.whole;
+    ctx.beginPath();
+    ctx.arc(wx, wy, 28, 0, Math.PI*2);
+    ctx.fill();
+
+    // Blind-spot ring — highlighted for pathology 5
+    if (pathology === 5) {
+      const pulse = 1 + Math.sin(T*3)*0.1;
+      ctx.strokeStyle = PAL.clay;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath();
+      ctx.arc(wx, wy, 55 * pulse, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // A "query" X outside the cover
+      ctx.fillStyle = PAL.clay;
+      ctx.beginPath();
+      ctx.arc(wx + 100, wy - 20, 6, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = PAL.clay;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(wx + 92, wy - 28); ctx.lineTo(wx + 108, wy - 12);
+      ctx.moveTo(wx + 108, wy - 28); ctx.lineTo(wx + 92, wy - 12);
+      ctx.stroke();
+    }
+
+    // O arrows (W → R)
+    rs.forEach((r, i) => {
+      const broken = pathology === 3;
+      ctx.strokeStyle = broken ? PAL.clay : r.col + '88';
+      ctx.lineWidth = 1;
+      ctx.setLineDash(broken ? [4,4] : []);
+      ctx.beginPath();
+      if (broken) {
+        // Draw a stub, then break, then stub
+        const mx = (wx + r.x)/2, my = (wy + r.y)/2;
+        ctx.moveTo(wx, wy + 15);
+        ctx.lineTo(mx - 10, my - 5);
+        ctx.moveTo(mx + 10, my + 5);
+        ctx.lineTo(r.x, r.y - 15);
+      } else {
+        ctx.moveTo(wx, wy + 15);
+        ctx.lineTo(r.x, r.y - 15);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // R_i nodes
+    rs.forEach((r, i) => {
+      ctx.fillStyle = r.col;
+      ctx.beginPath();
+      ctx.arc(r.x, r.y, 14, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // T arrows (R → G)
+    rs.forEach((r, i) => {
+      const broken = pathology === 2;
+      ctx.strokeStyle = broken ? PAL.clay : r.col + '88';
+      ctx.lineWidth = 1;
+      ctx.setLineDash(broken ? [4,4] : []);
+      ctx.beginPath();
+      if (broken) {
+        const mx = (r.x + gx)/2, my = (r.y + gy)/2;
+        ctx.moveTo(r.x, r.y + 15);
+        ctx.lineTo(mx - 5, my - 10);
+        ctx.moveTo(mx + 5, my + 10);
+        ctx.lineTo(gx, gy - 15);
+      } else {
+        ctx.moveTo(r.x, r.y + 15);
+        ctx.lineTo(gx, gy - 15);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // G node
+    const gAlive = pathology !== 2;
+    ctx.fillStyle = gAlive ? PAL.glue : PAL.mute;
+    if (gAlive) { ctx.shadowColor = PAL.glue; ctx.shadowBlur = 12; }
+    ctx.beginPath();
+    ctx.arc(gx, gy, 22, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // G → W claim arrow (upward)
+    const claimBroken = pathology === 1;
+    ctx.strokeStyle = claimBroken ? PAL.clay : PAL.glue;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash(claimBroken ? [3,3] : []);
+    ctx.beginPath();
+    // Arc from G back up to W (on the right side)
+    ctx.moveTo(gx + 25, gy - 5);
+    ctx.quadraticCurveTo(W*0.9, midY, wx + 30, wy + 5);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    if (claimBroken) {
+      // Big red X on the claim arc
+      const px = W*0.85, py = midY;
+      ctx.strokeStyle = PAL.clay;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(px - 12, py - 12); ctx.lineTo(px + 12, py + 12);
+      ctx.moveTo(px + 12, py - 12); ctx.lineTo(px - 12, py + 12);
+      ctx.stroke();
+    }
+
+    // Calibrated error — G is offset slightly from where it should be
+    if (pathology === 4) {
+      // Ghost G at ideal position, real G shifted
+      const shift = 15;
+      ctx.fillStyle = PAL.glue + '44';
+      ctx.beginPath();
+      ctx.arc(gx, gy, 22, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = PAL.edge;
+      ctx.beginPath();
+      ctx.arc(gx + shift, gy - 5, 22, 0, Math.PI*2);
+      ctx.fill();
+      // Small arrow showing bias
+      ctx.strokeStyle = PAL.clay;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(gx, gy);
+      ctx.lineTo(gx + shift - 5, gy - 3);
+      ctx.stroke();
+    }
+
+    // Pathology number indicator (bottom-right, subtle)
+    ctx.fillStyle = PAL.mute;
+    ctx.font = '48px serif';
+    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+    ctx.globalAlpha = 0.3;
+    ctx.fillText(String(pathology), W - 20, H - 60);
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S14: LLM — nesting / corpus as cover ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c14');
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+
+    // Top: The world W
+    const wx = W/2, wy = H*0.12;
+    ctx.fillStyle = PAL.whole;
+    ctx.beginPath();
+    ctx.arc(wx, wy, 22, 0, Math.PI*2);
+    ctx.fill();
+
+    // Middle: many authors/documents — each a small W→R nesting
+    const nDocs = 8;
+    const docY = H*0.42;
+    const docs = [];
+    for (let i = 0; i < nDocs; i++) {
+      const dx = W*0.1 + (W*0.8) * (i/(nDocs-1));
+      docs.push({ x: dx, y: docY, col: PATCH_COLORS[i % PATCH_COLORS.length] });
+    }
+
+    // Author perceives world → writes doc: each doc is a mini circle w/ inner dot
+    docs.forEach((d, i) => {
+      // "Author perception" arrow from W
+      const t = (T*0.3 + i*0.15) % 1;
+      const alpha = Math.sin(t*Math.PI);
+      ctx.strokeStyle = PAL.whole + '33';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(wx, wy + 15);
+      ctx.lineTo(d.x, d.y - 15);
+      ctx.stroke();
+
+      // Particle traveling down
+      const px = wx + (d.x - wx)*t;
+      const py = wy + (d.y - wy)*t;
+      ctx.fillStyle = d.col;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Document: outer circle = context, inner = distilled content
+      ctx.fillStyle = d.col + '44';
+      ctx.strokeStyle = d.col;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 14, 0, Math.PI*2);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = d.col;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 5, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // Overlap arcs between neighboring documents (they share topics)
+    ctx.strokeStyle = PAL.glue + '44';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < docs.length - 1; i++) {
+      const d1 = docs[i], d2 = docs[i+1];
+      ctx.beginPath();
+      ctx.arc((d1.x+d2.x)/2, docY + 25, Math.abs(d2.x-d1.x)/2, Math.PI, 0, true);
+      ctx.stroke();
+    }
+
+    // Bottom: The trained model G — a big gold circle,
+    // built from streams from all docs
+    const gx = W/2, gy = H*0.82;
+    docs.forEach((d, i) => {
+      // Training flow
+      const t = ((T*0.25 + i*0.1) % 1);
+      const px = d.x + (gx - d.x)*t;
+      const py = d.y + (gy - d.y)*t;
+      ctx.fillStyle = d.col;
+      ctx.globalAlpha = Math.sin(t*Math.PI) * 0.8;
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Faint training arrow
+      ctx.strokeStyle = d.col + '22';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(d.x, d.y + 15);
+      ctx.lineTo(gx, gy - 15);
+      ctx.stroke();
+    });
+
+    // G — trained model
+    const breath = 1 + Math.sin(T*1.5)*0.04;
+    ctx.fillStyle = PAL.glue;
+    ctx.shadowColor = PAL.glue;
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.arc(gx, gy, 32 * breath, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Compounding: a smaller "next generation" model being fed by G itself
+    // Show a subtle recursion arrow: G loops back to become a new "document"
+    const loopT = (T*0.5) % 1;
+    ctx.strokeStyle = PAL.plum + '77';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.moveTo(gx + 30, gy);
+    ctx.bezierCurveTo(W*0.95, gy, W*0.95, docY, docs[docs.length-1].x + 20, docY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Particle on the loop
+    const t3 = loopT;
+    const bp = (p) => {
+      const p0 = {x: gx + 30, y: gy};
+      const p1 = {x: W*0.95, y: gy};
+      const p2 = {x: W*0.95, y: docY};
+      const p3 = {x: docs[docs.length-1].x + 20, y: docY};
+      const mt = 1-p;
+      return {
+        x: mt*mt*mt*p0.x + 3*mt*mt*p*p1.x + 3*mt*p*p*p2.x + p*p*p*p3.x,
+        y: mt*mt*mt*p0.y + 3*mt*mt*p*p1.y + 3*mt*p*p*p2.y + p*p*p*p3.y
+      };
+    };
+    const lp = bp(t3);
+    ctx.fillStyle = PAL.plum;
+    ctx.beginPath();
+    ctx.arc(lp.x, lp.y, 3, 0, Math.PI*2);
+    ctx.fill();
+
+    // Labels (letters only, no explanatory text)
+    ctx.fillStyle = PAL.ink;
+    ctx.font = 'italic 14px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('W', wx, wy);
+    ctx.fillText('G', gx, gy);
+
+    // Frozen/no-live indicator: a small snowflake / lock on W→G direct arrow
+    ctx.strokeStyle = PAL.slate;
+    ctx.setLineDash([2,3]);
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(wx - 100, wy);
+    ctx.bezierCurveTo(W*0.05, H*0.5, W*0.05, gy, gx - 40, gy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Small "no direct arrow" mark
+    const nx = W*0.05, ny = H*0.5;
+    ctx.strokeStyle = PAL.clay;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(nx - 6, ny - 6); ctx.lineTo(nx + 6, ny + 6);
+    ctx.moveTo(nx + 6, ny - 6); ctx.lineTo(nx - 6, ny + 6);
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S15: SELF-AUDIT MIRROR ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c15');
+
+  function draw() {
+    ctx.fillStyle = PAL.ink2;
+    ctx.fillRect(0,0,w(),h());
+
+    const W = w(), H = h();
+    const cx = W/2;
+
+    // Two mirrored master diagrams facing each other
+    // Left: "the framework" — small W→R→G
+    // Right: same framework applied to itself
+    const centerGap = 60;
+    const halfW = (W - centerGap) / 2;
+
+    function drawMini(offsetX, mirrored) {
+      const bx = offsetX + halfW/2;
+      const wy = H*0.2, gy = H*0.8;
+      const rY = H*0.5;
+      const rs = [-1, 0, 1].map(i => ({
+        x: bx + i * halfW*0.25,
+        y: rY,
+        col: PATCH_COLORS[i+1]
+      }));
+
+      // W
+      ctx.fillStyle = PAL.whole;
+      ctx.beginPath(); ctx.arc(bx, wy, 18, 0, Math.PI*2); ctx.fill();
+      // Arrows W→R
+      rs.forEach(r => {
+        ctx.strokeStyle = r.col + '88';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(bx, wy + 12); ctx.lineTo(r.x, r.y - 12);
+        ctx.stroke();
+      });
+      // R nodes
+      rs.forEach(r => {
+        ctx.fillStyle = r.col;
+        ctx.beginPath(); ctx.arc(r.x, r.y, 10, 0, Math.PI*2); ctx.fill();
+      });
+      // R→G
+      rs.forEach(r => {
+        ctx.strokeStyle = r.col + '88';
+        ctx.beginPath();
+        ctx.moveTo(r.x, r.y + 12); ctx.lineTo(bx, gy - 15);
+        ctx.stroke();
+      });
+      // G
+      ctx.fillStyle = PAL.glue;
+      ctx.beginPath(); ctx.arc(bx, gy, 15, 0, Math.PI*2); ctx.fill();
+
+      // Residuals: small tick marks below G
+      const residuals = [PAL.moss, PAL.clay, PAL.slate];
+      residuals.forEach((rc, i) => {
+        ctx.fillStyle = rc;
+        ctx.fillRect(bx - 20 + i*15, gy + 22, 8, 4);
+      });
+    }
+
+    drawMini(0, false);
+    drawMini(halfW + centerGap, true);
+
+    // The mirror — a vertical line down the center
+    const mirrorX = cx;
+    const shimmer = Math.sin(T*2)*0.3 + 0.5;
+    const grad = ctx.createLinearGradient(mirrorX - 20, 0, mirrorX + 20, 0);
+    grad.addColorStop(0, 'rgba(245,180,97,0)');
+    grad.addColorStop(0.5, `rgba(245,180,97,${shimmer*0.6})`);
+    grad.addColorStop(1, 'rgba(245,180,97,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(mirrorX - 20, H*0.1, 40, H*0.8);
+
+    // Reflection ripple
+    ctx.strokeStyle = `rgba(245,180,97,${0.4 + shimmer*0.3})`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2,4]);
+    ctx.beginPath();
+    ctx.moveTo(mirrorX, H*0.1);
+    ctx.lineTo(mirrorX, H*0.9);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Nine step indicators along the bottom — as small circles pulsing in sequence
+    const stepY = H - 25;
+    const stepStart = W*0.15, stepEnd = W*0.85;
+    const active = Math.floor((T*0.5) % 9);
+    for (let i = 0; i < 9; i++) {
+      const sx = stepStart + (stepEnd - stepStart) * (i / 8);
+      const isAct = i === active;
+      ctx.fillStyle = isAct ? PAL.edge : PAL.mute;
+      if (isAct) { ctx.shadowColor = PAL.edge; ctx.shadowBlur = 8; }
+      ctx.beginPath();
+      ctx.arc(sx, stepY, isAct ? 5 : 3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      // Step number, small
+      if (isAct) {
+        ctx.fillStyle = PAL.edge;
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(i+1), sx, stepY - 12);
+      }
+    }
+
+    // Calibrated-error badge (pathology 4) — a small chip in a corner
+    ctx.fillStyle = PAL.slate + 'aa';
+    ctx.fillRect(W - 60, 20, 40, 20);
+    ctx.fillStyle = PAL.ink;
+    ctx.font = 'bold 12px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('4', W - 40, 30);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S16: HISTORY CONSTELLATION ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c16');
+
+  // The lineage
+  const stars = [
+    { name: 'Parmenides',  year: -480 },
+    { name: 'Heraclitus',  year: -500 },
+    { name: 'Anaxagoras',  year: -450 },
+    { name: 'Laozi',       year: -400 },
+    { name: 'Aristotle',   year: -340 },
+    { name: 'Nagarjuna',   year: 150 },
+    { name: 'Plotinus',    year: 250 },
+    { name: 'Cusa',        year: 1440 },
+    { name: 'Spinoza',     year: 1677 },
+    { name: 'Leibniz',     year: 1714 },
+    { name: 'Whitehead',   year: 1929 },
+    { name: 'Grothendieck',year: 1960 }
+  ];
+
+  // Compute layout: place stars along a gentle arc, year → x
+  const minY = Math.min(...stars.map(s => s.year));
+  const maxY = Math.max(...stars.map(s => s.year));
+  stars.forEach((s, i) => {
+    s.px = 0.08 + 0.84 * ((s.year - minY) / (maxY - minY));
+    // Use a pseudorandom but stable vertical scatter
+    s.py = 0.3 + 0.5 * ((Math.sin(i*2.4) + 1)/2);
+    s.phase = Math.random()*Math.PI*2;
+    s.brightness = 0.5 + Math.random()*0.5;
+  });
+
+  // Mouse
+  let mx = -100, my = -100;
+  c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    mx = e.clientX - r.left; my = e.clientY - r.top;
+  });
+
+  function draw() {
+    // Deep space background
+    ctx.fillStyle = PAL.ink;
+    ctx.fillRect(0,0,w(),h());
+    const W = w(), H = h();
+
+    // Nebula wash
+    const nebula = ctx.createRadialGradient(W/2, H/2, 50, W/2, H/2, W/1.5);
+    nebula.addColorStop(0, 'rgba(180,129,184,0.06)');
+    nebula.addColorStop(0.5, 'rgba(122,146,184,0.04)');
+    nebula.addColorStop(1, 'rgba(14,17,22,0)');
+    ctx.fillStyle = nebula;
+    ctx.fillRect(0,0,W,H);
+
+    // Background stars (small twinkles)
+    for (let i = 0; i < 80; i++) {
+      const x = ((i*97) % 100) / 100 * W;
+      const y = ((i*61) % 100) / 100 * H;
+      const tw = 0.3 + Math.sin(T*2 + i)*0.2;
+      ctx.fillStyle = `rgba(255,255,255,${tw*0.3})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    // Connect the constellation with faint lines (chronological chain)
+    ctx.strokeStyle = PAL.mute;
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    stars.forEach((s, i) => {
+      const px = s.px * W, py = s.py * H;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    // Draw each star
+    let hovered = null;
+    stars.forEach((s, i) => {
+      const px = s.px * W, py = s.py * H;
+      const dist = Math.hypot(mx - px, my - py);
+      const isHover = dist < 40;
+      if (isHover) hovered = s;
+
+      const twinkle = 0.7 + Math.sin(T*1.5 + s.phase)*0.3;
+      const baseR = isHover ? 6 : 3;
+      const glowR = isHover ? 25 : 10;
+
+      // Glow
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, glowR);
+      grad.addColorStop(0, `rgba(245,180,97,${twinkle * s.brightness * (isHover ? 0.8 : 0.4)})`);
+      grad.addColorStop(1, 'rgba(245,180,97,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(px, py, glowR, 0, Math.PI*2);
+      ctx.fill();
+
+      // Core
+      ctx.fillStyle = isHover ? PAL.glue : PAL.whole;
+      ctx.beginPath();
+      ctx.arc(px, py, baseR, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    // Hover label
+    if (hovered) {
+      const px = hovered.px * W, py = hovered.py * H;
+      ctx.fillStyle = PAL.whole;
+      ctx.font = 'italic 14px serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.fillText(hovered.name, px, py - 15);
+      ctx.fillStyle = PAL.edge;
+      ctx.font = '11px sans-serif';
+      const yr = hovered.year < 0 ? Math.abs(hovered.year) + ' BCE' : hovered.year + ' CE';
+      ctx.fillText(yr, px, py + 25);
+    }
+
+    // Auto-pulse a star every 2 seconds to invite interaction
+    if (!hovered) {
+      const idx = Math.floor((T*0.5) % stars.length);
+      const s = stars[idx];
+      const px = s.px * W, py = s.py * H;
+      const pulse = Math.sin(T*3) * 0.5 + 0.5;
+      ctx.strokeStyle = `rgba(255,216,138,${pulse*0.4})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(px, py, 12 + pulse*8, 0, Math.PI*2);
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ S17: EMBODIMENT LADDER ============
+(function(){
+  const svg = document.getElementById('c17');
+  const rungs = [
+    { label: 'grammar',   icon: 'chain',   col: PAL.whole },
+    { label: 'topos',     icon: 'topos',   col: PAL.plum },
+    { label: 'manifold',  icon: 'manif',   col: PAL.teal },
+    { label: 'ℝᵈ',        icon: 'linear',  col: PAL.moss },
+    { label: 'floats',    icon: 'lattice', col: PAL.slate },
+    { label: 'silicon',   icon: 'chip',    col: PAL.clay }
+  ];
+
+  function render() {
+    const W = 900, H = 560;
+    let html = '';
+    const cx = W/2;
+    const startY = 50;
+    const rungH = (H - 100) / rungs.length;
+
+    // Descent flow indicator: a ball travels down the ladder
+    const cycle = (T*0.3) % 1;
+    const currentRung = Math.floor(cycle * rungs.length);
+    const localT = (cycle * rungs.length) % 1;
+
+    // Ladder rails
+    html += `<line x1="${cx-100}" y1="${startY}" x2="${cx-100}" y2="${startY + rungH*rungs.length}" stroke="#3a4452" stroke-width="2"/>`;
+    html += `<line x1="${cx+100}" y1="${startY}" x2="${cx+100}" y2="${startY + rungH*rungs.length}" stroke="#3a4452" stroke-width="2"/>`;
+
+    rungs.forEach((r, i) => {
+      const y = startY + i*rungH + rungH/2;
+      const active = i === currentRung;
+      const passed = i < currentRung;
+      const op = active ? 1 : (passed ? 0.5 : 0.35);
+
+      // Rung line
+      html += `<line x1="${cx-100}" y1="${y}" x2="${cx+100}" y2="${y}" stroke="${r.col}" stroke-width="${active ? 2 : 1}" opacity="${op}"/>`;
+
+      // Icon per level
+      let icon = '';
+      if (r.icon === 'chain') {
+        // 3 vertical dots
+        for (let k = 0; k < 3; k++) {
+          icon += `<circle cx="${cx - 40 + k*20}" cy="${y-15}" r="4" fill="${r.col}" opacity="${op}"/>`;
+          if (k < 2) icon += `<line x1="${cx - 36 + k*20}" y1="${y-15}" x2="${cx - 24 + k*20}" y2="${y-15}" stroke="${r.col}" opacity="${op}"/>`;
+        }
+      } else if (r.icon === 'topos') {
+        // Nested circles
+        icon += `<circle cx="${cx}" cy="${y-15}" r="18" fill="none" stroke="${r.col}" stroke-width="1" opacity="${op}"/>`;
+        icon += `<circle cx="${cx-6}" cy="${y-18}" r="6" fill="${r.col}" opacity="${op*0.6}"/>`;
+        icon += `<circle cx="${cx+7}" cy="${y-12}" r="5" fill="${r.col}" opacity="${op*0.6}"/>`;
+      } else if (r.icon === 'manif') {
+        // Curved surface
+        icon += `<path d="M${cx-30} ${y-10} Q${cx-10} ${y-25} ${cx+10} ${y-15} T${cx+30} ${y-8}" fill="none" stroke="${r.col}" stroke-width="1.5" opacity="${op}"/>`;
+        icon += `<path d="M${cx-30} ${y-3} Q${cx-10} ${y-18} ${cx+10} ${y-8} T${cx+30} ${y}" fill="none" stroke="${r.col}" stroke-width="1" opacity="${op*0.5}"/>`;
+      } else if (r.icon === 'linear') {
+        // Vector arrows
+        icon += `<line x1="${cx-25}" y1="${y-10}" x2="${cx-5}" y2="${y-20}" stroke="${r.col}" stroke-width="1.5" opacity="${op}"/>`;
+        icon += `<line x1="${cx-25}" y1="${y-10}" x2="${cx-10}" y2="${y+2}" stroke="${r.col}" stroke-width="1.5" opacity="${op}"/>`;
+        icon += `<line x1="${cx-25}" y1="${y-10}" x2="${cx+15}" y2="${y-12}" stroke="${r.col}" stroke-width="1.5" opacity="${op}"/>`;
+        icon += `<circle cx="${cx-25}" cy="${y-10}" r="3" fill="${r.col}" opacity="${op}"/>`;
+      } else if (r.icon === 'lattice') {
+        // Grid of dots
+        for (let a = 0; a < 4; a++) for (let b = 0; b < 2; b++) {
+          icon += `<circle cx="${cx-25 + a*17}" cy="${y-20 + b*10}" r="1.5" fill="${r.col}" opacity="${op}"/>`;
+        }
+      } else if (r.icon === 'chip') {
+        // Chip
+        icon += `<rect x="${cx-20}" y="${y-22}" width="40" height="18" fill="${r.col}" opacity="${op}" rx="2"/>`;
+        for (let k = 0; k < 5; k++) {
+          icon += `<line x1="${cx-16 + k*8}" y1="${y-22}" x2="${cx-16 + k*8}" y2="${y-27}" stroke="${r.col}" opacity="${op}"/>`;
+          icon += `<line x1="${cx-16 + k*8}" y1="${y-4}" x2="${cx-16 + k*8}" y2="${y+1}" stroke="${r.col}" opacity="${op}"/>`;
+        }
+      }
+      html += icon;
+
+      // Label
+      html += `<text x="${cx-115}" y="${y+3}" fill="${r.col}" opacity="${op}" font-size="11" text-anchor="end" font-family="serif" font-style="italic">${r.label}</text>`;
+
+      // Arithmetic shadow on the right — what each level "becomes"
+      const shadows = ['v ≠ w', '⟨v,w⟩', 'W·v', '‖v-w‖<ε', 'cos(v,w)', 'v = Σαᵢeᵢ'];
+      html += `<text x="${cx+115}" y="${y+3}" fill="${r.col}" opacity="${op*0.8}" font-size="10" font-family="serif" font-style="italic">${shadows[i]}</text>`;
+    });
+
+    // Traveling ball — the "descent"
+    const ballY = startY + currentRung*rungH + rungH/2 + localT * rungH;
+    html += `<circle cx="${cx}" cy="${ballY}" r="7" fill="${PAL.edge}" filter="url(#glow17)"/>`;
+
+    // "Loses generality, gains causality" indicator — arrows on the sides
+    html += `<text x="30" y="${H/2}" fill="${PAL.mute}" font-size="10" font-family="serif" font-style="italic" transform="rotate(-90 30 ${H/2})" text-anchor="middle">abstract →</text>`;
+    html += `<text x="${W-30}" y="${H/2}" fill="${PAL.mute}" font-size="10" font-family="serif" font-style="italic" transform="rotate(90 ${W-30} ${H/2})" text-anchor="middle">→ physical</text>`;
+
+    svg.innerHTML = `<defs><filter id="glow17"><feGaussianBlur stdDeviation="3"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` + html;
+  
+    svg.innerHTML = `<defs><filter id="glow17"><feGaussianBlur stdDeviation="3"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>` + html;
+  }
+
+  function loop() { render(); requestAnimationFrame(loop); }
+  loop();
+})();
+
+// ============ S18: CODA — seams visible in the whole ============
+(function(){
+  const {c, ctx, w, h} = setupCanvas('c18');
+
+  // Similar to hero, but now the seams remain visibly gold —
+  // the whole holds because of the fitting, not sameness
+  const patches = [];
+  const N = 55;
+  for (let i = 0; i < N; i++) {
+    patches.push({
+      tx: 0, ty: 0,
+      color: PATCH_COLORS[i % PATCH_COLORS.length],
+      r: 25 + Math.random()*35,
+      phase: Math.random()*Math.PI*2,
+      seed: Math.random()
+    });
+  }
+
+  let initialized = false;
+  function init() {
+    // Arrange in a mandala-like coherent shape
+    const cx = w()/2, cy = h()/2;
+    const R = Math.min(w(),h())*0.32;
+    patches.forEach((p, i) => {
+      // Fibonacci-like spiral for organic coherence
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      const t = i / N;
+      const r = R * Math.sqrt(t);
+      const a = i * golden;
+      p.tx = cx + Math.cos(a) * r;
+      p.ty = cy + Math.sin(a) * r;
+    });
+  }
+
+  function draw() {
+    if (!initialized) { init(); initialized = true; }
+
+    ctx.fillStyle = PAL.ink;
+    ctx.fillRect(0,0,w(),h());
+
+    const cx = w()/2, cy = h()/2;
+
+    // Slow ambient rotation of the whole
+    const rot = T * 0.03;
+
+    // Draw seams FIRST (behind patches) — the gold "glue" is prominent
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    ctx.translate(-cx, -cy);
+
+    // Build seam graph: connect each patch to nearest neighbors
+    const seams = [];
+    for (let i = 0; i < patches.length; i++) {
+      const neighbors = [];
+      for (let j = 0; j < patches.length; j++) {
+        if (i === j) continue;
+        const dx = patches[i].tx - patches[j].tx;
+        const dy = patches[i].ty - patches[j].ty;
+        neighbors.push({ j, d: Math.sqrt(dx*dx + dy*dy) });
+      }
+      neighbors.sort((a,b) => a.d - b.d);
+      for (let k = 0; k < 4; k++) {
+        if (neighbors[k]) seams.push([i, neighbors[k].j, neighbors[k].d]);
+      }
+    }
+
+    // Draw seams — pulsing gold, the coherent glue is always visible
+    seams.forEach(([i, j, d]) => {
+      if (d > 120) return;
+      const p1 = patches[i], p2 = patches[j];
+      const pulse = (Math.sin(T*0.8 + p1.phase) + 1) / 2;
+      const alpha = 0.15 + pulse * 0.25;
+      ctx.strokeStyle = `rgba(255,216,138,${alpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(p1.tx, p1.ty);
+      ctx.lineTo(p2.tx, p2.ty);
+      ctx.stroke();
+    });
+
+    // Draw patches — DIFFERENT colors preserved
+    patches.forEach(p => {
+      const breathe = Math.sin(T*0.6 + p.phase) * 4;
+      const rr = p.r + breathe;
+
+      // Soft glow
+      const grad = ctx.createRadialGradient(p.tx, p.ty, 0, p.tx, p.ty, rr);
+      grad.addColorStop(0, p.color + 'ee');
+      grad.addColorStop(0.7, p.color + '88');
+      grad.addColorStop(1, p.color + '00');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.tx, p.ty, rr, 0, Math.PI*2);
+      ctx.fill();
+
+      // Core — the patch keeps its distinct identity
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.9;
+      ctx.beginPath();
+      ctx.arc(p.tx, p.ty, rr*0.35, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    ctx.restore();
+
+    // Central emergence — the "one whole" quietly present
+    const globalPulse = (Math.sin(T*0.5) + 1) / 2;
+    ctx.fillStyle = `rgba(242,237,228,${0.05 + globalPulse*0.05})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.min(w(),h())*0.4, 0, Math.PI*2);
+    ctx.fill();
+
+    // Final settle — a hairline gold ring around the whole
+    ctx.strokeStyle = `rgba(255,216,138,${0.3 + globalPulse*0.2})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.min(w(),h())*0.36, 0, Math.PI*2);
+    ctx.stroke();
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============ REDUCED MOTION FALLBACK ============
+if (reduced) {
+  // Freeze T; render one static frame per section by not advancing time
+  cancelAnimationFrame(tick);
+  T = 3.14; // fixed pleasant state
+}
+
+// ============ FINAL: force first section visible ============
+setTimeout(() => {
+  document.getElementById('s0').classList.add('visible');
+  if (dots[0]) dots[0].classList.add('active');
+}, 100);
+
+</script>
+</body>
+</html>
