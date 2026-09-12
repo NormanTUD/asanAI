@@ -781,9 +781,11 @@ function updateShape(){
   }
   scene.add(currentMesh);
   document.getElementById('b0').textContent = bettis[0];
-  document.getElementById('b1').textContent = bettis;
-  document.getElementById('b2').textContent = bettis
-  document.getElementById('chi').textContent = bettis[0] - bettis + bettis animateThree(){
+  document.getElementById('b1').textContent = bettis[1];
+  document.getElementById('b2').textContent = bettis[2];
+  document.getElementById('chi').textContent = bettis[0] - bettis[1] + bettis[2];
+}
+function animateThree(){
   requestAnimationFrame(animateThree);
   if(currentMesh && autoRot){
     currentMesh.rotation.y += 0.006;
@@ -837,7 +839,7 @@ function computeBettis(eps){
   const edges = [];
   for(let i=0;i<n;i++){
     for(let j=i+1;j<n;j++){
-      const d = Math.hypot(s7Points[i][0]-s7Points[j][0], s7Points-s7Points[      if(d <= 2*eps){
+      const d = Math.hypot(s7Points[i][0]-s7Points[j][0], s7Points[i][1]-s7Points[j][1]);      if(d <= 2*eps){
         edges.push([i,j]);
         uf_union(p,i,j);
       }
@@ -881,7 +883,7 @@ function computePersistence(){
   const eList = [];
   for(let i=0;i<s7Points.length;i++){
     for(let j=i+1;j<s7Points.length;j++){
-      eList.push([Math.hypot(s7Points[i][0]-s7Points[j][0], s7Points[i/2, i, j]);
+      eList.push([Math.hypot(s7Points[i][0]-s7Points[j][0], s7Points[i][1]-s7Points[j][1]), i, j]);
     }
   }
   eList.sort((a,b)=>a[0]-b[0]);
