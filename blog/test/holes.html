@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Topologische Löcher — Eine interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#131a2e; --card:#1a2340; --accent:#7dd3fc; --accent2:#f0abfc;
+    --accent3:#fde047; --text:#e2e8f0; --muted:#94a3b8; --border:#2a3556;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:radial-gradient(ellipse at top,#1e293b 0%,#0a0e1a 60%);
+    color:var(--text);line-height:1.6;min-height:100vh;
+  }
+  .container{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+  header{text-align:center;padding:3rem 0;margin-bottom:2rem;
+    background:linear-gradient(180deg,rgba(125,211,252,0.08),transparent);
+    border-radius:20px;border:1px solid var(--border)}
+  h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;
+    background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:0.5rem}
+  .subtitle{color:var(--muted);font-size:1.1rem;max-width:700px;margin:0 auto}
+  .section{background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:2rem;margin-bottom:2rem;box-shadow:0 10px 40px rgba(0,0,0,0.3)}
+  .section h2{font-size:1.8rem;margin-bottom:0.5rem;color:var(--accent)}
+  .section .lead{color:var(--muted);margin-bottom:1.5rem;font-style:italic}
+  .section h3{font-size:1.2rem;margin:1.5rem 0 0.75rem;color:var(--accent2)}
+  .badge{display:inline-block;background:rgba(125,211,252,0.15);color:var(--accent);
+    padding:0.2rem 0.7rem;border-radius:999px;font-size:0.8rem;font-weight:600;margin-bottom:1rem}
+  .demo{background:#0a0e1a;border-radius:12px;padding:1.5rem;margin:1rem 0;
+    border:1px solid var(--border)}
+  canvas{display:block;max-width:100%;background:#050810;border-radius:8px}
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem;align-items:center}
+  .control{display:flex;flex-direction:column;gap:0.35rem;min-width:180px;flex:1}
+  .control label{font-size:0.85rem;color:var(--muted);font-weight:500}
+  .control .val{color:var(--accent3);font-weight:600;font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;height:6px;background:#2a3556;border-radius:3px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;
+    background:var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 0 10px rgba(125,211,252,0.6)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--accent);
+    border-radius:50%;cursor:pointer;border:none}
+  button{background:linear-gradient(135deg,var(--accent),#0284c7);color:#0a0e1a;
+    border:none;padding:0.6rem 1.2rem;border-radius:8px;font-weight:600;cursor:pointer;
+    transition:transform 0.15s}
+  button:hover{transform:translateY(-2px)}
+  button.alt{background:linear-gradient(135deg,var(--accent2),#c026d3)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media (max-width:700px){.grid2{grid-template-columns:1fr}}
+  .info{background:rgba(125,211,252,0.08);border-left:3px solid var(--accent);
+    padding:1rem;border-radius:0 8px 8px 0;margin:1rem 0}
+  .info.warn{background:rgba(240,171,252,0.08);border-color:var(--accent2)}
+  .info.win{background:rgba(253,224,71,0.08);border-color:var(--accent3)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:0.75rem;margin-top:1rem}
+  .stat{background:#131a2e;padding:0.75rem;border-radius:8px;text-align:center;
+    border:1px solid var(--border)}
+  .stat .num{font-size:1.8rem;font-weight:800;color:var(--accent3);font-variant-numeric:tabular-nums}
+  .stat .lbl{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+  .nav{position:sticky;top:0;background:rgba(10,14,26,0.9);backdrop-filter:blur(12px);
+    padding:0.75rem;border-bottom:1px solid var(--border);z-index:100;
+    display:flex;gap:0.5rem;overflow-x:auto;margin:-2rem -1.5rem 2rem}
+  .nav a{color:var(--muted);text-decoration:none;padding:0.4rem 0.8rem;border-radius:6px;
+    font-size:0.85rem;white-space:nowrap;transition:all 0.2s}
+  .nav a:hover{background:var(--card);color:var(--accent)}
+  .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1.5rem}
+  .toc-item{background:#131a2e;padding:1rem;border-radius:10px;border:1px solid var(--border);
+    transition:all 0.2s;cursor:pointer;text-decoration:none;color:var(--text);display:block}
+  .toc-item:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .toc-item .n{font-size:0.75rem;color:var(--accent);font-weight:700}
+  .toc-item .t{font-weight:600;margin-top:0.25rem}
+  .toc-item .d{font-size:0.85rem;color:var(--muted);margin-top:0.35rem}
+  #pd-plot,#betti-plot{width:100%;height:400px}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>Topologische Löcher</h1>
+  <p class="subtitle">Eine interaktive Reise durch die Formen, die Mathematiker anders zählen als du denkst. Von der Kaffeetasse zum Donut, vom Rauschen zum Signal.</p>
+</header>
+
+<nav class="nav">
+  <a href="#s1">1. Motivation</a>
+  <a href="#s2">2. Was ist ein Loch?</a>
+  <a href="#s3">3. Homotopie</a>
+  <a href="#s4">4. Simpliziale Komplexe</a>
+  <a href="#s5">5. Homologie</a>
+  <a href="#s6">6. Betti-Zahlen</a>
+  <a href="#s7">7. Persistente Homologie</a>
+  <a href="#s8">8. Anwendungen</a>
+</nav>
+
+<div class="section">
+  <h2>Übersicht</h2>
+  <p class="lead">Was uns hier erwartet — spiele dich durch, in dieser Reihenfolge.</p>
+  <div class="toc">
+    <a href="#s1" class="toc-item"><div class="n">TEIL 1</div><div class="t">Motivation</div><div class="d">Warum sollten wir Löcher zählen? Ein Ballon, ein Donut und ein Datensatz.</div></a>
+    <a href="#s2" class="toc-item"><div class="n">TEIL 2</div><div class="t">Was ist ein Loch?</div><div class="d">Deforme Formen und finde Löcher intuitiv.</div></a>
+    <a href="#s3" class="toc-item"><div class="n">TEIL 3</div><div class="t">Homotopie</div><div class="d">Wann ist ein Kreis "wirklich" ein Kreis?</div></a>
+    <a href="#s4" class="toc-item"><div class="n">TEIL 4</div><div class="t">Simpliziale Komplexe</div><div class="d">Formen aus Punkten, Kanten und Dreiecken bauen.</div></a>
+    <a href="#s5" class="toc-item"><div class="n">TEIL 5</div><div class="t">Homologie</div><div class="d">Löcher durch Algebra zählen.</div></a>
+    <a href="#s6" class="toc-item"><div class="n">TEIL 6</div><div class="t">Betti-Zahlen</div><div class="d">Der Fingerabdruck jeder Form.</div></a>
+    <a href="#s7" class="toc-item"><div class="n">TEIL 7</div><div class="t">Persistente Homologie</div><div class="d">Welche Löcher sind Signal, welche Rauschen?</div></a>
+    <a href="#s8" class="toc-item"><div class="n">TEIL 8</div><div class="t">Anwendungen</div><div class="d">Von Hirnscans bis Machine Learning.</div></a>
+  </div>
+</div>
+
+<!-- SECTION 1: MOTIVATION -->
+<div class="section" id="s1">
+  <span class="badge">TEIL 1 — MOTIVATION</span>
+  <h2>Warum Löcher zählen?</h2>
+  <p class="lead">Manchmal ist die Form wichtiger als die Zahlen. Aber was ist "Form"?</p>
+  <p>Stell dir vor, du hast eine Punktwolke — z.B. Positionen von Sternen, Aktivierungen von Nervenzellen oder Datenpunkte aus einem Experiment. Die klassische Statistik gibt dir Mittelwerte und Varianzen. Aber was, wenn die <b>Geometrie</b> selbst die Antwort ist? Was, wenn die Daten auf einem <b>Ring</b> liegen, statt auf einer geraden Linie?</p>
+  <div class="info">Topologie ist die Kunst, sich nicht von Verzerrung täuschen zu lassen. Ein Kreis bleibt ein Kreis, auch wenn du ihn quetschst — solange du ihn nicht zerreißt.</div>
+
+  <h3>Demo: Ist das ein Ring — oder Zufall?</h3>
+  <div class="demo">
+    <canvas id="cvs1" width="700" height="400"></canvas>
+    <div class="controls">
+      <div class="control"><label>Anzahl Punkte: <span class="val" id="v1a">150</span></label>
+        <input type="range" id="s1a" min="20" max="500" value="150"></div>
+      <div class="control"><label>Rauschen: <span class="val" id="v1b">0.10</span></label>
+        <input type="range" id="s1b" min="0" max="100" value="10"></div>
+      <div class="control"><label>Ring-Anteil: <span class="val" id="v1c">80%</span></label>
+        <input type="range" id="s1c" min="0" max="100" value="80"></div>
+      <div class="control"><button onclick="drawS1(true)">Neu würfeln</button></div>
+    </div>
+    <div class="info warn">👉 Mit dem Auge siehst du sofort: da ist ein <b>Loch in der Mitte</b>. Aber wie bringst du das einem Computer bei? Das ist die Frage, die uns die nächsten Teile beschäftigt.</div>
+  </div>
+</div>
+
+<!-- SECTION 2: WHAT IS A HOLE -->
+<div class="section" id="s2">
+  <span class="badge">TEIL 2 — INTUITION</span>
+  <h2>Was ist ein Loch, mathematisch?</h2>
+  <p class="lead">Der berühmte Witz: Ein Topologe kann Kaffeetasse und Donut nicht unterscheiden.</p>
+  <p>Beide haben genau <b>ein Loch</b> — bei der Tasse durch den Henkel, beim Donut in der Mitte. Ein Ball hat <b>null Löcher</b>. Eine Brezel hat <b>drei</b>. Löcher sind das, was übrig bleibt, wenn du eine Form beliebig deformierst (aber nicht zerreißt oder klebst).</p>
+
+  <h3>Demo: Deforme frei — das Loch bleibt</h3>
+  <div class="demo">
+    <canvas id="cvs2" width="700" height="400"></canvas>
+    <div class="controls">
+      <div class="control"><label>Deformation: <span class="val" id="v2a">0.0</span></label>
+        <input type="range" id="s2a" min="0" max="100" value="0"></div>
+      <div class="control"><label>Form:</label>
+        <select id="s2b" style="background:#131a2e;color:var(--text);padding:0.4rem;border-radius:6px;border:1px solid var(--border)">
+          <option value="disk">Scheibe (0 Löcher)</option>
+          <option value="annulus" selected>Ring (1 Loch)</option>
+          <option value="double">Doppel-Ring (2 Löcher)</option>
+          <option value="triple">Brezel (3 Löcher)</option>
+        </select>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="holeCount">1</div><div class="lbl">Löcher (β₁)</div></div>
+      <div class="stat"><div class="num" id="compCount">1</div><div class="lbl">Komponenten (β₀)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: HOMOTOPY -->
+<div class="section" id="s3">
+  <span class="badge">TEIL 3 — HOMOTOPIE</span>
+  <h2>Der Test: Kann sich die Schleife zusammenziehen?</h2>
+  <p class="lead">Die eleganteste Definition eines Lochs: eine Schleife, die man nicht zu einem Punkt zusammenziehen kann.</p>
+  <p>Zeichne eine geschlossene Schleife auf deiner Form. Versuche, sie kontinuierlich (ohne zu springen) zu einem einzigen Punkt zu schrumpfen. Klappt das? Dann umschließt die Schleife <b>kein Loch</b>. Bleibst du irgendwo hängen? Dann hast du ein Loch gefunden.</p>
+
+  <h3>Demo: Zieh die Schleife zusammen</h3>
+  <div class="demo">
+    <canvas id="cvs3" width="700" height="400"></canvas>
+    <div class="controls">
+      <div class="control"><label>Schrumpfung: <span class="val" id="v3a">0%</span></label>
+        <input type="range" id="s3a" min="0" max="100" value="0"></div>
+      <div class="control"><label>Schleife umschließt Loch:</label>
+        <select id="s3b" style="background:#131a2e;color:var(--text);padding:0.4rem;border-radius:6px;border:1px solid var(--border)">
+          <option value="yes">Ja (nicht kontrahierbar)</option>
+          <option value="no">Nein (kontrahierbar)</option>
+        </select>
+      </div>
+    </div>
+    <div class="info" id="homoInfo">Die grüne Schleife umschließt das Loch — sie kann nicht zusammengezogen werden, ohne durch das Loch zu gehen!</div>
+  </div>
+  $$\text{Zwei Schleifen sind homotop} \iff \text{eine kann stetig in die andere deformiert werden.}$$
+</div>
+
+<!-- SECTION 4: SIMPLICIAL COMPLEXES -->
+<div class="section" id="s4">
+  <span class="badge">TEIL 4 — BAUSTEINE</span>
+  <h2>Simpliziale Komplexe — Formen aus Legosteinen</h2>
+  <p class="lead">Um mit Computern zu arbeiten, brauchen wir diskrete Bausteine.</p>
+  <p>Ein <b>Simplex</b> ist der einfachste Baustein in jeder Dimension:</p>
+  <ul style="margin-left:1.5rem;color:var(--muted)">
+    <li><b>0-Simplex</b> = Punkt (Ecke)</li>
+    <li><b>1-Simplex</b> = Kante (Linie zwischen zwei Punkten)</li>
+    <li><b>2-Simplex</b> = Dreieck (Fläche)</li>
+    <li><b>3-Simplex</b> = Tetraeder (Volumen)</li>
+  </ul>
+  <p>Fügt man diese sinnvoll zusammen (jede Seite eines Dreiecks ist eine Kante usw.), entsteht ein <b>simplizialer Komplex</b> — eine diskrete Approximation jeder Form.</p>
+
+  <h3>Demo: Baue selbst einen Komplex</h3>
+  <div class="demo">
+    <canvas id="cvs4" width="700" height="400"></canvas>
+    <div class="controls">
+      <div class="control"><button onclick="s4Mode='vertex'">Punkte setzen</button></div>
+      <div class="control"><button onclick="s4Mode='edge'" class="alt">Kanten ziehen</button></div>
+      <div class="control"><button onclick="s4Mode='face'">Dreiecke füllen</button></div>
+      <div class="control"><button onclick="s4Clear()" style="background:#ef4444">Löschen</button></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="s4v">0</div><div class="lbl">Ecken</div></div>
+      <div class="stat"><div class="num" id="s4e">0</div><div class="lbl">Kanten</div></div>
+      <div class="stat"><div class="num" id="s4f">0</div><div class="lbl">Flächen</div></div>
+      <div class="stat"><div class="num" id="s4chi">0</div><div class="lbl">Euler χ = V-E+F</div></div>
+    </div>
+    <div class="info">Die <b>Euler-Charakteristik</b> $\chi = V - E + F$ ist unsere erste topologische Invariante! Für eine Kugel ist $\chi = 2$, für einen Torus (Donut) $\chi = 0$.</div>
+  </div>
+</div>
+
+<!-- SECTION 5: HOMOLOGY -->
+<div class="section" id="s5">
+  <span class="badge">TEIL 5 — HOMOLOGIE</span>
+  <h2>Löcher zählen mit Algebra</h2>
+  <p class="lead">Homologie ist der geniale Trick: Wir übersetzen Geometrie in lineare Algebra.</p>
+  <p>Die Idee: Ein <b>k-dimensionaler Zyklus</b> ist eine geschlossene k-dimensionale "Form" (z.B. eine Schleife für k=1). Ein <b>Rand</b> ist ein Zyklus, der etwas umschließt (z.B. der Rand einer gefüllten Fläche). Ein <b>Loch</b> ist ein Zyklus, der <i>kein</i> Rand ist.</p>
+  $$H_k = \frac{\text{Zyklen}}{\text{Ränder}} = \frac{Z_k}{B_k}$$
+  <p>Die Dimension dieses Quotienten ist die <b>k-te Betti-Zahl</b> $\beta_k$ — die Anzahl der k-dimensionalen Löcher!</p>
+
+  <h3>Demo: Zyklus vs. Rand</h3>
+  <div class="demo">
+    <canvas id="cvs5" width="700" height="400"></canvas>
+    <div class="controls">
+      <div class="control"><label>Beispiel:</label>
+        <select id="s5sel" style="background:#131a2e;color:var(--text);padding:0.4rem;border-radius:6px;border:1px solid var(--border)">
+          <option value="0">Zyklus, der Rand ist (kein Loch)</option>
+          <option value="1">Zyklus, der KEIN Rand ist (Loch!)</option>
+        </select>
+      </div>
+    </div>
+    <div class="info win" id="s5Info">Blau: Zyklus (geschlossene Schleife). Grün: die Fläche, die er umschließt. Da die Fläche in unserem Komplex enthalten ist, ist die Schleife ein <b>Rand</b> — kein Loch.</div>
+  </div>
+</div>
+
+<!-- SECTION 6: BETTI NUMBERS -->
+<div class="section" id="s6">
+  <span class="badge">TEIL 6 — BETTI-ZAHLEN</span>
+  <h2>Der Fingerabdruck einer Form</h2>
+  <p class="lead">$\beta_0, \beta_1, \beta_2, \ldots$ — die Anzahl der Löcher in jeder Dimension.</p>
+  <ul style="margin-left:1.5rem;color:var(--muted)">
+    <li>$\beta_0$ = Anzahl der <b>zusammenhängenden Komponenten</b></li>
+    <li>$\beta_1$ = Anzahl der <b>Tunnel / Schleifen</b> in der Fläche</li>
+    <li>$\beta_2$ = Anzahl der <b>Hohlräume</b> (wie im Inneren einer Kugel)</li>
+    <li>$\beta_k$ = Anzahl der k-dimensionalen Löcher</li>
+  </ul>
+  <p>Beispiele:</p>
+  <ul style="margin-left:1.5rem;color:var(--muted)">
+    <li><b>Punkt</b>: $\beta_0=1$, alle anderen 0</li>
+    <li><b>Kreis (S¹)</b>: $\beta_0=1, \beta_1=1$</li>
+    <li><b>Kugel (S²)</b>: $\beta_0=1, \beta_1=0, \beta_2=1$</li>
+    <li><b>Torus (Donut)</b>: $\beta_0=1, \beta_1=2, \beta_2=1$</li>
+    <li><b>Brezel (Genus 3)</b>: $\beta_0=1, \beta_1=6, \beta_2=1$</li>
+  </ul>
+
+  <h3>Demo: 3D-Formen und ihre Betti-Zahlen</h3>
+  <div class="demo">
+    <div id="three3d" style="width:100%;height:450px;border-radius:8px;background:#050810"></div>
+    <div class="controls">
+      <div class="control"><label>Form:</label>
+        <select id="s6sel" style="background:#131a2e;color:var(--text);padding:0.4rem;border-radius:6px;border:1px solid var(--border)">
+          <option value="sphere">Kugel</option>
+          <option value="torus" selected>Torus (Donut)</option>
+          <option value="double">Doppel-Torus</option>
+          <option value="triple">Brezel</option>
+        </select>
+      </div>
+      <div class="control"><label>Auto-Rotation:</label>
+        <input type="checkbox" id="s6rot" checked></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="b0">1</div><div class="lbl">β₀ Komponenten</div></div>
+      <div class="stat"><div class="num" id="b1">2</div><div class="lbl">β₁ Tunnel</div></div>
+      <div class="stat"><div class="num" id="b2">1</div><div class="lbl">β₂ Hohlräume</div></div>
+      <div class="stat"><div class="num" id="chi">0</div><div class="lbl">χ = β₀-β₁+β₂</div></div>
+    </div>
+    <div class="info">💡 Die Betti-Zahlen sind eine <b>topologische Invariante</b>: Sie ändern sich nicht, wenn man die Form stetig deformiert. Deshalb sind Kaffeetasse und Donut für uns gleich — beide haben $(\beta_0, \beta_1, \beta_2) = (1, 1, 1)$.</div>
+  </div>
+</div>
+
+<!-- SECTION 7: PERSISTENT HOMOLOGY -->
+<div class="section" id="s7">
+  <span class="badge">TEIL 7 — PERSISTENTE HOMOLOGIE</span>
+  <h2>Welche Löcher sind echt?</h2>
+  <p class="lead">Die geniale Idee, die aus abstrakter Mathematik ein Werkzeug für echte Daten machte.</p>
+  <p>Zurück zur Motivation: Wir haben eine Punktwolke. Aber Punktwolken haben <b>keine</b> Löcher — sie sind ja nur Punkte! Die Lösung: Wir zeichnen um jeden Punkt eine Kugel mit Radius $\varepsilon$ und schauen, was passiert, wenn $\varepsilon$ wächst.</p>
+  <p>Bei kleinem $\varepsilon$: viele einzelne Komponenten. Bei mittlerem $\varepsilon$: Kugeln überlappen, es entstehen Formen mit Löchern. Bei großem $\varepsilon$: alles verschmilzt zu einer soliden Masse ohne Löcher.</p>
+  <div class="info warn">💡 Die Frage ist nicht "gibt es ein Loch?" sondern "<b>wie lange existiert dieses Loch?</b>" — Löcher, die über einen großen Bereich von $\varepsilon$ überleben, sind echt. Kurzlebige Löcher sind Rauschen.</div>
+
+  <h3>Demo: Vietoris-Rips Filtration</h3>
+  <div class="demo">
+    <canvas id="cvs7" width="700" height="450"></canvas>
+    <div class="controls">
+      <div class="control"><label>Radius ε: <span class="val" id="v7a">0.30</span></label>
+        <input type="range" id="s7a" min="0" max="200" value="30"></div>
+      <div class="control"><label>Datensatz:</label>
+        <select id="s7sel" style="background:#131a2e;color:var(--text);padding:0.4rem;border-radius:6px;border:1px solid var(--border)">
+          <option value="circle" selected>Kreis mit Rauschen</option>
+          <option value="two">Zwei Kreise</option>
+          <option value="figure8">Figur 8</option>
+          <option value="random">Zufällige Punkte</option>
+        </select>
+      </div>
+      <div class="control"><button onclick="animateFiltration()">▶ Animation abspielen</button></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="p7b0">–</div><div class="lbl">β₀ jetzt</div></div>
+      <div class="stat"><div class="num" id="p7b1">–</div><div class="lbl">β₁ jetzt</div></div>
+      <div class="stat"><div class="num" id="p7eps">0.30</div><div class="lbl">ε</div></div>
+    </div>
+  </div>
+
+  <h3>Das Persistenz-Diagramm</h3>
+  <p>Für jedes Loch merken wir uns: Wann wurde es geboren ($b$)? Wann starb es ($d$)? Plotten wir $(b, d)$ als Punkt. <b>Punkte weit über der Diagonale = langlebige, echte Löcher.</b> Punkte nahe der Diagonale = Rauschen.</p>
+  <div class="demo">
+    <div id="pd-plot"></div>
+    <div class="info win">🎯 <b>Das ist der Kern der Topologischen Datenanalyse (TDA):</b> Das Persistenz-Diagramm ist der topologische Fingerabdruck deiner Daten. Es ist stabil (kleine Änderungen an den Daten → kleine Änderungen am Diagramm) und maschinell auswertbar.</div>
+  </div>
+
+  <h3>Betti-Kurven — Entwicklung über ε</h3>
+  <div class="demo">
+    <div id="betti-plot"></div>
+  </div>
+</div>
+
+<!-- SECTION 8: APPLICATIONS -->
+<div class="section" id="s8">
+  <span class="badge">TEIL 8 — ANWENDUNGEN</span>
+  <h2>Wo topologische Löcher die Welt verändern</h2>
+  <p class="lead">Von abstrakter Mathematik zu konkreten Durchbrüchen.</p>
+  <div class="grid2">
+    <div class="info">
+      <b>🧠 Neurowissenschaft</b><br>
+      Aktivitätsmuster im Gehirn liegen oft auf niedrigdimensionalen Ringen oder Tori. TDA hat gezeigt, dass die "Grid Cells" im Hippocampus einen Torus kodieren.
+    </div>
+    <div class="info">
+      <b>🧬 Biologie</b><br>
+      Proteinstrukturen, DNA-Faltung, Evolution: TDA findet Muster, die klassische Methoden übersehen. Krebszellen zeigen andere topologische Fingerabdrücke als gesunde Zellen.
+    </div>
+    <div class="info">
+      <b>🤖 Machine Learning</b><br>
+      Der Latent Space neuronaler Netze hat Topologie. Persistente Homologie kann verwendet werden, um GANs zu verbessern oder Out-of-Distribution-Daten zu erkennen.
+    </div>
+    <div class="info">
+      <b>🌌 Kosmologie</b><br>
+      Die großräumige Struktur des Universums (Voids, Filamente, Wände) wird mit Betti-Zahlen quantifiziert.
+    </div>
+    <div class="info">
+      <b>📊 Zeitreihen</b><br>
+      Delay-Embedding + persistente Homologie erkennt periodisches Verhalten und chaotische Attraktoren in EKG, Aktienkursen, Klimadaten.
+    </div>
+    <div class="info">
+      <b>📡 Sensornetzwerke</b><br>
+      Fragen wie "gibt es ein unüberwachtes Loch im Netzwerk?" werden zu $\beta_1$-Berechnungen — ohne die Positionen der Sensoren zu kennen!
+    </div>
+  </div>
+
+  <h3>Zusammenfassung: Die Reise</h3>
+  <div class="info win">
+    <b>Wir sind gestartet</b> bei der Beobachtung, dass Daten oft eine Form haben, die klassische Statistik ignoriert.<br><br>
+    <b>Wir haben gelernt</b>, dass "Form" mathematisch durch <b>Löcher in verschiedenen Dimensionen</b> charakterisiert wird — die Betti-Zahlen.<br><br>
+    <b>Wir haben eine Methode</b> entwickelt (Homologie), diese Löcher algebraisch zu zählen — als Zyklen modulo Ränder.<br><br>
+    <b>Wir haben die Idee erweitert</b>, um mit echten, verrauschten Daten zu arbeiten: die persistente Homologie liefert nicht eine Zahl, sondern ein ganzes <b>Diagramm</b> — den topologischen Fingerabdruck.<br><br>
+    <b>Die Antwort</b> auf unsere ursprüngliche Frage "ist das ein Ring oder Zufall?": Wenn im Persistenz-Diagramm ein Punkt weit über der Diagonale bei $\beta_1$ existiert — <b>ja, es ist ein Ring</b>. Diese Antwort ist mathematisch rigoros, stabil unter Rauschen, und funktioniert in jeder Dimension.
+  </div>
+</div>
+
+</div>
+
+<script>
+// ============ SECTION 1: NOISY RING ============
+const c1 = document.getElementById('cvs1'), x1 = c1.getContext('2d');
+let s1Points = [];
+function genS1(){
+  const n = +document.getElementById('s1a').value;
+  const noise = +document.getElementById('s1b').value / 100;
+  const ringFrac = +document.getElementById('s1c').value / 100;
+  s1Points = [];
+  for(let i=0;i<n;i++){
+    if(Math.random() < ringFrac){
+      const a = Math.random() * Math.PI * 2;
+      const r = 1 + (Math.random()-0.5) * noise * 2;
+      s1Points.push([Math.cos(a)*r, Math.sin(a)*r]);
+    } else {
+      s1Points.push([(Math.random()-0.5)*2.5, (Math.random()-0.5)*2.5]);
+    }
+  }
+}
+function drawS1(regen){
+  if(regen || s1Points.length===0) genS1();
+  x1.fillStyle='#050810'; x1.fillRect(0,0,c1.width,c1.height);
+  const cx=c1.width/2, cy=c1.height/2, sc=Math.min(c1.width,c1.height)/3;
+  x1.strokeStyle='#1a2340'; x1.lineWidth=1;
+  for(let i=-3;i<=3;i++){
+    x1.beginPath(); x1.moveTo(cx+i*sc*0.5,0); x1.lineTo(cx+i*sc*0.5,c1.height); x1.stroke();
+    x1.beginPath(); x1.moveTo(0,cy+i*sc*0.5); x1.lineTo(c1.width,cy+i*sc*0.5); x1.stroke();
+  }
+  x1.fillStyle='#7dd3fc';
+  for(const p of s1Points){
+    x1.beginPath();
+    x1.arc(cx + p[0]*sc, cy + p*sc, 3, 0, Math.PI*2);
+    x1.fill();
+  }
+}
+['s1a','s1b','s1c'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    const v = e.target.value;
+    if(id==='s1a') document.getElementById('v1a').textContent = v;
+    if(id==='s1b') document.getElementById('v1b').textContent = (v/100).toFixed(2);
+    if(id==='s1c') document.getElementById('v1c').textContent = v + '%';
+    drawS1(true);
+  });
+});
+drawS1(true);
+
+// ============ SECTION 2: DEFORMATION ============
+const c2 = document.getElementById('cvs2'), x2 = c2.getContext('2d');
+function drawS2(){
+  const def = +document.getElementById('s2a').value / 100;
+  const shape = document.getElementById('s2b').value;
+  x2.fillStyle='#050810'; x2.fillRect(0,0,c2.width,c2.height);
+  const cx=c2.width/2, cy=c2.height/2;
+  x2.fillStyle='rgba(125,211,252,0.3)';
+  x2.strokeStyle='#7dd3fc'; x2.lineWidth=2;
+
+  function blob(centerX, centerY, R, r, seed){
+    x2.beginPath();
+    const N=80;
+    for(let i=0;i<=N;i++){
+      const t=i/N*Math.PI*2;
+      const wob = 1 + def*0.5*Math.sin(3*t+seed) + def*0.3*Math.cos(5*t+seed*2);
+      const rr = R*wob;
+      const px = centerX + Math.cos(t)*rr;
+      const py = centerY + Math.sin(t)*rr;
+      if(i===0) x2.moveTo(px,py); else x2.lineTo(px,py);
+    }
+    x2.closePath();
+    if(r>0){
+      for(let i=N;i>=0;i--){
+        const t=i/N*Math.PI*2;
+        const wob = 1 + def*0.4*Math.sin(4*t+seed+1);
+        const rr = r*wob;
+        const px = centerX + Math.cos(t)*rr;
+        const py = centerY + Math.sin(t)*rr;
+        if(i===N) x2.moveTo(px,py); else x2.lineTo(px,py);
+      }
+      x2.closePath();
+    }
+    x2.fill('evenodd'); x2.stroke();
+  }
+  let holes=1, comps=1;
+  if(shape==='disk'){ blob(cx,cy,120,0,1); holes=0; }
+  else if(shape==='annulus'){ blob(cx,cy,120,50,1); holes=1; }
+  else if(shape==='double'){ blob(cx-80,cy,80,35,1); blob(cx+80,cy,80,35,2); holes=2; comps=2; }
+  else if(shape==='triple'){ blob(cx-110,cy,65,25,1); blob(cx,cy,65,25,2); blob(cx+110,cy,65,25,3); holes=3; comps=3; }
+
+  document.getElementById('holeCount').textContent = holes;
+  document.getElementById('compCount').textContent = comps;
+}
+document.getElementById('s2a').addEventListener('input', e => {
+  document.getElementById('v2a').textContent = (e.target.value/100).toFixed(2);
+  drawS2();
+});
+document.getElementById('s2b').addEventListener('change', drawS2);
+drawS2();
+
+// ============ SECTION 3: HOMOTOPY ============
+const c3 = document.getElementById('cvs3'), x3 = c3.getContext('2d');
+function drawS3(){
+  const shrink = +document.getElementById('s3a').value / 100;
+  const encloses = document.getElementById('s3b').value === 'yes';
+  x3.fillStyle='#050810'; x3.fillRect(0,0,c3.width,c3.height);
+  const cx=c3.width/2, cy=c3.height/2;
+  x3.fillStyle='rgba(125,211,252,0.2)';
+  x3.strokeStyle='#7dd3fc'; x3.lineWidth=2;
+  x3.beginPath();
+  x3.arc(cx,cy,150,0,Math.PI*2);
+  x3.arc(cx,cy,50,0,Math.PI*2,true);
+  x3.fill('evenodd'); x3.stroke();
+  x3.fillStyle='#f0abfc'; x3.font='14px sans-serif';
+  x3.textAlign='center';
+  x3.fillText('LOCH', cx, cy+5);
+
+  const loopColor = shrink >= 0.99 && !encloses ? '#fde047' : '#22c55e';
+  x3.strokeStyle = loopColor;
+  x3.lineWidth = 3;
+  let info = '';
+  if(encloses){
+    const maxShrink = 0.6;
+    const stuckShrink = Math.min(shrink, maxShrink);
+    const r = 100 - stuckShrink * (100 - 55);
+    x3.beginPath();
+    x3.arc(cx, cy, r, 0, Math.PI*2);
+    x3.stroke();
+    if(shrink > maxShrink){
+      x3.strokeStyle = '#ef4444'; x3.lineWidth=2; x3.setLineDash([5,5]);
+      x3.beginPath(); x3.arc(cx, cy, r, 0, Math.PI*2); x3.stroke();
+      x3.setLineDash([]);
+      info = '🚫 Die Schleife bleibt am Loch hängen! Sie kann sich nicht weiter zusammenziehen — das beweist: <b>hier ist ein Loch</b>.';
+    } else {
+      info = 'Die grüne Schleife umschließt das Loch. Versuche sie zusammenzuziehen (Slider)...';
+    }
+  } else {
+    const cxL = cx + 95, cyL = cy - 55;
+    const r = 28 * (1 - shrink) + 2;
+    x3.beginPath();
+    x3.arc(cxL, cyL, r, 0, Math.PI*2);
+    x3.stroke();
+    if(shrink > 0.95){
+      info = '✅ Die Schleife ist zu einem Punkt zusammengeschrumpft — sie ist <b>kontrahierbar</b>, umschließt also kein Loch.';
+      x3.fillStyle = '#fde047';
+      x3.beginPath(); x3.arc(cxL, cyL, 4, 0, Math.PI*2); x3.fill();
+    } else {
+      info = 'Diese Schleife liegt vollständig im Ring, ohne das Loch zu umschließen. Sie sollte sich zu einem Punkt zusammenziehen lassen.';
+    }
+  }
+  document.getElementById('homoInfo').innerHTML = info;
+}
+document.getElementById('s3a').addEventListener('input', e => {
+  document.getElementById('v3a').textContent = e.target.value + '%';
+  drawS3();
+});
+document.getElementById('s3b').addEventListener('change', drawS3);
+drawS3();
+
+// ============ SECTION 4: SIMPLICIAL COMPLEX BUILDER ============
+const c4 = document.getElementById('cvs4'), x4 = c4.getContext('2d');
+let s4Verts=[], s4Edges=[], s4Faces=[], s4Mode='vertex', s4Selected=[];
+function s4Clear(){ s4Verts=[]; s4Edges=[]; s4Faces=[]; s4Selected=[]; drawS4(); }
+function drawS4(){
+  x4.fillStyle='#050810'; x4.fillRect(0,0,c4.width,c4.height);
+  x4.fillStyle='rgba(240,171,252,0.35)';
+  for(const f of s4Faces){
+    x4.beginPath();
+    x4.moveTo(s4Verts[f[0]][0], s4Verts[f[    x4.lineTo(s4Verts, s4Verts1]);
+    x4.lineTo(s4Verts0], s4Verts[f
+    x4.closePath(); x4.fill();
+  }
+  x4.strokeStyle='#7dd3fc'; x4.lineWidth=2;
+  for(const e of s4Edges){
+    x4.beginPath();
+    x4.moveTo(s4Verts[e[0]][0], s4Verts[e[0]][1]);
+    x4.lineTo(s4Verts[e s4Verts[e[1]][1]);
+    x4.stroke();
+  }
+  for(let i=0;i<s4Verts.length;i++){
+    x4.fillStyle = s4Selected.includes(i) ? '#fde047' : '#7dd3fc';
+    x4.beginPath();
+    x4.arc(s4Verts[i][0], s4Verts[ s4Selected.includes(i) ? 8 : 6, 0, Math.PI*2);
+    x4.fill();
+  }
+  x4.fillStyle='#94a3b8'; x4.font='13px sans-serif'; x4.textAlign='left';
+  x4.fillText('Modus: ' + s4Mode, 10, 20);
+  document.getElementById('s4v').textContent = s4Verts.length;
+  document.getElementById('s4e').textContent = s4Edges.length;
+  document.getElementById('s4f').textContent = s4Faces.length;
+  document.getElementById('s4chi').textContent = s4Verts.length - s4Edges.length + s4Faces.length;
+}
+c4.addEventListener('click', e => {
+  const r = c4.getBoundingClientRect();
+  const scaleX = c4.width / r.width, scaleY = c4.height / r.height;
+  const px = (e.clientX - r.left) * scaleX, py = (e.clientY - r.top) * scaleY;
+  if(s4Mode==='vertex'){
+    s4Verts.push([px, py]);
+  } else {
+    let best=-1, bd=1e9;
+    for(let i=0;i<s4Verts.length;i++){
+      const d = Math.hypot(s4Verts[i][0]-px, s4Verts);
+      if(d<bd && d<25){
+      const d = Math.hypot(s4Verts[i][0]-px, s4Verts-py);
+      if(d<bd && d<25){ bd=d; best=i; }
+    }
+    if(best<0) return;
+    if(!s4Selected.includes(best)) s4Selected.push(best);
+    const need = s4Mode==='edge' ? 2 : 3;
+    if(s4Selected.length===need){
+      if(s4Mode==='edge'){
+        const [a,b] = [...s4Selected].sort((x,y)=>x-y);
+        if(!s4Edges.some(e=>e[0]===a&&e)) s4Edges.push([a,b]);
+      } else {
+        const [a,b,cc] = [...s4Selected].sort((x,y)=>x-y);
+        if(!s4Faces.some(f=>f[0]===a&&f===b&&f===cc)){
+          s4Faces.push([a,b,cc]);
+          // auto-add missing edges
+          [[a,b],[b,cc],[a,cc]].forEach(pair=>{
+            if(!s4Edges.some(e=>e[0]===pair[0]&&e s4Edges.push(pair);
+          });
+        }
+      }
+      s4Selected = [];
+    }
+  }
+  drawS4();
+});
+// preload example: a triangle-ring (approximates a circle - has a hole)
+(function preloadS4(){
+  const cx=350, cy=200, R=120;
+  const N=8;
+  for(let i=0;i<N;i++){
+    const t = i/N*Math.PI*2;
+    s4Verts.push([cx+Math.cos(t)*R, cy+Math.sin(t)*R]);
+  }
+  for(let i=0;i<N;i++){
+    s4Edges.push([i, (i+1)%N < i ? (i+1)%N : (i+1)%N]);
+  }
+  // fix ordering
+  s4Edges = s4Edges.map(e=>[Math.min(e[0],e Math.max(e[0],e[1])]);
+  drawS4();
+})();
+
+// ============ SECTION 5: CYCLE VS BOUNDARY ============
+const c5 = document.getElementById('cvs5'), x5 = c5.getContext('2d');
+function drawS5(){
+  const example = document.getElementById('s5sel').value;
+  x5.fillStyle='#050810'; x5.fillRect(0,0,c5.width,c5.height);
+  const cx=c5.width/2, cy=c5.height/2;
+  if(example==='0'){
+    // Filled triangle: loop is boundary
+    const pts = [[cx-100,cy+70],[cx+100,cy+70],[cx,cy-100]];
+    x5.fillStyle='rgba(34,197,94,0.35)';
+    x5.beginPath();
+    x5.moveTo(pts[0][0],pts[
+    x5.lineTo(pts,pts);
+    x5.lineTo(pts,pts]);
+    x5.closePath();
+    x5.fill();
+    x5.strokeStyle='#7dd3fc'; x5.lineWidth=4;
+    x5.stroke();
+    x5.fillStyle='#7dd3fc';
+    for(const p of pts){
+      x5.beginPath(); x5.arc(p[0],p[1],7,0,Math.PI*2); x5.fill();
+    }
+    x5.fillStyle='#22c55e'; x5.font='bold 16px sans-serif'; x5.textAlign='center';
+    x5.fillText('Fläche im Komplex', cx, cy+10);
+    x5.fillStyle='#7dd3fc';
+    x5.fillText('Rand = blauer Zyklus', cx, cy+130);
+    document.getElementById('s5Info').innerHTML =
+      '✅ Der blaue Zyklus umschließt die grüne Fläche, die <b>Teil des Komplexes ist</b>. Der Zyklus ist also ein <b>Rand</b> → kein Loch! In Formel: $\\text{Zyklus} \\in B_1$, daher trägt er nichts zu $H_1$ bei.';
+  } else {
+    // Hollow triangle: loop is cycle but not boundary
+    const pts = [[cx-100,cy+70],[cx+100,cy+70],[cx,cy-100]];
+    x5.strokeStyle='#7dd3fc'; x5.lineWidth=4;
+    x5.beginPath();
+    x5.moveTo(pts[0][0],pts[0][1]);
+    x5.lineTo(pts,pts]);
+    x5.lineTo(pts);
+    x5.closePath();
+    x5.stroke();
+    x5.fillStyle='#7dd3fc';
+    for(const p of pts){
+      x5.beginPath(); x5.arc(p[0],pMath.PI*2); x5.fill();
+    }
+    // "would-be" face shown as dashed
+    x5.fillStyle='rgba(239,68,68,0.12)';
+    x5.beginPath();
+    x5.moveTo(pts[0][0],pts[0][1]);
+    x5.lineTo(ptspts
+    x5.lineTo(pts,pts);
+    x5.closePath();
+    x5.fill();
+    x5.strokeStyle='#ef4444'; x5.setLineDash([6,6]); x5.lineWidth=1.5;
+    x5.stroke(); x5.setLineDash([]);
+    x5.fillStyle='#ef4444'; x5.font='bold 14px sans-serif'; x5.textAlign='center';
+    x5.fillText('Fläche NICHT im Komplex', cx, cy+10);
+    x5.fillStyle='#7dd3fc'; x5.font='bold 16px sans-serif';
+    x5.fillText('Zyklus (aber kein Rand!)', cx, cy+130);
+    document.getElementById('s5Info').innerHTML =
+      '🎯 Der blaue Zyklus ist geschlossen — aber die Fläche, die er umschließen würde, ist <b>nicht Teil des Komplexes</b>. Daher ist er <b>ein Zyklus, aber kein Rand</b>. Genau das ist ein Loch! $\\beta_1 = \\dim(Z_1/B_1) = 1$.';
+    document.getElementById('s5Info').className = 'info win';
+  }
+  if(window.renderMathInElement) renderMathInElement(document.getElementById('s5Info'),
+    {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});
+}
+document.getElementById('s5sel').addEventListener('change', drawS5);
+drawS5();
+
+// ============ SECTION 6: 3D BETTI ============
+let scene, camera, renderer, currentMesh, autoRot=true;
+function initThree(){
+  const container = document.getElementById('three3d');
+  const w = container.clientWidth, h = 450;
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x050810);
+  camera = new THREE.PerspectiveCamera(50, w/h, 0.1, 1000);
+  camera.position.set(0, 2, 6);
+  renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+  scene.add(ambient);
+  const light1 = new THREE.PointLight(0x7dd3fc, 1.5, 100);
+  light1.position.set(5, 5, 5); scene.add(light1);
+  const light2 = new THREE.PointLight(0xf0abfc, 1, 100);
+  light2.position.set(-5, -3, 3); scene.add(light2);
+  updateShape();
+  animateThree();
+  window.addEventListener('resize', () => {
+    const w2 = container.clientWidth;
+    camera.aspect = w2/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w2, h);
+  });
+}
+function makeMultiTorus(genus){
+  // Build multi-torus by joining genus tori side by side (approximation)
+  const group = new THREE.Group();
+  const R = 0.8, r = 0.35;
+  const totalWidth = (genus-1) * (2*R + 0.1);
+  const startX = -totalWidth/2;
+  const mat = new THREE.MeshPhongMaterial({
+    color: 0x7dd3fc, shininess: 80, specular: 0xffffff,
+    transparent:true, opacity:0.85,
+    flatShading:false
+  });
+  for(let i=0;i<genus;i++){
+    const geom = new THREE.TorusGeometry(R, r, 32, 64);
+    const m = new THREE.Mesh(geom, mat);
+    m.position.x = startX + i*(2*R + 0.1);
+    group.add(m);
+  }
+  // add wireframe
+  for(const child of group.children){
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(child.geometry),
+      new THREE.LineBasicMaterial({color:0xf0abfc, transparent:true, opacity:0.15})
+    );
+    wire.position.copy(child.position);
+    group.add(wire);
+  }
+  return group;
+}
+function updateShape(){
+  if(currentMesh) scene.remove(currentMesh);
+  const shape = document.getElementById('s6sel').value;
+  let bettis = [1,0,1];
+  if(shape==='sphere'){
+    const geom = new THREE.SphereGeometry(1.3, 48, 32);
+    const mat = new THREE.MeshPhongMaterial({color:0x7dd3fc, shininess:80,
+      specular:0xffffff, transparent:true, opacity:0.85});
+    currentMesh = new THREE.Mesh(geom, mat);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(geom),
+      new THREE.LineBasicMaterial({color:0xf0abfc, transparent:true, opacity:0.15})
+    );
+    const grp = new THREE.Group(); grp.add(currentMesh); grp.add(wire);
+    currentMesh = grp;
+    bettis = [1,0,1];
+  } else if(shape==='torus'){
+    const geom = new THREE.TorusGeometry(1.1, 0.45, 32, 64);
+    const mat = new THREE.MeshPhongMaterial({color:0x7dd3fc, shininess:80,
+      specular:0xffffff, transparent:true, opacity:0.85});
+    const mesh = new THREE.Mesh(geom, mat);
+    const wire = new THREE.LineSegments(
+      new THREE.WireframeGeometry(geom),
+      new THREE.LineBasicMaterial({color:0xf0abfc, transparent:true, opacity:0.15})
+    );
+    const grp = new THREE.Group(); grp.add(mesh); grp.add(wire);
+    currentMesh = grp;
+    bettis = [1,2,1];
+  } else if(shape==='double'){
+    currentMesh = makeMultiTorus(2);
+    bettis = [1,4,1];
+  } else if(shape==='triple'){
+    currentMesh = makeMultiTorus(3);
+    bettis = [1,6,1];
+  }
+  scene.add(currentMesh);
+  document.getElementById('b0').textContent = bettis[0];
+  document.getElementById('b1').textContent = bettis;
+  document.getElementById('b2').textContent = bettis
+  document.getElementById('chi').textContent = bettis[0] - bettis + bettis animateThree(){
+  requestAnimationFrame(animateThree);
+  if(currentMesh && autoRot){
+    currentMesh.rotation.y += 0.006;
+    currentMesh.rotation.x += 0.003;
+  }
+  renderer.render(scene, camera);
+}
+document.getElementById('s6sel').addEventListener('change', updateShape);
+document.getElementById('s6rot').addEventListener('change', e => autoRot = e.target.checked);
+window.addEventListener('load', () => setTimeout(initThree, 100));
+
+// ============ SECTION 7: VIETORIS-RIPS FILTRATION ============
+const c7 = document.getElementById('cvs7'), x7 = c7.getContext('2d');
+let s7Points = [];
+function genS7(){
+  const kind = document.getElementById('s7sel').value;
+  s7Points = [];
+  if(kind==='circle'){
+    for(let i=0;i<40;i++){
+      const a = i/40*Math.PI*2 + (Math.random()-0.5)*0.15;
+      const r = 1 + (Math.random()-0.5)*0.1;
+      s7Points.push([Math.cos(a)*r, Math.sin(a)*r]);
+    }
+  } else if(kind==='two'){
+    for(let i=0;i<25;i++){
+      const a = i/25*Math.PI*2;
+      s7Points.push([Math.cos(a)*0.6 - 1.1, Math.sin(a)*0.6]);
+      s7Points.push([Math.cos(a)*0.6 + 1.1, Math.sin(a)*0.6]);
+    }
+  } else if(kind==='figure8'){
+    for(let i=0;i<30;i++){
+      const a = i/30*Math.PI*2;
+      s7Points.push([Math.cos(a)*0.7 - 0.7, Math.sin(a)*0.7 + (Math.random()-0.5)*0.05]);
+      s7Points.push([Math.cos(a)*0.7 + 0.7, Math.sin(a)*0.7 + (Math.random()-0.5)*0.05]);
+    }
+  } else {
+    for(let i=0;i<50;i++){
+      s7Points.push([(Math.random()-0.5)*3, (Math.random()-0.5)*3]);
+    }
+  }
+  computePersistence();
+}
+// Union-find for connected components
+function uf_make(n){ return Array.from({length:n},(_,i)=>i); }
+function uf_find(p,i){ while(p[i]!==i){ p[i]=p[p[i]]; i=p[i]; } return i; }
+function uf_union(p,a,b){ const ra=uf_find(p,a), rb=uf_find(p,b); if(ra!==rb){ p[ra]=rb; return true; } return false; }
+
+function computeBettis(eps){
+  const n = s7Points.length;
+  const p = uf_make(n);
+  const edges = [];
+  for(let i=0;i<n;i++){
+    for(let j=i+1;j<n;j++){
+      const d = Math.hypot(s7Points[i][0]-s7Points[j][0], s7Points-s7Points[      if(d <= 2*eps){
+        edges.push([i,j]);
+        uf_union(p,i,j);
+      }
+    }
+  }
+  const roots = new Set();
+  for(let i=0;i<n;i++) roots.add(uf_find(p,i));
+  const b0 = roots.size;
+  // Approximation for b1: for each component,  #edges - (#vertices - 1) - #triangles
+  // Count triangles (3-cliques where all pairs within 2*eps)
+  const adj = Array.from({length:n},()=>new Set());
+  for(const [a,b] of edges){ adj[a].add(b); adj[b].add(a); }
+  let triangles = 0;
+  for(let i=0;i<n;i++){
+    for(const j of adj[i]){
+      if(j<=i) continue;
+      for(const k of adj[j]){
+        if(k<=j) continue;
+        if(adj[i].has(k)) triangles++;
+      }
+    }
+  }
+  // Euler characteristic estimate for b1 (approx): b1 ≈ E - V + C - T
+  const b1 = Math.max(0, edges.length - n + b0 - triangles);
+  return {b0, b1, edges, triangles};
+}
+
+let persistenceData = {births0:[], deaths0:[], births1:[], deaths1:[]};
+function computePersistence(){
+  // Sweep eps from 0 to 2 and track b0 and b1
+  const N_STEPS = 60;
+  const maxEps = 1.5;
+  const b0_series = [], b1_series = [], eps_series = [];
+  let prev_b0 = s7Points.length, prev_b1 = 0;
+  const births0 = [], deaths0 = [], births1 = [], deaths1 = [];
+  // b0: each point born at 0, dies when merged
+  for(let i=0;i<s7Points.length;i++) births0.push(0);
+  const p = uf_make(s7Points.length);
+  const compBirth = Array(s7Points.length).fill(0);
+  // Collect edges sorted by distance
+  const eList = [];
+  for(let i=0;i<s7Points.length;i++){
+    for(let j=i+1;j<s7Points.length;j++){
+      eList.push([Math.hypot(s7Points[i][0]-s7Points[j][0], s7Points[i/2, i, j]);
+    }
+  }
+  eList.sort((a,b)=>a[0]-b[0]);
+  // process edges to get b0 deaths
+  for(const [d,i,j] of eList){
+    const ri=uf_find(p,i), rj=uf_find(p,j);
+    if(ri!==rj){
+      // one component dies at eps=d
+      deaths0.push(d);
+      p[ri]=rj;
+    }
+  }
+  // The infinite one (last remaining) — represent as maxEps for plotting
+  while(deaths0.length < s7Points.length - 1 + 1){ deaths0.push(maxEps); }
+  deaths0.push(maxEps); // for the one persistent component
+  // Sample b1 by computing at eps steps
+  const rawB1 = [];
+  for(let k=0;k<=N_STEPS;k++){
+    const eps = k/N_STEPS * maxEps;
+    eps_series.push(eps);
+    const {b0, b1} = computeBettis(eps);
+    b0_series.push(b0);
+    b1_series.push(b1);
+    rawB1.push({eps, b1});
+  }
+  // Extract b1 features: find peaks and durations
+  let inLoop = false, loopBirth = 0;
+  let currentB1Count = 0;
+  for(let k=0;k<rawB1.length;k++){
+    const b1now = rawB1[k].b1;
+    while(currentB1Count < b1now){
+      births1.push(rawB1[k].eps);
+      currentB1Count++;
+    }
+    while(currentB1Count > b1now){
+      deaths1.push(rawB1[k].eps);
+      currentB1Count--;
+    }
+  }
+  while(births1.length > deaths1.length) deaths1.push(maxEps);
+
+  persistenceData = {births0, deaths0, births1, deaths1, b0_series, b1_series, eps_series};
+  drawPersistenceDiagram();
+  drawBettiCurves();
+}
+
+function drawS7(){
+  const eps = +document.getElementById('s7a').value / 100;
+  x7.fillStyle='#050810'; x7.fillRect(0,0,c7.width,c7.height);
+  const cx=c7.width/2, cy=c7.height/2, sc=100;
+  // draw balls
+  x7.fillStyle='rgba(125,211,252,0.15)';
+  x7.strokeStyle='rgba(125,211,252,0.3)';
+  for(const p of s7Points){
+    x7.beginPath();
+    x7.arc(cx+p[0]*sc, cy+p*sc, eps*sc, 0, Math.PI*2);
+    x7.fill();
+  }
+  const {b0, b1, edges} = computeBettis(eps);
+  // draw edges
+  x7.strokeStyle='rgba(240,171,252,0.5)'; x7.lineWidth=1;
+  for(const [a,b] of edges){
+    x7.beginPath();
+    x7.moveTo(cx+s7Points[a][0]*sc, cy+s7Points*sc);
+    x7.lineTo(cx+s7Points[b][0]*sc, cy+s7Points[
+    x7.stroke();
+  }
+  // draw points
+  x7.fillStyle='#fde047';
+  for(const p of s7Points){
+    x7.beginPath();
+    x7.arc(cx+p[0]*sc, cy+p*sc, 3.5, 0, Math.PI*2);
+    x7.fill();
+  }
+  document.getElementById('p7b0').textContent = b0;
+  document.getElementById('p7b1').textContent = b1;
+  document.getElementById('p7eps').textContent = eps.toFixed(2);
+}
+
+function drawPersistenceDiagram(){
+  const maxEps = 1.5;
+  const traces = [];
+  // diagonal
+  traces.push({
+    x:[0,maxEps], y:[0,maxEps], mode:'lines',
+    line:{color:'#94a3b8', width:1, dash:'dash'},
+    name:'Diagonale', hoverinfo:'skip'
+  });
+  // b0 points
+  const b0x = persistenceData.births0.slice(0, persistenceData.deaths0.length);
+  const b0y = persistenceData.deaths0;
+  traces.push({
+    x: b0x, y: b0y, mode:'markers',
+    marker:{color:'#7dd3fc', size:9, line:{color:'#0284c7',width:1}},
+    name:'H₀ (Komponenten)',
+    hovertemplate:'Geburt: %{x:.2f}<br>Tod: %{y:.2f}<extra></extra>'
+  });
+  // b1 points
+  if(persistenceData.births1.length > 0){
+    traces.push({
+      x: persistenceData.births1, y: persistenceData.deaths1, mode:'markers',
+      marker:{color:'#f0abfc', size:14, symbol:'diamond', line:{color:'#c026d3',width:1.5}},
+      name:'H₁ (Löcher)',
+      hovertemplate:'Geburt: %{x:.2f}<br>Tod: %{y:.2f}<br>Persistenz: %{customdata:.2f}<extra></extra>',
+      customdata: persistenceData.deaths1.map((d,i)=>d-persistenceData.births1[i])
+    });
+  }
+  Plotly.newPlot('pd-plot', traces, {
+    paper_bgcolor:'#0a0e1a', plot_bgcolor:'#050810',
+    font:{color:'#e2e8f0'},
+    xaxis:{title:'Geburt ε', gridcolor:'#1a2340', range:[0,maxEps]},
+    yaxis:{title:'Tod ε', gridcolor:'#1a2340', range:[0,maxEps*1.05]},
+    margin:{t:20,r:20,b:50,l:60},
+    legend:{bgcolor:'rgba(0,0,0,0)'},
+    hovermode:'closest'
+  }, {responsive:true, displayModeBar:false});
+}
+
+function drawBettiCurves(){
+  Plotly.newPlot('betti-plot', [
+    {x:persistenceData.eps_series, y:persistenceData.b0_series, mode:'lines',
+      line:{color:'#7dd3fc', width:3, shape:'hv'},
+      name:'β₀ (Komponenten)',
+      hovertemplate:'ε=%{x:.2f}<br>β₀=%{y}<extra></extra>'},
+    {x:persistenceData.eps_series, y:persistenceData.b1_series, mode:'lines',
+      line:{color:'#f0abfc', width:3, shape:'hv'},
+      name:'β₁ (Löcher)',
+      hovertemplate:'ε=%{x:.2f}<br>β₁=%{y}<extra></extra>'}
+  ], {
+    paper_bgcolor:'#0a0e1a', plot_bgcolor:'#050810',
+    font:{color:'#e2e8f0'},
+    xaxis:{title:'Radius ε', gridcolor:'#1a2340'},
+    yaxis:{title:'Betti-Zahl', gridcolor:'#1a2340'},
+    margin:{t:20,r:20,b:50,l:60},
+    legend:{bgcolor:'rgba(0,0,0,0)'},
+    hovermode:'x unified'
+  }, {responsive:true, displayModeBar:false});
+}
+
+document.getElementById('s7a').addEventListener('input', e => {
+  document.getElementById('v7a').textContent = (e.target.value/100).toFixed(2);
+  drawS7();
+});
+document.getElementById('s7sel').addEventListener('change', () => {
+  genS7();
+  drawS7();
+});
+
+let animInterval = null;
+function animateFiltration(){
+  if(animInterval){ clearInterval(animInterval); animInterval=null; return; }
+  const slider = document.getElementById('s7a');
+  slider.value = 0;
+  animInterval = setInterval(() => {
+    let v = +slider.value;
+    v += 2;
+    if(v > 150){
+      clearInterval(animInterval);
+      animInterval = null;
+      return;
+    }
+    slider.value = v;
+    document.getElementById('v7a').textContent = (v/100).toFixed(2);
+    drawS7();
+  }, 80);
+}
+
+// Initialize section 7
+genS7();
+drawS7();
+
+// Re-render KaTeX for dynamically inserted formulas
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if(window.renderMathInElement){
+      renderMathInElement(document.body, {
+        delimiters:[
+          {left:'$$',right:'$$',display:true},
+          {left:'$',right:'$',display:false}
+        ]
+      });
+    }
+  }, 300);
+});
+</script>
+</body>
+</html>
