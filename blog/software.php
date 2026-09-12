@@ -113,8 +113,6 @@ The attitude was later codified as the **Unix philosophy**, and it is an *ideolo
 
 The **pipe** — the `|` operator that connects the output of one program to the input of another — was added in **1973** by **Doug McIlroy**, and it is arguably the single most important idea in the design: it is the “level of indirection” made concrete. You do not need to know what the two programs do to each other; you only need to know they share a *vocabulary* (text) and a *contract* (one reads stdin, the other writes stdout). This is composition, and composition is the entire game \cite{unix_ts}.
 
-But the thing that changed everything was not the pipe. It was **C**.
-
 ### C: The Operating System, Rewritten to Be Portable (1972)
 
 Unix began in a language called **B** (1969, Thompson's own invention, a tiny precursor). In **1972**, **Dennis Ritchie** extended B into **C**, and in **1973** he and Thompson did something that had never been done: they **rewrote the operating system in the very language the operating system was compiling** \cite{unix_ts}. Before C, an operating system was written in the machine's own assembly language, which meant it was *locked to one machine*; to run it on a different computer you had to rewrite it from scratch. After C, the Unix kernel was **portable**: compile the same C source on a different machine and you get a working Unix for that machine.
