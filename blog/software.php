@@ -46,6 +46,37 @@ To keep the thread visible while we climb, here is the whole stack, from the fir
 We will climb this ladder from the bottom up, because that is the order the rungs were actually built, and because it is the only order in which the ideas make sense.
 </div>
 
+<div class="md">
+## Before the Transistor: The Machine Learns to Be Programmed
+
+The ladder looks, from the transistor up, like a story that begins in 1947. But the *question* the whole ladder answers — how do you separate a *machine* from the *task* it is doing today? — is far older, and it was first posed in brass, not silicon. The rungs below the transistor are mechanical, and they belong on this page for one reason above all: **software does not exist until a machine can be *programmed***. Until a machine can be told, in a general and changeable way, what to do, there is no boundary between machine and task, and therefore no place for “software” to live.
+
+The idea that a machine can act *on its own* is ancient. In first-century Alexandria, **Hero of Alexandria** built water- and steam-driven automata that opened temple doors, dispensed a measured draught of wine, and, in the famous **aeolipile**, spun from the mere force of steam. They did not compute, and they were not computers; but they established the deep instinct the whole field inherits — that a machine can be made to run through a *sequence of actions* without being driven step by step. An **automaton** is, literally, a *self-acting* machine (Greek *automatos*), and it is from that instinct, not from electronics, that the idea of the machine-as-agent descends.
+
+The first machine to *compute* — to carry out an entire calculation by itself — was **Gottfried Wilhelm Leibniz**’s **Stepped Reckoner**, invented in 1672 and finally built in 1700 \cite{leibnizrechenmaschine}. It was the first machine to **multiply and divide** mechanically, not merely add and subtract, and Leibniz did his arithmetic in **binary**, the two-valued system a transistor will one day make literal. But the calculator was not his real ambition. In his \citeyear{leibniz1686calculus} sketch of a *calculus ratiocinator*, Leibniz proposed that reasoning itself could be reduced to calculation, that disputes could be settled not by argument but by arithmetic — “let us calculate!” \cite{leibniz1686calculus}. That is the seed of the entire field, stated three centuries before the silicon.
+
+<figure>
+    <img style="width: 100%" src="Leibnizrechenmaschine.jpg" alt="Leibniz's Stepped Reckoner" />
+    <figcaption class="md">\citealternativetitle{leibnizcc} — the first machine to multiply and divide, and the first to work in binary.</figcaption>
+</figure>
+
+Leibniz’s dream stayed a dream until **Charles Babbage** set out to build it. His **Analytical Engine** (conceived 1834–1837) was the first machine *designed to be general-purpose*: it separated the **store** (memory) from the **mill** (the processor), and it was to be **programmed with punched cards**, a technique borrowed from the Jacquard loom that wove pictures into silk \cite{chm}. For the first time a machine was conceived as something whose *instructions* are *data* you can change without rebuilding the machine — exactly the boundary software requires. The first person to see the full force of that was **Ada Lovelace**, who in 1843 wrote what is recognized as the first algorithm intended for a machine (a method for computing **Bernoulli numbers**) and recognized, ahead of everyone, that such an engine “weaves algebraic patterns just as the Jacquard-loom weaves flowers and leaves” \cite{lovelacequote}. The first *program* was written by a poet’s daughter, for a machine that was never finished.
+
+<figure>
+    <img style="width: 100%" src="babbage.jpg" alt="Babbage's Analytical Engine" />
+    <figcaption class="md">\citealternativetitle{babbage} — the first general-purpose, programmable engine: a store, a mill, and a way to reprogram it.</figcaption>
+</figure>
+
+The leap from Babbage’s unfinished brass to a machine that *actually ran* took another century, and it landed in Berlin. **Konrad Zuse**, a film engineer with no formal training in computer science, built the **Z1** in 1938 and, in 1941, the **Z3** — the **first working, fully automatic, programmable computer**, running on relays \cite{zusebook}. Even more quietly revolutionary, in the early 1940s Zuse went on to design **Plankalkül**, the **first high-level programming language ever designed** — more than a decade before FORTRAN \cite{zusebook}. He built the whole thing, in his own account, because he was “too lazy to calculate” \cite{zuselazy} — and in that one sentence is the whole motivation of the field: build a machine to spare the mind from the tedium of doing the symbol-manipulation itself.
+
+<figure>
+    <img style="width: 100%" src="zuse.jpg" alt="Konrad Zuse with a replica of his Z1" />
+    <figcaption class="md">\citealternativetitle{zusez1} — Zuse’s Z1 (1938); the working Z3 followed in 1941.</figcaption>
+</figure>
+
+This is the foundation the rest of the ladder is built on. Every electronic computer since is a *faster, cheaper, smaller* version of the same idea Zuse made real: a general machine whose behavior is set by a *changeable program*. The transistor (1947) did not invent the computer; it *industrialized* it, making the programmable machine cheap and fast enough to be *many*. The operating system, the compiler, and the entire stack above then had to manage exactly that abundance. The ladder’s deepest rung is not silicon. It is the decision, first made in brass, that the machine should be *programmable* — and once that decision is made, “software” stops being a word and becomes an inevitability.
+</div>
+
 <figure>
     <img style="width: 100%" src="eniac.jpg" alt="The ENIAC, programmed by patching cables and setting switches" />
     <figcaption class="md">The ENIAC, first general-purpose electronic digital computer (1945). It had no stored program: a “program” was a physical rewiring of the machine, thousands of patch cables set by hand \cite{chm}.</figcaption>
