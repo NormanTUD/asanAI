@@ -656,20 +656,20 @@ function drawS5(){
     x5.strokeStyle='#7dd3fc'; x5.lineWidth=4;
     x5.beginPath();
     x5.moveTo(pts[0][0],pts[0][1]);
-    x5.lineTo(pts,pts]);
-    x5.lineTo(pts);
+    x5.lineTo(pts[1][0],pts[1][1]);
+    x5.lineTo(pts[2][0],pts[2][1]);
     x5.closePath();
     x5.stroke();
     x5.fillStyle='#7dd3fc';
     for(const p of pts){
-      x5.beginPath(); x5.arc(p[0],pMath.PI*2); x5.fill();
+      x5.beginPath(); x5.arc(p[0],p[1],7,0,Math.PI*2); x5.fill();
     }
     // "would-be" face shown as dashed
     x5.fillStyle='rgba(239,68,68,0.12)';
     x5.beginPath();
     x5.moveTo(pts[0][0],pts[0][1]);
-    x5.lineTo(ptspts
-    x5.lineTo(pts,pts);
+    x5.lineTo(pts[1][0],pts[1][1]);
+    x5.lineTo(pts[2][0],pts[2][1]);
     x5.closePath();
     x5.fill();
     x5.strokeStyle='#ef4444'; x5.setLineDash([6,6]); x5.lineWidth=1.5;
