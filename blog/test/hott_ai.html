@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Homotopie-Typentheorie für KI — Interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#111827; --panel:#151b2e; --panel2:#1a2138;
+    --ink:#e8ecf7; --ink2:#a0aec8; --accent:#7c9cff; --accent2:#c084fc;
+    --good:#4ade80; --warn:#fbbf24; --bad:#f87171; --line:#2a3350;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:linear-gradient(180deg,#070912 0%,#0a0e1a 100%);color:var(--ink);font-family:'Inter',system-ui,-apple-system,sans-serif;line-height:1.6}
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem;position:relative;overflow:hidden}
+  .hero canvas{position:absolute;inset:0;z-index:0;opacity:.55}
+  .hero-content{position:relative;z-index:1;text-align:center;max-width:900px}
+  .hero h1{font-size:clamp(2.2rem,5vw,4.2rem);margin:0;font-weight:800;background:linear-gradient(135deg,#7c9cff 0%,#c084fc 50%,#f472b6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+  .hero .sub{font-size:1.15rem;color:var(--ink2);margin-top:1.5rem;max-width:700px;margin-left:auto;margin-right:auto}
+  .hero .tag{display:inline-block;padding:.35rem .9rem;border:1px solid var(--line);border-radius:99px;font-size:.8rem;color:var(--accent);background:rgba(124,156,255,.08);margin-bottom:1.5rem}
+  .scroll-hint{position:absolute;bottom:2rem;color:var(--ink2);font-size:.85rem;animation:bob 2s ease-in-out infinite;z-index:1}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+  section{max-width:1150px;margin:0 auto;padding:5rem 1.5rem;position:relative}
+  .chapter-num{color:var(--accent);font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+  h2{font-size:clamp(1.8rem,3.5vw,2.6rem);margin:.4rem 0 1rem;font-weight:700}
+  h3{font-size:1.35rem;margin-top:2rem;color:#d5dcf0}
+  .lead{font-size:1.08rem;color:var(--ink2);max-width:800px}
+  .card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%);border:1px solid var(--line);border-radius:18px;padding:1.5rem;margin:1.5rem 0;box-shadow:0 20px 40px -20px rgba(0,0,0,.5)}
+  .card-title{font-size:1.05rem;font-weight:600;color:var(--accent);margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+  .card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+  @media(max-width:800px){.grid2{grid-template-columns:1fr}}
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin:.8rem 0;padding:.8rem;background:rgba(0,0,0,.25);border-radius:10px}
+  .control{display:flex;flex-direction:column;gap:.3rem;min-width:150px;flex:1}
+  .control label{font-size:.8rem;color:var(--ink2);display:flex;justify-content:space-between}
+  .control label b{color:var(--accent);font-family:'JetBrains Mono',monospace}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--line);border-radius:2px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 0 8px var(--accent)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--accent);border-radius:50%;cursor:pointer;border:0}
+  button{background:var(--accent);color:#0a0e1a;border:0;padding:.55rem 1.1rem;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s}
+  button:hover{background:#93aeff;transform:translateY(-1px)}
+  button.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  canvas.viz{width:100%;height:auto;display:block;background:#060812;border-radius:10px}
+  .plot{width:100%;min-height:340px}
+  .row{display:flex;gap:.8rem;flex-wrap:wrap;margin:.6rem 0}
+  .pill{padding:.35rem .8rem;background:rgba(124,156,255,.12);border:1px solid var(--line);border-radius:99px;font-size:.82rem;color:var(--accent)}
+  .pill.good{color:var(--good);background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.3)}
+  .pill.bad{color:var(--bad);background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3)}
+  .callout{border-left:3px solid var(--accent);background:rgba(124,156,255,.06);padding:.9rem 1.1rem;border-radius:0 10px 10px 0;margin:1rem 0}
+  .callout.q{border-color:var(--accent2);background:rgba(192,132,252,.06)}
+  .callout.a{border-color:var(--good);background:rgba(74,222,128,.06)}
+  .math{background:rgba(0,0,0,.3);padding:.6rem 1rem;border-radius:8px;overflow-x:auto;font-size:1.05rem}
+  .stepper{display:flex;gap:.4rem;margin:.8rem 0;flex-wrap:wrap}
+  .step{padding:.4rem .8rem;background:var(--panel2);border:1px solid var(--line);border-radius:8px;font-size:.85rem;color:var(--ink2);cursor:pointer;transition:all .15s}
+  .step.active{background:var(--accent);color:#0a0e1a;border-color:var(--accent);font-weight:600}
+  .nav{position:fixed;right:1rem;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:.5rem}
+  .nav a{width:10px;height:10px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .2s;position:relative}
+  .nav a:hover{background:var(--accent);transform:scale(1.4)}
+  .nav a::after{content:attr(data-label);position:absolute;right:20px;top:50%;transform:translateY(-50%);background:var(--panel);padding:.2rem .6rem;border-radius:4px;font-size:.75rem;color:var(--ink);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;border:1px solid var(--line)}
+  .nav a:hover::after{opacity:1}
+  @media(max-width:800px){.nav{display:none}}
+  .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.8rem;margin-top:2rem}
+  .toc a{padding:.9rem 1.1rem;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--ink);text-decoration:none;font-size:.9rem;transition:all .2s}
+  .toc a:hover{border-color:var(--accent);background:var(--panel2);transform:translateY(-2px)}
+  .toc a b{color:var(--accent);display:block;margin-bottom:.2rem}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:3rem 0}
+  code{font-family:'JetBrains Mono',ui-monospace,monospace;background:rgba(0,0,0,.35);padding:.15rem .4rem;border-radius:4px;font-size:.9em;color:#c9d4ee}
+  pre{background:rgba(0,0,0,.4);padding:1rem;border-radius:10px;overflow-x:auto;border:1px solid var(--line)}
+  pre code{background:none;padding:0}
+  .badge{display:inline-block;padding:.15rem .55rem;border-radius:6px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .badge.pre{background:rgba(251,191,36,.15);color:var(--warn);border:1px solid rgba(251,191,36,.3)}
+  .badge.core{background:rgba(124,156,255,.15);color:var(--accent);border:1px solid rgba(124,156,255,.3)}
+  .badge.app{background:rgba(192,132,252,.15);color:var(--accent2);border:1px solid rgba(192,132,252,.3)}
+  footer{text-align:center;padding:3rem;color:var(--ink2);font-size:.85rem;border-top:1px solid var(--line);margin-top:4rem}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav"></nav>
+
+<div class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <span class="tag">Youvan, 2024 · Interaktive Erkundung</span>
+    <h1>Homotopie-Typentheorie<br>als Fundament der KI</h1>
+    <p class="sub">Eine Idee an der Grenze von Topologie, Logik und maschinellem Lernen — Schritt für Schritt zum Anfassen, mit Reglern statt Formeln.</p>
+    <div style="margin-top:2rem">
+      <button onclick="document.getElementById('map').scrollIntoView({behavior:'smooth'})">Los geht's ↓</button>
+    </div>
+  </div>
+  <div class="scroll-hint">scrollen · spielen · verstehen</div>
+</div>
+
+<section id="map">
+  <span class="chapter-num">Landkarte</span>
+  <h2>Worum geht es überhaupt?</h2>
+  <p class="lead">Douglas Youvan schlägt in seinem Paper vor, eine relativ junge mathematische Theorie — die <b>Homotopie-Typentheorie (HoTT)</b> — als neue <b>Grundlage für die Architektur von KI-Systemen</b> zu verwenden. Kein Experiment, keine Benchmarks: ein Vorschlag, wie man KI von der Basis her sauberer, verifizierbarer und erklärbarer bauen könnte.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Die Reise in einem Bild</div>
+    <p>Wir bauen die nötige Mathematik in drei kleinen Schritten auf (gelb = Voraussetzungen jenseits der Abi-Mathe), sehen dann was HoTT eigentlich ist (blau = Kern), und schauen zuletzt auf die sechs Anwendungsgebiete in der KI, die Youvan vorschlägt (lila).</p>
+    <div class="toc">
+      <a href="#motivation"><b>0 · Motivation</b>Warum überhaupt neue Mathematik für KI?</a>
+      <a href="#types"><b>1 · Typentheorie <span class="badge pre">Prereq</span></b>Was ist ein „Typ"?</a>
+      <a href="#homotopy"><b>2 · Homotopie <span class="badge pre">Prereq</span></b>Wann sind zwei Wege „gleich"?</a>
+      <a href="#identity"><b>3 · Identitätstypen <span class="badge core">Kern</span></b>Gleichheit = Pfad</a>
+      <a href="#higher"><b>4 · Höhere Dimensionen <span class="badge core">Kern</span></b>Pfade zwischen Pfaden</a>
+      <a href="#verify"><b>5 · Formale Verifikation <span class="badge app">Anwendung</span></b>Beweisen statt testen</a>
+      <a href="#uncert"><b>6 · Unsicherheit <span class="badge app">Anwendung</span></b>Wahrscheinlichkeit als Typ</a>
+      <a href="#knowledge"><b>7 · Wissen & Semantic Web <span class="badge app">Anwendung</span></b>Bedeutung sauber modellieren</a>
+      <a href="#quantum"><b>8 · Quanten-KI <span class="badge app">Anwendung</span></b>Superposition typisieren</a>
+      <a href="#xai"><b>9 · Erklärbare KI <span class="badge app">Anwendung</span></b>Blackbox aufmachen</a>
+      <a href="#answer"><b>10 · Youvans Antwort</b>Was schlägt er konkret vor?</a>
+    </div>
+  </div>
+</section>
+
+<section id="motivation">
+  <span class="chapter-num">Kapitel 0 · Motivation</span>
+  <h2>Warum braucht KI ein neues Fundament?</h2>
+  <p class="lead">Moderne KI ist verblüffend leistungsfähig — aber auch <b>opak</b>, <b>brüchig</b> und schwer <b>garantiert korrekt</b> zu machen. Klick unten auf die Probleme und sieh, wie sie sich anfühlen:</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Die drei Kernprobleme heutiger KI</div>
+    <div class="stepper" id="probSteps">
+      <div class="step active" data-p="0">🔲 Blackbox</div>
+      <div class="step" data-p="1">💥 Brüchigkeit</div>
+      <div class="step" data-p="2">🛡️ Fehlende Garantien</div>
+    </div>
+    <canvas id="probCanvas" class="viz" width="1000" height="360"></canvas>
+    <p id="probText" style="color:var(--ink2);margin-top:.8rem"></p>
+  </div>
+
+  <div class="callout q"><b>Youvans Frage:</b> Kann eine mathematisch tiefere Sprache — eine, die von Anfang an <i>weiß</i>, wie Datenobjekte, Transformationen und Gleichheit zusammenhängen — diese drei Probleme an der Wurzel angehen?</div>
+</section>
+
+<section id="types">
+  <span class="chapter-num">Kapitel 1 · Voraussetzung</span>
+  <h2>Was ist eigentlich ein „Typ"? <span class="badge pre">Prereq</span></h2>
+  <p class="lead">In der Schule kennst du „Menge". Ein <b>Typ</b> ist ähnlich — aber strenger. Jedes Objekt hat <b>genau einen</b> Typ, und die Sprache passt automatisch auf, dass du keinen Unsinn machst. Statt <i>„Elemente einer Menge"</i> sagen wir: <code>a : A</code> — „a hat Typ A".</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Spielwiese: Typ-Check</div>
+      <p style="font-size:.9rem;color:var(--ink2)">Wähle einen Wert und eine Funktion. Die Typ-Prüfung entscheidet, ob es zusammenpasst.</p>
+      <div class="controls">
+        <div class="control" style="min-width:100%">
+          <label>Wert</label>
+          <select id="tcVal" style="padding:.5rem;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px">
+            <option value="int">42 : ℤ (ganze Zahl)</option>
+            <option value="str">"Hallo" : String</option>
+            <option value="bool">wahr : Bool</option>
+            <option value="img">🖼️ : Bild</option>
+          </select>
+        </div>
+        <div class="control" style="min-width:100%">
+          <label>Funktion</label>
+          <select id="tcFun" style="padding:.5rem;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px">
+            <option value="succ">Nachfolger : ℤ → ℤ</option>
+            <option value="len">Länge : String → ℤ</option>
+            <option value="not">nicht : Bool → Bool</option>
+            <option value="classify">klassifiziere : Bild → Label</option>
+          </select>
+        </div>
+      </div>
+      <div id="tcResult" style="padding:1rem;background:rgba(0,0,0,.3);border-radius:8px;font-family:monospace;font-size:.95rem"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Warum das für KI zählt</div>
+      <p>Heutige ML-Frameworks lassen dich fast alles füttern und crashen erst zur Laufzeit — oder liefern still ein falsches Ergebnis. Ein <b>reiches Typsystem</b> würde vor der Ausführung sagen:</p>
+      <ul style="color:var(--ink2)">
+        <li>„Dieses Tensor-Shape passt nicht."</li>
+        <li>„Dieser Datensatz enthält noch persönliche Info — darf nicht in <code>PublicModel</code>."</li>
+        <li>„Die Ausgabe dieser Schicht ist keine Wahrscheinlichkeit."</li>
+      </ul>
+      <div class="callout">Kurz: Typen sind <b>Wächter</b>, die Fehler <i>vor</i> der Ausführung fangen.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Curry-Howard: Programme = Beweise</div>
+    <p>Der wirklich verrückte Trick: in der Typentheorie sind <b>Sätze auch Typen</b>, und ein <b>Beweis</b> ist ein <b>Programm</b> von diesem Typ. Beweg den Regler und sieh die Übersetzung:</p>
+    <div class="controls">
+      <div class="control">
+        <label>Aussage <b id="chVal">A ∧ B</b></label>
+        <input type="range" id="chSlider" min="0" max="3" step="1" value="0">
+      </div>
+    </div>
+    <div id="chView" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div style="padding:1rem;background:rgba(124,156,255,.08);border-radius:8px">
+        <div style="color:var(--accent);font-size:.8rem;margin-bottom:.5rem">LOGIK</div>
+        <div id="chLogic" style="font-size:1.1rem"></div>
+      </div>
+      <div style="padding:1rem;background:rgba(192,132,252,.08);border-radius:8px">
+        <div style="color:var(--accent2);font-size:.8rem;margin-bottom:.5rem">TYPEN</div>
+        <div id="chType" style="font-size:1.1rem;font-family:monospace"></div>
+      </div>
+    </div>
+    <p style="color:var(--ink2);margin-top:1rem">Konsequenz: Wenn du ein Programm schreiben kannst, das den richtigen Typ hat, hast du <b>bewiesen</b>, dass die entsprechende Aussage wahr ist. Das ist die Grundlage aller Beweisassistenten (Coq, Lean, Agda) — und der Grund, warum Typentheorie für KI-Verifikation so mächtig ist.</p>
+  </div>
+</section>
+
+<section id="homotopy">
+  <span class="chapter-num">Kapitel 2 · Voraussetzung</span>
+  <h2>Homotopie: Wann sind zwei Wege „im Wesentlichen gleich"? <span class="badge pre">Prereq</span></h2>
+  <p class="lead">Stell dir zwei Wanderwege von A nach B vor. Wenn du den einen <b>stetig zum anderen deformieren kannst</b>, ohne den Anfang oder das Ende zu bewegen — dann sind sie <b>homotop</b>. Das ist der zentrale Begriff, der HoTT den Namen gibt.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Deformiere zwei Pfade ineinander</div>
+    <div class="controls">
+      <div class="control">
+        <label>Deformation <b id="hDefVal">0.00</b></label>
+        <input type="range" id="hDef" min="0" max="1" step="0.01" value="0">
+      </div>
+      <div class="control">
+        <label>Pfad-Form <b id="hShapeVal">Bogen</b></label>
+        <input type="range" id="hShape" min="0" max="2" step="1" value="0">
+      </div>
+    </div>
+    <canvas id="homoCanvas" class="viz" width="1000" height="420"></canvas>
+    <p style="color:var(--ink2);margin-top:.8rem">Blauer Pfad = Startform. Lila Pfad = Zielform. Der weiße Zwischenpfad ist die aktuelle <b>Homotopie</b> — eine stetige Familie von Pfaden, die die beiden verbindet. Kein Springen, kein Zerreißen erlaubt.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Nicht alle Pfade sind homotop</div>
+      <p>In einem Raum <b>mit Loch</b> (z.B. einem Ring) kannst du einen Pfad, der um das Loch geht, <b>nicht</b> in einen deformieren, der es umgeht — ohne die Enden zu lösen. Bewege den Regler:</p>
+      <div class="controls">
+        <div class="control">
+          <label>Versuche zu deformieren <b id="hHoleVal">0.00</b></label>
+          <input type="range" id="hHole" min="0" max="1" step="0.01" value="0">
+        </div>
+      </div>
+      <canvas id="holeCanvas" class="viz" width="500" height="320"></canvas>
+      <p id="holeStatus" style="color:var(--ink2);margin-top:.5rem;font-size:.9rem"></p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Die große Idee</div>
+      <p>Homotopie gibt uns einen <b>flexiblen Gleichheits-Begriff</b>: „diese zwei Dinge sind nicht identisch, aber es gibt eine <i>stetige Familie</i>, die sie verbindet." Diese Idee — dass <b>Gleichheit selbst eine Struktur hat</b> — ist das Herzstück von HoTT.</p>
+      <div class="row">
+        <span class="pill">stetige Deformation</span>
+        <span class="pill">Endpunkte fest</span>
+        <span class="pill">Löcher = Hindernisse</span>
+      </div>
+      <div class="callout">Merke: In der Topologie zählt nicht die exakte Form, sondern <b>welche Verbindungen möglich sind</b>. Zwei Formen, die stetig ineinander überführbar sind, heißen homotopie-äquivalent.</div>
+    </div>
+  </div>
+</section>
+
+<section id="identity">
+  <span class="chapter-num">Kapitel 3 · Kern-Idee</span>
+  <h2>Identitätstypen: Gleichheit ist ein Pfad <span class="badge core">Kern</span></h2>
+  <p class="lead">Jetzt kommt der geniale Schritt, den HoTT macht: Wir verheiraten Kapitel 1 (Typen) mit Kapitel 2 (Homotopie). Statt „a = b" als schlichten Wahr/Falsch-Wert zu behandeln, sagen wir: <b>„a = b" ist selbst ein Typ</b> — nämlich der Typ aller <b>Pfade</b>, die a mit b verbinden.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Klick auf Punkte und sieh die Identität</div>
+    <p style="color:var(--ink2);font-size:.9rem">Zwei Punkte im Typ <code>A</code>. Zwischen ihnen: alle möglichen „Beweise, dass sie gleich sind" — jeder Beweis ist ein Pfad.</p>
+    <canvas id="idCanvas" class="viz" width="1000" height="380"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Anzahl Pfade zwischen a und b <b id="idNVal">1</b></label>
+        <input type="range" id="idN" min="1" max="5" step="1" value="1">
+      </div>
+      <button id="idAnim">Pfad-Animation ▶</button>
+    </div>
+    <div class="math" id="idMath"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Alte Sicht (Mengen)</div>
+      <p>a = b ist ein einziger Wert: <b>wahr</b> oder <b>falsch</b>. Fertig.</p>
+      <pre><code>a = b  :  Bool</code></pre>
+      <p style="color:var(--ink2);font-size:.9rem">Zwei Objekte sind entweder gleich oder nicht. Keine Nuance.</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Neue Sicht (HoTT)</div>
+      <p>a = b ist ein <b>Typ</b>, dessen Elemente <b>Beweise/Pfade</b> sind.</p>
+      <pre><code>Id_A(a, b)  :  Typ
+p : Id_A(a, b)   // p ist ein Pfad</code></pre>
+      <p style="color:var(--ink2);font-size:.9rem">Es kann <b>mehrere Arten</b> geben, wie zwei Objekte gleich sind — jede ist ein anderer Pfad.</p>
+    </div>
+  </div>
+
+  <div class="callout"><b>Warum das für KI zählt:</b> „Zwei Bilder derselben Katze" sind nicht identisch pixelweise — aber es gibt einen <b>Pfad</b> (Rotation, Beleuchtungswechsel, Perspektive), der sie verbindet. HoTT macht diesen Pfad zu einem <b>erst-klassigen Objekt</b>, mit dem man rechnen kann.</p></div>
+</section>
+
+<section id="higher">
+  <span class="chapter-num">Kapitel 4 · Kern-Idee</span>
+  <h2>Höhere Dimensionen: Pfade zwischen Pfaden <span class="badge core">Kern</span></h2>
+  <p class="lead">Wenn Pfade wieder Objekte sind — können sie <b>selbst</b> gleich sein? Ja! Ein Pfad zwischen zwei Pfaden heißt <b>2-Pfad</b> (oder Homotopie zweiter Stufe). Und so weiter, ins Unendliche. Das ist die <b>höherdimensionale</b> Struktur, die HoTT so mächtig macht.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>3D-Visualisierung: Der Turm der Gleichheiten</div>
+    <p style="color:var(--ink2);font-size:.9rem">Drehe die Szene mit der Maus. Punkte (0D) → Pfade (1D) → Flächen zwischen Pfaden (2D) → Volumina zwischen Flächen (3D). HoTT verwaltet all das in einer Sprache.</p>
+    <div id="higher3d" style="width:100%;height:480px;background:#050710;border-radius:10px;cursor:grab"></div>
+    <div class="controls">
+      <div class="control">
+        <label>Dimension zeigen bis <b id="dimVal">2</b></label>
+        <input type="range" id="dimSlider" min="0" max="3" step="1" value="2">
+      </div>
+      <div class="control">
+        <label>Rotation <b id="rotVal">auto</b></label>
+        <input type="range" id="rotSlider" min="0" max="1" step="0.01" value="0.3">
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Ein ∞-Gruppoid</div>
+      <p>Das entstehende Objekt ist ein <b>∞-Gruppoid</b>: eine Struktur mit Objekten, Morphismen zwischen ihnen, Morphismen zwischen Morphismen, usw. Ein einziger Typ kann so eine ganze Landschaft an Beziehungen enthalten.</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Was bedeutet das für KI?</div>
+      <ul style="color:var(--ink2)">
+        <li>„Zwei neuronale Netze machen dasselbe" — 1. Stufe.</li>
+        <li>„Zwei Beweise, dass sie dasselbe machen, sind äquivalent" — 2. Stufe.</li>
+        <li>Man kann <b>Verfeinerungen</b> und <b>Refaktorisierungen</b> formal rechtfertigen.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="verify">
+  <span class="chapter-num">Kapitel 5 · Anwendung</span>
+  <h2>Formale Verifikation von KI-Systemen <span class="badge app">Anwendung</span></h2>
+  <p class="lead">Statt eine KI mit tausenden Testfällen zu prüfen und zu hoffen — beweise mathematisch, dass sie sich <b>unter allen Umständen</b> korrekt verhält. Das ist der Traum der formalen Verifikation. Wähle unten ein Szenario aus dem Paper:</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Verifikations-Szenarien</div>
+    <div class="stepper" id="vSteps">
+      <div class="step active" data-v="0">🔒 Differential Privacy</div>
+      <div class="step" data-v="1">⚖️ Kredit-Fairness</div>
+      <div class="step" data-v="2">🖼️ Adversarial Robustness</div>
+    </div>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <canvas id="vCanvas" class="viz" width="500" height="360"></canvas>
+      </div>
+      <div>
+        <h3 id="vTitle" style="margin-top:0"></h3>
+        <p id="vDesc" style="color:var(--ink2)"></p>
+        <div class="math" id="vMath"></div>
+        <p id="vExplain" style="color:var(--ink2);font-size:.9rem"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout a"><b>Kernidee:</b> HoTT erlaubt es, „gleich" so präzise zu definieren (z.B. „gleich bis auf kleine Störung" oder „gleich unabhängig vom Geschlecht"), dass man einen <b>mechanisch prüfbaren Beweis</b> konstruieren kann.</div>
+</section>
+
+<section id="uncert">
+  <span class="chapter-num">Kapitel 6 · Anwendung</span>
+  <h2>Unsicherheit und probabilistisches Denken <span class="badge app">Anwendung</span></h2>
+  <p class="lead">In der echten Welt weiß eine KI nie <i>sicher</i> was los ist. HoTT bietet einen sauberen Weg, <b>Unsicherheit selbst zu typisieren</b> — sogar Unsicherheit über Unsicherheit (was Bayes-Netze schwer tun).</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Medizinisches Diagnose-Beispiel</div>
+    <p style="color:var(--ink2);font-size:.9rem">Bewege die Regler — Symptome und Testresultate. Die KI kombiniert Unsicherheiten. Beobachte die Wahrscheinlichkeitsverteilung über Diagnosen.</p>
+    <div class="controls">
+      <div class="control">
+        <label>Symptom-Stärke <b id="s1Val">0.5</b></label>
+        <input type="range" id="s1" min="0" max="1" step="0.01" value="0.5">
+      </div>
+      <div class="control">
+        <label>Test-Positivität <b id="s2Val">0.5</b></label>
+        <input type="range" id="s2" min="0" max="1" step="0.01" value="0.5">
+      </div>
+      <div class="control">
+        <label>Test-Zuverlässigkeit <b id="s3Val">0.9</b></label>
+        <input type="range" id="s3" min="0.5" max="1" step="0.01" value="0.9">
+      </div>
+    </div>
+    <div id="uncertPlot" class="plot"></div>
+    <p style="color:var(--ink2);font-size:.9rem;margin-top:.5rem">In HoTT: Der Typ <code>Wahrscheinlichkeitsverteilung(Diagnose)</code> ist selbst ein reiches Objekt. Zwei Verteilungen können via Identitätstyp „gleich bis auf Rundung" sein — formal beweisbar.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Höhere-Ordnung Unsicherheit</div>
+    <p>Bayes: „Wie sicher bin ich, dass es Grippe ist?" — HoTT: „Wie sicher bin ich <b>über meine Sicherheit</b>?" Die zweite Ebene wird zu einem 2-Pfad zwischen Verteilungen.</p>
+    <canvas id="metaUncert" class="viz" width="1000" height="260"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Meta-Unsicherheit <b id="muVal">0.3</b></label>
+        <input type="range" id="mu" min="0" max="1" step="0.01" value="0.3">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="knowledge">
+  <span class="chapter-num">Kapitel 7 · Anwendung</span>
+  <h2>Wissensrepräsentation & Semantic Web <span class="badge app">Anwendung</span></h2>
+  <p class="lead">Wie fügt man Wissen aus verschiedenen Quellen zusammen, wenn dieselbe Sache unterschiedlich beschrieben wird? HoTT sagt: „unterschiedliche Beschreibung, aber es existiert ein <b>Identitätspfad</b> zwischen ihnen".</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Ontologie-Graph: Krankheiten, Symptome, Behandlungen</div>
+    <canvas id="ontoCanvas" class="viz" width="1000" height="480"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Zeige HoTT-Äquivalenzen <b id="eqVal">aus</b></label>
+        <input type="range" id="eqSlider" min="0" max="1" step="1" value="0">
+      </div>
+      <div class="control">
+        <label>Datenquellen <b id="dsVal">1</b></label>
+        <input type="range" id="dsSlider" min="1" max="3" step="1" value="1">
+      </div>
+    </div>
+    <p style="color:var(--ink2);font-size:.9rem">Erhöhe „Datenquellen" — Duplikate erscheinen mit anderen Namen. Aktiviere die HoTT-Äquivalenzen, um zu sehen, wie Identitätspfade sie verknüpfen, ohne die Struktur zu zerstören.</p>
+  </div>
+</section>
+
+<section id="quantum">
+  <span class="chapter-num">Kapitel 8 · Anwendung</span>
+  <h2>Quanten-KI <span class="badge app">Anwendung</span></h2>
+  <p class="lead">Ein Qubit ist gleichzeitig 0 und 1 — bis man misst. HoTTs höherdimensionale Typen sind eine überraschend natürliche Sprache, um diese <b>Superposition</b> und <b>Verschränkung</b> zu beschreiben.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Ein Qubit auf der Bloch-Kugel</div>
+    <div class="grid2">
+      <div id="bloch3d" style="width:100%;height:380px;background:#050710;border-radius:10px;cursor:grab"></div>
+      <div>
+        <p>Jeder Punkt auf der Kugel ist ein Zustand des Qubits. Nord = |0⟩, Süd = |1⟩, Äquator = perfekte Superposition.</p>
+        <div class="controls" style="flex-direction:column">
+          <div class="control">
+            <label>θ (Breitengrad) <b id="thVal">0</b></label>
+            <input type="range" id="th" min="0" max="3.14" step="0.01" value="0.8">
+          </div>
+          <div class="control">
+            <label>φ (Längengrad) <b id="phVal">0</b></label>
+            <input type="range" id="ph" min="0" max="6.28" step="0.01" value="0.5">
+          </div>
+        </div>
+        <div class="math" id="qMath"></div>
+        <button id="qMeasure">Messen! 📏</button>
+        <p id="qResult" style="margin-top:.5rem;font-family:monospace"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout"><b>HoTTs Rolle:</b> Ein Quanten-Zustandsraum <i>ist</i> topologisch. Pfade auf der Bloch-Kugel = Quanten-Gates. Höhere Pfade = Beweise, dass zwei Gate-Sequenzen dasselbe tun. Formale Verifikation von Quanten-Algorithmen wird damit greifbar.</p></div>
+</section>
+
+<section id="xai">
+  <span class="chapter-num">Kapitel 9 · Anwendung</span>
+  <h2>Erklärbare KI (XAI) <span class="badge app">Anwendung</span></h2>
+  <p class="lead">Ein Deep-Learning-Modell trifft eine Entscheidung. Warum? Aktuelle Modelle können es nicht sagen. HoTT bietet eine Struktur, um die <b>Pfade der Entscheidungsfindung</b> nachverfolgbar zu machen.</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Entscheidungspfad-Explorer</div>
+    <p style="color:var(--ink2);font-size:.9rem">Klick auf einen Eingabepunkt — sieh, welchen Pfad er durch das Modell nimmt und wie ähnliche Eingaben ähnliche Pfade nehmen (HoTT-Identitätspfade zwischen Entscheidungen).</p>
+    <canvas id="xaiCanvas" class="viz" width="1000" height="440"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Zeige Äquivalenz-Klassen <b id="xaiEqVal">nein</b></label>
+        <input type="range" id="xaiEq" min="0" max="1" step="1" value="0">
+      </div>
+      <button id="xaiReset">Zurücksetzen</button>
+    </div>
+    <p id="xaiInfo" style="color:var(--ink2);font-size:.9rem"></p>
+  </div>
+</section>
+
+<section id="answer">
+  <span class="chapter-num">Kapitel 10 · Fazit</span>
+  <h2>Youvans Antwort auf seine eigene Frage</h2>
+  <p class="lead">Erinnere dich an die Frage vom Anfang: <i>Kann eine tiefere Sprache die Kernprobleme heutiger KI angehen?</i> Youvans Antwort:</p>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Die Antwort in einem Satz</div>
+    <p style="font-size:1.2rem;line-height:1.5">
+      <b>Ja</b> — HoTT ist kein Trick, sondern ein <b>Fundament</b>. Wenn KI-Systeme von Grund auf in einer Sprache gebaut werden, die Typen, Pfade und höhere Gleichheit kennt, dann werden <b>Verifikation, Erklärbarkeit und Ausdruckskraft</b> zu <i>eingebauten Eigenschaften</i>, nicht zu nachträglichen Reparaturen.
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Was Youvan konkret vorschlägt</div>
+      <ul>
+        <li>KI-<b>Programmiersprachen</b> mit HoTT-Typsystem</li>
+        <li><b>Formale Beweise</b> für Fairness, Privacy, Robustheit</li>
+        <li>Typen für <b>Unsicherheit höherer Ordnung</b></li>
+        <li>Semantic-Web-Integration via <b>Identitätspfade</b></li>
+        <li>HoTT als <b>Brückensprache</b> zu Quanten-KI</li>
+        <li>XAI durch <b>strukturierte Entscheidungspfade</b></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Was NICHT im Paper steht</div>
+      <ul style="color:var(--ink2)">
+        <li>❌ Kein konkretes Experiment</li>
+        <li>❌ Keine Benchmark-Zahlen</li>
+        <li>❌ Kein Code, keine Implementierung</li>
+        <li>❌ Keine Beweis-Konstruktion</li>
+      </ul>
+      <div class="callout" style="margin-top:1rem">Das Paper ist ein <b>Positionspapier / Vision</b>: „So könnte die Zukunft aussehen — wir sollten daran arbeiten." Die Aufgabe der Community: Werkzeuge, Sprachen, Bibliotheken bauen.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Herausforderungen, die Youvan selbst nennt</div>
+    <div class="row">
+      <span class="pill bad">HoTT ist mathematisch schwer</span>
+      <span class="pill bad">Bestehende ML-Frameworks passen nicht</span>
+      <span class="pill bad">Rechenoverhead</span>
+      <span class="pill good">→ Interdisziplinäre Kollaboration</span>
+      <span class="pill good">→ Bildung & Tooling</span>
+      <span class="pill good">→ Open Source Community</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Interaktive Umsetzung von <i>„Homotopy Type Theory: A New Foundation for AI Architecture"</i> · Douglas C. Youvan, April 2024 [[11]]<br>
+  <span style="opacity:.6">Alle Visualisierungen sind didaktische Vereinfachungen. Für die volle Tiefe: das HoTT-Book (2013).</span>
+</footer>
+
+<script>
+// ==================== UTILS ====================
+const $ = id => document.getElementById(id);
+const lerp = (a,b,t) => a+(b-a)*t;
+const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
+const TAU = Math.PI*2;
+
+// Render KaTeX helper
+function tex(el, s, display=false){
+  try { katex.render(s, el, {throwOnError:false, displayMode:display}); }
+  catch(e){ el.textContent = s; }
+}
+
+// Build side nav
+const sections = [
+  ['map','Landkarte'],['motivation','Motivation'],['types','Typen'],
+  ['homotopy','Homotopie'],['identity','Identität'],['higher','Höhere Dim.'],
+  ['verify','Verifikation'],['uncert','Unsicherheit'],['knowledge','Wissen'],
+  ['quantum','Quanten-KI'],['xai','XAI'],['answer','Antwort']
+];
+const navEl = $('nav');
+sections.forEach(([id,lbl])=>{
+  const a = document.createElement('a');
+  a.dataset.label = lbl;
+  a.onclick = ()=> $(id).scrollIntoView({behavior:'smooth'});
+  navEl.appendChild(a);
+});
+
+// ==================== HERO CANVAS: floating paths ====================
+(function(){
+  const c = $('heroCanvas'); const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  const pts = Array.from({length:80},()=>({
+    x:Math.random()*c.width, y:Math.random()*c.height,
+    vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3,
+    r:Math.random()*2+1
+  }));
+  function draw(){
+    ctx.fillStyle='rgba(7,9,18,0.15)'; ctx.fillRect(0,0,c.width,c.height);
+    for(const p of pts){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>c.width) p.vx*=-1;
+      if(p.y<0||p.y>c.height) p.vy*=-1;
+    }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d = Math.hypot(dx,dy);
+        if(d<140){
+          const a = (1-d/140)*0.25;
+          const grad = ctx.createLinearGradient(pts[i].x,pts[i].y,pts[j].x,pts[j].y);
+          grad.addColorStop(0,`rgba(124,156,255,${a})`);
+          grad.addColorStop(1,`rgba(192,132,252,${a})`);
+          ctx.strokeStyle=grad; ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    for(const p of pts){
+      ctx.fillStyle='rgba(200,215,255,0.7)';
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,TAU); ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ==================== MOTIVATION: 3 problems ====================
+(function(){
+  const c = $('probCanvas'); const ctx = c.getContext('2d');
+  const txt = $('probText');
+  const steps = document.querySelectorAll('#probSteps .step');
+  let active = 0;
+  const stories = [
+    'Ein neuronales Netz klassifiziert Bilder — aber niemand weiß, warum es dieses Bild als „Katze" liest. Millionen von Gewichten, keine Erklärung.',
+    'Ein winziger, für Menschen unsichtbarer Pixel-Rausch — und die selbstgleiche KI klassifiziert plötzlich das Panda-Bild als „Gibbon". Kein Sicherheitsnetz.',
+    'Bei sicherheitskritischen Systemen (Medizin, autonomes Fahren) reicht „funktioniert bei den 10.000 Testfällen" nicht. Wir brauchen mathematische Beweise.'
+  ];
+  steps.forEach(s => s.onclick = ()=>{
+    steps.forEach(x=>x.classList.remove('active'));
+    s.classList.add('active');
+    active = +s.dataset.p;
+    txt.textContent = stories[active];
+  });
+  txt.textContent = stories[0];
+
+  let t=0;
+  function draw(){
+    t+=0.015;
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    if(active===0){
+      // Blackbox
+      const cx=W/2, cy=H/2;
+      // input dots
+      for(let i=0;i<5;i++){
+        const y = cy-120+i*60;
+        ctx.fillStyle='#7c9cff'; ctx.beginPath(); ctx.arc(cx-320,y,8,0,TAU); ctx.fill();
+        ctx.strokeStyle='rgba(124,156,255,0.3)';
+        ctx.beginPath(); ctx.moveTo(cx-312,y); ctx.lineTo(cx-140,cy); ctx.stroke();
+      }
+      // box
+      ctx.fillStyle='#1a1a2e'; ctx.strokeStyle='#333';
+      ctx.fillRect(cx-140,cy-90,280,180);
+      ctx.strokeRect(cx-140,cy-90,280,180);
+      // noise inside
+      for(let i=0;i<40;i++){
+        const x = cx-130+Math.random()*260, y=cy-80+Math.random()*160;
+        ctx.fillStyle=`rgba(${Math.random()*255},${Math.random()*255},255,0.3)`;
+        ctx.fillRect(x,y,3,3);
+      }
+      ctx.fillStyle='#f87171'; ctx.font='bold 22px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('? ? ?', cx, cy+8);
+      ctx.fillStyle='#a0aec8'; ctx.font='12px sans-serif';
+      ctx.fillText('Blackbox', cx, cy+40);
+      // output
+      ctx.fillStyle='#c084fc'; ctx.beginPath(); ctx.arc(cx+280,cy,14,0,TAU); ctx.fill();
+      ctx.strokeStyle='rgba(192,132,252,0.4)';
+      ctx.beginPath(); ctx.moveTo(cx+140,cy); ctx.lineTo(cx+266,cy); ctx.stroke();
+      ctx.fillStyle='#e8ecf7'; ctx.font='14px sans-serif';
+      ctx.fillText('"Katze"', cx+280, cy+35);
+    } else if(active===1){
+      // Brittleness: panda -> gibbon after noise
+      const cy=H/2;
+      // original
+      ctx.fillStyle='#1f2937';
+      ctx.fillRect(80,cy-90,180,180);
+      ctx.fillStyle='#e8ecf7'; ctx.font='60px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('🐼', 170, cy+20);
+      ctx.fillStyle='#4ade80'; ctx.font='14px sans-serif';
+      ctx.fillText('→ Panda ✓', 170, cy+120);
+      // + noise
+      ctx.fillStyle='#e8ecf7'; ctx.font='40px sans-serif'; ctx.fillText('+', 310, cy+15);
+      // noise square
+      ctx.fillStyle='#1f2937'; ctx.fillRect(360,cy-90,180,180);
+      for(let i=0;i<300;i++){
+        const shift = Math.sin(t*2+i)*3;
+        ctx.fillStyle=`rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},0.5)`;
+        ctx.fillRect(360+Math.random()*180+shift,cy-90+Math.random()*180,2,2);
+      }
+      ctx.fillStyle='#a0aec8'; ctx.font='14px sans-serif';
+      ctx.fillText('unsichtbarer Rausch', 450, cy+120);
+      ctx.fillStyle='#e8ecf7'; ctx.font='40px sans-serif'; ctx.fillText('=', 590, cy+15);
+      // result
+      ctx.fillStyle='#1f2937'; ctx.fillRect(640,cy-90,180,180);
+      ctx.fillStyle='#e8ecf7'; ctx.font='60px sans-serif';
+      ctx.fillText('🐼', 730, cy+20);
+      ctx.fillStyle='#f87171'; ctx.font='14px sans-serif';
+      ctx.fillText('→ Gibbon ✗', 730, cy+120);
+    } else {
+      // No guarantees: infinite test cases
+      ctx.fillStyle='#e8ecf7'; ctx.font='16px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Test-Universum aller möglichen Eingaben', W/2, 40);
+      // dots representing all possible inputs
+      const N = 400;
+      for(let i=0;i<N;i++){
+        const angle = i/N * TAU + t*0.1;
+        const r = 100 + Math.sin(i*7.3)*50;
+        const x = W/2 + Math.cos(angle)*r*1.5;
+        const y = H/2 + Math.sin(angle)*r*0.8;
+        const tested = (i%23===0);
+        ctx.fillStyle = tested ? '#4ade80' : 'rgba(120,120,150,0.3)';
+        ctx.beginPath(); ctx.arc(x,y, tested?3:1.5, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle='#4ade80'; ctx.font='13px sans-serif';
+      ctx.fillText('● getestete Eingaben (endlich viele)', W/2, H-40);
+      ctx.fillStyle='#a0aec8';
+      ctx.fillText('● ungetestet (unendlich viele) — was passiert dort?', W/2, H-20);
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ==================== TYPE CHECKER ====================
+(function(){
+  const val = $('tcVal'), fun = $('tcFun'), res = $('tcResult');
+  const valTypes = {int:'ℤ', str:'String', bool:'Bool', img:'Bild'};
+  const valLbls = {int:'42', str:'"Hallo"', bool:'wahr', img:'🖼️'};
+  const funs = {
+    succ:{in:'ℤ', out:'ℤ', name:'Nachfolger'},
+    len:{in:'String', out:'ℤ', name:'Länge'},
+    not:{in:'Bool', out:'Bool', name:'nicht'},
+    classify:{in:'Bild', out:'Label', name:'klassifiziere'}
+  };
+  function upd(){
+    const v = val.value, f = fun.value;
+    const vt = valTypes[v], ft = funs[f];
+    const ok = vt === ft.in;
+    if(ok){
+      res.innerHTML = `<span style="color:#4ade80">✓ TYP-CHECK BESTANDEN</span>\n\n${ft.name}(${valLbls[v]})  :  ${ft.out}\n\n<span style="color:#a0aec8">Die Funktion erwartet ${ft.in}, bekommt ${vt}. Passt!</span>`;
+    } else {
+      res.innerHTML = `<span style="color:#f87171">✗ TYP-FEHLER</span>\n\n${ft.name} erwartet <b>${ft.in}</b>\nbekommen: <b>${vt}</b>\n\n<span style="color:#a0aec8">Der Compiler weigert sich, das Programm laufen zu lassen. Fehler zur Compile-Zeit gefangen.</span>`;
+    }
+  }
+  val.onchange = upd; fun.onchange = upd; upd();
+})();
+
+// ==================== CURRY-HOWARD ====================
+(function(){
+  const s = $('chSlider'), lab = $('chVal'), logic = $('chLogic'), type = $('chType');
+  const items = [
+    {name:'A ∧ B', logic:'A ∧ B (A und B)', type:'A × B  (Paar-Typ)', desc:'Ein Beweis von A∧B = ein Paar (Beweis von A, Beweis von B)'},
+    {name:'A ∨ B', logic:'A ∨ B (A oder B)', type:'A + B  (Summen-Typ)', desc:'Ein Beweis von A∨B = entweder ein Beweis von A oder ein Beweis von B'},
+    {name:'A ⇒ B', logic:'A ⇒ B (A impliziert B)', type:'A → B  (Funktions-Typ)', desc:'Ein Beweis von A⇒B = eine Funktion, die aus jedem Beweis von A einen Beweis von B macht'},
+    {name:'∀x.P(x)', logic:'∀x. P(x)', type:'Π(x:X). P(x)  (dep. Produkt)', desc:'Beweis von "für alle x, P(x)" = Funktion, die für jedes x einen Beweis von P(x) liefert'}
+  ];
+  function upd(){
+    const it = items[+s.value];
+    lab.textContent = it.name;
+    logic.innerHTML = it.logic + '<div style="color:#a0aec8;font-size:.85rem;margin-top:.6rem">Aussage der klassischen Logik</div>';
+    type.innerHTML = it.type + '<div style="color:#a0aec8;font-size:.85rem;margin-top:.6rem;font-family:sans-serif">' + it.desc + '</div>';
+  }
+  s.oninput = upd; upd();
+})();
+
+// ==================== HOMOTOPY DEFORMATION ====================
+(function(){
+  const c = $('homoCanvas'); const ctx = c.getContext('2d');
+  const def = $('hDef'), defV = $('hDefVal'), shape = $('hShape'), shapeV = $('hShapeVal');
+  const shapes = ['Bogen','Zickzack','Welle'];
+  function pathFn(x, kind){
+    // returns y offset from center given normalized x in [0,1]
+    if(kind===0) return -Math.sin(x*Math.PI)*100;
+    if(kind===1) return -Math.abs(((x*4)%1)-0.5)*160+40;
+    return Math.sin(x*Math.PI*3)*70;
+  }
+  function draw(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    const y0 = H/2+80;
+    const x0=100, x1=W-100;
+    const t = +def.value; defV.textContent=t.toFixed(2);
+    const sh = +shape.value; shapeV.textContent = shapes[sh];
+    // endpoints
+    // draw start path (blue) - always kind 0
+    ctx.strokeStyle='rgba(124,156,255,0.9)'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const u = i/100;
+      const x = lerp(x0,x1,u);
+      const y = y0 + pathFn(u, 0);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // target path (purple) - kind = shape
+    ctx.strokeStyle='rgba(192,132,252,0.9)'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const u = i/100;
+      const x = lerp(x0,x1,u);
+      const y = y0 + pathFn(u, sh);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // interpolated (white) - shows homotopy at parameter t
+    // Draw many intermediate paths as ghosts
+    for(let k=1;k<=6;k++){
+      const alpha = k/7 * t;
+      if(alpha<0.02) continue;
+      ctx.strokeStyle=`rgba(255,255,255,${0.05+alpha*0.15})`; ctx.lineWidth=1;
+      ctx.beginPath();
+      const tk = (k/7);
+      for(let i=0;i<=100;i++){
+        const u = i/100;
+        const x = lerp(x0,x1,u);
+        const y = y0 + lerp(pathFn(u,0), pathFn(u,sh), tk*t);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+    // current interpolation
+    ctx.strokeStyle=`rgba(255,255,255,${0.4+t*0.5})`; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const u = i/100;
+      const x = lerp(x0,x1,u);
+      const y = y0 + lerp(pathFn(u,0), pathFn(u,sh), t);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // endpoints
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.arc(x0,y0,9,0,TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(x1,y0,9,0,TAU); ctx.fill();
+    ctx.fillStyle='#e8ecf7'; ctx.font='14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('a', x0, y0+30); ctx.fillText('b', x1, y0+30);
+    // legend
+    ctx.textAlign='left'; ctx.font='13px sans-serif';
+    ctx.fillStyle='#7c9cff'; ctx.fillText('— Start-Pfad p', 20, 30);
+    ctx.fillStyle='#c084fc'; ctx.fillText('— Ziel-Pfad q', 20, 50);
+    ctx.fillStyle='#fff'; ctx.fillText('— aktuelle Deformation H(t)', 20, 70);
+  }
+  def.oninput = draw; shape.oninput = draw; draw();
+})();
+
+// ==================== HOLE ====================
+(function(){
+  const c = $('holeCanvas'); const ctx = c.getContext('2d');
+  const s = $('hHole'), v = $('hHoleVal'), st = $('holeStatus');
+  function draw(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    const cx=W/2, cy=H/2+10;
+    const t = +s.value; v.textContent=t.toFixed(2);
+    // Hole
+    ctx.fillStyle='#151b2e'; ctx.strokeStyle='#f87171'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(cx,cy,45,0,TAU); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#f87171'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('LOCH', cx, cy+4);
+    // start endpoint & end endpoint
+    const ax=cx-140, ay=cy, bx=cx+140, by=cy;
+    // Path that goes around top
+    ctx.strokeStyle='#7c9cff'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const u = i/100;
+      const x = lerp(ax,bx,u);
+      const y = ay - Math.sin(u*Math.PI)*90;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // Target path (below)
+    ctx.strokeStyle='#c084fc'; ctx.lineWidth=3;
+    ctx.beginPath();
+    for(let i=0;i<=100;i++){
+      const u = i/100;
+      const x = lerp(ax,bx,u);
+      const y = ay + Math.sin(u*Math.PI)*90;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    // Try to interpolate — but paths must pass through hole!
+    // If t>0, show attempt with collision
+    if(t>0){
+      const attemptY = lerp(-90, 90, t); // amplitude flip
+      ctx.strokeStyle=`rgba(255,255,255,${0.5+t*0.4})`; ctx.lineWidth=2;
+      ctx.beginPath();
+      let hit = false;
+      for(let i=0;i<=100;i++){
+        const u = i/100;
+        const x = lerp(ax,bx,u);
+        // linear interp of the two sin-arcs
+        const y = ay + lerp(-Math.sin(u*Math.PI)*90, Math.sin(u*Math.PI)*90, t);
+        if(Math.hypot(x-cx,y-cy)<45) hit = true;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      if(hit && t>0.15 && t<0.85){
+        // draw collision
+        ctx.fillStyle='rgba(248,113,113,0.4)';
+        ctx.beginPath(); ctx.arc(cx,cy,45,0,TAU); ctx.fill();
+        st.innerHTML = '<span style="color:#f87171">✗ Kollision! Der Deformations-Versuch trifft das Loch — Homotopie NICHT möglich.</span>';
+      } else {
+        st.innerHTML = '<span style="color:#a0aec8">Versuche zu deformieren...</span>';
+      }
+    } else {
+      st.innerHTML = '<span style="color:#a0aec8">Zwei Pfade um dasselbe Loch — obere und untere Route. Sind sie homotop?</span>';
+    }
+    // endpoints
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.arc(ax,ay,7,0,TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(bx,by,7,0,TAU); ctx.fill();
+  }
+  s.oninput = draw; draw();
+})();
+
+// ==================== IDENTITY TYPES ====================
+(function(){
+  const c = $('idCanvas'); const ctx = c.getContext('2d');
+  const nS = $('idN'), nV = $('idNVal'), math = $('idMath'), anim = $('idAnim');
+  let anT = 0, running=false;
+  function draw(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    const n = +nS.value; nV.textContent = n;
+    const ax = 180, bx = W-180, cy = H/2;
+    // draw type A as blob
+    ctx.strokeStyle='rgba(124,156,255,0.25)'; ctx.lineWidth=2;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.ellipse(W/2, cy, W/2-40, H/2-30, 0, 0, TAU); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(124,156,255,0.7)'; ctx.font='14px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('Typ A', 30, 30);
+    // paths between a and b
+    for(let k=0;k<n;k++){
+      const spread = n===1 ? 0 : (k/(n-1) - 0.5);
+      const amp = spread * 110;
+      ctx.strokeStyle = `hsla(${210+k*30},70%,65%,0.85)`;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for(let i=0;i<=100;i++){
+        const u = i/100;
+        const x = lerp(ax,bx,u);
+        // animate travel
+        const phase = running ? (u - anT) : u;
+        const y = cy + Math.sin(u*Math.PI) * amp;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      // label
+      ctx.fillStyle=`hsla(${210+k*30},70%,75%,0.9)`;
+      ctx.font='12px monospace';
+      const midX = (ax+bx)/2;
+      const midY = cy + Math.sin(Math.PI/2)*amp;
+      ctx.fillText(`p${k===0?'':'\u2081234'[k]||k}`, midX-8, midY - (amp>=0?8:-16));
+      // animated traveler
+      if(running){
+        const u = (anT + k*0.15) % 1;
+        const x = lerp(ax,bx,u);
+        const y = cy + Math.sin(u*Math.PI) * amp;
+        ctx.fillStyle='#fff';
+        ctx.beginPath(); ctx.arc(x,y,5,0,TAU); ctx.fill();
+      }
+    }
+    // endpoints
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath(); ctx.arc(ax,cy,11,0,TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(bx,cy,11,0,TAU); ctx.fill();
+    ctx.fillStyle='#0a0e1a'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('a', ax, cy+5); ctx.fillText('b', bx, cy+5);
+
+    // update math
+    const eq = n===1
+      ? '\\text{Id}_A(a,b) \\ni p_0'
+      : `\\text{Id}_A(a,b) \\ni p_0, p_1${n>2?', p_2':''}${n>3?', p_3':''}${n>4?', p_4':''}`;
+    tex(math, eq + ' \\qquad \\text{— jeder Pfad ist ein „Beweis der Gleichheit"}', true);
+  }
+  nS.oninput = draw;
+  anim.onclick = ()=>{
+    running = !running;
+    anim.textContent = running ? 'Pfad-Animation ⏸' : 'Pfad-Animation ▶';
+  };
+  function loop(){
+    if(running){ anT = (anT+0.006)%1; draw(); }
+    requestAnimationFrame(loop);
+  }
+  draw(); loop();
+})();
+
+// ==================== HIGHER 3D ====================
+(function(){
+  const container = $('higher3d');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x050710);
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(3.5, 2.5, 4.5);
+  camera.lookAt(0,0,0);
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  function resize(){
+    const w = container.clientWidth, h = container.clientHeight;
+    renderer.setSize(w,h);
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+  }
+  container.appendChild(renderer.domElement);
+  resize(); addEventListener('resize', resize);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const l = new THREE.DirectionalLight(0xffffff, 0.8); l.position.set(3,5,4); scene.add(l);
+
+  // Group we can filter by dimension
+  const g0 = new THREE.Group(); // points
+  const g1 = new THREE.Group(); // paths
+  const g2 = new THREE.Group(); // 2-paths (surfaces)
+  const g3 = new THREE.Group(); // 3-paths (volumes)
+  scene.add(g0,g1,g2,g3);
+
+  // Two endpoints
+  const pA = new THREE.Vector3(-1.5, 0, 0);
+  const pB = new THREE.Vector3(1.5, 0, 0);
+  function ball(pos, color, r=0.13){
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 24, 16),
+      new THREE.MeshStandardMaterial({color, emissive:color, emissiveIntensity:0.4})
+    );
+    m.position.copy(pos); return m;
+  }
+  g0.add(ball(pA, 0xfbbf24, 0.16));
+  g0.add(ball(pB, 0xfbbf24, 0.16));
+
+  // Paths (1-cells): several curves between pA and pB
+  function pathCurve(bendY, bendZ){
+    const mid = new THREE.Vector3(0, bendY, bendZ);
+    return new THREE.QuadraticBezierCurve3(pA, mid, pB);
+  }
+  const pathParams = [
+    {y:0.9, z:0, color:0x7c9cff},
+    {y:-0.9, z:0, color:0xc084fc},
+    {y:0, z:0.9, color:0x4ade80},
+  ];
+  const paths = pathParams.map(p=>{
+    const curve = pathCurve(p.y, p.z);
+    const geo = new THREE.TubeGeometry(curve, 60, 0.035, 8, false);
+    const mat = new THREE.MeshStandardMaterial({color:p.color, emissive:p.color, emissiveIntensity:0.3});
+    const mesh = new THREE.Mesh(geo, mat);
+    g1.add(mesh);
+    return {curve, mesh, ...p};
+  });
+
+  // 2-paths: surfaces connecting pairs of paths
+  function surfaceBetween(c1, c2, color){
+    const N=30, M=12;
+    const geo = new THREE.BufferGeometry();
+    const verts = [];
+    for(let i=0;i<N;i++){
+      for(let j=0;j<M;j++){
+        const u = i/(N-1);
+        const v = j/(M-1);
+        const p1 = c1.getPoint(u);
+        const p2 = c2.getPoint(u);
+        const p = new THREE.Vector3().lerpVectors(p1, p2, v);
+        verts.push(p.x,p.y,p.z);
+      }
+    }
+    const idx = [];
+    for(let i=0;i<N-1;i++){
+      for(let j=0;j<M-1;j++){
+        const a = i*M+j, b = i*M+j+1, c=(i+1)*M+j, d=(i+1)*M+j+1;
+        idx.push(a,b,c, b,d,c);
+      }
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(verts,3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshStandardMaterial({color, transparent:true, opacity:0.35, side:THREE.DoubleSide, emissive:color, emissiveIntensity:0.15});
+    return new THREE.Mesh(geo, mat);
+  }
+  g2.add(surfaceBetween(paths[0].curve, paths[1].curve, 0xff80c0));
+  g2.add(surfaceBetween(paths[0].curve, paths[2].curve, 0x80f0ff));
+
+  // 3-path (volume): shifted variants
+  function volumeBetween(c1, c2, c3, color){
+    const N=20, M=10, K=6;
+    const geo = new THREE.BufferGeometry();
+    const verts = [];
+    const idx = [];
+    // just skin the outer shell for visibility
+    const pts = [];
+    for(let k=0;k<K;k++){
+      for(let i=0;i<N;i++){
+        const u = i/(N-1);
+        const w = k/(K-1);
+        const p1 = c1.getPoint(u);
+        const p2 = c2.getPoint(u);
+        const p3 = c3.getPoint(u);
+        // barycentric-ish blend
+        const p = new THREE.Vector3()
+          .addScaledVector(p1, (1-w)*0.5)
+          .addScaledVector(p2, (1-w)*0.5)
+          .addScaledVector(p3, w);
+        p.y += Math.sin(u*Math.PI)*w*0.3;
+        pts.push(p);
+      }
+    }
+    pts.forEach(p=>verts.push(p.x,p.y,p.z));
+    for(let k=0;k<K-1;k++){
+      for(let i=0;i<N-1;i++){
+        const a = k*N+i, b=k*N+i+1, c=(k+1)*N+i, d=(k+1)*N+i+1;
+        idx.push(a,b,c, b,d,c);
+      }
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(verts,3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshStandardMaterial({color, transparent:true, opacity:0.22, side:THREE.DoubleSide, wireframe:false});
+    return new THREE.Mesh(geo, mat);
+  }
+  g3.add(volumeBetween(paths[0].curve, paths[1].curve, paths[2].curve, 0xffd580));
+
+  const dimS = $('dimSlider'), dimV = $('dimVal'), rotS = $('rotSlider'), rotV = $('rotVal');
+  function updateDim(){
+    const d = +dimS.value; dimV.textContent = d;
+    g0.visible = true;
+    g1.visible = d>=1;
+    g2.visible = d>=2;
+    g3.visible = d>=3;
+  }
+  dimS.oninput = updateDim; updateDim();
+
+  // Mouse drag
+  let drag=false, lx=0, ly=0, rotY=0.5, rotX=0.2;
+  container.addEventListener('mousedown', e=>{drag=true; lx=e.clientX; ly=e.clientY; container.style.cursor='grabbing';});
+  addEventListener('mouseup', ()=>{drag=false; container.style.cursor='grab';});
+  addEventListener('mousemove', e=>{
+    if(!drag) return;
+    rotY += (e.clientX-lx)*0.01; rotX += (e.clientY-ly)*0.01;
+    rotX = clamp(rotX, -1.2, 1.2);
+    lx=e.clientX; ly=e.clientY;
+  });
+
+  function animate(){
+    const auto = +rotS.value;
+    rotV.textContent = auto<0.05 ? 'aus' : auto.toFixed(2);
+    rotY += auto*0.005;
+    const r = 6;
+    camera.position.x = Math.cos(rotY)*Math.cos(rotX)*r;
+    camera.position.z = Math.sin(rotY)*Math.cos(rotX)*r;
+    camera.position.y = Math.sin(rotX)*r + 1;
+    camera.lookAt(0,0,0);
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ==================== VERIFICATION ====================
+(function(){
+  const steps = document.querySelectorAll('#vSteps .step');
+  const c = $('vCanvas'); const ctx = c.getContext('2d');
+  const title = $('vTitle'), desc = $('vDesc'), math = $('vMath'), explain = $('vExplain');
+  let active = 0;
+  const cases = [
+    {
+      title: '🔒 Differential Privacy',
+      desc: 'Ein Algorithmus verarbeitet sensible Nutzerdaten. Wir wollen beweisen: Auch bei Kenntnis der Ausgabe kann kein einzelner Nutzer identifiziert werden.',
+      math: '\\forall D, D\'.\\; d(D,D\')=1 \\Rightarrow \\text{Id}\\big(A(D),\\, A(D\')\\big)_{\\approx_\\varepsilon}',
+      explain: 'Zwei Datensätze, die sich in genau einem Nutzer unterscheiden, produzieren Ausgaben, die via HoTT-Identitätspfad ε-nah verbunden sind. Kein einzelner Nutzer verändert die Antwort merklich.'
+    },
+    {
+      title: '⚖️ Fairness bei Kreditentscheidungen',
+      desc: 'Zwei Antragsteller, gleiche finanzielle Situation, unterschiedliches Geschlecht. Beweise: gleiche Entscheidung.',
+      math: '\\forall x,y.\\; \\text{FinIdent}(x,y) \\Rightarrow \\text{Id}\\big(M(x),\\, M(y)\\big)',
+      explain: 'Der Identitätstyp erzwingt: Für alle finanziell äquivalenten Paare liefert das Modell einen Pfad, der die Ausgaben verbindet — d.h. sie sind gleich. Formal geprüft, keine statistische Hoffnung.'
+    },
+    {
+      title: '🖼️ Robustheit gegen Adversarial Attacks',
+      desc: 'Ein Bildklassifikator soll trotz kleiner Pixel-Störungen stabil bleiben.',
+      math: '\\forall x, \\delta.\\; \\|\\delta\\|<\\varepsilon \\Rightarrow \\text{Id}\\big(C(x),\\, C(x+\\delta)\\big)',
+      explain: 'Für jeden Störvektor δ innerhalb eines ε-Balls existiert ein Pfad, der die Klassifikationsausgaben verbindet — d.h. das Label ändert sich nicht. HoTT liefert einen formalen Beweis über einen unendlichen Eingaberaum.'
+    }
+  ];
+
+  function drawScenario(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    if(active===0){
+      // Two datasets side by side, one row difference
+      ctx.fillStyle='#a0aec8'; ctx.font='13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Datensatz D', 120, 30);
+      ctx.fillText("Datensatz D'", 380, 30);
+      for(let i=0;i<8;i++){
+        ctx.fillStyle = '#1f2937';
+        ctx.fillRect(60,50+i*30,120,22);
+        ctx.fillRect(320,50+i*30,120,22);
+        ctx.fillStyle='#7c9cff'; ctx.font='11px monospace'; ctx.textAlign='left';
+        ctx.fillText(`user_${i}: ${Math.floor(Math.random()*99)}`, 68, 66+i*30);
+        if(i===3){
+          ctx.fillStyle='#f87171';
+          ctx.fillText(`user_3: ✗`, 328, 66+i*30);
+        } else {
+          ctx.fillStyle='#7c9cff';
+          ctx.fillText(`user_${i}: ${Math.floor(Math.random()*99)}`, 328, 66+i*30);
+        }
+      }
+      // arrows to A(D), A(D')
+      ctx.strokeStyle='#4ade80'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(120,300); ctx.lineTo(120,340); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(380,300); ctx.lineTo(380,340); ctx.stroke();
+      ctx.fillStyle='#4ade80'; ctx.font='bold 14px monospace'; ctx.textAlign='center';
+      ctx.fillText('A(D) = 42.7', 120, 340);
+      ctx.fillText("A(D') = 42.8", 380, 340);
+      // identity path
+      ctx.strokeStyle='#c084fc'; ctx.setLineDash([4,4]); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(180,335); ctx.quadraticCurveTo(250,320,320,335); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#c084fc'; ctx.font='11px sans-serif';
+      ctx.fillText('Identitätspfad (ε-nah)', 250, 315);
+    } else if(active===1){
+      // Two applicants
+      const cx=c.width/2;
+      ctx.fillStyle='#a0aec8'; ctx.font='13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Antrag A', 120, 40); ctx.fillText('Antrag B', 380, 40);
+      // profiles
+      ctx.fillStyle='#7c9cff'; ctx.font='40px sans-serif';
+      ctx.fillText('👨', 120, 90); ctx.fillText('👩', 380, 90);
+      const stats = [['Einkommen','€65k'],['Kredit-Score','740'],['Alter','34'],['Schulden','€12k']];
+      ctx.font='12px monospace';
+      stats.forEach((s,i)=>{
+        ctx.fillStyle='#a0aec8'; ctx.textAlign='right';
+        ctx.fillText(s[0]+':', 175, 130+i*22);
+        ctx.fillText(s[0]+':', 435, 130+i*22);
+        ctx.fillStyle='#e8ecf7'; ctx.textAlign='left';
+        ctx.fillText(s[1], 185, 130+i*22);
+        ctx.fillText(s[1], 445, 130+i*22);
+      });
+      // Model
+      ctx.fillStyle='#151b2e'; ctx.strokeStyle='#7c9cff';
+      ctx.fillRect(cx-60,260,120,40); ctx.strokeRect(cx-60,260,120,40);
+      ctx.fillStyle='#7c9cff'; ctx.font='13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('KI-Modell M', cx, 285);
+      ctx.strokeStyle='#4ade80'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(150,230); ctx.lineTo(cx-30,265); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(410,230); ctx.lineTo(cx+30,265); ctx.stroke();
+      // outputs
+      ctx.beginPath(); ctx.moveTo(cx-20,300); ctx.lineTo(120,340); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+20,300); ctx.lineTo(380,340); ctx.stroke();
+      ctx.fillStyle='#4ade80'; ctx.font='bold 14px sans-serif';
+      ctx.fillText('✓ ZUSAGE', 120, 345);
+      ctx.fillText('✓ ZUSAGE', 380, 345);
+      ctx.strokeStyle='#c084fc'; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(170,340); ctx.quadraticCurveTo(250,325,330,340); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#c084fc'; ctx.font='11px sans-serif';
+      ctx.fillText('Id(M(A), M(B))', 250, 320);
+    } else {
+      // Adversarial
+      const cx=c.width/2;
+      ctx.fillStyle='#a0aec8'; ctx.font='13px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('Original x', 120, 30);
+      ctx.fillText('x + δ (klein)', 380, 30);
+      // draw pixel grid
+      function pixgrid(cx0, cy0, jitter){
+        for(let i=0;i<8;i++)for(let j=0;j<8;j++){
+          const v = 40 + ((i*j*17)%180) + (jitter? (Math.random()-0.5)*30:0);
+          ctx.fillStyle=`rgb(${v},${v*0.8},${v*0.6})`;
+          ctx.fillRect(cx0+j*15,cy0+i*15,14,14);
+        }
+      }
+      pixgrid(70,50,false); pixgrid(330,50,true);
+      // ε ball
+      ctx.strokeStyle='rgba(192,132,252,0.4)'; ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.arc(410,110,80,0,TAU); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#c084fc'; ctx.font='11px sans-serif';
+      ctx.fillText('ε-Ball', 470, 60);
+      // outputs
+      ctx.strokeStyle='#4ade80'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(130,200); ctx.lineTo(130,240); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(390,200); ctx.lineTo(390,240); ctx.stroke();
+      ctx.fillStyle='#4ade80'; ctx.font='bold 15px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('🐼 Panda', 130, 260);
+      ctx.fillText('🐼 Panda', 390, 260);
+      // identity
+      ctx.strokeStyle='#c084fc'; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(180,258); ctx.quadraticCurveTo(260,240,340,258); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#c084fc'; ctx.font='11px sans-serif';
+      ctx.fillText('Id(C(x), C(x+δ)) — Klasse invariant', 260, 235);
+      ctx.fillStyle='#a0aec8'; ctx.font='12px sans-serif';
+      ctx.fillText('HoTT beweist: alle δ mit ‖δ‖<ε liefern denselben Pfad zum Label', 260, 320);
+    }
+  }
+
+  function activate(i){
+    active = i;
+    steps.forEach(s=>s.classList.toggle('active', +s.dataset.v===i));
+    const cs = cases[i];
+    title.textContent = cs.title;
+    desc.textContent = cs.desc;
+    tex(math, cs.math, true);
+    explain.textContent = cs.explain;
+    drawScenario();
+  }
+  steps.forEach(s=> s.onclick = ()=> activate(+s.dataset.v));
+  activate(0);
+})();
+
+// ==================== UNCERTAINTY: probabilistic diagnosis ====================
+(function(){
+  const s1 = $('s1'), s2 = $('s2'), s3 = $('s3');
+  const v1 = $('s1Val'), v2 = $('s2Val'), v3 = $('s3Val');
+  function upd(){
+    v1.textContent = (+s1.value).toFixed(2);
+    v2.textContent = (+s2.value).toFixed(2);
+    v3.textContent = (+s3.value).toFixed(2);
+    const symp = +s1.value, test = +s2.value, rel = +s3.value;
+    // simple bayes-like: prior priors of 4 diagnoses
+    const priors = [0.4, 0.25, 0.2, 0.15];
+    // likelihoods roughly influenced by symptom and test
+    const like = [
+      symp*0.7 + test*rel*0.3 + 0.1,      // Grippe
+      symp*0.4 + test*rel*0.5 + 0.1,      // Bronchitis
+      symp*0.2 + test*rel*0.7 + 0.05,     // COVID
+      (1-symp)*0.6 + (1-test)*0.4 + 0.05  // Gesund
+    ];
+    const post = priors.map((p,i)=>p*like[i]);
+    const Z = post.reduce((a,b)=>a+b,0);
+    const norm = post.map(x=>x/Z);
+    const labels = ['Grippe','Bronchitis','COVID-19','Gesund'];
+    const colors = ['#7c9cff','#c084fc','#f472b6','#4ade80'];
+    Plotly.react('uncertPlot', [{
+      x: labels, y: norm, type:'bar',
+      marker:{color:colors, line:{color:'#151b2e', width:1}},
+      text: norm.map(x=>(x*100).toFixed(1)+'%'),
+      textposition:'outside',
+      textfont:{color:'#e8ecf7'}
+    }], {
+      paper_bgcolor:'#060812', plot_bgcolor:'#060812',
+      font:{color:'#a0aec8'},
+      margin:{t:20,r:20,b:40,l:50},
+      yaxis:{title:'Wahrscheinlichkeit', range:[0,1], gridcolor:'#1a2138'},
+      xaxis:{gridcolor:'#1a2138'}
+    }, {displayModeBar:false, responsive:true});
+  }
+  s1.oninput=upd; s2.oninput=upd; s3.oninput=upd; upd();
+})();
+
+// ==================== META UNCERTAINTY ====================
+(function(){
+  const c = $('metaUncert'); const ctx = c.getContext('2d');
+  const mu = $('mu'), mv = $('muVal');
+  function gauss(x, m, s){ return Math.exp(-0.5*((x-m)/s)**2)/(s*Math.sqrt(TAU)); }
+  function draw(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    const meta = +mu.value; mv.textContent = meta.toFixed(2);
+    // draw many candidate distributions (higher-order = uncertainty about which)
+    const N = 12;
+    for(let k=0;k<N;k++){
+      const shift = (Math.random()-0.5)*meta*3;
+      const spread = 1 + (Math.random()-0.5)*meta*1.5;
+      // deterministic-ish based on k
+      const s = (k/N - 0.5)*meta*4;
+      const sig = 1 + Math.sin(k*3.3)*meta*0.6;
+      ctx.strokeStyle=`hsla(${210 + k*15},70%,65%,${0.15 + (1-meta)*0.15})`;
+      ctx.lineWidth=1;
+      ctx.beginPath();
+      for(let i=0;i<=W;i+=2){
+        const x = (i/W - 0.5)*10;
+        const y = gauss(x, s, Math.abs(sig)+0.3);
+        const py = H - 30 - y*H*0.7;
+        if(i===0) ctx.moveTo(i,py); else ctx.lineTo(i,py);
+      }
+      ctx.stroke();
+    }
+    // draw the "mean" bold
+    ctx.strokeStyle='#c084fc'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let i=0;i<=W;i+=1){
+      const x = (i/W - 0.5)*10;
+      const y = gauss(x, 0, 1 + meta);
+      const py = H - 30 - y*H*0.7;
+      if(i===0) ctx.moveTo(i,py); else ctx.lineTo(i,py);
+    }
+    ctx.stroke();
+    // labels
+    ctx.fillStyle='#c084fc'; ctx.font='12px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('— Bayes-Erwartung (1. Ordnung)', 20, 25);
+    ctx.fillStyle='#7c9cff';
+    ctx.fillText('— HoTT: alle plausiblen Verteilungen (2. Ordnung)', 20, 45);
+    ctx.fillStyle='#a0aec8'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Wahrscheinlichkeits-Achse', W/2, H-8);
+  }
+  mu.oninput = draw; draw();
+})();
+
+// ==================== ONTOLOGY GRAPH ====================
+(function(){
+  const c = $('ontoCanvas'); const ctx = c.getContext('2d');
+  const eq = $('eqSlider'), eqV = $('eqVal'), ds = $('dsSlider'), dsV = $('dsVal');
+
+  // base concepts: disease, symptoms, treatments
+  const base = [
+    {id:'d1', label:'Grippe', type:'Krankheit', x:.3, y:.4, src:1},
+    {id:'s1', label:'Fieber', type:'Symptom', x:.15, y:.15, src:1},
+    {id:'s2', label:'Husten', type:'Symptom', x:.15, y:.65, src:1},
+    {id:'t1', label:'Ruhe', type:'Behandlung', x:.55, y:.2, src:1},
+    {id:'t2', label:'Flüssigkeit', type:'Behandlung', x:.55, y:.6, src:1},
+    // src 2
+    {id:'d1b', label:'Influenza', type:'Krankheit', x:.75, y:.4, src:2, alias:'d1'},
+    {id:'s1b', label:'erhöhte Temp.', type:'Symptom', x:.9, y:.2, src:2, alias:'s1'},
+    {id:'t1b', label:'Bettruhe', type:'Behandlung', x:.9, y:.55, src:2, alias:'t1'},
+    // src 3
+    {id:'d1c', label:'Flu', type:'Krankheit', x:.45, y:.85, src:3, alias:'d1'},
+    {id:'s2c', label:'Reizhusten', type:'Symptom', x:.2, y:.9, src:3, alias:'s2'},
+  ];
+  const edges = [
+    ['d1','s1','hat_symptom'],['d1','s2','hat_symptom'],
+    ['d1','t1','behandelt_mit'],['d1','t2','behandelt_mit'],
+    ['d1b','s1b','hat_symptom'],['d1b','t1b','behandelt_mit'],
+    ['d1c','s2c','hat_symptom'],
+  ];
+  const colors = {'Krankheit':'#f472b6','Symptom':'#fbbf24','Behandlung':'#4ade80'};
+
+  function draw(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    const nSrc = +ds.value; dsV.textContent = nSrc;
+    const showEq = +eq.value; eqV.textContent = showEq? 'an':'aus';
+    const visible = base.filter(n=>n.src<=nSrc);
+
+    // draw edges
+    ctx.strokeStyle='#2a3350'; ctx.lineWidth=1.5;
+    for(const [a,b,lbl] of edges){
+      const na = visible.find(n=>n.id===a);
+      const nb = visible.find(n=>n.id===b);
+      if(!na||!nb) continue;
+      ctx.beginPath();
+      ctx.moveTo(na.x*W, na.y*H);
+      ctx.lineTo(nb.x*W, nb.y*H);
+      ctx.stroke();
+    }
+
+    // identity paths (HoTT equivalences)
+    if(showEq){
+      for(const n of visible){
+        if(!n.alias) continue;
+        const target = visible.find(m=>m.id===n.alias);
+        if(!target) continue;
+        ctx.strokeStyle='rgba(192,132,252,0.7)';
+        ctx.lineWidth=2;
+        ctx.setLineDash([6,4]);
+        ctx.beginPath();
+        const x1=n.x*W, y1=n.y*H, x2=target.x*W, y2=target.y*H;
+        const mx=(x1+x2)/2, my=(y1+y2)/2 - 30;
+        ctx.moveTo(x1,y1);
+        ctx.quadraticCurveTo(mx,my,x2,y2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // draw nodes
+    for(const n of visible){
+      const x=n.x*W, y=n.y*H;
+      ctx.fillStyle=colors[n.type];
+      ctx.beginPath(); ctx.arc(x,y,20,0,TAU); ctx.fill();
+      ctx.strokeStyle='#0a0e1a'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='#e8ecf7'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(n.label, x, y+35);
+      ctx.fillStyle='#a0aec8'; ctx.font='9px sans-serif';
+      ctx.fillText('Quelle '+n.src, x, y+48);
+    }
+
+    // legend
+    ctx.textAlign='left';
+    let lx=20, ly=25;
+    for(const [k,c] of Object.entries(colors)){
+      ctx.fillStyle=c; ctx.beginPath(); ctx.arc(lx,ly,7,0,TAU); ctx.fill();
+      ctx.fillStyle='#e8ecf7'; ctx.font='12px sans-serif';
+      ctx.fillText(k, lx+15, ly+4);
+      lx += 130;
+    }
+    if(showEq){
+      ctx.strokeStyle='rgba(192,132,252,0.7)'; ctx.setLineDash([6,4]); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(W-260, ly); ctx.lineTo(W-230,ly); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#c084fc'; ctx.font='12px sans-serif';
+      ctx.fillText('HoTT-Identitätspfad', W-220, ly+4);
+    }
+  }
+  eq.oninput=draw; ds.oninput=draw; draw();
+})();
+
+// ==================== BLOCH SPHERE (QUANTUM) ====================
+(function(){
+  const container = $('bloch3d');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x050710);
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(2.5, 1.8, 3);
+  const renderer = new THREE.WebGLRenderer({antialias:true});
+  container.appendChild(renderer.domElement);
+  function resize(){
+    const w=container.clientWidth, h=container.clientHeight;
+    renderer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix();
+  }
+  resize(); addEventListener('resize', resize);
+  scene.add(new THREE.AmbientLight(0xffffff,0.6));
+  const l = new THREE.DirectionalLight(0xffffff,0.7); l.position.set(3,4,3); scene.add(l);
+
+  // sphere wireframe
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 32, 24),
+    new THREE.MeshBasicMaterial({color:0x7c9cff, wireframe:true, transparent:true, opacity:0.15})
+  );
+  scene.add(sphere);
+  // equator ring
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(1, 0.005, 8, 64),
+    new THREE.MeshBasicMaterial({color:0xc084fc})
+  );
+  ring.rotation.x = Math.PI/2; scene.add(ring);
+  // axes
+  function axis(dir, color){
+    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), dir.clone().multiplyScalar(1.3)]);
+    return new THREE.Line(g, new THREE.LineBasicMaterial({color}));
+  }
+  scene.add(axis(new THREE.Vector3(0,1,0), 0xfbbf24));   // z / |0>
+  scene.add(axis(new THREE.Vector3(0,-1,0), 0xf87171));  // -z / |1>
+  scene.add(axis(new THREE.Vector3(1,0,0), 0x4ade80));
+  scene.add(axis(new THREE.Vector3(0,0,1), 0x60a5fa));
+  // labels via sprites
+  function label(text, pos, color){
+    const canv = document.createElement('canvas'); canv.width=128; canv.height=64;
+    const cx = canv.getContext('2d');
+    cx.fillStyle=color; cx.font='bold 40px sans-serif'; cx.textAlign='center';
+    cx.fillText(text, 64, 44);
+    const tex = new THREE.CanvasTexture(canv);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true}));
+    sp.position.copy(pos); sp.scale.set(0.35,0.18,1);
+    return sp;
+  }
+  scene.add(label('|0⟩', new THREE.Vector3(0,1.5,0),'#fbbf24'));
+  scene.add(label('|1⟩', new THREE.Vector3(0,-1.5,0),'#f87171'));
+
+  // state vector
+  const state = new THREE.Mesh(
+    new THREE.SphereGeometry(0.07, 16, 12),
+    new THREE.MeshStandardMaterial({color:0xffffff, emissive:0xffffff, emissiveIntensity:0.5})
+  );
+  scene.add(state);
+  const arrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), new THREE.Vector3(), 1, 0xffffff, 0.15, 0.08);
+  scene.add(arrow);
+
+  const thS = $('th'), phS = $('ph'), thV = $('thVal'), phV = $('phVal');
+  const qMath = $('qMath'), qMeasure = $('qMeasure'), qResult = $('qResult');
+  function upd(){
+    const th = +thS.value, ph = +phS.value;
+    thV.textContent = th.toFixed(2); phV.textContent = ph.toFixed(2);
+    const x = Math.sin(th)*Math.cos(ph);
+    const z = Math.sin(th)*Math.sin(ph);
+    const y = Math.cos(th);
+    state.position.set(x,y,z);
+    arrow.setDirection(new THREE.Vector3(x,y,z).normalize());
+    arrow.setLength(1, 0.15, 0.08);
+    const a = Math.cos(th/2), b = Math.sin(th/2);
+    tex(qMath, `|\\psi\\rangle = ${a.toFixed(2)}\\,|0\\rangle + ${b.toFixed(2)}e^{i\\cdot${ph.toFixed(2)}}\\,|1\\rangle`, true);
+    qResult.textContent = '';
+  }
+  qMeasure.onclick = ()=>{
+    const th = +thS.value;
+    const p0 = Math.cos(th/2)**2;
+    const outcome = Math.random()<p0 ? '|0⟩' : '|1⟩';
+    qResult.innerHTML = `→ Ergebnis: <span style="color:${outcome==='|0⟩'?'#fbbf24':'#f87171'}">${outcome}</span>  (P(|0⟩)=${(p0*100).toFixed(1)}%)`;
+  };
+  thS.oninput=upd; phS.oninput=upd; upd();
+
+  // drag
+  let drag=false, lx=0, ly=0, rotY=0.6, rotX=0.3;
+  container.addEventListener('mousedown', e=>{drag=true; lx=e.clientX; ly=e.clientY; container.style.cursor='grabbing';});
+  addEventListener('mouseup', ()=>{drag=false; container.style.cursor='grab';});
+  addEventListener('mousemove', e=>{
+    if(!drag) return;
+    rotY += (e.clientX-lx)*0.01; rotX += (e.clientY-ly)*0.01;
+    rotX = clamp(rotX,-1.2,1.2);
+    lx=e.clientX; ly=e.clientY;
+  });
+  function anim(){
+    const r = 3.5;
+    camera.position.x = Math.cos(rotY)*Math.cos(rotX)*r;
+    camera.position.z = Math.sin(rotY)*Math.cos(rotX)*r;
+    camera.position.y = Math.sin(rotX)*r;
+    camera.lookAt(0,0,0);
+    renderer.render(scene,camera);
+    requestAnimationFrame(anim);
+  }
+  anim();
+})();
+
+// ==================== XAI: decision paths ====================
+(function(){
+  const c = $('xaiCanvas'); const ctx = c.getContext('2d');
+  const eq = $('xaiEq'), eqV = $('xaiEqVal'), reset = $('xaiReset'), info = $('xaiInfo');
+  // Fake 2D input space with 3 decision regions
+  const W = c.width, H = c.height;
+  // Neural net layers
+  const layers = [4, 6, 6, 3];
+  const layerX = layers.map((_,i)=> 220 + i*180);
+  const nodes = layers.map((n,li)=> Array.from({length:n},(_,i)=>({
+    x: layerX[li],
+    y: 80 + (H-160)*(i+0.5)/n
+  })));
+
+  let clicks = [];  // input positions clicked
+  function classify(px, py){
+    // simple region: divide input pane in 3
+    const rx = px/200; // normalized
+    if(py < H/3) return 0;
+    if(py < 2*H/3) return 1;
+    return 2;
+  }
+  function computePath(px, py){
+    const cls = classify(px, py);
+    // pick a stable path through layers based on cls & position
+    const path = [];
+    for(let li=0; li<layers.length; li++){
+      const chosen = new Set();
+      // pick ~2 nodes per layer influenced by cls & py
+      const seed = (cls*7 + Math.floor(py/40)) % layers[li];
+      chosen.add(seed);
+      chosen.add((seed+2)%layers[li]);
+      path.push([...chosen]);
+    }
+    return {cls, path};
+  }
+  c.addEventListener('click', (e)=>{
+    const rect = c.getBoundingClientRect();
+    const cx = (e.clientX-rect.left) * (c.width/rect.width);
+    const cy = (e.clientY-rect.top) * (c.height/rect.height);
+    if(cx < 200){
+      clicks.push({x:cx, y:cy, ...computePath(cx,cy)});
+      if(clicks.length>6) clicks.shift();
+      draw();
+    }
+  });
+  reset.onclick = ()=>{ clicks=[]; draw(); };
+
+  function draw(){
+    ctx.fillStyle='#060812'; ctx.fillRect(0,0,W,H);
+    // input pane
+    ctx.fillStyle='#0f1424';
+    ctx.fillRect(20,50,180,H-100);
+    ctx.strokeStyle='#2a3350'; ctx.strokeRect(20,50,180,H-100);
+    // decision zones (colored bands)
+    const colors = ['#7c9cff','#c084fc','#4ade80'];
+    for(let i=0;i<3;i++){
+      ctx.fillStyle = colors[i]+'22';
+      ctx.fillRect(20, 50 + i*(H-100)/3, 180, (H-100)/3);
+    }
+    ctx.fillStyle='#a0aec8'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Eingaberaum', 110, 40);
+    ctx.fillText('(klick hier)', 110, H-20);
+    // Draw network nodes
+    nodes.forEach((layer, li)=>{
+      layer.forEach((n)=>{
+        ctx.fillStyle = '#151b2e';
+        ctx.strokeStyle = '#2a3350';
+        ctx.beginPath(); ctx.arc(n.x, n.y, 14, 0, TAU); ctx.fill(); ctx.stroke();
+      });
+      ctx.fillStyle='#a0aec8'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+      const labelTxt = li===0? 'Input' : li===layers.length-1? 'Output' : 'Hidden '+li;
+      ctx.fillText(labelTxt, layerX[li], 40);
+    });
+    // draw all-connections faint
+    ctx.strokeStyle='rgba(60,80,120,0.15)'; ctx.lineWidth=1;
+    for(let li=0;li<layers.length-1;li++){
+      for(const a of nodes[li]) for(const b of nodes[li+1]){
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+
+    // Draw active paths for each click
+    clicks.forEach((clk, ci)=>{
+      const col = colors[clk.cls];
+      // draw input dot
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(clk.x, clk.y, 7, 0, TAU); ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke();
+      // draw path through network
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2;
+      // from input to first layer
+      const firstNode = nodes[0][clk.path[0][0]];
+      ctx.beginPath();
+      ctx.moveTo(clk.x, clk.y);
+      ctx.lineTo(firstNode.x, firstNode.y);
+      ctx.stroke();
+      // through layers
+      for(let li=0; li<layers.length-1; li++){
+        for(const a of clk.path[li]){
+          for(const b of clk.path[li+1]){
+            ctx.beginPath();
+            ctx.moveTo(nodes[li][a].x, nodes[li][a].y);
+            ctx.lineTo(nodes[li+1][b].x, nodes[li+1][b].y);
+            ctx.stroke();
+          }
+        }
+      }
+      // highlight active nodes
+      for(let li=0;li<layers.length;li++){
+        for(const idx of clk.path[li]){
+          const n = nodes[li][idx];
+          ctx.fillStyle = col;
+          ctx.beginPath(); ctx.arc(n.x, n.y, 10, 0, TAU); ctx.fill();
+        }
+      }
+      // output label
+      const outNode = nodes[layers.length-1][clk.path[layers.length-1][0]];
+      ctx.fillStyle = col; ctx.font='bold 12px sans-serif'; ctx.textAlign='left';
+      const labels = ['Klasse A','Klasse B','Klasse C'];
+      ctx.fillText('→ '+labels[clk.cls], outNode.x+20, outNode.y+4);
+    });
+
+    // Show equivalence classes: group same-cls clicks with dotted lines
+    const showEq = +eq.value; eqV.textContent = showEq? 'ja':'nein';
+    if(showEq){
+      const groups = {};
+      clicks.forEach(c=>{ (groups[c.cls] ||= []).push(c); });
+      Object.entries(groups).forEach(([cls, arr])=>{
+        if(arr.length<2) return;
+        ctx.strokeStyle = colors[cls]+'aa';
+        ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+        for(let i=0;i<arr.length-1;i++){
+          const a=arr[i], b=arr[i+1];
+          ctx.beginPath();
+          const mx=(a.x+b.x)/2 - 30, my=(a.y+b.y)/2;
+          ctx.moveTo(a.x, a.y);
+          ctx.quadraticCurveTo(mx, my, b.x, b.y);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+      });
+    }
+
+    // Info hint
+    if(clicks.length===0){
+      ctx.fillStyle='#a0aec8'; ctx.font='14px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('↑ Klick in den Eingaberaum links ↑', W/2, H/2);
+    }
+  }
+
+  info.innerHTML = 'Jeder Klick zeigt den <b>Entscheidungspfad</b>. Eingaben derselben Klasse teilen ähnliche Pfade — HoTT macht diese „Pfad-Äquivalenz" formal fassbar: <code>Id(Entscheidung(x₁), Entscheidung(x₂))</code>.';
+  draw();
+})();
+
+// ==================== INITIAL KATEX RENDER ====================
+renderMathInElement(document.body, {
+  delimiters:[
+    {left:'$$', right:'$$', display:true},
+    {left:'$', right:'$', display:false}
+  ],
+  throwOnError:false
+});
+
+</script>
+</body>
+</html>
