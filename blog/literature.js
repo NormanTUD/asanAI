@@ -10176,6 +10176,48 @@ window.bibData = {
 		url: "https://archive.org/details/the-selfish-gene-r.-dawkins-1976-ww",
 		alternativetitle: "Dawkins, The Selfish Gene"
 	},
+	"merton1973norms": {
+		title: "The Normative Structure of Science",
+		author: "Robert K. Merton",
+		year: 1973,
+		url: "https://en.wikipedia.org/wiki/Robert_K._Merton",
+		alternativetitle: "Merton, The Normative Structure of Science"
+	},
+	"axelrod1984cooperation": {
+		title: "The Evolution of Cooperation",
+		author: "Robert Axelrod",
+		year: 1984,
+		url: "https://en.wikipedia.org/wiki/The_Evolution_of_Cooperation",
+		alternativetitle: "Axelrod, The Evolution of Cooperation"
+	},
+	"raymond1999cathedral": {
+		title: "The Cathedral and the Bazaar: Musings on Linux and Open Source by an Accidental Revolutionary",
+		author: "Eric S. Raymond",
+		year: 1999,
+		url: "http://www.catb.org/~esr/writings/cathedral-bazaar/cathedral-bazaar/",
+		alternativetitle: "Raymond, The Cathedral and the Bazaar"
+	},
+	"ietf_open": {
+		title: "The IETF and the Internet Standards Process",
+		author: "Internet Engineering Task Force",
+		year: "accessed 2026",
+		url: "https://www.ietf.org/",
+		alternativetitle: "The IETF (open standards, open competition)"
+	},
+	"benkler2006wealth": {
+		title: "The Wealth of Networks: How Social Production Transforms Markets and Freedom",
+		author: "Yochai Benkler",
+		year: 2006,
+		url: "https://en.wikipedia.org/wiki/The_Wealth_of_Networks",
+		alternativetitle: "Benkler, The Wealth of Networks"
+	},
+	"huggingface": {
+		title: "Hugging Face",
+		author: "Hugging Face",
+		year: "accessed 2026",
+		url: "https://huggingface.co/",
+		alternativetitle: "Hugging Face"
+	},
 
 	/* ── The deep cuts ── */
 	"diekelmann2010sleep": {
