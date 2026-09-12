@@ -135,6 +135,7 @@
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 	incl("Unexpected Capabilities of LLMs", "unexpected_capabilities");
 	incl("Appendix", "appendix");
+	incl("Software: Operating Systems, Programming Languages & the Abstraction Stack", "software");
 ?>
 </div>
 </body>
