@@ -547,21 +547,22 @@ function drawS4(){
   x4.fillStyle='rgba(240,171,252,0.35)';
   for(const f of s4Faces){
     x4.beginPath();
-    x4.moveTo(s4Verts[f[0]][0], s4Verts[f[    x4.lineTo(s4Verts, s4Verts1]);
-    x4.lineTo(s4Verts0], s4Verts[f
+    x4.moveTo(s4Verts[f[0]][0], s4Verts[f[0]][1]);
+    x4.lineTo(s4Verts[f[1]][0], s4Verts[f[1]][1]);
+    x4.lineTo(s4Verts[f[2]][0], s4Verts[f[2]][1]);
     x4.closePath(); x4.fill();
   }
   x4.strokeStyle='#7dd3fc'; x4.lineWidth=2;
   for(const e of s4Edges){
     x4.beginPath();
     x4.moveTo(s4Verts[e[0]][0], s4Verts[e[0]][1]);
-    x4.lineTo(s4Verts[e s4Verts[e[1]][1]);
+    x4.lineTo(s4Verts[e[1]][0], s4Verts[e[1]][1]);
     x4.stroke();
   }
   for(let i=0;i<s4Verts.length;i++){
     x4.fillStyle = s4Selected.includes(i) ? '#fde047' : '#7dd3fc';
     x4.beginPath();
-    x4.arc(s4Verts[i][0], s4Verts[ s4Selected.includes(i) ? 8 : 6, 0, Math.PI*2);
+    x4.arc(s4Verts[i][0], s4Verts[i][1], s4Selected.includes(i) ? 8 : 6, 0, Math.PI*2);
     x4.fill();
   }
   x4.fillStyle='#94a3b8'; x4.font='13px sans-serif'; x4.textAlign='left';
@@ -580,9 +581,7 @@ c4.addEventListener('click', e => {
   } else {
     let best=-1, bd=1e9;
     for(let i=0;i<s4Verts.length;i++){
-      const d = Math.hypot(s4Verts[i][0]-px, s4Verts);
-      if(d<bd && d<25){
-      const d = Math.hypot(s4Verts[i][0]-px, s4Verts-py);
+      const d = Math.hypot(s4Verts[i][0]-px, s4Verts[i][1]-py);
       if(d<bd && d<25){ bd=d; best=i; }
     }
     if(best<0) return;
@@ -591,14 +590,14 @@ c4.addEventListener('click', e => {
     if(s4Selected.length===need){
       if(s4Mode==='edge'){
         const [a,b] = [...s4Selected].sort((x,y)=>x-y);
-        if(!s4Edges.some(e=>e[0]===a&&e)) s4Edges.push([a,b]);
+        if(!s4Edges.some(e=>e[0]===a&&e[1]===b)) s4Edges.push([a,b]);
       } else {
         const [a,b,cc] = [...s4Selected].sort((x,y)=>x-y);
-        if(!s4Faces.some(f=>f[0]===a&&f===b&&f===cc)){
+        if(!s4Faces.some(f=>f[0]===a&&f[1]===b&&f[2]===cc)){
           s4Faces.push([a,b,cc]);
           // auto-add missing edges
           [[a,b],[b,cc],[a,cc]].forEach(pair=>{
-            if(!s4Edges.some(e=>e[0]===pair[0]&&e s4Edges.push(pair);
+            if(!s4Edges.some(e=>e[0]===pair[0]&&e[1]===pair[1])) s4Edges.push(pair);
           });
         }
       }
@@ -619,7 +618,7 @@ c4.addEventListener('click', e => {
     s4Edges.push([i, (i+1)%N < i ? (i+1)%N : (i+1)%N]);
   }
   // fix ordering
-  s4Edges = s4Edges.map(e=>[Math.min(e[0],e Math.max(e[0],e[1])]);
+  s4Edges = s4Edges.map(e=>[Math.min(e[0],e[1]), Math.max(e[0],e[1])]);
   drawS4();
 })();
 
