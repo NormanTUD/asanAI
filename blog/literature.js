@@ -10324,5 +10324,255 @@ window.bibData = {
 		author: "Lchung9779",
 		license: "CC BY 4.0",
 		alternativetitle: "A slot machine"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Software: Operating Systems, Programming Languages & the
+	 *  Abstraction Stack  (software.php)
+	 *  Primary papers (DOI) + official project/vendor sites. No Wikipedia.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"edvac_os": {
+		title: "The first operating system for the EDVAC",
+		author: "Charles H. Reitwiesner",
+		year: 1997,
+		url: "https://doi.org/10.1109/85.560738",
+		alternativetitle: "First OS for the EDVAC"
+	},
+	"ctss_annals": {
+		title: "CTSS — the compatible time-sharing system",
+		author: "MIT Project MAC",
+		year: 1992,
+		url: "https://doi.org/10.1109/85.145324",
+		alternativetitle: "CTSS"
+	},
+	"licklider": {
+		title: "Man-Computer Symbiosis",
+		author: "J. C. R. Licklider",
+		year: 1960,
+		url: "https://doi.org/10.1109/thfe2.1960.4503259",
+		alternativetitle: "Man-Computer Symbiosis"
+	},
+	"multics_plan9": {
+		title: "Multics and Plan 9: The Big Bangs in the Distributed Computer",
+		author: "Mohsen Mirtaheri",
+		year: 2014,
+		url: "https://doi.org/10.1109/mcse.2014.3",
+		alternativetitle: "Multics and Plan 9"
+	},
+	"unix_ts": {
+		title: "The UNIX Time-Sharing System",
+		author: "Ken Thompson, Dennis Ritchie",
+		year: 1978,
+		url: "https://doi.org/10.1002/j.1538-7305.1978.tb02136.x",
+		alternativetitle: "The UNIX Time-Sharing System"
+	},
+	"mach": {
+		title: "Mach and Matchmaker: kernel and language support for object-oriented systems",
+		author: "Avie Tevanian, et al.",
+		year: 1986,
+		url: "https://doi.org/10.1145/960112.28705",
+		alternativetitle: "Mach"
+	},
+	"mars_pathfinder": {
+		title: "Streamlined design approach lands Mars Pathfinder",
+		author: "Jet Propulsion Laboratory (JPL)",
+		year: 1999,
+		url: "https://doi.org/10.1109/52.795102",
+		alternativetitle: "Mars Pathfinder"
+	},
+	"garmisch1968": {
+		title: "Proceedings of the First International Conference on Software Engineering (Garmisch, 1968)",
+		author: "ACM (First International Conference on Software Engineering)",
+		year: 1968,
+		url: "https://doi.org/10.1145/1476589.1476605",
+		alternativetitle: "Garmisch 1968 (Software Engineering)"
+	},
+	"goto_harmful": {
+		title: "Go to Statement Considered Harmful",
+		author: "Edsger W. Dijkstra",
+		year: 1968,
+		url: "https://doi.org/10.1145/3544585.3544604",
+		alternativetitle: "Go to statement considered harmful"
+	},
+	"fortran2": {
+		title: "Report on the algorithmic language FORTRAN II",
+		author: "J. W. Backus, et al.",
+		year: 1962,
+		url: "https://doi.org/10.1145/367766.368151",
+		alternativetitle: "FORTRAN"
+	},
+	"algol60": {
+		title: "Revised report on the algorithmic language ALGOL 60",
+		author: "The ALGOL 60 Committee",
+		year: 1963,
+		url: "https://doi.org/10.1093/comjnl/5.4.349",
+		alternativetitle: "ALGOL 60"
+	},
+	"codd1970": {
+		title: "A Relational Model of Data for Large Shared Data Banks",
+		author: "Edgar F. Codd",
+		year: 1970,
+		url: "https://doi.org/10.1145/362384.362685",
+		alternativetitle: "The Relational Model"
+	},
+	"chm": {
+		title: "Computer History Museum",
+		author: "Computer History Museum",
+		year: "accessed 2026",
+		url: "https://computerhistory.org/",
+		alternativetitle: "Computer History Museum"
+	},
+	"bell_labs": {
+		title: "Bell Labs",
+		author: "Bell Laboratories",
+		year: "accessed 2026",
+		url: "https://www.bell-labs.com/",
+		alternativetitle: "Bell Labs"
+	},
+	"plan9_9front": {
+		title: "Plan 9 from User Space (9front)",
+		author: "9front / Plan 9 community",
+		year: "accessed 2026",
+		url: "https://9front.org/",
+		alternativetitle: "Plan 9 / 9front"
+	},
+	"gnu_hurd": {
+		title: "GNU Hurd",
+		author: "GNU Project",
+		year: "accessed 2026",
+		url: "https://www.gnu.org/software/hurd/",
+		alternativetitle: "GNU Hurd"
+	},
+	"minix3": {
+		title: "MINIX 3",
+		author: "Andrew S. Tanenbaum",
+		year: "accessed 2026",
+		url: "https://minix3.org/",
+		alternativetitle: "MINIX"
+	},
+	"windows_ms": {
+		title: "Windows",
+		author: "Microsoft",
+		year: "accessed 2026",
+		url: "https://www.microsoft.com/en-us/windows/",
+		alternativetitle: "Windows"
+	},
+	"isocpp": {
+		title: "C++ Standards",
+		author: "Standards Council of the C++ Foundation",
+		year: "accessed 2026",
+		url: "https://isocpp.org/",
+		alternativetitle: "C++"
+	},
+	"go_lang": {
+		title: "The Go Programming Language",
+		author: "The Go Team (Google)",
+		year: "accessed 2026",
+		url: "https://go.dev/",
+		alternativetitle: "Go"
+	},
+	"rust_lang": {
+		title: "The Rust Programming Language",
+		author: "The Rust Team",
+		year: "accessed 2026",
+		url: "https://www.rust-lang.org/",
+		alternativetitle: "Rust"
+	},
+	"git": {
+		title: "Git",
+		author: "The Git Project",
+		year: "accessed 2026",
+		url: "https://git-scm.com/",
+		alternativetitle: "Git"
+	},
+	"python": {
+		title: "Python 3 Documentation",
+		author: "Python Software Foundation",
+		year: "accessed 2026",
+		url: "https://docs.python.org/3/",
+		alternativetitle: "Python"
+	},
+	"python_zen": {
+		title: "The Zen of Python (PEP 20)",
+		author: "Tim Peters",
+		year: 2004,
+		url: "https://peps.python.org/pep-0020/",
+		alternativetitle: "The Zen of Python"
+	},
+	"java_oracle": {
+		title: "Java (Oracle)",
+		author: "Oracle",
+		year: "accessed 2026",
+		url: "https://www.oracle.com/java/",
+		alternativetitle: "Java"
+	},
+	"javascript_mdn": {
+		title: "JavaScript (MDN)",
+		author: "MDN (Mozilla)",
+		year: "accessed 2026",
+		url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+		alternativetitle: "JavaScript"
+	},
+	"csharp_ms": {
+		title: "C# (Microsoft Docs)",
+		author: "Microsoft",
+		year: "accessed 2026",
+		url: "https://learn.microsoft.com/en-us/dotnet/csharp/",
+		alternativetitle: "C#"
+	},
+	"haskell": {
+		title: "The Haskell Programming Language",
+		author: "The Haskell Foundation",
+		year: "accessed 2026",
+		url: "https://www.haskell.org/",
+		alternativetitle: "Haskell"
+	},
+	"prolog": {
+		title: "SWI-Prolog",
+		author: "The SWI-Prolog Team",
+		year: "accessed 2026",
+		url: "https://www.swi-prolog.org/",
+		alternativetitle: "Prolog"
+	},
+	"smalltalk": {
+		title: "Smalltalk",
+		author: "Smalltalk (smalltalk.com)",
+		year: "accessed 2026",
+		url: "https://www.smalltalk.com/",
+		alternativetitle: "Smalltalk"
+	},
+	"pascal": {
+		title: "Pascal",
+		author: "Pascal",
+		year: "accessed 2026",
+		url: "https://www.pascal.org/",
+		alternativetitle: "Pascal"
+	},
+	"apl_j": {
+		title: "APL / J",
+		author: "jsoftware",
+		year: "accessed 2026",
+		url: "https://www.jsoftware.com/",
+		alternativetitle: "APL"
+	},
+	"lispworks": {
+		title: "LispWorks (LISP)",
+		author: "Franz Inc.",
+		year: "accessed 2026",
+		url: "https://www.lispworks.com/",
+		alternativetitle: "LISP"
+	},
+	"dartmouth": {
+		title: "Dartmouth College (home of BASIC)",
+		author: "Dartmouth College",
+		year: "accessed 2026",
+		url: "https://www.dartmouth.edu/",
+		alternativetitle: "Dartmouth (BASIC)"
+	},
+	"gnu_make": {
+		title: "GNU Make",
+		author: "GNU Project (Stewart Kafka)",
+		year: "accessed 2026",
+		url: "https://www.gnu.org/software/make/",
+		alternativetitle: "make"
 	}
 };
