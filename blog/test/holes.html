@@ -939,7 +939,7 @@ function drawS7(){
   x7.strokeStyle='rgba(125,211,252,0.3)';
   for(const p of s7Points){
     x7.beginPath();
-    x7.arc(cx+p[0]*sc, cy+p*sc, eps*sc, 0, Math.PI*2);
+    x7.arc(cx+p[0]*sc, cy+p[1]*sc, eps*sc, 0, Math.PI*2);
     x7.fill();
   }
   const {b0, b1, edges} = computeBettis(eps);
@@ -947,15 +947,15 @@ function drawS7(){
   x7.strokeStyle='rgba(240,171,252,0.5)'; x7.lineWidth=1;
   for(const [a,b] of edges){
     x7.beginPath();
-    x7.moveTo(cx+s7Points[a][0]*sc, cy+s7Points*sc);
-    x7.lineTo(cx+s7Points[b][0]*sc, cy+s7Points[
+    x7.moveTo(cx+s7Points[a][0]*sc, cy+s7Points[a][1]*sc);
+    x7.lineTo(cx+s7Points[b][0]*sc, cy+s7Points[b][1]*sc);
     x7.stroke();
   }
   // draw points
   x7.fillStyle='#fde047';
   for(const p of s7Points){
     x7.beginPath();
-    x7.arc(cx+p[0]*sc, cy+p*sc, 3.5, 0, Math.PI*2);
+    x7.arc(cx+p[0]*sc, cy+p[1]*sc, 3.5, 0, Math.PI*2);
     x7.fill();
   }
   document.getElementById('p7b0').textContent = b0;
