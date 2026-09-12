@@ -25,8 +25,12 @@ The framing borrowed from the [Untold History](untold_history) chapter applies d
 <div class="md">
 ## The Abstraction Ladder, Stacked
 
-To keep the thread visible while we climb, here is the whole stack from silicon to sentence, with the historical moment each rung was nailed down:
+To keep the thread visible while we climb, here is the whole stack, from the first mechanical gears to the final sentence, with the historical moment each rung was nailed down:
 
+* **The automatic machine** (Hero of Alexandria, 1st c. CE) — the first *self-acting* machines; the ancestors of the automaton.
+* **The mechanical computer** (Leibniz’s Stepped Reckoner, 1674) — the first machine that *multiplied and divided*, and the first to work in **binary**.
+* **The programmable engine** (Babbage’s Analytical Engine, 1837) — the first machine *designed to be reprogrammed* by punched cards.
+* **The working computer** (Zuse Z3, 1941) — the first *automatic, fully programmable* computer actually built and running.
 * **Silicon / the transistor** (1947) — the physical switch.
 * **The stored program** (1948) — the idea that the *instructions* live in the same memory as the *data* (\citeauthor{vonneumann}'s \citeyear{vonneumann} report is the canonical statement of this).
 * **The assembler** (1952) — the first *translator* that maps a human-readable mnemonic to machine code.
