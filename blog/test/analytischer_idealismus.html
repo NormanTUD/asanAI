@@ -2097,8 +2097,8 @@ function bindSlider(id, valId, formatter = v => v) {
     } else {
       // Smell - abstract particles
       for (let i = 0; i < 30; i++) {
-        const ang = (i / 30) * Math.PI * 2 + t;
-        const dist = 40 + f * 60 + Math.sin(t * 2 + i) * 15;
+        const ang = (i / 30) * Math.PI * 2 + time;
+        const dist = 40 + f * 60 + Math.sin(time * 2 + i) * 15;
         const px = W/2 + Math.cos(ang) * dist;
         const py = bcy + Math.sin(ang) * dist * 0.6;
         const hue = 60 + f * 80;
