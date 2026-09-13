@@ -149,7 +149,7 @@ The interactive shows the unit circle (white) and its image under a map with sin
 <div class="md">
 ## Descent: why the gradient is steepest
 
-Training a model is walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w) = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\nabla L$ points straight *downhill*. Is the gradient actually the steepest way, or just a convenient choice? The answer is geometric — it is the section-I identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product, using two geometric signs: $a \parallel b$ (*parallel to*) and $a \perp b$ (*perpendicular to*):
+Training a model is walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w) = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\nabla L$ points straight *downhill*. Is the gradient actually the steepest way, or just a convenient choice? The answer is geometric — it is the inner-product identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product, using two geometric signs: $a \parallel b$ (*parallel to*) and $a \perp b$ (*perpendicular to*):
 
 $$
 \underbrace{dL(d)}_{\text{“slope going in direction } d\text{”}} \;=\; \underbrace{\langle \nabla L, \, d \rangle}_{\text{gradient dotted with the direction}} \;=\; \underbrace{\lVert \nabla L \rVert}_{\text{the steepest slope there is}} \;\underbrace{\cos\angle(\nabla L, d)}_{\le 1,\ \text{and } 1 \text{ only when } d \parallel \nabla L}
@@ -159,7 +159,7 @@ So $\langle \nabla L, d\rangle$ is largest when $d$ points *along* $\nabla L$ an
 
 \marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}
 
-Read the same identity differently: the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. This is why a *curved* landscape is hard to descend: in a narrow valley the gradient points *across* the valley rather than down it, so a plain step zig-zags. The **condition number** from section III — the ratio of the loss’s biggest to smallest curvature — measures how narrow the valley is, and it, not the gradient itself, decides whether optimization is fast or slow.
+Read the same identity differently: the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. This is why a *curved* landscape is hard to descend: in a narrow valley the gradient points *across* the valley rather than down it, so a plain step zig-zags. The **condition number** from the SVD section — the ratio of the loss’s biggest to smallest curvature — measures how narrow the valley is, and it, not the gradient itself, decides whether optimization is fast or slow.
 
 The *schedule* on top of this fact — momentum, Adam, learning-rate decay — is optimization, not geometry, covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff). What we keep here: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; drag the valley narrow and it starts pointing across.
 </div>
@@ -191,7 +191,7 @@ $$
 \underbrace{(c * x)_t}_{\text{the output at position } t} \;=\; \underbrace{\sum_{k} c_k \, x_{t-k}}_{\text{“flip } c\text{, slide it to } t\text{, take the dot product”}}
 $$
 
-That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from section I. This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Convolutions](visionlab)).
+That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from the inner product. This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Convolutions](visionlab)).
 
 \marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible.}
 
@@ -261,7 +261,7 @@ and it gives the matching condition for equivariance. “Map, sum, pool” is no
 
 This matters because **weight sharing is equivariance in disguise**, and attention is a *symmetric* operation:
 
-* A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). Section V’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
+* A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). The convolution section’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
 * **Pooling** (mean, max) is the invariant readout: reorder what you pool over and the number does not move.
 * **Attention** is permutation-equivariant over the token set: shuffle the tokens and every output token and attention weight shuffles along. Order is not something attention knows, which is why position must be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)).
 * The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \cite{bronstein2021geometric}).
