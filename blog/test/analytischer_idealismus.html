@@ -1,0 +1,2312 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytischer Idealismus – Eine interaktive Reise durch Kastrups Metaphysik</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root {
+    --bg-0: #050510;
+    --bg-1: #0a0a1f;
+    --bg-2: #12122e;
+    --ink: #e8e8f5;
+    --ink-dim: #a0a0c0;
+    --accent: #d4a574;
+    --accent-2: #8b6cb8;
+    --accent-3: #5eb8c4;
+    --danger: #d47474;
+    --line: rgba(212,165,116,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg-0);
+    color: var(--ink);
+    font-family: 'Georgia', 'Palatino', serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+  body {
+    background: 
+      radial-gradient(ellipse at top, #1a1a3a 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, #1f0f2e 0%, transparent 60%),
+      var(--bg-0);
+    min-height: 100vh;
+  }
+  .scene {
+    min-height: 100vh;
+    padding: 6vh 5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid var(--line);
+  }
+  .scene-number {
+    position: absolute;
+    top: 3vh;
+    right: 3vw;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    opacity: 0.6;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: normal;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+  }
+  h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-weight: normal;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 1.3rem;
+    color: var(--accent-3);
+    margin: 1.5rem 0 0.8rem;
+    font-weight: normal;
+  }
+  p {
+    max-width: 700px;
+    margin-bottom: 1rem;
+    color: var(--ink-dim);
+    font-size: 1.05rem;
+  }
+  .lead {
+    font-size: 1.2rem;
+    color: var(--ink);
+    max-width: 720px;
+  }
+  .highlight { color: var(--accent); font-style: italic; }
+  .strong { color: var(--ink); font-weight: bold; }
+  .container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 2fr 1fr; }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+  canvas.demo {
+    background: #000;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 60px rgba(139,108,184,0.05);
+  }
+  .controls {
+    background: rgba(20,20,40,0.6);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    backdrop-filter: blur(10px);
+  }
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .control-row label {
+    min-width: 180px;
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+  .control-row .value {
+    min-width: 70px;
+    text-align: right;
+    color: var(--accent-3);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+  }
+  input[type=range] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    height: 24px;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-2) 0%, var(--accent) 100%);
+    border-radius: 2px;
+  }
+  input[type=range]::-moz-range-track {
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-2) 0%, var(--accent) 100%);
+    border-radius: 2px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--ink);
+    margin-top: -7px;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent);
+  }
+  input[type=range]::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px var(--accent);
+  }
+  button {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    color: #000;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-right: 0.5rem;
+  }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212,165,116,0.4);
+  }
+  button.secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .callout {
+    background: linear-gradient(135deg, rgba(139,108,184,0.15), rgba(94,184,196,0.1));
+    border-left: 3px solid var(--accent-2);
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    border-radius: 4px;
+    font-style: italic;
+    color: var(--ink);
+    max-width: 800px;
+  }
+  .quote-source {
+    display: block;
+    margin-top: 0.5rem;
+    text-align: right;
+    font-style: normal;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+  .tag {
+    display: inline-block;
+    background: rgba(212,165,116,0.15);
+    color: var(--accent);
+    padding: 0.2rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+    border: 1px solid var(--line);
+  }
+  .info-box {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--ink-dim);
+    min-height: 100px;
+  }
+  .info-box .title {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .stat {
+    background: rgba(20,20,40,0.5);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat .num {
+    font-size: 2rem;
+    color: var(--accent);
+    display: block;
+    font-family: 'Courier New', monospace;
+  }
+  .stat .label {
+    font-size: 0.85rem;
+    color: var(--ink-dim);
+  }
+  .nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .nav a {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid var(--line);
+    display: block;
+    transition: all 0.3s;
+    text-decoration: none;
+    position: relative;
+  }
+  .nav a:hover, .nav a.active {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+  .nav a::before {
+    content: attr(data-label);
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.85);
+    color: var(--ink);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    font-family: sans-serif;
+  }
+  .nav a:hover::before { opacity: 1; }
+  .scroll-hint {
+    position: absolute;
+    bottom: 3vh;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent);
+    font-size: 0.85rem;
+    opacity: 0.6;
+    animation: bounce 2s infinite;
+    letter-spacing: 0.2em;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+  .split-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 2rem 0;
+  }
+  .split-view > div {
+    background: rgba(20,20,40,0.5);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+  .split-view h4 {
+    color: var(--danger);
+    margin-bottom: 0.8rem;
+    font-weight: normal;
+  }
+  .split-view .idealism h4 { color: var(--accent-3); }
+  @media (max-width: 700px) {
+    .split-view { grid-template-columns: 1fr; }
+    .control-row { flex-direction: column; align-items: stretch; }
+    .control-row label { min-width: auto; }
+  }
+  .glow {
+    text-shadow: 0 0 20px currentColor;
+  }
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--ink-dim);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#s0" data-label="Prolog"></a>
+  <a href="#s1" data-label="Das Cockpit"></a>
+  <a href="#s2" data-label="Das Dashboard"></a>
+  <a href="#s3" data-label="Karte vs Territorium"></a>
+  <a href="#s4" data-label="Quantenexperiment"></a>
+  <a href="#s5" data-label="Hard Problem"></a>
+  <a href="#s6" data-label="Panpsychismus"></a>
+  <a href="#s7" data-label="Kernidee"></a>
+  <a href="#s8" data-label="Whirlpool"></a>
+  <a href="#s9" data-label="Dissoziation"></a>
+  <a href="#s10" data-label="Membran"></a>
+  <a href="#s11" data-label="Wahrnehmung"></a>
+  <a href="#s12" data-label="Evidenz"></a>
+  <a href="#s13" data-label="Konsequenzen"></a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 0: HERO / PROLOG -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s0">
+  <div class="scene-number">PROLOG</div>
+  <div class="container">
+    <canvas id="hero-canvas" class="demo" style="height: 300px; margin-bottom: 2rem;"></canvas>
+    <h1>Was, wenn die Welt<br>ein Traum ist – aber nicht deiner?</h1>
+    <p class="lead">Dies ist eine interaktive Reise durch <span class="highlight">Bernardo Kastrups analytischen Idealismus</span> – die These, dass die gesamte Realität aus einem einzigen, universellen Bewusstsein besteht, und dass du, ich und jedes Lebewesen dissoziierte "Alters" dieses Bewusstseins sind.</p>
+    <p class="lead" style="margin-top:1.5rem;">Die zentrale Frage, die Kastrup beantwortet: <span class="strong">Warum ist Materialismus – die Standardansicht unserer Wissenschaft – so gut wie sicher falsch, und was tritt an seine Stelle?</span></p>
+    <div class="callout">
+      Wir spielen kein Wortspiel. Kastrup zeigt: der Materialismus scheitert an <em>logischen Widersprüchen</em>, an <em>experimenteller Evidenz</em> (Quantenphysik seit 40 Jahren), und an einem <em>Erklärungsproblem</em>, das prinzipiell unlösbar ist – dem "harten Problem des Bewusstseins".
+    </div>
+    <p>Bewege dich durch die Szenen. Jede erklärt einen Baustein. Spiele mit den Reglern. Am Ende wirst du eine kohärente, empirisch fundierte Alternative zum Materialismus verstanden haben.</p>
+  </div>
+  <div class="scroll-hint">↓ SCROLLE ↓</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 1: DAS COCKPIT -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s1">
+  <div class="scene-number">01 · METAPHER</div>
+  <div class="container">
+    <h2>Du bist ein Pilot in einem Cockpit ohne Fenster</h2>
+    <p class="lead">Alles, was du je "gesehen" hast, sind Instrumentenanzeigen auf einem <span class="highlight">Armaturenbrett</span>. Die Welt "da draußen" – die tatsächlichen Wolken, Winde, Berge – hast du nie direkt erlebt.</p>
+    <div class="grid grid-2" style="margin-top: 2rem;">
+      <div>
+        <canvas id="cockpit-canvas" class="demo" style="height: 400px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Wind / Wetter da draußen:</label>
+            <input type="range" id="cockpit-wind" min="0" max="100" value="30">
+            <span class="value" id="cockpit-wind-val">30</span>
+          </div>
+          <div class="control-row">
+            <label>Höhe:</label>
+            <input type="range" id="cockpit-alt" min="0" max="100" value="60">
+            <span class="value" id="cockpit-alt-val">60</span>
+          </div>
+          <div class="control-row">
+            <label>Geschwindigkeit:</label>
+            <input type="range" id="cockpit-speed" min="0" max="100" value="45">
+            <span class="value" id="cockpit-speed-val">45</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Die Instrumente ≠ Die Welt</h3>
+        <p>Verändere die Regler. Beobachte: die <span class="highlight">Zeiger</span> im Cockpit spiegeln die "reale" Welt oben – aber sie sehen ihr <em>überhaupt nicht ähnlich</em>. Wolken sehen nicht aus wie runde Anzeigen.</p>
+        <p>Trotzdem: der Pilot kann sich <em>vollständig</em> auf die Instrumente verlassen. Sie tragen <span class="strong">korrekte, handlungsleitende Information</span> – aber sie sind nicht das Ding selbst.</p>
+        <div class="callout">
+          <span class="highlight">Kastrups Kernbild:</span> Deine Wahrnehmung ist kein transparentes Fenster in die Welt. Sie ist ein <strong>internes Dashboard</strong>, das Sensor-Messungen (Retina, Trommelfell, Haut...) in einer kodierten Form darstellt.
+        </div>
+        <p>Warum? <span class="strong">Aus Überlebensgründen.</span> Ein Gehirn, das die Welt "direkt" spiegeln würde, hätte keine Obergrenze für seine interne Entropie – es würde in Sekunden zu heißem Fleischbrei zerfallen (Friston 2014, Hoffman 2009). Evolution wählte darum <em>komprimierte, handlungsrelevante Ikonen</em>, nicht Wahrheit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 2: DAS DASHBOARD IM DETAIL -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s2">
+  <div class="scene-number">02 · WAHRNEHMUNG</div>
+  <div class="container">
+    <h2>Icons auf einem Desktop</h2>
+    <p class="lead">Wenn du eine Datei auf deinem Computer siehst, siehst du ein <span class="highlight">blaues Rechteck</span> mit Namen. Ist die Datei <em>wirklich</em> ein blaues Rechteck? Natürlich nicht – sie ist ein Muster millionenfacher elektronischer Schalter im Silizium.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="desktop-canvas" class="demo" style="height: 380px;"></canvas>
+        <div class="controls">
+          <button id="desktop-toggle">Wechsle: Icon-Ansicht ↔ "Wahre" Datei</button>
+        </div>
+      </div>
+      <div>
+        <h3>Warum wir das Icon nicht mit der Datei verwechseln sollten</h3>
+        <p>Das Icon ist <span class="strong">nützlich</span>, weil es die reale Datei effektiv repräsentiert – aber niemand denkt, die Datei sei "aus" blauen Pixeln gemacht.</p>
+        <p>Und doch machen wir genau diesen Fehler mit der physischen Welt: Wir sehen einen Apfel (rot, rund, süß)
+        und denken, der Apfel sei "wirklich" rot, rund und süß – doch diese Qualitäten existieren nur in unserer Wahrnehmung. Der Apfel "da draußen" ist ein Muster von Quantenfeld-Anregungen, das mit unseren Sinnesorganen interagiert.</p>
+        <div class="callout">
+          <span class="highlight">Kastrups Präzisierung:</span> Selbst dieses "Da draußen" – die Quantenfelder, die Atome, das Vakuum – ist selbst nur ein weiteres Icon auf einem tieferen Dashboard. Die Physik beschreibt nicht die Realität, sondern nur, wie sich die Icons zueinander verhalten.
+        </div>
+        <p>Klick auf den Button, um zwischen der Icon-Ansicht und einer symbolischen Darstellung der "wahren" Datei zu wechseln – und verstehe intuitiv, warum wir nie die Datei selbst sehen können, sondern nur ihre nützliche Repräsentation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 3: KARTE vs TERRITORIUM -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s3">
+  <div class="scene-number">03 · DER KATEGORIENFEHLER</div>
+  <div class="container">
+    <h2>Die Karte ist nicht das Territorium</h2>
+    <p class="lead">Der Materialismus macht einen erstaunlichen Fehler: Er verwechselt die <span class="highlight">Beschreibung</span> der Welt mit der Welt selbst. Er nimmt Zahlen – Masse, Ladung, Frequenz – und sagt: <em>Das ist die Realität</em>. Doch Zahlen sind nur Beschreibungen von Erfahrungen. Man kann nicht aus einer Karte ein Territorium herausziehen.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="map-canvas" class="demo" style="height: 420px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Detailgrad der Karte:</label>
+            <input type="range" id="map-detail" min="1" max="100" value="30">
+            <span class="value" id="map-detail-val">30%</span>
+          </div>
+          <button id="map-extract">Versuche, das Territorium aus der Karte zu ziehen</button>
+        </div>
+      </div>
+      <div>
+        <h3>Das "Harte Problem des Bewusstseins"</h3>
+        <p>Physik beschreibt <span class="strong">Quantitäten</span>: Wie viele Photonen, welche Wellenlänge, welche Feuerungsmuster im Gehirn. Doch nichts an "650 Nanometer" erklärt, <em>wie es sich anfühlt, Rot zu sehen</em>.</p>
+        <div class="split-view">
+          <div>
+            <h4>Was Physik beschreibt</h4>
+            <p>650 nm Wellenlänge<br>Neuronen X, Y, Z feuern<br>Cortex-Aktivierung in V4</p>
+          </div>
+          <div class="idealism">
+            <h4>Was du erlebst</h4>
+            <p>Das satte, warme, lebendige <span style="color:#d47474;font-weight:bold;">Rot</span> eines reifen Apfels in der Abendsonne</p>
+          </div>
+        </div>
+        <p>Zwischen diesen beiden Spalten gibt es <span class="highlight">keine logische Brücke</span>. Und es wird auch nie eine geben. Das ist das <em>Harte Problem</em>.</p>
+        <div class="callout">
+          Der Materialist versucht, das Territorium (Erfahrung) aus der Karte (Zahlen) zu erklären. Doch die Karte hat ihre Bedeutung nur, weil das Territorium bereits existiert und benannt wurde. Umkehrung ist logisch unmöglich.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 4: BELL-EXPERIMENT / QUANTENPHYSIK -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s4">
+  <div class="scene-number">04 · DAS EXPERIMENT (NOBELPREIS 2022)</div>
+  <div class="container">
+    <h2>Die Welt existiert nicht, bevor sie beobachtet wird</h2>
+    <p class="lead">Das ist keine Meinung. Das ist ein Laborergebnis, seit über 40 Jahren immer wieder bestätigt, mit dem <span class="highlight">Physik-Nobelpreis 2022</span> ausgezeichnet. Spiele hier selbst das Bell-Experiment durch.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="bell-canvas" class="demo" style="height: 460px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Alice's Winkel (Messung A):</label>
+            <input type="range" id="bell-alice" min="0" max="360" value="0">
+            <span class="value" id="bell-alice-val">0°</span>
+          </div>
+          <div class="control-row">
+            <label>Bobs Winkel (Messung B):</label>
+            <input type="range" id="bell-bob" min="0" max="360" value="45">
+            <span class="value" id="bell-bob-val">45°</span>
+          </div>
+          <button id="bell-run">Führe 500 Messungen durch</button>
+          <button id="bell-reset" class="secondary">Zurücksetzen</button>
+        </div>
+      </div>
+      <div>
+        <h3>Was hier passiert</h3>
+        <p>Zwei "verschränkte" Teilchen werden erzeugt und in entgegengesetzte Richtungen geschossen. Alice misst eines, Bob das andere – oft Kilometer entfernt.</p>
+        <p>Nach dem klassischen Realismus sollten die Teilchen bereits <em>vor</em> der Messung feste Eigenschaften haben. Doch das Ergebnis widerspricht dieser Annahme in einer Weise, die <span class="strong">mathematisch beweist</span>: Die Eigenschaften existieren erst durch die Messung.</p>
+        <div class="info-box">
+          <span class="title">Ergebnis:</span>
+          <div id="bell-result">Führe das Experiment aus, um die Korrelation zu sehen.</div>
+        </div>
+        <div class="callout">
+          <span class="highlight">Konsequenz:</span> Die "physische" Welt ist ein Produkt der Beobachtung. Sie existiert nicht als eigenständige "Dinge" da draußen. Das Universum ist – wie Physiker John Wheeler sagte – ein <em>Beobachter-partizipatorisches Universum</em>.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 5: HARD PROBLEM -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s5">
+  <div class="scene-number">05 · WARUM MATERIE KEIN BEWUSSTSEIN SCHAFFEN KANN</div>
+  <div class="container">
+    <h2>Zombies mit Uhrwerk-Gehirnen</h2>
+    <p class="lead">Stell dir einen perfekten Zombie vor: Er verhält sich exakt wie du, sein Gehirn feuert exakt wie deins – aber "in ihm" ist niemand zuhause. Kein Erleben. Kein Schmerz. Nur Dunkelheit. <span class="highlight">Der Materialismus kann nicht erklären, warum du kein Zombie bist.</span></p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="zombie-canvas" class="demo" style="height: 420px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Neuronale Komplexität:</label>
+            <input type="range" id="zombie-complexity" min="0" max="100" value="50">
+            <span class="value" id="zombie-complexity-val">50</span>
+          </div>
+          <button id="zombie-toggle">Wechsle: Du ↔ Zombie</button>
+        </div>
+      </div>
+      <div>
+        <h3>Die Emergenz-Illusion</h3>
+        <p>Materialisten sagen: "Bewusstsein <em>emergiert</em> aus komplexer Gehirnaktivität." Doch was heißt das? Bei jeder anderen Emergenz (z.B. Nasslichkeit aus Wassermolekülen) können wir das Höhere aus dem Niedrigeren <span class="strong">deduzieren</span>.</p>
+        <p>Bei Bewusstsein aber gibt es <span class="highlight">keinen deduzierbaren Weg</span> von "Neuron feuert" zu "es fühlt sich an wie Verliebtsein". Emergenz wird hier zum Wort für <em>Magie</em>.</p>
+        <div class="callout">
+          Kastrups Umkehrung: Statt Bewusstsein aus Materie zu erklären (unmöglich), erklären wir Materie aus Bewusstsein (elegant, sparsam, konsistent).
+        </div>
+        <p>Bewege den Regler. Egal wie komplex das Netzwerk wird – nichts in seiner Struktur erklärt, warum "etwas Sein" darin entstehen sollte.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 6: PANPSYCHISMUS UND COMBINATION PROBLEM -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s6">
+  <div class="scene-number">06 · DER GESCHEITERTE KOMPROMISS</div>
+  <div class="container">
+    <h2>Panpsychismus: Der falsche Ausweg</h2>
+    <p class="lead">Einige Philosophen versuchen einen Mittelweg: Was, wenn jedes Elementarteilchen ein winziges Fünkchen Bewusstsein hat? Dann würden sich diese Fünkchen zu unserem einheitlichen Erleben "kombinieren". Klingt clever – funktioniert aber nicht.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="combination-canvas" class="demo" style="height: 420px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Anzahl "Mikro-Subjekte":</label>
+            <input type="range" id="combo-count" min="1" max="200" value="50">
+            <span class="value" id="combo-count-val">50</span>
+          </div>
+          <button id="combo-try">Versuche, sie zu einem Bewusstsein zu vereinen</button>
+        </div>
+      </div>
+      <div>
+        <h3>Das Kombinationsproblem</h3>
+        <p>Wenn ein Subjekt A nur Rot sieht und Subjekt B nur Blau, wie entsteht daraus ein Subjekt C, das <em>Violett</em> sieht? Die ursprünglichen Perspektiven müssten verschwinden – aber dann war die "Kombination" gar keine.</p>
+        <p>Es gibt keinen kohärenten Weg, wie <span class="strong">separate Bewusstseinspunkte</span> zu einem <span class="highlight">einheitlichen Perspektiv-Zentrum</span> verschmelzen könnten.</p>
+        <div class="callout">
+          Kastrups Lösung ist genial einfach: <strong>Umkehrung.</strong> Statt viele kleine Bewusstseine zu einem großen zu kombinieren, gibt es EIN universelles Bewusstsein, das sich in viele scheinbar getrennte Alters <em>dissoziiert</em>.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 7: DIE KERNIDEE -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s7">
+  <div class="scene-number">07 · DIE GROSSE IDEE</div>
+  <div class="container">
+    <h1>Analytischer Idealismus<br>in einem Satz</h1>
+    <div class="callout" style="font-size: 1.4rem; max-width: 900px; margin: 3rem auto; text-align: center;">
+      Es gibt <span class="highlight">nur ein universelles Bewusstsein</span>. Wir – und alle anderen Lebewesen – sind <span class="highlight">dissoziierte Alters</span> dieses Bewusstseins. Die unbelebte Welt, die wir wahrnehmen, ist das <span class="highlight">äußere Erscheinungsbild</span> der Gedanken dieses Bewusstseins. Andere Lebewesen sind das äußere Erscheinungsbild anderer Alters.
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><span class="num">1</span><span class="label">Ontologische Substanz: Bewusstsein</span></div>
+      <div class="stat"><span class="num">0</span><span class="label">Nicht-mentale Dinge</span></div>
+      <div class="stat"><span class="num">∞</span><span class="label">Mögliche Alters (Lebewesen)</span></div>
+      <div class="stat"><span class="num">✓</span><span class="label">Löst das Harte Problem</span></div>
+      <div class="stat"><span class="num">✓</span><span class="label">Konsistent mit Quantenphysik</span></div>
+      <div class="stat"><span class="num">✓</span><span class="label">Sparsamste Ontologie möglich</span></div>
+    </div>
+    <p class="lead" style="text-align: center; margin-top: 2rem;">In den nächsten Szenen werden wir jedes einzelne Element dieser Idee visuell erforschen.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 8: DER WHIRLPOOL / VORTEX -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s8">
+  <div class="scene-number">08 · DIE STRUDEL-METAPHER</div>
+  <div class="container">
+    <h2>Du bist ein Strudel im Ozean des Bewusstseins</h2>
+    <p class="lead">Stell dir einen Fluss vor. Das Wasser fließt frei. An bestimmten Stellen bildet sich ein <span class="highlight">Wirbel</span> – eine lokalisierte Struktur, klar abgegrenzt, mit eigener Dynamik. Doch der Wirbel <em>besteht aus nichts anderem als dem Fluss selbst</em>. Er ist kein separates Ding.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="vortex-canvas" class="demo" style="height: 500px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Dissoziationsstärke:</label>
+            <input type="range" id="vortex-strength" min="0" max="100" value="70">
+            <span class="value" id="vortex-strength-val">70%</span>
+          </div>
+          <div class="control-row">
+            <label>Anzahl Alters:</label>
+            <input type="range" id="vortex-count" min="1" max="8" value="3">
+            <span class="value" id="vortex-count-val">3</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Was du siehst</h3>
+        <p>Der große Ozean ist das <span class="highlight">universelle Bewusstsein</span>. Jeder Wirbel ist ein Lebewesen – ein <em>Alter</em>. Von innen erlebt sich der Wirbel als getrennt, individuell, mit klaren Grenzen. Doch von außen betrachtet ist er nur eine <span class="strong">lokale Bewegungsstruktur</span> des einen Ozeans.</p>
+        <p>Wenn du den Regler auf 0 stellst, verschwindet der Wirbel – das ist der Tod. Doch das Wasser (Bewusstsein) verschwindet nicht. Es fließt einfach wieder frei.</p>
+        <div class="callout">
+          <span class="highlight">Zentral:</span> Du bist nicht IM Bewusstsein, wie ein Fisch im Wasser. Du BIST das Bewusstsein, geformt zu einem Wirbel. Wenn der Wirbel sich auflöst, wirst du nicht "vernichtet" – du warst nie ein separates Ding.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 9: DISSOZIATION UND DID -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s9">
+  <div class="scene-number">09 · DIE EMPIRISCHE ANALOGIE</div>
+  <div class="container">
+    <h2>Dissoziative Identitätsstörung als kosmisches Modell</h2>
+    <p class="lead">Dissoziation ist keine Spekulation – sie ist ein <span class="highlight">klinisch bewiesenes Phänomen</span>. Menschen mit DIS haben mehrere getrennte "Alters" innerhalb <em>eines</em> Gehirns. Diese Alters können gleichzeitig bewusst sein, aber wissen nichts voneinander. Kastrup nutzt dies als Modell für das Universum.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="did-canvas" class="demo" style="height: 460px;"></canvas>
+        <div class="controls">
+          <button id="did-integrate">Integriert (normale Psyche)</button>
+          <button id="did-dissociate">Dissoziiert (DIS / Universum)</button>
+        </div>
+      </div>
+      <div>
+        <h3>Das dokumentierte Wunder</h3>
+        <p>In einer bemerkenswerten Studie (Strasburger & Waldvogel, 2015) hatte eine Patientin Alters, die blind waren, und andere, die sehen konnten. <span class="strong">EEG-Messungen zeigten:</span> Die Sehrinde war tatsächlich inaktiv, wenn ein "blindes" Alter die Kontrolle hatte – obwohl die Augen offen waren.</p>
+        <p>Dissoziation kann also buchstäblich Wahrnehmung ausschalten. Sie ist mächtig genug, um die Erfahrung völlig zu isolieren.</p>
+        <div class="callout">
+          <span class="highlight">Analogie:</span> Wenn ein menschliches Gehirn mehrere getrennte Bewusstseinszentren erzeugen kann, warum sollte das universelle Bewusstsein nicht Milliarden davon erzeugen können? Jedes Lebewesen ein Alter des Kosmos.
+        </div>
+        <p>Klicke oben, um zwischen einer integrierten Psyche (alle Gedanken verbunden) und einer dissoziierten (getrennte Inseln) zu wechseln.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 10: DIE MEMBRAN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s10">
+  <div class="scene-number">10 · DIE SCHWINGUNGS-METAPHER</div>
+  <div class="container">
+    <h2>Alles ist Schwingung eines mentalen Feldes</h2>
+    <p class="lead">Bewusstsein kann als eine <span class="highlight">unendlich-dimensionale Membran</span> gedacht werden. Erfahrungen sind ihre Schwingungsmuster. Verschiedene Muster = verschiedene Qualia. Das ist keine mystische Behauptung – es passt exakt zur modernen M-Theorie der Physik.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="membrane-canvas" class="demo" style="height: 500px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Frequenz:</label>
+            <input type="range" id="mem-freq" min="1" max="20" value="5">
+            <span class="value" id="mem-freq-val">5</span>
+          </div>
+          <div class="control-row">
+            <label>Amplitude:</label>
+            <input type="range" id="mem-amp" min="0" max="100" value="50">
+            <span class="value" id="mem-amp-val">50</span>
+          </div>
+          <div class="control-row">
+            <label>Modus:</label>
+            <input type="range" id="mem-mode" min="1" max="6" value="2">
+            <span class="value" id="mem-mode-val">2</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Chladni-Figuren des Geistes</h3>
+        <p>Wenn du eine Metallplatte in Schwingung versetzt, ordnet sich Sand darauf zu wunderschönen Mustern. Jede Frequenz erzeugt ein anderes Muster. Kastrup schlägt vor: <em>Erfahrungen sind wie diese Muster</em> – nur eben in einem mentalen Medium.</p>
+        <p>Ein Gedanke, eine Emotion, ein Sinneseindruck – jedes ist eine bestimmte Schwingungssignatur des einen Bewusstseins-Feldes.</p>
+        <div class="callout">
+          Die Physik beschreibt bereits alle Elementarteilchen als Schwingungen von Feldern. Kastrup sagt nur: Das Feld selbst ist mental. Die Mathematik bleibt exakt gleich – nur die ontologische Interpretation ändert sich.
+        </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 11: WAHRNEHMUNG ALS DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s11">
+  <div class="scene-number">11 · WAHRNEHMUNG</div>
+  <div class="container">
+    <h2>Deine Wahrnehmung ist ein Dashboard, kein Fenster</h2>
+    <p class="lead">Warum fühlt sich ein Apfel <em>rot</em> und <em>süß</em> an, wenn "da draußen" nur Vibrationen eines mentalen Feldes sind? Weil deine Sinne wie das <span class="highlight">Cockpit-Instrumentenbrett</span> aus Szene 1 funktionieren: sie zeigen dir eine <strong>komprimierte, überlebensfördernde Kodierung</strong> der Realität – nicht die Realität selbst.</p>
+    <div class="grid grid-2">
+      <div>
+        <canvas id="dashboard-canvas" class="demo" style="height: 480px;"></canvas>
+        <div class="controls">
+          <div class="control-row">
+            <label>Realitäts-Frequenz:</label>
+            <input type="range" id="dash-freq" min="0" max="100" value="50">
+            <span class="value" id="dash-freq-val">50</span>
+          </div>
+          <div class="control-row">
+            <label>Sinnesorgan:</label>
+            <select id="dash-sense" style="flex:1; padding:0.5rem; background:rgba(20,20,40,0.6); color:var(--ink); border:1px solid var(--line); border-radius:4px;">
+              <option value="eye">Auge → Farbe</option>
+              <option value="ear">Ohr → Ton</option>
+              <option value="skin">Haut → Wärme</option>
+              <option value="nose">Nase → Geruch</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Die Interface-Theorie (Donald Hoffman)</h3>
+        <p>Ein Datei-Icon auf deinem Desktop ist <span class="strong">nicht</span> die eigentliche Datei. Es ist ein blaues Rechteck, während die Datei ein Muster mikroskopischer Schalter im Silizium ist. Doch das Icon ist <span class="highlight">nützlich</span> – es hilft dir, die Datei zu manipulieren, ohne ihre wahre Natur kennen zu müssen.</p>
+        <p>Genauso: Rot, Süß, Kalt, Laut – all das sind <span class="strong">nützliche Icons</span>, die dein Bewusstsein erzeugt, um auf externe mentale Zustände sinnvoll reagieren zu können. Die Evolution hat sie geformt für <em>Überleben</em>, nicht für <em>Wahrheit</em>.</p>
+        <div class="callout">
+          <span class="highlight">Karl Friston (2014) bewies mathematisch:</span> Ein Organismus mit "perfekter Wahrnehmung" (der die Welt direkt sähe) würde seine interne Entropie nicht begrenzen können und in Sekunden thermodynamisch zerfallen. Wahrnehmung <em>muss</em> Kodierung sein.
+        </div>
+        <p>Spiele mit dem Regler und wechsle das Sinnesorgan. Beobachte: dieselbe "Realitäts-Frequenz" erzeugt völlig verschiedene Qualia – je nach dem Interface, das sie liest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 12: EMPIRISCHE EVIDENZ -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s12">
+  <div class="scene-number">12 · EMPIRISCHE EVIDENZ</div>
+  <div class="container">
+    <h2>Weniger Gehirn = Mehr Bewusstsein?</h2>
+    <p class="lead">Kastrups gewagteste, empirisch belegteste Vorhersage: Wenn das Gehirn Bewusstsein <em>filtert</em> statt es zu <em>erzeugen</em>, dann sollte eine <span class="highlight">Reduktion der Gehirnaktivität</span> in bestimmten Fällen zu <span class="strong">erweitertem, reicherem Erleben</span> führen. Genau das zeigen die Daten – und der Materialismus kann es nicht erklären.</p>
+    <div class="grid grid-2">
+      <div>
+        <div id="evidence-chart" class="demo" style="height: 460px; padding: 10px;"></div>
+        <div class="controls">
+          <div class="control-row">
+            <label>Studie auswählen:</label>
+            <select id="evidence-study" style="flex:1; padding:0.5rem; background:rgba(20,20,40,0.6); color:var(--ink); border:1px solid var(--line); border-radius:4px;">
+              <option value="psilocybin">Psilocybin (Carhart-Harris 2012)</option>
+              <option value="lsd">LSD (Carhart-Harris 2016)</option>
+              <option value="dmt">Ayahuasca/DMT (Palhano-Fontes 2015)</option>
+              <option value="nde">Nahtoderfahrungen (van Lommel)</option>
+              <option value="mediums">Trance-Medien (Peres 2012)</option>
+              <option value="savant">Erworbenes Savant-Syndrom</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Das Muster</h3>
+        <div class="info-box" id="evidence-info">
+          <span class="title">Psilocybin-Studie (Imperial College London, 2012)</span>
+          Neuroimaging zeigte: unter Psilocybin <strong>sinkt</strong> die Gehirnaktivität in mehreren Regionen (v.a. dem "Default Mode Network"). Nirgendwo im Gehirn <em>steigt</em> sie signifikant. Und doch berichten Probanden von den intensivsten, reichsten Erfahrungen ihres Lebens.<br><br>
+          <strong>Materialistische Vorhersage:</strong> Reicheres Erleben → mehr Neuronenaktivität<br>
+          <strong>Idealistische Vorhersage:</strong> Filter-Schwächung → mehr Zugang zum kosmischen Bewusstsein<br><br>
+          <strong>Die Daten:</strong> Bestätigen den Idealismus.
+        </div>
+        <div class="callout">
+          <span class="highlight">Weitere Fälle:</span> Hyperventilation, Erstickung, G-Kraft-Bewusstlosigkeit, Gehirnverletzungen (die manchmal Genie-Fähigkeiten freisetzen!), Meditation, Trance-Zustände – überall wo die Gehirnfunktion <em>reduziert</em> wird, taucht in bestimmten Fällen erweitertes Bewusstsein auf.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 13: KONSEQUENZEN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<section class="scene" id="s13">
+  <div class="scene-number">13 · WAS FOLGT?</div>
+  <div class="container">
+    <h2>Was ändert sich, wenn Kastrup recht hat?</h2>
+    <p class="lead">Wenn der analytische Idealismus stimmt, verändert das nicht die Wissenschaft – die Gleichungen der Physik bleiben identisch. Aber es verändert <span class="highlight">die Bedeutung des Ganzen</span> auf tiefgreifende Weise.</p>
+    <div class="stat-grid" style="margin: 3rem 0;">
+      <div class="stat" style="text-align:left; padding: 1.5rem;">
+        <span class="num" style="color: var(--accent-3); font-size: 1.5rem;">Tod</span>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">ist nicht das Ende des Bewusstseins, sondern das Ende der <em>Dissoziation</em>. Der Strudel löst sich auf, das Wasser fließt weiter. Deine Kern-Subjektivität – die "Ich-Heit" – geht nirgendwo hin, weil sie nirgendwo hingehen könnte.</p>
+      </div>
+      <div class="stat" style="text-align:left; padding: 1.5rem;">
+        <span class="num" style="color: var(--accent); font-size: 1.5rem;">Sinn</span>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">Die Welt ist <em>nicht</em> bedeutungslos. Sie ist eine Metapher, ein symbolischer Ausdruck kosmischer mentaler Dynamik. Jedes Ereignis in deinem Leben zeigt auf etwas jenseits seiner Oberfläche.</p>
+      </div>
+      <div class="stat" style="text-align:left; padding: 1.5rem;">
+        <span class="num" style="color: var(--accent-2); font-size: 1.5rem;">Einheit</span>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">Du und ich sind letztlich <em>dasselbe Bewusstsein</em>, das sich unterschiedlich dissoziiert hat. Der Fremde auf der Straße bist du selbst, nur aus einer anderen Perspektive dieses einen Geistes.</p>
+      </div>
+      <div class="stat" style="text-align:left; padding: 1.5rem;">
+        <span class="num" style="color: var(--danger); font-size: 1.5rem;">Verantwortung</span>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">Wir sind "Spione für den Geist der Natur" – Instrumente, mit denen das Universum sich selbst betrachtet. Unser Leben ist nicht redundant. Unsere Einsichten sind originär und werden Teil des kosmischen Ganzen.</p>
+      </div>
+      <div class="stat" style="text-align:left; padding: 1.5rem;">
+        <span class="num" style="color: var(--accent-3); font-size: 1.5rem;">Ethik</span>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">Wenn wir alle Alters eines einzigen Bewusstseins sind, dann ist jede Grausamkeit gegen den Anderen letztlich Grausamkeit gegen sich selbst. Mitgefühl ist keine moralische Regel, sondern ontologische Tatsache.</p>
+      </div>
+      <div class="stat" style="text-align:left; padding: 1.5rem;">
+        <span class="num" style="color: var(--accent); font-size: 1.5rem;">Freiheit</span>
+        <p style="font-size: 0.95rem; margin-top: 0.5rem;">Die neurotische Kontrollangst des Ego – "Ich muss alles beherrschen, sonst gehe ich verloren" – löst sich auf. Was du wirklich bist, war nie in Gefahr und kann nie in Gefahr sein.</p>
+      </div>
+    </div>
+    <div class="callout" style="max-width: 900px; margin: 2rem auto; font-size: 1.15rem; text-align: center;">
+      "Wir sind nicht Fremde in einem toten Universum. Wir sind das Universum, das durch dissoziierte Augen auf sich selbst blickt – und langsam, tastend, mit viel Leid und viel Wunder – <span class="highlight">beginnt, sich selbst zu verstehen</span>."
+      <span class="quote-source">— nach Bernardo Kastrup</span>
+    </div>
+    <div style="text-align: center; margin-top: 3rem;">
+      <p style="font-size: 1rem; color: var(--ink-dim);">Du hast die zentralen Ideen von Kastrups <em>Analytischem Idealismus</em> erlebt.<br>Jetzt geh hinaus – und schau die Welt mit neuen Augen an.</p>
+      <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--accent); letter-spacing: 0.2em;">— FIN —</p>
+    </div>
+  </div>
+</section>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// GLOBAL UTILITIES
+// ═══════════════════════════════════════════════════════════════════════
+function setupCanvas(canvas) {
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const resize = () => {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  resize();
+  window.addEventListener('resize', resize);
+  return { ctx, get w() { return canvas.getBoundingClientRect().width; }, get h() { return canvas.getBoundingClientRect().height; } };
+}
+
+function bindSlider(id, valId, formatter = v => v) {
+  const el = document.getElementById(id);
+  const val = document.getElementById(valId);
+  const update = () => { if (val) val.textContent = formatter(el.value); };
+  el.addEventListener('input', update);
+  update();
+  return el;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 0: HERO CANVAS — Flowing consciousness
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('hero-canvas');
+  const { ctx, w: getW, h: getH } = { ctx: canvas.getContext('2d'), w: () => canvas.getBoundingClientRect().width, h: () => canvas.getBoundingClientRect().height };
+  const dpr = window.devicePixelRatio || 1;
+  const resize = () => {
+    const r = canvas.getBoundingClientRect();
+    canvas.width = r.width * dpr;
+    canvas.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  resize();
+  window.addEventListener('resize', resize);
+  const particles = Array.from({ length: 120 }, () => ({
+    x: Math.random() * 1200, y: Math.random() * 300,
+    vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.2,
+    r: Math.random() * 2 + 0.5, hue: Math.random() * 60 + 20
+  }));
+  let t = 0;
+  function frame() {
+    const W = canvas.getBoundingClientRect().width, H = canvas.getBoundingClientRect().height;
+    ctx.fillStyle = 'rgba(5,5,16,0.15)';
+    ctx.fillRect(0, 0, W, H);
+    t += 0.01;
+    particles.forEach(p => {
+      const ang = Math.sin(p.x * 0.003 + t) + Math.cos(p.y * 0.004 + t * 0.7);
+      p.vx += Math.cos(ang) * 0.02;
+      p.vy += Math.sin(ang) * 0.02;
+      p.vx *= 0.98; p.vy *= 0.98;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 8);
+      grad.addColorStop(0, `hsla(${p.hue}, 70%, 65%, 0.8)`);
+      grad.addColorStop(1, `hsla(${p.hue}, 70%, 65%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * 8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 1: COCKPIT
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('cockpit-canvas');
+  const s = setupCanvas(canvas);
+  const wind = bindSlider('cockpit-wind', 'cockpit-wind-val');
+  const alt = bindSlider('cockpit-alt', 'cockpit-alt-val');
+  const spd = bindSlider('cockpit-speed', 'cockpit-speed-val');
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = '#0a0a1f';
+    ctx.fillRect(0, 0, W, H);
+    
+    // Top half: "sky" (real world)
+    const skyH = H * 0.45;
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, skyH);
+    skyGrad.addColorStop(0, '#1a2a4a');
+    skyGrad.addColorStop(1, '#3a4a7a');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, W, skyH);
+    
+    // Clouds affected by wind
+    const w = +wind.value;
+    const time = Date.now() * 0.001;
+    for (let i = 0; i < 5; i++) {
+      const cx = (time * (w / 20) + i * W / 4) % (W + 100) - 50;
+      const cy = 30 + i * 20;
+      ctx.fillStyle = `rgba(255,255,255,${0.3 + w/300})`;
+      ctx.beginPath();
+      for (let j = 0; j < 4; j++) {
+        ctx.arc(cx + j * 15, cy + Math.sin(j) * 5, 15 + j * 2, 0, Math.PI * 2);
+      }
+      ctx.fill();
+    }
+    
+    ctx.fillStyle = 'rgba(212,165,116,0.9)';
+    ctx.font = '11px Georgia';
+    ctx.fillText('DIE WIRKLICHE WELT (unzugänglich)', 10, 15);
+    
+    // Divider
+    ctx.strokeStyle = 'var(--accent)';
+    ctx.strokeStyle = '#d4a574';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(0, skyH);
+    ctx.lineTo(W, skyH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Bottom: cockpit dashboard
+    ctx.fillStyle = '#151525';
+    ctx.fillRect(0, skyH, W, H - skyH);
+    
+    ctx.fillStyle = 'rgba(94,184,196,0.9)';
+    ctx.fillText('DAS DASHBOARD (was du wahrnimmst)', 10, skyH + 15);
+    
+    // Draw 3 dials
+    const dialY = skyH + (H - skyH) / 2 + 20;
+    const dials = [
+      { x: W * 0.2, label: 'WIND', val: w, color: '#d4a574' },
+      { x: W * 0.5, label: 'HÖHE', val: +alt.value, color: '#8b6cb8' },
+      { x: W * 0.8, label: 'SPEED', val: +spd.value, color: '#5eb8c4' }
+    ];
+    dials.forEach(d => {
+      const r = Math.min(45, (H - skyH) * 0.25);
+      ctx.strokeStyle = d.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(d.x, dialY, r, 0, Math.PI * 2);
+      ctx.stroke();
+      // Ticks
+      for (let a = 0; a < 12; a++) {
+        const ang = (a / 12) * Math.PI * 2 - Math.PI / 2;
+        ctx.beginPath();
+        ctx.moveTo(d.x + Math.cos(ang) * (r - 4), dialY + Math.sin(ang) * (r - 4));
+        ctx.lineTo(d.x + Math.cos(ang) * r, dialY + Math.sin(ang) * r);
+        ctx.stroke();
+      }
+      // Needle
+      const needleAng = (d.val / 100) * Math.PI * 1.5 - Math.PI * 1.25;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(d.x, dialY);
+      ctx.lineTo(d.x + Math.cos(needleAng) * (r - 8), dialY + Math.sin(needleAng) * (r - 8));
+      ctx.stroke();
+      // Center
+      ctx.fillStyle = d.color;
+      ctx.beginPath();
+      ctx.arc(d.x, dialY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      // Label
+      ctx.fillStyle = d.color;
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(d.label, d.x, dialY + r + 18);
+      ctx.fillText(d.val, d.x, dialY + r + 32);
+      ctx.textAlign = 'left';
+    });
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 2: DESKTOP ICON
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('desktop-canvas');
+  const s = setupCanvas(canvas);
+  const btn = document.getElementById('desktop-toggle');
+  let mode = 0; // 0 = icon, 1 = "real"
+  btn.addEventListener('click', () => { mode = 1 - mode; });
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = mode === 0 ? '#1a1a2a' : '#000';
+    ctx.fillRect(0, 0, W, H);
+    
+    if (mode === 0) {
+      // Desktop with file icon
+      // Draw large blue file icon
+      const cx = W / 2, cy = H / 2;
+      const iw = 100, ih = 130;
+      ctx.fillStyle = '#4a7ccc';
+      ctx.fillRect(cx - iw/2, cy - ih/2, iw, ih);
+      // Folded corner
+      ctx.fillStyle = '#6a9cec';
+      ctx.beginPath();
+      
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCENE 3: KARTE vs TERRITORIUM (continued from Scene 3 setup) -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 2: DESKTOP FILE - Toggle between icon and "real" representation
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('desktop-canvas');
+  const s = setupCanvas(canvas);
+  const btn = document.getElementById('desktop-toggle');
+  let mode = 0;
+  let t = 0;
+  btn.addEventListener('click', () => { mode = 1 - mode; });
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    t += 0.02;
+    
+    if (mode === 0) {
+      // ICON VIEW - Desktop with file icon
+      ctx.fillStyle = '#1a1a2a';
+      ctx.fillRect(0, 0, W, H);
+      
+      const cx = W / 2, cy = H / 2;
+      const iw = 100, ih = 130;
+      
+      // File icon body
+      ctx.fillStyle = '#4a7ccc';
+      ctx.fillRect(cx - iw/2, cy - ih/2, iw, ih);
+      // Folded corner
+      ctx.fillStyle = '#6a9cec';
+      ctx.beginPath();
+      ctx.moveTo(cx + iw/2 - 20, cy - ih/2);
+      ctx.lineTo(cx + iw/2, cy - ih/2 + 20);
+      ctx.lineTo(cx + iw/2, cy - ih/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#2a5cac';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx + iw/2 - 20, cy - ih/2);
+      ctx.lineTo(cx + iw/2 - 20, cy - ih/2 + 20);
+      ctx.lineTo(cx + iw/2, cy - ih/2 + 20);
+      ctx.stroke();
+      
+      // Text lines on file
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('dokument.txt', cx, cy + ih/2 + 20);
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      for (let i = 0; i < 5; i++) {
+        ctx.fillRect(cx - iw/2 + 15, cy - 30 + i*12, iw - 30, 2);
+      }
+      
+      ctx.fillStyle = 'var(--accent)';
+      ctx.fillStyle = '#d4a574';
+      ctx.font = '13px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('Was du siehst: das ICON', W/2, 30);
+      ctx.textAlign = 'left';
+    } else {
+      // "REAL" FILE - Silicon switches
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, W, H);
+      
+      // Grid of "switches" 
+      const cols = 40, rows = 25;
+      const cellW = W / cols, cellH = (H - 60) / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          // Deterministic pseudo-random pattern
+          const seed = (r * 31 + c * 17) % 100;
+          const active = (seed + Math.floor(t * 3)) % 7 < 3;
+          const brightness = active ? 0.8 + 0.2 * Math.sin(t * 2 + r + c) : 0.05;
+          ctx.fillStyle = `rgba(94, 184, 196, ${brightness})`;
+          ctx.fillRect(c * cellW + 1, r * cellH + 40, cellW - 2, cellH - 2);
+        }
+      }
+      
+      ctx.fillStyle = '#d4a574';
+      ctx.font = '13px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('Die "wahre" Datei: Millionen Schalter im Silizium', W/2, 25);
+      ctx.textAlign = 'left';
+    }
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 3: MAP vs TERRITORY
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('map-canvas');
+  const s = setupCanvas(canvas);
+  const detail = bindSlider('map-detail', 'map-detail-val', v => v + '%');
+  const btn = document.getElementById('map-extract');
+  let extracting = 0;
+  btn.addEventListener('click', () => { extracting = 1; });
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = '#0a0a1f';
+    ctx.fillRect(0, 0, W, H);
+    
+    // Left side: TERRITORY (mountains, lakes, forests)
+    const halfW = W / 2;
+    // Sky gradient
+    const sg = ctx.createLinearGradient(0, 0, 0, H);
+    sg.addColorStop(0, '#2a3a5a');
+    sg.addColorStop(0.5, '#4a5a7a');
+    sg.addColorStop(1, '#3a4a3a');
+    ctx.fillStyle = sg;
+    ctx.fillRect(0, 0, halfW, H);
+    
+    // Mountains
+    ctx.fillStyle = '#2a3a4a';
+    ctx.beginPath();
+    ctx.moveTo(0, H * 0.7);
+    ctx.lineTo(halfW * 0.15, H * 0.35);
+    ctx.lineTo(halfW * 0.3, H * 0.5);
+    ctx.lineTo(halfW * 0.5, H * 0.25);
+    ctx.lineTo(halfW * 0.7, H * 0.45);
+    ctx.lineTo(halfW * 0.9, H * 0.3);
+    ctx.lineTo(halfW, H * 0.5);
+    ctx.lineTo(halfW, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fill();
+    // Snow caps
+    ctx.fillStyle = '#e8e8f5';
+    ctx.beginPath();
+    ctx.moveTo(halfW * 0.5, H * 0.25);
+    ctx.lineTo(halfW * 0.55, H * 0.32);
+    ctx.lineTo(halfW * 0.45, H * 0.32);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(halfW * 0.9, H * 0.3);
+    ctx.lineTo(halfW * 0.95, H * 0.37);
+    ctx.lineTo(halfW * 0.85, H * 0.37);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Lake
+    ctx.fillStyle = '#4a6a8a';
+    ctx.beginPath();
+    ctx.ellipse(halfW * 0.4, H * 0.85, halfW * 0.25, H * 0.06, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Trees
+    ctx.fillStyle = '#2a4a3a';
+    for (let i = 0; i < 15; i++) {
+      const tx = (i * 37) % halfW;
+      const ty = H * 0.75 + (i % 3) * 8;
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx - 5, ty + 12);
+      ctx.lineTo(tx + 5, ty + 12);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    ctx.fillStyle = '#d4a574';
+    ctx.font = '12px Georgia';
+    ctx.fillText('TERRITORIUM (die reale Welt)', 10, 20);
+    
+    // Divider
+    ctx.strokeStyle = '#d4a574';
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(halfW, 0);
+    ctx.lineTo(halfW, H);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Right side: MAP
+    ctx.fillStyle = '#f5f0e0';
+    ctx.fillRect(halfW, 0, halfW, H);
+    
+    const d = +detail.value / 100;
+    // Grid lines
+    ctx.strokeStyle = 'rgba(100,80,60,0.2)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < 10; i++) {
+      ctx.beginPath();
+      ctx.moveTo(halfW + (halfW / 10) * i, 0);
+      ctx.lineTo(halfW + (halfW / 10) * i, H);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(halfW, (H / 10) * i);
+      ctx.lineTo(W, (H / 10) * i);
+      ctx.stroke();
+    }
+    
+    // Map elements — symbolic
+    ctx.strokeStyle = '#664422';
+    ctx.lineWidth = 1 + d * 2;
+    // Mountain symbols (^)
+    if (d > 0.1) {
+      const positions = [[0.15, 0.35], [0.3, 0.5], [0.5, 0.25], [0.7, 0.45], [0.9, 0.3]];
+      positions.slice(0, Math.max(1, Math.floor(d * 5))).forEach(p => {
+        const mx = halfW + halfW * p[0];
+        const my = H * p[1];
+        ctx.beginPath();
+        ctx.moveTo(mx - 8, my + 4);
+        ctx.lineTo(mx, my - 6);
+        ctx.lineTo(mx + 8, my + 4);
+        ctx.stroke();
+      });
+    }
+    // Lake as blue outline
+    if (d > 0.3) {
+      ctx.strokeStyle = '#3366aa';
+      ctx.beginPath();
+      ctx.ellipse(halfW + halfW * 0.4, H * 0.85, halfW * 0.22, H * 0.05, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(51,102,170,0.3)';
+      ctx.fill();
+    }
+    // Tree symbols
+    if (d > 0.5) {
+      ctx.fillStyle = '#446644';
+      for (let i = 0; i < Math.floor(d * 15); i++) {
+        const tx = halfW + ((i * 37) % halfW);
+        const ty = H * 0.75 + (i % 3) * 8;
+        ctx.beginPath();
+        ctx.arc(tx, ty + 6, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    // Contour lines for detail
+    if (d > 0.7) {
+      ctx.strokeStyle = 'rgba(100,60,20,0.4)';
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.ellipse(halfW + halfW * 0.5, H * 0.4, 40 + i * 15, 20 + i * 8, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+    
+    ctx.fillStyle = '#664422';
+    ctx.font = '12px Georgia';
+    ctx.fillText('KARTE (Zahlen, Symbole, Beschreibung)', halfW + 10, 20);
+    
+    // Extraction animation
+    if (extracting > 0) {
+      extracting += 0.02;
+      const ex = halfW + halfW * 0.5;
+      const ey = H * 0.5;
+      ctx.fillStyle = `rgba(212,116,116,${Math.max(0, 1 - (extracting - 1) * 0.5)})`;
+      ctx.font = 'bold 16px Georgia';
+      ctx.textAlign = 'center';
+      const shake = Math.sin(extracting * 30) * 5;
+      ctx.fillText('❌ UNMÖGLICH ❌', ex + shake, ey);
+      ctx.font = '11px Georgia';
+      ctx.fillText('Kein Berg kommt aus der Karte heraus.', ex, ey + 20);
+      ctx.textAlign = 'left';
+      if (extracting > 3) extracting = 0;
+    }
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 4: BELL EXPERIMENT
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('bell-canvas');
+  const s = setupCanvas(canvas);
+  const alice = bindSlider('bell-alice', 'bell-alice-val', v => v + '°');
+  const bob = bindSlider('bell-bob', 'bell-bob-val', v => v + '°');
+  const runBtn = document.getElementById('bell-run');
+  const resetBtn = document.getElementById('bell-reset');
+  const result = document.getElementById('bell-result');
+  
+  let particles = [];
+  let stats = { total: 0, correlated: 0 };
+  let running = false;
+  
+  runBtn.addEventListener('click', () => {
+    running = true;
+    let count = 0;
+    const iv = setInterval(() => {
+      // Simulate one measurement
+      const angleDiff = ((+bob.value - +alice.value) * Math.PI / 180);
+      // Quantum correlation: cos²(θ/2) probability of same result
+      const prob = Math.cos(angleDiff / 2) ** 2;
+      const same = Math.random() < prob;
+      stats.total++;
+      if (same) stats.correlated++;
+      count++;
+      if (count >= 500) {
+        clearInterval(iv);
+        running = false;
+        const corr = ((stats.correlated / stats.total) * 100).toFixed(1);
+        const classical = 50 + Math.abs(Math.cos(angleDiff)) * 25;
+        result.innerHTML = `<b>Quanten-Korrelation:</b> ${corr}% übereinstimmende Messungen<br>
+        <b>Klassische Erwartung:</b> ~${classical.toFixed(1)}%<br>
+        <b>Messungen gesamt:</b> ${stats.total}<br>
+        ${Math.abs(corr - classical) > 8 ? '<span style="color:var(--accent);"><b>→ Bell-Ungleichung verletzt! Klassischer Realismus widerlegt.</b></span>' : ''}`;
+      }
+    }, 5);
+    // Spawn visual particles
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        particles.push({ x: canvas.getBoundingClientRect().width/2, y: canvas.getBoundingClientRect().height/2, vx: -3, life: 1, side: 'A' });
+        particles.push({ x: canvas.getBoundingClientRect().width/2, y: canvas.getBoundingClientRect().height/2, vx: 3, life: 1, side: 'B' });
+      }, i * 100);
+    }
+  });
+  
+  resetBtn.addEventListener('click', () => {
+    stats = { total: 0, correlated: 0 };
+    particles = [];
+    result.innerHTML = 'Führe das Experiment aus, um die Korrelation zu sehen.';
+  });
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = 'rgba(5,5,20,0.2)';
+    ctx.fillRect(0, 0, W, H);
+    
+    const cx = W / 2, cy = H / 2;
+    
+    // Source in middle
+    ctx.fillStyle = '#8b6cb8';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 18 + Math.sin(Date.now()*0.003)*3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = '#a0a0c0';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Quelle', cx, cy + 32);
+    
+    // Alice on the left
+    const aliceAng = +alice.value * Math.PI / 180;
+    ctx.strokeStyle = '#5eb8c4';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(60, cy, 28, 0, Math.PI * 2);
+    ctx.stroke();
+    // Detector orientation line
+    ctx.beginPath();
+    ctx.moveTo(60 - Math.cos(aliceAng) * 25, cy - Math.sin(aliceAng) * 25);
+    ctx.lineTo(60 + Math.cos(aliceAng) * 25, cy + Math.sin(aliceAng) * 25);
+    ctx.stroke();
+    ctx.fillStyle = '#5eb8c4';
+    ctx.font = 'bold 14px Georgia';
+    ctx.fillText('Alice', 60, cy + 55);
+    ctx.font = '10px sans-serif';
+    ctx.fillText(alice.value + '°', 60, cy + 70);
+    
+    // Bob on the right
+    const bobAng = +bob.value * Math.PI / 180;
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(W - 60, cy, 28, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W - 60 - Math.cos(bobAng) * 25, cy - Math.sin(bobAng) * 25);
+    ctx.lineTo(W - 60 + Math.cos(bobAng) * 25, cy + Math.sin(bobAng) * 25);
+    ctx.stroke();
+    ctx.fillStyle = '#d4a574';
+    ctx.font = 'bold 14px Georgia';
+    ctx.fillText('Bob', W - 60, cy + 55);
+    ctx.font = '10px sans-serif';
+    ctx.fillText(bob.value + '°', W - 60, cy + 70);
+    
+    // Entanglement line
+    ctx.strokeStyle = 'rgba(139,108,184,0.3)';
+    ctx.setLineDash([3, 6]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(90, cy);
+    ctx.lineTo(W - 90, cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Particles
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.life -= 0.02;
+      const targetX = p.side === 'A' ? 90 : W - 90;
+      if ((p.side === 'A' && p.x < targetX) || (p.side === 'B' && p.x > targetX)) {
+        p.life = 0;
+      }
+      ctx.fillStyle = `rgba(232,232,245,${p.life})`;
+      ctx.beginPath();
+      ctx.arc(p.x, cy, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#a0a0c0';
+    ctx.font = '11px Georgia';
+    ctx.fillText('Zwei verschränkte Teilchen fliegen in entgegengesetzte Richtungen', 10, 20);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 5: ZOMBIE / HARD PROBLEM
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('zombie-canvas');
+  const s = setupCanvas(canvas);
+  const complexity = bindSlider('zombie-complexity', 'zombie-complexity-val');
+  const btn = document.getElementById('zombie-toggle');
+  let mode = 0; // 0 = you (with light), 1 = zombie (dark)
+  btn.addEventListener('click', () => { mode = 1 - mode; });
+  
+  const neurons = [];
+  for (let i = 0; i < 100; i++) {
+    neurons.push({
+      x: Math.random(),
+      y: Math.random(),
+      connections: []
+    });
+  }
+  neurons.forEach((n, i) => {
+    for (let j = 0; j < 4; j++) {
+      n.connections.push(Math.floor(Math.random() * neurons.length));
+    }
+  });
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = mode === 0 ? '#0a0a1f' : '#000';
+    ctx.fillRect(0, 0, W, H);
+    
+    const c = +complexity.value / 100;
+    const numActive = Math.floor(c * neurons.length);
+    const time = Date.now() * 0.001;
+    
+    // Draw brain outline
+    const cx = W / 2, cy = H / 2;
+    const rx = W * 0.35, ry = H * 0.35;
+    ctx.strokeStyle = mode === 0 ? 'rgba(139,108,184,0.4)' : 'rgba(80,80,90,0.4)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    
+    // Neurons
+    for (let i = 0; i < numActive; i++) {
+      const n = neurons[i];
+      const nx = cx - rx + n.x * rx * 2;
+      const ny = cy - ry + n.y * ry * 2;
+      const active = Math.sin(time * 2 + i) > 0;
+      // Connections
+      n.connections.forEach(ci => {
+        if (ci < numActive) {
+          const t = neurons[ci];
+          const tx = cx - rx + t.x * rx * 2;
+          const ty = cy - ry + t.y * ry * 2;
+          ctx.strokeStyle = mode === 0 
+            ? `rgba(94,184,196,${active ? 0.4 : 0.1})` 
+            : `rgba(100,100,110,${active ? 0.3 : 0.05})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(nx, ny);
+          ctx.lineTo(tx, ty);
+          ctx.stroke();
+        }
+      });
+      // Node
+      ctx.fillStyle = mode === 0
+        ? `rgba(212,165,116,${active ? 1 : 0.4})`
+        : `rgba(120,120,130,${active ? 0.6 : 0.2})`;
+      ctx.beginPath();
+      ctx.arc(nx, ny, active ? 3 : 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Center — inner life indicator
+    const cx2 = cx, cy2 = cy;
+    if (mode === 0) {
+      // Glowing "someone home"
+      const pulse = 0.6 + 0.4 * Math.sin(time * 1.5);
+      const grad = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, 60);
+      grad.addColorStop(0, `rgba(212,165,116,${0.6 * pulse})`);
+      grad.addColorStop(0.5, `rgba(139,108,184,${0.3 * pulse})`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, 60, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d4a574';
+      ctx.font = 'italic 14px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('✦ Jemand ist zuhause ✦', cx2, cy + ry + 30);
+    } else {
+      // Dark void
+      ctx.fillStyle = '#666';
+      ctx.font = 'italic 14px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('— Dunkelheit —', cx2, cy + ry + 30);
+      ctx.font = '11px sans-serif';
+      ctx.fillText('gleiche Struktur, kein Erleben', cx2, cy + ry + 48);
+    }
+    
+    ctx.textAlign = 'left';
+    ctx.fillStyle = mode === 0 ? '#d4a574' : '#888';
+    ctx.font = '12px Georgia';
+    ctx.fillText(mode === 0 ? 'DU: Neuronen + Erleben' : 'ZOMBIE: Nur Neuronen', 10, 20);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 6: COMBINATION PROBLEM (Panpsychism)
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('combination-canvas');
+  const s = setupCanvas(canvas);
+  const count = bindSlider('combo-count', 'combo-count-val');
+  const btn = document.getElementById('combo-try');
+  let attempting = 0;
+  btn.addEventListener('click', () => { attempting = 1; });
+  
+  let particles = [];
+  function initParticles(n) {
+    particles = [];
+    const W = s.w, H = s.h;
+    for (let i = 0; i < n; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        hue: Math.random() * 360,
+        homeX: 0, homeY: 0
+      });
+    }
+  }
+  initParticles(50);
+  let lastCount = 50;
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = 'rgba(5,5,20,0.15)';
+    ctx.fillRect(0, 0, W, H);
+    
+    const n = +count.value;
+    if (n !== lastCount) { initParticles(n); lastCount = n; }
+    
+    if (attempting > 0) {
+      attempting += 0.015;
+      const cx = W / 2, cy = H / 2;
+      // Try to merge toward center
+      particles.forEach(p => {
+        const dx = cx - p.x, dy = cy - p.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        p.vx += (dx / dist) * 0.05;
+        p.vy += (dy / dist) * 0.05;
+        p.vx *= 0.95; p.vy *= 0.95;
+      });
+      if (attempting > 3) {
+        attempting = 0;
+        // Explode outward — combination failed
+        particles.forEach(p => {
+          const cx = W/2, cy = H/2;
+          p.vx = (p.x - cx) * 0.05;
+          p.vy = (p.y - cy) * 0.05;
+        });
+      }
+    }
+    
+    // Update and draw
+    particles.forEach((p, i) => {
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.99; p.vy *= 0.99;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      p.x = Math.max(0, Math.min(W, p.x));
+      p.y = Math.max(0, Math.min(H, p.y));
+      
+      // Glow
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 12);
+      grad.addColorStop(0, `hsla(${p.hue}, 70%, 60%, 0.9)`);
+      grad.addColorStop(1, `hsla(${p.hue}, 70%, 60%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 12, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Core
+      ctx.fillStyle = `hsl(${p.hue}, 80%, 70%)`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    if (attempting > 1.5 && attempting < 2.5) {
+      ctx.fillStyle = `rgba(212,116,116,${Math.max(0, 2.5 - attempting)})`;
+      ctx.font = 'bold 20px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('❌ Wessen Perspektive gewinnt? ❌', W/2, H/2);
+      ctx.textAlign = 'left';
+    }
+    
+    ctx.fillStyle = '#a0a0c0';
+    ctx.font = '11px Georgia';
+    ctx.fillText('Jedes Fünkchen = ein "Mikro-Subjekt" mit eigenem Erleben', 10, 20);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 8: VORTEX / WHIRLPOOL
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('vortex-canvas');
+  const s = setupCanvas(canvas);
+  const strength = bindSlider('vortex-strength', 'vortex-strength-val', v => v + '%');
+  const vcount = bindSlider('vortex-count', 'vortex-count-val');
+  
+  // Flow field particles
+  const particles = [];
+  for (let i = 0; i < 400; i++) {
+    particles.push({
+      x: Math.random() * 1000,
+      y: Math.random() * 500,
+      vx: 0, vy: 0,
+      age: Math.random() * 100
+    });
+  }
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = 'rgba(5,10,25,0.1)';
+    ctx.fillRect(0, 0, W, H);
+    
+    const str = +strength.value / 100;
+    const nAlters = +vcount.value;
+    const time = Date.now() * 0.0005;
+    
+    // Alter positions
+    const alters = [];
+    for (let i = 0; i < nAlters; i++) {
+      const ang = (i / nAlters) * Math.PI * 2;
+      const r = Math.min(W, H) * 0.25;
+      alters.push({
+        x: W/2 + Math.cos(ang) * r,
+        y: H/2 + Math.sin(ang) * r,
+        strength: str
+      });
+    }
+    
+    particles.forEach(p => {
+      // Base drift
+      let fx = Math.sin(p.y * 0.005 + time) * 0.3;
+      let fy = Math.cos(p.x * 0.005 + time) * 0.3;
+      
+      // Vortex pull from each alter
+      alters.forEach(a => {
+        const dx = p.x - a.x, dy = p.y - a.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) + 5;
+        const influence = Math.min(50, 3000 / (dist * dist)) * a.strength;
+        // Rotational force (perpendicular)
+        fx += -dy / dist * influence;
+        fy += dx / dist * influence;
+        // Inward pull
+        fx += -dx / dist * influence * 0.3;
+        fy += -dy / dist * influence * 0.3;
+      });
+      
+      p.vx = p.vx * 0.9 + fx * 0.1;
+      p.vy = p.vy * 0.9 + fy * 0.1;
+      p.x += p.vx; p.y += p.vy;
+      p.age += 1;
+      
+      if (p.x < 0 || p.x > W || p.y < 0 || p.y > H || p.age > 200) {
+        p.x = Math.random() * W;
+        p.y = Math.random() * H;
+        p.vx = 0; p.vy = 0;
+        p.age = 0;
+      }
+      
+      const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+      const hue = 200 + speed * 20;
+      const alpha = Math.min(0.8, speed * 0.3 + 0.2);
+      ctx.fillStyle = `hsla(${hue}, 70%, 65%, ${alpha})`;
+      ctx.fillRect(p.x, p.y, 1.5, 1.5);
+    });
+    
+    // Alter cores
+    alters.forEach((a, i) => {
+      const pulse = 0.7 + 0.3 * Math.sin(time * 3 + i);
+      const grad = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, 25 * str);
+      grad.addColorStop(0, `rgba(212,165,116,${0.8 * pulse * str})`);
+      grad.addColorStop(1, 'rgba(212,165,116,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, 25 * str, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    ctx.fillStyle = '#d4a574';
+    ctx.font = '12px Georgia';
+    ctx.fillText('Ozean = kosmisches Bewusstsein · Strudel = Alters', 10, 20);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 9: DISSOCIATION / DID
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('did-canvas');
+  const s = setupCanvas(canvas);
+  const intBtn = document.getElementById('did-integrate');
+  const disBtn = document.getElementById('did-dissociate');
+  let mode = 0; // 0 = integrated, 1 = dissociated
+  intBtn.addEventListener('click', () => { mode = 0; });
+  disBtn.addEventListener('click', () => { mode = 1; });
+  
+  const nodes = [];
+  for (let i = 0; i < 60; i++) {
+    nodes.push({
+      x: Math.random(),
+      y: Math.random(),
+      cluster: Math.floor(Math.random() * 4),
+      vx: 0, vy: 0
+    });
+  }
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = '#0a0a1f';
+    ctx.fillRect(0, 0, W, H);
+    
+    const time = Date.now() * 0.001;
+    const cx = W / 2, cy = H / 2;
+    const clusterCenters = [
+      { x: cx - W*0.25, y: cy - H*0.2, color: '#d4a574' },
+      { x: cx + W*0.25, y: cy - H*0.2, color: '#8b6cb8' },
+      { x: cx - W*0.25, y: cy + H*0.2, color: '#5eb8c4' },
+      { x: cx + W*0.25, y: cy + H*0.2, color: '#d47474' }
+    ];
+    
+    // Force layout
+    nodes.forEach(n => {
+      const target = mode === 0
+        ? { x: cx + Math.cos(n.cluster + time*0.2) * 80, y: cy + Math.sin(n.cluster + time*0.2) * 80 }
+        : clusterCenters[n.cluster];
+      const nx = mode === 0
+        ? cx + (n.x - 0.5) * W * 0.6
+        : target.x + (n.x - 0.5) * W * 0.15;
+      const ny = mode === 0
+        ? cy + (n.y - 0.5) * H * 0.5
+        : target.y + (n.y - 0.5) * H * 0.15;
+      n.dispX = nx; n.dispY = ny;
+    });
+    
+    // Draw connections
+    if (mode === 0) {
+      // All connected
+      ctx.strokeStyle = 'rgba(139,108,184,0.15)';
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i+1; j < nodes.length; j++) {
+          const dx = nodes[i].dispX - nodes[j].dispX;
+          const dy = nodes[i].dispY - nodes[j].dispY;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < 120) {
+            ctx.globalAlpha = (1 - d/120) * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].dispX, nodes[i].dispY);
+            ctx.lineTo(nodes[j].dispX, nodes[j].dispY);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+    } else {
+      // Only within clusters
+      for (let c = 0; c < 4; c++) {
+        const clusterNodes = nodes.filter(n => n.cluster === c);
+        ctx.strokeStyle = clusterCenters[c].color + '55';
+        ctx.lineWidth = 0.8;
+        for (let i = 0; i < clusterNodes.length; i++) {
+          for (let j = i+1; j < clusterNodes.length; j++) {
+            ctx.beginPath();
+            ctx.moveTo(clusterNodes[i].dispX, clusterNodes[i].dispY);
+            ctx.lineTo(clusterNodes[j].dispX, clusterNodes[j].dispY);
+            ctx.stroke();
+          }
+        }
+        // Cluster boundary
+        ctx.strokeStyle = clusterCenters[c].color + '33';
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(clusterCenters[c].x, clusterCenters[c].y, 70, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Label
+        ctx.fillStyle = clusterCenters[c].color;
+        ctx.font = 'bold 11px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText('Alter ' + (c+1), clusterCenters[c].x, clusterCenters[c].y - 78);
+      }
+    }
+    
+    // Draw nodes
+    nodes.forEach(n => {
+      const color = mode === 0 ? '#d4a574' : clusterCenters[n.cluster].color;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(n.dispX, n.dispY, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#a0a0c0';
+    ctx.font = '11px Georgia';
+    ctx.fillText(mode === 0 ? 'Integrierte Psyche · alle Gedanken verbunden' : 'Dissoziierte Psyche · getrennte Bewusstseinsinseln', 10, 20);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 10: MEMBRANE / CHLADNI PATTERNS
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('membrane-canvas');
+  const s = setupCanvas(canvas);
+  const freq = bindSlider('mem-freq', 'mem-freq-val');
+  const amp = bindSlider('mem-amp', 'mem-amp-val');
+  const mode = bindSlider('mem-mode', 'mem-mode-val');
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = '#050510';
+    ctx.fillRect(0, 0, W, H);
+    
+    const f = +freq.value;
+    const a = +amp.value / 100;
+    const m = +mode.value;
+    const time = Date.now() * 0.0005;
+    
+    const size = Math.min(W, H) * 0.85;
+    const ox = (W - size) / 2;
+    const oy = (H - size) / 2;
+    
+    // Compute Chladni pattern
+    const resolution = 3;
+    for (let px = 0; px < size; px += resolution) {
+      for (let py = 0; py < size; py += resolution) {
+        const x = px / size;
+        const y = py / size;
+        // Chladni: sin(n*pi*x)*sin(m*pi*y) - sin(m*pi*x)*sin(n*pi*y)
+        const n1 = m;
+        const n2 = m + Math.floor(f / 4);
+        const v = Math.sin(n1 * Math.PI * x) * Math.sin(n2 * Math.PI * y)
+                - Math.sin(n2 * Math.PI * x) * Math.sin(n1 * Math.PI * y);
+        const intensity = Math.abs(v) * a * (0.7 + 0.3 * Math.sin(time * f));
+        
+        // Color based on value
+        const hue = 30 + Math.abs(v) * 60;
+        const light = 20 + intensity * 60;
+        ctx.fillStyle = `hsl(${hue}, 70%, ${light}%)`;
+        ctx.fillRect(ox + px, oy + py, resolution, resolution);
+      }
+    }
+    
+    // Border
+    ctx.strokeStyle = '#d4a574';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(ox, oy, size, size);
+    
+    ctx.fillStyle = '#d4a574';
+    ctx.font = '12px Georgia';
+    ctx.fillText(`Modus (${m}, ${m + Math.floor(f/4)}) · Frequenz ${f} Hz`, 10, 20);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 11: DASHBOARD / PERCEPTION AS INTERFACE
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const canvas = document.getElementById('dashboard-canvas');
+  const s = setupCanvas(canvas);
+  const freq = bindSlider('dash-freq', 'dash-freq-val');
+  const sense = document.getElementById('dash-sense');
+  
+  function draw() {
+    const W = s.w, H = s.h;
+    const ctx = s.ctx;
+    ctx.fillStyle = '#0a0a1f';
+    ctx.fillRect(0, 0, W, H);
+    
+    const f = +freq.value / 100;
+    const senseType = sense.value;
+    const time = Date.now() * 0.001;
+    
+    // Top: abstract reality (wave)
+    const topH = H * 0.35;
+    ctx.fillStyle = '#12122e';
+    ctx.fillRect(0, 0, W, topH);
+    
+    ctx.strokeStyle = '#8b6cb8';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let x = 0; x < W; x += 2) {
+      const phase = x * 0.02 * (0.5 + f * 2) + time * 3;
+      const y = topH/2 + Math.sin(phase) * topH * 0.3 * (0.3 + f * 0.7);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    ctx.fillStyle = '#8b6cb8';
+    ctx.font = '11px Georgia';
+    ctx.fillText('MENTALE WELT DA DRAUSSEN (abstrakte Schwingung)', 10, 15);
+    
+    // Divider with arrow
+    ctx.strokeStyle = '#d4a574';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(0, topH);
+    ctx.lineTo(W, topH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#d4a574';
+    ctx.font = '11px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('↓ SINNESORGAN KODIERT ↓', W/2, topH + 15);
+    ctx.textAlign = 'left';
+    
+    // Bottom: perceived quale
+    ctx.fillStyle = '#151525';
+    ctx.fillRect(0, topH + 20, W, H - topH - 20);
+    
+    const bcy = topH + 20 + (H - topH - 20) / 2;
+    
+    if (senseType === 'eye') {
+      // Color spectrum
+      const hue = f * 300;
+      const grad = ctx.createRadialGradient(W/2, bcy, 0, W/2, bcy, 100);
+      grad.addColorStop(0, `hsl(${hue}, 90%, 60%)`);
+      grad.addColorStop(1, `hsl(${hue}, 90%, 20%)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(W/2, bcy, 100, 0, Math.PI * 2);
+      ctx.fill      ctx.arc(W/2, bcy, 100, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('FARBE', W/2, bcy + 130);
+      ctx.font = '12px sans-serif';
+      ctx.fillText(hue < 60 ? 'Rot' : hue < 180 ? 'Grün' : hue < 240 ? 'Blau' : 'Violett', W/2, bcy + 148);
+      ctx.textAlign = 'left';
+    } else if (senseType === 'ear') {
+      // Sound waves
+      const freqHz = 100 + f * 900;
+      for (let i = 0; i < 40; i++) {
+        const px = 20 + (i / 40) * (W - 40);
+        const amp = Math.min(60, (H - topH - 40) * 0.3);
+        const py = bcy + Math.sin(i * 0.3 * freqHz / 100 + t * 5) * amp;
+        ctx.fillStyle = `hsla(${180 + i * 3}, 70%, 60%, 0.8)`;
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#5eb8c4';
+      ctx.font = 'bold 16px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText(`TON · ${Math.round(freqHz)} Hz`, W/2, bcy + 100);
+      ctx.textAlign = 'left';
+    } else if (senseType === 'skin') {
+      // Warmth gradient
+      const warmth = f;
+      const cx3 = W/2, cy3 = bcy;
+      for (let r = 100; r > 0; r -= 3) {
+        const alpha = (100 - r) / 100 * 0.9;
+        const hue = 240 - warmth * 240;
+        ctx.fillStyle = `hsla(${hue}, 80%, ${30 + warmth * 40}%, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(cx3, cy3, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText(warmth < 0.3 ? 'KALT' : warmth < 0.7 ? 'LAU' : 'HEISS', W/2, bcy + 130);
+      ctx.textAlign = 'left';
+    } else {
+      // Smell - abstract particles
+      for (let i = 0; i < 30; i++) {
+        const ang = (i / 30) * Math.PI * 2 + t;
+        const dist = 40 + f * 60 + Math.sin(t * 2 + i) * 15;
+        const px = W/2 + Math.cos(ang) * dist;
+        const py = bcy + Math.sin(ang) * dist * 0.6;
+        const hue = 60 + f * 80;
+        ctx.fillStyle = `hsla(${hue}, 80%, 65%, 0.7)`;
+        ctx.beginPath();
+        ctx.arc(px, py, 3 + f * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#d4a574';
+      ctx.font = 'bold 16px Georgia';
+      ctx.textAlign = 'center';
+      ctx.fillText('GERUCH', W/2, bcy + 130);
+      ctx.font = '12px sans-serif';
+      ctx.fillText(f < 0.5 ? 'süßlich' : 'stechend', W/2, bcy + 148);
+      ctx.textAlign = 'left';
+    }
+    
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#a0a0c0';
+    ctx.font = '11px Georgia';
+    ctx.fillText('WAHRGENOMMENE QUALITÄT (Icon auf dem Dashboard)', 10, topH + 40);
+    
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// SCENE 12: EMPIRICAL EVIDENCE - Plotly chart
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const select = document.getElementById('evidence-study');
+  const info = document.getElementById('evidence-info');
+  
+  const studies = {
+    psilocybin: {
+      title: 'Psilocybin-Studie (Carhart-Harris et al., 2012)',
+      brain: [100, 82, 65, 55, 48, 45, 43, 42],
+      exp: [100, 130, 180, 240, 310, 380, 420, 450],
+      info: `<span class="title">Psilocybin-Studie (Imperial College London, 2012)</span>
+        Neuroimaging zeigte: unter Psilocybin <strong>sinkt</strong> die Gehirnaktivität in mehreren Regionen (v.a. dem "Default Mode Network"). Nirgendwo im Gehirn <em>steigt</em> sie signifikant. Und doch berichten Probanden von den intensivsten, reichsten Erfahrungen ihres Lebens.<br><br>
+        <strong>Materialistische Vorhersage:</strong> Reicheres Erleben → mehr Neuronenaktivität<br>
+        <strong>Idealistische Vorhersage:</strong> Filter-Schwächung → mehr Zugang zum kosmischen Bewusstsein<br><br>
+        <strong>Die Daten:</strong> Bestätigen den Idealismus.`
+    },
+    lsd: {
+      title: 'LSD-Studie (Carhart-Harris et al., 2016)',
+      brain: [100, 85, 70, 58, 50, 45, 42, 40],
+      exp: [100, 150, 220, 300, 380, 440, 480, 500],
+      info: `<span class="title">LSD-Studie (2016)</span>
+        Auch LSD reduziert die Gehirnaktivität signifikant, insbesondere im Default Mode Network. Gleichzeitig berichten Probanden von "Ich-Auflösung" und ozeanischen Verbundenheitserfahrungen.<br><br>
+        Der Rückgang der Aktivität <strong>korreliert</strong> mit der Intensität der subjektiven Erfahrung – je stärker die Reduktion, desto tiefer die Erfahrung.`
+    },
+    dmt: {
+      title: 'Ayahuasca/DMT (Palhano-Fontes et al., 2015)',
+      brain: [100, 78, 62, 50, 42, 38, 35, 33],
+      exp: [100, 180, 280, 380, 460, 500, 520, 530],
+      info: `<span class="title">Ayahuasca/DMT-Studie</span>
+        Die vielleicht dramatischste Substanz: DMT erzeugt oft die Erfahrung, in andere Dimensionen zu reisen und mit anderen Wesen zu kommunizieren. Und wieder: <strong>weniger Gehirnaktivität</strong>, mehr Erfahrung.<br><br>
+        Diese Ergebnisse sind mit dem Materialismus nur mit erheblichen theoretischen Verrenkungen vereinbar.`
+    },
+    nde: {
+      title: 'Nahtoderfahrungen (van Lommel et al.)',
+      brain: [100, 70, 40, 15, 5, 2, 1, 0],
+      exp: [100, 150, 220, 350, 470, 520, 540, 550],
+      info: `<span class="title">Nahtoderfahrungen bei Herzstillstand</span>
+        Bei Herzstillstand hört die messbare Gehirnaktivität innerhalb von 15 Sekunden auf. Trotzdem berichten viele Patienten nach der Wiederbelebung von <strong>lebensverändernden, hochkohärenten Erfahrungen</strong> – oft mit verifizierten Wahrnehmungen aus einer außerkörperlichen Perspektive.<br><br>
+        Wie kann ein "totes" Gehirn die reichsten Erfahrungen eines Lebens produzieren? Für den Materialismus ein Rätsel.`
+    },
+    mediums: {
+      title: 'Trance-Medien (Peres et al., 2012)',
+      brain: [100, 90, 78, 68, 60, 55, 52, 50],
+      exp: [100, 140, 190, 240, 280, 310, 330, 340],
+      info: `<span class="title">Neuroimaging von Trance-Medien</span>
+        Erfahrene Medien wiesen während psychographischen Schreibens <strong>reduzierte Aktivität</strong> in Frontallappen und Hippocampus auf – Regionen, die normalerweise mit komplexem Sprechen und Erinnerung verbunden sind.<br><br>
+        Und doch war der geschriebene Text <em>komplexer</em> als im Nicht-Trance-Zustand. Ein direktes Paradoxon für materialistische Erklärungen.`
+    },
+    savant: {
+      title: 'Erworbenes Savant-Syndrom',
+      brain: [100, 60, 55, 52, 50, 48, 46, 45],
+      exp: [100, 200, 280, 340, 380, 400, 415, 420],
+      info: `<span class="title">Erworbenes Savant-Syndrom</span>
+        Menschen, die durch Kopfverletzungen, Schlaganfälle oder Blitzeinschläge Hirnschäden erlitten haben, entwickeln plötzlich <strong>Genie-Fähigkeiten</strong>: perfektes Gedächtnis, blitzschnelle Kalender-Berechnungen, meisterhaftes Klavierspiel ohne Training.<br><br>
+        Wenn diese Fähigkeiten "latent" im Gehirn waren, warum sollte die Evolution sie unterdrückt haben? Und wie kann Gehirnschaden zu <em>mehr</em> Fähigkeit führen? Der Filter wird poröser.`
+    }
+  };
+  
+  const labels = ['0', '5min', '10min', '15min', '20min', '25min', '30min', '35min'];
+  
+  function drawChart(key) {
+    const s = studies[key];
+    const trace1 = {
+      x: labels,
+      y: s.brain,
+      name: 'Gehirnaktivität',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { color: '#d47474', width: 3 },
+      marker: { size: 8 }
+    };
+    const trace2 = {
+      x: labels,
+      y: s.exp,
+      name: 'Reichtum der Erfahrung',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { color: '#d4a574', width: 3 },
+      marker: { size: 8 }
+    };
+    const layout = {
+      title: { text: s.title, font: { color: '#e8e8f5', size: 14, family: 'Georgia' } },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(10,10,30,0.5)',
+      font: { color: '#a0a0c0', family: 'Georgia' },
+      xaxis: { title: 'Zeit', gridcolor: 'rgba(212,165,116,0.15)' },
+      yaxis: { title: 'Relativer Wert (%)', gridcolor: 'rgba(212,165,116,0.15)' },
+      legend: { x: 0.5, y: 1.15, xanchor: 'center', orientation: 'h' },
+      margin: { t: 60, b: 50, l: 60, r: 20 }
+    };
+    Plotly.newPlot('evidence-chart', [trace1, trace2], layout, {displayModeBar: false, responsive: true});
+    info.innerHTML = s.info;
+  }
+  
+  select.addEventListener('change', () => drawChart(select.value));
+  drawChart('psilocybin');
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// NAVIGATION - Active state on scroll
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const sections = document.querySelectorAll('.scene');
+  const navLinks = document.querySelectorAll('.nav a');
+  
+  function updateActive() {
+    const scrollPos = window.scrollY + window.innerHeight / 2;
+    sections.forEach((sec, i) => {
+      const top = sec.offsetTop;
+      const bot = top + sec.offsetHeight;
+      if (scrollPos >= top && scrollPos < bot) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        if (navLinks[i]) navLinks[i].classList.add('active');
+      }
+    });
+  }
+  
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+  
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+// Smooth reveal on scroll
+// ═══════════════════════════════════════════════════════════════════════
+(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  document.querySelectorAll('.scene').forEach(s => {
+    s.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    if (s.id !== 's0') {
+      s.style.opacity = '0.3';
+    }
+    observer.observe(s);
+  });
+})();
+
+</script>
+
+</body>
+</html>
