@@ -138,6 +138,24 @@ window.bibData = {
 		url: "https://doi.org/10.2307/1968966",
 		alternativetitle: "Eilenberg and Mac Lane, Group Extensions and Homology (1942)"
 	},
+	"eilenbergsteenrod1952": {
+		title: "Foundations of Algebraic Topology",
+		author: "Samuel Eilenberg, Norman Steenrod",
+		year: 1952,
+		publisher: "Princeton University Press",
+		url: "https://en.wikipedia.org/wiki/Eilenberg%E2%80%93Steenrod_axioms",
+		alternativetitle: "Eilenberg and Steenrod, Foundations of Algebraic Topology (1952)"
+	},
+	"hurewicz1935": {
+		title: "Beiträge zur Topologie der Deformationen (I–IV)",
+		author: "Witold Hurewicz",
+		year: 1935,
+		journal: "Proceedings of the Koninklijke Nederlandse Akademie van Wetenschappen",
+		volume: 38,
+		pages: "112–119; 521–528; 1064–1065; 39 (1936) 215–224",
+		url: "https://en.wikipedia.org/wiki/Hurewicz_theorem",
+		alternativetitle: "Hurewicz, Contributions to the topology of deformations (1935–36)"
+	},
 	"mayer1929": {
 		title: "Über abstrakte Topologie",
 		author: "Walther Mayer",
