@@ -380,20 +380,20 @@ The math in the box above is precisely the machinery \citeauthor{youvan2024} (\c
 </div>
 
 <div class="hott-journey">
-	<a href="#hott-wrap"><b>0 &middot; Motivation</b>Why would AI need a new foundation?</a>
-	<a href="#hott-lab-1"><b>1 &middot; Types</b>What is a type? &middot; Curry&ndash;Howard</a>
-	<a href="#hott-lab-2"><b>2 &middot; Homotopy</b>When are two paths "the same"?</a>
-	<a href="#hott-lab-3"><b>3 &middot; Identity types</b>Equality is a path</a>
-	<a href="#hott-lab-4"><b>4 &middot; Higher dimensions</b>Paths between paths</a>
-	<a href="#hott-lab-5"><b>5 &middot; Verification</b>Proving instead of testing</a>
-	<a href="#hott-lab-6"><b>6 &middot; Uncertainty</b>Probability as a type</a>
-	<a href="#hott-lab-7"><b>7 &middot; Knowledge</b>Modeling meaning cleanly</a>
-	<a href="#hott-lab-8"><b>8 &middot; Quantum AI</b>Typing superposition</a>
-	<a href="#hott-lab-9"><b>9 &middot; Explainable AI</b>Opening the black box</a>
+	<a href="#hott-wrap"><b>Motivation</b> Why would AI need a new foundation?</a>
+	<a href="#hott-lab-1"><b>Types</b> What is a type? &middot; Curry&ndash;Howard</a>
+	<a href="#hott-lab-2"><b>Homotopy</b> When are two paths "the same"?</a>
+	<a href="#hott-lab-3"><b>Identity types</b> Equality is a path</a>
+	<a href="#hott-lab-4"><b>Higher dimensions</b> Paths between paths</a>
+	<a href="#hott-lab-5"><b>Verification</b> Proving instead of testing</a>
+	<a href="#hott-lab-6"><b>Uncertainty</b> Probability as a type</a>
+	<a href="#hott-lab-7"><b>Knowledge</b> Modeling meaning cleanly</a>
+	<a href="#hott-lab-8"><b>Quantum AI</b> Typing superposition</a>
+	<a href="#hott-lab-9"><b>Explainable AI</b> Opening the black box</a>
 </div>
 
 <div class="md">
-### 0 · Why would AI need a new foundation?
+### Motivation
 
 Modern AI is startlingly capable — and at the same time **opaque**, **brittle**, and **hard to guarantee**. Nobody can say why the model called the picture a cat, an imperceptible pixel-noise flips a panda into a gibbon, and "passed ten thousand tests" says nothing about the infinite inputs it has not seen. Click through the three problems to see how each one feels:
 </div>
