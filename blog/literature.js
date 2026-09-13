@@ -40,7 +40,7 @@ window.bibData = {
 		alternativetitle: "Fourier, Analytical Theory of Heat (1822)"
 	},
 	"cooley1965fft": {
-		title: "An Algorithm for the Machine Calculation of Complex Fourier Coefficients",
+		title: "An Algorithm for the Machine Calculation of Complex Fourier Series",
 		author: "James W. Cooley, John W. Tukey",
 		year: 1965,
 		url: "https://en.wikipedia.org/wiki/Fast_Fourier_transform",
@@ -358,7 +358,7 @@ window.bibData = {
 		title: "Homo erectus at Trinil on Java used shells for tool production and engraving",
 		author: "J. C. A. Joordens, F. Fitzer-Räpplin, S. P. B. G. Brink, E. H. S. Langforren, K. Douka, M. C. Aris, W. H. F. S. Kibenge, J. G. M. van der Geer, E. H. d'Errico",
 		year: 2015,
-		url: "https://www.nature.com/articles/nature14164",
+		url: "https://www.nature.com/articles/nature13962",
 		alternativetitle: "Trinil Shell (Joordens 2015)"
 	},
 	"trinilshell_image": {
@@ -368,6 +368,13 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Homo_Erectus_shell_with_geometric_incisions_circa_500,000_BP,_Naturalis_Biodiversity_Center,_Netherlands_(with_detail).jpg",
 		license: "CC-BY-4.0",
 		alternativetitle: "Trinil Shell"
+	},
+	"moscowpapyrus": {
+		title: "Moscow Mathematical Papyrus",
+		author: "Anonymous (Egyptian scribe)",
+		year: "ca. 1850 BCE",
+		url: "https://en.wikipedia.org/wiki/Moscow_Mathematical_Papyrus",
+		alternativetitle: "Moscow Papyrus"
 	},
 	"rhindpapyrus": {
 		title: "Rhind Mathematical Papyrus (Papyrus Ahmes)",
@@ -3144,11 +3151,11 @@ window.bibData = {
 	"zelligharris": {
 		url: "https://www.its.caltech.edu/~matilde/ZelligHarrisDistributionalStructure1954.pdf",
 		author: "Zellig Harris",
-		title: "Distributional Structures",
+		title: "Distributional Structure",
 		year: 1954
 	},
 	"leiblerkullback": {
-		title: "Information Theory and Statistics",
+		title: "On Information and Sufficiency",
 		author: "Solomon Kullback, Richard Leibler",
 		year: 1951
 	},
@@ -3168,7 +3175,7 @@ window.bibData = {
 		url: "https://web.archive.org/web/20201021205227/http://crystal.med.upenn.edu/sharp-lab-pdfs/2015SharpMatschinsky_Boltz1877_Entropy17.pdf",
 		title: "On the Relationship between the Second Fundamental Theorem of the Mechanical Theory of Heat and Probability Calculations Regarding the Conditions for Thermal Equilibrium",
 		author: "Ludwig Eduard Boltzmann",
-		year: 1868
+		year: 1877
 	},
 	"pittsfirstpaper": {
 		title: "Some observations on the simple neuron circuit",
@@ -3339,7 +3346,7 @@ window.bibData = {
 	"liberludo": {
 		title: "Liber de Ludo Aleae",
 		url: "https://archive.org/details/bookongamesofcha00card",
-		year: 1565,
+		year: 1564,
 		author: "Gerolamo Cardano"
 	},
 	"devetula": {

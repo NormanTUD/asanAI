@@ -42,7 +42,7 @@ Euler's formula is, in hindsight, the first homological statement ever made, the
 	<figcaption class="md">**Henri Poincaré (1854–1912)**. His 1895 *Analysis Situs* \cite{poincareanalysissitus} and its five follow-up papers founded algebraic topology: Betti numbers computed properly, the fundamental group, and, famously, the conjecture that bore his name until Perelman proved it with the Ricci flow \cite{perelmanpoincare}.</figcaption>
 </figure>
 
-The step from counting holes to the algebra of holes happened in 1925, in conversation. **Emmy Noether** told the Göttingen topology seminar that the Betti numbers should not be thought of as mere numbers. Each is the **rank** of a whole **abelian group**, the **homology group** $H_k$ \cite{mclarty2006noether}: the number $b_k$ counts the group's independent generators, but the group remembers more. From that moment holes stopped being tallies and became algebraic objects, structures a computer can add, compare, and compute with.
+The step from counting holes to the algebra of holes happened in 1925, in conversation. **Emmy Noether**, visiting a topology seminar at Brouwer's home in Blaricum in December 1925, pointed out that the Betti numbers should not be thought of as mere numbers. Each is the **rank** of a whole **abelian group**, the **homology group** $H_k$ \cite{mclarty2006noether}: the number $b_k$ counts the group's independent generators, but the group remembers more. From that moment holes stopped being tallies and became algebraic objects, structures a computer can add, compare, and compute with.
 </div>
 
 <div class="md">
@@ -276,7 +276,7 @@ Algebraic topology, in the end, is the mathematics that learned to ask, of anyth
 * **1871 (Betti).** "Betti numbers", counting holes per dimension \cite{poincareanalysissitus}.
 * **1895 (Poincaré).** *Analysis Situs*: homology, the fundamental group, Betti numbers done right \cite{poincareanalysissitus}.
 * **1911 (Brouwer).** Fixed-point theorem and the first topological degree arguments \cite{brouwer1911fixed}.
-* **1925 (Noether, at Göttingen).** Betti numbers become *groups* \cite{mclarty2006noether}.
+* **1925 (Noether, at Blaricum).** Betti numbers become *groups* \cite{mclarty2006noether}.
 * **1929 / 1930 (Mayer, Vietoris).** Mayer (Betti numbers), Vietoris (homology groups) \cite{mayer1929} \cite{vietoris1930}.
 * **1931 (Hopf).** $\underbrace{\pi_{3}(S^{2})=\mathbb{Z}}_{\substack{\text{one integer's worth of}\\\text{linking: the fibration}\\\text{that cracked homotopy open}}}$ \cite{hopf1931fibration}.
 * **1931 / 1933 (Seifert, van Kampen).** The fundamental group by gluing \cite{seifert1931} \cite{vankampen1933}.
