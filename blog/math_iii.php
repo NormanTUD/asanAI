@@ -125,19 +125,31 @@ Two more signs show up throughout this book, so it is worth learning them once. 
 
 ### The integral $\int$
 
-The integral $\int_a^b f(x)\,\mathrm{d}x$ **adds a quantity up continuously** over an interval. The picture: cut $[a,b]$ into $n$ thin slices of width $\Delta x$, replace $f$ in each slice by its height $f(x_i)$, and add up the little rectangles $\sum f(x_i)\,\Delta x$. As the slices get thinner and thinner ($n \to \infty$), this **Riemann sum** settles down to the exact area under the curve,
+The integral $\int_a^b f(x)\,\mathrm{d}x$ **adds a quantity up continuously** over an interval. The picture: split the interval $[a,b]$ into $n$ equal slices, each of width $\Delta x = \frac{b-a}{n}$, and take one sample point $x_i$ in the $i$-th slice (say at its right edge, $x_i = a + i\,\Delta x$). In each slice, replace $f$ by the single height $f(x_i)$, so that slice contributes a rectangle of area $f(x_i)\,\Delta x$; adding the $n$ rectangles gives the **Riemann sum** $\sum_{i=1}^{n} f(x_i)\,\Delta x$. As the slices get thinner and thinner ($n \to \infty$, so $\Delta x \to 0$), this Riemann sum settles down to the exact area under the curve,
 
 $$\int_a^b f(x)\,\mathrm{d}x = \underbrace{\lim_{n\to\infty}\sum_{i=1}^{n} f(x_i)\,\Delta x}_{\text{Riemann sum}} .$$
 
-The sign $\int$ is a stretched Latin *s*, short for *summa* (sum); **Leibniz** introduced it in 1675 \cite{historyofmathematicalnotation}. The idea of finding areas by summing infinitely thin pieces is much older: **Archimedes** did it by the method of exhaustion, and **Cavalieri** by "indivisibles"; Newton and Leibniz turned it into a general calculation. The result that makes the integral *useful* is the **Fundamental Theorem of Calculus**: if $F'(x) = f(x)$ (so $F$ is an antiderivative of $f$), then
+The sign $\int$ is a stretched Latin *s*, short for *summa* (sum); **Leibniz** introduced it in 1675 \cite{historyofmathematicalnotation}. The idea of finding areas by summing infinitely thin pieces is much older: **Archimedes** did it by the method of exhaustion, and **Cavalieri** by "indivisibles"; Newton and Leibniz turned it into a general calculation. The result that makes the integral *useful* is the **Fundamental Theorem of Calculus (FTC)**: if $F'(x) = f(x)$ (so $F$ is an antiderivative of $f$), then the whole limit collapses to a subtraction of two endpoint values. In general,
 
-$$\int_a^b f(x)\,\mathrm{d}x = F(b) - F(a).$$
+$$\int_a^b f(x)\,\mathrm{d}x = F(b) - F(a) \;=\; \big[\,F(x)\,\big]_{a}^{b} .$$
 
-So you rarely take the limit by hand. You find an antiderivative and subtract its endpoint values. For example $\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_0^3 = 9 - 0 = 9$, since $(x^2)' = 2x$.
+So you rarely take the limit by hand: find *any* antiderivative $F$ of $f$, then subtract its value at the lower limit from its value at the upper limit.
+
+**Worked example.** Let $f(x) = 2x$ on $[0,3]$. An antiderivative is $F(x) = x^2$, since $(x^2)' = 2x$. Applying the general formula at the two endpoints,
+
+$$\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_{0}^{3} = 3^{2} - 0^{2} = 9 - 0 = 9 .$$
 
 ### The closed integral $\oint$
 
-Put a small circle in the middle of the $\int$ and you get $\oint$, the **closed integral**. It means: integrate over a *closed* thing, a curve that returns to its starting point, or a closed surface. In physics it turns a local rule into a global total: the sum of a field all the way around a closed loop (its *circulation*), or the net flow of a field across a closed surface (its *flux*). Gauss's law, for instance, says the net outward flow of an electric field across a closed surface equals the charge inside, $\oint \mathbf{E}\cdot\mathrm{d}\mathbf{A} = Q/\varepsilon_0$. You will meet it again in [Geometry III](geometry_iii): the Gauss–Bonnet theorem sums all the curvature of a closed surface, $\oint_{M} K\,\mathrm{d}A = 2\pi\chi$, and the answer turns out to be pure topology.
+An ordinary integral $\int_a^b$ adds a quantity up along a path with **two ends**, a start $a$ and a finish $b$. The **closed integral** $\oint$ does the same kind of addition, but over a domain with **no ends**: a loop that returns to its starting point, or a surface that encloses a region. The dot in the symbol is just a flag meaning *the domain is closed* — it is not a new operation, and it is not a literal circle.
+
+To see what "closed" actually changes, let a vector field $\mathbf{F}$ place a small arrow at every point of space, and follow it.
+
+* **Along a closed loop $C$**, $\displaystyle\oint_{C} \mathbf{F}\cdot\mathrm{d}\mathbf{r}$ adds up, at every point, how much of $\mathbf{F}$ points *in the direction you are walking*, for the whole lap. Because the path has no ends, the result is a single number: the **circulation** of $\mathbf{F}$ around $C$. Walk one full circle through a spinning fluid and you keep adding forward push, so the circulation is positive; walk a loop through a swirl-free fluid and the forward and backward parts cancel to $0$.
+
+* **Across a closed surface $S$**, $\displaystyle\oint_{S} \mathbf{F}\cdot\mathrm{d}\mathbf{A}$ adds up, at every patch, how much of $\mathbf{F}$ points *outward* through the surface. The total is the **flux**: the net flow out of the enclosed region per unit time.
+
+Physics reads a local rule as a global total this way. **Gauss's law** says the outward flux of an electric field through any closed surface equals the charge trapped inside, $\oint_{S} \mathbf{E}\cdot\mathrm{d}\mathbf{A} = Q/\varepsilon_0$: measure what leaks out across the boundary and you know the total charge inside, without ever looking inside. The same move appears in [Geometry III](geometry_iii): the **Gauss–Bonnet theorem** says the total curvature of a closed surface equals $2\pi$ times its Euler characteristic, $\iint_{M} K\,\mathrm{d}A = 2\pi\chi(M)$ — a sum you can compute from how the surface bends, yet which ends up depending only on how many holes the surface has, not on its exact shape.
 </div>
 
 <div class="md">
