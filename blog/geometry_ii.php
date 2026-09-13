@@ -220,12 +220,12 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 		<input type="range" id="geo2-conv-c2" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
 		<span id="geo2-conv-c2v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
 	</div>
-	<div style="display:flex; gap:16px; flex-wrap:wrap;">
-		<div style="flex:1; min-width:320px;">
+	<div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+		<div style="flex:1 1 0; min-width:260px; max-width:300px;">
 			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">time domain — $y = c * x$</div>
 			<div id="geo2-conv-time" class="plot-container" style="width:100%; height:300px;"></div>
 		</div>
-		<div style="flex:1; min-width:320px;">
+		<div style="flex:1 1 0; min-width:260px; max-width:300px;">
 			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">frequency domain — $|F(y)| = |F(c)|\cdot|F(x)|$</div>
 			<div id="geo2-conv-freq" class="plot-container" style="width:100%; height:300px;"></div>
 		</div>
