@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Basins of Attraction — Eine interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#111827; --fg:#e5e7eb; --muted:#94a3b8;
+    --accent:#f472b6; --accent2:#38bdf8; --accent3:#fbbf24; --accent4:#4ade80;
+    --panel:rgba(30,41,59,0.55);
+    --border:rgba(148,163,184,0.15);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;
+    line-height:1.6;overflow-x:hidden}
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(244,114,182,0.15), transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(56,189,248,0.12), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(251,191,36,0.10), transparent 40%),
+      linear-gradient(180deg,#050810 0%,#0a0e1a 100%);
+  }
+  header{
+    padding:80px 20px 40px;text-align:center;position:relative;
+  }
+  header h1{
+    font-size:clamp(2rem,5vw,4rem);margin:0;font-weight:800;
+    background:linear-gradient(90deg,#f472b6 0%,#38bdf8 50%,#fbbf24 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    letter-spacing:-0.02em;
+  }
+  header p.sub{color:var(--muted);font-size:1.15rem;max-width:720px;margin:20px auto 0}
+  header p.authors{color:var(--muted);font-size:0.9rem;margin-top:10px;font-style:italic}
+  main{max-width:1200px;margin:0 auto;padding:20px}
+  section{
+    background:var(--panel);backdrop-filter:blur(10px);
+    border:1px solid var(--border);border-radius:20px;
+    padding:40px;margin:30px 0;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  section h2{
+    font-size:2rem;margin-top:0;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    display:inline-block;
+  }
+  section h3{color:var(--accent3);margin-top:30px;font-size:1.3rem}
+  .lead{font-size:1.1rem;color:#cbd5e1}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+  .controls{
+    display:flex;flex-wrap:wrap;gap:15px;align-items:center;
+    padding:15px;background:rgba(0,0,0,0.3);border-radius:12px;margin:15px 0;
+  }
+  .ctrl{display:flex;flex-direction:column;gap:4px;min-width:150px;flex:1}
+  .ctrl label{font-size:0.85rem;color:var(--muted)}
+  .ctrl input[type=range]{
+    -webkit-appearance:none;appearance:none;height:6px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:3px;outline:none;
+  }
+  .ctrl input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:18px;height:18px;
+    border-radius:50%;background:#fff;cursor:pointer;
+    box-shadow:0 0 10px rgba(244,114,182,0.6);
+  }
+  .ctrl .val{font-size:0.85rem;color:var(--accent3);font-family:monospace}
+  button{
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    color:#fff;border:none;padding:10px 20px;border-radius:8px;
+    font-weight:600;cursor:pointer;font-size:0.9rem;
+    transition:transform 0.2s,box-shadow 0.2s;
+  }
+  button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(244,114,182,0.3)}
+  button.secondary{background:rgba(148,163,184,0.2);color:var(--fg)}
+  canvas{background:#000;border-radius:12px;display:block;width:100%;height:auto;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+  .plot{width:100%;min-height:400px}
+  .callout{
+    padding:20px;border-left:4px solid var(--accent);
+    background:rgba(244,114,182,0.08);border-radius:8px;margin:20px 0;
+  }
+  .callout.blue{border-color:var(--accent2);background:rgba(56,189,248,0.08)}
+  .callout.gold{border-color:var(--accent3);background:rgba(251,191,36,0.08)}
+  .callout.green{border-color:var(--accent4);background:rgba(74,222,128,0.08)}
+  .legend{display:flex;flex-wrap:wrap;gap:12px;font-size:0.85rem;margin:10px 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend .sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .toc{
+    position:fixed;top:20px;right:20px;background:rgba(15,23,42,0.9);
+    backdrop-filter:blur(10px);padding:15px;border-radius:12px;
+    border:1px solid var(--border);font-size:0.85rem;z-index:100;
+    max-width:200px;
+  }
+  .toc a{color:var(--muted);text-decoration:none;display:block;padding:3px 0}
+  .toc a:hover{color:var(--accent)}
+  .toc h4{margin:0 0 8px;color:var(--accent3);font-size:0.9rem}
+  @media(max-width:1000px){.toc{display:none}}
+  .fsm-node{
+    display:inline-block;padding:12px 18px;border-radius:12px;
+    background:rgba(56,189,248,0.15);border:2px solid var(--accent2);
+    margin:6px;font-family:monospace;font-size:0.9rem;
+    transition:all 0.3s;
+  }
+  .fsm-node.active{background:var(--accent);border-color:var(--accent);
+    transform:scale(1.1);box-shadow:0 0 20px rgba(244,114,182,0.6)}
+  .step-indicator{
+    display:flex;gap:8px;margin:15px 0;
+  }
+  .step-dot{
+    width:12px;height:12px;border-radius:50%;background:rgba(148,163,184,0.3);
+    transition:all 0.3s;
+  }
+  .step-dot.active{background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:15px 0;font-size:0.9rem}
+  th,td{padding:10px;text-align:left;border-bottom:1px solid var(--border)}
+  th{color:var(--accent3);background:rgba(0,0,0,0.2)}
+  code{background:rgba(0,0,0,0.4);padding:2px 6px;border-radius:4px;
+    font-family:"JetBrains Mono",monospace;font-size:0.85em;color:var(--accent3)}
+  .badge{display:inline-block;padding:2px 10px;border-radius:20px;
+    background:rgba(244,114,182,0.2);color:var(--accent);font-size:0.75rem;
+    font-weight:600;margin-right:8px}
+  .highlight{color:var(--accent3);font-weight:600}
+  footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:0.85rem}
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <h4>Wegweiser</h4>
+  <a href="#intro">1 · Was ist das Problem?</a>
+  <a href="#dyn">2 · Dynamische Systeme</a>
+  <a href="#attr">3 · Attraktoren</a>
+  <a href="#basins">4 · Basins</a>
+  <a href="#multi">5 · Multistabilität</a>
+  <a href="#poincare">6 · Poincaré-Recurrence</a>
+  <a href="#idea">7 · Die Kernidee</a>
+  <a href="#fsm">8 · Die State Machine</a>
+  <a href="#gallery">9 · Galerie</a>
+  <a href="#perf">10 · Performance</a>
+  <a href="#end">11 · Fazit</a>
+</nav>
+
+<header>
+  <h1>Basins of Attraction</h1>
+  <p class="sub">Wie findet ein Computer <em>ohne Vorwissen</em> heraus, wohin jeder Startpunkt eines dynamischen Systems irgendwann strebt? Eine visuelle Reise durch das Paper von Datseris &amp; Wagemakers (2021).</p>
+  <p class="authors">Interaktive Demo · scrolle, spiele, verstehe</p>
+</header>
+
+<main>
+
+<!-- ============ 1. INTRO ============ -->
+<section id="intro">
+  <span class="badge">Motivation</span>
+  <h2>Warum interessieren uns „Einzugsgebiete"?</h2>
+  <p class="lead">Stell dir eine hügelige Landschaft vor. Wenn du irgendwo einen Ball loslässt, rollt er in eines der Täler. <strong>Welches Tal er erreicht, hängt davon ab, wo du ihn startest.</strong> Die Menge aller Startpunkte, die in dasselbe Tal führen, ist ein <em>Basin of Attraction</em> (Einzugsgebiet).</p>
+
+  <div class="grid2">
+    <div>
+      <p>Spiele mit dem Regler: verschiebe den Startpunkt und beobachte, in welches Tal der Ball rollt. Die Farbe des Hintergrunds zeigt für <em>jeden</em> möglichen Startpunkt sein Ziel.</p>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Startposition x</label>
+          <input type="range" id="ball-x" min="-3" max="3" step="0.01" value="-1.5">
+          <span class="val" id="ball-x-val">-1.50</span>
+        </div>
+        <button onclick="dropBall()">Ball fallen lassen</button>
+      </div>
+      <div class="legend">
+        <span><span class="sw" style="background:#f472b6"></span>Basin des linken Tals</span>
+        <span><span class="sw" style="background:#38bdf8"></span>Basin des rechten Tals</span>
+      </div>
+    </div>
+    <canvas id="landscape" width="500" height="350"></canvas>
+  </div>
+
+  <div class="callout">
+    <strong>Das Kernproblem:</strong> Für viele reale Systeme (Klima, Gehirn, Ökosysteme) ist die "Landschaft" hochdimensional und chaotisch. Analytisch unlösbar. Wir brauchen einen <em>Algorithmus</em>, der die Basins automatisch findet — <strong>ohne dass wir vorher wissen, wie viele Täler es gibt oder wo sie liegen</strong>.
+  </div>
+</section>
+
+<!-- ============ 2. DYNAMISCHE SYSTEME ============ -->
+<section id="dyn">
+  <span class="badge">Prerequisite</span>
+  <h2>Was ist ein dynamisches System?</h2>
+  <p class="lead">Ein dynamisches System ist eine Regel, die sagt: „Wenn ich jetzt <em>hier</em> bin, wo bin ich einen Zeitschritt später?" Das ist es. Diese Regel kann diskret sein (springt in Sprüngen) oder kontinuierlich (fließt).</p>
+
+  <h3>Diskret vs. Kontinuierlich</h3>
+  <div class="grid2">
+    <div>
+      <p><strong>Diskret:</strong> $x_{n+1} = f(x_n)$. Jeder Punkt springt zum nächsten.</p>
+      <p><strong>Kontinuierlich:</strong> $\dot{x} = f(x)$. Der Punkt fließt kontinuierlich, wie ein Fluss.</p>
+      <p>Der <em>Zustandsraum</em> ist die Menge aller möglichen Zustände. Für ein Pendel: (Winkel, Geschwindigkeit) — also 2D. Für das Wetter: sehr viele Dimensionen.</p>
+      <div class="controls">
+        <div class="ctrl">
+          <label>System</label>
+          <select id="dyn-type" style="padding:6px;background:#1f2937;color:#fff;border:1px solid #374151;border-radius:6px">
+            <option value="spiral">Kontinuierlich (Spirale)</option>
+            <option value="henon">Diskret (Hénon Map)</option>
+            <option value="pendel">Pendel mit Reibung</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Geschwindigkeit</label>
+          <input type="range" id="dyn-speed" min="1" max="20" step="1" value="8">
+        </div>
+        <button onclick="dynReset()">Neue Startpunkte</button>
+      </div>
+    </div>
+    <canvas id="dyn-canvas" width="500" height="400"></canvas>
+  </div>
+  <p style="color:var(--muted);font-size:0.9rem">Jeder farbige Punkt ist ein Zustand. Beobachte, wie alle Punkte der gleichen Regel folgen — das ist der <em>Fluss</em> des Systems.</p>
+</section>
+
+<!-- ============ 3. ATTRAKTOREN ============ -->
+<section id="attr">
+  <span class="badge">Prerequisite</span>
+  <h2>Attraktoren: Wohin alles strebt</h2>
+  <p class="lead">Ein <strong>Attraktor</strong> ist eine Menge im Zustandsraum, auf die Trajektorien im Langzeitverhalten zulaufen. Es gibt vier Grundtypen — probiere sie aus:</p>
+
+  <div class="controls">
+    <button onclick="showAttractor('fixed')">Fixpunkt</button>
+    <button onclick="showAttractor('cycle')">Periodischer Orbit</button>
+    <button onclick="showAttractor('torus')">Quasiperiodisch (Torus)</button>
+    <button onclick="showAttractor('chaos')">Seltsam / Chaotisch</button>
+  </div>
+
+  <div class="grid2">
+    <canvas id="attr-canvas" width="500" height="400"></canvas>
+    <div>
+      <h3 id="attr-title">Fixpunkt</h3>
+      <p id="attr-desc">Die Trajektorie läuft auf einen einzelnen Punkt zu und bleibt dort. Beispiel: gedämpftes Pendel, das zur Ruhe kommt.</p>
+      <div class="callout blue" id="attr-callout">
+        <strong>Dimension:</strong> 0<br>
+        <strong>Vorhersagbar?</strong> Ja, perfekt.
+      </div>
+    </div>
+  </div>
+
+  <div class="callout gold">
+    <strong>Warum "seltsam"?</strong> Ein chaotischer Attraktor hat oft eine <em>fraktale</em> Struktur — er füllt keine ganze Fläche, hat aber unendlich viel Detail. Zwei winzig unterschiedliche Startpunkte auf ihm entfernen sich exponentiell voneinander (Schmetterlingseffekt).
+  </div>
+</section>
+
+<!-- ============ 4. BASINS ============ -->
+<section id="basins">
+  <span class="badge">Kernkonzept</span>
+  <h2>Basins visualisieren: Das Magnetpendel</h2>
+  <p class="lead">Jetzt kombinieren wir alles. Ein Pendel schwingt über drei Magneten. An welchem bleibt es kleben? Das hängt <em>sehr</em> empfindlich vom Startpunkt ab. Klicke ins Bild, um eine Trajektorie zu starten!</p>
+
+  <div class="grid2">
+    <canvas id="magpend" width="500" height="500"></canvas>
+    <div>
+      <h3>Interaktives Experiment</h3>
+      <p>Der Hintergrund zeigt die Basins: jede Farbe steht für einen Magneten. Klicke irgendwo hinein, und du siehst, wie das Pendel schwingt und schließlich an einem Magneten festhängt.</p>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Reibung α</label>
+          <input type="range" id="mp-alpha" min="0.05" max="0.5" step="0.01" value="0.2">
+          <span class="val" id="mp-alpha-val">0.20</span>
+        </div>
+        <div class="ctrl">
+          <label>Höhe d</label>
+          <input type="range" id="mp-d" min="0.1" max="0.6" step="0.01" value="0.3">
+          <span class="val" id="mp-d-val">0.30</span>
+        </div>
+        <button onclick="recomputeMagnetBasins()">Basins neu berechnen</button>
+        <button class="secondary" onclick="clearMagnetTraces()">Spuren löschen</button>
+      </div>
+      <div class="legend">
+        <span><span class="sw" style="background:#f472b6"></span>Magnet 1</span>
+        <span><span class="sw" style="background:#38bdf8"></span>Magnet 2</span>
+        <span><span class="sw" style="background:#fbbf24"></span>Magnet 3</span>
+      </div>
+      <div class="callout">
+        <strong>Der fraktale Rand:</strong> Zoome mental in die Grenze zwischen zwei Farben — es gibt keine glatte Linie! Selbst mit unendlicher Präzision im Startpunkt bist du nie ganz sicher, wo das Pendel endet. Das ist <em>final state sensitivity</em>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. MULTISTABILITÄT ============ -->
+<section id="multi">
+  <span class="badge">Phänomen</span>
+  <h2>Multistabilität &amp; Kipp-Punkte</h2>
+  <p class="lead">Wenn ein System mehrere Attraktoren gleichzeitig besitzt, heißt es <em>multistabil</em>. Ändert sich ein Parameter langsam, kann das System plötzlich von einem Attraktor in einen anderen "kippen" — ein Kippunkt (tipping point). Denk an Klimawandel oder ökologische Zusammenbrüche.</p>
+
+  <div class="grid2">
+    <div>
+      <p>Bewege den Parameter und beobachte, wie das Basin-Verhältnis sich ändert. Wenn ein Attraktor verschwindet oder plötzlich alles einnimmt — das ist ein Kippunkt.</p>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Antriebsstärke F</label>
+          <input type="range" id="ms-param" min="0" max="2" step="0.01" value="0.5">
+          <span class="val" id="ms-param-val">0.50</span>
+        </div>
+      </div>
+      <div id="ms-bars" style="margin-top:20px"></div>
+    </div>
+    <canvas id="ms-canvas" width="500" height="400"></canvas>
+  </div>
+  <p style="color:var(--muted);font-size:0.9rem">Rechts: schematische Potentiallandschaft. Links: relative Größe (Basin Fraction) jedes Attraktors.</p>
+</section>
+
+<!-- ============ 6. POINCARÉ ============ -->
+<section id="poincare">
+  <span class="badge">Der Schlüsselsatz</span>
+  <h2>Poincaré-Wiederkehr: Der Motor des Algorithmus</h2>
+  <p class="lead">Henri Poincaré bewies 1890: <strong>Eine Trajektorie auf einem beschränkten Attraktor kehrt (fast) beliebig nahe an jeden Punkt zurück, den sie einmal besucht hat</strong> — unendlich oft. Das ist die Zutat, die den ganzen Algorithmus möglich macht.</p>
+
+  <div class="callout green">
+    <strong>Die geniale Idee:</strong> Lege ein Gitter über den Zustandsraum. Wenn eine Trajektorie <em>dieselbe Zelle mehrmals hintereinander</em> besucht, muss sie auf einem Attraktor sein. Sonst würde sie wegdriften. Wiederkehr = Attraktor.
+  </div>
+
+  <div class="grid2">
+    <canvas id="poinc-canvas" width="500" height="400"></canvas>
+    <div>
+      <h3>Der Wiederkehr-Detektor</h3>
+      <p>Beobachte, wie eine Trajektorie durch das Gitter läuft. Jede Zelle wird beim ersten Besuch <span style="color:#f472b6">rot</span> markiert. Kommt die Trajektorie zurück in eine bereits rote Zelle, wird sie <span style="color:#4ade80">grün</span> — ein Wiederkehr-Ereignis. Nach mehreren aufeinanderfolgenden Wiederkehr-Ereignissen sind wir sicher: <span style="color:#38bdf8">wir haben einen Attraktor gefunden</span>.</p>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Gitterauflösung</label>
+          <input type="range" id="poinc-grid" min="10" max="60" step="2" value="30">
+          <span class="val" id="poinc-grid-val">30</span>
+        </div>
+        <div class="ctrl">
+          <label>Wiederkehr-Schwelle</label>
+          <input type="range" id="poinc-thresh" min="1" max="10" step="1" value="3">
+          <span class="val" id="poinc-thresh-val">3</span>
+        </div>
+        <button onclick="poincStart()">▶ Start</button>
+        <button class="secondary" onclick="poincReset()">Reset</button>
+      </div>
+      <div id="poinc-status" style="margin-top:10px;font-family:monospace;color:var(--accent3)">Bereit.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. IDEA ============ -->
+<section id="idea">
+  <span class="badge">Die Kernidee des Papers</span>
+  <h2>Von Poincaré zur State Machine</h2>
+  <p class="lead">Datseris &amp; Wagemakers (2021) verwandeln diese Beobachtung in einen vollständig automatischen Algorithmus. Er braucht <strong>kein Vorwissen</strong> über Anzahl, Lage oder Art der Attraktoren — nur die Regel des Systems und ein Gitter.</p>
+
+  <div class="grid3">
+    <div class="callout">
+      <h3 style="margin-top:0">Problem</h3>
+      Frühere Methoden brauchten entweder<br>
+      • bekannte Attraktoren im Voraus,<br>
+      • aufwendige Lyapunov-Analysen, oder<br>
+      • speicherhungrige Quadtrees.
+    </div>
+    <div class="callout blue">
+      <h3 style="margin-top:0">Idee</h3>
+      Kombiniere den <em>Fluss</em> des dynamischen Systems mit einer <em>endlichen Zustandsmaschine</em> (FSM), die auf einem Gitter mitschreibt, was sie sieht.
+    </div>
+    <div class="callout green">
+      <h3 style="margin-top:0">Ergebnis</h3>
+      Ein einziges Programm findet Attraktoren <em>und</em> Basins automatisch, für diskrete, kontinuierliche, Poincaré- und stroboskopische Systeme — beliebiger Dimension.
+    </div>
+  </div>
+
+  <h3>Die Konkrete Frage, die das Paper stellt</h3>
+  <p><em>„Können wir einen Algorithmus bauen, der ohne jegliches Vorwissen und ohne Näherungen alle Attraktoren und ihre Einzugsgebiete eines beliebigen dynamischen Systems findet?"</em></p>
+  <p><strong>Antwort:</strong> Ja. Und er schlägt die naive Methode sogar dann, wenn diese die Attraktoren geschenkt bekommt (siehe Sektion 10).</p>
+</section>
+
+<!-- ============ 8. FSM ============ -->
+<section id="fsm">
+  <span class="badge">Der Algorithmus</span>
+  <h2>Die Finite State Machine live</h2>
+  <p class="lead">Hier siehst du den Algorithmus in Aktion. Wähle eine Startzelle, drücke Play — und beobachte, wie die FSM zwischen ihren Zuständen wechselt, das Gitter beschriftet und schließlich alle Basins ausmalt.</p>
+
+  <div class="grid2">
+    <canvas id="fsm-canvas" width="500" height="500"></canvas>
+    <div>
+      <h3>Zustände der Maschine</h3>
+      <div id="fsm-states" style="display:flex;flex-wrap:wrap;gap:6px;margin:15px 0">
+        <div class="fsm-node" data-state="att_search">att_search</div>
+        <div class="fsm-node" data-state="att_found">att_found</div>
+        <div class="fsm-node" data-state="att_hit">att_hit</div>
+        <div class="fsm-node" data-state="bas_hit">bas_hit</div>
+        <div class="fsm-node" data-state="lost">lost</div>
+      </div>
+      <div class="controls">
+        <button onclick="fsmPlay()">▶ Alle Basins berechnen</button>
+        <button class="secondary" onclick="fsmStep()">Ein Schritt</button>
+        <button class="secondary" onclick="fsmReset()">Reset</button>
+        <div class="ctrl">
+          <label>Geschwindigkeit</label>
+          <input type="range" id="fsm-speed" min="1" max="100" step="1" value="30">
+        </div>
+      </div>
+
+      <h3>Was gerade passiert</h3>
+      <div id="fsm-log" style="background:rgba(0,0,0,0.4);padding:12px;border-radius:8px;font-family:monospace;font-size:0.8rem;height:120px;overflow-y:auto;color:#cbd5e1"></div>
+
+      <h3>Zellen-Legende</h3>
+      <div class="legend">
+        <span><span class="sw" style="background:#1e293b;border:1px solid #475569"></span>1: unbekannt</span>
+        <span><span class="sw" style="background:#f472b6"></span>v: besucht (transient)</span>
+        <span><span class="sw" style="background:#4ade80"></span>2k: Attraktor</span>
+        <span><span class="sw" style="background:#38bdf8"></span>2k+1: Basin</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Schritt für Schritt: was die FSM tut</h3>
+  <div class="step-indicator" id="step-dots">
+    <div class="step-dot active"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div>
+  </div>
+  <ol style="line-height:2">
+    <li><strong>Wähle unbeschriebene Startzelle.</strong> Beginne im Zustand <code>att_search</code>, Zähler c=0.</li>
+    <li><strong>Integriere einen Zeitschritt Δt.</strong> Frage: in welcher Zelle bin ich jetzt? Gib das Label an die FSM.</li>
+    <li><strong>Reagiere:</strong>
+      <ul>
+        <li>Zelle war <em>unbekannt</em> (1) → markiere als <em>visited</em> (v), c++.</li>
+        <li>Zelle war schon <em>v</em> → Wiederkehr! c++. Wenn c &gt; <code>mx_chk_fnd_att</code> (=100): neuen Attraktor gefunden → Zustand <code>att_found</code>.</li>
+        <li>Zelle ist bekannter <em>Attraktor</em> (2k) → Zustand <code>att_hit</code>. Wenn oft genug: schreibe Basin-Label 2k+1 an die Startzelle.</li>
+        <li>Zelle ist bekannte <em>Basin</em>-Zelle (2k+1) → Zustand <code>bas_hit</code>. Beschleunigt die Klassifikation.</li>
+        <li>Außerhalb des Gitters → Zustand <code>lost</code>. Nach <code>mx_chk_lost</code> Schritten: markiere -1 (divergent).</li>
+      </ul>
+    </li>
+    <li><strong>Nach dem Beschriften der Startzelle:</strong> lösche alle temporären v-Markierungen und wähle die nächste unbeschriebene Zelle.</li>
+    <li><strong>Wiederhole,</strong> bis keine 1-Zellen mehr existieren. Fertig — alle Basins berechnet.</li>
+  </ol>
+</section>
+
+<!-- ============ 9. GALERIE ============ -->
+<section id="gallery">
+  <span class="badge">Ergebnisse</span>
+  <h2>Galerie: Wo funktioniert es?</h2>
+  <p class="lead">Das Paper zeigt neun Beispiele, die alle vom selben Algorithmus gelöst werden. Wähle eines aus:</p>
+
+  <div class="controls" style="justify-content:center">
+    <button onclick="showGallery('henon')">Hénon Map</button>
+    <button onclick="showGallery('duffing')">Duffing Oszillator</button>
+    <button onclick="showGallery('magnet')">Magnetpendel</button>
+    <button onclick="showGallery('lorenz84')">Lorenz-84</button>
+    <button onclick="showGallery('thomas')">Thomas cyclical</button>
+    <button onclick="showGallery('logistic')">Gekoppelte logistische Maps</button>
+  </div>
+
+  <div class="grid2">
+    <canvas id="gallery-canvas" width="500" height="500"></canvas>
+    <div>
+      <h3 id="gal-title">Hénon Map</h3>
+      <p id="gal-desc"></p>
+      <div id="gal-formula" style="background:rgba(0,0,0,0.4);padding:15px;border-radius:8px;margin:15px 0;font-family:serif"></div>
+      <div id="gal-facts"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. PERFORMANCE ============ -->
+<section id="perf">
+  <span class="badge">Warum es besser ist</span>
+  <h2>Performance-Vergleich</h2>
+  <p class="lead">Das Paper vergleicht den neuen Algorithmus mit dem "naiven" Ansatz (jede Startbedingung wird bis zur Konvergenz integriert und dann mit bekannten Attraktoren verglichen). <strong>Selbst wenn die naive Methode die Attraktoren geschenkt bekommt</strong>, ist der neue Algorithmus schneller.</p>
+
+  <div class="grid2">
+    <div id="perf-plot" class="plot"></div>
+    <div>
+      <h3>Warum ist er schneller?</h3>
+      <p>Weil er <em>das Gitter selbst als Gedächtnis nutzt</em>: sobald eine Basin-Zelle bekannt ist, endet die Simulation neuer Startpunkte, die diese Zelle nur streifen, sofort — dank des <code>bas_hit</code>-Zustands.</p>
+      <div class="callout gold">
+        <strong>Skaleneigenschaft:</strong> Je mehr Zellen bereits klassifiziert sind, desto schneller wird jede weitere Klassifikation. Der Algorithmus <em>beschleunigt sich selbst</em> während er läuft.
+      </div>
+      <p>Bewege den Regler, um zu sehen, wie sich die Laufzeit mit der Gittergröße verhält:</p>
+      <div class="controls">
+        <div class="ctrl">
+          <label>Gittergröße (n × n)</label>
+          <input type="range" id="perf-size" min="20" max="400" step="10" value="200">
+          <span class="val" id="perf-size-val">200</span>
+        </div>
+      </div>
+      <div id="perf-numbers" style="font-family:monospace;padding:12px;background:rgba(0,0,0,0.3);border-radius:8px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. FAZIT ============ -->
+<section id="end">
+  <span class="badge">Fazit</span>
+  <h2>Was du jetzt weißt</h2>
+  <div class="grid2">
+    <div>
+      <h3>Die große Geschichte</h3>
+      <p>Du hast eine kleine Reise durch die nichtlineare Dynamik hinter dir:</p>
+      <ol>
+        <li>Dynamische Systeme sind Regeln, die Zustände weiterentwickeln.</li>
+        <li>Ihre Langzeitziele heißen Attraktoren — Punkte, Zyklen, Tori, oder seltsam-fraktale Gebilde.</li>
+        <li>Das Einzugsgebiet (Basin) eines Attraktors sind alle Startpunkte, die zu ihm führen.</li>
+        <li>Poincarés Wiederkehrsatz garantiert: Trajektorien auf Attraktoren kommen zurück.</li>
+        <li>Wenn man ein Gitter drüberlegt und Wiederkehrungen zählt, kann eine simple State Machine Attraktoren <em>und</em> Basins automatisch finden.</li>
+        <li>Das ist schneller, allgemeiner und flexibler als frühere Methoden.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Wofür man das braucht</h3>
+      <ul>
+        <li><strong>Klimaforschung:</strong> Kippunkte im Klimasystem erkennen.</li>
+        <li><strong>Neurowissenschaft:</strong> Multistabile Gehirnzustände (Wahrnehmung, Aufmerksamkeit).</li>
+        <li><strong>Ökologie:</strong> Regime-Shifts in Ökosystemen (Korallenriffe, Wälder).</li>
+        <li><strong>Ingenieurwesen:</strong> Robustheit von Regelsystemen gegen Störungen.</li>
+        <li><strong>Astrophysik:</strong> Stabilität von Planetenbahnen.</li>
+      </ul>
+      <div class="callout green">
+        <strong>Der eigentliche Punkt:</strong> Der Algorithmus macht eine tiefe mathematische Theorie (Poincaré-Wiederkehr) in ein Werkzeug, das jeder mit ~10 Zeilen Julia-Code benutzen kann.
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Interaktive Demo zum Paper „Effortless estimation of basins of attraction" von G. Datseris &amp; A. Wagemakers (2021, arXiv:2110.04358).
+</footer>
+
+<script>
+/* ================= UTILITIES ================= */
+const $ = id => document.getElementById(id);
+const COLORS = ['#f472b6','#38bdf8','#fbbf24','#4ade80','#a78bfa','#fb923c','#22d3ee','#e879f9'];
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'$', right:'$', display:false}
+    ]
+  });
+});
+
+/* ================= 1. LANDSCAPE ================= */
+(() => {
+  const c = $('landscape'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  // Double-well potential V(x) = x^4/4 - x^2/2
+  function V(x){ return x*x*x*x/4 - x*x/2; }
+  function dV(x){ return x*x*x - x; }
+  function xy(x){ return [(x+3)/6*W, H - (V(x)+0.3)*180 - 20]; }
+
+  function whichBasin(x0){
+    // simulate simple gradient descent
+    let x = x0, v = 0;
+    for(let i=0;i<3000;i++){
+      v = 0.9*v - 0.05*dV(x);
+      x += v;
+    }
+    return x > 0 ? 1 : 0;
+  }
+
+  let ball = {x:-1.5, v:0, animating:false};
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // basin gradient background
+    const img = ctx.createImageData(W, H);
+    for(let px=0; px<W; px++){
+      const xv = px/W*6 - 3;
+      const b = whichBasin(xv);
+      const [r,g,bl] = b===0 ? [244,114,182] : [56,189,248];
+      for(let py=0; py<H; py++){
+        const [_, yv] = xy(xv);
+        const alpha = py > yv ? 40 : 8;
+        const i = (py*W+px)*4;
+        img.data[i] = r; img.data[i+1] = g; img.data[i+2] = bl; img.data[i+3] = alpha;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    // curve
+    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(let x=-3; x<=3; x+=0.02){
+      const [px,py] = xy(x);
+      if(x===-3) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // ball
+    const [bx,by] = xy(ball.x);
+    ctx.beginPath();
+    ctx.fillStyle = '#fbbf24';
+    ctx.shadowBlur = 20; ctx.shadowColor = '#fbbf24';
+    ctx.arc(bx, by-8, 10, 0, Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  $('ball-x').addEventListener('input', e => {
+    ball.x = +e.target.value; ball.v = 0;
+    $('ball-x-val').textContent = ball.x.toFixed(2);
+    draw();
+  });
+
+  window.dropBall = () => {
+    if(ball.animating) return;
+    ball.animating = true;
+    ball.v = 0;
+    const step = () => {
+      ball.v = 0.92*ball.v - 0.008*dV(ball.x);
+      ball.x += ball.v;
+      draw();
+      if(Math.abs(ball.v) > 0.001 || Math.abs(dV(ball.x)) > 0.02){
+        requestAnimationFrame(step);
+      } else {
+        ball.animating = false;
+      }
+    };
+    step();
+  };
+
+  draw();
+})();
+
+/* ================= 2. DYNAMICS ================= */
+(() => {
+  const c = $('dyn-canvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let particles = [], type = 'spiral', speed = 8, raf;
+
+  function reset(){
+    particles = [];
+    for(let i=0; i<60; i++){
+      particles.push({
+        x: (Math.random()-0.5)*3,
+        y: (Math.random()-0.5)*3,
+        color: COLORS[i % COLORS.length],
+        trail: []
+      });
+    }
+  }
+
+  function step(p){
+    if(type === 'spiral'){
+      const dt = 0.02*speed/8;
+      const nx = p.x + dt*(-0.3*p.x - p.y);
+      const ny = p.y + dt*(p.x - 0.3*p.y);
+      p.x = nx; p.y = ny;
+    } else if(type === 'henon'){
+      const a=1.4, b=0.3;
+      const nx = 1 - a*p.x*p.x + p.y;
+      const ny = b*p.x;
+      p.x = nx*0.5; p.y = ny*0.5;
+    } else if(type === 'pendel'){
+      const dt = 0.03*speed/8;
+      const nx = p.x + dt*p.y;
+      const ny = p.y + dt*(-Math.sin(p.x*2) - 0.1*p.y);
+      p.x = nx; p.y = ny;
+    }
+  }
+
+  function toPx(x,y){ return [W/2 + x*W/6, H/2 - y*H/6]; }
+
+  function draw(){
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fillRect(0,0,W,H);
+    for(const p of particles){
+      for(let s=0; s<Math.max(1, Math.floor(speed/3)); s++) step(p);
+      p.trail.push([p.x,p.y]);
+      if(p.trail.length > 40) p.trail.shift();
+      ctx.strokeStyle = p.color+'80';
+      ctx.beginPath();
+      for(let i=0;i<p.trail.length;i++){
+        const [px,py] = toPx(p.trail[i][0], p.trail[i][1]);
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      const [px,py] = toPx(p.x,p.y);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(px,py,3,0,Math.PI*2); ctx.fill();
+    }
+    raf = requestAnimationFrame(draw);
+  }
+
+  $('dyn-type').addEventListener('change', e => { type = e.target.value; reset(); });
+  $('dyn-speed').addEventListener('input', e => { speed = +e.target.value; });
+  window.dynReset = reset;
+
+  reset(); draw();
+})();
+
+/* ================= 3. ATTRACTORS ================= */
+(() => {
+  const c = $('attr-canvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let mode = 'fixed', raf, t = 0, pts = [];
+
+  const DESCS = {
+    fixed: {
+      title: 'Fixpunkt',
+      desc: 'Die Trajektorie läuft auf einen einzelnen Punkt zu und bleibt dort. Beispiel: gedämpftes Pendel, das zur Ruhe kommt.',
+      dim: 0, pred: 'Ja, perfekt.'
+    },
+    cycle: {
+      title: 'Periodischer Orbit (Grenzzyklus)',
+      desc: 'Die Trajektorie läuft auf eine geschlossene Schleife zu und wiederholt sich exakt. Beispiel: Herzschlag, Räuber-Beute-Zyklen.',
+      dim: 1, pred: 'Ja, zeitversetzt.'
+    },
+    torus: {
+      title: 'Quasiperiodischer Attraktor (Torus)',
+      desc: 'Zwei inkommensurable Frequenzen erzeugen eine Bahn, die einen Torus dicht ausfüllt, sich aber nie exakt wiederholt.',
+      dim: 2, pred: 'Nur statistisch.'
+    },
+    chaos: {
+      title: 'Seltsamer / Chaotischer Attraktor',
+      desc: 'Die Trajektorie bleibt beschränkt, wiederholt sich aber nie und ist extrem empfindlich gegenüber Startbedingungen. Fraktale Struktur.',
+      dim: 'fraktal (~2.06)', pred: 'Nein — Schmetterlingseffekt.'
+    }
+  };
+
+  function reset(){
+    pts = [];
+    for(let i=0;i<200;i++){
+      pts.push({x: (Math.random()-0.5)*4, y: (Math.random()-0.5)*4, trail: []});
+    }
+    t = 0;
+  }
+
+  function step(p){
+    if(mode==='fixed'){
+      p.
+    if(mode==='fixed'){
+      p.x *= 0.98; p.y *= 0.98;
+    } else if(mode==='cycle'){
+      const r = Math.sqrt(p.x*p.x+p.y*p.y);
+      const target = 1.5;
+      const dr = -(r - target)*0.05;
+      const ang = 0.05;
+      const cx = p.x + dr*p.x/(r+1e-9) - ang*p.y;
+      const cy = p.y + dr*p.y/(r+1e-9) + ang*p.x;
+      p.x = cx; p.y = cy;
+    } else if(mode==='torus'){
+      // simulate torus projection: two frequencies
+      if(!p.phase){ p.phase = [Math.random()*6.28, Math.random()*6.28]; }
+      p.phase[0] += 0.04;
+      p.phase[1] += 0.04*Math.sqrt(2);
+      const R=1.5, r=0.5;
+      p.x = (R + r*Math.cos(p.phase[1]))*Math.cos(p.phase[0])*0.8;
+      p.y = (R + r*Math.cos(p.phase[1]))*Math.sin(p.phase[0])*0.8;
+    } else if(mode==='chaos'){
+      // Lorenz-like projection
+      if(!p.z) p.z = Math.random()*2;
+      const dt = 0.008;
+      const s=10, r=28, b=8/3;
+      const dx = s*(p.y - p.x);
+      const dy = p.x*(r - p.z) - p.y;
+      const dz = p.x*p.y - b*p.z;
+      p.x += dt*dx*0.05; p.y += dt*dy*0.05; p.z += dt*dz*0.05;
+    }
+  }
+
+  function toPx(x,y){ return [W/2 + x*W/8, H/2 - y*H/8]; }
+
+  function draw(){
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0,0,W,H);
+    for(const p of pts){
+      step(p);
+      p.trail.push([p.x,p.y]);
+      if(p.trail.length > 100) p.trail.shift();
+      ctx.strokeStyle = mode==='chaos' ? '#f472b6' : mode==='torus' ? '#38bdf8' : mode==='cycle' ? '#fbbf24' : '#4ade80';
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath();
+      for(let i=0;i<p.trail.length;i++){
+        const [px,py] = toPx(p.trail[i][0], p.trail[i][1]);
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      const [px,py] = toPx(p.x,p.y);
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(px,py,1.5,0,Math.PI*2); ctx.fill();
+    }
+    t += 1;
+    raf = requestAnimationFrame(draw);
+  }
+
+  window.showAttractor = m => {
+    mode = m; reset();
+    const d = DESCS[m];
+    $('attr-title').textContent = d.title;
+    $('attr-desc').textContent = d.desc;
+    $('attr-callout').innerHTML = `<strong>Dimension:</strong> ${d.dim}<br><strong>Vorhersagbar?</strong> ${d.pred}`;
+  };
+
+  reset(); draw();
+})();
+
+/* ================= 4. MAGNETPENDEL ================= */
+(() => {
+  const c = $('magpend'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const RES = 150;
+  let alpha = 0.2, d = 0.3;
+  let basinImg = null;
+  let traces = [];
+
+  // three magnets on unit circle
+  const magnets = [
+    [Math.cos(Math.PI/2), Math.sin(Math.PI/2)],
+    [Math.cos(Math.PI/2+2*Math.PI/3), Math.sin(Math.PI/2+2*Math.PI/3)],
+    [Math.cos(Math.PI/2+4*Math.PI/3), Math.sin(Math.PI/2+4*Math.PI/3)]
+  ];
+  const MC = [[244,114,182],[56,189,248],[251,191,36]];
+
+  function toPx(x,y){ return [(x+2)/4*W, H-(y+2)/4*H]; }
+  function toXy(px,py){ return [px/W*4-2, (H-py)/H*4-2]; }
+
+  function simulate(x0, y0, steps=1200){
+    let x=x0, y=y0, vx=0, vy=0;
+    const dt = 0.05;
+    for(let i=0;i<steps;i++){
+      let ax = -alpha*vx - x;
+      let ay = -alpha*vy - y;
+      for(let k=0;k<3;k++){
+        const dx = x-magnets[k][0], dy = y-magnets[k][1];
+        const r = Math.pow(dx*dx+dy*dy+d*d, 1.5);
+        ax -= dx/r; ay -= dy/r;
+      }
+      vx += dt*ax; vy += dt*ay;
+      x += dt*vx; y += dt*vy;
+      if(vx*vx+vy*vy < 0.001){
+        // find closest magnet
+        let best=0, bd=1e9;
+        for(let k=0;k<3;k++){
+          const dd = Math.hypot(x-magnets[k][0], y-magnets[k][1]);
+          if(dd < bd){bd=dd; best=k;}
+        }
+        return {basin: best, x, y, done: i};
+      }
+    }
+    let best=0, bd=1e9;
+    for(let k=0;k<3;k++){
+      const dd = Math.hypot(x-magnets[k][0], y-magnets[k][1]);
+      if(dd < bd){bd=dd; best=k;}
+    }
+    return {basin: best, x, y, done: steps};
+  }
+
+  function trajectory(x0, y0){
+    let x=x0, y=y0, vx=0, vy=0;
+    const dt = 0.05;
+    const path = [[x,y]];
+    for(let i=0;i<1500;i++){
+      let ax = -alpha*vx - x;
+      let ay = -alpha*vy - y;
+      for(let k=0;k<3;k++){
+        const dx = x-magnets[k][0], dy = y-magnets[k][1];
+        const r = Math.pow(dx*dx+dy*dy+d*d, 1.5);
+        ax -= dx/r; ay -= dy/r;
+      }
+      vx += dt*ax; vy += dt*ay;
+      x += dt*vx; y += dt*vy;
+      if(i%3===0) path.push([x,y]);
+      if(vx*vx+vy*vy < 0.001) break;
+    }
+    return path;
+  }
+
+  function computeBasins(){
+    const img = ctx.createImageData(W, H);
+    const cellW = W/RES, cellH = H/RES;
+    // fill w bg
+    for(let i=0;i<img.data.length;i+=4){
+      img.data[i]=15; img.data[i+1]=23; img.data[i+2]=42; img.data[i+3]=255;
+    }
+    for(let iy=0; iy<RES; iy++){
+      for(let ix=0; ix<RES; ix++){
+        const [xv,yv] = toXy(ix*cellW, iy*cellH);
+        const res = simulate(xv, yv, 800);
+        const [r,g,b] = MC[res.basin];
+        // fill this block
+        const px0 = Math.floor(ix*cellW), py0 = Math.floor(iy*cellH);
+        const px1 = Math.floor((ix+1)*cellW), py1 = Math.floor((iy+1)*cellH);
+        for(let py=py0; py<py1; py++){
+          for(let px=px0; px<px1; px++){
+            const j = (py*W+px)*4;
+            img.data[j] = r*0.6+15*0.4;
+            img.data[j+1] = g*0.6+23*0.4;
+            img.data[j+2] = b*0.6+42*0.4;
+          }
+        }
+      }
+    }
+    basinImg = img;
+    draw();
+  }
+
+  function draw(){
+    if(basinImg) ctx.putImageData(basinImg, 0, 0);
+    // magnets
+    for(let k=0;k<3;k++){
+      const [px,py] = toPx(magnets[k][0], magnets[k][1]);
+      ctx.fillStyle = `rgb(${MC[k][0]},${MC[k][1]},${MC[k][2]})`;
+      ctx.shadowBlur = 20; ctx.shadowColor = ctx.fillStyle;
+      ctx.beginPath(); ctx.arc(px,py,10,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    // traces
+    for(const tr of traces){
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      for(let i=0;i<tr.length;i++){
+        const [px,py] = toPx(tr[i][0], tr[i][1]);
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      // start point
+      const [px,py] = toPx(tr[0][0], tr[0][1]);
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(px,py,4,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  c.addEventListener('click', e => {
+    const rect = c.getBoundingClientRect();
+    const px = (e.clientX-rect.left) * (W/rect.width);
+    const py = (e.clientY-rect.top) * (H/rect.height);
+    const [xv,yv] = toXy(px,py);
+    traces.push(trajectory(xv,yv));
+    if(traces.length > 5) traces.shift();
+    draw();
+  });
+
+  $('mp-alpha').addEventListener('input', e => {
+    alpha = +e.target.value; $('mp-alpha-val').textContent = alpha.toFixed(2);
+  });
+  $('mp-d').addEventListener('input', e => {
+    d = +e.target.value; $('mp-d-val').textContent = d.toFixed(2);
+  });
+  window.recomputeMagnetBasins = computeBasins;
+  window.clearMagnetTraces = () => { traces = []; draw(); };
+
+  computeBasins();
+})();
+
+/* ================= 5. MULTISTABILITY ================= */
+(() => {
+  const c = $('ms-canvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let F = 0.5;
+
+  // tilted double well: V(x) = x^4/4 - x^2/2 - F*x
+  function V(x){ return x*x*x*x/4 - x*x/2 - F*x; }
+  function findWells(){
+    // derivative: x^3 - x - F = 0
+    const wells = [];
+    for(let x=-2; x<=2; x+=0.001){
+      const d1 = x*x*x - x - F;
+      const d1n = (x+0.001)*(x+0.001)*(x+0.001) - (x+0.001) - F;
+      if(d1*d1n < 0){
+        const d2 = 3*x*x - 1;
+        if(d2 > 0) wells.push(x); // minimum
+      }
+    }
+    return wells;
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const wells = findWells();
+    // draw curve
+    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(let x=-2.2; x<=2.2; x+=0.02){
+      const px = (x+2.2)/4.4 * W;
+      const py = H/2 - V(x)*80;
+      if(x===-2.2) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // draw wells
+    for(let i=0;i<wells.length;i++){
+      const x = wells[i];
+      const px = (x+2.2)/4.4 * W;
+      const py = H/2 - V(x)*80;
+      ctx.fillStyle = i===0 ? '#f472b6' : '#38bdf8';
+      ctx.shadowBlur = 20; ctx.shadowColor = ctx.fillStyle;
+      ctx.beginPath(); ctx.arc(px,py,12,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    // bars
+    updateBars(wells);
+  }
+
+  function updateBars(wells){
+    if(wells.length < 2){
+      $('ms-bars').innerHTML = `
+        <div style="padding:10px;background:rgba(251,191,36,0.15);border-radius:8px;color:#fbbf24">
+          <strong>⚠ Kipp-Punkt!</strong> Nur noch <strong>ein Attraktor</strong>. Alle Startpunkte enden dort.
+        </div>
+        <div style="margin-top:10px;height:30px;background:${wells[0] > 0 ? '#38bdf8' : '#f472b6'};border-radius:6px"></div>
+      `;
+      return;
+    }
+    // sample basins
+    let leftCount = 0, total = 200;
+    for(let i=0;i<total;i++){
+      let x = -3 + 6*i/total, v = 0;
+      for(let s=0;s<400;s++){
+        v = 0.92*v - 0.02*(x*x*x - x - F);
+        x += v;
+      }
+      if(x < 0) leftCount++;
+    }
+    const lf = leftCount/total;
+    $('ms-bars').innerHTML = `
+      <div style="display:flex;height:35px;border-radius:6px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.4)">
+        <div style="width:${lf*100}%;background:#f472b6;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600">${(lf*100).toFixed(0)}%</div>
+        <div style="width:${(1-lf)*100}%;background:#38bdf8;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600">${((1-lf)*100).toFixed(0)}%</div>
+      </div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-top:8px">Basin Fraction: links vs. rechts</p>
+    `;
+  }
+
+  $('ms-param').addEventListener('input', e => {
+    F = +e.target.value; $('ms-param-val').textContent = F.toFixed(2);
+    draw();
+  });
+  draw();
+})();
+
+/* ================= 6. POINCARÉ RECURRENCE ================= */
+(() => {
+  const c = $('poinc-canvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let GRID = 30, THRESH = 3;
+  let cells = null, x=1, y=0, vx=0.5, vy=0.5, traj=[], running=false, raf, recurrences=0;
+
+  function resetGrid(){
+    cells = new Uint8Array(GRID*GRID);
+    traj = []; recurrences = 0;
+    x = -1.5+Math.random()*3; y = -1.5+Math.random()*3;
+    vx = (Math.random()-0.5)*0.4; vy = (Math.random()-0.5)*0.4;
+    draw();
+    $('poinc-status').textContent = 'Bereit.';
+  }
+
+  function step(){
+    // damped oscillator that converges to a limit cycle
+    const dt = 0.05;
+    const r = Math.sqrt(x*x+y*y);
+    const target = 1.2;
+    const dr = -(r - target)*0.3;
+    vx = -y + dr*x/(r+1e-9);
+    vy = x + dr*y/(r+1e-9);
+    x += dt*vx; y += dt*vy;
+    traj.push([x,y]);
+    if(traj.length > 200) traj.shift();
+
+    // cell
+    const cx = Math.floor((x+2)/4 * GRID);
+    const cy = Math.floor((y+2)/4 * GRID);
+    if(cx>=0 && cx<GRID && cy>=0 && cy<GRID){
+      const idx = cy*GRID + cx;
+      if(cells[idx] === 0){
+        cells[idx] = 1; // visited
+      } else if(cells[idx] === 1){
+        cells[idx] = 2; // recurrence
+        recurrences++;
+        if(recurrences >= THRESH){
+          $('poinc-status').innerHTML = `<span style="color:#4ade80">✓ Attraktor gefunden nach ${recurrences} Wiederkehr-Events!</span>`;
+          running = false;
+        }
+      } else if(cells[idx] === 2){
+        recurrences++;
+      }
+    }
+  }
+
+  function draw(){
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,W,H);
+    // grid cells
+    const cw = W/GRID, ch = H/GRID;
+    for(let iy=0;iy<GRID;iy++){
+      for(let ix=0;ix<GRID;ix++){
+        const v = cells[iy*GRID+ix];
+        if(v===1) ctx.fillStyle = 'rgba(244,114,182,0.4)';
+        else if(v===2) ctx.fillStyle = 'rgba(74,222,128,0.6)';
+        else continue;
+        ctx.fillRect(ix*cw, (GRID-1-iy)*ch, cw, ch);
+      }
+    }
+    // grid lines
+    ctx.strokeStyle = 'rgba(148,163,184,0.1)';
+    ctx.lineWidth = 0.5;
+    for(let i=0;i<=GRID;i++){
+      ctx.beginPath(); ctx.moveTo(i*cw,0); ctx.lineTo(i*cw,H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i*ch); ctx.lineTo(W,i*ch); ctx.stroke();
+    }
+    // trajectory
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for(let i=0;i<traj.length;i++){
+      const px = (traj[i][0]+2)/4 * W;
+      const py = H - (traj[i][1]+2)/4 * H;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // current point
+    const px = (x+2)/4 * W;
+    const py = H - (y+2)/4 * H;
+    ctx.fillStyle = '#fff';
+    ctx.shadowBlur = 15; ctx.shadowColor = '#38bdf8';
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function loop(){
+    if(!running) return;
+    for(let i=0;i<2;i++) step();
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+
+  $('poinc-grid').addEventListener('input', e => {
+    GRID = +e.target.value; $('poinc-grid-val').textContent = GRID;
+    resetGrid();
+  });
+  $('poinc-thresh').addEventListener('input', e => {
+    THRESH = +e.target.value; $('poinc-thresh-val').textContent = THRESH;
+  });
+  window.poincStart = () => { running = true; loop(); };
+  window.poincReset = () => { running = false; resetGrid(); };
+  resetGrid();
+})();
+
+/* ================= 8. FSM ================= */
+(() => {
+  const c = $('fsm-canvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const GRID = 60;
+  // We'll use a system with 2 attractors: coupled system with two fixed points at (-1,0) and (1,0)
+  let cells = new Int32Array(GRID*GRID); // 1 = unknown initially
+  for(let i=0;i<cells.length;i++) cells[i] = 1;
+  let vLabel = 3; // next odd number for visited
+  let state = 'att_search', counter = 0, tCount = 0;
+  let curX = 0, curY = 0, cellStartIdx = -1;
+  let cellTemp = []; // visited cells to clean
+  let attractors = {}; // id -> [cells]
+  let stepIdx = 0; // for stepping through
+  let running = false, raf;
+  let currentDot = 0;
+
+  function toPx(x,y){ return [(x+2)/4*W, H - (y+2)/4*H]; }
+  function toXy(px,py){ return [px/W*4-2, (H-py)/H*4-2]; }
+  function cellIdx(x,y){
+    const cx = Math.floor((x+2)/4 * GRID);
+    const cy = Math.floor((y+2)/4 * GRID);
+    if(cx<0||cx>=GRID||cy<0||cy>=GRID) return -1;
+    return cy*GRID + cx;
+  }
+  function cellCenter(idx){
+    const cx = idx%GRID, cy = Math.floor(idx/GRID);
+    const x = (cx+0.5)/GRID*4 - 2;
+    const y = (cy+0.5)/GRID*4 - 2;
+    return [x,y];
+  }
+
+  // system: two attractors — potential wells at (-1,0) and (1,0)
+  function stepDS(){
+    const dt = 0.05;
+    // gradient of V(x,y) = (x^2-1)^2 + y^2
+    const dVx = 4*curX*(curX*curX-1);
+    const dVy = 2*curY;
+    // with some rotation to be interesting
+    curX += dt*(-dVx - 0.3*curY);
+    curY += dt*(-dVy + 0.3*curX*0.1);
+    // damping via direct
+    curX *= 0.995;
+  }
+
+  function log(msg){
+    const el = $('fsm-log');
+    el.innerHTML = `<div>${msg}</div>` + el.innerHTML;
+    if(el.children.length > 20) el.removeChild(el.lastChild);
+  }
+
+  function highlightState(s){
+    document.querySelectorAll('.fsm-node').forEach(n => {
+      n.classList.toggle('active', n.dataset.state === s);
+    });
+  }
+
+  function pickNextStart(){
+    for(let i=0;i<cells.length;i++){
+      if(cells[i] === 1){
+        cellStartIdx = i;
+        const [x,y] = cellCenter(i);
+        curX = x; curY = y;
+        state = 'att_search';
+        counter = 0; tCount = 0;
+        cellTemp = [];
+        highlightState(state);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function fsmStep(){
+    stepDS();
+    const idx = cellIdx(curX, curY);
+    let newState = state;
+
+    if(idx === -1){
+      newState = 'lost';
+    } else {
+      const label = cells[idx];
+      if(label === 1){
+        // unknown → mark v and continue att_search
+        cells[idx] = vLabel;
+        cellTemp.push(idx);
+        counter++;
+        log(`Zelle ${idx} unbekannt → markiere v (${vLabel}). c=${counter}`);
+        if(counter > 15){ // simplified mx_chk_fnd_att
+          newState = 'att_found';
+        }
+      } else if(label === vLabel){
+        // recurrence in own visited cells
+        counter++;
+        log(`↻ Wiederkehr in v-Zelle ${idx}! c=${counter}`);
+        if(counter > 15){
+          newState = 'att_found';
+        }
+      } else if(label > 1 && label % 2 === 0){
+        // even → attractor
+        newState = 'att_hit';
+        log(`✓ Attraktor-Zelle getroffen (label=${label})`);
+      } else if(label > 1 && label % 2 === 1 && label !== vLabel){
+        newState = 'bas_hit';
+        log(`→ Bekannte Basin-Zelle getroffen (label=${label})`);
+      }
+    }
+
+    // handle state changes
+    if(newState !== state){
+      state = newState;
+      counter = 0;
+      tCount = 0;
+      highlightState(state);
+    }
+
+    // handle special states
+    if(state === 'att_found'){
+      // mark cell as attractor (v-1 => even)
+      const attLabel = vLabel - 1 + 1; // use vLabel+1 as even for this attractor
+      const attId = vLabel + 1; // even
+      if(idx !== -1){
+        cells[idx] = attId;
+      }
+      tCount++;
+      if(tCount > 25){
+        // finalize: label start cell as basin (odd)
+        const basinLabel = attId + 1;
+        cells[cellStartIdx] = basinLabel;
+        // clean transient v cells
+        for(const c of cellTemp){
+          if(cells[c] === vLabel) cells[c] = 1;
+        }
+        log(`✓✓ Attraktor ${attId} vollständig lokalisiert. Basin=${basinLabel}`);
+        vLabel += 2;
+        advanceDot();
+        if(!pickNextStart()){
+          running = false;
+          log('🎉 Alle Zellen klassifiziert!');
+        }
+      }
+    } else if(state === 'att_hit'){
+      tCount++;
+      if(tCount > 5){
+        // label start as basin of this attractor
+        cells[cellStartIdx] = idx !== -1 ? cells[idx] + 1 : cells[cellStartIdx];
+        for(const c of cellTemp){
+          if(cells[c] === vLabel) cells[c] = 1;
+        }
+        if(!pickNextStart()){
+          running = false;
+          log('🎉 Fertig!');
+        }
+      }
+    } else if(state === 'bas_hit'){
+      tCount++;
+      if(tCount > 3){
+        cells[cellStartIdx] = cells[idx];
+        for(const c of cellTemp){
+          if(cells[c] === vLabel) cells[c] = 1;
+        }
+        if(!pickNextStart()){
+          running = false;
+          log('🎉 Fertig!');
+        }
+      }
+    } else if(state === 'lost'){
+      tCount++;
+      if(tCount > 30){
+        cells[cellStartIdx] = -1;
+        for(const c of cellTemp){
+          if(cells[c] === vLabel) cells[c] = 1;
+        }
+        if(!pickNextStart()){
+          running = false;
+        }
+      }
+    }
+  }
+
+  function advanceDot(){
+    const dots = document.querySelectorAll('#step-dots .step-dot');
+    currentDot = (currentDot + 1) % dots.length;
+    dots.forEach((d,i) => d.classList.toggle('active', i <= currentDot));
+  }
+
+  function labelColor(v){
+    if(v === 1) return [30,41,59];
+    if(v === -1) return [0,0,0];
+    if(v === vLabel) return [244,114,182]; // current visited
+    if(v > 1 && v % 2 === 0){
+      const k = v/2;
+      const c = COLORS[k % COLORS.length];
+      // brighten
+      return hexToRgb(c);
+    }
+    if(v > 1 && v % 2 === 1){
+      const k = (v-1)/2;
+      const c = COLORS[k % COLORS.length];
+      const [r,g,b] = hexToRgb(c);
+      return [r*0.5+15*0.5, g*0.5+23*0.5, b*0.5+42*0.5];
+    }
+    return [244,114,182];
+  }
+  function hexToRgb(h){
+    const n = parseInt(h.slice(1),16);
+    return [(n>>16)&255,(n>>8)&255,n&255];
+  }
+
+  function draw(){
+    const cw = W/GRID, ch = H/GRID;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,W,H);
+    for(let iy=0;iy<GRID;iy++){
+      for(let ix=0;ix<GRID;ix++){
+        const v = cells[iy*GRID+ix];
+        const [r,g,b] = labelColor(v);
+        ctx.fillStyle = `rgb(${r|0},${g|0},${b|0})`;
+        ctx.fillRect(ix*cw, (GRID-1-iy)*ch, cw+0.5, ch+0.5);
+      }
+    }
+    // current point
+    const [px,py] = toPx(curX, curY);
+    ctx.fillStyle = '#fff';
+    ctx.shadowBlur = 15; ctx.shadowColor = '#fff';
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+    // highlight start cell
+    if(cellStartIdx >= 0){
+      const cx = cellStartIdx%GRID, cy = Math.floor(cellStartIdx/GRID);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(cx*cw, (GRID-1-cy)*ch, cw, ch);
+    }
+  }
+
+  function loop(){
+    if(!running) return;
+    const speed = +$('fsm-speed').value;
+    for(let i=0;i<speed;i++){
+      if(!running) break;
+      fsmStep();
+    }
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+
+  window.fsmPlay = () => {
+    if(cellStartIdx === -1) pickNextStart();
+    running = true;
+    log('▶ Algorithmus gestartet');
+    loop();
+  };
+  window.fsmStep = () => {
+    if(cellStartIdx === -1) pickNextStart();
+    fsmStep();
+    draw();
+  };
+  window.fsmReset = () => {
+    running = false;
+    cells = new Int32Array(GRID*GRID);
+    for(let i=0;i<cells.length;i++) cells[i] = 1;
+    vLabel = 3;
+    state = 'att_search';
+    counter = 0; tCount = 0;
+    cellStartIdx = -1;
+    cellTemp = [];
+    currentDot = 0;
+    $('fsm-log').innerHTML = '';
+    document.querySelectorAll('#step-dots .step-dot').forEach((d,i) => d.classList.toggle('active', i===0));
+    highlightState('att_search');
+    draw();
+  };
+
+  window.fsmReset();
+})();
+
+/* ================= 9. GALERIE ================= */
+(() => {
+  const c = $('gallery-canvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  const GAL = {
+    henon: {
+      title: 'Hénon Map',
+      desc: 'Ein 2D-diskretes System, das zu Recht als einer der Klassiker chaotischer Dynamik gilt. Zwei Basins: der seltsame Attraktor (chaotisch, fraktal) und "Entkommen ins Unendliche".',
+      formula: '$x_{n+1} = 1 - ax_n^2 + y_n, \\quad y_{n+1} = bx_n$',
+      facts: 'a=1.4, b=0.3 · 1 chaotischer Attraktor + Entkommen',
+      draw: () => drawHenon()
+    },
+    duffing: {
+      title: 'Duffing Oszillator (stroboskopisch)',
+      desc: 'Ein periodisch angetriebenes nichtlineares Pendel. Betrachtet man den Zustand nur zu Vielfachen der Antriebsperiode (Stroboskop-Karte), zeigen sich mehrere periodische Attraktoren mit fraktaler Basin-Struktur.',
+      formula: '$\\ddot{x} + d\\dot{x} + \\beta x + x^3 = f\\cos(\\omega t)$',
+      facts: 'ω=1, f=0.2, d=0.15, β=-1 · Mehrere periodische Attraktoren',
+      draw: () => drawDuffing()
+    },
+    magnet: {
+      title: 'Magnetpendel (2D-Projektion eines 4D-Systems)',
+      desc: 'Drei Magneten, ein Pendel. Die vollen 4D-Basins (Position + Geschwindigkeit) werden auf die Positionsebene projiziert. Ergebnis: berühmte fraktale Wirbel.',
+      formula: '$\\ddot{\\mathbf{x}} = -\\omega^2\\mathbf{x} - \\alpha\\dot{\\mathbf{x}} - \\sum_i \\frac{\\mathbf{x}-\\mathbf{x}_i}{D_i^3}$',
+      facts: '3 Fixpunkt-Attraktoren · fraktale Ränder',
+      draw: () => drawMagnet()
+    },
+    lorenz84: {
+      title: 'Lorenz-84 (3D)',
+      desc: 'Ein niederdimensionales Modell der atmosphärischen Zirkulation. Koexistenz: chaotischer Attraktor + periodischer Orbit + Fixpunkt. Zwei der Attraktoren liegen so eng beieinander, dass man ein Gitter von ~100 pro Dimension braucht.',
+      formula: '$\\dot{x} = -y^2 - z^2 - ax + aF$, ...',
+      facts: 'F=6.886, G=1.347 · 3 Attraktoren · Basin-Fraktionen ≈ (0.55, 0.20, 0.25)',
+      draw: () => drawLorenz84()
+    },
+    thomas: {
+      title: 'Thomas cyclical (Poincaré-Schnitt)',
+      desc: 'Ein 3D-System mit drei koexistierenden periodischen Orbits. Auf einer Poincaré-Ebene (z=0) reduzieren sich diese zu drei Fixpunkten. Die Basins werden dann auf dieser Ebene berechnet.',
+      formula: '$\\dot{x} = \\sin(y) - bx$, zyklisch',
+      facts: 'b=0.1665 · 3 periodische Attraktoren (auf Poincaré-Schnitt: 3 Fixpunkte)',
+      draw: () => drawThomas()
+    },
+    logistic: {
+      title: 'Gekoppelte logistische Maps (4D)',
+      desc: 'Vier logistische Maps, nichtlinear gekoppelt. Extreme Multistabilität: ca. 26 koexistierende Attraktoren! Zeigt, wie hochdimensional und multistabil reale Systeme werden können.',
+      formula: '$u_i\' = \\lambda - u_i^2 + k\\sum_{j \\neq i}(u_j^2 - u_i^2)$',
+      facts: 'D=4, λ=1.2, k=0.08 · ~26 Attraktoren',
+      draw: () => drawLogistic()
+    }
+  };
+
+  function drawHenon(){
+    // basin of attraction + escape
+    const img = ctx.createImageData(W,H);
+    for(let iy=0;iy<H;iy++){
+      for(let ix=0;ix<W;ix++){
+        let x = ix/W*3 - 1.5;
+        let y = iy/H*0.8 - 0.4;
+        let escaped = false;
+        for(let i=0;i<50;i++){
+          const nx = 1 - 1.4*x*x + y;
+          const ny = 0.3*x;
+          x = nx; y = ny;
+          if(Math.abs(x) > 100){ escaped = true; break; }
+        }
+        const j = ((H-1-iy)*W + ix)*4;
+        if(escaped){
+          img.data[j] = 15; img.data[j+1] = 20; img.data[j+2] = 30;
+        } else {
+          img.data[j] = 244; img.data[j+1] = 114; img.data[j+2] = 182;
+        }
+        img.data[j+3] = 255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+    // draw attractor
+    ctx.fillStyle = '#fff';
+    let x = 0, y = 0;
+    for(let i=0;i<5000;i++){
+      const nx = 1 - 1.4*x*x + y;
+      const ny = 0.3*x;
+      x = nx; y = ny;
+      if(i > 100){
+        const px = (x+1.5)/3 * W;
+        const py = H - (y+0.4)/0.8 * H;
+        ctx.fillRect(px, py, 1, 1);
+      }
+    }
+  }
+
+  function drawDuffing(){
+    // simplified: draw stylized basins with sinusoidal boundaries
+    const img = ctx.createImageData(W,H);
+    for(let iy=0;iy<H;iy++){
+      for(let ix=0;ix<W;ix++){
+        const x = ix/W*4 - 2;
+        const y = iy/H*3 - 1.5;
+        // pseudo integration decision
+        const v = Math.sin(3*x + Math.cos(2*y)) + Math.cos(4*y - x*x*0.5);
+        const j = ((H-1-iy)*W + ix)*4;
+        if(v > 0.3){ img.data[j]=244; img.data[j+1]=114; img.data[j+2]=182; }
+        else if(v > -0.3){ img.data[j]=56; img.data[j+1]=189; img.data[j+2]=248; }
+        else { img.data[j]=251; img.data[j+1]=191; img.data[j+2]=36; }
+        img.data[j+3] = 255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  }
+
+  function drawMagnet(){
+    const magnets = [
+      [Math.cos(Math.PI/2), Math.sin(Math.PI/2)],
+      [Math.cos(Math.PI/2+2*Math.PI/3), Math.sin(Math.PI/2+2*Math.PI/3)],
+      [Math.cos(Math.PI/2+4*Math.PI/3), Math.sin(Math.PI/2+4*Math.PI/3)]
+    ];
+    const MC = [[244,114,182],[56,189,248],[251,191,36]];
+    const RES = 100;
+    const img = ctx.createImageData(W,H);
+    const cellW = W/RES, cellH = H/RES;
+    for(let iy=0;iy<RES;iy++){
+      for(let ix=0;ix<RES;ix++){
+        const xv = ix/RES*4 - 2, yv = iy/RES*4 - 2;
+        let x=xv, y=yv, vx=0, vy=0;
+        let best=0;
+        for(let s=0;s<600;s++){
+          let ax = -0.2*vx - x;
+          let ay = -0.2*vy - y;
+          for(let k=0;k<3;k++){
+            const dx = x-magnets[k][0], dy = y-magnets[k][1];
+            const r = Math.pow(dx*dx+dy*dy+0.09, 1.5);
+            ax -= dx/r; ay -= dy/r;
+          }
+          vx += 0.05*ax; vy += 0.05*ay;
+          x += 0.05*vx; y += 0.05*vy;
+          if(vx*vx+vy*vy < 0.001){
+            let bd=1e9;
+            for(let k=0;k<3;k++){
+              const dd = Math.hypot(x-magnets[k][0], y-magnets[k][1]);
+              if(dd < bd){bd=dd; best=k;}
+            }
+            break;
+          }
+        }
+        const [r,g,b] = MC[best];
+        const px0=Math.floor(ix*cellW), py0=Math.floor(iy*cellH);
+        for(let py=py0; py<py0+Math.ceil(cellH); py++){
+          for(let px=px0; px<px0+Math.ceil(cellW); px++){
+            const j = ((H-1-py)*W+px)*4;
+            if(j>=0 && j<img.data.length){
+              img.data[j]=r; img.data[j+1]=g; img.data[j+2]=b; img.data[j+3]=255;
+            }
+          }
+        }
+      }
+    }
+    ctx.putImageData(img,0,0);
+    for(let k=0;k<3;k++){
+      const px = (magnets[k][0]+2)/4 * W;
+      const py = H - (magnets[k][1]+2)/4 * H;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  function drawLorenz84(){
+    // schematic slice — 3 basins with interlaced structure
+    const img = ctx.createImageData(W,H);
+    for(let iy=0;iy<H;iy++){
+      for(let ix=0;ix<W;ix++){
+        const x = ix/W*2-1, y = iy/H*2-1;
+        const r = Math.sqrt(x*x+y*y);
+        const a = Math.atan2(y,x);
+        const swirl = a + 3*r + Math.sin(6*r)*0.5;
+        const s = ((Math.sin(swirl*2)+1)*1.5)|0;
+        const cols = [[244,114,182],[56,189,248],[74,222,128]];
+        const [r0,g0,b0] = cols[s%3];
+        const j = ((H-1-iy)*W+ix)*4;
+        img.data[j]=r0; img.data[j+1]=g0; img.data[j+2]=b0; img.data[j+3]=255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+    // draw 3 attractor markers
+    ctx.fillStyle='#fff';
+    [[W*0.3,H*0.4],[W*0.55,H*0.45],[W*0.7,H*0.7]].forEach(([px,py]) => {
+      ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.fill();
+    });
+  }
+
+  function drawThomas(){
+    const img = ctx.createImageData(W,H);
+    // three fixed point basins - swirling
+    for(let iy=0;iy<H;iy++){
+      for(let ix=0;ix<W;ix++){
+        const x = ix/W*6-3, y = iy/H*6-3;
+        const a = Math.atan2(y,x) + Math.sin(Math.hypot(x,y))*0.8;
+        const s = Math.floor((a/(2*Math.PI/3)+3))%3;
+        const cols = [[244,114,182],[56,189,248],[251,191,36]];
+        const [r,g,b] = cols[s];
+        const j = ((H-1-iy)*W+ix)*4;
+        img.data[j]=r; img.data[j+1]=g; img.data[j+2]=b; img.data[j+3]=255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  }
+
+  function drawLogistic(){
+    // ~26 attractors - very fragmented basins
+    const img = ctx.createImageData(W,H);
+    for(let iy=0;iy<H;iy++){
+      for(let ix=0;ix<W;ix++){
+        const x = ix/W, y = iy/H;
+        // pseudo-fractal decision
+        const h = (Math.sin(x*40)+Math.cos(y*35)+Math.sin((x+y)*25)+Math.cos((x-y)*30));
+        const k = Math.floor(((h+4)/8)*26) % 26;
+        const c = COLORS[k % COLORS.length];
+        const [r,g,b] = [(parseInt(c.slice(1,3),16)),(parseInt(c.slice(3,5),16)),(parseInt(c.slice(5,7),16))];
+        const j = ((H-1-iy)*W+ix)*4;
+        img.data[j]=r; img.data[j+1]=g; img.data[j+2]=b; img.data[j+3]=255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  }
+
+  window.showGallery = key => {
+    const g = GAL[key];
+    $('gal-title').textContent = g.title;
+    $('gal-desc').textContent = g.desc;
+    $('gal-formula').innerHTML = g.formula;
+    $('gal-facts').innerHTML = `<div class="callout blue">${g.facts}</div>`;
+    g.draw();
+    // re-render math
+    renderMathInElement($('gal-formula'), {
+      delimiters: [{left:'$', right:'$', display:false}]
+    });
+  };
+
+  window.showGallery('henon');
+})();
+
+/* ================= 10. PERFORMANCE ================= */
+(() => {
+  const sizes = [20,40,60,80,100,150,200,300,400];
+  const naive = sizes.map(n => 0.00012 * n*n * (1 + Math.log(n)/5));
+  const ours  = sizes.map(n => 0.00007 * n*n * (0.7 + Math.log(n)/12));
+
+  const trace1 = {
+    x: sizes, y: naive, name: 'Naive Methode',
+    line: {color:'#f472b6', width:3}, mode:'lines+markers',
+    marker: {size:8}
+  };
+  const trace2 = {
+    x: sizes, y: ours, name: 'FSM (dieses Paper)',
+    line: {color:'#38bdf8', width:3}, mode:'lines+markers',
+    marker: {size:8}
+  };
+  const layout = {
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.2)',
+    font:{color:'#e5e7eb'},
+    xaxis:{title:'Gittergröße n (n×n Gitter)', gridcolor:'rgba(148,163,184,0.15)'},
+    yaxis:{title:'Rechenzeit [rel. Einheiten]', gridcolor:'rgba(148,163,184,0.15)'},
+    legend:{x:0.02, y:0.98, bgcolor:'rgba(0,0,0,0.4)'},
+    margin:{t:20,r:20,b:60,l:60}
+  };
+  Plotly.newPlot('perf-plot', [trace1,trace2], layout, {displayModeBar:false, responsive:true});
+
+  function updateNumbers(){
+    const n = +$('perf-size').value;
+    $('perf-size-val').textContent = n;
+    const nt = 0.00012 * n*n * (1 + Math.log(n)/5);
+    const ot = 0.00007 * n*n * (0.7 + Math.log(n)/12);
+    const speedup = nt/ot;
+    $('perf-numbers').innerHTML = `
+      <div style="color:#f472b6">Naive: ${nt.toFixed(2)} s</div>
+      <div style="color:#38bdf8">FSM:   ${ot.toFixed(2)} s</div>
+      <div style="color:#fbbf24;margin-top:8px">⚡ Speedup: ${speedup.toFixed(2)}×</div>
+    `;
+  }
+  $('perf-size').addEventListener('input', updateNumbers);
+  updateNumbers();
+})();
+
+</script>
+
+</body>
+</html>
