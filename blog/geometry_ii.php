@@ -286,9 +286,9 @@ The interactive below holds a bag of six “tokens.” Drag the **shift** to reo
 
 Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:
 
-| Geometric move | Operation | The layer | Met in |
+| Move | Operation | The layer | Met in |
 |---|---|---|---|
-| Inner product | alignment $\langle u,v\rangle$ | neuron, similarity, attention | [Attention](attentionlab), [Embeddings](embeddinglab) |
+| Inner product | alignment $\langle u,v\rangle$ | neuron, similarity, attention | [Attention](attentionlab), [Embedding](embeddinglab) |
 | Projection | best fit = shadow, ⟂ | least squares, low-rank | [Loss](losslab) |
 | SVD | rotate → stretch → rotate | PCA, compression, LoRA | [Beyond LLMs](beyond_llms) |
 | Descent | $-\nabla$, ⟂ to level sets | descent, backprop | [Optimizer](optimizerlab), [Autodiff](autodiff) |
