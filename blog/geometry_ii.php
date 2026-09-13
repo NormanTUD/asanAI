@@ -191,19 +191,19 @@ $$
 \underbrace{(c * x)_t}_{\text{the output at position } t} \;=\; \underbrace{\sum_{k} c_k \, x_{t-k}}_{\text{“flip } c\text{, slide it to } t\text{, take the dot product”}}
 $$
 
-That is all a convolution is: an inner product, repeated at every offset $t$. The word “convolution” hides the fact that the operation *under* it is the same one from section I — a measurement of alignment between the kernel and a sliding window of the input. This is exactly why a CNN filter works the way it does: each filter is a kernel, and “applying” it to an image is “taking the dot product with every patch,” so the filter *detects* precisely the local pattern it is shaped like (see [Convolutions](visionlab)).
+That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from section I. This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Convolutions](visionlab)).
 
 \marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible.}
 
-The payoff is the **Fourier transform**, and it is a *change of coordinates*. It is written with a **calligraphic $\mathcal{F}$** — a fancy, script letter $F$ (the convention for naming a big transformation operator), read simply *“F”* or *“the Fourier transform of”* — and it does one thing: send a signal to the list of sine-wave ingredients that build it. (The middle dot $\cdot$ between the factors below is ordinary multiplication.) Write the signal and the kernel in the basis of pure sine waves — the “frequency” coordinates — instead of in time. In that coordinate system the sliding sum above does something astonishing: **it becomes ordinary multiplication**, point by point,
+The payoff is the **Fourier transform** $\mathcal{F}$ — a *change of coordinates*. It sends a signal to the list of sine-wave ingredients that build it. Write the signal and kernel in the basis of pure sine waves (“frequency” coordinates) instead of time. In that system the sliding sum becomes **ordinary multiplication**, point by point,
 
 $$
 \underbrace{\mathcal{F}(c * x)}_{\text{spectrum of the convolved signal}} \;=\; \underbrace{\mathcal{F}(c)\,\cdot\,\mathcal{F}(x)}_{\text{no sliding — just multiply each frequency}}
 $$
 
-Convolution in time is multiplication in frequency \cite{fourier1822}. The reason is the same one running through this whole chapter: the sines are the directions in which the *slide* is **normal**. Shifting a sine wave in time only rotates its phase — it does not change the wave — so in the sine basis a shift is a rotation, and a sliding dot product of rotations is just a product. The DFT finds those special directions; the FFT is merely the fast way to compute them \cite{cooley1965fft}.
+Convolution in time is multiplication in frequency \cite{fourier1822}. The reason: the sines are the directions in which the *slide* is normal. Shifting a sine in time only rotates its phase, so in the sine basis a shift is a rotation, and a sliding dot product of rotations is a product. The DFT finds those directions; the FFT is the fast way to compute them \cite{cooley1965fft}.
 
-This is not a curiosity. “Smooth the signal” means “multiply its spectrum by a low-pass.” “Detect an edge” means “the output lights up at high frequency.” “A periodic hum” means “energy piled up at one frequency.” In audio, the whole short-time Fourier view of sound is this one identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT-based tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)). The two interactives below share one kernel: drag its three taps and watch the time-domain output get smoothed (left) *and* the frequency-domain reason for it — pointwise multiplication — happen at the same time (right).
+This is not a curiosity. “Smooth the signal” means multiply its spectrum by a low-pass; “detect an edge” means the output lights up at high frequency; “a periodic hum” means energy piled up at one frequency. In audio the short-time Fourier view of sound is this identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)). The two interactives share one kernel: drag its three taps and the time-domain output smooths (left) while the frequency-domain reason — pointwise multiplication — appears at the same time (right).
 </div>
 
 <!-- ─── Interactive: Convolution = sliding dot product; DFT = its shape ─── -->
@@ -234,12 +234,12 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 </div>
 
 <div class="md">
-## VI. Symmetry: invariance, equivariance, and the shape of attention
+## Symmetry: invariance, equivariance, and the shape of attention
 
-A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviors, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows. We write a symmetry as $\sigma$ (the Greek letter sigma) and its action on an input $x$ as $\sigma \cdot x$ — read *sigma acting on x*; here the middle dot does **not** mean multiplication, it means “the symmetry $\sigma$ is applied to $x$.” So $\sigma \cdot x$ is the input after the reordering (or shift) $\sigma$ has been performed on it.
+A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. Write a symmetry as $\sigma$ and its action on an input $x$ as $\sigma \cdot x$ (here the dot means “apply $\sigma$ to $x$,” not multiplication). Two behaviors matter:
 
-* **Invariant** — the output does not change at all: $f(\sigma \cdot x) = \underbrace{f(x)}_{\text{exactly the same as before the reorder}}$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
-* **Equivariant** — the output changes, but *the same way* the input did: $f(\sigma \cdot x) = \underbrace{\sigma \cdot f(x)}_{\text{the output, permuted the same way as the input}}$. The output “commutes” with the symmetry.
+* **Invariant** — the output does not change: $f(\sigma \cdot x) = f(x)$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
+* **Equivariant** — the output changes *the same way* the input did: $f(\sigma \cdot x) = \sigma \cdot f(x)$. The function “commutes” with the symmetry.
 
 Write the equivariance condition as a diagram that **commutes**: do the symmetry first, then the function, or the function first, then the symmetry — both paths land on the same point.
 
@@ -249,24 +249,24 @@ x \;\xrightarrow{\ \sigma\ }\; \sigma x \;\xrightarrow{\ f\ }\; \underbrace{\sig
 x \;\xrightarrow{\ f\ }\; f(x) \;\xrightarrow{\ \sigma\ }\; \underbrace{\sigma f(x)}_{\text{same point}}
 $$
 
-That little commuting square is the whole idea of equivariance, and it is a *geometric* statement: $f$ and the symmetry $\sigma$ are two motions of space that get along.
+The commuting square is the whole idea of equivariance, and it is *geometric*: $f$ and the symmetry $\sigma$ are two motions of space that get along.
 
-The deep result is that these are not exotic — they are *forced*. **Deep Sets** \cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:
+These are not exotic — they are *forced*. **Deep Sets** \cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:
 
 $$
 \underbrace{f(x_1,\dots,x_n)}_{\text{an answer that does not care about order}} \;=\; \underbrace{\rho}_{\text{one final map}}\Big(\underbrace{\textstyle\sum_{i}}_{\text{“add up all the items”}}\; \underbrace{\phi(x_i)}_{\text{“map each item”}}\Big)
 $$
 
-and it gives the matching necessary-and-sufficient condition for equivariance. “Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have. That is the geometry a set-based architecture has no choice but to obey.
+and it gives the matching condition for equivariance. “Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have.
 
-Why should a working-geometry chapter care? Because **weight sharing is equivariance in disguise**, and attention is a *symmetric* operation:
+This matters because **weight sharing is equivariance in disguise**, and attention is a *symmetric* operation:
 
-* A **CNN** shares one kernel across every location — that is translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). Section V’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
-* **Pooling** (mean, max) is the invariant readout: reorder or shift what you pool over and the pooled number does not move.
-* **Attention** is permutation-equivariant over the token set: shuffle the input tokens and every output token — and every attention weight — shuffles along with it. Order is not something attention knows, which is exactly why position has to be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)). The attention map — a weight on every *pair* of tokens — is itself permutation-equivariant: permute the tokens and the whole map permutes with them.
+* A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). Section V’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
+* **Pooling** (mean, max) is the invariant readout: reorder what you pool over and the number does not move.
+* **Attention** is permutation-equivariant over the token set: shuffle the tokens and every output token and attention weight shuffles along. Order is not something attention knows, which is why position must be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)).
 * The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \cite{bronstein2021geometric}).
 
-The interactive below holds a bag of six “tokens.” Drag the **shift** to reorder them. The <b>blue</b> (input) and <b>orange</b> (a per-item equivariant output) traces rotate *together* — that is equivariance, the commutative square closing. The flat <b>green</b> line is the invariant readout (the mean), and it does not move no matter how you reorder the bag.
+The interactive holds a bag of six “tokens.” Drag the **shift** to reorder them. The <b>blue</b> (input) and <b>orange</b> (per-item equivariant output) traces rotate *together* — equivariance, the commutative square closing. The flat <b>green</b> line is the invariant readout (the mean), which does not move no matter how you reorder.
 </div>
 
 <!-- ─── Interactive: Invariance vs equivariance on a bag of tokens ─── -->
@@ -282,7 +282,7 @@ The interactive below holds a bag of six “tokens.” Drag the **shift** to reo
 </div>
 
 <div class="md">
-## VII. Synthesis: one forward pass, as geometry
+## Synthesis: one forward pass, as geometry
 
 Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:
 
@@ -298,9 +298,9 @@ Pull the six moves together and a forward pass reads as a *sequence of geometric
 </tbody>
 </table>
 
-Notice what is *learned* and what is *fixed*. The geometry — that a dot product measures alignment, that the best fit is a shadow, that the steepest direction is the normal to the level sets, that convolution multiplies in frequency, that a symmetric operation must commute with its symmetry — is **fixed by mathematics**. What training learns are the *parameters inside* each move: which directions to stretch (the singular vectors), which kernel to slide (the filter weights), which per-item map to apply (the non-linearity). The shape of the operations is a prior; the data supplies the numbers. That is the working geometry of a neural network: a fixed set of geometric moves, parameterized, stacked, and trained.
+Notice what is *learned* and what is *fixed*. The geometry — a dot product measures alignment, the best fit is a shadow, the steepest direction is the normal to the level sets, convolution multiplies in frequency, a symmetric operation commutes with its symmetry — is **fixed by mathematics**. Training learns only the *parameters inside* each move: which directions to stretch, which kernel to slide, which per-item map to apply. The shape of the operations is a prior; the data supplies the numbers.
 
-And that is why the picture transfers. The same inner product that measures a neuron’s alignment measures a word’s similarity. The same projection that fits a line explains a low-rank approximation. The same SVD that shapes a matrix ranks a layer’s effective capacity. The same symmetry that justifies a shared filter is the reason attention needs position. Stop seeing a network as “matrices of weights” and start seeing it as **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and the layers stop being a list of tricks and become a single, navigable space. That is the shape of the machine.
+That is why the picture transfers. The same inner product that measures a neuron’s alignment measures a word’s similarity. The same projection that fits a line explains a low-rank approximation. The same SVD that shapes a matrix ranks a layer’s capacity. The same symmetry that justifies a shared filter is the reason attention needs position. A network is not “matrices of weights” but **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and its layers become a single, navigable space.
 </div>
 
 <script>
