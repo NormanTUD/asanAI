@@ -1063,33 +1063,7 @@ function bindSlider(id, valId, formatter = v => v) {
   draw();
 })();
 
-// ═══════════════════════════════════════════════════════════════════════
-// SCENE 2: DESKTOP ICON
-// ═══════════════════════════════════════════════════════════════════════
-(() => {
-  const canvas = document.getElementById('desktop-canvas');
-  const s = setupCanvas(canvas);
-  const btn = document.getElementById('desktop-toggle');
-  let mode = 0; // 0 = icon, 1 = "real"
-  btn.addEventListener('click', () => { mode = 1 - mode; });
-  
-  function draw() {
-    const W = s.w, H = s.h;
-    const ctx = s.ctx;
-    ctx.fillStyle = mode === 0 ? '#1a1a2a' : '#000';
-    ctx.fillRect(0, 0, W, H);
-    
-    if (mode === 0) {
-      // Desktop with file icon
-      // Draw large blue file icon
-      const cx = W / 2, cy = H / 2;
-      const iw = 100, ih = 130;
-      ctx.fillStyle = '#4a7ccc';
-      ctx.fillRect(cx - iw/2, cy - ih/2, iw, ih);
-      // Folded corner
-      ctx.fillStyle = '#6a9cec';
-      ctx.beginPath();
-      
+</script>
     </div>
   </div>
 </section>

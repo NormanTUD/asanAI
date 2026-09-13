@@ -1213,8 +1213,6 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
   const c = document.getElementById('ontolCanvas');
   const ctx = c.getContext('2d');
   const info = document.getElementById('ontolInfo');
-  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
-  resize(); window.addEventListener('resize', resize);
   const positions = [
     { x:.2, y:.5, r:70, color:'#7ec8ff', label:'Materialismus',
       info:'<b>Materialismus:</b> Nur Materie existiert wirklich. Bewusstsein ist ein Nebenprodukt neuronaler Prozesse. <br><span style="color:#ff8fb1">Schwäche:</span> Das harte Problem — niemand kann erklären, warum Materie sich anfühlt.' },
@@ -1226,6 +1224,9 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
       info:'<b>Objektiver Idealismus:</b> Nur phänomenales Bewusstsein existiert wirklich. Materie ist die äußere Erscheinung geistiger Prozesse. <br><span style="color:#a0e8a0">Stärke:</span> Kein hartes Problem, kein Interaktions-Problem, kein Kombinationsproblem.' }
   ];
   let hovered = null;
+  let t = 0;
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
   c.addEventListener('click',(e)=>{
     const rect = c.getBoundingClientRect();
     const mx = (e.clientX-rect.left)/rect.width;
@@ -1238,7 +1239,6 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
     if(hovered) info.innerHTML = hovered.info;
     draw();
   });
-  let t = 0;
   function draw(){
     t += .02;
     const w = c.width, h = c.height;
