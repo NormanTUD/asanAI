@@ -9,3 +9,5 @@ datenumfang ist ne kritische größe, mehr thematisieren (inter extrapolation, d
 
 todo: 
 - history of ai eigene präsentation
+
+https://arxiv.org/html/1602.05314v1
