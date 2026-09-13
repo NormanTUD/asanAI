@@ -9,6 +9,55 @@ order: 5
 color: accent
 topics: math-iii
 -->
+<?php js("math_iii_hott"); ?>
+
+<style>
+/* ── HoTT interactive lab (theme-aware, scoped by .hott-* prefix) ── */
+.hott-card { background: var(--mn-surface); border: 1px solid var(--mn-border); border-radius: var(--mn-radius-md); padding: 1rem 1.1rem; margin: 1.2rem 0; box-shadow: var(--mn-shadow-md); }
+.hott-card-title { font-weight: 600; color: var(--mn-accent); margin-bottom: .7rem; display: flex; align-items: center; gap: .5rem; font-family: var(--mn-font-heading); font-size: 1.02rem; }
+.hott-card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mn-accent); box-shadow: 0 0 10px var(--mn-accent); flex: 0 0 auto; }
+.hott-lead { color: var(--mn-text-secondary); }
+.hott-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+.hott-controls { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin: .7rem 0; padding: .7rem; background: var(--mn-bg-subtle); border-radius: 10px; }
+.hott-control { display: flex; flex-direction: column; gap: .35rem; min-width: 150px; flex: 1; }
+.hott-control label { font-size: .8rem; color: var(--mn-text-secondary); display: flex; justify-content: space-between; gap: .5rem; }
+.hott-control label b { color: var(--mn-accent); font-family: var(--mn-font-mono); }
+.hott-controls input[type=range], .hott-lab-range { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: var(--mn-border); border-radius: 2px; outline: none; }
+.hott-controls input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--mn-accent); border-radius: 50%; cursor: pointer; }
+.hott-controls input[type=range]::-moz-range-thumb { width: 16px; height: 16px; background: var(--mn-accent); border-radius: 50%; cursor: pointer; border: 0; }
+.hott-btn { background: var(--mn-accent); color: #fff; border: 0; padding: .5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: .85rem; align-self: flex-end; }
+.hott-btn:hover { filter: brightness(1.12); }
+.hott-canvas { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--mn-border); }
+.hott-plot { width: 100%; min-height: 340px; }
+.hott-3d { width: 100%; height: 440px; border-radius: 10px; border: 1px solid var(--mn-border); cursor: grab; overflow: hidden; }
+.hott-row { display: flex; gap: .6rem; flex-wrap: wrap; margin: .6rem 0; }
+.hott-pill { padding: .3rem .75rem; border: 1px solid var(--mn-border); border-radius: 99px; font-size: .8rem; color: var(--mn-accent); background: var(--mn-accent-lighter); }
+.hott-pill.good { color: var(--mn-emerald); border-color: var(--mn-emerald); background: var(--mn-emerald-light); }
+.hott-pill.bad { color: var(--mn-rose); border-color: var(--mn-rose); background: var(--mn-coral-light); }
+.hott-callout { border-left: 3px solid var(--mn-accent); background: var(--mn-bg-warm); padding: .8rem 1rem; border-radius: 0 10px 10px 0; margin: .9rem 0; }
+.hott-callout.a { border-color: var(--mn-emerald); }
+.hott-math { background: var(--mn-bg-subtle); padding: .55rem .9rem; border-radius: 8px; overflow-x: auto; margin: .6rem 0; }
+.hott-stepper { display: flex; gap: .4rem; margin: .7rem 0; flex-wrap: wrap; }
+.hott-step { padding: .42rem .8rem; background: var(--mn-surface-raised); border: 1px solid var(--mn-border); border-radius: 8px; font-size: .83rem; color: var(--mn-text-secondary); cursor: pointer; transition: all .15s; }
+.hott-step.active { background: var(--mn-accent); color: #fff; border-color: var(--mn-accent); font-weight: 600; }
+.hott-select { padding: .5rem; background: var(--mn-surface-raised); color: var(--mn-text); border: 1px solid var(--mn-border); border-radius: 6px; }
+.hott-tcresult { padding: 1rem; background: var(--mn-bg-subtle); border-radius: 8px; font-family: var(--mn-font-mono); font-size: .9rem; white-space: pre-wrap; }
+.hott-chview { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: .8rem; }
+.hott-chcell { padding: 1rem; border-radius: 8px; }
+.hott-chcell.logic { background: var(--mn-accent-lighter); }
+.hott-chcell.types { background: var(--mn-coral-light); }
+.hott-chcell .lbl { font-size: .75rem; margin-bottom: .5rem; font-weight: 700; letter-spacing: .05em; }
+.hott-chcell.logic .lbl { color: var(--mn-accent); }
+.hott-chcell.types .lbl { color: var(--mn-coral); }
+.hott-chcell .body { font-size: 1.05rem; }
+.hott-chcell.types .body { font-family: var(--mn-font-mono); font-size: .95rem; }
+.hott-chcell .sub { color: var(--mn-text-secondary); font-size: .82rem; margin-top: .6rem; }
+.hott-journey { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.hott-journey a { display: block; padding: .85rem 1rem; background: var(--mn-surface); border: 1px solid var(--mn-border); border-radius: 12px; color: var(--mn-text); text-decoration: none; font-size: .88rem; transition: all .18s; }
+.hott-journey a:hover { border-color: var(--mn-accent); transform: translateY(-2px); box-shadow: var(--mn-shadow-sm); }
+.hott-journey a b { display: block; color: var(--mn-accent); margin-bottom: .2rem; }
+@media (max-width: 800px) { .hott-grid2 { grid-template-columns: 1fr; } .hott-chview { grid-template-columns: 1fr; } }
+</style>
 
 <div class="md">
 This third math chapter steps back from mechanics and addresses two conceptual questions that recur throughout the rest of the textbook:
