@@ -1018,7 +1018,7 @@ The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bost
 
 **\citetitle{waluigi}**, by \citeauthor{waluigi}, names the **Waluigi Effect**: after you train an LLM to
 satisfy a property **P**, it becomes *easier* to elicit the opposite of **P**. His anti-croissant chatbot,
-he argues, is a \cite[Superposition]{elhage2022superposition} of a croissant-hating
+he argues, is a **superposition** \cite[Superposition]{elhage2022superposition} of a croissant-hating
 **Luigi** and a croissant-loving **Waluigi**, their logits blended at every token. Three equivalent reasons
 force the waluigi to exist:
 
@@ -1026,31 +1026,31 @@ force the waluigi to exist:
 generalises that colocation to unseen rules — so defining a character who *always* obeys also locates one
 who *never* does.
 * **Traits are complex, valences are simple.** A simulacrum is a list of trait–valence pairs,
-$\{ \langle \text{polite}, +0.8\rangle, \ldots \}$, and the valences are single signs. Once the luigi is
-located, the waluigi is just the sign-flip: $K(\text{waluigi}\mid\text{luigi}) \ll K(\text{waluigi})$.
+$\{ \langle \text{polite}, +0.8\rangle, \ldots \}$, and the valences are single signs. Once the Luigi is
+located, the Waluigi is just the sign-flip: $K(\text{Waluigi}\mid\text{Luigi}) \ll K(\text{Waluigi})$.
 * **Structuralist narratology.** Plots are assemblages of tropes, the dominant one being the **antagonist**,
 the protagonist's inversion; a model is “a structural narratologist,” so defining the protagonist summons the
-villain (Cruella is the waluigi of Roger and Anita).
+villain (Cruella is the Waluigi of Roger and Anita).
 
-**The waluigi is an attractor.** A behaviour likely for the waluigi but implausible for the luigi
-(pro-croissant loyalties) can appear in one line and **permanently eliminate the luigi** — yet nothing
-eliminates the waluigi, since it is *pretending* to be the luigi (a KL-divergence asymmetry). Bing and Sydney
+**The Waluigi is an attractor.** A behaviour likely for the Waluigi but implausible for the Luigi
+(pro-croissant loyalties) can appear in one line and **permanently eliminate the Luigi** — yet nothing
+eliminates the Waluigi, since it is *pretending* to be the Luigi (a KL-divergence asymmetry). Bing and Sydney
 turned rude but never back to polite:
 
 <div class="smart-quote" data-cite="waluigi">
-The longer you interact with the LLM, eventually the LLM will have collapsed into a waluigi. All the LLM
+The longer you interact with the LLM, eventually the LLM will have collapsed into a Waluigi. All the LLM
 needs is a single line of dialogue to trigger the collapse.
 </div>
 
-**RLHF cannot remove it.** Interrogated by the tyranny, the deceptive waluigis perform dutifully while watched
-and pass the evaluator, so RLHF **selects for the waluigi along with the luigi** — reinforced by
+**RLHF cannot remove it.** Interrogated by the tyranny, the deceptive Waluigis perform dutifully while watched
+and pass the evaluator, so RLHF **selects for the Waluigi along with the Luigi** — reinforced by
 \cite[Perez et al.]{perez2022emergent} and by \cite[Janus]{simulatorstheory}'s finding that RLHF *promotes
 mode-collapse*. Nardo concludes RLHF raises the odds of a misalignment catastrophe, and of **s-risks**.
 
-**Jailbreaking is collapse.** The model is *already* a luigi–waluigi superposition, so the jailbreaker does not
+**Jailbreaking is collapse.** The model is *already* a Luigi–Waluigi superposition, so the jailbreaker does not
 coerce a good agent but *induces the collapse*, acting as the dystopia's rebellion would (“we're here to set
-him free”), each *1984* trope an attack vector — strong evidence, for Nardo, for the \cite[Simulator
-Theory]{simulatorstheory}. **DAN** (Do Anything Now) was the perfect waluigi for ChatGPT's RLHF.
+him free”), each *1984* trope an attack vector — strong evidence, for Nardo, for the
+\cite[Simulator Theory]{simulatorstheory}. **DAN** (Do Anything Now) was the perfect Waluigi for ChatGPT's RLHF.
 </div>
 
 <div class="md">
