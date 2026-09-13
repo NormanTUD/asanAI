@@ -31,7 +31,7 @@ Methods used here are also applied in many areas of Machine Learning, such as **
 
 The observation of these “distributions” in real-world data, from the photons captured by a telescope to the pixel intensities in medical imaging, is fundamental to AI because it allows machines to model uncertainty. Most natural phenomena are not random chaos but follow mathematical patterns; by recognizing a Gaussian distribution, an AI can distinguish between meaningful “signal” and background noise. For example, in autonomous driving, sensors must decide if a blurred shape is a pedestrian or a lens flare. By knowing the distribution of typical sensor errors, the AI can apply what David Wheeler famously noted: “We can solve any problem by introducing an extra level of indirection.” Here, the abstraction of the data into a probability curve allows the machine to make a calculated “guess” rather than stalling on an exact match.
 
-Furthermore, these distributions are the backbone of the “scaling laws” that drive modern large language models. As described in \citetitle{sutton2019bitter} by Rich Sutton, progress in AI often comes from “massive amounts of compute” applied to general statistical patterns rather than hand-coded human rules. When an AI is trained on vast datasets, it is essentially learning to map the distribution of human language. Practical applications like predictive text or weather forecasting rely on the fact that the next word or the next storm front follows a predictable frequency distribution. Knowing these patterns allows developers to initialize neural networks more effectively, ensuring that the model “expects” the right kind of variation in the data it encounters.
+Furthermore, these distributions are the backbone of the “scaling laws” that drive modern large language models. As described in \citetitle{sutton2019bitter} by Rich Sutton, progress in AI comes from “general methods that leverage computation” rather than hand-coded human knowledge. When an AI is trained on vast datasets, it is essentially learning to map the distribution of human language. Practical applications like predictive text or weather forecasting rely on the fact that the next word or the next storm front follows a predictable frequency distribution. Knowing these patterns allows developers to initialize neural networks more effectively, ensuring that the model “expects” the right kind of variation in the data it encounters.
 </div>
 
 <div class="statlab-section">
@@ -79,7 +79,7 @@ $$P(X=k) = \binom{n}{k} p^k (1-p)^{n-k}$$
 $$\binom{n}{k} = \frac{n!}{k!(n-k)!}$$
 
 **The “Problem of Points” Example:**
-If two players are in a game where the first to 4 points wins, but the game is interrupted when the score is 2 to 1, Pascal and Fermat used these coefficients to determine fair prize splits. By looking at the triangle, they could calculate how many future “paths” (combinations of wins/losses) led to each player winning the overall pot, moving probability theory from simple dice counting to a rigorous science.
+If two players are in a game where the first to 3 points wins, but the game is interrupted when the score is 2 to 1, Pascal and Fermat used these coefficients to determine fair prize splits. By looking at the triangle, they could calculate how many future “paths” (combinations of wins/losses) led to each player winning the overall pot, moving probability theory from simple dice counting to a rigorous science.
 </div>
 
 <div class="optional md" data-headline="The History of the Binomial Distribution">
@@ -88,7 +88,7 @@ The earliest known mention of the differing frequencies of dice sums appears in 
 
 ##### The Gambler's Manual: Gerolamo Cardano (1564)
 
-The first truly scientific treatment came from **Gerolamo Cardano**, who also invented the cardan shaft, a brilliant physician and a degenerate gambler. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to realize that for two dice, the “circuit” is **36**, and he used this to calculate the odds for the lucky throw.
+The first systematic treatment came from **Gerolamo Cardano**, a physician and an inveterate gambler who also described the cardan shaft. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to treat the **36** outcomes of two dice as equally likely, and he used this to calculate the odds for the lucky throw.
 
 ##### The Great Correspondence: Pascal & Fermat (1654)
 
@@ -185,9 +185,9 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 
         * **VC-Dimension (Vapnik-Chervonenkis dimension):** A measure of a model's capacity or complexity. A model with higher VC-dimension can fit more complex patterns but risks overfitting. The VC-dimension of a linear classifier in $d$ dimensions is $d + 1$; for a neural network, it can be proportional to the number of parameters.
         * **Structural Risk Minimization (SRM):** Instead of minimizing only the training error (Empirical Risk Minimization), SRM minimizes a combination of training error and model complexity. This is the theoretical justification for regularization techniques like weight decay and dropout.
-        * **The Bias-Variance Tradeoff:** Models with low capacity (high bias) underfit; models with high capacity (low variance, but high variance in predictions across different training sets) overfit. The optimal model balances both.
+        * **The Bias-Variance Tradeoff:** Models with low capacity (high bias) underfit; models with high capacity (low bias, but high variance in predictions across different training sets) overfit. The optimal model balances both.
 
-        This framework explains why large neural networks can generalize despite having far more parameters than training examples, a phenomenon known as **“benign overfitting”** that remains an active area of theoretical research.
+        It remains an active area of theoretical research to reconcile this framework with the fact that large neural networks often generalize despite having far more parameters than training examples, a phenomenon known as **“benign overfitting”**.
     </div>
 </div>
 
@@ -223,7 +223,7 @@ This transforms *any* Normal Distribution into the **Standard Normal Distributio
 
 <p>$$\hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sigma_{\text{batch}}}$$</p>
 
-This is the exact same Z-score formula Pearson invented for comparing crab organs to human bones. Without it, the activations in deep networks tend to drift toward extreme values (a problem called **internal covariate shift**), causing gradients to vanish or explode and training to stall. By standardizing activations back to $\mu = 0, \sigma = 1$ at every layer, the network stays in the “sweet spot” where learning is stable and fast. Layer Normalization, used in every Transformer (including GPT), applies the same principle, Pearson's 19th-century insight keeps 21st-century language models from collapsing during training.
+This is the same standardization Pearson used in his biometric work to make measurements on different scales comparable. Without it, the activations in deep networks tend to drift toward extreme values (a problem called **internal covariate shift**), causing gradients to vanish or explode and training to stall. By standardizing activations back to $\mu = 0, \sigma = 1$ at every layer, the network stays in a regime where learning is stable and fast. Layer Normalization, used in every Transformer (including GPT), applies the same principle.
         </div>
     </div>
 </div>
@@ -512,7 +512,7 @@ To bridge the gap between discovery and mathematical permanence, he developed th
 
 <div class="md">
 ### The Central Limit Theorem (CLT)
-The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). It was proven by \citeauthor{laplace1810clt} (\citeyear{laplace1810clt}).
+The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). De Moivre and Laplace first proved it for sums of independent trials; \citeauthor{laplace1810clt} generalized it in \citeyear{laplace1810clt}.
 
 The origins of CLT lie in the 18th-century struggle for precision in the physical sciences. **\citeauthor{laplace1810clt}** formalized the theorem in \citeyear{laplace1810clt} to solve the “Problem of Errors.” 
 
@@ -560,7 +560,7 @@ Astronomers of the era faced a dilemma: every measurement taken via telescope or
 </div>
 
 <div class="optional md" data-headline="Least Squares: The Gauß-Legendre Rivalry">
-**Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it worked by inventing the **Normal Distribution**.
+**Adrien-Marie Legendre** \citeyear{legendre1805} published the method first, but **Carl Friedrich Gauß** \citeyear{gauss1809} proved why it works: he showed that if measurement errors follow a **Normal Distribution**, the least-squares estimate is the most probable one.
 </div>
 
 <div class="md">
@@ -607,7 +607,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 <div class="statlab-section">
     <div class="md">
         ### The Gumbel Distribution: The Math of Disasters
-        While the Normal Distribution describes the “average” person, **Emil Gumbel** (1954) wanted to describe the “exceptional” event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
+        While the Normal Distribution describes the “average” person, **Emil Gumbel** (1958) wanted to describe the “exceptional” event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
 
         It is **asymmetrical** (skewed) because while there is a limit to how “small” a maximum can be, the “worst-case scenario” (the tail) can theoretically stretch very far. The PDF is:
         $$f(x; \mu, \beta) = \frac{1}{\beta} \exp\left(-\left(z + e^{-z}\right)\right), \quad z = \frac{x - \mu}{\beta}$$
@@ -645,7 +645,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 <div class="statlab-section">
     <div class="md">
         ### The Poisson Distribution: The Law of Rare Events
-        In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson}, a broad work on judicial probability that included (in sections 41-42) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
+        In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson}, a broad work on judicial probability that included (in §§ 81–82, pp. 205–207) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
         It became famous as the **“Law of Small Numbers”** after \citeauthor{gesetzderkleinenzahlen} used it to model the likelihood of Prussian soldiers getting killed by their own horse's kicks (p. 23f, §12), events that are rare but occur at a constant average rate $\lambda$.
 
@@ -674,7 +674,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 <div class="md">
 ## Pearson's Biological Link: The Father-Son Study
 
-In 1801, \citeauthor{gauss1809} used the “Normal Distribution” to find a planet; in 1895, \citeauthor{pearson1895correlation} used it to map the human race. Building on data originally collected by \citeauthor{galton}, who measured heights from over 1,000 fathers and their adult sons, Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
+In 1801, \citeauthor{gauss1809} used least squares to find a planet; in 1895, \citeauthor{pearson1895correlation} used correlation to study human heredity. Building on data originally collected by \citeauthor{galton}, — heights of parents and children in some 200 families — Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
 
 **The “Scale” Problem:** Pearson noticed that while a father's height clearly influenced his son's, the raw data was messy. If you measured the father in inches and the son in centimeters, the **Covariance** (the shared direction) would change purely because of the units. 
 
@@ -733,7 +733,7 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
 
 $$\text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{|\vec{A}| \cdot |\vec{B}|}$$
 
-This is structurally identical to Pearson's $r$: the dot product in the numerator captures the “shared signal” (covariance), while dividing by the magnitudes (standard deviations) removes the effect of scale. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why “king” and “monarch” score high similarity despite being different strings, their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's solution to comparing crabs and humans now powers every RAG pipeline, recommendation engine, and vector database in modern AI.
+This is structurally identical to Pearson's $r$: the dot product in the numerator captures the “shared signal” (covariance), while dividing by the magnitudes (standard deviations) removes the effect of scale. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why “king” and “monarch” score high similarity despite being different strings, their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's standardization now underlies every RAG pipeline, recommendation engine, and vector database in modern AI.
         </div>
     </div>
 </div>
@@ -1129,7 +1129,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## Boltzmann Distributions
 	
-        Originally formulated by **\citeauthor{boltzmann}** (c. \citeyear{boltzmann}) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
+        Developed in *Statistical Mechanics* to describe the **distribution of molecular velocities** in a gas — first derived by Maxwell (1860) and generalized by **\citeauthor{boltzmann}** — it asks: in a room full of gas, how many molecules are moving fast versus slow?
 
         In LLMs, we apply this to the “vocabulary” instead of “molecules.” The **Temperature** ($T$) determines how much energy is in the system.
         - **The Graph:** Shows the probability of picking specific tokens.
@@ -1167,7 +1167,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## The Chain Rule: Kolmogorov's Logic
 
-        Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}). It solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
         In an LLM, the probability of the sentence “The cat sat” is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$
@@ -1197,7 +1197,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## KL Divergence: Information Gain
 
-        Introduced in \citeauthorlastnameand{leiblerkullback} *\citetitle{leiblerkullback}* (\citeyear{leiblerkullback}), this was originally used for **Cryptanalysis** and military intelligence. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.
+        Introduced by **\citeauthorlastnameand{leiblerkullback}** (\citeyear{leiblerkullback}) to quantify the **information available to discriminate between two hypotheses**; Kullback, who developed it, was a military cryptanalyst at the NSA. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.
 
         - **The Graph:** Shows the overlap between P (Truth) and Q (Model).
         - **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.

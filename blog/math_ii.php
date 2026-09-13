@@ -1143,7 +1143,7 @@ We can visualize these relationships using a triangle diagram. It shows that the
 <div class="md">
 ## The Hadamard Product ($\odot$)
 
-The **Hadamard Product** ($\odot$) was formally introduced by \citeauthor{hadamardproduct} in \citeyear{hadamardproduct}, in his paper \citetitle{hadamardproduct}. It was designed to solve the problem of identifying **singularities** in complex power series. By multiplying coefficients element-wise, defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$, Hadamard could predict the analytic continuation and boundaries of new functions derived from known ones.
+The **Hadamard Product** ($\odot$) was introduced by \citeauthor{hadamardproduct} to study **singularities** in complex power series: it first appears in his \citeyear{hadamardproduct} paper \citetitle{hadamardproduct}, and the related **Hadamard multiplication theorem** dates from 1899. It is defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.
 
 While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
 

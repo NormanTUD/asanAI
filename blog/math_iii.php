@@ -1,8 +1,8 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Basic Math Concepts III — Approximation & The Geometry of High Dimensions
-description: Why AI works on approximations, accuracy vs precision, and the blessing of dimensionality.
+title: Basic Math Concepts III — Approximation, High Dimensions & a Taste of Type Theory
+description: Why AI works on approximations, accuracy vs precision, and the blessing of dimensionality — plus a short tour of type theory and homotopy type theory (HoTT).
 icon: &#128290;
 part: 1
 order: 5
@@ -394,7 +394,7 @@ You do not need HoTT to read this book. But once you have the picture in your he
 <div class="md">
 ## An interactive tour: HoTT as a foundation for AI
 
-The math in the box above is precisely the machinery \citeauthor{youvan2024} (\citeyear{youvan2024}) argues for as a *foundation for how AI systems are built*. This is not a benchmark or a new network; it is a position paper. Its claim: if a model is written in a language that already understands **types**, **paths**, and **higher equality**, then reliability, verifiability, and explainability stop being bolted on afterwards and become built-in properties of the design. The tour below follows the paper's own arc — two prerequisites, the core idea, then the six application areas it targets. Everything is interactive; drag the sliders and click around.
+The math in the box above is precisely the machinery \citeauthor{youvan2024} (\citeyear{youvan2024}) argues for as a *foundation for how AI systems are built*. This is not a benchmark or a new network; it is a position paper. Its claim: if a model is written in a language that already understands **types**, **paths**, and **higher equality**, then reliability, verifiability, and explainability stop being bolted on afterwards and become built-in properties of the design. The tour below follows the paper's own arc — two prerequisites, the core idea, then the application areas it targets. Everything is interactive; drag the sliders and click around.
 </div>
 
 <div class="md">
