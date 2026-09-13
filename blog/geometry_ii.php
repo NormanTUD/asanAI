@@ -106,15 +106,15 @@ $$
 A \;=\; \underbrace{U}_{\substack{\text{a rotation in} \\ \text{the output space}}} \;\underbrace{\Sigma}_{\substack{\text{pure stretches} \\ \text{along the axes}}} \;\underbrace{V^{\top}}_{\substack{\text{a rotation in} \\ \text{the input space}}}
 $$
 
-where $U$ and $V$ are pure rotations (orthogonal: $U^{\top}U = V^{\top}V = I$) and $\Sigma$ is diagonal, its entries $\sigma_1 \ge \sigma_2 \ge \cdots \ge 0$ the **singular values** — non-negative, and ordered from largest to smallest.
+where $U$ and $V$ are pure rotations (orthogonal: $U^{\top}U = V^{\top}V = I$) and $\Sigma$ is diagonal, its entries $\sigma_1 \ge \sigma_2 \ge \cdots \ge 0$ the **singular values**.
 
 Read the factorisation as a story about a circle:
 
-1. $V^{\top}$ **rotates** the input unit circle so its axes line up with the directions that $A$ is about to stretch most and least.
-2. $\Sigma$ **stretches** purely along the coordinate axes, by $\sigma_1$ and $\sigma_2$ — no rotation, no shear, just scaling.
+1. $V^{\top}$ **rotates** the input unit circle so its axes line up with the directions $A$ stretches most and least.
+2. $\Sigma$ **stretches** purely along the axes, by $\sigma_1$ and $\sigma_2$ — no rotation, no shear.
 3. $U$ **rotates** the result into the output space.
 
-The upshot: *every* linear map is **rotate, stretch, rotate**. The circle $\lVert x\rVert = 1$ is carried to an **ellipse**, and the singular values are exactly the **semi-axis lengths** of that ellipse \cite{svd_wiki}. The right singular vectors (columns of $V$) point along the axes of the circle that get stretched; the left singular vectors (columns of $U$) point along where those stretched axes end up.
+So *every* linear map is **rotate, stretch, rotate**. The circle $\lVert x\rVert = 1$ becomes an **ellipse**, and the singular values are its **semi-axis lengths** \cite{svd_wiki}. The right singular vectors (columns of $V$) are the axes of the circle that get stretched; the left singular vectors (columns of $U$) are where those stretched axes end up.
 
 \marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851). In 1842 he gave the method of *alternately rotating a quadratic form between two sets of variables until it is diagonal* \cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today.}
 
