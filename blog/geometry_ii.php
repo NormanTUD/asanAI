@@ -20,11 +20,11 @@ The moves we will draw, in order:
 * **The inner product** — the operation underneath everything. A dot product is a *measurement of alignment*, and its shadow, the Gram matrix, is where “similarity” is actually stored \cite{scholkopf2002learning}.
 * **Projection** — fitting anything (a line, a low-rank approximation, a prediction) is *shading*: the best fit is the shadow the data throws onto a subspace, and the error is exactly the piece left standing.
 * **The singular value decomposition** — every matrix, no matter how ugly, is secretly a rotation, a set of pure stretches, and a rotation again. The stretches *are* the shape of the map \cite{svd_wiki}.
-* **Descent** — why the gradient points where it points, and why “steepest” is a geometric fact, not an optimiser’s choice \cite{cauchy1847}.
+* **Descent** — why the gradient points where it points, and why “steepest” is a geometric fact, not an optimizer’s choice \cite{cauchy1847}.
 * **Convolution and the Fourier transform** — a convolution is a dot product that slides across space, and the Fourier transform is the change of coordinates that turns that sliding into ordinary multiplication \cite{fourier1822} \cite{cooley1965fft}.
 * **Symmetry** — invariance and equivariance, the group-theoretic reason a filter may be *shared*, and the shape of the attention map \cite{zaheer2017deepsets}.
 
-Each section ends with a hands-on plot — drag the sliders, the picture is the point. We deliberately do **not** re-teach the parts the earlier chapters own: the dot product itself, what attention is as a convex combination, the optimisers, least squares, or PCA. We link to them instead. This chapter is the connective tissue that turns those isolated facts into one coherent geometry.
+Each section ends with a hands-on plot — drag the sliders, the picture is the point. We deliberately do **not** re-teach the parts the earlier chapters own: the dot product itself, what attention is as a convex combination, the optimizers, least squares, or PCA. We link to them instead. This chapter is the connective tissue that turns those isolated facts into one coherent geometry.
 </div>
 
 <div class="md">
@@ -38,7 +38,7 @@ $$
 
 The third form is the one that matters. The inner product factors into *how long* each vector is and *how close to pointing the same way* they are. Point the same way: maximum. Perpendicular: exactly zero. Opposite: minimum. So a dot product is not really a multiplication — it is a **verdict on alignment**.
 
-This single fact is the load-bearing wall of the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search is “find the vector with the largest inner product.” Attention is a weighted average whose *weights* are normalised inner products (see [Attention](attentionlab)). And cosine similarity — the inner product with the lengths divided out — is the “are these two embeddings about the same thing?” test that powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
+This single fact is the load-bearing wall of the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search is “find the vector with the largest inner product.” Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)). And cosine similarity — the inner product with the lengths divided out — is the “are these two embeddings about the same thing?” test that powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
 
 ### The Gram matrix: where similarity lives
 
@@ -58,7 +58,7 @@ $$
 
 Turn the whole point cloud around and nothing in $G$ moves: that is what it means for $G$ to be a coordinate-free description of the data. The statement is even more rigid — the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the shape of the data, its principal stretches, independent of every coordinate choice.
 
-That last sentence is the seed of the entire chapter. Everything that follows is an operation that reads or manipulates $G$’s eigenstructure: **projection** picks out a subspace, the **SVD** diagonalises the stretch, **descent** walks across a level set, **convolution** is a translation-invariant inner product, and **symmetry** is the group of rotations that leave $G$ unchanged.
+That last sentence is the seed of the entire chapter. Everything that follows is an operation that reads or manipulates $G$’s eigenstructure: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a translation-invariant inner product, and **symmetry** is the group of rotations that leave $G$ unchanged.
 </div>
 
 <div class="md">
@@ -125,12 +125,12 @@ Two facts turn the picture into engineering:
 
 That is why the SVD shows up across this course wearing different names. **PCA** is “the singular vectors of the data matrix, ordered by the variance they explain.” **Matrix factorisation / low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a huge weight matrix by learning only a *low-rank* correction $\Delta W = BA$ \cite{hu2021lora} — the bet that the useful change lives in a few directions. And the “effective rank” of a layer’s weight matrix (how fast its singular values decay) is a working proxy for how much of its high-dimensional capacity the layer actually uses. See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.
 
-The interactive below shows the unit circle (white) and its image under a map with singular values $\sigma_1, \sigma_2$ and output rotation $\theta$. The coloured arrows are the singular-vector axes, and their lengths are exactly $\sigma_1, \sigma_2$. Drag $\sigma_2$ down to zero and watch the ellipse pinch shut — the rank falling from 2 to 1.
+The interactive below shows the unit circle (white) and its image under a map with singular values $\sigma_1, \sigma_2$ and output rotation $\theta$. The colored arrows are the singular-vector axes, and their lengths are exactly $\sigma_1, \sigma_2$. Drag $\sigma_2$ down to zero and watch the ellipse pinch shut — the rank falling from 2 to 1.
 </div>
 
 <!-- ─── Interactive: SVD / the shape of a linear map ─── -->
 <div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
-	<p style="color:#64748b; font-size:0.9em; margin-top:0;">The <b>white</b> circle is the unit circle $\lVert x\rVert = 1$. The coloured <b>ellipse</b> is its image under a map that rotates by $\theta$, stretches by $\sigma_1$ and $\sigma_2$, and rotates back — “rotate, stretch, rotate.” The two coloured arrows are the singular-vector axes; their lengths are exactly $\sigma_1$ and $\sigma_2$. Drag <b>σ₂ → 0</b> and the ellipse collapses to a line: the rank drops from 2 to 1.</p>
+	<p style="color:#64748b; font-size:0.9em; margin-top:0;">The <b>white</b> circle is the unit circle $\lVert x\rVert = 1$. The colored <b>ellipse</b> is its image under a map that rotates by $\theta$, stretches by $\sigma_1$ and $\sigma_2$, and rotates back — “rotate, stretch, rotate.” The two colored arrows are the singular-vector axes; their lengths are exactly $\sigma_1$ and $\sigma_2$. Drag <b>σ₂ → 0</b> and the ellipse collapses to a line: the rank drops from 2 to 1.</p>
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>σ₁ (major):</b></label>
 		<input type="range" id="geo2-svd-s1" min="0.2" max="4" step="0.1" value="3" style="width:130px; vertical-align:middle;">
@@ -157,11 +157,11 @@ $$
 
 So $\langle \nabla L, d\rangle$ is largest when $d$ points *along* $\nabla L$ and most negative when $d$ points *against* it. The steepest ascent is $+\nabla L$ and the steepest descent is $-\nabla L$ — not because we *choose* gradient descent, but because the inner product *forces* the steepest direction to be the gradient. Cauchy wrote this down in 1847 as the method of steepest descent, decades before neural networks \cite{cauchy1847}.
 
-\marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimiser makes on a loss landscape.}
+\marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}
 
-Read the same identity a different way and it says the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. The contour lines are level sets of the quadratic forms you keep meeting, and the gradient is their normal. This is also why a *curved* landscape is hard to descend: in a narrow valley the contours crowd together on one side and spread out on the other, the gradient points *across* the valley rather than down it, and a plain gradient step zig-zags. The **condition number** from section III — the ratio of the loss’s biggest to smallest curvature — is precisely the width of that valley, and it is conditioning, not the gradient itself, that decides whether optimisation is fast or slow.
+Read the same identity a different way and it says the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. The contour lines are level sets of the quadratic forms you keep meeting, and the gradient is their normal. This is also why a *curved* landscape is hard to descend: in a narrow valley the contours crowd together on one side and spread out on the other, the gradient points *across* the valley rather than down it, and a plain gradient step zig-zags. The **condition number** from section III — the ratio of the loss’s biggest to smallest curvature — is precisely the width of that valley, and it is conditioning, not the gradient itself, that decides whether optimization is fast or slow.
 
-The *schedule* laid on top of this one geometric fact — momentum, Adam, learning-rate decay — is optimisation, not geometry, and is covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff). What we keep here is the truth underneath all of them: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive below, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; then drag the valley narrow and watch the arrow start pointing across it.
+The *schedule* laid on top of this one geometric fact — momentum, Adam, learning-rate decay — is optimization, not geometry, and is covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff). What we keep here is the truth underneath all of them: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive below, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; then drag the valley narrow and watch the arrow start pointing across it.
 </div>
 
 <!-- ─── Interactive: Gradient = steepest = normal to the contours ─── -->
@@ -213,7 +213,7 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 		<label><b>left $c_{-1}$:</b></label>
 		<input type="range" id="geo2-conv-c0" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
 		<span id="geo2-conv-c0v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
-		<label><b>centre $c_0$:</b></label>
+		<label><b>center $c_0$:</b></label>
 		<input type="range" id="geo2-conv-c1" min="0" max="1" step="0.01" value="0.5" style="width:110px; vertical-align:middle;">
 		<span id="geo2-conv-c1v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.50</span>
 		<label><b>right $c_1$:</b></label>
@@ -236,7 +236,7 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 <div class="md">
 ## VI. Symmetry: invariance, equivariance, and the shape of attention
 
-A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviours, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows.
+A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviors, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows.
 
 * **Invariant** — the output does not change at all: $f(\sigma \cdot x) = f(x)$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
 * **Equivariant** — the output changes, but *the same way* the input did: $f(\sigma \cdot x) = \sigma \cdot f(x)$. The output “commutes” with the symmetry.
@@ -295,7 +295,7 @@ Pull the six moves together and a forward pass reads as a *sequence of geometric
 | Convolution + DFT | sliding dot product | CNN filter, FFT | [Convolutions](visionlab), [Positional](positionalembeddingslab) |
 | Symmetry | invariant / equivariant | pooling, attention, weight sharing | [Convolutions](visionlab), [Mech. Interp.](mechanistic_interpretability) |
 
-Notice what is *learned* and what is *fixed*. The geometry — that a dot product measures alignment, that the best fit is a shadow, that the steepest direction is the normal to the level sets, that convolution multiplies in frequency, that a symmetric operation must commute with its symmetry — is **fixed by mathematics**. What training learns are the *parameters inside* each move: which directions to stretch (the singular vectors), which kernel to slide (the filter weights), which per-item map to apply (the non-linearity). The shape of the operations is a prior; the data supplies the numbers. That is the working geometry of a neural network: a fixed set of geometric moves, parametrised, stacked, and trained.
+Notice what is *learned* and what is *fixed*. The geometry — that a dot product measures alignment, that the best fit is a shadow, that the steepest direction is the normal to the level sets, that convolution multiplies in frequency, that a symmetric operation must commute with its symmetry — is **fixed by mathematics**. What training learns are the *parameters inside* each move: which directions to stretch (the singular vectors), which kernel to slide (the filter weights), which per-item map to apply (the non-linearity). The shape of the operations is a prior; the data supplies the numbers. That is the working geometry of a neural network: a fixed set of geometric moves, parameterized, stacked, and trained.
 
 And that is why the picture transfers. The same inner product that measures a neuron’s alignment measures a word’s similarity. The same projection that fits a line explains a low-rank approximation. The same SVD that shapes a matrix ranks a layer’s effective capacity. The same symmetry that justifies a shared filter is the reason attention needs position. Stop seeing a network as “matrices of weights” and start seeing it as **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and the layers stop being a list of tricks and become a single, navigable space. That is the shape of the machine.
 </div>
