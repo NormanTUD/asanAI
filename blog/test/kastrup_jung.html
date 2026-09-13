@@ -1010,9 +1010,9 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
   const nSl = document.getElementById('syncN');
   const rollBtn = document.getElementById('syncRoll');
   const orderVal = document.getElementById('syncOrderVal');
+  let dice = [];
   function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
   resize(); window.addEventListener('resize', resize);
-  let dice = [];
   function rollDice(){
     const N = parseInt(nSl.value);
     const order = orderSl.value/100;
