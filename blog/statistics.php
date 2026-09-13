@@ -860,7 +860,7 @@ This concept is the backbone of modern AI. When a model like GPT predicts the ne
 
 <div class="md">
 ## Standardizing: Z-Scores & The Pearson Problem
-In the late 19th century, \citeauthor{pearson1894zscore} faced a biological puzzle: How do you compare the variation of a small organ in a crab to the variation of a large bone in a human? A 1cm difference is massive for a crab but negligible for a human.
+In the late 19th century, \citeauthor{pearson1894zscore} faced a problem in biometry: comparing variation when the measurements are on different scales. A 1 cm difference is large for a small organ but negligible for a large bone — the raw units hide the real comparison, so he needed a scale-independent one.
 
 Pearson realized that to compare “variation” across different scales, he had to divide the distance from the average by the “standard” unit of spread for that specific group. This created the **Z-score**: a dimensionless number that represents how “extreme” an observation is, regardless of its original units.
 
