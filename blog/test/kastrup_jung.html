@@ -1619,9 +1619,9 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
     {id:'religion', label:'Gott & Sinn', color:'#ffcf8b'},
     {id:'fall', label:'Der Fall', color:'#ff8fb1'},
   ];
+  let hoveredIdx = -1;
   function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
   resize(); window.addEventListener('resize', resize);
-  let hoveredIdx = -1;
   c.addEventListener('mousemove', e=>{
     const rect = c.getBoundingClientRect();
     const mx = (e.clientX-rect.left)/rect.width;
