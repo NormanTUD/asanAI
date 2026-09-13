@@ -1018,8 +1018,8 @@ The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bost
 
 **\citetitle{waluigi}**, by \citeauthor{waluigi}, names the **Waluigi Effect**: after you train an LLM to
 satisfy a property **P**, it becomes *easier* to elicit the opposite of **P**. His anti-croissant chatbot,
-he argues, is a **superposition** \cite[Superposition]{elhage2022superposition} of a croissant-hating
-**luigi** and a croissant-loving **waluigi**, their logits blended at every token. Three equivalent reasons
+he argues, is a \cite[Superposition]{elhage2022superposition} of a croissant-hating
+**Luigi** and a croissant-loving **Waluigi**, their logits blended at every token. Three equivalent reasons
 force the waluigi to exist:
 
 * **Rules are meant to be broken.** The model learns rules sit beside examples of their violation, and
