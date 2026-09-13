@@ -48,12 +48,12 @@ $$
 G \;=\; \underbrace{X^{\top} X}_{\text{“all pairwise alignments at once”}} \qquad\qquad G_{ij} \;=\; \underbrace{\langle x_i, x_j \rangle}_{\text{“how much do data } i \text{ and } j \text{ agree?”}}
 $$
 
-Two things make $G$ more than a convenience. First, it is **always symmetric and positive semi-definite**: the diagonal holds $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for *any* coefficient vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. That positivity is not an accident — it is the statement that the data fits inside a real space. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space, possibly infinite-dimensional — the whole reason kernel methods and the “kernel trick” work.)
+Two things make $G$ more than a convenience. First, it is **always symmetric and positive semi-definite**: the diagonal holds $G_{ii} = \underbrace{\lVert x_i \rVert^2}_{\text{the squared length of point } i} \ge 0$, and for *any* coefficient vector $c$, $c^{\top} G c = \underbrace{\lVert Xc \rVert^2}_{\text{a squared length, so always } \ge 0} \ge 0$. That positivity is not an accident — it is the statement that the data fits inside a real space. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space, possibly infinite-dimensional — the whole reason kernel methods and the “kernel trick” work.)
 
 Second, and this is the punchline for AI: **$G$ describes the geometry of the data without committing to any coordinates.** It records only *inner products* between the data, and inner products do not change under a rigid motion. Rotate every data point by the same rotation $R$ — a pure re-orientation in space — and every pairwise dot product is the same, so the Gram matrix is **exactly unchanged**:
 
 $$
-(RX)^{\top}(RX) \;=\; X^{\top}\underbrace{R^{\top}R}_{=\, I}\,X \;=\; \underbrace{X^{\top}X}_{G}
+\underbrace{(RX)^{\top}(RX)}_{\text{the Gram matrix of the rotated data}} \;=\; X^{\top}\underbrace{R^{\top}R}_{\text{a rotation undoes itself }=\, I}\,X \;=\; \underbrace{X^{\top}X}_{\text{the original Gram matrix } G}
 $$
 
 Turn the whole point cloud around and nothing in $G$ moves: that is what it means for $G$ to be a coordinate-free description of the data. The statement is even more rigid — the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the shape of the data, its principal stretches, independent of every coordinate choice.
@@ -69,12 +69,12 @@ Suppose you do not know the answer, but you are told it *must* lie in a particul
 The answer is the **orthogonal projection**, and its proof is one of the shortest and most useful in all of applied mathematics. Take any candidate $s \in S$ and split the distance to it into two pieces:
 
 $$
-\lVert p - s \rVert^2 \;=\; \underbrace{\lVert p - p_S \rVert^2}_{\text{distance from } p \text{ to the whole subspace } S} \;+\; \underbrace{\lVert p_S - s \rVert^2}_{\text{extra distance you add by not picking } p_S}
+\underbrace{\lVert p - s \rVert^2}_{\text{squared distance from } p \text{ to your candidate } s} \;=\; \underbrace{\lVert p - p_S \rVert^2}_{\text{distance from } p \text{ to the whole subspace } S} \;+\; \underbrace{\lVert p_S - s \rVert^2}_{\text{extra you add by not picking } p_S}
 $$
 
 where $p_S$ is the projection of $p$ onto $S$. The cross term that would otherwise appear vanishes, because $p - p_S$ is *perpendicular to the entire subspace* while $s - p_S$ lies *inside* it, so their inner product is zero. The first term does not depend on $s$ at all; the second is non-negative and is zero exactly when $s = p_S$. So the closest point is **the shadow $p_S$**, and the error $p - p_S$ is the part of $p$ that sticks out, perpendicular to $S$.
 
-That “the error is perpendicular to the model” line is not a footnote — it is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of a low-rank approximation: truncating to a few directions gives the best shadow of your data in that lower-dimensional subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it is how to *read* a single neuron: its output $\langle w, x \rangle$ is the shadow of the input $x$ onto the one direction $w$ — one number, the coordinate of $x$ along $w$. Attention does the same move in reverse: project each key onto the query to get a similarity, then recombine the values (see [Attention](attentionlab)).
+That “the error is perpendicular to the model” line is not a footnote — it is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of a low-rank approximation: truncating to a few directions gives the best shadow of your data in that lower-dimensional subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it is how to *read* a single neuron: its output $\langle w, x \rangle$ is a single number — how much of the input $x$ points along the direction $w$. Attention does the same move in reverse: project each key onto the query to get a similarity, then recombine the values (see [Attention](attentionlab)).
 
 The picture is always: *a target, a family of allowed answers, keep the shadow.* The interactive below lets you move the target and tilt the subspace. Watch the residual stay perpendicular — that right angle *is* the proof — and watch the “explained” number behave exactly like the $R^2$ of a regression.
 </div>
@@ -120,10 +120,10 @@ The upshot: *every* linear map is **rotate, stretch, rotate**. The circle $\lVer
 
 Two facts turn the picture into engineering:
 
-* **Rank is the number of non-zero singular values.** If $\sigma_2 = 0$ the ellipse collapses to a line and the map forgets an entire input dimension — its image is lower-dimensional. A rank-1 map is “one direction in, one direction out.” This is why keeping only the top $r$ terms, $A \approx \sum_{i\le r}\sigma_i\, u_i v_i^{\top}$, is the *best* rank-$r$ approximation: it keeps the biggest stretches and drops the smallest \cite{svd_wiki}.
-* **Singular values are the “true sizes.”** Unlike eigenvalues, they are always real and non-negative and are defined for *any* rectangular matrix. The ratio $\kappa = \sigma_{\max}/\sigma_{\min}$, the **condition number**, measures how much more one direction is stretched than another — the number that controls how ill-conditioned the map is, and therefore how hard it is to invert, or how sensitive its output is to noise.
+* **Rank is the number of non-zero singular values.** If $\sigma_2 = 0$ the ellipse collapses to a line and the map forgets an entire input dimension — its image is lower-dimensional. A rank-1 map is “one direction in, one direction out.” This is why keeping only the top $r$ terms, $A \approx \underbrace{\sum_{i\le r}\sigma_i\, u_i v_i^{\top}}_{\text{keep the top } r \text{ stretches, drop the rest}}$, is the *best* rank-$r$ approximation: it keeps the biggest stretches and drops the smallest \cite{svd_wiki}.
+* **Singular values are the “true sizes.”** Unlike eigenvalues, they are always real and non-negative and are defined for *any* rectangular matrix. The ratio $\kappa = \underbrace{\sigma_{\max}/\sigma_{\min}}_{\text{“biggest stretch over smallest”}}$, the **condition number**, measures how much more one direction is stretched than another — the number that controls how ill-conditioned the map is, and therefore how hard it is to invert, or how sensitive its output is to noise.
 
-That is why the SVD shows up across this course wearing different names. **PCA** is “the singular vectors of the data matrix, ordered by the variance they explain.” **Matrix factorisation / low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a huge weight matrix by learning only a *low-rank* correction $\Delta W = BA$ \cite{hu2021lora} — the bet that the useful change lives in a few directions. And the “effective rank” of a layer’s weight matrix (how fast its singular values decay) is a working proxy for how much of its high-dimensional capacity the layer actually uses. See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.
+That is why the SVD shows up across this course wearing different names. **PCA** is “the singular vectors of the data matrix, ordered by the variance they explain.” **Matrix factorisation / low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a huge weight matrix by learning only a *low-rank* correction $\Delta W = \underbrace{BA}_{\text{a product of two thin matrices = low rank}}$ \cite{hu2021lora} — the bet that the useful change lives in a few directions. And the “effective rank” of a layer’s weight matrix (how fast its singular values decay) is a working proxy for how much of its high-dimensional capacity the layer actually uses. See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.
 
 The interactive below shows the unit circle (white) and its image under a map with singular values $\sigma_1, \sigma_2$ and output rotation $\theta$. The colored arrows are the singular-vector axes, and their lengths are exactly $\sigma_1, \sigma_2$. Drag $\sigma_2$ down to zero and watch the ellipse pinch shut — the rank falling from 2 to 1.
 </div>
@@ -155,11 +155,11 @@ $$
 \underbrace{dL(d)}_{\text{“slope going in direction } d\text{”}} \;=\; \underbrace{\langle \nabla L, \, d \rangle}_{\text{gradient dotted with the direction}} \;=\; \underbrace{\lVert \nabla L \rVert}_{\text{the steepest slope there is}} \;\underbrace{\cos\angle(\nabla L, d)}_{\le 1,\ \text{and } 1 \text{ only when } d \parallel \nabla L}
 $$
 
-So $\langle \nabla L, d\rangle$ is largest when $d$ points *along* $\nabla L$ and most negative when $d$ points *against* it. The steepest ascent is $+\nabla L$ and the steepest descent is $-\nabla L$ — not because we *choose* gradient descent, but because the inner product *forces* the steepest direction to be the gradient. Cauchy wrote this down in 1847 as the method of steepest descent, decades before neural networks \cite{cauchy1847}.
+So $\langle \nabla L, d\rangle$ is largest when $d$ points *along* $\nabla L$ and most negative when $d$ points *against* it. The steepest ascent is $+\nabla L$ and the steepest descent is $-\nabla L$ — not because we *choose* gradient descent, but because the inner product *forces* the steepest direction to be the gradient. Cauchy wrote this down in 1847 as the method of steepest descent, nearly a century before neural networks \cite{cauchy1847}.
 
 \marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}
 
-Read the same identity a different way and it says the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. The contour lines are level sets of the quadratic forms you keep meeting, and the gradient is their normal. This is also why a *curved* landscape is hard to descend: in a narrow valley the contours crowd together on one side and spread out on the other, the gradient points *across* the valley rather than down it, and a plain gradient step zig-zags. The **condition number** from section III — the ratio of the loss’s biggest to smallest curvature — is precisely the width of that valley, and it is conditioning, not the gradient itself, that decides whether optimization is fast or slow.
+Read the same identity a different way and it says the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. The contour lines are level sets of the quadratic forms you keep meeting, and the gradient is their normal. This is also why a *curved* landscape is hard to descend: in a narrow valley the contours crowd together on one side and spread out on the other, the gradient points *across* the valley rather than down it, and a plain gradient step zig-zags. The **condition number** from section III — the ratio of the loss’s biggest to smallest curvature — measures how narrow that valley is; and it is conditioning, not the gradient itself, that decides whether optimization is fast or slow.
 
 The *schedule* laid on top of this one geometric fact — momentum, Adam, learning-rate decay — is optimization, not geometry, and is covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff). What we keep here is the truth underneath all of them: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive below, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; then drag the valley narrow and watch the arrow start pointing across it.
 </div>
@@ -188,7 +188,7 @@ The *schedule* laid on top of this one geometric fact — momentum, Adam, learni
 A convolution takes a short pattern (the **kernel** $c$) and a long signal (the **input** $x$), flips the kernel, slides it across the signal, and at each position takes a **dot product** and sums:
 
 $$
-(c * x)_t \;=\; \underbrace{\sum_{k} c_k \, x_{t-k}}_{\text{“flip } c\text{, slide it to } t\text{, take the dot product”}}
+\underbrace{(c * x)_t}_{\text{the output at position } t} \;=\; \underbrace{\sum_{k} c_k \, x_{t-k}}_{\text{“flip } c\text{, slide it to } t\text{, take the dot product”}}
 $$
 
 That is all a convolution is: an inner product, repeated at every offset $t$. The word “convolution” hides the fact that the operation *under* it is the same one from section I — a measurement of alignment between the kernel and a sliding window of the input. This is exactly why a CNN filter works the way it does: each filter is a kernel, and “applying” it to an image is “taking the dot product with every patch,” so the filter *detects* precisely the local pattern it is shaped like (see [Convolutions](visionlab)).
@@ -198,7 +198,7 @@ That is all a convolution is: an inner product, repeated at every offset $t$. Th
 The payoff is the **Fourier transform**, and it is a *change of coordinates*. Write the signal and the kernel in the basis of pure sine waves — the “frequency” coordinates — instead of in time. In that coordinate system the sliding sum above does something astonishing: **it becomes ordinary multiplication**, point by point,
 
 $$
-\mathcal{F}(c * x) \;=\; \underbrace{\mathcal{F}(c)\,\cdot\,\mathcal{F}(x)}_{\text{no sliding — just multiply each frequency}}
+\underbrace{\mathcal{F}(c * x)}_{\text{spectrum of the convolved signal}} \;=\; \underbrace{\mathcal{F}(c)\,\cdot\,\mathcal{F}(x)}_{\text{no sliding — just multiply each frequency}}
 $$
 
 Convolution in time is multiplication in frequency \cite{fourier1822}. The reason is the same one running through this whole chapter: the sines are the directions in which the *slide* is **normal**. Shifting a sine wave in time only rotates its phase — it does not change the wave — so in the sine basis a shift is a rotation, and a sliding dot product of rotations is just a product. The DFT finds those special directions; the FFT is merely the fast way to compute them \cite{cooley1965fft}.
@@ -238,15 +238,15 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 
 A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviors, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows.
 
-* **Invariant** — the output does not change at all: $f(\sigma \cdot x) = f(x)$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
-* **Equivariant** — the output changes, but *the same way* the input did: $f(\sigma \cdot x) = \sigma \cdot f(x)$. The output “commutes” with the symmetry.
+* **Invariant** — the output does not change at all: $f(\sigma \cdot x) = \underbrace{f(x)}_{\text{exactly the same as before the reorder}}$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
+* **Equivariant** — the output changes, but *the same way* the input did: $f(\sigma \cdot x) = \underbrace{\sigma \cdot f(x)}_{\text{the output, permuted the same way as the input}}$. The output “commutes” with the symmetry.
 
 Write the equivariance condition as a diagram that **commutes**: do the symmetry first, then the function, or the function first, then the symmetry — both paths land on the same point.
 
 $$
-x \;\xrightarrow{\ \sigma\ }\; \sigma x \;\xrightarrow{\ f\ }\; \sigma f(x)
+x \;\xrightarrow{\ \sigma\ }\; \sigma x \;\xrightarrow{\ f\ }\; \underbrace{\sigma f(x)}_{\text{same point}}
 \qquad\text{and}\qquad
-x \;\xrightarrow{\ f\ }\; f(x) \;\xrightarrow{\ \sigma\ }\; \sigma f(x)
+x \;\xrightarrow{\ f\ }\; f(x) \;\xrightarrow{\ \sigma\ }\; \underbrace{\sigma f(x)}_{\text{same point}}
 $$
 
 That little commuting square is the whole idea of equivariance, and it is a *geometric* statement: $f$ and the symmetry $\sigma$ are two motions of space that get along.
@@ -254,7 +254,7 @@ That little commuting square is the whole idea of equivariance, and it is a *geo
 The deep result is that these are not exotic — they are *forced*. **Deep Sets** \cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:
 
 $$
-f(x_1,\dots,x_n) \;=\; \underbrace{\rho}_{\text{one final map}}\Big(\underbrace{\textstyle\sum_{i}}_{\text{“add up all the items”}}\; \underbrace{\phi(x_i)}_{\text{“map each item”}}\Big)
+\underbrace{f(x_1,\dots,x_n)}_{\text{an answer that does not care about order}} \;=\; \underbrace{\rho}_{\text{one final map}}\Big(\underbrace{\textstyle\sum_{i}}_{\text{“add up all the items”}}\; \underbrace{\phi(x_i)}_{\text{“map each item”}}\Big)
 $$
 
 and it gives the matching necessary-and-sufficient condition for equivariance. “Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have. That is the geometry a set-based architecture has no choice but to obey.
@@ -264,7 +264,7 @@ Why should a working-geometry chapter care? Because **weight sharing is equivari
 * A **CNN** shares one kernel across every location — that is translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). Section V’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
 * **Pooling** (mean, max) is the invariant readout: reorder or shift what you pool over and the pooled number does not move.
 * **Attention** is permutation-equivariant over the token set: shuffle the input tokens and every output token — and every attention weight — shuffles along with it. Order is not something attention knows, which is exactly why position has to be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)). The attention map is a function on *pairs* of tokens that commutes with permutation — a symmetric object in the group-theoretic sense.
-* The same logic reaches **graphs**: a GNN is equivariant under re-labelling the vertices, which is why it can be pure message-passing — sum over neighbours — and no more (the broader programme is **geometric deep learning** \cite{bronstein2021geometric}).
+* The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \cite{bronstein2021geometric}).
 
 The interactive below holds a bag of six “tokens.” Drag the **shift** to reorder them. The <b>blue</b> (input) and <b>orange</b> (a per-item equivariant output) traces rotate *together* — that is equivariance, the commutative square closing. The flat <b>green</b> line is the invariant readout (the mean), and it does not move no matter how you reorder the bag.
 </div>
