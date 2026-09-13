@@ -146,4 +146,158 @@ The interactive below shows the unit circle (white) and its image under a map wi
 	<div id="geo2-svd-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
 </div>
 
+<div class="md">
+## IV. Descent: why the gradient is steepest
+
+Training a model reduces to walking downhill on a loss landscape $L$. At any point $w$ the gradient $\nabla L(w)$ is a vector, and two questions arise: which way is *down*, and is “the gradient” actually the steepest way, or just a convenient choice? The answer is geometric, and it is just the section-I identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product:
+
+$$
+\underbrace{dL(d)}_{\text{“slope going in direction } d\text{”}} \;=\; \underbrace{\langle \nabla L, \, d \rangle}_{\text{gradient dotted with the direction}} \;=\; \underbrace{\lVert \nabla L \rVert}_{\text{the steepest slope there is}} \;\underbrace{\cos\angle(\nabla L, d)}_{\le 1,\ \text{and } 1 \text{ only when } d \parallel \nabla L}
+$$
+
+So $\langle \nabla L, d\rangle$ is largest when $d$ points *along* $\nabla L$ and most negative when $d$ points *against* it. The steepest ascent is $+\nabla L$ and the steepest descent is $-\nabla L$ — not because we *choose* gradient descent, but because the inner product *forces* the steepest direction to be the gradient. Cauchy wrote this down in 1847 as the method of steepest descent, decades before neural networks \cite{cauchy1847}.
+
+\marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimiser makes on a loss landscape.}
+
+Read the same identity a different way and it says the gradient is **perpendicular to the level sets** of $L$ — the “same loss” contours. Moving along a contour keeps $L$ constant, so its direction $d$ satisfies $\langle \nabla L, d\rangle = 0$, i.e. $d \perp \nabla L$. The contour lines are level sets of the quadratic forms you keep meeting, and the gradient is their normal. This is also why a *curved* landscape is hard to descend: in a narrow valley the contours crowd together on one side and spread out on the other, the gradient points *across* the valley rather than down it, and a plain gradient step zig-zags. The **condition number** from section III — the ratio of the loss’s biggest to smallest curvature — is precisely the width of that valley, and it is conditioning, not the gradient itself, that decides whether optimisation is fast or slow.
+
+The *schedule* laid on top of this one geometric fact — momentum, Adam, learning-rate decay — is optimisation, not geometry, and is covered in [The Optimizer](optimizerlab) and [Automatic Differentiation](autodiff). What we keep here is the truth underneath all of them: **the gradient is the normal to the level sets, and the steepest way down is to follow it.** In the interactive below, drag the point around an oval bowl and watch the descent arrow (−∇) stay perpendicular to the contours; then drag the valley narrow and watch the arrow start pointing across it.
+</div>
+
+<!-- ─── Interactive: Gradient = steepest = normal to the contours ─── -->
+<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
+	<p style="color:#64748b; font-size:0.9em; margin-top:0;">An anisotropic bowl $L(x,y)=\tfrac12(x^2/w + y^2 w)$ with oval level sets. The grey dot is your position; the <b>red</b> arrow is $-\nabla L$, the steepest-descent direction. It is always <b>perpendicular</b> to the contour it crosses. Drag the point off the valley floor and the arrow points across the valley (the zig-zag); drag <b>valley width $w$</b> large and the zig-zag gets worse — the condition number is $w^2$.</p>
+	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
+		<label><b>x:</b></label>
+		<input type="range" id="geo2-des-px" min="-3" max="3" step="0.05" value="1.5" style="width:120px; vertical-align:middle;">
+		<span id="geo2-des-pxv" style="font-family:monospace; font-weight:bold; color:#2563eb;">1.5</span>
+		<label><b>y:</b></label>
+		<input type="range" id="geo2-des-py" min="-3" max="3" step="0.05" value="1.2" style="width:120px; vertical-align:middle;">
+		<span id="geo2-des-pyv" style="font-family:monospace; font-weight:bold; color:#2563eb;">1.2</span>
+		<label><b>valley width $w$:</b></label>
+		<input type="range" id="geo2-des-w" min="1" max="6" step="0.1" value="2" style="width:130px; vertical-align:middle;">
+		<span id="geo2-des-wv" style="font-family:monospace; font-weight:bold; color:#2563eb;">2.0</span>
+	</div>
+	<div id="geo2-descent" class="plot-container" style="width:100%; height:380px;"></div>
+	<div id="geo2-des-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+</div>
+
+<div class="md">
+## V. Convolution is a sliding dot product — and the DFT is its shape
+
+A convolution takes a short pattern (the **kernel** $c$) and a long signal (the **input** $x$), flips the kernel, slides it across the signal, and at each position takes a **dot product** and sums:
+
+$$
+(c * x)_t \;=\; \underbrace{\sum_{k} c_k \, x_{t-k}}_{\text{“flip } c\text{, slide it to } t\text{, take the dot product”}}
+$$
+
+That is all a convolution is: an inner product, repeated at every offset $t$. The word “convolution” hides the fact that the operation *under* it is the same one from section I — a measurement of alignment between the kernel and a sliding window of the input. This is exactly why a CNN filter works the way it does: each filter is a kernel, and “applying” it to an image is “taking the dot product with every patch,” so the filter *detects* precisely the local pattern it is shaped like (see [Convolutions](visionlab)).
+
+\marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible.}
+
+The payoff is the **Fourier transform**, and it is a *change of coordinates*. Write the signal and the kernel in the basis of pure sine waves — the “frequency” coordinates — instead of in time. In that coordinate system the sliding sum above does something astonishing: **it becomes ordinary multiplication**, point by point,
+
+$$
+\mathcal{F}(c * x) \;=\; \underbrace{\mathcal{F}(c)\,\cdot\,\mathcal{F}(x)}_{\text{no sliding — just multiply each frequency}}
+$$
+
+Convolution in time is multiplication in frequency \cite{fourier1822}. The reason is the same one running through this whole chapter: the sines are the directions in which the *slide* is **normal**. Shifting a sine wave in time only rotates its phase — it does not change the wave — so in the sine basis a shift is a rotation, and a sliding dot product of rotations is just a product. The DFT finds those special directions; the FFT is merely the fast way to compute them \cite{cooley1965fft}.
+
+This is not a curiosity. “Smooth the signal” means “multiply its spectrum by a low-pass.” “Detect an edge” means “the output lights up at high frequency.” “A periodic hum” means “energy piled up at one frequency.” In audio, the whole short-time Fourier view of sound is this one identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT-based tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)). The two interactives below share one kernel: drag its three taps and watch the time-domain output get smoothed (left) *and* the frequency-domain reason for it — pointwise multiplication — happen at the same time (right).
+</div>
+
+<!-- ─── Interactive: Convolution = sliding dot product; DFT = its shape ─── -->
+<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
+	<p style="color:#64748b; font-size:0.9em; margin-top:0;">One 3-tap kernel $c = [c_{-1}, c_0, c_1]$ (drag the three taps) applied to a fixed signal $x$ (a short pulse on a wiggly baseline). <b>Left:</b> the time-domain result $y = c*x$ — the sliding dot product. <b>Right:</b> the frequency-domain reason: $|F(y)| = |F(c)|\cdot|F(x)|$, point by point. Make the taps a wide average and the output smooths (left) while the high frequencies get cancelled (right).</p>
+	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
+		<label><b>left $c_{-1}$:</b></label>
+		<input type="range" id="geo2-conv-c0" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
+		<span id="geo2-conv-c0v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
+		<label><b>centre $c_0$:</b></label>
+		<input type="range" id="geo2-conv-c1" min="0" max="1" step="0.01" value="0.5" style="width:110px; vertical-align:middle;">
+		<span id="geo2-conv-c1v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.50</span>
+		<label><b>right $c_1$:</b></label>
+		<input type="range" id="geo2-conv-c2" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
+		<span id="geo2-conv-c2v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
+	</div>
+	<div style="display:flex; gap:16px; flex-wrap:wrap;">
+		<div style="flex:1; min-width:320px;">
+			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">time domain — $y = c * x$</div>
+			<div id="geo2-conv-time" class="plot-container" style="width:100%; height:300px;"></div>
+		</div>
+		<div style="flex:1; min-width:320px;">
+			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">frequency domain — $|F(y)| = |F(c)|\cdot|F(x)|$</div>
+			<div id="geo2-conv-freq" class="plot-container" style="width:100%; height:300px;"></div>
+		</div>
+	</div>
+	<div id="geo2-conv-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+</div>
+
+<div class="md">
+## VI. Symmetry: invariance, equivariance, and the shape of attention
+
+A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviours, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows.
+
+* **Invariant** — the output does not change at all: $f(\sigma \cdot x) = f(x)$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
+* **Equivariant** — the output changes, but *the same way* the input did: $f(\sigma \cdot x) = \sigma \cdot f(x)$. The output “commutes” with the symmetry.
+
+Write the equivariance condition as a diagram that **commutes**: do the symmetry first, then the function, or the function first, then the symmetry — both paths land on the same point.
+
+$$
+x \;\xrightarrow{\ \sigma\ }\; \sigma x \;\xrightarrow{\ f\ }\; \sigma f(x)
+\qquad\text{and}\qquad
+x \;\xrightarrow{\ f\ }\; f(x) \;\xrightarrow{\ \sigma\ }\; \sigma f(x)
+$$
+
+That little commuting square is the whole idea of equivariance, and it is a *geometric* statement: $f$ and the symmetry $\sigma$ are two motions of space that get along.
+
+The deep result is that these are not exotic — they are *forced*. **Deep Sets** \cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:
+
+$$
+f(x_1,\dots,x_n) \;=\; \underbrace{\rho}_{\text{one final map}}\Big(\underbrace{\textstyle\sum_{i}}_{\text{“add up all the items”}}\; \underbrace{\phi(x_i)}_{\text{“map each item”}}\Big)
+$$
+
+and it gives the matching necessary-and-sufficient condition for equivariance. “Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have. That is the geometry a set-based architecture has no choice but to obey.
+
+Why should a working-geometry chapter care? Because **weight sharing is equivariance in disguise**, and attention is a *symmetric* operation:
+
+* A **CNN** shares one kernel across every location — that is translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). Section V’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
+* **Pooling** (mean, max) is the invariant readout: reorder or shift what you pool over and the pooled number does not move.
+* **Attention** is permutation-equivariant over the token set: shuffle the input tokens and every output token — and every attention weight — shuffles along with it. Order is not something attention knows, which is exactly why position has to be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)). The attention map is a function on *pairs* of tokens that commutes with permutation — a symmetric object in the group-theoretic sense.
+* The same logic reaches **graphs**: a GNN is equivariant under re-labelling the vertices, which is why it can be pure message-passing — sum over neighbours — and no more (the broader programme is **geometric deep learning** \cite{bronstein2021geometric}).
+
+The interactive below holds a bag of six “tokens.” Drag the **shift** to reorder them. The <b>blue</b> (input) and <b>orange</b> (a per-item equivariant output) traces rotate *together* — that is equivariance, the commutative square closing. The flat <b>green</b> line is the invariant readout (the mean), and it does not move no matter how you reorder the bag.
+</div>
+
+<!-- ─── Interactive: Invariance vs equivariance on a bag of tokens ─── -->
+<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
+	<p style="color:#64748b; font-size:0.9em; margin-top:0;">Six “tokens” (a bag). Drag <b>shift</b> to cyclically reorder them. The <b>blue</b> trace is the reordered input and the <b>orange</b> trace is a fixed per-item function of it — an <b>equivariant</b> output, so the two move together. The flat <b>green</b> line is the <b>invariant</b> readout (the mean), which does not move for any reorder. The grey trace is the original order, for reference.</p>
+	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
+		<label><b>shift (reorder):</b></label>
+		<input type="range" id="geo2-sym-shift" min="0" max="5" step="1" value="0" style="width:150px; vertical-align:middle;">
+		<span id="geo2-sym-shv" style="font-family:monospace; font-weight:bold; color:#2563eb;">0</span>
+	</div>
+	<div id="geo2-sym" class="plot-container" style="width:100%; height:380px;"></div>
+	<div id="geo2-sym-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+</div>
+
+<div class="md">
+## VII. Synthesis: one forward pass, as geometry
+
+Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:
+
+| Geometric move | The operation | The layer that is it | You met it in |
+|---|---|---|---|
+| Inner product | measure alignment $\langle u, v\rangle$ | a neuron, similarity, attention weights | [Attention](attentionlab), [Embeddings](embeddinglab) |
+| Projection | best fit = shadow, ⟂ residual | least squares, low-rank approximation | [Loss](losslab) |
+| SVD | rotate → stretch → rotate | PCA, low-rank compression, LoRA | [Beyond LLMs](beyond_llms) |
+| Descent | $-\nabla$, ⟂ to the level sets | gradient descent, backprop | [Optimizer](optimizerlab), [Autodiff](autodiff) |
+| Convolution + DFT | sliding dot product | CNN filter, FFT | [Convolutions](visionlab), [Positional](positionalembeddingslab) |
+| Symmetry | invariant / equivariant | pooling, attention, weight sharing | [Convolutions](visionlab), [Mech. Interp.](mechanistic_interpretability) |
+
+Notice what is *learned* and what is *fixed*. The geometry — that a dot product measures alignment, that the best fit is a shadow, that the steepest direction is the normal to the level sets, that convolution multiplies in frequency, that a symmetric operation must commute with its symmetry — is **fixed by mathematics**. What training learns are the *parameters inside* each move: which directions to stretch (the singular vectors), which kernel to slide (the filter weights), which per-item map to apply (the non-linearity). The shape of the operations is a prior; the data supplies the numbers. That is the working geometry of a neural network: a fixed set of geometric moves, parametrised, stacked, and trained.
+
+And that is why the picture transfers. The same inner product that measures a neuron’s alignment measures a word’s similarity. The same projection that fits a line explains a low-rank approximation. The same SVD that shapes a matrix ranks a layer’s effective capacity. The same symmetry that justifies a shared filter is the reason attention needs position. Stop seeing a network as “matrices of weights” and start seeing it as **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and the layers stop being a list of tricks and become a single, navigable space. That is the shape of the machine.
+</div>
+
 <!--GEO2_MORE-->
