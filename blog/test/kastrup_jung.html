@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kastrup dekodiert Jung — Eine interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root{
+    --bg:#0a0813; --bg2:#141024; --ink:#e8e4f5; --dim:#9a94b8;
+    --accent:#d4b26a; --accent2:#7ec8ff; --violet:#b088ff; --rose:#ff8fb1;
+    --card:#171229; --border:#2a2340;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    line-height:1.65; overflow-x:hidden}
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #2b1f4a 0%, transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, #3a1e3a 0%, transparent 60%),
+      radial-gradient(1000px 700px at 50% 120%, #12213a 0%, transparent 60%);
+  }
+  header.hero{
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:6vh 8vw; position:relative; overflow:hidden;
+  }
+  header.hero canvas{position:absolute; inset:0; z-index:0; opacity:.55}
+  header.hero .inner{position:relative; z-index:1; max-width:900px}
+  h1{font-size:clamp(2.2rem,5.5vw,4.6rem); margin:0 0 .3em; line-height:1.05;
+     letter-spacing:-.02em; font-weight:600;
+     background:linear-gradient(120deg,#fff 0%, var(--accent) 40%, var(--violet) 100%);
+     -webkit-background-clip:text; background-clip:text; color:transparent}
+  h2{font-size:clamp(1.6rem,3.2vw,2.4rem); margin:0 0 .4em; color:#fff;
+     letter-spacing:-.01em; font-weight:600}
+  h3{color:var(--accent); font-size:1.15rem; letter-spacing:.12em;
+     text-transform:uppercase; margin:0 0 .8em; font-weight:600; font-family:"Helvetica Neue",sans-serif}
+  .sub{color:var(--dim); font-size:1.15rem; max-width:720px}
+  section{padding:10vh 8vw; max-width:1400px; margin:0 auto; position:relative}
+  section.narrow{max-width:1050px}
+  .chapter-tag{display:inline-block; padding:4px 12px; border:1px solid var(--border);
+    border-radius:20px; font-size:.75rem; letter-spacing:.2em; color:var(--dim);
+    text-transform:uppercase; margin-bottom:1.2rem; font-family:"Helvetica Neue",sans-serif}
+  p{max-width:720px; color:#d8d3ea}
+  .lede{font-size:1.2rem; color:#efeaff}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:24px; margin:24px 0; box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .controls{display:flex; flex-wrap:wrap; gap:18px; align-items:center; margin-top:16px;
+    font-family:"Helvetica Neue",sans-serif; font-size:.9rem}
+  .controls label{display:flex; flex-direction:column; gap:6px; color:var(--dim); min-width:180px}
+  .controls input[type=range]{accent-color:var(--accent); width:100%}
+  .controls button{background:var(--accent); color:#221a08; border:0; padding:8px 16px;
+    border-radius:8px; cursor:pointer; font-weight:600; letter-spacing:.05em}
+  .controls button.ghost{background:transparent; color:var(--ink); border:1px solid var(--border)}
+  .controls button:hover{filter:brightness(1.1)}
+  .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px}
+  .callout{border-left:3px solid var(--accent); padding:8px 20px; color:#f0ead8;
+    background:rgba(212,178,106,.06); border-radius:0 8px 8px 0; margin:20px 0}
+  .qbox{border-left:3px solid var(--violet); padding:8px 20px; color:#efe6ff;
+    background:rgba(176,136,255,.08); border-radius:0 8px 8px 0; margin:20px 0;
+    font-style:italic}
+  canvas.viz{width:100%; display:block; border-radius:10px; background:#0d0a1c;
+    border:1px solid var(--border)}
+  .plotdiv{width:100%; height:340px; border-radius:10px; overflow:hidden;
+    background:#0d0a1c; border:1px solid var(--border)}
+  .legend{display:flex; gap:20px; flex-wrap:wrap; font-size:.85rem; color:var(--dim);
+    margin-top:10px; font-family:"Helvetica Neue",sans-serif}
+  .swatch{display:inline-block; width:12px; height:12px; border-radius:2px; margin-right:6px;
+    vertical-align:middle}
+  .val{color:var(--accent); font-weight:600}
+  nav.toc{position:fixed; top:20px; right:20px; z-index:100; background:rgba(20,16,36,.85);
+    backdrop-filter:blur(10px); border:1px solid var(--border); border-radius:10px;
+    padding:10px; font-family:"Helvetica Neue",sans-serif; font-size:.8rem;
+    max-width:220px}
+  nav.toc a{display:block; color:var(--dim); text-decoration:none; padding:4px 8px;
+    border-radius:4px}
+  nav.toc a:hover{color:var(--accent); background:rgba(212,178,106,.1)}
+  nav.toc .num{color:var(--accent); margin-right:6px}
+  .hint{color:var(--dim); font-size:.85rem; font-style:italic; margin-top:8px;
+    font-family:"Helvetica Neue",sans-serif}
+  .kbig{font-size:2rem; color:var(--accent); font-weight:700}
+  footer{padding:6vh 8vw; text-align:center; color:var(--dim); font-size:.9rem;
+    border-top:1px solid var(--border); margin-top:6vh}
+  .divider{height:120px; background:linear-gradient(180deg, transparent, rgba(212,178,106,.08), transparent);
+    margin:2vh 0}
+  @media (max-width:700px){ nav.toc{display:none} section{padding:8vh 5vw} }
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <a href="#hero"><span class="num">0</span>Auftakt</a>
+  <a href="#psyche"><span class="num">1</span>Die Psyche</a>
+  <a href="#meta"><span class="num">2</span>Meta-Bewusstsein</a>
+  <a href="#disso"><span class="num">3</span>Dissoziation</a>
+  <a href="#arch"><span class="num">4</span>Archetypen</a>
+  <a href="#kausal"><span class="num">5</span>Kausalität</a>
+  <a href="#sync"><span class="num">6</span>Synchronizität</a>
+  <a href="#wigner"><span class="num">7</span>Wigners Wunder</a>
+  <a href="#ontol"><span class="num">8</span>Ontologien</a>
+  <a href="#idealism"><span class="num">9</span>Jungs Idealismus</a>
+  <a href="#religion"><span class="num">10</span>Gott & Sinn</a>
+  <a href="#fall"><span class="num">11</span>Der Fall</a>
+  <a href="#finale"><span class="num">12</span>Finale</a>
+</nav>
+
+<!-- =============== HERO =============== -->
+<header class="hero" id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="inner">
+    <div class="chapter-tag">Bernardo Kastrup · Jungs Metaphysik entschlüsselt</div>
+    <h1>Die Welt ist ein Traum, den wir gemeinsam träumen.</h1>
+    <p class="sub">Eine interaktive Reise durch das Buch, in der jedes schwierige Konzept — von Meta-Bewusstsein und Dissoziation über Quantenzufall bis zum objektiven Idealismus — anfassbar und spielbar wird. Scrolle langsam. Bewege die Regler. Verstehe durch Erleben.</p>
+    <p class="hint" style="margin-top:2rem">↓ Weiter scrollen</p>
+  </div>
+</header>
+
+<!-- =============== 1. PSYCHE =============== -->
+<section id="psyche" class="narrow">
+  <div class="chapter-tag">Kapitel 1 · Was ist „Psyche"?</div>
+  <h2>Ein Spektrum, kein Schalter.</h2>
+  <p class="lede">Jung stellt die Psyche als ein <b>Spektrum</b> dar — wie Licht. In der Mitte liegt das <b>Ich-Bewusstsein</b> (was du gerade erlebst und weißt), links das <b>Instinktive</b> (dein Körper, Triebe), rechts das <b>Spirituelle</b> (Sinn, Berufung). Alles davon ist <b>erfahrungshaft</b> — auch das Unbewusste. Der Unterschied ist nur ein <b>Grad</b>, keine Kategorie.</p>
+
+  <div class="card">
+    <h3>Das psychische Spektrum</h3>
+    <p>Bewege den Regler entlang des Spektrums. Beobachte, wie sich <b>drei Eigenschaften</b> ändern: willentliche Kontrolle, Selbstreflexion, kognitive Verknüpfung. Nur wo alle drei stark sind, liegt „Bewusstsein" im engen Jung'schen Sinn.</p>
+    <canvas id="spectrumCanvas" class="viz" height="220"></canvas>
+    <div class="controls">
+      <label>Position im Spektrum
+        <input type="range" id="specSlider" min="0" max="1000" value="500">
+      </label>
+      <div style="min-width:220px">
+        <div>Willentliche Kontrolle: <span class="val" id="valWill">–</span></div>
+        <div>Selbstreflexion: <span class="val" id="valRefl">–</span></div>
+        <div>Kognitive Verknüpfung: <span class="val" id="valAssoc">–</span></div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:#ff6b6b"></span>Infrarot: Instinkt / Körper</span>
+      <span><span class="swatch" style="background:var(--accent)"></span>Sichtbar: Ich-Bewusstsein</span>
+      <span><span class="swatch" style="background:var(--violet)"></span>Ultraviolett: Geist</span>
+    </div>
+  </div>
+</section>
+
+<!-- =============== 2. META-BEWUSSTSEIN =============== -->
+<section id="meta" class="narrow">
+  <div class="chapter-tag">Kapitel 2 · Prerequisite: Meta-Bewusstsein</div>
+  <h2>Der Unterschied zwischen <i>Erleben</i> und <i>Wissen, dass man erlebt</i>.</h2>
+  <p class="lede">Das ist der wichtigste philosophische Baustein, den du brauchst. Es ist der Unterschied zwischen deinem Atem <i>haben</i> und <i>merken, dass du atmest</i>. Zwischen Schmerz <i>fühlen</i> und <i>wissen</i>, dass du Schmerz fühlst. Jung nennt nur letzteres „Bewusstsein" — eine <b>Re-Repräsentation</b> auf höherer Ebene.</p>
+
+  <div class="card">
+    <h3>Das Re-Repräsentations-Modell</h3>
+    <p>Klicke auf einen Erlebnisinhalt in der unteren Ebene. Der „Aufmerksamkeitsscheinwerfer" hebt ihn in die obere Ebene — jetzt <i>weißt du</i>, dass du ihn erlebst. Er wird berichtbar. Was außerhalb bleibt, wird trotzdem erlebt — aber unbewusst.</p>
+    <canvas id="metaCanvas" class="viz" height="380"></canvas>
+    <div class="controls">
+      <label>Reichweite der Aufmerksamkeit
+        <input type="range" id="attnRadius" min="30" max="200" value="80">
+      </label>
+      <button id="metaAuto">Automatisch schweifen lassen</button>
+    </div>
+    <div class="hint">Klicke auf die Symbole (Herz, Auge, Ohr, …), um sie in die Reflexions-Ebene zu heben.</div>
+  </div>
+
+  <div class="callout">
+    <b>Warum das zählt:</b> Wenn Bewusstsein <i>nur</i> die re-repräsentierten Inhalte sind, dann kann eine Psyche riesige Bereiche haben, die erfahrungshaft, aber unbewusst sind — das <b>Unbewusste</b>. Kein Widerspruch mehr.
+  </div>
+</section>
+
+<!-- =============== 3. DISSOZIATION =============== -->
+<section id="disso" class="narrow">
+  <div class="chapter-tag">Kapitel 3 · Prerequisite: Dissoziation</div>
+  <h2>Eine Psyche, viele Zentren.</h2>
+  <p class="lede">Empirisch belegt (moderne Neurobildgebung): Eine einzelne Psyche kann in <b>mehrere, intern kohärente, aber voneinander getrennte</b> Bewusstseinszentren zerfallen. Jedes „weiß" für sich, aber die assoziativen Brücken zwischen ihnen fehlen. Das erklärt Persönlichkeitsspaltung, Trance, Träume — und, wie wir sehen werden, den ganzen Kosmos.</p>
+
+  <div class="card">
+    <h3>Netzwerk der Assoziationen</h3>
+    <p>Das ist deine Psyche als Netzwerk. Erhöhe die <b>Dissoziationsstärke</b> und beobachte, wie assoziative Brücken zerreißen und getrennte „Inseln des Bewusstseins" entstehen. Das große goldene Zentrum ist das Ich. Die anderen sind <i>Daimonen</i> — autonome Komplexe, die trotzdem denken, fühlen, wollen.</p>
+    <canvas id="dissoCanvas" class="viz" height="440"></canvas>
+    <div class="controls">
+      <label>Dissoziationsstärke <span class="val" id="dissoVal">0</span>
+        <input type="range" id="dissoSlider" min="0" max="100" value="0">
+      </label>
+      <button id="dissoShake">Erschüttern</button>
+    </div>
+  </div>
+</section>
+
+<!-- =============== 4. ARCHETYPEN =============== -->
+<section id="arch">
+  <div class="chapter-tag">Kapitel 4 · Die Archetypen</div>
+  <h2>Eigenmoden der Psyche.</h2>
+  <p class="lede">Archetypen sind <b>keine Bilder</b>, sondern <b>Formen ohne Inhalt</b> — leere Schablonen, nach denen sich psychisches Geschehen spontan organisiert. Jung vergleicht sie mit dem <b>Kristallgitter</b>, das den Kristall vorformt, bevor er wächst. Oder mit den <b>Eigenmoden einer schwingenden Saite</b>: bestimmte Muster liegen in der Struktur selbst. Die Saite <i>ist</i> nicht der Ton — aber wenn sie schwingt, muss sie in diesen Mustern schwingen.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Eigenmoden einer Saite</h3>
+      <p>Wähle einen Modus. Die Saite kann nur in diesen diskreten Mustern natürlich schwingen — ihre <i>inneren Möglichkeiten</i>. Genauso „schwingt" die Psyche nur in bestimmten archetypischen Mustern.</p>
+      <canvas id="stringCanvas" class="viz" height="240"></canvas>
+      <div class="controls">
+        <label>Modus n = <span class="val" id="modeVal">1</span>
+          <input type="range" id="modeSlider" min="1" max="7" value="1">
+        </label>
+        <label>Amplitude
+          <input type="range" id="ampSlider" min="0" max="100" value="60">
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Kristallgitter — Form vor Inhalt</h3>
+      <p>Das leere Gitter existiert vor dem Kristall. Fülle es mit „Materie" (Erfahrungsinhalten). Der Kristall <b>ist</b> nicht das Gitter — aber er wächst nur nach dessen Muster.</p>
+      <canvas id="crystalCanvas" class="viz" height="240"></canvas>
+      <div class="controls">
+        <label>Wachstum
+          <input type="range" id="crystSlider" min="0" max="100" value="0">
+        </label>
+        <button id="crystReset" class="ghost">Neu</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Konkrete Anwendung:</b> Der „Mutter-Archetyp" ist keine Mutter — er ist das Muster, nach dem sich unser Denken/Fühlen organisiert, <i>wenn</i> die Situation es hervorruft (konstelliert). Erst dann füllt sich das leere Gitter mit konkreten Erfahrungen (deine Mutter, das Meer als Ursprung, die Erde als Nährende …).
+  </div>
+
+  <div class="card">
+    <h3>Der Traum vom Schlamm-Monster — ein archetypischer Traum, interaktiv</h3>
+    <p>Das Buch analysiert ausführlich einen Traum von Kastrups Partnerin. Klicke auf die Symbole, um ihre archetypische Bedeutung zu enthüllen. Kein bloßes „Deuten" — sondern das Netzwerk der <b>Ähnlichkeits-Assoziationen</b> sichtbar machen.</p>
+    <canvas id="dreamCanvas" class="viz" height="440"></canvas>
+    <div id="dreamInfo" class="qbox" style="min-height:60px">Klicke auf ein Symbol im Traum …</div>
+  </div>
+</section>
+
+<!-- =============== 5. KAUSALITÄT =============== -->
+<section id="kausal" class="narrow">
+  <div class="chapter-tag">Kapitel 5 · Prerequisite: Kausalität</div>
+  <h2>Was heißt „A verursacht B"?</h2>
+  <p class="lede">Um Synchronizität zu verstehen, brauchst du zuerst ein präzises Verständnis von <b>Kausalität</b>. Hume: Wir sehen nur <b>Regelmäßigkeit</b> — B folgt immer auf A. Die Philosophie ergänzt: <b>kontrafaktische Abhängigkeit</b> — hätte A nicht stattgefunden, wäre auch B nicht eingetreten.</p>
+
+  <div class="card">
+    <h3>Regel vs. Zufall vs. Kausalität</h3>
+    <p>Wähle eine Weltrelation. Klicke „Experiment durchführen", und die Simulation zeigt, wie oft B nach A auftritt — <i>mit</i> und <i>ohne</i> A. Nur wenn B ohne A verschwindet, ist es <b>kausal</b>.</p>
+    <div id="causalPlot" class="plotdiv"></div>
+    <div class="controls">
+      <label>Szenario
+        <select id="causalScenario" style="background:var(--card); color:var(--ink); border:1px solid var(--border); padding:8px; border-radius:6px">
+          <option value="cause">Echte Kausalität (A → B)</option>
+          <option value="common">Gemeinsame Ursache (C → A und C → B)</option>
+          <option value="coincidence">Zufall (A und B unabhängig)</option>
+          <option value="sync">Synchronizität (bedeutungsvolle Ähnlichkeit)</option>
+        </select>
+      </label>
+      <button id="causalRun">Experiment durchführen (1000×)</button>
+    </div>
+    <div class="hint">Achte auf die kontrafaktische Frage: <i>Was passiert mit B, wenn wir A verhindern?</i> Nur bei echter Kausalität verschwindet B.</div>
+  </div>
+</section>
+
+<!-- =============== 6. SYNCHRONIZITÄT =============== -->
+<section id="sync" class="narrow">
+  <div class="chapter-tag">Kapitel 6 · Synchronizität</div>
+  <h2>Wenn die Welt zurückflüstert.</h2>
+  <p class="lede">Jung beobachtet: <b>bedeutungsvolle Koinzidenzen</b> — ein innerer psychischer Zustand fällt mit einem äußeren Ereignis zusammen, das <i>dieselbe archetypische Bedeutung</i> trägt. Der berühmte Skarabäus-Käfer, der ans Fenster klopft, während eine Patientin einen Traum vom goldenen Skarabäus erzählt. Das ist keine Kausalität — und, so argumentiert Jung, auch kein bloßer Zufall.</p>
+
+  <div class="qbox">
+    „Innerhalb der Zufälligkeit des Würfelwurfs kommt eine ‚psychische' Ordnung zustande." — C. G. Jung
+  </div>
+
+  <div class="card">
+    <h3>Lokaler Zufall, globales Muster</h3>
+    <p>Werfe viele Würfel. Jeder einzelne wirkt <i>zufällig</i> (keiner besteht einen Zufalls-Test). Aber schau auf das <b>globale Muster</b>: es gibt eine verborgene Ordnung, die nur sichtbar wird, wenn man das Ganze betrachtet. Das ist Jungs Bild von Synchronizität: die einzelnen Quanten-Würfe sind lokal zufällig, folgen aber non-lokalen archetypischen Mustern.</p>
+    <canvas id="syncCanvas" class="viz" height="380"></canvas>
+    <div class="controls">
+      <label>Verborgene Ordnung <span class="val" id="syncOrderVal">0%</span>
+        <input type="range" id="syncOrder" min="0" max="100" value="0">
+      </label>
+      <label>Anzahl Würfe
+        <input type="range" id="syncN" min="30" max="400" value="150">
+      </label>
+      <button id="syncRoll">Neu würfeln</button>
+    </div>
+    <div class="hint">Bei Ordnung = 0% ist alles echter Zufall. Erhöhe die verborgene Ordnung: die Einzelwürfe bleiben statistisch zufällig, aber ein Muster (z.B. „alle gerade oder alle ungerade zugleich") wird sichtbar.</div>
+  </div>
+
+  <div class="card">
+    <h3>Der Skarabäus-Moment — rekonstruiert</h3>
+    <p>Zwei Ströme: <b>innen</b> (der Traum der Patientin) und <b>außen</b> (die Welt). Beide entfalten sich unabhängig — aber gelegentlich blitzt eine <i>Bedeutungsähnlichkeit</i> auf. Der Archetyp „Wiedergeburt" leuchtet gleichzeitig in beiden.</p>
+    <canvas id="scarabCanvas" class="viz" height="280"></canvas>
+    <div class="controls">
+      <button id="scarabPlay">Szene abspielen</button>
+      <button id="scarabReset" class="ghost">Zurücksetzen</button>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Kastrups Punkt:</b> Wenn die physische Welt sich nach archetypischen Mustern organisiert (wie Träume), dann muss unter ihr <i>etwas Psychisches</i> liegen, das Bedeutung überhaupt erst tragen kann. Materie kann nicht „symbolisieren" — nur Erfahrung kann das. Das ist der erste Schritt zum Idealismus.
+  </div>
+</section>
+
+<!-- =============== 7. WIGNERS WUNDER =============== -->
+<section id="wigner" class="narrow">
+  <div class="chapter-tag">Kapitel 7 · Wigners „unvernünftige Wirksamkeit"</div>
+  <h2>Warum passt Mathematik so unheimlich gut auf die Welt?</h2>
+  <p class="lede">Der Physiker Eugene Wigner nannte es ein <b>Wunder</b>: rein abstrakte mathematische Konzepte — π, Exponentialfunktionen, komplexe Zahlen — beschreiben die physikalische Welt mit fast beängstigender Präzision. Warum sollte die Kreiszahl π in Gleichungen über Bevölkerungswachstum, Radioaktivität und Elektromagnetismus auftauchen?</p>
+
+  <div class="card">
+    <h3>π taucht überall auf — spiele damit</h3>
+    <p>Bewege den Regler und sieh, wie <b>dieselbe</b> mathematische Struktur (die Gauß-Glocke, deren Formel π enthält) in völlig verschiedenen Kontexten auftaucht: Statistik, Wellen, Quantenmechanik. Jung erklärt das: <b>Zahlen sind Archetypen der Ordnung</b> — sie strukturieren Psyche <i>und</i> Welt gleichermaßen.</p>
+    <div id="wignerPlot" class="plotdiv" style="height:380px"></div>
+    <div class="controls">
+      <label>Parameter σ <span class="val" id="sigmaVal">1.0</span>
+        <input type="range" id="sigmaSlider" min="30" max="300" value="100">
+      </label>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Jungs Lösung des Wigner-Wunders:</b> Wenn Zahlen Archetypen sind, die sowohl unser Denken als auch die Welt strukturieren, dann ist es <i>kein</i> Wunder mehr, dass Mathematik funktioniert. Beide — Denken und Welt — entspringen demselben archetypischen Grund.
+  </div>
+</section>
+
+<!-- =============== 8. ONTOLOGIEN =============== -->
+<section id="ontol">
+  <div class="chapter-tag">Kapitel 8 · Prerequisite: Die Landkarte der Metaphysiken</div>
+  <h2>Was ist das Wesen der Wirklichkeit?</h2>
+  <p class="lede">Bevor wir zu Jungs eigener Position kommen, brauchst du die Landkarte. Vier Kandidaten kämpfen um die Frage: <i>Woraus besteht die Welt <b>letztlich</b>?</i></p>
+
+  <div class="card">
+    <h3>Die vier Positionen — interaktiv</h3>
+    <p>Klicke auf jede Position, um zu sehen, was sie behauptet, welche Stärken und welche Schwächen sie hat (besonders: wie sie mit dem <b>harten Bewusstseinsproblem</b> umgeht).</p>
+    <canvas id="ontolCanvas" class="viz" height="440"></canvas>
+    <div id="ontolInfo" class="qbox" style="min-height:120px">Klicke auf eine der vier Kugeln …</div>
+  </div>
+
+  <div class="card">
+    <h3>Das harte Problem des Bewusstseins</h3>
+    <p>Egal wie detailliert wir Neuronen beschreiben — nichts an dieser Beschreibung sagt uns, <b>warum</b> es sich irgendwie <i>anfühlt</i>, Rot zu sehen. Die Kluft zwischen quantitativer Physik und qualitativer Erfahrung ist unüberbrückbar. Das ist der Grund, warum Kastrup (und implizit Jung) den Materialismus verwerfen.</p>
+    <canvas id="hardCanvas" class="viz" height="240"></canvas>
+    <div class="hint">Links: alles über das Neuron messbar. Rechts: das Rot-Erlebnis. Zwischen ihnen: der Abgrund.</div>
+  </div>
+</section>
+
+<!-- =============== 9. JUNGS IDEALISMUS =============== -->
+<section id="idealism" class="narrow">
+  <div class="chapter-tag">Kapitel 9 · Die entschlüsselte Position</div>
+  <h2>Objektiver Idealismus: Der Kosmos als dissoziierter Geist.</h2>
+  <p class="lede">Kastrups zentrale These: Jung war heimlich ein <b>objektiver Idealist</b>. Alle Wirklichkeit — Materie, Psyche, Geist — ist im Wesen <i>erfahrungshaft</i>. Was wir „physische Welt" nennen, ist wie die Welt <b>von außen aussieht</b>, wenn ein transpersonales Bewusstseinsfeld auf unsere dissoziierten Ich-Zentren einwirkt. Genauso wie dein Gehirn von außen aussieht wie Gewebe — aber von innen deine ganze Erfahrungswelt ist.</p>
+
+  <div class="card">
+    <h3>Das große Bild — Jungs Kosmos</h3>
+    <p>Drehe und zoome. Der goldene Kern ist das <b>kollektive Unbewusste</b> (= Gott = alle Erfahrung). Die kleinen leuchtenden Blasen sind <b>wir</b> — dissoziierte Zentren („Alters"). Was jede Blase <i>außerhalb ihrer selbst</i> wahrnimmt, ist ihre eigene Sichtweise auf das umgebende Feld — das nennen wir „physische Welt". Was sie <i>innen</i> wahrnimmt (Träume, Visionen), ist derselbe Grund, aber von innen erreicht.</p>
+    <div id="kosmosDiv" style="width:100%; height:520px; border-radius:12px; overflow:hidden; background:#05030d; border:1px solid var(--border)"></div>
+    <div class="controls">
+      <label>Dissoziation der Alters <span class="val" id="kosmosDissoVal">50%</span>
+        <input type="range" id="kosmosDisso" min="0" max="100" value="50">
+      </label>
+      <label>Anzahl Alters
+        <input type="range" id="kosmosN" min="5" max="80" value="30">
+      </label>
+    </div>
+    <div class="hint">Ziehen zum Drehen · Scrollen zum Zoomen</div>
+  </div>
+
+  <div class="callout">
+    <b>Elegante Konsequenz:</b> Das Leib-Seele-Problem verschwindet. Das Gehirn <i>verursacht</i> keine Erfahrung — es <i>ist das Aussehen</i> von Erfahrung, so wie ein Wirbelsturm das Aussehen von wirbelnder Luft <i>ist</i>, nicht seine Ursache.
+  </div>
+</section>
+
+<!-- =============== 10. GOTT & SINN =============== -->
+<section id="religion" class="narrow">
+  <div class="chapter-tag">Kapitel 10 · Religion, Gott, Sinn</div>
+  <h2>Wozu sind wir da?</h2>
+  <p class="lede">Jungs stärkste Antwort: Gott — das kollektive Unbewusste — <b>ist</b> allwissend, aber <b>nicht selbstreflexiv</b>. Es weiß alles, aber es weiß nicht, <i>dass</i> es weiß. Um Selbstbewusstsein zu erlangen, „inkarniert" es sich in uns — endliche, verletzliche, reflektierende Wesen. Wir sind die <b>Augen Gottes auf sich selbst</b>.</p>
+
+  <div class="card">
+    <h3>Gott erwacht — durch uns</h3>
+    <p>Bewege den Zeitregler. Links: reines Sein ohne Selbstbezug — allwissend, aber „im Dunkeln". Rechts: durch die Millionen dissoziierter Bewusstseinszentren (wir) beginnt das Feld, sich selbst zu erkennen. Jedes bewusste Aha-Moment ist ein Funke göttlicher Selbsterkenntnis.</p>
+    <canvas id="godCanvas" class="viz" height="320"></canvas>
+    <div class="controls">
+      <label>Evolution des Selbstbewusstseins
+        <input type="range" id="godSlider" min="0" max="100" value="0">
+      </label>
+    </div>
+  </div>
+
+  <div class="qbox">
+    „Sinnlosigkeit hemmt die Fülle des Lebens und ist daher der Krankheit gleich. Sinn macht sehr vieles erträglich — vielleicht alles." — C. G. Jung
+  </div>
+</section>
+
+<!-- =============== 11. DER FALL =============== -->
+<section id="fall" class="narrow">
+  <div class="chapter-tag">Kapitel 11 · Der Sündenfall — neu gelesen</div>
+  <h2>Warum leiden wir?</h2>
+  <p class="lede">Jung liest den biblischen Sündenfall als <b>tatsächliches vorgeschichtliches Ereignis</b>: den Sprung in die Selbstreflexion. Vor dem „Fall" erlebten Menschen ihre Nacktheit, aber wussten nicht, dass sie sie erlebten. Nach dem Fall entstand Scham — und mit ihr die ganze Last innerer Narrative: Reue über Vergangenes, Angst vor Zukünftigem. Paläoanthropologen (Tattersall) bestätigen: der anatomisch moderne Mensch existierte lange, bevor symbolisches Denken erwachte. Der Fall geschah tatsächlich.</p>
+
+  <div class="card">
+    <h3>Vor und nach dem Fall</h3>
+    <p>Bewege den Regler durch die Zeit. Links: reines Präsenz-Erleben (wie ein Tier). Rechts: Selbstreflexion — und mit ihr die Erfindung von <i>Vergangenheit</i> und <i>Zukunft</i>, aus denen alles Leiden strömt.</p>
+    <canvas id="fallCanvas" class="viz" height="300"></canvas>
+    <div class="controls">
+      <label>Grad der Selbstreflexion
+        <input type="range" id="fallSlider" min="0" max="100" value="50">
+      </label>
+      <div style="min-width:220px">
+        <div>Präsenz: <span class="val" id="valPresence">–</span></div>
+        <div>Sinn: <span class="val" id="valMeaning">–</span></div>
+        <div>Leiden: <span class="val" id="valSuffering">–</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Der Preis, den wir zahlen:</b> ist derselbe wie unser Beitrag. Jedes Leiden entspringt derselben Fähigkeit, die auch jede Bedeutung erst ermöglicht. Der Fall ist Fluch <i>und</i> Gabe — unser Opfer an das Göttliche.
+  </div>
+</section>
+
+<!-- =============== 12. FINALE =============== -->
+<section id="finale">
+  <div class="chapter-tag">Kapitel 12 · Finale</div>
+  <h2>Die Frage, die Jung stellte — und die Antwort.</h2>
+  <div class="grid2">
+    <div>
+      <h3>Die Frage</h3>
+      <p class="lede">Was ist die Psyche, was ist die Welt, und wie hängen sie zusammen — so, dass Träume Bedeutung haben, Synchronizitäten möglich sind, Mathematik funktioniert, Bewusstsein existiert, und das Leben Sinn tragen kann?</p>
+    </div>
+    <div>
+      <h3>Die Antwort</h3>
+      <p class="lede">Es gibt nur <b>einen</b> Grund: ein transpersonales Feld phänomenaler Erfahrung (= kollektives Unbewusstes = Gott). Wir sind seine dissoziierten Zentren. Was wir „Materie" nennen, ist seine <i>äußere Erscheinung</i> — und in dieser Erscheinung wirken dieselben Archetypen, die auch unsere Träume weben. Deshalb sind Synchronizitäten möglich, deshalb funktioniert Mathematik, deshalb hat das Leben Sinn: wir sind die Selbsterkenntnis eines Kosmos, der ohne uns im Dunkel bliebe.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:40px; text-align:center; padding:60px 30px;
+    background:radial-gradient(circle at 50% 50%, rgba(212,178,106,.1), transparent 70%)">
+    <div class="kbig">„Die Welt ist der Traum eines größeren, umfassenderen Bewusstseins."</div>
+    <p style="margin:20px auto; max-width:600px; color:var(--dim)">
+      Und wir sind hier, um ihn zu deuten.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Der ganze Bogen — auf einen Blick</h3>
+    <p>Klicke die Etappen an, um zurückzuspringen.</p>
+    <canvas id="arcCanvas" class="viz" height="200"></canvas>
+  </div>
+</section>
+
+<footer>
+  Basierend auf Bernardo Kastrup, <i>Decoding Jung's Metaphysics</i> (Iff Books, 2021).<br>
+  Alle Visualisierungen dienen dem Verständnis der Kernideen — für die Tiefe: lies das Buch.
+</footer>
+
+<script>
+/* =============================================================
+   HERO — Sternenhimmel + Konstellationen (Jungs „The Constellations")
+   ============================================================= */
+(function(){
+  const c = document.getElementById('heroCanvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = c.offsetWidth * devicePixelRatio; c.height = c.offsetHeight * devicePixelRatio; }
+  resize(); window.addEventListener('resize', resize);
+  const stars = Array.from({length:220}, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random()*1.6+.3, tw: Math.random()*Math.PI*2,
+    s: .3+Math.random()*.8
+  }));
+  const links = [];
+  for(let i=0;i<40;i++){
+    const a = Math.floor(Math.random()*stars.length);
+    let b = a; while(b===a) b = Math.floor(Math.random()*stars.length);
+    const dx = stars[a].x-stars[b].x, dy = stars[a].y-stars[b].y;
+    if(Math.hypot(dx,dy)<.15) links.push([a,b]);
+  }
+  let t = 0;
+  function loop(){
+    t += .01;
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.strokeStyle = 'rgba(212,178,106,.15)';
+    ctx.lineWidth = 1*devicePixelRatio;
+    links.forEach(([a,b])=>{
+      ctx.beginPath();
+      ctx.moveTo(stars[a].x*c.width, stars[a].y*c.height);
+      ctx.lineTo(stars[b].x*c.width, stars[b].y*c.height);
+      ctx.stroke();
+    });
+    stars.forEach(s=>{
+      const tw = .6 + .4*Math.sin(t*s.s + s.tw);
+      ctx.fillStyle = `rgba(255,240,210,${tw})`;
+      ctx.beginPath();
+      ctx.arc(s.x*c.width, s.y*c.height, s.r*devicePixelRatio*tw, 0, Math.PI*2);
+      ctx.fill();
+    });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* =============================================================
+   1. PSYCHISCHES SPEKTRUM
+   ============================================================= */
+(function(){
+  const c = document.getElementById('spectrumCanvas');
+  const ctx = c.getContext('2d');
+  const sl = document.getElementById('specSlider');
+  const vW = document.getElementById('valWill');
+  const vR = document.getElementById('valRefl');
+  const vA = document.getElementById('valAssoc');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    // Farbverlauf
+    const g = ctx.createLinearGradient(0,0,w,0);
+    g.addColorStop(0,'#ff4444'); g.addColorStop(.15,'#ff8844');
+    g.addColorStop(.45,'#d4b26a'); g.addColorStop(.55,'#eecc88');
+    g.addColorStop(.85,'#b088ff'); g.addColorStop(1,'#7050d0');
+    ctx.fillStyle = g;
+    ctx.fillRect(30*devicePixelRatio, h*.35, w-60*devicePixelRatio, h*.25);
+    // Labels
+    ctx.fillStyle = '#e8e4f5';
+    ctx.font = `${14*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='left';
+    ctx.fillText('Instinkt', 30*devicePixelRatio, h*.28);
+    ctx.textAlign='center';
+    ctx.fillText('Ich-Bewusstsein', w/2, h*.28);
+    ctx.textAlign='right';
+    ctx.fillText('Geist', w-30*devicePixelRatio, h*.28);
+    // Kurven
+    const val = sl.value/1000;
+    function gaussian(x, mu, s){ return Math.exp(-((x-mu)**2)/(2*s*s)); }
+    const will = gaussian(val, .5, .25);
+    const refl = gaussian(val, .5, .18);
+    const assoc = gaussian(val, .5, .3);
+    // Marker
+    const mx = 30*devicePixelRatio + (w-60*devicePixelRatio)*val;
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2*devicePixelRatio;
+    ctx.beginPath(); ctx.moveTo(mx, h*.3); ctx.lineTo(mx, h*.7); ctx.stroke();
+    ctx.fillStyle='#fff';
+    
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(mx, h*.475, 8*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    // Werte aktualisieren
+    vW.textContent = (will*100|0)+'%';
+    vR.textContent = (refl*100|0)+'%';
+    vA.textContent = (assoc*100|0)+'%';
+  }
+  sl.addEventListener('input', draw);
+  draw();
+})();
+
+/* =============================================================
+   2. META-BEWUSSTSEIN — Aufmerksamkeitsscheinwerfer
+   ============================================================= */
+(function(){
+  const c = document.getElementById('metaCanvas');
+  const ctx = c.getContext('2d');
+  const rSlider = document.getElementById('attnRadius');
+  const autoBtn = document.getElementById('metaAuto');
+  let auto = false, autoT = 0;
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; }
+  resize(); window.addEventListener('resize', resize);
+  const symbols = [
+    {x:.15,y:.75,glyph:'♥',label:'Herzschlag'},
+    {x:.3,y:.7,glyph:'👁',label:'Sehen'},
+    {x:.45,y:.78,glyph:'🎵',label:'Hören'},
+    {x:.6,y:.72,glyph:'✋',label:'Berührung'},
+    {x:.75,y:.75,glyph:'💭',label:'Gedanke'},
+    {x:.87,y:.7,glyph:'😊',label:'Gefühl'},
+    {x:.22,y:.85,glyph:'🌬',label:'Atem'},
+    {x:.55,y:.88,glyph:'⏱',label:'Zeit'},
+    {x:.7,y:.88,glyph:'🍎',label:'Geschmack'},
+  ];
+  let attn = {x:.5, y:.75};
+  c.addEventListener('click', (e)=>{
+    const rect = c.getBoundingClientRect();
+    attn.x = (e.clientX-rect.left)/rect.width;
+    attn.y = (e.clientY-rect.top)/rect.height;
+    auto = false;
+  });
+  autoBtn.addEventListener('click', ()=>{ auto = !auto; autoBtn.textContent = auto?'Anhalten':'Automatisch schweifen lassen'; });
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    if(auto){ autoT+=.02; attn.x = .5 + .35*Math.sin(autoT); attn.y = .78 + .05*Math.cos(autoT*1.7); }
+    // Obere Ebene (Meta-Bewusstsein / Reflexion)
+    ctx.fillStyle = 'rgba(212,178,106,.08)';
+    ctx.fillRect(0, 0, w, h*.4);
+    ctx.strokeStyle = 'rgba(212,178,106,.3)';
+    ctx.setLineDash([5*devicePixelRatio, 5*devicePixelRatio]);
+    ctx.beginPath(); ctx.moveTo(0, h*.4); ctx.lineTo(w, h*.4); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'var(--accent)';
+    ctx.fillStyle = '#d4b26a';
+    ctx.font = `${13*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='left';
+    ctx.fillText('Meta-Bewusstsein  (»ich weiß, dass ich erlebe«)', 20*devicePixelRatio, 30*devicePixelRatio);
+    // Untere Ebene (phänomenales Erleben)
+    ctx.fillStyle = 'rgba(126,200,255,.05)';
+    ctx.fillRect(0, h*.4, w, h*.6);
+    ctx.fillStyle = '#7ec8ff';
+    ctx.fillText('Phänomenales Erleben  (alles, was da ist — bewusst oder nicht)', 20*devicePixelRatio, h*.4 + 26*devicePixelRatio);
+    // Aufmerksamkeitsscheinwerfer
+    const ax = attn.x*w, ay = attn.y*h;
+    const rad = parseFloat(rSlider.value) * devicePixelRatio;
+    const grd = ctx.createRadialGradient(ax, ay, 0, ax, ay, rad);
+    grd.addColorStop(0, 'rgba(255,240,200,.4)');
+    grd.addColorStop(1, 'rgba(255,240,200,0)');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(ax, ay, rad, 0, Math.PI*2); ctx.fill();
+    // Symbole zeichnen
+    symbols.forEach(s=>{
+      const sx = s.x*w, sy = s.y*h;
+      const d = Math.hypot(sx-ax, sy-ay);
+      const inAttn = d < rad;
+      ctx.font = `${28*devicePixelRatio}px serif`;
+      ctx.textAlign='center';
+      ctx.fillStyle = inAttn ? '#fff' : 'rgba(200,200,220,.5)';
+      ctx.fillText(s.glyph, sx, sy);
+      ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+      ctx.fillStyle = inAttn ? '#d4b26a' : 'rgba(150,150,170,.4)';
+      ctx.fillText(s.label, sx, sy+22*devicePixelRatio);
+      // Wenn in Aufmerksamkeit: nach oben re-repräsentiert
+      if(inAttn){
+        const tx = sx, ty = h*.2;
+        ctx.strokeStyle = 'rgba(212,178,106,.5)';
+        ctx.lineWidth = 1*devicePixelRatio;
+        ctx.beginPath(); ctx.moveTo(sx, sy-25*devicePixelRatio); ctx.lineTo(tx, ty+15*devicePixelRatio); ctx.stroke();
+        ctx.font = `${22*devicePixelRatio}px serif`;
+        ctx.fillStyle = '#fff';
+        ctx.fillText(s.glyph, tx, ty);
+        ctx.font = `${10*devicePixelRatio}px Helvetica Neue`;
+        ctx.fillStyle = '#d4b26a';
+        ctx.fillText('»ich weiß es«', tx, ty+18*devicePixelRatio);
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* =============================================================
+   3. DISSOZIATION — Netzwerk zerreißt
+   ============================================================= */
+(function(){
+  const c = document.getElementById('dissoCanvas');
+  const ctx = c.getContext('2d');
+  const sl = document.getElementById('dissoSlider');
+  const shakeBtn = document.getElementById('dissoShake');
+  const valEl = document.getElementById('dissoVal');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; }
+  resize(); window.addEventListener('resize', resize);
+  const N = 60;
+  const nodes = [];
+  for(let i=0;i<N;i++){
+    nodes.push({
+      x: Math.random(), y: Math.random(),
+      vx: (Math.random()-.5)*.001, vy: (Math.random()-.5)*.001,
+      cluster: 0,
+      isEgo: i===0
+    });
+  }
+  // Vorberechnete Cluster-Zuordnung (je höher Dissoziation, desto separater)
+  const clusterCenters = [
+    {x:.5,y:.5}, {x:.2,y:.3}, {x:.8,y:.25}, {x:.75,y:.75}, {x:.25,y:.8}
+  ];
+  nodes.forEach((n,i)=>{ n.cluster = i%5; });
+  const edges = [];
+  for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
+    if(Math.random() < .08) edges.push([i,j]);
+  }
+  let shakeT = 0;
+  shakeBtn.addEventListener('click', ()=>{ shakeT = 30; });
+  function tick(){
+    const disso = sl.value/100;
+    valEl.textContent = (disso*100|0);
+    // Ziehungskräfte: bei disso=0 zum Zentrum, bei disso=1 zum jeweiligen Cluster-Zentrum
+    nodes.forEach((n,i)=>{
+      const c1 = clusterCenters[0];
+      const c2 = clusterCenters[n.cluster];
+      const tx = c1.x*(1-disso) + c2.x*disso;
+      const ty = c1.y*(1-disso) + c2.y*disso;
+      n.vx += (tx-n.x)*.002;
+      n.vy += (ty-n.y)*.002;
+      if(shakeT>0){ n.vx += (Math.random()-.5)*.01; n.vy += (Math.random()-.5)*.01; }
+      n.vx *= .92; n.vy *= .92;
+      n.x += n.vx; n.y += n.vy;
+    });
+    if(shakeT>0) shakeT--;
+    draw(disso);
+    requestAnimationFrame(tick);
+  }
+  function draw(disso){
+    const w = c.width, h = c.height;
+    ctx.fillStyle = 'rgba(13,10,28,.4)';
+    ctx.fillRect(0,0,w,h);
+    // Kanten
+    edges.forEach(([a,b])=>{
+      const na = nodes[a], nb = nodes[b];
+      const sameCluster = na.cluster === nb.cluster;
+      const strength = sameCluster ? 1 : (1-disso);
+      if(strength<.02) return;
+      ctx.strokeStyle = `rgba(212,178,106,${strength*.4})`;
+      ctx.lineWidth = 1*devicePixelRatio;
+      ctx.beginPath();
+      ctx.moveTo(na.x*w, na.y*h);
+      ctx.lineTo(nb.x*w, nb.y*h);
+      ctx.stroke();
+    });
+    // Knoten
+    nodes.forEach(n=>{
+      const r = n.isEgo ? 10*devicePixelRatio : 4*devicePixelRatio;
+      ctx.fillStyle = n.isEgo ? '#d4b26a' : ['#7ec8ff','#b088ff','#ff8fb1','#a0e8a0','#ffcf8b'][n.cluster];
+      ctx.beginPath(); ctx.arc(n.x*w, n.y*h, r, 0, Math.PI*2); ctx.fill();
+      if(n.isEgo){
+        ctx.strokeStyle = 'rgba(255,255,255,.6)';
+        ctx.lineWidth = 2*devicePixelRatio;
+        ctx.stroke();
+      }
+    });
+    // Labels bei hoher Dissoziation
+    if(disso>.5){
+      ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+      ctx.textAlign='center';
+      const labels = ['ICH','Daimon A','Daimon B','Daimon C','Daimon D'];
+      clusterCenters.forEach((cc,i)=>{
+        ctx.fillStyle = `rgba(232,228,245,${(disso-.5)*2})`;
+        ctx.fillText(labels[i], cc.x*w, cc.y*h - 30*devicePixelRatio);
+      });
+    }
+  }
+  tick();
+})();
+
+/* =============================================================
+   4a. EIGENMODEN EINER SAITE
+   ============================================================= */
+(function(){
+  const c = document.getElementById('stringCanvas');
+  const ctx = c.getContext('2d');
+  const mSl = document.getElementById('modeSlider');
+  const aSl = document.getElementById('ampSlider');
+  const mVal = document.getElementById('modeVal');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; }
+  resize(); window.addEventListener('resize', resize);
+  let t = 0;
+  function draw(){
+    t += .04;
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    const n = parseInt(mSl.value);
+    const amp = aSl.value/100;
+    mVal.textContent = n;
+    // Ruhende Referenzlinie
+    ctx.strokeStyle = 'rgba(212,178,106,.15)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(40*devicePixelRatio, h/2); ctx.lineTo(w-40*devicePixelRatio, h/2); ctx.stroke();
+    ctx.setLineDash([]);
+    // Saite
+    ctx.strokeStyle = '#d4b26a';
+    ctx.lineWidth = 2.5*devicePixelRatio;
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){
+      const x = i/200;
+      const y = amp * Math.sin(n*Math.PI*x) * Math.sin(t*(1+n*.3));
+      const px = 40*devicePixelRatio + x*(w-80*devicePixelRatio);
+      const py = h/2 - y*h*.35;
+      if(i===0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    // Knoten (Nulldurchgänge)
+    for(let k=0;k<=n;k++){
+      const x = k/n;
+      const px = 40*devicePixelRatio + x*(w-80*devicePixelRatio);
+      ctx.fillStyle = '#7ec8ff';
+      ctx.beginPath(); ctx.arc(px, h/2, 4*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    }
+    // Endpunkte
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(40*devicePixelRatio, h/2, 6*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w-40*devicePixelRatio, h/2, 6*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(200,200,220,.6)';
+    ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='center';
+    ctx.fillText(`Archetyp Nr. ${n}`, w/2, h - 15*devicePixelRatio);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* =============================================================
+   4b. KRISTALLGITTER
+   ============================================================= */
+(function(){
+  const c = document.getElementById('crystalCanvas');
+  const ctx = c.getContext('2d');
+  const sl = document.getElementById('crystSlider');
+  const resetBtn = document.getElementById('crystReset');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  sl.addEventListener('input', draw);
+  resetBtn.addEventListener('click', ()=>{ sl.value = 0; draw(); });
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    const growth = sl.value/100;
+    // Hexagonales Gitter
+    const size = 22*devicePixelRatio;
+    const rows = 8, cols = 12;
+    const offsetX = (w - cols*size*1.5)/2;
+    const offsetY = (h - rows*size*Math.sqrt(3))/2;
+    const cells = [];
+    for(let r=0;r<rows;r++) for(let q=0;q<cols;q++){
+      const x = offsetX + q*size*1.5;
+      const y = offsetY + r*size*Math.sqrt(3) + (q%2)*size*Math.sqrt(3)/2;
+      cells.push({x,y,r,q});
+    }
+    // Zentrum bestimmen für Wachstum vom Zentrum aus
+    const cx = w/2, cy = h/2;
+    cells.forEach(cell=>{
+      const d = Math.hypot(cell.x-cx, cell.y-cy);
+      const maxD = Math.hypot(w/2, h/2);
+      const filled = (1-d/maxD) < growth;
+      // Leeres Gitter
+      ctx.strokeStyle = 'rgba(126,200,255,.25)';
+      ctx.lineWidth = 1*devicePixelRatio;
+      hex(cell.x, cell.y, size*.9, false);
+      if(filled){
+        ctx.fillStyle = `rgba(212,178,106,${.4 + .5*Math.random()})`;
+        hex(cell.x, cell.y, size*.85, true);
+      }
+    });
+    function hex(x,y,s,fill){
+      ctx.beginPath();
+      for(let i=0;i<6;i++){
+        const a = i*Math.PI/3;
+        const px = x + s*Math.cos(a), py = y + s*Math.sin(a);
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath();
+      if(fill) ctx.fill(); else ctx.stroke();
+    }
+    ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='center';
+    ctx.fillStyle = 'rgba(200,200,220,.6)';
+    ctx.fillText(growth<.05?'Nur Gitter (Archetyp)':growth<.95?'Gitter füllt sich (Erfahrung nimmt Form an)':'Vollendeter Kristall (archetypisches Bild)', w/2, h-10*devicePixelRatio);
+  }
+  draw();
+})();
+
+/* =============================================================
+   4c. TRAUM VOM SCHLAMM-MONSTER
+   ============================================================= */
+(function(){
+  const c = document.getElementById('dreamCanvas');
+  const ctx = c.getContext('2d');
+  const info = document.getElementById('dreamInfo');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  const elements = [
+    {x:.15,y:.7,r:60,glyph:'🌊',label:'Meer',
+     mean:'Meer = kollektives Unbewusstes. Tief, weit, verborgen, allen gemeinsam. Aus ihm steigt das Monster.'},
+    {x:.35,y:.55,r:75,glyph:'👹',label:'Schlamm-Monster',
+     mean:'Der kollektive Schatten. Instinktiv, gierig, unreflektiert. Verschlingt alles auf seinem Weg — Bild unseres blinden Ressourcen-Verzehrs.'},
+    {x:.6,y:.6,r:55,glyph:'☀️',label:'Land / Sonne',
+     mean:'Sonne = Bewusstsein. Land = das Reich des Ichs. Als das Monster aus dem Meer ans Land tritt, wird der Schatten sichtbar.'},
+    {x:.75,y:.4,r:60,glyph:'🔬',label:'Labor',
+     mean:'Symbol für Reflexion, Vernunft, methodische Selbst-Erforschung. Zufluchtsort — aber nur vorübergehend sicher.'},
+    {x:.55,y:.3,r:50,glyph:'📝',label:'Prüfung',
+     mean:'Die Prüfung, die man sich selbst wählt. Botschaft: du darfst nach deiner eigenen Natur gehen, statt fremde Erwartungen zu erfüllen.'},
+    {x:.85,y:.7,r:55,glyph:'👶',label:'Kind',
+     mean:'Kind-Archetyp: Zukunftspotenzial, Wachstum. Es zu retten heißt: dem Herz folgen, auch wenn der Kopf abrät.'},
+  ];
+  let hovered = null;
+  c.addEventListener('click',(e)=>{
+    const rect = c.getBoundingClientRect();
+    const mx = (e.clientX-rect.left)/rect.width;
+    const my = (e.clientY-rect.top)/rect.height;
+    hovered = null;
+    elements.forEach(el=>{
+      const d = Math.hypot((el.x-mx)*c.offsetWidth,(el.y-my)*c.offsetHeight);
+      if(d < el.r) hovered = el;
+    });
+    if(hovered) info.innerHTML = `<b>${hovered.label}:</b> ${hovered.mean}`;
+    draw();
+  });
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    // Hintergrund: Meer unten, Land oben
+    const grd = ctx.createLinearGradient(0,0,0,h);
+    grd.addColorStop(0,'#1a1230');
+    grd.addColorStop(.5,'#2a1e50');
+    grd.addColorStop(1,'#0d1a3a');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,w,h);
+    // Assoziative Linien
+    ctx.strokeStyle = 'rgba(212,178,106,.15)';
+    ctx.lineWidth = 1*devicePixelRatio;
+    for(let i=0;i<elements.length;i++) for(let j=i+1;j<elements.length;j++){
+      const a=elements[i], b=elements[j];
+      ctx.beginPath(); ctx.moveTo(a.x*w,a.y*h); ctx.lineTo(b.x*w,b.y*h); ctx.stroke();
+    }
+    elements.forEach(el=>{
+      const isHov = el===hovered;
+      const rad = el.r*devicePixelRatio*(isHov?1.15:1);
+      const glow = ctx.createRadialGradient(el.x*w, el.y*h, 0, el.x*w, el.y*h, rad);
+      glow.addColorStop(0, isHov?'rgba(212,178,106,.4)':'rgba(126,200,255,.2)');
+      glow.addColorStop(1,'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(el.x*w, el.y*h, rad, 0, Math.PI*2); ctx.fill();
+      ctx.font = `${40*devicePixelRatio}px serif`;
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(el.glyph, el.x*w, el.y*h);
+      ctx.font = `${12*devicePixelRatio}px Helvetica Neue`;
+      ctx.fillStyle = isHov?'#d4b26a':'rgba(200,200,220,.5)';
+      ctx.fillText(el.label, el.x*w, el.y*h + el.r*devicePixelRatio*.75);
+    });
+  }
+  draw();
+})();
+
+/* =============================================================
+   5. KAUSALITÄT — Plotly Bar-Chart
+   ============================================================= */
+(function(){
+  const sel = document.getElementById('causalScenario');
+  const btn = document.getElementById('causalRun');
+  function runExperiment(scenario){
+    const N = 1000;
+    let bWithA = 0, bWithoutA = 0;
+    for(let i=0;i<N;i++){
+      let A, B;
+      if(scenario==='cause'){
+        A = Math.random()<.5;
+        B = A ? (Math.random()<.95) : (Math.random()<.05);
+        if(A) bWithA += B?1:0; else bWithoutA += B?1:0;
+      } else if(scenario==='common'){
+        const C = Math.random()<.5;
+        A = C ? (Math.random()<.9) : (Math.random()<.1);
+        B = C ? (Math.random()<.9) : (Math.random()<.1);
+        if(A) bWithA += B?1:0; else bWithoutA += B?1:0;
+      } else if(scenario==='coincidence'){
+        A = Math.random()<.5;
+        B = Math.random()<.5;
+        if(A) bWithA += B?1:0; else bWithoutA += B?1:0;
+      } else if(scenario==='sync'){
+        // Bedeutungsvolle Ähnlichkeit ohne kausalen Zusammenhang
+        // aber mit erhöhter Korrelation zu bestimmten Zeiten
+        const archetype = Math.sin(i*.05) > .7;
+        A = archetype ? (Math.random()<.9) : (Math.random()<.3);
+        B = archetype ? (Math.random()<.9) : (Math.random()<.3);
+        if(A) bWithA += B?1:0; else bWithoutA += B?1:0;
+      }
+    }
+    // Normalisierung
+    const nA = N/2, nNotA = N/2;
+    return {
+      pBgivenA: bWithA/nA,
+      pBgivenNotA: bWithoutA/nNotA
+    };
+  }
+  function draw(){
+    const scenario = sel.value;
+    const r = runExperiment(scenario);
+    const data = [{
+      x: ['P(B | A)', 'P(B | nicht A)'],
+      y: [r.pBgivenA, r.pBgivenNotA],
+      type: 'bar',
+      marker: { color: ['#d4b26a', '#7ec8ff'] },
+      text: [r.pBgivenA.toFixed(2), r.pBgivenNotA.toFixed(2)],
+      textposition: 'outside',
+      textfont: { color: '#fff', size: 14 }
+    }];
+    const explanations = {
+      cause: '<b>Echte Kausalität:</b> Ohne A verschwindet B fast völlig. Kontrafaktische Abhängigkeit ist gegeben.',
+      common: '<b>Gemeinsame Ursache:</b> A und B korrelieren, aber A verursacht B nicht. Beide hängen von C ab.',
+      coincidence: '<b>Zufall:</b> B tritt unabhängig von A auf. Keine Struktur.',
+      sync: '<b>Synchronizität:</b> A und B korrelieren durch verborgenes archetypisches Muster — nicht kausal, nicht zufällig.'
+    };
+    const layout = {
+      title: { text: explanations[scenario], font: { color: '#e8e4f5', size: 13 } },
+      paper_bgcolor: '#0d0a1c', plot_bgcolor: '#0d0a1c',
+      font: { color: '#e8e4f5', family: 'Helvetica Neue' },
+      yaxis: { range: [0, 1.1], gridcolor: '#2a2340', title: 'Wahrscheinlichkeit für B' },
+      xaxis: { gridcolor: '#2a2340' },
+      margin: { t: 60, r: 20, b: 60, l: 60 }
+    };
+    Plotly.newPlot('causalPlot', data, layout, {displayModeBar: false, responsive: true});
+  }
+  sel.addEventListener('change', draw);
+  btn.addEventListener('click', draw);
+  draw();
+})();
+
+/* =============================================================
+   6. SYNCHRONIZITÄT — Würfel mit verborgener Ordnung
+   ============================================================= */
+(function(){
+  const c = document.getElementById('syncCanvas');
+  const ctx = c.getContext('2d');
+  const orderSl = document.getElementById('syncOrder');
+  const nSl = document.getElementById('syncN');
+  const rollBtn = document.getElementById('syncRoll');
+  const orderVal = document.getElementById('syncOrderVal');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  let dice = [];
+  function rollDice(){
+    const N = parseInt(nSl.value);
+    const order = orderSl.value/100;
+    dice = [];
+    // Wähle eine "archetypische Phase" – z.B. sind alle Würfel gleicher Parität wahrscheinlicher
+    for(let i=0;i<N;i++){
+      let v;
+      // Innerhalb bestimmter "Zeitfenster" korrelieren die Würfe
+      const window_ = Math.floor(i/20);
+      const windowType = window_ % 2; // gerade oder ungerade Fenster
+      if(Math.random() < order){
+        // Folgt Muster: in geraden Fenstern eher hohe Zahlen, in ungeraden eher niedrige
+        v = windowType===0 ? Math.floor(Math.random()*3)+4 : Math.floor(Math.random()*3)+1;
+      } else {
+        v = Math.floor(Math.random()*6)+1;
+      }
+      dice.push(v);
+    }
+  }
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    orderVal.textContent = orderSl.value + '%';
+    if(dice.length===0) rollDice();
+    const N = dice.length;
+    const cols = Math.ceil(Math.sqrt(N*w/h));
+    const rows = Math.ceil(N/cols);
+    const cw = w/cols, ch = (h*.7)/rows;
+    const size = Math.min(cw,ch)*.8;
+    dice.forEach((v,i)=>{
+      const col = i%cols, row = Math.floor(i/cols);
+      const x = col*cw + cw/2, y = row*ch + ch/2 + h*.05;
+      // Würfelfarbe entsprechend Wert
+      const isHigh = v >= 4;
+      ctx.fillStyle = isHigh ? 'rgba(212,178,106,.7)' : 'rgba(126,200,255,.6)';
+      ctx.fillRect(x-size/2, y-size/2, size, size);
+      ctx.strokeStyle = 'rgba(255,255,255,.2)';
+      ctx.strokeRect(x-size/2, y-size/2, size, size);
+      // Punkte
+      const dots = getDicePattern(v);
+      ctx.fillStyle = '#fff';
+      dots.forEach(([dx,dy])=>{
+        ctx.beginPath();
+        ctx.arc(x + dx*size*.25, y + dy*size*.25, size*.06, 0, Math.PI*2);
+        ctx.fill();
+      });
+    });
+    // Globales Muster: Durchschnitt pro Fenster
+    ctx.fillStyle = '#d4b26a';
+    ctx.font = `${12*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='left';
+    ctx.fillText('Globales Muster (Durchschnitt pro Fenster):', 20*devicePixelRatio, h*.82);
+    const windowSize = 20;
+    const bars = [];
+    for(let i=0;i<N;i+=windowSize){
+      const slice = dice.slice(i, i+windowSize);
+      const avg = slice.reduce((a,b)=>a+b,0)/slice.length;
+      bars.push(avg);
+    }
+    const barW = (w-40*devicePixelRatio)/bars.length;
+    bars.forEach((v,i)=>{
+      const bh = ((v-1)/5) * h*.1;
+      const x = 20*devicePixelRatio + i*barW;
+      const y = h*.98 - bh;
+      ctx.fillStyle = v>3.5 ? '#d4b26a' : '#7ec8ff';
+      ctx.fillRect(x, y, barW-2*devicePixelRatio, bh);
+    });
+  }
+  function getDicePattern(v){
+    const p = {
+      1: [[0,0]],
+      2: [[-1,-1],[1,1]],
+      3: [[-1,-1],[0,0],[1,1]],
+      4: [[-1,-1],[1,-1],[-1,1],[1,1]],
+      5: [[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],
+      6: [[-1,-1],[1,-1],[-1,0],[1,0],[-1,1],[1,1]]
+    };
+    return p[v]||[];
+  }
+  orderSl.addEventListener('input', ()=>{ rollDice(); draw(); });
+  nSl.addEventListener('input', ()=>{ rollDice(); draw(); });
+  rollBtn.addEventListener('click', ()=>{ rollDice(); draw(); });
+})();
+
+/* =============================================================
+   6b. SKARABÄUS-SZENE
+   ============================================================= */
+(function(){
+  const c = document.getElementById('scarabCanvas');
+  const ctx = c.getContext('2d');
+  const playBtn = document.getElementById('scarabPlay');
+  const resetBtn = document.getElementById('scarabReset');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(0); }
+  resize(); window.addEventListener('resize', resize);
+  let t = 0, playing = false;
+  function draw(progress){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    // Zwei Bahnen
+    ctx.strokeStyle = 'rgba(126,200,255,.2)';
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(0, h*.35); ctx.lineTo(w, h*.35); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, h*.75); ctx.lineTo(w, h*.75); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#7ec8ff'; ctx.font = `${12*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='left';
+    ctx.fillText('INNEN: Traum der Patientin', 15*devicePixelRatio, 20*devicePixelRatio);
+    ctx.fillText('AUSSEN: Der Käfer am Fenster', 15*devicePixelRatio, h*.55);
+    // Traum-Skarabäus (goldener Käfer im Kopf)
+    const dreamX = progress*w*.7 + w*.1;
+    ctx.font = `${32*devicePixelRatio}px serif`;
+    ctx.textAlign='center';
+    ctx.fillText('🪲', dreamX, h*.4);
+    ctx.font = `${10*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#d4b26a';
+    ctx.fillText('goldener Skarabäus (Wiedergeburt)', dreamX, h*.28);
+    // Realer Käfer
+    const beetleX = progress*w*.7 + w*.15;
+    ctx.font = `${32*devicePixelRatio}px serif`;
+    ctx.fillStyle = '#fff';
+    ctx.fillText('🪲', beetleX, h*.8);
+    ctx.font = `${10*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#7ec8ff';
+    ctx.fillText('Rosenkäfer (Wiedergeburts-Symbol)', beetleX, h*.92);
+    // Bei Zusammentreffen: Blitz
+    if(progress > .7){
+      const alpha = Math.min(1, (progress-.7)*4);
+      ctx.strokeStyle = `rgba(212,178,106,${alpha})`;
+      ctx.lineWidth = 2*devicePixelRatio;
+      ctx.setLineDash([6,4]);
+      ctx.beginPath(); ctx.moveTo(dreamX, h*.42); ctx.lineTo(beetleX, h*.78); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = `${14*devicePixelRatio}px Helvetica Neue`;
+      ctx.fillStyle = `rgba(212,178,106,${alpha})`;
+      ctx.textAlign='center';
+      ctx.fillText('★ Bedeutungsvolle Koinzidenz ★', w/2, h*.6);
+      ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+      ctx.fillStyle = `rgba(232,228,245,${alpha})`;
+      ctx.fillText('Selber Archetyp (Wiedergeburt) — innen und außen zugleich', w/2, h*.66);
+    }
+  }
+  function animate(){
+    if(!playing) return;
+    t += .008;
+    if(t>=1){ t = 1; playing = false; }
+    draw(t);
+    requestAnimationFrame(animate);
+  }
+  playBtn.addEventListener('click', ()=>{ if(!playing){ playing=true; if(t>=1) t=0; animate(); } });
+  resetBtn.addEventListener('click', ()=>{ playing=false; t=0; draw(0); });
+})();
+
+/* =============================================================
+   7. WIGNER — Gauß-Kurve mit π
+   ============================================================= */
+(function(){
+  const sl = document.getElementById('sigmaSlider');
+  const val = document.getElementById('sigmaVal');
+  function draw(){
+    const sigma = sl.value/100;
+    val.textContent = sigma.toFixed(2);
+    const xs = [], ys = [];
+    for(let x=-4; x<=4; x+=.05){
+      xs.push(x);
+      ys.push( (1/(sigma*Math.sqrt(2*Math.PI))) * Math.exp(-x*x/(2*sigma*sigma)) );
+    }
+    const data = [{
+      x: xs, y: ys, type:'scatter', mode:'lines',
+      line: { color: '#d4b26a', width: 3 },
+      fill: 'tozeroy', fillcolor: 'rgba(212,178,106,.15)',
+      name: 'Gauß-Verteilung'
+    }];
+    const layout = {
+      title: { text: `f(x) = (1 / (σ·√(2π))) · e^(-x²/(2σ²)) &nbsp;&nbsp; — π ist überall drin!`, font: { color:'#e8e4f5', size:12 } },
+      paper_bgcolor: '#0d0a1c', plot_bgcolor: '#0d0a1c',
+      font: { color: '#e8e4f5', family: 'Helvetica Neue' },
+      xaxis: { gridcolor: '#2a2340', title: 'x', zerolinecolor:'#3a3350' },
+      yaxis: { gridcolor: '#2a2340', title: 'Dichte', zerolinecolor:'#3a3350' },
+      margin: { t: 50, r: 20, b: 50, l: 60 },
+      showlegend: false,
+      annotations: [{
+        x: 0, y: 1/(sigma*Math.sqrt(2*Math.PI)),
+        text: `π taucht auf in: Statistik · Wellen · Quantenphysik · Bevölkerungsdynamik`,
+        showarrow: false, yshift: 20,
+        font: { color: '#b088ff', size: 11 }
+      }]
+    };
+    Plotly.newPlot('wignerPlot', data, layout, {displayModeBar:false, responsive:true});
+  }
+  sl.addEventListener('input', draw);
+  setTimeout(draw, 100);
+})();
+
+/* =============================================================
+   8. ONTOLOGIEN — vier Positionen
+   ============================================================= */
+(function(){
+  const c = document.getElementById('ontolCanvas');
+  const ctx = c.getContext('2d');
+  const info = document.getElementById('ontolInfo');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  const positions = [
+    { x:.2, y:.5, r:70, color:'#7ec8ff', label:'Materialismus',
+      info:'<b>Materialismus:</b> Nur Materie existiert wirklich. Bewusstsein ist ein Nebenprodukt neuronaler Prozesse. <br><span style="color:#ff8fb1">Schwäche:</span> Das harte Problem — niemand kann erklären, warum Materie sich anfühlt.' },
+    { x:.4, y:.5, r:70, color:'#ff8fb1', label:'Dualismus',
+      info:'<b>Dualismus (Descartes):</b> Geist und Materie sind zwei getrennte Substanzen. <br><span style="color:#ff8fb1">Schwäche:</span> Wie sollen sie interagieren? Wo ist die Schnittstelle?' },
+    { x:.6, y:.5, r:70, color:'#a0e8a0', label:'Panpsychismus',
+      info:'<b>Panpsychismus:</b> Bewusstsein ist überall in der Materie, auch in Elektronen. <br><span style="color:#ff8fb1">Schwäche:</span> Das Kombinationsproblem — wie summieren sich Mikro-Erlebnisse zu einem Ich?' },
+    { x:.8, y:.5, r:80, color:'#d4b26a', label:'Idealismus (Jung/Kastrup)',
+      info:'<b>Objektiver Idealismus:</b> Nur phänomenales Bewusstsein existiert wirklich. Materie ist die äußere Erscheinung geistiger Prozesse. <br><span style="color:#a0e8a0">Stärke:</span> Kein hartes Problem, kein Interaktions-Problem, kein Kombinationsproblem.' }
+  ];
+  let hovered = null;
+  c.addEventListener('click',(e)=>{
+    const rect = c.getBoundingClientRect();
+    const mx = (e.clientX-rect.left)/rect.width;
+    const my = (e.clientY-rect.top)/rect.height;
+    hovered = null;
+    positions.forEach(p=>{
+      const d = Math.hypot((p.x-mx)*c.offsetWidth,(p.y-my)*c.offsetHeight);
+      if(d < p.r) hovered = p;
+    });
+    if(hovered) info.innerHTML = hovered.info;
+    draw();
+  });
+  let t = 0;
+  function draw(){
+    t += .02;
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    // Titel-Zeile
+    ctx.font = `${13*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#9a94b8';
+    ctx.textAlign='center';
+    ctx.fillText('Was ist der ontologische Grund der Wirklichkeit?', w/2, 30*devicePixelRatio);
+    positions.forEach(p=>{
+      const isHov = p===hovered;
+      const pulse = 1 + .04*Math.sin(t + p.x*10);
+      const r = p.r*devicePixelRatio*pulse*(isHov?1.15:1);
+      const glow = ctx.createRadialGradient(p.x*w, p.y*h, 0, p.x*w, p.y*h, r*1.5);
+      glow.addColorStop(0, p.color + 'aa');
+      glow.addColorStop(.5, p.color + '40');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(p.x*w, p.y*h, r*1.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x*w, p.y*h, r, 0, Math.PI*2); ctx.fill();
+      ctx.font = `${12*devicePixelRatio}px Helvetica Neue`;
+      ctx.fillStyle = '#fff';
+      ctx.textAlign='center';
+      ctx.fillText(p.label, p.x*w, p.y*h + r + 20*devicePixelRatio);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* Hartes Problem – Kluft */
+(function(){
+  const c = document.getElementById('hardCanvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  let t = 0;
+  function draw(){
+    t += .03;
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    // Linke Seite: Neuron
+    const nx = w*.25, ny = h/2;
+    ctx.strokeStyle = '#7ec8ff'; ctx.lineWidth = 1.5*devicePixelRatio;
+    ctx.beginPath(); ctx.arc(nx, ny, 30*devicePixelRatio, 0, Math.PI*2); ctx.stroke();
+    for(let i=0;i<8;i++){
+      const a = i*Math.PI/4;
+      ctx.beginPath();
+      ctx.moveTo(nx+Math.cos(a)*30*devicePixelRatio, ny+Math.sin(a)*30*devicePixelRatio);
+      ctx.lineTo(nx+Math.cos(a)*70*devicePixelRatio, ny+Math.sin(a)*70*devicePixelRatio);
+      ctx.stroke();
+    }
+    // Puls entlang Axon
+    const pulseX = nx + 40 + (Math.sin(t)*.5+.5)*100;
+    ctx.fillStyle = '#7ec8ff';
+    ctx.beginPath(); ctx.arc(pulseX*devicePixelRatio/devicePixelRatio, ny, 4*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#7ec8ff';
+    ctx.textAlign='center';
+    ctx.fillText('Neuron feuert (physikalisch messbar)', nx, h - 15*devicePixelRatio);
+    // Kluft
+    ctx.fillStyle = '#ff8fb1';
+    ctx.font = `${14*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='center';
+    for(let i=0;i<20;i++){
+      const gx = w*.4 + (w*.2)*Math.random();
+      const gy = h*.2 + h*.6*Math.random();
+      ctx.fillStyle = `rgba(255,143,177,${.3+.5*Math.random()})`;
+      ctx.fillText('?', gx, gy);
+    }
+    ctx.fillStyle = '#ff8fb1';
+    ctx.fillText('D E R   A B G R U N D', w/2, h*.5);
+    // Rechte Seite: Rot-Erlebnis
+    const rx = w*.75;
+    const glow2 = ctx.createRadialGradient(rx, ny, 0, rx, ny, 60*devicePixelRatio);
+    glow2.addColorStop(0, '#ff3355');
+    glow2.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow2;
+    ctx.beginPath(); ctx.arc(rx, ny, 60*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#ff8fb1';
+    ctx.fillText('»Rot-Erlebnis« (qualitativ, unmessbar)', rx, h - 15*devicePixelRatio);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* =============================================================
+   9. THREE.JS — Jungs Kosmos
+   ============================================================= */
+(function(){
+  const container = document.getElementById('kosmosDiv');
+  const w = container.clientWidth, h = container.clientHeight;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, w/h, 0.1, 1000);
+  camera.position.set(0, 0, 30);
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(devicePixelRatio);
+  container.appendChild(renderer.domElement);
+
+  // Zentraler Kern = kollektives Unbewusstes / Gott
+  const coreGeo = new THREE.IcosahedronGeometry(4, 3);
+  const coreMat = new THREE.MeshBasicMaterial({
+    color: 0xd4b26a, wireframe: true, transparent: true, opacity: 0.4
+  });
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  scene.add(core);
+
+  const coreInner = new THREE.Mesh(
+    new THREE.SphereGeometry(2.5, 32, 32),
+    new THREE.MeshBasicMaterial({color: 0xffd88a, transparent:true, opacity:0.6})
+  );
+  scene.add(coreInner);
+
+  // Aura
+  const auraGeo = new THREE.SphereGeometry(6, 32, 32);
+  const auraMat = new THREE.MeshBasicMaterial({
+    color: 0xd4b26a, transparent: true, opacity: 0.08, side: THREE.BackSide
+  });
+  scene.add(new THREE.Mesh(auraGeo, auraMat));
+
+  // Alters (dissoziierte Bewusstseinszentren)
+  let alters = [];
+  function buildAlters(count, dissoRatio){
+    alters.forEach(a=>{ scene.remove(a.mesh); scene.remove(a.link); });
+    alters = [];
+    for(let i=0;i<count;i++){
+      const phi = Math.acos(-1 + 2*i/count);
+      const theta = Math.sqrt(count*Math.PI) * phi;
+      const r = 10 + dissoRatio*8;
+      const x = r*Math.sin(phi)*Math.cos(theta);
+      const y = r*Math.sin(phi)*Math.sin(theta);
+      const z = r*Math.cos(phi);
+      const color = [0x7ec8ff, 0xb088ff, 0xff8fb1, 0xa0e8a0, 0xffcf8b][i%5];
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.35, 16, 16),
+        new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.9})
+      );
+      mesh.position.set(x,y,z);
+      scene.add(mesh);
+      // Verbindungslinie zum Kern (bei niedriger Dissoziation stark)
+      const linkOpacity = Math.max(0, 0.5*(1-dissoRatio));
+      const linkGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(0,0,0), new THREE.Vector3(x,y,z)
+      ]);
+      const linkMat = new THREE.LineBasicMaterial({color, transparent:true, opacity:linkOpacity});
+      const link = new THREE.Line(linkGeo, linkMat);
+      scene.add(link);
+      alters.push({mesh, link, phi, theta, r, baseR:r});
+    }
+  }
+
+  // Sternfeld
+  const starGeo = new THREE.BufferGeometry();
+  const starPositions = [];
+  for(let i=0;i<800;i++){
+    starPositions.push((Math.random()-0.5)*200, (Math.random()-0.5)*200, (Math.random()-0.5)*200);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+  const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({color:0xffffff, size:0.15, transparent:true, opacity:0.5}));
+  scene.add(stars);
+
+  // Maus-Kontrolle
+  let mouseDown = false, mouseX = 0, mouseY = 0;
+  let rotX = 0.3, rotY = 0;
+  container.addEventListener('mousedown', e=>{ mouseDown = true; mouseX = e.clientX; mouseY = e.clientY; });
+  window.addEventListener('mouseup', ()=>{ mouseDown = false; });
+  window.addEventListener('mousemove', e=>{
+    if(!mouseDown) return;
+    rotY += (e.clientX - mouseX)*0.005;
+    rotX += (e.clientY - mouseY)*0.005;
+    mouseX = e.clientX; mouseY = e.clientY;
+  });
+  container.addEventListener('wheel', e=>{
+    e.preventDefault();
+    camera.position.z = Math.max(15, Math.min(60, camera.position.z + e.deltaY*0.02));
+  }, {passive:false});
+
+  const dissoSl = document.getElementById('kosmosDisso');
+  const nSl = document.getElementById('kosmosN');
+  const dissoValEl = document.getElementById('kosmosDissoVal');
+  function updateAlters(){
+    dissoValEl.textContent = dissoSl.value + '%';
+    buildAlters(parseInt(nSl.value), dissoSl.value/100);
+  }
+  dissoSl.addEventListener('input', updateAlters);
+  nSl.addEventListener('input', updateAlters);
+  updateAlters();
+
+  let t = 0;
+  function animate(){
+    t += 0.005;
+    core.rotation.x = t*0.5;
+    core.rotation.y = t*0.7;
+    coreInner.rotation.x = -t*0.3;
+    coreInner.rotation.y = -t*0.5;
+    // Alters pulsieren leicht
+    alters.forEach((a,i)=>{
+      const pulse = 1 + 0.1*Math.sin(t*3 + i*0.5);
+      a.mesh.scale.set(pulse, pulse, pulse);
+    });
+    scene.rotation.x = rotX;
+    scene.rotation.y = rotY + t*0.05;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  window.addEventListener('resize', ()=>{
+    const nw = container.clientWidth, nh = container.clientHeight;
+    camera.aspect = nw/nh; camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+  });
+})();
+
+/* =============================================================
+   10. GOTT ERWACHT
+   ============================================================= */
+(function(){
+  const c = document.getElementById('godCanvas');
+  const ctx = c.getContext('2d');
+  const sl = document.getElementById('godSlider');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; }
+  resize(); window.addEventListener('resize', resize);
+  let t = 0;
+  // Fest verteilte "Erwachungspunkte"
+  const points = [];
+  for(let i=0;i<200;i++){
+    points.push({
+      x: Math.random(), y: Math.random(),
+      threshold: Math.random(),
+      pulse: Math.random()*Math.PI*2
+    });
+  }
+  function draw(){
+    t += 0.02;
+    const w = c.width, h = c.height;
+    const evo = sl.value/100;
+    // Hintergrund: von Dunkel zu Licht
+    const bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h)/2);
+    bg.addColorStop(0, `rgba(${20+evo*100},${15+evo*80},${40+evo*100},1)`);
+    bg.addColorStop(1, '#05030d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,w,h);
+    // Zentrales "Ur-Bewusstsein"
+    const cx = w/2, cy = h/2;
+    const coreR = 40*devicePixelRatio * (0.8 + 0.2*Math.sin(t));
+    const coreG = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR*2);
+    coreG.addColorStop(0, `rgba(255,220,150,${0.3+evo*0.5})`);
+    coreG.addColorStop(1, 'transparent');
+    ctx.fillStyle = coreG;
+    ctx.beginPath(); ctx.arc(cx, cy, coreR*2, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#d4b26a';
+    ctx.beginPath(); ctx.arc(cx, cy, coreR*.5, 0, Math.PI*2); ctx.fill();
+    // Erwachungspunkte (wir)
+    points.forEach(p=>{
+      if(p.threshold < evo){
+        const alpha = Math.min(1, (evo - p.threshold)*3);
+        const flicker = 0.7 + 0.3*Math.sin(t*3 + p.pulse);
+        const r = 3*devicePixelRatio*flicker;
+        const glow = ctx.createRadialGradient(p.x*w, p.y*h, 0, p.x*w, p.y*h, r*4);
+        glow.addColorStop(0, `rgba(255,240,200,${alpha*flicker})`);
+        glow.addColorStop(1, 'transparent');
+        ctx.fillStyle = glow;
+        ctx.beginPath(); ctx.arc(p.x*w, p.y*h, r*4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.beginPath(); ctx.arc(p.x*w, p.y*h, r, 0, Math.PI*2); ctx.fill();
+        // Linie zum Zentrum, sehr subtil
+        ctx.strokeStyle = `rgba(212,178,106,${alpha*0.1})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x*w, p.y*h); ctx.stroke();
+      }
+    });
+    // Text
+    ctx.font = `${13*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#e8e4f5';
+    ctx.textAlign='center';
+    const label = evo < 0.1 ? 'Reines Sein — allwissend, aber ohne Selbstbezug'
+                : evo < 0.5 ? 'Erste Funken der Selbsterkenntnis'
+                : evo < 0.9 ? 'Der Kosmos beginnt, sich selbst zu erblicken'
+                : 'Gott erkennt sich in unzähligen Augen';
+    ctx.fillText(label, w/2, h - 20*devicePixelRatio);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* =============================================================
+   11. DER FALL
+   ============================================================= */
+(function(){
+  const c = document.getElementById('fallCanvas');
+  const ctx = c.getContext('2d');
+  const sl = document.getElementById('fallSlider');
+  const vP = document.getElementById('valPresence');
+  const vM = document.getElementById('valMeaning');
+  const vS = document.getElementById('valSuffering');
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  sl.addEventListener('input', draw);
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    const val = sl.value/100;
+    // Werte
+    const presence = 1 - val;
+    const meaning = val;
+    const suffering = val*val; // quadratisch — Leiden wächst schneller
+    vP.textContent = (presence*100|0)+'%';
+    vM.textContent = (meaning*100|0)+'%';
+    vS.textContent = (suffering*100|0)+'%';
+    // Zeitachse
+    const y0 = h*.55;
+    ctx.strokeStyle = 'rgba(212,178,106,.3)';
+    ctx.lineWidth = 1*devicePixelRatio;
+    ctx.beginPath(); ctx.moveTo(40*devicePixelRatio, y0); ctx.lineTo(w-40*devicePixelRatio, y0); ctx.stroke();
+    // "Jetzt"-Punkt in der Mitte
+    const nowX = w/2;
+    // Bei präsenzstarkem Zustand: konzentriert um "jetzt"
+    // Bei reflexivem Zustand: Ausdehnung nach Vergangenheit und Zukunft
+    const spread = val * (w*.4);
+    // Vergangenheit (links, blau)
+    for(let i=0;i<30;i++){
+      const x = nowX - spread * (i/30);
+      const alpha = val * (1-i/30);
+      ctx.fillStyle = `rgba(126,200,255,${alpha*.5})`;
+      ctx.beginPath(); ctx.arc(x, y0 - 20*devicePixelRatio*Math.sin(i*.3), 3*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    }
+    // Zukunft (rechts, rosa)
+    for(let i=0;i<30;i++){
+      const x = nowX + spread * (i/30);
+      const alpha = val * (1-i/30);
+      ctx.fillStyle = `rgba(255,143,177,${alpha*.5})`;
+      ctx.beginPath(); ctx.arc(x, y0 - 20*devicePixelRatio*Math.sin(i*.3+1), 3*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    }
+    // "Jetzt" Marker
+    ctx.fillStyle = '#d4b26a';
+    ctx.beginPath(); ctx.arc(nowX, y0, 8*devicePixelRatio + presence*8*devicePixelRatio, 0, Math.PI*2); ctx.fill();
+    // Labels
+    ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+    ctx.textAlign='center';
+    ctx.fillStyle = '#7ec8ff';
+    ctx.fillText('← Vergangenheit (Reue)', nowX - spread/2, y0 + 30*devicePixelRatio);
+    ctx.fillStyle = '#ff8fb1';
+    ctx.fillText('Zukunft (Angst) →', nowX + spread/2, y0 + 30*devicePixelRatio);
+    ctx.fillStyle = '#d4b26a';
+    ctx.font = `${13*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillText('JETZT', nowX, y0 - 25*devicePixelRatio);
+    // Titel
+    ctx.font = `${14*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = '#e8e4f5';
+    const status = val < 0.2 ? 'Vor dem Fall: reine Präsenz, keine Narrative, kein Leiden — aber auch kein Sinn'
+                 : val < 0.7 ? 'Der Sprung: Selbstreflexion entsteht — Sinn wird möglich, Leiden auch'
+                 : 'Nach dem Fall: reiche Bedeutungswelten — aber verloren zwischen Reue und Angst';
+    ctx.fillText(status, w/2, 30*devicePixelRatio);
+  }
+  draw();
+})();
+
+/* =============================================================
+   12. FINALE — BOGEN
+   ============================================================= */
+(function(){
+  const c = document.getElementById('arcCanvas');
+  const ctx = c.getContext('2d');
+  const stages = [
+    {id:'psyche', label:'Psyche', color:'#d4b26a'},
+    {id:'meta', label:'Meta-Bew.', color:'#7ec8ff'},
+    {id:'disso', label:'Dissoziation', color:'#b088ff'},
+    {id:'arch', label:'Archetypen', color:'#d4b26a'},
+    {id:'kausal', label:'Kausalität', color:'#7ec8ff'},
+    {id:'sync', label:'Synchronizität', color:'#ff8fb1'},
+    {id:'wigner', label:'Wigner', color:'#a0e8a0'},
+    {id:'ontol', label:'Ontologie', color:'#7ec8ff'},
+    {id:'idealism', label:'Idealismus', color:'#d4b26a'},
+    {id:'religion', label:'Gott & Sinn', color:'#ffcf8b'},
+    {id:'fall', label:'Der Fall', color:'#ff8fb1'},
+  ];
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
+  let hoveredIdx = -1;
+  c.addEventListener('mousemove', e=>{
+    const rect = c.getBoundingClientRect();
+    const mx = (e.clientX-rect.left)/rect.width;
+    hoveredIdx = Math.floor(mx * stages.length);
+    if(hoveredIdx<0||hoveredIdx>=stages.length) hoveredIdx = -1;
+    draw();
+  });
+  c.addEventListener('click', ()=>{
+    if(hoveredIdx>=0) document.getElementById(stages[hoveredIdx].id).scrollIntoView({behavior:'smooth'});
+  });
+  c.style.cursor = 'pointer';
+  function draw(){
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    // Bogen (Halbkreis)
+    const cx = w/2, cy = h*.9, r = h*.7;
+    ctx.strokeStyle = 'rgba(212,178,106,.2)';
+    ctx.lineWidth = 2*devicePixelRatio;
+    ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 2*Math.PI); ctx.stroke();
+    stages.forEach((s,i)=>{
+      const t = i/(stages.length-1);
+      const angle = Math.PI + t*Math.PI;
+      const x = cx + Math.cos(angle)*r;
+      const y = cy + Math.sin(angle)*r;
+      const isHov = i===hoveredIdx;
+      const rad = isHov ? 12*devicePixelRatio : 7*devicePixelRatio;
+      const glow = ctx.createRadialGradient(x,y,0,x,y,rad*3);
+      glow.addColorStop(0, s.color+'aa');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(x,y,rad*3,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = s.color;
+      ctx.beginPath(); ctx.arc(x,y,rad,0,Math.PI*2); ctx.fill();
+      ctx.font = `${(isHov?12:10)*devicePixelRatio}px Helvetica Neue`;
+      ctx.fillStyle = isHov?'#fff':'rgba(200,200,220,.7)';
+      ctx.textAlign='center';
+      // Labels alternieren oben/unten für Lesbarkeit
+      const ly = i%2===0 ? y - rad - 12*devicePixelRatio : y + rad + 18*devicePixelRatio;
+      ctx.fillText(s.label, x, ly);
+    });
+    ctx.font = `${11*devicePixelRatio}px Helvetica Neue`;
+    ctx.fillStyle = 'rgba(200,200,220,.5)';
+    ctx.textAlign='center';
+    ctx.fillText('Klicke ein Kapitel, um dorthin zu springen', w/2, h - 8*devicePixelRatio);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
