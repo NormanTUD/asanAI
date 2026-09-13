@@ -137,7 +137,7 @@
 	incl("Unexpected Capabilities of LLMs", "unexpected_capabilities");
 	incl("Appendix", "appendix");
 	incl("Software: Operating Systems, Programming Languages & the Abstraction Stack", "software");
-	incl("Formulary — Every Equation, One Place", "formulary");
+	#incl("Formulary — Every Equation, One Place", "formulary");
  ?>
 </div>
 </body>
