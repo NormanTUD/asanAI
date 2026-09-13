@@ -286,14 +286,14 @@ The interactive below holds a bag of six “tokens.” Drag the **shift** to reo
 
 Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:
 
-| Geometric move | The operation | The layer that is it | You met it in |
+| Geometric move | Operation | The layer | Met in |
 |---|---|---|---|
-| Inner product | measure alignment $\langle u, v\rangle$ | a neuron, similarity, attention weights | [Attention](attentionlab), [Embeddings](embeddinglab) |
-| Projection | best fit = shadow, ⟂ residual | least squares, low-rank approximation | [Loss](losslab) |
-| SVD | rotate → stretch → rotate | PCA, low-rank compression, LoRA | [Beyond LLMs](beyond_llms) |
-| Descent | $-\nabla$, ⟂ to the level sets | gradient descent, backprop | [Optimizer](optimizerlab), [Autodiff](autodiff) |
-| Convolution + DFT | sliding dot product | CNN filter, FFT | [Convolutions](visionlab), [Positional](positionalembeddingslab) |
-| Symmetry | invariant / equivariant | pooling, attention, weight sharing | [Convolutions](visionlab), [Mech. Interp.](mechanistic_interpretability) |
+| Inner product | alignment $\langle u,v\rangle$ | neuron, similarity, attention | [Attention](attentionlab), [Embeddings](embeddinglab) |
+| Projection | best fit = shadow, ⟂ | least squares, low-rank | [Loss](losslab) |
+| SVD | rotate → stretch → rotate | PCA, compression, LoRA | [Beyond LLMs](beyond_llms) |
+| Descent | $-\nabla$, ⟂ to level sets | descent, backprop | [Optimizer](optimizerlab), [Autodiff](autodiff) |
+| Conv + DFT | sliding dot product | CNN filter, FFT | [Vision](visionlab), [Positional](positionalembeddingslab) |
+| Symmetry | invariant / equivariant | pooling, attention, sharing | [Vision](visionlab), [Mech. Interp.](mechanistic_interpretability) |
 
 Notice what is *learned* and what is *fixed*. The geometry — that a dot product measures alignment, that the best fit is a shadow, that the steepest direction is the normal to the level sets, that convolution multiplies in frequency, that a symmetric operation must commute with its symmetry — is **fixed by mathematics**. What training learns are the *parameters inside* each move: which directions to stretch (the singular vectors), which kernel to slide (the filter weights), which per-item map to apply (the non-linearity). The shape of the operations is a prior; the data supplies the numbers. That is the working geometry of a neural network: a fixed set of geometric moves, parameterized, stacked, and trained.
 
