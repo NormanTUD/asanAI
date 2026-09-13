@@ -1020,7 +1020,7 @@ The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bost
 satisfy a property **P**, it becomes *easier* to elicit the opposite of **P**. His anti-croissant chatbot,
 he argues, is a **superposition** \cite[Superposition]{elhage2022superposition} of a croissant-hating
 **Luigi** and a croissant-loving **Waluigi**, their logits blended at every token. Three equivalent reasons
-force the waluigi to exist:
+force the Waluigi to exist:
 
 * **Rules are meant to be broken.** The model learns rules sit beside examples of their violation, and
 generalises that colocation to unseen rules — so defining a character who *always* obeys also locates one
