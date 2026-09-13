@@ -646,7 +646,10 @@ window.bibData = {
 	"condorcet1770": {
 		author: "Marie Jean Antoine Nicolas de Caritat, Marquis of Condorcet",
 		year: 1770,
-		title: "Mémoire sur le calcul intégral"
+		title: "Mémoire sur les équations aux différences partielles",
+		journal: "Histoire de l'Académie royale des sciences, année 1770 (Paris, 1773), pp. 151–178",
+		url: "https://gallica.bnf.fr/ark:/12148/bpt6k3568",
+		alternativetitle: "Condorcet, Mémoire sur les équations aux différences partielles (1770)"
 	},
 	"goodenough1980licoo2": {
 		title: "LixCoO2 (0<x⩽1): A new cathode material for batteries of high energy density",

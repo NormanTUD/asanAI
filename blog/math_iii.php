@@ -119,6 +119,28 @@ The **Universal Approximation Theorem** \cite[Cybenko, 1989]{cybenko1989} \cite[
 </div>
 
 <div class="md">
+## The integral and the closed integral
+
+Two more signs show up throughout this book, so it is worth learning them once. Both come from the **calculus**, which **Newton** and **Leibniz** invented independently in the 1660s to 1680s to turn "what is changing" into "what has accumulated."
+
+### The integral $\int$
+
+The integral $\int_a^b f(x)\,\mathrm{d}x$ **adds a quantity up continuously** over an interval. The picture: cut $[a,b]$ into $n$ thin slices of width $\Delta x$, replace $f$ in each slice by its height $f(x_i)$, and add up the little rectangles $\sum f(x_i)\,\Delta x$. As the slices get thinner and thinner ($n \to \infty$), this **Riemann sum** settles down to the exact area under the curve,
+
+$$\int_a^b f(x)\,\mathrm{d}x = \lim_{n\to\infty}\sum_{i=1}^{n} f(x_i)\,\Delta x .$$
+
+The sign $\int$ is a stretched Latin *s*, short for *summa* (sum); **Leibniz** introduced it in 1675 \cite{historyofmathematicalnotation}. The idea of finding areas by summing infinitely thin pieces is much older: **Archimedes** did it by the method of exhaustion, and **Cavalieri** by "indivisibles"; Newton and Leibniz turned it into a general calculation. The result that makes the integral *useful* is the **Fundamental Theorem of Calculus**: if $F'(x) = f(x)$ (so $F$ is an antiderivative of $f$), then
+
+$$\int_a^b f(x)\,\mathrm{d}x = F(b) - F(a).$$
+
+So you rarely take the limit by hand. You find an antiderivative and subtract its endpoint values. For example $\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_0^3 = 9 - 0 = 9$, since $(x^2)' = 2x$.
+
+### The closed integral $\oint$
+
+Put a small circle in the middle of the $\int$ and you get $\oint$, the **closed integral**. It means: integrate over a *closed* thing, a curve that returns to its starting point, or a closed surface. In physics it turns a local rule into a global total: the sum of a field all the way around a closed loop (its *circulation*), or the net flow of a field across a closed surface (its *flux*). Gauss's law, for instance, says the net outward flow of an electric field across a closed surface equals the charge inside, $\oint \mathbf{E}\cdot\mathrm{d}\mathbf{A} = Q/\varepsilon_0$. You will meet it again in [Geometry III](geometry_iii): the Gauss–Bonnet theorem sums all the curvature of a closed surface, $\oint_{M} K\,\mathrm{d}A = 2\pi\chi$, and the answer turns out to be pure topology.
+</div>
+
+<div class="md">
 ## Approximation vs. Exact Computation: When Each Wins
 
 | Task | Better with exact | Better with approximation |
