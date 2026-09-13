@@ -455,7 +455,7 @@ A **type** is a set with discipline: every object has exactly one type, and the 
 </div>
 
 <div class="md">
-### 2 · Prerequisite: homotopy — when are two paths "the same"?
+### Prerequisite: homotopy — when are two paths "the same"?
 
 Recall the core slogan: **types are spaces, terms are points, equalities are paths.** But *what* is a path, really? Two routes from $a$ to $b$ count as "the same" when you can **continuously deform** one into the other without lifting the endpoints. That is a **homotopy**. The slider below deforms a blue start-path into a purple target-path; the white curve in between is the homotopy at that instant. And here is the twist that makes the subject deep: in a space with a **hole**, some paths simply cannot be deformed into each other — the hole is an obstacle the deformation would have to pass through.
 </div>

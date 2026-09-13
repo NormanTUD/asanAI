@@ -7,6 +7,60 @@ window.bibData = {
 		alternativetitle: "HoTT as a foundation for AI"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Geometry II: A Working Geometry for AI  (geometry_ii.php)
+	 *  The working geometric toolkit — projection, SVD, descent,
+	 *  convolution/DFT, and symmetry/equivariance — each tied to AI.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"svd_wiki": {
+		title: "Singular value decomposition",
+		author: "Wikipedia",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Singular_value_decomposition",
+		alternativetitle: "Singular value decomposition (Wikipedia)"
+	},
+	"jacobi1842": {
+		title: "Sur la transformation des fonctions quadratiques des variables homogènes par des substitutions linéaires",
+		author: "Carl Gustav Jacob Jacobi",
+		year: 1842,
+		url: "https://en.wikipedia.org/wiki/Carl_Gustav_Jacobi",
+		alternativetitle: "Jacobi, reduction of quadratic forms (1842)"
+	},
+	"gray2006toeplitz": {
+		title: "Toeplitz and Circulant Matrices: A Review",
+		author: "Robert M. Gray",
+		year: 2006,
+		url: "https://www-ee.stanford.edu/~gray/toeplitz.pdf",
+		alternativetitle: "Gray, Toeplitz and Circulant Matrices (2006)"
+	},
+	"fourier1822": {
+		title: "Théorie analytique de la chaleur",
+		author: "Jean-Baptiste Joseph Fourier",
+		year: 1822,
+		url: "https://en.wikipedia.org/wiki/Th%C3%A9orie_analytique_de_la_chaleur",
+		alternativetitle: "Fourier, Analytical Theory of Heat (1822)"
+	},
+	"cooley1965fft": {
+		title: "An Algorithm for the Machine Calculation of Complex Fourier Coefficients",
+		author: "James W. Cooley, John W. Tukey",
+		year: 1965,
+		url: "https://en.wikipedia.org/wiki/Fast_Fourier_transform",
+		alternativetitle: "Cooley and Tukey, the FFT (1965)"
+	},
+	"zaheer2017deepsets": {
+		title: "Deep Sets",
+		author: "Manzil Zaheer, Satwik Kottur, Siamak Ravanbakhsh, Barnabás Póczos, Ruslan Salakhutdinov, Alexander Smola",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.06114",
+		alternativetitle: "Deep Sets (NeurIPS 2017)"
+	},
+	"mercerno1909": {
+		title: "Functions of positive and negative type, and their connection with the theory of integral equations",
+		author: "James Mercer",
+		year: 1909,
+		url: "https://en.wikipedia.org/wiki/Mercer%27s_theorem",
+		alternativetitle: "Mercer, positive-definite kernels (1909)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Geometry: History of Geometry  (geometry_i.php)
 	 *  Prehistoric → Babylonian / Egyptian / Indian / Chinese → Greek
 	 *  formalisation (Euclid) → Islamic / Early Modern → Topology &
