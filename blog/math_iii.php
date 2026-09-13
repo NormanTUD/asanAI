@@ -412,7 +412,7 @@ Modern AI is startlingly capable — and at the same time **opaque**, **brittle*
 <div class="hott-callout"><b>Youvan's question.</b> Can a mathematically deeper language — one that *knows* from the start how data objects, transformations, and equality are related — attack all three problems at the root?</div>
 
 <div class="md">
-### 1 · Prerequisite: what a type is, and programs-as-proofs
+### Prerequisite: what a type is, and programs-as-proofs
 
 A **type** is a set with discipline: every object has exactly one type, and the language checks — *for you, before anything runs* — that you never feed a function the wrong kind of input. The left-hand widget lets you pick a value and a function and watch that check pass or fail. The right-hand one is the deeper trick (the **Curry–Howard correspondence**): in type theory a logical *statement* is itself a type, and a *proof* of it is a *program* of that type. That is why type theory is the natural home for verifying AI at all.
 </div>
