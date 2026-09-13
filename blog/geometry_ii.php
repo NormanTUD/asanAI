@@ -28,55 +28,55 @@ Each section ends with a hands-on plot. We do **not** re-teach what the earlier 
 </div>
 
 <div class="md">
-## I. The one operation: the inner product
+## The inner product
 
-Everything in a neural network is a vector, and everything a layer *does* is a measurement of how those vectors line up. That measurement is the **inner product** (dot product), and the formula that follows uses three signs worth learning before you read it. **$\langle u, v\rangle$** — angle brackets, read *“the inner product of u and v”* — is the modern notation for the dot product: the plain dot product is enough in $\mathbb{R}^n$ (and $\mathbb{R}$, the *blackboard-bold* letter, names the **real numbers**, so $\mathbb{R}^2$ is the plane and $\mathbb{R}^n$ is $n$-dimensional real space), but the angle brackets stand for the *general* inner product, which exists in any space equipped with one. Inside it, **$\sum$** (a capital **sigma**, read *“sum”*) means “add up everything beneath it,” and **$\lVert v \rVert$** (double vertical bars, read *“the norm of v”*) is the *length* of a vector — doubled, so it is not mistaken for the single bar $|v|$ of an ordinary number. Read the whole identity as “alignment = (one length) times (the other length) times (closeness to parallel).” The three faces are the same quantity:
+Everything in a neural network is a vector, and every layer *does* a measurement of how those vectors line up. That measurement is the **inner product** (dot product). Three signs appear in the formula that follows: **$\langle u, v\rangle$** (angle brackets) is the general inner product — the plain dot product suffices in $\mathbb{R}^n$, where $\mathbb{R}$ denotes the **real numbers** ($\mathbb{R}^2$ is the plane); **$\sum$** (sigma) means “sum”; and **$\lVert v \rVert$** (double bars) is the *length* of a vector. Read the identity as “alignment = (one length) × (the other length) × (closeness to parallel).” The three forms are the same quantity:
 
 $$
 \underbrace{\langle \mathbf{u}, \mathbf{v} \rangle}_{\substack{\text{“how aligned are} \\ u \text{ and } v\text{?”}} \;} \;=\; \underbrace{\sum_{i=1}^{n} u_i v_i}_{\text{sum of term-by-term agreements}} \;=\; \underbrace{\lVert \mathbf{u} \rVert \, \lVert \mathbf{v} \rVert \, \cos\theta}_{\text{lengths times their alignment } \theta}
 $$
 
-The third form is the one that matters. The inner product factors into *how long* each vector is and *how close to pointing the same way* they are. Point the same way: maximum. Perpendicular: exactly zero. Opposite: minimum. So a dot product is not really a multiplication — it is a **verdict on alignment**.
+The third form is what matters. The inner product splits into *how long* each vector is and *how close to parallel* they are: same direction is maximum, perpendicular is zero, opposite is minimum. A dot product is a **measure of alignment**.
 
-This single fact is the load-bearing wall of the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search is “find the vector with the largest inner product.” Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)). And cosine similarity — the inner product with the lengths divided out — is the “are these two embeddings about the same thing?” test that powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
+This fact drives the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search finds the vector with the largest inner product. Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)). Cosine similarity — the inner product with the lengths divided out — powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
 
 ### The Gram matrix: where similarity lives
 
-Now line up $k$ data vectors as the columns of a matrix $X \in \mathbb{R}^{n \times k}$ — the $\in$ (read *“in”*) says $X$ is one particular matrix in the set of all $n$-by-$k$ arrays of real numbers, i.e. $n$ rows and $k$ columns. Writing down their pairwise inner products needs one more sign, the superscript $^{\top}$ (read *“transpose,”* or just *“T”): transposing a matrix flips it over its main diagonal, so the entry in row $i$, column $j$ moves to row $j$, column $i$. That flip is exactly what $X^{\top}X$ exploits — it lets you take each column of $X$ (one data point) and dot it against every other. The result is the **Gram matrix**
+Line up $k$ data vectors as the columns of a matrix $X \in \mathbb{R}^{n \times k}$ ($n$ rows, $k$ columns). The superscript $^{\top}$ is the *transpose* — flipping a matrix over its main diagonal. $X^{\top}X$ dots each column of $X$ (one data point) against every other. The result is the **Gram matrix**
 
 $$
 G \;=\; \underbrace{X^{\top} X}_{\text{“all pairwise alignments at once”}} \qquad\qquad G_{ij} \;=\; \underbrace{\langle x_i, x_j \rangle}_{\text{“how much do data } i \text{ and } j \text{ agree?”}}
 $$
 
-Two things make $G$ more than a convenience. First, it is **always symmetric and positive semi-definite**: the diagonal holds $G_{ii} = \underbrace{\lVert x_i \rVert^2}_{\text{the squared length of point } i} \ge 0$, and for *any* coefficient vector $c$, $c^{\top} G c = \underbrace{\lVert Xc \rVert^2}_{\text{a squared length, so always } \ge 0} \ge 0$. That positivity is not an accident — it is the statement that the data fits inside a real space. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space, possibly infinite-dimensional — the whole reason kernel methods and the “kernel trick” work.)
+Two things matter. First, $G$ is **always symmetric and positive semi-definite**: the diagonal is $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for any vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space — the reason the “kernel trick” works.)
 
-Second, and this is the punchline for AI: **$G$ describes the geometry of the data without committing to any coordinates.** It records only *inner products* between the data, and inner products do not change under a rigid motion. Rotate every data point by the same rotation $R$ — a pure re-orientation in space — and every pairwise dot product is the same, so the Gram matrix is **exactly unchanged**:
+Second: **$G$ describes the data’s geometry without any coordinates.** It records only *inner products*, which are unchanged by a rigid motion. Rotate every data point by the same rotation $R$ and every pairwise dot product stays the same, so $G$ is **unchanged**:
 
 $$
 \underbrace{(RX)^{\top}(RX)}_{\text{the Gram matrix of the rotated data}} \;=\; X^{\top}\underbrace{R^{\top}R}_{\text{a rotation undoes itself }=\, I}\,X \;=\; \underbrace{X^{\top}X}_{\text{the original Gram matrix } G}
 $$
 
-Turn the whole point cloud around and nothing in $G$ moves: that is what it means for $G$ to be a coordinate-free description of the data. The statement is even more rigid — the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the shape of the data, its principal stretches, independent of every coordinate choice.
+Rotate the whole point cloud and nothing in $G$ moves — a coordinate-free description. Even more rigid: the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the data’s shape independent of coordinates.
 
-That last sentence is the seed of the entire chapter. Everything that follows is a geometric operation the network performs on those vectors, and here is the shape of each: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network is built to respect.
+That is the seed of the chapter. Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.
 </div>
 
 <div class="md">
-## II. Projection: the best fit is a shadow
+## Projection: the best fit is a shadow
 
-Suppose you do not know the answer, but you are told it *must* lie in a particular subspace $S$ — a line, a plane, or, in a network, the low-dimensional set of all outputs a layer can produce. Given a target point $p$ that does not lie in $S$, **which point $s \in S$ is closest to $p$?**
+Suppose the answer *must* lie in a subspace $S$ — a line, a plane, or the set of all outputs a layer can produce. Given a target point $p$ outside $S$, **which point $s \in S$ is closest to $p$?**
 
-The answer is the **orthogonal projection**, and its proof is one of the shortest and most useful in all of applied mathematics. Take any candidate $s \in S$ and split the distance to it into two pieces:
+The answer is the **orthogonal projection**. Take any candidate $s \in S$ and split the distance into two pieces:
 
 $$
 \underbrace{\lVert p - s \rVert^2}_{\text{squared distance from } p \text{ to your candidate } s} \;=\; \underbrace{\lVert p - p_S \rVert^2}_{\text{distance from } p \text{ to the whole subspace } S} \;+\; \underbrace{\lVert p_S - s \rVert^2}_{\text{extra you add by not picking } p_S}
 $$
 
-where $p_S$ is the projection of $p$ onto $S$. The cross term that would otherwise appear vanishes, because $p - p_S$ is *perpendicular to the entire subspace* while $s - p_S$ lies *inside* it, so their inner product is zero. The first term does not depend on $s$ at all; the second is non-negative and is zero exactly when $s = p_S$. So the closest point is **the shadow $p_S$**, and the error $p - p_S$ is the part of $p$ that sticks out, perpendicular to $S$.
+where $p_S$ is the projection of $p$ onto $S$. The cross term vanishes because $p - p_S$ is *perpendicular to* $S$ while $s - p_S$ lies *in* it. The first term does not depend on $s$; the second is non-negative and zero only when $s = p_S$. So the closest point is **the shadow $p_S$**, and the error $p - p_S$ is the part of $p$ sticking out, perpendicular to $S$.
 
-That “the error is perpendicular to the model” line is not a footnote — it is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of a low-rank approximation: truncating to a few directions gives the best shadow of your data in that lower-dimensional subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it is how to *read* a single neuron: its output $\langle w, x \rangle$ is a single number — how much of the input $x$ points along the direction $w$. Attention does the same move in reverse: project each key onto the query to get a similarity, then recombine the values (see [Attention](attentionlab)).
+“The error is perpendicular to the model” is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of low-rank approximation: truncating to a few directions gives the best shadow of the data in that subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it reads a single neuron: its output $\langle w, x \rangle$ is how much of the input $x$ points along $w$. Attention does the same move in reverse — project each key onto the query for a similarity, then recombine the values (see [Attention](attentionlab)).
 
-The picture is always: *a target, a family of allowed answers, keep the shadow.* The interactive below lets you move the target and tilt the subspace. Watch the residual stay perpendicular — that right angle *is* the proof — and watch the “explained” number behave exactly like the $R^2$ of a regression.
+The picture is always *a target, a family of allowed answers, keep the shadow.* In the interactive, move the target and tilt the subspace. The residual stays perpendicular — that right angle *is* the proof — and “explained” behaves like a regression’s $R^2$.
 </div>
 
 <!-- ─── Interactive: Orthogonal Projection ─── -->
@@ -98,9 +98,9 @@ The picture is always: *a target, a family of allowed answers, keep the shadow.*
 </div>
 
 <div class="md">
-## III. The SVD: the shape of any linear map
+## The SVD: the shape of any linear map
 
-A linear map $A:\mathbb{R}^n\to\mathbb{R}^m$ looks, in coordinates, like a scary matrix of mixed-up numbers. But there is a coordinate system in which it is dead simple. The **singular value decomposition** (SVD) says every such $A$ factors as
+A linear map $A:\mathbb{R}^n\to\mathbb{R}^m$ looks like a messy matrix of mixed-up numbers. But in one coordinate system it is simple. The **singular value decomposition** (SVD) says every such $A$ factors as
 
 $$
 A \;=\; \underbrace{U}_{\substack{\text{a rotation in} \\ \text{the output space}}} \;\underbrace{\Sigma}_{\substack{\text{pure stretches} \\ \text{along the axes}}} \;\underbrace{V^{\top}}_{\substack{\text{a rotation in} \\ \text{the input space}}}

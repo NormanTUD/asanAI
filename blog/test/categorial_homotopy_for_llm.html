@@ -1217,8 +1217,7 @@ temml.render('\\mathcal{L}(x,y) := P(y \\mid x) \\in [0,1] \\qquad \\mathcal{L}(
     for(let x=0;x<cv.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
     // title
     ctx.fillStyle='#f4eaff';ctx.font='bold 14px system-ui';ctx.textAlign='left';
-    ctx.fillText(quotiented?'Nach Lokalisierung: 𝓛[Σ⁻¹]
- — Paraphrasen kollabieren zu Homotopie-Klassen 🌹':'Vor Lokalisierung: 𝓛 — jede Paraphrase ein separates Objekt',20,25);
+    ctx.fillText(quotiented?'Nach Lokalisierung: 𝓛[Σ⁻¹] — Paraphrasen kollabieren zu Homotopie-Klassen 🌹':'Vor Lokalisierung: 𝓛 — jede Paraphrase ein separates Objekt',20,25);
     ctx.font='12px system-ui';ctx.fillStyle='#b7a6d4';
     ctx.fillText(quotiented?'Alle Sätze, deren "semantische Distanz" < Schwelle liegt, werden identifiziert.':'Klicke "🌹 Lokalisieren", um die Homotopie-Kategorie Ho𝓛 zu bilden.',20,45);
 
