@@ -876,9 +876,9 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
     {x:.85,y:.7,r:55,glyph:'👶',label:'Kind',
       mean:'Kind-Archetyp: Zukunftspotenzial, Wachstum. Es zu retten heißt: dem Herz folgen, auch wenn der Kopf abrät.'},
    ];
+  let hovered = null;
   function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
   resize(); window.addEventListener('resize', resize);
-  let hovered = null;
   c.addEventListener('click',(e)=>{
     const rect = c.getBoundingClientRect();
     const mx = (e.clientX-rect.left)/rect.width;
