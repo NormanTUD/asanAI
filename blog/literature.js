@@ -1,4 +1,11 @@
 window.bibData = {
+	"youvan2024": {
+		title: "Homotopy Type Theory: A New Foundation for AI Architecture",
+		author: "Douglas C. Youvan",
+		year: 2024,
+		url: "https://youvan.ai/pdf.php?file=Homotopy%20Type%20Theory%20-%20A%20New%20Foundation%20for%20AI%20Architecture.pdf",
+		alternativetitle: "HoTT as a foundation for AI"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Geometry: History of Geometry  (geometry_i.php)
 	 *  Prehistoric → Babylonian / Egyptian / Indian / Chinese → Greek
