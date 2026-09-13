@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Framespotting — Eine interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#101625; --panel:#151b2e; --panel2:#1c2440;
+  --ink:#e8ecf5; --dim:#8892b0; --accent:#64ffda; --warm:#ffb86b;
+  --danger:#ff6b6b; --good:#7fffa8; --violet:#c792ea; --blue:#82aaff;
+  --border:rgba(255,255,255,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;
+}
+.bg-gradient{
+  position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse at 20% 10%,rgba(100,255,218,0.08),transparent 50%),
+    radial-gradient(ellipse at 80% 60%,rgba(199,146,234,0.06),transparent 50%),
+    radial-gradient(ellipse at 50% 100%,rgba(130,170,255,0.05),transparent 50%),
+    var(--bg);
+}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+header.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;text-align:center;padding:60px 24px;position:relative;
+}
+.hero h1{
+  font-size:clamp(2.5rem,7vw,5.5rem);font-weight:800;letter-spacing:-0.03em;
+  background:linear-gradient(135deg,#64ffda 0%,#c792ea 50%,#82aaff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin-bottom:16px;line-height:1;
+}
+.hero .subtitle{font-size:clamp(1rem,1.8vw,1.25rem);color:var(--dim);max-width:640px;margin-bottom:40px}
+.hero .authors{font-size:0.9rem;color:var(--dim);opacity:0.7;margin-top:8px;letter-spacing:0.05em}
+.scroll-indicator{position:absolute;bottom:40px;color:var(--accent);animation:bounce 2s infinite;font-size:0.85rem;letter-spacing:0.2em}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+
+section{padding:80px 0;position:relative}
+.chapter-num{
+  display:inline-block;color:var(--accent);font-size:0.85rem;letter-spacing:0.3em;
+  text-transform:uppercase;margin-bottom:12px;font-weight:600;
+}
+h2{
+  font-size:clamp(1.8rem,4vw,3rem);font-weight:700;margin-bottom:20px;
+  letter-spacing:-0.02em;line-height:1.1;
+}
+h3{font-size:1.4rem;margin:32px 0 12px;color:var(--ink);font-weight:600}
+h4{font-size:1.05rem;margin:20px 0 8px;color:var(--accent);font-weight:600}
+p{color:#c5cad9;margin-bottom:14px;font-size:1.02rem}
+p.lead{font-size:1.15rem;color:var(--ink);margin-bottom:24px}
+.hint{font-size:0.88rem;color:var(--dim);font-style:italic;margin-top:8px}
+
+.panel{
+  background:linear-gradient(160deg,var(--panel),var(--panel2));
+  border:1px solid var(--border);border-radius:16px;padding:28px;
+  margin:24px 0;box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.panel-title{
+  font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:16px;font-weight:600;
+}
+.controls{display:flex;flex-wrap:wrap;gap:20px;margin:16px 0;align-items:center}
+.control{display:flex;flex-direction:column;gap:6px;min-width:160px;flex:1}
+.control label{font-size:0.85rem;color:var(--dim);display:flex;justify-content:space-between}
+.control label span.val{color:var(--accent);font-family:'SF Mono',Menlo,monospace;font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:4px;
+  background:rgba(255,255,255,0.1);border-radius:2px;outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:18px;height:18px;
+  background:var(--accent);border-radius:50%;cursor:pointer;
+  box-shadow:0 0 12px rgba(100,255,218,0.5);transition:transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{
+  width:18px;height:18px;background:var(--accent);border-radius:50%;
+  cursor:pointer;border:none;box-shadow:0 0 12px rgba(100,255,218,0.5);
+}
+button.btn{
+  background:var(--accent);color:#0a0e1a;border:none;padding:10px 20px;
+  border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;
+  transition:all 0.2s;letter-spacing:0.02em;
+}
+button.btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(100,255,218,0.3)}
+button.btn.secondary{background:transparent;border:1px solid var(--border);color:var(--ink)}
+button.btn.warn{background:var(--warm);color:#0a0e1a}
+button.btn.danger{background:var(--danger);color:#fff}
+
+canvas.viz{
+  display:block;width:100%;height:auto;background:rgba(0,0,0,0.3);
+  border-radius:10px;margin:12px 0;
+}
+.plot{width:100%;min-height:380px;background:transparent;border-radius:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+.frame-card{
+  background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.3);
+  border-radius:12px;padding:20px;position:relative;
+}
+.frame-card::before{
+  content:"⚠ FRAME";position:absolute;top:-10px;left:16px;
+  background:var(--danger);color:#fff;padding:2px 10px;border-radius:4px;
+  font-size:0.7rem;letter-spacing:0.15em;font-weight:700;
+}
+.reframe-card{
+  background:rgba(127,255,168,0.08);border:1px solid rgba(127,255,168,0.3);
+  border-radius:12px;padding:20px;position:relative;margin-top:24px;
+}
+.reframe-card::before{
+  content:"✓ REFRAME";position:absolute;top:-10px;left:16px;
+  background:var(--good);color:#0a0e1a;padding:2px 10px;border-radius:4px;
+  font-size:0.7rem;letter-spacing:0.15em;font-weight:700;
+}
+.toggle-group{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.toggle{
+  padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  border-radius:8px;cursor:pointer;font-size:0.85rem;color:var(--dim);
+  transition:all 0.2s;
+}
+.toggle.active{background:var(--accent);color:#0a0e1a;border-color:var(--accent);font-weight:600}
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:4px;
+  font-size:0.75rem;font-weight:600;margin:0 4px;
+}
+.badge.warm{background:rgba(255,184,107,0.2);color:var(--warm)}
+.badge.good{background:rgba(127,255,168,0.2);color:var(--good)}
+.badge.danger{background:rgba(255,107,107,0.2);color:var(--danger)}
+nav.toc{
+  position:fixed;top:20px;right:20px;background:rgba(21,27,46,0.95);
+  border:1px solid var(--border);border-radius:12px;padding:12px;z-index:100;
+  backdrop-filter:blur(10px);max-height:80vh;overflow-y:auto;
+  font-size:0.82rem;transition:transform 0.3s;
+}
+nav.toc.collapsed{transform:translateX(calc(100% - 44px))}
+nav.toc .toc-toggle{
+  position:absolute;left:8px;top:8px;background:transparent;border:none;
+  color:var(--accent);cursor:pointer;font-size:1.2rem;
+}
+nav.toc ol{list-style:none;padding-left:28px;padding-right:8px}
+nav.toc a{color:var(--dim);text-decoration:none;display:block;padding:4px 8px;border-radius:4px;transition:all 0.15s}
+nav.toc a:hover{color:var(--accent);background:rgba(100,255,218,0.08)}
+@media(max-width:900px){nav.toc{display:none}}
+
+.tipping-container{position:relative;height:220px;margin:20px 0}
+.stat-row{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0}
+.stat{
+  flex:1;min-width:120px;background:rgba(255,255,255,0.03);border-radius:10px;
+  padding:14px;text-align:center;border:1px solid var(--border);
+}
+.stat .num{font-size:1.6rem;font-weight:700;color:var(--accent);font-family:'SF Mono',Menlo,monospace}
+.stat .label{font-size:0.78rem;color:var(--dim);margin-top:4px;letter-spacing:0.05em}
+
+.spectrum-container{position:relative;padding:20px 0}
+.big-quote{
+  font-size:1.4rem;font-style:italic;color:var(--ink);border-left:3px solid var(--accent);
+  padding:12px 20px;margin:24px 0;background:rgba(100,255,218,0.03);border-radius:0 8px 8px 0;
+}
+.narrative-choice{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;
+}
+@media(max-width:700px){.narrative-choice{grid-template-columns:1fr}}
+.narr{
+  padding:20px;border-radius:12px;cursor:pointer;transition:all 0.25s;
+  border:2px solid transparent;background:rgba(255,255,255,0.03);
+}
+.narr:hover{transform:translateY(-4px)}
+.narr.progress{border-color:rgba(130,170,255,0.4)}
+.narr.doom{border-color:rgba(255,107,107,0.4)}
+.narr.coming{border-color:rgba(100,255,218,0.4)}
+.narr h4{margin-top:0}
+.narr.progress h4{color:var(--blue)}
+.narr.doom h4{color:var(--danger)}
+.narr.coming h4{color:var(--accent)}
+
+.epilogue{
+  text-align:center;padding:120px 20px 80px;
+  background:linear-gradient(180deg,transparent,rgba(100,255,218,0.05));
+}
+.epilogue h2{font-size:clamp(2rem,5vw,3.5rem);
+  background:linear-gradient(135deg,#64ffda,#c792ea);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+footer{padding:40px 20px;text-align:center;color:var(--dim);font-size:0.85rem;border-top:1px solid var(--border)}
+.section-divider{
+  height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:40px 0;
+}
+.katex{font-size:1.05em}
+.mono{font-family:'SF Mono',Menlo,monospace;color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="bg-gradient"></div>
+
+<nav class="toc" id="toc">
+  <button class="toc-toggle" onclick="document.getElementById('toc').classList.toggle('collapsed')">☰</button>
+  <ol>
+    <li><a href="#intro">Prolog</a></li>
+    <li><a href="#c1">1 · Der Rahmen sehen</a></li>
+    <li><a href="#c2">2 · Zoom-Regler</a></li>
+    <li><a href="#c3">3 · Exponentielles Wachstum</a></li>
+    <li><a href="#c4">4 · Der Seerosenteich</a></li>
+    <li><a href="#c5">5 · Flach vs. rund</a></li>
+    <li><a href="#c6">6 · Die Badewanne (CO₂)</a></li>
+    <li><a href="#c7">7 · Kipppunkte</a></li>
+    <li><a href="#c8">8 · Die sieben Rahmen</a></li>
+    <li><a href="#c9">9 · Cap &amp; Share</a></li>
+    <li><a href="#c10">10 · Spieltheorie</a></li>
+    <li><a href="#c11">11 · Das Regenbogen-Spektrum</a></li>
+    <li><a href="#c12">12 · Drei Geschichten</a></li>
+    <li><a href="#c13">Epilog</a></li>
+  </ol>
+</nav>
+
+<header class="hero">
+  <div class="chapter-num">Eine interaktive Reise durch</div>
+  <h1>Framespotting</h1>
+  <p class="subtitle">Wie unsichtbare Denkrahmen unser Bild der Welt formen — und was das mit Wachstum, Klima und unserer Zukunft zu tun hat.</p>
+  <div class="authors">Nach dem Buch von Laurence &amp; Alison Matthews (2013)</div>
+  <div class="scroll-indicator">↓ SCROLLEN</div>
+</header>
+
+<section id="intro">
+<div class="container">
+<div class="chapter-num">Prolog</div>
+<h2>Was ist ein „Frame"?</h2>
+<p class="lead">Ein Frame ist eine unsichtbare Brille, durch die wir die Welt betrachten. Er entscheidet, was wir <em>sehen</em> — und, viel wichtiger, was wir <em>nicht sehen</em>. Bevor wir tief einsteigen, spiele einmal selbst mit dem Zoom-Regler.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Der Zoom-Regler</div>
+<p>Du siehst eine Szene. Schiebe den Regler und beobachte, wie sich dein Urteil ändert — obwohl die Realität dieselbe bleibt.</p>
+<canvas id="zoomCanvas" class="viz" width="900" height="380"></canvas>
+<div class="controls">
+  <div class="control">
+    <label>Zoom-Stufe <span class="val" id="zoomVal">1.0×</span></label>
+    <input type="range" id="zoomSlider" min="1" max="10" step="0.1" value="1">
+  </div>
+</div>
+<p class="hint">Bei starkem Zoom siehst du ein Auto auf leerer Straße — Freiheit! Zoomst du heraus, siehst du Stau, Abgase, verdrängte Fußgänger. Beide Bilder sind wahr. Das Frame entscheidet, welches du wahrnimmst.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c1">
+<div class="container">
+<div class="chapter-num">Kapitel 1</div>
+<h2>Hinter den Kulissen: Wörter formen Realität</h2>
+<p>Das Buch beginnt mit einer harmlosen Frage: Warum wird ein Stammbaum immer <em>mit den Ahnen unten</em> gezeichnet? Warum sitzt Management <em>oben</em>? Warum ist Norden auf Karten <em>oben</em>? Diese Konventionen sind willkürlich — aber sie beeinflussen unser Denken.</p>
+
+<div class="panel">
+<div class="panel-title">Experiment · Das „oben/unten"-Frame</div>
+<p>Klicke, um den Stammbaum umzudrehen. Fühlt es sich anders an? Beobachte auch die Firmenhierarchie.</p>
+<div class="grid-2">
+  <div>
+    <canvas id="treeCanvas" class="viz" width="440" height="320"></canvas>
+    <button class="btn secondary" onclick="flipTree()">🔄 Umdrehen</button>
+  </div>
+  <div>
+    <canvas id="hierCanvas" class="viz" width="440" height="320"></canvas>
+    <button class="btn secondary" onclick="flipHier()">🔄 Umdrehen</button>
+  </div>
+</div>
+<p class="hint">„Oben = besser" ist ein tief eingebettetes Frame. Es beeinflusst subtil, wen wir respektieren, wen wir „nach oben schauen".</p>
+</div>
+
+<div class="frame-card">
+<h4>Beispiel: „Steuererleichterung"</h4>
+<p>Das Wort suggeriert: Steuer = Last, von der man Erleichterung braucht. Das Frame wurde gewählt — und schiebt dich unbewusst dazu, Steuern für <em>schlecht</em> zu halten.</p>
+</div>
+<div class="reframe-card">
+<h4>Alternative: „Mitgliedsbeitrag zur Gesellschaft"</h4>
+<p>Dasselbe Ding, anderes Frame. Nun denkt man an Straßen, Schulen, Polizei — Dinge, für die man <em>gerne</em> bezahlt.</p>
+</div>
+
+<div class="panel" style="margin-top:32px">
+<div class="panel-title">Berühmtes Beispiel · Die K-Bots</div>
+<p>Die Autoren erfinden eine Maschine namens „K-Bot", die tausende Menschen täglich tötet — und die Regierung tut nichts. Empörung? Bis man erfährt: <span class="mono">K-Bot = Auto</span>. Autos haben oft mehr Bewegungsenergie als eine Gewehrkugel.</p>
+<canvas id="kboxCanvas" class="viz" width="900" height="240"></canvas>
+<div class="controls">
+  <div class="control">
+    <label>Masse (kg) <span class="val" id="mVal">1500</span></label>
+    <input type="range" id="mSlider" min="500" max="3000" step="50" value="1500">
+  </div>
+  <div class="control">
+    <label>Geschwindigkeit (km/h) <span class="val" id="vVal">50</span></label>
+    <input type="range" id="vSlider" min="10" max="200" step="1" value="50">
+  </div>
+</div>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="eAuto">—</div><div class="label">Auto (kJ)</div></div>
+  <div class="stat"><div class="num">4</div><div class="label">Gewehrkugel (kJ)</div></div>
+  <div class="stat"><div class="num" id="ratio">—</div><div class="label">Faktor</div></div>
+</div>
+<p class="hint">Kinetische Energie <span class="mono">E = ½·m·v²</span>. Doppelte Geschwindigkeit → vierfache Energie. Das Frame „Auto = Freiheit" macht diese Tatsache unsichtbar.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c2">
+<div class="container">
+<div class="chapter-num">Kapitel 2</div>
+<h2>Der Zoom-Regler: Frag „Warum?"</h2>
+<p>Frames sind wie eine hineingezoomte Kamera: viele Details, aber wenig Kontext. Das Gegenmittel heißt <em>zoom out</em> — und die einfachste Technik dafür: wiederholt „Warum?" fragen. So findet man die <em>Wurzelursache</em> statt nur Symptome zu bekämpfen.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Die „5-Warum"-Kette</div>
+<p>Wähle ein Problem und klicke immer wieder auf „Warum?". Beobachte, wie sich mit jedem Schritt die Verantwortung verschiebt — vom Individuum hin zu Strukturen.</p>
+<div class="toggle-group" id="whyTopics">
+  <div class="toggle active" data-topic="obesity">Fettleibigkeit</div>
+  <div class="toggle" data-topic="crash">Autounfall</div>
+  <div class="toggle" data-topic="climate">Klimawandel</div>
+</div>
+<canvas id="whyCanvas" class="viz" width="900" height="360"></canvas>
+<div class="controls">
+  <button class="btn" onclick="whyStep()">Warum? →</button>
+  <button class="btn secondary" onclick="whyReset()">Zurücksetzen</button>
+</div>
+<p class="hint">Zoomst du in Symptomen fest, ist das Individuum schuld. Zoomst du heraus, siehst du Werbung, Regulierung, Lobbys. Frame = Schuldzuweisung.</p>
+</div>
+
+<div class="big-quote">„Framing ist Blaming. Und viel zu oft: uns."</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c3">
+<div class="container">
+<div class="chapter-num">Kapitel 3 · Prerequisite</div>
+<h2>Exponentielles Wachstum verstehen</h2>
+<p class="lead">Bevor wir zur Kern-These des Buches kommen (Wachstum ist begrenzt), müssen wir <em>wirklich fühlen</em>, was exponentielles Wachstum bedeutet. Unsere Intuition ist dafür nicht gemacht.</p>
+
+<div class="panel">
+<div class="panel-title">Mathematischer Kern</div>
+<p>Exponentielles Wachstum bedeutet: Zuwachs ist proportional zur aktuellen Größe. In Gleichungen:</p>
+<p style="text-align:center;margin:20px 0"><span id="expEq"></span></p>
+<p>mit Verdopplungszeit <span id="expT2"></span></p>
+</div>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Linear vs. Exponentiell</div>
+<p>Vergleiche lineares Wachstum (jeden Tag +konst.) mit exponentiellem Wachstum (jeden Tag ×konst.). Schalte zwischen linearer und logarithmischer Achse um.</p>
+<div id="expPlot" class="plot"></div>
+<div class="controls">
+  <div class="control">
+    <label>Wachstumsrate r (% pro Jahr) <span class="val" id="rVal">3.0</span></label>
+    <input type="range" id="rSlider" min="0.5" max="10" step="0.1" value="3">
+  </div>
+  <div class="control">
+    <label>Zeithorizont (Jahre) <span class="val" id="tVal">100</span></label>
+    <input type="range" id="tSlider" min="20" max="300" step="10" value="100">
+  </div>
+  <div class="control" style="flex:0 1 auto">
+    <label>Achse</label>
+    <div class="toggle-group">
+      <div class="toggle active" id="linTog">Linear</div>
+      <div class="toggle" id="logTog">Log</div>
+    </div>
+  </div>
+</div>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="dblT">—</div><div class="label">Verdopplungszeit (Jahre)</div></div>
+  <div class="stat"><div class="num" id="finalMult">—</div><div class="label">Endwert × Anfang</div></div>
+  <div class="stat"><div class="num" id="rule70">—</div><div class="label">70/r ≈</div></div>
+</div>
+<p class="hint">Faustregel: Verdopplungszeit ≈ 70 / r(%). Bei 3 % Wachstum verdoppelt sich alles alle ~23 Jahre. In 100 Jahren: fast 20-fach.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c4">
+<div class="container">
+<div class="chapter-num">Kapitel 4</div>
+<h2>Der Seerosenteich — „Immer später als du denkst"</h2>
+<p>Die klassische Parabel: Eine Seerose verdoppelt sich jeden Tag. Nach 30 Tagen bedeckt sie den ganzen Teich. An welchem Tag ist der Teich <em>halb</em> voll?</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Der Teich</div>
+<p>Klicke Play und beobachte. Rate zuerst: An welchem Tag ist der Teich halb bedeckt?</p>
+<canvas id="pondCanvas" class="viz" width="900" height="360"></canvas>
+<div class="controls">
+  <button class="btn" onclick="pondPlay()">▶ Play</button>
+  <button class="btn secondary" onclick="pondReset()">↺ Reset</button>
+  <div class="control">
+    <label>Tag <span class="val" id="dayVal">0</span> / 30</label>
+    <input type="range" id="daySlider" min="0" max="30" step="1" value="0">
+  </div>
+</div>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="coverStat">0%</div><div class="label">Bedeckung</div></div>
+  <div class="stat"><div class="num" id="daysLeft">30</div><div class="label">Tage bis voll</div></div>
+</div>
+<p class="hint">Tag 25: kaum sichtbar (3 %). Tag 28: noch nur 12 %. Tag 29: 50 %! Tag 30: alles voll. <strong>Genau ein Tag Vorwarnung.</strong> Genau so verhalten sich viele planetare Probleme.</p>
+</div>
+
+<div class="big-quote">„Nur weil etwas langsam ist, heißt es nicht, dass es nicht dringend ist."</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c5">
+<div class="container">
+<div class="chapter-num">Kapitel 5 · Prerequisite</div>
+<h2>Flache vs. runde Erde — die Geometrie-Analogie</h2>
+<p>Die Autoren nutzen ein tiefes Bild: Klassische Ökonomie ist wie Schulgeometrie — sie <em>tut so</em>, als sei die Welt flach. Auf kleinem Maßstab funktioniert das. Auf planetarem Maßstab bricht es zusammen.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Wenn parallele Linien sich treffen</div>
+<p>Zeichne ein Dreieck auf einer Ebene: Winkelsumme = 180°. Auf einer Kugel: mehr als 180°. Drehe die Kugel, ändere die Größe des Dreiecks.</p>
+<div id="sphere3d" style="width:100%;height:420px;background:rgba(0,0,0,0.4);border-radius:10px"></div>
+<div class="controls">
+  <div class="control">
+    <label>Dreiecks-Größe <span class="val" id="triVal">30°</span></label>
+    <input type="range" id="triSlider" min="5" max="90" step="1" value="30">
+  </div>
+</div>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="triSum">—</div><div class="label">Winkelsumme (°)</div></div>
+  <div class="stat"><div class="num">180°</div><div class="label">Flach (Euklid)</div></div>
+  <div class="stat"><div class="num" id="triExcess">—</div><div class="label">Überschuss</div></div>
+</div>
+<p class="hint">Je größer das Dreieck relativ zur Kugel, desto stärker weicht die Geometrie ab. Übertragen: Je größer die Menschheit relativ zum Planeten, desto katastrophaler werden „flache" Wirtschaftsmodelle.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c6">
+<div class="container">
+<div class="chapter-num">Kapitel 6 · Prerequisite</div>
+<h2>Die Badewanne: Bestand und Fluss</h2>
+<p class="lead">Das wichtigste mentale Modell des Buches — und das Konzept, das den meisten Menschen fehlt: <strong>Stock-and-Flow-Dynamik</strong>. CO₂ in der Atmosphäre ist wie Wasser in einer Badewanne.</p>
+
+<div class="panel">
+<div class="panel-title">Mathematik dahinter</div>
+<p>Sei <span id="bathEq1"></span> die Menge CO₂ in der Atmosphäre. Dann gilt:</p>
+<p style="text-align:center;margin:20px 0"><span id="bathEq2"></span></p>
+<p>Wichtig: Auch wenn Zufluss <em>sinkt</em>, steigt der Pegel weiter — solange Zufluss > Abfluss. Um den Pegel zu <em>senken</em>, muss Zufluss < Abfluss werden.</p>
+</div>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Die CO₂-Badewanne</div>
+<p>Drehe an den Wasserhähnen (natürliche + fossile Emissionen) und am Abfluss (Ozean & Biosphäre). Beobachte den ppm-Pegel.</p>
+<canvas id="bathCanvas" class="viz" width="900" height="420"></canvas>
+<div class="controls">
+  <div class="control">
+    <label>Natürlicher Zufluss (GtC/Jahr) <span class="val" id="natVal">0</span></label>
+    <input type="range" id="natSlider" min="0" max="10" step="0.5" value="0">
+  </div>
+  <div class="control">
+    <label>Fossile Emissionen (GtC/Jahr) <span class="val" id="fosVal">10</span></label>
+    <input type="range" id="fosSlider" min="0" max="15" step="0.5" value="10">
+  </div>
+  <div class="control">
+    <label>Senke (GtC/Jahr) <span class="val" id="sinkVal">5</span></label>
+    <input type="range" id="sinkSlider" min="0" max="15" step="0.5" value="5">
+  </div>
+</div>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="ppmVal">400</div><div class="label">CO₂ (ppm)</div></div>
+  <div class="stat"><div class="num" id="netVal">+5</div><div class="label">Netto-Zunahme</div></div>
+  <div class="stat"><div class="num" id="statusVal">STEIGT</div><div class="label">Status</div></div>
+</div>
+<p class="hint">Vor der Industrialisierung: ~280 ppm. Heute: ~420 ppm. „Sicher": ~350 ppm. Um zurück zu 350 zu kommen, reicht es nicht, den fossilen Hahn <em>langsamer</em> aufzudrehen — er muss <em>fast zu</em>.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c7">
+<div class="container">
+<div class="chapter-num">Kapitel 7 · Prerequisite</div>
+<h2>Kipppunkte — wenn Systeme umschlagen</h2>
+<p>Ein Kipppunkt ist wie ein Auto über einen Hügel schieben: bis zum Kamm braucht es Kraft — danach rollt es von allein. Und das <em>im Nebel</em>: Niemand weiß genau, wo der Kamm ist.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Der Ball im Tal (Bistabilität)</div>
+<p>Ein Ball rollt in einer Landschaft mit zwei Tälern („stabiles Klima" und „Heißhaus-Klima"). Erhöhe die CO₂-Menge, um die Landschaft zu kippen. Der Ball springt plötzlich — und kommt nicht mehr zurück (Hysterese).</p>
+<canvas id="tipCanvas" class="viz" width="900" height="360"></canvas>
+<div class="controls">
+  <div class="control">
+    <label>Störung (CO₂-Anstieg) <span class="val" id="pertVal">0.0</span></label>
+    <input type="range" id="pertSlider" min="-1" max="1.5" step="0.01" value="0">
+  </div>
+  <button class="btn danger" onclick="tipShock()">💥 Extremwetter-Schock</button>
+</div>
+<p class="hint">Achtung: Ziehe den Regler nach rechts und dann wieder zurück. Der Ball kehrt nicht zum ursprünglichen Tal zurück! Das ist <strong>Hysterese</strong> — der Weg zurück ist viel schwieriger als der Weg hin.</p>
+</div>
+
+<div class="big-quote">„Auf die Bremse treten, während man schon über die Kante fährt, ist zu spät."</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c8">
+<div class="container">
+<div class="chapter-num">Kapitel 8</div>
+<h2>Die sieben Frames rund um Klimawandel</h2>
+<p>Kern der „Feldstudie" im Buch: Sieben unsichtbare Frames blockieren echtes Handeln. Klicke jeden an — sieh das Frame und das Reframe.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Frame-Wähler</div>
+<div class="toggle-group" id="frameToggles"></div>
+<div id="frameDisplay"></div>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c9">
+<div class="container">
+<div class="chapter-num">Kapitel 9</div>
+<h2>Cap &amp; Share vs. Cap &amp; Trade — der Gartenschlauch</h2>
+<p>Die Autoren schlagen eine elegante Lösung vor. Statt Millionen Auspuffe zu regulieren (<em>downstream</em>), regelt man die Hand voll Fossil-Konzerne (<em>upstream</em>). Analogie: Statt Sprinkler-Löcher zu verstopfen, dreht man am Wasserhahn.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Der Schlauch</div>
+<p>Schalte um: Regulierung <em>downstream</em> (viele kleine Ventile) vs. <em>upstream</em> (ein Hahn).</p>
+<canvas id="hoseCanvas" class="viz" width="900" height="380"></canvas>
+<div class="controls">
+  <div class="toggle-group">
+    <div class="toggle active" id="downTog">Downstream (Cap &amp; Trade)</div>
+    <div class="toggle" id="upTog">Upstream (Cap &amp; Share)</div>
+  </div>
+  <div class="control">
+    <label>Cap-Größe <span class="val" id="capVal">50%</span></label>
+    <input type="range" id="capSlider" min="10" max="100" step="1" value="50">
+  </div>
+</div>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="regCount">1000+</div><div class="label">Regulierte Akteure</div></div>
+  <div class="stat"><div class="num" id="loopHoles">viele</div><div class="label">Schlupflöcher</div></div>
+  <div class="stat"><div class="num" id="admin">hoch</div><div class="label">Verwaltungskost.</div></div>
+</div>
+<p class="hint">Upstream: nur ~100 Fossil-Konzerne weltweit. Die Regierung verkauft Emissions-Zertifikate, Konzerne kaufen sie, geben Kosten weiter. Das Geld geht als „Carbon Cashback" gleichmäßig an alle Bürger zurück. Wer wenig verbraucht, verdient sogar.</p>
+</div>
+
+<div class="panel">
+<div class="panel-title">Simulator · Deine Carbon-Cashback-Bilanz</div>
+<p>Stelle deinen CO₂-Fußabdruck ein und sieh, ob du bei Cap &amp; Share Gewinn oder Verlust machst.</p>
+<div class="controls">
+  <div class="control">
+    <label>Dein Fußabdruck (t CO₂/Jahr) <span class="val" id="myFpVal">6</span></label>
+    <input type="range" id="myFpSlider" min="0" max="30" step="0.5" value="6">
+  </div>
+  <div class="control">
+    <label>CO₂-Preis (€/t) <span class="val" id="priceVal">100</span></label>
+    <input type="range" id="priceSlider" min="20" max="300" step="10" value="100">
+  </div>
+</div>
+<div id="cashbackPlot" class="plot"></div>
+<p class="hint">Die horizontale Linie ist dein Cashback (Pro-Kopf-Anteil). Die Diagonale sind deine Mehrkosten. Wo du kreuzt: Break-Even. Darunter = Gewinn.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c10">
+<div class="container">
+<div class="chapter-num">Kapitel 10 · Prerequisite</div>
+<h2>„Ich mach's, wenn du's machst" — die Spieltheorie</h2>
+<p>Warum handeln Regierungen nicht? Weil sie in einem klassischen Dilemma stecken. USA warten auf China, China wartet auf USA. Beide verlieren.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Klima-Prisoner's Dilemma</div>
+<p>Zwei Länder wählen: <em>Handeln</em> (H) oder <em>Trittbrettfahren</em> (T). Klicke Zellen, um die Payoffs zu verstehen.</p>
+<canvas id="pdCanvas" class="viz" width="900" height="360"></canvas>
+<div class="controls">
+  <div class="control">
+    <label>Kosten des Handelns <span class="val" id="costVal">3</span></label>
+    <input type="range" id="costSlider" min="0" max="10" step="0.5" value="3">
+  </div>
+  <div class="control">
+    <label>Nutzen (falls beide handeln) <span class="val" id="benVal">5</span></label>
+    <input type="range" id="benSlider" min="0" max="10" step="0.5" value="5">
+  </div>
+</div>
+<p class="hint">Das <em>Nash-Gleichgewicht</em> ist oft (T,T) — obwohl (H,H) für alle besser wäre. Ausweg: das Spiel ändern. Ein <em>globales</em> Cap-&amp;-Share-Schema umgeht das Verhandlungs-Patt komplett.</p>
+</div>
+
+<div class="panel">
+<div class="panel-title">Bonus · Der Jevons-Paradox</div>
+<p>„Grünere Autos = weniger CO₂"? Nicht unbedingt. Effizienzsteigerungen können den Verbrauch <em>erhöhen</em>. Spiele mit dem Rebound-Effekt:</p>
+<div id="jevonsPlot" class="plot"></div>
+<div class="controls">
+  <div class="control">
+    <label>Effizienz-Verbesserung <span class="val" id="effVal">+50%</span></label>
+    <input type="range" id="effSlider" min="0" max="200" step="5" value="50">
+  </div>
+  <div class="control">
+    <label>Rebound-Elastizität <span class="val" id="rebVal">0.7</span></label>
+    <input type="range" id="rebSlider" min="0" max="1.5" step="0.05" value="0.7">
+  </div>
+</div>
+<p class="hint">Effizienz senkt den Preis pro Kilometer → wir fahren mehr. Bei Rebound > 1 (Backfire) steigt der Gesamtverbrauch trotz Effizienz.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c11">
+<div class="container">
+<div class="chapter-num">Kapitel 11</div>
+<h2>Das Regenbogen-Spektrum — wo sitzt DU?</h2>
+<p>„Ich bin doch nicht reich!" Wirklich? Wenn du ein Auto hast, bist du bereits im obersten Prozent der Weltbevölkerung. Konsumkultur zoomt uns immer auf noch Reichere — und verschleiert, wer die Umwelt wirklich zerstört.</p>
+
+<div class="panel">
+<div class="panel-title">Interaktiv · Wo stehst du im globalen Regenbogen?</div>
+<div class="controls">
+  <div class="control">
+    <label>Dein Netto-Einkommen (€/Monat) <span class="val" id="incVal">2500</span></label>
+    <input type="range" id="incSlider" min="50" max="20000" step="50" value="2500">
+  </div>
+</div>
+<canvas id="rainbowCanvas" class="viz" width="900" height="220"></canvas>
+<div class="stat-row">
+  <div class="stat"><div class="num" id="pctVal">—</div><div class="label">Reicher als __ %</div></div>
+  <div class="stat"><div class="num" id="decileVal">—</div><div class="label">Weltweites Dezil</div></div>
+  <div class="stat"><div class="num" id="colorVal">—</div><div class="label">Farbe</div></div>
+</div>
+<p class="hint">Der oberste Zipfel (violett) verursacht den Großteil der Emissionen. Nicht neiden — stoppen.</p>
+</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c12">
+<div class="container">
+<div class="chapter-num">Kapitel 12</div>
+<h2>Drei Geschichten, in denen wir leben</h2>
+<p>Am tiefsten Ende des Buches: Welches Meta-Narrativ prägt unser Handeln? Klicke — und sieh, wie jede Geschichte uns anders handeln lässt.</p>
+
+<div class="narrative-choice">
+  <div class="narr progress" onclick="pickNarr('progress')">
+    <h4>📈 Fortschritt</h4>
+    <p>„Wir haben Feuer gezähmt, Krankheiten besiegt, den Mond betreten. Es geht immer weiter aufwärts — Technologie wird auch das Klima lösen."</p>
+  </div>
+  <div class="narr doom" onclick="pickNarr('doom')">
+    <h4>💀 Untergang</h4>
+    <p>„Ikarus, Titanic, Babel. Wir sind zu weit gegangen. Es ist zu spät. Alles wird zusammenbrechen. Es hat keinen Sinn."</p>
+  </div>
+  <div class="narr coming" onclick="pickNarr('coming')">
+    <h4>🌱 Erwachsenwerden</h4>
+    <p>„Wachstum ist etwas aus der Kindheit. Erwachsene wachsen anders — in Weisheit, Erfahrung. Die Menschheit wird gerade volljährig."</p>
+  </div>
+</div>
+
+<div class="panel" id="narrPanel">
+  <div class="panel-title">Wähle oben eine Geschichte</div>
+  <p id="narrText">Jede Geschichte formt, was wir für möglich halten. Klicke eine an.</p>
+  <canvas id="narrCanvas" class="viz" width="900" height="240"></canvas>
+</div>
+
+<div class="big-quote">„Reifsein heißt: dem Wachstum entwachsen."</div>
+</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="c13" class="epilogue">
+<div class="container">
+<div class="chapter-num">Epilog</div>
+<h2>Du bist Teil der Geschichte</h2>
+<p class="lead">Framespotting ist keine Technik unter vielen. Es ist eine Haltung: die Frage <em>„Welchen Rahmen sehe ich gerade nicht?"</em> Jederzeit stellen zu können, ist die eigentliche Superkraft.</p>
+<p>Die Matthews' Botschaft in einem Satz: <strong>Die Welt ist rund, der Planet ist endlich, und wir werden erwachsen — ob wir wollen oder nicht.</strong> Die einzige Frage ist, ob wir es <em>bewusst</em> tun.</p>
+<div style="margin-top:60px;font-size:2rem;color:var(--accent)">✦</div>
+</div>
+</section>
+
+<footer>
+<p>Interaktive Visualisierung nach <em>Framespotting</em> von Laurence &amp; Alison Matthews (iff Books, 2014) · <a href="https://www.framespotting.com" style="color:var(--accent)">framespotting.com</a></p>
+</footer>
+
+<script>
+/* ===================== KaTeX renderings ===================== */
+function kx(id, tex, displayMode=false){
+  const el=document.getElementById(id);
+  if(el) katex.render(tex, el, {displayMode, throwOnError:false});
+}
+kx('expEq', 'N(t)=N_0\\cdot(1+r)^t \\quad\\text{oder}\\quad \\frac{dN}{dt}=k\\,N', true);
+kx('expT2', 'T_2 = \\frac{\\ln 2}{\\ln(1+r)} \\approx \\frac{70}{r\\,[\\%]}', true);
+kx('bathEq1', 'C(t)');
+kx('bathEq2', '\\frac{dC}{dt}=\\underbrace{E_{\\text{nat}}+E_{\\text{fossil}}}_{\\text{Zuflüsse}}-\\underbrace{S(C)}_{\\text{Senke}}', true);
+
+/* ===================== Ch.0 Zoom Canvas ===================== */
+const zc=document.getElementById('zoomCanvas'), zctx=zc.getContext('2d');
+const zSlider=document.getElementById('zoomSlider'), zVal=document.getElementById('zoomVal');
+function drawZoom(){
+  const z=parseFloat(zSlider.value); zVal.textContent=z.toFixed(1)+'×';
+  const W=zc.width,H=zc.height;
+  zctx.clearRect(0,0,W,H);
+  // sky gradient
+  const g=zctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#1a2540'); g.addColorStop(1,'#2d3856');
+  zctx.fillStyle=g; zctx.fillRect(0,0,W,H);
+  // road: as we zoom out, we see more cars, more pollution
+  const cx=W/2, roadY=H*0.7;
+  zctx.fillStyle='#1a1d2b'; zctx.fillRect(0,roadY,W,H-roadY);
+  // draw lots of cars if zoomed out
+  const numCars = Math.round(1 + (z-1)*3);
+  const spread = (z-1)*W*0.45;
+  for(let i=0;i<numCars;i++){
+    const x = cx - spread + (spread*2/(Math.max(numCars-1,1)))*i;
+    const carW = 80/z, carH=32/z;
+    zctx.fillStyle=i===Math.floor(numCars/2)?'#ff6b6b':'#64ffda';
+    zctx.fillRect(x-carW/2, roadY-carH-4, carW, carH);
+    zctx.fillStyle='#0a0e1a';
+    zctx.fillRect(x-carW/2+6/z, roadY-carH+carH*0.4, carW-12/z, carH*0.45);
+    // smoke
+    if(z>3){
+      zctx.fillStyle=`rgba(180,180,180,${Math.min((z-3)/5,0.5)})`;
+      for(let k=0;k<4;k++){
+        zctx.beginPath();
+        zctx.arc(x-carW/2-8-k*10, roadY-carH-4-k*6, 6+k*2, 0, Math.PI*2);
+        zctx.fill();
+      }
+    }
+  }
+  // pedestrians if very zoomed out
+  if(z>5){
+    zctx.fillStyle=`rgba(255,184,107,${(z-5)/5})`;
+    for(let i=0;i<8;i++){
+      const px=W*0.1 + i*(W*0.1);
+      zctx.fillRect(px-3, H*0.85, 6, 20);
+      zctx.beginPath(); zctx.arc(px, H*0.83, 5, 0, Math.PI*2); zctx.fill();
+    }
+  }
+  // label
+  zctx.fillStyle='#e8ecf5'; zctx.font='bold 18px sans-serif';
+  zctx.textAlign='left';
+  const labels=['🔍 „Freiheit auf leerer Straße"','🔍 Verkehr','🔍 Stau + Abgase','🔍 Verdrängte Fußgänger + Klimalast'];
+  const idx=Math.min(Math.floor((z-1)/2.3),3);
+  zctx.fillText(labels[idx], 20, 32);
+  zctx.font='13px sans-serif'; zctx.fillStyle='#8892b0';
+  zctx.fillText('Zoom-Stufe: '+z.toFixed(1)+'×', 20, 54);
+}
+zSlider.addEventListener('input',drawZoom); drawZoom();
+
+/* ===================== Ch.1 Tree & Hierarchy ===================== */
+const tc=document.getElementById('treeCanvas'), tctx=tc.getContext('2d');
+let treeFlipped=false;
+function drawTree(){
+  const W=tc.width,H=tc.height;
+  tctx.clearRect(0,0,W,H); tctx.fillStyle='rgba(0,0,0,0.2)'; tctx.fillRect(0,0,W,H);
+  const nodes=[
+    {name:'Opa',gen:0},{name:'Oma',gen:0},
+    {name:'Papa',gen:1},{name:'Mama',gen:1},
+    {name:'Ich',gen:2},{name:'Kind',gen:3}
+  ];
+  const layers=[[0,1],[2,3],[4],[5]];
+  layers.forEach((row,gi)=>{
+    const y = treeFlipped ? H-40-gi*(H-80)/3 : 40+gi*(H-80)/3;
+    row.forEach((idx,i)=>{
+      const x = W/2 + (i-(row.length-1)/2)*140;
+      nodes[idx].x=x; nodes[idx].y=y;
+    });
+  });
+  // edges
+  tctx.strokeStyle='rgba(100,255,218,0.4)'; tctx.lineWidth=2;
+  const links=[[0,2],[1,2],[0,3],[1,3],[2,4],[3,4],[4,5]];
+  links.forEach(([a,b])=>{tctx.beginPath();tctx.moveTo(nodes[a].x,nodes[a].y);tctx.lineTo(nodes[b].x,nodes[b].y);tctx.stroke();});
+  nodes.forEach(n=>{
+    tctx.fillStyle='#151b2e'; tctx.strokeStyle='#64ffda';
+    tctx.beginPath(); tctx.arc(n.x,n.y,26,0,Math.PI*2); tctx.fill(); tctx.stroke();
+    tctx.fillStyle='#e8ecf5'; tctx.font='12px sans-serif'; tctx.textAlign='center'; tctx.textBaseline='middle';
+    tctx.fillText(n.name,n.x,n.y);
+  });
+  tctx.fillStyle='#8892b0'; tctx.font='11px sans-serif'; tctx.textAlign='left';
+  tctx.fillText(treeFlipped?'↑ Zukunft ↑ / ↓ Ahnen ↓':'↑ Ahnen ↑ / ↓ Zukunft ↓', 10, H-8);
+}
+function flipTree(){treeFlipped=!treeFlipped;drawTree();} drawTree();
+
+const hc=document.getElementById('hierCanvas'), hctx=hc.getContext('2d');
+let hierFlipped=false;
+function drawHier(){
+  const W=hc.width,H=hc.height;
+  hctx.clearRect(0,0,W,H); hctx.fillStyle='rgba(0,0,0,0.2)'; hctx.fillRect(0,0,W,H);
+  const levels=[{n:'CEO',c:'#c792ea',w:1},{n:'Manager',c:'#82aaff',w:3},{n:'Angestellte',c:'#64ffda',w:6}];
+  levels.forEach((lv,i)=>{
+    const yi = hierFlipped ? levels.length-1-i : i;
+    const y = 40 + yi*(H-80)/(levels.length-1);
+    for(let k=0;k<lv.w;k++){
+      const x = W/2 + (k-(lv.w-1)/2)*60;
+      hctx.fillStyle=lv.c;
+      hctx.fillRect(x-22,y-16,44,32);
+    }
+    hctx.fillStyle='#e8ecf5'; hctx.font='bold 13px sans-serif'; hctx.textAlign='center';
+    hctx.fillText(lv.n, W/2, y+55);
+  });
+  hctx.fillStyle='#8892b0'; hctx.font='11px sans-serif'; hctx.textAlign='left';
+  hctx.fillText(hierFlipped?'Chef unten? Fühlt sich seltsam an, oder?':'„Oben = besser" — das Standard-Frame', 10, H-8);
+}
+function flipHier(){hierFlipped=!hierFlipped;drawHier();} drawHier();
+
+/* ===================== Ch.1 K-Bot kinetic energy ===================== */
+const kc=document.getElementById('kboxCanvas'), kctx=kc.getContext('2d');
+const mSlider=document.getElementById('mSlider'), mVal=document.getElementById('mVal');
+const vSlider=document.getElementById('vSlider'), vVal=document.getElementById('vVal');
+function drawKbot(){
+  const m=+mSlider.value, v=+vSlider.value;
+  mVal.textContent=m; vVal.textContent=v;
+  const vms = v/3.6;
+  const E = 0.5*m*vms*vms/1000; // kJ
+  document.getElementById('eAuto').textContent=E.toFixed(0);
+  document.getElementById('ratio').textContent=(E/4).toFixed(0)+'×';
+  const W=kc.width,H=kc.height;
+  kctx.clearRect(0,0,W,H); kctx.fillStyle='rgba(0,0,0,0.2)'; kctx.fillRect(0,0,W,H);
+  // bar chart of energies
+  const maxE=Math.max(E,50);
+  const barY=H-60;
+  // bullet
+  kctx.fillStyle='#82aaff';
+  const bulletH = 4/maxE * (H-100);
+  kctx.fillRect(W*0.25-60, barY-bulletH, 120, bulletH);
+  kctx.fillStyle='#e8ecf5'; kctx.font='12px sans-serif'; kctx.textAlign='center';
+  kctx.fillText('Gewehrkugel', W*0.25, barY+20);
+  kctx.fillText('4 kJ', W*0.25, barY+38);
+  // car
+  const carH = E/maxE * (H-100);
+  kctx.fillStyle=E>4?'#ff6b6b':'#64ffda';
+  kctx.fillRect(W*0.75-60, barY-carH, 120, carH);
+  kctx.fillStyle='#e8ecf5';
+  kctx.fillText('Auto (K-Bot)', W*0.75, barY+20);
+  kctx.fillText(E.toFixed(0)+' kJ', W*0.75, barY+38);
+  // caption
+  kctx.fillStyle='#ffb86b'; kctx.font='bold 14px sans-serif'; kctx.textAlign='center';
+  kctx.fillText('E = ½ · m · v²   →   doppelte Geschwindigkeit = 4-fache Energie', W/2, 24);
+}
+mSlider.addEventListener('input',drawKbot); vSlider.addEventListener('input',drawKbot); drawKbot();
+
+/* ===================== Ch.2 5 Whys ===================== */
+const whyChains = {
+  obesity:[
+    {q:'Warum sind so viele Menschen fettleibig?', a:'Weil sie viel Junk-Food essen.'},
+    {q:'Warum essen sie Junk-Food?', a:'Weil es billig und überall verfügbar ist.'},
+    {q:'Warum ist es so billig?', a:'Weil Zucker und Fette subventioniert werden.'},
+    {q:'Warum werden diese subventioniert?', a:'Weil Lebensmittel-Lobbys Einfluss auf Regierungen ausüben.'},
+    {q:'Warum haben Lobbys diesen Einfluss?', a:'Weil Wahlkampf-Finanzierung von Konzernen abhängt.'},
+    {q:'→ Wurzelursache:', a:'Politisches System, nicht individuelle Willensschwäche.'}
+  ],
+  crash:[
+    {q:'Warum gab es diesen Unfall?', a:'Weil das Auto zu schnell fuhr.'},
+    {q:'Warum konnte es zu schnell fahren?', a:'Weil es dafür gebaut ist (200+ km/h möglich).'},
+    {q:'Warum werden solche Autos gebaut?', a:'Weil sie sich gut verkaufen.'},
+    {q:'Warum verkaufen sie sich gut?', a:'Weil Werbung Geschwindigkeit als Freiheit vermarktet.'},
+    {q:'Warum ist das erlaubt?', a:'Weil Werbung für Autos kaum reguliert ist.'},
+    {q:'→ Wurzelursache:', a:'Regulierungs­lücken, nicht „schlechte Fahrer".'}
+  ],
+  climate:[
+    {q:'Warum steigt CO₂?', a:'Weil wir fossile Brennstoffe verbrennen.'},
+    {q:'Warum verbrennen wir sie?', a:'Weil Energie daraus billig ist.'},
+    {q:'Warum ist sie billig?', a:'Weil externe Kosten (Klimaschäden) nicht eingepreist sind.'},
+    {q:'Warum nicht?', a:'Weil Fossil-Konzerne politisch dagegen lobbyieren.'},
+    {q:'Warum sind sie so mächtig?', a:'Weil das Regelwerk das erlaubt (kein globales Cap).'},
+    {q:'→ Wurzelursache:', a:'Fehlende globale Governance, nicht persönlicher Verbrauch.'}
+  ]
+};
+let whyTopic='obesity', whyIdx=0;
+document.querySelectorAll('#whyTopics .toggle').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('#whyTopics .toggle').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active'); whyTopic=t.dataset.topic; whyIdx=0; drawWhy();
+  });
+});
+const whyC=document.getElementById('whyCanvas'), whyCtx=whyC.getContext('2d');
+function drawWhy(){
+  const W=whyC.width,H=whyC.height;
+  whyCtx.clearRect(0,0,W,H); whyCtx.fillStyle='rgba(0,0,0,0.2)'; whyCtx.fillRect(0,0,W,H);
+  const chain=whyChains[whyTopic];
+  const shown=chain.slice(0,whyIdx+1);
+  const rowH = (H-40)/6;
+  shown.forEach((s,i)=>{
+    const y = 30 + i*rowH;
+    const isRoot = s.q.startsWith('→');
+    whyCtx.fillStyle = isRoot ? 'rgba(255,184,107,0.15)' : 'rgba(100,255,218,0.06)';
+    whyCtx.fillRect(20, y-4, W-40, rowH-10);
+    whyCtx.strokeStyle = isRoot ? '#ffb86b' : '#64ffda';
+    whyCtx.strokeRect(20, y-4, W-40, rowH-10);
+    whyCtx.fillStyle=isRoot?'#ffb86b':'#64ffda'; whyCtx.font='bold 13px sans-serif'; whyCtx.textAlign='left';
+    whyCtx.fillText(s.q, 32, y+16);
+    whyCtx.fillStyle='#e8ecf5'; whyCtx.font='13px sans-serif';
+    whyCtx.fillText(s.a, 32, y+34);
+  });
+  // zoom indicator
+  whyCtx.fillStyle='#8892b0'; whyCtx.font='11px sans-serif'; whyCtx.textAlign='right';
+  whyCtx.fillText('Zoom-out: '+whyIdx+'/5', W-30, 20);
+}
+function whyStep(){if(whyIdx<whyChains[whyTopic].length-1){whyIdx++;drawWhy();}}
+function whyReset(){whyIdx=0;drawWhy();}
+drawWhy();
+
+/* ===================== Ch.3 Exponential Growth ===================== */
+const rSlider=document.getElementById('rSlider'), tSlider=document.getElementById('tSlider');
+let expLog=false;
+document.getElementById('linTog').addEventListener('click',()=>{
+  expLog=false; document.getElementById('linTog').classList.add('active');
+  document.getElementById('logTog').classList.remove('active'); drawExp();
+});
+document.getElementById('logTog').addEventListener('click',()=>{
+  expLog=true; document.getElementById('logTog').classList.add('active');
+  document.getElementById('linTog').classList.remove('active'); drawExp();
+});
+function drawExp(){
+  const r=+rSlider.value/100, T=+tSlider.value;
+  document.getElementById('rVal').textContent=(r*100).toFixed(1);
+  document.getElementById('tVal').textContent=T;
+  const xs=[], expY=[], linY=[];
+  for(let t=0;t<=T;t++){ xs.push(t); expY.push(Math.pow(1+r,t)); linY.push(1+r*t); }
+  const dbl = Math.log(2)/Math.log(1+r);
+  document.getElementById('dblT').textContent=dbl.toFixed(1);
+  document.getElementById('finalMult').textContent=expY[T].toFixed(1);
+  document.getElementById('rule70').textContent=(70/(r*100)).toFixed(1);
+  Plotly.react('expPlot',[
+    {x:xs,y:expY,name:'Exponentiell ×(1+r)ᵗ',line:{color:'#ff6b6b',width:3}},
+    {x:xs,y:linY,name:'Linear 1+r·t',line:{color:'#82aaff',width:3,dash:'dash'}}
+  ],{
+    paper_bgcolor:'transparent',plot_bgcolor:'transparent',
+    font:{color:'#c5cad9'},margin:{t:20,r:20,b:50,l:60},
+    xaxis:{title:'Jahre',gridcolor:'rgba(255,255,255,0.08)'},
+    yaxis:{title:'Größe (× Anfang)',type:expLog?'log':'linear',gridcolor:'rgba(255,255,255,0.08)'},
+    legend:{bgcolor:'rgba(0,0,0,0)'}
+  },{displayModeBar:false,responsive:true});
+}
+rSlider.addEventListener('input',drawExp); tSlider.addEventListener('input',drawExp); drawExp();
+
+/* ===================== Ch.4 Lily Pond ===================== */
+const pc=document.getElementById('pondCanvas'), pctx=pc.getContext('2d');
+const daySlider=document.getElementById('daySlider'); let pondTimer=null;
+function drawPond(){
+  const d=+daySlider.value;
+  const cover = Math.pow(2, d-30); // fraction 0..1
+  document.getElementById('dayVal').textContent=d;
+  document.getElementById('coverStat').textContent=(cover*100).toFixed(cover<0.01?3:1)+'%';
+  document.getElementById('daysLeft').textContent=30-d;
+  const W=pc.width,H=pc.height;
+  pctx.clearRect(0,0,W,H);
+  // pond
+  const cx=W/2, cy=H/2+10, R=Math.min(W,H)*0.42;
+  const g=pctx.createRadialGradient(cx,cy,10,cx,cy,R);
+  g.addColorStop(0,'#1a3a5c'); g.addColorStop(1,'#0a1a2c');
+  pctx.fillStyle=g;
+  pctx.beginPath(); pctx.arc(cx,cy,R,0,Math.PI*2); pctx.fill();
+  pctx.strokeStyle='#3a5578'; pctx.lineWidth=3; pctx.stroke();
+  // lily coverage — draw as many little pads
+  const nPads = Math.max(1, Math.round(cover * 200));
+  const seed = 42;
+  for(let i=0;i<nPads;i++){
+    // deterministic pseudo-random positions
+    const t = i*2.399963;
+    const rr = R*Math.sqrt((i+1)/nPads);
+    const px = cx + rr*Math.cos(t);
+    const py = cy + rr*Math.sin(t);
+    const size = 6 + (cover*6);
+    pctx.fillStyle='#7fffa8';
+    pctx.beginPath(); pctx.arc(px,py,size,0,Math.PI*2); pctx.fill();
+    pctx.fillStyle='rgba(0,80,40,0.4)';
+    pctx.beginPath(); pctx.arc(px+2,py+2,size*0.4,0,Math.PI*2); pctx.fill();
+  }
+  // label
+  pctx.fillStyle='#e8ecf5'; pctx.font='bold 20px sans-serif'; pctx.textAlign='left';
+  pctx.fillText('Tag '+d, 20, 32);
+  pctx.font='14px sans-serif'; pctx.fillStyle='#8892b0';
+  pctx.fillText('Bedeckung: '+(cover*100).toFixed(cover<0.01?3:1)+' %', 20, 54);
+  // day 29 marker
+  if(d===29){
+    pctx.fillStyle='#ffb86b'; pctx.font='bold 18px sans-serif'; pctx.textAlign='center';
+    pctx.fillText('⚠ Nur EIN Tag bis zur Katastrophe!', cx, H-16);
+  } else if(d===30){
+    pctx.fillStyle='#ff6b6b'; pctx.font='bold 20px sans-serif'; pctx.textAlign='center';
+    pctx.fillText('💀 Teich erstickt', cx, H-16);
+  }
+}
+function pondPlay(){
+  if(pondTimer) return;
+  daySlider.value=0; drawPond();
+  pondTimer = setInterval(()=>{
+    let d=+daySlider.value;
+    if(d>=30){clearInterval(pondTimer);pondTimer=null;return;}
+    daySlider.value=d+1; drawPond();
+  }, 400);
+}
+function pondReset(){if(pondTimer){clearInterval(pondTimer);pondTimer=null;} daySlider.value=0;drawPond();}
+daySlider.addEventListener('input',drawPond); drawPond();
+
+/* ===================== Ch.5 Sphere Triangle (Three.js) ===================== */
+(function(){
+  const container = document.getElementById('sphere3d');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, container.clientWidth/420, 0.1, 100);
+  camera.position.set(0,0,4.5);
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(container.clientWidth, 420);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  // sphere
+  const sphereGeo = new THREE.SphereGeometry(1.4, 64, 64);
+  const sphereMat = new THREE.MeshPhongMaterial({
+    color:0x1a3a5c, transparent:true, opacity:0.85,
+    wireframe:false, shininess:60, specular:0x64ffda
+  });
+  const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+  scene.add(sphere);
+
+  // grid overlay
+  const wireGeo = new THREE.SphereGeometry(1.41, 24, 16);
+  const wireMat = new THREE.MeshBasicMaterial({color:0x64ffda, wireframe:true, transparent:true, opacity:0.15});
+  scene.add(new THREE.Mesh(wireGeo, wireMat));
+
+  // lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+  const light = new THREE.DirectionalLight(0xffffff, 0.8);
+  light.position.set(3,3,5); scene.add(light);
+
+  // triangle line
+  let triLine = null;
+  const triSlider = document.getElementById('triSlider');
+  function updateTri(){
+    const ang = +triSlider.value * Math.PI/180;
+    document.getElementById('triVal').textContent = triSlider.value+'°';
+    if(triLine) scene.remove(triLine);
+    // spherical triangle: three vertices on unit sphere
+    const R = 1.42;
+    const A = new THREE.Vector3(0,R,0); // north pole
+    const B = new THREE.Vector3(R*Math.sin(ang), R*Math.cos(ang), 0);
+    const C = new THREE.Vector3(R*Math.sin(ang)*Math.cos(ang), R*Math.cos(ang), R*Math.sin(ang)*Math.sin(ang)).setLength(R);
+    // great-circle arc between two points
+    function arc(p1,p2,n=40){
+      const pts=[];
+      const omega = p1.angleTo(p2);
+      const so = Math.sin(omega);
+      for(let i=0;i<=n;i++){
+        const t=i/n;
+        const a = Math.sin((1-t)*omega)/so, b=Math.sin(t*omega)/so;
+        pts.push(p1.clone().multiplyScalar(a).add(p2.clone().multiplyScalar(b)));
+      }
+      return pts;
+    }
+    const pts = [...arc(A,B), ...arc(B,C), ...arc(C,A)];
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({color:0xff6b6b, linewidth:3});
+    triLine = new THREE.Line(geo, mat);
+    scene.add(triLine);
+
+    // compute angle sum (spherical excess formula)
+    // For a spherical triangle, sum = pi + area/R^2. Approximate area from side lengths.
+    function sphAng(v1,vc,v2){
+      // angle at vc between arcs to v1 and v2
+      const t1 = new THREE.Vector3().crossVectors(vc, v1).normalize();
+      const t2 = new THREE.Vector3().crossVectors(vc, v2).normalize();
+      return Math.acos(Math.max(-1,Math.min(1, t1.dot(t2))));
+    }
+    const angA = sphAng(B, A, C);
+    const angB = sphAng(A, B, C);
+    const angC = sphAng(A, C, B);
+    const sumDeg = (angA+angB+angC)*180/Math.PI;
+    document.getElementById('triSum').textContent = sumDeg.toFixed(1)+'°';
+    document.getElementById('triExcess').textContent = '+'+(sumDeg-180).toFixed(1)+'°';
+  }
+  triSlider.addEventListener('input', updateTri);
+  updateTri();
+
+  // rotate
+  let mouseDown=false, lastX=0, rotY=0.5, rotX=0.2;
+  container.addEventListener('mousedown',e=>{mouseDown=true;lastX=e.clientX;});
+  container.addEventListener('mouseup',()=>{mouseDown=false;});
+  container.addEventListener('mouseleave',()=>{mouseDown=false;});
+  container.addEventListener('mousemove',e=>{
+    if(mouseDown){ rotY += (e.clientX-lastX)*0.01; lastX=e.clientX; }
+  });
+  function animate(){
+    requestAnimationFrame(animate);
+    rotY += 0.003;
+    sphere.rotation.y = rotY;
+    if(triLine){triLine.rotation.y = rotY;}
+    scene.children.forEach(c=>{if(c.geometry && c.geometry.type==='SphereGeometry' && c.material.wireframe) c.rotation.y=rotY;});
+    renderer.render(scene, camera);
+  }
+  animate();
+  window.addEventListener('resize',()=>{
+    renderer.setSize(container.clientWidth, 420);
+    camera.aspect = container.clientWidth/420; camera.updateProjectionMatrix();
+  });
+})();
+
+/* ===================== Ch.6 Bathtub CO2 ===================== */
+const bc=document.getElementById('bathCanvas'), bctx=bc.getContext('2d');
+const natS=document.getElementById('natSlider'), fosS=document.getElementById('fosSlider'), sinkS=document.getElementById('sinkSlider');
+let bathC = 400; // ppm
+let bathTimer = null;
+function drawBath(){
+  const nat=+natS.value, fos=+fosS.value, sink=+sinkS.value;
+  document.getElementById('natVal').textContent=nat;
+  document.getElementById('fosVal').textContent=fos;
+  document.getElementById('sinkVal').textContent=sink;
+  const net = nat + fos - sink;
+  document.getElementById('netVal').textContent=(net>=0?'+':'')+net.toFixed(1);
+  document.getElementById('ppmVal').textContent=bathC.toFixed(0);
+  const status = net > 0.1 ? 'STEIGT' : net < -0.1 ? 'SINKT' : 'STABIL';
+  const st = document.getElementById('statusVal');
+  st.textContent = status;
+  st.style.color = net>0.1 ? '#ff6b6b' : net<-0.1 ? '#7fffa8' : '#ffb86b';
+  
+  const W=bc.width,H=bc.height;
+  bctx.clearRect(0,0,W,H);
+  bctx.fillStyle='rgba(0,0,0,0.2)'; bctx.fillRect(0,0,W,H);
+  
+  // bathtub
+  const tubX=W*0.25, tubY=H*0.35, tubW=W*0.5, tubH=H*0.5;
+  bctx.strokeStyle='#8892b0'; bctx.lineWidth=4;
+  bctx.beginPath();
+  bctx.moveTo(tubX,tubY); bctx.lineTo(tubX,tubY+tubH);
+  bctx.lineTo(tubX+tubW,tubY+tubH); bctx.lineTo(tubX+tubW,tubY);
+  bctx.stroke();
+  // water level (based on bathC 180..600 range)
+  const levelFrac = Math.max(0.05, Math.min(0.98, (bathC-180)/(600-180)));
+  const waterH = tubH*levelFrac;
+  const grad = bctx.createLinearGradient(0, tubY+tubH-waterH, 0, tubY+tubH);
+  grad.addColorStop(0, bathC>450?'#ff6b6b':bathC>380?'#ffb86b':'#64ffda');
+  grad.addColorStop(1, bathC>450?'#8a2c2c':bathC>380?'#8a5a2c':'#2c8a7a');
+  bctx.fillStyle=grad;
+  bctx.fillRect(tubX+2, tubY+tubH-waterH, tubW-4, waterH);
+  // safe line at 350
+  const safeY = tubY+tubH - tubH*((350-180)/(600-180));
+  bctx.strokeStyle='#7fffa8'; bctx.setLineDash([6,4]); bctx.lineWidth=2;
+  bctx.beginPath(); bctx.moveTo(tubX,safeY); bctx.lineTo(tubX+tubW,safeY); bctx.stroke();
+  bctx.setLineDash([]);
+  bctx.fillStyle='#7fffa8'; bctx.font='11px sans-serif'; bctx.textAlign='left';
+  bctx.fillText('sicher: 350 ppm', tubX+tubW+8, safeY+4);
+  // overflow line at 500
+  const overY = tubY+tubH - tubH*((500-180)/(600-180));
+  bctx.strokeStyle='#ff6b6b'; bctx.setLineDash([6,4]);
+  bctx.beginPath(); bctx.moveTo(tubX,overY); bctx.lineTo(tubX+tubW,overY); bctx.stroke();
+  bctx.setLineDash([]);
+  bctx.fillStyle='#ff6b6b';
+  bctx.fillText('Kipppunkt!', tubX+tubW+8, overY+4);
+  
+  // Taps (above)
+  function tap(x,label,val,color){
+    bctx.fillStyle=color;
+    bctx.fillRect(x-8, tubY-40, 16, 30);
+    bctx.beginPath(); bctx.arc(x, tubY-45, 10, 0, Math.PI*2); bctx.fill();
+    // water stream
+    const streamW = 3 + val*0.5;
+    bctx.fillStyle = color;
+    bctx.globalAlpha=0.6;
+    bctx.fillRect(x-streamW/2, tubY-10, streamW, tubY+tubH-waterH-tubY+10);
+    bctx.globalAlpha=1;
+    bctx.fillStyle='#e8ecf5'; bctx.font='11px sans-serif'; bctx.textAlign='center';
+    bctx.fillText(label, x, tubY-58);
+    bctx.fillText(val.toFixed(1), x, tubY-72);
+  }
+  tap(tubX+tubW*0.3, 'Natur', nat, '#82aaff');
+  tap(tubX+tubW*0.7, 'Fossil', fos, '#ff6b6b');
+  
+  // Drain (below)
+  bctx.fillStyle='#8892b0';
+  bctx.fillRect(tubX+tubW/2-15, tubY+tubH, 30, 20);
+  const dW = 4 + sink*0.5;
+  bctx.fillStyle='#64ffda'; bctx.globalAlpha=0.6;
+  bctx.fillRect(tubX+tubW/2-dW/2, tubY+tubH+20, dW, H-tubY-tubH-20);
+  bctx.globalAlpha=1;
+  bctx.fillStyle='#e8ecf5'; bctx.font='11px sans-serif'; bctx.textAlign='center';
+  bctx.fillText('Senke: '+sink.toFixed(1), tubX+tubW/2, H-8);
+  
+  // ppm label
+  bctx.fillStyle='#ffb86b'; bctx.font='bold 22px sans-serif'; bctx.textAlign='center';
+  bctx.fillText(bathC.toFixed(0)+' ppm', tubX+tubW/2, tubY+tubH-waterH/2+8);
+}
+function stepBath(){
+  const nat=+natS.value, fos=+fosS.value, sink=+sinkS.value;
+  const net = nat + fos - sink;
+  bathC += net * 0.15; // scaled step
+  bathC = Math.max(180, Math.min(600, bathC));
+  drawBath();
+}
+natS.addEventListener('input',drawBath);
+fosS.addEventListener('input',drawBath);
+sinkS.addEventListener('input',drawBath);
+bathTimer = setInterval(stepBath, 100);
+drawBath();
+
+/* ===================== Ch.7 Tipping point / bistability ===================== */
+const tc2=document.getElementById('tipCanvas'), tctx2=tc2.getContext('2d');
+const pertS=document.getElementById('pertSlider');
+let ballX = -1.2, ballV = 0;
+function potential(x, p){
+  // double well: V(x) = x^4/4 - x^2/2 + p*x
+  return x*x*x*x/4 - x*x/2 + p*x;
+}
+function force(x, p){
+  // -dV/dx = -x^3 + x - p
+  return -x*x*x + x - p;
+}
+function drawTip(){
+  const p = +pertS.value;
+  document.getElementById('pertVal').textContent=p.toFixed(2);
+  const W=tc2.width, H=tc2.height;
+  tctx2.clearRect(0,0,W,H);
+  tctx2.fillStyle='rgba(0,0,0,0.2)'; tctx2.fillRect(0,0,W,H);
+  // draw potential landscape
+  const xMin=-2, xMax=2;
+  const toX = x => (x-xMin)/(xMax-xMin)*W;
+  // find range of V
+  let vs=[];
+  for(let i=0;i<=200;i++){
+    const x=xMin+(xMax-xMin)*i/200;
+    vs.push(potential(x,p));
+  }
+  const vMin=Math.min(...vs), vMax=Math.max(...vs);
+  const toY = v => 60 + (v-vMin)/(vMax-vMin+0.001)*(H-140);
+  
+  // fill zones
+  tctx2.fillStyle='rgba(127,255,168,0.05)';
+  tctx2.fillRect(0,0,W/2,H);
+  tctx2.fillStyle='rgba(255,107,107,0.05)';
+  tctx2.fillRect(W/2,0,W/2,H);
+  
+  tctx2.strokeStyle='#64ffda'; tctx2.lineWidth=3;
+  tctx2.beginPath();
+  for(let i=0;i<=200;i++){
+    const x=xMin+(xMax-xMin)*i/200;
+    const v=potential(x,p);
+    if(i===0) tctx2.moveTo(toX(x),toY(v));
+    else tctx2.lineTo(toX(x),toY(v));
+  }
+  tctx2.stroke();
+  
+  // ball
+  const by = toY(potential(ballX,p)) - 12;
+  tctx2.fillStyle= ballX<0 ? '#7fffa8' : '#ff6b6b';
+  tctx2.beginPath(); tctx2.arc(toX(ballX), by, 12, 0, Math.PI*2); tctx2.fill();
+  tctx2.strokeStyle='#fff'; tctx2.lineWidth=2; tctx2.stroke();
+  
+  // labels
+  tctx2.fillStyle='#7fffa8'; tctx2.font='bold 13px sans-serif'; tctx2.textAlign='center';
+  tctx2.fillText('Stabiles Klima', W*0.25, H-16);
+  tctx2.fillStyle='#ff6b6b';
+  tctx2.fillText('Heißhaus-Klima', W*0.75, H-16);
+  tctx2.fillStyle='#8892b0'; tctx2.font='12px sans-serif'; tctx2.textAlign='left';
+  tctx2.fillText('CO₂-Störung kippt die Landschaft →', 20, 24);
+}
+function stepTip(){
+  const p = +pertS.value;
+  const F = force(ballX, p);
+  ballV += F * 0.02;
+  ballV *= 0.9; // damping
+  ballX += ballV * 0.05;
+  if(ballX<-1.9){ballX=-1.9;ballV=0;}
+  if(ballX>1.9){ballX=1.9;ballV=0;}
+  drawTip();
+}
+function tipShock(){ ballV += (Math.random()-0.3)*3; }
+pertS.addEventListener('input',drawTip);
+setInterval(stepTip, 40);
+drawTip();
+
+/* ===================== Ch.8 Seven Frames ===================== */
+const frames = [
+  {name:'Länder-Frame', frame:'„Klima ist Sache der Länder. Wir warten auf USA/China."',
+   reframe:'Das Klimasystem sieht keine Grenzen. Global handeln — nicht international verhandeln.'},
+  {name:'Anpassungs-Frame', frame:'„Wir bauen halt höhere Deiche und Klimaanlagen."',
+   reframe:'Anpassung = Liegestühle auf der Titanic. Ursache bekämpfen: Emissionen stoppen.'},
+  {name:'Effizienz-Frame', frame:'„Grüne Autos, sparsame Flüge — Technologie löst es."',
+   reframe:'Emissionen pro Auto sinken, Anzahl der Autos steigt schneller (Jevons). Zählt die Summe.'},
+  {name:'Geo-Engineering', frame:'„Spiegel im All, Aerosole in der Stratosphäre — cooler Planet."',
+   reframe:'Behandelt nur Symptom Temperatur, nicht saure Ozeane. Ausrede, um nichts Politisches zu tun.'},
+  {name:'Sandalman-Frame', frame:'„Grün leben heißt Verzicht, Rückkehr in die Höhle."',
+   reframe:'Wir haben auch die Sklaverei abgeschafft — und leben besser. Grün ≠ Askese.'},
+  {name:'„Do Your Bit"-Frame', frame:'„Wechsle Glühbirnen, dämme dein Dach — jeder ein bisschen."',
+   reframe:'Freiwilligkeit scheitert. Wir zahlen ja auch Steuern nicht freiwillig. System-Regel her.'},
+  {name:'Marktregulierung', frame:'„Emissionen entstehen bei Millionen Auspuffen — regulieren wir sie alle."',
+   reframe:'Upstream! Reguliere die ~100 Fossil-Konzerne am Hahn, nicht die Sprinklerlöcher.'}
+];
+const ft = document.getElementById('frameToggles');
+const fd = document.getElementById('frameDisplay');
+frames.forEach((f,i)=>{
+  const t=document.createElement('div');
+  t.className='toggle'+(i===0?' active':'');
+  t.textContent=(i+1)+'. '+f.name;
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('#frameToggles .toggle').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    showFrame(i);
+  });
+  ft.appendChild(t);
+});
+function showFrame(i){
+  const f = frames[i];
+  fd.innerHTML = `
+    <div class="frame-card"><h4>${f.name}</h4><p>${f.frame}</p></div>
+    <div class="reframe-card"><h4>Reframe</h4><p>${f.reframe}</p></div>
+  `;
+}
+showFrame(0);
+
+/* ===================== Ch.9 Hose (upstream vs downstream) ===================== */
+const hc2=document.getElementById('hoseCanvas'), hctx2=hc2.getContext('2d');
+let upstream = false;
+document.getElementById('downTog').addEventListener('click',()=>{
+  upstream=false;
+  document.getElementById('downTog').classList.add('active');
+  document.getElementById('upTog').classList.remove('active');
+  updateHoseStats(); drawHose();
+});
+document.getElementById('upTog').addEventListener('click',()=>{
+  upstream=true;
+  document.getElementById('upTog').classList.add('active');
+  document.getElementById('downTog').classList.remove('active');
+  updateHoseStats(); drawHose();
+});
+const capS=document.getElementById('capSlider');
+function updateHoseStats(){
+  if(upstream){
+    document.getElementById('regCount').textContent='~100';
+    document.getElementById('loopHoles').textContent='fast keine';
+    document.getElementById('admin').textContent='niedrig';
+  } else {
+    document.getElementById('regCount').textContent='1000+';
+    document.getElementById('loopHoles').textContent='viele';
+    document.getElementById('admin').textContent='hoch';
+  }
+}
+function drawHose(){
+  const cap=+capS.value; document.getElementById('capVal').textContent=cap+'%';
+  const W=hc2.width, H=hc2.height;
+  hctx2.clearRect(0,0,W,H);
+  hctx2.fillStyle='rgba(0,0,0,0.2)'; hctx2.fillRect(0,0,W,H);
+  
+  // Reservoir (fossil fuels)
+  hctx2.fillStyle='#3a2a1a';
+  hctx2.beginPath();
+  hctx2.moveTo(20,80); hctx2.lineTo(120,60); hctx2.lineTo(140,140); hctx2.lineTo(20,160);
+  hctx2.closePath(); hctx2.fill();
+  hctx2.strokeStyle='#8892b0'; hctx2.lineWidth=2; hctx2.stroke();
+  hctx2.fillStyle='#ffb86b'; hctx2.font='bold 12px sans-serif'; hctx2.textAlign='center';
+  hctx2.fillText('Fossile', 75, 105);
+  hctx2.fillText('Konzerne', 75, 122);
+  
+  // Main pipe (upstream)
+  const pipeY = 120;
+  hctx2.fillStyle='#4a5570';
+  hctx2.fillRect(140, pipeY-12, W*0.45-140, 24);
+  
+  // Upstream tap
+  const tapX = 240;
+  hctx2.fillStyle = upstream ? '#64ffda' : '#8892b0';
+  hctx2.fillRect(tapX-6, pipeY-30, 12, 18);
+  hctx2.beginPath(); hctx2.arc(tapX, pipeY-36, 12, 0, Math.PI*2); hctx2.fill();
+  hctx2.fillStyle='#e8ecf5'; hctx2.font='11px sans-serif';
+  hctx2.fillText(upstream?'✓ CAP hier':'kein Cap', tapX, pipeY-52);
+  
+  // Distribution point
+  const dx = W*0.45;
+  hctx2.fillStyle='#4a5570';
+  hctx2.beginPath(); hctx2.arc(dx, pipeY, 22, 0, Math.PI*2); hctx2.fill();
+  
+  // Multiple sprinkler outlets (downstream)
+  const nOut = 8;
+  const flow = upstream ? cap/100 : 1;
+  for(let i=0;i<nOut;i++){
+    const angle = -Math.PI/2 + (i-nOut/2+0.5)*0.15;
+    const outX = dx + Math.cos(angle)*22;
+    const outY = pipeY + Math.sin(angle)*22;
+    const endX = dx + Math.cos(angle)*(180+i*15);
+    const endY = pipeY + Math.sin(angle)*(180+i*15) + 60;
+    // pipe
+    hctx2.strokeStyle='#4a5570'; hctx2.lineWidth=6;
+    hctx2.beginPath(); hctx2.moveTo(outX,outY); hctx2.lineTo(endX,endY); hctx2.stroke();
+    // valve at end (downstream cap)
+    if(!upstream){
+      hctx2.fillStyle = '#ff6b6b';
+      hctx2.beginPath(); hctx2.arc(endX,endY,7,0,Math.PI*2); hctx2.fill();
+    }
+    // emission puff
+    const puffFlow = upstream ? flow : (cap/100);
+    if(puffFlow > 0.05){
+      const puffR = 6 + puffFlow*14;
+      hctx2.fillStyle=`rgba(255,107,107,${0.3+puffFlow*0.5})`;
+      hctx2.beginPath(); hctx2.arc(endX+15, endY-8, puffR, 0, Math.PI*2); hctx2.fill();
+      hctx2.beginPath(); hctx2.arc(endX+30, endY-20, puffR*0.7, 0, Math.PI*2); hctx2.fill();
+    }
+    // little factory/car icon
+    hctx2.fillStyle='#c5cad9';
+    hctx2.fillRect(endX-8, endY, 16, 10);
+  }
+  
+  // Labels
+  hctx2.fillStyle='#64ffda'; hctx2.font='bold 14px sans-serif'; hctx2.textAlign='left';
+  hctx2.fillText(upstream?'UPSTREAM · Cap & Share':'DOWNSTREAM · Cap & Trade', 20, 30);
+  hctx2.fillStyle='#8892b0'; hctx2.font='12px sans-serif';
+  hctx2.fillText(upstream?'Ein Hahn kontrolliert alles':'1000 Ventile, jedes muss überwacht werden', 20, 50);
+  
+  // Money flow arrow (only upstream)
+  if(upstream){
+    hctx2.strokeStyle='#7fffa8'; hctx2.lineWidth=2; hctx2.setLineDash([5,4]);
+    hctx2.beginPath();
+    hctx2.moveTo(tapX+10, pipeY-45); hctx2.quadraticCurveTo(W*0.7, 20, W-40, 60);
+    hctx2.stroke(); hctx2.setLineDash([]);
+    hctx2.fillStyle='#7fffa8'; hctx2.font='bold 12px sans-serif'; hctx2.textAlign='center';
+    hctx2.fillText('💰 Cashback an alle Bürger', W-100, 50);
+  }
+}
+capS.addEventListener('input',drawHose);
+updateHoseStats(); drawHose();
+
+/* ===================== Ch.9 Cashback Plot ===================== */
+const myFpS=document.getElementById('myFpSlider'), priceS=document.getElementById('priceSlider');
+function drawCashback(){
+  const fp=+myFpS.value, price=+priceS.value;
+  document.getElementById('myFpVal').textContent=fp;
+  document.getElementById('priceVal').textContent=price;
+  const avgFp = 8; // average per capita
+  const cashback = avgFp * price; // everyone gets same
+  const xs = [], costs = [], cashbacks = [], nets = [];
+  for(let f=0; f<=25; f+=0.5){
+    xs.push(f);
+    costs.push(f*price);
+    cashbacks.push(cashback);
+    nets.push(cashback - f*price);
+  }
+  const myCost = fp*price;
+  const myNet = cashback - myCost;
+  
+  Plotly.react('cashbackPlot',[
+    {x:xs, y:costs, name:'Deine CO₂-Mehrkosten', line:{color:'#ff6b6b',width:3}},
+    {x:xs, y:cashbacks, name:'Cashback (Pro-Kopf)', line:{color:'#7fffa8',width:3,dash:'dash'}},
+    {x:xs, y:nets, name:'Netto (Gewinn/Verlust)', line:{color:'#64ffda',width:3}, fill:'tozeroy', fillcolor:'rgba(100,255,218,0.1)'},
+    {x:[fp], y:[myNet], mode:'markers', name:'Du', marker:{color:'#ffb86b',size:16,line:{color:'#fff',width:2}}}
+  ],{
+    paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+    font:{color:'#c5cad9'}, margin:{t:20,r:20,b:50,l:70},
+    xaxis:{title:'CO₂-Fußabdruck (t/Jahr)', gridcolor:'rgba(255,255,255,0.08)'},
+    yaxis:{title:'€ pro Jahr', gridcolor:'rgba(255,255,255,0.08)', zerolinecolor:'rgba(255,255,255,0.3)'},
+    legend:{bgcolor:'rgba(0,0,0,0)', orientation:'h', y:-0.2},
+    shapes:[{type:'line', x0:avgFp, x1:avgFp, y0:0, y1:cashback,
+             line:{color:'rgba(255,255,255,0.2)', dash:'dot'}}],
+    annotations:[
+      {x:avgFp, y:cashback, text:'⌀ Break-Even', showarrow:false, yshift:15, font:{color:'#8892b0',size:11}},
+      {x:fp, y:myNet, text: myNet>=0?`✓ +${myNet.toFixed(0)} €`:`✗ ${myNet.toFixed(0)} €`,
+       showarrow:true, arrowcolor:'#ffb86b', ax:40, ay:-30, font:{color:'#ffb86b',size:13}}
+    ]
+  },{displayModeBar:false, responsive:true});
+}
+myFpS.addEventListener('input',drawCashback);
+priceS.addEventListener('input',drawCashback);
+drawCashback();
+
+/* ===================== Ch.10 Prisoner's Dilemma ===================== */
+const pdc=document.getElementById('pdCanvas'), pdctx=pdc.getContext('2d');
+const costS=document.getElementById('costSlider'), benS=document.getElementById('benSlider');
+function drawPD(){
+  const c=+costS.value, b=+benS.value;
+  document.getElementById('costVal').textContent=c;
+  document.getElementById('benVal').textContent=b;
+  const W=pdc.width, H=pdc.height;
+  pdctx.clearRect(0,0,W,H);
+  pdctx.fillStyle='rgba(0,0,0,0.2)'; pdctx.fillRect(0,0,W,H);
+  
+  // Payoff matrix
+  // (Row plays H or T, Col plays H or T)
+  // H,H: both get b-c
+  // H,T: row gets -c (paid but no benefit from partner), col gets b (free rider)
+  // T,H: row gets b, col gets -c
+  // T,T: both get 0
+  const cells = [
+    [{r:b-c, c:b-c}, {r:-c, c:b}],
+    [{r:b, c:-c}, {r:0, c:0}]
+  ];
+  const labels = [['Handeln','Trittbrett'],['Handeln','Trittbrett']];
+  const cellW = 220, cellH = 110;
+  const startX = W/2 - cellW, startY = 90;
+  
+  // Column headers (Land B)
+  pdctx.fillStyle='#82aaff'; pdctx.font='bold 14px sans-serif'; pdctx.textAlign='center';
+  pdctx.fillText('Land B:', W/2, 30);
+  pdctx.font='13px sans-serif';
+  pdctx.fillText('Handeln (H)', startX + cellW/2, 65);
+  pdctx.fillText('Trittbrett (T)', startX + cellW*1.5, 65);
+  // Row headers (Land A)
+  pdctx.fillStyle='#c792ea'; pdctx.font='bold 14px sans-serif';
+  pdctx.save(); pdctx.translate(startX-70, startY+cellH); pdctx.rotate(-Math.PI/2);
+  pdctx.fillText('Land A', 0, 0); pdctx.restore();
+  pdctx.font='13px sans-serif';
+  pdctx.textAlign='right';
+  pdctx.fillText('Handeln (H)', startX-10, startY+cellH/2+5);
+  pdctx.fillText('Trittbrett (T)', startX-10, startY+cellH*1.5+5);
+  
+  // find Nash equilibrium
+  // A's best response: to H (col H): compare r of H,H (b-c) vs T,H (b) → T better if b>b-c always (c>0), so T dominates
+  // Both defect → (T,T)
+  const nashRow = 1, nashCol = 1;
+  
+  for(let i=0;i<2;i++){
+    for(let j=0;j<2;j++){
+      const x = startX + j*cellW, y = startY + i*cellH;
+      const isNash = i===nashRow && j===nashCol;
+      const isBest = i===0 && j===0;
+      pdctx.fillStyle = isNash ? 'rgba(255,107,107,0.2)' : isBest ? 'rgba(127,255,168,0.2)' : 'rgba(255,255,255,0.04)';
+      pdctx.fillRect(x, y, cellW, cellH);
+      pdctx.strokeStyle = isNash ? '#ff6b6b' : isBest ? '#7fffa8' : 'rgba(255,255,255,0.15)';
+      pdctx.lineWidth = isNash || isBest ? 2 : 1;
+      pdctx.strokeRect(x, y, cellW, cellH);
+      // payoffs
+      pdctx.textAlign='center';
+      pdctx.fillStyle='#c792ea'; pdctx.font='bold 20px sans-serif';
+      pdctx.fillText('A: '+cells[i][j].r.toFixed(1), x+cellW/2, y+40);
+      pdctx.fillStyle='#82aaff';
+      pdctx.fillText('B: '+cells[i][j].c.toFixed(1), x+cellW/2, y+70);
+      if(isNash){
+        pdctx.fillStyle='#ff6b6b'; pdctx.font='bold 11px sans-serif';
+        pdctx.fillText('⚠ NASH-GLEICHGEWICHT', x+cellW/2, y+95);
+      }
+      if(isBest){
+        pdctx.fillStyle='#7fffa8'; pdctx.font='bold 11px sans-serif';
+        pdctx.fillText('✓ BESTES ERGEBNIS', x+cellW/2, y+95);
+      }
+    }
+  }
+  
+  // conclusion
+  pdctx.fillStyle='#ffb86b'; pdctx.font='italic 13px sans-serif'; pdctx.textAlign='center';
+  pdctx.fillText('Beide könnten (b-c)='+(b-c).toFixed(1)+' bekommen — enden aber bei 0. Das ist die Tragödie.', W/2, H-15);
+}
+costS.addEventListener('input',drawPD);
+benS.addEventListener('input',drawPD);
+drawPD();
+
+/* ===================== Ch.10 Jevons Paradox ===================== */
+const effS=document.getElementById('effSlider'), rebS=document.getElementById('rebSlider');
+function drawJevons(){
+  const eff=+effS.value/100, reb=+rebS.value;
+  document.getElementById('effVal').textContent='+'+(eff*100).toFixed(0)+'%';
+  document.getElementById('rebVal').textContent=reb.toFixed(2);
+  // Baseline: 100 units of consumption
+  // Efficiency reduces cost per unit by (1 - 1/(1+eff))
+  // Rebound: demand elasticity → new consumption = old * (1+eff)^reb
+  const xs = [], naive = [], reality = [];
+  for(let e=0; e<=2; e+=0.05){
+    xs.push(e*100);
+    // "naive" = if usage stayed constant, resource use would fall
+    naive.push(100/(1+e));
+    // reality: usage grows with rebound
+    reality.push(100/(1+e) * Math.pow(1+e, reb));
+  }
+  const myNaive = 100/(1+eff);
+  const myReal = 100/(1+eff) * Math.pow(1+eff, reb);
+  
+  Plotly.react('jevonsPlot',[
+    {x:xs, y:naive, name:'Naive Erwartung (Verbrauch konstant)', line:{color:'#7fffa8',width:3,dash:'dash'}},
+    {x:xs, y:reality, name:'Realität mit Rebound', line:{color:'#ff6b6b',width:3}},
+    {x:[100], y:[100], mode:'markers', name:'Start', marker:{color:'#ffb86b',size:12}},
+    {x:[eff*100], y:[myReal], mode:'markers', name:'Dein Punkt', marker:{color:'#64ffda',size:14,line:{color:'#fff',width:2}}}
+  ],{
+    paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+    font:{color:'#c5cad9'}, margin:{t:20,r:20,b:50,l:70},
+    xaxis:{title:'Effizienz-Verbesserung (%)', gridcolor:'rgba(255,255,255,0.08)'},
+    yaxis:{title:'Gesamtressourcen-Verbrauch', gridcolor:'rgba(255,255,255,0.08)'},
+    legend:{bgcolor:'rgba(0,0,0,0)', orientation:'h', y:-0.2},
+    shapes:[{type:'line', x0:0, x1:200, y0:100, y1:100, line:{color:'rgba(255,255,255,0.15)', dash:'dot'}}],
+    annotations:[
+      myReal>100 ? {x:eff*100, y:myReal, text:'⚠ BACKFIRE!', showarrow:true, ax:40, ay:-30, font:{color:'#ff6b6b',size:13,weight:'bold'}}
+                 : {x:eff*100, y:myReal, text:'✓ Ersparnis', showarrow:true, ax:40, ay:-30, font:{color:'#7fffa8',size:13}}
+    ]
+  },{displayModeBar:false, responsive:true});
+}
+effS.addEventListener('input',drawJevons);
+rebS.addEventListener('input',drawJevons);
+drawJevons();
+
+/* ===================== Ch.11 Rainbow Spectrum ===================== */
+const rc=document.getElementById('rainbowCanvas'), rctx=rc.getContext('2d');
+const incS=document.getElementById('incSlider');
+// approximate global income distribution (log-normal-ish, monthly € equivalent)
+const worldBands = [
+  {min:0, max:60, pct:10, color:'#ff3b3b', name:'rot'},
+  {min:60, max:150, pct:20, color:'#ff6b3b', name:'orange'},
+  {min:150, max:350, pct:20, color:'#ffb86b', name:'gelb'},
+  {min:350, max:800, pct:20, color:'#7fffa8', name:'grün'},
+  {min:800, max:1800, pct:15, color:'#64ffda', name:'blau'},
+  {min:1800, max:4000, pct:10, color:'#82aaff', name:'indigo'},
+  {min:4000, max:99999, pct:5, color:'#c792ea', name:'violett'}
+];
+function drawRainbow(){
+  const inc=+incS.value;
+  document.getElementById('incVal').textContent=inc;
+  const W=rc.width, H=rc.height;
+  rctx.clearRect(0,0,W,H);
+  rctx.fillStyle='rgba(0,0,0,0.2)'; rctx.fillRect(0,0,W,H);
+  
+  // Draw bands
+  const barY = 80, barH = 60;
+  let cumPct = 0;
+  let myBand = null, myCumPct = 0;
+  worldBands.forEach((b,i)=>{
+    const x = (cumPct/100) * W;
+    const w = (b.pct/100) * W;
+    // gradient
+    const g = rctx.createLinearGradient(x, barY, x+w, barY);
+    g.addColorStop(0, b.color); g.addColorStop(1, b.color);
+    rctx.fillStyle = b.color;
+    rctx.fillRect(x, barY, w, barH);
+    // label
+    rctx.fillStyle='#0a0e1a'; rctx.font='bold 11px sans-serif'; rctx.textAlign='center';
+    rctx.fillText(b.pct+'%', x+w/2, barY+barH/2+4);
+    // check if user in this band
+    if(inc >= b.min && inc < b.max){
+      myBand = b;
+      // fine-grained position within band
+      const within = Math.log(Math.max(inc,b.min)+1) - Math.log(b.min+1);
+      const total = Math.log(b.max+1) - Math.log(b.min+1);
+      const posInBand = Math.min(1, within/total);
+      myCumPct = cumPct + b.pct * posInBand;
+    }
+    cumPct += b.pct;
+  });
+  
+  // Labels below
+  cumPct = 0;
+  worldBands.forEach(b=>{
+    const x = (cumPct/100)*W + (b.pct/100)*W/2;
+    rctx.fillStyle=b.color; rctx.font='10px sans-serif'; rctx.textAlign='center';
+    rctx.fillText(b.name, x, barY+barH+16);
+    cumPct += b.pct;
+  });
+  
+  // User marker
+  if(myBand){
+    const mx = (myCumPct/100) * W;
+    rctx.fillStyle='#fff';
+    rctx.beginPath();
+    rctx.moveTo(mx, barY-5);
+    rctx.lineTo(mx-8, barY-20);
+    rctx.lineTo(mx+8, barY-20);
+    rctx.closePath(); rctx.fill();
+    rctx.fillStyle='#ffb86b'; rctx.font='bold 14px sans-serif'; rctx.textAlign='center';
+    rctx.fillText('DU', mx, barY-26);
+    rctx.fillStyle='#ffb86b';
+    rctx.fillRect(mx-1, barY, 2, barH);
+    
+    document.getElementById('pctVal').textContent=myCumPct.toFixed(0)+'%';
+    document.getElementById('decileVal').textContent=Math.min(10,Math.ceil(myCumPct/10));
+    const cv=document.getElementById('colorVal');
+    cv.textContent=myBand.name; cv.style.color=myBand.color;
+  }
+  
+  // Title
+  rctx.fillStyle='#e8ecf5'; rctx.font='bold 14px sans-serif'; rctx.textAlign='left';
+  rctx.fillText('Globales Einkommens-Spektrum (7,8 Mrd. Menschen)', 10, 30);
+  rctx.fillStyle='#8892b0'; rctx.font='11px sans-serif';
+  rctx.fillText('← ärmer                                                                                    reicher →', 10, 50);
+  
+  // Emissions overlay
+  rctx.fillStyle='rgba(255,107,107,0.6)'; rctx.font='11px sans-serif'; rctx.textAlign='center';
+  rctx.fillText('Der violette Zipfel verursacht ~50% aller Emissionen', W*0.85, H-8);
+}
+incS.addEventListener('input',drawRainbow);
+drawRainbow();
+
+/* ===================== Ch.12 Three Narratives ===================== */
+const narrData = {
+  progress: {
+    color:'#82aaff',
+    title:'📈 Die Fortschritts-Geschichte',    text:'„Vom Feuer zur Mondlandung — wir überwinden alle Grenzen. Auch das Klima wird eine technische Lösung finden. Onward and upward!" Diese Geschichte macht uns unfähig, Grenzen ernstzunehmen. Sie ist verführerisch, aber lebensgefährlich, wenn sie zum Alibi für Untätigkeit wird.',
+    curve: t => Math.pow(t, 1.5)
+  },
+  doom: {
+    color:'#ff6b6b',
+    title:'💀 Die Untergangs-Geschichte',
+    text:'„Ikarus, Babel, Titanic — Hybris wird bestraft. Wir sind zu weit gegangen, es ist zu spät, alles bricht zusammen." Auch diese Geschichte lähmt: Wenn eh alles verloren ist, warum kämpfen? Sie führt in die Verdrängung durch Fatalismus.',
+    curve: t => 1 - Math.pow(t, 2.5)
+  },
+  coming: {
+    color:'#64ffda',
+    title:'🌱 Die Coming-of-Age-Geschichte',
+    text:'„Wachstum gehört zur Kindheit. Erwachsene wachsen anders — in Weisheit, Erfahrung, Tiefe. Die Menschheit wird gerade volljährig." Diese Geschichte akzeptiert Grenzen, ohne zu verzweifeln. Sie eröffnet Handlungsspielraum.',
+    curve: t => {
+      // rise, then plateau at higher level
+      const rise = 1/(1+Math.exp(-8*(t-0.4)));
+      return 0.3 + 0.6*rise;
+    }
+  }
+};
+const narrC = document.getElementById('narrCanvas'), narrCtx = narrC.getContext('2d');
+let currentNarr = 'coming';
+function pickNarr(key){
+  currentNarr = key;
+  const d = narrData[key];
+  document.querySelector('#narrPanel .panel-title').textContent = d.title;
+  document.getElementById('narrText').textContent = d.text;
+  drawNarr();
+}
+function drawNarr(){
+  const d = narrData[currentNarr];
+  const W = narrC.width, H = narrC.height;
+  narrCtx.clearRect(0,0,W,H);
+  narrCtx.fillStyle='rgba(0,0,0,0.2)';
+  narrCtx.fillRect(0,0,W,H);
+  // axes
+  narrCtx.strokeStyle='rgba(255,255,255,0.15)';
+  narrCtx.lineWidth = 1;
+  narrCtx.beginPath();
+  narrCtx.moveTo(60, 20); narrCtx.lineTo(60, H-40);
+  narrCtx.lineTo(W-20, H-40);
+  narrCtx.stroke();
+  // labels
+  narrCtx.fillStyle='#8892b0'; narrCtx.font='11px sans-serif'; narrCtx.textAlign='right';
+  narrCtx.fillText('Wohlbefinden', 55, 24);
+  narrCtx.textAlign='center';
+  narrCtx.fillText('Vergangenheit → Heute → Zukunft', W/2, H-15);
+  // "today" marker
+  const todayX = 60 + (W-80)*0.4;
+  narrCtx.strokeStyle='rgba(255,184,107,0.4)'; narrCtx.setLineDash([4,4]);
+  narrCtx.beginPath(); narrCtx.moveTo(todayX, 20); narrCtx.lineTo(todayX, H-40); narrCtx.stroke();
+  narrCtx.setLineDash([]);
+  narrCtx.fillStyle='#ffb86b'; narrCtx.font='11px sans-serif';
+  narrCtx.fillText('HEUTE', todayX, 18);
+  // curve
+  narrCtx.strokeStyle = d.color; narrCtx.lineWidth = 4;
+  narrCtx.shadowColor = d.color; narrCtx.shadowBlur = 12;
+  narrCtx.beginPath();
+  for(let i=0;i<=200;i++){
+    const t = i/200;
+    const x = 60 + (W-80)*t;
+    const v = d.curve(t);
+    const y = (H-40) - v*(H-70);
+    if(i===0) narrCtx.moveTo(x,y); else narrCtx.lineTo(x,y);
+  }
+  narrCtx.stroke();
+  narrCtx.shadowBlur = 0;
+}
+pickNarr('coming');
+
+</script>
+</body>
+</html>
