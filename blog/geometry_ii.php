@@ -50,13 +50,13 @@ $$
 
 Two things make $G$ more than a convenience. First, it is **always symmetric and positive semi-definite**: the diagonal holds $G_{ii} = \lVert x_i \rVert^2 \ge 0$, and for *any* coefficient vector $c$, $c^{\top} G c = \lVert Xc \rVert^2 \ge 0$. That positivity is not an accident — it is the statement that the data fits inside a real space. (The deep version is Mercer’s theorem \citeyear{mercerno1909}: a positive-definite “kernel” is *exactly* a Gram matrix of features in some space, possibly infinite-dimensional — the whole reason kernel methods and the “kernel trick” work.)
 
-Second, and this is the punchline for AI: **$G$ stores the geometry of the data independent of the coordinates you happened to choose.** Rotate every column of $X$ by the *same* rotation $R$ and $X$ changes to $XR$, but $G$ does not:
+Second, and this is the punchline for AI: **$G$ describes the geometry of the data without committing to any coordinates.** It records only *inner products* between the data, and inner products do not change under a rigid motion. Rotate every data point by the same rotation $R$ — a pure re-orientation in space — and every pairwise dot product is the same, so the Gram matrix is **exactly unchanged**:
 
 $$
-(XR)^{\top}(XR) \;=\; R^{\top} \underbrace{\cancel{X^{\top}X}}_{G} R \;=\; R^{\top} G R
+(RX)^{\top}(RX) \;=\; X^{\top}\underbrace{R^{\top}R}_{=\, I}\,X \;=\; \underbrace{X^{\top}X}_{G}
 $$
 
-and if $R$ is the identity this is just $G$. The point is that **all the information about distances and angles between your data — the only thing a downstream layer can ever see — lives in this one symmetric matrix, and only in its eigenvalues.** Change coordinates and $G$’s entries shuffle, but its eigenvalues, and therefore the shape of the data, do not move.
+Turn the whole point cloud around and nothing in $G$ moves: that is what it means for $G$ to be a coordinate-free description of the data. The statement is even more rigid — the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the shape of the data, its principal stretches, independent of every coordinate choice.
 
 That last sentence is the seed of the entire chapter. Everything that follows is an operation that reads or manipulates $G$’s eigenstructure: **projection** picks out a subspace, the **SVD** diagonalises the stretch, **descent** walks across a level set, **convolution** is a translation-invariant inner product, and **symmetry** is the group of rotations that leave $G$ unchanged.
 </div>
