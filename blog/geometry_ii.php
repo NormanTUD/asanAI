@@ -116,7 +116,7 @@ Read the factorisation as a story about a circle:
 
 So *every* linear map is **rotate, stretch, rotate**. The circle $\lVert x\rVert = 1$ becomes an **ellipse**, and the singular values are its **semi-axis lengths** \cite{svd_wiki}. The right singular vectors (columns of $V$) are the axes of the circle that get stretched; the left singular vectors (columns of $U$) are where those stretched axes end up.
 
-\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851). In 1842 he gave the method of *alternately rotating a quadratic form between two sets of variables until it is diagonal* \cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today.}
+\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851). In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions* \cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today.}
 
 Two facts turn the picture into engineering:
 
