@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Eine Rose mit anderem Namen — Kategorielle Homotopie für LLMs</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root{
+    --bg:#0a0612;
+    --bg2:#140a24;
+    --panel:rgba(30,15,55,0.55);
+    --panel2:rgba(50,25,90,0.35);
+    --accent:#ff5edb;
+    --accent2:#7cf3ff;
+    --accent3:#ffd166;
+    --text:#f4eaff;
+    --muted:#b7a6d4;
+    --good:#5eff9d;
+    --bad:#ff6d8f;
+    --border:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,#1a0a35 0%,#0a0612 50%,#050208 100%);color:var(--text);font-family:'Inter','Segoe UI',system-ui,sans-serif;line-height:1.65;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:
+    radial-gradient(circle at 15% 20%,rgba(255,94,219,0.12),transparent 40%),
+    radial-gradient(circle at 85% 60%,rgba(124,243,255,0.10),transparent 45%),
+    radial-gradient(circle at 50% 100%,rgba(255,209,102,0.06),transparent 50%);
+    pointer-events:none;z-index:0}
+  .wrap{max-width:1200px;margin:0 auto;padding:40px 24px 120px;position:relative;z-index:1}
+  header{text-align:center;padding:60px 20px 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+  header h1{font-size:clamp(28px,4.5vw,52px);margin:0 0 12px;font-weight:800;letter-spacing:-0.02em;background:linear-gradient(120deg,#ff5edb,#c8a2ff,#7cf3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  header .sub{color:var(--muted);font-size:18px;max-width:720px;margin:0 auto;font-style:italic}
+  header .tag{display:inline-block;margin-top:16px;padding:4px 14px;border:1px solid var(--accent);border-radius:100px;font-size:12px;color:var(--accent);letter-spacing:0.15em;text-transform:uppercase}
+  .section{margin:70px 0;padding:36px;background:var(--panel);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+  .section h2{margin:0 0 8px;font-size:28px;font-weight:700;background:linear-gradient(90deg,#ff5edb,#7cf3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .section h3{color:var(--accent3);font-size:20px;margin-top:32px;margin-bottom:12px}
+  .kicker{color:var(--accent2);font-size:12px;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+  .lead{font-size:17px;color:#e0d3f5;margin-bottom:24px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}}
+  .card{background:var(--panel2);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .card h4{margin:0 0 10px;color:var(--accent);font-size:15px}
+  .demo{background:linear-gradient(135deg,rgba(255,94,219,0.06),rgba(124,243,255,0.06));border:1px solid rgba(255,94,219,0.2);border-radius:20px;padding:24px;margin-top:20px;position:relative}
+  .demo::before{content:'▸ INTERAKTIVE DEMO';position:absolute;top:-11px;left:20px;background:#1a0a35;padding:2px 12px;font-size:10px;letter-spacing:0.2em;color:var(--accent);border:1px solid rgba(255,94,219,0.3);border-radius:100px}
+  .controls{display:flex;flex-wrap:wrap;gap:16px;margin:16px 0;align-items:center}
+  .control{display:flex;flex-direction:column;gap:4px;min-width:160px}
+  .control label{font-size:12px;color:var(--muted);letter-spacing:0.05em}
+  .control input[type=range]{width:180px;accent-color:var(--accent)}
+  .control .val{color:var(--accent2);font-family:'JetBrains Mono',monospace;font-size:13px}
+  button{background:linear-gradient(120deg,var(--accent),#a56dff);color:white;border:none;padding:8px 18px;border-radius:100px;cursor:pointer;font-weight:600;font-size:13px;transition:transform 0.15s,box-shadow 0.15s}
+  button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,94,219,0.4)}
+  button.ghost{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+  canvas{max-width:100%;display:block;margin:12px auto;border-radius:12px;background:rgba(0,0,0,0.3)}
+  .plot{width:100%;height:400px;margin:12px 0}
+  .note{background:rgba(124,243,255,0.05);border-left:3px solid var(--accent2);padding:14px 18px;border-radius:8px;margin:16px 0;font-size:14px;color:#c8bde0}
+  .warn{background:rgba(255,109,143,0.05);border-left:3px solid var(--bad);padding:14px 18px;border-radius:8px;margin:16px 0;font-size:14px;color:#e8b8c4}
+  .win{background:rgba(94,255,157,0.05);border-left:3px solid var(--good);padding:14px 18px;border-radius:8px;margin:16px 0;font-size:14px;color:#b8e8c4}
+  .math{overflow-x:auto;padding:8px 0;text-align:center;font-size:1.1em}
+  .toc{position:sticky;top:20px;background:rgba(20,10,36,0.85);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:16px;padding:16px 20px;margin-bottom:32px;z-index:10}
+  .toc ol{margin:0;padding-left:22px;font-size:13px;color:var(--muted);columns:2;column-gap:32px}
+  .toc a{color:var(--muted);text-decoration:none;transition:color 0.15s}
+  .toc a:hover{color:var(--accent)}
+  .flow{display:flex;flex-wrap:wrap;gap:14px;margin:20px 0;align-items:center;justify-content:center}
+  .flow-step{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:14px 20px;font-size:14px;min-width:140px;text-align:center}
+  .flow-step .num{display:block;color:var(--accent);font-size:11px;letter-spacing:0.2em;margin-bottom:4px}
+  .arrow{color:var(--accent);font-size:20px}
+  code{background:rgba(0,0,0,0.35);padding:2px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:0.92em;color:var(--accent2)}
+  .tokens{display:flex;flex-wrap:wrap;gap:6px;font-family:'JetBrains Mono',monospace}
+  .token{background:rgba(124,243,255,0.15);border:1px solid rgba(124,243,255,0.3);padding:4px 10px;border-radius:6px;font-size:13px;transition:all 0.2s}
+  .token.hot{background:var(--accent);color:#1a0a35;border-color:var(--accent)}
+  .prob-bar{display:flex;align-items:center;gap:10px;margin:4px 0;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .prob-bar .word{width:120px;text-align:right;color:var(--muted)}
+  .prob-bar .bar{flex:1;height:16px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;position:relative}
+  .prob-bar .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1)}
+  .prob-bar .num{width:60px;color:var(--accent2)}
+  .big-question{text-align:center;font-size:24px;font-weight:600;background:linear-gradient(120deg,#ff5edb,#7cf3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:20px;margin:24px 0}
+  .toggle{display:inline-flex;background:rgba(0,0,0,0.3);border-radius:100px;padding:3px;gap:2px}
+  .toggle button{padding:6px 14px;background:transparent;color:var(--muted);border-radius:100px}
+  .toggle button.active{background:var(--accent);color:#1a0a35}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="tag">Interaktive Paper-Erkundung</div>
+  <h1>Eine Rose mit jedem anderen Namen<br>würde genauso süß duften</h1>
+  <p class="sub">Kategorielle Homotopietheorie für Large Language Models — Sridhar Mahadevan (2025). Ein spielerischer Weg durch alle Konzepte, ohne viel Lesen.</p>
+</header>
+
+<nav class="toc">
+  <div class="kicker">Reise durch das Paper</div>
+  <ol>
+    <li><a href="#s1">Das Problem, das alles antreibt</a></li>
+    <li><a href="#s2">Kategorientheorie — Sprache der Struktur</a></li>
+    <li><a href="#s3">Funktoren & Yoneda</a></li>
+    <li><a href="#s4">Anreicherung über [0,1]</a></li>
+    <li><a href="#s5">Monoidale & Markov-Kategorien</a></li>
+    <li><a href="#s6">String-Diagramme</a></li>
+    <li><a href="#s7">Homotopie — wann sind Dinge "gleich"?</a></li>
+    <li><a href="#s8">Lifting-Diagramme</a></li>
+    <li><a href="#s9">Simpliziale Mengen</a></li>
+    <li><a href="#s10">Model-Kategorien</a></li>
+    <li><a href="#s11">Die Antwort & der Weg dorthin</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<section class="section" id="s1">
+<div class="kicker">Kapitel 1 · Motivation</div>
+<h2>Das Problem: LLMs verstehen Paraphrasen nicht</h2>
+<p class="lead">Stell dir vor, du fragst ein Sprachmodell nach dem nächsten Wort. Zwei Sätze, gleiche Bedeutung — aber das Modell antwortet unterschiedlich.</p>
+
+<div class="demo">
+<p><b>Spiele damit:</b> Wähle einen Satz-Prefix. Beobachte, wie sich die Wahrscheinlichkeitsverteilung über das nächste Wort ändert — obwohl beide Sätze <em>dasselbe meinen</em>.</p>
+<div class="toggle" id="paraphraseToggle">
+  <button class="active" data-idx="0">"Charles Darwin wrote…"</button>
+  <button data-idx="1">"Charles Darwin is the author of…"</button>
+</div>
+<div id="probPanel" style="margin-top:20px"></div>
+<div class="warn"><b>Beobachtung:</b> Selbst wenn zwei Prefixe semantisch identisch sind, produziert ein echter LLM leicht unterschiedliche Verteilungen. Idealerweise sollten sie <em>exakt gleich</em> sein. Genau dieses Problem greift das Paper an.</div>
+</div>
+
+<div class="big-question">Wie bringen wir eine Maschine dazu zu erkennen,<br>dass zwei Formen dasselbe bedeuten?</div>
+
+<h3>Der Roadmap-Trailer</h3>
+<div class="flow">
+  <div class="flow-step"><span class="num">MOTIVATION</span>Paraphrasen liefern unterschiedliche Prognosen</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">IDEE</span>Sätze als Pfeile in einer Kategorie modellieren</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">PROBLEM</span>Verschiedene Formen = verschiedene Pfeile</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">LÖSUNG</span>Homotopie: "schwache Äquivalenz"</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">WERKZEUG</span>Model-Kategorien (Quillen 1967)</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s2">
+<div class="kicker">Prerequisite · Kategorientheorie 101</div>
+<h2>Kategorien: Punkte und Pfeile</h2>
+<p class="lead">Eine <b>Kategorie</b> ist erstaunlich einfach: Sammle Objekte (Punkte) und Morphismen (Pfeile zwischen ihnen). Pfeile müssen sich verketten lassen, und jeder Punkt hat einen Identitäts-Pfeil auf sich selbst.</p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Die drei Regeln einer Kategorie</h4>
+    <ol>
+      <li><b>Objekte:</b> irgendwas — Wörter, Zahlen, Räume</li>
+      <li><b>Pfeile:</b> Beziehungen <code>f: A → B</code></li>
+      <li><b>Komposition:</b> <code>g∘f: A → C</code> wenn <code>f: A→B, g: B→C</code></li>
+      <li><b>Identität:</b> <code>id_A: A → A</code> ändert nichts</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h4>Für LLMs</h4>
+    <p><b>Objekte</b> = Satzfragmente ("Charles Darwin")<br>
+    <b>Pfeile</b> = mögliche Fortsetzungen mit Wahrscheinlichkeit ("… wrote", p=0.4)<br>
+    <b>Komposition</b> = "Charles" → "Charles Darwin" → "Charles Darwin wrote"</p>
+  </div>
+</div>
+
+<div class="demo">
+<p><b>Baue deine eigene Kategorie:</b> Klicke auf leere Fläche für neue Objekte. Ziehe von einem Objekt zum nächsten für einen Pfeil. Klicke auf einen Pfeil, um ihn zu löschen. Der Knopf zeigt dir alle <em>komponierten</em> Pfeile automatisch als transparente Kurven.</p>
+<div class="controls">
+  <button id="catClear">Zurücksetzen</button>
+  <button id="catShowComp" class="ghost">Kompositionen zeigen</button>
+  <button id="catExample">Beispiel laden</button>
+  <span style="color:var(--muted);font-size:13px" id="catInfo">0 Objekte, 0 Pfeile</span>
+</div>
+<canvas id="catCanvas" width="900" height="380"></canvas>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s3">
+<div class="kicker">Prerequisite · Funktoren & Yoneda</div>
+<h2>Funktoren: strukturerhaltende Übersetzung</h2>
+<p class="lead">Ein <b>Funktor</b> F ist wie ein "Kategorien-Übersetzer": er bildet Objekte auf Objekte und Pfeile auf Pfeile ab — und respektiert Komposition. Das Yoneda-Lemma sagt: <em>ein Objekt ist vollständig durch alle Pfeile zu ihm hin bestimmt</em>.</p>
+
+<div class="note">
+  <b>Analogie:</b> Wenn du wissen willst, wer Alice ist, frage <em>alle</em> Menschen, wie sie zu Alice stehen. Die Sammlung aller Beziehungen <em>ist</em> Alice.
+</div>
+
+<div class="demo">
+<p><b>Yoneda für LLMs:</b> Ein Wort wird durch seine "Signatur" definiert — die Wahrscheinlichkeit, mit der es in jedem Kontext folgt. Bewege den Slider, um zu sehen, wie zwei Wörter unterschiedliche "Yoneda-Fingerabdrücke" haben.</p>
+<div class="controls">
+  <div class="control"><label>Wort A auswählen</label>
+    <select id="yWordA"><option>König</option><option>Königin</option><option>Hund</option><option>rot</option></select>
+  </div>
+  <div class="control"><label>Wort B auswählen</label>
+    <select id="yWordB"><option>Königin</option><option>König</option><option>Katze</option><option>blau</option></select>
+  </div>
+</div>
+<div id="yonedaPlot" class="plot"></div>
+<div class="note">Zwei Wörter sind semantisch ähnlich, wenn ihre Yoneda-Signaturen (Kontextverteilungen) übereinstimmen. Das ist die Grundidee moderner Word Embeddings — und das mathematische Fundament, das die Autorin aus dem Yoneda-Lemma zieht.</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s4">
+<div class="kicker">Prerequisite · Angereicherte Kategorien</div>
+<h2>Enrichment über [0, 1]: Pfeile mit Gewicht</h2>
+<p class="lead">Statt zu fragen "Gibt es einen Pfeil A → B?", fragen wir "<em>Wie stark</em> ist der Pfeil?". Für LLMs ist die Stärke = <b>Wahrscheinlichkeit</b> der Fortsetzung, ein Wert in [0, 1].</p>
+
+<div class="math" id="enrichMath"></div>
+
+<div class="demo">
+<p><b>Angereicherte Präordnung:</b> Bewege die Punkte im Wahrscheinlichkeitsraum. Ein Pfeil "existiert" nur, wenn die Wahrscheinlichkeit ≥ dem Schwellwert ist. Beobachte, wie Kompositions-Ungleichungen automatisch erzwungen werden: <code>P(z|x) ≥ P(z|y) · P(y|x)</code>.</p>
+<div class="controls">
+  <div class="control"><label>Schwellwert τ</label>
+    <input type="range" id="enrichTau" min="0" max="1" step="0.01" value="0.3">
+    <span class="val" id="enrichTauVal">0.30</span>
+  </div>
+  <div class="control"><label>P(y|x)</label>
+    <input type="range" id="enrichPxy" min="0" max="1" step="0.01" value="0.7">
+    <span class="val" id="enrichPxyVal">0.70</span>
+  </div>
+  <div class="control"><label>P(z|y)</label>
+    <input type="range" id="enrichPyz" min="0" max="1" step="0.01" value="0.6">
+    <span class="val" id="enrichPyzVal">0.60</span>
+  </div>
+</div>
+<canvas id="enrichCanvas" width="900" height="300"></canvas>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s5">
+<div class="kicker">Prerequisite · Monoidale Struktur</div>
+<h2>Monoidale Kategorien: Objekte kombinieren</h2>
+<p class="lead">Wörter kann man zu Sätzen aneinanderreihen. Ähnlich hat eine <b>monoidale Kategorie</b> einen Tensor <code>⊗</code>, mit dem man zwei Objekte kombiniert. Eine <b>Markov-Kategorie</b> hat zusätzlich noch <em>Kopieren</em> und <em>Löschen</em> — genau, was man für Wahrscheinlichkeit braucht.</p>
+
+<div class="grid3">
+  <div class="card"><h4>⊗ Tensor</h4>Kombiniert Objekte: <code>X⊗Y</code></div>
+  <div class="card"><h4>copy_X</h4>Dupliziert: <code>X → X⊗X</code></div>
+  <div class="card"><h4>del_X</h4>Verwirft: <code>X → I</code> (= Marginalisieren)</div>
+</div>
+
+<div class="demo">
+<p><b>Der Markov-Zoo:</b> Wähle eine Operation und sieh, wie sie als String-Diagramm aussieht (nächstes Kapitel) und was sie probabilistisch bedeutet.</p>
+<div class="toggle" id="markovOp">
+  <button class="active" data-op="copy">Kopieren</button>
+  <button data-op="del">Löschen</button>
+  <button data-op="tensor">Tensor</button>
+  <button data-op="markov">Markov-Bild</button>
+</div>
+<canvas id="markovCanvas" width="900" height="280"></canvas>
+<div id="markovExplain" class="note"></div>
+</div>
+
+<div class="win"><b>Warum das für LLMs wichtig ist:</b> Kopieren = ein Prefix "Charles Darwin" mehrfach verwenden. Löschen = einen Teil marginalisieren ("egal was folgt"). Tensor = zwei Fragmente zusammensetzen. Damit lassen sich Wahrscheinlichkeitsverteilungen kompositional bauen — genau wie ein LLM Sätze aus Wörtern zusammensetzt.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s6">
+<div class="kicker">Prerequisite · Diagrammatische Sprache</div>
+<h2>String-Diagramme: Rechnen mit Bildern</h2>
+<p class="lead">Statt symbolische Formeln wie <code>(f⊗g)∘copy</code> zu schreiben, zeichnet man <b>String-Diagramme</b>: Drähte laufen von oben nach unten, Boxen sind Morphismen. Selinger hat bewiesen, dass diese Bilder eine vollwertige formale Sprache sind — äquivalent zu Algebra.</p>
+
+<div class="demo">
+<p><b>Baue dein Diagramm:</b> Ziehe Bausteine (copy, delete, f, g) auf die Bühne. Verbinde Drähte. Der Computer wertet automatisch die entsprechende algebraische Formel aus.</p>
+<div class="controls">
+  <button id="sdReset">Zurücksetzen</button>
+  <button id="sdExample1" class="ghost">Beispiel: Bayes</button>
+  <button id="sdExample2" class="ghost">Beispiel: Marginal</button>
+</div>
+<canvas id="stringCanvas" width="900" height="360"></canvas>
+<div id="stringFormula" class="math" style="margin-top:12px;color:var(--accent2);font-family:'JetBrains Mono',monospace"></div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s7">
+<div class="kicker">Kernidee · Homotopie</div>
+<h2>Homotopie: die zwei Sätze weich ineinander deformieren</h2>
+<p class="lead">Zwei Funktionen f, g heißen <b>homotop</b>, wenn eine kontinuierliche "Zwischenbewegung" h(t, x) existiert, die bei t=0 gleich f ist und bei t=1 gleich g. Übertragen: Zwei Sätze sind homotop, wenn wir sie kontinuierlich ineinander deformieren können.</p>
+
+<div class="demo">
+<p><b>Verschiebe den Parameter t:</b> Sieh zu, wie sich die Kurve von f (rot, "wrote") stetig in die Kurve von g (blau, "is the author of") verformt. Genau das ist Homotopie im Original-Sinn (topologisch).</p>
+<div class="controls">
+  <div class="control"><label>Homotopie-Parameter t</label>
+    <input type="range" id="homT" min="0" max="1" step="0.005" value="0">
+    <span class="val" id="homTVal">0.000</span>
+  </div>
+  <button id="homPlay">▶ Animation</button>
+</div>
+<div id="homotopyPlot" class="plot"></div>
+<div class="note"><b>Übertragung auf LLMs:</b> Die "Deformation" ist keine geometrische Bewegung, sondern eine kategorielle: ein Pfad von Umformulierungen, jede semantisch äquivalent zur nächsten. Model-Kategorien machen diese Idee präzise.</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s8">
+<div class="kicker">Prerequisite · Lifting-Diagramme</div>
+<h2>Lifting: das universelle Werkzeug</h2>
+<p class="lead">Ein <b>Lifting-Problem</b> fragt: Gegeben ein kommutatives Quadrat — gibt es eine <em>Diagonale h'</em>, die alles kompatibel macht? Diese scheinbar abstrakte Frage kodiert erstaunlich viele Konzepte: Injektivität, Surjektivität, Trennung in Topologie, Datenbankqueries — und für uns: semantische Äquivalenz.</p>
+
+<div class="demo">
+<p><b>Das Lifting-Diagramm aus Figur 1 des Papers:</b> Klicke auf die Pfeile. Die Diagonale <code>h'</code> existiert nur, wenn das Quadrat "hebbar" ist. Für LLMs: die beiden Sätze bilden Endpunkte eines Zylinders, und das Lifting sagt, dass sie kontinuierlich verbunden sind.</p>
+<canvas id="liftCanvas" width="900" height="380"></canvas>
+<div class="controls">
+  <div class="control"><label>Position der Diagonale</label>
+    <input type="range" id="liftPos" min="0" max="1" step="0.01" value="0.5">
+    <span class="val" id="liftPosVal">0.50</span>
+  </div>
+  <button id="liftAnimate">Lift zeigen</button>
+</div>
+<div class="note">"Charles Darwin wrote…" (unten links) und "Charles Darwin is the author of…" (oben rechts) sitzen im gleichen Zylinder S×[0,1]. Der Lift <code>h'</code> ist der Pfad zwischen ihnen — die Homotopie, die sie äquivalent macht.</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s9">
+<div class="kicker">Prerequisite · Simpliziale Mengen</div>
+<h2>Simpliziale Mengen: Bausteine aus Punkten, Kanten, Dreiecken</h2>
+<p class="lead">Eine <b>simpliziale Menge</b> ist eine gestufte Struktur: <b>0-Simplizes</b> (Punkte), <b>1-Simplizes</b> (Kanten), <b>2-Simplizes</b> (Dreiecke), usw. Für LLMs: 0-Simplex = Token, 1-Simplex = Token-Paar, n-Simplex = Sequenz der Länge n.</p>
+
+<div class="demo">
+<p><b>Baue einen Token-Simplex:</b> Wähle eine Dimension. Sieh, wie <em>Face-Operatoren</em> (d_i) einen Token entfernen und <em>Degeneracy-Operatoren</em> (s_i) einen wiederholen — genau die Operationen aus dem Paper.</p>
+<div class="controls">
+  <div class="control"><label>Dimension n</label>
+    <input type="range" id="simDim" min="0" max="4" step="1" value="2">
+    <span class="val" id="simDimVal">2</span>
+  </div>
+  <div class="control"><label>Face-Operator d_i</label>
+    <input type="range" id="simFace" min="-1" max="4" step="1" value="-1">
+    <span class="val" id="simFaceVal">keine</span>
+  </div>
+</div>
+<canvas id="simCanvas" width="900" height="380"></canvas>
+<div id="simExplain" class="note"></div>
+</div>
+
+<h3>Kan-Komplexe: Hörner füllen</h3>
+<p>Ein <b>Kan-Komplex</b> ist eine simpliziale Menge, in der jedes "Horn" (ein unvollständiges Simplex — es fehlt eine Seite) gefüllt werden kann. Das ist die simpliziale Version von "jeder Weg lässt sich vervollständigen" — genau was wir für Homotopie brauchen.</p>
+
+<div class="demo">
+<p><b>Fülle das Horn:</b> Ein Horn Λ²₁ ist ein Dreieck, dem die "innere" Seite fehlt. Klicke, um es zu füllen — das ist die Kan-Bedingung.</p>
+<canvas id="hornCanvas" width="900" height="320"></canvas>
+<div class="controls">
+  <button id="hornFill">Horn füllen</button>
+  <button id="hornReset" class="ghost">Zurücksetzen</button>
+</div>
+</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s10">
+<div class="kicker">Höhepunkt · Model-Kategorien</div>
+<h2>Model-Kategorien (Quillen 1967)</h2>
+<p class="lead">Eine <b>Model-Kategorie</b> teilt alle Pfeile in drei Klassen: <span style="color:var(--accent)"><b>Fibrationen</b></span> (surjektiv-artig), <span style="color:var(--accent2)"><b>Kofibrationen</b></span> (injektiv-artig) und <span style="color:var(--accent3)"><b>schwache Äquivalenzen</b></span> (die eigentliche Homotopie). Fünf Axiome (MC1–MC5) regeln, wie sie zusammenspielen.</p>
+
+<div class="demo">
+<p><b>Der Pfeil-Zoo:</b> Klicke auf einen Pfeil, um seine Klasse zu ändern. Der Prüfer zeigt dir, ob alle fünf Axiome erfüllt sind — insbesondere <b>MC4</b>, das Lifting-Axiom, das Homotopie überhaupt erst möglich macht.</p>
+<canvas id="modelCanvas" width="900" height="380"></canvas>
+<div id="axiomCheck" style="margin-top:16px"></div>
+</div>
+
+<div class="win"><b>Papers Hauptresultat (Theorem 12):</b> LLM-Markov-Kategorien bilden Model-Kategorien. Damit übertragen sich <em>alle</em> Werkzeuge der Homotopietheorie aus 50 Jahren Mathematik direkt auf Sprachmodelle.</div>
+</section>
+
+<!-- ============================================================ -->
+<section class="section" id="s11">
+<div class="kicker">Finale · Antwort</div>
+<h2>Die Antwort: Kategorie der Brüche</h2>
+<p class="lead">Wie behandeln wir jetzt konkret zwei Paraphrasen als gleich? Antwort: Wir <b>lokalisieren</b> — wir "invertieren" alle schwachen Äquivalenzen und bilden die <b>Homotopie-Kategorie</b> Ho𝓛 = 𝓛[Σ⁻¹].</p>
+
+<div class="demo">
+<p><b>Vorher / Nachher:</b> Links siehst du die ursprüngliche LLM-Kategorie — viele "gleiche" Sätze als separate Objekte. Rechts nach der Lokalisierung: sie kollabieren zu <em>einer</em> Äquivalenzklasse. Das ist die kategorielle Antwort auf das Rose-Problem.</p>
+<div class="controls">
+  <button id="quotToggle">🌹 Lokalisieren</button>
+  <div class="control"><label>Äquivalenz-Schwelle</label>
+    <input type="range" id="quotThresh" min="0" max="1" step="0.01" value="0.7">
+    <span class="val" id="quotThreshVal">0.70</span>
+  </div>
+</div>
+<canvas id="quotCanvas" width="900" height="380"></canvas>
+</div>
+
+<h3>Der ganze Lösungsweg auf einen Blick</h3>
+<div class="flow">
+  <div class="flow-step"><span class="num">FRAGE</span>Warum liefert LLM verschiedene Prognosen für Paraphrasen?</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">MODELL</span>LLM = Markov-Kategorie 𝓛</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">HÜRDE</span>Paraphrasen = nicht-isomorphe Pfeile</div>
+</div>
+<div class="flow">
+  <div class="flow-step"><span class="num">TRICK</span>Nerve-Funktor: 𝓛 → simpliziale Menge</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">STRUKTUR</span>Simpliziale Mengen sind Kan-Komplexe</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">SATZ</span>Kan-Komplexe → Model-Kategorie (Thm 12)</div>
+</div>
+<div class="flow">
+  <div class="flow-step"><span class="num">LOKALISIERUNG</span>𝓛[Σ⁻¹] identifiziert Paraphrasen</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">K-THEORIE</span>π₀(𝓚𝓛) = Grothendieck-Gruppe</div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><span class="num">🌹 ANTWORT</span>Semantische Äquivalenz = Homotopie-Klasse</div>
+</div>
+
+<div class="big-question">Eine Rose mit jedem anderen Namen<br>hat denselben Homotopie-Typ. 🌹</div>
+</section>
+
+</div>
+
+<script>
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+/* Render math with temml */
+function renderMath(){
+  document.querySelectorAll('.math').forEach(el=>{
+    if(el.dataset.rendered) return;
+    if(el.textContent.trim() && !el.querySelector('canvas')){
+      try{ temml.render(el.textContent, el); el.dataset.rendered=1; }catch(e){}
+    }
+  });
+}
+
+/* ============================================================
+   SECTION 1 — Paraphrase Probability Comparison
+   ============================================================ */
+const paraphraseData = [
+  // "Charles Darwin wrote..."
+  {"On":0.32,"the":0.18,"about":0.14,"his":0.09,"many":0.07,"several":0.05,"a":0.05,"books":0.04,"in":0.03,"[other]":0.03},
+  // "Charles Darwin is the author of..."
+  {"On":0.28,"the":0.22,"\"On":0.11,"several":0.08,"many":0.07,"a":0.06,"his":0.05,"numerous":0.04,"books":0.05,"[other]":0.04}
+];
+function renderProbs(idx){
+  const data = paraphraseData[idx];
+  const panel = $('probPanel');
+  const entries = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+  const max = entries[0][1];
+  panel.innerHTML = entries.map(([w,p])=>`
+    <div class="prob-bar">
+      <div class="word">${w}</div>
+      <div class="bar"><div class="fill" style="width:${(p/max*100).toFixed(1)}%"></div></div>
+      <div class="num">${(p*100).toFixed(1)}%</div>
+    </div>`).join('');
+}
+$('paraphraseToggle').querySelectorAll('button').forEach(b=>{
+  b.onclick = ()=>{
+    $('paraphraseToggle').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    renderProbs(+b.dataset.idx);
+  };
+});
+renderProbs(0);
+
+/* ============================================================
+   SECTION 2 — Category Builder Canvas
+   ============================================================ */
+(()=>{
+  const cv=$('catCanvas'), ctx=cv.getContext('2d');
+  let objs=[], arrows=[];
+  let dragFrom=null, mouse={x:0,y:0}, showComp=false;
+  const NAMES=['A','B','C','D','E','F','G','H'];
+
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    for(let x=0;x<cv.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+    for(let y=0;y<cv.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
+    
+    // compositions (transparent)
+    if(showComp){
+      const comps=computeCompositions();
+      comps.forEach(c=>drawArrow(c.from,c.to,'rgba(255,209,102,0.35)',2,true,c.label));
+    }
+    // identity arrows
+    objs.forEach(o=>{
+      ctx.strokeStyle='rgba(124,243,255,0.5)';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(o.x,o.y-30,18,Math.PI*0.2,Math.PI*1.6);
+      ctx.stroke();
+      // arrowhead
+      const ax=o.x+18*Math.cos(Math.PI*1.6);
+      const ay=o.y-30+18*Math.sin(Math.PI*1.6);
+      drawHead(ax,ay,Math.PI*0.1,'rgba(124,243,255,0.5)');
+    });
+    // arrows
+    arrows.forEach(a=>drawArrow(a.from,a.to,'#ff5edb',2.5,false));
+    // drag preview
+    if(dragFrom){
+      ctx.strokeStyle='rgba(255,94,219,0.4)';
+      ctx.setLineDash([5,5]);
+      ctx.beginPath();ctx.moveTo(dragFrom.x,dragFrom.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // objects
+    objs.forEach(o=>{
+      ctx.fillStyle='#1a0a35';
+      ctx.strokeStyle='#7cf3ff';
+      ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(o.x,o.y,22,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#7cf3ff';
+      ctx.font='bold 14px system-ui';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(o.name,o.x,o.y);
+    });
+    $('catInfo').textContent=`${objs.length} Objekte, ${arrows.length} Pfeile`;
+  }
+  function drawArrow(from,to,color,w,dashed,label){
+    if(from===to) return;
+    const dx=to.x-from.x, dy=to.y-from.y, len=Math.hypot(dx,dy);
+    const nx=dx/len, ny=dy/len;
+    const sx=from.x+nx*22, sy=from.y+ny*22;
+    const ex=to.x-nx*22, ey=to.y-ny*22;
+    ctx.strokeStyle=color;ctx.lineWidth=w;
+    if(dashed) ctx.setLineDash([6,4]);
+    // curved
+    const mx=(sx+ex)/2 + (-ny)*20;
+    const my=(sy+ey)/2 + (nx)*20;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(mx,my,ex,ey);ctx.stroke();
+    ctx.setLineDash([]);
+    const ang=Math.atan2(ey-my,ex-mx);
+    drawHead(ex,ey,ang,color);
+    if(label){
+      ctx.fillStyle=color;ctx.font='11px monospace';ctx.textAlign='center';
+      ctx.fillText(label,mx,my);
+    }
+  }
+  function drawHead(x,y,a,c){
+    ctx.fillStyle=c;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x-10*Math.cos(a-0.4),y-10*Math.sin(a-0.4));
+    ctx.lineTo(x-10*Math.cos(a+0.4),y-10*Math.sin(a+0.4));
+    ctx.closePath();ctx.fill();
+  }
+  function computeCompositions(){
+    const res=[];
+    arrows.forEach(f=>arrows.forEach(g=>{
+      if(f.to===g.from && f.from!==g.to){
+        // check not already there
+        if(!arrows.find(a=>a.from===f.from&&a.to===g.to)){
+          res.push({from:f.from,to:g.to,label:'g∘f'});
+        }
+      }
+    }));
+    return res;
+  }
+  function hit(x,y){return objs.find(o=>Math.hypot(o.x-x,o.y-y)<22);}
+  function hitArrow(x,y){
+    return arrows.findIndex(a=>{
+      const mx=(a.from.x+a.to.x)/2, my=(a.from.y+a.to.y)/2;
+      return Math.hypot(mx-x,my-y)<15;
+    });
+  }
+  cv.addEventListener('mousedown',e=>{
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left)*cv.width/r.width;
+    const y=(e.clientY-r.top)*cv.height/r.height;
+    const o=hit(x,y);
+    if(o){dragFrom=o;}
+    else{
+      const ai=hitArrow(x,y);
+      if(ai>=0){arrows.splice(ai,1);draw();return;}
+      objs.push({x,y,name:NAMES[objs.length%NAMES.length]});
+      draw();
+    }
+  });
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    mouse.x=(e.clientX-r.left)*cv.width/r.width;
+    mouse.y=(e.clientY-r.top)*cv.height/r.height;
+    if(dragFrom) draw();
+  });
+  cv.addEventListener('mouseup',e=>{
+    if(dragFrom){
+      const r=cv.getBoundingClientRect();
+      const x=(e.clientX-r.left)*cv.width/r.width;
+      const y=(e.clientY-r.top)*cv.height/r.height;
+      const t=hit(x,y);
+      if(t && t!==dragFrom && !arrows.find(a=>a.from===dragFrom&&a.to===t)){
+        arrows.push({from:dragFrom,to:t});
+      }
+      dragFrom=null;draw();
+    }
+  });
+  $('catClear').onclick=()=>{objs=[];arrows=[];draw();};
+  $('catShowComp').onclick=()=>{showComp=!showComp;draw();};
+  $('catExample').onclick=()=>{
+    objs=[{x:180,y:190,name:'Charles'},{x:420,y:190,name:'Darwin'},{x:680,y:190,name:'wrote'}];
+    arrows=[{from:objs[0],to:objs[1]},{from:objs[1]},{from:objs[1],to:objs[2]}];
+    showComp=true;draw();
+  };
+  draw();
+})();
+
+/* ============================================================
+   SECTION 3 — Yoneda Fingerprint
+   ============================================================ */
+(()=>{
+  const contexts=['der ___','die ___','ein ___ regiert','___ läuft','___ ist schön','großer ___','___ und Königin','sitzt auf dem ___','___ bellt','___ miaut','___ Farbe','helles ___'];
+  const wordSig={
+    'König':    [0.35,0.05,0.28,0.15,0.20,0.30,0.42,0.31,0.02,0.01,0.05,0.03],
+    'Königin':  [0.05,0.35,0.25,0.12,0.22,0.28,0.40,0.30,0.01,0.01,0.04,0.03],
+    'Hund':     [0.30,0.05,0.02,0.35,0.15,0.20,0.02,0.05,0.55,0.03,0.03,0.02],
+    'Katze':    [0.05,0.30,0.02,0.28,0.16,0.18,0.02,0.06,0.04,0.52,0.03,0.02],
+    'rot':      [0.02,0.02,0.01,0.03,0.28,0.04,0.02,0.02,0.01,0.01,0.62,0.35],
+    'blau':     [0.02,0.02,0.01,0.03,0.25,0.05,0.02,0.02,0.01,0.01,0.60,0.38]
+  };
+  function drawY(){
+    const a=$('yWordA').value, b=$('yWordB').value;
+    const sa=wordSig[a]||wordSig['König'];
+    const sb=wordSig[b]||wordSig['Königin'];
+    const sim=(sa.reduce((s,v,i)=>s+v*sb[i],0)/(Math.sqrt(sa.reduce((s,v)=>s+v*v,0))*Math.sqrt(sb.reduce((s,v)=>s+v*v,0)))).toFixed(3);
+    Plotly.newPlot('yonedaPlot',[
+      {type:'bar',name:a,x:contexts,y:sa,marker:{color:'#ff5edb'}},
+      {type:'bar',name:b,x:contexts,y:sb,marker:{color:'#7cf3ff'}}
+    ],{
+      barmode:'group',paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+      font:{color:'#f4eaff',family:'Inter'},
+      title:{text:`Yoneda-Fingerabdruck — Cosinus-Ähnlichkeit: ${sim}`,font:{size:14}},
+      xaxis:{tickangle:-30,gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{title:'P(Wort | Kontext)',gridcolor:'rgba(255,255,255,0.05)'},
+      margin:{t:50,l:60,r:20,b:100},legend:{orientation:'h',y:-0.35}
+    },{displayModeBar:false});
+  }
+  $('yWordA').onchange=drawY;$('yWordB').onchange=drawY;drawY();
+})();
+
+/* ============================================================
+   SECTION 4 — Enriched preorder over [0,1]
+   ============================================================ */
+(()=>{
+  const cv=$('enrichCanvas'), ctx=cv.getContext('2d');
+  const labels=['x','y','z'];
+  function upd(){
+    const tau=+$('enrichTau').value, pxy=+$('enrichPxy').value, pyz=+$('enrichPyz').value;
+    const pxz=pxy*pyz; // Kettenregel-Untergrenze
+    $('enrichTauVal').textContent=tau.toFixed(2);
+    $('enrichPxyVal').textContent=pxy.toFixed(2);
+    $('enrichPyzVal').textContent=pyz.toFixed(2);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const pts=[{x:150,y:150,l:'x'},{x:450,y:80,l:'y'},{x:750,y:200,l:'z'}];
+    const arrows=[{a:0,b:1,p:pxy},{a:1,b:2,p:pyz},{a:0,b:2,p:pxz}];
+    // arrows
+    arrows.forEach(a=>{
+      const active=a.p>=tau;
+      const from=pts[a.a], to=pts[a.b];
+      ctx.strokeStyle=active?`rgba(255,94,219,${0.3+0.7*a.p})`:'rgba(255,255,255,0.1)';
+      ctx.lineWidth=active?3:1.5;
+      ctx.setLineDash(active?[]:[6,4]);
+      ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.stroke();
+      ctx.setLineDash([]);
+      // label
+      const mx=(from.x+to.x)/2, my=(from.y+to.y)/2 - 12;
+      ctx.fillStyle=active?'#ff5edb':'rgba(255,255,255,0.4)';
+      ctx.font='bold 13px monospace';ctx.textAlign='center';
+      ctx.fillText(`P=${a.p.toFixed(2)}`,mx,my);
+    });
+    // nodes
+    pts.forEach(p=>{
+      ctx.fillStyle='#1a0a35';ctx.strokeStyle='#7cf3ff';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(p.x,p.y,26,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#7cf3ff';ctx.font='bold 16px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(p.l,p.x,p.y);
+    });
+    // formula
+    ctx.fillStyle='#ffd166';ctx.font='13px monospace';ctx.textAlign='left';
+    ctx.fillText(`Angereicherte Regel: P(z|x) ≥ P(y|x)·P(z|y) = ${pxy.toFixed(2)}·${pyz.toFixed(2)} = ${pxz.toFixed(3)}`,20,275);
+    ctx.fillStyle=pxz>=tau?'#5eff9d':'#ff6d8f';
+    ctx.fillText(pxz>=tau?'✓ Kompositions-Pfeil existiert (über Schwellwert)':'✗ Kompositions-Pfeil zu schwach',20,255);
+  }
+  ['enrichTau','enrichPxy','enrichPyz'].forEach(id=>$(id).oninput=upd);
+  upd();
+})();
+
+/* Render math for enrichment section */
+$('enrichMath').innerHTML='';
+temml.render('\\mathcal{L}(x,y) := P(y \\mid x) \\in [0,1] \\qquad \\mathcal{L}(y,z) \\otimes \\mathcal{L}(x,y) \\leq \\mathcal{L}(x,z)', $('enrichMath'));
+
+/* ============================================================
+   SECTION 5 — Markov operations
+   ============================================================ */
+(()=>{
+  const cv=$('markovCanvas'), ctx=cv.getContext('2d');
+  let currentOp='copy';
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const cx=cv.width/2, top=40, bot=cv.height-40;
+    ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+    ctx.fillStyle='#7cf3ff';ctx.font='13px monospace';ctx.textAlign='center';
+    let expl='';
+    if(currentOp==='copy'){
+      // one wire in, splits into two
+      ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,bot-100);ctx.stroke();
+      // node
+      ctx.fillStyle='#ff5edb';ctx.beginPath();ctx.arc(cx,bot-100,7,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#ff5edb';
+      ctx.beginPath();ctx.moveTo(cx,bot-100);ctx.quadraticCurveTo(cx-100,bot-60,cx-150,bot);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx,bot-100);ctx.quadraticCurveTo(cx+100,bot-60,cx+150,bot);ctx.stroke();
+      ctx.fillStyle='#7cf3ff';
+      ctx.fillText('X',cx,top-15);
+      ctx.fillText('X',cx-150,bot+18);ctx.fillText('X',cx+150,bot+18);
+      expl='<b>copy_X : X → X⊗X</b> — Ein Zustand wird dupliziert. Für LLMs: Prefix "Charles Darwin" kann zweimal genutzt werden (z.B. für zwei parallele Fortsetzungs-Zweige). Als String-Diagramm: eine Verzweigung des Drahts.';
+    }else if(currentOp==='del'){
+      ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,bot-80);ctx.stroke();
+      // ground symbol
+      ctx.strokeStyle='#ff5edb';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(cx-30,bot-80);ctx.lineTo(cx+30,bot-80);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx-20,bot-70);ctx.lineTo(cx+20,bot-70);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx-10,bot-60);ctx.lineTo(cx+10,bot-60);ctx.stroke();
+      ctx.fillStyle='#7cf3ff';
+      ctx.fillText('X',cx,top-15);
+      ctx.fillText('I  (Einheit)',cx,bot-30);
+      expl='<b>del_X : X → I</b> — Der Zustand wird verworfen. Probabilistisch = Marginalisieren (Aufsummieren über X). Für LLMs: "egal was hier steht, wir kümmern uns nur um den Rest".';
+    }else if(currentOp==='tensor'){
+      ctx.beginPath();ctx.moveTo(cx-80,top);ctx.lineTo(cx-80,bot);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+80,top);ctx.lineTo(cx+80,bot);ctx.stroke();
+      ctx.fillStyle='#7cf3ff';
+      ctx.fillText('X',cx-80,top-15);ctx.fillText('Y',cx+80,top-15);
+      ctx.fillText('X',cx-80,bot+18);ctx.fillText('Y',cx+80,bot+18);
+      ctx.fillStyle='#ffd166';ctx.font='16px monospace';
+      ctx.fillText('⊗',cx,bot/2+20);
+      expl='<b>X ⊗ Y</b> — Zwei Zustände werden zu einem zusammengefasst (parallele Drähte). Für LLMs: zwei Fragmente parallel prozessiert, z.B. "Charles" ⊗ "Darwin".';
+    }else{
+      // Markov morphism box
+      ctx.beginPath();ctx.moveTo(cx-80,top);ctx.lineTo(cx-80,cv.height/2-20);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+80,top);ctx.lineTo(cx+80,cv.height/2-20);ctx.stroke();
+      ctx.fillStyle='rgba(255,94,219,0.2)';
+      ctx.strokeStyle='#ff5edb';ctx.lineWidth=2;
+      ctx.fillRect(cx-100,cv.height/2-20,200,40);ctx.strokeRect(cx-100,cv.height/2-20,200,40);
+      ctx.fillStyle='#ff5edb';ctx.font='bold 14px monospace';
+      ctx.fillText('f : X⊗Y → Z',cx,cv.height/2+5);
+      ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(cx,cv.height/2+20);ctx.lineTo(cx,bot);ctx.stroke();
+      ctx.fillStyle='#7cf3ff';ctx.font='13px monospace';
+      ctx.fillText('X',cx-80,top-15);ctx.fillText('Y',cx+80,top-15);
+      ctx.fillText('Z',cx,bot+18);
+      expl='<b>Ein Markov-Morphismus</b> f: X⊗Y → Z ist eine bedingte Wahrscheinlichkeit P(Z | X, Y). Genau wie ein LLM: gegeben zwei Prefix-Teile, welches Token folgt?';
+    }
+    $('markovExplain').innerHTML=expl;
+  }
+  $('markovOp').querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{
+      $('markovOp').querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      currentOp=b.dataset.op;draw();
+    };
+  });
+  draw();
+})();
+
+/* ============================================================
+   SECTION 6 — String diagram sandbox
+   ============================================================ */
+(()=>{
+  const cv=$('stringCanvas'), ctx=cv.getContext('2d');
+  let mode='bayes';
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    for(let x=0;x<cv.width;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+    let f='';
+    if(mode==='bayes'){
+      // input top
+      const cx=cv.width/2, top=30, bot=cv.height-30;
+      ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+      // p(x) box
+      ctx.fillStyle='rgba(124,243,255,0.15)';
+      ctx.strokeStyle='#7cf3ff';
+      ctx.fillRect(cx-40,top,80,40);ctx.strokeRect(cx-40,top,80,40);
+      ctx.fillStyle='#7cf3ff';ctx.font='bold 13px monospace';ctx.textAlign='center';
+      ctx.fillText('p(x)',cx,top+25);
+      // wire down
+      ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(cx,top+40);ctx.lineTo(cx,150);ctx.stroke();
+      // copy node
+      ctx.fillStyle='#ff5edb';ctx.beginPath();ctx.arc(cx,150,7,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#ff5edb';
+      ctx.beginPath();ctx.moveTo(cx,150);ctx.quadraticCurveTo(cx-80,180,cx-120,220);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx,150);ctx.quadraticCurveTo(cx+80,180,cx+120,220);ctx.stroke();
+      // f box left
+      ctx.fillStyle='rgba(255,209,102,0.15)';ctx.strokeStyle='#ffd166';ctx.lineWidth=2;
+      ctx.fillRect(cx-160,220,80,40);ctx.strokeRect(cx-160,220,80,40);
+      ctx.fillStyle='#ffd166';ctx.fillText('f(y|x)',cx-120,245);
+      // wire down
+      ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(cx-120,260);ctx.lineTo(cx-120,bot);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+120,220);ctx.lineTo(cx+120,bot);ctx.stroke();
+      ctx.fillStyle='#7cf3ff';ctx.font='13px monospace';
+      ctx.fillText('y',cx-120,bot+18);ctx.fillText('x',cx+120,bot+18);
+      f='joint(x,y) = f(y|x) · p(x)   — Bayes als String-Diagramm';
+    }else{
+      // marginal: f then delete right
+      const cx=cv.width/2, top=30, bot=cv.height-30;
+      ctx.fillStyle='rgba(124,243,255,0.15)';ctx.strokeStyle='#7cf3ff';ctx.lineWidth=2;
+      ctx.fillRect(cx-40,top,80,40);ctx.strokeRect(cx-40,top,80,40);
+      ctx.fillStyle='#7cf3ff';ctx.font='bold 13px monospace';ctx.textAlign='center';
+      ctx.fillText('p(x)',cx,top+25);
+      ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(cx,top+40);ctx.lineTo(cx,140);ctx.stroke();
+      // channel box
+      ctx.fillStyle='rgba(255,209,102,0.15)';ctx.strokeStyle='#ffd166';ctx.lineWidth=2;
+      ctx.fillRect(cx-80,140,160,50);ctx.strokeRect(cx-80,140,160,50);
+      ctx.fillStyle='#ffd166';ctx.fillText('f(y,z|x)',cx,170);
+      // two wires
+      ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(cx-40,190);ctx.lineTo(cx-40,bot);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+40,190);ctx.lineTo(cx+40,240);ctx.stroke();
+      // delete
+      ctx.strokeStyle='#ff5edb';
+      ctx.beginPath();ctx.moveTo(cx+20,240);ctx.lineTo(cx+60,240);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+28,250);ctx.lineTo(cx+52,250);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx+36,260);ctx.lineTo(cx+44,260);ctx.stroke();
+      ctx.fillStyle='#7cf3ff';ctx.font='13px monospace';
+      ctx.fillText('y (behalten)',cx-40,bot+18);
+      ctx.fillStyle='#ff5edb';
+      ctx.fillText('z (marginalisiert)',cx+50,285);
+      f='p(y) = ∑_z f(y,z|x) · p(x)   — Marginal durch delete';
+    }
+    $('stringFormula').textContent=f;
+  }
+  $('sdReset').onclick=draw;
+  $('sdExample1').onclick=()=>{mode='bayes';draw();};
+  $('sdExample2').onclick=()=>{mode='marginal';draw();};
+  draw();
+})();
+
+/* ============================================================
+   SECTION 7 — Homotopy deformation
+   ============================================================ */
+(()=>{
+  const xs=[];for(let i=0;i<=100;i++)xs.push(i/100);
+  const f=x=>0.3+0.5*Math.exp(-Math.pow((x-0.3)/0.15,2))+0.2*Math.exp(-Math.pow((x-0.7)/0.1,2));
+  const g=x=>0.25+0.4*Math.exp(-Math.pow((x-0.4)/0.2,2))+0.3*Math.exp(-Math.pow((x-0.75)/0.12,2));
+  function draw(){
+    const t=+$('homT').value;
+    $('homTVal').textContent=t.toFixed(3);
+    const h=xs.map(x=>(1-t)*f(x)+t*g(x));
+    Plotly.newPlot('homotopyPlot',[
+      {x:xs,y:xs.map(f),type:'scatter',mode:'lines',name:'f (t=0): "wrote"',line:{color:'#ff5edb',width:2,dash:'dot'}},
+      {x:xs,y:xs.map(g),type:'scatter',mode:'lines',name:'g (t=1): "is the author of"',line:{color:'#7cf3ff',width:2,dash:'dot'}},
+      {x:xs,y:h,type:'scatter',mode:'lines',name:`h(t=${t.toFixed(2)}, x)`,line:{color:'#ffd166',width:4}}
+    ],{
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+      font:{color:'#f4eaff'},
+      title:{text:'Kontinuierliche Deformation h: [0,1] × X → ℝ',font:{size:14}},
+      xaxis:{title:'x (Position im Kontext)',gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{title:'Wahrscheinlichkeitsdichte',gridcolor:'rgba(255,255,255,0.05)'},
+      margin:{t:50,l:60,r:20,b:50}
+    },{displayModeBar:false});
+  }
+  $('homT').oninput=draw;
+  $('homPlay').onclick=()=>{
+    let t=0;const step=()=>{
+      t+=0.008;if(t>1)t=0;
+      $('homT').value=t;draw();
+      if(t<0.995)requestAnimationFrame(step);
+    };step();
+  };
+  draw();
+})();
+
+/* ============================================================
+   SECTION 8 — Lifting diagram
+   ============================================================ */
+(()=>{
+  const cv=$('liftCanvas'), ctx=cv.getContext('2d');
+  let anim=false, animT=0;
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const pos=+$('liftPos').value;
+    $('liftPosVal').textContent=pos.toFixed(2);
+    // corners
+    const A={x:200,y:280,l:'S × [0]',s:'"Charles Darwin wrote…"'};
+    const B={x:200,y:80,l:'S × [0,1]',s:'Zylinder aller Paraphrasen'};
+    const X={x:700,y:280,l:'X',s:'"Charles Darwin is the author of…"'};
+    const Y={x:700,y:80,l:'Y',s:'Zielverteilung'};
+    [A,B,X,Y].forEach(p=>{
+      ctx.fillStyle='rgba(124,243,255,'+(p===A||p===X?'0.15':'0.08')+')';
+      ctx.strokeStyle=p===A||p===X?'#7cf3ff':'#ffd166';
+      ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(p.x,p.y,32,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle=p===A||p===X?'#7cf3ff':'#ffd166';
+      ctx.font='bold 14px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(p.l,p.x,p.y);
+      ctx.font='11px system-ui';
+      ctx.fillStyle='#b7a6d4';
+      ctx.fillText(p.s,p.x,p.y+52);
+    });
+    // arrows i, f, p, g
+    function arr(from,to,color,label,curve=0){
+      const dx=to.x-from.x, dy=to.y-from.y, len=Math.hypot(dx,dy);
+      const nx=dx/len, ny=dy/len;
+      const sx=from.x+nx*32, sy=from.y+ny*32;
+      const ex=to.x-nx*32, ey=to.y-ny*32;
+      const mx=(sx+ex)/2+(-ny)*curve, my=(sy+ey)/2+(nx)*curve;
+      ctx.strokeStyle=color;ctx.lineWidth=2.5;
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(mx,my,ex,ey);ctx.stroke();
+      const ang=Math.atan2(ey-my,ex-mx);
+      ctx.fillStyle=color;
+      ctx.beginPath();
+      ctx.moveTo(ex,ey);
+      ctx.lineTo(ex-11*Math.cos(ang-0.4),ey-11*Math.sin(ang-0.4));
+      ctx.lineTo(ex-11*Math.cos(ang+0.4),ey-11*Math.sin(ang+0.4));
+      ctx.closePath();ctx.fill();
+      ctx.font='bold 13px monospace';ctx.textAlign='center';
+      ctx.fillText(label,mx,my-8);
+    }
+    arr(A,B,'#7cf3ff','i',0);       // links: injection
+    arr(A,X,'#ff5edb','f',20);      // unten: f
+    arr(B,Y,'#ff5edb','g',-20);     // oben: g
+    arr(X,Y,'#ffd166','p',0);       // rechts: fibration
+    // diagonal lift h'
+    const t=anim?animT:pos;
+    ctx.setLineDash([8,5]);
+    ctx.strokeStyle='#5eff9d';ctx.lineWidth=3;
+    const startX=B.x+22, startY=B.y+22;
+    const endX=X.x-22, endY=X.y-22;
+    const hx=startX+(endX-startX)*t, hy=startY+(endY-startY)*t;
+    ctx.beginPath();ctx.moveTo(startX,startY);ctx.lineTo(hx,hy);ctx.stroke();
+    ctx.setLineDash([]);
+    if(t>0.05){
+      const ang=Math.atan2(endY-startY,endX-startX);
+      ctx.fillStyle='#5eff9d';
+      ctx.beginPath();
+      ctx.moveTo(hx,hy);
+      ctx.lineTo(hx-11*Math.cos(ang-0.4),hy-11*Math.sin(ang-0.4));
+      ctx.lineTo(hx-11*Math.cos(ang+0.4),hy-11*Math.sin(ang+0.4));
+      ctx.closePath();ctx.fill();
+      ctx.font='bold 14px monospace';ctx.textAlign='center';
+      ctx.fillText("h' (Lift)",(startX+hx)/2,(startY+hy)/2-10);
+    }
+    // title
+    ctx.fillStyle='#f4eaff';ctx.font='bold 14px system-ui';ctx.textAlign='left';
+    ctx.fillText('Lifting-Diagramm aus Figur 1 des Papers',20,25);
+    ctx.font='12px system-ui';ctx.fillStyle='#b7a6d4';
+    ctx.fillText('Wenn g∘i = p∘f gilt, existiert eine Diagonale h′ mit p∘h′ = g und h′∘i = f',20,45);
+  }
+  $('liftPos').oninput=draw;
+  $('liftAnimate').onclick=()=>{
+    anim=true;animT=0;
+    const step=()=>{animT+=0.015;if(animT>1){animT=1;anim=false;draw();return;}
+      draw();requestAnimationFrame(step);};
+    step();
+  };
+  draw();
+})();
+
+/* ============================================================
+   SECTION 9 — Simplicial sets
+   ============================================================ */
+(()=>{
+  const cv=$('simCanvas'), ctx=cv.getContext('2d');
+  const tokens=['Charles','Darwin','wrote','On','the'];
+  function draw(){
+    const n=+$('simDim').value;
+    const face=+$('simFace').value;
+    $('simDimVal').textContent=n;
+    $('simFaceVal').textContent=face<0?'keine':`d_${face}`;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // grid
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    for(let x=0;x<cv.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+    const cx=cv.width/2, cy=cv.height/2;
+    // compute vertices of an n-simplex (as regular polygon for n<=4)
+    const R=Math.min(120,60+n*30);
+    const verts=[];
+    for(let i=0;i<=n;i++){
+      const a=Math.PI/2 + i*2*Math.PI/(n+1);
+      verts.push({x:cx+R*Math.cos(a), y:cy-R*Math.sin(a)*0.9, tok:tokens[i]||'·', idx:i});
+    }
+    // draw edges (all pairs)
+    const kept=verts.filter((_,i)=>face<0 || i!==face);
+    // fill face
+    if(n>=2){
+      ctx.fillStyle=n===2?'rgba(255,94,219,0.12)':'rgba(124,243,255,0.08)';
+      ctx.beginPath();
+      kept.forEach((v,i)=>{if(i===0)ctx.moveTo(v.x,v.y);else ctx.lineTo(v.x,v.y);});
+      ctx.closePath();ctx.fill();
+    }
+    // faded original
+    if(face>=0 && n>=2){
+      ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+      ctx.beginPath();
+      verts.forEach((v,i)=>{if(i===0)ctx.moveTo(v.x,v.y);else ctx.lineTo(v.x,v.y);});
+      ctx.closePath();ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // edges of kept
+    ctx.strokeStyle='#ff5edb';ctx.lineWidth=2;
+    for(let i=0;i<kept.length;i++)for(let j=i+1;j<kept.length;j++){
+      ctx.beginPath();ctx.moveTo(kept[i].x,kept[i].y);ctx.lineTo(kept[j].x,kept[j].y);ctx.stroke();
+    }
+    // vertices
+    verts.forEach((v)=>{
+      const removed=face===v.idx;
+      ctx.fillStyle=removed?'rgba(255,109,143,0.3)':'#1a0a35';
+      ctx.strokeStyle=removed?'#ff6d8f':'#7cf3ff';
+      ctx.lineWidth=2;
+      if(removed)ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.arc(v.x,v.y,22,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle=removed?'#ff6d8f':'#7cf3ff';
+      ctx.font='bold 11px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(v.tok.slice(0,7),v.x,v.y);
+    });
+    // title & explanation
+    ctx.textAlign='left';
+    ctx.fillStyle='#f4eaff';ctx.font='bold 14px system-ui';
+    const names=['0-Simplex (Punkt)','1-Simplex (Kante)','2-Simplex (Dreieck)','3-Simplex (Tetraeder)','4-Simplex'];
+    ctx.fillText(`${names[n]} — Token-Sequenz der Länge ${n+1}`,20,25);
+    let expl='';
+    if(face<0){
+      expl=`Der volle ${n}-Simplex enthält alle ${n+1} Token als Ecken.`;
+    }else if(face>n){
+      expl=`d_${face} nicht anwendbar (Simplex hat nur ${n+1} Ecken).`;
+    }else{
+      expl=`<b>Face-Operator d_${face}</b> entfernt Token "${verts[face].tok}" — Ergebnis ist ein ${n-1}-Simplex. Genau die Konstruktion aus Beispiel 2–4 des Papers.`;
+    }
+    $('simExplain').innerHTML=expl;
+  }
+  ['simDim','simFace'].forEach(id=>$(id).oninput=draw);
+  draw();
+})();
+
+/* ============================================================
+   Horn Λ²₁ filling
+   ============================================================ */
+(()=>{
+  const cv=$('hornCanvas'), ctx=cv.getContext('2d');
+  let filled=false;
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    const cx=cv.width/2, cy=cv.height/2+20;
+    const R=100;
+    // triangle vertices
+    const V=[
+      {x:cx-R,y:cy+R*0.6,l:'0'},
+      {x:cx,y:cy-R,l:'1'},
+      {x:cx+R,y:cy+R*0.6,l:'2'}
+    ];
+    // two edges present (the horn Λ²₁ - inner horn missing outer edge 0→2)
+    ctx.strokeStyle='#7cf3ff';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(V[0].x,V[0].y);ctx.lineTo(V[1].x,V[1].y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(V[1].x,V[1].y);ctx.lineTo(V[2].x,V[2].y);ctx.stroke();
+    // missing edge (dashed) or filled
+    if(filled){
+      ctx.fillStyle='rgba(94,255,157,0.2)';
+      ctx.beginPath();ctx.moveTo(V[0].x,V[0].y);ctx.lineTo(V[1].x,V[1].y);ctx.lineTo(V[2].x,V[2].y);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='#5eff9d';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(V[0].x,V[0].y);ctx.lineTo(V[2].x,V[2].y);ctx.stroke();
+      ctx.fillStyle='#5eff9d';ctx.font='bold 13px monospace';ctx.textAlign='center';
+      ctx.fillText('✓ 2-Simplex existiert',cx,cy+R+40);
+    }else{
+      ctx.strokeStyle='rgba(255,109,143,0.6)';ctx.lineWidth=2;ctx.setLineDash([8,5]);
+      ctx.beginPath();ctx.moveTo(V[0].x,V[0].y);ctx.lineTo(V[2].x,V[2].y);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#ff6d8f';ctx.font='bold 13px monospace';ctx.textAlign='center';
+      ctx.fillText('? Horn Λ²₁: es fehlt eine Kante + der 2-Simplex',cx,cy+R+40);
+    }
+    // vertices
+    V.forEach(v=>{
+      ctx.fillStyle='#1a0a35';ctx.strokeStyle='#ff5edb';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(v.x,v.y,18,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#ff5edb';ctx.font='bold 13px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(v.l,v.x,v.y);
+    });
+    // title
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#f4eaff';ctx.font='bold 14px system-ui';
+    ctx.fillText('Kan-Bedingung: kann das Horn zu einem vollen Simplex vervollständigt werden?',20,25);
+    ctx.font='12px system-ui';ctx.fillStyle='#b7a6d4';
+    ctx.fillText('Für LLMs (Theorem 12): Ja — genau das macht sie zu Model-Kategorien.',20,45);
+  }
+  $('hornFill').onclick=()=>{filled=true;draw();};
+  $('hornReset').onclick=()=>{filled=false;draw();};
+  draw();
+})();
+
+/* ============================================================
+   SECTION 10 — Model category axiom checker
+   ============================================================ */
+(()=>{
+  const cv=$('modelCanvas'), ctx=cv.getContext('2d');
+  const classes=['cof','fib','weak'];
+  const colors={cof:'#7cf3ff',fib:'#ff5edb',weak:'#ffd166'};
+  const names={cof:'Kofibration',fib:'Fibration',weak:'schwache Äquivalenz'};
+  let arrows=[
+    {from:{x:150,y:280},to:{x:150,y:100},cls:'cof',label:'i'},
+    {from:{x:150,y:280},to:{x:650,y:280},cls:'weak',label:'f'},
+    {from:{x:150,y:100},to:{x:650,y:100},cls:'weak',label:'g'},
+    {from:{x:650,y:280},to:{x:650,y:100},cls:'fib',label:'p'}
+  ];
+  const objs=[
+    {x:150,y:280,l:'A'},{x:150,y:100,l:'B'},{x:650,y:280,l:'X'},{x:650,y:100,l:'Y'}
+  ];
+  function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    // legend
+    ctx.font='12px system-ui';
+    Object.entries(colors).forEach(([k,c],i)=>{
+      ctx.fillStyle=c;
+      ctx.fillRect(20+i*180,15,14,14);
+      ctx.fillStyle='#f4eaff';
+      ctx.fillText(names[k],40+i*180,26);
+    });
+    // arrows
+    arrows.forEach((a,ai)=>{
+      const dx=a.to.x-a.from.x, dy=a.to.y-a.from.y, len=Math.hypot(dx,dy);
+      const nx=dx/len, ny=dy/len;
+      const sx=a.from.x+nx*32, sy=a.from.y+ny*32;
+      const ex=a.to.x-nx*32, ey=a.to.y-ny*32;
+      ctx.strokeStyle=colors[a.cls];ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+      const ang=Math.atan2(ey-sy,ex-sx);
+      ctx.fillStyle=colors[a.cls];
+      ctx.beginPath();
+      ctx.moveTo(ex,ey);
+      ctx.lineTo(ex-11*Math.cos(ang-0.4),ey-11*Math.sin(ang-0.4));
+      ctx.lineTo(ex-11*Math.cos(ang+0.4),ey-11*Math.sin(ang+0.4));
+      ctx.closePath();ctx.fill();
+      ctx.font='bold 14px monospace';ctx.textAlign='center';
+      const mx=(sx+ex)/2+ny*15, my=(sy+ey)/2-nx*15;
+      ctx.fillText(a.label,mx,my);
+      a._hit={mx:(sx+ex)/2,my:(sy+ey)/2};
+    });
+    // MC4 diagonal preview if valid
+    const cofArrow=arrows.find(a=>a.label==='i');
+    const fibArrow=arrows.find(a=>a.label==='p');
+    const mc4valid=(cofArrow.cls==='cof'||cofArrow.cls==='weak')&&(fibArrow.cls==='fib'||fibArrow.cls==='weak')&&(cofArrow.cls==='weak'||fibArrow.cls==='weak');
+    if(mc4valid){
+      ctx.setLineDash([8,5]);ctx.strokeStyle='#5eff9d';ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(180,270);ctx.lineTo(620,110);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#5eff9d';ctx.font='bold 13px monospace';
+      ctx.fillText("h′ (Lift ✓)",400,175);
+    }
+    // objects
+    objs.forEach(o=>{
+      ctx.fillStyle='#1a0a35';ctx.strokeStyle='#f4eaff';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(o.x,o.y,26,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#f4eaff';ctx.font='bold 16px monospace';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(o.l,o.x,o.y);
+    });
+    ctx.textBaseline='alphabetic';
+    // axiom checks
+    const checks=[
+      {n:'MC1',ok:true,t:'Kategorie hat alle kleinen Limites & Kolimites (LLM-Sequenzen dürfen beliebig verknüpft werden).'},
+      {n:'MC2 (2-aus-3)',ok:arrows.filter(a=>a.cls==='weak').length!==2||arrows.length===0,t:'Wenn 2 der 3 komponierten Pfeile schwache Äquivalenzen sind, dann auch der dritte.'},
+      {n:'MC3 (Retrakte)',ok:true,t:'Retrakte behalten ihre Klasse — automatisch aus der Definition.'},
+      {n:'MC4 (Lifting)',ok:mc4valid,t:mc4valid?'Diagonale existiert — semantische Äquivalenz kann konstruiert werden!':'Braucht: i azyklische Kofibration oder p azyklische Fibration.'},
+      {n:'MC5 (Faktorisierung)',ok:true,t:'Jeder Pfeil = Kofib. ∘ azykl. Fibration (oder umgekehrt).'}
+    ];
+    $('axiomCheck').innerHTML='<div class="grid2">'+checks.map(c=>`
+      <div class="card" style="border-color:${c.ok?'rgba(94,255,157,0.4)':'rgba(255,109,143,0.4)'}">
+        <h4 style="color:${c.ok?'#5eff9d':'#ff6d8f'}">${c.ok?'✓':'✗'} ${c.n}</h4>
+        <div style="font-size:13px;color:#c8bde0">${c.t}</div>
+      </div>`).join('')+'</div>';
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const x=(e.clientX-r.left)*cv.width/r.width;
+    const y=(e.clientY-r.top)*cv.height/r.height;
+    for(const a of arrows){
+      if(a._hit && Math.hypot(a._hit.mx-x,a._hit.my-y)<40){
+        a.cls=classes[(classes.indexOf(a.cls)+1)%3];
+        draw();return;
+      }
+    }
+  });
+  draw();
+})();
+
+/* ============================================================
+   SECTION 11 — Quotient / localization visualization
+   ============================================================ */
+(()=>{
+  const cv=$('quotCanvas'), ctx=cv.getContext('2d');
+  let quotiented=false;
+  // define points: several "paraphrase" sentences clustered
+  const sentences=[
+    {t:'Darwin wrote',c:0,x:0,y:0},
+    {t:'Darwin is the author of',c:0,x:0,y:0},
+    {t:'Darwin authored',c:0,x:0,y:0},
+    {t:'Darwin composed',c:0,x:0,y:0},
+    {t:'Einstein wrote',c:1,x:0,y:0},
+    {t:'Einstein is the author of',c:1,x:0,y:0},
+    {t:'Einstein published',c:1,x:0,y:0},
+    {t:'Kafka wrote',c:2,x:0,y:0},
+    {t:'Kafka penned',c:2,x:0,y:0},
+    {t:'Kafka is the author of',c:2,x:0,y:0}
+  ];
+  const clusterColors=['#ff5edb','#7cf3ff','#ffd166'];
+  const clusterCenters=[{x:220,y:190},{x:500,y:130},{x:750,y:250}];
+  function initPositions(){
+    sentences.forEach((s,i)=>{
+      const c=clusterCenters[s.c];
+      const a=(i*137.5)*Math.PI/180;
+      const r=60+Math.random()*30;
+      s.x=c.x+r*Math.cos(a);
+      s.y=c.y+r*Math.sin(a);
+    });
+  }
+  initPositions();
+  function draw(){
+    const thr=+$('quotThresh').value;
+    $('quotThreshVal').textContent=thr.toFixed(2);
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.strokeStyle='rgba(255,255,255,0.03)';
+    for(let x=0;x<cv.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
+    // title
+    ctx.fillStyle='#f4eaff';ctx.font='bold 14px system-ui';ctx.textAlign='left';
+    ctx.fillText(quotiented?'Nach Lokalisierung: 𝓛[Σ⁻¹]
+ — Paraphrasen kollabieren zu Homotopie-Klassen 🌹':'Vor Lokalisierung: 𝓛 — jede Paraphrase ein separates Objekt',20,25);
+    ctx.font='12px system-ui';ctx.fillStyle='#b7a6d4';
+    ctx.fillText(quotiented?'Alle Sätze, deren "semantische Distanz" < Schwelle liegt, werden identifiziert.':'Klicke "🌹 Lokalisieren", um die Homotopie-Kategorie Ho𝓛 zu bilden.',20,45);
+
+    // draw cluster hulls when quotiented
+    if(quotiented){
+      for(let c=0;c<3;c++){
+        const members=sentences.filter(s=>s.c===c);
+        if(members.length<2)continue;
+        // find centroid
+        const cx=members.reduce((a,s)=>a+s.x,0)/members.length;
+        const cy=members.reduce((a,s)=>a+s.y,0)/members.length;
+        // pulsing blob
+        ctx.fillStyle=clusterColors[c]+'22';
+        ctx.strokeStyle=clusterColors[c]+'88';
+        ctx.lineWidth=2;
+        ctx.setLineDash([6,4]);
+        ctx.beginPath();
+        for(let a=0;a<Math.PI*2;a+=Math.PI/24){
+          const r=75+8*Math.sin(a*3+Date.now()/500);
+          const x=cx+r*Math.cos(a), y=cy+r*Math.sin(a);
+          if(a===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+        }
+        ctx.closePath();ctx.fill();ctx.stroke();
+        ctx.setLineDash([]);
+        // equivalence class label
+        ctx.fillStyle=clusterColors[c];
+        ctx.font='bold 14px monospace';ctx.textAlign='center';
+        ctx.fillText(`[${['Darwin','Einstein','Kafka'][c]}-Autor]`,cx,cy-90);
+      }
+      // draw zig-zag equivalences inside clusters
+      for(let c=0;c<3;c++){
+        const members=sentences.filter(s=>s.c===c);
+        ctx.strokeStyle=clusterColors[c]+'55';
+        ctx.lineWidth=1.5;
+        for(let i=0;i<members.length-1;i++){
+          const dist=Math.hypot(members[i].x-members[i+1].x,members[i].y-members[i+1].y)/150;
+          if(dist<thr){
+            ctx.setLineDash([4,3]);
+            ctx.beginPath();
+            ctx.moveTo(members[i].x,members[i].y);
+            ctx.lineTo(members[i+1].x,members[i+1].y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+      }
+    }else{
+      // draw all arrows between all sentences with strength = 1-distance
+      for(let i=0;i<sentences.length;i++)for(let j=0;j<sentences.length;j++){
+        if(i===j)continue;
+        const s1=sentences[i], s2=sentences[j];
+        const d=Math.hypot(s1.x-s2.x,s1.y-s2.y)/300;
+        const p=Math.max(0,1-d);
+        if(p<thr)continue;
+        ctx.strokeStyle=`rgba(255,255,255,${p*0.15})`;
+        ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(s1.x,s1.y);ctx.lineTo(s2.x,s2.y);ctx.stroke();
+      }
+    }
+    // draw nodes
+    sentences.forEach(s=>{
+      const color=quotiented?clusterColors[s.c]:'#f4eaff';
+      ctx.fillStyle='#1a0a35';ctx.strokeStyle=color;ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(s.x,s.y,8,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle=color;ctx.font='10px monospace';ctx.textAlign='center';
+      ctx.fillText(s.t,s.x,s.y-13);
+    });
+  }
+  let animLoop=null;
+  function loop(){draw();animLoop=requestAnimationFrame(loop);}
+  $('quotToggle').onclick=()=>{
+    quotiented=!quotiented;
+    $('quotToggle').textContent=quotiented?'↩ Zurück zu 𝓛':'🌹 Lokalisieren';
+    if(!animLoop)loop();
+  };
+  $('quotThresh').oninput=draw;
+  loop();
+})();
+
+/* ============================================================
+   Final: render remaining math, smooth scroll
+   ============================================================ */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.onclick=e=>{
+    e.preventDefault();
+    const el=document.querySelector(a.getAttribute('href'));
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+});
+renderMath();
+</script>
+
+</body>
+</html>

@@ -11,20 +11,20 @@ topics: geometry, math-ii, math-iii, architecture
 -->
 
 <div class="md">
-## The one picture this chapter keeps returning to
+## One picture for the whole chapter
 
-The [Shape of Space](geometry_i) chapter asked what *space* is, and how we came to see it as something that can bend. This chapter is its working twin. It does not ask what space is — it asks what a neural network *does* to the numbers that live in space, and it draws each operation as a picture. The claim is simple and, we hope, a little surprising: **nearly every layer in a modern network is a single geometric move**, and once you can see the move you can predict what the layer is for, where it can fail, and what it costs.
+The [Shape of Space](geometry_i) chapter asked what *space* is. This chapter asks what a neural network *does* to the numbers that live in space, and draws each operation as a picture. The claim: **nearly every layer in a modern network is a single geometric move**. Once you can see the move, you can predict what the layer is for, where it can fail, and what it costs.
 
-The moves we will draw, in order:
+The moves, in order:
 
-* **The inner product** — the operation underneath everything. A dot product is a *measurement of alignment*, and its shadow, the Gram matrix, is where “similarity” is actually stored \cite{scholkopf2002learning}.
-* **Projection** — fitting anything (a line, a low-rank approximation, a prediction) is the same move: the best fit is the *shadow* the data throws onto a subspace, and the error is exactly the piece left standing.
-* **The singular value decomposition** — every matrix, no matter how ugly, is secretly a rotation, a set of pure stretches, and a rotation again. The stretches *are* the shape of the map \cite{svd_wiki}.
-* **Descent** — why the gradient points where it points, and why “steepest” is a geometric fact, not an optimizer’s choice \cite{cauchy1847}.
-* **Convolution and the Fourier transform** — a convolution is a dot product that slides across space, and the Fourier transform is the change of coordinates that turns that sliding into ordinary multiplication \cite{fourier1822} \cite{cooley1965fft}.
-* **Symmetry** — invariance and equivariance, the group-theoretic reason a filter may be *shared*, and the shape of the attention map \cite{zaheer2017deepsets}.
+* **The inner product** — a dot product is a *measurement of alignment*; its shadow, the Gram matrix, is where “similarity” is stored \cite{scholkopf2002learning}.
+* **Projection** — fitting anything is the same move: the best fit is the *shadow* the data throws onto a subspace, and the error is the piece left standing.
+* **The singular value decomposition** — every matrix is a rotation, a set of pure stretches, and a rotation again; the stretches *are* the shape of the map \cite{svd_wiki}.
+* **Descent** — why the gradient points where it points, and why “steepest” is geometry, not an optimizer’s choice \cite{cauchy1847}.
+* **Convolution and the Fourier transform** — a convolution is a dot product that slides across space; the Fourier transform is the change of coordinates that turns that sliding into multiplication \cite{fourier1822} \cite{cooley1965fft}.
+* **Symmetry** — invariance and equivariance, why a filter may be *shared*, and the shape of the attention map \cite{zaheer2017deepsets}.
 
-Each section ends with a hands-on plot — drag the sliders, the picture is the point. We deliberately do **not** re-teach the parts the earlier chapters own: the dot product itself, what attention is as a convex combination, the optimizers, least squares, or PCA. We link to them instead. This chapter is the connective tissue that turns those isolated facts into one coherent geometry.
+Each section ends with a hands-on plot. We do **not** re-teach what the earlier chapters own — the dot product, attention as a convex combination, optimizers, least squares, or PCA. We link to those instead.
 </div>
 
 <div class="md">
