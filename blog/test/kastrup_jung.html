@@ -862,8 +862,6 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
   const c = document.getElementById('dreamCanvas');
   const ctx = c.getContext('2d');
   const info = document.getElementById('dreamInfo');
-  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
-  resize(); window.addEventListener('resize', resize);
   const elements = [
     {x:.15,y:.7,r:60,glyph:'🌊',label:'Meer',
      mean:'Meer = kollektives Unbewusstes. Tief, weit, verborgen, allen gemeinsam. Aus ihm steigt das Monster.'},
@@ -876,8 +874,10 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
     {x:.55,y:.3,r:50,glyph:'📝',label:'Prüfung',
      mean:'Die Prüfung, die man sich selbst wählt. Botschaft: du darfst nach deiner eigenen Natur gehen, statt fremde Erwartungen zu erfüllen.'},
     {x:.85,y:.7,r:55,glyph:'👶',label:'Kind',
-     mean:'Kind-Archetyp: Zukunftspotenzial, Wachstum. Es zu retten heißt: dem Herz folgen, auch wenn der Kopf abrät.'},
-  ];
+      mean:'Kind-Archetyp: Zukunftspotenzial, Wachstum. Es zu retten heißt: dem Herz folgen, auch wenn der Kopf abrät.'},
+   ];
+  function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
+  resize(); window.addEventListener('resize', resize);
   let hovered = null;
   c.addEventListener('click',(e)=>{
     const rect = c.getBoundingClientRect();
