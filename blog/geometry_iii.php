@@ -33,7 +33,7 @@ The seed of algebraic topology is the oldest result in this book's story that is
 
 Euler's formulas are, in modern hindsight, the first two *homological* statements ever made — the first Betti numbers of simple shapes, computed a century and a half before the name existed. To see why, notice one more pattern. Take any polyhedron and let $V,E,F$ be the counts of vertices, edges and faces. Then
 
-$$\underbrace{V}_{0\text{-dim}} - \underbrace{E}_{1\text{-dim}} + \underbrace{F}_{2\text{-dim}} = \chi$$
+$$\underbrace{V}_{\text{vertices: }0\text{-dim pieces}} - \underbrace{E}_{\text{edges: }1\text{-dim pieces}} + \underbrace{F}_{\text{faces: }2\text{-dim pieces}} = \underbrace{\chi}_{\substack{\text{the Euler characteristic:}\\\text{a hole counter that}\\\text{never changes no matter}\\\text{how you stretch or cut}}}$$
 
 is *always* $2$ for a sphere-like solid, *always* $0$ for a donut, *always* $-2$ for a double-donut. **The number $\chi$ — the Euler characteristic — is a hole counter.** The pattern "sum of alternating counts of $k$-dimensional building blocks" was later generalized by **Enrico Betti** (1871), who counted "gaps"/holes of each dimension in a space and named the counts after himself: the **Betti numbers** \cite{poincareanalysissitus}. The word "homology" itself, and the brilliant claim that to count holes you should count *cycles modulo boundaries*, came from the founder of the whole subject:
 
@@ -54,24 +54,24 @@ To make homology a *group*, you first need a *machine* that grinds a space into 
 2. **Build the chains.** Form the *free abelian group* $C_{k}$ of formal integer combinations of $k$-simplices: $C_{k}$ is the set of "deck of cards" sums of the $k$-dimensional pieces. A generic element of $C_{1}$ is a sum of edges with coefficients.
 3. **Apply the boundary operator.** Define $\partial_{k}: C_{k} \to C_{k-1}$ to send each simplex to its boundary — vertices of an edge, edges of a triangle, etc. Extend linearly. The one equation that makes the whole subject work is
 
-$$\partial_{k-1}\,\partial_{k} = 0, \qquad \text{i.e.}\quad \partial^{2}=0$$
+$$\underbrace{\partial_{k-1}\,\partial_{k}}_{\substack{\text{take the boundary,}\\\text{then take the boundary}\\\text{of what remains}}} \;=\; \underbrace{0}_{\substack{\text{the zero map:}\\\text{you always get nothing}}} \qquad\Longleftrightarrow\qquad \underbrace{\partial^{2}=0}_{\text{"the boundary of a boundary is empty"}}$$
 
 **the boundary of a boundary is empty.** Walk around the edge of a triangle and you return to where you started; take the boundary of that loop and you get nothing. More concretely: run a loop around two adjacent triangles — the shared edge is counted twice with opposite signs and cancels. So *the image of $\partial_{k}$ always lies inside the kernel of $\partial_{k-1}$*: boundaries are cycles.
 4. **Define the homology group.** The $k$-cycles that are *not* boundaries are the genuine $k$-dimensional holes. So declare
 
-$$\boxed{\,H_{k}(X) \;=\; \underbrace{\ker \partial_{k}}_{\text{closed $k$-chains (cycles)}} \;/\; \underbrace{\operatorname{im} \partial_{k+1}}_{\text{boundaries}} \,}$$
+$$\boxed{\;\underbrace{H_{k}(X)}_{\substack{\text{the }k\text{-th hole group:}\\\text{cycles that do not enclose}\\\text{a solid piece}}} \;=\; \underbrace{\ker \partial_{k}}_{\substack{\text{closed }k\text{-chains:}\\\text{loops and shells that}\\\text{close up on themselves}}} \;/\; \underbrace{\operatorname{im} \partial_{k+1}}_{\substack{\text{the boundaries:}\\\text{cycles that are the edge}\\\text{of a }(k{+}1)\text{-dimensional fill}}} \;}$$
 
 The rank of $H_{k}$ is the $k$-th **Betti number** $b_{k}$ — the number of independent holes of dimension $k$. For the torus (coffee cup/doughnut), a direct computation gives the whole story:
 
-$$H_{0}=\mathbb{Z}\;\;(\text{connected}), \qquad H_{1}=\mathbb{Z}^{2}\;\;(\text{two loops!}), \qquad H_{2}=\mathbb{Z}\;\;(\text{the cavity})$$
+$$H_{0}=\underbrace{\mathbb{Z}}_{\substack{\text{one infinite}\\\text{connected piece}}}, \qquad H_{1}=\underbrace{\mathbb{Z}^{2}}_{\substack{\text{two independent loops:}\\\text{the "one hole" of the}\\\text{coffee-cup joke}}}, \qquad H_{2}=\underbrace{\mathbb{Z}}_{\text{the inner cavity}}$$
 
 so $b_{0}=1$, $b_{1}=2$, $b_{2}=1$. That $b_{1}=2$ *is* the "one hole" of the joke made precise: the coffee cup and the doughnut have the same homology groups, which is exactly why no topologist can tell them apart \cite{hatcher}.
 
 The modern reformulation of Euler's observation is the **Euler–Poincaré formula**, and it is the moment the entire edifice clicks:
 
-$$\chi(X) \;=\; \sum_{k \ge 0} (-1)^{k}\, \dim H_{k}(X),$$
+$$\underbrace{\chi(X)}_{\substack{\text{the Euler characteristic:}\\\text{the same lucky number}\\\text{no matter the triangulation}}} \;=\; \sum_{k\ge 0} \underbrace{(-1)^{k}}_{\substack{\text{alternating}\\\text{plus-minus sign}}} \; \underbrace{\dim H_{k}(X)}_{\substack{\text{the }k\text{-th Betti number:}\\\text{how many independent }k\text{-dim holes}}} ,$$
 
-i.e. the hole-counting characteristic is the *alternating sum* of the ranks of the homology groups — a piece of data that depends only on how many holes of each dimension a shape has, not on how it was cut up. This is why the same $\chi$ keeps appearing across geometry: in the Gauss–Bonnet theorem $\oint K\,dA = 2\pi\chi$ it reads *curvature*, and in the de Rham and Chern–Weil theorems it reads *integral geometry* \cite{derham1931}.
+i.e. the hole-counting characteristic is the *alternating sum* of the ranks of the homology groups — a piece of data that depends only on how many holes of each dimension a shape has, not on how it was cut up. this is why the same $\chi$ keeps appearing across geometry: in the Gauss–Bonnet theorem $\underbrace{\oint K\,dA}_{\substack{\text{all the curvature}\\\text{spread over the surface}}} = \underbrace{2\pi\chi}_{\text{the hole count, disguised}} $ it reads *curvature*, and in the de Rham and Chern–Weil theorems it reads *integral geometry* \cite{derham1931}.
 
 **Why did "cycles modulo boundaries" take a century to invent?** Because it requires the idea that a *set* of shapes could form an algebraic group — the identification of structure with algebra that only the 20th century practiced. Noether's remark in 1925 was the switch, and Poincaré's 1895 paper supplied the intuition; everything between was notation struggling to catch up \cite{poincareanalysissitus}.
 </div>
@@ -96,11 +96,11 @@ The fundamental group $\pi_{1}(X,x)$ collects loops in $X$ based at a point $x\i
 
 Now we need the central *bookkeeping device* of algebraic topology, the tool that made the subject read like one connected account rather than a pile of invariants: the **exact sequence**. A sequence of groups and homomorphisms
 
-$$\cdots \to A_{k+1} \xrightarrow{\,f_{k+1}\,} A_{k} \xrightarrow{\,f_{k}\,} A_{k-1} \to \cdots$$
+$$\cdots \to \underbrace{A_{k+1}}_{\text{one step back}} \xrightarrow{\,f_{k+1}\,} \underbrace{A_{k}}_{\substack{\text{the meeting point:}\\\text{im } f_{k+1} \;=\; \ker f_{k}\\\text{everything killed here}\\\text{came from the left}}} \xrightarrow{\,f_{k}\,} \underbrace{A_{k-1}}_{\text{one step on}} \to \cdots$$
 
 is **exact** at $A_{k}$ if the image of $f_{k+1}$ equals the kernel of $f_{k}$ — i.e., if everything killed by $f_{k}$ is exactly the stuff coming from one step back. An **exact sequence** is one exact at every term. Its two extremities deserve names: a *short* exact sequence is
 
-$$0 \longrightarrow A \longrightarrow B \longrightarrow C \longrightarrow 0,$$
+$$\underbrace{0}_{\text{nothing before this}} \longrightarrow \underbrace{A}_{\substack{\text{injects cleanly:}\\\text{nothing maps to }0\\\text{except }0}} \longrightarrow \underbrace{B}_{\substack{\text{the middle group:}\\\text{contains }A\text{ as a piece}}} \longrightarrow \underbrace{C}_{\substack{\text{the quotient }B/A\text{:}\\\text{what is left after }A}} \longrightarrow \underbrace{0}_{\text{nothing after this}},$$
 
 which simply says $A$ injects into $B$ and $C$ is the quotient $B/A$; the "0" at each end says nothing conspires (no extra kernel or cokernel).
 
@@ -114,7 +114,8 @@ The deep discovery — and it took mathematics by surprise — is that **almost 
 
 The first and most famous exact sequence is the one that answers a practical question: *if I know the homology of two overlapping halves of a space, and of their overlap, do I know the homology of the whole?* Yes — with a long exact sequence. For a space $X = A \cup B$ with overlap $A\cap B$:
 
-$$\cdots \to H_{k}(A\cap B) \to H_{k}(A)\oplus H_{k}(B) \to H_{k}(X) \to H_{k-1}(A\cap B) \to \cdots$$
+$$\cdots \to \underbrace{H_{k}(A\cap B)}_{\substack{\text{holes in the}\\\text{overlap}}} \to \underbrace{H_{k}(A)\oplus H_{k}(B)}_{\substack{\text{holes in the}\\\text{two halves,}\\\text{added side by side}}} \to \underbrace{H_{k}(X)}_{\substack{\text{holes in}\\\text{the whole}}} \to \underbrace{H_{k-1}(A\cap B)}_{\substack{\text{overlap, one}\\\text{dimension down}}}
+\to \cdots$$
 
 This is the **Mayer–Vietoris sequence**, and it is the divide-and-conquer algorithm of algebraic topology: *split, compute the parts, glue the answers*. Without it, computing the homology of a torus by hand is a chore; with it, it is two lines.
 
@@ -132,7 +133,9 @@ So the shape of the whole story so far is: **homology groups count holes; exact 
 
 Mayer–Vietoris computes *homology* (abelian, well-behaved). The **Seifert–van Kampen theorem** does the same glory job for the *fundamental group*, which is non-abelian and much less well-behaved. If $X = A \cup B$ with open, path-connected $A,B$ whose intersection is also path-connected, then the fundamental group of $X$ is the **amalgamated free product**
 
-$$\pi_{1}(X) \;=\; \pi_{1}(A)\; *_{\,\pi_{1}(A\cap B)}\; \pi_{1}(B)$$
+$$\underbrace{\pi_{1}(X)}_{\substack{\text{loops in the}\\\text{whole space}}} \;=\; \underbrace{\pi_{1}(A)}_{\substack{\text{loops in}\\\text{one half}}}
+\; *_{\;\underbrace{\pi_{1}(A\cap B)}_{\substack{\text{loops shared by}\\\text{both halves: the}\\\text{thing we glue along}}}}\;
+\underbrace{\pi_{1}(B)}_{\substack{\text{loops in}\\\text{the other half}}}$$
 
 — "generators from the two halves, one relation from the overlap". The figure-eight (two circles tied at a point) has $\pi_{1}=\mathbb{Z} * \mathbb{Z}$, the free group on two generators; the torus, built from a square, gives $\pi_{1}=\mathbb{Z}^{2}$; a sphere, glued from two disks, gives $\pi_{1}=0$. It is a machine for *building* fundamental groups out of smaller ones, and its history is gently tangled:
 
@@ -150,7 +153,7 @@ There is a second, geometric way to understand $\pi_{1}(X)$, and it is the one t
 
 The beautiful fact — essentially due to **Poincaré** and made formal by covering space theory of the 1920s–30s — is that $\pi_{1}(X,x)$ acts on the covering sheets by *permuting them* as you walk a loop, and that **the conjugacy classes of subgroups of $\pi_{1}(X)$ classify all covering spaces**. Write it as a dictionary:
 
-$$\text{coverings of } X \quad\longleftrightarrow\quad \text{subgroups of } \pi_{1}(X)$$
+$$\underbrace{\{\text{coverings of }X\}}_{\substack{\text{ways of unwrapping}\\\text{the space into}\\\text{identical sheets}}} \quad\longleftrightarrow\quad \underbrace{\{\text{subgroups of }\pi_{1}(X)\}}_{\substack{\text{the loop-symmetries}\\\text{that shuffle those}\\\text{sheets around}}}$$
 
 This is a Galois correspondence — the same shape of theorem as in Galois theory, where subgroups of a Galois group classify field extensions. The mathematician who pushed this analogy hardest was **J.H.C. Whitehead's** colleague and collaborator across the Atlantic, **Samuel Eilenberg** — although the man who made *universal coverings* a tool of computation for spaces with prescribed fundamental group — the $K(G,1)$ spaces — was **Witold Hurewicz** (1935) \cite{hurewicz1935}. If you want a space whose $\pi_{1}$ is exactly a prescribed group $G$, coverage theory tells you how to build it: this is how Eilenberg–Mac Lane spaces $K(\pi,n)$, the atoms of homotopy theory, were engineered \cite{eilenberglane1945}.
 </div>
@@ -160,11 +163,11 @@ This is a Galois correspondence — the same shape of theorem as in Galois theor
 
 The fundamental group scans 1-dimensional holes with loops. In 1935, **Hurewicz** had the audacity to generalize *upwards*: let maps from the sphere $S^{n}$ into $X$, up to homotopy, form the group $\pi_{n}(X)$. This opened the door and immediately revealed two things.
 
-**First**, homology and homotopy are cousins. The **Hurewicz isomorphism theorem**: for a simply connected space ($\pi_{1}=0$), the first *nonzero* homotopy group agrees with the first nonzero homology group, $\pi_{n}(X) \cong H_{n}(X)$ for the first surviving dimension $n$; and in general $\pi_{1}$ abelianizes to $H_{1}$ \cite{hurewicz1935}.
+**First**, homology and homotopy are cousins. The **Hurewicz isomorphism theorem**: for a simply connected space ($\pi_{1}=0$), the first *nonzero* homotopy group agrees with the first nonzero homology group, $\underbrace{\pi_{n}(X)}_{\substack{\text{maps from the}\\\text{sphere }S^{n}\text{ up to}\\\text{deformation}}} \cong \underbrace{H_{n}(X)}_{\substack{\text{holes in}\\\text{dimension }n}}$ for the first surviving dimension $n$; and in general $\underbrace{\pi_{1}}_{\text{loops (non-commutative)}}$ abelianizes to $\underbrace{H_{1}}_{\text{holes (commutative)}}$ \cite{hurewicz1935}.
 
-**Second**, the higher homotopy groups are *wild* — infinitely more complicated than homology. Whereas homology groups are computable and countable, the groups $\pi_{n}(S^{k})$ are, a century later, still largely mysterious. The initial shock came with **Hopf**'s 1931 computation $\pi_{3}(S^{2}) = \mathbb{Z}$ — the discovery that a map from a 3-sphere to a 2-sphere could wrap around a "hole" it had no business having \cite{hopf1931fibration}. 
+**Second**, the higher homotopy groups are *wild* — infinitely more complicated than homology. Whereas homology groups are computable and countable, the groups $\pi_{n}(S^{k})$ are, a century later, still largely mysterious. The initial shock came with **Hopf**'s 1931 computation $\underbrace{\pi_{3}(S^{2})}_{\substack{\text{maps from }S^{3}\to S^{2}\\\text{(the Hopf fibration)}}} = \underbrace{\mathbb{Z}}_{\substack{\text{one integer's worth of }\\\text{winding/linking}}} $ — the discovery that a map from a 3-sphere to a 2-sphere could wrap around a "hole" it had no business having \cite{hopf1931fibration}. 
 
-The first structural results came from **Freudenthal** (1937), who proved the **suspension theorem**: as you suspend loops to higher dimensions, homotopy groups begin to *stabilize* — for large dimension, $\pi_{n+k}(S^{k})$ stops changing, giving the **stable homotopy groups of spheres** \cite{freudenthal1937}. And then came **Serre** (1951–1953), who, using **Leray's spectral sequences**, proved the famous **finiteness theorem**: all stable homotopy groups of spheres are *finite* — with exactly two exceptions per dimension, the infinite-cyclic ones $\pi_{n}(S^{n})=\mathbb{Z}$ and $\pi_{4m-1}(S^{2m})=\mathbb{Z}\oplus\text{finite}$ \cite{serre1951} \cite{serre1953}.
+The first structural results came from **Freudenthal** (1937), who proved the **suspension theorem**: as you suspend loops to higher dimensions, homotopy groups begin to *stabilize* — for large dimension, $\underbrace{\pi_{n+k}(S^{k})}_{\substack{\text{maps from }S^{n+k}\to S^{k}\\\text{(loops on higher}\\\text{and higher spheres)}}}$ stops changing, giving the **stable homotopy groups of spheres** \cite{freudenthal1937}. And then came **Serre** (1951–1953), who, using **Leray's spectral sequences**, proved the famous **finiteness theorem**: all stable homotopy groups of spheres are *finite* — with exactly two exceptions per dimension, the infinite-cyclic ones $\underbrace{\pi_{n}(S^{n})}_{\substack{\text{maps }S^{n}\to S^{n}:\\\text{the "same size" degree}}} = \underbrace{\mathbb{Z}}_{\substack{\text{one integer}\\\text{degree per map}}}$ and $\underbrace{\pi_{4m-1}(S^{2m})}_{\substack{\text{maps }S^{4m-1}\to S^{2m}:\\\text{the "Hopf-like" cases}}} = \underbrace{\mathbb{Z}\oplus\text{finite}}_{\substack{\text{one infinite copy}\\\text{plus a finite blob}}}$ \cite{serre1951} \cite{serre1953}.
 
 <div class="optional md" data-headline="The shock of Serre's theorem">
 As \citeauthor{serre1953} himself liked to recall, the reason his 1951 thesis caused a sensation was that people did not even *know* that the homotopy groups of spheres are finitely generated — before spectral sequences, they had literally no way to compute except brute-force geometric construction. Serre's theorem replaced a world of unknown garbage with a single elegant sentence: then it is all *finite*, except the two infinite families. From that day, algebraic topology stopped being a collection of hand-built invariants and became a *theory with structure theorem* — the kind of sentence that makes mathematicians call a field "done" \cite{serre1951}.
@@ -224,9 +227,9 @@ Oflag XVII-A was not only a prison camp; it became a *university*. Leray, the fa
 
 Homology gives groups; cohomology gives *rings* (you can multiply homology classes via the **cup product**). But even cohomology rings are not enough — they miss "hidden" operations. In 1947, **Norman Steenrod** discovered the **Steenrod operations**: systematic transformations $\mathrm{Sq}^{k}$ acting on mod-2 cohomology that are *natural* in a very strong sense, commuting with everything and satisfying only a small list of rules \cite{steenrod1947}. Steenrod operations are the reason the cup product isn't the end of the story: they encode structure that multiplication alone cannot see. (This is where "natural transformations" from Section X becomes a *working* tool: the Steenrod operations are literally natural transformations between cohomology functors.)
 
-The most famous *use* of Steenrod operations is one of the cleanest theorems in all of mathematics, **Adams' theorem on the Hopf invariant** (1958/1960) \cite{adams1960}. The Hopf fibration $\pi_{3}(S^{2})$ has a numerical **Hopf invariant** $1$ measuring how its fibres link; Adams asked *for which spheres* can such an invariant-one map exist, and proved: **only in dimensions 1, 2, 4 and 8.** That single theorem — obtained by an argument, as he said, "constructed from the Steenrod operations" — resolves a famous quest: it shows the only normed division algebras over $\mathbb{R}$ are the reals, the complex numbers, the quaternions and the octonions, because each such algebra *is* a "nice" map $S^{2n-1} \to S^{n}$ of Hopf invariant one. The number 1, 2, 4, 8, popping out of a theorem about the geometry of holes, is one of the most improbable facts in mathematics.
+The most famous *use* of Steenrod operations is one of the cleanest theorems in all of mathematics, **Adams' theorem on the Hopf invariant** (1958/1960) \cite{adams1960}. The Hopf fibration $\pi_{3}(S^{2})$ has a numerical **Hopf invariant** $1$ measuring how its fibres link; Adams asked *for which spheres* can such an invariant-one map exist, and proved: **only in dimensions 1, 2, 4 and 8.** That single theorem — obtained by an argument, as he said, "constructed from the Steenrod operations" — resolves a famous quest: it shows the only normed division algebras over $\mathbb{R}$ are the reals, the complex numbers, the quaternions and the octonions, because each such algebra *is* a "nice" map $\underbrace{S^{2n-1} \xrightarrow{\;h\;} S^{n}}_{\substack{\text{a sphere sitting above}\\\text{a sphere, its fibres linked}\\\text{once around the target}\\(hopf invariant }1\text{)}}$ of Hopf invariant one. The number 1, 2, 4, 8, popping out of a theorem about the geometry of holes, is one of the most improbable facts in mathematics.
 
-The other side of the same coin is **Bott periodicity** (1957–1959): compute the stable homotopy of the matrix groups, and you discover it is *periodic* — the infinite unitary group $U$ has $\pi_{k}(U)$ a copy of $\mathbb{Z}$ exactly for $k$ odd and $0$ for $k$ even (period **2**); the infinite orthogonal group has period **8**, matching the dimensions of the division algebras \cite{bott1959}. Topology keeps bumping into the same small calendar: $2$, $4$, $8$.
+The other side of the same coin is **Bott periodicity** (1957–1959): compute the stable homotopy of the matrix groups, and you discover it is *periodic* — the infinite unitary group $U$ has $\underbrace{\pi_{k}(U)}_{\substack{\text{holes of the infinite}\\\text{matrix group},k\text{ fixed}}}$ a copy of $\underbrace{\mathbb{Z}}_{\substack{\text{one hole when }k\text{ is odd}}} $ exactly for $k$ odd and $\underbrace{0}_{\text{no hole when }k\text{ is even}}$ (period **2**); the infinite orthogonal group has period **8**, matching the dimensions of the division algebras \cite{bott1959}. Topology keeps bumping into the same small calendar: $2$, $4$, $8$.
 </div>
 
 <div class="md">
