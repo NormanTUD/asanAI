@@ -80,6 +80,30 @@ function getTopLevelMdContainers() {
 	});
 }
 
+/* ── Figcaption markdown pass ─────────────────────────────────
+   marked.parse() treats <figure>…<figcaption>…</figcaption></figure>
+   as a raw HTML block and leaves its contents untouched, so
+   "*italic*" / "**bold**" inside a caption stay literal while the
+   surrounding prose renders. sidenotes.js already works around this
+   by running marked.parse() on the caption string; static captions
+   get the same treatment here, on the RENDERED DOM, via
+   marked.parseInline() so emphasis/links/code come out as
+   <em>/<strong>/<a>/<code> without disturbing the already-processed
+   citation anchors. Purely additive and idempotent: only captions
+   that actually contain markdown tokens are re-parsed.            */
+function processFigcapsMarkdown(root) {
+	if (!root || !root.querySelectorAll) return;
+	if (typeof marked === 'undefined' || typeof marked.parseInline !== 'function') return;
+	root.querySelectorAll('.md figure figcaption, .md > figcaption, .md table > caption')
+		.forEach(cap => {
+			const html = cap.innerHTML;
+			if (!html || !/[*_`[\\]/.test(html)) return;
+			try {
+				cap.innerHTML = marked.parseInline(html);
+			} catch (e) { /* leave the original caption untouched */ }
+		});
+}
+
 /* ── Typographic punctuation pass ──────────────────────────────
    Runs on the RENDERED DOM (never the Markdown source), so fenced
    code, inline code, kbd and math are untouched by construction —
@@ -222,6 +246,9 @@ function renderMarkdown() {
 
 		// 3. Erst jetzt das Markdown (mit den bereits fertigen Spans) parsen
 		container.innerHTML = marked.parse(rawContent);
+		// 3a. figcaptions sit inside raw HTML blocks that marked skips,
+		//     so their own *markdown* would remain literal — parse them.
+		processFigcapsMarkdown(container);
 		smartPunct(container);
 	});
 	updateLoadingStatus("Almost finished.");
@@ -1656,6 +1683,9 @@ function initOptionalBlocks() {
 		// Vorher blieb overflow:hidden nach dem Expand permanent bestehen,
 		// was in Kombination mit einer CSS max-height den Inhalt bei ~2000px abschnitt.
 		contentWrapper.innerHTML = contentHtml;
+		// figcaptions inside the optional body are raw HTML blocks that
+		// marked skipped — parse their markdown inline.
+		processFigcapsMarkdown(contentWrapper);
 
 		// Mirror renderMarkdown()'s post-processing on the freshly
 		// rendered subtree so typographic punctuation, [[t:…]] topic

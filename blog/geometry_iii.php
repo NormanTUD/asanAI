@@ -46,7 +46,7 @@ The crucial step from "counting holes" to "algebra of holes" happened in 1925, a
 </div>
 
 <div class="md">
-## II. Chains, boundaries, and the equation $\underbrace{\partial^{2}=0}_{\substack{\text{the boundary of a}\\\text{boundary is empty}}}$
+## II. Chains, boundaries, and the boundary of a boundary is empty
 
 To make homology a *group*, you first need a *machine* that grinds a space into group elements. The standard build, due largely to **Poincaré**, **Brouwer**, **Čech** and **Alexander in the 1910s–1930s**, is *simplicial*:
 
