@@ -122,6 +122,220 @@ window.bibData = {
 		url: "https://www.algebraic-topology.org/",
 		alternativetitle: "Hatcher, Algebraic Topology"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Geometry III: A Working Algebraic Topology (geometry_iii.php)
+	 *  Original sources of algebraic topology: homology, homotopy,
+	 *  exact sequences, gluing theorems, spectral sequences, torsion,
+	 *  and persistent homology.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"eilenbergmaclane1942": {
+		title: "Group Extensions and Homology",
+		author: "Samuel Eilenberg, Saunders Mac Lane",
+		year: 1942,
+		journal: "Annals of Mathematics",
+		volume: 43,
+		pages: "757–831",
+		url: "https://doi.org/10.2307/1968966",
+		alternativetitle: "Eilenberg and Mac Lane, Group Extensions and Homology (1942)"
+	},
+	"mayer1929": {
+		title: "Über abstrakte Topologie",
+		author: "Walther Mayer",
+		year: 1929,
+		journal: "Monatshefte für Mathematik und Physik",
+		volume: 36,
+		pages: "1–42, 219–258",
+		url: "https://doi.org/10.1007/BF01698483",
+		alternativetitle: "Mayer, Über abstrakte Topologie (1929)"
+	},
+	"vietoris1930": {
+		title: "Über die Homologiegruppen der Vereinigung zweier Komplexe",
+		author: "Leopold Vietoris",
+		year: 1930,
+		journal: "Monatshefte für Mathematik und Physik",
+		volume: 37,
+		pages: "159–162",
+		url: "https://doi.org/10.1007/BF01697514",
+		alternativetitle: "Vietoris, Homology of the union of two complexes (1930)"
+	},
+	"vietorisbio2002": {
+		title: "Leopold Vietoris (1891–2002)",
+		author: "Heinrich Reitberger",
+		year: 2002,
+		journal: "Notices of the American Mathematical Society",
+		volume: 49,
+		pages: "1232–1236",
+		url: "https://www.ams.org/notices/200210/fea-vietoris.pdf",
+		alternativetitle: "Reitberger, an obituary of Leopold Vietoris (2002)"
+	},
+	"seifert1931": {
+		title: "Konstruktion dreidimensionaler geschlossener Räume",
+		author: "Herbert Seifert",
+		year: 1931,
+		journal: "Berichte über die Verhandlungen der Sächsischen Akademie der Wissenschaften zu Leipzig, Math.-Phys. Klasse",
+		volume: 83,
+		pages: "26–66",
+		url: "https://en.wikipedia.org/wiki/Seifert%E2%80%93van_Kampen_theorem",
+		alternativetitle: "Seifert, construction of closed 3-dimensional spaces (1931)"
+	},
+	"vankampen1933": {
+		title: "On the Connection between the Fundamental Groups of some Related Spaces",
+		author: "Egbert R. van Kampen",
+		year: 1933,
+		journal: "American Journal of Mathematics",
+		volume: 55,
+		pages: "261–267",
+		url: "https://en.wikipedia.org/wiki/Seifert%E2%80%93van_Kampen_theorem",
+		alternativetitle: "van Kampen, the fundamental group of a union (1933)"
+	},
+	"brown1967": {
+		title: "Groupoids and van Kampen's theorem",
+		author: "Ronald Brown",
+		year: 1967,
+		journal: "Proceedings of the London Mathematical Society",
+		volume: "(3) 17",
+		pages: "385–401",
+		url: "https://groupoids.org.uk/pdffiles/vKT2.pdf",
+		alternativetitle: "Brown, Groupoids and van Kampen's theorem (1967)"
+	},
+	"freudenthal1937": {
+		title: "Über die Klassen der Sphärenabbildungen",
+		author: "Hans Freudenthal",
+		year: 1937,
+		journal: "Compositio Mathematica",
+		volume: 5,
+		pages: "299–314",
+		url: "https://www.ams.org/notices/200210/fea-vietoris.pdf",
+		alternativetitle: "Freudenthal, On the classes of sphere mappings (1937)"
+	},
+	"serre1951": {
+		title: "Homologie singulière des espaces fibrés. Applications",
+		author: "Jean-Pierre Serre",
+		year: 1951,
+		journal: "Annals of Mathematics",
+		volume: 54,
+		pages: "425–505",
+		url: "https://doi.org/10.2307/1969485",
+		alternativetitle: "Serre's thesis: singular homology of fibred spaces (1951)"
+	},
+	"serre1953": {
+		title: "Groupes d'homotopie et classes de groupes abéliens",
+		author: "Jean-Pierre Serre",
+		year: 1953,
+		journal: "Annals of Mathematics",
+		volume: 58,
+		pages: "258–294",
+		url: "https://doi.org/10.2307/1969763",
+		alternativetitle: "Serre, homotopy groups and abelian group classes (1953)"
+	},
+	"whitehead1949": {
+		title: "Combinatorial Homotopy I",
+		author: "J. H. C. Whitehead",
+		year: 1949,
+		journal: "Bulletin of the American Mathematical Society",
+		volume: 55,
+		pages: "213–245",
+		url: "https://www.ams.org/journals/bull/1949-55-03/S0002-9904-1949-09175-9/",
+		alternativetitle: "J. H. C. Whitehead, Combinatorial Homotopy I (1949)"
+	},
+	"leray1946": {
+		title: "L'anneau spectral et l'anneau filtré d'homologie d'un espace localement compact et d'une application continue",
+		author: "Jean Leray",
+		year: 1946,
+		journal: "Journal de Mathématiques Pures et Appliquées",
+		volume: 25,
+		pages: "201–228",
+		url: "https://en.wikipedia.org/wiki/Spectral_sequence",
+		alternativetitle: "Leray, the spectral sequence (1946)"
+	},
+	"steenrod1947": {
+		title: "Products of Cocycles and Extensions of Mappings",
+		author: "Norman Steenrod",
+		year: 1947,
+		journal: "Annals of Mathematics",
+		volume: 48,
+		pages: "290–320",
+		url: "https://en.wikipedia.org/wiki/Steenrod_operation",
+		alternativetitle: "Steenrod, products of cocycles (1947)"
+	},
+	"adams1960": {
+		title: "On the Non-existence of Elements of Hopf Invariant One",
+		author: "J. Frank Adams",
+		year: 1960,
+		journal: "Annals of Mathematics",
+		volume: 72,
+		pages: "20–104",
+		url: "https://en.wikipedia.org/wiki/Hopf_invariant",
+		alternativetitle: "Adams, Hopf invariant one (1960)"
+	},
+	"bott1959": {
+		title: "The Stable Homotopy of the Classical Groups",
+		author: "Raoul Bott",
+		year: 1959,
+		journal: "Annals of Mathematics",
+		volume: 70,
+		pages: "313–337",
+		url: "https://en.wikipedia.org/wiki/Bott_periodicity_theorem",
+		alternativetitle: "Bott periodicity (1959)"
+	},
+	"reidemeister1935": {
+		title: "Homotopieringe und Linsenräume",
+		author: "Kurt Reidemeister",
+		year: 1935,
+		journal: "Abhandlungen aus dem Mathematischen Seminar der Universität Hamburg",
+		volume: 11,
+		pages: "102–109",
+		url: "https://en.wikipedia.org/wiki/Lens_space",
+		alternativetitle: "Reidemeister, homotopy rings and lens spaces (1935)"
+	},
+	"milnor1966torsion": {
+		title: "Whitehead Torsion",
+		author: "John W. Milnor",
+		year: 1966,
+		journal: "Bulletin of the American Mathematical Society",
+		volume: 72,
+		pages: "358–426",
+		url: "https://www.maths.ed.ac.uk/~v1ranick/papers/mil1.pdf",
+		alternativetitle: "Milnor, Whitehead Torsion (1966)"
+	},
+	"milnor1962additivity": {
+		title: "On Axiomatic Homology Theory",
+		author: "John W. Milnor",
+		year: 1962,
+		journal: "Pacific Journal of Mathematics",
+		volume: 12,
+		pages: "337–341",
+		url: "https://projecteuclid.org/journals/pacific-journal-of-mathematics/volume-12/issue-1/On-axiomatic-homology-theory/pjm/1103036370.full",
+		alternativetitle: "Milnor, On axiomatic homology theory (1962)"
+	},
+	"zomorodian2005": {
+		title: "Computing Persistent Homology",
+		author: "Afra Zomorodian, Gunnar Carlsson",
+		year: 2005,
+		journal: "Discrete & Computational Geometry",
+		volume: 33,
+		pages: "249–274",
+		url: "https://geometry.stanford.edu/papers/zc-cph-05/zc-cph-05.pdf",
+		alternativetitle: "Zomorodian and Carlsson, Computing Persistent Homology (2005)"
+	},
+	"cohensteiner2007": {
+		title: "Stability of Persistence Diagrams",
+		author: "David Cohen-Steiner, Herbert Edelsbrunner, John Harer",
+		year: 2007,
+		journal: "Discrete & Computational Geometry",
+		volume: 37,
+		pages: "103–120",
+		url: "https://doi.org/10.1007/s00454-006-1276-5",
+		alternativetitle: "Cohen-Steiner, Edelsbrunner and Harer, Stability of Persistence Diagrams (2007)"
+	},
+	"riek2019neural": {
+		title: "Neural Persistence: A Topology-Informed Data Representation for Feature Selection in Neural Networks",
+		author: "Bastian Rieck, Matteo Togninalli, Martin Roth, Thomas Gumbsch, Devin Jung, Karsten Borgwardt",
+		year: 2019,
+		journal: "ECML PKDD 2019 / arXiv:1709.07039",
+		url: "https://arxiv.org/abs/1709.07039",
+		alternativetitle: "Rieck et al., Neural Persistence (2019)"
+	},
 	"trinilshell": {
 		title: "Homo erectus at Trinil on Java used shells for tool production and engraving",
 		author: "J. C. A. Joordens, F. Fitzer-Räpplin, S. P. B. G. Brink, E. H. S. Langforren, K. Douka, M. C. Aris, W. H. F. S. Kibenge, J. G. M. van der Geer, E. H. d'Errico",
