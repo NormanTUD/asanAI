@@ -143,11 +143,11 @@ $$\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_{0}^{3} = 3^{2} - 0^{2} = 9 - 0 =
 
 The ordinary integral $\int_a^b$ adds a quantity up along a line that has a start, $a$, and an end, $b$. The **closed integral** $\oint$ adds up the same kind of thing, but along a line that has **no start and no end** — a loop that comes all the way back to where it began. The dot in the middle is only a reminder that the line is closed.
 
-Here is what that actually looks like. Walk around the boundary of a shape, one full lap, and at each step add up the tiny bit of distance $ds$ you have just covered. When you get back to where you started, the total you have added up is simply the **perimeter** of the shape,
+Here is what that actually looks like. Walk around the boundary of a shape, one full lap. Let $s$ be the distance you have walked along the boundary, so one tiny step is $ds$ — a small piece of the path. As you walk, add up all those little pieces $ds$. When you get back to where you started, the total is just the **perimeter** of the shape,
 
 $$\oint_{C} ds = \text{the perimeter of } C .$$
 
-That is a closed integral: you add up little pieces all the way round a closed loop, and the answer is one number.
+Two things to notice. First, why there is **no upper limit**: the curve $C$ under the sign *is* the "from … to …" — $\oint_C$ means "add up all the way around $C$." Because the loop is closed you finish where you began, so there is no separate start- and end-number to write down. Second, $ds$ is not a mystery variable: it is one tiny piece of length along the curve, playing exactly the role that $\Delta x$ played in the Riemann sum above. The only difference is that the thing you would normally write between the sign and the $ds$ (the "height") is just the number $1$, and a lone $1$ is left out by convention — exactly as $\int_a^b dx$ really means $\int_a^b 1\,dx$. So here you are adding up pure length.
 
 Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (that is $360^\circ$), no matter what shape the loop is.
 
