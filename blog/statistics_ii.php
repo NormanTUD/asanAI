@@ -213,7 +213,7 @@ In LLMs, this is why a prompt works. By typing “Import torch,” you are stati
 
     <div class="md">
     Mathematically, the probability of a word $x$ given the mixture is:
-    $$P(x) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x | \mu_k, \Sigma_k)$$
+    $$P(x) = \sum_{k=1}^{K} \underbrace{\pi_k}_{\text{weight of topic } k} \mathcal{N}(x | \mu_k, \Sigma_k)$$
     Where $\pi_k$ is the weight of topic $k$, and $\mathcal{N}$ is the Normal Distribution (the Bell Curve) you learned about in the Statistics section.
     </div>
 </div>
@@ -352,7 +352,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## Boltzmann Distributions
 	
-        Originally formulated by **\citeauthor{boltzmann}** (c. \citeyear{boltzmann}) in his work on *Statistical Mechanics*, this was designed to solve the problem of **Molecular Velocity**. He wanted to know: in a room full of gas, how many molecules are moving fast versus slow?
+        Developed in *Statistical Mechanics* to describe the **distribution of molecular velocities** in a gas — first derived by Maxwell (1860) and generalized by **\citeauthor{boltzmann}** — it asks: in a room full of gas, how many molecules are moving fast versus slow?
 
         In LLMs, we apply this to the “vocabulary” instead of “molecules.” The **Temperature** ($T$) determines how much energy is in the system.
         - **The Graph:** Shows the probability of picking specific tokens.
@@ -390,7 +390,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## The Chain Rule of Probability: Kolmogorov's Logic
 
-        Formalized by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}), the Chain Rule of Probability solves the problem of **Sequential Dependencies**. (It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
+        The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}). It solves the problem of **Sequential Dependencies**. (It is distinct from the calculus chain rule that powers backpropagation.) It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.
         
         In an LLM, the probability of the sentence “The cat sat” is calculated as:
         $P(\text{The}) \times P(\text{cat} | \text{The}) \times P(\text{sat} | \text{The cat})$
@@ -420,7 +420,7 @@ Thus began Zarathustra's down-going.
     <div class="md">
         ## KL Divergence: Information Gain
 
-        Introduced in \citeauthorlastnameand{leiblerkullback} *\citetitle{leiblerkullback}* (\citeyear{leiblerkullback}), this was originally used for **Cryptanalysis** and military intelligence. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.
+        Introduced by **\citeauthorlastnameand{leiblerkullback}** (\citeyear{leiblerkullback}) to quantify the **information available to discriminate between two hypotheses**; Kullback, who developed it, was a military cryptanalyst at the NSA. It measures the “surprise” or extra bits of info needed if you use Distribution Q to approximate Distribution P.
 
         - **The Graph:** Shows the overlap between P (Truth) and Q (Model).
         - **Live Logic:** The divergence $D_{KL}$ is 0 only when the distributions are identical.

@@ -61,7 +61,7 @@ When we have such a function, we can go through a list of values, like $1$, $2$,
 <div id="plot-step-1" class="plot-container" style="height: 250px; margin-bottom: 40px;"></div>
 
 <div class="md">
-We can now also introduce parameters, $a$ and $b$ (which will later be the so-called **weights**): $ f(x) = ax + b $. A changes the slope of the line, while b moves it up- or downwards.
+We can now also introduce parameters, $a$ and $b$ (which will later be the so-called **weights**): $ f(x) = ax + b $. $a$ changes the slope of the line, while $b$ moves it up or down.
 </div>
 
 <pre><code class="language-python">def straight_line(a, b, x):
@@ -69,7 +69,7 @@ We can now also introduce parameters, $a$ and $b$ (which will later be the so-ca
 </code></pre>
 
 <div class="md">
-You can experiment around with how the parameters by changing them with the sliders:
+You can see how the parameters affect the plot by changing them with the sliders:
 </div>
 
 <div style="margin-bottom: 10px;">
@@ -134,13 +134,13 @@ We can also use other functions, like $\sin$ (the sine) in our functions, and we
 
 <div class="md">
 
-For mathematically understanding functions, you need to understand sets first, which luckily is quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
+For a mathematical understanding of functions, you need sets first, which are quite simple. A set is a collection of things, like the collection of positive natural numbers smaller than 4: $\left\{1, 2, 3\right\}$. A function now, mathematically speaking, is a rule to transform each input of one set into exactly one element of another set. Like, for example, the function $y = f(x) = x \cdot 2$, transforms the input $x$ to $y$ with the rule $x\cdot 2$.
 
 Sets do not need to contain only numbers, though. A set can be *anything*. Sets can contain sets, or sets can contain images, or people, or whatever else that can be listed. The *set* of jobs could be something like this: $\left\{\text{programmer}, \text{janitor}, \text{cashier}, \dots\right\}$. Sets can have a limited number of elements (and even be empty), or have an unlimited amount of elements, like the set of all numbers. Since, for each number, there's always a larger number, the set never ends.
 
 There are certain sets that are useful to know, like $\mathbb{N}$, which is the set of all natural numbers, or $\mathbb{R}$, which is the set of all real numbers (i.e. all numbers we use in every day life when not simply counting, e.g. $1.8$ or $3.14$, but also every number from $\mathbb{N}$, or the set of so-called **boolean values** $\mathbb{B} = \left\{\text{True}, \text{False}\right\}$, but a set does not need to be any of them.
 
-Functions define a rule so that, for each element of a set, if you apply the rules the function defines, you end up with an element in another (or even the same) set of elements.
+A function defines a rule such that, for each element of a set, applying that rule yields an element of another (or the same) set.
 
 Another example for a function could be something like the function $\text{is\_even}(x)$, which takes any nonnegative integer $x \in \{0, 1, 2, 3, \ldots\}$ and returns $\text{True}$ if $x$ is even and $\text{False}$ otherwise. Here the input set is $\mathbb{N}$ (the natural numbers, including 0), and the output set is $\mathbb{B} = \{\text{True}, \text{False}\}$. Notice that $0$ is even, so $\text{is\_even}(0) = \text{True}$ — which is exactly what the definition gives us.
 
@@ -196,7 +196,7 @@ The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neur
 
 If $x$ is the input and $w$ is the weight, the AI calculates a score using this formula:
 
-$$\text{Score} = \sum_{i=1}^{n} w_i x_i$$
+$$\text{Score} = \sum_{i=1}^{n} \underbrace{w_i}_\text{weight}\,\underbrace{x_i}_\text{input}$$
 
 This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
 
@@ -221,7 +221,7 @@ total = sum(numbers)
 <div class="md">
 ## The Product Symbol $\prod$
 
-The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similar to the $\sum$:
+The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similarly to the $\sum$:
 
 $$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
 
@@ -271,11 +271,11 @@ In the floating-point math used by AI models, infinity follows specific rules th
 	$$\infty + n = \infty$$
 	$$\infty - n = \infty$$
 	$$\infty + \infty = \infty$$
-	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI to ensure that once a value reaches a certain threshold of “certainty,” minor fluctuations don't distract the model.
+	Adding or subtracting any finite number $n$ to infinity changes nothing. This is used in AI so that once a value passes a “certainty” threshold, small finite additions leave it unchanged.
 * **The Vanishing Fraction:** $$\frac{n}{\infty} = 0$$
 	Any finite number divided by infinity approaches zero. This is crucial for normalization, helping the model turn massive raw scores into manageable probabilities.
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
-	The exponential of negative infinity is exactly zero. This is a “superpower” in machine learning. It allows us to “mask” certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
+	The exponential of negative infinity is exactly zero. This is useful in machine learning: it lets us “mask” certain pieces of data by assigning them a value of $-\infty$, which makes them effectively ignored. This becomes important later in the chapter on Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
 * Similarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 
@@ -305,7 +305,7 @@ $e$ is not an arbitrary constant; it is the natural language of growth and chang
 
 $$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$$
 
-The $\lim$ means we look what happens when $n$ reaches $\infty$. Some numbers get bigger when they go towards infinity, some numbers get smaller and some go towards a certain specific number, which is then called convergence. This equation converges, that means, the higher the $n$ gets, the more closely that number comes to the irrational number $e$.
+The $\lim$ looks at what happens as $n$ grows without bound. Some quantities grow larger, some shrink, and some approach a specific fixed value; this approach is called convergence. This expression converges: the larger $n$ gets, the closer the value comes to the irrational number $e$.
 
 The formula $e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$ wasn't just invented; it was discovered through the logic of **compound interest**.
 
@@ -317,14 +317,14 @@ Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.
 
 While the limit above is the definition, $e$ can be calculated using a Taylor Series (an infinite sum):
 
-$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{n=0}^{\infty} \frac{1}{n!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
+$$e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n = \sum_{k=0}^{\infty} \frac{1}{k!} = \frac{1}{0!} + \frac{1}{1!} + \frac{1}{2!} + \frac{1}{3!} + \frac{1}{4!} \dots$$
 $$e = 1 + 1 + 0.5 + 0.1666 + 0.0416 \dots \approx 2.71828$$
 
 The equation asks: *“What if we compound every single microsecond? What if the interest is calculated continuously?”* As $n$ (the frequency of compounding) goes to infinity, the result doesn't explode to infinity. Instead, it hits a “natural ceiling.” That ceiling is exactly **2.71828...** or $e$. It is the maximum possible result of 100% growth shared over infinite intervals.
 </div>
 
 <div class="optional md" data-headline="History of the Taylor Series">
-The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion. In the 14th century, \citeauthor{madhava} gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method. His followers in the Kerala school developed further expansions over the following two centuries.
+The idea of summing infinite series to achieve finite results dates back to antiquity, notably Zeno's paradox, later addressed through Archimedes's method of exhaustion. In the 14th century, the Indian mathematician Madhava of Sangamagrama gave the earliest known examples of specific Taylor series, for sine, cosine, and arctangent, though not the general method. His followers in the Kerala school, recorded in works such as the \citetitle{madhava}, developed further expansions over the following two centuries.
 
 In early 1671, James Gregory independently discovered something like the general Maclaurin series (see \citetitle{gregoryachievements}), but never published his method, believing he had merely rediscovered work by Isaac Newton. In 1691–1692, Newton wrote down an explicit general formulation in an unpublished draft of \citetitle{newtonquadratura}, but the relevant sections were omitted from the 1704 publication.
 
@@ -386,7 +386,7 @@ Napier's breakthrough allowed researchers to perform **multiplication by simply 
 
 $$\log(A \times B) = \log(A) + \log(B)$$
 
-By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to say in \citeyear{laplace1821}: *“Logarithms, by shortening the labors, doubled the life of the astronomer”* (p. 96).
+By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to write in \citeyear{laplace1821} that logarithms were *“an admirable artifice which, by reducing to a few days the labour of many months, doubles the life of the astronomer”* (p. 96).
 </div>
 
 <div class="optional md" data-headline="How is the Logarithm calculated today?">
@@ -402,7 +402,7 @@ In practice, most mathematical libraries only “know” how to calculate the na
 
 $$\log_a(x) = \frac{\ln(x)}{\ln(a)}$$
 
-This works because the logarithm is essentially a scaling factor. If you know the “natural” rate of growth, you can find the rate of growth for any other base by simply dividing by the “cost” of that base in natural terms. This allows a computer to solve any logarithmic problem using just one optimized core function.
+This works because changing the base only rescales the logarithm. If you know the natural logarithm, you can find the logarithm to any other base $a$ by dividing by the natural logarithm of $a$. This allows a computer to solve any logarithmic problem using just one optimized core function.
 
 While logarithms were born from the needs of 17th-century astronomers, they are essential for Artificial Intelligence today. In neural networks, we use them to prevent numerical errors when dealing with tiny probabilities and to calculate how “wrong” a model is during training. We will dive deeper into “Log Loss” and “Softmax” in the upcoming sections.
 </div>

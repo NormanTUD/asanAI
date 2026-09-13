@@ -430,7 +430,7 @@ That is why the picture transfers. The same inner product that measures a neuron
 			];
 			var layT = baseLayout(); layT.showlegend = true; layT.legend = { orientation: "h", y: -0.28, x: 0 }; layT.xaxis.range = [0, NX - 1]; layT.xaxis.title = { text: "time t", font: { color: gc("#64748b") } };
 			Plotly.react("geo2-conv-time", tdata, layT, cfg);
-			var cSeq = new Array(L).fill(0); cSeq[0] = cl; cSeq[1] = cc; cSeq[2] = cr;
+			var cSeq = new Array(L).fill(0); cSeq[0] = cc; cSeq[1] = cr; cSeq[L - 1] = cl;
 			var Cf = dft(cSeq), fb = [], mx = [], mc = [], my = [];
 			for (var k = 0; k < 64; k++) { var X = Math.hypot(Xf.re[k], Xf.im[k]), C = Math.hypot(Cf.re[k], Cf.im[k]); fb.push(k); mx.push(X); mc.push(C); my.push(X * C); }
 			var fdata = [

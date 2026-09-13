@@ -61,7 +61,7 @@ This third math chapter steps back from mechanics and addresses two conceptual q
 1. **Why is “good enough” the goal of AI?** Most AI is approximation; what does that mean precisely?
 2. **Why do neural networks work so well in high dimensions?** Classical statistics calls high dimensions a “curse”, but neural networks thrive.
 
-Both questions reveal deep truths about the geometry of the spaces in which models learn.
+Both questions turn on the geometry of the spaces in which models learn.
 </div>
 
 <div class="md">
@@ -100,7 +100,7 @@ Floating-point arithmetic cannot represent most real numbers exactly (0.1 in bin
 For a sequence of operations $f_1, f_2, \dots, f_n$, the **forward error** grows at worst as:
 
 $$
-|\hat y - y| \leq C \cdot n \cdot \epsilon_{\text{machine}}
+\underbrace{|\hat y - y|}_{\text{forward error}} \leq C \cdot n \cdot \epsilon_{\text{machine}}
 $$
 
 where $\epsilon_{\text{machine}}$ is machine precision ($\approx 10^{-7}$ for fp32) and $C$ is a problem-dependent constant. So even if individual steps are approximate, the result is bounded.
@@ -127,7 +127,7 @@ Two more signs show up throughout this book, so it is worth learning them once. 
 
 The integral $\int_a^b f(x)\,\mathrm{d}x$ **adds a quantity up continuously** over an interval. The picture: cut $[a,b]$ into $n$ thin slices of width $\Delta x$, replace $f$ in each slice by its height $f(x_i)$, and add up the little rectangles $\sum f(x_i)\,\Delta x$. As the slices get thinner and thinner ($n \to \infty$), this **Riemann sum** settles down to the exact area under the curve,
 
-$$\int_a^b f(x)\,\mathrm{d}x = \lim_{n\to\infty}\sum_{i=1}^{n} f(x_i)\,\Delta x .$$
+$$\int_a^b f(x)\,\mathrm{d}x = \underbrace{\lim_{n\to\infty}\sum_{i=1}^{n} f(x_i)\,\Delta x}_{\text{Riemann sum}} .$$
 
 The sign $\int$ is a stretched Latin *s*, short for *summa* (sum); **Leibniz** introduced it in 1675 \cite{historyofmathematicalnotation}. The idea of finding areas by summing infinitely thin pieces is much older: **Archimedes** did it by the method of exhaustion, and **Cavalieri** by "indivisibles"; Newton and Leibniz turned it into a general calculation. The result that makes the integral *useful* is the **Fundamental Theorem of Calculus**: if $F'(x) = f(x)$ (so $F$ is an antiderivative of $f$), then
 
@@ -192,7 +192,7 @@ $$
 
 This means the model can store thousands of **nearly-independent features** because high-dimensional space provides exponentially many “almost-orthogonal” directions for free. This is what makes **superposition** (the ability to represent more features than dimensions) geometrically possible.
 
-The “aha-moment”: the very property that makes high dimensions terrifying for classical statistics, the concentration of measure, is what makes neural networks so powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
+The key idea: the same property that makes high dimensions difficult for classical statistics, the concentration of measure, is what makes neural networks powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
 
 ### Superposition
 
@@ -209,12 +209,12 @@ This is possible precisely because high-dimensional space has exponentially many
 A foundational result in high-dimensional probability. For any function $f$ that is Lipschitz with constant $L$, the values of $f$ on random points in a high-dimensional ball are tightly concentrated around their mean:
 
 $$
-P\!\left(|f(\mathbf{x}) - \mathbb{E}[f(\mathbf{x})]| > t\right) \leq 2 \exp\!\left(-\frac{c d t^2}{L^2}\right)
+P\!\left(\underbrace{|f(\mathbf{x}) - \mathbb{E}[f(\mathbf{x})]|}_{\text{deviation from the mean}} > t\right) \leq 2 \exp\!\left(-\frac{c d t^2}{L^2}\right)
 $$
 
 In words: as dimension $d$ grows, the probability of deviating from the mean shrinks **exponentially**. Random high-dimensional vectors are almost deterministic in their statistical properties.
 
-This is why a 70B-parameter LLM, despite the astronomical size of its hypothesis space, behaves reliably on novel inputs: high-dimensional concentration ensures that any new input is “close” (in cosine similarity) to many training examples.
+This is why a 70B-parameter LLM, despite the vast size of its hypothesis space, behaves reliably on novel inputs: high-dimensional concentration ensures that any new input is “close” (in cosine similarity) to many training examples.
 </div>
 
 <div class="md">
@@ -257,7 +257,7 @@ The student who masters both, and knows when to use which, will be far more capa
 <div class="md">
 ## The Other Side of the Bridge: Types, Spaces, and Equality
 
-Every loss function, every embedding, every layer of every network is a function between *types*. A loss is a map $\mathcal{L} : \theta \to \mathbb{R}_+$ from the space of parameters to the positive reals. An embedding is a map $E : V \to \mathbb{R}^d$ from a vocabulary to a vector space. A transformer block is a map $T : \mathbb{R}^{L \times d} \to \mathbb{R}^{L \times d}$ from token sequences to token sequences. Once you see this, every chapter in this book is secretly a chapter about *typed functions*.
+Every loss function, every embedding, every layer of every network is a function between *types*. A loss is a map $\mathcal{L} : \Theta \to \mathbb{R}_+$ from the space of parameters to the positive reals. An embedding is a map $E : V \to \mathbb{R}^d$ from a vocabulary to a vector space. A transformer block is a map $T : \mathbb{R}^{L \times d} \to \mathbb{R}^{L \times d}$ from token sequences to token sequences. Once you see this, every chapter in this book is secretly a chapter about *typed functions*.
 
 In most of this textbook we write types informally (“$x$ is a vector, $w$ is a matrix”). For most purposes that's enough. But sometimes a sharper language helps, and the sharpest language for “spaces + functions between them” turns out to be **type theory**.
 </div>
@@ -331,7 +331,7 @@ You can build new types from old with **type constructors**:
     So $\pi_1(\texttt{A}, \texttt{true}) = \texttt{A}$ and $\pi_2(\texttt{B}, \texttt{false}) = \texttt{false}$. Picking a column of the table is applying $\pi_2$; picking a row is applying $\pi_1$. Together they let you recover each factor from the pair, and the universal property of the product says this is the *only* way to do it cleanly.
 
 * **Sum** $A + B$: tagged unions, *either* an $A$ *or* a $B$, with a tag telling you which. The result of a parser is a Sum: `ParseSuccess(string) + ParseFailure(error)`. Cardinality: $|A| + |B|$.
-* **Function space** $A \to B$: already covered. Cardinality: $|B|^{|A|}$, for every one of the $|A|$ inputs you pick one of the $|B|$ outputs, and there are $|B|^{|A|}$ such functions. A function `int → bool` has $2^{|\mathbb{Z}|}$ inhabitants (one for each even/odd rule), which is a *lot*.
+* **Function space** $A \to B$: already covered. Cardinality: $|B|^{|A|}$, for every one of the $|A|$ inputs you pick one of the $|B|$ outputs, and there are $|B|^{|A|}$ such functions. A function `int → bool` has $2^{|\mathbb{Z}|}$ inhabitants (one for each subset of the integers), which is a *lot*.
 * **List** $\texttt{List}(A)$: finite sequences of $A$'s. A batch of token sequences is $\texttt{List}(\mathbb{R}^{L \times d})$.
 * **Dependent types** $x : A \vdash B(x)$: the type $B$ *depends on the value* $x$. “A vector of length $n$” is a dependent type, the length is part of the type, so you cannot pass a length-3 vector to a function expecting length-4. This is the level at which proof assistants really earn their keep.
 
@@ -347,7 +347,7 @@ with the convention that $\to$ **associates to the right**, so $A \to B \to C$ m
 
 This is not just a notational trick. It is what makes **partial application** and **point-free style** possible, and it is why every ML function with several hyperparameters can be written as a pipeline of small composable pieces. A transformer block $T$ is $T : \mathbb{R}^{L \times d} \to \mathbb{R}^{L \times d}$; multi-layer perceptrons are just nested $\to$'s of vector spaces.
 
-**Homotopy Type Theory (HoTT)**, developed by the \citetitle{hottbook} (\citeyear{hottbook}), pushes this further. The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*. Two things are equal not just when a binary “=” returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.
+**Homotopy Type Theory (HoTT)**, as set out in the \citetitle{hottbook} (\citeyear{hottbook}), pushes this further. The big idea: *types are spaces, terms are points, and proofs of equality are paths in the space between them*. Two things are equal not just when a binary “=” returns true, but when there exists a *continuous deformation* (a homotopy) from one to the other.
 
 This matters because the **univalence axiom** says: $(A \simeq B) \simeq (A = B)$, “equality of types *is* equivalence of types.” Two mathematical structures are identical precisely when you can translate between them without losing **structural** information. This is much richer than the binary `==` in a programming language: it accommodates symmetries, isomorphisms, and equivalences as first-class objects.
 
@@ -357,7 +357,7 @@ Once equality is a *path* rather than a boolean, a new question opens up: **when
 
 And then: **when are two 2-paths the same?** Answer: a *3-path*. And so on, ad infinitum. At every level there are paths-between-paths, and the question of whether *those* are equal pushes you up one more level. HoTT takes the full infinite tower seriously: an equality is not a single bit, it is an entire **∞-groupoid**.
 
-What is an *∞-groupoid*? A **groupoid** is the same thing as a **group**, except that the “elements” can be many. In a group there is exactly one element; in a groupoid there can be infinitely many. Concretely: a groupoid is a collection of objects together with *invertible* maps between them (called **morphisms**), where the morphisms compose and every morphism has an inverse. The “group” part means morphisms are reversible symmetries; the “-oid” part (“resembling”) means there can be more than one object, it is a *group-like* structure, not a single group. A permutation group is a groupoid with one object. A category of *isomorphisms* is a groupoid. The set of symmetries of any mathematical object forms a groupoid.
+What is an *∞-groupoid*? A **groupoid** is the same thing as a **group**, except that a group is the special case with a single object, while a groupoid can have many objects. Concretely: a groupoid is a collection of objects together with *invertible* maps between them (called **morphisms**), where the morphisms compose and every morphism has an inverse. The “group” part means morphisms are reversible symmetries; the “-oid” part (“resembling”) means there can be more than one object, it is a *group-like* structure, not a single group. A permutation group is a groupoid with one object. A category of *isomorphisms* is a groupoid. The set of symmetries of any mathematical object forms a groupoid.
 
 An **∞-groupoid** is a groupoid where, in addition to objects and invertible morphisms between them, you have:
 

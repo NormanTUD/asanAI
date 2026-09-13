@@ -19,7 +19,7 @@ Students at all levels will see that geometry is a living subject responding to 
 
 The three math chapters before this one gave you the *numbers* a neural network manipulates — sums, products, vectors, gradients. This chapter gives you the *stage* on which those numbers live: **space**, and the history of how we came to understand it.
 
-Geometry is older than almost any other branch of mathematics. Arithmetic needs counting; geometry needs a *landscape* to measure, a field to bound, a temple to square. It is also, arguably, the most visual and the most "alive" of the disciplines — and the quote above, written for a modern textbook on the *shape of space* \citeauthor{weeksshapespace} (\citeyear{weeksshapespace}), makes the point: geometry is not a relic finished off in Alexandria. Every few centuries it has been forced to grow, because the world — or our models of it — stopped fitting inside flat, straight-line space.
+Geometry is older than almost any other branch of mathematics. Arithmetic needs counting; geometry needs a *landscape* to measure, a field to bound, a temple to square. It is also, arguably, the most visual and the most "alive" of the disciplines — and the quote above, written for a modern textbook on the *shape of space* \citeauthor{weeksshapespace} (\citeyear{weeksshapespace}), makes the point: geometry is not a relic finished off in Alexandria. Every few centuries it has had to grow, because real surfaces and models no longer fit inside flat, straight-line space.
 
 This chapter follows that growth step by step. For each turn we ask four questions: **what** was discovered, **who** did it, **when**, and — the question that makes a history interesting — **why**, what need of the age forced the result to exist. We start where the physical evidence actually begins: not with a Greek theorist, but with a hand tool pressing a zig-zag into a river shell. We then cross the first cities, where geometry became a *job* (surveying land after the flood), pass through the Greek invention of *proof*, the medieval and early-modern reformulation of space in terms of projection and coordinates, and finally the 19th-century earthquake that turned out space itself might be *curved* — the idea that later made general relativity possible, and that quietly underlies the high-dimensional "spaces of meaning" you will meet in the [Embeddings](embeddinglab) chapter.
 </div>
@@ -66,7 +66,7 @@ If the shell and the ochre mark the birth of *form*, the **Ishango bone** and th
 
 <figure>
 	<img style="width: 100%" src="lebombo.jpg" alt="The Lebombo bone, a tally bone from c. 43,000 BCE" />
-	<figcaption class="md">The <strong>Lebombo bone</strong> (c. 43,000 BCE, Lesotho), a hyoid bone with 29 notches arranged in groups — a <em>spatial</em> record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}.</figcaption>
+	<figcaption class="md">The <strong>Lebombo bone</strong> (c. 43,000 BCE, South Africa), a baboon fibula with 29 notches arranged in groups — a <em>spatial</em> record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}.</figcaption>
 </figure>
 
 (We return to both artifacts in the [History of AI](history) chapter, where they matter as the first *external memory*; here we only need that the notches are themselves a two-dimensional arrangement — the earliest "database" was a pattern on a bone.)
@@ -103,7 +103,7 @@ The best single window into Egyptian practical geometry is the **\citealternativ
 Two results are worth knowing, because they show the level of sophistication:
 
 * **Area of a circle.** Ahmes uses the rule "cut off one-ninth of the diameter, and what remains, square it": $A = \left(\tfrac{8}{9}d\right)^{2}$, which is equivalent to $\pi \approx \tfrac{256}{81} \approx 3.1605$ — impressively close to $3.1416$ for a rule that is easy to remember and hard to derive \cite{rhindpapyrus}.
-* **Volume of a truncated pyramid.** Problem 58 gives the exact formula for the frustum of a square pyramid, $V = \tfrac{h}{3}\left(a^{2} + ab + b^{2}\right)$ (top side $a$, base side $b$, height $h$). This is a genuinely non-obvious formula — the volume of a frustum is not the average of the top and bottom volumes, and the correct expression involves the *cross-term* $ab$ — and it is stated correctly \cite{rhindpapyrus}. The full pyramid, $V=\tfrac{1}{3}Bh$, is the same rule with the top shrunk to nothing.
+* **Volume of a truncated pyramid.** The companion Egyptian papyrus, the **Moscow Mathematical Papyrus** (Problem 14, c. 1850 BCE), gives the exact formula for the frustum of a square pyramid, $V = \tfrac{h}{3}\left(a^{2} + ab + b^{2}\right)$ (top side $a$, base side $b$, height $h$). This is a genuinely non-obvious formula — the volume of a frustum is not the average of the top and bottom volumes, and the correct expression involves the *cross-term* $ab$ — and it is stated correctly: base $4$, top $2$, height $6$ gives volume $56$ \cite{moscowpapyrus}. The full pyramid, $V=\tfrac{1}{3}Bh$, is the same rule with the top shrunk to nothing.
 
 Note what is *absent*: there is no proof, no postulate, no general argument. The rules are recipes, validated by the fact that the tax they produced was right. That is the defining feature of applied geometry before the Greeks.
 
@@ -167,7 +167,7 @@ The famous line, roughly, is that *"the length obtained along the diagonal makes
 
 The Chinese tradition is anchored in the **\citealternativetitle{jiuzhangsuanshu}** (*The Nine Chapters on the Mathematical Art*), a practical compendium whose problems — land area, grain, fair distribution, earthworks — were assembled by Han-dynasty scholars (compiled c. 1st century BCE, with material older still) \cite{jiuzhangsuanshu}. Its geometry is metric and algorithmic: areas of fields of every shape, volumes of dikes and granaries, and, in the chapter on the *gougu* (the "right-angle"), the same $a^{2}+b^{2}=c^{2}$ relation, used to *find* the diagonal of a rectangle from its two sides \cite{jiuzhangsuanshu}. The *Jiuzhang* gives the trapezoidal field area $A=\tfrac{1}{2}(a+b)h$ as a standing rule, and it is also where one of the earliest clear uses of **negative numbers** appears (as book-keeping entries in a system of simultaneous linear equations), so it is a reminder that these "geometric" treatises were, in practice, the whole of a culture's applied mathematics. The *why* is the state: the *Jiuzhang* is a manual for the bureaucracy that taxed fields, paid soldiers in grain, and moved earth for canals and tombs.
 
-A fair summary of this whole section: by the first millennium BCE, three unrelated civilisations — Mesopotamia, the Indus and China — had each invented, for the *practical* purpose of measuring the earth, the right-triangle relation, the area rules, and (in India and China) a working $\sqrt{2}$. Geometry had already travelled the world once, on the business of land, before anyone wrote a proof.
+A fair summary of this whole section: by the first millennium BCE, three unrelated civilisations — Mesopotamia, India and China — had each invented, for the *practical* purpose of measuring the earth, the right-triangle relation, the area rules, and (in India and China) a working $\sqrt{2}$. Geometry had already travelled the world once, on the business of land, before anyone wrote a proof.
 </div>
 
 <div class="md">
@@ -409,7 +409,7 @@ Euler also found the first genuine topological *invariant*. For any convex solid
 
 $$\underbrace{V}_{\substack{\text{corners}\\\text{(vertices)}}} - \underbrace{E}_{\text{edges}} + \underbrace{F}_{\substack{\text{flat}\\\text{faces}}} = \underbrace{2}_{\substack{\text{always, for any}\\\text{ball-shaped solid}}}$$
 
-(\citeyear{eulersolids}; the general statement in \citetitle{eulersolids}) \cite{eulersolids}. A cube ($8 - 12 + 6$), a pyramid ($5 - 9 + 5$) and an arbitrarily twisted dodecahedron all give $2$. The number $2$ is the **Euler characteristic** $\chi$ of the sphere; it is *the same for every shape that can be deformed into a sphere* and *different* for anything that cannot. Generalised, a closed surface of genus $g$ (a sphere with $g$ handles) has
+(\citeyear{eulersolids}; the general statement in \citetitle{eulersolids}) \cite{eulersolids}. A cube ($8 - 12 + 6$), a square pyramid ($5 - 8 + 5$) and an arbitrarily twisted dodecahedron all give $2$. The number $2$ is the **Euler characteristic** $\chi$ of the sphere; it is *the same for every shape that can be deformed into a sphere* and *different* for anything that cannot. Generalised, a closed surface of genus $g$ (a sphere with $g$ handles) has
 
 $$\underbrace{\chi}_{\text{the topological identity number}} = 2 - 2\,\underbrace{g}_{\substack{\text{number of}\\\text{handles}}} \qquad \big(g=0:\ \text{sphere} \Rightarrow \chi=2;\ \ g=1:\ \text{donut} \Rightarrow \chi=0\big)$$
 
@@ -458,7 +458,7 @@ $$\underbrace{A + B + C}_{\text{its three angles, added up}} \;<\; \underbrace{\
 
 So a triangle's area is read directly from its *angular defect*, and there is no largest triangle — the total area of the whole hyperbolic plane is finite in angular terms yet infinite in extent. (In the opposite, spherical geometry, the sum is *more* than $\pi$ and the excess is the area.) The result was shocking, because it was not a contradiction: it was a *different, equally valid, geometry of space*. The father **Farkas Bolyai** and **Gauss** (who had found the same geometry independently but never published) both recognised that the *truth* of Euclidean versus hyperbolic geometry is no longer a question of pure reason — it is, as Gauss put it, an **empirical** question, to be settled by measuring the angle-sum of a *very large* triangle in the real world. Geometry had become a question about *physical space*, not just a set of theorems.
 
-\marginfig{bolyai.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in a 1832 appendix to his father's book.}
+\marginfig{bolyai.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in an 1837 appendix to his father's book.}
 
 ### Riemann: the general idea of "space"
 
@@ -662,7 +662,8 @@ $$\lvert \underbrace{\alpha_{i}}_{\substack{\text{the eigenvalues of the}\\\text
 * **c. 500,000 BCE** — Trinil shell: oldest deliberate geometric incision \cite{trinilshell}.
 * **c. 43,000 / 18,000 BCE** — Lebombo and Ishango bones: quantity as a spatial pattern \cite{lebombobone} \cite{ishangobone}.
 * **c. 75,000 BCE** — Blombos ochre: abstract grid patterning \cite{emergenceofmodernhumanbehaviour}.
-* **c. 1650 BCE** — Rhind Papyrus: Egyptian areas, the circle rule $\pi\approx 256/81$, and the frustum volume $V=\tfrac{h}{3}(a^{2}+ab+b^{2})$ \cite{rhindpapyrus}.
+* **c. 1850 BCE** — Moscow Papyrus: the frustum volume $V=\tfrac{h}{3}(a^{2}+ab+b^{2})$ \cite{moscowpapyrus}.
+* **c. 1650 BCE** — Rhind Papyrus: Egyptian areas and the circle rule $\pi\approx 256/81$ \cite{rhindpapyrus}.
 * **c. 1900–1600 BCE** — Si.427 and Plimpton 322: Babylonian surveying geometry, Pythagorean triples \cite{si427} \cite{plimpton322}; BM 85200 + VAT 6599, Db2-146 \cite{hoyrup2021algebra}; scribe-school geometry exercises \cite{historyofmath_wikipedia} \cite{susa_geometry_tablet}.
 * **c. 800 BCE** — Śulba Sūtras: the fire-altar geometry and a five-decimal $\sqrt{2}$ \cite{sulbasutras}.
 * **c. 1st c. BCE** — Jiuzhang Suanshu: Chinese metric geometry, the trapezoid area, and negative numbers \cite{jiuzhangsuanshu}.
