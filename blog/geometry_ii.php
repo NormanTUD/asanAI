@@ -30,7 +30,7 @@ Each section ends with a hands-on plot — drag the sliders, the picture is the 
 <div class="md">
 ## I. The one operation: the inner product
 
-Everything in a neural network is a vector, and everything a layer *does* is a measurement of how those vectors line up. That measurement is the **inner product** (dot product):
+Everything in a neural network is a vector, and everything a layer *does* is a measurement of how those vectors line up. That measurement is the **inner product** (dot product), and the formula that follows uses three signs worth learning before you read it. **$\langle u, v\rangle$** — angle brackets, read *“the inner product of u and v”* — is the modern notation for the dot product: the plain dot product is enough in $\mathbb{R}^n$ (and $\mathbb{R}$, the *blackboard-bold* letter, names the **real numbers**, so $\mathbb{R}^2$ is the plane and $\mathbb{R}^n$ is $n$-dimensional real space), but the angle brackets stand for the *general* inner product, which exists in any space equipped with one. Inside it, **$\sum$** (a capital **sigma**, read *“sum”*) means “add up everything beneath it,” and **$\lVert v \rVert$** (double vertical bars, read *“the norm of v”*) is the *length* of a vector — doubled, so it is not mistaken for the single bar $|v|$ of an ordinary number. Read the whole identity as “alignment = (one length) times (the other length) times (closeness to parallel).” The three faces are the same quantity:
 
 $$
 \underbrace{\langle \mathbf{u}, \mathbf{v} \rangle}_{\substack{\text{“how aligned are} \\ u \text{ and } v\text{?”}} \;} \;=\; \underbrace{\sum_{i=1}^{n} u_i v_i}_{\text{sum of term-by-term agreements}} \;=\; \underbrace{\lVert \mathbf{u} \rVert \, \lVert \mathbf{v} \rVert \, \cos\theta}_{\text{lengths times their alignment } \theta}
@@ -42,7 +42,7 @@ This single fact is the load-bearing wall of the whole field. A neuron’s weigh
 
 ### The Gram matrix: where similarity lives
 
-Now line up $k$ data vectors as the columns of a matrix $X \in \mathbb{R}^{n \times k}$. Their pairwise inner products form the **Gram matrix**
+Now line up $k$ data vectors as the columns of a matrix $X \in \mathbb{R}^{n \times k}$ — the $\in$ (read *“in”*) says $X$ is one particular matrix in the set of all $n$-by-$k$ arrays of real numbers, i.e. $n$ rows and $k$ columns. Writing down their pairwise inner products needs one more sign, the superscript $^{\top}$ (read *“transpose,”* or just *“T”): transposing a matrix flips it over its main diagonal, so the entry in row $i$, column $j$ moves to row $j$, column $i$. That flip is exactly what $X^{\top}X$ exploits — it lets you take each column of $X$ (one data point) and dot it against every other. The result is the **Gram matrix**
 
 $$
 G \;=\; \underbrace{X^{\top} X}_{\text{“all pairwise alignments at once”}} \qquad\qquad G_{ij} \;=\; \underbrace{\langle x_i, x_j \rangle}_{\text{“how much do data } i \text{ and } j \text{ agree?”}}
@@ -149,7 +149,7 @@ The interactive below shows the unit circle (white) and its image under a map wi
 <div class="md">
 ## IV. Descent: why the gradient is steepest
 
-Training a model reduces to walking downhill on a loss landscape $L$. At any point $w$ the gradient $\nabla L(w)$ is a vector, and two questions arise: which way is *down*, and is “the gradient” actually the steepest way, or just a convenient choice? The answer is geometric, and it is just the section-I identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product:
+Training a model reduces to walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w)$ is a vector. First, the sign: $\nabla$ is an upside-down triangle, read ***nabla*** (after the Greek *nabla*, the triangular harp it looks like) or, just as often, ***del***; Hamilton introduced it in the 19th century as a compact vector-calculus operator, and applied to a function it means “take all the partial derivatives at once and stack them into one vector,” $\nabla L = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$. Geometrically that vector points the way the function climbs *fastest* — so $-\nabla L$ points straight *downhill*. With the sign in hand, two questions arise: which way is *down*, and is “the gradient” actually the steepest way, or just a convenient choice? The answer is geometric, and it is just the section-I identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product. Two signs appear in what follows, and both are pure geometry: $a \parallel b$ — “$a$ is *parallel to* $b$,” i.e. in the same direction, one a scalar multiple of the other — and $a \perp b$ — “$a$ is *perpendicular to* $b$,” meeting at a right angle. Read them *“parallel to”* and *“perpendicular to”*; they are the oldest geometric predicates there are, and they will carry the whole argument:
 
 $$
 \underbrace{dL(d)}_{\text{“slope going in direction } d\text{”}} \;=\; \underbrace{\langle \nabla L, \, d \rangle}_{\text{gradient dotted with the direction}} \;=\; \underbrace{\lVert \nabla L \rVert}_{\text{the steepest slope there is}} \;\underbrace{\cos\angle(\nabla L, d)}_{\le 1,\ \text{and } 1 \text{ only when } d \parallel \nabla L}
@@ -195,7 +195,7 @@ That is all a convolution is: an inner product, repeated at every offset $t$. Th
 
 \marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible.}
 
-The payoff is the **Fourier transform**, and it is a *change of coordinates*. Write the signal and the kernel in the basis of pure sine waves — the “frequency” coordinates — instead of in time. In that coordinate system the sliding sum above does something astonishing: **it becomes ordinary multiplication**, point by point,
+The payoff is the **Fourier transform**, and it is a *change of coordinates*. It is written with a **calligraphic $\mathcal{F}$** — a fancy, script letter $F$ (the convention for naming a big transformation operator), read simply *“F”* or *“the Fourier transform of”* — and it does one thing: send a signal to the list of sine-wave ingredients that build it. (The middle dot $\cdot$ between the factors below is ordinary multiplication.) Write the signal and the kernel in the basis of pure sine waves — the “frequency” coordinates — instead of in time. In that coordinate system the sliding sum above does something astonishing: **it becomes ordinary multiplication**, point by point,
 
 $$
 \underbrace{\mathcal{F}(c * x)}_{\text{spectrum of the convolved signal}} \;=\; \underbrace{\mathcal{F}(c)\,\cdot\,\mathcal{F}(x)}_{\text{no sliding — just multiply each frequency}}
@@ -236,7 +236,7 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 <div class="md">
 ## VI. Symmetry: invariance, equivariance, and the shape of attention
 
-A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviors, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows.
+A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. There are two such behaviors, and they are the difference between a network that works and one that wastes capacity re-learning what it already knows. We write a symmetry as $\sigma$ (the Greek letter sigma) and its action on an input $x$ as $\sigma \cdot x$ — read *sigma acting on x*; here the middle dot does **not** mean multiplication, it means “the symmetry $\sigma$ is applied to $x$.” So $\sigma \cdot x$ is the input after the reordering (or shift) $\sigma$ has been performed on it.
 
 * **Invariant** — the output does not change at all: $f(\sigma \cdot x) = \underbrace{f(x)}_{\text{exactly the same as before the reorder}}$ for a symmetry $\sigma$ (say, reordering the inputs). The output “forgets” the symmetry.
 * **Equivariant** — the output changes, but *the same way* the input did: $f(\sigma \cdot x) = \underbrace{\sigma \cdot f(x)}_{\text{the output, permuted the same way as the input}}$. The output “commutes” with the symmetry.
