@@ -28,7 +28,7 @@ topics: math-iii
 .hott-btn { background: var(--mn-accent); color: #fff; border: 0; padding: .5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: .85rem; align-self: flex-end; }
 .hott-btn:hover { filter: brightness(1.12); }
 .hott-canvas { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--mn-border); }
-.hott-plot { width: 100%; min-height: 340px; }
+.hott-plot { width: 100%; max-width: 80%; min-height: 340px; margin: 0 auto; }
 .hott-3d { width: 100%; height: 440px; border-radius: 10px; border: 1px solid var(--mn-border); cursor: grab; overflow: hidden; }
 .hott-row { display: flex; gap: .6rem; flex-wrap: wrap; margin: .6rem 0; }
 .hott-pill { padding: .3rem .75rem; border: 1px solid var(--mn-border); border-radius: 99px; font-size: .8rem; color: var(--mn-accent); background: var(--mn-accent-lighter); }
@@ -52,10 +52,6 @@ topics: math-iii
 .hott-chcell .body { font-size: 1.05rem; }
 .hott-chcell.types .body { font-family: var(--mn-font-mono); font-size: .95rem; }
 .hott-chcell .sub { color: var(--mn-text-secondary); font-size: .82rem; margin-top: .6rem; }
-.hott-journey { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .8rem; margin: 1rem 0; }
-.hott-journey a { display: block; padding: .85rem 1rem; background: var(--mn-surface); border: 1px solid var(--mn-border); border-radius: 12px; color: var(--mn-text); text-decoration: none; font-size: .88rem; transition: all .18s; }
-.hott-journey a:hover { border-color: var(--mn-accent); transform: translateY(-2px); box-shadow: var(--mn-shadow-sm); }
-.hott-journey a b { display: block; color: var(--mn-accent); margin-bottom: .2rem; }
 @media (max-width: 800px) { .hott-grid2 { grid-template-columns: 1fr; } .hott-chview { grid-template-columns: 1fr; } }
 </style>
 
@@ -379,19 +375,6 @@ You do not need HoTT to read this book. But once you have the picture in your he
 The math in the box above is precisely the machinery \citeauthor{youvan2024} (\citeyear{youvan2024}) argues for as a *foundation for how AI systems are built*. This is not a benchmark or a new network; it is a position paper. Its claim: if a model is written in a language that already understands **types**, **paths**, and **higher equality**, then reliability, verifiability, and explainability stop being bolted on afterwards and become built-in properties of the design. The tour below follows the paper's own arc — two prerequisites, the core idea, then the six application areas it targets. Everything is interactive; drag the sliders and click around.
 </div>
 
-<div class="hott-journey">
-	<a href="#hott-wrap"><b>Motivation</b> Why would AI need a new foundation?</a>
-	<a href="#hott-lab-1"><b>Types</b> What is a type? &middot; Curry&ndash;Howard</a>
-	<a href="#hott-lab-2"><b>Homotopy</b> When are two paths "the same"?</a>
-	<a href="#hott-lab-3"><b>Identity types</b> Equality is a path</a>
-	<a href="#hott-lab-4"><b>Higher dimensions</b> Paths between paths</a>
-	<a href="#hott-lab-5"><b>Verification</b> Proving instead of testing</a>
-	<a href="#hott-lab-6"><b>Uncertainty</b> Probability as a type</a>
-	<a href="#hott-lab-7"><b>Knowledge</b> Modeling meaning cleanly</a>
-	<a href="#hott-lab-8"><b>Quantum AI</b> Typing superposition</a>
-	<a href="#hott-lab-9"><b>Explainable AI</b> Opening the black box</a>
-</div>
-
 <div class="md">
 ### Motivation
 
@@ -409,7 +392,7 @@ Modern AI is startlingly capable — and at the same time **opaque**, **brittle*
 	<p id="hott-probText" class="hott-lead"></p>
 </div>
 
-<div class="hott-callout"><b>Youvan's question.</b> Can a mathematically deeper language — one that *knows* from the start how data objects, transformations, and equality are related — attack all three problems at the root?</div>
+<div class="hott-callout"><b>Youvan's question.</b> Can a mathematically deeper language — one that <em>knows</em> from the start how data objects, transformations, and equality are related — attack all three problems at the root?</div>
 
 <div class="md">
 ### Prerequisite: what a type is, and programs-as-proofs
@@ -467,7 +450,7 @@ Recall the core slogan: **types are spaces, terms are points, equalities are pat
 		<div class="hott-control"><label>Path shape <b id="hott-shapeVal">Arc</b></label><input type="range" id="hott-shape" min="0" max="2" step="1" value="0"></div>
 	</div>
 	<canvas id="hott-homoCanvas" class="hott-canvas" width="1000" height="420"></canvas>
-	<p class="hott-lead">Blue = start path $p$, purple = target path $q$. The white in-between is the current homotopy $H(t)$ — a continuous family of paths connecting them. No jumping, no tearing.</p>
+	<p class="hott-lead">Blue = start path <em>p</em>, purple = target path <em>q</em>. The white in-between is the current homotopy <em>H</em>(<em>t</em>) — a continuous family of paths connecting them. No jumping, no tearing.</p>
 </div>
 
 <div class="hott-card">
@@ -481,24 +464,24 @@ Recall the core slogan: **types are spaces, terms are points, equalities are pat
 </div>
 
 <div class="md">
-### 3 · Core idea: equality is a path
+### Core idea: equality is a path
 
 Now the marriage of the two prerequisites. Instead of treating $a = b$ as a bare true/false, HoTT says: **"$a = b$" is itself a type** — the type of all the paths connecting $a$ to $b$. Two objects can be equal in *several different ways*, one for each path. That is the whole point, and it is what the box above only hinted at: equality is not a bit, it is a structure you can manipulate.
 </div>
 
 <div class="hott-card" id="hott-lab-3">
 	<div class="hott-card-title"><span class="dot"></span>Equality is a path</div>
-	<p class="hott-lead">Two points in a type $A$. Between them sit every possible "proof that they are equal" — each proof is a path. Raise the slider to add more, or play the animation.</p>
+	<p class="hott-lead">Two points in a type <em>A</em>. Between them sit every possible "proof that they are equal" — each proof is a path. Raise the slider to add more, or play the animation.</p>
 	<canvas id="hott-idCanvas" class="hott-canvas" width="1000" height="380"></canvas>
 	<div class="hott-controls">
-		<div class="hott-control"><label>Number of paths between $a$ and $b$ <b id="hott-idNVal">1</b></label><input type="range" id="hott-idN" min="1" max="5" step="1" value="1"></div>
+		<div class="hott-control"><label>Number of paths between <em>a</em> and <em>b</em> <b id="hott-idNVal">1</b></label><input type="range" id="hott-idN" min="1" max="5" step="1" value="1"></div>
 		<button id="hott-idAnim" class="hott-btn">Path animation &#9654;</button>
 	</div>
 	<div class="hott-math" id="hott-idMath"></div>
 </div>
 
 <div class="md">
-### 4 · Core idea: paths between paths, all the way up
+### Core idea: paths between paths, all the way up
 
 If paths are objects, can two paths be *equal*? Yes — by a **path between the two paths** (a 2-path, or homotopy). And two 2-paths can be equal by a 3-path, and so on, without end. The result is an **&infin;-groupoid**: points, paths, paths-between-paths, … at every level. Rotate the scene below and strip the tower down dimension by dimension — a single type can carry an entire landscape of such relationships.
 </div>
@@ -513,10 +496,10 @@ If paths are objects, can two paths be *equal*? Yes — by a **path between the 
 	</div>
 </div>
 
-<div class="hott-callout a"><b>What that buys AI.</b> "Two networks do the same thing" is a level-1 statement. "Two *proofs* that they do the same thing are equivalent" is level 2. A refactoring, a reparameterization, a fine-tune that provably changes nothing — all become things you can *justify formally*, not just hope about.</div>
+<div class="hott-callout a"><b>What that buys AI.</b> "Two networks do the same thing" is a level-1 statement. "Two <em>proofs</em> that they do the same thing are equivalent" is level 2. A refactoring, a reparameterization, a fine-tune that provably changes nothing — all become things you can <em>justify formally</em>, not just hope about.</div>
 
 <div class="md">
-### 5 · Application: formal verification of AI
+### Application: formal verification of AI
 
 Instead of testing a model on ten thousand cases and hoping, **prove** it behaves correctly under *all* conditions. This is the dream of formal verification, and HoTT's precise notion of "equal" (equal up to a small perturbation, equal regardless of gender, …) is what makes a mechanically checkable proof possible. Pick a scenario from the paper:
 </div>
@@ -540,7 +523,7 @@ Instead of testing a model on ten thousand cases and hoping, **prove** it behave
 </div>
 
 <div class="md">
-### 6 · Application: typing uncertainty
+### Application: typing uncertainty
 
 In the real world a model is never *certain*. HoTT offers a clean way to **type uncertainty itself** — even uncertainty *about* uncertainty, the second-order quantity that Bayesian networks struggle to express naturally. The first widget combines a symptom and a test into a distribution over diagnoses; the second shows that "how sure am I about my own certainty" is a 2-path between distributions.
 </div>
@@ -567,7 +550,7 @@ In the real world a model is never *certain*. HoTT offers a clean way to **type 
 </div>
 
 <div class="md">
-### 7 · Application: knowledge representation & the Semantic Web
+### Application: knowledge representation & the Semantic Web
 
 The web is full of the same thing described in different ways. HoTT's answer: *different descriptions, but there exists an **identity path** between them.* Raise "data sources" in the graph below to make duplicates appear under different names, then switch on the HoTT equivalences to watch identity paths link them together without destroying the structure.
 </div>
@@ -582,7 +565,7 @@ The web is full of the same thing described in different ways. HoTT's answer: *d
 </div>
 
 <div class="md">
-### 8 · Application: quantum AI
+### Application: quantum AI
 
 A qubit is both $|0\rangle$ and $|1\rangle$ until you measure it. HoTT's higher-dimensional types turn out to be a surprisingly natural language for that **superposition** and **entanglement**: the quantum state space is topological, a path on the Bloch sphere is a quantum gate, and a *higher* path is a proof that two gate sequences do the same job. Move the state around the sphere and measure it.
 </div>
@@ -592,7 +575,7 @@ A qubit is both $|0\rangle$ and $|1\rangle$ until you measure it. HoTT's higher-
 	<div class="hott-grid2">
 		<div id="hott-bloch3d" class="hott-3d" style="height:380px"></div>
 		<div>
-			<p class="hott-lead">Every point on the sphere is a state of the qubit. North = $|0\rangle$, south = $|1\rangle$, the equator is perfect superposition.</p>
+			<p class="hott-lead">Every point on the sphere is a state of the qubit. North = |0&#10217;, south = |1&#10217;, the equator is perfect superposition.</p>
 			<div class="hott-controls" style="flex-direction:column">
 				<div class="hott-control"><label>&theta; (latitude) <b id="hott-thVal">0.80</b></label><input type="range" id="hott-th" min="0" max="3.14" step="0.01" value="0.8"></div>
 				<div class="hott-control"><label>&phi; (longitude) <b id="hott-phVal">0.50</b></label><input type="range" id="hott-ph" min="0" max="6.28" step="0.01" value="0.5"></div>
@@ -605,7 +588,7 @@ A qubit is both $|0\rangle$ and $|1\rangle$ until you measure it. HoTT's higher-
 </div>
 
 <div class="md">
-### 9 · Application: explainable AI
+### Application: explainable AI
 
 A deep model makes a decision — but why? HoTT offers a structure for making the **path of the decision** trackable: click an input on the left and trace the path it takes through the network. Inputs that land in the same class share similar paths, and HoTT makes that path-equivalence a first-class, checkable fact.
 </div>
