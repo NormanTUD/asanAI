@@ -300,4 +300,185 @@ Notice what is *learned* and what is *fixed*. The geometry — that a dot produc
 And that is why the picture transfers. The same inner product that measures a neuron’s alignment measures a word’s similarity. The same projection that fits a line explains a low-rank approximation. The same SVD that shapes a matrix ranks a layer’s effective capacity. The same symmetry that justifies a shared filter is the reason attention needs position. Stop seeing a network as “matrices of weights” and start seeing it as **geometry — points, shadows, stretches, level sets, sliding alignments, and symmetries** — and the layers stop being a list of tricks and become a single, navigable space. That is the shape of the machine.
 </div>
 
-<!--GEO2_MORE-->
+<script>
+(function () {
+	"use strict";
+
+	function boot() {
+		var gc = function (c) { try { return (typeof themeColor === "function") ? themeColor(c) : c; } catch (e) { return c; } };
+		var cfg = { responsive: true, displayModeBar: false };
+		function el(id) { return document.getElementById(id); }
+
+		function baseLayout() {
+			return {
+				paper_bgcolor: gc("#ffffff"),
+				plot_bgcolor: gc("#f8fafc"),
+				font: { color: gc("#334155"), size: 12 },
+				margin: { l: 48, r: 18, b: 42, t: 12 },
+				showlegend: true,
+				legend: { orientation: "h", y: 1.14, x: 0 },
+				xaxis: { gridcolor: gc("#eef2f7"), zeroline: true, zerolinecolor: gc("#cbd5e1"), tickfont: { color: gc("#64748b") } },
+				yaxis: { gridcolor: gc("#eef2f7"), zeroline: true, zerolinecolor: gc("#cbd5e1"), tickfont: { color: gc("#64748b") } }
+			};
+		}
+		function on(id, fn) { var e = el(id); if (e) e.addEventListener("input", fn); }
+		var inited = {};
+		function mount(id, fn) {
+			var box = el(id); if (!box) return;
+			var doInit = function () { if (inited[id]) return; inited[id] = true; fn(); };
+			if (typeof IntersectionObserver !== "undefined") {
+				var ob = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { doInit(); ob.disconnect(); } }); }, { rootMargin: "300px", threshold: 0 });
+				ob.observe(box);
+			}
+			var r = box.getBoundingClientRect();
+			if (r.top < (window.innerHeight + 300) && r.bottom > -300) doInit();
+		}
+
+		/* ── II. Projection ─────────────────────────────────────────────── */
+		function projRead() {
+			var px = parseFloat(el("geo2-proj-px").value), py = parseFloat(el("geo2-proj-py").value), deg = parseFloat(el("geo2-proj-phi").value);
+			el("geo2-proj-pxv").textContent = px.toFixed(1);
+			el("geo2-proj-pyv").textContent = py.toFixed(1);
+			el("geo2-proj-phiv").textContent = deg.toFixed(0) + "°";
+			var phi = deg * Math.PI / 180, ux = Math.cos(phi), uy = Math.sin(phi);
+			var s = px * ux + py * uy, pxp = s * ux, pyp = s * uy, rx = px - pxp, ry = py - pyp;
+			var rlen = Math.sqrt(rx * rx + ry * ry);
+			var data = [
+				{ x: [-5 * ux, 5 * ux], y: [-5 * uy, 5 * uy], type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 2 }, name: "subspace S" }
+			];
+			if (rlen > 0.05) {
+				var m = 0.35, dx = rx / rlen, dy = ry / rlen;
+				var Ax = pxp + m * ux, Ay = pyp + m * uy, Bx = pxp + m * dx, By = pyp + m * dy, Cx = pxp + m * (ux + dx), Cy = pyp + m * (uy + dy);
+				data.push({ x: [Ax, Cx, Bx], y: [Ay, Cy, By], type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 1.5 }, showlegend: false, hoverinfo: "skip" });
+			}
+			data.push({ x: [0, pxp], y: [0, pyp], type: "scatter", mode: "lines", line: { color: "#2563eb", width: 4 }, name: "projection (shadow)" });
+			data.push({ x: [pxp, px], y: [pyp, py], type: "scatter", mode: "lines", line: { color: "#ef4444", width: 4 }, name: "residual (⊥ S)" });
+			data.push({ x: [px], y: [py], type: "scatter", mode: "markers", marker: { size: 13, color: "#475569" }, name: "P" });
+			data.push({ x: [pxp], y: [pyp], type: "scatter", mode: "markers", marker: { size: 9, color: "#2563eb" }, showlegend: false });
+			var lay = baseLayout(); lay.xaxis.range = [-5, 5]; lay.yaxis.range = [-5, 5];
+			Plotly.react("geo2-projection", data, lay, cfg);
+			var norm2 = px * px + py * py, expl = norm2 > 1e-12 ? (s * s) / norm2 : 0;
+			el("geo2-proj-readout").textContent = "residual² = " + (rx * rx + ry * ry).toFixed(3) + "   ·   explained (R²) = " + (100 * expl).toFixed(1) + "%   ·   the red residual is always ⊥ to S";
+		}
+
+		/* ── III. SVD ───────────────────────────────────────────────────── */
+		function svdRead() {
+			var s1 = parseFloat(el("geo2-svd-s1").value), s2 = parseFloat(el("geo2-svd-s2").value), th = parseFloat(el("geo2-svd-th").value) * Math.PI / 180;
+			el("geo2-svd-s1v").textContent = s1.toFixed(1);
+			el("geo2-svd-s2v").textContent = s2.toFixed(1);
+			el("geo2-svd-thv").textContent = (th * 180 / Math.PI).toFixed(0) + "°";
+			var N = 128, cx = [], cy = [], ex = [], ey = [];
+			for (var i = 0; i <= N; i++) {
+				var a = 2 * Math.PI * i / N, c = Math.cos(a), sn = Math.sin(a);
+				cx.push(c); cy.push(sn);
+				var X = s1 * c, Y = s2 * sn;
+				ex.push(X * Math.cos(th) - Y * Math.sin(th));
+				ey.push(X * Math.sin(th) + Y * Math.cos(th));
+			}
+			var majx = Math.cos(th), majy = Math.sin(th), minx = -Math.sin(th), miny = Math.cos(th);
+			var data = [
+				{ x: cx, y: cy, type: "scatter", mode: "lines", line: { color: gc("#cbd5e1"), width: 1.5 }, name: "unit circle" },
+				{ x: ex, y: ey, type: "scatter", mode: "lines", line: { color: "#7c3aed", width: 2 }, name: "image (ellipse)" },
+				{ x: [0, s1 * majx], y: [0, s1 * majy], type: "scatter", mode: "lines+markers", line: { color: "#2563eb", width: 4 }, marker: { size: 10, color: "#2563eb" }, name: "σ₁ axis (len σ₁)" },
+				{ x: [0, s2 * minx], y: [0, s2 * miny], type: "scatter", mode: "lines+markers", line: { color: "#f59e0b", width: 4 }, marker: { size: 10, color: "#f59e0b" }, name: "σ₂ axis (len σ₂)" }
+			];
+			var R = Math.max(s1, s2) + 0.6;
+			var lay = baseLayout(); lay.xaxis.range = [-R, R]; lay.yaxis.range = [-R, R];
+			Plotly.react("geo2-svd", data, lay, cfg);
+			var rk = s2 < 0.05 ? 1 : 2, kap = s2 > 1e-6 ? (s1 / s2).toFixed(1) : "∞";
+			el("geo2-svd-readout").textContent = "σ₁ = " + s1.toFixed(2) + "   σ₂ = " + s2.toFixed(2) + "   →   rank " + rk + (s2 < 0.05 ? " (the ellipse is a line)" : "") + "   ·   condition κ = " + kap;
+		}
+
+		/* ── IV. Descent ────────────────────────────────────────────────── */
+		function desRead() {
+			var px = parseFloat(el("geo2-des-px").value), py = parseFloat(el("geo2-des-py").value), w = parseFloat(el("geo2-des-w").value);
+			el("geo2-des-pxv").textContent = px.toFixed(2);
+			el("geo2-des-pyv").textContent = py.toFixed(2);
+			el("geo2-des-wv").textContent = w.toFixed(1);
+			var gx = px / w, gy = py * w, gmag = Math.sqrt(gx * gx + gy * gy);
+			var data = [];
+			[0.5, 1.5, 3, 5].forEach(function (c) {
+				var semX = Math.sqrt(2 * c * w), semY = Math.sqrt(2 * c / w), xs = [], ys = [];
+				for (var i = 0; i <= 120; i++) { var a = 2 * Math.PI * i / 120; xs.push(semX * Math.cos(a)); ys.push(semY * Math.sin(a)); }
+				data.push({ x: xs, y: ys, type: "scatter", mode: "lines", line: { color: gc("#cbd5e1"), width: 1 }, showlegend: false, hoverinfo: "skip" });
+			});
+			var tipx = 0, tipy = 0;
+			if (gmag > 1e-6) { tipx = px - gx / gmag * 1.4; tipy = py - gy / gmag * 1.4; }
+			data.push({ x: [px, tipx], y: [py, tipy], type: "scatter", mode: "lines", line: { color: "#ef4444", width: 4 }, name: "−∇L (steepest descent)" });
+			data.push({ x: [px], y: [py], type: "scatter", mode: "markers", marker: { size: 13, color: "#475569" }, name: "position" });
+			var lay = baseLayout(); lay.xaxis.range = [-4.5, 4.5]; lay.yaxis.range = [-4.5, 4.5];
+			Plotly.react("geo2-descent", data, lay, cfg);
+			el("geo2-des-readout").textContent = "∇L = (" + gx.toFixed(2) + ", " + gy.toFixed(2) + ")   |∇L| = " + gmag.toFixed(2) + "   condition κ = " + (w * w).toFixed(1) + "   ·   −∇L ⊥ to the contour it crosses";
+		}
+
+		/* ── V. Convolution + DFT ───────────────────────────────────────── */
+		var NX = 64, L = 128, xSeq = new Array(L);
+		(function () { for (var n = 0; n < L; n++) { var b = 0.25 * Math.sin(2 * Math.PI * n / 9); var p = (n >= 20 && n <= 44) ? 1 : 0; xSeq[n] = n < NX ? b + p : 0; } })();
+		function dft(seq) { var re = new Array(L), im = new Array(L); for (var k = 0; k < L; k++) { var sr = 0, si = 0; for (var n = 0; n < L; n++) { var ang = -2 * Math.PI * k * n / L; sr += seq[n] * Math.cos(ang); si += seq[n] * Math.sin(ang); } re[k] = sr; im[k] = si; } return { re: re, im: im }; }
+		var Xf = dft(xSeq);
+		function convRead() {
+			var cl = parseFloat(el("geo2-conv-c0").value), cc = parseFloat(el("geo2-conv-c1").value), cr = parseFloat(el("geo2-conv-c2").value);
+			el("geo2-conv-c0v").textContent = cl.toFixed(2); el("geo2-conv-c1v").textContent = cc.toFixed(2); el("geo2-conv-c2v").textContent = cr.toFixed(2);
+			var y = [], nx = [];
+			for (var t = 0; t < NX; t++) { nx.push(t); y.push(cc * (xSeq[t] || 0) + cl * (xSeq[t + 1] || 0) + cr * (xSeq[t - 1] || 0)); }
+			var tdata = [
+				{ x: nx, y: xSeq.slice(0, NX), type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 2 }, name: "x (input)" },
+				{ x: nx, y: y, type: "scatter", mode: "lines", line: { color: "#2563eb", width: 3 }, name: "y = c*x (sliding dot product)" }
+			];
+			var layT = baseLayout(); layT.showlegend = true; layT.legend = { orientation: "h", y: -0.28, x: 0 }; layT.xaxis.range = [0, NX - 1]; layT.xaxis.title = { text: "time t", font: { color: gc("#64748b") } };
+			Plotly.react("geo2-conv-time", tdata, layT, cfg);
+			var cSeq = new Array(L).fill(0); cSeq[0] = cl; cSeq[1] = cc; cSeq[2] = cr;
+			var Cf = dft(cSeq), fb = [], mx = [], mc = [], my = [];
+			for (var k = 0; k < 64; k++) { var X = Math.hypot(Xf.re[k], Xf.im[k]), C = Math.hypot(Cf.re[k], Cf.im[k]); fb.push(k); mx.push(X); mc.push(C); my.push(X * C); }
+			var fdata = [
+				{ x: fb, y: mx, type: "scatter", mode: "lines", line: { color: gc("#94a3b8"), width: 2 }, name: "|F(x)|" },
+				{ x: fb, y: mc, type: "scatter", mode: "lines", line: { color: "#f59e0b", width: 2 }, name: "|F(c)|" },
+				{ x: fb, y: my, type: "scatter", mode: "lines", line: { color: "#2563eb", width: 3 }, name: "|F(y)| = |F(c)|·|F(x)|" }
+			];
+			var layF = baseLayout(); layF.legend = { orientation: "h", y: -0.28, x: 0 }; layF.xaxis.range = [0, 63]; layF.xaxis.title = { text: "frequency bin (0…Nyquist)", font: { color: gc("#64748b") } };
+			Plotly.react("geo2-conv-freq", fdata, layF, cfg);
+			el("geo2-conv-readout").textContent = "kernel [c₋₁, c₀, c₁] = [" + cl.toFixed(2) + ", " + cc.toFixed(2) + ", " + cr.toFixed(2) + "]   Σc = " + (cl + cc + cr).toFixed(2) + "   ·   right: |F(y)| = |F(c)|·|F(x)|, point by point";
+		}
+
+		/* ── VI. Symmetry ───────────────────────────────────────────────── */
+		var TOKENS = [0.4, 2.2, 1.1, 3.0, 0.7, 1.8];
+		function psi(v) { return v + 0.25 * v * v; }
+		function symRead() {
+			var k = parseInt(el("geo2-sym-shift").value, 10);
+			el("geo2-sym-shv").textContent = String(k);
+			var n = 6, pos = [], shifted = [], out = [];
+			for (var i = 0; i < n; i++) { pos.push(i); shifted.push(TOKENS[(i + k) % n]); out.push(psi(shifted[i])); }
+			var mean = TOKENS.reduce(function (a, b) { return a + b; }, 0) / n;
+			var data = [
+				{ x: pos, y: TOKENS, type: "scatter", mode: "lines+markers", line: { color: gc("#cbd5e1"), width: 1.5, dash: "dot" }, marker: { size: 8, color: gc("#94a3b8") }, name: "input (original)" },
+				{ x: pos, y: shifted, type: "scatter", mode: "lines+markers", line: { color: "#2563eb", width: 2.5 }, marker: { size: 9, color: "#2563eb" }, name: "input (shifted)" },
+				{ x: pos, y: out, type: "scatter", mode: "lines+markers", line: { color: "#f59e0b", width: 2.5 }, marker: { size: 9, color: "#f59e0b" }, name: "equivariant out ψ(input)" },
+				{ x: [-0.3, n - 1 + 0.3], y: [mean, mean], type: "scatter", mode: "lines", line: { color: "#16a34a", width: 3, dash: "dash" }, name: "invariant (mean)" }
+			];
+			var lay = baseLayout(); lay.xaxis.range = [-0.3, n - 1 + 0.3]; lay.xaxis.title = { text: "token position", font: { color: gc("#64748b") } };
+			Plotly.react("geo2-sym", data, lay, cfg);
+			el("geo2-sym-readout").textContent = "shift = " + k + "   ·   mean = " + mean.toFixed(3) + " (unchanged for every shift)   ·   blue & orange move together = equivariant; green stays put = invariant";
+		}
+
+		/* ── Wire sliders + lazy-init ───────────────────────────────────── */
+		on("geo2-proj-px", projRead); on("geo2-proj-py", projRead); on("geo2-proj-phi", projRead);
+		on("geo2-svd-s1", svdRead); on("geo2-svd-s2", svdRead); on("geo2-svd-th", svdRead);
+		on("geo2-des-px", desRead); on("geo2-des-py", desRead); on("geo2-des-w", desRead);
+		on("geo2-conv-c0", convRead); on("geo2-conv-c1", convRead); on("geo2-conv-c2", convRead);
+		on("geo2-sym-shift", symRead);
+		mount("geo2-projection", projRead);
+		mount("geo2-svd", svdRead);
+		mount("geo2-descent", desRead);
+		mount("geo2-conv-time", convRead);
+		mount("geo2-sym", symRead);
+	}
+
+	if (typeof Plotly !== "undefined") { boot(); }
+	else {
+		var tries = 0, t = setInterval(function () {
+			if (typeof Plotly !== "undefined") { clearInterval(t); boot(); }
+			else if (++tries > 150) { clearInterval(t); }
+		}, 100);
+	}
+})();
+</script>

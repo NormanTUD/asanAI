@@ -75,6 +75,7 @@
 	incl("Basic Math Concepts II — Linear Algebra for AI", "math_ii");
 	incl("Basic Math Concepts III — Approximation & The Geometry of High Dimensions", "math_iii");
 	incl("The Shape of Space — A History of Geometry", "geometry_i");
+	incl("The Shape of the Machine — A Working Geometry for AI", "geometry_ii");
 	incl("The History of Language: From Sanskrit to LLMs", "language");
 	incl("Statistics I — Distributions and Inference", "statistics_i");
 	incl("Statistics II — Inference and Information", "statistics_ii");
