@@ -594,7 +594,7 @@ renderProbs(0);
   $('catShowComp').onclick=()=>{showComp=!showComp;draw();};
   $('catExample').onclick=()=>{
     objs=[{x:180,y:190,name:'Charles'},{x:420,y:190,name:'Darwin'},{x:680,y:190,name:'wrote'}];
-    arrows=[{from:objs[0],to:objs[1]},{from:objs[1]},{from:objs[1],to:objs[2]}];
+    arrows=[{from:objs[0],to:objs[1]},{from:objs[1],to:objs[2]}];
     showComp=true;draw();
   };
   draw();
