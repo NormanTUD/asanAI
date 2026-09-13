@@ -141,15 +141,17 @@ $$\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_{0}^{3} = 3^{2} - 0^{2} = 9 - 0 =
 
 ### The closed integral $\oint$
 
-An ordinary integral $\int_a^b$ adds a quantity up along a path with **two ends**, a start $a$ and a finish $b$. The **closed integral** $\oint$ does the same kind of addition, but over a domain with **no ends**: a loop that returns to its starting point, or a surface that encloses a region. The dot in the symbol is just a flag meaning *the domain is closed* — it is not a new operation, and it is not a literal circle.
+The ordinary integral $\int_a^b$ adds a quantity up along a line that has a start, $a$, and an end, $b$. The **closed integral** $\oint$ adds up the same kind of thing, but along a line that has **no start and no end** — a loop that comes all the way back to where it began. The dot in the middle is only a reminder that the line is closed.
 
-To see what "closed" actually changes, let a vector field $\mathbf{F}$ place a small arrow at every point of space, and follow it.
+Here is what that actually looks like. Walk around the boundary of a shape, one full lap, and at each step add up the tiny bit of distance $ds$ you have just covered. When you get back to where you started, the total you have added up is simply the **perimeter** of the shape,
 
-* **Along a closed loop $C$**, $\displaystyle\oint_{C} \mathbf{F}\cdot\mathrm{d}\mathbf{r}$ adds up, at every point, how much of $\mathbf{F}$ points *in the direction you are walking*, for the whole lap. Because the path has no ends, the result is a single number: the **circulation** of $\mathbf{F}$ around $C$. Walk one full circle through a spinning fluid and you keep adding forward push, so the circulation is positive; walk a loop through a swirl-free fluid and the forward and backward parts cancel to $0$.
+$$\oint_{C} ds = \text{the perimeter of } C .$$
 
-* **Across a closed surface $S$**, $\displaystyle\oint_{S} \mathbf{F}\cdot\mathrm{d}\mathbf{A}$ adds up, at every patch, how much of $\mathbf{F}$ points *outward* through the surface. The total is the **flux**: the net flow out of the enclosed region per unit time.
+That is a closed integral: you add up little pieces all the way round a closed loop, and the answer is one number.
 
-Physics reads a local rule as a global total this way. **Gauss's law** says the outward flux of an electric field through any closed surface equals the charge trapped inside, $\oint_{S} \mathbf{E}\cdot\mathrm{d}\mathbf{A} = Q/\varepsilon_0$: measure what leaks out across the boundary and you know the total charge inside, without ever looking inside. The same move appears in [Geometry III](geometry_iii): the **Gauss–Bonnet theorem** says the total curvature of a closed surface equals $2\pi$ times its Euler characteristic, $\iint_{M} K\,\mathrm{d}A = 2\pi\chi(M)$ — a sum you can compute from how the surface bends, yet which ends up depending only on how many holes the surface has, not on its exact shape.
+Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (that is $360^\circ$), no matter what shape the loop is.
+
+You will meet the same idea again in physics and in [Geometry III](geometry_iii): add up a quantity all the way round a closed loop — or across a closed surface, like the total amount that flows out of a box — and the single number you get at the end describes the whole closed shape, not just one point on it.
 </div>
 
 <div class="md">
