@@ -2066,7 +2066,7 @@ function bindSlider(id, valId, formatter = v => v) {
       for (let i = 0; i < 40; i++) {
         const px = 20 + (i / 40) * (W - 40);
         const amp = Math.min(60, (H - topH - 40) * 0.3);
-        const py = bcy + Math.sin(i * 0.3 * freqHz / 100 + t * 5) * amp;
+        const py = bcy + Math.sin(i * 0.3 * freqHz / 100 + time * 5) * amp;
         ctx.fillStyle = `hsla(${180 + i * 3}, 70%, 60%, 0.8)`;
         ctx.beginPath();
         ctx.arc(px, py, 4, 0, Math.PI * 2);
