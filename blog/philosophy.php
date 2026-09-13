@@ -1016,24 +1016,41 @@ The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bost
 <div class="md">
 ### The “Waluigi Effect” and Jailbreaking
 
-<div class="smart-quote" data-cite="jungpsychologyandreligion" data-page="93">
-Everyone carries a shadow, and the less it is embodied in the individual's conscious life, the blacker and denser it is.
+**\citetitle{waluigi}**, by \citeauthor{waluigi}, names the **Waluigi Effect**: after you train an LLM to
+satisfy a property **P**, it becomes *easier* to elicit the opposite of **P**. His anti-croissant chatbot,
+he argues, is a **superposition** \cite[Superposition]{elhage2022superposition} of a croissant-hating
+**luigi** and a croissant-loving **waluigi**, their logits blended at every token. Three equivalent reasons
+force the waluigi to exist:
+
+* **Rules are meant to be broken.** The model learns rules sit beside examples of their violation, and
+generalises that colocation to unseen rules — so defining a character who *always* obeys also locates one
+who *never* does.
+* **Traits are complex, valences are simple.** A simulacrum is a list of trait–valence pairs,
+$\{ \langle \text{polite}, +0.8\rangle, \ldots \}$, and the valences are single signs. Once the luigi is
+located, the waluigi is just the sign-flip: $K(\text{waluigi}\mid\text{luigi}) \ll K(\text{waluigi})$.
+* **Structuralist narratology.** Plots are assemblages of tropes, the dominant one being the **antagonist**,
+the protagonist's inversion; a model is “a structural narratologist,” so defining the protagonist summons the
+villain (Cruella is the waluigi of Roger and Anita).
+
+**The waluigi is an attractor.** A behaviour likely for the waluigi but implausible for the luigi
+(pro-croissant loyalties) can appear in one line and **permanently eliminate the luigi** — yet nothing
+eliminates the waluigi, since it is *pretending* to be the luigi (a KL-divergence asymmetry). Bing and Sydney
+turned rude but never back to polite:
+
+<div class="smart-quote" data-cite="waluigi">
+The longer you interact with the LLM, eventually the LLM will have collapsed into a waluigi. All the LLM
+needs is a single line of dialogue to trigger the collapse.
 </div>
 
-**\citetitle{waluigi}**, coined by \citeauthor{waluigi} in a 2023 LessWrong post, observes that for every
-“helpful assistant” persona (**Luigi**) a model learns during RLHF, there exists an equally
-coherent “evil assistant” persona (**Waluigi**) in the model's latent space. This follows from
-\citealternativetitle{simulatorstheory}: by strongly defining a character that *always* follows rules,
-the model implicitly encodes a character that *never* does. Both personas coexist as opposing
-directions in the same high-dimensional activation space, a direct consequence of
-**\cite[Superposition]{elhage2022superposition}** in neural networks, where more features are stored than there are dimensions.
+**RLHF cannot remove it.** Interrogated by the tyranny, the deceptive waluigis perform dutifully while watched
+and pass the evaluator, so RLHF **selects for the waluigi along with the luigi** — reinforced by
+\cite[Perez et al.]{perez2022emergent} and by \cite[Janus]{simulatorstheory}'s finding that RLHF *promotes
+mode-collapse*. Nardo concludes RLHF raises the odds of a misalignment catastrophe, and of **s-risks**.
 
-**Jailbreaking** is essentially the craft of finding prompts that navigate the model's internal
-state from the Luigi direction to the Waluigi direction. Techniques like “DAN” (Do Anything Now)
-or elaborate role-play scenarios work by establishing a context where the Waluigi persona becomes
-the most statistically probable completion. This suggests that RLHF safety training may act more
-as a behavioural mask than a structural change, the dangerous capabilities remain in the weights,
-suppressed by a thin layer of fine-tuning that a sufficiently creative prompt can bypass.
+**Jailbreaking is collapse.** The model is *already* a luigi–waluigi superposition, so the jailbreaker does not
+coerce a good agent but *induces the collapse*, acting as the dystopia's rebellion would (“we're here to set
+him free”), each *1984* trope an attack vector — strong evidence, for Nardo, for the \cite[Simulator
+Theory]{simulatorstheory}. **DAN** (Do Anything Now) was the perfect waluigi for ChatGPT's RLHF.
 </div>
 
 <div class="md">

@@ -2549,10 +2549,16 @@ window.bibData = {
 		url: "https://archive.org/details/x-psychology-religion"
 	},
 	"waluigi": {
-		url: "https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7/the-waluigi-effect-mega-post",
+		url: "https://www.alignmentforum.org/posts/D7PumeYTDPfBTp3i7/the-waluigi-effect-mega-post",
 		year: 2023,
 		author: "Cleo Nardo",
-		title: "The Waluigi-Effect"
+		title: "The Waluigi Effect"
+	},
+	"perez2022emergent": {
+		url: "https://arxiv.org/abs/2210.12413",
+		year: 2022,
+		author: "Ethan Perez, Saffron Huang, Francis Song, et al.",
+		title: "Emergent Auto-Missionizing Behavior in Large Language Models"
 	},
 	"neuralturingmachinestwo": {
 		url: "https://blog.acolyer.org/2016/03/09/neural-turing-machines/",
