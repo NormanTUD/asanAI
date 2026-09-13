@@ -1274,9 +1274,9 @@ window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] } };
 (function(){
   const c = document.getElementById('hardCanvas');
   const ctx = c.getContext('2d');
+  let t = 0;
   function resize(){ c.width = c.offsetWidth*devicePixelRatio; c.height = c.offsetHeight*devicePixelRatio; draw(); }
   resize(); window.addEventListener('resize', resize);
-  let t = 0;
   function draw(){
     t += .03;
     const w = c.width, h = c.height;
