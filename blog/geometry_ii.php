@@ -18,7 +18,7 @@ The [Shape of Space](geometry_i) chapter asked what *space* is, and how we came 
 The moves we will draw, in order:
 
 * **The inner product** — the operation underneath everything. A dot product is a *measurement of alignment*, and its shadow, the Gram matrix, is where “similarity” is actually stored \cite{scholkopf2002learning}.
-* **Projection** — fitting anything (a line, a low-rank approximation, a prediction) is *shading*: the best fit is the shadow the data throws onto a subspace, and the error is exactly the piece left standing.
+* **Projection** — fitting anything (a line, a low-rank approximation, a prediction) is the same move: the best fit is the *shadow* the data throws onto a subspace, and the error is exactly the piece left standing.
 * **The singular value decomposition** — every matrix, no matter how ugly, is secretly a rotation, a set of pure stretches, and a rotation again. The stretches *are* the shape of the map \cite{svd_wiki}.
 * **Descent** — why the gradient points where it points, and why “steepest” is a geometric fact, not an optimizer’s choice \cite{cauchy1847}.
 * **Convolution and the Fourier transform** — a convolution is a dot product that slides across space, and the Fourier transform is the change of coordinates that turns that sliding into ordinary multiplication \cite{fourier1822} \cite{cooley1965fft}.
@@ -58,7 +58,7 @@ $$
 
 Turn the whole point cloud around and nothing in $G$ moves: that is what it means for $G$ to be a coordinate-free description of the data. The statement is even more rigid — the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis, so they capture the shape of the data, its principal stretches, independent of every coordinate choice.
 
-That last sentence is the seed of the entire chapter. Everything that follows is an operation that reads or manipulates $G$’s eigenstructure: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a translation-invariant inner product, and **symmetry** is the group of rotations that leave $G$ unchanged.
+That last sentence is the seed of the entire chapter. Everything that follows is a geometric operation the network performs on those vectors, and here is the shape of each: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network is built to respect.
 </div>
 
 <div class="md">
@@ -263,7 +263,7 @@ Why should a working-geometry chapter care? Because **weight sharing is equivari
 
 * A **CNN** shares one kernel across every location — that is translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). Section V’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
 * **Pooling** (mean, max) is the invariant readout: reorder or shift what you pool over and the pooled number does not move.
-* **Attention** is permutation-equivariant over the token set: shuffle the input tokens and every output token — and every attention weight — shuffles along with it. Order is not something attention knows, which is exactly why position has to be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)). The attention map is a function on *pairs* of tokens that commutes with permutation — a symmetric object in the group-theoretic sense.
+* **Attention** is permutation-equivariant over the token set: shuffle the input tokens and every output token — and every attention weight — shuffles along with it. Order is not something attention knows, which is exactly why position has to be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)). The attention map — a weight on every *pair* of tokens — is itself permutation-equivariant: permute the tokens and the whole map permutes with them.
 * The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \cite{bronstein2021geometric}).
 
 The interactive below holds a bag of six “tokens.” Drag the **shift** to reorder them. The <b>blue</b> (input) and <b>orange</b> (a per-item equivariant output) traces rotate *together* — that is equivariance, the commutative square closing. The flat <b>green</b> line is the invariant readout (the mean), and it does not move no matter how you reorder the bag.

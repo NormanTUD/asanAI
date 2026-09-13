@@ -195,7 +195,7 @@ window.bibData = {
 		journal: "Proceedings of the London Mathematical Society",
 		volume: "(3) 17",
 		pages: "385–401",
-		url: "https://groupoids.org.uk/pdffiles/vKT2.pdf",
+		url: "https://www.sas.rochester.edu/mth/sites/doug-ravenel/otherpapers/rbrown-topgrpds-e.pdf",
 		alternativetitle: "Brown, Groupoids and van Kampen's theorem (1967)"
 	},
 	"freudenthal1937": {
@@ -205,7 +205,7 @@ window.bibData = {
 		journal: "Compositio Mathematica",
 		volume: 5,
 		pages: "299–314",
-		url: "https://www.ams.org/notices/200210/fea-vietoris.pdf",
+		url: "https://en.wikipedia.org/wiki/Freudenthal_suspension_theorem",
 		alternativetitle: "Freudenthal, On the classes of sphere mappings (1937)"
 	},
 	"serre1951": {
@@ -295,7 +295,7 @@ window.bibData = {
 		journal: "Bulletin of the American Mathematical Society",
 		volume: 72,
 		pages: "358–426",
-		url: "https://www.maths.ed.ac.uk/~v1ranick/papers/mil1.pdf",
+		url: "https://en.wikipedia.org/wiki/Whitehead_torsion",
 		alternativetitle: "Milnor, Whitehead Torsion (1966)"
 	},
 	"milnor1962additivity": {
@@ -315,7 +315,7 @@ window.bibData = {
 		journal: "Discrete & Computational Geometry",
 		volume: 33,
 		pages: "249–274",
-		url: "https://geometry.stanford.edu/papers/zc-cph-05/zc-cph-05.pdf",
+		url: "https://doi.org/10.1007/s00454-004-1146-y",
 		alternativetitle: "Zomorodian and Carlsson, Computing Persistent Homology (2005)"
 	},
 	"cohensteiner2007": {
