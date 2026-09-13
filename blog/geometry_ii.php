@@ -221,11 +221,11 @@ This is not a curiosity. “Smooth the signal” means “multiply its spectrum 
 		<span id="geo2-conv-c2v" style="font-family:monospace; font-weight:bold; color:#2563eb;">0.25</span>
 	</div>
 	<div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
-		<div style="flex:1 1 0; min-width:260px; max-width:300px;">
+		<div style="flex:0 0 300px; max-width:100%; overflow:hidden;">
 			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">time domain — $y = c * x$</div>
 			<div id="geo2-conv-time" class="plot-container" style="width:100%; height:300px;"></div>
 		</div>
-		<div style="flex:1 1 0; min-width:260px; max-width:300px;">
+		<div style="flex:0 0 300px; max-width:100%; overflow:hidden;">
 			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">frequency domain — $|F(y)| = |F(c)|\cdot|F(x)|$</div>
 			<div id="geo2-conv-freq" class="plot-container" style="width:100%; height:300px;"></div>
 		</div>
@@ -286,14 +286,17 @@ The interactive below holds a bag of six “tokens.” Drag the **shift** to reo
 
 Pull the six moves together and a forward pass reads as a *sequence of geometric operations*, each with a fixed shape and a handful of learned parameters:
 
-| Move | Operation | The layer | Met in |
-|---|---|---|---|
-| Inner product | alignment $\langle u,v\rangle$ | neuron, similarity, attention | [Attention](attentionlab), [Embedding](embeddinglab) |
-| Projection | best fit = shadow, ⟂ | least squares, low-rank | [Loss](losslab) |
-| SVD | rotate → stretch → rotate | PCA, compression, LoRA | [Beyond LLMs](beyond_llms) |
-| Descent | $-\nabla$, ⟂ to level sets | descent, backprop | [Optimizer](optimizerlab), [Autodiff](autodiff) |
-| Conv + DFT | sliding dot product | CNN filter, FFT | [Vision](visionlab), [Positional](positionalembeddingslab) |
-| Symmetry | invariant / equivariant | pooling, attention, sharing | [Vision](visionlab), [Mech. Interp.](mechanistic_interpretability) |
+<table>
+<thead><tr><th>Move</th><th>Operation</th><th>The layer</th><th>Met in</th></tr></thead>
+<tbody>
+<tr><td>Inner product</td><td>alignment $\langle u,v\rangle$</td><td>neuron, similarity, attention</td><td><a href="attentionlab">Attention</a>, <a href="embeddinglab">Embedding</a></td></tr>
+<tr><td>Projection</td><td>best fit = shadow, ⟂</td><td>least squares, low-rank</td><td><a href="losslab">Loss</a></td></tr>
+<tr><td>SVD</td><td>rotate → stretch → rotate</td><td>PCA, compression, LoRA</td><td><a href="beyond_llms">Beyond LLMs</a></td></tr>
+<tr><td>Descent</td><td>$-\nabla$, ⟂ to level sets</td><td>descent, backprop</td><td><a href="optimizerlab">Optimizer</a>, <a href="autodiff">Autodiff</a></td></tr>
+<tr><td>Conv + DFT</td><td>sliding dot product</td><td>CNN filter, FFT</td><td><a href="visionlab">Vision</a>, <a href="positionalembeddingslab">Positional</a></td></tr>
+<tr><td>Symmetry</td><td>invariant / equivariant</td><td>pooling, attention, sharing</td><td><a href="visionlab">Vision</a>, <a href="mechanistic_interpretability">Mech. Interp.</a></td></tr>
+</tbody>
+</table>
 
 Notice what is *learned* and what is *fixed*. The geometry — that a dot product measures alignment, that the best fit is a shadow, that the steepest direction is the normal to the level sets, that convolution multiplies in frequency, that a symmetric operation must commute with its symmetry — is **fixed by mathematics**. What training learns are the *parameters inside* each move: which directions to stretch (the singular vectors), which kernel to slide (the filter weights), which per-item map to apply (the non-linearity). The shape of the operations is a prior; the data supplies the numbers. That is the working geometry of a neural network: a fixed set of geometric moves, parameterized, stacked, and trained.
 
