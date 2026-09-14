@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Geometrie & Topologie bedeutungsvoller Sprachräume — Interaktive Reise</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{
+  --bg:#07070c;
+  --bg2:#0d0d18;
+  --panel:#12121f;
+  --panel2:#1a1a2e;
+  --ink:#e8e8f5;
+  --muted:#8888a8;
+  --accent:#7ac8ff;
+  --accent2:#ff7ad9;
+  --accent3:#b8ff7a;
+  --accent4:#ffd07a;
+  --void:#2a1a3a;
+  --cluster:#7ac8ff;
+  --danger:#ff5577;
+  --ok:#77ffaa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(122,200,255,0.08), transparent 50%),
+    radial-gradient(ellipse at 80% 60%, rgba(255,122,217,0.06), transparent 50%),
+    radial-gradient(ellipse at 50% 90%, rgba(184,255,122,0.04), transparent 50%),
+    var(--bg);
+}
+.wrap{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
+header{
+  padding:5rem 1.5rem 3rem;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  position:relative;
+  overflow:hidden;
+}
+header::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(122,200,255,0.15), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255,122,217,0.12), transparent 40%);
+  z-index:0;
+}
+header > *{position:relative;z-index:1}
+h1{
+  font-size:clamp(2rem,5vw,3.5rem);
+  font-weight:800;
+  letter-spacing:-0.02em;
+  background:linear-gradient(120deg,#fff 0%, #7ac8ff 40%, #ff7ad9 70%, #fff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  margin-bottom:1rem;
+  line-height:1.1;
+}
+.subtitle{color:var(--muted);font-size:1.15rem;max-width:700px;margin:0 auto}
+section{
+  margin:4rem auto;
+  max-width:1100px;
+  padding:0 1.5rem;
+}
+h2{
+  font-size:1.8rem;
+  margin-bottom:0.5rem;
+  color:var(--accent);
+  font-weight:700;
+  letter-spacing:-0.01em;
+}
+h2 .num{color:var(--muted);font-weight:400;margin-right:0.5rem;font-variant-numeric:tabular-nums}
+h3{font-size:1.2rem;margin:1.5rem 0 0.75rem;color:var(--accent3)}
+p{margin:0.8rem 0}
+.lede{color:var(--muted);font-size:1.05rem;margin-bottom:1.5rem;max-width:800px}
+.card{
+  background:linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;
+  padding:1.5rem;
+  margin:1.5rem 0;
+  box-shadow:0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.controls{
+  display:grid;
+  gap:1rem;
+  margin:1rem 0;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+}
+.ctrl{display:flex;flex-direction:column;gap:0.4rem}
+.ctrl label{font-size:0.85rem;color:var(--muted);display:flex;justify-content:space-between}
+.ctrl label span{color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{
+  -webkit-appearance:none;
+  appearance:none;
+  height:6px;
+  background:linear-gradient(90deg,#333 0%, #333 100%);
+  border-radius:3px;
+  outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;height:18px;
+  background:linear-gradient(135deg,#7ac8ff,#ff7ad9);
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 0 12px rgba(122,200,255,0.6);
+}
+input[type=range]::-moz-range-thumb{
+  width:18px;height:18px;
+  background:linear-gradient(135deg,#7ac8ff,#ff7ad9);
+  border-radius:50%;
+  cursor:pointer;
+  border:none;
+  box-shadow:0 0 12px rgba(122,200,255,0.6);
+}
+canvas{display:block;width:100%;border-radius:12px;background:#050510}
+.canvas-wrap{position:relative;margin:1rem 0}
+.readout{
+  font-family:'SF Mono',Monaco,Consolas,monospace;
+  font-size:0.9rem;
+  color:var(--accent3);
+  background:rgba(0,0,0,0.4);
+  padding:0.75rem 1rem;
+  border-radius:8px;
+  border-left:3px solid var(--accent3);
+  margin:0.75rem 0;
+  white-space:pre-wrap;
+}
+.hint{color:var(--muted);font-size:0.9rem;font-style:italic;margin-top:0.5rem}
+button{
+  background:linear-gradient(135deg,#2a3a5a,#3a2a5a);
+  color:var(--ink);
+  border:1px solid rgba(122,200,255,0.3);
+  padding:0.5rem 1rem;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:0.9rem;
+  transition:all 0.2s;
+}
+button:hover{border-color:var(--accent);box-shadow:0 0 20px rgba(122,200,255,0.3)}
+button.active{background:linear-gradient(135deg,#7ac8ff,#ff7ad9);color:#000;font-weight:600}
+.btn-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin:0.75rem 0}
+.example-box{
+  background:rgba(0,0,0,0.3);
+  border-left:3px solid var(--accent2);
+  padding:0.75rem 1rem;
+  border-radius:0 8px 8px 0;
+  margin:0.5rem 0;
+  font-style:italic;
+}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin:1rem 0}
+.field-card{
+  background:rgba(0,0,0,0.3);
+  border-radius:10px;
+  padding:0.75rem;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.field-card .name{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.field-card .val{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-top:0.4rem}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.4s ease}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.tag.hypo{background:rgba(255,208,122,0.15);color:var(--accent4);border:1px solid rgba(255,208,122,0.3)}
+.tag.spec{background:rgba(255,122,217,0.15);color:var(--accent2);border:1px solid rgba(255,122,217,0.3)}
+.tag.est{background:rgba(184,255,122,0.15);color:var(--accent3);border:1px solid rgba(184,255,122,0.3)}
+.formula-box{
+  background:linear-gradient(180deg,rgba(122,200,255,0.05),rgba(255,122,217,0.05));
+  border-radius:12px;
+  padding:1rem;
+  margin:1rem 0;
+  text-align:center;
+  border:1px solid rgba(255,255,255,0.05);
+}
+.big-question{
+  font-size:1.3rem;
+  color:var(--accent);
+  padding:1.25rem 1.5rem;
+  background:linear-gradient(90deg,rgba(122,200,255,0.08),transparent);
+  border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;
+  margin:1.5rem 0;
+  font-weight:500;
+}
+.toc{
+  position:fixed;
+  top:1rem;right:1rem;
+  background:rgba(15,15,30,0.9);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  padding:0.75rem;
+  max-width:220px;
+  max-height:80vh;
+  overflow-y:auto;
+  font-size:0.8rem;
+  z-index:100;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5);
+  display:none;
+}
+@media(min-width:1400px){.toc{display:block}}
+.toc a{display:block;color:var(--muted);text-decoration:none;padding:3px 6px;border-radius:4px;transition:all 0.15s}
+.toc a:hover{background:rgba(122,200,255,0.1);color:var(--accent)}
+.toc h4{color:var(--accent);font-size:0.85rem;margin-bottom:0.5rem}
+.divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(122,200,255,0.3),transparent);
+  margin:3rem 0;
+}
+.motivation{
+  background:linear-gradient(135deg,rgba(255,208,122,0.08),rgba(255,122,217,0.05));
+  border-radius:12px;
+  padding:1rem 1.25rem;
+  margin:1rem 0;
+  border-left:3px solid var(--accent4);
+}
+.motivation strong{color:var(--accent4)}
+.solution{
+  background:linear-gradient(135deg,rgba(184,255,122,0.08),rgba(122,200,255,0.05));
+  border-radius:12px;
+  padding:1rem 1.25rem;
+  margin:1rem 0;
+  border-left:3px solid var(--accent3);
+}
+.solution strong{color:var(--accent3)}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:0.85rem;margin:0.5rem 0;color:var(--muted)}
+.legend-item{display:flex;align-items:center;gap:0.4rem}
+.legend-dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.chapter-intro{
+  border-radius:16px;
+  padding:1.5rem 2rem;
+  background:linear-gradient(135deg,rgba(122,200,255,0.05),rgba(255,122,217,0.03));
+  border:1px solid rgba(122,200,255,0.15);
+  margin-bottom:2rem;
+}
+select{
+  background:var(--panel2);
+  color:var(--ink);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:0.4rem 0.75rem;
+  border-radius:6px;
+  font-size:0.9rem;
+}
+.footer{
+  text-align:center;
+  padding:3rem 1rem;
+  color:var(--muted);
+  font-size:0.9rem;
+  border-top:1px solid rgba(255,255,255,0.05);
+  margin-top:4rem;
+}
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <h4>Navigation</h4>
+  <a href="#s1">1. Das Universum aller Sätze</a>
+  <a href="#s2">2. Bedeutung als Feld</a>
+  <a href="#s3">3. Das kosmische Netz</a>
+  <a href="#s4">4. Selbstähnlichkeit & Fraktale</a>
+  <a href="#s5">5. Vier Arten von Leere</a>
+  <a href="#s6">6. Ränder & Phasenübergänge</a>
+  <a href="#s7">7. Metapher als Brücke</a>
+  <a href="#s8">8. Persistent Homology</a>
+  <a href="#s9">9. Faserbündel: Form → Bedeutung</a>
+  <a href="#s10">10. Kommutierende Diagramme</a>
+  <a href="#s11">11. Skalengesetze</a>
+  <a href="#s12">12. Coarse-Graining</a>
+  <a href="#s13">13. Grand Synthesis</a>
+</nav>
+
+<header>
+  <h1>Die Geometrie<br>bedeutungsvoller Sprache</h1>
+  <p class="subtitle">Eine interaktive Reise durch das kosmische Netz der Sprache — von kombinatorischen Möglichkeitsräumen zu hierarchischen Clustern, Leerräumen und weltverankerter Bedeutung.</p>
+</header>
+
+<!-- ============================================================ -->
+<section id="s1">
+  <div class="chapter-intro">
+    <h2><span class="num">§1</span>Das Universum aller möglichen Sätze</h2>
+    <p class="lede">Bevor wir über Bedeutung reden, brauchen wir eine Bühne. Diese Bühne ist gigantisch — sie enthält jeden Text, den man mit einem Alphabet und einer maximalen Länge überhaupt bilden könnte.</p>
+  </div>
+
+  <div class="motivation">
+    <strong>Motivation:</strong> Wir wollen verstehen, wo <em>innerhalb</em> aller möglichen Zeichenkombinationen die bedeutungsvollen liegen. Also fangen wir mit <em>allem</em> an, was möglich ist — auch mit dem Müll.
+  </div>
+
+  <div class="card">
+    <h3>Das Möglichkeits-Universum $X_N$</h3>
+    <div class="formula-box">$$X_N = \bigcup_{n=1}^{N} V^n$$</div>
+    <p>$V$ ist unser Alphabet (Vokabular), $N$ die maximale Länge. $X_N$ enthält <em>jede</em> Zeichenkette bis zur Länge $N$. Bewege die Slider und sieh, wie schnell dieser Raum explodiert:</p>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Vokabulargröße $|V|$ <span id="v1_vLabel">26</span></label>
+        <input type="range" id="v1_V" min="2" max="50000" value="26" step="1">
+      </div>
+      <div class="ctrl">
+        <label>Maximale Länge $N$ <span id="v1_nLabel">5</span></label>
+        <input type="range" id="v1_N" min="1" max="100" value="5" step="1">
+      </div>
+    </div>
+    <div class="btn-row">
+      <button onclick="s1Preset(2,10)">Binär, N=10</button>
+      <button onclick="s1Preset(26,5)">Latein-Alphabet, N=5</button>
+      <button onclick="s1Preset(50000,20)">GPT-Vokabular, N=20</button>
+    </div>
+    <div class="readout" id="v1_readout"></div>
+    <div id="v1_plot" style="height:280px"></div>
+    <p class="hint">Beobachtung: Die Anzahl wächst <strong>exponentiell</strong>. Bei einem GPT-Vokabular und einem Kontext von nur 20 Tokens gibt es bereits mehr mögliche Sequenzen als Atome im beobachtbaren Universum. Bedeutungsvolle Sprache ist ein <em>verschwindend kleines</em> Teilmengen dieser Wüste.</p>
+  </div>
+
+  <div class="solution">
+    <strong>Idee:</strong> $X_N$ ist ein <em>Raum der Möglichkeiten</em>, nicht der Beobachtungen. Die zentrale Frage: <em>Welche geometrische Form hat die winzige Untermenge, die strukturierte, bedeutungsvolle Sprache trägt?</em>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s2">
+  <div class="chapter-intro">
+    <h2><span class="num">§2</span>Bedeutung ist kein Ja/Nein — sie ist ein Feld</h2>
+    <p class="lede">Man könnte glauben, jeder Satz ist entweder „bedeutungsvoll" oder nicht. Doch die Realität ist gradueller: syntaktisch okay aber semantisch schräg, oder inhaltlich klar aber weltfremd. Wir brauchen mehrere Felder.</p>
+  </div>
+
+  <div class="card">
+    <h3>Vier Dimensionen der Kohärenz</h3>
+    <p>Statt einer Zahl ordnen wir jedem Satz $x$ vier Werte zwischen 0 und 1 zu:</p>
+    <div class="formula-box">
+      $C(x)$ = syntaktische Kohärenz &nbsp;·&nbsp;
+      $S(x)$ = semantische Kohärenz &nbsp;·&nbsp;
+      $G(x)$ = Grounding (Weltbezug) &nbsp;·&nbsp;
+      $E(x)$ = epistemische Bestimmtheit
+    </div>
+    <p>Der <em>Void-Vektor</em> misst, wo Struktur <em>fehlt</em>:</p>
+    <div class="formula-box">$$V(x) = (1-C(x),\ 1-S(x),\ 1-G(x),\ 1-E(x))$$</div>
+
+    <h3 style="margin-top:1.5rem">Probier verschiedene Sätze aus:</h3>
+    <div class="btn-row" id="s2_btns"></div>
+
+    <div class="example-box" id="s2_sentence" style="font-size:1.1rem;color:var(--ink)">
+      Der Hund läuft im Park.
+    </div>
+
+    <div class="grid4">
+      <div class="field-card">
+        <div class="name">Syntax $C$</div>
+        <div class="val" id="s2_C">1.00</div>
+        <div class="bar"><div class="bar-fill" id="s2_Cbar" style="background:#7ac8ff"></div></div>
+      </div>
+      <div class="field-card">
+        <div class="name">Semantik $S$</div>
+        <div class="val" id="s2_S">1.00</div>
+        <div class="bar"><div class="bar-fill" id="s2_Sbar" style="background:#b8ff7a"></div></div>
+      </div>
+      <div class="field-card">
+        <div class="name">Grounding $G$</div>
+        <div class="val" id="s2_G">1.00</div>
+        <div class="bar"><div class="bar-fill" id="s2_Gbar" style="background:#ffd07a"></div></div>
+      </div>
+      <div class="field-card">
+        <div class="name">Epistemik $E$</div>
+        <div class="val" id="s2_E">1.00</div>
+        <div class="bar"><div class="bar-fill" id="s2_Ebar" style="background:#ff7ad9"></div></div>
+      </div>
+    </div>
+
+    <div id="s2_radar" style="height:340px"></div>
+    <p class="hint">Radar-Chart: Je weiter außen, desto stärker die Kohärenz. Ein „idealer" Satz füllt das ganze Viereck. Reale Sätze haben oft <em>Löcher</em> in bestimmten Dimensionen.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s3">
+  <div class="chapter-intro">
+    <h2><span class="num">
+  <div class="chapter-intro">
+    <h2><span class="num">§3</span>Das kosmische Netz — eine Intuition</h2>
+    <p class="lede">In der Kosmologie ist Materie im Universum nicht gleichmäßig verteilt. Sie bildet <em>Cluster</em>, <em>Filamente</em>, <em>Wände</em> und riesige <em>Voids</em>. Die Vermutung: Bedeutungsvolle Sprache ist ähnlich strukturiert.</p>
+  </div>
+
+  <div class="motivation">
+    <strong>Warum diese Analogie?</strong> Wenn wir wissen wollen, wo im Ozean von $X_N$ die bedeutungsvollen Inseln liegen, brauchen wir ein mentales Bild für „strukturierte Sparsamkeit". Das kosmische Netz ist das reifste Beispiel aus der Physik.
+  </div>
+
+  <div class="card">
+    <h3>Simuliertes kosmisches Netz der Sprache</h3>
+    <p>Jeder Punkt ist ein hypothetischer Satz. Cluster sind semantisch verwandte Regionen (z.B. „Küche", „Fußball", „Quantenphysik"), Filamente verbinden sie, Voids sind Wüsten des Unsinns.</p>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Anzahl Cluster <span id="v3_kLabel">6</span></label>
+        <input type="range" id="v3_k" min="2" max="20" value="6">
+      </div>
+      <div class="ctrl">
+        <label>Cluster-Dichte <span id="v3_dLabel">0.5</span></label>
+        <input type="range" id="v3_d" min="0" max="1" step="0.01" value="0.5">
+      </div>
+      <div class="ctrl">
+        <label>Filament-Stärke <span id="v3_fLabel">0.4</span></label>
+        <input type="range" id="v3_f" min="0" max="1" step="0.01" value="0.4">
+      </div>
+      <div class="ctrl">
+        <label>Rausch-Punkte im Void <span id="v3_nLabel">80</span></label>
+        <input type="range" id="v3_n" min="0" max="500" value="80">
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="v3_canvas" width="1000" height="560"></canvas>
+    </div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:#7ac8ff"></span>Cluster (dichte Bedeutung)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#ff7ad9"></span>Filament (Übergang)</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#555"></span>Void-Rauschen (unstrukturierter Unsinn)</span>
+    </div>
+    <p class="hint">Bewege deine Maus über die Karte — sie zoomt lokal. Die zentrale Behauptung: <em>diese Struktur ist selbstähnlich</em>. Zoom in einen Cluster und du siehst wieder Sub-Cluster, Sub-Filamente, Sub-Voids.</p>
+  </div>
+
+  <div class="solution">
+    <strong>Idee:</strong> Der bedeutungsvolle Teil von $X_N$ ist keine glatte Blase. Es ist ein <em>hierarchisches Netz</em>: Punkte → Cluster → Cluster von Clustern → …
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s4">
+  <div class="chapter-intro">
+    <h2><span class="num">§4</span>Hierarchische Selbstähnlichkeit</h2>
+    <p class="lede">Sprache ist wahrscheinlich kein exakter Fraktal wie das Mandelbrot-Set. Aber sie könnte <em>statistische</em> oder <em>multifraktale</em> Selbstähnlichkeit zeigen: Ähnliche Arten von Strukturen tauchen auf verschiedenen Skalen wieder auf.</p>
+  </div>
+
+  <div class="formula-box">$$\mathcal S(r)\ \sim\ \mathcal S(\lambda r)$$
+    <div class="hint">Struktur bei Skala $r$ ist statistisch ähnlich zur Struktur bei Skala $\lambda r$.</div>
+  </div>
+
+  <div class="card">
+    <h3>Zoom-Experiment: dieselben Muster auf jeder Skala</h3>
+    <p>Bewege den Zoom-Slider. Bei jedem Zoom-Level siehst du wieder: Cluster, Filamente, Voids — nur der Inhalt ändert sich (Discourse → Absatz → Satz → Wort).</p>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Zoom-Level <span id="v4_zLabel">1</span> von 5</label>
+        <input type="range" id="v4_z" min="0" max="4" value="0" step="1">
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="v4_canvas" width="1000" height="480"></canvas>
+    </div>
+    <div class="readout" id="v4_readout">Skala 1: Diskurs-Ebene — jeder Blob ist ein ganzes Themengebiet.</div>
+    <p class="hint">Prinzip: <em>Strukturen bestehen aus Strukturen.</em> Ein Diskurs besteht aus Absätzen, ein Absatz aus Sätzen, ein Satz aus Phrasen, eine Phrase aus Tokens — und dieselbe geometrische Sprache (Cluster/Void) beschreibt jede Ebene.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s5">
+  <div class="chapter-intro">
+    <h2><span class="num">§5</span>Vier Arten von Leere</h2>
+    <p class="lede">„Void" heißt nicht einfach „wenige Punkte". Ein Void ist die <em>Abwesenheit einer bestimmten Art von Struktur auf einer bestimmten Skala</em>. Es gibt daher viele Sorten davon.</p>
+  </div>
+
+  <div class="big-question">
+    Kann ein Satz gleichzeitig syntaktisch perfekt und semantisch völlig leer sein? Ja — und diese Unterscheidung ist entscheidend.
+  </div>
+
+  <div class="card">
+    <h3>Klassifikator: Welche Art von Void?</h3>
+    <p>Klicke einen Satz und sieh sein Void-Profil. Achte darauf, wie Sätze dieselbe „Meaninglessness" haben können — aber aus völlig verschiedenen Gründen.</p>
+    <div class="btn-row" id="v5_btns"></div>
+
+    <div class="example-box" id="v5_sentence" style="font-size:1.15rem;color:var(--ink)">
+      Bitte einen Satz auswählen.
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div id="v5_bars"></div>
+        <div class="readout" id="v5_diagnosis"></div>
+      </div>
+      <div>
+        <div id="v5_scatter" style="height:340px"></div>
+      </div>
+    </div>
+    <p class="hint">Beobachtung: Der 3D-Punkt zeigt die Position im Void-Raum $(V_{\text{syn}}, V_{\text{sem}}, V_{\text{ground}})$. Ecken des Würfels sind extreme Fälle. Metaphern und Poesie leben in interessanten Zwischenregionen.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s6">
+  <div class="chapter-intro">
+    <h2><span class="num">§6</span>Ränder & Phasenübergänge</h2>
+    <p class="lede">Der Rand $\partial M$ eines bedeutungsvollen Bereichs enthält womöglich <em>mehr Information</em> über semantische Organisation als sein Inneres. An diesen Rändern findet der „Phasenübergang" von Kohärenz zu Inkohärenz statt.</p>
+  </div>
+
+  <div class="card">
+    <h3>Sprachliche Degradation als Phasenübergang</h3>
+    <p>Bewege den Slider und beobachte, wie derselbe Satz durch schrittweise Modifikationen kollabiert. Die Kohärenz sinkt nicht linear — es gibt eine <em>kritische Schwelle</em>.</p>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Degradations-Parameter $t$ <span id="v6_tLabel">0.00</span></label>
+        <input type="range" id="v6_t" min="0" max="1" step="0.001" value="0">
+      </div>
+    </div>
+
+    <div class="example-box" id="v6_sentence" style="font-size:1.2rem;text-align:center;color:var(--ink)"></div>
+
+    <div id="v6_plot" style="height:320px"></div>
+    <p class="hint">Die Kohärenz $C(t)$ folgt einer Sigmoid-artigen Kurve mit einem kritischen Punkt $t_c$. Genau dort ist der Rand $\partial M$ — und dort ist das Signal am reichsten.</p>
+  </div>
+
+  <div class="solution">
+    <strong>Warum wichtig?</strong> Ränder sind, wo Bedeutung sich <em>ändert</em>. Interior-Punkte sind langweilig gleich. Wenn wir Semantik verstehen wollen, müssen wir die Ränder studieren, nicht die Zentren.
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s7">
+  <div class="chapter-intro">
+    <h2><span class="num">§7</span>Metapher als Filament</h2>
+    <p class="lede">Zwei Cluster, die normalerweise weit voneinander entfernt sind (z.B. „ZEIT" und „FLUSS"), werden durch eine Metapher verbunden. Metapher = Langstrecken-Filament im semantischen Netz.</p>
+  </div>
+
+  <div class="card">
+    <h3>„Die Zeit ist ein Fluss" — Aktivierung der Brücke</h3>
+    <p>Klicke auf eine Metapher und beobachte, wie ein Filament zwischen zwei sonst getrennten semantischen Regionen entsteht.</p>
+
+    <div class="btn-row" id="v7_btns"></div>
+
+    <div class="canvas-wrap">
+      <canvas id="v7_canvas" width="1000" height="500"></canvas>
+    </div>
+    <div class="readout" id="v7_readout"></div>
+    <p class="hint">Strukturell unterscheidet sich Metapher damit von <em>lokaler</em> semantischer Ähnlichkeit („Hund" ↔ „Katze"). Sie erzeugt <em>topologisch</em> neue Verbindungen zwischen weit entfernten Bereichen.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s8">
+  <div class="chapter-intro">
+    <h2><span class="num">§8</span>Persistent Homology — Formen, die überleben</h2>
+    <p class="lede">Werkzeug aus der topologischen Datenanalyse. Es misst, welche „Formen" (verbundene Komponenten $H_0$, Schleifen $H_1$, Hohlräume $H_2$) über verschiedene Auflösungen $\epsilon$ hinweg <em>persistieren</em>.</p>
+  </div>
+
+  <div class="motivation">
+    <strong>Voraussetzung (nicht Abi):</strong> Ein <em>simplizialer Komplex</em> ist ein Konstrukt aus Punkten, Kanten, Dreiecken usw. Die <em>Vietoris–Rips-Filtration</em> $VR(P, \epsilon)$ verbindet zwei Punkte mit einer Kante, wenn ihre Distanz $\leq \epsilon$ ist. Wächst $\epsilon$, wachsen die Verbindungen — und Formen erscheinen und verschwinden.
+  </div>
+
+  <div class="card">
+    <h3>Vietoris–Rips-Filtration live</h3>
+    <p>Der linke Canvas zeigt die Punktwolke bei aktuellem $\epsilon$. Rechts das <em>Barcode-Diagramm</em>: jeder Balken ist ein topologisches Feature (Komponente oder Loop), das bei einem $\epsilon$ geboren wird und bei einem anderen stirbt. Lange Balken = echte Struktur. Kurze = Rauschen.</p>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Skalen-Parameter $\epsilon$ <span id="v8_eLabel">0.05</span></label>
+        <input type="range" id="v8_e" min="0" max="0.5" step="0.005" value="0.05">
+      </div>
+      <div class="ctrl">
+        <label>Punktkonfiguration</label>
+        <select id="v8_conf">
+          <option value="two">Zwei Cluster</option>
+          <option value="ring">Ring (Schleife → $H_1$)</option>
+          <option value="three">Drei Cluster + Brücke</option>
+          <option value="hier">Hierarchie: Cluster von Clustern</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="canvas-wrap"><canvas id="v8_pts" width="500" height="500"></canvas></div>
+      <div class="canvas-wrap"><canvas id="v8_bar" width="500" height="500"></canvas></div>
+    </div>
+    <div class="readout" id="v8_readout"></div>
+    <p class="hint">Persistente Features (lange Balken) = stabile, skalenübergreifende Struktur. Übertragen: <em>welche semantischen Relationen überleben Zoom-Wechsel?</em> Genau diese sind Kandidaten für „echte" Bedeutung.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s9">
+  <div class="chapter-intro">
+    <h2><span class="num">§9</span>Faserbündel: von der Form zur Bedeutung</h2>
+    <p class="lede">Verschiedene Sätze können dieselbe Bedeutung tragen: „Der Hund jagt die Katze" ≈ „Die Katze wird vom Hund gejagt". Formal ist Bedeutung dann eine Abbildung $\pi: X \to S$, und die <em>Faser</em> $\pi^{-1}(s)$ enthält alle sprachlichen Realisierungen von $s$.</p>
+  </div>
+
+  <div class="motivation">
+    <strong>Voraussetzung (nicht Abi):</strong> Ein <em>Faserbündel</em> ist ein Raum, der lokal wie ein Produkt Basis $\times$ Faser aussieht. Klassisches Beispiel: der Möbiusstreifen als Bündel über einem Kreis. Hier: linguistischer Totalraum $X$ als Bündel über semantischer Basis $S$.
+  </div>
+
+  <div class="card">
+    <h3>3D-Bündel: $X$ über $S$</h3>
+    <p>Der Boden ist der semantische Basisraum $S$. Über jedem Punkt $s \in S$ steht eine <em>Faser</em> (vertikale Säule) mit allen sprachlichen Realisierungen. Klick, zieh, zoom.</p>
+
+    <div class="btn-row">
+      <button onclick="v9_highlight('jagt')">Faser über „X jagt Y"</button>
+      <button onclick="v9_highlight('sleep')">Faser über „X schläft"</button>
+      <button onclick="v9_highlight('all')">Alle Fasern</button>
+    </div>
+    <div id="v9_three" style="height:520px;border-radius:12px;overflow:hidden;background:#020208"></div>
+    <div class="readout" id="v9_readout">Bewege die Maus, um zu rotieren. Jede vertikale Säule ist die Menge aller Sätze, die dieselbe Bedeutung ausdrücken.</div>
+  </div>
+
+  <div class="solution">
+    <strong>Konsequenz:</strong> Semantik ist keine Etikette. Semantik ist die <em>Äquivalenzstruktur</em>, die Bedeutungsklassen definiert — und die Projektion $\pi$ ist der Übersetzer.
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s10">
+  <div class="chapter-intro">
+    <h2><span class="num">§10</span>Kommutierende Diagramme & Weltverankerung</h2>
+    <p class="lede">Bedeutung endet nicht bei $S$. Ein Satz ist <em>über etwas</em>. Wir brauchen noch $W$ = mögliche Weltzustände. Die vollständige Kette: $X \to S \leftrightarrow W$.</p>
+  </div>
+
+  <div class="motivation">
+    <strong>Voraussetzung (nicht Abi):</strong> In der Kategorientheorie sagt ein <em>kommutierendes Diagramm</em>: zwei verschiedene Wege zwischen zwei Objekten liefern dasselbe Ergebnis. Für Sprache heißt das: „Erst umformen, dann interpretieren" muss dasselbe geben wie „Erst interpretieren, dann Bedeutung umformen".
+  </div>
+
+  <div class="card">
+    <h3>Interaktives kommutierendes Quadrat</h3>
+    <div class="formula-box">$$\begin{array}{ccc} X & \xrightarrow{f} & X'\\ \downarrow\pi && \downarrow\pi'\\ S & \xrightarrow{g} & S' \end{array} \qquad \pi'\circ f = g\circ \pi$$</div>
+
+    <p>Klicke die zwei Wege und sieh, ob sie am selben Ziel ankommen.</p>
+    <div class="btn-row">
+      <button id="v10_path1">Weg 1: $\pi' \circ f$ (erst Form umformen, dann interpretieren)</button>
+      <button id="v10_path2">Weg 2: $g \circ \pi$ (erst interpretieren, dann Bedeutung umformen)</button>
+      <button onclick="v10_reset()">Zurücksetzen</button>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="v10_canvas" width="1000" height="450"></canvas>
+    </div>
+    <div class="readout" id="v10_readout">Beispiel: $x=$„Der Hund jagt die Katze". $f=$ Passivierung, $\pi=$ Bedeutungsextraktion.</div>
+  </div>
+
+  <div class="card">
+    <h3>Die Tarskische Wahrheits-Kette</h3>
+    <p>Ein Satz ist wahr, wenn seine Bedeutung mit einem Weltzustand übereinstimmt. Formal: $\llbracket s \rrbracket = \{w \in W \mid s\text{ ist wahr in }w\}$.</p>
+
+    <div class="ctrl" style="max-width:400px">
+      <label>Welche Welt betrachten wir? <span id="v10w_lab">Welt 1</span></label>
+      <input type="range" id="v10w" min="0" max="4" value="0" step="1">
+    </div>
+    <div id="v10_tarski" style="height:360px"></div>
+    <p class="hint">Blau: Sätze, die in der gewählten Welt wahr sind. Grau: falsch. Bedeutung koppelt sprachliche Form über eine Zwischenschicht $S$ an Realität $W$.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s11">
+  <div class="chapter-intro">
+    <h2><span class="num">§11</span>Skalengesetze: Zipf, Heaps & Multifraktalität</h2>
+    <p class="lede">Sprache hat keine charakteristische Skala. Wenige Wörter kommen sehr oft vor, extrem viele Wörter extrem selten. Das ist ein Fingerabdruck skalenfreier, potenziell fraktaler Organisation.</p>
+  </div>
+
+  <div class="card">
+    <h3>Zipfs Gesetz: $f(r) \sim r^{-\alpha}$</h3>
+    <p>Die Häufigkeit $f$ des $r$-häufigsten Wortes fällt wie eine Potenz. Bewege $\alpha$ und beobachte den Effekt — im Log-Log-Plot wird die Kurve zu einer Geraden mit Steigung $-\alpha$.</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Zipf-Exponent $\alpha$ <span id="v11_aLabel">1.00</span></label>
+        <input type="range" id="v11_a" min="0.5" max="2.0" step="0.01" value="1.0">
+      </div>
+      <div class="ctrl">
+        <label>Heaps-Exponent $\beta$ <span id="v11_bLabel">0.55</span></label>
+        <input type="range" id="v11_b" min="0.3" max="0.9" step="0.01" value="0.55">
+      </div>
+    </div>
+    <div class="grid2">
+      <div id="v11_zipf" style="height:340px"></div>
+      <div id="v11_heaps" style="height:340px"></div>
+    </div>
+    <p class="hint">Heaps: $V(N)\sim N^\beta$ — Vokabulargröße wächst mit Textlänge, aber sublinear. Neue Wörter tauchen immer weiter auf, nie versiegend. Diese Regelmäßigkeiten sind bereits <em>etablierte</em> empirische Fakten über Sprache.</p>
+  </div>
+
+  <div class="card">
+    <h3>Multifraktales Spektrum $D(q)$</h3>
+    <p>Bei einem echten Fraktal reicht eine Dimension $D$. Bei Sprache scheint man eine <em>Familie</em> von Dimensionen zu brauchen. Verschiedene Teile des Raums haben verschiedene Skalierungsexponenten.</p>
+    <div id="v11_dq" style="height:320px"></div>
+    <p class="hint">Ein flaches Spektrum ⇒ Monofraktal. Ein gebogenes Spektrum ⇒ Multifraktal, wie es für Sprache erwartet wird: mathematische Beweise, Alltagsgespräche, Poesie und Zufallsstrings haben strukturell verschiedene Fingerabdrücke.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s12">
+  <div class="chapter-intro">
+    <h2><span class="num">§12</span>Coarse-Graining & Renormierung</h2>
+    <p class="lede">Aus der Physik: eine Grobkörnungs-Operation $R$ ersetzt feine Details durch effektive Beschreibungen auf gröberer Skala. Wiederholt angewandt zeigt sie, welche Eigenschaften <em>skaleninvariant</em> sind — also wirklich fundamental.</p>
+  </div>
+
+  <div class="motivation">
+    <strong>Voraussetzung (nicht Abi):</strong> Die <em>Renormierungsgruppe</em> (RG) untersucht, wie physikalische Systeme aussehen, wenn man immer wieder herauszoomt. <em>Fixpunkte</em> $R(S)\approx S$ sind Strukturen, die unter Zoom stabil bleiben — z.B. „Agent-Aktion" oder „Kausalität" auf jeder linguistischen Ebene.
+  </div>
+
+  <div class="card">
+    <h3>Interaktive Coarse-Graining-Maschine</h3>
+    <p>Wende die Grobkörnungs-Operation $R$ an. Feine Cluster verschmelzen, kleine Voids verschwinden. Was übrig bleibt, ist die <em>skaleninvariante Skelett-Struktur</em>.</p>
+
+    <div class="controls">
+      <div class="ctrl">
+        <label>Grobkörnungs-Schritte $R^n$ <span id="v12_nLabel">0</span></label>
+        <input type="range" id="v12_n" min="0" max="6" value="0" step="1">
+      </div>
+    </div>
+
+    <div class="canvas-wrap"><canvas id="v12_canvas" width="1000" height="480"></canvas></div>
+    <div class="readout" id="v12_readout"></div>
+
+    <h3>Fixpunkt-Kandidaten (skaleninvariant)</h3>
+    <div class="grid4">
+      <div class="field-card"><div class="name">Agent–Aktion</div><div class="val" style="color:var(--accent3)">✓</div></div>
+      <div class="field-card"><div class="name">Objekt–Eigenschaft</div><div class="val" style="color:var(--accent3)">✓</div></div>
+      <div class="field-card"><div class="name">Kausalität</div><div class="val" style="color:var(--accent3)">✓</div></div>
+      <div class="field-card"><div class="name">Teil–Ganzes</div><div class="val" style="color:var(--accent3)">✓</div></div>
+      <div class="field-card"><div class="name">Zufallsrauschen</div><div class="val" style="color:var(--danger)">✗</div></div>
+      <div class="field-card"><div class="name">Lokale Wortwahl</div><div class="val" style="color:var(--danger)">✗</div></div>
+      <div class="field-card"><div class="name">Temporale Ordnung</div><div class="val" style="color:var(--accent3)">✓</div></div>
+      <div class="field-card"><div class="name">Identität</div><div class="val" style="color:var(--accent3)">✓</div></div>
+    </div>
+    <p class="hint">Grüne Häkchen: <em>überleben</em> die Renormierung. Rote Kreuze: sind reines Detailrauschen und verdampfen. Die Vermutung: Was $R$ überlebt, ist Kandidat für „universelle" semantische Struktur.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============================================================ -->
+<section id="s13">
+  <div class="chapter-intro">
+    <h2><span class="num">§13</span>Grand Synthesis — das Gesamtbild</h2>
+    <p class="lede">Alles zusammen. Jede Ebene, die wir aufgebaut haben, ist Teil <em>eines</em> großen Diagramms. Interagiere mit ihm.</p>
+  </div>
+
+  <div class="big-question">
+    Die tiefste Hypothese: Bedeutung ist kein Etikett. Bedeutung ist eine <em>stabile relationale Organisation</em> des Möglichkeitsraums — mit interner Kohärenz als einer Schicht und Welt-Kopplung als zweiter.
+  </div>
+
+  <div class="card">
+    <h3>Das vollständige Diagramm: $X \to S \leftrightarrow W$ mit multiskaliger Geometrie</h3>
+    <p>Klicke Sätze, Bedeutungsklassen oder Weltzustände. Die grünen Pfeile zeigen die aktive Interpretations- und Wahrheitskette.</p>
+
+    <div class="canvas-wrap"><canvas id="v13_canvas" width="1000" height="560"></canvas></div>
+    <div class="readout" id="v13_readout">Klicke einen linguistischen Punkt (oben) an.</div>
+
+    <h3>Zusammenfassung der ursprünglichen Frage & Antwort</h3>
+    <div class="grid2">
+      <div class="motivation">
+        <strong>Die ursprüngliche Frage:</strong><br>
+        Welche geometrische und topologische Form hat die winzige Teilmenge von $X_N$, die strukturierte, bedeutungsvolle Sprache trägt?
+      </div>
+      <div class="solution">
+        <strong>Die Antwort (als Forschungsprogramm):</strong><br>
+        Ein hierarchisch organisierter Landschaftskomplex aus Clustern, Filamenten, Wänden, Rändern und strukturierten Voids — multiskalig, potenziell (multi-)fraktal, mit einer Faserprojektion nach $S$ und einer Kopplung zu $W$, wobei semantische Fixpunkte unter Coarse-Graining überleben.
+      </div>
+    </div>
+
+    <h3>Die vier Ebenen des Programms</h3>
+    <div class="grid2">
+      <div class="field-card"><div class="name">Level I</div><div class="val" style="font-size:1rem">Kombinatorischer Raum $X_N$</div></div>
+      <div class="field-card"><div class="name">Level II</div><div class="val" style="font-size:1rem">Relationale Landschaft (Cluster/Void)</div></div>
+      <div class="field-card"><div class="name">Level III</div><div class="val" style="font-size:1rem">Multiskalige Struktur $\mathcal S(r)\sim\mathcal S(\lambda r)$</div></div>
+      <div class="field-card"><div class="name">Level IV</div><div class="val" style="font-size:1rem">Verankerte Semantik $X\to S\leftrightarrow W$</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Offene Forschungsfragen</h3>
+    <div class="grid2">
+      <div>
+        <p><span class="tag hypo">Geometrie</span> Gibt es eine repräsentations-unabhängige Distanz auf $X_N$?</p>
+        <p><span class="tag hypo">Topologie</span> Welche persistenten Features entsprechen Bedeutungsunterschieden?</p>
+        <p><span class="tag spec">Fraktalität</span> Sind Voids skalenfrei verteilt? Mono- oder Multifraktal?</p>
+      </div>
+      <div>
+        <p><span class="tag est">Komposition</span> Gibt es einen universellen Coarse-Graining-Operator $R$?</p>
+        <p><span class="tag hypo">Grounding</span> Was ist die mathematische Struktur der Welt-Kopplung $S\to W$?</p>
+        <p><span class="tag spec">Universalität</span> Welche Eigenschaften überleben Sprachwechsel und Repräsentationswechsel?</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="motivation" style="text-align:center;font-size:1.1rem">
+    <strong>Die eigentliche Pointe:</strong><br>
+    Das geometrisch-topologische Programm und das klassische semantische Problem treffen sich <em>am selben Punkt</em>:<br>
+    <em>Wie wird ein strukturierter symbolischer Raum <strong>über etwas</strong>?</em>
+  </div>
+</section>
+
+<div class="footer">
+  Interaktive Visualisierung basierend auf „A Geometric and Topological Theory of Meaningful Language Spaces". Alle Visualisierungen sind konzeptionelle Illustrationen der im Dokument beschriebenen Hypothesen und Spekulationen, keine empirischen Messungen.
+</div>
+
+<!-- ============================================================================================ -->
+<!-- SCRIPTS -->
+<!-- ============================================================================================ -->
+<script>
+/* ================================================================
+   §1 — Kombinatorische Explosion
+   ================================================================ */
+(function(){
+  const V = document.getElementById('v1_V');
+  const N = document.getElementById('v1_N');
+  const vL = document.getElementById('v1_vLabel');
+  const nL = document.getElementById('v1_nLabel');
+  const ro = document.getElementById('v1_readout');
+
+  function fmt(x){
+    if(!isFinite(x)) return '∞';
+    if(x<1e6) return x.toLocaleString('de-DE');
+    const e = Math.floor(Math.log10(x));
+    return (x/Math.pow(10,e)).toFixed(2)+' × 10'+sup(e);
+  }
+  function sup(n){
+    const map={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+    return String(n).split('').map(c=>map[c]||c).join('');
+  }
+  function total(v,n){
+    // sum_{k=1..n} v^k = v(v^n-1)/(v-1)
+    if(v===1) return n;
+    return v*(Math.pow(v,n)-1)/(v-1);
+  }
+
+  function render(){
+    const v=+V.value, n=+N.value;
+    vL.textContent=v.toLocaleString('de-DE');
+    nL.textContent=n;
+    const tot=total(v,n);
+    const atoms=1e80;
+    let msg=`|V|=${v},  N=${n}\n|X_N| = ${fmt(tot)}\n`;
+    if(tot>atoms) msg+=`Das ist ${fmt(tot/atoms)}× mehr als Atome im beobachtbaren Universum (~10⁸⁰).`;
+    else if(tot>1e12) msg+='Vergleich: die Weltbevölkerung ist ~10¹⁰.';
+    ro.textContent=msg;
+
+    const xs=[], ys=[];
+    for(let k=1;k<=Math.min(n,50);k++){xs.push(k); ys.push(Math.pow(v,k));}
+    Plotly.react('v1_plot',[{
+      x:xs, y:ys, type:'scatter', mode:'lines+markers',
+      line:{color:'#7ac8ff',width:3}, marker:{color:'#ff7ad9',size:6},
+      hovertemplate:'Länge %{x}: %{y:.3e} Möglichkeiten<extra></extra>'
+    }],{
+      paper_bgcolor:'transparent', plot_bgcolor:'rgba(0,0,0,0.3)',
+      font:{color:'#e8e8f5',size:11},
+      margin:{l:60,r:20,t:20,b:40},
+      xaxis:{title:'Sequenzlänge n', gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{title:'|Vⁿ|', type:'log', gridcolor:'rgba(255,255,255,0.05)'}
+    },{displayModeBar:false});
+  }
+  V.oninput=render; N.oninput=render;
+  window.s1Preset=function(v,n){V.value=v;N.value=n;render();};
+  render();
+})();
+
+/* ================================================================
+   §2 — Vier Kohärenzfelder + Radar
+   ================================================================ */
+(function(){
+  const examples=[
+    {t:'Der Hund läuft im Park.', C:1.00,S:0.98,G:0.95,E:0.90, note:'Idealer Satz: alle Dimensionen hoch.'},
+    {t:'Der Gedanke trinkt das Quadrat Dienstag.', C:0.95,S:0.10,G:0.05,E:0.20, note:'Syntax perfekt, Semantik zerfällt: SEMANTISCHER VOID.'},
+    {t:'asdf qwer sieben blau weil Tisch morgen', C:0.05,S:0.05,G:0.05,E:0.05, note:'Reines Rauschen: SYNTAKTISCHER VOID.'},
+    {t:'Für alle Primzahlen p gilt p mod 6 ∈ {1,5}.', C:1.00,S:1.00,G:0.30,E:0.95, note:'Formal-mathematisch: intern kohärent, wenig physisch geerdet.'},
+    {t:'Vielleicht regnet es morgen in Vaduz.', C:1.00,S:0.95,G:0.80,E:0.30, note:'Bedeutungsvoll, aber epistemisch unbestimmt.'},
+    {t:'Die Zeit ist ein Fluss.', C:1.00,S:0.75,G:0.60,E:0.85, note:'Metapher: semantisch grenzwertig, aber interpretierbar.'},
+    {t:'Farblose grüne Ideen schlafen wütend.', C:1.00,S:0.15,G:0.05,E:0.25, note:'Chomskys Klassiker: Syntax ohne Semantik.'},
+    {t:'Snow is white.', C:1.00,S:1.00,G:1.00,E:1.00, note:'Tarskis Standardbeispiel: geerdet, überprüfbar.'}
+  ];
+  const btns=document.getElementById('s2_btns');
+  examples.forEach((e,i)=>{
+    const b=document.createElement('button');
+    b.textContent=e.t.length>30?e.t.slice(0,28)+'…':e.t;
+    b.title=e.t;
+    b.onclick=()=>select(i);
+    btns.appendChild(b);
+  });
+
+  const els={C:document.getElementById('s2_C'),S:document.getElementById('s2_S'),G:document.getElementById('s2_G'),E:document.getElementById('s2_E'),
+             Cb:document.getElementById('s2_Cbar'),Sb:document.getElementById('s2_Sbar'),Gb:document.getElementById('s2_Gbar'),Eb:document.getElementById('s2_Ebar'),
+             s:document.getElementById('s2_sentence')};
+
+  function select(i){
+    const e=examples[i];
+    els.s.innerHTML=`„${e.t}"<br><span style="font-size:0.85rem;color:var(--muted);font-style:normal">${e.note}</span>`;
+    els.C.textContent=e.C.toFixed(2); els.Cb.style.width=(e.C*100)+'%';
+    els.S.textContent=e.S.toFixed(2); els.Sb.style.width=(e.S*100)+'%';
+    els.G.textContent=e.G.toFixed(2); els.Gb.style.width=(e.G*100)+'%';
+    els.E.textContent=e.E.toFixed(2); els.Eb.style.width=(e.E*100)+'%';
+    Plotly.react('s2_radar',[{
+      type:'scatterpolar',
+      r:[e.C,e.S,e.G,e.E,e.C],
+      theta:['Syntax C','Semantik S','Grounding G','Epistemik E','Syntax C'],
+      fill:'toself',
+      fillcolor:'rgba(122,200,255,0.25)',
+      line:{color:'#7ac8ff',width:3},
+      marker:{color:'#ff7ad9',size:8}
+    }],{
+      paper_bgcolor:'transparent',
+      font:{color:'#e8e8f5',size:11},
+      polar:{
+        bgcolor:'rgba(0,0,0,0.3)',
+        radialaxis:{range:[0,1],gridcolor:'rgba(255,255,255,0.1)',tickfont:{color:'#888'}},
+        angularaxis:{gridcolor:'rgba(255,255,255,0.1)',tickfont:{color:'#e8e8f5'}}
+      },
+      margin:{l:60,r:60,t:40,b:40},
+      showlegend:false
+    },{displayModeBar:false});
+  }
+  select(0);
+})();
+
+/* ================================================================
+   §3 — Kosmisches Netz Canvas
+   ================================================================ */
+(function(){
+  const cv=document.getElementById('v3_canvas');
+  const ctx=cv.getContext('2d');
+  const kL=document.getElementById('v3_kLabel');
+  const dL=document.getElementById('v3_dLabel');
+  const fL=document.getElementById('v3_fLabel');
+  const nL=document.getElementById('v3_nLabel');
+  const kI=document.getElementById('v3_k'), dI=document.getElementById('v3_d'), fI=document.getElementById('v3_f'), nI=document.getElementById('v3_n');
+  let mouse={x:-999,y:-999};
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect();
+    mouse.x=(e.clientX-r.left)*(cv.width/r.width);
+    mouse.y=(e.clientY-r.top)*(cv.height/r.height);
+    draw();
+  });
+  cv.addEventListener('mouseleave',()=>{mouse.x=-999;draw();});
+
+  let clusters=[];
+  function seedClusters(k){
+    clusters=[];
+    const rng=mulberry32(42);
+    for(let i=0;i<k;i++){
+      clusters.push({x:100+rng()*(cv.width-200), y:80+rng()*(cv.height-160), r:40+rng()*70});
+    }
+  }
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+
+  function draw(){
+    const k=+kI.value, d=+dI.value, f=+fI.value, n=+nI.value;
+    kL.textContent=k; dL.textContent=d.toFixed(2); fL.textContent=f.toFixed(2); nL.textContent=n;
+    if(clusters.length!==k) seedClusters(k);
+
+    ctx.fillStyle='#050510';
+    ctx.fillRect(0,0,cv.width,cv.height);
+
+    // void noise
+    const rng=mulberry32(7);
+    ctx.fillStyle='rgba(120,120,140,0.35)';
+    for(let i=0;i<n;i++){
+      const x=rng()*cv.width, y=rng()*cv.height;
+      ctx.beginPath(); ctx.arc(x,y,0.8,0,7); ctx.fill();
+    }
+
+    // filaments
+    ctx.lineWidth=1;
+    for(let i=0;i<clusters.length;i++){
+      for(let j=i+1;j<clusters.length;j++){
+        const a=clusters[i], b=clusters[j];
+        const dist=Math.hypot(a.x-b.x,a.y-b.y);
+        const strength=Math.max(0,1-dist/500)*f;
+        if(strength>0.05){
+          const steps=40;
+          for(let s=0;s<steps;s++){
+            const t=s/steps;
+            const x=a.x+(b.x-a.x)*t + Math.sin(t*Math.PI*3)*15*strength;
+            const y=a.y+(b.y-a.y)*t + Math.cos(t*Math.PI*3)*15*strength;
+            ctx.fillStyle=`rgba(255,122,217,${strength*0.4*(1-Math.abs(t-0.5)*1.5)})`;
+            ctx.beginPath(); ctx.arc(x,y,1.2,0,7); ctx.fill();
+          }
+        }
+      }
+    }
+
+    // clusters
+    const rng2=mulberry32(99);
+    clusters.forEach((c,ci)=>{
+      const grad=ctx.createRadialGradient(c.x,c.y,0,c.x,c.y,c.r);
+      grad.addColorStop(0,`rgba(122,200,255,${0.35*d})`);
+      grad.addColorStop(0.5,`rgba(122,200,255,${0.15*d})`);
+      grad.addColorStop(1,'rgba(122,200,255,0)');
+      ctx.fillStyle=grad;
+      ctx.beginPath(); ctx.arc(c.x,c.y,c.r,0,7); ctx.fill();
+      const cnt=Math.floor(30+80*d);
+      for(let i=0;i<cnt;i++){
+        const ang=rng2()*7, rr=rng2()*c.r*Math.sqrt(rng2());
+        const x=c.x+Math.cos(ang)*rr, y=c.y+Math.sin(ang)*rr;
+        ctx.fillStyle=`rgba(180,220,255,${0.5+rng2()*0.5})`;
+        ctx.beginPath(); ctx.arc(x,y,1.1,0,7); ctx.fill();
+      }
+    });
+
+    // mouse zoom
+    if(mouse.x>0){
+      const R=120;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(mouse.x,mouse.y,R,0,7); ctx.clip();
+      ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.fillRect(mouse.x-R,mouse.y-R,R*2,R*2);
+      // zoomed points
+      const rng3=mulberry32(Math.floor(mouse.x*mouse.y));
+      for(let i=0;i<300;i++){
+        const ang=rng3()*7, rr=rng3()*R*Math.sqrt(rng3());
+        const x=mouse.x+Math.cos(ang)*rr, y=mouse.y+Math.sin(ang)*rr;
+        const col=rng3()<0.5?'rgba(122,200,255,0.7)':'rgba(255,122,217,0.5)';
+        ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,1.3,0,7); ctx.fill();
+      }
+      ctx.restore();
+      ctx.strokeStyle='rgba(255,208,122,0.8)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(mouse.x,mouse.y,R,0,7); ctx.stroke();
+      ctx.fillStyle='#ffd07a'; ctx.font='12px monospace';
+      ctx.fillText('ZOOM: gleiche Struktur auf feinerer Skala', mouse.x-R, mouse.y-R-8);
+    }
+  }
+  [kI,dI,fI,nI].forEach(x=>x.oninput=()=>{if(x===kI) seedClusters(+kI.value); draw();});
+  draw();
+})();
+
+/* ================================================================
+   §4 — Hierarchische Selbstähnlichkeit (Zoom-Kaskade)
+   ================================================================ */
+(function(){
+  const cv=document.getElementById('v4_canvas');
+  const ctx=cv.getContext('2d');
+  const zI=document.getElementById('v4_z');
+  const zL=document.getElementById('v4_zLabel');
+  const labels=[
+    'Skala 1 — Diskurs-Ebene: jeder Blob ist ein ganzes Themengebiet (Wissenschaft, Küche, Politik…).',
+    'Skala 2 — Absatz-Ebene: innerhalb eines Themas sehen wir Sub-Themen und ihre Verbindungen.',
+    'Skala 3 — Satz-Ebene: einzelne Aussagen mit lokalen semantischen Nachbarn.',
+    'Skala 4 — Phrasen-Ebene: Nominal- und Verbalphrasen als eigene Cluster.',
+    'Skala 5 — Token-Ebene: einzelne Wörter mit lexikalischen Nachbarschaften.'
+  ];
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=seed;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+
+  function drawLevel(level){
+    ctx.fillStyle='#050510'; ctx.fillRect(0,0,cv.width,cv.height);
+    const seed=1000+level*17;
+    const r=rng(seed);
+    // Recursive: at each level, place clusters, within them smaller clusters, etc.
+    function recur(cx,cy,rad,depth,hue){
+      if(depth<=0){
+        ctx.fillStyle=`hsla(${hue},80%,70%,0.9)`;
+        ctx.beginPath(); ctx.arc(cx,cy,1.4,0,7); ctx.fill();
+        return;
+      }
+      // draw halo
+      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+      g.addColorStop(0,`hsla(${hue},80%,60%,${0.15+0.05*depth})`);
+      g.addColorStop(1,`hsla(${hue},80%,60%,0)`);
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,rad,0,7); ctx.fill();
+      const subs=3+Math.floor(r()*4);
+      for(let i=0;i<subs;i++){
+        const ang=r()*7, rr=rad*(0.35+r()*0.45);
+        const nx=cx+Math.cos(ang)*rr, ny=cy+Math.sin(ang)*rr;
+        // filaments
+        ctx.strokeStyle=`hsla(${hue+30},60%,60%,${0.08*depth})`;
+        ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(nx,ny); ctx.stroke();
+        recur(nx,ny,rad*0.4,depth-1,(hue+30+r()*60)%360);
+      }
+    }
+    // Draw top-level clusters based on current zoom depth
+    const topClusters=4+level;
+    const R=rng(2000+level*11);
+    for(let i=0;i<topClusters;i++){
+      const cx=120+R()*(cv.width-240);
+      const cy=80+R()*(cv.height-160);
+      recur(cx,cy,60+R()*40, Math.min(4,level+1), 200+R()*160);
+    }
+    // Zoom-indicator box
+    ctx.strokeStyle='rgba(255,208,122,0.4)';
+    ctx.setLineDash([4,4]); ctx.lineWidth=1.5;
+    if(level<4){
+      const boxW=cv.width/(level+2), boxH=cv.height/(level+2);
+      ctx.strokeRect(cv.width/2-boxW/2, cv.height/2-boxH/2, boxW, boxH);
+      ctx.fillStyle='rgba(255,208,122,0.7)';
+      ctx.font='11px monospace';
+      ctx.fillText('→ Ausschnitt für nächste Skala', cv.width/2-boxW/2, cv.height/2-boxH/2-6);
+    }
+    ctx.setLineDash([]);
+  }
+  function update(){
+    const z=+zI.value;
+    zL.textContent=z+1;
+    document.getElementById('v4_readout').textContent=labels[z];
+    drawLevel(z);
+  }
+  zI.oninput=update;
+  update();
+})();
+
+/* ================================================================
+   §5 — Vier Arten von Voids
+   ================================================================ */
+(function(){
+  const examples=[
+    {t:'asdf qwer sieben blau weil Tisch morgen', vs:0.95, vm:0.95, vg:0.95, ve:0.9, diag:'SYNTAKTISCHER VOID: alle Ebenen fehlen. Reine Zufallsanordnung.'},
+    {t:'Der Gedanke trinkt das Quadrat Dienstag.', vs:0.05, vm:0.90, vg:0.95, ve:0.8, diag:'SEMANTISCHER VOID: Syntax perfekt, aber keine kohärente Bedeutung erzeugbar.'},
+    {t:'Für alle Primzahlen p gilt p mod 6 ∈ {1,5}.', vs:0.02, vm:0.05, vg:0.70, ve:0.05, diag:'GROUNDING-VOID: intern perfekt, aber keine Verankerung in der physischen Welt.'},
+    {t:'Vielleicht regnet es morgen in Vaduz.', vs:0.05, vm:0.10, vg:0.20, ve:0.70, diag:'EPISTEMISCHER VOID: Bedeutung klar, aber Wahrheit unbestimmt.'},
+    {t:'Der Hund läuft im Park.', vs:0.02, vm:0.05, vg:0.10, ve:0.10, diag:'STRUKTURREICH: keine wesentlichen Voids — voll geerdet.'},
+    {t:'Farblose grüne Ideen schlafen wütend.', vs:0.02, vm:0.85, vg:0.95, ve:0.75, diag:'CHOMSKY-KLASSIKER: rein syntaktisch, kein Semantik-Cluster erreichbar.'},
+    {t:'Die Zeit ist ein Fluss.', vs:0.05, vm:0.25, vg:0.40, ve:0.15, diag:'GRENZFALL METAPHER: Filament zwischen zwei entfernten Bedeutungsclustern.'}
+  ];
+  const btns=document.getElementById('v5_btns');
+  examples.forEach((e,i)=>{
+    const b=document.createElement('button');
+    b.textContent=e.t.length>26?e.t.slice(0,24)+'…':e.t;
+    b.title=e.t;
+    b.onclick=()=>show(i);
+    btns.appendChild(b);
+  });
+
+  function show(i){
+    const e=examples[i];
+    document.getElementById('v5_sentence').textContent='„'+e.t+'"';
+    const barsHtml=[
+      {n:'V_syn (Syntax-Void)', v:e.vs, c:'#7ac8ff'},
+      {n:'V_sem (Semantik-Void)', v:e.vm, c:'#b8ff7a'},
+      {n:'V_ground (Grounding-Void)', v:e.vg, c:'#ffd07a'},
+      {n:'V_epi (Epistemik-Void)', v:e.ve, c:'#ff7ad9'}
+    ].map(x=>`
+      <div style="margin:0.5rem 0">
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;color:var(--muted)">
+          <span>${x.n}</span><span style="color:${x.c};font-family:monospace">${x.v.toFixed(2)}</span>
+        </div>
+        <div class="bar"><div class="bar-fill" style="width:${x.v*100}%;background:${x.c}"></div></div>
+      </div>
+    `).join('');
+    document.getElementById('v5_bars').innerHTML=barsHtml;
+    document.getElementById('v5_diagnosis').textContent='Diagnose: '+e.diag;
+
+    // 3D scatter of all examples, with current highlighted
+    const traces=[{
+      type:'scatter3d', mode:'markers+text',
+      x:examples.map(x=>x.vs), y:examples.map(x=>x.vm), z:examples.map(x=>x.vg),
+      text:examples.map((x,j)=>j===i?'●':'○'),
+      textfont:{size:14,color:examples.map((_,j)=>j===i?'#ff7ad9':'#7ac8ff')},
+      marker:{
+        size:examples.map((_,j)=>j===i?14:8),
+        color:examples.map((_,j)=>j===i?'#ff7ad9':'#7ac8ff'),
+        opacity:examples.map((_,j)=>j===i?1:0.5)
+      },
+      hovertext:examples.map(x=>x.t), hoverinfo:'text'
+    }];
+    Plotly.react('v5_scatter',traces,{
+      paper_bgcolor:'transparent',
+      font:{color:'#e8e8f5',size:10},
+      scene:{
+        xaxis:{title:'V_syn',range:[0,1],gridcolor:'rgba(255,255,255,0.1)',backgroundcolor:'rgba(0,0,0,0.3)'},
+        yaxis:{title:'V_sem',range:[0,1],gridcolor:'rgba(255,255,255,0.1)',backgroundcolor:'rgba(0,0,0,0.3)'},
+        zaxis:{title:'V_ground',range:[0,1],gridcolor:'rgba(255,255,255,0.1)',backgroundcolor:'rgba(0,0,0,0.3)'},
+        bgcolor:'rgba(0,0,0,0)'
+      },
+      margin:{l:0,r:0,t:20,b:0},
+      showlegend:false
+    },{displayModeBar:false});
+  }
+  show(0);
+})();
+
+/* ================================================================
+   §6 — Phasenübergang
+   ================================================================ */
+(function(){
+  const stages=[
+    {t:0.00, s:'Der Hund schläft.', C:1.00},
+    {t:0.20, s:'Der Hund schläft schnell.', C:0.85},
+    {t:0.45, s:'Der Hund schläft quadratisch.', C:0.50},
+    {t:0.70, s:'Der Hund quadratisch sieben.', C:0.15},
+    {t:1.00, s:'quadratisch Hund sieben schläft.', C:0.03}
+  ];
+  const tI=document.getElementById('v6_t'), tL=document.getElementById('v6_tLabel');
+  const se=document.getElementById('v6_sentence');
+  function interp(t){
+    for(let i=0;i<stages.length-1;i++){
+      if(t>=stages[i].t && t<=stages[i+1].t){
+        const a=(t-stages[i].t)/(stages[i+1].t-stages[i].t);
+        return {s:a<0.5?stages[i].s:stages[i+1].s, C:stages[i].C*(1-a)+stages[i+1].C*a};
+      }
+    }
+    return stages[stages.length-1];
+  }
+  // Sigmoid-like curve for the plot
+  function sigmoid(t){return 1/(1+Math.exp((t-0.5)*12));}
+  const xs=[], ys=[];
+  for(let i=0;i<=100;i++){const t=i/100;xs.push(t);ys.push(sigmoid(t));}
+
+  function update(){
+    const t=+tI.value;
+    tL.textContent=t.toFixed(2);
+    const {s,C}=interp(t);
+    se.textContent='„'+s+'"';
+    const traces=[
+      {x:xs, y:ys, type:'scatter', mode:'lines', line:{color:'#7ac8ff',width:3}, name:'C(t)'},
+      {x:[t], y:[sigmoid(t)], type:'scatter', mode:'markers', marker:{color:'#ff7ad9',size:16,line:{color:'#fff',width:2}}, name:'aktuell'},
+      {x:[0.5,0.5], y:[0,1], type:'scatter', mode:'lines', line:{color:'rgba(255,208,122,0.6)',width:2,dash:'dash'}, name:'kritische Schwelle t_c'}
+    ];
+    Plotly.react('v6_plot',traces,{
+      paper_bgcolor:'transparent', plot_bgcolor:'rgba(0,0,0,0.3)',
+      font:{color:'#e8e8f5',size:11},
+      xaxis:{title:'Degradations-Parameter t', gridcolor:'rgba(255,255,255,0.05)', range:[0,1]},
+      yaxis:{title:'Kohärenz C', gridcolor:'rgba(255,255,255,0.05)', range:[-0.05,1.05]},
+      margin:{l:60,r:20,t:20,b:50},
+      showlegend:true, legend:{bgcolor:'rgba(0,0,0,0.3)',bordercolor:'rgba(255,255,255,0.1)'},
+      annotations:[
+        {x:0.5,y:0.5,xref:'x',yref:'y',text:'∂M — Phasenübergang',showarrow:true,arrowcolor:'#ffd07a',font:{color:'#ffd07a'}}
+      ]
+    },{displayModeBar:false});
+  }
+  tI.oninput=update; update();
+})();
+
+/* ================================================================
+   §7 — Metapher als Filament
+   ================================================================ */
+(function(){
+  const cv=document.getElementById('v7_canvas');
+  const ctx=cv.getContext('2d');
+  const metaphors=[
+    {n:'„Die Zeit ist ein Fluss."', a:'ZEIT', b:'FLUSS', mapping:['fließt','strömt','tief','Ufer','Quelle','Mündung']},
+    {n:'„Argumente sind Krieg."', a:'ARGUMENT', b:'KRIEG', mapping:['angreifen','verteidigen','Position','Front','Sieg','Niederlage']},
+    {n:'„Das Leben ist eine Reise."', a:'LEBEN', b:'REISE', mapping:['Wegkreuzung','Ziel','Umweg','Ankunft','Gepäck','Route']},
+    {n:'„Ideen sind Nahrung."', a:'IDEE', b:'NAHRUNG', mapping:['verdauen','nährstoffreich','schmackhaft','schlucken','gierig','sättigen']}
+  ];
+  const btns=document.getElementById('v7_btns');
+  let current=0;
+  metaphors.forEach((m,i)=>{
+    const b=document.createElement('button');
+    b.textContent=m.n;
+    b.onclick=()=>{current=i;setActive();draw(0);animate();};
+    btns.appendChild(b);
+  });
+  function setActive(){[...btns.children].forEach((b,i)=>b.classList.toggle('active',i===current));}
+  setActive();
+
+  function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=seed;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+
+  function drawCluster(cx,cy,label,hue){
+    const r=rng(label.charCodeAt(0)*97);
+    const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,120);
+    grad.addColorStop(0,`hsla(${hue},80%,60%,0.35)`);
+    grad.addColorStop(1,`hsla(${hue},80%,60%,0)`);
+    ctx.fillStyle=grad;
+    ctx.beginPath(); ctx.arc(cx,cy,120,0,7); ctx.fill();
+    for(let i=0;i<60;i++){
+      const ang=r()*7, rr=r()*100*Math.sqrt(r());
+      ctx.fillStyle=`hsla(${hue},80%,80%,${0.5+r()*0.5})`;
+      ctx.beginPath(); ctx.arc(cx+Math.cos(ang)*rr,cy+Math.sin(ang)*rr,1.4,0,7); ctx.fill();
+    }
+    ctx.fillStyle=`hsl(${hue},80%,80%)`;
+    ctx.font='bold 20px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(label,cx,cy+150);
+  }
+
+  function draw(progress){
+    ctx.fillStyle='#050510'; ctx.fillRect(0,0,cv.width,cv.height);
+    // background void
+    const rr=rng(11);
+    ctx.fillStyle='rgba(120,120,140,0.25)';
+    for(let i=0;i<200;i++){ctx.beginPath();ctx.arc(rr()*cv.width,rr()*cv.height,0.8,0,7);ctx.fill();}
+    const m=metaphors[current];
+    const ax=220, ay=cv.height/2, bx=cv.width-220, by=cv.height/2;
+    drawCluster(ax,ay,m.a,200);
+    drawCluster(bx,by,m.b,320);
+    // Filament
+    if(progress>0){
+      const steps=60;
+      for(let s=0;s<steps*progress;s++){
+        const t=s/steps;
+        const x=ax+(bx-ax)*t;
+        const y=ay+(by-ay)*t+Math.sin(t*Math.PI*2)*30;
+        const alpha=(1-Math.abs(t-0.5)*1.5)*progress;
+        ctx.fillStyle=`rgba(255,122,217,${alpha*0.9})`;
+        ctx.beginPath(); ctx.arc(x,y,2.2,0,7); ctx.fill();
+        ctx.fillStyle=`rgba(255,208,122,${alpha*0.4})`;
+        ctx.beginPath(); ctx.arc(x,y,5,0,7); ctx.fill();
+      }
+      // Mapping labels
+      ctx.fillStyle='#ff7ad9'; ctx.font='11px monospace'; ctx.textAlign='center';
+      m.mapping.forEach((word,i)=>{
+        const t=(i+1)/(m.mapping.length+1);
+        if(t<=progress){
+          const x=ax+(bx-ax)*t;
+          const y=ay+(by-ay)*t+Math.sin(t*Math.PI*2)*30 - 15;
+          ctx.fillText(word,x,y);
+        }
+      });
+    }
+    document.getElementById('v7_readout').textContent=
+      progress<1
+        ? `Aufbau des metaphorischen Filaments zwischen „${m.a}" und „${m.b}" … ${Math.round(progress*100)}%`
+        : `Filament aktiv: ${m.mapping.length} Konzepte werden zwischen „${m.a}" und „${m.b}" abgebildet. Metapher = topologische Langstrecken-Verbindung.`;
+  }
+  let animFrame, animProg;
+  function animate(){
+    cancelAnimationFrame(animFrame);
+    animProg=0;
+    function step(){
+      animProg+=0.015;
+      if(animProg>=1){animProg=1;draw(1);return;}
+      draw(animProg);
+      animFrame=requestAnimationFrame(step);
+    }
+    step();
+  }
+  animate();
+})();
+
+/* ================================================================
+   §8 — Persistent Homology: Vietoris-Rips + Barcode
+   ================================================================ */
+(function(){
+  const cvP=document.getElementById('v8_pts');
+  const cvB=document.getElementById('v8_bar');
+  const ctxP=cvP.getContext('2d');
+  const ctxB=cvB.getContext('2d');
+  const eI=document.getElementById('v8_e'), eL=document.getElementById('v8_eLabel');
+  const conf=document.getElementById('v8_conf');
+
+  function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=s;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+
+  function generate(kind){
+    const r=rng(42);
+    const pts=[];
+    if(kind==='two'){
+      for(let i=0;i<15;i++) pts.push([0.28+r()*0.15,0.4+r()*0.2]);
+      for(let i=0;i<15;i++) pts.push([0.6+r()*0.15,0.4+r()*0.2]);
+    } else if(kind==='ring'){
+      for(let i=0;i<24;i++){
+        const a=i/24*2*Math.PI+r()*0.15;
+        pts.push([0.5+Math.cos(a)*0.28,0.5+Math.sin(a)*0.28]);
+      }
+    } else if(kind==='three'){
+      for(let i=0;i<12;i++) pts.push([0.22+r()*0.12,0.28+r()*0.12]);
+      for(let i=0;i<12;i++) pts.push([0.72+r()*0.12,0.28+r()*0.12]);
+      for(let i=0;i<12;i++) pts.push([0.5+r()*0.12,0.72+r()*0.12]);
+      // bridge
+      for(let i=0;i<4;i++){const t=(i+1)/6;pts.push([0.28+t*0.5+r()*0.02,0.34+r()*0.02]);}
+    } else { // hier
+      for(let c=0;c<4;c++){
+        const cx=0.25+(c%2)*0.5, cy=0.25+Math.floor(c/2)*0.5;
+        for(let s=0;s<3;s++){
+          const sx=cx+(s-1)*0.06, sy=cy+(s-1)*0.05;
+          for(let i=0;i<5;i++) pts.push([sx+r()*0.04, sy+r()*0.04]);
+        }
+      }
+    }
+    return pts;
+  }
+
+  // Union-find for H0
+  function uf(n){const p=[...Array(n).keys()];return{f:function(x){while(p[x]!==x){p[x]=p[p[x]];x=p[x];}return x;},u:function(a,b){a=this.f(a);b=this.f(b);if(a!==b){p[a]=b;return true;}return false;}};}
+
+  // Compute persistence barcode for H0 by sorting edges by length
+  function computeH0(pts){
+    const n=pts.length;
+    const edges=[];
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const d=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);
+      edges.push([d,i,j]);
+    }
+    edges.sort((a,b)=>a[0]-b[0]);
+    const u=uf(n);
+    // Each point is born at 0. It dies (component merged into another) at edge length.
+    const deaths=Array(n).fill(Infinity);
+    for(const [d,i,j] of edges){
+      const ri=u.f(i), rj=u.f(j);
+      if(ri!==rj){
+        // The younger component dies. We simplify: the one with larger index dies.
+        const dead=Math.max(ri,rj);
+        deaths[dead]=d;
+        u.u(i,j);
+      }
+    }
+    // Return array of (birth, death) pairs
+    const bars=[];
+    for(let i=0;i<n;i++) bars.push([0,deaths[i]]);
+    // Sort by death time
+    bars.sort((a,b)=>a[1]-b[1]);
+    return bars;
+  }
+
+  // Very simplified H1: detect approximate loops via cycle detection in the graph at scale eps
+  // For visualization we compute a hint: check if a ring configuration is present.
+  function computeH1(pts,eps){
+    const n=pts.length;
+    // Build adjacency
+    const adj=Array.from({length:n},()=>[]);
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const d=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);
+      if(d<=eps){adj[i].push(j);adj[j].push(i);}
+    }
+    // Euler formula for planar graph estimate: cycles ≈ E - V + C
+    let E=0; for(let i=0;i<n;i++) E+=adj[i].length; E/=2;
+    const u=uf(n);
+    for(let i=0;i<n;i++)for(const j of adj[i]) if(j>i) u.u(i,j);
+    const comps=new Set(); for(let i=0;i<n;i++) comps.add(u.f(i));
+    const C=comps.size;
+    return Math.max(0, E - n + C);
+  }
+
+  function drawPts(pts,eps){
+    ctxP.fillStyle='#050510'; ctxP.fillRect(0,0,cvP.width,cvP.height);
+    const W=cvP.width, H=cvP.height;
+    // Draw eps-disks
+    for(const [x,y] of pts){
+      const g=ctxP.createRadialGradient(x*W,y*H,0,x*W,y*H,eps*W);
+      g.addColorStop(0,'rgba(122,200,255,0.15)');
+      g.addColorStop(1,'rgba(122,200,255,0)');
+      ctxP.fillStyle=g;
+      ctxP.beginPath(); ctxP.arc(x*W,y*H,eps*W,0,7); ctxP.fill();
+    }
+    // Draw edges
+    ctxP.strokeStyle='rgba(255,208,122,0.5)';
+    ctxP.lineWidth=1;
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);
+      if(d<=eps){
+        ctxP.beginPath();
+        ctxP.moveTo(pts[i][0]*W,pts[i][1]*H);
+        ctxP.lineTo(pts[j][0]*W,pts[j][1]*H);
+        ctxP.stroke();
+      }
+    }
+    // Draw triangles (2-simplices) when all three edges present
+    ctxP.fillStyle='rgba(255,122,217,0.15)';
+    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++)for(let k=j+1;k<pts.length;k++){
+      const d1=Math.hypot(pts[i][0]-pts[j][0],pts[i][1]-pts[j][1]);
+      const d2=Math.hypot(pts[j][0]-pts[k][0],pts[j][1]-pts[k][1]);
+      const d3=Math.hypot(pts[i][0]-pts[k][0],pts[i][1]-pts[k][1]);
+      if(d1<=eps&&d2<=eps&&d3<=eps){
+        ctxP.beginPath();
+        ctxP.moveTo(pts[i][0]*W,pts[i][1]*H);
+        ctxP.lineTo(pts[j][0]*W,pts[j][1]*H);
+        ctxP.lineTo(pts[k][0]*W,pts[k][1]*H);
+        ctxP.closePath(); ctxP.fill();
+      }
+    }
+    // Draw points
+    for(const [x,y] of pts){
+      ctxP.fillStyle='#7ac8ff';
+      ctxP.beginPath(); ctxP.arc(x*W,y*H,4,0,7); ctxP.fill();
+      ctxP.strokeStyle='#fff'; ctxP.lineWidth=1;
+      ctxP.stroke();
+    }
+    // Legend
+    ctxP.fillStyle='rgba(255,255,255,0.6)'; ctxP.font='12px monospace';
+    ctxP.fillText('ε = '+eps.toFixed(3), 12, 22);
+  }
+
+  function drawBar(bars,eps,h1){
+    ctxB.fillStyle='#050510'; ctxB.fillRect(0,0,cvB.width,cvB.height);
+    const W=cvB.width, H=cvB.height;
+    const pad=40;
+    // axes
+    ctxB.strokeStyle='rgba(255,255,255,0.2)';
+    ctxB.beginPath();
+    ctxB.moveTo(pad,10); ctxB.lineTo(pad,H-pad);
+    ctxB.lineTo(W-10,H-pad);
+    ctxB.stroke();
+    ctxB.fillStyle='rgba(255,255,255,0.6)'; ctxB.font='11px monospace';
+    ctxB.fillText('ε →', W-30, H-pad+18);
+    ctxB.fillText('Features', 8, 20);
+    ctxB.fillText('H₀ Barcode (verbundene Komponenten)', pad+10, 24);
+
+    const maxEps=0.5;
+    const barH = Math.min(14, (H-pad-40)/Math.max(bars.length,1));
+    bars.forEach((b,i)=>{
+      const y=40+i*barH;
+      const x0=pad + (b[0]/maxEps)*(W-pad-20);
+      const x1=pad + (Math.min(b[1],maxEps)/maxEps)*(W-pad-20);
+      const persist=(b[1]===Infinity?maxEps:b[1])-b[0];
+      const col=persist>0.15?'#b8ff7a':(persist>0.06?'#ffd07a':'#8888a8');
+      ctxB.fillStyle=col;
+      ctxB.fillRect(x0,y,Math.max(1,x1-x0),barH-2);
+      if(b[1]===Infinity){
+        ctxB.fillStyle='#ff7ad9';
+        ctxB.fillRect(W-15,y,4,barH-2);
+      }
+    });
+    // current eps line
+    const cx=pad+(eps/maxEps)*(W-pad-20);
+    ctxB.strokeStyle='#ff7ad9'; ctxB.lineWidth=2;
+    ctxB.beginPath(); ctxB.moveTo(cx,10); ctxB.lineTo(cx,H-pad); ctxB.stroke();
+    ctxB.fillStyle='#ff7ad9';
+    ctxB.fillText('aktuelles ε', cx+4, H-pad-4);
+
+    // H1 indicator
+    ctxB.fillStyle='rgba(255,255,255,0.7)'; ctxB.font='12px monospace';
+    ctxB.fillText('H₁ (Schleifen) bei aktuellem ε: '+h1, pad+10, H-8);
+  }
+
+  let curPts=[];
+  function refresh(){
+    curPts=generate(conf.value);
+    const eps=+eI.value;
+    eL.textContent=eps.toFixed(3);
+    const bars=computeH0(curPts);
+    const h1=computeH1(curPts,eps);
+    drawPts(curPts,eps);
+    drawBar(bars,eps,h1);
+    // components alive at eps
+    const alive=bars.filter(b=>b[1]>eps).length;
+    document.getElementById('v8_readout').textContent=
+      `Bei ε=${eps.toFixed(3)}: ${alive} verbundene Komponente(n), ${h1} unabhängige Schleife(n) (H₁).  Grün = persistent (echte Struktur), Grau = kurzlebig (Rauschen), Magenta-Strich = unendlich lebendig.`;
+  }
+  eI.oninput=refresh; conf.onchange=refresh;
+  refresh();
+})();
+
+/* ================================================================
+   §9 — Fiber Bundle in 3D (three.js)
+   ================================================================ */
+(function(){
+  const container=document.getElementById('v9_three');
+  const w=container.clientWidth, h=520;
+  const scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x020208);
+  const camera=new THREE.PerspectiveCamera(50,w/h,0.1,100);
+  camera.position.set(5,4,7);
+  camera.lookAt(0,1,0);
+  const renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(w,h);
+  container.appendChild(renderer.domElement);
+
+  // Base plane (S)
+  const planeGeo=new THREE.PlaneGeometry(6,6,20,20);
+  const planeMat=new THREE.MeshBasicMaterial({color:0x1a2a4a,wireframe:true,transparent:true,opacity:0.5});
+  const plane=new THREE.Mesh(planeGeo,planeMat);
+  plane.rotation.x=-Math.PI/2;
+  scene.add(plane);
+
+  // Base points (semantic meanings)
+  const meanings=[
+    {id:'jagt',pos:[-1.5,-1],label:'CHASE(X,Y)',color:0xff7ad9},
+    {id:'sleep',pos:[1.5,-1],label:'SLEEP(X)',color:0x7ac8ff},
+    {id:'love',pos:[-1.5,1.5],label:'LOVE(X,Y)',color:0xb8ff7a},
+    {id:'eat',pos:[1.5,1.5],label:'EAT(X,Y)',color:0xffd07a}
+  ];
+  const fibers={};
+  meanings.forEach(m=>{
+    // base marker
+    const geo=new THREE.SphereGeometry(0.12,16,16);
+    const mat=new THREE.MeshBasicMaterial({color:m.color});
+    const sph=new THREE.Mesh(geo,mat);
+    sph.position.set(m.pos[0],0.05,m.pos[1]);
+    scene.add(sph);
+    // fiber = vertical column of points
+    const group=new THREE.Group();
+    const nPts=25;
+    for(let i=0;i<nPts;i++){
+      const g=new THREE.SphereGeometry(0.05,8,8);
+      const mm=new THREE.MeshBasicMaterial({color:m.color,transparent:true,opacity:0.7});
+      const p=new THREE.Mesh(g,mm);
+      const jitter=(Math.random()-0.5)*0.35;
+      const yPos=0.3+i*0.15;
+      p.position.set(m.pos[0]+jitter,yPos,m.pos[1]+(Math.random()-0.5)*0.35);
+      group.add(p);
+    }
+    // dashed projection line
+    const lineMat=new THREE.LineDashedMaterial({color:m.color,dashSize:0.1,gapSize:0.08,opacity:0.5,transparent:true});
+    const lineGeo=new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(m.pos[0],0,m.pos[1]),
+      new THREE.Vector3(m.pos[0],4,m.pos[1])
+    ]);
+    const line=new THREE.Line(lineGeo,lineMat);
+    line.computeLineDistances();
+    group.add(line);
+    scene.add(group);
+    fibers[m.id]=group;
+  });
+
+  // Base label markers using sprite-like planes
+  function makeLabel(text,color){
+    const canvas=document.createElement('canvas');
+    canvas.width=256; canvas.height=64;
+    const c=canvas.getContext('2d');
+    c.fillStyle='rgba(0,0,0,0)';
+    c.fillRect(0,0,256,64);
+    c.font='bold 24px monospace';
+    c.fillStyle='#'+color.toString(16).padStart(6,'0');
+    c.textAlign='center';
+    c.fillText(text,128,40);
+    const tex=new THREE.CanvasTexture(canvas);
+    const mat=new THREE.SpriteMaterial({map:tex,transparent:true});
+    const sp=new THREE.Sprite(mat);
+    sp.scale.set(1.4,0.35,1);
+    return sp;
+  }
+  meanings.forEach(m=>{
+    const lab=makeLabel(m.label,m.color);
+    lab.position.set(m.pos[0],-0.25,m.pos[1]);
+    scene.add(lab);
+  });
+
+  // Base plane label
+  const baseLab=makeLabel('S (Bedeutungen)',0x7ac8ff);
+  baseLab.position.set(2.5,-0.2,2.5); baseLab.scale.set(1.8,0.45,1);
+  scene.add(baseLab);
+  const topLab=makeLabel('X (Sätze) — Fasern π⁻¹(s)',0xff7ad9);
+  topLab.position.set(0,4.5,0); topLab.scale.set(2.2,0.55,1);
+  scene.add(topLab);
+
+  // Rotation state
+  let rotX=0.2, rotY=0.6, dragging=false, lx=0, ly=0;
+  const el=renderer.domElement;
+  el.addEventListener('mousedown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;});
+  window.addEventListener('mouseup',()=>dragging=false);
+  window.addEventListener('mousemove',e=>{
+    if(!dragging) return;
+    rotY+=(e.clientX-lx)*0.008;
+    rotX+=(e.clientY-ly)*0.008;
+    rotX=Math.max(-0.8,Math.min(1.2,rotX));
+    lx=e.clientX; ly=e.clientY;
+  });
+  el.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const d=e.deltaY>0?1.1:0.9;
+    camera.position.multiplyScalar(d);
+  },{passive:false});
+
+  function animate(){
+    requestAnimationFrame(animate);
+    const R=Math.sqrt(camera.position.x**2+camera.position.z**2+camera.position.y**2);
+    camera.position.x=R*Math.cos(rotX)*Math.sin(rotY);
+    camera.position.z=R*Math.cos(rotX)*Math.cos(rotY);
+    camera.position.y=R*Math.sin(rotX)+1.5;
+    camera.lookAt(0,1.5,0);
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  window.v9_highlight=function(which){
+    Object.entries(fibers).forEach(([id,g])=>{
+      g.children.forEach(c=>{
+        if(c.material){
+          c.material.opacity= (which==='all'||id===which)?0.9:0.1;
+        }
+      });
+    });
+    const map={jagt:'Faser über CHASE(X,Y) — z.B. „Der Hund jagt die Katze", „Die Katze wird vom Hund gejagt", „A dog chases a cat"…',
+               sleep:'Faser über SLEEP(X) — z.B. „Der Hund schläft", „Ein schlafender Hund", „El perro duerme"…',
+               all:'Alle Fasern sichtbar. Jede vertikale Säule = eine Bedeutungsklasse mit vielen linguistischen Realisierungen.'};
+    document.getElementById('v9_readout').textContent=map[which]||map.all;
+  };
+})();
+
+/* ================================================================
+   §10 — Kommutierendes Diagramm + Tarski
+   ================================================================ */
+(function(){
+  const cv=document.getElementById('v10_canvas');
+  const ctx=cv.getContext('2d');
+  const nodes={
+    X:{x:200,y:120,label:'X: „Der Hund jagt die Katze"',color:'#7ac8ff'},
+    Xp:{x:800,y:120,label:"X': „Die Katze wird vom Hund gejagt"",color:'#7ac8ff'},
+    S:{x:200,y:340,label:'S: CHASE(dog,cat)',color:'#ff7ad9'},
+    Sp:{x:800,y:340,label:"S': CHASE(dog,cat)",color:'#ff7ad9'}
+  };
+  let path1Active=false, path2Active=false, anim=0;
+
+  function drawArrow(x1,y1,x2,y2,color,active,label,side){
+    ctx.strokeStyle=active?color:'rgba(255,255,255,0.2)';
+    ctx.lineWidth=active?3:1.5;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    const ang=Math.atan2(y2-y1,x2-x1);
+    const ah=12;
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-ah*Math.cos(ang-0.4),y2-ah*Math.sin(ang-0.4));
+    ctx.lineTo(x2-ah*Math.cos(ang+0.4),y2-ah*Math.sin(ang+0.4));
+    ctx.closePath();
+    ctx.fillStyle=active?color:'rgba(255,255,255,0.3)';
+    ctx.fill();
+    ctx.fillStyle=active?color:'rgba(255,255,255,0.4)';
+    ctx.font='bold 13px monospace';
+    const mx=(x1+x2)/2, my=(y1+y2)/2;
+    ctx.fillText(label,mx+(side||0),my-8);
+  }
+
+  function draw(){
+    ctx.fillStyle='#050510'; ctx.fillRect(0,0,cv.width,cv.height);
+    // Nodes
+    Object.entries(nodes).forEach(([k,n])=>{
+      ctx.fillStyle=n.color+'44';
+      ctx.beginPath(); ctx.arc(n.x,n.y,42,0,7); ctx.fill();
+      ctx.fillStyle=n.color;
+      ctx.beginPath(); ctx.arc(n.x,n.y,10,0,7); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(n.label,n.x, n.y<200?n.y-58:n.y+70);
+    });
+    // Arrows
+    drawArrow(nodes.X.x+42,nodes.X.y,nodes.Xp.x-42,nodes.Xp.y,'#ffd07a',path1Active||anim===1,'f  (Passivierung)',0);
+    drawArrow(nodes.X.x,nodes.X.y+42,nodes.S.x,nodes.S.y-42,'#7ac8ff',path2Active||anim===2,'π  (Interpretation)',-70);
+    drawArrow(nodes.Xp.x,nodes.Xp.y+42,nodes.Sp.x,nodes.Sp.y-42,'#7ac8ff',path1Active||anim===1||path2Active||anim===2,"π'",20);
+    drawArrow(nodes.S.x+42,nodes.S.y,nodes.Sp.x-42,nodes.Sp.y,'#ffd07a',path2Active||anim===2,'g',0);
+
+    // If both active: check commutation
+    if(path1Active && path2Active){
+      ctx.fillStyle='rgba(184,255,122,0.15)';
+      ctx.beginPath(); ctx.arc(nodes.Sp.x,nodes.Sp.y,60,0,7); ctx.fill();
+      ctx.strokeStyle='#b8ff7a'; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.arc(nodes.Sp.x,nodes.Sp.y,60,0,7); ctx.stroke();
+      ctx.fillStyle='#b8ff7a'; ctx.font='bold 16px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('✓ Diagramm kommutiert',nodes.Sp.x,nodes.Sp.y+95);
+      ctx.font='11px monospace';
+      ctx.fillText("π'∘f = g∘π",nodes.Sp.x,nodes.Sp.y+112);
+    }
+  }
+  document.getElementById('v10_path1').onclick=()=>{path1Active=true; anim=1; draw(); setTimeout(()=>{anim=0;draw();},600);};
+  document.getElementById('v10_path2').onclick=()=>{path2Active=true; anim=2; draw(); setTimeout(()=>{anim=0;draw();},600);};
+  window.v10_reset=function(){path1Active=false;path2Active=false;anim=0;draw();};
+  draw();
+})();
+
+/* ================================================================
+   §10 — Tarski Wahrheits-Kette
+   ================================================================ */
+(function(){
+  const worlds=[
+    {name:'Welt 1: Schnee weiß, Hund läuft', facts:{snow_white:true,dog_runs:true,rain:false,cat_sleeps:true}},
+    {name:'Welt 2: Schnee grün, Hund läuft', facts:{snow_white:false,dog_runs:true,rain:false,cat_sleeps:true}},
+    {name:'Welt 3: Regen, Schnee weiß', facts:{snow_white:true,dog_runs:false,rain:true,cat_sleeps:false}},
+    {name:'Welt 4: alles falsch', facts:{snow_white:false,dog_runs:false,rain:false,cat_sleeps:false}},
+    {name:'Welt 5: alles wahr', facts:{snow_white:true,dog_runs:true,rain:true,cat_sleeps:true}}
+  ];
+  const sentences=[
+    {t:'„Schnee ist weiß."', k:'snow_white'},
+    {t:'„Der Hund läuft."', k:'dog_runs'},
+    {t:'„Es regnet."', k:'rain'},
+    {t:'„Die Katze schläft."', k:'cat_sleeps'}
+  ];
+  const wI=document.getElementById('v10w'), wL=document.getElementById('v10w_lab');
+  function render(){
+    const w=+wI.value;
+    wL.textContent=worlds[w].name;
+    const colors=sentences.map(s=>worlds[w].facts[s.k]?'#7ac8ff':'#555');
+    const truth=sentences.map(s=>worlds[w].facts[s.k]?'WAHR':'FALSCH');
+    Plotly.react('v10_tarski',[{
+      type:'bar', orientation:'h',
+      x:sentences.map(()=>1),
+      y:sentences.map(s=>s.t),
+      marker:{color:colors, line:{color:'#fff',width:1}},
+      text:truth, textposition:'inside',
+      textfont:{color:'#000',size:13},
+      hovertemplate:'%{y}<br>%{text}<extra></extra>'
+    }],{
+      paper_bgcolor:'transparent', plot_bgcolor:'rgba(0,0,0,0.3)',      font:{color:'#e8e8f5',size:12},
+      xaxis:{showticklabels:false,range:[0,1.1],gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{gridcolor:'rgba(255,255,255,0.05)',automargin:true},
+      margin:{l:180,r:40,t:30,b:30},
+      showlegend:false,
+      title:{text:worlds[w].name,font:{color:'#7ac8ff',size:13}}
+    },{displayModeBar:false});
+  }
+  wI.oninput=()=>{wL.textContent=worlds[+wI.value].name;render();};
+  render();
+})();
+
+/* ================================================================
+   §11 — Zipf, Heaps, Multifractal D(q)
+   ================================================================ */
+(function(){
+  const aI=document.getElementById('v11_a'), aL=document.getElementById('v11_aLabel');
+  const bI=document.getElementById('v11_b'), bL=document.getElementById('v11_bLabel');
+
+  function render(){
+    const a=+aI.value, b=+bI.value;
+    aL.textContent=a.toFixed(2); bL.textContent=b.toFixed(2);
+    // Zipf
+    const rs=[], fs=[];
+    for(let r=1;r<=10000;r*=1.15){rs.push(r); fs.push(Math.pow(r,-a));}
+    Plotly.react('v11_zipf',[{
+      x:rs, y:fs, type:'scatter', mode:'lines',
+      line:{color:'#7ac8ff',width:3},
+      name:`f(r) ∝ r^-${a.toFixed(2)}`
+    }],{
+      paper_bgcolor:'transparent', plot_bgcolor:'rgba(0,0,0,0.3)',
+      font:{color:'#e8e8f5',size:11},
+      title:{text:'Zipf: log-log',font:{color:'#7ac8ff',size:13}},
+      xaxis:{title:'Rang r (log)', type:'log', gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{title:'Häufigkeit f (log)', type:'log', gridcolor:'rgba(255,255,255,0.05)'},
+      margin:{l:60,r:20,t:40,b:50},
+      showlegend:false
+    },{displayModeBar:false});
+    // Heaps
+    const ns=[], vs=[];
+    for(let n=1;n<=1e6;n*=1.3){ns.push(n); vs.push(Math.pow(n,b));}
+    Plotly.react('v11_heaps',[{
+      x:ns, y:vs, type:'scatter', mode:'lines',
+      line:{color:'#ff7ad9',width:3},
+      name:`V ∝ N^${b.toFixed(2)}`
+    }],{
+      paper_bgcolor:'transparent', plot_bgcolor:'rgba(0,0,0,0.3)',
+      font:{color:'#e8e8f5',size:11},
+      title:{text:'Heaps: Vokabularwachstum',font:{color:'#ff7ad9',size:13}},
+      xaxis:{title:'Textlänge N', type:'log', gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{title:'Vokabulargröße V(N)', type:'log', gridcolor:'rgba(255,255,255,0.05)'},
+      margin:{l:60,r:20,t:40,b:50},
+      showlegend:false
+    },{displayModeBar:false});
+    // Multifractal D(q)
+    const qs=[], dqs_mono=[], dqs_multi=[];
+    for(let q=-5;q<=5;q+=0.1){
+      qs.push(q);
+      dqs_mono.push(1.5); // constant
+      // curved spectrum for multifractal (schematic)
+      dqs_multi.push(1.5 - 0.15*Math.tanh(q*0.8) + 0.05*Math.exp(-q*q/8));
+    }
+    Plotly.react('v11_dq',[
+      {x:qs, y:dqs_mono, type:'scatter', mode:'lines', name:'Monofraktal (flach)', line:{color:'#8888a8', width:2, dash:'dash'}},
+      {x:qs, y:dqs_multi, type:'scatter', mode:'lines', name:'Multifraktal (gebogen)', line:{color:'#b8ff7a', width:3}}
+    ],{
+      paper_bgcolor:'transparent', plot_bgcolor:'rgba(0,0,0,0.3)',
+      font:{color:'#e8e8f5',size:11},
+      title:{text:'Multifraktales Spektrum D(q)', font:{color:'#b8ff7a', size:13}},
+      xaxis:{title:'q (Momentordnung)', gridcolor:'rgba(255,255,255,0.05)'},
+      yaxis:{title:'Verallgemeinerte Dimension D(q)', gridcolor:'rgba(255,255,255,0.05)'},
+      margin:{l:60,r:20,t:40,b:50},
+      legend:{bgcolor:'rgba(0,0,0,0.3)',bordercolor:'rgba(255,255,255,0.1)',x:0.6,y:0.98}
+    },{displayModeBar:false});
+  }
+  aI.oninput=render; bI.oninput=render;
+  render();
+})();
+
+/* ================================================================
+   §12 — Coarse-Graining Animation
+   ================================================================ */
+(function(){
+  const cv=document.getElementById('v12_canvas');
+  const ctx=cv.getContext('2d');
+  const nI=document.getElementById('v12_n'), nL=document.getElementById('v12_nLabel');
+
+  function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;let t=s;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+
+  // Generate hierarchical point cloud once
+  const seed=rng(777);
+  const basePoints=[];
+  // 4 super-clusters
+  for(let sc=0;sc<4;sc++){
+    const scx=150+seed()*(cv.width-300), scy=80+seed()*(cv.height-160);
+    // 4 sub-clusters each
+    for(let cc=0;cc<4;cc++){
+      const ccx=scx+(seed()-0.5)*160, ccy=scy+(seed()-0.5)*140;
+      for(let i=0;i<20;i++){
+        basePoints.push({
+          x:ccx+(seed()-0.5)*50, y:ccy+(seed()-0.5)*40,
+          superCluster:sc, subCluster:sc*4+cc
+        });
+      }
+    }
+  }
+
+  const readouts=[
+    'Ebene 0 — Rohdaten: ~320 einzelne linguistische Punkte, feinste Auflösung.',
+    'Ebene 1 — R¹: Wörter → Phrasen. Kleine Cluster erscheinen als effektive Einheiten.',
+    'Ebene 2 — R²: Phrasen → Sätze. Sub-Cluster zu Cluster verschmolzen.',
+    'Ebene 3 — R³: Sätze → Absätze. Die Struktur ist skelettiert.',
+    'Ebene 4 — R⁴: Absätze → Diskurse. Nur die groben Bedeutungsregionen bleiben.',
+    'Ebene 5 — R⁵: Diskurse → Themengebiete. Vier semantische Attraktoren.',
+    'Ebene 6 — R⁶: Fixpunkt-Struktur. Was übrig ist, ist skaleninvariant: Agent–Aktion, Kausalität, Teil–Ganzes.'
+  ];
+
+  function draw(){
+    const n=+nI.value;
+    nL.textContent=n;
+    document.getElementById('v12_readout').textContent=readouts[n];
+    ctx.fillStyle='#050510'; ctx.fillRect(0,0,cv.width,cv.height);
+
+    if(n===0){
+      // draw raw points
+      basePoints.forEach(p=>{
+        ctx.fillStyle='rgba(122,200,255,0.7)';
+        ctx.beginPath(); ctx.arc(p.x,p.y,2.5,0,7); ctx.fill();
+      });
+    } else if(n<=2){
+      // merge into sub-clusters
+      const groups={};
+      basePoints.forEach(p=>{
+        const key=p.subCluster;
+        if(!groups[key]) groups[key]={x:0,y:0,c:0,sc:p.superCluster};
+        groups[key].x+=p.x; groups[key].y+=p.y; groups[key].c++;
+      });
+      Object.values(groups).forEach(g=>{
+        const cx=g.x/g.c, cy=g.y/g.c;
+        const r=8+n*4;
+        const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,r*2);
+        grad.addColorStop(0,'rgba(184,255,122,0.7)');
+        grad.addColorStop(1,'rgba(184,255,122,0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.arc(cx,cy,r*2,0,7); ctx.fill();
+        ctx.fillStyle='#b8ff7a';
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
+      });
+    } else if(n<=4){
+      // merge sub-clusters into super-clusters
+      const groups={};
+      basePoints.forEach(p=>{
+        const key=p.superCluster;
+        if(!groups[key]) groups[key]={x:0,y:0,c:0};
+        groups[key].x+=p.x; groups[key].y+=p.y; groups[key].c++;
+      });
+      Object.values(groups).forEach(g=>{
+        const cx=g.x/g.c, cy=g.y/g.c;
+        const r=25+n*8;
+        const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,r*1.6);
+        grad.addColorStop(0,'rgba(255,208,122,0.8)');
+        grad.addColorStop(1,'rgba(255,208,122,0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.arc(cx,cy,r*1.6,0,7); ctx.fill();
+        ctx.fillStyle='#ffd07a';
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
+      });
+    } else {
+      // ultimate fixed points
+      const groups={};
+      basePoints.forEach(p=>{
+        const key=p.superCluster;
+        if(!groups[key]) groups[key]={x:0,y:0,c:0};
+        groups[key].x+=p.x; groups[key].y+=p.y; groups[key].c++;
+      });
+      const labels=['AGENT–AKTION','OBJEKT–EIGENSCHAFT','KAUSALITÄT','TEIL–GANZES'];
+      let idx=0;
+      Object.values(groups).forEach(g=>{
+        const cx=g.x/g.c, cy=g.y/g.c;
+        const r=60;
+        // filaments between fixed points
+        const others=Object.values(groups);
+        others.forEach(o=>{
+          if(o!==g){
+            const ox=o.x/o.c, oy=o.y/o.c;
+            ctx.strokeStyle='rgba(255,122,217,0.3)';
+            ctx.lineWidth=1.5;
+            ctx.setLineDash([4,6]);
+            ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ox,oy); ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        });
+        const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,r*1.5);
+        grad.addColorStop(0,'rgba(255,122,217,0.9)');
+        grad.addColorStop(1,'rgba(255,122,217,0)');
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.arc(cx,cy,r*1.5,0,7); ctx.fill();
+        ctx.fillStyle='#ff7ad9';
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
+        ctx.fillStyle='#fff'; ctx.font='bold 11px monospace'; ctx.textAlign='center';
+        ctx.fillText(labels[idx++],cx,cy+4);
+      });
+    }
+    // Legend / annotation
+    ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText(`Anzahl effektiver Objekte: ${n===0?basePoints.length:(n<=2?16:(n<=4?4:4))}`, 12, cv.height-14);
+  }
+  nI.oninput=draw; draw();
+})();
+
+/* ================================================================
+   §13 — Grand Synthesis Diagram
+   ================================================================ */
+(function(){
+  const cv=document.getElementById('v13_canvas');
+  const ctx=cv.getContext('2d');
+
+  const W=cv.width, H=cv.height;
+  const layers={
+    X:{y:80, label:'X — Linguistische Formen', color:'#7ac8ff', points:[]},
+    S:{y:280, label:'S — Bedeutungen (semantische Basis)', color:'#ff7ad9', points:[]},
+    W:{y:480, label:'W — Weltzustände', color:'#b8ff7a', points:[]}
+  };
+
+  // Generate X points (many sentences)
+  const sentences=[
+    {t:'"Der Hund jagt die Katze."', s:0, w:[0,1]},
+    {t:'"Die Katze wird vom Hund gejagt."', s:0, w:[0,1]},
+    {t:'"A dog chases a cat."', s:0, w:[0,1]},
+    {t:'"Der Hund schläft."', s:1, w:[2]},
+    {t:'"Ein schlafender Hund."', s:1, w:[2]},
+    {t:'"Es regnet."', s:2, w:[1,2]},
+    {t:'"Regen fällt."', s:2, w:[1,2]},
+    {t:'"Schnee ist weiß."', s:3, w:[0,1,2]},
+    {t:'"asdf qwer sieben"', s:-1, w:[]}, // Void
+    {t:'"Der Gedanke trinkt Dienstag."', s:-2, w:[]} // semantic void
+  ];
+  sentences.forEach((s,i)=>{
+    layers.X.points.push({x:100+i*(W-200)/(sentences.length-1), y:layers.X.y, data:s, idx:i});
+  });
+
+  const meanings=[
+    {label:'CHASE(dog,cat)'},
+    {label:'SLEEP(dog)'},
+    {label:'RAIN()'},
+    {label:'WHITE(snow)'}
+  ];
+  meanings.forEach((m,i)=>{
+    layers.S.points.push({x:180+i*(W-360)/(meanings.length-1), y:layers.S.y, data:m, idx:i});
+  });
+
+  const worlds=[
+    {label:'Welt 1: Hund jagt Katze, Schnee weiß'},
+    {label:'Welt 2: Regen + Schnee weiß'},
+    {label:'Welt 3: Hund schläft + Regen'}
+  ];
+  worlds.forEach((w,i)=>{
+    layers.W.points.push({x:250+i*(W-500)/(worlds.length-1), y:layers.W.y, data:w, idx:i});
+  });
+
+  let selected=null;
+
+  function draw(){
+    ctx.fillStyle='#050510'; ctx.fillRect(0,0,W,H);
+
+    // Draw layer backgrounds
+    Object.values(layers).forEach(L=>{
+      const grad=ctx.createLinearGradient(0,L.y-30,0,L.y+30);
+      grad.addColorStop(0,'rgba(255,255,255,0)');
+      grad.addColorStop(0.5, L.color+'22');
+      grad.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=grad;
+      ctx.fillRect(0,L.y-30,W,60);
+      ctx.fillStyle=L.color;
+      ctx.font='bold 13px monospace'; ctx.textAlign='left';
+      ctx.fillText(L.label, 20, L.y-40);
+    });
+
+    // Highlight paths from selected
+    if(selected){
+      if(selected.layer==='X'){
+        const s=selected.point.data;
+        if(s.s>=0){
+          // X -> S
+          const sPt=layers.S.points[s.s];
+          ctx.strokeStyle='#ffd07a'; ctx.lineWidth=3;
+          ctx.beginPath();
+          ctx.moveTo(selected.point.x, selected.point.y);
+          ctx.bezierCurveTo(selected.point.x, selected.point.y+80, sPt.x, sPt.y-80, sPt.x, sPt.y);
+          ctx.stroke();
+          // S -> W (truth relation)
+          s.w.forEach(wi=>{
+            const wPt=layers.W.points[wi];
+            ctx.strokeStyle='#b8ff7a'; ctx.lineWidth=3;
+            ctx.beginPath();
+            ctx.moveTo(sPt.x, sPt.y);
+            ctx.bezierCurveTo(sPt.x, sPt.y+80, wPt.x, wPt.y-80, wPt.x, wPt.y);
+            ctx.stroke();
+          });
+          document.getElementById('v13_readout').textContent=
+            `Kette: ${s.t}  →π→  ${meanings[s.s].label}  →⊨→  wahr in: ${s.w.map(i=>'Welt '+(i+1)).join(', ')}`;
+        } else if(s.s===-1){
+          document.getElementById('v13_readout').textContent=
+            `${s.t} — SYNTAKTISCHER VOID. Kein Bild unter π möglich. Kette bricht sofort ab.`;
+        } else {
+          document.getElementById('v13_readout').textContent=
+            `${s.t} — SEMANTISCHER VOID. Syntax ok, aber π hat keinen wohldefinierten Wert in S.`;
+        }
+      } else if(selected.layer==='S'){
+        // Show all X that map here, and all W it's satisfied in
+        const mi=selected.point.idx;
+        layers.X.points.forEach(xp=>{
+          if(xp.data.s===mi){
+            ctx.strokeStyle='#ffd07a'; ctx.lineWidth=2;
+            ctx.beginPath();
+            ctx.moveTo(xp.x, xp.y);
+            ctx.bezierCurveTo(xp.x, xp.y+80, selected.point.x, selected.point.y-80, selected.point.x, selected.point.y);
+            ctx.stroke();
+          }
+        });
+        // Determine satisfying worlds
+        const anyX=layers.X.points.find(x=>x.data.s===mi);
+        if(anyX){
+          anyX.data.w.forEach(wi=>{
+            const wPt=layers.W.points[wi];
+            ctx.strokeStyle='#b8ff7a'; ctx.lineWidth=3;
+            ctx.beginPath();
+            ctx.moveTo(selected.point.x, selected.point.y);
+            ctx.bezierCurveTo(selected.point.x, selected.point.y+80, wPt.x, wPt.y-80, wPt.x, wPt.y);
+            ctx.stroke();
+          });
+        }
+        document.getElementById('v13_readout').textContent=
+          `Bedeutung ${meanings[mi].label}: Faser π⁻¹(s) enthält alle linguistischen Realisierungen; ⟦s⟧ = Menge der Welten in denen s wahr ist.`;
+      } else {
+        // W selected: show which meanings are true here
+        const wi=selected.point.idx;
+        meanings.forEach((m,mi)=>{
+          const anyX=layers.X.points.find(x=>x.data.s===mi);
+          if(anyX && anyX.data.w.includes(wi)){
+            const sPt=layers.S.points[mi];
+            ctx.strokeStyle='#b8ff7a'; ctx.lineWidth=3;
+            ctx.beginPath();
+            ctx.moveTo(sPt.x, sPt.y);
+            ctx.bezierCurveTo(sPt.x, sPt.y+80, selected.point.x, selected.point.y-80, selected.point.x, selected.point.y);
+            ctx.stroke();
+          }
+        });
+        document.getElementById('v13_readout').textContent=
+          `${selected.point.data.label}: alle grünen Verbindungen zeigen Bedeutungen, die in diesem Weltzustand wahr sind.`;
+      }
+    } else {
+      // Show all default projections faintly
+      layers.X.points.forEach(xp=>{
+        if(xp.data.s>=0){
+          const sPt=layers.S.points[xp.data.s];
+          ctx.strokeStyle='rgba(255,208,122,0.15)'; ctx.lineWidth=1;
+          ctx.beginPath();
+          ctx.moveTo(xp.x, xp.y);
+          ctx.bezierCurveTo(xp.x, xp.y+80, sPt.x, sPt.y-80, sPt.x, sPt.y);
+          ctx.stroke();
+        }
+      });
+      layers.S.points.forEach((sp,mi)=>{
+        const anyX=layers.X.points.find(x=>x.data.s===mi);
+        if(anyX){
+          anyX.data.w.forEach(wi=>{
+            const wPt=layers.W.points[wi];
+            ctx.strokeStyle='rgba(184,255,122,0.15)'; ctx.lineWidth=1;
+            ctx.beginPath();
+            ctx.moveTo(sp.x, sp.y);
+            ctx.bezierCurveTo(sp.x, sp.y+80, wPt.x, wPt.y-80, wPt.x, wPt.y);
+            ctx.stroke();
+          });
+        }
+      });
+    }
+
+    // Draw nodes for each layer
+    Object.entries(layers).forEach(([k,L])=>{
+      L.points.forEach(p=>{
+        const isSel = selected && selected.layer===k && selected.point===p;
+        const isVoid = k==='X' && p.data.s<0;
+        ctx.fillStyle = isVoid ? '#444' : (isSel ? '#fff' : L.color);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, isSel?10:7, 0, 7);
+        ctx.fill();
+        if(isSel){
+          ctx.strokeStyle=L.color; ctx.lineWidth=3;
+          ctx.beginPath(); ctx.arc(p.x,p.y,14,0,7); ctx.stroke();
+        }
+        // Label
+        if(k==='X'){
+          ctx.save();
+          ctx.translate(p.x, p.y-14);
+          ctx.rotate(-Math.PI/6);
+          ctx.fillStyle=isVoid?'#666':'#e8e8f5';
+          ctx.font='10px sans-serif'; ctx.textAlign='right';
+          ctx.fillText(p.data.t, 0, 0);
+          ctx.restore();
+        } else if(k==='S'){
+          ctx.fillStyle=isSel?'#fff':L.color;
+          ctx.font='bold 11px monospace'; ctx.textAlign='center';
+          ctx.fillText(p.data.label, p.x, p.y+22);
+        } else {
+          ctx.fillStyle=isSel?'#fff':L.color;
+          ctx.font='11px sans-serif'; ctx.textAlign='center';
+          ctx.fillText(p.data.label, p.x, p.y+22);
+        }
+      });
+    });
+
+    // Legend for arrows
+    ctx.fillStyle='#ffd07a'; ctx.font='11px monospace'; ctx.textAlign='left';
+    ctx.fillText('gelb: π (Interpretation X→S)', 20, H-40);
+    ctx.fillStyle='#b8ff7a';
+    ctx.fillText('grün: ⊨ (Wahrheit S↔W)', 20, H-22);
+  }
+
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    const mx=(e.clientX-r.left)*(cv.width/r.width);
+    const my=(e.clientY-r.top)*(cv.height/r.height);
+    let best=null, bestD=25;
+    Object.entries(layers).forEach(([k,L])=>{
+      L.points.forEach(p=>{
+        const d=Math.hypot(p.x-mx,p.y-my);
+        if(d<bestD){bestD=d;best={layer:k,point:p};}
+      });
+    });
+    selected=best;
+    draw();
+  });
+
+  draw();
+})();
+</script>
+
+</body>
+</html>
