@@ -61,6 +61,41 @@ The *full* phase space is the room. The *shell* is where the furniture stands. \
 </div>
 
 <div class="md">
+## What shape is the space — and what can be said about it
+
+So far phase space has been *defined*. Now the sharper question: what is its **shape**, and what can actually be *proved* about that shape? Three facts, each with a different weight.
+
+**The shape is inherited from the configuration space.** $T^{*}Q$ is a *bundle* over $Q$: to each configuration you attach a whole vector space of momenta. Topologically it "remembers" $Q$. If $Q$ is flat and open ($Q=\mathbb{R}^{n}$, the free particles) then $T^{*}Q \cong \mathbb{R}^{2n}$ — trivial and simply connected. If $Q$ is a circle (the pendulum's angle) then $T^{*}Q \cong S^{1}\times\mathbb{R}$, a *cylinder*: the position wraps around, the momentum does not. The "space of all possibilities" can therefore carry holes and wrap-around, inherited from the geometry of the thing being modelled \cite{symplectic_manifold_wiki}.
+
+**Darboux's theorem: there is no *local* shape.** The deep and slightly surprising fact is that *every* symplectic manifold looks, near every point, exactly like flat $\mathbb{R}^{2n}$ with the standard form $\omega=\sum_{i}dp_{i}\wedge dq^{i}$ \cite{symplectic_manifold_wiki}. This is the symplectic antithesis of Riemannian geometry, where local curvature is the whole story. A symplectic manifold has **no local invariant at all**: you cannot detect any "bending" of phase space by zooming in.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{Phase space has no local shape. Every neighbourhood looks identical.}\\
+&\text{All of its shape is \emph{global} — in how the space wraps, and in its topology.}
+\end{aligned}
+}
+$$
+
+**Liouville's theorem: the flow preserves a volume.** The symplectic form defines a canonical volume $\omega^{n}/n!$, and the Hamiltonian flow *preserves* it — the dynamics are incompressible; phase-space volume is neither created nor destroyed \cite{symplectic_manifold_wiki}. A direct consequence: the flow cannot collapse onto a point (that would shrink volume to zero). This is one reason the *dynamics* keep a state moving *on* the shell rather than letting it settle into a single configuration.
+
+**What the topology can force: the Arnold conjecture.** This is the strongest "what can be said about the shape" result in the subject. On a *closed* phase space, the topology — the Betti numbers, the counts of holes in each dimension — *lower-bounds* the number of fixed points (and, in the periodic form, of periodic orbits) of *any* Hamiltonian placed on it \cite{arnold_conjecture_wiki}:
+
+$$
+\boxed{
+\#\{\text{fixed points}\}\;\ge\; \sum_{i=0}^{2n}\dim H_{i}(M) \;\ge\; \text{the Morse number of } M.
+}
+$$
+
+In words: **the shape of the space forces a minimum number of rest-states.** No matter how you choose the energy, the system cannot have fewer equilibria — or periodic orbits — than the topology demands. The topology is a *hard constraint on the dynamics*: the rare case where the *shape of the arena* provably dictates a feature of the *motion inside it*.
+
+<div class="optional md" data-headline="Where the physics phase space is richer than the AI 'phase space'">
+Hold this distinction, because it decides what is a theorem and what is a lens. A *physical* phase space $T^{*}Q$ arrives equipped with a canonical symplectic form — and therefore with Darboux flatness, a Liouville volume, and the Arnold constraint. A neural network's *configuration / input space* has **none of that**: no canonical $\omega$, no incompressible flow, no topological lower bound on its critical points. It is just a (usually high-dimensional, noncompact) space, and the only structure it carries is what the *data and the loss* put there. So when this course says "the AI's phase space," it is *borrowing the word*. The rigorous shape theorems above apply to the physical $T^{*}Q$; to the machine, only the looser statement — "a scalar field selects a thin slice" — carries over. The analogy is *structural*, and this is exactly where that word earns its keep.
+</div>
+</div>
+
+<div class="md">
 ## The energy function is the selector
 
 **Plain.** Not every point of phase space is equally "alive". A single number, the **energy** $H(q,p)$, tells you which. $H$ is the *Hamiltonian*; for a mechanical system it is kinetic plus potential energy \cite[nLab]{nlab_hamiltonian_mechanics}:
