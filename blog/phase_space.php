@@ -15,13 +15,13 @@ topics: math-ii, math-iii, philosophy, ai
 
 Ask a chatbot a hard question and you may notice something odd. It is not always wrong — sometimes it is exactly right. But its reliability is not even: for some questions it is rock-solid, for others it quietly falls apart. And the unsettling part is that it gives you little signal about which kind of question you are asking. When it *does* go wrong, it often does not say "I don't know" — it can glide into a smooth, confident, completely *wrong* answer, in a calm voice, with no hint that it has left the rails.
 
-The point of this chapter is to locate *where* the reliability actually is. It is high on a thin, special **slice** of the huge space of everything the AI could be asked, and low almost everywhere else. A single number — its **energy** — marks where that slice is; the rest of the space is still *possible*, but the model is not reliable on it. Two words carry the whole chapter: **phase space** (the whole space of possibilities) and **energy** (the number that draws the line).
+The point of this chapter is to locate *where* the reliability actually is. The right space to think in is not just the set of questions the AI could be asked, but the space of **all its (input, output) pairs** — every possible input paired with every possible answer. Across that space the AI is reliable only on a thin, special **slice**: the pairs where the output is a good one for the input. A single number — its **energy** — marks where that slice is; the rest is still *possible*, but the model is not reliable on it. Two words carry the whole chapter: **phase space** (that whole space of (input, output) pairs) and **energy** (the number that draws the line).
 
 **The tour, in four stops.**
 
 1. **A state** — what it takes to fully describe something that moves, and the space of all such states.
 2. **The energy** — the one number that runs the system, and why the system is locked to one thin curve.
-3. **The machine** — why a neural network is exactly this picture.
+3. **The machine** — why a neural network fits this picture.
 4. **Going off the curve** — what happens when the input, or the model, drifts off the slice. (That is when it hallucinates.)
 
 You need no physics beyond school: slopes, energy, a swinging pendulum. Every equation is glossed in plain words, and the fold-out boxes marked *for the curious* hold the advanced version — skip them all and the main text still stands on its own.
@@ -30,7 +30,7 @@ $$
 \boxed{
 \begin{aligned}
 &\text{An AI works only on a thin, low-energy slice}\\
-&\text{of the huge space of everything it could be asked;}\\
+&\text{of the huge space of all (input, output) pairs;}\\
 &\text{one number, its \emph{energy}, draws the line.}
 \end{aligned}
 }
@@ -136,7 +136,7 @@ $$
 }
 $$
 
-An AI's usefulness is the higher-dimensional version of exactly this.
+An AI's usefulness is the higher-dimensional version of this.
 
 *In one line:* fix the energy → one curve → one slice.
 </div>
@@ -278,7 +278,7 @@ Make "thin" exact. A smooth surface of dimension $k$ sitting inside a space of d
 Two honesty notes. First, it is a *hypothesis*, not a theorem — and it can fail. Fefferman, Mitter and Narayanan wrote a whole paper on how to *test* whether a data set really does lie on a low-dimensional surface, and found the question is genuinely hard to verify, and sometimes the answer is "no" (noise, in particular, *inflates* the apparent dimension) \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}. Second, real data is usually not *one* surface but a **union of several** — cats, dogs, cars, each its own sheet \cite[Brown et al., 2023]{brown2023union}. The safe statement is "a low-complexity, low-dimensional region of a huge space" — exactly what we need, and no more.
 </div>
 
-**In the pendulum language:** the slice is like a surface the system settles *onto* and then stays on — an **attractor** \cite[manifold learning]{manifold_learning_wiki}. Once the dust settles the system is *on* the surface; the rest of the space is only where the settling-down happens. "The system only really does something on the attractor" is the phase-space form of "the model only works on the slice."
+**The dynamical-systems version of the same idea.** For a system that *does* lose energy to friction, there is a precise object that plays this role: an **attractor** — a set that nearby trajectories flow onto and then stay on \cite[manifold learning]{manifold_learning_wiki}. Once the transients have decayed, the long-run behaviour is *on* the attractor; the rest of the space is only where the settling-down happens. (The frictionless pendulum is the limiting case with no attractor — it stays on its energy curve forever — which is exactly why the *slice* is the right word.) "The system only really does something on the attractor" is the dynamical-systems form of "the model only works on the slice."
 </div>
 
 <div class="md">
