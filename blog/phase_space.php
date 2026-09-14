@@ -13,418 +13,338 @@ topics: math-ii, math-iii, philosophy, ai
 <div class="md">
 ## The question, in one plain sentence
 
-Try a modern AI on something a little outside what it was trained on, and watch what it does. It does not shrug. It does not say "I don't know." It *slides off* into fluent, confident invention — a plausible-sounding answer to a question it has no business answering. The failure is so smooth that it's easy to miss the moment it happened.
+Ask a modern AI something a little outside what it was trained on, and watch what happens. It does not say "I don't know." It does not hesitate. It *glides* into a smooth, confident answer — to a question it actually has no idea about. The moment it stops being reliable is invisible.
 
-This chapter finds that moment, and gives it a coordinate. The idea is old — two thousand years of physics — and it transfers to machines almost verbatim. An AI is useful only in a thin, low-energy slice of the space of all its possible inputs and outputs. Everything else in that space is still *possible* — but essentially empty. The word for the full space is **phase space**; the word for the thing that carves out the slice is **energy**.
-
-We build both from scratch below. No prior physics, and every equation gets a plain-English gloss on its key symbols.
+This chapter makes that moment visible. It borrows an idea from physics that is two thousand years old, and that, almost word for word, also describes a neural network:
 
 $$
 \boxed{
 \begin{aligned}
-&\text{An AI's \emph{phase space} is the space of \emph{all} of its}\\
-&\text{possible inputs and outputs. Usefulness is not a property}\\
-&\text{of that space; it is a property of a thin low-energy slice of it.}
+&\text{An AI only really works in a thin, special slice}\\
+&\text{of the huge space of everything it could be asked.}\\
+&\text{A single number — its \emph{energy} — draws the line.}
 \end{aligned}
 }
 $$
 
-Everything below earns that sentence.
+"Everything it could be asked" is called the **phase space**. The thing that picks out the thin, reliable slice is called the **energy**. We build both from scratch below, using only the math and physics you already have — slopes, energy, a swinging pendulum. The small fold-out boxes marked *for the curious* hold the advanced version; the main text stands on its own, so you can safely skip every box and still follow.
 </div>
 
 <div class="md">
-## Start here: what it takes to fully describe a moving system
+## To describe a moving thing, you need two numbers
 
-**Where something is is not the same as where it is going.** Put a bead on a wire. Tell me its *position* $x$ along the wire — fine, I can point to it. But I still can't predict its future: at that exact spot it could be resting, or racing straight through. Same $x$, two very different lives.
+**"Where" is not the same as "where it's going."** Put a bead on a wire. Tell me where it is along the wire — fine, I can point to it. But I still can't predict its future: at that very spot it could be resting, or flying straight through. Same place, two completely different stories.
 
-So a full description of a moving thing needs two numbers *at once*:
+So to pin down a moving thing, you need *two* numbers together:
 
-- a **position** $q$ — where it is;
-- a **momentum** $p$ — how it is moving (speed, and which way).
+- **where** it is (a position), and
+- **how it's moving** (a speed, and a direction).
 
-A **state** is the pair $(q,p)$. The **phase space** is the set of *all* states — every position with every possible motion glued to it, laid out at once, before anything has been ruled out \cite[nLab]{nlab_configspace_physics} \cite[nLab]{nlab_phasespace}. You cannot copy a system by copying where things are; you have to copy where they are *going* too.
+Physicists call the second one the **momentum** $p$ — for something with mass $m$ it is just mass times velocity, $p = m\,v$. A **state** is the pair "where + how moving." The set of all the "where's" is called the *configuration space* \cite[nLab]{nlab_configspace_physics}; if you glue a "how moving" onto each one, the result is the **phase space** — simply *all the states at once*, every possible place paired with every possible motion \cite[nLab]{nlab_phasespace}. (Its formal name is the *cotangent bundle* $T^{*}Q$; don't worry about that word — the picture above is the whole content.) You can't copy a system by copying where things are; you have to copy where they are *going* too.
 
-**Watch one bead.** Let a bead slide on a one-dimensional wire. Its state is a single point $(x,p)$ in a **two-dimensional plane** — position across, momentum up. Its whole life is a *curve traced inside that plane*, and at any instant it sits at exactly one point of it. That one picture — one point wandering a plane of all-possible-states — is the entire idea. (The plane *is* the phase space.)
+**Now the key picture.** For our single bead, a state is one point in a flat graph — position across the bottom, momentum up the side. The bead's entire life is a *path traced inside that graph*, and at any instant it sits at exactly one point of it. Draw the graph and you can see, at a glance, what the bead will do next. (One bead → a 2-D graph. $N$ particles → $6N$ numbers, three "where" and three "how moving" each. The idea doesn't change.)
 
-Scale it up. $N$ particles in ordinary 3-D space have three positions and three momenta each, so the phase space is $\mathbb{R}^{6N}$: every position and every momentum, side by side. The phase space of the *whole universe* — one axis for the position of every atom, one for its momentum — is a dimension you cannot even write down. For a neural network, "position" is the arrangement of its weights plus the (input, output) it is handed; its phase space is the space of all of those.
-
-**The shape is inherited from the positions.** The momenta sit *on top of* the positions, one little vector space of motions at each position. So the phase space "remembers" the shape of the position space, plus a direction. Flat positions give a flat (just bigger) phase space. But if the position has a wrap-around — the angle of a **pendulum**, which is really just a bead on a curved wire \cite{simple_pendulum_wiki} — the position wraps around while the momentum does not, and the phase space becomes a **cylinder** \cite{symplectic_manifold_wiki}. The "space of all possibilities" can therefore carry holes and wrap-arounds, inherited from the thing being modelled. Formally the phase space is the **cotangent bundle** $T^{*}Q$ of the position space $Q$:
-
-$$
-\underbrace{T^{*}Q}_{\text{“positions, each with a momentum glued on”}}
-\;=\;
-\underbrace{\bigl\{\, (q,p)\;:\; q\in \underbrace{Q}_{\text{all positions}},\; p\in \underbrace{T^{*}_{q}Q}_{\text{momenta at that position}} \,\bigr\}}_{\text{a state }=\text{ a position \emph{plus} how it is moving}}.
-$$
+**The space can have a shape.** The "where" part might itself be curved or wrapped. A straight wire gives a flat space. But hang the bead from a string and you have a **pendulum** \cite{simple_pendulum_wiki}: its "where" is an *angle* that wraps all the way around and comes back to itself. So the position part is a circle, and the whole phase space is a **cylinder** — angle around, momentum up \cite{symplectic_manifold_wiki}. The "space of everything possible" can therefore have wrap-arounds and holes, inherited from the thing being modelled.
 
 $$
 \boxed{
-\text{phase space} \;=\; \text{“every position, with every possible motion at that position.”}
+\text{phase space} \;=\; \text{“every place, paired with every way of moving.”}
 }
 $$
 </div>
 
 <div class="md">
-## The Hamiltonian: the one number that runs the system
+## Energy: the one number that runs everything
 
-**What is a Hamiltonian?** One number assigned to every state. For a moving mechanical thing, that number is just the **total energy** of the state \cite[nLab]{nlab_hamiltonian_mechanics}:
+**The Hamiltonian is just the total energy.** There is a name for the single number that assigns an amount to every state — the **Hamiltonian** $H$ — and for anything that moves it is exactly the total energy \cite[nLab]{nlab_hamiltonian_mechanics}:
 
 $$
-\underbrace{H(q,p)}_{\text{the energy of a state}}
+\underbrace{H}_{\text{total energy}}
 \;=\;
-\underbrace{\tfrac{1}{2m}\,\lVert p\rVert^{2}}_{\text{kinetic: the price of \emph{moving fast}}}
+\underbrace{\tfrac{1}{2}\,m\,v^{2}}_{\text{kinetic: the “how fast” part}}
 \;+\;
-\underbrace{V(q)}_{\text{potential: the price of \emph{where you are}}}.
+\underbrace{V(q)}_{\text{potential: the “where it costs” part}}.
 $$
 
-Read the two pieces like a landscape. **Potential** energy $V(q)$ is the *shape of the terrain*: a ball held high, a stretched spring, a bead high on a wire — all *cost*. **Kinetic** energy is how fast you are moving *through* that terrain — zero at rest, large when racing ($\tfrac{1}{2}m\lVert v\rVert^{2}$, and with momentum $p=mv$ that is $\tfrac{1}{2m}\lVert p\rVert^{2}$). Add terrain-cost to motion and you have one number: the state's energy. *That* is the **Hamiltonian** $H$ — think of it as the height in a landscape the state is always trying to stay low in.
+You already know both halves. **Kinetic energy** $\tfrac{1}{2}mv^{2}$ is the energy of motion — more of it when the thing moves faster. **Potential energy** $V$ is stored energy from a position — a ball held high has more, a stretched spring has more. Add the two and you have one number: the state's energy.
 
-**The Hamiltonian manufactures the motion.** Given $H$, the rules of motion are two short lines, **Hamilton's equations** \cite[nLab]{nlab_hamiltonian_mechanics}:
+**Picture it as a landscape.** Lay the position axis out as the ground, and let $V$ be the height of some hilly terrain. The bead is a ball resting on that terrain. **Kinetic energy is how fast it is rolling; potential energy is how high up it is.** That's the entire picture.
 
-$$
-\underbrace{\dot q_{i} \;=\; +\,\frac{\partial H}{\partial p_{i}}}_{\text{position moves the way energy \emph{rises} with momentum}}
-\;\;\text{and}\;\;
-\underbrace{\dot p_{i} \;=\; -\,\frac{\partial H}{\partial q_{i}}}_{\text{momentum moves the way energy \emph{falls} with position}}.
-$$
-
-**Feel it with the bead.** Write $H=\tfrac{1}{2m}p^{2}+V(x)$. The first line gives $\dot x = \partial H/\partial p = p/m$: the bead moves at exactly the speed its momentum says. The second gives $\dot p = -\,\partial H/\partial x = -V'(x)$: its momentum changes by the *slope of the terrain* — it accelerates *downhill*, slows *uphill*. So the bead rolls to the bottom, overshoots, slows, and comes back: a swing, with the $+$ and the $-$ as the two halves of a tug-of-war. *Things drift toward what they want (low potential) and are turned around by what holds them (the slope).* That give-and-take is the whole subject, written down.
-
-**Energy is conserved, so the bead is trapped on a slice.** With no friction, the total $H$ never changes as it swings. So the bead cannot climb off the one surface it began on: it stays on the **energy shell**
+**The rule of motion is just "roll downhill."** The ball speeds up going down the slope, slows going up, and turns around at the top. Written down, this is exactly Newton's laws rearranged:
 
 $$
-\underbrace{\{\, (q,p)\;:\;H(q,p)=E\,\}}_{\text{“all the states that cost exactly the energy }E\text{”}}.
+\underbrace{v \;=\; \frac{p}{m}}_{\text{speed is momentum divided by mass}}
+\qquad\text{and}\qquad
+\underbrace{\frac{dp}{dt} \;=\; -\,V'(q)}_{\text{momentum changes by the \emph{slope} of the terrain — it rolls downhill}}.
 $$
 
-Even the freest physical system is *already confined to a slice*. The rest of phase space is where it *cannot be*.
+That minus sign *is* the physics: the ball always moves the way the terrain slopes down.
 
-<div class="optional md" data-headline="The coordinate-free version (for the curious)">
-The two coordinate lines above have a form that does not depend on choosing coordinates at all, and it is the cleanest statement in the subject. Phase space carries a canonical area form, the **symplectic form** $\omega$, built from the **canonical (Liouville) 1-form** $\theta$ \cite[nLab]{nlab_phasespace} \cite[nLab]{nlab_symplectic_manifold}:
-
-$$
-\underbrace{\theta \;=\; \sum_{i} p_{i}\,dq_{i}}_{\text{each momentum }p_{i}\text{ is the covector measuring “change in position }q_{i}\text{”}}
-\qquad\Longrightarrow\qquad
-\underbrace{\omega \;=\; -\,d\theta \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{an infinitesimal area element }dq\wedge dp\text{ for every pair }(q_{i},p_{i})}.
-$$
-
-The Hamiltonian $H$ then determines a unique velocity field $X_{H}$ — the **Hamiltonian vector field** — by the single rule \cite[nLab]{nlab_symplectic_manifold}:
+**The energy never changes — so the bead is trapped on one curve.** With no friction, the total energy $H$ is *conserved*: the bead can trade kinetic for potential and back, but the sum never changes. So it can never climb off the one curve in the phase graph where the energy equals its starting value. That curve is the **energy slice**:
 
 $$
-\underbrace{\iota_{X_{H}}\,\omega \;=\; dH}_{\text{“turn the gradient of the energy into a direction”}}.
+\underbrace{\{\,(q,p)\;:\;H(q,p)=E\,\}}_{\text{“all the states that cost exactly the energy }E\text{” }=\text{ one curve in the phase graph}}.
 $$
 
-Hamilton's equations are just this rule written out in coordinates. A phase space with this structure is a **symplectic manifold**, and the study of its motion is **Hamiltonian mechanics** \cite[nLab]{nlab_symplectic_manifold} \cite[nLab]{nlab_hamiltonian_mechanics}.
+Even the freest system in the universe is, from the moment it starts, confined to a single slice. Everywhere else is where it *cannot* be.
+
+<div class="optional md" data-headline="The formal version (for the curious)">
+The two lines above are the one-dimensional, Newtonian form. In full generality a state is a point of the **cotangent bundle** $T^{*}Q$ of the configuration space $Q$, and the phase space carries a canonical area form — the **symplectic form** $\omega$ — built from the **canonical 1-form** $\theta$ \cite[nLab]{nlab_phasespace} \cite[nLab]{nlab_symplectic_manifold}:
+
+$$
+\underbrace{\theta \;=\; \sum_{i} p_{i}\,dq_{i}}_{\text{each momentum }p_{i}\text{ is paired with the “change in position” }dq_{i}}
+\;\Longrightarrow\;
+\underbrace{\omega \;=\; -\,d\theta \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{one area element }dq\wedge dp\text{ for each pair }(q_{i},p_{i})}.
+$$
+
+The energy $H$ then picks out a unique velocity field $X_{H}$, the **Hamiltonian vector field**, by the single rule \cite[nLab]{nlab_symplectic_manifold}
+
+$$
+\underbrace{\iota_{X_{H}}\,\omega \;=\; dH}_{\text{“turn the slope of the energy into a direction”}},
+$$
+
+which written out in coordinates is **Hamilton's equations**, $\dot q_{i}=\partial H/\partial p_{i}$ and $\dot p_{i}=-\partial H/\partial q_{i}$ \cite[nLab]{nlab_hamiltonian_mechanics}. The subject is **Hamiltonian mechanics** on a **symplectic manifold** \cite[nLab]{nlab_symplectic_manifold}. The coordinate-free version is cleaner and more general; the "roll downhill" version in the main text is the same thing in one dimension.
 </div>
 </div>
 
 <div class="md">
-## Watch the bead move — the picture that makes it click
+## The picture that makes it click
 
-Because the bead's energy $H$ is fixed, it is welded to one energy shell — and when you draw *all* the shells on the phase plane, you get one of the most beautiful pictures in all of physics: the **phase portrait** of a pendulum \cite{simple_pendulum_wiki}.
+Because the energy is fixed, the bead is welded to one curve. Now draw *all* the curves at once — one for every possible energy — and you get one of the most beautiful pictures in all of physics: the **phase portrait** of a pendulum \cite{simple_pendulum_wiki}.
 
-Picture the plane: position $x$ across — and because the bead's position wraps around a circle, the left and right edges are really glued, so the plane is a cylinder — with momentum $p$ up. Now trace every possible energy level as a curve:
+Hold a pendulum a little to the side and let go. In its phase graph (angle across, momentum up — and the angle wraps, so it's a cylinder) it traces:
 
-- **Low energy.** Small closed ovals near the bottom — the bead swings a little, back and forth. Each oval is *one* energy shell: a bead starting on it stays on it, forever, tracing the same loop.
-- **Higher energy.** Bigger ovals — wider swings. Still closed, still one shell each.
-- **Just enough to reach the top.** A knife-edge curve called the **separatrix**: the bead can climb to the very top and hover there forever. It divides the small swings (below) from the big rounds (above).
-- **More than that.** The bead goes *over the top* and keeps going — it spins around the cylinder instead of swinging. These are the open, wrapping orbits.
+- **A small swing:** a small closed loop near the bottom. It goes back and forth on the *same* loop, forever.
+- **A bigger swing:** a bigger loop. Still closed.
+- **Just enough to reach the very top:** a special knife-edge curve (the *separatrix*). Below it the pendulum swings back and forth; above it, it goes all the way over the top and keeps spinning.
 
-Now look at what this has quietly done. The "space of all possibilities" is the whole cylinder. But the bead — at a fixed energy — lives on **one closed curve** inside it. *That curve is the slice.* Everything else on the cylinder is still *there*, still *possible* — but the bead will never visit it. One number, $E$, selected one thin loop out of an enormous space, and that loop is where all the action is.
+Here is the quiet magic. The whole cylinder is "everything that could happen." But a pendulum with a *fixed* energy lives on **one loop** inside it. One number — the energy — picked out one thin curve, and that curve is where *all* the action is. Everything else on the cylinder is still possible, but the pendulum will never touch it.
 
 $$
 \boxed{
-\text{one number (the energy) selects one thin curve out of a vast space —}
-\qquad\text{and that curve is where everything happens.}
+\text{one number (the energy) picks one thin curve out of a huge space —}
+\quad\text{and that curve is where everything happens.}
 }
 $$
 
-Everything about an AI's usefulness is a higher-dimensional version of this picture.
+An AI's usefulness is a higher-dimensional version of exactly this picture.
 </div>
 
 <div class="md">
-## Temperature: when the energy is not pinned down
+## Temperature: when the energy is allowed to wiggle
 
-A bead in a frictionless field sits on one exact shell $H=E$. But a real system in a warm bath is *not* at one energy — it sloshes around, sometimes higher, sometimes lower. How is the state chosen? By one formula, the **Boltzmann (canonical) distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
+A frictionless bead sits on one exact curve. But a real, warm system *wiggles* — its energy drifts a little now and then. Then the question becomes: **which state does it actually sit in?** The answer is one rule, the **Boltzmann distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
 
 $$
-\underbrace{P(q,p) \;=\; \frac{e^{-\beta\, H(q,p)}}{Z}}_{\text{the probability of a state}}
-\quad=\quad
-\underbrace{e^{-\beta\, H(q,p)}}_{\text{the selector: }H\text{ small}\Rightarrow\text{ weight}\approx1;\ H\text{ large}\Rightarrow\text{ weight}\approx0}
-\;\Big/\;
-\underbrace{Z \;=\; \int e^{-\beta\, H(q,p)}\,dq\,dp}_{\text{the normaliser: total weight of \emph{everything}, forcing the probabilities to add to }1}.
+\underbrace{P \;=\; \frac{e^{-\beta H}}{Z}}_{\text{probability of a state}}
+\qquad\text{where}\qquad
+\underbrace{\beta \;=\; \tfrac{1}{\text{temperature}}}_{\text{how “stingy” the system is}}.
 $$
 
-Here $\beta = 1/(k_{B}T)$ is the **inverse temperature** (bigger $T$, smaller $\beta$, more willing to climb), and $Z$ is the **partition function** \cite{partition_function_wiki} — the total weight of the whole space, present only so the probabilities sum to one. The whole argument of this chapter is sitting in that formula:
+Read it plainly. Every state gets a **weight** $e^{-\beta H}$: the bigger its energy $H$, the *smaller* its weight. $Z$ is just the total of all the weights, and we divide by it so the probabilities add up to $1$ (the **partition function** \cite{partition_function_wiki}). That's the whole rule:
 
 $$
 \boxed{
-\text{low energy} \;\Rightarrow\; \text{high probability}; \qquad\qquad \text{high energy} \;\Rightarrow\; \text{almost never.}
+\text{low energy} \;\Rightarrow\; \text{likely.} \qquad\qquad \text{high energy} \;\Rightarrow\; \text{almost never.}
 }
 $$
 
-The factor $e^{-\beta H}$ is a *selector*. It does not delete the high-energy part of phase space — that part is still *there*, still part of the space of all possibilities — but it assigns it vanishing weight. The system is found, with overwhelming probability, in the **low-energy slice**; everything else is *possible* but *empty*.
+The high-energy states are not deleted — they are still *there*, still part of the space of all possibilities — they have just been given almost no weight. So the system is found, almost always, in the **low-energy slice**.
 
-**"Temperature" is the knob you already know.** This is exactly the temperature on a chatbot, borrowed straight from here. **Low temperature: stingy** — the selector barely relaxes, so the system does almost nothing but the single lowest-energy thing: safe, and repetitive. **High temperature: generous** — the selector relaxes and the system explores, trying weird, high-energy states: some surprising, some nonsense. *Creativity, in this picture, is literally raising the temperature* and letting the selector loosen. (The <a href="samplinglab">Temperature &amp; Sampling</a> chapter turns this knob in detail.)
+**This is the knob on your chatbot.** "Temperature" in a language model is borrowed straight from here. **Low temperature = stingy:** it does almost nothing but the single safest, most-likely thing — correct, but dull. **High temperature = generous:** it explores, trying unusual, higher-energy things — some delightful, some nonsense. *Creativity, in this picture, is literally turning the temperature up* and letting the selector relax. (The <a href="samplinglab">Temperature &amp; Sampling</a> chapter turns this knob in detail.)
 
-**How thick is the slice?** The **density of states** counts how much room there is at a given energy \cite{canonical_ensemble_wiki}:
-
-$$
-\underbrace{\Omega(E) \;=\; \int \delta\!\big(H(q,p)-E\big)\,dq\,dp}_{\text{“how much room there is at energy }E\text{” }=\text{ the thickness of the shell }H=E}.
-$$
-
-The system settles where there is the most room to sit: the typical energy is where $\Omega(E)$ — or, in the warm case, $\Omega(E)\,e^{-\beta E}$ — is largest. And in a big system that "typical energy" is *pinned* to a single value with astonishing precision. For a mole of gas ($N\approx6\times10^{23}$ particles) the relative wiggle in the total energy is about
+**And the slice is astonishingly thin.** In a big system the energy barely wiggles at all. Whenever a total is the sum of $N$ independent little contributions, the size of the wiggle is about $1/\sqrt{N}$ — the same fact behind the statistics rule "the bigger the sample, the tighter the average." For a mole of gas ($N\approx6\times10^{23}$ particles) that comes out to
 
 $$
-\underbrace{\frac{\sqrt{\operatorname{Var}(H)}}{\mathbb{E}[H]} \;\sim\; \frac{1}{\sqrt{N}} \;\approx\; 10^{-12}}_{\text{“the energy is pinned to about one part in a trillion”}}.
+\underbrace{\tfrac{1}{\sqrt{N}} \;\approx\; 10^{-12}}_{\text{“pinned to about one part in a trillion”}}.
 $$
 
-Not "roughly the same" — *one part in a trillion*. So:
+Not "roughly the same" — *one part in a trillion*.
 
+<div class="optional md" data-headline="The precise statement (for the curious)">
+"Thin" can be made exact in two ways. First, the **density of states** counts how much room there is at a given energy \cite{canonical_ensemble_wiki}
 $$
-\boxed{\text{the living part of phase space is a thin slice, selected by energy.}}
+\underbrace{\Omega(E) \;=\; \int \delta\!\big(H-E\big)\,dq\,dp}_{\text{“how much room is there at energy }E\text{?”}}
 $$
+and the system settles where that room (multiplied by the Boltzmann weight) is largest. Second, the thinness is not a guess but a theorem — **concentration of measure** \cite[concentration of measure]{concentration_of_measure_wiki}: in high dimensions the energy of a large system concentrates so tightly around one value that its relative wiggle goes to $0$ like $1/\sqrt{N}$. That result is what lies behind the equivalence of the ensembles of statistical physics.
+</div>
 </div>
 
 <div class="md">
-## What shape is the space — and what can be said about it
+## What shape is the space?
 
-So far phase space has been *described*. Now the sharper question: what is its **shape**, and what can actually be *proved* about it?
+We've said the phase space can have a shape — wrap-arounds, holes — inherited from the positions. Here is the surprising part: **all of that shape is *global*.**
 
-**The main line, in plain terms.** The shape is inherited from the position space, and — here is the surprise — it is all *global*. Stand on the Earth and the ground looks flat. That does not mean the Earth has no shape; it means the shape is too big to see up close. Phase space is the same: zoom in on it at *any* point and you see flat space with one standard form — there is nothing local, no curvature, to read off by looking closely. All the shape that exists lives in the *large-scale* structure: how the space wraps around, whether it has holes, how it fits together. A pendulum's phase space is a cylinder (one wrap-around); a set of free particles' is flat and open (none). The "space of all possibilities" can carry holes and wrap-arounds, and those are what the geometry of the thing being modelled dictates \cite{symplectic_manifold_wiki}. The three results that pin this down are the hard part, so they are tucked away:
+Stand on the Earth and the ground looks flat. That does not mean the Earth is flat — it means its shape is too big to see up close. Phase space is the same. Zoom in on it *anywhere* and it looks like ordinary flat space; there is no local "bend" you can find by looking closely. The shape lives only in the big picture — how the space wraps around, whether it has holes, how it fits together. A pendulum's phase space is a cylinder (one wrap-around); free particles' is flat (none) \cite{symplectic_manifold_wiki}. You have to see the whole thing to see the shape.
 
 <div class="optional md" data-headline="Three theorems about the shape (the hard part)">
-Each of the three has a different weight.
+The claim "the shape is all global" has three precise versions, each with its own weight.
 
-**Darboux — there is no *local* shape.** Every symplectic manifold, no matter how bent, looks — near every point — exactly like flat space with one standard form \cite{symplectic_manifold_wiki}:
-
+**Darboux — there is no *local* shape.** Every symplectic phase space, however bent, looks locally like flat space with one standard area form \cite{symplectic_manifold_wiki}:
 $$
-\underbrace{\omega \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{“everywhere, phase space is a stack of flat little area elements }dq\wedge dp\text{”}}.
+\underbrace{\omega \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{“locally, just flat area elements”}}.
 $$
+The symplectic version of "the Earth looks flat up close." There is no local curvature to read off by zooming in.
 
-This is the symplectic version of "the Earth looks flat up close." A symplectic manifold has **no local invariant** — no curvature to read off by zooming in. So:
-
+**Liouville — the flow preserves a volume.** The motion is *incompressible*, like an ideal fluid that cannot be squeezed \cite{symplectic_manifold_wiki}:
 $$
-\boxed{
-\begin{aligned}
-&\text{Phase space has no local shape. Every neighbourhood looks identical.}\\
-&\text{All of its shape is \emph{global} — in how the space wraps, and in its topology.}
-\end{aligned}
-}
+\underbrace{\mathcal{L}_{X_{H}}\,\omega \;=\; 0}_{\text{“the flow neither stretches nor squeezes area”}}
+\;\Longrightarrow\;
+\underbrace{\operatorname{vol}(S) \;=\; \operatorname{vol}\bigl(\Phi_{t}(S)\bigr)}_{\text{a cloud of states keeps its volume, always}}.
 $$
+So the motion cannot collapse onto a single point (that would shrink a volume to zero) — which is one reason it keeps a state *moving on* the slice rather than letting it settle down.
 
-**Liouville — the flow preserves a volume.** The symplectic form defines a canonical volume, and the motion *preserves* it — the dynamics are incompressible, like an ideal fluid with no way to be squeezed \cite{symplectic_manifold_wiki}:
-
+**Arnold — the shape forces a minimum number of rest-states.** On a *closed* phase space $M$, the topology — the number of holes — *lower-bounds* how many rest-states *any* energy placed on it can have \cite{arnold_conjecture_wiki}:
 $$
-\underbrace{\mathcal{L}_{X_{H}}\,\omega \;=\; 0}_{\text{“the motion neither stretches nor squeezes the area form”}}
-\quad\Longrightarrow\quad
-\underbrace{\operatorname{vol}\bigl(S\bigr) \;=\; \operatorname{vol}\bigl(\Phi_{t}(S)\bigr)}_{\text{a cloud of states keeps exactly its phase-space volume, for all time }t}.
-$$
-
-A direct consequence: the flow cannot collapse onto a point (that would shrink a volume to zero). This is one reason the *dynamics* keep a state moving *on* the shell rather than letting it settle into a single configuration.
-
-**Arnold — the shape forces a minimum number of rest-states.** On a *closed* phase space $M$, the topology — the counts of holes in each dimension — *lower-bounds* the number of fixed points (and, in the periodic form, of periodic orbits) of *any* Hamiltonian placed on it \cite{arnold_conjecture_wiki}:
-
-$$
-\boxed{
-\underbrace{\#\{\text{fixed points of }X_{H}\}}_{\text{how many rest-states the motion admits}}
+\underbrace{\#\{\text{rest-states}\}}_{\text{fixed points of the motion}}
 \;\ge\;
-\underbrace{\operatorname{Mor}(M)}_{\text{fewest critical points any height function on }M\text{ can have}}
+\underbrace{\operatorname{Mor}(M)}_{\text{fewest critical points any height function can have}}
 \;\ge\;
-\underbrace{\sum_{i=0}^{2n}\dim H_{i}(M)}_{\text{the total number of holes of }M\text{, counted in every dimension}}.
-}
+\underbrace{\text{(total number of holes of }M)}_{\text{counted in every dimension}}.
 $$
-
-In words: **no matter how you choose the energy, the system cannot have fewer equilibria — or periodic orbits — than the topology demands.** The shape of the arena provably dictates a feature of the motion inside it.
+No matter how you choose the energy, the topology forces a minimum number of equilibria. The shape of the arena dictates a feature of the motion inside it.
 </div>
 
-<div class="optional md" data-headline="Where the physics phase space is richer than the AI 'phase space'">
-Hold this distinction, because it decides what is a theorem and what is a lens. A *physical* phase space $T^{*}Q$ arrives equipped with a canonical symplectic form — and therefore with Darboux flatness, a Liouville volume, and the Arnold constraint. A neural network's *configuration / input space* has **none of that**: no canonical $\omega$, no incompressible flow, no topological lower bound on its critical points. It is just a (usually high-dimensional, noncompact) space, and the only structure it carries is what the *data and the loss* put there. So when this course says "the AI's phase space," it is *borrowing the word*. The rigorous shape theorems above apply to the physical $T^{*}Q$; to the machine, only the looser statement — "a scalar field selects a thin slice" — carries over. The analogy is *structural*, and that is exactly where the word earns its keep.
+<div class="optional md" data-headline="Physics phase space vs. the AI “phase space”">
+One caution, because it decides what is a theorem and what is a metaphor. A *physical* phase space comes with that symplectic structure — and so gets the Darboux, Liouville, and Arnold results for free. A neural network's input/weight space has **none of that**: no special area form, no incompressible flow, no topological lower bound. It is just a (usually huge) space, and the only structure it carries is what the *data and the loss* put there. So "the AI's phase space" *borrows* the word. The theorems above are true of the physical space; for the machine only the looser idea — "a number picks out a thin slice" — carries over. The analogy is structural, and that is exactly where it earns its keep.
 </div>
 </div>
 
 <div class="md">
-## The LeCun energy paper
+## The same idea, now for a neural network
 
-**The turn to machines.** The bridge from physics to neural networks is a short line of papers by Yann LeCun and collaborators, in which a neural network is described not as a function you evaluate but as an **energy function over a space of configurations** \cite[LeCun et al., 2007]{lecun2007ebm} \cite[LeCun et al., 1998]{lecun1998gradient}.
+Here is the bridge, and it is almost word for word. A line of papers by Yann LeCun and co-workers describes a neural network not as a function you feed in and read out, but as an **energy over all its possible inputs and outputs** \cite[LeCun et al., 2007]{lecun2007ebm} \cite[LeCun et al., 1998]{lecun1998gradient}.
 
-The move is the physics move, verbatim. Take the space of all configurations a system could be in — for a classifier, the pairs (input, label); for a generator, all possible inputs — and put a scalar **energy** $E(x)$ on every point of it. The paper lives on one sentence:
+Take the space of every possible configuration — for a classifier, every (input, label) pair; for a generator, every possible input — and put one number, an **energy** $E(x)$, on each point. The whole paper is really one sentence:
 
 <div class="smart-quote" data-cite="ebm_wiki" data-after="Energy-based model">
 Essentially, the model learns a function that associates low energies to correct values, and higher energies to incorrect values.
 </div>
 
-The probability over configurations is again Boltzmann, $P(x)\propto e^{-E_{\theta}(x)}$, normalised by a partition function $Z = \sum_{x} e^{-E_{\theta}(x)}$ \cite{ebm_wiki} \cite[LeCun et al., 2007]{lecun2007ebm}. And that is the "phase-space selection of useful spaces" in a single stroke:
+The probability is the same Boltzmann rule as before, $P(x)\propto e^{-E(x)}$ \cite{ebm_wiki} \cite[LeCun et al., 2007]{lecun2007ebm}. So the physics picture lands on machines in one stroke:
 
 $$
 \boxed{
 \begin{aligned}
-&\textbf{phase space} &&=\; \text{the space of \emph{all} configurations (all inputs, all (input, output) pairs);}\\
-&\textbf{energy }E_{\theta} &&=\; \text{the learned scalar, \emph{sculpted} to be low on the useful/correct/data-like ones;}\\
-&\textbf{useful slice} &&=\; \{x : E_{\theta}(x) \text{ is small}\},\ \text{the region where the model actually \emph{works}.}
+&\textbf{phase space} &&= \text{all possible inputs / (input, output) pairs;}\\
+&\textbf{energy }E &&= \text{a number the training has made \emph{small} on the good, useful ones;}\\
+&\textbf{useful slice} &&= \{x : E(x)\text{ is small}\},\ \text{where the model actually \emph{works}.}
 \end{aligned}
 }
 $$
 
 Three verbs do all the work \cite[LeCun et al., 2007]{lecun2007ebm}:
 
-- **Training = sculpting** $E_{\theta}$ so that the data sit in low-energy basins and the rest of the space sits high.
-- **Inference = minimising** $E_{\theta}$: given a partial input, find the low-energy completion.
-- **Usefulness = the low-energy slice** — the set of configurations the sculpted energy has made probable.
+- **Training** = shaping $E$ so the good cases sink into low-energy valleys and everything else sits high.
+- **Inference** = sliding to the lowest energy: given part of an input, find the low-energy completion.
+- **Usefulness** = the low-energy slice itself.
 
-**The idea is old inside the field.** **Hopfield networks** are literally physical systems: the weights define an energy, and the dynamics *descend* that energy until the state settles into a minimum — a stored memory \cite{hopfield1982}. **Boltzmann machines** add the temperature: the state is drawn from the Boltzmann distribution over configurations, and learning pushes the data *down* in energy and everything else *up* \cite[Ackley, Hinton & Sejnowski, 1985]{ackley1985boltzmann}. In both, "the network only makes sense in the low-energy region" is not an accident; it is the *definition*.
+**It is an old trick in the field.** **Hopfield networks** literally *are* energy systems: the dynamics slide the state down the energy until it parks in a minimum — a stored memory \cite{hopfield1982}. **Boltzmann machines** add temperature: the state is drawn from the Boltzmann rule, and learning pushes the good cases down and the rest up \cite[Ackley, Hinton & Sejnowski, 1985]{ackley1985boltzmann}. In both, "the network only makes sense in the low-energy region" is not an accident — it is the *definition*. LeCun returns to it in his 2022 position paper, where the whole proposed brain is a stack of modules each driven toward low energy, the "world model" being the low-energy region of all possible world states \cite[LeCun, 2022]{lecun2022autonomous}.
 
-LeCun returns to the energy point in his 2022 position paper, where the whole proposed intelligence is a hierarchy of modules each driven toward low energy, the "world model" being the low-energy region of the space of all possible world states \cite[LeCun, 2022]{lecun2022autonomous}. The slogan of that paper — *find the lowest-energy state consistent with what you observe* — is the Boltzmann selector rewritten as an engineering goal.
-
-<div class="optional md" data-headline="What 'energy' means for a modern LLM (honest boundary)">
-In a modern large language model the "energy" is *not* a physical Hamiltonian. There is no symplectic form, no conserved quantity, no Hamilton's equations, no literal temperature in a frozen model at inference. The energy is the **loss** — for a language model, the (negative) log-likelihood of the tokens, summed over a sequence. But its *structural* role is identical: a scalar field over the space of all possible (input, output) sequences that training has made small exactly on the sequences that are *coherent, fluent, factual, and in-distribution*. The physics is a *model of the geometry*, not a claim that a GPU integrates Hamiltonian flow. The discipline, held throughout this course: where the analogy is *structural* it is useful; where it would be *literal* it is not.
+<div class="optional md" data-headline="What “energy” means for a real LLM (the honest boundary)">
+In a modern language model the "energy" is *not* a physical Hamiltonian. There is no conserved quantity, no pendulum swinging, no real temperature in a frozen model at inference. The energy is the **loss** — for a language model, roughly the *surprise* of the tokens (the negative log-likelihood). But its *job* is identical: a single number over all possible (input, output) sequences that training has made small exactly on the sequences that are *coherent, fluent, and in-distribution*. The physics is a *picture of the geometry*, not a claim that a GPU is swinging a pendulum. The rule for the whole course: where the analogy is *structural* it is useful; where it would be *literal*, it is not.
 </div>
 </div>
 
 <div class="md">
-## The slice is thin — the manifold hypothesis
+## Why a *slice* — and why it is so thin
 
-**Why a *slice* and not "low-energy blobs scattered everywhere"?** Because the useful configurations are not spread through the space. They lie on a **manifold**: a surface of much lower dimension than the space around it. This is the **manifold hypothesis** \cite[Sindhwani, Belkin & Niyogi, 2006]{sindhwani2006geometric} \cite[manifold learning]{manifold_learning_wiki}: natural data — faces, digits, sentences, audio — although it lives in a huge ambient vector space, is actually produced by a small number of free parameters, so it occupies a *low-dimensional* manifold *inside* that space.
+So far: the useful states are the *low-energy* ones. But why a thin *slice*, and not "low-energy blobs scattered all over the place"? Because the useful states are not scattered. They lie on a **low-dimensional surface** floating inside the huge space. That is the **manifold hypothesis** \cite[Sindhwani, Belkin & Niyogi, 2006]{sindhwani2006geometric} \cite[manifold learning]{manifold_learning_wiki}: real data, though it lives in a space with a huge number of coordinates, is really controlled by only a few free knobs.
 
-**The face example.** Take every photograph of every human face; each is a point in a huge space of pixel values. But "all faces" is not the whole space — it is a *surface* floating inside it. Move along that surface smoothly and you morph one face into another (shift the jaw, the eyes, the lighting), and *every point on the way is still a real face*. Olah's classic picture puts a **hole** in this face-manifold: you can loop from "eyes open" all the way around to "eyes closed" without ever leaving a real face — the surface has a hole in it, like the inside of a bagel \cite[Olah, 2014]{olah2014manifolds}.
+**The face example — the most vivid one.** Take every photograph of every human face. Each is a point in a giant space of pixel values. But "all faces" is not the whole space — it is a *surface* floating inside it. Slide smoothly along that surface and you morph one face into another (change the jaw, the eyes, the light), and *every step of the way is still a real face*. The classic picture even has a **hole** in it: you can go all the way around from "eyes open" to "eyes closed" and back, never leaving a real face — the surface is shaped like the inside of a bagel \cite[Olah, 2014]{olah2014manifolds}.
 
-The standard number. All images of the letter "A", scaled and rotated, are each a 1024-dimensional pixel vector, so the ambient space is $\mathbb{R}^{1024}$. But only two numbers vary — scale and rotation. The data lies on a **two-dimensional** surface curving through $\mathbb{R}^{1024}$ \cite[manifold learning]{manifold_learning_wiki}: *intrinsic* dimension $2$, *ambient* dimension $1024$. For a language model it is more extreme still: the space of all $100$-token outputs has size $\lvert V\rvert^{100}$ (vocabulary size $\lvert V\rvert$) — for a 10,000-word vocabulary that is $10^{400}$, a 1 with four hundred zeros, while the entire observable universe is only about a $10^{80}$-digit number of atoms. The outputs that are *grammatical and on-topic* are a measure-thin slice of it. The model is useful **on that slice, and only on that slice.**
+**A number you can feel.** Every scaled-and-rotated picture of the letter "A" is a 1,024-number vector, so the space is $\mathbb{R}^{1024}$. But only *two* knobs actually move — size and rotation. The data sits on a **two-dimensional** surface inside a 1,024-dimensional space \cite[manifold learning]{manifold_learning_wiki}. For a language model it is more extreme still: the number of possible 100-token answers is $\lvert V\rvert^{100}$ (with $\lvert V\rvert$ words in the vocabulary) — for $\lvert V\rvert=10{,}000$ that is $(10^{4})^{100}=10^{400}$, a 1 followed by four hundred zeros. The observable universe contains only about $10^{80}$ atoms. The space of possible answers has roughly **320 more digits** than there are atoms in the cosmos. The answers that are *grammatical and on-topic* are a measure-thin sliver of it. The model works **on that sliver — and only on that sliver.**
 
-<div class="optional md" data-headline="Making 'thin' precise: the measure-zero fact">
-Make "thin" exact. A $k$-dimensional smooth manifold embedded in $\mathbb{R}^{N}$, with $k < N$, has **$N$-dimensional Lebesgue measure zero**. Sketch: cover the manifold by coordinate patches, each the image of a $C^{1}$ map from $\mathbb{R}^{k}$ into $\mathbb{R}^{N}$; such an image has $N$-measure zero, because the Jacobian has rank at most $k < N$. Two consequences:
+<div class="optional md" data-headline="Why “thin” is the right word (for the curious)">
+Make "thin" exact. A smooth surface of dimension $k$ sitting inside a space of dimension $N$ (with $k < N$) has **$N$-dimensional measure zero** — the same reason a line has zero *area*. So a point picked uniformly from the full space lands on the slice with probability *exactly* $0$. Usefulness is a knife-edge: the model is right precisely *because* it has been made to live on a measure-zero set, while a random input is right with probability zero.
 
-1. The useful slice is not "a smaller blob" — it is *measure zero*. A point drawn uniformly from the full phase space lands on the slice with probability *exactly* $0$.
-2. Usefulness is a **knife-edge**. The model is correct precisely *because* it has been made to live on a measure-zero set, while a random configuration is correct with probability zero. "Just try random inputs" is not a strategy; the space is, almost entirely, *not* where the model works.
-
-This is the precise sense in which "the AI only works on a slice": the slice is *all* of where it works, and it is *almost none* of the space.
+Two honesty notes. First, it is a *hypothesis*, not a theorem — and it can fail. Fefferman, Mitter and Narayanan wrote a whole paper on how to *test* whether a data set really does lie on a low-dimensional surface, and found the question is genuinely hard to verify, and sometimes the answer is "no" (noise, in particular, *inflates* the apparent dimension) \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}. Second, real data is usually not *one* surface but a **union of several** — cats, dogs, cars, each its own sheet \cite[Brown et al., 2023]{brown2023union}. The safe statement is "a low-complexity, low-dimensional region of a huge space" — exactly what we need, and no more.
 </div>
 
-<div class="optional md" data-headline="An honest note: it is a *hypothesis*">
-Note the name — *hypothesis*. It is a conjecture about the world, not a theorem, and it can fail. Fefferman, Mitter and Narayanan wrote a whole paper on how to *test* whether a data set genuinely lies on a low-dimensional manifold, and found the question is genuinely hard to answer and sometimes the answer is "no" — noise in particular *inflates* the apparent dimension \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}. And the modern refinement is that real data is usually not *one* smooth manifold but a **union of several** — cats, dogs, cars, each its own sheet \cite[Brown et al., 2023]{brown2023union}. So the honest statement is: the useful region is a *low-complexity, low-dimensional* subset (a manifold, or a union of them) of a vast space — which is exactly the shape claim this chapter needs, and nothing stronger.
-</div>
-
-**The phase-space form of the same fact.** An **attracting invariant manifold** in phase space — a surface that nearby trajectories flow onto and then stay on, indefinitely — is the dynamical-systems home of this idea \cite[manifold learning]{manifold_learning_wiki}. If such an attracting surface exists, the long-time behaviour of the system *is* that surface; the rest of phase space is only where the transients live before they decay into it. "The system only really does something on the attractor." That is the phase-space form of "the model only works on the slice."
+**In the pendulum language:** the low-energy slice is like a surface that nearby paths flow *onto* and then stay on — an **attractor** \cite[manifold learning]{manifold_learning_wiki}. Once the dust settles, the system is *on* the surface; the rest of the space is only where the settling-down happens. "The system only really does something on the attractor" is the phase-space form of "the model only works on the slice."
 </div>
 
 <div class="md">
-## The shape of the slices
+## What shape is the slice?
 
-We now know the useful slice is (i) *low-energy*, (ii) *low-dimensional*, and (iii) *measure-zero* in the ambient space. But what is its **shape**? Three answers — one from physics, one from measure theory, one from the machine — and they are not competing; they are three directions on the same slice.
+We've said the slice is low-energy, low-dimensional, and measure-thin. But what does it actually *look like*? Three pictures — one from physics, one from probability, one from the machine — and they are not rivals; they are three angles on the same slice.
 
-**1. When the system is integrable, the slice is a *torus*.** A torus is a donut — or, better, a coffee mug, since a mug squished flat *is* a donut. The **Liouville–Arnold theorem** is one of the cleanest shape results in all of mechanics \cite[Liouville–Arnold]{liouville_arnold_wiki}. Take a Hamiltonian system with $n$ degrees of freedom that is *integrable* — it carries $n$ independent conserved quantities (the energy among them) that all Poisson-commute. At a regular point the state is confined to the *common level set* of those $n$ conserved quantities, and if that level set is compact and connected it is **diffeomorphic to the $n$-torus $\mathbb{T}^{n}$**: one donut-hole per independent oscillation. In **action–angle coordinates** the motion becomes nothing more than $n$ circles turning at constant speeds:
+**1. A donut (when the motion is orderly).** When a system's motion is simple enough — no chaos, just several independent little oscillations — its long-run behaviour winds around a **donut-shaped** surface in phase space, one hole per independent oscillation. That orderly case is the shape named by the **Liouville–Arnold theorem** \cite[Liouville–Arnold]{liouville_arnold_wiki}: one free circle per independent motion, so the slice's *shape* literally counts the independent motions. (A donut and a coffee mug are the same shape, once you squish the handle — that is all a "torus" is.)
 
-$$
-\underbrace{\dot{\theta}_{i} \;=\; \omega_{i}(I) \;=\; \frac{\partial H}{\partial I_{i}}}_{\text{“angle }\theta_{i}\text{ winds around its circle at a \emph{constant} rate, set by the action }I_{i}\text{”}}
-\qquad\Longrightarrow\qquad
-\underbrace{\theta_{i}(t) \;=\; \theta_{i}(0) + \omega_{i}\,t}_{\text{the state is a point drifting around }\mathbb{T}^{n}\text{, never leaving it}}.
-$$
+**2. A thin shell (where the weight sits).** We saw in the temperature section that in a big system the energy locks onto one value to within about $1/\sqrt{N}$. So almost all the probability sits in a thin band around one energy — a **shell**. Here is the lovely paradox: the slice is *measure-zero* for a uniform random point (nothing is there), yet it carries *essentially all* the weight under the dynamics (everything is there). Empty and full at the same time.
 
-So for the idealised, well-behaved system, the useful slice has a *precise* shape:
+**3. Groves of solutions (what the machine sees).** A trained network's own "phase space" is its *weight space*, with the loss as its energy. A famous study of this landscape \cite[Saxe, McClelland & Ganguli, 2014]{saxe2014deep} found that the set of *best* answers is not a scatter of isolated dots: it has **valleys and flat plains** — structure, not dust. And there is a simple reason it is connected: **rearranging the neurons inside a layer does not change what the network does**, so the same answer is represented by many different weight vectors. The solutions come in whole *families*, forming flat, symmetry-made **groves** rather than a dust of points.
 
-$$
-\boxed{
-\begin{aligned}
-&\text{integrable system}\ \Longrightarrow\ \text{the useful slice is a torus }\mathbb{T}^{n},\\
-&\text{one free circle per degree of freedom. The \emph{shape} of the slice}\\
-&\text{\emph{is} the count of the independent motions.}
-\end{aligned}
-}
-$$
-
-Not an arbitrary blob, not a random region: a torus, whose topology literally encodes how many independent oscillations the system has.
-
-**2. As a place where mass lands, the slice is a *thin shell*.** Remember the thin-shell fact from the temperature section: the energy of a large system locks onto one value to within about $1/\sqrt{N}$. That is not an approximation; it is a theorem — the **concentration of measure** phenomenon, the result behind the equivalence of the ensembles of statistical physics \cite[concentration of measure]{concentration_of_measure_wiki}. So the Boltzmann/Gibbs measure piles essentially all of its weight onto a thin band around the typical energy. There are thus **two independent senses of "thin," and both hold at once**:
-
-$$
-\boxed{
-\begin{aligned}
-&\text{measure-zero for a \emph{uniform} point\ \ \ \ (nothing is there);}\\
-&\text{yet carrying \emph{all} the mass under the \emph{dynamics}\ \ \ \ (everything is there).}\\
-&\text{The useful slice is, at once, empty and full.}
-\end{aligned}
-}
-$$
-
-**3. As the machine sees it, the slice is a *manifold* — and even the solutions have a shape.** The data manifold $M^{k}\subset\mathbb{R}^{N}$ is not assumed to be one smooth flat surface. Real data manifolds are **curved** (they carry intrinsic Riemannian curvature), can be **branched** or **multi-modal** (a union of patches — the "two moons," the "Swiss roll," an S-curve), and can carry **nontrivial topology** (holes, handles — the bagel in the face example) \cite[manifold learning]{manifold_learning_wiki}.
-
-And the *model's own* phase space — **weight space** — has its own slice geometry, with the loss as its energy. A body of work on the loss landscape, beginning with the analysis of deep *linear* networks \cite[Saxe, McClelland & Ganguli, 2014]{saxe2014deep}, found that the set of *global* minima is not a scatter of isolated points: it has **basins and plateaus** — structure, not dust. On top of that, a network's function is unchanged by permuting the units of a layer (and, for sign-symmetric activations, by flipping them), so the *same* solution is represented by many weight vectors. The minima therefore come in whole **families**, forming flat, symmetry-generated "groves" rather than a dust of points:
-
-$$
-\boxed{
-\begin{aligned}
-&\text{even the set of \emph{solutions} has a shape: flat, connected,}\\
-&\text{symmetry-generated — \emph{groves} of minima, not a dust of points.}
-\end{aligned}
-}
-$$
-
-<div class="optional md" data-headline="Three shapes, one slice — and which one is 'the' shape">
-The three shapes describe the slice from three directions at once, and they agree on the *form* even where they differ in the details. The **torus** is the shape the *dynamics* impose when the system is integrable — the geometric skeleton of the motion. The **thin shell** is the shape the *measure* imposes — where the probability actually sits, which is where the torus lives, concentrated. The **manifold / grove** is the shape *learning* imposes — the low-dimensional, low-energy, symmetry-structured set a trained model is built to live on. The physics gives the torus and the shell as *theorems*; the machine gives the manifold and the grove as *empirical, structural* facts. The honest claim of this chapter is the common **form** — a thin, low-complexity, low-energy subset of a vast space of possibilities — *not* the claim that a trained network is literally a torus in $\mathbb{R}^{6N}$.
+<div class="optional md" data-headline="Three shapes, one slice — which one is “the” shape">
+All three describe the same slice from three directions. The **donut** is the shape the *motion* imposes (the geometry of the dynamics). The **shell** is the shape the *probability* imposes (where the weight actually sits — which is where the donut lives, concentrated). The **surface / grove** is the shape *learning* imposes (the low-dimensional, low-energy, symmetry-structured set a trained model is built to live on). Physics gives the donut and the shell as *theorems*; the machine gives the surface and the grove as *empirical, structural* facts. The honest claim is the shared **form** — a thin, low-complexity, low-energy corner of a vast space of possibilities — *not* that a trained network literally is a donut in a 6N-dimensional space.
 </div>
 </div>
 
 <div class="md">
-## What breaks off the slice
+## What happens when it drifts off the slice
 
-Everything that goes *wrong* with a model is, in this language, one thing: the input — or the internal state — has drifted **off the slice**, into a high-energy region.
+In this language, everything that goes *wrong* is one thing: the input — or the model's internal state — has drifted **off the slice**, into a high-energy region.
 
-- **Out-of-distribution input.** The input is a point the manifold does not pass through. The model is asked to evaluate on a configuration it was never sculpted for; the energy there is high and uncontrolled, and the output is whatever the landscape happens to do there — often *confident* nonsense, because the network has no signal that it is off-slice.
-- **Adversarial examples.** A tiny perturbation moves a data point just off the manifold and, because the energy between two neighbouring basins can be steep, over a cliff into a basin with the *wrong* label. The point is *nearly* on the slice; the answer is *completely* off it.
-- **Temperature and sampling.** The Boltzmann selector is governed by $\beta$. Low temperature keeps the sampler glued to the minima — you get almost nothing but the argmin. High temperature lets it wander up the energy surface, drawing from far-off, high-energy regions — you get the incoherent. The <a href="samplinglab">Temperature &amp; Sampling</a> chapter is a study of exactly this knob.
-- **Hallucination.** The model has drifted to a configuration that is *locally* low-energy — it sounds fluent, it is a minimum of its *own* internal energy — but that does not descend from a grounded cover. In energy terms it is a **spurious local minimum**: a low-energy pocket the data did not put there. This is exactly the "locally coherent, not true" case of the <a href="coherent_world_models">Coherent World Models</a> chapter, now given a coordinate.
+- **Out-of-distribution input.** The input is a point the surface does not pass through. The model is asked about something it was never shaped for; the energy there is high and uncontrolled, and the answer is whatever the landscape happens to do there — often *confident* nonsense, because the model has no built-in alarm that it is off-slice.
+- **Adversarial examples.** A tiny nudge moves an input just off the surface and, because the energy can change *fast* between two neighbouring valleys, over the rim into a valley with the *wrong* label. The input is *nearly* on the slice; the answer is *completely* off it.
+- **Temperature and sampling.** The Boltzmann selector is controlled by temperature. Low: the sampler stays glued to the valleys — almost nothing but the single best answer. High: it wanders up into high-energy regions — you get the incoherent. (See the <a href="samplinglab">Temperature &amp; Sampling</a> chapter.)
+- **Hallucination.** The model drifts to a spot that is *locally* low-energy — it sounds smooth and confident, a minimum of its *own* internal energy — but that spot was never created by real data. It is a **fake valley**: a low pocket the data did not put there. This is the "sounds right, isn't true" case, now with a coordinate — the same case the <a href="coherent_world_models">Coherent World Models</a> chapter met as "locally coherent, not true."
 
 $$
 \boxed{
 \begin{aligned}
-&\text{on the slice} \quad\Rightarrow\quad \text{low energy, coherent, (usually) true;}\\
-&\text{off the slice} \quad\Rightarrow\quad \text{high / uncontrolled energy, incoherent, hallucinated.}
+&\text{on the slice}\ \Rightarrow\ \text{low energy, coherent, (usually) true;}\\
+&\text{off the slice}\ \Rightarrow\ \text{high / uncontrolled energy, incoherent, made up.}
 \end{aligned}
 }
 $$
 </div>
 
 <div class="md">
-## The one diagram
+## The whole thing, in one picture
 
-Each row is a stricter slice of the one above it, and a model's *useful* behaviour lives on the bottom rows:
+Each row is a narrower slice of the one above it, and the model's *useful* behaviour lives on the bottom rows:
 
 $$
 \begin{array}{c|c|c}
-\textbf{layer} & \textbf{the space} & \textbf{where the system actually is} \\
+\textbf{row} & \textbf{the space} & \textbf{where the system actually is} \\
 \hline
-\text{full phase space} & T^{*}Q,\ \text{all }(q,p) & \text{all of it} \\
-\text{energy shell} & \{H = E\} & \text{one level set} \\
-\text{data manifold} & M^{k}\subset \mathbb{R}^{N},\ k\ll N & \text{the low-energy slice} \\
-\text{basin / trajectory} & \text{one attractor} & \text{the particular run} \\
+\text{full phase space} & \text{every place + every way of moving} & \text{all of it} \\
+\text{energy slice} & \text{one fixed energy }H & \text{one curve / level set} \\
+\text{data surface} & \text{a low-dimensional surface in a huge space} & \text{the useful slice} \\
+\text{one run} & \text{one valley / one path} & \text{this particular answer} \\
 \end{array}
 $$
 
-**Where the rest of the course lives on this picture.**
+**How this ties the earlier chapters together.**
 
-- **Coherent Difference.** The embedding space *is* the configuration space; the directions that carry meaning are the *data manifold inside it*, not the whole $\mathbb{R}^{d}$. The geometry of an embedding is, in this language, a low-energy slice made visible.
-- **Coherent World Models.** The "accessible region" $c_{\mathrm{acc}}$ was introduced there as an honest limit on what a model covers. This chapter gives it a name and a mechanism: $c_{\mathrm{acc}}$ *is* the low-energy slice of the world's phase space — the part the learned energy makes probable. The model is a global section *over that slice*, no more, exactly as the earlier chapter insisted.
-- **The Optimizer and the loss landscape.** Training *is* the sculpting of the energy: descending the loss so that the data manifold becomes the low-energy set. Every gradient step is a move of the *energy function*, not of the data.
+- **Coherent Difference** said meaning comes from the *differences* between things, arranged in a space. In this language: that space is the configuration space, and the directions that actually carry meaning are the *data surface inside it*, not the whole space.
+- **Coherent World Models** said a model only covers the part of the world it can actually reach (it called that region the "accessible region"). This chapter names and mechanises it: that reachable region *is* the low-energy slice — the part the learned energy makes likely.
+- **The Optimizer / loss landscape.** *Training* is exactly the act of shaping the energy: sliding the loss down until the data surface *becomes* the low-energy set. Every step moves the *energy function*, not the data.
 
 $$
 \boxed{
 \begin{aligned}
-&\text{one shape, three chapters:}\\
-&\text{meaning is glued (difference), the model is a slice (world),}\\
-&\text{and the slice is \emph{selected} by energy (here).}
+&\text{one idea, three chapters:}\\
+&\text{meaning is built from differences, the model is a slice of the world,}\\
+&\text{and the slice is \emph{picked out} by an energy.}
 \end{aligned}
 }
 $$
 </div>
 
 <div class="md">
-## One sentence, and the status of the chapter
+## In one sentence — and an honest word about it
 
 $$
 \boxed{
 \begin{aligned}
-&\textbf{Usefulness is not a property of a model's whole space of possibilities;}\\
-&\textbf{it is a property of the thin, low-energy, low-dimensional slice}\\
-&\textbf{of it that the learned energy function has made probable.}
+&\textbf{An AI is not “useful everywhere in its space of possibilities.”}\\
+&\textbf{It is useful on one thin, low-energy, low-dimensional slice of it —}\\
+&\textbf{the slice its learned energy has made likely.}
 \end{aligned}
 }
 $$
 
-**Status.** As with the previous two chapters, this is a *lens*, not a theorem. The physics is exact about *itself*: phase space, the Hamiltonian, the Boltzmann selector, the measure-zero slice — each is a fact. The transfer to machines is *structural*. What carries over is the **shape** — a scalar field selecting a measure-thin, low-complexity subset of a vast space of possibilities — not the literal apparatus (no $\omega$, no conservation law, no temperature in a frozen LLM). The standing rule of the course applies here without exception: **a useful analogy is not a theorem.** Where this chapter's energy is the loss and the slice is the data manifold, that is a precise structural claim. Where it would require a GPU to conserve a Hamiltonian, it is not — and it does not.
+**The honest word.** The physics in this chapter is *exactly true about itself*: the phase space, the energy, conservation, the Boltzmann rule, the thin slice — each is a real fact. The step from physics to a machine is a *metaphor*, not a theorem. What carries over is the **shape** — a single number picking out a tiny, low-complexity corner of a huge space of possibilities. What does *not* carry over is the literal machinery: a frozen language model has no pendulum, no conserved energy, no real temperature. The course's standing rule applies: **a useful analogy is not a theorem.** Where the energy is the loss and the slice is the data surface, that is a precise structural claim. Where it would require a GPU to conserve a Hamiltonian, it is not — and it does not.
 </div>
