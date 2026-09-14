@@ -93,6 +93,7 @@
 	incl("Over- and underfitting", "overandunderfittinglab");
 	incl("Deep Learning Mechanics: ResNets & Vanishing Gradients", "resnetlab");
 	incl("Understanding Layer Normalization", "normalizationlab");
+	incl("What Machines See", "computer_vision");
 	incl("Reinforcement Learning", "reinforcement_learning");
 	incl("Tokenization: How Words become Numbers", "tokenizerlab");
 	incl("Coherent Difference", "coherent_difference");
@@ -126,15 +127,19 @@
 	incl("Production Serving & Inference", "production_serving");
 	incl("Reasoning & Test-Time Compute", "reasoning");
 	incl("Evaluation & Benchmarks", "evaluation");
+	incl("Reliability — Calibration & Knowing When to Stop", "reliability");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("The Global AI Ecosystem", "global_ai_ecosystem");
 	incl("The Untold History of AI", "untold_history");
 	incl("The Mind That Built Machines", "human_mind");
 	incl("Beyond LLMs — The Wider World of Algorithms & Models", "beyond_llms");
+	incl("Why Do Networks Generalize?", "deep_theory");
 	incl("Frontier Topics", "frontier");
+	incl("AI Alignment — Making Optimizers Want What We Want", "alignment");
 	incl("AI Law & Regulation", "law_regulation");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 	incl("Unexpected Capabilities of LLMs", "unexpected_capabilities");
+	incl("Closing the Loop — AI for Science", "ai_for_science");
 	incl("Appendix", "appendix");
 	incl("Software: Operating Systems, Programming Languages & the Abstraction Stack", "software");
 	#incl("Formulary — Every Equation, One Place", "formulary");
