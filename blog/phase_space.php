@@ -9,10 +9,11 @@
     color: "#7c3aed"
     topics: ["phase space", "geometric topology", "meaningful language", "clusters and voids", "interpretation map", "fiber bundle", "heavy-tail distribution", "landscape"]
 -->
-<h1 class="title" style="font-size:2rem; margin:1rem 0; text-align:center;">Phase Space: The Shape of Meaningful Language</h1>
 
 
 <div class="md">
+# Phase Space: The Shape of Meaningful Language
+
 This chapter is a working mathematical treatment of *meaningful language spaces*. It begins from the idea that the objects of study are not tokens, not words, and not even sentences, but the structured *possibility spaces* in which those things live — the space of all potential utterances, the space of all interpretations those utterances can generate, and the spaces of worlds, actions, and consequences in which those interpretations can be tested.
 
 The guiding intuition is that meaning is not a substance carried by individual symbols. Meaning is a property of structure: of the shape of the space, the geometry of its clusters and voids, and the maps that relate one space to another. A single sentence, viewed in isolation, is almost meaningless. What makes it meaningful is its position within a landscape — the nearby utterances, the distant ones, the gaps, the bridges, and the patterns that persist across scale.
@@ -35,6 +36,7 @@ This intuition has a long history. The idea that meaning is *relational* and *st
 </div>
 
 <div class="md">
+# Phase Space: The Shape of Meaningful Language
 ## The possibility space $X$
 
 Let us begin with the most basic object. Let $X$ be the space of all potential linguistic configurations. An element of $X$ is a *linguistic form*: a string, a phonological pattern, a syntactic frame, or more generally anything that can be uttered or written. We do not need to fix a precise alphabet or grammar at this stage. What matters is that $X$ carries structure:
@@ -127,6 +129,7 @@ $
 M_{\mathrm{strong}} \;=\; C_{\mathrm{syn}} \cap C_{\mathrm{sem}} \cap C_{\mathrm{ground}} \cap C_{\mathrm{epi}},
 $
 while weaker forms of meaning occupy the other intersections.
+</div>
 
 <figure style="max-width:460px; margin:1.5em auto; text-align:center;">
 <svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="Void as a direction: four arrows from a fully-meaningful center, each pointing toward one kind of void" style="width:100%; height:auto; display:block; margin:0 auto;">
