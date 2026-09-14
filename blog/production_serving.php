@@ -223,6 +223,20 @@ A good production engineer knows when to skip the LLM entirely:
 Rule of thumb: prototype with the best model; measure cost; downgrade if necessary; cache aggressively; consider a hybrid pipeline (cheap heuristic + occasional LLM fallback).
 </div>
 
+<div class="md">
+## MLOps / LLM-Ops: life after deployment
+
+Serving is only the start. In production a model is a **system** that drifts, regresses, and costs money:
+
+* **Monitoring & drift.** Inputs and quality shift over time (new slang, new user populations, data leaks). Track latency and error rate *and* the statistical shape of what is coming in.
+* **Evals in CI.** Run a regression suite of prompts + automatic metrics on every change, like unit tests for code; A/B new weights against old on live traffic.
+* **Versioning & rollback.** Treat weights, prompts, and retrieval indexes as versioned artifacts you can roll back in minutes.
+* **Feedback loops.** Capture corrections and rejections, label a slice, and fold it back into fine-tuning — a data flywheel.
+* **Cost governance.** Token cost, batch size, and model routing (cheap model first, expensive on escalation) are first-class constraints, not afterthoughts.
+
+The discipline borrows its bones from software **continuous delivery** \cite[Wikipedia]{continuous_delivery_wiki} — build, test, ship, observe, repeat — now applied to a model whose "code" is a billion floating-point weights. The goal is the same as in the <a href="evaluation">Evaluation chapter</a>: a measurement loop tight enough that you learn, before a user does, when the model has started to fail.
+</div>
+
 <script>
 // KV cache memory growth
 (function() {
