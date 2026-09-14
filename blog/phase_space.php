@@ -137,9 +137,9 @@ Start with the low, well-lit ground of the height map — the region the model a
 
 **How it forms.** It is low-energy because that is where the data put its mass, and the data is *low-dimensional*: the useful states do not scatter through the whole space; they lie on a **low-dimensional surface** floating inside it. That is the **manifold hypothesis** \cite[Sindhwani, Belkin & Niyogi, 2006]{sindhwani2006geometric} \cite[manifold learning]{manifold_learning_wiki} — real data, though it lives in a space with a huge number of coordinates, is really controlled by only a few free knobs.
 
-**The face example.** Every photograph of every human face is a point in a giant space of pixel values. But "all faces" is not the whole space — it is a *surface* inside it. Slide smoothly along that surface and you morph one face into another (change the jaw, the eyes, the light), and *every step of the way is still a real face*. The classic picture even has a **hole**: you can go all the way round from "eyes open" to "eyes closed" and back without ever leaving a real face, so the surface is shaped like the inside of a bagel \cite[Olah, 2014]{olah2014manifolds}.
+**The face example.** Every photograph of a human face is a point in a giant space of pixel values, but "all faces" is not the whole space — it is a *surface* inside it. Sliding smoothly along that surface morphs one face into another — change the jaw, the eyes, the light — and *every step of the way is still a real face*. The classic picture even has a **hole**: going all the way round from "eyes open" to "eyes closed" and back never leaves a real face, so the surface is shaped like the inside of a bagel \cite[Olah, 2014]{olah2014manifolds}.
 
-**A number you can feel.** A scaled-and-rotated letter "A" is still just one point in that huge space, and only *two* knobs — size and rotation — move it. So every letter "A" sits on a **two-dimensional surface** floating inside a space with thousands of dimensions \cite[manifold learning]{manifold_learning_wiki}: a sheet with two degrees of freedom inside an enormous arena. A language model is more extreme still: the number of possible 100-token answers is $10^{400}$ for a realistic vocabulary — roughly **320 more digits** than the atoms in the observable universe ($\sim10^{80}$). And yet the *grammatical, on-topic* answers are a measure-thin sliver of that space. The model works **on that sliver, and only on that sliver.**
+**A number one can feel.** A scaled-and-rotated letter "A" is still just one point in that huge space, and only *two* knobs — size and rotation — move it. So every letter "A" sits on a **two-dimensional surface** floating inside a space with thousands of dimensions \cite[manifold learning]{manifold_learning_wiki}: a sheet with two degrees of freedom inside an enormous arena. A language model is more extreme still: the number of possible 100-token answers is $10^{400}$ for a realistic vocabulary — roughly **320 more digits** than the atoms in the observable universe ($\sim10^{80}$). And yet the *grammatical, on-topic* answers are a measure-thin sliver of that space. The model works **on that sliver, and only on that sliver.**
 
 **What shape it is.** Three pictures — one from physics, one from probability, one from the machine — are not rivals but three angles on the same sheet:
 
@@ -163,63 +163,32 @@ Make "thin" exact. A smooth surface of dimension $k$ sitting inside a space of d
 Two honesty notes. First, it is a *hypothesis*, not a theorem — and it can fail. Fefferman, Mitter and Narayanan wrote a whole paper on how to *test* whether a data set really does lie on a low-dimensional surface, and found the question is genuinely hard to verify, and sometimes the answer is "no" (noise, in particular, *inflates* the apparent dimension) \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}. Second, real data is usually not *one* surface but a **union of several** — cats, dogs, cars, each its own sheet \cite[Brown et al., 2023]{brown2023union}. The safe statement is "a low-complexity, low-dimensional region of a huge space" — exactly what we need, and no more.
 </div>
 
-**The dynamical-systems version of the same idea.** For a system that *does* lose energy to friction, there is a precise object that plays this role: an **attractor** — a set that nearby trajectories flow onto and then stay on \cite[manifold learning]{manifold_learning_wiki}. Once the transients have decayed, the long-run behaviour is *on* the attractor; the rest of the space is only where the settling-down happens. (The frictionless pendulum is the limiting case with no attractor — it stays on its energy curve forever — which is exactly why the *slice* is the right word.) "The system only really does something on the attractor" is the dynamical-systems form of "the model only works on the slice."
+**A dynamical-systems name for it.** In a system that loses energy to friction, the long-run behaviour is a set that nearby trajectories flow onto and then stay on — an **attractor** \cite[manifold learning]{manifold_learning_wiki}. "The system only really does something on the attractor" is the dynamical-systems form of "the model only works on the reachable region."
 </div>
 
 <div class="md">
-## The spaces it never reaches
+## The unreachable region: how it forms, and its shape
 
-Look at what surrounds the thin slice. The (input, output) space is full of points the model will effectively *never* produce — pairs where the output makes no sense for the input. It does not answer "write a sonnet about the sea" with "aaaa…", and it does not answer "what is 2+2?" with "ababab…". Those outputs are *right there* in the space, perfectly valid strings, and yet the model never lands on them. Why?
+Now the high wilderness that surrounds the thin, lit-up ground.
 
-**The question that matters: if everything is one space, what separates the region where meaning sits from the region where it does not?**
+**How it forms.** It is simply the *complement* — every (input, output) pair the data did not make likely. And it is not *blocked*; it is **starved**. The model is never *forbidden* from producing a nonsense output — nothing in its wiring blocks that string. It has simply been given almost zero *weight* there, because the data almost never pairs that output with a sensible input. That is the "it could always reply 'aaaa…', as long as the context allows, but it does not" point made precise: the *context* — the training distribution — is exactly what made the bad pairs high-energy, so the sampling never reaches them. The wilderness is empty for a *statistical* reason, not a *structural* one.
 
-The answer — and it is the crux — is that **it is not the shape of the space.** There is no wall, no border, no separate "meaningless room." The meaningful and the meaningless live in the *same* space, side by side. What draws the line is not geometry; it is the **training data**, through the likelihood the model learned from it.
-
-**The data paints the line onto the space as a single number.** Recall the energy. For a language model the energy of a pair is essentially its *surprise* — how unlikely that output is *given that input*, according to the data \cite[LeCun et al., 2007]{lecun2007ebm}:
-
-$$
-\underbrace{E(x)}_{\text{energy of a pair }x}
-\;=\;
-\underbrace{-\,\log\, p(x)}_{\text{how “unexpected” the pair is to the data}}
-\;+\;
-\underbrace{\text{const.}}_{\text{the same for every pair, so it never matters}}.
-$$
-
-Here $x$ is an (input, output) pair and $p(x)$ is how likely that pair is under the distribution the model learned. A pair the data supports — "what is 2+2?" → "4" — has low energy. A pair the data almost never contains — "write a sonnet" → "aaaa…" — has very high energy. So *the same string* "aaaa…" is high energy (meaningless) next to "write a sonnet about the sea," but low energy (perfectly fine) next to "print the letter a five times." Meaning is not a property of the *output* alone; it is a property of the **pair**, and the training data is what decides.
-
-**So the empty regions are empty for a statistical reason, not a structural one.** The model is never *forbidden* from saying "aaaa…" — nothing in its wiring blocks that string. It has simply been given almost zero *weight* there, because the data almost never pairs it with a sensible input. That is the "it could always reply with 'aaaa…', as long as context allows, but it doesn't" point made precise: the *context* — the training distribution — is exactly what made it high-energy, so the sampling never reaches it. The boundary is a **cliff in probability, not a wall in the space**.
+**What shape it is.** If the reachable region is a thin sheet, the unreachable region is *everything else* — and by raw count, "everything else" is *almost the whole space*. In high dimensions the raw volume of a region does not sit near its middle at all: it concentrates in a thin shell far out toward the edges, so the data's thin sliver (measure-zero, all the weight) is wrapped inside a vast bulk that is, by volume, nearly everything \cite{concentration_of_measure_wiki}. That is the paradox, stated cleanly:
 
 $$
 \boxed{
 \begin{aligned}
-&\text{one space holds the meaningful and the meaningless together;}\\
-&\text{the training data paints an energy across it;}\\
-&\text{meaning sits where that energy is low — the rest is wilderness.}
+&\text{the reachable sliver is measure-zero (nothing, for a random point)}\\
+&\text{yet carries almost all the weight (everything, under the model);}\\
+&\text{the unreachable bulk is almost all the volume}\\
+&\text{yet carries almost no weight (nothing, under the model).}
 \end{aligned}
 }
 $$
 
-**The spatial picture.** Paint the (input, output) space as a height map, height = energy. The training data is a thin, low ribbon winding through a vast, high, empty wilderness. The model walks only on the ribbon. The wilderness is not locked away — it is simply where there is no data, and therefore no meaning. The model could step off the ribbon at any point; it just has almost no probability mass to do so. Its effective world is the ribbon, not the whole space.
+Empty and full, at the same time, for opposite reasons.
 
-**Now name that ribbon.** The thin, lit-up region — the whole space with the unreachable wilderness subtracted out — is not nameless; three fields give it three names:
-
-- **Measure theory** calls it the **support** of the distribution: the place the mass *lives* — the largest region in which every point still has weight around it \cite{support_measure_wiki}.
-- **Information theory** calls it the **typical set**: the answers that are "typical" of what the data actually looks like \cite{typical_set_wiki}.
-- **Physics** calls it the **ground state** — the lowest-energy configuration — what the system becomes as the temperature goes to zero \cite{ground_state_wiki}.
-
-**What can be said about its form?** Four things, and each is a result, not a guess.
-
-*It is exponentially thin.* As answers get longer, the number of *typical* answers grows only like the entropy's exponent, while the total number of possible answers grows faster still. The **fraction** of the whole space that is typical is a small number that **goes to zero exponentially fast** the moment the data has any structure at all. A vanishing sliver of the space holds (almost) all the probability — the chapter's central claim, stated as a theorem \cite{aep_wiki}.
-
-*It is a surface, not a volume.* The meaningful pairs sit on, or very near, a **low-dimensional manifold** buried inside the enormous ambient space \cite{manifold_learning_wiki}.
-
-*It concentrates.* In high dimensions, probability mass piles into a thin region rather than spreading out evenly \cite{concentration_of_measure_wiki}.
-
-*It is a union of pockets.* The density has several peaks — its **modes** — and the reachable region is the set of valleys around those peaks, one pocket for each "way the data tends to look" \cite{mode_wiki}.
-
-**Why the wilderness stays empty — the precise reason.** It is not merely that bad answers are unlikely; they are unlikely in the strongest possible way. As an answer grows, the chance of landing far from typical does not just shrink — it shrinks *exponentially fast* \cite{large_deviations_wiki}. The exponent is a single number, the **rate function**, and for a whole region that rate is just the region's **distance from the data**, measured by **KL divergence** \cite{sanov_theorem_wiki}\cite{kl_divergence_wiki}. Here the story closes its circle: that number is the **energy**, and the average energy over the data is the **cross-entropy** — the surprise per token — that the model is *trained to minimize* \cite{cross_entropy_wiki}. Lowering the energy of the data is literally fitting the data. The ML name for stepping off the slice, into the wilderness, is simply going **out-of-distribution** \cite[covariate shift]{covariate_shift_wiki}.
-
-And one thing about its **edge**: there is no wall, only a *scale*. "Reachable" versus "unreachable" is decided by a threshold on the probability — a level of the energy — not by a border. The boundary is a smooth **level set of the energy**, and the model could in principle step over it. It simply has almost no weight on the far side.
+**Why it stays empty — the precise reason.** The bad regions are not merely *unlikely*; they are unlikely in the *strongest* way. As an output grows, the chance of landing far from the typical set does not just shrink — it shrinks **exponentially fast** \cite{large_deviations_wiki}. The exponent is a single number, the **rate function**, and for a whole region that rate is just the region's *distance from the data*, measured by **KL divergence** (Sanov's theorem) \cite{sanov_theorem_wiki}\cite{kl_divergence_wiki}. The farther a region is from what the data looks like, the faster its probability dies.
 
 <div class="optional md" data-headline="The precise statement (for the curious)">
 The model has learned an (approximate) distribution $p(\text{input},\text{output})$ from the training data; the reachable region is where $p$ is large, the wilderness where $p\approx 0$. Three precise names for that region, and the theorem behind the thinness. *Support:* the largest set in which every neighbourhood still carries positive probability — topologically, the whole space minus the (open) set of measure zero \cite{support_measure_wiki}. *Typical set:* for long outputs of length $n$, the sequences with probability near $2^{-nH}$, $H$ the entropy; by the **asymptotic equipartition property** (a law of large numbers) the typical set has total probability $\to 1$ yet size only $\sim 2^{nH}$, against $2^{n\log_2|\mathcal{X}|}$ possible sequences. The typical *fraction* is $2^{nH}/2^{n\log_2|\mathcal{X}|}=2^{-n(\log_2|\mathcal{X}|-H)}\to 0$ exponentially — a vanishing share of the space carrying (almost) all the mass \cite{aep_wiki}\cite{typical_set_wiki}. *Modes and ground state:* the density's peaks and their basins; at zero temperature the Boltzmann measure collapses entirely onto the lowest-energy states, the ground state(s) \cite{mode_wiki}\cite{ground_state_wiki}. One caveat: a real softmax network has $p>0$ *everywhere*, so its topological support is technically the whole space — for a net the thin slice is not the support but the **high-density / typical** part of it (probability above some threshold). And "meaningful" means *typical under the training data*, a statistical rather than logical notion: different data lay down a different slice. The deepest statement is the **large-deviation** one: the probability of a region decays as $\exp(-n\,I)$ with $I$ the **rate function**, and for the empirical statistics that rate is the **KL divergence** from the data \cite{sanov_theorem_wiki}\cite{large_deviations_wiki}. The rate function is the Legendre dual of the entropy — the same free-energy/entropy duality of statistical mechanics that holds this whole chapter together \cite{kl_divergence_wiki}.
@@ -227,19 +196,30 @@ The model has learned an (approximate) distribution $p(\text{input},\text{output
 </div>
 
 <div class="md">
-## What shape is the slice?
+## The line between them
 
-We know the slice is low-energy, low-dimensional, and measure-thin. But what does it actually *look like*? Three pictures — one from physics, one from probability, one from the machine — and they are not rivals; they are three angles on the same slice.
+Finally, the boundary between the two regions.
 
-**1. A donut (orderly motion).** When the motion is simple enough — no chaos, just several independent little oscillations — its long-run behaviour winds around a **donut-shaped** surface in phase space, one hole per independent oscillation. That orderly case is the shape named by the **Liouville–Arnold theorem** \cite[Liouville–Arnold]{liouville_arnold_wiki}: one free circle per independent motion, so the slice's *shape* literally counts the independent motions. (A donut and a coffee mug are the same shape once you squish the handle — that is all a "torus" is.)
+There is **no wall** — only a *scale*. "Reachable" versus "unreachable" is decided by a **threshold on the energy**, not by a geometric border. The line is the **level set** of the energy at some height,
 
-**2. A thin shell (where the weight sits).** From the temperature section: in a large system the energy locks onto one value to within about $1/\sqrt{N}$. So almost all the probability sits in a thin band around one energy — a **shell**. Here is the paradox, stated cleanly: the slice is *measure-zero* for a uniform random point (nothing is there), yet it carries *essentially all* the weight under the dynamics (everything is there). Empty and full at the same time.
+$$
+\underbrace{\{\,x \,:\, E(x) = E_0\,\}}_{\text{the contour of the height map at height }E_0},
+$$
 
-**3. Groves of solutions (what the machine sees).** A trained network's own "phase space" is its *weight space*, with the loss as its energy. A famous study of this landscape \cite[Saxe, McClelland & Ganguli, 2014]{saxe2014deep} found that the set of *best* answers is not a scatter of isolated dots: it has **valleys and flat plains** — structure, not dust. And there is a simple reason it is connected: **rearranging the neurons inside a layer does not change what the network does**, so the same answer is represented by many different weight vectors. The solutions come in whole *families*, forming flat, symmetry-made **groves** rather than a dust of points.
+a smooth contour hugging the sheets — the outer surface of the thin shell. The model could in principle step over it; it simply has almost no weight on the far side. The boundary is a **cliff in probability, not a wall in the space**.
 
-<div class="optional md" data-headline="Three shapes, one slice — which one is “the” shape">
-All three describe the same slice from three directions. The **donut** is the shape the *motion* imposes (the geometry of the dynamics). The **shell** is the shape the *probability* imposes (where the weight actually sits — which is where the donut lives, concentrated). The **surface / grove** is the shape *learning* imposes (the low-dimensional, low-energy, symmetry-structured set a trained model is built to live on). Physics gives the donut and the shell as *theorems*; the machine gives the surface and the grove as *empirical, structural* facts. The honest claim is the shared **form** — a thin, low-complexity, low-energy corner of a vast space of possibilities — *not* that a trained network literally is a donut in a 6N-dimensional space.
-</div>
+And the story closes its circle here. That height, read as a function of position, *is* the rate function — the distance from the data — and its average over the data is the **cross-entropy**, the surprise per token, that the model is *trained to minimize* \cite{cross_entropy_wiki}. Lowering the energy of the data is literally *fitting the data*. So the line is not drawn by some external rule; it is the level set of the very quantity the training optimizes. The machine-learning name for crossing it — for wandering from the low-energy ground into the high wilderness — is simply going **out-of-distribution** \cite[covariate shift]{covariate_shift_wiki}.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{the line between the two regions}\\
+&\;=\; \text{a level set of the energy}\\
+&\;=\; \text{a contour of the rate function (the distance from the data)}\\
+&\;=\; \text{the cross-entropy surface that training minimizes.}
+\end{aligned}
+}
+$$
 </div>
 
 <div class="md">
@@ -269,18 +249,18 @@ Each row is a narrower slice of the one above it, and the model's *useful* behav
 
 $$
 \begin{array}{c|c|c}
-\textbf{row} & \textbf{the space} & \textbf{where the system actually is} \\
+\textbf{region} & \textbf{what it is} & \textbf{volume \quad / \quad probability} \\
 \hline
-\text{full phase space} & \text{every }(q,p)\text{ at once} & \text{all of it} \\
-\text{energy slice} & \text{one fixed energy }H & \text{one curve / level set} \\
-\text{data surface} & \text{a low-dimensional surface in a huge space} & \text{the useful slice} \\
-\text{one run} & \text{one valley / one path} & \text{this particular answer} \\
+\text{full space} & \text{every (input, output) pair} & \text{all of it \quad / \quad 1} \\
+\text{reachable} & \text{a thin low-dimensional sheet, + a halo} & \text{\approx none \quad / \quad \approx all} \\
+\text{unreachable} & \text{the rest: the high wilderness} & \text{\approx all \quad / \quad \approx none} \\
+\text{the line} & \text{a level set of the energy (the cliff)} & \text{a threshold} \\
 \end{array}
 $$
 
 **How this ties the earlier chapters together.**
 
-- **Coherent Difference** said meaning comes from the *differences* between things, arranged in a space. In this language: that space is the configuration space, and the directions that actually carry meaning are the *data surface inside it*, not the whole space.
+- **Coherent Difference** said meaning comes from the *differences* between things, arranged in a space. In this language: that space is the space of all (input, output) pairs, and the directions that actually carry meaning are the *reachable sheet inside it*, not the whole space.
 - **Coherent World Models** said a model only covers the part of the world it can actually reach (it called that region the "accessible region"). This chapter names and mechanises it: that reachable region *is* the low-energy slice — the part the learned energy makes likely.
 - **The Optimizer / loss landscape.** *Training* is exactly the act of shaping the energy: sliding the loss down until the data surface *becomes* the low-energy set. Every step moves the *energy function*, not the data.
 
@@ -308,5 +288,5 @@ $$
 }
 $$
 
-**The honest word.** The physics in this chapter is *exactly true about itself*: the phase space, the energy, conservation, the Boltzmann rule, the thin slice — each is a real fact. The step from physics to a machine is a *metaphor*, not a theorem. What carries over is the **shape** — a single number picking out a tiny, low-complexity corner of a huge space of possibilities. What does *not* carry over is the literal machinery: a frozen language model has no pendulum, no conserved energy, no real temperature. The course's standing rule applies: **a useful analogy is not a theorem.** Where the energy is the loss and the slice is the data surface, that is a precise structural claim. Where it would require a GPU to conserve a Hamiltonian, it is not — and it does not.
+**The honest word.** The core of this chapter is a statement about the space of (input, output) pairs, and that statement is the real part: the space is enormous and high-dimensional; the useful pairs form a thin, low-dimensional region of it — tiny by volume, yet carrying almost all the probability — while the overwhelming rest is high and empty and carries almost none; and a single number, the energy (set by the data), is what separates the two. What is *borrowed* from physics is the vocabulary — "energy," "phase space," "temperature" — which makes the picture easier to hold. But a frozen language model has no conserved quantity and no real temperature. The course's standing rule applies: **a useful analogy is not a theorem.** Where the energy is the loss and the reachable region is the data surface, that is a precise structural claim; where it would require a GPU to conserve a Hamiltonian, it is not — and it does not.
 </div>
