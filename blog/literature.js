@@ -7,6 +7,19 @@ window.bibData = {
 		alternativetitle: "HoTT as a foundation for AI"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Computers in Spaceflight: The NASA Experience  (history.php,
+	 *  untold_history.php)
+	 *  The spaceflight-computing lineage: real-time operation, redundancy,
+	 *  distributed computing and image processing as AI prerequisites.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"tomayko1988spaceflight": {
+		title: "Computers in Spaceflight: The NASA Experience",
+		author: "James E. Tomayko",
+		year: 1988,
+		url: "https://ntrs.nasa.gov/citations/19880069935",
+		alternativetitle: "Computers in Spaceflight (Tomayko 1988)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Geometry II: A Working Geometry for AI  (geometry_ii.php)
 	 *  The working geometric toolkit — projection, SVD, descent,
 	 *  convolution/DFT, and symmetry/equivariance — each tied to AI.
