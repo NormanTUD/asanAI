@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AEP & Shannon–McMillan–Breiman – Interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>
+:root{
+  --bg:#0a0e1a;
+  --bg2:#101627;
+  --panel:#141b30;
+  --panel2:#1a2340;
+  --ink:#e7ecff;
+  --dim:#8892b8;
+  --accent:#7c9cff;
+  --accent2:#ff7ac6;
+  --good:#6ee7b7;
+  --warn:#fbbf24;
+  --bad:#f87171;
+  --border:#2a3358;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,#111a35 0%,#070a15 60%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 120px}
+h1{font-size:2.4rem;margin:0 0 8px;background:linear-gradient(90deg,#7c9cff,#ff7ac6,#6ee7b7);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.7rem;margin:48px 0 12px;color:#fff;border-left:4px solid var(--accent);padding-left:14px}
+h3{font-size:1.2rem;margin:24px 0 8px;color:#c5d1ff}
+p.lead{color:var(--dim);font-size:1.05rem;margin:0 0 24px}
+.chip{display:inline-block;background:var(--panel2);border:1px solid var(--border);color:var(--accent);padding:2px 10px;border-radius:999px;font-size:.8rem;margin-right:6px}
+.card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--border);border-radius:16px;padding:22px;margin:18px 0;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:12px 0}
+.ctrl{display:flex;flex-direction:column;gap:4px;min-width:180px}
+.ctrl label{font-size:.8rem;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+input[type=range]{width:100%;accent-color:var(--accent)}
+button{background:linear-gradient(180deg,#2b3a6b,#1c2547);color:#fff;border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s}
+button:hover{background:linear-gradient(180deg,#3a4d8a,#2a3560);transform:translateY(-1px)}
+button.primary{background:linear-gradient(180deg,#5b7cff,#3d5cd6)}
+button.primary:hover{background:linear-gradient(180deg,#7c9cff,#5b7cff)}
+canvas{background:#060912;border-radius:10px;display:block;width:100%}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px 14px}
+.stat .k{color:var(--dim);font-size:.75rem;text-transform:uppercase}
+.stat .v{color:#fff;font-size:1.2rem;font-weight:700;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.pill{display:inline-block;padding:3px 8px;border-radius:6px;font-size:.75rem;font-family:ui-monospace,monospace}
+.pill.g{background:rgba(110,231,183,.15);color:var(--good);border:1px solid rgba(110,231,183,.3)}
+.pill.b{background:rgba(248,113,113,.15);color:var(--bad);border:1px solid rgba(248,113,113,.3)}
+.pill.w{background:rgba(251,191,36,.15);color:var(--warn);border:1px solid rgba(251,191,36,.3)}
+.toc{position:sticky;top:0;background:rgba(10,14,26,.85);backdrop-filter:blur(10px);z-index:10;padding:12px 0;border-bottom:1px solid var(--border);margin:-32px -24px 24px;padding-left:24px;padding-right:24px}
+.toc a{color:var(--dim);text-decoration:none;margin-right:16px;font-size:.85rem;transition:.2s}
+.toc a:hover{color:var(--accent)}
+.callout{background:rgba(124,156,255,.08);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;margin:16px 0}
+.callout.warn{background:rgba(251,191,36,.08);border-color:var(--warn)}
+.callout.good{background:rgba(110,231,183,.08);border-color:var(--good)}
+.formula{background:#060912;border:1px solid var(--border);border-radius:8px;padding:12px;margin:8px 0;overflow-x:auto}
+kbd{background:#060912;border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:ui-monospace,monospace;font-size:.85em}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+.tag{display:inline-block;background:var(--panel2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-size:.75rem;color:var(--accent);margin:2px}
+select{background:var(--panel2);color:var(--ink);border:1px solid var(--border);padding:6px 10px;border-radius:6px;font-size:.9rem}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;margin:8px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
+progress{width:100%;height:8px;accent-color:var(--good)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc">
+  <a href="#intro">① Intuition</a>
+  <a href="#prereq">② Grundlagen</a>
+  <a href="#entropy">③ Entropie</a>
+  <a href="#lln">④ Gesetz d. gr. Zahlen</a>
+  <a href="#aep">⑤ AEP</a>
+  <a href="#typical">⑥ Typische Menge</a>
+  <a href="#compression">⑦ Kompression</a>
+  <a href="#ergodic">⑧ Ergodizität</a>
+  <a href="#smb">⑨ Shannon–McMillan–Breiman</a>
+  <a href="#continuous">⑩ Kontinuierlich</a>
+  <a href="#summary">⑪ Zusammenfassung</a>
+</nav>
+
+<h1>Die Asymptotische Gleichverteilungs­eigenschaft</h1>
+<p class="lead">Eine interaktive Reise durch das Herz der Informationstheorie – von Shannons Frage bis zum Shannon–McMillan–Breiman-Satz. <span class="chip">Nur klicken & schieben</span> <span class="chip">Kein Wall-of-Text</span></p>
+
+<!-- ================= INTRO ================= -->
+<section id="intro">
+<h2>① Die große Frage – warum überhaupt?</h2>
+<div class="card">
+<p><b>Motivation:</b> 1948 fragte Claude Shannon: <i>„Wie viele Bits brauche ich <b>mindestens</b>, um eine Nachricht aus einer zufälligen Quelle zu speichern oder zu senden?"</i></p>
+<p>Die überraschende Antwort: Obwohl es <b>astronomisch viele</b> mögliche Nachrichten gibt, sind fast alle davon <b>extrem unwahrscheinlich</b>. Die Wirklichkeit lebt in einer winzigen Teilmenge – der <b>typischen Menge</b> – in der alle Sequenzen ungefähr die gleiche Wahrscheinlichkeit haben. Das ist die AEP.</p>
+
+<h3>Live-Experiment: Münzwürfe</h3>
+<p>Wirf eine unfaire Münze <span class="mono" id="coinN">n=100</span>-mal mit Kopf-Wahrscheinlichkeit <span class="mono" id="coinPl">p=0.7</span>. Zähle, wie viele Köpfe kommen.</p>
+<div class="controls">
+  <div class="ctrl"><label>Kopf-Wahrscheinlichkeit p</label><input type="range" id="coinP" min="0.05" max="0.95" step="0.01" value="0.7"></div>
+  <div class="ctrl"><label>Länge n</label><input type="range" id="coinNs" min="10" max="1000" step="10" value="100"></div>
+  <div class="ctrl"><label>Anzahl Simulationen</label><input type="range" id="coinSims" min="100" max="5000" step="100" value="2000"></div>
+  <button class="primary" onclick="runCoin()">Neu würfeln</button>
+</div>
+<div id="coinPlot" style="height:360px"></div>
+<div class="callout">Sieh dir an: Die Verteilung der Anzahl Köpfe konzentriert sich <b>immer enger</b> um den Erwartungswert <span class="mono">np</span>, je größer n wird. Sequenzen wie „nur Köpfe" oder „nur Zahlen" verschwinden praktisch vollständig – obwohl sie theoretisch möglich sind. <b>Das ist die Grundintuition der AEP.</b></div>
+</div>
+</section>
+
+<!-- ================= PREREQ ================= -->
+<section id="prereq">
+<h2>② Grundlagen jenseits der Schulmathematik</h2>
+<p class="lead">Bevor wir loslegen: drei Werkzeuge, die über Abi-Mathe hinausgehen. Alle interaktiv erklärt.</p>
+
+<div class="grid2">
+<div class="card">
+<h3>🎲 Wahrscheinlichkeitsraum <span class="mono">(Ω,B,p)</span></h3>
+<p>Ein Wahrscheinlichkeitsraum ist ein Tripel:</p>
+<ul>
+<li><b>Ω</b> – Menge aller möglichen Ergebnisse (Alphabet)</li>
+<li><b>B</b> – σ-Algebra (welche Teilmengen dürfen Wahrscheinlichkeit tragen?)</li>
+<li><b>p</b> – Maß, das jeder Menge eine Zahl in [0,1] zuweist</li>
+</ul>
+<p>Klick auf Buchstaben, um eine Menge <span class="mono">A ⊂ Ω</span> zu bilden – die Wahrscheinlichkeit summiert sich:</p>
+<div id="probSpace" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0"></div>
+<div class="stat"><span class="k">p(A) =</span> <span class="v" id="probSum">0.00</span></div>
+</div>
+
+<div class="card">
+<h3>📊 Erwartungswert & Varianz</h3>
+<p>Erwartungswert = "durchschnittliches Ergebnis": <span class="mono">E[X]=Σ x·p(x)</span>. Varianz misst die Streuung: <span class="mono">Var[X]=E[(X-E[X])²]</span>.</p>
+<div class="controls">
+  <div class="ctrl"><label>μ (Mittelwert)</label><input type="range" id="evMu" min="-3" max="3" step="0.1" value="0"></div>
+  <div class="ctrl"><label>σ (Streuung)</label><input type="range" id="evSig" min="0.2" max="3" step="0.1" value="1"></div>
+</div>
+<canvas id="evCanvas" height="200"></canvas>
+</div>
+</div>
+
+<div class="card">
+<h3>🌊 Konvergenz-Arten (der wichtigste Punkt!)</h3>
+<p>Was bedeutet „X<sub>n</sub> → X"? In der Wahrscheinlichkeitstheorie gibt es <b>mehrere</b> Konvergenzbegriffe. Für die AEP sind drei wichtig:</p>
+<div class="grid3">
+<div class="stat"><span class="k">In Wahrscheinlichkeit</span><br><span style="font-size:.9rem">P(|Xₙ−X|>ε) → 0</span><br><span class="pill w">schwach</span></div>
+<div class="stat"><span class="k">Fast sicher</span><br><span style="font-size:.9rem">P(lim Xₙ = X) = 1</span><br><span class="pill g">stark</span></div>
+<div class="stat"><span class="k">L¹-Konvergenz</span><br><span style="font-size:.9rem">E[|Xₙ−X|] → 0</span><br><span class="pill g">stark</span></div>
+</div>
+<p style="margin-top:12px">Spiel damit: Beobachte, wie die Folge <span class="mono">Xₙ = 1/n·Σ Bernoulli(p)</span> zu <span class="mono">p</span> konvergiert.</p>
+<div class="controls">
+  <div class="ctrl"><label>Anzahl Pfade</label><input type="range" id="convPaths" min="1" max="80" step="1" value="20"></div>
+  <div class="ctrl"><label>Länge n</label><input type="range" id="convN" min="50" max="2000" step="50" value="500"></div>
+  <div class="ctrl"><label>p</label><input type="range" id="convP" min="0.1" max="0.9" step="0.05" value="0.4"></div>
+  <button class="primary" onclick="runConv()">Simuliere</button>
+</div>
+<div id="convPlot" style="height:340px"></div>
+<div class="callout good">Alle Pfade landen bei <span class="mono">p</span>. Die "fast sichere Konvergenz" heißt: <b>fast jeder einzelne Pfad</b> konvergiert. Konvergenz in Wahrscheinlichkeit sagt nur: der Anteil abweichender Pfade wird beliebig klein.</div>
+</div>
+</section>
+
+<!-- ================= ENTROPY ================= -->
+<section id="entropy">
+<h2>③ Entropie – wie viel Überraschung steckt drin?</h2>
+<div class="card">
+<p><b>Idee:</b> Ein Ereignis mit Wahrscheinlichkeit <span class="mono">p</span> hat Informationsgehalt <span class="mono">−log p</span>. Die <b>Entropie</b> ist der Erwartungswert dieses Überraschungsgehalts:</p>
+<div class="formula" id="entFormula"></div>
+<p>Regle die Wahrscheinlichkeiten einer 3-Symbol-Quelle {A, B, C} und schau, wie sich H(X) verändert:</p>
+<div class="controls">
+  <div class="ctrl"><label>p(A) = <span id="paLbl">0.33</span></label><input type="range" id="pA" min="0.01" max="0.98" step="0.01" value="0.33"></div>
+  <div class="ctrl"><label>p(B) = <span id="pbLbl">0.33</span></label><input type="range" id="pB" min="0.01" max="0.98" step="0.01" value="0.33"></div>
+  <div class="ctrl"><label>p(C) = <span id="pcLbl">0.34</span> (auto)</label><input type="range" disabled></div>
+</div>
+<div class="grid2">
+  <canvas id="entBars" height="220"></canvas>
+  <div>
+    <div class="stat" style="margin-bottom:8px"><span class="k">Entropie H(X)</span><span class="v" id="entVal">1.58</span> <span class="mono">bits</span></div>
+    <div class="stat"><span class="k">Maximum log₂(3)</span><span class="v">1.585</span></div>
+    <div style="margin-top:10px"><progress id="entProg" max="1.585" value="1.58"></progress></div>
+    <p style="color:var(--dim);font-size:.9rem;margin-top:10px">Maximum bei Gleichverteilung → maximale Unsicherheit. Bei p(A)=1 → H=0 (kein Überraschungsmoment).</p>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ================= LLN ================= -->
+<section id="lln">
+<h2>④ Das Gesetz der großen Zahlen – der Motor</h2>
+<div class="card">
+<p>Wenn <span class="mono">X₁, X₂, …, Xₙ</span> i.i.d. sind (unabhängig, identisch verteilt), dann konvergiert der empirische Mittelwert gegen den echten:</p>
+<div class="formula" id="llnFormula"></div>
+<p>Jetzt der geniale Trick von Shannon: Setze <span class="mono">Yᵢ = −log p(Xᵢ)</span>. Dann ist <span class="mono">E[Yᵢ] = H(X)</span>, und das LLN ergibt direkt die AEP! ⬇</p>
+</div>
+</section>
+
+<!-- ================= AEP ================= -->
+<section id="aep">
+<h2>⑤ Die AEP – Shannons Zaubertrick</h2>
+<div class="card">
+<p><b>Aussage:</b> Für i.i.d. Quellen gilt fast sicher:</p>
+<div class="formula" id="aepFormula"></div>
+<p>Das heißt: Die <b>Wahrscheinlichkeit</b> einer typischen langen Sequenz ist ungefähr <span class="mono">2⁻ⁿᴴ</span> – egal welche typische Sequenz du nimmst. <b>Alle typischen Sequenzen sind ungefähr gleich wahrscheinlich!</b> Daher der Name.</p>
+
+<h3>Live-Demonstration</h3>
+<p>Wir generieren viele Sequenzen der Länge n und plotten <span class="mono">−(1/n)·log₂ p(x₁,…,xₙ)</span>. Beobachte, wie sich alles um H(X) sammelt.</p>
+<div class="controls">
+  <div class="ctrl"><label>p(1) für Bernoulli-Quelle</label><input type="range" id="aepP" min="0.05" max="0.95" step="0.01" value="0.3"></div>
+  <div class="ctrl"><label>Sequenz-Länge n</label><input type="range" id="aepN" min="10" max="500" step="10" value="100"></div>
+  <div class="ctrl"><label>Anzahl Sequenzen</label><input type="range" id="aepM" min="100" max="3000" step="100" value="1000"></div>
+  <button class="primary" onclick="runAEP()">Neue Sequenzen</button>
+</div>
+<div id="aepPlot" style="height:380px"></div>
+<div class="callout good">Die rote Linie ist <b>H(X)</b>. Bei kleinem n ist die Streuung groß, bei großem n <b>kollabiert alles auf H</b>. Das ist die AEP live.</div>
+</div>
+</section>
+
+<!-- ================= TYPICAL ================= -->
+<section id="typical">
+<h2>⑥ Die typische Menge – wo die Wirklichkeit lebt</h2>
+<div class="card">
+<p>Die <b>ε-typische Menge</b> <span class="mono">A<sub>ε</sub>⁽ⁿ⁾</span> ist definiert als die Menge aller Sequenzen, deren empirische Entropie nahe H(X) liegt:</p>
+<div class="formula" id="typFormula"></div>
+
+<h3>Das große Paradox – visualisiert</h3>
+<p>Es gibt <b>2ⁿ</b> mögliche Binärsequenzen, aber nur ca. <b>2ⁿᴴ</b> davon sind typisch. Bei H&lt;1 ist das ein <b>winziger Bruchteil</b> – der aber fast die gesamte Wahrscheinlichkeit trägt!</p>
+<div class="controls">
+  <div class="ctrl"><label>p (Bernoulli)</label><input type="range" id="typP" min="0.05" max="0.95" step="0.01" value="0.11"></div>
+  <div class="ctrl"><label>n</label><input type="range" id="typN" min="10" max="200" step="5" value="50"></div>
+</div>
+<div class="grid2">
+  <div>
+    <canvas id="typCanvas" height="280"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:#f87171"></span>alle 2ⁿ Sequenzen</span>
+      <span><span class="swatch" style="background:#6ee7b7"></span>typische Menge (~2ⁿᴴ)</span>
+    </div>
+  </div>
+  <div>
+    <div class="stat" style="margin-bottom:8px"><span class="k">Alle Sequenzen |Ωⁿ|</span><span class="v" id="typAll">2⁵⁰</span></div>
+    <div class="stat" style="margin-bottom:8px"><span class="k">Typische ~ 2ⁿᴴ</span><span class="v" id="typTyp">2²⁵</span></div>
+    <div class="stat" style="margin-bottom:8px"><span class="k">Anteil typischer</span><span class="v" id="typFrac">10⁻⁸</span></div>
+    <div class="stat" style="margin-bottom:8px"><span class="k">Wahrscheinlichkeit typisch</span><span class="v" style="color:var(--good)">≈ 1</span></div>
+    <div class="callout warn" style="margin-top:12px">Bei p=0.11 ist H≈0.5 bit. Die typische Menge enthält nur <b>2⁰·⁵ⁿ</b> Sequenzen von 2ⁿ – ein verschwindend kleiner Bruchteil, der aber fast die gesamte Wahrscheinlichkeitsmasse trägt. <b>Genau das ist Shannons Zauber.</b></div>
+  </div>
+</div>
+
+<h3>Die drei Eigenschaften der typischen Menge</h3>
+<div class="grid3">
+  <div class="stat"><span class="k">① Wahrscheinlichkeit</span><br><span style="font-size:.9rem">P(A<sub>ε</sub>⁽ⁿ⁾) → 1</span><br><span class="pill g">fast alles ist typisch</span></div>
+  <div class="stat"><span class="k">② Größe</span><br><span style="font-size:.9rem">|A<sub>ε</sub>⁽ⁿ⁾| ≤ 2ⁿ⁽ᴴ⁺ᵋ⁾</span><br><span class="pill g">klein</span></div>
+  <div class="stat"><span class="k">③ Gleichverteilung</span><br><span style="font-size:.9rem">p(x) ≈ 2⁻ⁿᴴ</span><br><span class="pill g">alle gleich wahrsch.</span></div>
+</div>
+</div>
+</section>
+
+<!-- ================= COMPRESSION ================= -->
+<section id="compression">
+<h2>⑦ Konkrete Anwendung – Datenkompression</h2>
+<div class="card">
+<p><b>Das Problem, das Shannon gelöst hat:</b> Wie viele Bits pro Symbol brauche ich mindestens, um eine Quelle verlustfrei zu komprimieren?</p>
+<p><b>Die Antwort:</b> Genau <b>H(X)</b> Bits pro Symbol. Nicht weniger. Und die AEP zeigt, warum: Wir müssen nur die typischen Sequenzen kodieren, die anderen sind vernachlässigbar unwahrscheinlich.</p>
+
+<h3>Kodierungs-Strategie</h3>
+<ol>
+<li>Nummeriere die ca. <b>2ⁿᴴ</b> typischen Sequenzen. Das braucht <b>nH</b> Bits.</li>
+<li>Nummeriere die ca. <b>2ⁿ</b> untypischen Sequenzen. Das braucht <b>n·log|Ω|</b> Bits.</li>
+<li>Ein Präfix-Bit sagt, in welcher Menge wir sind.</li>
+<li>Durchschnittlich brauchen wir also fast genau <b>H(X)</b> Bits pro Symbol.</li>
+</ol>
+
+<div class="controls">
+  <div class="ctrl"><label>p (Bernoulli-Quelle)</label><input type="range" id="cmpP" min="0.02" max="0.98" step="0.01" value="0.15"></div>
+  <div class="ctrl"><label>Blocklänge n</label><input type="range" id="cmpN" min="1" max="200" step="1" value="50"></div>
+</div>
+<div id="cmpPlot" style="height:340px"></div>
+<div class="callout good">Beobachte: Bei jeder Blocklänge n liegt die durchschnittliche Codelänge <b>oberhalb</b> von H(X) (rote Linie) und nähert sich ihr mit wachsendem n. Das ist <b>Shannons Source-Coding-Theorem</b> – direkt aus der AEP.</div>
+</div>
+</section>
+
+<!-- ================= ERGODIC ================= -->
+<section id="ergodic">
+<h2>⑧ Was ist eigentlich „ergodisch"?</h2>
+<div class="card">
+<p>Für i.i.d.-Quellen reicht das Gesetz der großen Zahlen. Für <b>Prozesse mit Gedächtnis</b> (z.B. Sprache: nach „q" kommt fast immer „u") brauchen wir mehr.</p>
+<p><b>Ergodisch heißt:</b> Der zeitliche Durchschnitt entspricht dem Ensemble-Durchschnitt. Ein einzelner, unendlich langer Pfad enthält bereits alle statistischen Informationen des Prozesses.</p>
+
+<h3>Markov-Kette live</h3>
+<p>Regle die Übergangswahrscheinlichkeiten einer 2-Zustand-Markov-Kette. Der zeitliche Anteil in Zustand 1 sollte gegen die stationäre Verteilung konvergieren – <b>egal bei welchem Zustand du startest</b>.</p>
+<div class="controls">
+  <div class="ctrl"><label>P(0→1) = <span id="p01Lbl">0.30</span></label><input type="range" id="p01" min="0.01" max="0.99" step="0.01" value="0.3"></div>
+  <div class="ctrl"><label>P(1→0) = <span id="p10Lbl">0.10</span></label><input type="range" id="p10" min="0.01" max="0.99" step="0.01" value="0.1"></div>
+  <div class="ctrl"><label>Länge n</label><input type="range" id="mkN" min="100" max="5000" step="100" value="2000"></div>
+  <button class="primary" onclick="runMarkov()">Neu simulieren</button>
+</div>
+<div id="markovPlot" style="height:320px"></div>
+<div class="callout">Die stationäre Verteilung ist <span class="mono">π₁ = P(0→1) / (P(0→1)+P(1→0))</span>. Egal welcher Startzustand: der Zeit-Mittelwert konvergiert dorthin. <b>Das ist Ergodizität.</b></div>
+</div>
+</section>
+
+<!-- ================= SMB ================= -->
+<section id="smb">
+<h2>⑨ Der Shannon–McMillan–Breiman-Satz</h2>
+<div class="card">
+<p><b>Shannons ursprüngliche Frage in voller Allgemeinheit:</b> Gilt die AEP auch für <b>Prozesse mit Gedächtnis</b> – nicht nur i.i.d.?</p>
+<p><b>Antwort (Shannon 1948, McMillan 1953, Breiman 1957):</b> Ja! Für jede <b>stationäre ergodische Quelle</b> mit endlichem Alphabet gilt <b>L¹-Konvergenz</b> (und damit auch fast sichere Konvergenz):</p>
+<div class="formula" id="smbFormula"></div>
+
+<p>Wobei <span class="mono">H(X)</span> hier die <b>Entropierate</b> ist:</p>
+<div class="formula" id="smbRate"></div>
+
+<h3>Die Beweis-Idee (visuell)</h3>
+<p>Der eleganteste Beweis stammt von Algoet & Cover 1988 – der „Sandwich-Beweis". Die Idee:</p>
+<div class="grid3">
+<div class="stat"><span class="k">Oberer Sandwich</span><br><span style="font-size:.85rem">Markov-Approximation k-ter Ordnung H<sup>k</sup></span><br><span class="pill w">↓ konvergiert von oben zu H</span></div>
+<div class="stat"><span class="k">Zielgröße</span><br><span style="font-size:.85rem">−(1/n)·log p(X₁...Xₙ)</span><br><span class="pill g">wird eingeklemmt</span></div>
+<div class="stat"><span class="k">Unterer Sandwich</span><br><span style="font-size:.85rem">Bedingung auf unendl. Vergangenheit H<sup>∞</sup></span><br><span class="pill w">↑ konvergiert von unten zu H</span></div>
+</div>
+<p style="margin-top:12px">Beide „Brotscheiben" konvergieren gegen dieselbe Zahl H – also muss auch das Sandwich (unsere Zielgröße) dorthin konvergieren. Das nutzt <b>Martingal-Konvergenz</b> (Lévy) und das <b>Borel–Cantelli-Lemma</b>.</p>
+
+<h3>Live-Demonstration der Entropierate</h3>
+<p>Wir simulieren die Markov-Kette und berechnen <span class="mono">−(1/n)·log p(X₁...Xₙ)</span>. Diese Größe konvergiert gegen die Entropierate H(X):</p>
+<div class="controls">
+  <div class="ctrl"><label>P(0→1) = <span id="sp01Lbl">0.30</span></label><input type="range" id="sp01" min="0.05" max="0.95" step="0.01" value="0.3"></div>
+  <div class="ctrl"><label>P(1→0) = <span id="sp10Lbl">0.20</span></label><input type="range" id="sp10" min="0.05" max="0.95" step="0.01" value="0.2"></div>
+  <div class="ctrl"><label>Anzahl Pfade</label><input type="range" id="smbPaths" min="5" max="60" step="1" value="25"></div>
+  <div class="ctrl"><label>Länge n</label><input type="range" id="smbN" min="100" max="3000" step="100" value="1500"></div>
+  <button class="primary" onclick="runSMB()">Simulieren</button>
+</div>
+<div id="smbPlot" style="height:380px"></div>
+<div class="callout good">Alle Pfade konvergieren gegen dieselbe rote Linie – die <b>Entropierate</b> der Markov-Kette. Das ist der Shannon–McMillan–Breiman-Satz in Aktion – jetzt <b>trotz</b> Gedächtnis im Prozess.</div>
+
+<h3>Beweis-Skizze in Etappen (aus Algoet–Cover 1988)</h3>
+<ol style="line-height:1.9">
+<li>Definiere die Verbundwahrscheinlichkeit <span class="mono">j(n,x)=p(x₀^{n-1})</span> und die bedingte <span class="mono">c(i,k,x)=p(xᵢ|xᵢ₋ₖ^{i-1})</span>.</li>
+<li>Zeige, dass beide Definitionen der Entropierate (via Verbund und via bedingt) übereinstimmen: <span class="mono">= H</span>.</li>
+<li>Definiere die k-te Markov-Approximation <span class="mono">a(n,k,x)</span>. Sample-Mittel von <span class="mono">−(1/n)log a(n,k,X)</span> konvergiert fast sicher gegen <span class="mono">H<sup>k</sup></span>.</li>
+<li>Definiere <span class="mono">a(n,x)=p(x₀^{n-1}|x₋∞^{-1})</span>. Sample-Mittel konvergiert gegen <span class="mono">H<sup>∞</sup></span>.</li>
+<li>Zeige mit Markov-Ungleichung + Borel–Cantelli: <span class="mono">limsup (1/n)log[a(n,k,X)/j(n,X)] ≤ 0</span> und ebenso für <span class="mono">j(n,X)/a(n,X)</span>.</li>
+<li>Klemme <span class="mono">−(1/n)log j(n,X)</span> zwischen <span class="mono">H<sup>∞</sup></span> und <span class="mono">H<sup>k</sup></span> ein.</li>
+<li>Lasse k→∞: <span class="mono">H<sup>k</sup> ↘ H</span> (Stationarität) und <span class="mono">H<sup>∞</sup> = H</span> (Lévys Martingal-Konvergenz). ∎</li>
+</ol>
+</div>
+</section>
+
+<!-- ================= CONTINUOUS ================= -->
+<section id="continuous">
+<h2>⑩ Erweiterungen – Kontinuierlich & Nicht-stationär</h2>
+<div class="grid2">
+<div class="card">
+<h3>Kontinuierliche Quellen (Differential-Entropie)</h3>
+<p>Für kontinuierlich verteilte Zufallsvariablen ersetzt die <b>Differential-Entropie</b> <span class="mono">h(X)=−∫f(x)log f(x)dx</span> die diskrete Entropie. Die AEP gilt weiterhin.</p>
+<div class="controls">
+  <div class="ctrl"><label>σ (Normalverteilung)</label><input type="range" id="diffSig" min="0.2" max="4" step="0.1" value="1"></div>
+</div>
+<canvas id="diffCanvas" height="200"></canvas>
+<div class="stat" style="margin-top:8px"><span class="k">h(X) = ½·log₂(2πeσ²)</span><span class="v" id="diffH">2.05 bits</span></div>
+</div>
+
+<div class="card">
+<h3>Nicht-stationäre unabhängige Quellen</h3>
+<p>Selbst wenn jede Zufallsvariable eine <b>andere</b> Verteilung hat, gilt die AEP – solange die Varianz von <span class="mono">log p(Xᵢ)</span> gleichmäßig beschränkt bleibt. Dann konvergiert <span class="mono">−(1/n)log p(X₁..Xₙ)</span> gegen die <b>durchschnittliche</b> Entropie <span class="mono">H̄ₙ(X) = (1/n)·Σ H(Xᵢ)</span>.</p>
+<p>Beweis: Markov-Ungleichung angewandt auf das zweite Moment. Konvergenz-Rate: <span class="mono">O(M/(nε²))</span>.</p>
+<div class="callout">Konsequenz: Source-Coding-Theorem und Kanalkapazitätssatz gelten auch für <b>gedächtnislose, aber zeitvariable</b> Kanäle.</div>
+</div>
+</div>
+</section>
+
+<!-- ================= SUMMARY ================= -->
+<section id="summary">
+<h2>⑪ Was haben wir gelernt?</h2>
+<div class="card">
+<h3>Shannons Frage</h3>
+<p>„Wie viel Redundanz steckt in einer zufälligen Quelle – und wie sehr kann ich sie komprimieren?"</p>
+
+<h3>Shannons Antwort</h3>
+<p>Genau <b>H(X)</b> Bits pro Symbol – nicht weniger, nicht mehr. Und der Grund ist die AEP: Die Realität lebt in der typischen Menge, dort sind alle Sequenzen gleich wahrscheinlich, es gibt nur <b>2ⁿᴴ</b> davon – also brauchen wir nur <b>nH</b> Bits, um sie zu adressieren.</p>
+
+<h3>Der Weg dorthin</h3>
+<div class="grid3">
+<div class="stat"><span class="k">i.i.d.-Fall</span><br>Gesetz der großen Zahlen<br><span class="pill g">1948 Shannon</span></div>
+<div class="stat"><span class="k">Stationär-ergodisch</span><br>Ergodentheorie + Martingale<br><span class="pill g">1953 McMillan, 1957 Breiman</span></div>
+<div class="stat"><span class="k">Countable alphabet</span><br>Chung-Verallgemeinerung<br><span class="pill g">Algoet–Cover 1988</span></div>
+</div>
+
+<h3>Warum es wichtig ist</h3>
+<ul>
+<li><b>Datenkompression:</b> Untere Schranke für verlustfreie Kompression (ZIP, Huffman, arithmetische Kodierung).</li>
+<li><b>Kanalkapazität:</b> Noisy-Channel-Coding-Theorem baut auf denselben Ideen auf.</li>
+<li><b>Zufallszahlengeneratoren:</b> Testen, ob eine Sequenz „typisch genug" wirkt.</li>
+<li><b>Große Abweichungen:</b> Cramérs Satz sagt, wie schnell die Wahrscheinlichkeit untypischer Sequenzen exponentiell abfällt.</li>
+<li><b>Ergodentheorie:</b> Verbindung zwischen Zeit- und Ensemble-Mittelwerten (Kolmogorov–Sinai-Entropie).</li>
+</ul>
+
+<div class="callout good" style="margin-top:16px"><b>Kernaussage in einem Satz:</b> Aus astronomisch vielen möglichen Nachrichten wird fast immer eine aus einer verschwindend kleinen, gleichverteilten Teilmenge realisiert – und deshalb reicht <b>H</b> Bits pro Symbol.</div>
+</div>
+</section>
+
+</div>
+
+<script>
+// ============= KATEX RENDERING =============
+document.addEventListener("DOMContentLoaded", ()=>{
+  const set = (id, tex) => {
+    const el = document.getElementById(id);
+    if (el) katex.render(tex, el, {throwOnError:false, displayMode:true});
+  };
+  set("entFormula", "H(X) \\;=\\; -\\sum_{x\\in\\mathcal X} p(x)\\,\\log_2 p(x) \\;=\\; \\mathbb{E}[-\\log_2 p(X)]");
+  set("llnFormula", "\\frac{1}{n}\\sum_{i=1}^{n} Y_i \\;\\xrightarrow{\\;\\text{a.s.}\\;}\\; \\mathbb{E}[Y_1] \\quad\\text{(starkes LLN)}");
+  set("aepFormula", "-\\frac{1}{n}\\log_2 p(X_1,X_2,\\dots,X_n) \\;\\xrightarrow{\\;\\text{a.s.}\\;}\\; H(X)");
+  set("typFormula", "A_{\\varepsilon}^{(n)} \\;=\\; \\Big\\{(x_1,\\dots,x_n): \\big|-\\tfrac{1}{n}\\log_2 p(x_1,\\dots,x_n) - H(X)\\big| < \\varepsilon\\Big\\}");
+  set("smbFormula", "\\mathbb{E}\\!\\left[\\,\\left|-\\tfrac{1}{n}\\log p(X_1,\\dots,X_n) - H(X)\\right|\\,\\right] \\to 0 \\quad(n\\to\\infty)");
+  set("smbRate",   "H(X) \\;=\\; \\lim_{n\\to\\infty}\\tfrac{1}{n}\\,H(X_1,\\dots,X_n) \\;=\\; \\lim_{n\\to\\infty} H(X_n\\mid X_{n-1},\\dots,X_1)");
+});
+
+// ============= HELPERS =============
+const log2 = x => Math.log(x)/Math.LN2;
+function bernoulliSeq(n,p){ const s=new Uint8Array(n); for(let i=0;i<n;i++) s[i]= Math.random()<p?1:0; return s; }
+function seqLogProb(seq,p){ let s=0; for(const x of seq) s += x? Math.log(p) : Math.log(1-p); return s/Math.LN2; }
+function binaryEntropy(p){ if(p<=0||p>=1) return 0; return -p*log2(p)-(1-p)*log2(1-p); }
+
+// ============= ① COIN =============
+function runCoin(){
+  const p=+document.getElementById('coinP').value;
+  const n=+document.getElementById('coinNs').value;
+  const sims=+document.getElementById('coinSims').value;
+  document.getElementById('coinN').textContent='n='+n;
+  document.getElementById('coinPl').textContent='p='+p.toFixed(2);
+  const counts=new Array(n+1).fill(0);
+  for(let s=0;s<sims;s++){
+    let c=0; for(let i=0;i<n;i++) if(Math.random()<p) c++;
+    counts[c]++;
+  }
+  const x=[...Array(n+1).keys()], y=counts.map(c=>c/sims);
+  Plotly.newPlot('coinPlot', [
+    {x, y, type:'bar', marker:{color:'#7c9cff'}, name:'Empirisch'}
+  ], {
+    paper_bgcolor:'#141b30', plot_bgcolor:'#141b30',
+    font:{color:'#e7ecff'}, margin:{t:20,r:20,b:40,l:50},
+    xaxis:{title:'Anzahl Köpfe', gridcolor:'#2a3358'},
+    yaxis:{title:'Häufigkeit', gridcolor:'#2a3358'},
+    shapes:[{type:'line', x0:n*p, x1:n*p, y0:0, y1:Math.max(...y), line:{color:'#ff7ac6', width:3, dash:'dash'}}],
+    annotations:[{x:n*p, y:Math.max(...y), text:'E[X]=np', showarrow:true, arrowcolor:'#ff7ac6', font:{color:'#ff7ac6'}}]
+  }, {displayModeBar:false, responsive:true});
+}
+
+// ============= ② PROB SPACE =============
+const alphabet=[['A',0.15],['B',0.20],['C',0.05],['D',0.25],['E',0.10],['F',0.08],['G',0.17]];
+const selected=new Set();
+function renderProbSpace(){
+  const c=document.getElementById('probSpace'); c.innerHTML='';
+  alphabet.forEach(([l,pr])=>{
+    const b=document.createElement('button');
+    b.textContent=`${l} (${pr})`;
+    b.style.background = selected.has(l)?'linear-gradient(180deg,#5b7cff,#3d5cd6)':'var(--panel2)';
+    b.onclick=()=>{ if(selected.has(l)) selected.delete(l); else selected.add(l); update(); };
+    c.appendChild(b);
+  });
+  update();
+  function update(){
+    let s=0; alphabet.forEach(([l,pr])=>{ if(selected.has(l)) s+=pr; });
+    document.getElementById('probSum').textContent=s.toFixed(2);
+    renderProbSpace._();
+  }
+  renderProbSpace._=()=>{
+    [...c.children].forEach((b,i)=>{
+      b.style.background = selected.has(alphabet[i][0])?'linear-gradient(180deg,#5b7cff,#3d5cd6)':'var(--panel2)';
+    });
+  };
+}
+renderProbSpace();
+
+// ============= ② E & VAR - Normal =============
+function drawNormal(){
+  const mu=+document.getElementById('evMu').value;
+  const sig=+document.getElementById('evSig').value;
+  const c=document.getElementById('evCanvas');
+  const ctx=c.getContext('2d');
+  const w=c.width=c.clientWidth, h=c.height=200;
+  ctx.fillStyle='#060912'; ctx.fillRect(0,0,w,h);
+  // axes
+  ctx.strokeStyle='#2a3358'; ctx.beginPath();
+  ctx.moveTo(0,h-30); ctx.lineTo(w,h-30); ctx.stroke();
+  // grid
+  const xMin=-6, xMax=6;
+  const x2px = x => (x-xMin)/(xMax-xMin)*w;
+  ctx.strokeStyle='#1a2340';
+  for(let gx=xMin;gx<=xMax;gx++){
+    ctx.beginPath(); ctx.moveTo(x2px(gx),0); ctx.lineTo(x2px(gx),h-30); ctx.stroke();
+  }
+  // curve
+  const pdf = x => Math.exp(-((x-mu)*(x-mu))/(2*sig*sig))/(sig*Math.sqrt(2*Math.PI));
+  let maxY=pdf(mu);
+  ctx.strokeStyle='#7c9cff'; ctx.lineWidth=2.5; ctx.beginPath();
+  for(let px=0;px<w;px++){
+    const x=xMin+(px/w)*(xMax-xMin);
+    const y=pdf(x);
+    const py=(h-30) - (y/maxY)*(h-50);
+    if(px===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  // fill ±σ area
+  ctx.fillStyle='rgba(124,156,255,0.2)';
+  ctx.beginPath();
+  ctx.moveTo(x2px(mu-sig),h-30);
+  for(let px=x2px(mu-sig);px<=x2px(mu+sig);px++){
+    const x=xMin+(px/w)*(xMax-xMin);
+    const y=pdf(x);
+    const py=(h-30) - (y/maxY)*(h-50);
+    ctx.lineTo(px,py);
+  }
+  ctx.lineTo(x2px(mu+sig),h-30);
+  ctx.closePath(); ctx.fill();
+  // mean line
+  ctx.strokeStyle='#ff7ac6'; ctx.lineWidth=2; ctx.setLineDash([5,3]);
+  ctx.beginPath(); ctx.moveTo(x2px(mu),0); ctx.lineTo(x2px(mu),h-30); ctx.stroke();
+  ctx.setLineDash([]);
+  // labels
+  ctx.fillStyle='#e7ecff'; ctx.font='12px ui-monospace';
+  ctx.fillText(`μ=${mu.toFixed(1)}, σ=${sig.toFixed(1)}`,10,15);
+  ctx.fillText('E[X]=μ',x2px(mu)+5,15);
+  ctx.fillText('±σ',x2px(mu+sig)+3,h-40);
+}
+document.getElementById('evMu').addEventListener('input',drawNormal);
+document.getElementById('evSig').addEventListener('input',drawNormal);
+
+// ============= ② CONVERGENCE =============
+function runConv(){
+  const paths=+document.getElementById('convPaths').value;
+  const n=+document.getElementById('convN').value;
+  const p=+document.getElementById('convP').value;
+  const traces=[];
+  const xs=[...Array(n).keys()].map(i=>i+1);
+  for(let k=0;k<paths;k++){
+    const ys=new Array(n); let s=0;
+    for(let i=0;i<n;i++){ s += Math.random()<p?1:0; ys[i]=s/(i+1); }
+    traces.push({x:xs, y:ys, mode:'lines', line:{width:1, color:`hsla(${(k*37)%360},70%,65%,0.55)`}, showlegend:false});
+  }
+  traces.push({x:[1,n], y:[p,p], mode:'lines', line:{color:'#ff7ac6', width:3, dash:'dash'}, name:`E[X]=p=${p}`});
+  Plotly.newPlot('convPlot',traces,{
+    paper_bgcolor:'#141b30', plot_bgcolor:'#141b30', font:{color:'#e7ecff'},
+    margin:{t:20,r:20,b:40,l:50},
+    xaxis:{title:'n', gridcolor:'#2a3358', type:'log'},
+    yaxis:{title:'(1/n)·ΣXᵢ', gridcolor:'#2a3358', range:[0,1]}
+  },{displayModeBar:false, responsive:true});
+}
+
+// ============= ③ ENTROPY BARS =============
+function drawEntropy(){
+  let pa=+document.getElementById('pA').value;
+  let pb=+document.getElementById('pB').value;
+  if(pa+pb>0.99){ const s=pa+pb; pa=pa/s*0.99; pb=pb/s*0.99; }
+  const pc=Math.max(0.01,1-pa-pb);
+  document.getElementById('paLbl').textContent=pa.toFixed(2);
+  document.getElementById('pbLbl').textContent=pb.toFixed(2);
+  document.getElementById('pcLbl').textContent=pc.toFixed(2);
+  const probs=[pa,pb,pc]; const labels=['A','B','C'];
+  let H=0; probs.forEach(p=>{ if(p>0) H -= p*log2(p); });
+  document.getElementById('entVal').textContent=H.toFixed(3);
+  document.getElementById('entProg').value=H;
+  const c=document.getElementById('entBars');
+  const ctx=c.getContext('2d');
+  const w=c.width=c.clientWidth, h=c.height=220;
+  ctx.fillStyle='#060912'; ctx.fillRect(0,0,w,h);
+  const bw=w/4;
+  const colors=['#7c9cff','#ff7ac6','#6ee7b7'];
+  probs.forEach((p,i)=>{
+    const bh=p*(h-50);
+    ctx.fillStyle=colors[i];
+    ctx.fillRect((i+0.5)*bw-30,(h-30)-bh,60,bh);
+    ctx.fillStyle='#e7ecff'; ctx.font='bold 14px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(labels[i],(i+0.5)*bw,h-10);
+    ctx.font='11px ui-monospace';
+    ctx.fillText(p.toFixed(2),(i+0.5)*bw,(h-35)-bh);
+    // surprise = -log2(p)
+    ctx.fillStyle='#8892b8';
+    ctx.font='10px ui-monospace';
+    ctx.fillText(`-log₂p=${(-log2(p)).toFixed(2)}`,(i+0.5)*bw,h-25);
+  });
+  ctx.textAlign='left';
+  ctx.fillStyle='#e7ecff'; ctx.font='12px ui-monospace';
+  ctx.fillText(`H = ${H.toFixed(3)} bits`,10,20);
+}
+['pA','pB'].forEach(id=>document.getElementById(id).addEventListener('input',drawEntropy));
+
+// ============= ⑤ AEP =============
+function runAEP(){
+  const p=+document.getElementById('aepP').value;
+  const n=+document.getElementById('aepN').value;
+  const M=+document.getElementById('aepM').value;
+  const H=binaryEntropy(p);
+  const vals=[];
+  for(let m=0;m<M;m++){
+    const seq=bernoulliSeq(n,p);
+    const lp=seqLogProb(seq,p);
+    vals.push(-lp/n);
+  }
+  Plotly.newPlot('aepPlot',[
+    {x:vals, type:'histogram', nbinsx:60, marker:{color:'#7c9cff', line:{color:'#3d5cd6',width:1}}, name:'−(1/n)log p'}
+  ],{
+    paper_bgcolor:'#141b30', plot_bgcolor:'#141b30', font:{color:'#e7ecff'},
+    margin:{t:20,r:20,b:40,l:50},
+    xaxis:{title:'−(1/n)·log₂ p(x₁..xₙ)', gridcolor:'#2a3358'},
+    yaxis:{title:'Häufigkeit', gridcolor:'#2a3358'},
+    shapes:[{type:'line', x0:H, x1:H, y0:0, y1:M/8, line:{color:'#ff7ac6', width:4, dash:'dash'}}],
+    annotations:[{x:H, y:M/8, text:`H(X)=${H.toFixed(3)}`, showarrow:true, arrowcolor:'#ff7ac6', font:{color:'#ff7ac6',size:14}, ax:40,ay:-20}]
+  },{displayModeBar:false, responsive:true});
+}
+
+// ============= ⑥ TYPICAL SET =============
+function drawTypical(){
+  const p=+document.getElementById('typP').value;
+  const n=+document.getElementById('typN').value;
+  const H=binaryEntropy(p);
+  const c=document.getElementById('typCanvas');
+  const ctx=c.getContext('2d');
+  const w=c.width=c.clientWidth, h=c.height=280;
+  ctx.fillStyle='#060912'; ctx.fillRect(0,0,w,h);
+  // Big circle = all 2^n sequences (log-scale area)
+  const cx=w/2, cy=h/2;
+  const Rbig=Math.min(w,h)*0.45;
+  const Rsmall=Rbig*Math.sqrt(Math.max(0.02,H)); // sqrt to make area ratio ~ H
+  // Draw big
+  ctx.fillStyle='rgba(248,113,113,0.25)';
+  ctx.strokeStyle='#f87171'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,cy,Rbig,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  // Draw small
+  ctx.fillStyle='rgba(110,231,183,0.5)';
+  ctx.strokeStyle='#6ee7b7'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(cx,cy,Rsmall,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  // Labels
+  ctx.fillStyle='#f87171'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(`|Ωⁿ| = 2^${n} ≈ 10^${(n*Math.log10(2)).toFixed(1)}`, cx, cy-Rbig-8);
+  ctx.fillStyle='#6ee7b7'; ctx.font='bold 12px sans-serif';
+  ctx.fillText(`typische Menge`, cx, cy-4);
+  ctx.font='11px ui-monospace';
+  ctx.fillText(`~ 2^${(n*H).toFixed(1)}`, cx, cy+12);
+  // Stats
+  const allExp = n*Math.log10(2);
+  const typExp = n*H*Math.log10(2);
+  const fracExp = typExp - allExp;
+  document.getElementById('typAll').textContent = `10^${allExp.toFixed(1)}`;
+  document.getElementById('typTyp').textContent = `10^${typExp.toFixed(1)}`;
+  document.getElementById('typFrac').textContent = `10^${fracExp.toFixed(1)}`;
+}
+['typP','typN'].forEach(id=>document.getElementById(id).addEventListener('input',drawTypical));
+
+// ============= ⑦ COMPRESSION =============
+function drawCompression(){
+  const p=+document.getElementById('cmpP').value;
+  const nmax=+document.getElementById('cmpN').value;
+  const H=binaryEntropy(p);
+  const ns=[], huff=[], aep=[], naive=[];
+  for(let n=1;n<=nmax;n++){
+    // Naive: n bits (log2 |Ω|^n)
+    naive.push(1);
+    // AEP-based encoding: ≈ H + O(1/n)
+    aep.push(H + Math.log2(n+1)/n);
+    // Block-Huffman-like approximation: H + 1/n
+    huff.push(H + 1/n);
+    ns.push(n);
+  }
+  Plotly.newPlot('cmpPlot',[
+    {x:ns, y:naive, mode:'lines', name:'Naiv (1 bit/symbol)', line:{color:'#f87171',width:2}},
+    {x:ns, y:huff, mode:'lines', name:'Block-Huffman (obere Schranke)', line:{color:'#fbbf24',width:2}},
+    {x:ns, y:aep, mode:'lines', name:'AEP-basiert', line:{color:'#6ee7b7',width:2}},
+    {x:ns, y:new Array(ns.length).fill(H), mode:'lines', name:`H(X)=${H.toFixed(3)} (Shannon-Grenze)`, line:{color:'#ff7ac6',width:3,dash:'dash'}}
+  ],{
+    paper_bgcolor:'#141b30', plot_bgcolor:'#141b30', font:{color:'#e7ecff'},
+    margin:{t:20,r:20,b:40,l:50},
+    xaxis:{title:'Blocklänge n', gridcolor:'#2a3358'},
+    yaxis:{title:'Bits pro Symbol', gridcolor:'#2a3358', range:[0,1.1]},
+    legend:{bgcolor:'rgba(20,27,48,0.7)'}
+  },{displayModeBar:false, responsive:true});
+}
+['cmpP','cmpN'].forEach(id=>document.getElementById(id).addEventListener('input',drawCompression));
+
+// ============= ⑧ MARKOV =============
+function runMarkov(){
+  const p01=+document.getElementById('p01').value;
+  const p10=+document.getElementById('p10').value;
+  const n=+document.getElementById('mkN').value;
+  document.getElementById('p01Lbl').textContent=p01.toFixed(2);
+  document.getElementById('p10Lbl').textContent=p10.toFixed(2);
+  const stationary = p01/(p01+p10);
+  const paths=[];
+  const xs=[...Array(n).keys()].map(i=>i+1);
+  const starts=[0,1];
+  starts.forEach((s0,idx)=>{
+    for(let rep=0;rep<3;rep++){
+      const state=[s0]; let cur=s0; let cnt1=cur;
+      const frac=[cnt1];
+      for(let i=1;i<n;i++){
+        if(cur===0){ cur = Math.random()<p01?1:0; }
+        else{ cur = Math.random()<p10?0:1; }
+        cnt1 += cur;
+        frac.push(cnt1/(i+1));
+      }
+      paths.push({x:xs, y:frac, mode:'lines', line:{width:1.2, color: s0===0?`hsla(220,70%,${55+rep*10}%,0.7)`:`hsla(330,70%,${55+rep*10}%,0.7)`}, name:`Start=${s0}`, showlegend:rep===0});
+    }
+  });
+  paths.push({x:[1,n], y:[stationary,stationary], mode:'lines', line:{color:'#6ee7b7',width:3,dash:'dash'}, name:`π₁=${stationary.toFixed(3)}`});
+  Plotly.newPlot('markovPlot',paths,{
+    paper_bgcolor:'#141b30', plot_bgcolor:'#141b30', font:{color:'#e7ecff'},
+    margin:{t:20,r:20,b:40,l:50},
+    xaxis:{title:'n', gridcolor:'#2a3358', type:'log'},
+    yaxis:{title:'Anteil Zustand 1', gridcolor:'#2a3358', range:[0,1]},
+    legend:{bgcolor:'rgba(20,27,48,0.7)'}
+  },{displayModeBar:false, responsive:true});
+}
+
+// ============= ⑨ SMB =============
+function markovEntropyRate(p01,p10){
+  const pi1 = p01/(p01+p10), pi0 = 1-pi1;
+  const H0 = binaryEntropy(p01); // H(X_{n+1} | X_n=0)
+  const H1 = binaryEntropy(p10); // H(X_{n+1} | X_n=1)
+  return pi0*H0 + pi1*H1;
+}
+function runSMB(){
+  const p01=+document.getElementById('sp01').value;
+  const p10=+document.getElementById('sp10').value;
+  const paths=+document.getElementById('smbPaths').value;
+  const n=+document.getElementById('smbN').value;
+  document.getElementById('sp01Lbl').textContent=p01.toFixed(2);
+  document.getElementById('sp10Lbl').textContent=p10.toFixed(2);
+  const H = markovEntropyRate(p01,p10);
+  const pi1 = p01/(p01+p10);
+  const xs=[...Array(n).keys()].map(i=>i+1);
+  const traces=[];
+  for(let k=0;k<paths;k++){
+    let cur = Math.random()<pi1?1:0;
+    // log p(X_1) using stationary distribution
+    let logP = Math.log2(cur===1?pi1:(1-pi1));
+    const ys=new Array(n);
+    ys[0] = -logP/1;
+    for(let i=1;i<n;i++){
+      const prev=cur;
+      let trans;
+      if(prev===0){ cur = Math.random()<p01?1:0; trans = cur===1?p01:(1-p01); }
+      else{ cur = Math.random()<p10?0:1; trans = cur===0?p10:(1-p10); }
+      logP += Math.log2(trans);
+      ys[i] = -logP/(i+1);
+    }
+    traces.push({x:xs, y:ys, mode:'lines', line:{width:1, color:`hsla(${(k*37)%360},70%,65%,0.5)`}, showlegend:false});
+  }
+  traces.push({x:[1,n], y:[H,H], mode:'lines', line:{color:'#ff7ac6', width:3, dash:'dash'}, name:`Entropierate H=${H.toFixed(4)}`});
+  Plotly.newPlot('smbPlot',traces,{
+    paper_bgcolor:'#141b30', plot_bgcolor:'#141b30', font:{color:'#e7ecff'},
+    margin:{t:20,r:20,b:40,l:50},
+    xaxis:{title:'n', gridcolor:'#2a3358', type:'log'},
+    yaxis:{title:'−(1/n)·log₂ p(X₁..Xₙ)', gridcolor:'#2a3358'},
+    legend:{bgcolor:'rgba(20,27,48,0.7)'}
+  },{displayModeBar:false, responsive:true});
+}
+
+// ============= ⑩ DIFFERENTIAL ENTROPY =============
+function drawDiff(){
+  const sig=+document.getElementById('diffSig').value;
+  const h = 0.5*log2(2*Math.PI*Math.E*sig*sig);
+  document.getElementById('diffH').textContent=`${h.toFixed(3)} bits`;
+  const c=document.getElementById('diffCanvas');
+  const ctx=c.getContext('2d');
+  const w=c.width=c.clientWidth, hh=c.height=200;
+  ctx.fillStyle='#060912'; ctx.fillRect(0,0,w,hh);
+  const xMin=-6, xMax=6;
+  const pdf = x => Math.exp(-x*x/(2*sig*sig))/(sig*Math.sqrt(2*Math.PI));
+  const maxY=pdf(0);
+  ctx.strokeStyle='#6ee7b7'; ctx.lineWidth=2.5; ctx.beginPath();
+  for(let px=0;px<w;px++){
+    const x=xMin+(px/w)*(xMax-xMin);
+    const y=pdf(x);
+    const py=(hh-25) - (y/maxY)*(hh-45);
+    if(px===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.fillStyle='rgba(110,231,183,0.15)';
+  ctx.beginPath(); ctx.moveTo(0,hh-25);
+  for(let px=0;px<w;px++){
+    const x=xMin+(px/w)*(xMax-xMin);
+    const y=pdf(x);
+    const py=(hh-25) - (y/maxY)*(hh-45);
+    ctx.lineTo(px,py);
+  }
+  ctx.lineTo(w,hh-25); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='#2a3358'; ctx.beginPath();
+  ctx.moveTo(0,hh-25); ctx.lineTo(w,hh-25); ctx.stroke();
+  ctx.fillStyle='#e7ecff'; ctx.font='12px ui-monospace';
+  ctx.fillText(`σ=${sig.toFixed(2)}, h(X)=${h.toFixed(3)} bits`,10,18);
+}
+document.getElementById('diffSig').addEventListener('input',drawDiff);
+
+// ============= INITIAL RENDER =============
+window.addEventListener('load',()=>{
+  runCoin();
+  drawNormal();
+  runConv();
+  drawEntropy();
+  runAEP();
+  drawTypical();
+  drawCompression();
+  runMarkov();
+  runSMB();
+  drawDiff();
+});
+window.addEventListener('resize',()=>{
+  drawNormal(); drawEntropy(); drawTypical(); drawDiff();
+});
+</script>
+
+</body>
+</html>
