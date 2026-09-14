@@ -1788,4 +1788,10 @@ $$
 \end{aligned}}
 $$
 
+Also:
+
+$$
+\boxed{\text{Meaning} = \text{Internal Structure} + \text{World Coupling}}
+$$
+
 </div>
