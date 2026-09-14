@@ -19,11 +19,10 @@ The point of this chapter is to locate *where* the reliability actually is. The 
 
 **The tour.**
 
-1. **A space and a number.** What a "state" is, the space of all states, and the one number — the energy — that runs everything.
-2. **The picture.** A fixed energy locks the system to one thin curve; adding temperature turns that curve into a probability.
-3. **The machine.** A neural network is exactly this: an energy over all (question, answer) pairs.
-4. **The two regions.** The thin region the model *does* reach, the vast region it *never* reaches, and the line between them — each with its own shape.
-5. **Off the slice.** Going wrong is going off the slice.
+1. **The space.** The space of all (input, output) pairs — enormous, high-dimensional, and mostly incoherent.
+2. **The energy.** A single number on each pair, decided by the training data; low energy = useful. Temperature turns it into a probability.
+3. **The two regions.** The thin region the model *does* reach and the vast region it *never* reaches — each with its own shape, and a line between them.
+4. **Off the slice.** Going wrong is going off the slice.
 
 $$
 \boxed{
@@ -37,110 +36,65 @@ $$
 </div>
 
 <div class="md">
-## The space: every possible state
+## The space: every (input, output) pair
 
-**"Where" is not "where it is going."** Put a bead on a wire. Tell me where it is along the wire, and I can point to it. But I still cannot say what happens next: at that spot it could be at rest, or racing straight past. Same place, two different futures.
+The space this chapter lives in is the space of **all (input, output) pairs** — every possible input paired with *every* possible answer, absurd ones included; for an image generator, every possible picture. In physics, a space of "every possible state" has a name, **phase space** \cite[nLab]{nlab_phasespace}; here the "state" is simply a pair, and the name is borrowed for the same idea — *the space of everything that could possibly be the case*.
 
-So a moving thing needs *two* numbers at once:
+It is **enormous and high-dimensional**. Every scaled-and-rotated image of the letter "A" is a 1,024-number vector, so its space is $\mathbb{R}^{1024}$ — one cannot draw 1,024 axes, but the extra dimensions only make the space bigger and emptier. For a sequence model the count is wilder still: the number of possible 100-token answers is $\lvert V\rvert^{100}$, which for a vocabulary of $\lvert V\rvert = 10{,}000$ is $10^{400}$ — a 1 followed by four hundred zeros.
 
-- the **position** $q$ — where it is;
-- the **momentum** $p$ — how it is moving (speed and direction).
-
-Momentum is just mass times speed, $p = m\,v$; if the word is new, read it as "how much motion it has." A **state** is the pair $(q,p)$: position plus momentum.
-
-**The key picture.** Collect *all* states — every position paired with every possible momentum — and you get the **phase space** \cite[nLab]{nlab_phasespace}. (The positions by themselves form the *configuration space* \cite[nLab]{nlab_configspace_physics}.) For one bead, each state is a point in a flat **graph**: position across the bottom, momentum up the side. The bead's whole life is a *path drawn inside that graph*, and at any instant it sits at exactly one point of it. One bead gives a 2-D graph; $N$ particles give $6N$ numbers (three positions and three momenta each). Same idea, only bigger.
-
-**The space can have a shape.** The position part may wrap around. Hang the bead from a string and it becomes a **pendulum** \cite{simple_pendulum_wiki}: its position is an *angle* that wraps all the way round, so the position part is a circle and the whole phase space is a **cylinder** \cite{symplectic_manifold_wiki}. The space of "everything possible" can therefore carry wrap-arounds and holes, inherited from the thing being modelled.
-
-**Now make the space be a machine.** For a chatbot the "state" is not a bead but a **(question, answer) pair**; for an image generator, a *possible picture*. The phase space is then *all* such pairs — and, as the opening warned, that includes the incoherent ones. The same two ingredients apply: a huge space of all (input, output) pairs, and, in the next section, one number on each of them.
+And almost none of those points is a sensible answer to its input. Yet they are all *in* the space, sitting there, perfectly valid strings. The question this chapter answers: **where, inside that enormous space, is the thin place where the outputs are actually good answers — and what shape is it?**
 
 $$
 \boxed{
-\text{phase space} \;=\; \text{the set of all states} \;=\; \text{every }(q,p)\text{, or every (question, answer), at once.}
+\text{phase space here} \;=\; \text{all (input, output) pairs at once,} \qquad \text{enormous, high-dimensional, mostly incoherent.}
 }
 $$
-
-*In one line:* a state is $(q,p)$; the phase space is all the states together — and for a machine, all the (input, output) pairs together.
 </div>
 
 <div class="md">
-## The energy: the one number that runs everything
+## The energy: a number the data paints
 
-**One number captures a whole state — its energy.** Physics calls it the **Hamiltonian** $H$; for anything that moves it is just the *total energy* \cite[nLab]{nlab_hamiltonian_mechanics}:
+Give every (input, output) pair a single number — its **energy**. In a trained model this is not a physical energy at all; it is a *score*, and the crucial point is that **the training data decides it**. Training does essentially one thing: it pushes the good pairs — coherent, fluent, in-distribution — to *low* energy, and the bad pairs — incoherent, off-distribution — to *high* energy. That is the whole idea behind **energy-based models** \cite[LeCun et al., 2007]{lecun2007ebm} \cite[LeCun et al., 1998]{lecun1998gradient}:
+
+<div class="smart-quote" data-cite="ebm_wiki" data-after="Energy-based model">
+Essentially, the model learns a function that associates low energies to correct values, and higher energies to incorrect values.
+</div>
+
+So "useful" and "low energy" are the same statement: a pair is useful exactly when the data made it likely, that is, when its energy is low.
+
+**Temperature turns the number into a probability.** The standard rule is the **Boltzmann distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
 
 $$
-\underbrace{H(q,p)}_{\text{total energy}}
+\underbrace{P(x)}_{\text{probability of a pair }x}
 \;=\;
-\underbrace{\tfrac{1}{2m}\,p^{2}}_{\text{kinetic: the “how fast” part } \big(=\tfrac{1}{2}m v^{2}\big)}
-\;+\;
-\underbrace{V(q)}_{\text{potential: the “where it costs” part}}.
+\underbrace{e^{-\beta\, E(x)}}_{\text{the weight: \emph{small} when the energy is big}}
+\;\Big/\;
+\underbrace{Z}_{\text{the total of all the weights}}
+\qquad\text{with}\qquad
+\underbrace{\beta \;=\; \tfrac{1}{\text{temperature}}}_{\text{how “stingy” the sampling is}}.
 $$
 
-The first term is the kinetic energy you already know — $\tfrac{1}{2m}p^{2}$ is the same as $\tfrac{1}{2}mv^{2}$, because $p = m\,v$. The second, $V(q)$, is potential energy: stored energy of a position, where a ball held high has more and a stretched spring has more. Add the two and you have one number, the state's energy $H$.
-
-**Picture a landscape.** Let $V$ be the height of hilly terrain laid out over the position $q$. The bead is a ball on that terrain. Kinetic energy is how fast it is rolling; potential energy is how high up it is. That is the entire picture.
-
-**The motion is just "roll downhill."** The ball speeds up going down a slope, slows going up, and turns around at the top. Written down, this is exactly Newton's laws rearranged:
-
-$$
-\underbrace{v \;=\; \frac{p}{m}}_{\text{speed = momentum ÷ mass}}
-\qquad\text{and}\qquad
-\underbrace{\frac{dp}{dt} \;=\; -\,V'(q)}_{\text{momentum changes by the \emph{slope} of the terrain, downhill}}.
-$$
-
-The second line says the momentum changes by the slope of the terrain, and the minus sign makes it go *downhill*. That minus sign is the physics.
-
-**The energy is conserved — so the bead is locked to one curve.** As long as the terrain $V$ does not change with time, $H$ stays constant: the bead trades kinetic for potential and back, but the sum never changes. It can never leave the one curve where the energy equals its starting value $E$. That curve is the **energy slice** — the set of all states with that single energy:
-
-$$
-\underbrace{\{\,(q,p)\;:\;H(q,p)=E\,\}}_{\text{“every state whose energy is exactly }E\text{” }=\text{ one curve in the phase graph}}.
-$$
-
-Even the freest system in the universe is, from the instant it starts, confined to a single slice. Everywhere else is where it *cannot* be.
-
-<div class="optional md" data-headline="The formal version (for the curious)">
-The two lines above are the one-dimensional, Newtonian form. In full generality a state is a point of the **cotangent bundle** $T^{*}Q$ of the configuration space $Q$, and the phase space carries a canonical area form — the **symplectic form** $\omega$ — built from the **canonical 1-form** $\theta$ \cite[nLab]{nlab_phasespace} \cite[nLab]{nlab_symplectic_manifold}:
-
-$$
-\underbrace{\theta \;=\; \sum_{i} p_{i}\,dq_{i}}_{\text{each momentum }p_{i}\text{ is paired with the “change in position” }dq_{i}}
-\;\Longrightarrow\;
-\underbrace{\omega \;=\; -\,d\theta \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{one area element }dq\wedge dp\text{ for each pair }(q_{i},p_{i})}.
-$$
-
-The energy $H$ then picks out a unique velocity field $X_{H}$, the **Hamiltonian vector field**, by the single rule \cite[nLab]{nlab_symplectic_manifold}
-
-$$
-\underbrace{\iota_{X_{H}}\,\omega \;=\; dH}_{\text{“turn the slope of the energy into a direction”}},
-$$
-
-which written out in coordinates is **Hamilton's equations**, $\dot q_{i}=\partial H/\partial p_{i}$ and $\dot p_{i}=-\partial H/\partial q_{i}$ \cite[nLab]{nlab_hamiltonian_mechanics}. The subject is **Hamiltonian mechanics** on a **symplectic manifold** \cite[nLab]{nlab_symplectic_manifold}. The coordinate-free version is cleaner and more general; the "roll downhill" version in the main text is the same thing in one dimension.
-</div>
-</div>
-
-<div class="md">
-## The picture that makes it click
-
-The bead's energy is fixed, so it is locked to one curve. Now draw *every* curve at once — one for each possible energy — and you get one of the most beautiful pictures in all of physics: the **phase portrait** of a pendulum \cite{simple_pendulum_wiki}.
-
-Pull a pendulum a little to the side and let go. In its phase graph (angle across, momentum up — and the angle wraps, so it is a cylinder) it draws:
-
-- **a small swing** → a small closed loop near the bottom. It keeps circling the *same* loop, forever.
-- **a bigger swing** → a bigger loop, still closed.
-- **just enough to reach the very top** → a knife-edge curve (the *separatrix*). Below it the pendulum swings back and forth; above it, it goes over the top and keeps spinning.
-
-The point: the whole cylinder is "everything that could happen," but a pendulum with a *fixed* energy lives on **one loop**. One number — the energy — selected one thin curve out of all of it, and that loop is where *all* the action is. Everything else on the cylinder is still possible, but the pendulum never visits it.
+Each pair gets a **weight** $e^{-\beta E}$ that *shrinks* as the energy grows; divide by $Z$ (the sum of all the weights) so the probabilities add to $1$ \cite{partition_function_wiki}. In one line:
 
 $$
 \boxed{
-\text{one number (the energy) selects one thin curve of a huge space —}
-\quad\text{and that curve is where everything happens.}
+\text{low energy} \;\Rightarrow\; \text{likely.} \qquad\qquad \text{high energy} \;\Rightarrow\; \text{almost never.}
 }
 $$
 
-An AI's usefulness is the higher-dimensional version of this.
+The high-energy pairs are **not removed** — they are still in the space, still part of the possibilities — they have simply been given almost no weight. So the model is found, almost always, in the **low-energy region**. And that region is *thin*: in a large system the energy concentrates so tightly around one value that the relative wobble is about $1/\sqrt{N}$, a consequence of **concentration of measure** \cite{concentration_of_measure_wiki}. Push the temperature to zero and the wobble dies out entirely: all the weight sits on the single lowest-energy pair — the **ground state** \cite{ground_state_wiki} — and the region narrows to a point. That one-point limit is the useful, deterministic answer a trained model gives.
 
-*In one line:* fix the energy → one curve → one slice.
+**This is the knob on a chatbot.** "Temperature" in a language model is borrowed straight from here: **low** = almost nothing but the single safest, most likely thing (correct, but dull); **high** = it explores unusual, higher-energy options (some delightful, some nonsense). (The <a href="samplinglab">Temperature &amp; Sampling</a> chapter turns this knob in detail.)
+
+**Three verbs do the work** \cite[LeCun et al., 2007]{lecun2007ebm}: **training** = shaping the energy so the good cases sit low and the rest sits high; **inference** = sliding to the low energy (given a question, find the low-energy answer); **usefulness** = the low-energy region itself. It is an old trick — **Hopfield networks** are energy systems that slide down until they park on a stored memory \cite{hopfield1982}, **Boltzmann machines** add temperature and push the good cases down and the rest up \cite[Ackley, Hinton & Sejnowski, 1985]{ackley1985boltzmann}, and LeCun returns to it in 2022, where the proposed brain is a stack of modules each driven to low energy \cite[LeCun, 2022]{lecun2022autonomous}.
+
+*In one line:* a space of all (input, output) pairs, one number on each — set by the data, low on the useful ones — and a thin low-energy region where the model works.
+
+<div class="optional md" data-headline="What “energy” means for a real LLM (the honest boundary)">
+In a modern language model the "energy" is *not* a physical Hamiltonian. There is no conserved quantity, no pendulum swinging, no real temperature in a frozen model at inference. The energy is the **loss** — for a language model, roughly the *surprise* of the tokens (the negative log-likelihood). But its *job* is identical: a single number over all possible (input, output) sequences that training has made small exactly on the sequences that are *coherent, fluent, and in-distribution*. The physics is a *picture of the geometry*, not a claim that a GPU is swinging a pendulum. The rule for the whole course: where the analogy is *structural* it is useful; where it would be *literal*, it is not.
 </div>
+</div>
+
 
 <div class="md">
 ## Temperature: the slice gets a thickness
