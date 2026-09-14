@@ -157,7 +157,7 @@ The three spaces play distinct roles:
 - **$S$** is the space of *meanings*: what can be expressed *as*.
 - **$W$** is the space of *situations*: what meanings can be *about*.
 
-The map $\pi: X \to S$ is the act of interpretation; the relation $S \rel W$ is the act of reference or truth. Meaning lives in the *composition* of these two: a form $x$ is meaningful and true to the extent that there is a well-defined path $x \mapsto \pi(x) \rel w$ for some world $w$.
+The map $\pi: X \to S$ is the act of interpretation; the relation $S \models W$ is the act of reference or truth. Meaning lives in the *composition* of these two: a form $x$ is meaningful and true to the extent that there is a well-defined path $x \mapsto \pi(x) \models w$ for some world $w$.
 
 This three-space picture is, we believe, the right *topology* for a theory of meaning. It separates the three things that are often conflated — expression, interpretation, and reference — and it makes precise the sense in which meaning is a *mediated* relation between language and world.
 </div>
@@ -339,21 +339,27 @@ The fiber-bundle picture is, we think, the right level of mathematical abstracti
 
 We can now state the central structural claim of the theory as a *commutativity* condition. The three spaces $X$, $S$, and $W$, together with the interpretation map $\pi: X \to S$ and the satisfaction relation between $S$ and $W$, should be organized so that the different routes from a form to a world *agree*.
 
-Concretely, if we have two forms $x, x' \in X$ that are related by a linguistic transformation $f: X \to X$ (say, a grammatical operation), and corresponding meanings $s, s' \in S$ related by a semantic transformation $g: S \to S$, then the diagram
+Concretely, suppose a linguistic transformation $f: X \to X'$ takes a form $x$ to a form $x'$, and a semantic transformation $g: S \to S'$ takes its meaning $s$ to a meaning $s'$. For interpretation to be coherent, the diagram below — with every symbol labeled — must **commute**:
 $$
-\underbrace{
 \begin{array}{ccc}
-X & \xrightarrow{\;f\;} & X'\\[3pt]
-\downarrow\;\pi & & \downarrow\;\pi'\\[3pt]
-S & \xrightarrow{\;g\;} & S'
+\underbrace{X}_{\text{forms}}
+& \xrightarrow{\;\underbrace{f}_{\text{linguistic}}\;}
+& \underbrace{X'}_{\text{forms}'} \\[14pt]
+\underbrace{\pi}_{\text{interpret}}\!\downarrow
+& &
+\downarrow\!\underbrace{\pi'}_{\text{interpret}} \\[14pt]
+\underbrace{S}_{\text{meanings}}
+& \xrightarrow{\;\underbrace{g}_{\text{semantic}}\;}
+& \underbrace{S'}_{\text{meanings}'}
 \end{array}
-}_{\substack{\text{two routes}\\[-1pt]X \to S'}}
-\qquad\text{must agree:}\qquad
+$$
+In words: the two routes from $X$ to $S'$ must give the same result,
+$$
 \underbrace{\pi' \circ f}_{\substack{\text{transform,}\\[-1pt]\text{then interpret}}}
 \;=\;
 \underbrace{g \circ \pi}_{\substack{\text{interpret,}\\[-1pt]\text{then transform}}}
 $$
-should **commute**. The equation $\pi' \circ f = g \circ \pi$ says that *transforming the form and then interpreting* gives the same result as *interpreting and then transforming the meaning*.
+that is, *transforming the form and then interpreting* gives the same result as *interpreting and then transforming the meaning*.
 
 Commutativity is the precise sense in which the map $\pi$ is a *structure-preserving* map — a morphism in the appropriate category. It is the condition that makes $\pi$ a genuine *interpretation* rather than an arbitrary assignment of meanings to forms. A map that did not commute would be one in which the meaning of a transformed form is not the transformation of the meaning — a fundamentally incoherent semantics.
 
@@ -415,7 +421,7 @@ This chapter has laid out a scaffold. The open problems are the places where the
 
 **Problem 4 (Self-similarity and scale).** The claim that $X$ is approximately self-similar needs a precise formulation. Is there a genuine scaling symmetry, or only statistical scale-invariance? What are the exponents, and do they vary across languages?
 
-**Problem 5 (The three spaces and truth).** The space $W$ of worlds, and the satisfaction relation $S \rel W$, are the least developed parts of the picture. How does the geometry of $W$ interact with the geometry of $S$? This is where the theory must connect to formal semantics and to the philosophy of truth.
+**Problem 5 (The three spaces and truth).** The space $W$ of worlds, and the satisfaction relation $S \models W$, are the least developed parts of the picture. How does the geometry of $W$ interact with the geometry of $S$? This is where the theory must connect to formal semantics and to the philosophy of truth.
 
 These five problems are not independent. They form a programme: construct the spaces, specify the maps, identify the invariants, test the heavy-tail claim, and connect the geometry to truth. A theory of meaningful language spaces is complete when it can answer all five.
 
@@ -425,7 +431,7 @@ The aim of this chapter has not been to answer these questions, but to make them
 <div class="optional md" data-headline="Sources and further reading">
 This chapter develops a geometric and topological view of meaningful language. The central ideas — meaning as structure, the three-space picture, and the landscape of clusters, filaments, and voids — draw on several traditions.
 
-**Structural semantics and the relational nature of meaning.** The view that meaning is relational and that a sign's value comes from its differences within a system is classical. The model-theoretic treatment of meaning, truth, and satisfaction is due to Tarski, whose definition of truth for formal languages is the direct ancestor of the satisfaction relation $S \rel W$ used here.
+**Structural semantics and the relational nature of meaning.** The view that meaning is relational and that a sign's value comes from its differences within a system is classical. The model-theoretic treatment of meaning, truth, and satisfaction is due to Tarski, whose definition of truth for formal languages is the direct ancestor of the satisfaction relation $S \models W$ used here.
 
 - \citeauthor{tarski1935wahrheitsbegriff}, \citealternativetitle{tarski1935wahrheitsbegriff} (\citeyear{tarski1935wahrheitsbegriff}).
 - \citeauthor{hodges1993modeltheory}, \citealternativetitle{hodges1993modeltheory} (\citeyear{hodges1993modeltheory}) — a modern, accessible account of the model theory that underlies the $S$–$W$ relation.
