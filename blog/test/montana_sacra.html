@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Der Heilige Berg — Eine interaktive Reise</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0705; --ink:#efe6d2; --gold:#d4a24a; --blood:#7a1a1a;
+    --sepia:#c8a877; --dim:#8a7a5a; --panel:#12100b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Cormorant Garamond',Georgia,serif;line-height:1.55;overflow-x:hidden}
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=IM+Fell+English+SC&display=swap');
+  body{font-family:'Cormorant Garamond',Georgia,serif}
+  .sc{font-family:'IM Fell English SC',serif;letter-spacing:.05em}
+  section{min-height:100vh;padding:6vh 8vw;position:relative;border-bottom:1px solid #1a1510;display:flex;flex-direction:column;justify-content:center}
+  h1{font-family:'IM Fell English SC',serif;font-size:clamp(2.5rem,7vw,6rem);color:var(--gold);letter-spacing:.08em;line-height:1.05;margin-bottom:1rem}
+  h2{font-family:'IM Fell English SC',serif;font-size:clamp(1.6rem,3.5vw,2.8rem);color:var(--gold);letter-spacing:.06em;margin-bottom:1.2rem}
+  h3{font-family:'IM Fell English SC',serif;color:var(--sepia);font-size:1.3rem;letter-spacing:.05em;margin:1rem 0 .5rem}
+  p{font-size:1.15rem;max-width:70ch;margin-bottom:1rem;color:#e0d4b8}
+  em{color:var(--gold);font-style:italic}
+  .subtle{color:var(--dim);font-size:.95rem;font-style:italic}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+  @media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+  canvas.demo{background:#050403;border:1px solid #2a2015;display:block;max-width:100%}
+  .panel{background:var(--panel);border:1px solid #2a2015;padding:1.5rem;border-radius:2px}
+  .glyph{font-size:2rem;color:var(--gold);margin:0 .3rem}
+  button,.btn{background:transparent;color:var(--gold);border:1px solid var(--gold);padding:.5rem 1rem;font-family:inherit;font-size:1rem;cursor:pointer;letter-spacing:.05em;transition:all .3s}
+  button:hover,.btn:hover{background:var(--gold);color:var(--bg)}
+  input[type=range]{width:100%;accent-color:var(--gold)}
+  .tag{display:inline-block;padding:.15rem .6rem;background:#1a140d;border:1px solid var(--dim);color:var(--sepia);font-size:.85rem;margin:.2rem .2rem 0 0;border-radius:2px}
+  .drop{border-left:2px solid var(--gold);padding-left:1rem;margin:1rem 0;color:#c8b890;font-style:italic}
+  .chapter-num{font-family:'IM Fell English SC',serif;color:var(--blood);font-size:1.2rem;letter-spacing:.3em;margin-bottom:.5rem}
+  .nav{position:fixed;right:1rem;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:.3rem}
+  .nav a{width:10px;height:10px;border-radius:50%;background:#2a2015;border:1px solid var(--dim);text-decoration:none;transition:all .3s}
+  .nav a:hover,.nav a.active{background:var(--gold)}
+  .nav a::after{content:attr(data-t);position:absolute;right:20px;color:var(--sepia);font-size:.85rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;background:var(--bg);padding:.1rem .5rem;border:1px solid #2a2015}
+  .nav a:hover::after{opacity:1}
+  .flourish{text-align:center;color:var(--gold);font-size:1.5rem;margin:2rem 0;letter-spacing:1rem}
+  .planet-card{cursor:pointer;transition:transform .3s}
+  .planet-card:hover{transform:translateY(-3px)}
+  .modal{position:fixed;inset:0;background:rgba(5,4,3,.95);display:none;align-items:center;justify-content:center;z-index:200;padding:2rem}
+  .modal.open{display:flex}
+  .modal-inner{max-width:600px;background:var(--panel);border:1px solid var(--gold);padding:2rem;position:relative}
+  .modal .close{position:absolute;top:.5rem;right:.8rem;font-size:1.5rem;cursor:pointer;color:var(--gold)}
+  #meta-reveal{transition:opacity 2s;opacity:0}
+  .marquee{border-top:1px solid #2a2015;border-bottom:1px solid #2a2015;padding:.8rem 0;overflow:hidden;white-space:nowrap;color:var(--dim);font-style:italic}
+  code{color:var(--sepia);background:#1a140d;padding:.1rem .3rem;font-size:.9rem}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav"></nav>
+
+<!-- ============ HERO ============ -->
+<section id="hero" style="justify-content:center;align-items:center;text-align:center">
+  <div class="chapter-num">MEXIKO · 1973 · 114 MINUTEN</div>
+  <h1>Der Heilige Berg</h1>
+  <p class="subtle" style="max-width:50ch">Eine interaktive Erzählung des Films von Alejandro Jodorowsky.<br>Scrolle langsam. Klicke auf alles. Der Film verlangt es.</p>
+  <canvas id="eyeCanvas" width="400" height="400" style="margin-top:2rem"></canvas>
+  <div class="flourish">☉ ☽ ☿ ♀ ♁ ♂ ♃ ♄</div>
+  <p class="subtle">„Nichts in deiner Erfahrung oder Bildung hat dich auf diesen Film vorbereitet." — offizieller Trailer, 1973 [[1]]</p>
+</section>
+
+<!-- ============ PROLOG: Wer erzählt uns hier was? ============ -->
+<section id="prolog">
+  <div class="chapter-num">PROLOG</div>
+  <h2>Was du gleich sehen wirst</h2>
+  <div class="grid2">
+    <div>
+      <p>Ein <em>Dieb</em>, der aussieht wie Christus, wird von einem <em>fußlosen Zwerg</em> aus der Wüste in eine Stadt geführt. Dort trifft er einen <em>Alchimisten</em>, der seine Scheiße in Gold verwandelt. Der Alchimist sammelt <em>sieben mächtige Menschen</em> ein — jede und jeder verkörpert einen Planeten und ein Übel unserer Welt — und führt die Gruppe zu einem <em>heiligen Berg</em>, um den <em>Unsterblichen</em> das Geheimnis des ewigen Lebens zu entreißen.</p>
+      <p>Am Gipfel angekommen, ruft der Alchimist in die Kamera: <em>„Zoom back, camera!"</em> — das Filmset wird sichtbar. Der Film widerlegt sich selbst. [[1]]</p>
+      <div class="drop">Das ist die ganze Geschichte. Alles Weitere ist, <em>wie</em> Jodorowsky sie erzählt — und warum jede Szene brennt.</div>
+    </div>
+    <div class="panel">
+      <h3>Die zehn Reisenden</h3>
+      <p class="subtle">Klicke später auf jede Figur, wenn sie in der Handlung auftaucht.</p>
+      <div style="line-height:2">
+        <span class="tag">Der Dieb · Der Narr 🃏</span>
+        <span class="tag">Der Zwerg · 5 der Schwerter ⚔</span>
+        <span class="tag">Der Alchimist ☉</span>
+        <span class="tag">Die Schreib-Frau · Assistentin</span><br>
+        <span class="tag">Fon ♀ Venus</span>
+        <span class="tag">Isla ♂ Mars</span>
+        <span class="tag">Klen ♃ Jupiter</span>
+        <span class="tag">Sel ♄ Saturn</span>
+        <span class="tag">Berg ⛢ Uranus</span>
+        <span class="tag">Axon ♆ Neptun</span>
+        <span class="tag">Lut ♇ Pluto</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AKT I: DIE WÜSTE ============ -->
+<section id="akt1">
+  <div class="chapter-num">AKT I · DIE WÜSTE UND DIE STADT</div>
+  <h2>Der Dieb erwacht</h2>
+  <div class="grid2">
+    <div>
+      <p>Ein Mann liegt im Sand. Fliegen kriechen über sein Gesicht. Er hat keinen Namen. Er ist <em>Der Narr</em> — die erste Karte des großen Arkanums, die Zahl <em>Null</em>, der Beginn jeder Reise. Ein <em>fußloser, handloser Zwerg</em> findet ihn, freundet sich mit ihm an. Zusammen ziehen sie in die Stadt und verdienen Geld, indem sie Touristen unterhalten. [[1]]</p>
+      <p>Die Stadt ist ein Karneval der Grausamkeit: Soldaten erschießen Studenten, während Touristen die Leichen fotografieren; eine Prozession trägt gehäutete Lämmer wie Christus-Statuen; Frösche und Chamäleons stellen die spanische Eroberung Mexikos nach — bis die Bühne explodiert. Jodorowsky zeigt keine Metapher. Er zeigt die Metapher <em>als Ereignis</em>.</p>
+      <div class="drop">Der Dieb ähnelt Christus. Eine Nonne und drei Krieger machen einen Gipsabguss seines Körpers und verkaufen hunderte identische Kruzifixe. Der Dieb wacht auf, umgeben von sich selbst.</div>
+      <p>Er isst dem Wachs-Christus das Gesicht ab und schickt den Körper mit Ballons in den Himmel. <em>Er verzehrt Christus. Er entlässt Christus.</em> Dann sieht er einen Turm am Horizont, an dem ein Haken mit einem Goldbeutel herabgelassen wird. Er will wissen, woher das Gold kommt.</p>
+    </div>
+    <div>
+      <h3>Der Narr trifft die 5 der Schwerter</h3>
+      <p class="subtle">Die beiden Tarot-Karten, die den ersten Akt formen. Bewege die Maus über die Karten.</p>
+      <div id="tarotHolder" style="display:flex;gap:1rem;justify-content:center;margin:1rem 0"></div>
+      <div id="tarotInfo" class="panel" style="min-height:120px">
+        <p class="subtle">Fahre über eine Karte, um ihre Bedeutung im Film zu sehen.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AKT II: DER TURM ============ -->
+<section id="akt2">
+  <div class="chapter-num">AKT II · DER TURM DES ALCHIMISTEN</div>
+  <h2>Scheiße wird Gold</h2>
+  <div class="grid2">
+    <div>
+      <p>Der Dieb steigt den Turm hinauf. Im obersten Raum: der <em>Alchimist</em> (gespielt von Jodorowsky selbst) und seine stumme, tätowierte Assistentin. Es kommt zum Kampf. Der Alchimist zwingt den Dieb, in ein Gefäß zu defäkieren. Er verwandelt die Exkremente vor der Kamera in einen glänzenden Goldbarren und spricht den Kernsatz des Films:</p>
+      <div class="drop" style="font-size:1.3rem">„Du bist Exkrement. Du kannst dich in Gold verwandeln." [[1]]</div>
+      <p>Der Dieb nimmt das Gold. Der Alchimist hält ihm einen Spiegel vor. Der Dieb sieht sein Gesicht — und zerschmettert den Spiegel mit dem Goldbarren. Damit hat er die Prüfung bestanden: Er zerstört sein eigenes Bild <em>durch</em> das, was aus seinem Abfall gewonnen wurde. Der Alchimist nimmt ihn als Lehrling an.</p>
+      <p class="subtle">Das ist wörtliche Alchemie: <em>nigredo</em> (Schwärzung, Verfaulung) → <em>albedo</em> (Reinigung) → <em>rubedo</em> (das Rote, Gold, vollendetes Selbst). Bewege die Regler rechts, um die Transmutation selbst zu vollziehen.</p>
+    </div>
+    <div>
+      <h3>Die alchemistische Transmutation</h3>
+      <canvas id="alchemyCanvas" class="demo" width="500" height="380"></canvas>
+      <div style="margin-top:1rem">
+        <label>Feuer (Hitze der Läuterung) <span id="fireVal">0.3</span></label>
+        <input type="range" id="fire" min="0" max="1" step="0.01" value="0.3">
+        <label>Zeit (Dauer des Werks) <span id="timeVal">0.2</span></label>
+        <input type="range" id="atime" min="0" max="1" step="0.01" value="0.2">
+        <label>Selbst-Erkenntnis (Zerbrechen des Spiegels) <span id="mirrorVal">0</span></label>
+        <input type="range" id="mirror" min="0" max="1" step="0.01" value="0">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AKT III: DIE SIEBEN PLANETEN ============ -->
+<section id="akt3">
+  <div class="chapter-num">AKT III · DIE SIEBEN PLANETEN DER WELT</div>
+  <h2>Sieben Sünden, sieben Sterne</h2>
+  <p>Der Alchimist stellt dem Dieb sieben Menschen vor. Jede und jeder ist die menschgewordene <em>dunkle Seite</em> eines Planeten — reich, mächtig, <em>funktional</em> in unserer Welt. Sie sind nicht Bösewichte im Comic-Sinn; sie sind die <em>Architektur</em> der Moderne: Kosmetik, Waffen, Kunst-als-Ware, Kindheit-als-Indoktrination, Bevölkerungspolitik, Polizei, Wohnungsbau. [[1]]</p>
+  <p class="subtle">Klicke auf einen Planeten, um seine Figur, ihr Geschäft und ihre Szene im Film zu sehen.</p>
+  <div id="planetPanel" style="position:relative;height:520px;margin:2rem 0">
+    <svg id="planetSvg" viewBox="0 0 800 520" style="width:100%;height:100%"></svg>
+  </div>
+  <p>Der Alchimist befiehlt den Sieben, ihr Geld zu verbrennen — vor der Kamera brennen echte Bündel — und wächserne Effigien ihrer selbst zu verbrennen. Mit dem Dieb und der Assistentin bilden sie eine <em>Gruppe von zehn</em>. Zehn ist die Zahl der Sephiroth, der Vollendung des Baums. Erst jetzt beginnt die eigentliche Reise.</p>
+</section>
+
+<!-- ============ AKT IV: LOTUS-INSEL ============ -->
+<section id="akt4">
+  <div class="chapter-num">AKT IV · LOTUS-INSEL</div>
+  <h2>Die Versuchung, unterwegs zu vergessen, wohin man ging</h2>
+  <div class="grid2">
+    <div>
+      <p>Die Zehn segeln zur <em>Lotus-Insel</em>. Der Name selbst ist eine Warnung: In der <em>Odyssee</em> vergessen die Lotus-Esser ihre Heimat, sobald sie die Frucht kosten. Auf der Insel finden sie die <em>Pantheon-Bar</em> — eine Party auf einem Friedhof, wo frühere Pilger den Aufstieg zum Berg <em>aufgegeben</em> haben und stattdessen Drogen nehmen, Gedichte schreiben, akrobatische Kunststücke vollführen. [[1]]</p>
+      <div class="drop">Die Pantheon-Bar ist Jodorowskys Selbstkritik an der Gegenkultur, aus der er selbst kommt: die Hippies, die die Suche <em>durch</em> die Suche ersetzt haben. Rausch als Ziel statt als Werkzeug.</div>
+      <p>Die Zehn widerstehen. Sie verlassen die Bar und beginnen den Aufstieg. Jede und jeder muss unterwegs seiner <em>persönlichen symbolischen Vision</em> begegnen — der schlimmsten Angst, der tiefsten Obsession, dem eigenen Schatten. Der Film überspringt diese Visionen mit ritueller Knappheit; sie sind privat.</p>
+    </div>
+    <div>
+      <h3>Der Kompass des Reisenden</h3>
+      <p class="subtle">Wo stehst <em>du</em> auf der Lotus-Insel? Ziehe die Regler.</p>
+      <div id="lotusPlot" style="height:380px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AKT V: DER AUFSTIEG ============ -->
+<section id="akt5" style="background:linear-gradient(180deg,#0a0705 0%,#1a1208 100%)">
+  <div class="chapter-num">AKT V · DER AUFSTIEG</div>
+  <h2>Der Berg</h2>
+  <div class="grid2">
+    <div>
+      <p>Der Berg erhebt sich. Nahe dem Gipfel schickt der Alchimist den <em>Dieb</em> zurück — mit einer jungen Prostituierten und einem Schimpansen, die ihm aus der Stadt gefolgt sind. Der Dieb, unsere Identifikationsfigur, unser <em>Christus-Doppel</em>, darf den Gipfel nicht erreichen. Er wird zurückgeschickt zu „seinem Volk". [[1]]</p>
+      <p>Die übrigen — Alchimist, Assistentin, die sieben Planeten — steigen weiter. Am Gipfel sitzen die <em>neun Unsterblichen</em>, verhüllt in Kapuzen. Die Kamera zeigt sie feierlich. Dann streift der Alchimist eine Kapuze zurück.</p>
+      <div class="drop" style="font-size:1.3rem">Es sind gesichtslose Puppen. Attrappen. Es gibt keine Unsterblichen.</div>
+      <p>Und dann, in die Stille hinein, spricht der Alchimist in die Kamera:</p>
+      <p style="font-family:'IM Fell English SC',serif;font-size:1.6rem;color:var(--gold);text-align:center;margin:2rem 0">„Zoom back, camera!"</p>
+    </div>
+    <div>
+      <p class="subtle">Scrolle in diesem Panel nach unten, um den Berg zu besteigen.</p>
+      <div id="mountainCanvas" style="height:500px;background:#050403;border:1px solid #2a2015"></div>
+      <p class="subtle" style="text-align:center;margin-top:.5rem">Höhe: <span id="altitude">0</span> m</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AKT VI: ZOOM BACK ============ -->
+<section id="akt6">
+  <div class="chapter-num">AKT VI · DIE ANTWORT</div>
+  <h2>„Zoom back, camera!"</h2>
+  <div class="grid2">
+    <div>
+      <p>Die Kamera fährt zurück. Man sieht die anderen Kameras. Die Mikrofone. Die Lampen. Das Filmteam. Kabel. Ein Klappenmann. Das <em>gesamte Apparat</em> des Kinos ist plötzlich sichtbar — der Zauber wird nicht enthüllt, er wird <em>ausgestellt</em>. [[1]]</p>
+      <p>Der Alchimist wendet sich an die Zehn — <em>und an uns</em>:</p>
+      <div class="drop" style="font-size:1.3rem">„Auf Wiedersehen, Heiliger Berg. Das echte Leben erwartet uns."</div>
+      <p>Das ist die <em>Antwort</em> auf die Frage, die der Film gestellt hat: <em>Kann Kino spirituelle Erleuchtung liefern?</em> Jodorowskys Antwort ist ein doppeltes Nein und ein einfaches Ja. Nein: Der Film kann dich nicht unsterblich machen; die Gurus am Gipfel sind Puppen. Nein: Sitzen bleiben, weiter starren, weiter <em>konsumieren</em> ist genau die Falle, gegen die er zwei Stunden lang angeschrien hat. Ja: <em>
+Ja: <em>aufstehen</em>. Die Kinosessel verlassen. Die Suche fortsetzen — aber im echten Leben, nicht im Bild. [[11]]</p>
+      <p>Santos liest das Ende als eine Geste, die den Film gleichzeitig <em>konstruiert und wieder abbaut</em> als heiliges Objekt. Jodorowsky spielt selbst den Alchimisten — den falschen Guru — und entzieht sich damit im selben Zug, in dem er sich zeigt. [[11]]</p>
+    </div>
+    <div>
+      <h3>Die Enthüllung</h3>
+      <p class="subtle">Klicke, um die Kamera zurückzuziehen.</p>
+      <canvas id="zoomCanvas" class="demo" width="500" height="400"></canvas>
+      <div style="margin-top:1rem;text-align:center">
+        <button id="zoomBtn">Zoom back, camera!</button>
+      </div>
+      <p class="subtle" style="margin-top:1rem">Der einzige Knopf in diesem Dokument, der dich <em>aus</em> dem Dokument herausführt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EPILOG ============ -->
+<section id="epilog">
+  <div class="chapter-num">EPILOG · WAS BLEIBT</div>
+  <h2>Nach dem Abstieg</h2>
+  <div class="grid2">
+    <div>
+      <p>Der Dieb kehrt in die Stadt zurück. Der Alchimist verschwindet aus dem Bild. Der Film endet nicht mit einem Aufstieg, sondern mit einer <em>Rückkehr</em> — und mit der Anweisung, das Bild zu verlassen.</p>
+      <p>Alles, was du in den zwei Stunden gesehen hast — der Wachs-Christus, das Gold aus Scheiße, die sieben Planeten, der Berg, die Puppen am Gipfel — war <em>Handwerk</em>. Kameras, Lichter, Schauspieler, drei Monate Arica-Training, LSD, sequentieller Dreh, 20 Minuten herausgeschnittener Dialog. [[11]] Die Magie war <em>gemacht</em>. Und trotzdem — oder gerade deshalb — hat sie funktioniert: Der Film läuft seit 1973 weiter, im Waverly 16 Monate am Stück um Mitternacht [[11]], in Kanye Wests Yeezus-Tour 2013 [[11]], in einer MoMA-PS1-Installation 2011 [[11]], in Bootlegs während der 30-jährigen Verschollenheit, in jedem Menschen, der ihn einmal gesehen hat.</p>
+      <div class="drop">Die Frage war: <em>Kann Kino Erleuchtung liefern?</em><br>Die Antwort ist: <em>Nein. Aber es kann dich hinaus­schicken.</em></div>
+    </div>
+    <div class="panel">
+      <h3>Die zehn Reisenden — nochmal</h3>
+      <p class="subtle">Jetzt, nach der Geschichte, klicke auf jede Figur. Sie bedeuten mehr.</p>
+      <div id="finalCast" style="line-height:2.2"></div>
+    </div>
+  </div>
+
+  <div class="marquee" id="marquee" style="margin-top:3rem">
+    <span id="marqueeText">☉ Auf Wiedersehen, Heiliger Berg. Das echte Leben erwartet uns. ☉ Goodbye to the Holy Mountain. Real life awaits us. ☉ Du bist Exkrement. Du kannst dich in Gold verwandeln. ☉ Zoom back, camera! ☉</span>
+  </div>
+
+  <div id="meta-reveal" style="margin-top:4rem;padding:2rem;border:1px dashed var(--dim);background:#050403">
+    <p class="sc" style="color:var(--gold);text-align:center;font-size:1.1rem">— DIE KAMERA IST WEIT GENUG ZURÜCK, UM SICH SELBST ZU SEHEN —</p>
+    <p class="subtle" style="text-align:center;margin-top:1rem">Diese Seite ist HTML. Die Berge sind Dreiecke. Die Planeten sind SVG-Kreise. Der Alchimist ist Text. Wenn du das siehst, hat der Film funktioniert.</p>
+  </div>
+</section>
+
+<!-- ============ MODAL ============ -->
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <span class="close" id="modalClose">×</span>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/* ============ NAV ============ */
+const sections=[
+  ['hero','Titel'],['prolog','Prolog'],['akt1','I · Wüste'],['akt2','II · Turm'],
+  ['akt3','III · Sieben Planeten'],['akt4','IV · Lotus-Insel'],['akt5','V · Aufstieg'],
+  ['akt6','VI · Zoom back'],['epilog','Epilog']
+];
+const nav=document.getElementById('nav');
+sections.forEach(([id,t])=>{
+  const a=document.createElement('a');a.href='#'+id;a.dataset.t=t;a.id='nav-'+id;
+  nav.appendChild(a);
+});
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){
+    document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+    const el=document.getElementById('nav-'+e.target.id);if(el)el.classList.add('active');
+  }});
+},{threshold:.3});
+sections.forEach(([id])=>{const s=document.getElementById(id);if(s)io.observe(s);});
+
+/* ============ HERO: pulsing eye ============ */
+(function(){
+  const c=document.getElementById('eyeCanvas'),x=c.getContext('2d');
+  let t=0;
+  function draw(){
+    t+=0.015;x.clearRect(0,0,400,400);
+    // triangle
+    x.strokeStyle='#d4a24a';x.lineWidth=2;x.beginPath();
+    x.moveTo(200,60);x.lineTo(360,340);x.lineTo(40,340);x.closePath();x.stroke();
+    // rays
+    for(let i=0;i<12;i++){
+      const a=t+i*Math.PI/6, r1=140+Math.sin(t*2+i)*10, r2=180+Math.sin(t*2+i)*10;
+      x.strokeStyle='rgba(212,162,74,.3)';x.beginPath();
+      x.moveTo(200+Math.cos(a)*r1,220+Math.sin(a)*r1);
+      x.lineTo(200+Math.cos(a)*r2,220+Math.sin(a)*r2);x.stroke();
+    }
+    // eye
+    const s=1+Math.sin(t*2)*.08;
+    x.fillStyle='#efe6d2';x.beginPath();x.ellipse(200,220,45*s,25*s,0,0,Math.PI*2);x.fill();
+    x.fillStyle='#7a1a1a';x.beginPath();x.arc(200,220,18*s,0,Math.PI*2);x.fill();
+    x.fillStyle='#0a0705';x.beginPath();x.arc(200,220,8*s,0,Math.PI*2);x.fill();
+    x.fillStyle='#efe6d2';x.beginPath();x.arc(196,216,3,0,Math.PI*2);x.fill();
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============ AKT I: TAROT ============ */
+(function(){
+  const holder=document.getElementById('tarotHolder'),info=document.getElementById('tarotInfo');
+  const cards=[
+    {name:'Der Narr',num:'0',glyph:'🃏',color:'#d4a24a',
+     meaning:'Die erste Karte des großen Arkanums, Zahl Null. Der Beginn jeder Reise, unschuldig, offen, ohne Ziel. Im Film: der namenlose Dieb, der im Sand erwacht — leer, formbar, bereit für alles.'},
+    {name:'5 der Schwerter',num:'V',glyph:'⚔',color:'#7a1a1a',
+     meaning:'Karte des Verlusts, der Verstümmelung, der unfairen Niederlage. Im Film: der fußlose, handlose Zwerg, der den Dieb findet. Der Verletzte, der den Suchenden zur Suche führt.'}
+  ];
+  cards.forEach(card=>{
+    const el=document.createElement('div');
+    el.style.cssText=`width:130px;height:200px;border:1px solid ${card.color};background:#12100b;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1rem;cursor:pointer;font-family:'IM Fell English SC',serif`;
+    el.innerHTML=`<div style="color:${card.color};font-size:.9rem;letter-spacing:.2em">${card.num}</div>
+      <div style="font-size:3rem">${card.glyph}</div>
+      <div style="color:${card.color};font-size:.85rem;text-align:center;letter-spacing:.05em">${card.name}</div>`;
+    el.onmouseenter=()=>{info.innerHTML=`<h3 style="color:${card.color}">${card.name}</h3><p>${card.meaning}</p>`;};
+    holder.appendChild(el);
+  });
+})();
+
+/* ============ AKT II: ALCHEMY CANVAS ============ */
+(function(){
+  const c=document.getElementById('alchemyCanvas'),x=c.getContext('2d');
+  const fire=document.getElementById('fire'),time=document.getElementById('atime'),mirror=document.getElementById('mirror');
+  const fv=document.getElementById('fireVal'),tv=document.getElementById('timeVal'),mv=document.getElementById('mirrorVal');
+  let anim=0;
+  function lerpColor(a,b,t){
+    const p=(c,s)=>parseInt(c.slice(s,s+2),16);
+    const r=Math.round(p(a,1)+(p(b,1)-p(a,1))*t);
+    const g=Math.round(p(a,3)+(p(b,3)-p(a,3))*t);
+    const bl=Math.round(p(a,5)+(p(b,5)-p(a,5))*t);
+    return `rgb(${r},${g},${bl})`;
+  }
+  function draw(){
+    anim+=0.03;
+    const F=+fire.value, T=+time.value, M=+mirror.value;
+    fv.textContent=F.toFixed(2);tv.textContent=T.toFixed(2);mv.textContent=M.toFixed(2);
+    x.fillStyle='#050403';x.fillRect(0,0,500,380);
+    // stage: nigredo (#2a1a10 brown) -> albedo (#c8c0b0 white) -> rubedo (#7a1a1a red) -> gold (#d4a24a)
+    const stage=Math.min(T,1);
+    let col;
+    if(stage<.33)col=lerpColor('#2a1a10','#c8c0b0',stage/.33);
+    else if(stage<.66)col=lerpColor('#c8c0b0','#7a1a1a',(stage-.33)/.33);
+    else col=lerpColor('#7a1a1a','#d4a24a',(stage-.66)/.34);
+    // vessel
+    x.strokeStyle='#8a7a5a';x.lineWidth=2;
+    x.beginPath();
+    x.moveTo(180,300);x.quadraticCurveTo(140,260,150,180);x.lineTo(160,120);x.lineTo(340,120);x.lineTo(350,180);x.quadraticCurveTo(360,260,320,300);x.closePath();x.stroke();
+    // liquid
+    x.fillStyle=col;
+    x.beginPath();
+    const bubble=Math.sin(anim*3)*3*F;
+    x.moveTo(185,300);x.quadraticCurveTo(145,260,155,200+bubble);x.lineTo(345,200-bubble);x.quadraticCurveTo(355,260,315,300);x.closePath();x.fill();
+    // fire
+    for(let i=0;i<20*F;i++){
+      const fx=200+Math.random()*100, fy=310+Math.random()*30;
+      x.fillStyle=`rgba(${212+Math.random()*40},${100+Math.random()*80},${20+Math.random()*40},${.4+Math.random()*.4})`;
+      x.beginPath();x.arc(fx,fy,3+Math.random()*4,0,Math.PI*2);x.fill();
+    }
+    // bubbles in liquid
+    for(let i=0;i<8;i++){
+      const bx=180+Math.sin(anim+i)*60+i*15, by=280-((anim*30+i*40)%160);
+      x.fillStyle='rgba(255,255,255,.3)';x.beginPath();x.arc(bx,by,2,0,Math.PI*2);x.fill();
+    }
+    // stage label
+    x.fillStyle='#8a7a5a';x.font='14px serif';x.textAlign='center';
+    let label='NIGREDO · die Schwärzung';
+    if(stage>.33)label='ALBEDO · die Reinigung';
+    if(stage>.66)label='RUBEDO · das Rote, das Gold';
+    x.fillText(label,250,50);
+    // mirror
+    if(M>0){
+      x.save();
+      x.globalAlpha=M;
+      x.strokeStyle='#efe6d2';x.lineWidth=1;
+      x.strokeRect(390,150,80,110);
+      // cracks
+      const cracks=Math.floor(M*8);
+      x.strokeStyle=`rgba(212,162,74,${M})`;
+      for(let i=0;i<cracks;i++){
+        x.beginPath();
+        x.moveTo(430,205);
+        x.lineTo(390+Math.random()*80,150+Math.random()*110);
+        x.stroke();
+      }
+      if(M>.9){
+        x.fillStyle='#d4a24a';x.font='italic 12px serif';x.textAlign='center';
+        x.fillText('das Selbstbild zerbricht',430,285);
+      }
+      x.restore();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============ AKT III: PLANETS ============ */
+(function(){
+  const svg=document.getElementById('planetSvg');
+  const planets=[
+    {n:'Fon',g:'♀',p:'Venus',c:'#e8b4a0',ang:-90,job:'Kosmetikerin',
+     scene:'Fon produziert künstliche Gesichter — Masken für die, die ihr eigenes nicht mehr ertragen. Ihre Boutique ist ein Tempel der Selbst-Auslöschung. Fons Vater erscheint in einer eigenen Szene.',
+     evil:'Die Schönheits-Industrie als Vernichtung des echten Gesichts.'},
+    {n:'Isla',g:'♂',p:'Mars',c:'#c04040',ang:-38,job:'Waffenhändlerin',
+     scene:'Isla stellt Waffen her, die als Kunst getarnt sind — Gewehre in Form von Kruzifixen, Bomben mit Blumenmotiven. Sie verkauft Tod an Regierungen, die religiöse Rhetorik brauchen.',
+     evil:'Die Militär­industrie, verkleidet als Kultur.'},
+    {n:'Klen',g:'♃',p:'Jupiter',c:'#d4a24a',ang:14,job:'Kunsthändler',
+     scene:'Klen ist Millionär und handelt mit erotischen Maschinen — Kunst, deren einziger Zweck sexuelle Stimulation ist. Kunst als Konsumgut, Sinnlichkeit als Fließbandware.',
+     evil:'Die Kommodifizierung des Begehrens und der Kunst.'},
+    {n:'Sel',g:'♄',p:'Saturn',c:'#8a7a5a',ang:66,job:'Spielzeugherstellerin',
+     scene:'Sel baut Spielzeug, das Kinder von klein auf zu Konsumenten, Soldaten und Bürgern erzieht. Krieg im Puppenformat. Die Ideologie beginnt vor der Sprache.',
+     evil:'Indoktrination durch Kindheit selbst.'},
+    {n:'Berg',g:'⛢',p:'Uranus',c:'#6a8ab0',ang:118,job:'Politik-Berater',
+     scene:'Berg berät Regierungen zur Bevölkerungs­reduktion — aus finanziellen Gründen. Nicht Malthusianismus als Angst, sondern als Bilanz­posten. Seine Frau erscheint in einer eigenen Szene.',
+     evil:'Menschen­leben als Ausgaben­posten.'},
+    {n:'Axon',g:'♆',p:'Neptun',c:'#4070a0',ang:170,job:'Polizeichef',
+     scene:'Axon leitet eine Polizei­einheit und kastriert seine Offiziere in einem grotesken Ritual der Loyalität. Der Staat verlangt den Körper, nicht nur den Gehorsam.',
+     evil:'Der Staat als totale Aneignung des Leibes.'},
+    {n:'Lut',g:'♇',p:'Pluto',c:'#5a4a6a',ang:222,job:'Architekt',
+     scene:'Lut entwirft minimalistische Wohnzellen — perfekt effiziente, perfekt entseelte Behausungen. Das moderne Wohnen als Sarg mit Fenster.',
+     evil:'Wohnen ohne Wohnen. Das Zuhause als Zelle.'}
+  ];
+  // sun
+  svg.innerHTML=`<circle cx="400" cy="260" r="45" fill="#d4a24a" opacity=".9"/>
+    <text x="400" y="268" text-anchor="middle" font-size="30" fill="#0a0705">☉</text>
+    <text x="400" y="330" text-anchor="middle" font-size="14" fill="#8a7a5a" font-family="'IM Fell English SC',serif">DER ALCHIMIST</text>`;
+  // orbit
+  svg.innerHTML+=`<ellipse cx="400" cy="260" rx="300" ry="180" fill="none" stroke="#2a2015" stroke-dasharray="2 4"/>`;
+  planets.forEach((p,i)=>{
+    const rad=p.ang*Math.PI/180;
+    const cx=400+Math.cos(rad)*300, cy=260+Math.sin(rad)*180;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','planet-card');
+    g.style.cursor='pointer';
+    g.innerHTML=`<circle cx="${cx}" cy="${cy}" r="30" fill="${p.c}" opacity=".85" stroke="#efe6d2" stroke-width="1"/>
+      <text x="${cx}" y="${cy+7}" text-anchor="middle" font-size="24" fill="#0a0705">${p.g}</text>
+      <text x="${cx}" y="${cy+50}" text-anchor="middle" font-size="13" fill="#efe6d2" font-family="'IM Fell English SC',serif">${p.n}</text>
+      <text x="${cx}" y="${cy+65}" text-anchor="middle" font-size="10" fill="#8a7a5a" font-style="italic">${p.p}</text>`;
+    g.onclick=()=>openModal(`<h2 style="color:${p.c}">${p.g} ${p.n} — ${p.p}</h2>
+      <p class="subtle">${p.job}</p>
+      <h3>Was sie/er im Film tut</h3>
+      <p>${p.scene}</p>
+      <h3>Was sie/er bedeutet</h3>
+      <p><em>${p.evil}</em></p>
+      <p class="subtle" style="margin-top:1rem">Der Alchimist wird alle sieben zwingen, ihr Geld und wächserne Bilder ihrer selbst zu verbrennen.</p>`);
+    svg.appendChild(g);
+  });
+})();
+
+/* ============ MODAL ============ */
+function openModal(html){
+  document.getElementById('modalContent').innerHTML=html;
+  document.getElementById('modal').classList.add('open');
+}
+document.getElementById('modalClose').onclick=()=>document.getElementById('modal').classList.remove('open');
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')document.getElementById('modal').classList.remove('open');};
+
+/* ============ AKT IV: LOTUS PLOT ============ */
+(function(){
+  const data=[{
+    type:'scatterpolar',
+    r:[8,3,7,2,9,8],
+    theta:['Rausch als Ziel','Suche nach dem Berg','Kollektive Selbst­feier','Disziplin','Vergessen','Ästhetische Verausgabung'],
+    fill:'toself',
+    line:{color:'#d4a24a'},
+    fillcolor:'rgba(212,162,74,.3)',
+    name:'Pantheon-Bar'
+  }];
+  const layout={
+    paper_bgcolor:'#12100b',plot_bgcolor:'#12100b',
+    font:{color:'#efe6d2',family:'Cormorant Garamond,serif'},
+    polar:{
+      bgcolor:'#0a0705',
+      radialaxis:{visible:true,range:[0,10],color:'#8a7a5a',gridcolor:'#2a2015'},
+      angularaxis:{color:'#c8a877',gridcolor:'#2a2015'}
+    },
+    showlegend:false,margin:{t:30,b:30,l:60,r:60}
+  };
+  Plotly.newPlot('lotusPlot',data,layout,{displayModeBar:false});
+})();
+
+/* ============ AKT V: THREE.JS MOUNTAIN ============ */
+(function(){
+  const container=document.getElementById('mountainCanvas');
+  const alt=document.getElementById('altitude');
+  const w=container.clientWidth,h=500;
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x050403);scene.fog=new THREE.Fog(0x050403,20,80);
+  const cam=new THREE.PerspectiveCamera(50,w/h,.1,200);
+  cam.position.set(0,3,25);
+  const rn=new THREE.WebGLRenderer({antialias:true});rn.setSize(w,h);container.appendChild(rn.domElement);
+  // mountain (cone)
+  const mg=new THREE.ConeGeometry(10,20,6,1,false);
+  const mm=new THREE.MeshStandardMaterial({color:0x3a2a1a,flatShading:true,roughness:.9});
+  const mountain=new THREE.Mesh(mg,mm);mountain.position.y=10;scene.add(mountain);
+  // snow cap
+  const cg=new THREE.ConeGeometry(3,4,6,1,false);
+  const cm=new THREE.MeshStandardMaterial({color:0xefe6d2,flatShading:true});
+  const cap=new THREE.Mesh(cg,cm);cap.position.y=21;scene.add(cap);
+  // ridges (smaller cones around)
+  for(let i=0;i<5;i++){
+    const rg=new THREE.ConeGeometry(3+Math.random()*3,8+Math.random()*6,5,1,false);
+    const rm=new THREE.MeshStandardMaterial({color:0x2a1a0f,flatShading:true});
+    const r=new THREE.Mesh(rg,rm);
+    const ang=Math.random()*Math.PI*2, dist=12+Math.random()*8;
+    r.position.set(Math.cos(ang)*dist,4,Math.sin(ang)*dist);
+    scene.add(r);
+  }
+  // ten pilgrims as cones
+  const pilgrims=[];
+  const colors=[0xd4a24a,0xefe6d2,0xe8b4a0,0xc04040,0xd4a24a,0x8a7a5a,0x6a8ab0,0x4070a0,0x5a4a6a,0xc8a877];
+  for(let i=0;i<10;i++){
+    const pg=new THREE.ConeGeometry(.35,1.1,6);
+    const pm=new THREE.MeshStandardMaterial({color:colors[i],flatShading:true});
+    const p=new THREE.Mesh(pg,pm);
+    p.userData={offset:i*.08,angle:Math.PI*2*i/10};
+    pilgrims.push(p);scene.add(p);
+  }
+  // nine dummies at the summit (hidden until near top)
+  const dummies=[];
+  for(let i=0;i<9;i++){
+    const dg=new THREE.ConeGeometry(.3,1,4);
+    const dm=new THREE.MeshStandardMaterial({color:0x1a140d,flatShading:true});
+    const d=new THREE.Mesh(dg,dm);
+    const a=Math.PI*2*i/9;
+    d.position.set(Math.cos(a)*1.8,20.6,Math.sin(a)*1.8);
+    d.visible=false;dummies.push(d);scene.add(d);
+  }
+  // film crew (revealed on zoom-back — kept off-screen for now)
+  const crew=new THREE.Group();crew.visible=false;
+  for(let i=0;i<8;i++){
+    const bg=new THREE.BoxGeometry(1,1.5,1);
+    const bm=new THREE.MeshStandardMaterial({color:0x333,flatShading:true});
+    const b=new THREE.Mesh(bg,bm);
+    b.position.set(-25+Math.random()*50,1,-25+Math.random()*50);
+    crew.add(b);
+  }
+  scene.add(crew);
+  // lights
+  scene.add(new THREE.AmbientLight(0x6a5a3a,.6));
+  const dl=new THREE.DirectionalLight(0xd4a24a,.9);dl.position.set(10,20,10);scene.add(dl);
+  // stars
+  const sg=new THREE.BufferGeometry();
+  const spos=[];for(let i=0;i<300;i++)spos.push((Math.random()-.5)*100,Math.random()*60,(Math.random()-.5)*100);
+  sg.setAttribute('position',new THREE.Float32BufferAttribute(spos,3));
+  scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xd4a24a,size:.15})));
+  // scroll → altitude
+  let progress=0;
+  function updateProgress(){
+    const rect=container.getBoundingClientRect();
+    const vh=window.innerHeight;
+    // when the panel center passes the viewport center, ramp from 0..1
+    const p=1-(rect.top+rect.height/2)/(vh);
+    progress=Math.max(0,Math.min(1,(p-.1)*1.4));
+    alt.textContent=Math.round(progress*3000);
+    // reveal dummies near summit
+    dummies.forEach(d=>d.visible=progress>.85);
+  }
+  window.addEventListener('scroll',updateProgress);
+  let t=0;
+  function animate(){
+    t+=.008;
+    // camera arcs from far/low to close/high with progress
+    const camY=3+progress*20;
+    const camR=25-progress*15;
+    cam.position.set(Math.sin(t*.3)*camR,camY,Math.cos(t*.3)*camR);
+    cam.lookAt(0,10+progress*10,0);
+    // pilgrims climb the cone
+    pilgrims.forEach((p,i)=>{
+      const local=Math.max(0,Math.min(1,progress-p.userData.offset+.3));
+      const h=local*20;
+      // radius shrinks as height rises (cone)
+      const r=10*(1-local)+.5;
+      const a=p.userData.angle+t*.2;
+      p.position.set(Math.cos(a)*r,h,Math.sin(a)*r);
+    });
+    rn.render(scene,cam);
+    requestAnimationFrame(animate);
+  }
+  updateProgress();animate();
+  window.addEventListener('resize',()=>{
+    const nw=container.clientWidth;cam.aspect=nw/h;cam.updateProjectionMatrix();rn.setSize(nw,h);
+  });
+})();
+
+/* ============ AKT VI: ZOOM BACK CANVAS ============ */
+(function(){
+  const c=document.getElementById('zoomCanvas'),x=c.getContext('2d');
+  const btn=document.getElementById('zoomBtn');
+  let zoom=1, target=1, revealed=false;
+  btn.onclick=()=>{
+    target=(target===1)?.28:1;
+    if(target<1)revealed=true;
+    btn.textContent=(target<1)?'Zurück in den Film':'Zoom back, camera!';
+    if(target<1)setTimeout(revealMeta,2500);
+  };
+  function revealMeta(){
+    const m=document.getElementById('meta-reveal');
+    if(m)m.style.opacity='1';
+  }
+  function drawFrame(){
+    zoom+=(target-zoom)*.04;
+    x.fillStyle='#050403';x.fillRect(0,0,500,400);
+    x.save();
+    x.translate(250,200);
+    x.scale(zoom,zoom);
+    x.translate(-250,-200);
+    // "scene": mountain summit with alchemist + dummies
+    // sky
+    x.fillStyle='#1a1208';x.fillRect(100,80,300,220);
+    // mountain
+    x.fillStyle='#2a1a0f';x.beginPath();
+    x.moveTo(250,100);x.lineTo(400,300);x.lineTo(100,300);x.closePath();x.fill();
+    // snow
+    x.fillStyle='#efe6d2';x.beginPath();
+    x.moveTo(250,100);x.lineTo(285,150);x.lineTo(215,150);x.closePath();x.fill();
+    // 9 dummies
+    for(let i=0;i<9;i++){
+      const a=(i/9)*Math.PI-Math.PI/2;
+      const dx=250+Math.cos(a)*40, dy=155+Math.sin(a)*15;
+      x.fillStyle='#1a140d';x.beginPath();x.arc(dx,dy,4,0,Math.PI*2);x.fill();
+      x.strokeStyle='#8a7a5a';x.lineWidth=.5;x.stroke();
+    }
+    // alchemist (gold)
+    x.fillStyle='#d4a24a';x.beginPath();x.arc(250,135,6,0,Math.PI*2);x.fill();
+    x.restore();
+    // when zoomed back: reveal apparatus
+    if(revealed && zoom<.7){
+      const alpha=Math.min(1,(1-zoom)*2);
+      x.globalAlpha=alpha;
+      // camera on tripod (left)
+      x.fillStyle='#3a3a3a';x.fillRect(40,240,50,30);
+      x.fillRect(55,270,4,80);x.fillRect(75,270,4,80);
+      x.fillStyle='#1a1a1a';x.beginPath();x.arc(90,255,12,0,Math.PI*2);x.fill();
+      x.fillStyle='#d4a24a';x.font='10px serif';x.fillText('CAMERA A',40,235);
+      // mic boom (top)
+      x.strokeStyle='#8a7a5a';x.lineWidth=2;x.beginPath();
+      x.moveTo(150,20);x.lineTo(280,90);x.stroke();
+      x.fillStyle='#2a2a2a';x.beginPath();x.arc(280,90,6,0,Math.PI*2);x.fill();
+      x.fillStyle='#d4a24a';x.font='10px serif';x.fillText('BOOM',150,15);
+      // second camera (right)
+      x.fillStyle='#3a3a3a';x.fillRect(410,250,50,30);
+      x.fillRect(425,280,4,80);x.fillRect(445,280,4,80);
+      x.fillStyle='#1a1a1a';x.beginPath();x.arc(410,265,12,0,Math.PI*2);x.fill();
+      x.fillStyle='#d4a24a';x.font='10px serif';x.fillText('CAMERA B',410,245);
+      // spotlight
+      x.fillStyle='#efe6d2';x.beginPath();
+      x.moveTo(30,60);x.lineTo(70,50);x.lineTo(70,90);x.lineTo(30,80);x.closePath();x.fill();
+      x.fillStyle='#d4a24a';x.font='10px serif';x.fillText('LIGHT',30,50);
+      // clapper
+      x.fillStyle='#efe6d2';x.fillRect(200,340,60,30);
+      x.fillStyle='#1a1a1a';x.fillRect(200,340,60,8);
+      for(let i=0;i<6;i++){x.fillRect(200+i*10,340,5,8);}
+      x.fillStyle='#0a0705';x.font='9px serif';x.fillText('SC.47 T.1',205,362);
+      // crew silhouettes
+      x.fillStyle='#1a1208';
+      x.beginPath();x.arc(130,350,15,0,Math.PI*2);x.fill();x.fillRect(120,360,20,30);
+      x.beginPath();x.arc(370,355,13,0,Math.PI*2);x.fill();x.fillRect(360,365,20,25);
+      // border of "real" frame
+      x.strokeStyle='#d4a24a';x.lineWidth=1;x.setLineDash([4,4]);
+      x.strokeRect(4,4,492,392);x.setLineDash([]);
+      x.globalAlpha=1;
+      // caption
+      x.fillStyle='#d4a24a';x.font='italic 13px serif';x.textAlign='center';
+      x.fillText('„Auf Wiedersehen, Heiliger Berg."',250,20);
+    }
+    requestAnimationFrame(drawFrame);
+  }
+  drawFrame();
+})();
+
+/* ============ EPILOG: FINAL CAST ============ */
+(function(){
+  const cast=[
+    ['Der Dieb','Der Narr — die Zahl Null. Beginnt und endet die Reise. Wird kurz vor dem Gipfel zurückgeschickt.'],
+    ['Der Zwerg','5 der Schwerter. Der verstümmelte Gefährte. Bleibt in der Stadt zurück.'],
+    ['Der Alchimist','Sonne. Falscher Guru, echter Regisseur. Jodorowsky selbst.'],
+    ['Die geschriebene Frau','Die stumme, tätowierte Assistentin. Trägt den Text am Körper.'],
+    ['Fon ♀','Venus. Kosmetikerin. Bricht am Berg mit dem Gesicht, das sie verkauft.'],
+    ['Isla ♂','Mars. Waffen als Kunst. Wird auf dem Gipfel entwaffnet.'],
+    ['Klen ♃','Jupiter. Kunst als Ware. Verliert seinen Markt.'],
+    ['Sel ♄','Saturn. Spielzeug als Ideologie. Verliert das Kind in sich.'],
+    ['Berg ⛢','Uranus. Bevölkerung als Bilanz. Verliert die Zahl.'],
+    ['Axon ♆','Neptun. Der Staat im Leib. Verliert die Uniform.'],
+    ['Lut ♇','Pluto. Wohnen als Zelle. Verliert das Haus.']
+  ];
+  const holder=document.getElementById('finalCast');
+  cast.forEach(([n,d])=>{
+    const s=document.createElement('span');
+    s.className='tag';s.style.cursor='pointer';
+    s.textContent=n;
+    s.onclick=()=>openModal(`<h2 style="color:#d4a24a">${n}</h2><p>${d}</p>`);
+    holder.appendChild(s);holder.appendChild(document.createTextNode(' '));
+  });
+})();
+
+/* ============ MARQUEE ============ */
+(function(){
+  const m=document.getElementById('marqueeText');
+  let pos=0;
+  function scroll(){
+    pos-=.5;
+    m.style.transform=`translateX(${pos}px)`;
+    if(pos<-2000)pos=window.innerWidth;
+    requestAnimationFrame(scroll);
+  }
+  scroll();
+})();
+
+/* ============ ESC closes modal ============ */
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').classList.remove('open');});
+</script>
+</body>
+</html>
