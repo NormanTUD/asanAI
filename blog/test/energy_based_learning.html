@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Energy-Based Learning — Interaktive Reise durch LeCun et al. 2006</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#111827; --panel:#151b2e; --panel2:#1c2340;
+  --accent:#00d4ff; --accent2:#ff3d7f; --accent3:#ffcc00; --good:#4ade80;
+  --text:#e6edf7; --muted:#8892b0; --border:#2a3352;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:radial-gradient(ellipse at top,#131a2e 0%,var(--bg) 70%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;scroll-behavior:smooth}
+.container{max-width:1200px;margin:0 auto;padding:40px 24px}
+header{text-align:center;padding:80px 20px 60px;background:radial-gradient(circle at center,rgba(0,212,255,0.15),transparent 60%)}
+h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:20px;letter-spacing:-0.02em}
+header p{color:var(--muted);max-width:700px;margin:0 auto;font-size:1.1rem}
+.badge{display:inline-block;padding:6px 16px;background:rgba(0,212,255,0.1);color:var(--accent);border:1px solid rgba(0,212,255,0.3);border-radius:20px;font-size:0.85rem;margin-bottom:24px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 0}
+nav ul{display:flex;gap:8px;list-style:none;overflow-x:auto;padding:0 24px;max-width:1200px;margin:0 auto;scrollbar-width:none}
+nav ul::-webkit-scrollbar{display:none}
+nav a{color:var(--muted);text-decoration:none;font-size:0.85rem;padding:6px 12px;border-radius:6px;white-space:nowrap;transition:all 0.2s;font-weight:500}
+nav a:hover{color:var(--accent);background:rgba(0,212,255,0.08)}
+section{padding:60px 0;border-bottom:1px solid var(--border)}
+section h2{font-size:2rem;margin-bottom:12px;font-weight:700;color:var(--text)}
+section h2 .num{color:var(--accent);font-family:'JetBrains Mono',monospace;margin-right:12px;font-size:0.7em;opacity:0.7}
+section h3{font-size:1.3rem;margin:32px 0 12px;color:var(--accent);font-weight:600}
+section p{color:var(--text);margin-bottom:16px;font-size:1.02rem}
+.lead{color:var(--muted);font-size:1.1rem;margin-bottom:32px}
+.demo{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--border);border-radius:16px;padding:28px;margin:28px 0;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.demo-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);font-weight:700;margin-bottom:8px}
+.demo-desc{color:var(--muted);margin-bottom:20px;font-size:0.95rem}
+.controls{display:flex;flex-wrap:wrap;gap:20px;padding:16px;background:rgba(0,0,0,0.25);border-radius:10px;margin-bottom:20px;align-items:center}
+.control{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
+.control label{font-size:0.8rem;color:var(--muted);font-weight:500;display:flex;justify-content:space-between}
+.control label span{color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 0 10px rgba(0,212,255,0.5)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--accent);border-radius:50%;cursor:pointer;border:none}
+button{background:linear-gradient(135deg,var(--accent),#0099cc);color:#000;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;transition:all 0.2s}
+button:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(0,212,255,0.3)}
+button.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+select{background:var(--panel2);color:var(--text);border:1px solid var(--border);padding:8px 12px;border-radius:6px;cursor:pointer;font-size:0.9rem}
+canvas{display:block;width:100%;border-radius:10px;background:#050810}
+.plot{width:100%;height:400px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:20px 0}
+.card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card h4{color:var(--accent);margin-bottom:8px;font-size:1rem}
+.card p{font-size:0.9rem;color:var(--muted);margin:0}
+.info{background:rgba(0,212,255,0.05);border-left:3px solid var(--accent);padding:14px 18px;margin:16px 0;border-radius:6px;font-size:0.95rem}
+.warn{background:rgba(255,61,127,0.05);border-left:3px solid var(--accent2);padding:14px 18px;margin:16px 0;border-radius:6px;font-size:0.95rem}
+.good{background:rgba(74,222,128,0.05);border-left:3px solid var(--good);padding:14px 18px;margin:16px 0;border-radius:6px;font-size:0.95rem}
+.math{background:rgba(0,0,0,0.3);padding:16px;border-radius:8px;overflow-x:auto;margin:12px 0;text-align:center}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:0.85rem;margin:12px 0;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.tab{padding:10px 16px;background:none;color:var(--muted);border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:0.9rem;white-space:nowrap;font-weight:500}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+footer{text-align:center;padding:60px 20px;color:var(--muted);font-size:0.9rem}
+.story{background:linear-gradient(135deg,rgba(255,61,127,0.08),rgba(0,212,255,0.08));border:1px solid var(--border);border-radius:12px;padding:24px;margin:28px 0}
+.story h4{color:var(--accent3);margin-bottom:10px;font-size:1.1rem}
+kbd{background:var(--panel2);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.85em}
+.pill{display:inline-block;padding:3px 10px;background:rgba(0,212,255,0.1);color:var(--accent);border-radius:12px;font-size:0.8rem;margin:0 4px;font-family:monospace}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Interaktive Reise</div>
+  <h1>Energie-basiertes Lernen</h1>
+  <p>Ein visueller, spielbarer Rundgang durch das Tutorial von LeCun, Chopra, Hadsell, Ranzato & Huang (2006). Kein Textwust — nur Intuition, Slider, und Bilder, die die Ideen sprechen lassen.</p>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#motivation">Motivation</a></li>
+    <li><a href="#idee">Grundidee</a></li>
+    <li><a href="#inferenz">Inferenz</a></li>
+    <li><a href="#prob">Prob. vs EBM</a></li>
+    <li><a href="#lernen">Lernen</a></li>
+    <li><a href="#losses">Loss-Zoo</a></li>
+    <li><a href="#collapse">Collapse!</a></li>
+    <li><a href="#simple">Einfache Modelle</a></li>
+    <li><a href="#latent">Latente Vars</a></li>
+    <li><a href="#factor">Faktor-Graphen</a></li>
+    <li><a href="#gtn">GTN</a></li>
+    <li><a href="#summary">Zusammenfassung</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- ============ MOTIVATION ============ -->
+<section id="motivation">
+  <h2><span class="num">01</span>Die Motivation — welches Problem löst LeCun?</h2>
+  <p class="lead">Stell dir vor, du willst einer Maschine beibringen, ein handgeschriebenes Wort zu erkennen, ein Gesicht zu finden, oder das nächste Wort in einem Satz vorherzusagen. Das haben Wahrscheinlichkeits-Modelle traditionell so gelöst: <b>p(Antwort | Bild)</b>. Das Problem: solche Wahrscheinlichkeiten müssen sich zu 1 aufsummieren — die berühmte <i>Normalisierung</i>. Und die kann höllisch schwer zu berechnen sein.</p>
+
+  <div class="story">
+    <h4>💡 Die Kernidee in einem Satz</h4>
+    <p>„Vergiss Wahrscheinlichkeiten. Weise jeder möglichen Antwort einfach eine <b>Energie</b> zu (eine Zahl). Niedrige Energie = passt gut. Hohe Energie = passt schlecht. Um zu antworten, wähle die Antwort mit der niedrigsten Energie.“</p>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Das Normalisierungs-Problem verstehen</div>
+    <p class="demo-desc">Links siehst du eine unnormalisierte "Energie-Landschaft" (blau, alles erlaubt). Rechts musst du sie zu einer Wahrscheinlichkeit machen — sie muss sich zu 1 integrieren. Bewege den Slider und sieh, wie schwer das wird, wenn die Landschaft sich ändert.</p>
+    <div class="controls">
+      <div class="control"><label>Peak-Position <span id="v-peakpos">0.0</span></label><input type="range" id="s-peakpos" min="-2" max="2" step="0.05" value="0"></div>
+      <div class="control"><label>Peak-Breite <span id="v-peakw">1.0</span></label><input type="range" id="s-peakw" min="0.2" max="3" step="0.05" value="1"></div>
+      <div class="control"><label>β (Temperatur⁻¹) <span id="v-beta1">1.0</span></label><input type="range" id="s-beta1" min="0.1" max="5" step="0.1" value="1"></div>
+    </div>
+    <div id="plot-normalization" class="plot"></div>
+    <div class="info">📌 Die Fläche unter der Wahrscheinlichkeitskurve muss <b>immer</b> 1 sein — egal wie du die Energie änderst. Für hochdimensionales Y ist diese Integral-Berechnung oft <b>unmöglich</b>. EBMs sagen: „Interessiert uns nicht!"</div>
+  </div>
+</section>
+
+<!-- ============ IDEE ============ -->
+<section id="idee">
+  <h2><span class="num">02</span>Die Grundidee — Energie-Landschaften</h2>
+  <p>Ein Energie-basiertes Modell ist eine Funktion <span class="pill">E(Y, X)</span>: gegeben eine Eingabe <span class="pill">X</span> (z.B. Bild) und eine mögliche Antwort <span class="pill">Y</span> (z.B. Label „Katze"), gib eine Zahl aus. Klein = kompatibel, groß = inkompatibel.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎨 Demo: Zeichne deine eigene Energie-Landschaft</div>
+    <p class="demo-desc">Klicke und ziehe im Canvas, um Energie-„Täler" (blau, niedrige Energie) zu zeichnen. Der rote Kreis ist die Inferenz — er rollt automatisch ins nächste Tal. Das ist das Herz eines EBMs: Antworten sind Minima.</p>
+    <div class="controls">
+      <button onclick="resetLandscape()">🗑️ Landschaft löschen</button>
+      <button onclick="startInference()" class="secondary">▶️ Neue Inferenz starten</button>
+      <div class="control"><label>Pinselstärke <span id="v-brush">30</span></label><input type="range" id="s-brush" min="10" max="80" value="30"></div>
+    </div>
+    <canvas id="canvas-landscape" width="900" height="400"></canvas>
+    <div class="info">🔬 <b>Was du siehst:</b> Die Farbe = Energie (dunkelblau = niedrig, rot = hoch). Der Kreis folgt dem Gradienten bergab — genau wie ein EBM den besten Y-Wert findet: <code>Y* = argmin E(Y,X)</code>.</div>
+  </div>
+</section>
+
+<!-- ============ INFERENZ ============ -->
+<section id="inferenz">
+  <h2><span class="num">03</span>Inferenz — Wie findet man das Minimum?</h2>
+  <p>Das Bild ist gegeben (X ist fixiert). Jetzt willst du <b>schnell</b> das beste Y finden. Je nach Struktur von Y gibt es verschiedene Strategien:</p>
+
+  <div class="grid">
+    <div class="card"><h4>Y klein & diskret</h4><p>Einfach alle Y ausprobieren. Bei 10 Klassen? Trivial.</p></div>
+    <div class="card"><h4>Y kontinuierlich & glatt</h4><p>Gradient-Descent. Roll den Ball bergab.</p></div>
+    <div class="card"><h4>Y = Sequenz</h4><p>Dynamische Programmierung (Viterbi, min-sum) auf einem Trellis.</p></div>
+    <div class="card"><h4>Y = riesiger diskreter Raum</h4><p>Faktor-Graphen ausnutzen, min-sum-Algorithmus.</p></div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Gradient Descent auf verschiedenen Landschaften</div>
+    <p class="demo-desc">Bewege den Slider, um die Landschaftsart zu ändern. Beobachte, wie Gradient Descent nach dem Minimum sucht — und wo es scheitert (lokale Minima!).</p>
+    <div class="controls">
+      <div class="control"><label>Landschaft <span id="v-scape">Konvex</span></label><input type="range" id="s-scape" min="0" max="3" step="1" value="0"></div>
+      <div class="control"><label>Startpunkt Y₀ <span id="v-y0">-3.0</span></label><input type="range" id="s-y0" min="-5" max="5" step="0.1" value="-3"></div>
+      <div class="control"><label>Lernrate η <span id="v-lr">0.10</span></label><input type="range" id="s-lr" min="0.01" max="0.5" step="0.01" value="0.1"></div>
+      <button onclick="runInference()">▶️ Gradient Descent</button>
+    </div>
+    <div id="plot-inference" class="plot"></div>
+    <div class="warn">⚠️ Auf nicht-konvexen Landschaften landest du oft in falschen Minima. Deshalb sind konvexe Loss-Funktionen theoretisch schön — aber wie du später siehst, praktisch oft <b>egal</b>.</div>
+  </div>
+</section>
+
+<!-- ============ PROBABILISTIC vs EBM ============ -->
+<section id="prob">
+  <h2><span class="num">04</span>Von Energie zu Wahrscheinlichkeit — die Gibbs-Verteilung</h2>
+  <p>Wenn du <i>doch</i> Wahrscheinlichkeiten willst (z.B. um zwei Modelle zu kombinieren), gibt es das Gibbs-Rezept:</p>
+  <div class="math" id="eq-gibbs"></div>
+
+  <div class="demo">
+    <div class="demo-title">🌡️ Demo: β — die Temperatur ändert alles</div>
+    <p class="demo-desc">β ist wie eine „inverse Temperatur". Bei hohem β wird die Verteilung scharf (fokussiert aufs Minimum), bei niedrigem β wird sie flach (alle Antworten gleich wahrscheinlich). Schau, wie Energie und Wahrscheinlichkeit sich verhalten.</p>
+    <div class="controls">
+      <div class="control"><label>β (inverse Temperatur) <span id="v-beta2">1.0</span></label><input type="range" id="s-beta2" min="0.1" max="10" step="0.1" value="1"></div>
+    </div>
+    <div id="plot-gibbs" class="plot"></div>
+    <div class="info">🔥 Bei <b>β → ∞</b> (kalt): Wahrscheinlichkeit konzentriert sich komplett auf das Minimum → wird zu argmin. Bei <b>β → 0</b> (heiß): Uniformverteilung, alles gleich wahrscheinlich.</div>
+  </div>
+</section>
+
+<!-- ============ LERNEN ============ -->
+<section id="lernen">
+  <h2><span class="num">05</span>Lernen — die Energie-Landschaft <i>formen</i></h2>
+  <p class="lead">Bisher: gegeben eine Energie-Funktion, finde das Minimum. Jetzt: gegeben Trainingsdaten (X, Y-korrekt), <b>lerne</b> eine Energie-Funktion, die für korrekte Antworten niedrige Energie hat.</p>
+
+  <div class="story">
+    <h4>🎯 Die zwei Kräfte des Lernens</h4>
+    <p><b>Push-Down:</b> Drücke Energie der korrekten Antwort <span class="pill">Y<sup>i</sup></span> nach unten.<br>
+    <b>Pull-Up:</b> Ziehe Energie der falschen Antworten nach oben.<br>
+    Der <i>most offending incorrect answer</i> <span class="pill">Ȳ<sup>i</sup></span> ist die falsche Antwort, die die niedrigste Energie hat — der stärkste Konkurrent.</p>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Push-Down / Pull-Up in Aktion</div>
+    <p class="demo-desc">Du siehst eine Energie-Landschaft über 5 diskrete Antworten. Die grüne Antwort ist korrekt. Klicke die Buttons und beobachte, wie die Landschaft sich verformt.</p>
+    <div class="controls">
+      <button onclick="pushDown()">⬇️ Push-Down korrekt</button>
+      <button onclick="pullUpWorst()">⬆️ Pull-Up Ȳ (schlimmster falscher)</button>
+      <button onclick="pullUpAll()">⬆️⬆️ Pull-Up alle (wie NLL)</button>
+      <button onclick="resetShape()" class="secondary">🔄 Reset</button>
+    </div>
+    <div id="plot-shape" class="plot"></div>
+    <div class="info">🎓 Unterschiedliche Loss-Funktionen wählen unterschiedliche Strategien: <b>Perceptron</b> zieht nur Ȳ hoch, <b>NLL</b> zieht alle hoch (gewichtet), <b>Hinge</b> nur Ȳ mit einem Sicherheits-Margin.</div>
+  </div>
+</section>
+
+<!-- ============ LOSS ZOO ============ -->
+<section id="losses">
+  <h2><span class="num">06</span>Der Loss-Zoo — Familie der Verlustfunktionen</h2>
+  <p>Alle diese Losses haben denselben Zweck: Push-Down + Pull-Up. Aber sie tun's unterschiedlich.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Loss-Vergleich in 3D</div>
+    <p class="demo-desc">Auf der X-Achse: Energie der korrekten Antwort E<sub>C</sub>. Auf der Y-Achse: Energie
+    <div class="demo-title">🎮 Demo: Loss-Vergleich in 3D</div>
+    <p class="demo-desc">Auf der X-Achse: Energie der korrekten Antwort E<sub>C</sub>. Auf der Y-Achse: Energie der falschen Antwort E<sub>I</sub>. Die Z-Achse (Höhe/Farbe) ist der Loss. Ein <b>guter</b> Loss hat sein Minimum im Bereich <span class="pill">E<sub>C</sub> + m &lt; E<sub>I</sub></span> (Halbebene HP₁). Wechsle die Losses und sieh, welche das schaffen — und welche kollabieren.</p>
+    <div class="controls">
+      <div class="control"><label>Loss-Typ</label>
+        <select id="s-losstype">
+          <option value="energy">Energy Loss (schlecht!)</option>
+          <option value="perceptron">Perceptron Loss (Margin 0)</option>
+          <option value="hinge" selected>Hinge Loss (SVM)</option>
+          <option value="log">Log Loss</option>
+          <option value="sqsq">Square-Square Loss</option>
+          <option value="sqexp">Square-Exponential Loss</option>
+          <option value="nll">NLL Loss</option>
+          <option value="mce">MCE Loss</option>
+        </select>
+      </div>
+      <div class="control"><label>Margin m <span id="v-margin">1.0</span></label><input type="range" id="s-margin" min="0" max="3" step="0.1" value="1"></div>
+    </div>
+    <div id="plot-loss3d" class="plot" style="height:500px"></div>
+    <div class="two-col">
+      <div class="info">✅ <b>Gute Losses</b> (Hinge, Log, Sq-Sq, Sq-Exp, NLL, MCE): Das Minimum liegt strikt in HP₁ (E<sub>C</sub>&lt;E<sub>I</sub>−m). Sie erzeugen eine echte Energie-Lücke.</div>
+      <div class="warn">❌ <b>Schlechte Losses</b> (Energy, Perceptron): Können in einer flachen (kollabierten) Energie-Landschaft landen, wenn die Architektur keine implizite Push-Up-Kraft hat.</div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">📈 Demo: Loss-Kurven im Vergleich (1D-Schnitt)</div>
+    <p class="demo-desc">Alle Losses als Funktion der Energie-Differenz Δ = E<sub>C</sub> − E<sub>I</sub>. Perfektes Modell hat Δ stark negativ.</p>
+    <div id="plot-losses1d" class="plot"></div>
+  </div>
+</section>
+
+<!-- ============ COLLAPSE ============ -->
+<section id="collapse">
+  <h2><span class="num">07</span>Der Kollaps — warum manche Losses versagen</h2>
+  <p>LeCuns berühmtes Beispiel: Lerne <span class="pill">Y = X²</span> mit zwei verschiedenen Architekturen und Losses. Sieh selbst, was schiefgeht.</p>
+
+  <div class="demo">
+    <div class="demo-title">💥 Demo: Live-Training — Kollaps vs. gesundes Lernen</div>
+    <p class="demo-desc">Wir trainieren ein kleines Netz mit Daten aus Y=X². Wähle Architektur und Loss und beobachte die Energie-Landschaft in Echtzeit.</p>
+    <div class="controls">
+      <div class="control"><label>Architektur</label>
+        <select id="s-arch">
+          <option value="simple">Einfach: E = |G(X) − Y|</option>
+          <option value="implicit">Implizit: E = |G₁(X) − G₂(Y)|</option>
+        </select>
+      </div>
+      <div class="control"><label>Loss</label>
+        <select id="s-collosslos">
+          <option value="energy">Energy Loss</option>
+          <option value="sqsq">Square-Square Loss</option>
+          <option value="nll">NLL Loss</option>
+        </select>
+      </div>
+      <div class="control"><label>Epochen <span id="v-epochs">0</span></label></div>
+      <button onclick="startTraining()">▶️ Training starten</button>
+      <button onclick="resetTraining()" class="secondary">🔄 Reset</button>
+    </div>
+    <div id="plot-collapse" class="plot" style="height:450px"></div>
+    <div class="warn">💥 <b>Beobachte:</b> Bei <i>Implizit + Energy Loss</i> kollabiert die Landschaft komplett flach — beide Netze lernen einfach, konstant zu sein! Mit Sq-Sq oder NLL entsteht die richtige Rinne entlang Y=X².</div>
+  </div>
+</section>
+
+<!-- ============ SIMPLE ARCHITECTURES ============ -->
+<section id="simple">
+  <h2><span class="num">08</span>Einfache Modelle als EBMs</h2>
+  <p>Regression, Zwei-Klassen-Klassifikation, Multi-Klassen — alles sind Spezialfälle des EBM-Frameworks. Nur die Form der Energie-Funktion ändert sich.</p>
+
+  <div class="grid">
+    <div class="card"><h4>Regression</h4><p>E = ½‖G(X) − Y‖². Inferenz: Y* = G(X). Reduziert auf mittleren quadratischen Fehler.</p></div>
+    <div class="card"><h4>2-Klassen-Classifier</h4><p>E = −Y·G(X). Y ∈ {−1,+1}. Mit Hinge: SVM. Mit NLL: logistische Regression.</p></div>
+    <div class="card"><h4>Multi-Class</h4><p>G gibt Vektor aus, ein „Schalter" wählt die Komponente für Y.</p></div>
+    <div class="card"><h4>Implizite Regression</h4><p>E = ‖G₁(X) − G₂(Y)‖. Erlaubt mehrere gute Y für ein X (z.B. Siamese-Netze).</p></div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: 2-Klassen-Klassifikation live</div>
+    <p class="demo-desc">Klicke im Canvas, um Punkte zu setzen. Rot=Klasse −1, Blau=Klasse +1. Das Modell lernt eine Trennlinie. Ändere den Loss und beobachte, wie sich Rand und Margin ändern.</p>
+    <div class="controls">
+      <div class="control"><label>Loss-Funktion</label>
+        <select id="s-clsloss">
+          <option value="perceptron">Perceptron</option>
+          <option value="hinge" selected>Hinge (SVM)</option>
+          <option value="nll">NLL (Logistic)</option>
+        </select>
+      </div>
+      <div class="control"><label>Modus beim Klick</label>
+        <select id="s-clsmode">
+          <option value="1">Blaue Punkte (+1)</option>
+          <option value="-1">Rote Punkte (−1)</option>
+        </select>
+      </div>
+      <button onclick="trainClassifier()">🚀 Trainieren</button>
+      <button onclick="resetClassifier()" class="secondary">🗑️ Reset</button>
+    </div>
+    <canvas id="canvas-classifier" width="900" height="450"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#ff3d7f"></span>Klasse −1</span>
+      <span><span class="dot" style="background:#00d4ff"></span>Klasse +1</span>
+      <span><span class="dot" style="background:#4ade80"></span>Trennlinie E=0</span>
+      <span><span class="dot" style="background:#ffcc00"></span>Margin ±m</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LATENT ============ -->
+<section id="latent">
+  <h2><span class="num">09</span>Latente Variablen — Unsichtbares mitlernen</h2>
+  <p>Manchmal gibt es Variablen <span class="pill">Z</span>, die man weder beobachten noch trainieren kann. Beispiel: <b>Wo</b> im Bild das Gesicht ist. Wir kennen nur „Gesicht ja/nein", nicht die Position. LeCuns Trick: minimiere die Energie über Z mit.</p>
+
+  <div class="math" id="eq-latent"></div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Gesichtserkennung mit latenter Position</div>
+    <p class="demo-desc">Bewege das „Gesicht" (grüner Punkt) im Bild. Das Modell scannt alle Positionen (Z), findet das Minimum von G_face(X_z) und antwortet „Gesicht: ja/nein". Der Slider setzt die Schwelle T.</p>
+    <div class="controls">
+      <div class="control"><label>Gesichts-Größe <span id="v-facesize">40</span></label><input type="range" id="s-facesize" min="15" max="80" value="40"></div>
+      <div class="control"><label>Rauschen <span id="v-noise">0.3</span></label><input type="range" id="s-noise" min="0" max="1" step="0.05" value="0.3"></div>
+      <div class="control"><label>Schwelle T <span id="v-thresh">0.5</span></label><input type="range" id="s-thresh" min="0" max="1" step="0.02" value="0.5"></div>
+    </div>
+    <canvas id="canvas-face" width="900" height="400"></canvas>
+    <div class="info">🔍 Der rote Rahmen zeigt <b>Z*</b> — die Position mit niedrigster Energie. Steht sie unter T, meldet das Modell „Gesicht". Genau so funktionieren viele Detektoren!</div>
+  </div>
+</section>
+
+<!-- ============ FACTOR GRAPHS ============ -->
+<section id="factor">
+  <h2><span class="num">10</span>Faktor-Graphen — effiziente Inferenz</h2>
+  <p>Wenn die Energie sich als <b>Summe</b> von Faktoren schreiben lässt, die jeweils nur wenige Variablen betreffen, kann man mit dynamischer Programmierung (Viterbi/min-sum) exponentiell schneller inferieren.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Viterbi im Trellis — Kürzester Pfad = niedrigste Energie</div>
+    <p class="demo-desc">Ein Trellis mit Knoten (Variablen-Zuständen) und Kanten (Faktor-Energien). Klicke „Viterbi", um den kürzesten Pfad zu finden. Ändere die Kanten-Energien mit Klick.</p>
+    <div class="controls">
+      <button onclick="runViterbi()">🎯 Viterbi ausführen</button>
+      <button onclick="randomizeTrellis()" class="secondary">🎲 Neue Energien</button>
+      <button onclick="resetTrellis()" class="secondary">🔄 Reset</button>
+    </div>
+    <canvas id="canvas-trellis" width="900" height="400"></canvas>
+    <div class="info">⚡ <b>Warum ist das ein Riesending?</b> Ohne Faktorisierung müsste man 2×2×2×3 = 24 volle Energien berechnen. Mit Viterbi: nur 2+4+4+6 = 16 Kanten — und das Verhältnis wird bei längeren Sequenzen dramatisch besser (exponentiell vs. linear).</div>
+  </div>
+</section>
+
+<!-- ============ GTN ============ -->
+<section id="gtn">
+  <h2><span class="num">11</span>Graph Transformer Networks — die Krönung</h2>
+  <p>Die zentrale Anwendung im Paper: <b>Handschrifterkennung</b>. Man weiß nicht, wo ein Zeichen aufhört und das nächste beginnt (Segmentation). Man weiß auch nicht direkt, welches Zeichen es ist (Recognition). GTNs lernen <b>beides gemeinsam</b>, end-to-end.</p>
+
+  <div class="story">
+    <h4>🏗️ Die Pipeline in einem Satz</h4>
+    <p>Bild → Übersegmentierungs-Graph (viele Cut-Hypothesen) → Recognition-Transformer (CNN bewertet jedes Fragment für jedes Zeichen) → Interpretationsgraph → Viterbi wählt den besten Pfad = beste Segmentierung + Erkennung <b>gleichzeitig</b>.</p>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Wort-Erkennung mit gemeinsamer Segmentierung</div>
+    <p class="demo-desc">Ein handgeschriebenes „342" wird an mehreren Stellen zerschnitten (rote Linien). Der Trellis zeigt alle Möglichkeiten. Viterbi findet den Pfad mit niedrigster Gesamt-Energie — das ist die richtige Segmentierung UND Erkennung.</p>
+    <div class="controls">
+      <div class="control"><label>Rauschen bei Erkennung <span id="v-gtnnoise">0.2</span></label><input type="range" id="s-gtnnoise" min="0" max="1" step="0.05" value="0.2"></div>
+      <button onclick="runGTN()">🎯 GTN inferieren</button>
+      <button onclick="animateGTN()" class="secondary">🎬 Animiert</button>
+    </div>
+    <canvas id="canvas-gtn" width="900" height="500"></canvas>
+    <div class="good">💎 <b>Der Clou:</b> Weil alles differenzierbar ist, kann man den Loss (NLL oder Perceptron) direkt durch den Viterbi zurück in die CNN-Gewichte propagieren. Genau so hat LeCun 1998 Bankschecks lesen gelernt — Millionen von Schecks pro Tag in echten Banken.</div>
+  </div>
+</section>
+
+<!-- ============ SUMMARY ============ -->
+<section id="summary">
+  <h2><span class="num">12</span>Die große Zusammenfassung</h2>
+  <p class="lead">Was du jetzt weißt — und wie alles zusammenhängt.</p>
+
+  <div class="demo">
+    <div class="demo-title">🗺️ Das große Bild</div>
+    <canvas id="canvas-map" width="900" height="500"></canvas>
+  </div>
+
+  <div class="grid">
+    <div class="card"><h4>❓ Die Frage</h4><p>Wie modelliere ich Abhängigkeiten zwischen Variablen, ohne bei Normalisierung zu ersticken?</p></div>
+    <div class="card"><h4>💡 Die Idee</h4><p>Weise jeder Konfiguration eine skalare Energie zu. Niedrig = kompatibel. Fertig.</p></div>
+    <div class="card"><h4>🔍 Inferenz</h4><p>Finde Y mit minimaler E(Y,X). Je nach Struktur: brute-force, Gradient, Viterbi, DP.</p></div>
+    <div class="card"><h4>🎓 Lernen</h4><p>Forme die Landschaft: Push-Down bei korrekten, Pull-Up bei falschen Antworten.</p></div>
+    <div class="card"><h4>⚖️ Loss-Wahl</h4><p>Muss Kollaps vermeiden. Gute: Hinge, Log, Sq-Sq, NLL. Schlechte: Energy, Perceptron (allein).</p></div>
+    <div class="card"><h4>🌉 Verbindung</h4><p>Prob. Modelle = EBMs mit NLL-Loss und normalisierbarer Energie. CRF, SVM, HMM — alle drin.</p></div>
+    <div class="card"><h4>🏛️ Architekturen</h4><p>Linear (CRF, MMMN), nichtlinear (TDNN+HMM), hierarchisch (GTN).</p></div>
+    <div class="card"><h4>🚀 Warum wichtig</h4><p>Fundament für strukturierte Vorhersage. Vorläufer moderner Diffusion-Modelle & Score-Matching.</p></div>
+  </div>
+
+  <div class="story">
+    <h4>🎯 LeCuns eine große Antwort</h4>
+    <p>„Wahrscheinlichkeiten sind nur <b>eine</b> Art, Kompatibilität zu messen — und meist die teuerste. Wenn du eine Entscheidung treffen willst, brauchst du keine Normalisierung. Wenn du <i>doch</i> Wahrscheinlichkeiten willst, mach's am Ende mit Gibbs. Aber baue erst die Energie-Landschaft, die dein Problem strukturell einfängt — dann ist alles andere ein Detail."</p>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>Interaktiver Guide zu LeCun, Chopra, Hadsell, Ranzato, Huang (2006) — „A Tutorial on Energy-Based Learning"<br>
+  Erstellt für Neugierige, die Formeln <i>sehen</i> und <i>fühlen</i> wollen, statt sie zu lesen.</p>
+</footer>
+
+<script>
+// ========== KaTeX rendering ==========
+function katexRender(id, tex, display=true){
+  const el = document.getElementById(id);
+  if(el) katex.render(tex, el, {displayMode:display, throwOnError:false});
+}
+window.addEventListener('load', ()=>{
+  katexRender('eq-gibbs', 'P(Y|X) = \\frac{e^{-\\beta E(Y,X)}}{\\int_{y \\in \\mathcal{Y}} e^{-\\beta E(y,X)}\\,dy}');
+  katexRender('eq-latent', 'E(Y,X) = \\min_{Z \\in \\mathcal{Z}} E(Z,Y,X) \\qquad Y^* = \\arg\\min_{Y,Z} E(Z,Y,X)');
+});
+
+// ========== 1. NORMALIZATION DEMO ==========
+function normalizationPlot(){
+  const pos = parseFloat(document.getElementById('s-peakpos').value);
+  const w = parseFloat(document.getElementById('s-peakw').value);
+  const beta = parseFloat(document.getElementById('s-beta1').value);
+  document.getElementById('v-peakpos').textContent = pos.toFixed(2);
+  document.getElementById('v-peakw').textContent = w.toFixed(2);
+  document.getElementById('v-beta1').textContent = beta.toFixed(2);
+  const xs=[], E=[], P=[];
+  for(let i=0;i<200;i++){
+    const x=-5+10*i/199;
+    xs.push(x);
+    E.push(Math.pow((x-pos)/w,2) + 0.3*Math.sin(2*x));
+  }
+  let Z=0; const expE=E.map(e=>Math.exp(-beta*e));
+  for(let i=0;i<expE.length-1;i++) Z += 0.5*(expE[i]+expE[i+1])*(xs[1]-xs[0]);
+  for(let i=0;i<E.length;i++) P.push(expE[i]/Z);
+  Plotly.newPlot('plot-normalization',[
+    {x:xs,y:E,name:'Energie E(Y)',line:{color:'#00d4ff',width:3},yaxis:'y'},
+    {x:xs,y:P,name:'Wahrscheinlichkeit P(Y)',line:{color:'#ff3d7f',width:3},yaxis:'y2',fill:'tozeroy',fillcolor:'rgba(255,61,127,0.2)'}
+  ],{
+    paper_bgcolor:'#050810',plot_bgcolor:'#050810',font:{color:'#e6edf7'},
+    xaxis:{title:'Y',gridcolor:'#2a3352'},
+    yaxis:{title:'Energie',gridcolor:'#2a3352',side:'left'},
+    yaxis2:{title:'P(Y)',overlaying:'y',side:'right',gridcolor:'transparent'},
+    legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0.5)'},margin:{t:20,b:40,l:50,r:50}
+  },{displayModeBar:false});
+}
+['s-peakpos','s-peakw','s-beta1'].forEach(id=>document.getElementById(id).addEventListener('input',normalizationPlot));
+normalizationPlot();
+
+// ========== 2. LANDSCAPE CANVAS ==========
+const lsCanvas = document.getElementById('canvas-landscape');
+const lsCtx = lsCanvas.getContext('2d');
+let landscape;
+function initLandscape(){
+  landscape = new Float32Array(lsCanvas.width*lsCanvas.height).fill(1.0);
+  // add default valleys
+  drawValley(200,200,80);
+  drawValley(500,250,100);
+  drawValley(750,180,70);
+  renderLandscape();
+}
+function drawValley(cx,cy,r){
+  for(let y=Math.max(0,cy-r);y<Math.min(lsCanvas.height,cy+r);y++){
+    for(let x=Math.max(0,cx-r);x<Math.min(lsCanvas.width,cx+r);x++){
+      const d=Math.hypot(x-cx,y-cy);
+      if(d<r) landscape[y*lsCanvas.width+x] = Math.min(landscape[y*lsCanvas.width+x], d/r);
+    }
+  }
+}
+function renderLandscape(){
+  const img = lsCtx.createImageData(lsCanvas.width,lsCanvas.height);
+  for(let i=0;i<landscape.length;i++){
+    const e = landscape[i];
+    // blue (low) to red (high) via green
+    const r = Math.floor(255*Math.min(1,e*1.5));
+    const g = Math.floor(255*Math.max(0,1-Math.abs(e-0.5)*2));
+    const b = Math.floor(255*Math.max(0,1-e*1.5));
+    img.data[i*4]=r; img.data[i*4+1]=g; img.data[i*4+2]=b; img.data[i*4+3]=255;
+  }
+  lsCtx.putImageData(img,0,0);
+}
+let drawing=false;
+lsCanvas.addEventListener('mousedown',e=>{drawing=true; paintValley(e);});
+lsCanvas.addEventListener('mousemove',e=>{if(drawing) paintValley(e);});
+lsCanvas.addEventListener('mouseup',()=>drawing=false);
+lsCanvas.addEventListener('mouseleave',()=>drawing=false);
+function paintValley(e){
+  const rect = lsCanvas.getBoundingClientRect();
+  const x = (e.clientX-rect.left)*(lsCanvas.width/rect.width);
+  const y = (e.clientY-rect.top)*(lsCanvas.height/rect.height);
+  const r = parseInt(document.getElementById('s-brush').value);
+  drawValley(x,y,r);
+  renderLandscape();
+}
+document.getElementById('s-brush').addEventListener('input',e=>{document.getElementById('v-brush').textContent=e.target.value;});
+function resetLandscape(){landscape.fill(1.0); renderLandscape();}
+let inferenceBall={x:50,y:50,active:false};
+function startInference(){
+  inferenceBall.x=Math.random()*lsCanvas.width;
+  inferenceBall.y=Math.random()*lsCanvas.height;
+  inferenceBall.active=true;
+}
+function animateInference(){
+  renderLandscape();
+  if(inferenceBall.active){
+    // compute gradient
+    const x=Math.round(inferenceBall.x), y=Math.round(inferenceBall.y);
+    const eps=3;
+    const getE=(xx,yy)=>{
+      xx=Math.max(0,Math.min(lsCanvas.width-1,Math.round(xx)));
+      yy=Math.max(0,Math.min(lsCanvas.height-1,Math.round(yy)));
+      return landscape[yy*lsCanvas.width+xx];
+    };
+    const gx = (getE(x+eps,y)-getE(x-eps,y))/(2*eps);
+    const gy = (getE(x,y+eps)-getE(x,y-eps))/(2*eps);
+    inferenceBall.x -= gx*3000;
+    inferenceBall.y -= gy*3000;
+    inferenceBall.x=Math.max(10,Math.min(lsCanvas.width-10,inferenceBall.x));
+    inferenceBall.y=Math.max(10,Math.min(lsCanvas.height-10,inferenceBall.y));
+    lsCtx.beginPath();
+    lsCtx.arc(inferenceBall.x,inferenceBall.y,10,0,Math.PI*2);
+    lsCtx.fillStyle='#ff3d7f';
+    lsCtx.shadowColor='#ff3d7f'; lsCtx.shadowBlur=20;
+    lsCtx.fill();
+    lsCtx.shadowBlur=0;
+  }
+  requestAnimationFrame(animateInference);
+}
+initLandscape();
+startInference();
+animateInference();
+
+// ========== 3. INFERENCE 1D ==========
+function scapeFunc(y, type){
+  if(type===0) return 0.3*y*y; // convex
+  if(type===1) return 0.1*y*y + Math.sin(y*1.5)*1.5; // multi-min
+  if(type===2) return -Math.exp(-0.5*y*y)*3 - Math.exp(-0.5*(y-3)*(y-3))*2 + 3; // two wells
+  if(type===3) return 0.05*Math.pow(y,4) - 0.5*y*y + 0.1*y + 2; // double well
+  return 0;
+}
+function scapeGrad(y, type){
+  const h=0.001;
+  return (scapeFunc(y+h,type)-scapeFunc(y-h,type))/(2*h);
+}
+const scapeNames=['Konvex','Multi-Minima','Zwei Täler','Double Well'];
+function runInference(){
+  const type = parseInt(document.getElementById('s-scape').value);
+  const y0 = parseFloat(document.getElementById('s-y0').value);
+  const lr = parseFloat(document.getElementById('s-lr').value);
+  let y = y0;
+  const trajX=[y], trajY=[scapeFunc(y,type)];
+  for(let i=0;i<200;i++){
+    y -= lr*scapeGrad(y,type);
+    y = Math.max(-5.5, Math.min(5.5, y));
+    trajX.push(y); trajY.push(scapeFunc(y,type));
+  }
+  plotInference(type, trajX, trajY);
+}
+function plotInference(type, trajX, trajY){
+  const xs=[], ys=[];
+  for(let i=0;i<200;i++){
+    const x=-5.5+11*i/199;
+    xs.push(x); ys.push(scapeFunc(x,type));
+  }
+  Plotly.newPlot('plot-inference',[
+    {x:xs,y:ys,name:'Energie E(Y)',line:{color:'#00d4ff',width:3}},
+    {x:trajX,y:trajY,name:'Gradient Descent',mode:'lines+markers',
+      line:{color:'#ff3d7f',width:2},marker:{size:4,color:'#ff3d7f'}},
+    {x:[trajX[trajX.length-1]],y:[trajY[trajY.length-1]],name:'Final Y*',
+      mode:'markers',marker:{size:15,color:'#ffcc00',symbol:'star'}}
+  ],{
+    paper_bgcolor:'#050810',plot_bgcolor:'#050810',font:{color:'#e6edf7'},
+    xaxis:{title:'Y',gridcolor:'#2a3352',range:[-5.5,5.5]},
+    yaxis:{title:'Energie',gridcolor:'#2a3352'},
+    legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0.5)'},margin:{t:20,b:40,l:50,r:20}
+  },{displayModeBar:false});
+}
+['s-scape','s-y0','s-lr'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    const t=parseInt(document.getElementById('s-scape').value);
+    document.getElementById('v-scape').textContent=scapeNames[t];
+    document.getElementById('v-y0').textContent=parseFloat(document.getElementById('s-y0').value).toFixed(1);
+    document.getElementById('v-lr').textContent=parseFloat(document.getElementById('s-lr').value).toFixed(2);
+    runInference();
+  });
+});
+runInference();
+
+// ========== 4. GIBBS ==========
+function gibbsPlot(){
+  const beta = parseFloat(document.getElementById('s-beta2').value);
+  document.getElementById('v-beta2').textContent=beta.toFixed(2);
+  const xs=[], E=[], P=[];
+  for(let i=0;i<200;i++){
+    const x=-4+8*i/199;
+    xs.push(x);
+    E.push(0.5*x*x - Math.cos(x*2)*0.8 + 1);
+  }
+  let Z=0; const expE=E.map(e=>Math.exp(-beta*e));
+  for(let i=0;i<expE.length-1;i++) Z += 0.5*(expE[i]+expE[i+1])*(xs[1]-xs[0]);
+  for(let i=0;i<E.length;i++) P.push(expE[i]/Z);
+  Plotly.newPlot('plot-gibbs',[
+    {x:xs,y:E,name:'Energie E(Y)',line:{color:'#00d4ff',width:3},yaxis:'y'},
+    {x:xs,y:P,name:'P(Y) = e^(-βE)/Z',line:{color:'#ff3d7f',width:3},yaxis:'y2',fill:'tozeroy',fillcolor:'rgba(255,61,127,0.25)'}
+  ],{
+    paper_bgcolor:'#050810',plot_bgcolor:'#050810',font:{color:'#e6edf7'},
+    xaxis:{title:'Y',gridcolor:'#2a3352'},
+    yaxis:{title:'Energie',gridcolor:'#2a3352',side:'left'},
+    yaxis2:{title:'P(Y)',overlaying:'y',side:'right',gridcolor:'transparent'},
+    legend:{x:0.02,y:0.98,bgcolor:'rgba(0,0,0,0.5)'},margin:{t:20,b:40,l:50,r:50}
+  },{displayModeBar:false});
+}
+document.getElementById('s-beta2').addEventListener('input',gibbsPlot);
+gibbsPlot();
+
+// ========== 5. SHAPE PUSH/PULL ==========
+let shape = [2.5, 1.8, 0.8, 2.2, 3.0];
+const correctIdx = 2;
+const labels=['A','B','C ✓','D','E'];
+function plotShape(){
+  const colors=shape.map((v,i)=>i===correctIdx?'#4ade80':'#ff3d7f');
+  Plotly.newPlot('plot-shape',[
+    {x:labels,y:shape,type:'bar',marker:{color:colors,line:{color:'#fff',width:1}}}
+  ],{
+    paper_bgcolor:'#050810',plot_bgcolor:'#050810',font:{color:'#e6edf7'},
+    xaxis:{title:'Antwort Y',gridcolor:'#2a3352'},
+    yaxis:{title:'Energie E(Y,X)',gridcolor:'#2a3352',range:[-1,5]},
+    margin:{t:20,b:40,l:50,r:20},showlegend:false
+  },{displayModeBar:false});
+}
+function pushDown(){shape[correctIdx]=Math.max(-0.5,shape[correctIdx]-0.3); plotShape();}
+function pullUpWorst(){
+  let worst=-1, wE=-Infinity;
+  for(let i=0;i<shape.length;i++) if(i!==correctIdx && shape[i]>wE){wE=shape[i]; worst=i;}
+  // actually most offending = LOWEST wrong
+  let low=-1, lE=Infinity;
+  for(let i=0;i<shape.length;i++) if(i!==correctIdx && shape[i]<lE){lE=shape[i]; low=i;}
+  shape[low]+=0.3; plotShape();
+}
+function pullUpAll(){
+  for(let i=0;i<shape.length;i++) if(i!==correctIdx) shape[i]+=0.15*Math.exp(-(shape[i]-shape[correctIdx]));
+  plotShape();
+}
+function resetShape(){shape=[2.5,1.8,0.8,2.2,3.0]; plotShape();}
+plotShape();
+
+// ========== 6. LOSS 3D ==========
+function lossFunc(EC, EI, type, m){
+  switch(type){
+    case 'energy': return EC;
+    case 'perceptron': return Math.max(0, EC - Math.min(EC,EI));
+    case 'hinge': return Math.max(0, m + EC - EI);
+    case 'log': return Math.log(1 + Math.exp(EC - EI));
+    case 'sqsq': return EC*EC + Math.pow(Math.max(0, m-EI),2);
+    case 'sqexp': return EC*EC + 2*Math.exp(-EI);
+    case 'nll': return EC + Math.log(Math.exp(-EC)+Math.exp(-EI));
+    case 'mce': return 1/(1+Math.exp(-(EC-EI)));
+  }
+  return 0;
+}
+function plotLoss3D(){
+  const type = document.getElementById('s-losstype').value;
+  const m = parseFloat(document.getElementById('s-margin').value);
+  document.getElementById('v-margin').textContent=m.toFixed(1);
+  const N=40, ecs=[], eis=[], zs=[];
+  for(let i=0;i<N;i++) ecs.push(i/(N-1)*3);
+  for(let j=0;j<N;j++) eis.push(j/(N-1)*3);
+  for(let j=0;j<N;j++){
+    const row=[];
+    for(let i=0;i<N;i++) row.push(lossFunc(ecs[i], eis[j], type, m));
+    zs.push(row);
+  }
+  Plotly.newPlot('plot-loss3d',[{
+    x:ecs,y:eis,z:zs,type:'surface',colorscale:'Viridis',
+    contours:{z:{show:true,usecolormap:true,project:{z:true}}}
+  }],{
+    paper_bgcolor:'#050810',font:{color:'#e6edf7'},
+    scene:{
+      xaxis:{title:'E_C (korrekt)',gridcolor:'#2a3352',backgroundcolor:'#050810'},
+      yaxis:{title:'E_I (falsch)',gridcolor:'#2a3352',backgroundcolor:'#050810'},
+      zaxis:{title:'Loss',gridcolor:'#2a3352',backgroundcolor:'#050810'},
+      bgcolor:'#050810'
+    },margin:{t:0,b:0,l:0,r:0}
+  },{displayModeBar:false});
+  plotLoss1D();
+}
+function plotLoss1D(){
+  const type = document.getElementById('s-losstype').value;
+  const m = parseFloat(document.getElementById('s-margin').value);
+  const types=['energy','perceptron','hinge','log','sqsq','sqexp','nll','mce'];
+  const names={energy:'Energy',perceptron:'Perceptron',hinge:'Hinge',log:'Log',sqsq:'Sq-Sq',sqexp:'Sq-Exp',nll:'NLL',mce:'MCE'};
+  const colors={energy:'#ff3d7f',perceptron:'#ffcc00',hinge:'#00d4ff',log:'#4ade80',sqsq:'#a78bfa',sqexp:'#f472b6',nll:'#60a5fa',mce:'#facc15'};
+  const traces=[];
+  types.forEach(t=>{
+    const xs=[], ys=[];
+    for(let i=0;i<100;i++){
+      const delta=-3+6*i/99; // EC - EI
+      const EC=1+delta/2, EI=1-delta/2;
+      xs.push(delta);
+      ys.push(lossFunc(EC,EI,t,m));
+    }
+    traces.push({x:xs,y:ys,name:names[t],line:{color:colors[t],width:t===type?4:1.5},opacity:t===type?1:0.4});
+  });
+  Plotly.newPlot('plot-losses1d',traces,{
+    paper_bgcolor:'#050810',plot_bgcolor:'#050810',font:{color:'#e6edf7'},
+    xaxis:{title:'Δ = E_C − E_I (kleiner = besser)',gridcolor:'#2a3352'},
+    yaxis:{title:'Loss',gridcolor:'#2a3352',range:[0,5]},
+    legend:{bgcolor:'rgba(0,0,0,0.5)'},margin:{t:20,b:40,l:50,r:20}
+  },{displayModeBar:false});
+}
+['s-losstype','s-margin'].forEach(id=>document.getElementById(id).addEventListener('input',plotLoss3D));
+plotLoss3D();
+
+// ========== 7. COLLAPSE TRAINING ==========
+let trainState = null;
+let trainAnim = null;
+function initTrainState(){
+  const arch = document.getElementById('s-arch').value;
+  const N=30, data=[];
+  for(let i=0;i<N;i++){
+    const x=-1+2*i/(N-1); data.push({x:x,y:x*x});
+  }
+  // simple network parameters: 5 hidden units for G
+  const rand = ()=>(Math.random()-0.5)*0.5;
+  trainState = {
+    arch, data, epoch:0,
+    G1: {W1:Array.from({length:8},()=>rand()), b1:Array.from({length:8},()=>rand()),
+         W2:Array.from({length:8},()=>rand()), b2:rand()},
+    G2: {W1:Array.from({length:8},()=>rand()), b1:Array.from({length:8},()=>rand()),
+         W2:Array.from({length:8},()=>rand()), b2:rand()}
+  };
+}
+function forwardNet(net, x){
+  const h = net.W1.map((w,i)=>Math.tanh(w*x+net.b1[i]));
+  return h.reduce((s,hi,i)=>s+net.W2[i]*hi,0) + net.b2;
+}
+function energyAt(x,y,state){
+  if(state.arch==='simple') return Math.abs(forwardNet(state.G1,x)-y);
+  return Math.abs(forwardNet(state.G1,x)-forwardNet(state.G2,y));
+}
+function trainStep(){
+  if(!trainState) return;
+  const loss = document.getElementById('s-collosslos').value;
+  const lr=0.02;
+  for(const pt of trainState.data){
+    // numerical gradient step (simplified)
+    const eps=0.001;
+    const params=[trainState.G1.W1,trainState.G1.b1,trainState.G1.W2,[trainState.G1],
+                  trainState.G2.W1,trainState.G2.b1,trainState.G2.W2,[trainState.G2]];
+    // simpler: analytic-ish
+    const perturbAndUpdate=(net,key,idx)=>{
+      const orig=key==='b2'?net.b2:net[key][idx];
+      const setV=(v)=>{if(key==='b2')net.b2=v; else net[key][idx]=v;};
+      setV(orig+eps); const Lp=lossVal(pt,loss);
+      setV(orig-eps); const Lm=lossVal(pt,loss);
+      const g=(Lp-Lm)/(2*eps);
+      setV(orig - lr*g);
+    };
+    ['W1','b1','W2','b2'].forEach(k=>{
+      const arr = k==='b2'?[0]:trainState.G1[k];
+      arr.forEach((_,i)=>perturbAndUpdate(trainState.G1,k,i));
+    });
+    if(trainState.arch==='implicit'){
+      ['W1','b1','W2','b2'].forEach(k=>{
+        const arr = k==='b2'?[0]:trainState.G2[k];
+        arr.forEach((_,i)=>perturbAndUpdate(trainState.G2,k,i));
+      });
+    }
+  }
+  trainState.epoch++;
+  document.getElementById('v-epochs').textContent=trainState.epoch;
+}
+function lossVal(pt,lossType){
+  const EC = energyAt(pt.x, pt.y, trainState);
+  // find most offending: sample Y at various points
+  let worst=Infinity, worstY=0;
+  for(let k=0;k<10;k++){
+    const y=-0.2+1.4*k/9;
+    if(Math.abs(y-pt.y)<0.15) continue;
+    const e=energyAt(pt.x,y,trainState);
+    if(e<worst){worst=e; worstY=y;}
+  }
+  const EI = worst;
+  if(lossType==='energy') return EC;
+  if(lossType==='sqsq') return EC*EC + Math.pow(Math.max(0,0.5-EI),2);
+  if(lossType==='nll'){
+    let sum=0;
+    for(let k=0;k<10;k++){
+      const y=-0.2+1.4*k/9;
+      sum+=Math.exp(-energyAt(pt.x,y,trainState));
+    }
+    return EC + Math.log(sum);
+  }
+  return EC;
+}
+function plotCollapse(){
+  const N=40;
+  const xs=[], ys=[], zs=[];
+  for(let i=0;i<N;i++) xs.push(-1+2*i/(N-1));
+  for(let j=0;j<N;j++) ys.push(-0.2+1.4*j/(N-1));
+  for(let j=0;j<N;j++){
+    const row=[];
+    for(let i=0;i<N;i++) row.push(energyAt(xs[i],ys[j],trainState));
+    zs.push(row);
+  }
+  Plotly.newPlot('plot-collapse',[
+    {x:xs,y:ys,z:zs,type:'contour',colorscale:'Viridis',contours:{showlabels:false}},
+    {x:trainState.data.map(d=>d.x),y:trainState.data.map(d=>d.y),
+     mode:'markers',marker:{color:'#ff3d7f',size:8,line:{color:'#fff',width:1}},name:'Training Y=X²'}
+  ],{
+    paper_bgcolor:'#050810',plot_bgcolor:'#050810',font:{color:'#e6edf7'},
+    xaxis:{title:'X',gridcolor:'#2a3352'},
+    yaxis:{title:'Y',gridcolor:'#2a3352'},
+    margin:{t:20,b:40,l:50,r:20}
+  },{displayModeBar:false});
+}
+function startTraining(){
+  if(!trainState) initTrainState();
+  if(trainAnim) clearInterval(trainAnim);
+  trainAnim = setInterval(()=>{
+    trainStep();
+    if(trainState.epoch%2===0) plotCollapse();
+    if(trainState.epoch>=40){clearInterval(trainAnim);}
+  }, 100);
+}
+function resetTraining(){
+  if(trainAnim) clearInterval(trainAnim);
+  initTrainState();
+  plotCollapse();
+}
+document.getElementById('s-arch').addEventListener('change',resetTraining);
+document.getElementById('s-collosslos').addEventListener('change',resetTraining);
+initTrainState();
+plotCollapse();
+
+// ========== 8. CLASSIFIER ==========
+const clsCanvas = document.getElementById('canvas-classifier');
+const clsCtx = clsCanvas.getContext('2d');
+let clsPoints = [];
+let clsW = [0.5, 0.5, 0]; // w1, w2, b
+function initClsData(){
+  clsPoints=[];
+  for(let i=0;i<15;i++){
+    clsPoints.push({x:200+Math.random()*150-75, y:200+Math.random()*150-75, label:-1});
+    clsPoints.push({x:600+Math.random()*150-75, y:250+Math.random()*150-75, label:1});
+  }
+}
+clsCanvas.addEventListener('click',e=>{
+  const rect=clsCanvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)*(clsCanvas.width/rect.width);
+  const y=(e.clientY-rect.top)*(clsCanvas.height/rect.height);
+  const label=parseInt(document.getElementById('s-clsmode').value);
+  clsPoints.push({x,y,label});
+  drawCls();
+});
+function normalize(p){return [(p.x-450)/200, (p.y-225)/200];}
+function scoreCls(p){
+  const [x,y]=normalize(p);
+  return clsW[0]*x + clsW[1]*y + clsW[2];
+}
+function trainClassifier(){
+  const loss = document.getElementById('s-clsloss').value;
+  const lr=0.02, m=1;
+  for(let epoch=0;epoch<200;epoch++){
+    for(const p of clsPoints){
+      const [x,y]=normalize(p);
+      const s = scoreCls(p);
+      const E = -p.label*s;
+      let grad=0;
+      if(loss==='perceptron'){
+        if(p.label*s < 0) grad = -p.label;
+      } else if(loss==='hinge'){
+        if(m + E > 0) grad = -p.label;
+      } else if(loss==='nll'){
+        grad = -p.label*(1/(1+Math.exp(2*p.label*s)))*2;
+      }
+      clsW[0] -= lr*grad*x;
+      clsW[1] -= lr*grad*y;
+      clsW[2] -= lr*grad;
+    }
+  }
+  drawCls();
+}
+function resetClassifier(){clsW=[0.5,0.5,0]; initClsData(); drawCls();}
+function drawCls(){
+  clsCtx.fillStyle='#050810';
+  clsCtx.fillRect(0,0,clsCanvas.width,clsCanvas.height);
+  // draw energy field as background
+  const step=20;
+  for(let y=0;y<clsCanvas.height;y+=step){
+    for(let x=0;x<clsCanvas.width;x+=step){
+      const s = scoreCls({x,y});
+      const intensity = Math.tanh(s*0.7);
+      const r = intensity>0 ? 0 : Math.floor(-intensity*40);
+      const b = intensity>0 ? Math.floor(intensity*40) : 0;
+      clsCtx.fillStyle=`rgb(${r+8},${8},${b+16})`;
+      clsCtx.fillRect(x,y,step,step);
+    }
+  }
+  // draw decision boundary & margin lines by tracing zero level
+  clsCtx.lineWidth=2;
+  for(const [level,color] of [[0,'#4ade80'],[1,'#ffcc00'],[-1,'#ffcc00']]){
+    clsCtx.strokeStyle=color;
+    clsCtx.setLineDash(level===0?[]:[6,4]);
+    clsCtx.beginPath();
+    let first=true;
+    for(let x=0;x<=clsCanvas.width;x+=4){
+      const [nx,ny_] = [(x-450)/200, 0];
+      // solve w0*nx + w1*ny + w2 = level => ny = (level - w2 - w0*nx)/w1
+      if(Math.abs(clsW[1])<1e-6) continue;
+      const ny = (level - clsW[2] - clsW[0]*nx)/clsW[1];
+      const y = ny*200 + 225;
+      if(y<0||y>clsCanvas.height) continue;
+      if(first){clsCtx.moveTo(x,y); first=false;} else clsCtx.lineTo(x,y);
+    }
+    clsCtx.stroke();
+  }
+  clsCtx.setLineDash([]);
+  // draw points
+  for(const p of clsPoints){
+    clsCtx.beginPath();
+    clsCtx.arc(p.x,p.y,7,0,Math.PI*2);
+    clsCtx.fillStyle = p.label===1?'#00d4ff':'#ff3d7f';
+    clsCtx.fill();
+    clsCtx.strokeStyle='#fff'; clsCtx.lineWidth=1.5; clsCtx.stroke();
+  }
+}
+initClsData(); drawCls();
+
+// ========== 9. FACE DETECTION (latent Z) ==========
+const faceCanvas = document.getElementById('canvas-face');
+const faceCtx = faceCanvas.getContext('2d');
+let facePos = {x:450, y:200};
+let faceDrag = false;
+faceCanvas.addEventListener('mousedown',e=>{
+  const rect=faceCanvas.getBoundingClientRect();
+  facePos.x=(e.clientX-rect.left)*(faceCanvas.width/rect.width);
+  facePos.y=(e.clientY-rect.top)*(faceCanvas.height/rect.height);
+  faceDrag=true; drawFace();
+});
+faceCanvas.addEventListener('mousemove',e=>{
+  if(!faceDrag) return;
+  const rect=faceCanvas.getBoundingClientRect();
+  facePos.x=(e.clientX-rect.left)*(faceCanvas.width/rect.width);
+  facePos.y=(e.clientY-rect.top)*(faceCanvas.height/rect.height);
+  drawFace();
+});
+faceCanvas.addEventListener('mouseup',()=>faceDrag=false);
+faceCanvas.addEventListener('mouseleave',()=>faceDrag=false);
+['s-facesize','s-noise','s-thresh'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',e=>{
+    document.getElementById('v-'+id.slice(2)).textContent = 
+      id==='s-thresh' || id==='s-noise' ? parseFloat(e.target.value).toFixed(2) : e.target.value;
+    drawFace();
+  });
+});
+function drawFace(){
+  faceCtx.fillStyle='#0a0e1a';
+  faceCtx.fillRect(0,0,faceCanvas.width,faceCanvas.height);
+  const size = parseInt(document.getElementById('s-facesize').value);
+  const noise = parseFloat(document.getElementById('s-noise').value);
+  const thresh = parseFloat(document.getElementById('s-thresh').value);
+  // add noise texture
+  const img = faceCtx.getImageData(0,0,faceCanvas.width,faceCanvas.height);
+  for(let i=0;i<img.data.length;i+=4){
+    const n = Math.random()*255*noise;
+    img.data[i]=n*0.3; img.data[i+1]=n*0.3; img.data[i+2]=n*0.4;
+  }
+  faceCtx.putImageData(img,0,0);
+  // draw face (yellow circle with eyes)
+  faceCtx.beginPath();
+  faceCtx.arc(facePos.x,facePos.y,size,0,Math.PI*2);
+  faceCtx.fillStyle='#ffcc00'; faceCtx.fill();
+  faceCtx.fillStyle='#000';
+  faceCtx.beginPath(); faceCtx.arc(facePos.x-size*0.3,facePos.y-size*0.15,size*0.12,0,Math.PI*2); faceCtx.fill();
+  faceCtx.beginPath(); faceCtx.arc(facePos.x+size*0.3,facePos.y-size*0.15,size*0.12,0,Math.PI*2); faceCtx.fill();
+  faceCtx.beginPath(); faceCtx.arc(facePos.x,facePos.y+size*0.2,size*0.4,0,Math.PI); faceCtx.stroke();
+  // scan positions Z, compute energy = distance from face + noise
+  let bestZ={x:0,y:0}, bestE=Infinity;
+  const step=30;
+  for(let zy=size;zy<faceCanvas.height-size;zy+=step){
+    for(let zx=size;zx<faceCanvas.width-size;zx+=step){
+      // "energy" — low when close to face
+      const d = Math.hypot(zx-facePos.x, zy-facePos.y);
+      const e = d/200 + Math.random()*noise*0.5;
+      if(e<bestE){bestE=e; bestZ={x:zx,y:zy};}
+    }
+  }
+  // draw best Z as red rectangle
+  const detected = bestE < thresh;
+  faceCtx.strokeStyle = detected?'#4ade80':'#ff3d7f';
+  faceCtx.lineWidth = 3;
+  faceCtx.strokeRect(bestZ.x-size, bestZ.y-size, size*2, size*2);
+  // label
+  faceCtx.fillStyle = detected?'#4ade80':'#ff3d7f';
+  faceCtx.font='bold 18px sans-serif';
+  faceCtx.fillText(
+    (detected?'✓ GESICHT ERKANNT':'✗ Kein Gesicht')+`  |  E* = ${bestE.toFixed(2)}  |  T = ${thresh.toFixed(2)}`,
+    20, 30
+  );
+  faceCtx.fillStyle='#8892b0'; faceCtx.font='12px monospace';
+  faceCtx.fillText(`Z* = (${bestZ.x}, ${bestZ.y}) — Position mit minimaler Energie`, 20, 380);
+}
+drawFace();
+
+// ========== 10. TRELLIS / VITERBI ==========
+const trelCanvas = document.getElementById('canvas-trellis');
+const trelCtx = trelCanvas.getContext('2d');
+let trellis = null;
+function initTrellis(){
+  // 4 columns: start, Z1(2), Z2(2), Y1(2), Y2(3), end
+  trellis = {
+    cols: [
+      [{label:'START',x:60,y:200}],
+      [{label:'Z1=0',x:220,y:130},{label:'Z1=1',x:220,y:270}],
+      [{label:'Z2=0',x:400,y:130},{label:'Z2=1',x:400,y:270}],
+      [{label:'Y1=0',x:580,y:130},{label:'Y1=1',x:580,y:270}],
+      [{label:'Y2=0',x:760,y:80},{label:'Y2=1',x:760,y:200},{label:'Y2=2',x:760,y:320}],
+      [{label:'END',x:860,y:200}]
+    ],
+    edges: [],
+    path: []
+  };
+  // build edges between consecutive columns
+  for(let c=0;c<trellis.cols.length-1;c++){
+    for(let i=0;i<trellis.cols[c].length;i++){
+      for(let j=0;j<trellis.cols[c+1].length;j++){
+        trellis.edges.push({from:[c,i],to:[c+1,j],w:parseFloat((Math.random()*3).toFixed(1))});
+      }
+    }
+  }
+}
+function randomizeTrellis(){
+  trellis.edges.forEach(e=>e.w=parseFloat((Math.random()*3).toFixed(1)));
+  trellis.path=[]; drawTrellis();
+}
+function resetTrellis(){initTrellis(); drawTrellis();}
+function runViterbi(){
+  // DP: shortest path from START to END
+  const dist = trellis.cols.map(col => col.map(_=>Infinity));
+  const prev = trellis.cols.map(col => col.map(_=>null));
+  dist[0][0]=0;
+  for(const e of trellis.edges){
+    const [c,i]=e.from, [c2,j]=e.to;
+    if(dist[c][i]+e.w < dist[c2][j]){
+      dist[c2][j] = dist[c][i]+e.w;
+      prev[c2][j] = [c,i];
+    }
+  }
+  // reconstruct
+  const last = trellis.cols.length-1;
+  let node=[last,0], path=[];
+  while(node){
+    path.unshift(node);
+    node = prev[node[0]][node[1]];
+  }
+  trellis.path = path;
+  trellis.totalEnergy = dist[last][0];
+  drawTrellis();
+}
+function drawTrellis(){
+  trelCtx.fillStyle='#050810';
+  trelCtx.fillRect(0,0,trelCanvas.width,trelCanvas.height);
+  // edges
+  for(const e of trellis.edges){
+    const a = trellis.cols[e.from[0]][e.from[1]];
+    const b = trellis.cols[e.to[0]][e.to[1]];
+    const onPath = trellis.path.some((n,idx)=>{
+      if(idx===trellis.path.length-1) return false;
+      const nxt = trellis.path[idx+1];
+      return n[0]===e.from[0] && n[1]===e.from[1] && nxt[0]===e.to[0] && nxt[1]===e.to[1];
+    });
+    trelCtx.strokeStyle = onPath?'#ffcc00':'rgba(136,146,176,0.3)';
+    trelCtx.lineWidth = onPath?3:1;
+    trelCtx.beginPath();
+    trelCtx.moveTo(a.x,a.y); trelCtx.lineTo(b.x,b.y);
+    trelCtx.stroke();
+    // edge weight label
+    trelCtx.fillStyle=onPath?'#ffcc00':'#8892b0';
+    trelCtx.font='11px monospace';
+    trelCtx.fillText(e.w.toFixed(1),(a.x+b.x)/2, (a.y+b.y)/2 - 4);
+  }
+  // nodes
+  for(let c=0;c<trellis.cols.length;c++){
+    for(let i=0;i<trellis.cols[c].length;i++){
+      const n = trellis.cols[c][i];
+      const onPath = trellis.path.some(p=>p[0]===c&&p[1]===i);
+      trelCtx.beginPath();
+      trelCtx.arc(n.x,n.y,22,0,Math.PI*2);
+      trelCtx.fillStyle = onPath?'#ff3d7f':'#1c2340';
+      trelCtx.fill();
+      trelCtx.strokeStyle = onPath?'#ffcc00':'#00d4ff';
+      trelCtx.lineWidth=2; trelCtx.stroke();
+      trelCtx.fillStyle='#fff'; trelCtx.font='bold 10px sans-serif';
+      trelCtx.textAlign='center';
+      trelCtx.fillText(n.label, n.x, n.y+3);
+    }
+  }
+  trelCtx.textAlign='left';
+  if(trellis.path.length){
+    trelCtx.fillStyle='#4ade80'; trelCtx.font='bold 14px monospace';
+    trelCtx.fillText(`Kürzester Pfad — Gesamtenergie: ${trellis.totalEnergy.toFixed(2)}`, 20, 30);
+  }
+}
+initTrellis(); drawTrellis();
+
+// ========== 11. GTN — Handwriting recognition ==========
+const gtnCanvas = document.getElementById('canvas-gtn');
+const gtnCtx = gtnCanvas.getContext('2d');
+let gtnAnimState = 0;
+function drawDigit(ctx, digit, x, y, size, color='#e6edf7'){
+  ctx.strokeStyle=color; ctx.lineWidth=size*0.15; ctx.lineCap='round';
+  ctx.beginPath();
+  const s=size;
+  if(digit==='3'){
+    ctx.arc(x+s*0.3,y-s*0.25,s*0.35,-Math.PI*0.7,Math.PI*0.5);
+    ctx.arc(x+s*0.3,y+s*0.25,s*0.35,-Math.PI*0.5,Math.PI*0.7);
+  } else if(digit==='4'){
+    ctx.moveTo(x+s*0.1,y-s*0.5); ctx.lineTo(x+s*0.1,y+s*0.1); ctx.lineTo(x+s*0.7,y+s*0.1);
+    ctx.moveTo(x+s*0.55,y-s*0.5); ctx.lineTo(x+s*0.55,y+s*0.5);
+  } else if(digit==='2'){
+    ctx.arc(x+s*0.35,y-s*0.2,s*0.35,-Math.PI,Math.PI*0.4);
+    ctx.lineTo(x-s*0.05,y+s*0.5); ctx.lineTo(x+s*0.75,y+s*0.5);
+  } else if(digit==='?'){
+    ctx.arc(x+s*0.3,y-s*0.2,s*0.3,-Math.PI,Math.PI*0.3);
+    ctx.lineTo(x+s*0.3,y+s*0.15);
+    ctx.moveTo(x+s*0.3,y+s*0.4); ctx.arc(x+s*0.3,y+s*0.4,2,0,Math.PI*2);
+  }
+  ctx.stroke();
+}
+let gtnState = null;
+function initGTN(){
+  const noise = parseFloat(document.getElementById('s-gtnnoise').value);
+  // 3 segments (cuts at 4 positions) — actually "342"
+  const trueLabels = ['3','4','2'];
+  const candidates = ['0','1','2','3','4','5','6','7','8','9'];
+  // segment i can be interpreted as any digit with an energy
+  const segments = [];
+  for(let i=0;i<3;i++){
+    const arr = candidates.map(c=>({
+      char:c,
+      energy: c===trueLabels[i] ? 0.2 + Math.random()*noise*0.5
+                                : 1.5 + Math.random()*noise*2
+    }));
+    // keep only top 4 lowest for display
+    arr.sort((a,b)=>a.energy-b.energy);
+    segments.push(arr.slice(0,4));
+  }
+  gtnState = {segments, trueLabels, path:null, totalE:0};
+}
+function runGTN(){
+  if(!gtnState) initGTN();
+  // find best path (independent segments here)
+  const path = gtnState.segments.map(seg=>seg[0]);
+  const totalE = path.reduce((s,p)=>s+p.energy,0);
+  gtnState.path = path;
+  gtnState.totalE = totalE;
+  drawGTN();
+}
+function animateGTN(){
+  initGTN(); gtnAnimState=0;
+  const iv = setInterval(()=>{
+    gtnAnimState++;
+    drawGTN();
+    if(gtnAnimState>=6){clearInterval(iv); runGTN();}
+  },500);
+}
+function drawGTN(){
+  gtnCtx.fillStyle='#050810';
+  gtnCtx.fillRect(0,0,gtnCanvas.width,gtnCanvas.height);
+  // draw input "image" with 3 digits + cuts
+  gtnCtx.fillStyle='#8892b0'; gtnCtx.font='bold 12px sans-serif';
+  gtnCtx.fillText('EINGABE — Handgeschriebenes Wort mit übersegmentierten Cuts', 20, 25);
+  const baseY = 80;
+  const digits = ['3','4','2'];
+  for(let i=0;i<3;i++){
+    drawDigit(gtnCtx, digits[i], 100+i*90, baseY, 60, '#00d4ff');
+  }
+  // cuts
+  gtnCtx.strokeStyle='#ff3d7f'; gtnCtx.setLineDash([5,3]); gtnCtx.lineWidth=2;
+  for(let c=0;c<=3;c++){
+    const x = 80+c*90;
+    gtnCtx.beginPath();
+    gtnCtx.moveTo(x, 40); gtnCtx.lineTo(x, 130);
+    gtnCtx.stroke();
+  }
+  gtnCtx.setLineDash([]);
+  // draw recognition trellis
+  if(!gtnState){drawGTNPlaceholder(); return;}
+  gtnCtx.fillStyle='#8892b0'; gtnCtx.font='bold 12px sans-serif';
+  gtnCtx.fillText('INTERPRETATIONS-GRAPH — CNN bewertet jedes Segment für jedes Zeichen', 20, 170);
+  const trelY = 250;
+  const colX = [150, 400, 650];
+  const nodeSize = 26;
+  // draw nodes
+  for(let seg=0;seg<3;seg++){
+    for(let k=0;k<gtnState.segments[seg].length;k++){
+      const cand = gtnState.segments[seg][k];
+      const y = trelY + k*55;
+      const x = colX[seg];
+      const onPath = gtnState.path && gtnState.path[seg]===cand;
+      const shouldShow = gtnAnimState===0 ? true : (gtnAnimState-1 >= seg);
+      if(!shouldShow) continue;
+      // node
+      gtnCtx.beginPath();
+      gtnCtx.arc(x, y, nodeSize, 0, Math.PI*2);
+      gtnCtx.fillStyle = onPath?'#ff3d7f':'#1c2340';
+      gtnCtx.fill();
+      gtnCtx.strokeStyle = onPath?'#ffcc00':'#00d4ff';
+      gtnCtx.lineWidth=2; gtnCtx.stroke();
+      // char
+      gtnCtx.fillStyle='#fff'; gtnCtx.font='bold 18px sans-serif';
+      gtnCtx.textAlign='center';
+      gtnCtx.fillText(cand.char, x, y+6);
+      // energy
+      gtnCtx.font='10px monospace';
+      gtnCtx.fillStyle=onPath?'#ffcc00':'#8892b0';
+      gtnCtx.fillText(`E=${cand.energy.toFixed(2)}`, x, y+nodeSize+14);
+      // connect to previous column (only best path highlighted)
+      if(seg>0 && gtnState.path){
+        const prevBest = gtnState.path[seg-1];
+        if(prevBest && (onPath || k===0)){
+          const py = trelY + gtnState.segments[seg-1].indexOf(prevBest)*55;
+          gtnCtx.beginPath();
+          gtnCtx.moveTo(colX[seg-1]+nodeSize, py);
+          gtnCtx.lineTo(x-nodeSize, y);
+          const isPathEdge = onPath && gtnState.path[seg]===cand;
+          gtnCtx.strokeStyle=isPathEdge?'#ffcc00':'rgba(136,146,176,0.15)';
+          gtnCtx.lineWidth=isPathEdge?3:1;
+          gtnCtx.stroke();
+        }
+      }
+    }
+    // segment label
+    gtnCtx.fillStyle='#00d4ff'; gtnCtx.font='bold 11px sans-serif';
+    gtnCtx.textAlign='center';
+    gtnCtx.fillText(`Segment ${seg+1}`, colX[seg], trelY-30);
+  }
+  gtnCtx.textAlign='left';
+  // result
+  if(gtnState.path){
+    gtnCtx.fillStyle='#4ade80'; gtnCtx.font='bold 20px monospace';
+    const result = gtnState.path.map(p=>p.char).join('');
+    gtnCtx.fillText(`ERKANNT: "${result}"    |    Gesamtenergie: ${gtnState.totalE.toFixed(2)}    |    ✓ Segmentierung + Erkennung gemeinsam optimiert`, 20, 480);
+  }
+}
+function drawGTNPlaceholder(){
+  gtnCtx.fillStyle='#8892b0';
+  gtnCtx.font='14px sans-serif';
+  gtnCtx.fillText('▶️ Klicke "GTN inferieren" oder "Animiert" für Ergebnis', 20, 300);
+}
+document.getElementById('s-gtnnoise').addEventListener('input',e=>{
+  document.getElementById('v-gtnnoise').textContent=parseFloat(e.target.value).toFixed(2);
+});
+initGTN(); drawGTN();
+
+// ========== 12. SUMMARY MAP ==========
+const mapCanvas = document.getElementById('canvas-map');
+const mapCtx = mapCanvas.getContext('2d');
+function drawMap(){
+  mapCtx.fillStyle='#050810';
+  mapCtx.fillRect(0,0,mapCanvas.width,mapCanvas.height);
+  const nodes = [
+    {x:450,y:60,label:'ENERGIE E(Y,X)',color:'#ffcc00',big:true},
+    {x:150,y:180,label:'Inferenz\nY* = argmin E',color:'#00d4ff'},
+    {x:750,y:180,label:'Lernen\nForm E(Y,X)',color:'#ff3d7f'},
+    {x:80,y:320,label:'Brute Force',color:'#4ade80'},
+    {x:220,y:320,label:'Gradient',color:'#4ade80'},
+    {x:360,y:320,label:'Viterbi\n(min-sum)',color:'#4ade80'},
+    {x:500,y:320,label:'Faktor-\ngraphen',color:'#4ade80'},
+    {x:640,y:320,label:'Push-Down\ncorrect',color:'#ffcc00'},
+    {x:820,y:320,label:'Pull-Up\nincorrect',color:'#ffcc00'},
+    {x:150,y:440,label:'Wahrscheinlichkeit\n(NLL + Gibbs)',color:'#a78bfa'},
+    {x:450,y:440,label:'GTN / CRF / SVM\nMax-Margin Markov',color:'#f472b6'},
+    {x:750,y:440,label:'Latente Vars Z\n(Segmentierung)',color:'#60a5fa'}
+  ];
+  const edges = [
+    [0,1],[0,2],[1,3],[1,4],[1,5],[1,6],[2,7],[2,8],
+    [0,9],[1,10],[2,10],[6,11],[7,11]
+  ];
+  // draw edges
+  edges.forEach(([a,b])=>{
+    const A=nodes[a], B=nodes[b];
+    mapCtx.strokeStyle='rgba(0,212,255,0.25)';
+    mapCtx.lineWidth=1.5;
+    mapCtx.beginPath();
+    mapCtx.moveTo(A.x,A.y); mapCtx.lineTo(B.x,B.y);
+    mapCtx.stroke();
+  });
+  // draw nodes
+  nodes.forEach(n=>{
+    const r = n.big?55:42;
+    mapCtx.beginPath();
+    mapCtx.arc(n.x,n.y,r,0,Math.PI*2);
+    const grad = mapCtx.createRadialGradient(n.x,n.y,0,n.x,n.y,r);
+    grad.addColorStop(0, n.color);
+    grad.addColorStop(1, 'rgba(10,14,26,0.9)');
+    mapCtx.fillStyle=grad;
+    mapCtx.fill();
+    mapCtx.strokeStyle=n.color; mapCtx.lineWidth=2; mapCtx.stroke();
+    // label
+    mapCtx.fillStyle='#fff';
+    mapCtx.font=n.big?'bold 13px sans-serif':'bold 11px sans-serif';
+    mapCtx.textAlign='center';
+    const lines = n.label.split('\n');
+    lines.forEach((line,i)=>{
+      mapCtx.fillText(line, n.x, n.y - (lines.length-1)*7 + i*14 + 4);
+    });
+  });
+  mapCtx.textAlign='left';
+}
+drawMap();
+
+</script>
+</body>
+</html>
