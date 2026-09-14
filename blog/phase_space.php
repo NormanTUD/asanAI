@@ -364,6 +364,37 @@ $$
 $$
 that is, *transforming the form and then interpreting* gives the same result as *interpreting and then transforming the meaning*.
 
+<figure style="max-width:600px; margin:1.5em auto; text-align:center;">
+<svg viewBox="0 0 460 320" class="no-smart" role="img" aria-label="A commutative square seen as two paths from X to S prime, with a shaded homotopy region between them" style="width:100%; height:auto; display:block; margin:0 auto;">
+<rect x="1" y="1" width="458" height="318" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
+<polygon points="110,70 350,70 350,250 110,250" style="fill:var(--mn-accent); opacity:0.09;"/>
+<line x1="110" y1="70" x2="350" y2="70" style="stroke:var(--mn-sky);" stroke-width="3"/>
+<polygon points="340,64 340,76 352,70" style="fill:var(--mn-sky);"/>
+<line x1="350" y1="70" x2="350" y2="250" style="stroke:var(--mn-sky);" stroke-width="3"/>
+<polygon points="344,240 356,240 350,252" style="fill:var(--mn-sky);"/>
+<line x1="110" y1="70" x2="110" y2="250" style="stroke:var(--mn-coral);" stroke-width="3"/>
+<polygon points="104,240 116,240 110,252" style="fill:var(--mn-coral);"/>
+<line x1="110" y1="250" x2="350" y2="250" style="stroke:var(--mn-coral);" stroke-width="3"/>
+<polygon points="340,244 340,256 352,250" style="fill:var(--mn-coral);"/>
+<g style="fill:var(--mn-text);">
+<circle cx="110" cy="70" r="6"/><circle cx="350" cy="70" r="6"/><circle cx="110" cy="250" r="6"/>
+</g>
+<circle cx="350" cy="250" r="6" style="fill:var(--mn-emerald);"/>
+<circle cx="350" cy="250" r="13" fill="none" style="stroke:var(--mn-emerald);" stroke-width="2"/>
+<g style="fill:var(--mn-text); font-size:16px; font-family:inherit; font-weight:600;">
+<text x="82" y="60">X</text><text x="360" y="60">X'</text><text x="82" y="272">S</text><text x="360" y="272">S'</text>
+</g>
+<g style="fill:var(--mn-text-muted); font-size:15px; font-family:inherit;">
+<text x="222" y="59">f</text><text x="364" y="166">&#960;'</text><text x="76" y="166">&#960;</text><text x="222" y="274">g</text>
+</g>
+<text x="230" y="150" text-anchor="middle" style="fill:var(--mn-text-muted); font-size:13px; font-family:inherit;">the two paths</text>
+<text x="230" y="172" text-anchor="middle" style="fill:var(--mn-emerald); font-size:13px; font-family:inherit; font-weight:600;">are homotopic</text>
+</svg>
+<figcaption class="md">The commutative square as two paths from $X$ to $S'$ (blue: transform then interpret; coral: interpret then transform), with the shaded region the homotopy that deforms one into the other.</figcaption>
+</figure>
+
+Seen through the lens of **homotopy type theory**, this is not a bare equation but a statement about *paths*. The two composites $\pi' \circ f$ and $g \circ \pi$ are two *paths* from $X$ to $S'$, and the commutativity condition says that these two paths are **homotopic** — equal up to a path. The shaded square is the witness: a two-dimensional region that continuously deforms one route into the other. In this view the agreement of the two meanings is not a mere point but a *space of reasons* — the collection of all the ways the two routes agree. Compositionality is the assertion that this space of homotopies is nonempty, and (in the strongest version) contractible.
+
 Commutativity is the precise sense in which the map $\pi$ is a *structure-preserving* map — a morphism in the appropriate category. It is the condition that makes $\pi$ a genuine *interpretation* rather than an arbitrary assignment of meanings to forms. A map that did not commute would be one in which the meaning of a transformed form is not the transformation of the meaning — a fundamentally incoherent semantics.
 
 This is, we believe, the cleanest mathematical statement of the requirement that **meaning be compositional**: the meaning of a whole should be determined by the meanings of its parts and the way they are combined. Compositionality is the commutativity of the interpretation map with respect to the operations of the language.
