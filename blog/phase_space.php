@@ -97,52 +97,6 @@ In a modern language model the "energy" is *not* a physical Hamiltonian. There i
 
 
 <div class="md">
-## Temperature: the slice gets a thickness
-
-A frictionless bead sits on one exact curve. But a real, warm system *wobbles* — its energy drifts a little now and then. So the question becomes: **which state does it actually occupy?** One rule answers — the **Boltzmann distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
-
-$$
-\underbrace{P(q,p)}_{\text{probability of a state}}
-\;=\;
-\underbrace{e^{-\beta\, H(q,p)}}_{\text{the weight: \emph{small} when the energy }H\text{ is big}}
-\;\Big/\;
-\underbrace{Z}_{\text{the total of all the weights}}
-\qquad\text{with}\qquad
-\underbrace{\beta \;=\; \tfrac{1}{\text{temperature}}}_{\text{how “stingy” the system is}}.
-$$
-
-In pieces. Each state gets a **weight** $e^{-\beta H}$: a number that *shrinks* as the energy $H$ grows — a penalty for being high up. $\beta$ is the inverse of temperature: cold = stingy (barely leaves the bottom), hot = generous (climbs high). $Z$ is the sum of all the weights, and we divide by it so the probabilities add up to $1$ \cite{partition_function_wiki}. In one line:
-
-$$
-\boxed{
-\text{low energy} \;\Rightarrow\; \text{likely.} \qquad\qquad \text{high energy} \;\Rightarrow\; \text{almost never.}
-}
-$$
-
-The high-energy states are not removed — they are still *there*, still part of the space of all possibilities — they have simply been given almost no weight. So the system is found, almost always, in the **low-energy slice**.
-
-Push the temperature all the way down and the wobble dies out: at $T=0$ the weight sits on the single lowest-energy state alone — the **ground state** \cite{ground_state_wiki} — and the "slice" narrows to a single point. That one-point limit is the useful, deterministic answer a trained model gives.
-
-**This is the knob on your chatbot.** "Temperature" in a language model is borrowed straight from here. **Low = stingy:** it does almost nothing but the single safest, most likely thing — correct, but dull. **High = generous:** it explores unusual, higher-energy options — some delightful, some nonsense. *Creativity, in this picture, is turning the temperature up* and loosening the selector. (The <a href="samplinglab">Temperature &amp; Sampling</a> chapter turns this knob in detail.)
-
-**And the slice is astonishingly thin.** In a large system the energy barely wobbles at all. Whenever a total is the sum of $N$ independent contributions, the relative size of the wobble is about $1/\sqrt{N}$ — the same fact behind the statistics rule "the bigger the sample, the tighter the average." For a mole of gas ($N\approx6\times10^{23}$ particles) that comes out to
-
-$$
-\underbrace{\tfrac{1}{\sqrt{N}} \;\approx\; 10^{-12}}_{\text{“locked to about one part in a trillion”}}.
-$$
-
-Not "roughly the same" — *one part in a trillion*.
-
-<div class="optional md" data-headline="The precise statement (for the curious)">
-"Thin" can be made exact in two ways. First, the **density of states** counts how much room there is at a given energy \cite{canonical_ensemble_wiki}
-$$
-\underbrace{\Omega(E) \;=\; \int \delta\!\big(H-E\big)\,dq\,dp}_{\text{“how much room is there at energy }E\text{?”}}
-$$
-and the system settles where that room (multiplied by the Boltzmann weight) is largest. Second, the thinness is not a guess but a theorem — **concentration of measure** \cite[concentration of measure]{concentration_of_measure_wiki}: in high dimensions the energy of a large system concentrates so tightly around one value that its relative wiggle goes to $0$ like $1/\sqrt{N}$. That result is what lies behind the equivalence of the ensembles of statistical physics.
-</div>
-</div>
-
-<div class="md">
 ## What shape is the space?
 
 We have said the phase space can have a shape — wrap-arounds, holes — inherited from the positions. Here is the surprising part: **all of that shape is *global*.**
