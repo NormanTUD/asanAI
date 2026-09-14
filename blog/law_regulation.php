@@ -5,7 +5,7 @@ title: AI Law & Regulation
 description: EU AI Act, GDPR, copyright, liability, sectoral rules — the legal landscape shaping deployment.
 icon: &#9878;
 part: 6
-order: 6
+order: 8
 color: text-secondary
 topics: society, ethics, law
 -->
