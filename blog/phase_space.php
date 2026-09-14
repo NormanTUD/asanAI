@@ -17,12 +17,13 @@ Ask a chatbot a hard question and you may notice something odd. It is not always
 
 The point of this chapter is to locate *where* the reliability actually is. The right space to think in is not just the questions the AI could be asked, but the space of **all its (input, output) pairs** — every possible input paired with *every* possible answer, absurd ones included: an endless run of "aaa…", a never-ending "ababab…". That space is enormous, and most of it is incoherent. Across it the AI is reliable only on a thin, special **slice**: the pairs where the output is actually a good answer to the input. A single number — its **energy** — marks where that slice is. Two words carry the whole chapter: **phase space** (that whole space of (input, output) pairs) and **energy** (the number that draws the line).
 
-**The tour, in four stops.**
+**The tour.**
 
-1. **A state** — what it takes to fully describe something that moves, and the space of all such states.
-2. **The energy** — the one number that runs the system, and why the system is locked to one thin curve.
-3. **The machine** — why a neural network fits this picture.
-4. **Going off the curve** — what happens when the input, or the model, drifts off the slice. (That is when it hallucinates.)
+1. **A space and a number.** What a "state" is, the space of all states, and the one number — the energy — that runs everything.
+2. **The picture.** A fixed energy locks the system to one thin curve; adding temperature turns that curve into a probability.
+3. **The machine.** A neural network is exactly this: an energy over all (question, answer) pairs.
+4. **The two regions.** The thin region the model *does* reach, the vast region it *never* reaches, and the line between them — each with its own shape.
+5. **Off the slice.** Going wrong is going off the slice.
 
 $$
 \boxed{
@@ -36,7 +37,7 @@ $$
 </div>
 
 <div class="md">
-## A moving thing needs two numbers
+## The space: every possible state
 
 **"Where" is not "where it is going."** Put a bead on a wire. Tell me where it is along the wire, and I can point to it. But I still cannot say what happens next: at that spot it could be at rest, or racing straight past. Same place, two different futures.
 
@@ -51,13 +52,15 @@ Momentum is just mass times speed, $p = m\,v$; if the word is new, read it as "h
 
 **The space can have a shape.** The position part may wrap around. Hang the bead from a string and it becomes a **pendulum** \cite{simple_pendulum_wiki}: its position is an *angle* that wraps all the way round, so the position part is a circle and the whole phase space is a **cylinder** \cite{symplectic_manifold_wiki}. The space of "everything possible" can therefore carry wrap-arounds and holes, inherited from the thing being modelled.
 
+**Now make the space be a machine.** For a chatbot the "state" is not a bead but a **(question, answer) pair**; for an image generator, a *possible picture*. The phase space is then *all* such pairs — and, as the opening warned, that includes the incoherent ones. The same two ingredients apply: a huge space of all (input, output) pairs, and, in the next section, one number on each of them.
+
 $$
 \boxed{
-\text{phase space} \;=\; \text{the set of all states} \;=\; \text{every }(q,p)\text{ at once.}
+\text{phase space} \;=\; \text{the set of all states} \;=\; \text{every }(q,p)\text{, or every (question, answer), at once.}
 }
 $$
 
-*In one line:* a state is $(q,p)$; the phase space is all the states together.
+*In one line:* a state is $(q,p)$; the phase space is all the states together — and for a machine, all the (input, output) pairs together.
 </div>
 
 <div class="md">
@@ -140,7 +143,7 @@ An AI's usefulness is the higher-dimensional version of this.
 </div>
 
 <div class="md">
-## Temperature: when the energy can vary
+## Temperature: the slice gets a thickness
 
 A frictionless bead sits on one exact curve. But a real, warm system *wobbles* — its energy drifts a little now and then. So the question becomes: **which state does it actually occupy?** One rule answers — the **Boltzmann distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
 
@@ -163,6 +166,8 @@ $$
 $$
 
 The high-energy states are not removed — they are still *there*, still part of the space of all possibilities — they have simply been given almost no weight. So the system is found, almost always, in the **low-energy slice**.
+
+Push the temperature all the way down and the wobble dies out: at $T=0$ the weight sits on the single lowest-energy state alone — the **ground state** \cite{ground_state_wiki} — and the "slice" narrows to a single point. That one-point limit is the useful, deterministic answer a trained model gives.
 
 **This is the knob on your chatbot.** "Temperature" in a language model is borrowed straight from here. **Low = stingy:** it does almost nothing but the single safest, most likely thing — correct, but dull. **High = generous:** it explores unusual, higher-energy options — some delightful, some nonsense. *Creativity, in this picture, is turning the temperature up* and loosening the selector. (The <a href="samplinglab">Temperature &amp; Sampling</a> chapter turns this knob in detail.)
 
@@ -262,13 +267,65 @@ In a modern language model the "energy" is *not* a physical Hamiltonian. There i
 </div>
 
 <div class="md">
-## Why a *slice* — and why it is so thin
+## One space, two regions
 
-So far, the useful states are the *low-energy* ones. Why a thin *slice*, and not "low-energy blobs scattered everywhere"? Because the useful states are not scattered: they lie on a **low-dimensional surface** floating inside the huge space. That is the **manifold hypothesis** \cite[Sindhwani, Belkin & Niyogi, 2006]{sindhwani2006geometric} \cite[manifold learning]{manifold_learning_wiki} — real data, though it lives in a space with a huge number of coordinates, is really controlled by only a few free knobs.
+Look at the whole (input, output) space. It is full of points the model will effectively *never* produce: "write a sonnet about the sea" answered with "aaaa…", "what is 2+2?" answered with "ababab…". Those outputs are *right there* in the space — perfectly valid strings — and yet the model never lands on them.
+
+So the question that matters: **if the whole thing is one space, what separates the region where meaning sits from the region where it does not?**
+
+The answer — and it is the crux — is that **it is not the shape of the space.** There is no wall, no border, no separate "meaningless room." The meaningful and the meaningless live in the *same* space, side by side. What draws the line is not geometry; it is the **training data**, through the likelihood — the energy — the model learned from it. The data paints a single number, the energy, across the whole space:
+
+$$
+\underbrace{E(x)}_{\text{energy of a pair }x}
+\;=\;
+\underbrace{-\,\log\, P(x)}_{\text{how “unexpected” the pair is to the data}}
+\;+\;
+\underbrace{\text{const.}}_{\text{the same for every pair, so it never matters}}.
+$$
+
+Here $x$ is an (input, output) pair and $P(x)$ is how likely that pair is under the distribution the model learned \cite[LeCun et al., 2007]{lecun2007ebm}. A pair the data supports — "what is 2+2?" → "4" — has low energy; a pair it almost never contains — "write a sonnet" → "aaaa…" — has very high energy. The *same string* "aaaa…" is high-energy (meaningless) next to "write a sonnet about the sea," but low-energy (perfectly fine) next to "print the letter a five times." Meaning is not a property of the *output* alone; it is a property of the **pair**, and the data decides.
+
+**Now picture the space as a height map**, with height = energy. The training data occupies a few thin, low, well-lit regions; everything else is high, empty wilderness. One space, two regions, divided by a line at some height:
+
+$$
+\boxed{
+\begin{aligned}
+&\text{one space holds the meaningful and the meaningless together;}\\
+&\text{the training data paints an energy across it;}\\
+&\text{meaning sits where that energy is low — the rest is wilderness.}
+\end{aligned}
+}
+$$
+
+The **reachable region** is the thin low-energy ground the model walks on. The **unreachable region** is the high wilderness around it. And between the two runs a **line** — the level set of the energy at some height. The next three sections give each its own shape: how it forms, and what it looks like.
+</div>
+
+<div class="md">
+## The reachable region: how it forms, and its shape
+
+Start with the low, well-lit ground of the height map — the region the model actually lives on.
+
+**How it forms.** It is low-energy because that is where the data put its mass, and the data is *low-dimensional*: the useful states do not scatter through the whole space; they lie on a **low-dimensional surface** floating inside it. That is the **manifold hypothesis** \cite[Sindhwani, Belkin & Niyogi, 2006]{sindhwani2006geometric} \cite[manifold learning]{manifold_learning_wiki} — real data, though it lives in a space with a huge number of coordinates, is really controlled by only a few free knobs.
 
 **The face example.** Every photograph of every human face is a point in a giant space of pixel values. But "all faces" is not the whole space — it is a *surface* inside it. Slide smoothly along that surface and you morph one face into another (change the jaw, the eyes, the light), and *every step of the way is still a real face*. The classic picture even has a **hole**: you can go all the way round from "eyes open" to "eyes closed" and back without ever leaving a real face, so the surface is shaped like the inside of a bagel \cite[Olah, 2014]{olah2014manifolds}.
 
 **A number you can feel.** Every scaled-and-rotated image of the letter "A" is a 1,024-number vector, so the space is $\mathbb{R}^{1024}$. You cannot draw 1,024 axes, but the 2-D picture you *can* draw has the same shape — the extra dimensions only make the space bigger and emptier. Only *two* knobs move a letter "A" (size and rotation), so the data sits on a **two-dimensional surface** inside that 1,024-dimensional space \cite[manifold learning]{manifold_learning_wiki}. A language model is more extreme still: the number of possible 100-token answers is $\lvert V\rvert^{100}$ (for a vocabulary of $\lvert V\rvert$); with $\lvert V\rvert=10{,}000$ that is $(10^{4})^{100}=10^{400}$, a 1 followed by four hundred zeros. The observable universe contains only about $10^{80}$ atoms. The space of possible answers has roughly **320 more digits** than there are atoms in the cosmos — and the *grammatical, on-topic* answers are a measure-thin sliver of it. The model works **on that sliver, and only on that sliver.**
+
+**What shape it is.** Three pictures — one from physics, one from probability, one from the machine — are not rivals but three angles on the same sheet:
+
+- **A donut (orderly motion).** When a system's long-run behaviour is just several independent little oscillations, it winds around a **donut-shaped** surface — one hole per independent motion. That shape is the **Liouville–Arnold theorem** \cite[Liouville–Arnold]{liouville_arnold_wiki}: the reachable surface literally *counts* the independent motions. (A donut and a coffee mug are the same shape once you squish the handle — that is all a "torus" is.)
+- **A thin shell (where the weight sits).** From the temperature section: the energy locks to one value to within $1/\sqrt{N}$, so almost all the probability sits in a thin band around one energy — a **shell** hugging the sheet.
+- **Groves of solutions (what the machine sees).** A trained network's weight space has valleys and flat plains, not a scatter of dots \cite[Saxe, McClelland & Ganguli, 2014]{saxe2014deep} — and, because rearranging the neurons in a layer does not change what the network does, the good answers come in whole *families*, flat symmetry-made **groves** rather than dust.
+
+Put together: a **low-dimensional sheet** (donut / grove) on which the mass **concentrates** in a **thin shell**, built from a few **pockets** — one for each "way the data tends to look" \cite[concentration of measure]{concentration_of_measure_wiki} \cite[mode]{mode_wiki}.
+
+**And it has names.** Three fields each give the same thin, lit-up region a name:
+
+- **Measure theory:** the **support** of the distribution — the place the mass lives \cite{support_measure_wiki}.
+- **Information theory:** the **typical set** — the answers typical of the data \cite{typical_set_wiki}.
+- **Physics:** the **ground state** — the lowest-energy configuration, what the system becomes as the temperature goes to zero \cite{ground_state_wiki}.
+
+The thinness is a theorem, not a guess: as answers get longer, the *fraction* of the space that is typical **goes to zero exponentially** the moment the data has any structure at all — a vanishing sliver carrying (almost) all the probability (the **asymptotic equipartition property**) \cite{aep_wiki}.
 
 <div class="optional md" data-headline="Why “thin” is the right word (for the curious)">
 Make "thin" exact. A smooth surface of dimension $k$ sitting inside a space of dimension $N$ (with $k < N$) has **$N$-dimensional measure zero** — the same reason a line has zero *area*. So a point picked uniformly from the full space lands on the slice with probability *exactly* $0$. Usefulness is a knife-edge: the model is right precisely *because* it has been made to live on a measure-zero set, while a random input is right with probability zero.
