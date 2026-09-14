@@ -445,6 +445,16 @@ Without chronophotography there are no video frames. Without labelled image-sequ
 </div>
 
 <div class="md">
+#### From the Moon to the GPU: Space Image Processing
+
+Muybridge's labelled images stayed, for half a century, a pile of glass plates. What turned images into *computable* data, and quietly set the scene for the entire vision stack, was done in a very different place: a laboratory at NASA's Jet Propulsion Laboratory, cleaning up grainy pictures of the Moon and the planets arriving over a slow radio link.
+
+\citeauthor{tomayko1988spaceflight} records that **Robert Nathan** at JPL pioneered **digital image processing** to enhance the images from the Ranger, Surveyor and Mariner probes \cite{tomayko1988spaceflight}: stretching their contrast, normalising their uneven illumination with high-pass filtering, correcting their geometric distortion, and eliminating their noise. Because the images were far too big and slow for an astronomer to fix by eye, Nathan's team wrote **VICAR** (Video Information Communication and Retrieval), a language that let a user *chain* image-processing operations together, the conceptual ancestor of the modern computer-vision pipeline, where one feeds an image through a stack of transforms \cite{tomayko1988spaceflight}. Those techniques spread, almost immediately, into astronomy and into medical imaging (the enhancement of x-ray scans), and became the quiet foundation on which modern computer vision, and the neural networks trained on image data, were later built \cite{tomayko1988spaceflight}.
+
+The hardware half of the story is the more direct foreshadow of the GPU. To make these operations fast enough, Nathan went on to pioneer **VLSI chips that implemented image-processing algorithms in hardware**, wiring up a 35×35 array of parallel multipliers to accelerate a computation by a factor of **1,225** \cite{tomayko1988spaceflight}. A grid of parallel multipliers doing a two-dimensional array operation in one shot is, at the level of the idea, exactly what a modern GPU or TPU is. The machine that made the Moon pictures clearer is a direct, if unacknowledged, ancestor of the accelerator that trains a language model.
+</div>
+
+<div class="md">
 ### Networks and Interfaces
 
 #### Land Telegraphy: The First Digital Network
@@ -623,6 +633,22 @@ Chemistry did not intend to create artificial intelligence. It intended to under
 
 
 Every weight update in a modern neural network is an electrical signal propagating through silicon, coordinated by a clock, stored in volatile memory, and communicated across copper traces on a printed circuit board. None of these components was invented for artificial intelligence. The CPU descends from wartime code-breaking. RAM evolved from radar. The GPU was forged by video games. Networking grew from military resilience planning. Storage was driven by census-taking. Yet together, they form the physical body in which neural networks are incarnated.
+
+#### The Space Program That Nudged the State of the Art
+
+Of all the displaced prerequisites, one is special because it is not a single material or device but a *demand*: the need for a computer that could not crash, could not be powered off, and could not afford to be wrong, hanging in space where no one could walk over and fix it. \citeauthor{tomayko1988spaceflight} makes the point that NASA's spaceflight computers were the engine behind an entire generation of techniques the industry later took for granted \cite{tomayko1988spaceflight}.
+
+<div class="smart-quote" data-cite="tomayko1988spaceflight">
+NASA never asked for anything that could not be done with the current technology. But in response, the computer industry sometimes pushed itself just a little in a number of areas [...] NASA did not push the state of the art, but nudged it enough times to make a difference.
+</div>
+
+* **Real-time, non-stopping systems.** Batch machines of the 1950s and 60s could crash or run to an abnormal end; a spacecraft computer could not. It had to respond to asynchronous inputs continuously and *never* stop, a constraint that pushed the whole industry toward real-time operating systems. The Apollo Guidance Computer's **priority-interrupt** scheduler, which juggled several jobs by importance, is the ancestor of the real-time operating systems that now keep autonomous vehicles and robot fleets from freezing \cite{tomayko1988spaceflight}.
+
+* **Redundancy and voting.** Because a failure in orbit is fatal, spaceflight made **redundant, voting computer sets** standard. The Shuttle flew five general-purpose computers, four of them running identical software and constantly cross-checking each other against a fifth, independently written backup \cite{tomayko1988spaceflight}. The same "run N copies and vote" idea, and the harder problem of keeping those copies *synchronized*, is exactly what modern distributed training and consensus protocols do when they replicate a model or its state across a cluster of GPUs \cite{tomayko1988spaceflight}.
+
+* **Distributed computing, forty years early.** The Voyager spacecraft carried three separate, dual-redundant computer subsystems working as one, and the Galileo probe, launched in 1989, carried **nineteen microprocessors** spread across its command system, its attitude-control units, and its scientific instruments, a genuinely distributed computer floating on its way to Jupiter \cite{tomayko1988spaceflight}. NASA's ground-side Shuttle launch-processing system went further still, linking dozens of minicomputers through a single shared **common-data buffer** so they could coordinate without pairwise messaging, a direct ancestor of the shared-memory parallelism and network file systems that move data across a training cluster today \cite{tomayko1988spaceflight}.
+
+* **Software first.** For the Viking lander, Martin Marietta's team inverted the usual order: they built an *emulated* hardware mock-up and finished the software a full **year before** the flight hardware existed, letting the hardware's requirements evolve around the code \cite{tomayko1988spaceflight}. "Software first", where the program defines the machine rather than the other way around, is now the default way embedded and accelerator systems are designed.
 
 #### The Central Processing Unit (CPU)
 
