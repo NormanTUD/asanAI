@@ -5,7 +5,7 @@ title: Software: Operating Systems, Programming Languages & the Abstraction Stac
 description: How the software that makes AI possible was actually built — the operating systems, the languages, the tools, and the minds behind them.
 icon: &#128190;
 part: 6
-order: 10
+order: 13
 color: text-secondary
 topics: history, programming, society
 -->
