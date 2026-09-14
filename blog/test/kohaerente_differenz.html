@@ -708,6 +708,7 @@ function fitCanvas(c) {
   const ph = Math.min(h * dpr, 8192);
   c.width = pw;
   c.height = ph;
+  c.style.height = h + 'px';
   const ctx = c.getContext('2d');
   ctx.setTransform(pw / w, 0, 0, ph / h, 0, 0);
   return {w, h};
