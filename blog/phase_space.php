@@ -366,7 +366,15 @@ $$
 f(r) \sim r^{-\alpha},
 $$
 
-frequency against rank \cite{zipf1949human}, and Heaps' law, $V(N) \sim N^{\beta}$, vocabulary against text length, both say that language has *no single characteristic scale* — a few very large, very frequent structures and an enormous tail of small, rare ones. Heavy-tailed structure of exactly this kind is the signature of a system with no preferred scale \cite{statisticsofextremes}.
+frequency against rank \cite{zipf1949human}, and Heaps' law, $V(N) \sim N^{\beta}$, vocabulary against text length, both say that language has *no single characteristic scale* — a few very large, very frequent structures and an enormous tail of small, rare ones:
+
+```text
+large structures     ████████
+medium structures    ███ ██ █
+small structures     · · · · · · · · · · · ·
+```
+
+Heavy-tailed structure of exactly this kind is the signature of a system with no preferred scale \cite{statisticsofextremes}. These results do not *prove* the semantic-space theory — they show that language has strong regularities across scales and that scaling analysis is a legitimate tool for it. The bridge is that language is best read as **scale-dependent statistical structure**, rather than merely *a list of vectors*.
 
 **[HYPOTHESIS]** If the *clusters and voids* obey related heavy-tailed laws, that is evidence for hierarchical organization. Possible empirical forms:
 
@@ -410,7 +418,23 @@ $$
 \pi^{-1}(s),
 $$
 
-is the collection of linguistic realizations of $s$. This motivates a fiber-bundle-like picture \cite{fiber_bundle_wiki}: $X$ is the *total space* of linguistic configurations, $S$ a semantic *base space*, $\pi$ the projection, and each fiber the set of ways one structure can be said.
+is the collection of linguistic realizations of $s$. This motivates a fiber-bundle-like picture \cite{fiber_bundle_wiki}: $X$ is the *total space* of linguistic configurations, $S$ a semantic *base space*, $\pi$ the projection, and each fiber the set of ways one structure can be said — many points up top, fewer structures below:
+
+```text
+                        X = linguistic total space
+              ┌──────────────────────────────┐
+              │  • •       • •        •      │
+              │ •    •   •     •   •        │
+              │    •       •       •        │
+              └──────────────────────────────┘
+                  │       │        │
+                  π       π        π
+                  ↓       ↓        ↓
+              ┌────────────────────────┐
+              │ S = semantic structures│
+              │   ●       ●       ●    │
+              └────────────────────────┘
+```
 
 <div class="optional md" data-headline="The fiber picture (for the curious)">
 A genuine fiber bundle requires more structure than is established here, so the careful word is "fiber-like." The point: semantics is not a *label* attached to points ($x \mapsto L(x)$). Two expressions are semantically related not because they wear the same tag, but because they *participate in corresponding relations*. That turns semantics from a classification problem into a *structural* one.
@@ -422,7 +446,19 @@ $$
 X \;\longrightarrow\; S \;\longleftrightarrow\; W,
 $$
 
-where $W$ is the space of possible world-states. This splits "meaningfulness" into two:
+where $W$ is the space of possible world-states — the first arrow is *interpretation*, the second *truth / satisfaction*:
+
+```text
+   linguistic space X
+          │  interpretation
+          ▼
+   semantic space S
+          │  truth / satisfaction
+          ▼
+   world space W
+```
+
+This splits "meaningfulness" into two:
 
 $$
 \boxed{\text{internal coherence}} \qquad\text{and}\qquad \boxed{\text{world coupling / grounding}}.
@@ -436,7 +472,7 @@ $$
 \text{linguistic expression} \;\longrightarrow\; \text{proposition} \;\longrightarrow\; \text{world condition}.
 $$
 
-A theory of meaning based only on internal geometry is incomplete if it wants to capture reference. Model theory gives the clean version \cite{hodges1993modeltheory} \cite{lewis_ci_1946mwo}: a proposition $s$ is represented by the set of worlds in which it is true,
+A Tarskian truth schema is what connects the truth of the quoted sentence with the corresponding fact or condition in the world — the bridge between the sentence and the state of affairs it describes. A theory of meaning based only on internal geometry is therefore incomplete if it wants to capture reference. Model theory gives the clean version \cite{hodges1993modeltheory} \cite{lewis_ci_1946mwo}: a proposition $s$ is represented by the set of worlds in which it is true,
 
 $$
 \llbracket s \rrbracket \;=\; \{\, w \in W \mid s \text{ is true in } w \,\},
@@ -462,13 +498,25 @@ $$
 <div class="md">
 ## 13. The landscape is a stack, not a single region
 
-Once there are several structures, there is no single complement called "the meaningless space." A point can sit in
+Once there are several structures, there is no single complement called "the meaningless space." One point can sit in
 
 $$
 \text{Syntax Cluster} \;\cap\; \text{Semantic Cluster} \;\cap\; \text{Grounding Void},
 $$
 
-while another sits in all three voids, and another in all three clusters. There may be several *overlapping* cosmic webs, one per relational dimension. The strongest semantic region is the intersection
+another in
+
+$$
+\text{Syntax Void} \;\cap\; \text{Semantic Void} \;\cap\; \text{Grounding Void},
+$$
+
+and another in
+
+$$
+\text{Syntax Cluster} \;\cap\; \text{Semantic Cluster} \;\cap\; \text{Grounded Cluster}.
+$$
+
+There may be several *overlapping* cosmic webs, one per relational dimension. The strongest semantic region is the intersection
 
 $$
 M_{\mathrm{strong}} \;=\; C_{\mathrm{syn}} \;\cap\; C_{\mathrm{sem}} \;\cap\; C_{\mathrm{ground}} \;\cap\; C_{\mathrm{epi}},
