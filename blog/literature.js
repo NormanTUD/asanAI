@@ -169,6 +169,39 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1312.6120",
 		alternativetitle: "Saxe, McClelland & Ganguli, deep linear networks (ICLR 2014)"
 	},
+	"simple_pendulum_wiki": {
+		title: "Simple pendulum",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Simple_pendulum",
+		alternativetitle: "Simple pendulum (Wikipedia)"
+	},
+	"olah2014manifolds": {
+		title: "Neural Networks, Manifolds, and Topology",
+		author: "Christopher Olah",
+		year: 2014,
+		url: "https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/",
+		alternativetitle: "Olah, Neural Networks, Manifolds, and Topology (2014)"
+	},
+	"fefferman2016testing": {
+		title: "Testing the manifold hypothesis",
+		author: "Charles Fefferman, Sanjoy Mitter, Hariharan Narayanan",
+		year: 2016,
+		journal: "Journal of the American Mathematical Society",
+		volume: 29,
+		number: 4,
+		pages: "983–1049",
+		url: "https://doi.org/10.1090/jams/852",
+		alternativetitle: "Fefferman, Mitter & Narayanan, testing the manifold hypothesis (JAMS 2016)"
+	},
+	"brown2023union": {
+		title: "The Union of Manifolds Hypothesis and its Implications for Deep Generative Modelling",
+		author: "Bradley C. A. Brown, Anthony L. Caterini, Brendan Leigh Ross, Jesse C. Cresswell, Gabriel Loaiza-Ganem",
+		year: 2023,
+		journal: "Proceedings of the 11th International Conference on Learning Representations (ICLR)",
+		url: "https://arxiv.org/abs/2207.02862",
+		alternativetitle: "Brown et al., the union of manifolds hypothesis (ICLR 2023)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Computers in Spaceflight: The NASA Experience  (history.php,
 	 *  untold_history.php)
