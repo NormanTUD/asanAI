@@ -1,0 +1,2513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Conceptual Spaces – Die Geometrie des Denkens (Interaktiv)</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#111827; --panel:#1a2138; --accent:#7dd3fc;
+  --accent2:#f472b6; --accent3:#a78bfa; --text:#e5e7eb; --muted:#94a3b8;
+  --good:#4ade80; --warn:#fbbf24;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:linear-gradient(180deg,#050810 0%,#0a0e1a 100%);color:var(--text);font-family:-apple-system,'Segoe UI',Inter,sans-serif;line-height:1.6;overflow-x:hidden}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:2rem;position:relative;overflow:hidden}
+.hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+.hero-content{position:relative;z-index:1;max-width:900px}
+h1{font-size:clamp(2.5rem,6vw,5rem);font-weight:800;background:linear-gradient(135deg,#7dd3fc,#f472b6,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:1rem;letter-spacing:-0.03em}
+.subtitle{font-size:1.3rem;color:var(--muted);margin-bottom:2rem}
+.author{font-size:0.9rem;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);color:var(--muted);animation:bounce 2s infinite;z-index:2}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(10px)}}
+
+section{max-width:1200px;margin:0 auto;padding:4rem 2rem;border-top:1px solid rgba(125,211,252,0.1)}
+h2{font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:0.5rem;color:var(--accent)}
+h3{font-size:1.4rem;margin:1.5rem 0 0.5rem;color:var(--accent2)}
+.chapter-num{font-size:0.8rem;color:var(--accent3);letter-spacing:0.3em;text-transform:uppercase;margin-bottom:0.5rem}
+p{margin:0.7rem 0;color:#cbd5e1}
+.intro{font-size:1.05rem;color:#94a3b8;font-style:italic;margin-bottom:2rem;border-left:3px solid var(--accent);padding-left:1rem}
+
+.panel{background:rgba(26,33,56,0.6);backdrop-filter:blur(10px);border:1px solid rgba(125,211,252,0.15);border-radius:16px;padding:1.5rem;margin:1.5rem 0;box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.panel-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+.panel-title::before{content:'▸';color:var(--accent2)}
+
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1rem 0}
+.control{display:flex;flex-direction:column;gap:0.3rem}
+.control label{font-size:0.8rem;color:var(--muted);display:flex;justify-content:space-between}
+.control label span{color:var(--accent);font-family:monospace}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;background:rgba(125,211,252,0.15);border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;cursor:pointer;box-shadow:0 0 10px rgba(125,211,252,0.5)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;cursor:pointer;border:none}
+select,button{background:rgba(125,211,252,0.1);color:var(--text);border:1px solid rgba(125,211,252,0.3);padding:0.5rem 1rem;border-radius:8px;cursor:pointer;font-family:inherit;font-size:0.9rem;transition:all 0.2s}
+button:hover,select:hover{background:rgba(125,211,252,0.2);border-color:var(--accent)}
+button.active{background:linear-gradient(135deg,var(--accent),var(--accent3));color:#0a0e1a;font-weight:600}
+
+canvas.demo{width:100%;background:#050810;border-radius:12px;display:block}
+.plot{width:100%;min-height:400px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:800px){.grid3{grid-template-columns:1fr}}
+
+.info-box{background:linear-gradient(135deg,rgba(125,211,252,0.08),rgba(244,114,182,0.08));border:1px solid rgba(125,211,252,0.2);border-radius:12px;padding:1rem;margin:1rem 0;font-size:0.95rem}
+.info-box strong{color:var(--accent)}
+.warn-box{background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(244,114,182,0.05));border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:1rem;margin:1rem 0}
+
+.badge{display:inline-block;background:rgba(125,211,252,0.15);color:var(--accent);padding:0.15rem 0.6rem;border-radius:12px;font-size:0.75rem;font-family:monospace;margin:0 0.2rem}
+
+.levels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:2rem 0}
+@media(max-width:800px){.levels{grid-template-columns:1fr}}
+.level{padding:1.2rem;border-radius:12px;text-align:center;transition:transform 0.2s;cursor:pointer}
+.level:hover{transform:translateY(-4px)}
+.level.sym{background:linear-gradient(135deg,rgba(244,114,182,0.15),rgba(244,114,182,0.05));border:1px solid rgba(244,114,182,0.3)}
+.level.con{background:linear-gradient(135deg,rgba(125,211,252,0.15),rgba(125,211,252,0.05));border:1px solid rgba(125,211,252,0.3)}
+.level.sub{background:linear-gradient(135deg,rgba(167,139,250,0.15),rgba(167,139,250,0.05));border:1px solid rgba(167,139,250,0.3)}
+.level h4{font-size:1.1rem;margin-bottom:0.5rem}
+.level p{font-size:0.85rem;color:var(--muted)}
+
+.formula{background:rgba(0,0,0,0.3);padding:1rem;border-radius:8px;margin:1rem 0;overflow-x:auto;font-size:1.1rem;text-align:center}
+
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:0.85rem;margin:0.5rem 0}
+.legend-item{display:flex;align-items:center;gap:0.4rem}
+.legend-dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+.footer{text-align:center;padding:3rem 2rem;color:var(--muted);font-size:0.9rem;border-top:1px solid rgba(125,211,252,0.1);margin-top:4rem}
+.footer strong{color:var(--accent)}
+
+.toc{position:fixed;top:20px;right:20px;background:rgba(10,14,26,0.9);backdrop-filter:blur(10px);border:1px solid rgba(125,211,252,0.2);border-radius:12px;padding:1rem;max-width:200px;z-index:100;font-size:0.8rem;display:none}
+.toc.show{display:block}
+.toc a{color:var(--muted);text-decoration:none;display:block;padding:0.2rem 0;transition:color 0.2s}
+.toc a:hover{color:var(--accent)}
+.toc-toggle{position:fixed;top:20px;right:20px;z-index:101;background:rgba(125,211,252,0.2);border:1px solid var(--accent);color:var(--accent);padding:0.5rem 0.8rem;border-radius:8px;cursor:pointer;font-size:0.8rem}
+
+@media(max-width:600px){.toc-toggle,.toc{display:none}}
+</style>
+</head>
+<body>
+
+<button class="toc-toggle" onclick="document.getElementById('toc').classList.toggle('show')">☰ Kapitel</button>
+<nav class="toc" id="toc">
+  <a href="#motivation">▸ Motivation</a>
+  <a href="#levels">▸ Drei Ebenen</a>
+  <a href="#color">▸ Farbraum</a>
+  <a href="#metrics">▸ Metriken</a>
+  <a href="#integral">▸ Integral/Separabel</a>
+  <a href="#convex">▸ Konvexität</a>
+  <a href="#voronoi">▸ Voronoi</a>
+  <a href="#prototype">▸ Prototypen</a>
+  <a href="#learning">▸ Lernen</a>
+  <a href="#combo">▸ Konzeptkombination</a>
+  <a href="#contrast">▸ Kontrastklassen</a>
+  <a href="#metaphor">▸ Metaphern</a>
+  <a href="#grue">▸ Grue-Rätsel</a>
+  <a href="#kohonen">▸ Kohonen</a>
+  <a href="#shells">▸ Muschelraum</a>
+  <a href="#prepositions">▸ Präpositionen</a>
+  <a href="#conclusion">▸ Fazit</a>
+</nav>
+
+<div class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="author">Peter Gärdenfors · 2000</div>
+    <h1>Conceptual Spaces</h1>
+    <div class="subtitle">Die Geometrie des Denkens — interaktiv erforscht</div>
+    <p style="color:var(--muted);max-width:600px;margin:0 auto">Wie stellt der Geist Bedeutung dar? Nicht als Symbole. Nicht als Neuronen. Sondern als <em>geometrische Räume</em>, in denen Ähnlichkeit Distanz ist und Begriffe konvexe Regionen sind.</p>
+  </div>
+  <div class="scroll-hint">↓ Scrolle & spiele</div>
+</div>
+
+<!-- MOTIVATION -->
+<section id="motivation">
+  <div class="chapter-num">Kapitel 1 · Das Problem</div>
+  <h2>Wie repräsentiert der Geist Bedeutung?</h2>
+  <div class="intro">Gärdenfors' zentrale Frage: Cognitive Science hat zwei dominante Paradigmen zur Wissensrepräsentation — und beide scheitern an fundamentalen Aufgaben.</div>
+
+  <div class="levels">
+    <div class="level sym" onclick="highlightLevel('sym')">
+      <h4>🔤 Symbolisch</h4>
+      <p><strong>Fodor, Pylyshyn</strong>: Denken = Symbolmanipulation nach Regeln. Wie eine Turing-Maschine.</p>
+      <p style="color:var(--warn);margin-top:0.5rem">Problem: Wo kommen die Symbole her? Wie wird ihre Bedeutung geerdet?</p>
+    </div>
+    <div class="level sub" onclick="highlightLevel('sub')">
+      <h4>🕸️ Subkonzeptuell</h4>
+      <p><strong>Konnektionismus</strong>: Denken = Aktivierungsmuster in neuronalen Netzen.</p>
+      <p style="color:var(--warn);margin-top:0.5rem">Problem: Was bedeutet ein Neuron? Unglaublich langsames Lernen.</p>
+    </div>
+    <div class="level con" onclick="highlightLevel('con')">
+      <h4>📐 Konzeptuell ⭐</h4>
+      <p><strong>Gärdenfors' Vorschlag</strong>: Denken = Geometrie in Qualitätsräumen.</p>
+      <p style="color:var(--good);margin-top:0.5rem">Löst Ähnlichkeit, Lernen, Konzeptbildung geometrisch.</p>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>Die Kernthese:</strong> Zwischen Neuron und Symbol liegt eine dritte Ebene — die <em>konzeptuelle Ebene</em>. Sie besteht aus <strong>Qualitätsdimensionen</strong> (Farbe, Temperatur, Höhe, Gewicht ...), die geometrische Strukturen bilden. In diesen Räumen entsprechen <strong>Ähnlichkeiten Distanzen</strong> und <strong>Begriffe konvexen Regionen</strong>.
+  </div>
+</section>
+
+<!-- LEVELS -->
+<section id="levels">
+  <div class="chapter-num">Die Dschungel-Analogie</div>
+  <h2>Drei Auflösungen derselben Realität</h2>
+  <p class="intro">Menschen bewegen sich durch einen Dschungel. Man kann ihre Bewegung auf drei Ebenen beschreiben — mit zunehmender Abstraktion.</p>
+
+  <div class="panel">
+    <div class="panel-title">Interaktive Karte</div>
+    <div class="controls">
+      <div class="control">
+        <label>Ebene: <span id="jungle-level-lbl">Konzeptuell</span></label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="btn-jungle-sub" onclick="setJungleLevel('sub')">Subkonzeptuell</button>
+          <button id="btn-jungle-con" onclick="setJungleLevel('con')" class="active">Konzeptuell</button>
+          <button id="btn-jungle-sym" onclick="setJungleLevel('sym')">Symbolisch</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="jungle" class="demo" height="400"></canvas>
+    <div class="info-box" id="jungle-info">
+      <strong>Konzeptuelle Ebene:</strong> "Geh 30 m nach Westen, folge dem Pfad." Der Weg wird als geometrische Struktur wahrgenommen — mit Richtung und Distanz. Man abstrahiert von den einzelnen Schritten, sieht aber die Form des Weges.
+    </div>
+  </div>
+</section>
+
+<!-- COLOR -->
+<section id="color">
+  <div class="chapter-num">Paradebeispiel · Kapitel 1.5</div>
+  <h2>Der Farbraum — die Königsdisziplin</h2>
+  <p class="intro">Farbe ist Gärdenfors' bestes Beispiel für einen konzeptuellen Raum. Sie hat exakt <strong>drei integrale Dimensionen</strong>: Farbton (kreisförmig), Sättigung (linear), Helligkeit (linear).</p>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-title">Der Farbkegel (NCS)</div>
+      <div id="color-3d" style="width:100%;height:450px"></div>
+      <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem">Drehe & zoome. Jeder Punkt ist eine mögliche Farbwahrnehmung.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Farbe erkunden</div>
+      <div class="controls">
+        <div class="control">
+          <label>Farbton (H): <span id="hue-val">0°</span></label>
+          <input type="range" id="hue" min="0" max="360" value="0">
+        </div>
+        <div class="control">
+          <label>Sättigung (S): <span id="sat-val">100%</span></label>
+          <input type="range" id="sat" min="0" max="100" value="100">
+        </div>
+        <div class="control">
+          <label>Helligkeit (L): <span id="light-val">50%</span></label>
+          <input type="range" id="light" min="0" max="100" value="50">
+        </div>
+      </div>
+      <div id="color-preview" style="width:100%;height:120px;border-radius:12px;margin-top:1rem;transition:background 0.2s;border:1px solid rgba(255,255,255,0.1)"></div>
+      <div id="color-name" style="text-align:center;margin-top:1rem;font-size:1.1rem;color:var(--accent)"></div>
+      <div class="info-box" style="margin-top:1rem;font-size:0.9rem">
+        Die drei Dimensionen sind <span class="badge">integral</span> — man kann eine Farbe nicht wählen, ohne allen drei einen Wert zu geben. Anders als Höhe und Breite eines Objekts, die <span class="badge">separabel</span> sind.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section id="metrics">
+  <div class="chapter-num">Kapitel 1.6 · Mathematik</div>
+  <h2>Was ist Distanz? Metriken</h2>
+  <p class="intro">Wenn Ähnlichkeit gleich Distanz ist, brauchen wir eine <strong>Metrik</strong>. Aber welche? Gärdenfors zeigt: Die Wahl hängt davon ab, ob Dimensionen integral oder separabel sind.</p>
+
+  <div class="formula" id="metric-formula"></div>
+
+  <div class="panel">
+    <div class="panel-title">Minkowski-Metriken vergleichen</div>
+    <div class="controls">
+      <div class="control">
+        <label>Minkowski-Parameter r: <span id="mink-val">2.00</span></label>
+        <input type="range" id="mink" min="1" max="5" step="0.1" value="2">
+      </div>
+      <div class="control">
+        <label>Gewicht Dim X (w₁): <span id="w1-val">1.00</span></label>
+        <input type="range" id="w1" min="0.2" max="3" step="0.1" value="1">
+      </div>
+      <div class="control">
+        <label>Gewicht Dim Y (w₂): <span id="w2-val">1.00</span></label>
+        <input type="range" id="w2" min="0.2" max="3" step="0.1" value="1">
+      </div>
+    </div>
+    <div class="grid2">
+      <canvas id="metric-canvas" class="demo" height="400"></canvas>
+      <div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#7dd3fc"></span>Isodistanz-Linien</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f472b6"></span>Zentrum</div>
+        </div>
+        <div class="info-box">
+          <p><strong>r = 1</strong>: City-Block-Metrik (Manhattan). Für <em>separable</em> Dimensionen. Kreise werden Rauten.</p>
+          <p><strong>r = 2</strong>: Euklidische Metrik. Für <em>integrale</em> Dimensionen (wie Farbton+Sättigung). Kreise sind Kreise.</p>
+          <p><strong>r → ∞</strong>: Chebyshev. Kreise werden Quadrate.</p>
+        </div>
+        <div class="info-box">
+          <strong>Ähnlichkeit als abklingende Funktion:</strong>
+          <div class="formula" style="font-size:1rem;margin:0.5rem 0">s(i,j) = e<sup>−c·d(i,j)</sup></div>
+          Shepard's "universelles Gesetz der Generalisierung" (1987).
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRAL vs SEPARABLE -->
+<section id="integral">
+  <div class="chapter-num">Kapitel 1.8</div>
+  <h2>Integral vs. Separabel — die Struktur einer Domäne</h2>
+  <p class="intro">Zwei Dimensionen sind <strong>integral</strong>, wenn man einer keine Werte zuweisen kann, ohne der anderen einen zu geben (z.B. Farbton & Helligkeit). Sie sind <strong>separabel</strong>, wenn man sie unabhängig aufmerksam betrachten kann (z.B. Größe & Farbe).</p>
+
+  <div class="panel">
+    <div class="panel-title">Interaktives Experiment: "Speeded Classification"</div>
+    <p style="font-size:0.9rem;color:var(--muted)">Klassifiziere: Was ist ein "A"-Objekt? Achte nur auf eine Dimension. Ignoriere die andere.</p>
+    <div class="controls">
+      <div class="control">
+        <label>Dimensionstyp</label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="btn-sep" onclick="setDimType('sep')" class="active">Separabel (Größe/Farbe)</button>
+          <button id="btn-int" onclick="setDimType('int')">Integral (Farbton/Sätt.)</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin:1.5rem 0">
+      <div id="stim-container" style="display:flex;gap:2rem;justify-content:center"></div>
+    </div>
+    <div style="margin-top:1rem;text-align:center;font-size:0.95rem" id="stim-instruction">
+      Beobachte: Kannst du die "A"-Kategorie schnell erfassen, indem du nur auf <strong>eine</strong> Dimension achtest?
+    </div>
+  </div>
+</section>
+
+<!-- CONVEXITY -->
+<section id="convex">
+  <div class="chapter-num">Kapitel 3 · Der Kern der Theorie</div>
+  <h2>Kriterium P: Natürliche Eigenschaften sind konvex</h2>
+  <p class="intro">Gärdenfors' <strong>zentrale These</strong>: Eine natürliche Eigenschaft entspricht einer <em>konvexen Region</em> einer Domäne im konzeptuellen Raum. Konvex heißt: Wenn zwei Punkte in der Region liegen, dann liegen auch alle Punkte dazwischen darin.</p>
+
+  <div class="formula" id="convex-formula"></div>
+
+  <div class="panel">
+    <div class="panel-title">Zeichne deine eigene Region – ist sie konvex?</div>
+    <p style="font-size:0.9rem;color:var(--muted)">Klicke Punkte, um eine Region zu erstellen. Die konvexe Hülle wird berechnet. Passt deine Region hinein?</p>
+    <div class="controls">
+      <div class="control">
+        <label>Modus</label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="btn-convex-draw" onclick="setConvexMode('draw')" class="active">Punkte hinzufügen</button>
+          <button id="btn-convex-clear" onclick="clearConvex()">Löschen</button>
+          <button id="btn-convex-example" onclick="loadConvexExample()">Beispiel: "Rot"</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="convex-canvas" class="demo" height="450"></canvas>
+    <div id="convex-verdict" style="text-align:center;margin-top:1rem;font-size:1.1rem"></div>
+  </div>
+
+  <div class="info-box">
+    <strong>Warum Konvexität?</strong> Wenn "Rot" konvex ist und du zwei rote Objekte kennst, dann sind alle Farben "zwischen" ihnen ebenfalls rot. Das macht <em>Lernen ökonomisch</em> und <em>Kommunikation zuverlässig</em>. Sivik & Taft (1994) haben empirisch bestätigt: Alle 16 untersuchten Farbwörter im Schwedischen bilden konvexe Regionen im NCS-Raum.
+  </div>
+</section>
+
+<!-- VORONOI -->
+<section id="voronoi">
+  <div class="chapter-num">Kapitel 3.9 · Der elegante Beweis</div>
+  <h2>Voronoi-Tessellationen: Wie Prototypen Kategorien erzeugen</h2>
+  <p class="intro">Wenn wir für jede Kategorie einen <strong>Prototyp</strong> haben (den zentralen Repräsentanten) und ein neues Objekt der nächsten Kategorie zuweisen – dann entstehen automatisch <strong>konvexe Regionen</strong>. Das ist Lemma 3.1. Ein tiefer Zusammenhang zwischen Prototypentheorie und Kriterium P.</p>
+
+  <div class="panel">
+    <div class="panel-title">Interaktive Voronoi-Tessellation</div>
+    <div class="controls">
+      <div class="control">
+        <label>Metrik</label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="btn-vor-eucl" onclick="setVorMetric('eucl')" class="active">Euklidisch</button>
+          <button id="btn-vor-city" onclick="setVorMetric('city')">City-Block</button>
+        </div>
+      </div>
+      <div class="control">
+        <label>Aktion</label>
+        <div style="display:flex;gap:0.3rem">
+          <button onclick="addVorPoint()">+ Prototyp</button>
+          <button onclick="clearVor()">Zurücksetzen</button>
+          <button id="btn-vor-gen" onclick="toggleGeneralized()">Generalisiert: aus</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="voronoi-canvas" class="demo" height="500"></canvas>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem">Ziehe die Prototypen (farbige Kreise) mit der Maus. Die Regionen aktualisieren sich live.</p>
+  </div>
+
+  <div class="info-box">
+    <strong>Kognitive Ökonomie:</strong> Statt sich jedes einzelne Objekt und seine Kategorie zu merken, reicht es, die wenigen Prototypen und die Metrik zu kennen. Der Rest ergibt sich geometrisch.
+  </div>
+  <div class="info-box">
+    <strong>Generalisierte Voronoi:</strong> Manche Konzepte "decken" mehr ab als andere (z.B. "Ente" vs. "Strauß"). Mit einem Radius um jeden Prototyp lässt sich Variabilität modellieren – und Rips' Pizza-Quarter-Puzzle lösen: Ein Objekt in der Mitte wird als Pizza kategorisiert, weil Pizzas variabler in Größe sind.
+  </div>
+</section>
+
+<!-- PROTOTYPE -->
+<section id="prototype">
+  <div class="chapter-num">Kapitel 3.8</div>
+  <h2>Prototypen: Nicht alle Vögel sind gleich vogelig</h2>
+  <p class="intro">Ein Rotkehlchen ist ein "besserer" Vogel als ein Pinguin. Rosch (1975) zeigte: Kategorien haben eine <strong>graduelle Struktur</strong> mit prototypischen Mitgliedern im Zentrum. Konzeptuelle Räume erklären das natürlich – der Prototyp ist der geometrische Schwerpunkt der konvexen Region.</p>
+
+  <div class="panel">
+    <div class="panel-title">Der Vokal-Raum (Fairbanks & Grubb 1961)</div>
+    <p style="font-size:0.9rem;color:var(--muted)">Vokale werden durch zwei Formanten F1 und F2 charakterisiert. Jeder Vokal bildet eine konvexe Region mit einem Prototyp im Zentrum.</p>
+    <div id="vowel-plot" class="plot"></div>
+  </div>
+</section>
+
+<!-- LEARNING -->
+<section id="learning">
+  <div class="chapter-num">Kapitel 4.5 · Lernen</div>
+  <h2>Wie Konzepte gelernt werden</h2>
+  <p class="intro">Ein Kind sieht ein paar Hunde. Wie generalisiert es zu "Hund"? Gärdenfors' Vorschlag: Aus den Beispielen wird der Mittelwert berechnet → das ist der Prototyp. Neue Prototypen erzeugen eine neue Voronoi-Zerlegung. Übergeneralisierung wird natürlich erklärt.</p>
+
+  <div class="panel">
+    <div class="panel-title">Lerne mit dem Kind mit</div>
+    <div class="controls">
+      <div class="control">
+        <label>Wähle eine Kategorie</label>
+        <div style="display:flex;gap:0.3rem;flex-wrap:wrap">
+          <button id="learn-cat-A" onclick="setLearnCat('A')" class="active">🐕 Hund</button>
+          <button id="learn-cat-B" onclick="setLearnCat('B')">🐈 Katze</button>
+          <button id="learn-cat-C" onclick="setLearnCat('C')">🐦 Vogel</button>
+        </div>
+      </div>
+      <div class="control">
+        <label>Aktion</label>
+        <div style="display:flex;gap:0.3rem">
+          <button onclick="clearLearning()">Zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="learn-canvas" class="demo" height="450"></canvas>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem">Klicke ins Feld, um ein Beispiel für die gewählte Kategorie zu setzen. Sieh zu, wie sich die Prototypen (Sterne) und die Voronoi-Grenzen entwickeln.</p>
+    <div class="formula" id="learn-formula"></div>
+  </div>
+</section>
+
+<!-- CONCEPT COMBINATION -->
+<section id="combo">
+  <div class="chapter-num">Kapitel 4.4 · Konzeptkombination</div>
+  <h2>"Steinerner Löwe" – wie kombinieren wir Konzepte?</h2>
+  <p class="intro">Wie versteht man "pinker Elefant", "hölzerner Löffel", "steinerner Löwe"? Nicht als Mengenschnitt! Die klassische Logik scheitert. Gärdenfors' Lösung: Der Modifikator ersetzt oder überschreibt Regionen in bestimmten Domänen des Kopfnomens.</p>
+
+  <div class="panel">
+    <div class="panel-title">Konzept-Kombinator</div>
+    <div class="controls">
+      <div class="control">
+        <label>Modifikator (Adjektiv)</label>
+        <select id="mod-select">
+          <option value="pink">pink</option>
+          <option value="green">grün</option>
+          <option value="tiny">winzig</option>
+          <option value="huge">riesig</option>
+          <option value="stone">steinern</option>
+          <option value="wooden">hölzern</option>
+        </select>
+      </div>
+      <div class="control">
+        <label>Kopfnomen</label>
+        <select id="head-select">
+          <option value="elephant">Elefant</option>
+          <option value="apple">Apfel</option>
+          <option value="lion">Löwe</option>
+          <option value="chihuahua">Chihuahua</option>
+          <option value="spoon">Löffel</option>
+        </select>
+      </div>
+    </div>
+    <div id="combo-result" style="margin-top:1rem"></div>
+  </div>
+
+  <div class="info-box">
+    <strong>Die Regel:</strong> Die Regionen des Modifikators C, beschränkt auf die Kontrastklasse von D, ersetzen die entsprechenden Regionen von D. Bei "steinernem Löwen" bleibt nur die Form-Domäne des Löwen erhalten – alles andere (Verhalten, Geräusch, Habitat) wird durch "Stein" blockiert.
+  </div>
+</section>
+
+<!-- CONTRAST CLASSES -->
+<section id="contrast">
+  <div class="chapter-num">Kapitel 4.4.2</div>
+  <h2>Kontrastklassen: Warum "heißes Wasser" nicht heiß ist</h2>
+  <p class="intro">Dasselbe Wasser aus dem Hahn kann "heiß" (als Wasser allgemein) oder "kalt" (als Badewasser) sein. Der Kontrast bestimmt die Bedeutung. Ein "großer Chihuahua" ist ein "kleiner Hund". Wie modelliert man das?</p>
+
+  <div class="panel">
+    <div class="panel-title">Der Bedeutungsverschieber</div>
+    <div class="controls">
+      <div class="control">
+        <label>Wassertemperatur: <span id="temp-val">40°C</span></label>
+        <input type="range" id="temp-slider" min="0" max="100" value="40">
+      </div>
+      <div class="control">
+        <label>Kontrastklasse</label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="ctx-water" onclick="setCtx('water')" class="active">Wasser allgemein (0–100°C)</button>
+          <button id="ctx-bath" onclick="setCtx('bath')">Badewasser (30–45°C)</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="contrast-canvas" class="demo" height="200"></canvas>
+    <div id="contrast-verdict" style="text-align:center;margin-top:1rem;font-size:1.3rem"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Der Hautfarben-Raum – ein eingebetteter Raum</div>
+    <p style="font-size:0.9rem;color:var(--muted)">"Weiße" Haut ist beige, "schwarze" Haut ist braun. Der volle Farbraum wird auf einen kleineren Unterraum abgebildet – aber die relative geometrische Struktur bleibt erhalten.</p>
+    <canvas id="skin-canvas" class="demo" height="300"></canvas>
+  </div>
+</section>
+
+<!-- METAPHOR -->
+<section id="metaphor">
+  <div class="chapter-num">Kapitel 5.4</div>
+  <h2>Metaphern als Domain-Mappings</h2>
+  <p class="intro">"Der Höhepunkt einer Karriere". Eine Karriere hat keinen Gipfel! Aber die geometrische Struktur "Gipfel" wird von der räumlichen Domäne auf die Karriere-Domäne (Zeit × sozialer Status) übertragen. Metaphern sind strukturerhaltende Abbildungen zwischen Domänen.</p>
+
+  <div class="panel">
+    <div class="panel-title">Der Metaphern-Übersetzer</div>
+    <div class="grid2">
+      <div>
+        <div style="text-align:center;color:var(--accent);margin-bottom:0.5rem"><strong>Quell-Domäne: Berg</strong></div>
+        <canvas id="metaphor-source" class="demo" height="300"></canvas>
+      </div>
+      <div>
+        <div style="text-align:center;color:var(--accent2);margin-bottom:0.5rem"><strong>Ziel-Domäne: Karriere</strong></div>
+        <canvas id="metaphor-target" class="demo" height="300"></canvas>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="control">
+        <label>Position auf der Kurve: <span id="meta-pos">50%</span></label>
+        <input type="range" id="meta-slider" min="0" max="100" value="50">
+      </div>
+    </div>
+    <div id="meta-verdict" style="text-align:center;margin-top:1rem;font-size:1.05rem;color:var(--accent)"></div>
+  </div>
+
+  <div class="info-box">
+    <strong>Asymmetrie von Metaphern:</strong> Wir sagen "die Party liegt hinter uns" (räumlich → zeitlich), aber nicht "der Spiegel ist in der Vergangenheit" (zeitlich → räumlich). Grund: Metaphern gehen immer von der <em>fundamentaleren</em> zur weniger fundamentalen Domäne. Räumliche Domänen sind evolutionär primär.
+  </div>
+</section>
+
+<!-- GRUE -->
+<section id="grue">
+  <div class="chapter-num">Kapitel 6.3 · Das Induktionsrätsel</div>
+  <h2>Goodmans "Grue"-Rätsel – geometrisch gelöst</h2>
+  <p class="intro">Alle bisher beobachteten Smaragde sind grün. Also: Alle Smaragde sind grün. Aber sie sind auch alle <strong>"grue"</strong> = grün vor 2030, blau danach. Warum ist die Induktion "grün" gültig, aber "grue" nicht? Die klassische Logik weiß es nicht. Konzeptuelle Räume schon.</p>
+
+  <div class="panel">
+    <div class="panel-title">Die Zeit-Farbe-Zylinder</div>
+    <div class="controls">
+      <div class="control">
+        <label>Zeige: <span id="grue-toggle-lbl">Grün-Region</span></label>
+        <div style="display:flex;gap:0.3rem;flex-wrap:wrap">
+          <button id="btn-green" onclick="setGrueShow('green')" class="active">Grün</button>
+          <button id="btn-blue" onclick="setGrueShow('blue')">Blau</button>
+          <button id="btn-grue" onclick="setGrueShow('grue')">Grue</button>
+          <button id="btn-bleen" onclick="setGrueShow('bleen')">Bleen</button>
+        </div>
+      </div>
+    </div>
+    <div id="grue-plot" style="width:100%;height:450px"></div>
+  </div>
+
+  <div class="info-box">
+    <strong>Die Lösung:</strong> "Grün" und "Blau" sind <em>konvexe Regionen</em> im Zeit-Farbe-Zylinder – also natürliche Eigenschaften (Kriterium P). "Grue" und "Bleen" haben eine <strong>Unstetigkeit</strong> im Jahr 2030 – sie sind <em>keine</em> konvexen Regionen und daher keine natürlichen Eigenschaften. Das erklärt geometrisch, warum sie sich nicht für induktive Schlüsse eignen.
+  </div>
+</section>
+
+<!-- KOHONEN -->
+<section id="kohonen">
+  <div class="chapter-num">Kapitel 6.5 · Selbstorganisation</div>
+  <h2>Kohonen-Karten: Wie Räume entstehen</h2>
+  <p class="intro">Wie entstehen die Dimensionen eines konzeptuellen Raums überhaupt? Ein Weg: <strong>selbstorganisierende Karten</strong> von Kohonen. Ein neuronales Netz reduziert die hohe Dimensionalität sensorischer Eingaben auf eine niedrigdimensionale topologische Karte, die Ähnlichkeit als Nähe kodiert.</p>
+
+  <div class="panel">
+    <div class="panel-title">SOM-Simulation: 2D-Eingabe → 1D-Karte</div>
+    <div class="controls">
+      <div class="control">
+        <label>Trainingsschritte: <span id="som-steps">0</span></label>
+        <input type="range" id="som-speed" min="0" max="50" value="10">
+      </div>
+      <div class="control">
+        <label>Aktion</label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="btn-som-start" onclick="toggleSOM()">Start</button>
+          <button onclick="resetSOM()">Reset</button>
+        </div>
+      </div>
+      <div class="control">
+        <label>Eingaberaum</label>
+        <div style="display:flex;gap:0.3rem">
+          <button id="btn-som-tri" onclick="setSOMShape('triangle')" class="active">Dreieck</button>
+          <button id="btn-som-ring" onclick="setSOMShape('ring')">Ring</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="som-canvas" class="demo" height="450"></canvas>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem">Die blaue Linie ist die 1D-Karte, die sich anpasst, um den 2D-Eingaberaum optimal abzudecken – ohne dass jemand ihr sagt, wie.</p>
+  </div>
+</section>
+
+<!-- SHELLS -->
+<section id="shells">
+  <div class="chapter-num">Kapitel 4.10 · Das Muschel-Experiment</div>
+  <h2>Der Muschelraum – Gärdenfors' eigenes Experiment</h2>
+  <p class="intro">Gärdenfors und Holmqvist entwarfen ein Experiment mit einem 3D-Raum von Muschelformen (Raup 1966): Rate der Wachstumsspirale, vertikale Translation, Öffnungswachstum. So testeten sie vier Kategorisierungsmodelle empirisch.</p>
+
+  <div class="panel">
+    <div class="panel-title">Muschel-Generator: Erkunde den 3D-Konzept-Raum</div>
+    <div class="controls">
+      <div class="control">
+        <label>Wachstumsrate W: <span id="w-val">1.5</span></label>
+        <input type="range" id="w-slider" min="1.05" max="4" step="0.05" value="1.5">
+      </div>
+      <div class="control">
+        <label>Vertikale Translation T: <span id="t-val">0.3</span></label>
+        <input type="range" id="t-slider" min="0" max="1.5" step="0.05" value="0.3">
+      </div>
+      <div class="control">
+        <label>Öffnungswachstum D: <span id="d-val">0.2</span></label>
+        <input type="range" id="d-slider" min="0.05" max="0.5" step="0.01" value="0.2">
+      </div>
+    </div>
+    <canvas id="shell-canvas" class="demo" height="450"></canvas>
+    <p style="font-size:0.85rem;color:var(--muted);margin-top:0.5rem">Jede Muschel ist ein Punkt im 3D-Konzept-Raum. Bewege die Regler und sieh, wie sich die Form ändert – kontinuierlich, wie es die Theorie vorhersagt.</p>
+  </div>
+
+  <div class="info-box">
+    <strong>Ergebnis des Experiments:</strong> Vier Modelle (Prototyp-Voronoi, generalisierte Voronoi, Nearest-Neighbor, Average-Distance) wurden getestet. Kein Modell war überlegen für <em>alle</em> Situationen. Bei "natürlichen" Kategorien (kompakte Cluster) siegte die generalisierte Voronoi-Regel; bei "unnatürlichen" (verstreute Beispiele) die Nearest-Neighbor-Regel.
+  </div>
+</section>
+
+<!-- PREPOSITIONS -->
+<section id="prepositions">
+  <div class="chapter-num">Kapitel 5.3 · Zwarts' Vektor-Semantik</div>
+  <h2>Präpositionen als Vektor-Regionen</h2>
+  <p class="intro">"vor dem Schloss" bezeichnet eine Region relativ zum Schloss. Zwarts (1995) modellierte Präpositionen als <strong>Vektor-Mengen</strong> vom Referenzobjekt aus. Alle einfachen lokativen Präpositionen sind konvex – ein weiterer Sieg für Kriterium P.</p>
+
+  <div class="panel">
+    <div class="panel-title">Präpositions-Erkunder</div>
+    <div class="controls">
+      <div class="control">
+        <label>Präposition</label>
+        <div style="display:flex;gap:0.3rem;flex-wrap:wrap">
+          <button id="prep-front" onclick="setPrep('front')" class="active">vor</button>
+          <button id="prep-behind" onclick="setPrep('behind')">hinter</button>
+          <button id="prep-above" onclick="setPrep('above')">über</button>
+          <button id="prep-near" onclick="setPrep('near')">nahe</button>
+          <button id="prep-between" onclick="setPrep('between')">zwischen</button>
+        </div>
+      </div>
+    </div>
+    <canvas id="prep-canvas" class="demo" height="450"></canvas>
+    <div class="info-box">
+      <strong>Zwarts' Universalien:</strong> Alle einfachen lokativen Präpositionen sind (i) unter Verkürzung abgeschlossen und (ii) linear oder radial konvex. Ein weiterer eleganter Beleg für Kriterium P – natürliche Bedeutungen sind konvexe Regionen.
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section id="conclusion">
+  <div class="chapter-num">Fazit</div>
+  <h2>Was du gerade gelernt hast (ohne viel zu lesen)</h2>
+  <p class="intro">Gärdenfors' große Vision: Zwischen dem Symbol und dem Neuron liegt eine dritte Ebene der Kognition – die geometrische. In ihr sind Bedeutungen keine Wörter und keine Feuerungsmuster, sondern <em>Orte in Räumen</em>. Ähnlichkeit ist Distanz. Konzepte sind konvexe Regionen. Prototypen sind Schwerpunkte. Lernen ist Voronoi-Tessellation. Metaphern sind Struktur-Mappings. Der Geist ist ein Geometer.</p>
+
+  <div class="grid3">
+    <div class="panel">
+      <div class="panel-title">🎯 Das Problem</div>
+      <p>Wie repräsentiert der Geist Bedeutung? Symbolische KI scheitert am Symbol-Grounding, Konnektionismus lernt zu langsam und ist uninterpretierbar.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">💡 Die Idee</div>
+      <p>Qualitätsdimensionen (Farbe, Zeit, Höhe, ...) bilden geometrische Räume. Objekte sind Punkte, Eigenschaften sind Regionen, Ähnlichkeit ist Distanz.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🔑 Kriterium P</div>
+      <p>Eine natürliche Eigenschaft ist eine konvexe Region. Diese einfache Bedingung löst Goodmans Grue-Rätsel, erklärt Prototypen, Kategorienbildung und Wortbedeutungen.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🎨 Voronoi-Magie</div>
+      <p>Prototypen + Metrik = automatische Zerlegung in konvexe Regionen. Kognitive Ökonomie in Reinform.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🌉 Semantik</div>
+      <p>Meanings are in the head – aber nicht willkürlich. Konvexe Regionen in geteilten konzeptuellen Räumen ermöglichen Kommunikation. Metaphern übertragen Strukturen zwischen Domänen.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🧠 Drei Ebenen</div>
+      <p>Subkonzeptuell (Neuronen) → Konzeptuell (Geometrie) → Symbolisch (Sprache). Keine Ebene ist "die richtige" – alle drei ergänzen sich.</p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:2rem;text-align:center;background:linear-gradient(135deg,rgba(125,211,252,0.1),rgba(244,114,182,0.1),rgba(167,139,250,0.1))">
+    <div class="panel-title" style="justify-content:center">Die Antwort auf die Frage</div>
+    <p style="font-size:1.15rem;line-height:1.8;max-width:800px;margin:0 auto">
+      Wie strukturiert der Geist Bedeutung? Nicht durch Regeln über Symbole. Nicht durch bloße Assoziationen zwischen Neuronen. <strong style="color:var(--accent)">Sondern durch die Geometrie konzeptueller Räume.</strong> Diese geometrische Zwischenebene erklärt, warum Denken so schnell, so kreativ und so kommunikabel ist. Sie ist die Brücke zwischen Wahrnehmung und Sprache – und sie ist wörtlich geometrisch: Der Geist ist ein Geometer, und Denken ist Bewegung durch Räume der Qualität.
+    </p>
+  </div>
+</section>
+
+<footer class="footer">
+  <p><strong>Interaktive Adaption</strong> von Peter Gärdenfors' <em>Conceptual Spaces: The Geometry of Thought</em> (MIT Press, 2000)</p>
+  <p style="margin-top:0.5rem">Erforsche, spiele, verstehe. Alle Konzepte sind hier direkt manipulierbar.</p>
+</footer>
+
+<script>
+// ==================== KATEX RENDERING ====================
+document.addEventListener("DOMContentLoaded", () => {
+  // Hero background particles
+  initHero();
+  // Formulas
+  renderKatex();
+  // All demos
+  initJungle();
+  initColor();
+  initMetrics();
+  initIntegral();
+  initConvex();
+  initVoronoi();
+  initVowels();
+  initLearning();
+  initCombo();
+  initContrast();
+  initSkin();
+  initMetaphor();
+  initGrue();
+  initKohonen();
+  initShell();
+  initPrepositions();
+});
+
+function renderKatex(){
+  const mf = document.getElementById('metric-formula');
+  katex.render("d_r(x,y) = \\left(\\sum_{i=1}^n w_i \\cdot |x_i - y_i|^r\\right)^{1/r}", mf, {throwOnError:false});
+  const cf = document.getElementById('convex-formula');
+  katex.render("\\forall x, y \\in C, \\forall \\lambda \\in [0,1]: \\lambda x + (1-\\lambda) y \\in C", cf, {throwOnError:false});
+  const lf = document.getElementById('learn-formula');
+  katex.render("p_i = \\frac{1}{n}\\sum_{k=1}^n x_{ik} \\quad \\text{(Prototyp = Mittelwert der Beispiele)}", lf, {throwOnError:false});
+}
+
+// ==================== HERO PARTICLES ====================
+function initHero(){
+  const c = document.getElementById('hero-canvas');
+  const ctx = c.getContext('2d');
+  let w, h;
+  const resize = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+  const pts = Array.from({length:80}, () => ({
+    x: Math.random()*w, y: Math.random()*h,
+    vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+    r: Math.random()*2+1,
+    hue: Math.random()*60+180
+  }));
+  function draw(){
+    ctx.fillStyle = 'rgba(5,8,16,0.15)';
+    ctx.fillRect(0,0,w,h);
+    for(const p of pts){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>w) p.vx*=-1;
+      if(p.y<0||p.y>h) p.vy*=-1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, 0.6)`;
+      ctx.fill();
+    }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.strokeStyle = `rgba(125,211,252,${(1-d/120)*0.15})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ==================== JUNGLE ====================
+let jungleLevel = 'con';
+function setJungleLevel(l){
+  jungleLevel = l;
+  ['sub','con','sym'].forEach(x=>document.getElementById('btn-jungle-'+x).classList.toggle('active', x===l));
+  const lbl = {sub:'Subkonzeptuell',con:'Konzeptuell',sym:'Symbolisch'}[l];
+  document.getElementById('jungle-level-lbl').textContent = lbl;
+  const infos = {
+    sub:'<strong>Subkonzeptuelle Ebene:</strong> "Zwei Schritte zum Baumstamm, dann links um den Ast bücken, 45° drehen, über den Fels..." Jede Bewegung wird als dynamische Interaktion zwischen Körper und Umwelt beschrieben – wie Neuronenfeuer in einem konnektionistischen Netz. Sehr detailreich, aber unhandlich.',
+    con:'<strong>Konzeptuelle Ebene:</strong> "Geh 30 m nach Westen, folge dem Pfad." Der Weg wird als geometrische Struktur wahrgenommen – mit Richtung und Distanz. Man abstrahiert von den einzelnen Schritten, sieht aber die Form des Weges.',
+    sym:'<strong>Symbolische Ebene:</strong> "Von A nach B, dann links nach C." Nur Namen und Beziehungen. Die Details zwischen den Knoten sind irrelevant – höchste Abstraktion, ideal für Kommunikation.'
+  };
+  document.getElementById('jungle-info').innerHTML = infos[l];
+  drawJungle();
+}
+function drawJungle(){
+  const c = document.getElementById('jungle');
+  const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth;
+  const h = c.height = 400;
+  ctx.fillStyle = '#050810'; ctx.fillRect(0,0,w,h);
+  
+  // Trees / obstacles (always visible faintly)
+  ctx.fillStyle = 'rgba(74,222,128,0.08)';
+  const trees = [[80,80,25],[200,150,30],[350,90,28],[500,180,32],[650,120,26],[420,300,30],[150,320,28],[600,320,25],[280,240,22]];
+  trees.forEach(([x,y,r])=>{ ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); });
+  
+  const path = [[40,350],[120,340],[200,320],[280,290],[340,250],[420,220],[500,200],[580,180],[660,150],[720,120]];
+  
+  if(jungleLevel === 'sub'){
+    // Detailed steps
+    ctx.strokeStyle = 'rgba(167,139,250,0.3)';
+    trees.forEach(([x,y,r])=>{ 
+      ctx.fillStyle='rgba(167,139,250,0.15)'; 
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r+3,0,Math.PI*2); ctx.stroke();
+    });
+    // small footsteps
+    for(let i=0;i<path.length-1;i++){
+      const [x1,y1]=path[i],[x2,y2]=path[i+1];
+      const steps=8;
+      for(let s=0;s<steps;s++){
+        const t=s/steps;
+        const x=x1+(x2-x1)*t+Math.sin(s*2)*4;
+        const y=y1+(y2-y1)*t+Math.cos(s*2)*4;
+        ctx.fillStyle=`hsla(280,70%,${60+s*3}%,0.7)`;
+        ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill();
+      }
+    }
+    ctx.fillStyle='#a78bfa'; ctx.font='12px monospace';
+    ctx.fillText('Jeder Schritt einzeln beschrieben →', 30, 30);
+  } else if(jungleLevel === 'con'){
+    // Path as smooth curve
+    ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++){
+      const [x1,y1]=path[i-1],[x2,y2]=path[i];
+      const cx=(x1+x2)/2, cy=(y1+y2)/2;
+      ctx.quadraticCurveTo(x1,y1,cx,cy);
+    }
+    ctx.lineTo(path[path.length-1][0],path[path.length-1][1]);
+    ctx.stroke();
+    // Compass
+    ctx.strokeStyle='rgba(125,211,252,0.4)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(700,50,30,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#7dd3fc'; ctx.font='14px sans-serif';
+    ctx.fillText('N',695,40); ctx.fillText('30m',680,90);
+    // Distance markers
+    for(let i=0;i<path.length;i+=2){
+      const [x,y]=path[i];
+      ctx.fillStyle='rgba(244,114,182,0.6)';
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    }
+  } else {
+    // Symbolic - nodes and labels
+    const nodes=[[80,340,'A'],[280,290,'B'],[500,200,'C'],[720,120,'D']];
+    ctx.strokeStyle='#f472b6'; ctx.lineWidth=2;
+    ctx.setLineDash([5,5]);
+    for(let i=0;i<nodes.length-1;i++){
+      ctx.beginPath(); ctx.moveTo(nodes[i][0],nodes[i][1]);
+      ctx.lineTo(nodes[i+1][0],nodes[i+1][1]); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    nodes.forEach(([x,y,label])=>{
+      ctx.fillStyle='#f472b6';
+      ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='bold 16px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(label,x,y);
+    });
+    ctx.textAlign='start'; ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#f472b6'; ctx.font='12px monospace';
+    ctx.fillText('A → B → C → D', 30, 30);
+  }
+}
+function initJungle(){ setJungleLevel('con'); window.addEventListener('resize', drawJungle); }
+
+// ==================== COLOR ====================
+function initColor(){
+  // 3D cone
+  const N=30, M=20;
+  const x=[],y=[],z=[],col=[];
+  for(let i=0;i<=N;i++){
+    for(let j=0;j<=M;j++){
+      const h = (i/N)*360;
+      const l = j/M;
+      const r = Math.sin(l*Math.PI); // saturation profile (diamond)
+      const theta = h*Math.PI/180;
+      x.push(r*Math.cos(theta));
+      y.push(r*Math.sin(theta));
+      z.push(l*2-1);
+      col.push(`hsl(${h},${Math.round(r*100)}%,${Math.round(l*100)}%)`);
+    }
+  }
+  Plotly.newPlot('color-3d', [{
+    type:'scatter3d', mode:'markers',
+    x, y, z,
+    marker:{size:3, color:col, opacity:0.85}
+  }], {
+    paper_bgcolor:'#050810', plot_bgcolor:'#050810',
+    scene:{
+      xaxis:{title:'', showgrid:false, showticklabels:false, color:'#94a3b8'},
+      yaxis:{title:'', showgrid:false, showticklabels:false, color:'#94a3b8'},
+      zaxis:{title:'Helligkeit', color:'#94a3b8'},
+      bgcolor:'#050810'
+    },
+    margin:{l:0,r:0,t:0,b:0}, showlegend:false
+  }, {displayModeBar:false, responsive:true});
+  
+  // Color picker
+  const upd = () => {
+    const h = +document.getElementById('hue').value;
+    const s = +document.getElementById('sat').value;
+    const l = +document.getElementById('light').value;
+    document.getElementById('hue-val').textContent = h+'°';
+    document.getElementById('sat-val').textContent = s+'%';
+    document.getElementById('light-val').textContent = l+'%';
+    document.getElementById('color-preview').style.background = `hsl(${h},${s}%,${l}%)`;
+    // rough name
+    let name = '';
+    if(s < 15) name = l < 20 ? 'Schwarz' : l > 80 ? 'Weiß' : 'Grau';
+    else{
+      const names = ['Rot','Orange','Gelb','Grün','Türkis','Blau','Violett','Magenta','Rot'];
+      name = names[Math.round(h/45)];
+      if(l < 30) name = 'Dunkles ' + name;
+      else if(l > 70) name = 'Helles ' + name;
+    }
+    document.getElementById('color-name').textContent = `≈ „${name}"`;
+  };
+  ['hue','sat','light'].forEach(id => document.getElementById(id).addEventListener('input', upd));
+  upd();
+}
+
+// ==================== METRICS ====================
+function initMetrics(){
+  const c = document.getElementById('metric-canvas');
+  const ctx = c.getContext('2d');
+  const draw = () => {
+    const w = c.width = c.offsetWidth;
+    const h = c.height = 400;
+    const r = +document.getElementById('mink').value;
+    const w1 = +document.getElementById('w1').value;
+    const w2 = +document.getElementById('w2').value;
+    document.getElementById('mink-val').textContent = r.toFixed(2);
+    document.getElementById('w1-val').textContent = w1.toFixed(2);
+    document.getElementById('w2-val').textContent = w2.toFixed(2);
+    
+    ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+    const cx=w/2, cy=h/2, scale=Math.min(w,h)*0.4;
+    
+    // Grid
+    ctx.strokeStyle='rgba(125,211,252,0.1)'; ctx.lineWidth=1;
+    for(let i=-5;i<=5;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*30,0); ctx.lineTo(cx+i*30,h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,cy+i*30); ctx.lineTo(w,cy+i*30); ctx.stroke();
+    }
+    // Axes
+    ctx.strokeStyle='rgba(125,211,252,0.4)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(w,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
+    
+    // Iso-distance contours
+    for(let d=0.3; d<=1.5; d+=0.3){
+      ctx.strokeStyle=`rgba(125,211,252,${0.8-d*0.3})`;
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      const N=200;
+      for(let i=0;i<=N;i++){
+        const theta = (i/N)*Math.PI*2;
+        // find point at distance d in direction theta under Minkowski
+        // solve: (w1*|x|^r + w2*|y|^r)^(1/r) = d, x=t*cos, y=t*sin
+        const cosT = Math.cos(theta), sinT = Math.sin(theta);
+        // t * (w1*|cos|^r + w2*|sin|^r)^(1/r) = d
+        const denom = Math.pow(w1*Math.pow(Math.abs(cosT),r) + w2*Math.pow(Math.abs(sinT),r), 1/r);
+        const t = d/denom;
+        const px = cx + t*cosT*scale;
+        const py = cy + t*sinT*scale;
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath(); ctx.stroke();
+    }
+    // Center point
+    ctx.fillStyle='#f472b6';
+    ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+    // Label
+    ctx.fillStyle='#7dd3fc'; ctx.font='13px monospace';
+    let mname = 'Minkowski';
+    if(Math.abs(r-1)<0.05) mname='City-Block (r=1)';
+    else if(Math.abs(r-2)<0.05) mname='Euklidisch (r=2)';
+    else if(r>4.5) mname='≈ Chebyshev (r→∞)';
+    ctx.fillText(mname, 15, 25);
+  };
+  ['mink','w1','w2'].forEach(id => document.getElementById(id).addEventListener('input', draw));
+  window.addEventListener('resize', draw);
+  draw();
+}
+
+// ==================== INTEGRAL vs SEPARABLE ====================
+let dimType = 'sep';
+function setDimType(t){
+  dimType = t;
+  document.getElementById('btn-sep').classList.toggle('active', t==='sep');
+  document.getElementById('btn-int').classList.toggle('active', t==='int');
+  drawStim();
+}
+function drawStim(){
+  const cont = document.getElementById('stim-container');
+  cont.innerHTML = '';
+  const stims = [
+    {label:'A₁', x1:1, x2:1}, {label:'A₂', x1:2, x2:2},
+    {label:'B₁', x1:1, x2:2}, {label:'B₂', x1:2, x2:1}
+  ];
+  stims.forEach(s => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.4rem';
+    const canv = document.createElement('canvas');
+    canv.width = 100; canv.height = 100;
+    const cx = canv.getContext('2d');
+    cx.fillStyle = '#111827'; cx.fillRect(0,0,100,100);
+    if(dimType === 'sep'){
+      // size × color (separable)
+      const size = s.x1===1 ? 25 : 40;
+      const color = s.
+    <div class="info-box">
+      <strong>Zwarts' Universalien:</strong> Alle einfachen lokativen Präpositionen sind (i) unter Verkürzung abgeschlossen und (ii) linear oder radial konvex. Wieder Kriterium P in Aktion – natürliche Bedeutungen sind konvexe Regionen von Vektor-Räumen.
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section id="conclusion">
+  <div class="chapter-num">Fazit · Die Antwort</div>
+  <h2>Der Geist ist ein Geometer</h2>
+  <p class="intro">Was hast du gerade – ohne viel zu lesen – gelernt? Gärdenfors' große These, dass zwischen dem Neuron und dem Symbol eine dritte, geometrische Repräsentationsebene liegt, hat weitreichende Konsequenzen für Kognitionswissenschaft, Linguistik, KI und Philosophie.</p>
+
+  <div class="grid3">
+    <div class="panel">
+      <div class="panel-title">🎯 Die Frage</div>
+      <p>Wie repräsentiert der Geist Bedeutung? Symbolische KI scheitert am Grounding-Problem und an der Konzeptbildung. Konnektionismus lernt viel zu langsam und ist uninterpretierbar.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">💡 Die Idee</div>
+      <p>Qualitätsdimensionen (Farbe, Zeit, Höhe, Temperatur…) bilden geometrische Räume – Domänen. Objekte sind Punkte, Eigenschaften sind Regionen, Ähnlichkeit ist Distanz.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🔑 Kriterium P</div>
+      <p>Eine natürliche Eigenschaft ist eine <strong>konvexe Region</strong> einer Domäne. Diese schlichte Bedingung löst Goodmans Grue-Rätsel, erklärt Prototypen, Farbwörter, Präpositionen.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🎨 Voronoi</div>
+      <p>Prototypen + Metrik = automatische Zerlegung in konvexe Regionen. Kognitive Ökonomie in reinster Form. Auch das Lernen neuer Konzepte folgt diesem Muster.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🌉 Semantik</div>
+      <p>Bedeutungen sind im Kopf – aber nicht willkürlich. Konvexe Regionen in geteilten Räumen ermöglichen Kommunikation. Metaphern übertragen Struktur zwischen Domänen.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🧠 Drei Ebenen</div>
+      <p>Subkonzeptuell (Neuronen) → Konzeptuell (Geometrie) → Symbolisch (Sprache). Keine Ebene ist „die richtige" – alle drei ergänzen sich. Die konzeptuelle ist die Brücke.</p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:2rem;text-align:center;background:linear-gradient(135deg,rgba(125,211,252,0.1),rgba(244,114,182,0.1),rgba(167,139,250,0.1));border:1px solid rgba(167,139,250,0.3)">
+    <div class="panel-title" style="justify-content:center;color:var(--accent2)">Die Antwort auf die Frage</div>
+    <p style="font-size:1.15rem;line-height:1.9;max-width:800px;margin:0 auto">
+      Wie strukturiert der Geist Bedeutung? <em>Nicht</em> durch Regeln über abstrakte Symbole. <em>Nicht</em> durch bloße Assoziationen zwischen Neuronen. <strong style="color:var(--accent)">Sondern durch die Geometrie konzeptueller Räume.</strong> Diese geometrische Zwischenebene erklärt, warum Denken so schnell, so kreativ und so kommunikabel ist. Sie ist die Brücke zwischen Wahrnehmung und Sprache – und sie ist wörtlich geometrisch: Der Geist ist ein Geometer, und Denken ist Bewegung durch Räume der Qualität.
+    </p>
+  </div>
+</section>
+
+<footer class="footer">
+  <p><strong>Interaktive Adaption</strong> von Peter Gärdenfors' <em>Conceptual Spaces: The Geometry of Thought</em> (MIT Press, 2000)</p>
+  <p style="margin-top:0.5rem">Erforsche, spiele, verstehe. Alle Konzepte sind hier direkt manipulierbar.</p>
+</footer>
+
+<script>
+// ==================== INITIALIZATION ====================
+document.addEventListener("DOMContentLoaded", () => {
+  initHero();
+  renderKatex();
+  initJungle();
+  initColor();
+  initMetrics();
+  initIntegral();
+  initConvex();
+  initVoronoi();
+  initVowels();
+  initLearning();
+  initCombo();
+  initContrast();
+  initSkin();
+  initMetaphor();
+  initGrue();
+  initKohonen();
+  initShell();
+  initPrepositions();
+});
+
+function renderKatex(){
+  try{
+    katex.render("d_r(x,y) = \\left(\\sum_{i=1}^n w_i \\cdot |x_i - y_i|^r\\right)^{1/r}", document.getElementById('metric-formula'), {throwOnError:false});
+    katex.render("\\forall x, y \\in C, \\forall \\lambda \\in [0,1]: \\lambda x + (1-\\lambda) y \\in C", document.getElementById('convex-formula'), {throwOnError:false});
+    katex.render("p_i = \\frac{1}{n}\\sum_{k=1}^n x_{ik} \\quad \\text{(Prototyp = Mittelwert der Beispiele)}", document.getElementById('learn-formula'), {throwOnError:false});
+  }catch(e){console.warn('KaTeX:',e);}
+}
+
+// ==================== HERO PARTICLES ====================
+function initHero(){
+  const c = document.getElementById('hero-canvas');
+  const ctx = c.getContext('2d');
+  let w, h;
+  const resize = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+  const pts = Array.from({length:80}, () => ({
+    x: Math.random()*w, y: Math.random()*h,
+    vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+    r: Math.random()*2+1,
+    hue: Math.random()*80+180
+  }));
+  function draw(){
+    ctx.fillStyle = 'rgba(5,8,16,0.15)'; ctx.fillRect(0,0,w,h);
+    for(const p of pts){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>w) p.vx*=-1;
+      if(p.y<0||p.y>h) p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, 0.6)`; ctx.fill();
+    }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.strokeStyle = `rgba(125,211,252,${(1-d/120)*0.15})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ==================== JUNGLE ====================
+let jungleLevel = 'con';
+function setJungleLevel(l){
+  jungleLevel = l;
+  ['sub','con','sym'].forEach(x=>document.getElementById('btn-jungle-'+x).classList.toggle('active', x===l));
+  document.getElementById('jungle-level-lbl').textContent = {sub:'Subkonzeptuell',con:'Konzeptuell',sym:'Symbolisch'}[l];
+  const infos = {
+    sub:'<strong>Subkonzeptuelle Ebene:</strong> "Zwei Schritte zum Baumstamm, dann links um den Ast bücken, 45° drehen, über den Fels…" Jede Bewegung wird als dynamische Interaktion zwischen Körper und Umwelt beschrieben – wie Neuronenfeuer in einem konnektionistischen Netz. Sehr detailreich, aber unhandlich.',
+    con:'<strong>Konzeptuelle Ebene:</strong> "Geh 30 m nach Westen, folge dem Pfad." Der Weg wird als geometrische Struktur wahrgenommen – mit Richtung und Distanz. Man abstrahiert von den einzelnen Schritten, sieht aber die Form des Weges.',
+    sym:'<strong>Symbolische Ebene:</strong> "Von A nach B, dann links nach C." Nur Namen und Beziehungen. Die Details zwischen den Knoten sind irrelevant – höchste Abstraktion, ideal für Kommunikation.'
+  };
+  document.getElementById('jungle-info').innerHTML = infos[l];
+  drawJungle();
+}
+function drawJungle(){
+  const c = document.getElementById('jungle');
+  const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 400;
+  ctx.fillStyle = '#050810'; ctx.fillRect(0,0,w,h);
+  const trees = [[80,80,25],[200,150,30],[350,90,28],[500,180,32],[650,120,26],[420,300,30],[150,320,28],[600,320,25],[280,240,22]];
+  const path = [[40,350],[120,340],[200,320],[280,290],[340,250],[420,220],[500,200],[580,180],[660,150],[720,120]];
+  if(jungleLevel === 'sub'){
+    trees.forEach(([x,y,r])=>{ ctx.fillStyle='rgba(167,139,250,0.15)'; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); });
+    for(let i=0;i<path.length-1;i++){
+      const [x1,y1]=path[i],[x2,y2]=path[i+1];
+      for(let s=0;s<8;s++){
+        const t=s/8, x=x1+(x2-x1)*t+Math.sin(s*2)*4, y=y1+(y2-y1)*t+Math.cos(s*2)*4;
+        ctx.fillStyle=`hsla(280,70%,${60+s*3}%,0.7)`;
+        ctx.beginPath(); ctx.arc(x,y,2,0,Math.PI*2); ctx.fill();
+      }
+    }
+    ctx.fillStyle='#a78bfa'; ctx.font='12px monospace';
+    ctx.fillText('Jeder Schritt einzeln beschrieben →', 30, 30);
+  } else if(jungleLevel === 'con'){
+    trees.forEach(([x,y,r])=>{ ctx.fillStyle='rgba(74,222,128,0.08)'; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); });
+    ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(path[0][0],path[0][1]);
+    for(let i=1;i<path.length;i++){
+      const [x1,y1]=path[i-1],[x2,y2]=path[i], cx=(x1+x2)/2, cy=(y1+y2)/2;
+      ctx.quadraticCurveTo(x1,y1,cx,cy);
+    }
+    ctx.lineTo(path[path.length-1][0],path[path.length-1][1]); ctx.stroke();
+    ctx.strokeStyle='rgba(125,211,252,0.4)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(700,50,30,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#7dd3fc'; ctx.font='14px sans-serif';
+    ctx.fillText('N',695,40); ctx.fillText('30m',680,90);
+    for(let i=0;i<path.length;i+=2){
+      const [x,y]=path[i]; ctx.fillStyle='rgba(244,114,182,0.6)';
+      ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    }
+  } else {
+    const nodes=[[80,340,'A'],[280,290,'B'],[500,200,'C'],[720,120,'D']];
+    ctx.strokeStyle='#f472b6'; ctx.lineWidth=2; ctx.setLineDash([5,5]);
+    for(let i=0;i<nodes.length-1;i++){
+      ctx.beginPath(); ctx.moveTo(nodes[i][0],nodes[i][1]);
+      ctx.lineTo(nodes[i+1][0],nodes[i+1][1]); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    nodes.forEach(([x,y,label])=>{
+      ctx.fillStyle='#f472b6'; ctx.beginPath(); ctx.arc(x,y,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#0a0e1a'; ctx.font='bold 16px sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(label,x,y);
+    });
+    ctx.textAlign='start'; ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#f472b6'; ctx.font='12px monospace';
+    ctx.fillText('A → B → C → D', 30, 30);
+  }
+}
+function initJungle(){ setJungleLevel('con'); window.addEventListener('resize', drawJungle); }
+
+// ==================== COLOR ====================
+function initColor(){
+  const N=30, M=20; const x=[],y=[],z=[],col=[];
+  for(let i=0;i<=N;i++){
+    for(let j=0;j<=M;j++){
+      const h = (i/N)*360, l = j/M, r = Math.sin(l*Math.PI), theta = h*Math.PI/180;
+      x.push(r*Math.cos(theta)); y.push(r*Math.sin(theta)); z.push(l*2-1);
+      col.push(`hsl(${h},${Math.round(r*100)}%,${Math.round(l*100)}%)`);
+    }
+  }
+  Plotly.newPlot('color-3d', [{
+    type:'scatter3d', mode:'markers', x, y, z,
+    marker:{size:3, color:col, opacity:0.85}
+  }], {
+    paper_bgcolor:'#050810', plot_bgcolor:'#050810',
+    scene:{
+      xaxis:{title:'', showgrid:false, showticklabels:false, color:'#94a3b8'},
+      yaxis:{title:'', showgrid:false, showticklabels:false, color:'#94a3b8'},
+      zaxis:{title:'Helligkeit', color:'#94a3b8'}, bgcolor:'#050810'
+    }, margin:{l:0,r:0,t:0,b:0}, showlegend:false
+  }, {displayModeBar:false, responsive:true});
+  
+  const upd = () => {
+    const h = +document.getElementById('hue').value;
+    const s = +document.getElementById('sat').value;
+    const l = +document.getElementById('light').value;
+    document.getElementById('hue-val').textContent = h+'°';
+    document.getElementById('sat-val').textContent = s+'%';
+    document.getElementById('light-val').textContent = l+'%';
+    document.getElementById('color-preview').style.background = `hsl(${h},${s}%,${l}%)`;
+    let name = '';
+    if(s < 15) name = l < 20 ? 'Schwarz' : l > 80 ? 'Weiß' : 'Grau';
+    else{
+      const names = ['Rot','Orange','Gelb','Grün','Türkis','Blau','Violett','Magenta','Rot'];
+      name = names[Math.round(h/45)];
+      if(l < 30) name = 'Dunkles ' + name;
+      else if(l > 70) name = 'Helles ' + name;
+    }
+    document.getElementById('color-name').textContent = `≈ „${name}"`;
+  };
+  ['hue','sat','light'].forEach(id => document.getElementById(id).addEventListener('input', upd));
+  upd();
+}
+
+// ==================== METRICS ====================
+function initMetrics(){
+  const c = document.getElementById('metric-canvas'); const ctx = c.getContext('2d');
+  const draw = () => {
+    const w = c.width = c.offsetWidth; const h = c.height = 400;
+    const r = +document.getElementById('mink').value;
+    const w1 = +document.getElementById('w1').value;
+    const w2 = +document.getElementById('w2').value;
+    document.getElementById('mink-val').textContent = r.toFixed(2);
+    document.getElementById('w1-val').textContent = w1.toFixed(2);
+    document.getElementById('w2-val').textContent = w2.toFixed(2);
+    ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+    const cx=w/2, cy=h/2, scale=Math.min(w,h)*0.35;
+    ctx.strokeStyle='rgba(125,211,252,0.08)'; ctx.lineWidth=1;
+    for(let i=-6;i<=6;i++){
+      ctx.beginPath(); ctx.moveTo(cx+i*30,0); ctx.lineTo(cx+i*30,h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,cy+i*30); ctx.lineTo(w,cy+i*30); ctx.stroke();
+    }
+    ctx.strokeStyle='rgba(125,211,252,0.4)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(w,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
+    for(let d=0.3; d<=1.5; d+=0.3){
+      ctx.strokeStyle=`rgba(125,211,252,${0.85-d*0.35})`; ctx.lineWidth=2;
+      ctx.beginPath();
+      const N=200;
+      for(let i=0;i<=N;i++){
+        const theta = (i/N)*Math.PI*2;
+        const cosT = Math.cos(theta), sinT = Math.sin(theta);
+        const denom = Math.pow(w1*Math.pow(Math.abs(cosT),r) + w2*Math.pow(Math.abs(sinT),r), 1/r);
+        const t = d/denom, px = cx + t*cosT*scale, py = cy + t*sinT*scale;
+        if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+      }
+      ctx.closePath(); ctx.stroke();
+    }
+    ctx.fillStyle='#f472b6'; ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#7dd3fc'; ctx.font='13px monospace';
+    let mname = 'Minkowski (r='+r.toFixed(2)+')';
+    if(Math.abs(r-1)<0.05) mname='City-Block (r=1)';
+    else if(Math.abs(r-2)<0.05) mname='Euklidisch (r=2)';
+    else if(r>4.5) mname='≈ Chebyshev (r→∞)';
+    ctx.fillText(mname, 15, 25);
+  };
+  ['mink','w1','w2'].forEach(id => document.getElementById(id).addEventListener('input', draw));
+  window.addEventListener('resize', draw); draw();
+}
+
+// ==================== INTEGRAL vs SEPARABLE ====================
+let dimType = 'sep';
+function setDimType(t){
+  dimType = t;
+  document.getElementById('btn-sep').classList.toggle('active', t==='sep');
+  document.getElementById('btn-int').classList.toggle('active', t==='int');
+  drawStim();
+  document.getElementById('stim-instruction').innerHTML = t==='sep'
+    ? 'Bei <strong>separablen</strong> Dimensionen (Größe & Farbe) kannst du eine Dimension leicht ignorieren. Kategorie A = kleine Objekte, unabhängig von der Farbe.'
+    : 'Bei <strong>integralen</strong> Dimensionen (Farbton & Sättigung) verschmelzen die Dimensionen zu einer wahrgenommenen Einheit. Es ist schwer, nur eine Dimension zu betrachten.';
+}
+function drawStim(){
+  const cont = document.getElementById('stim-container'); cont.innerHTML = '';
+  const stims = [
+    {label:'A₁', x1:1, x2:1}, {label:'A₂', x1:2, x2:2},
+    {label:'B₁', x1:1, x2:2}, {label:'B₂', x1:2, x2:1}
+  ];
+  stims.forEach(s => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.4rem';
+    const canv = document.createElement('canvas');
+    canv.width = 100; canv.height = 100;
+    const cx = canv.getContext('2d');
+    cx.fillStyle = '#111827'; cx.fillRect(0,0,100,100);
+    if(dimType === 'sep'){
+      const size = s.x1===1 ? 22 : 38;
+      const color = s.x2===1 ? '#7dd3fc' : '#f472b6';
+      cx.fillStyle = color;
+      cx.beginPath(); cx.arc(50,50,size,0,Math.PI*2); cx.fill();
+    } else {
+      const hue = s.x1===1 ? 350 : 20;
+      const sat = s.x2===1 ? 40 : 95;
+      cx.fillStyle = `hsl(${hue},${sat}%,55%)`;
+      cx.beginPath(); cx.arc(50,50,32,0,Math.PI*2); cx.fill();
+    }
+    const label = document.createElement('div');
+    label.textContent = s.label;
+    label.style.cssText = 'font-family:monospace;color:'+(s.label.startsWith('A')?'#7dd3fc':'#f472b6');
+    div.appendChild(canv); div.appendChild(label); cont.appendChild(div);
+  });
+}
+function initIntegral(){ setDimType('sep'); }
+
+// ==================== CONVEX ====================
+let convexPoints = [];
+let convexMode = 'draw';
+function setConvexMode(m){ convexMode = m; }
+function clearConvex(){ convexPoints = []; drawConvex(); }
+function loadConvexExample(){
+  convexPoints = [[200,150],[280,140],[340,180],[360,240],[320,300],[240,310],[180,260],[170,200]];
+  drawConvex();
+}
+function convexHull(pts){
+  if(pts.length<3) return pts.slice();
+  const sorted = pts.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const cross = (O,A,B) => (A[0]-O[0])*(B[1]-O[1])-(A[1]-O[1])*(B[0]-O[0]);
+  const lower=[];
+  for(const p of sorted){ while(lower.length>=2 && cross(lower[lower.length-2],lower[lower.length-1],p)<=0) lower.pop(); lower.push(p); }
+  const upper=[];
+  for(let i=sorted.length-1;i>=0;i--){ const p=sorted[i]; while(upper.length>=2 && cross(upper[upper.length-2],upper[upper.length-1],p)<=0) upper.pop(); upper.push(p); }
+  lower.pop(); upper.pop(); return lower.concat(upper);
+}
+function drawConvex(){
+  const c = document.getElementById('convex-canvas'); const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 450;
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+  // Draw region if points form one
+  if(convexPoints.length>2){
+    // Draw the "user region" as filled polygon in order clicked
+    ctx.fillStyle='rgba(244,114,182,0.15)';
+    ctx.strokeStyle='rgba(244,114,182,0.6)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(convexPoints[0][0],convexPoints[0][1]);
+    for(let i=1;i<convexPoints.length;i++) ctx.lineTo(convexPoints[i][0],convexPoints[i][1]);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    // Convex hull
+    const hull = convexHull(convexPoints);
+    ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    ctx.moveTo(hull[0][0],hull[0][1]);
+    for(let i=1;i<hull.length;i++) ctx.lineTo(hull[i][0],hull[i][1]);
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+    // Check convexity: is user region == hull?
+    const isConvex = hull.length === convexPoints.length;
+    const v = document.getElementById('convex-verdict');
+    if(isConvex){ v.innerHTML='<span style="color:var(--good)">✓ Konvex! Diese Region könnte eine natürliche Eigenschaft sein.</span>'; }
+    else{ v.innerHTML='<span style="color:var(--warn)">✗ Nicht konvex. Die gestrichelte Linie zeigt die konvexe Hülle.</span>'; }
+  } else { document.getElementById('convex-verdict').textContent='Klicke mindestens 3 Punkte…'; }
+  // Draw points
+  convexPoints.forEach((p,i)=>{
+    ctx.fillStyle='#f472b6';
+    ctx.beginPath(); ctx.arc(p[0],p[1],5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e5e7eb'; ctx.font='10px monospace';
+    ctx.fillText(i+1, p[0]+7, p[1]-7);
+  });
+  ctx.fillStyle='#94a3b8'; ctx.font='12px sans-serif';
+  ctx.fillText('Klicke, um Punkte hinzuzufügen. Reihenfolge wird verbunden.', 15, h-15);
+}
+function initConvex(){
+  const c = document.getElementById('convex-canvas');
+  c.addEventListener('click', e => {
+    if(convexMode !== 'draw') return;
+    const r = c.getBoundingClientRect();
+    convexPoints.push([e.clientX - r.left, e.clientY - r.top]);
+    drawConvex();
+  });
+  window.addEventListener('resize', drawConvex);
+  drawConvex();
+}
+
+// ==================== VORONOI ====================
+let vorPoints = [
+  {x:150, y:150, c:'#f472b6', r:60},
+  {x:400, y:180, c:'#7dd3fc', r:80},
+  {x:300, y:350, c:'#a78bfa', r:70},
+  {x:600, y:280, c:'#4ade80', r:65}
+];
+let vorMetric = 'eucl';
+let vorGen = false;
+let vorDragging = null;
+function setVorMetric(m){
+  vorMetric = m;
+  document.getElementById('btn-vor-eucl').classList.toggle('active', m==='eucl');
+  document.getElementById('btn-vor-city').classList.toggle('active', m==='city');
+  drawVor();
+}
+function toggleGeneralized(){
+  vorGen = !vorGen;
+  document.getElementById('btn-vor-gen').textContent = 'Generalisiert: ' + (vorGen?'an':'aus');
+  drawVor();
+}
+function addVorPoint(){
+  const colors=['#fbbf24','#fb7185','#38bdf8','#c084fc','#34d399','#f472b6'];
+  vorPoints.push({x:100+Math.random()*600, y:100+Math.random()*300, c:colors[vorPoints.length%colors.length], r:50+Math.random()*40});
+  drawVor();
+}
+function clearVor(){
+  vorPoints = [
+    {x:150, y:150, c:'#f472b6', r:60},
+    {x:400, y:180, c:'#7dd3fc', r:80},
+    {x:300, y:350, c:'#a78bfa', r:70},
+    {x:600, y:280, c:'#4ade80', r:65}
+  ];
+  drawVor();
+}
+function distVor(x1,y1,x2,y2,r){
+  let d;
+  if(vorMetric==='eucl') d=Math.sqrt((x1-x2)**2+(y1-y2)**2);
+  else d=Math.abs(x1-x2)+Math.abs(y1-y2);
+  return vorGen ? d - r : d;
+}
+function drawVor(){
+  const c = document.getElementById('voronoi-canvas'); const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 500;
+  const img = ctx.createImageData(w, h);
+  const step = 2;
+  for(let y=0;y<h;y+=step){
+    for(let x=0;x<w;x+=step){
+      let minD=Infinity, minI=0;
+      for(let i=0;i<vorPoints.length;i++){
+        const d = distVor(x,y,vorPoints[i].x,vorPoints[i].y, vorPoints[i].r);
+        if(d<minD){ minD=d; minI=i; }
+      }
+      const col = vorPoints[minI].c;
+      const rr = parseInt(col.slice(1,3),16), gg = parseInt(col.slice(3,5),16), bb = parseInt(col.slice(5,7),16);
+      for(let dy=0;dy<step;dy++) for(let dx=0;dx<step;dx++){
+        const idx = ((y+dy)*w+(x+dx))*4;
+        img.data[idx]=rr; img.data[idx+1]=gg; img.data[idx+2]=bb; img.data[idx+3]=50;
+      }
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  // Draw prototypes
+  vorPoints.forEach(p => {
+    if(vorGen){
+      ctx.strokeStyle=p.c; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.fillStyle=p.c; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(p.x,p.y,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  });
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='12px sans-serif';
+  ctx.fillText(`${vorPoints.length} Prototypen · ${vorMetric==='eucl'?'Euklidisch':'City-Block'}${vorGen?' · Generalisiert':''}`, 15, 25);
+}
+function initVoronoi(){
+  const c = document.getElementById('voronoi-canvas');
+  c.addEventListener('mousedown', e => {
+    const r = c.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+    for(let i=0;i<vorPoints.length;i++){
+      const p=vorPoints[i];
+      if((mx-p.x)**2+(my-p.y)**2 < 200){ vorDragging = i; break; }
+    }
+  });
+  c.addEventListener('mousemove', e => {
+    if(vorDragging===null) return;
+    const r = c.getBoundingClientRect();
+    vorPoints[vorDragging].x = e.clientX-r.left;
+    vorPoints[vorDragging].y = e.clientY-r.top;
+    drawVor();
+  });
+  window.addEventListener('mouseup', ()=>vorDragging=null);
+  window.addEventListener('resize', drawVor);
+  drawVor();
+}
+
+// ==================== VOWELS ====================
+function initVowels(){
+  const vowels = [
+    {v:'i', F1:280, F2:2250, c:'#f472b6'},
+    {v:'ɪ', F1:400, F2:1920, c:'#fbbf24'},
+    {v:'e', F1:405, F2:2080, c:'#c084fc'},
+    {v:'ɛ', F1:530, F2:1840, c:'#7dd3fc'},
+    {v:'æ', F1:660, F2:1720, c:'#4ade80'},
+    {v:'a', F1:750, F2:1200, c:'#fb7185'},
+    {v:'ɔ', F1:570, F2:840, c:'#38bdf8'},
+    {v:'o', F1:430, F2:730, c:'#a78bfa'},
+    {v:'u', F1:325, F2:700, c:'#f472b6'},
+    {v:'ʊ', F1:440, F2:1020, c:'#fbbf24'}
+  ];
+  // Add cloud of samples per vowel
+  const traces = [];
+  vowels.forEach(vv => {
+    const xs=[], ys=[];
+    for(let i=0;i<40;i++){
+      xs.push(vv.F2 + (Math.random()-0.5)*300);
+      ys.push(vv.F1 + (Math.random()-0.5)*80);
+    }
+    traces.push({
+      x:xs, y:ys, mode:'markers', type:'scatter',
+      marker:{color:vv.c, size:6, opacity:0.35}, showlegend:false,
+      hoverinfo:'skip'
+    });
+    traces.push({
+      x:[vv.F2], y:[vv.F1], mode:'markers+text', type:'scatter',
+      marker:{color:vv.c, size:22, line:{color:'#fff',width:2}},
+      text:[vv.v], textfont:{size:16,color:'#fff'}, textposition:'middle center',
+      showlegend:false, hoverinfo:'text', hovertext:`Vokal /${vv.v}/`
+    });
+  });
+  Plotly.newPlot('vowel-plot', traces, {
+    paper_bgcolor:'#050810', plot_bgcolor:'#0a0e1a',
+    xaxis:{title:'F2 (Hz) →', color:'#94a3b8', gridcolor:'rgba(125,211,252,0.1)', autorange:'reversed'},
+    yaxis:{title:'F1 (Hz) →', color:'#94a3b8', gridcolor:'rgba(125,211,252,0.1)', autorange:'reversed'},
+    margin:{l:60,r:20,t:20,b:50},
+    annotations:[{
+      x:0.02, y:0.98, xref:'paper', yref:'paper',
+      text:'Jede Wolke = konvexe Region einer Vokalkategorie. Prototyp im Zentrum.',
+      showarrow:false, font:{color:'#7dd3fc',size:11}
+    }]
+  }, {displayModeBar:false, responsive:true});
+}
+
+// ==================== LEARNING ====================
+let learnCat = 'A';
+let learnPoints = {A:[], B:[], C:[]};
+const learnColors = {A:'#f472b6', B:'#7dd3fc', C:'#a78bfa'};
+function setLearnCat(c){
+  learnCat = c;
+  ['A','B','C'].forEach(x=>document.getElementById('learn-cat-'+x).classList.toggle('active', x===c));
+}
+function clearLearning(){ learnPoints={A:[],B:[],C:[]}; drawLearn(); }
+function drawLearn(){
+  const c = document.getElementById('learn-canvas'); const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 450;
+  const protos = {};
+  ['A','B','C'].forEach(cat => {
+    const pts = learnPoints[cat];
+    if(pts.length>0){
+      const mx = pts.reduce((s,p)=>s+p[0],0)/pts.length;
+      const my = pts.reduce((s,p)=>s+p[1],0)/pts.length;
+      protos[cat] = {x:mx, y:my, c:learnColors[cat]};
+    }
+  });
+  const protoArr = Object.values(protos);
+  // Voronoi background
+  if(protoArr.length>=2){
+    const img = ctx.createImageData(w,h); const step = 3;
+    for(let y=0;y<h;y+=step) for(let x=0;x<w;x+=step){
+      let minD=Infinity, minP=null;
+      protoArr.forEach(p=>{ const d=(x-p.x)**2+(y-p.y)**2; if(d<minD){minD=d;minP=p;} });
+      const rr=parseInt(minP.c.slice(1,3),16), gg=parseInt(minP.c.slice(3,5),16), bb=parseInt(minP.c.slice(5,7),16);
+      for(let dy=0;dy<step;dy++) for(let dx=0;dx<step;dx++){
+        const idx=((y+dy)*w+(x+dx))*4;
+        img.data[idx]=rr; img.data[idx+1]=gg; img.data[idx+2]=bb; img.data[idx+3]=40;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  } else { ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h); }
+  // Exemplars
+  ['A','B','C'].forEach(cat => {
+    learnPoints[cat].forEach(p => {
+      ctx.fillStyle=learnColors[cat];
+      ctx.beginPath(); ctx.arc(p[0],p[1],5,0,Math.PI*2); ctx.fill();
+    });
+  });
+  // Prototypes as stars
+  protoArr.forEach(p => {
+    ctx.fillStyle=p.c; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<10;i++){
+      const a=Math.PI*2*i/10-Math.PI/2, r=i%2===0?15:7;
+      const x=p.x+Math.cos(a)*r, y=p.y+Math.sin(a)*r;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  });
+  // Legend
+  ctx.font='12px sans-serif';
+  ['A','B','C'].forEach((cat,i)=>{
+    ctx.fillStyle=learnColors[cat];
+    ctx.fillText(`● ${cat}: ${learnPoints[cat].length} Beispiele`, 15, 25+i*18);
+  });
+}
+function initLearning(){
+  const c = document.getElementById('learn-canvas');
+  c.addEventListener('click', e => {
+    const r = c.getBoundingClientRect();
+    learnPoints[learnCat].push([e.clientX-r.left, e.clientY-r.top]);
+    drawLearn();
+  });
+  window.addEventListener('resize', drawLearn);
+  drawLearn();
+}
+
+// ==================== CONCEPT COMBO ====================
+function initCombo(){
+  const modData = {
+    pink: {color:'#f9a8d4', name:'pink', overrides:['Farbe']},
+    green: {color:'#4ade80', name:'grün', overrides:['Farbe']},
+    tiny: {color:'#94a3b8', name:'winzig', overrides:['Größe']},
+    huge: {color:'#94a3b8', name:'riesig', overrides:['Größe']},
+    stone: {color:'#78716c', name:'steinern', overrides:['Farbe','Material','Verhalten','Geräusch','Lebendig']},
+    wooden: {color:'#a16207', name:'hölzern', overrides:['Farbe','Material','Verhalten','Geräusch','Lebendig']}
+  };
+  const headData = {
+    elephant: {name:'Elefant', emoji:'🐘', color:'grau', size:'sehr groß', domains:{Farbe:'grau',Größe:'sehr groß',Form:'Elefant',Verhalten:'lebendig',Geräusch:'trötet',Lebendig:'ja'}},
+    apple: {name:'Apfel', emoji:'🍎', color:'rot', size:'klein', domains:{Farbe:'rot',Größe:'klein',Form:'rund',Geschmack:'süß',Lebendig:'nein'}},
+    lion: {name:'Löwe', emoji:'🦁', color:'gelbbraun', size:'groß', domains:{Farbe:'gelbbraun',Größe:'groß',Form:'Löwe',Verhalten:'jagt',Geräusch:'brüllt',Lebendig:'ja'}},
+    chihuahua: {name:'Chihuahua', emoji:'🐕', color:'variabel', size:'sehr klein', domains:{Farbe:'variabel',Größe:'sehr klein',Form:'Hund',Verhalten:'lebendig',Geräusch:'bellt',Lebendig:'ja'}},
+    spoon: {name:'Löffel', emoji:'🥄', color:'silber', size:'klein', domains:{Farbe:'silber',Größe:'klein',Form:'Löffel',Material:'Metall',Lebendig:'nein'}}
+  };
+  const upd = () => {
+    const mod = document.getElementById('mod-select').value;
+    const head = document.getElementById('head-select').value;
+    const m = modData[mod], h = headData[head];
+    let html = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;align-items:center">`;
+    html += `<div class="panel" style="margin:0;text-align:center"><div style="font-size:0.8rem;color:var(--muted)">Modifikator</div><div style="font-size:1.3rem;color:${m.color};font-weight:600">${m.name}</div></div>`;
+    html += `<div style="text-align:center;font-size:2rem;color:var(--accent)">+ → =</div>`;
+    html += `<div class="panel" style="margin:0;text-align:center"><div style="font-size:0.8rem;color:var(--muted)">Kopfnomen</div><div style="font-size:3rem">${h.emoji}</div><div style="color:var(--accent2);font-weight:600">${h.name}</div></div>`;
+    html += `</div>`;
+    // Result
+    const resultDomains = {};
+    for(const [k,v] of Object.entries(h.domains)){
+      if(m.overrides.includes(k)){
+        if(k==='Farbe' && (mod==='pink'||mod==='green')) resultDomains[k]=m.name;
+        else if(k==='Größe' && (mod==='tiny'||mod==='huge')) resultDomains[k]=m.name;
+        else if(mod==='stone'){
+          if(k==='Farbe') resultDomains[k]='grau (Stein)';
+          else if(k==='Material') resultDomains[k]='Stein';
+          else if(k==='Verhalten'||k==='Geräusch') resultDomains[k]='—(blockiert)';
+          else if(k==='Lebendig') resultDomains[k]='nein';
+          else resultDomains[k]=v;
+        }
+        else if(mod==='wooden'){
+          if(k==='Farbe') resultDomains[k]='braun (Holz)';
+          else if(k==='Material') resultDomains[k]='Holz';
+          else if(k==='Verhalten'||k==='Geräusch') resultDomains[k]='—(blockiert)';
+          else if(k==='Lebendig') resultDomains[k]='nein';
+          else resultDomains[k]=v;
+        }
+        else resultDomains[k]=v;
+      } else resultDomains[k]=v;
+    }
+    html += `<div class="panel" style="margin-top:1rem"><div class="panel-title">Ergebnis: „${m.name} ${h.name.toLowerCase()}"</div>`;
+    html += `<table style="width:100%;font-size:0.9rem;border-collapse:collapse">`;
+    html += `<tr style="border-bottom:1px solid rgba(125,211,252,0.2)"><th style="text-align:left;padding:0.5rem">Domäne</th><th style="text-align:left;padding:0.5rem">Original</th><th style="text-align:left;padding:0.5rem">Nach Kombination</th></tr>`;
+    for(const [k,v] of Object.entries(resultDomains)){
+      const changed = h.domains[k] !== v;
+      html += `<tr style="border-bottom:1px solid rgba(125,211,252,0.05)"><td style="padding:0.4rem;color:var(--muted)">${k}</td><td style="padding:0.4rem">${h.domains[k]}</td><td style="padding:0.4rem;color:${changed?'var(--accent2)':'var(--text)'};font-weight:${changed?'600':'400'}">${v} ${chang      cx.beginPath(); cx.arc(50,50,32,0,Math.PI*2); cx.fill();
+    }
+    const label = document.createElement('div');
+    label.textContent = s.label;
+    label.style.cssText = 'font-family:monospace;color:'+(s.label.startsWith('A')?'#7dd3fc':'#f472b6')+';font-size:0.9rem';
+    div.appendChild(canv); div.appendChild(label); cont.appendChild(div);
+  });
+}
+function initIntegral(){ setDimType('sep'); }
+
+// ==================== CONVEX ====================
+let convexPoints = [];
+function setConvexMode(m){}
+function clearConvex(){ convexPoints=[]; drawConvex(); }
+function loadConvexExample(){
+  const c = document.getElementById('convex-canvas');
+  const w = c.offsetWidth, h = 450;
+  const cx = w/2, cy = h/2, r = 130;
+  convexPoints = [];
+  for(let i=0;i<8;i++){
+    const a = i*Math.PI*2/8;
+    convexPoints.push([cx+Math.cos(a)*r, cy+Math.sin(a)*r*0.7]);
+  }
+  drawConvex();
+}
+function convexHull(pts){
+  if(pts.length<3) return pts.slice();
+  const sorted = pts.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const cross = (O,A,B) => (A[0]-O[0])*(B[1]-O[1])-(A[1]-O[1])*(B[0]-O[0]);
+  const lower=[];
+  for(const p of sorted){ while(lower.length>=2 && cross(lower[lower.length-2],lower[lower.length-1],p)<=0) lower.pop(); lower.push(p); }
+  const upper=[];
+  for(let i=sorted.length-1;i>=0;i--){ const p=sorted[i]; while(upper.length>=2 && cross(upper[upper.length-2],upper[upper.length-1],p)<=0) upper.pop(); upper.push(p); }
+  lower.pop(); upper.pop(); return lower.concat(upper);
+}
+function pointInPolygon(p, poly){
+  let inside=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1];
+    const intersect = ((yi>p[1])!==(yj>p[1])) && (p[0]<(xj-xi)*(p[1]-yi)/(yj-yi)+xi);
+    if(intersect) inside=!inside;
+  }
+  return inside;
+}
+function drawConvex(){
+  const c = document.getElementById('convex-canvas'); const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 450;
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+  if(convexPoints.length>2){
+    ctx.fillStyle='rgba(244,114,182,0.15)';
+    ctx.strokeStyle='rgba(244,114,182,0.6)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(convexPoints[0][0],convexPoints[0][1]);
+    for(let i=1;i<convexPoints.length;i++) ctx.lineTo(convexPoints[i][0],convexPoints[i][1]);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    const hull = convexHull(convexPoints);
+    ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    ctx.moveTo(hull[0][0],hull[0][1]);
+    for(let i=1;i<hull.length;i++) ctx.lineTo(hull[i][0],hull[i][1]);
+    ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+    // Test convexity: midpoints of random point pairs
+    let convex = true;
+    for(let i=0;i<convexPoints.length && convex;i++){
+      for(let j=i+1;j<convexPoints.length && convex;j++){
+        const mid = [(convexPoints[i][0]+convexPoints[j][0])/2, (convexPoints[i][1]+convexPoints[j][1])/2];
+        if(!pointInPolygon(mid, convexPoints)) convex = false;
+      }
+    }
+    const v = document.getElementById('convex-verdict');
+    if(convex){ v.innerHTML='<span style="color:var(--good)">✓ Konvex! Diese Region könnte eine natürliche Eigenschaft sein.</span>'; }
+    else{ v.innerHTML='<span style="color:var(--warn)">✗ Nicht konvex. Die gestrichelte blaue Linie zeigt die konvexe Hülle.</span>'; }
+  } else { document.getElementById('convex-verdict').textContent='Klicke mindestens 3 Punkte…'; }
+  convexPoints.forEach((p,i)=>{
+    ctx.fillStyle='#f472b6';
+    ctx.beginPath(); ctx.arc(p[0],p[1],5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e5e7eb'; ctx.font='10px monospace';
+    ctx.fillText(i+1, p[0]+7, p[1]-7);
+  });
+  ctx.fillStyle='#94a3b8'; ctx.font='12px sans-serif';
+  ctx.fillText('Klicke, um Punkte hinzuzufügen. Reihenfolge wird verbunden.', 15, h-15);
+}
+function initConvex(){
+  const c = document.getElementById('convex-canvas');
+  c.addEventListener('click', e => {
+    const r = c.getBoundingClientRect();
+    convexPoints.push([e.clientX - r.left, e.clientY - r.top]);
+    drawConvex();
+  });
+  window.addEventListener('resize', drawConvex);
+  drawConvex();
+}
+
+// ==================== VORONOI ====================
+let vorPoints = [
+  {x:150, y:150, c:'#f472b6', r:60},
+  {x:400, y:180, c:'#7dd3fc', r:80},
+  {x:300, y:350, c:'#a78bfa', r:70},
+  {x:600, y:280, c:'#4ade80', r:65}
+];
+let vorMetric='eucl', vorGen=false, vorDragging=null;
+function setVorMetric(m){
+  vorMetric=m;
+  document.getElementById('btn-vor-eucl').classList.toggle('active', m==='eucl');
+  document.getElementById('btn-vor-city').classList.toggle('active', m==='city');
+  drawVor();
+}
+function toggleGeneralized(){
+  vorGen=!vorGen;
+  document.getElementById('btn-vor-gen').textContent='Generalisiert: '+(vorGen?'an':'aus');
+  drawVor();
+}
+function addVorPoint(){
+  const colors=['#fbbf24','#fb7185','#38bdf8','#c084fc','#34d399','#f472b6'];
+  vorPoints.push({x:100+Math.random()*600, y:100+Math.random()*300, c:colors[vorPoints.length%colors.length], r:50+Math.random()*40});
+  drawVor();
+}
+function clearVor(){
+  vorPoints=[
+    {x:150,y:150,c:'#f472b6',r:60},{x:400,y:180,c:'#7dd3fc',r:80},
+    {x:300,y:350,c:'#a78bfa',r:70},{x:600,y:280,c:'#4ade80',r:65}
+  ];
+  drawVor();
+}
+function distVor(x1,y1,x2,y2,r){
+  let d;
+  if(vorMetric==='eucl') d=Math.sqrt((x1-x2)**2+(y1-y2)**2);
+  else d=Math.abs(x1-x2)+Math.abs(y1-y2);
+  return vorGen ? d-r : d;
+}
+function drawVor(){
+  const c = document.getElementById('voronoi-canvas'); const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 500;
+  const img = ctx.createImageData(w,h); const step=2;
+  for(let y=0;y<h;y+=step) for(let x=0;x<w;x+=step){
+    let minD=Infinity,minI=0;
+    for(let i=0;i<vorPoints.length;i++){
+      const d=distVor(x,y,vorPoints[i].x,vorPoints[i].y,vorPoints[i].r);
+      if(d<minD){minD=d;minI=i;}
+    }
+    const col=vorPoints[minI].c;
+    const rr=parseInt(col.slice(1,3),16),gg=parseInt(col.slice(3,5),16),bb=parseInt(col.slice(5,7),16);
+    for(let dy=0;dy<step;dy++) for(let dx=0;dx<step;dx++){
+      const idx=((y+dy)*w+(x+dx))*4;
+      img.data[idx]=rr;img.data[idx+1]=gg;img.data[idx+2]=bb;img.data[idx+3]=55;
+    }
+  }
+  ctx.putImageData(img,0,0);
+  vorPoints.forEach(p=>{
+    if(vorGen){
+      ctx.strokeStyle=p.c; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    }
+    ctx.fillStyle=p.c; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(p.x,p.y,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  });
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='12px sans-serif';
+  ctx.fillText(`${vorPoints.length} Prototypen · ${vorMetric==='eucl'?'Euklidisch':'City-Block'}${vorGen?' · Generalisiert':''}`, 15, 25);
+}
+function initVoronoi(){
+  const c=document.getElementById('voronoi-canvas');
+  c.addEventListener('mousedown', e=>{
+    const r=c.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+    for(let i=0;i<vorPoints.length;i++){
+      const p=vorPoints[i];
+      if((mx-p.x)**2+(my-p.y)**2<200){vorDragging=i;break;}
+    }
+  });
+  c.addEventListener('mousemove', e=>{
+    if(vorDragging===null) return;
+    const r=c.getBoundingClientRect();
+    vorPoints[vorDragging].x=e.clientX-r.left;
+    vorPoints[vorDragging].y=e.clientY-r.top;
+    drawVor();
+  });
+  window.addEventListener('mouseup',()=>vorDragging=null);
+  window.addEventListener('resize',drawVor);
+  drawVor();
+}
+
+// ==================== VOWELS ====================
+function initVowels(){
+  const vowels = [
+    {v:'i',F1:280,F2:2250,c:'#f472b6'},{v:'ɪ',F1:400,F2:1920,c:'#fbbf24'},
+    {v:'e',F1:405,F2:2080,c:'#c084fc'},{v:'ɛ',F1:530,F2:1840,c:'#7dd3fc'},
+    {v:'æ',F1:660,F2:1720,c:'#4ade80'},{v:'a',F1:750,F2:1200,c:'#fb7185'},
+    {v:'ɔ',F1:570,F2:840,c:'#38bdf8'},{v:'o',F1:430,F2:730,c:'#a78bfa'},
+    {v:'u',F1:325,F2:700,c:'#f472b6'},{v:'ʊ',F1:440,F2:1020,c:'#fbbf24'}
+  ];
+  const traces=[];
+  vowels.forEach(vv=>{
+    const xs=[],ys=[];
+    for(let i=0;i<40;i++){
+      xs.push(vv.F2+(Math.random()-0.5)*300);
+      ys.push(vv.F1+(Math.random()-0.5)*80);
+    }
+    traces.push({x:xs,y:ys,mode:'markers',type:'scatter',marker:{color:vv.c,size:6,opacity:0.35},showlegend:false,hoverinfo:'skip'});
+    traces.push({x:[vv.F2],y:[vv.F1],mode:'markers+text',type:'scatter',marker:{color:vv.c,size:22,line:{color:'#fff',width:2}},text:[vv.v],textfont:{size:16,color:'#fff'},textposition:'middle center',showlegend:false,hoverinfo:'text',hovertext:`Vokal /${vv.v}/`});
+  });
+  Plotly.newPlot('vowel-plot',traces,{
+    paper_bgcolor:'#050810',plot_bgcolor:'#0a0e1a',
+    xaxis:{title:'F2 (Hz) →',color:'#94a3b8',gridcolor:'rgba(125,211,252,0.1)',autorange:'reversed'},
+    yaxis:{title:'F1 (Hz) →',color:'#94a3b8',gridcolor:'rgba(125,211,252,0.1)',autorange:'reversed'},
+    margin:{l:60,r:20,t:20,b:50},
+    annotations:[{x:0.02,y:0.98,xref:'paper',yref:'paper',text:'Jede Wolke = konvexe Region einer Vokalkategorie. Prototyp im Zentrum.',showarrow:false,font:{color:'#7dd3fc',size:11}}]
+  },{displayModeBar:false,responsive:true});
+}
+
+// ==================== LEARNING ====================
+let learnCat='A';
+let learnPoints={A:[],B:[],C:[]};
+const learnColors={A:'#f472b6',B:'#7dd3fc',C:'#a78bfa'};
+function setLearnCat(c){
+  learnCat=c;
+  ['A','B','C'].forEach(x=>document.getElementById('learn-cat-'+x).classList.toggle('active',x===c));
+}
+function clearLearning(){ learnPoints={A:[],B:[],C:[]}; drawLearn(); }
+function drawLearn(){
+  const c=document.getElementById('learn-canvas'); const ctx=c.getContext('2d');
+  const w=c.width=c.offsetWidth; const h=c.height=450;
+  const protos={};
+  ['A','B','C'].forEach(cat=>{
+    const pts=learnPoints[cat];
+    if(pts.length>0){
+      const mx=pts.reduce((s,p)=>s+p[0],0)/pts.length;
+      const my=pts.reduce((s,p)=>s+p[1],0)/pts.length;
+      protos[cat]={x:mx,y:my,c:learnColors[cat]};
+    }
+  });
+  const protoArr=Object.values(protos);
+  if(protoArr.length>=2){
+    const img=ctx.createImageData(w,h); const step=3;
+    for(let y=0;y<h;y+=step) for(let x=0;x<w;x+=step){
+      let minD=Infinity,minP=null;
+      protoArr.forEach(p=>{const d=(x-p.x)**2+(y-p.y)**2;if(d<minD){minD=d;minP=p;}});
+      const rr=parseInt(minP.c.slice(1,3),16),gg=parseInt(minP.c.slice(3,5),16),bb=parseInt(minP.c.slice(5,7),16);
+      for(let dy=0;dy<step;dy++) for(let dx=0;dx<step;dx++){
+        const idx=((y+dy)*w+(x+dx))*4;
+        img.data[idx]=rr;img.data[idx+1]=gg;img.data[idx+2]=bb;img.data[idx+3]=45;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  } else {ctx.fillStyle='#050810';ctx.fillRect(0,0,w,h);}
+  ['A','B','C'].forEach(cat=>{
+    learnPoints[cat].forEach(p=>{
+      ctx.fillStyle=learnColors[cat];
+      ctx.beginPath(); ctx.arc(p[0],p[1],5,0,Math.PI*2); ctx.fill();
+    });
+  });
+  protoArr.forEach(p=>{
+    ctx.fillStyle=p.c; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<10;i++){
+      const a=Math.PI*2*i/10-Math.PI/2, r=i%2===0?15:7;
+      const x=p.x+Math.cos(a)*r, y=p.y+Math.sin(a)*r;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  });
+  ctx.font='12px sans-serif';
+  ['A','B','C'].forEach((cat,i)=>{
+    ctx.fillStyle=learnColors[cat];
+    ctx.fillText(`● ${cat}: ${learnPoints[cat].length} Beispiele`,15,25+i*18);
+  });
+}
+function initLearning(){
+  const c=document.getElementById('learn-canvas');
+  c.addEventListener('click', e=>{
+    const r=c.getBoundingClientRect();
+    learnPoints[learnCat].push([e.clientX-r.left,e.clientY-r.top]);
+    drawLearn();
+  });
+  window.addEventListener('resize',drawLearn);
+  drawLearn();
+}
+
+// ==================== CONCEPT COMBO ====================
+function initCombo(){
+  const modData={
+    pink:{color:'#f9a8d4',name:'pink',overrides:['Farbe']},
+    green:{color:'#4ade80',name:'grün',overrides:['Farbe']},
+    tiny:{color:'#94a3b8',name:'winzig',overrides:['Größe']},
+    huge:{color:'#94a3b8',name:'riesig',overrides:['Größe']},
+    stone:{color:'#78716c',name:'steinern',overrides:['Farbe','Material','Verhalten','Geräusch','Lebendig']},
+    wooden:{color:'#a16207',name:'hölzern',overrides:['Farbe','Material','Verhalten','Geräusch','Lebendig']}
+  };
+  const headData={
+    elephant:{name:'Elefant',emoji:'🐘',domains:{Farbe:'grau',Größe:'sehr groß',Form:'Elefant',Verhalten:'lebendig',Geräusch:'trötet',Lebendig:'ja'}},
+    apple:{name:'Apfel',emoji:'🍎',domains:{Farbe:'rot',Größe:'klein',Form:'rund',Geschmack:'süß',Lebendig:'nein'}},
+    lion:{name:'Löwe',emoji:'🦁',domains:{Farbe:'gelbbraun',Größe:'groß',Form:'Löwe',Verhalten:'jagt',Geräusch:'brüllt',Lebendig:'ja'}},
+    chihuahua:{name:'Chihuahua',emoji:'🐕',domains:{Farbe:'variabel',Größe:'sehr klein',Form:'Hund',Verhalten:'lebendig',Geräusch:'bellt',Lebendig:'ja'}},
+    spoon:{name:'Löffel',emoji:'🥄',domains:{Farbe:'silber',Größe:'klein',Form:'Löffel',Material:'Metall',Lebendig:'nein'}}
+  };
+  const upd=()=>{
+    const mod=document.getElementById('mod-select').value;
+    const head=document.getElementById('head-select').value;
+    const m=modData[mod],h=headData[head];
+    let html=`<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;margin-bottom:1rem">`;
+    html+=`<div class="panel" style="margin:0;text-align:center"><div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Modifikator</div><div style="font-size:1.4rem;color:${m.color};font-weight:600;margin-top:0.3rem">${m.name}</div></div>`;
+    html+=`<div style="text-align:center;font-size:1.5rem;color:var(--accent)">✦</div>`;
+    html+=`<div class="panel" style="margin:0;text-align:center"><div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Kopfnomen</div><div style="font-size:2.5rem;margin:0.3rem 0">${h.emoji}</div><div style="color:var(--accent2);font-weight:600">${h.name}</div></div>`;
+    html+=`</div>`;
+    const resultDomains={};
+    for(const [k,v] of Object.entries(h.domains)){
+      if(m.overrides.includes(k)){
+        if(k==='Farbe' && (mod==='pink'||mod==='green')) resultDomains[k]=m.name;
+        else if(k==='Größe' && (mod==='tiny'||mod==='huge')) resultDomains[k]=m.name;
+        else if(mod==='stone'){
+          if(k==='Farbe') resultDomains[k]='grau (Stein)';
+          else if(k==='Material') resultDomains[k]='Stein';
+          else if(k==='Verhalten'||k==='Geräusch') resultDomains[k]='— (blockiert)';
+          else if(k==='Lebendig') resultDomains[k]='nein';
+          else resultDomains[k]=v;
+        }
+        else if(mod==='wooden'){
+          if(k==='Farbe') resultDomains[k]='braun (Holz)';
+          else if(k==='Material') resultDomains[k]='Holz';
+          else if(k==='Verhalten'||k==='Geräusch') resultDomains[k]='— (blockiert)';
+          else if(k==='Lebendig') resultDomains[k]='nein';
+          else resultDomains[k]=v;
+        }
+        else resultDomains[k]=v;
+      } else resultDomains[k]=v;
+    }
+    html+=`<div class="panel" style="margin:0"><div class="panel-title">Ergebnis: „${m.name} ${h.name.toLowerCase()}"</div>`;
+    html+=`<table style="width:100%;font-size:0.9rem;border-collapse:collapse">`;
+    html+=`<tr style="border-bottom:1px solid rgba(125,211,252,0.3)"><th style="text-align:left;padding:0.5rem;color:var(--accent)">Domäne</th><th style="text-align:left;padding:0.5rem;color
+      const changed = h.domains[k] !== v;
+      html+=`<tr style="border-bottom:1px solid rgba(125,211,252,0.05)"><td style="padding:0.4rem;color:var(--muted)">${k}</td><td style="padding:0.4rem;color:#94a3b8">${h.domains[k]}</td><td style="padding:0.4rem;color:${changed?'var(--accent2)':'var(--text)'};font-weight:${changed?'600':'400'}">${v} ${changed?'✦':''}</td></tr>`;
+    }
+    html+=`</table></div>`;
+    document.getElementById('combo-result').innerHTML=html;
+  };
+  document.getElementById('mod-select').addEventListener('change',upd);
+  document.getElementById('head-select').addEventListener('change',upd);
+  upd();
+}
+
+// ==================== CONTRAST ====================
+let ctxMode='water';
+function setCtx(c){
+  ctxMode=c;
+  document.getElementById('ctx-water').classList.toggle('active',c==='water');
+  document.getElementById('ctx-bath').classList.toggle('active',c==='bath');
+  drawContrast();
+}
+function drawContrast(){
+  const c=document.getElementById('contrast-canvas'); const ctx=c.getContext('2d');
+  const w=c.width=c.offsetWidth; const h=c.height=200;
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+  const temp=+document.getElementById('temp-slider').value;
+  document.getElementById('temp-val').textContent=temp+'°C';
+  const [rangeMin,rangeMax] = ctxMode==='water'?[0,100]:[30,45];
+  const margin=60, barY=80, barH=40;
+  const barW=w-margin*2;
+  // Gradient bar for contrast range
+  const grad=ctx.createLinearGradient(margin,0,margin+barW,0);
+  grad.addColorStop(0,'#7dd3fc'); grad.addColorStop(0.5,'#e5e7eb'); grad.addColorStop(1,'#f472b6');
+  ctx.fillStyle=grad; ctx.fillRect(margin,barY,barW,barH);
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=1;
+  ctx.strokeRect(margin,barY,barW,barH);
+  // Labels for range
+  ctx.fillStyle='#94a3b8'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(rangeMin+'°C',margin,barY+barH+20);
+  ctx.fillText(rangeMax+'°C',margin+barW,barY+barH+20);
+  ctx.fillText('kalt',margin+barW*0.15,barY-8);
+  ctx.fillText('lauwarm',margin+barW*0.5,barY-8);
+  ctx.fillText('heiß',margin+barW*0.85,barY-8);
+  // Temperature marker (only if within range)
+  if(temp>=rangeMin && temp<=rangeMax){
+    const px=margin + (temp-rangeMin)/(rangeMax-rangeMin)*barW;
+    ctx.fillStyle='#fbbf24'; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(px,barY+barH/2,12,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#fbbf24'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(temp+'°C', px, barY-25);
+    // Verdict
+    const relPos = (temp-rangeMin)/(rangeMax-rangeMin);
+    let verdict = '';
+    if(relPos < 0.3) verdict = '<span style="color:#7dd3fc">❄ kalt</span>';
+    else if(relPos > 0.7) verdict = '<span style="color:#f472b6">🔥 heiß</span>';
+    else verdict = '<span style="color:var(--muted)">〰 lauwarm</span>';
+    document.getElementById('contrast-verdict').innerHTML = `${temp}°C in Kontext „${ctxMode==='water'?'Wasser allgemein':'Badewasser'}" ist: ${verdict}`;
+  } else {
+    ctx.fillStyle='#94a3b8'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(`${temp}°C liegt außerhalb der Kontextklasse`, w/2, h-15);
+    document.getElementById('contrast-verdict').innerHTML = `<span style="color:var(--warn)">${temp}°C liegt außerhalb der Kontrastklasse „${ctxMode==='water'?'Wasser':'Badewasser'}"</span>`;
+  }
+  ctx.textAlign='start';
+}
+function initContrast(){
+  document.getElementById('temp-slider').addEventListener('input',drawContrast);
+  window.addEventListener('resize',drawContrast);
+  setCtx('water');
+}
+
+// ==================== SKIN ====================
+function initSkin(){
+  const c=document.getElementById('skin-canvas'); const ctx=c.getContext('2d');
+  const draw=()=>{
+    const w=c.width=c.offsetWidth; const h=c.height=300;
+    ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+    // Full color spindle on left
+    const cx1=w*0.25, cy=h/2, r=Math.min(h*0.35, w*0.15);
+    ctx.fillStyle='#94a3b8'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('Voller Farbraum',cx1,25);
+    for(let a=0;a<360;a+=3){
+      for(let rr=0;rr<r;rr+=2){
+        const x=cx1+Math.cos(a*Math.PI/180)*rr, y=cy+Math.sin(a*Math.PI/180)*rr;
+        ctx.fillStyle=`hsl(${a},${Math.round(rr/r*100)}%,55%)`;
+        ctx.fillRect(x,y,3,3);
+      }
+    }
+    // Skin color subspace on right (embedded)
+    const cx2=w*0.75, r2=r*0.7;
+    ctx.fillStyle='#94a3b8'; ctx.fillText('Hautfarben-Unterraum',cx2,25);
+    // Skin colors form an arc from light beige to dark brown
+    for(let a=0;a<360;a+=3){
+      for(let rr=0;rr<r2;rr+=2){
+        // Map to skin color range: hue 20-40, sat 30-70%, light 20-90%
+        const hue = 25 + (Math.cos(a*Math.PI/180)*0.5+0.5)*15;
+        const sat = 30 + (rr/r2)*40;
+        const light = 30 + (Math.sin(a*Math.PI/180)*0.5+0.5)*55;
+        const x=cx2+Math.cos(a*Math.PI/180)*rr, y=cy+Math.sin(a*Math.PI/180)*rr;
+        ctx.fillStyle=`hsl(${hue},${sat}%,${light}%)`;
+        ctx.fillRect(x,y,3,3);
+      }
+    }
+    // Label the "white" and "black" of skin
+    ctx.font='11px sans-serif'; ctx.fillStyle='#e5e7eb';
+    ctx.fillText('„weiß"',cx2, cy-r2-8);
+    ctx.fillText('„schwarz"',cx2, cy+r2+18);
+    // Arrow between them
+    ctx.strokeStyle='rgba(244,114,182,0.6)'; ctx.lineWidth=2;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(cx1+r+15, cy); ctx.lineTo(cx2-r2-15, cy);
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#f472b6'; ctx.font='11px sans-serif';
+    ctx.fillText('Struktur erhaltende Abbildung', (cx1+cx2)/2, cy-10);
+    ctx.textAlign='start';
+  };
+  window.addEventListener('resize',draw); draw();
+}
+
+// ==================== METAPHOR ====================
+function initMetaphor(){
+  const cs=document.getElementById('metaphor-source'); const ct=document.getElementById('metaphor-target');
+  const drawBoth=()=>{
+    const pos=+document.getElementById('meta-slider').value/100;
+    document.getElementById('meta-pos').textContent=Math.round(pos*100)+'%';
+    // Source: mountain
+    const csx=cs.getContext('2d');
+    const ws=cs.width=cs.offsetWidth, hs=cs.height=300;
+    csx.fillStyle='#050810'; csx.fillRect(0,0,ws,hs);
+    // axes
+    csx.strokeStyle='rgba(125,211,252,0.3)'; csx.lineWidth=1;
+    csx.beginPath(); csx.moveTo(30,hs-30); csx.lineTo(ws-15,hs-30); csx.stroke();
+    csx.beginPath(); csx.moveTo(30,15); csx.lineTo(30,hs-30); csx.stroke();
+    csx.fillStyle='#94a3b8'; csx.font='11px sans-serif';
+    csx.fillText('Horizontale Distanz →', ws/2-50, hs-10);
+    csx.save(); csx.translate(15,hs/2); csx.rotate(-Math.PI/2); csx.fillText('Höhe →',0,0); csx.restore();
+    // mountain curve
+    csx.strokeStyle='#7dd3fc'; csx.lineWidth=3;
+    csx.beginPath();
+    const N=100;
+    for(let i=0;i<=N;i++){
+      const t=i/N;
+      const x=30+t*(ws-45);
+      const y=hs-30 - Math.sin(t*Math.PI)*(hs-70);
+      if(i===0) csx.moveTo(x,y); else csx.lineTo(x,y);
+    }
+    csx.stroke();
+    // marker
+    const mx=30+pos*(ws-45);
+    const my=hs-30 - Math.sin(pos*Math.PI)*(hs-70);
+    csx.fillStyle='#fbbf24'; csx.strokeStyle='#fff'; csx.lineWidth=2;
+    csx.beginPath(); csx.arc(mx,my,8,0,Math.PI*2); csx.fill(); csx.stroke();
+    // "peak" label
+    if(pos>0.4 && pos<0.6){
+      csx.fillStyle='#f472b6'; csx.font='bold 12px sans-serif'; csx.textAlign='center';
+      csx.fillText('GIPFEL',mx,my-15);
+      csx.textAlign='start';
+    }
+    
+    // Target: career
+    const ctx2=ct.getContext('2d');
+    const wt=ct.width=ct.offsetWidth, ht=ct.height=300;
+    ctx2.fillStyle='#050810'; ctx2.fillRect(0,0,wt,ht);
+    ctx2.strokeStyle='rgba(244,114,182,0.3)'; ctx2.lineWidth=1;
+    ctx2.beginPath(); ctx2.moveTo(30,ht-30); ctx2.lineTo(wt-15,ht-30); ctx2.stroke();
+    ctx2.beginPath(); ctx2.moveTo(30,15); ctx2.lineTo(30,ht-30); ctx2.stroke();
+    ctx2.fillStyle='#94a3b8'; ctx2.font='11px sans-serif';
+    ctx2.fillText('Zeit →', wt/2-15, ht-10);
+    ctx2.save(); ctx2.translate(15,ht/2); ctx2.rotate(-Math.PI/2); ctx2.fillText('Sozialer Status →',0,0); ctx2.restore();
+    // career curve — same topology
+    ctx2.strokeStyle='#f472b6'; ctx2.lineWidth=3;
+    ctx2.beginPath();
+    for(let i=0;i<=N;i++){
+      const t=i/N;
+      const x=30+t*(wt-45);
+      const y=ht-30 - Math.sin(t*Math.PI)*(ht-70);
+      if(i===0) ctx2.moveTo(x,y); else ctx2.lineTo(x,y);
+    }
+    ctx2.stroke();
+    const mx2=30+pos*(wt-45);
+    const my2=ht-30 - Math.sin(pos*Math.PI)*(ht-70);
+    ctx2.fillStyle='#fbbf24'; ctx2.strokeStyle='#fff'; ctx2.lineWidth=2;
+    ctx2.beginPath(); ctx2.arc(mx2,my2,8,0,Math.PI*2); ctx2.fill(); ctx2.stroke();
+    if(pos>0.4 && pos<0.6){
+      ctx2.fillStyle='#7dd3fc'; ctx2.font='bold 12px sans-serif'; ctx2.textAlign='center';
+      ctx2.fillText('HÖHEPUNKT',mx2,my2-15);
+      ctx2.textAlign='start';
+    }
+    // Verdict
+    let phase = '';
+    if(pos < 0.2) phase = 'Am Fuß / Karrierebeginn';
+    else if(pos < 0.4) phase = 'Aufstieg';
+    else if(pos < 0.6) phase = 'Gipfel / Höhepunkt der Karriere';
+    else if(pos < 0.8) phase = 'Abstieg';
+    else phase = 'Am Ende / Ruhestand';
+    document.getElementById('meta-verdict').innerHTML = `Die geometrische Struktur „${phase}" wird von der Berg-Domäne in die Karriere-Domäne <em>übertragen</em>.`;
+  };
+  document.getElementById('meta-slider').addEventListener('input',drawBoth);
+  window.addEventListener('resize',drawBoth);
+  drawBoth();
+}
+
+// ==================== GRUE ====================
+let grueShow='green';
+function setGrueShow(s){
+  grueShow=s;
+  ['green','blue','grue','bleen'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('active',x===s));
+  document.getElementById('grue-toggle-lbl').textContent = {green:'Grün-Region',blue:'Blau-Region',grue:'Grue-Region',bleen:'Bleen-Region'}[s];
+  drawGrue();
+}
+function drawGrue(){
+  // Cylinder: theta = hue (0-360), z = time (2020-2040)
+  const N_theta=60, N_z=40;
+  const xs=[],ys=[],zs=[],cols=[];
+  for(let i=0;i<=N_theta;i++){
+    for(let j=0;j<=N_z;j++){
+      const theta = (i/N_theta)*Math.PI*2;
+      const t = 2020 + (j/N_z)*20;
+      const hue = (i/N_theta)*360;
+      // Determine if this point is "in" the selected concept
+      let inRegion = false;
+      if(grueShow==='green') inRegion = (hue>=90 && hue<=150);
+      else if(grueShow==='blue') inRegion = (hue>=210 && hue<=270);
+      else if(grueShow==='grue') inRegion = (t<2030 && hue>=90 && hue<=150) || (t>=2030 && hue>=210 && hue<=270);
+      else if(grueShow==='bleen') inRegion = (t<2030 && hue>=210 && hue<=270) || (t>=2030 && hue>=90 && hue<=150);
+      xs.push(Math.cos(theta));
+      ys.push(Math.sin(theta));
+      zs.push(t);
+      if(inRegion){
+        cols.push(`hsl(${hue},80%,55%)`);
+      } else {
+        cols.push('rgba(80,80,100,0.15)');
+      }
+    }
+  }
+  const trace = {
+    type:'scatter3d', mode:'markers',
+    x:xs, y:ys, z:zs,
+    marker:{size:3, color:cols, opacity:0.85},
+    hoverinfo:'skip'
+  };
+  Plotly.newPlot('grue-plot',[trace],{
+    paper_bgcolor:'#050810',
+    scene:{
+      xaxis:{title:'',showticklabels:false,showgrid:false,color:'#94a3b8'},
+      yaxis:{title:'',showticklabels:false,showgrid:false,color:'#94a3b8'},
+      zaxis:{title:'Jahr',color:'#94a3b8'},
+      bgcolor:'#050810',
+      annotations:[
+        {x:0,y:0,z:2030,text:'←— 2030 (Sprung bei grue/bleen) —→',showarrow:false,font:{color:'#fbbf24',size:10}}
+      ]
+    },
+    margin:{l:0,r:0,t:20,b:0},showlegend:false
+  },{displayModeBar:false,responsive:true});
+}
+function initGrue(){ setGrueShow('green'); }
+
+// ==================== KOHONEN SOM ====================
+let somRunning=false, somInterval=null, somSteps=0;
+let somShape='triangle';
+let somNodes=[];
+function initKohonenNodes(){
+  const N=30;
+  somNodes=[];
+  for(let i=0;i<N;i++){
+    const t=i/(N-1);
+    // Start with a random-ish line in the middle
+    somNodes.push({x:0.2+t*0.6+(Math.random()-0.5)*0.05, y:0.5+(Math.random()-0.5)*0.05});
+  }
+}
+function setSOMShape(s){
+  somShape=s;
+  document.getElementById('btn-som-tri').classList.toggle('active',s==='triangle');
+  document.getElementById('btn-som-ring').classList.toggle('active',s==='ring');
+  resetSOM();
+}
+function sampleSOMInput(){
+  if(somShape==='triangle'){
+    // Rejection sampling on triangle with vertices (0.2,0.85), (0.8,0.85), (0.5,0.15)
+    while(true){
+      const x=Math.random(), y=Math.random();
+      // Point in triangle test using barycentric
+      const v0x=0.2,v0y=0.85,v1x=0.8,v1y=0.85,v2x=0.5,v2y=0.15;
+      const d = (v1y-v2y)*(v0x-v2x)+(v2x-v1x)*(v0y-v2y);
+      const a = ((v1y-v2y)*(x-v2x)+(v2x-v1x)*(y-v2y))/d;
+      const b = ((v2y-v0y)*(x-v2x)+(v0x-v2x)*(y-v2y))/d;
+      const c = 1-a-b;
+      if(a>=0&&b>=0&&c>=0) return {x,y};
+    }
+  } else {
+    // Ring
+    const theta=Math.random()*Math.PI*2;
+    const r=0.25+Math.random()*0.15;
+    return {x:0.5+Math.cos(theta)*r, y:0.5+Math.sin(theta)*r};
+  }
+}
+function somStep(){
+  const speed=+document.getElementById('som-speed').value;
+  for(let s=0;s<speed;s++){
+    const input=sampleSOMInput();
+    // Find winner
+    let minD=Infinity, winI=0;
+    for(let i=0;i<somNodes.length;i++){
+      const d=(somNodes[i].x-input.x)**2+(somNodes[i].y-input.y)**2;
+      if(d<minD){minD=d;winI=i;}
+    }
+    // Update neighborhood
+    const lr = Math.max(0.02, 0.5 * Math.exp(-somSteps/2000));
+    const sigma = Math.max(1, 8 * Math.exp(-somSteps/1500));
+    for(let i=0;i<somNodes.length;i++){
+      const dist=Math.abs(i-winI);
+      const infl = Math.exp(-(dist*dist)/(2*sigma*sigma));
+      somNodes[i].x += lr*infl*(input.x-somNodes[i].x);
+      somNodes[i].y += lr*infl*(input.y-somNodes[i].y);
+    }
+    somSteps++;
+  }
+  document.getElementById('som-steps').textContent=somSteps;
+  drawSOM();
+}
+function drawSOM(){
+  const c=document.getElementById('som-canvas'); const ctx=c.getContext('2d');
+  const w=c.width=c.offsetWidth; const h=c.height=450;
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+  const sz=Math.min(w,h)-40, ox=(w-sz)/2, oy=(h-sz)/2;
+  // Draw input space
+  ctx.fillStyle='rgba(244,114,182,0.15)';
+  ctx.strokeStyle='rgba(244,114,182,0.5)'; ctx.lineWidth=2;
+  ctx.beginPath();
+  if(somShape==='triangle'){
+    ctx.moveTo(ox+0.2*sz, oy+0.85*sz);
+    ctx.lineTo(ox+0.8*sz, oy+0.85*sz);
+    ctx.lineTo(ox+0.5*sz, oy+0.15*sz);
+    ctx.closePath();
+  } else {
+    ctx.arc(ox+0.5*sz, oy+0.5*sz, 0.3*sz, 0, Math.PI*2);
+    ctx.moveTo(ox+0.5*sz+0.2*sz, oy+0.5*sz);
+    ctx.arc(ox+0.5*sz, oy+0.5*sz, 0.2*sz, 0, Math.PI*2, true);
+  }
+  ctx.fill('evenodd'); ctx.stroke();
+  // Draw SOM line
+  ctx.strokeStyle='#7dd3fc'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<somNodes.length;i++){
+    const x=ox+somNodes[i].x*sz, y=oy+somNodes[i].y*sz;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  for(let i=0;i<somNodes.length;i++){
+    const x=ox+somNodes[i].x*sz, y=oy+somNodes[i].y*sz;
+    ctx.fillStyle='#f472b6';
+    ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+  }
+  ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.font='12px sans-serif';
+  ctx.fillText('Rosa Region = 2D-Eingaberaum · Blaue Kette = 1D-Karte',15,25);
+}
+function toggleSOM(){
+  const btn=document.getElementById('btn-som-start');
+  if(somRunning){
+    clearInterval(somInterval); somRunning=false; btn.textContent='Start';
+  } else {
+    somInterval = setInterval(somStep, 50); somRunning=true; btn.textContent='Pause';
+  }
+}
+function resetSOM(){
+  if(somRunning){ clearInterval(somInterval); somRunning=false; document.getElementById('btn-som-start').textContent='Start'; }
+  somSteps=0; document.getElementById('som-steps').textContent=0;
+  initKohonenNodes(); drawSOM();
+}
+function initKohonen(){
+  initKohonenNodes();
+  window.addEventListener('resize', drawSOM);
+  drawSOM();
+}
+
+// ==================== SHELL ====================
+function initShell(){
+  const c = document.getElementById('shell-canvas'); const ctx = c.getContext('2d');
+  const draw = () => {
+    const w = c.width = c.offsetWidth; const h = c.height = 450;
+    const W = +document.getElementById('w-slider').value;
+    const T = +document.getElementById('t-slider').value;
+    const D = +document.getElementById('d-slider').value;
+    document.getElementById('w-val').textContent = W.toFixed(2);
+    document.getElementById('t-val').textContent = T.toFixed(2);
+    document.getElementById('d-val').textContent = D.toFixed(2);
+    ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+    // Draw Raup shell using parametric spiral
+    const cx = w/2, cy = h/2;
+    const turns = 6;
+    const steps = 400;
+    const baseR = 15;
+    // Compute path points
+    const pts = [];
+    let curR = baseR, curH = 0, curAp = D * 50;
+    for(let i=0;i<=steps;i++){
+      const t = (i/steps)*turns*Math.PI*2;
+      const rad = baseR * Math.pow(W, t/(Math.PI*2));
+      const dist = rad;
+      const px = Math.cos(t) * dist;
+      const py = Math.sin(t) * dist * 0.4 + (t/(Math.PI*2))*T*40;
+      const apSize = (D * 50) * Math.pow(W, t/(Math.PI*2));
+      pts.push({x:px, y:py, r:apSize, t:t});
+    }
+    // Scale to fit canvas
+    let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+    pts.forEach(p=>{
+      minX=Math.min(minX, p.x-p.r); maxX=Math.max(maxX, p.x+p.r);
+      minY=Math.min(minY, p.y-p.r); maxY=Math.max(maxY, p.y+p.r);
+    });
+    const scaleX = (w-40)/(maxX-minX), scaleY = (h-40)/(maxY-minY);
+    const scale = Math.min(scaleX, scaleY, 3);
+    const offsetX = w/2 - ((minX+maxX)/2)*scale;
+    const offsetY = h/2 - ((minY+maxY)/2)*scale;
+    // Draw apertures (circles along the spiral) with gradient shading
+    for(let i=0;i<pts.length;i+=2){
+      const p = pts[i];
+      const px = p.x*scale + offsetX;
+      const py = p.y*scale + offsetY;
+      const pr = Math.max(1, p.r*scale);
+      const shade = 30 + (i/pts.length)*60;
+      const grad = ctx.createRadialGradient(px-pr*0.3, py-pr*0.3, pr*0.1, px, py, pr);
+      grad.addColorStop(0, `hsl(${180+i/4},60%,${shade+20}%)`);
+      grad.addColorStop(1, `hsl(${180+i/4},60%,${shade-15}%)`);
+      ctx.fillStyle = grad;
+      ctx.strokeStyle = `hsla(${180+i/4},60%,${shade-25}%,0.6)`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.arc(px, py, pr, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    }
+    ctx.fillStyle='#7dd3fc'; ctx.font='12px monospace';
+    ctx.fillText(`W=${W.toFixed(2)} · T=${T.toFixed(2)} · D=${D.toFixed(2)}`, 15, 25);
+    ctx.fillStyle='#94a3b8'; ctx.font='11px sans-serif';
+    ctx.fillText('Ein Punkt im 3D-Muschelraum → eine Muschelform', 15, h-15);
+  };
+  ['w-slider','t-slider','d-slider'].forEach(id => document.getElementById(id).addEventListener('input', draw));
+  window.addEventListener('resize', draw);
+  draw();
+}
+
+// ==================== PREPOSITIONS ====================
+let currentPrep = 'front';
+function setPrep(p){
+  currentPrep = p;
+  ['front','behind','above','near','between'].forEach(x=>document.getElementById('prep-'+x).classList.toggle('active', x===p));
+  drawPrep();
+}
+function drawPrep(){
+  const c = document.getElementById('prep-canvas'); const ctx = c.getContext('2d');
+  const w = c.width = c.offsetWidth; const h = c.height = 450;
+  ctx.fillStyle='#050810'; ctx.fillRect(0,0,w,h);
+  // Grid
+  ctx.strokeStyle='rgba(125,211,252,0.08)'; ctx.lineWidth=1;
+  for(let i=0;i<w;i+=30){ ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,h); ctx.stroke(); }
+  for(let i=0;i<h;i+=30){ ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(w,i); ctx.stroke(); }
+  
+  // Reference object (castle) — center
+  const cx = w/2, cy = h/2;
+  
+  // Vector field: draw arrows showing the region
+  const step = 25;
+  for(let x=step; x<w; x+=step){
+    for(let y=step; y<h; y+=step){
+      const dx = x - cx, dy = y - cy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 30) continue;
+      let inRegion = false;
+      let intensity = 0;
+      if(currentPrep === 'front'){
+        // Front = to the right (positive x direction), within some angle
+        const angle = Math.atan2(dy, dx);
+        inRegion = Math.abs(angle) < Math.PI/4 && dist < 200;
+        intensity = inRegion ? 1 - dist/200 : 0;
+      } else if(currentPrep === 'behind'){
+        const angle = Math.atan2(dy, dx);
+        inRegion = Math.abs(angle - Math.PI) < Math.PI/4 || Math.abs(angle + Math.PI) < Math.PI/4;
+        inRegion = inRegion && dist < 200;
+        intensity = inRegion ? 1 - dist/200 : 0;
+      } else if(currentPrep === 'above'){
+        const angle = Math.atan2(dy, dx);
+        inRegion = Math.abs(angle + Math.PI/2) < Math.PI/4 && dist < 200;
+        intensity = inRegion ? 1 - dist/200 : 0;
+      } else if(currentPrep === 'near'){
+        inRegion = dist < 150 && dist > 30;
+        intensity = inRegion ? 1 - dist/150 : 0;
+      } else if(currentPrep === 'between'){
+        // Between two objects (draw two objects then)
+        const o1x = cx - 150, o1y = cy;
+        const o2x = cx + 150, o2y = cy;
+        // Point is between if projection onto line o1-o2 is within segment and perpendicular distance is small
+        const lineLen = Math.abs(o2x - o1x);
+        const projT = (x - o1x) / (o2x - o1x);
+        const perpDist = Math.abs(y - o1y);
+        inRegion = projT > 0.15 && projT < 0.85 && perpDist < 40;
+        intensity = inRegion ? 1 - perpDist/40 : 0;
+      }
+      if(inRegion){
+        // Draw vector arrow
+        const len = Math.min(dist * 0.15, 15);
+        const ux = dx/dist, uy = dy/dist;
+        const startX = cx + ux*30, startY = cy + uy*30;
+        const alpha = 0.3 + intensity*0.6;
+        ctx.strokeStyle = `rgba(125,211,252,${alpha})`;
+        ctx.fillStyle = `rgba(125,211,252,${alpha})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x-ux*len/2, y-uy*len/2); ctx.lineTo(x+ux*len/2, y+uy*len/2); ctx.stroke();
+        // Small dot at endpoint
+        ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI*2); ctx.fill();
+      }
+    }
+  }
+  
+  // Draw reference object (castle)
+  if(currentPrep === 'between'){
+    // Two objects
+    ctx.fillStyle='#f472b6'; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.fillRect(cx-150-20, cy-25, 40, 50);
+    ctx.strokeRect(cx-150-20, cy-25, 40, 50);
+    ctx.fillRect(cx+150-20, cy-25, 40, 50);
+    ctx.strokeRect(cx+150-20, cy-25, 40, 50);
+    ctx.fillStyle='#0a0e1a'; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('🏰', cx-150, cy+5);
+    ctx.fillText('🏰', cx+150, cy+5);
+  } else {
+    ctx.fillStyle='#f472b6'; ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+    ctx.fillRect(cx-30, cy-25, 60, 50);
+    ctx.strokeRect(cx-30, cy-25, 60, 50);
+    ctx.fillStyle='#fff'; ctx.font='bold 24px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('🏰', cx, cy);
+  }
+  ctx.textAlign='start'; ctx.textBaseline='alphabetic';
+  
+  // Label
+  ctx.fillStyle='#7dd3fc'; ctx.font='bold 16px sans-serif';
+  const labels = {front:'vor dem Schloss', behind:'hinter dem Schloss', above:'über dem Schloss', near:'nahe dem Schloss', between:'zwischen den Schlössern'};
+  ctx.fillText(labels[currentPrep], 20, 30);
+  ctx.fillStyle='#94a3b8'; ctx.font='11px sans-serif';
+  ctx.fillText('Blaue Vektoren = Region, die die Präposition denotiert. Alle Regionen sind konvex.', 20, h-15);
+}
+function initPrepositions(){
+  window.addEventListener('resize', drawPrep);
+  setPrep('front');
+}
+</script>
+
+</body>
+</html>
