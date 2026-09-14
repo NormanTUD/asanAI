@@ -7,6 +7,129 @@ window.bibData = {
 		alternativetitle: "HoTT as a foundation for AI"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Phase Space: Usefulness as a Slice  (phase_space.php)
+	 *  The space of all possible configurations, the energy function that
+	 *  carves out the low-energy "useful" slice, and the bridge from
+	 *  Hamiltonian/Boltzmann physics to energy-based neural models and the
+	 *  manifold hypothesis.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"nlab_phasespace": {
+		title: "phase space",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/phase+space",
+		alternativetitle: "nLab, phase space"
+	},
+	"nlab_configspace_physics": {
+		title: "configuration space (physics)",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/configuration+space+%28physics%29",
+		alternativetitle: "nLab, configuration space (physics)"
+	},
+	"nlab_symplectic_manifold": {
+		title: "symplectic manifold",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/symplectic+manifold",
+		alternativetitle: "nLab, symplectic manifold"
+	},
+	"nlab_hamiltonian_mechanics": {
+		title: "Hamiltonian mechanics",
+		author: "nLab contributors",
+		year: 2026,
+		url: "https://ncatlab.org/nlab/show/Hamiltonian+mechanics",
+		alternativetitle: "nLab, Hamiltonian mechanics"
+	},
+	"canonical_ensemble_wiki": {
+		title: "Canonical ensemble",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Canonical_ensemble",
+		alternativetitle: "Canonical ensemble (Wikipedia)"
+	},
+	"partition_function_wiki": {
+		title: "Partition function (statistical mechanics)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Partition_function_(statistical_mechanics)",
+		alternativetitle: "Partition function (Wikipedia)"
+	},
+	"boltzmann_distribution_wiki": {
+		title: "Boltzmann distribution",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Boltzmann_distribution",
+		alternativetitle: "Boltzmann distribution (Wikipedia)"
+	},
+	"manifold_learning_wiki": {
+		title: "Nonlinear dimensionality reduction (manifold learning)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Nonlinear_dimensionality_reduction",
+		alternativetitle: "Manifold learning (Wikipedia)"
+	},
+	"ebm_wiki": {
+		title: "Energy-based model",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Energy-based_model",
+		alternativetitle: "Energy-based model (Wikipedia)"
+	},
+	"lecun1998gradient": {
+		title: "Gradient-based learning applied to document recognition",
+		author: "Y. LeCun, L. Bottou, Y. Bengio, P. Haffner",
+		year: 1998,
+		journal: "Proceedings of the IEEE",
+		volume: 86,
+		number: 11,
+		pages: "2278–2324",
+		url: "https://doi.org/10.1109/5.726791",
+		alternativetitle: "LeCun et al., gradient-based learning (1998)"
+	},
+	"lecun2007ebm": {
+		title: "Energy-Based Models",
+		author: "Yann LeCun, Sumit Chopra, Raia Hadsell, Marc'Aurelio Ranzato, Fu Jie Huang",
+		year: 2007,
+		publisher: "MIT Press (in Predicting Structured Data)",
+		url: "https://doi.org/10.7551/mitpress/7443.003.0014",
+		alternativetitle: "LeCun et al., Energy-Based Models (2007)"
+	},
+	"lecun2007icdar": {
+		title: "Energy-Based Models in Document Recognition and Computer Vision",
+		author: "Y. LeCun, S. Chopra, M. Ranzato, F.-J. Huang",
+		year: 2007,
+		journal: "Proceedings of the 9th International Conference on Document Analysis and Recognition (ICDAR)",
+		url: "https://doi.org/10.1109/ICDAR.2007.4378728",
+		alternativetitle: "LeCun et al., EBMs in document recognition (ICDAR 2007)"
+	},
+	"lecun2022autonomous": {
+		title: "A Path Towards Autonomous Machine Intelligence",
+		author: "Yann LeCun",
+		year: 2022,
+		url: "https://openreview.net/forum?id=ByoZEg2OLkg",
+		alternativetitle: "LeCun, A Path Towards Autonomous Machine Intelligence (2022)"
+	},
+	"ackley1985boltzmann": {
+		title: "A learning algorithm for Boltzmann machines",
+		author: "David H. Ackley, Geoffrey E. Hinton, Terrence J. Sejnowski",
+		year: 1985,
+		journal: "Cognitive Science",
+		volume: 9,
+		number: 1,
+		pages: "147–169",
+		url: "https://doi.org/10.1207/s15516709cog0901_7",
+		alternativetitle: "Ackley, Hinton & Sejnowski, Boltzmann machines (1985)"
+	},
+	"sindhwani2006geometric": {
+		title: "The Geometric Basis of Semi-Supervised Learning",
+		author: "Vikas Sindhwani, Misha Belkin, Partha Niyogi",
+		year: 2006,
+		publisher: "MIT Press (in Semi-Supervised Learning)",
+		url: "https://doi.org/10.7551/mitpress/6173.003.0017",
+		alternativetitle: "Sindhwani, Belkin & Niyogi, the geometric basis of semi-supervised learning (2006)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Computers in Spaceflight: The NASA Experience  (history.php,
 	 *  untold_history.php)
 	 *  The spaceflight-computing lineage: real-time operation, redundancy,
