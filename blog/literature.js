@@ -10925,5 +10925,181 @@ window.bibData = {
 		year: "accessed 2026",
 		url: "https://www.gnu.org/software/make/",
 		alternativetitle: "make"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Why Do Networks Generalize?  (deep_theory.php)
+	 *  Generalization theory, loss landscapes, double descent, NTK,
+	 *  lottery tickets, grokking, spectral bias, sharpness.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"foret2021sam": {
+		title: "Sharpness-Aware Minimization for Efficiently Improving Generalization",
+		author: "Pierre Foret, Ariel Kleiner, Hossein Mobahi, Behnam Neyshabur",
+		year: 2020,
+		url: "https://arxiv.org/abs/2010.01412",
+		alternativetitle: "SAM (sharpness-aware minimization)"
+	},
+	"rahaman2019spectral": {
+		title: "On the Spectral Bias of Neural Networks",
+		author: "Nasim Rahaman, Aristide Baratin, Devansh Arpit, Felix Draxler, Min Lin, Fred A. Hamprecht, Yoshua Bengio, Aaron Courville",
+		year: 2019,
+		url: "https://arxiv.org/abs/1806.08734",
+		alternativetitle: "Spectral (low-frequency) bias"
+	},
+	"nakkiran2019deepdd": {
+		title: "Deep Double Descent: Where Bigger Models and More Data Hurt",
+		author: "Preetum Nakkiran, Gal Kaplun, Yamini Bansal, Tristan Yang, Boaz Barak, Ilya Sutskever",
+		year: 2019,
+		url: "https://arxiv.org/abs/1912.02292",
+		alternativetitle: "Deep double descent"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  What Machines See  (computer_vision.php)
+	 *  Detection, segmentation, ViT, MAE, SAM.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"girshick2014rcnn": {
+		title: "Rich feature hierarchies for accurate object detection and semantic segmentation",
+		author: "Ross Girshick, Jeff Donahue, Trevor Darrell, Jitendra Malik",
+		year: 2014,
+		url: "https://arxiv.org/abs/1311.2524",
+		alternativetitle: "R-CNN"
+	},
+	"ren2015faster": {
+		title: "Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks",
+		author: "Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun",
+		year: 2015,
+		url: "https://arxiv.org/abs/1506.01497",
+		alternativetitle: "Faster R-CNN"
+	},
+	"redmon2016yolo": {
+		title: "You Only Look Once: Unified, Real-Time Object Detection",
+		author: "Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi",
+		year: 2016,
+		url: "https://arxiv.org/abs/1506.02640",
+		alternativetitle: "YOLO"
+	},
+	"ronneberger2015unet": {
+		title: "U-Net: Convolutional Networks for Biomedical Image Segmentation",
+		author: "Olaf Ronneberger, Philipp Fischer, Thomas Brox",
+		year: 2015,
+		url: "https://arxiv.org/abs/1505.04597",
+		alternativetitle: "U-Net"
+	},
+	"he2017maskrcnn": {
+		title: "Mask R-CNN",
+		author: "Kaiming He, Georgia Gkioxari, Piotr Dollár, Ross Girshick",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.06870",
+		alternativetitle: "Mask R-CNN"
+	},
+	"kirillov2023sam": {
+		title: "Segment Anything",
+		author: "Alexander Kirillov, Eric Mintun, Nikhila Ravi, Hanzi Mao, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2304.02643",
+		alternativetitle: "SAM / SA-1B"
+	},
+	"dosovitskiy2021vit": {
+		title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+		author: "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
+		year: 2021,
+		url: "https://arxiv.org/abs/2010.11929",
+		alternativetitle: "Vision Transformer (ViT)"
+	},
+	"he2021mae": {
+		title: "Masked Autoencoders Are Scalable Vision Learners",
+		author: "Kaiming He, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Dollár, Ross Girshick",
+		year: 2022,
+		url: "https://arxiv.org/abs/2111.06377",
+		alternativetitle: "MAE"
+	},
+	"sam_demo_img": {
+		url: "https://raw.githubusercontent.com/facebookresearch/segment-anything/main/assets/masks1.png",
+		title: "Segment Anything Model — promptable segmentation",
+		author: "Alexander Kirillov et al. (Meta AI)",
+		year: 2023,
+		alternativetitle: "SAM demo (masks from different prompts)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Closing the Loop — AI for Science  (ai_for_science.php)
+	 * ───────────────────────────────────────────────────────────────────── */
+	"jumper2021alphafold": {
+		title: "Highly accurate protein structure prediction with AlphaFold",
+		author: "John Jumper, Richard Evans, Alexander Pritzel, et al.",
+		year: 2021,
+		url: "https://doi.org/10.1038/s41586-021-03819-2",
+		alternativetitle: "AlphaFold 2 (Nature 596:583)"
+	},
+	"alphafold_db": {
+		title: "AlphaFold Protein Structure Database",
+		author: "Minko Savate, Milot Mirdita, et al. (EMBL-EBI)",
+		year: 2023,
+		url: "https://www.alphafold.ebi.ac.uk/",
+		alternativetitle: "200M+ predicted protein structures"
+	},
+	"merchant2023gnome": {
+		title: "Scaling deep learning for materials discovery",
+		author: "Aditi Merchant, Samuel Batzner, Samuel S. Schoenholz, Murata Aykol, Gowoon Cheon, Ekin D. Cubuk",
+		year: 2023,
+		url: "https://doi.org/10.1038/s41586-023-06735-9",
+		alternativetitle: "GNoME (2.2M stable materials)"
+	},
+	"pathak2022fourcastnet": {
+		title: "FourCastNet: A Global Data-driven High-resolution Weather Model using Adaptive Fourier Neural Operators",
+		author: "Jaideep Pathak, Shashank Subramanian, Peter Harrington, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2202.11214",
+		alternativetitle: "FourCastNet"
+	},
+	"imo_wiki": {
+		title: "International Mathematical Olympiad",
+		author: "Wikipedia",
+		year: 2024,
+		url: "https://en.wikipedia.org/wiki/International_Mathematical_Olympiad",
+		alternativetitle: "AlphaProof (IMO silver medal, 2024)"
+	},
+	"alphafold_protein_img": {
+		url: "https://commons.wikimedia.org/wiki/File:TMEM253_AlphaFold_Predicted_Structure.jpg",
+		title: "Predicted tertiary structure of TMEM253 (AlphaFold), coloured by pLDDT confidence",
+		author: "Wikimedia Commons (CC BY 4.0)",
+		year: 2026,
+		alternativetitle: "AlphaFold predicted protein structure"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Reliability  (reliability.php)  &  NLP/MLOps sections
+	 * ───────────────────────────────────────────────────────────────────── */
+	"lakshminarayanan2017ensembles": {
+		title: "Simple and Scalable Predictive Uncertainty Estimation using Deep Ensembles",
+		author: "Balaji Lakshminarayanan, Alexander Pritzel, Charles Blundell",
+		year: 2017,
+		url: "https://arxiv.org/abs/1612.01474",
+		alternativetitle: "Deep ensembles"
+	},
+	"kendall2017uncertainties": {
+		title: "What Uncertainties Do We Need in Bayesian Deep Learning for Computer Vision?",
+		author: "Alex Kendall, Yarin Gal",
+		year: 2017,
+		url: "https://arxiv.org/abs/1703.04977",
+		alternativetitle: "Aleatoric vs epistemic uncertainty"
+	},
+	"angelopoulos2021conformal": {
+		title: "A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification",
+		author: "Anastasios N. Angelopoulos, Stephen Bates",
+		year: 2021,
+		url: "https://arxiv.org/abs/2107.07511",
+		alternativetitle: "Conformal prediction"
+	},
+	"zhao2023survey": {
+		title: "A Survey of Large Language Models",
+		author: "Wayne Xin Zhao, Kun Zhou, Junyi Li, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2303.18223",
+		alternativetitle: "LLM survey"
+	},
+	"continuous_delivery_wiki": {
+		title: "Continuous delivery",
+		author: "Wikipedia",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Continuous_delivery",
+		alternativetitle: "CI/CD"
 	}
 };
