@@ -6511,6 +6511,17 @@ window.bibData = {
 		license: "Public domain (NASA)",
 		alternativetitle: "Structure of the Universe (the cosmic web)"
 	},
+	/* Roger Shepard's 1987 "universal law of generalization": the probability
+	 * that a response learned to one stimulus generalizes to another falls off
+	 * exponentially with the distance between the two in a psychological
+	 * space. Original: Science 237(4820): 1317–1323. */
+	"shepard1987universal": {
+		author: "Roger N. Shepard",
+		year: 1987,
+		title: "Toward a Universal Law of Generalization for Psychological Science",
+		url: "https://legacy.voteview.com/pdf/Shepard_1987.pdf",
+		alternativetitle: "The Universal Law of Generalization"
+	},
 	"volta_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Volta_A.jpg",
 		title: "Portrait of Alessandro Volta",
