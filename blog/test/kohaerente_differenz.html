@@ -702,12 +702,15 @@ const distC = document.getElementById('distCanvas');
 const distX = distC.getContext('2d');
 function fitCanvas(c) {
   const w = c.clientWidth;
-  c.width = w * devicePixelRatio;
-  c.height = c.height ? c.height : 320;
-  c.height = (c.getAttribute('height') || 320) * devicePixelRatio;
+  const h = parseInt(c.getAttribute('height')) || 320;
+  const dpr = devicePixelRatio;
+  const pw = Math.min(w * dpr, 8192);
+  const ph = Math.min(h * dpr, 8192);
+  c.width = pw;
+  c.height = ph;
   const ctx = c.getContext('2d');
-  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-  return {w, h: c.height/devicePixelRatio};
+  ctx.setTransform(pw / w, 0, 0, ph / h, 0, 0);
+  return {w, h};
 }
 function drawCircle() {
   const {w,h} = fitCanvas(distC);
