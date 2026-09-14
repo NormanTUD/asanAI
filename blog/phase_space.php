@@ -226,9 +226,10 @@ One of the most revealing applications of the geometric picture is to **metaphor
 Consider the metaphor "time is a river." The cluster of *time-talk* ("the week is coming," "we run out of time") and the cluster of *river-talk* ("flows," "currents," "eddy") are, in the absence of the metaphor, two separate regions of $X$. The metaphor *constructs a filament* between them: it imports the structure of the river-cluster (flow, direction, current, obstacle) into the time-cluster, and in doing so it *changes the shape* of the time-cluster.
 
 <figure style="max-width:600px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="A metaphor as a bridge: a dashed filament connecting the TIME cluster and the RIVER cluster across a void" style="width:100%; height:auto; display:block; margin:0 auto;">
+<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="A metaphor as a new path: two distant clusters, TIME and RIVER, joined by a bold coral filament, contrasted with a faint long indirect void path" style="width:100%; height:auto; display:block; margin:0 auto;">
 <rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
-<path d="M 150 92 Q 228 150 312 200" fill="none" style="stroke:var(--mn-coral);" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"/>
+<path d="M 150 70 C 320 18 432 122 340 200" fill="none" style="stroke:var(--mn-text-muted);" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.55"/>
+<path d="M 148 92 Q 235 150 318 205" fill="none" style="stroke:var(--mn-coral);" stroke-width="3.5" stroke-dasharray="8 6" stroke-linecap="round"/>
 <g style="fill:var(--mn-accent);">
 <circle cx="85" cy="65" r="4.5"/><circle cx="112" cy="52" r="5"/><circle cx="138" cy="72" r="4.5"/><circle cx="95" cy="92" r="4.5"/><circle cx="125" cy="95" r="4"/><circle cx="75" cy="85" r="3.5"/><circle cx="150" cy="58" r="3.5"/>
 </g>
@@ -236,12 +237,14 @@ Consider the metaphor "time is a river." The cluster of *time-talk* ("the week i
 <circle cx="315" cy="215" r="4.5"/><circle cx="342" cy="205" r="5"/><circle cx="368" cy="222" r="4.5"/><circle cx="325" cy="242" r="4.5"/><circle cx="352" cy="248" r="4"/><circle cx="385" cy="235" r="3.5"/>
 </g>
 <g style="fill:var(--mn-text-muted); font-size:14px; font-family:inherit; font-weight:600;">
-<text x="60" y="40">TIME</text><text x="330" y="282">RIVER</text>
+<text x="58" y="38">TIME</text><text x="328" y="284">RIVER</text>
 </g>
-<text x="150" y="150" style="fill:var(--mn-coral); font-size:13px; font-family:inherit; font-style:italic;">metaphor</text>
+<text x="150" y="150" style="fill:var(--mn-coral); font-size:13px; font-family:inherit; font-weight:600;">metaphor: a new path</text>
 </svg>
-<figcaption class="md">A metaphor as a bridge: the metaphor "time is a river" lays a dashed filament between two clusters that were otherwise separated by a void, importing the structure of one into the other.</figcaption>
+<figcaption class="md">A metaphor as a new path: "time is a river" lays a short, structured filament between two clusters that were otherwise separated by a void (the faint, long detour is the only route available before the metaphor).</figcaption>
 </figure>
+
+This is best understood in the language of **homotopy type theory**, where a *path* between two points is itself a piece of meaning — a way of getting from one to the other. Before the metaphor, the two clusters are far apart: the only route from a point in the time-cluster to a point in the river-cluster is a long traversal of the void. The metaphor adds a **new path** — a short, structured filament — directly between them. Topologically this changes the space: a new one-dimensional feature has been created, and the two regions become *homotopically* close. A metaphor is not a label glued on; it is a genuine deformation of the connectivity of the space.
 
 This is why metaphors are not merely expressive but *cognitive*: they literally reshape the geometry of the space in which thought takes place. A good metaphor creates a new filament, and a new filament changes which regions of the space are reachable from which. This is a precise statement of the idea that metaphor is a mechanism of *conceptual change*.
 
