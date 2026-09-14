@@ -145,15 +145,15 @@ The more layers, the more abstract and complex the representations become. Howev
 
 </div>
     <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px;">
-        <div class="panel" style="background: var(--mn-surface, white); padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
+        <div class="panel" style="padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; height: fit-content;">
             <div style="text-align:center;">
                 <canvas id="feat-src" width="100" height="100" style="border:2px solid #cbd5e1; width:200px; image-rendering:pixelated; border-radius: 4px;"></canvas>
                 <p class="md">Source Image (by \citeauthor{stopsignimage})</p>
             </div>
-            <div style="margin-top: 20px; padding: 12px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 8px; font-size: 0.8rem; color: #475569; border: 1px solid #e2e8f0;">
-                <strong>🔍 How to read the feature maps:</strong><br>
-                Each matrix (kernel) acts as a specialized “eye” that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected.
-            </div>
+<div style="margin-top: 20px; padding: 12px; border-radius: 8px; font-size: 0.8rem; color: var(--mn-text-secondary); border: 1px solid var(--mn-border);">
+				<strong style="color: var(--mn-text-primary);">🔍 How to read the feature maps:</strong><br>
+				Each matrix (kernel) acts as a specialized “eye” that searches for specific patterns. Bright pixels in the output mean the filter found a strong match at that location. Dark pixels mean no match was detected.
+			</div>
         </div>
 
         <div id="filter-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">

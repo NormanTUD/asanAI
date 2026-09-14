@@ -38,12 +38,33 @@ Everything below earns that sentence.
 **The upgrade to phase space.** A *state* needs more than a position; it needs *how the thing is moving*. So to each position $q$ you attach a *momentum* $p$ — a covector, an element of the cotangent space $T^{*}_{q}Q$ at that point. A point of the **phase space** is a pair $(q,p)$ \cite[nLab]{nlab_phasespace}:
 
 $$
-\text{phase space} \;=\; T^{*}Q \;=\; \bigl\{\, (q,p)\;:\; q\in Q,\; p\in T^{*}_{q}Q \,\bigr\}.
+\text{phase space} \;=\; \underbrace{T^{*}Q}_{\text{“positions, each with a momentum glued on”}}
+\;=\; \underbrace{\bigl\{\, (q,p)\;:\; q\in \underbrace{Q}_{\text{all positions}},\; p\in \underbrace{T^{*}_{q}Q}_{\text{momenta at that position}} \,\bigr\}}_{\text{a state }=\text{ a position \emph{plus} how it is moving}}.
 $$
 
 For $N$ particles in ordinary 3-space, $Q \cong \mathbb{R}^{3N}$ and the phase space is $\mathbb{R}^{6N}$: all positions and all momenta, laid side by side. *That* is the "space of all possibilities" — every location and every velocity, all at once, before anything has been ruled out.
 
-The phase space is not just a set; it carries a canonical geometric object, a **symplectic form** $\omega$ (in flat coordinates $\omega = \sum_{i} dq_{i}\wedge dp_{i}$), which is precisely what makes the motion reversible and volume-preserving \cite[nLab]{nlab_symplectic_manifold}. A phase space is a *symplectic manifold* \cite[nLab]{nlab_symplectic_manifold}; the study of its motion is *Hamiltonian mechanics* \cite[nLab]{nlab_hamiltonian_mechanics}.
+The phase space is not just a set; it carries a canonical geometric object, a **symplectic form** $\omega$, which is precisely what makes the motion reversible and volume-preserving \cite[nLab]{nlab_symplectic_manifold}. A phase space is a *symplectic manifold* \cite[nLab]{nlab_symplectic_manifold}; the study of its motion is *Hamiltonian mechanics* \cite[nLab]{nlab_hamiltonian_mechanics}.
+
+There is one equation that is the whole subject, and it is best to *feel* it before anything else. The **momentum is, literally, the rate at which the position changes** — this is what the canonical (Liouville) 1-form says \cite[nLab]{nlab_phasespace}:
+
+$$
+\underbrace{\theta \;=\; \sum_{i} p_{i}\,dq_{i}}_{\text{each momentum }p_{i}\text{ is the covector measuring “change in position }q_{i}\text{”}}
+\qquad\Longrightarrow\qquad
+\underbrace{\omega \;=\; -\,d\theta \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{an infinitesimal area element }dq\wedge dp\text{ for every pair }(q_{i},p_{i})}.
+$$
+
+Given an energy $H$, this area form *manufactures the motion*: the **Hamiltonian vector field** $X_{H}$ is the unique velocity field whose contraction with $\omega$ is the gradient of $H$ \cite[nLab]{nlab_symplectic_manifold}. Written out in coordinates this is **Hamilton's equations** \cite[nLab]{nlab_hamiltonian_mechanics}:
+
+$$
+\underbrace{\iota_{X_{H}}\,\omega \;=\; dH}_{\text{“turn the gradient of the energy into a direction”}}
+\qquad\Longleftrightarrow\qquad
+\underbrace{\dot q_{i} \;=\; +\,\frac{\partial H}{\partial p_{i}}}_{\text{position moves the way energy \emph{rises} with momentum}}
+\;\;\text{and}\;\;
+\underbrace{\dot p_{i} \;=\; -\,\frac{\partial H}{\partial q_{i}}}_{\text{momentum moves the way energy \emph{falls} with position}}.
+$$
+
+Read the two coordinate lines as a single tug-of-war: *things drift toward what they want, and are pushed back by what holds them.* A pendulum swings because its potential energy falls with angle and rises again; the $+$ and the $-$ are exactly that give-and-take, written down.
 
 **Two "spaces of all possibilities", kept apart.** There are two distinct spaces it is tempting to call "all the possibilities", and the argument depends on not conflating them:
 
@@ -67,7 +88,13 @@ So far phase space has been *defined*. Now the sharper question: what is its **s
 
 **The shape is inherited from the configuration space.** $T^{*}Q$ is a *bundle* over $Q$: to each configuration you attach a whole vector space of momenta. Topologically it "remembers" $Q$. If $Q$ is flat and open ($Q=\mathbb{R}^{n}$, the free particles) then $T^{*}Q \cong \mathbb{R}^{2n}$ — trivial and simply connected. If $Q$ is a circle (the pendulum's angle) then $T^{*}Q \cong S^{1}\times\mathbb{R}$, a *cylinder*: the position wraps around, the momentum does not. The "space of all possibilities" can therefore carry holes and wrap-around, inherited from the geometry of the thing being modelled \cite{symplectic_manifold_wiki}.
 
-**Darboux's theorem: there is no *local* shape.** The deep and slightly surprising fact is that *every* symplectic manifold looks, near every point, exactly like flat $\mathbb{R}^{2n}$ with the standard form $\omega=\sum_{i}dp_{i}\wedge dq^{i}$ \cite{symplectic_manifold_wiki}. This is the symplectic antithesis of Riemannian geometry, where local curvature is the whole story. A symplectic manifold has **no local invariant at all**: you cannot detect any "bending" of phase space by zooming in.
+**Darboux's theorem: there is no *local* shape.** The deep and slightly surprising fact is that *every* symplectic manifold, no matter how it is bent, looks — near every point — exactly like flat space with one standard form \cite{symplectic_manifold_wiki}:
+
+$$
+\underbrace{\omega \;=\; \sum_{i} dq_{i}\wedge dp_{i}}_{\text{“everywhere, phase space is a stack of flat little area elements }dq\wedge dp\text{”}}.
+$$
+
+This is the symplectic antithesis of Riemannian geometry, where *local* curvature is the whole story. A symplectic manifold has **no local invariant at all** — no curvature tensor to read off by zooming in. All of the shape that exists is therefore *global*:
 
 $$
 \boxed{
@@ -78,13 +105,25 @@ $$
 }
 $$
 
-**Liouville's theorem: the flow preserves a volume.** The symplectic form defines a canonical volume $\omega^{n}/n!$, and the Hamiltonian flow *preserves* it — the dynamics are incompressible; phase-space volume is neither created nor destroyed \cite{symplectic_manifold_wiki}. A direct consequence: the flow cannot collapse onto a point (that would shrink volume to zero). This is one reason the *dynamics* keep a state moving *on* the shell rather than letting it settle into a single configuration.
+**Liouville's theorem: the flow preserves a volume.** The symplectic form defines a canonical volume $\omega^{n}/n!$, and the Hamiltonian flow *preserves* it — the dynamics are incompressible \cite{symplectic_manifold_wiki}:
 
-**What the topology can force: the Arnold conjecture.** This is the strongest "what can be said about the shape" result in the subject. On a *closed* phase space, the topology — the Betti numbers, the counts of holes in each dimension — *lower-bounds* the number of fixed points (and, in the periodic form, of periodic orbits) of *any* Hamiltonian placed on it \cite{arnold_conjecture_wiki}:
+$$
+\underbrace{\mathcal{L}_{X_{H}}\,\omega \;=\; 0}_{\text{“the motion neither stretches nor squeezes the area form”}}
+\quad\Longrightarrow\quad
+\underbrace{\operatorname{vol}\bigl(S\bigr) \;=\; \operatorname{vol}\bigl(\Phi_{t}(S)\bigr)}_{\text{a cloud of states keeps exactly its phase-space volume, for all time }t}.
+$$
+
+A direct consequence: the flow cannot collapse onto a point (that would shrink a volume to zero). This is one reason the *dynamics* keep a state moving *on* the shell rather than letting it settle into a single configuration.
+
+**What the topology can force: the Arnold conjecture.** This is the strongest "what can be said about the shape" result in the subject. On a *closed* phase space $M$, the topology — the Betti numbers, the counts of holes in each dimension — *lower-bounds* the number of fixed points (and, in the periodic form, of periodic orbits) of *any* Hamiltonian placed on it \cite{arnold_conjecture_wiki}:
 
 $$
 \boxed{
-\#\{\text{fixed points}\}\;\ge\; \sum_{i=0}^{2n}\dim H_{i}(M) \;\ge\; \text{the Morse number of } M.
+\underbrace{\#\{\text{fixed points of }X_{H}\}}_{\text{how many rest-states the motion admits}}
+\;\ge\;
+\underbrace{\operatorname{Mor}(M)}_{\text{fewest critical points any height function on }M\text{ can have}}
+\;\ge\;
+\underbrace{\sum_{i=0}^{2n}\dim H_{i}(M)}_{\text{the total number of holes of }M\text{, counted in every dimension}}.
 }
 $$
 
@@ -101,7 +140,7 @@ Hold this distinction, because it decides what is a theorem and what is a lens. 
 **Plain.** Not every point of phase space is equally "alive". A single number, the **energy** $H(q,p)$, tells you which. $H$ is the *Hamiltonian*; for a mechanical system it is kinetic plus potential energy \cite[nLab]{nlab_hamiltonian_mechanics}:
 
 $$
-H(q,p) \;=\; \tfrac{1}{2m}\,\lVert p\rVert^{2} \;+\; V(q).
+\underbrace{H(q,p)}_{\text{the energy of a state}} \;=\; \underbrace{\tfrac{1}{2m}\,\lVert p\rVert^{2}}_{\text{kinetic: the price of moving fast}} \;+\; \underbrace{V(q)}_{\text{potential: the price of where you are}}.
 $$
 
 The laws of motion move the state *along* the level sets of $H$. With no dissipation, $H$ is conserved, so a state never leaves the single surface $H = E$ on which it began. Even the most free physical system is therefore *already* confined to a slice: the **energy shell** $\{H = E\}$.
@@ -109,7 +148,11 @@ The laws of motion move the state *along* the level sets of $H$. With no dissipa
 Statistical mechanics sharpens the point. A system in a heat bath does not sit at one energy; it *samples* the whole phase space with the **Boltzmann (canonical) distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
 
 $$
-P(q,p) \;=\; \frac{e^{-\beta\, H(q,p)}}{Z}, \qquad Z \;=\; \int e^{-\beta\, H(q,p)}\,dq\,dp,
+\underbrace{P(q,p) \;=\; \frac{e^{-\beta\, H(q,p)}}{Z}}_{\text{the probability of a state}}
+\quad=\quad
+\underbrace{e^{-\beta\, H(q,p)}}_{\text{the selector: }H\text{ small}\Rightarrow\text{ weight}\approx1;\ H\text{ large}\Rightarrow\text{ weight}\approx0}
+\;\Big/\;
+\underbrace{Z \;=\; \int e^{-\beta\, H(q,p)}\,dq\,dp}_{\text{the normaliser: total weight of \emph{everything}, forcing the probabilities to add to }1}.
 $$
 
 where $\beta = 1/(k_{B}T)$ is the inverse temperature and $Z$ is the **partition function** \cite{partition_function_wiki}. The whole argument of this chapter is sitting in that formula:
@@ -120,7 +163,13 @@ $$
 }
 $$
 
-The factor $e^{-\beta H}$ is a *selector*. It does not delete the high-energy part of phase space — that part is still *there*, still part of the space of all possibilities — but it assigns it vanishing weight. The system is found, with overwhelming probability, in the **low-energy slice**. That slice is where the stable, reproducible, *interesting* behaviour lives; everything else is *possible* but *empty*. The microcanonical version states the same thing more starkly: fix $E$ and the state is uniform *on the shell* $\{H=E\}$ and *nowhere else* \cite{canonical_ensemble_wiki}. Either way:
+The factor $e^{-\beta H}$ is a *selector*. It does not delete the high-energy part of phase space — that part is still *there*, still part of the space of all possibilities — but it assigns it vanishing weight. The system is found, with overwhelming probability, in the **low-energy slice**. That slice is where the stable, reproducible, *interesting* behaviour lives; everything else is *possible* but *empty*. The microcanonical version states the same thing more starkly: fix $E$ and the state is uniform *on the shell* $\{H=E\}$ and *nowhere else* \cite{canonical_ensemble_wiki}. The size of that shell is the **density of states**:
+
+$$
+\underbrace{\Omega(E) \;=\; \int \delta\!\big(H(q,p)-E\big)\,dq\,dp}_{\text{“how much room there is at energy }E\text{” }=\text{ the thickness of the shell }H=E}.
+$$
+
+The system then sits where there is the most room to sit: the typical energy is where $\Omega(E)$ — or, in the canonical ensemble, $\Omega(E)\,e^{-\beta E}$ — is largest. Either way:
 
 $$
 \boxed{\text{the living part of phase space is a thin slice, selected by energy.}}
@@ -189,7 +238,15 @@ This is the precise sense in which "the AI only works on a slice": the slice is 
 
 We now know the useful slice is (i) *low-energy*, (ii) *low-dimensional*, and (iii) *measure-zero* in the ambient space. But what is its **shape**? Three answers — one from physics, one from measure theory, one from the machine — and they are not competing; they are three directions on the same slice.
 
-**1. When the system is integrable, the slice is a *torus*.** The **Liouville–Arnold theorem** is one of the cleanest shape results in all of mechanics \cite[Liouville–Arnold]{liouville_arnold_wiki}. Take a Hamiltonian system with $n$ degrees of freedom that is *integrable* — it carries $n$ independent conserved quantities (the energy among them) that all Poisson-commute. At a regular point the state is confined to the *common level set* of those $n$ conserved quantities, and if that level set is compact and connected it is **diffeomorphic to the $n$-torus $\mathbb{T}^{n}$**. The motion on it is a simple quasi-periodic flow — the state winds around the torus at $n$ fixed frequencies. So for the idealised, well-behaved system, the useful slice has a *precise* shape:
+**1. When the system is integrable, the slice is a *torus*.** The **Liouville–Arnold theorem** is one of the cleanest shape results in all of mechanics \cite[Liouville–Arnold]{liouville_arnold_wiki}. Take a Hamiltonian system with $n$ degrees of freedom that is *integrable* — it carries $n$ independent conserved quantities (the energy among them) that all Poisson-commute. At a regular point the state is confined to the *common level set* of those $n$ conserved quantities, and if that level set is compact and connected it is **diffeomorphic to the $n$-torus $\mathbb{T}^{n}$**. In **action–angle coordinates** the motion becomes nothing more than $n$ circles turning at constant speeds:
+
+$$
+\underbrace{\dot{\theta}_{i} \;=\; \omega_{i}(I) \;=\; \frac{\partial H}{\partial I_{i}}}_{\text{“angle }\theta_{i}\text{ winds around its circle at a \emph{constant} rate, set by the action }I_{i}\text{”}}
+\qquad\Longrightarrow\qquad
+\underbrace{\theta_{i}(t) \;=\; \theta_{i}(0) + \omega_{i}\,t}_{\text{the state is a point drifting around }\mathbb{T}^{n}\text{, never leaving it}}.
+$$
+
+So for the idealised, well-behaved system, the useful slice has a *precise* shape:
 
 $$
 \boxed{
@@ -203,7 +260,14 @@ $$
 
 Not an arbitrary blob, not a random region: a torus, whose topology literally encodes how many independent oscillations the system has.
 
-**2. As a place where mass lands, the slice is a *thin shell*.** The measure-zero fact said the slice is "empty" for a *uniform* random point. The *dynamics* say almost the opposite: the Boltzmann/Gibbs measure piles essentially all of its weight onto the slice. In high dimension this is not an approximation but a theorem — the **concentration of measure** phenomenon, the "thin shell" result behind the equivalence of the ensembles of statistical physics \cite[concentration of measure]{concentration_of_measure_wiki}. The typical energy, and a thin band around it, capture almost all the probability; as temperature drops the mass collapses onto the ground state. So there are **two independent senses of "thin," and both hold at once**:
+**2. As a place where mass lands, the slice is a *thin shell*.** The measure-zero fact said the slice is "empty" for a *uniform* random point. The *dynamics* say almost the opposite: the Boltzmann/Gibbs measure piles essentially all of its weight onto the slice. In high dimension this is not an approximation but a theorem — the **concentration of measure** phenomenon, the "thin shell" result behind the equivalence of the ensembles of statistical physics \cite[concentration of measure]{concentration_of_measure_wiki}. Concretely, the energy of a large system barely wiggles around its mean:
+
+$$
+\underbrace{\frac{\sqrt{\operatorname{Var}(H)}}{\mathbb{E}[H]} \;\sim\; \frac{1}{\sqrt{N}}}_{\text{“the larger the system, the tighter the energy locks onto a single value”}}
+\quad\xrightarrow[\;]{\;N\,\to\,\infty\;}\; 0.
+$$
+
+So the typical energy, and a thin band around it, capture almost all the probability; as temperature drops the mass collapses onto the ground state. There are thus **two independent senses of "thin," and both hold at once**:
 
 $$
 \boxed{
