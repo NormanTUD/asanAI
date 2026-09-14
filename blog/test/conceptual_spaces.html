@@ -694,6 +694,16 @@ function renderKatex(){
   }catch(e){console.warn('KaTeX:',e);}
 }
 
+// ==================== LEVELS (Motivation) ====================
+function highlightLevel(lvl){
+  document.querySelectorAll('.level').forEach(el=>{
+    const on = el.classList.contains(lvl);
+    el.style.opacity = on ? '1' : '0.4';
+    el.style.transform = on ? 'scale(1.03)' : 'scale(1)';
+    el.style.boxShadow = on ? '0 0 0 2px var(--accent), 0 12px 34px rgba(125,211,252,0.18)' : 'none';
+  });
+}
+
 // ==================== HERO PARTICLES ====================
 function initHero(){
   const c = document.getElementById('hero-canvas');
