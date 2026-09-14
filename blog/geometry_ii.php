@@ -191,7 +191,7 @@ $$
 \underbrace{(c * x)_t}_{\text{the output at position } t} \;=\; \underbrace{\sum_{k} c_k \, x_{t-k}}_{\text{“flip } c\text{, slide it to } t\text{, take the dot product”}}
 $$
 
-That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from the inner product. This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Convolutions](visionlab)).
+That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from the inner product. This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Computer Vision](computer_vision)).
 
 \marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible.}
 
@@ -261,7 +261,7 @@ and it gives the matching condition for equivariance. “Map, sum, pool” is no
 
 This matters because **weight sharing is equivariance in disguise**, and attention is a *symmetric* operation:
 
-* A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Convolutions](visionlab)). The convolution section’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
+* A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Computer Vision](computer_vision)). The convolution section’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
 * **Pooling** (mean, max) is the invariant readout: reorder what you pool over and the number does not move.
 * **Attention** is permutation-equivariant over the token set: shuffle the tokens and every output token and attention weight shuffles along. Order is not something attention knows, which is why position must be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)).
 * The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \cite{bronstein2021geometric}).
@@ -293,8 +293,8 @@ Pull the six moves together and a forward pass reads as a *sequence of geometric
 <tr><td>Projection</td><td>best fit = shadow, ⟂</td><td>least squares, low-rank</td><td><a href="losslab">Loss</a></td></tr>
 <tr><td>SVD</td><td>rotate → stretch → rotate</td><td>PCA, compression, LoRA</td><td><a href="beyond_llms">Beyond LLMs</a></td></tr>
 <tr><td>Descent</td><td>$-\nabla$, ⟂ to level sets</td><td>descent, backprop</td><td><a href="optimizerlab">Optimizer</a>, <a href="autodiff">Autodiff</a></td></tr>
-<tr><td>Conv + DFT</td><td>sliding dot product</td><td>CNN filter, FFT</td><td><a href="visionlab">Vision</a>, <a href="positionalembeddingslab">Positional</a></td></tr>
-<tr><td>Symmetry</td><td>invariant / equivariant</td><td>pooling, attention, sharing</td><td><a href="visionlab">Vision</a>, <a href="mechanistic_interpretability">Mech. Interp.</a></td></tr>
+<tr><td>Conv + DFT</td><td>sliding dot product</td><td>CNN filter, FFT</td><td><a href="computer_vision">Vision</a>, <a href="positionalembeddingslab">Positional</a></td></tr>
+<tr><td>Symmetry</td><td>invariant / equivariant</td><td>pooling, attention, sharing</td><td><a href="computer_vision">Vision</a>, <a href="mechanistic_interpretability">Mech. Interp.</a></td></tr>
 </tbody>
 </table>
 
