@@ -454,6 +454,32 @@ In 1979, **Dan Bricklin** watched a Harvard Business School professor erase and 
 
 Released August 12, 1981, the **IBM PC** used the Intel 8088 CPU and Microsoft-supplied **PC-DOS** (later **MS-DOS**), since IBM's negotiations with Digital Research for CP/M had failed \cite{ibmpc} \cite{historyofpc}. IBM's failure to patent the BIOS led, via clean-room reverse engineering, to a clone industry that ultimately overwhelmed IBM itself, establishing the Wintel architecture as the dominant PC standard for decades.
 
+### NASA Spaceflight Computers: Real-Time Reliability in Orbit (1965–1989)
+
+Long before neural networks, a different kind of computing was pushing the hardware forward: the computers that flew. A spacecraft computer could not crash, could not be powered off, and could not be handed to a technician who walked over and pressed *reset* — so NASA's spaceflight programs forced the industry into **real-time, fault-tolerant** design decades before it became mainstream. \citeauthor{tomayko1988spaceflight} documents the full arc in \citetitle{tomayko1988spaceflight} (\citeyear{tomayko1988spaceflight}).
+
+<div class="smart-quote" data-cite="tomayko1988spaceflight">
+NASA had no choice but to become a leader in the development of real-time systems [...] it is in this field of computing that NASA has had its greatest impact.
+</div>
+
+**The Gemini Digital Computer (1965).** Built by IBM, it was the **first digital computer flown on a manned spacecraft**: 4,096 words of ferrite-core memory at 39 bits per word, a 140-millisecond instruction cycle, and about 59 pounds \cite{tomayko1988spaceflight}. From Gemini VIII it carried an **Auxiliary Tape Memory** that loaded programs from tape into core, an early ancestor of virtual memory and program swapping \cite{tomayko1988spaceflight}.
+
+**The Apollo Guidance Computer (AGC).** Developed at MIT's Instrumentation Laboratory from 1961, the AGC was one of the first computers to be built from **integrated circuits**, a bold choice when ICs were only three years old \cite{tomayko1988spaceflight}. It used roughly 5,000 NOR-gate ICs and stored its program in **core rope memory**, a non-volatile medium whose read-wires were *hand-woven* by operators at Raytheon, at up to 2,000 bits per cubic inch \cite{tomayko1988spaceflight}. Its operating system was a **priority-interrupt** scheduler (the "Executive" and a "waitlist") that juggled several concurrent jobs by importance, the direct ancestor of the real-time operating systems still flying in spacecraft today \cite{tomayko1988spaceflight}.
+
+#### The Apollo 11 landing alarms
+
+During the lunar descent of Apollo 11 the AGC began throwing **1201 and 1202 program alarms**: the docking radar was flooding it with interrupt requests and eating about 15% of the machine's resources. Instead of aborting, the computer's **restart software** gracefully shed the overload, kept the guidance functions alive, and let Armstrong land \cite{tomayko1988spaceflight}. Sixty years on this is still the textbook example of **fault-tolerant real-time computing**, a property modern autonomous and ML systems quietly depend on.
+
+**The Space Shuttle (1981).** The Shuttle carried the most computerized avionics built to that date \cite{tomayko1988spaceflight}: **five** general-purpose computers flying in redundant configurations, digital controllers on every main engine (the first digital rocket-engine controllers), and a **fully digital fly-by-wire** system in which every mechanical linkage had been replaced by electrical signals routed through the computers \cite{tomayko1988spaceflight}. Four of the computers ran identical software and had to agree with each other at all times.
+
+<div class="smart-quote" data-cite="tomayko1988spaceflight">
+Computer synchronization proved to be the most difficult task in producing the Shuttle's avionics.
+</div>
+
+To stop a single common software bug from taking down all four at once, a fifth **Backup Flight System** ran independently developed code \cite{tomayko1988spaceflight}. The high-level language NASA commissioned for the Shuttle, **HAL/S**, introduced real-time statements like `SCHEDULE`, `TERMINATE`, `WAIT` and `PRIORITY` with priority-based task scheduling, ideas that carried straight into **Ada**, the language later adopted for the Space Station \cite{tomayko1988spaceflight}.
+
+**The STAR computer and selective redundancy.** At JPL, Algirdas Avizienis's **STAR** (Self-Testing And Repairing) computer never flew, but it invented the fault-tolerance toolkit that still underpins reliable computing: **selective redundancy** (cold spares swapped in on failure), error-correcting codes, 3-of-5 voting, and **rollback-and-retry** on transient faults \cite{tomayko1988spaceflight}. Its descendants reappear, much later, in the redundancy and checkpointing that keep large-scale training runs alive.
+
 ## The term “Artificial Intelligence”
 
 The term “Artificial Intelligence” was coined in \citeyear{darthmouthartificialintelligence} when **John McCarthy**, along with Marvin Minsky, Nathaniel Rochester, and Claude Shannon, submitted a proposal for the \citealternativetitle{darthmouthartificialintelligence}. The workshop was founded on the conjecture that “every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it,” marking the official birth of the field.
