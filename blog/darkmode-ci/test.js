@@ -68,7 +68,7 @@ const ALL_PAGES = [
     'overandunderfittinglab', 'deeplearninglab', 'resnetlab',
     'normalizationlab', 'embeddinglab', 'positionalembeddingslab',
     'traininglab', 'finetuninglab', 'samplinglab', 'temperaturelab',
-    'tokenizerlab', 'visionlab', 'attentionlab', 'transformer',
+    'tokenizerlab', 'computer_vision', 'attentionlab', 'transformer',
     'contextwindows', 'mechanistic_interpretability', 'algorithms',
     'rag', 'vectorsearch', 'websearch', 'hallucinations',
     'promptengineering', 'evaluation', 'reasoning',

@@ -1,5 +1,5 @@
 // ============================================================
-// VISIONLAB.JS — Interactive Convolution & Feature Map Explorer
+// COMPUTER_VISION.JS — Interactive Convolution & Feature Map Explorer
 // Refactored for maximum DRY, readability, and debuggability.
 // ============================================================
 
@@ -34,20 +34,20 @@ const DOM_ID_MAP = {
 };
 
 function cacheDOMRefs() {
-	console.debug('[visionlab] Caching DOM references...');
+	console.debug('[computer_vision] Caching DOM references...');
 	for (const [key, id] of Object.entries(DOM_ID_MAP)) {
 		DOM[key] = document.getElementById(id);
 		if (!DOM[key]) {
-			console.warn(`[visionlab] DOM element not found: #${id} (key: ${key}). It may be created later.`);
+			console.warn(`[computer_vision] DOM element not found: #${id} (key: ${key}). It may be created later.`);
 		}
 	}
-	console.debug('[visionlab] DOM cache complete:', Object.keys(DOM).filter(k => DOM[k]).length, 'elements found');
+	console.debug('[computer_vision] DOM cache complete:', Object.keys(DOM).filter(k => DOM[k]).length, 'elements found');
 }
 
 // --- Utility: Debounce ---
 function debounce(fn, ms) {
-	console.assert(typeof fn === 'function', '[visionlab] debounce: fn must be a function, got:', typeof fn);
-	console.assert(typeof ms === 'number' && ms > 0, '[visionlab] debounce: ms must be a positive number, got:', ms);
+	console.assert(typeof fn === 'function', '[computer_vision] debounce: fn must be a function, got:', typeof fn);
+	console.assert(typeof ms === 'number' && ms > 0, '[computer_vision] debounce: ms must be a positive number, got:', ms);
 	let timer;
 	return (...args) => {
 		clearTimeout(timer);
@@ -58,16 +58,16 @@ function debounce(fn, ms) {
 // --- Shared Helpers ---
 function getKernelSize() {
 	if (!DOM.kSize) {
-		console.error('[visionlab] getKernelSize: DOM.kSize is null. Was cacheDOMRefs() called?');
+		console.error('[computer_vision] getKernelSize: DOM.kSize is null. Was cacheDOMRefs() called?');
 		return CONFIG.DEFAULT_KERNEL_SIZE;
 	}
 	const size = parseInt(DOM.kSize.value) || CONFIG.DEFAULT_KERNEL_SIZE;
 	if (size < CONFIG.MIN_KERNEL_SIZE || size > CONFIG.MAX_KERNEL_SIZE) {
-		console.warn(`[visionlab] getKernelSize: size ${size} is outside valid range [${CONFIG.MIN_KERNEL_SIZE}, ${CONFIG.MAX_KERNEL_SIZE}]. Clamping.`);
+		console.warn(`[computer_vision] getKernelSize: size ${size} is outside valid range [${CONFIG.MIN_KERNEL_SIZE}, ${CONFIG.MAX_KERNEL_SIZE}]. Clamping.`);
 		return Math.max(CONFIG.MIN_KERNEL_SIZE, Math.min(CONFIG.MAX_KERNEL_SIZE, size));
 	}
 	if (size % 2 === 0) {
-		console.warn(`[visionlab] getKernelSize: even kernel size ${size} may cause alignment issues.`);
+		console.warn(`[computer_vision] getKernelSize: even kernel size ${size} may cause alignment issues.`);
 	}
 	return size;
 }
@@ -75,7 +75,7 @@ function getKernelSize() {
 function getInputValues(selector) {
 	const inputs = document.querySelectorAll(selector);
 	if (inputs.length === 0) {
-		console.warn(`[visionlab] getInputValues: no inputs found for selector "${selector}"`);
+		console.warn(`[computer_vision] getInputValues: no inputs found for selector "${selector}"`);
 	}
 	return Array.from(inputs).map(i => parseFloat(i.value) || 0);
 }
@@ -90,40 +90,40 @@ function clamp(v) {
 
 // --- Generic Canvas Helpers ---
 function getCanvasCtx(canvas, label) {
-	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] getCanvasCtx(${label || '?'}): expected HTMLCanvasElement, got:`, canvas);
+	console.assert(canvas instanceof HTMLCanvasElement, `[computer_vision] getCanvasCtx(${label || '?'}): expected HTMLCanvasElement, got:`, canvas);
 	return canvas.getContext('2d', { willReadFrequently: true });
 }
 
 function drawImageToCanvas(canvas, image, width, height, label) {
-	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] drawImageToCanvas(${label || '?'}): canvas is not an HTMLCanvasElement`);
-	console.assert(width > 0 && height > 0, `[visionlab] drawImageToCanvas(${label || '?'}): invalid dimensions ${width}x${height}`);
+	console.assert(canvas instanceof HTMLCanvasElement, `[computer_vision] drawImageToCanvas(${label || '?'}): canvas is not an HTMLCanvasElement`);
+	console.assert(width > 0 && height > 0, `[computer_vision] drawImageToCanvas(${label || '?'}): invalid dimensions ${width}x${height}`);
 	getCanvasCtx(canvas, label).drawImage(image, 0, 0, width, height);
-	console.debug(`[visionlab] drawImageToCanvas(${label || '?'}): drew ${width}x${height}`);
+	console.debug(`[computer_vision] drawImageToCanvas(${label || '?'}): drew ${width}x${height}`);
 }
 
 function loadImageOntoCanvas(canvas, imageSource, width, height, callback, label) {
-	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] loadImageOntoCanvas(${label || '?'}): canvas is not an HTMLCanvasElement`);
+	console.assert(canvas instanceof HTMLCanvasElement, `[computer_vision] loadImageOntoCanvas(${label || '?'}): canvas is not an HTMLCanvasElement`);
 	const doSetup = () => {
 		drawImageToCanvas(canvas, imageSource, width, height, label);
-		console.debug(`[visionlab] loadImageOntoCanvas(${label || '?'}): image loaded and drawn`);
+		console.debug(`[computer_vision] loadImageOntoCanvas(${label || '?'}): image loaded and drawn`);
 		if (callback) callback();
 	};
 	if (imageSource.complete && imageSource.naturalWidth > 0) {
 		doSetup();
 	} else {
-		console.debug(`[visionlab] loadImageOntoCanvas(${label || '?'}): waiting for image to load...`);
+		console.debug(`[computer_vision] loadImageOntoCanvas(${label || '?'}): waiting for image to load...`);
 		imageSource.onload = doSetup;
 		imageSource.onerror = () => {
-			console.error(`[visionlab] loadImageOntoCanvas(${label || '?'}): image failed to load. src="${imageSource.src}"`);
+			console.error(`[computer_vision] loadImageOntoCanvas(${label || '?'}): image failed to load. src="${imageSource.src}"`);
 		};
 	}
 }
 
 function getPixelAt(canvas, x, y, label) {
-	console.assert(canvas instanceof HTMLCanvasElement, `[visionlab] getPixelAt(${label || '?'}): expected HTMLCanvasElement`);
+	console.assert(canvas instanceof HTMLCanvasElement, `[computer_vision] getPixelAt(${label || '?'}): expected HTMLCanvasElement`);
 	console.assert(
 		x >= 0 && x < canvas.width && y >= 0 && y < canvas.height,
-		`[visionlab] getPixelAt(${label || '?'}): coords (${x},${y}) out of bounds for ${canvas.width}x${canvas.height}`
+		`[computer_vision] getPixelAt(${label || '?'}): coords (${x},${y}) out of bounds for ${canvas.width}x${canvas.height}`
 	);
 	return getCanvasCtx(canvas, label).getImageData(x, y, 1, 1).data;
 }
@@ -131,7 +131,7 @@ function getPixelAt(canvas, x, y, label) {
 // --- Generic Overlay Positioning ---
 function positionOverlay(el, { display = 'block', left, top, width, height } = {}) {
 	if (!el) {
-		console.warn('[visionlab] positionOverlay: element is null/undefined, skipping.');
+		console.warn('[computer_vision] positionOverlay: element is null/undefined, skipping.');
 		return;
 	}
 	el.style.display = display;
@@ -149,10 +149,10 @@ function hideOverlays(...elements) {
 
 // --- Mouse Coordinate Helper ---
 function canvasMouseCoords(e, canvas, logicalSize) {
-	console.assert(canvas instanceof HTMLCanvasElement, '[visionlab] canvasMouseCoords: expected HTMLCanvasElement');
+	console.assert(canvas instanceof HTMLCanvasElement, '[computer_vision] canvasMouseCoords: expected HTMLCanvasElement');
 	const rect = canvas.getBoundingClientRect();
 	const scale = rect.width / logicalSize;
-	console.assert(scale > 0, `[visionlab] canvasMouseCoords: invalid scale ${scale} (rect.width=${rect.width}, logicalSize=${logicalSize})`);
+	console.assert(scale > 0, `[computer_vision] canvasMouseCoords: invalid scale ${scale} (rect.width=${rect.width}, logicalSize=${logicalSize})`);
 	return {
 		x: Math.floor((e.clientX - rect.left) / scale),
 		y: Math.floor((e.clientY - rect.top) / scale),
@@ -164,7 +164,7 @@ function canvasMouseCoords(e, canvas, logicalSize) {
 function assertTensorRank(tensor, expectedRank, label) {
 	console.assert(
 		tensor.rank === expectedRank,
-		`[visionlab] ${label}: expected rank ${expectedRank}, got rank ${tensor.rank} with shape [${tensor.shape}]`
+		`[computer_vision] ${label}: expected rank ${expectedRank}, got rank ${tensor.rank} with shape [${tensor.shape}]`
 	);
 }
 
@@ -173,7 +173,7 @@ function assertTensorShape(tensor, expectedShape, label) {
 		tensor.shape.every((dim, i) => expectedShape[i] === null || dim === expectedShape[i]);
 	console.assert(
 		match,
-		`[visionlab] ${label}: expected shape [${expectedShape.map(d => d === null ? '?' : d)}], got [${tensor.shape}]`
+		`[computer_vision] ${label}: expected shape [${expectedShape.map(d => d === null ? '?' : d)}], got [${tensor.shape}]`
 	);
 }
 
@@ -184,11 +184,11 @@ function applyConv2D(inputTensor4D, kernelData, kernelSize, flipKernel = false) 
 	const inChannels = inputTensor4D.shape[3];
 	console.assert(
 		inChannels === 1,
-		`[visionlab] applyConv2D: input depth must be 1 for single-channel conv, got ${inChannels}. Shape: [${inputTensor4D.shape}]`
+		`[computer_vision] applyConv2D: input depth must be 1 for single-channel conv, got ${inChannels}. Shape: [${inputTensor4D.shape}]`
 	);
 	console.assert(
 		kernelData.length === kernelSize * kernelSize,
-		`[visionlab] applyConv2D: kernelData length ${kernelData.length} does not match kernelSize ${kernelSize}x${kernelSize}=${kernelSize * kernelSize}`
+		`[computer_vision] applyConv2D: kernelData length ${kernelData.length} does not match kernelSize ${kernelSize}x${kernelSize}=${kernelSize * kernelSize}`
 	);
 
 	let ker = tensor2d(kernelData, [kernelSize, kernelSize]);
@@ -200,18 +200,18 @@ function applyConv2D(inputTensor4D, kernelData, kernelSize, flipKernel = false) 
 	assertTensorShape(ker, [kernelSize, kernelSize, 1, 1], 'applyConv2D/kernel');
 
 	const result = tf.conv2d(inputTensor4D, ker, 1, 'same').squeeze();
-	console.debug(`[visionlab] applyConv2D: input [${inputTensor4D.shape}] * kernel [${ker.shape}] => output [${result.shape}]`);
+	console.debug(`[computer_vision] applyConv2D: input [${inputTensor4D.shape}] * kernel [${ker.shape}] => output [${result.shape}]`);
 	return result;
 }
 
 function applyMultiChannelConv(sourceCanvas, kernelData, kernelSize) {
-	console.assert(sourceCanvas instanceof HTMLCanvasElement, '[visionlab] applyMultiChannelConv: sourceCanvas is not an HTMLCanvasElement');
+	console.assert(sourceCanvas instanceof HTMLCanvasElement, '[computer_vision] applyMultiChannelConv: sourceCanvas is not an HTMLCanvasElement');
 	const t = tf.browser.fromPixels(sourceCanvas).toFloat();
 	assertTensorRank(t, 3, 'applyMultiChannelConv/fromPixels');
-	console.debug(`[visionlab] applyMultiChannelConv: source tensor shape [${t.shape}]`);
+	console.debug(`[computer_vision] applyMultiChannelConv: source tensor shape [${t.shape}]`);
 
 	const channels = tf.split(t, 3, 2);
-	console.assert(channels.length === 3, `[visionlab] applyMultiChannelConv: expected 3 channels, got ${channels.length}`);
+	console.assert(channels.length === 3, `[computer_vision] applyMultiChannelConv: expected 3 channels, got ${channels.length}`);
 
 	const processed = channels.map((ch, i) => {
 		// ch shape: [H, W, 1] — need [1, H, W, 1]
@@ -228,7 +228,7 @@ function applyGrayscaleConv(input4D, kernelData) {
 	assertTensorShape(input4D, [1, null, null, 1], 'applyGrayscaleConv/input');
 	console.assert(
 		kernelData.length === 9,
-		`[visionlab] applyGrayscaleConv: expected 9 kernel values (3x3), got ${kernelData.length}`
+		`[computer_vision] applyGrayscaleConv: expected 9 kernel values (3x3), got ${kernelData.length}`
 	);
 	return applyConv2D(input4D, kernelData, 3, false).abs();
 }
@@ -238,7 +238,7 @@ function normalizeTensor(tensor, label) {
 	const maxVal = tensor.max();
 	const maxScalar = maxVal.dataSync()[0];
 	if (maxScalar < CONFIG.EPSILON) {
-		console.warn(`[visionlab] normalizeTensor(${label || '?'}): max value is near zero (${maxScalar}). Output will be all black.`);
+		console.warn(`[computer_vision] normalizeTensor(${label || '?'}): max value is near zero (${maxScalar}). Output will be all black.`);
 	}
 	return tensor.div(maxVal.add(CONFIG.EPSILON));
 }
@@ -247,7 +247,7 @@ function normalizeTensor(tensor, label) {
 function kernelValueToColor(norm) {
 	console.assert(
 		norm >= -1 && norm <= 1,
-		`[visionlab] kernelValueToColor: norm ${norm} is outside [-1, 1]`
+		`[computer_vision] kernelValueToColor: norm ${norm} is outside [-1, 1]`
 	);
 	if (norm >= 0) {
 		const inv = Math.round(255 * (1 - norm));
@@ -260,12 +260,12 @@ function kernelValueToColor(norm) {
 
 function updateKernelViz(kValues, size) {
 	if (!DOM.kernelViz) {
-		console.warn('[visionlab] updateKernelViz: DOM.kernelViz is null, skipping.');
+		console.warn('[computer_vision] updateKernelViz: DOM.kernelViz is null, skipping.');
 		return;
 	}
 	console.assert(
 		kValues.length === size * size,
-		`[visionlab] updateKernelViz: kValues length ${kValues.length} != size*size ${size * size}`
+		`[computer_vision] updateKernelViz: kValues length ${kValues.length} != size*size ${size * size}`
 	);
 
 	DOM.kernelViz.width = size;
@@ -283,11 +283,11 @@ function updateKernelViz(kValues, size) {
 // --- Convolution Runner ---
 async function runConv() {
 	if (!DOM.srcCanvas || DOM.srcCanvas.width === 0) {
-		console.warn('[visionlab] runConv: srcCanvas not ready, skipping.');
+		console.warn('[computer_vision] runConv: srcCanvas not ready, skipping.');
 		return;
 	}
 	if (!DOM.resCanvas) {
-		console.error('[visionlab] runConv: resCanvas is null. Cannot render output.');
+		console.error('[computer_vision] runConv: resCanvas is null. Cannot render output.');
 		return;
 	}
 
@@ -295,7 +295,7 @@ async function runConv() {
 	const kValues = getKernelValues();
 
 	if (kValues.length !== size * size) {
-		console.error(`[visionlab] runConv: kernel values count ${kValues.length} does not match expected ${size}x${size}=${size * size}. Aborting.`);
+		console.error(`[computer_vision] runConv: kernel values count ${kValues.length} does not match expected ${size}x${size}=${size * size}. Aborting.`);
 		return;
 	}
 
@@ -305,18 +305,18 @@ async function runConv() {
 			tf.browser.toPixels(combined, DOM.resCanvas);
 		});
 		updateKernelViz(kValues, size);
-		console.debug(`[visionlab] runConv: completed successfully with ${size}x${size} kernel`);
+		console.debug(`[computer_vision] runConv: completed successfully with ${size}x${size} kernel`);
 	} catch (err) {
-		console.error('[visionlab] runConv: TF.js error:', err.message, err.stack);
+		console.error('[computer_vision] runConv: TF.js error:', err.message, err.stack);
 	}
 }
 
 // --- Kernel Preset Setter ---
 function setKernel(matrix) {
-	console.assert(Array.isArray(matrix) && matrix.length > 0, '[visionlab] setKernel: matrix must be a non-empty array');
+	console.assert(Array.isArray(matrix) && matrix.length > 0, '[computer_vision] setKernel: matrix must be a non-empty array');
 	console.assert(
 		matrix.every(row => Array.isArray(row) && row.length === matrix.length),
-		'[visionlab] setKernel: matrix must be square'
+		'[computer_vision] setKernel: matrix must be square'
 	);
 
 	DOM.kSize.value = matrix.length;
@@ -325,7 +325,7 @@ function setKernel(matrix) {
 
 	const flat = matrix.flat();
 	if (inps.length !== flat.length) {
-		console.error(`[visionlab] setKernel: input count ${inps.length} does not match matrix size ${flat.length}`);
+		console.error(`[computer_vision] setKernel: input count ${inps.length} does not match matrix size ${flat.length}`);
 		return;
 	}
 
@@ -333,7 +333,7 @@ function setKernel(matrix) {
 		inps[i].value = parseFloat(val.toFixed(4));
 	});
 	runConv();
-	console.info(`[visionlab] setKernel: applied ${matrix.length}x${matrix.length} kernel preset`);
+	console.info(`[computer_vision] setKernel: applied ${matrix.length}x${matrix.length} kernel preset`);
 }
 
 // --- Convolution Math Display ---
@@ -351,11 +351,11 @@ function extractPatchData(ctx, x, y, size) {
 
 	console.assert(
 		imgData.length === size * size * 4,
-		`[visionlab] extractPatchData: expected ${size * size * 4} bytes, got ${imgData.length}`
+		`[computer_vision] extractPatchData: expected ${size * size * 4} bytes, got ${imgData.length}`
 	);
 	console.assert(
 		kValues.length === size * size,
-		`[visionlab] extractPatchData: kernel values count ${kValues.length} != ${size * size}`
+		`[computer_vision] extractPatchData: kernel values count ${kValues.length} != ${size * size}`
 	);
 
 	const pixels = [];
@@ -396,7 +396,7 @@ function buildConvLatex(x, y, pixels, sums) {
 
 function _updateConvMathInner(x, y, size) {
 	if (!DOM.srcCanvas || !DOM.mathStep) {
-		console.warn('[visionlab] _updateConvMathInner: required DOM elements missing.');
+		console.warn('[computer_vision] _updateConvMathInner: required DOM elements missing.');
 		return;
 	}
 	const ctx = getCanvasCtx(DOM.srcCanvas, 'mathInner');
@@ -408,7 +408,7 @@ function _updateConvMathInner(x, y, size) {
 // --- Pixel Info Tooltip ---
 function showPixelInfo(x, y, srcCanvas) {
 	if (!DOM.pixelInfo) {
-		console.warn('[visionlab] showPixelInfo: DOM.pixelInfo is null, skipping.');
+		console.warn('[computer_vision] showPixelInfo: DOM.pixelInfo is null, skipping.');
 		return;
 	}
 	const px = getPixelAt(srcCanvas, x, y, 'pixelInfo');
@@ -424,10 +424,10 @@ function showPixelInfo(x, y, srcCanvas) {
 // --- Kernel Table Builder ---
 function buildKernelTable(size) {
 	if (!DOM.kernelTable) {
-		console.error('[visionlab] buildKernelTable: DOM.kernelTable is null.');
+		console.error('[computer_vision] buildKernelTable: DOM.kernelTable is null.');
 		return;
 	}
-	console.debug(`[visionlab] buildKernelTable: building ${size}x${size} table`);
+	console.debug(`[computer_vision] buildKernelTable: building ${size}x${size} table`);
 	DOM.kernelTable.innerHTML = "";
 	const center = Math.floor(size / 2);
 
@@ -451,15 +451,15 @@ function buildKernelTable(size) {
 
 // --- Main Init ---
 function initVisionLab() {
-	console.info('[visionlab] initVisionLab: initializing...');
+	console.info('[computer_vision] initVisionLab: initializing...');
 	cacheDOMRefs();
 
 	if (!DOM.srcCanvas) {
-		console.error('[visionlab] initVisionLab: srcCanvas (#conv-src-display) not found. Aborting.');
+		console.error('[computer_vision] initVisionLab: srcCanvas (#conv-src-display) not found. Aborting.');
 		return;
 	}
 	if (!DOM.srcHidden) {
-		console.error('[visionlab] initVisionLab: srcHidden (#conv-src-hidden) not found. Aborting.');
+		console.error('[computer_vision] initVisionLab: srcHidden (#conv-src-hidden) not found. Aborting.');
 		return;
 	}
 
@@ -494,7 +494,7 @@ function initVisionLab() {
 		hideOverlays(DOM.focus, DOM.cross, DOM.pixelInfo);
 	};
 
-	console.info('[visionlab] initVisionLab: complete.');
+	console.info('[computer_vision] initVisionLab: complete.');
 }
 
 // ============================================================
@@ -749,23 +749,23 @@ function _visLazyCreateObserver() {
 }
 
 // ============================================================
-// REPLACEMENT: loadVisionModule (drop-in replacement)
+// REPLACEMENT: loadComputerVisionModule (drop-in replacement)
 // ============================================================
 
-async function loadVisionModule() {
-    console.info('[visionlab] loadVisionModule: registering lazy sections...');
-    updateLoadingStatus("Loading section about Computer Vision...");
+async function loadComputerVisionModule() {
+    console.info('[computer_vision] loadComputerVisionModule: registering lazy sections...');
+    updateLoadingStatus("Loading section about What Machines See...");
 
     // 1. Convolution Explorer (kernel table + source/result canvases)
     _visLazyRegister('conv-src-display', () => {
-        console.info('[visionlab] lazy: initializing convolution explorer');
+        console.info('[computer_vision] lazy: initializing convolution explorer');
         cacheDOMRefs();
         initVisionLab();
     });
 
     // 2. Feature Lab (filter grid + heatmap)
     _visLazyRegister('filter-grid', () => {
-        console.info('[visionlab] lazy: initializing FeatureLab');
+        console.info('[computer_vision] lazy: initializing FeatureLab');
         cacheDOMRefs();
         FeatureLab.init();
     });
@@ -781,7 +781,7 @@ async function loadVisionModule() {
         });
     }
 
-    console.info('[visionlab] loadVisionModule: lazy registration complete.');
+    console.info('[computer_vision] loadComputerVisionModule: lazy registration complete.');
     return Promise.resolve();
 }
 

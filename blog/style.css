@@ -1162,7 +1162,7 @@ html.dark select option {
    - history.php   : OR / XOR Gate Plotly plots
    - statistics.php: "Why This Matters for AI" callouts, cream
                      math display, Dirichlet triangle
-   - visionlab.php : mouse-over math hint, feature-map help panel
+    - computer_vision.php : mouse-over math hint, feature-map help panel
    - 17 lab pages  : hard-coded `style="background:#fff"` /
                      `style="background:#f8fafc"` containers
                      around Plotly plots and tables
@@ -1358,7 +1358,7 @@ html.dark #plot-xor-gate {
 	border-color: var(--mn-border) !important;
 }
 
-/* 8. The visionlab convolution math-step box and feature-map
+/* 8. The computer_vision convolution math-step box and feature-map
       help panel — both use the `#f8fafc → #f1f5f9` linear
       gradient.  The existing rule catches that gradient, but
       the explicit child text colour `#475569` is too dark on
@@ -1372,7 +1372,7 @@ html.dark #conv-math-step [style*="color: #94a3b8"] {
 	color: var(--mn-text-muted) !important;
 }
 
-/* 9. visionlab.php source / feature-map panel — uses
+/* 9. computer_vision.php source / feature-map panel — uses
       `background: var(--mn-surface, white)` which IS picked up
       by the CSS variable, but child <p> inherits a dark text
       colour in light mode that becomes unreadable on dark.
