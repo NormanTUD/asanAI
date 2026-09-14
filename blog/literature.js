@@ -202,6 +202,76 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2207.02862",
 		alternativetitle: "Brown et al., the union of manifolds hypothesis (ICLR 2023)"
 	},
+	"typical_set_wiki": {
+		title: "Typical set",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Typical_set",
+		alternativetitle: "Typical set (Wikipedia)"
+	},
+	"aep_wiki": {
+		title: "Asymptotic equipartition property",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Asymptotic_equipartition_property",
+		alternativetitle: "Asymptotic equipartition property (Wikipedia)"
+	},
+	"support_measure_wiki": {
+		title: "Support (measure theory)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Support_(measure_theory)",
+		alternativetitle: "Support of a measure (Wikipedia)"
+	},
+	"mode_wiki": {
+		title: "Mode (statistics)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Mode_(statistics)",
+		alternativetitle: "Mode (Wikipedia)"
+	},
+	"ground_state_wiki": {
+		title: "Ground state",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Ground_state",
+		alternativetitle: "Ground state (Wikipedia)"
+	},
+	"large_deviations_wiki": {
+		title: "Large deviations theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Large_deviations_theory",
+		alternativetitle: "Large deviations theory (Wikipedia)"
+	},
+	"sanov_theorem_wiki": {
+		title: "Sanov's theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Sanov%27s_theorem",
+		alternativetitle: "Sanov's theorem (Wikipedia)"
+	},
+	"cross_entropy_wiki": {
+		title: "Cross entropy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cross_entropy",
+		alternativetitle: "Cross entropy (Wikipedia)"
+	},
+	"kl_divergence_wiki": {
+		title: "Kullback–Leibler divergence",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence",
+		alternativetitle: "Kullback–Leibler divergence (Wikipedia)"
+	},
+	"covariate_shift_wiki": {
+		title: "Covariate shift",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Covariate_shift",
+		alternativetitle: "Covariate shift (Wikipedia)"
+	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Computers in Spaceflight: The NASA Experience  (history.php,
 	 *  untold_history.php)
