@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Kohärente Differenz — Eine interaktive Reise</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #131a2b;
+    --panel: #1a2337;
+    --accent: #7dd3fc;
+    --accent2: #f0abfc;
+    --accent3: #86efac;
+    --warn: #fbbf24;
+    --text: #e2e8f0;
+    --dim: #94a3b8;
+    --edge: #2d3a56;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: radial-gradient(ellipse at top, #1a1f3a 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+  }
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero canvas { position: absolute; inset: 0; z-index: 0; }
+  .hero-content { position: relative; z-index: 1; max-width: 900px; }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0 0 1rem;
+    letter-spacing: -0.02em;
+  }
+  .hero .sub { font-size: 1.3rem; color: var(--dim); margin-bottom: 2rem; }
+  .hero .quote {
+    font-size: 1.5rem; font-style: italic;
+    max-width: 700px; margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    border-left: 3px solid var(--accent);
+    background: rgba(125,211,252,0.05);
+    border-radius: 6px;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    color: var(--dim); animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(10px);} }
+
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    border-top: 1px solid var(--edge);
+  }
+  section h2 {
+    font-size: 2.2rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+  section .lead {
+    font-size: 1.1rem; color: var(--dim);
+    margin-bottom: 2rem;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5);
+  }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;
+    padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; margin-bottom: 1rem;
+  }
+  .controls label { display: flex; flex-direction: column; font-size: 0.85rem; color: var(--dim); gap: 4px; }
+  .controls input[type=range] { width: 180px; accent-color: var(--accent); }
+  .controls button {
+    background: var(--accent); color: var(--bg); border: none;
+    padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;
+    transition: transform 0.15s;
+  }
+  .controls button:hover { transform: translateY(-2px); }
+  .controls button.alt { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .val { color: var(--accent); font-family: monospace; font-weight: bold; }
+
+  canvas.demo { display: block; width: 100%; background: #0d1424; border-radius: 8px; }
+
+  .chain {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem; margin: 2rem 0;
+  }
+  .chain-node {
+    background: var(--panel);
+    border: 2px solid var(--edge);
+    border-radius: 10px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .chain-node:hover, .chain-node.active {
+    border-color: var(--accent);
+    background: rgba(125,211,252,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -5px rgba(125,211,252,0.3);
+  }
+  .chain-node .num { color: var(--accent); font-size: 0.75rem; }
+  .chain-node .name { display: block; margin-top: 4px; }
+
+  .info-box {
+    background: rgba(125,211,252,0.05);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.95rem;
+  }
+  .info-box.warn { border-left-color: var(--warn); background: rgba(251,191,36,0.05); }
+  .info-box.success { border-left-color: var(--accent3); background: rgba(134,239,172,0.05); }
+
+  math, .katex, .temml { color: var(--text); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 768px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .toc {
+    position: fixed; top: 1rem; right: 1rem; z-index: 100;
+    background: var(--panel); border: 1px solid var(--edge);
+    border-radius: 10px; padding: 0.75rem;
+    max-width: 220px; font-size: 0.85rem;
+    max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .toc a { color: var(--dim); text-decoration: none; display: block; padding: 3px 0; }
+  .toc a:hover, .toc a.active { color: var(--accent); }
+  .toc-toggle {
+    display: none; position: fixed; top: 1rem; right: 1rem; z-index: 101;
+    background: var(--accent); color: var(--bg); border: none;
+    padding: 8px 12px; border-radius: 6px; cursor: pointer;
+  }
+  @media (max-width: 900px) { .toc { display: none; } .toc.open { display: block; top: 3.5rem; } .toc-toggle { display: block; } }
+
+  .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.8s; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  .story {
+    font-size: 1.05rem;
+    max-width: 800px;
+  }
+  .story p { margin: 1rem 0; }
+
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    background: rgba(125,211,252,0.15); color: var(--accent);
+    font-size: 0.75rem; font-weight: 600; margin-right: 6px;
+  }
+
+  .synth {
+    background: linear-gradient(135deg, rgba(125,211,252,0.1), rgba(240,171,252,0.1));
+    border: 1px solid var(--accent);
+    padding: 2rem;
+    border-radius: 14px;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  .synth .big {
+    font-size: 1.4rem; font-weight: 600;
+    color: var(--accent2); margin: 1rem 0;
+  }
+</style>
+</head>
+<body>
+
+<button class="toc-toggle" onclick="document.querySelector('.toc').classList.toggle('open')">☰ Kapitel</button>
+<nav class="toc" id="toc">
+  <strong style="color:var(--accent);">Reise</strong>
+  <a href="#hero">▸ Die eine Idee</a>
+  <a href="#chain">▸ Die Kette</a>
+  <a href="#distinction">1. Unterscheidung</a>
+  <a href="#relations">2. Relationen</a>
+  <a href="#topology">3. Topologie (Nähe)</a>
+  <a href="#category">4. Kategorien</a>
+  <a href="#sheaf">5. Garben (Sheaves)</a>
+  <a href="#lightning">6. Blitz &amp; Donner</a>
+  <a href="#circle">7. Der Kreis</a>
+  <a href="#topos">8. Topoi</a>
+  <a href="#embedding">9. Embeddings</a>
+  <a href="#floats">10. Floats</a>
+  <a href="#answer">✦ Die Antwort</a>
+</nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero" id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-content">
+    <h1>Kohärente Differenz</h1>
+    <div class="sub">Wie Bedeutung aus lokalen Unterschieden entsteht — die strukturelle Idee hinter Räumen, Embeddings und moderner KI</div>
+    <div class="quote">
+      „Differenz muss nicht ausgelöscht werden, damit Einheit entsteht."
+    </div>
+    <div style="color:var(--dim); font-size:0.95rem;">
+      Diese interaktive Reise führt dich durch alle Konzepte des Papers — spiele, statt zu lesen.
+    </div>
+  </div>
+  <div class="scroll-hint">↓ scrollen</div>
+</div>
+
+<!-- ═══════════════════ MOTIVATION ═══════════════════ -->
+<section id="motivation">
+  <h2>Die Frage</h2>
+  <div class="story">
+    <p>Ein Transformer nimmt eine Liste von Zahlen (Token-IDs) und produziert Sätze, die <em>Sinn ergeben</em>. Was ist das für ein Ding — ein „Embedding-Raum" — in dem Bedeutung als Geometrie lebt?</p>
+    <p>Um zu verstehen, was das ist, brauchst du eine bestimmte Sichtweise: die, dass ein <b>Ganzes</b> nicht aus <em>identischen</em> Teilen entsteht, sondern aus <b>verschiedenen Teilen, die auf ihren Überlappungen zusammenpassen</b>.</p>
+    <p>Das ist die Idee dieses Papers. Und sie ist erstaunlich alt — Heraklit, Spinoza, Anaxagoras haben sie in ihrer Sprache formuliert. Modern hat sie einen Namen: <b>Garbentheorie</b> (Sheaves). Wir bauen sie Schritt für Schritt auf.</p>
+  </div>
+
+  <div class="synth">
+    <div>Die zentrale Gleichung dieses Papers:</div>
+    <div class="big" id="masterEq"></div>
+    <div style="color:var(--dim); font-size:0.95rem;">Klick jeden Baustein unten an, um ihn interaktiv zu erkunden.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════ THE CHAIN ═══════════════════ -->
+<section id="chain">
+  <h2>Die Kette</h2>
+  <div class="lead">Neun Schritte — eine einzige Bewegung, immer feiner strukturiert. Klick jeden an, um zu ihm zu springen.</div>
+  <div class="chain">
+    <div class="chain-node" data-target="distinction"><span class="num">01</span><span class="name">Unterscheidung</span></div>
+    <div class="chain-node" data-target="relations"><span class="num">02</span><span class="name">Relation</span></div>
+    <div class="chain-node" data-target="category"><span class="num">03</span><span class="name">Transformation</span></div>
+    <div class="chain-node" data-target="topology"><span class="num">04</span><span class="name">Lokalität</span></div>
+    <div class="chain-node" data-target="sheaf"><span class="num">05</span><span class="name">Kompatibilität</span></div>
+    <div class="chain-node" data-target="lightning"><span class="num">06</span><span class="name">Kohärenz</span></div>
+    <div class="chain-node" data-target="sheaf"><span class="num">07</span><span class="name">Verklebung</span></div>
+    <div class="chain-node" data-target="embedding"><span class="num">08</span><span class="name">Globalität</span></div>
+    <div class="chain-node" data-target="embedding"><span class="num">09</span><span class="name">Invarianz</span></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 1. DISTINCTION ═══════════════════ -->
+<section id="distinction">
+  <h2>1 · Unterscheidung <span class="tag">Spencer-Brown</span></h2>
+  <div class="lead">
+    Bevor irgendetwas in Beziehung stehen kann, muss <em>etwas</em> von <em>etwas anderem</em> abgegrenzt werden.
+    <em>„Ziehe eine Unterscheidung"</em> — das ist der erste Satz aller Mathematik.
+  </div>
+
+  <div class="panel">
+    <div class="controls">
+      <button onclick="drawCircle()">↺ Unmarkiert</button>
+      <button onclick="drawMark()">✎ Ziehe Unterscheidung</button>
+      <button onclick="drawDoubleMark()">✎✎ Zweimal (¬¬x = x)</button>
+    </div>
+    <canvas id="distCanvas" class="demo" height="320"></canvas>
+    <div id="distText" class="info-box">Klicke einen Button. Vor der Unterscheidung: nichts. Nach der Unterscheidung: zwei Welten.</div>
+  </div>
+
+  <div class="story">
+    <p>Aus dieser einen Bewegung folgt der gesamte Boolean-Kalkül. Der Punkt ist nicht die Algebra — der Punkt ist, dass <em>Unterscheidung</em> selbst am Fundament der Mathematik steht.</p>
+    <p>Laozi (400 v.Chr.): <em>„Alle Welt nennt schön, was schön ist — und so erscheint das Hässliche."</em> Das Schöne steht nicht zuerst da; der Akt des Nennens ist derselbe Akt, durch den beide erscheinen.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 2. RELATIONS ═══════════════════ -->
+<section id="relations">
+  <h2>2 · Relationen &amp; Äquivalenzklassen</h2>
+  <div class="lead">Eine Relation ist eine Regel, die sagt: „x steht zu y in dieser Beziehung." Eine <b>Äquivalenzrelation</b> sortiert deine Welt in Schubladen.</div>
+
+  <div class="panel">
+    <div class="controls">
+      <label>Anzahl Punkte <input type="range" id="relN" min="6" max="40" value="20"><span class="val" id="relNv">20</span></label>
+      <label>Ähnlichkeitsradius ε <input type="range" id="relEps" min="20" max="200" value="70"><span class="val" id="relEpsv">70</span></label>
+      <label>
+        Modus
+        <select id="relMode" style="padding:4px;background:var(--bg2);color:var(--text);border:1px solid var(--edge);border-radius:4px;">
+          <option value="raw">Rohe Ähnlichkeit (nicht transitiv)</option>
+          <option value="closure">Transitiver Abschluss = Äquivalenz</option>
+        </select>
+      </label>
+      <button onclick="regenRel()">↺ Neu würfeln</button>
+    </div>
+    <canvas id="relCanvas" class="demo" height="380"></canvas>
+    <div class="info-box" id="relInfo">
+      Roher Modus: Kanten verbinden nahe Punkte, aber „A~B" und „B~C" heißt nicht „A~C". Das ist noch keine Äquivalenz.
+    </div>
+  </div>
+
+  <div class="story">
+    <p>Eine Äquivalenzrelation braucht drei Eigenschaften:</p>
+    <ul>
+      <li><b>Reflexiv:</b> jedes Ding ist mit sich selbst verwandt</li>
+      <li><b>Symmetrisch:</b> wenn A~B, dann B~A</li>
+      <li><b>Transitiv:</b> wenn A~B und B~C, dann A~C — das ist die harte</li>
+    </ul>
+    <p>Sobald alle drei gelten, zerfällt deine Menge automatisch in <b>disjunkte Boxen</b> (Partition). Genau diese Boxen sind es, was Mathematiker als „gleich" behandeln — für ihre Zwecke.</p>
+    <p><b>Merksatz:</b> Zu entscheiden, was „gleich" heißt, heißt zu entscheiden, welche Boxen existieren.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 3. TOPOLOGY ═══════════════════ -->
+<section id="topology">
+  <h2>3 · Topologie — „Nähe" ohne Zahlen</h2>
+  <div class="lead">Ein Raum ist nicht eine Menge von Punkten mit Abständen. Ein Raum ist eine Menge mit einer Vorstellung davon, <em>welche Teilmengen einen Punkt „umgeben"</em>. Das ist alles.</div>
+
+  <div class="panel">
+    <div class="controls">
+      <label>Punkt x-Position <input type="range" id="topX" min="50" max="550" value="300"></label>
+      <label>Offene-Menge-Radius <input type="range" id="topR" min="20" max="200" value="80"></label>
+      <button onclick="topAddSet()">+ Weitere offene Menge</button>
+      <button onclick="topReset()">↺ Reset</button>
+    </div>
+    <canvas id="topCanvas" class="demo" height="380"></canvas>
+    <div class="info-box">
+      <b>Offene Menge = Umgebung</b> = eine Teilmenge, die einen Punkt „mit etwas Platz drumherum" enthält. Wir messen nicht — wir fragen nur: <em>gibt es Platz?</em>
+      Die Sammlung aller offenen Mengen heißt <b>Topologie</b>.
+    </div>
+  </div>
+
+  <div class="story">
+    <p>Warum das die richtige Bühne ist: Wörter sind <em>nah</em> beieinander, nicht weil die Zahl 3.7 klein ist, sondern weil sie in <em>überlappenden Kontexten</em> vorkommen. Genau diese Idee — Nähe ohne Metrik — brauchen wir für Sprache.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 4. CATEGORIES ═══════════════════ -->
+<section id="category">
+  <h2>4 · Kategorien — die Algebra des Machens</h2>
+  <div class="lead">Objekte + Pfeile + Komposition. Das ist die minimale Struktur, um „Transformation" ernst zu nehmen.</div>
+
+  <div class="panel">
+    <canvas id="catCanvas" class="demo" height="380"></canvas>
+    <div class="controls">
+      <button onclick="catAnimate('f')">Anwenden: f</button>
+      <button onclick="catAnimate('g')">Anwenden: g</button>
+      <button onclick="catAnimate('gof')">Komposition: g ∘ f</button>
+      <button class="alt" onclick="catReset()">↺</button>
+    </div>
+    <div class="info-box" id="catInfo">
+      Eine Kategorie besagt: Wenn du f: A→B und g: B→C hast, dann existiert auch g∘f: A→C. „Doing things to things" — komponierbar, assoziativ, mit Identität.
+    </div>
+  </div>
+
+  <div class="story">
+    <p>Für einen Programmierer: Types + Funktionen + Komposition = Kategorie. Wenn du Haskell magst, benutzt du Kategorientheorie längst.</p>
+    <p>Wichtig für später: In einer Kategorie <em>schaust du nie ins Innere</em> der Objekte. Du fragst nur, welche Pfeile zwischen ihnen laufen. Bedeutung = Beziehung, nicht Inhalt.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 5. SHEAVES ═══════════════════ -->
+<section id="sheaf">
+  <h2>5 · Garben (Sheaves) — Das Herzstück</h2>
+  <div class="lead">
+    Hier passiert alles. Eine Garbe ist eine Regel: „<em>Lokale Daten, die auf Überlappungen zusammenpassen, verkleben sich zu globalen Daten.</em>"
+  </div>
+
+  <div class="story">
+    <p>Stell dir vor, du fotografierst ein Tal von einem Hügel aus. Fünf Aufnahmen, Panorama-Schwenk. Benachbarte Fotos überlappen: derselbe Eichenbaum in Foto 2 und 3, dieselbe Flussbiegung in 3 und 4. Wenn die Überlappungen zusammenpassen, kannst du sie zu einem Panorama zusammennähen. Genau das ist eine Garbe.</p>
+  </div>
+
+  <div class="panel">
+    <div style="font-weight:600; margin-bottom:0.5rem; color:var(--accent);">Interaktives Panorama — verklebe die Fotos</div>
+    <div class="controls">
+      <label>Foto 1 Helligkeit <input type="range" id="ph1" min="0" max="200" value="100"><span class="val" id="ph1v">100</span></label>
+      <label>Foto 2 Helligkeit <input type="range" id="ph2" min="0" max="200" value="100"><span class="val" id="ph2v">100</span></label>
+      <label>Foto 3 Helligkeit <input type="range" id="ph3" min="0" max="200" value="100"><span class="val" id="ph3v">100</span></label>
+      <label>Foto 4 Helligkeit <input type="range" id="ph4" min="0" max="200" value="100"><span class="val" id="ph4v">100</span></label>
+    </div>
+    <canvas id="panoCanvas" class="demo" height="280"></canvas>
+    <div class="info-box" id="panoInfo">
+      Wenn alle Helligkeiten übereinstimmen → die Überlappungen sind kompatibel → das Panorama <b>verklebt</b> sich eindeutig zu einem globalen Bild. Stelle einen Regler anders ein — die Naht bricht auf. <b>Garbenbedingung verletzt.</b>
+    </div>
+  </div>
+
+  <div class="story">
+    <p>In einer Formel:</p>
+    <div style="text-align:center; font-size:1.1rem; margin:1rem 0;" id="sheafFormula"></div>
+    <p>Anaxagoras (450 v.Chr.): „In allem steckt ein Anteil von allem." — Zweitausendvierhundert Jahre vor Grothendieck, dieselbe Idee: die globale Welt ist die kohärente Verklebung ihrer lokalen Anteile.</p>
+  </div>
+
+  <div class="panel">
+    <div style="font-weight:600; margin-bottom:0.5rem; color:var(--accent);">Sektion, Restriktion, Halm — die drei Ebenen</div>
+    <div class="controls">
+      <label>Punkt-Position <input type="range" id="stalkX" min="50" max="750" value="400"></label>
+      <button onclick="stalkToggle()">Zeige Halm (stalk)</button>
+    </div>
+    <canvas id="stalkCanvas" class="demo" height="340"></canvas>
+    <div class="info-box">
+      Eine <b>Sektion</b> = die Daten auf einer offenen Menge (das ganze Foto). Eine <b>Restriktion</b> = derselbe Datensatz eingeschränkt auf einen kleineren Bereich. Ein <b>Halm</b> (stalk) an einem Punkt = alle „Keime" (germs) von Sektionen, die sich auf beliebig kleinen Umgebungen dieses Punktes gleich verhalten. Das ist „was hier wirklich passiert" ohne Rücksicht auf das Foto.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ 6. LIGHTNING & THUNDER ═══════════════════ -->
+<section id="lightning">
+  <h2>6 · Blitz &amp; Donner — wenn Gleichheit zu Äquivalenz wird</h2>
+  <div class="lead">Manchmal <em>stimmen</em> die lokalen Daten auf der Überlappung nicht überein — aber sie sind durch eine <b>kohärente Transformation</b> verbunden. Das ist der Sprung zu ∞-Garben.</div>
+
+  <div class="panel">
+    <div class="controls">
+      <label>Entfernung zum Blitz (km) <input type="range" id="ltDist" min="0" max="10" step="0.1" value="3"><span class="val" id="ltDistv">3.0</span></label>
+      <button onclick="strike()">⚡ Blitz!</button>
+      <button onclick="ltReset()" class="alt">↺</button>
+    </div>
+    <canvas id="ltCanvas" class="demo" height="360"></canvas>
+    <div class="info-box" id="ltInfo">
+      Der Blitz und der Donner stammen vom <em>selben Ereignis</em>. Aber auf der Zeit-Überlappung sind sie nicht gleich — der Schall braucht länger. Sie sind durch eine <b>Zeit-Verschiebung φ</b> verbunden. Diese φ ist ein <b>Isomorphismus</b>, nicht Gleichheit.
+    </div>
+  </div>
+
+  <div class="story">
+    <p>Der Slogan des Papers:</p>
+    <div style="text-align:center; font-size:1.2rem; margin:1.5rem 0;" id="eqCoh"></div>
+    <p>In der klassischen Garbe: Sektionen sind <em>gleich</em> auf der Überlappung. In der ∞-Garbe: Sektionen sind <em>äquivalent</em> — verbunden durch eine Homotopie α, die selbst wieder kohärent sein muss auf Dreifach-Überlappungen (α₁₂ ∘ α₂₃ ≃ α₁₃).</p>
+    <p>Das ist die Grundidee der <b>Homotopy Type Theory (HoTT)</b>: Gleichheit ist kein bool'sches Faktum, sondern ein Pfad, und Pfade zwischen Pfaden sind höhere Pfade, ad infinitum.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 7. THE CIRCLE ═══════════════════ -->
+<section id="circle">
+  <h2>7 · Der Kreis — wenn Verklebung fehlschlägt</h2>
+  <div class="lead">Ein wunderschönes Beispiel: die Winkelfunktion auf dem Kreis <em>existiert nicht global</em>. Der Grund heißt <b>Windungszahl</b> — die erste nicht-triviale Kohomologie-Klasse.</div>
+
+  <div class="panel">
+    <div class="controls">
+      <label>Position auf dem Kreis <input type="range" id="circPos" min="0" max="720" value="0"><span class="val" id="circPosv">0°</span></label>
+      <label>Anzahl Umrundungen <input type="range" id="circWind" min="1" max="4" value="1"><span class="val" id="circWindv">1</span></label>
+      <button onclick="circWalk()">▶ Einmal rumlaufen</button>
+    </div>
+    <canvas id="circCanvas" class="demo" height="360"></canvas>
+    <div class="info-box" id="circInfo">
+      Auf jedem <em>Bogen</em> kannst du eine Winkelfunktion definieren. Aber wenn du einmal rumläufst, ist dein Winkel um 2π gewachsen — und du bist zurück am Startpunkt. Widerspruch: 0 = 2π? Die lokale Verklebung schlägt <b>global</b> fehl. Diese Zahl (die Windungszahl) misst die topologische Obstruktion.
+    </div>
+  </div>
+
+  <div class="story">
+    <p><em>„Natura non facit saltus"</em> — die Natur macht keine Sprünge. Lokal stimmt das immer. Global, auf dem Kreis, sammelt sich der Sprung um das Loch an. Das ist der einfachste Fall von <b>Garben-Kohomologie</b>.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 8. TOPOS ═══════════════════ -->
+<section id="topos">
+  <h2>8 · Topoi — Universen der Mathematik</h2>
+  <div class="lead">Ein Topos ist ein Universum, in dem man Mathematik betreiben kann — mit eigener Logik. In manchen gilt „ausgeschlossenes Drittes" nicht mehr. Wahrheit wird <em>lokal</em>.</div>
+
+  <div class="panel">
+    <div style="font-weight:600; margin-bottom:0.5rem; color:var(--accent);">Der Subobjekt-Klassifizierer Ω — Wahrheit als Region</div>
+    <div class="controls">
+      <label>Wähle Topos:
+        <select id="toposSel" style="padding:4px;background:var(--bg2);color:var(--text);border:1px solid var(--edge);border-radius:4px;">
+          <option value="set">Set — klassische Logik (Ω = {0,1})</option>
+          <option value="sheaf">Sh(X) — intuitionistisch (Ω = offene Mengen)</option>
+        </select>
+      </label>
+      <label>Aussage P „gilt auf" <input type="range" id="toposRegion" min="0" max="100" value="60"><span class="val" id="toposRegionv">60%</span></label>
+    </div>
+    <canvas id="toposCanvas" class="demo" height="320"></canvas>
+    <div class="info-box" id="toposInfo">
+      In <b>Set</b>: eine Aussage ist entweder wahr oder falsch. Punkt.<br>
+      In <b>Sh(X)</b>: eine Aussage ist eine <em>Region</em>. Sie kann hier wahr, dort falsch, dazwischen unbestimmt sein. Das Gesetz vom ausgeschlossenen Dritten P ∨ ¬P gilt nicht mehr — es gibt ein Dazwischen.
+    </div>
+  </div>
+
+  <div class="story">
+    <p>Ein Topos hat vier Zutaten:</p>
+    <div id="toposAxioms" style="margin:1rem 0;"></div>
+    <p>Das Erstaunliche: <em>Jeder Satz, der in höherer-Ordnung intuitionistischer Logik beweisbar ist, gilt in jedem Topos.</em> Ein Topos ist die allgemeinste Struktur, in der man Mathematik betreiben kann.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 9. EMBEDDINGS ═══════════════════ -->
+<section id="embedding">
+  <h2>9 · Embeddings — die Geometrie der Bedeutung</h2>
+  <div class="lead">Endlich das konkrete Problem: Ein Transformer ordnet jedem Token einen Punkt in ℝᵈ zu. Warum funktioniert das? Weil die Idee der Kette hier <b>angewendet</b> wird auf Sprache.</div>
+
+  <div class="panel">
+    <div style="font-weight:600; margin-bottom:0.5rem; color:var(--accent);">2D-Projektion eines Embedding-Raums (interaktiv)</div>
+    <div class="controls">
+      <label>Rotation θ <input type="range" id="embTheta" min="0" max="360" value="30"></label>
+      <label>Ähnlichkeitsradius <input type="range" id="embEps" min="10" max="150" value="60"></label>
+      <button onclick="embAddWord()">+ Zufallswort hinzufügen</button>
+      <button onclick="embShift()" class="alt">Analogie: König−Mann+Frau</button>
+    </div>
+    <canvas id="embCanvas" class="demo" height="440"></canvas>
+    <div class="info-box" id="embInfo">
+      Wörter mit ähnlicher Bedeutung sitzen räumlich nahe beieinander. Die Nähe ist keine Konvention — sie ist das <em>Ergebnis</em> davon, dass Wörter in überlappenden Kontexten vorkommen. Der Raum <em>ist</em> die kohärente Verklebung dieser Kontexte.
+    </div>
+  </div>
+
+  <div class="story">
+    <p>Setze die Kette in Aktion:</p>
+    <ul>
+      <li><b>Unterscheidung:</b> Tokens sind verschieden</li>
+      <li><b>Relation:</b> nach Embedding: Abstand, Winkel</li>
+      <li><b>Transformation:</b> Attention, Feed-Forward</li>
+      <li><b>Lokalität:</b> Nachbarschaft von „Katze": „Hund", „Kätzchen", „Miau"</li>
+      <li><b>Kompatibilität:</b> ähnliche Sätze → ähnliche Zustände</li>
+      <li><b>Kohärenz:</b> vom Training über den ganzen Korpus erzwungen</li>
+      <li><b>Verklebung:</b> Residual-Connections</li>
+      <li><b>Globalität:</b> die vollständige Antwort</li>
+      <li><b>Invarianz:</b> gleiche Vorhersage, egal wie parallelisiert</li>
+    </ul>
+    <p>Saussure (1916): „Sprache ist ein System reiner Differenzen." — Firth (1957): „You shall know a word by the company it keeps." — Nagarjuna (150 n.Chr.): „Was in Abhängigkeit entsteht, ist leer von Selbstnatur." — Alle sagen dasselbe. Ein Embedding-Raum ist die <em>quantitative geometrische Form</em> dieser uralten Einsicht.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ 10. FLOATS ═══════════════════ -->
+<section id="floats">
+  <h2>10 · Floats — die Kondensation zur Berechenbarkeit</h2>
+  <div class="lead">ℝᵈ ist eine Idealisierung. In Wahrheit rechnet der Computer mit <b>Floats</b> — einem endlichen, logarithmisch verzerrten Gitter. Das ist die Materie, auf die die Form drückt.</div>
+
+  <div class="panel">
+    <div style="font-weight:600; margin-bottom:0.5rem; color:var(--accent);">Das Float-Gitter — nicht gleichmäßig!</div>
+    <div class="controls">
+      <label>Mantissen-Bits <input type="range" id="fMant" min="2" max="8" value="4"><span class="val" id="fMantv">4</span></label>
+      <label>Exponenten-Bits <input type="range" id="fExp" min="2" max="5" value="3"><span class="val" id="fExpv">3</span></label>
+    </div>
+    <canvas id="floatCanvas" class="demo" height="220"></canvas>
+    <div class="info-box">
+      Floats sind dicht bei 0 und grob am Rand. Das ist kein Bug — es ist die einzige Weise, mit endlicher Bit-Zahl einen riesigen Wertebereich zu decken, ohne bei kleinen Zahlen alle Präzision zu verlieren.
+    </div>
+  </div>
+
+  <div class="panel">
+    <div style="font-weight:600; margin-bottom:0.5rem; color:var(--warn);">Assoziativität bricht: (a+b)+c ≠ a+(b+c)</div>
+    <div class="controls">
+      <label>a <input type="range" id="faA" min="-100" max="100" value="1"></label>
+      <label>b <input type="range" id="faB" min="-100" max="100" value="-1"></label>
+      <label>c <input type="range" id="faC" min="-1000" max="1000" value="500"></label>
+    </div>
+    <div id="floatAssoc" style="font-family:monospace; padding:1rem; background:var(--bg2); border-radius:6px;"></div>
+  </div>
+
+  <div class="story">
+    <p>Der Vektorraum eines LLM ist <em>kein Vektorraum im axiomatischen Sinne</em>. Er verhält sich nur bei der Auflösung der Floats wie einer. Zwei Approximationen sind gestapelt:</p>
+    <div style="text-align:center; font-size:1.05rem; margin:1rem 0; color:var(--dim);">
+      Kette → ℝᵈ → Float-Gitter → Silizium
+    </div>
+    <p>Und trotzdem reicht es. Warum? Weil <b>Sprache selbst approximativ ist</b>. Wörter haben keine scharfen Grenzen, Bedeutungen sind nicht diskret. Zwei Weichheiten passen zusammen.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════ ANSWER ═══════════════════ -->
+<section id="answer">
+  <h2>✦ Die Antwort auf die Frage</h2>
+  <div class="lead">Wir sind angekommen. Was ist ein „Raum", in dem Bedeutung als Geometrie lebt?</div>
+
+  <div class="synth">
+    <div style="font-size:1.1rem; color:var(--dim);">Die drei Sätze des Papers:</div>
+    <div class="big" id="finalEq1"></div>
+    <div class="big" id="finalEq2"></div>
+    <div class="big" id="finalEq3"></div>
+  </div>
+
+  <div class="story">
+    <p><b>Die Frage:</b> Was ist ein Embedding-Raum wirklich?</p>
+    <p><b>Die Motivation:</b> Wir wollen verstehen, wie aus einer Liste von Zahlen (Token-IDs) etwas entsteht, das <em>Sinn ergibt</em>.</p>
+    <p><b>Die Idee:</b> Bedeutung ist relational, nicht intrinsisch. Ein „Raum" ist keine Kiste, die man mit Dingen füllt — ein Raum ist das, was entsteht, wenn <em>unterscheidbare lokale Daten kohärent auf Überlappungen zusammenpassen</em>.</p>
+    <p><b>Die Lösung:</b> Die Garbentheorie (und ihre ∞-Verallgemeinerung) gibt uns die exakte formale Sprache dafür.</p>
+    <p><b>Der Lösungsweg:</b> Distinktion → Relation → Transformation → Lokalität → Kompatibilität → Kohärenz → Verklebung → Globalität → Invarianz. Neun Schritte, dieselbe Bewegung, immer feiner strukturiert.</p>
+    <p><b>Die Antwort:</b> Ein Embedding-Raum ist eine <em>approximative Garbe</em> auf den Kontexten der Wörter. Seine Geometrie ist die eindeutige globale Sektion, die aus den kohärenten lokalen Kontexten hervorgeht — kondensiert durch eine endliche Arithmetik gerade präzise genug, um Bedeutung zu tragen, und gerade konkret genug, um milliardenfach pro Sekunde von einer Matrix multipliziert zu werden.</p>
+    <p style="font-size:1.15rem; text-align:center; color:var(--accent2); margin:2rem 0; font-style:italic;">
+      Abstraktion und Verkörperung sind dasselbe Objekt, gelesen von entgegengesetzten Enden der Leiter.<br>
+      Kohärente Differenz — berechenbar gemacht — und endlich real gemacht.
+    </p>
+  </div>
+
+  <div style="text-align:center; padding: 3rem 0; color: var(--dim); font-size:0.9rem;">
+    Ende der Reise. Scrolle nach oben und spiele erneut mit einem anderen Blick.
+  </div>
+</section>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  TeX RENDERING
+// ═══════════════════════════════════════════════════════════
+function tex(el, s, display=true) {
+  if (!el) return;
+  try {
+    el.innerHTML = temml.renderToString(s, {displayMode: display});
+  } catch(e) { el.textContent = s; }
+}
+
+tex(document.getElementById('masterEq'),
+  "\\text{globale Einheit} = \\text{lokale Differenz} + \\text{kohärente Übergänge}");
+tex(document.getElementById('sheafFormula'),
+  "\\text{lokale Daten} + \\text{Kompatibilität auf Überlappungen} \\Longrightarrow \\text{globale Daten}");
+tex(document.getElementById('eqCoh'),
+  "\\text{Gleichheit} \\;\\rightsquigarrow\\; \\text{Äquivalenz} + \\text{Kohärenz}");
+tex(document.getElementById('finalEq1'),
+  "\\textbf{Differenz muss nicht ausgelöscht werden, damit Einheit entsteht.}");
+tex(document.getElementById('finalEq2'),
+  "\\text{globale Einheit} = \\text{lokale Differenz} + \\text{kohärente Übergänge}");
+tex(document.getElementById('finalEq3'),
+  "\\text{ein Objekt} \\approx \\text{das kohärente Netz seiner möglichen Erscheinungen}");
+
+document.getElementById('toposAxioms').innerHTML = `
+  <ol style="line-height:1.9;">
+    <li><b>Endliche Limites</b> — Produkte, Terminalobjekt, Equalizer</li>
+    <li><b>Exponentiale</b> B^A — kartesische Abgeschlossenheit</li>
+    <li><b>Subobjekt-Klassifizierer Ω</b> — die eigene Wahrheitswert-Struktur</li>
+    <li><b>Potenzobjekte</b> Ω^X — Logik höherer Stufe</li>
+  </ol>
+`;
+
+// ═══════════════════════════════════════════════════════════
+//  HERO — animated particle "distinctions"
+// ═══════════════════════════════════════════════════════════
+(function heroAnim(){
+  const c = document.getElementById('heroCanvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = c.parentElement.offsetHeight; }
+  resize(); addEventListener('resize', resize);
+  const N = 90;
+  const parts = Array.from({length:N}, ()=>({
+    x: Math.random()*c.width, y: Math.random()*c.height,
+    vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+    r: Math.random()*2 + 1,
+    hue: Math.random()*360
+  }));
+  function frame(){
+    ctx.fillStyle = 'rgba(10,14,26,0.15)';
+    ctx.fillRect(0,0,c.width,c.height);
+    // edges (coherence)
+    for (let i=0;i<N;i++){
+      for (let j=i+1;j<N;j++){
+        const dx = parts[i].x-parts[j].x, dy = parts[i].y-parts[j].y;
+        const d = Math.hypot(dx,dy);
+        if (d < 130) {
+          ctx.strokeStyle = `rgba(125,211,252,${(1-d/130)*0.15})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath(); ctx.moveTo(parts[i].x, parts[i].y);
+          ctx.lineTo(parts[j].x, parts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    // particles
+    for (const p of parts) {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > c.width) p.vx *= -1;
+      if (p.y < 0 || p.y > c.height) p.vy *= -1;
+      ctx.beginPath();
+      ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, 0.8)`;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+// ═══════════════════════════════════════════════════════════
+//  CHAIN NAVIGATION
+// ═══════════════════════════════════════════════════════════
+document.querySelectorAll('.chain-node').forEach(n => {
+  n.addEventListener('click', () => {
+    const t = document.getElementById(n.dataset.target);
+    if (t) t.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+//  TOC HIGHLIGHT
+// ═══════════════════════════════════════════════════════════
+const tocLinks = document.querySelectorAll('#toc a');
+const sections = document.querySelectorAll('section, .hero');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => {
+    if (s.getBoundingClientRect().top < 200) cur = s.id;
+  });
+  tocLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+cur);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+//  1. DISTINCTION
+// ═══════════════════════════════════════════════════════════
+const distC = document.getElementById('distCanvas');
+const distX = distC.getContext('2d');
+function fitCanvas(c) {
+  const w = c.clientWidth;
+  c.width = w * devicePixelRatio;
+  c.height = c.height ? c.height : 320;
+  c.height = (c.getAttribute('height') || 320) * devicePixelRatio;
+  const ctx = c.getContext('2d');
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  return {w, h: c.height/devicePixelRatio};
+}
+function drawCircle() {
+  const {w,h} = fitCanvas(distC);
+  distX.fillStyle = '#0d1424'; distX.fillRect(0,0,w,h);
+  distX.strokeStyle = '#334155'; distX.lineWidth = 2;
+  distX.setLineDash([8,6]);
+  distX.beginPath(); distX.arc(w/2,h/2, Math.min(w,h)*0.35, 0, Math.PI*2); distX.stroke();
+  distX.setLineDash([]);
+  distX.fillStyle = '#64748b'; distX.font = '16px Inter';
+  distX.textAlign = 'center';
+  distX.fillText('das Unmarkierte — noch keine Unterscheidung', w/2, h-20);
+  document.getElementById('distText').innerHTML = '<b>Zustand: unmarkiert.</b> Kein „hier" oder „dort", kein „innen" oder „außen". Nichts, worüber man sprechen könnte.';
+}
+function drawMark() {
+  const {w,h} = fitCanvas(distC);
+  distX.fillStyle = '#0d1424'; distX.fillRect(0,0,w,h);
+  const r = Math.min(w,h)*0.35;
+  distX.fillStyle = 'rgba(125,211,252,0.15)';
+  distX.beginPath(); distX.arc(w/2,h/2,r,0,Math.PI*2); distX.fill();
+  distX.strokeStyle = '#7dd3fc'; distX.lineWidth = 3;
+  distX.beginPath(); distX.arc(w/2,h/2,r,0,Math.PI*2); distX.stroke();
+  distX.fillStyle = '#7dd3fc'; distX.font = 'bold 20px Inter';
+  distX.textAlign = 'center';
+  distX.fillText('markiert', w/2, h/2+7);
+  distX.fillStyle = '#94a3b8'; distX.font = '16px Inter';
+  distX.fillText('unmarkiert', w*0.15, h/2+7);
+  distX.fillText('unmarkiert', w*0.85, h/2+7);
+  document.getElementById('distText').innerHTML = '<b>Ein Strich — zwei Welten entstehen zusammen.</b> Das Markierte gibt es nicht ohne das Unmarkierte. Sie sind ko-erzeugt durch <em>dieselbe</em> Bewegung. (Laozi: das Schöne und das Hässliche.)';
+}
+function drawDoubleMark() {
+  const {w,h} = fitCanvas(distC);
+  distX.fillStyle = '#0d1424'; distX.fillRect(0,0,w,h);
+  const r = Math.min(w,h)*0.35, r2 = r*0.55;
+  distX.fillStyle = 'rgba(125,211,252,0.15)';
+  distX.beginPath(); distX.arc(w/2,h/2,r,0,Math.PI*2); distX.fill();
+  distX.fillStyle = '#0d1424';
+  distX.beginPath(); distX.arc(w/2,h/2,r2,0,Math.PI*2); distX.fill();
+  distX.strokeStyle = '#7dd3fc'; distX.lineWidth = 3;
+  distX.beginPath(); distX.arc(w/2,h/2,r,0,Math.PI*2); distX.stroke();
+  distX.beginPath(); distX.arc(w/2,h/2,r2,0,Math.PI*2); distX.stroke();
+  distX.fillStyle = '#94a3b8'; distX.font = '16px Inter';
+  distX.textAlign = 'center';
+  distX.fillText('¬¬x = x', w/2, h-20);
+  document.getElementById('distText').innerHTML = '<b>Zwei Unterscheidungen heben sich auf.</b> Die Kern-Axiom des Spencer-Brown-Kalküls: die Verneinung der Verneinung ist die Ursprungslage. Aus dieser einen Gleichung folgt der gesamte Boole\'sche Kalkül.';
+}
+drawCircle();
+
+// ═══════════════════════════════════════════════════════════
+//  2. RELATIONS
+// ═══════════════════════════════════════════════════════════
+const relC = document.getElementById('relCanvas');
+const relX = relC.getContext('2d');
+let relPoints = [];
+function regenRel() {
+  const {w,h} = fitCanvas(relC);
+  const N = +document.getElementById('relN').value;
+  relPoints = Array.from({length:N}, ()=>({
+    x: 40 + Math.random()*(w-80),
+    y: 40 + Math.random()*(h-80)
+  }));
+  drawRel();
+}
+function drawRel() {
+  const {w,h} = fitCanvas(relC);
+  const eps = +document.getElementById('relEps').value;
+  const mode = document.getElementById('relMode').value;
+  relX.fillStyle = '#0d1424'; relX.fillRect(0,0,w,h);
+
+  // build adjacency
+  const N = relPoints.length;
+  const adj = Array.from({length:N}, ()=>new Set());
+  for (let i=0;i<N;i++) for (let j=i+1;j<N;j++) {
+    const d = Math.hypot(relPoints[i].x-relPoints[j].x, relPoints[i].y-relPoints[j].y);
+    if (d < eps) { adj[i].add(j); adj[j].add(i); }
+  }
+
+  let component = new Array(N).fill(-1);
+  if (mode === 'closure') {
+    // transitive closure via BFS = connected components
+    let c = 0;
+    for (let i=0;i<N;i++) if (component[i]===-1) {
+      const q=[i]; component[i]=c;
+      while (q.length) {
+        const u = q.shift();
+        for (const v of adj[u]) if (component[v]===-1) { component[v]=c; q.push(v); }
+      }
+      c++;
+    }
+    // draw filled hulls per component
+    const palette = ['#7dd3fc','#f0abfc','#86efac','#fbbf24','#fb923c','#a5b4fc','#fda4af','#67e8f9'];
+    for (let ci=0; ci<c; ci++) {
+      relX.fillStyle = palette[ci % palette.length] + '30';
+      relX.strokeStyle = palette[ci % palette.length];
+      relX.lineWidth = 1;
+      for (let i=0;i<N;i++) if (component[i]===ci) {
+        for (const j of adj[i]) if (j>i) {
+          relX.beginPath(); relX.moveTo(relPoints[i].x,relPoints[i].y);
+          relX.lineTo(relPoints[j].x,relPoints[j].y); relX.stroke();
+        }
+      }
+    }
+    // draw points
+    for (let i=0;i<N;i++) {
+      relX.fillStyle = palette[component[i] % palette.length];
+      relX.beginPath(); relX.arc(relPoints[i].x, relPoints[i].y, 6, 0, Math.PI*2); relX.fill();
+    }
+    document.getElementById('relInfo').innerHTML =
+      `<b>Äquivalenzmodus:</b> ${c} disjunkte Boxen (Partition). Alles in derselben Farbe zählt jetzt als „gleich". Deine Menge <em>zerfällt automatisch</em> in Klassen.`;
+  } else {
+    // raw
+    relX.strokeStyle = 'rgba(125,211,252,0.4)'; relX.lineWidth = 1;
+    for (let i=0;i<N;i++) for (const j of adj[i]) if (j>i) {
+      relX.beginPath(); relX.moveTo(relPoints[i].x,relPoints[i].y);
+      relX.lineTo(relPoints[j].x,relPoints[j].y); relX.stroke();
+    }
+    relX.fillStyle = '#7dd3fc';
+    for (const p of relPoints) {
+      relX.beginPath(); relX.arc(p.x,p.y,5,0,Math.PI*2); relX.fill();
+    }
+    document.getElementById('relInfo').innerHTML =
+      `<b>Roher Modus:</b> Kanten verbinden Punkte im Radius ε. Aber „A~B" und „B~C" heißt hier nicht „A~C" — die Relation ist <em>nicht transitiv</em>. Wechsle auf „Abschluss", um zu sehen, wie sich das automatisch in Klassen auflöst.`;
+  }
+}
+['relN','relEps','relMode'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    const v = document.getElementById(id+'v');
+    if (v) v.textContent = e.target.value;
+    if (id === 'relN') regenRel(); else drawRel();
+  });
+});
+regenRel();
+
+// ═══════════════════════════════════════════════════════════
+//  3. TOPOLOGY
+// ═══════════════════════════════════════════════════════════
+const topC = document.getElementById('topCanvas');
+const topX = topC.getContext('2d');
+let topSets = [];
+function topReset() { topSets = [{cx:200, cy:180, r:100}, {cx:400, cy:180, r:120}]; drawTop(); }
+function topAddSet() {
+  const {w,h} = fitCanvas(topC);
+  topSets.push({cx: 100 + Math.random()*(w-200), cy: 80 + Math.random()*(h-160), r: 60+Math.random()*80});
+  drawTop();
+}
+function drawTop() {
+  const {w,h} = fitCanvas(topC);
+  const px = +document.getElementById('topX').value;
+  const pr = +document.getElementById('topR').value;
+  topX.fillStyle = '#0d1424'; topX.fillRect(0,0,w,h);
+
+  // additional sets
+  topSets.forEach((s,i)=>{
+    const hue = (i*70) % 360;
+    topX.fillStyle = `hsla(${hue},70%,60%,0.12)`;
+    topX.strokeStyle = `hsla(${hue},70%,70%,0.7)`;
+    topX.lineWidth = 2;
+    topX.setLineDash([6,4]);
+    topX.beginPath(); topX.arc(s.cx, s.cy, s.r, 0, Math.PI*2);
+    topX.fill(); topX.stroke();
+  });
+  topX.setLineDash([]);
+
+  // main point + its neighborhood
+  const py = h/2;
+  topX.fillStyle = 'rgba(240,171,252,0.15)';
+  topX.strokeStyle = '#f0abfc'; topX.lineWidth = 3;
+  topX.beginPath(); topX.arc(px, py, pr, 0, Math.PI*2);
+  topX.fill(); topX.stroke();
+  // point
+  topX.fillStyle = '#f0abfc';
+  topX.beginPath(); topX.arc(px, py, 6, 0, Math.PI*2); topX.fill();
+  topX.fillStyle = '#e2e8f0'; topX.font = 'bold 14px Inter';
+  topX.fillText('x', px+10, py-8);
+
+  // count containing neighborhoods
+  let cnt = 0;
+  topSets.forEach(s => {
+    const d = Math.hypot(s.cx-px, s.cy-py);
+    if (d + 5 < s.r) cnt++;
+  });
+  topX.fillStyle = '#94a3b8'; topX.font = '13px Inter';
+  topX.fillText(`Punkt x liegt in ${cnt} weiteren offenen Mengen`, 10, h-10);
+}
+['topX','topR'].forEach(id => document.getElementById(id).addEventListener('input', drawTop));
+topReset();
+
+// ═══════════════════════════════════════════════════════════
+//  4. CATEGORY
+// ═══════════════════════════════════════════════════════════
+const catC = document.getElementById('catCanvas');
+const catX = catC.getContext('2d');
+let catState = {pos: {A: null, B: null, C: null}, animT: 0, animMode: null};
+
+function catReset() {
+  const {w,h} = fitCanvas(catC);
+  catState.pos.A = {x: w*0.15, y: h*0.5};
+  catState.pos.B = {x: w*0.5, y: h*0.5};
+  catState.pos.C = {x: w*0.85, y: h*0.5};
+  catState.animMode = null;
+  drawCat();
+}
+function drawCat(highlight={}) {
+  const {w,h} = fitCanvas(catC);
+  catX.fillStyle = '#0d1424'; catX.fillRect(0,0,w,h);
+  const P = catState.pos;
+  // arrows
+  function arrow(from, to, label, color, offY=0, curve=0) {
+    catX.strokeStyle = color; catX.fillStyle = color; catX.lineWidth = 2;
+    catX.beginPath();
+    const mx = (from.x+to.x)/2, my = (from.y+to.y)/2 + curve;
+    if (curve === 0) {
+      catX.moveTo(from.x+30, from.y+offY);
+      catX.lineTo(to.x-30, to.y+offY);
+    } else {
+      catX.moveTo(from.x+30, from.y);
+      catX.quadraticCurveTo(mx, my, to.x-30, to.y);
+    }
+    catX.stroke();
+    // arrowhead
+    const angle = Math.atan2((to.y+offY)-my, (to.x-30)-mx);
+    catX.beginPath();
+    catX.moveTo(to.x-30, to.y+offY);
+    catX.lineTo(to.x-40, to.y+offY-6);
+    catX.lineTo(to.x-40, to.y+offY+6);
+    catX.fill();
+    catX.font = 'italic bold 16px Inter';
+    catX.fillText(label, mx-6, my - (curve===0 ? 12 : (curve<0?10:-20)));
+  }
+  arrow(P.A, P.B, 'f', highlight.f ? '#fbbf24' : '#7dd3fc');
+  arrow(P.B, P.C, 'g', highlight.g ? '#fbbf24' : '#7dd3fc');
+  arrow(P.A, P.C, 'g ∘ f', highlight.gof ? '#f0abfc' : '#64748b', 0, -80);
+
+  // nodes
+  function node(p, label, color) {
+    catX.fillStyle = color; catX.beginPath(); catX.arc(p.x, p.y, 28, 0, Math.PI*2); catX.fill();
+    catX.fillStyle = '#0a0e1a'; catX.font = 'bold 20px Inter'; catX.textAlign = 'center';
+    catX.fillText(label, p.x, p.y+7);
+  }
+  node(P.A, 'A', '#7dd3fc');
+  node(P.B, 'B', '#86efac');
+  node(P.C, 'C', '#f0abfc');
+}
+function catAnimate(mode) {
+  catState.animMode = mode; catState.animT = 0;
+  const start = performance.now();
+  function step(t) {
+    const dt = (t-start)/900;
+    if (dt >= 1) { drawCat(); return; }
+    const hl = {};
+    if (mode === 'f') hl.f = true;
+    if (mode === 'g') hl.g = true;
+    if (mode === 'gof') { hl.f = dt<0.5; hl.g = dt>=0.5; hl.gof = true; }
+    drawCat(hl);
+    requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+  document.getElementById('catInfo').innerHTML =
+    mode === 'gof'
+    ? '<b>Komposition:</b> Statt zweimal zu laufen (erst f, dann g), kannst du auch <em>direkt</em> g∘f nehmen. Die Kategorie <em>garantiert</em>, dass dieser direkte Pfeil existiert und dasselbe Ergebnis liefert. Assoziativität + Identität sind die einzigen Axiome.'
+    : `<b>Anwenden von ${mode}:</b> Ein Morphismus ist einfach ein „Pfeil". Wir schauen nie ins Innere der Objekte — nur was zwischen ihnen läuft.`;
+}
+catReset();
+addEventListener('resize', () => setTimeout(catReset, 100));
+
+// ═══════════════════════════════════════════════════════════
+//  5. SHEAF — PANORAMA
+// ═══════════════════════════════════════════════════════════
+const panoC = document.getElementById('panoCanvas');
+const panoX = panoC.getContext('2d');
+function drawPano() {
+  const {w,h} = fitCanvas(panoC);
+  panoX.fillStyle = '#0d1424'; panoX.fillRect(0,0,w,h);
+  const vals = [1,2,3,4].map(i => +document.getElementById('ph'+i).value / 100);
+  vals.forEach((v,i) => document.getElementById('ph'+(i+1)+'v').textContent = Math.round(v*100));
+
+  // photo widths
+  const pw = w/3.5, overlap = pw*0.3;
+  const starts = [0, pw-overlap, 2*(pw-overlap), 3*(pw-overlap)];
+  const skyH = h*0.55;
+  // ground gradient base
+  const skyHueBase = 210, groundHueBase = 90;
+
+  vals.forEach((v,i) => {
+    const x0 = starts[i];
+    // sky
+    const g1 = panoX.createLinearGradient(0,0,0,skyH);
+    g1.addColorStop(0, `hsl(${skyHueBase}, 60%, ${20+v*40}%)`);
+    g1.addColorStop(1, `hsl(${skyHueBase+20}, 50%, ${40+v*30}%)`);
+    panoX.fillStyle = g1;
+    panoX.fillRect(x0, 0, pw, skyH);
+    // ground
+    const g2 = panoX.createLinearGradient(0,skyH,0,h);
+    g2.addColorStop(0, `hsl(${groundHueBase}, 40%, ${20+v*35}%)`);
+    g2.addColorStop(1, `hsl(${groundHueBase-10}, 30%, ${10+v*25}%)`);
+    panoX.fillStyle = g2;
+    panoX.fillRect(x0, skyH, pw, h-skyH);
+    // mountain silhouette
+    panoX.fillStyle = `hsla(${skyHueBase+30}, 30%, ${10+v*20}%, 0.9)`;
+    panoX.beginPath();
+    panoX.moveTo(x0, skyH);
+    for (let dx=0; dx<=pw; dx+=8) {
+      const y = skyH - 30 - 40*Math.sin((x0+dx)*0.02 + i);
+      panoX.lineTo(x0+dx, y);
+    }
+    panoX.lineTo(x0+pw, skyH);
+    panoX.closePath(); panoX.fill();
+    // photo border
+    panoX.strokeStyle = 'rgba(125,211,252,0.5)'; panoX.lineWidth = 2;
+    panoX.strokeRect(x0, 0, pw, h);
+    panoX.fillStyle = '#e2e8f0'; panoX.font = 'bold 12px Inter';
+    panoX.fillText('Foto '+(i+1), x0+8, 16);
+  });
+
+  // check compatibility
+  let seams = 0, bad = [];
+  for (let i=0;i<3;i++) {
+    if (Math.abs(vals[i]-vals[i+1]) > 0.05) { seams++; bad.push(i+1); }
+  }
+  // draw overlap markers
+  for (let i=0;i<3;i++) {
+    const xO = starts[i+1];
+    const wO = starts[i]+pw - xO;
+    const compat = Math.abs(vals[i]-vals[i+1]) <= 0.05;
+    panoX.strokeStyle = compat ? '#86efac' : '#fb7185';
+    panoX.lineWidth = 3;
+    panoX.setLineDash(compat ? [] : [6,4]);
+    panoX.strokeRect(xO, 4, wO, h-8);
+  }
+  panoX.setLineDash([]);
+
+  document.getElementById('panoInfo').innerHTML = seams === 0
+    ? '<b>✓ Alle Überlappungen sind kompatibel.</b> Die Garbenbedingung ist erfüllt — es existiert ein <em>eindeutiges</em> globales Panorama, das alle vier Fotos richtig verklebt.'
+    : `<b>✗ ${seams} Naht/Nähte gebrochen (Fotos ${bad.join(', ')}).</b> Auf mindestens einer Überlappung sind die Sektionen nicht gleich → die Garbenbedingung ist verletzt → kein globales Bild existiert.`;
+}
+['ph1','ph2','ph3','ph4'].forEach(id => document.getElementById(id).addEventListener('input', drawPano));
+drawPano();
+
+// ═══════════════════════════════════════════════════════════
+//  5b. STALK — sections, restrictions, germs
+// ═══════════════════════════════════════════════════════════
+const stalkC = document.getElementById('stalkCanvas');
+const stalkX = stalkC.getContext('2d');
+let showStalk = false;
+function stalkToggle() { showStalk = !showStalk; drawStalk(); }
+function fSect(x, i) {
+  // three "sections" — different formulas, but agree on overlaps
+  if (i===0) return 100 + 40*Math.sin(x*0.015);
+  if (i===1) return 100 + 40*Math.sin(x*0.015) + 0.5*(x-400);
+  if (i===2) return 100 + 40*Math.sin(x*0.015);
+}
+function drawStalk() {
+  const {w,h} = fitCanvas(stalkC);
+  const px = +document.getElementById('stalkX').value;
+  stalkX.fillStyle = '#0d1424'; stalkX.fillRect(0,0,w,h);
+
+  // three open sets as horizontal bars
+  const sets = [
+    {x0: 40,  x1: 340, color:'#7dd3fc', label:'U₁'},
+    {x0: 250, x1: 560, color:'#86efac', label:'U₂'},
+    {x0: 470, x1: w-40, color:'#f0abfc', label:'U₃'}
+  ];
+  sets.forEach((s,i) => {
+    stalkX.fillStyle = s.color + '20';
+    stalkX.fillRect(s.x0, 20, s.x1-s.x0, h-40);
+    stalkX.strokeStyle = s.color;
+    stalkX.lineWidth = 2; stalkX.setLineDash([4,3]);
+    stalkX.strokeRect(s.x0, 20, s.x1-s.x0, h-40);
+    stalkX.setLineDash([]);
+    stalkX.fillStyle = s.color; stalkX.font = 'bold 14px Inter';
+    stalkX.fillText(s.label, s.x0+8, 38);
+
+    // draw the section as a curve
+    stalkX.beginPath();
+    for (let x=s.x0; x<=s.x1; x+=2) {
+      const y = h/2 + 60*Math.sin((x-s.x0)*0.02 + i*0.5);
+      if (x === s.x0) stalkX.moveTo(x, y);
+      else stalkX.lineTo(x, y);
+    }
+    stalkX.strokeStyle = s.color;
+    stalkX.lineWidth = 3; stalkX.stroke();
+  });
+
+  // vertical line at chosen point
+  stalkX.strokeStyle = '#fbbf24'; stalkX.lineWidth = 2;
+  stalkX.setLineDash([6,4]);
+  stalkX.beginPath(); stalkX.moveTo(px, 10); stalkX.lineTo(px, h-10); stalkX.stroke();
+  stalkX.setLineDash([]);
+  stalkX.fillStyle = '#fbbf24'; stalkX.font = 'bold 13px Inter';
+  stalkX.fillText('x', px+6, 20);
+
+  // show stalk: which sections cover this point?
+  if (showStalk) {
+    const covering = sets.filter(s => px >= s.x0 && px <= s.x1);
+    const boxX = Math.min(px+20, w-200);
+    stalkX.fillStyle = 'rgba(251,191,36,0.15)';
+    stalkX.fillRect(boxX, 30, 180, 30 + covering.length*22);
+    stalkX.strokeStyle = '#fbbf24';
+    stalkX.strokeRect(boxX, 30, 180, 30 + covering.length*22);
+    stalkX.fillStyle = '#fbbf24'; stalkX.font = 'bold 12px Inter';
+    stalkX.fillText('Halm 𝓕ₓ:', boxX+8, 48);
+    stalkX.fillStyle = '#e2e8f0'; stalkX.font = '12px Inter';
+    covering.forEach((s,i) => {
+      stalkX.fillText(`Keim aus ${s.label}`, boxX+8, 68 + i*20);
+    });
+  }
+}
+document.getElementById('stalkX').addEventListener('input', drawStalk);
+drawStalk();
+
+// ═══════════════════════════════════════════════════════════
+//  6. LIGHTNING & THUNDER
+// ═══════════════════════════════════════════════════════════
+const ltC = document.getElementById('ltCanvas');
+const ltX = ltC.getContext('2d');
+let ltPhase = 0, ltAnimating = false, ltStrike = 0;
+function ltReset() { ltPhase = 0; ltAnimating = false; drawLt(); }
+function strike() {
+  ltStrike = performance.now();
+  ltAnimating = true;
+  const dist = +document.getElementById('ltDist').value;
+  const step = () => {
+    const t = (performance.now() - ltStrike) / 1000;
+    ltPhase = t;
+    drawLt();
+    if (t < dist/0.343 + 2) requestAnimationFrame(step);
+    else ltAnimating = false;
+  };
+  step();
+}
+function drawLt() {
+  const {w,h} = fitCanvas(ltC);
+  const dist = +document.getElementById('ltDist').value;
+  ltX.fillStyle = '#0d1424'; ltX.fillRect(0,0,w,h);
+
+  // timeline
+  ltX.strokeStyle = '#334155'; ltX.lineWidth = 1;
+  ltX.beginPath(); ltX.moveTo(60, h-60); ltX.lineTo(w-40, h-60); ltX.stroke();
+  ltX.fillStyle = '#64748b'; ltX.font = '11px Inter';
+  for (let s=0; s<=Math.ceil(dist/0.343+2); s++) {
+    const x = 60 + s*(w-100)/Math.ceil(dist/0.343+2);
+    ltX.beginPath(); ltX.moveTo(x, h-65); ltX.lineTo(x, h-55); ltX.stroke();
+    ltX.fillText(s+'s', x-6, h-40);
+  }
+
+  const soundDelay = dist / 0.343; // seconds
+
+  // lightning appearance
+  const seeing = ltPhase > 0 && ltPhase < 0.15;
+  if (seeing) {
+    ltX.fillStyle = 'rgba(253,224,71,0.4)';
+    ltX.fillRect(0,0,w,h);
+  }
+  // lightning bolt
+  ltX.strokeStyle = seeing ? '#fef08a' : '#facc15';
+  ltX.lineWidth = seeing ? 4 : 2;
+  ltX.beginPath();
+  const bx = w*0.7, by = 60;
+  ltX.moveTo(bx, by);
+  ltX.lineTo(bx-20, by+50);
+  ltX.lineTo(bx+10, by+90);
+  ltX.lineTo(bx-15, by+140);
+  ltX.stroke();
+
+  // observer
+  ltX.fillStyle = '#7dd3fc';
+  ltX.beginPath(); ltX.arc(w*0.15, h-90, 12, 0, Math.PI*2); ltX.fill();
+  ltX.fillStyle = '#e2e8f0'; ltX.font = '11px Inter';
+  ltX.fillText('du', w*0.15-8, h-70);
+
+  // sound wave
+  if (ltPhase > 0 && ltPhase < soundDelay + 0.5) {
+    const soundR = ltPhase * 0.343 / dist * (w*0.55);
+    ltX.strokeStyle = 'rgba(240,171,252,0.6)';
+    ltX.lineWidth = 2;
+    for (let r=0; r<3; r++) {
+      const rr = soundR - r*15;
+      if (rr > 0) {
+        ltX.beginPath();
+        ltX.arc(bx, by+70, rr, 0, Math.PI*2);
+        ltX.stroke();
+      }
+    }
+  }
+  // hearing
+  const hearing = ltPhase > soundDelay && ltPhase < soundDelay + 0.3;
+  if (hearing) {
+    ltX.fillStyle = '#f0abfc'; ltX.font = 'bold 20px Inter';
+    ltX.fillText('💥 KRACH!', w*0.1, h-110);
+  }
+
+  // sections labels
+  ltX.fillStyle = '#facc15'; ltX.font = 'bold 13px Inter';
+  ltX.fillText('visuelle Sektion: t = 0', 60, 30);
+  ltX.fillStyle = '#f0abfc';
+  ltX.fillText(`akustische Sektion: t = ${soundDelay.toFixed(2)}s`, 60, 50);
+
+  // isomorphism arrow
+  ltX.strokeStyle = '#86efac'; ltX.lineWidth = 2; ltX.setLineDash([6,4]);
+  ltX.beginPath();
+  ltX.moveTo(280, 30);
+  ltX.bezierCurveTo(320, 40, 340, 40, 380, 50);
+  ltX.stroke(); ltX.setLineDash([]);
+  ltX.fillStyle = '#86efac'; ltX.font = 'italic bold 13px Inter';
+  ltX.fillText('φ (Isomorphismus)', 300, 25);
+
+  document.getElementById('ltDistv').textContent = dist.toFixed(1);
+  document.getElementById('ltInfo').innerHTML =
+    `Auf der Überlappung (das Ereignis) sind visuelle und akustische Sektion <b>nicht gleich</b> — sie sind versetzt um φ = ${soundDelay.toFixed(2)}s. Aber φ ist <em>invertierbar</em>: du kannst die Zeitverschiebung rückgängig machen. In einer <b>∞-Garbe</b> reicht das — Sektionen müssen sich nur bis auf kohärente Isomorphismen entsprechen.`;
+}
+document.getElementById('ltDist').addEventListener('input', drawLt);
+ltReset();
+
+// ═══════════════════════════════════════════════════════════
+//  7. CIRCLE — winding number
+// ═══════════════════════════════════════════════════════════
+const circC = document.getElementById('circCanvas');
+const circX = circC.getContext('2d');
+function drawCirc() {
+  const {w,h} = fitCanvas(circC);
+  const pos = +document.getElementById('circPos').value;
+  const winds = +document.getElementById('circWind').value;
+  document.getElementById('circPosv').textContent = pos + '°';
+  document.getElementById('circWindv').textContent = winds;
+
+  circX.fillStyle = '#0d1424'; circX.fillRect(0,0,w,h);
+
+  // LEFT: the circle
+  const cx = w*0.28, cy = h*0.5, r = Math.min(w*0.2, h*0.35);
+  // rainbow arcs (charts / open sets)
+  const chartCount = 4;
+  for (let i=0; i<chartCount; i++) {
+    const a0 = (i/chartCount) * Math.PI*2 - Math.PI*0.05;
+    const a1 = ((i+1)/chartCount) * Math.PI*2 + Math.PI*0.05;
+    circX.strokeStyle = `hsl(${i*90}, 70%, 60%)`;
+    circX.lineWidth = 12;
+    circX.beginPath(); circX.arc(cx, cy, r, a0, a1); circX.stroke();
+  }
+  // walking point
+  const ang = pos * Math.PI/180 - Math.PI/2;
+  const px = cx + r*Math.cos(ang), py = cy + r*Math.sin(ang);
+  circX.fillStyle = '#fbbf24';
+  circX.beginPath(); circX.arc(px, py, 8, 0, Math.PI*2); circX.fill();
+  circX.strokeStyle = '#fbbf24'; circX.lineWidth = 2;
+  circX.stroke();
+
+  // trail
+  circX.strokeStyle = 'rgba(251,191,36,0.5)'; circX.lineWidth = 3;
+  circX.beginPath();
+  for (let a=0; a<=pos; a+=2) {
+    const rr = r + Math.floor(a/360)*4;
+    const aa = a*Math.PI/180 - Math.PI/2;
+    const x = cx + rr*Math.cos(aa), y = cy + rr*Math.sin(aa);
+    if (a===0) circX.moveTo(x,y); else circX.lineTo(x,y);
+  }
+  circX.stroke();
+
+  circX.fillStyle = '#e2e8f0'; circX.font = 'bold 14px Inter';
+  circX.textAlign = 'center';
+  circX.fillText('Kreis S¹ (mit 4 lokalen Charts)', cx, cy+r+40);
+
+  // RIGHT: the angle graph, going up as we walk
+  const gx0 = w*0.55, gx1 = w-40, gy0 = 40, gy1 = h-40;
+  circX.strokeStyle = '#334155'; circX.lineWidth = 1;
+  circX.strokeRect(gx0, gy0, gx1-gx0, gy1-gy0);
+  circX.fillStyle = '#94a3b8'; circX.font = '11px Inter'; circX.textAlign='left';
+  circX.fillText('Winkel(θ)', gx0+8, gy0+14);
+  circX.fillText('Position auf Kreis →', gx0+8, gy1-6);
+
+  // y-axis marks
+  for (let k=0; k<=4; k++) {
+    const y = gy1 - k*(gy1-gy0)/4;
+    circX.strokeStyle = '#1e293b';
+    circX.beginPath(); circX.moveTo(gx0, y); circX.lineTo(gx1, y); circX.stroke();
+    circX.fillStyle = '#64748b';
+    circX.fillText((k*Math.PI/2).toFixed(2), gx0-30, y+3);
+  }
+
+  // draw angle-vs-position line: monotonically increasing
+  circX.strokeStyle = '#f0abfc'; circX.lineWidth = 2.5;
+  circX.beginPath();
+  const totalPos = winds*360;
+  for (let a=0; a<=Math.max(pos, totalPos); a+=3) {
+    const x = gx0 + (a/totalPos)*(gx1-gx0);
+    const y = gy1 - (a/(4*90)) * (gy1-gy0) * 0.9;
+    if (a===0) circX.moveTo(x,y); else circX.lineTo(x,y);
+    if (a > pos && !circWalking) break;
+  }
+  circX.stroke();
+
+  // marker of current pos on graph
+  if (pos > 0) {
+    const gx = gx0 + (pos/totalPos)*(gx1-gx0);
+    const gy = gy1 - (pos/(4*90)) * (gy1-gy0) * 0.9;
+    circX.fillStyle = '#fbbf24';
+    circX.beginPath(); circX.arc(gx, gy, 6, 0, Math.PI*2); circX.fill();
+  }
+
+  // contradiction annotation if past a full loop
+  if (pos >= 360) {
+    circX.fillStyle = '#fb7185'; circX.font = 'bold 13px Inter';
+    circX.textAlign='center';
+    circX.fillText(`Widerspruch: 0° und ${pos}° sind derselbe Punkt`, (gx0+gx1)/2, gy0+34);
+    circX.fillText(`aber die Winkel unterscheiden sich um ${Math.floor(pos/360)}·2π`, (gx0+gx1)/2, gy0+52);
+  }
+
+  document.getElementById('circInfo').innerHTML = pos >= 360
+    ? `<b>Windungszahl = ${Math.floor(pos/360)}.</b> Nach einer vollen Runde bist du am Startpunkt zurück — aber dein Winkel ist um ${Math.floor(pos/360)}·2π gewachsen. Es kann <em>keine</em> globale Winkelfunktion auf dem ganzen Kreis geben. Das ist die einfachste nicht-triviale Kohomologie-Klasse.`
+    : `Lokal, auf jedem farbigen Bogen, kannst du eine stetige Winkelfunktion definieren. Bewege den Schieber über 360° hinaus, um die globale Obstruktion zu sehen.`;
+}
+let circWalking = false;
+function circWalk() {
+  if (circWalking) return;
+  circWalking = true;
+  const winds = +document.getElementById('circWind').value;
+  const target = winds * 360;
+  const start = performance.now();
+  const step = t => {
+    const dt = (t - start) / 4000;
+    const p = Math.min(dt, 1) * target;
+    document.getElementById('circPos').value = p;
+    drawCirc();
+    if (dt < 1) requestAnimationFrame(step);
+    else circWalking = false;
+  };
+  requestAnimationFrame(step);
+}
+document.getElementById('circPos').addEventListener('input', drawCirc);
+document.getElementById('circWind').addEventListener('input', () => {
+  const w = +document.getElementById('circWind').value;
+  document.getElementById('circPos').max = w * 360;
+  drawCirc();
+});
+document.getElementById('circPos').max = 360;
+drawCirc();
+
+// ═══════════════════════════════════════════════════════════
+//  8. TOPOS — subobject classifier
+// ═══════════════════════════════════════════════════════════
+const toposC = document.getElementById('toposCanvas');
+const toposX = toposC.getContext('2d');
+function drawTopos() {
+  const {w,h} = fitCanvas(toposC);
+  const mode = document.getElementById('toposSel').value;
+  const region = +document.getElementById('toposRegion').value / 100;
+  document.getElementById('toposRegionv').textContent = Math.round(region*100)+'%';
+
+  toposX.fillStyle = '#0d1424'; toposX.fillRect(0,0,w,h);
+
+  if (mode === 'set') {
+    // Two boxes: true or false
+    const bx = w*0.5, by = h*0.5;
+    // true box
+    toposX.fillStyle = '#86efac33';
+    toposX.strokeStyle = '#86efac'; toposX.lineWidth = 3;
+    toposX.fillRect(bx-160, by-60, 140, 120);
+    toposX.strokeRect(bx-160, by-60, 140, 120);
+    toposX.fillStyle = '#86efac'; toposX.font = 'bold 22px Inter';
+    toposX.textAlign = 'center';
+    toposX.fillText('WAHR', bx-90, by+8);
+    // false box
+    toposX.fillStyle = '#fb718533';
+    toposX.strokeStyle = '#fb7185';
+    toposX.fillRect(bx+20, by-60, 140, 120);
+    toposX.strokeRect(bx+20, by-60, 140, 120);
+    toposX.fillStyle = '#fb7185'; toposX.font = 'bold 22px Inter';
+    toposX.fillText('FALSCH', bx+90, by+8);
+    // P as an arrow
+    toposX.strokeStyle = '#fbbf24'; toposX.lineWidth = 3;
+    toposX.beginPath();
+    const targetX = region > 0.5 ? bx-90 : bx+90;
+    toposX.moveTo(bx-250, 40);
+    toposX.lineTo(targetX, by-60);
+    toposX.stroke();
+    toposX.fillStyle = '#fbbf24'; toposX.font = 'italic bold 15px Inter';
+    toposX.textAlign = 'left';
+    toposX.fillText('P : 1 → Ω', bx-280, 30);
+    toposX.font = '13px Inter';
+    toposX.fillText(`Ω = {0, 1}`, 20, h-15);
+    toposX.fillText(`P ist ${region > 0.5 ? 'WAHR' : 'FALSCH'} — nichts dazwischen`, 20, h-30);
+
+    document.getElementById('toposInfo').innerHTML =
+      '<b>Topos Set:</b> Ω hat genau 2 Elemente. Jede Aussage ist entweder wahr oder falsch. Das Gesetz vom ausgeschlossenen Dritten <em>P ∨ ¬P</em> gilt immer.';
+  } else {
+    // Sheaf topos: Ω = open sets
+    // draw a topological space (a rectangle)
+    const rx = 40, ry = 50, rw = w-80, rh = h-100;
+    toposX.strokeStyle = '#334155'; toposX.lineWidth = 2;
+    toposX.strokeRect(rx, ry, rw, rh);
+    // shade the region where P holds
+    const holdW = rw*region;
+    // Gradient fade: neither wholly true nor false
+    const grad = toposX.createLinearGradient(rx, 0, rx+rw, 0);
+    grad.addColorStop(0, 'rgba(134,239,172,0.5)');
+    grad.addColorStop(Math.min(0.99, region), 'rgba(134,239,172,0.5)');
+    grad.addColorStop(Math.min(1, region+0.001), 'rgba(251,113,133,0.3)');
+    grad.addColorStop(1, 'rgba(251,113,133,0.3)');
+    toposX.fillStyle = grad;
+    toposX.fillRect(rx, ry, rw, rh);
+    // labels
+    toposX.fillStyle = '#86efac'; toposX.font = 'bold 16px Inter'; toposX.textAlign='center';
+    toposX.fillText('P wahr hier', rx + holdW/2, ry+rh/2);
+    toposX.fillStyle = '#fb7185';
+    toposX.fillText('P falsch hier', rx + holdW + (rw-holdW)/2, ry+rh/2);
+    // dividing line
+    toposX.strokeStyle = '#fbbf24'; toposX.lineWidth = 2;
+    toposX.setLineDash([6,4]);
+    toposX.beginPath(); toposX.moveTo(rx+holdW, ry); toposX.lineTo(rx+holdW, ry+rh); toposX.stroke();
+    toposX.setLineDash([]);
+    // Ω label
+    toposX.fillStyle = '#94a3b8'; toposX.font = '13px Inter'; toposX.textAlign='left';
+    toposX.fillText('Ω(X) = Menge aller offenen Teilmengen — Wahrheitswert = Region', 20, h-15);
+
+    document.getElementById('toposInfo').innerHTML =
+      `<b>Topos Sh(X):</b> P „gilt auf" ${Math.round(region*100)}% des Raums. <b>¬P</b> gilt nicht auf 100%−${Math.round(region*100)}% = ${Math.round((1-region)*100)}% — sondern nur auf dem <em>Inneren des Komplements</em>. Auf der Grenzlinie: weder P noch ¬P. → intuitionistische Logik.`;
+  }
+}
+document.getElementById('toposSel').addEventListener('change', drawTopos);
+document.getElementById('toposRegion').addEventListener('input', drawTopos);
+drawTopos();
+
+// ═══════════════════════════════════════════════════════════
+//  9. EMBEDDINGS
+// ═══════════════════════════════════════════════════════════
+const embC = document.getElementById('embCanvas');
+const embX = embC.getContext('2d');
+// semantic word cloud with clusters
+let embWords = [
+  // animals
+  {w:'Katze', c:[2,3,0], cluster:0},
+  {w:'Hund', c:[2.5,3.2,0.2], cluster:0},
+  {w:'Kätzchen', c:[1.8,2.8,-0.1], cluster:0},
+  {w:'Miau', c:[2.2,3.5,0.3], cluster:0},
+  {w:'Haustier', c:[2.3,2.7,0.4], cluster:0},
+  // royals
+  {w:'König', c:[-3,2,0.5], cluster:1},
+  {w:'Königin', c:[-3.3,2.3,-0.5], cluster:1},
+  {w:'Prinz', c:[-2.7,1.7,0.6], cluster:1},
+  {w:'Krone', c:[-3.1,2.5,0.2], cluster:1},
+  // colors
+  {w:'rot', c:[0,-3,0.5], cluster:2},
+  {w:'blau', c:[0.3,-3.3,0.3], cluster:2},
+  {w:'grün', c:[-0.3,-3.1,-0.2], cluster:2},
+  {w:'Farbe', c:[0,-2.5,0.4], cluster:2},
+  // gender
+  {w:'Mann', c:[-1.5,0.5,1.0], cluster:3},
+  {w:'Frau', c:[-1.8,0.8,-1.0], cluster:3},
+];
+const CLUSTER_COLORS = ['#7dd3fc','#f0abfc','#fbbf24','#86efac','#fb923c'];
+let embAnalogyArrow = null;
+
+function embAddWord() {
+  const words = ['Baum','Auto','Wolke','Musik','Traum','Fluss','Stern','Buch','Wind','Berg'];
+  const w = words[Math.floor(Math.random()*words.length)];
+  const cluster = embWords.length % 5;
+  const base = [
+    [2,3,0],[-3,2,0.5],[0,-3,0.5],[-1.5,0.5,1.0],[3,-2,0.5]
+  ][cluster];
+  embWords.push({
+    w: w+'*', c: [base[0]+Math.random()-0.5, base[1]+Math.random()-0.5, base[2]+Math.random()-0.5],
+    cluster
+  });
+  drawEmb();
+}
+function embShift() {
+  // Analogy vector: König - Mann + Frau ≈ Königin
+  const king = embWords.find(x=>x.w==='König').c;
+  const man = embWords.find(x=>x.w==='Mann').c;
+  const woman = embWords.find(x=>x.w==='Frau').c;
+  const result = [king[0]-man[0]+woman[0], king[1]-man[1]+woman[1], king[2]-man[2]+woman[2]];
+  embAnalogyArrow = {from: king, to: result};
+  drawEmb();
+  document.getElementById('embInfo').innerHTML =
+    '<b>Analogie:</b> König − Mann + Frau ≈ <b>Königin</b>. Der Pfeil zeigt: der Vektor „Geschlechtsrichtung" von Mann→Frau, angewendet auf König, führt fast exakt zu Königin. <em>Geometrie codiert semantische Beziehungen.</em>';
+}
+function drawEmb() {
+  const {w,h} = fitCanvas(embC);
+  const theta = +document.getElementById('embTheta').value * Math.PI/180;
+  const eps = +document.getElementById('embEps').value;
+  embX.fillStyle = '#0d1424'; embX.fillRect(0,0,w,h);
+
+  // project 3D → 2D via rotation around Y
+  const cx = w/2, cy = h/2;
+  const scale = Math.min(w,h)/12;
+  function proj(p) {
+    const [x,y,z] = p;
+    const xr = x*Math.cos(theta) - z*Math.sin(theta);
+    const zr = x*Math.sin(theta) + z*Math.cos(theta);
+    return {x: cx + xr*scale, y: cy - y*scale, depth: zr};
+  }
+
+  // axes
+  embX.strokeStyle = '#1e293b'; embX.lineWidth = 1;
+  embX.setLineDash([3,3]);
+  for (let g=-5; g<=5; g++) {
+    const p1 = proj([g, -5, 0]), p2 = proj([g, 5, 0]);
+    embX.beginPath(); embX.moveTo(p1.x,p1.y); embX.lineTo(p2.x,p2.y); embX.stroke();
+    const p3 = proj([-5, g, 0]), p4 = proj([5, g, 0]);
+    embX.beginPath(); embX.moveTo(p3.x,p3.y); embX.lineTo(p4.x,p4.y); embX.stroke();
+  }
+  embX.setLineDash([]);
+
+  // similarity edges (within cluster)
+  const projected = embWords.map(w => ({...w, p: proj(w.c)}));
+  projected.sort((a,b)=>a.p.depth-b.p.depth);
+  for (let i=0;i<projected.length;i++) {
+    for (let j=i+1;j<projected.length;j++) {
+      const d = Math.hypot(projected[i].p.x-projected[j].p.x, projected[i].p.y-projected[j].p.y);
+      if (d < eps) {
+        const alpha = (1 - d/eps) * 0.5;
+        const color = projected[i].cluster === projected[j].cluster
+          ? CLUSTER_COLORS[projected[i].cluster]
+          : '#334155';
+        embX.strokeStyle = color + Math.floor(alpha*255).toString(16).padStart(2,'0');
+        embX.lineWidth = projected[i].cluster === projected[j].cluster ? 2 : 0.5;
+        embX.beginPath();
+        embX.moveTo(projected[i].p.x, projected[i].p.y);
+        embX.lineTo(projected[j].p.x, projected[j].p.y);
+        embX.stroke();
+      }
+    }
+  }
+
+  // analogy arrow
+  if (embAnalogyArrow) {
+    const p1 = proj(embAnalogyArrow.from), p2 = proj(embAnalogyArrow.to);
+    embX.strokeStyle = '#fbbf24'; embX.lineWidth = 3;
+    embX.beginPath(); embX.moveTo(p1.x,p1.y); embX.lineTo(p2.x,p2.y); embX.stroke();
+    // arrowhead
+    const ang = Math.atan2(p2.y-p1.y, p2.x-p1.x);
+    embX.beginPath();
+    embX.moveTo(p2.x, p2.y);
+    embX.lineTo(p2.x - 12*Math.cos(ang-0.4), p2.y - 12*Math.sin(ang-0.4));
+    embX.lineTo(p2.x - 12*Math.cos(ang+0.4), p2.y - 12*Math.sin(ang+0.4));
+    embX.fillStyle = '#fbbf24'; embX.fill();
+    embX.fillStyle = '#fbbf24'; embX.font = 'bold 12px Inter';
+    embX.fillText('≈ Königin', p2.x+8, p2.y);
+  }
+
+  // words
+  projected.forEach(pw => {
+    const {p, cluster, w:word} = pw;
+    const depthFactor = (pw.p.depth+5)/10;
+    embX.fillStyle = CLUSTER_COLORS[cluster];
+    embX.globalAlpha = 0.4 + 0.6*depthFactor;
+    embX.beginPath(); embX.arc(p.x, p.y, 5 + 3*depthFactor, 0, Math.PI*2); embX.fill();
+    embX.globalAlpha = 1;
+    embX.fillStyle = '#e2e8f0';
+    embX.font = `${Math.round(11 + 3*depthFactor)}px Inter`;
+    embX.fillText(word, p.x+8, p.y+4);
+  });
+
+  // legend
+  const clusters = ['Tiere','Königlich','Farben','Geschlecht','Zufall'];
+  clusters.slice(0, Math.max(...embWords.map(w=>w.cluster))+1).forEach((label, i) => {
+    embX.fillStyle = CLUSTER_COLORS[i];
+    embX.fillRect(10, 10+i*20, 12, 12);
+    embX.fillStyle = '#94a3b8'; embX.font = '12px Inter';
+    embX.fillText(label, 28, 20+i*20);
+  });
+}
+document.getElementById('embTheta').addEventListener('input', drawEmb);
+document.getElementById('embEps').addEventListener('input', drawEmb);
+// auto-rotate slowly
+setInterval(() => {
+  const s = document.getElementById('embTheta');
+  s.value = (+s.value + 0.3) % 360;
+  drawEmb();
+}, 60);
+drawEmb();
+
+// ═══════════════════════════════════════════════════════════
+//  10. FLOATS
+// ═══════════════════════════════════════════════════════════
+const floatC = document.getElementById('floatCanvas');
+const floatX = floatC.getContext('2d');
+function drawFloats() {
+  const {w,h} = fitCanvas(floatC);
+  const M = +document.getElementById('fMant').value;
+  const E = +document.getElementById('fExp').value;
+  document.getElementById('fMantv').textContent = M;
+  document.getElementById('fExpv').textContent = E;
+  floatX.fillStyle = '#0d1424'; floatX.fillRect(0,0,w,h);
+
+  // generate representable positive floats
+  const values = new Set();
+  values.add(0);
+  const Ebias = (1<<(E-1)) - 1;
+  for (let e = 1; e < (1<<E) - 1; e++) {
+    for (let m = 0; m < (1<<M); m++) {
+      const mantissa = 1 + m/(1<<M);
+      const val = mantissa * Math.pow(2, e - Ebias);
+      values.add(val);
+      values.add(-val);
+    }
+  }
+  const vs = [...values].sort((a,b)=>a-b);
+  const vmax = vs[vs.length-1];
+  // axis
+  floatX.strokeStyle = '#475569'; floatX.lineWidth = 1;
+  floatX.beginPath(); floatX.moveTo(20, h/2); floatX.lineTo(w-20, h/2); floatX.stroke();
+  // tickmarks
+  vs.forEach(v => {
+    const x = w/2 + (v/vmax) * (w/2 - 30);
+    const near0 = Math.abs(v) < vmax*0.1;
+    floatX.strokeStyle = near0 ? '#7dd3fc' : '#f0abfc';
+    floatX.lineWidth = near0 ? 1.5 : 1;
+    floatX.beginPath();
+    floatX.moveTo(x, h/2 - (near0?14:8));
+    floatX.lineTo(x, h/2 + (near0?14:8));
+    floatX.stroke();
+  });
+  // labels
+  floatX.fillStyle = '#94a3b8'; floatX.font = '12px Inter';
+  floatX.textAlign = 'center';
+  floatX.fillText('0', w/2, h/2+30);
+  floatX.fillText('−'+vmax.toFixed(1), 30, h/2+30);
+  floatX.fillText('+'+vmax.toFixed(1), w-30, h/2+30);
+  floatX.fillStyle = '#7dd3fc';
+  floatX.fillText(`${vs.length} darstellbare Werte`, w/2, 20);
+  floatX.fillStyle = '#f0abfc'; floatX.textAlign = 'left';
+  floatX.fillText('dicht bei 0', w/2 + 20, h/2 - 25);
+  floatX.fillText('grob am Rand', w - 130, h/2 - 25);
+}
+document.getElementById('fMant').addEventListener('input', drawFloats);
+document.getElementById('fExp').addEventListener('input', drawFloats);
+drawFloats();
+
+// associativity demo
+function drawAssoc() {
+  const a = +document.getElementById('faA').value;
+  const b = +document.getElementById('faB').value;
+  const c = +document.getElementById('faC').value;
+  // simulate low-precision by rounding to nearest of ~10^-2 log-scale
+  function round(x) {
+    if (x === 0) return 0;
+    const e = Math.floor(Math.log10(Math.abs(x)));
+    const q = Math.pow(10, e - 2);
+    return Math.round(x / q) * q;
+  }
+  // fake low-precision addition
+  function fpAdd(x,y) { return round(x + y); }
+  const left = fpAdd(fpAdd(a,b), c);
+  const right = fpAdd(a, fpAdd(b,c));
+  const diff = left - right;
+  document.getElementById('floatAssoc').innerHTML = `
+    a = ${a},  b = ${b},  c = ${c}<br>
+    (a + b) + c = <span style="color:#7dd3fc;">${left}</span><br>
+    a + (b + c) = <span style="color:#f0abfc;">${right}</span><br>
+    Differenz = <span style="color:${Math.abs(diff)>1e-9?'#fb7185':'#86efac'};font-weight:bold;">${diff}</span>
+    ${Math.abs(diff)>1e-9 ? ' &nbsp;⚠ Assoziativität gebrochen!' : ' &nbsp;✓ (zufällig) exakt'}
+  `;
+}
+['faA','faB','faC'].forEach(id => document.getElementById(id).addEventListener('input', drawAssoc));
+drawAssoc();
+
+// ═══════════════════════════════════════════════════════════
+//  RESIZE HANDLERS
+// ═══════════════════════════════════════════════════════════
+addEventListener('resize', () => {
+  drawCircle();
+  drawRel();
+  drawTop();
+  drawPano();
+  drawStalk();
+  drawLt();
+  drawCirc();
+  drawTopos();
+  drawEmb();
+  drawFloats();
+  catReset();
+});
+
+// initial run of temml on any remaining elements
+setTimeout(() => {
+  document.querySelectorAll('.temml-target').forEach(el => {
+    if (el.dataset.tex) tex(el, el.dataset.tex);
+  });
+}, 100);
+</script>
+</body>
+</html>

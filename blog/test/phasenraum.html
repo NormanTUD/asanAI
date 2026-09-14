@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Phasenraum — Die dünne Scheibe der Nützlichkeit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-elev: #131a2e;
+    --bg-card: #1a2340;
+    --ink: #e8ecf5;
+    --ink-dim: #a0aac0;
+    --accent: #ffb347;
+    --accent2: #7fd4ff;
+    --accent3: #ff6b9d;
+    --good: #6ee7a8;
+    --bad: #ff6b6b;
+    --line: #2a3555;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: linear-gradient(180deg, #060912 0%, #0a0e1a 100%);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 24px 120px;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0 0 12px;
+    line-height: 1.1;
+  }
+  h2 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin-top: 80px;
+    margin-bottom: 8px;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  h2 .step {
+    display: inline-block;
+    background: var(--accent);
+    color: #0a0e1a;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-right: 14px;
+    vertical-align: middle;
+    min-width: 34px;
+    text-align: center;
+  }
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-top: 32px;
+    margin-bottom: 8px;
+  }
+  p { color: var(--ink); }
+  .lede {
+    font-size: 1.15rem;
+    color: var(--ink-dim);
+    max-width: 780px;
+    margin-bottom: 40px;
+  }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 24px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .card.wide { padding: 28px; }
+  .demo-title {
+    font-weight: 700;
+    color: var(--accent2);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .demo-sub { color: var(--ink-dim); font-size: 0.95rem; margin-bottom: 18px; }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 28px;
+    align-items: center;
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+    margin-top: 16px;
+  }
+  .ctrl {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 140px;
+    flex: 1;
+  }
+  .ctrl label {
+    font-size: 0.85rem;
+    color: var(--ink-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+  .ctrl label b { color: var(--accent); font-weight: 700; }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent) var(--pct, 50%), #2a3555 var(--pct, 50%), #2a3555 100%);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(255,179,71,0.5);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(255,179,71,0.5);
+  }
+  button, .btn {
+    background: var(--accent);
+    color: #0a0e1a;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.1s, box-shadow 0.2s;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,179,71,0.4); }
+  button.secondary { background: var(--bg-elev); color: var(--accent); border: 1px solid var(--accent); }
+  button.small { padding: 4px 12px; font-size: 0.8rem; }
+  canvas { display: block; max-width: 100%; background: #060912; border-radius: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 780px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+  .readout {
+    display: inline-block;
+    background: rgba(0,0,0,0.4);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent2);
+    margin: 4px 6px 4px 0;
+  }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: rgba(255,179,71,0.08);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+  }
+  .callout.big {
+    border-left-width: 6px;
+    font-size: 1.05rem;
+    padding: 20px 24px;
+  }
+  .toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 32px 0 60px;
+  }
+  .toc a {
+    background: var(--bg-card);
+    color: var(--ink);
+    text-decoration: none;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .toc a:hover {
+    border-color: var(--accent);
+    background: var(--bg-elev);
+    transform: translateY(-2px);
+  }
+  .toc .n {
+    background: var(--accent);
+    color: #0a0e1a;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 12px 20px;
+    font-size: 0.88rem; color: var(--ink-dim);
+    margin: 10px 0;
+  }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .tab-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tab-row button {
+    background: var(--bg-elev);
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .tab-row button.active {
+    background: var(--accent);
+    color: #0a0e1a;
+    border-color: var(--accent);
+  }
+  .footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .kbd {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 0.85rem;
+  }
+  .prereq {
+    background: rgba(127,212,255,0.05);
+    border: 1px dashed rgba(127,212,255,0.3);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+  .prereq h3 { margin-top: 0; color: var(--accent2); }
+  .prereq h3::before { content: "🎓 Vorwissen: "; color: var(--accent2); font-weight: 600; }
+  .status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .status.on { background: rgba(110,231,168,0.2); color: var(--good); }
+  .status.off { background: rgba(255,107,107,0.2); color: var(--bad); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div style="text-align: center; margin-bottom: 20px;">
+  <div style="color: var(--accent); font-weight: 700; letter-spacing: 0.15em; font-size: 0.9rem;">TEIL 4 · KAPITEL 4</div>
+</div>
+<h1>Der Phasenraum<br><span style="background: linear-gradient(90deg, var(--accent2), var(--good)); -webkit-background-clip: text; background-clip: text; color: transparent;">Die dünne Scheibe der Nützlichkeit</span></h1>
+<p class="lede">
+Warum ein KI-Modell nur in einem winzigen Bereich zuverlässig ist — und wie die Physik uns eine überraschend präzise Sprache dafür gibt. Kein Text zum Auswendiglernen. Nur Regler, Bilder, und ein paar Momente zum Staunen.
+</p>
+
+<div class="callout big">
+  <b>Die eine Idee:</b> Ein KI-Modell ist nicht überall in seinem Möglichkeitenraum nützlich. Es ist nützlich auf <b style="color: var(--accent);">einer dünnen, energiearmen Scheibe</b> davon — der Scheibe, die sein gelerntes "Energiefeld" wahrscheinlich gemacht hat.
+</div>
+
+<div class="toc">
+  <a href="#s1"><span class="n">1</span><div><b>Was ist eigentlich Bewegung?</b><br><small style="color: var(--ink-dim);">Ort + Impuls = Zustand</small></div></a>
+  <a href="#s2"><span class="n">2</span><div><b>Der Phasenraum</b><br><small style="color: var(--ink-dim);">Alle Zustände auf einmal</small></div></a>
+  <a href="#s3"><span class="n">3</span><div><b>Energie als Landschaft</b><br><small style="color: var(--ink-dim);">Warum die Kugel rollt</small></div></a>
+  <a href="#s4"><span class="n">4</span><div><b>Das Phasenporträt</b><br><small style="color: var(--ink-dim);">Ein Bild sagt alles</small></div></a>
+  <a href="#s5"><span class="n">5</span><div><b>Temperatur</b><br><small style="color: var(--ink-dim);">Kreativität als Regler</small></div></a>
+  <a href="#s6"><span class="n">6</span><div><b>Hohe Dimensionen</b><br><small style="color: var(--ink-dim);">Warum "dünn" so extrem ist</small></div></a>
+  <a href="#s7"><span class="n">7</span><div><b>Die Mannigfaltigkeit</b><br><small style="color: var(--ink-dim);">Sinnvolle Daten liegen auf einer Fläche</small></div></a>
+  <a href="#s8"><span class="n">8</span><div><b>Das neuronale Netz</b><br><small style="color: var(--ink-dim);">Gleiche Idee, neue Bühne</small></div></a>
+  <a href="#s9"><span class="n">9</span><div><b>Neben die Scheibe fallen</b><br><small style="color: var(--ink-dim);">Halluzination sichtbar gemacht</small></div></a>
+  <a href="#s10"><span class="n">10</span><div><b>Alles auf einem Bild</b><br><small style="color: var(--ink-dim);">Die Synthese</small></div></a>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: STATE -->
+<!-- ============================================================ -->
+<h2 id="s1"><span class="step">1</span>Ein Ort reicht nicht — was Bewegung wirklich braucht</h2>
+<p>Stell dir eine Perle auf einem geraden Draht vor. Wenn ich dir nur sage <em>wo</em> sie ist, weißt du noch nichts über ihre Zukunft. Sie könnte still stehen, langsam nach rechts driften oder mit Höchstgeschwindigkeit an dieser Stelle vorbeirasen. Gleicher Ort, drei verschiedene Zukünfte.</p>
+<p>Um Bewegung wirklich zu beschreiben, brauchen wir <b>zwei Zahlen</b>:</p>
+<ul>
+  <li><b style="color:var(--accent);">Ort q</b> — wo die Perle ist</li>
+  <li><b style="color:var(--accent2);">Impuls p</b> — wie schnell sie sich wohin bewegt (<code>p = m·v</code>, Masse mal Geschwindigkeit)</li>
+</ul>
+
+<div class="card">
+  <div class="demo-title">Demo · Perle auf einem Draht</div>
+  <div class="demo-sub">Setze Ort und Impuls beliebig. Beobachte, was passiert. Alle drei Perlen starten <b>am gleichen Ort</b> — nur der Impuls unterscheidet sie.</div>
+  <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+    <canvas id="beadCanvas" width="1000" height="180"></canvas>
+  </div>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Gemeinsamer Startort q₀ <b><span id="q0v">0.0</span></b></label>
+      <input type="range" id="q0" min="-4" max="4" step="0.1" value="0">
+    </div>
+    <div class="ctrl">
+      <label>Impuls Perle A <b><span id="p1v">0.0</span></b></label>
+      <input type="range" id="p1" min="-3" max="3" step="0.1" value="0">
+    </div>
+    <div class="ctrl">
+      <label>Impuls Perle B <b><span id="p2v">1.0</span></b></label>
+      <input type="range" id="p2" min="-3" max="3" step="0.1" value="1">
+    </div>
+    <div class="ctrl">
+      <label>Impuls Perle C <b><span id="p3v">-2.0</span></b></label>
+      <input type="range" id="p3" min="-3" max="3" step="0.1" value="-2">
+    </div>
+    <button onclick="resetBeads()">▶ Neu starten</button>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Erkenntnis:</b> Selbe Position → drei völlig verschiedene Zukünfte. Ein Ort allein reicht nicht. Ein <b style="color: var(--accent);">Zustand</b> ist das Paar <span class="readout">(q, p)</span>.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: PHASE SPACE -->
+<!-- ============================================================ -->
+<h2 id="s2"><span class="step">2</span>Der Phasenraum — jeder mögliche Zustand als Punkt</h2>
+<p>Jetzt der entscheidende Schritt: statt <em>eine</em> Perle in <em>einer</em> Welt zu betrachten, betrachten wir <b>alle möglichen Zustände auf einmal</b>. Das ist der <b>Phasenraum</b>: eine Ebene, deren x-Achse der Ort und deren y-Achse der Impuls ist. <b>Jeder Punkt in dieser Ebene ist eine mögliche Situation.</b></p>
+<p>Das Leben der Perle ist dann eine <b>Bahn</b>, die durch den Phasenraum zeichnet.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Der Phasenraum eines harmonischen Oszillators</div>
+  <div class="demo-sub">Links: die Perle an einer Feder (Ortsraum). Rechts: der gleiche Zustand als Punkt im Phasenraum. Klicke ins rechte Bild, um einen neuen Startzustand zu setzen.</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Ortsraum (was du siehst)</div>
+      <canvas id="springCanvas" width="500" height="380"></canvas>
+    </div>
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Phasenraum (was der Physiker zeichnet)</div>
+      <canvas id="phaseCanvas" width="500" height="380"></canvas>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Federkonstante k <b><span id="kv">1.00</span></b></label>
+      <input type="range" id="kSlider" min="0.2" max="3" step="0.05" value="1">
+    </div>
+    <div class="ctrl">
+      <label>Trail-Länge <b><span id="trailv">200</span></b></label>
+      <input type="range" id="trailSlider" min="30" max="600" step="10" value="200">
+    </div>
+    <button onclick="clearPhaseTrail()">Bahnen löschen</button>
+    <button class="secondary" onclick="addRandomState()">+ Zufälliger Startzustand</button>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Beobachtung:</b> Jede Bahn im Phasenraum ist eine <b>geschlossene Ellipse</b>. Warum? Die Perle tauscht Ort gegen Impuls und zurück — aber die <b>Summe</b> bleibt konstant. Genau das ist Energieerhaltung.</p>
+</div>
+
+<div class="prereq">
+  <h3>Was heißt "Impuls" formal?</h3>
+  <p>Impuls <b>p = m·v</b> misst "wie viel Bewegung" ein Objekt hat. Ein schwerer LKW mit 30 km/h hat viel mehr Impuls als ein Fahrrad mit 30 km/h. In Formeln erscheint die kinetische Energie als:</p>
+  <div style="text-align: center; font-size: 1.1rem; margin: 12px 0;">$$E_{\text{kin}} = \tfrac{1}{2} m v^2 = \frac{p^2}{2m}$$</div>
+  <p>Warum <em>Impuls</em> statt <em>Geschwindigkeit</em>? Weil Impuls die "richtige" Koordinate ist: er hat eine Erhaltungssatz-Struktur, die Geschwindigkeit alleine nicht hat. Für unsere Zwecke: <b>Impuls = Geschwindigkeit mal Masse.</b></p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: ENERGY LANDSCAPE -->
+<!-- ============================================================ -->
+<h2 id="s3"><span class="step">3</span>Energie ist eine Landschaft — und alles rollt bergab</h2>
+<p>Eine einzige Zahl regiert das ganze System: die <b>Gesamtenergie H</b> (nach Hamilton). Sie hat zwei Teile:</p>
+<div style="text-align: center; font-size: 1.15rem; margin: 16px 0;">
+  $$H(q,p) = \underbrace{\frac{p^2}{2m}}_{\text{kinetisch (Bewegung)}} + \underbrace{V(q)}_{\text{potentiell (Lage)}}$$
+</div>
+<p><b>Bildlich:</b> Stell dir eine hügelige Landschaft vor. Die Höhe an jeder Stelle ist die potentielle Energie <code>V(q)</code>. Eine Kugel rollt auf dieser Landschaft. Wo sie schnell ist, hat sie viel kinetische Energie; wo sie hoch liegt, viel potentielle. Die Summe bleibt konstant — <b>Energieerhaltung</b>.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Kugel in einer Energie-Landschaft</div>
+  <div class="demo-sub">Zeichne die Landschaft mit den Reglern. Setze die Startenergie. Beobachte, wie die Kugel niemals die Höhe ihrer Energie überschreiten kann — sie ist auf <b>eine Energie-Höhenlinie</b> gefangen.</div>
+  <canvas id="landscapeCanvas" width="1000" height="440"></canvas>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Landschaftsform <b><span id="landv">Doppel-Mulde</span></b></label>
+      <div class="tab-row" id="landTabs">
+        <button data-land="single" class="active">Einfache Mulde</button>
+        <button data-land="double">Doppel-Mulde</button>
+        <button data-land="washboard">Wellblech</button>
+      </div>
+    </div>
+    <div class="ctrl">
+      <label>Startposition q₀ <b><span id="lq0v">-1.5</span></b></label>
+      <input type="range" id="lq0" min="-3" max="3" step="0.05" value="-1.5">
+    </div>
+    <div class="ctrl">
+      <label>Gesamtenergie E <b><span id="lev">1.5</span></b></label>
+      <input type="range" id="le" min="0.1" max="4" step="0.05" value="1.5">
+    </div>
+    <button onclick="resetLandscape()">▶ Kugel loslassen</button>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Beobachtung:</b> Die gestrichelte Linie ist die Gesamtenergie <span class="readout">E</span>. Die Kugel kann nirgends höher rollen als diese Linie — das wäre negative kinetische Energie, unmöglich. Die <b>Umkehrpunkte</b> sind, wo Landschaft und Energie-Linie sich treffen.</p>
+</div>
+
+<div class="prereq">
+  <h3>Ableitung als "Steigung"</h3>
+  <p>Wenn die Landschaft an einer Stelle steigt, wirkt eine Kraft, die die Kugel nach unten drückt. Die Kraft ist genau die <b>negative Steigung</b>:</p>
+  <div style="text-align: center; font-size: 1.05rem;">$$F = -\frac{dV}{dq} = -V'(q)$$</div>
+  <p>Steilere Steigung → stärkere Kraft. Flach (an einem Minimum oder Maximum) → keine Kraft, Gleichgewicht.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: PHASE PORTRAIT -->
+<!-- ============================================================ -->
+<h2 id="s4"><span class="step">4</span>Das Phasenporträt — ein Bild sagt alles</h2>
+<p>Jetzt zeichnen wir nicht mehr <em>eine</em> Bahn im Phasenraum, sondern <b>alle Bahnen gleichzeitig</b>. Für jede mögliche Startenergie eine eigene Kurve. Das Ergebnis heißt <b>Phasenporträt</b> — und für ein Pendel ist es eines der schönsten Bilder in der ganzen Physik.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Phasenporträt eines Pendels</div>
+  <div class="demo-sub">Klicke <b>irgendwo</b> ins Bild um eine neue Bahn zu starten. Kleine Auslenkung → Schwingung (geschlossene Schleife). Große Auslenkung → Überschlag (das Pendel dreht sich immer weiter). Die <b>rote Kurve</b> dazwischen ist die <b>Separatrix</b> — genau die Energie, bei der das Pendel im Handstand steht.</div>
+  <canvas id="portraitCanvas" width="1000" height="500"></canvas>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Anzahl Bahnen anzeigen <b><span id="ncurvesv">14</span></b></label>
+      <input type="range" id="ncurves" min="0" max="30" step="1" value="14">
+    </div>
+    <div class="ctrl">
+      <label>Vektorfeld anzeigen</label>
+      <div class="tab-row">
+        <button id="vfBtn" class="active" onclick="toggleVF()">Ein</button>
+      </div>
+    </div>
+    <button onclick="clearPortrait()">Bahnen löschen</button>
+    <button class="secondary" onclick="setSeparatrix()">Separatrix zeigen</button>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="background:#7fd4ff"></span>Schwingung (geschlossen)</span>
+    <span><span class="swatch" style="background:#ff6b6b"></span>Separatrix (knife-edge)</span>
+    <span><span class="swatch" style="background:#ffb347"></span>Überschlag (offene Bahn)</span>
+    <span><span class="swatch" style="background:#6ee7a8"></span>Ruhelagen (Fixpunkte)</span>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Die entscheidende Beobachtung:</b> Die ganze Ebene ist "alles was passieren könnte" — aber ein Pendel mit fester Energie lebt auf <b>einer einzigen Kurve</b>. Eine einzige Zahl (Energie) selektiert eine hauchdünne Kurve aus dem gesamten Raum. Diese Kurve ist der ganze "Wirkbereich". Alles andere ist möglich, wird aber nie besucht.</p>
+</div>
+
+<div class="callout">
+  <b>Die zentrale Idee, für später:</b> Genau so funktioniert eine KI. Eine einzige Zahl (die Energie / der Loss) wählt aus dem gigantischen Raum aller möglichen (Frage, Antwort)-Paare eine <b>hauchdünne Scheibe</b> aus — die Scheibe, wo die Antworten sinnvoll sind.
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: TEMPERATURE -->
+<!-- ============================================================ -->
+<h2 id="s5"><span class="step">5</span>Temperatur — wenn die Energie wackeln darf</h2>
+<p>Eine reibungsfreie Kugel sitzt exakt auf einer Kurve. Ein <b>warmes</b> System wackelt — die Energie schwankt ein bisschen. Welche Zustände werden dann besucht? Die Antwort ist die <b>Boltzmann-Verteilung</b>:</p>
+<div style="text-align: center; font-size: 1.15rem; margin: 16px 0;">
+  $$P(\text{Zustand}) \propto e^{-E/T}$$
+</div>
+<p>In Worten: Zustand bekommt ein <b>Gewicht</b>, das <em>schrumpft</em> wenn die Energie <em>wächst</em>. <b>T</b> ist die Temperatur: kalt = geizig (bleibt unten), heiß = großzügig (klettert hoch).</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Temperatur regelt die Verteilung</div>
+  <div class="demo-sub">Links: die Energie-Landschaft. Rechts: die Wahrscheinlichkeit, an jeder Stelle zu sein. Dreh die Temperatur hoch und runter.</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Energie-Landschaft (Höhe = Energie)</div>
+      <canvas id="boltzLandCanvas" width="500" height="320"></canvas>
+    </div>
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Aufenthaltswahrscheinlichkeit P(q)</div>
+      <canvas id="boltzProbCanvas" width="500" height="320"></canvas>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Temperatur T <b><span id="tv">0.30</span></b></label>
+      <input type="range" id="tempSlider" min="0.03" max="3" step="0.01" value="0.3">
+    </div>
+    <button onclick="animateTemp()">🌡 Auto-Animation</button>
+  </div>
+  <div class="legend">
+    <span>🥶 <b>T klein</b>: fast alles Gewicht in den tiefsten Tälern — <i>präzise, langweilig</i></span>
+    <span>🔥 <b>T groß</b>: gleichmäßig verteilt — <i>kreativ, chaotisch</i></span>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Genau das ist der Temperatur-Regler eines Chatbots.</b> Niedrig = die eine sicherste Antwort (korrekt, aber öde). Hoch = ungewöhnliche, kreative, manchmal unsinnige Antworten. "Kreativität" ist buchstäblich Temperatur-Erhöhung.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: HIGH DIMENSIONS -->
+<!-- ============================================================ -->
+<h2 id="s6"><span class="step">6</span>Warum "dünn" in hohen Dimensionen so extrem ist</h2>
+<p>In unserer Anschauung ist "dünn" nicht schockierend — eine Linie in einer Ebene ist dünn, aber nicht <em>furchtbar</em> dünn. In hohen Dimensionen ist Dünnheit etwas völlig anderes: die dünne Scheibe wird <b>exponentiell winzig</b>.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Wie viele mögliche Antworten gibt es?</div>
+  <div class="demo-sub">Ein Sprachmodell hat ein Vokabular. Eine Antwort ist eine Folge von Tokens. Wie viele mögliche Folgen gibt es?</div>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Vokabulargröße |V| <b><span id="vsv">10000</span></b></label>
+      <input type="range" id="vs" min="100" max="50000" step="100" value="10000">
+    </div>
+    <div class="ctrl">
+      <label>Antwortlänge n (Tokens) <b><span id="nv">100</span></b></label>
+      <input type="range" id="ntok" min="1" max="200" step="1" value="100">
+    </div>
+  </div>
+  <div style="margin-top: 16px; text-align: center; font-family: 'JetBrains Mono', monospace;">
+    <div style="font-size: 1rem; color: var(--ink-dim);">Anzahl möglicher Antworten:</div>
+    <div id="hugeNum" style="font-size: 2rem; color: var(--accent); font-weight: 800; margin: 12px 0;">10⁴⁰⁰</div>
+    <div style="font-size: 0.95rem; color: var(--ink-dim);">Zum Vergleich: Atome im beobachtbaren Universum ≈ <b style="color:var(--accent2)">10⁸⁰</b></div>
+    <div id="ratio" style="font-size: 1.15rem; margin-top: 12px; color: var(--accent3);">
+      → Das ist <b>10³²⁰</b> mal mehr als es Atome im Universum gibt.
+    </div>
+  </div>
+  <canvas id="dimCanvas" width="1000" height="220" style="margin-top: 20px;"></canvas>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Und die sinnvollen, grammatischen Antworten?</b> Sie sind eine <b>hauchdünne</b> Untermenge davon. Wenn ein Modell nur diese winzige Scheibe trifft, ist es ein kleines Wunder — und genau deshalb hängt seine Zuverlässigkeit so stark daran, dass die Frage <i>innerhalb der Trainingsverteilung</i> liegt.</p>
+</div>
+
+<div class="prereq">
+  <h3>Warum "10⁴⁰⁰" nicht "sehr groß" ist, sondern <em>unfassbar</em></h3>
+  <p>10⁸⁰ (Universum-Atome) ist schon jenseits jeder Vorstellung. 10⁴⁰⁰ ist nicht "fünfmal mehr" oder "hundertmal mehr" — es ist 10³²⁰-mal mehr. Wenn du das ganze Universum leerst und für jedes Atom ein neues Universum gleicher Größe erschaffst, und das 4 Mal hintereinander machst, hast du gerade mal 10³²⁰ Atome. Und <em>so viel Mal</em> mehr Antworten gibt es als Atome. Die grammatischen darunter sind ein Staubkorn im Ozean der Ozeane.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: MANIFOLD -->
+<!-- ============================================================ -->
+<h2 id="s7"><span class="step">7</span>Die Mannigfaltigkeit — sinnvolle Daten liegen auf einer Fläche</h2>
+<p>Die sinnvollen Antworten sind nicht wahllos verstreut. Sie liegen auf einer <b>niedrig-dimensionalen Fläche</b> (einer "Mannigfaltigkeit") in dem riesigen Raum. Das ist die <b>Mannigfaltigkeits-Hypothese</b>: reale Daten haben nur wenige echte Freiheitsgrade, auch wenn sie in einem Raum mit sehr vielen Koordinaten leben.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Der Buchstabe "A" hat nur zwei Freiheitsgrade</div>
+  <div class="demo-sub">Ein Bild eines Buchstabens hat viele Pixel (hier 32×32 = 1024 Zahlen). Aber jedes rotierte und skalierte "A" ist noch immer ein Punkt auf einer <b>2D-Fläche</b> in diesem 1024-dimensionalen Raum. Zwei Regler → ein ganzes A-Universum.</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Das Bild (1024-dim Vektor)</div>
+      <canvas id="letterCanvas" width="380" height="380"></canvas>
+    </div>
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Die 2D-Mannigfaltigkeit (Größe × Rotation)</div>
+      <canvas id="manifoldCanvas" width="380" height="380"></canvas>
+      <div style="font-size: 0.8rem; color: var(--ink-dim); margin-top: 6px;">Klicke, um einen Punkt auf der Mannigfaltigkeit zu wählen.</div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Größe <b><span id="szv">1.00</span></b></label>
+      <input type="range" id="sz" min="0.4" max="1.6" step="0.02" value="1.0">
+    </div>
+    <div class="ctrl">
+      <label>Rotation (°) <b><span id="rotv">0</span></b></label>
+      <input type="range" id="rot" min="-90" max="90" step="1" value="0">
+    </div>
+    <button onclick="tourManifold()">🎢 Auto-Tour</button>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Das ist die Idee:</b> Der Möglichkeitenraum ist 1024-dimensional (jedes Pixel = eine Dimension). Aber alle sinnvollen A's leben auf einer <b>2-dimensionalen</b> Fläche darin. Bei Gesichtern sind es vielleicht 50 Freiheitsgrade; bei Sätzen ein paar hundert. Immer verschwindend wenige im Vergleich zum ganzen Raum.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: NEURAL NETWORK ENERGY -->
+<!-- ============================================================ -->
+<h2 id="s8"><span class="step">8</span>Das neuronale Netz — gleiche Idee, neue Bühne</h2>
+<p>LeCun und Kollegen beschreiben ein neuronales Netz nicht als "Funktion von Input zu Output", sondern als eine <b>Energie über allen möglichen (Input, Output)-Paaren</b>:</p>
+<div class="callout">
+  <i>"Das Modell lernt eine Funktion, die niedrige Energien mit korrekten Werten und höhere Energien mit falschen Werten assoziiert."</i>
+</div>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Training formt die Energie-Landschaft</div>
+  <div class="demo-sub">Jeder Klick fügt einen "guten" Datenpunkt hinzu — an dieser Stelle wird die Energie <b>abgesenkt</b>. Beobachte, wie sich die Landschaft formt, bis nur noch dort niedrige Energie ist, wo die Trainingsdaten leben.</div>
+  <canvas id="trainCanvas" width="1000" height="420"></canvas>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Anzahl Trainingspunkte: <b><span id="npts">0</span></b></label>
+    </div>
+    <button onclick="addTrainingBurst(1)">+ 1 Punkt</button>
+    <button onclick="addTrainingBurst(10)">+ 10 Punkte</button>
+    <button onclick="addTrainingCurve()">+ Eine Kurve</button>
+    <button class="secondary" onclick="resetTrain()">Reset</button>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Was du siehst:</b> Anfangs ist die Landschaft flach — das Modell "weiß nichts". Jeder Datenpunkt drückt eine kleine Delle. Viele Punkte auf einer Kurve → ein ganzes Tal entlang der Kurve. Am Ende ist die <b>Datenmannigfaltigkeit</b> = das <b>niedrigenergetische Tal</b>. Das ist die "nützliche Scheibe".</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: HALLUCINATION -->
+<!-- ============================================================ -->
+<h2 id="s9"><span class="step">9</span>Neben die Scheibe fallen — Halluzination sichtbar gemacht</h2>
+<p>Alles was schief geht ist <b>eine</b> Sache: der Input (oder der interne Zustand) ist <b>neben die Scheibe gerutscht</b>. Und tückisch: an "falschen" Stellen kann die Energie <b>lokal</b> immer noch niedrig sein — eine <b>falsche Mulde</b>, ein Tal, das die Trainingsdaten dort nie gemacht haben. Das Modell fühlt sich sicher, klingt glatt und selbstbewusst — und liegt komplett daneben.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Auf der Scheibe vs. daneben</div>
+  <div class="demo-sub">Bewege die Anfrage <span style="color: var(--accent3);">●</span> mit der Maus über die Landschaft. Das Modell "antwortet" mit dem nächstgelegenen niedrigenergetischen Punkt. In den <b>echten Tälern</b> (blau) ist alles gut. In den <b>falschen Tälern</b> (rot markiert) klingt es ebenfalls überzeugt — aber die Antwort hat keine Grundlage in echten Daten. <b>Das ist Halluzination.</b></div>
+  <canvas id="halluCanvas" width="1000" height="480"></canvas>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Anzeige</label>
+      <div class="tab-row">
+        <button id="showEnergy" class="active" onclick="setHalluView('energy')">Energie</button>
+        <button id="showData" onclick="setHalluView('data')">Trainingsdaten</button>
+        <button id="showBoth" onclick="setHalluView('both')">Beides</button>
+      </div>
+    </div>
+    <div class="ctrl" style="min-width: 220px;">
+      <label>Modell-Zustand: <span id="halluStatus" class="status on">AUF DER SCHEIBE</span></label>
+    </div>
+    <button class="secondary" onclick="animateHallu()">🎬 Auto-Bewegung</button>
+  </div>
+  <p style="margin-top: 14px; color: var(--ink-dim);"><b>Die Lektion:</b> Ein Modell weiß nicht <em>von selbst</em>, wann es die Scheibe verlässt. Es hat keinen eingebauten Alarm für "out-of-distribution". Es glättet einfach weiter und produziert die Antwort, die in seiner internen Landschaft am tiefsten liegt — auch wenn diese Landschaft dort gar nichts über die Welt weiß.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: SYNTHESIS -->
+<!-- ============================================================ -->
+<h2 id="s10"><span class="step">10</span>Alles auf einem Bild — die Synthese</h2>
+<p>Zieh alle Regler dieses Bildes. Es ist die Zusammenfassung des ganzen Kapitels in einer einzigen Szene: eine Energielandschaft, eine Wolke von Datenpunkten, eine dünne Scheibe, ein Temperatur-Regler, und ein Modell-Zustand der auf der Scheibe wandert.</p>
+
+<div class="card wide">
+  <div class="demo-title">Demo · Der ganze Phasenraum, auf einen Blick</div>
+  <div class="demo-sub">Links: die Landschaft (Höhe = Energie, blau = Trainingsdaten-Scheibe). Rechts: die Boltzmann-Wahrscheinlichkeit — wo das Modell wirklich "lebt". Bewege Temperatur und Modell-Punkt.</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Phasenraum + Energiescheibe</div>
+      <canvas id="synthLandCanvas" width="500" height="420"></canvas>
+    </div>
+    <div>
+      <div style="font-size: 0.85rem; color: var(--ink-dim); margin-bottom: 4px;">Boltzmann-Verteilung P ∝ e^(−E/T)</div>
+      <canvas id="synthProbCanvas" width="500" height="420"></canvas>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="ctrl">
+      <label>Temperatur T <b><span id="synthTv">0.40</span></b></label>
+      <input type="range" id="synthT" min="0.05" max="2.5" step="0.01" value="0.4">
+    </div>
+    <div class="ctrl">
+      <label>Scheibendicke <b><span id="synthDv">0.30</span></b></label>
+      <input type="range" id="synthD" min="0.05" max="1.5" step="0.02" value="0.3">
+    </div>
+    <div class="ctrl">
+      <label>Wo ist das Modell? <b><span id="synthPos">auf der Scheibe</span></b></label>
+      <input type="range" id="synthX" min="-4" max="4" step="0.05" value="0">
+    </div>
+    <button onclick="synthAnimate()">🌊 Auto-Wandern</button>
+  </div>
+</div>
+
+<div class="callout big" style="margin-top: 32px;">
+  <div style="font-size: 1.05rem; margin-bottom: 12px;"><b>Zusammengefasst:</b></div>
+  <ol style="margin: 0; padding-left: 22px;">
+    <li>Ein <b>Zustand</b> ist mehr als ein Ort — er ist Ort <em>plus</em> Impuls: <span class="readout">(q, p)</span>.</li>
+    <li>Der <b>Phasenraum</b> ist der Raum aller möglichen Zustände.</li>
+    <li>Eine einzige Zahl — die <b>Energie H</b> — sperrt das System auf eine dünne Kurve/Fläche.</li>
+    <li>Bei Temperatur T > 0 folgt die Verteilung <span class="readout">P ∝ e^(−E/T)</span> — niedrige Energie ist wahrscheinlich.</li>
+    <li>Sinnvolle Daten leben auf einer <b>niedrig-dimensionalen Mannigfaltigkeit</b> im riesigen Möglichkeitenraum.</li>
+    <li>Training formt die Energie so, dass diese Mannigfaltigkeit = das <b>Tal</b> wird.</li>
+    <li><b>Nützlichkeit</b> = auf der Scheibe. <b>Halluzination</b> = daneben, aber überzeugend klingend.</li>
+    <li>Die Physik ist <em>Metapher</em>, nicht wörtlich — aber die <b>Form</b> ist exakt.</li>
+  </ol>
+</div>
+
+<div class="footer">
+  Interaktive Begleitung zu <i>Phase Space — Usefulness as a Slice</i> · Basiert auf den Kapiteln <i>Coherent Difference</i>, <i>Coherent World Models</i> und <i>Phase Space</i>.<br>
+  Alles im Browser · keine Daten verlassen deinen Computer.
+</div>
+
+</div><!-- /container -->
+
+<script>
+/* ==========================================================
+   Utility
+   ========================================================== */
+const $ = id => document.getElementById(id);
+function updateSliderFill(el){
+  const min = +el.min, max = +el.max, v = +el.value;
+  const pct = ((v-min)/(max-min))*100;
+  el.style.setProperty('--pct', pct+'%');
+}
+document.querySelectorAll('input[type=range]').forEach(el=>{
+  updateSliderFill(el);
+  el.addEventListener('input', ()=>updateSliderFill(el));
+});
+
+function hexToRgba(hex, a){
+  const n = parseInt(hex.slice(1),16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+
+/* ==========================================================
+   SECTION 1 · Bead on a wire
+   ========================================================== */
+(function(){
+  const c = $('beadCanvas'), ctx = c.getContext('2d');
+  let beads = [];
+  const colors = ['#ffb347','#7fd4ff','#ff6b9d'];
+  const labels = ['A','B','C'];
+  function reset(){
+    const q0 = +$('q0').value;
+    const ps = [+$('p1').value, +$('p2').value, +$('p3').value];
+    $('q0v').textContent = q0.toFixed(1);
+    $('p1v').textContent = ps[0].toFixed(1);
+    $('p2v').textContent = ps[1].toFixed(1);
+    $('p3v').textContent = ps[2].toFixed(1);
+    beads = ps.map((p,i)=>({q:q0, p:p, trail:[], color:colors[i], label:labels[i]}));
+  }
+  window.resetBeads = reset;
+  ['q0','p1','p2','p3'].forEach(id=>$(id).addEventListener('input', reset));
+  reset();
+
+  function draw(){
+    ctx.fillStyle = '#060912';
+    ctx.fillRect(0,0,c.width,c.height);
+    // wire
+    const yMid = c.height/2;
+    ctx.strokeStyle = '#2a3555'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(20,yMid); ctx.lineTo(c.width-20,yMid); ctx.stroke();
+    // ticks
+    ctx.fillStyle = '#3a4565'; ctx.font = '11px monospace';
+    for(let x=-5;x<=5;x++){
+      const px = c.width/2 + x*80;
+      ctx.beginPath(); ctx.moveTo(px, yMid-6); ctx.lineTo(px, yMid+6); ctx.stroke();
+      ctx.fillText(x.toString(), px-4, yMid+22);
+    }
+    // beads
+    beads.forEach((b,i)=>{
+      b.q += b.p * 0.015;
+      if(b.q > 5) { b.q = 5; b.p = -Math.abs(b.p); }
+      if(b.q < -5) { b.q = -5; b.p = Math.abs(b.p); }
+      b.trail.push(b.q);
+      if(b.trail.length > 60) b.trail.shift();
+      // trail
+      b.trail.forEach((q,j)=>{
+        const alpha = j/b.trail.length * 0.5;
+        ctx.fillStyle = hexToRgba(b.color, alpha);
+        ctx.beginPath(); ctx.arc(c.width/2 + q*80, yMid + (i-1)*4, 3, 0, Math.PI*2); ctx.fill();
+      });
+      // bead
+      ctx.fillStyle = b.color;
+      ctx.beginPath(); ctx.arc(c.width/2 + b.q*80, yMid, 10, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle = '#0a0e1a'; ctx.font='bold 11px Inter'; ctx.textAlign='center';
+      ctx.fillText(b.label, c.width/2 + b.q*80, yMid+4);
+      // momentum arrow
+      const ax = c.width/2 + b.q*80;
+      ctx.strokeStyle = b.color; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(ax, yMid-20-i*10);
+      ctx.lineTo(ax + b.p*25, yMid-20-i*10); ctx.stroke();
+      // arrowhead
+      const dir = Math.sign(b.p);
+      if(Math.abs(b.p)>0.05){
+        ctx.beginPath();
+        ctx.moveTo(ax+b.p*25, yMid-20-i*10);
+        ctx.lineTo(ax+b.p*25-dir*6, yMid-24-i*10);
+        ctx.lineTo(ax+b.p*25-dir*6, yMid-16-i*10);
+        ctx.closePath(); ctx.fillStyle=b.color; ctx.fill();
+      }
+      ctx.textAlign='left';
+      ctx.fillStyle=b.color; ctx.font='10px monospace';
+      ctx.fillText(`p=${b.p.toFixed(1)}`, ax + b.p*25 + 6, yMid-17-i*10);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   SECTION 2 · Spring + phase space
+   ========================================================== */
+(function(){
+  const cS = $('springCanvas'), sx = cS.getContext('2d');
+  const cP = $('phaseCanvas'), px = cP.getContext('2d');
+  let states = [{q:1.5, p:0, trail:[], color:'#ffb347'}];
+  let k = 1;
+
+  $('kSlider').addEventListener('input', ()=>{
+    k = +$('kSlider').value;
+    $('kv').textContent = k.toFixed(2);
+  });
+  $('trailSlider').addEventListener('input', ()=>{
+    $('trailv').textContent = $('trailSlider').value;
+  });
+  window.clearPhaseTrail = ()=>states.forEach(s=>s.trail=[]);
+  window.addRandomState = ()=>{
+    const cols = ['#7fd4ff','#ff6b9d','#6ee7a8','#ffb347','#c084fc'];
+    states.push({
+      q: (Math.random()-0.5)*4,
+      p: (Math.random()-0.5)*4,
+      trail: [],
+      color: cols[states.length % cols.length]
+    });
+  };
+
+  cP.addEventListener('click', e=>{
+    const r = cP.getBoundingClientRect();
+    const mx = (e.clientX-r.left)/r.width * cP.width;
+    const my = (e.clientY-r.top)/r.height * cP.height;
+    const q = (mx - cP.width/2) / 70;
+    const p = -(my - cP.height/2) / 70;
+    const cols = ['#7fd4ff','#ff6b9d','#6ee7a8','#ffb347','#c084fc'];
+    states.push({q, p, trail:[], color: cols[states.length % cols.length]});
+  });
+
+  function draw(){
+    // spring canvas
+    sx.fillStyle = '#060912'; sx.fillRect(0,0,cS.width,cS.height);
+    sx.strokeStyle='#2a3555'; sx.lineWidth=1;
+    sx.beginPath(); sx.moveTo(30,cS.height/2); sx.lineTo(cS.width-30,cS.height/2); sx.stroke();
+    // wall
+    sx.fillStyle='#3a4565';
+    sx.fillRect(20,cS.height/2-40,10,80);
+    // draw first bead's spring + bead
+    const trailLen = +$('trailSlider').value;
+    states.forEach((s,i)=>{
+      // integrate: dq/dt = p, dp/dt = -k*q
+      const dt = 0.03;
+      s.p -= k*s.q*dt;
+      s.q += s.p*dt;
+      s.trail.push({q:s.q, p:s.p});
+      if(s.trail.length>trailLen) s.trail.shift();
+    });
+    // draw ONE spring for state 0
+    const s0 = states[0];
+    const restX = cS.width*0.55;
+    const beadX = restX + s0.q*50;
+    // spring zigzag
+    sx.strokeStyle = '#7fd4ff'; sx.lineWidth=2;
+    sx.beginPath();
+    const N=16;
+    for(let j=0;j<=N;j++){
+      const t = j/N;
+      const x = 30 + t*(beadX-30-15);
+      const y = cS.height/2 + (j%2===0?0:(j===0||j===N?0:-8));
+      j===0 ? sx.moveTo(x,y) : sx.lineTo(x,y);
+    }
+    sx.stroke();
+    // bead
+    sx.fillStyle = s0.color;
+    sx.beginPath(); sx.arc(beadX, cS.height/2, 14, 0, Math.PI*2); sx.fill();
+    sx.strokeStyle='#fff'; sx.lineWidth=2; sx.stroke();
+    // equilibrium mark
+    sx.strokeStyle='#3a4565'; sx.setLineDash([4,4]); sx.lineWidth=1;
+    sx.beginPath(); sx.moveTo(restX, cS.height/2-30); sx.lineTo(restX, cS.height/2+30); sx.stroke();
+    sx.setLineDash([]);
+    sx.fillStyle='#3a4565'; sx.font='11px monospace';
+    sx.fillText('Ruhelage q=0', restX-40, cS.height/2+50);
+    // labels
+    sx.fillStyle='#a0aac0'; sx.font='11px Inter';
+    sx.fillText(`q = ${s0.q.toFixed(2)}   p = ${s0.p.toFixed(2)}`, 30, 30);
+    sx.fillText(`E = ½p² + ½kq² = ${(0.5*s0.p*s0.p + 0.5*k*s0.q*s0.q).toFixed(2)}`, 30, 50);
+
+    // phase canvas
+    px.fillStyle = '#060912'; px.fillRect(0,0,cP.width,cP.height);
+    // axes
+    px.strokeStyle = '#2a3555'; px.lineWidth=1;
+    px.beginPath(); px.moveTo(0,cP.height/2); px.lineTo(cP.width,cP.height/2); px.stroke();
+    px.beginPath(); px.moveTo(cP.width/2,0); px.lineTo(cP.width/2,cP.height); px.stroke();
+    // grid
+    px.strokeStyle='#1a2340'; px.lineWidth=1;
+    for(let g=-3;g<=3;g++){
+      if(g===0) continue;
+      px.beginPath(); px.moveTo(cP.width/2+g*70,0); px.lineTo(cP.width/2+g*70,cP.height); px.stroke();
+      px.beginPath(); px.moveTo(0,cP.height/2+g*70); px.lineTo(cP.width,cP.height/2+g*70); px.stroke();
+    }
+    // labels
+    px.fillStyle='#a0aac0'; px.font='12px Inter';
+    px.fillText('q (Ort) →', cP.width-70, cP.height/2-8);
+    px.save(); px.translate(cP.width/2+8, 12); px.fillText('p (Impuls) ↑', 0, 0); px.restore();
+    // draw trails
+    states.forEach(s=>{
+      px.strokeStyle = hexToRgba(s.color, 0.6); px.lineWidth=1.5;
+      px.beginPath();
+      s.trail.forEach((pt,i)=>{
+        const x = cP.width/2 + pt.q*70;
+        const y = cP.height/2 - pt.p*70;
+        i===0 ? px.moveTo(x,y) : px.lineTo(x,y);
+      });
+      px.stroke();
+      // current point
+      px.fillStyle = s.color;
+      px.beginPath(); px.arc(cP.width/2 + s.q*70, cP.height/2 - s.p*70, 6, 0, Math.PI*2); px.fill();
+      px.strokeStyle='#fff'; px.lineWidth=1.5; px.stroke();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+  renderMath();
+})();
+
+/* ==========================================================
+   SECTION 3 · Energy landscape
+   ========================================================== */
+(function(){
+  const c = $('landscapeCanvas'), ctx = c.getContext('2d');
+  let landType = 'double';
+  let q, p, E;
+
+  function V(q){
+    if(landType==='single') return 0.5*q*q;
+    if(landType==='double') return 0.15*Math.pow(q*q-2.25,2);
+    return 0.5 + 0.5*Math.cos(2*q) + 0.05*q*q;
+  }
+  function Vp(q){
+    if(landType==='single') return q;
+    if(landType==='double') return 0.15*4*q*(q*q-2.25);
+    return -Math.sin(2*q) + 0.1*q;
+  }
+
+  function reset(){
+    q = +$('lq0').value;
+    E = +$('le').value;
+    const Vq = V(q);
+    if(E<=Vq) E = Vq+0.05;
+    p = Math.sqrt(2*(E-Vq));
+    $('lq0v').textContent = q.toFixed(2);
+    $('lev').textContent = E.toFixed(2);
+  }
+  window.resetLandscape = reset;
+  $('lq0').addEventListener('input', reset);
+  $('le').addEventListener('input', reset);
+  document.querySelectorAll('#landTabs button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('#landTabs button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      landType = b.dataset.land;
+      $('landv').textContent = b.textContent;
+      reset();
+    });
+  });
+  reset();
+
+  function draw(){
+    ctx.fillStyle = '#060912'; ctx.fillRect(0,0,c.width,c.height);
+    const W=c.width, H=c.height;
+    const xScale = W/8, xMid = W/2;
+    const yMax = 4, yBase = H-40, yScale = (H-60)/yMax;
+
+    // grid
+    ctx.strokeStyle='#1a2340'; ctx.lineWidth=1;
+    for(let x=-3;x<=3;x++){
+      ctx.beginPath(); ctx.moveTo(xMid+x*xScale,20); ctx.lineTo(xMid+x*xScale,yBase); ctx.stroke();
+    }
+    for(let y=0;y<=4;y++){
+      ctx.beginPath(); ctx.moveTo(30,yBase-y*yScale); ctx.lineTo(W-20,yBase-y*yScale); ctx.stroke();
+    }
+
+    // landscape (filled)
+    ctx.fillStyle = 'rgba(127,212,255,0.08)';
+    ctx.beginPath();
+    ctx.moveTo(30, yBase);
+    for(let x=30;x<W-20;x++){
+      const qv = (x-xMid)/xScale;
+      ctx.lineTo(x, yBase - V(qv)*yScale);
+    }
+    ctx.lineTo(W-20, yBase);
+    ctx.closePath(); ctx.fill();
+    // landscape stroke
+    ctx.strokeStyle='#7fd4ff'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    for(let x=30;x<W-20;x++){
+      const qv = (x-xMid)/xScale;
+      const y = yBase - V(qv)*yScale;
+      x===30 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+
+    // energy line
+    ctx.strokeStyle='#ff6b9d'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    ctx.moveTo(30, yBase - E*yScale);
+    ctx.lineTo(W-20, yBase - E*yScale);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#ff6b9d'; ctx.font='bold 12px Inter';
+    ctx.fillText(`E = ${E.toFixed(2)} (Gesamtenergie)`, W-220, yBase - E*yScale - 8);
+
+    // integrate
+    const dt = 0.02;
+    p -= Vp(q)*dt;
+    q += p*dt;
+    // clamp: if outside allowed
+    const Vq = V(q);
+    if(Vq > E){
+      p = -p * 0.7;
+      // pull back
+      q -= p*dt*2;
+    }
+
+    // filled area = kinetic energy (below E, above V)
+    const bx = xMid + q*xScale;
+    const by = yBase - Vq*yScale;
+    ctx.fillStyle='rgba(255,179,71,0.3)';
+    ctx.fillRect(bx-2, by, 4, (E-Vq)*yScale);
+
+    // ball
+    ctx.fillStyle='#ffb347';
+    ctx.beginPath(); ctx.arc(bx, by-8, 10, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+
+    // Legend
+    ctx.fillStyle='#7fd4ff'; ctx.font='11px Inter';
+    ctx.fillText('V(q) — Landschaft (potentielle Energie)', 40, 32);
+    ctx.fillStyle='#ff6b9d';
+    ctx.fillText('E — Gesamtenergie (unüberwindbar)', 40, 48);
+    ctx.fillStyle='#ffb347';
+    ctx.fillText('Kugel: kinetisch + potentiell = konstant', 40, 64);
+
+    // axis
+    ctx.fillStyle='#3a4565'; ctx.font='10px monospace';
+    ctx.fillText('q →', W-40, yBase+15);
+    ctx.fillText('Energie ↑', 35, 18);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   SECTION 4 · Phase portrait of pendulum
+   ========================================================== */
+(function(){
+  const c = $('portraitCanvas'), ctx = c.getContext('2d');
+  let curves = [];
+  let showVF = true;
+  const W = c.width, H = c.height;
+
+  // pendulum: H = 0.5*p^2 + (1-cos(q))
+  function derivs(q,p){ return {dq:p, dp:-Math.sin(q)}; }
+  function energy(q,p){ return 0.5*p*p + (1-Math.cos(q)); }
+
+  // coords: q in [-2pi, 2pi], p in [-3, 3]
+  const qMin=-2*Math.PI, qMax=2*Math.PI, pMin=-3, pMax=3;
+  function qx(q){ return (q-qMin)/(qMax-qMin) * W; }
+  function py(p){ return H - (p-pMin)/(pMax-pMin) * H; }
+  function xq(x){ return qMin + x/W*(qMax-qMin); }
+  function yp(y){ return pMin + (H-y)/H*(pMax-pMin); }
+
+  function integrateOrbit(q0, p0, steps=1200, dt=0.02){
+    const pts=[]; let q=q0, p=p0;
+    for(let i=0;i<steps;i++){
+      const k1=derivs(q,p);
+      const k2=derivs(q+dt*k1.dq/2, p+dt*k1.dp/2);
+      const k3=derivs(q+dt*k2.dq/2, p+dt*k2.dp/2);
+      const k4=derivs(q+dt*k3.dq, p+dt*k3.dp);
+      q += dt*(k1.dq+2*k2.dq+2*k3.dq+k4.dq)/6;
+      p += dt*(k1.dp+2*k2.dp+2*k3.dp+k4.dp)/6;
+      pts.push({q,p});
+      if(q>qMax) q-=2*Math.PI*Math.floor((q-qMin)/(2*Math.PI));
+      if(q<qMin) q+=2*Math.PI*Math.floor((qMax-q)/(2*Math.PI));
+    }
+    return pts;
+  }
+
+  function seedDefault(){
+    curves = [];
+    const n = +$('ncurves').value;
+    for(let i=0;i<n;i++){
+      const E = 0.1 + (i/n)*3.8;
+      // start at q=0 with p= sqrt(2E)
+      const p0 = Math.sqrt(2*E);
+      curves.push({pts: integrateOrbit(0, p0), E});
+      if(E<2) curves.push({pts: integrateOrbit(0, -p0), E});
+    }
+  }
+  seedDefault();
+
+  $('ncurves').addEventListener('input', ()=>{
+    $('ncurvesv').textContent = $('ncurves').value;
+    seedDefault();
+  });
+  window.clearPortrait = ()=>{ curves = []; };
+  window.toggleVF = ()=>{
+    showVF = !showVF;
+    $('vfBtn').textContent = showVF ? 'Ein' : 'Aus';
+    $('vfBtn').classList.toggle('active', showVF);
+  };
+  window.setSeparatrix = ()=>{
+    // Energy = 2 is separatrix
+    const p0 = Math.sqrt(2*1.999);
+    curves.push({pts: integrateOrbit(-Math.PI+0.01, 0.001, 2000), E:2, sep:true});
+    curves.push({pts: integrateOrbit(Math.PI-0.01, 0.001, 2000), E:2, sep:true});
+  };
+
+  c.addEventListener('click', e=>{
+    const r = c.getBoundingClientRect();
+    const mx = (e.clientX-r.left)/r.width * W;
+    const my = (e.clientY-r.top)/r.height * H;
+    const q0 = xq(mx), p0 = yp(my);
+    curves.push({pts: integrateOrbit(q0, p0), E: energy(q0,p0)});
+  });
+
+  function colorFor(E, sep){
+    if(sep) return '#ff6b6b';
+    if(E < 1.99) return '#7fd4ff';
+    return '#ffb347';
+  }
+
+  function draw(){
+    ctx.fillStyle = '#060912'; ctx.fillRect(0,0,W,H);
+
+    // grid
+    ctx.strokeStyle='#141c30'; ctx.lineWidth=1;
+    for(let q=-2*Math.PI; q<=2*Math.PI; q+=Math.PI/2){
+      ctx.beginPath(); ctx.moveTo(qx(q),0); ctx.lineTo(qx(q),H); ctx.stroke();
+    }
+    for(let p=-3;p<=3;p++){
+      ctx.beginPath(); ctx.moveTo(0,py(p)); ctx.lineTo(W,py(p)); ctx.stroke();
+    }
+    // pi markers
+    ctx.fillStyle='#3a4565'; ctx.font='11px monospace';
+    [-2,-1,0,1,2].forEach(k=>{
+      const lab = k===0?'0':(k===1?'π':(k===-1?'-π':(k+'π')));
+      ctx.fillText(lab, qx(k*Math.PI)-8, py(0)+14);
+    });
+    // axes
+    ctx.strokeStyle='#2a3555'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,py(0)); ctx.lineTo(W,py(0)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(qx(0),0); ctx.lineTo(qx(0),H); ctx.stroke();
+
+    // vector field
+    if(showVF){
+      const step = 40;
+      ctx.strokeStyle='rgba(127,212,255,0.25)'; ctx.lineWidth=1;
+      for(let x=step/2; x<W; x+=step){
+        for(let y=step/2; y<H; y+=step){
+          const q=xq(x), p=yp(y);
+          const d = derivs(q,p);
+          const mag = Math.sqrt(d.dq*d.dq + d.dp*d.dp)+0.001;
+          const sx = d.dq/mag * 12, sy = -d.dp/mag * 12;
+          ctx.beginPath(); ctx.moveTo(x-sx/2, y-sy/2);
+          ctx.lineTo(x+sx/2, y+sy/2); ctx.stroke();
+          // arrowhead
+          ctx.beginPath();
+          ctx.arc(x+sx/2, y+sy/2, 1.5, 0, Math.PI*2);
+          ctx.fillStyle='rgba(127,212,255,0.4)'; ctx.fill();
+        }
+      }
+    }
+
+    // orbits
+    curves.forEach(cu=>{
+      const col = colorFor(cu.E, cu.sep);
+      ctx.strokeStyle = col; ctx.lineWidth = cu.sep?2.5:1.6;
+      ctx.beginPath();
+      let last=null;
+      cu.pts.forEach(pt=>{
+        const x=qx(pt.q), y=py(pt.p);
+        if(!last || Math.abs(x-last.x)>W*0.5){
+          ctx.moveTo(x,y);
+        } else {
+          ctx.lineTo(x,y);
+        }
+        last={x,y};
+      });
+      ctx.stroke();
+    });
+
+    // fixed points
+    ctx.fillStyle='#6ee7a8';
+    [-2*Math.PI, 0, 2*Math.PI].forEach(q=>{
+      ctx.beginPath(); ctx.arc(qx(q), py(0), 5, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.fillStyle='#ff6b6b';
+    [-Math.PI, Math.PI].forEach(q=>{
+      ctx.beginPath(); ctx.arc(qx(q), py(0), 5, 0, Math.PI*2); ctx.fill();
+    });
+    // axis labels
+    ctx.fillStyle='#a0aac0'; ctx.font='12px Inter';
+    ctx.fillText('q (Winkel) →', W-100, py(0)-8);
+    ctx.save(); ctx.translate(qx(0)+8, 14); ctx.fillText('p (Winkelimpuls) ↑', 0, 0); ctx.restore();
+  }
+  setInterval(draw, 40);
+})();
+
+/* ==========================================================
+   SECTION 5 · Boltzmann / Temperature
+   ========================================================== */
+(function(){
+  const cL = $('boltzLandCanvas'), lx = cL.getContext('2d');
+  const cP = $('boltzProbCanvas'), px = cP.getContext('2d');
+  let T = 0.3;
+  let animId = null;
+
+  // energy landscape: double well
+  function E(q){ return 0.5*Math.pow(q*q-2,2) + 0.1*q; }
+  const qMin=-3, qMax=3, W=cL.width, H=cL.height;
+  function qx(q){ return (q-qMin)/(qMax-qMin) * W; }
+  function ey(e){ return H - e/6 * H - 20; }
+
+  $('tempSlider').addEventListener('input', ()=>{
+    T = +$('tempSlider').value;
+    $('tv').textContent = T.toFixed(2);
+    draw();
+  });
+
+  window.animateTemp = ()=>{
+    if(animId){ clearInterval(animId); animId=null; return; }
+    let t=0;
+    animId = setInterval(()=>{
+      t += 0.05;
+      const T2 = 0.05 + (Math.sin(t)*0.5+0.5)*2.5;
+      $('tempSlider').value = T2;
+      updateSliderFill($('tempSlider'));
+      T = T2;
+      $('tv').textContent = T.toFixed(2);
+      draw();
+    }, 40);
+  };
+
+  function draw(){
+    // landscape
+    lx.fillStyle='#060912'; lx.fillRect(0,0,W,H);
+    lx.strokeStyle='#141c30'; lx.lineWidth=1;
+    for(let q=-3;q<=3;q++){
+      lx.beginPath(); lx.moveTo(qx(q),20); lx.lineTo(qx(q),H-20); lx.stroke();
+    }
+    // fill
+    lx.fillStyle='rgba(127,212,255,0.1)';
+    lx.beginPath();
+    lx.moveTo(0, H-20);
+    for(let x=0;x<W;x+=2){
+      const q=qMin+x/W*(qMax-qMin);
+      lx.lineTo(x, ey(E(q)));
+    }
+    lx.lineTo(W, H-20); lx.closePath(); lx.fill();
+    lx.strokeStyle='#7fd4ff'; lx.lineWidth=2.5;
+    lx.beginPath();
+    for(let x=0;x<W;x+=2){
+      const q=qMin+x/W*(qMax-qMin);
+      const y=ey(E(q));
+      x===0 ? lx.moveTo(x,y) : lx.lineTo(x,y);
+    }
+    lx.stroke();
+
+    // "particles" sampled from Boltzmann
+    const N = 120;
+    const qs = [];
+    for(let i=0;i<N;i++){
+      // rejection sampling
+      let q, accepted=false;
+      for(let tries=0;tries<200 && !accepted;tries++){
+        q = qMin + Math.random()*(qMax-qMin);
+        const p = Math.exp(-E(q)/T);
+        if(Math.random() < p) accepted = true;
+      }
+      if(accepted) qs.push(q);
+    }
+    qs.forEach(q=>{
+      const x=qx(q), y=ey(E(q));
+      lx.fillStyle = 'rgba(255,179,71,0.7)';
+      lx.beginPath(); lx.arc(x, y-6, 3.5, 0, Math.PI*2); lx.fill();
+    });
+
+    lx.fillStyle='#7fd4ff'; lx.font='11px Inter';
+    lx.fillText(`T = ${T.toFixed(2)}`, 12, 22);
+    lx.fillStyle='#ffb347';
+    lx.fillText(`${qs.length} Teilchen thermisch verteilt`, 12, 38);
+
+    // probability
+    px.fillStyle='#060912'; px.fillRect(0,0,W,H);
+    // compute P(q) = e^(-E(q)/T) / Z
+    const vals = [];
+    let Z = 0;
+    for(let x=0;x<W;x++){
+      const q = qMin + x/W*(qMax-qMin);
+      const p = Math.exp(-E(q)/T);
+      vals.push(p); Z += p;
+    }
+    const maxP = Math.max(...vals) / Z * W/6;
+    // fill
+    px.fillStyle='rgba(255,107,157,0.25)';
+    px.beginPath(); px.moveTo(0,H-20);
+    for(let x=0;x<W;x++){
+      const p = vals[x]/Z;
+      const y = H-20 - p * (H-40)/maxP * (W/6);
+      px.lineTo(x,y);
+    }
+    px.lineTo(W,H-20); px.closePath(); px.fill();
+    // line
+    px.strokeStyle='#ff6b9d'; px.lineWidth=2.5;
+    px.beginPath();
+    for(let x=0;x<W;x++){
+      const p = vals[x]/Z;
+      const y = H-20 - p * (H-40)/maxP * (W/6);
+      x===0 ? px.moveTo(x,y) : px.lineTo(x,y);
+    }
+    px.stroke();
+    // baseline
+    px.strokeStyle='#2a3555'; px.lineWidth=1;
+    px.beginPath(); px.moveTo(0,H-20); px.lineTo(W,H-20); px.stroke();
+    // x axis
+    px.fillStyle='#3a4565'; px.font='11px monospace';
+    [-3,-2,-1,0,1,2,3].forEach(q=>{
+      px.fillText(q.toString(), qx(q)-4, H-6);
+    });
+    px.fillStyle='#ff6b9d'; px.font='11px Inter';
+    px.fillText(`P(q) ∝ e^(−E(q)/T),   T = ${T.toFixed(2)}`, 12, 22);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   SECTION 6 · High dimensions
+   ========================================================== */
+(function(){
+  const c = $('dimCanvas'), ctx = c.getContext('2d');
+  function update(){
+    const V = +$('vs').value;
+    const n = +$('ntok').value;
+    $('vsv').textContent = V.toLocaleString('de-DE');
+    $('nv').textContent = n;
+    // possibilities = V^n
+    // log10 = n * log10(V)
+    const log10 = n * Math.log10(V);
+    const exp = Math.floor(log10);
+    $('hugeNum').textContent = `10^${exp}`;
+    const diff = Math.floor(log10 - 80);
+    if(diff > 0){
+      $('ratio').innerHTML = `→ Das ist <b>10^${diff}</b> mal mehr als es Atome im Universum gibt.`;
+    } else {
+      $('ratio').innerHTML = `→ Immer noch <b>10^${-diff}</b> Atome mehr als Antworten.`;
+    }
+    drawBar(log10);
+  }
+  function drawBar(log10){
+    ctx.fillStyle='#060912'; ctx.fillRect(0,0,c.width,c.height);
+    // scale: 0 to 500 orders of magnitude
+    const maxScale = 500;
+    const barY = 80, barH = 40;
+    // atoms line
+    const atomsX = (80/maxScale) * (c.width-40) + 20;
+    // draw scale
+    ctx.strokeStyle='#2a3555'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(20, barY+barH+10); ctx.lineTo(c.width-20, barY+barH+10); ctx.stroke();
+    for(let i=0;i<=maxScale;i+=50){
+      const x = (i/maxScale) * (c.width-40) + 20;
+      ctx.beginPath(); ctx.moveTo(x, barY+barH+8); ctx.lineTo(x, barY+barH+14); ctx.stroke();
+      ctx.fillStyle='#3a4565'; ctx.font='10px monospace';
+      ctx.fillText(`10^${i}`, x-14, barY+barH+28);
+    }
+    // atoms marker
+    ctx.strokeStyle='#7fd4ff'; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(atomsX, 20); ctx.lineTo(atomsX, barY+barH+16); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#7fd4ff'; ctx.font='bold 11px Inter';
+    ctx.fillText('Atome im Universum (10⁸⁰)', atomsX+6, 32);
+    // answers bar
+    const ansX = Math.min((log10/maxScale) * (c.width-40) + 20, c.width-20);
+    // gradient bar
+    const grad = ctx.createLinearGradient(20, barY, ansX, barY);
+    grad.addColorStop(0, '#ffb347');
+    grad.addColorStop(1, '#ff6b9d');
+    ctx.fillStyle = grad;
+    ctx.fillRect(20, barY, ansX-20, barH);
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.strokeRect(20, barY, ansX-20, barH);
+    ctx.fillStyle='#fff'; ctx.font='bold 12px Inter';
+    ctx.fillText(`Mögliche Antworten: 10^${Math.floor(log10)}`, 30, barY+25);
+    // top title
+    ctx.fillStyle='#a0aac0'; ctx.font='11px Inter';
+    ctx.fillText('Logarithmische Skala (Größenordnungen)', 20, 15);
+  }
+  $('vs').addEventListener('input', update);
+  $('ntok').addEventListener('input', update);
+  update();
+})();
+
+/* ==========================================================
+   SECTION 7 · Manifold / Letter A
+   ========================================================== */
+(function(){
+  const cL = $('letterCanvas'), lx = cL.getContext('2d');
+  const cM = $('manifoldCanvas'), mx = cM.getContext('2d');
+  let sz=1, rot=0;
+  let tourId = null;
+
+  $('sz').addEventListener('input', ()=>{
+    sz = +$('sz').value; $('szv').textContent = sz.toFixed(2); draw();
+  });
+  $('rot').addEventListener('input', ()=>{
+    rot = +$('rot').value; $('rotv').textContent = rot; draw();
+  });
+  cM.addEventListener('click', e=>{
+    const r = cM.getBoundingClientRect();
+    const mxp = (e.clientX-r.left)/r.width;
+    const myp = (e.clientY-r.top)/r.height;
+    sz = 0.4 + (1-myp)*1.2;
+    rot = (mxp-0.5)*180;
+    $('sz').value = sz; $('rot').value = rot;
+    updateSliderFill($('sz')); updateSliderFill($('rot'));
+    $('szv').textContent = sz.toFixed(2); $('rotv').textContent = Math.round(rot);
+    draw();
+  });
+  window.tourManifold = ()=>{
+    if(tourId){ clearInterval(tourId); tourId=null; return; }
+    let t=0;
+    tourId = setInterval(()=>{
+      t += 0.03;
+      sz = 1 + 0.5*Math.sin(t);
+      rot = 60*Math.sin(t*0.7);
+      $('sz').value = sz; $('rot').value = rot;
+      updateSliderFill($('sz')); updateSliderFill($('rot'));
+      $('szv').textContent = sz.toFixed(2); $('rotv').textContent = Math.round(rot);
+      draw();
+    }, 30);
+  };
+
+  function draw(){
+    // letter with pixel grid
+    lx.fillStyle='#060912'; lx.fillRect(0,0,cL.width,cL.height);
+    // draw a pixelated "A"
+    const N=32, cell=cL.width/N;
+    // pixel buffer
+    const pix = new Array(N*N).fill(0);
+    // draw scaled+rotated A into an offscreen and read pixels? Cheaper: rasterize analytically.
+    lx.save();
+    lx.translate(cL.width/2, cL.height/2);
+    lx.rotate(rot*Math.PI/180);
+    lx.scale(sz, sz);
+    // draw A as thick strokes
+    lx.strokeStyle='#ffb347'; lx.lineWidth=18; lx.lineCap='round';
+    lx.beginPath();
+    lx.moveTo(-70, 90);
+    lx.lineTo(0, -90);
+    lx.lineTo(70, 90);
+    lx.moveTo(-40, 20);
+    lx.lineTo(40, 20);
+    lx.stroke();
+    lx.restore();
+
+    // now sample pixels back as grid overlay
+    const imgData = lx.getImageData(0,0,cL.width, cL.height);
+    lx.fillStyle='#060912'; lx.fillRect(0,0,cL.width,cL.height);
+    for(let i=0;i<N;i++){
+      for(let j=0;j<N;j++){
+        // average brightness of cell
+        let sum=0, count=0;
+        const x0=Math.floor(i*cell), y0=Math.floor(j*cell);
+        for(let dx=0;dx<cell;dx+=2){
+          for(let dy=0;dy<cell;dy+=2){
+            const idx = ((y0+dy)*cL.width + (x0+dx))*4;
+            sum += imgData.data[idx];
+            count++;
+          }
+        }
+        const v = sum/count/255;
+        if(v>0.05){
+          lx.fillStyle = `rgba(255,179,71,${v})`;
+          lx.fillRect(x0, y0, cell-1, cell-1);
+        } else {
+          lx.strokeStyle = 'rgba(30,40,60,0.5)';
+          lx.strokeRect(x0, y0, cell-1, cell-1);
+        }
+      }
+    }
+    lx.fillStyle='#7fd4ff'; lx.font='11px Inter';
+    lx.fillText('32×32 = 1024 Pixel = 1024 Dimensionen', 8, 15);
+
+    // manifold view - 2D grid with current point
+    mx.fillStyle='#060912'; mx.fillRect(0,0,cM.width,cM.height);
+    // draw many faded A shapes on grid
+    const G=7;
+    for(let i=0;i<G;i++){
+      for(let j=0;j<G;j++){
+        const s = 0.4 + (i/(G-1))*1.2;
+        const r = -90 + (j/(G-1))*180;
+        const cx = (j+0.5)/G * cM.width;
+        const cy = (i+0.5)/G * cM.height;
+        mx.save();
+        mx.
+<!-- SECTION 7 continued: Manifold -->
+        mx.save();
+        mx.translate(cx, cy);
+        mx.rotate(r*Math.PI/180);
+        mx.scale(s*0.3, s*0.3);
+        mx.strokeStyle = 'rgba(127,212,255,0.25)';
+        mx.lineWidth = 4;
+        mx.lineCap = 'round';
+        mx.beginPath();
+        mx.moveTo(-30, 35);
+        mx.lineTo(0, -35);
+        mx.lineTo(30, 35);
+        mx.moveTo(-18, 8);
+        mx.lineTo(18, 8);
+        mx.stroke();
+        mx.restore();
+      }
+    }
+    // axes
+    mx.strokeStyle = '#2a3555'; mx.lineWidth = 1;
+    mx.beginPath(); mx.moveTo(20, cM.height-20); mx.lineTo(cM.width-20, cM.height-20); mx.stroke();
+    mx.beginPath(); mx.moveTo(20, 20); mx.lineTo(20, cM.height-20); mx.stroke();
+    mx.fillStyle = '#a0aac0'; mx.font = '11px Inter';
+    mx.fillText('Rotation →', cM.width-90, cM.height-6);
+    mx.save(); mx.translate(12, 14); mx.rotate(-Math.PI/2); mx.fillText('Größe →', 0, 0); mx.restore();
+    // current point marker
+    const px = ((rot+90)/180) * (cM.width-40) + 20;
+    const py = cM.height - 20 - ((sz-0.4)/1.2) * (cM.height-40);
+    mx.fillStyle = '#ffb347';
+    mx.beginPath(); mx.arc(px, py, 10, 0, Math.PI*2); mx.fill();
+    mx.strokeStyle = '#fff'; mx.lineWidth = 2; mx.stroke();
+    // "manifold surface" label
+    mx.fillStyle = 'rgba(255,179,71,0.7)'; mx.font = 'italic 11px Inter';
+    mx.fillText('Die 2D-Mannigfaltigkeit', 30, 40);
+    mx.fillText('(alle sind echte A\'s)', 30, 55);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   SECTION 8 · Training carves the energy landscape
+   ========================================================== */
+(function(){
+  const c = $('trainCanvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  // 1D landscape: energy over q in [-4, 4]
+  // start with flat baseline; each data point subtracts a Gaussian bump
+  let dataPoints = [];  // {q, w}
+  const qMin = -4, qMax = 4;
+  function qx(q){ return (q-qMin)/(qMax-qMin) * W; }
+  function xq(x){ return qMin + x/W*(qMax-qMin); }
+
+  function energyAt(q){
+    // baseline: high, flat
+    let E = 2.5;
+    dataPoints.forEach(dp=>{
+      E -= dp.w * Math.exp(-Math.pow(q-dp.q,2)/(2*0.15*0.15));
+    });
+    return E;
+  }
+
+  c.addEventListener('click', e=>{
+    const r = c.getBoundingClientRect();
+    const mx = (e.clientX-r.left)/r.width * W;
+    const q = xq(mx);
+    dataPoints.push({q, w: 0.4});
+    updateCount();
+  });
+
+  window.addTrainingBurst = (n)=>{
+    for(let i=0;i<n;i++){
+      const q = qMin + Math.random()*(qMax-qMin);
+      dataPoints.push({q, w:0.4});
+    }
+    updateCount();
+  };
+  window.addTrainingCurve = ()=>{
+    // add 30 points along a sinusoidal curve region
+    for(let i=0;i<30;i++){
+      const q = -2.5 + i*0.15 + (Math.random()-0.5)*0.1;
+      dataPoints.push({q, w:0.4});
+    }
+    updateCount();
+  };
+  window.resetTrain = ()=>{
+    dataPoints = [];
+    updateCount();
+  };
+  function updateCount(){
+    $('npts').textContent = dataPoints.length;
+  }
+
+  function draw(){
+    ctx.fillStyle = '#060912'; ctx.fillRect(0,0,W,H);
+    // grid
+    ctx.strokeStyle = '#141c30'; ctx.lineWidth = 1;
+    for(let q=-4;q<=4;q++){
+      ctx.beginPath(); ctx.moveTo(qx(q),20); ctx.lineTo(qx(q),H-30); ctx.stroke();
+    }
+
+    // heatmap-ish underlay (low energy = brighter blue)
+    const grad = ctx.createImageData(W, H-50);
+    for(let x=0;x<W;x++){
+      const q = xq(x);
+      const E = energyAt(q);
+      // Ehigh=2.5 mid, Elow near 0.5
+      const t = Math.max(0, Math.min(1, (2.5-E)/2));
+      const r = Math.round(30 + t*20);
+      const g = Math.round(40 + t*100);
+      const b = Math.round(60 + t*180);
+      for(let y=0;y<H-50;y++){
+        const idx = (y*W + x)*4;
+        grad.data[idx] = r;
+        grad.data[idx+1] = g;
+        grad.data[idx+2] = b;
+        grad.data[idx+3] = 180;
+      }
+    }
+    ctx.putImageData(grad, 0, 20);
+
+    // energy curve
+    ctx.strokeStyle = '#ffb347'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for(let x=0;x<W;x+=2){
+      const q = xq(x);
+      const E = energyAt(q);
+      const y = 20 + (E/2.8) * (H-70);
+      x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.fillStyle='rgba(255,179,71,0.15)';
+    ctx.lineTo(W, H-30); ctx.lineTo(0, H-30); ctx.closePath(); ctx.fill();
+
+    // data points as ticks
+    dataPoints.forEach(dp=>{
+      const x = qx(dp.q);
+      ctx.strokeStyle = '#6ee7a8'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x, H-30); ctx.lineTo(x, H-15); ctx.stroke();
+      ctx.fillStyle = 'rgba(110,231,168,0.6)';
+      ctx.beginPath(); ctx.arc(x, H-8, 3, 0, Math.PI*2); ctx.fill();
+    });
+
+    // labels
+    ctx.fillStyle='#ffb347'; ctx.font='12px Inter';
+    ctx.fillText('E(q) — gelernte Energie über allen möglichen (Eingabe, Ausgabe)', 12, 34);
+    ctx.fillStyle='#6ee7a8'; ctx.font='11px Inter';
+    ctx.fillText('▪ Trainingsdaten (grüne Marker)', 12, 50);
+    ctx.fillStyle='#7fd4ff';
+    ctx.fillText('▪ Klicke in die Landschaft, um Datenpunkte hinzuzufügen', 12, 66);
+
+    // helper text
+    if(dataPoints.length === 0){
+      ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = 'italic 14px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText('Landschaft ist flach — das Modell "weiß nichts". Klicke oder benutze die Buttons.', W/2, H/2);
+      ctx.textAlign = 'left';
+    }
+    ctx.fillStyle='#3a4565'; ctx.font='10px monospace';
+    ctx.fillText('niedrig ← Energie → hoch', 12, H-4);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   SECTION 9 · Hallucination
+   ========================================================== */
+(function(){
+  const c = $('halluCanvas'), ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let view = 'energy';
+  let mouseX = W*0.3, mouseY = H*0.4;
+  let animId = null;
+
+  // Landscape defined as a mix of Gaussians
+  // Some are "real" data valleys (blue), one is a "fake" valley (red)
+  const realValleys = [
+    {x: W*0.20, y: H*0.55, r: 80, depth: 1.2},
+    {x: W*0.40, y: H*0.30, r: 70, depth: 1.0},
+    {x: W*0.65, y: H*0.50, r: 90, depth: 1.3},
+    {x: W*0.85, y: H*0.35, r: 65, depth: 0.9},
+  ];
+  const fakeValleys = [
+    {x: W*0.55, y: H*0.75, r: 55, depth: 0.7},  // ONLY in energy, not in data
+    {x: W*0.30, y: H*0.15, r: 45, depth: 0.5},
+  ];
+
+  function energyAt(x, y){
+    let E = 1.5;
+    realValleys.forEach(v=>{
+      const d2 = (x-v.x)**2 + (y-v.y)**2;
+      E -= v.depth * Math.exp(-d2/(2*v.r*v.r));
+    });
+    fakeValleys.forEach(v=>{
+      const d2 = (x-v.x)**2 + (y-v.y)**2;
+      E -= v.depth * Math.exp(-d2/(2*v.r*v.r));
+    });
+    return E;
+  }
+  function nearestValley(x,y){
+    let best=null, bestD=Infinity, kind='none';
+    realValleys.forEach(v=>{
+      const d = Math.hypot(x-v.x, y-v.y);
+      if(d<bestD){ bestD=d; best=v; kind='real'; }
+    });
+    fakeValleys.forEach(v=>{
+      const d = Math.hypot(x-v.x, y-v.y);
+      if(d<bestD){ bestD=d; best=v; kind='fake'; }
+    });
+    return {v:best, d:bestD, kind};
+  }
+
+  c.addEventListener('mousemove', e=>{
+    if(animId) return;
+    const r = c.getBoundingClientRect();
+    mouseX = (e.clientX-r.left)/r.width * W;
+    mouseY = (e.clientY-r.top)/r.height * H;
+  });
+
+  window.setHalluView = (v)=>{
+    view = v;
+    ['showEnergy','showData','showBoth'].forEach(id=>$(id).classList.remove('active'));
+    if(v==='energy') $('showEnergy').classList.add('active');
+    if(v==='data') $('showData').classList.add('active');
+    if(v==='both') $('showBoth').classList.add('active');
+  };
+  window.animateHallu = ()=>{
+    if(animId){ clearInterval(animId); animId=null; return; }
+    let t=0;
+    animId = setInterval(()=>{
+      t += 0.02;
+      mouseX = W*0.5 + Math.cos(t)*W*0.4;
+      mouseY = H*0.5 + Math.sin(t*1.3)*H*0.35;
+    }, 30);
+  };
+
+  function draw(){
+    // background
+    ctx.fillStyle = '#060912'; ctx.fillRect(0,0,W,H);
+
+    // Draw energy landscape as heatmap
+    if(view === 'energy' || view === 'both'){
+      const step = 4;
+      for(let x=0;x<W;x+=step){
+        for(let y=0;y<H;y+=step){
+          const E = energyAt(x,y);
+          // Ehigh=1.5, Elow ~ -1 or -2
+          const t = Math.max(0, Math.min(1, (1.5-E)/2.5));
+          // blue-ish for low energy generally
+          const r = Math.round(15 + t*30);
+          const g = Math.round(20 + t*100);
+          const b = Math.round(35 + t*200);
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.fillRect(x, y, step, step);
+        }
+      }
+      // contours
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      for(let level=-1; level<1.4; level+=0.25){
+        // marching-squares-lite: skip, just draw isolines via sampling
+        // for simplicity, draw dots where |E-level|<0.02
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        for(let x=0;x<W;x+=3){
+          for(let y=0;y<H;y+=3){
+            if(Math.abs(energyAt(x,y)-level)<0.015){
+              ctx.fillRect(x, y, 2, 2);
+            }
+          }
+        }
+      }
+    }
+
+    // Draw training data points (real valleys have data around them)
+    if(view === 'data' || view === 'both'){
+      realValleys.forEach(v=>{
+        // scatter data around valley
+        for(let i=0;i<60;i++){
+          const angle = Math.random()*Math.PI*2;
+          const dist = Math.abs(Math.random()*v.r*0.7);
+          const px = v.x + Math.cos(angle)*dist;
+          const py = v.y + Math.sin(angle)*dist;
+          ctx.fillStyle = 'rgba(110,231,168,0.7)';
+          ctx.beginPath(); ctx.arc(px, py, 1.8, 0, Math.PI*2); ctx.fill();
+        }
+      });
+    }
+
+    // Mark fake valleys explicitly when in "both" or "energy"
+    if(view === 'both' || view === 'energy'){
+      fakeValleys.forEach(v=>{
+        ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 2;
+        ctx.setLineDash([5,4]);
+        ctx.beginPath(); ctx.arc(v.x, v.y, v.r*0.7, 0, Math.PI*2); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ff6b6b'; ctx.font = 'bold 10px Inter';
+        ctx.fillText('FALSCHES TAL', v.x-38, v.y+v.r*0.7+14);
+      });
+    }
+    if(view === 'both'){
+      realValleys.forEach(v=>{
+        ctx.strokeStyle = 'rgba(110,231,168,0.4)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(v.x, v.y, v.r*0.6, 0, Math.PI*2); ctx.stroke();
+      });
+    }
+
+    // Draw the model "answer" point (nearest low-energy point)
+    const {v: vNearest, d, kind} = nearestValley(mouseX, mouseY);
+
+    // trace from query to answer
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(mouseX, mouseY);
+    ctx.lineTo(vNearest.x, vNearest.y); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // query point
+    ctx.fillStyle = '#ff6b9d';
+    ctx.beginPath(); ctx.arc(mouseX, mouseY, 9, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#ff6b9d'; ctx.font = 'bold 11px Inter';
+    ctx.fillText('Anfrage', mouseX+14, mouseY-8);
+
+    // answer point
+    const ansColor = kind === 'real' ? '#6ee7a8' : '#ff6b6b';
+    ctx.fillStyle = ansColor;
+    ctx.beginPath(); ctx.arc(vNearest.x, vNearest.y, 8, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = ansColor; ctx.font = 'bold 11px Inter';
+    ctx.fillText(kind === 'real' ? 'gute Antwort' : 'HALLUZINATION', vNearest.x+12, vNearest.y+4);
+
+    // Status
+    const statusEl = $('halluStatus');
+    if(kind === 'real'){
+      statusEl.textContent = 'AUF DER SCHEIBE';
+      statusEl.className = 'status on';
+    } else {
+      statusEl.textContent = 'NEBEN DER SCHEIBE';
+      statusEl.className = 'status off';
+    }
+
+    // legend
+    ctx.fillStyle = 'rgba(6,9,18,0.85)'; ctx.fillRect(10, 10, 260, 78);
+    ctx.strokeStyle = '#2a3555'; ctx.strokeRect(10, 10, 260, 78);
+    ctx.fillStyle = '#6ee7a8'; ctx.font = '11px Inter';
+    ctx.fillText('● echte Trainings-Täler', 20, 28);
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillText('◌ falsche Täler (nur im Modell)', 20, 46);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fillText('● Anfrage · bewege sie mit der Maus', 20, 64);
+    ctx.fillStyle = '#a0aac0';
+    ctx.fillText('Ohne Bewegung: siehe Auto-Bewegung', 20, 80);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   SECTION 10 · Synthesis
+   ========================================================== */
+(function(){
+  const cL = $('synthLandCanvas'), lx = cL.getContext('2d');
+  const cP = $('synthProbCanvas'), px = cP.getContext('2d');
+  let T = 0.4, D = 0.3, modelX = 0;
+  let animId = null;
+
+  // energy: a wide bowl with a thin slice-ring at the bottom
+  // We'll show 1D: the "slice" is a narrow low-energy region
+  const qMin=-4, qMax=4;
+  const W = cL.width, H = cL.height;
+  function qxL(q){ return (q-qMin)/(qMax-qMin)*W; }
+  function energy(q){
+    // wide quadratic bowl + a very deep narrow trench near 0
+    const bowl = 0.15*q*q;
+    // the "slice" is a soft narrow band around 0 of width D
+    const slice = -1.5 * Math.exp(-q*q/(2*D*D));
+    return bowl + slice + 1.5;
+  }
+
+  $('synthT').addEventListener('input', ()=>{ T=+$('synthT').value; $('synthTv').textContent=T.toFixed(2); draw(); });
+  $('synthD').addEventListener('input', ()=>{ D=+$('synthD').value; $('synthDv').textContent=D.toFixed(2); draw(); });
+  $('synthX').addEventListener('input', ()=>{
+    modelX=+$('synthX').value;
+    const onSlice = Math.abs(modelX) < D*2;
+    $('synthPos').textContent = onSlice ? 'auf der Scheibe ✓' : 'NEBEN der Scheibe ✗';
+    $('synthPos').style.color = onSlice ? 'var(--good)' : 'var(--bad)';
+    draw();
+  });
+
+  window.synthAnimate = ()=>{
+    if(animId){ clearInterval(animId); animId=null; return; }
+    let t=0;
+    animId = setInterval(()=>{
+      t += 0.02;
+      const x = Math.sin(t)*3;
+      $('synthX').value = x;
+      updateSliderFill($('synthX'));
+      modelX = x;
+      const onSlice = Math.abs(modelX) < D*2;
+      $('synthPos').textContent = onSlice ? 'auf der Scheibe ✓' : 'NEBEN der Scheibe ✗';
+      $('synthPos').style.color = onSlice ? 'var(--good)' : 'var(--bad)';
+      draw();
+    }, 40);
+  };
+
+  function draw(){
+    // ---- Landscape ----
+    lx.fillStyle='#060912'; lx.fillRect(0,0,W,H);
+    // grid
+    lx.strokeStyle='#141c30';
+    for(let q=-4;q<=4;q++){
+      lx.beginPath(); lx.moveTo(qxL(q),20); lx.lineTo(qxL(q),H-30); lx.stroke();
+    }
+    // slice region highlight
+    const sliceLeft = qxL(-D*2), sliceRight = qxL(D*2);
+    lx.fillStyle = 'rgba(110,231,168,0.12)';
+    lx.fillRect(sliceLeft, 20, sliceRight-sliceLeft, H-50);
+
+    // energy curve
+    lx.strokeStyle='#7fd4ff'; lx.lineWidth=2.5;
+    lx.beginPath();
+    for(let x=0;x<W;x+=2){
+      const q = qMin + x/W*(qMax-qMin);
+      const E = energy(q);
+      const y = 20 + E/3 * (H-70);
+      x===0 ? lx.moveTo(x,y) : lx.lineTo(x,y);
+    }
+    lx.stroke();
+    lx.fillStyle='rgba(127,212,255,0.15)';
+    lx.lineTo(W, H-30); lx.lineTo(0, H-30); lx.closePath(); lx.fill();
+
+    // "training data" dots inside slice
+    for(let i=0;i<50;i++){
+      const q = (Math.random()-0.5)*D*3;
+      const x = qxL(q);
+      const y = 20 + energy(q)/3 * (H-70) - 5;
+      lx.fillStyle='rgba(110,231,168,0.6)';
+      lx.beginPath(); lx.arc(x, y, 2.5, 0, Math.PI*2); lx.fill();
+    }
+
+    // model position
+    const mxPos = qxL(modelX);
+    const myPos = 20 + energy(modelX)/3 * (H-70);
+    const onSlice = Math.abs(modelX) < D*2;
+    lx.strokeStyle = onSlice ? '#6ee7a8' : '#ff6b6b';
+    lx.setLineDash([4,4]); lx.lineWidth=1.5;
+    lx.beginPath(); lx.moveTo(mxPos, 20); lx.lineTo(mxPos, H-25); lx.stroke();
+    lx.setLineDash([]);
+    lx.fillStyle = onSlice ? '#6ee7a8' : '#ff6b6b';
+    lx.beginPath(); lx.arc(mxPos, myPos-4, 9, 0, Math.PI*2); lx.fill();
+    lx.strokeStyle='#fff'; lx.lineWidth=2; lx.stroke();
+
+    // legend
+    lx.fillStyle='#7fd4ff'; lx.font='11px Inter';
+    lx.fillText('Energie E(q)', 12, 20);
+    lx.fillStyle='rgba(110,231,168,0.9)';
+    lx.fillText('Trainingsdaten-Scheibe', 12, 36);
+    lx.fillStyle = onSlice ? '#6ee7a8' : '#ff6b6b';
+    lx.fillText(`Modell @ q=${modelX.toFixed(2)}`, 12, 52);
+
+    // update pos text
+    const posEl = $('synthPos');
+    if(onSlice){ posEl.textContent = 'auf der Scheibe ✓'; posEl.style.color='var(--good)'; }
+    else       { posEl.textContent = 'NEBEN der Scheibe ✗'; posEl.style.color='var(--bad)'; }
+
+    // ---- Boltzmann prob ----
+    px.fillStyle='#060912'; px.fillRect(0,0,W,H);
+    // compute P
+    const vals=[]; let Z=0;
+    for(let x=0;x<W;x++){
+      const q = qMin + x/W*(qMax-qMin);
+      const p = Math.exp(-energy(q)/T);
+      vals.push(p); Z+=p;
+    }
+    const maxP = Math.max(...vals)/Z;
+    // fill
+    const grad = px.createLinearGradient(0, H, 0, 0);
+    grad.addColorStop(0, 'rgba(255,107,157,0.05)');
+    grad.addColorStop(1, 'rgba(255,107,157,0.5)');
+    px.fillStyle = grad;
+    px.beginPath(); px.moveTo(0, H-30);
+    for(let x=0;x<W;x++){
+      const p = vals[x]/Z;
+      const y = H-30 - (p/maxP) * (H-70);
+      px.lineTo(x, y);
+    }
+    px.lineTo(W, H-30); px.closePath(); px.fill();
+    // line
+    px.strokeStyle='#ff6b9d'; px.lineWidth=2.5;
+    px.beginPath();
+    for(let x=0;x<W;x++){
+      const p = vals[x]/Z;
+      const y = H-30 - (p/maxP) * (H-70);
+      x===0 ? px.moveTo(x,y) : px.lineTo(x,y);
+    }
+    px.stroke();
+
+    // current model position marker
+    px.strokeStyle = onSlice ? '#6ee7a8' : '#ff6b6b';
+    px.setLineDash([4,4]); px.lineWidth=1.5;
+    px.beginPath();
+    const mxP = (modelX - qMin)/(qMax-qMin) * W;
+    px.moveTo(mxP, 20); px.lineTo(mxP, H-25); px.stroke();
+    px.setLineDash([]);
+    px.fillStyle = onSlice ? '#6ee7a8' : '#ff6b6b';
+    px.beginPath(); px.arc(mxP, H-30, 6, 0, Math.PI*2); px.fill();
+
+    // axis labels
+    px.fillStyle='#3a4565'; px.font='11px monospace';
+    [-4,-2,0,2,4].forEach(q=>{
+      const x = (q-qMin)/(qMax-qMin) * W;
+      px.fillText(q.toString(), x-4, H-8);
+    });
+    // title
+    px.fillStyle='#ff6b9d'; px.font='11px Inter';
+    px.fillText(`T = ${T.toFixed(2)}   ·   niedrig T → Peak schmilzt in die Scheibe`, 12, 22);
+    px.fillStyle='#a0aac0';
+    px.fillText(`hoch T → verteilt sich über den ganzen Raum`, 12, 38);
+  }
+  draw();
+})();
+
+/* ==========================================================
+   Render KaTeX
+   ========================================================== */
+function renderMath(){
+  if(typeof renderMathInElement !== 'undefined'){
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
+  }
+}
+window.addEventListener('load', renderMath);
+
+</script>
+
+</body>
+</html>
