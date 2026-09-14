@@ -156,7 +156,7 @@ Three verbs do all the work \cite[LeCun et al., 2007]{lecun2007ebm}:
 - **Inference = minimising** $E_{\theta}$: given a partial input, find the low-energy completion.
 - **Usefulness = the low-energy slice** — the set of configurations the sculpted energy has made probable.
 
-**The idea is old inside the field.** **Hopfield networks** are literally physical systems: the weights define an energy, and the dynamics *descend* that energy until the state settles into a minimum — a stored memory \cite{hopfield1982}. **Boltzmann machines** add the temperature: the state is drawn from the Boltzmann distribution over configurations, and learning pushes the data *down* in energy and everything else *up* \cite[Ackley, Hinton \& Sejnowski, 1985]{ackley1985boltzmann}. In both, "the network only makes sense in the low-energy region" is not an accident; it is the *definition*.
+**The idea is old inside the field.** **Hopfield networks** are literally physical systems: the weights define an energy, and the dynamics *descend* that energy until the state settles into a minimum — a stored memory \cite{hopfield1982}. **Boltzmann machines** add the temperature: the state is drawn from the Boltzmann distribution over configurations, and learning pushes the data *down* in energy and everything else *up* \cite[Ackley, Hinton & Sejnowski, 1985]{ackley1985boltzmann}. In both, "the network only makes sense in the low-energy region" is not an accident; it is the *definition*.
 
 LeCun returns to the energy point in his 2022 position paper, where the whole proposed intelligence is a hierarchy of modules each driven toward low energy, the "world model" being the low-energy region of the space of all possible world states \cite[LeCun, 2022]{lecun2022autonomous}. The slogan of that paper — *find the lowest-energy state consistent with what you observe* — is the Boltzmann selector rewritten as an engineering goal.
 
@@ -182,6 +182,55 @@ This is the precise sense in which "the AI only works on a slice": the slice is 
 </div>
 
 **The phase-space form of the same fact.** An **attracting invariant manifold** in phase space — a surface that nearby trajectories flow onto and then stay on, indefinitely — is the dynamical-systems home of this idea \cite[manifold learning]{manifold_learning_wiki}. If such an attracting surface exists, the long-time behaviour of the system *is* that surface; the rest of phase space is only where the transients live before they decay into it. "The system only really does something on the attractor." That is the phase-space form of "the model only works on the slice."
+</div>
+
+<div class="md">
+## The shape of the slices
+
+We now know the useful slice is (i) *low-energy*, (ii) *low-dimensional*, and (iii) *measure-zero* in the ambient space. But what is its **shape**? Three answers — one from physics, one from measure theory, one from the machine — and they are not competing; they are three directions on the same slice.
+
+**1. When the system is integrable, the slice is a *torus*.** The **Liouville–Arnold theorem** is one of the cleanest shape results in all of mechanics \cite[Liouville–Arnold]{liouville_arnold_wiki}. Take a Hamiltonian system with $n$ degrees of freedom that is *integrable* — it carries $n$ independent conserved quantities (the energy among them) that all Poisson-commute. At a regular point the state is confined to the *common level set* of those $n$ conserved quantities, and if that level set is compact and connected it is **diffeomorphic to the $n$-torus $\mathbb{T}^{n}$**. The motion on it is a simple quasi-periodic flow — the state winds around the torus at $n$ fixed frequencies. So for the idealised, well-behaved system, the useful slice has a *precise* shape:
+
+$$
+\boxed{
+\begin{aligned}
+&\text{integrable system}\ \Longrightarrow\ \text{the useful slice is a torus }\mathbb{T}^{n},\\
+&\text{one free circle per degree of freedom. The \emph{shape} of the slice}\\
+&\text{\emph{is} the count of the independent motions.}
+\end{aligned}
+}
+$$
+
+Not an arbitrary blob, not a random region: a torus, whose topology literally encodes how many independent oscillations the system has.
+
+**2. As a place where mass lands, the slice is a *thin shell*.** The measure-zero fact said the slice is "empty" for a *uniform* random point. The *dynamics* say almost the opposite: the Boltzmann/Gibbs measure piles essentially all of its weight onto the slice. In high dimension this is not an approximation but a theorem — the **concentration of measure** phenomenon, the "thin shell" result behind the equivalence of the ensembles of statistical physics \cite[concentration of measure]{concentration_of_measure_wiki}. The typical energy, and a thin band around it, capture almost all the probability; as temperature drops the mass collapses onto the ground state. So there are **two independent senses of "thin," and both hold at once**:
+
+$$
+\boxed{
+\begin{aligned}
+&\text{measure-zero for a \emph{uniform} point\ \ \ \ (nothing is there);}\\
+&\text{yet carrying \emph{all} the mass under the \emph{dynamics}\ \ \ \ (everything is there).}\\
+&\text{The useful slice is, at once, empty and full.}
+\end{aligned}
+}
+$$
+
+**3. As the machine sees it, the slice is a *manifold* — and even the solutions have a shape.** The data manifold $M^{k}\subset\mathbb{R}^{N}$ is not assumed to be one smooth flat surface. Real data manifolds are **curved** (they carry intrinsic Riemannian curvature), can be **branched** or **multi-modal** (a union of patches — the "two moons," the "Swiss roll," an S-curve), and can carry **nontrivial topology** (holes, handles) \cite[manifold learning]{manifold_learning_wiki}.
+
+And the *model's own* phase space — **weight space** — has its own slice geometry, with the loss as its energy. A body of work on the loss landscape, beginning with the analysis of deep *linear* networks \cite[Saxe, McClelland & Ganguli, 2014]{saxe2014deep}, found that the set of *global* minima is not a scatter of isolated points: it has **basins and plateaus** — structure, not dust. On top of that, a network's function is unchanged by permuting the units of a layer (and, for sign-symmetric activations, by flipping them), so the *same* solution is represented by many weight vectors. The minima therefore come in whole **families**, forming flat, symmetry-generated "groves" rather than a dust of points:
+
+$$
+\boxed{
+\begin{aligned}
+&\text{even the set of \emph{solutions} has a shape: flat, connected,}\\
+&\text{symmetry-generated — \emph{groves} of minima, not a dust of points.}
+\end{aligned}
+}
+$$
+
+<div class="optional md" data-headline="Three shapes, one slice — and which one is 'the' shape">
+The three shapes describe the slice from three directions at once, and they agree on the *form* even where they differ in the details. The **torus** is the shape the *dynamics* impose when the system is integrable — the geometric skeleton of the motion. The **thin shell** is the shape the *measure* imposes — where the probability actually sits, which is where the torus lives, concentrated. The **manifold / grove** is the shape *learning* imposes — the low-dimensional, low-energy, symmetry-structured set a trained model is built to live on. The physics gives the torus and the shell as *theorems*; the machine gives the manifold and the grove as *empirical, structural* facts. The honest claim of this chapter is the common **form** — a thin, low-complexity, low-energy subset of a vast space of possibilities — *not* the claim that a trained network is literally a torus in $\mathbb{R}^{6N}$.
+</div>
 </div>
 
 <div class="md">
