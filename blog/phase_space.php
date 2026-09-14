@@ -1,291 +1,607 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Phase Space — Usefulness as a Slice
-description: The space of every possible input and output, the energy function that carves out the thin low-energy slice where an AI is actually useful.
+title: A Geometric and Topological Theory of Meaningful Language Spaces
+description: The space of every possible utterance, the clusters and voids inside it, and the hierarchical structure and absence that geometry and topology may make precise.
 icon: 🌌
 part: 4
 order: 4
 color: accent
-topics: math-ii, math-iii, philosophy, ai
+topics: geometry, math-iii, philosophy, language, frontier
 -->
 
 <div class="md">
-## The question, in one plain sentence
+## The question, and the object that answers it
 
-Ask a chatbot a hard question and you may notice something odd. It is not always wrong — sometimes it is exactly right. But its reliability is not even: for some questions it is rock-solid, for others it quietly falls apart. And the unsettling part is that it gives you little signal about which kind of question you are asking. When it *does* go wrong, it often does not say "I don't know" — it can glide into a smooth, confident, completely *wrong* answer, in a calm voice, with no hint that it has left the rails.
+Type a few random characters — `xq7z`, `aaaaaa`, `blorp blorp` — and you know at once that they are not language. They are strings, perfectly valid ones, but they carry no meaning. Now do the reverse: type a real sentence and you feel meaning *land*. The unsettling fact is that there is no bright line you can point to between the two. Almost every string that *could* exist is meaningless, and the meaningful ones are a vanishingly small part of the whole.
 
-The point of this chapter is to locate *where* the reliability actually is. The right space to think in is not just the questions the AI could be asked, but the space of **all its (input, output) pairs** — every possible input paired with *every* possible answer, absurd ones included: an endless run of "aaa…", a never-ending "ababab…". That space is enormous, and most of it is incoherent. Across it the AI is reliable only on a thin, special **slice**: the pairs where the output is actually a good answer to the input. A single number — its **energy** — marks where that slice is. Two words carry the whole chapter: **phase space** (that whole space of (input, output) pairs) and **energy** (the number that draws the line).
+So the question this chapter pursues is a geometric one: **what is the shape of the part of the space of all possible utterances that actually supports structured, meaningful language?**
+
+The object to begin with is *not* a model's output, and *not* the language anyone has ever spoken. It is a static, enormous space holding every possible linguistic object up to some length. This is a **conceptual research program**, not an established theory: where a statement is a guess rather than a result, it is flagged **[HYPOTHESIS]**, **[SPECULATION]**, or **[RESEARCH QUESTION]**.
 
 **The tour.**
 
-1. **The space.** The space of all (input, output) pairs — enormous, high-dimensional, and mostly incoherent.
-2. **The energy.** A single number on each pair, decided by the training data; low energy = useful. Temperature turns it into a probability.
-3. **The two regions.** The thin region the model *does* reach and the vast region it *never* reaches — each with its own shape, and a line between them.
-4. **Off the slice.** Going wrong is going off the slice.
+1. **The space** — $X_N$, everything that could be said, up to length $N$.
+2. **Meaning as a field** — not a hard subset, but several overlapping "coherence" fields and their complements, the *voids*.
+3. **The cosmic web** — clusters, filaments, walls, voids; and the conjecture that they are *hierarchical*.
+4. **Voids are structured too** — voids of voids, and several distinct kinds.
+5. **The tools** — geometry, topology (persistent homology), and scaling.
+6. **The three spaces** — form $X$, meaning $S$, world $W$.
+7. **Evidence, the research program, and the deepest hypothesis.**
 
 $$
 \boxed{
 \begin{aligned}
-&\text{An AI works only on a thin, low-energy slice}\\
-&\text{of the huge space of all (input, output) pairs;}\\
-&\text{one number, its \emph{energy}, draws the line.}
+&\text{Meaning is not a label stuck on a string.}\\
+&\text{It may be a stable relational organization of a vast possibility space —}\\
+&\text{with clusters, filaments, boundaries, holes, and voids, organized across scales.}
 \end{aligned}
 }
 $$
 </div>
 
 <div class="md">
-## The space: every (input, output) pair
+## 1. The space of all possible discourse
 
-The space this chapter lives in is the space of **all (input, output) pairs** — every possible input paired with *every* possible answer, absurd ones included; for an image generator, every possible picture: a real image, or a real image with noise added, at every possible state — clean faces, and all the static, corruption, and half-formed junk in between. In physics, a space of "every possible state" has a name, **phase space** \cite[nLab]{nlab_phasespace}; here the "state" is simply a pair, and the name is borrowed for the same idea — *the space of everything that could possibly be the case*.
+Let $V$ be an alphabet, vocabulary, or token set, and let $N$ be a maximum length. The **total possibility space** is
 
-It is **enormous and high-dimensional**. Even a small image is a vector with thousands of numbers, so its space has thousands of dimensions — far too many to draw, and the extra dimensions only make the space bigger and emptier. For a sequence model the count is wilder still: the number of possible 100-token answers is $\lvert V\rvert^{100}$, which for a vocabulary of $\lvert V\rvert = 10{,}000$ is $10^{400}$ — a 1 followed by four hundred zeros.
+$$
+X_N \;=\; \bigcup_{n=1}^{N} V^{n},
+$$
 
-And almost none of those points is a sensible answer to its input. Yet they are all *in* the space, sitting there, perfectly valid strings. The question this chapter answers: **where, inside that enormous space, is the thin place where the outputs are actually good answers — and what shape is it?**
+every string of length $1,2,\dots,N$, all at once. Both $\texttt{a}$ and $\texttt{aaaaaaaaaaaaaaaa}$ are points of it, as is "The thought drinks the square Tuesday," as is pure gibberish. Nothing in the definition privileges meaning, grammar, or likelihood. It is a **space of possibilities**, not a space of observed language.
+
+The size is the first thing to absorb. Since $|V^{n}| = |V|^{n}$, the count grows *exponentially* with length. For a vocabulary of $|V| = 10{,}000$, the number of possible $100$-token strings is $10{,}000^{100} = 10^{400}$ — a $1$ followed by four hundred zeros, some three hundred orders of magnitude past the atoms in the observable universe. And the overwhelming majority of those points will never take part in any structured discourse.
+
+That is exactly what makes the question interesting:
 
 $$
 \boxed{
-\text{phase space here} \;=\; \text{all (input, output) pairs at once,} \qquad \text{enormous, high-dimensional, mostly incoherent.}
+\text{What is the geometry and topology of the small part of } X_N \text{ that supports structured, meaningful language?}
 }
 $$
 </div>
 
 <div class="md">
-## The energy: a number the data paints
+## 2. Meaning is a field, not a hard subset
 
-Give every (input, output) pair a single number — its **energy**. In a trained model this is not a physical energy at all; it is a *score*, and the crucial point is that **the training data decides it**. Training does essentially one thing: it pushes the good pairs — coherent, fluent, in-distribution — to *low* energy, and the bad pairs — incoherent, off-distribution — to *high* energy. That is the whole idea behind **energy-based models** \cite[LeCun et al., 2007]{lecun2007ebm} \cite[LeCun et al., 1998]{lecun1998gradient}:
+The naive move is to carve out a subset $M \subset X_N$ of "the meaningful strings." Conceptually fine — but too crude. Meaningfulness is not binary. A string can be syntactically well formed but semantically anomalous; interpretable but false; internally coherent yet disconnected from the world; ambiguous; metaphorical; meaningful only in a particular context.
 
-<div class="smart-quote" data-cite="ebm_wiki" data-after="Energy-based model">
-Essentially, the model learns a function that associates low energies to correct values, and higher energies to incorrect values.
-</div>
-
-So "useful" and "low energy" are the same statement: a pair is useful exactly when the data made it likely, that is, when its energy is low.
-
-**Temperature turns the number into a probability.** The standard rule is the **Boltzmann distribution** \cite{boltzmann_distribution_wiki} \cite{canonical_ensemble_wiki}:
+So instead of a subset, use a *field* — a number on every point. The simplest is a single coherence score $\rho : X_N \to [0,1]$. But one scalar is probably not enough. A richer description assigns several fields at once:
 
 $$
-\underbrace{P(x)}_{\text{probability of a pair }x}
-\;=\;
-\underbrace{e^{-\beta\, E(x)}}_{\text{the weight: \emph{small} when the energy is big}}
-\;\Big/\;
-\underbrace{Z}_{\text{the total of all the weights}}
-\qquad\text{with}\qquad
-\underbrace{\beta \;=\; \tfrac{1}{\text{temperature}}}_{\text{how “stingy” the sampling is}}.
+C(x) = \text{syntactic coherence}, \qquad
+S(x) = \text{semantic coherence},
+$$
+$$
+G(x) = \text{grounding / world-coupling}, \qquad
+E(x) = \text{epistemic determination}.
 $$
 
-Each pair gets a **weight** $e^{-\beta E}$ that *shrinks* as the energy grows; divide by $Z$ (the sum of all the weights) so the probabilities add to $1$ \cite{partition_function_wiki}. In one line:
+Each says a different thing about how "there" the point is, along a different axis. Now take the *complements* — how far the point is from full structure, on each axis:
 
 $$
 \boxed{
-\text{low energy} \;\Rightarrow\; \text{likely.} \qquad\qquad \text{high energy} \;\Rightarrow\; \text{almost never.}
+V(x) \;=\; \bigl(1-C(x),\; 1-S(x),\; 1-G(x),\; 1-E(x)\bigr).
 }
 $$
 
-The high-energy pairs are **not removed** — they are still in the space, still part of the possibilities — they have simply been given almost no weight. So the model is found, almost always, in the **low-energy region**. And that region is *thin*: in a large system the energy concentrates so tightly around one value that the relative wobble is about $1/\sqrt{N}$, a consequence of **concentration of measure** \cite{concentration_of_measure_wiki}. Push the temperature to zero and the wobble dies out entirely: all the weight sits on the single lowest-energy pair — the **ground state** \cite{ground_state_wiki} — and the region narrows to a point. That one-point limit is the useful, deterministic answer a trained model gives.
-
-**This is the knob on a chatbot.** "Temperature" in a language model is borrowed straight from here: **low** = almost nothing but the single safest, most likely thing (correct, but dull); **high** = it explores unusual, higher-energy options (some delightful, some nonsense). (The <a href="samplinglab">Temperature &amp; Sampling</a> chapter turns this knob in detail.)
-
-**Three verbs do the work** \cite[LeCun et al., 2007]{lecun2007ebm}: **training** = shaping the energy so the good cases sit low and the rest sits high; **inference** = sliding to the low energy (given a question, find the low-energy answer); **usefulness** = the low-energy region itself. It is an old trick — **Hopfield networks** are energy systems that slide down until they park on a stored memory \cite{hopfield1982}, **Boltzmann machines** add temperature and push the good cases down and the rest up \cite[Ackley, Hinton & Sejnowski, 1985]{ackley1985boltzmann}, and LeCun returns to it in 2022, where the proposed brain is a stack of modules each driven to low energy \cite[LeCun, 2022]{lecun2022autonomous}.
-
-*In one line:* a space of all (input, output) pairs, one number on each — set by the data, low on the useful ones — and a thin low-energy region where the model works.
-
-<div class="optional md" data-headline="What “energy” means for a real LLM (the honest boundary)">
-In a modern language model the "energy" is *not* a physical Hamiltonian. There is no conserved quantity, no pendulum swinging, no real temperature in a frozen model at inference. The energy is the **loss** — for a language model, roughly the *surprise* of the tokens (the negative log-likelihood). But its *job* is identical: a single number over all possible (input, output) sequences that training has made small exactly on the sequences that are *coherent, fluent, and in-distribution*. The physics is a *picture of the geometry*, not a claim that a GPU is swinging a pendulum. The rule for the whole course: where the analogy is *structural* it is useful; where it would be *literal*, it is not.
-</div>
+This **void vector** is the central object of the next few sections. Its purpose is not to claim that these four quantities are *the* right ones, but to make explicit that "void" can mean several different things at once — and that they need not line up.
 </div>
 
 <div class="md">
-## One space, two regions
+## 3. The cosmic-web intuition
 
-Look at the whole (input, output) space. It is full of points the model will effectively *never* produce: "write a sonnet about the sea" answered with "aaaa…", "what is 2+2?" answered with "ababab…". Those outputs are *right there* in the space — perfectly valid strings — and yet the model never lands on them.
+A picture to hold onto is the **cosmic web**. Look at the universe at large scale and matter is not smeared uniformly: it forms clusters, threads (filaments), sheets (walls), and enormous underdense **voids** in between. The analogy is *not* literal — language is not a gravitational matter distribution. What we borrow is the *shape* of a sparse, structured distribution: a little stuff, arranged, in a lot of emptiness.
 
-So the question that matters: **if the whole thing is one space, what separates the region where meaning sits from the region where it does not?**
+<figure style="max-width:760px; margin:1.5em auto; text-align:center;">
+	<img src="cosmic_web.jpg" alt="The cosmic web: bright filaments and nodes of galaxies and dark matter threading through vast dark voids" style="width:100%; height:auto; border-radius:6px;" />
+	<figcaption class="md">A slice of the **cosmic web** — the large-scale structure of the universe: filaments and nodes of galaxies and dark matter, and the vast underdense voids between them. The shape we are borrowing, not the substance. \cite[Image: Structure of the Universe]{cosmic_web_image}</figcaption>
+</figure>
 
-The answer — and it is the crux — is that **it is not the shape of the space.** There is no wall, no border, no separate "meaningless room." The meaningful and the meaningless live in the *same* space, side by side. What draws the line is not geometry; it is the **training data**, through the likelihood — the energy — the model learned from it. The data paints a single number, the energy, across the whole space:
+Schematically, the linguistic possibility space might look like this — bright structure on a dark ground:
 
-$$
-\underbrace{E(x)}_{\text{energy of a pair }x}
-\;=\;
-\underbrace{-\,\log\, P(x)}_{\text{how “unexpected” the pair is to the data}}
-\;+\;
-\underbrace{\text{const.}}_{\text{the same for every pair, so it never matters}}.
-$$
+```text
+VOID VOID VOID VOID VOID VOID
 
-Here $x$ is an (input, output) pair and $P(x)$ is how likely that pair is under the distribution the model learned \cite[LeCun et al., 2007]{lecun2007ebm}. A pair the data supports — "what is 2+2?" → "4" — has low energy; a pair it almost never contains — "write a sonnet" → "aaaa…" — has very high energy. The *same string* "aaaa…" is high-energy (meaningless) next to "write a sonnet about the sea," but low-energy (perfectly fine) next to "print the letter a five times." Meaning is not a property of the *output* alone; it is a property of the **pair**, and the data decides.
+       ████
+      ██████
+     ███████
+       │
+       └────────────
+                    ███
+                  ███████
+                    │
+          █████████████
+         ███████████████
 
-**Now picture the space as a height map**, with height = energy. The training data occupies a few thin, low, well-lit regions; everything else is high, empty wilderness. One space, two regions, divided by a line at some height:
+VOID VOID VOID VOID VOID
+```
+
+The central conjecture is that the meaningful part of the space is not a bag of isolated islands. It may form a **hierarchy**:
 
 $$
 \boxed{
-\begin{aligned}
-&\text{one space holds the meaningful and the meaningless together;}\\
-&\text{the training data paints an energy across it;}\\
-&\text{meaning sits where that energy is low — the rest is wilderness.}
-\end{aligned}
+\text{point} \;\to\; \text{cluster} \;\to\; \text{cluster of clusters} \;\to\; \text{cluster of clusters of clusters} \;\to\; \cdots
 }
 $$
 
-The **reachable region** is the thin low-energy ground the model walks on. The **unreachable region** is the high wilderness around it. And between the two runs a **line** — the level set of the energy at some height. The next three sections give each its own shape: how it forms, and what it looks like.
+That is the notion of **hierarchical self-similarity** — the spine of the whole program.
 </div>
 
 <div class="md">
-## The reachable region: how it forms, and its shape
+## 4. Hierarchical self-similarity
 
-Start with the low, well-lit ground of the height map — the region the model actually lives on.
+Use the word "fractal" carefully. The claim is *not* that language has exact mathematical self-similarity. It may instead have **statistical or multifractal self-similarity**.
 
-**How it forms.** It is low-energy because that is where the data put its mass, and the data is *low-dimensional*: the useful states do not scatter through the whole space; they lie on a **low-dimensional surface** floating inside it. That is the **manifold hypothesis** \cite[Sindhwani, Belkin & Niyogi, 2006]{sindhwani2006geometric} \cite[manifold learning]{manifold_learning_wiki} — real data, though it lives in a space with a huge number of coordinates, is really controlled by only a few free knobs.
+Let $\mathcal{S}(r)$ denote the structural organization of language at scale $r$. A weak form of scale similarity is
 
-**The face example.** Every photograph of a human face is a point in a giant space of pixel values, but "all faces" is not the whole space — it is a *surface* inside it. Sliding smoothly along that surface morphs one face into another — change the jaw, the eyes, the light — and *every step of the way is still a real face*. The classic picture even has a **hole**: going all the way round from "eyes open" to "eyes closed" and back never leaves a real face, so the surface is shaped like the inside of a bagel \cite[Olah, 2014]{olah2014manifolds}.
+$$
+\mathcal{S}(r) \;\sim\; \mathcal{S}(\lambda r),
+$$
 
-**A number one can feel.** A scaled-and-rotated letter "A" is still just one point in that huge space, and only *two* knobs — size and rotation — move it. So every letter "A" sits on a **two-dimensional surface** floating inside a space with thousands of dimensions \cite[manifold learning]{manifold_learning_wiki}: a sheet with two degrees of freedom inside an enormous arena. A language model is more extreme still: the number of possible 100-token answers is $10^{400}$ for a realistic vocabulary — roughly **320 more digits** than the atoms in the observable universe ($\sim10^{80}$). And yet the *grammatical, on-topic* answers are a measure-thin sliver of that space. The model works **on that sliver, and only on that sliver.**
+where $\sim$ means *statistical or structural* similarity, not equality. The same *kind* of object can recur at different scales — point, cluster, cluster of clusters — while its detailed contents change. That is far more plausible than exact geometric self-similarity, and it is closer to how fractal ideas are actually used in complex systems.
 
-**What shape it is.** Three pictures — one from physics, one from probability, one from the machine — are not rivals but three angles on the same sheet:
+And the hierarchy need not stop at the usual linguistic units (token → phrase → sentence → paragraph → discourse → document). More generally, structures can themselves become objects at the next level:
 
-- **A donut (orderly motion).** When a system's long-run behaviour is just several independent little oscillations, it winds around a **donut-shaped** surface — one hole per independent motion. That shape is the **Liouville–Arnold theorem** \cite[Liouville–Arnold]{liouville_arnold_wiki}: the reachable surface literally *counts* the independent motions. (A donut and a coffee mug are the same shape once you squish the handle — that is all a "torus" is.)
-- **A thin shell — and the thickness comes from the temperature.** The probability is not glued to the sheet; it spreads a little around it, so the reachable region is the sheet *plus a thin halo* hugging it. That thickness is the temperature: **warm** gives a fatter halo, **cold** a thinner one, and at **zero temperature** the halo vanishes and all the mass collapses onto the sheet itself (the ground state). In a large system the halo is extremely thin, a **concentration of measure** effect \cite{concentration_of_measure_wiki}.
-- **Groves of solutions (what the machine sees).** A trained network's weight space has valleys and flat plains, not a scatter of dots \cite[Saxe, McClelland & Ganguli, 2014]{saxe2014deep} — and, because rearranging the neurons in a layer does not change what the network does, the good answers come in whole *families*, flat symmetry-made **groves** rather than dust.
+$$
+A_{1} \;\to\; A_{2} \;\to\; A_{3} \;\to\; \cdots,
+$$
 
-Put together: a **low-dimensional sheet** (donut / grove) on which the mass **concentrates** in a **thin shell**, built from a few **pockets** — one for each "way the data tends to look" \cite[concentration of measure]{concentration_of_measure_wiki} \cite[mode]{mode_wiki}.
+where $A_{k+1}$ is not just a bigger pile of $A_k$, but a *structure whose elements are lower-level structures*. Two principles follow.
 
-**And it has names.** Three fields each give the same thin, lit-up region a name:
+**Composition is not concatenation.** Putting two structures together creates *new relations* between them:
 
-- **Measure theory:** the **support** of the distribution — the place the mass lives \cite{support_measure_wiki}.
-- **Information theory:** the **typical set** — the answers typical of the data \cite{typical_set_wiki}.
-- **Physics:** the **ground state** — the lowest-energy configuration, what the system becomes as the temperature goes to zero \cite{ground_state_wiki}.
+$$
+A + B \;\longrightarrow\; C(A,B),
+$$
 
-The thinness is a theorem, not a guess: as answers get longer, the *fraction* of the space that is typical **goes to zero exponentially** the moment the data has any structure at all — a vanishing sliver carrying (almost) all the probability (the **asymptotic equipartition property**) \cite{aep_wiki}.
+where $C(A,B)$ carries relations that were present in neither $A$ nor $B$ alone. "DOG" + "RUN" can become the relational structure $\operatorname{AGENT}(\text{DOG},\,\text{RUN})$ — an agent–action relation that neither word carried on its own.
 
-<div class="optional md" data-headline="Why “thin” is the right word (for the curious)">
-Make "thin" exact. A smooth surface of dimension $k$ sitting inside a space of dimension $N$ (with $k < N$) has **$N$-dimensional measure zero** — the same reason a line has zero *area*. So a point picked uniformly from the full space lands on the slice with probability *exactly* $0$. Usefulness is a knife-edge: the model is right precisely *because* it has been made to live on a measure-zero set, while a random input is right with probability zero.
-
-Two honesty notes. First, it is a *hypothesis*, not a theorem — and it can fail. Fefferman, Mitter and Narayanan wrote a whole paper on how to *test* whether a data set really does lie on a low-dimensional surface, and found the question is genuinely hard to verify, and sometimes the answer is "no" (noise, in particular, *inflates* the apparent dimension) \cite[Fefferman, Mitter & Narayanan, 2016]{fefferman2016testing}. Second, real data is usually not *one* surface but a **union of several** — cats, dogs, cars, each its own sheet \cite[Brown et al., 2023]{brown2023union}. The safe statement is "a low-complexity, low-dimensional region of a huge space" — exactly what we need, and no more.
+<div class="optional md" data-headline="The two principles (for the curious)">
+Two rules do the work. The **recursive principle**: *structures are built from structures*. And the **compositional principle**: $A+B \to C(A,B)$, where the composite carries new relations. For language the crucial point is that composition does not merely concatenate points — it *creates relations*. A proof, a conversation, a poem: at each level the objects of the level below become the components of the level above.
 </div>
-
-**A dynamical-systems name for it.** In a system that loses energy to friction, the long-run behaviour is a set that nearby trajectories flow onto and then stay on — an **attractor** \cite[manifold learning]{manifold_learning_wiki}. "The system only really does something on the attractor" is the dynamical-systems form of "the model only works on the reachable region."
 </div>
 
 <div class="md">
-## The unreachable region: how it forms, and its shape
+## 5. The voids are structured too
 
-Now the high wilderness that surrounds the thin, lit-up ground.
-
-**How it forms.** It is simply the *complement* — every (input, output) pair the data did not make likely. And it is not *blocked*; it is **starved**. The model is never *forbidden* from producing a nonsense output — nothing in its wiring blocks that string. It has simply been given almost zero *weight* there, because the data almost never pairs that output with a sensible input. That is the "it could always reply 'aaaa…', as long as the context allows, but it does not" point made precise: the *context* — the training distribution — is exactly what made the bad pairs high-energy, so the sampling never reaches them. The wilderness is empty for a *statistical* reason, not a *structural* one.
-
-**What shape it is.** If the reachable region is a thin sheet, the unreachable region is *everything else* — and by raw count, "everything else" is *almost the whole space*. In high dimensions the raw volume of a region does not sit near its middle at all: it concentrates in a thin shell far out toward the edges, so the data's thin sliver (measure-zero, all the weight) is wrapped inside a vast bulk that is, by volume, nearly everything \cite{concentration_of_measure_wiki}. That is the paradox, stated cleanly:
+This is one of the central ideas: **a void is not "an area with few points."** A region can be dense with points and still be a semantic void, if the *right relations* are missing.
 
 $$
 \boxed{
-\begin{aligned}
-&\text{the reachable sliver is measure-zero (nothing, for a random point)}\\
-&\text{yet carries almost all the weight (everything, under the model);}\\
-&\text{the unreachable bulk is almost all the volume}\\
-&\text{yet carries almost no weight (nothing, under the model).}
-\end{aligned}
+\text{void} \;=\; \text{absence of a particular kind of structure, at a particular scale}.
 }
 $$
 
-Empty and full, at the same time, for opposite reasons.
-
-**Why it stays empty — the precise reason.** The bad regions are not merely *unlikely*; they are unlikely in the *strongest* way. As an output grows, the chance of landing far from the typical set does not just shrink — it shrinks **exponentially fast** \cite{large_deviations_wiki}. The exponent is a single number, the **rate function**, and for a whole region that rate is just the region's *distance from the data*, measured by **KL divergence** (Sanov's theorem) \cite{sanov_theorem_wiki}\cite{kl_divergence_wiki}. The farther a region is from what the data looks like, the faster its probability dies.
-
-<div class="optional md" data-headline="The precise statement (for the curious)">
-The model has learned an (approximate) distribution $p(\text{input},\text{output})$ from the training data; the reachable region is where $p$ is large, the wilderness where $p\approx 0$. Three precise names for that region, and the theorem behind the thinness. *Support:* the largest set in which every neighbourhood still carries positive probability — topologically, the whole space minus the (open) set of measure zero \cite{support_measure_wiki}. *Typical set:* for long outputs of length $n$, the sequences with probability near $2^{-nH}$, $H$ the entropy; by the **asymptotic equipartition property** (a law of large numbers) the typical set has total probability $\to 1$ yet size only $\sim 2^{nH}$, against $2^{n\log_2|\mathcal{X}|}$ possible sequences. The typical *fraction* is $2^{nH}/2^{n\log_2|\mathcal{X}|}=2^{-n(\log_2|\mathcal{X}|-H)}\to 0$ exponentially — a vanishing share of the space carrying (almost) all the mass \cite{aep_wiki}\cite{typical_set_wiki}. *Modes and ground state:* the density's peaks and their basins; at zero temperature the Boltzmann measure collapses entirely onto the lowest-energy states, the ground state(s) \cite{mode_wiki}\cite{ground_state_wiki}. One caveat: a real softmax network has $p>0$ *everywhere*, so its topological support is technically the whole space — for a net the thin slice is not the support but the **high-density / typical** part of it (probability above some threshold). And "meaningful" means *typical under the training data*, a statistical rather than logical notion: different data lay down a different slice. The deepest statement is the **large-deviation** one: the probability of a region decays as $\exp(-n\,I)$ with $I$ the **rate function**, and for the empirical statistics that rate is the **KL divergence** from the data \cite{sanov_theorem_wiki}\cite{large_deviations_wiki}. The rate function is the Legendre dual of the entropy — the same free-energy/entropy duality of statistical mechanics that holds this whole chapter together \cite{kl_divergence_wiki}.
-</div>
-</div>
-
-<div class="md">
-## The line between them
-
-Finally, the boundary between the two regions.
-
-There is **no wall** — only a *scale*. "Reachable" versus "unreachable" is decided by a **threshold on the energy**, not by a geometric border. The line is the **level set** of the energy at some height,
+Consider "The thought drinks the square Tuesday." It has real syntactic structure — a subject, a verb, an object, a time. But it fails to settle into a stable ordinary interpretation. So
 
 $$
-\underbrace{\{\,x \,:\, E(x) = E_0\,\}}_{\text{the contour of the height map at height }E_0},
+\text{high syntactic structure} \;\not\Rightarrow\; \text{high semantic structure}.
 $$
 
-a smooth contour hugging the sheets — the outer surface of the thin shell. The model could in principle step over it; it simply has almost no weight on the far side. The boundary is a **cliff in probability, not a wall in the space**.
+Voids can themselves be hierarchical — a nesting
 
-And the story closes its circle here. That height, read as a function of position, *is* the rate function — the distance from the data — and its average over the data is the **cross-entropy**, the surprise per token, that the model is *trained to minimize* \cite{cross_entropy_wiki}. Lowering the energy of the data is literally *fitting the data*. So the line is not drawn by some external rule; it is the level set of the very quantity the training optimizes. The machine-learning name for crossing it — for wandering from the low-energy ground into the high wilderness — is simply going **out-of-distribution** \cite[covariate shift]{covariate_shift_wiki}.
+$$
+V_{0} \;\supset\; V_{1} \;\supset\; V_{2} \;\supset\; V_{3} \;\supset\; \cdots,
+$$
+
+conceptual rather than literal set-inclusion:
 
 $$
 \boxed{
-\begin{aligned}
-&\text{the line between the two regions}\\
-&\;=\; \text{a level set of the energy}\\
-&\;=\; \text{a contour of the rate function (the distance from the data)}\\
-&\;=\; \text{the cross-entropy surface that training minimizes.}
-\end{aligned}
+\text{void} \;\to\; \text{void structure} \;\to\; \text{voids within voids}.
 }
 $$
+
+And "void" splits into **four distinct kinds**, one per coherence field.
+
+- **Syntactic void.** Not enough internal syntactic organization. "asdf qwer seven blue because table tomorrow." Here $C(x) \approx 0$. The most straightforward kind of void.
+- **Semantic void.** Syntactically structured, but no stable semantic interpretation. "The thought drinks the square Tuesday." $C(x) \approx 1$ while $S(x) \ll 1$. Not empty in the geometric sense — substantial local structure, wrong higher-order relations.
+- **Grounding void.** Internally coherent and semantically well specified, but no connection to the external world. $C(x)\approx 1,\; S(x)\approx 1,\; G(x)\approx 0$. A purely formal system is the limiting case: perfectly well-defined relations, symbols not interpreted as objects in the world.
+- **Epistemic void.** A determinate meaning whose truth is not known. $S(x)\approx 1$ does *not* force $E(x)\approx 1$. A proposition can be meaningful and yet unresolved.
 </div>
 
 <div class="md">
-## What happens when it drifts off the slice
+## 6. The voids overlap
 
-In this language, everything that goes *wrong* is one thing: the input — or the model's internal state — has drifted **off the slice**, into a high-energy region.
+The four void fields can overlap, so the geometry is better drawn as a multidimensional field
 
-- **Out-of-distribution input.** The input is a point the surface does not pass through. The model is asked about something it was never shaped for; the energy there is high and uncontrolled, and the answer is whatever the landscape happens to do there — often *confident* nonsense, because the model has no built-in alarm that it is off-slice.
-- **Adversarial examples.** A tiny nudge moves an input just off the surface and, because the energy can change *fast* between two neighbouring valleys, over the rim into a valley with the *wrong* label. The input is *nearly* on the slice; the answer is *completely* off it.
-- **Temperature and sampling.** The Boltzmann selector is controlled by temperature. Low: the sampler stays glued to the valleys — almost nothing but the single best answer. High: it wanders up into high-energy regions — you get the incoherent. (See the <a href="samplinglab">Temperature &amp; Sampling</a> chapter.)
-- **Hallucination.** The model drifts to a spot that is *locally* low-energy — it sounds smooth and confident, a minimum of its *own* internal energy — but that spot was never created by real data. It is a **fake valley**: a low pocket the data did not put there. This is the "sounds right, isn't true" case, now with a coordinate — the same case the <a href="coherent_world_models">Coherent World Models</a> chapter met as "locally coherent, not true."
+$$
+V(x) \;=\; \bigl(V_{\mathrm{syn}},\; V_{\mathrm{sem}},\; V_{\mathrm{ground}},\; V_{\mathrm{epi}}\bigr).
+$$
+
+A single point can be syntactically coherent, semantically coherent, weakly grounded, and epistemically unresolved — all at once. Or the opposite: incoherent on every axis. This yields a crucial insight:
 
 $$
 \boxed{
-\begin{aligned}
-&\text{on the slice}\ \Rightarrow\ \text{low energy, coherent, (usually) true;}\\
-&\text{off the slice}\ \Rightarrow\ \text{high / uncontrolled energy, incoherent, made up.}
-\end{aligned}
+\text{the same geometric region can be a void with respect to one structure and a dense region with respect to another.}
+}
+$$
+
+And the *deepest* void — the region that fails to participate in *any* strong structure — is not a single empty room. By raw combinatorics it is the overwhelming majority of $X_N$. **[HYPOTHESIS]** It is not homogeneous: it may be a *landscape* — completely unstructured void, syntactically structured but semantically empty regions, semantically structured but ungrounded regions, boundaries between semantic regions, and filaments through which distant regions become related. "The void" is a place with a map, not a blank.
+</div>
+
+<div class="md">
+## 7. Boundaries may be more informative than interiors
+
+Now move slowly across a short family of sentences and watch the structure degrade:
+
+> The dog sleeps.
+> The dog sleeps quickly.
+> The dog sleeps quadratically.
+> The dog quadratically seven.
+
+At some point a *small* change in the string produces a *qualitative* change in structure. That suggests an important object: the **boundary** of a meaningful region,
+
+$$
+\partial M,
+$$
+
+the place where coherence changes rapidly.
+
+<div class="optional md" data-headline="[HYPOTHESIS] The boundary (for the curious)">
+The boundary between coherent and incoherent regions may carry *more* information about semantic organization than the interior of either. A **semantic phase transition** could occur when a small change in configuration causes a qualitative change in structural connectivity. If so, the most interesting place to look is not the middle of a cluster but its edge.
+</div>
+
+$$
+\boxed{
+\text{Boundaries, where structure changes rapidly, may be more informative than the interiors they separate.}
 }
 $$
 </div>
 
 <div class="md">
-## The whole thing, in one picture
+## 8. Clusters, filaments, walls, voids, boundaries — and metaphor
 
-Each row is a narrower slice of the one above it, and the model's *useful* behaviour lives on the bottom rows:
+The cosmic-web picture, made precise. A linguistic configuration space might contain:
+
+- **Clusters** — dense regions of closely related configurations.
+- **Filaments** — narrow structures connecting otherwise distant clusters.
+- **Walls** — higher-dimensional transition regions between large structures.
+- **Voids** — regions lacking a particular type of relational structure.
+- **Boundaries** — regions where structural properties change rapidly.
+
+And the key conjecture: **these structures themselves occur hierarchically.** A cluster can be made of clusters; a filament can connect clusters of clusters; a void can contain smaller voids; a boundary can contain boundaries between finer structures.
+
+**Metaphor as a possible filament.** "Time is a river." TIME and RIVER normally sit in very different semantic neighborhoods. A metaphor builds a relation between regions that are not ordinarily adjacent — a long-range bridge across the void:
+
+```text
+      TIME CLUSTER
+       ███████
+       ███████
+          \
+           \
+            \   metaphorical bridge
+             \
+              \
+           ███████
+           ███████
+        RIVER CLUSTER
+```
+
+<div class="optional md" data-headline="[SPECULATION] Metaphor (for the curious)">
+Metaphor might be a mechanism that *creates or strengthens long-range connections between otherwise separated semantic regions*. That makes it structurally different from ordinary local similarity: it is a filament, not a neighbor. The structure-mapping account of metaphor \cite{gentner1983structuremapping} and the claim that metaphor is fundamental to ordinary thought rather than just to poetry \cite{lakoff1993metaphor} are the closest published relatives of this idea.
+</div>
+</div>
+
+<div class="md">
+## 9. A hierarchy of semantic structure
+
+The hierarchy of *meaning* may run deeper than the hierarchy of *units*. Imagine
 
 $$
-\begin{array}{c|c|c}
-\textbf{region} & \textbf{what it is} & \textbf{volume \quad / \quad probability} \\
-\hline
-\text{full space} & \text{every (input, output) pair} & \text{all of it \quad / \quad 1} \\
-\text{reachable} & \text{a thin low-dimensional sheet, + a halo} & \text{\approx none \quad / \quad \approx all} \\
-\text{unreachable} & \text{the rest: the high wilderness} & \text{\approx all \quad / \quad \approx none} \\
-\text{the line} & \text{a level set of the energy (the cliff)} & \text{a threshold} \\
+\text{word} \;\to\; \text{concept} \;\to\; \text{relation} \;\to\; \text{proposition} \;\to\; \text{model} \;\to\; \text{world-model}.
+$$
+
+At each level, the objects of the previous level become components. This is a reading of hierarchical self-similarity:
+
+$$
+\boxed{
+\text{local relational structures become the atoms of higher-order relational structures.}
+}
+$$
+
+It is not a literal fractal geometry. It is a **recursive ontology of relations** — meaning is built by relations organizing relations.
+</div>
+
+<div class="md">
+## 10. The tools: geometry and topology
+
+Suppose a discourse is represented as a point cloud $P_T = \{x_1, \dots, x_k\}$ in some high-dimensional space, and for the moment we ignore order and just study the cloud.
+
+The standard instrument is the **Vietoris–Rips filtration**. At a scale $\epsilon$, connect two points whenever their distance is below $\epsilon$:
+
+$$
+\operatorname{VR}(P_T, \epsilon), \qquad \epsilon \ge 0.
+$$
+
+As $\epsilon$ grows, points link up, triangles form, and larger shapes appear and disappear. **Persistent homology** \cite{edelsbrunner2002persistent} tracks those features — the numbers $H_0, H_1, H_2, \dots$ (components, loops, voids) — *across* scales \cite{hatcher} \cite{carlsson2009tda}. The output is not a 2D surface; it is a simplicial complex with potentially high-dimensional topology.
+
+The multiscale signature of a discourse can be written schematically as
+
+$$
+\Phi(T) \;=\; \bigl(\, \beta_0(\epsilon),\; \beta_1(\epsilon),\; \beta_2(\epsilon),\; \dots \,\bigr)_{\epsilon},
+$$
+
+the Betti numbers as a function of scale. Two discourses can then be compared by a distance between their persistence structures,
+
+$$
+d_{\mathrm{topo}}(T_1, T_2) \;=\; d\bigl(\Phi(T_1),\, \Phi(T_2)\bigr),
+$$
+
+a stability-guaranteed notion of closeness \cite{cohensteiner2007}. The empirical question: **do semantically related structures have systematically related topological signatures?**
+
+<div class="optional md" data-headline="Topology is a tool, not the theory (for the curious)">
+Persistent homology is best seen as a *measurement instrument*, not the theory itself. The deeper hypothesis is that meaningful language has stable multiscale relational organization. Topology asks *which structures survive changes of scale*; fractal analysis asks *how structural complexity scales*; geometry asks *how structures are separated and clustered*; network analysis asks *which connect to which*; information geometry asks *how uncertainties are organized*. These are complementary lenses, and the theory is meant to survive any one of them.
+</div>
+</div>
+
+<div class="md">
+## 11. Scale, coarse-graining, and scaling laws
+
+The hierarchy suggests a **coarse-graining** operation
+
+$$
+R : X_{r} \to X_{r+1}.
+$$
+
+At a fine scale you see tokens and local relations; at a coarser scale those structures *are* the units. Schematically, tokens → phrases → sentences → discourse. The crucial question:
+
+$$
+\boxed{
+\text{What properties remain invariant under } R \, ?
+}
+$$
+
+If some properties survive repeated coarse-graining, they are candidates for the fundamental large-scale structures of language.
+
+<div class="optional md" data-headline="[SPECULATION] Semantic fixed points (for the curious)">
+The strongest possibility: some semantic structures behave like *fixed points* under coarse-graining, $R(S) \approx S$ — not identical at every scale, but relationally recognizable. Candidates: agent–action, object–property, causal, temporal ordering, part–whole, identity, opposition, dependency. This is why renormalization-group ideas are a tempting conceptual analogy: irrelevant details get washed out, and what remains at large scale is the universal part.
+</div>
+
+**There is precedent that language scales.** Zipf's law,
+
+$$
+f(r) \sim r^{-\alpha},
+$$
+
+frequency against rank \cite{zipf1949human}, and Heaps' law, $V(N) \sim N^{\beta}$, vocabulary against text length, both say that language has *no single characteristic scale* — a few very large, very frequent structures and an enormous tail of small, rare ones. Heavy-tailed structure of exactly this kind is the signature of a system with no preferred scale \cite{statisticsofextremes}.
+
+**[HYPOTHESIS]** If the *clusters and voids* obey related heavy-tailed laws, that is evidence for hierarchical organization. Possible empirical forms:
+
+$$
+N_{\mathrm{void}}(r) \sim r^{-D},
+$$
+
+or, per void type,
+
+$$
+N_{\mathrm{syn}}(r) \sim r^{-D_{s}}, \qquad
+N_{\mathrm{sem}}(r) \sim r^{-D_{m}}, \qquad
+N_{\mathrm{ground}}(r) \sim r^{-D_{g}}.
+$$
+
+And a single exponent $D$ may not even suffice: a **multifractal spectrum** $D(q)$, as in multifractal analysis, lets different parts of the space scale differently — which fits the intuition that a proof, a conversation, a poem, and a random string have radically different internal structure.
+</div>
+
+<div class="md">
+## 12. Form, meaning, world: the three spaces
+
+Perhaps the most important distinction in the whole program: **the semantic space is not the linguistic space.**
+
+Let $X$ be the space of linguistic *forms* and $S$ the space of semantic *structures*. There is a natural map
+
+$$
+\pi : X \to S.
+$$
+
+Different expressions map to the same or similar structure:
+
+$$
+x_1 = \text{"The dog chases the cat."}
+\qquad\text{and}\qquad
+x_2 = \text{"The cat is being chased by the dog."}
+$$
+
+correspond to closely related semantic structures. The **fiber** over a structure $s$,
+
+$$
+\pi^{-1}(s),
+$$
+
+is the collection of linguistic realizations of $s$. This motivates a fiber-bundle-like picture \cite{fiber_bundle_wiki}: $X$ is the *total space* of linguistic configurations, $S$ a semantic *base space*, $\pi$ the projection, and each fiber the set of ways one structure can be said.
+
+<div class="optional md" data-headline="The fiber picture (for the curious)">
+A genuine fiber bundle requires more structure than is established here, so the careful word is "fiber-like." The point: semantics is not a *label* attached to points ($x \mapsto L(x)$). Two expressions are semantically related not because they wear the same tag, but because they *participate in corresponding relations*. That turns semantics from a classification problem into a *structural* one.
+</div>
+
+Now widen the picture to include the world:
+
+$$
+X \;\longrightarrow\; S \;\longleftrightarrow\; W,
+$$
+
+where $W$ is the space of possible world-states. This splits "meaningfulness" into two:
+
+$$
+\boxed{\text{internal coherence}} \qquad\text{and}\qquad \boxed{\text{world coupling / grounding}}.
+$$
+
+Language can have internal structure *independently* of whether it is grounded: a purely coherent formal system is a highly structured region that need not be empirically grounded.
+
+**Tarski puts the external side in.** For "Snow is white," there is a difference between the expression, the proposition, and the state of affairs \cite{tarski1935wahrheitsbegriff}:
+
+$$
+\text{linguistic expression} \;\longrightarrow\; \text{proposition} \;\longrightarrow\; \text{world condition}.
+$$
+
+A theory of meaning based only on internal geometry is incomplete if it wants to capture reference. Model theory gives the clean version \cite{hodges1993modeltheory} \cite{lewis_ci_1946mwo}: a proposition $s$ is represented by the set of worlds in which it is true,
+
+$$
+\llbracket s \rrbracket \;=\; \{\, w \in W \mid s \text{ is true in } w \,\},
+$$
+
+separating cleanly (1) the linguistic form, (2) the semantic structure, and (3) its interpretation across worlds.
+
+**Consistency as a commuting diagram.** A meaningful representation should let different routes agree: transforming a linguistic object and then interpreting it should give the same result as interpreting it and then transforming the structure,
+
+$$
+\begin{array}{ccc}
+X & \xrightarrow{\;f\;} & X'\\[3pt]
+\downarrow\;\pi & & \downarrow\;\pi'\\[3pt]
+S & \xrightarrow{\;g\;} & S'
 \end{array}
+\qquad\text{with}\qquad
+\boxed{\;\pi' \circ f \;=\; g \circ \pi.\;}
 $$
 
-**How this ties the earlier chapters together.**
-
-- **Coherent Difference** said meaning comes from the *differences* between things, arranged in a space. In this language: that space is the space of all (input, output) pairs, and the directions that actually carry meaning are the *reachable sheet inside it*, not the whole space.
-- **Coherent World Models** said a model only covers the part of the world it can actually reach (it called that region the "accessible region"). This chapter names and mechanises it: that reachable region *is* the low-energy slice — the part the learned energy makes likely.
-- **The Optimizer / loss landscape.** *Training* is exactly the act of shaping the energy: sliding the loss down until the data surface *becomes* the low-energy set. Every step moves the *energy function*, not the data.
-
-$$
-\boxed{
-\begin{aligned}
-&\text{one idea, three chapters:}\\
-&\text{meaning is built from differences, the model is a slice of the world,}\\
-&\text{and the slice is \emph{picked out} by an energy.}
-\end{aligned}
-}
-$$
+**[HYPOTHESIS]** A good semantic representation should exhibit many such approximate commutation properties.
 </div>
 
 <div class="md">
-## In one sentence — and an honest word about it
+## 13. The landscape is a stack, not a single region
+
+Once there are several structures, there is no single complement called "the meaningless space." A point can sit in
+
+$$
+\text{Syntax Cluster} \;\cap\; \text{Semantic Cluster} \;\cap\; \text{Grounding Void},
+$$
+
+while another sits in all three voids, and another in all three clusters. There may be several *overlapping* cosmic webs, one per relational dimension. The strongest semantic region is the intersection
+
+$$
+M_{\mathrm{strong}} \;=\; C_{\mathrm{syn}} \;\cap\; C_{\mathrm{sem}} \;\cap\; C_{\mathrm{ground}} \;\cap\; C_{\mathrm{epi}},
+$$
+
+with weaker meanings living in the other overlaps.
+
+The picture is therefore not one landscape but a **stack of coupled landscapes**:
+
+```text
+   syntactic landscape     clusters / voids / boundaries
+            │
+            ▼
+   semantic landscape     clusters / voids / boundaries
+            │
+            ▼
+   grounding landscape    clusters / voids / boundaries
+            │
+            ▼
+   epistemic landscape    certainty / uncertainty / voids
+```
+
+**[HYPOTHESIS]** These landscapes may be *correlated*: strong syntax may make semantic structure more likely; grounding may impose extra constraints on it. The relationship need not be one-to-one.
+
+And the strongest form of the whole hypothesis is not "language is fractal" but:
+
+$$
+\boxed{
+\text{the organization of both structure and absence of structure may be multiscale and recursively organized.}
+}
+$$
+
+A cluster zooms into smaller clusters plus smaller voids; a void zooms into structured sub-voids. A possible minimal recursive rule:
+
+$$
+\mathcal{R}_{k+1} \;=\; F(\mathcal{R}_{k},\mathcal{R}_{k},\dots),
+\qquad
+\mathcal{V}_{k+1} \;=\; G(\mathcal{V}_{k},\,\mathcal{R}_{k}),
+$$
+
+where the second says that voids at one level are determined not by absence of points but by the *failure of particular relations* among lower-level structures. That makes voids a first-class citizen of the theory, not an afterthought.
+</div>
+
+<div class="md">
+## 14. What would count as evidence
+
+The program earns its keep only if it is *falsifiable*. It gains support if one repeatedly observes some combination of:
+
+1. **Scale-dependent clustering** — cluster organization persists across multiple resolutions.
+2. **Power-law scaling** — cluster/void sizes follow robust scaling distributions.
+3. **Nested structure** — large clusters systematically contain smaller cluster structures.
+4. **Nested voids** — large void regions contain structured sub-voids.
+5. **Stable boundaries** — coherence changes rapidly near reproducible semantic boundaries.
+6. **Topological persistence** — some components, loops, or higher-dimensional holes persist across scales.
+7. **Cross-representation invariance** — similar structures appear under substantially different representations.
+8. **Semantic correspondence** — related objects show related multiscale structure even when surface forms differ.
+9. **Grounding separation** — internally coherent but ungrounded structures are systematically distinguishable from grounded ones.
+
+These are *research predictions*, not established results.
+
+<div class="optional md" data-headline="[RESEARCH QUESTION] The methodological trap (for the curious)">
+The big danger: the observed "topology" may just be the *representation* you chose. If points are embedded by a particular model, the geometry partly reflects that model's training and architecture. So always separate the **geometry of the representation** from the **geometry of the underlying phenomenon**. A strong theory predicts structures that *survive substantial changes in representation* — which is why the abstract formulation in terms of relations, coarse-graining, invariants, and maps between spaces may be more fundamental than any one embedding.
+</div>
+</div>
+
+<div class="md">
+## 15. The research program, and the deepest hypothesis
+
+The program organizes into four levels.
+
+**Level I — Combinatorial space.** Define $X_N = \bigcup_{n=1}^{N} V^{n}$. Ask how the space of possible configurations is structured.
+
+**Level II — Relational landscape.** Identify syntactic, semantic, and pragmatic relations. Ask where the clusters, filaments, boundaries, and voids occur.
+
+**Level III — Multiscale structure.** Introduce a scale $r$ or a coarse-graining $R$. Ask whether $\mathcal{S}(r) \sim \mathcal{S}(\lambda r)$ — whether hierarchical self-similarity exists.
+
+**Level IV — Grounded semantics.** Introduce $X \to S \leftrightarrow W$. Ask how internal coherence and external reference interact. This is where a purely geometric theory of language runs into the classical philosophical problem of reference and truth.
+
+**The central picture.** Start with the total space $X_N$; inside it,
+
+$$
+\boxed{
+\text{points} \;\to\; \text{clusters} \;\to\; \text{clusters of clusters} \;\to\; \cdots
+}
+$$
+
+and, in parallel,
+
+$$
+\boxed{
+\text{voids} \;\to\; \text{structured voids} \;\to\; \text{voids within voids} \;\to\; \cdots
+}
+$$
+
+across four relational dimensions — syntax, semantics, grounding, epistemics — that overlap; with $X \xrightarrow{\;\pi\;} S$ and $S \leftrightarrow W$; and with multiscale geometry and topology at every level.
 
 $$
 \boxed{
 \begin{aligned}
-&\textbf{An AI is not “useful everywhere in its space of possibilities.”}\\
-&\textbf{It is useful on one thin, low-energy, low-dimensional slice of it —}\\
-&\textbf{the slice its learned energy has made likely.}
+&\textbf{Meaning may not be an extra label on linguistic objects.}\\
+&\textbf{It may be a stable relational organization of the space of possible}\\
+&\textbf{linguistic configurations — internal coherence giving one layer of}\\
+&\textbf{structure, and coupling to the world giving another.}
 \end{aligned}
 }
 $$
 
-**The honest word.** The core of this chapter is a statement about the space of (input, output) pairs, and that statement is the real part: the space is enormous and high-dimensional; the useful pairs form a thin, low-dimensional region of it — tiny by volume, yet carrying almost all the probability — while the overwhelming rest is high and empty and carries almost none; and a single number, the energy (set by the data), is what separates the two. What is *borrowed* from physics is the vocabulary — "energy," "phase space," "temperature" — which makes the picture easier to hold. But a frozen language model has no conserved quantity and no real temperature. The course's standing rule applies: **a useful analogy is not a theorem.** Where the energy is the loss and the reachable region is the data surface, that is a precise structural claim; where it would require a GPU to conserve a Hamiltonian, it is not — and it does not.
+Meaning would then have both **intrinsic structure** and **extrinsic grounding**. A coherent formal system can occupy a highly structured region without being grounded; empirical language is constrained by *both*. The resulting geometry does not divide the universe into "meaningful" and "meaningless." It contains a hierarchy of **clusters, filaments, boundaries, holes, voids, and nested structures**, whose organization may itself be scale-dependent and possibly fractal.
+
+<div class="optional md" data-headline="Open questions (the research frontier)">
+- **Geometry:** is there a metric intrinsic to $X_N$? A representation-independent notion of distance? Is semantic similarity fundamentally geometric?
+- **Topology:** which topological invariants correspond to meaningful distinctions? Do semantic structures carry persistent holes? What is the topology of the complement of coherent language?
+- **Fractality:** do cluster and void sizes follow scale-free laws? Are there nested clusters and nested voids? Monofractal or multifractal? Are there scaling fixed points?
+- **Composition:** what operation turns lower-level structures into higher-level ones? Does composition preserve topological invariants? Can a general coarse-graining $R$ be defined?
+- **Grounding:** what mathematical object is world-coupling? Can grounding be a map $S \to W$? What separates a coherent-but-ungrounded structure from a grounded one?
+- **Universality:** which properties survive changes of language, of representation — and which are specific to human language rather than to symbolic communication in general?
+</div>
+
+The most interesting version of the project is therefore not "run persistent homology on word embeddings" — that is one experiment. It is:
+
+$$
+\boxed{
+\text{language as a multiscale structured landscape in a vast possibility space}
+}
+$$
+
+with a recursive organization of presence, *and* a parallel organization of absence. But meaning may require more than internal structure. A complete theory must explain the relationship
+
+$$
+\boxed{
+\text{form} \;\to\; \text{internal semantic structure} \;\to\; \text{world},
+}
+$$
+
+so that **coherence is not confused with reference, and reference is not reduced to an arbitrary label.** That is exactly where the geometric–topological program and the classical semantic problem meet: the question of how a structured symbolic space becomes *about something*.
 </div>
