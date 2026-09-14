@@ -21,7 +21,7 @@ This is not a finished theory. It is a scaffold: a set of definitions, conjectur
 </div>
 
 <div class="md">
-## 1. The central intuition: structure, not statistics
+## The central intuition: structure, not statistics
 
 The most common modern approach to language treats it as a *statistical* object. One collects a large corpus, estimates probabilities, and trains a model to predict the next token. By this view, meaning is an emergent byproduct of distributional regularity: a word means what it means because of the words it tends to appear near.
 
@@ -33,7 +33,7 @@ This intuition has a long history. The idea that meaning is *relational* and *st
 </div>
 
 <div class="md">
-## 2. The possibility space $X$
+## The possibility space $X$
 
 Let us begin with the most basic object. Let $X$ be the space of all potential linguistic configurations. An element of $X$ is a *linguistic form*: a string, a phonological pattern, a syntactic frame, or more generally anything that can be uttered or written. We do not need to fix a precise alphabet or grammar at this stage. What matters is that $X$ carries structure:
 
@@ -56,7 +56,7 @@ The picture above is not science fiction. It is a direct transplant of the astro
 </div>
 
 <div class="md">
-## 3. What $X$ is not: a list of vectors
+## What $X$ is not: a list of vectors
 
 A common modern move is to represent each utterance as a high-dimensional vector — a "word embedding" or a "sentence embedding" — and to do all the geometry in that vector space. We want to be clear about what our $X$ is and is not relative to this.
 
@@ -68,7 +68,7 @@ The practical upshot is this. Embeddings are excellent *instruments* for probing
 </div>
 
 <div class="md">
-## 4. Scale and self-similarity
+## Scale and self-similarity
 
 One of the most striking empirical facts about natural language is that it is organized at *every* scale. The same kinds of phenomena — clustering, hierarchy, long-range dependence, heavy tails — appear at the level of phonemes, words, sentences, and discourse. This is the sense in which language is *scale-free* or *self-similar*.
 
@@ -80,7 +80,7 @@ The consequence for the theory is that the right objects to study are not fixed-
 </div>
 
 <div class="md">
-## 5. The semantic space $S$ and the interpretation map $\pi: X \to S$
+## The semantic space $S$ and the interpretation map $\pi: X \to S$
 
 The space $X$ by itself is not yet a theory of meaning. A purely linguistic space tells us what can be *said*, but not what it *means*. To get meaning, we need a second space and a map between them.
 
@@ -125,7 +125,7 @@ This reframing has a striking consequence. It makes *meaning* a property of a *m
 </div>
 
 <div class="md">
-## 6. The three-space picture: $X$, $S$, and the world
+## The three-space picture: $X$, $S$, and the world
 
 So far we have two spaces, $X$ and $S$, and a map $\pi: X \to S$. But $S$, the space of semantic structures, is itself not the final word. Meanings are not free-floating; they are *about* something. They refer to states of affairs, situations, and possibilities in the world.
 
@@ -163,7 +163,7 @@ This three-space picture is, we believe, the right *topology* for a theory of me
 </div>
 
 <div class="md">
-## 7. Clusters, filaments, and voids
+## Clusters, filaments, and voids
 
 We now turn to the geometric features of $X$ (and, derivatively, of $S$). The central claim of this chapter is that a meaningful language space has a characteristic *shape*, and that the shape is best described by three kinds of feature:
 
@@ -219,7 +219,7 @@ The picture generalizes in a natural way. There is not one landscape but a *stac
 </div>
 
 <div class="md">
-## 8. Metaphor as a bridge between clusters
+## Metaphor as a bridge between clusters
 
 One of the most revealing applications of the geometric picture is to **metaphor**. In the geometric view, a metaphor is not a decorative comparison; it is a *structural bridge* between two clusters of the language space that would otherwise be disconnected.
 
@@ -251,7 +251,7 @@ In the geometric language, a metaphor is a *stable filament* between two cluster
 </div>
 
 <div class="md">
-## 9. Ambiguity as the branching of $\pi$
+## Ambiguity as the branching of $\pi$
 
 We said earlier that ambiguity is the failure of $\pi$ to be a function. Let us make this precise.
 
@@ -265,7 +265,7 @@ This also connects ambiguity to the landscape. Ambiguous forms tend to live in *
 </div>
 
 <div class="md">
-## 10. The heavy tail: why structure, not frequency, carries meaning
+## The heavy tail: why structure, not frequency, carries meaning
 
 A purely statistical theory predicts that the most important units of language are the most *frequent* ones. The geometric view makes a different prediction, and it is a strong one.
 
@@ -293,7 +293,7 @@ The practical consequence is methodological. If meaning lives in the tail, then 
 </div>
 
 <div class="md">
-## 11. The fiber-bundle view: meaning as a family of structures
+## The fiber-bundle view: meaning as a family of structures
 
 The map $\pi: X \to S$ invites a more sophisticated geometric treatment. If we view $\pi$ as a **fiber bundle** projection, then each point $s \in S$ (a meaning) has a **fiber** $\pi^{-1}(s) \subseteq X$ over it: the set of all linguistic forms that express that meaning.
 
@@ -335,19 +335,23 @@ The fiber-bundle picture is, we think, the right level of mathematical abstracti
 </div>
 
 <div class="md">
-## 12. The three spaces as a commutative diagram
+## The three spaces as a commutative diagram
 
 We can now state the central structural claim of the theory as a *commutativity* condition. The three spaces $X$, $S$, and $W$, together with the interpretation map $\pi: X \to S$ and the satisfaction relation between $S$ and $W$, should be organized so that the different routes from a form to a world *agree*.
 
 Concretely, if we have two forms $x, x' \in X$ that are related by a linguistic transformation $f: X \to X$ (say, a grammatical operation), and corresponding meanings $s, s' \in S$ related by a semantic transformation $g: S \to S$, then the diagram
 $$
+\underbrace{
 \begin{array}{ccc}
 X & \xrightarrow{\;f\;} & X'\\[3pt]
 \downarrow\;\pi & & \downarrow\;\pi'\\[3pt]
 S & \xrightarrow{\;g\;} & S'
 \end{array}
-\qquad\text{with}\qquad
-\boxed{\;\pi' \circ f \;=\; g \circ \pi.\;}
+}_{\substack{\text{two routes}\\[-1pt]X \to S'}}
+\qquad\text{must agree:}\qquad
+\underbrace{\pi' \circ f}_{\substack{\text{transform,}\\[-1pt]\text{then interpret}}}
+\;=\;
+\underbrace{g \circ \pi}_{\substack{\text{interpret,}\\[-1pt]\text{then transform}}}
 $$
 should **commute**. The equation $\pi' \circ f = g \circ \pi$ says that *transforming the form and then interpreting* gives the same result as *interpreting and then transforming the meaning*.
 
@@ -357,7 +361,7 @@ This is, we believe, the cleanest mathematical statement of the requirement that
 </div>
 
 <div class="md">
-## 13. Topological invariants and the "shape" of meaning
+## Topological invariants and the "shape" of meaning
 
 If the shape of $X$ is the object of study, then the right tools are *topological invariants*: quantities that capture the shape of a space without depending on a particular embedding or coordinate system.
 
@@ -375,7 +379,7 @@ This is a strong and checkable claim. It says that the meaningful content of a l
 </div>
 
 <div class="md">
-## 14. Learning as the construction of $\pi$
+## Learning as the construction of $\pi$
 
 We can now give a geometric account of **language learning**. To learn a language is to construct, from experience, an approximation to the interpretation map $\pi: X \to S$.
 
@@ -399,7 +403,7 @@ The upshot is that learning is not the accumulation of facts but the *constructi
 </div>
 
 <div class="md">
-## 15. Open problems and a research programme
+## Open problems and a research programme
 
 This chapter has laid out a scaffold. The open problems are the places where the scaffold needs to be turned into a building. We close with the most important of them.
 
