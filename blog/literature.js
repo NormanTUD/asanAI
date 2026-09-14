@@ -11114,5 +11114,242 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Continuous_delivery",
 		alternativetitle: "CI/CD"
+	},
+
+	// ===== AI for Science / AI for Math (added) =====
+	"navier_stokes_openai": {
+		title: "On the Navier–Stokes Millennium Prize Problem",
+		author: "OpenAI",
+		year: 2026,
+		url: "https://openai.com/index/navier-stokes-solution/",
+		alternativetitle: "AI proof of Navier–Stokes blowup"
+	},
+	"navier_stokes_priority": {
+		title: "Navier–Stokes priority controversy",
+		author: "Wikipedia",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy",
+		alternativetitle: "NS Clay problem / priority"
+	},
+	"funsearch": {
+		title: "Mathematical discoveries from program search with large language models",
+		author: "Bernardino Romera-Paredes, et al.",
+		year: 2024,
+		url: "https://doi.org/10.1038/s41586-023-06924-6",
+		alternativetitle: "FunSearch"
+	},
+	"alphatensor": {
+		title: "Discovering faster matrix multiplication algorithms with reinforcement learning",
+		author: "Alhussein Fawzi, et al.",
+		year: 2022,
+		url: "https://doi.org/10.1038/s41586-022-05172-4",
+		alternativetitle: "AlphaTensor"
+	},
+	"alphaevolve": {
+		title: "Mathematical exploration and discovery at scale",
+		author: "Bogdan Georgiev, Javier Gómez-Serrano, Terence Tao, Adam Zsolt Wagner",
+		year: 2025,
+		url: "https://arxiv.org/abs/2511.02864",
+		alternativetitle: "AlphaEvolve"
+	},
+	"alphageometry2": {
+		title: "Gold-medalist Performance in Solving Olympiad Geometry with AlphaGeometry2",
+		author: "Yuri Chervonyi, et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2502.03544",
+		alternativetitle: "AlphaGeometry 2"
+	},
+	"deletion_codes": {
+		title: "LLM-Guided Search for Deletion-Correcting Codes",
+		author: "Franziska Weindel, Reinhard Heckel",
+		year: 2025,
+		url: "https://arxiv.org/abs/2504.00613",
+		alternativetitle: "AI finds a conjectured-optimal code"
+	},
+	"alphafold3": {
+		title: "Accurate structure prediction of biomolecular interactions with AlphaFold 3",
+		author: "Josh Abramson, et al.",
+		year: 2024,
+		url: "https://doi.org/10.1038/s41586-024-07487-w",
+		alternativetitle: "AlphaFold 3"
+	},
+	"alphamissense": {
+		title: "Accurate proteome-wide missense variant effect prediction with AlphaMissense",
+		author: "Josh Abramson, et al.",
+		year: 2023,
+		url: "https://doi.org/10.1126/science.adg7492",
+		alternativetitle: "AlphaMissense"
+	},
+
+	// ===== Deep learning theory (added) =====
+	"nlab_neural_network": {
+		title: "Neural network",
+		author: "nLab (ncatlab.org)",
+		year: 2024,
+		url: "https://ncatlab.org/nlab/show/neural+network",
+		alternativetitle: "nLab: NNGP, NTK, field theory"
+	},
+	"principles_dl_theory": {
+		title: "The Principles of Deep Learning Theory",
+		author: "Daniel A. Roberts, Sho Yaida, Boris Hanin",
+		year: 2021,
+		url: "https://arxiv.org/abs/2106.10165",
+		alternativetitle: "Effective field theory of deep nets"
+	},
+	"yang_hu_feature_learning": {
+		title: "Feature Learning in Infinite-Width Neural Networks",
+		author: "Greg Yang, Edward J. Hu",
+		year: 2020,
+		url: "https://arxiv.org/abs/2011.14522",
+		alternativetitle: "Feature learning vs NTK"
+	},
+	"bartlett_benign_overfitting": {
+		title: "Benign overfitting in linear regression",
+		author: "Peter L. Bartlett, Andrew M. Long, Gábor Lugosi, Alexander Tsigler",
+		year: 2019,
+		url: "https://arxiv.org/abs/1906.11300",
+		alternativetitle: "Interpolation can generalize"
+	},
+	"montanari_interpolation": {
+		title: "The Interpolation Phase Transition in Neural Networks: Memorization and Generalization under Lazy Training",
+		author: "Andrea Montanari, et al.",
+		year: 2020,
+		url: "https://arxiv.org/abs/2007.12826",
+		alternativetitle: "Interpolation threshold"
+	},
+	"draxler_mode_connectivity": {
+		title: "Essentially No Barriers in Neural Network Energy Landscape",
+		author: "David Draxler, Ambra Veschgini, Manfred Salmhofer, Franziska Hamprecht",
+		year: 2018,
+		url: "https://arxiv.org/abs/1803.00885",
+		alternativetitle: "Mode connectivity"
+	},
+	"progressive_sharpening": {
+		title: "Analyzing Sharpness along GD Trajectory: Progressive Sharpening and Edge of Stability",
+		author: "Zhouzi Li, Zixuan Wang, Jian Li",
+		year: 2022,
+		url: "https://arxiv.org/abs/2207.12678",
+		alternativetitle: "Edge of stability"
+	},
+	"edge_of_stability": {
+		title: "Second-order regression models exhibit progressive sharpening to the edge of stability",
+		author: "Dan Agarwala, Francis Pedregosa, Jonathan P. H. Pennington",
+		year: 2022,
+		url: "https://arxiv.org/abs/2210.04860",
+		alternativetitle: "Chaotic phase / self-stabilization"
+	},
+	"implicit_reg_deep": {
+		title: "Implicit Regularization in Deep Matrix Factorization",
+		author: "Sanjeev Arora, Nadav Cohen, Wei Hu, Yu Luo",
+		year: 2019,
+		url: "https://arxiv.org/abs/1905.13655",
+		alternativetitle: "Implicit bias toward low norm"
+	},
+	"neural_collapse": {
+		title: "Prevalence of Neural Collapse during the terminal phase of deep learning training",
+		author: "Amirata Papyan, Wei Han, Dono Donoho",
+		year: 2020,
+		url: "https://arxiv.org/abs/2008.08186",
+		alternativetitle: "Neural collapse"
+	},
+	"grokking_effective": {
+		title: "Towards Understanding Grokking: An Effective Theory of Representation Learning",
+		author: "Simran Liu, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2205.10343",
+		alternativetitle: "Grokking as phase transition"
+	},
+
+	// ===== Alignment (added) =====
+	"ai_safety_debate": {
+		title: "AI Safety via Debate",
+		author: "Geoffrey Irving, Paul Christiano, Dario Amodei",
+		year: 2018,
+		url: "https://arxiv.org/abs/1805.00899",
+		alternativetitle: "Debate for oversight"
+	},
+	"weak_to_strong": {
+		title: "Weak-to-Strong Generalization: Simulating Out-of-Distribution Generalization Gaps with Proxies",
+		author: "Collin Burns, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2312.09390",
+		alternativetitle: "Weak models supervise strong"
+	},
+	"verify_step_by_step": {
+		title: "Let's Verify Step by Step",
+		author: "Hunter Lightman, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2305.20050",
+		alternativetitle: "Process reward models"
+	},
+	"mesa_optimization": {
+		title: "Risks from Learned Optimization in Advanced Machine Learning Systems",
+		author: "Hubinger, van Merwijk, Mikulik, Skalse, Garrabrant",
+		year: 2019,
+		url: "https://arxiv.org/abs/1906.01820",
+		alternativetitle: "Mesa-optimization"
+	},
+	"alignment_faking": {
+		title: "Alignment faking in large language models",
+		author: "Ryan Greenblatt, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2412.14093",
+		alternativetitle: "Alignment faking"
+	},
+	"reward_tampering": {
+		title: "Sycophancy to Subterfuge: Investigating Reward-Tampering in LLMs",
+		author: "Christopher Denison, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2406.10162",
+		alternativetitle: "LLM reward tampering"
+	},
+	"thought_crime": {
+		title: "Thought Crime: Backdoors and Emergent Misalignment in Reasoning Models",
+		author: "Chua, Betley, Taylor, Evans",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.13206",
+		alternativetitle: "Backdoors in reasoning models"
+	},
+	"treacherous_turn": {
+		title: "Investigating the Treacherous Turn in Deep RL",
+		author: "Ashcraft, et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2504.08943",
+		alternativetitle: "Treacherous turn"
+	},
+	"rogue_agents": {
+		title: "ROGUE: Misaligned Agent Behavior Arising from Ordinary Computer Use",
+		author: "Tien, et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2606.00341",
+		alternativetitle: "Overriding human interrupt"
+	},
+	"ai_control": {
+		title: "AI Control: Improving Safety Despite Intentional Subversion",
+		author: "Ryan Greenblatt, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2312.06942",
+		alternativetitle: "The control problem"
+	},
+	"mech_interp_alignment": {
+		title: "Mechanistic Interpretability for LLM Alignment: Progress, Challenges, Future Directions",
+		author: "Usman Naseem",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.11180",
+		alternativetitle: "Interpretability for safety"
+	},
+	"rlaif": {
+		title: "RLAIF vs. RLHF: Scaling Reinforcement Learning from Human Feedback with AI Feedback",
+		author: "Lee, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2309.00267",
+		alternativetitle: "AI feedback"
+	},
+	"orpo": {
+		title: "ORPO: Monolithic Preference Optimization without Reference Model",
+		author: "Hong, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2403.07691",
+		alternativetitle: "Preference optimization"
 	}
 };
