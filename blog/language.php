@@ -260,3 +260,19 @@ But the linguistic thread is only one of several. It converges with a parallel h
 The LLM is not the *only* possible outcome of this convergence. The digital computer, the scientific method, and the modern university are equally its products. But the LLM is the point where all the threads happen to meet: language, numeracy, logic, and mechanism woven into a single substrate. The next formalization may not be about language at all. The threads diverge again as soon as they converge. What matters is the pattern: abstraction upon abstraction, each layer enabling the next, with no final destination in sight.
 
 </div>
+
+<div class="md">
+## The NLP Task Landscape, Unified
+
+For decades, natural-language processing was a **zoo**: one hand-built system per task, each with its own features, dataset, and state of the art.
+
+| Task | Question it answered | Classic tool |
+|------|----------------------|--------------|
+| Machine translation | Translate between languages | statistical, phrase-based MT |
+| Part-of-speech / parsing | Label words / build the tree | HMMs, CFGs, CRFs |
+| Named-entity recognition | Find people, places, dates | CRFs, sequence models |
+| Sentiment analysis | Classify polarity | SVMs on bag-of-words |
+| Question answering | Extract / generate an answer | retrieval + extraction |
+
+The Transformer **collapsed the zoo**. One pre-trained model, fine-tuned, now performs *most* of these as a single next-token task \cite[Zhao et al., 2023]{zhao2023survey}. The tasks did not vanish — they were **absorbed** into a general sequence model. That absorption is the same gesture as every thread in this chapter: a specific, hand-built mechanism giving way to a general one that subsumes it.
+</div>
