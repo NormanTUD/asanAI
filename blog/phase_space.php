@@ -308,7 +308,7 @@ The fiber-bundle view has several consequences:
 
 3. **Synonymy is a property of fibers, not of points.** Two words are synonyms not in an absolute sense, but relative to a meaning: they are close in $X$ *within the same fiber*. Synonymy is a fiber-local relation.
 
-4. **The bundle can have non-trivial topology.** The fibers need not be trivial products; the bundle over $S$ can have *twists* and *monodromy*. This is a precise way of saying that the relation between form and meaning is not globally simple: the "way of saying" a meaning can depend on the *path* by which one arrives at it in $S$.
+4. **The bundle can have non-trivial topology — and paths act on fibers.** The fibers need not be trivial products; the bundle over $S$ can have *twists* and *monodromy*. In the language of homotopy type theory each fiber is a *type* sitting over its base point, and a *path* in the base $S$ *transports* a point of one fiber to a point of another — the action of a path, also called *monodromy*. Travel once around a loop in $S$ and a form can be carried back to a *different* form in the same fiber. This is the precise sense in which "the way of saying" a meaning can depend on the *path* by which one arrives at it: meaning is path-dependent, exactly as identity types are in a type theory.
 
 The fiber-bundle picture is, we think, the right level of mathematical abstraction for the relation between form and meaning. It captures the many-to-one nature of interpretation, the locality of paraphrase and synonymy, and the global complexity of the form–meaning relation.
 
