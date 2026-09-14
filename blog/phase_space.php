@@ -13,9 +13,9 @@ topics: math-ii, math-iii, philosophy, ai
 <div class="md">
 ## The question, in one plain sentence
 
-Ask a chatbot something a little beyond what it was trained on, and watch. It does not say "I don't know." It does not hesitate. It glides into a smooth, confident, completely *wrong* answer — in a calm voice.
+Ask a chatbot a hard question and you may notice something odd. It is not always wrong — sometimes it is exactly right. But its reliability is not even: for some questions it is rock-solid, for others it quietly falls apart. And the unsettling part is that it gives you little signal about which kind of question you are asking. When it *does* go wrong, it often does not say "I don't know" — it can glide into a smooth, confident, completely *wrong* answer, in a calm voice, with no hint that it has left the rails.
 
-The point of this chapter: **in that moment, the AI has left the one region where it is reliable.** It works well only on a thin, special *slice* of the huge space of everything it could be asked. A single number — its **energy** — marks where that slice is. The rest of the space is still *possible*, but essentially empty. Two words carry the whole chapter: **phase space** (the whole space of possibilities) and **energy** (the number that draws the line).
+The point of this chapter is to locate *where* the reliability actually is. It is high on a thin, special **slice** of the huge space of everything the AI could be asked, and low almost everywhere else. A single number — its **energy** — marks where that slice is; the rest of the space is still *possible*, but the model is not reliable on it. Two words carry the whole chapter: **phase space** (the whole space of possibilities) and **energy** (the number that draws the line).
 
 **The tour, in four stops.**
 
