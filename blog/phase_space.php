@@ -15,7 +15,7 @@ topics: math-ii, math-iii, philosophy, ai
 
 Ask a chatbot a hard question and you may notice something odd. It is not always wrong — sometimes it is exactly right. But its reliability is not even: for some questions it is rock-solid, for others it quietly falls apart. And the unsettling part is that it gives you little signal about which kind of question you are asking. When it *does* go wrong, it often does not say "I don't know" — it can glide into a smooth, confident, completely *wrong* answer, in a calm voice, with no hint that it has left the rails.
 
-The point of this chapter is to locate *where* the reliability actually is. The right space to think in is not just the set of questions the AI could be asked, but the space of **all its (input, output) pairs** — every possible input paired with every possible answer. Across that space the AI is reliable only on a thin, special **slice**: the pairs where the output is a good one for the input. A single number — its **energy** — marks where that slice is; the rest is still *possible*, but the model is not reliable on it. Two words carry the whole chapter: **phase space** (that whole space of (input, output) pairs) and **energy** (the number that draws the line).
+The point of this chapter is to locate *where* the reliability actually is. The right space to think in is not just the questions the AI could be asked, but the space of **all its (input, output) pairs** — every possible input paired with *every* possible answer, absurd ones included: an endless run of "aaa…", a never-ending "ababab…". That space is enormous, and most of it is incoherent. Across it the AI is reliable only on a thin, special **slice**: the pairs where the output is actually a good answer to the input. A single number — its **energy** — marks where that slice is. Two words carry the whole chapter: **phase space** (that whole space of (input, output) pairs) and **energy** (the number that draws the line).
 
 **The tour, in four stops.**
 
@@ -23,8 +23,6 @@ The point of this chapter is to locate *where* the reliability actually is. The 
 2. **The energy** — the one number that runs the system, and why the system is locked to one thin curve.
 3. **The machine** — why a neural network fits this picture.
 4. **Going off the curve** — what happens when the input, or the model, drifts off the slice. (That is when it hallucinates.)
-
-You need no physics beyond school: slopes, energy, a swinging pendulum. Every equation is glossed in plain words, and the fold-out boxes marked *for the curious* hold the advanced version — skip them all and the main text still stands on its own.
 
 $$
 \boxed{
