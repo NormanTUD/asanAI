@@ -280,6 +280,46 @@ Two honesty notes. First, it is a *hypothesis*, not a theorem — and it can fai
 </div>
 
 <div class="md">
+## The spaces it never reaches
+
+Look at what surrounds the thin slice. The (input, output) space is full of points the model will effectively *never* produce — pairs where the output makes no sense for the input. It does not answer "write a sonnet about the sea" with "aaaa…", and it does not answer "what is 2+2?" with "ababab…". Those outputs are *right there* in the space, perfectly valid strings, and yet the model never lands on them. Why?
+
+**The question that matters: if everything is one space, what separates the region where meaning sits from the region where it does not?**
+
+The answer — and it is the crux — is that **it is not the shape of the space.** There is no wall, no border, no separate "meaningless room." The meaningful and the meaningless live in the *same* space, side by side. What draws the line is not geometry; it is the **training data**, through the likelihood the model learned from it.
+
+**The data paints the line onto the space as a single number.** Recall the energy. For a language model the energy of a pair is essentially its *surprise* — how unlikely that output is *given that input*, according to the data \cite[LeCun et al., 2007]{lecun2007ebm}:
+
+$$
+\underbrace{E(x)}_{\text{energy of a pair }x}
+\;=\;
+\underbrace{-\,\log\, p(x)}_{\text{how “unexpected” the pair is to the data}}
+\;+\;
+\underbrace{\text{const.}}_{\text{the same for every pair, so it never matters}}.
+$$
+
+Here $x$ is an (input, output) pair and $p(x)$ is how likely that pair is under the distribution the model learned. A pair the data supports — "what is 2+2?" → "4" — has low energy. A pair the data almost never contains — "write a sonnet" → "aaaa…" — has very high energy. So *the same string* "aaaa…" is high energy (meaningless) next to "write a sonnet about the sea," but low energy (perfectly fine) next to "print the letter a five times." Meaning is not a property of the *output* alone; it is a property of the **pair**, and the training data is what decides.
+
+**So the empty regions are empty for a statistical reason, not a structural one.** The model is never *forbidden* from saying "aaaa…" — nothing in its wiring blocks that string. It has simply been given almost zero *weight* there, because the data almost never pairs it with a sensible input. That is the "it could always reply with 'aaaa…', as long as context allows, but it doesn't" point made precise: the *context* — the training distribution — is exactly what made it high-energy, so the sampling never reaches it. The boundary is a **cliff in probability, not a wall in the space**.
+
+$$
+\boxed{
+\begin{aligned}
+&\text{one space holds the meaningful and the meaningless together;}\\
+&\text{the training data paints an energy across it;}\\
+&\text{meaning sits where that energy is low — the rest is wilderness.}
+\end{aligned}
+}
+$$
+
+**The spatial picture.** Paint the (input, output) space as a height map, height = energy. The training data is a thin, low ribbon winding through a vast, high, empty wilderness. The model walks only on the ribbon. The wilderness is not locked away — it is simply where there is no data, and therefore no meaning. The model could step off the ribbon at any point; it just has almost no probability mass to do so. Its effective world is the ribbon, not the whole space.
+
+<div class="optional md" data-headline="The precise statement (for the curious)">
+The model has learned an (approximate) distribution $p(\text{input},\text{output})$ from the training data. The "meaningful slice" is the region where $p$ is large — equivalently, where the energy $E=-\log p$ is small. The "wilderness" is where $p\approx 0$. The model "never reaches" a region precisely because its learned mass there is negligible. Two subtleties. First, $p$ is a measure on the *pairs*, so no output has meaning in isolation — only relative to its input. Second, "meaningful" here really means *typical under the training data*, which is a statistical notion, not a logical one: the data defines the slice, and different training data would lay down a different slice.
+</div>
+</div>
+
+<div class="md">
 ## What shape is the slice?
 
 We know the slice is low-energy, low-dimensional, and measure-thin. But what does it actually *look like*? Three pictures — one from physics, one from probability, one from the machine — and they are not rivals; they are three angles on the same slice.
