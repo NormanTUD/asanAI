@@ -130,6 +130,46 @@ window.bibData = {
 		alternativetitle: "Sindhwani, Belkin & Niyogi, the geometric basis of semi-supervised learning (2006)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
+	 *  Phase Space: Usefulness as a Slice  (phase_space.php) — the shape
+	 *  of phase space, and of the useful (low-energy) slices of it.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"symplectic_manifold_wiki": {
+		title: "Symplectic manifold",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Symplectic_manifold",
+		alternativetitle: "Symplectic manifold (Wikipedia)"
+	},
+	"liouville_arnold_wiki": {
+		title: "Liouville–Arnold theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Liouville%E2%80%93Arnold_theorem",
+		alternativetitle: "Liouville–Arnold theorem (Wikipedia)"
+	},
+	"arnold_conjecture_wiki": {
+		title: "Arnold conjecture",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Arnold_conjecture",
+		alternativetitle: "Arnold conjecture (Wikipedia)"
+	},
+	"concentration_of_measure_wiki": {
+		title: "Concentration of measure",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Concentration_of_measure",
+		alternativetitle: "Concentration of measure (Wikipedia)"
+	},
+	"saxe2014deep": {
+		title: "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+		author: "Andrew M. Saxe, James L. McClelland, Surya Ganguli",
+		year: 2014,
+		journal: "Proceedings of the 3rd International Conference on Learning Representations (ICLR)",
+		url: "https://arxiv.org/abs/1312.6120",
+		alternativetitle: "Saxe, McClelland & Ganguli, deep linear networks (ICLR 2014)"
+	},
+	/* ─────────────────────────────────────────────────────────────────────
 	 *  Computers in Spaceflight: The NASA Experience  (history.php,
 	 *  untold_history.php)
 	 *  The spaceflight-computing lineage: real-time operation, redundancy,
