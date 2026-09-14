@@ -454,17 +454,14 @@ function renderProbSpace(){
     b.onclick=()=>{ if(selected.has(l)) selected.delete(l); else selected.add(l); update(); };
     c.appendChild(b);
   });
-  update();
   function update(){
     let s=0; alphabet.forEach(([l,pr])=>{ if(selected.has(l)) s+=pr; });
     document.getElementById('probSum').textContent=s.toFixed(2);
-    renderProbSpace._();
-  }
-  renderProbSpace._=()=>{
     [...c.children].forEach((b,i)=>{
       b.style.background = selected.has(alphabet[i][0])?'linear-gradient(180deg,#5b7cff,#3d5cd6)':'var(--panel2)';
     });
-  };
+  }
+  update();
 }
 renderProbSpace();
 
