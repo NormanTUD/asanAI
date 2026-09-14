@@ -6497,6 +6497,20 @@ window.bibData = {
 		year: 2010,
 		alternativetitle: "Wilkinson Microwave Anisotropy Probe, 7-year data"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  A Geometric and Topological Theory of Meaningful Language Spaces
+	 *  (phase_space.php) — the cosmic-web image: the large-scale structure
+	 *  of the universe (filaments, nodes and voids), used as the visual
+	 *  anchor for the "cosmic-web intuition".
+	 * ───────────────────────────────────────────────────────────────────── */
+	"cosmic_web_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Structure_of_the_Universe.jpg",
+		title: "Structure of the Universe — a slice of the cosmic web: filaments and nodes of galaxies and dark matter, and the vast voids between them",
+		author: "NASA, ESA, and E. Hallman (University of Colorado, Boulder)",
+		year: 2008,
+		license: "Public domain (NASA)",
+		alternativetitle: "Structure of the Universe (the cosmic web)"
+	},
 	"volta_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Volta_A.jpg",
 		title: "Portrait of Alessandro Volta",
