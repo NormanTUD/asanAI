@@ -304,6 +304,7 @@ The importance of this trichotomy is that it gives a *geometric* account of thre
 A theory of meaning that captures these three features captures, we argue, the essential *shape* of linguistic structure.
 
 The picture generalizes in a natural way. There is not one landscape but a *stack* of coupled ones: a syntactic landscape, a semantic landscape, a grounding landscape, and an epistemic landscape, each with its own clusters, voids, and boundaries, and each correlated with the others. Strong syntax tends to make semantic structure more likely; grounding imposes further constraints on what can be meaningful; and the epistemic layer records where the system is certain and where it is still open. Meaning is strong where these layers align, and weak or absent where they diverge.
+</div>
 
 <figure style="max-width:560px; margin:1.5em auto; text-align:center;">
 <svg viewBox="0 0 460 360" class="no-smart" role="img" aria-label="A stack of four coupled landscapes: syntactic, semantic, grounding, and epistemic, each with clusters, voids, and boundaries" style="width:100%; height:auto; display:block; margin:0 auto;">
@@ -336,157 +337,6 @@ The picture generalizes in a natural way. There is not one landscape but a *stac
 </svg>
 <figcaption class="md">A stack of coupled landscapes: each layer has its own clusters, voids, and boundaries, and the layers are correlated with one another. Meaning is strong where the layers align.</figcaption>
 </figure>
-</div>
-
-<div class="md">
-## Four kinds of void
-
-A single binary split between "meaningful" and "meaningless" hides real structure. Once we have the coherence fields, *void* breaks into four distinct kinds — the four coordinate directions of the void vector.
-
-**Syntactic void.** The configuration lacks internal syntactic organization. Example: "asdf qwer seven blue because table tomorrow." Here $C(x)\approx 0$. This is the most straightforward kind of emptiness.
-
-**Semantic void.** The configuration is syntactically structured but fails to form a stable interpretation. Example: "The thought drinks the square Tuesday." It can have $C(x)\approx 1$ while $S(x)\ll 1$ — substantial local structure, but none of the right higher-order relations. High syntactic structure does **not** force high semantic structure.
-
-**Grounding void.** A structure can be internally coherent and semantically well-specified while having no connection to a world: $C(x)\approx 1$, $S(x)\approx 1$, but $G(x)\approx 0$. A purely formal mathematical system is the limiting example — its relations are perfectly well-defined without its symbols naming anything physical.
-
-**Epistemic void.** An expression can have a determinate meaning without its truth being known: $S(x)\approx 1$ does not imply $E(x)\approx 1$. A proposition may be meaningful but unresolved.
-
-These voids are not necessarily separate regions: the same point can be a void with respect to one structure and a dense region with respect to another. The strongest meaningful region is the intersection of all four,
-$$
-M_{\mathrm{strong}} \;=\; C_{\mathrm{syn}} \cap C_{\mathrm{sem}} \cap C_{\mathrm{ground}} \cap C_{\mathrm{epi}},
-$$
-while weaker forms of meaning occupy the other intersections.
-
-<figure style="max-width:460px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="Void as a direction: four arrows from a fully-meaningful center, each pointing toward one kind of void" style="width:100%; height:auto; display:block; margin:0 auto;">
-<rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
-<g style="stroke:var(--mn-coral);" stroke-width="2.5;">
-<line x1="230" y1="138" x2="230" y2="58"/><line x1="242" y1="150" x2="400" y2="150"/><line x1="230" y1="162" x2="230" y2="242"/><line x1="218" y1="150" x2="60" y2="150"/>
-</g>
-<polygon points="224,58 236,58 230,46" style="fill:var(--mn-coral);"/>
-<polygon points="400,144 400,156 412,150" style="fill:var(--mn-coral);"/>
-<polygon points="224,242 236,242 230,254" style="fill:var(--mn-coral);"/>
-<polygon points="60,144 60,156 48,150" style="fill:var(--mn-coral);"/>
-<circle cx="230" cy="150" r="8" style="fill:var(--mn-emerald);"/>
-<text x="230" y="178" text-anchor="middle" style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">fully meaningful</text>
-<g style="fill:var(--mn-text); font-size:13px; font-family:inherit; font-weight:600;">
-<text x="230" y="30" text-anchor="middle">syntactic void</text>
-<text x="230" y="286" text-anchor="middle">grounding void</text>
-<text x="398" y="132" text-anchor="end">semantic void</text>
-<text x="62" y="132" text-anchor="start">epistemic void</text>
-</g>
-</svg>
-<figcaption class="md">Void is a *direction*, not a place: from the fully-meaningful center, dropping syntax, semantics, grounding, or epistemic determination each leads to a different kind of void.</figcaption>
-</figure>
-</div>
-
-<div class="md">
-## Boundaries and phase transitions
-
-Now watch structure degrade. Consider the short progression *the dog sleeps* &rarr; *the dog sleeps quickly* &rarr; *the dog sleeps quadratically* &rarr; *the dog quadratically seven*. Moving along it, several forms of structure fall away one by one. This points to an important object: the **boundary** $\partial M$ of a meaningful region. The hypothesis is that the boundary between coherent and incoherent regions may contain *more* information about semantic organization than the interior of either — the place where meaning breaks is where its structure is most visible.
-
-A **semantic phase transition** is when a small change in configuration produces a qualitative change in connectivity. The first two sentences above are close and both meaningful; the second and third differ by a single word, yet one is meaningful and the other is not. Meaning can fail abruptly, the way water turns to ice — not by losing a little warmth at a time, but by crossing a threshold.
-
-<figure style="max-width:600px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="Structural coherence as a function of a degradation parameter, with a sharp phase-transition drop" style="width:100%; height:auto; display:block; margin:0 auto;">
-<rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
-<line x1="55" y1="40" x2="55" y2="240" style="stroke:var(--mn-border);" stroke-width="1.5"/>
-<line x1="55" y1="240" x2="425" y2="240" style="stroke:var(--mn-border);" stroke-width="1.5"/>
-<line x1="240" y1="40" x2="240" y2="240" style="stroke:var(--mn-coral);" stroke-width="1.5" stroke-dasharray="4 5"/>
-<polyline points="55,52 177,66 300,182 425,220" fill="none" style="stroke:var(--mn-accent);" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<g style="fill:var(--mn-accent);">
-<circle cx="55" cy="52" r="4"/><circle cx="177" cy="66" r="4"/><circle cx="300" cy="182" r="4"/><circle cx="425" cy="220" r="4"/>
-</g>
-<text x="250" y="55" style="fill:var(--mn-coral); font-size:12px; font-family:inherit; font-weight:600;">phase transition</text>
-<g style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">
-<text x="55" y="258" text-anchor="start">the dog sleeps</text>
-<text x="177" y="258" text-anchor="middle">+ quickly</text>
-<text x="300" y="258" text-anchor="middle">+ quadratically</text>
-<text x="425" y="258" text-anchor="end">+ seven</text>
-<text x="235" y="284" text-anchor="middle">degradation t &#8594;</text>
-</g>
-<text x="20" y="140" text-anchor="middle" transform="rotate(-90 20 140)" style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">structural coherence</text>
-</svg>
-<figcaption class="md">A degradation sweep: coherence is high and stable, then collapses in a single step as the sentence crosses into the void — a semantic phase transition at the boundary $\partial M$.</figcaption>
-</figure>
-</div>
-
-<div class="md">
-## Metaphor as a bridge between clusters
-
-One of the most revealing applications of the geometric picture is to **metaphor**. In the geometric view, a metaphor is not a decorative comparison; it is a *structural bridge* between two clusters of the language space that would otherwise be disconnected.
-
-Consider the metaphor "time is a river." The cluster of *time-talk* ("the week is coming," "we run out of time") and the cluster of *river-talk* ("flows," "currents," "eddy") are, in the absence of the metaphor, two separate regions of $X$. The metaphor *constructs a filament* between them: it imports the structure of the river-cluster (flow, direction, current, obstacle) into the time-cluster, and in doing so it *changes the shape* of the time-cluster.
-
-<figure style="max-width:600px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="A metaphor as a new path: two distant clusters, TIME and RIVER, joined by a bold coral filament, contrasted with a faint long indirect void path" style="width:100%; height:auto; display:block; margin:0 auto;">
-<rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
-<path d="M 150 70 C 320 18 432 122 340 200" fill="none" style="stroke:var(--mn-text-muted);" stroke-width="1.5" stroke-dasharray="2 6" opacity="0.55"/>
-<path d="M 148 92 Q 235 150 318 205" fill="none" style="stroke:var(--mn-coral);" stroke-width="3.5" stroke-dasharray="8 6" stroke-linecap="round"/>
-<g style="fill:var(--mn-accent);">
-<circle cx="85" cy="65" r="4.5"/><circle cx="112" cy="52" r="5"/><circle cx="138" cy="72" r="4.5"/><circle cx="95" cy="92" r="4.5"/><circle cx="125" cy="95" r="4"/><circle cx="75" cy="85" r="3.5"/><circle cx="150" cy="58" r="3.5"/>
-</g>
-<g style="fill:var(--mn-accent);">
-<circle cx="315" cy="215" r="4.5"/><circle cx="342" cy="205" r="5"/><circle cx="368" cy="222" r="4.5"/><circle cx="325" cy="242" r="4.5"/><circle cx="352" cy="248" r="4"/><circle cx="385" cy="235" r="3.5"/>
-</g>
-<g style="fill:var(--mn-text-muted); font-size:14px; font-family:inherit; font-weight:600;">
-<text x="58" y="38">TIME</text><text x="328" y="284">RIVER</text>
-</g>
-<text x="150" y="150" style="fill:var(--mn-coral); font-size:13px; font-family:inherit; font-weight:600;">metaphor: a new path</text>
-</svg>
-<figcaption class="md">A metaphor as a new path: "time is a river" lays a short, structured filament between two clusters that were otherwise separated by a void (the faint, long detour is the only route available before the metaphor).</figcaption>
-</figure>
-
-This is best understood in the language of **homotopy type theory**, where a *path* between two points is itself a piece of meaning — a way of getting from one to the other. Before the metaphor, the two clusters are far apart: the only route from a point in the time-cluster to a point in the river-cluster is a long traversal of the void. The metaphor adds a **new path** — a short, structured filament — directly between them. Topologically this changes the space: a new one-dimensional feature has been created, and the two regions become *homotopically* close. A metaphor is not a label glued on; it is a genuine deformation of the connectivity of the space.
-
-This is why metaphors are not merely expressive but *cognitive*: they literally reshape the geometry of the space in which thought takes place. A good metaphor creates a new filament, and a new filament changes which regions of the space are reachable from which. This is a precise statement of the idea that metaphor is a mechanism of *conceptual change*.
-
-The geometric view also explains why some metaphors are more "fruitful" than others. A fruitful metaphor is one that connects two clusters that share a *common structural skeleton* — a shared pattern of relations — so that the bridge is stable and carries a lot of structure across. This is exactly the condition that cognitive linguists have identified as the basis of *structural mapping* in metaphor: the mapping works when the source and target domains share a relational structure.
-
-In the geometric language, a metaphor is a *stable filament* between two clusters, and its fruitfulness is measured by how much structure it transfers. A bad metaphor is a filament that does not hold: it connects two regions whose internal structures are incompatible, and it either collapses or distorts both.
-</div>
-
-<div class="md">
-## Ambiguity as the branching of $\pi$
-
-We said earlier that ambiguity is the failure of $\pi$ to be a function. Let us make this precise.
-
-In the idealized case, $\pi: X \to S$ is a function: each form has a unique meaning. In reality, $\pi$ is often *multivalued*: a single form $x$ can be mapped to several distinct meanings $s_1, s_2, \dots \in S$. We can represent this by replacing $\pi$ with a *relation* $\Pi \subseteq X \times S$, or by viewing $\pi$ as a map to a *set* of meanings $\pi(x) \subseteq S$.
-
-The **ambiguity** of a form $x$ is then the *size* (or, better, the *structure*) of the fiber $\pi^{-1}(\pi(x))$, or equivalently the number of distinct meanings $x$ can take. But the mere number of meanings is not the whole story. What matters is the *geometry* of the set of possible meanings: are they close together in $S$ (a mild, "nearby" ambiguity) or far apart (a sharp, "garden-path" ambiguity)?
-
-This gives a refined, geometric notion of ambiguity: **ambiguity is a property of the fiber of $\pi$ over a point, and its severity is measured by the diameter of that fiber in the metric of $S$.** A form is *mildly* ambiguous if its possible meanings form a tight cluster in $S$; it is *sharply* ambiguous if they are spread across distant regions.
-
-This also connects ambiguity to the landscape. Ambiguous forms tend to live in *high-density regions* of $X$ — near the boundaries of clusters, or where filaments cross. A form at the center of a single cluster is usually unambiguous; a form at the intersection of two filaments is maximally ambiguous. The geometry of the landscape predicts where ambiguity should concentrate.
-</div>
-
-<div class="md">
-## The heavy tail: why structure, not frequency, carries meaning
-
-A purely statistical theory predicts that the most important units of language are the most *frequent* ones. The geometric view makes a different prediction, and it is a strong one.
-
-The claim is that the **meaningful** structure of $X$ is carried not by the high-frequency core, but by the **heavy tail** of the distribution — the vast region of low-frequency, long-distance, and combinatorial configurations. The frequent core (the "head" of the distribution) is where language is *routine*; the tail is where language is *creative*, *novel*, and *meaningful* in the interesting sense.
-
-<figure style="max-width:600px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 240" class="no-smart" role="img" aria-label="A heavy-tailed distribution: a few tall bars (the frequent head) followed by a long, low tail of many small bars" style="width:100%; height:auto; display:block; margin:0 auto;">
-<line x1="30" y1="195" x2="405" y2="195" style="stroke:var(--mn-border);" stroke-width="1.5"/>
-<g style="fill:var(--mn-accent); opacity:0.88;">
-<rect x="30" y="30" width="14" height="165"/><rect x="49" y="103" width="14" height="92"/><rect x="68" y="137" width="14" height="58"/><rect x="87" y="154" width="14" height="41"/><rect x="106" y="163" width="14" height="32"/><rect x="125" y="169" width="14" height="26"/><rect x="144" y="173" width="14" height="22"/><rect x="163" y="176" width="14" height="19"/><rect x="182" y="179" width="14" height="16"/><rect x="201" y="181" width="14" height="14"/>
-<rect x="220" y="182" width="14" height="13"/><rect x="239" y="183" width="14" height="12"/><rect x="258" y="184" width="14" height="11"/><rect x="277" y="185" width="14" height="10"/><rect x="296" y="185" width="14" height="10"/><rect x="315" y="186" width="14" height="9"/><rect x="334" y="187" width="14" height="8"/><rect x="353" y="187" width="14" height="8"/><rect x="372" y="188" width="14" height="7"/><rect x="391" y="188" width="14" height="7"/>
-</g>
-<g style="fill:var(--mn-text-muted); font-size:13px; font-family:inherit;">
-<text x="30" y="216">routine head (frequent)</text><text x="235" y="216">creative, meaningful tail (rare)</text>
-</g>
-</svg>
-<figcaption class="md">A heavy-tailed distribution: a small, frequent, routine head, and a vast, rare tail. On the geometric view, novel and structured meaning is generated in the tail.</figcaption>
-</figure>
-
-This is not a claim that frequent words are meaningless. It is a claim about *where new meaning is generated*. Routine, high-frequency regions of $X$ are where $\pi$ is simple and predictable; the tail is where $\pi$ is complex, where new filaments are being built, and where the shape of the space is actively being changed. Meaning, in the sense of *novel, structured, non-routine significance*, lives in the tail.
-
-This connects directly to the scale-free, self-similar structure of language. The heavy tail is the signature of a scale-free distribution, and a scale-free distribution is the statistical fingerprint of a self-similar geometry. So the empirical fact that language has a heavy tail is, in this view, *evidence* for the geometric picture: it is the observable signature of the underlying self-similar landscape.
-
-The practical consequence is methodological. If meaning lives in the tail, then a theory of meaning that is trained only on the head of the distribution — on frequent, routine data — will systematically miss the very region where meaning is generated. This is a geometric argument for why models and theories that ignore the tail are incomplete, independent of any particular empirical evaluation.
-</div>
 
 <div class="md">
 ## The fiber-bundle view: meaning as a family of structures
@@ -633,9 +483,7 @@ $$
 where $d(x,x')$ is the distance in the representational space. The bold claim is that this form is *universal* — across species, tasks, and modalities — because it is the form any internalized, distance-based decision rule must take. In the language of this chapter, the law says **generalization is local in $X$**: the closer an unseen form is to a known one, the more reliably its meaning transfers, and the more distant it is, the less. Shepard's exponential kernel is precisely what turns the metric of $X$ into a *learning* signal — and one of the clearest pieces of evidence that the right language for meaning is the language of spaces and distances.
 
 The upshot is that learning is not the accumulation of facts but the *construction of a map between spaces*, under geometric constraints. This reframes the central problem of language acquisition as a problem in *topological inference*: inferring the shape of a space and the structure of a map from partial, noisy observations.
-</div>
 
-<div class="md">
 ## Open problems and a research programme
 
 This chapter has laid out a scaffold. The open problems are the places where the scaffold needs to be turned into a building. We close with the most important of them.
