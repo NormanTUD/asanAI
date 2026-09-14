@@ -568,7 +568,7 @@ These early neural networks were extremely limited by today's standards, but the
 
 #### The Hype (1958)
 
-When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, it was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages. Most of Rosenblatt's predictions were surprisingly accurate.
+When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, it was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages. Most of Rosenblatt's predictions were surprisingly accurate. The *New York Times* hype was even more literal than is usually remembered: it reported Rosenblatt predicting that Perceptrons might one day be **fired to the planets as mechanical space explorers** \cite{tomayko1988spaceflight}. Six decades later, on the Martian surface, that prediction was quietly realized, when NASA's Perseverance rover used autonomous target selection (**AEGIS**) and hazard-avoidant path planning (**ENav**) to choose which rocks to drill and how to steer around boulders without waiting for a human in Mission Control to tell it to \cite{tomayko1988spaceflight}.
 
 Between the invention of the Perceptron in 1958 and the release of ChatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
