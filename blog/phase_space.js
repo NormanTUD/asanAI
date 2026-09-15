@@ -827,19 +827,35 @@
 	   ══════════════════════════════════════════════════════════════ */
 	register(function fiberBundle3D() {
 		const container = $('ps-fib-3d');
-		if (!container || typeof THREE === 'undefined') return;
 		const ro = $('ps-fib-readout');
-		const w = container.clientWidth || 800, h = 460;
+		const status = (msg) => { if (ro) ro.textContent = msg; };
+		if (!container) return;
+		if (typeof THREE === 'undefined') { status('Three.js is not loaded, so the 3D view is unavailable.'); return; }
+
+		// Lazy init: the container may have zero width when
+		// blogPostLoadComplete fires (layout not flushed yet). A 800px
+		// canvas inside a 0px-wide, overflow:hidden box would be fully
+		// clipped. So wait until the box actually has size (ResizeObserver),
+		// exactly like math_iii_hott.js does.
+		let started = false;
+		function start() {
+			if (started || container.clientWidth === 0) return;
+			started = true;
+		try {
+		const w = container.clientWidth, h = container.clientHeight || 460;
 		const P = pal();
+
+		let renderer;
+		try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false }); }
+		catch (e) { status('WebGL could not be initialised: ' + e.message); return; }
+		renderer.setSize(w, h);
+		container.appendChild(renderer.domElement);
 
 		const scene = new THREE.Scene();
 		scene.background = new THREE.Color(P.dark ? 0x020208 : 0xf6f3ea);
 		const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
 		camera.position.set(5, 4, 7);
 		camera.lookAt(0, 1, 0);
-		const renderer = new THREE.WebGLRenderer({ antialias: true });
-		renderer.setSize(w, h);
-		container.appendChild(renderer.domElement);
 
 		const plane = new THREE.Mesh(
 			new THREE.PlaneGeometry(6, 6, 20, 20),
@@ -931,6 +947,10 @@
 			if (b) b.onclick = () => highlight(id.replace('ps-fib-', ''));
 		});
 		highlight('all');
+		} catch (e) { status('3D view failed to initialise: ' + e.message); console.error('phase_space 3D demo failed:', e); }
+		}
+		start();
+		if (window.ResizeObserver) new ResizeObserver(start).observe(container);
 	});
 
 	/* ══════════════════════════════════════════════════════════════
@@ -1056,63 +1076,67 @@
 		const scaleNames = ['tokens', 'phrases', 'sentences', 'discourse'];
 		const r = rng(7);
 
-		function makeClusters(parents, spread, count) {
-			return parents.map((c, ci) => {
-				const clusters = [];
-				for (let i = 0; i < count; i++) {
-					const cx = c[0] + (r() - 0.5) * spread * 0.4;
-					const cy = c[1] + (r() - 0.5) * spread * 0.4;
-					const pts = [];
-					for (let k = 0; k < 4; k++) pts.push([cx + (r() - 0.5) * spread * 0.5, cy + (r() - 0.5) * spread * 0.5]);
-					clusters.push({ center: [cx, cy], pts });
-				}
-				return { center: c, clusters, id: ci };
-			});
+		// A 4-level hierarchy: discourse(4) -> sentence(2) -> phrase(3)
+		// -> token-cluster(5) -> 4 raw points.  Each node stores its centre
+		// and (for leaves) its raw points, plus which discourse region it
+		// belongs to (`disc`) so it can be colour-coded.
+		const branch = [2, 3, 5];
+		function build(parent, depth) {
+			if (depth >= 3) {
+				const pts = [];
+				for (let k = 0; k < 4; k++) pts.push([parent[0] + (r() - 0.5) * 0.05, parent[1] + (r() - 0.5) * 0.05]);
+				return { center: [parent[0], parent[1]], pts, disc: parent[2] };
+			}
+			const n = branch[depth];
+			const children = [];
+			for (let i = 0; i < n; i++) {
+				const c = [parent[0] + (r() - 0.5) * 0.24, parent[1] + (r() - 0.5) * 0.24, parent[2]];
+				children.push(build(c, depth + 1));
+			}
+			const cx = children.reduce((s, c) => s + c.center[0], 0) / n;
+			const cy = children.reduce((s, c) => s + c.center[1], 0) / n;
+			return { center: [cx, cy], children, disc: parent[2] };
 		}
-		const l0 = makeClusters([[0.2, 0.3], [0.8, 0.3], [0.3, 0.75], [0.7, 0.75]], 0.12, 5);
-		const l1 = makeClusters(l0.map((c) => c.center), 0.05, 3);
-		const l2 = makeClusters(l1.map((c) => c.center), 0.03, 2);
-		const l3 = makeClusters(l2.map((c) => c.center), 0.015, 1);
-		const scales = [
-			{ pts: l0.flatMap((c) => c.pts.flatMap((p) => p.pts)), centers: l0.flatMap((c) => c.clusters.map((p) => p.center)), n: l0.length * 5 },
-			{ pts: l1.flatMap((c) => c.pts.flatMap((p) => p.pts)), centers: l1.flatMap((c) => c.clusters.map((p) => p.center)), n: l0.length * 3 },
-			{ pts: l2.flatMap((c) => c.pts.flatMap((p) => p.pts)), centers: l2.flatMap((c) => c.clusters.map((p) => p.center)), n: l0.length * 2 },
-			{ pts: l3.flatMap((c) => c.pts), centers: l3.flatMap((c) => c.center), n: l0.length }
-		];
+		const macro = [[0.24, 0.30, 0], [0.78, 0.30, 1], [0.30, 0.74, 2], [0.72, 0.74, 3]];
+		const tree = macro.map((m) => build(m, 0));
+		function collect(depth) {
+			function rec(nodes, d) { if (d === 0) return nodes.slice(); return nodes.flatMap((n) => (n.children ? rec(n.children, d - 1) : [])); }
+			return rec(tree, depth);
+		}
+		// display scale 0 = finest (tokens) .. 3 = coarsest (discourse)
+		function nodesAt(scale) { return collect(3 - scale); }
 
 		function draw(scale) {
 			const P = pal(); const W = cv.width, H = cv.height;
 			ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
-			const fine = scales[scale];
-			const ghost = scale < 3 ? scales[scale + 1] : null;
 			const clColors = [P.accent, P.accent2, P.accent3, P.accent4];
-			fine.centers.forEach((c, i) => {
-				const col = clColors[i % clColors.length];
-				if (ghost) {
-					ctx.fillStyle = rgba(P.ink, 0.12);
-					ghost.pts.forEach((p) => { ctx.beginPath(); ctx.arc(p[0] * W, p[1] * H, 2, 0, TAU); ctx.fill(); });
-				}
-				ctx.fillStyle = rgba(col, 0.2);
-				ctx.beginPath(); ctx.arc(c[0] * W, c[1] * H, 26, 0, TAU); ctx.fill();
-				fine.pts.forEach((p) => {
-					ctx.fillStyle = col;
-					ctx.beginPath(); ctx.arc(p[0] * W, p[1] * H, 4, 0, TAU); ctx.fill();
-					ctx.strokeStyle = P.ink; ctx.lineWidth = 1; ctx.stroke();
-				});
+			if (scale > 0) {
+				const finer = nodesAt(scale - 1);
+				ctx.fillStyle = rgba(P.ink, 0.2);
+				finer.forEach((n) => { ctx.beginPath(); ctx.arc(n.center[0] * W, n.center[1] * H, 2, 0, TAU); ctx.fill(); });
+			}
+			const nodes = nodesAt(scale);
+			const dotR = [2, 5, 9, 14][scale], haloR = [5, 12, 18, 26][scale];
+			nodes.forEach((n) => {
+				const col = clColors[n.disc % 4];
+				ctx.fillStyle = rgba(col, 0.18);
+				ctx.beginPath(); ctx.arc(n.center[0] * W, n.center[1] * H, haloR, 0, TAU); ctx.fill();
+				ctx.fillStyle = col;
+				ctx.beginPath(); ctx.arc(n.center[0] * W, n.center[1] * H, dotR, 0, TAU); ctx.fill();
 			});
-			ctx.fillStyle = rgba(P.ink, 0.8); ctx.font = 'bold 13px monospace';
-			ctx.fillText('scale: ' + scaleNames[scale], 14, 26);
-			ctx.font = '11px monospace';
-			if (ghost) ctx.fillText('(finer scale shown as grey ghosts)', 14, 44);
+			ctx.fillStyle = rgba(P.ink, 0.85); ctx.font = 'bold 13px monospace';
+			ctx.fillText('scale: ' + scaleNames[scale] + '  (' + nodes.length + ' clusters)', 14, 26);
+			ctx.font = '11px monospace'; ctx.fillStyle = rgba(P.ink, 0.6);
+			if (scale > 0) ctx.fillText('(finer level shown as faint dots)', 14, 44);
 		}
 		function updatePlot(scale) {
 			const P = pal();
-			const nClusters = [20, 12, 8, 4][scale];
-			const nVoids = [6, 4, 3, 2][scale];
+			const nClusters = [120, 24, 8, 4][scale];
+			const nVoids = [15, 8, 3, 1][scale];
 			Plotly.react(plotEl, [{
 				type: 'bar',
 				x: ['clusters visible', 'voids visible', 'effective degrees of freedom'],
-				y: [nClusters, nVoids, [80, 36, 16, 4][scale]],
+				y: [nClusters, nVoids, [480, 120, 24, 8][scale]],
 				marker: { color: [P.accent, P.accent2, P.accent3] }
 			}], {
 				paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',

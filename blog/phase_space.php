@@ -1,13 +1,13 @@
 <?php include_once("functions.php"); ?>
 <!--
-    COURSE_METADATA
-    title: "Phase Space: The Shape of Meaningful Language"
-    description: "A geometric and topological theory of meaningful language spaces — the possibility space X, its image under interpretation π: X → S, and the landscapes of clusters, filaments, and voids — the shape of a sparse, structured distribution."
-    icon: "🌌"
-    part: "Mathematics"
-    order: 6
-    color: "#7c3aed"
-    topics: ["phase space", "geometric topology", "meaningful language", "clusters and voids", "interpretation map", "fiber bundle", "heavy-tail distribution", "landscape"]
+COURSE_METADATA:
+title: Phase Space: The Shape of Meaningful Language
+description: A geometric and topological theory of meaningful language spaces — the possibility space X, its image under interpretation π: X → S, and the landscapes of clusters, filaments, and voids — the shape of a sparse, structured distribution.
+icon: &#127756;
+part: 1
+order: 11
+color: accent
+topics: geometry, math-i, math-ii, math-iii, statistics-ii
 -->
 
 <style>
@@ -35,7 +35,7 @@
 .ps-plot { width: 100%; min-height: 340px; }
 .ps-3d { width: 100%; height: 460px; border-radius: 10px; border: 1px solid var(--mn-border); overflow: hidden; cursor: grab; }
 .ps-readout { font-family: var(--mn-font-mono); font-size: .9rem; color: var(--mn-emerald); background: var(--mn-bg-subtle); padding: .75rem 1rem; border-radius: 8px; border-left: 3px solid var(--mn-emerald); margin: .8rem 0; white-space: pre-wrap; line-height: 1.5; }
-.ps-example { background: var(--mn-bg-cream); border-left: 3px solid var(--mn-coral); padding: .7rem 1rem; border-radius: 0 8px 8px 0; margin: .6rem 0; font-style: italic; font-size: 1.05rem; }
+.ps-example { background: var(--mn-bg-warm); border-left: 3px solid var(--mn-coral); padding: .7rem 1rem; border-radius: 0 8px 8px 0; margin: .6rem 0; font-style: italic; font-size: 1.05rem; color: var(--mn-text); }
 .ps-field { background: var(--mn-bg-subtle); border-radius: 10px; padding: .7rem .8rem; border: 1px solid var(--mn-border-light); }
 .ps-field .name { font-size: .72rem; color: var(--mn-text-muted); text-transform: uppercase; letter-spacing: .05em; }
 .ps-field .val { font-size: 1.4rem; font-weight: 700; font-family: var(--mn-font-mono); }
@@ -170,35 +170,7 @@ V(x) \;=\; \left(1-C(x),\; 1-S(x),\; 1-G(x),\; 1-E(x)\right),
 $$
 a point in a four-dimensional space whose origin is "fully meaningful" and whose far corners are extreme kinds of emptiness. The point is not that $C,S,G,E$ are the right quantities; it is to make explicit that *'void' is not a single thing* but a *direction* in this space. The four kinds of void considered below are precisely the four coordinate directions of $V(x)$.
 
-<figure style="max-width:480px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="A four-axis radar of coherence fields: a grounded sentence near the edge, and a semantically void but syntactically structured sentence collapsed toward the center" style="width:100%; height:auto; display:block; margin:0 auto;">
-<rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
-<g style="stroke:var(--mn-border);" fill="none;">
-<polygon points="230,40 320,130 230,220 140,130"/>
-<polygon points="230,63 298,130 230,198 163,130"/>
-<polygon points="230,85 275,130 230,175 185,130"/>
-<polygon points="230,108 253,130 230,152 208,130"/>
-</g>
-<line x1="230" y1="40" x2="230" y2="220" style="stroke:var(--mn-border);" stroke-width="1"/>
-<line x1="140" y1="130" x2="320" y2="130" style="stroke:var(--mn-border);" stroke-width="1"/>
-<polygon points="230,49 307,130 230,202 167,130" style="fill:var(--mn-emerald);" opacity="0.22"/>
-<polygon points="230,49 307,130 230,202 167,130" fill="none" style="stroke:var(--mn-emerald);" stroke-width="2"/>
-<polygon points="230,58 248,130 230,157 212,130" style="fill:var(--mn-coral);" opacity="0.3"/>
-<polygon points="230,58 248,130 230,157 212,130" fill="none" style="stroke:var(--mn-coral);" stroke-width="2"/>
-<g style="fill:var(--mn-text-muted); font-size:13px; font-family:inherit; font-weight:600;">
-<text x="198" y="32">C &#183; syntax</text><text x="326" y="124">S &#183; meaning</text><text x="196" y="240">G &#183; grounding</text><text x="24" y="124">E &#183; epistemic</text>
-</g>
-<g style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">
-<rect x="120" y="260" width="12" height="12" style="fill:var(--mn-emerald);"/>
-<text x="138" y="270">'the dog sleeps' &#8212; grounded</text>
-<rect x="120" y="278" width="12" height="12" style="fill:var(--mn-coral);"/>
-<text x="138" y="288">'the thought drinks the square Tuesday' &#8212; syntactic, semantically void</text>
-</g>
-</svg>
-<figcaption class="md">A sentence's void vector as a 4-axis radar: a grounded sentence sits near the edge on all four coherence fields, while a sentence that is syntactically structured but semantically empty is collapsed toward the origin on the semantic and grounding axes.</figcaption>
-</figure>
 </div>
-
 <div class="ps-card" id="ps-rad-card">
 	<div class="ps-card-title"><span class="dot"></span>Try different sentences</div>
 	<p class="ps-lead">Each sentence is assigned four coherence values in $[0,1]$. The radar shows how far the sentence reaches on each axis — an "ideal" sentence fills the whole square, while real ones usually have <em>holes</em> in particular dimensions.</p>
@@ -294,29 +266,6 @@ The key point is that voids are not the *absence* of structure but a *part* of t
 Now watch structure degrade. Consider the short progression *the dog sleeps* → *the dog sleeps quickly* → *the dog sleeps quadratically* → *the dog quadratically seven*. Moving along it, several forms of structure fall away one by one. This points to an important object: the **boundary** $\partial M$ of a meaningful region. The hypothesis is that the boundary between coherent and incoherent regions may contain *more* information about semantic organization than the interior of either — the place where meaning breaks is where its structure is most visible.
 
 A **semantic phase transition** is when a small change in configuration produces a qualitative change in connectivity. The first two sentences above are close and both meaningful; the second and third differ by a single word, yet one is meaningful and the other is not. Meaning can fail abruptly, the way water turns to ice — not by losing a little warmth at a time, but by crossing a threshold.
-
-<figure style="max-width:600px; margin:1.5em auto; text-align:center;">
-<svg viewBox="0 0 460 300" class="no-smart" role="img" aria-label="Structural coherence as a function of a degradation parameter, with a sharp phase-transition drop" style="width:100%; height:auto; display:block; margin:0 auto;">
-<rect x="1" y="1" width="458" height="298" rx="10" style="fill:var(--mn-bg-subtle); stroke:var(--mn-border);" stroke-width="1"/>
-<line x1="55" y1="40" x2="55" y2="240" style="stroke:var(--mn-border);" stroke-width="1.5"/>
-<line x1="55" y1="240" x2="425" y2="240" style="stroke:var(--mn-border);" stroke-width="1.5"/>
-<line x1="240" y1="40" x2="240" y2="240" style="stroke:var(--mn-coral);" stroke-width="1.5" stroke-dasharray="4 5"/>
-<polyline points="55,52 177,66 300,182 425,220" fill="none" style="stroke:var(--mn-accent);" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-<g style="fill:var(--mn-accent);">
-<circle cx="55" cy="52" r="4"/><circle cx="177" cy="66" r="4"/><circle cx="300" cy="182" r="4"/><circle cx="425" cy="220" r="4"/>
-</g>
-<text x="250" y="55" style="fill:var(--mn-coral); font-size:12px; font-family:inherit; font-weight:600;">phase transition</text>
-<g style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">
-<text x="55" y="258" text-anchor="start">the dog sleeps</text>
-<text x="177" y="258" text-anchor="middle">+ quickly</text>
-<text x="300" y="258" text-anchor="middle">+ quadratically</text>
-<text x="425" y="258" text-anchor="end">+ seven</text>
-<text x="235" y="284" text-anchor="middle">degradation t &#8594;</text>
-</g>
-<text x="20" y="140" text-anchor="middle" transform="rotate(-90 20 140)" style="fill:var(--mn-text-muted); font-size:12px; font-family:inherit;">structural coherence</text>
-</svg>
-<figcaption class="md">A degradation sweep: coherence is high and stable, then collapses in a single step as the sentence crosses into the void — a semantic phase transition at the boundary $\partial M$.</figcaption>
-</figure>
 </div>
 
 <div class="ps-card" id="ps-phase-card">
