@@ -1827,6 +1827,11 @@ const NNStepDemo = (() => {
     const totalSteps = sinSteps.length + customSteps.length + 1; // 15
     let currentStep = 0;
 
+    const sinEnd = sinSteps.length - 1;          // 6
+    const customStart = sinSteps.length;          // 7
+    const customEnd = sinSteps.length + customSteps.length - 1; // 13
+    const imagesStep = sinSteps.length + customSteps.length;    // 14
+
     function isOnStückelungSlide() {
         const activeSlide = document.querySelector('.slide.active');
         if (!activeSlide) return false;
@@ -1835,11 +1840,18 @@ const NNStepDemo = (() => {
 
     function canGoNext() {
         if (!isOnStückelungSlide()) return false;
+        if (Presentation.isFastMode()) {
+            // fast: nur sin (0..6) + Bilder (14), Wellenform übersprungen
+            return currentStep !== imagesStep;
+        }
         return currentStep < totalSteps - 1;
     }
 
     function canGoPrev() {
         if (!isOnStückelungSlide()) return false;
+        if (Presentation.isFastMode()) {
+            return currentStep !== 0;
+        }
         return currentStep > 0;
     }
 
@@ -1850,11 +1862,6 @@ const NNStepDemo = (() => {
         const imagesDiv = document.getElementById('nn-bottom-images');
 
         if (!slider || !fnSelect) return;
-
-        const sinEnd = sinSteps.length - 1;          // 6
-        const customStart = sinSteps.length;          // 7
-        const customEnd = sinSteps.length + customSteps.length - 1; // 13
-        const imagesStep = sinSteps.length + customSteps.length;    // 14
 
         if (currentStep <= sinEnd) {
             // Sinus-Schritte
@@ -1880,13 +1887,23 @@ const NNStepDemo = (() => {
 
     function next() {
         if (!canGoNext()) return;
-        currentStep++;
+        if (Presentation.isFastMode() && currentStep === sinEnd) {
+            // fast: direkt zu den Bildern, Wellenform-Schritte überspringen
+            currentStep = imagesStep;
+        } else {
+            currentStep++;
+        }
         applyStep();
     }
 
     function prev() {
         if (!canGoPrev()) return;
-        currentStep--;
+        if (Presentation.isFastMode() && currentStep === imagesStep) {
+            // fast: von den Bildern zurück zum letzten sin-Schritt
+            currentStep = sinEnd;
+        } else {
+            currentStep--;
+        }
         applyStep();
     }
 

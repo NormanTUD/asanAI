@@ -491,6 +491,7 @@ function prev() {
         init, next, prev, goTo, count: () => slides.length,
         slides: () => slides,
         slideTitleAt: (i) => (slides[i] ? slideTitle(slides[i], i) : ''),
+        isFastMode: () => fastMode,
         toggleOverview, toggleFullscreen, closeOverview,
         searchAppend, searchBackspace, clearOverviewSearch, overviewEscape,
     };
