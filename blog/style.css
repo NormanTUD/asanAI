@@ -314,6 +314,18 @@ html.dark .btn-outline:hover {
 html.dark #contents a {
 	text-decoration-color: rgba(129, 140, 248, 0.35);
 }
+html.dark .glossary-term {
+	background: rgba(226, 232, 240, 0.04);
+}
+html.dark .glossary-term:hover {
+	background: rgba(226, 232, 240, 0.10);
+}
+html.dark .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
+	background: rgba(226, 232, 240, 0.05);
+}
+html.dark .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
+	background: rgba(226, 232, 240, 0.13);
+}
 
 /* Light-tinted info/success/warning boxes in dark mode */
 html.dark [style*="background: #f0fdf4"],
@@ -2699,7 +2711,12 @@ pre code {
    be shadowed by neighbour content. */
 .glossary-term {
 	cursor: help;
-	border-bottom: 1px dotted rgba(148, 163, 184, 0.7);
+	background: rgba(71, 85, 105, 0.02);
+	padding: 0.04em 0.15em;
+	border-radius: 999px;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+	transition: background-color 0.18s ease;
 	position: relative;
 	display: inline;
 	z-index: 1;
@@ -5887,17 +5904,19 @@ html.dark #theme-toggle .ti-moon { display: none; }
 
 .glossary-term {
 	cursor: help;
-	border-bottom: 1px dotted rgba(148, 163, 184, 0.7);
+	background: rgba(71, 85, 105, 0.02);
+	padding: 0.04em 0.15em;
+	border-radius: 999px;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+	transition: background-color 0.18s ease;
 	position: relative;
 	display: inline;
 	z-index: 1;
 	isolation: isolate;
 }
 .glossary-term:hover {
-	border-bottom-color: rgba(148, 163, 184, 0.9);
-}
-.glossary-term:hover {
-	border-bottom-color: rgba(148, 163, 184, 0.9);
+	background: rgba(71, 85, 105, 0.10);
 }
 .glossary-tooltip {
 	position: fixed;
@@ -6639,17 +6658,19 @@ html.dark .md mark {
 .md figure { scroll-margin-top: 5rem; }
 .md table { scroll-margin-top: 5rem; }
 
-/* ── 12. Quiet link treatment — reveal underline on hover only ── */
+/* ── 12. Quiet link treatment — subtle gray box, clearer on hover ── */
 .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
-	text-decoration: underline;
-	text-decoration-color: rgba(99,102,241,.30);
-	text-decoration-thickness: 1px;
-	text-underline-offset: .22em;
-	transition: text-decoration-color .18s ease, color .18s ease;
+	color: inherit;
+	text-decoration: none;
+	background: rgba(71, 85, 105, 0.03);
+	padding: 0.05em 0.2em;
+	border-radius: 999px;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+	transition: background-color .18s ease, color .18s ease;
 }
 .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
-	text-decoration-color: currentColor;
-	text-decoration-thickness: 1.5px;
+	background: rgba(71, 85, 105, 0.13);
 }
 
 /* ── 13. Smooth scrolling for in-page anchors ── */
