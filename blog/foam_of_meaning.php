@@ -875,7 +875,31 @@ $$
 where $d(x,x')$ is the distance in the representational space. The bold claim is that this form is *universal* — across species, tasks, and modalities — because it is the form any internalized, distance-based decision rule must take. In the language of this chapter, the law says **generalization is local in $X$**: the closer an unseen form is to a known one, the more reliably its meaning transfers, and the more distant it is, the less. Shepard's exponential kernel is precisely what turns the metric of $X$ into a *learning* signal — and one of the clearest pieces of evidence that the right language for meaning is the language of spaces and distances.
 
 The upshot is that learning is not the accumulation of facts but the *construction of a map between spaces*, under geometric constraints. This reframes the central problem of language acquisition as a problem in *topological inference*: inferring the shape of a space and the structure of a map from partial, noisy observations.
+</div>
 
+<div class="md">
+## Training follows the filaments
+
+The learner constructed $\pi$; in a trained language model that map is not a metaphor but a function $\pi_\theta$ literally optimized on a sample of the measure on $X$. A transformer is never told what language is. It is shown a corpus and asked to predict the next token, and from that single repeated error it must do something harder than memorize: it must locate the web. Its one way to reduce its loss is to discover where the corpus actually lives — the clusters, and above all the **filaments** that connect them — and to learn to walk only there.
+
+**[HYPOTHESIS]** A fully trained model assigns probability concentrated on the web, and exponentially small probability in the voids; the interesting part is directional. At a point on a filament the next-token distribution is sharply peaked, and the natural metric of the model's belief — its Fisher information metric — is elongated along the filament and stiff transverse to it. $\pi_\theta$ is, in effect, a vector field on $X$ whose integral curves follow the filaments: sampling is a random walk that stays on the web, threading clusters, crossing filaments, and only rarely venturing into a void. That is what fluency is.
+
+The voids are avoided without ever being labelled. A continuation that would step off a filament into empty space is, by definition, a continuation that the corpus never shows; the training signal at such a point is large and points back onto the web. Equivalently: what the model implicitly learns is the **score** — the gradient of the log-density $\nabla_x \log p_\theta(x)$ over $X$. In a low-dimensional web set in a high-dimensional void, the score points almost entirely in the direction *normal* to the structure, with magnitude growing with distance from it — exactly the sense in which a diffusion model's score detects the shore of its data manifold. Following the filaments and avoiding the voids are not two goals; they are the same gradient, read forward and backward.
+
+The difficulty is that the web must be discovered before it can be followed, and following is how it is discovered. Early in training the model cannot predict, so it cannot yet know which regions are dense. **[HYPOTHESIS]** The observed exit from this circle is grokking-like: the network first memorizes the clusters by fitting them exactly, then slowly compresses its representations onto the low-dimensional filament structure while pruning away the void-facing components — a compression that persistent homology on its own embeddings resolves as coherent topology (the loops and bridges of the web) appearing at the very moment generalization switches on. The filaments are not an input to training. They are its output.
+</div>
+
+<div class="optional md" data-headline="Has this been said before? A reading note">
+Every ingredient of the picture exists in the literature, but in other vocabularies, and we have not found the specific statement given here — next-token prediction as *learning to follow the filaments of the cosmic web of $X$, and learning the score-normal direction so as to avoid its voids* — in a single place.
+
+- The oldest ingredient is the **manifold hypothesis**: high-dimensional data concentrate near a low-dimensional structure, and training determines the learned function there while leaving the off-manifold directions (the voids) undefined. Transferred to language, pretraining is the learning of "valid text space" — which next-token transitions are natural.
+- The off-manifold direction is increasingly implicated in **hallucination**: recent work on LLM decoding names "manifold departure" — hidden states pushed into low-density tail regions — and proposes corrections that keep decoding on the learned manifold, measuring departure by $k$NN distance: a void-detector in all but name.
+- In generative modeling the same geometry reappears as the demand that **geodesics stay on the data manifold** rather than cutting a chord through its low-density interior ("Riemannian flow matching," score-based metrics, manifold-constrained correction) — the literal claim that training and sampling must not traverse the void.
+- Topological studies of LLM latent spaces find *stratified*, negatively curved token subspaces and persistent "hidden holes," more consistent with a web-like than a manifold-like shape; and a slime-mold filament-detector transplanted from cosmology — where it is run on galaxies — has extracted filaments and knots directly from word embeddings.
+- Finally, "semantic cosmology"-style work has begun applying the full cluster–filament–void vocabulary to training. None of these, on our reading, identifies the *double object of learning* proposed here: the filament to be followed and the void-normal to be avoided are one and the same gradient.
+</div>
+
+<div class="md">
 ## Open problems and a research programme
 
 This chapter has laid out a scaffold. The open problems are the places where the scaffold needs to be turned into a building. We close with the most important of them.
