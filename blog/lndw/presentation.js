@@ -266,55 +266,69 @@ const Presentation = (() => {
         }
     }
 
-    // „Einfachste" Fragmente = statischer Inhalt ohne Aktionen/Demos.
-    // In ?fast=1 werden sie direkt angezeigt statt Schritt für Schritt.
-    function isSimpleFragment(frag) {
-        if (frag.getAttribute('data-fragment-action')) return false;
-        if (frag.classList.contains('demo-box')) return false;
-        if (frag.querySelector('.demo-box')) return false;
-        return true;
-    }
+// „Einfachste" Fragmente = statischer Inhalt ohne Aktionen/Demos
+// (weder data-fragment-action, noch demo-box). Verschachtelte
+// Fragmente (z.B. die LLM-Schritte in „Die autoregressive Schleife")
+// bleiben Schritt für Schritt – so auch komplexe Demos.
+function isSimpleFragment(frag) {
+    if (frag.getAttribute('data-fragment-action')) return false;
+    if (frag.classList.contains('demo-box')) return false;
+    if (frag.querySelector('.demo-box')) return false;
+    return true;
+}
 
-    function revealFastFragments(idx) {
-        const fragments = getFragments(idx);
-        let n = 0;
-        while (n < fragments.length && isSimpleFragment(fragments[n])) {
-            fragments[n].classList.add('visible');
-            n++;
-        }
-        fragmentIndex[idx] = n;
-    }
+// Nur TOP-LEVEL-Fragmente: kein Elternteil ist selbst ein Fragment.
+function isTopLevelFragment(frag) {
+    if (!frag.parentElement) return true;
+    return !frag.parentElement.closest('.fragment');
+}
 
-    function next() {
-        const fragments = getFragments(currentSlide);
-        const visibleCount = fragmentIndex[currentSlide];
-        if (visibleCount < fragments.length) {
-            const frag = fragments[visibleCount];
-            frag.classList.add('visible');
-            fragmentIndex[currentSlide]++;
-            executeFragmentAction(frag, 'forward');
-            return;
-        }
-        goTo((currentSlide + 1) % slides.length);
-    }
+function isFastRevealable(frag) {
+    return isSimpleFragment(frag) && isTopLevelFragment(frag);
+}
 
-    function prev() {
-        const fragments = getFragments(currentSlide);
-        const visibleCount = fragmentIndex[currentSlide];
-        if (visibleCount > 0) {
-            const frag = fragments[visibleCount - 1];
-            frag.classList.remove('visible');
-            fragmentIndex[currentSlide]--;
-            executeFragmentAction(frag, 'backward');
-            return;
-        }
-        if (currentSlide > 0) {
-            goTo(currentSlide - 1, true);
-        } else {
-            // Loop: von der ersten Folie zurück zur letzten
-            goTo(slides.length - 1, true);
-        }
+// ?fast=1: alle einfachen Top-Level-Fragmente direkt anzeigen.
+// fragmentIndex bleibt bei 0 – next() überspringt die bereits
+// sichtbaren und zeigt nur noch die verschachtelten/Demo-Schritte
+// einzeln an; prev() faltet in umgekehrter Reihenfolge zusammen.
+function revealFastFragments(idx) {
+    const fragments = getFragments(idx);
+    fragments.forEach(f => f.classList.remove('visible'));
+    fragments.forEach(f => { if (isFastRevealable(f)) f.classList.add('visible'); });
+    fragmentIndex[idx] = 0;
+}
+
+function next() {
+    const fragments = getFragments(currentSlide);
+    let i = fragmentIndex[currentSlide];
+    while (i < fragments.length && fragments[i].classList.contains('visible')) i++;
+    if (i < fragments.length) {
+        const frag = fragments[i];
+        frag.classList.add('visible');
+        executeFragmentAction(frag, 'forward');
+        fragmentIndex[currentSlide] = i + 1;
+        return;
     }
+    goTo((currentSlide + 1) % slides.length);
+}
+
+function prev() {
+    const fragments = getFragments(currentSlide);
+    let i = fragmentIndex[currentSlide] - 1;
+    while (i >= 0 && !fragments[i].classList.contains('visible')) i--;
+    if (i >= 0) {
+        fragments[i].classList.remove('visible');
+        executeFragmentAction(fragments[i], 'backward');
+        fragmentIndex[currentSlide] = i;
+        return;
+    }
+    if (currentSlide > 0) {
+        goTo(currentSlide - 1, true);
+    } else {
+        // Loop: von der ersten Folie zurück zur letzten
+        goTo(slides.length - 1, true);
+    }
+}
 
     function goTo(idx, showAllFragments = false) {
         if (idx < 0 || idx >= slides.length) return;
