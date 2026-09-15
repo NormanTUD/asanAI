@@ -59,8 +59,6 @@ topics: geometry, math-i, math-ii, math-iii, statistics-ii
 
 
 <div class="md">
-# The foam of meaning
-
 This chapter is a working mathematical treatment of *meaningful language spaces*. It begins from the idea that the objects of study are not tokens, not words, and not even sentences, but the structured *possibility spaces* in which those things live — the space of all potential utterances, the space of all interpretations those utterances can generate, and the spaces of worlds, actions, and consequences in which those interpretations can be tested.
 
 The guiding intuition is that meaning is not a substance carried by individual symbols. Meaning is a property of structure: of the shape of the space, the geometry of its clusters and voids, and the maps that relate one space to another. A single sentence, viewed in isolation, is almost meaningless. What makes it meaningful is its position within a landscape — the nearby utterances, the distant ones, the gaps, the bridges, and the patterns that persist across scale.
@@ -104,6 +102,16 @@ The picture above is not science fiction. It is a direct transplant of the astro
 	<img src="cosmic_web.jpg" alt="A slice of the cosmic web: clusters and filaments of galaxies and dark matter, set in large voids" style="width:100%; height:auto; border-radius:12px; border:1px solid var(--mn-border);" />
 	<figcaption class="md">A slice of the cosmic web: bright **clusters** and **filaments** of galaxies and dark matter, set in vast **voids**. \cite[the linguistic possibility space is conjectured to have the same kind of large-scale shape]{cosmic_web_image}.</figcaption>
 </figure>
+</div>
+
+<div class="optional md" data-headline="How the cosmic web is actually shaped">
+The web in the picture above is not an artist's invention. It is a rendering of the large-scale structure that four decades of sky surveys have mapped in three dimensions. Looked at that way, the galaxies of the universe are not sprinkled about evenly: they sit in a hierarchy. Stars gather into galaxies, galaxies into groups and **clusters**, clusters into superclusters, and these are strung together into thread-like **filaments** and into flattened **walls** and **sheets**, all of them suspended in a sea of near-empty **voids**. Cosmologists call the whole pattern the *cosmic web*, and — fittingly — describe it as a vast, foam-like structure.
+
+The individual pieces are enormous. The "Great Wall" mapped by Geller and Huchra in 1989 is a sheet of galaxies more than 500 million light-years long but only about 15 million light-years thick. The Pisces–Cetus filament that contains our own neighbourhood of the sky is of order a billion light-years across. And the Giant Void is an almost empty sphere about 1.3 billion light-years in diameter. What ties the pattern together is that it is *hierarchical*: the same tangle of knots and connecting threads reappears at almost every magnification. Statistically, that self-similarity is captured by a single object, the **matter power spectrum** — a curve that says how much "clumpiness" there is at each scale.
+
+There is a boundary to the pattern, and it is worth being honest about. Beyond a scale of roughly 100 megaparsecs (about 300 million light-years) the clumpiness fades, and the universe becomes statistically homogeneous and isotropic, just as the cosmological principle demands. The web is therefore *not* a fractal that repeats to infinity; at the very largest scales the cells of the foam blur into one another and the effective dimension approaches that of ordinary space. (The web is also more "material" than a mere drawing: the gas between the knots is real, and has itself been imaged — in the Lyman-alpha forest of quasar spectra, and more recently in the faint glow of the filamentary gas around knots that are still forming.)
+
+The final step is the part that is a *conjecture*, not a measurement. Because the cosmic web is, at bottom, simply "stuff laid out in a high-dimensional space, gathered into dense regions, joined by thin bridges, and separated by empty ones," one can ask whether the same coarse shape might show up in the space $X$ of possible linguistic forms. It is possible — we do not know — that frequently used, conventional utterances sit in dense **clusters**, that productive grammatical and compositional patterns form the **filaments** between them, and that the enormous region of ungrammatical or simply never-used strings corresponds to the **voids**. All that can safely be said is that the possibility space *could be* of this kind: a sparse, clustered, filamentary foam. That is a guess made plausible by the visual and structural parallel, not a claim with a proof or a measurement. The rest of this chapter is an attempt to find out whether the guess survives contact with the data.
 </div>
 
 <div class="md">
