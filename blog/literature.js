@@ -9565,6 +9565,131 @@ window.bibData = {
 		url: "https://en.wikisource.org/wiki/Works_of_Antoni_van_Leeuwenhoek",
 		alternativetitle: "Leeuwenhoek's Letters"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Micrographia → the cell → the neuron  (untold_history.php)
+	 *  The lens lineage: Hooke's Micrographia (1665) names the cell;
+	 *  cell theory (Schleiden, Schwann, Virchow); Golgi's black reaction
+	 *  and Cajal's neuron doctrine; the microscope as the model, the
+	 *  metrology, and the method of AI (Olah et al., "Zoom In").
+	 * ───────────────────────────────────────────────────────────────────── */
+	"micrographia": {
+		title: "Micrographia: or Some Physiological Descriptions of Minute Bodies Made by Magnifying Glasses. With Observations and Inquiries Thereupon",
+		author: "Robert Hooke",
+		year: 1665,
+		url: "https://en.wikisource.org/wiki/Micrographia",
+		alternativetitle: "Micrographia"
+	},
+	"micrographia_wiki": {
+		title: "Micrographia",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Micrographia",
+		alternativetitle: "Micrographia (Wikipedia)"
+	},
+	"hookecork": {
+		title: "Micrographia, Plate II: observation of the pores (cells) of cork",
+		author: "Robert Hooke",
+		year: 1665,
+		url: "http://www.ucmp.berkeley.edu/history/hooke.html",
+		alternativetitle: "Hooke's cork observation (1665)"
+	},
+	"celltheory_wiki": {
+		title: "Cell theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cell_theory",
+		alternativetitle: "Cell theory (Wikipedia)"
+	},
+	"schleiden1838": {
+		title: "Beiträge zur Phytogenese (Contributions to Phytogenesis)",
+		author: "Matthias Jakob Schleiden",
+		year: 1838,
+		url: "https://en.wikipedia.org/wiki/Cell_theory",
+		alternativetitle: "Beiträge zur Phytogenese"
+	},
+	"schwann1839": {
+		title: "Microscopical Researches on the Agreement in the Structure and Growth of Animals and Plants",
+		author: "Theodor Schwann",
+		year: 1839,
+		url: "https://en.wikipedia.org/wiki/Cell_theory",
+		alternativetitle: "Schwann's Microscopical Researches"
+	},
+	"virchow1858": {
+		title: "Die zelluläre Pathologie (Cellular Pathology)",
+		author: "Rudolf Virchow",
+		year: 1858,
+		url: "https://en.wikipedia.org/wiki/Rudolf_Virchow",
+		alternativetitle: "Die zelluläre Pathologie"
+	},
+	"golgi1873": {
+		title: "Sulla struttura della corteccia cerebellare (first description of the silver impregnation method, 1873)",
+		author: "Camillo Golgi",
+		year: 1873,
+		url: "https://en.wikipedia.org/wiki/Golgi_stain",
+		alternativetitle: "Golgi's black reaction"
+	},
+	"cajal1888": {
+		title: "De la nature du réseau nerveux (on the nature of the nerve network)",
+		author: "Santiago Ramón y Cajal",
+		year: 1888,
+		journal: "Revista Trimestral de Histología Normal y Patológica",
+		url: "https://en.wikipedia.org/wiki/Neuron_doctrine",
+		alternativetitle: "Cajal's 1888 neuron-doctrine report"
+	},
+	"waldeyer1891": {
+		title: "Anatomie des Menschen, 4th ed. (coining the term 'Neuron')",
+		author: "Heinrich Wilhelm Gottfried von Waldeyer-Hartz",
+		year: 1891,
+		url: "https://en.wikipedia.org/wiki/Neuron_doctrine",
+		alternativetitle: "Waldeyer's Anatomie des Menschen"
+	},
+	"neuron_doctrine_wiki": {
+		title: "Neuron doctrine",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Neuron_doctrine",
+		alternativetitle: "Neuron doctrine (Wikipedia)"
+	},
+	"olaha2020zoomin": {
+		title: "Zoom In: An Introduction to Circuits",
+		author: "Chris Olah, Nick Cammarata, Ludwig Schubert, Gabriel Goh, Michael Petrov, Shan Carter",
+		year: 2020,
+		journal: "Distill",
+		url: "https://distill.pub/2020/circuits/zoom-in/",
+		alternativetitle: "Olah et al., Zoom In: An Introduction to Circuits (Distill 2020)"
+	},
+	"img_micrographia_titlepage": {
+		title: "Title page of Micrographia (1665)",
+		author: "Robert Hooke",
+		year: 1665,
+		url: "https://commons.wikimedia.org/wiki/File:Micrographia_title_page.gif",
+		license: "Public domain",
+		alternativetitle: "Micrographia title page"
+	},
+	"img_hooke_cock_microscope": {
+		title: "Compound microscope manufactured by Christopher Cock of London for Robert Hooke, believed used for the observations of Micrographia",
+		author: "Billings Microscope Collection, National Museum of Health and Medicine (photograph by Crispin Cooper)",
+		year: 2018,
+		url: "https://commons.wikimedia.org/wiki/File:Hooke_Microscope-03000276-FIG-4.jpg",
+		license: "Public domain",
+		alternativetitle: "Hooke's Cock microscope"
+	},
+	"img_micrographia_cork": {
+		title: "Hooke was the first to apply the word 'cell' to biological objects: Cork",
+		author: "Robert Hooke (engraving after his own drawing)",
+		year: 1665,
+		url: "https://commons.wikimedia.org/wiki/File:RobertHookeMicrographia1665.jpg",
+		license: "Public domain",
+		alternativetitle: "Micrographia cork cells"
+	},
+	"img_cajal_cerebellum": {
+		title: "Ramón y Cajal's drawing of the cells of the chick cerebellum, from Estructura de los centros nerviosos de las aves, Madrid, 1905",
+		author: "Santiago Ramón y Cajal",
+		year: 1905,
+		url: "https://commons.wikimedia.org/wiki/File:CajalCerebellum.jpg",
+		license: "Public domain",
+		alternativetitle: "Cajal, chick cerebellum (1905)"
+	},
 	"gutenbergpress": {
 		title: "Movable metal type printing press (Mainz, c. 1440)",
 		author: "Johannes Gutenberg",
