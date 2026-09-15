@@ -553,14 +553,14 @@ function renderBackpropVisual(rootId) {
       zChunks.push({ kind: "tex", tex: "\\;=\\;" + fmt(R.z[l][i]) });
       stmts.push({ title: "① Forward — pre-activation", chunks: zChunks });
 
-      // a = σ(z)
+      // a = σ(z)  — plain parens (stretchy \left/\right can't span two fragments)
       stmts.push({
         title: "② Forward — activation",
         chunks: [
           { kind: "sym", sym: Sym.a(l, i), pathKey: `${pathPrefix}/a` },
-          { kind: "tex", tex: "\\;=\\;\\sigma\\!\\left(" },
+          { kind: "tex", tex: "\\;=\\;\\sigma\\!\\(" },
           { kind: "sym", sym: Sym.z(l, i), pathKey: `${pathPrefix}/z2` },
-          { kind: "tex", tex: "\\right) \\;=\\; " + fmt(R.a[l][i]) }
+          { kind: "tex", tex: "\\)\\;=\\; " + fmt(R.a[l][i]) }
         ]
       });
 
