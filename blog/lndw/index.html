@@ -33,13 +33,12 @@
 	<div class="slide-content">
 		<h2>Was sind LLM?</h2>
 		<div style="align-items:center; justify-content:center; gap:20px; margin:30px 0; flex-wrap:wrap;">
-			<p>Sprachmodelle wie <b>ChatGPT</b>, <b>Gemini</b> oder <b>Claude</b>.</p>
+			<p><b>ChatGPT</b> · <b>Gemini</b> · <b>Claude</b></p>
 			<ul>
-				<li class="fragment">Der User stellt dem System eine Frage, so, wie er denkt</li>
-				<li class="fragment">Das System antwortet mit einer (hoffentlich) sinnvollen Antwort</li>
+				<li class="fragment">Frage stellen → Antwort erhalten</li>
+				<li class="fragment">= <b>Large Language Model</b> (LLM)</li>
 			</ul>
-			<p class="fragment">Systeme wie diese heißen <b>Large Language Model</b> oder kurz <b>LLM.</b></p>
-		<p class="fragment">Sprachmodelle dieser Art sind Grundlage vieler moderner KI-Systeme, sei es Bild- oder Audiogenerierung.</p>
+		<p class="fragment">Grundlage vieler KI-Systeme (Bild, Audio, …)</p>
 	</div>
 </div>
 </div>
@@ -48,7 +47,7 @@
 <div class="slide" data-title="Sonnenbahn">
     <div class="slide-content">
         <h2>Die Wirklichkeit hat mathematische Muster</h2>
-        <p style="margin-bottom:10px;">Und diese Muster spiegeln sich in Texten wider, weil manche Texte versuchen, die Wirklichkeit zu beschreiben.</p>
+        <p style="margin-bottom:10px;">Muster der Wirklichkeit → spiegeln sich in Texten wider.</p>
 
         <!-- Fragment 1: Sonnenbild -->
         <div id="sunrise-fragment-1">
@@ -60,7 +59,7 @@
 
         <!-- Fragment 2: Sinus-Overlay einblenden -->
         <div class="fragment" id="sunrise-fragment-2" data-fragment-action="show-sinus"></div>
-        <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn über Concordia (75°S, Antarktis) über 24 Stunden an einem Polartag, 24 Aufnahmen im Stundenabstand, zusammengefügt zu einem Panorama.</p>
+        <p style="color:#64748b; text-align:center; margin-top:8px;">Sonnenbahn, Concordia (Antarktis) · 24 h Polartag als Panorama.</p>
 
         <!-- Sinus-Formel (vereinfacht) -->
         <div class="fragment" style="margin-top:16px;">
@@ -70,8 +69,7 @@
         </div>
 
         <div class="fragment" style="margin-top:12px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; color:#92400e; max-width:900px; margin-left:auto; margin-right:auto;">
-            <b>Der Zusammenhang:</b> In Texten steht "Um Mitternacht steht die Sonne nur 10° über dem Horizont" und "Mittags erreicht sie fast 40°".
-            Implizit steckt darin die modellhafte Vorstellung einer Sinusfunktion, solche Muster kann ein Modell aus Textzusammenhängen lernen.
+            <b>Der Zusammenhang:</b> „Mitternacht 10°, Mittag 40°" → implizite Sinusfunktion. Solche Muster lernt das Modell aus Texten.
         </div>
     </div>
 </div>
@@ -113,11 +111,11 @@
         <h2>Was sind Neuronale Netzwerk?</h2>
 
         <div>
-		Neuronale Netze können Funktionen approximieren. Das heißt: sie verhalten sich <i>ähnlich genug</i>, um nützlich zu sein.
+ 		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
         </div>
 
         <div class="fragment">
-		Manchmal weiß man nicht, wie man eine Funktion bauen kann, hat aber viele Beispiele, was Eingaben sind und was rauskommen kann. Dann kann der Computer eine Funktion finden, mit der das möglichst gut geht.
+ 		Viele Beispiele (Eingang → Ausgang) → der Computer findet die Funktion selbst.
         </div>
 
         <div class="fragment formula-box">
@@ -125,7 +123,7 @@
         </div>
 
         <div class="fragment">
-		Ein einziges Neuron löst immer nur eine Gleichung der Form <span class="math-inline">a \cdot x + b</span>. Ein Dense-Layer kann Milliarden davon gleichzeitig berechnen.
+ 		1 Neuron = 1 Gleichung <span class="math-inline">a \cdot x + b</span> · ein Layer rechnet Milliarden davon parallel.
         </div>
 
         <div class="fragment">
@@ -168,7 +166,7 @@
         </div>
 
         <div class="key-insight fragment">
-            <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau durch Stückelung in lineare Segmente approximieren!
+            <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b> (per Stückelung).
         </div>
     </div>
 </div>
@@ -183,17 +181,17 @@
                     <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" class="fragment" src="../mcculloch.png" alt="Warren McCulloch" />
                     <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" class="fragment" src="../pitts.jpg" alt="Walter Pitts" />
                 </div>
-                <p class="fragment" style="text-align:center; margin-top:8px;"><b>Warren McCulloch &amp; Walter Pitts (1943)</b> bewiesen, dass ein vereinfachtes Neuron logische Operationen ausführen kann.</p>
+                <p class="fragment" style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
 
                 <div style="text-align:center">
                 <img style="max-width:100%; max-height:22vh; border-radius:8px;" class="fragment" src="../snarc.jpg" alt="SNARC" />
                 </div>
-                <p class="fragment" style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b> von Minsky &amp; Edmonds: das erste physische neuronale Netz — 40 Neuronen aus Vakuumröhren, die eine Ratte im Labyrinth simulierten.</p>
+                <p class="fragment" style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
             </div>
 
             <div>
                 <div class="key-insight fragment" style="font-size:0.95em;">
-                    <b>Rosenblatts Perceptron (1958)</b> baute auf McCulloch &amp; Pitts auf und konnte Buchstaben klassifizieren.
+                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf M&amp;P auf · klassifiziert Buchstaben.
                 </div>
 
                 <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
@@ -210,7 +208,7 @@
     <div class="slide-content">
         <h2>Funktionsapproximation durch Stückelung</h2>
         <div class="demo-box">
-            <p>Ein Neuronales kann (mit genug Neuronen) jede stetige Funktion beliebig genau approximieren</p>
+            <p>Mit genug Neuronen → jede stetige Funktion beliebig genau.</p>
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
                 <label style="font-weight:bold;">Zielfunktion:</label>
                 <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
@@ -244,20 +242,20 @@
         <h2>Deep Learning</h2>
 
         <div class="key-insight">
-		Beim <b>Deep Learning</b> schaltet man viele dieser Neuronen nebeneinander und hintereinander, so dass alle mit jedem aus der vorherigen und nächsten Schicht verbunden sind.
-	</div>
+ 		Viele Neuronen nebeneinander &amp; hintereinander · jede Schicht voll verdrahtet mit der vorherigen &amp; nächsten.
+ 	</div>
 
 	<div style="text-align:center">
 	<img class="fragment" src="dense.png" />
 	</div>
 
         <div class="fragment">
-		Die ersten Layer übernehmen normalerweise die einfachsten Aufgaben, die späteren können auf den Ergebnissen der vorherigen aufbauen.
-	</div>
+ 		Früh: einfache Muster · später: darauf aufbauen.
+ 	</div>
 
         <div class="fragment">
-		Beispiel: Gesichtserkennung. Die frühesten Layer achten nur auf sehr kleine lokale Verläufe, aus denen sich dann immer komplexere Strukturen zusammenbauen, die er erkennen kann.
-	</div>
+ 		Beispiel Gesichtserkennung: kleine lokale Verläufe → immer komplexere Strukturen.
+ 	</div>
 
 	<div style="text-align:center">
 	<img class="fragment" src="first_layers_vs_last_layers.png" />
@@ -270,12 +268,12 @@
     <div class="slide-content">
         <h2>Texte haben Pattern; Maschinen können Patterns lernen</h2>
         <div>
-		Texte haben offensichtliche Pattern: nach dem Subjekt kommt ein Verb, vor dem Nomen ein Artikel, usw.
-	</div>
+ 		Offensichtliche Pattern: Subjekt → Verb, Artikel vor Nomen, …
+ 	</div>
 
         <div class="fragment">
-		Es gibt aber auch <b>unerwartete, sehr robuste Pattern</b>. Eines davon ist <b>Zipfs Gesetz</b>: das zweithäufigste Wort kommt etwa halb so oft vor wie das häufigste, das dritthäufigste ein Drittel davon, usw.
-	</div>
+ 		Auch <b>unerwartet robuste Pattern</b> — z. B. <b>Zipfs Gesetz</b>: 2. häufigstes Wort ≈ halb so oft wie das häufigste, 3. ≈ ein Drittel, …
+ 	</div>
 
         <div class="fragment" style="margin-top:10px;">
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
@@ -284,12 +282,12 @@
         </div>
 
         <div class="fragment" style="font-size:0.85em; color:#475569; margin-top:6px;">
-            Echte Daten: <b>King James Bible</b> (823.806 Wörter) vs. <b>Finnegans Wake</b> (9.994 Wörter) — die <b>Form</b> der Verteilung ist identisch.
+            <b>King James Bible</b> (823.806 Wörter) vs. <b>Finnegans Wake</b> (9.994 Wörter) → gleiche <b>Form</b>.
         </div>
 
         <div class="key-insight fragment">
-		Solche Pattern kann die Maschine lernen — <b>und auch ganz andere</b>, die den Daten zugrunde liegen, wie die <b>sinusförmigen Sonnen-Daten</b> (Sonnenstände, Tag/Nacht-Wechsel) aus den ersten Folien.
-	</div>
+ 		Die Maschine lernt solche Pattern — <b>und zugrundeliegende</b>, wie die <b>sinusförmigen Sonnen-Daten</b>.
+ 	</div>
     </div>
 </div>
 
@@ -471,8 +469,8 @@
     <div class="slide" data-title="Autoregressive Schleife">
         <div class="slide-content">
             <h2>Die autoregressive Schleife</h2>
-            <p>LLMs sind Maschinen, die das <b>nächste Token</b> vorhersagen. Aber immer nur <b>ein einziges Token</b> auf einmal.</p>
-            <p class="fragment">Dieses Token wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
+            <p>LLMs vorhersagen immer nur <b>ein</b> Token auf einmal.</p>
+            <p class="fragment">→ an den Input anhängen → erneut rechnen, bis <code>|endoftext|</code>.</p>
 
             <div class="fragment formula-box">
                 <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>
@@ -483,7 +481,7 @@
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>
             </div>
-		<p class="fragment">Bei jedem Aufruf wird nur <b>ein</b> Token generiert! Es wird angehangen und wieder und wieder aufgerufen, bis <tt>|endoftext|</tt> kommt.</p>
+		<p class="fragment">Jeder Aufruf = 1 Token · anhängen · wiederholen, bis <tt>|endoftext|</tt>.</p>
         </div>
     </div>
 
@@ -492,9 +490,9 @@
     <div class="slide" data-title="Tokenisierung">
         <div class="slide-content">
             <h2>Tokenisierung</h2>
-            <p>Computer verstehen keine Wörter, nur Zahlen. Der Text wird in kleine Stücke (<b>Tokens</b>) zerlegt.</p>
-            <p class="fragment">Diese können ganze Wörter sein, oder Bestandteile von Wörtern, oder auch mehrere Wörter, aber auch Leerzeichen, Komma, Fragezeichen, Emojis usw.</p>
-	    <p class="fragment">Man sagt dem Tokenizer, wie viele Tokens er erstellen soll, und abhängig von der Häufigkeit in den Trainingsdaten sucht er sich dann von selbst die Worte oder Teile von Worten aus, die er als <b>Tokens</b> nimmt.</p>
+            <p>Text → kleine Stücke (<b>Tokens</b>) · Computer versteht nur Zahlen.</p>
+            <p class="fragment">Ganze Wörter · Wortteile · mehrere Wörter · auch Leerzeichen, Kommata, Emojis, …</p>
+    	<p class="fragment">Anzahl vorgeben → Tokenizer wählt per Häufigkeit die (Teil-)Worte selbst.</p>
 
             <div class="demo-box fragment" style="min-height:auto;">
                 <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:14px;" placeholder="z.B. 'es war einmal ein königskind'" value="es war einmal ein königskind">
@@ -507,12 +505,12 @@
     <div class="slide" data-title="Embedding">
         <div class="slide-content">
             <h2>Embedding</h2>
-	    <p>Jedes Token wird durch einen <b>Vektor</b> ersetzt, der interpretierbar ist als seine <b>Bedeutung</b>:</p>
+ 	    <p>Jedes Token → <b>Vektor</b> = seine <b>Bedeutung</b>:</p>
             <div class="formula-box">
                 <div class="math-display">$$\text{"könig"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
             </div>
-	    <p class="fragment">Die konkreten Werte bringt der Computer sich selbstständig anhand von Trainingsdaten bei, indem er statistische Muster und Wortbeziehungen aus riesigen Textmengen lernt.</p>
-	    <p class="fragment">Die Startpunkte werden zufällig gewählt, und immer mehr angepasst, so dass das Ergebnis (die Auswahl des nächsten Tokens) möglichst gut wird.</p>
+ 	    <p class="fragment">Werte lernt der Computer selbst aus Trainingsdaten (statistische Muster).</p>
+ 	    <p class="fragment">Starte zufällig → wird so angepasst, dass die nächste-Token-Wahl immer besser wird.</p>
 
     <figure class="quote fragment visible">
         <blockquote>
@@ -553,7 +551,7 @@
         </div>
 
         <div class="fragment key-insight" style="margin-top:14px;">
-		In diesem zweidimensionalen Schnitt durch den Embedding Space eines LLMs haben sich Punkte so geclustert, dass sie in Relation zueinander in etwa gleich sind wie in der physischen Welt, weil das die einfachste Form ist, diese Information zu speichern.
+ 		2D-Schnitt des Embedding Spaces: Punkte clustern so, dass ihre Relationen ≈ der physischen Welt entsprechen — die einfachste Speicherung.
         </div>
     </div>
 </div>
@@ -569,8 +567,7 @@
                 <div style="padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca; margin-bottom:14px;">
                     <div style="font-weight:bold; color:#991b1b; margin-bottom:10px;">⚠️ Was sind Glitch Tokens?</div>
                     <p style="color:#7f1d1d; line-height:1.8; margin:0;">
-                        Tokens, die der <b>Tokenizer</b> kennt (d.h. sie haben einen eigenen Vektor),
-			weil sie häufig vorkamen, aber das <b>Modell</b> nie richtig gelernt hat, was sie bedeuten.
+                        Tokens, die der <b>Tokenizer</b> kennt (eigener Vektor, weil häufig) — aber das <b>Modell</b> nie gelernt hat, was sie bedeuten.
                     </p>
                 </div>
 
@@ -578,10 +575,8 @@
                     <div style="font-weight:bold; color:#6b21a8; margin-bottom:10px;">💬 "TheNitromeFan" → 182</div>
                     <img src="thenitromefan.jpg" alt="Glitch Token Chat-Beispiel" style="max-width:100%; max-height:280px; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
                     <p style="color:#581c87; margin-top:12px; line-height:1.6; text-align:left;">
-			Reddit-User, der in r/counting nur <b>Zahlen</b> gepostet hat.<br>
-			Das Token kam fast nur <b>neben Zahlen</b> vor (Zähl-Threads).<br>
-			→ Das Modell assoziiert es vage mit Zahlen<br>
-			→ Gibt z.B. "182" aus statt den Namen zu wiederholen.
+ 			Reddit-User (r/counting) → Token kam fast nur <b>neben Zahlen</b> vor.<br>
+ 			→ Modell assoziiert vage Zahlen → gibt <b>"182"</b> statt des Namens.
                     </p>
                 </div>
             </div>
@@ -626,8 +621,8 @@
 <div class="slide" data-title="Positional Embedding">
 	<div class="slide-content">
 		<h2>Positional Embedding</h2>
-		<p>"Der Hund beißt den Mann” ≠ "Der Mann beißt den Hund”: gleiche Wörter, aber andere Reihenfolge und ganz andere Bedeutung!</p>
-		<p class="fragment">Die Reihenfolge ist wichtig: sie wird <b>in</b> die Tokens selbst durch <b>Positional Embedding</b> kodiert, so dass jeder <i>positionally embedded</i> Tokenvektor beinhaltet, <b>was es bedeutet</b> und <b>wo es steht</b>.</p>
+		<p>"Hund beißt Mann" ≠ "Mann beißt Hund" — gleiche Wörter, andere Reihenfolge, andere Bedeutung.</p>
+		<p class="fragment">Reihenfolge wird per <b>Positional Embedding</b> in den Tokenvektor kodiert → Vektor weiß <b>was</b> es bedeutet und <b>wo</b> es steht.</p>
 	</div>
 </div>
 
@@ -665,7 +660,7 @@
         <div class="slide-content">
             <h2>Attention</h2>
             <p>"Welche anderen Tokens sind für <b>dieses</b> Token wichtig?”</p>
-	    <p class="fragment"><b>Beispiel:</b> "Ich bringe mein <b>Geld</b> auf die <b>Bank</b>”, worauf bezieht sich "<b>Bank</b>”, eine Parkbank oder die Bank zu der man Geld bringt?</p>
+	    <p class="fragment"><b>Beispiel:</b> „Geld auf die <b>Bank</b>” → Parkbank oder Geldinstitut?</p>
 		<div class="fragment" style="margin-top:16px;">
 		    <div id="attention-sentence-display" style="text-align:center; padding:14px 20px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; margin-bottom:12px; font-size:1.2em; color:#1e293b; font-weight:500; min-height:48px; display:flex; align-items:center; justify-content:center;">
 			Ich bringe mein <b style="color:#3b82f6;">Geld</b> auf die <b style="color:#3b82f6;">Bank</b>.
@@ -674,12 +669,12 @@
 		</div>
 
 		<div class="key-insight fragment" style="margin-top:14px;">
-			Statt nur auf einen Aspekt zu achten, packt man mehrere <b>Attention Heads</b> zusammen. Einer achtet darauf, worauf sich "sie" oder "er" bezieht. Ein anderer erkennt, dass "nicht schlecht" zusammengehört. Ein dritter führt getrennte Tokens wie "Königs" und "kind" zu ihrer gemeinsamen Bedeutung "Königskind" zusammen. Und wieder ein anderer verbindet weit entfernte Stellen: wenn auf Seite 1 steht "Der Detektiv heißt Müller" und auf Seite 30 jemand fragt "Wer hat den Fall gelöst?", wird das "Wer" mit "Müller" in Verbindung gebracht. <b>Attention</b> beachtet immer <b>alle</b> Tokens!
+			Mehrere <b>Attention Heads</b>, je einer für einen Aspekt: Pronomen-Referenz · „nicht schlecht" · „Königs"+"kind" → Königskind · „Wer" (S. 1) ↔ „Müller" (S. 30). <b>Attention</b> beachtet immer <b>alle</b> Tokens!
 		</div>
 
 
 	    <div class="fragment" style="margin-top:16px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
-		    <strong>⚠️ Hinweis:</strong> Das hier ist eine <b>starke Vereinfachung</b>. In Wirklichkeit ist Attention deutlich komplizierter. Es gibt Query-, Key- und Value-Vektoren und mehr. Aber für die <b>Intuition</b> reicht es: Attention beantwortet die Frage "Welche anderen Tokens im Satz sind für dieses Token gerade relevant?"
+		    <strong>⚠️ Hinweis:</strong> <b>starke Vereinfachung</b> — in Wirklichkeit gibt es Query-, Key-, Value-Vektoren. Für die <b>Intuition</b> reicht es.
 		</div>
 
         </div>
@@ -690,7 +685,7 @@
 <div class="slide" data-title="Wahrscheinlichkeits-Tunnel">
     <div class="slide-content">
         <h2>Isoflächen der Wahrscheinlichkeit: Der "Truth Tunnel"</h2>
-        <p style="margin-bottom:10px;">Stell dir eine Hülle um jeden Bereich vor, den das Modell für <b>plausibel</b> hält. Mit jedem Token <b>verändert, verengt</b></b> sich der Tunnel – wie ein Scheinwerfer zeigt er auf die Region der möglichen nächsten Token.</p>
+        <p style="margin-bottom:10px;">Hülle um alles, was das Modell für <b>plausibel</b> hält. Mit jedem Token verengt sich der Tunnel → Scheinwerfer auf die möglichen nächsten Token.</p>
 
         <div class="demo-box" style="min-height:auto; padding:16px;">
             <div style="display:grid; grid-template-columns:1fr 230px; gap:14px; align-items:start;">
@@ -706,8 +701,7 @@
         </div>
 
         <div class="key-insight fragment">
-            <strong>Die Kernidee:</strong> Der Tunnel markiert die Region, in der <b>plausible</b> Fortsetzungen liegen — „König" oder „Mädchen" sind noch drin, sie könnten noch kommen.
-            <b>Wesentlich außerhalb</b> des Funnels (graue „✗"-Wörter) ist für das Modell praktisch ausgeschlossen: solche Wörter kommen nicht einmal in die Nähe der möglichen nächsten Tokens.
+            <strong>Die Kernidee:</strong> Der Tunnel markiert <b>plausible</b> Fortsetzungen („König"/„Mädchen" drin) · weit außerhalb (graue „✗") ≈ ausgeschlossen.
         </div>
     </div>
 </div>
@@ -748,7 +742,7 @@
 <div class="slide" data-title="J-Space">
     <div class="slide-content">
         <h2>Der J-Space: Ein "Global Workspace" im Modell</h2>
-        <p>Wie kommt es, dass ein LLM seine eigenen Zwischenschritte "sehen" kann – und was hat das mit Bewusstsein zu tun?</p>
+        <p>Wie ein LLM seine eigenen Zwischenschritte "sehen" kann — und was das mit Bewusstsein zu tun hat.</p>
 
         <div class="demo-box" style="min-height:auto; padding:20px;">
             <!-- Step Indicators -->
@@ -769,9 +763,8 @@
         </div>
 
  		<div class="key-insight fragment" style="margin-top:14px;">
- 			Die Existenz eines globalen Workspaces heißt nicht, dass das LLM bewusst wäre.<br>
- 			Keiner weiß, was Bewusstsein genau ist, und wie es funktioniert.<br>
- 			Die <i>Global Workspace Theory</i> ist nur ein Modell unter vielen.
+  			Global Workspace ≠ Bewusstsein · Niemand weiß, was Bewusstsein ist.<br>
+  			<i>Global Workspace Theory</i> = nur ein Modell unter vielen.
  		</div>
 
  		<p class="fragment" style="margin-top:12px; font-size:0.82em; color:#64748b; text-align:center; line-height:1.6;">
