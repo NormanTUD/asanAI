@@ -2,7 +2,7 @@
    EFFECTS — Gorgeous but quiet enhancements
    • Scroll-reveal cascade for course parts
    The hero network's own scroll-fade is handled inside
-   organic-network.js so it can pause its RAF loop too.
+   organic-network.js (is-scrolled-past class + draw gating).
    Activated by adding `effects-on` to <html>. No-JS users see
    the default visible state — graceful fallback.
    ════════════════════════════════════════════════════════════ */

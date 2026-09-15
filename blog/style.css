@@ -8101,10 +8101,13 @@ html.reader-mode .md h3 {
 	margin-top: 2.5rem;
 }
 
-/* Reader-mode pill for the toggle: stays visible, slightly larger. */
+/* Reader-mode pill for the toggle: stays visible, slightly larger.
+   Parked in the vacated topics-toggle slot — the theme toggle stays
+   visible in reader mode, so the reader icon sits just to its left
+   with the usual 16 px gap (never on top of it).                 */
 html.reader-mode #reader-toggle {
 	top: 16px;
-	right: 80px;
+	right: 132px;
 	background: var(--mn-surface);
 	color: var(--mn-accent);
 	border-color: var(--mn-accent);
@@ -8753,6 +8756,16 @@ html.reader-mode #reader-toggle {
 @media (max-width: 600px) {
 	#reader-toggle {
 		right: 180px;
+		width: 36px;
+		height: 36px;
+	}
+}
+/* Mobile reader mode: same next-to-theme-toggle rule as desktop —
+   theme sits at right: 66 / 36 px wide, so 66 + 36 + 16 = 118.      */
+@media (max-width: 600px) {
+	html.reader-mode #reader-toggle {
+		top: 10px;
+		right: 118px;
 		width: 36px;
 		height: 36px;
 	}
