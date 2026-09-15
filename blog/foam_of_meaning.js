@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════
-   Phase Space interactive demos — woven into "Phase Space: The Shape
-   of Meaningful Language".
+   The foam of meaning interactive demos — woven into "The foam of
+   meaning".
 
    Ported (and translated to English) from test/geometry_of_meaning_test.html.
 
@@ -79,7 +79,7 @@
 	function initPhaseSpace() {
 		inits.forEach((fn) => {
 			try { fn(); }
-			catch (e) { console.error('phase_space demo failed:', e); }
+			catch (e) { console.error('foam_of_meaning demo failed:', e); }
 		});
 	}
 	window.addEventListener('blogPostLoadComplete', initPhaseSpace, { once: true });
@@ -947,7 +947,7 @@
 			if (b) b.onclick = () => highlight(id.replace('ps-fib-', ''));
 		});
 		highlight('all');
-		} catch (e) { status('3D view failed to initialise: ' + e.message); console.error('phase_space 3D demo failed:', e); }
+		} catch (e) { status('3D view failed to initialise: ' + e.message); console.error('foam_of_meaning 3D demo failed:', e); }
 		}
 		start();
 		if (window.ResizeObserver) new ResizeObserver(start).observe(container);
