@@ -54,7 +54,7 @@ Below is your current pick. Tap any pill to flip it on or off:
 
 <div data-topics-inline class="inline-topics"></div>
 
-Toggle individual topics to fine-tune, sections you don't care about get tucked behind a soft “skipped” banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads. **Ctrl/⌘+Z** undoes while the picker is open.
+Toggle individual topics to fine-tune, sections you don't care about get tucked behind a soft “skipped” banner instead of vanishing, and home-page tiles for muted topics dim back so you can still see they exist. Your choices are saved in a cookie and survive reloads.
 
 ## What You Will Achieve
 
