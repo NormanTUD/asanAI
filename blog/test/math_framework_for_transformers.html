@@ -1162,9 +1162,9 @@ function bind(id, cb) {
     let M = mat.map(row => row.slice());
     const result = Array(rows).fill().map(() => Array(cols).fill(0));
     for (let k = 0; k < r; k++) {
-      let v = Array(cols).fill().map(() => Math.random());
+      let u, v = Array(cols).fill().map(() => Math.random());
       for (let iter = 0; iter < 50; iter++) {
-        let u = Array(rows).fill(0);
+        u = Array(rows).fill(0);
         for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) u[i] += M[i][j]*v[j];
         const nu = Math.hypot(...u); if (nu < 1e-9) break;
         u = u.map(x => x/nu);

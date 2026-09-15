@@ -1501,5 +1501,38 @@
 	});
 </script>
 
+<!-- TEMP TEST -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	setTimeout(() => {
+		try {
+			const all = document.querySelectorAll('.slide');
+			const rows = [];
+			rows.push('isFast=' + Presentation.isFastMode());
+			const idx = [...all].findIndex(s => s.getAttribute('data-title') === 'Stückelung');
+			Presentation.goTo(idx);
+			const fn = () => document.getElementById('nn-target-fn').value;
+			const nc = () => document.getElementById('nn-neuron-count').textContent;
+			rows.push('enter: fn=' + fn() + ' n=' + nc() + ' canNext=' + NNStepDemo.canGoNext());
+			for (let i = 1; i <= 8; i++) {
+				NNStepDemo.next();
+				rows.push('next#' + i + ': fn=' + fn() + ' n=' + nc() + ' canNext=' + NNStepDemo.canGoNext());
+			}
+			const opts = [...document.querySelectorAll('#nn-target-fn option')].map(o => o.value);
+			rows.push('options: ' + opts.join(','));
+			const pre = document.createElement('pre');
+			pre.id = 'testresult';
+			pre.textContent = rows.join('\n');
+			document.body.appendChild(pre);
+		} catch (e) {
+			const pre = document.createElement('pre');
+			pre.id = 'testresult';
+			pre.textContent = 'ERROR: ' + e.message + ' | ' + e.stack;
+			document.body.appendChild(pre);
+		}
+	}, 200);
+});
+</script>
+
 </body>
 </html>
