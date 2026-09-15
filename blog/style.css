@@ -21,6 +21,58 @@
 	font-optical-sizing: auto;
 }
 
+/* ════════════════════════════════════════════════════════════
+   COMPUTER MODERN — CMU Serif (woff, self-hosted from
+   https://colah.github.io/fonts/Serif/).  Used for prose
+   body text, headings, and sidenotes so the blog matches
+   colah.github.io's distinctive LaTeX-flavoured look.
+   ════════════════════════════════════════════════════════════ */
+@font-face {
+	font-family: 'CMS';
+	src: url('fonts/cmunrm.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'CMS';
+	src: url('fonts/cmunbx.woff') format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'CMS';
+	src: url('fonts/cmunti.woff') format('woff');
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'CMS';
+	src: url('fonts/cmunbi.woff') format('woff');
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+/* CMSS — Computer Modern Sans-Slanted (used for blockquotes
+   and info captions, matching colah's convention) */
+@font-face {
+	font-family: 'CMSS';
+	src: url('fonts/cmunsl.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'CMSS';
+	src: url('fonts/cmunbl.woff') format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
 html {
 	/* Light mode is now a CREAM PAPER palette — like the page of a
 	   well-made hardback. White felt sterile; cream reads as warm,
@@ -64,10 +116,10 @@ html {
 	/* Fonts — system stacks (no webfonts loaded); these were referenced
 	   via var() throughout the file but never defined, so code blocks
 	   silently rendered in the inherited sans-serif. */
-	--mn-font-heading: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	--mn-font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--mn-font-heading: "CMS", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--mn-font-body: "CMS", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	--mn-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-	--mn-font-prose: "Source Serif 4", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+	--mn-font-prose: "CMS", "Source Serif 4", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
 
 	/* Vertical-rhythm ladder — single source of truth for block
 	   spacing in the reading column (≈ golden-ish steps). Micro-
@@ -1920,6 +1972,7 @@ p, .assistant-frame {
 }
 
 blockquote {
+	font-family: 'CMSS';
 	margin: 2rem 0;
 	padding: 1.05em 1.4em 1.05em 1.85em;
 	border-radius: 0 var(--mn-radius-lg) var(--mn-radius-lg) 0;

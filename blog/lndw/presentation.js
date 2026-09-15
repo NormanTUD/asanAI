@@ -607,10 +607,6 @@ const Selection = (() => {
         if (panelEl()) panelEl().style.display = 'none';
     }
 
-    function togglePanel() {
-        if (isPanelVisible()) closePanel(); else openPanel();
-    }
-
     // 3× Esc (schnell nacheinander) → Panel öffnen/schließen.
     // Einzelnes Esc mit offenem Panel → Panel schließen.
     function handleEscape() {
@@ -659,7 +655,7 @@ const Selection = (() => {
     }
 
     return {
-        init, handleEscape, togglePanel,
+        init, handleEscape,
         isPanelVisible, openPanel, closePanel,
     };
 })();
