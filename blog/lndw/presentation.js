@@ -284,6 +284,8 @@ function isTopLevelFragment(frag) {
 }
 
 function isFastRevealable(frag) {
+    // data-fast-reveal="1" erzwingt Anzeige in ?fast=1 (auch für demo-box).
+    if (frag.getAttribute('data-fast-reveal') === '1') return true;
     return isSimpleFragment(frag) && isTopLevelFragment(frag);
 }
 
@@ -855,6 +857,13 @@ function plotLabel(div) {
 // BOOTSTRAP + LADE-PIPELINE
 // ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+    // ?short=1: optionale Inhalte entfernen (data-short). Das Element wird
+    // aus dem DOM genommen, damit der darüberliegende Inhalt nachrückt und
+    // der Platz wirklich nicht belegt wird – nicht nur unsichtbar ist.
+    if (new URLSearchParams(window.location.search).get('short') === '1') {
+        document.querySelectorAll('[data-short]').forEach(el => el.remove());
+    }
+
     Presentation.init();
     InputHandler.init();
     Selection.init();
