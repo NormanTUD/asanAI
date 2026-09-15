@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Backpropagation: How a Neural Network Learns From Its Mistakes
-description: The 1986 algorithm that made deep learning possible, forward pass, backward pass, weight updates.
+description: The 1986 algorithm that made deep learning possible — see forward pulses, backward error flow, and drill into every equation.
 icon: &#8634;
 part: 2
 order: 5
@@ -11,118 +11,100 @@ topics: math-i, programming, training
 -->
 
 <div class="md">
-Backpropagation, introduced to the field of AI in \citeyear{rumelhart1986}, is a method to improve a neural network by *systematically adjusting* its weights and biases based on the error it makes. It uses two main steps:
 
-1. **Forward Pass**: Inputs are passed through the network layer by layer, producing outputs (predictions).
-2. **Backward Pass**: The error (difference between prediction and target) is sent *backward* through the network, and each weight is updated to reduce the error.
+Backpropagation, introduced to the field of AI in \citeyear{rumelhart1986}, is how a neural network **learns from its own mistakes**. It has two heartbeats:
 
-## Our Example Network
+1. **Forward Pass** — inputs flow *left → right* through the layers, producing a prediction.
+2. **Backward Pass** — the error flows *right → left*, telling each weight exactly how much to change.
 
-We use a simple neural network with:
+In the demo further down you can *watch* both flows as glowing pulses along the wires, click any neuron or weight to unfold its equations, and click any symbol *inside* an equation to substitute its definition — drilling all the way down to raw inputs.
 
-- **2 Inputs**: $x_1$ and $x_2$
-- **2 Hidden Neurons**: $h_1$ and $h_2$
-- **2 Outputs**: $o_1$ and $o_2$
+## The Network You'll Play With
 
-Each connection has a weight (e.g., $w_1, w_2$) and each neuron has a bias (e.g., $b_1$).
+Instead of a toy 2‑2‑2 net, the demo below runs a **4-layer network** with shape **3 → 4 → 4 → 2**. That's small enough to hand‑trace, deep enough to show how error signals *cascade* backward layer by layer — the exact behaviour that makes "deep" learning deep.
 
 $$
-\mathbf{x} = \begin{pmatrix} x_1 \\ x_2 \end{pmatrix}
-\longrightarrow \mathbf{h} = \begin{pmatrix} h_1 \\ h_2 \end{pmatrix}
-\longrightarrow \mathbf{o} = \begin{pmatrix} o_1 \\ o_2 \end{pmatrix}
+\underbrace{\mathbf{x} \in \mathbb{R}^3}_{\text{inputs}}
+\;\longrightarrow\;
+\underbrace{\mathbf{h}^{(1)} \in \mathbb{R}^4}_{\text{hidden 1}}
+\;\longrightarrow\;
+\underbrace{\mathbf{h}^{(2)} \in \mathbb{R}^4}_{\text{hidden 2}}
+\;\longrightarrow\;
+\underbrace{\mathbf{o} \in \mathbb{R}^2}_{\text{outputs}}
 $$
 
-## Mathematics Behind the Network
+Every arrow between layers is a **weight** $w$; every neuron also owns a **bias** $b$.
 
-At each layer, the neurons first calculate a weighted sum of their inputs (plus a bias) and then apply the **sigmoid function**:
+## One Neuron, In Slow Motion
 
-$$
-z = w \cdot x + b \quad \text{and} \quad \sigma(z) = \frac{1}{1 + e^{-z}}
-$$
-
-The sigmoid function “squashes” any number into the range (0, 1), which is useful for keeping values bounded and for computing smooth gradients.
-
-## The Sigmoid Derivative
-
-The derivative of the sigmoid function is simple and efficient to calculate:
+Each neuron does two things:
 
 $$
-\sigma'(z) = \sigma(z) \cdot (1 - \sigma(z))
+z \;=\; \underbrace{\sum_j w_j \cdot \text{in}_j}_{\text{weighted sum}} \;+\; \underbrace{b}_{\text{bias}}
+\qquad\qquad
+a \;=\; \sigma(z) \;=\; \frac{1}{1 + e^{-z}}
 $$
 
-This means that once we know the output of a sigmoid neuron, we can instantly compute its derivative.
-
-<div id="sigmoid-plot" style="width: 100%; height: 500px;"></div>
-
-## Loss Function
-
-The network's error is measured using the **Sum of Squared Errors with a $\tfrac{1}{2}$ factor** (sometimes called *half-SSE*, i.e. $\tfrac{1}{2}\cdot$SSE):
+The **sigmoid** squashes any real number into $(0, 1)$. Its derivative — which we'll need for backprop — is delightfully cheap once you already know $\sigma(z)$:
 
 $$
-E_{\text{total}} = \sum_i \frac{1}{2}(t_i - o_i)^2
+\sigma'(z) \;=\; \sigma(z)\,\bigl(1 - \sigma(z)\bigr)
 $$
 
-Here, $t_i$ is the target value, and $o_i$ is the network's output. The factor $\frac{1}{2}$ is included for convenience, as it cancels out when taking derivatives. The standard **MSE** (used in the Loss and Overfitting chapters) is $\tfrac{1}{N}\sum (y_i - \hat{y}_i)^2$, same shape, no $\tfrac{1}{2}$, normalised by batch size; both formulations share the same minima.
+Hover the plot below to see the tangent slope at any point:
 
-## Backward Pass: Updating Weights
+<div id="sigmoid-plot" style="width: 100%; height: 460px;"></div>
 
-The backward pass uses the **chain rule** (explained in the <a href="differentiation">Differentiation chapter</a>) to compute how much each weight contributed to the total error. For any weight $w$, the change is proportional to:
+## The Loss — "How Wrong Are We?"
 
-$$
-\frac{\partial E}{\partial w} = \delta \cdot \text{input}
-$$
-
-Where:
-
-- $\delta$ is the **error signal** at the receiving neuron.
-- **input** is the value that flowed through the weight during the forward pass.
-
-## What is $\delta$?
-
-The term $\delta$ quantifies how much a neuron contributed to the total error:
-
-**For Output Neurons (with sigmoid + SSE):** $\delta_{\text{output}} = -(t - o) \cdot o \cdot (1 - o)$
-
-**For Hidden Neurons (with sigmoid activation):** $\delta_{\text{hidden}} = (\delta_{\text{next}} \cdot w_{\text{next}}) \cdot h \cdot (1 - h)$
-
-(For a different activation $\phi$, the factor $h(1-h)$ generalises to $\phi'(z)$, the activation's derivative evaluated at the hidden neuron's pre-activation; the chain rule $\delta^{(\ell)} = \big(W^{(\ell+1)\top} \delta^{(\ell+1)}\big) \odot \phi'(z^{(\ell)})$ is the general form.)
-
-(The sign convention follows from the chain rule applied to $E = \tfrac{1}{2}(t - o)^2$ with $o = \sigma(z)$: $\delta = \partial E / \partial z = -(t - o) \cdot \sigma'(z) = -(t - o) \cdot o (1 - o)$, so the leading minus is part of the formula, not an extra sign flip. The update $w \leftarrow w - \eta \cdot \partial E / \partial w$ then moves the weights in the direction that *decreases* $E$. Note that this $\delta$ is for the *Sum of Squared Errors with a sigmoid output*; the gradient $\partial \mathcal{L} / \partial z_i = \hat{y}_i - y_i$ that appears in the Loss chapter is for the *cross-entropy + softmax* combination. These are gradients of two different objectives, so they are not the same quantity.)
-
-## Weight Updates
-
-Once we calculate $\delta$, we update the weights to reduce the error:
+We measure error with the **half sum-of-squares**:
 
 $$
-w_{\text{new}} = w - \eta \cdot \frac{\partial E}{\partial w}
+E \;=\; \sum_i \tfrac{1}{2}\,(t_i - o_i)^2
 $$
 
-Where $\eta$ is the learning rate.
+The $\tfrac{1}{2}$ is a convenience — it cancels when we differentiate. (The standard **MSE** used elsewhere in the course is the same shape, just averaged over the batch.)
 
-## Example Calculations
+## The Chain Rule Is All You Need
 
-### For a weight $w_5$ connecting $h_1$ to $o_1$:
+To learn, we need $\partial E / \partial w$ for every weight $w$ in the network. Instead of computing each one from scratch, backprop reuses work by pushing an **error signal** $\delta$ backward, layer by layer.
 
-1. Compute $\delta_{\text{o1}}$:
-   $$
-   \delta_{o_1} = -(t_1 - o_1) \cdot o_1 \cdot (1 - o_1)
-   $$
+**At the output layer** (sigmoid + half-SSE):
 
-2. Compute the gradient:
-   $$
-   \frac{\partial E}{\partial w_5} = \delta_{o_1} \cdot h_1
-   $$
+$$
+\delta_{o_i} \;=\; -\bigl(t_i - o_i\bigr)\cdot o_i\,(1 - o_i)
+$$
 
-3. Update the weight:
-   $$
-   w_5^{\text{new}} = w_5 - \eta \cdot \frac{\partial E}{\partial w_5}
-   $$
+**At any hidden layer** (chain rule):
 
-## Key Insights
+$$
+\delta^{(\ell)} \;=\; \Bigl(W^{(\ell+1)\,\top}\,\delta^{(\ell+1)}\Bigr) \;\odot\; \sigma'\!\bigl(z^{(\ell)}\bigr)
+$$
 
-- Errors flow backward through the network, layer by layer.
-- Each weight gets updated based on its contribution to the error.
-- The process can be calculated step by step by hand to understand how backpropagation works.
+That's the whole trick. Once you have $\delta$ at a neuron, the gradient for any weight *feeding into* it is trivial:
+
+$$
+\frac{\partial E}{\partial w} \;=\; \delta_{\text{receiver}} \,\cdot\, \text{activation}_{\text{sender}}
+$$
+
+And the update is a small step downhill:
+
+$$
+w \;\leftarrow\; w \;-\; \eta \cdot \frac{\partial E}{\partial w}
+$$
+
+where $\eta$ is the **learning rate**.
+
+## Now Watch It Happen
+
+Below is a live network. Try this in order:
+
+1. **Press ▶ Forward** — watch cyan pulses travel left→right, thickness ∝ activation magnitude.
+2. **Press ◀ Backward** — watch red pulses travel right→left, thickness ∝ $|\delta|$ magnitude.
+3. **Hover any neuron** — a *cone of influence* lights up every weight it touches, colored by that weight's contribution.
+4. **Click any neuron or weight** — the side panel expands the full equation.
+5. **Inside the equation, click any coloured symbol** (e.g. $h_1^{(2)}$) — it *expands in place* into its own definition. Click again to collapse. Chain expansions arbitrarily deep to unfold the entire computation graph from a single symbol down to raw $x_i$.
+6. **Press ↻ Train 100** — watch the loss bar shrink as the whole network adapts.
 
 </div>
 
