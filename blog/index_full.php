@@ -78,7 +78,7 @@
 	incl("The Shape of the Machine — A Working Geometry for AI", "geometry_ii");
 	incl("The Shape of Holes: A Working Algebraic Topology", "geometry_iii");
 	incl("The History of Language: From Sanskrit to LLMs", "language");
-	incl("Phase Space: The Shape of Meaningful Language", "phase_space");
+	incl("The foam of meaning", "foam_of_meaning");
 	incl("Statistics I — Distributions and Inference", "statistics_i");
 	incl("Statistics II — Inference and Information", "statistics_ii");
 	incl("Loss: Teaching through Failure", "losslab");

@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: Phase Space: The Shape of Meaningful Language
+title: The foam of meaning
 description: A geometric and topological theory of meaningful language spaces — the possibility space X, its image under interpretation π: X → S, and the landscapes of clusters, filaments, and voids — the shape of a sparse, structured distribution.
 icon: &#127756;
 part: 1
@@ -11,7 +11,7 @@ topics: geometry, math-i, math-ii, math-iii, statistics-ii
 -->
 
 <style>
-/* ── Phase Space interactive demos (theme-aware, scoped by .ps- prefix) ── */
+/* ── The foam of meaning interactive demos (theme-aware, scoped by .ps- prefix) ── */
 .ps-card { background: var(--mn-surface); border: 1px solid var(--mn-border); border-radius: var(--mn-radius-md); padding: 1rem 1.15rem; margin: 1.3rem 0; box-shadow: var(--mn-shadow-md); }
 .ps-card-title { font-weight: 600; color: var(--mn-accent); margin-bottom: .7rem; display: flex; align-items: center; gap: .5rem; font-family: var(--mn-font-heading); font-size: 1.02rem; }
 .ps-card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mn-accent); box-shadow: 0 0 10px var(--mn-accent); flex: 0 0 auto; }
@@ -59,7 +59,7 @@ topics: geometry, math-i, math-ii, math-iii, statistics-ii
 
 
 <div class="md">
-# Phase Space: The Shape of Meaningful Language
+# The foam of meaning
 
 This chapter is a working mathematical treatment of *meaningful language spaces*. It begins from the idea that the objects of study are not tokens, not words, and not even sentences, but the structured *possibility spaces* in which those things live — the space of all potential utterances, the space of all interpretations those utterances can generate, and the spaces of worlds, actions, and consequences in which those interpretations can be tested.
 
@@ -83,7 +83,7 @@ This intuition has a long history. The idea that meaning is *relational* and *st
 </div>
 
 <div class="md">
-# Phase Space: The Shape of Meaningful Language
+# The foam of meaning
 ## The possibility space $X$
 
 Let us begin with the most basic object. Let $X$ be the space of all potential linguistic configurations. An element of $X$ is a *linguistic form*: a string, a phonological pattern, a syntactic frame, or more generally anything that can be uttered or written. We do not need to fix a precise alphabet or grammar at this stage. What matters is that $X$ carries structure:
