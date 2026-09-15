@@ -7,7 +7,7 @@ window.bibData = {
 		alternativetitle: "HoTT as a foundation for AI"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Phase Space: Usefulness as a Slice  (phase_space.php)
+	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php)
 	 *  The space of all possible configurations, the energy function that
 	 *  carves out the low-energy "useful" slice, and the bridge from
 	 *  Hamiltonian/Boltzmann physics to energy-based neural models and the
@@ -130,7 +130,7 @@ window.bibData = {
 		alternativetitle: "Sindhwani, Belkin & Niyogi, the geometric basis of semi-supervised learning (2006)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Phase Space: Usefulness as a Slice  (phase_space.php) — the shape
+	 *  Phase Space: Usefulness as a Slice  (foam_of_meaning.php) — the shape
 	 *  of phase space, and of the useful (low-energy) slices of it.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"symplectic_manifold_wiki": {
@@ -6499,7 +6499,7 @@ window.bibData = {
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  A Geometric and Topological Theory of Meaningful Language Spaces
-	 *  (phase_space.php) — the cosmic-web image: the large-scale structure
+	 *  (foam_of_meaning.php) — the cosmic-web image: the large-scale structure
 	 *  of the universe (filaments, nodes and voids), used as the visual
 	 *  anchor for the "cosmic-web intuition".
 	 * ───────────────────────────────────────────────────────────────────── */
