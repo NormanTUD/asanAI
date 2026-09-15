@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boundary maps by hand — the pictures</title>
+<style>
+:root{
+  --bg:#0f1420; --surface:#1a2130; --border:#2a3448; --text:#e6e9ef;
+  --muted:#8b95a7; --accent:#7ca5ff; --green:#4ade80; --red:#f87171; --sub:#141a27;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55;padding:0 0 4rem}
+.wrap{max-width:920px;margin:0 auto;padding:2rem 1.2rem}
+h1{font-size:1.8rem;margin:.2rem 0 .3rem}
+h2{color:var(--accent);font-size:1.25rem;margin:2.2rem 0 .4rem;
+  border-bottom:1px solid var(--border);padding-bottom:.35rem}
+.lead{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.1rem;margin:1rem 0;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;padding:2px 9px;border-radius:99px;margin-bottom:.4rem}
+.tag.int{background:#2b3b5e;color:#bcd0ff}
+.tag.form{background:#3a2b5e;color:#dcc7ff}
+.tag.ex{background:#1f4a33;color:#b7f4cf}
+.math{background:var(--sub);padding:.5rem .8rem;border-radius:8px;margin:.5rem 0;
+  overflow-x:auto;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:center}
+canvas{width:100%;height:auto;display:block;background:var(--sub);
+  border:1px solid var(--border);border-radius:10px;margin:.6rem 0}
+.cap{font-size:.85rem;color:var(--muted);margin:-.2rem 0 .4rem}
+b.green{color:var(--green)} b.red{color:var(--red)} b.acc{color:var(--accent)}
+.btn{background:var(--accent);color:#0a0f1a;border:0;padding:.45rem .9rem;border-radius:8px;
+  font-weight:700;cursor:pointer;font-size:.85rem}
+.btn.warn{background:var(--red);color:#160808}
+.spoiler{display:none;background:var(--sub);border-left:3px solid var(--green);
+  padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:.7rem 0;
+  font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Boundary maps, one picture at a time</h1>
+<p class="lead">Everything below is built from a single idea: a shape is glued together
+from triangles-of-various-dimensions called <b>simplices</b>, and the <b>boundary map</b> ∂
+records what the edge/rim/skin of each piece is. Read straight down. The drawings appear
+by themselves; one of them animates.</p>
+
+<!-- ================================================================= -->
+<h2>Step 0 — What is a simplex? (the building blocks)</h2>
+
+<div class="card">
+<span class="tag int">Intuition</span>
+<p>A simplex is the simplest solid shape you can make from a given number of corners:
+0 corners → a point, 2 → a line segment, 3 → a filled triangle, 4 → a solid tetrahedron.
+An <b>n-simplex</b> just means "the simplex with n+1 corners", so it lives in n dimensions.</p>
+
+<span class="tag form">Formalism</span>
+<p>An <b>n-simplex</b> is written <code>[v<sub>0</sub>,v<sub>1</sub>,…,v<sub>n</sub>]</code>
+where the v<sub>i</sub> are its corners, called <b>vertices</b>. It is the filled-in region
+spanned by those corners.</p>
+
+<span class="tag ex">Example</span>
+<div class="math">
+[v<sub>0</sub>] = point &nbsp;·&nbsp; [v<sub>0</sub>,v<sub>1</sub>] = edge &nbsp;·&nbsp;
+[v<sub>0</sub>,v<sub>1</sub>,v<sub>2</sub>] = triangle &nbsp;·&nbsp;
+[v<sub>0</sub>,v<sub>1</sub>,v<sub>2</sub>,v<sub>3</sub>] = tetrahedron
+</div>
+<canvas id="c-simplices" width="1000" height="230"></canvas>
+<p class="cap">The four smallest simplices. Notice each one is "the previous one, plus one new corner."</p>
+</div>
+
+<!-- ================================================================= -->
+<h2>Step 1 — "Order the vertices by index." What does that mean, and why?</h2>
+
+<div class="card">
+<span class="tag int">Intuition</span>
+<p>Writing the corners in a fixed order <code>v<sub>0</sub>,v<sub>1</sub>,v<sub>2</sub>,…</code>
+does one thing: it puts <b>arrows</b> on all the edges — each edge points from the
+lower-numbered corner to the higher-numbered one. Those arrows are the "orientation".
+They are the reason minus signs will show up later: an arrow can agree or disagree with
+your finger's direction of travel, and that agree/disagree is exactly a + or a −.</p>
+
+<span class="tag form">Formalism</span>
+<p>"Ordered by index" means whenever we look at any sub-simplex (any face), we list its
+vertices in the same increasing-subscript order as in the big simplex. This choice fixes
+one orientation per simplex; swapping two vertices flips the sign of that simplex.</p>
+
+<span class="tag ex">Example</span>
+<p>On the edge <code>[v<sub>0</sub>,v<sub>1</sub>]</code> the arrow goes 0→1.
+On the triangle <code>[v<sub>0</sub>,v<sub>1</sub>,v<sub>2</sub>]</code> the three edge-arrows
+0→1, 1→2, 0→2 run <b>counter-clockwise-ish</b>, which is the picture below.</p>
+<canvas id="c-orient" width="1000" height="260"></canvas>
+<p class="cap">Left: an oriented edge (one arrow). Right: an oriented triangle (arrows induced by 0&lt;1&lt;2).</p>
+</div>
+
+<!-- ================================================================= -->
+<h2>Step 2 — Head and tail (and why ∂ of an edge is head − tail)</h2>
+
+<div class="card">
+<span class="tag int">Intuition</span>
+<p>Walk along the arrow of an edge. You <b>start</b> at one corner (the <b>tail</b>) and
+<b>finish</b> at the other (the <b>head</b>). The boundary of a walk is "where I ended
+minus where I started". Ending counts <b>+</b>, starting counts <b>−</b>. That's the whole
+formula for a 1-simplex.</p>
+
+<span class="tag form">Formalism</span>
+<div class="math">
+∂[v<sub>i</sub>,v<sub>j</sub>] = v<sub>j</sub> − v<sub>i</sub> = (head) − (tail)
+</div>
+<p>The head is the last vertex listed, the tail is the first.</p>
+
+<span class="tag ex">Example</span>
+<div class="math">∂[v<sub>0</sub>,v<sub>1</sub>] = v<sub>1</sub> − v<sub>0</sub></div>
+<canvas id="c-headtail" width="1000" height="180"></canvas>
+<p class="cap">The arrow's start is the <b class="red">tail (−)</b>, its finish is the <b class="green">head (+)</b>.</p>
+</div>
+
+<!-- ================================================================= -->
+<h2>Step 3 — What is a chain? (a "shopping list" of simplices)</h2>
+
+<div class="card">
+<span class="tag int">Intuition</span>
+<p>A chain is just a <b>weighted collection</b> of simplices of one fixed dimension —
+like a shopping list "2 copies of edge a, 1 copy of edge b, but subtract edge c".
+A minus sign means "that edge, but walked backwards". You never have to picture
+"2.5 triangles"; the numbers are pure bookkeeping, exactly like coordinates of a vector.</p>
+
+<span class="tag form">Formalism</span>
+<p>"C<sub>n</sub> = the vector space of formal ℝ-combinations of the n-simplices" means:
+take the n-simplices as a <b>basis</b>, and let a chain be any finite sum
+<code>a<sub>1</sub>σ<sub>1</sub> + a<sub>2</sub>σ<sub>2</sub> + …</code> with real numbers
+a<sub>i</sub>. "Formal" = we're allowed to add them and scale them like vectors even
+though the sum has no single-picture meaning.</p>
+
+<span class="tag ex">Example</span>
+<div class="math">the 1-chain &nbsp; 2a + b − c</div>
+<canvas id="c-chain" width="1000" height="210"></canvas>
+<p class="cap">Thickness shows the coefficient; the <b class="red">red</b> edge has coefficient −1 (its arrow is flipped).</p>
+</div>
+
+<!-- ================================================================= -->
+<h2>Step 4 — The boundary map (the animation you asked for)</h2>
+
+<div class="card">
+<span class="tag int">Intuition</span>
+<p>The boundary of a filled triangle is its three edges — its <b>rim</b>. The formula
+builds that rim by a little ritual: <b>delete each corner in turn</b>. Deleting a corner
+from a triangle leaves the edge that was <b>opposite</b> that corner. Do this for all three
+corners and you get all three edges. The signs +, −, + are put in so the three edges join
+up head-to-tail into one coherent loop.</p>
+
+<span class="tag form">Formalism</span>
+<div class="math">
+∂[v<sub>0</sub>,…,v<sub>n</sub>] = Σ<sub>i</sub> (−1)<sup>i</sup> [v<sub>0</sub>,…, <span style="text-decoration:overline">v<sub>i</sub></span> ,…,v<sub>n</sub>]
+</div>
+<p>The hat <span style="text-decoration:overline">v<sub>i</sub></span> means "delete this
+vertex." The <b>"each vertex in turn"</b> refers to the vertices of the very simplex whose
+boundary you are computing — here the triangle's three corners v<sub>0</sub>, v<sub>1</sub>,
+v<sub>2</sub>. Deleting vertex number i gives the i-th face, weighted by (−1)<sup>i</sup>.</p>
+
+<span class="tag ex">Example (watch it run)</span>
+<div class="math">
+∂[v<sub>0</sub>,v<sub>1</sub>,v<sub>2</sub>]
+= <b class="green">+[v<sub>1</sub>,v<sub>2</sub>]</b>
+  <b class="red">−[v<sub>0</sub>,v<sub>2</sub>]</b>
+  <b class="green">+[v<sub>0</sub>,v<sub>1</sub>]</b>
+</div>
+<canvas id="c-boundary" width="1000" height="420"></canvas>
+<div id="boundary-narr" class="cap" style="min-height:1.4em"></div>
+<button class="btn" id="btn-boundary">⏸ pause / ▶ play</button>
+</div>
+
+<!-- ================================================================= -->
+<h2>Step 5 — Why the boundary of a boundary is nothing (∂∘∂ = 0)</h2>
+
+<div class="card">
+<span class="tag int">Intuition</span>
+<p>The rim of the triangle is a closed loop of three edges. Now take the boundary of
+<em>that</em> — i.e. the head/tail endpoints of every edge, with signs. Every corner is the
+head of one edge (+) and the tail of the next edge (−). Those +1 and −1 land on the same
+point and cancel. Nothing survives. A rim has no ends.</p>
+
+<span class="tag form">Formalism</span>
+<div class="math">∂∘∂ = 0</div>
+
+<span class="tag ex">Example</span>
+<canvas id="c-dd" width="1000" height="260"></canvas>
+<p class="cap">At each corner a <b class="green">+</b> from one edge's head meets a <b class="red">−</b> from the next edge's tail → they cancel → the total boundary is 0.</p>
+</div>
+
+<!-- ================================================================= -->
+<h2>The dictionary (what all this is for)</h2>
+<div class="card">
+<p>Once shapes are chains and ∂ is defined, the "holes" are counted by
+<b>Betti numbers</b> b<sub>n</sub> = (# n-simplices) − rank ∂<sub>n</sub> − rank ∂<sub>n+1</sub>:</p>
+<div class="math">
+b<sub>0</sub> = # separate clusters &nbsp;·&nbsp;
+b<sub>1</sub> = # independent loops &nbsp;·&nbsp;
+b<sub>2</sub> = # enclosed hollow voids
+</div>
+</div>
+
+<!-- ================================================================= -->
+<h2>Your turn (paper + pencil)</h2>
+<div class="card">
+<p>Compute the boundary of the <b>solid tetrahedron</b>
+<code>[v<sub>0</sub>,v<sub>1</sub>,v<sub>2</sub>,v<sub>3</sub>]</code> using the same ritual —
+delete each of the four vertices in turn, with signs (−1)<sup>i</sup>, giving +,−,+,−.
+Write the four triangular faces.</p>
+<button class="btn warn" id="btn-reveal"
+  onclick="if(confirm('Reveal the answer?\n\nOnly if you have already written the four faces on paper.\nCancel to keep working.')){document.getElementById('ans').style.display='block';this.style.display='none';}">
+  🔒 reveal answer
+</button>
+<div class="spoiler" id="ans">∂[v0,v1,v2,v3] =
+ +[v1,v2,v3]   (delete v0, sign +)
+ −[v0,v2,v3]   (delete v1, sign −)
+ +[v0,v1,v3]   (delete v2, sign +)
+ −[v0,v1,v2]   (delete v3, sign −)</div>
+</div>
+
+</div><!--/wrap-->
+
+<script>
+// ---------- shared helpers ----------
+const C={bg:'#141a27',sf:'#1a2130',bd:'#2a3448',tx:'#e6e9ef',mu:'#8b95a7',
+         ac:'#7ca5ff',gr:'#4ade80',rd:'#f87171'};
+function dot(g,x,y,r,col){g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=col;g.fill();}
+function lbl(g,t,x,y,col,size){g.fillStyle=col||C.tx;g.font=(size||15)+'px ui-monospace,Menlo,monospace';
+  g.textAlign='center';g.textBaseline='middle';g.fillText(t,x,y);}
+function arrow(g,x1,y1,x2,y2,col,w){ // line with an arrowhead near the middle
+  g.strokeStyle=col;g.lineWidth=w||2.5;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const mx=(x1+x2)/2,my=(y1+y2)/2,a=Math.atan2(y2-y1,x2-x1),h=9;
+  g.fillStyle=col;g.beginPath();
+  g.moveTo(mx+Math.cos(a)*h,my+Math.sin(a)*h);
+  g.lineTo(mx+Math.cos(a+2.5)*h,my+Math.sin(a+2.5)*h);
+  g.lineTo(mx+Math.cos(a-2.5)*h,my+Math.sin(a-2.5)*h);
+  g.closePath();g.fill();}
+
+// ---------- Step 0: the four simplices ----------
+(function(){const cv=document.getElementById('c-simplices'),g=cv.getContext('2d');
+  g.clearRect(0,0,1000,230);const cy=120;
+  // 0-simplex
+  dot(g,110,cy,6,C.ac);lbl(g,'[v0]',110,cy+40,C.mu);lbl(g,'0-simplex',110,cy+64,C.mu,13);
+  // 1-simplex
+  let x0=270,x1=370;arrow(g,x0,cy,x1,cy,C.ac);dot(g,x0,cy,5,C.tx);dot(g,x1,cy,5,C.tx);
+  lbl(g,'v0',x0,cy-18,C.mu);lbl(g,'v1',x1,cy-18,C.mu);
+  lbl(g,'[v0,v1]',320,cy+40,C.mu);lbl(g,'1-simplex',320,cy+64,C.mu,13);
+  // 2-simplex (filled)
+  let A=[560,cy+45],B=[660,cy+45],D=[610,cy-45];
+  g.beginPath();g.moveTo(A[0],A[1]);g.lineTo(B[0],B[1]);g.lineTo(D[0],D[1]);g.closePath();
+  g.fillStyle='rgba(124,165,255,.25)';g.fill();g.strokeStyle=C.ac;g.lineWidth=2;g.stroke();
+  dot(g,A[0],A[1],4,C.tx);dot(g,B[0],B[1],4,C.tx);dot(g,D[0],D[1],4,C.tx);
+  lbl(g,'triangle',610,cy+64,C.mu,13);lbl(g,'2-simplex',610,cy+84,C.mu,13);
+  lbl(g,'v0',A[0]-6,A[1]+16,C.mu,13);lbl(g,'v1',B[0]+6,B[1]+16,C.mu,13);lbl(g,'v2',D[0],D[1]-14,C.mu,13);
+  // 3-simplex (tetra)
+  let P=[840,cy+50],Q=[930,cy+35],R=[865,cy-5],S=[890,cy-55];
+  g.strokeStyle=C.ac;g.lineWidth=2;
+  const E=[[P,Q],[Q,R],[R,P],[P,S],[Q,S],[R,S]];
+  g.globalAlpha=.5;E.forEach(e=>{g.beginPath();g.moveTo(e[0][0],e[0][1]);g.lineTo(e[1][0],e[1][1]);g.stroke();});
+  g.globalAlpha=1;[P,Q,R,S].forEach(p=>dot(g,p[0],p[1],4,C.tx));
+  lbl(g,'tetrahedron',885,cy+70,C.mu,13);lbl(g,'3-simplex',885,cy+90,C.mu,13);
+})();
+
+// ---------- Step 1: orientation ----------
+(function(){const cv=document.getElementById('c-orient'),g=cv.getContext('2d');
+  g.clearRect(0,0,1000,260);
+  // oriented edge
+  let x0=140,x1=340,y=130;arrow(g,x0,y,x1,y,C.gr,3);
+  dot(g,x0,y,6,C.tx);dot(g,x1,y,6,C.tx);
+  lbl(g,'v0',x0,y-22,C.mu);lbl(g,'v1',x1,y-22,C.mu);
+  lbl(g,'arrow: 0 → 1',240,y+34,C.mu,14);
+  // oriented triangle
+  let A=[640,200],B=[860,200],D=[750,60];
+  g.fillStyle='rgba(124,165,255,.15)';g.beginPath();
+  g.moveTo(A[0],A[1]);g.lineTo(B[0],B[1]);g.lineTo(D[0],D[1]);g.closePath();g.fill();
+  arrow(g,A[0],A[1],B[0],B[1],C.gr,2.5); // 0->1
+  arrow(g,B[0],B[1],D[0],D[1],C.gr,2.5); // 1->2
+  arrow(g,A[0],A[1],D[0],D[1],C.ac,2.5); // 0->2
+  [A,B,D].forEach(p=>dot(g,p[0],p[1],5,C.tx));
+  lbl(g,'v0',A[0]-16,A[1]+8,C.mu);lbl(g,'v1',B[0]+16,B[1]+8,C.mu);lbl(g,'v2',D[0],D[1]-16,C.mu);
+  lbl(g,'edges point low→high index',750,232,C.mu,14);
+})();
+
+// ---------- Step 2: head/tail ----------
+(function(){const cv=document.getElementById('c-headtail'),g=cv.getContext('2d');
+  g.clearRect(0,0,1000,180);let x0=280,x1=720,y=90;
+  arrow(g,x0,y,x1,y,C.ac,3);
+  dot(g,x0,y,7,C.rd);dot(g,x1,y,7,C.gr);
+  lbl(g,'v0',x0,y-26,C.mu);lbl(g,'v1',x1,y-26,C.mu);
+  lbl(g,'tail  (−)',x0,y+30,C.rd,15);lbl(g,'head  (+)',x1,y+30,C.gr,15);
+  lbl(g,'∂ = v1 − v0',500,y+30,C.tx,15);
+})();
+
+// ---------- Step 3: chain 2a + b − c ----------
+(function(){const cv=document.getElementById('c-chain'),g=cv.getContext('2d');
+  g.clearRect(0,0,1000,210);let y=105;
+  // a, coefficient 2 (thick), green forward
+  arrow(g,120,y,300,y,C.gr,7);lbl(g,'2·a',210,y+34,C.gr,15);
+  dot(g,120,y,5,C.tx);dot(g,300,y,5,C.tx);
+  // b, coefficient 1
+  arrow(g,420,y,600,y,C.ac,3);lbl(g,'b',510,y+34,C.ac,15);
+  dot(g,420,y,5,C.tx);dot(g,600,y,5,C.tx);
+  // c, coefficient -1: draw arrow reversed, red
+  arrow(g,900,y,720,y,C.rd,3);lbl(g,'−c',810,y+34,C.rd,15);
+  dot(g,720,y,5,C.tx);dot(g,900,y,5,C.tx);
+  lbl(g,'chain  =  2a + b − c',500,40,C.tx,17);
+})();
+
+// ---------- Step 4: animated boundary of a triangle ----------
+(function(){
+  const cv=document.getElementById('c-boundary'),g=cv.getContext('2d');
+  const narr=document.getElementById('boundary-narr');
+  const A=[300,320],B=[700,320],D=[500,90]; // v0,v1,v2
+  const V=[A,B,D];
+  // step 0 = whole triangle; 1 = delete v0 -> edge [v1,v2] (+);
+  // 2 = delete v1 -> edge [v0,v2] (-); 3 = delete v2 -> edge [v0,v1] (+)
+  const faces=[
+    {del:0,e:[B,D],sign:'+',col:C.gr,txt:'delete v0  →  face [v1,v2]   sign +  (i=0)'},
+    {del:1,e:[A,D],sign:'−',col:C.rd,txt:'delete v1  →  face [v0,v2]   sign −  (i=1)'},
+    {del:2,e:[A,B],sign:'+',col:C.gr,txt:'delete v2  →  face [v0,v1]   sign +  (i=2)'}
+  ];
+  let idx=0,playing=true;
+  function draw(){
+    g.clearRect(0,0,1000,420);
+    // faint filled triangle + all edges
+    g.fillStyle='rgba(124,165,255,.08)';
+    g.beginPath();g.moveTo(A[0],A[1]);g.lineTo(B[0],B[1]);g.lineTo(D[0],D[1]);g.closePath();g.fill();
+    g.strokeStyle=C.bd;g.lineWidth=2;
+    [[A,B],[B,D],[A,D]].forEach(e=>{g.beginPath();g.moveTo(e[0][0],e[0][1]);g.lineTo(e[1][0],e[1][1]);g.stroke();});
+    // highlighted face
+    const f=faces[idx];
+    arrow(g,f.e[0][0],f.e[0][1],f.e[1][0],f.e[1][1],f.col,6);
+    // vertices, greying the deleted one
+    V.forEach((p,i)=>{
+      const deleted=(i===f.del);
+      dot(g,p[0],p[1],deleted?9:6,deleted?C.rd:C.tx);
+      if(deleted){g.strokeStyle=C.rd;g.lineWidth=2;
+        g.beginPath();g.moveTo(p[0]-9,p[1]-9);g.lineTo(p[0]+9,p[1]+9);g.stroke();
+        g.beginPath();g.moveTo(p[0]-9,p[1]+9);g.lineTo(p[0]+9,p[1]-9);g.stroke();}
+    });
+    lbl(g,'v0',A[0]-20,A[1]+6,C.mu);lbl(g,'v1',B[0]+20,B[1]+6,C.mu);lbl(g,'v2',D[0],D[1]-18,C.mu);
+    // sign badge on the face midpoint
+    const mx=(f.e[0][0]+f.e[1][0])/2,my=(f.e[0][1]+f.e[1][1])/2;
+    lbl(g,f.sign,mx+22,my-22,f.col,26);
+    narr.innerHTML=f.txt;
+  }
+  draw();
+  let t=setInterval(()=>{if(playing){idx=(idx+1)%3;draw();}},1600);
+  document.getElementById('btn-boundary').onclick=()=>{playing=!playing;};
+})();
+
+// ---------- Step 5: ∂∂ = 0 ----------
+(function(){const cv=document.getElementById('c-dd'),g=cv.getContext('2d');
+  g.clearRect(0,0,1000,260);
+  const A=[300,210],B=[700,210],D=[500,50];
+  arrow(g,A[0],A[1],B[0],B[1],C.ac,3); // 0->1
+  arrow(g,B[0],B[1],D[0],D[1],C.ac,3); // 1->2
+  arrow(g,D[0],D[1],A[0],A[1],C.ac,3); // 2->0 (loop closes)
+  [A,B,D].forEach(p=>dot(g,p[0],p[1],6,C.tx));
+  lbl(g,'v0',A[0]-20,A[1]+6,C.mu);lbl(g,'v1',B[0]+20,B[1]+6,C.mu);lbl(g,'v2',D[0],D[1]-18,C.mu);
+  // at each vertex show +head/-tail cancelling
+  lbl(g,'+  −',A[0],A[1]+30,C.tx,16);
+  lbl(g,'+  −',B[0],B[1]+30,C.tx,16);
+  lbl(g,'+  −',D[0],D[1]-38,C.tx,16);
+  lbl(g,'every corner: +1 (a head)  and  −1 (a tail)   →   they cancel',500,244,C.mu,14);
+})();
+</script>
+</body>
+</html>
