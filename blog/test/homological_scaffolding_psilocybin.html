@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Homologische Gerüste des Gehirns – Interaktive Erkundung</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.css">
 <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
 <style>
 :root {
@@ -3436,8 +3436,7 @@ const C = {
         const interWidth = lerp(0.3, 3, t);
         const numInterEdges = Math.floor(lerp(3, 25, t));
 
-        // Deterministic "random
-" seed for reproducibility
+        // Deterministic "random" seed for reproducibility
         const seed = 42;
         let seedVal = seed;
         function seededRand() {
