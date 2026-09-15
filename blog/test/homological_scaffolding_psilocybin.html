@@ -1,0 +1,3566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homologische Gerüste des Gehirns – Interaktive Erkundung</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+:root {
+--bg-deep: #0a0a1a;
+--bg-card: #12122a;
+--bg-card-hover: #1a1a3a;
+--accent-cyan: #00e5ff;
+--accent-magenta: #e040fb;
+--accent-gold: #ffd740;
+--accent-green: #69f0ae;
+--accent-red: #ff5252;
+--accent-blue: #448aff;
+--text-primary: #e8e8f0;
+--text-secondary: #9898b0;
+--border-subtle: rgba(255,255,255,0.08);
+--glow-cyan: 0 0 30px rgba(0,229,255,0.3);
+--glow-magenta: 0 0 30px rgba(224,64,251,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(--bg-deep);
+color: var(--text-primary);
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+line-height: 1.7;
+overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 4px; }
+
+/* Hero */
+.hero {
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+position: relative;
+overflow: hidden;
+padding: 2rem;
+}
+
+.hero-bg-canvas {
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 100%;
+z-index: 0;
+}
+
+.hero-content {
+position: relative;
+z-index: 1;
+max-width: 900px;
+}
+
+.hero h1 {
+font-size: clamp(2rem, 5vw, 3.5rem);
+font-weight: 800;
+background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin-bottom: 1rem;
+letter-spacing: -0.02em;
+}
+
+.hero .subtitle {
+font-size: clamp(1rem, 2.5vw, 1.4rem);
+color: var(--text-secondary);
+max-width: 700px;
+margin: 0 auto 2rem;
+}
+
+.hero .paper-ref {
+font-size: 0.85rem;
+color: var(--text-secondary);
+opacity: 0.7;
+font-style: italic;
+}
+
+/* Navigation dots */
+.nav-dots {
+position: fixed;
+right: 20px;
+top: 50%;
+transform: translateY(-50%);
+z-index: 1000;
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+
+.nav-dot {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: var(--border-subtle);
+border: 2px solid var(--text-secondary);
+cursor: pointer;
+transition: all 0.3s;
+position: relative;
+}
+
+.nav-dot.active {
+background: var(--accent-cyan);
+border-color: var(--accent-cyan);
+box-shadow: var(--glow-cyan);
+}
+
+.nav-dot:hover::after {
+content: attr(data-label);
+position: absolute;
+right: 24px;
+top: 50%;
+transform: translateY(-50%);
+background: var(--bg-card);
+color: var(--text-primary);
+padding: 4px 12px;
+border-radius: 6px;
+font-size: 0.75rem;
+white-space: nowrap;
+border: 1px solid var(--border-subtle);
+}
+
+/* Sections */
+.section {
+min-height: 100vh;
+padding: 4rem 2rem;
+max-width: 1400px;
+margin: 0 auto;
+position: relative;
+}
+
+.section-header {
+text-align: center;
+margin-bottom: 3rem;
+}
+
+.section-number {
+font-size: 0.85rem;
+color: var(--accent-cyan);
+text-transform: uppercase;
+letter-spacing: 0.2em;
+margin-bottom: 0.5rem;
+}
+
+.section-title {
+font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+font-weight: 700;
+margin-bottom: 1rem;
+}
+
+.section-desc {
+color: var(--text-secondary);
+max-width: 700px;
+margin: 0 auto;
+font-size: 1.05rem;
+}
+
+/* Cards */
+.card {
+background: var(--bg-card);
+border: 1px solid var(--border-subtle);
+border-radius: 16px;
+padding: 2rem;
+margin-bottom: 2rem;
+transition: all 0.3s;
+}
+
+.card:hover {
+border-color: rgba(0,229,255,0.2);
+box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.card-title {
+font-size: 1.2rem;
+font-weight: 600;
+margin-bottom: 1rem;
+display: flex;
+align-items: center;
+gap: 0.5rem;
+}
+
+.card-title .icon {
+font-size: 1.4rem;
+}
+
+/* Interactive containers */
+.interactive-container {
+background: rgba(0,0,0,0.3);
+border: 1px solid var(--border-subtle);
+border-radius: 12px;
+padding: 1.5rem;
+margin: 1rem 0;
+}
+
+canvas {
+border-radius: 8px;
+display: block;
+margin: 0 auto;
+max-width: 100%;
+}
+
+/* Controls */
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+margin: 1rem 0;
+align-items: center;
+justify-content: center;
+}
+
+.control-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.3rem;
+}
+
+.control-group label {
+font-size: 0.8rem;
+color: var(--text-secondary);
+text-transform: uppercase;
+letter-spacing: 0.1em;
+}
+
+input[type="range"] {
+-webkit-appearance: none;
+appearance: none;
+width: 180px;
+height: 6px;
+border-radius: 3px;
+background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+outline: none;
+cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: white;
+box-shadow: 0 0 10px rgba(0,229,255,0.5);
+cursor: pointer;
+}
+
+.value-display {
+font-size: 1.1rem;
+font-weight: 600;
+color: var(--accent-cyan);
+font-variant-numeric: tabular-nums;
+}
+
+button {
+background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+color: var(--bg-deep);
+border: none;
+padding: 0.6rem 1.5rem;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s;
+font-size: 0.9rem;
+}
+
+button:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 15px rgba(0,229,255,0.4);
+}
+
+button.secondary {
+background: transparent;
+color: var(--accent-cyan);
+border: 1px solid var(--accent-cyan);
+}
+
+button.secondary:hover {
+background: rgba(0,229,255,0.1);
+}
+
+/* Grid layouts */
+.grid-2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 2rem;
+}
+
+.grid-3 {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+.grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* Math */
+.math-block {
+background: rgba(0,229,255,0.05);
+border-left: 3px solid var(--accent-cyan);
+padding: 1rem 1.5rem;
+margin: 1rem 0;
+border-radius: 0 8px 8px 0;
+overflow-x: auto;
+}
+
+/* Annotations */
+.annotation {
+background: rgba(224,64,251,0.1);
+border: 1px solid rgba(224,64,251,0.3);
+border-radius: 8px;
+padding: 1rem 1.5rem;
+margin: 1rem 0;
+font-size: 0.95rem;
+}
+
+.annotation::before {
+content: "💡 ";
+}
+
+/* Key insight */
+.key-insight {
+background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(224,64,251,0.1));
+border: 1px solid rgba(0,229,255,0.3);
+border-radius: 12px;
+padding: 1.5rem 2rem;
+margin: 1.5rem 0;
+text-align: center;
+font-size: 1.1rem;
+font-weight: 500;
+}
+
+/* Progress indicator */
+.step-indicator {
+display: flex;
+justify-content: center;
+gap: 0.5rem;
+margin: 1rem 0;
+}
+
+.step-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--border-subtle);
+transition: all 0.3s;
+}
+
+.step-dot.active {
+background: var(--accent-cyan);
+box-shadow: var(--glow-cyan);
+}
+
+/* Legend */
+.legend {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+justify-content: center;
+margin: 0.5rem 0;
+font-size: 0.85rem;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 0.4rem;
+}
+
+.legend-color {
+width: 12px;
+height: 12px;
+border-radius: 3px;
+}
+
+/* Comparison layout */
+.comparison {
+display: grid;
+grid-template-columns: 1fr auto 1fr;
+gap: 1rem;
+align-items: center;
+}
+
+.vs-badge {
+background: var(--accent-gold);
+color: var(--bg-deep);
+font-weight: 800;
+padding: 0.5rem 1rem;
+border-radius: 50%;
+font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+.comparison {
+grid-template-columns: 1fr;
+}
+}
+
+/* Tooltip */
+.tooltip-custom {
+position: absolute;
+background: var(--bg-card);
+border: 1px solid var(--accent-cyan);
+border-radius: 8px;
+padding: 0.5rem 1rem;
+font-size: 0.8rem;
+pointer-events: none;
+z-index: 100;
+max-width: 250px;
+display: none;
+}
+
+/* Flow arrow */
+.flow-container {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 1rem;
+flex-wrap: wrap;
+margin: 2rem 0;
+}
+
+.flow-box {
+background: var(--bg-card);
+border: 1px solid var(--border-subtle);
+border-radius: 10px;
+padding: 1rem 1.5rem;
+text-align: center;
+font-size: 0.9rem;
+min-width: 140px;
+}
+
+.flow-arrow {
+color: var(--accent-cyan);
+font-size: 1.5rem;
+}
+
+/* Fade in animation */
+.fade-in {
+opacity: 0;
+transform: translateY(30px);
+transition: opacity 0.8s, transform 0.8s;
+}
+
+.fade-in.visible {
+opacity: 1;
+transform: translateY(0);
+}
+
+/* Tab system */
+.tabs {
+display: flex;
+gap: 0;
+margin-bottom: 1.5rem;
+border-bottom: 2px solid var(--border-subtle);
+}
+
+.tab {
+padding: 0.7rem 1.5rem;
+cursor: pointer;
+color: var(--text-secondary);
+border-bottom: 2px solid transparent;
+margin-bottom: -2px;
+transition: all 0.3s;
+font-weight: 500;
+font-size: 0.9rem;
+}
+
+.tab.active {
+color: var(--accent-cyan);
+border-bottom-color: var(--accent-cyan);
+}
+
+.tab-content {
+display: none;
+}
+
+.tab-content.active {
+display: block;
+}
+
+/* Plotly overrides */
+.js-plotly-plot .plotly .modebar { right: 10px !important; }
+
+.scroll-hint {
+position: absolute;
+bottom: 2rem;
+left: 50%;
+transform: translateX(-50%);
+animation: bounce 2s infinite;
+color: var(--text-secondary);
+font-size: 0.85rem;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.5rem;
+}
+
+@keyframes bounce {
+0%, 100% { transform: translateX(-50%) translateY(0); }
+50% { transform: translateX(-50%) translateY(10px); }
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.5; }
+}
+
+.pulse { animation: pulse 2s infinite; }
+
+/* Specific canvas sizes */
+.canvas-large {
+width: 100%;
+height: 500px;
+}
+
+.canvas-medium {
+width: 100%;
+height: 400px;
+}
+
+.canvas-small {
+width: 100%;
+height: 300px;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO SECTION -->
+<section class="hero" id="hero">
+<canvas class="hero-bg-canvas" id="heroBgCanvas"></canvas>
+<div class="hero-content">
+<h1>Homologische Gerüste funktioneller Gehirnnetzwerke</h1>
+<p class="subtitle">
+Wie algebraische Topologie verborgene Muster in der Gehirnaktivität sichtbar macht –
+und was Psilocybin damit anstellt.
+</p>
+<p class="paper-ref">
+Basierend auf: Petri, Expert, Turkheimer, Carhart-Harris, Nutt, Hellyer & Vaccarino (2014)<br>
+J. R. Soc. Interface 11: 20140873
+</p>
+</div>
+<div class="scroll-hint">
+<span>↓ Scroll zum Erkunden ↓</span>
+</div>
+</section>
+
+<!-- NAV DOTS -->
+<div class="nav-dots" id="navDots">
+<div class="nav-dot active" data-label="Start" data-target="hero"></div>
+<div class="nav-dot" data-label="Das Problem" data-target="sec-problem"></div>
+<div class="nav-dot" data-label="Netzwerke" data-target="sec-networks"></div>
+<div class="nav-dot" data-label="Cliquen & Simplizes" data-target="sec-cliques"></div>
+<div class="nav-dot" data-label="Löcher & Homologie" data-target="sec-homology"></div>
+<div class="nav-dot" data-label="Filtration" data-target="sec-filtration"></div>
+<div class="nav-dot" data-label="Persistente Homologie" data-target="sec-persistence"></div>
+<div class="nav-dot" data-label="Gerüste (Scaffolds)" data-target="sec-scaffolds"></div>
+<div class="nav-dot" data-label="Gehirn-Ergebnisse" data-target="sec-results"></div>
+<div class="nav-dot" data-label="Fazit" data-target="sec-conclusion"></div>
+</div>
+
+<!-- SECTION 1: THE PROBLEM -->
+<section class="section fade-in" id="sec-problem">
+<div class="section-header">
+<div class="section-number">Kapitel 1</div>
+<h2 class="section-title">Das Problem: Warum brauchen wir neue Werkzeuge?</h2>
+<p class="section-desc">
+Das Gehirn ist ein Netzwerk aus ~86 Milliarden Neuronen. Wie finden wir Muster in diesem Chaos?
+</p>
+</div>
+
+<div class="flow-container">
+<div class="flow-box" style="border-color: var(--accent-cyan);">
+<strong>fMRI-Scan</strong><br>
+<small>Gehirnaktivität messen</small>
+</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-magenta);">
+<strong>Korrelationen</strong><br>
+<small>Welche Regionen schwingen zusammen?</small>
+</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-gold);">
+<strong>Netzwerk</strong><br>
+<small>169 Regionen, alle verbunden</small>
+</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-green);">
+<strong>Analyse?</strong><br>
+<small>Hier liegt das Problem!</small>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-title"><span class="icon">⚠️</span> Das bisherige Problem</div>
+<p>Traditionelle Netzwerkanalyse schaut auf einzelne Knoten und Kanten: Wie viele Verbindungen hat ein Knoten? Welcher ist am zentralsten? Aber das übersieht <strong>mesoskopische Muster</strong> – Strukturen, die größer als einzelne Verbindungen, aber kleiner als das ganze Netzwerk sind.</p>
+<br>
+<p>Außerdem: Wenn man schwache Verbindungen einfach wegschneidet (Schwellenwert), verliert man möglicherweise wichtige Information!</p>
+</div>
+<div class="card">
+<div class="card-title"><span class="icon">💡</span> Die neue Idee</div>
+<p>Statt nur Knoten und Kanten zu zählen, schauen wir auf die <strong>„Löcher"</strong> im Netzwerk – Regionen mit reduzierter Konnektivität, umgeben von starken Verbindungen.</p>
+<br>
+<p>Das Werkzeug dafür: <strong>Persistente Homologie</strong> aus der algebraischen Topologie. Damit können wir alle Gewichtsskalen gleichzeitig betrachten, ohne willkürliche Schwellenwerte zu setzen.</p>
+</div>
+</div>
+
+<div class="key-insight">
+🎯 <strong>Die zentrale Frage:</strong> Wie unterscheidet sich die topologische Struktur des Gehirns im Normalzustand von der unter Psilocybin?
+</div>
+
+<div class="interactive-container">
+<div class="card-title"><span class="icon">🎮</span> Interaktiv: Das Schwellenwert-Dilemma</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Bewege den Slider, um den Schwellenwert zu ändern. Sieh, wie Verbindungen verschwinden – und wie du dabei wichtige Strukturen verlieren kannst.
+</p>
+<div class="controls">
+<div class="control-group">
+<label>Schwellenwert</label>
+<input type="range" id="thresholdSlider" min="0" max="100" value="0">
+<span class="value-display" id="thresholdValue">0%</span>
+</div>
+</div>
+<canvas id="thresholdCanvas" width="700" height="350"></canvas>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-cyan);"></div> Starke Verbindung</div>
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-gold);"></div> Mittlere Verbindung</div>
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-red);"></div> Schwache Verbindung</div>
+<div class="legend-item"><div class="legend-color" style="background: #333;"></div> Entfernt</div>
+</div>
+<div class="annotation">
+Beachte: Bei hohem Schwellenwert verschwinden genau die schwachen Verbindungen, die vielleicht ein wichtiges „Loch" umranden!
+</div>
+</div>
+</section>
+
+<!-- SECTION 2: NETWORKS BASICS -->
+<section class="section fade-in" id="sec-networks">
+<div class="section-header">
+<div class="section-number">Kapitel 2</div>
+<h2 class="section-title">Netzwerke: Die Grundsprache</h2>
+<p class="section-desc">
+Ein Netzwerk besteht aus Knoten (Gehirnregionen) und Kanten (Verbindungen). Kanten können Gewichte haben.
+</p>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🕸️</span> Interaktiv: Baue dein eigenes Netzwerk</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Klicke auf die Fläche, um Knoten hinzuzufügen. Klicke zwei Knoten nacheinander an, um sie zu verbinden. Nutze den Slider, um die Gewichte zu verändern.
+</p>
+<canvas id="networkCanvas" width="700" height="400"></canvas>
+<div class="controls">
+<button onclick="clearNetwork()">🗑️ Zurücksetzen</button>
+<button onclick="loadExampleNetwork()" class="secondary">📋 Beispiel laden</button>
+</div>
+<div class="math-block" id="mathAdjacency">
+<strong>Adjazenzmatrix:</strong> Ein Netzwerk G = (V, E, ω) wird beschrieben durch Knoten V, Kanten E und Gewichtsfunktion ω: E → ℝ
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🧠</span> Im Paper: Das Gehirn als Netzwerk</div>
+<p>169 kortikale und subkortikale Regionen bilden die Knoten. Die Kantengewichte sind <strong>partielle Korrelationen</strong> zwischen den fMRI-Zeitreihen der Regionen. Das ergibt eine vollständig verbundene, gewichtete Matrix.</p>
+<div class="interactive-container">
+<div class="card-title">Korrelationsmatrix-Visualisierung</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Eine simulierte Korrelationsmatrix – jeder Pixel zeigt die Stärke der Verbindung zwischen zwei Gehirnregionen.
+</p>
+<canvas id="corrMatrixCanvas" width="400" height="400"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Rauschen</label>
+<input type="range" id="noiseSlider" min="0" max="100" value="30">
+</div>
+<div class="control-group">
+<label>Cluster-Stärke</label>
+<input type="range" id="clusterSlider" min="0" max="100" value="70">
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SECTION 3: CLIQUES AND SIMPLICES -->
+<section class="section fade-in" id="sec-cliques">
+<div class="section-header">
+<div class="section-number">Kapitel 3</div>
+<h2 class="section-title">Von Cliquen zu Simplizes</h2>
+<p class="section-desc">
+Der Schlüssel: Wir verwandeln ein Netzwerk in einen höherdimensionalen topologischen Raum.
+</p>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-title"><span class="icon">🔺</span> Was ist eine Clique?</div>
+<p>Eine <strong>Clique</strong> ist eine Gruppe von Knoten, in der <em>jeder mit jedem</em> verbunden ist:</p>
+<ul style="margin: 1rem 0; padding-left: 1.5rem; color: var(--text-secondary);">
+<li><strong>2-Clique:</strong> Eine Kante (2 verbundene Knoten)</li>
+<li><strong>3-Clique:</strong> Ein Dreieck (3 Knoten, alle paarweise verbunden)</li>
+<li><strong>4-Clique:</strong> Ein Tetraeder (4 Knoten, alle paarweise verbunden)</li>
+</ul>
+</div>
+<div class="card">
+<div class="card-title"><span class="icon">📐</span> Was ist ein Simplex?</div>
+<p>Ein <strong>k-Simplex</strong> ist die geometrische Verallgemeinerung:</p>
+<ul style="margin: 1rem 0; padding-left: 1.5rem; color: var(--text-secondary);">
+<li><strong>0-Simplex:</strong> Ein Punkt</li>
+<li><strong>1-Simplex:</strong> Eine Linie</li>
+<li><strong>2-Simplex:</strong> Ein ausgefülltes Dreieck</li>
+<li><strong>3-Simplex:</strong> Ein ausgefüllter Tetraeder</li>
+</ul>
+<p style="margin-top: 0.5rem;"><strong>Regel:</strong> Eine k-Clique wird zu einem (k−1)-Simplex.</p>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🎮</span> Interaktiv: Cliquen erkennen und füllen</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Links siehst du ein Netzwerk. Rechts den zugehörigen <strong>Cliquen-Komplex</strong> (Simplizial-Komplex), bei dem Cliquen zu ausgefüllten Simplizes „aufgeblasen" werden. Bewege den Slider, um Kanten hinzuzufügen und zu sehen, wie neue Cliquen entstehen.
+</p>
+<canvas id="cliqueCanvas" width="700" height="400"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Kanten hinzufügen</label>
+<input type="range" id="cliqueEdgeSlider" min="0" max="15" value="0" step="1">
+<span class="value-display" id="cliqueEdgeValue">0 / 15</span>
+</div>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-cyan);"></div> Kante (1-Simplex)</div>
+<div class="legend-item"><div class="legend-color" style="background: rgba(0,229,255,0.3);"></div> Gefülltes Dreieck (2-Simplex)</div>
+<div class="legend-item"><div class="legend-color" style="background: rgba(224,64,251,0.3);"></div> Loch (1-Zykel)</div>
+</div>
+<div id="cliqueInfo" class="annotation" style="display:none;"></div>
+</div>
+
+<div class="key-insight">
+🔑 <strong>Kernidee:</strong> Durch das Füllen von Cliquen definieren wir einen <strong>Simplizialkomplex</strong> – einen topologischen Raum, in dem wir „Löcher" mathematisch präzise definieren können.
+</div>
+</section>
+
+<!-- SECTION 4: HOLES AND HOMOLOGY -->
+<section class="section fade-in" id="sec-homology">
+<div class="section-header">
+<div class="section-number">Kapitel 4</div>
+<h2 class="section-title">Löcher & Homologie</h2>
+<p class="section-desc">
+Homologie zählt die „Löcher" in einem topologischen Raum – und ihre Dimension verrät uns, welche Art von Loch es ist.
+</p>
+</div>
+
+<div class="grid-3">
+<div class="card" style="text-align:center;">
+<div class="card-title" style="justify-content:center;"><span class="icon">⚫</span> H₀: Zusammenhangskomponenten</div>
+<canvas id="h0Canvas" width="200" height="200"></canvas>
+<p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Getrennte Teile = „0-dimensionale Löcher"</p>
+</div>
+<div class="card" style="text-align:center;">
+<div class="card-title" style="justify-content:center;"><span class="icon">🔵</span> H₁: Schleifen / Zyklen</div>
+<canvas id="h1Canvas" width="200" height="200"></canvas>
+<p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Geschlossene Ringe = „1-dimensionale Löcher"</p>
+</div>
+<div class="card" style="text-align:center;">
+<div class="card-title" style="justify-content:center;"><span class="icon">🟣</span> H₂: Hohlräume</div>
+<canvas id="h2Canvas" width="200" height="200"></canvas>
+<p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Eingeschlossene Hohlräume = „2-dimensionale Löcher"</p>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🎮</span> Interaktiv: Löcher erkennen</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Füge Kanten und Dreiecke hinzu und beobachte, wie sich die Homologie-Gruppen verändern. Ein Zyklus (Schleife) ist ein H₁-Loch – aber nur, wenn er nicht durch ein gefülltes Dreieck „zugestopft" wird!
+</p>
+<canvas id="homologyCanvas" width="700" height="420"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Bauphase</label>
+<input type="range" id="homologySlider" min="0" max="20" value="0" step="1">
+<span class="value-display" id="homologyStep">Schritt 0</span>
+</div>
+</div>
+<div id="homologyCounts" style="display:flex; justify-content:center; gap:2rem; margin-top:1rem;">
+<div style="text-align:center;">
+<div style="font-size:2rem; font-weight:800; color: var(--accent-green);" id="h0Count">0</div>
+<div style="font-size:0.8rem; color: var(--text-secondary);">H₀ (Komponenten)</div>
+</div>
+<div style="text-align:center;">
+<div style="font-size:2rem; font-weight:800; color: var(--accent-cyan);" id="h1Count">0</div>
+<div style="font-size:0.8rem; color: var(--text-secondary);">H₁ (Schleifen)</div>
+</div>
+</div>
+<div class="annotation">
+<strong>Wichtig für das Paper:</strong> Die Autoren konzentrieren sich auf H₁ – die Schleifen. Diese repräsentieren Regionen im Gehirn mit <em>reduzierter Konnektivität</em>, umgeben von starken Verbindungen. Stell dir einen Ring aus stark korrelierten Gehirnregionen vor, deren Inneres schwach verbunden ist.
+</div>
+</div>
+
+<div class="math-block">
+<strong>Formal:</strong> Die k-te Homologiegruppe H<sub>k</sub>(K) beschreibt die Löcher eines Simplizialkomplexes K, die von k-dimensionalen Rändern begrenzt werden. H₁ beschreibt Zyklen, die von 1-Simplizes (Kanten) begrenzt werden.
+</div>
+</section>
+
+<!-- SECTION 5: FILTRATION -->
+<section class="section fade-in" id="sec-filtration">
+<div class="section-header">
+<div class="section-number">Kapitel 5</div>
+<h2 class="section-title">Filtration: Schicht für Schicht durch die Gewichte</h2>
+<p class="section-desc">
+Statt einen willkürlichen Schwellenwert zu wählen, scannen wir systematisch alle Gewichtsskalen – von den stärksten zu den schwächsten Verbindungen.
+</p>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🏔️</span> Die Stratigraphie-Metapher</div>
+<p>Stell dir das gewichtete Netzwerk als Landschaft vor: Starke Verbindungen sind hohe Berge, schwache sind tiefe Täler. Die Filtration ist wie ein steigender Wasserspiegel – wir sehen zuerst nur die Gipfel (stärkste Verbindungen), dann tauchen immer mehr Strukturen auf.</p>
+<div class="interactive-container">
+<canvas id="stratigraphyCanvas" width="700" height="350"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Wasserspiegel (Schwellenwert ε)</label>
+<input type="range" id="waterLevelSlider" min="0" max="100" value="100">
+<span class="value-display" id="waterLevelValue">ε = 1.00</span>
+</div>
+<button onclick="animateWaterLevel()">▶ Automatisch abspielen</button>
+</div>
+<div id="filtrationInfo" style="text-align:center; margin-top:0.5rem; color: var(--text-secondary); font-size: 0.9rem;"></div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🎮</span> Interaktiv: Gewichtete Netzwerk-Filtration</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Beobachte, wie bei sinkendem Schwellenwert neue Kanten erscheinen, Cliquen entstehen, Dreiecke gefüllt werden – und wie Löcher geboren werden und sterben.
+</p>
+<canvas id="filtrationCanvas" width="700" height="450"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Filtrations-Schritt</label>
+<input type="range" id="filtrationSlider" min="0" max="30" value="0" step="1">
+<span class="value-display" id="filtrationStep">0 / 30</span>
+</div>
+<button onclick="animateFiltration()">▶ Animation</button>
+<button onclick="resetFiltration()" class="secondary">↺ Reset</button>
+</div>
+<div id="filtrationEvents" style="min-height: 60px; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: var(--text-secondary);"></div>
+</div>
+
+<div class="key-insight">
+🔑 <strong>Kernprinzip:</strong> Die Filtration erzeugt eine Folge K<sub>ε₁</sub> ⊆ K<sub>ε₂</sub> ⊆ ... ⊆ K<sub>εₙ</sub> von Simplizialkomplexen. Wir beobachten, wie Löcher <em>geboren</em> werden (wenn ein Zyklus entsteht) und <em>sterben</em> (wenn er durch eine neue Kante/Dreieck gefüllt wird).
+</div>
+</section>
+
+<!-- SECTION 6: PERSISTENT HOMOLOGY -->
+<section class="section fade-in" id="sec-persistence">
+<div class="section-header">
+<div class="section-number">Kapitel 6</div>
+<h2 class="section-title">Persistente Homologie</h2>
+<p class="section-desc">
+Jedes Loch hat eine Geburt und einen Tod. Die Differenz – die <em>Persistenz</em> – misst seine Bedeutung.
+</p>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">📊</span> Interaktiv: Persistenzdiagramm bauen</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Bewege den Filtrations-Slider und beobachte gleichzeitig das Netzwerk (links) und das Persistenzdiagramm (rechts). Jeder Punkt im Diagramm repräsentiert ein Loch: x-Achse = Geburt, y-Achse = Tod. Je weiter ein Punkt von der Diagonale entfernt ist, desto <strong>persistenter</strong> (wichtiger) ist das Loch.
+</p>
+<canvas id="persistenceCanvas" width="700" height="450"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Filtrations-Fortschritt</label>
+<input type="range" id="persistenceSlider" min="0" max="100" value="0">
+<span class="value-display" id="persistenceProgress">0%</span>
+</div>
+<button onclick="animatePersistence()">▶ Animation</button>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-cyan);"></div> Aktives Loch (lebt noch)</div>
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-red);"></div> Totes Loch (gefüllt)</div>
+<div class="legend-item"><div class="legend-color" style="background: var(--accent-gold); opacity:0.5;"></div> Diagonale (Persistenz = 0)</div>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="card">
+<div class="card-title"><span class="icon">📈</span> Persistenz = Tiefe des Lochs</div>
+<p>Ein Loch mit <strong>hoher Persistenz</strong> bedeutet: Die Kanten, die den Zyklus bilden, sind viel stärker als die Kanten, die ihn schließlich füllen.</p>
+<br>
+<p>Im Gehirn: Ein Ring aus stark korrelierten Regionen, deren Inneres schwach korreliert ist → ein tiefes „Loch" in der funktionellen Konnektivität.</p>
+</div>
+<div class="card">
+<div class="card-title"><span class="icon">🗺️</span> Persistenzdiagramm lesen</div>
+<ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+<li><strong>Nahe der Diagonale:</strong> Kurzlebig, wahrscheinlich Rauschen</li>
+<li><strong>Weit von der Diagonale:</strong> Langlebig, echtes topologisches Merkmal</li>
+<li><strong>Viele Punkte oben links:</strong> Viele Löcher, die früh geboren werden und spät sterben</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🔬</span> Im Paper: Placebo vs. Psilocybin</div>
+<div id="persistenceDensityPlot" style="width:100%; height:400px;"></div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 1rem;">
+<strong>Placebo:</strong> Gleichmäßige Verteilung der Generatoren – moderate Persistenz, moderate Geburtszeiten.<br>
+<strong>Psilocybin:</strong> Stark gepeakt bei niedrigen Persistenzwerten (viele instabile Zyklen), ABER mit einem langen Schwanz (einige wenige extrem persistente Zyklen, die es unter Placebo nicht gibt).
+</p>
+</div>
+</section>
+
+<!-- SECTION 7: SCAFFOLDS -->
+<section class="section fade-in" id="sec-scaffolds">
+<div class="section-header">
+<div class="section-number">Kapitel 7</div>
+<h2 class="section-title">Homologische Gerüste (Scaffolds)</h2>
+<p class="section-desc">
+Die zentrale Innovation des Papers: Zwei neue Netzwerke, die die topologische Information kompakt zusammenfassen.
+</p>
+</div>
+
+<div class="annotation">
+Das Persistenzdiagramm zeigt uns die Löcher als Ganzes. Aber welche <em>einzelnen Kanten</em> sind für diese Löcher verantwortlich? Die Gerüste beantworten diese Frage.
+</div>
+
+<div class="grid-2">
+<div class="card" style="border-color: rgba(0,229,255,0.3);">
+<div class="card-title"><span class="icon">⏱️</span> Persistenz-Gerüst H<sup>p</sup></div>
+<p>Jede Kante bekommt als Gewicht die <strong>Summe der Persistenzen</strong> aller Zyklen, zu denen sie gehört:</p>
+<div class="math-block">
+w<sup>p</sup><sub>e</sub> = Σ<sub>gᵢ | e∈gᵢ</sub> p<sub>gᵢ</sub>
+</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem;">
+<strong>Hoher Wert</strong> = Diese Kante ist Teil von langlebigen, wichtigen Zyklen → sie ist eine „stabile Brücke" in einer lokal schwach verbundenen Region.
+</p>
+</div>
+<div class="card" style="border-color: rgba(224,64,251,0.3);">
+<div class="card-title"><span class="icon">🔢</span> Frequenz-Gerüst H<sup>f</sup></div>
+<p>Jede Kante bekommt als Gewicht die <strong>Anzahl der Zyklen</strong>, zu denen sie gehört:</p>
+<div class="math-block">
+w<sup>f</sup><sub>e</sub> = Σ<sub>gᵢ</sub> 𝟙<sub>e∈gᵢ</sub>
+</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem;">
+<strong>Hoher Wert</strong> = Diese Kante taucht in vielen verschiedenen Zyklen auf → sie ist ein topologischer „Hub".
+</p>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🎮</span> Interaktiv: Gerüste bauen</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Beobachte, wie aus den Zyklen der persistenten Homologie die beiden Gerüste konstruiert werden. Jeder Zyklus färbt seine Kanten ein – das Persistenz-Gerüst summiert die Lebensdauer, das Frequenz-Gerüst zählt die Beteiligungen.
+</p>
+<canvas id="scaffoldCanvas" width="700" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Zyklus hinzufügen</label>
+<input type="range" id="scaffoldSlider" min="0" max="8" value="0" step="1">
+<span class="value-display" id="scaffoldStep">0 / 8 Zyklen</span>
+</div>
+</div>
+<div class="tabs" id="scaffoldTabs">
+<div class="tab active" data-tab="persistence-scaffold">Persistenz-Gerüst</div>
+<div class="tab" data-tab="frequency-scaffold">Frequenz-Gerüst</div>
+<div class="tab" data-tab="both-scaffolds">Vergleich</div>
+</div>
+<div id="scaffoldInfo" style="padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; font-size: 0.9rem; color: var(--text-secondary); min-height: 50px;"></div>
+</div>
+
+<div class="key-insight">
+🔑 <strong>Warum zwei Gerüste?</strong> Zusammen verraten sie uns die <em>Natur</em> jeder Kante: Ist sie Teil vieler kurzlebiger Zyklen (hohe Frequenz, niedrige Persistenz)? Oder Teil weniger, aber extrem stabiler Zyklen (niedrige Frequenz, hohe Persistenz)? Unter Psilocybin gibt es Kanten der zweiten Art, die es unter Placebo nicht gibt!
+</div>
+</section>
+
+<!-- SECTION 8: BRAIN RESULTS -->
+<section class="section fade-in" id="sec-results">
+<div class="section-header">
+<div class="section-number">Kapitel 8</div>
+<h2 class="section-title">Ergebnisse: Das Gehirn unter Psilocybin</h2>
+<p class="section-desc">
+15 Probanden, je einmal Placebo, einmal Psilocybin. fMRI-Scans. 169 Gehirnregionen. Was zeigt die Topologie?
+</p>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">📊</span> Ergebnis 1: Persistenzverteilungen sind dramatisch verschieden</div>
+<div id="resultPersistencePlot" style="width:100%; height:350px;"></div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 1rem;">
+Kolmogorov-Smirnov-Test: Statistik = 0.22, p-Wert < 10⁻¹⁰. Die Verteilungen sind hochsignifikant verschieden.
+</p>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">📊</span> Ergebnis 2: Frequenz vs. Persistenz der Kanten</div>
+<div id="scatterPlot" style="width:100%; height:400px;"></div>
+<div class="grid-2" style="margin-top: 1rem;">
+<div style="text-align:center; padding: 1rem; background: rgba(68,138,255,0.1); border-radius: 8px;">
+<strong style="color: var(--accent-blue);">Placebo</strong><br>
+<span style="color: var(--text-secondary); font-size: 0.9rem;">R² = 0.95, Steigung = 0.23<br>Linearer Zusammenhang: Frequenz ≈ Persistenz</span>
+</div>
+<div style="text-align:center; padding: 1rem; background: rgba(255,82,82,0.1); border-radius: 8px;">
+<strong style="color: var(--accent-red);">Psilocybin</strong><br>
+<span style="color: var(--text-secondary); font-size: 0.9rem;">R² = 0.9, Steigung = 0.3<br>Größere Streuung: Einige Kanten extrem persistent!</span>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🧠</span> Ergebnis 3: Die Gerüste im Vergleich</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+Interaktiver Vergleich der Persistenz-Gerüste. Nur Kanten mit Gewicht ≥ 80 sind gezeigt (dort wo die Verteilungen auseinandergehen). Farben = Communities im Placebo-Gerüst.
+</p>
+<div class="comparison">
+<div>
+<h3 style="text-align:center; color: var(--accent-blue); margin-bottom: 1rem;">Placebo</h3>
+<canvas id="brainPlaceboCanvas" width="320" height="320"></canvas>
+<p style="text-align:center; color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">165 schwere Kanten, meist <em>innerhalb</em> von Communities</p>
+</div>
+<div class="vs-badge">VS</div>
+<div>
+<h3 style="text-align:center; color: var(--accent-red); margin-bottom: 1rem;">Psilocybin</h3>
+<canvas id="brainPsilocybinCanvas" width="320" height="320"></canvas>
+<p style="text-align:center; color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">374 schwere Kanten, 217 davon <em>zwischen</em> Communities!</p>
+</div>
+</div>
+<div class="controls" style="margin-top: 1rem;">
+<div class="control-group">
+<label>Gewichts-Schwelle</label>
+<input type="range" id="brainThresholdSlider" min="0" max="100" value="80">
+<span class="value-display" id="brainThresholdValue">80</span>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">📊</span> Ergebnis 4: Kantengewichts-Verteilungen</div>
+<div id="edgeWeightPlot" style="width:100%; height:350px;"></div>
+<p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 1rem;">
+<strong>Persistenz-Gerüst:</strong> Psilocybin hat einen breiteren Schwanz (p < 10⁻²⁰).<br>
+<strong>Frequenz-Gerüst:</strong> Kein signifikanter Unterschied (p = 0.72)!<br>
+→ Kanten gehören zu gleich vielen Zyklen, aber unter Psilocybin sind manche Zyklen viel langlebiger.
+</p>
+</div>
+</section>
+
+<!-- SECTION 9: CONCLUSION -->
+<section class="section fade-in" id="sec-conclusion">
+<div class="section-header">
+<div class="section-number">Kapitel 9</div>
+<h2 class="section-title">Was bedeutet das alles?</h2>
+<p class="section-desc">
+Die Zusammenfassung: Was hat die Topologie über das Gehirn unter Psilocybin enthüllt?
+</p>
+</div>
+
+<div class="card" style="border-color: rgba(0,229,255,0.3);">
+<div class="card-title"><span class="icon">🔬</span> Die drei Hauptergebnisse</div>
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+<div style="display: flex; gap: 1rem; align-items: flex-start;">
+<div style="background: var(--accent-cyan); color: var(--bg-deep); font-weight: 800; min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">1</div>
+<div>
+<strong>Weniger stabile Zyklen insgesamt</strong>
+<p style="color: var(--text-secondary); font-size: 0.9rem;">Unter Psilocybin sind die meisten mesoskopischen Strukturen (Zyklen) kurzlebiger als unter Placebo. Das Gehirn wird „flexibler".</p>
+</div>
+</div>
+<div style="display: flex; gap: 1rem; align-items: flex-start;">
+<div style="background: var(--accent-magenta); color: var(--bg-deep); font-weight: 800; min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">2</div>
+<div>
+<strong>Aber: Einige extrem stabile Verbindungen</strong>
+<p style="color: var(--text-secondary); font-size: 0.9rem;">Einzelne Kanten sind viel persistenter als alles, was unter Placebo vorkommt. Das Gehirn wird nicht einfach „zufällig" – es bildet neue, ungewöhnlich stabile Brücken.</p>
+</div>
+</div>
+<div style="display: flex; gap: 1rem; align-items: flex-start;">
+<div style="background: var(--accent-gold); color: var(--bg-deep); font-weight: 800; min-width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">3</div>
+<div>
+<strong>Mehr Integration zwischen Gehirnregionen</strong>
+<p style="color: var(--text-secondary); font-size: 0.9rem;">Die stabilen Brücken verbinden vor allem verschiedene funktionelle Communities – kortikale Regionen, die normalerweise getrennt arbeiten, kommunizieren plötzlich stark miteinander.</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-title"><span class="icon">🍄</span> Interpretation: Was passiert im Gehirn?</div>
+<div class="interactive-container">
+<canvas id="interpretationCanvas" width="700" height="400"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Zustand</label>
+<input type="range" id="stateSlider" min="0" max="100" value="0">
+</div>
+<div style="display: flex; justify-content: space-between; width: 180px;">
+<span style="font-size: 0.75rem; color: var(--accent-blue);">Placebo</span>
+<span style="font-size: 0.75rem; color: var(--accent-red);">Psilocybin</span>
+</div>
+</div>
+</div>
+<p style="color: var(--text-secondary); font-size: 0.9rem;">
+<strong>Placebo:</strong> Das Gehirn hat klar getrennte funktionelle Module. Verbindungen sind hauptsächlich innerhalb dieser Module stark.<br><br>
+<strong>Psilocybin:</strong> Die Modulgrenzen werden durchbrochen. Neue, starke Verbindungen entstehen zwischen normalerweise getrennten Regionen. Dies könnte erklären, warum Synästhesie (Vermischung der Sinne) unter Psychedelika häufig berichtet wird.
+</p>
+</div>
+
+<div class="key-insight">
+🧠 <strong>Fazit:</strong> Der psychedelische Zustand ist nicht einfach „chaotisch" – er ist gekennzeichnet durch eine <em>andere Art der Organisation</em>: weniger modulare Trennung, mehr globale Integration, getragen von einem Gerüst besonders stabiler, modulübergreifender Verbindungen. Die persistente Homologie und die homologischen Gerüste machen diese Unterschiede sichtbar, die mit traditionellen Netzwerkmetriken verborgen bleiben würden.
+</div>
+
+<div class="card" style="text-align: center; border-color: rgba(255,215,64,0.3);">
+<div class="card-title" style="justify-content: center;"><span class="icon">🗺️</span> Die Reise auf einen Blick</div>
+<div class="flow-container">
+<div class="flow-box" style="border-color: var(--accent-cyan);">fMRI-Daten<br><small>169 Regionen</small></div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-blue);">Korrelations-<br>matrix</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-magenta);">Gewichtete<br>Filtration</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-gold);">Persistente<br>Homologie</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-green);">Homologische<br>Gerüste</div>
+<span class="flow-arrow">→</span>
+<div class="flow-box" style="border-color: var(--accent-red);">Placebo vs.<br>Psilocybin</div>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer style="text-align: center; padding: 3rem 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border-subtle);">
+<p>Interaktive Visualisierung basierend auf: Petri, Expert, Turkheimer, Carhart-Harris, Nutt, Hellyer & Vaccarino (2014)</p>
+<p style="margin-top: 0.5rem;"><em>„Homological scaffolds of brain functional networks""</em> – J. R. Soc. Interface 11: 20140873</p>
+</footer>
+
+<!-- ======================= JAVASCRIPT ======================= -->
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+const TAU = Math.PI * 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const rand = (lo = 0, hi = 1) => lerp(lo, hi, Math.random());
+const randInt = (lo, hi) => Math.floor(rand(lo, hi + 1));
+const dist = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
+const hexToRgba = (hex, a) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+};
+
+function getCanvasCtx(id) {
+    const c = document.getElementById(id);
+    if (!c) return [null, null];
+    const dpr = window.devicePixelRatio || 1;
+    const rect = c.getBoundingClientRect();
+    c.width = rect.width * dpr;
+    c.height = rect.height * dpr;
+    c.style.width = rect.width + 'px';
+    c.style.height = rect.height + 'px';
+    const ctx = c.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return [c, ctx];
+}
+
+// Colors
+const C = {
+    cyan: '#00e5ff', magenta: '#e040fb', gold: '#ffd740',
+    green: '#69f0ae', red: '#ff5252', blue: '#448aff',
+    bg: '#0a0a1a', card: '#12122a', text: '#e8e8f0',
+    textDim: '#9898b0', white: '#ffffff'
+};
+
+// ============================================================
+// HERO BACKGROUND ANIMATION – Floating network
+// ============================================================
+(function heroBackground() {
+    const canvas = document.getElementById('heroBgCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = rand(0, W);
+            this.y = rand(0, H);
+            this.vx = rand(-0.3, 0.3);
+            this.vy = rand(-0.3, 0.3);
+            this.r = rand(1.5, 3);
+            this.alpha = rand(0.2, 0.6);
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            if (this.x < -50 || this.x > W + 50 || this.y < -50 || this.y > H + 50) this.reset();
+        }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        // Edges
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const d = dist(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+                if (d < 180) {
+                    const alpha = (1 - d / 180) * 0.15;
+                    ctx.strokeStyle = `rgba(0,229,255,${alpha})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        // Nodes
+        for (const p of particles) {
+            p.update();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, TAU);
+            ctx.fillStyle = `rgba(0,229,255,${p.alpha})`;
+            ctx.fill();
+        }
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ============================================================
+// NAVIGATION DOTS
+// ============================================================
+(function navDots() {
+    const dots = document.querySelectorAll('.nav-dot');
+    const sections = [];
+    dots.forEach(d => {
+        const target = d.getAttribute('data-target');
+        const el = document.getElementById(target);
+        if (el) sections.push({ dot: d, el });
+        d.addEventListener('click', () => {
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY + window.innerHeight / 2;
+        let active = sections[0];
+        for (const s of sections) {
+            if (s.el.offsetTop <= scrollY) active = s;
+        }
+        dots.forEach(d => d.classList.remove('active'));
+        if (active) active.dot.classList.add('active');
+    });
+})();
+
+// ============================================================
+// FADE-IN OBSERVER
+// ============================================================
+(function fadeInObserver() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) e.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+})();
+
+// ============================================================
+// SECTION 1: THRESHOLD DILEMMA
+// ============================================================
+(function thresholdDemo() {
+    const canvas = document.getElementById('thresholdCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // Create a small network with weighted edges
+    const nodes = [
+        { x: W * 0.15, y: H * 0.3, label: 'A' },
+        { x: W * 0.35, y: H * 0.15, label: 'B' },
+        { x: W * 0.55, y: H * 0.15, label: 'C' },
+        { x: W * 0.75, y: H * 0.3, label: 'D' },
+        { x: W * 0.75, y: H * 0.7, label: 'E' },
+        { x: W * 0.55, y: H * 0.85, label: 'F' },
+        { x: W * 0.35, y: H * 0.85, label: 'G' },
+        { x: W * 0.15, y: H * 0.7, label: 'H' },
+        { x: W * 0.45, y: H * 0.5, label: 'I' },
+    ];
+
+    // Edges: [from, to, weight 0-100]
+    const edges = [
+        [0, 1, 95], [1, 2, 90], [2, 3, 88], [3, 4, 85],
+        [4, 5, 80], [5, 6, 75], [6, 7, 70], [7, 0, 65],
+        [0, 8, 30], [1, 8, 35], [2, 8, 25], [3, 8, 20],
+        [4, 8, 15], [5, 8, 40], [6, 8, 10], [7, 8, 45],
+        [1, 7, 50], [2, 6, 55], [3, 5, 60],
+    ];
+
+    const slider = document.getElementById('thresholdSlider');
+    const valueDisplay = document.getElementById('thresholdValue');
+
+    function draw() {
+        const threshold = parseInt(slider.value);
+        valueDisplay.textContent = threshold + '%';
+        ctx.clearRect(0, 0, W, H);
+
+        // Draw edges
+        for (const [i, j, w] of edges) {
+            const visible = w >= threshold;
+            const alpha = visible ? clamp(w / 100, 0.3, 1) : 0.08;
+            let color;
+            if (!visible) color = `rgba(60,60,60,0.3)`;
+            else if (w >= 70) color = hexToRgba(C.cyan, alpha);
+            else if (w >= 40) color = hexToRgba(C.gold, alpha);
+            else color = hexToRgba(C.red, alpha);
+
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = visible ? clamp(w / 25, 1, 4) : 0.5;
+            if (!visible) ctx.setLineDash([4, 4]);
+            else ctx.setLineDash([]);
+            ctx.stroke();
+
+            // Weight label
+            if (visible) {
+                const mx = (nodes[i].x + nodes[j].x) / 2;
+                const my = (nodes[i].y + nodes[j].y) / 2;
+                ctx.fillStyle = `rgba(255,255,255,0.5)`;
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(w, mx, my - 4);
+            }
+        }
+        ctx.setLineDash([]);
+
+        // Highlight the cycle formed by weak edges (the "hole")
+        if (threshold < 30) {
+            // Show the hole: I is connected to many nodes weakly
+            ctx.beginPath();
+            ctx.arc(nodes[8].x, nodes[8].y, 30, 0, TAU);
+            ctx.fillStyle = 'rgba(224,64,251,0.1)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(224,64,251,0.4)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Draw nodes
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            // Count visible edges
+            let visCount = 0;
+            for (const [a, b, w] of edges) {
+                if ((a === i || b === i) && w >= threshold) visCount++;
+            }
+            const r = 12 + visCount * 1.5;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, r, 0, TAU);
+            const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r);
+            grad.addColorStop(0, visCount > 0 ? 'rgba(0,229,255,0.8)' : 'rgba(100,100,100,0.5)');
+            grad.addColorStop(1, visCount > 0 ? 'rgba(0,229,255,0.1)' : 'rgba(100,100,100,0.05)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.fillStyle = visCount > 0 ? C.white : '#666';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(n.label, n.x, n.y);
+        }
+
+        // Info text
+        const visibleEdges = edges.filter(([,,w]) => w >= threshold).length;
+        ctx.fillStyle = C.textDim;
+        ctx.font = '12px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Sichtbare Kanten: ${visibleEdges} / ${edges.length}`, 10, H - 10);
+
+        if (threshold > 60) {
+            ctx.fillStyle = C.red;
+            ctx.fillText('⚠ Schwache Verbindungen verloren – Loch-Information geht verloren!', 10, H - 30);
+        }
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 2: NETWORK BUILDER
+// ============================================================
+(function networkBuilder() {
+    const canvas = document.getElementById('networkCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    let nodes = [];
+    let edgesNet = [];
+    let selectedNode = -1;
+
+    function drawNetwork() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Hint text
+        if (nodes.length === 0) {
+            ctx.fillStyle = C.textDim;
+            ctx.font = '14px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Klicke, um Knoten hinzuzufügen. Klicke zwei Knoten an, um sie zu verbinden.', W / 2, H / 2);
+        }
+
+        // Edges
+        for (const [i, j] of edgesNet) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.strokeStyle = hexToRgba(C.cyan, 0.6);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Nodes
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, 14, 0, TAU);
+            if (i === selectedNode) {
+                ctx.fillStyle = C.gold;
+                ctx.shadowColor = C.gold;
+                ctx.shadowBlur = 15;
+            } else {
+                ctx.fillStyle = C.cyan;
+                ctx.shadowColor = C.cyan;
+                ctx.shadowBlur = 10;
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = C.bg;
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(i, n.x, n.y);
+        }
+    }
+
+    canvas.addEventListener('click', (e) => {
+        const r = canvas.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+
+        // Check if clicked on existing node
+        for (let i = 0; i < nodes.length; i++) {
+            if (dist(x, y, nodes[i].x, nodes[i].y) < 18) {
+                if (selectedNode === -1) {
+                    selectedNode = i;
+                } else if (selectedNode !== i) {
+                    // Add edge
+                    const exists = edgesNet.some(([a, b]) => (a === selectedNode && b === i) || (a === i && b === selectedNode));
+                    if (!exists) edgesNet.push([selectedNode, i]);
+                    selectedNode = -1;
+                } else {
+                    selectedNode = -1;
+                }
+                drawNetwork();
+                return;
+            }
+        }
+
+        // Add new node
+        if (nodes.length < 20) {
+            nodes.push({ x, y });
+            selectedNode = -1;
+        }
+        drawNetwork();
+    });
+
+    window.clearNetwork = function () {
+        nodes = [];
+        edgesNet = [];
+        selectedNode = -1;
+        drawNetwork();
+    };
+
+    window.loadExampleNetwork = function () {
+        nodes = [
+            { x: W * 0.2, y: H * 0.3 }, { x: W * 0.4, y: H * 0.15 },
+            { x: W * 0.6, y: H * 0.15 }, { x: W * 0.8, y: H * 0.3 },
+            { x: W * 0.8, y: H * 0.7 }, { x: W * 0.6, y: H * 0.85 },
+            { x: W * 0.4, y: H * 0.85 }, { x: W * 0.2, y: H * 0.7 },
+        ];
+        edgesNet = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,2],[1,3],[5,7]];
+        selectedNode = -1;
+        drawNetwork();
+    };
+
+    drawNetwork();
+})();
+
+// ============================================================
+// SECTION 2: CORRELATION MATRIX
+// ============================================================
+(function corrMatrix() {
+    const canvas = document.getElementById('corrMatrixCanvas');
+    if (!canvas) return;
+    const size = 400;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const N = 50; // simulated regions
+    const noiseSlider = document.getElementById('noiseSlider');
+    const clusterSlider = document.getElementById('clusterSlider');
+
+    function generateMatrix() {
+        const noise = parseInt(noiseSlider.value) / 100;
+        const clusterStr = parseInt(clusterSlider.value) / 100;
+        const matrix = [];
+        // 4 clusters
+        const clusterSize = Math.floor(N / 4);
+        for (let i = 0; i < N; i++) {
+            matrix[i] = [];
+            for (let j = 0; j < N; j++) {
+                const ci = Math.floor(i / clusterSize);
+                const cj = Math.floor(j / clusterSize);
+                let val;
+                if (i === j) val = 1;
+                else if (ci === cj) val = clusterStr * (0.5 + 0.5 * Math.random()) + noise * (Math.random() - 0.5);
+                else val = (1 - clusterStr) * 0.3 * Math.random() + noise * (Math.random() - 0.5);
+                matrix[i][j] = clamp(val, -0.3, 1);
+            }
+        }
+        return matrix;
+    }
+
+    function draw() {
+        const matrix = generateMatrix();
+        const cellSize = size / N;
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                const v = matrix[i][j];
+                let r, g, b;
+                if (v >= 0) {
+                    r = Math.floor(255 * (1 - v));
+                    g = Math.floor(229 * v + 100 * (1 - v));
+                    b = 255;
+                } else {
+                    r = 255;
+                    g = Math.floor(100 * (1 + v));
+                    b = Math.floor(100 * (1 + v));
+                }
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fillRect(j * cellSize, i * cellSize, cellSize + 0.5, cellSize + 0.5);
+            }
+        }
+        // Cluster borders
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+        ctx.lineWidth = 1;
+        for (let k = 1; k < 4; k++) {
+            const pos = k * Math.floor(N / 4) * cellSize;
+            ctx.beginPath();
+            ctx.moveTo(pos, 0); ctx.lineTo(pos, size);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, pos); ctx.lineTo(size, pos);
+            ctx.stroke();
+        }
+    }
+
+    noiseSlider.addEventListener('input', draw);
+    clusterSlider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 3: CLIQUES AND SIMPLICES
+// ============================================================
+(function cliquesDemo() {
+    const canvas = document.getElementById('cliqueCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // 6 nodes in a hexagonal arrangement
+    const cx = W * 0.35, cy = H * 0.5, R = Math.min(W, H) * 0.28;
+    const nodes = [];
+    for (let i = 0; i < 6; i++) {
+        const angle = -Math.PI / 2 + (TAU / 6) * i;
+        nodes.push({ x: cx + R * Math.cos(angle), y: cy + R * Math.sin(angle) });
+    }
+
+    // All possible edges (15 for 6 nodes)
+    const allEdges = [];
+    for (let i = 0; i < 6; i++)
+        for (let j = i + 1; j < 6; j++)
+            allEdges.push([i, j]);
+
+    const slider = document.getElementById('cliqueEdgeSlider');
+    const valueDisplay = document.getElementById('cliqueEdgeValue');
+    const infoDiv = document.getElementById('cliqueInfo');
+
+    function findCliques(edgeSet) {
+        const adj = Array.from({ length: 6 }, () => new Set());
+        for (const [a, b] of edgeSet) { adj[a].add(b); adj[b].add(a); }
+
+        const triangles = [];
+        for (let i = 0; i < 6; i++)
+            for (let j = i + 1; j < 6; j++)
+                for (let k = j + 1; k < 6; k++)
+                    if (adj[i].has(j) && adj[j].has(k) && adj[i].has(k))
+                        triangles.push([i, j, k]);
+
+        const tetrahedra = [];
+        for (let i = 0; i < 6; i++)
+            for (let j = i + 1; j < 6; j++)
+                for (let k = j + 1; k < 6; k++)
+                    for (let l = k + 1; l < 6; l++)
+                        if (adj[i].has(j) && adj[i].has(k) && adj[i].has(l) &&
+                            adj[j].has(k) && adj[j].has(l) && adj[k].has(l))
+                            tetrahedra.push([i, j, k, l]);
+
+        return { triangles, tetrahedra };
+    }
+
+    function findCycles(edgeSet) {
+        // Find simple cycles of length 3-6 that are NOT filled (not triangles)
+        const adj = Array.from({ length: 6 }, () => new Set());
+        for (const [a, b] of edgeSet) { adj[a].add(b); adj[b].add(a); }
+        const { triangles } = findCliques(edgeSet);
+        const triSet = new Set(triangles.map(t => t.join(',')));
+
+        const cycles = [];
+        // Find 4-cycles that aren't filled
+        for (let a = 0; a < 6; a++)
+            for (let b = a + 1; b < 6; b++)
+                for (let c = b + 1; c < 6; c++)
+                    for (let d = c + 1; d < 6; d++) {
+                        // Check if a-b-c-d-a forms a cycle
+                        const perms = [[a,b,c,d],[a,b,d,c],[a,c,b,d],[a,c,d,b],[a,d,b,c],[a,d,c,b]];
+                        for (const [p,q,r,s] of perms) {
+                            if (adj[p].has(q) && adj[q].has(r) && adj[r].has(s) && adj[s].has(p)) {
+                                // Check it's not fully filled
+                                const inner1 = adj[p].has(r);
+                                const inner2 = adj[q].has(s);
+                                if (!inner1 || !inner2) {
+                                    cycles.push([p, q, r, s]);
+                                }
+                            }
+                        }
+                    }
+        return cycles.slice(0, 5); // limit
+    }
+
+    function draw() {
+        const numEdges = parseInt(slider.value);
+        valueDisplay.textContent = `${numEdges} / ${allEdges.length}`;
+        const activeEdges = allEdges.slice(0, numEdges);
+        const { triangles, tetrahedra } = findCliques(activeEdges);
+        const cycles = findCycles(activeEdges);
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Title areas
+        ctx.fillStyle = C.textDim;
+        ctx.font = '13px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Netzwerk → Simplizialkomplex', W * 0.35, 20);
+
+        // Draw filled triangles (2-simplices)
+        for (const [a, b, c] of triangles) {
+            // Check if part of tetrahedron
+            const inTet = tetrahedra.some(t => t.includes(a) && t.includes(b) && t.includes(c));
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            ctx.lineTo(nodes[c].x, nodes[c].y);
+            ctx.closePath();
+            ctx.fillStyle = inTet ? 'rgba(224,64,251,0.15)' : 'rgba(0,229,255,0.15)';
+            ctx.fill();
+        }
+
+        // Highlight unfilled cycles (holes!)
+        for (const cycle of cycles) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[cycle[0]].x, nodes[cycle[0]].y);
+            for (let i = 1; i < cycle.length; i++) {
+                ctx.lineTo(nodes[cycle[i]].x, nodes[cycle[i]].y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(224,64,251,0.1)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(224,64,251,0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Draw edges
+        for (const [a, b] of activeEdges) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            ctx.strokeStyle = hexToRgba(C.cyan, 0.7);
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Draw nodes
+        for (let i = 0; i < 6; i++) {
+            ctx.beginPath();
+            ctx.arc(nodes[i].x, nodes[i].y, 14, 0, TAU);
+            ctx.fillStyle = C.cyan;
+            ctx.shadowColor = C.cyan;
+            ctx.shadowBlur = 10;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = C.bg;
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(String.fromCharCode(65 + i), nodes[i].x, nodes[i].y);
+        }
+
+        // Info panel on right side
+        const infoX = W * 0.72;
+        let infoY = 50;
+        ctx.fillStyle = C.text;
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Gefundene Strukturen:', infoX, infoY);
+        infoY += 30;
+
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillStyle = C.cyan;
+        ctx.fillText(`Kanten (1-Simplizes): ${activeEdges.length}`, infoX, infoY);
+        infoY += 22;
+        ctx.fillStyle = C.green;
+        ctx.fillText(`Dreiecke (2-Simplizes): ${triangles.length}`, infoX, infoY);
+        infoY += 22;
+        ctx.fillStyle = C.magenta;
+        ctx.fillText(`Tetraeder (3-Simplizes): ${tetrahedra.length}`, infoX, infoY);
+        infoY += 30;
+        ctx.fillStyle = C.gold;
+        ctx.fillText(`Löcher (H₁-Zyklen): ~${cycles.length}`, infoX, infoY);
+
+        // Show info
+        if (infoDiv) {
+            if (triangles.length > 0 || cycles.length > 0) {
+                infoDiv.style.display = 'block';
+                let msg = '';
+                if (triangles.length > 0 && cycles.length === 0) {
+                    msg = 'Alle Zyklen sind durch Dreiecke gefüllt – keine Löcher!';
+                } else if (cycles.length > 0) {
+                    msg = `Es gibt ${cycles.length} ungefüllte Zyklen – das sind echte topologische Löcher (H₁)! Die Kanten bilden geschlossene Ringe, aber das Innere ist nicht durch Dreiecke ausgefüllt.`;
+                }
+                if (tetrahedra.length > 0) {
+                    msg += ` Außerdem gibt es ${tetrahedra.length} Tetraeder (3-Simplizes) – höherdimensionale Strukturen!`;
+                }
+                infoDiv.innerHTML = msg;
+            } else {
+                infoDiv.style.display = 'none';
+            }
+        }
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 4: H0, H1, H2 MINI CANVASES
+// ============================================================
+(function homologyMiniCanvases() {
+    // H0 Canvas – disconnected components
+    const [c0, ctx0] = (() => {
+        const c = document.getElementById('h0Canvas');
+        if (!c) return [null, null];
+        const dpr = window.devicePixelRatio || 1;
+        c.width = 200 * dpr; c.height = 200 * dpr;
+        c.style.width = '200px'; c.style.height = '200px';
+        const ctx = c.getContext('2d');
+        ctx.scale(dpr, dpr);
+        return [c, ctx];
+    })();
+
+    if (ctx0) {
+        // Three disconnected clusters
+        const clusters = [
+            { cx: 50, cy: 60, nodes: [[40,45],[60,45],[50,75]] },
+            { cx: 150, cy: 60, nodes: [[140,50],[160,50],[150,70]] },
+            { cx: 100, cy: 160, nodes: [[85,150],[115,150],[100,170]] },
+        ];
+        const colors = [C.cyan, C.magenta, C.gold];
+        clusters.forEach((cl, ci) => {
+            // Edges within cluster
+            for (let i = 0; i < cl.nodes.length; i++) {
+                for (let j = i + 1; j < cl.nodes.length; j++) {
+                    ctx0.beginPath();
+                    ctx0.moveTo(cl.nodes[i][0], cl.nodes[i][1]);
+                    ctx0.lineTo(cl.nodes[j][0], cl.nodes[j][1]);
+                    ctx0.strokeStyle = hexToRgba(colors[ci], 0.6);
+                    ctx0.lineWidth = 2;
+                    ctx0.stroke();
+                }
+            }
+            // Nodes
+            for (const [x, y] of cl.nodes) {
+                ctx0.beginPath();
+                ctx0.arc(x, y, 6, 0, TAU);
+                ctx0.fillStyle = colors[ci];
+                ctx0.fill();
+            }
+        });
+        ctx0.fillStyle = C.text;
+        ctx0.font = 'bold 14px Inter, sans-serif';
+        ctx0.textAlign = 'center';
+        ctx0.fillText('H₀ = 3', 100, 20);
+    }
+
+    // H1 Canvas – loop
+    const [c1, ctx1] = (() => {
+        const c = document.getElementById('h1Canvas');
+        if (!c) return [null, null];
+        const dpr = window.devicePixelRatio || 1;
+        c.width = 200 * dpr; c.height = 200 * dpr;
+        c.style.width = '200px'; c.style.height = '200px';
+        const ctx = c.getContext('2d');
+        ctx.scale(dpr, dpr);
+        return [c, ctx];
+    })();
+
+    if (ctx1) {
+        const cx = 100, cy = 110, r = 55;
+        const n = 6;
+        const pts = [];
+        for (let i = 0; i < n; i++) {
+            const a = -Math.PI / 2 + (TAU / n) * i;
+            pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+        // Draw cycle
+        ctx1.beginPath();
+        ctx1.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < n; i++) ctx1.lineTo(pts[i][0], pts[i][1]);
+        ctx1.closePath();
+        ctx1.strokeStyle = hexToRgba(C.cyan, 0.8);
+        ctx1.lineWidth = 3;
+        ctx1.stroke();
+        // Fill hole indicator
+        ctx1.fillStyle = 'rgba(0,229,255,0.08)';
+        ctx1.fill();
+        // Nodes
+        for (const [x, y] of pts) {
+            ctx1.beginPath();
+            ctx1.arc(x, y, 6, 0, TAU);
+            ctx1.fillStyle = C.cyan;
+            ctx1.fill();
+        }
+        // Hole label
+        ctx1.fillStyle = C.magenta;
+        ctx1.font = 'bold 16px Inter, sans-serif';
+        ctx1.textAlign = 'center';
+        ctx1.fillText('Loch!', cx, cy + 4);
+        ctx1.fillStyle = C.text;
+        ctx1.font = 'bold 14px Inter, sans-serif';
+        ctx1.fillText('H₁ = 1', 100, 20);
+    }
+
+    // H2 Canvas – hollow tetrahedron (void)
+    const [c2, ctx2] = (() => {
+        const c = document.getElementById('h2Canvas');
+        if (!c) return [null, null];
+        const dpr = window.devicePixelRatio || 1;
+        c.width = 200 * dpr; c.height = 200 * dpr;
+        c.style.width = '200px'; c.style.height = '200px';
+        const ctx = c.getContext('2d');
+        ctx.scale(dpr, dpr);
+        return [c, ctx];
+    })();
+
+    if (ctx2) {
+        // Draw a tetrahedron-like shape
+        const pts = [[100, 40], [40, 160], [160, 160], [120, 110]];
+        // Back faces (dimmer)
+        ctx2.beginPath();
+        ctx2.moveTo(pts[1][0], pts[1][1]);
+        ctx2.lineTo(pts[3][0], pts[3][1]);
+        ctx2.lineTo(pts[2][0], pts[2][1]);
+        ctx2.closePath();
+        ctx2.fillStyle = 'rgba(224,64,251,0.1)';
+        ctx2.fill();
+        ctx2.strokeStyle = hexToRgba(C.magenta, 0.3);
+        ctx2.lineWidth = 1;
+        ctx2.setLineDash([4, 4]);
+        ctx2.stroke();
+        ctx2.setLineDash([]);
+
+        // Front faces
+        const faces = [[0,1,3],[0,2,3],[0,1,2]];
+        for (const [a, b, c] of faces) {
+            ctx2.beginPath();
+            ctx2.moveTo(pts[a][0], pts[a][1]);
+            ctx2.lineTo(pts[b][0], pts[b][1]);
+            ctx2.lineTo(pts[c][0], pts[c][1]);
+            ctx2.closePath();
+            ctx2.fillStyle = 'rgba(224,64,251,0.08)';
+            ctx2.fill();
+            ctx2.strokeStyle = hexToRgba(C.magenta, 0.6);
+            ctx2.lineWidth = 2;
+            ctx2.stroke();
+        }
+        // Nodes
+        for (const [x, y] of pts) {
+            ctx2.beginPath();
+            ctx2.arc(x, y, 6, 0, TAU);
+            ctx2.fillStyle = C.magenta;
+            ctx2.fill();
+        }
+        // Void label
+        ctx2.fillStyle = C.gold;
+        ctx2.font = 'bold 12px Inter, sans-serif';
+        ctx2.textAlign = 'center';
+        ctx2.fillText('Hohlraum', 90, 130);
+        ctx2.fillStyle = C.text;
+        ctx2.font = 'bold 14px Inter, sans-serif';
+        ctx2.fillText('H₂ = 1', 100, 20);
+    }
+})();
+
+// ============================================================
+// SECTION 4: HOMOLOGY INTERACTIVE BUILDER
+// ============================================================
+(function homologyBuilder() {
+    const canvas = document.getElementById('homologyCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    // Build a sequence of steps: add nodes, edges, triangles
+    // 8 nodes arranged in interesting pattern
+    const nodes = [
+        { x: W * 0.15, y: H * 0.35 },  // 0
+        { x: W * 0.30, y: H * 0.15 },  // 1
+        { x: W * 0.50, y: H * 0.15 },  // 2
+        { x: W * 0.65, y: H * 0.35 },  // 3
+        { x: W * 0.65, y: H * 0.65 },  // 4
+        { x: W * 0.50, y: H * 0.85 },  // 5
+        { x: W * 0.30, y: H * 0.85 },  // 6
+        { x: W * 0.15, y: H * 0.65 },  // 7
+        { x: W * 0.40, y: H * 0.50 },  // 8 (center)
+    ];
+
+    // Steps: each step adds edges and optionally fills triangles
+    const steps = [
+        { edges: [], triangles: [], desc: 'Startpunkt: 9 isolierte Knoten' },
+        { edges: [[0,1]], triangles: [], desc: 'Erste Kante: A–B' },
+        { edges: [[0,1],[1,2]], triangles: [], desc: 'Kette: A–B–C' },
+        { edges: [[0,1],[1,2],[2,3]], triangles: [], desc: 'Kette wächst: A–B–C–D' },
+        { edges: [[0,1],[1,2],[2,3],[3,4]], triangles: [], desc: 'Weiter: ...–D–E' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5]], triangles: [], desc: 'Weiter: ...–E–F' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]], triangles: [], desc: 'Weiter: ...–F–G' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7]], triangles: [], desc: 'Weiter: ...–G–H' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]], triangles: [], desc: '🎉 Zyklus geschlossen! H–A → H₁ = 1 (ein Loch!)' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8]], triangles: [], desc: 'Zentrum verbinden: A–I' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8]], triangles: [[0,1,8]], desc: 'B–I → Dreieck A-B-I gefüllt! Loch wird kleiner...' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8]], triangles: [[0,1,8],[1,2,8]], desc: 'C–I → Dreieck B-C-I gefüllt!' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8]], triangles: [[0,1,8],[1,2,8],[2,3,8]], desc: 'D–I → Dreieck C-D-I gefüllt!' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8]], desc: 'E–I → Dreieck D-E-I gefüllt!' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8],[4,5,8]], desc: 'F–I → Dreieck E-F-I gefüllt!' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8],[4,5,8],[5,6,8]], desc: 'G–I → Dreieck F-G-I gefüllt!' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8],[4,5,8],[5,6,8],[6,7,8]], desc: 'H–I → Dreieck G-H-I gefüllt!' },
+        // One more triangle to close
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8],[4,5,8],[5,6,8],[6,7,8],[7,0,8]], desc: '🎉 Letztes Dreieck H-A-I gefüllt! H₁ = 0 – das Loch ist zu!' },
+        // Add a second cycle
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],[1,3]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8],[4,5,8],[5,6,8],[6,7,8],[7,0,8]], desc: 'Neue Kante B–D → neuer Zyklus B-C-D! Aber Dreiecke B-C-I und C-D-I füllen ihn schon → H₁ bleibt 0' },
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[0,8],[1,8],[2,8],[3,8],[4,8],[5,8],[6,8],[7,8],[1,3],[5,7]], triangles: [[0,1,8],[1,2,8],[2,3,8],[3,4,8],[4,5,8],[5,6,8],[6,7,8],[7,0,8]], desc: 'Kante F–H → Zyklus F-G-H, auch schon gefüllt. Topologie stabil.' },
+    ];
+
+    const slider = document.getElementById('homologySlider');
+    const stepDisplay = document.getElementById('homologyStep');
+    const h0Display = document.getElementById('h0Count');
+    const h1Display = document.getElementById('h1Count');
+    slider.max = steps.length - 1;
+
+    function computeH0(edgeList, nNodes) {
+        // Union-Find
+        const parent = Array.from({ length: nNodes }, (_, i) => i);
+        function find(x) { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+        function union(a, b) { parent[find(a)] = find(b); }
+        for (const [a, b] of edgeList) union(a, b);
+        const roots = new Set();
+        for (let i = 0; i < nNodes; i++) roots.add(find(i));
+        return roots.size;
+    }
+
+    function computeH1Simple(edgeList, triangleList, nNodes) {
+        // Euler characteristic approach: H1 = edges - nodes + components - filled_triangles (approximate)
+        const h0 = computeH0(edgeList, nNodes);
+        // H1 ≈ |E| - |V| + H0 - |filled triangles| (for simplicial complex without higher simplices)
+        return Math.max(0, edgeList.length - nNodes + h0 - triangleList.length);
+    }
+
+    function draw() {
+        const step = parseInt(slider.value);
+        stepDisplay.textContent = `Schritt ${step}`;
+        const { edges: edgeList, triangles: triList, desc } = steps[step];
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Description
+        ctx.fillStyle = C.text;
+        ctx.font = '13px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(desc, W / 2, H - 15);
+
+        // Filled triangles
+        for (const [a, b, c] of triList) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            ctx.lineTo(nodes[c].x, nodes[c].y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0,229,255,0.12)';
+            ctx.fill();
+        }
+
+        // Detect unfilled cycles for highlighting
+        // Simple: if step 8 (cycle closed) and not all triangles filled, highlight the ring
+        if (step >= 8 && step < 17) {
+            // The outer ring is a cycle; highlight unfilled portion
+            const filledCount = triList.length;
+            if (filledCount < 8) {
+                ctx.beginPath();
+                for (let i = 0; i < 8; i++) {
+                    const n = nodes[i];
+                    if (i === 0) ctx.moveTo(n.x, n.y);
+                    else ctx.lineTo(n.x, n.y);
+                }
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(224,64,251,0.06)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(224,64,251,0.4)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
+        // Edges
+        for (const [a, b] of edgeList) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            ctx.strokeStyle = hexToRgba(C.cyan, 0.7);
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+        }
+
+        // Nodes
+        const labels = 'ABCDEFGHI';
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            // Check if node is connected
+            const connected = edgeList.some(([a, b]) => a === i || b === i);
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, connected ? 14 : 8, 0, TAU);
+            ctx.fillStyle = connected ? C.cyan : 'rgba(100,100,100,0.4)';
+            if (connected) {
+                ctx.shadowColor = C.cyan;
+                ctx.shadowBlur = 8;
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = connected ? C.bg : '#666';
+            ctx.font = `bold ${connected ? 11 : 9}px Inter, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(labels[i], n.x, n.y);
+        }
+
+        // Update counters
+        const h0 = computeH0(edgeList, nodes.length);
+        const h1 = computeH1Simple(edgeList, triList, nodes.length);
+        h0Display.textContent = h0;
+        h1Display.textContent = h1;
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 5: STRATIGRAPHY / WATER LEVEL
+// ============================================================
+(function stratigraphyDemo() {
+    const canvas = document.getElementById('stratigraphyCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const slider = document.getElementById('waterLevelSlider');
+    const valueDisplay = document.getElementById('waterLevelValue');
+    const infoDisplay = document.getElementById('filtrationInfo');
+
+    // Create a "landscape" of bars representing edge weights
+    const nBars = 40;
+    const barWeights = [];
+    // Create a pattern with two "holes" (valleys)
+    for (let i = 0; i < nBars; i++) {
+        let w;
+        if (i < 5) w = 0.9 - i * 0.05 + rand(-0.03, 0.03);
+        else if (i < 10) w = 0.65 + (i - 5) * 0.04 + rand(-0.03, 0.03);
+        else if (i < 15) w = 0.85 - (i - 10) * 0.12 + rand(-0.03, 0.03);
+        else if (i < 20) w = 0.25 + (i - 15) * 0.1 + rand(-0.03, 0.03);
+        else if (i < 25) w = 0.75 - (i - 20) * 0.02 + rand(-0.03, 0.03);
+        else if (i < 30) w = 0.65 - (i - 25) * 0.08 + rand(-0.03, 0.03);
+        else if (i < 35) w = 0.25 + (i - 30) * 0.12 + rand(-0.03, 0.03);
+        else w = 0.85 - (i - 35) * 0.03 + rand(-0.03, 0.03);
+        barWeights.push(clamp(w, 0.05, 0.98));
+    }
+
+    let animating = false;
+
+    function draw() {
+        const level = parseInt(slider.value) / 100;
+        valueDisplay.textContent = `ε = ${level.toFixed(2)}`;
+        ctx.clearRect(0, 0, W, H);
+
+        const margin = 40;
+        const barW = (W - 2 * margin) / nBars;
+        const maxH = H - 2 * margin;
+
+        // Background gradient
+        const bgGrad = ctx.createLinearGradient(0, margin, 0, H - margin);
+        bgGrad.addColorStop(0, 'rgba(0,229,255,0.05)');
+        bgGrad.addColorStop(1, 'rgba(10,10,26,0.8)');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(margin, margin, W - 2 * margin, maxH);
+
+        // Water level line
+        const waterY = margin + (1 - level) * maxH;
+        ctx.fillStyle = 'rgba(0,100,255,0.08)';
+        ctx.fillRect(margin, waterY, W - 2 * margin, H - margin - waterY);
+
+        // Bars
+        for (let i = 0; i < nBars; i++) {
+            const bx = margin + i * barW;
+            const bh = barWeights[i] * maxH;
+            const by = H - margin - bh;
+            const aboveWater = barWeights[i] >= level;
+
+            if (aboveWater) {
+                const grad = ctx.createLinearGradient(bx, by, bx, H - margin);
+                grad.addColorStop(0, C.cyan);
+                grad.addColorStop(1, hexToRgba(C.blue, 0.6));
+                ctx.fillStyle = grad;
+            } else {
+                ctx.fillStyle = 'rgba(60,60,80,0.3)';
+            }
+            ctx.fillRect(bx + 1, by, barW - 2, bh);
+
+            // Weight label on top
+            if (aboveWater) {
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.font = '8px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(barWeights[i].toFixed(2), bx + barW / 2, by - 4);
+            }
+        }
+
+        // Water level line
+        ctx.beginPath();
+        ctx.moveTo(margin, waterY);
+        ctx.lineTo(W - margin, waterY);
+        ctx.strokeStyle = 'rgba(0,150,255,0.8)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label
+        ctx.fillStyle = 'rgba(0,150,255,0.9)';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Schwellenwert ε = ${level.toFixed(2)}`, W - margin - 5, waterY - 8);
+
+        // Axis labels
+        ctx.fillStyle = C.textDim;
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Kanten (sortiert nach Position)', W / 2, H - 8);
+        ctx.save();
+        ctx.translate(12, H / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Gewicht', 0, 0);
+        ctx.restore();
+
+        // Count visible
+        const visible = barWeights.filter(w => w >= level).length;
+        if (infoDisplay) {
+            infoDisplay.textContent = `${visible} von ${nBars} Kanten sichtbar bei ε = ${level.toFixed(2)}. ${level > 0.7 ? 'Nur die stärksten Verbindungen.' : level > 0.3 ? 'Mittlere Verbindungen erscheinen.' : 'Fast alle Verbindungen sichtbar – Löcher werden gefüllt.'}`;
+        }
+    }
+
+    window.animateWaterLevel = function () {
+        if (animating) return;
+        animating = true;
+        slider.value = 100;
+        const interval = setInterval(() => {
+            let v = parseInt(slider.value);
+            if (v <= 0) { clearInterval(interval); animating = false; return; }
+            slider.value = v - 1;
+            draw();
+        }, 60);
+    };
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 5: FILTRATION INTERACTIVE
+// ============================================================
+(function filtrationDemo() {
+    const canvas = document.getElementById('filtrationCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const slider = document.getElementById('filtrationSlider');
+    const stepDisplay = document.getElementById('filtrationStep');
+    const eventsDisplay = document.getElementById('filtrationEvents');
+
+    // 8 nodes
+    const nodes = [
+        { x: W * 0.15, y: H * 0.3 }, { x: W * 0.30, y: H * 0.12 },
+        { x: W * 0.50, y: H * 0.12 }, { x: W * 0.65, y: H * 0.3 },
+        { x: W * 0.65, y: H * 0.65 }, { x: W * 0.50, y: H * 0.82 },
+        { x: W * 0.30, y: H * 0.82 }, { x: W * 0.15, y: H * 0.65 },
+    ];
+
+    // Edges sorted by weight (descending) – each added at a filtration step
+    const edgeSequence = [
+        { e: [0, 1], w: 0.95, step: 1 },
+        { e: [2, 3], w: 0.92, step: 2 },
+        { e: [1, 2], w: 0.88, step: 3 },
+        { e: [3, 4], w: 0.85, step: 4 },
+        { e: [4, 5], w: 0.82, step: 5 },
+        { e: [6, 7], w: 0.78, step: 6 },
+        { e: [5, 6], w: 0.75, step: 7 },
+        { e: [7, 0], w: 0.70, step: 8 },  // closes outer cycle! H1 born
+        { e: [0, 3], w: 0.65, step: 9 },
+        { e: [1, 3], w: 0.60, step: 10 },  // triangle 1-2-3 → fills part
+        { e: [0, 2], w: 0.55, step: 11 },  // triangle 0-1-2
+        { e: [4, 6], w: 0.50, step: 12 },
+        { e: [5, 7], w: 0.45, step: 13 },  // triangle 5-6-7
+        { e: [4, 7], w: 0.40, step: 14 },  // triangle 4-5-7 or similar
+        { e: [0, 4], w: 0.35, step: 15 },
+        { e: [3, 7], w: 0.30, step: 16 },
+        { e: [1, 5], w: 0.28, step: 17 },
+        { e: [2, 6], w: 0.25, step: 18 },
+        { e: [0, 5], w: 0.22, step: 19 },
+        { e: [1, 4], w: 0.20, step: 20 },
+        { e: [2, 5], w: 0.18, step: 21 },
+        { e: [3, 6], w: 0.15, step: 22 },
+        { e: [1, 7], w: 0.12, step: 23 },
+        { e: [2, 4], w: 0.10, step: 24 },
+        { e: [0, 6], w: 0.08, step: 25 },
+        { e: [1, 6], w: 0.06, step: 26 },
+        { e: [2, 7], w: 0.05, step: 27 },
+        { e: [3, 5], w: 0.04, step: 28 },
+        { e: [1, 4], w: 0.03, step: 29 },
+        { e: [0, 5], w: 0.02, step: 30 },
+    ];
+
+    // Track events for each step
+    const events = {
+        0: 'Start: Nur isolierte Knoten. Keine Kanten.',
+        1: 'Stärkste Kante (0.95) erscheint: A–B',
+        2: 'Kante C–D (0.92) erscheint',
+        3: 'Kante B–C (0.88) verbindet die zwei Paare → eine Kette A-B-C-D',
+        4: 'Kante D–E (0.85) verlängert die Kette',
+        5: 'Kante E–F (0.82)',
+        6: 'Kante G–H (0.78) – neues Paar',
+        7: 'Kante F–G (0.75) verbindet alles zu einer Kette A-B-C-D-E-F-G-H',
+        8: '🎉 Kante H–A (0.70) schließt den Ring! → H₁-Zyklus GEBOREN bei ε=0.70',
+        9: 'Kante A–D (0.65) – Diagonale, aber noch kein Dreieck gefüllt',
+        10: '🔺 Kante B–D (0.60) → Dreieck B-C-D entsteht! Teilfüllung des Rings.',
+        11: '🔺 Kante A–C (0.55) → Dreieck A-B-C! Mehr Füllung.',
+        12: 'Kante E–G (0.50) – neue Diagonale',
+        13: '🔺 Kante F–H (0.45) → Dreieck F-G-H!',
+        14: '🔺 Kante E–H (0.40) → Dreieck E-F-H oder ähnlich. Loch schrumpft!',
+        15: 'Kante A–E (0.35) – Querverbindung',
+        16: '💀 Kante D–H (0.30) → Das ursprüngliche Loch wird geschlossen! H₁-Zyklus STIRBT bei ε=0.30. Persistenz = 0.70 - 0.30 = 0.40',
+        17: 'Weitere Kanten füllen den Komplex weiter auf...',
+        18: 'Kante C–G (0.25)',
+        19: 'Kante A–F (0.22)',
+        20: 'Kante B–E (0.20)',
+        21: 'Kante C–F (0.18)',
+        22: 'Kante D–G (0.15)',
+        23: 'Kante B–H (0.12)',
+        24: 'Kante C–E (0.10)',
+        25: 'Kante A–G (0.08)',
+        26: 'Kante B–G (0.06)',
+        27: 'Kante C–H (0.05)',
+        28: 'Kante D–F (0.04) – fast vollständig verbunden',
+        29: 'Kante B–E (0.03)',
+        30: 'Alle Kanten da → vollständiger Graph. Keine Löcher mehr möglich.',
+    };
+
+    let animatingFilt = false;
+
+    function draw() {
+        const step = parseInt(slider.value);
+        stepDisplay.textContent = `${step} / 30`;
+        const activeEdges = edgeSequence.filter(es => es.step <= step);
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Find triangles among active edges
+        const adj = Array.from({ length: 8 }, () => new Set());
+        for (const es of activeEdges) {
+            adj[es.e[0]].add(es.e[1]);
+            adj[es.e[1]].add(es.e[0]);
+        }
+
+        const triangles = [];
+        for (let i = 0; i < 8; i++)
+            for (let j = i + 1; j < 8; j++)
+                for (let k = j + 1; k < 8; k++)
+                    if (adj[i].has(j) && adj[j].has(k) && adj[i].has(k))
+                        triangles.push([i, j, k]);
+
+        // Draw filled triangles
+        for (const [a, b, c] of triangles) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            ctx.lineTo(nodes[c].x, nodes[c].y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0,229,255,0.08)';
+            ctx.fill();
+        }
+
+        // Highlight the main cycle if it exists and isn't fully filled
+        if (step >= 8) {
+            // Check if outer ring is still a hole
+            const outerRing = [0,1,2,3,4,5,6,7];
+            // Simple check: is the interior fully triangulated?
+            let holeFilled = true;
+            // A rough check: if all diagonals from 0 exist and form triangles
+            for (let i = 1; i < 7; i++) {
+                if (!adj[0].has(i) || !adj[i].has(i+1)) { holeFilled = false; break; }
+            }
+            // More accurate: just check if step < 16 (our defined death)
+            if (step < 16) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[0].x, nodes[0].y);
+                for (let i = 1; i < 8; i++) ctx.lineTo(nodes[i].x, nodes[i].y);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(224,64,251,0.08)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(224,64,251,0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Label
+                ctx.fillStyle = C.magenta;
+                ctx.font = 'bold 13px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                const cx2 = nodes.reduce((s, n) => s + n.x, 0) / 8;
+                const cy2 = nodes.reduce((s, n) => s + n.y, 0) / 8;
+                ctx.fillText('H₁ Loch!', cx2, cy2);
+            }
+        }
+
+        // Draw edges with weight-based styling
+        for (const es of activeEdges) {
+            const [a, b] = es.e;
+            ctx.beginPath();
+            ctx.moveTo(nodes[a].x, nodes[a].y);
+            ctx.lineTo(nodes[b].x, nodes[b].y);
+            const alpha = 0.3 + es.w * 0.7;
+            const lw = 1 + es.w * 3;
+            // Color by weight
+            if (es.w >= 0.7) ctx.strokeStyle = hexToRgba(C.cyan, alpha);
+            else if (es.w >= 0.4) ctx.strokeStyle = hexToRgba(C.gold, alpha);
+            else ctx.strokeStyle = hexToRgba(C.red, alpha);
+            ctx.lineWidth = lw;
+            ctx.stroke();
+
+            // Weight label
+            const mx = (nodes[a].x + nodes[b].x) / 2;
+            const my = (nodes[a].y + nodes[b].y) / 2;
+            ctx.fillStyle = `rgba(255,255,255,${0.3 + es.w * 0.4})`;
+            ctx.font = '9px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(es.w.toFixed(2), mx, my - 5);
+        }
+
+        // Draw nodes
+        const labels = 'ABCDEFGH';
+        for (let i = 0; i < 8; i++) {
+            const n = nodes[i];
+            const deg = adj[i].size;
+            const r = 10 + deg * 1.5;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, r, 0, TAU);
+            ctx.fillStyle = deg > 0 ? C.cyan : 'rgba(100,100,100,0.4)';
+            if (deg > 0) { ctx.shadowColor = C.cyan; ctx.shadowBlur = 8; }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = deg > 0 ? C.bg : '#666';
+            ctx.font = `bold ${deg > 0 ? 11 : 9}px Inter, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(labels[i], n.x, n.y);
+        }
+
+        // Persistence bar on the right
+        const barX = W * 0.82, barY = 30, barW2 = 20, barH2 = H - 60;
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(barX, barY, barW2, barH2);
+        // Current position
+        const currentWeight = step === 0 ? 1.0 : (activeEdges.length > 0 ? activeEdges[activeEdges.length - 1].w : 1.0);
+        const yPos = barY + (1 - currentWeight) * barH2;
+        ctx.fillStyle = C.gold;
+        ctx.fillRect(barX, yPos, barW2, 3);
+        ctx.fillStyle = C.text;
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`ε=${currentWeight.toFixed(2)}`, barX + barW2 + 5, yPos + 4);
+        // Birth/death markers
+        if (step >= 8) {
+            const birthY = barY + (1 - 0.70) * barH2;
+            ctx.fillStyle = C.green;
+            ctx.fillRect(barX - 5, birthY, barW2 + 10, 2);
+            ctx.font = '9px Inter, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('Geburt', barX - 8, birthY + 3);
+        }
+        if (step >= 16) {
+            const deathY = barY + (1 - 0.30) * barH2;
+            ctx.fillStyle = C.red;
+            ctx.fillRect(barX - 5, deathY, barW2 + 10, 2);
+            ctx.font = '9px Inter, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('Tod', barX - 8, deathY + 3);
+            // Persistence bracket
+            const birthY = barY + (1 - 0.70) * barH2;
+            ctx.strokeStyle = C.magenta;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(barX + barW2 + 20, birthY);
+            ctx.lineTo(barX + barW2 + 30, birthY);
+            ctx.lineTo(barX + barW2 + 30, deathY);
+            ctx.lineTo(barX + barW2 + 20, deathY);
+            ctx.stroke();
+            ctx.fillStyle = C.magenta;
+            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('p=0.40', barX + barW2 + 33, (birthY + deathY) / 2 + 3);
+        }
+
+        // Axis labels for bar
+        ctx.fillStyle = C.textDim;
+        ctx.font = '9px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('1.0', barX + barW2 / 2, barY - 5);
+        ctx.fillText('0.0', barX + barW2 / 2, barY + barH2 + 12);
+
+        // Events
+        if (eventsDisplay) {
+            eventsDisplay.innerHTML = events[step] || '';
+        }
+    }
+
+    window.animateFiltration = function () {
+        if (animatingFilt) return;
+        animatingFilt = true;
+        slider.value = 0;
+        draw();
+        let s = 0;
+        const interval = setInterval(() => {
+            s++;
+            if (s > 30) { clearInterval(interval); animatingFilt = false; return; }
+            slider.value = s;
+            draw();
+        }, 400);
+    };
+
+    window.resetFiltration = function () {
+        slider.value = 0;
+        draw();
+    };
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 6: PERSISTENCE DIAGRAM INTERACTIVE
+// ============================================================
+(function persistenceDiagram() {
+    const canvas = document.getElementById('persistenceCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const slider = document.getElementById('persistenceSlider');
+    const progressDisplay = document.getElementById('persistenceProgress');
+
+    // Simulated persistence data: [birth, death] pairs
+    // Mimicking the paper's results
+    const cycles = [
+        { birth: 0.70, death: 0.30, label: 'Hauptzyklus' },
+        { birth: 0.60, death: 0.45, label: 'Zyklus 2' },
+        { birth: 0.55, death: 0.50, label: 'Kurzlebig' },
+        { birth: 0.48, death: 0.35, label: 'Zyklus 4' },
+        { birth: 0.42, death: 0.38, label: 'Kurzlebig' },
+        { birth: 0.35, death: 0.20, label: 'Zyklus 6' },
+        { birth: 0.30, death: 0.28, label: 'Rauschen' },
+        { birth: 0.25, death: 0.10, label: 'Tiefer Zyklus' },
+        { birth: 0.22, death: 0.20, label: 'Rauschen' },
+        { birth: 0.18, death: 0.05, label: 'Sehr persistent!' },
+    ];
+
+    // Network for left panel
+    const netNodes = [
+        { x: 60, y: 100 }, { x: 120, y: 50 }, { x: 200, y: 50 },
+        { x: 260, y: 100 }, { x: 260, y: 200 }, { x: 200, y: 250 },
+        { x: 120, y: 250 }, { x: 60, y: 200 },
+    ];
+
+    let animatingPers = false;
+
+    function draw() {
+        const progress = parseInt(slider.value) / 100;
+        progressDisplay.textContent = Math.round(progress * 100) + '%';
+        const currentEpsilon = 1.0 - progress;
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Split: left = mini network, right = persistence diagram
+        const splitX = W * 0.42;
+
+        // --- LEFT: Mini network ---
+        ctx.fillStyle = C.textDim;
+        ctx.font = '12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Netzwerk bei ε = ' + currentEpsilon.toFixed(2), splitX / 2, 20);
+
+        // Draw edges that exist at current epsilon
+        const edgeData = [
+            [0,1,0.95],[1,2,0.90],[2,3,0.88],[3,4,0.85],[4,5,0.82],
+            [5,6,0.78],[6,7,0.75],[7,0,0.70],[0,3,0.65],[1,3,0.60],
+            [0,2,0.55],[4,6,0.50],[5,7,0.45],[4,7,0.40],[0,4,0.35],
+            [3,7,0.30],[1,5,0.28],[2,6,0.25],[0,5,0.22],[1,4,0.20],
+            [2,5,0.18],[3,6,0.15],[1,7,0.12],[2,4,0.10],[0,6,0.08],
+            [3,5,0.05],
+        ];
+
+        const activeEdges = edgeData.filter(([,,w]) => w >= currentEpsilon);
+
+        // Triangles
+        const adj = Array.from({ length: 8 }, () => new Set());
+        for (const [a, b] of activeEdges) { adj[a].add(b); adj[b].add(a); }
+        const tris = [];
+        for (let i = 0; i < 8; i++)
+            for (let j = i + 1; j < 8; j++)
+                for (let k = j + 1; k < 8; k++)
+                    if (adj[i].has(j) && adj[j].has(k) && adj[i].has(k))
+                        tris.push([i, j, k]);
+
+        for (const [a, b, c] of tris) {
+            ctx.beginPath();
+            ctx.moveTo(netNodes[a].x, netNodes[a].y);
+            ctx.lineTo(netNodes[b].x, netNodes[b].y);
+            ctx.lineTo(netNodes[c].x, netNodes[c].y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0,229,255,0.07)';
+            ctx.fill();
+        }
+
+        for (const [a, b, w] of activeEdges) {
+            ctx.beginPath();
+            ctx.moveTo(netNodes[a].x, netNodes[a].y);
+            ctx.lineTo(netNodes[b].x, netNodes[b].y);
+            ctx.strokeStyle = hexToRgba(C.cyan, 0.3 + w * 0.7);
+            ctx.lineWidth = 1 + w * 2;
+            ctx.stroke();
+        }
+
+        for (let i = 0; i < 8; i++) {
+            const n = netNodes[i];
+            const connected = adj[i].size > 0;
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, connected ? 8 : 5, 0, TAU);
+            ctx.fillStyle = connected ? C.cyan : 'rgba(100,100,100,0.4)';
+            ctx.fill();
+        }
+
+        // --- RIGHT: Persistence Diagram ---
+        const pdLeft = splitX + 30;
+        const pdRight = W - 30;
+        const pdTop = 40;
+        const pdBottom = H - 40;
+        const pdW = pdRight - pdLeft;
+        const pdH = pdBottom - pdTop;
+
+        // Title
+        ctx.fillStyle = C.textDim;
+        ctx.font = '12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Persistenzdiagramm', (pdLeft + pdRight) / 2, 20);
+
+        // Background
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.fillRect(pdLeft, pdTop, pdW, pdH);
+
+        // Diagonal
+        ctx.beginPath();
+        ctx.moveTo(pdLeft, pdTop);
+        ctx.lineTo(pdRight, pdBottom);
+        ctx.strokeStyle = 'rgba(255,215,64,0.3)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Axes
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(pdLeft, pdBottom);
+        ctx.lineTo(pdRight, pdBottom);
+        ctx.moveTo(pdLeft, pdBottom);
+        ctx.lineTo(pdLeft, pdTop);
+        ctx.stroke();
+
+        // Axis labels
+        ctx.fillStyle = C.textDim;
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Geburt (ε)', (pdLeft + pdRight) / 2, pdBottom + 25);
+        ctx.save();
+        ctx.translate(pdLeft - 25, (pdTop + pdBottom) / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Tod (ε)', 0, 0);
+        ctx.restore();
+
+        // Tick marks
+        for (let v = 0; v <= 1; v += 0.2) {
+            const x = pdLeft + v * pdW;
+            const y = pdBottom - v * pdH;
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.font = '8px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(v.toFixed(1), x, pdBottom + 12);
+            ctx.textAlign = 'right';
+            ctx.fillText(v.toFixed(1), pdLeft - 5, y + 3);
+        }
+
+        // Current epsilon line
+        const epsilonX = pdLeft + currentEpsilon * pdW;
+        ctx.beginPath();
+        ctx.moveTo(epsilonX, pdTop);
+        ctx.lineTo(epsilonX, pdBottom);
+        ctx.strokeStyle = 'rgba(255,215,64,0.4)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Plot cycles
+        for (const cycle of cycles) {
+            const bx = pdLeft + cycle.birth * pdW;
+            const dy = pdBottom - cycle.death * pdH;
+
+            // Is this cycle born yet?
+            const born = currentEpsilon <= cycle.birth;
+            // Is this cycle dead?
+            const dead = currentEpsilon <= cycle.death;
+
+            if (!born) continue; // Not yet born
+
+            const isAlive = born && !dead;
+
+            ctx.beginPath();
+            ctx.arc(bx, dy, isAlive ? 7 : 5, 0, TAU);
+            if (isAlive) {
+                ctx.fillStyle = C.cyan;
+                ctx.shadowColor = C.cyan;
+                ctx.shadowBlur = 12;
+            } else {
+                ctx.fillStyle = C.red;
+                ctx.shadowBlur = 0;
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // Persistence line (vertical from diagonal to point)
+            if (isAlive) {
+                const diagY = pdBottom - cycle.birth * pdH;
+                ctx.beginPath();
+                ctx.moveTo(bx, diagY);
+                ctx.lineTo(bx, dy);
+                ctx.strokeStyle = hexToRgba(C.green, 0.6);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+    }
+
+    window.animatePersistence = function () {
+        if (animatingPers) return;
+        animatingPers = true;
+        slider.value = 0;
+        const interval = setInterval(() => {
+            let v = parseInt(slider.value);
+            if (v >= 100) { clearInterval(interval); animatingPers = false; return; }
+            slider.value = v + 1;
+            draw();
+        }, 60);
+    };
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 6: PERSISTENCE DENSITY PLOT (Plotly) – Paper Fig 3
+// ============================================================
+(function persistenceDensityPlot() {
+    const div = document.getElementById('persistenceDensityPlot');
+    if (!div) return;
+
+    // Simulate data mimicking Figure 3 of the paper
+    const nPoints = 500;
+    const placeboBirths = [], placeboDeaths = [];
+    const psiloBirths = [], psiloDeaths = [];
+
+    for (let i = 0; i < nPoints; i++) {
+        // Placebo: broad, uniform-ish distribution
+        const pb = rand(0.1, 0.9);
+        const pp = rand(0.05, 0.5);
+        placeboBirths.push(pb);
+        placeboDeaths.push(Math.max(0, pb - pp));
+
+        // Psilocybin: peaked at low persistence, with fat tail
+        let psb, psp;
+        if (Math.random() < 0.85) {
+            psb = rand(0.05, 0.4);
+            psp = rand(0.01, 0.15);
+        } else {
+            psb = rand(0.3, 0.95);
+            psp = rand(0.3, 0.8);
+        }
+        psiloBirths.push(psb);
+        psiloDeaths.push(Math.max(0, psb - psp));
+    }
+
+    const trace1 = {
+        x: placeboBirths, y: placeboDeaths,
+        mode: 'markers', type: 'scatter',
+        name: 'Placebo',
+        marker: { color: 'rgba(68,138,255,0.4)', size: 4 },
+    };
+    const trace2 = {
+        x: psiloBirths, y: psiloDeaths,
+        mode: 'markers', type: 'scatter',
+        name: 'Psilocybin',
+        marker: { color: 'rgba(255,82,82,0.4)', size: 4 },
+    };
+    // Diagonal
+    const trace3 = {
+        x: [0, 1], y: [0, 1],
+        mode: 'lines', type: 'scatter',
+        name: 'Diagonale',
+        line: { color: 'rgba(255,215,64,0.4)', dash: 'dash', width: 1 },
+        showlegend: false,
+    };
+
+    Plotly.newPlot(div, [trace3, trace1, trace2], {
+        title: { text: 'Persistenzdiagramm: Placebo vs. Psilocybin (simuliert)', font: { color: '#e8e8f0', size: 14 } },
+        xaxis: { title: 'Geburt', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)', range: [0, 1] },
+        yaxis: { title: 'Tod', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)', range: [0, 1] },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(18,18,42,0.8)',
+        legend: { font: { color: '#e8e8f0' } },
+        margin: { t: 50, b: 50, l: 50, r: 20 },
+    }, { responsive: true });
+})();
+
+// ============================================================
+// SECTION 7: SCAFFOLD BUILDER
+// ============================================================
+(function scaffoldBuilder() {
+    const canvas = document.getElementById('scaffoldCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const slider = document.getElementById('scaffoldSlider');
+    const stepDisplay = document.getElementById('scaffoldStep');
+    const infoDiv = document.getElementById('scaffoldInfo');
+
+    // 8 nodes
+    const nodes = [
+        { x: W * 0.12, y: H * 0.30 }, { x: W * 0.27, y: H * 0.12 },
+        { x: W * 0.45, y: H * 0.12 }, { x: W * 0.60, y: H * 0.30 },
+        { x: W * 0.60, y: H * 0.62 }, { x: W * 0.45, y: H * 0.80 },
+        { x: W * 0.27, y: H * 0.80 }, { x: W * 0.12, y: H * 0.62 },
+    ];
+    const labels = 'ABCDEFGH';
+
+    // Define cycles with their persistence and constituent edges
+    const cyclesDef = [
+        { edges: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]], persistence: 0.40, color: 'rgba(0,229,255,0.5)', name: 'Zyklus α' },
+        { edges: [[0,1],[1,3],[3,0]], persistence: 0.15, color: 'rgba(224,64,251,0.5)', name: 'Zyklus β' },
+        { edges: [[3,4],[4,6],[6,3]], persistence: 0.08, color: 'rgba(255,215,64,0.5)', name: 'Zyklus γ' },
+        { edges: [[5,6],[6,7],[7,5]], persistence: 0.30, color: 'rgba(105,240,174,0.5)', name: 'Zyklus δ' },
+        { edges: [[0,7],[7,6],[6,5],[5,0]], persistence: 0.22, color: 'rgba(255,82,82,0.5)', name: 'Zyklus ε' },
+        { edges: [[1,2],[2,4],[4,1]], persistence: 0.05, color: 'rgba(68,138,255,0.5)', name: 'Zyklus ζ' },
+        { edges: [[2,3],[3,5],[5,2]], persistence: 0.18, color: 'rgba(255,171,64,0.5)', name: 'Zyklus η' },
+        { edges: [[0,7],[7,1],[1,0]], persistence: 0.12, color: 'rgba(178,255,89,0.5)', name: 'Zyklus θ' },
+    ];
+
+    // Compute scaffold weights
+    function computeScaffolds(numCycles) {
+        const persWeights = {};
+        const freqWeights = {};
+        for (let ci = 0; ci < numCycles; ci++) {
+            const cycle = cyclesDef[ci];
+            for (const [a, b] of cycle.edges) {
+                const key = Math.min(a, b) + ',' + Math.max(a, b);
+                persWeights[key] = (persWeights[key] || 0) + cycle.persistence;
+                freqWeights[key] = (freqWeights[key] || 0) + 1;
+            }
+        }
+        return { persWeights, freqWeights };
+    }
+
+    // Tab handling
+    const tabs = document.querySelectorAll('#scaffoldTabs .tab');
+    let activeTab = 'persistence-scaffold';
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            activeTab = tab.getAttribute('data-tab');
+            draw();
+        });
+    });
+
+    function draw() {
+        const numCycles = parseInt(slider.value);
+        stepDisplay.textContent = `${numCycles} / ${cyclesDef.length} Zyklen`;
+        const { persWeights, freqWeights } = computeScaffolds(numCycles);
+
+        ctx.clearRect(0, 0, W, H);
+
+        const showPers = activeTab === 'persistence-scaffold' || activeTab === 'both-scaffolds';
+        const showFreq = activeTab === 'frequency-scaffold' || activeTab === 'both-scaffolds';
+
+        // If both, split the canvas
+        const offsetX = activeTab === 'both-scaffolds' ? 0 : 0;
+        const scaleX = activeTab === 'both-scaffolds' ? 0.5 : 1.0;
+
+        function drawScaffold(weights, maxW, labelText, xOff, xScale, accentColor) {
+            ctx.save();
+
+            // Title
+            ctx.fillStyle = accentColor;
+            ctx.font = 'bold 13px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            const centerX = xOff + (W * xScale) / 2;
+            ctx.fillText(labelText, centerX, 25);
+
+            // Draw edges with scaffold weights
+            const allKeys = Object.keys(weights);
+            const maxVal = Math.max(1, ...Object.values(weights));
+
+            for (const key of allKeys) {
+                const [a, b] = key.split(',').map(Number);
+                const w = weights[key];
+                const norm = w / maxVal;
+                const na = { x: xOff + nodes[a].x * xScale, y: nodes[a].y };
+                const nb = { x: xOff + nodes[b].x * xScale, y: nodes[b].y };
+
+                ctx.beginPath();
+                ctx.moveTo(na.x, na.y);
+                ctx.lineTo(nb.x, nb.y);
+                ctx.strokeStyle = hexToRgba(accentColor.replace('0.5)', '1)').replace('rgba', '').length ? accentColor : C.cyan, 0.2 + norm * 0.8);
+                ctx.strokeStyle = `rgba(${accentColor === C.cyan ? '0,229,255' : '224,64,251'},${0.2 + norm * 0.8})`;
+                ctx.lineWidth = 1 + norm * 6;
+                ctx.stroke();
+
+                // Weight label
+                const mx = (na.x + nb.x) / 2;
+                const my = (na.y + nb.y) / 2;
+                ctx.fillStyle = `rgba(255,255,255,${0.3 + norm * 0.5})`;
+                ctx.font = '9px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(w.toFixed(2), mx, my - 6);
+            }
+
+            // Draw nodes
+            for (let i = 0; i < nodes.length; i++) {
+                const nx = xOff + nodes[i].x * xScale;
+                const ny = nodes[i].y;
+                // Compute node strength
+                let strength = 0;
+                for (const key of allKeys) {
+                    const [a, b] = key.split(',').map(Number);
+                    if (a === i || b === i) strength += weights[key];
+                }
+                const normStr = strength / (maxVal * 4 + 1);
+                const r = 8 + normStr * 14;
+
+                ctx.beginPath();
+                ctx.arc(nx, ny, r, 0, TAU);
+                const grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, r);
+                grad.addColorStop(0, `rgba(255,255,255,0.9)`);
+                grad.addColorStop(1, `rgba(255,255,255,0.1)`);
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.fillStyle = C.bg;
+                ctx.font = 'bold 10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(labels[i], nx, ny);
+            }
+
+            ctx.restore();
+        }
+
+        if (showPers && !showFreq) {
+            drawScaffold(persWeights, 1, 'Persistenz-Gerüst Hᵖ', 0, 1, C.cyan);
+        } else if (showFreq && !showPers) {
+            drawScaffold(freqWeights, 1, 'Frequenz-Gerüst Hᶠ', 0, 1, C.magenta);
+        } else if (showPers && showFreq) {
+            // Divider
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(W / 2, 0);
+            ctx.lineTo(W / 2, H);
+            ctx.stroke();
+            drawScaffold(persWeights, 1, 'Persistenz Hᵖ', 0, 0.5, C.cyan);
+            drawScaffold(freqWeights, 1, 'Frequenz Hᶠ', W * 0.5, 0.5, C.magenta);
+        }
+
+        // Draw active cycles legend at bottom
+        if (numCycles > 0) {
+            const legendY = H - 30;
+            ctx.font = '10px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            let lx = 10;
+            for (let ci = 0; ci < numCycles; ci++) {
+                const c = cyclesDef[ci];
+                ctx.fillStyle = c.color;
+                ctx.fillRect(lx, legendY, 10, 10);
+                ctx.fillStyle = C.textDim;
+                ctx.fillText(`${c.name} (p=${c.persistence.toFixed(2)})`, lx + 14, legendY + 9);
+                lx += 140;
+                if (lx > W - 150) { lx = 10; }
+            }
+        }
+
+        // Info
+        if (infoDiv) {
+            if (numCycles === 0) {
+                infoDiv.innerHTML = 'Noch keine Zyklen hinzugefügt. Bewege den Slider, um Zyklen aus der persistenten Homologie einzufügen.';
+            } else {
+                const totalEdges = Object.keys(persWeights).length;
+                const maxPers = Math.max(...Object.values(persWeights)).toFixed(2);
+                const maxFreq = Math.max(...Object.values(freqWeights));
+                infoDiv.innerHTML = `<strong>${numCycles} Zyklen</strong> aktiv → <strong>${totalEdges} Kanten</strong> im Gerüst. Max. Persistenz-Gewicht: <strong>${maxPers}</strong>, Max. Frequenz: <strong>${maxFreq}</strong>. ${numCycles >= 4 ? 'Beachte: Manche Kanten gehören zu mehreren Zyklen – ihre Gewichte summieren sich!' : ''}`;
+            }
+        }
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 8: BRAIN RESULTS – Plotly Charts
+// ============================================================
+
+// Result 1: Persistence distributions
+(function resultPersistence() {
+    const div = document.getElementById('resultPersistencePlot');
+    if (!div) return;
+
+    // Simulate persistence distributions matching paper Fig 4a
+    const x = [];
+    for (let i = 0; i <= 1; i += 0.01) x.push(i);
+
+    // Placebo: broader, more uniform
+    const yPla = x.map(v => {
+        return 0.02 + 0.015 * Math.exp(-((v - 0.3) ** 2) / 0.08) + 0.01 * Math.exp(-((v - 0.6) ** 2) / 0.1);
+    });
+
+    // Psilocybin: peaked at low persistence, fat tail
+    const yPsi = x.map(v => {
+        return 0.04 * Math.exp(-((v - 0.08) ** 2) / 0.01) + 0.003 * Math.exp(-v / 0.5);
+    });
+
+    Plotly.newPlot(div, [
+        { x, y: yPla, type: 'scatter', mode: 'lines', name: 'Placebo', line: { color: '#448aff', width: 3 } },
+        { x, y: yPsi, type: 'scatter', mode: 'lines', name: 'Psilocybin', line: { color: '#ff5252', width: 3 } },
+    ], {
+        title: { text: 'Persistenz-Verteilung P(p) der H₁-Generatoren', font: { color: '#e8e8f0', size: 14 } },
+        xaxis: { title: 'Persistenz p', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)' },
+        yaxis: { title: 'P(p)', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(18,18,42,0.8)',
+        legend: { font: { color: '#e8e8f0' } },
+        margin: { t: 50, b: 50, l: 60, r: 20 },
+        annotations: [{
+            x: 0.08, y: 0.04, text: 'Peak bei<br>niedriger Persistenz', showarrow: true,
+            arrowhead: 2, arrowcolor: '#ff5252', font: { color: '#ff5252', size: 10 },
+            ax: 60, ay: -40
+        }, {
+            x: 0.7, y: 0.005, text: 'Fetter Schwanz<br>(Psilocybin)', showarrow: true,
+            arrowhead: 2, arrowcolor: '#ff5252', font: { color: '#ff5252', size: 10 },
+            ax: -40, ay: -50
+        }]
+    }, { responsive: true });
+})();
+
+// Result 2: Scatter plot frequency vs persistence
+(function scatterPlot() {
+    const div = document.getElementById('scatterPlot');
+    if (!div) return;
+
+    const nPts = 300;
+    const plaFreq = [], plaPers = [], psiFreq = [], psiPers = [];
+
+    for (let i = 0; i < nPts; i++) {
+        // Placebo: tight linear relationship
+        const f1 = rand(5, 200);
+        const p1 = f1 * 0.23 + rand(-5, 5);
+        plaFreq.push(f1);
+        plaPers.push(Math.max(0, p1));
+
+        // Psilocybin: linear but with more spread, some outliers
+        const f2 = rand(5, 250);
+        let p2 = f2 * 0.3 + rand(-15, 15);
+        if (Math.random() < 0.08) p2 = f2 * 0.3 + rand(50, 200); // outliers
+        psiFreq.push(f2);
+        psiPers.push(Math.max(0, p2));
+    }
+
+    Plotly.newPlot(div, [
+        {
+            x: plaFreq, y: plaPers, type: 'scatter', mode: 'markers',
+            name: 'Placebo', marker: { color: 'rgba(68,138,255,0.5)', size: 5 }
+        },
+        {
+            x: psiFreq, y: psiPers, type: 'scatter', mode: 'markers',
+            name: 'Psilocybin', marker: { color: 'rgba(255,82,82,0.5)', size: 5 }
+        },
+        // Fit lines
+        {
+            x: [0, 250], y: [0, 250 * 0.23], type: 'scatter', mode: 'lines',
+            name: 'Fit Placebo (m=0.23)', line: { color: '#448aff', width: 2, dash: 'dash' }
+        },
+        {
+            x: [0, 250], y: [0, 250 * 0.3], type: 'scatter', mode: 'lines',
+            name: 'Fit Psilocybin (m=0.30)', line: { color: '#ff5252', width: 2, dash: 'dash' }
+        },
+    ], {
+        title: { text: 'Kantenfrequenz wᶠ vs. Kantenpersistenz wᵖ', font: { color: '#e8e8f0', size: 14 } },
+        xaxis: { title: 'Frequenz wᶠ (Anzahl Zyklen)', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)' },
+        yaxis: { title: 'Persistenz wᵖ (Summe)', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(18,18,42,0.8)',
+        legend: { font: { color: '#e8e8f0', size: 10 } },
+        margin: { t: 50, b: 50, l: 60, r: 20 },
+    }, { responsive: true });
+})();
+
+// Result 4: Edge weight distributions
+(function edgeWeightPlot() {
+    const div = document.getElementById('edgeWeightPlot');
+    if (!div) return;
+
+    // Persistence scaffold weights
+    const xVals = [];
+    for (let i = 1; i <= 1200; i += 5) xVals.push(i);
+
+    // Placebo: drops off sharply
+    const yPlaP = xVals.map(v => Math.exp(-v / 80) * 0.01 + 0.0001);
+    // Psilocybin: broader tail
+    const yPsiP = xVals.map(v => Math.exp(-v / 120) * 0.008 + 0.0002 * Math.exp(-v / 400));
+
+    Plotly.newPlot(div, [
+        { x: xVals, y: yPlaP, type: 'scatter', mode: 'lines', name: 'Placebo Hᵖ', line: { color: '#448aff', width: 2 } },
+        { x: xVals, y: yPsiP, type: 'scatter', mode: 'lines', name: 'Psilocybin Hᵖ', line: { color: '#ff5252', width: 2 } },
+    ], {
+        title: { text: 'Kantengewichts-Verteilung im Persistenz-Gerüst', font: { color: '#e8e8f0', size: 14 } },
+        xaxis: { title: 'Kantengewicht wᵖ', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)' },
+        yaxis: { title: 'P(wᵖ)', type: 'log', color: '#9898b0', gridcolor: 'rgba(255,255,255,0.05)' },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(18,18,42,0.8)',
+        legend: { font: { color: '#e8e8f0' } },
+        margin: { t: 50, b: 50, l: 60, r: 20 },
+        annotations: [{
+            x: 600, y: Math.log10(0.0005), text: '← Breiterer Schwanz<br>(Psilocybin)',
+            showarrow: true, arrowhead: 2, arrowcolor: '#ff5252',
+            font: { color: '#ff5252', size: 11 }, ax: 60, ay: -30
+        }],
+        shapes: [{
+            type: 'line', x0: 400, x1: 400, y0: 0.00001, y1: 0.01,
+            line: { color: 'rgba(255,215,64,0.4)', width: 1, dash: 'dot' }
+        }]
+    }, { responsive: true });
+})();
+
+// ============================================================
+// SECTION 8: BRAIN VISUALIZATIONS (Placebo vs Psilocybin)
+// ============================================================
+(function brainComparison() {
+    const canvasP = document.getElementById('brainPlaceboCanvas');
+    const canvasS = document.getElementById('brainPsilocybinCanvas');
+    if (!canvasP || !canvasS) return;
+
+    const size = 320;
+    const dpr = window.devicePixelRatio || 1;
+
+    function setupCanvas(c) {
+        c.width = size * dpr;
+        c.height = size * dpr;
+        c.style.width = size + 'px';
+        c.style.height = size + 'px';
+        const ctx = c.getContext('2d');
+        ctx.scale(dpr, dpr);
+        return ctx;
+    }
+
+    const ctxP = setupCanvas(canvasP);
+    const ctxS = setupCanvas(canvasS);
+
+    const slider = document.getElementById('brainThresholdSlider');
+    const valueDisplay = document.getElementById('brainThresholdValue');
+
+    // Generate brain-like node positions (circular layout with communities)
+    const nNodes = 40; // simplified
+    const communities = 5;
+    const communityColors = ['#00e5ff', '#e040fb', '#ffd740', '#69f0ae', '#ff5252'];
+    const brainNodes = [];
+    const communityAssignment = [];
+
+    for (let c = 0; c < communities; c++) {
+        const nInComm = Math.floor(nNodes / communities);
+        const angleOffset = (TAU / communities) * c - Math.PI / 2;
+        const commR = size * 0.3;
+        const commCx = size / 2 + commR * 0.5 * Math.cos(angleOffset);
+        const commCy = size / 2 + commR * 0.5 * Math.sin(angleOffset);
+        for (let i = 0; i < nInComm; i++) {
+            const a = angleOffset + (TAU / communities) * (i / nInComm) * 0.8 - 0.4;
+            const r = size * 0.32 + rand(-20, 20);
+            brainNodes.push({
+                x: size / 2 + r * Math.cos(a),
+                y: size / 2 + r * Math.sin(a),
+                comm: c
+            });
+            communityAssignment.push(c);
+        }
+    }
+
+    // Generate edges for placebo (mostly within-community)
+    function generateEdges(crossProb) {
+        const edges = [];
+        for (let i = 0; i < brainNodes.length; i++) {
+            for (let j = i + 1; j < brainNodes.length; j++) {
+                const sameComm = brainNodes[i].comm === brainNodes[j].comm;
+                let weight;
+                if (sameComm) {
+                    weight = rand(20, 150);
+                } else {
+                    weight = rand(0, crossProb);
+                }
+                if (weight > 10) {
+                    edges.push({ i, j, weight, cross: !sameComm });
+                }
+            }
+        }
+        return edges;
+    }
+
+    // Placebo: mostly within-community
+    const placeboEdges = generateEdges(40);
+    // Psilocybin: more cross-community, some very strong
+    const psiloEdges = generateEdges(100);
+    // Add some extra-strong cross-community edges for psilocybin
+    for (let k = 0; k < 30; k++) {
+        const i = randInt(0, brainNodes.length - 1);
+        let j = randInt(0, brainNodes.length - 1);
+        while (brainNodes[j].comm === brainNodes[i].comm || j === i) j = randInt(0, brainNodes.length - 1);
+        psiloEdges.push({ i, j, weight: rand(100, 200), cross: true });
+    }
+
+    function drawBrain(ctx2, edgeList, threshold) {
+        ctx2.clearRect(0, 0, size, size);
+
+        // Background circle
+        ctx2.beginPath();
+        ctx2.arc(size / 2, size / 2, size * 0.42, 0, TAU);
+        ctx2.fillStyle = 'rgba(255,255,255,0.02)';
+        ctx2.fill();
+        ctx2.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx2.lineWidth = 1;
+        ctx2.stroke();
+
+        // Filter edges
+        const visible = edgeList.filter(e => e.weight >= threshold);
+        const withinCount = visible.filter(e => !e.cross).length;
+        const crossCount = visible.filter(e => e.cross).length;
+
+        // Draw edges
+        for (const e of visible) {
+            const ni = brainNodes[e.i];
+            const nj = brainNodes[e.j];
+            const norm = clamp((e.weight - threshold) / (200 - threshold), 0, 1);
+            ctx2.beginPath();
+            ctx2.moveTo(ni.x, ni.y);
+            ctx2.lineTo(nj.x, nj.y);
+            if (e.cross) {
+                ctx2.strokeStyle = `rgba(255,215,64,${0.15 + norm * 0.6})`;
+            } else {
+                const cc = communityColors[ni.comm];
+                ctx2.strokeStyle = hexToRgba(cc, 0.1 + norm * 0.5);
+            }
+            ctx2.lineWidth = 0.5 + norm * 2.5;
+            ctx2.stroke();
+        }
+
+        // Draw nodes
+        for (let i = 0; i < brainNodes.length; i++) {
+            const n = brainNodes[i];
+            let strength = 0;
+            for (const e of visible) {
+                if (e.i === i || e.j === i) strength += e.weight;
+            }
+            const r = 2 + Math.min(strength / 300, 5);
+            ctx2.beginPath();
+            ctx2.arc(n.x, n.y, r, 0, TAU);
+            ctx2.fillStyle = communityColors[n.comm];
+            ctx2.fill();
+        }
+
+        // Stats
+        ctx2.fillStyle = C.textDim;
+        ctx2.font = '10px Inter, sans-serif';
+        ctx2.textAlign = 'center';
+        ctx2.fillText(`${visible.length} Kanten (${withinCount} intra, ${crossCount} inter)`, size / 2, size - 8);
+    }
+
+    function draw() {
+        const threshold = parseInt(slider.value);
+        valueDisplay.textContent = threshold;
+        drawBrain(ctxP, placeboEdges, threshold);
+        drawBrain(ctxS, psiloEdges, threshold);
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// SECTION 9: INTERPRETATION CANVAS
+// ============================================================
+(function interpretationVis() {
+    const canvas = document.getElementById('interpretationCanvas');
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const W = rect.width, H = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const slider = document.getElementById('stateSlider');
+
+    // 5 communities, each a cluster of nodes
+    const communities = [];
+    const commColors = ['#00e5ff', '#e040fb', '#ffd740', '#69f0ae', '#ff5252'];
+    const commLabels = ['Visuell', 'Auditiv', 'Motorisch', 'Frontal', 'Temporal'];
+    const commCenters = [
+        { x: W * 0.2, y: H * 0.25 },
+        { x: W * 0.5, y: H * 0.15 },
+        { x: W * 0.8, y: H * 0.25 },
+        { x: W * 0.3, y: H * 0.7 },
+        { x: W * 0.7, y: H * 0.7 },
+    ];
+
+    for (let c = 0; c < 5; c++) {
+        const nodesInComm = [];
+        for (let i = 0; i < 6; i++) {
+            const angle = (TAU / 6) * i;
+            const r = 30 + rand(-5, 5);
+            nodesInComm.push({
+                x: commCenters[c].x + r * Math.cos(angle),
+                y: commCenters[c].y + r * Math.sin(angle),
+                comm: c
+            });
+        }
+        communities.push(nodesInComm);
+    }
+
+    function draw() {
+        const t = parseInt(slider.value) / 100; // 0 = placebo, 1 = psilocybin
+        ctx.clearRect(0, 0, W, H);
+
+        // Title
+        ctx.fillStyle = C.text;
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        const stateLabel = t < 0.3 ? 'Placebo (Normal)' : t < 0.7 ? 'Übergang...' : 'Psilocybin';
+        const stateColor = t < 0.3 ? C.blue : t < 0.7 ? C.gold : C.red;
+        ctx.fillStyle = stateColor;
+        ctx.fillText(stateLabel, W / 2, 25);
+
+        // Draw intra-community edges (weaken with psilocybin)
+        for (let c = 0; c < 5; c++) {
+            const ns = communities[c];
+            const intraAlpha = lerp(0.6, 0.2, t);
+            const intraWidth = lerp(2, 0.5, t);
+            for (let i = 0; i < ns.length; i++) {
+                for (let j = i + 1; j < ns.length; j++) {
+                    ctx.beginPath();
+                    ctx.moveTo(ns[i].x, ns[i].y);
+                    ctx.lineTo(ns[j].x, ns[j].y);
+                    ctx.strokeStyle = hexToRgba(commColors[c], intraAlpha);
+                    ctx.lineWidth = intraWidth;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Draw inter-community edges (strengthen with psilocybin)
+        const interAlpha = lerp(0.02, 0.5, t);
+        const interWidth = lerp(0.3, 3, t);
+        const numInterEdges = Math.floor(lerp(3, 25, t));
+
+        // Deterministic "random
+" seed for reproducibility
+        const seed = 42;
+        let seedVal = seed;
+        function seededRand() {
+            seedVal = (seedVal * 16807 + 0) % 2147483647;
+            return (seedVal - 1) / 2147483646;
+        }
+
+        const interPairs = [];
+        for (let ci = 0; ci < 5; ci++) {
+            for (let cj = ci + 1; cj < 5; cj++) {
+                for (let ni = 0; ni < communities[ci].length; ni++) {
+                    for (let nj = 0; nj < communities[cj].length; nj++) {
+                        interPairs.push([ci, ni, cj, nj]);
+                    }
+                }
+            }
+        }
+        // Shuffle deterministically
+        for (let i = interPairs.length - 1; i > 0; i--) {
+            const j = Math.floor(seededRand() * (i + 1));
+            [interPairs[i], interPairs[j]] = [interPairs[j], interPairs[i]];
+        }
+
+        for (let k = 0; k < numInterEdges && k < interPairs.length; k++) {
+            const [ci, ni, cj, nj] = interPairs[k];
+            const na = communities[ci][ni];
+            const nb = communities[cj][nj];
+            ctx.beginPath();
+            ctx.moveTo(na.x, na.y);
+            ctx.lineTo(nb.x, nb.y);
+            // Gradient line between community colors
+            const grad = ctx.createLinearGradient(na.x, na.y, nb.x, nb.y);
+            grad.addColorStop(0, hexToRgba(commColors[ci], interAlpha));
+            grad.addColorStop(1, hexToRgba(commColors[cj], interAlpha));
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = interWidth;
+            ctx.stroke();
+        }
+
+        // Draw community circles and labels
+        for (let c = 0; c < 5; c++) {
+            const cc = commCenters[c];
+            // Community boundary
+            ctx.beginPath();
+            ctx.arc(cc.x, cc.y, 50, 0, TAU);
+            const boundaryAlpha = lerp(0.15, 0.04, t);
+            ctx.strokeStyle = hexToRgba(commColors[c], boundaryAlpha);
+            ctx.lineWidth = lerp(2, 0.5, t);
+            ctx.setLineDash(t > 0.5 ? [4, 4] : []);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.fillStyle = hexToRgba(commColors[c], lerp(0.8, 0.4, t));
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(commLabels[c], cc.x, cc.y - 48);
+
+            // Nodes
+            for (const n of communities[c]) {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, 5, 0, TAU);
+                ctx.fillStyle = commColors[c];
+                ctx.fill();
+            }
+        }
+
+        // Annotations
+        if (t < 0.2) {
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Klare Modulgrenzen – starke interne Verbindungen', W / 2, H - 15);
+        } else if (t > 0.8) {
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '11px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Modulgrenzen aufgelöst – starke modulübergreifende Brücken', W / 2, H - 15);
+        }
+    }
+
+    slider.addEventListener('input', draw);
+    draw();
+})();
+
+// ============================================================
+// RENDER MATH WITH TEMML (if available)
+// ============================================================
+(function renderMath() {
+    if (typeof temml === 'undefined') return;
+    document.querySelectorAll('.math-block').forEach(el => {
+        // Only render if it contains LaTeX-like content with backslashes
+        // For now we leave the text as-is since we used HTML notation
+    });
+})();
+
+// ============================================================
+// SMOOTH SCROLL FOR ANCHOR LINKS
+// ============================================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// ============================================================
+// RESIZE HANDLER – Redraw canvases on resize (debounced)
+// ============================================================
+(function resizeHandler() {
+    let timeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            // Trigger input events on all sliders to force redraw
+            document.querySelectorAll('input[type="range"]').forEach(s => {
+                s.dispatchEvent(new Event('input'));
+            });
+        }, 300);
+    });
+})();
+
+</script>
+</body>
+</html>
