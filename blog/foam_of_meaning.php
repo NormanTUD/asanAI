@@ -878,9 +878,9 @@ The upshot is that learning is not the accumulation of facts but the *constructi
 </div>
 
 <div class="md">
-## Training follows the filaments
+## Training may learn to follow the filaments and avoid the voids
 
-The learner constructed $\pi$; in a trained language model that map is not a metaphor but a function $\pi_\theta$ literally optimized on a sample of the measure on $X$. A transformer is never told what language is. It is shown a corpus and asked to predict the next token, and from that single repeated error it must do something harder than memorize: it must locate the web. Its one way to reduce its loss is to discover where the corpus actually lives — the clusters, and above all the **filaments** that connect them — and to learn to walk only there.
+A transformer is never told what language is. It is shown a corpus and asked to predict the next token, and from that single repeated error it must do something harder than memorize: it must locate the web. Its one way to reduce its loss is to discover where the corpus actually lives — the clusters, and above all the **filaments** that connect them — and to learn to walk only there.
 
 **[HYPOTHESIS]** A fully trained model assigns probability concentrated on the web, and exponentially small probability in the voids; the interesting part is directional. At a point on a filament the next-token distribution is sharply peaked, and the natural metric of the model's belief — its Fisher information metric — is elongated along the filament and stiff transverse to it. $\pi_\theta$ is, in effect, a vector field on $X$ whose integral curves follow the filaments: sampling is a random walk that stays on the web, threading clusters, crossing filaments, and only rarely venturing into a void. That is what fluency is.
 
