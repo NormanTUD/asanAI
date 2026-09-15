@@ -600,11 +600,13 @@ const Selection = (() => {
     // ── Panel öffnen/schließen ──
     function openPanel() {
         if (panelEl()) panelEl().style.display = 'block';
+        document.body.classList.add('sel-mode');
         syncPanel();
     }
 
     function closePanel() {
         if (panelEl()) panelEl().style.display = 'none';
+        document.body.classList.remove('sel-mode');
     }
 
     // 3× Esc (schnell nacheinander) → Panel öffnen/schließen.
