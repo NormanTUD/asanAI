@@ -320,10 +320,10 @@ html.dark .glossary-term {
 html.dark .glossary-term:hover {
 	background: rgba(226, 232, 240, 0.10);
 }
-html.dark .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
+html.dark #contents .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
 	background: rgba(226, 232, 240, 0.05);
 }
-html.dark .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
+html.dark #contents .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
 	background: rgba(226, 232, 240, 0.13);
 }
 
@@ -6659,7 +6659,10 @@ html.dark .md mark {
 .md table { scroll-margin-top: 5rem; }
 
 /* ── 12. Quiet link treatment — subtle gray box, clearer on hover ── */
-.md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
+/* Scoped to #contents on purpose: the base `#contents a` rule below/above
+   has ID-level specificity and would otherwise win the text-decoration
+   and color battle for every article link. */
+#contents .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link) {
 	color: inherit;
 	text-decoration: none;
 	background: rgba(71, 85, 105, 0.03);
@@ -6669,7 +6672,7 @@ html.dark .md mark {
 	-webkit-box-decoration-break: clone;
 	transition: background-color .18s ease, color .18s ease;
 }
-.md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
+#contents .md a:not(.cl-inline):not(.cl-h-anchor):not(.km-sec-link):not(.cc-name):not(.drawer-module):not(.module-nav-link):hover {
 	background: rgba(71, 85, 105, 0.13);
 }
 
