@@ -6554,6 +6554,33 @@ window.bibData = {
 		url: "https://legacy.voteview.com/pdf/Shepard_1987.pdf",
 		alternativetitle: "The Universal Law of Generalization"
 	},
+	/* He, Tsai & Ward (2023) — "Side Effects of Learning from Low-dimensional
+	 * Data Embedded in a Euclidean Space". Training pins the learned function
+	 * down along a low-dimensional data manifold while leaving the normal
+	 * (void) directions free, fixed by initialization; noise in the codimension
+	 * regularizes them at sample cost N ~ sigma^{-2} and slow convergence.
+	 * Research in the Mathematical Sciences 10(1): 13. arXiv:2203.00614. */
+	"he2023sideeffects": {
+		author: "Juncai He, Yen-Hsi Richard Tsai, Rachel Ward",
+		year: 2023,
+		title: "Side Effects of Learning from Low-Dimensional Data Embedded in a Euclidean Space",
+		journal: "Research in the Mathematical Sciences",
+		volume: 10,
+		number: 1,
+		url: "https://doi.org/10.1007/s40687-023-00378-y",
+		alternativetitle: "He, Tsai & Ward, side effects of low-dimensional learning (2023)"
+	},
+	/* Kevin Maik Jablonka (2025) — "The Geometry of Not Enough Data", blog
+	 * post. Reads pretraining as learning the manifold of "valid text space";
+	 * argues underdetermined normal directions are the source of
+	 * distribution-shift, adversarial, and extrapolation failures. */
+	"jablonka2025geometry": {
+		title: "The Geometry of Not Enough Data",
+		author: "Kevin Maik Jablonka",
+		year: 2025,
+		url: "https://kjablonka.com/blog/posts/manifold/geometry_blog.html",
+		alternativetitle: "Jablonka, The Geometry of Not Enough Data (2025)"
+	},
 	"volta_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Volta_A.jpg",
 		title: "Portrait of Alessandro Volta",
