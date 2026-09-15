@@ -194,6 +194,36 @@ const Presentation = (() => {
     let fragmentIndex = {};
     let searchQuery = '';
     let fastMode = false;        // ?fast=1 → einfache Fragmente direkt anzeigen
+    let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
+
+    // ────────────────────────────────────────────────────────────
+    // KURZ-PRÄSENTATION: extra Abschluss-Folie (nur fast=1&short=1)
+    // Wird nach der Folie „Die Vorhersage" in die Navigation eingefügt
+    // und zeigt, dass alles wieder an den Anfang angehängt wird.
+    // Die ?slides=-Indizes der Ursprungsfolge bleiben unverändert, da
+    // nur das (gefilterte) slides-Array angepasst wird.
+    // ────────────────────────────────────────────────────────────
+    function buildShortLoopSlide() {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        slide.setAttribute('data-title', 'Und wieder von vorn');
+        slide.setAttribute('data-non-original', '1');
+        slide.innerHTML = `
+            <div class="slide-content">
+                <div style="text-align:center; max-width:900px; margin:0 auto;">
+                    <div style="font-size:6em; line-height:1;">↺</div>
+                    <h2 style="margin:20px 0 10px;">Die kurze Version ist zu Ende</h2>
+                    <p style="font-size:1.25em; color:#475569; line-height:1.7; max-width:720px; margin:0 auto 10px;">
+                        Der <b>letzte Vektor</b> wird wieder an den <b>Anfang</b> angehängt –
+                        genau wie beim autoregressiven Sprachmodell beginnt der Kreislauf von vorn.
+                    </p>
+                    <p style="font-size:1.05em; color:#64748b;">Token → Vorhersage → neuer Token wird angehängt → wieder von vorn …</p>
+                    <button id="btn-loop-restart" style="margin-top:24px; padding:14px 28px; font-size:1.1em; font-weight:bold; border:none; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer;">↺ Zurück zum Anfang</button>
+                </div>
+            </div>`;
+        slide.querySelector('#btn-loop-restart').addEventListener('click', () => goTo(0));
+        return slide;
+    }
 
     // ────────────────────────────────────────────────────────────
     // SLIDE-AUSWAHL via URL:  ?slides=0,1,2,3,10-16,17,19-30
@@ -232,6 +262,19 @@ const Presentation = (() => {
             console.warn('slides= hat keine Folie ausgewaehlt – zeige alle Folien.');
             slides = allSlides;
         }
+
+        // ?short=1 + ?fast=1: Abschluss-Folie "Und wieder von vorn" direkt
+        // nach "Die Vorhersage" in die Navigation einfügen.
+        fastMode = new URLSearchParams(window.location.search).get('fast') === '1';
+        shortMode = new URLSearchParams(window.location.search).get('short') === '1';
+        if (fastMode && shortMode) {
+            const loopSlide = buildShortLoopSlide();
+            document.body.appendChild(loopSlide);
+            const vorhersageIdx = slides.findIndex(s => s.getAttribute('data-title') === 'Die Vorhersage');
+            const insertAt = vorhersageIdx >= 0 ? vorhersageIdx + 1 : slides.length;
+            slides.splice(insertAt, 0, loopSlide);
+        }
+
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
 
         // Startfolie: ?start=N (1-basiert, wie im Zähler / wie #N) → die N-te Folie,
@@ -247,7 +290,6 @@ const Presentation = (() => {
         if (slides.length) slides[currentSlide].classList.add('active');
 
         // ?fast=1: einfache Fragmente direkt anzeigen
-        fastMode = new URLSearchParams(window.location.search).get('fast') === '1';
         if (fastMode) revealFastFragments(currentSlide);
 
         updateUI();
@@ -584,6 +626,9 @@ const Selection = (() => {
         // (Filterung ändert nur die Navigation, nicht die Reihenfolge).
         // Also ist der DOM-Index (= pos) bereits der Ursprungs-Index.
         document.querySelectorAll('.slide').forEach((slide, pos) => {
+            // Dynamisch erzeugte Folien (z.B. Kurz-Abschluss) haben keinen
+            // Original-Index und gehören nicht in die ?slides=-Auswahl.
+            if (slide.getAttribute('data-non-original')) return;
             const orig = pos;
             const label = document.createElement('label');
             label.className = 'sel-check';
