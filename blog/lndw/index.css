@@ -755,7 +755,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 
 /* ============ FOLIEN-AUSWAHL (Checkbox je Folie + 3× Esc) ============ */
 #sel-panel {
-	position: fixed; top: 12px; right: 16px; z-index: 2500;
+	position: fixed; bottom: 68px; right: 16px; z-index: 2500;
 	background: rgba(15, 23, 42, 0.97);
 	border: 1px solid #475569; border-radius: 12px;
 	padding: 14px 16px; color: #e2e8f0; font-size: 0.9em;
