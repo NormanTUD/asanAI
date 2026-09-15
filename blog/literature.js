@@ -6511,6 +6511,38 @@ window.bibData = {
 		license: "Public domain (NASA)",
 		alternativetitle: "Structure of the Universe (the cosmic web)"
 	},
+	/* Geller & Huchra (1989) — the CfA redshift-survey paper that first
+	 * presented the "Great Wall" (the CfA2 Great Wall), a vast, thin sheet of
+	 * galaxies. Science 246(4932): 897–903. */
+	"greatwallpaper": {
+		author: "Margaret J. Geller and John P. Huchra",
+		year: 1989,
+		title: "Mapping the Universe",
+		url: "https://doi.org/10.1126/science.246.4932.897",
+		alternativetitle: "The Great Wall (Geller & Huchra 1989)"
+	},
+	/* The cosmological principle: on a large-enough scale the universe is
+	 * homogeneous and isotropic. Usually traced back to Newton's Principia
+	 * (1687), where the universe is treated as uniform and the same laws are
+	 * held to hold throughout. */
+	"cosmologicalprinciple": {
+		author: "Isaac Newton",
+		year: 1687,
+		title: "Philosophiæ Naturalis Principia Mathematica",
+		url: "https://www.gutenberg.org/ebooks/28233",
+		alternativetitle: "The cosmological principle (Newton, Principia 1687)"
+	},
+	/* Lynds (1971) — first recorded the Lyman-alpha forest: the many narrow
+	 * Lyman-alpha absorption lines in the spectrum of the high-redshift quasar
+	 * 4C 05.34, produced by intergalactic gas along the line of sight.
+	 * ApJ 164: L73–L78. */
+	"lymanalphaforest": {
+		author: "Roger Lynds",
+		year: 1971,
+		title: "The Absorption-Line Spectrum of 4C 05.34",
+		url: "https://doi.org/10.1086/180695",
+		alternativetitle: "The Lyman-alpha forest (Lynds 1971)"
+	},
 	/* Roger Shepard's 1987 "universal law of generalization": the probability
 	 * that a response learned to one stimulus generalizes to another falls off
 	 * exponentially with the distance between the two in a psychological
