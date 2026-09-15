@@ -117,7 +117,7 @@ const JSpaceViz = (() => {
             '<b>Global Workspace (Baars, 1988):</b> Die Module posten ihre <i>Ergebnisse</i> in eine zentrale Arena – den "Workspace". Wir sehen nur das Ergebnis, nie die interne Berechnung. (So erklärt die Theorie unser Bewusstsein.)',
             '<b>Das Rätsel:</b> Frag das Modell: „…das Tier, das Netze spinnt, hat wie viele Beine?" – Intern tauchen Zwischengedanken auf: <i>Spinne … 8</i>. Die sagt es aber <b>nicht</b>. Wie könnten wir sie sehen?',
             '<b>Die J-Lens:</b> Die <b>Jacobian Lens</b> macht genau das sichtbar – sie zeigt die Wörter, die eine interne Aktivierung <i>gerade dazu bringt, gesagt zu werden</i>. Hier taucht <b>spider</b> auf (steht nie im Prompt!) → dann <b>8</b>.',
-            '<b>Wie das geht:</b> <b>Zwei Räume</b> – interner Zustand (Schicht ℓ) und Wortraum (Ausgabe) – verbindet die Funktion <b>F</b> = restliche Schichten. Der <b>Jacobian</b> = deren <i>lineares Stück</i> an einem Punkt (über ~1000 Kontexte gemittelt): eine Abbildung <i>zwischen</i> zwei Räumen, keine Bewegung.',
+            '<b>Der Jacobian als Decoder:</b> Er ordnet jedem Wort eine <i>Richtung</i> im internen Raum zu. Je stärker der aktuelle Zustand in diese Richtung zeigt, desto wahrscheinlicher wird das Wort. Die J-Lens liest diese Zuordnung ab – so wird das Innere des Modells sichtbar.',
             '<b>Stilles Denken:</b> So kann das Modell Erkenntnisse <i>zwischenspeichern, ohne sie auszusprechen</i> – und still komplexere Probleme lösen. Der J-Space hat sich dabei <b>selbst</b> entwickelt: vom Optimierer gefunden, weil er <i>nützt</i>.'
         ];
         const captionEl = document.getElementById('jspace-caption');
@@ -695,18 +695,36 @@ const JSpaceViz = (() => {
     }
 
     // ============================================================
-    // STEP 4: Wie das geht – die Jacobi-Matrix (umgeschrieben)
+    // STEP 4 (Jacobian): Der Jacobian als Decoder
     // ============================================================
     function renderJacobian(container) {
         const setup = safeCanvasSetup(container);
         if (!setup) return;
         const { ctx, W, H } = setup;
 
-        const gridSize = 8;
-        const cellSize = Math.min(W * 0.15, H * 0.2) / gridSize;
-        const leftX = W * 0.24;
-        const rightX = W * 0.74;
-        const gridY = H * 0.47;
+        const cx = W * 0.30;
+        const cy = H * 0.52;
+        const R  = Math.min(W * 0.15, H * 0.22);
+
+        const dirs = [
+            { label: 'Spinne', angle: -Math.PI / 6,    color: '#f59e0b' },
+            { label: 'acht',   angle:  Math.PI / 2,     color: '#10b981' },
+            { label: 'Netz',   angle: -5 * Math.PI / 6, color: '#ef4444' },
+        ];
+
+        const arrow = (x1, y1, x2, y2, color, width) => {
+            const a = Math.atan2(y2 - y1, x2 - x1);
+            ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - 8 * Math.cos(a - 0.35), y2 - 8 * Math.sin(a - 0.35));
+            ctx.lineTo(x2 - 8 * Math.cos(a + 0.35), y2 - 8 * Math.sin(a + 0.35));
+            ctx.closePath(); ctx.fill();
+        };
+        const dot = (x, y, r, color) => {
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fillStyle = color; ctx.fill();
+        };
 
         animationRunning = true;
         let t = 0;
@@ -720,149 +738,144 @@ const JSpaceViz = (() => {
             ctx.font = 'bold 16px system-ui';
             ctx.fillStyle = THEME.title;
             ctx.textAlign = 'center';
-            ctx.fillText('Wie das geht: die Jacobi-Matrix', W / 2, 24);
+            ctx.fillText('Der Jacobian als Decoder', W / 2, 28);
             ctx.font = '12px system-ui';
             ctx.fillStyle = THEME.sub;
-            ctx.fillText('Zwei verschiedene Räume, verbunden durch die restlichen Schichten (Funktion F).', W / 2, 42);
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = '11px system-ui';
-            ctx.fillText('Der Jacobian = deren lineares Stück an einem Punkt (über ~1000 Kontexte gemittelt).', W / 2, 58);
+            ctx.fillText('Jedes Wort hat eine Richtung im internen Raum. Je staerker der Zustand in diese Richtung zeigt, desto wahrscheinlicher wird das Wort.', W / 2, 48);
 
-            const leftGridX = leftX - (gridSize * cellSize) / 2;
-            const leftGridY = gridY - (gridSize * cellSize) / 2;
-            const rightGridX = rightX - (gridSize * cellSize) / 2;
-            const rightGridY = gridY - (gridSize * cellSize) / 2;
+            // --- Linkes Panel: interner Raum ---
+            const dirLen = R * 1.2;
+            const pw = Math.min(W * 0.48, 380);
+            const ph = Math.min(H - 160, 330);
+            const plx = cx - pw / 2, ply = cy - ph / 2;
 
-            // Labels
-            ctx.font = 'bold 12px system-ui';
-            ctx.fillStyle = '#c7d2fe';
-            ctx.textAlign = 'center';
-            ctx.fillText('Zustandsraum', leftX, leftGridY - 22);
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = THEME.sub;
-            ctx.fillText('(Schicht ℓ, d dim.)', leftX, leftGridY - 8);
-
-            ctx.font = 'bold 12px system-ui';
-            ctx.fillStyle = '#fca5a5';
-            ctx.fillText('Wortraum', rightX, rightGridY - 22);
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = THEME.sub;
-            ctx.fillText('(Ausgabe, |V| dim.)', rightX, rightGridY - 8);
-
-            // Links: gleichmäßiges Gitter
-            ctx.strokeStyle = 'rgba(99, 102, 241, 0.45)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= gridSize; i++) {
-                ctx.beginPath();
-                ctx.moveTo(leftGridX + i * cellSize, leftGridY);
-                ctx.lineTo(leftGridX + i * cellSize, leftGridY + gridSize * cellSize);
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.moveTo(leftGridX, leftGridY + i * cellSize);
-                ctx.lineTo(leftGridX + gridSize * cellSize, leftGridY + i * cellSize);
-                ctx.stroke();
-            }
-            for (let i = 0; i <= gridSize; i++) {
-                for (let j = 0; j <= gridSize; j++) {
-                    ctx.beginPath();
-                    ctx.arc(leftGridX + i * cellSize, leftGridY + j * cellSize, 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = '#6366f1';
-                    ctx.fill();
-                }
-            }
-
-            // Verzerrungsfunktion (animiert)
-            const warp = (x, y) => {
-                const nx = (x - rightGridX) / (gridSize * cellSize) - 0.5;
-                const ny = (y - rightGridY) / (gridSize * cellSize) - 0.5;
-                const strength = 0.3 + 0.15 * Math.sin(t * 0.02);
-                const angle = strength * Math.sin(nx * 3 + t * 0.01) * Math.cos(ny * 2);
-                const scale = 1 + strength * 0.5 * Math.sin(ny * 4 + nx * 2);
-                const wx = rightGridX + (nx * scale * Math.cos(angle) - ny * scale * Math.sin(angle) * 0.3 + 0.5) * gridSize * cellSize;
-                const wy = rightGridY + (nx * scale * Math.sin(angle) * 0.3 + ny * scale * Math.cos(angle) + 0.5) * gridSize * cellSize;
-                return { x: wx, y: wy };
-            };
-
-            // Rechts: verzerrtes Gitter
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
-            ctx.lineWidth = 1;
-            for (let i = 0; i <= gridSize; i++) {
-                ctx.beginPath();
-                for (let j = 0; j <= gridSize * 4; j++) {
-                    const rawX = rightGridX + i * cellSize;
-                    const rawY = rightGridY + (j / 4) * cellSize;
-                    const w = warp(rawX, rawY);
-                    if (j === 0) ctx.moveTo(w.x, w.y);
-                    else ctx.lineTo(w.x, w.y);
-                }
-                ctx.stroke();
-            }
-            for (let j = 0; j <= gridSize; j++) {
-                ctx.beginPath();
-                for (let i = 0; i <= gridSize * 4; i++) {
-                    const rawX = rightGridX + (i / 4) * cellSize;
-                    const rawY = rightGridY + j * cellSize;
-                    const w = warp(rawX, rawY);
-                    if (i === 0) ctx.moveTo(w.x, w.y);
-                    else ctx.lineTo(w.x, w.y);
-                }
-                ctx.stroke();
-            }
-            for (let i = 0; i <= gridSize; i++) {
-                for (let j = 0; j <= gridSize; j++) {
-                    const rawX = rightGridX + i * cellSize;
-                    const rawY = rightGridY + j * cellSize;
-                    const w = warp(rawX, rawY);
-                    ctx.beginPath();
-                    ctx.arc(w.x, w.y, 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ef4444';
-                    ctx.fill();
-                }
-            }
-
-            // Pfeil in der Mitte
-            const arrowY = gridY;
-            ctx.beginPath();
-            ctx.moveTo(W * 0.42, arrowY);
-            ctx.lineTo(W * 0.58, arrowY);
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(W * 0.58, arrowY);
-            ctx.lineTo(W * 0.56, arrowY - 5);
-            ctx.lineTo(W * 0.56, arrowY + 5);
-            ctx.closePath();
-            ctx.fillStyle = '#94a3b8';
-            ctx.fill();
+            ctx.fillStyle = 'rgba(99,102,241,0.06)';
+            ctx.beginPath(); ctx.roundRect(plx, ply, pw, ph, 12); ctx.fill();
+            ctx.strokeStyle = 'rgba(99,102,241,0.25)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.roundRect(plx, ply, pw, ph, 12); ctx.stroke();
 
             ctx.font = 'bold 11px system-ui';
-            ctx.fillStyle = '#cbd5e1';
-            ctx.textAlign = 'center';
-            ctx.fillText('restliche Schichten', W * 0.5, arrowY - 24);
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = '#f59e0b';
-            ctx.fillText('= Funktion F  →  streckt & dreht', W * 0.5, arrowY - 10);
-
-            // Ein-Satz-Box unten
-            const explY = H - 92;
-            ctx.fillStyle = 'rgba(99, 102, 241, 0.10)';
-            ctx.beginPath();
-            ctx.roundRect(W * 0.08, explY, W * 0.84, 76, 10);
-            ctx.fill();
-            ctx.strokeStyle = '#6366f1';
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.roundRect(W * 0.08, explY, W * 0.84, 76, 10);
-            ctx.stroke();
-
-            ctx.font = 'bold 13px system-ui';
             ctx.fillStyle = '#c7d2fe';
             ctx.textAlign = 'center';
-            ctx.fillText('Der Jacobian = das lineare Stück der Funktion  Zustand → Wort, an einem Punkt', W / 2, explY + 26);
+            ctx.fillText('Interner Raum (Schicht \u2113)', cx, ply - 6);
+
+            // dezentem Gitter
+            ctx.strokeStyle = 'rgba(148,163,184,0.1)'; ctx.lineWidth = 1;
+            for (let i = -2; i <= 2; i++) {
+                const g = i * pw / 6;
+                ctx.beginPath(); ctx.moveTo(cx + g, ply); ctx.lineTo(cx + g, ply + ph); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(plx, cy + g); ctx.lineTo(plx + pw, cy + g); ctx.stroke();
+            }
+
+            // Wort-Richtungspfeile
+            dirs.forEach(d => {
+                const ex = cx + Math.cos(d.angle) * dirLen;
+                const ey = cy + Math.sin(d.angle) * dirLen;
+                arrow(cx, cy, ex, ey, d.color, 2);
+                ctx.font = 'bold 12px system-ui';
+                ctx.fillStyle = d.color;
+                ctx.textAlign = 'center';
+                ctx.fillText(d.label, ex + Math.cos(d.angle) * 18, ey + Math.sin(d.angle) * 18 + 4);
+            });
+
+            // rotierender Zustands-Vektor
+            const sAngle = t * 0.018;
+            const sx = cx + R * Math.cos(sAngle);
+            const sy = cy + R * Math.sin(sAngle);
+            arrow(cx, cy, sx, sy, '#6366f1', 3);
+
+            // Beschriftung Zustand
+            const stateLabelAngle = sAngle;
             ctx.font = '11px system-ui';
-            ctx.fillStyle = '#cbd5e1';
-            ctx.fillText('Gestreckt von den SCHICHTEN · eine Abbildung ZWISCHEN zwei Räumen – keine Bewegung', W / 2, explY + 50);
+            ctx.fillStyle = '#a5b4fc';
+            ctx.textAlign = 'center';
+            ctx.fillText('Zustand', sx + Math.cos(stateLabelAngle) * 16, sy + Math.sin(stateLabelAngle) * 16 + 4);
+
+            // Projektionen auf Wort-Richtungen
+            dirs.forEach(d => {
+                const dx = Math.cos(d.angle);
+                const dy = Math.sin(d.angle);
+                const proj = (sx - cx) * dx + (sy - cy) * dy;
+                const fx = cx + proj * dx;
+                const fy = cy + proj * dy;
+
+                if (proj > 2) {
+                    // helle Linie auf dem Richtungspfeil
+                    ctx.strokeStyle = d.color;
+                    ctx.lineWidth = 3;
+                    ctx.globalAlpha = 0.6;
+                    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(fx, fy); ctx.stroke();
+                    ctx.globalAlpha = 1;
+                    // Punkt am Fu\u00dfe
+                    ctx.beginPath(); ctx.arc(fx, fy, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = d.color; ctx.fill();
+                }
+
+                // gestrichelte Linie: Zustand -> Fu\u00df auf Richtung
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = d.color + '40';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(fx, fy); ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            // --- Rechtes Panel: Was die J-Lens liest ---
+            const rx = W * 0.62;
+            const ry = H * 0.22;
+            const barMax = W * 0.28;
+            const barH = 26;
+            const gap = 50;
+
+            ctx.font = 'bold 12px system-ui';
+            ctx.fillStyle = '#e2e8f0';
+            ctx.textAlign = 'left';
+            ctx.fillText('Was die J-Lens liest:', rx, ry);
+
+            let maxProj = 0;
+            const projs = dirs.map(d => {
+                const dx = Math.cos(d.angle);
+                const dy = Math.sin(d.angle);
+                const p = Math.max(0, (sx - cx) * dx + (sy - cy) * dy);
+                if (p > maxProj) maxProj = p;
+                return p;
+            });
+
+            dirs.forEach((d, i) => {
+                const norm = projs[i] / R;
+                const isMax = projs[i] === maxProj && maxProj > 2;
+                const by = ry + 24 + i * gap;
+
+                ctx.font = isMax ? 'bold 13px system-ui' : '13px system-ui';
+                ctx.fillStyle = isMax ? d.color : '#64748b';
+                ctx.textAlign = 'left';
+                ctx.fillText(d.label, rx, by + barH / 2 + 4);
+
+                ctx.fillStyle = 'rgba(148,163,184,0.1)';
+                ctx.beginPath(); ctx.roundRect(rx + 65, by, barMax, barH, 4); ctx.fill();
+
+                const fw = barMax * norm;
+                if (fw > 0) {
+                    ctx.fillStyle = isMax ? d.color + 'cc' : d.color + '44';
+                    ctx.beginPath(); ctx.roundRect(rx + 65, by, fw, barH, 4); ctx.fill();
+                }
+
+                if (isMax) {
+                    ctx.strokeStyle = d.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath(); ctx.roundRect(rx + 65, by, barMax, barH, 4); ctx.stroke();
+                }
+            });
+
+            // --- Erkl\u00e4rungsbox unten ---
+            const ey = H - 56;
+            ctx.fillStyle = 'rgba(99,102,241,0.08)';
+            ctx.beginPath(); ctx.roundRect(W * 0.05, ey, W * 0.90, 42, 10); ctx.fill();
+            ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.roundRect(W * 0.05, ey, W * 0.90, 42, 10); ctx.stroke();
+            ctx.font = '11px system-ui'; ctx.fillStyle = '#c7d2fe'; ctx.textAlign = 'center';
+            ctx.fillText('Der Jacobian = feste Regel (per Backprop \u00b7 ~1000 Kontexte gemittelt): \u201eWelche Richtung im internen Raum = welches Wort?\u201c', W / 2, ey + 17);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('Die J-Lens misst den aktuellen Zustand gegen diese Richtungen \u2192 so liest sie das Innere des Modells.', W / 2, ey + 35);
 
             activeAnimation = requestAnimationFrame(draw);
         }
