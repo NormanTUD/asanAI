@@ -661,19 +661,6 @@ The fiber-bundle picture is, we think, the right level of mathematical abstracti
 </figure>
 </div>
 
-<div class="ps-card" id="ps-fib-card">
-	<div class="ps-card-title"><span class="dot"></span>The bundle in 3D: $X$ over $S$</div>
-	<p class="ps-lead">The floor is the semantic base space $S$. Over each point $s \in S$ stands a <em>fiber</em> (a vertical column) holding every linguistic realisation of that meaning. Drag to rotate, scroll to zoom, and use the buttons to isolate a single fiber.</p>
-	<div class="ps-row">
-		<button class="ps-btn ghost" id="ps-fib-chase">Fiber over &ldquo;X chases Y&rdquo;</button>
-		<button class="ps-btn ghost" id="ps-fib-sleep">Fiber over &ldquo;X sleeps&rdquo;</button>
-		<button class="ps-btn ghost" id="ps-fib-all">All fibers</button>
-	</div>
-	<div id="ps-fib-3d" class="ps-3d"></div>
-	<div class="ps-readout" id="ps-fib-readout">Drag to rotate. Each vertical column is the set of all sentences that express the same meaning.</div>
-	<p class="ps-lead">Paraphrase is a *path within a fiber*: moving from one realisation to another while staying over the same meaning. In the language of homotopy type theory, a path in the base *transports* a point of one fiber to another — the "way of saying" can depend on the path by which you arrive.</p>
-</div>
-
 <div class="md">
 ## The three spaces as a commutative diagram
 
