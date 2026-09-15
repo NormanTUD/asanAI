@@ -752,3 +752,43 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* ============ FOLIEN-AUSWAHL (Checkbox je Folie + 3× Esc) ============ */
+#sel-panel {
+	position: fixed; top: 12px; right: 16px; z-index: 2500;
+	background: rgba(15, 23, 42, 0.97);
+	border: 1px solid #475569; border-radius: 12px;
+	padding: 14px 16px; color: #e2e8f0; font-size: 0.9em;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45); min-width: 260px;
+}
+#sel-count { color: #94a3b8; font-size: 0.85em; margin-top: 8px; }
+#sel-url {
+	margin-top: 8px; font-size: 0.72em; color: #7dd3fc; word-break: break-all;
+	font-family: monospace; line-height: 1.5; overflow-wrap: anywhere;
+}
+#sel-panel .sel-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+#sel-panel .sel-actions button {
+	background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25);
+	color: #e2e8f0; border-radius: 8px; padding: 6px 10px; font-size: 0.8em; cursor: pointer;
+	transition: background 0.2s;
+}
+#sel-panel .sel-actions button:hover { background: rgba(255, 255, 255, 0.2); }
+#sel-hint { margin-top: 10px; font-size: 0.75em; color: #64748b; line-height: 1.5; }
+
+/* Auswahl-Checkbox oben rechts an jeder Folie (nur die aktive Folie
+   ist klickbar – inaktive Folien haben per CSS pointer-events:none). */
+.sel-check {
+	position: absolute; top: 12px; right: 16px; z-index: 20;
+	display: inline-flex; align-items: center; gap: 6px;
+	background: rgba(15, 23, 42, 0.85); color: #e2e8f0;
+	border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 20px;
+	padding: 5px 10px; font-size: 0.85em; cursor: pointer; user-select: none;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	transition: background 0.2s;
+}
+.sel-check:hover { background: rgba(15, 23, 42, 0.97); }
+.sel-check input {
+	width: 16px; height: 16px; accent-color: #8b5cf6;
+	cursor: pointer; margin: 0; pointer-events: auto;
+}
+.sel-check.checked { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.35); }

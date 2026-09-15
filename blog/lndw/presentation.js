@@ -193,6 +193,7 @@ const Presentation = (() => {
     let slides = [];
     let fragmentIndex = {};
     let searchQuery = '';
+    let fastMode = false;        // ?fast=1 → einfache Fragmente direkt anzeigen
 
     // ────────────────────────────────────────────────────────────
     // SLIDE-AUSWAHL via URL:  ?slides=0,1,2,3,10-16,17,19-30
@@ -244,6 +245,11 @@ const Presentation = (() => {
         // Nur die Startfolie aktivieren (Folie 0 hat "active" hartkodiert).
         allSlides.forEach(s => s.classList.remove('active'));
         if (slides.length) slides[currentSlide].classList.add('active');
+
+        // ?fast=1: einfache Fragmente direkt anzeigen
+        fastMode = new URLSearchParams(window.location.search).get('fast') === '1';
+        if (fastMode) revealFastFragments(currentSlide);
+
         updateUI();
         buildOverview();
     }
@@ -258,6 +264,25 @@ const Presentation = (() => {
         if (action && FragmentActions[action]) {
             FragmentActions[action][direction](frag);
         }
+    }
+
+    // „Einfachste" Fragmente = statischer Inhalt ohne Aktionen/Demos.
+    // In ?fast=1 werden sie direkt angezeigt statt Schritt für Schritt.
+    function isSimpleFragment(frag) {
+        if (frag.getAttribute('data-fragment-action')) return false;
+        if (frag.classList.contains('demo-box')) return false;
+        if (frag.querySelector('.demo-box')) return false;
+        return true;
+    }
+
+    function revealFastFragments(idx) {
+        const fragments = getFragments(idx);
+        let n = 0;
+        while (n < fragments.length && isSimpleFragment(fragments[n])) {
+            fragments[n].classList.add('visible');
+            n++;
+        }
+        fragmentIndex[idx] = n;
     }
 
     function next() {
@@ -298,7 +323,9 @@ const Presentation = (() => {
         slides[currentSlide].classList.add('active');
 
         const fragments = getFragments(currentSlide);
-        if (showAllFragments) {
+        if (fastMode) {
+            revealFastFragments(currentSlide);
+        } else if (showAllFragments) {
             fragments.forEach(f => f.classList.add('visible'));
             fragmentIndex[currentSlide] = fragments.length;
         } else {
@@ -455,6 +482,188 @@ const Presentation = (() => {
     };
 })();
 
+// ════════════════════════════════════════════════════════════
+// FOLIEN-AUSWAHL (Checkbox je Folie + 3× Esc)
+// Jede Folie hat oben rechts eine ab Werk deaktivierte Checkbox.
+// Ein Klick nimmt die Folie in die URL-Auswahl auf (?slides=…),
+// die URL wird live aktualisiert. 3× Esc (schnell hintereinander)
+// öffnet/schließt das Panel oben rechts zum Ablesen der URL.
+// ════════════════════════════════════════════════════════════
+const Selection = (() => {
+    let chosen = new Set();      // Ursprungs-Indexes der gewählten Folien
+    let escTimes = [];           // Zeitstempel der letzten Escape-Tasten
+    const ESC_WINDOW_MS = 500;   // Fenster, in dem 3× Esc zählt
+    const TRIPLE = 3;
+    const checks = [];           // { el, cb, orig } je Folien-Checkbox
+
+    const byId = id => document.getElementById(id);
+
+    // ── Ursprungs-Indexe aus dem aktuellen ?slides=-Parameter ──
+    function paramOrder() {
+        const raw = new URLSearchParams(window.location.search).get('slides');
+        if (!raw) return [];
+        const out = [];
+        raw.split(',').forEach(part => {
+            part = part.trim();
+            if (!part) return;
+            const r = part.split('-');
+            if (r.length === 2) {
+                const a = parseInt(r[0], 10), b = parseInt(r[1], 10);
+                if (!isNaN(a) && !isNaN(b)) {
+                    for (let i = Math.min(a, b); i <= Math.max(a, b); i++) out.push(i);
+                }
+            } else if (!isNaN(parseInt(part, 10))) {
+                out.push(parseInt(part, 10));
+            }
+        });
+        return out;
+    }
+
+    function selectedParam() {
+        return Array.from(chosen).sort((a, b) => a - b).join(',');
+    }
+
+    // URL OHNE %2C-Enkodierung aufbauen: ?slides=0,1,2 (rohe Kommas).
+    // Nur der slides-Parameter wird ersetzt, andere (?fast=… etc.) bleiben.
+    function buildURL() {
+        const qs = window.location.search.replace(/^\?/, '');
+        const parts = qs ? qs.split('&').filter(p => p && !p.startsWith('slides=')) : [];
+        if (chosen.size) parts.push('slides=' + selectedParam());
+        const q = parts.join('&');
+        return window.location.pathname + (q ? '?' + q : '') + window.location.hash;
+    }
+
+    function fullURL() { return window.location.origin + buildURL(); }
+
+    function updateURL() {
+        try { history.replaceState(null, '', buildURL()); } catch (e) {}
+    }
+
+    // ── Panel ──
+    function panelEl() { return byId('sel-panel'); }
+
+    function isPanelVisible() {
+        return !!panelEl() && panelEl().style.display !== 'none';
+    }
+
+    function syncPanel() {
+        const count = chosen.size;
+        byId('sel-count').textContent =
+            count === 1 ? '1 Folie' : (count + ' Folien');
+        byId('sel-url').textContent = buildURL();
+    }
+
+    // ── Checkboxen: eine je Folie, oben rechts ──
+    function syncChecks() {
+        checks.forEach(({ el, cb, orig }) => {
+            const on = chosen.has(orig);
+            cb.checked = on;
+            el.classList.toggle('checked', on);
+        });
+    }
+
+    function buildChecks() {
+        // Die .slide-Elemente liegen im DOM stets in Ursprungs-Reihenfolge
+        // (Filterung ändert nur die Navigation, nicht die Reihenfolge).
+        // Also ist der DOM-Index (= pos) bereits der Ursprungs-Index.
+        document.querySelectorAll('.slide').forEach((slide, pos) => {
+            const orig = pos;
+            const label = document.createElement('label');
+            label.className = 'sel-check';
+            label.title = 'Folie ' + orig + ' in die URL-Auswahl aufnehmen';
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            const span = document.createElement('span');
+            span.textContent = orig;
+            label.appendChild(cb);
+            label.appendChild(span);
+            slide.appendChild(label);
+            const rec = { el: label, cb, orig };
+            cb.addEventListener('change', () => {
+                if (cb.checked) chosen.add(orig); else chosen.delete(orig);
+                syncChecks();
+                syncPanel();
+                updateURL();
+            });
+            checks.push(rec);
+        });
+        syncChecks();
+    }
+
+    function clearAll() {
+        chosen = new Set();
+        syncChecks();
+        syncPanel();
+        updateURL();
+    }
+
+    // ── Panel öffnen/schließen ──
+    function openPanel() {
+        if (panelEl()) panelEl().style.display = 'block';
+        syncPanel();
+    }
+
+    function closePanel() {
+        if (panelEl()) panelEl().style.display = 'none';
+    }
+
+    function togglePanel() {
+        if (isPanelVisible()) closePanel(); else openPanel();
+    }
+
+    // 3× Esc (schnell nacheinander) → Panel öffnen/schließen.
+    // Einzelnes Esc mit offenem Panel → Panel schließen.
+    function handleEscape() {
+        const now = Date.now();
+        escTimes = escTimes.filter(t => now - t <= ESC_WINDOW_MS);
+        escTimes.push(now);
+        if (escTimes.length >= TRIPLE) {
+            escTimes = [];
+            if (!isPanelVisible()) openPanel(); else closePanel();
+            return true;
+        }
+        if (isPanelVisible()) {
+            closePanel();
+            return true;
+        }
+        return false;
+    }
+
+    // ── Initialisierung & Listener ──
+    function init() {
+        chosen = new Set(paramOrder());
+        buildChecks();
+        if (byId('sel-copy')) byId('sel-copy').addEventListener('click', () => copyURL());
+        if (byId('sel-preview')) byId('sel-preview').addEventListener('click', () => { window.location.href = fullURL(); });
+        if (byId('sel-clear')) byId('sel-clear').addEventListener('click', () => clearAll());
+        if (byId('sel-close')) byId('sel-close').addEventListener('click', () => closePanel());
+        if (panelEl()) panelEl().style.display = 'none';
+        syncPanel();
+    }
+
+    function copyURL() {
+        const url = fullURL();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => flash('✓ kopiert'));
+        } else {
+            window.prompt('URL kopieren:', url);
+        }
+    }
+
+    function flash(text) {
+        const btn = byId('sel-copy');
+        if (!btn) return;
+        const orig = btn.textContent;
+        btn.textContent = text;
+        setTimeout(() => { btn.textContent = orig; }, 1200);
+    }
+
+    return {
+        init, handleEscape, togglePanel,
+        isPanelVisible, openPanel, closePanel,
+    };
+})();
+
 // ────────────────────────────────────────────────────────────
 // INPUT HANDLING (Keyboard + Touch, keine Duplikation)
 // ────────────────────────────────────────────────────────────
@@ -510,6 +719,12 @@ const InputHandler = (() => {
                 return;
             }
             // Pfeile / Home / End / Enter etc. → unten (normale Navigation)
+        }
+
+        // Folien-Auswahl: 3× Esc (schnell) öffnet das Panel, einfaches Esc schließt es.
+        if (e.key === 'Escape' && Selection.handleEscape()) {
+            e.preventDefault();
+            return;
         }
 
         if (KEY_ACTIONS.next.includes(e.key)) {
@@ -629,6 +844,7 @@ function plotLabel(div) {
 document.addEventListener('DOMContentLoaded', () => {
     Presentation.init();
     InputHandler.init();
+    Selection.init();
 
     // URL-Hash-Navigation (#N → Folie N, 1-basiert) – nur ohne ?start=
     const hasStart = new URLSearchParams(window.location.search).has('start');

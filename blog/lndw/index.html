@@ -1414,6 +1414,19 @@
     <div class="overview-grid" id="overview-grid"></div>
 </div>
 
+<!-- ============ FOLIEN-AUSWAHL (3× Esc) ============ -->
+<div id="sel-panel" style="display:none;">
+    <div class="sel-count" id="sel-count">0 Folien</div>
+    <div class="sel-url" id="sel-url"></div>
+    <div class="sel-actions">
+        <button type="button" id="sel-copy">🔗 URL kopieren</button>
+        <button type="button" id="sel-preview">▶ Vorschau</button>
+        <button type="button" id="sel-clear">Leeren</button>
+        <button type="button" id="sel-close">✕</button>
+    </div>
+    <div class="sel-hint" id="sel-hint">Die Checkbox oben rechts an jeder Folie hängt die Folie an die URL an (?slides=0,1,2 …). Die URL aktualisiert sich dabei live. „Leeren" setzt alle zurück.</div>
+</div>
+
 <!-- ============ NAVIGATION BAR ============ -->
 <div id="nav-bar">
     <button id="btn-prev" onclick="Presentation.prev()">← Zurück</button>
@@ -1421,6 +1434,7 @@
         <span id="slide-counter">1 / 18</span>
         <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Übersicht (O)">▦</button>
         <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer;" title="Vollbild (F)">⛶</button>
+        <button onclick="Selection.togglePanel()" style="background:transparent; border:none; color:#fbbf24; cursor:pointer;" title="Folien-Auswahl (3× Esc)">☑</button>
     </div>
     <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
 </div>
