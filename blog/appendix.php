@@ -5,7 +5,7 @@ title: Appendix
 description: Grokking, sine & cosine, Taylor series, and the group structure of positional embeddings.
 icon: &#128214;
 part: 6
-order: 12
+order: 13
 color: text-secondary
 topics: reference, math-i, programming
 -->
