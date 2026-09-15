@@ -59,7 +59,7 @@ topics: geometry, math-i, math-ii, math-iii, statistics-ii
 
 
 <div class="md">
-This chapter is a working mathematical treatment of *meaningful language spaces*. It begins from the idea that the objects of study are not tokens, not words, and not even sentences, but the structured *possibility spaces* in which those things live — the space of all potential utterances, the space of all interpretations those utterances can generate, and the spaces of worlds, actions, and consequences in which those interpretations can be tested.
+This chapter is an attempt of a treatment of *meaningful language spaces*. It begins from the idea that the objects of study are not tokens, not words, and not even sentences, but the structured *possibility spaces* in which those things live — the space of all potential utterances, the space of all interpretations those utterances can generate, and the spaces of worlds, actions, and consequences in which those interpretations can be tested.
 
 The guiding intuition is that meaning is not a substance carried by individual symbols. Meaning is a property of structure: of the shape of the space, the geometry of its clusters and voids, and the maps that relate one space to another. A single sentence, viewed in isolation, is almost meaningless. What makes it meaningful is its position within a landscape — the nearby utterances, the distant ones, the gaps, the bridges, and the patterns that persist across scale.
 
