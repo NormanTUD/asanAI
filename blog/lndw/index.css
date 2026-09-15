@@ -550,7 +550,10 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 #notebook-layer-info {
     font-size: 0.9em;
     color: #64748b;
-    min-height: 24px;
+    /* Fest reservieren: die Info ist beim Betreten leer (min-height 24px),
+       wächst aber auf 2 Zeilen ("✍️ Schicht 1 kritzelt..." + Beschreibung).
+       Ohne Reserve springt die Foliengröße, sobald die Animation startet. */
+    min-height: 44px;
 }
 
 .quote {
