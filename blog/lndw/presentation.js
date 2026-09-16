@@ -114,18 +114,15 @@ const DemoRegistry = (() => {
         const canKey = direction === 'next' ? 'canNext' : 'canPrev';
         const methodKey = direction === 'next' ? 'nextMethod' : 'prevMethod';
 
-        window.__tnLog = window.__tnLog || [];
         for (const demo of demos) {
             const instance = demo.ref();
             if (!instance) continue;
             if (!demo.guard(instance)) continue;
             if (typeof instance[demo[canKey]] === 'function' && instance[demo[canKey]]()) {
-                window.__tnLog.push(direction + ' consumed by: ' + (demo._tag || demo.nextMethod));
                 instance[demo[methodKey]]();
                 return true;
             }
         }
-        window.__tnLog.push(direction + ' NOT consumed');
         return false;
     }
 
@@ -301,7 +298,7 @@ function initTypewriters() {
     document.querySelectorAll('[data-typewriter]').forEach(el => {
         if (el.dataset.typeHtml === undefined) el.dataset.typeHtml = el.innerHTML;
         const fullHeight = el.offsetHeight;
-        if (fullHeight > 0 && !el.style.minHeight) el.style.minHeight = fullHeight + 'px';
+        if (fullHeight > 0) el.style.minHeight = fullHeight + 'px';
         el.innerHTML = '';
     });
 }

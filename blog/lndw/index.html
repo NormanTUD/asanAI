@@ -114,7 +114,7 @@
             <div class="fragment" data-fragment-action="typewriter" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
                 <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">Klassisch</div>
                 <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Der Mensch schreibt jede Regel von Hand.</div>
-                <pre data-typewriter style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto; min-height:4.5em;"><span style="color:#d8b4fe">function</span> <span style="color:#7dd3fc">UND</span>(a, b):
+                <pre data-typewriter style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;"><span style="color:#d8b4fe">function</span><span style="color:#e2e8f0"> UND</span><span style="color:#7dd3fc">(a, b)</span><span style="color:#e2e8f0">:</span>
     <span style="color:#d8b4fe">wenn</span> a <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span> <span style="color:#d8b4fe">und</span> b <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span>:
         y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">1</span>
     <span style="color:#d8b4fe">sonst</span>:
@@ -1635,78 +1635,6 @@ let resizeRaf;
 		cancelAnimationFrame(resizeRaf);
 		resizeRaf = requestAnimationFrame(fitSlides);
 	});
-</script>
-
-<!-- TEMP TEST -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-	setTimeout(() => {
-		try {
-			const rows = [];
-			const titles = Presentation.slides().map(s => s.getAttribute('data-title'));
-			const row = (label, cond) => rows.push(label + ': ' + (cond ? 'JA' : 'NEIN'));
-			const raw = (label, val) => rows.push(label + ': ' + val);
-			const scenes = () => Array.from(document.querySelectorAll('#nn-intro-anim .nn-anim-scene')).map(s => s.classList.contains('on') ? (+s.dataset.scene) : 0);
-			const key = (k) => document.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
-			const snapshot = () => document.querySelector('.slide.active [data-typewriter]')?.dataset.typeHtml;
-
-			// --- Neuron Intro: Pfeiltaste steppt die Szenen (via echte Input-Pipeline) ---
-			Presentation.goTo(titles.indexOf('Neuronales Netz Intro'));
-			const fvis = () => document.querySelectorAll('.slide.active .fragment.visible').length;
-			key('ArrowRight');  // DENSE-BOX
-			key('ArrowRight');  // NEURON-BOX → Szene 1
-			row('Intro: Szene 1 nach Reveal', scenes().join(',') === '1,0');
-			row('DBG canGoNext nach Reveal', typeof NeuronIntroViz !== 'undefined' && NeuronIntroViz.canGoNext());
-			key('ArrowRight');  // → Szene 2
-			row('Intro: Pfeil vor = Szene 2', scenes().join(',') === '0,1');
-			raw('DBG scenes nach Pfeil', scenes().join(','));
-			raw('DBG tryNavigate-Log', (window.__tnLog || []).join(' | '));
-			key('ArrowRight');  // keine Szene mehr → ReLU fragment
-			row('Intro: Danach normales Weiter (ReLU sichtbar)', fvis() === 3);
-			key('ArrowRight');  // Alternativ-Formel
-			key('ArrowRight');  // Key-Insight
-			key('ArrowLeft');   // → Alternativ-Formel
-			key('ArrowLeft');   // → ReLU
-			key('ArrowLeft');   // → NEURON-BOX (Szene 2)
-			row('Intro: Zurück bei Szene 2', scenes().join(',') === '0,1');
-			key('ArrowLeft');   // → Szene 1
-			row('Intro: Pfeil zurück = Szene 1', scenes().join(',') === '1,0');
-			key('ArrowLeft');   // → blendet NEURON-BOX aus
-			row('Intro: Weiter zurück blendet Fragment aus', fvis() === 1);
-			row('Intro: dense(x)= vor Matrix (Szene 2 gerendert, kein $$)', Array.from(document.querySelectorAll('#nn-intro-anim')).every(e => !/\$\$/.test(e.textContent)));
-			row('Intro: Alternativ-Formel aligned gerendert', Array.from(document.querySelectorAll('#slide-neuronales-netz-intro .fragment .math-display')).some(d => d.textContent.includes('linear') && d.textContent.includes('knicken') && !d.textContent.includes('$$')));
-
-			// --- Typewriter: Block bis Code fertig getippt ---
-			Presentation.goTo(titles.indexOf('Klassisch vs. KI'));
-			const snap = snapshot();
-			const preBefore = document.querySelector('.slide.active [data-typewriter]');
-			const boxHBefore = preBefore.closest('.fragment').offsetHeight;
-			key('ArrowRight');  // Klassisch-Box → beginnt zu tippen
-			row('Typewriter: tippt nach Reveal', typeof TypewriterViz !== 'undefined' && TypewriterViz.isTypewriting());
-			raw('Typewriter: Box-Höhe bei Reveal (px)', boxHBefore);
-			key('ArrowRight');  // sollte durch Typewriter blockiert werden
-			row('Typewriter: Pfeil blockiert (nur 1 Fragment sichtbar)', fvis() === 1);
-			setTimeout(() => {
-				const boxHAfter = preBefore.closest('.fragment').offsetHeight;
-				row('Typewriter: Code voll getippt', document.querySelector('.slide.active [data-typewriter]').innerHTML === snap);
-				row('Typewriter: nicht mehr aktiv', typeof TypewriterViz !== 'undefined' && !TypewriterViz.isTypewriting());
-				raw('Typewriter: Box-Höhe danach (px)', boxHAfter);
-				row('Typewriter: Höhe stabil', Math.abs(boxHBefore - boxHAfter) < 6);
-				key('ArrowRight');
-				row('Typewriter: Danach normal weiter (KI-Box)', fvis() === 2);
-				const pre = document.createElement('pre');
-				pre.id = 'testresult';
-				pre.textContent = rows.join('\n');
-				document.body.appendChild(pre);
-			}, 1200);
-		} catch (e) {
-			const pre = document.createElement('pre');
-			pre.id = 'testresult';
-			pre.textContent = 'ERROR: ' + e.message + ' | ' + e.stack;
-			document.body.appendChild(pre);
-		}
-	}, 400);
-});
 </script>
 
 </body>
