@@ -13,6 +13,10 @@ const ResidualNotebook = (() => {
     const baseText = "Die Katze saß auf der Matte weil sie müde war";
 
     // 5 Stufen: von fundamental bis hochkomplex
+    // Base-Text: "Die Katze saß auf der Matte weil sie müde war"
+    // Indizes:   D0 i1 e2    K4…e8   s10…ß12  a14…f16  d18…r20  M22…e26  w28…l31  s33…e35  m37…e40  w42…r44
+    // Scribbles besitzen "anchor" (Zeichen-Index) und werden über ihr
+    // Wort zentriert; "y" bleibt als vertikaler Offset relativ zur Wortlinie.
     const layers = [
         {
             name: "Schicht 1",
@@ -22,15 +26,15 @@ const ResidualNotebook = (() => {
                 { type: "underline", start: 0, end: 3, color: "#e63946", label: "Artikel" },
                 { type: "underline", start: 4, end: 9, color: "#d62828", label: "Nomen" },
                 { type: "circle", start: 10, end: 13, color: "#e63946" },
-                { type: "scribble", x: 120, y: -30, text: "VERB!", color: "#e63946", rotation: -8, font: "bold 14px Courier" },
+                { type: "scribble", anchor: 10, y: -30, text: "VERB!", color: "#e63946", rotation: -8, font: "bold 14px Courier" },
                 { type: "underline", start: 14, end: 17, color: "#457b9d", label: "Präp." },
                 { type: "underline", start: 18, end: 21, color: "#e63946", label: "Artikel" },
                 { type: "underline", start: 22, end: 27, color: "#d62828", label: "Nomen" },
-                { type: "scribble", x: 350, y: -25, text: "Konjunktion↓", color: "#a8201a", rotation: 12, font: "italic 11px Georgia" },
-                { type: "highlight", start: 30, end: 34, color: "rgba(230, 57, 70, 0.15)" },
-                { type: "underline", start: 36, end: 38, color: "#6a040f", label: "Pron." },
-                { type: "circle", start: 45, end: 48, color: "#e63946" },
-                { type: "scribble", x: 480, y: -35, text: "auch Verb!", color: "#e63946", rotation: -5, font: "bold 12px Courier New" },
+                { type: "scribble", anchor: 28, y: -25, text: "Konjunktion↓", color: "#a8201a", rotation: 12, font: "italic 11px Georgia" },
+                { type: "highlight", start: 28, end: 32, color: "rgba(230, 57, 70, 0.15)" },
+                { type: "underline", start: 33, end: 36, color: "#6a040f", label: "Pron." },
+                { type: "circle", start: 42, end: 45, color: "#e63946" },
+                { type: "scribble", anchor: 42, y: -35, text: "auch Verb!", color: "#e63946", rotation: -5, font: "bold 12px Courier New" },
             ]
         },
         {
@@ -41,10 +45,10 @@ const ResidualNotebook = (() => {
                 { type: "bracket", start: 0, end: 9, color: "#2a9d8f", label: "Subjekt (Nominativ)" },
                 { type: "arrow", from: 10, to: 4, color: "#2a9d8f", label: "Verb → Subjekt" },
                 { type: "bracket", start: 14, end: 27, color: "#264653", label: "Präpositionalphrase (lokal)" },
-                { type: "scribble", x: 30, y: -45, text: "Subjekt-Verb\nKongruenz: 3.Pers.Sg.", color: "#2a9d8f", rotation: -3, font: "bold 11px monospace" },
-                { type: "box", start: 36, end: 46, color: "#2a9d8f", label: "Nebensatz (kausal)" },
-                { type: "scribble", x: 300, y: 55, text: "← Verb am Ende!\n   (Nebensatz-Regel)", color: "#264653", rotation: 4, font: "italic bold 11px Georgia" },
-                { type: "scribble", x: 180, y: -50, text: "V2-Stellung ✓", color: "#2a9d8f", rotation: -7, font: "bold 13px Impact" },
+                { type: "scribble", anchor: 10, y: -45, text: "Subjekt-Verb\nKongruenz: 3.Pers.Sg.", color: "#2a9d8f", rotation: -3, font: "bold 11px monospace" },
+                { type: "box", start: 28, end: 45, color: "#2a9d8f", label: "Nebensatz (kausal)" },
+                { type: "scribble", anchor: 28, y: 55, text: "← Verb am Ende!\n   (Nebensatz-Regel)", color: "#264653", rotation: 4, font: "italic bold 11px Georgia" },
+                { type: "scribble", anchor: 4, y: -50, text: "V2-Stellung ✓", color: "#2a9d8f", rotation: -7, font: "bold 13px Impact" },
             ]
         },
         {
@@ -54,10 +58,10 @@ const ResidualNotebook = (() => {
             annotations: [
                 { type: "highlight", start: 33, end: 36, color: "rgba(231, 111, 81, 0.35)" },
                 { type: "arrow", from: 33, to: 4, color: "#e76f51", label: "sie → Katze" },
-                { type: "scribble", x: 60, y: -55, text: "\"sie\" = DIE KATZE\n(nicht die Matte!)", color: "#e76f51", rotation: -6, font: "bold 13px Courier" },
-                { type: "scribble", x: 250, y: -60, text: "Genus-Match:\nKatze=fem → sie=fem ✓\nMatte=fem → sie=fem ✓\n→ Semantik entscheidet!", color: "#e76f51", rotation: 3, font: "11px Courier New" },
+                { type: "scribble", anchor: 33, y: -55, text: "\"sie\" = DIE KATZE\n(nicht die Matte!)", color: "#e76f51", rotation: -6, font: "bold 13px Courier" },
+                { type: "scribble", anchor: 33, y: -60, text: "Genus-Match:\nKatze=fem → sie=fem ✓\nMatte=fem → sie=fem ✓\n→ Semantik entscheidet!", color: "#e76f51", rotation: 3, font: "11px Courier New" },
                 { type: "strikethrough", start: 22, end: 27, color: "#e76f51", label: "" },
-                { type: "scribble", x: 220, y: 50, text: "Matte kann nicht\nmüde sein! ✗", color: "#c1121f", rotation: -4, font: "bold italic 12px Georgia" },
+                { type: "scribble", anchor: 22, y: 50, text: "Matte kann nicht\nmüde sein! ✗", color: "#c1121f", rotation: -4, font: "bold italic 12px Georgia" },
                 { type: "circle", start: 4, end: 9, color: "#e76f51" },
             ]
         },
@@ -67,14 +71,14 @@ const ResidualNotebook = (() => {
             description: "Versteht Bedeutungsbeziehungen, Kausalität und semantische Rollen.",
             annotations: [
                 { type: "arrow", from: 37, to: 10, color: "#6b21a8", label: "Grund → Handlung" },
-                { type: "scribble", x: 10, y: -65, text: "KAUSALITÄT:\nmüde → saß\n(nicht umgekehrt!)", color: "#6b21a8", rotation: -4, font: "bold 12px monospace" },
+                { type: "scribble", anchor: 37, y: -65, text: "KAUSALITÄT:\nmüde → saß\n(nicht umgekehrt!)", color: "#6b21a8", rotation: -4, font: "bold 12px monospace" },
                 { type: "highlight", start: 10, end: 13, color: "rgba(107, 33, 168, 0.2)" },
-                { type: "scribble", x: 100, y: 60, text: "saß = STATISCH\n= passiv, ruhend\n→ passt zu \"müde\"", color: "#7b2cbf", rotation: 5, font: "italic 11px Georgia" },
+                { type: "scribble", anchor: 10, y: 60, text: "saß = STATISCH\n= passiv, ruhend\n→ passt zu \"müde\"", color: "#7b2cbf", rotation: 5, font: "italic 11px Georgia" },
                 { type: "margin-note", x: "left", y: 120, text: "Semantische Rollen:\n• Katze = EXPERIENCER\n• Matte = LOCATION\n• müde = STATE", color: "#6b21a8" },
-                { type: "scribble", x: 320, y: -55, text: "Kohärenz-Check:\nLebewesen + müde ✓\nObjekt + müde ✗", color: "#6b21a8", rotation: -2, font: "bold 11px Courier New" },
-                { type: "box", start: 0, end: 46, color: "#6b21a8", label: "Kohärentes Narrativ ✓" },
-                { type: "scribble", x: 400, y: 55, text: "Frame: RUHEN\nAgent: Katze\nOrt: Matte\nGrund: Müdigkeit", color: "#9d4edd", rotation: -8, font: "12px monospace" },
-                { type: "checkmark", x: 500, y: -20, color: "#6b21a8" },
+                { type: "scribble", anchor: 37, y: -55, text: "Kohärenz-Check:\nLebewesen + müde ✓\nObjekt + müde ✗", color: "#6b21a8", rotation: -2, font: "bold 11px Courier New" },
+                { type: "box", start: 0, end: 45, color: "#6b21a8", label: "Kohärentes Narrativ ✓" },
+                { type: "scribble", anchor: 37, y: 55, text: "Frame: RUHEN\nAgent: Katze\nOrt: Matte\nGrund: Müdigkeit", color: "#9d4edd", rotation: -8, font: "12px monospace" },
+                { type: "checkmark", anchor: 42, y: -20, color: "#6b21a8" },
             ]
         },
         {
@@ -82,12 +86,12 @@ const ResidualNotebook = (() => {
             color: "#0077b6",
             description: "Versteht den kommunikativen Zweck und bereitet die Vorhersage des nächsten Tokens vor.",
             annotations: [
-                { type: "scribble", x: 250, y: -75, text: "Informationsstruktur:\nTHEMA: Katze (bekannt)\nRHEMA: müde (neu!)", color: "#023e8a", rotation: 5, font: "italic 11px monospace" },
-                { type: "scribble", x: 80, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Courier" },
-                { type: "highlight", start: 37, end: 46, color: "rgba(0, 119, 182, 0.15)" },
-                { type: "scribble", x: 450, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
-                { type: "box", start: 37, end: 46, color: "#0077b6", label: "← Informations-Fokus" },
-                { type: "checkmark", x: 530, y: 30, color: "#0077b6" }
+                { type: "scribble", anchor: 0, y: -75, text: "Informationsstruktur:\nTHEMA: Katze (bekannt)\nRHEMA: müde (neu!)", color: "#023e8a", rotation: 5, font: "italic 11px monospace" },
+                { type: "scribble", anchor: 28, y: 65, text: "Diskurs-Erwartung:\nNach Grund-Angabe →\nSatz ist KOMPLETT", color: "#0077b6", rotation: -6, font: "bold 11px Courier" },
+                { type: "highlight", start: 37, end: 45, color: "rgba(0, 119, 182, 0.15)" },
+                { type: "scribble", anchor: 42, y: -65, text: "FOKUS des Satzes!\n(neue Information)\n→ höchstes Gewicht\nfür Vorhersage", color: "#0077b6", rotation: -10, font: "bold 13px Impact" },
+                { type: "box", start: 37, end: 45, color: "#0077b6", label: "← Informations-Fokus" },
+                { type: "checkmark", anchor: 42, y: 30, color: "#0077b6" }
             ]
         }
     ];
@@ -97,6 +101,25 @@ const ResidualNotebook = (() => {
         if (!container) return;
         render();
         observeSlideActivation();
+        installReflowGuards();
+    }
+
+    // Guardrail: bei Font-Load, Resize oder Layout-Shift die Annotationen
+    // neu ausmessen und neu zeichnen, damit sie exakt auf den Wörtern sitzen.
+    function installReflowGuards() {
+        const page = document.getElementById('notebook-page');
+        if (!page) return;
+        const reflow = () => rebuildUpToLayer(Math.min(currentLayer, layers.length));
+        if (window.ResizeObserver) {
+            const ro = new ResizeObserver(() => reflow());
+            ro.observe(page);
+            ro.observe(container);
+        }
+        window.addEventListener('resize', reflow);
+        window.addEventListener('load', reflow);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(reflow);
+        }
     }
 
     // Beobachte, ob die Residual-Stream-Folie aktiv ist
@@ -195,7 +218,11 @@ const ResidualNotebook = (() => {
 			const layer = layers[i];
 			if (!layer || !layer.annotations) continue; // FIX: guard against undefined
 			layer.annotations.forEach(ann => {
-				renderAnnotation(ann, annotationsContainer, textEl, layer.color);
+				try {
+					renderAnnotation(ann, annotationsContainer, textEl, layer.color);
+				} catch (err) {
+					console.error('[Notebook] Annotation fehlgeschlagen:', ann, err);
+				}
 			});
 		}
 	}
@@ -224,50 +251,191 @@ const ResidualNotebook = (() => {
         setTimeout(onComplete, delay + 100);
     }
 
-    function renderAnnotation(ann, container, textEl, defaultColor) {
-        const el = document.createElement('div');
-        el.className = `nb-annotation nb-annotation-appear nb-type-${ann.type}`;
+    // ============================================================
+    // ANNOTATIONEN AUSGEMESSEN positionieren (statt fester Pixelbreiten)
+    // Guardrails: echte Zeichen-Rects via Range, Zeilen-Erkennung bei
+    // Umbruch, Retry bis Layout/Fonts fertig, Index-Clamping, Reflow
+    // bei Resize/Font-Load.
+    // ============================================================
 
-        const charWidth = 11.5;
-        const textTop = 45;
-        const textLeft = 30;
+    let _retryMap = new Map(); // ann -> versuchszähler pro Zeile
+
+    function textLen() {
+        const t = document.getElementById('notebook-text');
+        return t ? t.textContent.length : 0;
+    }
+
+    // Zeichen-Rects relativ zur Annotations-Container-Box (transform-fest).
+    function measureChars() {
+        const textEl = document.getElementById('notebook-text');
+        const cont = document.getElementById('notebook-annotations');
+        if (!textEl || !cont) return null;
+        const node = textEl.firstChild;
+        if (!node || node.nodeType !== 3) return null;
+        const len = node.textContent.length;
+        if (!len) return null;
+        const ref = cont.getBoundingClientRect();
+        if (!ref.width || !ref.height) return null; // nicht laid out (z.B. hidden)
+        const ok = /courier/i.test(getComputedStyle(textEl).fontFamily);
+        if (!ok) return null;
+        const range = document.createRange();
+        const out = [];
+        for (let i = 0; i < len; i++) {
+            range.setStart(node, i);
+            range.setEnd(node, i + 1);
+            const r = range.getBoundingClientRect();
+            out.push({
+                left: r.left - ref.left,
+                right: r.right - ref.left,
+                top: r.top - ref.top,
+                bottom: r.bottom - ref.top,
+                line: Math.round(r.top)
+            });
+        }
+        try { range.detach(); } catch (e) { /* noop */ }
+        const measureable = out.length === len && out.every(r => isFinite(r.left) && r.right > r.left);
+        return measureable ? out : null;
+    }
+
+    // Wort um einen Zeichen-Index (für Scribbles/Arrows zentriert).
+    function wordSpan(tx, i) {
+        let s = i, e = i + 1;
+        while (s > 0 && /\S/.test(tx[s - 1])) s--;
+        while (e < tx.length && /\S/.test(tx[e])) e++;
+        return { s, e };
+    }
+
+    // Zeichenbereiche [start,end) in Zeilen-Segmente zerlegen (Umbruch-sicher).
+    function lineSegments(chars, start, end) {
+        const segs = [];
+        let i = start;
+        while (i < end) {
+            const r = chars[i];
+            if (!r) { i++; continue; }
+            let j = i;
+            while (j < end && chars[j] && Math.round(chars[j].line) === Math.round(r.line)) j++;
+            segs.push({ s: i, e: j });
+            i = j;
+        }
+        return segs;
+    }
+
+    function segRect(chars, seg) {
+        const a = chars[seg.s], b = chars[seg.e - 1];
+        const top = Math.min(a.top, b.top);
+        const bottom = Math.max(a.bottom, b.bottom);
+        return { left: a.left, right: b.right, top, bottom, width: b.right - a.left, height: bottom - top };
+    }
+
+    function wordCenterX(chars, tx, anchor) {
+        const sp = wordSpan(tx, Math.max(0, Math.min(anchor, tx.length - 1)));
+        const a = chars[sp.s], b = chars[sp.e - 1];
+        return (a.left + b.right) / 2;
+    }
+
+    const num = (v, d) => (typeof v === 'number' && isFinite(v)) ? v : d;
+
+    // Baut alle Elemente für eine Annotation; null, wenn noch nicht messbar.
+    function buildAnnotationEls(ann, textEl) {
+        const chars = measureChars();
+        const tx = textEl.textContent;
+        const len = tx.length;
+        if (!chars) return null;
+        if (chars.length !== len) return null;
+
+        const els = [];
+        const baseCls = `nb-annotation nb-annotation-appear nb-type-${ann.type}`;
+
+        const withLabel = (el, label, css) => {
+            if (label) {
+                const lb = document.createElement('span');
+                lb.className = 'nb-label';
+                lb.style.cssText = css;
+                lb.textContent = label;
+                el.appendChild(lb);
+            }
+            return el;
+        };
 
         switch (ann.type) {
             case 'underline': {
-                const left = textLeft + ann.start * charWidth;
-                const width = (ann.end - ann.start) * charWidth;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 22}px; width:${width}px; height:3px; background:${ann.color}; border-radius:2px;`;
-                if (ann.label) {
-                    const label = document.createElement('span');
-                    label.className = 'nb-label';
-                    label.style.cssText = `position:absolute; top:4px; left:0; font-size:10px; color:${ann.color}; white-space:nowrap; font-weight:bold;`;
-                    label.textContent = ann.label;
-                    el.appendChild(label);
-                }
+                const segs = lineSegments(chars, num(ann.start, 0), num(ann.end, len));
+                segs.forEach((seg, si) => {
+                    const r = segRect(chars, seg);
+                    const el = document.createElement('div');
+                    el.className = baseCls;
+                    el.style.cssText = `position:absolute; left:${r.left.toFixed(2)}px; top:${(r.bottom + 2).toFixed(2)}px; width:${r.width.toFixed(2)}px; height:3px; background:${ann.color}; border-radius:2px;`;
+                    els.push(withLabel(el, si === segs.length - 1 ? ann.label : null,
+                        `position:absolute; top:4px; left:0; font-size:10px; color:${ann.color}; white-space:nowrap; font-weight:bold;`));
+                });
                 break;
             }
             case 'highlight': {
-                const left = textLeft + ann.start * charWidth;
-                const width = (ann.end - ann.start) * charWidth;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 2}px; width:${width}px; height:26px; background:${ann.color}; border-radius:4px; pointer-events:none;`;
+                lineSegments(chars, num(ann.start, 0), num(ann.end, len)).forEach(seg => {
+                    const r = segRect(chars, seg);
+                    const el = document.createElement('div');
+                    el.className = baseCls;
+                    el.style.cssText = `position:absolute; left:${r.left.toFixed(2)}px; top:${(r.top - 2).toFixed(2)}px; width:${r.width.toFixed(2)}px; height:${(r.height + 4).toFixed(2)}px; background:${ann.color}; border-radius:4px; pointer-events:none;`;
+                    els.push(el);
+                });
                 break;
             }
             case 'circle': {
-                const left = textLeft + ann.start * charWidth - 4;
-                const width = (ann.end - ann.start) * charWidth + 8;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 5}px; width:${width}px; height:30px; border:2.5px solid ${ann.color}; border-radius:50%; pointer-events:none;`;
+                lineSegments(chars, num(ann.start, 0), num(ann.end, len)).forEach(seg => {
+                    const r = segRect(chars, seg);
+                    const el = document.createElement('div');
+                    el.className = baseCls;
+                    el.style.cssText = `position:absolute; left:${(r.left - 4).toFixed(2)}px; top:${(r.top - 5).toFixed(2)}px; width:${(r.width + 8).toFixed(2)}px; height:${(r.height + 10).toFixed(2)}px; border:2.5px solid ${ann.color}; border-radius:50%; pointer-events:none;`;
+                    els.push(el);
+                });
+                break;
+            }
+            case 'bracket': {
+                const segs = lineSegments(chars, num(ann.start, 0), num(ann.end, len));
+                segs.forEach((seg, si) => {
+                    const r = segRect(chars, seg);
+                    const el = document.createElement('div');
+                    el.className = baseCls;
+                    el.style.cssText = `position:absolute; left:${r.left.toFixed(2)}px; top:${(r.bottom + 4).toFixed(2)}px; width:${r.width.toFixed(2)}px; height:12px; border-bottom:2.5px solid ${ann.color}; border-left:2.5px solid ${ann.color}; border-right:2.5px solid ${ann.color}; border-radius:0 0 4px 4px;`;
+                    els.push(withLabel(el, si === segs.length - 1 ? ann.label : null,
+                        `position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; font-weight:bold;`));
+                });
+                break;
+            }
+            case 'strikethrough': {
+                lineSegments(chars, num(ann.start, 0), num(ann.end, len)).forEach(seg => {
+                    const r = segRect(chars, seg);
+                    const el = document.createElement('div');
+                    el.className = baseCls;
+                    el.style.cssText = `position:absolute; left:${r.left.toFixed(2)}px; top:${((r.top + r.bottom) / 2 - 1.5).toFixed(2)}px; width:${r.width.toFixed(2)}px; height:2.5px; background:${ann.color}; opacity:0.7; transform:rotate(-1deg);`;
+                    els.push(el);
+                });
+                break;
+            }
+            case 'box': {
+                const segs = lineSegments(chars, num(ann.start, 0), num(ann.end, len));
+                segs.forEach((seg, si) => {
+                    const r = segRect(chars, seg);
+                    const el = document.createElement('div');
+                    el.className = baseCls;
+                    el.style.cssText = `position:absolute; left:${(r.left - 6).toFixed(2)}px; top:${(r.top - 8).toFixed(2)}px; width:${(r.width + 12).toFixed(2)}px; height:${(r.height + 16).toFixed(2)}px; border:2.5px dashed ${ann.color}; border-radius:8px; pointer-events:none;`;
+                    els.push(withLabel(el, si === segs.length - 1 ? ann.label : null,
+                        `position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; background:#fffef7; padding:0 4px; font-weight:bold;`));
+                });
                 break;
             }
             case 'arrow': {
-                const fromX = textLeft + ann.from * charWidth + 5;
-                const toX = textLeft + ann.to * charWidth + 5;
+                const fromI = Math.max(0, Math.min(ann.from, len - 1));
+                const toI = Math.max(0, Math.min(ann.to, len - 1));
+                const fromX = wordCenterX(chars, tx, fromI);
+                const toX = wordCenterX(chars, tx, toI);
+                const minTop = Math.min(chars[fromI].top, chars[toI].top);
+                const curveY = minTop - 20 - Math.random() * 15;
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.style.cssText = `position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; overflow:visible;`;
                 const midX = (fromX + toX) / 2;
-                const curveY = textTop - 20 - Math.random() * 15;
-
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${fromX} ${textTop - 5} Q ${midX} ${curveY} ${toX} ${textTop - 5}`);
+                path.setAttribute('d', `M ${fromX.toFixed(2)} ${minTop.toFixed(2)} Q ${midX.toFixed(2)} ${curveY.toFixed(2)} ${toX.toFixed(2)} ${minTop.toFixed(2)}`);
                 path.setAttribute('stroke', ann.color);
                 path.setAttribute('stroke-width', '2');
                 path.setAttribute('fill', 'none');
@@ -291,8 +459,8 @@ const ResidualNotebook = (() => {
 
                 if (ann.label) {
                     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', midX);
-                    text.setAttribute('y', curveY - 4);
+                    text.setAttribute('x', midX.toFixed(2));
+                    text.setAttribute('y', (curveY - 4).toFixed(2));
                     text.setAttribute('text-anchor', 'middle');
                     text.setAttribute('fill', ann.color);
                     text.setAttribute('font-size', '10');
@@ -301,64 +469,81 @@ const ResidualNotebook = (() => {
                     svg.appendChild(text);
                 }
 
+                const el = document.createElement('div');
+                el.className = baseCls;
                 el.style.cssText = 'position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none;';
                 el.appendChild(svg);
+                els.push(el);
                 break;
             }
             case 'margin-note': {
                 const x = ann.x === 'right' ? 'right: -10px;' : 'left: -10px;';
                 const transform = ann.x === 'right' ? 'translateX(100%)' : 'translateX(-100%)';
-                el.style.cssText = `position:absolute; ${x} top:${ann.y}px; transform:${transform}; padding:6px 10px; background:#fffef0; border:1.5px solid ${ann.color}; border-radius:6px; font-size:11px; color:${ann.color}; white-space:pre-line; max-width:180px; line-height:1.4; box-shadow: 2px 2px 6px rgba(0,0,0,0.12); font-family: 'Courier', cursive, sans-serif;`;
+                const el = document.createElement('div');
+                el.className = baseCls;
+                el.style.cssText = `position:absolute; ${x} top:${num(ann.y, 0)}px; transform:${transform}; padding:6px 10px; background:#fffef0; border:1.5px solid ${ann.color}; border-radius:6px; font-size:11px; color:${ann.color}; white-space:pre-line; max-width:180px; line-height:1.4; box-shadow: 2px 2px 6px rgba(0,0,0,0.12); font-family: 'Courier', cursive, sans-serif;`;
                 el.textContent = ann.text;
+                els.push(el);
                 break;
             }
             case 'scribble': {
-                const rotation = ann.rotation || 0;
+                const rotation = num(ann.rotation, 0);
                 const font = ann.font || `bold italic 12px 'Courier', cursive`;
-                el.style.cssText = `position:absolute; left:${textLeft + ann.x}px; top:${textTop + ann.y}px; font:${font}; color:${ann.color}; transform:rotate(${rotation}deg); white-space:pre-line; pointer-events:none; text-shadow: 0 0 1px ${ann.color}33;`;
+                const anchor = num(ann.anchor, ann.x == null ? 0 : -1);
+                const el = document.createElement('div');
+                el.className = baseCls;
+                let leftCss = '';
+                if (anchor >= 0) {
+                    const c = wordCenterX(chars, tx, anchor);
+                    const baseTop = chars[Math.max(0, Math.min(anchor, len - 1))].top;
+                    leftCss = `left:${c.toFixed(2)}px; transform:translateX(-50%) rotate(${rotation}deg);`;
+                    el.style.cssText = `position:absolute; ${leftCss} top:${(baseTop + num(ann.y, -12)).toFixed(2)}px; font:${font}; color:${ann.color}; white-space:pre-line; pointer-events:none; text-shadow: 0 0 1px ${ann.color}33;`;
+                } else {
+                    el.style.cssText = `position:absolute; left:${num(ann.x, 0)}px; top:${num(ann.y, 0)}px; font:${font}; color:${ann.color}; transform:rotate(${rotation}deg); white-space:pre-line; pointer-events:none; text-shadow: 0 0 1px ${ann.color}33;`;
+                }
                 el.textContent = ann.text;
-                break;
-            }
-            case 'bracket': {
-                const left = textLeft + ann.start * charWidth;
-                const width = (ann.end - ann.start) * charWidth;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 24}px; width:${width}px; height:12px; border-bottom:2.5px solid ${ann.color}; border-left:2.5px solid ${ann.color}; border-right:2.5px solid ${ann.color}; border-radius:0 0 4px 4px;`;
-                if (ann.label) {
-                    const label = document.createElement('span');
-                    label.className = 'nb-label';
-                    label.style.cssText = `position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; font-weight:bold;`;
-                    label.textContent = ann.label;
-                    el.appendChild(label);
-                }
-                break;
-            }
-            case 'strikethrough': {
-                const left = textLeft + ann.start * charWidth;
-                const width = (ann.end - ann.start) * charWidth;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop + 10}px; width:${width}px; height:2.5px; background:${ann.color}; opacity:0.7; transform:rotate(-1deg);`;
-                break;
-            }
-            case 'box': {
-                const left = textLeft + ann.start * charWidth - 6;
-                const width = (ann.end - ann.start) * charWidth + 12;
-                el.style.cssText = `position:absolute; left:${left}px; top:${textTop - 8}px; width:${width}px; height:38px; border:2.5px dashed ${ann.color}; border-radius:8px; pointer-events:none;`;
-                if (ann.label) {
-                    const label = document.createElement('span');
-                    label.className = 'nb-label';
-                    label.style.cssText = `position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-size:10px; color:${ann.color}; white-space:nowrap; background:#fffef7; padding:0 4px; font-weight:bold;`;
-                    label.textContent = ann.label;
-                    el.appendChild(label);
-                }
+                els.push(el);
                 break;
             }
             case 'checkmark': {
-                el.style.cssText = `position:absolute; left:${textLeft + ann.x}px; top:${textTop + ann.y}px; font-size:28px; color:${ann.color};`;
+                const anchor = num(ann.anchor, -1);
+                const el = document.createElement('div');
+                el.className = baseCls;
+                if (anchor >= 0) {
+                    const c = wordCenterX(chars, tx, anchor);
+                    const baseTop = chars[Math.max(0, Math.min(anchor, len - 1))].top;
+                    el.style.cssText = `position:absolute; left:${c.toFixed(2)}px; top:${(baseTop + num(ann.y, 0)).toFixed(2)}px; font-size:28px; color:${ann.color}; transform:translateX(-50%);`;
+                } else {
+                    el.style.cssText = `position:absolute; left:${num(ann.x, 0)}px; top:${num(ann.y, 0)}px; font-size:28px; color:${ann.color};`;
+                }
                 el.textContent = '✓';
+                els.push(el);
                 break;
             }
         }
+        return els;
+    }
 
-        container.appendChild(el);
+    function renderAnnotation(ann, container, textEl, defaultColor) {
+        let els;
+        try {
+            els = buildAnnotationEls(ann, textEl);
+        } catch (err) {
+            console.error('[Notebook] Annotation konnte nicht gebaut werden:', ann, err);
+            return;
+        }
+        if (els) {
+            els.forEach(el => container.appendChild(el));
+            return;
+        }
+        // Guardrail: Layout/Fonts noch nicht fertig → kurz erneut versuchen
+        const key = container;
+        const tries = (_retryMap.get(key) || 0) + 1;
+        _retryMap.set(key, tries);
+        if (tries > 30) { _retryMap.delete(key); return; }
+        requestAnimationFrame(() => {
+            renderAnnotation(ann, container, textEl, defaultColor);
+        });
     }
 
     function updateInfo() {
