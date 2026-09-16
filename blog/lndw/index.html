@@ -779,15 +779,17 @@
             const TOK3 = ['cat','dog','cat'];
             function alpha(v){ return Math.min(0.65, v*0.7+0.08).toFixed(2); }
 			function chips(row, who, toks){
+				let best = -1, bv = -1;
+				row.forEach((v,i)=>{ if (v>bv){ bv = v; best = i; } });
 				let s = '<table class="attn-chips"><tr>';
 				s += '<td class="attn-sp">'+(who?'<span class="attn-chip lbl">'+who+'</span>':'')+'</td>';
-				row.forEach(v=>{
-					s += '<td class="attn-vc"><span class="attn-chip'+(v===0?' z':'')+'" style="background:'+(v>0?'rgba(59,130,246,'+alpha(v)+')':'transparent')+'">'+(v>0?v.toFixed(2):'0')+'</span></td>';
+				row.forEach((v,i)=>{
+					s += '<td class="attn-vc'+(i===best?' hi':'')+'"><span class="attn-chip'+(v===0?' z':'')+'" style="background:'+(v>0?'rgba(59,130,246,'+alpha(v)+')':'transparent')+'">'+(v>0?v.toFixed(2):'0')+'</span></td>';
 				});
 				s += '</tr>';
 				if (toks){
 					s += '<tr><td class="attn-sp"></td>';
-					toks.forEach(t=>s += '<td class="attn-xc"><span class="chip-x">'+t+'</span></td>');
+					toks.forEach((t,i)=>s += '<td class="attn-xc'+(i===best?' hi':'')+'"><span class="chip-x">'+t+'</span></td>');
 					s += '</tr>';
 				}
 				s += '</table>';
