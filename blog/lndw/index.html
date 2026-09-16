@@ -923,7 +923,7 @@
     <div class="slide-content">
 	    <h2>Die Vorhersage</h2>
 	    <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht seinen Winkel zu allen anderen bekannten <b>Tokens</b>.</p>
-	    <p class="fragment">Aus den möglichen Tokens werden von denen mit den geringsten Winkeln wird eines zufällig ausgewählt. Wie sehr es zufällig ist, bestimmt die <b>Temperatur</b>.</p>
+	    <p class="fragment">Aus den <b>Top-K</b> wahrscheinlichsten Tokens zufällig gewählt – wie zufällig, bestimmt die <b>Temperatur</b>.</p>
 
         <div class="demo-box fragment" data-fast-reveal="1">
             <h3>Es war einmal...</h3>
