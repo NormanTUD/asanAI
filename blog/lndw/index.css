@@ -846,4 +846,8 @@ body.sel-mode .sel-check { display: inline-flex; }
 	width: 16px; height: 16px; accent-color: #8b5cf6;
 	cursor: pointer; margin: 0; pointer-events: auto;
 }
+.sel-check span {
+	overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+	max-width: calc(40vw - 48px);
+}
 .sel-check.checked { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.35); }

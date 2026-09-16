@@ -655,11 +655,12 @@ const Selection = (() => {
             const orig = pos;
             const label = document.createElement('label');
             label.className = 'sel-check';
-            label.title = 'Folie ' + orig + ' in die URL-Auswahl aufnehmen';
+            label.title = slide.id || slide.getAttribute('data-title') || ('Folie ' + orig);
             const cb = document.createElement('input');
             cb.type = 'checkbox';
             const span = document.createElement('span');
-            span.textContent = orig;
+            const title = slide.getAttribute('data-title');
+            span.textContent = orig + ' · ' + (title || slide.id || '');
             label.appendChild(cb);
             label.appendChild(span);
             slide.appendChild(label);
@@ -782,7 +783,16 @@ const InputHandler = (() => {
     }
 
     function handleKeydown(e) {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        const target = e.target;
+        const tag = target.tagName;
+        const isCheckbox = tag === 'INPUT' && target.type === 'checkbox';
+        // Text-Inputs/Textarea: Browser übernimmt die Tasten.
+        if ((tag === 'INPUT' && !isCheckbox) || tag === 'TEXTAREA') return;
+        // Fokussierte Auswahl-Checkbox: Space toggelt sie (Standard);
+        // alle anderen Tasten (Pfeile, Home/End, Buchstaben, Ziffern)
+        // navigieren normal und geben den Fokus an die Folie zurück.
+        if (isCheckbox && e.key === ' ') return;
+        if (isCheckbox) target.blur();
 
         // Übersicht offen → Tippen filtert die Folien nach Titel
         if (isOverviewOpen()) {
