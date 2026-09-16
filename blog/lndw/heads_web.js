@@ -108,7 +108,7 @@
     const strip = document.getElementById('heads-web-strip');
     const stepLabel = document.getElementById('heads-step-label');
     const caption = document.getElementById('heads-web-caption');
-    const rowEls = wrap.querySelectorAll('tbody tr');
+    const rowEls = Array.from(wrap.querySelectorAll('.heads-table > tbody > tr'));
 
     // Wort-Chips – eine Zeile, darunter die Bögen
     strip.innerHTML = TOK.map((t) =>
