@@ -109,31 +109,27 @@
 <div class="slide" data-title="Klassisch vs. KI" id="slide-klassisch-vs-ki">
     <div class="slide-content">
         <h2>Klassisches Programmieren vs. KI</h2>
-        <p style="margin-bottom:4px;">Gleiche Funktion <b>UND</b> — nur wer schreibt sie?</p>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:stretch; margin-top:6px;">
             <div class="fragment" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
                 <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">Klassisch</div>
                 <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Der Mensch schreibt jede Regel von Hand.</div>
-                <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.65; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;">UND(a, b):
-  wenn a == 1 und b == 1:
-      y = 1
-  sonst:
-      y = 0</pre>
+                <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;"><span style="color:#d8b4fe">function</span> <span style="color:#7dd3fc">UND</span>(a, b):
+    <span style="color:#d8b4fe">wenn</span> a <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span> <span style="color:#d8b4fe">und</span> b <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span>:
+        y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">1</span>
+    <span style="color:#d8b4fe">sonst</span>:
+        y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">0</span>
+    <span style="color:#d8b4fe">return</span> y</pre>
             </div>
             <div class="fragment" style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
                 <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">KI / Lernen</div>
                 <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Wir geben nur Beispiele — die Regel findet das Netz selbst.</div>
-                <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.65; background:#fff; color:#1e293b; padding:14px 16px; border-radius:10px; border:1px solid #bfdbfe;">(0,0) → 0
-(0,1) → 0
-(1,0) → 0
-(1,1) → 1</pre>
+                <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#fff; color:#1e293b; padding:14px 16px; border-radius:10px; border:1px solid #bfdbfe;">(0,0) <span style="color:#3b82f6">→</span> <span style="color:#2563eb;font-weight:600;">0</span>
+(0,1) <span style="color:#3b82f6">→</span> <span style="color:#2563eb;font-weight:600;">0</span>
+(1,0) <span style="color:#3b82f6">→</span> <span style="color:#2563eb;font-weight:600;">0</span>
+(1,1) <span style="color:#3b82f6">→</span> <span style="color:#2563eb;font-weight:600;">1</span></pre>
                 <div style="color:#475569; font-size:0.88em; margin-top:8px;">…mehr Beispiele = bessere Regeln.</div>
-            </div>
-        </div>
-
-        <div class="fragment" style="text-align:center; margin-top:14px;">
-            <div class="math-display">$$f(x) = y \qquad \text{wir geben nur } X \text{ und } Y,\ \text{das Netz lernt } f$$</div>
+                </div>
         </div>
 
         <div class="key-insight fragment">
