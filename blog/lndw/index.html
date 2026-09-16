@@ -799,33 +799,24 @@
             const H2SATROW = [0.20,0.55,0.25,0,0,0];
             const L4H11SAT = [0.00,1.00,0.00,0.00,0.00,0.00];
             const L7H2CAT2 = [0.99,0.01,0.01];
-            const NAME = ['Kopf 1','Kopf 2','Kopf 3','Kopf 4','Kopf 5'];
+            const NAME = ['Kopf 1','Kopf 2','Kopf 4'];
             const U = [
                 '{\\text{Artikel}\\leftrightarrow\\text{Nomen}}',
                 '{\\text{Subjekt}\\to\\text{Verb}}',
-                '{\\text{Vorheriges Token}}',
                 '{\\text{Induktion }[A][B]\\dots[A]}',
-                '{\\text{Pronomen}\\leftrightarrow\\text{Bezug}}',
             ];
             const ROWS = [
-                { row: H1CATROW, toks: TOK, who:'cat', sight:'"cat" blickt auf "the" (0.71); the₂ → the₁ (0.43).',
-                  src:'Mini-Modell · GPT-2 L0H0: cat→the 0.73', paper:'Clark et al. 2019' },
-                { row: H2SATROW, toks: TOK, who:'sat', sight:'"sat" (Verb) sucht das Subjekt "cat" (0.55).',
-                  src:'Mini-Modell · GPT-2 L4H3: sat→cat 0.96', paper:'Wang et al. 2022' },
-                { row: L4H11SAT, toks: TOK, who:'sat', sight:'Kette the→the · cat→the · sat→cat · on→sat · the→on · mat→the (je ≈1.0).',
-                  src:'real gemessen, GPT-2 L4H11', paper:'Elhage et al. 2021' },
-                { row: L7H2CAT2, toks: TOK3, who:'cat₂', sight:'2. "cat" blickt auf 1. "cat" (0.99) → nächster Schritt: "dog".',
-                  src:'real gemessen, GPT-2 L7H2', paper:'Olsson et al. 2022' },
-                { row: null, who:'…', sight:'Pronomen blicken auf ihren Bezug (Koreferenz), z. B. "he" → "Peter".',
-                  src:'qualitativ beschrieben', paper:'Clark et al. 2019' },
+                { row: H1CATROW, toks: TOK, who:'cat', sight:'"cat" blickt auf "the (0.71); the₂ → the₁ (0.43).' },
+                { row: H2SATROW, toks: TOK, who:'sat', sight:'"sat" (Verb) sucht das Subjekt "cat" (0.55).' },
+                { row: L7H2CAT2, toks: TOK3, who:'cat₂', sight:'2. "cat" blickt auf 1. "cat" (0.99) → nächster Schritt: "dog".' },
             ];
             let s = '<table class="heads-table"><thead><tr>' +
-                    '<th style="width:230px;">Kopf <span style="font-weight:400;font-size:0.8em;">(unterstrichen: die Frage)</span></th><th>Schaut wo entlang</th><th>Beobachtung</th><th>Gemessen</th><th>Literatur</th>' +
+                    '<th style="width:230px;">Kopf <span style="font-weight:400;font-size:0.8em;">(unterstrichen: die Frage)</span></th><th>Schaut wo entlang</th><th>Beobachtung</th>' +
                     '</tr></thead><tbody>';
             ROWS.forEach((r, i) => {
                 s += '<tr><td><span class="math-inline">$\\underbrace{\\text{' + NAME[i] + '}}_{' + U[i] + '}$</span></td>';
                 s += '<td style="white-space:nowrap;">' + (r.row?chips(r.row, r.who, r.toks):'—') + '</td>';
-                s += '<td>'+r.sight+'</td><td style="white-space:nowrap;">'+r.src+'</td><td style="white-space:nowrap;">'+r.paper+'</td></tr>';
+                s += '<td>'+r.sight+'</td></tr>';
             });
             s += '</tbody></table>';
             document.getElementById('heads-wrap').innerHTML = s;
