@@ -10,11 +10,12 @@
     if (!wrap || !box) return;
 
     const TOK = ['the', 'cat', 'sat', 'on', 'the', 'mat'];
+    const COLORS = ['#2563eb', '#db2777', '#059669', '#d97706', '#7c3aed', '#0d9488'];
     const NAME = ['Kopf 1', 'Kopf 2'];
     const SUBTITLE = ['Artikel ↔ Nomen', 'Subjekt → Verb'];
     const ROWSIGHT = [
-        '"cat" blickt auf "the" (0.71); "the₂" blickt auf "the₁" (0.43).',
-        '"sat" (Verb) sucht das Subjekt "cat" (0.55).'
+        capStep('cat', COLORS[1], 'the', COLORS[0], 71),
+        capStep('sat', COLORS[2], 'cat', COLORS[1], 55)
     ];
     const H1CATROW = [0.71, 0.29, 0, 0, 0, 0];
     const H2SATROW = [0.20, 0.55, 0.25, 0, 0, 0];
@@ -35,11 +36,22 @@
         [0.11, 0.25, 0.13, 0.15, 0.11, 0.25]
     ];
     const MATS = [H1FULL, H2FULL];
-    const COLORS = ['#2563eb', '#db2777', '#059669', '#d97706', '#7c3aed', '#0d9488'];
     const U = [
         '{\\text{Artikel}\\leftrightarrow\\text{Nomen}}',
         '{\\text{Subjekt}\\to\\text{Verb}}'
     ];
+
+    function capNum(n, c) {
+        return '<span style="display:inline-flex;align-items:center;justify-content:center;' +
+            'width:1.55em;height:1.55em;border-radius:50%;background:' + c + ';color:#fff;' +
+            'font-weight:700;font-size:0.78em;vertical-align:-0.15em">' + n + '</span>';
+    }
+    function capStep(w1, c1, w2, c2, pct) {
+        const arrow = '<span style="color:#cbd5e1;margin:0 0.2em">→</span>';
+        const p = '<span style="color:#94a3b8;font-size:0.85em;margin-left:0.5em;font-weight:600">' + pct + '%</span>';
+        return capNum(1, c1) + ' <b style="color:' + c1 + '">' + w1 +
+            '</b>' + arrow + capNum(2, c2) + ' <b style="color:' + c2 + '">' + w2 + '</b>' + p;
+    }
 
     // ---------- Tabelle (Chips) ----------
     function alpha(v) { return Math.min(0.65, v * 0.7 + 0.08).toFixed(2); }
