@@ -25,7 +25,7 @@ const evoSpaces = {
 		},
 		axes: { x: 'Macht', y: 'Geschlecht' }, 
 		dims: 2,
-		rangeX: [-15, 40]
+		rangeX: [-5, 40]
 	},
 };
 
