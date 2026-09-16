@@ -847,10 +847,24 @@ const InputHandler = (() => {
         }
     }
 
+    // Mouse-Wheel: jede deutliche Scrollbewegung = ein Folienwechsel.
+    // 500 ms Cooldown verhindert, dass ein einziges Scroll-Event mehrere
+    // Folien überspringt (Trackpad-/Mausrad-Artefakte).
+    let wheelCooldown = false;
+    function handleWheel(e) {
+        if (wheelCooldown) return;
+        if (isOverviewOpen()) return;
+        e.preventDefault();
+        wheelCooldown = true;
+        setTimeout(() => { wheelCooldown = false; }, 500);
+        navigate(e.deltaY > 0 ? 'next' : 'prev');
+    }
+
     function init() {
         document.addEventListener('keydown', handleKeydown);
         document.addEventListener('touchstart', handleTouchStart, { passive: true });
         document.addEventListener('touchend', handleTouchEnd, { passive: true });
+        document.addEventListener('wheel', handleWheel, { passive: false });
     }
 
     return { init };
