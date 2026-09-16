@@ -503,6 +503,7 @@
             <h2>Die autoregressive Schleife</h2>
             <p>LLMs vorhersagen immer nur <b>ein</b> Token auf einmal.</p>
             <p class="fragment">→ an den Input anhängen → erneut rechnen, bis <code>|endoftext|</code>.</p>
+            	<p class="fragment">Jeder Aufruf = 1 Token · anhängen · wiederholen, bis <tt>|endoftext|</tt>.</p>
 
             <div class="fragment formula-box">
                 <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>
@@ -513,7 +514,6 @@
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte}) \rightarrow \texttt{.}$$</div>
                 <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>
             </div>
-		<p class="fragment">Jeder Aufruf = 1 Token · anhängen · wiederholen, bis <tt>|endoftext|</tt>.</p>
         </div>
     </div>
 
