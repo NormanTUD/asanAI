@@ -1858,13 +1858,20 @@ const NNStepDemo = (() => {
         return activeSlide.getAttribute('data-title') === 'Stückelung';
     }
 
-    function canGoNext() {
-        if (!isOnStückelungSlide()) return false;
+    // Letzter Schritt der Demo. Der Bilder-Schritt (imagesStep) existiert
+    // nur, wenn die Sonnenbahn-Folie schon einmal sichtbar war – sonst endet
+    // die Demo direkt nach dem letzten 20-Neuronen-Schritt.
+    function finalStep() {
         if (Presentation.isFastMode()) {
             // fast: nur sin (0..6) + Bilder (14), Wellenform übersprungen
-            return currentStep !== imagesStep;
+            return sonnenbahnSeen ? imagesStep : sinEnd;
         }
-        return currentStep < totalSteps - 1;
+        return sonnenbahnSeen ? totalSteps - 1 : customEnd;
+    }
+
+    function canGoNext() {
+        if (!isOnStückelungSlide()) return false;
+        return currentStep < finalStep();
     }
 
     function canGoPrev() {
