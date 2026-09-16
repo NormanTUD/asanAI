@@ -157,9 +157,9 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	color: #94a3b8;
 }
 .attn-chip {
-	display: inline-block; width: 32px; height: 22px; margin: 1px;
-	border: 1px solid #cbd5e1; border-radius: 3px; text-align: center;
-	line-height: 22px; font-size: 0.7em; font-weight: 600; color: #0f172a;
+	display: inline-block; width: 42px; height: 30px; margin: 2px;
+	border: 1px solid #cbd5e1; border-radius: 4px; text-align: center;
+	line-height: 30px; font-size: 0.95em; font-weight: 600; color: #0f172a;
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .attn-chip.z {
@@ -167,14 +167,14 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	color: #94a3b8;
 }
 .attn-chip.lbl {
-	background: #f1f5f9; border: none; width: 44px; padding: 0; margin: 0;
+	background: #f1f5f9; border: none; width: 52px; padding: 0; margin: 0;
 	color: #475569; font-weight: 700; text-align: center;
 }
 .chip-xrow { margin-top: 2px; }
 .chip-spacer { display: inline-block; width: 44px; }
 .chip-x {
-	display: inline-block; width: 34px; text-align: center;
-	font-size: 0.62em; color: #64748b; font-weight: 600;
+	display: inline-block; width: 44px; text-align: center;
+	font-size: 0.85em; color: #64748b; font-weight: 600;
 }
 .attn-vc.hi .attn-chip {
 	box-shadow: 0 0 0 2px #f59e0b, 0 0 10px rgba(245,158,11,0.35);
@@ -190,7 +190,7 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	background: #fef3c7; border-radius: 3px; padding: 1px 0; color: #92400e;
 }
 table.heads-table {
-	border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 0.95em;
+	border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 1.1em;
 }
 .heads-table th {
 	background: #0f172a; color: #fff; padding: 8px 10px; text-align: left;

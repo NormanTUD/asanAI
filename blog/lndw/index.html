@@ -768,7 +768,6 @@
         <script>
         (function () {
             const TOK = ['the','cat','sat','on','the','mat'];
-            const TOK3 = ['cat','dog','cat'];
             function alpha(v){ return Math.min(0.65, v*0.7+0.08).toFixed(2); }
 			function chips(row, who, toks){
 				let best = -1, bv = -1;
@@ -790,17 +789,14 @@
             const H1CATROW = [0.71,0.29,0,0,0,0];
             const H2SATROW = [0.20,0.55,0.25,0,0,0];
             const L4H11SAT = [0.00,1.00,0.00,0.00,0.00,0.00];
-            const L7H2CAT2 = [0.99,0.01,0.01];
-            const NAME = ['Kopf 1','Kopf 2','Kopf 4'];
+            const NAME = ['Kopf 1','Kopf 2'];
             const U = [
                 '{\\text{Artikel}\\leftrightarrow\\text{Nomen}}',
                 '{\\text{Subjekt}\\to\\text{Verb}}',
-                '{\\text{Induktion }[A][B]\\dots[A]}',
             ];
             const ROWS = [
                 { row: H1CATROW, toks: TOK, who:'cat', sight:'"cat" blickt auf "the (0.71); the₂ → the₁ (0.43).' },
                 { row: H2SATROW, toks: TOK, who:'sat', sight:'"sat" (Verb) sucht das Subjekt "cat" (0.55).' },
-                { row: L7H2CAT2, toks: TOK3, who:'cat₂', sight:'2. "cat" blickt auf 1. "cat" (0.99) → nächster Schritt: "dog".' },
             ];
             let s = '<table class="heads-table"><thead><tr>' +
                     '<th style="width:230px;">Kopf <span style="font-weight:400;font-size:0.8em;">(unterstrichen: die Frage)</span></th><th>Schaut wo entlang</th><th>Beobachtung</th>' +
