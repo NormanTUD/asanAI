@@ -1659,8 +1659,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			row('DBG canGoNext nach Reveal', typeof NeuronIntroViz !== 'undefined' && NeuronIntroViz.canGoNext());
 			key('ArrowRight');  // → Szene 2
 			row('Intro: Pfeil vor = Szene 2', scenes().join(',') === '0,1');
-			row('DBG scenes nach Pfeil', scenes().join(','));
-			row('DBG tryNavigate-Log', (window.__tnLog || []).join(' | '));
+			raw('DBG scenes nach Pfeil', scenes().join(','));
+			raw('DBG tryNavigate-Log', (window.__tnLog || []).join(' | '));
 			key('ArrowRight');  // keine Szene mehr → ReLU fragment
 			row('Intro: Danach normales Weiter (ReLU sichtbar)', fvis() === 3);
 			key('ArrowRight');  // Alternativ-Formel
@@ -1679,13 +1679,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			// --- Typewriter: Block bis Code fertig getippt ---
 			Presentation.goTo(titles.indexOf('Klassisch vs. KI'));
 			const snap = snapshot();
+			const preBefore = document.querySelector('.slide.active [data-typewriter]');
+			const boxHBefore = preBefore.closest('.fragment').offsetHeight;
 			key('ArrowRight');  // Klassisch-Box → beginnt zu tippen
 			row('Typewriter: tippt nach Reveal', typeof TypewriterViz !== 'undefined' && TypewriterViz.isTypewriting());
+			raw('Typewriter: Box-Höhe bei Reveal (px)', boxHBefore);
 			key('ArrowRight');  // sollte durch Typewriter blockiert werden
 			row('Typewriter: Pfeil blockiert (nur 1 Fragment sichtbar)', fvis() === 1);
 			setTimeout(() => {
+				const boxHAfter = preBefore.closest('.fragment').offsetHeight;
 				row('Typewriter: Code voll getippt', document.querySelector('.slide.active [data-typewriter]').innerHTML === snap);
 				row('Typewriter: nicht mehr aktiv', typeof TypewriterViz !== 'undefined' && !TypewriterViz.isTypewriting());
+				raw('Typewriter: Box-Höhe danach (px)', boxHAfter);
+				row('Typewriter: Höhe stabil', Math.abs(boxHBefore - boxHAfter) < 6);
 				key('ArrowRight');
 				row('Typewriter: Danach normal weiter (KI-Box)', fvis() === 2);
 				const pre = document.createElement('pre');
