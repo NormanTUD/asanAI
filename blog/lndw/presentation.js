@@ -228,28 +228,35 @@ const Presentation = (() => {
     // ────────────────────────────────────────────────────────────
     // SLIDE-AUSWAHL via URL:  ?slides=0,1,2,3,10-16,17,19-30
     // 0-basierte Indexe der Ursprungsfolge, Bereiche inkl. der Enden.
+    // Zusätzlich sind Slide-IDs möglich:  ?slides=slide-attention-matrix,slide-9
     // Ohne Parameter (oder leer) → alle Folien.
     // ────────────────────────────────────────────────────────────
     function parseSlideSelection(total) {
         const raw = new URLSearchParams(window.location.search).get('slides');
         if (!raw) return null;
+        const all = Array.from(document.querySelectorAll('.slide'));
         const selected = new Set();
         raw.split(',').forEach(part => {
             part = part.trim();
             if (!part) return;
-            const range = part.split('-');
-            let a, b;
-            if (range.length === 2) {
-                a = parseInt(range[0].trim(), 10);
-                b = parseInt(range[1].trim(), 10);
-            } else {
-                a = b = parseInt(part, 10);
+            const rangeMatch = part.match(/^(\d+)-(\d+)$/);
+            if (rangeMatch) {
+                const a = parseInt(rangeMatch[1], 10);
+                const b = parseInt(rangeMatch[2], 10);
+                const [lo, hi] = a <= b ? [a, b] : [b, a];
+                for (let i = lo; i <= hi; i++) {
+                    if (i >= 0 && i < total) selected.add(i);
+                }
+                return;
             }
-            if (isNaN(a) || isNaN(b)) return;
-            const [lo, hi] = a <= b ? [a, b] : [b, a];
-            for (let i = lo; i <= hi; i++) {
-                if (i >= 0 && i < total) selected.add(i);
+            const num = parseInt(part, 10);
+            if (!isNaN(num)) {
+                if (num >= 0 && num < total) selected.add(num);
+                return;
             }
+            // Slide-ID (z. B. slide-attention-matrix) → zu ihrem Index auflösen.
+            const idx = all.findIndex(s => s.id === part);
+            if (idx !== -1) selected.add(idx);
         });
         return selected;
     }

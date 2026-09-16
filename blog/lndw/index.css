@@ -101,6 +101,55 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	pointer-events: auto;
 }
 
+/* ============ ATTENTION MATRIX + CHIPS (Folien "Attention-Matrix"/"Viele Köpfe") ============ */
+.attn-matrix {
+	border-collapse: collapse; margin: 0 auto;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 0.78em;
+}
+.attn-matrix td {
+	width: 46px; height: 30px; text-align: center;
+	font-weight: 600; border: 1px solid #e2e8f0; color: #0f172a;
+}
+.attn-matrix td.attn-colhead, .attn-matrix td.attn-rowhead {
+	background: #f1f5f9; color: #475569; font-size: 0.72em;
+}
+.attn-matrix td.attn-colhead { border-bottom: 2px solid #cbd5e1; width: 42px; }
+.attn-matrix td.attn-rowhead { text-align: right; padding-right: 6px; border-right: 2px solid #cbd5e1; }
+.attn-matrix td.attn-v { white-space: nowrap; }
+.attn-matrix td.attn-z {
+	background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 4px, #e2e8f0 4px, #e2e8f0 5px);
+	color: #94a3b8;
+}
+.attn-chip {
+	display: inline-block; width: 32px; height: 22px; margin: 1px;
+	border: 1px solid #cbd5e1; border-radius: 3px; text-align: center;
+	line-height: 22px; font-size: 0.7em; font-weight: 600; color: #0f172a;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.attn-chip.z {
+	background: repeating-linear-gradient(45deg, #f8fafc, #f8fafc 3px, #e2e8f0 3px, #e2e8f0 4px);
+	color: #94a3b8;
+}
+.attn-chip.lbl {
+	background: #f1f5f9; border: none; width: auto; padding: 0 8px;
+	color: #475569; font-weight: 700; margin-right: 4px;
+}
+.chip-xrow { margin-top: 1px; }
+.chip-x {
+	display: inline-block; width: 34px; text-align: center;
+	font-size: 0.62em; color: #64748b; font-weight: 600;
+}
+table.heads-table {
+	border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 0.95em;
+}
+.heads-table th {
+	background: #0f172a; color: #fff; padding: 8px 10px; text-align: left;
+	font-size: 0.85em;
+}
+.heads-table td { border: 1px solid #e2e8f0; padding: 8px 10px; vertical-align: top; }
+.heads-table tbody tr:nth-child(even) td { background: #f8fafc; }
+
 /* ============ NAVIGATION BAR ============ */
 #nav-bar {
 	position: fixed;

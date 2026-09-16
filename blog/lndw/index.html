@@ -29,7 +29,7 @@
         </div>
     </div>
 
-<div class="slide" data-title="Was sind LLM?">
+<div class="slide" id="slide-was-sind-llm" data-title="Was sind LLM?">
 	<div class="slide-content">
 		<h2>Was sind LLM?</h2>
 		<div style="align-items:center; justify-content:center; gap:20px; margin:30px 0; flex-wrap:wrap;">
@@ -44,7 +44,7 @@
 </div>
 
 <!-- ==================== SLIDE: Sonnenbahn (Die Wirklichkeit hat Muster) ==================== -->
-<div class="slide" data-title="Sonnenbahn">
+<div class="slide" id="slide-sonnenbahn" data-title="Sonnenbahn">
     <div class="slide-content">
         <h2>Die Wirklichkeit hat mathematische Muster</h2>
         <p style="margin-bottom:10px;">Muster der Wirklichkeit → spiegeln sich in Texten wider.</p>
@@ -75,7 +75,7 @@
 </div>
 
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
-<div class="slide" data-title="Muster in der Wirklichkeit">
+<div class="slide" id="slide-muster-in-der-wirklichkeit" data-title="Muster in der Wirklichkeit">
     <div class="slide-content">
         <h2>Aber auch "Quatsch" hat Muster</h2>
 	<p>James Joyces <i>Finnegans Wake</i> (1939) wirkt wie Englisch, ist aber keines. Trotzdem trägt es tiefe Muster in sich — sogar die eines italienischen Philosophen.</p>
@@ -105,8 +105,38 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Klassisch vs. KI ==================== -->
+<div class="slide" data-title="Klassisch vs. KI" id="slide-klassisch-vs-ki">
+    <div class="slide-content">
+        <h2>Klassisches Programmieren vs. KI</h2>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:stretch; margin-top:6px;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
+                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:4px;">Klassisch</div>
+                <div style="color:#334155; line-height:1.5;">
+                    Der Mensch schreibt <b>Regeln</b> (Code). Jede Falle wird von Hand eingebaut.
+                </div>
+                <div class="math-display" style="margin:12px 0 4px;">$$\underbrace{f}_{\text{Programm}}:\ X \to Y$$</div>
+                <div class="math-display" style="margin-top:10px;">$$\text{UND}\quad \begin{pmatrix}0&0\\0&1\\1&0\\1&1\end{pmatrix} \to \begin{pmatrix}0\\0\\0\\1\end{pmatrix}$$</div>
+            </div>
+            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
+                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:4px;">KI / Lernen</div>
+                <div style="color:#334155; line-height:1.5;">
+                    Der Mensch gibt nur <b>Beispiele</b> (X, Y) — den Rest findet die Maschine selbst.
+                </div>
+                <div class="math-display" style="margin:12px 0 4px;">$$\underbrace{f}_{\text{??}}\ :\ (x_1,y_1)\dots(x_N,y_N) \to \underbrace{\hat{f}}_{\text{Regeln}}$$</div>
+                <div class="math-display" style="margin-top:10px;">$$\text{ODER}\quad \begin{pmatrix}0&0\\0&1\\1&0\\1&1\end{pmatrix} \to \begin{pmatrix}0\\1\\1\\1\end{pmatrix}$$</div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment">
+            Klassisch: <b>Regeln → Programm</b> · Lernen: <b>Beispiele → Regeln</b>.
+        </div>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Neural Net Intro ==================== -->
-<div class="slide" data-title="Neuronales Netz Intro">
+<div class="slide" id="slide-neuronales-netz-intro" data-title="Neuronales Netz Intro">
     <div class="slide-content">
         <h2>Was sind Neuronale Netzwerk?</h2>
 
@@ -171,7 +201,7 @@
     </div>
 </div>
 
-<div class="slide" data-title="Neuronales Netz Geschichte">
+<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
     <div class="slide-content">
         <h2>Das erste künstliche Neuronale Netz</h2>
 
@@ -204,7 +234,7 @@
 </div>
 
 <!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
-<div class="slide" data-title="Stückelung">
+<div class="slide" id="slide-stueckelung" data-title="Stückelung">
     <div class="slide-content">
         <h2>Funktionsapproximation durch Stückelung</h2>
         <div class="demo-box">
@@ -237,7 +267,7 @@
     </div>
 </div>
 
-<div class="slide" data-title="Deep Learning">
+<div class="slide" id="slide-deep-learning" data-title="Deep Learning">
     <div class="slide-content">
         <h2>Deep Learning</h2>
 
@@ -264,7 +294,7 @@
 </div>
 
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
-<div class="slide" data-title="Muster in der Wirklichkeit">
+<div class="slide" id="slide-muster-in-der-wirklichkeit-2" data-title="Muster in der Wirklichkeit">
     <div class="slide-content">
         <h2>Texte haben Pattern; Maschinen können Patterns lernen</h2>
         <div>
@@ -292,7 +322,7 @@
 </div>
 
 <!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
-<div class="slide" data-title="Die Datenmenge">
+<div class="slide" id="slide-die-datenmenge" data-title="Die Datenmenge">
     <div class="slide-content">
         <h2>Die Datenmenge.</h2>
 
@@ -315,7 +345,7 @@
 </div>
 
 <!-- ==================== SLIDE: Daten sind fehlerhaft ==================== -->
-<div class="slide" data-title="Daten sind fehlerhaft">
+<div class="slide" id="slide-daten-sind-fehlerhaft" data-title="Daten sind fehlerhaft">
     <div class="slide-content">
         <h2>Daten sind fehlerhaft, und trotzdem nützlich</h2>
 
@@ -357,7 +387,7 @@
 </div>
 
 <!-- ==================== SLIDE: Transformer-Architektur (vereinfacht) ==================== -->
-<div class="slide" data-title="Transformer-Architektur">
+<div class="slide" id="slide-transformer-architektur" data-title="Transformer-Architektur">
     <div class="slide-content">
         <h2>Die Transformer-Architektur</h2>
         <p>Eine vereinfachte Version des Architektur-Diagramms aus dem Paper "Attention Is All You Need". Im Kern sind es nur ein paar Bausteine, die sich wiederholen.</p>
@@ -466,7 +496,7 @@
 </div>
 
 <!-- ==================== SLIDE 2: Autoregressive Schleife ==================== -->
-    <div class="slide" data-title="Autoregressive Schleife">
+    <div class="slide" id="slide-autoregressive-schleife" data-title="Autoregressive Schleife">
         <div class="slide-content">
             <h2>Die autoregressive Schleife</h2>
             <p>LLMs vorhersagen immer nur <b>ein</b> Token auf einmal.</p>
@@ -487,7 +517,7 @@
 
 
     <!-- ==================== SLIDE 5: Tokenisierung ==================== -->
-    <div class="slide" data-title="Tokenisierung">
+    <div class="slide" id="slide-tokenisierung" data-title="Tokenisierung">
         <div class="slide-content">
             <h2>Tokenisierung</h2>
             <p>Text → kleine Stücke (<b>Tokens</b>) · Computer versteht nur Zahlen.</p>
@@ -502,7 +532,7 @@
     </div>
 
     <!-- ==================== SLIDE 7: Embedding ==================== -->
-    <div class="slide" data-title="Embedding">
+    <div class="slide" id="slide-embedding" data-title="Embedding">
         <div class="slide-content">
             <h2>Embedding</h2>
  	    <p>Jedes Token → <b>Vektor</b> = seine <b>Bedeutung</b>:</p>
@@ -525,7 +555,7 @@
     </div>
 
 <!-- ==================== SLIDE 8: Embedding Demo (aus embeddinglab) ==================== -->
-<div class="slide" data-title="Embedding">
+<div class="slide" id="slide-embedding-2" data-title="Embedding">
     <div class="slide-content">
         <h2>Embedding-Raum</h2>
         <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
@@ -542,7 +572,7 @@
 </div>
 
 <!-- ==================== SLIDE: Approximation der Welt ==================== -->
-<div class="slide" data-title="Approximation der Welt">
+<div class="slide" id="slide-approximation-der-welt" data-title="Approximation der Welt">
     <div class="slide-content">
         <h2>Eine Weltkarte im Embedding Space</h2>
 
@@ -557,7 +587,7 @@
 </div>
 
 <!-- ==================== SLIDE: Glitch Tokens ==================== -->
-<div class="slide" data-title="Glitch Tokens">
+<div class="slide" id="slide-glitch-tokens" data-title="Glitch Tokens">
     <div class="slide-content">
         <h2>Glitch Tokens</h2>
 
@@ -589,7 +619,7 @@
 </div>
 
 <!-- ==================== SLIDE: Mannigfaltigkeiten-Hypothese ==================== -->
-<div class="slide" data-title="Mannigfaltigkeiten-Hypothese">
+<div class="slide" id="slide-mannigfaltigkeiten-hypothese" data-title="Mannigfaltigkeiten-Hypothese">
     <div class="slide-content">
         <h2>Übersetzung als Bewegung</h2>
         <p style="margin-bottom:12px;">
@@ -618,7 +648,7 @@
 </div>
 
 <!-- ==================== SLIDE 9: Positional Embedding ==================== -->
-<div class="slide" data-title="Positional Embedding">
+<div class="slide" id="slide-positional-embedding" data-title="Positional Embedding">
 	<div class="slide-content">
 		<h2>Positional Embedding</h2>
 		<p>"Hund beißt Mann" ≠ "Mann beißt Hund" — gleiche Wörter, andere Reihenfolge, andere Bedeutung.</p>
@@ -627,7 +657,7 @@
 </div>
 
 <!-- ==================== SLIDE 10: Positional Embedding Demo (Kreisbahn v3) ==================== -->
-<div class="slide" data-title="Positional Embedding">
+<div class="slide" id="slide-positional-embedding-2" data-title="Positional Embedding">
 	<div class="slide-content">
 		<h2>Positional Embedding</h2>
 		<div style="max-width:700px; margin:0 auto;">
@@ -638,7 +668,7 @@
 </div>
 
 <!-- ==================== SLIDE: Residual Stream Notebook Animation ==================== -->
-<div class="slide" data-title="Residual Stream Notebook">
+<div class="slide" id="slide-residual-stream-notebook" data-title="Residual Stream Notebook">
     <div class="slide-content">
         <h2>Der Residual Stream</h2>
         <p>Stell dir den Residual Stream als <b>gemeinsames Notizbuch</b> vor: Jede Schicht (Layer) ist ein anderer Experte, der den Text liest und seine Erkenntnisse <b>dazuschreibt</b>, ohne das Vorherige zu löschen.</p>
@@ -656,7 +686,7 @@
 </div>
 
     <!-- ==================== SLIDE 12: Attention ==================== -->
-    <div class="slide" data-title="Attention">
+    <div class="slide" id="slide-attention" data-title="Attention">
         <div class="slide-content">
             <h2>Attention</h2>
             <p>"Welche anderen Tokens sind für <b>dieses</b> Token wichtig?”</p>
@@ -681,8 +711,124 @@
     </div>
 </div>
 
+<!-- ==================== SLIDE: Attention-Matrix ==================== -->
+<div class="slide" data-title="Attention-Matrix" id="slide-attention-matrix">
+    <div class="slide-content">
+        <h2>Ein Blick hinein: Attention-Matrix</h2>
+        <p style="margin-bottom:2px;">Mini-Modell (4 Dim., 2 Köpfe), Satz <b>"the cat sat on the mat"</b>. Zeile <b>schaut</b> auf Spalte. Autoregression: Token <i>i</i> sieht nur 0…<i>i</i> → <b>oberes Dreieck = 0</b>.</p>
+
+        <div id="attn-h1-wrap" style="margin-top:12px;"></div>
+        <div id="attn-h2-wrap" style="margin-top:10px;"></div>
+
+        <div class="key-insight fragment" style="margin-top:12px;">
+            Kopf 1 fragt <b>„Ist da ein Artikel?"</b> → <span class="math-inline">\underbrace{\text{cat} \to \text{the}}_{0.71}</span>: Nomen blicken hell auf ihren Artikel.
+        </div>
+        <div class="key-insight fragment">
+            Kopf 2 fragt <b>„Wer ist das Subjekt?"</b> → <span class="math-inline">\underbrace{\text{sat} \to \text{cat}}_{0.55}</span>.
+        </div>
+        <div class="fragment" style="font-size:0.9em; color:#475569; margin-top:10px; text-align:center;">
+            ⚠️ Konstruiertes Mini-Modell, komplett nachrechenbar (<code>attention_scripts/</code>). In echten Modellen: <span class="math-inline">d_k \approx 64</span>, Skalierung <span class="math-inline">1/\sqrt{d_k}</span>.
+        </div>
+
+        <script>
+        (function () {
+            const TOK = ['the','cat','sat','on','the','mat'];
+            const H1 = [[1,0,0,0,0,0],[0.71,0.29,0,0,0,0],[0.33,0.33,0.33,0,0,0],[0.44,0.25,0.12,0.19,0,0],[0.43,0.09,0.01,0.04,0.43,0],[0.31,0.13,0.04,0.08,0.31,0.13]];
+            const H2 = [[1,0,0,0,0,0],[0.31,0.69,0,0,0,0],[0.20,0.55,0.25,0,0,0],[0.19,0.34,0.22,0.24,0,0],[0.19,0.21,0.20,0.20,0.19,0],[0.11,0.25,0.13,0.15,0.11,0.25]];
+            function alpha(v){ return Math.min(0.65, v*0.7+0.08).toFixed(2); }
+            function render(name, title, M){
+                let s = '<div style="text-align:center;font-weight:700;color:#1e293b;margin-bottom:2px;">' + title + '</div>';
+                s += '<div style="overflow-x:auto;text-align:center;"><table class="attn-matrix"><tr><td></td>';
+                s += TOK.map(t=>'<td class="attn-colhead">'+t+'</td>').join('');
+                s += '</tr>';
+                for (let i=0;i<6;i++){
+                    s += '<tr><td class="attn-rowhead">'+TOK[i]+'</td>';
+                    for (let j=0;j<6;j++){
+                        if (j>i) { s += '<td class="attn-z" title="Kausalmaske">0</td>'; }
+                        else { s += '<td class="attn-v" style="background:rgba(59,130,246,'+alpha(M[i][j])+')">'+M[i][j].toFixed(2)+'</td>'; }
+                    }
+                    s += '</tr>';
+                }
+                s += '</table></div>';
+                document.getElementById(name).innerHTML = s;
+            }
+            render('attn-h1-wrap', 'Kopf 1 · Artikel → Nomen', H1);
+            render('attn-h2-wrap', 'Kopf 2 · Subjekt → Verb', H2);
+        })();
+        </script>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Viele Köpfe ==================== -->
+<div class="slide" data-title="Viele Köpfe" id="slide-viele-koepfe">
+    <div class="slide-content">
+        <h2>Viele Köpfe – jede Frage eine Aufmerksamkeit</h2>
+        <p style="margin-bottom:2px;">GPT-2 small: 12 Layer × 12 Köpfe = <b>144 Aufmerksamkeiten</b>. Jeder Kopf beantwortet seine <b>eigene Frage</b> an den Text.</p>
+
+        <div id="heads-wrap" style="margin-top:8px;"></div>
+
+        <div class="fragment" style="margin-top:12px; padding:12px 16px; background:#fffbeb; border-left:4px solid #f59e0b; border-radius:6px; color:#92400e; line-height:1.6;">
+            <strong>⚠️ Vereinfachung:</strong> Die Muster oben sind <b>unsere Deutung</b> der stärksten Kanten. In Wirklichkeit lernt das Modell <b>seine eigenen, "fremden" Kategorien</b> — aus Optimierung, nicht nach menschlichen Begriffen. So hören manche Köpfe z. B. nicht "Artikel", sondern Signal-Kombinationen, die wir nur grob so übersetzen.
+        </div>
+        <div class="fragment" style="font-size:0.82em; color:#64748b; margin-top:10px; text-align:center;">
+            Quellen: Clark et al. 2019 · arXiv:1906.04341 · Elhage et al. 2021 (Transformer Circuits) · Olsson et al. 2022 · arXiv:2209.11895 · Wang et al. 2022 · arXiv:2211.00593
+        </div>
+
+        <script>
+        (function () {
+            const TOK = ['the','cat','sat','on','the','mat'];
+            const TOK3 = ['cat','dog','cat'];
+            function alpha(v){ return Math.min(0.65, v*0.7+0.08).toFixed(2); }
+            function chips(row, toks){
+                let s = '';
+                for (let j=0;j<row.length;j++){
+                    const v = row[j];
+                    s += '<span class="attn-chip'+(v===0?' z':'')+'" style="background:'+(v>0?'rgba(59,130,246,'+alpha(v)+')':'transparent')+'">'+(v>0?v.toFixed(2):'0')+'</span>';
+                }
+                if (toks) { s += '<div class="chip-xrow">' + toks.map(t=>'<span class="chip-x">'+t+'</span>').join('') + '</div>'; }
+                return s;
+            }
+            const H1CATROW = [0.71,0.29,0,0,0,0];
+            const H2SATROW = [0.20,0.55,0.25,0,0,0];
+            const L4H11SAT = [0.00,1.00,0.00,0.00,0.00,0.00];
+            const L7H2CAT2 = [0.99,0.01,0.01];
+            const NAME = ['Kopf 1','Kopf 2','Kopf 3','Kopf 4','Kopf 5'];
+            const U = [
+                '{\\text{Artikel}\\leftrightarrow\\text{Nomen}}',
+                '{\\text{Subjekt}\\to\\text{Verb}}',
+                '{\\text{Vorheriges Token}}',
+                '{\\text{Induktion }[A][B]\\dots[A]}',
+                '{\\text{Pronomen}\\leftrightarrow\\text{Bezug}}',
+            ];
+            const ROWS = [
+                { row: H1CATROW, toks: TOK, who:'cat', sight:'"cat" blickt auf "the" (0.71); the₂ → the₁ (0.43).',
+                  src:'Mini-Modell · GPT-2 L0H0: cat→the 0.73', paper:'Clark et al. 2019' },
+                { row: H2SATROW, toks: TOK, who:'sat', sight:'"sat" (Verb) sucht das Subjekt "cat" (0.55).',
+                  src:'Mini-Modell · GPT-2 L4H3: sat→cat 0.96', paper:'Wang et al. 2022' },
+                { row: L4H11SAT, toks: TOK, who:'sat', sight:'Kette the→the · cat→the · sat→cat · on→sat · the→on · mat→the (je ≈1.0).',
+                  src:'real gemessen, GPT-2 L4H11', paper:'Elhage et al. 2021' },
+                { row: L7H2CAT2, toks: TOK3, who:'cat₂', sight:'2. "cat" blickt auf 1. "cat" (0.99) → nächster Schritt: "dog".',
+                  src:'real gemessen, GPT-2 L7H2', paper:'Olsson et al. 2022' },
+                { row: null, who:'…', sight:'Pronomen blicken auf ihren Bezug (Koreferenz), z. B. "he" → "Peter".',
+                  src:'qualitativ beschrieben', paper:'Clark et al. 2019' },
+            ];
+            let s = '<table class="heads-table"><thead><tr>' +
+                    '<th style="width:230px;">Kopf <span style="font-weight:400;font-size:0.8em;">(unterstrichen: die Frage)</span></th><th>Schaut wo entlang</th><th>Beobachtung</th><th>Gemessen</th><th>Literatur</th>' +
+                    '</tr></thead><tbody>';
+            ROWS.forEach((r, i) => {
+                s += '<tr><td><span class="math-inline">$\\underbrace{\\text{' + NAME[i] + '}}_{' + U[i] + '}$</span></td>';
+                s += '<td style="white-space:nowrap;"><span class="attn-chip lbl">'+r.who+'</span>' + (r.row?chips(r.row, r.toks):'—') + '</td>';
+                s += '<td>'+r.sight+'</td><td style="white-space:nowrap;">'+r.src+'</td><td style="white-space:nowrap;">'+r.paper+'</td></tr>';
+            });
+            s += '</tbody></table>';
+            document.getElementById('heads-wrap').innerHTML = s;
+        })();
+        </script>
+    </div>
+</div>
+
 <!-- ==================== SLIDE: Wahrscheinlichkeits-Tunnel ==================== -->
-<div class="slide" data-title="Wahrscheinlichkeits-Tunnel">
+<div class="slide" id="slide-wahrscheinlichkeits-tunnel" data-title="Wahrscheinlichkeits-Tunnel">
     <div class="slide-content">
         <h2>Isoflächen der Wahrscheinlichkeit: Der "Truth Tunnel"</h2>
         <p style="margin-bottom:10px;">Hülle um alles, was das Modell für <b>plausibel</b> hält. Mit jedem Token verengt sich der Tunnel → Scheinwerfer auf die möglichen nächsten Token.</p>
@@ -709,7 +855,7 @@
 <!-- TODO: Es gibt auch Repellanten, und beide die können ganz anders aufgebaut sein, sie sind nur homotop -->
 
 <!-- ==================== FOLIE: Attraktoren ==================== -->
-<div class="slide" data-title="Attraktoren">
+<div class="slide" id="slide-attraktoren" data-title="Attraktoren">
     <div class="slide-content">
         <h2>Wie "weiß" das Modell, dass Paris die Hauptstadt von Frankreich ist?</h2>
 	<p>Ich lass das LLM vervollständigen: <i>Die Hauptstadt von Frankreich ist</i>.</p>
@@ -739,7 +885,7 @@
 </div>
 
 <!-- ==================== FOLIE: J-Space (überarbeitet) ==================== -->
-<div class="slide" data-title="J-Space">
+<div class="slide" id="slide-j-space" data-title="J-Space">
     <div class="slide-content">
         <h2>Der J-Space: Ein "Global Workspace" im Modell</h2>
         <p>Wie ein LLM seine eigenen Zwischenschritte "sehen" kann — und was das mit Bewusstsein zu tun hat.</p>
@@ -775,7 +921,7 @@
 </div>
 
 <!-- ==================== SLIDE 15: Vorhersage ==================== -->
-<div class="slide" data-title="Die Vorhersage">
+<div class="slide" id="slide-die-vorhersage" data-title="Die Vorhersage">
     <div class="slide-content">
 	    <h2>Die Vorhersage</h2>
 	    <p>Nach allen Schichten nimmt das Modell den <b>letzten Vektor</b>, der einen Punkt beinhaltet, der interpretiert werden kann als Bedeutung des gesamten bisherigen Kontextes, und vergleicht seinen Winkel zu allen anderen bekannten <b>Tokens</b>.</p>
@@ -816,7 +962,7 @@
 </div>
 
 <!-- ==================== SLIDE: Für das LLM ist alles ein Muster – Erinnerung ==================== -->
-<div class="slide" data-title="Für das LLM ist alles ein Muster">
+<div class="slide" id="slide-fuer-das-llm-ist-alles-ein-muster" data-title="Für das LLM ist alles ein Muster">
     <div class="slide-content">
         <h2>Erinnerung: für das LLM ist <b>Alles</b> ein Muster</h2>
 
@@ -871,7 +1017,7 @@
 
 
 <!-- ==================== SLIDE: Pre-Training & Fine-Tuning ==================== -->
-<div class="slide" data-title="Pre-Training & Fine-Tuning">
+<div class="slide" id="slide-pre-training-fine-tuning" data-title="Pre-Training & Fine-Tuning">
 	<div class="slide-content">
 		<h2>Von großen Textmengen zum Assistenten</h2>
 		<p>Das Training eines LLM passiert in <b>drei Phasen</b>:</p>
@@ -933,7 +1079,7 @@
 </div>
 
 <!-- ==================== SLIDE: Kosten & Energie ==================== -->
-<div class="slide" data-title="Kosten & Energie">
+<div class="slide" id="slide-kosten-energie" data-title="Kosten & Energie">
 	<div class="slide-content">
 		<h2>Was LLM die Welt kosten</h2>
 
@@ -1000,7 +1146,7 @@
 </div>
 
 <!-- ==================== SLIDE: Warum Large? ==================== -->
-<div class="slide" data-title="Warum Large?">
+<div class="slide" id="slide-warum-large" data-title="Warum Large?">
     <div class="slide-content">
         <h2>Warum "Large"?</h2>
 
@@ -1025,7 +1171,7 @@
 </div>
 
 <!-- ==================== SLIDE: Versteht das LLM?s ==================== -->
-<div class="slide" data-title="Versteht das LLM?">
+<div class="slide" id="slide-versteht-das-llm" data-title="Versteht das LLM?">
 	<div class="slide-content" style="text-align:center; position:relative; overflow:hidden;">
 		<div style="position:relative; z-index:1;">
 			<h2 style="margin-bottom:24px;">Versteht das LLM, was es sagt?</h2>
@@ -1055,7 +1201,7 @@
 </div>
 
 <!-- ==================== SLIDE: Chinese Room (Präsentations-Demo) ==================== -->
-<div class="slide" data-title="Chinese Room" data-init="CRSim.start()">
+<div class="slide" id="slide-chinese-room" data-title="Chinese Room" data-init="CRSim.start()">
     <div class="slide-content">
         <h2>Das Chinese Room Argument (John Searle, 1980)</h2>
         <p style="color:#475569; margin-bottom:14px; line-height:1.7;">
@@ -1147,7 +1293,7 @@
 </div>
 
 <!-- ==================== SLIDE: Halluzinationen ==================== -->
-<div class="slide" data-title="Halluzinationen">
+<div class="slide" id="slide-halluzinationen" data-title="Halluzinationen">
     <div class="slide-content">
         <h2>Halluzinationen: Wenn das LLM "lügt"</h2>
 
@@ -1195,7 +1341,7 @@
     </div>
 </div>
 
-<div class="slide" data-title="Halluzinationen">
+<div class="slide" id="slide-halluzinationen-2" data-title="Halluzinationen">
     <div class="slide-content">
         <h2>Halluzinationen: Wenn das LLM "lügt"</h2>
         <!-- Warum passiert das? -->
@@ -1226,7 +1372,7 @@
     </div>
 </div>
 
-<div class="slide" data-title="Der ELIZA-Effekt">
+<div class="slide" id="slide-der-eliza-effekt" data-title="Der ELIZA-Effekt">
     <div class="slide-content">
         <h2>Der ELIZA-Effekt: Warum wir auf Maschinen "reinfallen"</h2>
         
@@ -1268,7 +1414,7 @@
 </div>
 
 <!-- ==================== SLIDE: Vorsicht, Bias & Intransparenz ==================== -->
-<div class="slide" data-title="Vorsicht: Bias & Grenzen">
+<div class="slide" id="slide-vorsicht-bias-grenzen" data-title="Vorsicht: Bias & Grenzen">
 	<div class="slide-content">
 		<h2>Vorsicht: Approximation, Bias & Intransparenz</h2>
 
@@ -1333,7 +1479,7 @@
 </div>
 
 <!-- ==================== SLIDE: Was LLMs nicht können ==================== -->
-<div class="slide" data-title="Was LLMs nicht können">
+<div class="slide" id="slide-was-llms-nicht-koennen" data-title="Was LLMs nicht können">
     <div class="slide-content">
         <h2>Was LLM nicht können, und vielleicht nie können wird</h2>
         <p>LLMs sind beeindruckend, aber es gibt fundamentale Grenzen, die nicht einfach durch "mehr Daten" verschwinden.</p>
@@ -1380,7 +1526,7 @@
 </div>
 
 <!-- ==================== SLIDE: Abschluss ==================== -->
-<div class="slide" data-title="Danke!">
+<div class="slide" id="slide-danke" data-title="Danke!">
     <div class="slide-content" style="text-align:center; overflow:hidden; position:relative;">
         <!-- Dezente animierte Partikel im Hintergrund -->
         <div style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden;">
