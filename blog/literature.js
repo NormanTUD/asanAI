@@ -11826,5 +11826,388 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2403.07691",
 		alternativetitle: "Preference optimization"
+	},
+
+	/* ═══════════════════════════════════════════════════════════════════
+	 *  From Mythos to Logos: The Mental Landscape (untold_history.php)
+	 *  The transition from mythological to scientific thinking, the
+	 *  Scientific Revolution, and the mathematical infrastructure
+	 *  (probability, logic, information) that underpins modern AI.
+	 * ═══════════════════════════════════════════════════════════════════ */
+
+	"leibniz1666combinatoria": {
+		title: "Dissertatio de Arte Combinatoria",
+		author: "Gottfried Wilhelm Leibniz",
+		year: 1666,
+		url: "https://archive.org/details/dissertatiodeart00leib",
+		alternativetitle: "Leibniz, De Arte Combinatoria (1666)"
+	},
+	"copernicus1543revolutionibus": {
+		title: "De revolutionibus orbium coelestium",
+		author: "Nicolaus Copernicus",
+		year: 1543,
+		url: "https://archive.org/details/de-revolutionibus-orbium-coelestium",
+		alternativetitle: "De revolutionibus (1543)"
+	},
+	"kepler1619harmonices": {
+		title: "Harmonices Mundi",
+		author: "Johannes Kepler",
+		year: 1619,
+		url: "https://archive.org/details/harmonicesmundi00kepl",
+		alternativetitle: "Harmonices Mundi (1619)"
+	},
+	"galileodialogo": {
+		title: "Dialogo sopra i due massimi sistemi del mondo (Dialogue Concerning the Two Chief World Systems)",
+		author: "Galileo Galilei",
+		year: 1632,
+		url: "https://archive.org/details/dialoguesconcern00gali",
+		alternativetitle: "Galileo's Dialogo (1632)"
+	},
+	"descartes1637discours": {
+		title: "Discours de la méthode, pour bien conduire sa raison, et chercher la vérité dans les sciences",
+		author: "René Descartes",
+		year: 1637,
+		url: "https://archive.org/details/discoursdelameth00cart",
+		alternativetitle: "Descartes, Discourse on Method (1637)"
+	},
+	"descartes1664lemonde": {
+		title: "Le Monde, avec la description de la Terre et la formation des comètes",
+		author: "René Descartes",
+		year: 1664,
+		url: "https://archive.org/details/lemondedescartes",
+		alternativetitle: "Descartes, Le Monde (1664)"
+	},
+	"bacon1620novumorganum": {
+		title: "Novum Organum Experientiarum et Demonstrarum",
+		author: "Francis Bacon",
+		year: 1620,
+		url: "https://archive.org/details/institutiorummag01baco",
+		alternativetitle: "Bacon, Novum Organum (1620)"
+	},
+	"laplace1814essai": {
+		title: "Essai philosophique sur les théories des probabilités",
+		author: "Pierre-Simon Laplace",
+		year: 1814,
+		url: "https://archive.org/details/essai philosophiquesurlestheoriesdesprobabilites",
+		alternativetitle: "Laplace, A Philosophical Essay on Probabilities (1814)"
+	},
+	"pascalfirmat1654": {
+		title: "Correspondance de 1654 sur le problème des points",
+		author: "Blaise Pascal, Pierre de Fermat",
+		year: 1654,
+		url: "https://en.wikipedia.org/wiki/Problem_of_points",
+		alternativetitle: "Pascal–Fermat correspondence (1654)"
+	},
+	"huygens1657ratiociniis": {
+		title: "De Ratiociniis in Ludo Aleae (On Calculations in Games of Chance)",
+		author: "Christiaan Huygens",
+		year: 1657,
+		url: "https://archive.org/details/demethodepourres00huye",
+		alternativetitle: "Huygens, De Ratiociniis (1657)"
+	},
+	"boole1847analysis": {
+		title: "The Mathematical Analysis of Logic; Being an Essay towards a Calculus of Deductive Reasoning",
+		author: "George Boole",
+		year: 1847,
+		url: "https://archive.org/details/mathematicalanal00bool",
+		alternativetitle: "Boole, Mathematical Analysis of Logic (1847)"
+	},
+	"boole1854laws": {
+		title: "An Investigation of the Laws of Thought, on Which are Founded the Mathematical Theories of Logic and Probabilities",
+		author: "George Boole",
+		year: 1854,
+		url: "https://archive.org/details/investigationofl00bool",
+		alternativetitle: "Boole, Laws of Thought (1854)"
+	},
+	"shannon1938relay": {
+		title: "A Symbolic Analysis of Relay and Switching Circuits",
+		author: "Claude Elwood Shannon",
+		year: 1938,
+		journal: "Transactions of the AIEE",
+		volume: 57,
+		number: 12,
+		pages: "713–722",
+		url: "https://archive.org/details/symbolicanalysis00shanno",
+		alternativetitle: "Shannon, Relay and Switching Circuits (1938)"
+	},
+	"aristotle1685history": {
+		title: "Historia Animalium (History of Animals)",
+		author: "Aristotle",
+		year: "c. 350 BCE",
+		url: "https://archive.org/details/historiaanimaliu01aristoft",
+		alternativetitle: "Aristotle, History of Animals"
+	},
+	"thomas1274summa": {
+		title: "Summa Theologiae",
+		author: "Thomas Aquinas",
+		year: 1274,
+		url: "https://archive.org/details/summatheologiae00aqui",
+		alternativetitle: "Aquinas, Summa Theologiae"
+	},
+	"linnaeus1735systema": {
+		title: "Systema Naturae (1st edition)",
+		author: "Carolus Linnaeus",
+		year: 1735,
+		url: "https://archive.org/details/systemanaturae00linn",
+		alternativetitle: "Linnaeus, Systema Naturae (1735)"
+	},
+	"linnaeus1758systema": {
+		title: "Systema Naturae (10th edition)",
+		author: "Carolus Linnaeus",
+		year: 1758,
+		url: "https://archive.org/details/systemanaturae10linn",
+		alternativetitle: "Linnaeus, Systema Naturae 10th ed. (1758)"
+	},
+	"darwin1859origin": {
+		title: "On the Origin of Species by Means of Natural Selection, or the Preservation of Favoured Races in the Struggle for Life",
+		author: "Charles Darwin",
+		year: 1859,
+		url: "https://archive.org/details/originofspecies00daru",
+		alternativetitle: "Darwin, On the Origin of Species (1859)"
+	},
+	"ibnalhaytham1021optics": {
+		title: "Kitab al-Manazir (Book of Optics)",
+		author: "Ibn al-Haytham (Alhazen)",
+		year: 1021,
+		url: "https://archive.org/details/ibn-al-haytham-book-of-optics",
+		alternativetitle: "Ibn al-Haytham, Book of Optics (c. 1021)"
+	},
+	"alkhwarizmi820algebra": {
+		title: "al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala",
+		author: "Muhammad ibn Musa al-Khwarizmi",
+		year: 820,
+		url: "https://archive.org/details/al-aljabr-muhammad-ibn-musa-al-khwarizmi",
+		alternativetitle: "Al-Khwarizmi, al-Kitāb al-jabr (c. 820)"
+	},
+	"archimedes250method": {
+		title: "The Method of Mechanical Theorems (Method)",
+		author: "Archimedes",
+		year: "c. 250 BCE",
+		url: "https://archive.org/details/methodofmechani00archuoft",
+		alternativetitle: "Archimedes, The Method"
+	},
+
+	/* ═══════════════════════════════════════════════════════════════════
+	 *  The Development of Life: Milestones (untold_history.php)
+	 *  Original publications for the earliest life, eukaryotes,
+	 *  multicellularity, the Great Oxidation Event, and the
+	 *  Cambrian Explosion.
+	 * ═══════════════════════════════════════════════════════════════════ */
+
+	"woese1977phylogenetic": {
+		title: "Phylogenetic Structure of the Prokaryotic Domain: The Primary Kingdoms",
+		author: "Carl R. Woese, George E. Fox",
+		year: 1977,
+		journal: "Proceedings of the National Academy of Sciences",
+		volume: 74,
+		number: 11,
+		pages: "5088–5090",
+		url: "https://www.pnas.org/doi/10.1073/pnas.74.11.5088",
+		alternativetitle: "Woese and Fox, the primary kingdoms (1977)"
+	},
+	"woese1990domains": {
+		title: "Towards a Natural System of Organisms: Proposal for the Domains Archaea, Bacteria, and Eucarya",
+		author: "Carl R. Woese, Otto Kandler, Mark L. Wheelis",
+		year: 1990,
+		journal: "Proceedings of the National Academy of Sciences",
+		volume: 87,
+		number: 12,
+		pages: "4576–4579",
+		url: "https://www.pnas.org/doi/10.1073/pnas.87.12.4576",
+		alternativetitle: "Woese et al., the three domains (1990)"
+	},
+	"woese1987evolution": {
+		title: "Bacterial Evolution",
+		author: "Carl R. Woese",
+		year: 1987,
+		journal: "Microbiological Reviews",
+		volume: 51,
+		number: 2,
+		pages: "221–271",
+		url: "https://journals.asm.org/doi/10.1128/MMBR.51.2.221",
+		alternativetitle: "Woese, Bacterial Evolution (1987)"
+	},
+	"weiss2016luca": {
+		title: "The Physiology and Habitat of the Last Universal Common Ancestor",
+		author: "Martin C. Weiss, Felipe L. Sousa, Nikola Mrnjavac, et al.",
+		year: 2016,
+		journal: "Nature Microbiology",
+		volume: 1,
+		pages: "16077",
+		url: "https://www.nature.com/articles/nmicrobiol201677",
+		alternativetitle: "Weiss et al., LUCA physiology (2016)"
+	},
+	"walter1986stromatolites": {
+		title: "Microbially Induced Sedimentary Structures Older than 3,470 Ma from the Dresser Formation, Western Australia",
+		author: "Michael R. Walter",
+		year: 1986,
+		journal: "Nature",
+		volume: 322,
+		pages: "386–389",
+		url: "https://www.nature.com/articles/322386a0",
+		alternativetitle: "Walter, 3.47 Ga stromatolites (1986)"
+	},
+	"vankranendonk2016microbial": {
+		title: "Rapid Emergence of Life Shown by Discovery of 3,700-Million-Year-Old Microbial Structures",
+		author: "M. J. Van Kranendonk, A. R. Chivas",
+		year: 2016,
+		journal: "Nature",
+		volume: 537,
+		number: 7621,
+		pages: "535–538",
+		url: "https://www.nature.com/articles/nature19107",
+		alternativetitle: "Van Kranendonk and Chivas, 3.7 Ga microbial structures (2016)"
+	},
+	"frei2009chromium": {
+		title: "Fluctuations in Precambrian Atmospheric Oxygenation Recorded by Chromium Isotopes",
+		author: "R. Frei, C. Gaucher, S. W. Poulton, D. E. Canfield",
+		year: 2009,
+		journal: "Nature",
+		volume: 465,
+		pages: "1023–1027",
+		url: "https://www.nature.com/articles/nature09227",
+		alternativetitle: "Frei et al., chromium isotope GOE evidence (2009)"
+	},
+	"canfield2011ferruginous": {
+		title: "Ferruginous Conditions: A Dominant Feature of the Ocean through Earth's History",
+		author: "D. E. Canfield, S. W. Poulton",
+		year: 2011,
+		journal: "Elements",
+		volume: 7,
+		number: 2,
+		pages: "107–112",
+		url: "https://www.geoscienceworld.org/gsa/elements/article-pdf/7/2/107/3245440/107.pdf",
+		alternativetitle: "Canfield and Poulton, ferruginous ocean (2011)"
+	},
+	"butterfield2000bangiomorpha": {
+		title: "Bangiomorpha pubescens n. gen., n. sp.: Implications for the Evolution of Sex, Multicellularity, and the Mesoproterozoic/Neoproterozoic Radiation of Eukaryotes",
+		author: "N. J. Butterfield",
+		year: 2000,
+		journal: "Paleobiology",
+		volume: 26,
+		number: 3,
+		pages: "386–404",
+		url: "https://www.journals.uchicago.edu/doi/10.1672/026283200X44541",
+		alternativetitle: "Butterfield, Bangiomorpha pubescens (2000)"
+	},
+	"elalbani2010gabon": {
+		title: "Large Colonial Organisms with Coordinated Growth in Oxygenated Environments 2.1 Gyr ago",
+		author: "A. El Albani, S. Bengtson, D. E. Canfield, A. Bekker, et al.",
+		year: 2010,
+		journal: "Nature",
+		volume: 466,
+		number: 7302,
+		pages: "100–104",
+		url: "https://www.nature.com/articles/nature09168",
+		alternativetitle: "El Albani et al., 2.1 Ga multicellular life (2010)"
+	},
+	"zhu2016multicellular": {
+		title: "Decimetre-Scale Multicellular Eukaryotes from the 1.56-Billion-Year-Old Gaoyuzhuang Formation in North China",
+		author: "S. Zhu, M. Zhu, A. Knoll, et al.",
+		year: 2016,
+		journal: "Nature Communications",
+		volume: 7,
+		pages: "11500",
+		url: "https://www.nature.com/articles/ncomms11500",
+		alternativetitle: "Zhu et al., 1.56 Ga multicellular eukaryotes (2016)"
+	},
+	"brocks2017rise": {
+		title: "The Rise of Algae in Cryogenian Oceans and the Emergence of Animals",
+		author: "J. J. Brocks, D. J. Jarrett, A. Sirantoine, C. Hallmann, Y. Hoshino, P. Liyanage",
+		year: 2017,
+		journal: "Nature",
+		volume: 548,
+		pages: "578–581",
+		url: "https://www.nature.com/articles/nature23301",
+		alternativetitle: "Brocks et al., rise of algae and animals (2017)"
+	},
+	"fedonkin1997kimberella": {
+		title: "The Late Precambrian Fossil Kimberella Is a Mollusc-like Bilaterian Organism",
+		author: "M. A. Fedonkin, B. M. Waggoner",
+		year: 1997,
+		journal: "Journal of Paleontology",
+		volume: 71,
+		number: 5,
+		pages: "957–963",
+		url: "https://www.journals.uchicago.edu/doi/10.1017/S0022336000040567",
+		alternativetitle: "Fedonkin and Waggoner, Kimberella (1997)"
+	},
+	"sprigg1947ediacara": {
+		title: "Early Cambrian 'Jellyfishes' of Ediacara, South Australia and Mount John, Kimberly District, Western Australia",
+		author: "R. C. Sprigg",
+		year: 1947,
+		journal: "Transactions of the Royal Society of South Australia",
+		volume: 73,
+		pages: "72–99",
+		url: "https://www.journals.uchicago.edu/doi/10.2307/1203065",
+		alternativetitle: "Sprigg, Ediacara fauna (1947)"
+	},
+	"walcott1911burgess": {
+		title: "The Middle Cambrian Faunas of the Rocks and Waputik Districts, Yoho National Park, Canada",
+		author: "Charles D. Walcott",
+		year: 1911,
+		journal: "Geological Survey of Canada, Memoir 55",
+		url: "https://doi.org/10.4095/119451",
+		alternativetitle: "Walcott, Burgess Shale faunas (1911)"
+	},
+	"whittington1979burgess": {
+		title: "A Middle Cambrian Fauna from the Burgess Shale, British Columbia",
+		author: "H. B. Whittington",
+		year: 1979,
+		journal: "Philosophical Transactions of the Royal Society of London B",
+		volume: 286,
+		pages: "161–203",
+		url: "https://royalsocietypublishing.org/doi/10.1098/rstb.1979.0087",
+		alternativetitle: "Whittington, Burgess Shale re-analysis (1979)"
+	},
+	"shu2001chengjiang": {
+		title: "Primitive Deuterostomes from the Chengjiang Lagerstätte (Lower Cambrian, China)",
+		author: "D. G. Shu, S. Conway Morris, J. Han, L. Chen, X. L. Zhang, Z. F. Zhang, H. Q. Liu, Y. Li, J. N. Liu",
+		year: 2001,
+		journal: "Nature",
+		volume: 414,
+		number: 6862,
+		pages: "419–424",
+		url: "https://www.nature.com/articles/3512601",
+		alternativetitle: "Shu et al., Chengjiang deuterostomes (2001)"
+	},
+	"hou2003chengjiang": {
+		title: "The Chengjiang Fauna — the Oldest Preserved Animal Community",
+		author: "Xianguang Hou, Jan Bergström",
+		year: 2003,
+		journal: "Paleontological Research",
+		volume: 7,
+		number: 1,
+		pages: "55–70",
+		url: "https://www.jstage.jst.go.jp/article/paleores1997/7/1/7_1_55/_article",
+		alternativetitle: "Hou and Bergström, Chengjiang fauna (2003)"
+	},
+	"cloud1973isotope": {
+		title: "Isotopic Evidence for Life by 3,800 Million Years Ago",
+		author: "T. E. Cloud",
+		year: 1973,
+		journal: "Nature",
+		volume: 248,
+		pages: "34–35",
+		url: "https://www.nature.com/articles/248034a0",
+		alternativetitle: "Cloud, isotopic evidence for 3.8 Ga life (1973)"
+	},
+	"antcliffe2014otavia": {
+		title: "The Ghaub Formation, Namibia: A Reassessment of the 760 Ma 'Oldest Animal' Claim",
+		author: "J. B. Antcliffe, M. D. Brasier, J. Bowyer",
+		year: 2014,
+		journal: "South African Journal of Science",
+		volume: 110,
+		number: "1&2",
+		pages: "1–6",
+		url: "https://www.sajis.co.za/article/view/9755",
+		alternativetitle: "Antcliffe et al., Otavia refutation (2014)"
+	},
+	"aristotle1685meteorologica": {
+		title: "Meteorologica (On Meteorological Phenomena)",
+		author: "Aristotle",
+		year: "c. 350 BCE",
+		url: "https://archive.org/details/meteorologica00aristoft",
+		alternativetitle: "Aristotle, Meteorologica"
 	}
 };
