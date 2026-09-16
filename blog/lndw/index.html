@@ -1646,43 +1646,46 @@ document.addEventListener('DOMContentLoaded', () => {
 			const titles = Presentation.slides().map(s => s.getAttribute('data-title'));
 			const row = (label, cond) => rows.push(label + ': ' + (cond ? 'JA' : 'NEIN'));
 			const scenes = () => Array.from(document.querySelectorAll('#nn-intro-anim .nn-anim-scene')).map(s => s.classList.contains('on') ? (+s.dataset.scene) : 0);
+			const key = (k) => document.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+			const snapshot = () => document.querySelector('.slide.active [data-typewriter]')?.dataset.typeHtml;
 
-			// --- Neuron Intro: Pfeiltaste steppt die Szenen ---
+			// --- Neuron Intro: Pfeiltaste steppt die Szenen (via echte Input-Pipeline) ---
 			Presentation.goTo(titles.indexOf('Neuronales Netz Intro'));
-			Presentation.next();  // DENSE-BOX
-			Presentation.next();  // NEURON-BOX → Szene 1
-			row('Intro: Szene 1 nach Reveal', scenes().join(',') === '1,0,0');
-			Presentation.next();  // → Szene 2
-			row('Intro: Pfeil vor = Szene 2', scenes().join(',') === '0,1,0');
-			Presentation.next();  // → Szene 3
-			row('Intro: Pfeil vor = Szene 3', scenes().join(',') === '0,0,1');
-			Presentation.next();  // keine Szene mehr → ReLU fragment
-			row('Intro: Danach normales Weiter (ReLU sichtbar)', document.querySelectorAll('.slide.active .fragment.visible').length === 3);
-			Presentation.next();  // Alternating-Formel
-			Presentation.next();  // Key-Insight
-			Presentation.prev();  // → Alternating (fragment zurück)
-			Presentation.prev();  // → ReLU
-			Presentation.prev();  // → NEURON-BOX, Szene weiterhin 3
-			Presentation.prev();  // DemoReg: Szene zurück → Szene 2 (stoppt beim Abblenden NICHT)
-			row('Intro: Pfeil zurück = Szene 2', scenes().join(',') === '0,1,0');
-			Presentation.prev();  // → Szene 1
-			row('Intro: Pfeil zurück = Szene 1', scenes().join(',') === '1,0,0');
-			Presentation.prev();  // → Szene 1 ist letzte → Fragment wird ausgeblendet
-			row('Intro: Weiter zurück blendet Fragment aus', document.querySelectorAll('.slide.active .fragment.visible').length === 1);
+			const fvis = () => document.querySelectorAll('.slide.active .fragment.visible').length;
+			key('ArrowRight');  // DENSE-BOX
+			key('ArrowRight');  // NEURON-BOX → Szene 1
+			row('Intro: Szene 1 nach Reveal', scenes().join(',') === '1,0');
+			row('DBG canGoNext nach Reveal', typeof NeuronIntroViz !== 'undefined' && NeuronIntroViz.canGoNext());
+			key('ArrowRight');  // → Szene 2
+			row('Intro: Pfeil vor = Szene 2', scenes().join(',') === '0,1');
+			row('DBG scenes nach Pfeil', scenes().join(','));
+			key('ArrowRight');  // keine Szene mehr → ReLU fragment
+			row('Intro: Danach normales Weiter (ReLU sichtbar)', fvis() === 3);
+			key('ArrowRight');  // Alternativ-Formel
+			key('ArrowRight');  // Key-Insight
+			key('ArrowLeft');   // → Alternativ-Formel
+			key('ArrowLeft');   // → ReLU
+			key('ArrowLeft');   // → NEURON-BOX (Szene 2)
+			row('Intro: Zurück bei Szene 2', scenes().join(',') === '0,1');
+			key('ArrowLeft');   // → Szene 1
+			row('Intro: Pfeil zurück = Szene 1', scenes().join(',') === '1,0');
+			key('ArrowLeft');   // → blendet NEURON-BOX aus
+			row('Intro: Weiter zurück blendet Fragment aus', fvis() === 1);
+			row('Intro: dense(x)= vor Matrix (Szene 2 gerendert, kein $$)', Array.from(document.querySelectorAll('#nn-intro-anim')).every(e => !/\$\$/.test(e.textContent)));
+			row('Intro: Alternativ-Formel aligned gerendert', Array.from(document.querySelectorAll('#slide-neuronales-netz-intro .fragment .math-display')).some(d => d.textContent.includes('linear') && d.textContent.includes('knicken') && !d.textContent.includes('$$')));
 
 			// --- Typewriter: Block bis Code fertig getippt ---
 			Presentation.goTo(titles.indexOf('Klassisch vs. KI'));
-			const snapshot = document.querySelector('.slide.active [data-typewriter]').dataset.typeHtml;
-			Presentation.next();  // Klassisch-Box → beginnt zu tippen
-			const busyRightAway = typeof TypewriterViz !== 'undefined' && TypewriterViz.isTypewriting();
-			row('Typewriter: tippt nach Reveal', busyRightAway);
-			Presentation.next();  // sollte durch Typewriter blockiert werden
-			row('Typewriter: Pfeil blockiert (nur 1 Fragment sichtbar)', document.querySelectorAll('.slide.active .fragment.visible').length === 1);
+			const snap = snapshot();
+			key('ArrowRight');  // Klassisch-Box → beginnt zu tippen
+			row('Typewriter: tippt nach Reveal', typeof TypewriterViz !== 'undefined' && TypewriterViz.isTypewriting());
+			key('ArrowRight');  // sollte durch Typewriter blockiert werden
+			row('Typewriter: Pfeil blockiert (nur 1 Fragment sichtbar)', fvis() === 1);
 			setTimeout(() => {
-				row('Typewriter: Code voll getippt', document.querySelector('.slide.active [data-typewriter]').innerHTML === snapshot);
+				row('Typewriter: Code voll getippt', document.querySelector('.slide.active [data-typewriter]').innerHTML === snap);
 				row('Typewriter: nicht mehr aktiv', typeof TypewriterViz !== 'undefined' && !TypewriterViz.isTypewriting());
-				Presentation.next();
-				row('Typewriter: Danach normal weiter (KI-Box)', document.querySelectorAll('.slide.active .fragment.visible').length === 2);
+				key('ArrowRight');
+				row('Typewriter: Danach normal weiter (KI-Box)', fvis() === 2);
 				const pre = document.createElement('pre');
 				pre.id = 'testresult';
 				pre.textContent = rows.join('\n');
