@@ -758,58 +758,18 @@
 
         <div id="heads-wrap" style="margin-top:8px;"></div>
 
+        <div id="heads-sentence-viz" style="margin-top:14px;"></div>
+
         <div class="fragment" style="margin-top:12px; padding:12px 16px; background:#fffbeb; border-left:4px solid #f59e0b; border-radius:6px; color:#92400e; line-height:1.6;">
             <strong>⚠️ Vereinfachung:</strong> Die Muster oben sind <b>unsere Deutung</b> der stärksten Kanten. In Wirklichkeit lernt das Modell <b>seine eigenen, "fremden" Kategorien</b> — aus Optimierung, nicht nach menschlichen Begriffen. So hören manche Köpfe z. B. nicht "Artikel", sondern Signal-Kombinationen, die wir nur grob so übersetzen.
         </div>
+        <!-- Auskommentiert: Quellen hier nicht benötigt.
         <div class="fragment" style="font-size:0.82em; color:#64748b; margin-top:10px; text-align:center;">
             Quellen: Clark et al. 2019 · arXiv:1906.04341 · Elhage et al. 2021 (Transformer Circuits) · Olsson et al. 2022 · arXiv:2209.11895 · Wang et al. 2022 · arXiv:2211.00593
         </div>
+        -->
 
-        <script>
-        (function () {
-            const TOK = ['the','cat','sat','on','the','mat'];
-            function alpha(v){ return Math.min(0.65, v*0.7+0.08).toFixed(2); }
-			function chips(row, who, toks){
-				let best = -1, bv = -1;
-				row.forEach((v,i)=>{ if (v>bv){ bv = v; best = i; } });
-				let s = '<table class="attn-chips"><tr>';
-				s += '<td class="attn-sp">'+(who?'<span class="attn-chip lbl">'+who+'</span>':'')+'</td>';
-				row.forEach((v,i)=>{
-					s += '<td class="attn-vc'+(i===best?' hi':'')+'"><span class="attn-chip'+(v===0?' z':'')+'" style="background:'+(v>0?'rgba(59,130,246,'+alpha(v)+')':'transparent')+'">'+(v>0?v.toFixed(2):'0')+'</span></td>';
-				});
-				s += '</tr>';
-				if (toks){
-					s += '<tr><td class="attn-sp"></td>';
-					toks.forEach((t,i)=>s += '<td class="attn-xc'+(i===best?' hi':'')+'"><span class="chip-x">'+t+'</span></td>');
-					s += '</tr>';
-				}
-				s += '</table>';
-				return s;
-			}
-            const H1CATROW = [0.71,0.29,0,0,0,0];
-            const H2SATROW = [0.20,0.55,0.25,0,0,0];
-            const L4H11SAT = [0.00,1.00,0.00,0.00,0.00,0.00];
-            const NAME = ['Kopf 1','Kopf 2'];
-            const U = [
-                '{\\text{Artikel}\\leftrightarrow\\text{Nomen}}',
-                '{\\text{Subjekt}\\to\\text{Verb}}',
-            ];
-            const ROWS = [
-                { row: H1CATROW, toks: TOK, who:'cat', sight:'"cat" blickt auf "the (0.71); the₂ → the₁ (0.43).' },
-                { row: H2SATROW, toks: TOK, who:'sat', sight:'"sat" (Verb) sucht das Subjekt "cat" (0.55).' },
-            ];
-            let s = '<table class="heads-table"><thead><tr>' +
-                    '<th style="width:230px;">Kopf <span style="font-weight:400;font-size:0.8em;">(unterstrichen: die Frage)</span></th><th>Schaut wo entlang</th><th>Beobachtung</th>' +
-                    '</tr></thead><tbody>';
-            ROWS.forEach((r, i) => {
-                s += '<tr><td><span class="math-inline">$\\underbrace{\\text{' + NAME[i] + '}}_{' + U[i] + '}$</span></td>';
-                s += '<td style="white-space:nowrap;">' + (r.row?chips(r.row, r.who, r.toks):'—') + '</td>';
-                s += '<td>'+r.sight+'</td></tr>';
-            });
-            s += '</tbody></table>';
-            document.getElementById('heads-wrap').innerHTML = s;
-        })();
-        </script>
+        
     </div>
 </div>
 
@@ -1580,6 +1540,7 @@
 <script src="residual_stream_notebook.js"></script>
 <script src="zipf.js"></script>
 <script src="attn_demo.js"></script>
+<script src="heads_web.js"></script>
 <script src="index.js"></script>
 <script src="intuition.js"></script>
 <script src="philosophy.js"></script>

@@ -104,6 +104,9 @@ const DemoRegistry = (() => {
                         canNext: 'isTypewriting',
                         nextMethod: 'nop' },
 
+                { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
+                        guard: d => d.isOnSlide() },
+
         ];
 
     // Normalisiere: Defaults einsetzen

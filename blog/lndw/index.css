@@ -198,6 +198,9 @@ table.heads-table {
 }
 .heads-table td { border: 1px solid #e2e8f0; padding: 8px 10px; vertical-align: top; }
 .heads-table tbody tr:nth-child(even) td { background: #f8fafc; }
+.heads-table tbody tr.active-row td { background: #eff6ff; }
+.heads-table tbody tr.active-row td:first-child { box-shadow: inset 3px 0 0 #2563eb; }
+.heads-table tbody tr.pinned td:first-child { box-shadow: inset 3px 0 0 #f59e0b; }
 
 /* ============ NAVIGATION BAR ============ */
 #nav-bar {
