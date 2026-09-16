@@ -208,14 +208,14 @@
         <div class="demo-box">
             <p>Mit genug Neuronen → jede stetige Funktion beliebig genau.</p>
             <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-                <label style="font-weight:bold;">Zielfunktion:</label>
+                <div data-short><label style="font-weight:bold;">Zielfunktion:</label>
                 <select id="nn-target-fn" onchange="reset_nn_num_neurons()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1;">
                     <option value="sin">sin(x)</option>
                     <option value="quadratic">x²</option>
                     <option value="abs">|x|</option>
                     <option value="step">Treppenfunktion</option>
                     <option value="custom">Wellenform</option>
-                </select>
+                </select></div>
                 <label style="font-weight:bold; margin-left:12px;">Gesamtanzahl Neuronen:</label>
                 <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="1" style="width:140px; accent-color:#6366f1;">
                 <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">1</span>
