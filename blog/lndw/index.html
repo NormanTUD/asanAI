@@ -32,13 +32,21 @@
 <div class="slide" id="slide-was-sind-llm" data-title="Was sind Large Language Models?">
 	<div class="slide-content">
 		<h2>Was sind Large Language Models?</h2>
-		<div style="align-items:center; justify-content:center; gap:20px; margin:30px 0; flex-wrap:wrap;">
-			<p><b>ChatGPT</b> · <b>Gemini</b> · <b>Claude</b></p>
-			<ul>
-				<li class="fragment">Frage stellen → Antwort erhalten</li>
-				<li class="fragment">= <b>Large Language Model</b> (LLM)</li>
+
+		<p style="text-align:center; margin:14px 0 8px;"><b>ChatGPT</b> · <b>Gemini</b> · <b>Claude</b> — alle kennen sie. Aber wie funktionieren sie eigentlich?</p>
+
+		<div class="fragment demo-box" style="max-width:720px; margin:14px auto; padding:18px 24px;">
+			<p style="font-weight:bold; margin:0 0 8px;">Die Tour:</p>
+			<ul style="margin:0; line-height:1.9;">
+				<li><b>Woher kommt das Wissen?</b> — Muster in Texten und Daten</li>
+				<li><b>Wie „versteht" es Wörter?</b> — Tokens, Embeddings, Position</li>
+				<li><b>Wie findet es Zusammenhänge?</b> — Attention &amp; der Residual Stream</li>
+				<li><b>Wie entsteht eine Antwort?</b> — Vorhersage, Token für Token</li>
+				<li><b>Und versteht es wirklich?</b> — Grenzen, Halluzinationen, Bias</li>
 			</ul>
-		<p class="fragment">Grundlage vieler KI-Systeme (Bild, Audio, …)</p>
+		</div>
+
+		<p class="fragment" style="text-align:center; margin-top:10px;">Am Ende steht ein Gefühl dafür, wie ChatGPT wirklich funktioniert.</p>
 	</div>
 </div>
 </div>
@@ -64,7 +72,7 @@
         <!-- Sinus-Formel (vereinfacht) -->
         <div class="fragment" style="margin-top:16px;">
             <div class="formula-box" style="max-width:900px; margin-left:auto; margin-right:auto;">
-                <div class="math-display">$$\underbrace{h(t)}_{\text{Sonnenstand zur Zeit } t} = \sin\!\left(t\right)$$</div>
+                <div class="math-display">$$\underbrace{h(t)}_{\text{Sonnenstand zur Zeit } t} \approx \sin\!\left(t\right)$$</div>
             </div>
         </div>
 
