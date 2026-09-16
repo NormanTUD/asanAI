@@ -723,6 +723,9 @@ const Selection = (() => {
         if (byId('sel-close')) byId('sel-close').addEventListener('click', () => closePanel());
         if (panelEl()) panelEl().style.display = 'none';
         syncPanel();
+        // Numerische ?slides=0,10-16 sofort auf Slide-IDs normalisieren,
+        // damit die Adresszeile immer sprechende Namen zeigt.
+        updateURL();
     }
 
     function copyURL() {
