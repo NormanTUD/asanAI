@@ -194,62 +194,11 @@ const Presentation = (() => {
     let fragmentIndex = {};
     let searchQuery = '';
     let fastMode = false;        // ?fast=1 → einfache Fragmente direkt anzeigen
-    let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
-
-    // ────────────────────────────────────────────────────────────
-    // KURZ-PRÄSENTATION: extra Abschluss-Folie (nur fast=1&short=1)
-    // Wird nach der Folie „Die Vorhersage" in die Navigation eingefügt
-    // und zeigt, dass alles wieder an den Anfang angehängt wird.
-    // Die ?slides=-Indizes der Ursprungsfolge bleiben unverändert, da
-    // nur das (gefilterte) slides-Array angepasst wird.
-    // ────────────────────────────────────────────────────────────
-    function buildShortLoopSlide() {
-        const slide = document.createElement('div');
-        slide.className = 'slide';
-        slide.setAttribute('data-title', 'Wort für Wort – wieder von vorn');
-        slide.setAttribute('data-non-original', '1');
-        const chip = (tokens, lastIdx) => {
-            const t = tokens.map((w, i) => i === lastIdx
-                ? `<span style="background:#fde68a; border:2px solid #f59e0b; border-radius:8px; padding:4px 9px; font-weight:bold;">${w}</span>`
-                : `<span style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:4px 9px;">${w}</span>`).join(' ');
-            return `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; font-size:1.05em; white-space:nowrap;">${t}</div>`;
-        };
-        slide.innerHTML = `
-            <div class="slide-content">
-                <div style="text-align:center; max-width:1000px; margin:0 auto;">
-                    <h2 style="margin-bottom:8px;">Wort für Wort – wieder von vorn</h2>
-                    <p style="font-size:1.1em; color:#475569; margin-bottom:26px;">
-                        Jede Vorhersage hängt das gewählte Wort an den Kontext an.
-                        Beim nächsten Durchgang liest das Modell alles <b>wieder von vorn</b>.
-                    </p>
-                    <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
-                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;">
-                            ${chip(['Die', 'Katze', 'saß'], -1)}
-                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
-                            <span style="background:#fef3c7; border:2px solid #f59e0b; border-radius:10px; padding:10px 14px; color:#92400e; font-weight:bold; font-size:1.05em;">🎲 auf</span>
-                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
-                            ${chip(['Die', 'Katze', 'saß', 'auf'], -1)}
-                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
-                            <span style="background:#fef3c7; border:2px solid #f59e0b; border-radius:10px; padding:10px 14px; color:#92400e; font-weight:bold; font-size:1.05em;">🎲 der</span>
-                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
-                            ${chip(['Die', 'Katze', 'saß', 'auf', 'der'], -1)}
-                            <span style="font-size:1.4em; color:#94a3b8;">…</span>
-                        </div>
-                        <div style="margin-top:8px; font-size:1.15em; color:#1e293b; background:#fffef7; border:2px dashed #d4a574; border-radius:12px; padding:14px 22px;">
-                            <span style="font-size:1.6em;">↺</span>
-                            <b>Letztes gewähltes Wort</b> → wieder an den <b>Anfang</b> angehängt → alles beginnt <b>von vorn</b>.
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        slide.querySelector('#btn-loop-restart').addEventListener('click', () => goTo(0));
-        return slide;
-    }
+let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
 
     // ────────────────────────────────────────────────────────────
     // SLIDE-AUSWAHL via URL:  ?slides=0,1,2,3,10-16,17,19-30
     // 0-basierte Indexe der Ursprungsfolge, Bereiche inkl. der Enden.
-    // Zusätzlich sind Slide-IDs möglich:  ?slides=slide-attention-matrix,slide-9
     // Ohne Parameter (oder leer) → alle Folien.
     // ────────────────────────────────────────────────────────────
     function parseSlideSelection(total) {
@@ -296,11 +245,24 @@ const Presentation = (() => {
         fastMode = new URLSearchParams(window.location.search).get('fast') === '1';
         shortMode = new URLSearchParams(window.location.search).get('short') === '1';
         if (fastMode && shortMode) {
-            const loopSlide = buildShortLoopSlide();
-            document.body.appendChild(loopSlide);
-            const vorhersageIdx = slides.findIndex(s => s.getAttribute('data-title') === 'Die Vorhersage');
-            const insertAt = vorhersageIdx >= 0 ? vorhersageIdx + 1 : slides.length;
-            slides.splice(insertAt, 0, loopSlide);
+            // Kurzversion: „Die autoregressive Schleife" wird aus ihrer
+            // Originalposition herausgenommen und direkt nach „Die Vorhersage"
+            // geschoben (Ende der Kurzversion → Kreislauf beginnt wieder).
+            // Nur das slides-Array wird verändert, der DOM bleibt unangetastet,
+            // damit die ?slides=-Indizes der Ursprungsfolge gültig bleiben.
+            const titleOf = s => s.getAttribute('data-title');
+            const vorhersageIdx = slides.findIndex(s => titleOf(s) === 'Die Vorhersage');
+            const arIdx = slides.findIndex(s => titleOf(s) === 'Autoregressive Schleife');
+            if (arIdx >= 0) {
+                const [arSlide] = slides.splice(arIdx, 1);
+                if (vorhersageIdx < 0) {
+                    slides.push(arSlide);
+                } else {
+                    let insertAt = vorhersageIdx;
+                    if (arIdx < vorhersageIdx) insertAt--; // Vorhersage rückt eine Position vor
+                    slides.splice(insertAt + 1, 0, arSlide);
+                }
+            }
         }
 
         slides.forEach((_, i) => { fragmentIndex[i] = 0; });
