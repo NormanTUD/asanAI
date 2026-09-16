@@ -159,7 +159,7 @@
 			<div class="math-display">$$\text{dense}(x) = W \cdot x + B$$</div>
 		    </div>
 		    <div class="nn-anim-scene" data-scene="2">
-			<div class="math-display">$$
+			<div class="math-display">$$\text{dense}(x) =
 				\begin{pmatrix}
 				w_1 \\ w_2 \\ w_3 \\ \vdots
 				\end{pmatrix} \cdot \begin{pmatrix}
@@ -170,9 +170,6 @@
 				\end{pmatrix}
 			$$</div>
 		    </div>
-		    <div class="nn-anim-scene" data-scene="3">
-			<div class="math-display">$$\text{dense}(x) = w_1 \cdot x_1 + b_1$$</div>
-		    </div>
 		</div>
             </div>
 
@@ -181,7 +178,14 @@
         </div>
 
         <div class="fragment formula-box" data-nofast>
-		<div class="math-display">$$\underbrace{\mathbf{x}_1 = \text{dense}(\mathbf{x}_0)}_{\text{linear}} ,\quad \underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{knicken}} ,\quad \underbrace{\mathbf{x}_3 = \text{dense}(\mathbf{x}_2)}_{\text{zurück zum Linear}} ,\ \ldots$$</div>
+		<div class="math-display" style="font-size:1.05em;">$$
+			\begin{aligned}
+			\underbrace{\mathbf{x}_1 = \text{dense}(\mathbf{x}_0)}_{\text{linear}} \\
+			\underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{knicken}} \\
+			\underbrace{\mathbf{x}_3 = \text{dense}(\mathbf{x}_2)}_{\text{zurück zum Linear}} \\
+			&\;\vdots
+			\end{aligned}
+		$$</div>
         </div>
 
         <div class="key-insight fragment" data-nofast>
