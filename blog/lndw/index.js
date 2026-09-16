@@ -1963,7 +1963,12 @@ const TypewriterViz = (() => {
     function isTypewriting() { return active; }
     function setActive(v) { active = v; }
 
-    return { isTypewriting, setActive };
+    function isOnClassicSlide() {
+        const a = document.querySelector('.slide.active');
+        return a && a.getAttribute('data-title') === 'Klassisch vs. KI';
+    }
+
+    return { isTypewriting, setActive, isOnClassicSlide, nop() {} };
 })();
 
 /* ================================================================

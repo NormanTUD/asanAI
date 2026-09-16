@@ -91,9 +91,18 @@ const DemoRegistry = (() => {
                         } },
 
                 { ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
+                        guard: d => d.isOnIntroSlide(),
+                        canNext: 'canGoNext',
+                        nextMethod: 'next',
+                        canPrev: 'canGoPrev',
+                        prevMethod: 'prev',
                         slideTest: s => s.getAttribute('data-title') === 'Neuronales Netz Intro',
-                        onEnter: d => d.reset(),
-                        onLeave: d => d.stop() },
+                        onEnter: d => d.reset() },
+
+                { ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
+                        guard: d => d.isOnClassicSlide(),
+                        canNext: 'isTypewriting',
+                        nextMethod: 'nop' },
 
         ];
 
@@ -199,10 +208,10 @@ const FragmentActions = {
 	    backward: (frag) => resetTypewriter(frag),
 	},
 
-	// "Was sind Neuronale Netzwerk?" – 3-Szenerie-Animation (dense → Vektoren → scalar)
+	// "Was sind Neuronale Netzwerk?" – 3-Szene manuell (Pfeiltaste weiter/rückwärts)
 	'neuron-intro-anim': {
 	    forward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.start(); },
-	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.reset(); },
+	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.hideFragment(); },
 	},
 
 };
@@ -256,12 +265,13 @@ function startTypewriter(frag) {
     _twStop(el);
     let n = 0;
     el.innerHTML = '<span class="type-caret">▍</span>';
+    if (typeof TypewriterViz !== 'undefined') TypewriterViz.setActive(true);
     el._twTimer = setInterval(() => {
         n++;
         el.innerHTML = _twPrefix(parts, n) + '<span class="type-caret">▍</span>';
         if (n >= total) {
-            _twStop(el);
             el.innerHTML = el.dataset.typeHtml;
+            _twStop(el);
         }
     }, speed);
 }
@@ -277,6 +287,7 @@ function _twStop(el) {
     if (el._twTimer) {
         clearInterval(el._twTimer);
         el._twTimer = null;
+        if (typeof TypewriterViz !== 'undefined') TypewriterViz.setActive(false);
     }
 }
 
