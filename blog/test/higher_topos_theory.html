@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Higher Topos Theory — Interaktiver Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: {fontCache:'global'} };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0b0d17; --bg2:#141830; --panel:#1a1f3a; --panel2:#232849;
+    --accent:#8b5cf6; --accent2:#06b6d4; --accent3:#f59e0b; --accent4:#ec4899;
+    --text:#e9ecff; --muted:#a0a8c8; --good:#10b981; --bad:#ef4444;
+    --border:#2d3358;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:linear-gradient(180deg,#07091a,#0b0d17);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;line-height:1.55}
+  header{position:sticky;top:0;z-index:50;background:rgba(11,13,23,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 22px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  header h1{font-size:17px;margin:0;font-weight:600;background:linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent}
+  nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  nav button{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .2s}
+  nav button:hover{background:var(--panel2);border-color:var(--accent)}
+  nav button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent}
+  main{max-width:1200px;margin:0 auto;padding:24px 22px 80px}
+  section{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+  section h2{margin-top:0;font-size:22px;background:linear-gradient(90deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  section h3{color:var(--accent3);font-size:16px;margin-top:24px;border-left:3px solid var(--accent3);padding-left:10px}
+  .tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-right:6px}
+  .tag.motiv{background:rgba(245,158,11,.15);color:var(--accent3);border-color:var(--accent3)}
+  .tag.idee{background:rgba(139,92,246,.15);color:var(--accent);border-color:var(--accent)}
+  .tag.antwort{background:rgba(16,185,129,.15);color:var(--good);border-color:var(--good)}
+  .tag.prereq{background:rgba(236,72,153,.15);color:var(--accent4);border-color:var(--accent4)}
+  .controls{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;background:var(--bg2);padding:14px 18px;border-radius:12px;margin:14px 0;border:1px solid var(--border)}
+  .controls label{font-size:13px;color:var(--muted);white-space:nowrap}
+  .controls input[type=range]{width:100%;accent-color:var(--accent)}
+  .controls .val{font-family:"SF Mono",Consolas,monospace;color:var(--accent2);font-size:13px;min-width:60px;text-align:right}
+  .canvas-wrap{background:#050716;border-radius:12px;border:1px solid var(--border);overflow:hidden;position:relative}
+  canvas{display:block;width:100%}
+  .plot{width:100%;height:340px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:820px){.grid2{grid-template-columns:1fr}}
+  .callout{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(6,182,212,.05));border-left:4px solid var(--accent);padding:14px 18px;border-radius:0 12px 12px 0;margin:14px 0;font-size:14px}
+  .callout.motiv{border-color:var(--accent3);background:linear-gradient(135deg,rgba(245,158,11,.08),transparent)}
+  .callout.antwort{border-color:var(--good);background:linear-gradient(135deg,rgba(16,185,129,.08),transparent)}
+  code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-family:"SF Mono",Consolas,monospace;font-size:.9em;color:var(--accent2)}
+  .step{display:flex;gap:12px;align-items:flex-start;margin:10px 0}
+  .step .num{flex:0 0 28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  details{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin:10px 0}
+  summary{cursor:pointer;font-weight:600;color:var(--accent2)}
+  .toc{columns:2;column-gap:22px}
+  .toc a{color:var(--accent2);text-decoration:none;display:block;padding:3px 0;font-size:13px}
+  .toc a:hover{color:var(--accent);text-decoration:underline}
+  .footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px}
+  .pill{display:inline-block;background:var(--panel2);padding:2px 8px;border-radius:99px;font-family:monospace;font-size:11px;color:var(--accent3)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>∞-Kategorien &amp; Topoi — ein interaktiver Streifzug</h1>
+  <nav>
+    <button data-tab="ueberblick" class="active">Überblick</button>
+    <button data-tab="simpl">Simpliziale Mengen</button>
+    <button data-tab="horns">Horns &amp; Kan</button>
+    <button data-tab="infcat">∞-Kategorien</button>
+    <button data-tab="nerve">Nerve &amp; Homotopie-Kategorie</button>
+    <button data-tab="fibrations">Fibrationen</button>
+    <button data-tab="colim">(Ko)Limits &amp; Präsentierbar</button>
+    <button data-tab="topoi">∞-Topoi</button>
+    <button data-tab="paracompact">Parakompakte Räume</button>
+    <button data-tab="dimension">Dimension &amp; Verschwinden</button>
+    <button data-tab="properness">Eigentliche Basiswechsel</button>
+    <button data-tab="antworten">Kernfragen</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- =============== ÜBERBLICK =============== -->
+<section id="ueberblick">
+  <h2>Worum geht es in "Higher Topos Theory"?</h2>
+  <span class="tag motiv">Motivation</span>
+  <span class="tag idee">Idee</span>
+  <span class="tag antwort">Ergebnis</span>
+
+  <div class="callout motiv">
+    <b>Konkrete Ausgangsfrage (Vorwort).</b> Für einen "netten" topologischen Raum $X$ (z.B. CW-Komplex) ist die singuläre Kohomologie $H^n(X;G)$ ein zentrales Werkzeug der algebraischen Topologie. Für $n=1$ hat sie <em>drei</em> äquivalente Beschreibungen:
+    <ol>
+      <li>Als $G$-wertige singuläre Kozykel modulo Korand.</li>
+      <li>Als Homotopieklassen von Abbildungen $X\to BG$.</li>
+      <li>Als Isomorphieklassen von $G$-Torsoren auf $X$.</li>
+    </ol>
+    Für schlechtere Räume $X$ zerbricht die Äquivalenz — nur (3), die <b>garbentheoretische</b> Beschreibung, funktioniert überall. Für $H^2(X;G)$ braucht man <b>Gerben</b> (2-Stacks), für $H^n$ dann $n$-Stacks. Grothendieck vermutete das in seinem berühmten Brief an Quillen.
+  </div>
+
+  <div class="callout idee">
+    <b>Leitidee des Buches.</b> Die ganze Theorie der Stacks/Gerben verlangt <b>höhere Kategorien</b>. Lurie baut eine vollständige, brauchbare <b>$(\infty,1)$-Kategorien</b>-Theorie auf simplizialer Grundlage (Joyal's quasi-Kategorien) und definiert damit den Begriff des <b>$\infty$-Topos</b> als das natürliche Habitat für "Garben von Räumen".
+  </div>
+
+  <div class="callout antwort">
+    <b>Antworten, die das Buch liefert (grob):</b>
+    <ul>
+      <li>Was ist ein $\infty$-Topos? Drei äquivalente Charakterisierungen (Kap. 6, Theorem 6.1.0.6).</li>
+      <li>Wie klassifiziert man Kohomologie mit nicht-abelschen / höheren Koeffizienten? Über Eilenberg-MacLane-Objekte in einem $\infty$-Topos (§7.2).</li>
+      <li>Wann gilt der <b>eigentliche Basiswechselsatz</b> nicht-abelsch? Immer, für eigentliche Abbildungen zwischen lokalkompakten Räumen (§7.3).</li>
+      <li>Kann man klassische Homotopietheorie auf parakompakten Räumen aus Garben rekonstruieren? Ja: $[X,|K|] \cong \pi_0(p_*p^*K)$ (§7.1).</li>
+    </ul>
+  </div>
+
+  <h3>Landkarte des Aufbaus</h3>
+  <div class="toc">
+    <a href="#simpl">1. Simpliziale Mengen — die Sprache</a>
+    <a href="#horns">2. Horns, Kan-Komplexe, quasi-Kategorien</a>
+    <a href="#infcat">3. ∞-Kategorien konkret</a>
+    <a href="#nerve">4. Nerv &amp; Homotopie-Kategorie</a>
+    <a href="#fibrations">5. Faserungen (links/rechts/inner/(co)Cartesian)</a>
+    <a href="#colim">6. (Ko)limiten &amp; Präsentierbare ∞-Kategorien</a>
+    <a href="#topoi">7. ∞-Topoi — Definition &amp; Giraud</a>
+    <a href="#paracompact">8. Parakompakte Räume</a>
+    <a href="#dimension">9. Dimensionstheorie &amp; Grothendieck-Verschwinden</a>
+    <a href="#properness">10. Eigentlicher Basiswechsel (nicht-abelsch)</a>
+    <a href="#antworten">11. Zusammenfassung: die Kernfragen</a>
+  </div>
+</section>
+
+<!-- =============== SIMPLIZIALE MENGEN =============== -->
+<section id="simpl">
+  <h2>1. Simpliziale Mengen — die Grundsprache</h2>
+  <span class="tag prereq">Prerequisite</span>
+
+  <div class="callout">
+    Eine <b>simpliziale Menge</b> $S$ ist eine Folge von Mengen $S_0, S_1, S_2, \dots$ mit "Rand-" ($d_i$) und "Entartungs-" ($s_i$) Abbildungen, die bestimmten Relationen genügen. Denke: $S_n$ = Menge der $n$-Simplizes; $d_i$ vergisst die $i$-te Ecke, $s_i$ dupliziert die $i$-te Ecke.
+  </div>
+
+  <p>Prototyp: der Standardsimplex $\Delta^n$ mit $\Delta^n_k = $ Menge der monotonen Abbildungen $[k]\to[n]$. Die nicht-entarteten $k$-Simplizes von $\Delta^n$ entsprechen den $(k+1)$-elementigen Teilmengen von $\{0,\dots,n\}$.</p>
+
+  <div class="controls">
+    <label>$n$ =</label>
+    <input type="range" id="simplN" min="0" max="4" step="1" value="2">
+    <span class="val" id="simplNv">2</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="simplCanvas" height="360"></canvas></div>
+  <div class="legend">
+    <span><span class="dot" style="background:#f59e0b"></span>Ecken $\Delta^n_0$</span>
+    <span><span class="dot" style="background:#06b6d4"></span>Kanten (nicht-entartete 1-Simplizes)</span>
+    <span><span class="dot" style="background:#8b5cf6"></span>2-Simplizes (Flächen)</span>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">Anzahl nicht-entarteter $k$-Simplizes von $\Delta^n$: $\binom{n+1}{k+1}$. Für $n=$ <span id="simplNout">2</span>: <span id="simplCounts">…</span></p>
+
+  <h3>Wozu?</h3>
+  <p>Simpliziale Mengen sind gleichzeitig ein Modell für <b>topologische Räume</b> (via geometrische Realisierung $|S|$), für <b>Kategorien</b> (via Nerv), und – wie wir gleich sehen – für <b>$\infty$-Kategorien</b>. Diese Doppel/Mehrfachrolle ist der Grund, warum die Sprache so mächtig ist.</p>
+</section>
+
+<!-- =============== HORNS & KAN =============== -->
+<section id="horns">
+  <h2>2. Horns, Kan-Komplexe, quasi-Kategorien</h2>
+  <span class="tag prereq">Prerequisite</span>
+  <span class="tag idee">Idee</span>
+
+  <p>Der <b>Horn</b> $\Lambda^n_i \subset \Delta^n$ ist der Simplex minus Inneres minus der $i$-ten Fläche. Ein Horn ist "fast" ein Simplex — es fehlt eine Seite.</p>
+
+  <div class="controls">
+    <label>$n$ =</label>
+    <input type="range" id="hornN" min="1" max="3" step="1" value="2">
+    <span class="val" id="hornNv">2</span>
+  </div>
+  <div class="controls">
+    <label>$i$ =</label>
+    <input type="range" id="hornI" min="0" max="2" step="1" value="1">
+    <span class="val" id="hornIv">1</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="hornCanvas" height="360"></canvas></div>
+  <div class="legend">
+    <span><span class="dot" style="background:#10b981"></span>Vorhandene Kanten von $\Lambda^n_i$</span>
+    <span><span class="dot" style="background:#ef4444"></span>Fehlende Kante(n)</span>
+    <span><span class="dot" style="background:#8b5cf680"></span>Fehlendes Inneres</span>
+  </div>
+  <p id="hornType" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+
+  <div class="callout idee" style="margin-top:18px">
+    <b>Die Klassifikation von Horns:</b>
+    <ul>
+      <li><b>Innerer</b> Horn: $0 &lt; i &lt; n$. Steht für: "wenn ich die Komposition von $g\circ f$ habe, sollte auch $g$ und $f$ da sein" — bzw. umgekehrt.</li>
+      <li><b>Äußerer</b> Horn: $i=0$ oder $i=n$. Steht für: "wenn $g$ und $g\circ f$ da sind, ist $f$ auch da" — das ist Invertierbarkeit.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <b>Kan-Erweiterungsbedingung.</b> $S$ ist ein <b>Kan-Komplex</b>, wenn <em>jeder</em> Horn $\Lambda^n_i \to S$ zu $\Delta^n\to S$ fortsetzbar ist. Kan-Komplexe = ∞-Gruppoide = "Räume".<br>
+    $S$ ist eine <b>$\infty$-Kategorie</b> (quasi-Kategorie), wenn nur <em>innere</em> Horns fortsetzbar sind — Kompositionen existieren, aber nicht alle Morphismen sind invertierbar.
+  </div>
+
+  <p>Wenn $\mathcal{C}$ eine gewöhnliche Kategorie ist, dann hat ihr Nerv $N(\mathcal{C})$ die <b>eindeutige</b> Erweiterung für innere Horns (Prop. 1.1.2.2). Bei ∞-Kategorien lassen wir die Eindeutigkeit fallen.</p>
+</section>
+
+<!-- =============== INFCAT =============== -->
+<section id="infcat">
+  <h2>3. ∞-Kategorien — Kompositionen bis auf kohärente Homotopie</h2>
+  <span class="tag idee">Idee</span>
+
+  <p>In einer $\infty$-Kategorie $\mathcal C$ liefert ein innerer Horn $\Lambda^2_1$ mit zwei Morphismen $f:x\to y$, $g:y\to z$ ein 2-Simplex $\sigma$, dessen dritte Kante $h=d_1\sigma$ eine <b>Komposition</b> $g\circ f$ ist. Diese Komposition ist nur bis auf einen <b>kontrahierbaren Raum</b> von Wahlen bestimmt — deshalb "bis auf Homotopie".</p>
+
+  <div class="controls">
+    <label>Nach jeder Komp. weiter komponieren?</label>
+    <input type="range" id="assocSteps" min="1" max="4" step="1" value="2">
+    <span class="val" id="assocStepsV">2</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="assocCanvas" height="380"></canvas></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">
+    Bei drei komponierbaren Morphismen $f,g,h$ existiert in einer $\infty$-Kategorie das Bild rechts: ein 3-Simplex, dessen Randflächen die "beiden Klammerungen" $(hg)f$ und $h(gf)$ als Kompositionen darstellen — die Assoziativität kommt aus der 3-Zellen-Homotopie automatisch mit.
+  </p>
+
+  <h3>Was heißt "Äquivalenz"?</h3>
+  <div class="callout">
+    Ein Morphismus $f:x\to y$ in einer $\infty$-Kategorie $\mathcal C$ heißt <b>Äquivalenz</b>, wenn er in der Homotopiekategorie $\mathrm{h}\mathcal C$ ein Isomorphismus ist. Äquivalent (Prop. 1.2.4.3): für jedes $n\ge 2$ und jede Erweiterung $\Lambda^n_0\to \mathcal C$, die auf $\Delta^{\{0,1\}}$ mit $f$ übereinstimmt, existiert eine Erweiterung auf $\Delta^n$.
+  </div>
+
+  <p>Insbesondere: <b>Kan-Komplex $\iff$ $\infty$-Groupoid $\iff$ jede 1-Zelle ist Äquivalenz</b> — das ist die Übersetzung "Räume = ∞-Groupoide".</p>
+</section>
+
+<!-- =============== NERVE =============== -->
+<section id="nerve">
+  <h2>4. Nerv einer Kategorie &amp; Homotopiekategorie</h2>
+  <span class="tag prereq">Prerequisite</span>
+
+  <div class="callout">
+    Für eine gewöhnliche Kategorie $\mathcal C$ ist $N(\mathcal C)_n = \{\text{Ketten } c_0\xrightarrow{f_1}c_1\xrightarrow{f_2}\cdots\xrightarrow{f_n}c_n\}$. Face-Abbildungen: $d_i$ komponiert $f_{i+1}\circ f_i$, $d_0$ und $d_n$ vergessen einen Endpunkt.
+  </div>
+
+  <div class="controls">
+    <label>Kettenlänge $n$:</label>
+    <input type="range" id="nerveN" min="0" max="4" value="2">
+    <span class="val" id="nerveNv">2</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="nerveCanvas" height="220"></canvas></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">
+    Die Face-Operation $d_1$ auf einem 2-Simplex $c_0\xrightarrow{f}c_1\xrightarrow{g}c_2$ ergibt $c_0\xrightarrow{g\circ f}c_2$ — die Komposition ist geometrisch die "verkürzte Kette".
+  </p>
+
+  <h3>Umgekehrt: Homotopiekategorie einer ∞-Kategorie</h3>
+  <p>Zu jeder $\infty$-Kategorie $\mathcal C$ konstruiert man eine gewöhnliche Kategorie $\mathrm h\mathcal C$ mit denselben Objekten und $\mathrm{Hom}_{\mathrm h\mathcal C}(x,y) = \pi_0\mathrm{Map}_{\mathcal C}(x,y)$. Der Buchbeweis (Prop. 1.2.3.5) ze
+  <h3>Umgekehrt: Homotopie-Kategorie einer ∞-Kategorie</h3>
+  <p>Zu jeder $\infty$-Kategorie $\mathcal C$ konstruiert man eine gewöhnliche Kategorie $\mathrm h\mathcal C$ mit denselben Objekten und $\mathrm{Hom}_{\mathrm h\mathcal C}(x,y) = \pi_0\mathrm{Map}_{\mathcal C}(x,y)$. Der Buchbeweis (Prop. 1.2.3.5) zeigt: wenn $\mathcal C$ eine $\infty$-Kategorie ist, dann ist die Homotopie-Relation auf 1-Simplizes eine Äquivalenzrelation, Komposition ist wohldefiniert modulo Homotopie, und assoziativ.</p>
+
+  <div class="callout">
+    <b>Merke:</b> Aus <em>bis-auf-Homotopie</em>-Kompositionen in $\mathcal C$ wird eine <em>strikte</em> Kategorie $\mathrm h\mathcal C$. Man verliert dabei die höheren Homotopie-Informationen — deshalb ist $\mathrm h\mathcal C$ nur ein grober Schatten von $\mathcal C$.
+  </div>
+</section>
+
+<!-- =============== FIBRATIONS =============== -->
+<section id="fibrations">
+  <h2>5. Faserungen simplizialer Mengen</h2>
+  <span class="tag prereq">Prerequisite</span>
+  <span class="tag idee">Idee</span>
+
+  <p>Ein <b>innerer Fibration</b> $p: X \to S$ hat die Lifting-Eigenschaft für innere Horns $\Lambda^n_i \subset \Delta^n$, $0 < i < n$. Fasern über Vertizes von $S$ sind $\infty$-Kategorien; Kanten von $S$ liefern <em>Korrespondenzen</em> zwischen Fasern.</p>
+
+  <p><b>Links-/Rechts-Fibrationen:</b> Lifting für <em>alle</em> Horns mit $0 \le i < n$ (bzw. $0 < i \le n$). Fasern sind Kan-Komplexe. Rechtsfibrationen $X \to S$ codieren kontravariante Funktoren $S^{\mathrm{op}} \to \mathcal S$ ("Prägarben von Räumen").</p>
+
+  <div class="controls">
+    <label>Faserungstyp:</label>
+    <input type="range" id="fibType" min="0" max="3" step="1" value="0">
+    <span class="val" id="fibTypeV">Innere</span>
+  </div>
+  <div class="controls">
+    <label>Kanten in $S$:</label>
+    <input type="range" id="fibEdges" min="1" max="5" step="1" value="3">
+    <span class="val" id="fibEdgesV">3</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="fibCanvas" height="380"></canvas></div>
+  <p id="fibDesc" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+
+  <h3>Kartesische Fibrationen</h3>
+  <p>Eine <b>kartesische Fibration</b> ist ein innerer Fibration $p: X \to S$, sodass zu jedem Objekt $y \in X$ und jeder Kante $f: x \to p(y)$ in $S$ eine $p$-kartesische Kante $\bar f: \bar x \to y$ existiert, die $f$ liftet. Kartesische Fibrationen entsprechen (kontravarianten) Funktoren $S^{\mathrm{op}} \to \mathrm{Cat}_\infty$.</p>
+
+  <div class="callout idee">
+    <b>Straightening/Unstraightening</b> (Kap. 3): Kartesische Fibrationen $X \to S$ $\;\leftrightarrow\;$ Funktoren $S^{\mathrm{op}} \to \mathrm{Cat}_\infty$. Das ist eine der <em>zentralen technischen Errungenschaften</em> des Buches — sie macht das Arbeiten mit "Familien von $\infty$-Kategorien" praktikabel.
+  </div>
+</section>
+
+<!-- =============== (KO)LIMITS =============== -->
+<section id="colim">
+  <h2>6. (Ko)Limiten & Präsentierbare ∞-Kategorien</h2>
+  <span class="tag prereq">Prerequisite</span>
+
+  <p>In einer $\infty$-Kategorie $\mathcal C$ ist der <b>Kolimes</b> eines Diagramms $p: K \to \mathcal C$ ein <em>initiales Objekt</em> von $\mathcal C_{p/}$. Er ist bis auf kontrahiblen Wahl-Raum eindeutig — eine viel stärkere Aussage als in klassischer Kategorientheorie.</p>
+
+  <div class="controls">
+    <label>Diagramm $K$:</label>
+    <input type="range" id="colimDiag" min="0" max="3" step="1" value="0">
+    <span class="val" id="colimDiagV">Pushout</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="colimCanvas" height="360"></canvas></div>
+  <p id="colimDesc" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+
+  <h3>Homotopie-(Ko)Limiten vs. ∞-kategorielle (Ko)Limiten</h3>
+  <p>Theorem 4.2.4.1: Für eine simpliziale Modellkategorie $\mathbf A$ stimmen (ko)Limiten in der zugrundeliegenden $\infty$-Kategorie $\mathrm N(\mathbf A^\circ)$ mit den klassischen <em>Homotopie</em>-(Ko)Limiten überein. Das rechtfertigt die Notation und erlaubt es, klassische Modellkategorien-Rechnungen in $\infty$-Sprache zu übersetzen.</p>
+
+  <h3>Präsentierbarkeit</h3>
+  <p>Eine $\infty$-Kategorie $\mathcal C$ heißt <b>präsentierbar</b>, wenn sie klein-erzeugt ist und alle kleinen (Ko)Limiten hat. Formal: $\mathcal C \simeq \mathrm{Ind}_\kappa(\mathcal C_0)$ für eine kleine $\infty$-Kategorie $\mathcal C_0$ und einen regulären Kardinal $\kappa$.</p>
+
+  <div class="callout">
+    <b>Adjungierten-Funktor-Satz</b> (Cor. 5.5.2.9): Ein Funktor $F: \mathcal C \to \mathcal D$ zwischen präsentierbaren $\infty$-Kategorien hat genau dann einen Rechtsadjungierten, wenn er kleine Kolimiten erhält.
+  </div>
+</section>
+
+<!-- =============== ∞-TOPOI =============== -->
+<section id="topoi">
+  <h2>7. ∞-Topoi — das Herzstück</h2>
+  <span class="tag motiv">Motivation</span>
+  <span class="tag antwort">Antwort</span>
+
+  <div class="callout motiv">
+    <b>Zurück zur Ausgangsfrage.</b> Was ist eine "Garbe von $n$-Typen" auf $X$? Antwort: ein Objekt in einem geeigneten $\infty$-Topos $\mathrm{Shv}(X)$.
+  </div>
+
+  <p><b>Theorem 6.1.0.6 (Lurie's Giraud-Theorem):</b> Für eine $\infty$-Kategorie $\mathcal X$ sind äquivalent:</p>
+  <ol style="font-size:14px">
+    <li>$\mathcal X$ ist eine (akzessible) links-exakte Lokalisierung von $\mathcal P(\mathcal C) = \mathrm{Fun}(\mathcal C^{\mathrm{op}}, \mathcal S)$ für eine kleine $\infty$-Kategorie $\mathcal C$.</li>
+    <li>$\mathcal X$ ist präsentierbar, und für jede Kartesische Transformation von Kolimes-Diagrammen bleibt Kartesianität erhalten (Descent).</li>
+    <li>$\mathcal X$ erfüllt die $\infty$-kategoriellen Giraud-Axiome:
+      <ul>
+        <li>präsentierbar,</li>
+        <li>Kolimiten sind universell (stabil unter Pullback),</li>
+        <li>Koprodukte sind disjunkt,</li>
+        <li>jedes Gruppoid-Objekt ist effektiv.</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="controls">
+    <label>Giraud-Axiom:</label>
+    <input type="range" id="giraud" min="0" max="3" step="1" value="0">
+    <span class="val" id="giraudV">Präsentierbar</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="giraudCanvas" height="380"></canvas></div>
+  <p id="giraudDesc" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+
+  <h3>Beispiele</h3>
+  <ul style="font-size:14px">
+    <li>$\mathcal S$ selbst (Garben auf einem Punkt).</li>
+    <li>$\mathrm{Shv}(X)$ = Garben von Räumen auf einem topologischen Raum $X$.</li>
+    <li>$\mathrm{Shv}(\mathcal C)$ für eine kleine $\infty$-Kategorie $\mathcal C$ mit Grothendieck-Topologie (§6.2).</li>
+    <li>Étale-Topos eines Schemas — mit den Homotopiegruppen als "höheren" Analoga der étalen Fundamentalgruppe.</li>
+  </ul>
+
+  <h3>Geometrische Morphismen</h3>
+  <p>Ein <b>geometrischer Morphismus</b> $f_*: \mathcal X \to \mathcal Y$ zwischen $\infty$-Topoi ist ein Funktor mit einem linksexakten Linksadjungierten $f^*$. Die Kategorie $\mathrm{RTop}_\infty$ der $\infty$-Topoi hat gute (Ko)Limes-Eigenschaften (§6.3).</p>
+</section>
+
+<!-- =============== PARAKOMPAKTE RÄUME =============== -->
+<section id="paracompact">
+  <h2>8. Parakompakte Räume — Rekonstruktion klassischer Homotopie</h2>
+  <span class="tag antwort">Antwort auf Q1</span>
+
+  <p><b>Theorem 7.1.0.1:</b> Für einen parakompakten Raum $X$ und einen Kan-Komplex $K$ gibt es eine kanonische Bijektion
+  $$[X, |K|] \;\cong\; \pi_0\bigl(p_* p^* K\bigr),$$
+  wobei $p: X \to *$ die Projektion und $p^*, p_*$ die geometrischen Morphismen zwischen $\mathrm{Shv}(X)$ und $\mathcal S$ sind.</p>
+
+  <div class="callout antwort">
+    <b>Deutung:</b> Klassische Homotopie-Klassen von Abbildungen $X \to |K|$ sind dasselbe wie "globale Schnitte" der konstanten Garbe $K$ auf $X$ — <em>rein aus der internen Homotopietheorie</em> von $\mathrm{Shv}(X)$ rekonstruiert. Kohomologie mit beliebigen Koeffizienten (auch nicht-abelsch, auch höher) fällt als Spezialfall heraus.
+  </div>
+
+  <div class="controls">
+    <label>Grad $n$ in $K(G,n)$:</label>
+    <input type="range" id="emN" min="1" max="4" step="1" value="1">
+    <span class="val" id="emNv">1</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="emCanvas" height="320"></canvas></div>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">Kohomologie $H^n(X;G) \cong [X, K(G,n)] \cong \pi_0(p_* p^* K(G,n))$ — beliebig hoch, beliebig nicht-abelsch (mit Gerben / Stacks).</p>
+</section>
+
+<!-- =============== DIMENSION =============== -->
+<section id="dimension">
+  <h2>9. Dimension & Verschwinden</h2>
+  <span class="tag idee">Idee</span>
+
+  <p><b>Homotopie-Dimension</b> eines $\infty$-Topos $\mathcal X$ ($\le n$): Jedes $n$-zusammenhängende Objekt hat einen globalen Schnitt. Für $\mathcal X = \mathrm{Shv}(X)$ mit $X$ parakompakt: stimmt mit der Überdeckungsdimension überein.</p>
+
+  <p><b>Grothendieck-Verschwinden (nicht-abelsch, §7.2.4):</b> Für einen "Heyting-Raum" $X$ (Verallgemeinerung Noethersch, endliche Krull-Dimension $\le n$) hat $\mathrm{Shv}(X)$ Homotopie-Dimension $\le n$. Insbesondere verschwindet $H^k(X; G) = 0$ für $k > n$, für <em>jede</em> Garbe von (nicht-abelschen) Gruppen.</p>
+
+  <div class="controls">
+    <label>Krull-Dim $n$:</label>
+    <input type="range" id="dimN" min="0" max="4" step="1" value="2">
+    <span class="val" id="dimNv">2</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="dimCanvas" height="320"></canvas></div>
+  <p id="dimDesc" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+</section>
+
+<!-- =============== PROPER BASE CHANGE =============== -->
+<section id="properness">
+  <h2>10. Eigentlicher Basiswechsel — nicht-abelsch</h2>
+  <span class="tag antwort">Hauptresultat §7.3</span>
+
+  <p>Gegeben ein Pullback-Quadrat lokal-kompakter Hausdorff-Räume mit $p$ eigentlich:</p>
+  <div style="text-align:center;margin:14px 0;font-size:16px">
+    $\begin{array}{ccc} X' & \xrightarrow{q'} & X \\ \downarrow p' & & \downarrow p \\ Y' & \xrightarrow{q} & Y \end{array}$
+  </div>
+
+  <p><b>Theorem 7.3.1.18 (nicht-abelscher eigentlicher Basiswechsel):</b> Die kanonische Transformation
+  $$q^* p_* \;\longrightarrow\; p'_* q'^*$$
+  von Funktoren $\mathrm{Shv}(X) \to \mathrm{Shv}(Y')$ ist eine Äquivalenz.</p>
+
+  <div class="controls">
+    <label>$p$ eigentlich?</label>
+    <input type="range" id="propProper" min="0" max="1" step="1" value="1">
+    <span class="val" id="propProperV">ja</span>
+  </div>
+  <div class="canvas-wrap"><canvas id="propCanvas" height="380"></canvas></div>
+  <p id="propDesc" style="font-size:13px;color:var(--muted);margin-top:8px"></p>
+
+  <div class="callout antwort">
+    <b>Wichtig:</b> Das Resultat gilt für <em>Garben von Räumen</em> — die klassische Aussage für abelsche Garben ist ein Korollar. Es gilt <em>nicht</em> mehr, wenn man zur hyperkompletten Version $\mathrm{Shv}(X)^\wedge$ übergeht (Counterexample 6.5.4.2, Hilbert-Würfel). Deshalb ist Lurie's Definition von $\mathrm{Shv}(X)$ (ohne Hyperkomplettierung) die "richtige".
+  </div>
+</section>
+
+<!-- =============== ANTWORTEN =============== -->
+<section id="antworten">
+  <h2>11. Die drei Kernfragen — Antworten</h2>
+  <span class="tag motiv">Frage</span>
+  <span class="tag antwort">Antwort</span>
+
+  <div class="callout motiv">
+    <b>Q1.</b> Was ist eine "Garbe von $n$-Typen" auf einem Raum $X$?
+  </div>
+  <div class="callout antwort">
+    <b>A1.</b> Ein $(n-1)$-abgeschnittenes Objekt im $\infty$-Topos $\mathrm{Shv}(X) = \mathrm{Fun}(\mathrm{Op}(X)^{\mathrm{op}}, \mathcal S)_{\text{Garben}}$. Für $X$ parakompakt: klassische Homotopietheorie wird intern rekonstruiert.
+  </div>
+
+  <div class="callout motiv">
+    <b>Q2.</b> Welche Struktur hat die Sammlung $\mathrm{Shv}_{\le n}(X)$?
+  </div>
+  <div class="callout antwort">
+    <b>A2.</b> Es ist eine $(n+1)$-Kategorie — genauer: die volle Unter-$\infty$-Kategorie der $(n-1)$-abgeschnittenen Objekte des $\infty$-Topos $\mathrm{Shv}(X)$.
+  </div>
+
+  <div class="callout motiv">
+    <b>Q3.</b> Welche besonderen Eigenschaften hat $\mathrm{Shv}_{\le n}(X)$?
+  </div>
+  <div class="callout antwort">
+    <b>A3.</b> Sie ist ein $(n+1)$-Topos: erfüllt höher-kategorielle Analoga der Giraud-Axiome (Thm. 6.4.1.5). Insbesondere lassen sich Kohomologie, Basiswechsel, Dimension u.v.m. natürlich formulieren und beweisen.
+  </div>
+
+  <h3>Der Werkzeugkasten</h3>
+  <p>Um diese Antworten sauber zu formulieren und die klassischen Sätze (Basiswechsel, Verschwinden, Vergleich singulär/Garben-Kohomologie) auf den nicht-abelschen Fall zu heben, entwickelt das Buch:</p>
+  <ul style="font-size:14px">
+    <li>Kap. 1–2: Grundlagen der $\infty$-Kategorien (quasi-Kategorien, Faserungen).</li>
+    <li>Kap. 3: Straightening/Unstraightening — Familien vs. Funktoren.</li>
+    <li>Kap. 4: (Ko)Limiten, Kan-Erweiterungen.</li>
+    <li>Kap. 5: Präsentierbare/akzessible $\infty$-Kategorien, Lokalisierungen.</li>
+    <li>Kap. 6: $\infty$-Topoi — Definitionen, Charakterisierungen, Konstruktionen.</li>
+    <li>Kap. 7: Anwendungen: parakompakte Räume, Dimensionstheorie, eigentlicher Basiswechsel.</li>
+  </ul>
+
+  <div class="callout" style="margin-top:20px">
+    <b>Fazit:</b> Lurie liefert einen kompletten, brauchbaren Formalismus für "höhere Garbentheorie". Klassische Kohomologie, Homotopietheorie und Topos-Theorie sind Spezialfälle. Die neue Flexibilität erlaubt nicht-abelsche Verallgemeinerungen (Gerben, Stacks) und den Umgang mit Objekten wie Räumen von Räumen — mit voller technischer Kontrolle.
+  </div>
+</section>
+
+<p class="footer">Interaktiver Explorer nach Jacob Lurie, "Higher Topos Theory" (2009) · Alle Konzepte durch Spielen erlebbar.</p>
+
+</main>
+
+<script>
+// ============ TAB NAVIGATION ============
+const tabs = document.querySelectorAll('nav button');
+const sections = document.querySelectorAll('main section');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  const id=t.dataset.tab;
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+}));
+// active on scroll
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){
+    tabs.forEach(x=>x.classList.toggle('active',x.dataset.tab===e.target.id));
+  }});
+},{rootMargin:'-40% 0px -55% 0px'});
+sections.forEach(s=>io.observe(s));
+
+// ============ HIDPI CANVAS SETUP ============
+function setupCanvas(canvas){
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*dpr;
+  canvas.height=canvas.height; // preserve attribute height in CSS px
+  const cssH=parseInt(canvas.getAttribute('height'));
+  canvas.style.height=cssH+'px';
+  canvas.width=rect.width*dpr;
+  canvas.height=cssH*dpr;
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w:rect.width,h:cssH};
+}
+
+// ============ SIMPLICIAL SET DEMO ============
+const simplCanvas=document.getElementById('simplCanvas');
+const simplN=document.getElementById('simplN');
+const simplNv=document.getElementById('simplNv');
+const simplNout=document.getElementById('simplNout');
+const simplCounts=document.getElementById('simplCounts');
+
+function binom(n,k){if(k<0||k>n)return 0;let r=1;for(let i=0;i<k;i++)r=r*(n-i)/(i+1);return Math.round(r);}
+
+function drawSimplex(){
+  const {ctx,w,h}=setupCanvas(simplCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  const n=parseInt(simplN.value);
+  simplNv.textContent=n;simplNout.textContent=n;
+  const cx=w/2,cy=h/2,R=Math.min(w,h)*0.35;
+  const verts=[];
+  for(let i=0;i<=n;i++){
+    const a=-Math.PI/2+2*Math.PI*i/(n+1);
+    verts.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});
+  }
+  // fill 2-faces (triangles) if n>=2
+  if(n>=2){
+    ctx.fillStyle='rgba(139,92,246,0.15)';
+    for(let i=0;i<=n;i++)for(let j=i+1;j<=n;j++)for(let k=j+1;k<=n;k++){
+      ctx.beginPath();
+      ctx.moveTo(verts[i].x,verts[i].y);
+      ctx.lineTo(verts[j].x,verts[j].y);
+      ctx.lineTo(verts[k].x,verts[k].y);
+      ctx.closePath();ctx.fill();
+    }
+  }
+  // edges
+  ctx.strokeStyle='#06b6d4';ctx.lineWidth=1.5;
+  for(let i=0;i<=n;i++)for(let j=i+1;j<=n;j++){
+    ctx.beginPath();ctx.moveTo(verts[i].x,verts[i].y);ctx.lineTo(verts[j].x,verts[j].y);ctx.stroke();
+  }
+  // vertices
+  ctx.fillStyle='#f59e0b';
+  verts.forEach((v,i)=>{
+    ctx.beginPath();ctx.arc(v.x,v.y,6,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(String(i),v.x,v.y-12);ctx.fillStyle='#f59e0b';
+  });
+  // counts
+  const counts=[];
+  for(let k=0;k<=n;k++)counts.push(`${binom(n+1,k+1)} ${k}-simplices`);
+  simplCounts.textContent=counts.join(' · ');
+}
+simplN.addEventListener('input',drawSimplex);
+window.addEventListener('resize',drawSimplex);
+setTimeout(drawSimplex,50);
+
+// ============ HORNS ============
+const hornCanvas=document.getElementById('hornCanvas');
+const hornN=document.getElementById('hornN');
+const hornI=document.getElementById('hornI');
+const hornNv=document.getElementById('hornNv');
+const hornIv=document.getElementById('hornIv');
+const hornType=document.getElementById('hornType');
+
+function drawHorn(){
+  const n=parseInt(hornN.value);
+  hornI.max=n;
+  let i=parseInt(hornI.value);if(i>n){i=n;hornI.value=n;}
+  hornNv.textContent=n;hornIv.textContent=i;
+  const {ctx,w,h}=setupCanvas(hornCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  const cx=w/2,cy=h/2,R=Math.min(w,h)*0.35;
+  const verts=[];
+  for(let k=0;k<=n;k++){
+    const a=-Math.PI/2+2*Math.PI*k/(n+1);
+    verts.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});
+  }
+  // Λⁿᵢ = ∂Δⁿ minus the i-th face (the face opposite vertex i)
+  // interior missing
+  ctx.fillStyle='rgba(139,92,246,0.15)';
+  if(n>=2){
+    for(let a=0;a<=n;a++)for(let b=a+1;b<=n;b++)for(let c=b+1;c<=n;c++){
+      // face {a,b,c} is present unless it is exactly the missing face (only meaningful when n=2 and this face equals opposite of i, but n=2 face opposite i is the edge, so all 2-faces in n>=3 shown faintly except opposite-i)
+      // For simplicity: for n=2, the "face opposite i" is the edge, not a 2-face. Draw the interior of the 2-simplex as missing.
+      if(n===2){
+        // skip - horn misses interior
+        continue;
+      }
+      // For n>=3, faces opposite i means the (n-1)-face not containing i. We omit any 2-face contained in that missing face? Simpler: just draw all 2-faces faintly.
+      ctx.beginPath();
+      ctx.moveTo(verts[a].x,verts[a].y);
+      ctx.lineTo(verts[b].x,verts[b].y);
+      ctx.lineTo(verts[c].x,verts[c].y);
+      ctx.closePath();ctx.fill();
+    }
+  }
+  // For n=2, show the missing 2-simplex interior with hatching
+  if(n===2){
+    ctx.strokeStyle='rgba(139,92,246,0.4)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(verts[0].x,verts[0].y);ctx.lineTo(verts[1].x,verts[1].y);ctx.lineTo(verts[2].x,verts[2].y);ctx.closePath();
+    ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+  }
+  // edges: present unless the edge is only in the missing face
+  // The missing face is opposite vertex i => it's the (n-1)-simplex on vertices [n]\{i}
+  // An edge {a,b} is present in Λⁿᵢ iff {a,b} ⊆ some remaining face, i.e., iff i ∈ {a,b} OR n>=3 (edge not on the missing face alone)
+  // Simpler correct rule: edge {a,b} is in Λⁿᵢ iff it lies in ∂Δⁿ (always true for edges when n>=2) AND is not exclusively in the missing face.
+  // For n=1: single edge; if i=0 or i=1, horn is just the vertex opposite. Handle:
+  if(n===1){
+    // horn is just vertex (1-i)
+    ctx.strokeStyle='rgba(239,68,68,0.8)';ctx.lineWidth=2;ctx.setLineDash([6,6]);
+    ctx.beginPath();ctx.moveTo(verts[0].x,verts[0].y);ctx.lineTo(verts[1].x,verts[1].y);ctx.stroke();ctx.setLineDash([]);
+  } else {
+    for(let a=0;a<=n;a++)for(let b=a+1;b<=n;b++){
+      // edge {a,b} is on the missing face iff a≠i && b≠i
+      const inMissing=(a!==i && b!==i);
+      if(inMissing && n===2){
+        ctx.strokeStyle='rgba(239,68,68,0.9)';ctx.lineWidth=2.5;ctx.setLineDash([6,6]);
+      } else {
+        ctx.strokeStyle='#10b981';ctx.lineWidth=2;ctx.setLineDash([]);
+      }
+      ctx.beginPath();ctx.moveTo(verts[a].x,verts[a].y);ctx.lineTo(verts[b].x,verts[b].y);ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+  // vertices
+  verts.forEach((v,k)=>{
+    ctx.fillStyle=(k===i)?'#ec4899':'#f59e0b';
+    ctx.beginPath();ctx.arc(v.x,v.y,6,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(String(k),v.x,v.y-12);
+  });
+  const inner=(i>0 && i<n);
+  hornType.textContent=`Λ${n}_${i} — ${inner?'innerer Horn (Komposition kann rekonstruiert werden)':'äußerer Horn (verlangt Invertierbarkeit)'}. Der pinke Vertex ist ausgezeichnet; die rote gestrichelte Kante/Fläche fehlt.`;
+}
+[hornN,hornI].forEach(e=>e.addEventListener('input',drawHorn));
+window.addEventListener('resize',drawHorn);
+setTimeout(drawHorn,50);
+
+// ============ ASSOC ============
+const assocCanvas=document.getElementById('assocCanvas');
+const assocSteps=document.getElementById('assocSteps');
+const assocStepsV=document.getElementById('assocStepsV');
+function drawAssoc(){
+  const n=parseInt(assocSteps.value);
+  assocStepsV.textContent=n;
+  const {ctx,w,h}=setupCanvas(assocCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  // draw n+1 morphism arrows in a chain and show compositions
+  const N=n+1;
+  const marginX=60, marginY=h/2;
+  const stepW=(w-2*marginX)/N;
+  const pts=[];
+  for(let k=0;k<=N;k++)pts.push({x:marginX+k*stepW,y:marginY});
+  // arrows
+  ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.fillStyle='#06b6d4';
+  for(let k=0;k<N;k++){
+    const a=pts[k],b=pts[k+1];
+    ctx.beginPath();ctx.moveTo(a.x+8,a.y);ctx.lineTo(b.x-8,b.y);ctx.stroke();
+    // arrowhead
+    ctx.beginPath();ctx.moveTo(b.x-8,b.y);ctx.lineTo(b.x-14,b.y-4);ctx.lineTo(b.x-14,b.y+4);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#a0a8c8';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(['f','g','h','k','l'][k]||'', (a.x+b.x)/2, a.y-8);
+    ctx.fillStyle='#06b6d4';
+  }
+  // vertices
+  ctx.fillStyle='#f59e0b';
+  pts.forEach((p,k)=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,7,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='13px sans-serif';
+    ctx.fillText('X'+k,p.x,p.y+22);ctx.fillStyle='#f59e0b';
+  });
+  // draw a curved composition arc above
+  ctx.strokeStyle='rgba(139,92,246,0.7)';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  const first=pts[0], last=pts[N];
+  const arcH=Math.min(120, 30+N*20);
+  ctx.moveTo(first.x, first.y-15);
+  ctx.bezierCurveTo(first.x+stepW*0.5, first.y-arcH, last.x-stepW*0.5, last.y-arcH, last.x, last.y-15);
+  ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#8b5cf6';ctx.font='13px sans-serif';
+  ctx.fillText(`Komposition ${N===1?'f':N===2?'g∘f':N===3?'h∘g∘f':'…∘f'}`, (first.x+last.x)/2, first.y-arcH-8);
+  // label
+  ctx.fillStyle='#a0a8c8';ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillText(`Die gestrichelte Klammerung wird von einem ${N}-Simplex gefüllt — Assoziativität ist automatisch kohärent.`, 20, h-18);
+}
+assocSteps.addEventListener('input',drawAssoc);
+window.addEventListener('resize',drawAssoc);
+setTimeout(drawAssoc,50);
+
+// ============ NERVE ============
+const nerveCanvas=document.getElementById('nerveCanvas');
+const nerveN=document.getElementById('nerveN');
+const nerveNv=document.getElementById('nerveNv');
+function drawNerve(){
+  const n=parseInt(nerveN.value);
+  nerveNv.textContent=n;
+  const {ctx,w,h}=setupCanvas(nerveCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  const N=n+1;
+  const margin=60;const stepW=(w-2*margin)/Math.max(N,1);
+  const y=h/2;
+  const pts=[];
+  for(let k=0;k<=n;k++)pts.push({x:margin+k*stepW,y});
+  // arrows
+  ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.fillStyle='#06b6d4';
+  for(let k=0;k<n;k++){
+    const a=pts[k],b=pts[k+1];
+    ctx.beginPath();ctx.moveTo(a.x+8,a.y);ctx.lineTo(b.x-8,b.y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(b.x-8,b.y);ctx.lineTo(b.x-14,b.y-4);ctx.lineTo(b.x-14,b.y+4);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#a0a8c8';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText('f'+(k+1), (a.x+b.x)/2, a.y-8);
+    ctx.fillStyle='#06b6d4';
+  }
+  ctx.fillStyle='#f59e0b';
+  pts.forEach((p,k)=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,7,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='13px sans-serif';ctx.textAlign='center';
+    ctx.fillText('c'+k,p.x,p.y+22);ctx.fillStyle='#f59e0b';
+  });
+  ctx.fillStyle='#a0a8c8';ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillText(`N(C)_${n} = { verkettbare Ketten der Länge ${n} in C }`, 20, h-14);
+}
+nerveN.addEventListener('input',drawNerve);
+window.addEventListener('resize',drawNerve);
+setTimeout(drawNerve,50);
+
+// ============ FIBRATIONS ============
+const fibCanvas=document.getElementById('fibCanvas');
+const fibType=document.getElementById('fibType');
+const fibTypeV=document.getElementById('fibTypeV');
+const fibEdges=document.getElementById('fibEdges');
+const fibEdgesV=document.getElementById('fibEdgesV');
+const fibDesc=document.getElementById('fibDesc');
+const fibTypes=['Innere','Links','Rechts','coCartesisch'];
+const fibDescs=[
+  'Innere Fibration: Kompositionen liften. Fasern sind ∞-Kategorien; Kanten von S ⇒ Korrespondenzen.',
+  'Links-Fibration: alle Kanten mit i<n liften. Fasern sind Kan-Komplexe (∞-Groupoide); Kanten ⇒ Funktoren.',
+  'Rechts-Fibration: alle Kanten mit i>0 liften. Fasern sind Kan-Komplexe; codiert kontravariante Funktoren.',
+  'coCartesische Fibration: für jede Kante s→s\' und jeden Lift x über s existiert eine ausgezeichnete Kante, die einen Funktor X_s → X_{s\'} liefert.'
+];
+function drawFib(){
+  const t=parseInt(fibType.value);
+  const nE=parseInt(fibEdges.value);
+  fibTypeV.textContent=fibTypes[t];
+  fibEdgesV.textContent=nE;
+  fibDesc.textContent=fibDescs[t];
+  const {ctx,w,h}=setupCanvas(fibCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  // Base S at bottom, fibers above
+  const baseY=h-60;const topY=60;
+  const margin=80;const stepW=(w-2*margin)/Math.max(nE,1);
+  const basePts=[];
+  for(let k=0;k<=nE;k++)basePts.push({x:margin+k*stepW,y:baseY});
+  // draw base
+  ctx.strokeStyle='#a0a8c8';ctx.lineWidth=1.5;ctx.fillStyle='#a0a8c8';
+  for(let k=0;k<nE;k++){
+    const a=basePts[k],b=basePts[k+1];
+    ctx.beginPath();ctx.moveTo(a.x+6,a.y);ctx.lineTo(b.x-6,b.y);ctx.stroke();
+  }
+  basePts.forEach((p,k)=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,5,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('s'+k,p.x,p.y+18);ctx.fillStyle='#a0a8c8';
+  });
+  ctx.fillStyle='#a0a8c8';ctx.font='12px sans-serif';ctx.textAlign='left';
+  ctx.fillText('Basis S', margin-50, baseY+5);
+  // draw fibers (small clouds of dots) and lifted edges
+  const fiberColor=['#8b5cf6','#06b6d4','#f59e0b','#ec4899'];
+  basePts.forEach((p,k)=>{
+    // 3 dots stacked
+    for(let j=0;j<3;j++){
+      const fx=p.x+(j-1)*15, fy=topY+j*18;
+      ctx.fillStyle=fiberColor[t];
+      ctx.beginPath();ctx.arc(fx,fy,4,0,2*Math.PI);ctx.fill();
+      // projection line
+      ctx.strokeStyle='rgba(160,168,200,0.2)';ctx.lineWidth=0.8;
+      ctx.beginPath();ctx.moveTo(fx,fy);ctx.lineTo(p.x,p.y-5);ctx.stroke();
+    }
+    ctx.fillStyle='#a0a8c8';ctx.font='10px sans-serif';ctx.textAlign='center';
+    ctx.fillText('X_s'+k, p.x, topY-8);
+  });
+  // draw "lifted" edges between fibers (for links/rechts/coCart shown as arrows)
+  ctx.strokeStyle=fiberColor[t];ctx.lineWidth=1.8;ctx.fillStyle=fiberColor[t];
+  for(let k=0;k<nE;k++){
+    const a={x:basePts[k].x+15, y:topY+18};
+    const b={x:basePts[k+1].x-15, y:topY+18};
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-6,b.y-3);ctx.lineTo(b.x-6,b.y+3);ctx.closePath();ctx.fill();
+  }
+  ctx.fillStyle='#a0a8c8';ctx.font='11px sans-serif';ctx.textAlign='left';
+  ctx.fillText('X (Totalraum)  →  Fasern sind '+(t===0?'∞-Kat.':'Kan-Komplexe'), margin-50, topY-30);
+}
+[fibType,fibEdges].forEach(e=>e.addEventListener('input',drawFib));
+window.addEventListener('resize',drawFib);
+setTimeout(drawFib,50);
+
+// ============ COLIMIT DIAGRAMS ============
+const colimCanvas=document.getElementById('colimCanvas');
+const colimDiag=document.getElementById('colimDiag');
+const colimDiagV=document.getElementById('colimDiagV');
+const colimDesc=document.getElementById('colimDesc');
+const colimNames=['Pushout','Koprodukt','Koequalizer','Filtrierter Kolimes'];
+const colimDescs=[
+  'Pushout: A ← C → B liefert A ∪_C B (Verkleben zweier Objekte entlang C).',
+  'Koprodukt: A ⊔ B — freie Summe zweier Objekte.',
+  'Koequalizer: X ⇉ Y liefert Y/~ (Quotient nach der von den zwei Pfeilen erzeugten Relation).',
+  'Filtrierter Kolimes: X₀ → X₁ → X₂ → … — "Vereinigung" einer aufsteigenden Kette.'
+];
+function drawColim(){
+  const d=parseInt(colimDiag.value);
+  colimDiagV.textContent=colimNames[d];
+  colimDesc.textContent=colimDescs[d];
+  const {ctx,w,h}=setupCanvas(colimCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.fillStyle='#06b6d4';
+  function node(x,y,label,color='#f59e0b'){
+    ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,9,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='13px sans-serif';ctx.textAlign='center';
+    ctx.fillText(label,x,y+4);
+  }
+  function arrow(a,b,color='#06b6d4'){
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.fillStyle=color;
+    const dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy);
+    const ux=dx/len, uy=dy/len;
+    const sx=a.x+ux*11, sy=a.y+uy*11, ex=b.x-ux*11, ey=b.y-uy*11;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-ux*8-uy*4,ey-uy*8+ux*4);ctx.lineTo(ex-ux*8+uy*4,ey-uy*8-ux*4);ctx.closePath();ctx.fill();
+  }
+  const cx=w/2, cy=h/2;
+  if(d===0){
+    // Pushout: A ← C → B  =>  A ⊔_C B
+    const C={x:cx,y:cy-70}, A={x:cx-140,y:cy+20}, B={x:cx+140,y:cy+20}, P={x:cx,y:cy+110};
+    arrow(C,A);arrow(C,B);
+    ctx.setLineDash([5,5]);arrow(A,P,'#ec4899');arrow(B,P,'#ec4899');ctx.setLineDash([]);
+    node(C.x,C.y,'C');node(A.x,A.y,'A');node(B.x,B.y,'B');node(P.x,P.y,'⊔','#ec4899');
+  } else if(d===1){
+    // Coproduct A + B
+    const A={x:cx-100,y:cy-30}, B={x:cx+100,y:cy-30}, P={x:cx,y:cy+80};
+    ctx.setLineDash([5,5]);arrow(A,P,'#ec4899');arrow(B,P,'#ec4899');ctx.setLineDash([]);
+    node(A.x,A.y,'A');node(B.x,B.y,'B');node(P.x,P.y,'A⊔B','#ec4899');
+  } else if(d===2){
+    // Coequalizer  X ⇉ Y → Y/~
+    const X={x:cx-140,y:cy}, Y={x:cx,y:cy}, Q={x:cx+140,y:cy};
+    // two arrows X ⇉ Y
+    ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.fillStyle='#06b6d4';
+    // upper
+    ctx.beginPath();ctx.moveTo(X.x+11,X.y-8);ctx.bezierCurveTo(X.x+50,X.y-30,Y.x-50,Y.y-30,Y.x-11,Y.y-8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(Y.x-11,Y.y-8);ctx.lineTo(Y.x-17,Y.y-14);ctx.lineTo(Y.x-19,Y.y-4);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(X.x+11,X.y+8);ctx.bezierCurveTo(X.x+50,X.y+30,Y.x-50,Y.y+30,Y.x-11,Y.y+8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(Y.x-11,Y.y+8);ctx.lineTo(Y.x-17,Y.y+14);ctx.lineTo(Y.x-19,Y.y+4);ctx.closePath();ctx.fill();
+    ctx.setLineDash([5,5]);arrow(Y,Q,'#ec4899');ctx.setLineDash([]);
+    node(X.x,X.y,'X');node(Y.x,Y.y,'Y');node(Q.x,Q.y,'Y/~','#ec4899');
+  } else {
+    // Filtered colimit chain
+    const N=5;
+    for(let i=0;i<N;i++){
+      const x=marginX(w)+i*((w-2*marginX(w))/(N)), y=cy;
+      const nx=x, ny=y;
+      const p={x:nx,y:ny};
+      ctx.fillStyle='#f59e0b';
+      ctx.beginPath();ctx.arc(nx,ny,8,0,2*Math.PI);ctx.fill();
+      ctx.fillStyle='#e9ecff';ctx.font='11px sans-serif';ctx.textAlign='center';
+      ctx.fillText('X'+i,nx,ny+22);
+      if(i>0){
+        const px=marginX(w)+(i-1)*((w-2*marginX(w))/(N)), py=cy;
+        arrow({x:px,y:py},{x:nx,y:ny});
+      }
+    }
+    const lastX=marginX(w)+(N-1)*((w-2*marginX(w))/(N));
+    const colim={x:w-40,y:cy};
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle='#ec4899';ctx.beginPath();ctx.moveTo(lastX+15,cy);ctx.lineTo(colim.x-15,cy);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#ec4899';ctx.beginPath();ctx.arc(colim.x,colim.y,10,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#e9ecff';ctx.font='11px sans-serif';ctx.fillText('colim',colim.x,colim.y+22);
+  }
+  function marginX(w){return 60;}
+}
+[colimDiag].forEach(e=>e.addEventListener('input',drawColim));
+window.addEventListener('resize',drawColim);
+setTimeout(drawColim,50);
+
+// ============ GIRAUD AXIOMS ============
+const giraudCanvas=document.getElementById('giraudCanvas');
+const giraudSlider=document.getElementById('giraud');
+const giraudV=document.getElementById('giraudV');
+const giraudDesc=document.getElementById('giraudDesc');
+const giraudNames=['Präsentierbar','Kolimiten universell','Koprodukte disjunkt','Groupoide effektiv'];
+const giraudDescs=[
+  'X ist präsentierbar: es gibt eine kleine Menge Generatoren und alle kleinen Kolimiten existieren. Kontrolliert die "Größe" der ∞-Kategorie.',
+  'Universelle Kolimiten: Pullback entlang jeder Abbildung vertauscht mit Kolimiten. limᐩ(Xᵢ) ×_S T ≃ limᐩ(Xᵢ ×_S T). Distributivgesetz zwischen Limits und Kolimiten.',
+  'Koprodukte disjunkt: Xᵢ ×_{⊔Xⱼ} Xₖ = ∅ für i≠k. Die Summanden einer Summe schneiden sich nur trivial.',
+  'Effektive Gruppoide: jede „Äquivalenzrelation bis auf höhere Homotopie" ist der Čech-Nerv einer effektiven Epi. Erlaubt Quotienten nach kohärenten Gruppoid-Aktionen.'
+];
+function drawGiraud(){
+  const g=parseInt(giraudSlider.value);
+  giraudV.textContent=giraudNames[g];
+  giraudDesc.textContent=giraudDescs[g];
+  const {ctx,w,h}=setupCanvas(giraudCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  const cx=w/2,cy=h/2;
+  if(g===0){
+    // presentable: small generators clouds
+    ctx.fillStyle='#f59e0b';
+    const gens=[[cx-140,cy-50],[cx-100,cy+30],[cx-160,cy+50]];
+    gens.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,10,0,2*Math.PI);ctx.fill();});
+    ctx.fillStyle='#a0a8c8';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('kleine Generatoren',cx-125,cy-75);
+    // colimits fill up X
+    ctx.strokeStyle='#8b5cf6';ctx.setLineDash([4,4]);ctx.lineWidth=1;
+    for(let i=0;i<8;i++){
+      const a=i/8*2*Math.PI;
+      ctx.beginPath();ctx.arc(cx+80,cy,80+Math.sin(i)*10,a,a+Math.PI/4);ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.fillStyle='#8b5cf6';ctx.font='16px sans-serif';
+    ctx.fillText('X',cx+80,cy+5);
+    ctx.fillStyle='#a0a8c8';ctx.font='11px sans-serif';
+    ctx.fillText('erzeugt unter Kolimiten',cx+80,cy+95);
+  } else if(g===1){
+    // universal colimits: pullback square commutes
+    const A={x:cx-100,y:cy-60},B={x:cx+40,y:cy-60},C={x:cx-100,y:cy+40},D={x:cx+40,y:cy+40};
+    ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.fillStyle='#06b6d4';
+    [[A,B],[C,D],[A,C],[B,D]].forEach(([p,q])=>{
+      ctx.beginPath();ctx.moveTo(p.x+11,p.y);ctx.lineTo(q.x-11,q.y);ctx.stroke();
+    });
+    ctx.fillStyle='#f59e0b';
+    [A,B,C,D].forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,9,0,2*Math.PI);ctx.fill();});
+    ctx.fillStyle='#e9ecff';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText('limᐩXᵢ×T',A.x,A.y+4);
+    ctx.fillText('T',B.x,B.y+4);
+    ctx.fillText('limᐩXᵢ',C.x,C.y+4);
+    ctx.fillText('S',D.x,D.y+4);
+    ctx.fillStyle='#8b5cf6';ctx.font='13px sans-serif';
+    ctx.fillText('= limᐩ(Xᵢ×_S T)',cx+180,cy);
+  } else if(g===2){
+    // disjoint coproducts
+    ctx.fillStyle='rgba(139,92,246,0.4)';
+    ctx.beginPath();ctx.arc(cx-70,cy,60,0,2*Math.PI);ctx.fill();
+    ctx.beginPath();ctx.arc(cx+70,cy,60,0,2*Math.PI);ctx.fill();
+    ctx.strokeStyle='#8b5cf6';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx-70,cy,60,0,2*Math.PI);ctx.stroke();
+    ctx.beginPath();ctx.arc(cx+70,cy,60,0,2*Math.PI);ctx.stroke();
+    ctx.fillStyle='#e9ecff';ctx.font='16px sans-serif';ctx.textAlign='center';
+    ctx.fillText('A',cx-70,cy+5);ctx.fillText('B',cx+70,cy+5);
+    ctx.fillStyle='#ec4899';ctx.font='13px sans-serif';
+    ctx.fillText('A ∩ B = ∅  (in A⊔B)',cx,cy+100);
+  } else {
+    // groupoid effective: Čech nerve
+    const pts=[[cx-150,cy],[cx-70,cy-40],[cx+10,cy],[cx+90,cy-40],[cx+170,cy]];
+    ctx.strokeStyle='#06b6d4';ctx.lineWidth=1.5;
+    for(let i=0;i<pts.length-1;i++){
+      ctx.beginPath();ctx.moveTo(pts[i][0]+8,pts[i][1]);ctx.lineTo(pts[i+1][0]-8,pts[i+1][1]);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(pts[i+1][0]-8,pts[i+1][1]);ctx.lineTo(pts[i+1][0]-14,pts[i+1][1]-4);ctx.lineTo(pts[i+1][0]-14,pts[i+1][1]+4);ctx.closePath();
+      ctx.fillStyle='#06b6d4';ctx.fill();
+    }
+    ctx.fillStyle='#f59e0b';
+    pts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,7,0,2*Math.PI);ctx.fill();});
+    ctx.fillStyle='#a0a8c8';ctx.font='11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('U₃',pts[0][0],pts[0][1]+22);
+    ctx.fillText('U₂',pts[1][0],pts[1][1]-15);
+    ctx.fillText('U₁',pts[2][0],pts[2][1]+22);
+    ctx.fillText('U₀',pts[3][0],pts[3][1]-15);
+    ctx.fillText('X',pts[4][0],pts[4][1]+22);
+    ctx.fillStyle='#ec4899';ctx.font='12px sans-serif';
+    ctx.fillText('Čech-Nerv einer effektiven Epi U₀ → X',cx,cy+80);
+  }
+}
+giraudSlider.addEventListener('input',drawGiraud);
+window.addEventListener('resize',drawGiraud);
+setTimeout(drawGiraud,50);
+
+// ============ EILENBERG-MACLANE ============
+const emCanvas=document.getElementById('emCanvas');
+const emN=document.getElementById('emN');
+const emNv=document.getElementById('emNv');
+function drawEM(){
+  const n=parseInt(emN.value);
+  emNv.textContent=n;
+  const {ctx,w,h}=setupCanvas(emCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  const cx=w/2,cy=h/2;
+  // draw K(G,n) as a cloud
+  ctx.fillStyle='rgba(139,92,246,0.15)';
+  for(let i=0;i<40;i++){
+    const a=i/40*2*Math.PI;
+    const r=90+Math.sin(a*n)*20;
+    ctx.beginPath();ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,4+n,0,2*Math.PI);ctx.fill();
+  }
+  ctx.strokeStyle='#8b5cf6';ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<=100;i++){
+    const a=i/100*2*Math.PI;
+    const r=90+Math.sin(a*n)*20;
+    const px=cx+Math.cos(a)*r,py=cy+Math.sin(a)*r;
+    if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+  }
+  ctx.closePath();ctx.stroke();
+  ctx.fillStyle='#e9ecff';ctx.font='18px sans-serif';ctx.textAlign='center';
+  ctx.fillText('K(G,'+n+')',cx,cy);
+  ctx.fillStyle='#06b6d4';ctx.font='12px sans-serif';
+  ctx.fillText('πₖ K(G,'+n+') = G falls k='+n+', sonst 0',cx,cy+140);
+  ctx.fillStyle='#ec4899';ctx.font='13px sans-serif';
+  ctx.fillText('Hⁿ(X;G) ≃ [X, K(G,n)] ≃ π₀(p*p*K(G,n))',cx,30);
+}
+emN.addEventListener('input',drawEM);
+window.addEventListener('resize',drawEM);
+setTimeout(drawEM,50);
+
+// ============ DIMENSION ============
+const dimCanvas=document.getElementById('dimCanvas');
+const dimN=document.getElementById('dimN');
+const dimNv=document.getElementById('dimNv');
+const dimDesc=document.getElementById('dimDesc');
+function drawDim(){
+  const n=parseInt(dimN.value);
+  dimNv.textContent=n;
+  dimDesc.textContent='Krull-Dim ≤ '+n+' ⟹ Shv(X) hat Homotopie-Dimension ≤ '+n+' ⟹ Hᵏ(X;G) = 0 für k > '+n+'.';
+  const {ctx,w,h}=setupCanvas(dimCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  // draw a chain of n+1 irreducible closed subsets
+  const cx=w/2,cy=h/2;
+  const chain=[];
+  for(let i=0;i<=n;i++){
+    const r=30+i*35;
+    chain.push({r,label:'Z'+i});
+  }
+  chain.slice().reverse().forEach((c,idx)=>{
+    const hue=idx*40;
+    ctx.fillStyle=`hsla(${260-idx*30}, 60%, 50%, 0.3)`;
+    ctx.beginPath();ctx.arc(cx,cy,c.r,0,2*Math.PI);ctx.fill();
+    ctx.strokeStyle=`hsl(${260-idx*30}, 70%, 60%)`;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(cx,cy,c.r,0,2*Math.PI);ctx.stroke();
+  });
+  ctx.fillStyle='#e9ecff';ctx.font='11px sans-serif';ctx.textAlign='center';
+  chain.forEach((c,i)=>{
+    ctx.fillText(c.label,cx,cy-c.r+13);
+  });
+  ctx.fillStyle='#a0a8c8';ctx.font='12px sans-serif';
+  ctx.fillText('Kette Z₀ ⊂ Z₁ ⊂ ... ⊂ Z'+n+' irreduzibler abgeschlossener Teilmengen',cx,h-15);
+}
+dimN.addEventListener('input',drawDim);
+window.addEventListener('resize',drawDim);
+setTimeout(drawDim,50);
+
+// ============ PROPER BASE CHANGE ============
+const propCanvas=document.getElementById('propCanvas');
+const propProper=document.getElementById('propProper');
+const propProperV=document.getElementById('propProperV');
+const propDesc=document.getElementById('propDesc');
+function drawProp(){
+  const isProper=parseInt(propProper.value)===1;
+  propProperV.textContent=isProper?'ja':'nein';
+  propDesc.textContent=isProper
+    ? 'p eigentlich ⟹ q*p* ≃ p′*q′*. Basiswechsel funktioniert für Garben von Räumen (nicht-abelsch!).'
+    : 'p nicht eigentlich ⟹ q*p* ≠ p′*q′* im Allgemeinen. Basiswechsel scheitert (Gegenbeispiel: Hilbert-Würfel).';
+  const {ctx,w,h}=setupCanvas(propCanvas);
+  ctx.fillStyle='#050716';ctx.fillRect(0,0,w,h);
+  const cx=w/2,cy=h/2;
+  const positions={
+    'X\'': {x:cx-120,y:cy-80},
+    'X':   {x:cx+120,y:cy-80},
+    'Y\'': {x:cx-120,y:cy+80},
+    'Y':   {x:cx+120,y:cy+80}
+  };
+  function arrow(a,b,label,color='#06b6d4'){
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.fillStyle=color;
+    const dx=b.x-a.x, dy=b.y-a.y, len=Math.hypot(dx,dy);
+    const ux=dx/len, uy=dy/len;
+    const sx=a.x+ux*15, sy=a.y+uy*15, ex=b.x-ux*15, ey=b.y-uy*15;
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex-ux*8-uy*4,ey-uy*8+ux*4);ctx.lineTo(ex-ux*8+uy*4,ey-uy*8-ux*4);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#a0a8c8';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText(label,(a.x+b.x)/2+8,(a.y+b.y)/2-3);
+  }
+  arrow(positions['X\''],positions['X'],'q\'');
+  arrow(positions['X\''],positions['Y\''],'p\'',isProper?'#10b981':'#ef4444');
+  arrow(positions['X'],positions['Y'],'p',isProper?'#10b981':'#ef4444');
+  arrow(positions['Y\''],positions['Y'],'q');
+  Object.entries(positions).forEach(([label,p])=>{
+    ctx.fillStyle='#f59e0b';
+    ctx.beginPath();ctx.arc(p.x,p.y,14,0,2*Math.PI);ctx.fill();
+    ctx.fillStyle='#0b0d17';ctx.font='13px sans-serif';ctx.textAlign='center';
+    ctx.fillText(label,p.x,p.y+4);
+  });
+  // pullback square symbol
+  ctx.strokeStyle='rgba(160,168,200,0.4)';ctx.lineWidth=1;
+  ctx.strokeRect(cx-15,cy-90,25,25);
+  ctx.fillStyle='#a0a8c8';ctx.font='16px sans-serif';
+  ctx.fillText('⌟',cx-3,cy-72);
+  // status
+  ctx.fillStyle=isProper?'#10b981':'#ef4444';
+  ctx.font='14px sans-serif';
+  ctx.fillText(isProper?'✓ Basiswechsel-Formel gilt':'✗ Basiswechsel scheitert',cx,h-15);
+}
+propProper.addEventListener('input',drawProp);
+window.addEventListener('resize',drawProp);
+setTimeout(drawProp,50);
+
+// Redraw on window resize (debounced)
+let resizeTimer;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{
+    drawSimplex();drawHorn();drawAssoc();drawNerve();drawFib();drawColim();drawGiraud();drawEM();drawDim();drawProp();
+  },150);
+});
+</script>
+</body>
+</html>
