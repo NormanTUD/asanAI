@@ -92,7 +92,7 @@ The origin of life on Earth remains one of the most profound questions in scienc
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="stromatolite_sharkbay.png" alt="Living stromatolites in Shark Bay, Western Australia, the modern descendants of the microbial mats that laid down the oldest fossils of life" />
-    <figcaption class="md">Living stromatolites in Shark Bay, Western Australia: modern microbial mats in the same form that, in their 3.5-billion-year-old fossil descendants, provide the oldest secure evidence of life on Earth. Source: Ed Landing &amp; Markes E. Johnson, <em>Journal of Marine Science and Engineering</em> (2024), Wikimedia Commons (CC BY 4.0).</figcaption>
+    <figcaption class="md">The \citealternativetitle{img_stromatolite_sharkbay} (CC BY 4.0): living stromatolites in Shark Bay, Western Australia — modern microbial mats in the same form that, in their 3.5-billion-year-old fossil descendants, provide the oldest secure evidence of life on Earth. Source: \citeauthor{img_stromatolite_sharkbay}, \citeyear{img_stromatolite_sharkbay}, \citealternativetitle{img_stromatolite_sharkbay}, Wikimedia Commons.</figcaption>
 </figure>
 
 What were these first organisms? They were prokaryotes, single-celled organisms without a membrane-bound nucleus, and they were almost certainly anaerobic, metabolizing in an atmosphere that contained essentially no free oxygen. The reconstruction of the **Last Universal Common Ancestor (LUCA)**, the most recent organism from which all extant life descends, has become a precise molecular exercise. \citeauthorlastnameand{woese1977phylogenetic} in \citeyear{woese1977phylogenetic} used 16S ribosomal RNA sequences to root the tree of life, revealing three primary kingdoms rather than two \cite[as established in]{woese1977phylogenetic}; \citeauthorlastnameand{woese1990domains} formalized the three-domain system (Archaea, Bacteria, Eucarya) in \citeyear{woese1990domains} \cite{woese1990domains}. In \citeyear{weiss2016luca}, \citeauthorlastnameand{weiss2016luca} and colleagues reconstructed approximately 355 gene families that LUCA must have possessed, painting a picture of a thermophilic, hydrogen-metabolizing organism living near hydrothermal vents \cite[as argued in]{weiss2016luca}.
@@ -108,11 +108,11 @@ What were these first organisms? They were prokaryotes, single-celled organisms 
 <div class="image-row">
     <figure>
         <img src="charnia_masoni.jpg" alt="Charnia masoni, a frond-like Ediacaran organism from the 560-million-year-old Holbrook Limestone of Charnwood Forest, England" />
-        <figcaption class="md"><em>Charnia masoni</em>, a frond-like Ediacaran organism from Charnwood Forest, England, one of the icon of the first large soft-bodied life. Source: MUSE, Wikimedia Commons (CC BY-SA 3.0).</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_charnia_masoni} (CC BY-SA 3.0): <em>Charnia masoni</em>, a frond-like Ediacaran organism from Charnwood Forest, England, one of the icons of the first large soft-bodied life. Source: \citeauthor{img_charnia_masoni}, \citeyear{img_charnia_masoni}, \citealternativetitle{img_charnia_masoni}, Wikimedia Commons.</figcaption>
     </figure>
     <figure>
         <img src="kimberella_quadrata.jpg" alt="Kimberella, a quilted Ediacaran organism from the White Sea in Russia, proposed to be one of the earliest bilaterian animals" />
-        <figcaption class="md"><em>Kimberella</em>, a quilted Ediacaran animal from the White Sea, Russia, proposed by Fedonkin and Waggoner (\citeyear{fedonkin1997kimberella}) to be one of the earliest bilaterians \cite[as argued in]{fedonkin1997kimberella}. Source: A. Nagovitsyn, Wikimedia Commons (CC BY-SA 4.0).</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_kimberella_quadrata} (CC BY-SA 4.0): <em>Kimberella</em>, a quilted Ediacaran animal from the White Sea, Russia, proposed by Fedonkin and Waggoner (\citeyear{fedonkin1997kimberella}) to be one of the earliest bilaterians \cite[as argued in]{fedonkin1997kimberella}. Source: \citeauthor{img_kimberella_quadrata}, \citeyear{img_kimberella_quadrata}, \citealternativetitle{img_kimberella_quadrata}, Wikimedia Commons.</figcaption>
     </figure>
 </div>
 
@@ -120,7 +120,7 @@ Among the most enigmatic of these is *Dickinsonia*, a flat, bilaterally symmetri
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="dickinsonia_costata.jpg" alt="Dickinsonia costata, a flat, bilaterally symmetric, ribbed Ediacaran organism, one of the largest and most enigmatic fossils of the late Precambrian" />
-    <figcaption class="md"><em>Dickinsonia costata</em>, the flat, ribbed Ediacaran animal whose animal identity was confirmed in \citeyear{bobrovskiy2018dickinsonia} by the animal-specific sterol cholestanol preserved in its fossils \cite[as demonstrated in]{bobrovskiy2018dickinsonia}. Source: Ghedoghedo, Wikimedia Commons (CC BY-SA 3.0).</figcaption>
+    <figcaption class="md">The \citealternativetitle{img_dickinsonia_costata} (CC BY-SA 3.0): <em>Dickinsonia costata</em>, the flat, ribbed Ediacaran animal whose animal identity was confirmed in \citeyear{bobrovskiy2018dickinsonia} by the animal-specific sterol cholestanol preserved in its fossils \cite[as demonstrated in]{bobrovskiy2018dickinsonia}. Source: \citeauthor{img_dickinsonia_costata}, \citeyear{img_dickinsonia_costata}, \citealternativetitle{img_dickinsonia_costata}, Wikimedia Commons.</figcaption>
 </figure>
 
 *Otavia antiqua*, a sponge-like organism from 760-million-year-old Namibian rocks, was reported by \citeauthorlastnameand{brain2012otavia} in \citeyear{brain2012otavia} as the oldest known animal \cite[as described in]{brain2012otavia}. That claim has since been contested: \citeauthorlastnameand{antcliffe2014otavia} argued that the structures are non-biological concretions \cite[as argued in]{antcliffe2014otavia}. The 760 Ma claim therefore remains open, while the *Dickinsonia* result at 558 Ma is the strongest currently defensible biomarker evidence for animals.
@@ -134,11 +134,11 @@ The original description of the best-preserved Cambrian fauna came from \citeaut
 <div class="image-row">
     <figure>
         <img src="anomalocaris_canadensis.png" alt="Anomalocaris canadensis, the metre-long apex predator of the Cambrian Burgess Shale, with its ringed mouthparts and paired frontal appendages" />
-        <figcaption class="md"><em>Anomalocaris canadensis</em>, the metre-long Cambrian apex predator with ringed mouthparts and frontal appendages, a "living relative" of no modern phylum. Source: Wawrow, Wikimedia Commons (CC BY 4.0).</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_anomalocaris_canadensis} (CC BY 4.0): <em>Anomalocaris canadensis</em>, the metre-long Cambrian apex predator with ringed mouthparts and frontal appendages, with no living relatives. Source: \citeauthor{img_anomalocaris_canadensis}, \citeyear{img_anomalocaris_canadensis}, \citealternativetitle{img_anomalocaris_canadensis}, Wikimedia Commons.</figcaption>
     </figure>
     <figure>
         <img src="burgess_shale_fossils.jpg" alt="An assortment of Burgess Shale fossils from the Middle Cambrian of the Canadian Rockies, showing the extraordinary morphological diversity of the Cambrian Explosion" />
-        <figcaption class="md">A selection of Middle Cambrian fossils from the Burgess Shale, the type locality for the Cambrian Explosion, where the first appearance of most modern animal body plans is preserved in fine detail \cite[as described in]{whittington1979burgess}. Source: Ryan Somma, Wikimedia Commons (CC BY 2.0).</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_burgess_shale_fossils} (CC BY 2.0): a selection of Middle Cambrian fossils from the Burgess Shale, the type locality for the Cambrian Explosion, where the first appearance of most modern animal body plans is preserved in fine detail \cite[as described in]{whittington1979burgess}. Source: \citeauthor{img_burgess_shale_fossils}, \citeyear{img_burgess_shale_fossils}, \citealternativetitle{img_burgess_shale_fossils}, Wikimedia Commons.</figcaption>
     </figure>
 </div>
 
@@ -147,11 +147,11 @@ The Chinese **Chengjiang lagerstätte**, described in the early 2000s, extended 
 <div class="image-row">
     <figure>
         <img src="vetulicola_cuneatus.jpg" alt="Vetulicola cuneatus, a primitive deuterostome from the Chengjiang biota, with a body plan that predates the clear split between the two major groups of animals" />
-        <figcaption class="md"><em>Vetulicola cuneatus</em>, a primitive deuterostome from the Chengjiang biota, one of the earliest animals on the lineage leading to the chordates \cite[as described in]{shu2001chengjiang}. Source: Woudloper, Wikimedia Commons (CC BY-SA 4.0).</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_vetulicola_cuneatus} (CC BY-SA 4.0): <em>Vetulicola cuneatus</em>, a primitive deuterostome from the Chengjiang biota, one of the earliest animals on the lineage leading to the chordates \cite[as described in]{shu2001chengjiang}. Source: \citeauthor{img_vetulicola_cuneatus}, \citeyear{img_vetulicola_cuneatus}, \citealternativetitle{img_vetulicola_cuneatus}, Wikimedia Commons.</figcaption>
     </figure>
     <figure>
         <img src="hallucigenia_smithsonian.jpg" alt="Hallucigenia sparsa, a bizarre lobopodian from the Cambrian, preserved with its four rows of spines that made it look 'upside down' when first reconstructed" />
-        <figcaption class="md"><em>Hallucigenia sparsa</em>, a lobopodian from the Cambrian whose four rows of spines led Walcott to mount it "upside down" before its true orientation was recognized. Source: Smithsonian, Wikimedia Commons (Public Domain).</figcaption>
+        <figcaption class="md">The \citealternativetitle{img_hallucigenia_smithsonian} (Public Domain): <em>Hallucigenia sparsa</em>, a lobopodian from the Cambrian whose four rows of spines led Walcott to mount it "upside down" before its true orientation was recognized. Source: \citeauthor{img_hallucigenia_smithsonian}, \citeyear{img_hallucigenia_smithsonian}, \citealternativetitle{img_hallucigenia_smithsonian}, Wikimedia Commons.</figcaption>
     </figure>
 </div>
 
@@ -234,7 +234,7 @@ Yet mythos was not merely an obstacle to science. It created specific mental pre
 
 <figure>
     <img style="width: 60%; height: auto; display: block; margin: 1em auto;" src="great_chain_of_being_1579.jpg" alt="The Great Chain of Being, a 1579 woodcut from Diego de Valadés' Rhetorica Christiana, showing the hierarchy of creation from inanimate matter up through angels to God" />
-    <figcaption class="md">The Great Chain of Being (1579): the hierarchy of creation as Diego de Valadés drew it in <em>Rhetorica Christiana</em> — from inert matter at the base, through plants, animals, and humans, up through the angels to God at the apex. The fixed, ranked ladder that dominated Western thought for a millennium, and the last great echo of which is Linnaeus's <em>Systema Naturae</em>. Source: Diego de Valadés, Wikimedia Commons (Public Domain).</figcaption>
+    <figcaption class="md">The \citealternativetitle{img_great_chain_of_being_1579} (Public Domain): the hierarchy of creation as \citeauthor{img_great_chain_of_being_1579} drew it in <em>Rhetorica Christiana</em> — from inert matter at the base, through plants, animals, and humans, up through the angels to God at the apex. The fixed, ranked ladder that dominated Western thought for a millennium, the last great echo of which is Linnaeus's <em>Systema Naturae</em>. Source: \citeauthor{img_great_chain_of_being_1579}, \citeyear{img_great_chain_of_being_1579}, \citealternativetitle{img_great_chain_of_being_1579}, Wikimedia Commons.</figcaption>
 </figure>
 
 * **The clockwork universe.** The mechanistic philosophy that would eventually make "the brain as a computer" thinkable began not in a laboratory but in a workshop. The development of precision clocks in the 17th century, driven by the longitude problem, created the *mental model* of the universe as a **deterministic, rule-governed mechanism**: given its current state and its rules, its future is fully determined. This is the conceptual template of the computer itself. A Turing machine is a clockwork: given a state and a transition rule, the next state is fixed.
@@ -265,7 +265,7 @@ The Scientific Revolution was not a single event but a cascade of mutually reinf
 
 <figure>
     <img style="width: 40%; height: auto; display: block; margin: 1em auto;" src="copernicus_portrait.jpg" alt="Portrait of Nicolaus Copernicus, the astronomer whose De revolutionibus (1543) moved the Earth from the centre of the cosmos to a planet" />
-    <figcaption class="md">Nicolaus Copernicus (1473–1543), whose <em>De revolutionibus orbium coelestium</em> (\citeyear{copernicus1543revolutionibus}) displaced the Earth from the centre of the cosmos, the first and most consequential displacement in the Scientific Revolution. Source: Wellcome Collection, Wikimedia Commons (CC BY 4.0).</figcaption>
+    <figcaption class="md">The \citealternativetitle{img_copernicus_portrait} (CC BY 4.0): Nicolaus Copernicus (1473–1543), whose <em>De revolutionibus orbium coelestium</em> (\citeyear{copernicus1543revolutionibus}) displaced the Earth from the centre of the cosmos — the first and most consequential displacement in the Scientific Revolution. Source: \citeauthor{img_copernicus_portrait}, \citeyear{img_copernicus_portrait}, \citealternativetitle{img_copernicus_portrait}, Wikimedia Commons.</figcaption>
 </figure>
 
 **Kepler: The Laws of the Planets.** \citeauthorlastnameand{keplerastronomianova} spent seventeen years analysing the observations of the Danish astronomer Tycho Brahe, the most precise naked-eye measurements ever made, to find the shape of Mars's orbit. In \citetitle{keplerastronomianova} (\citeyear{keplerastronomianova}), he announced his first two laws: planetary orbits are **ellipses** with the Sun at one focus, and a line from the Sun to a planet sweeps out equal areas in equal times \cite[as established in]{keplerastronomianova}. In \citetitle{kepler1619harmonices} (\citeyear{kepler1619harmonices}), published in Linz, he announced the third law: the square of a planet's orbital period is proportional to the cube of its semi-major axis \cite[as derived in]{kepler1619harmonices}. Kepler's laws were *empirical*: they described what the planets do, not why. The "why" would wait for Newton.

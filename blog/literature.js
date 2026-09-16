@@ -12209,5 +12209,90 @@ window.bibData = {
 		year: "c. 350 BCE",
 		url: "https://archive.org/details/meteorologica00aristoft",
 		alternativetitle: "Aristotle, Meteorologica"
+	},
+
+	/* ═══════════════════════════════════════════════════════════════════
+	 *  Image sources: Development of Life + From Mythos to Logos
+	 *  (untold_history.php) — downloaded and embedded as figures.
+	 * ═══════════════════════════════════════════════════════════════════ */
+	"img_stromatolite_sharkbay": {
+		title: "Living stromatolites, Shark Bay, Western Australia",
+		author: "Ed Landing & Markes E. Johnson (in: Journal of Marine Science and Engineering, 2024)",
+		year: 2024,
+		url: "https://commons.wikimedia.org/wiki/File:Living_stromatolites,_Shark_Bay,_Western_Australia.png",
+		license: "CC BY 4.0",
+		alternativetitle: "Living stromatolites, Shark Bay (2024)"
+	},
+	"img_charnia_masoni": {
+		title: "Charnia masoni, frond-like Ediacaran organism from the Holbrook Limestone, Charnwood Forest",
+		author: "MUSE",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Charnia_masoni_-_MUSE.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Charnia masoni (Ediacaran)"
+	},
+	"img_kimberella_quadrata": {
+		title: "Kimberella quadrata, quilted Ediacaran organism from the White Sea",
+		author: "Aleksey Nagovitsyn",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Kimberella_quadrata.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Kimberella quadrata (Ediacaran)"
+	},
+	"img_dickinsonia_costata": {
+		title: "Dickinsonia costata, ribbed Ediacaran animal",
+		author: "Ghedoghedo",
+		year: 2011,
+		url: "https://commons.wikimedia.org/wiki/File:Dickinsonia_costata.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Dickinsonia costata"
+	},
+	"img_anomalocaris_canadensis": {
+		title: "Anomalocaris canadensis, Cambrian apex predator from the Burgess Shale",
+		author: "Wawrow",
+		year: 2024,
+		url: "https://commons.wikimedia.org/wiki/File:Anomalocaris_canadensis.png",
+		license: "CC BY 4.0",
+		alternativetitle: "Anomalocaris canadensis"
+	},
+	"img_burgess_shale_fossils": {
+		title: "Burgess Shale fossils, Middle Cambrian of the Canadian Rockies",
+		author: "Ryan Somma",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Burgess_Shale_Fossils.jpg",
+		license: "CC BY 2.0",
+		alternativetitle: "Burgess Shale fossils"
+	},
+	"img_vetulicola_cuneatus": {
+		title: "Vetulicola cuneatus, primitive deuterostome from the Chengjiang biota",
+		author: "Woudloper",
+		year: 2025,
+		url: "https://commons.wikimedia.org/wiki/File:Vetulicola_cuneatus,_Chengjiang_biota_1.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Vetulicola cuneatus (Chengjiang)"
+	},
+	"img_hallucigenia_smithsonian": {
+		title: "Hallucigenia sparsa, lobopodian from the Cambrian (Smithsonian)",
+		author: "Jstuby at English Wikipedia (Smithsonian)",
+		year: 2009,
+		url: "https://commons.wikimedia.org/wiki/File:Hallucigenia_smithsonian.JPG",
+		license: "Public domain",
+		alternativetitle: "Hallucigenia sparsa"
+	},
+	"img_great_chain_of_being_1579": {
+		title: "The Great Chain of Being, woodcut from Rhetorica Christiana",
+		author: "Diego de Valadés",
+		year: 1579,
+		url: "https://commons.wikimedia.org/wiki/File:The_Great_Chain_of_Being_(1579).jpg",
+		license: "Public domain",
+		alternativetitle: "The Great Chain of Being (1579)"
+	},
+	"img_copernicus_portrait": {
+		title: "Portrait of Nicolas Copernicus",
+		author: "Wellcome Collection",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Portrait_of_Nicolas_Copernicus_Wellcome_M0006157.jpg",
+		license: "CC BY 4.0",
+		alternativetitle: "Portrait of Copernicus"
 	}
 };
