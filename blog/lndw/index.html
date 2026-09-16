@@ -222,7 +222,7 @@
             </div>
             <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
             <br>
-            <div style="text-align:center">
+            <div style="text-align:center; display:none;" id="nn-bottom-images-wrap">
                 <div id="nn-bottom-images" style="display: flex; justify-content: center; align-items: center; gap: 20px; opacity: 0; transition: opacity 0.5s ease;">
                     <img height="100" class="sunrise-bg-img" src="sun_run.jpg" alt="Sonnenbahn über Concordia Station, 24 Stunden Polartag" style="width: auto;">
                     <div style="font-size: 24px; color: #333;">→</div>
@@ -247,7 +247,7 @@
                 </div>
                 <p style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
 
-<div style="text-align:center; display:none;" id="nn-bottom-images-wrap">
+<div style="text-align:center">
                 <img style="max-width:100%; max-height:22vh; border-radius:8px;" class="fragment" src="../snarc.jpg" alt="SNARC" />
                 </div>
                 <p class="fragment" style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
@@ -1638,7 +1638,7 @@
 			// Hinweis: Der Lade-Screen wird von der Lade-Pipeline (LoadingStatus) ausgeblendet.
 		});
 	});
-	let resizeRaf;
+let resizeRaf;
 	window.addEventListener('resize', () => {
 		cancelAnimationFrame(resizeRaf);
 		resizeRaf = requestAnimationFrame(fitSlides);
