@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Ologs – Interaktive Reise durch Spivak & Kent (2012)</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0f1a; --bg2:#111827; --panel:#0f172a; --ink:#e5e7eb; --muted:#9ca3af;
+    --acc:#38bdf8; --acc2:#a78bfa; --ok:#34d399; --warn:#fbbf24; --bad:#f87171;
+    --line:#1f2937; --box:#1e293b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:linear-gradient(180deg,#050810,#0b0f1a 30%,#0b0f1a);color:var(--ink);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:60px 24px 24px;text-align:center;background:radial-gradient(1000px 400px at 50% -100px,rgba(56,189,248,.25),transparent 60%),radial-gradient(800px 300px at 20% 0,rgba(167,139,250,.15),transparent 60%)}
+  header h1{font-size:clamp(28px,4vw,52px);margin:0;background:linear-gradient(90deg,#38bdf8,#a78bfa,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em}
+  header .sub{color:var(--muted);margin-top:10px;font-size:18px}
+  header .meta{color:#64748b;margin-top:6px;font-size:14px}
+  nav.toc{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:rgba(11,15,26,.75);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+  nav.toc a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;transition:all .2s}
+  nav.toc a:hover{background:var(--box);color:var(--ink)}
+  nav.toc a.active{background:linear-gradient(90deg,#38bdf8,#a78bfa);color:#0b0f1a}
+  main{max-width:1200px;margin:0 auto;padding:24px}
+  section{margin:48px 0;padding:28px;background:linear-gradient(180deg,var(--panel),#0b1220);border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 60px -30px rgba(0,0,0,.5)}
+  section h2{margin:0 0 6px;font-size:28px;color:#f8fafc}
+  section h2 .num{color:#38bdf8;font-family:'JetBrains Mono',monospace;margin-right:12px}
+  section .lead{color:var(--muted);font-size:15px;margin-bottom:20px}
+  h3{color:#e2e8f0;font-size:20px;margin:24px 0 10px;border-left:3px solid var(--acc);padding-left:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:800px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--box);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card h4{margin:0 0 8px;color:#f1f5f9;font-size:16px}
+  .card p{margin:6px 0;color:#cbd5e1;font-size:14px;line-height:1.55}
+  .canvas-wrap{background:#020617;border:1px solid var(--line);border-radius:12px;padding:12px;overflow:hidden}
+  canvas{display:block;max-width:100%;background:#020617;border-radius:8px}
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:14px 0;padding:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px}
+  .controls label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:160px}
+  .controls label b{color:var(--acc);font-family:'JetBrains Mono',monospace;font-size:13px}
+  input[type=range]{-webkit-appearance:none;height:6px;background:linear-gradient(90deg,#334155,#475569);border-radius:4px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:linear-gradient(135deg,#38bdf8,#a78bfa);border-radius:50%;cursor:pointer;box-shadow:0 0 10px rgba(56,189,248,.6)}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;background:linear-gradient(135deg,#38bdf8,#a78bfa);border-radius:50%;cursor:pointer;border:none}
+  button{background:linear-gradient(135deg,#38bdf8,#a78bfa);color:#0b0f1a;border:none;padding:10px 16px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px;transition:transform .1s}
+  button:hover{transform:translateY(-1px)}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+  select{background:var(--box);color:var(--ink);border:1px solid var(--line);padding:8px 10px;border-radius:8px;font-size:13px}
+  .note{background:linear-gradient(90deg,rgba(56,189,248,.08),rgba(167,139,250,.08));border-left:3px solid var(--acc);padding:12px 14px;border-radius:8px;margin:14px 0;font-size:14px;color:#cbd5e1}
+  .qa{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+  @media(max-width:900px){.qa{grid-template-columns:1fr 1fr}}
+  .qa .q{background:var(--box);padding:12px;border-radius:10px;border-top:3px solid var(--acc)}
+  .qa .q h5{margin:0 0 6px;color:var(--acc);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+  .qa .q p{margin:0;font-size:13px;color:#cbd5e1;line-height:1.5}
+  .status{padding:10px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:13px;margin-top:10px}
+  .status.ok{background:rgba(52,211,153,.12);color:#6ee7b7;border:1px solid rgba(52,211,153,.3)}
+  .status.bad{background:rgba(248,113,113,.12);color:#fca5a5;border:1px solid rgba(248,113,113,.3)}
+  table.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0}
+  table.tbl th,table.tbl td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+  table.tbl th{color:var(--acc);font-weight:600;background:rgba(56,189,248,.06)}
+  .badge{display:inline-block;padding:2px 8px;background:rgba(167,139,250,.15);color:#c4b5fd;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;margin-right:4px}
+  footer{text-align:center;padding:40px 20px;color:#475569;font-size:13px;border-top:1px solid var(--line);margin-top:60px}
+  .kbd{background:#1e293b;border:1px solid var(--line);border-bottom:2px solid var(--line);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .hint{color:#64748b;font-size:12px;font-style:italic;margin-top:6px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ologs</h1>
+  <div class="sub">Ein kategoriales Framework für Wissensrepräsentation</div>
+  <div class="meta">Interaktive Erkundung des Papers von David I. Spivak & Robert E. Kent (PLOS ONE, 2012)</div>
+</header>
+
+<nav class="toc" id="toc">
+  <a href="#motiv">🎯 Motivation</a>
+  <a href="#prereq1">📐 Mengen & Funktionen</a>
+  <a href="#prereq2">🔗 Kategorien</a>
+  <a href="#basic">📦 Types, Aspects, Facts</a>
+  <a href="#instances">🗃️ Instanzen (Daten)</a>
+  <a href="#functors">🔄 Funktoren & Übersetzung</a>
+  <a href="#limits">⊓ Limits (Layouts)</a>
+  <a href="#colimits">⊔ Kolimits (Groupings)</a>
+  <a href="#factorial">🔢 Fakultät als Olog</a>
+  <a href="#metric">📏 Metrische Räume</a>
+  <a href="#network">🌐 Informationssysteme</a>
+  <a href="#outro">✨ Fazit</a>
+</nav>
+
+<main>
+
+<!-- ===================== MOTIVATION ===================== -->
+<section id="motiv">
+  <h2><span class="num">§0</span>Warum überhaupt Ologs?</h2>
+  <div class="lead">Bevor wir ins Formale gehen: <b>Welches Problem lösen Ologs?</b></div>
+
+  <div class="qa">
+    <div class="q"><h5>Problem</h5><p>Wissenschaftler, Firmen, Menschen speichern Wissen in Prosa („Silos"). Silos lassen sich nicht präzise verknüpfen.</p></div>
+    <div class="q"><h5>Motivation</h5><p>Wir brauchen eine Sprache, die <b>menschlich lesbar</b> UND <b>maschinell präzise</b> ist – und die Ideen zwischen verschiedenen Autoren übersetzen kann.</p></div>
+    <div class="q"><h5>Idee</h5><p>Nutze die Sprache der <b>Kategorientheorie</b>: Boxen für Konzepte, Pfeile für funktionale Beziehungen, kommutative Diagramme für Fakten.</p></div>
+    <div class="q"><h5>Lösungsweg</h5><p>Definiere „Ologs" als beschriftete Kategorien / Sketches. Zeige, dass sie als DB-Schemata dienen, primitive Rekursion ausdrücken und via Funktoren verbunden werden können.</p></div>
+    <div class="q"><h5>Antwort</h5><p>Ologs = kategoriales KR-Framework mit rigoroser Semantik, das RDF/OWL/SemNets übertrifft in Präzision & Kompositionalität.</p></div>
+  </div>
+
+  <div class="note">
+    👉 <b>Interaktive Demo:</b> Klick unten auf ein Wissens-Modell und sieh, wie „Silo" vs. „Olog-Netzwerk" sich unterscheiden.
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="siloVsOlog" width="1100" height="380"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="silo.mode='silo';silo.draw()">📄 Silos (Prosa)</button>
+    <button onclick="silo.mode='olog';silo.draw()">🕸️ Olog-Netzwerk</button>
+    <label>Zufall neu <input type="range" min="1" max="100" value="42" oninput="silo.seed=+this.value;silo.init();silo.draw()"></label>
+  </div>
+</section>
+
+<!-- ===================== PREREQ 1: Mengen & Funktionen ===================== -->
+<section id="prereq1">
+  <h2><span class="num">§1</span>Prerequisite: Mengen & Funktionen</h2>
+  <div class="lead">Ein Olog-Pfeil <b>ist</b> eine Funktion zwischen Mengen. Was heißt das genau?</div>
+
+  <div class="grid">
+    <div class="card">
+      <h4>Regel 1 · Jedes Element hat einen Pfeil</h4>
+      <p>Zieh unten Punkte in <b>A</b> auf Punkte in <b>B</b>. Jeder A-Punkt braucht <b>genau einen</b> Pfeil raus.</p>
+    </div>
+    <div class="card">
+      <h4>Regel 2 · Keine „Ambiguität"</h4>
+      <p>Ein A-Punkt darf nicht auf zwei B-Punkte zeigen. Aber zwei A-Punkte dürfen auf denselben B-Punkt zeigen.</p>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="funCanvas" width="1100" height="420"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="funGame.reset()">🔄 Reset</button>
+    <button onclick="funGame.check()">✓ Ist es eine gültige Funktion?</button>
+    <label>|A| <input type="range" min="2" max="6" value="4" oninput="funGame.setSize('A',+this.value)"></label>
+    <label>|B| <input type="range" min="2" max="6" value="3" oninput="funGame.setSize('B',+this.value)"></label>
+    <div id="funStatus" class="status ok">Ziehe Pfeile von A nach B (Klick auf A-Punkt, dann auf B-Punkt).</div>
+  </div>
+</section>
+
+<!-- ===================== PREREQ 2: Kategorien ===================== -->
+<section id="prereq2">
+  <h2><span class="num">§2</span>Prerequisite: Was ist eine Kategorie?</h2>
+  <div class="lead">Kategorien = Graphen + <b>Pfad-Äquivalenzen</b>. Das ist der Unterschied zu RDF & Co.</div>
+
+  <div class="grid">
+    <div class="card">
+      <h4>Komposition</h4>
+      <p>Wenn $f:A\to B$ und $g:B\to C$, dann existiert $g\circ f:A\to C$. Pfeile ketten sich.</p>
+    </div>
+    <div class="card">
+      <h4>Kommutative Diagramme</h4>
+      <p>Zwei verschiedene Pfade $A\to C$ können <b>gleich erklärt werden</b>. Das ist der Trick, um Bedeutung festzunageln.</p>
+    </div>
+  </div>
+
+  <div class="note">🎮 Spiel: Klicke Pfeile an, um Pfade zu bauen. Der grüne Haken erscheint, wenn du zwei Pfade findest, die als gleich deklariert sind.</div>
+
+  <div class="canvas-wrap">
+    <canvas id="catCanvas" width="1100" height="400"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="catDemo.reset()">🔄 Pfade löschen</button>
+    <button onclick="catDemo.showCommute=!catDemo.showCommute;catDemo.draw()">🔍 Kommutative Fläche zeigen</button>
+  </div>
+</section>
+
+<!-- ===================== BASIC: Types, Aspects, Facts ===================== -->
+<section id="basic">
+  <h2><span class="num">§3</span>Bausteine: Types · Aspects · Facts</h2>
+  <div class="lead">Ein basic olog ist genau eine Kategorie mit englischen Labels. Jedes Element hat eine Bedeutung.</div>
+
+  <div class="grid">
+    <div class="card">
+      <h4><span class="badge">Type</span>Box mit Substantiv</h4>
+      <p>„a person", „a woman", „a pair (a,b) where a is a person and b is a person"</p>
+    </div>
+    <div class="card">
+      <h4><span class="badge">Aspect</span>Pfeil = Funktion</h4>
+      <p>„a woman <b>is</b> a person" – jeder Instanz der Quelle wird genau eine Instanz des Ziels zugeordnet.</p>
+    </div>
+    <div class="card">
+      <h4><span class="badge">Fact</span>Kommutatives Diagramm</h4>
+      <p>„die weibliche Elter einer Person ist ihre Mutter" – zwei Pfade sind äquivalent.</p>
+    </div>
+    <div class="card">
+      <h4><span class="badge">Regel</span>Guter Stil</h4>
+      <p>Boxen starten mit „a"/„an". Pfeile ergeben englische Sätze. Fakten werden explizit deklariert.</p>
+    </div>
+  </div>
+
+  <h3>Live-Olog-Editor: Familie</h3>
+  <div class="note">Bewege die Regler → sieh, wie ein Olog gleichzeitig <b>Struktur</b> und <b>Faktum</b> ausdrückt. Der Haken ✓ bedeutet: „Frau + Elter = Mutter" ist Gesetz.</div>
+
+  <div class="canvas-wrap">
+    <canvas id="ologCanvas" width="1100" height="460"></canvas>
+  </div>
+  <div class="controls">
+    <label>Größe „woman" <b id="lvW">3</b><input type="range" min="1" max="6" value="3" oninput="ologDemo.nW=+this.value;document.getElementById('lvW').textContent=this.value;ologDemo.draw()"></label>
+    <label>Größe „person" <b id="lvP">5</b><input type="range" min="2" max="10" value="5" oninput="ologDemo.nP=+this.value;document.getElementById('lvP').textContent=this.value;ologDemo.draw()"></label>
+    <label><input type="checkbox" id="cbFact" checked onchange="ologDemo.showFact=this.checked;ologDemo.draw()"> Faktum "✓ Mutter = weibl. Elter" anzeigen</label>
+  </div>
+</section>
+
+<!-- ===================== INSTANCES ===================== -->
+<section id="instances">
+  <h2><span class="num">§4</span>Instanzen: Ologs als Datenbank-Schemata</h2>
+  <div class="lead">Jeder Olog kann mit „Instance Data" gefüllt werden — dann ist er eine echte Datenbank.</div>
+
+  <div class="note">💡 Formal: Instanzen = ein Funktor $I:C\to \mathbf{Set}$. Jede Box → Menge, jeder Pfeil → Funktion, jedes Faktum → Gleichung.</div>
+
+  <h3>Interaktives Beispiel: Firma</h3>
+  <p style="color:var(--muted);font-size:14px">Klicke auf eine Tabelle, ändere Werte und sieh, wie ein „Fact" (Konsistenzregel) verletzt werden kann.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h4>employee</h4>
+      <table class="tbl" id="tblEmp"></table>
+    </div>
+    <div class="card">
+      <h4>department</h4>
+      <table class="tbl" id="tblDep"></table>
+    </div>
+  </div>
+  <div class="controls">
+    <button onclick="dbDemo.checkFact()">🧪 Faktum prüfen: „manager arbeitet in derselben Abteilung"</button>
+    <button onclick="dbDemo.mutate()">🎲 Zufällig ändern</button>
+    <button onclick="dbDemo.reset()">↺ Zurücksetzen</button>
+    <div id="dbStatus" class="status ok">Bereit</div>
+  </div>
+</section>
+
+<!-- ===================== FUNCTORS ===================== -->
+<section id="functors">
+  <h2><span class="num">§5</span>Funktoren: Übersetzung zwischen Ologs</h2>
+  <div class="lead">Zwei Personen (=Ologs) verstehen sich, wenn ein Funktor jede Box/jeden Pfeil des einen Ologs auf den anderen abbildet.</div>
+
+  <div class="grid">
+    <div class="card">
+      <h4>Common Ground (Span)</h4>
+      <p>Zwei Ologs $A, B$ finden gemeinsamen Boden $C$ mit Funktoren $C\to A$ und $C\to B$. So kann Information fließen.</p>
+    </div>
+    <div class="card">
+      <h4>Direct / Inverse Flow</h4>
+      <p>Ein Funktor $F:C\to D$ erlaubt es, Fakten von $C$ nach $D$ (direkt) und von $D$ nach $C$ (invers) zu transportieren.</p>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="functorCanvas" width="1100" height="440"></canvas>
+  </div>
+  <div class="controls">
+    <label>Mapping-Modus
+      <select id="mapMode" onchange="funcDemo.mode=this.value;funcDemo.draw()">
+        <option value="translate">Übersetze A → B</option>
+        <option value="span">Common Ground (A ← C → B)</option>
+        <option value="flow">Informationsfluss</option>
+      </select>
+    </label>
+    <button onclick="funcDemo.animate()">▶ Fluss animieren</button>
+  </div>
+</section>
+
+<!-- ===================== LIMITS ===================== -->
+<section id="limits">
+  <h2><span class="num">§6</span>Limits: Layouts (Produkt & Pullback)</h2>
+  <div class="lead">Wie drückt man „<b>ein Paar (x,y) wobei…</b>" oder „<b>ein X mit derselben Eigenschaft wie Y</b>" aus?</div>
+
+  <h3>Produkt A × B</h3>
+  <p style="color:var(--muted);font-size:14px">Alle möglichen Paare (a,b). Beispiel: $|\text{Farbe}|=3,\ |\text{Größe}|=4 \Rightarrow |\text{Paare}|=12$.</p>
+
+  <div class="canvas-wrap">
+    <canvas id="prodCanvas" width="1100" height="380"></canvas>
+  </div>
+  <div class="controls">
+    <label>|A|
+  <div class="controls">
+    <label>|A| <b id="lvA2">3</b><input type="range" min="1" max="6" value="3" oninput="prodDemo.nA=+this.value;document.getElementById('lvA2').textContent=this.value;prodDemo.draw()"></label>
+    <label>|B| <b id="lvB2">4</b><input type="range" min="1" max="6" value="4" oninput="prodDemo.nB=+this.value;document.getElementById('lvB2').textContent=this.value;prodDemo.draw()"></label>
+    <label>|A×B| = <b id="lvProd">12</b></label>
+  </div>
+
+  <h3>Pullback A ×_C B: "Dinge, die dieselbe Eigenschaft haben"</h3>
+  <p style="color:var(--muted);font-size:14px">Beispiel: Möbel, das genau in eine Lücke passt (gleiche Breite). Formal: $A\times_C B = \{(a,b) \mid f(a)=g(b)\}$.</p>
+
+  <div class="canvas-wrap">
+    <canvas id="pullCanvas" width="1100" height="420"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="pullDemo.randomize()">🎲 Neue Werte</button>
+    <label>Möbel-Anzahl <input type="range" min="2" max="8" value="5" oninput="pullDemo.nA=+this.value;pullDemo.randomize()"></label>
+    <label>Lücken-Anzahl <input type="range" min="2" max="8" value="5" oninput="pullDemo.nB=+this.value;pullDemo.randomize()"></label>
+    <div id="pullStatus" class="status ok">Passende Paare werden grün hervorgehoben</div>
+  </div>
+</section>
+
+<!-- ===================== COLIMITS ===================== -->
+<section id="colimits">
+  <h2><span class="num">§7</span>Kolimits: Groupings (Coproduct & Pushout)</h2>
+  <div class="lead">Wie drückt man "<b>entweder X oder Y</b>" oder "<b>X und Y verklebt an einer Naht</b>" aus?</div>
+
+  <h3>Coproduct A ⊔ B: Disjunkte Vereinigung</h3>
+  <p style="color:var(--muted);font-size:14px">Beispiel: <i>Ein Tier, das fliegt oder schwimmt</i>. Enten kommen zweimal vor (einmal als Flieger, einmal als Schwimmer).</p>
+
+  <div class="canvas-wrap">
+    <canvas id="coprodCanvas" width="1100" height="360"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="coprodDemo.toggleOverlap()">🔁 Überlappung ein/aus (Enten)</button>
+  </div>
+
+  <h3>Pushout: Verkleben an einer gemeinsamen Naht</h3>
+  <p style="color:var(--muted);font-size:14px">Beispiel: Arm + Torso, verklebt an den <i>Schulterzellen</i>. Die Schulterzellen werden nicht doppelt gezählt.</p>
+
+  <div class="canvas-wrap">
+    <canvas id="pushCanvas" width="1100" height="420"></canvas>
+  </div>
+  <div class="controls">
+    <label>Schulter-Überlappung <input type="range" min="0" max="10" value="4" oninput="pushDemo.overlap=+this.value;pushDemo.draw()"></label>
+    <button onclick="pushDemo.mode=(pushDemo.mode+1)%2;pushDemo.draw()">🔄 Coproduct vs. Pushout</button>
+  </div>
+</section>
+
+<!-- ===================== FACTORIAL OLOG ===================== -->
+<section id="factorial">
+  <h2><span class="num">§8</span>Konkrete Anwendung: Fakultät als Olog</h2>
+  <div class="lead">Spivak zeigt: <b>jede primitiv-rekursive Funktion</b> lässt sich als Olog schreiben. Wir demonstrieren es an $n!$.</div>
+
+  <div class="note">
+    Der Olog hat 5 Boxen und 7 Pfeile. Die Fakten (kommutative Diagramme) definieren die Rekursion: $f(0)=1$ und $f(n) = n \cdot f(n-1)$.
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="factOlog" width="1100" height="440"></canvas>
+  </div>
+  <div class="controls">
+    <label>Berechne n! für n = <b id="factNVal">5</b>
+      <input type="range" min="0" max="10" value="5" oninput="factDemo.n=+this.value;document.getElementById('factNVal').textContent=this.value;factDemo.animate()">
+    </label>
+    <button onclick="factDemo.animate()">▶ Animation starten</button>
+    <div id="factOut" class="status ok">5! = 120</div>
+  </div>
+
+  <h3>Rechenweg als Baum</h3>
+  <div id="factTree" style="width:100%;height:420px"></div>
+</section>
+
+<!-- ===================== METRIC SPACES ===================== -->
+<section id="metric">
+  <h2><span class="num">§9</span>Mathematik als Olog: Pseudo-metrischer Raum</h2>
+  <div class="lead">Ologs können auch <b>abstrakte mathematische Definitionen</b> ausdrücken. Beispiel: Was ist ein (pseudo-)metrischer Raum?</div>
+
+  <div class="grid">
+    <div class="card">
+      <h4>Klassische Definition</h4>
+      <p>Ein pseudo-metrischer Raum $(X,d)$ ist eine Menge $X$ mit einer Distanzfunktion $d:X\times X\to \mathbb{R}_{\geq 0}$, sodass für alle $x,y,z\in X$:</p>
+      <p>1) $d(x,x)=0$<br>2) $d(x,y)=d(y,x)$<br>3) $d(x,z)\leq d(x,y)+d(y,z)$</p>
+    </div>
+    <div class="card">
+      <h4>Als Olog</h4>
+      <p>Die drei Axiome werden zu <b>drei kommutativen Diagrammen</b> im Olog. Struktur und Bedeutung fallen zusammen.</p>
+    </div>
+  </div>
+
+  <div id="metricPlot" style="width:100%;height:500px"></div>
+  <div class="controls">
+    <label>Anzahl Punkte <input type="range" min="3" max="20" value="8" oninput="metricDemo.n=+this.value;metricDemo.draw()"></label>
+    <label>
+      <select id="metricType" onchange="metricDemo.metric=this.value;metricDemo.draw()">
+        <option value="euclid">Euklidische Metrik</option>
+        <option value="manhattan">Manhattan-Metrik</option>
+        <option value="chebyshev">Chebyshev-Metrik</option>
+      </select>
+    </label>
+    <button onclick="metricDemo.checkTriangle()">🧪 Dreiecks-Ungleichung prüfen</button>
+    <div id="metricStatus" class="status ok">Alle Axiome erfüllt ✓</div>
+  </div>
+</section>
+
+<!-- ===================== NETWORK OF OLOGS ===================== -->
+<section id="network">
+  <h2><span class="num">§10</span>Informationssysteme: Netzwerke aus Ologs</h2>
+  <div class="lead">Individuen haben je einen Olog. Verbunden über <b>Common Grounds</b>, entsteht ein Netzwerk. <b>Kanäle</b> und <b>Fusion</b> integrieren alles.</div>
+
+  <div class="qa">
+    <div class="q"><h5>Distributed System</h5><p>Diagramm $I:J\to\mathbf{Olog}$: viele Ologs mit Constraints.</p></div>
+    <div class="q"><h5>Common Ground</h5><p>Reference-Ontologie $C$ mit Funktoren nach $A$ und $B$.</p></div>
+    <div class="q"><h5>Channel</h5><p>Flüsse in einen Core – der Zusammenfluss aller Weltsichten.</p></div>
+    <div class="q"><h5>Fusion</h5><p>Der Kolimit-Olog: <i>direkter System-Fluss</i>.</p></div>
+    <div class="q"><h5>Consequence</h5><p>Fusion inverse zurückverteilt = Interoperabilität.</p></div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="netCanvas" width="1100" height="500"></canvas>
+  </div>
+  <div class="controls">
+    <button onclick="netDemo.mode='separate';netDemo.draw()">1️⃣ Getrennte Ologs</button>
+    <button onclick="netDemo.mode='common';netDemo.draw()">2️⃣ Common Grounds einführen</button>
+    <button onclick="netDemo.mode='channel';netDemo.animateChannel()">3️⃣ Channel-Fluss</button>
+    <button onclick="netDemo.mode='fusion';netDemo.animateFusion()">4️⃣ Fusion bilden</button>
+  </div>
+</section>
+
+<!-- ===================== OUTRO ===================== -->
+<section id="outro">
+  <h2><span class="num">§11</span>Fazit & Zukunft</h2>
+  <div class="lead">Was hast du gerade gesehen?</div>
+  <div class="grid">
+    <div class="card">
+      <h4>✅ Was Ologs leisten</h4>
+      <p>• Menschenlesbare KR mit mathematischer Präzision<br>• Automatische Übersetzung in DB-Schemata<br>• Modularität statt Silos<br>• Präzise Übersetzung zwischen Weltsichten<br>• Können primitive Rekursion & Math-Definitionen ausdrücken</p>
+    </div>
+    <div class="card">
+      <h4>🚀 Zukunftsrichtungen (Section 7)</h4>
+      <p>• Exponentiale, Subobject-Classifier, Turing-vollständig?<br>• Ologs für Rechts- & Wissenschafts-Ontologien<br>• Semantic Web als Netzwerk von Ologs<br>• Beweise als Olog-Funktoren<br>• Kinder lernen präzises Denken via Ologs</p>
+    </div>
+  </div>
+  <div class="note">
+    Die Grundidee: <b>Kategorien = Graphen + Pfad-Äquivalenzen</b>. Das kleine „+" ist der ganze Unterschied zwischen einem Wirrwarr aus Fakten und einer präzisen Wissensstruktur.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Interaktive Visualisierung basierend auf: <b>Spivak & Kent (2012)</b>, „Ologs: A Categorical Framework for Knowledge Representation", <i>PLOS ONE</i>. DOI: 10.1371/journal.pone.0024274 · Alle Grafiken selbst gerendert (Canvas + Plotly + MathJax).
+</footer>
+
+<script>
+/* ========= TOC ACTIVE STATE ========= */
+const tocLinks = document.querySelectorAll('#toc a');
+const sections = document.querySelectorAll('section');
+window.addEventListener('scroll', ()=>{
+  let cur='';
+  sections.forEach(s=>{ if(scrollY>=s.offsetTop-120) cur=s.id; });
+  tocLinks.forEach(l=>{ l.classList.toggle('active', l.getAttribute('href')==='#'+cur); });
+});
+
+/* ========= HELPER: ARROW ========= */
+function arrow(ctx,x1,y1,x2,y2,color='#94a3b8',w=2,dashed=false,label=null){
+  ctx.save();
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.fillStyle=color;
+  if(dashed) ctx.setLineDash([6,6]); else ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-10*Math.cos(a-0.35),y2-10*Math.sin(a-0.35));
+  ctx.lineTo(x2-10*Math.cos(a+0.35),y2-10*Math.sin(a+0.35));
+  ctx.closePath(); ctx.fill();
+  if(label){
+    ctx.fillStyle='#cbd5e1'; ctx.font='12px Inter';
+    ctx.fillText(label,(x1+x2)/2+6,(y1+y2)/2-6);
+  }
+  ctx.restore();
+}
+function box(ctx,x,y,w,h,text,fill='#1e293b',stroke='#38bdf8'){
+  ctx.fillStyle=fill; ctx.strokeStyle=stroke; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.roundRect(x,y,w,h,8); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#e5e7eb'; ctx.font='13px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  wrapText(ctx,text,x+w/2,y+h/2,w-14,15);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+function wrapText(ctx,t,x,y,mw,lh){
+  const words=t.split(' '); let line='',lines=[];
+  for(const w of words){
+    const test=line+w+' ';
+    if(ctx.measureText(test).width>mw && line){ lines.push(line.trim()); line=w+' '; }
+    else line=test;
+  }
+  lines.push(line.trim());
+  const start=y-(lines.length-1)*lh/2;
+  lines.forEach((L,i)=>ctx.fillText(L,x,start+i*lh));
+}
+
+/* ========= §0 SILO VS OLOG ========= */
+const silo={mode:'silo',seed:42,init(){
+  const rng=mulberry32(this.seed); this.nodes=[];
+  const labels=['Person','Buch','Auto','Firma','Stadt','Datum','Preis','Autor','Kunde','Farbe','Größe','Land'];
+  for(let i=0;i<12;i++) this.nodes.push({x:80+rng()*940,y:60+rng()*260,label:labels[i]});
+  this.edges=[];
+  for(let i=0;i<15;i++){const a=Math.floor(rng()*12),b=Math.floor(rng()*12);if(a!==b)this.edges.push([a,b]);}
+},draw(){
+  const c=document.getElementById('siloVsOlog'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  if(this.mode==='silo'){
+    // Silos: getrennte Kästen mit Text
+    for(let i=0;i<4;i++){
+      const x=80+i*260,y=60;
+      ctx.fillStyle='#1e293b'; ctx.strokeStyle='#475569'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.roundRect(x,y,220,260,12); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='#94a3b8'; ctx.font='bold 14px Inter';
+      ctx.fillText('📄 Silo '+(i+1),x+16,y+28);
+      ctx.font='11px monospace'; ctx.fillStyle='#64748b';
+      const lines=['Lorem ipsum dolor','sit amet, consec-','tetur adipiscing.','Prosa-Text ohne','maschinelle','Struktur. Nur','Menschen können','das lesen und','interpretieren.'];
+      lines.forEach((L,j)=>ctx.fillText(L,x+16,y+56+j*18));
+    }
+    ctx.fillStyle='#f87171'; ctx.font='bold 16px Inter'; ctx.textAlign='center';
+    ctx.fillText('❌ Keine strukturellen Verbindungen zwischen Silos', c.width/2, 350);
+    ctx.textAlign='left';
+  } else {
+    // Olog-Netzwerk
+    this.edges.forEach(([a,b])=>{
+      const n1=this.nodes[a],n2=this.nodes[b];
+      arrow(ctx,n1.x,n1.y,n2.x,n2.y,'#38bdf8',1.5);
+    });
+    this.nodes.forEach(n=>{
+      const w=Math.max(60,ctx.measureText(n.label).width+20);
+      box(ctx,n.x-w/2,n.y-16,w,32,'a '+n.label,'#0f172a','#a78bfa');
+    });
+    ctx.fillStyle='#34d399'; ctx.font='bold 16px Inter'; ctx.textAlign='center';
+    ctx.fillText('✓ Präzise, funktoriale Verbindungen – maschinell lesbar', c.width/2, 350);
+    ctx.textAlign='left';
+  }
+}};
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+silo.init(); silo.draw();
+
+/* ========= §1 FUNCTION GAME ========= */
+const funGame={sizeA:4,sizeB:3,arrows:[],selected:null,init(){this.arrows=[];this.selected=null;this.draw();},
+  setSize(k,v){if(k==='A')this.sizeA=v;else this.sizeB=v;this.arrows=[];this.selected=null;this.draw();},
+  reset(){this.arrows=[];this.selected=null;this.check();this.draw();},
+  pointsA(){const c=document.getElementById('funCanvas');return Array.from({length:this.sizeA},(_,i)=>({x:200,y:60+(340/(this.sizeA))*i+30}));},
+  pointsB(){return Array.from({length:this.sizeB},(_,i)=>({x:900,y:60+(340/(this.sizeB))*i+30}));},
+  draw(){
+    const c=document.getElementById('funCanvas'),ctx=c.getContext('2d');
+    ctx.clearRect(0,0,c.width,c.height);
+    ctx.fillStyle='rgba(56,189,248,.08)'; ctx.beginPath(); ctx.ellipse(200,220,110,200,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(167,139,250,.08)'; ctx.beginPath(); ctx.ellipse(900,220,110,200,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#38bdf8'; ctx.font='bold 20px Inter'; ctx.fillText('A',110,50); ctx.fillStyle='#a78bfa'; ctx.fillText('B',990,50);
+    this.arrows.forEach(([a,b])=>{const p1=this.pointsA()[a],p2=this.pointsB()[b];arrow(ctx,p1.x,p1.y,p2.x,p2.y,'#e5e7eb',2);});
+    this.pointsA().forEach((p,i)=>{ctx.fillStyle=this.selected===i?'#fbbf24':'#38bdf8';ctx.beginPath();ctx.arc(p.x,p.y,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0b0f1a';ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('a'+(i+1),p.x,p.y);});
+    this.pointsB().forEach((p,i)=>{ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(p.x,p.y,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#0b0f1a';ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('b'+(i+1),p.x,p.y);});
+    ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  },
+  check(){
+    const s=document.getElementById('funStatus');
+    const A=new Set(this.arrows.map(a=>a[0]));
+    const counts={};this.arrows.forEach(([a])=>counts[a]=(counts[a]||0)+1);
+    const missing=[];for(let i=0;i<this.sizeA;i++)if(!A.has(i))missing.push('a'+(i+1));
+    const multi=Object.entries(counts).filter(([,c])=>c>1).map(([a])=>'a'+(+a+1));
+    if(missing.length){s.className='status bad';s.textContent='❌ Keine Funktion: '+missing.join(', ')+' hat keinen Pfeil.';}
+    else if(multi.length){s.className='status bad';s.textContent='❌ Keine Funktion: '+multi.join(', ')+' hat mehrere Pfeile.';}
+    else {s.className='status ok';s.textContent='✓ Gültige Funktion! Jeder A-Punkt hat genau einen Pfeil nach B.';}
+  }};
+document.getElementById('funCanvas').addEventListener('click',e=>{
+  const c=e.currentTarget,r=c.getBoundingClientRect(),x=(e.clientX-r.left)*c.width/r.width,y=(e.clientY-r.top)*c.height/r.height;
+  funGame.pointsA().forEach((p,i)=>{if(Math.hypot(p.x-x,p.y-y)<14){funGame.selected=i;funGame.draw();}});
+  if(funGame.selected!==null){
+    funGame.pointsB().forEach((p,i)=>{if(Math.hypot(p.x-x,p.y-y)<14){
+      funGame.arrows=funGame.arrows.filter(a=>a[0]!==funGame.selected);
+      funGame.arrows.push([funGame.selected,i]);funGame.selected=null;funGame.draw();funGame.check();
+    }});
+  }
+});
+funGame.init();
+
+/* ========= §2 CATEGORY / COMMUTE ========= */
+const catDemo={showCommute:true,activePath:[],reset(){this.activePath=[];this.draw();},draw(){
+  const c=document.getElementById('catCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const A={x:150,y:200,l:'a person'},B={x:500,y:80,l:'a pair (mother, father)'},C={x:500,y:320,l:'a woman'},M={x:900,y:200,l:'a woman (mother)'};
+  const nodes=[A,B,C,M];
+  // commutative region
+  if(this.showCommute){
+    ctx.fillStyle='rgba(52,211,153,.08)';
+    ctx.beginPath();
+    ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.lineTo(M.x,M.y); ctx.lineTo(C.x,C.y); ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle='#34d399'; ctx.font='bold 40px Inter'; ctx.textAlign='center';
+    ctx.fillText('✓', (A.x+M.x)/2, (A.y+M.y)/2+15);
+    ctx.textAlign='left';
+    ctx.fillStyle='#6ee7b7'; ctx.font='italic 13px Inter';
+    ctx.fillText('kommutiert: beide Pfade ergeben dieselbe Mutter', 380, 380);
+  }
+  // arrows
+  arrow(ctx,A.x+90,A.y-10,B.x-140,B.y+20,'#38bdf8',2,false,'hat Eltern');
+  arrow(ctx,B.x+140,B.y+20,M.x-90,M.y-10,'#a78bfa',2,false,'weibl. Elter');
+  arrow(ctx,A.x+70,A.y+20,C.x-80,C.y-20,'#f472b6',2,false,'ist');
+  arrow(ctx,C.x+80,C.y-20,M.x-70,M.y+20,'#fbbf24',2,false,'Mutter');
+  // boxes
+  box(ctx,A.x-80,A.y-22,160,44,A.l,'#1e293b','#38bdf8');
+  box(ctx,B.x-140,B.y-22,280,44,B.l,'#1e293b','#a78bfa');
+  box(ctx,C.x-80,C.y-22,160,44,C.l,'#1e293b','#f472b6');
+  box(ctx,M.x-90,M.y-22,180,44,M.l,'#1e293b','#fbbf24');
+}};
+catDemo.draw();
+
+/* ========= §3 OLOG DEMO (Familie) ========= */
+const ologDemo={nW:3,nP:5,showFact:true,draw(){
+  const c=document.getElementById('ologCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  // Boxes
+  const W={x:150,y:130,l:'a woman'},P={x:600,y:130,l:'a person'},Pa={x:150,y:340,l:'a pair (mother, father)'},M={x:600,y:340,l:'a mother'};
+  // arrows
+  arrow(ctx,W.x+90,W.y,P.x-110,P.y,'#38bdf8',2.5,false,'ist');
+  arrow(ctx,W.x,W.y+30,W.x,Pa.y-30,'#a78bfa',2,false,null);
+  ctx.fillStyle='#a78bfa';ctx.font='12px Inter';ctx.fillText('gehört zu',20,220);
+  arrow(ctx,Pa.x+180,Pa.y,M.x-70,M.y,'#f472b6',2,false,'weibl. Elter');
+  arrow(ctx,P.x,P.y+30,M.x,M.y-30,'#fbbf24',2,false,'Mutter');
+  if(this.showFact){
+    ctx.fillStyle='#34d399';ctx.font='bold 32px Inter';ctx.textAlign='center';
+    ctx.fillText('✓',380,240);
+    ctx.fillStyle='#6ee7b7';ctx.font='italic 12px Inter';
+    ctx.fillText('Mutter = weibl. Elter',380,265);
+    ctx.textAlign='left';
+  }
+  box(ctx,W.x-90,W.y-25,180,50,W.l,'#0f172a','#38bdf8');
+  box(ctx,P.x-90,P.y-25,180,50,P.l,'#0f172a','#a78bfa');
+  box(ctx,Pa.x-90,Pa.y-25,270,50,Pa.l,'#0f172a','#fbbf24');
+  box(ctx,M.x-90,M.y-25,180,50,M.l,'#0f172a','#f472b6');
+  // Instanzen als kleine Punkte
+  const rng=mulberry32(this.nW*1000+this.nP);
+  for(let i=0;i<this.nW;i++){ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(W.x-60+i*30,W.y+40,4,0,Math.PI*2);ctx.fill();}
+  for(let i=0;i<this.nP;i++){ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(P.x-80+i*30,P.y+40,4,0,Math.PI*2);ctx.fill();}
+  ctx.fillStyle='#64748b';ctx.font='11px Inter';
+  ctx.fillText(this.nW+' Instanzen',W.x-40,W.y+60);
+  ctx.fillText(this.nP+' Instanzen',P.x-40,P.y+60);
+}};
+ologDemo.draw();
+
+/* ========= §4 DATABASE DEMO ========= */
+const dbDemo={
+  emp:[{id:1,name:'Alice',dept:1},{id:2,name:'Bob',dept:2},{id:3,name:'Carol',dept:1},{id:4,name:'Dan',dept:2}],
+  dep:[{id:1,name:'Engineering',mgr:1},{id:2,name:'Sales',mgr:2}],
+  init(){this.render();},
+  render(){
+    const te=document.getElementById('tblEmp');
+    te.innerHTML='<tr><th>id</th><th>name</th><th>works_in</th></tr>'+this.emp.map(e=>`<tr><td>${e.id}</td><td>${e.name}</td><td>${e.dept}</td></tr>`).join('');
+    const td=document.getElementById('tblDep');
+    td.innerHTML='<tr><th>id</th><th>name</th><th>manager</th></tr>'+this.dep.map(d=>`<tr><td>${d.id}</td><td>${d.name}</td><td>${d.mgr}</td></tr>`).join('');
+  },
+  checkFact(){
+    const s=document.getElementById('dbStatus');
+    for(const d of this.dep){
+      const mgr=this.emp.find(e=>e.id===d.mgr);
+      if(!mgr){s.className='status bad';s.textContent=`❌ Manager ${d.mgr} von "${d.name}" existiert nicht!`;return;}
+      if(mgr.dept!==d.id){s.className='status bad';s.textContent=`❌ Verletzung! Manager "${mgr.name}" arbeitet in Abteilung ${mgr.dept}, sollte aber in "${d.name}" (${d.id}) arbeiten.`;return;}
+    }
+    s.className='status ok';s.textContent='✓ Alle Fakten erfüllt: Jeder Manager arbeitet in derselben Abteilung, die er leitet.';
+  },
+  mutate(){
+    const e=this.emp[Math.floor(Math.random()*this.emp.length)];
+    e.dept=e.dept===1?2:1;
+    this.render();this.checkFact();
+  },
+  reset(){
+    this.emp=[{id:1,name:'Alice',dept:1},{id:2,name:'Bob',dept:2},{id:3,name:'Carol',dept:1},{id:4,name:'Dan',dept:2}];
+    this.dep=[{id:1,name:'Engineering',mgr:1},{id:2,name:'Sales',mgr:2}];
+    this.render();this.checkFact();
+  }
+};
+dbDemo.init();
+
+/* ========= §5 FUNCTOR DEMO ========= */
+const funcDemo={mode:'translate',t:0,animating:false,draw(){
+  const c=document.getElementById('functorCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const A={x:200,y:220,items:['Kunde','Bestellung','Produkt']};
+  const B={x:900,y:220,items:['Client','Order','Item']};
+  const C={x:550,y:80,items:['Entity','Transaction','Thing']};
+  const drawOlog=(o,color,label)=>{
+    ctx.fillStyle='rgba(255,255,255,.03)';ctx.strokeStyle=color;ctx.lineWidth=2;
+    ctx.beginPath();ctx.roundRect(o.x-90,o.y-90,180,220,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle=color;ctx.font='bold 14px Inter';ctx.textAlign='center';
+    ctx.fillText(label,o.x,o.y-100);
+    o.items.forEach((it,i)=>{
+      box(ctx,o.x-70,o.y-60+i*60,140,32,'a '+it,'#0f172a',color);
+    });
+    ctx.textAlign='left';
+  };
+  drawOlog(A,'#38bdf8','Olog A (Deutsch)');
+  drawOlog(B,'#a78bfa','Olog B (English)');
+  if(this.mode==='span'||this.mode==='common'){
+    drawOlog(C,'#fbbf24','C (Common Ground)');
+    for(let i=0;i<3;i++){
+      arrow(ctx,C.x-50,C.y-50+i*60+16,A.x+40,A.y-50+i*60+16,'#fbbf24',1.5,true);
+      arrow(ctx,C.x+50,C.y-50+i*60+16,B.x-40,B.y-50+i*60+16,'#fbbf24',1.5,true);
+    }
+  }
+  if(this.mode==='translate'||this.mode==='flow'){
+    for(let i=0;i<3;i++){
+      const dashed=this.mode==='flow';
+      arrow(ctx,A.x+70,A.y-50+i*60+16,B.x-70,B.y-50+i*60+16,'#e5e7eb',2,dashed,i===0?'F':null);
+    }
+  }
+  if(this.mode==='flow'&&this.animating){
+    for(let i=0;i<3;i++){
+      const x=A.x+70+(B.x-70-A.x-70)*this.t;
+      const y=A.y-50+i*60+16;
+      ctx.fillStyle='#34d399';ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();
+      ctx.shadowBlur=15;ctx.shadowColor='#34d399';ctx.fill();ctx.shadowBlur=0;
+    }
+  }
+  ctx.fillStyle='#94a3b8';ctx.font='12px Inter';
+  ctx.fillText({translate:'Funktor F: A→B übersetzt jede Box in A auf eine Box in B.',span:'Common Ground C mit Funktoren C→A und C→B ermöglicht Übersetzung.',common:'Beide Autoren einigen sich auf ein gemeinsames C.',flow:'Information fließt entlang des Funktors – direkt & invers.'}[this.mode],20,470);
+},
+animate(){this.mode='flow';this.animating=true;this.t=0;const step=()=>{this.t+=0.02;if(this.t>1){this.t=0;}this.draw();if(this.animating)requestAnimationFrame(step);};step();setTimeout(()=>{this.animating=false;},4000);}};
+funcDemo.draw();
+
+/* ========= §6 PRODUCT DEMO ========= */
+const prodDemo={nA:3,nB:4,draw(){
+  const c=document.getElementById('prodCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const colors=['#f87171','#38bdf8','#a78bfa','#fbbf24','#34d399','#f472b6'];
+  const sizes=['XS','S','M','L','XL','XXL'];
+  // A boxes
+  for(let i=0;i<this.nA;i++){
+    ctx.fillStyle=colors[i];ctx.beginPath();ctx.roundRect(60,50+i*45,80,32,6);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 12px Inter';ctx.textAlign='center';
+    ctx.fillText('Farbe '+(i+1),100,70+i*45);
+  }
+  // B boxes
+  for(let j=0;j<this.nB;j++){
+    ctx.fillStyle='#1e293b';ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;
+    ctx.beginPath();ctx.roundRect(220,50+j*45,80,32,6);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#e5e7eb';ctx.font='bold 12px Inter';ctx.textAlign='center';
+    ctx.fillText(sizes[j],260,70+j*45);
+  }
+  // Product grid
+  ctx.fillStyle='#94a3b8';ctx.font='bold 13px Inter';ctx.textAlign='left';
+  ctx.fillText('A × B (alle Paare):',400,40);
+  for(let i=0;i<this.nA;i++){
+    for(let j=0;j<this.nB;j++){
+      const x=420+j*70,y=60+i*50;
+      ctx.fillStyle=colors[i];ctx.beginPath();ctx.roundRect(x,y,60,32,6);ctx.fill();
+      ctx.fillStyle='#0b0f1a';ctx.font='bold 11px Inter';ctx.textAlign='center';
+      ctx.fillText('F'+(i+1)+','+sizes[j],x+30,y+20);
+    }
+  }
+  document.getElementById('lvProd').textContent=this.nA*this.nB;
+  ctx.textAlign='left';
+}};
+prodDemo.draw();
+
+/* ========= §6 PULLBACK DEMO ========= */
+const pullDemo={nA:5,nB:5,items:[],randomize(){
+  const rng=mulberry32(Date.now()%1000);
+  this.items={A:[],B:[]};
+  for(let i=0;i<this.nA;i++)this.items.A.push({name:'M'+(i+1),w:20+Math.floor(rng()*40)*5});
+  for(let i=0;i<this.nB;i++)this.items.B.push({name:'L'+(i+1),w:20+Math.floor(rng()*40)*5});
+  this.draw();
+},draw(){
+  const c=document.getElementById('pullCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle='#cbd5e1';ctx.font='bold 14px Inter';
+  ctx.fillText('Möbel (Breite in cm)',60,30);
+  ctx.fillText('Lücken (Breite in cm)',700,30);
+  ctx.fillText('Passt A×_C B (gleiche Breite)',380,30);
+  const matches=[];
+  this.items.A.forEach((a,i)=>{
+    ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.roundRect(60,50+i*55,180,40,8);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 13px Inter';
+    ctx.fillText(a.name+': '+a.w+' cm',75,75+i*55);
+  });
+  this.items.B.forEach((b,j)=>{
+    ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.roundRect(700,50+j*55,180,40,8);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 13px Inter';
+    ctx.fillText(b.name+': '+b.w+' cm',715,75+j*55);
+  });
+  this.items.A.forEach((a,i)=>{
+    this.items.B.forEach((b,j)=>{
+      if(a.w===b.w){
+        matches.push([a,b]);
+        ctx.strokeStyle='#34d399';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+        ctx.beginPath();ctx.moveTo(240,70+i*55);ctx.lineTo(700,70+j*55);ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
+  });
+  matches.forEach((m,k)=>{
+    ctx.fillStyle='#34d399';ctx.beginPath();ctx.roundRect(400,50+k*50,220,36,8);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 12px Inter';
+    ctx.fillText('('+m[0].name+', '+m[1].name+') → '+m[0].w+' cm',415,72+k*50);
+  });
+  document.getElementById('pullStatus').textContent=matches.length?`✓ ${matches.length} passende Paare gefunden`:'❌ Keine passenden Paare – versuche neue Werte';
+  document.getElementById('pullStatus').className='status '+(matches.length?'ok':'bad');
+}};
+pullDemo.randomize();
+
+/* ========= §7 COPRODUCT DEMO ========= */
+const coprodDemo={overlap:true,toggleOverlap(){this.overlap=!this.overlap;this.draw();},draw(){
+  const c=document.getElementById('coprodCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const flyers=['Adler','Spatz','Ente'];
+  const swimmers=['Fisch','Ente','Delfin'];
+  ctx.fillStyle='#38bdf8';ctx.font='bold 14px Inter';
+  ctx.fillText('Flieger',80,30);
+  flyers.forEach((f,i)=>{
+    ctx.fillStyle='#1e293b';ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;
+    ctx.beginPath();ctx.roundRect(60,50+i*50,140,36,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#e5e7eb';ctx.font='13px Inter';ctx.fillText(f,80,73+i*50);
+  });
+  ctx.fillStyle='#a78bfa';ctx.font='bold 14px Inter';
+  ctx.fillText('Schwimmer',260,30);
+  swimmers.forEach((s,i)=>{
+    ctx.fillStyle='#1e293b';ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;
+    ctx.beginPath();ctx.roundRect(240,50+i*50,140,36,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#e5e7eb';ctx.font='13px Inter';ctx.fillText(s,260,73+i*50);
+  });
+  ctx.fillStyle='#fbbf24';ctx.font='bold 14px Inter';
+  ctx.fillText('Coproduct: Flieger ⊔ Schwimmer',440,30);
+  let y=50;
+  flyers.forEach(f=>{
+    ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.roundRect(440,y,180,32,6);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 12px Inter';ctx.fillText(f+' (als Flieger)',455,y+21);
+    y+=40;
+  });
+  swimmers.forEach(s=>{
+    ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.roundRect(640,y-flyers.length*40,180,32,6);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 12px Inter';ctx.fillText(s+' (als Schwimmer)',655,y-flyers.length*40+21);
+    y+=40;
+  });
+  ctx.fillStyle='#34d399';ctx.font='italic 13px Inter';
+  ctx.fillText(`Anzahl im Coproduct: ${flyers.length + swimmers.length} (Ente kommt 2× vor!)`,440,320);
+}};
+coprodDemo.draw();
+
+/* ========= §7 PUSHOUT DEMO ========= */
+const pushDemo={overlap:4,mode:1,draw(){
+  const c=document.getElementById('pushCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const arm=10,torso=12,ov=this.overlap;
+  ctx.fillStyle='#cbd5e1';ctx.font='bold 14px Inter';
+  ctx.fillText(this.mode===0?'Coproduct: Arm ⊔ Torso (Schulter DOPPELT)':'Pushout: Arm ⊔_Schulter Torso (Schulter EINMAL)',60,30);
+  // Draw arm cells
+  for(let i=0;i<arm;i++){
+    const inSh=i>=arm-ov;
+    ctx.fillStyle=inSh?'#fbbf24':'#38bdf8';
+    ctx.beginPath();ctx.arc(80+i*40,120,15,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 10px Inter';ctx.textAlign='center';
+    ctx.fillText('A'+(i+1),80+i*40,124);
+  }
+  ctx.fillStyle='#38bdf8';ctx.font='12px Inter';ctx.textAlign='left';
+  ctx.fillText('Arm ('+arm+' Zellen)',60,90);
+  // Draw torso cells
+  for(let i=0;i<torso;i++){
+    const inSh=i<ov;
+    ctx.fillStyle=inSh?'#fbbf24':'#a78bfa';
+    ctx.beginPath();ctx.arc(80+i*40,220,15,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0b0f1a';ctx.font='bold 10px Inter';ctx.textAlign='center';
+    ctx.fillText('T'+(i+1),80+i*40,224);
+  }
+  ctx.fillStyle='#a78bfa';ctx.font='12px Inter';ctx.textAlign='left';
+  ctx.fillText('Torso ('+torso+' Zellen)',60,190);
+  // Result
+  ctx.fillStyle='#34d399';ctx.font='bold 13px Inter';
+  const total=this.mode===0?arm+torso:arm+torso-ov;
+  ctx.f
+  const total=this.mode===0?arm+torso:arm+torso-ov;
+  ctx.fillText('Gesamt: '+total+' Zellen',60,290);
+  if(this.mode===1&&ov>0){
+    ctx.fillStyle='#34d399';ctx.font='italic 12px Inter';
+    ctx.fillText('✓ Schulter-Zellen werden identifiziert (Pushout-Verklebung)',60,320);
+  }
+  // draw connection lines for pushout
+  if(this.mode===1&&ov>0){
+    ctx.strokeStyle='rgba(251,191,36,.4)';ctx.lineWidth=2;ctx.setLineDash([4,4]);
+    for(let i=0;i<ov;i++){
+      ctx.beginPath();
+      ctx.moveTo(80+(arm-ov+i)*40,135);
+      ctx.lineTo(80+i*40,205);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+  }
+}};
+pushDemo.draw();
+
+/* ========= §8 FACTORIAL OLOG ========= */
+const factDemo={n:5,animating:false,step:0,
+draw(){
+  const c=document.getElementById('factOlog'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  // Boxes for the factorial olog
+  const N={x:150,y:100,l:'natürliche Zahl'};
+  const Z={x:150,y:280,l:'null (0)'};
+  const P={x:400,y:280,l:'positive Zahl n'};
+  const F={x:700,y:100,l:'ergebnis n!'};
+  const Pair={x:700,y:280,l:'Paar (n, (n-1)!)'};
+  // arrows
+  arrow(ctx,Z.x+50,Z.y-15,N.x+50,N.y+30,'#a78bfa',2,false,'ist');
+  arrow(ctx,P.x-50,P.y-15,N.x+100,N.y+30,'#a78bfa',2,false,'ist');
+  arrow(ctx,P.x+130,P.y,Pair.x-100,Pair.y,'#fbbf24',2,false,'→ (n, n-1)');
+  arrow(ctx,Pair.x,Pair.y-30,F.x,F.y+30,'#f472b6',2.5,false,'multipliziere');
+  arrow(ctx,Z.x+130,Z.y,F.x-50,F.y+40,'#34d399',2,true,'! = 1');
+  arrow(ctx,N.x+130,N.y,F.x-50,F.y,'#38bdf8',2.5,false,'!');
+  // boxes
+  box(ctx,N.x-100,N.y-20,220,44,N.l,'#0f172a','#38bdf8');
+  box(ctx,Z.x-70,Z.y-20,160,40,Z.l,'#0f172a','#a78bfa');
+  box(ctx,P.x-80,P.y-20,180,40,P.l,'#0f172a','#a78bfa');
+  box(ctx,F.x-80,F.y-20,180,44,F.l,'#0f172a','#f472b6');
+  box(ctx,Pair.x-100,Pair.y-20,220,40,Pair.l,'#0f172a','#fbbf24');
+  // Show current computation
+  ctx.fillStyle='#34d399';ctx.font='bold 14px Inter';
+  ctx.fillText('Rekursion: n! = n × (n-1)!',c.width/2-100,410);
+  ctx.fillStyle='#6ee7b7';ctx.font='12px Inter';
+  ctx.fillText('Basisfall: 0! = 1',c.width/2-50,430);
+},
+animate(){
+  const n=this.n;
+  let result=1;
+  const steps=[];
+  for(let i=1;i<=n;i++){result*=i;steps.push(`${i}! = ${result}`);}
+  if(n===0){steps.push('0! = 1');result=1;}
+  document.getElementById('factOut').textContent=`${n}! = ${result}`;
+  this.draw();
+  this.drawTree();
+},
+drawTree(){
+  const n=this.n;
+  const labels=[],values=[],parents=[];
+  const build=(k)=>{
+    if(k===0){labels.push('0!');values.push(1);parents.push(k===n?'':`${k+1}!`);return 1;}
+    const child=build(k-1);
+    labels.push(`${k}!`);values.push(k*child);parents.push(k===n?'':`${k+1}!`);
+    return k*child;
+  };
+  build(n);
+  Plotly.newPlot('factTree',[{
+    type:'treemap',
+    labels:labels,
+    parents:parents,
+    values:values,
+    textinfo:'label+value',
+    marker:{colors:values.map((v,i)=>`hsl(${200+i*20},70%,${40+i*3}%)`)},
+    hovertemplate:'<b>%{label}</b><br>Wert: %{value}<extra></extra>'
+  }],{
+    paper_bgcolor:'#020617',plot_bgcolor:'#020617',
+    font:{color:'#e5e7eb',family:'Inter'},
+    margin:{t:10,l:10,r:10,b:10}
+  },{displayModeBar:false,responsive:true});
+}};
+factDemo.animate();
+
+/* ========= §9 METRIC SPACES ========= */
+const metricDemo={n:8,metric:'euclid',points:[],
+generate(){
+  const rng=mulberry32(42);
+  this.points=[];
+  for(let i=0;i<this.n;i++)this.points.push({x:rng()*10,y:rng()*10,label:'P'+(i+1)});
+},
+dist(a,b){
+  if(this.metric==='euclid')return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);
+  if(this.metric==='manhattan')return Math.abs(a.x-b.x)+Math.abs(a.y-b.y);
+  if(this.metric==='chebyshev')return Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y));
+},
+draw(){
+  this.generate();
+  const traces=[];
+  // Points
+  traces.push({
+    x:this.points.map(p=>p.x),y:this.points.map(p=>p.y),
+    mode:'markers+text',type:'scatter',
+    marker:{size:14,color:'#38bdf8',line:{color:'#0b0f1a',width:2}},
+    text:this.points.map(p=>p.label),textposition:'top center',
+    textfont:{color:'#e5e7eb',size:11},name:'Punkte'
+  });
+  // Distance heatmap
+  const n=this.points.length;
+  const z=[];
+  for(let i=0;i<n;i++){
+    const row=[];
+    for(let j=0;j<n;j++)row.push(this.dist(this.points[i],this.points[j]));
+    z.push(row);
+  }
+  Plotly.newPlot('metricPlot',[
+    {...traces[0],xaxis:'x',yaxis:'y'},
+    {z:z,type:'heatmap',xaxis:'x2',yaxis:'y2',colorscale:'Viridis',
+     x:this.points.map(p=>p.label),y:this.points.map(p=>p.label),
+     colorbar:{title:'d(x,y)',titlefont:{color:'#e5e7eb'},tickfont:{color:'#e5e7eb'}}}
+  ],{
+    grid:{rows:1,columns:2,pattern:'independent'},
+    paper_bgcolor:'#020617',plot_bgcolor:'#0f172a',
+    font:{color:'#e5e7eb',family:'Inter'},
+    xaxis:{title:'x',gridcolor:'#1e293b',zerolinecolor:'#334155'},
+    yaxis:{title:'y',gridcolor:'#1e293b',zerolinecolor:'#334155'},
+    xaxis2:{title:'',tickfont:{size:9}},
+    yaxis2:{title:'',tickfont:{size:9}},
+    title:{text:`Metrik: ${this.metric} — links: Punkte, rechts: d(x,y)-Matrix`,font:{color:'#e5e7eb',size:14}},
+    margin:{t:60,l:60,r:60,b:60},
+    showlegend:false
+  },{displayModeBar:false,responsive:true});
+  this.checkTriangle();
+},
+checkTriangle(){
+  const s=document.getElementById('metricStatus');
+  let ok=true,violation=null;
+  for(let i=0;i<this.points.length;i++){
+    for(let j=0;j<this.points.length;j++){
+      for(let k=0;k<this.points.length;k++){
+        const d_ik=this.dist(this.points[i],this.points[k]);
+        const d_ij=this.dist(this.points[i],this.points[j]);
+        const d_jk=this.dist(this.points[j],this.points[k]);
+        if(d_ik>d_ij+d_jk+1e-9){ok=false;violation=[i,j,k];break;}
+      }
+    }
+  }
+  if(ok){s.className='status ok';s.textContent='✓ Alle drei Axiome erfüllt (Reflexivität, Symmetrie, Dreiecksungleichung)';}
+  else {s.className='status bad';s.textContent=`❌ Verletzung bei Punkten ${violation}`;}
+}};
+metricDemo.draw();
+
+/* ========= §10 NETWORK OF OLOGS ========= */
+const netDemo={mode:'separate',t:0,animating:false,
+draw(){
+  const c=document.getElementById('netCanvas'),ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const ologs=[
+    {x:150,y:120,l:'Olog A (Biologie)',color:'#38bdf8'},
+    {x:550,y:120,l:'Olog B (Medizin)',color:'#a78bfa'},
+    {x:950,y:120,l:'Olog C (Chemie)',color:'#f472b6'},
+  ];
+  const commons=[
+    {x:350,y:280,l:'Common Ground A↔B',color:'#fbbf24'},
+    {x:750,y:280,l:'Common Ground B↔C',color:'#fbbf24'},
+  ];
+  const core={x:550,y:430,l:'Fusion (Core)',color:'#34d399'};
+  // Draw ologs
+  ologs.forEach(o=>{
+    ctx.fillStyle='#0f172a';ctx.strokeStyle=o.color;ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.roundRect(o.x-100,o.y-30,200,60,10);ctx.fill();ctx.stroke();
+    ctx.fillStyle=o.color;ctx.font='bold 13px Inter';ctx.textAlign='center';
+    ctx.fillText(o.l,o.x,o.y+5);
+    // little internal structure
+    ctx.fillStyle=o.color;
+    for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(o.x-40+i*25,o.y+18,3,0,Math.PI*2);ctx.fill();}
+    ctx.textAlign='left';
+  });
+  if(this.mode==='common'||this.mode==='channel'||this.mode==='fusion'){
+    commons.forEach(cg=>{
+      ctx.fillStyle='#1e293b';ctx.strokeStyle=cg.color;ctx.lineWidth=2;
+      ctx.beginPath();ctx.roundRect(cg.x-90,cg.y-25,180,50,8);ctx.fill();ctx.stroke();
+      ctx.fillStyle=cg.color;ctx.font='bold 12px Inter';ctx.textAlign='center';
+      ctx.fillText(cg.l,cg.x,cg.y+4);
+      ctx.textAlign='left';
+    });
+    arrow(ctx,commons[0].x-50,commons[0].y-20,ologs[0].x+50,ologs[0].y+30,'#fbbf24',1.5,true);
+    arrow(ctx,commons[0].x+50,commons[0].y-20,ologs[1].x-50,ologs[1].y+30,'#fbbf24',1.5,true);
+    arrow(ctx,commons[1].x-50,commons[1].y-20,ologs[1].x+50,ologs[1].y+30,'#fbbf24',1.5,true);
+    arrow(ctx,commons[1].x+50,commons[1].y-20,ologs[2].x-50,ologs[2].y+30,'#fbbf24',1.5,true);
+  }
+  if(this.mode==='channel'||this.mode==='fusion'){
+    ctx.fillStyle='#0f172a';ctx.strokeStyle=core.color;ctx.lineWidth=3;
+    ctx.beginPath();ctx.roundRect(core.x-120,core.y-30,240,60,12);ctx.fill();ctx.stroke();
+    ctx.fillStyle=core.color;ctx.font='bold 15px Inter';ctx.textAlign='center';
+    ctx.fillText(core.l,core.x,core.y+5);
+    ctx.textAlign='left';
+    // channel flow links from all ologs to core
+    ologs.forEach((o,i)=>{
+      arrow(ctx,o.x,o.y+35,core.x-80+i*80,core.y-30,o.color,2,false);
+    });
+  }
+  if(this.mode==='fusion'&&this.animating){
+    // Animate particles flowing to core
+    ologs.forEach((o,i)=>{
+      const tx=core.x-80+i*80,ty=core.y-30;
+      const x=o.x+(tx-o.x)*this.t;
+      const y=(o.y+35)+(ty-(o.y+35))*this.t;
+      ctx.fillStyle=o.color;ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fill();
+      ctx.shadowBlur=20;ctx.shadowColor=o.color;ctx.fill();ctx.shadowBlur=0;
+    });
+  }
+  // Legend
+  ctx.fillStyle='#94a3b8';ctx.font='12px Inter';
+  const desc={
+    separate:'1️⃣ Getrennte Ologs — jede Weltsicht existiert für sich.',
+    common:'2️⃣ Common Grounds — gemeinsame Referenz-Ontologien verbinden benachbarte Ologs.',
+    channel:'3️⃣ Channel — alle Ologs fließen in einen gemeinsamen Core.',
+    fusion:'4️⃣ Fusion — der Kolimit ist die Vereinigung aller Weltsichten, respektiert alle Common Grounds.'
+  };
+  ctx.fillText(desc[this.mode],20,490);
+},
+animateChannel(){this.mode='channel';this.draw();},
+animateFusion(){
+  this.mode='fusion';this.animating=true;this.t=0;
+  const step=()=>{this.t+=0.015;if(this.t>1){this.t=0;}this.draw();if(this.animating)requestAnimationFrame(step);};
+  step();
+  setTimeout(()=>{this.animating=false;this.draw();},5000);
+}};
+netDemo.draw();
+
+</script>
+
+</body>
+</html>
