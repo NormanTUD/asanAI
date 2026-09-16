@@ -206,19 +206,41 @@ const Presentation = (() => {
     function buildShortLoopSlide() {
         const slide = document.createElement('div');
         slide.className = 'slide';
-        slide.setAttribute('data-title', 'Und wieder von vorn');
+        slide.setAttribute('data-title', 'Wort für Wort – wieder von vorn');
         slide.setAttribute('data-non-original', '1');
+        const chip = (tokens, lastIdx) => {
+            const t = tokens.map((w, i) => i === lastIdx
+                ? `<span style="background:#fde68a; border:2px solid #f59e0b; border-radius:8px; padding:4px 9px; font-weight:bold;">${w}</span>`
+                : `<span style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:4px 9px;">${w}</span>`).join(' ');
+            return `<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 14px; font-size:1.05em; white-space:nowrap;">${t}</div>`;
+        };
         slide.innerHTML = `
             <div class="slide-content">
-                <div style="text-align:center; max-width:900px; margin:0 auto;">
-                    <div style="font-size:6em; line-height:1;">↺</div>
-                    <h2 style="margin:20px 0 10px;">Die kurze Version ist zu Ende</h2>
-                    <p style="font-size:1.25em; color:#475569; line-height:1.7; max-width:720px; margin:0 auto 10px;">
-                        Der <b>letzte Vektor</b> wird wieder an den <b>Anfang</b> angehängt –
-                        genau wie beim autoregressiven Sprachmodell beginnt der Kreislauf von vorn.
+                <div style="text-align:center; max-width:1000px; margin:0 auto;">
+                    <h2 style="margin-bottom:8px;">Wort für Wort – wieder von vorn</h2>
+                    <p style="font-size:1.1em; color:#475569; margin-bottom:26px;">
+                        Jede Vorhersage hängt das gewählte Wort an den Kontext an.
+                        Beim nächsten Durchgang liest das Modell alles <b>wieder von vorn</b>.
                     </p>
-                    <p style="font-size:1.05em; color:#64748b;">Token → Vorhersage → neuer Token wird angehängt → wieder von vorn …</p>
-                    <button id="btn-loop-restart" style="margin-top:24px; padding:14px 28px; font-size:1.1em; font-weight:bold; border:none; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer;">↺ Zurück zum Anfang</button>
+                    <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center;">
+                            ${chip(['Die', 'Katze', 'saß'], -1)}
+                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
+                            <span style="background:#fef3c7; border:2px solid #f59e0b; border-radius:10px; padding:10px 14px; color:#92400e; font-weight:bold; font-size:1.05em;">🎲 auf</span>
+                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
+                            ${chip(['Die', 'Katze', 'saß', 'auf'], -1)}
+                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
+                            <span style="background:#fef3c7; border:2px solid #f59e0b; border-radius:10px; padding:10px 14px; color:#92400e; font-weight:bold; font-size:1.05em;">🎲 der</span>
+                            <span style="font-size:1.4em; color:#3b82f6;">→</span>
+                            ${chip(['Die', 'Katze', 'saß', 'auf', 'der'], -1)}
+                            <span style="font-size:1.4em; color:#94a3b8;">…</span>
+                        </div>
+                        <div style="margin-top:8px; font-size:1.15em; color:#1e293b; background:#fffef7; border:2px dashed #d4a574; border-radius:12px; padding:14px 22px;">
+                            <span style="font-size:1.6em;">↺</span>
+                            <b>Letztes gewähltes Wort</b> → wieder an den <b>Anfang</b> angehängt → alles beginnt <b>von vorn</b>.
+                        </div>
+                    </div>
+                    <button id="btn-loop-restart" style="margin-top:28px; padding:14px 28px; font-size:1.05em; font-weight:bold; border:none; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer;">↺ Zurück zum Anfang</button>
                 </div>
             </div>`;
         slide.querySelector('#btn-loop-restart').addEventListener('click', () => goTo(0));
