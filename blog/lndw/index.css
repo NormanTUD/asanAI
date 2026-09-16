@@ -132,10 +132,11 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	color: #94a3b8;
 }
 .attn-chip.lbl {
-	background: #f1f5f9; border: none; width: auto; padding: 0 8px;
-	color: #475569; font-weight: 700; margin-right: 4px;
+	background: #f1f5f9; border: none; width: 44px; padding: 0; margin: 0;
+	color: #475569; font-weight: 700; text-align: center;
 }
-.chip-xrow { margin-top: 1px; }
+.chip-xrow { margin-top: 2px; }
+.chip-spacer { display: inline-block; width: 44px; }
 .chip-x {
 	display: inline-block; width: 34px; text-align: center;
 	font-size: 0.62em; color: #64748b; font-weight: 600;
