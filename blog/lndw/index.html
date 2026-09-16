@@ -146,10 +146,6 @@
  		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
         </div>
 
-        <div class="fragment">
- 		Viele Beispiele (Eingang → Ausgang) → der Computer findet die Funktion selbst.
-        </div>
-
         <div class="fragment formula-box">
 		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
         </div>
@@ -203,37 +199,7 @@
     </div>
 </div>
 
-<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
-    <div class="slide-content">
-        <h2>Das erste künstliche Neuronale Netz</h2>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items:start;">
-            <div>
-                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
-                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" class="fragment" src="../mcculloch.png" alt="Warren McCulloch" />
-                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" class="fragment" src="../pitts.jpg" alt="Walter Pitts" />
-                </div>
-                <p class="fragment" style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
-
-                <div style="text-align:center">
-                <img style="max-width:100%; max-height:22vh; border-radius:8px;" class="fragment" src="../snarc.jpg" alt="SNARC" />
-                </div>
-                <p class="fragment" style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
-            </div>
-
-            <div>
-                <div class="key-insight fragment" style="font-size:0.95em;">
-                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf M&amp;P auf · klassifiziert Buchstaben.
-                </div>
-
-                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
-                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" class="fragment" src="../FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
-                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" class="fragment" src="../perceptron2.jpg" alt="Das Perceptron" />
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
 <div class="slide" id="slide-stueckelung" data-title="Stückelung">
@@ -268,6 +234,40 @@
         </div>
     </div>
 </div>
+
+<div class="slide" id="slide-neuronales-netz-geschichte" data-title="Neuronales Netz Geschichte">
+    <div class="slide-content">
+        <h2>Das erste künstliche Neuronale Netz</h2>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items:start;">
+            <div>
+                <div style="display:flex; gap:10px; justify-content:center; align-items:center;">
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" class="fragment" src="../mcculloch.png" alt="Warren McCulloch" />
+                    <img style="width:110px; height:110px; border-radius:50%; object-fit:cover;" class="fragment" src="../pitts.jpg" alt="Walter Pitts" />
+                </div>
+                <p class="fragment" style="text-align:center; margin-top:8px;"><b>McCulloch &amp; Pitts (1943)</b>: vereinfachtes Neuron → logische Operationen.</p>
+
+                <div style="text-align:center">
+                <img style="max-width:100%; max-height:22vh; border-radius:8px;" class="fragment" src="../snarc.jpg" alt="SNARC" />
+                </div>
+                <p class="fragment" style="text-align:center; margin-top:8px;"><b>SNARC (1951)</b>, Minsky &amp; Edmonds: 1. physisches Netz · 40 Röhren-Neuronen · simulierte eine Ratte im Labyrinth.</p>
+            </div>
+
+            <div>
+                <div class="key-insight fragment" style="font-size:0.95em;">
+                    <b>Perceptron (1958)</b>, Rosenblatt: baut auf M&amp;P auf · klassifiziert Buchstaben.
+                </div>
+
+                <div style="display:flex; gap:16px; justify-content:center; align-items:center; margin-top:12px;">
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" class="fragment" src="../FrankRosenblattWiringPerceptron.jpg" alt="Rosenblatt verdrahtet das Perceptron" />
+                    <img style="max-height:36vh; width:auto; max-width:100%; border-radius:8px;" class="fragment" src="../perceptron2.jpg" alt="Das Perceptron" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <div class="slide" id="slide-deep-learning" data-title="Deep Learning">
     <div class="slide-content">
