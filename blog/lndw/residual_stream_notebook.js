@@ -9,6 +9,10 @@ const ResidualNotebook = (() => {
     let animationRunning = false;
     let container = null;
     let isActive = false; // ob diese Folie gerade aktiv ist
+    let _buildVersion = 0; // wird bei jedem full rebuild erhöht
+    let _retryMap = new Map(); // ann -> Versuchszähler
+    let _pendingRenders = new Set(); // rAF-Token laufender Async-Renders
+    let _verifyRetry = 0; // Self-Repair-Zähler für fehlende Annotationen
 
     const baseText = "Die Katze saß auf der Matte weil sie müde war";
 
@@ -127,7 +131,15 @@ const ResidualNotebook = (() => {
         const observer = new MutationObserver(() => {
             const slide = container.closest('.slide');
             if (slide) {
-                isActive = slide.classList.contains('active');
+                const nowActive = slide.classList.contains('active');
+                const becameActive = nowActive && !isActive;
+                isActive = nowActive;
+                // Sichtwechsel: neu ausmessen (Layout/Scale können sich geändert
+                // haben, während die Folie display:none/versteckt war).
+                if (becameActive) {
+                    _retryMap.clear();
+                    rebuildUpToLayer(Math.min(currentLayer, layers.length));
+                }
             }
         });
 
@@ -206,6 +218,9 @@ const ResidualNotebook = (() => {
 	function rebuildUpToLayer(upTo) {
 		const annotationsContainer = document.getElementById('notebook-annotations');
 		if (!annotationsContainer) return;
+		_buildVersion++;
+		_pendingRenders.forEach(token => cancelAnimationFrame(token));
+		_pendingRenders.clear();
 		annotationsContainer.innerHTML = '';
 
 		const textEl = document.getElementById('notebook-text');
@@ -225,6 +240,7 @@ const ResidualNotebook = (() => {
 				}
 			});
 		}
+		verifyCount(annotationsContainer, safeUpTo);
 	}
 
     function animateLayer(layer, onComplete) {
@@ -258,14 +274,33 @@ const ResidualNotebook = (() => {
     // bei Resize/Font-Load.
     // ============================================================
 
-    let _retryMap = new Map(); // ann -> versuchszähler pro Zeile
-
     function textLen() {
         const t = document.getElementById('notebook-text');
         return t ? t.textContent.length : 0;
     }
 
-    // Zeichen-Rects relativ zur Annotations-Container-Box (transform-fest).
+    // Skalenfaktor der Folie (fitSlides setzt transform:scale(k) auf
+    // .slide-content). getBoundingClientRect() liefert dann SKALIERTE
+    // Viewport-Koordinaten; platziert man damit innerhalb des ebenfalls
+    // skalierten Containers, wird doppelt skaliert und jede Annotation
+    // wandert um x*(1-k) nach rechts/wachsen ab. Deshalb messen wir immer
+    // in Layout-Px = gBCR / k.
+    function containerScale() {
+        const cont = document.getElementById('notebook-annotations');
+        if (!cont) return 0;
+        const layoutW = cont.offsetWidth;
+        const layoutH = cont.offsetHeight;
+        if (!layoutW || !layoutH) return 0; // nicht gelayoutet (display:none etc.)
+        const r = cont.getBoundingClientRect();
+        const kw = r.width / layoutW;
+        const kh = r.height / layoutH;
+        if (!isFinite(kw) || !isFinite(kh) || kw <= 0 || kh <= 0) return 0;
+        // anisotrope Skalierung abfangen (Matrix-Fallbacks o.ä.)
+        if (Math.abs(kw - kh) > 0.02) return 0;
+        return (kw + kh) / 2;
+    }
+
+    // Zeichen-Rects relativ zur Annotations-Container-Box, in Layout-Px (transform-fest).
     function measureChars() {
         const textEl = document.getElementById('notebook-text');
         const cont = document.getElementById('notebook-annotations');
@@ -274,10 +309,10 @@ const ResidualNotebook = (() => {
         if (!node || node.nodeType !== 3) return null;
         const len = node.textContent.length;
         if (!len) return null;
+        const k = containerScale();
+        if (k <= 0) return null; // nicht laid out (z.B. hidden)
         const ref = cont.getBoundingClientRect();
-        if (!ref.width || !ref.height) return null; // nicht laid out (z.B. hidden)
-        const ok = /courier/i.test(getComputedStyle(textEl).fontFamily);
-        if (!ok) return null;
+        if (!ref.width || !ref.height) return null;
         const range = document.createRange();
         const out = [];
         for (let i = 0; i < len; i++) {
@@ -285,15 +320,15 @@ const ResidualNotebook = (() => {
             range.setEnd(node, i + 1);
             const r = range.getBoundingClientRect();
             out.push({
-                left: r.left - ref.left,
-                right: r.right - ref.left,
-                top: r.top - ref.top,
-                bottom: r.bottom - ref.top,
-                line: Math.round(r.top)
+                left: (r.left - ref.left) / k,
+                right: (r.right - ref.left) / k,
+                top: (r.top - ref.top) / k,
+                bottom: (r.bottom - ref.top) / k,
+                line: Math.round(r.top / k)
             });
         }
         try { range.detach(); } catch (e) { /* noop */ }
-        const measureable = out.length === len && out.every(r => isFinite(r.left) && r.right > r.left);
+        const measureable = out.length === len && out.every(r => isFinite(r.left) && isFinite(r.right) && r.right > r.left);
         return measureable ? out : null;
     }
 
@@ -306,14 +341,19 @@ const ResidualNotebook = (() => {
     }
 
     // Zeichenbereiche [start,end) in Zeilen-Segmente zerlegen (Umbruch-sicher).
+    // Gruppierung mit Toleranz statt exaktem top-Match (Subpixel/Fallback-set).
     function lineSegments(chars, start, end) {
         const segs = [];
         let i = start;
         while (i < end) {
             const r = chars[i];
             if (!r) { i++; continue; }
-            let j = i;
-            while (j < end && chars[j] && Math.round(chars[j].line) === Math.round(r.line)) j++;
+            let j = i + 1;
+            while (j < end && chars[j]) {
+                if (Math.abs(chars[j].top - r.top) > 6) break; // neue Zeile
+                j++;
+            }
+            if (j <= i) { i++; continue; }
             segs.push({ s: i, e: j });
             i = j;
         }
@@ -525,6 +565,7 @@ const ResidualNotebook = (() => {
     }
 
     function renderAnnotation(ann, container, textEl, defaultColor) {
+        const buildAt = _buildVersion;
         let els;
         try {
             els = buildAnnotationEls(ann, textEl);
@@ -533,17 +574,50 @@ const ResidualNotebook = (() => {
             return;
         }
         if (els) {
-            els.forEach(el => container.appendChild(el));
+            els.forEach(el => {
+                // Guardrail-Tags: erlauben Selbstprüfung & Debug-Harness,
+                // welcher Zeichen-Bereich / Anker für jedes Element gilt.
+                if (ann && typeof ann.start === 'number' && typeof ann.end === 'number') {
+                    el.dataset.start = ann.start;
+                    el.dataset.end = ann.end;
+                }
+                if (ann && typeof ann.anchor === 'number') {
+                    el.dataset.anchor = ann.anchor;
+                }
+                container.appendChild(el);
+            });
             return;
         }
-        // Guardrail: Layout/Fonts noch nicht fertig → kurz erneut versuchen
-        const key = container;
+        // Guardrail: Layout/Fonts noch nicht fertig → kurz erneut versuchen.
+        // Pro Annotation (nicht pro Container) mit harter Obergrenze.
+        const key = ann;
         const tries = (_retryMap.get(key) || 0) + 1;
         _retryMap.set(key, tries);
-        if (tries > 30) { _retryMap.delete(key); return; }
-        requestAnimationFrame(() => {
+        if (tries > 120) { _retryMap.delete(key); return; }
+        const token = requestAnimationFrame(() => {
+            _pendingRenders.delete(token);
+            if (buildAt !== _buildVersion) return; // veralteter Render (wurde gewiped)
             renderAnnotation(ann, container, textEl, defaultColor);
         });
+        _pendingRenders.add(token);
+    }
+
+    // Zählt nach einem Build, ob genau die erwartete Anzahl an Annotationen
+    // im DOM liegt; Unstimmigkeit wird geflaggt (Layout- oder Skalierungsproblem).
+    function verifyCount(container, upTo) {
+        const expected = layers.slice(0, upTo).reduce((n, l) => n + (l.annotations ? l.annotations.length : 0), 0);
+        setTimeout(() => {
+            if (!container.isConnected) return;
+            const got = container.querySelectorAll('.nb-annotation').length;
+            if (got !== expected) {
+                console.warn('[Notebook] GUARDRAIL: erwartete', expected, 'Annotationen, gefunden', got);
+                _verifyRetry++;
+                if (_verifyRetry <= 3) rebuildUpToLayer(Math.min(currentLayer, layers.length));
+                else _verifyRetry = 0;
+            } else {
+                _verifyRetry = 0;
+            }
+        }, 400);
     }
 
     function updateInfo() {
