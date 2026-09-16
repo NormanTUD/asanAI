@@ -79,7 +79,7 @@
     ];
 
     let s = '<table class="heads-table"><thead><tr>' +
-        '<th style="width:230px;">Kopf <span style="font-weight:400;font-size:0.8em;">(unterstrichen: die Frage)</span></th><th>Schaut wo entlang</th><th>Beobachtung</th>' +
+        '<th style="width:230px;">Kopf</th><th>Schaut wo entlang</th><th>Beobachtung</th>' +
         '</tr></thead><tbody>';
     ROWS.forEach((r, i) => {
         s += '<tr><td><span class="math-inline">$\\underbrace{\\text{' + NAME[i] + '}}_{' + U[i] + '}$</span></td>';
