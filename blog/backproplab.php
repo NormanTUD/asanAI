@@ -17,7 +17,7 @@ Backpropagation, introduced to the field of AI in \citeyear{rumelhart1986}, is h
 1. **Forward Pass** — inputs flow *left → right* through the layers, producing a prediction.
 2. **Backward Pass** — the error flows *right → left*, telling each weight exactly how much to change.
 
-In the demo further down you can *watch* both flows as glowing pulses along the wires, click any neuron or weight to unfold its equations, and click any symbol *inside* an equation to substitute its definition — drilling all the way down to raw inputs.
+In the demo further down you can *watch* both flows as glowing pulses along the wires — each neuron's numbers update the instant a pulse lands on it. Click any neuron or weight to unfold its equations; every quantity wears an **underbrace** naming what it is in plain words, and a **show definition** toggle unfolds a symbol into its own formula.
 
 ## The Network You'll Play With
 
@@ -99,12 +99,12 @@ where $\eta$ is the **learning rate**.
 
 Below is a live network. Try this in order:
 
-1. **Press ▶ Forward** — watch cyan pulses travel left→right, thickness ∝ activation magnitude.
-2. **Press ◀ Backward** — watch red pulses travel right→left, thickness ∝ $|\delta|$ magnitude.
+1. **Press ▶ Forward** — watch cyan pulses travel left→right; each neuron's activation *updates the moment a pulse lands on it*.
+2. **Press ◀ Backward** — watch red pulses travel right→left; each neuron's error signal $\delta$ updates on arrival.
 3. **Hover any neuron** — a *cone of influence* lights up every weight it touches, colored by that weight's contribution.
-4. **Click any neuron or weight** — the side panel expands the full equation.
-5. **Inside the equation, click any coloured symbol** (e.g. $h_1^{(2)}$) — it *expands in place* into its own definition. Click again to collapse. Chain expansions arbitrarily deep to unfold the entire computation graph from a single symbol down to raw $x_i$.
-6. **Press ↻ Train 100** — watch the loss bar shrink as the whole network adapts.
+4. **Click any neuron or weight** — the panel below expands its full equations. Every quantity wears an **underbrace** naming what it is, with a wider underbrace grouping related terms.
+5. **Hit "show definition"** on a line — it unfolds that symbol into its own formula (e.g. the activation into the raw sigmoid).
+6. **Press ✓ Full step**, then **↻ Train 100** — watch the values change on arrival and the loss bar shrink as the network adapts.
 
 </div>
 

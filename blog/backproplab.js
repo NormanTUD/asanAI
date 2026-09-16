@@ -141,14 +141,6 @@ function renderBackpropVisual(rootId) {
   const weightId = (l, i, j) => `w_${l}_${i}_${j}`;
   const biasId = (l, i) => `b_${l}_${i}`;
 
-  const nodeLabel = (l, i) => {
-    if (l === 0) return `x_{${i + 1}}`;
-    if (l === L - 1) return `o_{${i + 1}}`;
-    return `h^{(${l})}_{${i + 1}}`;
-  };
-  const weightLabel = (l, i, j) => `w^{(${l})}_{${i + 1},${j + 1}}`;
-  const biasLabel = (l, i) => l === L - 1 ? `b^{(o)}_{${i + 1}}` : `b^{(${l})}_{${i + 1}}`;
-  const preactivationLabel = (l, i) => l === L - 1 ? `z^{(o)}_{${i + 1}}` : `z^{(${l})}_{${i + 1}}`;
 
   // ── STATE: all weights, biases, inputs, targets, hyperparams ──────────
   // Deterministic init so reset always returns to a known scene.
@@ -233,10 +225,16 @@ function renderBackpropVisual(rootId) {
   }
 
   let R = null; // { a, z, E, perOutput, delta, grads }
+  // What is actually painted on the SVG. Normally mirrors R, but during a
+  // pulse animation we hold it on the previous values and reveal R layer
+  // by layer as the wave arrives, so numbers visibly change on arrival.
+  let dispA = null, dispDelta = null;
   function recompute() {
     const fwd = forward(S);
     const bwd = backward(S, fwd);
     R = { ...fwd, ...bwd };
+    dispA = R.a.map(r => r.slice());
+    dispDelta = R.delta.map(r => r.slice());
   }
 
   function applyGradients() {
@@ -350,15 +348,8 @@ function renderBackpropVisual(rootId) {
     }
   }
 
-  // Build the definition of any symbol as a LaTeX fragment.
-  // Returns null for atoms (raw inputs) — they cannot be expanded further.
-  function defOf(sym) {
-    const m = sym.match(/^([a-zA-Z]+)_(\d+)_(\d+)?_?(\d+)?$/);
-    if (!m) return null;
-    const [, kind, l, i, j] = m.map((x, k) => k === 0 ? x : (x === undefined ? undefined : parseInt(x)));
-    // sym forms: x_0_i, h_l_i, z_l_i, w_l_i_j, b_l_i, delta_l_i, o_l_i
-    return null; // will be handled by richer parser below
-  }
+  const U = (tex, label) => `\\underbrace{${tex}}_{\\text{${label}}}`;
+  const col = v => `\\textcolor{#059669}{${fmt(v)}}`;
 
   // A more disciplined symbol system: symbols are objects with a "kind"
   const Sym = {
@@ -403,202 +394,95 @@ function renderBackpropVisual(rootId) {
     return "?";
   }
 
-  // Value of any symbol given current R.
-  function symValue(s) {
-    switch (s.kind) {
-      case "x": return S[`x_${s.i}`];
-      case "z": return R.z[s.l][s.i];
-      case "a": return R.a[s.l][s.i];
-      case "w": return S[weightId(s.l, s.i, s.j)];
-      case "b": return S[biasId(s.l, s.i)];
-      case "d": return R.delta[s.l][s.i];
-      case "E": return R.E;
-      case "g": return R.grads[weightId(s.l, s.i, s.j)];
-    }
-  }
-
-  // Expansion: return a LaTeX expression that substitutes the definition
-  // of the symbol inline. If atomic, return null.
-  function expandSym(s) {
-    switch (s.kind) {
-      case "x": return null; // atomic
-      case "w": return null; // parameter
-      case "b": return null; // parameter
-      case "a": {
-        if (s.l === 0) return null;
-        return `\\sigma\\!\\left(${symLatex(Sym.z(s.l, s.i))}\\right)`;
-      }
-      case "z": {
-        if (s.l === 0) return null;
-        const terms = [];
-        for (let j = 0; j < LAYERS[s.l - 1]; j++) {
-          terms.push(`${symLatex(Sym.w(s.l, s.i, j))} \\cdot ${symLatex(Sym.a(s.l - 1, j))}`);
-        }
-        return terms.join(" + ") + " + " + symLatex(Sym.b(s.l, s.i));
-      }
-      case "d": {
-        if (s.l === L - 1)
-          return `-\\!\\left(t_{${s.i + 1}} - ${symLatex(Sym.a(L - 1, s.i))}\\right)\\cdot ${symLatex(Sym.a(L - 1, s.i))}\\left(1 - ${symLatex(Sym.a(L - 1, s.i))}\\right)`;
-        const terms = [];
-        for (let k = 0; k < LAYERS[s.l + 1]; k++) {
-          terms.push(`${symLatex(Sym.w(s.l + 1, k, s.i))} \\cdot ${symLatex(Sym.delta(s.l + 1, k))}`);
-        }
-        return `\\left(${terms.join(" + ")}\\right) \\cdot ${symLatex(Sym.a(s.l, s.i))}\\left(1 - ${symLatex(Sym.a(s.l, s.i))}\\right)`;
-      }
-      case "g": return `${symLatex(Sym.delta(s.l, s.i))} \\cdot ${symLatex(Sym.a(s.l - 1, s.j))}`;
-      case "E": {
-        const terms = [];
-        for (let i = 0; i < LAYERS[L - 1]; i++) {
-          terms.push(`\\tfrac{1}{2}\\left(t_{${i + 1}} - ${symLatex(Sym.a(L - 1, i))}\\right)^2`);
-        }
-        return terms.join(" + ");
-      }
-    }
-    return null;
-  }
-
-  // A "Formula" is a top-level equation displayed in the info panel.
-  // Instead of one huge LaTeX string, we build a tree:
-  //   { kind: "eq", lhs: symbol|"text", rhs: [ node, ... ] }
-  //   node = { kind:"sym", sym } | { kind:"text", tex } | { kind:"num", val } | { kind:"expanded", inner: [...] }
-  //
-  // We track which symbols are currently expanded (a Set of sym.id path keys).
-
-  // For pedagogic power the panel actually holds a *list* of statements
-  // (LaTeX with clickable symbols). Each statement is rendered via temml
-  // one at a time; every clickable symbol is a <span> that toggles
-  // substitution by re-rendering the whole panel.
-
-  // Global expansion state for the current selection.
+  // Global expansion state for the current selection (statement keys).
   let expanded = new Set();
-
-  // Render a "sym" as clickable LaTeX embedded in a $...$ segment.
-  // We split each statement into a sequence of {kind:"tex"|"sym"} chunks
-  // so that temml can render tex chunks, and sym chunks become spans.
-
-  function renderChunks(chunks, container) {
-    container.innerHTML = "";
-    chunks.forEach(c => {
-      if (c.kind === "tex") {
-        const span = document.createElement("span");
-        texToHtml(span, c.tex, false);
-        container.appendChild(span);
-      } else if (c.kind === "sym") {
-        const span = document.createElement("span");
-        span.className = "bp-sym";
-        const key = c.pathKey;
-        const isExpanded = expanded.has(key);
-        const canExpand = expandSym(c.sym) !== null;
-        if (isExpanded) {
-          const inner = expandSym(c.sym);
-          texToHtml(span, `\\left(\\,\\underset{\\text{def of } ${symLatex(c.sym)}}{\\underbrace{${inner}}}\\,\\right)`, false);
-          span.classList.add("bp-sym-expanded");
-        } else {
-          texToHtml(span, symLatex(c.sym), false);
-          if (canExpand) span.classList.add("bp-sym-clickable");
-        }
-        if (canExpand) {
-          span.title = `Click to ${isExpanded ? "collapse" : "expand"} this symbol`;
-          span.addEventListener("click", ev => {
-            ev.stopPropagation();
-            if (expanded.has(key)) expanded.delete(key);
-            else expanded.add(key);
-            refreshInfoPanel();
-          });
-        }
-        container.appendChild(span);
-      } else if (c.kind === "val") {
-        const span = document.createElement("span");
-        span.className = "bp-val";
-        texToHtml(span, `\\;=\\; \\textcolor{#059669}{${fmt(c.val)}}`, false);
-        container.appendChild(span);
-      } else if (c.kind === "raw") {
-        const span = document.createElement("span");
-        span.innerHTML = c.html;
-        container.appendChild(span);
-      }
-    });
-  }
 
   // ── Selection state ──────────────────────────────────────────────────
   let activeSelection = null; // { type: "neuron"|"weight"|"bias", ...ids }
   let hoverKey = null;
 
   // ── Info panel builders ──────────────────────────────────────────────
+  // Each statement = one self-contained LaTeX fragment (so \left/\right and
+  // nested underbraces always stay paired) plus a title of mixed text/tex.
   function buildNeuronStatements(l, i, pathPrefix) {
     const stmts = [];
     if (l === 0) {
-      // Input node
       stmts.push({
-        title: "Input value",
-        chunks: [
-          { kind: "sym", sym: Sym.a(0, i), pathKey: `${pathPrefix}/x` },
-          { kind: "tex", tex: "\\;=\\;" + fmt(S[`x_${i}`]) }
-        ]
+        key: `${pathPrefix}/x`,
+        title: [{ t: "text", s: "Input value" }],
+        tex: `${U(`x_{${i + 1}}`, "input")} \\;=\\; ${col(S[`x_${i}`])}`
       });
-    } else {
-      // Forward: z = Σ w·a + b
-      const zChunks = [
-        { kind: "sym", sym: Sym.z(l, i), pathKey: `${pathPrefix}/z` },
-        { kind: "tex", tex: "\\;=\\;" }
-      ];
-      for (let j = 0; j < LAYERS[l - 1]; j++) {
-        if (j > 0) zChunks.push({ kind: "tex", tex: "\\;+\\;" });
-        zChunks.push({ kind: "sym", sym: Sym.w(l, i, j), pathKey: `${pathPrefix}/w${j}` });
-        zChunks.push({ kind: "tex", tex: "\\cdot" });
-        zChunks.push({ kind: "sym", sym: Sym.a(l - 1, j), pathKey: `${pathPrefix}/a${j}` });
-      }
-      zChunks.push({ kind: "tex", tex: "\\;+\\;" });
-      zChunks.push({ kind: "sym", sym: Sym.b(l, i), pathKey: `${pathPrefix}/b` });
-      zChunks.push({ kind: "tex", tex: "\\;=\\;" + fmt(R.z[l][i]) });
-      stmts.push({ title: "① Forward — pre-activation", chunks: zChunks });
+      return stmts;
+    }
+    const m = LAYERS[l - 1];
+    const zL = symLatex(Sym.z(l, i));
+    const aL = symLatex(Sym.a(l, i));
+    const dL = symLatex(Sym.delta(l, i));
+    const bL = symLatex(Sym.b(l, i));
 
-      // a = σ(z)  — plain parens (stretchy \left/\right can't span two fragments)
+    // ① pre-activation: z = [weighted sum] + [bias]
+    {
+      const terms = [];
+      for (let j = 0; j < m; j++) {
+        const w = symLatex(Sym.w(l, i, j)), h = symLatex(Sym.a(l - 1, j));
+        terms.push(j === 0 ? `${U(w, "weight")}\\,${U(h, "activation")}` : `${w}\\,${h}`);
+      }
       stmts.push({
-        title: "② Forward — activation",
-        chunks: [
-          { kind: "sym", sym: Sym.a(l, i), pathKey: `${pathPrefix}/a` },
-          { kind: "tex", tex: "\\;=\\;\\sigma\\!\\(" },
-          { kind: "sym", sym: Sym.z(l, i), pathKey: `${pathPrefix}/z2` },
-          { kind: "tex", tex: "\\)\\;=\\; " + fmt(R.a[l][i]) }
-        ]
+        key: `${pathPrefix}/z`,
+        title: [{ t: "text", s: "① Forward — pre-activation " }, { t: "tex", s: zL }],
+        tex: `${U(zL, "pre-activation")} \\;=\\; ${U(terms.join(" \\;+\\; "), "weighted sum")} \\;+\\; ${U(bL, "bias")} \\;=\\; ${col(R.z[l][i])}`
       });
+    }
 
-      // Backward: delta
-      const dChunks = [
-        { kind: "sym", sym: Sym.delta(l, i), pathKey: `${pathPrefix}/d` },
-        { kind: "tex", tex: "\\;=\\;" + fmt(R.delta[l][i]) }
-      ];
-      stmts.push({ title: "③ Backward — error signal δ", chunks: dChunks });
+    // ② activation: a = σ(z); expandable to the raw sigmoid
+    stmts.push({
+      key: `${pathPrefix}/a`,
+      title: [{ t: "text", s: "② Forward — activation " }, { t: "tex", s: aL }],
+      tex: `${U(aL, "activation")} \\;=\\; \\sigma\\!\\left( ${U(zL, "pre-activation")} \\right) \\;=\\; ${col(R.a[l][i])}`,
+      defTex: `${U(aL, "activation")} \\;=\\; \\frac{1}{1 + e^{-${zL}}} \\;=\\; ${col(R.a[l][i])}`
+    });
 
-      // Gradients for incoming weights
-      for (let j = 0; j < LAYERS[l - 1]; j++) {
-        stmts.push({
-          title: `④ Gradient for incoming weight ${symLatex(Sym.w(l, i, j))}`,
-          chunks: [
-            { kind: "sym", sym: Sym.grad(l, i, j), pathKey: `${pathPrefix}/g${j}` },
-            { kind: "tex", tex: "\\;=\\;" },
-            { kind: "sym", sym: Sym.delta(l, i), pathKey: `${pathPrefix}/gd${j}` },
-            { kind: "tex", tex: "\\cdot" },
-            { kind: "sym", sym: Sym.a(l - 1, j), pathKey: `${pathPrefix}/ga${j}` },
-            { kind: "tex", tex: "\\;=\\;" + fmt(R.grads[weightId(l, i, j)]) }
-          ]
-        });
+    // ③ error signal δ (full chain-rule form shown inline)
+    {
+      let rhs;
+      if (l === L - 1) {
+        const oL = symLatex(Sym.a(L - 1, i));
+        rhs = `-\\,${U(`t_{${i + 1}} - ${oL}`, "target − output")} \\;\\cdot\\; ${U(`${oL}\\left(1-${oL}\\right)`, "σ′(z)")}`;
+      } else {
+        const terms = [];
+        for (let k = 0; k < LAYERS[l + 1]; k++)
+          terms.push(`${symLatex(Sym.w(l + 1, k, i))}\\,${symLatex(Sym.delta(l + 1, k))}`);
+        rhs = `${U(`\\left(${terms.join(" + ")}\\right)`, "error from above")} \\;\\cdot\\; ${U(`${aL}\\left(1-${aL}\\right)`, "σ′(z)")}`;
       }
+      stmts.push({
+        key: `${pathPrefix}/d`,
+        title: [{ t: "text", s: "③ Backward — error signal " }, { t: "tex", s: dL }],
+        tex: `${U(dL, "error signal")} \\;=\\; ${rhs} \\;=\\; ${col(R.delta[l][i])}`
+      });
+    }
 
-      // Update rule
-      for (let j = 0; j < LAYERS[l - 1]; j++) {
-        const wv = S[weightId(l, i, j)];
-        const gv = R.grads[weightId(l, i, j)];
-        const nw = wv - S.lr * gv;
-        stmts.push({
-          title: `⑤ Update ${symLatex(Sym.w(l, i, j))}`,
-          chunks: [
-            { kind: "sym", sym: Sym.w(l, i, j), pathKey: `${pathPrefix}/u${j}` },
-            { kind: "tex", tex: `\\;\\leftarrow\\; ${fmt(wv)} \\;-\\; ${fmt(S.lr)} \\cdot ${fmt(gv)} \\;=\\; ${fmt(nw)}` }
-          ]
-        });
-      }
+    // ④ gradient for each incoming weight
+    for (let j = 0; j < m; j++) {
+      const wL = symLatex(Sym.w(l, i, j));
+      const hL = symLatex(Sym.a(l - 1, j));
+      stmts.push({
+        key: `${pathPrefix}/g${j}`,
+        title: [{ t: "text", s: "④ Gradient for weight " }, { t: "tex", s: wL }],
+        tex: `${U(`\\tfrac{\\partial E}{\\partial ${wL}}`, "gradient")} \\;=\\; ${U(dL, "error signal")} \\;\\cdot\\; ${U(hL, "sender activation")} \\;=\\; ${col(R.grads[weightId(l, i, j)])}`
+      });
+    }
+
+    // ⑤ update for each incoming weight
+    for (let j = 0; j < m; j++) {
+      const wL = symLatex(Sym.w(l, i, j));
+      const wv = S[weightId(l, i, j)];
+      const gv = R.grads[weightId(l, i, j)];
+      const nw = wv - S.lr * gv;
+      stmts.push({
+        key: `${pathPrefix}/u${j}`,
+        title: [{ t: "text", s: "⑤ Update " }, { t: "tex", s: wL }],
+        tex: `${U(wL, "weight")} \\;\\leftarrow\\; ${U(fmt(wv), "current")} \\;-\\; ${U(`${fmt(S.lr)}\\;\\times\\;${fmt(gv)}`, "η · gradient")} \\;=\\; ${col(nw)}`
+      });
     }
     return stmts;
   }
@@ -607,39 +491,30 @@ function renderBackpropVisual(rootId) {
     const pathPrefix = `w_${l}_${i}_${j}`;
     const wv = S[weightId(l, i, j)];
     const gv = R.grads[weightId(l, i, j)];
+    const wL = symLatex(Sym.w(l, i, j));
+    const hL = symLatex(Sym.a(l - 1, j));
+    const aL = symLatex(Sym.a(l, i));
+    const dL = symLatex(Sym.delta(l, i));
     return [
       {
-        title: "Current value",
-        chunks: [
-          { kind: "sym", sym: Sym.w(l, i, j), pathKey: `${pathPrefix}/self` },
-          { kind: "tex", tex: `\\;=\\; ${fmt(wv)}` }
-        ]
+        key: `${pathPrefix}/conn`,
+        title: [{ t: "text", s: "This weight connects" }],
+        tex: `${U(hL, "sender activation")} \\;\\longrightarrow\\; ${U(aL, "receiving neuron")}`
       },
       {
-        title: "This weight connects",
-        chunks: [
-          { kind: "sym", sym: Sym.a(l - 1, j), pathKey: `${pathPrefix}/from` },
-          { kind: "tex", tex: "\\;\\longrightarrow\\;" },
-          { kind: "sym", sym: Sym.a(l, i), pathKey: `${pathPrefix}/to` }
-        ]
+        key: `${pathPrefix}/self`,
+        title: [{ t: "text", s: "Current value" }],
+        tex: `${U(wL, "weight")} \\;=\\; ${col(wv)}`
       },
       {
-        title: "Gradient",
-        chunks: [
-          { kind: "sym", sym: Sym.grad(l, i, j), pathKey: `${pathPrefix}/g` },
-          { kind: "tex", tex: "\\;=\\;" },
-          { kind: "sym", sym: Sym.delta(l, i), pathKey: `${pathPrefix}/gd` },
-          { kind: "tex", tex: "\\cdot" },
-          { kind: "sym", sym: Sym.a(l - 1, j), pathKey: `${pathPrefix}/ga` },
-          { kind: "tex", tex: `\\;=\\; ${fmt(gv)}` }
-        ]
+        key: `${pathPrefix}/g`,
+        title: [{ t: "text", s: "Gradient for " }, { t: "tex", s: wL }],
+        tex: `${U(`\\tfrac{\\partial E}{\\partial ${wL}}`, "gradient")} \\;=\\; ${U(dL, "error signal")} \\;\\cdot\\; ${U(hL, "sender activation")} \\;=\\; ${col(gv)}`
       },
       {
-        title: "Update (one SGD step)",
-        chunks: [
-          { kind: "sym", sym: Sym.w(l, i, j), pathKey: `${pathPrefix}/u` },
-          { kind: "tex", tex: `\\;\\leftarrow\\; ${fmt(wv)} - ${fmt(S.lr)} \\cdot ${fmt(gv)} \\;=\\; ${fmt(wv - S.lr * gv)}` }
-        ]
+        key: `${pathPrefix}/u`,
+        title: [{ t: "text", s: "Update (one SGD step)" }],
+        tex: `${U(wL, "weight")} \\;\\leftarrow\\; ${U(fmt(wv), "current")} \\;-\\; ${U(`${fmt(S.lr)}\\;\\times\\;${fmt(gv)}`, "η · gradient")} \\;=\\; ${col(wv - S.lr * gv)}`
       }
     ];
   }
@@ -649,8 +524,8 @@ function renderBackpropVisual(rootId) {
     if (!activeSelection) {
       infoPanel.innerHTML = `<div style="color:#94a3b8; padding:12px; text-align:center;">
         <b>Click any neuron or weight</b> to see its equations.<br>
-        Then <b>click any symbol inside a formula</b> to expand its definition inline.<br>
-        Drill down until every symbol is a raw input or parameter.
+        Every quantity carries an <b>underbrace</b> naming what it is.<br>
+        Use <b>show definition</b> to unfold a symbol into its own formula.
       </div>`;
       return;
     }
@@ -675,7 +550,7 @@ function renderBackpropVisual(rootId) {
     closeBtn.textContent = "✕";
     const collapseBtn = document.createElement("button");
     collapseBtn.className = "bp-collapse-all";
-    collapseBtn.textContent = "collapse all substitutions";
+    collapseBtn.textContent = "collapse all";
     hdr.appendChild(closeBtn);
     hdr.appendChild(collapseBtn);
     infoPanel.appendChild(hdr);
@@ -700,13 +575,42 @@ function renderBackpropVisual(rootId) {
       wrap.className = "bp-stmt";
       const t = document.createElement("div");
       t.className = "bp-stmt-title";
-      t.textContent = st.title;
+      st.title.forEach(seg => {
+        if (seg.t === "tex") {
+          const sp = document.createElement("span");
+          texToHtml(sp, seg.s, false);
+          t.appendChild(sp);
+        } else {
+          const s = document.createElement("span");
+          s.className = "bp-stmt-label";
+          s.textContent = seg.s;
+          t.appendChild(s);
+        }
+      });
+      if (st.defTex) {
+        const btn = document.createElement("button");
+        btn.className = "bp-expand";
+        const open = expanded.has(st.key);
+        btn.textContent = open ? "▾ hide definition" : "▸ show definition";
+        btn.addEventListener("click", () => {
+          if (expanded.has(st.key)) expanded.delete(st.key);
+          else expanded.add(st.key);
+          refreshInfoPanel();
+        });
+        t.appendChild(btn);
+      }
       wrap.appendChild(t);
       const body = document.createElement("div");
       body.className = "bp-stmt-body";
+      texToHtml(body, st.tex, false);
       wrap.appendChild(body);
+      if (st.defTex && expanded.has(st.key)) {
+        const def = document.createElement("div");
+        def.className = "bp-stmt-def";
+        texToHtml(def, st.defTex, false);
+        wrap.appendChild(def);
+      }
       infoPanel.appendChild(wrap);
-      renderChunks(st.chunks, body);
     });
   }
 
@@ -857,8 +761,8 @@ function renderBackpropVisual(rootId) {
       for (let i = 0; i < LAYERS[l]; i++) {
         const cx = layerX(l), cy = neuronY(l, i);
         const r  = neuronR(l);
-        const a  = R.a[l][i];
-        const d  = R.delta[l][i] || 0;
+        const a  = dispA[l][i];
+        const d  = dispDelta[l][i] || 0;
         const fill = neuronFill(l, a);
         const isSel = activeSelection?.type === "neuron"
                      && activeSelection.l === l && activeSelection.i === i;
@@ -868,27 +772,32 @@ function renderBackpropVisual(rootId) {
         // Delta halo (bwd magnitude)
         const dMag = Math.min(1, Math.abs(d) * 4);
         if (dMag > 0.02) {
-          out += `<circle cx="${cx}" cy="${cy}" r="${r + 6 + dMag*10}"
+          out += `<circle class="${uid}-halo" data-l="${l}" data-i="${i}" cx="${cx}" cy="${cy}" r="${r + 6 + dMag*10}"
             fill="none" stroke="${d >= 0 ? C.bwd : "#60a5fa"}"
             stroke-opacity="${0.15 + dMag*0.35}" stroke-width="${1 + dMag*3}"
-            pointer-events="none"/>`;
+            pointer-events="none" style="transition: r 0.3s, stroke-opacity 0.3s, stroke-width 0.3s;"/>`;
         }
         // Body
         out += `<circle class="${uid}-neuron" data-l="${l}" data-i="${i}"
           cx="${cx}" cy="${cy}" r="${r}"
           fill="${fill}" stroke="${stroke}" stroke-width="${strokeW}"
-          style="cursor:pointer; transition: stroke 0.2s, r 0.2s;"
+          style="cursor:pointer; transition: stroke 0.2s, r 0.2s, fill 0.35s;"
           filter="${isSel || isHi ? `url(#${uid}-glow)` : ''}"/>`;
         // Symbol
-        const lbl = nodeLabel(l, i).replace(/[{}]/g,'').replace('^','').replace(/_/g,'');
         out += `<text x="${cx}" y="${cy - 2}" text-anchor="middle"
           font-size="12" font-weight="700" fill="${C.text}" style="pointer-events:none;">
           ${prettyLabel(l, i)}</text>`;
         // Activation numeric
-        out += `<text x="${cx}" y="${cy + 12}" text-anchor="middle"
+        out += `<text class="${uid}-nval" data-l="${l}" data-i="${i}" x="${cx}" y="${cy + 12}" text-anchor="middle"
           font-size="10" font-family="ui-monospace,monospace"
           fill="rgba(255,255,255,0.85)" style="pointer-events:none;">
           ${fmt(a, 3)}</text>`;
+        // Error-signal numeric (hidden + output layers)
+        if (l >= 1) {
+          out += `<text class="${uid}-dval" data-l="${l}" data-i="${i}" x="${cx}" y="${cy + 24}" text-anchor="middle"
+            font-size="9" font-family="ui-monospace,monospace"
+            fill="#fca5a5" style="pointer-events:none;">δ ${fmt(d, 4)}</text>`;
+        }
 
         // For output layer: show target + gap
         if (l === L - 1) {
@@ -1019,17 +928,54 @@ function renderBackpropVisual(rootId) {
   function animatePulses(direction, done) {
     animTok++;
     const myTok = animTok;
-    const perLayerMs = 700;
+    const perLayerMs = 750;
     const start = performance.now();
     const total = perLayerMs * (L - 1);
     const fpulses = svg.querySelectorAll(`.${uid}-fpulse`);
     const bpulses = svg.querySelectorAll(`.${uid}-bpulse`);
     const pulses = direction === "forward" ? fpulses : bpulses;
+    const reached = new Set();
+
+    // When the wave front reaches layer l, snap that layer's displayed values
+    // (activation label + fill, error label + halo) to the freshly computed
+    // ones and give the neurons a brief glow — so values change on arrival.
+    function revealLayer(l) {
+      if (reached.has(l)) return;
+      reached.add(l);
+      dispA[l] = R.a[l].slice();
+      dispDelta[l] = R.delta[l].slice();
+      for (let i = 0; i < LAYERS[l]; i++) {
+        const circle = svg.querySelector(`.${uid}-neuron[data-l="${l}"][data-i="${i}"]`);
+        const valT = svg.querySelector(`.${uid}-nval[data-l="${l}"][data-i="${i}"]`);
+        const dT = svg.querySelector(`.${uid}-dval[data-l="${l}"][data-i="${i}"]`);
+        const halo = svg.querySelector(`.${uid}-halo[data-l="${l}"][data-i="${i}"]`);
+        if (circle) {
+          circle.setAttribute("fill", neuronFill(l, dispA[l][i]));
+          circle.setAttribute("filter", `url(#${uid}-glow)`);
+        }
+        if (valT) valT.textContent = fmt(dispA[l][i], 3);
+        if (dT) dT.textContent = `δ ${fmt(dispDelta[l][i], 4)}`;
+        if (halo) {
+          const dm = Math.min(1, Math.abs(dispDelta[l][i]) * 4);
+          halo.setAttribute("r", neuronR(l) + 6 + dm * 10);
+          halo.setAttribute("stroke-opacity", 0.15 + dm * 0.35);
+          halo.setAttribute("stroke-width", 1 + dm * 3);
+          halo.setAttribute("stroke", dispDelta[l][i] >= 0 ? C.bwd : "#60a5fa");
+        }
+      }
+    }
+    function revealUpTo(t) {
+      if (direction === "forward") {
+        for (let l = 1; l < L; l++) if (t >= l * perLayerMs) revealLayer(l);
+      } else {
+        for (let l = L - 1; l >= 1; l--) if (t >= (L - 1 - l) * perLayerMs) revealLayer(l);
+      }
+    }
 
     function frame(now) {
       if (myTok !== animTok) return; // cancelled by newer animation
       const t = (now - start);
-      let anyAlive = false;
+      revealUpTo(t);
       pulses.forEach(p => {
         const [, l, i, j] = p.dataset.e.split("_").map((x,k)=>k===0?x:+x);
         const layerStart = direction === "forward"
@@ -1038,16 +984,13 @@ function renderBackpropVisual(rootId) {
         const localT = (t - layerStart) / perLayerMs;
         if (localT < 0 || localT > 1) {
           p.setAttribute("r", 0);
-          if (localT >= 0 && localT <= 1) anyAlive = true;
           return;
         }
-        anyAlive = true;
         const a = { x: layerX(l-1), y: neuronY(l-1, j) };
         const b = { x: layerX(l),   y: neuronY(l, i)   };
         const u = direction === "forward" ? localT : (1 - localT);
         const cx = a.x + (b.x - a.x) * u;
         const cy = a.y + (b.y - a.y) * u;
-        // Size ∝ signal magnitude on this edge
         const mag = direction === "forward"
           ? Math.abs(S[weightId(l,i,j)] * R.a[l-1][j])
           : Math.abs(S[weightId(l,i,j)] * R.delta[l][i]);
@@ -1060,6 +1003,9 @@ function renderBackpropVisual(rootId) {
       if (t < total + perLayerMs) requestAnimationFrame(frame);
       else {
         pulses.forEach(p => p.setAttribute("r", 0));
+        if (direction === "forward") for (let l = 1; l < L; l++) revealLayer(l);
+        else for (let l = L - 1; l >= 1; l--) revealLayer(l);
+        draw();
         if (done) done();
       }
     }
@@ -1069,18 +1015,30 @@ function renderBackpropVisual(rootId) {
 
   // ── CONTROL BUTTONS ──────────────────────────────────────────────
   document.getElementById(`${uid}-btn-fwd`).addEventListener("click", () => {
-    recompute(); redraw(); animatePulses("forward");
+    const prevA = dispA.map(r => r.slice());
+    const prevD = dispDelta.map(r => r.slice());
+    recompute();
+    dispA = prevA; dispDelta = prevD;   // hold previous values, reveal on arrival
+    draw();
+    animatePulses("forward");
   });
   document.getElementById(`${uid}-btn-bwd`).addEventListener("click", () => {
-    recompute(); redraw(); animatePulses("backward");
+    const prevD = dispDelta.map(r => r.slice());
+    recompute();
+    dispDelta = prevD;                  // hold previous error signals, reveal on arrival
+    draw();
+    animatePulses("backward");
   });
   document.getElementById(`${uid}-btn-step`).addEventListener("click", () => {
-    recompute();
+    const prevA = dispA.map(r => r.slice());
+    const prevD = dispDelta.map(r => r.slice());
+    applyGradients();          // weights change first, so the waves below carry new values
+    recompute();               // forward/backward with the updated weights
+    dispA = prevA; dispDelta = prevD;
+    draw();
     animatePulses("forward", () => {
       animatePulses("backward", () => {
-        applyGradients();
         syncIOFields();
-        recompute();
         redraw();
         if (activeSelection) refreshInfoPanel();
       });
@@ -1165,41 +1123,49 @@ function renderBackpropVisual(rootId) {
       }
       #${uid}-info .bp-close:hover, #${uid}-info .bp-collapse-all:hover { background: #334155; }
 
-      #${uid}-info .bp-stmt {
-        border-left: 3px solid #22d3ee;
-        padding: 6px 0 6px 10px;
-        margin: 12px 0;
-      }
-      #${uid}-info .bp-stmt-title {
-        font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #94a3b8;
-        margin-bottom: 4px;
-      }
-      #${uid}-info .bp-stmt-body { display: block; }
-      #${uid}-info .bp-sym {
-        display: inline-block;
-        padding: 1px 4px;
-        margin: 0 1px;
-        border-radius: 4px;
-        transition: background 0.15s, box-shadow 0.15s;
-      }
-      #${uid}-info .bp-sym-clickable {
-        background: rgba(34, 211, 238, 0.10);
-        border-bottom: 1px dashed rgba(34, 211, 238, 0.55);
-        cursor: pointer;
-      }
-      #${uid}-info .bp-sym-clickable:hover {
-        background: rgba(250, 204, 21, 0.20);
-        box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.6);
-      }
-      #${uid}-info .bp-sym-expanded {
-        background: rgba(250, 204, 21, 0.12);
-        border-bottom: 1px solid rgba(250, 204, 21, 0.7);
-        cursor: pointer;
-      }
-      #${uid}-info .bp-val { color: #34d399; }
+       #${uid}-info .bp-stmt {
+         border-left: 3px solid #22d3ee;
+         padding: 6px 0 6px 10px;
+         margin: 14px 0;
+       }
+       #${uid}-info .bp-stmt-title {
+         display: flex; align-items: center; gap: 8px;
+         font-size: 0.85rem;
+         margin-bottom: 6px;
+       }
+       #${uid}-info .bp-stmt-label {
+         font-size: 0.7rem;
+         text-transform: uppercase;
+         letter-spacing: 1px;
+         color: #94a3b8;
+       }
+       #${uid}-info .bp-stmt-body {
+         display: block;
+         overflow-x: auto;
+         padding: 2px 2px 6px;
+         font-size: 1.02rem;
+         line-height: 2.1;
+       }
+       #${uid}-info .bp-stmt-body::-webkit-scrollbar { height: 6px; }
+       #${uid}-info .bp-stmt-body::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+       #${uid}-info .bp-stmt-def {
+         margin: 6px 0 2px 8px;
+         padding: 6px 12px;
+         border-left: 2px dashed #facc15;
+         background: rgba(250, 204, 21, 0.06);
+         border-radius: 4px;
+         overflow-x: auto;
+         font-size: 1.02rem;
+         line-height: 2.1;
+       }
+       #${uid}-info .bp-expand {
+         margin-left: auto;
+         background: #1e293b; color: #7dd3fc; border: none;
+         padding: 3px 9px; border-radius: 5px; cursor: pointer;
+         font-size: 0.7rem; letter-spacing: 0; text-transform: none;
+         flex: none;
+       }
+       #${uid}-info .bp-expand:hover { background: #334155; }
 
       #${uid}-controls {
         display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -1293,7 +1259,7 @@ function renderBackpropVisual(rootId) {
       <div id="${uid}-controls">
         <button class="bp-btn-fwd"   id="${uid}-btn-fwd">▶ Forward pass</button>
         <button class="bp-btn-bwd"   id="${uid}-btn-bwd">◀ Backward pass</button>
-        <button class="bp-btn-step"  id="${uid}-btn-step">✓ Full step (fwd → bwd → update)</button>
+        <button class="bp-btn-step"  id="${uid}-btn-step" title="Apply one gradient step, then watch the new values flow through">✓ Full step</button>
         <button class="bp-btn-train" id="${uid}-btn-train">↻ Train 100</button>
         <button class="bp-btn-reset" id="${uid}-btn-reset">↺ Reset</button>
       </div>
