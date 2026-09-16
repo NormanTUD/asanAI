@@ -240,7 +240,6 @@ const Presentation = (() => {
                             <b>Letztes gewähltes Wort</b> → wieder an den <b>Anfang</b> angehängt → alles beginnt <b>von vorn</b>.
                         </div>
                     </div>
-                    <button id="btn-loop-restart" style="margin-top:28px; padding:14px 28px; font-size:1.05em; font-weight:bold; border:none; border-radius:10px; background:#3b82f6; color:#fff; cursor:pointer;">↺ Zurück zum Anfang</button>
                 </div>
             </div>`;
         slide.querySelector('#btn-loop-restart').addEventListener('click', () => goTo(0));
