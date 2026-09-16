@@ -552,8 +552,10 @@ function prev() {
 // FOLIEN-AUSWAHL (Checkbox je Folie + 3× Esc)
 // Jede Folie hat oben rechts eine ab Werk deaktivierte Checkbox.
 // Ein Klick nimmt die Folie in die URL-Auswahl auf (?slides=…),
-// die URL wird live aktualisiert. 3× Esc (schnell hintereinander)
-// öffnet/schließt das Panel oben rechts zum Ablesen der URL.
+// die URL wird live aktualisiert – geschrieben als Slide-IDs wie
+// ?slides=slide-attention-matrix,slide-viele-koepfe.
+// 3× Esc (schnell hintereinander) öffnet/schließt das Panel oben rechts
+// zum Ablesen der URL.
 // ════════════════════════════════════════════════════════════
 const Selection = (() => {
     let chosen = new Set();      // Ursprungs-Indexes der gewählten Folien
@@ -565,9 +567,12 @@ const Selection = (() => {
     const byId = id => document.getElementById(id);
 
     // ── Ursprungs-Indexe aus dem aktuellen ?slides=-Parameter ──
+    // Akzeptiert Zahlen, Bereiche (0,1,10-16) und Slide-IDs
+    // (slide-attention-matrix) – alle werden auf Ursprungs-Indexe gemappt.
     function paramOrder() {
         const raw = new URLSearchParams(window.location.search).get('slides');
         if (!raw) return [];
+        const all = Array.from(document.querySelectorAll('.slide'));
         const out = [];
         raw.split(',').forEach(part => {
             part = part.trim();
@@ -577,16 +582,27 @@ const Selection = (() => {
                 const a = parseInt(r[0], 10), b = parseInt(r[1], 10);
                 if (!isNaN(a) && !isNaN(b)) {
                     for (let i = Math.min(a, b); i <= Math.max(a, b); i++) out.push(i);
+                } else {
+                    const idx = all.findIndex(s => s.id === part);
+                    if (idx !== -1) out.push(idx);
                 }
             } else if (!isNaN(parseInt(part, 10))) {
                 out.push(parseInt(part, 10));
+            } else {
+                const idx = all.findIndex(s => s.id === part);
+                if (idx !== -1) out.push(idx);
             }
         });
         return out;
     }
 
+    // ── Auswahl als Slide-IDs schreiben (statt Zahlen) ──
     function selectedParam() {
-        return Array.from(chosen).sort((a, b) => a - b).join(',');
+        const all = document.querySelectorAll('.slide');
+        return Array.from(chosen).sort((a, b) => a - b).map(i => {
+            const el = all[i];
+            return (el && el.id) ? el.id : String(i);
+        }).join(',');
     }
 
     // URL OHNE %2C-Enkodierung aufbauen: ?slides=0,1,2 (rohe Kommas).
