@@ -1645,6 +1645,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const rows = [];
 			const titles = Presentation.slides().map(s => s.getAttribute('data-title'));
 			const row = (label, cond) => rows.push(label + ': ' + (cond ? 'JA' : 'NEIN'));
+			const raw = (label, val) => rows.push(label + ': ' + val);
 			const scenes = () => Array.from(document.querySelectorAll('#nn-intro-anim .nn-anim-scene')).map(s => s.classList.contains('on') ? (+s.dataset.scene) : 0);
 			const key = (k) => document.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
 			const snapshot = () => document.querySelector('.slide.active [data-typewriter]')?.dataset.typeHtml;
@@ -1659,6 +1660,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			key('ArrowRight');  // → Szene 2
 			row('Intro: Pfeil vor = Szene 2', scenes().join(',') === '0,1');
 			row('DBG scenes nach Pfeil', scenes().join(','));
+			row('DBG tryNavigate-Log', (window.__tnLog || []).join(' | '));
 			key('ArrowRight');  // keine Szene mehr → ReLU fragment
 			row('Intro: Danach normales Weiter (ReLU sichtbar)', fvis() === 3);
 			key('ArrowRight');  // Alternativ-Formel
