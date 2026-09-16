@@ -488,16 +488,15 @@ sections.forEach(s=>io.observe(s));
 // ============ HIDPI CANVAS SETUP ============
 function setupCanvas(canvas){
   const dpr=window.devicePixelRatio||1;
-  const rect=canvas.getBoundingClientRect();
-  canvas.width=rect.width*dpr;
-  canvas.height=canvas.height; // preserve attribute height in CSS px
-  const cssH=parseInt(canvas.getAttribute('height'));
+  if(canvas.dataset.cssH===undefined)canvas.dataset.cssH=canvas.getAttribute('height')||String(canvas.height);
+  const cssH=parseInt(canvas.dataset.cssH);
+  const cssW=canvas.getBoundingClientRect().width;
   canvas.style.height=cssH+'px';
-  canvas.width=rect.width*dpr;
-  canvas.height=cssH*dpr;
+  canvas.width=Math.max(1,Math.round(cssW*dpr));
+  canvas.height=Math.round(cssH*dpr);
   const ctx=canvas.getContext('2d');
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  return {ctx,w:rect.width,h:cssH};
+  return {ctx,w:cssW,h:cssH};
 }
 
 // ============ SIMPLICIAL SET DEMO ============
