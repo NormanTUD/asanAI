@@ -362,17 +362,17 @@ const TokenizerViz = {
 
         if (compoundWords.length > 0) {
             html += `<div style="margin-top:14px; padding:12px 16px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;">`;
-            html += `<div style="font-size:0.8em; font-weight:bold; color:#1e40af; margin-bottom:8px;">🔍 Subword-Zerlegung:</div>`;
+            html += `<div style="font-size:1em; font-weight:bold; color:#1e40af; margin-bottom:8px;">🔍 Subword-Zerlegung:</div>`;
             html += `<div style="display:flex; flex-direction:column; gap:6px;">`;
 
             compoundWords.forEach(({ word, parts }) => {
-                html += `<div style="font-family:monospace; font-size:0.85em; color:#334155;">`;
+                html += `<div style="font-family:monospace; font-size:1em; color:#334155;">`;
                 html += `<span style="color:#64748b;">"${word}"</span> → `;
                 html += parts.map((p, i) => {
                     const c = this.tokenColors[i % this.tokenColors.length];
                     return `<span style="background:${c}15; border:1px solid ${c}40; padding:2px 6px; border-radius:4px; color:${c}; font-weight:bold;">${p}</span>`;
                 }).join(' + ');
-                html += ` <span style="color:#94a3b8; font-size:0.85em;">(${parts.length} tokens)</span>`;
+                html += ` <span style="color:#94a3b8; font-size:1em;">(${parts.length} tokens)</span>`;
                 html += `</div>`;
             });
 
