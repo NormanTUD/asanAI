@@ -1968,7 +1968,22 @@ const TypewriterViz = (() => {
         return a && a.getAttribute('data-title') === 'Klassisch vs. KI';
     }
 
-    return { isTypewriting, setActive, isOnClassicSlide, nop() {} };
+    // Auf Folie betreten automatisch den Schreibmaschinen-Effekt starten.
+    // Das Panel ist immer sichtbar (kein Fragment mehr); der Code wird
+    // sofort getippt. Danach werden Pfeile wieder normal verarbeitet.
+    function activate() {
+        const slide = document.querySelector('.slide.active');
+        if (!slide) return;
+        if (typeof startTypewriter === 'function') startTypewriter(slide);
+    }
+
+    // Schreibmaschine stoppen (Folie verlassen).
+    function stop() {
+        const el = document.querySelector('[data-typewriter]');
+        if (el && typeof _twStop === 'function') _twStop(el);
+    }
+
+    return { isTypewriting, setActive, isOnClassicSlide, activate, stop, nop() {} };
 })();
 
 /* ================================================================

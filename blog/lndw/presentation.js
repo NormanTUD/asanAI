@@ -101,8 +101,11 @@ const DemoRegistry = (() => {
 
                 { ref: () => typeof TypewriterViz !== 'undefined' ? TypewriterViz : null,
                         guard: d => d.isOnClassicSlide(),
+                        slideTest: s => s.getAttribute('data-title') === 'Klassisch vs. KI',
                         canNext: 'isTypewriting',
-                        nextMethod: 'nop' },
+                        nextMethod: 'nop',
+                        onEnter: d => d.activate(),
+                        onLeave: d => d.stop() },
 
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },
@@ -402,6 +405,12 @@ let shortMode = false;       // ?short=1 → optionale Inhalte entfernt
 
         // ?fast=1: einfache Fragmente direkt anzeigen
         if (fastMode) revealFastFragments(currentSlide);
+
+        // Boot aktiviert die Startfolie direkt (ohne goTo → ohne notifyEnter).
+        // Klassisch-vs-KI-Startfolie: Schreibmaschinen-Effekt sofort starten.
+        if (typeof TypewriterViz !== 'undefined' && TypewriterViz.isOnClassicSlide()) {
+            TypewriterViz.activate();
+        }
 
         updateUI();
         buildOverview();
