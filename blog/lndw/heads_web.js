@@ -91,7 +91,7 @@
 
     // ---------- Attention-Web (Canvas) ----------
     box.innerHTML =
-        '<div id="heads-web-container" style="position:relative; height:240px; padding-top:20px; margin-bottom:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; overflow-x:auto; overflow-y:hidden;">' +
+        '<div id="heads-web-container" style="position:relative; height:240px; padding-top:20px; margin-bottom:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; overflow-x:hidden; overflow-y:hidden;">' +
         '<canvas id="heads-web-canvas" style="position:absolute; top:0; left:0; pointer-events:none; z-index:5;"></canvas>' +
         '<div id="heads-web-strip" style="display:flex; justify-content:center; gap:10px; position:absolute; bottom:26px; width:max-content; min-width:100%; padding:0 20px; flex-wrap:nowrap;"></div>' +
         '</div>' +

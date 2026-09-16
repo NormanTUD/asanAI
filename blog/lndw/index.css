@@ -196,6 +196,8 @@ table.heads-table {
 	background: #0f172a; color: #fff; padding: 8px 10px; text-align: left;
 	font-size: 0.85em;
 }
+.heads-table th:first-child,
+.heads-table tbody tr td:first-child { text-align: center; }
 .heads-table td { border: 1px solid #e2e8f0; padding: 8px 10px; vertical-align: top; }
 .heads-table tbody tr:nth-child(even) td { background: #f8fafc; }
 .heads-table tbody tr.active-row td { background: #eff6ff; }
