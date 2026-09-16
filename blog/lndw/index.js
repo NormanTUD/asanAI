@@ -1989,7 +1989,8 @@ const TypewriterViz = (() => {
 /* ================================================================
    Neuron Intro Animation (Slide "Was sind Neuronale Netzwerk?")
    Pfeilrechts zeigt die nächste Szene, Pfeillinks die vorherige.
-     Szene 1: Vektoren/Matrizen           (W → w₁ w₂ w₃ ⋮ …)
+     Szene 1: dense(x) = W·x + B      (Underbraces: Gewichte / Bias)
+     Szene 2: Vektoren/Matrizen          (W und B unterlegt mit "lernbar")
    ================================================================ */
 const NeuronIntroViz = (() => {
     let revealed = false;
