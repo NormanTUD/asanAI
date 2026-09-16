@@ -30,6 +30,10 @@ const DemoRegistry = (() => {
                 { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
                         onLeave: d => d.reset() },
 
+                { ref: () => typeof NNStepDemo !== 'undefined' ? NNStepDemo : null,
+                        slideTest: s => NNStepDemo && NNStepDemo.isSonnenbahnSlide(s),
+                        onEnter: d => d.markSonnenbahnSeen() },
+
                 { ref: () => typeof TrainingViz !== 'undefined' ? TrainingViz : null },
 
                 { ref: () => typeof AttentionDemo !== 'undefined' ? AttentionDemo : null,

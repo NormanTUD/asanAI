@@ -1832,6 +1832,26 @@ const NNStepDemo = (() => {
     const customEnd = sinSteps.length + customSteps.length - 1; // 13
     const imagesStep = sinSteps.length + customSteps.length;    // 14
 
+    // Bilder unten (und der Platz, den sie brauchen) erscheinen erst,
+    // nachdem einmal die Sonnenbahn-Folie („Die Wirklichkeit hat
+    // mathematische Muster") sichtbar war.
+    let sonnenbahnSeen = false;
+
+    function isSonnenbahnSlide(slide) {
+        return !!(slide && slide.id === 'slide-sonnenbahn');
+    }
+
+    function markSonnenbahnSeen() {
+        sonnenbahnSeen = true;
+        applyImagesVisibility();
+    }
+
+    function applyImagesVisibility() {
+        const wrapper = document.getElementById('nn-bottom-images-wrap');
+        if (!wrapper) return;
+        wrapper.style.display = sonnenbahnSeen ? '' : 'none';
+    }
+
     function isOnStückelungSlide() {
         const activeSlide = document.querySelector('.slide.active');
         if (!activeSlide) return false;
@@ -1856,6 +1876,7 @@ const NNStepDemo = (() => {
     }
 
     function applyStep() {
+        applyImagesVisibility();
         const slider = document.getElementById('nn-num-neurons');
         const fnSelect = document.getElementById('nn-target-fn');
         const countLabel = document.getElementById('nn-neuron-count');
@@ -1918,7 +1939,9 @@ const NNStepDemo = (() => {
         canGoPrev,
         next,
         prev,
-        reset
+        reset,
+        markSonnenbahnSeen,
+        isSonnenbahnSlide
     };
 })();
 
