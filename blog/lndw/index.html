@@ -189,6 +189,10 @@
 		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
         </div>
 
+        <div class="fragment formula-box" data-nofast>
+		<div class="math-display">$$\underbrace{\mathbf{x}_1 = \text{dense}(\mathbf{x}_0)}_{\text{linear}} ,\quad \underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{knicken}} ,\quad \underbrace{\mathbf{x}_3 = \text{dense}(\mathbf{x}_2)}_{\text{zurück zum Linear}} ,\ \ldots$$</div>
+        </div>
+
         <div class="key-insight fragment" data-nofast>
             <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b> (per Stückelung).
         </div>
