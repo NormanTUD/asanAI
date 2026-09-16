@@ -187,7 +187,95 @@ const FragmentActions = {
 	    },
 	},
 
+	// "Code-reingetippt"-Effekt: Fragment zeigt beim Einblenden den Code
+	// in einem [data-typewriter]-Element, Buchstabe für Buchstabe (schnell).
+	'typewriter': {
+	    forward: (frag) => startTypewriter(frag),
+	    backward: (frag) => resetTypewriter(frag),
+	},
+
 };
+
+// ────────────────────────────────────────────────────────────
+// TYPEWRITER – Code "wird getippt" (Buchstabe für Buchstabe)
+// Vorbereitung: beim Booten wird der vollständige HTML-Inhalt eines
+// [data-typewriter]-Elements gesichert und der Inhalt geleert, damit
+// beim Einblenden kein kurzer Flacker-Effekt entsteht.
+// ────────────────────────────────────────────────────────────
+const _twTimers = {};
+
+function _twEscape(s) {
+    return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// Zerlegt den gespeicherten HTML-Quelltext in [Tag, Text, Tag, …]-Stücke.
+function _twParts(el) {
+    if (el._twParts) return el._twParts;
+    const html = el.dataset.typeHtml;
+    el._twParts = (html || '').split(/(<[^>]*>)/).filter(p => p !== '');
+    return el._twParts;
+}
+
+function _twTotal(parts) {
+    let t = 0;
+    for (const p of parts) if (p[0] !== '<') t += p.length;
+    return t;
+}
+
+// HTML-Präfix, der die ersten n Zeichen repräsentiert (Tags bleiben intakt).
+function _twPrefix(parts, n) {
+    let out = '';
+    let acc = 0;
+    for (const p of parts) {
+        if (acc >= n) break;
+        if (p[0] === '<') { out += p; continue; }
+        const need = n - acc;
+        if (p.length <= need) { out += _twEscape(p); acc += p.length; }
+        else { out += _twEscape(p.slice(0, need)); acc = n; }
+    }
+    return out;
+}
+
+function startTypewriter(frag) {
+    const el = frag.querySelector('[data-typewriter]');
+    if (!el) return;
+    const parts = _twParts(el);
+    const total = _twTotal(parts);
+    const speed = parseInt(el.getAttribute('data-type-speed') || '6', 10);
+    _twStop(el);
+    let n = 0;
+    el.innerHTML = '<span class="type-caret">▍</span>';
+    el._twTimer = setInterval(() => {
+        n++;
+        el.innerHTML = _twPrefix(parts, n) + '<span class="type-caret">▍</span>';
+        if (n >= total) {
+            _twStop(el);
+            el.innerHTML = el.dataset.typeHtml;
+        }
+    }, speed);
+}
+
+function resetTypewriter(frag) {
+    const el = frag.querySelector('[data-typewriter]');
+    if (!el) return;
+    _twStop(el);
+    if (el.dataset.typeHtml !== undefined) el.innerHTML = '';
+}
+
+function _twStop(el) {
+    if (el._twTimer) {
+        clearInterval(el._twTimer);
+        el._twTimer = null;
+    }
+}
+
+// Boot: vollständigen Inhalt sichern und leeren (kein Flackern beim Einblenden).
+function initTypewriters() {
+    document.querySelectorAll('[data-typewriter]').forEach(el => {
+        if (el.dataset.typeHtml === undefined) el.dataset.typeHtml = el.innerHTML;
+        el.innerHTML = '';
+    });
+}
 
 // ────────────────────────────────────────────────────────────
 // PRESENTATION CORE
@@ -947,6 +1035,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (new URLSearchParams(window.location.search).get('short') === '1') {
         document.querySelectorAll('[data-short]').forEach(el => el.remove());
     }
+
+    initTypewriters();
 
     Presentation.init();
     InputHandler.init();
