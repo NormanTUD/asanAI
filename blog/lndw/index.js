@@ -1861,11 +1861,11 @@ const NNStepDemo = (() => {
         const countLabel = document.getElementById('nn-neuron-count');
         const imagesDiv = document.getElementById('nn-bottom-images');
 
-        if (!slider || !fnSelect) return;
+        if (!slider) return;
 
         if (currentStep <= sinEnd) {
             // Sinus-Schritte
-            fnSelect.value = 'sin';
+            if (fnSelect) fnSelect.value = 'sin';
             const neurons = sinSteps[currentStep];
             slider.value = neurons;
             if (countLabel) countLabel.textContent = neurons;
@@ -1873,7 +1873,7 @@ const NNStepDemo = (() => {
             NNApproxViz.render();
         } else if (currentStep >= customStart && currentStep <= customEnd) {
             // Wellenform-Schritte
-            fnSelect.value = 'custom';
+            if (fnSelect) fnSelect.value = 'custom';
             const neurons = customSteps[currentStep - customStart];
             slider.value = neurons;
             if (countLabel) countLabel.textContent = neurons;
