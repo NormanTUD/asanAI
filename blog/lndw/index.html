@@ -109,24 +109,31 @@
 <div class="slide" data-title="Klassisch vs. KI" id="slide-klassisch-vs-ki">
     <div class="slide-content">
         <h2>Klassisches Programmieren vs. KI</h2>
+        <p style="margin-bottom:4px;">Gleiche Funktion <b>UND</b> — nur wer schreibt sie?</p>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:stretch; margin-top:6px;">
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
-                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:4px;">Klassisch</div>
-                <div style="color:#334155; line-height:1.5;">
-                    Der Mensch schreibt <b>Regeln</b> (Code). Jede Falle wird von Hand eingebaut.
-                </div>
-                <div class="math-display" style="margin:12px 0 4px;">$$\underbrace{f}_{\text{Programm}}:\ X \to Y$$</div>
-                <div class="math-display" style="margin-top:10px;">$$\text{UND}\quad \begin{pmatrix}0&0\\0&1\\1&0\\1&1\end{pmatrix} \to \begin{pmatrix}0\\0\\0\\1\end{pmatrix}$$</div>
+            <div class="fragment" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
+                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">Klassisch</div>
+                <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Der Mensch schreibt jede Regel von Hand.</div>
+                <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.65; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;">UND(a, b):
+  wenn a == 1 und b == 1:
+      y = 1
+  sonst:
+      y = 0</pre>
             </div>
-            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
-                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:4px;">KI / Lernen</div>
-                <div style="color:#334155; line-height:1.5;">
-                    Der Mensch gibt nur <b>Beispiele</b> (X, Y) — den Rest findet die Maschine selbst.
-                </div>
-                <div class="math-display" style="margin:12px 0 4px;">$$\underbrace{f}_{\text{??}}\ :\ (x_1,y_1)\dots(x_N,y_N) \to \underbrace{\hat{f}}_{\text{Regeln}}$$</div>
-                <div class="math-display" style="margin-top:10px;">$$\text{ODER}\quad \begin{pmatrix}0&0\\0&1\\1&0\\1&1\end{pmatrix} \to \begin{pmatrix}0\\1\\1\\1\end{pmatrix}$$</div>
+            <div class="fragment" style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px 18px;">
+                <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">KI / Lernen</div>
+                <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Wir geben nur Beispiele — die Regel findet das Netz selbst.</div>
+                <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.65; background:#fff; color:#1e293b; padding:14px 16px; border-radius:10px; border:1px solid #bfdbfe;">(0,0) → 0
+(0,1) → 0
+(1,0) → 0
+(1,1) → 1</pre>
+                <div style="color:#475569; font-size:0.88em; margin-top:8px;">…mehr Beispiele = bessere Regeln.</div>
             </div>
+        </div>
+
+        <div class="fragment" style="text-align:center; margin-top:14px;">
+            <div class="math-display">$$f(x) = y \qquad \text{wir geben nur } X \text{ und } Y,\ \text{das Netz lernt } f$$</div>
         </div>
 
         <div class="key-insight fragment">
