@@ -319,8 +319,8 @@ const TokenizerViz = {
                     " onmouseover="this.style.transform='translateY(-3px)'"
                       onmouseout="this.style.transform='translateY(0)'"
                       title="Whitespace: ${token.text.length} Zeichen">
-                        <span style="font-weight:bold; font-size:1.05em; color:#64748b;">${token.displayText}</span>
-                        <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
+                        <span style="font-weight:bold; font-size:1.2em; color:#64748b;">${token.displayText}</span>
+                        <span style="font-size:0.75em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
                     </div>`;
                 return;
             }
@@ -332,7 +332,7 @@ const TokenizerViz = {
             html += `
                 <div class="token-chip" style="
                     display:inline-flex; flex-direction:column; align-items:center;
-                    padding:8px 12px; background:${isSplit ? color + '0a' : '#fff'}; border-radius:8px;
+                    padding:10px 14px; background:${isSplit ? color + '0a' : '#fff'}; border-radius:8px;
                     border-left:3px ${isSubword ? 'dashed' : 'solid'} ${color};
                     border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;
                     box-shadow:0 2px 4px rgba(0,0,0,0.05);
@@ -341,8 +341,8 @@ const TokenizerViz = {
                 " onmouseover="this.style.transform='translateY(-3px)'"
                   onmouseout="this.style.transform='translateY(0)'"
                   title="${token.displayOriginal} → Teil ${token.splitIndex + 1}/${token.splitTotal}">
-                    <span style="font-weight:bold; font-size:1.05em; color:${color};">${token.displayText}</span>
-                    <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
+                    <span style="font-weight:bold; font-size:1.2em; color:${color};">${token.displayText}</span>
+                    <span style="font-size:0.75em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
                 </div>`;
         });
         html += '</div>';
@@ -361,18 +361,18 @@ const TokenizerViz = {
         });
 
         if (compoundWords.length > 0) {
-            html += `<div style="margin-top:14px; padding:12px 16px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;">`;
-            html += `<div style="font-size:1em; font-weight:bold; color:#1e40af; margin-bottom:8px;">🔍 Subword-Zerlegung:</div>`;
-            html += `<div style="display:flex; flex-direction:column; gap:6px;">`;
+            html += `<div style="margin-top:14px; padding:18px 22px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;">`;
+            html += `<div style="font-size:1.15em; font-weight:bold; color:#1e40af; margin-bottom:10px;">🔍 Subword-Zerlegung:</div>`;
+            html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
 
             compoundWords.forEach(({ word, parts }) => {
-                html += `<div style="font-family:monospace; font-size:1em; color:#334155;">`;
+                html += `<div style="font-family:monospace; font-size:1.25em; color:#334155;">`;
                 html += `<span style="color:#64748b;">"${word}"</span> → `;
                 html += parts.map((p, i) => {
                     const c = this.tokenColors[i % this.tokenColors.length];
-                    return `<span style="background:${c}15; border:1px solid ${c}40; padding:2px 6px; border-radius:4px; color:${c}; font-weight:bold;">${p}</span>`;
+                    return `<span style="background:${c}15; border:1px solid ${c}40; padding:4px 10px; border-radius:4px; color:${c}; font-weight:bold; font-size:1em;">${p}</span>`;
                 }).join(' + ');
-                html += ` <span style="color:#94a3b8; font-size:1em;">(${parts.length} tokens)</span>`;
+                html += ` <span style="color:#94a3b8; font-size:0.95em;">(${parts.length} tokens)</span>`;
                 html += `</div>`;
             });
 
