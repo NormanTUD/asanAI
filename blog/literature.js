@@ -12294,5 +12294,71 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Portrait_of_Nicolas_Copernicus_Wellcome_M0006157.jpg",
 		license: "CC BY 4.0",
 		alternativetitle: "Portrait of Copernicus"
+	},
+
+	/* ── Public-domain images: Material Foundations sections ───────── */
+	"img_huygens_aerial_telescope": {
+		title: "Tubeless Aerial telescope of Christiaan Huygens (1629–1695)",
+		author: "Christiaan Huygens",
+		year: 1684,
+		url: "https://commons.wikimedia.org/wiki/File:Huygens_Aerial_telescope,_1684.jpg",
+		license: "Public domain",
+		alternativetitle: "Huygens aerial telescope (1684)"
+	},
+	"img_iron_pillar_delhi": {
+		title: "The iron pillar in the Qutb complex near Delhi, India",
+		author: "Mark A. Wilson (Department of Geology)",
+		year: 2008,
+		url: "https://commons.wikimedia.org/wiki/File:Iron_Pillar,_Delhi,_May_2008.jpg",
+		license: "Public domain",
+		alternativetitle: "Iron Pillar of Delhi"
+	},
+	"img_bessemer_converter": {
+		title: "Bessemer converter",
+		author: "Wikimedia Commons",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Bessemer_converter.jpg",
+		license: "Public domain",
+		alternativetitle: "Bessemer converter"
+	},
+	"img_cai_lun": {
+		title: "Portrait of Cai Lun (50–121 CE), Han-dynasty official and inventor of paper",
+		author: "Unknown",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Cai-lun.jpg",
+		license: "Public domain",
+		alternativetitle: "Cai Lun"
+	},
+	"img_huygens_horologium": {
+		title: "Horologium oscillatorium, sive de motu pendulorum ad horologia aptato (1673)",
+		author: "Christiaan Huygens",
+		year: 1673,
+		url: "https://commons.wikimedia.org/wiki/File:Huygens_-_Horologium_oscillatorium,_sive_De_motu_pendulorum_ad_horologia_aptato_demonstrationes_geometricae,_1673_-_869780.jpeg",
+		license: "Public domain",
+		alternativetitle: "Huygens, Horologium Oscillatorium (1673)"
+	},
+	"img_watt_steam_engine": {
+		title: "James Watt and the Steam Engine — the Dawn of the Nineteenth Century",
+		author: "James Eckford Lauder (1811–1869)",
+		year: "c. 1860",
+		url: "https://commons.wikimedia.org/wiki/File:James_Eckford_Lauder_-_James_Watt_and_the_Steam_Engine-_the_Dawn_of_the_Nineteenth_Century_-_Google_Art_Project.jpg",
+		license: "Public domain",
+		alternativetitle: "Watt and the Steam Engine (Lauder)"
+	},
+	"img_ranger7_moon": {
+		title: "Ranger 7, lunar surface image",
+		author: "NASA / JPL-Caltech",
+		year: 1964,
+		url: "https://commons.wikimedia.org/wiki/File:PIA23520_Ranger_7.jpg",
+		license: "Public domain",
+		alternativetitle: "Ranger 7 lunar image"
+	},
+	"img_gutta_percha_cable": {
+		title: "Appareil pour envelopper de gutta-percha les fils de cuivre du câble transatlantique",
+		author: "Louis Figuier",
+		year: "c. 1880",
+		url: "https://commons.wikimedia.org/wiki/File:T2-_d239_-_Fig._139._—_Appareil_pour_envelopper_de_gutta-percha_le_câble_transatlantique.png",
+		license: "Public domain",
+		alternativetitle: "Gutta-percha cable coating (Figuier)"
 	}
 };
