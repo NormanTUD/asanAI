@@ -322,6 +322,8 @@ function isTopLevelFragment(frag) {
 function isFastRevealable(frag) {
     // data-fast-reveal="1" erzwingt Anzeige in ?fast=1 (auch für demo-box).
     if (frag.getAttribute('data-fast-reveal') === '1') return true;
+    // data-nofast: bleibt auch in ?fast=1 schrittweise (Lehr-Schritte).
+    if (frag.hasAttribute('data-nofast')) return false;
     return isSimpleFragment(frag) && isTopLevelFragment(frag);
 }
 

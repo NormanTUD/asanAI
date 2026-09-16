@@ -146,15 +146,14 @@
  		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
         </div>
 
-        <div class="fragment formula-box">
+        <div class="fragment" data-nofast>
+            <div class="formula-box">
 		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
-        </div>
-
-        <div class="fragment">
+            </div>
+            <div class="formula-box">
+                <div style="margin-bottom:12px; font-weight:bold; color:#1e293b;">
  		1 Neuron = 1 Gleichung <span class="math-inline">a \cdot x + b</span> · ein Layer rechnet Milliarden davon parallel.
-        </div>
-
-        <div class="fragment">
+                </div>
 		<div class="math-display">$$
 			\begin{pmatrix}
 			w_1 \\
@@ -174,12 +173,8 @@
 			\vdots
 			\end{pmatrix}
 		$$</div>
-        </div>
-        <div class="fragment">
-		<div class="math-display">$$
-			\\ \Downarrow \\
-		$$</div>
-		<div class="math-display">$$
+                <div class="math-display" style="font-size:1.3em;">$$\Downarrow$$</div>
+                <div class="math-display">$$
 			\begin{aligned}
 			w_1 \cdot x_1 &+ b_1 \\
 			w_2 \cdot x_2 &+ b_2 \\
@@ -187,13 +182,14 @@
 			&\ \vdots
 			\end{aligned}
 		$$</div>
+            </div>
         </div>
 
-        <div class="fragment formula-box">
+        <div class="fragment formula-box" data-nofast>
 		<div class="math-display">$$\text{ReLU}(x) = \max(0, x)$$</div>
         </div>
 
-        <div class="key-insight fragment">
+        <div class="key-insight fragment" data-nofast>
             <strong>Universelle Approximation:</strong> genug Neuronen → <b>jede stetige Funktion</b> (per Stückelung).
         </div>
     </div>
