@@ -140,7 +140,7 @@
 <!-- ==================== SLIDE: Neural Net Intro ==================== -->
 <div class="slide" id="slide-neuronales-netz-intro" data-title="Neuronales Netz Intro">
     <div class="slide-content">
-        <h2>Was sind Neuronale Netzwerk?</h2>
+        <h2>Was sind Neuronale Netzwerke?</h2>
 
         <div>
  		Netze <b>approximieren</b> Funktionen — <i>ähnlich genug</i>, um nützlich zu sein.
@@ -291,7 +291,7 @@
 </div>
 
 <!-- ==================== SLIDE: Muster in der Wirklichkeit ==================== -->
-<div class="slide" id="slide-muster-in-der-wirklichkeit-2" data-title="Muster in der Wirklichkeit">
+<div class="slide" id="slide-muster-in-der-wirklichkeit-2" data-title="Texte haben Pattern">
     <div class="slide-content">
         <h2>Texte haben Pattern; Maschinen können Patterns lernen</h2>
         <div>
@@ -324,19 +324,15 @@
         <h2>Die Datenmenge.</h2>
 
 	<div style="margin-bottom:20px;">
-		Die Datenmenge, die man dafür braucht, ist für sowas wie ein LLM gigantisch.
+		Für ein LLM wird eine <b>gigantische Textmenge</b> gebraucht.
 	</div>
 
 	<div class="fragment" style="margin-bottom:20px;">
-		LLM brauchen dafür Daten wie <b>Wikipedia</b> oder <b>Common Crawl</b> oder <b>Reddit</b> oder oder oder, damit man Modelle bauen kann, die sich so verhalten, wie Menschen.
+		Es braucht das <b>gesamte öffentliche Internet</b>: Wikipedia, Common Crawl, Reddit, Foren, Bücher — fast alles, was an Text existiert.
 	</div>
 
 	<div class="fragment" style="margin-bottom:20px;">
-		Diese Datenmenge gibt es erst seit einigen Jahren, der sogenannten <b>Zettabyte-Ära</b> (seit ca. 2016), in der die jährlich übertragene Datenmenge im Internet ein Zettabyte überstieg.
-	</div>
-
-	<div class="fragment" style="margin-bottom:20px;">
-		Ohne wäre es nicht möglich gewesen, LLMs heutiger Art zu trainieren, weil sie einfach so viele Daten brauchten.
+		Diese Datenmenge existiert erst seit der <b>Zettabyte-Ära</b> (ab ca. 2016): Seither übersteigt der jährliche Datenverkehr im Internet ein Zettabyte — ohne sie wäre das Training heutiger LLMs nicht möglich.
 	</div>
     </div>
 </div>
@@ -460,32 +456,6 @@
                 Vorhersage des nächsten Tokens
             </div>
 
-            <!-- Autoregressive Schleife -->
-            <div class="fragment" style="width:100%; position:relative; margin-top:8px;">
-                <div style="display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 18px; background:linear-gradient(135deg, #fef3c7, #fde68a); border:2px solid #f59e0b; border-radius:12px;">
-                    <span style="font-size:1.2em;">🔁</span>
-                    <div style="text-align:left;">
-                        <div style="font-weight:bold; color:#92400e;">Autoregressive Schleife</div>
-                        <div style="color:#78350f; font-size:0.85em; margin-top:2px;">
-                            Token wird an Eingabe angehängt → gesamter Prozess wiederholt sich, bis <code>|endoftext|</code>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SVG: Orange gestrichelte Linie von unten rechts zurück nach oben zum Eingabetext -->
-            <svg class="fragment" style="position:absolute; right:-55px; top:0; width:55px; height:100%; pointer-events:none; overflow:visible;" preserveAspectRatio="none" viewBox="0 0 55 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <marker id="arrowhead-auto" markerWidth="8" markerHeight="6" refX="4" refY="3" orient="auto">
-                        <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
-                    </marker>
-                </defs>
-                <!-- Linie: startet unten rechts, geht nach rechts raus, hoch, und endet oben mit Pfeil zurück zum Input -->
-                <path d="M 0 96 L 20 96 C 40 96, 45 93, 45 90 L 45 10 C 45 5, 40 3, 20 3 L 5 3" 
-                      stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="2 1.5" fill="none" 
-                      marker-end="url(#arrowhead-auto)"/>
-            </svg>
-
         </div>
 
         <p class="fragment">Einige Bausteine habe ich weg gelassen, weil sie relevant für die Technik, aber nicht fürs intuitive Verständnis sind (z.B. Layer Normalization).</p>
@@ -496,9 +466,7 @@
     <div class="slide" id="slide-autoregressive-schleife" data-title="Autoregressive Schleife">
         <div class="slide-content">
             <h2>Die autoregressive Schleife</h2>
-            <p>LLMs vorhersagen immer nur <b>ein</b> Token auf einmal.</p>
-            <p class="fragment">→ an den Input anhängen → erneut rechnen, bis <code>|endoftext|</code>.</p>
-            	<p class="fragment">Jeder Aufruf = 1 Token · anhängen · wiederholen, bis <tt>|endoftext|</tt>.</p>
+            <p>LLMs vorhersagen immer nur <b>ein</b> Token auf einmal — dieser wird an den Input angehängt und alles beginnt von vorn, bis <code>|endoftext|</code>.</p>
 
             <div class="fragment formula-box">
                 <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>
@@ -552,7 +520,7 @@
     </div>
 
 <!-- ==================== SLIDE 8: Embedding Demo (aus embeddinglab) ==================== -->
-<div class="slide" id="slide-embedding-2" data-title="Embedding">
+<div class="slide" id="slide-embedding-2" data-title="Embedding-Raum">
     <div class="slide-content">
         <h2>Embedding-Raum</h2>
         <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
@@ -620,7 +588,7 @@
     <div class="slide-content">
         <h2>Übersetzung als Bewegung</h2>
         <p style="margin-bottom:12px;">
-		Da in verschiedenen Sprachen Worte mit ähnlicher Bedeutung oft in ähnlichen Konstellationen vorkommen, ergeben sich sogenannte Mannigfaltigkeiten: das sind Strukturen im Embedding-Raum, die durch ihre Anordnung untereinander eine Ähnlichkeit zueinander haben. Kennt man eine Mannigfaltigkeit, kann man durch Bewegung, Drehung und Verschiebung <b>Übersetzungen</b> finden.
+		Wörter mit ähnlicher Bedeutung kommen in vielen Sprachen in ähnlichen Konstellationen vor → im Embedding-Raum entstehen so <b>Mannigfaltigkeiten</b>: Strukturen gleicher Anordnung, die einander ähneln. Bewegung, Drehung und Verschiebung zwischen ihnen liefern <b>Übersetzungen</b>.
         </p>
         <div id="plot-dual-manifolds" data-loading-label="Dual-Manifolds (Übersetzungsraum)" style="height: 520px; border-radius: 8px; width: 100%;"></div>
 
@@ -639,7 +607,7 @@
         <!-- Fragments to control animation via arrow keys -->
         <div class="fragment" data-fragment-action="manifold-align" style="display:none;"></div>
         <p class="fragment">
-		Das bekommt man quasi "for free”, wenn man die Embeddings hat, einfach durch ihre Struktur. Dafür wurde die Transformer-Architektur auch erfunden: für Übersetzungen.
+		Das bekommt man "for free" — allein aus der Struktur der Embeddings. Genau dafür wurde die Transformer-Architektur erfunden: für Übersetzungen.
 	</p>
     </div>
 </div>
@@ -654,7 +622,7 @@
 </div>
 
 <!-- ==================== SLIDE 10: Positional Embedding Demo (Kreisbahn v3) ==================== -->
-<div class="slide" id="slide-positional-embedding-2" data-title="Positional Embedding">
+<div class="slide" id="slide-positional-embedding-2" data-title="Positional Embedding (Demo)">
 	<div class="slide-content">
 		<h2>Positional Embedding</h2>
 		<div style="max-width:700px; margin:0 auto;">
@@ -915,38 +883,23 @@
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap:10px; margin:16px 0;">
             <div style="padding:12px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; text-align:center;">
                 <div>🔁</div>
-                <div style="font-weight:bold; color:#92400e;">Zyklen</div>
-                <div style="color:#78350f; margin-top:3px; line-height:1.4;">Gezeiten, Herzschlag,<br>Jahreszeiten, Atmung</div>
-            </div>
-            <div class="fragment" style="padding:12px; background:#f0fdf4; border-radius:10px; border:1px solid #86efac; text-align:center;">
-                <div>📈</div>
-                <div style="font-weight:bold; color:#065f46;">Wachstum</div>
-                <div style="color:#166534; margin-top:3px; line-height:1.4;">Bevölkerung, Zinsen,<br>Epidemien, Lernkurven</div>
+                <div style="font-weight:bold; color:#92400e;">Dynamik</div>
+                <div style="color:#78350f; margin-top:3px; line-height:1.4;">Gezeiten, Jahreszeiten,<br>Herzschlag, Atmung,<br>Bevölkerung, Zinsen,<br>Epidemien, Lernkurven</div>
             </div>
             <div class="fragment" style="padding:12px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; text-align:center;">
                 <div>🧬</div>
-                <div style="font-weight:bold; color:#1e40af;">Strukturen</div>
-                <div style="color:#1e3a5f; margin-top:3px; line-height:1.4;">Grammatik, DNA,<br>Kristalle, Taxonomien</div>
+                <div style="font-weight:bold; color:#1e40af;">Struktur & Relation</div>
+                <div style="color:#1e3a5f; margin-top:3px; line-height:1.4;">Grammatik, DNA, Kristalle,<br>Taxonomien, Analogien,<br>Hierarchien, Gleichheiten,<br>Ungleichheiten</div>
+            </div>
+            <div class="fragment" style="padding:12px; background:#f0fdf4; border-radius:10px; border:1px solid #86efac; text-align:center;">
+                <div>💬</div>
+                <div style="font-weight:bold; color:#065f46;">Sprache & Kausalität</div>
+                <div style="color:#166534; margin-top:3px; line-height:1.4;">Syntax, Stil, Pragmatik,<br>Argumentation, Wenn→Dann,<br>Physik, Logik, Konsequenzen</div>
             </div>
             <div class="fragment" style="padding:12px; background:#faf5ff; border-radius:10px; border:1px solid #e9d5ff; text-align:center;">
-                <div>🔗</div>
-                <div style="font-weight:bold; color:#6b21a8;">Relationen</div>
-                <div style="color:#581c87; margin-top:3px; line-height:1.4;">Analogien, Hierarchien, Gleichheiten und Ungleichheiten</div>
-            </div>
-            <div class="fragment" style="padding:12px; background:#f0f9ff; border-radius:10px; border:1px solid #bae6fd; text-align:center;">
-                <div>💬</div>
-                <div style="font-weight:bold; color:#0c4a6e;">Sprache</div>
-                <div style="color:#164e63; margin-top:3px; line-height:1.4;">Syntax, Stil, Pragmatik,<br>Argumentation</div>
-            </div>
-            <div class="fragment" style="padding:12px; background:#fefce8; border-radius:10px; border:1px solid #fef08a; text-align:center;">
-                <div>⚖️</div>
-                <div style="font-weight:bold; color:#854d0e;">Kausalität</div>
-                <div style="color:#713f12; margin-top:3px; line-height:1.4;">Wenn→Dann, Physik,<br>Logik, Konsequenzen</div>
-            </div>
-            <div class="fragment" style="padding:12px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; text-align:center;">
                 <div>🎵</div>
-                <div style="font-weight:bold; color:#334155;">Harmonien</div>
-                <div style="color:#475569; margin-top:3px; line-height:1.4;">Musik, Farben, Ästhetik,<br>Proportionen</div>
+                <div style="font-weight:bold; color:#6b21a8;">Harmonien</div>
+                <div style="color:#581c87; margin-top:3px; line-height:1.4;">Musik, Farben, Ästhetik,<br>Proportionen</div>
             </div>
         </div>
 
@@ -1033,10 +986,10 @@
 			<!-- Links: Training -->
 			<div style="flex:1; min-width:280px; padding:18px; background:#fef2f2; border-radius:14px; border:2px solid #fecaca;">
 				<div style="display:grid; grid-template-columns:auto 1fr; gap:8px 14px; color:#7f1d1d; line-height:1.8;">
-					<span style="font-weight:bold;">Kosten, chatGPT4 zu trainieren:</span>
+					<span style="font-weight:bold;">Kosten, GPT-4 zu trainieren:</span>
 					<span>US $370.000.000</span>
 					<span style="font-weight:bold;">Rechenaufwand:</span>
-					<span>3.8 ExaFLOP (3.8e26 FLOP, 380 Septillionen Operationen pro Sekunde)</span>
+					<span>≈ 3,8 × 10<sup>26</sup> FLOP gesamt über das Training (~380 Septillionen Operationen, ≈ 35 ExaFLOP/s)</span>
 					<span style="font-weight:bold;">Dauer:</span>
 					<span>125 Tage</span>
 					<span style="font-weight:bold;">Energieverbrauch:</span>
@@ -1047,7 +1000,7 @@
 			<div style="text-align:center" class="fragment">
 				<figure>
 					<img style="width: 50%; height: auto;" src="juelich.jpeg" />
-					<figcaption>Zum Vergleich: das größte Rechenzentrum in Deutschland (Jülich) hat 1 ExaFLOP.</figcaption>
+					<figcaption>Zum Vergleich: Deutschlands größtes Rechenzentrum (Jülich) schafft ~1 ExaFLOP Rechenleistung pro Sekunde.</figcaption>
 				</figure>
 			</div>
 
@@ -1060,7 +1013,7 @@
 					<p style="margin:0 0 10px;">Auch das <b>Beantworten</b> einer Frage kostet Energie:</p>
 					<ul style="margin-left:16px; padding:0;">
 						<li>Eine ChatGPT-Anfrage: ~10× so viel Strom wie eine Google-Suche</li>
-						<li>~0003 bis 0,0029 kWh pro Antwort</li>
+						<li>~0,0003 bis 0,0029 kWh pro Antwort</li>
 						<li>Bei Milliarden Anfragen/Tag summiert sich das enorm</li>
 					</ul>
 				</div>
@@ -1073,20 +1026,13 @@
 		<!-- Machtkonzentration -->
 		<div class="fragment" style="margin-top:18px; padding:16px 20px; background:#fffbeb; border-radius:12px; border:2px solid #fde68a;">
 			<div style="font-weight:bold; color:#92400e; margin-bottom:8px;">🏢 Die Konsequenz: Machtkonzentration</div>
-			<div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
-				<div style="flex:1; min-width:250px; color:#78350f; line-height:1.7;">
-					<p style="margin:0;">Nur eine <b>Handvoll Firmen</b> weltweit kann sich Training leisten: OpenAI, Google, Meta, Anthropic, DeepSeek, Mistral…</p>
-					<p style="margin:8px 0 0;">→ Diese wenigen Akteure entscheiden, <b>welche Daten</b> verwendet werden, <b>welche Werte</b> eingebaut werden, und <b>wer Zugang</b> bekommt.</p>
-				</div>
-				<div style="min-width:180px; text-align:center; padding:12px; background:#fef3c7; border-radius:10px; max-width: 200px;">
-					<div style="">🏗️</div>
-					<div style="color:#92400e; margin-top:4px; line-height:1.4;">Wer die Infrastruktur besitzt, bestimmt die Regeln. Noch mehr Macht haben die, die die regulieren, die die Infrastruktur besitzen (Regierungen).</div>
-				</div>
+			<div style="color:#78350f; line-height:1.7;">
+				<p style="margin:0;">Nur eine <b>Handvoll Firmen</b> könnte sich das Training leisten (OpenAI, Google, Meta, Anthropic, DeepSeek, Mistral…) — sie entscheiden, <b>welche Daten</b> genutzt, <b>welche Werte</b> eingebaut und <b>wer Zugang</b> bekommt. Wer die Infrastruktur besitzt, setzt die Regeln — noch mehr Macht haben jene, die sie regulieren (Regierungen).</p>
 			</div>
 		</div>
 
 		<div class="key-insight fragment" style="margin-top:16px;">
-			<strong>Fazit:</strong> LLM und KI sind nicht "kostenlos", sie verbraucht <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
+			<strong>Fazit:</strong> LLM und KI sind nicht "kostenlos", sie verbrauchen <b>enorme Ressourcen</b>, und die Fähigkeit, sie zu trainieren, liegt bei <b>wenigen, sehr mächtigen Akteuren</b>. Das hat direkte Konsequenzen für Neutralität, Zugang und Demokratie.
 		</div>
 	</div>
 </div>
@@ -1287,7 +1233,7 @@
     </div>
 </div>
 
-<div class="slide" id="slide-halluzinationen-2" data-title="Halluzinationen">
+<div class="slide" id="slide-halluzinationen-2" data-title="Warum halluziniert das LLM?">
     <div class="slide-content">
         <h2>Halluzinationen: Wenn das LLM "lügt"</h2>
         <!-- Warum passiert das? -->
@@ -1370,8 +1316,8 @@
 				<div style="padding:16px; background:#fffbeb; border-radius:12px; border:1px solid #fde68a; margin-bottom:14px;">
 					<div style="font-weight:bold; color:#92400e; margin-bottom:8px;">📐 Immer nur Approximation</div>
 					<p style="color:#78350f; line-height:1.7; margin:0;">
-                        Ein LLM ist <b>kein Lexikon</b>. Es speichert keine Fakten exakt, sondern lernt statistische Muster.
-                        Jede Antwort ist eine <b>Annäherung</b>, manchmal erstaunlich gut, manchmal subtil (und manchmal auch offensichtlich) falsch.
+                        Ein LLM ist <b>kein Lexikon</b>: Es speichert keine Fakten exakt, sondern statistische Muster.
+                        Jede Antwort ist eine <b>Annäherung</b> — mal erstaunlich gut, mal subtil, manchmal offensichtlich falsch.
                     </p>
                 </div>
                 <div class="fragment" style="padding:16px; background:#fef2f2; border-radius:12px; border:1px solid #fecaca;">
@@ -1408,7 +1354,7 @@
                         </div>
                     </div>
                     <p style="color:#164e63; line-height:1.7; margin:0;">
-                        → Es ist <b>extrem schwer</b>, ohne Zugang zu den Trainingsdaten, dem Code und enormer Rechenleistung nachträglich herauszufinden, welche Biases ein Modell hat.
+                        → Ohne Zugang zu Trainingsdaten, Code und Rechenleistung lässt sich kaum feststellen, welche Biases ein Modell hat.
                     </p>
                     <p style="color:#475569; line-height:1.6; margin-top:10px; font-style:italic;">
                         Niemand kann ein fertiges Modell "durchlesen" und sagen: "Hier steckt der politische Bias."
@@ -1427,7 +1373,7 @@
 <!-- ==================== SLIDE: Was LLMs nicht können ==================== -->
 <div class="slide" id="slide-was-llms-nicht-koennen" data-title="Was LLMs nicht können">
     <div class="slide-content">
-        <h2>Was LLM nicht können, und vielleicht nie können wird</h2>
+        <h2>Was LLMs nicht können — und vielleicht nie können werden</h2>
         <p>LLMs sind beeindruckend, aber es gibt fundamentale Grenzen, die nicht einfach durch "mehr Daten" verschwinden.</p>
 
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin:20px 0;">
@@ -1435,21 +1381,21 @@
                 <div style="margin-bottom:6px;">🪞</div>
                 <div style="font-weight:bold; color:#991b1b; margin-bottom:6px;">Echtes Verstehen</div>
                 <p style="color:#7f1d1d; margin:0; line-height:1.5;">
-                    Ein LLM manipuliert Symbole nach Mustern, aber "versteht" es, wie Rot aussieht? Wie Kaffee riecht? Nein, dafür bräuchte es Grounding.
+                    Ein LLM manipuliert Symbole nach Mustern — aber "versteht" es, wie Rot aussieht oder Kaffee riecht? Dafür bräuchte es Grounding.
                 </p>
             </div>
             <div class="fragment" style="padding:16px; background:#fffbeb; border-radius:12px; border:1px solid #fde68a; text-align:center;">
                 <div style="margin-bottom:6px;">🧭</div>
-                <div style="font-weight:bold; color:#92400e; margin-bottom:6px;">Ethische Urteil</div>
+                <div style="font-weight:bold; color:#92400e; margin-bottom:6px;">Ethisches Urteilen</div>
                 <p style="color:#78350f; margin:0; line-height:1.5;">
-                    Sie kann ethische Argumente <b>wiedergeben</b>, aber sie hat keine Werte, kein Gewissen, keine Verantwortung. Auch dafür bräuchte es Grounding.
+                    Es kann ethische Argumente <b>wiedergeben</b>, hat aber keine Werte, kein Gewissen, keine Verantwortung — auch dafür bräuchte es Grounding.
                 </p>
             </div>
             <div class="fragment" style="padding:16px; background:#faf5ff; border-radius:12px; border:1px solid #e9d5ff; text-align:center;">
                 <div style="margin-bottom:6px;">🧘</div>
                 <div style="font-weight:bold; color:#6b21a8; margin-bottom:6px;">Bewusstsein & Empathie</div>
                 <p style="color:#581c87; margin:0; line-height:1.5;">
-		Sie kann Mitgefühl simulieren, aber da ist kein <b>Subjekt</b>, das wahrnimmt.
+		Es kann Mitgefühl simulieren, aber da ist kein <b>Subjekt</b>, das wahrnimmt.
 		</p>
 	    </div>
         </div>

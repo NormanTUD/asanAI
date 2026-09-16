@@ -84,7 +84,7 @@ const DemoRegistry = (() => {
                         onLeave: d => d.stop() },
 
                 { ref: () => typeof ZipfViz !== 'undefined' ? ZipfViz : null,
-                        slideTest: s => s.getAttribute('data-title') === 'Muster in der Wirklichkeit',
+                        slideTest: s => s.getAttribute('data-title') === 'Texte haben Pattern',
                         onEnter: d => {
                             d.renderGermanZipf();
                             setTimeout(() => d.resize(), 100);

@@ -2144,8 +2144,8 @@ const EmbeddingAutoDemo = (() => {
     function isOnEmbeddingSlide() {
         const activeSlide = document.querySelector('.slide.active');
         if (!activeSlide) return false;
-        // Es gibt zwei Slides mit data-title="Embedding" — wir wollen den mit dem Input
-        return activeSlide.getAttribute('data-title') === 'Embedding' &&
+        // data-title="Embedding" (Folie 1) vs "Embedding-Raum" (Folie 2 mit Input)
+        return activeSlide.getAttribute('data-title') === 'Embedding-Raum' &&
                activeSlide.querySelector('#input-2d') !== null;
     }
 
