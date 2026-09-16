@@ -1633,5 +1633,43 @@ let resizeRaf;
 	});
 </script>
 
+<!-- TEMP TEST -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	setTimeout(() => {
+		try {
+			const rows = [];
+			const titles = Presentation.slides().map(s => s.getAttribute('data-title'));
+			Presentation.goTo(titles.indexOf('Neuronales Netz Intro'));
+			const row = (label, cond) => rows.push(label + ': ' + (cond ? 'JA' : 'NEIN'));
+			const scenes = () => Array.from(document.querySelectorAll('#nn-intro-anim .nn-anim-scene')).map(s => s.classList.contains('on') ? (+s.dataset.scene) : 0);
+			Presentation.next();
+			Presentation.next();
+			row('NEURON-BOX sichtbar', document.querySelectorAll('.slide.active .fragment.visible').length === 2);
+			row('Szene 1 sofort on', scenes().join(',') === '1,0,0');
+			setTimeout(() => {
+				row('Szene 2 nach ~1.2s', scenes().join(',') === '0,1,0');
+				setTimeout(() => {
+					row('Szene 3 nach ~2.4s', scenes().join(',') === '0,0,1');
+					const noRawMath = Array.from(document.querySelectorAll('#nn-intro-anim')).every(e => !/\\begin\{pmatrix\}|\\cdots|\$\$/.test(e.textContent));
+					row('Temml gerendert (keine rohen $$)', noRawMath);
+					Presentation.prev();
+					row('Backward: Szene 1 on', scenes().join(',') === '1,0,0');
+					const pre = document.createElement('pre');
+					pre.id = 'testresult';
+					pre.textContent = rows.join('\n');
+					document.body.appendChild(pre);
+				}, 1500);
+			}, 1500);
+		} catch (e) {
+			const pre = document.createElement('pre');
+			pre.id = 'testresult';
+			pre.textContent = 'ERROR: ' + e.message + ' | ' + e.stack;
+			document.body.appendChild(pre);
+		}
+	}, 400);
+});
+</script>
+
 </body>
 </html>

@@ -1953,50 +1953,81 @@ const NNStepDemo = (() => {
 })();
 
 /* ================================================================
+   TypewriterViz – Schreibmaschinen-Effekt für [data-typewriter]
+   Äußere Pfeile werden blockiert, bis der Code komplett geschrieben
+   ist; danach wird der nächste Klick/Pfeil wieder normal verarbeitet.
+   ================================================================ */
+const TypewriterViz = (() => {
+    let active = false;
+
+    function isTypewriting() { return active; }
+    function setActive(v) { active = v; }
+
+    return { isTypewriting, setActive };
+})();
+
+/* ================================================================
    Neuron Intro Animation (Slide "Was sind Neuronale Netzwerk?")
-   Zeigt beim Einblenden des NEURON-BOX-Fragments automatisch:
+   Pfeilrechts zeigt die nächste Szene, Pfeillinks die vorherige.
      Szene 1: dense(x) = W·x + B        (evokative Wiederholung)
      Szene 2: Vektoren/Matrizen           (W → w₁ w₂ w₃ ⋮ …)
      Szene 3: dense(x) = w₁·x₁ + b₁     (bleibt)
    ================================================================ */
 const NeuronIntroViz = (() => {
-    let timer = null;
+    let revealed = false;
+    let cur = 0;
+
+    function isOnIntroSlide() {
+        const active = document.querySelector('.slide.active');
+        return active && active.getAttribute('data-title') === 'Neuronales Netz Intro';
+    }
 
     function getScenes() {
         const el = document.getElementById('nn-intro-anim');
-        return el ? el.querySelectorAll('.nn-anim-scene') : [];
+        return el ? Array.from(el.querySelectorAll('.nn-anim-scene')) : [];
     }
 
-    function _apply(scenes, idx) {
-        scenes.forEach((s, k) => s.classList.toggle('on', k === idx));
+    function _apply(idx) {
+        getScenes().forEach((s, k) => s.classList.toggle('on', k === idx));
     }
 
     function start() {
-        const container = document.getElementById('nn-intro-anim');
-        const scenes = getScenes();
-        const speed = parseInt((container?.getAttribute('data-speed')) || '1200', 10);
-        stop();
-        if (!scenes.length) return;
-
-        _apply(scenes, 0);
-        let cur = 0;
-        timer = setInterval(() => {
-            if (cur >= scenes.length - 1) { stop(); return; }
-            cur++;
-            _apply(scenes, cur);
-        }, speed);
+        revealed = true;
+        cur = 0;
+        _apply(0);
     }
 
-    function stop() {
-        if (timer !== null) { clearInterval(timer); timer = null; }
+    function hideFragment() { revealed = false; }
+
+    function canGoNext() {
+        if (!revealed) return false;
+        return cur < getScenes().length - 1;
+    }
+
+    function next() {
+        if (!canGoNext()) return;
+        cur++;
+        _apply(cur);
+    }
+
+    function canGoPrev() {
+        if (!revealed) return false;
+        return cur > 0;
+    }
+
+    function prev() {
+        if (!canGoPrev()) return;
+        cur--;
+        _apply(cur);
     }
 
     function reset() {
-        stop();
-        _apply(getScenes(), 0);
+        revealed = false;
+        cur = 0;
+        _apply(0);
     }
 
-    return { start, stop, reset };
+    return { start, hideFragment, canGoNext, next, canGoPrev, prev, reset, isOnIntroSlide };
 })();
 
 function reset_nn_num_neurons () {
