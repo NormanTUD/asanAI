@@ -90,6 +90,11 @@ const DemoRegistry = (() => {
                             setTimeout(() => d.resize(), 100);
                         } },
 
+                { ref: () => typeof NeuronIntroViz !== 'undefined' ? NeuronIntroViz : null,
+                        slideTest: s => s.getAttribute('data-title') === 'Neuronales Netz Intro',
+                        onEnter: d => d.reset(),
+                        onLeave: d => d.stop() },
+
         ];
 
     // Normalisiere: Defaults einsetzen
@@ -192,6 +197,12 @@ const FragmentActions = {
 	'typewriter': {
 	    forward: (frag) => startTypewriter(frag),
 	    backward: (frag) => resetTypewriter(frag),
+	},
+
+	// "Was sind Neuronale Netzwerk?" – 3-Szenerie-Animation (dense → Vektoren → scalar)
+	'neuron-intro-anim': {
+	    forward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.start(); },
+	    backward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.reset(); },
 	},
 
 };

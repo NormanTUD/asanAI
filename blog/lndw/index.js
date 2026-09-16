@@ -1952,6 +1952,53 @@ const NNStepDemo = (() => {
     };
 })();
 
+/* ================================================================
+   Neuron Intro Animation (Slide "Was sind Neuronale Netzwerk?")
+   Zeigt beim Einblenden des NEURON-BOX-Fragments automatisch:
+     Szene 1: dense(x) = W·x + B        (evokative Wiederholung)
+     Szene 2: Vektoren/Matrizen           (W → w₁ w₂ w₃ ⋮ …)
+     Szene 3: dense(x) = w₁·x₁ + b₁     (bleibt)
+   ================================================================ */
+const NeuronIntroViz = (() => {
+    let timer = null;
+
+    function getScenes() {
+        const el = document.getElementById('nn-intro-anim');
+        return el ? el.querySelectorAll('.nn-anim-scene') : [];
+    }
+
+    function _apply(scenes, idx) {
+        scenes.forEach((s, k) => s.classList.toggle('on', k === idx));
+    }
+
+    function start() {
+        const container = document.getElementById('nn-intro-anim');
+        const scenes = getScenes();
+        const speed = parseInt((container?.getAttribute('data-speed')) || '1200', 10);
+        stop();
+        if (!scenes.length) return;
+
+        _apply(scenes, 0);
+        let cur = 0;
+        timer = setInterval(() => {
+            if (cur >= scenes.length - 1) { stop(); return; }
+            cur++;
+            _apply(scenes, cur);
+        }, speed);
+    }
+
+    function stop() {
+        if (timer !== null) { clearInterval(timer); timer = null; }
+    }
+
+    function reset() {
+        stop();
+        _apply(getScenes(), 0);
+    }
+
+    return { start, stop, reset };
+})();
+
 function reset_nn_num_neurons () {
 	$("#nn-num-neurons").val(1).trigger("change");
 }

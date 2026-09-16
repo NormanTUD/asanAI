@@ -56,6 +56,29 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 	padding: 24px 32px; margin: 20px 0; text-align: center; font-size: 1.1em;
 }
 .formula-box .math-display { font-size: 1.3em; margin: 12px 0; }
+
+/* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
+#nn-intro-anim {
+	position: relative;
+	min-height: 9.2em;
+	overflow: hidden;
+}
+#nn-intro-anim .nn-anim-scene {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transform: scale(0.92) translateY(14px);
+	transition: opacity 0.55s ease, transform 0.55s ease;
+	pointer-events: none;
+}
+#nn-intro-anim .nn-anim-scene.on {
+	opacity: 1;
+	transform: scale(1) translateY(0);
+	pointer-events: auto;
+}
 .key-insight {
 	background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px;
 	padding: 20px 24px; margin: 20px 0; font-size: 1.1em;

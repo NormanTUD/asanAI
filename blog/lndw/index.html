@@ -150,38 +150,30 @@
 		<div class="math-display">$$\text{dense}(x) = \underbrace{W}_{\text{Gewichte}} \cdot x + \underbrace{B}_{\text{Bias}}$$</div>
         </div>
 
-            <div class="fragment formula-box" data-nofast>
+            <div class="fragment formula-box" data-nofast data-fragment-action="neuron-intro-anim">
                 <div style="margin-bottom:12px; font-weight:bold; color:#1e293b;">
  		1 Neuron = 1 Gleichung <span class="math-inline">a \cdot x + b</span> · ein Layer rechnet Milliarden davon parallel.
                 </div>
-		<div class="math-display">$$
-			\begin{pmatrix}
-			w_1 \\
-			w_2 \\
-			w_3 \\
-			\vdots
-			\end{pmatrix} \cdot \begin{pmatrix}
-			x_1 \\
-			x_2 \\
-			x_3 \\
-			\vdots
-			\end{pmatrix} + 
-			\begin{pmatrix}
-			b_1 \\
-			b_2 \\
-			b_3 \\
-			\vdots
-			\end{pmatrix}
-		$$</div>
-                <div class="math-display" style="font-size:1.3em;">$$\Downarrow$$</div>
-                <div class="math-display">$$
-			\begin{aligned}
-			w_1 \cdot x_1 &+ b_1 \\
-			w_2 \cdot x_2 &+ b_2 \\
-			w_3 \cdot x_3 &+ b_3 \\
-			&\ \vdots
-			\end{aligned}
-		$$</div>
+		<div id="nn-intro-anim" data-speed="1200">
+		    <div class="nn-anim-scene" data-scene="1">
+			<div class="math-display">$$\text{dense}(x) = W \cdot x + B$$</div>
+		    </div>
+		    <div class="nn-anim-scene" data-scene="2">
+			<div class="math-display">$$
+				\begin{pmatrix}
+				w_1 \\ w_2 \\ w_3 \\ \vdots
+				\end{pmatrix} \cdot \begin{pmatrix}
+				x_1 \\ x_2 \\ x_3 \\ \vdots
+				\end{pmatrix} +
+				\begin{pmatrix}
+				b_1 \\ b_2 \\ b_3 \\ \vdots
+				\end{pmatrix}
+			$$</div>
+		    </div>
+		    <div class="nn-anim-scene" data-scene="3">
+			<div class="math-display">$$\text{dense}(x) = w_1 \cdot x_1 + b_1$$</div>
+		    </div>
+		</div>
             </div>
 
         <div class="fragment formula-box" data-nofast>
