@@ -5040,6 +5040,13 @@ window.bibData = {
 		year: 2023,
 		alternativetitle: "Geometry of Truth"
 	},
+	"marks2024featurecircuits": {
+		url: "https://arxiv.org/abs/2403.19647",
+		title: "Sparse Feature Circuits: Discovering and Editing Interpretable Causal Graphs in Language Models",
+		author: "Samuel Marks, Can Rager, Eric J. Michaud, Yonatan Belinkov, David Bau, Aaron Mueller",
+		year: 2024,
+		alternativetitle: "Sparse Feature Circuits"
+	},
 	"zou2023representation": {
 		url: "https://arxiv.org/abs/2310.01405",
 		title: "Representation Engineering: A Top-Down Approach to AI Transparency",
