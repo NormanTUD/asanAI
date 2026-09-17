@@ -31,7 +31,17 @@ function print_font_override() {
 		: "";
 	$preload = $isUtopia ? "fonts/LinguaFranca-Regular.woff2" : "fonts/cmunrm.woff";
 	$mime    = str_ends_with($preload, ".woff2") ? "font/woff2" : "font/woff";
+	// Faces runPostLoad() force-loads before dismissing the spinner —
+	// the browser defers font downloads for off-viewport text, so the
+	// drop cap / small caps / bold-italic below the fold would pop in
+	// late on scroll without this.
+	$specs = $isUtopia
+		? ['400 1em "Lingua Franca"', 'italic 400 1em "Lingua Franca"', '700 1em "Lingua Franca"', 'italic 700 1em "Lingua Franca"']
+		: ['400 1em CMS', 'italic 400 1em CMS', '700 1em CMS', 'italic 700 1em CMS', '400 1em CMSS', '700 1em CMSS'];
+	$specs[] = '1em "Floral Capitals"';
+	$specs[] = '1em Temml';
 	print("<link rel='preload' href='$preload' as='font' type='$mime' crossorigin>\n");
+	print("<script>window.__blogFontSpecs=" . json_encode($specs) . ";</script>\n");
 	print("<style>html{--mn-font-heading:$stack;--mn-font-body:$stack;--mn-font-prose:$stack;}$extra</style>\n");
 }
 
@@ -264,16 +274,21 @@ function load_base_js () {
 				}
 				postLoadInit();
 				make_external_a_href_target_blank();
-				// Keep the loader on screen until the webfonts have
-				// arrived, so the first revealed paint already uses the
-				// real typeface (without this the reader sees the
-				// fallback face and a visible swap ~2 s later when they
-				// scroll to the first block). Hard-capped so a stalled
-				// font download can never hold the page hostage.
-				if (document.fonts && document.fonts.ready) {
+				// Keep the loader on screen until EVERY face the page
+				// can use has actually arrived. The browser defers font
+				// downloads for text outside the viewport, so the drop
+				// cap (Floral Capitals), the first-line small caps and
+				// bold/italic below the fold used to pop in late on
+				// scroll. Force-loading them here (window.__blogFontSpecs
+				// is set in <head>) makes the first paint final. Hard-
+				// capped so a stalled download can never hold the page.
+				if (document.fonts && document.fonts.load) {
+					const fontJobs = (window.__blogFontSpecs || []).map(function (spec) {
+						return document.fonts.load(spec, 'AaHäöüß 0123').catch(function () {});
+					});
 					await Promise.race([
-						document.fonts.ready,
-						new Promise(function (r) { setTimeout(r, 3000); }),
+						Promise.all(fontJobs),
+						new Promise(function (r) { setTimeout(r, 4000); }),
 					]);
 				}
 				revealContent();
