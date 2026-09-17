@@ -57,7 +57,7 @@ function toc() {
 	var s = document.createElement("style");
 	s.textContent = [
 		// Container — no border, no background, just a hairline rule above.
-		'#toc { font-family: system-ui, -apple-system, sans-serif; color: #1f2328; padding: 18px 0 4px; margin: 24px 0; line-height: 1.55; border-top: 1px solid #d0d7de; }',
+		'#toc { font-family: var(--mn-font-body); color: #1f2328; padding: 18px 0 4px; margin: 24px 0; line-height: 1.55; border-top: 1px solid #d0d7de; }',
 		'#toc-toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; font-size: 0.8em; color: #656d76; }',
 		'#toc-toolbar input[type="search"] { flex: 1; min-width: 140px; padding: 4px 8px; font-size: 1em; border: none; border-bottom: 1px solid #d0d7de; border-radius: 0; background: transparent; font-family: inherit; color: #1f2328; outline: none; }',
 		'#toc-toolbar input[type="search"]:focus { border-bottom-color: #1f2328; }',

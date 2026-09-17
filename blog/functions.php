@@ -20,12 +20,18 @@ function blog_font_stack() {
 
 /* Injected in <head> directly after the style.css <link> so it
    wins the cascade and can override the --mn-font-* variables
-   defined on html in style.css. */
+   defined on html in style.css. Also preloads the regular face so
+   the webfont download starts in parallel with the HTML parse and
+   is normally ready by the time the loader is dismissed. */
 function print_font_override() {
+	$isUtopia = ($GLOBALS["blog_font"] ?? "") === "utopia";
 	$stack = blog_font_stack();
-	$extra = ($GLOBALS["blog_font"] ?? "") === "utopia"
+	$extra = $isUtopia
 		? "blockquote{font-family:'Lingua Franca';font-style:italic;}"
 		: "";
+	$preload = $isUtopia ? "fonts/LinguaFranca-Regular.woff2" : "fonts/cmunrm.woff";
+	$mime    = str_ends_with($preload, ".woff2") ? "font/woff2" : "font/woff";
+	print("<link rel='preload' href='$preload' as='font' type='$mime' crossorigin>\n");
 	print("<style>html{--mn-font-heading:$stack;--mn-font-body:$stack;--mn-font-prose:$stack;}$extra</style>\n");
 }
 
@@ -258,6 +264,18 @@ function load_base_js () {
 				}
 				postLoadInit();
 				make_external_a_href_target_blank();
+				// Keep the loader on screen until the webfonts have
+				// arrived, so the first revealed paint already uses the
+				// real typeface (without this the reader sees the
+				// fallback face and a visible swap ~2 s later when they
+				// scroll to the first block). Hard-capped so a stalled
+				// font download can never hold the page hostage.
+				if (document.fonts && document.fonts.ready) {
+					await Promise.race([
+						document.fonts.ready,
+						new Promise(function (r) { setTimeout(r, 3000); }),
+					]);
+				}
 				revealContent();
 				sendHeight();
 			} catch (error) {
