@@ -225,6 +225,18 @@ const FragmentActions = {
 	    backward: (frag) => resetTypewriter(frag),
 	},
 
+	// "Attention + FFN ×N": im letzten Schritt wird das Lückenfeld zu „Haus"
+	'fill-haus': {
+	    forward: () => {
+		const c = document.querySelector('#slide-attention-ffn-stapel .blankcell');
+		if (c) c.classList.add('filled');
+	    },
+	    backward: () => {
+		const c = document.querySelector('#slide-attention-ffn-stapel .blankcell');
+		if (c) c.classList.remove('filled');
+	    },
+	},
+
 	// "Was sind Neuronale Netzwerk?" – 3-Szene manuell (Pfeiltaste weiter/rückwärts)
 	'neuron-intro-anim': {
 	    forward: () => { if (typeof NeuronIntroViz !== 'undefined') NeuronIntroViz.start(); },

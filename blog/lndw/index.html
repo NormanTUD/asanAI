@@ -670,10 +670,66 @@
 		</div>
 
 
-	    <div class="fragment" style="margin-top:16px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
+        	    <div class="fragment" style="margin-top:16px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
 		    <strong>⚠️ Hinweis:</strong> <b>starke Vereinfachung</b> — in Wirklichkeit gibt es Query-, Key-, Value-Vektoren. Für die <b>Intuition</b> reicht es.
 		</div>
 
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Attention + FFN ×N (Verfeinerung) ==================== -->
+<div class="slide" id="slide-attention-ffn-stapel" data-title="Attention + FFN ×N">
+    <div class="slide-content">
+        <h2>Attention + FFN — viele Male hintereinander</h2>
+        <p>Jeder Durchgang tut <b>beides</b>: Kontext zusammenfassen <b>und</b> das nächste Wort vorhersagen — mit jedem Layer wird die erfasste Spanne <b>größer</b>.</p>
+
+        <div style="display:flex; gap:30px; align-items:center; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+            <!-- Loop-Diagramm -->
+            <div style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:18px 26px; text-align:center;">
+                <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:3px 10px; border-radius:10px; font-size:1.05em;">×N (12–100)</div>
+                <div style="padding:10px 18px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; font-weight:bold; color:#5b21b6; font-size:1.2em;">Attention</div>
+                <div style="margin:6px 0; font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:10px 18px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; font-weight:bold; color:#92400e; font-size:1.2em;">Feed-Forward</div>
+                <div style="margin-top:8px; color:#64748b; font-size:0.95em;">Ergebnis → Residual Stream → nächstes Layer</div>
+            </div>
+
+            <!-- Satz: Underbraces erscheinen nacheinander (1× → ~10× → ~100×) -->
+            <div style="min-width:500px;">
+                <div class="st-grid">
+                    <span class="w">Ich</span>
+                    <span class="w">fliege</span>
+                    <span class="w">nach</span>
+                    <span class="w">New</span>
+                    <span class="w">York</span>
+                    <span class="w">,</span>
+                    <span class="w">weil</span>
+                    <span class="w">meine</span>
+                    <span class="w">Tante</span>
+                    <span class="w">dort</span>
+                    <span class="w">wohnt.</span>
+                    <span class="w">Sie</span>
+                    <span class="w">hat</span>
+                    <span class="w">ein</span>
+                    <span class="w">großes</span>
+                    <span class="w blankcell"><span class="q">?</span><span class="h">Haus</span></span>
+
+                    <div class="bcell" style="grid-row:2; grid-column:4/6;">
+                        <div class="fragment b1"><div class="st-ub"></div><div class="st-ub-label">1× → Stadt</div></div>
+                    </div>
+                    <div class="bcell" style="grid-row:3; grid-column:7/12;">
+                        <div class="fragment b2"><div class="st-ub"></div><div class="st-ub-label">~10× → Reisegrund</div></div>
+                    </div>
+                    <div class="bcell" style="grid-row:4; grid-column:9/13;">
+                        <div class="fragment b3"><div class="st-ub"></div><div class="st-ub-label">~100× → dieselbe Person</div></div>
+                    </div>
+                </div>
+                <div class="fragment" data-fragment-action="fill-haus" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:16px;">
+            Mit jedem Durchgang: <b>größerer Kontext</b> + <b>klarere Vorhersage</b> — am Ende steht das nächste Wort fest.
         </div>
     </div>
 </div>
