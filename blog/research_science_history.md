@@ -690,3 +690,63 @@ Use `\citeauthor{...}`, `\citetitle{...}`, `\citealternativetitle{...}`, `\citey
 | Linnaeus, *Species Plantarum* | 1753 | — | — | binomial nomenclature for plants |
 | Diderot/d'Alembert, *Encyclopédie* | 1751–1772 | Paris | — | 35 vols; all knowledge systematised & cross-referenced |
 | Royal Society *Phil. Trans.* | 1665 | London | Royal Society | **first scientific journal** |
+
+---
+
+## PART 2 — The Origin of Life: From Primordial Chemistry to the First Cell
+
+> Scope: the chemistry-to-biology transition that precedes the first *observable* cells
+> (the "Miller–Urey level" and beyond). Added to `untold_history.php` inside
+> `### The Development of Life`, before `**The First Cells**`, as five bold blocks.
+> The existing text jumped from "Making of Planets" straight to "The First Cells (3.8–3.5 Ga)"
+> and never covered the origin of life — even though line 89 already promises "the first
+> self-replicating molecule." This part supplies that missing middle.
+
+### 2.1 The gap and the fix
+- The fossil/geochemical record begins at the first *cell*, but life began earlier, as
+  self-replicating chemistry. Reframe: cells are where life becomes *observable in rock*,
+  not where it began.
+- LLM hook running the whole section: self-replication + **error threshold** (Eigen) = the
+  math of noisy replication / error-correcting codes; the **hypercycle** = a self-organizing
+  catalytic circuit; the **genetic code** as a *frozen accident* = a legacy API that can never
+  be redesigned; RNA as "both program and machine" = self-interpreting code; Miller–Urey =
+  a compiler turning inorganic inputs into polymers.
+
+### 2.2 Key facts (verified)
+- **Primordial soup**: Oparin (*The Origin of Life*, 1936) and Haldane (letter to *Nature*,
+  1929, 120:884–885) independently proposed a reducing early ocean + energy → "chemical
+  evolution." Darwin's 1871 letter to Hooker ("some warm little pond …") is the early poetic form.
+- **Miller–Urey (1953)**: Miller (grad student under Harold Urey, who refused co-authorship),
+  U. Chicago. CH₄:NH₃:H₂ (2:2:1) + water + continuous spark → 5 amino acids (glycine,
+  α- & β-alanine; tentatively aspartic & aminobutyric acid). *Science* 117(3046):550–555.
+  The chemistry: spark → HCN + formaldehyde → **Strecker synthesis** (amino acids) +
+  **formose** reaction (ribose). Joan **Oró** (1961) made **adenine** from HCN. Murchison
+  meteorite (1969) carried extraterrestrial amino acids (Orgel & Parris 1979, PNAS).
+  Caveat: early Earth was likely CO₂/N₂-rich (weakly reducing); post-impact H₂-rich bursts
+  recover Miller–Urey conditions.
+- **RNA world**: Rich (1962) first; Gilbert (1986, *Nature* 324:518) coined the term.
+  Catalytic-RNA proposal: Woese, Crick, Orgel (1967). Proven by the **ribozyme** discovery:
+  **Cech** (self-splicing *Tetrahymena* intron; Kruger et al. 1982, *Cell* 31:147–157,
+  term "ribozyme" coined here) and **Altman** (RNase P RNA is the catalyst; 1976).
+  Nobel 1989 (Cech & Altman). Prebiotic nucleotides: Powner/Sutherland (2009, *Nature*
+  459:1039). The **24-3** polymerase ribozyme (Horning et al. 2016, *Nature* 536:195) =
+  a first RNA-only PCR.
+- **Metabolism-first / systems**: Wächtershäuser (1988, *Nature* 336:21) — metal-sulfur world,
+  autocatalytic inorganic networks. Eigen (1971, *Science* 174:936) — **error threshold** +
+  **quasispecies**. Eigen & Schuster (1978, *Naturwissenschaften* 65:425) — **hypercycle**.
+  Gánti (2000, *J. Theor. Biol.* 205:39) — **chemoton**. Protocells: lipid vesicles +
+  **coacervates** (Smith & Szostak 2010, *Nature* 466:713).
+- **The code freezes**: Crick (1968, *J. Mol. Biol.* 12:766) — the genetic code as a
+  **frozen accident** (legacy-API analogy). Hand-off to LUCA / "The First Cells."
+
+### 2.3 New citation keys (added to `literature.js`)
+`darwin1871warmpond`, `oparin1936origin`, `haldane1929origin`, `miller1953aminoacids`,
+`cleaves2012prebiotic`, `oro1961adenine`, `orgelparris1979murchison`, `orgel1973molecularevolution`,
+`crick1968code`, `gilbert1986rnaworld`, `kruger1982selfsplicing`, `altman1976rnasep`,
+`nobel1989cechantman`, `sutherland2009pyrimidine`, `horning2016rpr`, `wachtershauser1988`,
+`eigen1971selforganization`, `eigen1978hypercycle`, `ganti2000chemoton`, `smith2010coacervate`,
+`protocell_wiki`.
+
+### 2.4 New image assets (sourced, downloaded, license-verified — see `bildquellen-pruefung.txt`)
+- `miller_urey_apparatus.png` — CC BY-SA 3.0 (YassineMrabet; SVG→PNG via Inkscape).
+- `hammerhead_ribozyme.png` — CC BY-SA 3.0 (William G. Scott).

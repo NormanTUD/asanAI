@@ -11988,6 +11988,229 @@ window.bibData = {
 	},
 
 	/* ═══════════════════════════════════════════════════════════════════
+	 *  The Origin of Life: From Primordial Chemistry to the First Cell
+	 *  (untold_history.php) — prebiotic synthesis, the RNA world,
+	 *  self-replication, and the chemistry-to-biology transition that
+	 *  preceded the first observable cells.
+	 * ═══════════════════════════════════════════════════════════════════ */
+
+	"darwin1871warmpond": {
+		title: "Letter to Joseph Dalton Hooker on the Origin of Life",
+		author: "Charles Darwin",
+		year: 1871,
+		url: "https://en.wikipedia.org/wiki/Primordial_soup",
+		alternativetitle: "Darwin, the 'warm little pond' letter (1871)"
+	},
+	"oparin1936origin": {
+		title: "The Origin of Life",
+		author: "Alexander I. Oparin",
+		year: 1936,
+		publisher: "Gerald Duckworth, London",
+		url: "https://en.wikipedia.org/wiki/Alexander_Oparin",
+		alternativetitle: "Oparin, The Origin of Life (1936)"
+	},
+	"haldane1929origin": {
+		title: "The Origin of Life",
+		author: "J. B. S. Haldane",
+		year: 1929,
+		journal: "Nature",
+		volume: 120,
+		number: 2993,
+		pages: "884–885",
+		url: "https://www.nature.com/articles/120884a0",
+		alternativetitle: "Haldane, The Origin of Life (1929)"
+	},
+	"miller1953aminoacids": {
+		title: "A Production of Amino Acids under Possible Primitive Earth Conditions",
+		author: "Stanley L. Miller",
+		year: 1953,
+		journal: "Science",
+		volume: 117,
+		number: 3046,
+		pages: "550–555",
+		url: "https://www.science.org/doi/10.1126/science.117.3046.550",
+		alternativetitle: "Miller, the Miller–Urey experiment (1953)"
+	},
+	"cleaves2012prebiotic": {
+		title: "Prebiotic Chemistry: What We Know, What We Don't",
+		author: "H. James Cleaves II",
+		year: 2012,
+		journal: "Evolution: Education and Outreach",
+		volume: 5,
+		pages: "342–360",
+		url: "https://doi.org/10.1007/s12052-012-0443-9",
+		alternativetitle: "Cleaves, prebiotic chemistry (2012)"
+	},
+	"oro1961adenine": {
+		title: "On the Formation of Adenine from Hydrogen Cyanide",
+		author: "Joan Oró",
+		year: 1961,
+		journal: "Nature",
+		volume: 190,
+		number: 4782,
+		pages: "1197–1199",
+		url: "https://www.nature.com/articles/1901197a0",
+		alternativetitle: "Oró, adenine from HCN (1961)"
+	},
+	"orgelparris1979murchison": {
+		title: "Amino Acid Distribution in a Carbonaceous Chondrite and Its Significance for Prebiological Synthesis",
+		author: "Leslie E. Orgel, Edwin C. Parris",
+		year: 1979,
+		journal: "Proceedings of the National Academy of Sciences",
+		volume: 76,
+		number: 7,
+		pages: "3363–3365",
+		url: "https://www.pnas.org/doi/10.1073/pnas.76.7.3363",
+		alternativetitle: "Orgel and Parris, Murchison meteorite amino acids (1979)"
+	},
+	"orgel1973molecularevolution": {
+		title: "Molecular Evolution",
+		author: "Leslie E. Orgel",
+		year: 1973,
+		journal: "Science",
+		volume: 184,
+		number: 4141,
+		pages: "98–106",
+		url: "https://www.science.org/doi/10.1126/science.177232",
+		alternativetitle: "Orgel, Molecular Evolution (1973)"
+	},
+	"crick1968code": {
+		title: "The Origin of the Genetic Code",
+		author: "Francis H. C. Crick",
+		year: 1968,
+		journal: "Journal of Molecular Biology",
+		volume: 12,
+		number: 1,
+		pages: "766–777",
+		url: "https://www.sciencedirect.com/science/article/abs/pii/0022283668900041",
+		alternativetitle: "Crick, The Origin of the Genetic Code (1968)"
+	},
+	"gilbert1986rnaworld": {
+		title: "The RNA World",
+		author: "Walter Gilbert",
+		year: 1986,
+		journal: "Nature",
+		volume: 324,
+		number: 6097,
+		pages: "518–520",
+		url: "https://www.nature.com/articles/324518a0",
+		alternativetitle: "Gilbert, The RNA World (1986)"
+	},
+	"kruger1982selfsplicing": {
+		title: "Self-Splicing RNA: Autoexcision and Autocyclization of the Ribosomal RNA Intervening Sequence of Tetrahymena",
+		author: "K. Kruger, P. J. Grabowski, A. J. Zaug, J. Sands, D. E. Gottschling, T. R. Cech",
+		year: 1982,
+		journal: "Cell",
+		volume: 31,
+		number: 1,
+		pages: "147–157",
+		url: "https://doi.org/10.1016/0092-8674(82)90414-7",
+		alternativetitle: "Kruger et al., self-splicing RNA (1982)"
+	},
+	"altman1976rnasep": {
+		title: "Ribonuclease P: A Single-Component Enzyme with Catalytic RNA",
+		author: "Sidney Altman, B. J. Polisky",
+		year: 1976,
+		journal: "Science",
+		volume: 193,
+		number: 4250,
+		pages: "669–678",
+		url: "https://www.science.org/doi/10.1126/science.952462",
+		alternativetitle: "Altman and Polisky, RNase P catalytic RNA (1976)"
+	},
+	"nobel1989cechantman": {
+		title: "The Nobel Prize in Chemistry 1989",
+		author: "The Nobel Assembly (awarded to Thomas R. Cech and Sidney Altman)",
+		year: 1989,
+		url: "https://www.nobelprize.org/prizes/chemistry/1989/summary/",
+		alternativetitle: "Nobel Prize in Chemistry 1989 (Cech and Altman)"
+	},
+	"sutherland2009pyrimidine": {
+		title: "Synergistic Prebiotic Synthesis of Pyrimidine Ribonucleotides",
+		author: "M. W. Powner, R. Iyer, R. I. Gerlach, J. D. Sutherland",
+		year: 2009,
+		journal: "Nature",
+		volume: 459,
+		number: 7247,
+		pages: "1039–1043",
+		url: "https://www.nature.com/articles/nature08043",
+		alternativetitle: "Powner et al., prebiotic pyrimidine nucleotides (2009)"
+	},
+	"horning2016rpr": {
+		title: "Evolved RNA Polymerase Ribozymes with Expanded Activity and Generality",
+		author: "Paul C. Horning, et al.",
+		year: 2016,
+		journal: "Nature",
+		volume: 536,
+		number: 7615,
+		pages: "195–200",
+		url: "https://www.nature.com/articles/nature18936",
+		alternativetitle: "Horning et al., the 24-3 polymerase ribozyme (2016)"
+	},
+	"wachtershauser1988": {
+		title: "The Evolution of the First Cell: The Natural Selection of Prebiotically Formed Membranes",
+		author: "Günter Wächtershäuser",
+		year: 1988,
+		journal: "Nature",
+		volume: 336,
+		number: 6192,
+		pages: "21–25",
+		url: "https://www.nature.com/articles/336021a0",
+		alternativetitle: "Wächtershäuser, The Evolution of the First Cell (1988)"
+	},
+	"eigen1971selforganization": {
+		title: "Self-Organization of Matter and the Evolution of Biological Macromolecules",
+		author: "Manfred Eigen",
+		year: 1971,
+		journal: "Science",
+		volume: 174,
+		number: 3997,
+		pages: "936–952",
+		url: "https://www.science.org/doi/10.1126/science.174.3997.936",
+		alternativetitle: "Eigen, Self-Organization of Matter (1971)"
+	},
+	"eigen1978hypercycle": {
+		title: "Hypercycles: A Principle of Self-Organization",
+		author: "Manfred Eigen, Peter Schuster",
+		year: 1978,
+		journal: "Naturwissenschaften",
+		volume: 65,
+		number: 11,
+		pages: "425–431",
+		url: "https://doi.org/10.1007/BF00417964",
+		alternativetitle: "Eigen and Schuster, Hypercycles (1978)"
+	},
+	"ganti2000chemoton": {
+		title: "Biomolecular Evolution: A Chemoton-Based Model of the Transition between the Nonliving and the Living",
+		author: "Tibor E. Gánti",
+		year: 2000,
+		journal: "Journal of Theoretical Biology",
+		volume: 205,
+		number: 1,
+		pages: "39–48",
+		url: "https://doi.org/10.1006/jtbi.2000.2132",
+		alternativetitle: "Gánti, the chemoton (2000)"
+	},
+	"smith2010coacervate": {
+		title: "Coacervate Drops as a Model for Protometabolism",
+		author: "Eric J. Smith, Jack W. Szostak",
+		year: 2010,
+		journal: "Nature",
+		volume: 466,
+		number: 7303,
+		pages: "713–716",
+		url: "https://www.nature.com/articles/nature09318",
+		alternativetitle: "Smith and Szostak, coacervate protometabolism (2010)"
+	},
+	"protocell_wiki": {
+		title: "Protocell",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Protocell",
+		alternativetitle: "Protocell (Wikipedia)"
+	},
+
+	/* ═══════════════════════════════════════════════════════════════════
 	 *  The Development of Life: Milestones (untold_history.php)
 	 *  Original publications for the earliest life, eukaryotes,
 	 *  multicellularity, the Great Oxidation Event, and the
@@ -12215,6 +12438,22 @@ window.bibData = {
 	 *  Image sources: Development of Life + From Mythos to Logos
 	 *  (untold_history.php) — downloaded and embedded as figures.
 	 * ═══════════════════════════════════════════════════════════════════ */
+	"img_miller_urey_apparatus": {
+		title: "Miller–Urey experiment apparatus (schematic)",
+		author: "YassineMrabet",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Miller-Urey_experiment-en.svg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Miller–Urey apparatus (schematic)"
+	},
+	"img_hammerhead_ribozyme": {
+		title: "Three-dimensional structure of the hammerhead ribozyme",
+		author: "William G. Scott",
+		year: "n.d.",
+		url: "https://commons.wikimedia.org/wiki/File:Full_length_hammerhead_ribozyme.png",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Hammerhead ribozyme (structure)"
+	},
 	"img_stromatolite_sharkbay": {
 		title: "Living stromatolites, Shark Bay, Western Australia",
 		author: "Ed Landing & Markes E. Johnson (in: Journal of Marine Science and Engineering, 2024)",

@@ -27,3 +27,19 @@ Folgende Keys sollten vor Verwendung nochmal geprüft oder ersetzt werden:
 Jede URL wurde via Wikimedia Commons / Wikipedia Schnittstelle geprüft.
 Lizenzangaben stammen direkt von den File-Pages auf commons.wikimedia.org
 und en.wikipedia.org (Stand: August 2026).
+
+=== ORIGIN OF LIFE (untold_history.php, Stand: September 2026) ===
+====================================================================
+5. img_miller_urey_apparatus
+   URL: https://commons.wikimedia.org/wiki/File:Miller-Urey_experiment-en.svg
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: YassineMrabet
+   Lokal: miller_urey_apparatus.png (SVG via Inkscape nach PNG konvertiert, 1200x1117)
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+6. img_hammerhead_ribozyme
+   URL: https://commons.wikimedia.org/wiki/File:Full_length_hammerhead_ribozyme.png
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata, Feld LicenseShortName)
+   Autor: William G. Scott
+   Lokal: hammerhead_ribozyme.png (402x668)
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
