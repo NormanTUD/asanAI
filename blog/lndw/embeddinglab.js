@@ -490,6 +490,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
     // ═══════ 1D / 2D → Plotly ═══════
     let traces = [];
     let annotations = [];
+    const fs = plotFontSizes();
 
     Object.keys(space.vocab).forEach(word => {
         const v = space.vocab[word];
@@ -498,8 +499,8 @@ function renderSpace(key, highlightPos = null, steps = []) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            textfont: { size: 18, family: 'system-ui, sans-serif' },
-            marker: { size: 8, opacity: 0.5, color: '#94a3b8' },
+            textfont: { size: fs.label, family: 'system-ui, sans-serif' },
+            marker: { size: fs.marker, opacity: 0.5, color: '#94a3b8' },
             cliponaxis: false
         });
     });
@@ -535,11 +536,11 @@ function renderSpace(key, highlightPos = null, steps = []) {
     }
 
     Plotly.react(divId, traces, {
-        margin: { l: 45, r: 40, b: 50, t: 20 },
+        margin: { l: fs.marginL, r: 40, b: fs.marginB, t: 20 },
         showlegend: false,
-        font: { size: 14, family: 'system-ui, sans-serif' },
-        xaxis: { range: rangeX, title: { text: space.axes.x, font: { size: 20 } }, tickfont: { size: 14 } },
-        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: 20 } }, tickfont: { size: 14 }, visible: space.dims > 1 },
+        font: { size: fs.base, family: 'system-ui, sans-serif' },
+        xaxis: { range: rangeX, title: { text: space.axes.x, font: { size: fs.title } }, tickfont: { size: fs.tick } },
+        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: fs.title } }, tickfont: { size: fs.tick }, visible: space.dims > 1 },
         annotations
     }).then(() => {
         const loader = plotDiv.querySelector('.plot-loading');
@@ -2046,6 +2047,7 @@ function renderDirectionDemo(stage) {
     const plotDiv = document.getElementById('plot-2d');
     if (!space || !plotDiv) return;
 
+    const fs = plotFontSizes();
     const traces = [];
     const annotations = [];
 
@@ -2056,8 +2058,8 @@ function renderDirectionDemo(stage) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            textfont: { size: 18, family: 'system-ui, sans-serif' },
-            marker: { size: 8, opacity: 0.5, color: '#94a3b8' },
+            textfont: { size: fs.label, family: 'system-ui, sans-serif' },
+            marker: { size: fs.marker, opacity: 0.5, color: '#94a3b8' },
             cliponaxis: false
         });
     });
@@ -2081,7 +2083,7 @@ function renderDirectionDemo(stage) {
     annotations.push({
         x: 15, y: 24, text: '„Geschlecht“ — überall dieselbe Richtung',
         showarrow: false,
-        font: { size: 20, color: GREEN, family: 'system-ui, sans-serif' },
+        font: { size: fs.note, color: GREEN, family: 'system-ui, sans-serif' },
         align: 'center'
     });
 
@@ -2094,17 +2096,17 @@ function renderDirectionDemo(stage) {
         annotations.push({
             x: 15, y: -24, text: '„Macht“ — auch hier: dieselbe Richtung',
             showarrow: false,
-            font: { size: 20, color: ORANGE, family: 'system-ui, sans-serif' },
+            font: { size: fs.note, color: ORANGE, family: 'system-ui, sans-serif' },
             align: 'center'
         });
     }
 
     Plotly.react(plotDiv, traces, {
-        margin: { l: 45, r: 40, b: 50, t: 20 },
+        margin: { l: fs.marginL, r: 40, b: fs.marginB, t: 20 },
         showlegend: false,
-        font: { size: 14, family: 'system-ui, sans-serif' },
-        xaxis: { range: space.rangeX || [-15, 40], title: { text: space.axes.x, font: { size: 20 } }, tickfont: { size: 14 } },
-        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: 20 } }, tickfont: { size: 14 }, visible: true },
+        font: { size: fs.base, family: 'system-ui, sans-serif' },
+        xaxis: { range: space.rangeX || [-15, 40], title: { text: space.axes.x, font: { size: fs.title } }, tickfont: { size: fs.tick } },
+        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: fs.title } }, tickfont: { size: fs.tick }, visible: true },
         annotations
     });
 
