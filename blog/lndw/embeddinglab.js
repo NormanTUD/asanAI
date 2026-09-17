@@ -14,6 +14,22 @@ function _getEC3D(divId) {
     return chart;
 }
 
+// Viewport-abhängige Plot-Fontgrößen: auf großen Monitoren (4K) skalieren
+// die festen px-Größen nicht mit, daher skaliert man ab 1920px Viewport mit.
+function plotFontSizes() {
+    const s = Math.max(1, window.innerWidth / 1920);
+    return {
+        label: Math.round(18 * s),
+        title: Math.round(20 * s),
+        tick: Math.round(14 * s),
+        base: Math.round(14 * s),
+        note: Math.round(20 * s),
+        marker: Math.max(6, Math.round(8 * s)),
+        marginL: Math.round(45 * s),
+        marginB: Math.round(50 * s)
+    };
+}
+
 const evoSpaces = {
 	'2d': {
 		vocab: { 
@@ -482,7 +498,8 @@ function renderSpace(key, highlightPos = null, steps = []) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+            textfont: { size: 18, family: 'system-ui, sans-serif' },
+            marker: { size: 8, opacity: 0.5, color: '#94a3b8' },
             cliponaxis: false
         });
     });
@@ -518,10 +535,11 @@ function renderSpace(key, highlightPos = null, steps = []) {
     }
 
     Plotly.react(divId, traces, {
-        margin: { l: 40, r: 40, b: 40, t: 20 },
+        margin: { l: 45, r: 40, b: 50, t: 20 },
         showlegend: false,
-        xaxis: { range: rangeX, title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
+        font: { size: 14, family: 'system-ui, sans-serif' },
+        xaxis: { range: rangeX, title: { text: space.axes.x, font: { size: 20 } }, tickfont: { size: 14 } },
+        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: 20 } }, tickfont: { size: 14 }, visible: space.dims > 1 },
         annotations
     }).then(() => {
         const loader = plotDiv.querySelector('.plot-loading');
@@ -1745,11 +1763,11 @@ function initEmbeddingEditor() {
 
 		let html = `
     <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
-	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
+	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px;" id="table-${spaceKey}">
 	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
 		<tr>
-		    <th style="padding: 10px; text-align: left;">Token</th>
-		    <th style="padding: 10px; text-align: center;">X</th>
+		    <th style="padding: 8px 10px; text-align: left;">Token</th>
+		    <th style="padding: 8px 10px; text-align: center;">X</th>
 		    ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
 		    ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
 		</tr>
@@ -1774,7 +1792,7 @@ function initEmbeddingEditor() {
 function generateRowHtml(spaceKey, word, vec, dims) {
 	return `
     <tr style="border-bottom: 1px solid #f1f5f9;" id="row-${spaceKey}-${word}">
-	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
+	<td style="padding: 5px 10px; font-weight: 500;">${word}</td>
 	${[0, 1, 2].slice(0, dims).map(dim => `
 	    <td style="padding: 5px; text-align: center;">${vec[dim]}</td>
 	`).join('')}
@@ -2038,7 +2056,8 @@ function renderDirectionDemo(stage) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+            textfont: { size: 18, family: 'system-ui, sans-serif' },
+            marker: { size: 8, opacity: 0.5, color: '#94a3b8' },
             cliponaxis: false
         });
     });
@@ -2062,7 +2081,7 @@ function renderDirectionDemo(stage) {
     annotations.push({
         x: 15, y: 24, text: '„Geschlecht“ — überall dieselbe Richtung',
         showarrow: false,
-        font: { size: 15, color: GREEN, family: 'system-ui, sans-serif' },
+        font: { size: 20, color: GREEN, family: 'system-ui, sans-serif' },
         align: 'center'
     });
 
@@ -2075,16 +2094,17 @@ function renderDirectionDemo(stage) {
         annotations.push({
             x: 15, y: -24, text: '„Macht“ — auch hier: dieselbe Richtung',
             showarrow: false,
-            font: { size: 15, color: ORANGE, family: 'system-ui, sans-serif' },
+            font: { size: 20, color: ORANGE, family: 'system-ui, sans-serif' },
             align: 'center'
         });
     }
 
     Plotly.react(plotDiv, traces, {
-        margin: { l: 40, r: 40, b: 40, t: 20 },
+        margin: { l: 45, r: 40, b: 50, t: 20 },
         showlegend: false,
-        xaxis: { range: space.rangeX || [-15, 40], title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: true },
+        font: { size: 14, family: 'system-ui, sans-serif' },
+        xaxis: { range: space.rangeX || [-15, 40], title: { text: space.axes.x, font: { size: 20 } }, tickfont: { size: 14 } },
+        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: 20 } }, tickfont: { size: 14 }, visible: true },
         annotations
     });
 

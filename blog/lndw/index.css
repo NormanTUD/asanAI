@@ -57,6 +57,10 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 .formula-box .math-display { font-size: 1.3em; margin: 12px 0; }
 
+/* "Was sind Neuronale Netzwerke?": Formeln für Distanz/Lesbarkeit vergrößern */
+#slide-neuronales-netz-intro .formula-box { font-size: 1.18em; }
+#slide-neuronales-netz-intro .formula-box .math-display { font-size: 1.6em; }
+
 /* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
 #nn-intro-anim {
 	position: relative;
