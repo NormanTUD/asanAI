@@ -109,10 +109,14 @@ const DemoRegistry = (() => {
 
                 // "Übersetzung als Bewegung": Pfeiltaste weiter während der
                 // Aligning-Animation blockieren (Bewegung nicht skippen).
+                // Beim Verlassen der Folie wird der Zustand zurückgesetzt,
+                // damit beim nächsten Besuch wieder von vorn begonnen wird.
                 { ref: () => typeof ManifoldAlignViz !== 'undefined' ? ManifoldAlignViz : null,
                         guard: d => d.isOnSlide(),
                         canNext: 'isAnimating',
-                        nextMethod: 'nop' },
+                        nextMethod: 'nop',
+                        slideTest: s => s.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese',
+                        onLeave: d => d.reset() },
 
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },

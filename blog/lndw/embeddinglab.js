@@ -58,7 +58,8 @@ const dualManifoldState = {
 	animating: false,
 	origRotation: 55,
 	origSeparation: 5,
-	rendered: false
+	rendered: false,
+	_rafId: null
 };
 
 function dualManifoldZ(u, v) {
@@ -346,8 +347,9 @@ window.animateDualManifoldAlignment = function() {
 		renderDualManifolds();
 
 		if (rawT < 1) {
-			requestAnimationFrame(step);
+			st._rafId = requestAnimationFrame(step);
 		} else {
+			st._rafId = null;
 			st.rotationDeg = 0;
 			st.separation = 0;
 			st.animating = false;
@@ -366,7 +368,7 @@ statusEl.innerHTML = '✅ <b>Aligned!</b> Both manifolds overlap — the paths m
 			renderDualManifolds();
 		}
 	}
-	requestAnimationFrame(step);
+	st._rafId = requestAnimationFrame(step);
 };
 
 // Navigation-Sperre für die "Übersetzung als Bewegung"-Folie:
@@ -380,12 +382,21 @@ const ManifoldAlignViz = (() => {
     function isAnimating() {
         return !!(typeof dualManifoldState !== 'undefined' && dualManifoldState.animating);
     }
-    return { isOnSlide, isAnimating, nop() {} };
+    // Folie verlassen → Ausgangslage wiederherstellen (Auch mitten in der
+    // Animation: laufender rAF-Lauf wird abgebrochen).
+    function reset() {
+        if (typeof resetDualManifold === 'function') resetDualManifold();
+    }
+    return { isOnSlide, isAnimating, reset, nop() {} };
 })();
 
 window.resetDualManifold = function() {
 	const st = dualManifoldState;
-	if (st.animating) return;
+	if (st.animating) {
+		if (st._rafId) cancelAnimationFrame(st._rafId);
+		st._rafId = null;
+		st.animating = false;
+	}
 
 	st.rotationDeg = st.origRotation;
 	st.separation = st.origSeparation;
