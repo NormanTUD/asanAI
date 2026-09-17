@@ -14,6 +14,22 @@ function _getEC3D(divId) {
     return chart;
 }
 
+// Viewport-abhängige Plot-Fontgrößen: auf großen Monitoren (4K) skalieren
+// die festen px-Größen nicht mit, daher skaliert man ab 1920px Viewport mit.
+function plotFontSizes() {
+    const s = Math.max(1, window.innerWidth / 1920);
+    return {
+        label: Math.round(18 * s),
+        title: Math.round(20 * s),
+        tick: Math.round(14 * s),
+        base: Math.round(14 * s),
+        note: Math.round(20 * s),
+        marker: Math.max(6, Math.round(8 * s)),
+        marginL: Math.round(45 * s),
+        marginB: Math.round(50 * s)
+    };
+}
+
 const evoSpaces = {
 	'2d': {
 		vocab: { 
@@ -42,7 +58,8 @@ const dualManifoldState = {
 	animating: false,
 	origRotation: 55,
 	origSeparation: 5,
-	rendered: false
+	rendered: false,
+	_rafId: null
 };
 
 function dualManifoldZ(u, v) {
@@ -330,8 +347,9 @@ window.animateDualManifoldAlignment = function() {
 		renderDualManifolds();
 
 		if (rawT < 1) {
-			requestAnimationFrame(step);
+			st._rafId = requestAnimationFrame(step);
 		} else {
+			st._rafId = null;
 			st.rotationDeg = 0;
 			st.separation = 0;
 			st.animating = false;
@@ -350,12 +368,35 @@ statusEl.innerHTML = '✅ <b>Aligned!</b> Both manifolds overlap — the paths m
 			renderDualManifolds();
 		}
 	}
-	requestAnimationFrame(step);
+	st._rafId = requestAnimationFrame(step);
 };
+
+// Navigation-Sperre für die "Übersetzung als Bewegung"-Folie:
+// Während die Aligning-Animation läuft wird "weiter" blockiert,
+// damit man die Bewegung nicht überspringen kann (wie TypewriterViz).
+const ManifoldAlignViz = (() => {
+    function isOnSlide() {
+        const a = document.querySelector('.slide.active');
+        return a && a.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese';
+    }
+    function isAnimating() {
+        return !!(typeof dualManifoldState !== 'undefined' && dualManifoldState.animating);
+    }
+    // Folie verlassen → Ausgangslage wiederherstellen (Auch mitten in der
+    // Animation: laufender rAF-Lauf wird abgebrochen).
+    function reset() {
+        if (typeof resetDualManifold === 'function') resetDualManifold();
+    }
+    return { isOnSlide, isAnimating, reset, nop() {} };
+})();
 
 window.resetDualManifold = function() {
 	const st = dualManifoldState;
-	if (st.animating) return;
+	if (st.animating) {
+		if (st._rafId) cancelAnimationFrame(st._rafId);
+		st._rafId = null;
+		st.animating = false;
+	}
 
 	st.rotationDeg = st.origRotation;
 	st.separation = st.origSeparation;
@@ -474,6 +515,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
     // ═══════ 1D / 2D → Plotly ═══════
     let traces = [];
     let annotations = [];
+    const fs = plotFontSizes();
 
     Object.keys(space.vocab).forEach(word => {
         const v = space.vocab[word];
@@ -482,7 +524,8 @@ function renderSpace(key, highlightPos = null, steps = []) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+            textfont: { size: fs.label, family: 'system-ui, sans-serif' },
+            marker: { size: fs.marker, opacity: 0.5, color: '#94a3b8' },
             cliponaxis: false
         });
     });
@@ -518,10 +561,11 @@ function renderSpace(key, highlightPos = null, steps = []) {
     }
 
     Plotly.react(divId, traces, {
-        margin: { l: 40, r: 40, b: 40, t: 20 },
+        margin: { l: fs.marginL, r: 40, b: fs.marginB, t: 20 },
         showlegend: false,
-        xaxis: { range: rangeX, title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: space.dims > 1 },
+        font: { size: fs.base, family: 'system-ui, sans-serif' },
+        xaxis: { range: rangeX, title: { text: space.axes.x, font: { size: fs.title } }, tickfont: { size: fs.tick } },
+        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: fs.title } }, tickfont: { size: fs.tick }, visible: space.dims > 1 },
         annotations
     }).then(() => {
         const loader = plotDiv.querySelector('.plot-loading');
@@ -1745,11 +1789,11 @@ function initEmbeddingEditor() {
 
 		let html = `
     <div style="overflow-x: auto; margin-top: 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: white;">
-	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px;" id="table-${spaceKey}">
+	<table style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 14px;" id="table-${spaceKey}">
 	    <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
 		<tr>
-		    <th style="padding: 10px; text-align: left;">Token</th>
-		    <th style="padding: 10px; text-align: center;">X</th>
+		    <th style="padding: 8px 10px; text-align: left;">Token</th>
+		    <th style="padding: 8px 10px; text-align: center;">X</th>
 		    ${space.dims >= 2 ? '<th style="padding: 10px; text-align: center;">Y</th>' : ''}
 		    ${space.dims >= 3 ? '<th style="padding: 10px; text-align: center;">Z</th>' : ''}
 		</tr>
@@ -1774,7 +1818,7 @@ function initEmbeddingEditor() {
 function generateRowHtml(spaceKey, word, vec, dims) {
 	return `
     <tr style="border-bottom: 1px solid #f1f5f9;" id="row-${spaceKey}-${word}">
-	<td style="padding: 8px 10px; font-weight: 500;">${word}</td>
+	<td style="padding: 5px 10px; font-weight: 500;">${word}</td>
 	${[0, 1, 2].slice(0, dims).map(dim => `
 	    <td style="padding: 5px; text-align: center;">${vec[dim]}</td>
 	`).join('')}
@@ -2028,6 +2072,7 @@ function renderDirectionDemo(stage) {
     const plotDiv = document.getElementById('plot-2d');
     if (!space || !plotDiv) return;
 
+    const fs = plotFontSizes();
     const traces = [];
     const annotations = [];
 
@@ -2038,7 +2083,8 @@ function renderDirectionDemo(stage) {
             x: [v[0]], y: [v[1]],
             mode: 'markers+text',
             name: word, text: [word], textposition: 'top center',
-            marker: { size: 6, opacity: 0.5, color: '#94a3b8' },
+            textfont: { size: fs.label, family: 'system-ui, sans-serif' },
+            marker: { size: fs.marker, opacity: 0.5, color: '#94a3b8' },
             cliponaxis: false
         });
     });
@@ -2062,7 +2108,7 @@ function renderDirectionDemo(stage) {
     annotations.push({
         x: 15, y: 24, text: '„Geschlecht“ — überall dieselbe Richtung',
         showarrow: false,
-        font: { size: 15, color: GREEN, family: 'system-ui, sans-serif' },
+        font: { size: fs.note, color: GREEN, family: 'system-ui, sans-serif' },
         align: 'center'
     });
 
@@ -2075,16 +2121,17 @@ function renderDirectionDemo(stage) {
         annotations.push({
             x: 15, y: -24, text: '„Macht“ — auch hier: dieselbe Richtung',
             showarrow: false,
-            font: { size: 15, color: ORANGE, family: 'system-ui, sans-serif' },
+            font: { size: fs.note, color: ORANGE, family: 'system-ui, sans-serif' },
             align: 'center'
         });
     }
 
     Plotly.react(plotDiv, traces, {
-        margin: { l: 40, r: 40, b: 40, t: 20 },
+        margin: { l: fs.marginL, r: 40, b: fs.marginB, t: 20 },
         showlegend: false,
-        xaxis: { range: space.rangeX || [-15, 40], title: space.axes.x },
-        yaxis: { range: [-30, 30], title: space.axes.y || '', visible: true },
+        font: { size: fs.base, family: 'system-ui, sans-serif' },
+        xaxis: { range: space.rangeX || [-15, 40], title: { text: space.axes.x, font: { size: fs.title } }, tickfont: { size: fs.tick } },
+        yaxis: { range: [-30, 30], title: { text: space.axes.y || '', font: { size: fs.title } }, tickfont: { size: fs.tick }, visible: true },
         annotations
     });
 

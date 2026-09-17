@@ -107,6 +107,17 @@ const DemoRegistry = (() => {
                         onEnter: d => d.activate(),
                         onLeave: d => d.stop() },
 
+                // "Übersetzung als Bewegung": Pfeiltaste weiter während der
+                // Aligning-Animation blockieren (Bewegung nicht skippen).
+                // Beim Verlassen der Folie wird der Zustand zurückgesetzt,
+                // damit beim nächsten Besuch wieder von vorn begonnen wird.
+                { ref: () => typeof ManifoldAlignViz !== 'undefined' ? ManifoldAlignViz : null,
+                        guard: d => d.isOnSlide(),
+                        canNext: 'isAnimating',
+                        nextMethod: 'nop',
+                        slideTest: s => s.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese',
+                        onLeave: d => d.reset() },
+
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },
 
@@ -212,6 +223,18 @@ const FragmentActions = {
 	'typewriter': {
 	    forward: (frag) => startTypewriter(frag),
 	    backward: (frag) => resetTypewriter(frag),
+	},
+
+	// "Attention + FFN ×N": im letzten Schritt wird das Lückenfeld zu „Haus"
+	'fill-haus': {
+	    forward: () => {
+		const c = document.querySelector('#slide-attention-ffn-stapel .blankcell');
+		if (c) c.classList.add('filled');
+	    },
+	    backward: () => {
+		const c = document.querySelector('#slide-attention-ffn-stapel .blankcell');
+		if (c) c.classList.remove('filled');
+	    },
 	},
 
 	// "Was sind Neuronale Netzwerk?" – 3-Szene manuell (Pfeiltaste weiter/rückwärts)

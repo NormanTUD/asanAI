@@ -57,6 +57,24 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 }
 .formula-box .math-display { font-size: 1.3em; margin: 12px 0; }
 
+/* "Was sind Neuronale Netzwerke?": Formeln für Distanz/Lesbarkeit vergrößern */
+#slide-neuronales-netz-intro .formula-box { font-size: 1.18em; }
+#slide-neuronales-netz-intro .formula-box .math-display { font-size: 1.6em; }
+
+/* "Attention + FFN ×N": Satz-Grid mit Underbraces (Schritt für Schritt) */
+.st-grid { display: grid; grid-template-columns: repeat(16, auto); column-gap: 4px; row-gap: 2px; font-size: 1.2em; color: #1e293b; }
+.st-grid .w { line-height: 1.9; padding: 0 5px; border-radius: 4px; white-space: nowrap; }
+.st-grid .w.blankcell { position: relative; border: 2px dashed #94a3b8; color: #64748b; min-width: 3.4em; text-align: center; padding: 0 6px; }
+.st-grid .w.blankcell .h { display: none; position: absolute; inset: -2px; align-items: center; justify-content: center; background: #bbf7d0; color: #14532d; font-weight: bold; border-radius: 4px; }
+.st-grid .w.blankcell.filled .q { display: none; }
+.st-grid .w.blankcell.filled .h { display: flex; }
+.st-ub { height: 13px; position: relative; margin: 0 2px; }
+.st-ub::before { content: ""; position: absolute; top: 0; bottom: 0; left: 3px; right: 3px; border: 3px solid currentColor; border-top: none; border-radius: 0 0 18px 18px; }
+.st-ub-label { text-align: center; font-size: 0.85em; font-weight: bold; margin-top: 4px; white-space: nowrap; }
+.st-grid .b1 { color: #b45309; }
+.st-grid .b2 { color: #c2410c; }
+.st-grid .b3 { color: #15803d; }
+
 /* Neuron-Intro-Animation (Slide "Was sind Neuronale Netzwerk?") */
 #nn-intro-anim {
 	position: relative;

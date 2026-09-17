@@ -33,7 +33,7 @@
 	<div class="slide-content">
 		<h2>Was sind Large Language Models?</h2>
 
-		<p style="text-align:center; margin:14px 0 8px; max-width:840px; margin-left:auto; margin-right:auto;">Ihr kennt diese Programme — <b>ChatGPT</b> &amp; Co.: Frage eintippen, und es antwortet, als wäre dort ein Mensch. Heute schauen wir hinter die Kulissen.</p>
+		<p style="text-align:center; margin:14px 0 8px; max-width:840px; margin-left:auto; margin-right:auto;">Programme wie <b>ChatGPT</b> &amp; Co. funktionieren so: Eine Frage wird eingetippt — genau so, wie sie gerade gedacht wird. Der Computer antwortet in ganzen Sätzen, als hätte ein Gegenüber geschrieben. Was dabei hinter den Kulissen passiert, ist das Thema heute.</p>
 	</div>
 </div>
 </div>
@@ -109,7 +109,7 @@
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px;">
                 <div style="font-size:1.05em; font-weight:700; color:#1e293b; margin-bottom:6px;">Klassisch</div>
                 <div style="color:#475569; font-size:0.88em; margin-bottom:8px;">Der Mensch schreibt jede Regel von Hand.</div>
-                <pre data-typewriter style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;"><span style="color:#d8b4fe">function</span><span style="color:#e2e8f0"> UND</span><span style="color:#7dd3fc">(a, b)</span><span style="color:#e2e8f0">:</span>
+                <pre data-typewriter data-type-speed="3" style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:0.95em; line-height:1.7; background:#0f172a; color:#e2e8f0; padding:14px 16px; border-radius:10px; overflow-x:auto;"><span style="color:#d8b4fe">function</span><span style="color:#e2e8f0"> UND</span><span style="color:#7dd3fc">(a, b)</span><span style="color:#e2e8f0">:</span>
     <span style="color:#d8b4fe">wenn</span> a <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span> <span style="color:#d8b4fe">und</span> b <span style="color:#fbbf24">==</span> <span style="color:#fcd34d">1</span>:
         y <span style="color:#fbbf24">=</span> <span style="color:#fcd34d">1</span>
     <span style="color:#d8b4fe">sonst</span>:
@@ -174,7 +174,7 @@
         </div>
 
         <div class="fragment formula-box" data-nofast>
-		<div class="math-display" style="font-size:1.05em;">$$
+		<div class="math-display">$$
 			\begin{aligned}
 			\underbrace{\mathbf{x}_1 = \text{dense}(\mathbf{x}_0)}_{\text{linear}} \\
 			\underbrace{\mathbf{x}_2 = \text{ReLU}(\mathbf{x}_1)}_{\text{knicken}} \\
@@ -309,7 +309,7 @@
         </div>
 
         <div class="key-insight fragment">
- 		Die Maschine lernt solche Pattern — <b>und zugrundeliegende</b>, wie die <b>sinusförmigen Sonnen-Daten</b>.
+ 		Die Maschine lernt solche und viele andere Arten solcher Patterns.</b>
  	</div>
     </div>
 </div>
@@ -388,31 +388,38 @@
             <div class="fragment" id="tf-input-block" style="padding:10px 20px; background:#f1f5f9; border:2px solid #cbd5e1; border-radius:10px; color:#475569; text-align:center; width:100%; box-sizing:border-box;">
                 <div style="font-weight:bold;">Eingabetext</div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Tokenisierung -->
-            <div class="fragment" style="padding:12px 20px; background:#fff7ed; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
-                <div style="font-weight:bold; color:#9d174d;">Tokenisierung</div>
-                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Aus Worten Tokens machen</div>
+            <!-- Pfeil + Tokenisierung -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 20px; background:#fff7ed; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                    <div style="font-weight:bold; color:#9d174d;">Tokenisierung</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Aus Worten Tokens machen</div>
+                </div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Embedding -->
-            <div class="fragment" style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
-                <div style="font-weight:bold; color:#9d174d;">Embedding</div>
-                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Tokens zu Punkten</div>
+            <!-- Pfeil + Embedding -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                    <div style="font-weight:bold; color:#9d174d;">Embedding</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Tokens zu Punkten</div>
+                </div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Positional Embedding -->
-            <div class="fragment" style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
-                <div style="font-weight:bold; color:#0c4a6e;">+ Positional Embedding</div>
-                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Position kodieren</div>
+            <!-- Pfeil + Positional Embedding -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                    <div style="font-weight:bold; color:#0c4a6e;">+ Positional Embedding</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Position kodieren</div>
+                </div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Residual Stream Start -->
-            <div class="fragment" style="width:100%; position:relative;">
+            <!-- Pfeil + Residual Stream Start -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+            <div style="width:100%; position:relative;">
                 <!-- Residual Stream: vertikaler Balken links -->
                 <div style="position:absolute; left:-38px; top:0; bottom:0; width:18px; background:linear-gradient(180deg, #6ee7b7, #34d399, #10b981); border-radius:9px; display:flex; align-items:center; justify-content:center;">
                     <span style="writing-mode:vertical-rl; transform:rotate(180deg); color:#065f46; font-weight:bold; font-size:0.7em; letter-spacing:1px;">RESIDUAL STREAM</span>
@@ -444,12 +451,14 @@
                     <div style="text-align:center; color:#10b981; font-weight:bold; font-size:0.85em; margin:4px 0;">⊕ Residual Add</div>
                 </div>
             </div>
+            </div>
 
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
-
-            <!-- Softmax / Output -->
-            <div class="fragment" style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
-                Vorhersage des nächsten Tokens
+            <!-- Pfeil + Softmax / Output -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
+                    Vorhersage des nächsten Tokens
+                </div>
             </div>
 
         </div>
@@ -520,7 +529,7 @@
     <div class="slide-content">
         <h2>Embedding-Raum</h2>
         <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0;">
-            <div id="plot-2d" style="height: 400px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
+            <div id="plot-2d" style="height: 480px; background: #fff; border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
             <div>
 		    <input type="text" id="input-2d" style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box;" placeholder="z.B., Mann + Macht" oninput="calcEvo('2d')">
                 <div id="res-2d-wrapper">
@@ -661,10 +670,66 @@
 		</div>
 
 
-	    <div class="fragment" style="margin-top:16px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
+        	    <div class="fragment" style="margin-top:16px; padding:14px 18px; background:#fffbeb; border-radius:10px; border:1px solid #fde68a; color:#92400e; line-height:1.6;">
 		    <strong>⚠️ Hinweis:</strong> <b>starke Vereinfachung</b> — in Wirklichkeit gibt es Query-, Key-, Value-Vektoren. Für die <b>Intuition</b> reicht es.
 		</div>
 
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Attention + FFN ×N (Verfeinerung) ==================== -->
+<div class="slide" id="slide-attention-ffn-stapel" data-title="Attention + FFN ×N">
+    <div class="slide-content">
+        <h2>Attention + FFN — viele Male hintereinander</h2>
+        <p>Jeder Durchgang tut <b>beides</b>: Kontext zusammenfassen <b>und</b> das nächste Wort vorhersagen — mit jedem Layer wird die erfasste Spanne <b>größer</b>.</p>
+
+        <div style="display:flex; gap:30px; align-items:center; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+            <!-- Loop-Diagramm -->
+            <div style="position:relative; border:2px dashed #94a3b8; border-radius:14px; padding:18px 26px; text-align:center;">
+                <div style="position:absolute; top:-12px; right:-10px; background:#1e293b; color:#fff; font-weight:bold; padding:3px 10px; border-radius:10px; font-size:1.05em;">×N</div>
+                <div style="padding:10px 18px; background:#ede9fe; border:2px solid #c4b5fd; border-radius:10px; font-weight:bold; color:#5b21b6; font-size:1.2em;">Attention</div>
+                <div style="margin:6px 0; font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:10px 18px; background:#fef3c7; border:2px solid #fde68a; border-radius:10px; font-weight:bold; color:#92400e; font-size:1.2em;">Feed-Forward</div>
+                <div style="margin-top:8px; color:#64748b; font-size:0.95em;">Ergebnis → Residual Stream → nächstes Layer</div>
+            </div>
+
+            <!-- Satz: Underbraces erscheinen nacheinander (1× → ~10× → ~100×) -->
+            <div style="min-width:500px;">
+                <div class="st-grid">
+                    <span class="w">Ich</span>
+                    <span class="w">fliege</span>
+                    <span class="w">nach</span>
+                    <span class="w">New</span>
+                    <span class="w">York</span>
+                    <span class="w">,</span>
+                    <span class="w">weil</span>
+                    <span class="w">meine</span>
+                    <span class="w">Tante</span>
+                    <span class="w">dort</span>
+                    <span class="w">wohnt.</span>
+                    <span class="w">Sie</span>
+                    <span class="w">hat</span>
+                    <span class="w">ein</span>
+                    <span class="w">großes</span>
+                    <span class="w blankcell"><span class="q">?</span><span class="h">Haus</span></span>
+
+                    <div class="bcell" style="grid-row:2; grid-column:4/6;">
+                        <div class="fragment b1" data-nofast><div class="st-ub"></div><div class="st-ub-label">1× → Stadt</div></div>
+                    </div>
+                    <div class="bcell" style="grid-row:3; grid-column:7/12;">
+                        <div class="fragment b2" data-nofast><div class="st-ub"></div><div class="st-ub-label">~10× → Reisegrund</div></div>
+                    </div>
+                    <div class="bcell" style="grid-row:4; grid-column:9/13;">
+                        <div class="fragment b3" data-nofast><div class="st-ub"></div><div class="st-ub-label">~100× → "Tante" und "Sie": dieselbe Person</div></div>
+                    </div>
+                </div>
+                <div class="fragment" data-fragment-action="fill-haus" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:16px;">
+            Mit jedem Durchgang: <b>größerer Kontext</b> + <b>klarere Vorhersage</b> — am Ende steht das nächste Wort fest.
         </div>
     </div>
 </div>
