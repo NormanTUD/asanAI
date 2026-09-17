@@ -1534,6 +1534,253 @@ let resizeRaf;
 		cancelAnimationFrame(resizeRaf);
 		resizeRaf = requestAnimationFrame(fitSlides);
 	});
+ </script>
+
+<!-- ============ ✨ SPARKLE MODE (?sparkle=1) ============ -->
+<script>
+(function () {
+  try {
+    const params = new URLSearchParams(location.search);
+    const sparkleOn = params.has('sparkle') && params.get('sparkle') !== '0';
+    if (!sparkleOn) return;
+
+    // ---------- CSS (self-contained, injected) ----------
+    const css = document.createElement('style');
+    css.textContent = `
+      #sparkle-canvas{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000;}
+      .sparkle-vignette{position:fixed;inset:0;pointer-events:none;z-index:2147482998;
+        mix-blend-mode:screen;opacity:.9;
+        background:
+          radial-gradient(60% 60% at 20% 20%, rgba(255,0,128,.18), transparent 60%),
+          radial-gradient(60% 60% at 80% 30%, rgba(0,204,255,.18), transparent 60%),
+          radial-gradient(70% 70% at 50% 90%, rgba(180,0,255,.18), transparent 60%);
+        animation:sparkleHue 12s linear infinite;}
+      @keyframes sparkleHue{to{filter:hue-rotate(360deg);}}
+      .sparkle-badge{position:fixed;top:14px;right:14px;z-index:2147483001;
+        display:flex;align-items:center;gap:8px;pointer-events:none;
+        font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:800;font-size:15px;
+        color:#fff;padding:8px 14px;border-radius:20px;letter-spacing:.5px;
+        background:linear-gradient(90deg,#ff0080,#ff8c00,#ffee00,#00ff85,#00cfff,#b400ff,#ff0080);
+        background-size:300% 100%;
+        box-shadow:0 0 18px rgba(255,255,255,.7),0 0 40px rgba(180,0,255,.5);
+        animation:badgeRainbow 3s linear infinite,badgePulse 1.2s ease-in-out infinite;}
+      @keyframes badgeRainbow{to{background-position:300% 0;}}
+      @keyframes badgePulse{0%,100%{transform:scale(1) rotate(-1deg);}50%{transform:scale(1.08) rotate(1deg);}}
+      .sparkle-badge .sparkle-emoji{font-size:20px;animation:badgeSpin 2s linear infinite;}
+      @keyframes badgeSpin{to{transform:rotate(360deg);}}
+      h1.sparkle-shine,h2.sparkle-shine,h3.sparkle-shine,h4.sparkle-shine{
+        background-image:linear-gradient(90deg,#ff0080,#ff8c00,#ffee00,#00ff85,#00cfff,#b400ff,#ff0080);
+        background-size:300% 100%;
+        -webkit-background-clip:text;background-clip:text;
+        -webkit-text-fill-color:transparent;color:transparent;
+        animation:rainbowSlide 2.6s linear infinite;
+        filter:drop-shadow(0 0 8px rgba(255,255,255,.65));}
+      @keyframes rainbowSlide{to{background-position:300% 0;}}
+      #progress-bar{box-shadow:0 0 12px rgba(180,0,255,.9),0 0 24px rgba(255,0,128,.7)!important;
+        background:linear-gradient(90deg,#ff0080,#ffee00,#00cfff,#b400ff)!important;background-size:300% 100%!important;
+        animation:rainbowSlide 2s linear infinite!important;}
+      body{cursor:crosshair;}
+    `;
+    document.head.appendChild(css);
+
+    // Rainbow shimmer on headings
+    document.querySelectorAll('h1,h2,h3,h4').forEach(h => h.classList.add('sparkle-shine'));
+
+    // Vignette + badge
+    const vignette = document.createElement('div');
+    vignette.className = 'sparkle-vignette';
+    document.body.appendChild(vignette);
+    const badge = document.createElement('div');
+    badge.className = 'sparkle-badge';
+    badge.innerHTML = '<span class="sparkle-emoji">✨</span> SPARKLE-MODUS AKTIV <span class="sparkle-emoji">💥</span>';
+    document.body.appendChild(badge);
+
+    // ---------- Canvas engine ----------
+    const canvas = document.createElement('canvas');
+    canvas.id = 'sparkle-canvas';
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const HUE_DRIFT = 45; // deg per second -> full rainbow cycle ~8s
+
+    // particles
+    const P = [];
+    const MAX_P = 900;
+    let baseHue = 0;
+    let flash = 0;
+
+    function addStar(x, y, o) {
+      if (P.length >= MAX_P) return;
+      P.push(Object.assign({
+        x: x, y: y, vx: 0, vy: 0, g: 0,
+        size: rand(4, 9), sizeVel: 0,
+        life: rand(1.4, 3), maxLife: 0,
+        hue: (baseHue + rand(-40, 40)) % 360,
+        rot: rand(0, Math.PI * 2), rotVel: rand(-2.5, 2.5),
+        twinkle: true, twinkleSpeed: rand(6, 14), twinklePhase: rand(0, 6.28),
+        type: 'star'
+      }, o || {}));
+      P[P.length - 1].maxLife = P[P.length - 1].life;
+    }
+
+    function spawnAmbient() {
+      addStar(rand(0, W), rand(H * 0.15, H), { g: -6, size: rand(3, 8) });
+    }
+    function spawnRain() {
+      addStar(rand(0, W), -12, { g: rand(120, 200), vy: rand(40, 90), size: rand(5, 15), twinkle: false, life: rand(2.2, 3.2) });
+    }
+    function burst(x, y, n, speed, hue) {
+      for (let i = 0; i < n; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const s = rand(speed * 0.2, speed);
+        addStar(x, y, {
+          vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40,
+          g: 260, size: rand(6, 18), twinkle: false,
+          hue: (hue != null ? hue : baseHue + rand(-60, 60)) % 360,
+          life: rand(0.9, 1.8)
+        });
+      }
+    }
+    function shower(fromTop) {
+      const n = 90;
+      for (let i = 0; i < n; i++) {
+        const x = fromTop ? rand(0, W) : rand(W * 0.3, W * 0.7);
+        addStar(x, fromTop ? rand(-40, 10) : H * 0.5, {
+          g: rand(140, 260), vy: rand(60, 160), vx: rand(-60, 60),
+          size: rand(6, 20), twinkle: false, life: rand(1.6, 3)
+        });
+      }
+      flash = 1;
+    }
+
+    function drawStar(p, alpha) {
+      const r = p.size;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = alpha;
+      ctx.shadowBlur = r * 2.4;
+      ctx.shadowColor = 'hsla(' + p.hue + ',100%,70%,' + alpha + ')';
+      ctx.fillStyle = 'hsla(' + p.hue + ',100%,72%,1)';
+      ctx.beginPath();
+      const spikes = 4;
+      for (let i = 0; i < spikes * 2; i++) {
+        const rad = i % 2 === 0 ? r : r * 0.26;
+        const a = (Math.PI * i) / spikes;
+        const px = Math.cos(a) * rad, py = Math.sin(a) * rad;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,1)';
+      ctx.beginPath();
+      ctx.arc(0, 0, Math.max(1, r * 0.18), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // spawn timers
+    let ambT = 0, rainT = 0, stormT = 4;
+    let last = performance.now();
+
+    function update(dt) {
+      baseHue = (baseHue + HUE_DRIFT * dt) % 360;
+      ambT -= dt; if (ambT <= 0) { spawnAmbient(); ambT = 0.045; }
+      rainT -= dt; if (rainT <= 0) { spawnRain(); rainT = 0.05; }
+      stormT -= dt; if (stormT <= 0) { shower(true); stormT = rand(6, 11); }
+
+      for (let i = P.length - 1; i >= 0; i--) {
+        const p = P[i];
+        p.life -= dt;
+        if (p.life <= 0) { P.splice(i, 1); continue; }
+        p.vy += p.g * dt;
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        p.rot += p.rotVel * dt;
+        if (p.y > H + 40 && p.g >= 0) P.splice(i, 1);
+      }
+      if (flash > 0) flash = Math.max(0, flash - dt * 2.4);
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+      if (flash > 0) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.7);
+        g.addColorStop(0, 'rgba(255,255,255,' + (flash * 0.5) + ')');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        ctx.restore();
+      }
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < P.length; i++) {
+        const p = P[i];
+        const lifeFrac = p.life / p.maxLife;
+        let alpha = lifeFrac < 0.2 ? lifeFrac / 0.2 : (lifeFrac > 0.7 ? (1 - lifeFrac) / 0.3 : 1);
+        if (p.twinkle) alpha *= 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(performance.now() / 1000 * p.twinkleSpeed + p.twinklePhase));
+        drawStar(p, Math.max(0, Math.min(1, alpha)));
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function frame(now) {
+      const dt = Math.min((now - last) / 1000, 0.05); last = now;
+      update(dt); render();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // ---------- Interactions ----------
+    let mx = W / 2, my = H / 2, lastMove = 0;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      const t = performance.now();
+      if (t - lastMove > 28) {
+        lastMove = t;
+        addStar(mx + rand(-6, 6), my + rand(-6, 6), {
+          g: 40, size: rand(4, 11), twinkle: false, life: rand(0.5, 1)
+        });
+      }
+    });
+    window.addEventListener('click', (e) => {
+      burst(e.clientX, e.clientY, 70, 380);
+      flash = 1;
+    });
+    window.addEventListener('keydown', (e) => {
+      if (['Space', 'ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'PageDown', 'Enter'].includes(e.key)) {
+        burst(W / 2, H / 2, 60, 420);
+        flash = Math.max(flash, 0.7);
+      }
+    });
+    // Slide change shower
+    const pres = document.getElementById('presentation');
+    if (pres) {
+      const obs = new MutationObserver(() => {
+        const active = pres.querySelector('.slide.active');
+        if (active) {
+          shower(true);
+          const r = active.getBoundingClientRect();
+          burst(r.left + r.width / 2, r.top + 60, 50, 300);
+        }
+      });
+      obs.observe(pres, { subtree: true, attributes: true, attributeFilter: ['class'] });
+    }
+  } catch (err) {
+    console.warn('[sparkle] disabled:', err);
+  }
+})();
 </script>
 
 </body>
