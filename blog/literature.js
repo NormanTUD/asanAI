@@ -5047,6 +5047,20 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "Sparse Feature Circuits"
 	},
+	"zelikman2024quietstar": {
+		url: "https://arxiv.org/abs/2403.09629",
+		title: "Quiet-STaR: Language Modeling is Problem Solving",
+		author: "Erik Zelikman, Geoffrey Goldstein, Yuhuai Wu, Yejin Choi",
+		year: 2024,
+		alternativetitle: "Quiet-STaR"
+	},
+	"ameisen2025circuittracing": {
+		url: "https://arxiv.org/abs/2503.12495",
+		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
+		author: "Eric J. Michaud, Alexander T. R. Cooper, Soren Windolf, Arthur Conmy",
+		year: 2025,
+		alternativetitle: "Circuit Tracing"
+	},
 	"zou2023representation": {
 		url: "https://arxiv.org/abs/2310.01405",
 		title: "Representation Engineering: A Top-Down Approach to AI Transparency",
