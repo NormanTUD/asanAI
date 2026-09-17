@@ -309,7 +309,7 @@
         </div>
 
         <div class="key-insight fragment">
- 		Die Maschine lernt solche und viele andere Arten solcher Patterns.</b>.
+ 		Die Maschine lernt solche und viele andere Arten solcher Patterns.</b>
  	</div>
     </div>
 </div>
@@ -388,31 +388,38 @@
             <div class="fragment" id="tf-input-block" style="padding:10px 20px; background:#f1f5f9; border:2px solid #cbd5e1; border-radius:10px; color:#475569; text-align:center; width:100%; box-sizing:border-box;">
                 <div style="font-weight:bold;">Eingabetext</div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Tokenisierung -->
-            <div class="fragment" style="padding:12px 20px; background:#fff7ed; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
-                <div style="font-weight:bold; color:#9d174d;">Tokenisierung</div>
-                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Aus Worten Tokens machen</div>
+            <!-- Pfeil + Tokenisierung -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 20px; background:#fff7ed; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                    <div style="font-weight:bold; color:#9d174d;">Tokenisierung</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Aus Worten Tokens machen</div>
+                </div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Embedding -->
-            <div class="fragment" style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
-                <div style="font-weight:bold; color:#9d174d;">Embedding</div>
-                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Tokens zu Punkten</div>
+            <!-- Pfeil + Embedding -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 20px; background:#fce7f3; border:2px solid #f9a8d4; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                    <div style="font-weight:bold; color:#9d174d;">Embedding</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Tokens zu Punkten</div>
+                </div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Positional Embedding -->
-            <div class="fragment" style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
-                <div style="font-weight:bold; color:#0c4a6e;">+ Positional Embedding</div>
-                <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Position kodieren</div>
+            <!-- Pfeil + Positional Embedding -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 20px; background:#e0f2fe; border:2px solid #7dd3fc; border-radius:10px; text-align:center; width:100%; box-sizing:border-box;">
+                    <div style="font-weight:bold; color:#0c4a6e;">+ Positional Embedding</div>
+                    <div style="color:#94a3b8; font-style:italic; font-size:0.85em; margin-top:4px;">Position kodieren</div>
+                </div>
             </div>
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
 
-            <!-- Residual Stream Start -->
-            <div class="fragment" style="width:100%; position:relative;">
+            <!-- Pfeil + Residual Stream Start -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+            <div style="width:100%; position:relative;">
                 <!-- Residual Stream: vertikaler Balken links -->
                 <div style="position:absolute; left:-38px; top:0; bottom:0; width:18px; background:linear-gradient(180deg, #6ee7b7, #34d399, #10b981); border-radius:9px; display:flex; align-items:center; justify-content:center;">
                     <span style="writing-mode:vertical-rl; transform:rotate(180deg); color:#065f46; font-weight:bold; font-size:0.7em; letter-spacing:1px;">RESIDUAL STREAM</span>
@@ -444,12 +451,14 @@
                     <div style="text-align:center; color:#10b981; font-weight:bold; font-size:0.85em; margin:4px 0;">⊕ Residual Add</div>
                 </div>
             </div>
+            </div>
 
-            <div class="fragment" style="font-size:1.4em; color:#94a3b8;">↓</div>
-
-            <!-- Softmax / Output -->
-            <div class="fragment" style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
-                Vorhersage des nächsten Tokens
+            <!-- Pfeil + Softmax / Output -->
+            <div class="fragment" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+                <div style="font-size:1.4em; color:#94a3b8;">↓</div>
+                <div style="padding:12px 28px; background:#d1fae5; border:2px solid #6ee7b7; border-radius:10px; font-weight:bold; color:#065f46; text-align:center; width:100%; box-sizing:border-box;">
+                    Vorhersage des nächsten Tokens
+                </div>
             </div>
 
         </div>
