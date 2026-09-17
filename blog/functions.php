@@ -2,6 +2,33 @@
 $GLOBALS["loaded_js"] = [];
 $GLOBALS["debug_mode"] = false;
 
+/* ── Blog-Standardserif (globaler Umschalter) ─────────────────
+   "utopia"          → Lingua Franca (LaTeX-"fourier"-Look =
+                       Adobe Utopia; kräftiger als Computer Modern)
+   "computer-modern" → Computer Modern (colah.github.io-Look)
+   Wert ändern = Font site-weit umstellen. */
+$GLOBALS["blog_font"] = "utopia";
+
+function blog_font_stack() {
+	$stacks = [
+		"utopia"          => '"Lingua Franca", "CMS", "Source Serif 4", Charter, "Bitstream Charter", Cambria, Georgia, serif',
+		"computer-modern" => '"CMS", "Source Serif 4", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif',
+	];
+	$key = $GLOBALS["blog_font"] ?? "computer-modern";
+	return $stacks[$key] ?? $stacks["computer-modern"];
+}
+
+/* Injected in <head> directly after the style.css <link> so it
+   wins the cascade and can override the --mn-font-* variables
+   defined on html in style.css. */
+function print_font_override() {
+	$stack = blog_font_stack();
+	$extra = ($GLOBALS["blog_font"] ?? "") === "utopia"
+		? "blockquote{font-family:'Lingua Franca';font-style:italic;}"
+		: "";
+	print("<style>html{--mn-font-heading:$stack;--mn-font-body:$stack;--mn-font-prose:$stack;}$extra</style>\n");
+}
+
 /**
  * Renders a group of tabs where only one can be active at a time.
   * @param  array  $tabs     Associative array: ["Tab Title" => "HTML Content"]
@@ -155,6 +182,7 @@ function load_base_js () {
 	js("effects");
 	css("prism-tomorrow.min.css");
 	css("style");
+	print_font_override();
 	js("echarts.min");
 	js("echarts-gl.min.js");
 	js("prism.min");

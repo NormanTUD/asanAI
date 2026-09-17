@@ -73,6 +73,46 @@
 	font-display: swap;
 }
 
+/* ════════════════════════════════════════════════════════════
+   FOURIER / UTOPIA — "Lingua Franca", a Utopia (Robert
+   Slimbach / Adobe) derivative by Andreas Nolda, SIL OFL.
+   Self-hosted woff2, subset to latin + greek + punctuation
+   (~90 KB per style). This is the same lettering the LaTeX
+   `fourier` package sets (Fourier = Utopia + MathDesign).
+   Active when $GLOBALS["blog_font"] is "utopia" in
+   functions.php — the font stack is injected there as an
+   override of the --mn-font-* variables.
+   License: fonts/LinguaFranca-LICENSE.txt
+   ════════════════════════════════════════════════════════════ */
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('fonts/LinguaFranca-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('fonts/LinguaFranca-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('fonts/LinguaFranca-Italic.woff2') format('woff2');
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Lingua Franca';
+	src: url('fonts/LinguaFranca-BoldItalic.woff2') format('woff2');
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
+
 html {
 	/* Light mode is now a CREAM PAPER palette — like the page of a
 	   well-made hardback. White felt sterile; cream reads as warm,
