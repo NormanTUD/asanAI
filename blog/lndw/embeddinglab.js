@@ -369,6 +369,20 @@ statusEl.innerHTML = '✅ <b>Aligned!</b> Both manifolds overlap — the paths m
 	requestAnimationFrame(step);
 };
 
+// Navigation-Sperre für die "Übersetzung als Bewegung"-Folie:
+// Während die Aligning-Animation läuft wird "weiter" blockiert,
+// damit man die Bewegung nicht überspringen kann (wie TypewriterViz).
+const ManifoldAlignViz = (() => {
+    function isOnSlide() {
+        const a = document.querySelector('.slide.active');
+        return a && a.getAttribute('data-title') === 'Mannigfaltigkeiten-Hypothese';
+    }
+    function isAnimating() {
+        return !!(typeof dualManifoldState !== 'undefined' && dualManifoldState.animating);
+    }
+    return { isOnSlide, isAnimating, nop() {} };
+})();
+
 window.resetDualManifold = function() {
 	const st = dualManifoldState;
 	if (st.animating) return;

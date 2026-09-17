@@ -107,6 +107,13 @@ const DemoRegistry = (() => {
                         onEnter: d => d.activate(),
                         onLeave: d => d.stop() },
 
+                // "Übersetzung als Bewegung": Pfeiltaste weiter während der
+                // Aligning-Animation blockieren (Bewegung nicht skippen).
+                { ref: () => typeof ManifoldAlignViz !== 'undefined' ? ManifoldAlignViz : null,
+                        guard: d => d.isOnSlide(),
+                        canNext: 'isAnimating',
+                        nextMethod: 'nop' },
+
                 { ref: () => typeof HeadsStepDemo !== 'undefined' ? HeadsStepDemo : null,
                         guard: d => d.isOnSlide() },
 
