@@ -81,7 +81,7 @@ function toc() {
 		// the same size but lighter, indented.
 		'#toc .toc-row { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; padding: 2px 0; }',
 		'#toc .toc-row > a { flex: 1; min-width: 0; }',
-		'#toc li.toc-level-2 > .toc-row > a { font-weight: 500; color: #1f2328; }',
+		'#toc li.toc-level-2 > .toc-row > a { font-weight: 700; color: #1f2328; }',
 		'#toc li.toc-level-3 > .toc-row > a, #toc li.toc-level-4 > .toc-row > a, #toc li.toc-level-5 > .toc-row > a, #toc li.toc-level-6 > .toc-row > a { color: #57606a; font-weight: 400; }',
 
 		// Optional content: same color, italic. No badge, no border.
@@ -101,7 +101,7 @@ function toc() {
 		// Filter
 		'#toc.filtering li.toc-hidden { display: none; }',
 		'#toc.filtering li.toc-match > ul, #toc.filtering li.toc-ancestor-match > ul { display: block !important; max-height: none !important; overflow: visible !important; }',
-		'#toc.filtering li.toc-match > .toc-row > a, #toc.filtering li.toc-ancestor-match > .toc-row > a { color: #1f2328; font-weight: 500; }',
+		'#toc.filtering li.toc-match > .toc-row > a, #toc.filtering li.toc-ancestor-match > .toc-row > a { color: #1f2328; font-weight: 700; }',
 
 		// Total reading time footer
 		'#toc .toc-footer { font-size: 0.78em; color: #8c959f; margin-top: 14px; padding-top: 10px; border-top: 1px solid #eaeef2; }',

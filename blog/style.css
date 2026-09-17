@@ -76,9 +76,13 @@
 /* ════════════════════════════════════════════════════════════
    FOURIER / UTOPIA — "Lingua Franca", a Utopia (Robert
    Slimbach / Adobe) derivative by Andreas Nolda, SIL OFL.
-   Self-hosted woff2, subset to latin + greek + punctuation
-   (~90 KB per style). This is the same lettering the LaTeX
-   `fourier` package sets (Fourier = Utopia + MathDesign).
+   Self-hosted woff2, FULL unicode + all OpenType features
+   (smcp/c2sc small caps, onum/pnum/tnum figures, ss01) — do NOT
+   glyph-subset this font: the features reference many glyphs and
+   get silently dropped by fontTools when their targets go away,
+   which would break .caps and font-variant-numeric in the CSS.
+   This is the same lettering the LaTeX `fourier` package sets
+   (Fourier = Utopia + MathDesign).
    Active when $GLOBALS["blog_font"] is "utopia" in
    functions.php — the font stack is injected there as an
    override of the --mn-font-* variables.
@@ -6579,7 +6583,7 @@ blockquote > p:first-of-type::before {
 /* ── 6. TOC scroll-spy — current section pulses in the nav ── */
 #toc li.toc-current > a {
 	color: var(--mn-accent);
-	font-weight: 600;
+	font-weight: 700;
 }
 #toc li.toc-current > a::before {
 	content: '\2022';
