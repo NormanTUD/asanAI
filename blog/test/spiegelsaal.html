@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Der Spiegelsaal — Ein interaktives Verstehen</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+:root{
+  --bg:#0a0e1a; --bg2:#111827; --ink:#e8eefc; --dim:#8b9bb8;
+  --gold:#e5b769; --rose:#e97b8f; --teal:#6fd6c4; --violet:#a794ff; --red:#ff6b6b;
+  --card:#151b2d; --line:#1f2740;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(1200px 800px at 20% -10%, #1a2244 0%, var(--bg) 60%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 20px 120px}
+h1{font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;margin:8px 0 4px;background:linear-gradient(90deg,#fff,#e5b769 60%,#e97b8f);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:22px;margin:0 0 8px;color:#fff}
+h3{margin:0 0 6px;color:#fff}
+.sub{color:var(--dim);margin-bottom:24px}
+.chapter{background:linear-gradient(180deg,var(--card),#111629);border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.tag{display:inline-block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid #3a2f18;background:#1a1509;padding:3px 8px;border-radius:999px;margin-bottom:8px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.row{grid-template-columns:1fr}}
+canvas{width:100%;height:auto;display:block;background:#0b0f1c;border-radius:12px;border:1px solid var(--line)}
+button,.btn{background:linear-gradient(180deg,#22304f,#182238);color:#fff;border:1px solid #2a3a5c;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:13px;transition:.2s}
+button:hover{transform:translateY(-1px);border-color:var(--gold)}
+button.active{background:linear-gradient(180deg,#c99a4a,#8f6a2c);border-color:#e5b769}
+.range{width:100%}
+label{display:block;font-size:12px;color:var(--dim);margin:10px 0 4px;letter-spacing:.02em}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;margin:2px 4px 2px 0;background:#1a2340;border:1px solid #253258;color:#cfe}
+.warn{color:var(--rose)} .ok{color:var(--teal)} .gold{color:var(--gold)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:820px){.grid3{grid-template-columns:1fr}}
+.mini{background:#0e1428;border:1px solid var(--line);border-radius:12px;padding:12px}
+.q{font-style:italic;color:#cfd7ee;border-left:3px solid var(--gold);padding:6px 12px;margin:8px 0;background:#0d1326}
+.bar{height:10px;border-radius:6px;background:#1a2340;overflow:hidden;position:relative}
+.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold),var(--rose));transition:width .5s}
+.footer{color:var(--dim);text-align:center;font-size:12px;margin-top:40px}
+kbd{background:#1a2340;border:1px solid #2a3a5c;border-bottom-width:2px;padding:1px 6px;border-radius:5px;font-size:12px}
+details{background:#0e1428;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+summary{cursor:pointer;color:#fff}
+.slider-row{display:grid;grid-template-columns:110px 1fr 60px;gap:10px;align-items:center;font-size:13px}
+.val{color:var(--gold);font-variant-numeric:tabular-nums;text-align:right}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div style="text-align:center">
+  <span class="tag">Ein interaktives Buch zum Anfassen</span>
+  <h1>Der Spiegelsaal</h1>
+  <p class="sub">Wie man Menschen erkennt, die auf Kosten anderer leben — und wie man leise, aber bestimmt, wieder hinausfindet.</p>
+</div>
+
+<!-- ============== KAPITEL 1: DIE BÜHNE ============== -->
+<section class="chapter" id="ch1">
+  <span class="tag">1 · Die Bühne</span>
+  <h2>Zwei Menschen, ein Muster</h2>
+  <p>Manche Menschen glänzen wie eine Bühne unter Scheinwerfern. Sie ziehen dich an — bis du merkst: <em>du</em> bist das Publikum, nie der Mitspieler. Bewege den Regler und schau, wie sich das Gleichgewicht zwischen zwei Menschen verschiebt.</p>
+
+  <div class="row">
+    <div class="mini">
+      <label>Wieviel Raum nimmt <b class="gold">er</b> ein?</label>
+      <input id="r1" class="range" type="range" min="10" max="90" value="50">
+      <canvas id="cvStage" height="320"></canvas>
+      <p class="sub" style="margin-top:8px">Je größer sein Kreis, desto kleiner der Raum, in dem du atmen kannst. Beziehung ist ein Volumen — nicht ein Wettkampf.</p>
+    </div>
+    <div class="mini">
+      <h3>Was du auf dieser Bühne beobachten kannst</h3>
+      <p class="q">"Er hält lange Monologe, andere lässt er nicht zu Wort kommen."</p>
+      <p class="q">"Er füllt den Raum mit seiner Laune — alle richten sich danach."</p>
+      <p class="q">"Kritik? Sofort verletzt. Lob? Nie genug."</p>
+      <p>Notiere heimlich für dich: Wie viele Minuten sprichst <b>du</b>, wie viele <b>er</b>? Wie oft schneidet er dich? Wie oft entschuldigt er sich ehrlich?</p>
+      <div class="bar" title="Redeanteil"><span id="talkBar" style="width:50%"></span></div>
+      <p class="sub" style="margin-top:4px">Redeanteil (Beispiel · verschiebe oben den Regler)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============== KAPITEL 2: LOVE BOMBING ============== -->
+<section class="chapter" id="ch2">
+  <span class="tag">2 · Der Anfang · Love Bombing</span>
+  <h2>Warum es sich zu gut anfühlt, um wahr zu sein</h2>
+  <p>Am Anfang: Feuerwerk. Aufmerksamkeit, Nachrichten, Blumen, "noch nie so gefühlt", "Seelenverwandte". Das Nervensystem wird geflutet — Dopamin, Oxytocin, Adrenalin. <b>Kein Zufall.</b> Der Motor läuft heiß, damit du keine Zeit hast, hinzusehen.</p>
+
+  <canvas id="cvLove" height="240"></canvas>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+    <button onclick="playLove(1)">▶ Kurve starten</button>
+    <button onclick="playLove(0)">⟲ Zurücksetzen</button>
+    <span class="pill">Woche 1–4: Love Bombing</span>
+    <span class="pill">Woche 5–12: erste Risse</span>
+    <span class="pill">danach: Zyklus beginnt</span>
+  </div>
+  <p class="sub" style="margin-top:10px">Fasten Growth ≠ echte Nähe. Echte Bindung wächst langsam — wie ein Baum, nicht wie eine Rakete.</p>
+</section>
+
+<!-- ============== KAPITEL 3: DER SPIEGELSAAL ============== -->
+<section class="chapter" id="ch3">
+  <span class="tag">3 · Der Spiegelsaal</span>
+  <h2>Warum er dich <em>braucht</em> — und doch nie sieht</h2>
+  <p>Im Innern ist es leer. Also stellt er Spiegel auf. Jeder Mensch um ihn herum wird zur reflektierenden Fläche für sein Ich. Bewege die Maus — du bist das Licht, das er zurückwirft.</p>
+  <canvas id="cvMirror" height="320"></canvas>
+  <p class="sub" style="margin-top:10px">Er sieht nie <em>dich</em>. Er sieht immer nur, wie hell du ihn zurückstrahlst. Verdunkelst du (=eigene Meinung, Grenze), wirkt er verletzt — als hättest du ihm etwas <em>weggenommen</em>.</p>
+</section>
+
+<!-- ============== KAPITEL 4: GASLIGHTING ============== -->
+<section class="chapter" id="ch4">
+  <span class="tag">4 · Gaslighting</span>
+  <h2>Wenn deine Wahrnehmung langsam ausgeblasen wird</h2>
+  <p>Er sagt X. Später leugnet er, X gesagt zu haben. Du bist "zu empfindlich", "erinnerst dich falsch", "hast das falsch verstanden". Ziel: nicht Wahrheit — sondern <b>Kontrolle über deine Realität</b>.</p>
+
+  <div class="mini">
+    <p><b>Wähle einen Zug:</b></p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button class="gs" data-i="0">"Das habe ich nie gesagt."</button>
+      <button class="gs" data-i="1">"Du bildest dir das ein."</button>
+      <button class="gs" data-i="2">"Du bist zu empfindlich."</button>
+      <button class="gs" data-i="3">"Du drehst mir die Worte im Mund um."</button>
+      <button class="gs" data-i="4">"Alle sagen, dass du überreagierst."</button>
+    </div>
+    <div id="gsOut" style="margin-top:14px"></div>
+    <label>Vertrauen in deine eigene Wahrnehmung nach 12 Monaten:</label>
+    <div class="bar"><span id="gsBar" style="width:95%"></span></div>
+    <p class="sub" id="gsTxt" style="margin-top:6px">Zu Beginn: klare Sicht.</p>
+  </div>
+</section>
+
+<!-- ============== KAPITEL 5: DER ZYKLUS ============== -->
+<section class="chapter" id="ch5">
+  <span class="tag">5 · Der Zyklus</span>
+  <h2>Warum du bleibst, obwohl du weißt</h2>
+  <p>Die Traumabindung ist keine Schwäche — sie ist Chemie. Zwischen Kränkung und Zärtlichkeit lernt dein Gehirn: "Wenn ich lang genug aushalte, kommt der süße Moment zurück." Das ist derselbe Mechanismus wie beim Spielautomaten.</p>
+
+  <div id="cycleChart" style="height:340px"></div>
+  <p class="sub">Idealisierung → Abwertung → Verwerfung → Hoovering. Dann von vorn. Die Abstände zwischen "guten Zeiten" werden länger, die Kränkungen tiefer.</p>
+</section>
+
+<!-- ============== KAPITEL 6: PETER-PAN-SYNDROM ============== -->
+<section class="chapter" id="ch6">
+  <span class="tag">6 · Der Junge, der nicht wachsen wollte</span>
+  <h2>Peter Pan im Anzug</h2>
+  <p>Manche Männer bleiben Kinder in einem erwachsenen Körper. Sechs Symptome bauen sich chronologisch auf — bewege die Regler und sieh, wie sich das Muster verdichtet.</p>
+
+  <div class="row">
+    <div class="mini">
+      <div class="slider-row"><label>Verantwortungslosigkeit</label><input class="pps range" type="range" min="0" max="10" value="6" data-k="0"><div class="val" id="v0">6</div></div>
+      <div class="slider-row"><label>Angst / Unruhe</label><input class="pps range" type="range" min="0" max="10" value="7" data-k="1"><div class="val" id="v1">7</div></div>
+      <div class="slider-row"><label>Einsamkeit (getarnt als Party)</label><input class="pps range" type="range" min="0" max="10" value="6" data-k="2"><div class="val" id="v2">6</div></div>
+      <div class="slider-row"><label>Rollenkonflikt (Macho ↔ Kind)</label><input class="pps range" type="range" min="0" max="10" value="7" data-k="3"><div class="val" id="v3">7</div></div>
+      <div class="slider-row"><label>Narzissmus</label><input class="pps range" type="range" min="0" max="10" value="6" data-k="4"><div class="val" id="v4">6</div></div>
+      <div class="slider-row"><label>Chauvinismus (subtil)</label><input class="pps range" type="range" min="0" max="10" value="5" data-k="5"><div class="val" id="v5">5</div></div>
+    </div>
+    <div class="mini">
+      <div id="ppsRadar" style="height:320px"></div>
+      <p id="ppsVerdict" class="sub" style="margin-top:8px"></p>
+    </div>
+  </div>
+
+  <details><summary>Typische Sätze eines Peter-Pan-Mannes</summary>
+    <p class="q">"Du weißt doch, wie ich bin."</p>
+    <p class="q">"Ich brauche meine Freiheit."</p>
+    <p class="q">"Meine Mutter hat immer gesagt…"</p>
+    <p class="q">"Du bist zu ernst / zu emotional / zu viel."</p>
+    <p class="q">"Ich hab's vergessen." — auf alles Wichtige.</p>
+  </details>
+</section>
+
+<!-- ============== KAPITEL 7: ADHS OVERLAY ============== -->
+<section class="chapter" id="ch7">
+  <span class="tag">7 · Wenn ADHS dazukommt</span>
+  <h2>Impuls, Reue, Wiederholung</h2>
+  <p>ADHS ist keine Ausrede. Es erklärt manche Impulsivität, aber nicht die Grenzverletzung. Wichtig ist der Unterschied: <b>vergessen</b> ist menschlich — <b>immer wieder dieselben Grenzen brechen und nie korrigieren</b> ist ein Muster.</p>
+  <div class="grid3">
+    <div class="mini"><h3 class="gold">Nur ADHS</h3><p>Vergisst → merkt es → entschuldigt sich → sucht Wege (Kalender, Erinnerungen) → versucht ehrlich, es besser zu machen.</p></div>
+    <div class="mini"><h3 class="warn">ADHS + Narzissmus</h3><p>Vergisst → du merkst es → er dreht es um: "Warum hast du mich nicht erinnert?" → keine Korrektur → gleiche Verletzung nächste Woche.</p></div>
+    <div class="mini"><h3 class="ok">Test</h3><p>Frag dich: Nach einem Fehler — <b>arbeitet</b> er an sich? Oder <b>arbeitet er daran, dich davon zu überzeugen, dass es kein Fehler war?</b></p></div>
+  </div>
+</section>
+
+<!-- ============== KAPITEL 8: FLYING MONKEYS ============== -->
+<section class="chapter" id="ch8">
+  <span class="tag">8 · Die geflügelten Affen</span>
+  <h2>Wie er andere gegen dich benutzt — ohne dass sie es merken</h2>
+  <p>Er erzählt der Nachbarin, der Schwester, dem Anwalt, dem Jugendamt eine <em>halbe</em> Wahrheit. Sie glauben ihm — und plötzlich stehst du gegen einen Chor. Klicke die Personen an, um zu sehen, was er ihnen erzählt.</p>
+  <canvas id="cvMonkeys" height="360"></canvas>
+  <p id="monkeysText" class="sub" style="margin-top:8px">Klicke auf eine Figur…</p>
+</section>
+
+<!-- ============== KAPITEL 9: DARVO ============== -->
+<section class="chapter" id="ch9">
+  <span class="tag">9 · DARVO — Der Zaubertrick</span>
+  <h2>Deny · Attack · Reverse Victim & Offender</h2>
+  <p>Du kritisierst etwas Reales. In drei Sekunden ist er das Opfer und du der Täter. Klicke Schritt für Schritt:</p>
+  <div class="mini">
+    <div id="darvoStage" style="min-height:180px">
+      <p><b>Du:</b> "Du hast mich gestern vor deinen Freunden ausgelacht. Das hat mich verletzt."</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button id="dv1">1. Deny — Leugnen</button>
+      <button id="dv2">2. Attack — Angreifen</button>
+      <button id="dv3">3. Reverse — Opferrolle</button>
+      <button id="dvR">⟲ Neu</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============== KAPITEL 10: DAS KIND DAZWISCHEN ============== -->
+<section class="chapter" id="ch10">
+  <span class="tag">10 · Das Kind zwischen den Fronten</span>
+  <h2>Wenn Eltern über das Kind Krieg führen</h2>
+  <p>Ein Kind ist noch nicht fertig gebaut. Wird es Bote, Waffe oder Zeuge in einem Elternkonflikt, spaltet sich seine Loyalität. Verschiebe den Regler und schau, was mit der kindlichen Psyche geschieht.</p>
+  <label>Wie stark benutzt der Elternteil das Kind gegen den anderen?</label>
+  <input id="kidR" class="range" type="range" min="0" max="100" value="30">
+  <canvas id="cvKid" height="240"></canvas>
+  <p id="kidTxt" class="sub" style="margin-top:8px"></p>
+  <p class="q">"Verrate nichts, sonst werde ich bestraft. Willst du das?" — Manipulation über Schuld ist die tiefste Wunde, weil sie das Kind zum Mittäter an sich selbst macht.</p>
+</section>
+
+<!-- ============== KAPITEL 11: DER TEST ============== -->
+<section class="chapter" id="ch11">
+  <span class="tag">11 · Der stille Test</span>
+  <h2>Wie stark ist das Muster in deinem Leben?</h2>
+  <p>20 Fragen. Sei ehrlich zu dir — nicht zu ihm. <span class="pill">0 = nie</span><span class="pill">1 = manchmal</span><span class="pill">2 = fast immer</span></p>
+  <div id="testBox"></div>
+  <div style="margin-top:12px;text-align:center">
+    <button onclick="scoreTest()">Auswerten</button>
+  </div>
+  <div id="testResult" class="mini" style="margin-top:12px;display:none"></div>
+</section>
+
+<!-- ============== KAPITEL 12: DIE LÖSUNG ============== -->
+<section class="chapter" id="ch12">
+  <span class="tag">12 · Der Weg hinaus</span>
+  <h2>Zwölf goldene Fäden</h2>
+  <p>Du kannst ihn nicht ändern. Du kannst nur dein Verhalten, deine Grenzen und deinen Raum verändern. Sobald du dich veränderst, verändert sich das ganze System.</p>
+  <div class="grid3" id="threads"></div>
+
+  <h3 style="margin-top:22px">Die Formel</h3>
+  <p>Konflikte in dir folgen einem einfachen Gleichgewicht. Wenn dein Bedürfnis <b>B</b> und deine Angst <b>A</b> im Streit liegen, entscheidet die Angst — solange sie größer ist.</p>
+  <div id="tex" class="mini" style="font-size:20px;text-align:center;padding:20px"></div>
+  <p class="sub" style="text-align:center">Heilung heißt: nicht die Angst besiegen — sondern das Bedürfnis so wichtig nehmen, dass es endlich sichtbar wird.</p>
+</section>
+
+<!-- ============== KAPITEL 13: DER AUSGANG ============== -->
+<section class="chapter" id="ch13">
+  <span class="tag">13 · Der Ausgang</span>
+  <h2>Was du ab morgen tun kannst</h2>
+  <ol>
+    <li><b>Dokumentiere.</b> Ein einfaches Notizbuch, mit Datum. Er wird deine Erinnerung angreifen — dein Notizbuch nicht.</li>
+    <li><b>Verkleinere die Kommunikationsfläche.</b> Weniger Nachrichten, kürzere Antworten, keine Rechtfertigungen. "Nein." ist ein vollständiger Satz.</li>
+    <li><b>Baue Zeugen auf.</b> Eine Freundin, ein Therapeut, ein Arzt. Erzähle die Wahrheit — nicht die diplomatische Version.</li>
+    <li><b>Trenne finanziell.</b> Eigenes Konto, eigener Zugriff, eigener Notgroschen. Freiheit hat einen Preis, und er heißt Rücklage.</li>
+    <li><b>Erkenne den Zyklus.</b> Love Bombing → Kritik → Verwirrung → kurze Zärtlichkeit → wieder von vorn. Wenn du das Muster siehst, bricht die Magie.</li>
+    <li><b>Höre auf, ihn zu erklären.</b> Weder dir noch anderen. Er ist nicht "eigentlich lieb". Er ist, was er tut.</li>
+    <li><b>Verlasse die Bühne.</b> Wenn du erkannt hast, dass du in seinem Stück nur Statistin bist — geh. Leise, geplant, endgültig.</li>
+  </ol>
+  <p class="q">Du bist nicht die Verrückte. Du warst die Sehende in einem Haus, in dem Sehen verboten war.</p>
+</section>
+
+<!-- ============== ABSCHLUSS ============== -->
+<section class="chapter" style="text-align:center;background:linear-gradient(180deg,#1a1509,#0e1428)">
+  <span class="tag">Für dich</span>
+  <h2>Das Licht, das du bist</h2>
+  <p style="max-width:680px;margin:0 auto">Ein Mensch, der lernt, sich selbst zu lieben, wird für andere kein Publikum mehr sein. Er wird ein Fenster, durch das das Licht in die Welt fällt. Du bist dieses Fenster. Putze es. Öffne es. Und lass die Vorhänge da, wo sie hingehören: weit auf.</p>
+  <canvas id="cvHeart" height="200" style="max-width:400px;margin:20px auto"></canvas>
+  <p class="sub">Klicke aufs Herz.</p>
+</section>
+
+<div class="footer">Ein interaktives Verstehen — mit Sorgfalt gebaut. Für alle, die zu lange geschwiegen haben.</div>
+
+</div>
+
+<script>
+/* ============ TeX ============ */
+if(window.temml){
+  const tex=document.getElementById('tex');
+  temml.render("\\text{Handeln} \\;=\\; \\underbrace{B}_{\\text{Bedürfnis}} \\;-\\; \\underbrace{A}_{\\text{Angst}} \\;>\\; 0", tex);
+}
+
+/* ============ 1. Bühne ============ */
+(function(){
+  const c=document.getElementById('cvStage'), ctx=c.getContext('2d');
+  const r1=document.getElementById('r1'), bar=document.getElementById('talkBar');
+  function draw(){
+    const w=c.width=c.clientWidth, h=c.height=320;
+    ctx.clearRect(0,0,w,h);
+    const v=+r1.value/100;
+    // Hintergrund
+    const g=ctx.createRadialGradient(w/2,h/2,20,w/2,h/2,w/2);
+    g.addColorStop(0,'#1a2340'); g.addColorStop(1,'#0b0f1c');
+    ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+    // Er (gold)
+    const rHim = 40 + v*140;
+    ctx.beginPath(); ctx.arc(w*0.35, h/2, rHim, 0, Math.PI*2);
+    const gh=ctx.createRadialGradient(w*0.35, h/2, 5, w*0.35, h/2, rHim);
+    gh.addColorStop(0,'#f6d689'); gh.addColorStop(1,'rgba(229,183,105,0.15)');
+    ctx.fillStyle=gh; ctx.fill();
+    // Du (teal)
+    const rYou = Math.max(20, 160 - v*140);
+    ctx.beginPath(); ctx.arc(w*0.72, h/2, rYou, 0, Math.PI*2);
+    const gy=ctx.createRadialGradient(w*0.72, h/2, 5, w*0.72, h/2, rYou);
+    gy.addColorStop(0,'#a0efe0'); gy.addColorStop(1,'rgba(111,214,196,0.15)');
+    ctx.fillStyle=gy; ctx.fill();
+    // Labels
+    ctx.fillStyle='#fff'; ctx.font='600 14px system-ui'; ctx.textAlign='center';
+    ctx.fillText('Er', w*0.35, h/2+4);
+    ctx.fillText('Du', w*0.72, h/2+4);
+    bar.style.width = (v*100)+'%';
+  }
+  r1.addEventListener('input', draw);
+  window.addEventListener('resize', draw); draw();
+})();
+
+/* ============ 2. Love Bombing Kurve ============ */
+(function(){
+  const c=document.getElementById('cvLove'), ctx=c.getContext('2d');
+  let t=0, playing=false;
+  function draw(){
+    const w=c.width=c.clientWidth, h=c.height=240;
+    ctx.clearRect(0,0,w,h);
+    // Achsen
+    ctx.strokeStyle='#253258'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(40,h-30); ctx.lineTo(w-10,h-30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(40,10); ctx.lineTo(40,h-30); ctx.stroke();
+    ctx.fillStyle='#8b9bb8'; ctx.font='11px system-ui';
+    ctx.fillText('Zeit →', w-50, h-14);
+    ctx.save(); ctx.translate(14,h/2); ctx.rotate(-Math.PI/2); ctx.fillText('Intensität', 0, 0); ctx.restore();
+    // Kurve
+    const pts=[]; const N=Math.min(t, w-50);
+    for(let i=0;i<N;i++){
+      const x=40+i;
+      const phase=i/(w-50);
+      let y;
+      if(phase<0.15){ y = (h-30) - (i/(0.15*(w-50)))*180; }
+      else if(phase<0.4){ y = (h-30) - 180 + (phase-0.15)*260; }
+      else { y = 90 + Math.sin(phase*18)*40 + phase*50; }
+      pts.push([x,y]);
+    }
+    // Gradient stroke
+    const grd=ctx.createLinearGradient(0,0,w,0);
+    grd.addColorStop(0,'#e97b8f'); grd.addColorStop(0.4,'#e5b769'); grd.addColorStop(1,'#6fd6c4');
+    ctx.strokeStyle=grd; ctx.lineWidth=3; ctx.beginPath();
+    pts.forEach((p,i)=> i? ctx.lineTo(p[0],p[1]): ctx.moveTo(p[0],p[1]));
+    ctx.stroke();
+    // Phasen-Marker
+    if(t>0){
+      ctx.fillStyle='#a794ff88'; ctx.fillRect(40,10,(w-50)*0.15,h-40);
+    }
+  }
+  function loop(){ if(playing && t<800){ t+=6; draw(); requestAnimationFrame(loop);} }
+  window.playLove=function(on){ if(on){ playing=true; t=0; loop(); } else { playing=false; t=0; draw(); } };
+  window.addEventListener('resize', draw); draw();
+})();
+
+/* ============ 3. Spiegelsaal ============ */
+(function(){
+  const c=document.getElementById('cvMirror'), ctx=c.getContext('2d');
+  let mx=null,my=null;
+  c.addEventListener('mousemove', e=>{
+    const r=c.getBoundingClientRect();
+    mx=(e.clientX-r.left)*(c.width/r.width);
+    my=(e.clientY-r.top)*(c.height/r.height);
+  });
+  c.addEventListener('mouseleave',()=>{mx=my=null;});
+  function draw(){
+    const w=c.width=c.clientWidth, h=c.height=320;
+    ctx.fillStyle='#0b0f1c'; ctx.fillRect(0,0,w,h);
+    // Spiegel (Kreise)
+    const cx=w/2, cy=h/2;
+    for(let i=0;i<24;i++){
+      const a=i/24*Math.PI*2;
+      const R=Math.min(w,h)*0.38;
+      const x=cx+Math.cos(a)*R, y=cy+Math.sin(a)*R;
+      ctx.beginPath(); ctx.arc(x,y,26,0,Math.PI*2);
+      ctx.fillStyle='#141c34'; ctx.fill();
+      ctx.strokeStyle='#2a3a5c'; ctx.stroke();
+      // Reflex
+      if(mx!==null){
+        const dx=mx-x, dy=my-y, d=Math.hypot(dx,dy);
+        const intensity=Math.max(0, 1-d/300);
+        ctx.beginPath(); ctx.arc(x,y,20*intensity+2,0,Math.PI*2);
+        ctx.fillStyle=`rgba(229,183,105,${0.15+intensity*0.7})`;
+        ctx.fill();
+      }
+    }
+    // Zentrum: Er
+    ctx.beginPath(); ctx.arc(cx,cy,40,0,Math.PI*2);
+    const g=ctx.createRadialGradient(cx,cy,5,cx,cy,40);
+    g.addColorStop(0,'#e5b769'); g.addColorStop(1,'#8f6a2c');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.fillStyle='#0b0f1c'; ctx.font='bold 13px system-ui'; ctx.textAlign='center'; ctx.fillText('ICH', cx, cy+4);
+    // Du (Maus)
+    if(mx!==null){
+      ctx.beginPath(); ctx.arc(mx,my,14,0,Math.PI*2);
+      ctx.fillStyle='#6fd6c4'; ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============ 4. Gaslighting ============ */
+(function(){
+  const items=[
+    {t:"„Das habe ich nie gesagt.“", e:"Deine Erinnerung wird angezweifelt. Nach Monaten glaubst du dir selbst nicht mehr.", d:15},
+    {t:"„Du bildest dir das ein.“", e:"Deine Wahrnehmung wird pathologisiert. Du fängst an, alles zu hinterfragen.", d:20},
+    {t:"„Du bist zu empfindlich.“", e:"Deine Grenze wird als Schwäche umgedeutet. Du entschuldigst dich für dein Fühlen.", d:12},
+    {t:"„Du drehst mir die Worte im Mund um.“", e:"Täter-Opfer-Umkehr. Er ist plötzlich der Verletzte. DARVO.", d:25},
+    {t:"„Alle sagen, dass du überreagierst.“", e:"Isolation. Die 'Anderen' existieren oft nicht — oder er hat sie gegen dich gestimmt.", d:18},
+  ];
+  const buttons=document.querySelectorAll('.gs');
+  const out=document.getElementById('gsOut'), bar=document.getElementById('gsBar'), txt=document.getElementById('gsTxt');
+  let trust=95;
+  buttons.forEach(b=>b.addEventListener('click',()=>{
+    const it=items[+b.dataset.i];
+    out.innerHTML=`<p class="q">${it.t}</p><p class="sub">${it.e}</p>`;
+    trust=Math.max(5, trust-it.d);
+    bar.style.width=trust+'%';
+    txt.textContent = trust>70 ? "Du zweifelst kaum." : trust>40 ? "Du beginnst, dich selbst infrage zu stellen." : trust>20 ? "Du weißt nicht mehr, was wahr ist." : "Du hast dich selbst verloren.";
+  }));
+})();
+
+/* ============ 5. Zyklus (Plotly) ============ */
+(function(){
+  const x=[], y=[], phases=['Idealisierung','Abwertung','Verwerfung','Hoovering'];
+  const colors=['#6fd6c4','#e5b769','#e97b8f','#a794ff'];
+  const traces=[];
+  for(let cycle=0; cycle<4; cycle++){
+    for(let p=0; p<4; p++){
+      const start=cycle*4+p;
+      const val = p===0 ? 90-cycle*8 : p===1 ? 40-cycle*5 : p===2 ? 5 : 60-cycle*7;
+      x.push(start); y.push(val);
+    }
+  }
+  const trace={x, y, mode:'lines+markers', line:{color:'#e5b769',width:3,shape:'spline'}, marker:{size:10,color:y.map((v,i)=>colors[i%4])}};
+  const layout={
+    paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+    font:{color:'#cfd7ee'},
+    xaxis:{title:'Phasen im Zeitverlauf →', gridcolor:'#1f2740', zeroline:false},
+    yaxis:{title:'Emotionale Intensität', gridcolor:'#1f2740', zeroline:false, range:[0,100]},
+    margin:{t:20,l:60,r:20,b:50},
+    showlegend:false
+  };
+  Plotly.newPlot('cycleChart', [trace], layout, {displayModeBar:false, responsive:true});
+})();
+
+/* ============ 6. Peter-Pan Radar ============ */
+(function(){
+  const sliders=document.querySelectorAll('.pps');
+  const labels=['Verantwortungslos','Angst','Einsamkeit','Rollenkonflikt','Narzissmus','Chauvinismus'];
+  const verdict=document.getElementById('ppsVerdict');
+  function render(){
+    const vals=Array.from(sliders).map(s=>+s.value);
+    sliders.forEach((s,i)=>document.getElementById('v'+i).textContent=s.value);
+    const trace={type:'scatterpolar', r:[...vals,vals[0]], theta:[...labels,labels[0]], fill:'toself', line:{color:'#e97b8f'}, fillcolor:'rgba(233,123,143,0.35)'};
+    const layout={
+      paper_bgcolor:'transparent', font:{color:'#cfd7ee'},
+      polar:{radialaxis:{range:[0,10], gridcolor:'#2a3a5c'}, angularaxis:{gridcolor:'#2a3a5c'}, bgcolor:'transparent'},
+      margin:{t:30,l:30,r:30,b:30}, showlegend:false
+    };
+    Plotly.react('ppsRadar', [trace], layout, {displayModeBar:false, responsive:true});
+    const sum=vals.reduce((a,b)=>a+b,0);
+    verdict.textContent = sum<25 ? "Leichte Ausprägung — Wachstum möglich." : sum<45 ? "Mittlere Ausprägung — hohe Toleranz nötig oder Trennung erwägen." : "Starke Ausprägung — dein Wohlbefinden geht vor.";
+  }
+  sliders.forEach(s=>s.addEventListener('input', render));
+  render();
+})();
+
+/* ============ 8. Flying Monkeys ============ */
+(function(){
+  const c=document.getElementById('cvMonkeys'), ctx=c.getContext('2d');
+  const out=document.getElementById('monkeysText');
+  const nodes=[
+    {x:.5,y:.5,r:38,label:'ER',color:'#e5b769',text:'Der Erzähler. Er streut Halbwahrheiten und wartet.'},
+    {x:.2,y:.25,r:26,label:'Nachbarin',color:'#a794ff',text:'"Er hat mir erzählt, sie sei psychisch labil und würde die Kinder vernachlässigen."'},
+    {x:.8,y:.25,r:26,label:'Schwester',color:'#a794ff',text:'"Er war schon immer der Gute. Sie ist bestimmt schuld an der Trennung."'},
+    {x:.15,y:.75,r:26,label:'Anwalt',color:'#a794ff',text:'"Mein Mandant ist sehr um das Wohl der Kinder besorgt. Die Mutter wirkt instabil."'},
+    {x:.85,y:.75,r:26,label:'Jugendamt',color:'#a794ff',text:'"Nach unserem Eindruck ist die Mutter überfordert — er hingegen scheint kooperativ."'},
+    {x:.5,y:.88,r:22,label:'DU',color:'#6fd6c4',text:'Du stehst allein — umzingelt von einem Chor, den er dirigiert hat.'},
+  ];
+  function draw(){
+    const w=c.width=c.clientWidth, h=c.height=360;
+    ctx.fillStyle='#0b0f1c'; ctx.fillRect(0,0,w,h);
+    // Linien
+    ctx.strokeStyle='#2a3a5c66'; ctx.lineWidth=1;
+    for(let i=1;i<nodes.length-1;i++){
+      ctx.beginPath();
+      ctx.moveTo(nodes[0].x*w, nodes[0].y*h);
+      ctx.lineTo(nodes[i].x*w, nodes[i].y*h);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(nodes[i].x*w, nodes[i].y*h);
+      ctx.lineTo(nodes[5].x*w, nodes[5].y*h);
+      ctx.stroke();
+    }
+    nodes.forEach(n=>{
+      ctx.beginPath(); ctx.arc(n.x*w, n.y*h, n.r, 0, Math.PI*2);
+      ctx.fillStyle=n.color; ctx.fill();
+      ctx.fillStyle='#0b0f1c'; ctx.font='bold 11px system-ui'; ctx.textAlign='center';
+      ctx.fillText(n.label, n.x*w, n.y*h+4);
+    });
+  }
+  c.addEventListener('click', e=>{
+    const r=c.getBoundingClientRect();
+    const x=(e.clientX-r.left)*(c.width/r.width), y=(e.clientY-r.top)*(c.height/r.height);
+    const w=c.width, h=c.height;
+    for(const n of nodes){
+      if(Math.hypot(x-n.x*w, y-n.y*h) < n.r){
+        out.innerHTML = `<p class="q">${n.text}</p>`;
+        return;
+      }
+    }
+  });
+  window.addEventListener('resize', draw); draw();
+})();
+
+/* ============ 9. DARVO ============ */
+(function(){
+  const stage=document.getElementById('darvoStage');
+  const orig='<p><b>Du:</b> "Du hast mich gestern vor deinen Freunden ausgelacht. Das hat mich verletzt."</p>';
+  document.getElementById('dv1').onclick=()=>{ stage.innerHTML=orig+'<p><b>Er (Deny):</b> "Was? Das habe ich nie getan. Du bildest dir das ein."</p>'; };
+  document.getElementById('dv2').onclick=()=>{ stage.innerHTML=orig+'<p><b>Er (Deny):</b> "Das habe ich nie getan."</p><p><b>Er (Attack):</b> "Du bist so überempfindlich. Immer machst du aus einer Mücke einen Elefanten."</p>'; };
+  document.getElementById('dv3').onclick=()=>{ stage.innerHTML=orig+'<p><b>Er (Deny):</b> "Das habe ich nie getan."</p><p><b>Er (Attack):</b> "Du bist so überempfindlich."</p><p><b>Er (Reverse):</b> "Weißt du, wie verletzend es für <em>mich</em> ist, dass du mir so etwas unterstellst? <em>Ich</em> bin das Opfer hier."</p><p class="sub">In 30 Sekunden bist du die Täterin und er das Opfer. Willkommen bei DARVO.</p>'; };
+  document.getElementById('dvR').onclick=()=>{ stage.innerHTML=orig; };
+})();
+
+/* ============ 10. Kind ============ */
+(function(){
+  const c=document.getElementById('cvKid'), ctx=c.getContext('2d');
+  const r=document.getElementById('kidR'), txt=document.getElementById('kidTxt');
+  function draw(){
+    const w=c.width=c.clientWidth, h=c.height=240;
+    ctx.fillStyle='#0b0f1c'; ctx.fillRect(0,0,w,h);
+    const v=+r.value/100;
+    // Zwei Eltern-Kreise
+    const pull=v*120;
+    ctx.fillStyle='#e5b769'; ctx.beginPath(); ctx.arc(w*0.2, h/2, 40, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b0f1c'; ctx.font='bold 12px system-ui'; ctx.textAlign='center'; ctx.fillText('Papa', w*0.2, h/2+4);
+    ctx.fillStyle='#6fd6c4'; ctx.beginPath(); ctx.arc(w*0.8, h/2, 40, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='#0b0f1c'; ctx.fillText('Mama', w*0.8, h/2+4);
+    // Kind in der Mitte — je nach Zug verzerrt
+    const cx=w/2 - (v-.5)*40;
+    const stretch=1+v*0.8;
+    ctx.save();
+    ctx.translate(cx, h/2);
+    ctx.scale(stretch, 1/stretch);
+    ctx.beginPath(); ctx.arc(0,0, 26, 0, Math.PI*2);
+    ctx.fillStyle=`hsl(${340-v*60}, ${40+v*40}%, ${70-v*20}%)`;
+    ctx.fill();
+    ctx.restore();
+    ctx.fillStyle='#0b0f1c'; ctx.font='bold 11px system-ui'; ctx.fillText('Kind', cx, h/2+4);
+    // Seile
+    ctx.strokeStyle='#e    ctx.strokeStyle=`#e97b8f`; ctx.lineWidth=2;
+    for(let i=0;i<3;i++){
+      ctx.beginPath();
+      ctx.moveTo(w*0.2+40, h/2);
+      ctx.lineTo(cx-20+i*15, h/2-10);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(w*0.8-40, h/2);
+      ctx.lineTo(cx+20-i*15, h/2-10);
+      ctx.stroke();
+    }
+    txt.textContent = v<20 ? "Das Kind ruht in sich. Loyalität ist frei." : v<50 ? "Erste Zerreißprobe. Das Kind spürt den Zwiespalt." : v<80 ? "Das Kind wird zum Boten, zur Waffe. Es beginnt zu spalten." : "Zerrissenheit. Das Kind opfert seine Ganzheit, um beide Elternteile nicht zu verlieren.";
+  }
+  r.addEventListener('input', draw);
+  window.addEventListener('resize', draw); draw();
+})();
+
+/* ============ 11. Test ============ */
+(function(){
+  const questions = [
+    "Ich fühle mich schuldig, wenn ich eigene Bedürfnisse äußere.",
+    "Ich zweifle oft an meiner eigenen Wahrnehmung.",
+    "Ich habe Kontakt zu Freunden reduziert, seit ich in dieser Beziehung bin.",
+    "Ich entschuldige mich häufig, auch wenn ich nichts falsch gemacht habe.",
+    "Gespräche über Probleme enden meist damit, dass ich als Problem dastehe.",
+    "Ich fühle mich in seiner/ihrer Gegenwart oft angespannt.",
+    "Ich verheimliche vor anderen, wie er/sie sich zu Hause verhält.",
+    "Ich habe körperliche Beschwerden ohne klare Ursache (Kopfschmerzen, Magen, Schlaf).",
+    "Ich habe Angst, allein nicht zurechtzukommen.",
+    "Meine Meinung wird regelmäßig lächerlich gemacht oder abgetan.",
+    "Ich erinnere mich schlechter an Dinge als früher.",
+    "Ich habe das Gefühl, auf Eierschalen zu laufen.",
+    "Sex fühlt sich oft wie eine Pflicht an, nicht wie Freude.",
+    "Ich werde vor anderen bloßgestellt oder herabgesetzt.",
+    "Ich bekomme selten ehrliche Entschuldigungen.",
+    "Ich habe das Gefühl, meine Persönlichkeit verloren zu haben.",
+    "Er/sie leugnet Dinge, die nachweislich passiert sind.",
+    "Ich werde für seine/ihre schlechte Laune verantwortlich gemacht.",
+    "Ich sehne mich nach der Person, in die ich mich verliebt habe — sie ist weg.",
+    "Ich habe manchmal Gedanken, dass ich so nicht weiterleben will."
+  ];
+  const box = document.getElementById('testBox');
+  questions.forEach((q,i)=>{
+    const row = document.createElement('div');
+    row.className = 'mini';
+    row.style.marginTop = '8px';
+    row.innerHTML = `<div style="margin-bottom:6px">${i+1}. ${q}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${[0,1,2].map(v=>`<button data-q="${i}" data-v="${v}" class="tq">${v}</button>`).join('')}
+      </div>`;
+    box.appendChild(row);
+  });
+  const answers = {};
+  box.addEventListener('click', e=>{
+    if(!e.target.classList.contains('tq')) return;
+    const q = e.target.dataset.q, v = +e.target.dataset.v;
+    answers[q] = v;
+    box.querySelectorAll(`.tq[data-q="${q}"]`).forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+  });
+  window.scoreTest = function(){
+    let score = 0, answered = 0;
+    for(const k in answers){ score += answers[k]; answered++; }
+    const out = document.getElementById('testResult');
+    out.style.display='block';
+    if(answered < 15){ out.innerHTML = `<p class="warn">Bitte beantworte mindestens 15 Fragen.</p>`; return; }
+    let level, color, text;
+    if(score <= 8){ level="Grüner Bereich"; color="var(--teal)"; text="Deine Beziehung scheint überwiegend gesund. Achte auf einzelne Muster, aber es gibt keinen Grund zur Alarmierung."; }
+    else if(score <= 18){ level="Gelber Bereich"; color="var(--gold)"; text="Es gibt deutliche belastende Muster. Sprich mit einer vertrauten Person darüber und beobachte genauer. Setze klare Grenzen."; }
+    else if(score <= 28){ level="Oranger Bereich"; color="#ff9e5c"; text="Deine Beziehung zeigt starke Anzeichen emotionaler Gewalt. Hol dir professionelle Unterstützung — eine Beratungsstelle, eine Therapeutin, eine Freundin des Vertrauens."; }
+    else { level="Roter Bereich"; color="var(--rose)"; text="Du befindest dich in einer akut schädlichen Beziehungssituation. Bitte suche dir Hilfe — beim Hilfetelefon Gewalt gegen Frauen (08000 116 016), bei einer Fachberatungsstelle oder einer Therapeut:in. Du bist nicht allein."; }
+    out.innerHTML = `<h3 style="color:${color}">${level} — ${score} Punkte</h3><p>${text}</p>`;
+  };
+})();
+
+/* ============ 12. Threads ============ */
+(function(){
+  const threads = [
+    ["Grenzen","Ein „Nein" ist ein vollständiger Satz. Übe es, ohne Rechtfertigung."],
+    ["Zeugen","Sprich mit Menschen. Verschweigen macht die Manipulation mächtig."],
+    ["Dokumentation","Ein Notizbuch mit Datum. Deine Erinnerung ist deine Wahrheit."],
+    ["Finanzen","Eigenes Konto, eigener Zugriff, eigener Notgroschen."],
+    ["Therapie","Nicht, um „reparabler" zu werden. Sondern, um dich zu erinnern, wer du bist."],
+    ["Körper","Bewegung, Schlaf, Essen. Der Körper trägt, was die Seele nicht sagen kann."],
+    ["Empathie für dich","Sprich mit dir wie mit deiner besten Freundin."],
+    ["Erinnerung","Wer warst du, bevor du ihn/sie kanntest? Hol diese Person zurück."],
+    ["Realitätscheck","Vertraue deinen Beobachtungen. Nicht seinen Erklärungen."],
+    ["Netzwerk","Freundinnen, Familie, Beratungsstellen. Baue Brücken, keine Mauern."],
+    ["Kein Kontakt","Wenn möglich: Funkstille. Jede Nachricht ist eine Tür für Manipulation."],
+    ["Selbstliebe","Nicht als Ziel, sondern als tägliche Übung. Kleine Gesten an dich selbst."]
+  ];
+  const box = document.getElementById('threads');
+  threads.forEach((t,i)=>{
+    const el = document.createElement('div');
+    el.className = 'mini';
+    el.innerHTML = `<div style="color:var(--gold);font-weight:600;margin-bottom:4px">${i+1}. ${t[0]}</div><div style="font-size:13px;color:var(--dim)">${t[1]}</div>`;
+    box.appendChild(el);
+  });
+})();
+
+/* ============ 13. Herz ============ */
+(function(){
+  const c=document.getElementById('cvHeart'), ctx=c.getContext('2d');
+  let t=0, pulse=0;
+  c.addEventListener('click', ()=>{ pulse=1; });
+  function draw(){
+    const w=c.width=c.clientWidth, h=c.height=200;
+    ctx.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2;
+    const s = 3 + Math.sin(t*0.05)*0.3 + pulse*2;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.scale(s,s);
+    ctx.beginPath();
+    for(let i=0;i<Math.PI*2;i+=0.01){
+      const x = 16*Math.pow(Math.sin(i),3);
+      const y = -(13*Math.cos(i) - 5*Math.cos(2*i) - 2*Math.cos(3*i) - Math.cos(4*i));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    const g=ctx.createRadialGradient(0,0,2,0,0,20);
+    g.addColorStop(0,'#ffd4dc'); g.addColorStop(1,'#e97b8f');
+    ctx.fillStyle=g; ctx.fill();
+    ctx.restore();
+    pulse *= 0.92;
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+</script>
+</body>
+</html>
