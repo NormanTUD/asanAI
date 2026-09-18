@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Making It Explicit — Interaktive Reise durch Brandoms Meisterwerk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<style>
+  :root{
+    --bg:#0a0e1a;
+    --bg2:#111827;
+    --panel:rgba(20,25,45,0.75);
+    --ink:#e8ecf7;
+    --dim:#8b93a7;
+    --accent:#ffb454;
+    --accent2:#7c9eff;
+    --accent3:#ff7ab6;
+    --good:#5eead4;
+    --bad:#f87171;
+    --line:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Georgia','Iowan Old Style',serif;line-height:1.6;overflow-x:hidden}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(124,158,255,0.12), transparent 45%),
+      radial-gradient(circle at 85% 70%, rgba(255,122,182,0.10), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(255,180,84,0.08), transparent 50%);
+  }
+  header{
+    position:relative;z-index:1;
+    padding:80px 24px 50px;text-align:center;
+    background:linear-gradient(180deg, rgba(10,14,26,0) 0%, rgba(10,14,26,0.6) 100%);
+  }
+  header h1{
+    font-family:'Playfair Display','Georgia',serif;
+    font-size:clamp(2.2rem, 5vw, 4rem);
+    margin:0 0 12px;
+    background:linear-gradient(120deg, var(--accent) 0%, var(--accent3) 50%, var(--accent2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    letter-spacing:-0.02em;
+  }
+  header .sub{color:var(--dim);font-style:italic;font-size:1.1rem;max-width:720px;margin:0 auto}
+  header .brandom{margin-top:10px;color:var(--accent2);font-size:0.95rem;letter-spacing:0.15em;text-transform:uppercase}
+
+  nav.toc{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(14px);
+    background:rgba(10,14,26,0.75);
+    border-bottom:1px solid var(--line);
+    padding:12px 20px;
+    display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+    font-family:'Inter','Helvetica',sans-serif;font-size:0.85rem;
+  }
+  nav.toc a{
+    color:var(--dim);text-decoration:none;padding:6px 12px;border-radius:999px;
+    border:1px solid transparent;transition:all .25s;
+  }
+  nav.toc a:hover{color:var(--ink);border-color:var(--line);background:rgba(255,255,255,0.03)}
+
+  main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:40px 24px 120px}
+  section.chapter{
+    margin:60px 0;
+    padding:36px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:24px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 20px 60px -20px rgba(0,0,0,0.5);
+  }
+  section.chapter h2{
+    font-family:'Playfair Display',serif;
+    font-size:2rem;margin:0 0 8px;
+    color:var(--accent);
+  }
+  section.chapter .chapno{
+    font-family:'Inter',sans-serif;font-size:0.75rem;letter-spacing:0.25em;
+    color:var(--accent2);text-transform:uppercase;margin-bottom:4px;
+  }
+  section.chapter .lead{
+    font-style:italic;color:var(--dim);margin-bottom:20px;font-size:1.05rem;
+    border-left:3px solid var(--accent);padding-left:14px;
+  }
+  .demo{
+    margin:24px 0;
+    background:rgba(0,0,0,0.35);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px;
+  }
+  .demo h3{margin:0 0 12px;color:var(--accent3);font-family:'Inter',sans-serif;font-size:1.05rem;letter-spacing:0.02em}
+  .demo .caption{color:var(--dim);font-size:0.9rem;margin-bottom:14px;font-style:italic}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0;align-items:center}
+  .controls label{display:flex;flex-direction:column;font-size:0.85rem;color:var(--dim);gap:4px;min-width:140px}
+  .controls input[type=range]{accent-color:var(--accent);width:100%}
+  .controls button{
+    background:linear-gradient(135deg, var(--accent2), var(--accent3));
+    color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;
+    cursor:pointer;font-family:'Inter',sans-serif;font-size:0.85rem;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .controls button:hover{transform:translateY(-1px);box-shadow:0 6px 20px -6px var(--accent3)}
+  .controls select{
+    background:rgba(255,255,255,0.05);color:var(--ink);border:1px solid var(--line);
+    padding:6px 10px;border-radius:6px;font-family:inherit;
+  }
+  canvas{display:block;border-radius:10px;background:rgba(0,0,0,0.25);max-width:100%}
+  .output{
+    margin-top:12px;padding:12px 16px;background:rgba(0,0,0,0.4);
+    border-left:3px solid var(--accent2);border-radius:6px;
+    font-family:'JetBrains Mono','Consolas',monospace;font-size:0.88rem;color:var(--good);
+    min-height:24px;white-space:pre-wrap;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media (max-width:800px){.grid2{grid-template-columns:1fr}}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;background:rgba(124,158,255,0.15);color:var(--accent2);font-size:0.75rem;font-family:'Inter',sans-serif;margin-right:6px}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:0.9rem}
+  .kv dt{color:var(--accent);font-weight:600}
+  .kv dd{margin:0;color:var(--ink)}
+  .quote{
+    border-left:3px solid var(--accent3);padding:10px 16px;margin:16px 0;
+    background:rgba(255,122,182,0.05);border-radius:0 8px 8px 0;font-style:italic;
+  }
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  .node{
+    padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.06);
+    border:1px solid var(--line);cursor:pointer;transition:all .2s;font-size:0.9rem;
+  }
+  .node:hover{background:rgba(255,180,84,0.15);border-color:var(--accent)}
+  .node.active{background:var(--accent);color:#000;border-color:var(--accent)}
+  .arrow{color:var(--dim);font-size:1.2rem}
+  footer{
+    text-align:center;padding:40px 20px;color:var(--dim);font-size:0.85rem;
+    border-top:1px solid var(--line);margin-top:40px;
+  }
+  .tag{font-family:'Inter',sans-serif;font-size:0.7rem;color:var(--dim);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px}
+  .highlight{color:var(--accent);font-weight:600}
+  .h2{color:var(--accent2);font-weight:600}
+  .h3{color:var(--accent3);font-weight:600}
+  details summary{cursor:pointer;color:var(--accent2);padding:6px 0;font-family:'Inter',sans-serif;font-size:0.9rem}
+  details[open] summary{color:var(--accent)}
+  .prose p{margin:10px 0}
+  .step-nav{display:flex;gap:8px;margin:12px 0}
+  .step-nav button{flex:1;background:rgba(255,255,255,0.05);color:var(--ink);border:1px solid var(--line);padding:8px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;font-size:0.8rem}
+  .step-nav button.on{background:var(--accent);color:#000;border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brandom">Robert B. Brandom · 1994</div>
+  <h1>Making It Explicit</h1>
+  <div class="sub">Reasoning, Representing, and Discursive Commitment — eine interaktive Reise durch die Frage: Was macht uns zu Wesen, die etwas <em>sagen</em> und <em>meinen</em> können?</div>
+</header>
+
+<nav class="toc">
+  <a href="#intro">Motivation</a>
+  <a href="#c1">1 · Normen</a>
+  <a href="#c2">2 · Inferenz</a>
+  <a href="#c3">3 · Deontic Scorekeeping</a>
+  <a href="#c4">4 · Perzeption & Handlung</a>
+  <a href="#c5">5 · Wahrheit & Referenz</a>
+  <a href="#c6">6 · Substitution</a>
+  <a href="#c7">7 · Anaphora</a>
+  <a href="#c8">8 · De Re / De Dicto</a>
+  <a href="#c9">9 · Objektivität</a>
+  <a href="#syn">Synthese</a>
+</nav>
+
+<main>
+
+<!-- ============ INTRODUCTION ============ -->
+<section id="intro" class="chapter">
+  <div class="chapno">Prolog</div>
+  <h2>Die Frage, die alles antreibt</h2>
+  <div class="lead">"Wir sind die Wesen, die 'wir' sagen können." — Was heißt es, ein Wesen zu sein, das denkt, spricht, handelt und Gründe für all das geben kann?</div>
+  
+  <div class="prose">
+    <p>Brandom fragt: <span class="highlight">Was unterscheidet uns von Thermostaten, Papageien und Steinen?</span> Alle drei reagieren differenziert auf ihre Umgebung. Ein Thermostat reagiert auf Temperatur, ein Papagei kann "Das ist rot" krähen, ein Stein rostet oder fällt. Aber keines davon <em>versteht</em>, was es tut.</p>
+    <p>Die Antwort, die Brandom über 700 Seiten entwickelt: Wir sind die Wesen, die im <span class="h2">Spiel des Gebens und Verlangens von Gründen</span> spielen. Bedeutung entsteht nicht dadurch, dass Wörter auf Dinge zeigen — sondern dadurch, dass wir mit ihnen Behauptungen aufstellen, die andere Behauptungen rechtfertigen oder ausschließen.</p>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 0 · Thermostat vs. Reporter — Wo ist der Unterschied?</h3>
+    <div class="caption">Klick auf die Systeme. Beide reagieren auf "rotes Licht". Aber nur eines <em>meint</em> etwas damit.</div>
+    <canvas id="demo0" width="720" height="280"></canvas>
+    <div class="controls">
+      <button onclick="demo0.trigger('thermo')">🌡️ Thermostat reagiert</button>
+      <button onclick="demo0.trigger('parrot')">🦜 Papagei sagt "rot"</button>
+      <button onclick="demo0.trigger('human')">🧠 Mensch berichtet "rot"</button>
+    </div>
+    <div class="output" id="demo0-out">Wähle ein System und beobachte, was <em>daraus folgt</em>...</div>
+  </div>
+
+  <div class="prose">
+    <p>Der Mensch — anders als Thermostat und Papagei — verpflichtet sich mit "Das ist rot" auf weiteres: <em>Es ist farbig. Es ist nicht grün. Es ist nicht schwarz-weiß.</em> Diese <span class="h3">inferentielle Verknüpfung</span> ist das, was aus einem Signal eine Behauptung macht.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 1: NORMS ============ -->
+<section id="c1" class="chapter">
+  <div class="chapno">Kapitel 1</div>
+  <h2>Normen — die unsichtbare Architektur des Geistes</h2>
+  <div class="lead">Brandoms erster Zug: Intentionalität ist normativ. Zu glauben heißt, sich zu <em>verpflichten</em>. Zu handeln heißt, für Gründe verantwortlich zu sein.</div>
+
+  <div class="prose">
+    <p>Kant hatte gesehen: Was uns von Steinen unterscheidet, ist nicht ein besonderer <em>Stoff</em> (Descartes' res cogitans), sondern eine besondere <em>Verpflichtung</em>. Wenn ich glaube, dass es regnet, dann sollte ich rational auch glauben, dass die Straße nass wird. Dieses "sollte" ist kein Naturgesetz — ich kann es verletzen. Aber es ist auch keine bloße Regelmäßigkeit.</p>
+    <p>Wittgenstein zeigte dann: Normen können nicht bloß in <em>expliziten Regeln</em> bestehen. Denn jede Regel muss angewandt werden, und die Anwendung selbst kann korrekt oder inkorrekt sein — das führt in einen Regress. Also: Normen müssen zuerst <span class="highlight">implizit in Praktiken</span> existieren.</p>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 1a · Der Regel-Regress (Wittgenstein)</h3>
+    <div class="caption">Jede Regel braucht eine Regel für ihre Anwendung — und die braucht wieder eine. Bis wir bei einer <em>Praxis</em> ankommen, die keine Regel mehr ist.</div>
+    <canvas id="regress" width="720" height="360"></canvas>
+    <div class="controls">
+      <button onclick="regress.step()">▶ Nächste Meta-Ebene</button>
+      <button onclick="regress.reset()">↺ Reset</button>
+    </div>
+    <div class="output" id="regress-out">Klick "Nächste Meta-Ebene" um den Regress zu sehen.</div>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 1b · Regelmäßigkeit ≠ Norm (Gerrymandering)</h3>
+    <div class="caption">Aus den bisherigen Punkten kann man <em>beliebig viele</em> "Muster" extrapolieren. Regelmäßigkeit allein bestimmt keine Norm.</div>
+    <div id="plot-gerry" style="height:320px"></div>
+    <div class="controls">
+      <label>Zukünftiger Punkt: <input type="range" id="gerry-x" min="6" max="15" value="10" step="0.1"></label>
+      <button onclick="gerry.newPattern()">🎲 Neues "gültiges" Muster</button>
+    </div>
+    <div class="output" id="gerry-out"></div>
+  </div>
+
+  <div class="prose">
+    <p><span class="h2">Brandoms Lösung:</span> Normen entstehen durch <em>soziale Praktiken der gegenseitigen Zuschreibung</em>. Ich bin verpflichtet zu p, weil andere mich als verpflichtet <em>behandeln</em>. Das ist keine Regel-Anwendung, sondern eine soziale Haltung — die Grundhaltung des <span class="h3">deontic scorekeeping</span>.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 2: INFERENCE ============ -->
+<section id="c2" class="chapter">
+  <div class="chapno">Kapitel 2</div>
+  <h2>Inferentialismus — Bedeutung als Rolle im Schlussfolgern</h2>
+  <div class="lead">Der Inhalt eines Begriffs = seine Rolle im Netzwerk von Gründen. Nicht was er repräsentiert, sondern was aus ihm folgt und woraus er folgt.</div>
+
+  <div class="prose">
+    <p>Die Standard-Semantik (Frege ab 1890, Tarski, Davidson) beginnt mit <span class="highlight">Repräsentation</span>: Wörter beziehen sich auf Dinge, Sätze auf Sachverhalte. Wahrheit kommt zuerst, Inferenz wird abgeleitet.</p>
+    <p>Brandom kehrt das um — im Anschluss an den frühen Frege (Begriffsschrift, 1879) und Sellars: <span class="h2">Inferenz kommt zuerst</span>. Ein Satz hat den Inhalt, den er hat, weil er in bestimmten Schlüssen als Prämisse und Konklusion auftreten kann.</p>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 2 · Baue Bedeutung durch Inferenzen</h3>
+    <div class="caption">Wähle einen Begriff und sieh, welche <em>materiellen Inferenzen</em> (nicht bloß logische!) ihn konstituieren.</div>
+    <div class="controls">
+      <select id="conc-select">
+        <option value="dog">Hund</option>
+        <option value="red">rot</option>
+        <option value="west">westlich von</option>
+        <option value="wednesday">Mittwoch</option>
+      </select>
+    </div>
+    <canvas id="infer-net" width="720" height="420"></canvas>
+    <div class="output" id="infer-out"></div>
+  </div>
+
+  <div class="prose">
+    <p>Beachte: Die Inferenz "A ist westlich von B, also ist B östlich von A" ist <span class="h3">material korrekt</span> — nicht wegen logischer Form, sondern wegen der <em>Bedeutung</em> von "westlich" und "östlich". Wenn Bedeutung inferentielle Rolle ist, dann sind solche materialen Inferenzen konstitutiv, nicht bloß Enthymem.</p>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 2b · Die expressive Rolle der Logik</h3>
+    <div class="caption">Was tut das Wort "wenn... dann..."? Es macht eine Inferenz <em>explizit</em> — bringt sie in eine Form, in der man <em>über</em> sie streiten kann.</div>
+    <div class="grid2">
+      <div>
+        <div class="tag">Implizit (in der Praxis)</div>
+        <div style="padding:12px;background:rgba(0,0,0,0.3);border-radius:8px;font-size:0.95rem">
+          Man <em>tut</em> etwas: schließt von "Es regnet" auf "Die Straße wird nass".
+        </div>
+      </div>
+      <div>
+        <div class="tag">Explizit (durch Konditional)</div>
+        <div style="padding:12px;background:rgba(255,180,84,0.1);border-radius:8px;font-size:0.95rem">
+          Man <em>sagt</em> etwas: "Wenn es regnet, dann wird die Straße nass." Jetzt kann man darüber streiten!
+        </div>
+      </div>
+    </div>
+    <div class="controls" style="margin-top:14px">
+      <button onclick="expr.toggle()">🔄 Wechsle zwischen implizit / explizit</button>
+    </div>
+    <canvas id="expressive" width="720" height="200"></canvas>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 3: DEONTIC SCOREKEEPING ============ -->
+<section id="c3" class="chapter">
+  <div class="chapno">Kapitel 3</div>
+  <h2>Deontic Scorekeeping — das Herzstück</h2>
+  <div class="lead">Sprechen ist wie Baseball. Jede Behauptung ändert den "Punktestand" der Verpflichtungen und Berechtigungen — für Sprecher und Zuhörer.</div>
+
+  <div class="prose">
+    <p>Brandoms zentrales Bild (nach David Lewis): Ein Gespräch ist ein Spiel, in dem jeder Teilnehmer <em>zwei Bücher</em> führt — eines mit <span class="h2">Verpflichtungen (commitments)</span> und eines mit <span class="h3">Berechtigungen (entitlements)</span>. Jede Assertion verändert diesen Score.</p>
+    <p>Wenn ich behaupte "Der Löwe brüllte", dann:</p>
+    <ul>
+      <li>habe ich mich verpflichtet auf: "Ein Säugetier brüllte", "Etwas Lebendiges brüllte"...</li>
+      <li>habe ich mich davon ausgeschlossen: "Nichts brüllte", "Es war still"...</li>
+      <li>berechtige ich andere, dies zu behaupten (Zeugnis)</li>
+      <li>übernehme ich die Verantwortung, es zu rechtfertigen, falls angefochten</li>
+    </ul>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 3 · Interaktiver Scorekeeper — spiele das Spiel</h3>
+    <div class="caption">Zwei Sprecher, ein Gespräch. Behaupte etwas, fordere Rechtfertigung, oder widersprich. Beobachte, wie sich der Score verändert.</div>
+    <div class="controls">
+      <button onclick="score.assert('A','p1')">A: "Es regnet."</button>
+      <button onclick="score.assert('A','p2')">A: "Die Straße ist nass."</button>
+      <button onclick="score.assert('B','p3')">B: "Es ist trocken."</button>
+      <button onclick="score.challenge('B','A','p1')">B fordert Rechtfertigung von A</button>
+      <button onclick="score.justify('A','p1','p2')">A rechtfertigt p1 mit p2</button>
+      <button onclick="score.reset()">↺ Reset</button>
+    </div>
+    <canvas id="scoreCanvas" width="720" height="380"></canvas>
+    <div class="output" id="score-out">Der Score beginnt leer. Jede Behauptung ändert Verpflichtungen (C) und Berechtigungen (E).</div>
+  </div>
+
+  <div class="prose">
+    <p>Beachte die drei fundamentalen Dimensionen: <span class="highlight">Verpflichtung vs. Berechtigung</span>, <span class="h2">intra- vs. interpersonal</span>, und <span class="h3">Autorität vs. Verantwortung</span>. Eine Behauptung ist immer beides: eine Autorisierung anderer (sie dürfen es weitersagen) und eine Verantwortung des Sprechers (er muss es rechtfertigen können, wenn gefordert).</p>
+    <p>Das ist das Herzstück: <em>Behaupten heißt implizit Wissen beanspruchen</em>. Jede Assertion ist eine hybride Haltung — sie schreibt eine Verpflichtung zu <strong>und</strong> übernimmt selbst eine.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 4: PERCEPTION & ACTION ============ -->
+<section id="c4" class="chapter">
+  <div class="chapno">Kapitel 4</div>
+  <h2>Perzeption und Handlung — die Ein- und Ausgänge</h2>
+  <div class="lead">Wie kommt der Diskurs mit der Welt in Kontakt? Durch Sprach-Eingänge (Wahrnehmung) und Sprach-Ausgänge (Handlung). Beide sind zuverlässige differentielle Reaktionsdispositionen — aber begrifflich artikuliert.</div>
+
+  <div class="demo">
+    <h3>Demo 4a · Der Thermometer und der Reporter (Sellars)</h3>
+    <div class="caption">Beide reagieren zuverlässig auf Rot. Der Unterschied? Der Reporter <em>versteht</em> die inferenziellen Konsequenzen.</div>
+    <canvas id="reporter" width="720" height="300"></canvas>
+    <div class="controls">
+      <button onclick="reporter.stimulate('red')">🔴 Roten Gegenstand zeigen</button>
+      <button onclick="reporter.stimulate('green')">🟢 Grünen Gegenstand zeigen</button>
+      <label>Zuverlässigkeit: <input type="range" id="reliability" min="0" max="100" value="90"></label>
+    </div>
+    <div class="output" id="reporter-out"></div>
+  </div>
+
+  <div class="demo">
+    <h3>Demo 4b · Praktisches Schließen — vom Glauben zur Handlung</h3>
+    <div class="caption">Handlungen sind Performances, für die Gründe verlangt werden können. Konstruiere ein praktisches Argument:</div>
+    <div id="practReason" style="min-height:220px"></div>
+    <div class="controls">
+      <button onclick="practReason.addPremise('doxastic')">+ Doxastische Prämisse (Glaube)</button>
+      <button onclick="practReason.addPremise('preference')">+ Präferenz / Norm</button>
+      <button onclick="practReason.conclude()">→ Praktische Schlussfolgerung ableiten</button>
+      <button onclick="practReason.reset()">↺ Reset</button>
+    </div>
+    <div class="output" id="pract-out"></div>
+  </div>
+
+  <div class="prose">
+    <p>Drei Arten von "sollen": <span class="h3">prudentiell</span> ("Wenn du trocken bleiben willst, öffne den Regenschirm"), <span class="h2">institutionell</span> ("Bankangestellte sollen Krawatten tragen"), und <span class="highlight">unbedingt / moralisch</span> ("Man sollte niemandem grundlos schaden"). Alle sind Muster praktischen Schließens, explizit gemacht durch normatives Vokabular.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 5: TRUTH & REFERENCE ============ -->
+<section id="c5" class="chapter">
+  <div class="chapno">Kapitel 5</div>
+  <h2>Wahrheit und Referenz — anaphorisch, nicht substantiell</h2>
+  <div class="lead">"Wahr" bezeichnet keine geheimnisvolle Eigenschaft. Es ist ein pro-sententialer Operator — wie das Pronomen "es" für Sätze.</div>
+
+  <div class="demo">
+    <h3>Demo 5 · Der Prosentenz-Operator</h3>
+    <div class="caption">"Alles was der Polizist sagte, ist wahr" — wie funktioniert das? Klick auf die Aussagen des Polizisten:</div>
+    <div id="prosent" style="padding:14px;background:rgba(0,0,0,0.3);border-radius:8px"></div>
+    <div class="controls">
+      <button onclick="prosent.utter('Der Verdächtige floh nach Norden.')">Polizist: Aussage 1</button>
+      <button onclick="prosent.utter('Er trug einen grauen Mantel.')">Polizist: Aussage 2</button>
+      <button onclick="prosent.utter('Das Fenster war zerbrochen.')">Polizist: Aussage 3</button>
+      <button onclick="prosent.claimAll()">Anna: "Alles was er sagte, ist wahr."</button>
+      <button onclick="prosent.reset()">↺</button>
+    </div>
+    <div class="output" id="pros-out">Anna's Aussage ist eine Quantoren-Prosentenz — anaphorisch abhängig von den Äußerungen des Polizisten.</div>
+  </div>
+
+  <div class="prose">
+    <p>Genauso funktioniert <span class="h3">"bezieht sich auf"</span>: Es ist ein pronomen-bildender Operator. "Der, den Joe 'diesen Vollidioten' nannte" ist ein anaphorisch indirektes Pronomen — es erbt seinen Referenten von Joes ursprünglicher Äußerung.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 6: SUBSTITUTION ============ -->
+<section id="c6" class="chapter">
+  <div class="chapno">Kapitel 6</div>
+  <h2>Substitution — wie Sätze in Teile zerlegt werden</h2>
+  <div class="lead">Wenn nur Sätze inferenziell rollen können, wie können dann Namen und Prädikate Bedeutung haben? Antwort: durch ihre substitutionelle Rolle.</div>
+
+  <div class="demo">
+    <h3>Demo 6 · Fregescher Substitutions-Test</h3>
+    <div class="caption">Ersetze Ausdrücke im Satz. Welche Substitutionen erhalten die Wahrheit? Diese Muster definieren die begriffliche Rolle.</div>
+    <div id="substDemo" style="padding:16px;background:rgba(0,0,0,0.3);border-radius:8px;font-size:1rem;line-height:1.8"></div>
+    <div class="controls">
+      <button onclick="subst.setType('term')">Singularterm ersetzen (symmetrisch)</button>
+      <button onclick="subst.setType('pred')">Prädikat ersetzen (asymmetrisch)</button>
+      <button onclick="subst.doSubst()">▶ Substitution durchführen</button>
+      <button onclick="subst.reset()">↺</button>
+    </div>
+    <div class="output" id="subst-out"></div>
+  </div>
+
+  <div class="prose">
+    <p>Der große Unterschied: <span class="highlight">Singularterme sind symmetrisch intersubstituierbar</span> (a = b heißt: a kann durch b ersetzt werden UND umgekehrt), <span class="h3">Prädikate sind asymmetrisch</span> ("ist ein Hund" → "ist ein Säugetier", aber nicht umgekehrt). Diese asymmetrische Struktur ist der Grund, <em>warum es Singularterme überhaupt gibt</em> — sie erlauben in Kombination mit logischem Vokabular (wie dem Konditional) die vollständige explizite Kodifizierung von Inferenzen.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 7: ANAPHORA ============ -->
+<section id="c7" class="chapter">
+  <div class="chapno">Kapitel 7</div>
+  <h2>Anaphora — Ketten der Bezugnahme</h2>
+  <div class="lead">Wie werden einmalige Ereignisse (Demonstrativa, "dies", "jetzt") in wiederholbare Strukturen eingebunden? Durch Anaphora — Vererbung substitutioneller Verpflichtungen.</div>
+
+  <div class="demo">
+    <h3>Demo 7 · Anaphorische Ketten</h3>
+    <div class="caption">Baue eine anaphorische Kette. Jedes Pronomen erbt seine Referenz vom Antezedens. Ohne Anaphora wären Demonstrativa bedeutungslos!</div>
+    <canvas id="anaphora" width="720" height="360"></canvas>
+    <div class="controls">
+      <button onclick="anaph.addToken('deictic')">+ Deiktisches Token ("dieser Mann")</button>
+      <button onclick="anaph.addToken('pronoun')">+ Pronomen ("er")</button>
+      <button onclick="anaph.addToken('description')">+ Definite Beschreibung ("der Fremde")</button>
+      <button onclick="anaph.reset()">↺</button>
+    </div>
+    <div class="output" id="anaph-out"></div>
+  </div>
+
+  <div class="prose">
+    <p>Fundamental: <span class="h2">Deixis setzt Anaphora voraus</span>, nicht umgekehrt. Ein rein deiktisches "dies" ohne die Möglichkeit anaphorischer Wiederaufnahme wäre kognitiv leer — es könnte in keiner Inferenz auftauchen.</p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 8: DE RE / DE DICTO ============ -->
+<section id="c8" class="chapter">
+  <div class="chapno">Kapitel 8</div>
+  <h2>De Re und De Dicto — die zwei Perspektiven</h2>
+  <div class="lead">Wenn ich sage "Voltaire glaubte, dass der Mann, von dem Napoleon am meisten lernte, ein Philosophenkönig war" — beschreibe ich Voltaires Sicht oder meine? Diese Unterscheidung ist der Schlüssel zur Repräsentation.</div>
+
+  <div class="demo">
+    <h3>Demo 8 · De Dicto vs. De Re Zuschreibung</h3>
+    <div class="caption">Der Detektiv weiß etwas, was der Verdächtige nicht weiß. Wechsle die Perspektive und sieh, wie sich die Zuschreibung ändert.</div>
+    <div class="grid2">
+      <div>
+        <div class="tag">Was Peter glaubt (seine Perspektive)</div>
+        <div id="peter-view" style="padding:12px;background:rgba(124,158,255,0.1);border-radius:8px;min-height:100px"></div>
+      </div>
+      <div>
+        <div class="tag">Was wir wissen (Sprecher-Perspektive)</div>
+        <div id="we-view" style="padding:12px;background:rgba(255,180,84,0.1);border-radius:8px;min-height:100px"></div>
+      </div>
+    </div>
+    <div class="controls" style="margin-top:14px">
+      <button onclick="dere.showDeDicto()">📖 De Dicto Zuschreibung</button>
+      <button onclick="dere.showDeRe()">🎯 De Re Zuschreibung</button>
+      <button onclick="dere.reset()">↺</button>
+    </div>
+    <div class="output" id="dere-out"></div>
+  </div>
+
+  <div class="prose">
+    <p>Die repräsentationale Dimension unseres Denkens — worüber wir denken — ist genau das, was durch <span class="highlight">de re</span>-Zuschreibungen explizit gemacht wird. Und diese Zuschreibungen spiegeln den sozialen Perspektivunterschied zwischen dem, der eine Verpflichtung eingeht, und dem, der sie zuschreibt.</p>
+    <p><span class="h3">Repräsentation ist ein Reflex der sozialen Struktur des Argumentierens.</span></p>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 9: OBJECTIVITY ============ -->
+<section id="c9" class="chapter">
+  <div class="chapno">Kapitel 9</div>
+  <h2>Objektivität — wie Normen über uns hinausweisen</h2>
+  <div class="lead">Wenn Normen von uns gemacht sind, wie können wir uns dann alle irren? Brandoms Antwort: Objektivität ist eine strukturelle Eigenschaft der sozialen Perspektiven — kein Standpunkt hat globales Privileg.</div>
+
+  <div class="demo">
+    <h3>Demo 9 · Der Objektivitäts-Beweis</h3>
+    <div class="caption">Zeige interaktiv, dass "p ist wahr" NICHT äquivalent ist zu "alle glauben p". Die Gemeinschaft kann sich irren.</div>
+    <div id="objProof" style="padding:16px;background:rgba(0,0,0,0.3);border-radius:8px"></div>
+    <div class="controls">
+      <button onclick="objp.step()">▶ Nächster Schritt im Beweis</button>
+      <button onclick="objp.reset()">↺</button>
+    </div>
+    <div class="output" id="obj-out"></div>
+  </div>
+
+  <div class="prose">
+    <p>Jede Perspektive erhält intern die Unterscheidung zwischen <em>was wahr ist</em> und <em>was als wahr gehalten wird</em>. Aber keine Perspektive ist a priori privilegiert. Das ist die <span class="h2">I-Du Sozialität</span>, nicht die I-Wir Sozialität.</p>
+  </div>
+</section>
+
+<!-- ============ SYNTHESIS ============ -->
+<section id="syn" class="chapter" style="border:2px solid var(--accent)">
+  <div class="chapno">Synthese</div>
+  <h2>Die Antwort — wer wir sind</h2>
+  <div class="lead">Wir sind die Wesen, die es explizit machen können. Und wir können uns selbst explizit machen als solche, die es explizit machen.</div>
+
+  <canvas id="synth" width="720" height="420"></canvas>
+
+  <div class="prose" style="margin-top:20px">
+    <p><strong>Brandoms Frage:</strong> Was macht uns zu Wesen, die denken, sprechen, handeln können?</p>
+    <p><strong>Sein Weg:</strong></p>
+    <ol>
+      <li><span class="highlight">Normativer Pragmatismus</span> — Intentionalität ist normativ (Kant)</li>
+      <li><span class="highlight">Praktische Grundierung</span> — Normen sind in Praktiken implizit (Wittgenstein)</li>
+      <li><span class="highlight">Soziales Scorekeeping</span> — Verpflichtungen werden zugeschrieben und anerkannt</li>
+      <li><span class="highlight">Inferenzielle Semantik</span> — Bedeutung = Rolle im Schließen (Frege, Sellars)</li>
+      <li><span class="highlight">Ausdrucksvolle Rolle der Logik</span> — Logik macht implizite Inferenzen explizit</li>
+      <li><span class="highlight">Substitution und Anaphora</span> — von Sätzen zu Objekten und Tokens</li>
+      <li><span class="highlight">De Re als sozialer Perspektivwechsel</span> — Repräsentation aus Kommunikation</li>
+      <li><span class="highlight">Objektivität als Struktur</span> — jede Perspektive unterscheidet Sein und Meinen</li>
+    </ol>
+    <p><strong>Seine Antwort:</strong> Wir sind rationale, expressive, logische Wesen. Wir spielen das Spiel des Gebens und Verlangens von Gründen. Und wir können — durch Logik — <em>über dieses Spiel selbst</em> sprechen. Das ist Selbstbewusstsein im vollen Sinn.</p>
+    <p style="text-align:center;font-style:italic;color:var(--accent);margin-top:30px;font-size:1.15rem">
+      "Wir haben die Normen getroffen — und sie sind unsere."
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Interaktive Visualisierung von Robert Brandom, <em>Making It Explicit</em> (Harvard University Press, 1994) ·
+  Alle Kernkonzepte durch spielbare Demos erschlossen.
+</footer>
+
+<script>
+/* ============================================================
+   COMMON UTILITIES
+   ============================================================ */
+function ctx(id){ const c=document.getElementById(id); return {c, x:c.getContext('2d'), w:c.width, h:c.height}; }
+function clear(o, color='rgba(10,14,26,0.9)'){ o.x.fillStyle=color; o.x.fillRect(0,0,o.w,o.h); }
+function drawText(o, txt, x, y, opts={}){
+  o.x.fillStyle=opts.color||'#e8ecf7';
+  o.x.font=opts.font||'14px Georgia';
+  o.x.textAlign=opts.align||'left';
+  o.x.fillText(txt,x,y);
+}
+function roundRect(x,cx,cy,w,h,r,fill,stroke){
+  x.beginPath();
+  x.moveTo(cx+r,cy);
+  x.arcTo(cx+w,cy,cx+w,cy+h,r);
+  x.arcTo(cx+w,cy+h,cx,cy+h,r);
+  x.arcTo(cx,cy+h,cx,cy,r);
+  x.arcTo(cx,cy,cx+w,cy,r);
+  x.closePath();
+  if(fill){x.fillStyle=fill; x.fill();}
+  if(stroke){x.strokeStyle=stroke; x.stroke();}
+}
+
+/* ============================================================
+   DEMO 0: THERMOSTAT vs PARROT vs HUMAN
+   ============================================================ */
+const demo0 = (()=>{
+  const o = ctx('demo0');
+  const out = document.getElementById('demo0-out');
+  function draw(active){
+    clear(o);
+    const items = [
+      {x:120, label:'🌡️ Thermostat', sub:'reagiert → nichts folgt', color:'#8b93a7'},
+      {x:360, label:'🦜 Papagei', sub:'sagt "rot" → nichts folgt', color:'#ffb454'},
+      {x:600, label:'🧠 Mensch', sub:'sagt "rot" → Kaskade!', color:'#7c9eff'}
+    ];
+    items.forEach(it=>{
+      const isActive = active===it.label.split(' ')[1]?.toLowerCase() || active===it.label;
+      const glow = isActive?18:0;
+      o.x.shadowBlur=glow; o.x.shadowColor=it.color;
+      roundRect(o.x, it.x-90, 60, 180, 100, 12, isActive?it.color+'33':'rgba(255,255,255,0.05)', it.color);
+      o.x.shadowBlur=0;
+      drawText(o,it.label,it.x,105,{align:'center',color:it.color,font:'bold 16px Georgia'});
+      drawText(o,it.sub,it.x,135,{align:'center',color:'#8b93a7',font:'12px Georgia'});
+    });
+    // Show inferential cascade for human
+    if(active==='human'){
+      const arrows = ['→ es ist farbig','→ es ist nicht grün','→ es ist wahrnehmbar','→ jemand könnte sagen: "Das ist auch rot"'];
+      arrows.forEach((a,i)=>drawText(o,a,600,190+i*22,{align:'center',color:'#5eead4',font:'italic 12px Georgia'}));
+    }
+  }
+  draw();
+  return {
+    trigger(kind){
+      draw(kind);
+      const msgs = {
+        thermo: '🌡️ Der Thermostat schaltet an. Das ist alles. Keine Verpflichtung, keine Konsequenz, kein Anspruch auf Rechtfertigung. Es geschieht nur.',
+        parrot: '🦜 Der Papagei krächzt "rot". Andere könnten ihn als Signal nutzen — aber er selbst hat keine Verpflichtungen dadurch übernommen. Es folgt nichts für ihn.',
+        human: '🧠 Der Mensch behauptet: "Das ist rot." Damit hat er sich verpflichtet auf: (a) es ist farbig, (b) es ist nicht grün, (c) er muss es rechtfertigen können, (d) andere dürfen es weiterverwenden. Das ist eine BEHAUPTUNG.'
+      };
+      out.innerHTML = msgs[kind] || msgs.human;
+    }
+  };
+})();
+
+/* ============================================================
+   DEMO 1a: REGRESS OF RULES
+   ============================================================ */
+const regress = (()=>{
+  const o = ctx('regress');
+  const out = document.getElementById('regress-out');
+  let level = 0;
+  const rules = [
+    {t:'Regel R₀:', d:'"Verwende \'rot\' für rote Dinge."'},
+    {t:'Meta-Regel R₁:', d:'"So wendest du R₀ an: entscheide, ob dies rot ist."'},
+    {t:'Meta-Meta-Regel R₂:', d:'"So wendest du R₁ an: entscheide, ob dies eine Anwendung von R₀ ist..."'},
+    {t:'Meta³-Regel R₃:', d:'"So wendest du R₂ an... aber wie wendest du R₃ an?"'},
+    {t:'∞ REGRESS!', d:'Ohne implizite praktische Kompetenz kommIch sehe, dass du eine sehr lange Fortsetzung erwartest. Ich muss ehrlich sein: Die HTML-Datei, die ich begonnen habe, würde in ihrer vollständigen Form (alle 9+ Kapitel als hochwertige interaktive Demos mit Canvas, Plotly, komplexem JavaScript) den verfügbaren Antwortumfang bei weitem überschreiten. Lass mich stattdessen die Datei **vollständig neu und in sich abgeschlossen** produzieren – kompakter im Code, aber mit allen Kapiteln funktionsfähig, damit du eine **wirklich lauffähige, komplette Datei** in einer einzigen Antwort bekommst.
+
+Hier ist die vollständige, in sich geschlossene interaktive HTML-Datei:
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Making It Explicit — Brandom interaktiv</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root{--bg:#0a0e1a;--panel:rgba(20,25,45,.75);--ink:#e8ecf7;--dim:#8b93a7;--acc:#ffb454;--acc2:#7c9eff;--acc3:#ff7ab6;--good:#5eead4;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.6;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 15% 20%,rgba(124,158,255,.12),transparent 45%),radial-gradient(circle at 85% 70%,rgba(255,122,182,.10),transparent 45%),radial-gradient(circle at 50% 100%,rgba(255,180,84,.08),transparent 50%)}
+  header{position:relative;z-index:1;padding:70px 24px 40px;text-align:center}
+  h1{font-size:clamp(2rem,5vw,3.8rem);margin:0 0 12px;background:linear-gradient(120deg,var(--acc),var(--acc3) 50%,var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-style:italic;max-width:720px;margin:0 auto}
+  .brandom{color:var(--acc2);font-size:.9rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px}
+  nav.toc{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(10,14,26,.8);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-family:Inter,sans-serif;font-size:.8rem}
+  nav.toc a{color:var(--dim);text-decoration:none;padding:5px 10px;border-radius:999px;border:1px solid transparent;transition:.2s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--line);background:rgba(255,255,255,.03)}
+  main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:30px 20px 100px}
+  section{margin:50px 0;padding:32px;background:var(--panel);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
+  section h2{font-size:1.8rem;margin:0 0 6px;color:var(--acc)}
+  .chapno{font-family:Inter,sans-serif;font-size:.7rem;letter-spacing:.25em;color:var(--acc2);text-transform:uppercase;margin-bottom:4px}
+  .lead{font-style:italic;color:var(--dim);margin-bottom:18px;border-left:3px solid var(--acc);padding-left:12px}
+  .demo{margin:20px 0;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .demo h3{margin:0 0 8px;color:var(--acc3);font-family:Inter,sans-serif;font-size:1rem}
+  .caption{color:var(--dim);font-size:.88rem;margin-bottom:12px;font-style:italic}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;align-items:center}
+  .controls label{display:flex;flex-direction:column;font-size:.8rem;color:var(--dim);gap:3px;min-width:130px}
+  .controls input[type=range]{accent-color:var(--acc);width:100%}
+  button{background:linear-gradient(135deg,var(--acc2),var(--acc3));color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;font-size:.82rem;transition:transform .15s}
+  button:hover{transform:translateY(-1px)}
+  button.sec{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--line)}
+  select{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--line);padding:6px 10px;border-radius:6px;font-family:inherit}
+  canvas{display:block;border-radius:10px;background:rgba(0,0,0,.25);max-width:100%}
+  .output{margin-top:10px;padding:12px 14px;background:rgba(0,0,0,.4);border-left:3px solid var(--acc2);border-radius:6px;font-family:'JetBrains Mono',Consolas,monospace;font-size:.85rem;color:var(--good);min-height:24px;white-space:pre-wrap}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:800px){.grid2{grid-template-columns:1fr}}
+  .highlight{color:var(--acc);font-weight:600}
+  .h2{color:var(--acc2);font-weight:600}
+  .h3{color:var(--acc3);font-weight:600}
+  .prose p{margin:10px 0}
+  .tag{font-family:Inter,sans-serif;font-size:.7rem;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+  footer{text-align:center;padding:30px 20px;color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);margin-top:30px}
+  .score-table{width:100%;border-collapse:collapse;font-family:Inter,sans-serif;font-size:.85rem;margin-top:10px}
+  .score-table th,.score-table td{padding:6px 10px;border:1px solid var(--line);text-align:left}
+  .score-table th{background:rgba(255,180,84,.1);color:var(--acc)}
+  .commit{color:var(--acc3)}
+  .entitle{color:var(--good)}
+</style>
+</head>
+<body>
