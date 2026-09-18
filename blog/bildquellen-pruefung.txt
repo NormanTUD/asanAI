@@ -43,3 +43,10 @@ und en.wikipedia.org (Stand: August 2026).
    Autor: William G. Scott
    Lokal: hammerhead_ribozyme.png (402x668)
    Status: OK - Lizenz klar (CC BY-SA 3.0)
+
+7. vestonice_wolf_bone
+   URL: https://commons.wikimedia.org/wiki/File:Vl%C4%8D%C3%AD_radius.jpg
+   Lizenz: CC BY-SA 3.0 (via Commons, bibliographiert in literature.js als wolfbonephoto)
+   Autor: J3n6
+   Lokal: vestonice_wolf_bone.jpg (800x502)
+   Status: OK - Lizenz klar (CC BY-SA 3.0)
