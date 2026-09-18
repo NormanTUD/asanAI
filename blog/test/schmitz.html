@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Hermann Schmitz – Die Neue Phänomenologie interaktiv</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --bg:#0a0e1a;
+  --bg2:#111827;
+  --panel:#1a2033;
+  --panel2:#232b42;
+  --accent:#f59e0b;
+  --accent2:#ec4899;
+  --accent3:#8b5cf6;
+  --leib:#10b981;
+  --koerper:#3b82f6;
+  --text:#e5e7eb;
+  --dim:#9ca3af;
+  --border:#2d3654;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:linear-gradient(135deg,var(--bg) 0%,#0f1729 100%);color:var(--text);font-family:'Georgia',serif;line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);z-index:100;padding:.7rem 1rem;border-bottom:1px solid var(--border);display:flex;gap:.3rem;overflow-x:auto;white-space:nowrap;font-size:.85rem}
+nav a{color:var(--dim);text-decoration:none;padding:.3rem .7rem;border-radius:6px;transition:all .2s}
+nav a:hover{color:var(--accent);background:rgba(245,158,11,.1)}
+main{max-width:1100px;margin:0 auto;padding:5rem 1.5rem 4rem}
+section{margin:4rem 0;padding:2rem;background:var(--panel);border-radius:14px;border:1px solid var(--border);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+h1{font-size:2.8rem;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,var(--accent3) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:.3rem;letter-spacing:-.02em}
+h2{font-size:1.9rem;color:var(--accent);border-bottom:2px solid var(--border);padding-bottom:.5rem;margin-top:0}
+h3{color:var(--accent2);font-size:1.3rem;margin-top:1.8rem}
+h4{color:var(--accent3);margin-bottom:.5rem}
+.subtitle{color:var(--dim);font-style:italic;font-size:1.1rem;margin-bottom:2rem}
+.hero{text-align:center;padding:3rem 2rem;background:radial-gradient(ellipse at center,rgba(139,92,246,.15) 0%,transparent 70%);border:1px solid var(--border);border-radius:20px}
+.motiv{background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(236,72,153,.1));border-left:4px solid var(--accent);padding:1rem 1.5rem;margin:1rem 0;border-radius:6px}
+.frage{background:rgba(139,92,246,.1);border-left:4px solid var(--accent3);padding:1rem 1.5rem;margin:1rem 0;border-radius:6px}
+.antwort{background:rgba(16,185,129,.1);border-left:4px solid var(--leib);padding:1rem 1.5rem;margin:1rem 0;border-radius:6px}
+.demo{background:var(--panel2);border-radius:10px;padding:1.5rem;margin:1.5rem 0;border:1px solid var(--border)}
+canvas{display:block;background:#000;border-radius:8px;max-width:100%}
+.controls{display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0;align-items:center}
+.control{display:flex;flex-direction:column;gap:.2rem;min-width:140px}
+.control label{font-size:.85rem;color:var(--dim)}
+.control input[type=range]{width:100%;accent-color:var(--accent)}
+.control .val{color:var(--accent);font-weight:bold;font-size:.9rem}
+button{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:white;padding:.5rem 1.1rem;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:bold;transition:transform .1s}
+button:hover{transform:translateY(-1px)}
+button.alt{background:linear-gradient(135deg,var(--accent3),var(--koerper))}
+button.small{padding:.3rem .8rem;font-size:.85rem}
+.toggle{display:inline-flex;align-items:center;gap:.5rem;cursor:pointer;user-select:none}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.85rem;margin:.5rem 0}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;background:var(--panel2);border:1px solid var(--border);color:var(--accent);padding:.15rem .6rem;border-radius:4px;font-size:.75rem;margin:.2rem}
+.big-idea{font-size:1.15rem;padding:1.2rem;background:rgba(245,158,11,.08);border-radius:8px;border:1px dashed var(--accent);margin:1rem 0}
+.status{font-family:monospace;background:#000;color:var(--leib);padding:.5rem;border-radius:4px;font-size:.85rem;margin-top:.5rem;min-height:1.5rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#start">Start</a>
+  <a href="#kap0">0 · Frage</a>
+  <a href="#kap1">1 · Subj. Tatsachen</a>
+  <a href="#kap2">2 · Leib vs Körper</a>
+  <a href="#kap3">3 · Leibl. Dynamik</a>
+  <a href="#kap4">4 · Leibl. Kommunikation</a>
+  <a href="#kap5">5 · Gefühle als Atmosphären</a>
+  <a href="#kap6">6 · Person & Situation</a>
+  <a href="#kap7">7 · Reifung</a>
+  <a href="#kap8">8 · Freiheit</a>
+  <a href="#kap9">9 · Logik & Grenzen</a>
+</nav>
+
+<main>
+
+<section id="start" class="hero">
+  <h1>Hermann Schmitz</h1>
+  <div class="subtitle">Die Neue Phänomenologie — ein interaktives Verstehen</div>
+  <p>Schmitz stellt eine einfache, aber radikale Frage:<br>
+  <em>„Was muss ich gelten lassen?“</em></p>
+  <div class="big-idea">
+    Statt die Welt in objektive Tatsachen zu zerlegen und den Menschen als „Geist in einer Maschine“ zu verstehen,
+    fragt Schmitz nach dem, was uns <strong>unwiderleglich betrifft</strong>:
+    der Leib, die Gefühle als Atmosphären, Situationen, in denen wir immer schon leben.
+  </div>
+  <p style="color:var(--dim);font-size:.9rem">Diese Seite ist keine Zusammenfassung zum Lesen, sondern ein <strong>Spielplatz</strong>. Bewege Slider. Klicke. Fühle die Konzepte.</p>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap0">
+  <h2>0 · Die Motivation: Wozu Philosophie?</h2>
+  <div class="motiv">
+    <strong>Schmitz' Definition:</strong> Philosophie ist das <em>Sich-Besinnen des Menschen auf sein Sich-Finden in seiner Umgebung</em>.
+  </div>
+  <div class="frage"><strong>Konkretes Problem:</strong> Was ist mir eigentlich gegeben — bevor Wissenschaft, Religion, Alltagsroutine mir sagen, was „ist"? Wovon kann ich nicht ehrlich absehen?</div>
+  <div class="antwort"><strong>Schmitz' Antwort:</strong> Nicht das Neutrale, sondern das <em>affektive Betroffensein</em>. Genau das hat die abendländische Tradition seit Platon systematisch ignoriert oder in eine „Innenwelt" verbannt.</div>
+
+  <h3>Interaktiv: Der „Innenwelt-Dogma"-Sprenger</h3>
+  <p>Klick auf das Modell des Gehirns. Ist da drinnen wirklich ein „Ich", ein „Bewusstseinstheater", in dem alles stattfindet?</p>
+  <div class="demo">
+    <canvas id="brainCanvas" width="700" height="380"></canvas>
+    <div class="controls">
+      <button onclick="brainDemo.mode='dogma';brainDemo.draw()">Klassische Sicht: Innenwelt</button>
+      <button class="alt" onclick="brainDemo.mode='schmitz';brainDemo.draw()">Schmitz: aus dem Leib heraus</button>
+    </div>
+    <div class="status" id="brainStatus">Wähle eine Ansicht.</div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap1">
+  <h2>1 · Subjektive vs. objektive Tatsachen</h2>
+  <div class="motiv"><strong>Prerequisite (jenseits Abi-Mathe):</strong> Der Begriff der „Tatsache" ist normalerweise objektiv gedacht — was <em>jeder</em> nachprüfen kann. Schmitz führt einen neuen Begriff ein.</div>
+
+  <div class="grid2">
+    <div>
+      <h4>Objektive Tatsache</h4>
+      <p>„Hermann Schmitz hat heute Zahnschmerzen." — kann jeder sagen, überprüfen, in eine Datenbank eintragen.</p>
+    </div>
+    <div>
+      <h4>Subjektive Tatsache</h4>
+      <p>„<strong>Ich</strong> habe diese Schmerzen." — Nur ich kann das sagen. Es gibt eine <em>tatsächliche Kite</em> (Dringlichkeit) in dieser Tatsache, die verschwindet, wenn ich sie neutralisiere.</p>
+    </div>
+  </div>
+
+  <h3>Interaktiv: Judas-Frage</h3>
+  <p>Leibniz sagt: Gott hat den Judas mit voller Freiheit an diese Stelle der Welt gesetzt. Aber: <em>Warum musste ich ausgerechnet DAS sein?</em></p>
+  <div class="demo">
+    <canvas id="judasCanvas" width="700" height="300"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Subjektivitäts-Grad: <span class="val" id="subVal">100%</span></label>
+        <input type="range" id="subSlider" min="0" max="100" value="100">
+      </div>
+    </div>
+    <div class="status" id="judasStatus">Schiebe den Regler ganz nach links — die tatsächliche Kite verschwindet. Nur noch neutrale, objektive Fakten bleiben. Kein „ich" mehr.</div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap2">
+  <h2>2 · Leib ≠ Körper</h2>
+  <div class="motiv"><strong>Kernunterscheidung:</strong> Der <span class="tag" style="color:var(--leib)">Leib</span> ist das, was ich in der Gegend meines Körpers spüre — <em>ohne mich auf die fünf Sinne zu verlassen</em>. Der <span class="tag" style="color:var(--koerper)">Körper</span> ist der sicht- und tastbare physische Gegenstand.</div>
+
+  <h3>Interaktiv: Die zwei Räumlichkeiten</h3>
+  <p>Der Körper lebt im <strong>flächenhaltigen</strong> Raum (mit Konturen, Volumen). Der Leib lebt in einem <strong>flächenlosen</strong> Raum — ein „Gewoge verschwommener Inseln".</p>
+  <div class="demo">
+    <canvas id="leibkoerperCanvas" width="700" height="420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Atmung: <span class="val" id="atemVal">Aus</span></label>
+        <input type="range" id="atemSlider" min="0" max="100" value="0">
+      </div>
+      <div class="control">
+        <label>Angst / Enge: <span class="val" id="angstVal">0</span></label>
+        <input type="range" id="angstSlider" min="0" max="100" value="20">
+      </div>
+      <div class="control">
+        <label>Weitung: <span class="val" id="weitVal">50</span></label>
+        <input type="range" id="weitSlider" min="0" max="100" value="50">
+      </div>
+      <label class="toggle"><input type="checkbox" id="showLeib" checked> Leibinseln anzeigen</label>
+      <label class="toggle"><input type="checkbox" id="showKoerper" checked> Körperkontur anzeigen</label>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--koerper)"></span>Körper (flächenhaltig, kontinuierlich)</span>
+      <span><span class="dot" style="background:var(--leib)"></span>Leibinseln (flächenlos, unstetig)</span>
+    </div>
+    <div class="status" id="leibStatus">Der Leib überlappt räumlich meist mit dem Körper — ist aber anders <em>verfasst</em>. Er ist nicht drinnen im Körper.</div>
+  </div>
+
+  <h3>Das Phantomglied — der klassische Beleg</h3>
+  <p>Wird ein Bein amputiert, bleibt oft eine spürbare „Leibesinsel" zurück, die weh tut — obwohl kein Körperteil mehr da ist. Der Leib ist eben nicht der Körper.</p>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap3">
+  <h2>3 · Die leibliche Dynamik: Enge & Weitung</h2>
+  <div class="motiv"><strong>Grundgesetz des Leibes:</strong> Alles Leibliche entfaltet sich zwischen zwei Polen: <strong>Enge</strong> (Anspannung, Zusammenziehen, Schreck) und <strong>Weitung</strong> (Öffnung, Entspannung, Ausatmen). Ihr Zusammenspiel bildet den <em>Antrieb</em>.</div>
+
+  <h3>Interaktiv: Der leibliche Antrieb</h3>
+  <p>Nur wenn Enge UND Weitung gleichzeitig hoch sind, entsteht Antrieb (Wachheit, Handlungsfähigkeit). Schwellungen ohne Spannung = Schlaf. Spannung ohne Weitung = Erstarrung.</p>
+  <div class="demo">
+    <canvas id="antriebCanvas" width="700" height="360"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Enge (Spannung): <span class="val" id="engeVal">50</span></label>
+        <input type="range" id="engeSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control">
+        <label>Weitung (Schwellung): <span class="val" id="weit2Val">50</span></label>
+        <input type="range" id="weit2Slider" min="0" max="100" value="50">
+      </div>
+    </div>
+    <div class="status" id="antriebStatus"></div>
+  </div>
+  <p style="color:var(--dim);font-size:.9rem">Der Antrieb ist mathematisch grob $A \sim \min(E, W)$ — nur wo beides zugleich ist, entsteht lebendige Kraft. Ausatmen = Richtung von Enge in Weite. Schreck = plötzliche Weitung „hakt aus".</p>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap4">
+  <h2>4 · Leibliche Kommunikation</h2>
+  <div class="motiv">Wenn zwei Menschen sich begegnen, tauschen sie nicht bloß Informationen aus. Ihre Leiber koppeln sich in einem <strong>gemeinsamen Antrieb</strong> — Schmitz nennt das <em>Einleibung</em>.</div>
+
+  <h3>Antagonistische Einleibung: der Blick</h3>
+  <p>Wenn dir ein Ball entgegenfliegt, weichst du geschickt aus — <em>weil</em> dein Blick sich gefesselt an das Objekt heftet. Ein gemeinsamer Bewegungsraum entsteht, ohne dass das Objekt sich seinerseits „zuwenden" muss.</p>
+  <div class="demo">
+    <canvas id="einleibCanvas" width="700" height="400"></canvas>
+    <div class="controls">
+      <button onclick="einleib.mode='ball';einleib.reset()">Ball fliegt</button>
+      <button class="alt" onclick="einleib.mode='gespraech';einleib.reset()">Gespräch (wechselseitig)</button>
+      <div class="control">
+        <label>Aufmerksamkeit: <span class="val" id="aufVal">80</span></label>
+        <input type="range" id="aufSlider" min="0" max="100" value="80">
+      </div>
+    </div>
+    <div class="status" id="einleibStatus">Ball-Modus: einseitige Einleibung. Gesprächs-Modus: fluktuierender Wechsel der Dominanz-Rolle.</div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap5">
+  <h2>5 · Gefühle sind Atmosphären</h2>
+  <div class="motiv"><strong>Radikale These:</strong> Gefühle sind nicht „drinnen" in der Seele. Sie sind räumliche <em>Atmosphären</em>, halb-dingliche Mächte, die uns ergreifen können — oder auch nicht.</div>
+
+  <h3>Interaktiv: Die Atmosphäre der Trauer</h3>
+  <p>Ein trauriger Ort kann traurig sein, auch wenn niemand da ist, der trauert. Und ich kann eine Atmosphäre <em>wahrnehmen</em>, ohne von ihr <em>ergriffen</em> zu werden (wie ein nüchterner Beobachter auf einem albernen Fest).</p>
+  <div class="demo">
+    <canvas id="atmoCanvas" width="700" height="380"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Atmosphäre-Intensität: <span class="val" id="atmoInt">60</span></label>
+        <input type="range" id="atmoIntSlider" min="0" max="100" value="60">
+      </div>
+      <div class="control">
+        <label>Person's Öffnung (Einlassen): <span class="val" id="oeffVal">50</span></label>
+        <input type="range" id="oeffSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control">
+        <label>Stimmung: <span class="val" id="stimmVal">Freude</span></label>
+        <input type="range" id="stimmSlider" min="0" max="3" value="0">
+      </div>
+    </div>
+    <div class="status" id="atmoStatus"></div>
+  </div>
+  <p style="color:var(--dim);font-size:.9rem">
+    Ergriffenheit = Atmosphäre × Öffnung. Der Beobachter (Öffnung=0) nimmt die Atmosphäre wahr, wird aber nicht ergriffen.
+  </p>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap6">
+  <h2>6 · Person, Situation, Bedeutsamkeit</h2>
+  <div class="motiv"><strong>Situation:</strong> eine Mannigfaltigkeit, die durch <em>binnendiffuse Bedeutsamkeit</em> zusammengehalten wird. NICHT alles darin ist einzeln — sonst könnte man auf eine Gefahr nicht rechtzeitig reagieren.</div>
+
+  <h3>Interaktiv: Vereinzelung aus der Situation</h3>
+  <p>Eine Gefahr ist zuerst <em>ganzheitlich</em> da: Sachverhalte + Programme + Probleme in einem Kloß. Erst durch <strong>Explikation</strong> (sprachlich, denkerisch) werden einzelne Sachverhalte herausgeholt.</p>
+  <div class="demo">
+    <canvas id="situationCanvas" width="700" height="400"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Explikation (Vereinzelung): <span class="val" id="explVal">0%</span></label>
+        <input type="range" id="explSlider" min="0" max="100" value="0">
+      </div>
+      <button class="small" onclick="situation.newSituation()">Neue Situation</button>
+    </div>
+    <div class="status" id="situationStatus">Ganz links: diffuse Bedeutsamkeit. Ganz rechts: analysierte Einzelsachverhalte, -programme, -probleme.</div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap7">
+  <h2>7 · Reifung: Emanzipation ⇄ Regression</h2>
+  <div class="motiv">Das personale Leben ist <strong>Wellenreiten</strong>: Man muss sich immer wieder aus dem unmittelbaren Betroffensein <em>emanzipieren</em> (Abstand, Vereinzelung, Neutralisierung) — aber auch wieder <em>regredieren</em> (Ergriffenheit, Zurückfließen ins Ganze).</div>
+
+  <h3>Interaktiv: Das Wellenreiten der Person</h3>
+  <p>Nur der Wechsel zwischen beiden Polen macht personales Leben aus. Steckt jemand fest oben (Erstarrung) oder unten (Fassungslosigkeit), wird es pathologisch.</p>
+  <div class="demo">
+<div id="reifungPlot" style="width:100%;height:400px"></div>
+    <div class="controls">
+      <div class="control">
+        <label>Emanzipations-Fähigkeit: <span class="val" id="emanVal">50</span></label>
+        <input type="range" id="emanSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control">
+        <label>Regressions-Fähigkeit: <span class="val" id="regVal">50</span></label>
+        <input type="range" id="regSlider" min="0" max="100" value="50">
+      </div>
+      <button class="small" onclick="reifung.mode='gesund';reifung.draw()">Gesund (Wellenreiten)</button>
+      <button class="small alt" onclick="reifung.mode='erstarrung';reifung.draw()">Erstarrung</button>
+      <button class="small alt" onclick="reifung.mode='fassungslos';reifung.draw()">Fassungslosigkeit</button>
+    </div>
+    <div class="status" id="reifungStatus">Faust sagt: „Bin ich ein Gott?" – und gleich darauf: „Welch Schauspiel!" Das ist gesundes Wellenreiten.</div>
+  </div>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap8">
+  <h2>8 · Freiheit — die Selbstbewirkung</h2>
+  <div class="motiv"><strong>Kern-Problem:</strong> Determinismus (alles ist vorher festgelegt) und Indeterminismus (Zufall) sind BEIDE mit Freiheit unverträglich. Wählen setzt voraus, dass ich mehrere Möglichkeiten habe UND mich für eine entscheide — nicht durch fremde Ursache, nicht zufällig.</div>
+
+  <div class="frage"><strong>Schmitz' Lösung:</strong> Freiheit liegt nicht im objektiven Bereich (dort gilt: entweder determiniert oder zufällig). Sie liegt im <em>affektiven Betroffensein</em>: Ich lasse mich auf etwas ein oder nicht — das ist <strong>Selbstbewirkung</strong>.</div>
+
+  <h3>Interaktiv: Das Trilemma</h3>
+  <p>Schiebe die Regler und sieh, welche Position im Trilemma unmöglich ist:</p>
+  <div class="demo">
+    <canvas id="freiheitCanvas" width="700" height:420"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Determinierung durch Außen: <span class="val" id="detVal">50</span></label>
+        <input type="range" id="detSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control">
+        <label>Zufall / Indeterminismus: <span class="val" id="indVal">50</span></label>
+        <input type="range" id="indSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control">
+        <label>Sich-Einlassen (Gesinnung): <span class="val" id="einVal">50</span></label>
+        <input type="range" id="einSlider" min="0" max="100" value="50">
+      </div>
+    </div>
+    <div class="status" id="freiheitStatus"></div>
+  </div>
+  <p style="color:var(--dim);font-size:.9rem">Beispiel Emotions-Lähmung: Bei Katastrophen (Erdbeben, Flugzeugabsturz) ist man „cool", weil man nichts mehr an sich heranlässt. Genau daran sieht man: Freiheit lebt vom aktiven Sich-Einlassen.</p>
+</section>
+
+<!-- =================================================================== -->
+<section id="kap9">
+  <h2>9 · Logik, Situationen & die Grenzen der Digitalisierung</h2>
+  <div class="motiv"><strong>Schmitz gegen den „Singularismus":</strong> Die klassische Logik setzt voraus, dass alles ohne Weiteres einzeln ist. Aber: Situationen sind <em>binnendiffuse</em> Ganzheiten. Nicht alles darin ist einzeln — sonst könnte man z.B. auf eine Gefahr nicht rechtzeitig reagieren.</div>
+
+  <h3>Interaktiv: Warum totale Digitalisierung unmöglich ist</h3>
+  <p>Klassische Logik + Mengenlehre setzen die „durchgängige Bestimmung" voraus (Kant): Jedes Ding hat von jeder möglichen Eigenschaft entweder diese oder ihre Verneinung. Schmitz zeigt: Das ist falsch. Es gibt <em>zwiespältige Sachen</em> (z.B. Lebensphasen: Bin ich noch der Junge von damals oder nicht?).</p>
+  <div class="demo">
+    <canvas id="digitCanvas" width="700" height="380"></canvas>
+    <div class="controls">
+      <div class="control">
+        <label>Auflösung (Digitalisierung): <span class="val" id="digitVal">50</span></label>
+        <input type="range" id="digitSlider" min="0" max="100" value="50">
+      </div>
+      <button class="small" onclick="digit.mode='situation'">Situation (diffus)</button>
+      <button class="small alt" onclick="digit.mode='pixel'">Nur Pixel</button>
+    </div>
+    <div class="status" id="digitStatus">Egal wie hoch die Auflösung: Die Bedeutsamkeit einer Situation lässt sich nicht restlos in einzelne Datenpunkte zerlegen.</div>
+  </div>
+
+  <div class="antwort" style="margin-top:2rem">
+    <h3 style="margin-top:0">Zusammenfassung: Schmitz' Antwort auf seine Frage</h3>
+    <p><strong>Was muss ich gelten lassen?</strong> — Nicht bloß objektive Fakten, sondern:</p>
+    <ul>
+      <li>Das <strong>affektive Betroffensein</strong> — subjektive Tatsachen, die nur ich für mich sagen kann</li>
+      <li>Den <strong>Leib</strong> als flächenlosen Spür-Raum (nicht identisch mit dem Körper)</li>
+      <li>Die Dynamik von <strong>Enge und Weitung</strong> als Grundgesetz alles Leiblichen</li>
+      <li><strong>Gefühle als Atmosphären</strong>, die uns ergreifen können — Halbdinge im Raum</li>
+      <li><strong>Situationen</strong> mit binnendiffuser Bedeutsamkeit, in denen wir immer schon leben</li>
+      <li>Das <strong>Wellenreiten</strong> von Emanzipation und Regression als Rhythmus personalen Lebens</li>
+      <li><strong>Freiheit</strong> als Selbstbewirkung im affektiven Sich-Einlassen</li>
+    </ul>
+    <p>Kurz: Der Mensch ist nicht ein „Geist in einer Maschine" (Innenwelt-Dogma), sondern ein leibliches Wesen, das <em>immer schon in Situationen mit anderen kommuniziert</em> — vor aller Sprache, vor aller Reflexion.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================== SCRIPTS ============================== -->
+<script>
+// ============ Helpers ============
+function $(id){return document.getElementById(id)}
+function bind(id,cb){const s=$(id);s.addEventListener('input',()=>{cb(+s.value);});cb(+s.value);}
+
+// ============ Kap 0: Brain Demo ============
+const brainDemo = {
+  mode:'dogma',
+  draw(){
+    const c=$('brainCanvas'),ctx=c.getContext('2d');
+    ctx.clearRect(0,0,c.width,c.height);
+    // background gradient
+    const bg=ctx.createRadialGradient(c.width/2,c.height/2,50,c.width/2,c.height/2,400);
+    bg.addColorStop(0,'#111827');bg.addColorStop(1,'#000');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);
+
+    if(this.mode==='dogma'){
+      // Draw a "skull with theater inside"
+      ctx.strokeStyle='#3b82f6';ctx.lineWidth=3;
+      ctx.beginPath();ctx.ellipse(c.width/2,c.height/2,180,140,0,0,Math.PI*2);ctx.stroke();
+      // "Theater" inside
+      ctx.fillStyle='rgba(139,92,246,.15)';
+      ctx.fillRect(c.width/2-100,c.height/2-70,200,140);
+      ctx.strokeStyle='#8b5cf6';ctx.strokeRect(c.width/2-100,c.height/2-70,200,140);
+      // little "Ich"
+      ctx.fillStyle='#f59e0b';ctx.font='bold 40px Georgia';ctx.textAlign='center';
+      ctx.fillText('ICH',c.width/2,c.height/2+15);
+      ctx.font='14px Georgia';ctx.fillStyle='#9ca3af';
+      ctx.fillText('(Innenwelt-Theater)',c.width/2,c.height/2+40);
+      // Arrows in
+      ctx.strokeStyle='#ec4899';ctx.lineWidth=2;
+      for(let i=0;i<5;i++){
+        const a=Math.PI*2*i/5-Math.PI/2;
+        const x1=c.width/2+Math.cos(a)*280,y1=c.height/2+Math.sin(a)*180;
+        const x2=c.width/2+Math.cos(a)*195,y2=c.height/2+Math.sin(a)*145;
+        ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+      }
+      $('brainStatus').textContent='Klassisch: Welt "draußen" schickt Reize hinein zum "Ich im Kopf". Problem: Wie kommt das Ich je wieder heraus?';
+    } else {
+      // Schmitz: leib in Situation
+      ctx.strokeStyle='var(--leib)';ctx.strokeStyle='#10b981';ctx.lineWidth=3;
+      // Body silhouette
+      ctx.beginPath();ctx.ellipse(c.width/2,c.height/2,90,140,0,0,Math.PI*2);ctx.stroke();
+      // Leibinseln reaching out
+      ctx.fillStyle='rgba(16,185,129,.3)';
+      for(let i=0;i<12;i++){
+        const a=Math.PI*2*i/12;
+        const r=100+Math.random()*90;
+        const x=c.width/2+Math.cos(a)*r,y=c.height/2+Math.sin(a)*r*.7;
+        ctx.beginPath();ctx.arc(x,y,8+Math.random()*15,0,Math.PI*2);ctx.fill();
+      }
+      // "Situation" text
+      ctx.fillStyle='#f59e0b';ctx.font='bold 26px Georgia';ctx.textAlign='center';
+      ctx.fillText('SITUATION',c.width/2,40);
+      ctx.font='14px Georgia';ctx.fillStyle='#9ca3af';
+      ctx.fillText('(Leib greift in die Umgebung aus)',c.width/2,c.height-20);
+      $('brainStatus').textContent='Schmitz: Kein "Innen". Der Leib ist immer schon in Situationen — betroffen, ergriffen, ausgreifend.';
+    }
+  }
+};
+brainDemo.draw();
+
+// ============ Kap 1: Judas ============
+const judasCanvas=$('judasCanvas'),jctx=judasCanvas.getContext('2d');
+function drawJudas(sub){
+  jctx.clearRect(0,0,judasCanvas.width,judasCanvas.height);
+  jctx.fillStyle='#0a0e1a';jctx.fillRect(0,0,judasCanvas.width,judasCanvas.height);
+  // objective side
+  jctx.fillStyle='#3b82f6';jctx.font='bold 16px Georgia';
+  jctx.fillText('Objektiv:',30,40);
+  jctx.font='14px Georgia';jctx.fillStyle='#9ca3af';
+  const facts=['Judas geboren ca. 4 v.Chr.','Verrät Jesus für 30 Silberlinge','Männlich, jüdisch, aus Kariot'];
+  facts.forEach((f,i)=>jctx.fillText('• '+f,30,70+i*22));
+  // subjective side (fades with slider)
+  jctx.globalAlpha=sub/100;
+  jctx.fillStyle='#ec4899';jctx.font='bold 20px Georgia';
+  jctx.fillText('Aber ICH... warum musste ICH DAS sein?!',30,200);
+  jctx.font='italic 15px Georgia';jctx.fillStyle='#f59e0b';
+  jctx.fillText('Diese Frage brennt. Kein noch so vollständiger',30,230);
+  jctx.fillText('Steckbrief kann sie beantworten.',30,250);
+  // heart/flame icon
+  jctx.fillStyle='#ec4899';
+  jctx.beginPath();
+  for(let i=0;i<20;i++){
+    const a=Math.PI*2*i/20;
+    const r=40+Math.sin(Date.now()/200+i)*8;
+    const x=550+Math.cos(a)*r,y=200+Math.sin(a)*r;
+    if(i===0)jctx.moveTo(x,y);else jctx.lineTo(x,y);
+  }
+  jctx.closePath();jctx.fill();
+  jctx.globalAlpha=1;
+  jctx.fillStyle='#666';jctx.font='12px Georgia';
+  jctx.fillText('Subjektivitäts-Grad: '+sub+'%',30,290);
+  if(sub<15){
+    jctx.fillStyle='#666';jctx.font='italic 14px Georgia';
+    jctx.fillText('→ Nur noch neutrale Fakten. Kein Ich mehr da.',30,270);
+  }
+}
+bind('subSlider',v=>{$('subVal').textContent=v+'%';drawJudas(v);});
+setInterval(()=>drawJudas(+$('subSlider').value),80);
+
+// ============ Kap 2: Leib vs Körper ============
+const lkCanvas=$('leibkoerperCanvas'),lkctx=lkCanvas.getContext('2d');
+let atem=0;
+function drawLK(){
+  const W=lkCanvas.width,H=lkCanvas.height;
+  lkctx.clearRect(0,0,W,H);
+  lkctx.fillStyle='#000';lkctx.fillRect(0,0,W,H);
+  const angst=+$('angstSlider').value/100;
+  const weit=+$('weitSlider').value/100;
+  const atmung=+$('atemSlider').value/100;
+  atem+=atmung*.05;
+  const breath=Math.sin(atem)*.5+.5; // 0..1
+  const cx=W/2,cy=H/2;
+  // Körper
+  if($('showKoerper').checked){
+    lkctx.strokeStyle='#3b82f6';lkctx.lineWidth=2.5;
+    lkctx.beginPath();
+    // head
+    lkctx.arc(cx,cy-100,40,0,Math.PI*2);
+    // body
+    lkctx.moveTo(cx-60,cy-60);lkctx.quadraticCurveTo(cx,cy+80,cx-60,cy+140);
+    lkctx.moveTo(cx+60,cy-60);lkctx.quadraticCurveTo(cx,cy+80,cx+60,cy+140);
+    lkctx.moveTo(cx-60,cy-60);lkctx.lineTo(cx+60,cy-60);
+    lkctx.stroke();
+  }
+  // Leibinseln (flächenlos)
+  if($('showLeib').checked){
+    const spread=weit*120+20;
+    const tight=angst*.8+.2;
+    // chest island (breathing)
+    const chestR=30+breath*20*(1-angst*.5);
+    const grad=lkctx.createRadialGradient(cx,cy-20,0,cx,cy-20,chestR);
+    grad.addColorStop(0,'rgba(16,185,129,.9)');
+    grad.addColorStop(1,'rgba(16,185,129,0)');
+    lkctx.fillStyle=grad;
+    lkctx.beginPath();lkctx.arc(cx,cy-20,chestR,0,Math.PI*2);lkctx.fill();
+    // random islands
+    const islands=[
+      [cx-70,cy+40,15],[cx+70,cy+40,15],
+      [cx,cy+100,20],[cx-30,cy-80,10],[cx+40,cy-70,12],
+      [cx-90,cy-30,8],[cx+90,cy-40,10]
+    ];
+    islands.forEach(([x,y,r])=>{
+      const off=Math.sin(atem*2+x*.1)*3;
+      const rr=r*(1+weit*.5)*(1-angst*.3);
+      const g=lkctx.createRadialGradient(x+off,y,0,x+off,y,rr);
+      g.addColorStop(0,'rgba(16,185,129,.7)');
+      g.addColorStop(1,'rgba(16,185,129,0)');
+      lkctx.fillStyle=g;
+      lkctx.beginPath();lkctx.arc(x+off,y,rr,0,Math.PI*2);lkctx.fill();
+    });
+  }
+  // Labels
+  lkctx.fillStyle='#e5e7eb';lkctx.font='13px Georgia';
+  lkctx.fillText('Enge: Zusammenziehen, alles verdichtet sich',20,H-40);
+  lkctx.fillText('Weitung: Öffnung, Ausatmen, Aufblühen',20,H-22);
+}
+$('atemSlider').addEventListener('input',()=>$('atemVal').textContent=+$('atemSlider').value>0?'An ('+$('atemSlider').value+')':'Aus');
+$('angstSlider').addEventListener('input',()=>$('angstVal').textContent=$('angstSlider').value);
+$('weitSlider').addEventListener('input',()=>$('weitVal').textContent=$('weitSlider').value);
+setInterval(drawLK,40);
+
+// ============ Kap 3: Antrieb ============
+const antCanvas=$('antriebCanvas'),actx=antCanvas.getContext('2d');
+function drawAntrieb(){
+  const W=antCanvas.width,H=antCanvas.height;
+  actx.clearRect(0,0,W,H);
+  actx.fillStyle='#000';actx.fillRect(0,0,W,H);
+  const E=+$('engeSlider').value/100;
+  const Wt=+$('weit2Slider').value/100;
+  const A=Math.min(E,Wt); // Antrieb
+  // draw 3 bars
+  const bars=[
+    ['Enge',E,'#ec4899'],
+    ['Weitung',Wt,'#10b981'],
+    ['ANTRIEB',A,'#f59e0b']
+  ];
+  bars.forEach(([lbl,v,col],i)=>{
+    const x=100+i*180,y=H-60,bh=v*220;
+    actx.fillStyle='#1a2033';actx.fillRect(x-40,y-220,80,220);
+    actx.fillStyle=col;actx.fillRect(x-40,y-bh,80,bh);
+    actx.fillStyle='#e5e7eb';actx.font='bold 14px Georgia';actx.textAlign='center';
+    actx.fillText(lbl,x,y+20);
+    actx.font='12px Georgia';
+    actx.fillText(Math.round(v*100),x,y-bh-8);
+  });
+  // interpretation
+  let msg='';
+  if(E<.15&&Wt<.15) msg='Tiefschlaf — kein Antrieb, kein Bewusstsein.';
+  else if(E>.85&&Wt<.15) msg='Erstarrung / Panik — nur Enge, keine Öffnung.';
+  else if(E<.15&&Wt>.85) msg='Ohnmacht / Auflösung — nur Weitung, kein Halt.';
+  else if(A>.7) msg='Wach, handlungsfähig, lebendig — beide Pole hoch.';
+  else if(Math.abs(E-Wt)>.4) msg='Ungleichgewicht — Antrieb schwach.';
+  else msg='Ruhezustand.';
+  $('antriebStatus').textContent='A = min(E,W) = '+Math.round(A*100)+' → '+msg;
+}
+['engeSlider','weit2Slider'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    $('engeVal').textContent=$('engeSlider').value;
+    $('weit2Val').textContent=$('weit2Slider').value;
+    drawAntrieb();
+  });
+});
+drawAntrieb();
+
+// ============ Kap 4: Einleibung ============
+const einlCanvas=$('einleibCanvas'),ectx=einlCanvas.getContext('2d');
+const einleib={mode:'ball',t:0,ballX:100,ballY:200,ballVX:3,personX:600,dominance:0,
+  reset(){this.t=0;this.ballX=50;this.ballY=100+Math.random()*200;this.ballVX=3+Math.random()*2;}
+};
+function drawEinleib(){
+  const W=einlCanvas.width,H=einlCanvas.height;
+  ectx.clearRect(0,0,W,H);
+  ectx.fillStyle='#0a0e1a';ectx.fillRect(0,0,W,H);
+  const auf=+$('aufSlider').value/100;
+  einleib.t++;
+  if(einleib.mode==='ball'){
+    // Ball flying
+    einleib.ballX+=einleib.ballVX;
+    einleib.ballY+=Math.sin(einleib.t*.05)*2;
+    if(einleib.ballX>W-100){einleib.reset();}
+    // Person right
+    ectx.strokeStyle='#10b981';ectx.lineWidth=2;
+    ectx.beginPath();ectx.arc(einleib.personX,H/2,25,0,Math.PI*2);
+    ectx.moveTo(einleib.personX,H/2+25);ectx.lineTo(einleib.personX,H/2+90);
+    ectx.stroke();
+    // Ball
+    ectx.fillStyle='#ec4899';
+    ectx.beginPath();ectx.arc(einleib.ballX,einleib.ballY,15,0,Math.PI*2);ectx.fill();
+    // Gaze line (Einleibung!)
+    ectx.strokeStyle='rgba(245,158,11,'+auf+')';
+    ectx.lineWidth=2+auf*3;
+    ectx.setLineDash([5,3]);
+    ectx.beginPath();ectx.moveTo(einleib.personX-15,H/2-10);ectx.lineTo(einleib.ballX,einleib.ballY);ectx.stroke();
+    ectx.setLineDash([]);
+    // dodge if attention high
+    if(auf>.5&&einleib.ballX>400){
+      const dodge=Math.min(50,(einleib
+if(auf>.5&&einleib.ballX>400){
+      const dodge=Math.min(50,(einleib.ballX-400)*.5);
+      ectx.strokeStyle='#10b981';ectx.lineWidth=2;
+      ectx.beginPath();ectx.arc(einleib.personX,H/2-dodge*.3,25,0,Math.PI*2);ectx.stroke();
+    }
+    $('einleibStatus').textContent='Ball-Modus: Der Blick heftet sich ans Objekt (Einleibung). Bei hoher Aufmerksamkeit weichst du geschickt aus.';
+  } else {
+    // Gespräch: two people, alternating dominance
+    einleib.dominance=Math.sin(einleib.t*.02);
+    const p1x=150,p2x=550,py=H/2;
+    // person 1
+    const s1=1+einleib.dominance*.2;
+    ectx.strokeStyle=einleib.dominance>0?'#f59e0b':'#10b981';
+    ectx.lineWidth=2+Math.max(0,einleib.dominance)*2;
+    ectx.beginPath();ectx.arc(p1x,py,25*s1,0,Math.PI*2);
+    ectx.moveTo(p1x,py+25*s1);ectx.lineTo(p1x,py+90);ectx.stroke();
+    // person 2
+    const s2=1-einleib.dominance*.2;
+    ectx.strokeStyle=einleib.dominance<0?'#f59e0b':'#10b981';
+    ectx.lineWidth=2+Math.max(0,-einleib.dominance)*2;
+    ectx.beginPath();ectx.arc(p2x,py,25*s2,0,Math.PI*2);
+    ectx.moveTo(p2x,py+25*s2);ectx.lineTo(p2x,py+90);ectx.stroke();
+    // shared antrieb between them
+    const grad=ectx.createLinearGradient(p1x,py,p2x,py);
+    grad.addColorStop(0,'rgba(245,158,11,.3)');
+    grad.addColorStop(.5,'rgba(236,72,153,.5)');
+    grad.addColorStop(1,'rgba(139,92,246,.3)');
+    ectx.fillStyle=grad;
+    ectx.beginPath();ectx.ellipse((p1x+p2x)/2,py,180,40,0,0,Math.PI*2);ectx.fill();
+    // ping-pong dot
+    const bx=(p1x+p2x)/2+einleib.dominance*150;
+    ectx.fillStyle='#fff';ectx.beginPath();ectx.arc(bx,py,6,0,Math.PI*2);ectx.fill();
+    ectx.fillStyle='#e5e7eb';ectx.font='13px Georgia';ectx.textAlign='center';
+    ectx.fillText('Gemeinsamer Antrieb (Ballspiel-Struktur)',(p1x+p2x)/2,H-30);
+    $('einleibStatus').textContent='Gespräch: fluktuierender Wechsel der Dominanz-Rolle. Aktion & Reaktion wie beim Ballspiel.';
+  }
+}
+$('aufSlider').addEventListener('input',()=>$('aufVal').textContent=$('aufSlider').value);
+setInterval(drawEinleib,30);
+
+// ============ Kap 5: Atmosphäre ============
+const atmoCanvas=$('atmoCanvas'),atmctx=atmoCanvas.getContext('2d');
+const stimmungen=[
+  {name:'Freude',col:'#fbbf24',up:true},
+  {name:'Trauer',col:'#3b82f6',up:false},
+  {name:'Feierlichkeit',col:'#8b5cf6',up:false},
+  {name:'Zorn',col:'#ef4444',up:true}
+];
+let atmoT=0;
+function drawAtmo(){
+  const W=atmoCanvas.width,H=atmoCanvas.height;
+  atmctx.clearRect(0,0,W,H);
+  atmctx.fillStyle='#000';atmctx.fillRect(0,0,W,H);
+  const intens=+$('atmoIntSlider').value/100;
+  const oeff=+$('oeffSlider').value/100;
+  const stimm=stimmungen[+$('stimmSlider').value];
+  atmoT+=.02;
+  // Atmosphere as a filled space
+  const g=atmctx.createRadialGradient(W/2,H/2,0,W/2,H/2,350);
+  g.addColorStop(0,stimm.col+Math.floor(intens*180).toString(16).padStart(2,'0'));
+  g.addColorStop(1,stimm.col+'00');
+  atmctx.fillStyle=g;atmctx.fillRect(0,0,W,H);
+  // floating "atmosphere particles"
+  for(let i=0;i<40;i++){
+    const a=atmoT+i;
+    const x=W/2+Math.cos(a*.3+i)*(150+Math.sin(a)*30);
+    const y=H/2+Math.sin(a*.2+i*.7)*(80+Math.cos(a)*20)+(stimm.up?-Math.sin(a)*20:Math.sin(a)*20);
+    atmctx.fillStyle=stimm.col+Math.floor(intens*200).toString(16).padStart(2,'0');
+    atmctx.beginPath();atmctx.arc(x,y,2+Math.sin(a)*1,0,Math.PI*2);atmctx.fill();
+  }
+  // person (observer)
+  const px=W/2,py=H-100;
+  atmctx.strokeStyle='#e5e7eb';atmctx.lineWidth=2;
+  atmctx.beginPath();atmctx.arc(px,py,20,0,Math.PI*2);
+  atmctx.moveTo(px,py+20);atmctx.lineTo(px,py+60);atmctx.stroke();
+  // Ergreifung: coloured aura if öffnung high
+  const ergr=intens*oeff;
+  if(ergr>.05){
+    const ag=atmctx.createRadialGradient(px,py+20,0,px,py+20,60);
+    ag.addColorStop(0,stimm.col+Math.floor(ergr*220).toString(16).padStart(2,'0'));
+    ag.addColorStop(1,stimm.col+'00');
+    atmctx.fillStyle=ag;
+    atmctx.beginPath();atmctx.arc(px,py+20,60,0,Math.PI*2);atmctx.fill();
+  }
+  // Labels
+  $('atmoInt').textContent=$('atmoIntSlider').value;
+  $('oeffVal').textContent=$('oeffSlider').value;
+  $('stimmVal').textContent=stimm.name;
+  const status = ergr<.05
+    ? 'Beobachter nimmt die Atmosphäre wahr — ohne von ihr ergriffen zu werden (wie ein Nüchterner auf albernem Fest).'
+    : ergr<.4
+      ? 'Leichte Ergriffenheit: Die Atmosphäre beginnt in den Leib einzudringen.'
+      : 'Volle Ergriffenheit: Das Gefühl ist zum eigenen geworden — halbdingliche Macht ist übergeflossen.';
+  $('atmoStatus').textContent=status;
+}
+['atmoIntSlider','oeffSlider','stimmSlider'].forEach(id=>$(id).addEventListener('input',drawAtmo));
+setInterval(drawAtmo,50);
+
+// ============ Kap 6: Situation ============
+const sitCanvas=$('situationCanvas'),sctx=sitCanvas.getContext('2d');
+const situation={
+  items:[],
+  newSituation(){
+    this.items=[];
+    const types=[
+      {label:'Gefahr',col:'#ef4444',cat:'Sachverhalt'},
+      {label:'Person A',col:'#f59e0b',cat:'Sachverhalt'},
+      {label:'Person B',col:'#f59e0b',cat:'Sachverhalt'},
+      {label:'Ort',col:'#10b981',cat:'Sachverhalt'},
+      {label:'Ausweichen',col:'#8b5cf6',cat:'Programm'},
+      {label:'Warnen',col:'#8b5cf6',cat:'Programm'},
+      {label:'Zeit-Not',col:'#ec4899',cat:'Problem'},
+      {label:'Angst',col:'#ec4899',cat:'Problem'}
+    ];
+    types.forEach((t,i)=>{
+      const a=i/types.length*Math.PI*2;
+      this.items.push({...t,
+        cx:sitCanvas.width/2+Math.cos(a)*30,
+        cy:sitCanvas.height/2+Math.sin(a)*30,
+        tx:0,ty:0,i});
+    });
+    // target positions when exploded, grouped by cat
+    const cats=['Sachverhalt','Programm','Problem'];
+    cats.forEach((c,ci)=>{
+      const inCat=this.items.filter(it=>it.cat===c);
+      inCat.forEach((it,idx)=>{
+        it.tx=150+ci*200;
+        it.ty=100+idx*55;
+      });
+    });
+  }
+};
+situation.newSituation();
+function drawSituation(){
+  const W=sitCanvas.width,H=sitCanvas.height;
+  sctx.clearRect(0,0,W,H);
+  sctx.fillStyle='#000';sctx.fillRect(0,0,W,H);
+  const expl=+$('explSlider').value/100;
+  $('explVal').textContent=$('explSlider').value+'%';
+  // diffuse cloud when not exploded
+  if(expl<.9){
+    const cx=W/2,cy=H/2;
+    for(let i=0;i<200;i++){
+      const a=Math.random()*Math.PI*2;
+      const r=Math.random()*120*(1-expl);
+      sctx.fillStyle='rgba(245,158,11,'+(.15*(1-expl))+')';
+      sctx.beginPath();sctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,3,0,Math.PI*2);sctx.fill();
+    }
+    sctx.fillStyle='rgba(245,158,11,'+(.4*(1-expl))+')';
+    sctx.font='italic 18px Georgia';sctx.textAlign='center';
+    sctx.fillText('„binnendiffuse Bedeutsamkeit"',cx,cy+150);
+  }
+  // items
+  situation.items.forEach(it=>{
+    const x0=W/2+Math.cos(it.i/situation.items.length*Math.PI*2)*30;
+    const y0=H/2+Math.sin(it.i/situation.items.length*Math.PI*2)*30;
+    const x=x0+(it.tx-x0)*expl;
+    const y=y0+(it.ty-y0)*expl;
+    sctx.fillStyle=it.col;
+    sctx.globalAlpha=.3+expl*.7;
+    sctx.beginPath();sctx.arc(x,y,10,0,Math.PI*2);sctx.fill();
+    sctx.globalAlpha=expl;
+    sctx.fillStyle='#e5e7eb';sctx.font='12px Georgia';sctx.textAlign='left';
+    sctx.fillText(it.label,x+15,y+4);
+  });
+  sctx.globalAlpha=1;
+  // Category labels
+  if(expl>.5){
+    sctx.fillStyle='#f59e0b';sctx.font='bold 14px Georgia';sctx.textAlign='center';
+    sctx.globalAlpha=(expl-.5)*2;
+    sctx.fillText('SACHVERHALTE',150+50,70);
+    sctx.fillText('PROGRAMME',350+50,70);
+    sctx.fillText('PROBLEME',550+30,70);
+    sctx.globalAlpha=1;
+  }
+}
+$('explSlider').addEventListener('input',drawSituation);
+drawSituation();
+
+// ============ Kap 7: Reifung (Plotly) ============
+const reifung={mode:'gesund',draw(){
+  const N=200;
+  const eman=+$('emanSlider').value/100;
+  const reg=+$('regSlider').value/100;
+  const t=[],y=[];
+  for(let i=0;i<N;i++){
+    t.push(i);
+    let v=0;
+    if(this.mode==='gesund'){
+      v=Math.sin(i*.1)*eman*.7+Math.sin(i*.15+1)*reg*.7+Math.sin(i*.05)*.3;
+    } else if(this.mode==='erstarrung'){
+      v=.8+Math.sin(i*.02)*.05; // stuck high
+    } else { // fassungslos
+      v=-.8+Math.sin(i*.03)*.05; // stuck low
+    }
+    y.push(v);
+  }
+  Plotly.react('reifungPlot',[
+    {x:t,y:y,type:'scatter',mode:'lines',line:{color:'#f59e0b',width:3},name:'Personales Niveau'},
+    {x:t,y:t.map(_=>1),type:'scatter',mode:'lines',line:{color:'#ef4444',dash:'dot',width:1},name:'Erstarrung (oben)'},
+    {x:t,y:t.map(_=>-1),type:'scatter',mode:'lines',line:{color:'#3b82f6',dash:'dot',width:1},name:'Fassungslosigkeit (unten)'}
+  ],{
+    paper_bgcolor:'#232b42',plot_bgcolor:'#0a0e1a',
+    font:{color:'#e5e7eb'},
+    margin:{t:20,r:20,b:40,l:40},
+    yaxis:{range:[-1.3,1.3],title:'Emanzipation ⇄ Regression',gridcolor:'#2d3654'},
+    xaxis:{title:'Zeit',gridcolor:'#2d3654'},
+    showlegend:true,legend:{bgcolor:'rgba(0,0,0,0)'}
+  },{displayModeBar:false});
+  $('reifungStatus').textContent = this.mode==='gesund'
+    ? 'Gesundes Wellenreiten: Person kann Abstand nehmen UND wieder regredieren. Faust: „Bin ich ein Gott? … Welch Schauspiel!"'
+    : this.mode==='erstarrung'
+      ? 'Erstarrung: Person hängt oben fest. Kein Ergriffenwerden mehr möglich. Kalt, gefühlsgelähmt.'
+      : 'Fassungslosigkeit: Person versinkt unten. Kein Abstand mehr, keine Vereinzelung, dauerhafte Ergriffenheit.';
+}};
+['emanSlider','regSlider'].forEach(id=>$(id).addEventListener('input',()=>{
+  $('emanVal').textContent=$('emanSlider').value;
+  $('regVal').textContent=$('regSlider').value;
+  reifung.draw();
+}));
+reifung.draw();
+
+// ============ Kap 8: Freiheit ============
+const frCanvas=$('freiheitCanvas'),fctx=frCanvas.getContext('2d');
+frCanvas.width=700;frCanvas.height=420;
+function drawFreiheit(){
+  const W=frCanvas.width,H=frCanvas.height;
+  fctx.clearRect(0,0,W,H);
+  fctx.fillStyle='#000';fctx.fillRect(0,0,W,H);
+  const det=+$('detSlider').value/100;
+  const ind=+$('indSlider').value/100;
+  const ein=+$('einSlider').value/100;
+  // Triangle: 3 poles
+  const cx=W/2,cy=200;
+  const poles=[
+    {x:cx-180,y:cy+50,label:'Determinismus',val:det,col:'#3b82f6',
+     desc:'Alles ist von außen festgelegt.\nWählen unmöglich.'},
+    {x:cx+180,y:cy+50,label:'Indeterminismus',val:ind,col:'#ec4899',
+     desc:'Reiner Zufall.\nInitiative unmöglich.'},
+    {x:cx,y:cy-120,label:'Selbst-Einlassen',val:ein,col:'#10b981',
+     desc:'Gesinnung, sich-affizieren-lassen.\nHier lebt Freiheit!'}
+  ];
+  // triangle bg
+  fctx.strokeStyle='#2d3654';fctx.lineWidth=1;
+  fctx.beginPath();fctx.moveTo(poles[0].x,poles[0].y);
+  fctx.lineTo(poles[1].x,poles[1].y);fctx.lineTo(poles[2].x,poles[2].y);
+  fctx.closePath();fctx.stroke();
+  poles.forEach(p=>{
+    const r=15+p.val*35;
+    const g=fctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r);
+    g.addColorStop(0,p.col);g.addColorStop(1,p.col+'00');
+    fctx.fillStyle=g;
+    fctx.beginPath();fctx.arc(p.x,p.y,r,0,Math.PI*2);fctx.fill();
+    fctx.fillStyle=p.col;fctx.font='bold 14px Georgia';fctx.textAlign='center';
+    fctx.fillText(p.label,p.x,p.y-r-8);
+    fctx.fillStyle='#9ca3af';fctx.font='11px Georgia';
+    p.desc.split('\n').forEach((line,i)=>fctx.fillText(line,p.x,p.y+r+15+i*13));
+  });
+  // interpretation
+  $('detVal').textContent=$('detSlider').value;
+  $('indVal').textContent=$('indSlider').value;
+  $('einVal').textContent=$('einSlider').value;
+  let msg='';
+  if(det>.7&&ein<.3) msg='Klassischer Determinismus: keine Freiheit. Wählen wäre bloße Illusion.';
+  else if(ind>.7&&ein<.3) msg='Reiner Zufall: keine Verantwortung. Handeln wäre ohne Urheber.';
+  else if(ein>.7) msg='✓ Freiheit als Selbstbewirkung im affektiven Sich-Einlassen — Schmitz\' Ausweg.';
+  else if(ein<.15) msg='Emotions-Lähmung (Katastrophen-Cool): Kein Einlassen mehr, alles läuft nur ab.';
+  else msg='Zwischen den Polen: Freiheit entsteht nur, wenn ich mich wirklich einlasse.';
+  $('freiheitStatus').textContent=msg;
+}
+['detSlider','indSlider','einSlider'].forEach(id=>$(id).addEventListener('input',drawFreiheit));
+drawFreiheit();
+
+// ============ Kap 9: Digitalisierung ============
+const digCanvas=$('digitCanvas'),dctx=digCanvas.getContext('2d');
+const digit={mode:'situation'};
+function drawDigit(){
+  const W=digCanvas.width,H=digCanvas.height;
+  dctx.clearRect(0,0,W,H);
+  dctx.fillStyle='#000';dctx.fillRect(0,0,W,H);
+  const res=+$('digitSlider').value/100;
+  $('digitVal').textContent=$('digitSlider').value;
+  const gridSize=Math.max(4,Math.floor(60-res*55));
+  // left: original "situation" cloud
+  const cxL=W/4,cyL=H/2;
+  dctx.fillStyle='#f59e0b';dctx.font='bold 14px Georgia';dctx.textAlign='center';
+  dctx.fillText('Situation (analog)',cxL,25);
+  // draw a flowing gradient blob
+  const g=dctx.createRadialGradient(cxL,cyL,0,cxL,cyL,120);
+  g.addColorStop(0,'rgba(245,158,11,.9)');
+  g.addColorStop(.5,'rgba(236,72,153,.5)');
+  g.addColorStop(1,'rgba(139,92,246,0)');
+  dctx.fillStyle=g;
+  dctx.beginPath();
+  for(let i=0;i<40;i++){
+    const a=Math.PI*2*i/40;
+    const r=100+Math.sin(a*3+Date.now()/500)*20;
+    const x=cxL+Math.cos(a)*r,y=cyL+Math.sin(a)*r*.7;
+    if(i===0)dctx.moveTo(x,y);else dctx.lineTo(x,y);
+  }
+  dctx.closePath();dctx.fill();
+  // right: digitized
+  const cxR=3*W/4,cyR=H/2;
+  dctx.fillStyle='#3b82f6';dctx.font='bold 14px Georgia';
+  dctx.fillText('Digitalisiert (Auflösung: '+$('digitSlider').value+')',cxR,25);
+  const boxW=240,boxH=240;
+  const x0=cxR-boxW/2,y0=cyR-boxH/2;
+  for(let x=0;x<boxW;x+=gridSize){
+    for(let y=0;y<boxH;y+=gridSize){
+      // sample from left blob
+      const dx=(x+gridSize/2)-boxW/2,dy=(y+gridSize/2)-boxH/2;
+      const d=Math.sqrt(dx*dx+dy*dy*1.4);
+      const v=Math.max(0,1-d/120);
+      if(v>.05){
+        const r=Math.floor(245*v),gg=Math.floor(158*v),bb=Math.floor(11*v);
+        dctx.fillStyle=`rgb(${r+40},${gg+40},${bb+80})`;
+        dctx.fillRect(x0+x,y0+y,gridSize-1,gridSize-1);
+      }
+    }
+  }
+  // "Rest" indicator: never gets all
+  const rest=Math.max(0,.2-res*.15);
+  dctx.fillStyle='#ec4899';dctx.font='italic 13px Georgia';dctx.textAlign='center';
+  dctx.fillText('Nicht digitalisierbarer Rest: '+Math.round((rest+.05)*100)+'%',cxR,H-25);
+  dctx.fillStyle='#9ca3af';dctx.font='12px Georgia';
+  dctx.fillText('(binnendiffuse Bedeutsamkeit)',cxR,H-8);
+  // Arrow
+  dctx.strokeStyle='#f59e0b';dctx.lineWidth=2;
+  dctx.beginPath();dctx.moveTo(cxL+130,cyL);dctx.lineTo(cxR-130,cyR);dctx.stroke();
+  dctx.fillStyle='#f59e0b';
+  dctx.beginPath();dctx.moveTo(cxR-130,cyR);dctx.lineTo(cxR-142,cyR-6);dctx.lineTo(cxR-142,cyR+6);dctx.closePath();dctx.fill();
+}
+$('digitSlider').addEventListener('input',drawDigit);
+setInterval(drawDigit,80);
+</script>
+
+</body>
+</html>
