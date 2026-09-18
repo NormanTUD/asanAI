@@ -848,10 +848,9 @@ function showError(err) {
       data[4*i + 2] = 0;
       data[4*i + 3] = 255;
     }
-    volTex = new THREE.DataTexture(data, W, H, THREE.RGBAFormat, THREE.UnsignedByteType);
-    volTex.image.depth = B;
-    volTex.magFilter = THREE.NearestFilter;
-    volTex.minFilter = THREE.NearestFilter;
+    volTex = new THREE.Data3DTexture(data, W, H, B);
+    volTex.format = THREE.RGBAFormat;
+    volTex.type = THREE.UnsignedByteType;
     volTex.wrapS = volTex.wrapT = volTex.wrapR = THREE.ClampToEdgeWrapping;
     volTex.needsUpdate = true;
     volTex.userData.vol = vol;
