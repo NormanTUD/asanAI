@@ -154,6 +154,38 @@
       <input type="range" id="ps" min="0.5" max="10" step="0.1" value="2.0">
     </div>
 
+    <h3>3D slice (clipping)</h3>
+    <div class="ctrl">
+      <label>Clip axis</label>
+      <select id="clip-axis">
+        <option value="off" selected>off</option>
+        <option value="x">x  (keep x ≤ pos)</option>
+        <option value="y">y  (keep y ≤ pos)</option>
+        <option value="z">brightness (keep bin ≤ pos)</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Clip position = <span id="clip-val">14</span></label>
+      <input type="range" id="clip-pos" min="0" max="27" value="14">
+    </div>
+
+    <h3>2D focus slice</h3>
+    <div class="ctrl">
+      <label>Axis</label>
+      <select id="focus-axis">
+        <option value="x" selected>x  (y × brightness)</option>
+        <option value="y">y  (x × brightness)</option>
+        <option value="z">brightness (x × y)</option>
+      </select>
+    </div>
+    <div class="ctrl">
+      <label>Position = <span id="focus-val">14</span></label>
+      <input type="range" id="focus-pos" min="0" max="27" value="14">
+    </div>
+    <div class="ctrl">
+      <canvas id="focus-canvas" width="256" height="256" style="width:100%;image-rendering:pixelated;background:#08080c;border:1px solid #222;border-radius:4px;"></canvas>
+    </div>
+
     <h3>Tools</h3>
     <div class="btn-row">
       <button id="btn-snap">Snapshot</button>

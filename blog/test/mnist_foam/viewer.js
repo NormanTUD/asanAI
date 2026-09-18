@@ -565,3 +565,121 @@ function showError(err) {
     controls.autoRotateSpeed = 1.5;
   });
 })();
+
+// ======================================================================
+// 3D CLIPPING + 2D FOCUS SLICE (purely additive)
+//  - 3D clipping: saws the point cloud along x / y / brightness
+//  - 2D focus: one 2D slice where you freely pick axis + position
+// ======================================================================
+(function initSlicing() {
+  if (!renderer || !camera || !scene) return;
+
+  const clip  = { axis: "off", pos: 14 };
+  const focus = { axis: "x", pos: 14 };
+  let sliceCloud = null;
+
+  function pointMaterial() {
+    return new THREE.ShaderMaterial({
+      uniforms: { size: { value: state.pointSize } },
+      vertexShader: `
+        attribute float alpha;
+        varying vec3 vColor; varying float vAlpha; uniform float size;
+        void main(){ vColor=color; vAlpha=alpha;
+          vec4 mv = modelViewMatrix * vec4(position,1.0);
+          gl_PointSize = size*(300.0/-mv.z); gl_Position = projectionMatrix*mv; }`,
+      fragmentShader: `
+        varying vec3 vColor; varying float vAlpha;
+        void main(){ vec2 d=gl_PointCoord-vec2(0.5); if(dot(d,d)>0.25) discard;
+          gl_FragColor=vec4(vColor,vAlpha); }`,
+      vertexColors: true, transparent: true, depthWrite: false
+    });
+  }
+
+  // rebuild the (clipped) 3D cloud; hides the original while clipping
+  function buildSliceCloud() {
+    if (sliceCloud) { scene.remove(sliceCloud); sliceCloud.geometry.dispose(); sliceCloud.material.dispose(); sliceCloud = null; }
+    const vol = state.volume;
+    if (!vol || clip.axis === "off") { if (pointCloud) pointCloud.visible = true; return; }
+    const [W, H, B] = state.shape;
+    const vmax = Math.max(1, state.volMax), thr = state.thr, ax = clip.axis, pos = clip.pos;
+    const coord = (x, y, z) => ax === "x" ? x : ax === "y" ? y : z;
+    let n = 0;
+    for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) for (let z = 0; z < B; z++) {
+      if (coord(x, y, z) > pos) continue;
+      if (vol[x*H*B + y*B + z] < thr) continue;
+      n++;
+    }
+    const positions = new Float32Array(n*3), colors = new Float32Array(n*3), alphas = new Float32Array(n);
+    const cmap = CMAPS[state.cmap] || CMAPS.magma; let k = 0;
+    for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) for (let z = 0; z < B; z++) {
+      if (coord(x, y, z) > pos) continue;
+      const v = vol[x*H*B + y*B + z]; if (v < thr) continue;
+      positions[k*3] = x; positions[k*3+1] = y; positions[k*3+2] = z;
+      let r, g, b;
+      if (state.cmap === "brightness") { const bt = z / (B - 1); [r, g, b] = CMAPS.magma(bt); }
+      else { const t = state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax; [r, g, b] = cmap(t); }
+      colors[k*3] = r; colors[k*3+1] = g; colors[k*3+2] = b;
+      alphas[k] = Math.min(1, (state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax) * state.opacity);
+      k++;
+    }
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geom.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geom.setAttribute("alpha", new THREE.BufferAttribute(alphas, 1));
+    sliceCloud = new THREE.Points(geom, pointMaterial());
+    scene.add(sliceCloud);
+    if (pointCloud) pointCloud.visible = false;   // hide original, show sawn-off cloud
+  }
+
+  function drawFocus() {
+    const cv = document.getElementById("focus-canvas");
+    const vol = state.volume; if (!cv || !vol) return;
+    const [W, H, B] = state.shape;
+    let cols, rows, getVal;
+    if (focus.axis === "x") { cols = H; rows = B; getVal = (c, r) => vol[focus.pos*H*B + c*B + r]; }
+    else if (focus.axis === "y") { cols = W; rows = B; getVal = (c, r) => vol[c*H*B + focus.pos*B + r]; }
+    else { cols = W; rows = H; getVal = (c, r) => vol[c*H*B + r*B + focus.pos]; }
+    cv.width = cols; cv.height = rows;
+    const ctx = cv.getContext("2d"), img = ctx.createImageData(cols, rows);
+    const cmap = CMAPS[state.cmap] || CMAPS.magma, vmax = Math.max(1, state.volMax);
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const v = getVal(c, r), t = state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax;
+      const [R, G, Bc] = cmap(t), i = ((rows - 1 - r) * cols + c) * 4;
+      img.data[i] = R*255; img.data[i+1] = G*255; img.data[i+2] = Bc*255; img.data[i+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  // redraw only when the relevant inputs change
+  let _clipVol = null, _clipSig = "", _focusVol = null, _focusSig = "";
+  (function slicingLoop() {
+    requestAnimationFrame(slicingLoop);
+    const vol = state.volume; if (!vol) return;
+    const cs = [state.thr, state.opacity, state.log, state.cmap, state.pointSize, clip.axis, clip.pos].join("|");
+    if (vol !== _clipVol || cs !== _clipSig) { _clipVol = vol; _clipSig = cs; buildSliceCloud(); }
+    const fs = [focus.axis, focus.pos, state.log, state.cmap].join("|");
+    if (vol !== _focusVol || fs !== _focusSig) { _focusVol = vol; _focusSig = fs; drawFocus(); }
+  })();
+
+  const setMax = (el, isZ) => { const m = isZ ? state.shape[2] - 1 : 27; el.max = m; if (+el.value > m) el.value = m; };
+  document.getElementById("clip-axis").addEventListener("change", e => {
+    clip.axis = e.target.value;
+    setMax(document.getElementById("clip-pos"), e.target.value === "z");
+    _clipSig = "";
+  });
+  document.getElementById("clip-pos").addEventListener("input", e => {
+    clip.pos = +e.target.value;
+    document.getElementById("clip-val").textContent = clip.pos;
+    _clipSig = "";
+  });
+  document.getElementById("focus-axis").addEventListener("change", e => {
+    focus.axis = e.target.value;
+    setMax(document.getElementById("focus-pos"), e.target.value === "z");
+    _focusSig = "";
+  });
+  document.getElementById("focus-pos").addEventListener("input", e => {
+    focus.pos = +e.target.value;
+    document.getElementById("focus-val").textContent = focus.pos;
+    _focusSig = "";
+  });
+})();
