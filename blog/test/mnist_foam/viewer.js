@@ -17,6 +17,7 @@ const state = {
   slice: { x: 14, y: 14, z: 32 },
   thr: 10, opacity: 1.0, cmap: "magma", log: true,
   pointSize: 2.0, showAxes: true,
+  renderMode: "points",  // "points" | "surface" | "volume" | "mip"
 };
 
 // cache of already-fetched volumes keyed by `${variant}:${name}`
@@ -426,6 +427,15 @@ function showError(err) {
 (async function main() {
   init3D();
   wireControls();
+  // optional URL params for shareable views: ?mode=points|surface|volume|mip&cam=front
+  const qp = new URLSearchParams(location.search);
+  const pm = qp.get("mode");
+  if (pm && ["points", "surface", "volume", "mip"].includes(pm)) {
+    state.renderMode = pm;
+    const sel = document.getElementById("rendermode");
+    if (sel) sel.value = pm;
+  }
+  if (qp.get("cam") === "front") { camera.position.set(14, 14, 100); controls.update(); }
   try {
     await loadAll();
   } catch (err) {
@@ -681,5 +691,348 @@ function showError(err) {
     focus.pos = +e.target.value;
     document.getElementById("focus-val").textContent = focus.pos;
     _focusSig = "";
+  });
+})();
+
+// ======================================================================
+// RENDER MODES (purely additive)
+//
+//   points  : alpha point cloud, depth-sorted back-to-front every time the
+//             camera moves (painter's algorithm) so overlapping points
+//             composite correctly — fixes the "washed-out front view"
+//   surface : opaque shell — only voxels with at least one empty neighbour,
+//             drawn as solid instanced boxes with depth testing
+//   volume  : true ray-marched volume rendering (front-to-back alpha
+//             compositing through a 3D texture, the standard CT/MRI style)
+//   mip     : max-intensity projection — the strongest voxel on each view
+//             ray (the "shadow" of the volume from the current angle)
+// ======================================================================
+(function initRenderModes() {
+  if (!renderer || !camera || !scene || !controls) return;
+
+  const NBINS = 4096;
+  const BG = new THREE.Color(0x08080c);
+  let surfaceMesh = null, surfaceSig = "";
+  let volTex = null, lutTex = null, lutSig = "";
+  let quad = null, quadMat = null;
+  let camDirty = true;
+  const _camPos = new THREE.Vector3(1e9, 0, 0);
+  const _tgt = new THREE.Vector3(1e9, 0, 0);
+  const tmpM = new THREE.Matrix4();
+  const scratch = {
+    d: new Float32Array(0), order: new Int32Array(0),
+    counts: new Int32Array(0), binStart: new Int32Array(0), cur: new Int32Array(0),
+    base: new WeakMap(),
+  };
+  const knownPointObjs = new WeakSet();
+
+  const volKey = () => state.variant + ":" + (state.currentDigit === "total" ? "total" : "digit_" + state.currentDigit);
+  const clipAxisVal = () => document.getElementById("clip-axis").value;
+  const clipPosVal  = () => +document.getElementById("clip-pos").value;
+
+  // ---------- points: painter's-algorithm depth sort ----------
+  function baseFor(obj) {
+    let b = scratch.base.get(obj);
+    if (!b) {
+      const p = obj.geometry.attributes.position.array;
+      b = {
+        pos: p.slice(),
+        col: obj.geometry.attributes.color.array.slice(),
+        alp: obj.geometry.attributes.alpha.array.slice(),
+        n: p.length / 3,
+      };
+      scratch.base.set(obj, b);
+    }
+    return b;
+  }
+
+  function sortActivePoints() {
+    if (!pointCloud) return;
+    const pts = scene.children.filter(o => o.isPoints);
+    const obj = pts.find(o => o.visible !== false) || pointCloud;
+    if (!obj || !obj.visible) return;
+    const b = baseFor(obj);
+    const n = b.n;
+    if (!n || n > 200000) return;
+    if (scratch.d.length < n) { scratch.d = new Float32Array(n); scratch.order = new Int32Array(n); }
+    if (scratch.counts.length < NBINS) {
+      scratch.counts = new Int32Array(NBINS);
+      scratch.binStart = new Int32Array(NBINS);
+      scratch.cur = new Int32Array(NBINS);
+    }
+    const d = scratch.d, cp = camera.position;
+    let mn = Infinity, mx = -Infinity;
+    for (let i = 0; i < n; i++) {
+      const dx = b.pos[3*i] - cp.x, dy = b.pos[3*i+1] - cp.y, dz = b.pos[3*i+2] - cp.z;
+      const s = dx*dx + dy*dy + dz*dz;
+      d[i] = s;
+      if (s < mn) mn = s; else if (s > mx) mx = s;
+    }
+    const span = (mx - mn) || 1;
+    const counts = scratch.counts; counts.fill(0);
+    for (let i = 0; i < n; i++) {
+      let bi = ((d[i] - mn) / span * (NBINS - 1)) | 0;
+      if (bi < 0) bi = 0; else if (bi >= NBINS) bi = NBINS - 1;
+      d[i] = bi;                 // stash bin back, reuse buffer
+      counts[bi]++;
+    }
+    // output order: far bin first (drawn first by the GPU), near last
+    let cursor = n;
+    for (let bi = NBINS - 1; bi >= 0; bi--) { cursor -= counts[bi]; scratch.binStart[bi] = cursor; }
+    scratch.cur.set(scratch.binStart);
+    const order = scratch.order, cur = scratch.cur;
+    for (let i = 0; i < n; i++) order[cur[d[i]]++] = i;
+    const P = obj.geometry.attributes.position, C = obj.geometry.attributes.color, A = obj.geometry.attributes.alpha;
+    for (let o = 0; o < n; o++) {
+      const i = order[o], j3 = 3 * i, o3 = 3 * o;
+      P.array[o3] = b.pos[j3]; P.array[o3+1] = b.pos[j3+1]; P.array[o3+2] = b.pos[j3+2];
+      C.array[o3] = b.col[j3]; C.array[o3+1] = b.col[j3+1]; C.array[o3+2] = b.col[j3+2];
+      A.array[o] = b.alp[i];
+    }
+    P.needsUpdate = C.needsUpdate = A.needsUpdate = true;
+  }
+
+  // ---------- surface shell (opaque instanced boxes) ----------
+  function buildSurface() {
+    if (surfaceMesh) { scene.remove(surfaceMesh); surfaceMesh.geometry.dispose(); surfaceMesh.material.dispose(); surfaceMesh = null; }
+    const vol = state.volume;
+    if (!vol) return;
+    const [W, H, B] = state.shape;
+    const thr = state.thr, vmax = Math.max(1, state.volMax);
+    const cax = clipAxisVal(), cpos = clipPosVal();
+    const clipOk = (x, y, z) => {
+      const c = cax === "x" ? x : cax === "y" ? y : cax === "z" ? z : -1;
+      return c <= cpos;
+    };
+    const nb = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= W || y >= H || z >= B) ? 0 : vol[x*H*B + y*B + z];
+    const isShell = (x, y, z) =>
+      nb(x+1,y,z) < thr || nb(x-1,y,z) < thr || nb(x,y+1,z) < thr ||
+      nb(x,y-1,z) < thr || nb(x,y,z+1) < thr || nb(x,y,z-1) < thr;
+    let n = 0;
+    for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) for (let z = 0; z < B; z++)
+      if (vol[x*H*B + y*B + z] >= thr && clipOk(x, y, z) && isShell(x, y, z)) n++;
+    if (!n) return;
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.92, 0.92, 0.92), new THREE.MeshBasicMaterial(), n);
+    const M = new THREE.Matrix4(), CC = new THREE.Color();
+    const cmap = state.cmap === "brightness" ? CMAPS.magma : (CMAPS[state.cmap] || CMAPS.magma);
+    let k = 0;
+    for (let x = 0; x < W; x++) for (let y = 0; y < H; y++) for (let z = 0; z < B; z++) {
+      const v = vol[x*H*B + y*B + z];
+      if (v < thr || !clipOk(x, y, z) || !isShell(x, y, z)) continue;
+      M.makeTranslation(x, y, z);
+      mesh.setMatrixAt(k, M);
+      const t = state.cmap === "brightness" ? z / (B - 1)
+              : (state.log ? Math.log(1 + v) / Math.log(1 + vmax) : v / vmax);
+      const [r, g, bl] = cmap(t);
+      mesh.setColorAt(k, CC.setRGB(r, g, bl));
+      k++;
+    }
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    scene.add(mesh);
+    surfaceMesh = mesh;
+  }
+
+  // ---------- 3D volume texture (r = log-norm count, g = linear-norm count) ----------
+  function buildVolTexture() {
+    if (volTex) { volTex.dispose(); volTex = null; }
+    const vol = state.volume;
+    if (!vol) return;
+    const [W, H, B] = state.shape;
+    const vmax = Math.max(1, state.volMax);
+    const data = new Uint8Array(W * H * B * 4);
+    for (let i = 0; i < vol.length; i++) {
+      const v = vol[i];
+      data[4*i]     = Math.min(255, Math.round(Math.log(1 + v) / Math.log(1 + vmax) * 255));
+      data[4*i + 1] = Math.min(255, Math.round(v / vmax * 255));
+      data[4*i + 2] = 0;
+      data[4*i + 3] = 255;
+    }
+    volTex = new THREE.DataTexture(data, W, H, THREE.RGBAFormat, THREE.UnsignedByteType);
+    volTex.image.depth = B;
+    volTex.magFilter = THREE.NearestFilter;
+    volTex.minFilter = THREE.NearestFilter;
+    volTex.wrapS = volTex.wrapT = volTex.wrapR = THREE.ClampToEdgeWrapping;
+    volTex.needsUpdate = true;
+    volTex.userData.vol = vol;
+  }
+
+  // ---------- 256-entry colormap LUT (1D texture) ----------
+  function buildLUT() {
+    if (lutTex) { lutTex.dispose(); lutTex = null; }
+    const fn = state.cmap === "brightness" ? CMAPS.magma : (CMAPS[state.cmap] || CMAPS.magma);
+    const data = new Uint8Array(256 * 4);
+    for (let i = 0; i < 256; i++) {
+      const [r, g, b] = fn(i / 255);
+      data[4*i] = r * 255; data[4*i+1] = g * 255; data[4*i+2] = b * 255; data[4*i+3] = 255;
+    }
+    lutTex = new THREE.DataTexture(data, 256, 1, THREE.RGBAFormat, THREE.UnsignedByteType);
+    lutTex.magFilter = THREE.LinearFilter;
+    lutTex.minFilter = THREE.LinearFilter;
+    lutTex.needsUpdate = true;
+  }
+
+  // ---------- ray-marched volume / MIP (fullscreen quad) ----------
+  (function makeQuad() {
+    const uniforms = {
+      uVol:      { value: null },
+      uLUT:      { value: null },
+      uInvPV:    { value: new THREE.Matrix4() },
+      uBoxMax:   { value: new THREE.Vector3(27, 27, 63) },
+      uThr:      { value: 10 },
+      uVmax:     { value: 1 },
+      uLog:      { value: 1 },
+      uByBin:    { value: 0 },
+      uOpacity:  { value: 1 },
+      uMode:     { value: 0 },   // 0 = front-to-back compositing, 1 = MIP
+      uClipAxis: { value: 0 },   // 0 none, 1 x, 2 y, 3 z
+      uClipPos:  { value: 999 },
+      uBg:       { value: new THREE.Vector3(BG.r, BG.g, BG.b) },
+    };
+    quadMat = new THREE.ShaderMaterial({
+      uniforms,
+      vertexShader: `
+        varying vec2 vNdc;
+        void main() { vNdc = position.xy; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+      fragmentShader: `
+        varying vec2 vNdc;
+        uniform sampler3D uVol;
+        uniform sampler2D uLUT;
+        uniform mat4 uInvPV;
+        uniform vec3 uBoxMax, uBg;
+        uniform float uThr, uVmax, uLog, uByBin, uOpacity, uMode, uClipPos;
+        uniform int uClipAxis;
+        #ifdef GL_ES
+          #define TEX2(t, u) texture(t, u)
+          #define TEX3(t, u) texture(t, u)
+        #else
+          #define TEX2(t, u) texture2D(t, u)
+          #define TEX3(t, u) texture3D(t, u)
+        #endif
+        void main() {
+          vec3 ro = cameraPosition;
+          vec4 pf = uInvPV * vec4(vNdc, 1.0, 1.0);
+          vec3 rd = normalize(pf.xyz / pf.w - ro);
+          // slab intersection with the box [0, uBoxMax]
+          vec3 inv = 1.0 / (rd + vec3(1e-7));
+          vec3 ta = (-ro) * inv;
+          vec3 tb = (uBoxMax - ro) * inv;
+          vec3 t0 = min(ta, tb);
+          vec3 t1 = max(ta, tb);
+          float tN = max(max(t0.x, t0.y), t0.z);
+          float tF = min(min(t1.x, t1.y), t1.z);
+          if (tF < max(tN, 0.0)) { gl_FragColor = vec4(uBg, 1.0); return; }
+          tN = max(tN, 0.0);
+          const int N = 128;
+          float dt = (tF - tN) / float(N);
+          float logVmax = log(1.0 + uVmax);
+          vec3 acc = vec3(0.0);
+          float aAcc = 0.0;
+          float tMax = 0.0;
+          for (int i = 0; i < N; i++) {
+            vec3 p = ro + rd * (tN + dt * (float(i) + 0.5));
+            float c = uClipAxis == 1 ? p.x : (uClipAxis == 2 ? p.y : (uClipAxis == 3 ? p.z : -1.0));
+            if (c > uClipPos) continue;
+            vec3 uvw = p / uBoxMax;
+            if (uvw.x < 0.0 || uvw.y < 0.0 || uvw.z < 0.0 || uvw.x > 1.0 || uvw.y > 1.0 || uvw.z > 1.0) continue;
+            vec2 s = TEX3(uVol, uvw).rg;
+            float v = uLog > 0.5 ? exp(s.r * logVmax) - 1.0 : s.g * uVmax;
+            if (v < uThr) continue;
+            float t = uLog > 0.5 ? s.r : s.g;
+            float tt = uByBin > 0.5 ? p.z / uBoxMax.z : t;
+            vec3 cc = TEX2(uLUT, vec2(tt, 0.5)).rgb;
+            if (uMode > 0.5) { if (t > tMax) tMax = t; continue; }
+            float a = min(uOpacity * (0.3 + 0.7 * t), 1.0);
+            acc += (1.0 - aAcc) * cc * a;
+            aAcc += (1.0 - aAcc) * a;
+            if (aAcc > 0.999) break;
+          }
+          vec3 col;
+          if (uMode > 0.5) col = tMax > 0.0 ? TEX2(uLUT, vec2(tMax, 0.5)).rgb : uBg;
+          else             col = acc + uBg * (1.0 - aAcc);
+          gl_FragColor = vec4(col, 1.0);
+        }`,
+      depthTest: false, depthWrite: false,
+    });
+    quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), quadMat);
+    quad.frustumCulled = false;
+    quad.renderOrder = 999;   // fullscreen, drawn over the 3D scene
+    quad.visible = false;
+    scene.add(quad);
+  })();
+
+  // ---------- master sync loop ----------
+  (function modeLoop() {
+    requestAnimationFrame(modeLoop);
+    if (!state.volume || !state.meta) return;
+    const mode = state.renderMode;
+    const [W, H, B] = state.shape;
+
+    // did the camera move? (covers orbit, reset, auto-rotate)
+    if (camera.position.distanceToSquared(_camPos) > 1e-6 ||
+        controls.target.distanceToSquared(_tgt) > 1e-6) {
+      _camPos.copy(camera.position);
+      _tgt.copy(controls.target);
+      camDirty = true;
+    }
+    // a freshly built point object is unsorted -> force a sort
+    for (const o of scene.children) if (o.isPoints && !knownPointObjs.has(o)) { knownPointObjs.add(o); camDirty = true; }
+
+    // mode gating
+    if (mode !== "points") {
+      for (const o of scene.children) if (o.isPoints) o.visible = false;
+    } else {
+      const clipOn = clipAxisVal() !== "off";
+      const pts = scene.children.filter(o => o.isPoints);
+      const sc = pts.find(o => o !== pointCloud) || null;
+      if (pointCloud) pointCloud.visible = !clipOn || !sc;
+      if (sc) sc.visible = clipOn;
+    }
+    if (surfaceMesh) surfaceMesh.visible = (mode === "surface");
+    quad.visible = (mode === "volume" || mode === "mip");
+
+    // axes as overlay in the fullscreen modes (orientation cue)
+    if (axesGroup) {
+      const overlay = mode === "volume" || mode === "mip";
+      axesGroup.traverse(o => {
+        if (!o.material) return;
+        o.renderOrder = overlay ? 1000 : 0;
+        o.material.depthTest = !overlay;
+      });
+    }
+
+    // surface shell: rebuild only when its inputs change
+    if (mode === "surface") {
+      const sig = ["s", volKey(), state.thr, state.log, state.cmap, clipAxisVal(), clipPosVal()].join("|");
+      if (sig !== surfaceSig) { surfaceSig = sig; buildSurface(); }
+    }
+
+    // volume / mip: keep texture + uniforms in sync
+    if (mode === "volume" || mode === "mip") {
+      if (!volTex || volTex.userData.vol !== state.volume) buildVolTexture();
+      if (state.cmap !== lutSig) { lutSig = state.cmap; buildLUT(); }
+      const u = quadMat.uniforms;
+      u.uVol.value = volTex;
+      u.uLUT.value = lutTex;
+      u.uBoxMax.value.set(W - 1, H - 1, B - 1);
+      u.uThr.value = state.thr;
+      u.uVmax.value = Math.max(1, state.volMax);
+      u.uLog.value = state.log ? 1 : 0;
+      u.uByBin.value = state.cmap === "brightness" ? 1 : 0;
+      u.uOpacity.value = state.opacity;
+      u.uMode.value = mode === "mip" ? 1 : 0;
+      const ca = clipAxisVal();
+      u.uClipAxis.value = ca === "x" ? 1 : ca === "y" ? 2 : ca === "z" ? 3 : 0;
+      u.uClipPos.value = clipPosVal();
+      tmpM.copy(camera.projectionMatrix).multiply(camera.matrixWorldInverse).invert();
+      u.uInvPV.value.copy(tmpM);
+    }
+
+    // points: re-sort only while the camera is actually moving
+    if (mode === "points" && camDirty) { camDirty = false; sortActivePoints(); }
+  })();
+
+  document.getElementById("rendermode").addEventListener("change", e => {
+    state.renderMode = e.target.value;
   });
 })();

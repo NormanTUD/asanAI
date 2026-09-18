@@ -119,6 +119,15 @@
 
     <h3>3D voxels</h3>
     <div class="ctrl">
+      <label>Render mode</label>
+      <select id="rendermode">
+        <option value="points" selected>points (depth-sorted)</option>
+        <option value="surface">surface shell (solid)</option>
+        <option value="volume">volume (ray-marched)</option>
+        <option value="mip">max-intensity projection</option>
+      </select>
+    </div>
+    <div class="ctrl">
       <label>Min count threshold = <span id="thr-val">10</span></label>
       <input type="range" id="thr" min="0" max="1000" value="10">
     </div>
