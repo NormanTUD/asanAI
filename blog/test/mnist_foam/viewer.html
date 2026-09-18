@@ -4,15 +4,20 @@
 <meta charset="UTF-8">
 <title>MNIST Foam Viewer</title>
 <style>
-  body { margin: 0; font-family: system-ui, sans-serif; background: #0e0e12; color: #e8e8ea; }
-  .app { display: grid; grid-template-columns: 280px 1fr 280px; height: 100vh; }
-  .panel { padding: 12px; overflow-y: auto; border-right: 1px solid #222; background: #16161c; }
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; background: #0e0e12; color: #e8e8ea; }
+  .app { display: grid; grid-template-columns: 280px 1fr 280px; height: 100%; min-height: 0; }
+  .panel { padding: 12px; overflow-y: auto; border-right: 1px solid #222; background: #16161c; min-height: 0; }
   .panel:last-child { border-right: 0; border-left: 1px solid #222; }
-  .main { display: grid; grid-template-rows: 1fr 320px; overflow: hidden; }
+  .main { display: grid; grid-template-rows: 1fr minmax(140px, 320px); overflow: hidden; min-height: 0; }
   #stage3d { background: #08080c; }
   .slices { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 8px; background: #101015; }
-  .slice { position: relative; background: #08080c; border: 1px solid #222; border-radius: 4px; }
-  .slice canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .slice { position: relative; background: #08080c; border: 1px solid #222; border-radius: 4px; min-height: 0; overflow: hidden; }
+  /* absolute: canvas must not dictate the row height (height:100% is otherwise
+     unresolved -> falls back to the buffer aspect ratio -> canvas overflows
+     the row and its bottom half gets clipped). object-fit keeps the data
+     proportions and shows the whole slice. */
+  .slice canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; image-rendering: pixelated; }
   .slice-label { position: absolute; top: 4px; left: 6px; font-size: 11px; color: #888; }
   .ctrl { margin-bottom: 14px; }
   .ctrl label { display: block; font-size: 11px; color: #999; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
