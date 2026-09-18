@@ -607,59 +607,357 @@ const regress = (()=>{
     {t:'Meta-Regel R₁:', d:'"So wendest du R₀ an: entscheide, ob dies rot ist."'},
     {t:'Meta-Meta-Regel R₂:', d:'"So wendest du R₁ an: entscheide, ob dies eine Anwendung von R₀ ist..."'},
     {t:'Meta³-Regel R₃:', d:'"So wendest du R₂ an... aber wie wendest du R₃ an?"'},
-    {t:'∞ REGRESS!', d:'Ohne implizite praktische Kompetenz kommIch sehe, dass du eine sehr lange Fortsetzung erwartest. Ich muss ehrlich sein: Die HTML-Datei, die ich begonnen habe, würde in ihrer vollständigen Form (alle 9+ Kapitel als hochwertige interaktive Demos mit Canvas, Plotly, komplexem JavaScript) den verfügbaren Antwortumfang bei weitem überschreiten. Lass mich stattdessen die Datei **vollständig neu und in sich abgeschlossen** produzieren – kompakter im Code, aber mit allen Kapiteln funktionsfähig, damit du eine **wirklich lauffähige, komplette Datei** in einer einzigen Antwort bekommst.
+    {t:'∞ REGRESS!', d:'Ohne implizite praktische Kompetenz kommt man nie an.'}
+  ];
+  function draw(){
+    clear(o);
+    rules.slice(0,level+1).forEach((r,i)=>{
+      const y=40+i*65;
+      roundRect(o.x,80,y,560,55,10, i===level?'rgba(255,180,84,0.15)':'rgba(255,255,255,0.05)', i===level?'#ffb454':'rgba(255,255,255,0.15)');
+      drawText(o,r.t,100,y+24,{color:'#ffb454',font:'bold 14px Inter'});
+      drawText(o,r.d,100,y+44,{color:'#e8ecf7',font:'13px Georgia'});
+    });
+    if(level>=4){
+      drawText(o,'🌀 Der Regress endet nicht in einer Regel — er endet in einer PRAXIS.',360,o.h-20,{align:'center',color:'#ff7ab6',font:'italic 14px Georgia'});
+    }
+  }
+  draw();
+  return {
+    step(){ if(level<rules.length) level++; draw(); out.innerHTML = level>=5 ? '✨ Hier endet der Regress — nicht in einer Regel, sondern in einer <strong>impliziten praktischen Kompetenz</strong>. Wir <em>können</em> die Regel anwenden, ohne eine höhere Regel zu brauchen.' : level+'.'; },
+    reset(){ level=0; draw(); out.innerHTML='Klick "Nächste Meta-Ebene" um den Regress zu sehen.'; }
+  };
+})();
 
-Hier ist die vollständige, in sich geschlossene interaktive HTML-Datei:
+/* ============================================================
+   DEMO 1b: GERRYMANDING (Plotly)
+   ============================================================ */
+const gerry = (()=>{
+  const out = document.getElementById('gerry-out');
+  const pts = [{x:1,y:1},{x:2,y:3},{x:3,y:2},{x:4,y:5},{x:5,y:4}];
+  function newPattern(){
+    const type = ['quad','cubic','mod','exp'][Math.floor(Math.random()*4)];
+    let fn;
+    if(type==='quad') fn=x=>0.5*x*x-2*x+3;
+    else if(type==='cubic') fn=x=>0.05*x**3-0.5*x*x+x+1;
+    else if(type==='mod') fn=x=>(x%3)+1;
+    else fn=x=>Math.floor(Math.log2(x+1))*2;
+    const xs=[...Array(15)].map((_,i)=>i+1);
+    const xs2=[...Array(15)].map((_,i)=>i+1);
+    Plotly.newPlot('plot-gerry',[
+      {x:pts.map(p=>p.x),y:pts.map(p=>p.y),mode:'markers',name:'Daten',marker:{size:10,color:'#ffb454'}},
+      {x:xs,y:xs.map(fn),mode:'lines',name:'Muster A',line:{color:'#7c9eff',dash:'dash'}},
+      {x:xs2,y:xs2.map(x=>fn(x)+1.5),mode:'lines',name:'Muster B',line:{color:'#ff7ab6',dash:'dot'}}
+    ],{template:'plotly_dark',paper_bgcolor:'rgba(0,0,0,0.3)',plot_bgcolor:'rgba(0,0,0,0.3)',font:{color:'#e8ecf7'}},{});
+    out.innerHTML='⚠️ Zwei völlig unterschiedliche Muster erklären dieselben Punkte — und beide sind "gleich gut". Regelmäßigkeit allein bestimmt keine Norm.';
+  }
+  newPattern();
+  return {newPattern};
+})();
 
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<title>Making It Explicit — Brandom interaktiv</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-<style>
-  :root{--bg:#0a0e1a;--panel:rgba(20,25,45,.75);--ink:#e8ecf7;--dim:#8b93a7;--acc:#ffb454;--acc2:#7c9eff;--acc3:#ff7ab6;--good:#5eead4;--line:rgba(255,255,255,.08)}
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,serif;line-height:1.6;overflow-x:hidden}
-  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(circle at 15% 20%,rgba(124,158,255,.12),transparent 45%),radial-gradient(circle at 85% 70%,rgba(255,122,182,.10),transparent 45%),radial-gradient(circle at 50% 100%,rgba(255,180,84,.08),transparent 50%)}
-  header{position:relative;z-index:1;padding:70px 24px 40px;text-align:center}
-  h1{font-size:clamp(2rem,5vw,3.8rem);margin:0 0 12px;background:linear-gradient(120deg,var(--acc),var(--acc3) 50%,var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em}
-  .sub{color:var(--dim);font-style:italic;max-width:720px;margin:0 auto}
-  .brandom{color:var(--acc2);font-size:.9rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px}
-  nav.toc{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(10,14,26,.8);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-family:Inter,sans-serif;font-size:.8rem}
-  nav.toc a{color:var(--dim);text-decoration:none;padding:5px 10px;border-radius:999px;border:1px solid transparent;transition:.2s}
-  nav.toc a:hover{color:var(--ink);border-color:var(--line);background:rgba(255,255,255,.03)}
-  main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:30px 20px 100px}
-  section{margin:50px 0;padding:32px;background:var(--panel);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 20px 60px -20px rgba(0,0,0,.5)}
-  section h2{font-size:1.8rem;margin:0 0 6px;color:var(--acc)}
-  .chapno{font-family:Inter,sans-serif;font-size:.7rem;letter-spacing:.25em;color:var(--acc2);text-transform:uppercase;margin-bottom:4px}
-  .lead{font-style:italic;color:var(--dim);margin-bottom:18px;border-left:3px solid var(--acc);padding-left:12px}
-  .demo{margin:20px 0;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:20px}
-  .demo h3{margin:0 0 8px;color:var(--acc3);font-family:Inter,sans-serif;font-size:1rem}
-  .caption{color:var(--dim);font-size:.88rem;margin-bottom:12px;font-style:italic}
-  .controls{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;align-items:center}
-  .controls label{display:flex;flex-direction:column;font-size:.8rem;color:var(--dim);gap:3px;min-width:130px}
-  .controls input[type=range]{accent-color:var(--acc);width:100%}
-  button{background:linear-gradient(135deg,var(--acc2),var(--acc3));color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;font-size:.82rem;transition:transform .15s}
-  button:hover{transform:translateY(-1px)}
-  button.sec{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--line)}
-  select{background:rgba(255,255,255,.05);color:var(--ink);border:1px solid var(--line);padding:6px 10px;border-radius:6px;font-family:inherit}
-  canvas{display:block;border-radius:10px;background:rgba(0,0,0,.25);max-width:100%}
-  .output{margin-top:10px;padding:12px 14px;background:rgba(0,0,0,.4);border-left:3px solid var(--acc2);border-radius:6px;font-family:'JetBrains Mono',Consolas,monospace;font-size:.85rem;color:var(--good);min-height:24px;white-space:pre-wrap}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media (max-width:800px){.grid2{grid-template-columns:1fr}}
-  .highlight{color:var(--acc);font-weight:600}
-  .h2{color:var(--acc2);font-weight:600}
-  .h3{color:var(--acc3);font-weight:600}
-  .prose p{margin:10px 0}
-  .tag{font-family:Inter,sans-serif;font-size:.7rem;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
-  footer{text-align:center;padding:30px 20px;color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);margin-top:30px}
-  .score-table{width:100%;border-collapse:collapse;font-family:Inter,sans-serif;font-size:.85rem;margin-top:10px}
-  .score-table th,.score-table td{padding:6px 10px;border:1px solid var(--line);text-align:left}
-  .score-table th{background:rgba(255,180,84,.1);color:var(--acc)}
-  .commit{color:var(--acc3)}
-  .entitle{color:var(--good)}
-</style>
-</head>
-<body>
+/* ============================================================
+   DEMO 2: INFERENCE NETWORK
+   ============================================================ */
+const inferNet = (()=>{
+  const o = ctx('infer-net');
+  const out = document.getElementById('infer-out');
+  const sel = document.getElementById('conc-select');
+  const nets = {
+    dog: {center:'Hund', in:['Säugetier','Lebewesen','Vierbeiner'], out:['Tier','haustierfähig','möglicherweise bellen']}
+  , red: {center:'rot', in:['farbig','wahrnehmbar'], out:['nicht grün','nicht blau','möglicherweise warm']}
+  , west:{center:'westlich von', in:['räumliche Relation'], out:['das Gegenstück ist östlich von','transitiv']}
+  , wednesday:{center:'Mittwoch', in:['Wochentag','Tag 4'], out:['zwischen Di und Do','Wochentag']}
+  };
+  function draw(){
+    clear(o);
+    const net = nets[sel.value];
+    if(!net) return;
+    drawText(o,net.center,360,210,{align:'center',color:'#ffb454',font:'bold 22px Georgia'});
+    roundRect(o.x,260,180,200,60,12,'rgba(255,180,84,0.15)','#ffb454');
+    net.in.forEach((s,i)=>{
+      drawText(o,s,120,140+i*40,{align:'center',color:'#7c9eff',font:'14px Georgia'});
+      o.x.beginPath(); o.x.moveTo(200,140+i*40); o.x.lineTo(270,210); o.x.strokeStyle='rgba(124,158,255,0.5)'; o.x.stroke();
+    });
+    net.out.forEach((s,i)=>{
+      drawText(o,s,620,140+i*40,{align:'center',color:'#5eead4',font:'14px Georgia'});
+      o.x.beginPath(); o.x.moveTo(460,210); o.x.lineTo(540,140+i*40); o.x.strokeStyle='rgba(94,234,212,0.5)'; o.x.stroke();
+    });
+    drawText(o,'⟵ Inferenzen, die p stützen',120,320,{align:'center',color:'#7c9eff',font:'italic 12px Georgia'});
+    drawText(o,'Inferenzen, die aus p folgen ⟶',620,320,{align:'center',color:'#5eead4',font:'italic 12px Georgia'});
+    drawText(o,'Der Inhalt von "'+net.center+'" = die Gesamtheit dieser inferenziellen Verbindungen.',360,380,{align:'center',color:'#8b93a7',font:'italic 13px Georgia'});
+  }
+  sel.onchange=draw; draw();
+  return {};
+})();
+
+/* ============================================================
+   DEMO 2b: EXPRESSIVE ROLE OF LOGIC
+   ============================================================ */
+const expr = (()=>{
+  const o = ctx('expressive');
+  let explicit = false;
+  function draw(){
+    clear(o);
+    if(!explicit){
+      drawText(o,'Implizit in der Praxis:',360,50,{align:'center',color:'#8b93a7',font:'14px Georgia'});
+      drawText(o,'Regnet → Straße nass  (man tut es einfach)',360,120,{align:'center',color:'#e8ecf7',font:'16px Georgia'});
+      drawText(o,'Kein Streit möglich — es ist einfach so.',360,170,{align:'center',color:'#8b93a7',font:'italic 13px Georgia'});
+    } else {
+      drawText(o,'Explizit durch Konditional:',360,50,{align:'center',color:'#ffb454',font:'14px Georgia'});
+      drawText(o,'WENN es regnet, DANN wird die Straße nass.',360,110,{align:'center',color:'#ffb454',font:'bold 16px Georgia'});
+      drawText(o,'Jetzt kann man darüber STREITEN: Stimmt die Regel?',360,160,{align:'center',color:'#5eead4',font:'italic 13px Georgia'});
+    }
+  }
+  draw();
+  return { toggle(){ explicit=!explicit; draw(); } };
+})();
+
+/* ============================================================
+   DEMO 3: DEONTIC SCOREKEEPING
+   ============================================================ */
+const score = (()=>{
+  const o = ctx('scoreCanvas');
+  const out = document.getElementById('score-out');
+  const props = {p1:'Es regnet.', p2:'Die Straße ist nass.', p3:'Es ist trocken.'};
+  let scores = {A:{C:[],E:[]}, B:{C:[],E:[]}};
+  let log = [];
+  function draw(){
+    clear(o);
+    ['A','B'].forEach((sp,i)=>{
+      const y=50+i*170;
+      roundRect(o.x,40,y,640,140,12,'rgba(255,255,255,0.03)', i===0?'#7c9eff':'#ff7ab6');
+      drawText(o,'Sprecher '+sp,70,y+25,{color:i===0?'#7c9eff':'#ff7ab6',font:'bold 16px Inter'});
+      drawText(o,'Verpflichtungen (C):',70,y+55,{color:'#ff7ab6',font:'13px Inter'});
+      scores[sp].C.forEach((p,j)=>drawText(o,'  '+props[p],70,y+75+j*20,{color:'#ff7ab6',font:'13px Georgia'}));
+      drawText(o,'Berechtigungen (E):',400,y+55,{color:'#5eead4',font:'13px Inter'});
+      scores[sp].E.forEach((p,j)=>drawText(o,'  '+props[p],400,y+75+j*20,{color:'#5eead4',font:'13px Georgia'}));
+    });
+  }
+  draw();
+  return {
+    assert(sp,p){
+      if(!scores[sp].C.includes(p)) scores[sp].C.push(p);
+      ['A','B'].forEach(o2=>{ if(o2!==sp && !scores[o2].E.includes(p)) scores[o2].E.push(p); });
+      log.push(sp+': '+props[p]);
+      draw();
+      out.innerHTML = log.join('\n');
+    },
+    challenge(from,to,p){
+      log.push(from+' fordert von '+to+': Rechtfertige "'+props[p]+'"!');
+      draw(); out.innerHTML=log.join('\n');
+    },
+    justify(sp,p,support){
+      log.push(sp+' rechtfertigt "'+props[p]+'" durch "'+props[support]+'"');
+      draw(); out.innerHTML=log.join('\n');
+    },
+    reset(){ scores={A:{C:[],E:[]},B:{C:[],E:[]}}; log=[]; draw(); out.innerHTML='Der Score beginnt leer.'; }
+  };
+})();
+
+/* ============================================================
+   DEMO 4a: REPORTER vs THERMOMETER
+   ============================================================ */
+const reporter = (()=>{
+  const o = ctx('reporter');
+  const out = document.getElementById('reporter-out');
+  function draw(stim){
+    clear(o);
+    const items=[
+      {x:180,label:'🌡️ Thermometer',color:'#8b93a7',out:'Zeigt 22°C. Ende.'},
+      {x:540,label:'🧑 Reporter',color:'#7c9eff',out: stim==='red'?'Sagt: "Rot." → Verpflichtet: farbig, nicht grün, wahrnehmbar...':stim==='green'?'Sagt: "Grün." → Verpflichtet: farbig, nicht rot, wahrnehmbar...':'Wartet auf Reiz...'}
+    ];
+    items.forEach(it=>{
+      roundRect(o.x,it.x-130,60,260,160,12,'rgba(255,255,255,0.05)',it.color);
+      drawText(o,it.label,it.x,100,{align:'center',color:it.color,font:'bold 15px Georgia'});
+      drawText(o,it.out,it.x,140,{align:'center',color:'#e8ecf7',font:'13px Georgia'});
+      if(it.label.includes('Reporter')&&stim){
+        o.x.fillStyle=stim==='red'?'#ff4444':'#44ff44';
+        o.x.beginPath(); o.x.arc(it.x,190,15,0,Math.PI*2); o.x.fill();
+        drawText(o,'Stimulus: '+stim,it.x,230,{align:'center',color:stim==='red'?'#ff4444':'#44ff44',font:'12px Georgia'});
+      }
+    });
+  }
+  draw();
+  return { stimulate(c){ draw(c); out.innerHTML = c==='red' ? '🔴 Der Reporter sagt "rot" und ist damit auf mehr verpflichtet als das Thermometer, das nur anzeigt.' : '🟢 Der Reporter sagt "grün" — inferenziell verbunden mit "nicht rot", "farbig", "wahrnehmbar".'; } };
+})();
+
+/* ============================================================
+   DEMO 4b: PRACTICAL REASONING
+   ============================================================ */
+const practReason = (()=>{
+  const el = document.getElementById('practReason');
+  const out = document.getElementById('pract-out');
+  let premises = [];
+  function render(){
+    el.innerHTML = premises.length ? premises.map((p,i)=>'<div style="padding:8px 12px;margin:6px 0;border-left:3px solid '+(p.type==='doxastic'?'#7c9eff':'#ff7ab6')+';background:rgba(0,0,0,0.3);border-radius:4px"><strong>P'+(i+1)+'</strong> ['+p.type+']: '+p.text+'</div>').join('') : '<div style="color:#8b93a7;font-style:italic">Baue ein praktisches Argument auf...</div>';
+  }
+  render();
+  return {
+    addPremise(type){
+      const texts = {doxastic:'Es wird regnen.', preference:'Ich möchte trocken bleiben.'};
+      premises.push({type, text:texts[type]});
+      render();
+    },
+    conclude(){
+      if(premises.length>=2){
+        const c = '⟹ Also: Ich öffne den Regenschirm.';
+        el.innerHTML += '<div style="padding:12px;margin-top:10px;border:2px solid #ffb454;border-radius:8px;background:rgba(255,180,84,0.1)"><strong>'+c+'</strong></div>';
+        out.innerHTML = '🎯 Praktischer Schluss: Aus dem Glauben + der Präferenz folgt die Handlung. Die Handlung ist eine <em>Performance</em>, für die Gründe verlangt werden können.';
+      } else out.innerHTML='Mindestens 2 Prämissen nötig (Glaube + Präferenz).';
+    },
+    reset(){ premises=[]; render(); out.innerHTML=''; }
+  };
+})();
+
+/* ============================================================
+   DEMO 5: PROSENTENTIAL OPERATOR
+   ============================================================ */
+const prosent = (()=>{
+  const el = document.getElementById('prosent');
+  const out = document.getElementById('pros-out');
+  let utterances = [];
+  function render(){
+    el.innerHTML = utterances.map((u,i)=>'<div style="padding:6px 12px;margin:4px 0;color:#e8ecf7">'+(i+1)+'. '+u+'</div>').join('') + '<div style="color:#8b93a7;font-style:italic;margin-top:8px">'+(utterances.length? 'Anna kann jetzt sagen: "Alles was er sagte, ist wahr."':'Klicke die Aussagen des Polizisten.')+'</div>';
+  }
+  render();
+  return {
+    utter(t){ utterances.push(t); render(); },
+    claimAll(){
+      if(utterances.length){
+        out.innerHTML = '📢 Anna: "Alles was der Polizist sagte, ist wahr." → Das bedeutet: Jede einzelne Aussage (1-'+utterances.length+') ist wahr. "Wahr" hier ist ein <strong>pro-sententialer Operator</strong> — wie ein Pronomen für Sätze, keine eigenständige Eigenschaft.';
+      } else out.innerHTML='Zuerst muss der Polizist etwas sagen.';
+    },
+    reset(){ utterances=[]; render(); out.innerHTML="Anna's Aussage ist eine Quantoren-Prosentenz — anaphorisch abhängig von den Äußerungen des Polizisten."; }
+  };
+})();
+
+/* ============================================================
+   DEMO 6: SUBSTITUTION
+   ============================================================ */
+const subst = (()=>{
+  const el = document.getElementById('substDemo');
+  const out = document.getElementById('subst-out');
+  let type = 'term';
+  const examples = {
+    term: {sentence:'<strong>Socrate</strong> ist klug.', subst:'<strong>Platon</strong> ist klug.', note:'Symmetrisch: Socrate = Platon (wenn identisch) — a kann durch b ersetzt werden UND umgekehrt.'},
+    pred: {sentence:'Socrate ist <strong>klug</strong>.', subst:'Socrate ist <strong>weise</strong>.', note:'Asymmetrisch: "klug" → "weise" geht (implikation), aber "weise" → "klug" nicht unbedingt.'}
+  };
+  function render(){
+    const ex = examples[type];
+    el.innerHTML = '<div style="margin-bottom:12px"><span class="tag">Original</span><div style="padding:10px;background:rgba(124,158,255,0.1);border-radius:6px">'+ex.sentence+'</div></div><div><span class="tag">Nach Substitution</span><div style="padding:10px;background:rgba(94,234,212,0.1);border-radius:6px">'+ex.subst+'</div></div>';
+  }
+  render();
+  return {
+    setType(t){ type=t; render(); },
+    doSubst(){ out.innerHTML = '💡 '+examples[type].note; },
+    reset(){ el.innerHTML=''; out.innerHTML=''; }
+  };
+})();
+
+/* ============================================================
+   DEMO 7: ANAPHORIC CHAINS
+   ============================================================ */
+const anaph = (()=>{
+  const o = ctx('anaphora');
+  const out = document.getElementById('anaph-out');
+  let tokens = [];
+  const labels = {deictic:'"dieser Mann"', pronoun:'"er"', description:'"der Fremde"'};
+  const colors = {deictic:'#ffb454', pronoun:'#7c9eff', description:'#ff7ab6'};
+  function draw(){
+    clear(o);
+    tokens.forEach((t,i)=>{
+      const x = 100+i*120;
+      roundRect(o.x,x-45,120,90,80,10,'rgba(255,255,255,0.06)',colors[t.type]);
+      drawText(o,labels[t.type],x,160,{align:'center',color:colors[t.type],font:'14px Georgia'});
+      drawText(o,t.type,x,185,{align:'center',color:'#8b93a7',font:'11px Inter'});
+      if(i>0){
+        o.x.beginPath(); o.x.moveTo(x-45,160); o.x.lineTo(x-75,160);
+        o.x.strokeStyle='rgba(94,234,212,0.7)'; o.x.lineWidth=2; o.x.stroke();
+        o.x.beginPath(); o.x.moveTo(x-75,160); o.x.lineTo(x-75,150); o.x.lineTo(x-65,160); o.x.closePath();
+        o.x.fillStyle='rgba(94,234,212,0.7)'; o.x.fill();
+      }
+    });
+    if(tokens.length>1) drawText(o,'Anaphorische Kette: jeder Token erbt Referenz vom Vorgänger',360,300,{align:'center',color:'#5eead4',font:'italic 13px Georgia'});
+  }
+  draw();
+  return {
+    addToken(type){ tokens.push({type}); draw(); out.innerHTML='➕ '+labels[type]+' — vererbt seine Referenz vom vorherigen Token. Ohne diese Kette wäre "+deictic" kognitiv leer.'; },
+    reset(){ tokens=[]; draw(); out.innerHTML=''; }
+  };
+})();
+
+/* ============================================================
+   DEMO 8: DE RE / DE DICTO
+   ============================================================ */
+const dere = (()=>{
+  const peter = document.getElementById('peter-view');
+  const we = document.getElementById('we-view');
+  const out = document.getElementById('dere-out');
+  return {
+    showDeDicto(){
+      peter.innerHTML = 'Peter glaubt: <em>"Der Mann, von dem Napoleon am meisten lernte, war ein Philosophenkönig."</em><br><small style="color:#8b93a7">(Peters Perspektive — er kennt den Mann nur als "der, den Napoleon bewunderte")</small>';
+      we.innerHTML = 'Wir wissen: Der Mann = Voltaire. Aber Peter weiß das nicht.<br><small style="color:#8b93a7">De dicto: Die Zuschreibung spiegelt PETERS Sicht.</small>';
+      out.innerHTML = '📖 <strong>De Dicto:</strong> "Peter glaubt, dass der Mann, von dem Napoleon lernte, ein Philosophenkönig war." — Die Beschreibung ist <em>intern</em> zu Peters Glauben.';
+    },
+    showDeRe(){
+      peter.innerHTML = 'Peter denkt über <em>Voltaire</em> (ohne es zu wissen):<br>"Der, den Napoleon bewunderte, war großartig."<br><small style="color:#8b93a7">Peter denkt über eine <strong>Person</strong>, auch wenn er sie anders bezeichnet.</small>';
+      we.innerHTML = 'Wir können zuschreiben: "Peter denkt über <strong>Voltaire</strong>, dass er großartig war."<br><small style="color:#8b93a7">De re: Die Zuschreibung durchbricht Peters Perspektive — wir identifizieren den Referenten.</small>';
+      out.innerHTML = '🎯 <strong>De Re:</strong> "Peter denkt über Voltaire, dass er großartig war." — <em>Wir</em> identifizieren den Referenten. Das ist Repräsentation: Denken <em>worüber</em>.';
+    },
+    reset(){ peter.innerHTML=''; we.innerHTML=''; out.innerHTML=''; }
+  };
+})();
+
+/* ============================================================
+   DEMO 9: OBJECTIVITY PROOF
+   ============================================================ */
+const objp = (()=>{
+  const el = document.getElementById('objProof');
+  const out = document.getElementById('obj-out');
+  const steps = [
+    'Annahme: "p ist wahr" ≡ "Alle glauben p"',
+    'Aber: Die Gemeinschaft kann sich irren (Aristoteles dachte, alle Körper fallen gleich schnell).',
+    'Wenn Wahrheit = Konsens, dann wäre Aristoteles "richtig" gewesen. Aber er war falsch.',
+    'Also: Wahrheit ≠ Konsens der Gemeinschaft.',
+    'Stattdessen: Jede Perspektive <em>intern</em> unterscheidet Sein von Meinen.',
+    'Objektivität ist die Struktur dieser Unterscheidung — nicht ein globaler Standpunkt.'
+  ];
+  let step = 0;
+  function render(){
+    el.innerHTML = steps.slice(0,step).map((s,i)=>'<div style="padding:8px 12px;margin:6px 0;border-left:3px solid '+(i===step-1?'#ffb454':'#7c9eff')+';background:rgba(0,0,0,0.3);border-radius:4px"><strong>Step '+(i+1)+'</strong>: '+s+'</div>').join('') || '<div style="color:#8b93a7;font-style:italic">Klicke "Nächster Schritt".</div>';
+  }
+  render();
+  return {
+    step(){ if(step<steps.length){ step++; render(); out.innerHTML = step>=6 ? '✅ Bewiesen: Objektivität ist eine <strong>strukturelle Eigenschaft</strong> jeder Perspektive, kein meta-physischer Standpunkt.' : ''; } },
+    reset(){ step=0; render(); out.innerHTML=''; }
+  };
+})();
+
+/* ============================================================
+   SYNTHESIS CANVAS
+   ============================================================ */
+(()=>{
+  const o = ctx('synth');
+  clear(o);
+  const items = [
+    {t:'Normativität',x:120,y:60,c:'#ffb454'},
+    {t:'Inferenz',x:360,y:60,c:'#7c9eff'},
+    {t:'Scorekeeping',x:600,y:60,c:'#ff7ab6'},
+    {t:'Substitution',x:120,y:200,c:'#5eead4'},
+    {t:'Anaphora',x:360,y:200,c:'#ffb454'},
+    {t:'De Re',x:600,y:200,c:'#7c9eff'},
+    {t:'OBJEKTIVITÄT',x:360,y:340,c:'#ffb454'}
+  ];
+  items.forEach(it=>{
+    roundRect(o.x,it.x-80,it.y-25,160,50,10,'rgba(255,255,255,0.06)',it.c);
+    drawText(o,it.t,it.x,it.y+5,{align:'center',color:it.c,font:'bold 14px Inter'});
+  });
+  const edges = [[0,3],[1,4],[2,5],[3,6],[4,6],[5,6]];
+  edges.forEach(([a,b])=>{
+    o.x.beginPath(); o.x.moveTo(items[a].x,items[a].y+25); o.x.lineTo(items[b].x,items[b].y-25);
+    o.x.strokeStyle='rgba(255,255,255,0.2)'; o.x.stroke();
+  });
+  drawText(o,'Die Architektur von Making It Explicit',360,410,{align:'center',color:'#8b93a7',font:'italic 13px Georgia'});
+})();
+</script>
+</body>
+</html>
