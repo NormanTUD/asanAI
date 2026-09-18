@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nebeneffekte des Lernens aus niedrig-dimensionalen Daten — Interaktive Erklärung</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-card: #121829;
+    --bg-card-2: #1a2138;
+    --accent: #7dd3fc;
+    --accent-2: #f0abfc;
+    --accent-3: #86efac;
+    --accent-4: #fbbf24;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, 'Segoe UI', 'Inter', sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(at 20% 10%, rgba(125,211,252,0.08) 0px, transparent 50%),
+      radial-gradient(at 80% 40%, rgba(240,171,252,0.08) 0px, transparent 50%),
+      radial-gradient(at 40% 90%, rgba(134,239,172,0.05) 0px, transparent 50%);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 30px 0;
+    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .toc a {
+    color: var(--accent);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    font-size: 0.9rem;
+  }
+  .toc a:hover { background: var(--bg-card-2); }
+  section {
+    margin: 60px 0;
+    padding: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.4);
+  }
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: var(--bg);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+  h3 {
+    font-size: 1.25rem;
+    margin: 24px 0 12px;
+    color: var(--accent-2);
+  }
+  h4 {
+    font-size: 1.05rem;
+    margin: 16px 0 8px;
+    color: var(--accent-3);
+  }
+  p { margin: 12px 0; color: var(--text); }
+  .lead { font-size: 1.05rem; color: var(--text-dim); margin-bottom: 20px; }
+  .demo {
+    margin: 24px 0;
+    padding: 20px;
+    background: var(--bg-card-2);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+  .demo-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-4);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+    padding: 14px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+  }
+  .ctrl {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .ctrl label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+  .ctrl label .val {
+    color: var(--accent);
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(125,211,252,0.5);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: var(--bg);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: transform 0.15s;
+  }
+  button:hover { transform: translateY(-2px); }
+  select {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  canvas {
+    display: block;
+    max-width: 100%;
+    background: #0a0e1a;
+    border-radius: 10px;
+  }
+  .plot { min-height: 380px; width: 100%; }
+  .insight {
+    margin: 16px 0;
+    padding: 16px 20px;
+    background: linear-gradient(90deg, rgba(134,239,172,0.08), transparent);
+    border-left: 3px solid var(--accent-3);
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+  .insight strong { color: var(--accent-3); }
+  .warning {
+    background: linear-gradient(90deg, rgba(251,191,36,0.08), transparent);
+    border-left: 3px solid var(--accent-4);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 0.95rem;
+  }
+  .warning strong { color: var(--accent-4); }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 780px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    section { padding: 20px; }
+  }
+  .story {
+    background: linear-gradient(135deg, rgba(125,211,252,0.05), rgba(240,171,252,0.05));
+    border: 1px dashed var(--border);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    font-style: italic;
+    color: var(--text-dim);
+  }
+  .story strong { color: var(--text); font-style: normal; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    background: var(--bg-card-2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-right: 6px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+  .formula-box {
+    background: rgba(0,0,0,0.3);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 12px 0;
+    overflow-x: auto;
+    border-left: 2px solid var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Nebeneffekte des Lernens aus niedrig-dimensionalen Daten</h1>
+  <p class="subtitle">Eine interaktive Reise durch das Paper von He, Tsai &amp; Ward (2023) — verstehe alle Kernkonzepte durch Spielen, nicht durch Lesen.</p>
+</header>
+
+<div class="container">
+
+<nav class="toc">
+  <a href="#motivation">🎯 Die Kernfrage</a>
+  <a href="#setup">📐 Setup &amp; Geometrie</a>
+  <a href="#regression">📏 Lineare Regression</a>
+  <a href="#noise">🎲 Rauschen als Retter</a>
+  <a href="#lnn">🧬 Deep Linear Networks</a>
+  <a href="#phase">🌀 Phasenporträt</a>
+  <a href="#slow">🐌 Langsame Konvergenz</a>
+  <a href="#depth">📚 Tiefe als Regularisierer</a>
+  <a href="#relu">🔥 ReLU-Netzwerke</a>
+  <a href="#tradeoff">⚖️ Trade-off</a>
+  <a href="#summary">✨ Antworten</a>
+</nav>
+
+<!-- ================ MOTIVATION ================ -->
+<section id="motivation">
+  <h2><span class="num">1</span> Die Kernfrage: Was passiert außerhalb der Datenmannigfaltigkeit?</h2>
+
+  <p class="lead">
+    Stell dir vor, alle deine Trainingsdaten leben auf einer flachen Ebene, aber dein neuronales Netzwerk kann Punkte im gesamten 3D-Raum bewerten. Was passiert dann <em>oberhalb</em> oder <em>unterhalb</em> dieser Ebene?
+  </p>
+
+  <div class="story">
+    <strong>Die Manifold-Hypothese:</strong> Reale Daten (z.B. natürliche Bilder) liegen auf einer niedrig-dimensionalen Mannigfaltigkeit $M$, eingebettet in einem hoch-dimensionalen Raum $\mathbb{R}^d$. Ein 28×28 Pixel-Bild lebt in $\mathbb{R}^{784}$, aber alle „sinnvollen" Bilder bedecken davon nur einen winzigen Teil.
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Daten auf einer Ebene, Netzwerk im ganzen Raum</div>
+    <p>Rotiere die 3D-Szene. Die orangenen Punkte sind Trainingsdaten auf einer 2D-Ebene ($M$). Das Netzwerk lernt Werte auf dieser Ebene — aber was tut es <em>senkrecht dazu</em> (rote Pfeile)?</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Anzahl Datenpunkte: <span class="val" id="mv-n-val">80</span></label>
+        <input type="range" id="mv-n" min="10" max="300" value="80">
+      </div>
+      <div class="ctrl">
+        <label>Kippwinkel der Ebene: <span class="val" id="mv-tilt-val">20°</span></label>
+        <input type="range" id="mv-tilt" min="0" max="60" value="20">
+      </div>
+      <div class="ctrl">
+        <label>Sichtbare Normal-Variation: <span class="val" id="mv-var-val">1.0</span></label>
+        <input type="range" id="mv-var" min="0" max="3" step="0.05" value="1.0">
+      </div>
+    </div>
+    <div id="motiv-plot" class="plot" style="height:500px;"></div>
+    <div class="insight">
+      <strong>💡 Beobachtung:</strong> Die Normalenableitung $\partial f/\partial n_M$ — wie schnell sich $f$ senkrecht zur Datenebene ändert — ist im Prinzip <em>willkürlich</em>! Sie wird von den Trainingsdaten überhaupt nicht bestimmt. Wenn im Deployment ein Punkt leicht neben der Mannigfaltigkeit liegt (Rauschen, Distribution Shift), kann das Netzwerk beliebig verrückte Werte ausspucken.
+    </div>
+  </div>
+
+  <h3>Die drei Leitfragen des Papers</h3>
+  <ol style="padding-left: 20px;">
+    <li>Kann $\partial f_{\theta^*}/\partial n_M$ durch <strong>Architektur</strong> (Tiefe) oder <strong>Optimierung</strong> reguliert werden?</li>
+    <li>Kann <strong>Rauschen</strong> in den Trainingsdaten die Stabilität verbessern?</li>
+    <li>Wie beeinflusst die <strong>niedrige Dimension</strong> der Datenmannigfaltigkeit die Stabilität außerhalb?</li>
+  </ol>
+</section>
+
+<!-- ================ SETUP ================ -->
+<section id="setup">
+  <h2><span class="num">2</span> Das Setup: Wie sind Daten und Netzwerk formalisiert?</h2>
+
+  <p>Zerlegen wir jeden Datenpunkt $\mathbf{x} \in \mathbb{R}^d$ in zwei Teile:</p>
+  <div class="formula-box">
+    $$\mathbf{x} = \begin{pmatrix} x \\ \sigma y \end{pmatrix}, \quad x \in \mathbb{R}^{d_x} \text{ (auf Mannigfaltigkeit)}, \quad y \in \mathbb{R}^{d_y} \text{ (Rauschen normal dazu)}$$
+  </div>
+  <p>Wenn $\sigma = 0$: Daten liegen exakt auf $M$. Wenn $\sigma > 0$: Daten sind in Normalenrichtung um $\sigma$ „verrauscht". Die Labels $g_i = g(x_i)$ hängen nur von $x$ ab — nicht von $y$!</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Zerlegung visualisieren</div>
+    <p>Ändere $\sigma$ und sieh, wie die Daten von einer Linie zu einer verrauschten Wolke werden. Die Farbe zeigt den Label-Wert $g(x)$.</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>$\sigma$ (Rauschen normal): <span class="val" id="setup-sigma-val">0.00</span></label>
+        <input type="range" id="setup-sigma" min="0" max="1" step="0.01" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Anzahl Punkte $N$: <span class="val" id="setup-n-val">150</span></label>
+        <input type="range" id="setup-n" min="20" max="800" value="150">
+      </div>
+    </div>
+    <div id="setup-plot" class="plot" style="height:380px;"></div>
+  </div>
+</section>
+
+<!-- ================ LINEAR REGRESSION ================ -->
+<section id="regression">
+  <h2><span class="num">3</span> Aufwärmen: Warum lineare Regression schon das Problem zeigt</h2>
+
+  <p>Betrachte das einfachste Modell: $f(\mathbf{x}; \mathbf{w}) = w_x \cdot x + w_y \cdot y$. Wir minimieren den quadratischen Fehler.</p>
+
+  <p><strong>Wenn $\sigma = 0$ (kein Rauschen):</strong> Das Optimierungsproblem sieht $y$ nie! Also bleibt $w_y$ genau dort, wo es initialisiert wurde. $\partial f/\partial n_M = w_y^{(0)}$ — willkürlich!</p>
+
+  <p><strong>Wenn $\sigma > 0$:</strong> Man kann $w_y^*$ explizit berechnen. Für unabhängige $x, y$ mit $\mathbb{E}[xy]=0$:</p>
+  <div class="formula-box">
+    $$\|w_y^*\| \sim \mathcal{O}\left(\frac{1}{\sigma \sqrt{N}}\right)$$
+  </div>
+  <p>Damit $w_y^*$ klein bleibt (Stabilität!), muss $N \sim \mathcal{O}(\sigma^{-2})$ — <em>superlinear</em> mit inverser Varianz wachsen!</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Lineare Regression mit Rauschen</div>
+    <p>Sieh das Skalierungsgesetz live. Die orangene Linie zeigt die theoretische Vorhersage $1/(\sigma\sqrt{N})$.</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Feste Datenanzahl $N$: <span class="val" id="lr-n-val">200</span></label>
+        <input type="range" id="lr-n" min="20" max="2000" value="200">
+      </div>
+      <div class="ctrl">
+        <label>Anzahl Trials pro $\sigma$: <span class="val" id="lr-trials-val">20</span></label>
+        <input type="range" id="lr-trials" min="5" max="80" value="20">
+      </div>
+      <div class="ctrl">
+        <label style="visibility:hidden">-</label>
+        <button id="lr-run">🔄 Neu simulieren</button>
+      </div>
+    </div>
+    <div id="lr-plot" class="plot"></div>
+    <div class="insight">
+      <strong>💡 Kernaussage:</strong> Rauschen <em>senkrecht</em> zur Mannigfaltigkeit „zwingt" das Modell, in dieser Richtung flach zu werden — aber nur, wenn genügend Daten vorhanden sind. Ohne Rauschen bleiben diese Richtungen <em>komplett unkontrolliert</em>.
+    </div>
+  </div>
+</section>
+
+<!-- ================ NOISE ================ -->
+<section id="noise">
+  <h2><span class="num">4</span> Rauschen als Regularisierer — visuell</h2>
+
+  <p>Bewege die Slider und beobachte, wie sich die gelernte Funktion außerhalb der Datenmannigfaltigkeit verhält:</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: 2D-Landschaft der gelernten Funktion</div>
+    <p>Die Daten liegen auf der horizontalen Achse ($M$). Die Farbe zeigt die gelernte Funktion $f_{\theta^*}(x,y)$. Rauschen erzeugt Stabilität in $y$-Richtung.</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Rauschen $\sigma$: <span class="val" id="ns-sigma-val">0.00</span></label>
+        <input type="range" id="ns-sigma" min="0" max="0.5" step="0.01" value="0">
+      </div>
+      <div class="ctrl">
+        <label>Datenanzahl $N$: <span class="val" id="ns-n-val">100</span></label>
+        <input type="range" id="ns-n" min="20" max="1500" value="100">
+      </div>
+      <div class="ctrl">
+        <label>Initial. $w_y^{(0)}$: <span class="val" id="ns-wy0-val">0.50</span></label>
+        <input type="range" id="ns-wy0" min="-2" max="2" step="0.05" value="0.5">
+      </div>
+    </div>
+    <div id="ns-plot" class="plot" style="height:450px;"></div>
+    <div class="insight">
+    <strong>💡 Beobachte:</strong> Bei $\sigma=0$ bilden die Konturlinien vertikale Streifen — die Funktion ist entlang der $y$-Achse völlig durch die Initialisierung $w_y^{(0)}$ bestimmt. Erhöhe $\sigma$: Die Streifen werden horizontal, weil das Modell nun bestraft wird, wenn es in $y$-Richtung variiert.
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">📊 Skalierungsgesetz: $\|w_y^*\| \sim 1/(\sigma\sqrt{N})$</div>
+    <p>Log-Log-Diagramm: Wie viele Datenpunkte brauchst du, um bei gegebenem Rauschen eine stabile Lösung zu bekommen?</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Anzahl $N$-Werte: <span class="val" id="sc-nsteps-val">6</span></label>
+        <input type="range" id="sc-nsteps" min="3" max="10" value="6">
+      </div>
+      <div class="ctrl">
+        <label>Trials: <span class="val" id="sc-trials-val">15</span></label>
+        <input type="range" id="sc-trials" min="5" max="40" value="15">
+      </div>
+      <div class="ctrl">
+        <label style="visibility:hidden">-</label>
+        <button id="sc-run">🔄 Simulieren</button>
+      </div>
+    </div>
+    <div id="sc-plot" class="plot"></div>
+    <div class="insight">
+      <strong>💡 Kritisches Ergebnis (Theorem 2.1):</strong> Um $\|w_y^*\|$ auf $\mathcal{O}(1)$ zu halten, muss $N \sim \sigma^{-2}$ skalieren. Halbierst du das Rauschen, brauchst du <em>viermal</em> so viele Datenpunkte!
+    </div>
+  </div>
+</section>
+
+<!-- ================ LNN ================ -->
+<section id="lnn">
+  <h2><span class="num">5</span> Deep Linear Networks: Gleiches Modell, komplizierteres Verhalten</h2>
+
+  <p>Ein tiefes lineares Netzwerk sieht so aus: $f(\mathbf{x};\theta) = W_L W_{L-1} \cdots W_1 \mathbf{x} = w^T\mathbf{x}$. Mathematisch immer noch linear — aber die <em>Trainingsdynamik</em> ist völlig anders!</p>
+
+  <p>Arora et al. (2018) zeigten: Im Limit kleiner Lernraten folgt der End-to-End-Vektor $w$ dem Fluss:</p>
+  <div class="formula-box">
+    $$\frac{d}{dt}w = -\|w\|^{2-2/L}\Big(\nabla_w J^e(w) + (L-1) P_w(\nabla_w J^e(w))\Big)$$
+  </div>
+  <p>Diese Dynamik ist <strong>nichtlinear</strong> in $w$, obwohl das Netzwerk linear ist! Der Faktor $\|w\|^{2-2/L}$ und der Projektor $P_w$ erzeugen völlig neue Phänomene.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Vergleich Gradient Descent (LR) vs. Deep Linear Flow</div>
+    <p>Beide Modelle konvergieren zur selben Lösung, aber der Weg dorthin ist völlig anders. Beobachte, wie die Tiefe $L$ die Trajektorie krümmt.</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Tiefe $L$: <span class="val" id="lnn-L-val">5</span></label>
+        <input type="range" id="lnn-L" min="1" max="20" value="5">
+      </div>
+      <div class="ctrl">
+        <label>Start $w_x(0)$: <span class="val" id="lnn-wx0-val">-1.5</span></label>
+        <input type="range" id="lnn-wx0" min="-2" max="2" step="0.1" value="-1.5">
+      </div>
+      <div class="ctrl">
+        <label>Start $w_y(0)$: <span class="val" id="lnn-wy0-val">1.5</span></label>
+        <input type="range" id="lnn-wy0" min="-2" max="2" step="0.1" value="1.5">
+      </div>
+      <div class="ctrl">
+        <label>$\sigma$: <span class="val" id="lnn-sigma-val">0.1</span></label>
+        <input type="range" id="lnn-sigma" min="0" max="0.5" step="0.01" value="0.1">
+      </div>
+    </div>
+    <canvas id="lnn-canvas" width="800" height="500"></canvas>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#7dd3fc"></div>Deep Linear Flow ($L$-Netzwerk)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#f0abfc"></div>Klassische lineare Regression ($L=1$)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#86efac"></div>Slow Manifold $\Gamma_\sigma$</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#fbbf24"></div>Optimum $w^*$</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================ PHASE PORTRAIT ================ -->
+<section id="phase">
+  <h2><span class="num">6</span> Phasenporträt: Wo führt der Fluss hin?</h2>
+
+  <p>Der Schlüssel zum Verständnis liegt im <strong>Vektorfeld</strong> $F(w)$. Klicke irgendwo im Feld — der Punkt startet dort und folgt dem Fluss. Die Farbe zeigt $\|F\|$: hell = schnell, dunkel = langsam.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Interaktives Phasenporträt (klicke zum Starten!)</div>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Tiefe $L$: <span class="val" id="pp-L-val">5</span></label>
+        <input type="range" id="pp-L" min="2" max="50" value="5">
+      </div>
+      <div class="ctrl">
+        <label>Rauschen $\sigma$: <span class="val" id="pp-sigma-val">0.10</span></label>
+        <input type="range" id="pp-sigma" min="0" max="0.5" step="0.01" value="0.1">
+      </div>
+      <div class="ctrl">
+        <label>Anzahl Streamlines: <span class="val" id="pp-streams-val">40</span></label>
+        <input type="range" id="pp-streams" min="10" max="120" value="40">
+      </div>
+      <div class="ctrl">
+        <label style="visibility:hidden">-</label>
+        <button id="pp-reset">🧹 Zurücksetzen</button>
+      </div>
+    </div>
+    <canvas id="pp-canvas" width="800" height="600" style="cursor:crosshair;"></canvas>
+    <div class="insight">
+      <strong>💡 Was du siehst:</strong> Trajektorien werden schnell zum <em>Slow Manifold</em> (grüne Linie) gezogen — dort ist $w_x \approx w_x^*$. Danach kriechen sie <em>quälend langsam</em> zum wahren Optimum $w^*$ (gelber Stern). Ohne Rauschen ($\sigma=0$) bleiben sie irgendwo auf der Linie stecken!
+    </div>
+    <div class="warning">
+      <strong>⚠️ Fallenstellen am Ursprung (Theorem 2.3):</strong> Startest du nahe $w=0$, kann es $\sim \epsilon^{-2/(L-1)}$ Zeit dauern, um dort zu entkommen. Deshalb <em>niemals</em> Gewichte nahe null initialisieren!
+    </div>
+  </div>
+</section>
+
+<!-- ================ SLOW CONVERGENCE ================ -->
+<section id="slow">
+  <h2><span class="num">7</span> Die zwei Zeitskalen der langsamen Konvergenz</h2>
+
+  <p>Der kleinste Eigenwert von $\nabla F(w^*)$ skaliert wie $\mathcal{O}(\sigma^2)$ (FGD) bzw. $\mathcal{O}(\sigma)$ (SGD). Die Konvergenzzeit skaliert reziprok dazu.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Verlustkurven — sieh die zwei Phasen</div>
+    <p>Zwei Komponenten konvergieren mit stark unterschiedlicher Geschwindigkeit. $w_x$ ist schnell; $w_y$ braucht $\sim 1/\sigma^2$ Iterationen!</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Rauschen $\sigma$: <span class="val" id="sl-sigma-val">0.10</span></label>
+        <input type="range" id="sl-sigma" min="0.02" max="0.5" step="0.01" value="0.1">
+      </div>
+      <div class="ctrl">
+        <label>Tiefe $L$: <span class="val" id="sl-L-val">5</span></label>
+        <input type="range" id="sl-L" min="2" max="15" value="5">
+      </div>
+      <div class="ctrl">
+        <label>Simulationszeit: <span class="val" id="sl-T-val">2000</span></label>
+        <input type="range" id="sl-T" min="500" max="8000" step="100" value="2000">
+      </div>
+      <div class="ctrl">
+        <label style="visibility:hidden">-</label>
+        <button id="sl-run">▶️ Starten</button>
+      </div>
+    </div>
+    <div id="sl-plot" class="plot"></div>
+    <div class="insight">
+      <strong>💡 Die "Nebenwirkung":</strong> Selbst wenn theoretisch alles zur optimalen Lösung konvergiert, sind die relevanten Zeitskalen so unterschiedlich, dass Training in der Praxis <em>abgebrochen wird, bevor</em> die Stabilität in Normalenrichtung erreicht ist.
+    </div>
+  </div>
+</section>
+
+<!-- ================ DEPTH REGULARIZATION ================ -->
+<section id="depth">
+  <h2><span class="num">8</span> Tiefe als impliziter Regularisierer (wenn $\sigma=0$)</h2>
+
+  <p>Überraschung: Auch <em>ohne</em> Rauschen kann Tiefe helfen! Aber nur, wenn die Initialisierung in der <strong>richtigen Region</strong> liegt.</p>
+
+  <p>Der Raum zerfällt in zwei Bereiche, getrennt durch die Ellipsoidoberfläche $E = \{w_x : w_x^T \partial J^e/\partial w_x = 0\}$:</p>
+  <ul style="padding-left:20px;">
+    <li><span style="color:var(--accent-3)"><strong>$U^+$ (außerhalb $E$):</strong></span> $\|w_y(T)\| \leq \|w_y(0)\|$ — <strong>Regularisierung!</strong> Größeres $L$ hilft mehr.</li>
+    <li><span style="color:var(--accent-4)"><strong>$E^-$ (innerhalb $E$):</strong></span> $\|w_y(T)\| \geq \|w_y(0)\|$ — <strong>Nebeneffekt!</strong> Die Instabilität wird schlimmer.</li>
+  </ul>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Vergleich $L=5$ vs. $L=100$ (wie Fig. 2.7 im Paper)</div>
+    <p>Klicke Punkte zum Starten. Grüner Bereich = Regularisierung, oranger Bereich = Nebeneffekt.</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Tiefe $L$: <span class="val" id="dp-L-val">5</span></label>
+        <input type="range" id="dp-L" min="2" max="100" value="5">
+      </div>
+      <div class="ctrl">
+        <label style="visibility:hidden">-</label>
+        <button id="dp-reset">🧹 Zurücksetzen</button>
+      </div>
+      <div class="ctrl">
+        <label style="visibility:hidden">-</label>
+        <button id="dp-compare">⚖️ Beide $L$ vergleichen</button>
+      </div>
+    </div>
+    <canvas id="dp-canvas" width="800" height="500" style="cursor:crosshair;"></canvas>
+    <div class="insight">
+      <strong>💡 Die a-priori-Schranke (Theorem 2.4):</strong>
+      $$\|w_y(T)\|^2 \leq h(L)\big(\|w_x(0)\|^2 - \|w_x^*\|^2\big) + \frac{\|w_x^*\|^2}{\|w_x(0)\|^2}\|w_y(0)\|^2$$
+      wobei $h(L)$ mit $L$ <em>abnimmt</em>. Also: tiefer = besser (in $U^+$).
+    </div>
+  </div>
+</section>
+
+<!-- ================ RELU ================ -->
+<section id="relu">
+  <h2><span class="num">9</span> ReLU-Netzwerke: Von linear zu MNIST</h2>
+
+  <p>Bei ReLU-Netzen wird die erste Schicht $W^1 = (W_x^1, W_y^1)$ aufgeteilt. <strong>Lemma 3.1:</strong> Wenn $\sigma=0$, bleibt $W_y^1$ während des gesamten Trainings <em>komplett unverändert</em> — es ist ein "eingefrorener" Parameter, der nur durch die Initialisierung bestimmt wird!</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: MNIST-Experiment (Fig. 3.1 nachgebaut)</div>
+    <p>Wir haben eine "2" aus MNIST. Der Slider $t$ perturbiert das Bild in Normalenrichtung $v_n$; der Slider $s$ perturbiert das Netzwerk-Gewicht $W_y^1$. Beobachte: Nur wenn <em>beide</em> perturbiert werden, ändert sich die Klassifikation!</p>
+    <div class="controls">
+      <div class="ctrl">
+        <label>$t$ (Eingabe-Perturbation): <span class="val" id="mn-t-val">0.00</span></label>
+        <input type="range" id="mn-t" min="-3" max="3" step="0.05" value="0">
+      </div>
+      <div class="ctrl">
+        <label>$s$ (Gewichts-Perturbation): <span class="val" id="mn-s-val">0.00</span></label>
+        <input type="range" id="mn-s" min="-3" max="3" step="0.05" value="0">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;">
+      <div>
+        <div style="text-align:center;color:var(--text-dim);margin-bottom:8px;font-size:0.85rem;">Perturbiertes Bild</div>
+        <canvas id="mn-img" width="280" height="280" style="image-rendering:pixelated;margin:0 auto;"></canvas>
+      </div>
+      <div>
+        <div style="text-align:center;color:var(--text-dim);margin-bottom:8px;font-size:0.85rem;">$I(s,t) = \|f^{[2]}_\theta - f^{[2]}_{\theta_s}\|^2$</div>
+        <div id="mn-heatmap" style="width:100%;height:280px;"></div>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>💡 Die Adversarial-Verbindung:</strong> Diese "unbenutzten" Gewichte $W_y^1$ machen ReLU-Netze anfällig für <em>adversarial examples</em>: winzige Perturbationen normal zur Datenmannigfaltigkeit können die Klassifikation drastisch ändern.
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-title">📊 Stabilitätsabschätzung: $\|\Delta_y f\|^2$ vs. Tiefe (Theorem 3.2)</div>
+    <p>Für ReLU-Netzwerke gilt:</p>
+    <div class="formula-box" style="font-size:0.9rem;">
+      $$\|\Delta_y f\|^2_{L^2} \leq \left(\prod_{\ell=3}^L \|W^\ell\|^2\right) \sum_{i,j}\left(\frac{\|W_{j,y}^1 y\|^2 \|\nabla h_{i,j}\|^2}{\|W_{j,x}^1\|^2} + C_{d_x}\frac{|W^2_{i,j}|^2 \|W_{j,y}^1 y\|^3}{\|W_{j,x}^1\|}\right)$$
+    </div>
+    <div class="controls">
+      <div class="ctrl">
+        <label>$\|y\|$ (Perturbation): <span class="val" id="rl-y-val">1.0</span></label>
+        <input type="range" id="rl-y" min="0.1" max="3" step="0.05" value="1">
+      </div>
+      <div class="ctrl">
+        <label>Initialisierung $\nu$: <span class="val" id="rl-nu-val">0.30</span></label>
+        <input type="range" id="rl-nu" min="0.05" max="1" step="0.01" value="0.3">
+      </div>
+      <div class="ctrl">
+        <label>Schichtbreite $n$: <span class="val" id="rl-n-val">100</span></label>
+        <input type="range" id="rl-n" min="10" max="500" value="100">
+      </div>
+    </div>
+    <div id="rl-plot" class="plot"></div>
+    <div class="insight">
+      <strong>💡 Kernaussage:</strong> Die Instabilität wächst <em>exponentiell mit der Tiefe</em> (Produkt der Operatornormen)! Für tiefe Netze braucht es besondere Vorsicht bei der Initialisierung von $W_y^1$.
+    </div>
+  </div>
+</section>
+
+<!-- ================ TRADE-OFF ================ -->
+<section id="tradeoff">
+  <h2><span class="num">10</span> Der Stabilitäts-Genauigkeits-Trade-off</h2>
+
+  <p>Rauschen macht das Netzwerk stabiler — aber ungenauer. Rauschen zur $x$-Komponente (parallel zur Mannigfaltigkeit) verschlechtert die Interpolation; Rauschen in $y$-Richtung (normal) verbessert die Stabilität.</p>
+
+  <div class="demo">
+    <div class="demo-title">🎮 Demo: Wähle deinen Kompromiss</div>
+    <div class="controls">
+      <div class="ctrl">
+        <label>Rauschen $\sigma$: <span class="val" id="to-sigma-val">0.10</span></label>
+        <input type="range" id="to-sigma" min="0" max="0.5" step="0.01" value="0.1">
+      </div>
+      <div class="ctrl">
+        <label>Datenmenge $N$: <span class="val" id="to-N-val">500</span></label>
+        <input type="range" id="to-N" min="50" max="5000" value="500">
+      </div>
+      <div class="ctrl">
+        <label>Tiefe $L$: <span class="val" id="to-L-val">4</span></label>
+        <input type="range" id="to-L" min="2" max="10" value="4">
+      </div>
+    </div>
+    <div id="to-plot" class="plot" style="height:420px;"></div>
+    <div class="insight">
+      <strong>💡 Trade-off (Gl. 4.4 &amp; 4.5):</strong>
+      $$\underbrace{\|f(x,0)-g(x)\|^2}_{\text{Genauigkeit}} \lesssim \mathcal{O}(\sigma^2) + \mathcal{O}(N^{-1}), \quad \underbrace{\|\Delta_y f\|^2}_{\text{Stabilität}} \sim \mathcal{O}\left(\frac{1}{\sigma^2 N^\beta}\right)$$
+      Für ReLU: $\beta < 1/2$! Also ist der Trade-off <em>härter</em> als für lineare Netze.
+    </div>
+  </div>
+</section>
+
+<!-- ================ SUMMARY ================ -->
+<section id="summary">
+  <h2><span class="num">11</span> ✨ Die Antworten auf die Leitfragen</h2>
+
+  <div class="story">
+    <strong>Frage 1:</strong> Kann $\partial f_{\theta^*}/\partial n_M$ durch <em>Architektur oder Optimierung</em> kontrolliert werden?
+    <br><br>
+    <strong>Antwort:</strong> Teilweise ja. <span class="badge">Tiefe</span> wirkt regularisierend — aber nur in bestimmten Initialisierungsbereichen ($U^+$). In der falschen Region verstärkt sie die Instabilität sogar. Optimierung allein reicht nicht, denn ein Teil der Parameter ($W_y^1$ bei ReLU, $w_y$ bei linearer Regression) ist <em>schlicht nicht trainierbar</em>, wenn $\sigma=0$.
+  </div>
+
+  <div class="story">
+    <strong>Frage 2:</strong> Kann <em>Rauschen</em> die Stabilität verbessern?
+    <br><br>
+    <strong>Antwort:</strong> Ja — mit hohem Preis. <span class="badge">Rauschen</span> in Normalenrichtung wirkt als Regularisierer, aber die Datenmenge muss superlinear skalieren: $N \sim \sigma^{-2}$ für lineare Netze, sogar $N \sim \sigma^{-2/\beta}$ mit $\beta<1/2$ für ReLU. Zusätzlich verlangsamt es das Training dramatisch (Konvergenzzeit $\sim 1/\sigma^2$).
+  </div>
+
+  <div class="story">
+    <strong>Frage 3:</strong> Wie beeinflusst die <em>niedrige Dimension</em> die Stabilität?
+    <br><br>
+    <strong>Antwort:</strong> Fundamental. <span class="badge">Kodimension</span> = Anzahl "freier" Richtungen, in denen das Modell tun kann, was es will. Jede zusätzliche Kodimension bedeutet mehr uneingeschränkte Parameter, mehr Anfälligkeit für Distribution Shift und Adversarial Examples. Die Manifold-Hypothese ist also ein zweischneidiges Schwert: sie ermöglicht effizientes Lernen — aber öffnet gleichzeitig unkontrollierte Richtungen im Ambient-Raum, die niemals von den Trainingsdaten "berührt" werden.
+  </div>
+
+  <div class="insight">
+    <strong>🎯 Praktische Konsequenzen:</strong>
+    <ul style="padding-left: 20px; margin-top: 10px;">
+      <li><strong>Initialisierung matters:</strong> Nie nahe null starten (Theorem 2.3), und $W_y^1$ mit kleiner Varianz initialisieren.</li>
+      <li><strong>Datenaugmentation ist essentiell:</strong> Gauß'sches Rauschen in Normalenrichtung ist eine implizite Regularisierung, die die konstante Extension $\overline{g}(x) = g(P_M x)$ lernt.</li>
+      <li><strong>Tiefe ist kein Wundermittel:</strong> Sie hilft in $U^+$, schadet in $E^-$. Bei ReLU wächst die Instabilität sogar exponentiell mit $L$.</li>
+      <li><strong>Adversarial Examples verstehen:</strong> Die "unbenutzten" Gewichte in Normalenrichtung sind der geometrische Grund, warum winzige Perturbationen Klassifikationen umwerfen können.</li>
+      <li><strong>Weight Decay vorsichtig:</strong> Zu aggressive $\ell_2$-Regularisierung schadet der Genauigkeit mehr, als sie die Stabilität hilft.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Interaktive Visualisierung basierend auf: <em>He, Tsai &amp; Ward (2023)</em> — "Side Effects of Learning from Low-dimensional Data Embedded in a Euclidean Space", arXiv:2203.00614v5.
+  <br>Alle Simulationen laufen live in deinem Browser.
+</footer>
+
+<script>
+/* ============================================================
+   UTILITY FUNCTIONS
+   ============================================================ */
+const COL = {
+  accent: '#7dd3fc', accent2: '#f0abfc', accent3: '#86efac', accent4: '#fbbf24',
+  bg: '#0a0e1a', text: '#e2e8f0', dim: '#94a3b8', red: '#f87171'
+};
+
+function randn() {
+  let u=0, v=0;
+  while(u===0) u = Math.random();
+  while(v===0) v = Math.random();
+  return Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
+}
+function uniform(a,b){ return a + Math.random()*(b-a); }
+function linspace(a,b,n){ const r=[]; for(let i=0;i<n;i++) r.push(a + (b-a)*i/(n-1)); return r; }
+
+function bindSlider(id, cb, fmt=(v)=>v) {
+  const s = document.getElementById(id);
+  const v = document.getElementById(id + '-val');
+  const update = () => { if(v) v.textContent = fmt(parseFloat(s.value)); cb(parseFloat(s.value)); };
+  s.addEventListener('input', update);
+  update();
+}
+
+/* ============================================================
+   SECTION 1: MOTIVATION - 3D plane with normal vectors
+   ============================================================ */
+function drawMotiv() {
+  const n = parseInt(document.getElementById('mv-n').value);
+  const tilt = parseFloat(document.getElementById('mv-tilt').value) * Math.PI/180;
+  const varAmp = parseFloat(document.getElementById('mv-var').value);
+
+  // Plane data: z = tan(tilt) * x
+  const px=[], py=[], pz=[], pc=[];
+  for(let i=0;i<n;i++){
+    const x = uniform(-2,2), y = uniform(-2,2);
+    const z = Math.tan(tilt)*x;
+    px.push(x); py.push(y); pz.push(z);
+    pc.push(Math.sin(1.5*x) + 0.5*Math.cos(1.5*y));
+  }
+
+  // Grid for surface
+  const gN = 15;
+  const gx = linspace(-2.2, 2.2, gN);
+  const gy = linspace(-2.2, 2.2, gN);
+  const gz = gy.map(y => gx.map(x => Math.tan(tilt)*x));
+
+  // Normal arrows
+  const nx = Math.sin(tilt), nz = Math.cos(tilt);
+  const arrows = [];
+  const arrN = 6;
+  for(let i=0;i<arrN;i++){
+    for(let j=0;j<arrN;j++){
+      const x0 = -1.6 + 3.2*i/(arrN-1);
+      const y0 = -1.6 + 3.2*j/(arrN-1);
+      const z0 = Math.tan(tilt)*x0;
+      const amp = varAmp * (0.3 + 0.5*Math.sin(2*x0+3*y0));
+      arrows.push({
+        type:'scatter3d', mode:'lines',
+        x:[x0, x0+amp*nx], y:[y0, y0], z:[z0, z0+amp*nz],
+        line:{color:COL.red, width:4}, showlegend:false, hoverinfo:'skip'
+      });
+    }
+  }
+
+  const traces = [
+    {type:'surface', x:gx, y:gy, z:gz, opacity:0.35,
+     colorscale:[[0,'#1e40af'],[1,'#7dd3fc']], showscale:false, hoverinfo:'skip'},
+    {type:'scatter3d', x:px, y:py, z:pz, mode:'markers',
+     marker:{size:4, color:pc, colorscale:'Plasma', showscale:false},
+     name:'Trainingsdaten auf M'},
+    ...arrows
+  ];
+
+  Plotly.react('motiv-plot', traces, {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    scene:{
+      xaxis:{title:'x₁', gridcolor:'#334155', color:COL.text, backgroundcolor:COL.bg},
+      yaxis:{title:'x₂', gridcolor:'#334155', color:COL.text, backgroundcolor:COL.bg},
+      zaxis:{title:'x₃ (normal)', gridcolor:'#334155', color:COL.text, backgroundcolor:COL.bg},
+      camera:{eye:{x:1.6, y:1.6, z:1.0}}
+    },
+    margin:{l:0,r:0,t:0,b:0},
+    font:{color:COL.text}, showlegend:false
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('mv-n', drawMotiv);
+bindSlider('mv-tilt', drawMotiv, v=>v+'°');
+bindSlider('mv-var', drawMotiv, v=>v.toFixed(2));
+
+/* ============================================================
+   SECTION 2: SETUP - data decomposition
+   ============================================================ */
+function drawSetup() {
+  const sigma = parseFloat(document.getElementById('setup-sigma').value);
+  const N = parseInt(document.getElementById('setup-n').value);
+  const xs=[], ys=[], cs=[];
+  for(let i=0;i<N;i++){
+    const x = uniform(-1,1);
+    const y = sigma * randn();
+    xs.push(x); ys.push(y);
+    cs.push(Math.PI*Math.sin(Math.PI*x));
+  }
+  const line_x = linspace(-1,1,80);
+  const line_y = line_x.map(_=>0);
+  Plotly.react('setup-plot', [
+    {x:line_x, y:line_y, mode:'lines', line:{color:COL.accent3, width:3, dash:'dash'}, name:'Mannigfaltigkeit M'},
+    {x:xs, y:ys, mode:'markers', type:'scatter',
+     marker:{size:6, color:cs, colorscale:'Viridis', showscale:true, colorbar:{title:'g(x)', tickfont:{color:COL.text}}},
+     name:'Datenpunkte'}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'x (auf M)', color:COL.text, gridcolor:'#1e293b', zerolinecolor:'#334155', range:[-1.2,1.2]},
+    yaxis:{title:'σy (Normalenrichtung)', color:COL.text, gridcolor:'#1e293b', zerolinecolor:'#334155', range:[-1.5,1.5]},
+    margin:{l:60,r:20,t:20,b:50}, font:{color:COL.text}, showlegend:false
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('setup-sigma', drawSetup, v=>v.toFixed(2));
+bindSlider('setup-n', drawSetup);
+
+/* ============================================================
+   SECTION 3: LINEAR REGRESSION - scaling law
+   ============================================================ */
+function linRegWy(N, sigma) {
+  // Simulate: x ~ U[-1,1], y ~ N(0,1), g(x) = pi*sin(pi*x)
+  let sxx=0, syy=0, sxy=0, sxg=0, syg=0;
+  for(let i=0;i<N;i++){
+    const x = uniform(-1,1);
+    const y = randn();
+    const g = Math.PI*Math.sin(Math.PI*x);
+    sxx += x*x; syy += y*y; sxy += x*y;
+    sxg += g*x; syg += g*y;
+  }
+  sxx/=N; syy/=N; sxy/=N; sxg/=N; syg/=N;
+  const det = sxx*syy - sxy*sxy;
+  if(Math.abs(det) < 1e-12) return 0;
+  const wy = (1/sigma) * (syg*sxx - sxg*sxy) / det;
+  return Math.abs(wy);
+}
+
+function runLR() {
+  const N = parseInt(document.getElementById('lr-n').value);
+  const trials = parseInt(document.getElementById('lr-trials').value);
+  const sigmas = [];
+  for(let k=-6; k<=-1; k+=0.4) sigmas.push(Math.pow(2,k));
+
+  const means=[], stds=[], theory=[];
+  sigmas.forEach(sig => {
+    const vals = [];
+    for(let t=0;t<trials;t++) vals.push(linRegWy(N, sig));
+    const m = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const v = vals.reduce((a,b)=>a+(b-m)**2,0)/vals.length;
+    means.push(m); stds.push(Math.sqrt(v));
+    theory.push(Math.PI / (sig * Math.sqrt(N)));
+  });
+
+  Plotly.react('lr-plot', [
+    {x:sigmas, y:means, error_y:{type:'data', array:stds, color:COL.accent}, mode:'markers+lines',
+     marker:{size:10, color:COL.accent}, line:{color:COL.accent}, name:'Simuliert ‖w_y*‖'},
+    {x:sigmas, y:theory, mode:'lines', line:{color:COL.accent4, width:3, dash:'dash'},
+     name:'Theorie: π/(σ√N)'}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'σ (Rauschen)', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'‖w_y*‖', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:60,r:20,t:20,b:50}, font:{color:COL.text},
+    legend:{bgcolor:'rgba(0,0,0,0.3)'}
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('lr-n', ()=>{});
+bindSlider('lr-trials', ()=>{});
+document.getElementById('lr-run').addEventListener('click', runLR);
+runLR();
+
+/* ============================================================
+   SECTION 4a: NOISE - 2D landscape of learned function
+   ============================================================ */
+function drawNS() {
+  const sigma = parseFloat(document.getElementById('ns-sigma').value);
+  const N = parseInt(document.getElementById('ns-n').value);
+  const wy0 = parseFloat(document.getElementById('ns-wy0').value);
+
+  // Fit: f(x,y) = wx*x + wy*y, target g(x) = x (linear for simplicity)
+  let wx, wy;
+  if(sigma < 1e-4){
+    wx = 1.0; wy = wy0; // wy stays at initialization
+  } else {
+    // Compute optimal wx, wy from noisy data
+    let sxx=0, syy=0, sxy=0, sxg=0, syg=0;
+    for(let i=0;i<N;i++){
+      const x = uniform(-1,1);
+      const y = sigma * randn();
+      const g = x; // linear target
+      sxx += x*x; syy += y*y; sxy += x*y;
+      sxg += g*x; syg += g*y;
+    }
+    sxx/=N; syy/=N; sxy/=N; sxg/=N; syg/=N;
+    const det = sxx*syy - sxy*sxy;
+    wx = (sxg*syy - syg*sxy)/det;
+    wy = (syg*sxx - sxg*sxy)/det;
+  }
+
+  // Grid
+  const gN = 40;
+  const gx = linspace(-1.5, 1.5, gN);
+  const gy = linspace(-1.5, 1.5, gN);
+  const z = gy.map(y => gx.map(x => wx*x + wy*y));
+
+  // Data samples
+  const dx=[], dy=[];
+  for(let i=0;i<Math.min(N,150);i++){
+    dx.push(uniform(-1,1));
+    dy.push(sigma*randn());
+  }
+
+  Plotly.react('ns-plot', [
+    {type:'contour', x:gx, y:gy, z:z, colorscale:'RdBu',
+     contours:{coloring:'heatmap'}, colorbar:{tickfont:{color:COL.text}}},
+    {x:dx, y:dy, mode:'markers', type:'scatter',
+     marker:{size:5, color:COL.accent4, line:{color:'#000', width:0.5}}, name:'Daten'},
+    {x:[-1.5,1.5], y:[0,0], mode:'lines', line:{color:COL.accent3, width:2, dash:'dash'}, name:'M'}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'x (auf M)', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'y (Normalenrichtung)', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:60,r:20,t:30,b:50}, font:{color:COL.text}, showlegend:false,
+    title:{text:`wx*=${wx.toFixed(3)}, wy*=${wy.toFixed(3)}`, font:{color:COL.text, size:13}}
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('ns-sigma', drawNS, v=>v.toFixed(2));
+bindSlider('ns-n', drawNS);
+bindSlider('ns-wy0', drawNS, v=>v.toFixed(2));
+
+/* ============================================================
+   SECTION 4b: SCALING - log-log plot of ||wy*|| vs N for different sigma
+   ============================================================ */
+function runSC() {
+  const nsteps = parseInt(document.getElementById('sc-nsteps').value);
+  const trials = parseInt(document.getElementById('sc-trials').value);
+  const sigmas = [0.05, 0.1, 0.2, 0.4];
+  const cols = [COL.accent, COL.accent2, COL.accent3, COL.accent4];
+  const Ns = [];
+  for(let k=0;k<nsteps;k++){
+    Ns.push(Math.round(50 * Math.pow(4000/50, k/(nsteps-1))));
+  }
+
+  const traces = [];
+  sigmas.forEach((sig,i) => {
+    const means = Ns.map(N => {
+      let s=0;
+      for(let t=0;t<trials;t++) s += linRegWy(N, sig);
+      return s/trials;
+    });
+    traces.push({
+      x:Ns, y:means, mode:'markers+lines',
+      marker:{size:8, color:cols[i]}, line:{color:cols[i]},
+      name:`σ=${sig}`
+    });
+    // Theoretical line
+    traces.push({
+      x:Ns, y:Ns.map(N => Math.PI/(sig*Math.sqrt(N))),
+      mode:'lines', line:{color:cols[i], width:1, dash:'dot'},
+      showlegend:false
+    });
+  });
+
+  Plotly.react('sc-plot', traces, {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'N (Anzahl Datenpunkte)', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'‖w_y*‖ (gestrichelt: Theorie)', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:60,r:20,t:20,b:50}, font:{color:COL.text},
+    legend:{bgcolor:'rgba(0,0,0,0.3)'}
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('sc-nsteps', ()=>{});
+bindSlider('sc-trials', ()=>{});
+document.getElementById('sc-run').addEventListener('click', runSC);
+runSC();
+
+/* ============================================================
+   SECTION 5: LNN - Deep Linear Flow vs LR
+   ============================================================ */
+const lnnCanvas = document.getElementById('lnn-canvas');
+const lnnCtx = lnnCanvas.getContext('2d');
+
+function lnnField(wx, wy, L, sigma) {
+  // Approximate dynamics with x~U[-1,1], y~N(0,1), g(x)=x (target = x)
+  // <xxT>=1/3, <yyT>=1, <xy>=0, <gx>=1/3, <gy>=0 (approximate)
+  const Axx = 1/3, Ayy = sigma*sigma, gx=1/3, gy=0;
+  // gradJ = A*w - <gx>
+  const gwx = Axx*wx - gx;
+  const gwy = Ayy*wy - gy;
+  const nw2 = wx*wx + wy*wy + 1e-9;
+  const nw = Math.sqrt(nw2);
+  const dotwG = wx*gwx + wy*gwy;
+  // F = -||w||^(2-2/L) * (gradJ + (L-1)*Pw(gradJ))
+  const factor = Math.pow(nw2, 1 - 1/L);
+  const projX = (dotwG/nw2) * wx;
+  const projY = (dotwG/nw2) * wy;
+  const Fx = -factor * (gwx + (L-1)*projX);
+  const Fy = -factor * (gwy + (L-1)*projY);
+  return [Fx, Fy];
+}
+
+function drawLNN() {
+  const L = parseInt(document.getElementById('lnn-L').value);
+  const wx0 = parseFloat(document.getElementById('lnn-wx0').value);
+  const wy0 = parseFloat(document.getElementById('lnn-wy0').value);
+  const sigma = parseFloat(document.getElementById('lnn-sigma').value);
+
+  const W = lnnCanvas.width, H = lnnCanvas.height;
+  lnnCtx.fillStyle = COL.bg;
+  lnnCtx.fillRect(0,0,W,H);
+
+  const xmin=-2.2, xmax=2.2, ymin=-2, ymax=2;
+  const toX = wx => (wx-xmin)/(xmax-xmin) * W;
+  const toY = wy => H - (wy-ymin)/(ymax-ymin) * H;
+
+  // Grid
+  lnnCtx.strokeStyle = '#1e293b';
+  lnnCtx.lineWidth = 1;
+  for(let i=-2;i<=2;i++){
+    lnnCtx.beginPath(); lnnCtx.moveTo(toX(i),0); lnnCtx.lineTo(toX(i),H); lnnCtx.stroke();
+    lnnCtx.beginPath(); lnnCtx.moveTo(0,toY(i)); lnnCtx.lineTo(W,toY(i)); lnnCtx.stroke();
+  }
+  // Axes
+  lnnCtx.strokeStyle = '#475569';
+  lnnCtx.beginPath(); lnnCtx.moveTo(toX(0),0); lnnCtx.lineTo(toX(0),H); lnnCtx.stroke();
+  lnnCtx.beginPath(); lnnCtx.moveTo(0,toY(0)); lnnCtx.lineTo(W,toY(0)); lnnCtx.stroke();
+
+  // Vector field arrows
+  const step = 40;
+  for(let px=step/2; px<W; px+=step){
+    for(let py=step/2; py<H; py+=step){
+      const wx = xmin + px/W*(xmax-xmin);
+      const wy = ymax - py/H*(ymax-ymin);
+      const [Fx, Fy] = lnnField(wx, wy, L, sigma);
+      const mag = Math.sqrt(Fx*Fx + Fy*Fy) + 1e-9;
+      const scale = Math.min(15, 8*Math.log(1+mag));
+      const nx = Fx/mag, ny = -Fy/mag;
+      lnnCtx.strokeStyle = `rgba(148,163,184,${Math.min(0.7, 0.1+0.15*Math.log(1+mag))})`;
+      lnnCtx.beginPath();
+      lnnCtx.moveTo(px, py);
+      lnnCtx.lineTo(px+nx*scale, py+ny*scale);
+      lnnCtx.stroke();
+    }
+  }
+
+  // Slow manifold: wx = wx* = 1 (approx, since g(x)=x -> wx* = 1)
+  const wxStar = 1.0;
+  lnnCtx.strokeStyle = COL.accent3;
+  lnnCtx.lineWidth = 2;
+  lnnCtx.setLineDash([6,4]);
+  lnnCtx.beginPath();
+  lnnCtx.moveTo(toX(wxStar), 0); lnnCtx.lineTo(toX(wxStar), H);
+  lnnCtx.stroke();
+  lnnCtx.setLineDash([]);
+
+  // Integrate trajectory - Deep Linear
+  let wx = wx0, wy = wy0;
+  const traj_lnn = [[wx, wy]];
+  const dt = 0.01;
+  const steps = 3000;
+  for(let i=0;i<steps;i++){
+    const [Fx, Fy] = lnnField(wx, wy, L, sigma);
+    wx += dt*Fx; wy += dt*Fy;
+    traj_lnn.push([wx, wy]);
+    if(Math.abs(Fx)+Math.abs(Fy) < 1e-6) break;
+  }
+
+  lnnCtx.strokeStyle = COL.accent;
+  lnnCtx.lineWidth = 2.5;
+  lnnCtx.beginPath();
+  traj_lnn.forEach((p,i) => {
+    if(i===0) lnnCtx.moveTo(toX(p[0]), toY(p[1]));
+    else lnnCtx.lineTo(toX(p[0]), toY(p[1]));
+  });
+  lnnCtx.stroke();
+
+  // Integrate LR (L=1)
+  let wx2 = wx0, wy2 = wy0;
+  const traj_lr = [[wx2, wy2]];
+  for(let i=0;i<steps;i++){
+    const [Fx, Fy] = lnnField(wx2, wy2, 1, sigma);
+    wx2 += dt*Fx; wy2 += dt*Fy;
+    traj_lr.push([wx2, wy2]);
+    if(Math.abs(Fx)+Math.abs(Fy) < 1e-6) break;
+  }
+  lnnCtx.strokeStyle = COL.accent2;
+  lnnCtx.lineWidth = 2;
+  lnnCtx.setLineDash([4,4]);
+  lnnCtx.beginPath();
+  traj_lr.forEach((p,i) => {
+    if(i===0) lnnCtx.moveTo(toX(p[0]), toY(p[1]));
+    else lnnCtx.lineTo(toX(p[0]), toY(p[1]));
+  });
+  lnnCtx.stroke();
+  lnnCtx.setLineDash([]);
+
+  // Start point
+  lnnCtx.fillStyle = '#fff';
+  lnnCtx.beginPath(); lnnCtx.arc(toX(wx0), toY(wy0), 6, 0, 2*Math.PI); lnnCtx.fill();
+  lnnCtx.fillStyle = COL.bg;
+  lnnCtx.beginPath(); lnnCtx.arc(toX(wx0), toY(wy0), 3, 0, 2*Math.PI); lnnCtx.fill();
+
+  // Optimum
+  const wyStar = sigma > 0.001 ? 0 : wy0;
+  lnnCtx.fillStyle = COL.accent4;
+  lnnCtx.font = 'bold 24px sans-serif';
+  lnnCtx.textAlign = 'center';
+  lnnCtx.textBaseline = 'middle';
+  lnnCtx.fillText('★', toX(wxStar), toY(wyStar));
+
+  // Labels
+  lnnCtx.fillStyle = COL.dim;
+  lnnCtx.font = '13px sans-serif';
+  lnnCtx.textAlign = 'left';
+  lnnCtx.fillText('wₓ →', W-40, toY(0)-6);
+  lnnCtx.fillText('wᵧ ↑', toX(0)+6, 14);
+}
+bindSlider('lnn-L', drawLNN);
+bindSlider('lnn-wx0', drawLNN, v=>v.toFixed(2));
+bindSlider('lnn-wy0', drawLNN, v=>v.toFixed(2));
+bindSlider('lnn-sigma', drawLNN, v=>v.toFixed(2));
+
+/* ============================================================
+   SECTION 6: PHASE PORTRAIT with clickable trajectories
+   ============================================================ */
+const ppCanvas = document.getElementById('pp-canvas');
+const ppCtx = ppCanvas.getContext('2d');
+let ppTrajectories = [];
+
+function ppDraw() {
+  const L = parseInt(document.getElementById('pp-L').value);
+  const sigma = parseFloat(document.getElementById('pp-sigma').value);
+  const nStreams = parseInt(document.getElementById('pp-streams').value);
+
+  const W = ppCanvas.width, H = ppCanvas.height;
+  const xmin=-2.5, xmax=2.5, ymin=-2, ymax=2;
+  const toX = wx => (wx-xmin)/(xmax-xmin) * W;
+  const toY = wy => H - (wy-ymin)/(ymax-ymin) * H;
+
+  // Background heatmap of ||F||
+  const cellsX = 100, cellsY = 80;
+  const img = ppCtx.createImageData(W, H);
+  const cellW = W/cellsX, cellH = H/cellsY;
+  let maxMag = 0;
+  const mags = [];
+  for(let cy=0;cy<cellsY;cy++){
+    mags[cy] = [];
+    for(let cx=0;cx<cellsX;cx++){
+      const wx = xmin + (cx+0.5)/cellsX*(xmax-xmin);
+      const wy = ymax - (cy+0.5)/cellsY*(ymax-ymin);
+      const [Fx, Fy] = lnnField(wx, wy, L, sigma);
+      const m = Math.log(1+Math.sqrt(Fx*Fx+Fy*Fy));
+      mags[cy][cx] = m;
+      if(m > maxMag) maxMag = m;
+    }
+  }
+  for(let py=0;py<H;py++){
+    for(let px=0;px<W;px++){
+      const cx = Math.min(cellsX-1, Math.floor(px/cellW));
+      const cy = Math.min(cellsY-1, Math.floor(py/cellH));
+      const t = mags[cy][cx]/(maxMag+1e-9);
+      // Dark-to-bright viridis-like
+      const r = Math.floor(30 + t*80);
+      const g = Math.floor(20 + t*140);
+      const b = Math.floor(60 + t*180);
+      const idx = (py*W + px)*4;
+      img.data[idx] = r;
+      img.data[idx+1] = g;
+      img.data[idx+2] = b;
+      img.data[idx+3] = 255;
+    }
+  }
+  ppCtx.putImageData(img, 0, 0);
+
+  // Streamlines
+  for(let i=0;i<nStreams;i++){
+    const wx0 = uniform(xmin+0.1, xmax-0.1);
+    const wy0 = uniform(ymin+0.1, ymax-0.1);
+    let wx = wx0, wy = wy0;
+    ppCtx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ppCtx.lineWidth = 1;
+    ppCtx.beginPath();
+    ppCtx.moveTo(toX(wx), toY(wy));
+    for(let s=0;s<200;s++){
+      const [Fx, Fy] = lnnField(wx, wy, L, sigma);
+      const m = Math.sqrt(Fx*Fx+Fy*Fy)+1e-9;
+      const dt = 0.02/m;
+      wx += dt*Fx; wy += dt*Fy;
+      if(wx<xmin||wx>xmax||wy<ymin||wy>ymax) break;
+      ppCtx.lineTo(toX(wx), toY(wy));
+    }
+    ppCtx.stroke();
+  }
+
+  // Slow manifold (wx = 1)
+  const wxStar = 1.0;
+  ppCtx.strokeStyle = COL.accent3;
+  ppCtx.lineWidth = 3;
+  ppCtx.setLineDash([8,5]);
+  ppCtx.beginPath();
+  ppCtx.moveTo(toX(wxStar), 0); ppCtx.lineTo(toX(wxStar), H);
+  ppCtx.stroke();
+  ppCtx.setLineDash([]);
+
+  // Axes
+  ppCtx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ppCtx.lineWidth = 1;
+  ppCtx.beginPath(); ppCtx.moveTo(toX(0),0); ppCtx.lineTo(toX(0),H); ppCtx.stroke();
+  ppCtx.beginPath(); ppCtx.moveTo(0,toY(0)); ppCtx.lineTo(W,toY(0)); ppCtx.stroke();
+
+  // User trajectories
+  ppTrajectories.forEach(traj => {
+    ppCtx.strokeStyle = COL.accent4;
+    ppCtx.lineWidth = 2.5;
+    ppCtx.beginPath();
+    traj.forEach((p,i) => {
+      if(i===0) ppCtx.moveTo(toX(p[0]), toY(p[1]));
+      else ppCtx.lineTo(toX(p[0]), toY(p[1]));
+    });
+    ppCtx.stroke();
+    ppCtx.fillStyle = '#fff';
+    ppCtx.beginPath(); ppCtx.arc(toX(traj[0][0]), toY(traj[0][1]), 4, 0, 2*Math.PI); ppCtx.fill();
+  });
+
+  // Optimum star
+  const wyStar = sigma > 0.001 ? 0 : 0;
+  ppCtx.fillStyle = COL.accent4;
+  ppCtx.font = 'bold 28px sans-serif';
+  ppCtx.textAlign = 'center';
+  ppCtx.textBaseline = 'middle';
+  ppCtx.fillText('★', toX(wxStar), toY(wyStar));
+}
+
+ppCanvas.addEventListener('click', (e) => {
+  const rect = ppCanvas.getBoundingClientRect();
+  const scaleX = ppCanvas.width/rect.width;
+  const scaleY = ppCanvas.height/rect.height;
+  const px = (e.clientX - rect.left)*scaleX;
+  const py = (e.clientY - rect.top)*scaleY;
+  const W=ppCanvas.width, H=ppCanvas.height;
+  const xmin=-2.5, xmax=2.5, ymin=-2, ymax=2;
+  let wx = xmin + px/W*(xmax-xmin);
+  let wy = ymax - py/H*(ymax-ymin);
+  const L = parseInt(document.getElementById('pp-L').value);
+  const sigma = parseFloat(document.getElementById('pp-sigma').value);
+  const traj = [[wx, wy]];
+  for(let s=0;s<5000;s++){
+    const [Fx, Fy] = lnnField(wx, wy, L, sigma);
+    const m = Math.sqrt(Fx*Fx+Fy*Fy)+1e-9;
+    const dt = Math.min(0.05, 0.02/m);
+    wx += dt*Fx; wy += dt*Fy;
+    traj.push([wx, wy]);
+    if(m < 1e-5) break;
+    if(wx<xmin-1||wx>xmax+1||wy<ymin-1||wy>ymax+1) break;
+  }
+  ppTrajectories.push(traj);
+  if(ppTrajectories.length > 8) ppTrajectories.shift();
+  ppDraw();
+});
+
+document.getElementById('pp-reset').addEventListener('click', () => {
+  ppTrajectories = [];
+  ppDraw();
+});
+bindSlider('pp-L', ()=>ppDraw());
+bindSlider('pp-sigma', ()=>ppDraw(), v=>v.toFixed(2));
+bindSlider('pp-streams', ()=>ppDraw());
+ppDraw();
+
+/* ============================================================
+   SECTION 7: SLOW CONVERGENCE - loss curves
+   ============================================================ */
+function runSlow() {
+  const sigma = parseFloat(document.getElementById('sl-sigma').value);
+  const L = parseInt(document.getElementById('sl-L').value);
+  const T = parseInt(document.getElementById('sl-T').value);
+
+  // Simulate flow, track ||wx-wx*||, ||wy-wy*||, loss
+  let wx = -1.0, wy = 1.5;
+  const wxStar = 1.0, wyStar = 0;
+  const dt = 0.05;
+  const times=[], err_x=[], err_y=[], loss=[];
+  for(let t=0;t<T;t++){
+    const [Fx, Fy] = lnnField(wx, wy, L, sigma);
+    wx += dt*Fx; wy += dt*Fy;
+    if(t%5===0){
+      times.push(t*dt);
+      err_x.push(Math.abs(wx-wxStar) + 1e-10);
+      err_y.push(Math.abs(wy-wyStar) + 1e-10);
+      // Loss ~ (wx-wxStar)^2 * <x^2> + sigma^2*(wy-wyStar)^2
+      const l = (wx-wxStar)**2 * (1/3) + sigma*sigma*(wy-wyStar)**2 + 1e-10;
+      loss.push(l);
+    }
+  }
+
+  Plotly.react('sl-plot', [
+    {x:times, y:loss, mode:'lines', line:{color:COL.accent4, width:3}, name:'Loss J(w)'},
+    {x:times, y:err_x, mode:'lines', line:{color:COL.accent, width:2}, name:'|wₓ - wₓ*|'},
+    {x:times, y:err_y, mode:'lines', line:{color:COL.accent2, width:2}, name:'|wᵧ - wᵧ*|'}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'Zeit t', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'Fehler (log)', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:60,r:20,t:30,b:50}, font:{color:COL.text},
+    title:{text:`σ=${sigma}, L=${L} — Konvergenzzeit für wᵧ ~ 1/σ² = ${(1/sigma/sigma).toFixed(0)}`,
+           font:{color:COL.text, size:13}},
+    legend:{bgcolor:'rgba(0,0,0,0.3)'}
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('sl-sigma', ()=>{}, v=>v.toFixed(2));
+bindSlider('sl-L', ()=>{});
+bindSlider('sl-T', ()=>{});
+document.getElementById('sl-run').addEventListener('click', runSlow);
+runSlow();
+
+/* ============================================================
+   SECTION 8: DEPTH REGULARIZATION (sigma = 0)
+   ============================================================ */
+const dpCanvas = document.getElementById('dp-canvas');
+const dpCtx = dpCanvas.getContext('2d');
+let dpTrajectories = [];
+
+function dpField(wx, wy, L) {
+  // sigma = 0 case: uses (2.15)
+  // <x^2>=1/3, <gx>=1/3 (g(x)=x)
+  const Axx = 1/3, gx = 1/3;
+  const dJdwx = Axx*wx - gx;
+  const nw2 = wx*wx + wy*wy + 1e-9;
+  const factor = Math.pow(nw2, 1 - 1/L);
+  const wxDotG = wx*dJdwx;
+  const dwx = -factor * (dJdwx + (L-1)*(wxDotG/nw2)*wx);
+  const dwy = -factor * (L-1) * (wxDotG/nw2)*wy;
+  return [dwx, dwy];
+}
+
+function drawDP() {
+  const L = parseInt(document.getElementById('dp-L').value);
+  const W = dpCanvas.width, H = dpCanvas.height;
+  const xmin=-2, xmax=2.5, ymin=-2.5, ymax=2.5;
+  const toX = wx => (wx-xmin)/(xmax-xmin) * W;
+  const toY = wy => H - (wy-ymin)/(ymax-ymin) * H;
+
+  dpCtx.fillStyle = COL.bg;
+  dpCtx.fillRect(0,0,W,H);
+
+  // Shade regions: E- and U+
+  // wx * (Axx*wx - gx) < 0 => E- (side effect region)
+  const Axx=1/3, gx=1/3;
+  const wxStar = gx/Axx; // = 1
+  // E- boundary: wx*(Axx*wx - gx) = 0 => wx=0 or wx = wxStar
+  // Between 0 and wxStar is E- (product negative)
+  dpCtx.fillStyle = 'rgba(251,191,36,0.12)';
+  dpCtx.fillRect(toX(0), 0, toX(wxStar)-toX(0), H);
+  dpCtx.fillStyle = 'rgba(134,239,172,0.12)';
+  // U+ is to the right of Gamma_0 (wx = wxStar)
+  dpCtx.fillRect(toX(wxStar), 0, W-toX(wxStar), H);
+
+  // Region labels
+  dpCtx.fillStyle = COL.accent4;
+  dpCtx.font = 'bold 14px sans-serif';
+  dpCtx.textAlign = 'center';
+  dpCtx.fillText('E⁻ (Nebeneffekt)', toX(0.5), 20);
+  dpCtx.fillStyle = COL.accent3;
+  dpCtx.fillText('U⁺ (Regularisierung)', toX(1.75), 20);
+
+  // Grid
+  dpCtx.strokeStyle = '#1e293b';
+  dpCtx.lineWidth = 1;
+  for(let i=-2;i<=2;i++){
+    dpCtx.beginPath(); dpCtx.moveTo(toX(i),0); dpCtx.lineTo(toX(i),H); dpCtx.stroke();
+    dpCtx.beginPath(); dpCtx.moveTo(0,toY(i)); dpCtx.lineTo(W,toY(i)); dpCtx.stroke();
+  }
+
+  // Vector field
+  const step = 45;
+  for(let px=step/2; px<W; px+=step){
+    for(let py=step/2; py<H; py+=step){
+      const wx = xmin + px/W*(xmax-xmin);
+      const wy = ymax - py/H*(ymax-ymin);
+      if(Math.abs(wx)+Math.abs(wy) < 0.1) continue;
+      const [Fx, Fy] = dpField(wx, wy, L);
+      const mag = Math.sqrt(Fx*Fx+Fy*Fy)+1e-9;
+      const scale = Math.min(15, 6*Math.log(1+mag));
+      const nx = Fx/mag, ny = -Fy/mag;
+      dpCtx.strokeStyle = `rgba(148,163,184,${Math.min(0.6, 0.1+0.12*Math.log(1+mag))})`;
+      dpCtx.beginPath();
+      dpCtx.moveTo(px, py);
+      dpCtx.lineTo(px+nx*scale, py+ny*scale);
+      dpCtx.stroke();
+    }
+  }
+
+  // Gamma_0 line (wx = wxStar)
+  dpCtx.strokeStyle = COL.accent3;
+  dpCtx.lineWidth = 3;
+  dpCtx.setLineDash([8,5]);
+  dpCtx.beginPath();
+  dpCtx.moveTo(toX(wxStar), 0); dpCtx.lineTo(toX(wxStar), H);
+  dpCtx.stroke();
+  dpCtx.setLineDash([]);
+
+  // Axes
+  dpCtx.strokeStyle = '#475569';
+  dpCtx.lineWidth = 1;
+  dpCtx.beginPath(); dpCtx.moveTo(toX(0),0); dpCtx.lineTo(toX(0),H); dpCtx.stroke();
+  dpCtx.beginPath(); dpCtx.moveTo(0,toY(0)); dpCtx.lineTo(W,toY(0)); dpCtx.stroke();
+
+  // Draw trajectories
+  dpTrajectories.forEach(({traj, L: trajL, color}) => {
+    dpCtx.strokeStyle = color;
+    dpCtx.lineWidth = 2.5;
+    dpCtx.beginPath();
+    traj.forEach((p,i) => {
+      if(i===0) dpCtx.moveTo(toX(p[0]), toY(p[1]));
+      else dpCtx.lineTo(toX(p[0]), toY(p[1]));
+    });
+    dpCtx.stroke();
+    // Start
+    dpCtx.fillStyle = '#fff';
+    dpCtx.beginPath(); dpCtx.arc(toX(traj[0][0]), toY(traj[0][1]), 4, 0, 2*Math.PI); dpCtx.fill();
+    // End
+    dpCtx.fillStyle = color;
+    dpCtx.beginPath(); dpCtx.arc(toX(traj[traj.length-1][0]), toY(traj[traj.length-1][1]), 5, 0, 2*Math.PI); dpCtx.fill();
+    // Label at end
+    dpCtx.fillStyle = color;
+    dpCtx.font = 'bold 11px sans-serif';
+    dpCtx.textAlign = 'left';
+    dpCtx.fillText(`L=${trajL}`, toX(traj[traj.length-1][0])+8, toY(traj[traj.length-1][1]));
+  });
+}
+
+function integrateTraj(wx0, wy0, L) {
+  let wx = wx0, wy = wy0;
+  const traj = [[wx, wy]];
+  for(let s=0;s<8000;s++){
+    const [Fx, Fy] = dpField(wx, wy, L);
+    const m = Math.sqrt(Fx*Fx+Fy*Fy)+1e-9;
+    const dt = Math.min(0.05, 0.02/m);
+    wx += dt*Fx; wy += dt*Fy;
+    traj.push([wx, wy]);
+    if(m < 1e-5) break;
+  }
+  return traj;
+}
+
+dpCanvas.addEventListener('click', (e) => {
+  const rect = dpCanvas.getBoundingClientRect();
+  const scaleX = dpCanvas.width/rect.width;
+  const scaleY = dpCanvas.height/rect.height;
+  const px = (e.clientX - rect.left)*scaleX;
+  const py = (e.clientY - rect.top)*scaleY;
+  const W=dpCanvas.width, H=dpCanvas.height;
+  const xmin=-2, xmax=2.5, ymin=-2.5, ymax=2.5;
+  const wx0 = xmin + px/W*(xmax-xmin);
+  const wy0 = ymax - py/H*(ymax-ymin);
+  const L = parseInt(document.getElementById('dp-L').value);
+  dpTrajectories.push({traj: integrateTraj(wx0, wy0, L), L, color: COL.accent});
+  if(dpTrajectories.length > 10) dpTrajectories.shift();
+  drawDP();
+});
+
+document.getElementById('dp-reset').addEventListener('click', () => {
+  dpTrajectories = [];
+  drawDP();
+});
+
+document.getElementById('dp-compare').addEventListener('click', () => {
+  // Take existing start points and add L=5
+document.getElementById('dp-compare').addEventListener('click', () => {
+  // Take existing start points and add L=5 and L=100 versions
+  const startPoints = [
+    [1.6, 1.5], [1.8, -1.2], [0.5, 1.3], [0.4, -1.0], [2.2, 0.8], [0.3, 0.6]
+  ];
+  dpTrajectories = [];
+  startPoints.forEach(p => {
+    dpTrajectories.push({traj: integrateTraj(p[0], p[1], 5), L: 5, color: COL.accent2});
+    dpTrajectories.push({traj: integrateTraj(p[0], p[1], 100), L: 100, color: COL.accent});
+  });
+  drawDP();
+});
+bindSlider('dp-L', drawDP);
+drawDP();
+
+/* ============================================================
+   SECTION 9a: MNIST-like demo
+   ============================================================ */
+// Create a stylized "2" digit as 28x28 pixel array
+function makeDigit2() {
+  const img = new Array(28*28).fill(0);
+  // Draw a "2" shape
+  const strokes = [
+    // Top curve
+    ...[6,7,8,9,10,11].map(x => [5, x]),
+    ...[7,8,9,10,11,12].map(x => [6, x]),
+    [7,5],[7,12],[7,13],
+    [8,5],[8,13],[8,14],
+    [9,13],[9,14],
+    [10,12],[10,13],
+    [11,11],[11,12],
+    [12,10],[12,11],
+    [13,9],[13,10],
+    [14,8],[14,9],
+    [15,7],[15,8],
+    [16,6],[16,7],
+    [17,5],[17,6],
+    [18,5],[18,6],
+    // Bottom line
+    ...[5,6,7,8,9,10,11,12,13,14,15].map(x => [19, x]),
+    ...[5,6,7,8,9,10,11,12,13,14,15].map(x => [20, x]),
+    ...[5,6,7,8,9,10,11,12,13,14,15].map(x => [21, x])
+  ];
+  strokes.forEach(([r,c]) => {
+    if(r>=0 && r<28 && c>=0 && c<28) img[r*28+c] = 0.9;
+  });
+  // Blur slightly
+  const blurred = img.slice();
+  for(let r=1;r<27;r++){
+    for(let c=1;c<27;c++){
+      let s = 0;
+      for(let dr=-1;dr<=1;dr++)
+        for(let dc=-1;dc<=1;dc++)
+          s += img[(r+dr)*28+(c+dc)];
+      blurred[r*28+c] = Math.max(blurred[r*28+c], s/12);
+    }
+  }
+  return blurred;
+}
+
+// Normal direction v_n: a smooth pattern (e.g., low-freq sinusoidal)
+function makeNormalDir() {
+  const v = new Array(28*28);
+  for(let r=0;r<28;r++){
+    for(let c=0;c<28;c++){
+      v[r*28+c] = Math.sin(2*Math.PI*r/28) * Math.cos(2*Math.PI*c/28);
+    }
+  }
+  // Normalize
+  const norm = Math.sqrt(v.reduce((a,b)=>a+b*b, 0));
+  return v.map(x => x/norm);
+}
+
+const digit2 = makeDigit2();
+const vNormal = makeNormalDir();
+
+function drawDigit(canvas, pixels) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cellW = W/28, cellH = H/28;
+  const img = ctx.createImageData(W, H);
+  for(let py=0;py<H;py++){
+    for(let px=0;px<W;px++){
+      const r = Math.floor(py/cellH);
+      const c = Math.floor(px/cellW);
+      const v = Math.max(0, Math.min(1, pixels[r*28+c]));
+      const idx = (py*W+px)*4;
+      img.data[idx] = Math.floor(v*230 + 10);
+      img.data[idx+1] = Math.floor(v*220 + 15);
+      img.data[idx+2] = Math.floor(v*180 + 25);
+      img.data[idx+3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
+function updateMnist() {
+  const t = parseFloat(document.getElementById('mn-t').value);
+  const s = parseFloat(document.getElementById('mn-s').value);
+  // Perturbed image: x + t*v_n
+  const perturbed = digit2.map((p, i) => p + 0.35*t*vNormal[i]);
+  drawDigit(document.getElementById('mn-img'), perturbed);
+
+  // Heatmap of I(s,t) - synthetic: I(s,t) ~ (s*t)^2 * scale
+  const gN = 25;
+  const svals = linspace(-3, 3, gN);
+  const tvals = linspace(-3, 3, gN);
+  const z = svals.map(sv => tvals.map(tv => 0.02*(sv*tv)*(sv*tv) + 0.001*sv*sv*tv*tv*tv*tv));
+  Plotly.react('mn-heatmap', [
+    {type:'heatmap', x:tvals, y:svals, z:z, colorscale:'Viridis',
+     colorbar:{tickfont:{color:COL.text}, len:0.9}},
+    {x:[t], y:[s], mode:'markers', type:'scatter',
+     marker:{size:14, color:COL.accent4, symbol:'x', line:{color:'#fff', width:2}}}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'t (Eingabe)', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'s (Gewicht)', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:50,r:20,t:10,b:40}, font:{color:COL.text}, showlegend:false
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('mn-t', updateMnist, v=>v.toFixed(2));
+bindSlider('mn-s', updateMnist, v=>v.toFixed(2));
+
+/* ============================================================
+   SECTION 9b: ReLU stability vs depth (Theorem 3.2)
+   ============================================================ */
+function drawRelu() {
+  const ynorm = parseFloat(document.getElementById('rl-y').value);
+  const nu = parseFloat(document.getElementById('rl-nu').value);
+  const n = parseInt(document.getElementById('rl-n').value);
+  // ||Δ_y f||^2 ≈ (∏ ||W^ℓ||^2) * (ν^2 + 2√2/π ν^3) * n^2 * y^2
+  // Approximate ||W^ℓ|| ≈ 2 (typical for He init in wide layers)
+  const opNorm = 2.0;
+  const Ls = [];
+  for(let L=2; L<=15; L++) Ls.push(L);
+  const bounds = Ls.map(L => {
+    const prod = Math.pow(opNorm, 2*Math.max(0, L-2));
+    const varTerm = nu*nu + (2*Math.sqrt(2)/Math.PI)*nu*nu*nu;
+    return prod * varTerm * n * ynorm*ynorm;
+  });
+  // Also plot empirical scaling (rough simulation)
+  const empirical = Ls.map(L => {
+    const prod = Math.pow(opNorm*0.85, 2*Math.max(0, L-2));
+    return prod * (nu*nu * 0.6) * n * ynorm*ynorm;
+  });
+
+  Plotly.react('rl-plot', [
+    {x:Ls, y:bounds, mode:'lines+markers', line:{color:COL.accent4, width:3},
+     marker:{size:8, color:COL.accent4}, name:'Obere Schranke (Theorem 3.2)'},
+    {x:Ls, y:empirical, mode:'lines+markers', line:{color:COL.accent, width:2, dash:'dash'},
+     marker:{size:7, color:COL.accent}, name:'Typische Messung'}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'Tiefe L', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'‖Δ_y f‖² (log-Skala)', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:70,r:20,t:20,b:50}, font:{color:COL.text},
+    legend:{bgcolor:'rgba(0,0,0,0.3)'}
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('rl-y', drawRelu, v=>v.toFixed(2));
+bindSlider('rl-nu', drawRelu, v=>v.toFixed(2));
+bindSlider('rl-n', drawRelu);
+
+/* ============================================================
+   SECTION 10: TRADE-OFF
+   ============================================================ */
+function drawTO() {
+  const sigmaBase = parseFloat(document.getElementById('to-sigma').value);
+  const NBase = parseInt(document.getElementById('to-N').value);
+  const L = parseInt(document.getElementById('to-L').value);
+
+  // Trade-off: accuracy = σ² + 1/N, stability = 1/(σ² N^β) with β=1/L (approx for ReLU)
+  const beta = 0.35 + 0.02*L; // heuristic
+  const sigmas = linspace(0.01, 0.5, 60);
+  const accuracy = sigmas.map(s => s*s + 1/NBase);
+  const stability = sigmas.map(s => 1/(s*s * Math.pow(NBase, beta)));
+  // Total "risk" = accuracy + λ * stability (with λ=0.1)
+  const total = sigmas.map((s,i) => accuracy[i] + 0.05*stability[i]);
+
+  // Current point
+  const idx = sigmas.findIndex(s => s >= sigmaBase);
+  const currentAcc = sigmaBase*sigmaBase + 1/NBase;
+  const currentStab = 1/(sigmaBase*sigmaBase * Math.pow(NBase, beta));
+
+  Plotly.react('to-plot', [
+    {x:sigmas, y:accuracy, mode:'lines', line:{color:COL.accent3, width:3},
+     name:'Genauigkeitsfehler ~ σ² + 1/N'},
+    {x:sigmas, y:stability, mode:'lines', line:{color:COL.accent2, width:3},
+     name:`Instabilität ~ 1/(σ²·N^${beta.toFixed(2)})`},
+    {x:sigmas, y:total, mode:'lines', line:{color:COL.accent4, width:3, dash:'dash'},
+     name:'Kombiniertes Risiko'},
+    {x:[sigmaBase], y:[currentAcc], mode:'markers',
+     marker:{size:14, color:COL.accent3, symbol:'circle', line:{color:'#fff', width:2}},
+     name:'Aktuelle Genauigkeit', showlegend:false},
+    {x:[sigmaBase], y:[currentStab], mode:'markers',
+     marker:{size:14, color:COL.accent2, symbol:'circle', line:{color:'#fff', width:2}},
+     name:'Aktuelle Instabilität', showlegend:false}
+  ], {
+    paper_bgcolor:COL.bg, plot_bgcolor:COL.bg,
+    xaxis:{title:'σ (Rauschen)', color:COL.text, gridcolor:'#1e293b'},
+    yaxis:{title:'Fehler (log-Skala)', type:'log', color:COL.text, gridcolor:'#1e293b'},
+    margin:{l:70,r:20,t:30,b:50}, font:{color:COL.text},
+    title:{text:`Süßer Punkt: minimiere gestrichelte gelbe Kurve! (L=${L}, N=${NBase})`,
+           font:{color:COL.text, size:12}},
+    legend:{bgcolor:'rgba(0,0,0,0.3)', y:0.98}
+  }, {responsive:true, displayModeBar:false});
+}
+bindSlider('to-sigma', drawTO, v=>v.toFixed(2));
+bindSlider('to-N', drawTO);
+bindSlider('to-L', drawTO);
+
+/* ============================================================
+   INITIAL DRAWS
+   ============================================================ */
+drawMotiv();
+drawSetup();
+drawNS();
+drawLNN();
+updateMnist();
+drawRelu();
+drawTO();
+
+</script>
+</body>
+</html>
