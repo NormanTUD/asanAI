@@ -41,6 +41,33 @@ const CMAPS = {
 };
 
 // -------- data loading --------
+async function fetchJSON(url) {
+  let resp;
+  try {
+    resp = await fetch(url);
+  } catch (e) {
+    throw new Error(`Network error requesting ${url} — ${e.message}`);
+  }
+  const file = url.split("/").pop();
+  if (!resp.ok) {
+    if (resp.status === 404) {
+      throw new Error(
+`Missing data file: ${file}  (HTTP 404)
+
+The voxel volumes have not been generated yet.
+Build them, then click "Retry" (or reload this page):
+
+  python3 build_data.py`);
+    }
+    throw new Error(`Failed to load ${file}: HTTP ${resp.status} ${resp.statusText}`);
+  }
+  try {
+    return await resp.json();
+  } catch (e) {
+    throw new Error(`${file} is not valid JSON: ${e.message}`);
+  }
+}
+
 async function loadVolume(variant, name) {
   const key = variant + ":" + name;
   if (volCache[key]) {
@@ -69,8 +96,7 @@ async function loadVolume(variant, name) {
     state.volTotal = total;
     return;
   }
-  const resp = await fetch(`${DATA_DIR}foam_${variant}_${name}.json`);
-  const j = await resp.json();
+  const j = await fetchJSON(`${DATA_DIR}foam_${variant}_${name}.json`);
   // support both dense ("data") and sparse ("x","y","b","count") formats
   const [W, H, B] = j.shape;
   const vol = new Uint32Array(W*H*B);
@@ -104,8 +130,8 @@ async function refreshData() {
 }
 
 async function loadAll() {
-  state.meta = await (await fetch(`${DATA_DIR}meta.json`)).json();
-  state.samples = await (await fetch(`${DATA_DIR}samples.json`)).json();
+  state.meta    = await fetchJSON(`${DATA_DIR}meta.json`);
+  state.samples = await fetchJSON(`${DATA_DIR}samples.json`);
   document.getElementById("sz").max = state.meta.n_bins - 1;
   buildDigitButtons();
   renderSamples("total");
@@ -304,23 +330,24 @@ function rebuild3D() {
 // -------- UI wiring --------
 function buildDigitButtons() {
   const host = document.getElementById("digit-buttons");
-  for (let d = 0; d < 10; d++) {
+  host.innerHTML = "";   // idempotent: safe to call again on Retry
+  const mk = (digit, label) => {
     const b = document.createElement("button");
     b.className = "digit-btn";
-    b.textContent = d;
-    b.dataset.digit = String(d);
-    host.appendChild(b);
-  }
-  host.querySelectorAll("button").forEach(btn => {
-    btn.addEventListener("click", async () => {
+    if (digit === "total") b.classList.add("active");
+    b.textContent = label;
+    b.dataset.digit = digit;
+    b.addEventListener("click", async () => {
       host.querySelectorAll("button").forEach(x => x.classList.remove("active"));
-      btn.classList.add("active");
-      const d = btn.dataset.digit;
-      state.currentDigit = d;
-      renderSamples(d);
-      await refreshData();
+      b.classList.add("active");
+      state.currentDigit = digit;
+      renderSamples(digit);
+      try { await refreshData(); } catch (err) { showError(err); }
     });
-  });
+    host.appendChild(b);
+  };
+  mk("total", "all");
+  for (let d = 0; d < 10; d++) mk(String(d), String(d));
 }
 
 function renderSamples(digit) {
@@ -345,9 +372,17 @@ function renderSamples(digit) {
 }
 
 function wireControls() {
+  document.getElementById("error-dismiss").addEventListener("click", () => {
+    document.getElementById("error").hidden = true;
+  });
+  document.getElementById("error-retry").addEventListener("click", () => {
+    document.getElementById("error").hidden = true;
+    loadAll().catch(showError);
+  });
+
   document.getElementById("variant").addEventListener("change", e => {
     state.variant = e.target.value;   // "aug", "raw" or "diff"
-    refreshData();
+    refreshData().catch(showError);
   });
 
   const bind = (id, labelId, fn, rebuild3d=false) => {
@@ -380,9 +415,20 @@ function wireControls() {
   });
 }
 
+// -------- error handling --------
+function showError(err) {
+  document.getElementById("error-msg").textContent = err.message;
+  document.getElementById("error").hidden = false;
+  console.error("[mnist-foam]", err);
+}
+
 // -------- boot --------
 (async function main() {
   init3D();
   wireControls();
-  await loadAll();
+  try {
+    await loadAll();
+  } catch (err) {
+    showError(err);
+  }
 })();

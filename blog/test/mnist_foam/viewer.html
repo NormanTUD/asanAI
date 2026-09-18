@@ -27,6 +27,13 @@
   .samples img { width: 100%; image-rendering: pixelated; border: 1px solid #222; }
   h3 { margin: 4px 0 10px; font-size: 13px; color: #6cf; text-transform: uppercase; letter-spacing: 0.05em; }
   .stat { font-size: 11px; color: #888; font-family: monospace; }
+  .error-overlay { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(8,8,12,0.82); z-index: 1000; padding: 20px; }
+  .error-overlay[hidden] { display: none; }
+  .error-card { background: #16161c; border: 1px solid #5a2230; border-left: 4px solid #f44; max-width: 640px; width: 100%; padding: 20px 24px; border-radius: 6px; }
+  .error-card h2 { color: #f66; margin: 0 0 12px; font-size: 17px; }
+  .error-card pre { background: #0e0e12; border: 1px solid #2a2a35; padding: 12px 14px; border-radius: 4px; color: #d8d8de; font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; overflow: auto; }
+  .error-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .error-actions button { width: auto; }
 </style>
 </head>
 <body>
@@ -121,6 +128,17 @@
     </div>
   </aside>
 
+</div>
+
+<div id="error" class="error-overlay" hidden>
+  <div class="error-card">
+    <h2>Could not load data</h2>
+    <pre id="error-msg"></pre>
+    <div class="error-actions">
+      <button id="error-retry">Retry</button>
+      <button id="error-dismiss">Dismiss</button>
+    </div>
+  </div>
 </div>
 
 <!-- three.js via ES modules -->
