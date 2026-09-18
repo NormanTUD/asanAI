@@ -3198,6 +3198,72 @@ window.bibData = {
 		license: "CC BY-SA 3.0",
 		alternativetitle: "Wolf Bone from Dolní Věstonice"
 	},
+	"vogelsang2010apollo11": {
+		author: "Wim Vogelsang et al.",
+		year: 2010,
+		title: "New Excavations of Middle Stone Age Deposits at Apollo 11 Rockshelter, Namibia",
+		journal: "Journal of African Archaeology 8(2): 185–218"
+	},
+	"henshilwood2018blombos": {
+		author: "Chris Henshilwood et al.",
+		year: 2018,
+		title: "An abstract drawing from the 73,000-year-old levels at Blombos Cave, South Africa",
+		journal: "Nature 562(7725): 115–118",
+		url: "https://www.nature.com/articles/s41586-018-0514-3"
+	},
+	"aubert2018borneo": {
+		author: "Maxime Aubert et al.",
+		year: 2018,
+		title: "Palaeolithic cave art in Borneo",
+		journal: "Nature 564(7735): 254–257",
+		url: "https://www.nature.com/articles/s41586-018-0679-9"
+	},
+	"brumm2021sulawesi": {
+		author: "Adam Brumm et al.",
+		year: 2021,
+		title: "Oldest cave art found in Sulawesi",
+		journal: "Science Advances 7(3): eabd4648",
+		url: "https://www.science.org/doi/10.1126/sciadv.abd4648"
+	},
+	"aubert2019sulawesi": {
+		author: "Maxime Aubert et al.",
+		year: 2019,
+		title: "Earliest hunting scene in prehistoric art",
+		journal: "Nature 576(7787): 442–445",
+		url: "https://www.nature.com/articles/s41586-019-1806-y"
+	},
+	"hoffmann2018iberia": {
+		author: "David L. Hoffmann et al.",
+		year: 2018,
+		title: "U-Th dating of carbonate crusts reveals Neandertal origin of Iberian cave art",
+		journal: "Science 359(6378): 912–915",
+		url: "https://www.science.org/doi/10.1126/science.aap7778"
+	},
+	"schmandtbesserat1992": {
+		author: "Denise Schmandt-Besserat",
+		year: 1992,
+		title: "Before Writing: The Counting Tally",
+		publisher: "University of California Press"
+	},
+	"chrisomalis2010": {
+		author: "Stephen Chrisomalis",
+		year: 2010,
+		title: "Numerical Notation: A Comparative History",
+		publisher: "Cambridge University Press"
+	},
+	"ifrah2000": {
+		author: "Georges Ifrah",
+		year: 2000,
+		title: "The Universal History of Numbers: From Prehistory to the Invention of the Computer",
+		publisher: "John Wiley & Sons"
+	},
+	"smithkarpinski1911": {
+		author: "David Eugene Smith and Louis Charles Karpinski",
+		year: 1911,
+		title: "The Hindu–Arabic Numerals: A Critical Study of All the Principal Sources of European Knowledge of and Claim to Priority in the Numeration System",
+		publisher: "Ginn and Company",
+		url: "https://archive.org/details/hinduarabicnumer00smitrich"
+	},
 	"ishango12": {
 		url: "https://arxiv.org/abs/1204.1019",
 		title: "Does the Ishango Bone Indicate Knowledge of the Base 12? An Interpretation of a Prehistoric Discovery, the First Mathematical Tool of Humankind",
