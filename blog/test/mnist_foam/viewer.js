@@ -10,7 +10,7 @@ const DATA_DIR = "data/";
 const state = {
   meta: null,
   currentDigit: "total",
-  variant: "aug",      // "aug" = with rotation/shift augmentation, "raw" = none
+  variant: "aug",      // "aug" = rotation/shift augmented, "raw" = none, "diff" = aug - raw
   volume: null,        // Uint32Array of length 28*28*64
   shape: [28, 28, 64],
   samples: {},
@@ -47,6 +47,26 @@ async function loadVolume(variant, name) {
     state.volume   = volCache[key].vol;
     state.volMax   = volCache[key].max;
     state.volTotal = volCache[key].total;
+    return;
+  }
+  // "diff" = aug - raw, computed client-side: the voxels created purely by
+  // augmentation. aug >= raw holds for every cell, so this never goes negative.
+  if (variant === "diff") {
+    await loadVolume("aug", name);
+    await loadVolume("raw", name);
+    const a = volCache["aug:" + name].vol;
+    const r = volCache["raw:" + name].vol;
+    const d = new Uint32Array(a.length);
+    let max = 0, total = 0;
+    for (let i = 0; i < a.length; i++) {
+      const v = a[i] - r[i];
+      d[i] = v; total += v;
+      if (v > max) max = v;
+    }
+    volCache[key] = { vol: d, max, total };
+    state.volume   = d;
+    state.volMax   = max;
+    state.volTotal = total;
     return;
   }
   const resp = await fetch(`${DATA_DIR}foam_${variant}_${name}.json`);
@@ -325,8 +345,8 @@ function renderSamples(digit) {
 }
 
 function wireControls() {
-  document.getElementById("aug").addEventListener("change", e => {
-    state.variant = e.target.value;   // "aug" or "raw"
+  document.getElementById("variant").addEventListener("change", e => {
+    state.variant = e.target.value;   // "aug", "raw" or "diff"
     refreshData();
   });
 
