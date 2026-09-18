@@ -9,13 +9,13 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 const DATA_DIR = "data/";
 const state = {
   meta: null,
-  currentDigit: "total",
-  variant: "aug",      // "aug" = rotation/shift augmented, "raw" = none, "diff" = aug - raw
+  currentDigit: "1",
+  variant: "raw",      // "aug" = rotation/shift augmented, "raw" = none, "diff" = aug - raw
   volume: null,        // Uint32Array of length 28*28*64
   shape: [28, 28, 64],
   samples: {},
   slice: { x: 14, y: 14, z: 32 },
-  thr: 10, opacity: 1.0, cmap: "magma", log: true,
+  thr: 20, opacity: 1.0, cmap: "magma", log: true,
   pointSize: 3.0, showAxes: true,
   renderMode: "surface", // "points" | "surface" | "volume" | "mip"
   solid: true,           // points: opaque (solid) vs alpha-blended
@@ -136,7 +136,7 @@ async function loadAll() {
   state.samples = await fetchJSON(`${DATA_DIR}samples.json`);
   document.getElementById("sz").max = state.meta.n_bins - 1;
   buildDigitButtons();
-  renderSamples("total");
+  renderSamples(state.currentDigit);
   await refreshData();
 }
 
@@ -338,7 +338,7 @@ function buildDigitButtons() {
   const mk = (digit, label) => {
     const b = document.createElement("button");
     b.className = "digit-btn";
-    if (digit === "total") b.classList.add("active");
+    if (digit === state.currentDigit) b.classList.add("active");
     b.textContent = label;
     b.dataset.digit = digit;
     b.addEventListener("click", async () => {

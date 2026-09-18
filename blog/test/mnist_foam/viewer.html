@@ -55,15 +55,15 @@
     <div class="ctrl">
       <label>Data variant</label>
       <select id="variant">
-        <option value="aug" selected>augmented (rot + shift)</option>
-        <option value="raw">raw only (no augmentation)</option>
+        <option value="aug">augmented (rot + shift)</option>
+        <option value="raw" selected>raw only (no augmentation)</option>
         <option value="diff">Δ aug − raw (augmentation only)</option>
       </select>
     </div>
     <div class="ctrl">
       <label>Volume</label>
       <div class="digit-grid" id="digit-buttons">
-        <button class="digit-btn active" data-digit="total">all</button>
+        <button class="digit-btn" data-digit="total">all</button>
         <!-- digit buttons injected by JS -->
       </div>
     </div>
@@ -140,8 +140,8 @@
       </select>
     </div>
     <div class="ctrl">
-      <label>Min count threshold = <span id="thr-val">10</span></label>
-      <input type="range" id="thr" min="0" max="1000" value="10">
+      <label>Min count threshold = <span id="thr-val">20</span></label>
+      <input type="range" id="thr" min="0" max="1000" value="20">
     </div>
     <div class="ctrl">
       <label>Opacity scale = <span id="op-val">1.0</span></label>
